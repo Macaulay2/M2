@@ -6,10 +6,11 @@ Node
   Description
     Text
 
-      This package supports computation in intersection theory on smooth varieties.  An @TO2{AbstractVariety,"abstract
+      This package supports computation in intersection theory on smooth projective varieties.  An @TO2{AbstractVariety,"abstract
       variety"}@ is not given by equations.  Instead, one gives its graded intersection ring of algebraic cycle classes
-      (modulo either numerical equivalence or rational equivalence, and tensored with the rational numbers and perhaps
-      also with some algebra over the rational numbers), its dimension, and the Chern class of its tangent bundle (if
+      modulo numerical equivalence (tensored with the rational numbers or perhaps
+      with some algebra over the rational numbers), its dimension, a method for counting the number of points in a cycle class
+      of dimension zero (integration), and the Chern class of its tangent bundle (if
       known).  The intersection ring is represented as a {\em Macaulay2} @ TO2{Ring,"ring"} @, and its elements are {\em
       Macaulay2} @ TO2{RingElement,"ring elements"} @.
       
@@ -20,7 +21,8 @@ Node
       ring isomorphism from Grothendieck ring (tensored as before) to the intersection ring.
 
       An @TO2{AbstractVarietyMap,"abstract variety map"}@ is a map between abstract varieties: the information encoded
-      is the pull-back and push-forward maps between the corresponding intersection rings.
+      is the pull-back and push-forward maps between the corresponding intersection rings.  If necessary, the push-forward map
+      is computed automatically from multiplication and integrals.
 
       One may start with a {\em base variety} whose intersection ring contains variables of degree 0 that can represent
       unknown integers in formulas, along with variables of positive degree that can be used as Chern classes of
@@ -530,10 +532,10 @@ Node
        the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the the type of {\tt s}.  See 
        page 271 of Fulton's book, {\em Intersection Theory} for the notations.
 
-       In the case where {\tt s} is a sequence, the value returned is the {\em homology} class of the {\em Schubert variety} in
+       In the case where {\tt s} is a @ ofClass Sequence @, the value returned is the {\em homology} class of the {\em Schubert variety} in
        $ F $ consisting of those points corresponding to $(q-1)$-planes of $\PP(A)$ that meet $ W_j $ in dimension at least
-       $ i $ with $0 \le{} i < q$, for each $ i $, where $ j = s_i $, and where $ W_i $ is the projective subspace of dimension
-       $ i $ in a fixed (complete) flag $0 = W_0 \subset{} W_1 \subset{} ... \subset{} W_{n-1} = \PP(A) $.
+       $ i $ with $0 \le{} i < q$, for each $ i $, where $ j = s_i $, and where $ W_j $ is the projective subspace of dimension
+       $ j $ in a fixed (complete) flag $0 = W_0 \subset{} W_1 \subset{} ... \subset{} W_{n-1} = \PP(A) $.
        
        In the case where {\tt s} is a @ ofClass List @, the result is the corresponding {\em Schubert class} in
        cohomology.  In {\em Schubert2} homology and cohomology are identified with each other.
@@ -1032,12 +1034,6 @@ Node
 --------
 Node
   Key
-   FlagBundleStructureMap
-  Headline
-   the class of all abstract flag bundle structure maps
---------
-Node
-  Key
    integral
   Headline
    compute an integral (push forward a cycle to the base)
@@ -1309,14 +1305,16 @@ Node
   Key
    StructureMap
   Headline
-   get the structure map of a flag bundle
+   get the structure map of an abstract variety
   Usage
    F.StructureMap
   Inputs
-   F:FlagBundle
+   F:AbstractVariety
   Outputs
-   :FlagBundleStructureMap
-    the structure map of $F$
+   :AbstractVarietyMap
+    the structure map of $F$, if it has one.
+  SeeAlso
+   (symbol /,AbstractVariety,AbstractVariety)
   Description
    Example
     F = PP^2
@@ -1395,24 +1393,20 @@ Node
     (todd,AbstractSheaf)
     (todd,AbstractVariety)
     (todd,AbstractVarietyMap)
-    (todd,RingElement)
   Headline
-   compute the Todd class of an abstract sheaf, variety, map, or Chern character
+   compute the Todd class of an abstract sheaf, variety, map
   Usage
    todd F
    todd X
    todd f
-   todd cc
   Inputs
    F:AbstractSheaf
    X:AbstractVariety
    f:AbstractVarietyMap
-   cc:RingElement
   Outputs
    :RingElement
     the Todd class of $F$, of the (absolute) tangent bundle of $X$,
-    of the (relative) tangent bundle of $f$, or of the abstract sheaf
-    whose Chern character is $cc$
+    of the (relative) tangent bundle of $f$
   Description
    Example
     todd PP^6
@@ -2205,6 +2199,7 @@ Node
  Description
   Example
    euler PP^5
+   euler flagBundle {1,1,1,1,1}
 -------
 Node
  Key
@@ -2596,6 +2591,8 @@ Node
  Outputs
   :
    the structure map or composition of structure maps $X \rightarrow{} S$
+ SeeAlso
+  StructureMap
  Description
   Example
    X = projectiveSpace_3 point

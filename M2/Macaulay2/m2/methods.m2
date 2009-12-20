@@ -158,7 +158,7 @@ setupMethods((), {
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
-	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
+	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
@@ -568,6 +568,26 @@ baseName Thing := R -> (
 	  x)
      else error "baseName: no base name available"
      )
+
+-- exp
+exp = method()
+exp CC := CC => exp'
+exp RR := exp QQ := exp ZZ := RR => exp'
+exp RingElement := RingElement => r -> (
+     try
+     promote(exp lift(r,RR),ring r)
+     else try
+     promote(exp lift(r,CC),ring r)
+     else (
+	  n := 1;
+	  rn := r;
+	  e := try 1/1 + rn else error "exp: expected an algebra over QQ";
+	  while true do (
+	       n = n+1;
+	       rn = (1/n)*rn*r;
+	       if rn == 0 then break e;
+	       e = e + rn;
+	       )))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

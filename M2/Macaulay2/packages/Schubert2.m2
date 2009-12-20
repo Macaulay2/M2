@@ -17,7 +17,7 @@ newPackage(
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
-     "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
+     "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
      "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
@@ -64,8 +64,6 @@ FlagBundle#{Standard,AfterPrint} = X -> (
 
 AbstractVarietyMap = new Type of MutableHashTable
 AbstractVarietyMap.synonym = "abstract variety map"
-FlagBundleStructureMap = new Type of AbstractVarietyMap
-FlagBundleStructureMap.synonym = "abstract flag bundle structure map"
 AbstractVarietyMap ^* := Function => f -> f.PullBack
 AbstractVarietyMap _* := Function => f -> f.PushForward
 globalAssignment AbstractVarietyMap
@@ -146,7 +144,7 @@ abstractSheaf AbstractVariety := opts -> X -> (
 	  global cache => new CacheTable from {
 	       if opts.Name =!= null then Name => opts.Name,
      	       global rank => rk,
-	       if opts.ChernClass =!= null then ChernClass => opts.ChernClass
+	       if opts.ChernClass =!= null then ChernClass => promote(opts.ChernClass,A)
 	       }
      	  }
      )
@@ -402,17 +400,20 @@ flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundle
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      h$ := global H;
      varNames := opts.VariableNames;
+     bundleRanks = splice bundleRanks;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
      n := #bundleRanks;
      rk := sum bundleRanks;
-     HR := degreesRing {1};
+     hft := {1};
+     HR := degreesRing hft;
      T := HR_0;
      vn := dualpart(0,rsort bundleRanks);
      hilbertSeriesHint := new Divide from {
-	  product for i from 0 to n-1 list ( k := sum take(bundleRanks,i); product for j from k+1 to k+bundleRanks#i list 1 - T^j ),
+	  promote( product for i from 0 to n-1 list ( k := sum take(bundleRanks,i); product for j from k+1 to k+bundleRanks#i list 1 - T^j ), HR),
 	  new Product from reverse for i from 1 to #vn list new Power from {1 - T^i, vn#(i-1)}
 	  };
-     if rank E =!= rk then error "expected rank of bundle to equal sum of bundle ranks";
+     if rank E != rk then error "expected rank of bundle to equal sum of bundle ranks";
+     if part(rk+1,infinity,chern E) != 0 then error "expected an effective bundle (vanishing higher Chern classes)";
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
      varNames = (
 	  if varNames === null then varNames = h$;
@@ -441,13 +442,13 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      X := variety E;
      dgs := splice apply(bundleRanks, r -> 1 .. r);
      S := intersectionRing X;
-     U := S(monoid [flatten varNames, Degrees => dgs, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false]);
+     U := S(monoid [flatten varNames, Degrees => dgs, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false, Heft => hft, DegreeRank => 1]);
      -- (A,F) := flattenRing U; G := F^-1 ;
      A := U; F := identity;
-     chclasses := apply(varNames, x -> F (1 + sum(x,v -> U_v)));
+     chclasses := apply(varNames, x -> F (1_U + sum(x,v -> U_v)));
      rlns := product chclasses - F promote(chern E,U);
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
-     rlns = ideal rlns;
+     rlns = ideal matrix(U,{rlns});
      if heft S =!= null and degreesRing S === HR then gb(rlns, Hilbert => numerator hilbertSeriesHint * numerator hilbertSeries S);
      B := A/rlns;
      -- (C,H) := flattenRing B; I := H^-1;
@@ -469,12 +470,12 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      pushforward := method();
      pullback ZZ := pullback QQ := r -> promote(r,C);
      pullback S := r -> H promote(F promote(r,U), B);
-     sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
+     sec := if n === 0 then 1_C else product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      pushforward C := r -> coefficient(sec,r);
      pullback AbstractSheaf := E -> (
 	  if variety E =!= X then "pullback: variety mismatch";
 	  abstractSheaf(FV,Rank => rank E, ChernClass => pullback chern E));
-     p := new FlagBundleStructureMap from {
+     p := new AbstractVarietyMap from {
 	  global target => X,
 	  global source => FV,
 	  SectionClass => sec,
@@ -486,6 +487,11 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  if variety E =!= FV then "pushforward: variety mismatch";
 	  abstractSheaf(X,ChernCharacter => pushforward (ch E * todd p)));
      integral C := r -> integral p_* r;
+     FV.StructureMap.TangentBundle = (
+	  if #bundles > 0
+	  then sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))
+	  else OO_FV^0);
+     if X.?TangentBundle then FV.TangentBundle = FV.StructureMap.TangentBundle + FV.StructureMap^* X.TangentBundle;
      use FV;
      FV)
 
@@ -493,11 +499,6 @@ use AbstractVariety := AbstractVariety => X -> (
      use intersectionRing X;
      if X#?"bundles" then scan(X#"bundles",(sym,shf) -> sym <- shf);
      X)
-
-tangentBundle FlagBundleStructureMap := (stashValue TangentBundle) (
-     p -> (
-	  bundles := (source p).Bundles;
-	  sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))))
 
 installMethod(symbol SPACE, OO, RingElement, AbstractSheaf => (OO,h) -> OO_(variety ring h) (h))
 
@@ -528,37 +529,36 @@ reciprocal RingElement := (A) -> (
 logg = method(TypicalValue => RingElement)
 logg QQ := logg ZZ := (n) -> 0
 logg RingElement := (C) -> (
-     -- C is the total chern class in an intersection ring
+     -- C is the total chern class in an intersection ring A
      -- The chern character of C is returned.
-     if not (ring C).?VarietyDimension then error "expected a ring with its variety dimension set";
-     d := (ring C).VarietyDimension;
+     A := ring C;
+     d := A.VarietyDimension;
      p := new MutableList from splice{d+1:0}; -- p#i is (-1)^i * (i-th power sum of chern roots)
      e := for i from 0 to d list part(i,C); -- elem symm functions in the chern roots
      for n from 1 to d do
          p#n = -n*e#n - sum for j from 1 to n-1 list e#j * p#(n-j);
-     sum for i from 1 to d list 1/i! * (-1)^i * p#i
-     )
+     promote(sum for i from 1 to d list 1/i! * (-1)^i * p#i, A))
 
 expp = method(TypicalValue => RingElement)
 expp QQ := expp ZZ := (n) -> 1
-expp RingElement := (A) -> (
-     -- A is the chern character
-     -- the total chern class of A is returned
-     if not (ring A).?VarietyDimension then error "expected a ring with its variety dimension set";
-     d := (ring A).VarietyDimension;
-     p := for i from 0 to d list (-1)^i * i! * part(i,A);
+expp RingElement := (y) -> (
+     -- y is the chern character
+     -- the total chern class of y is returned
+     A := ring y;
+     d := A.VarietyDimension;
+     p := for i from 0 to d list (-1)^i * i! * part(i,y);
      e := new MutableList from splice{d+1:0};
-     e#0 = 1;
+     e#0 = 1_A;
      for n from 1 to d do
 	  e#n = - 1/n * sum for j from 1 to n list p#j * e#(n-j);
      sum toList e
      )
 
 todd = method(TypicalValue => RingElement)
-todd AbstractSheaf := E -> todd ch E
+todd AbstractSheaf := E -> todd' ch E
 todd AbstractVariety := X -> todd tangentBundle X
 todd AbstractVarietyMap := p -> todd tangentBundle p
-todd RingElement := (r) -> (
+todd' = (r) -> (
      -- r is the chern character
      -- the (total) todd class is returned
      A := ring r;
@@ -818,7 +818,6 @@ degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
      m := rank A;
      n := rank B;
      G := flagBundle({m-k,k},A);
-     tangentBundle G;					    -- compute it!
      S := first G.Bundles;
      sectionZeroLocus Hom(S,(G/X)^* B))
 
@@ -836,7 +835,6 @@ beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
 undocumented {
      (tangentBundle,FlagBundle),
-     (tangentBundle,FlagBundleStructureMap),
      (symmetricPower,QQ,AbstractSheaf),
      (symmetricPower,ZZ,AbstractSheaf),
      (net,ChernClassVariableTable),
