@@ -27,13 +27,13 @@ CONFIGOPTIONS += --host=@host_alias@
 endif
 CONFIGOPTIONS += --cache-file=/dev/null
 COMPILEFLAGS  = \
+	CPPFLAGS="$(CPPFLAGS)" \
 	CXXFLAGS="$(CXXFLAGS)" \
 	CFLAGS="$(CFLAGS)" \
 	FFLAGS="$(FCFLAGS)" \
 	FCFLAGS="$(FCFLAGS)"
 CONFIGENV     = env \
 	$(COMPILEFLAGS) \
-	CPPFLAGS="$(CPPFLAGS)" \
 	CC="$(CC)" \
 	CXX="@CXX@" \
 	LDFLAGS="$(LDFLAGS)" \
