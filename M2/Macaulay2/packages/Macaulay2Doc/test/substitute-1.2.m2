@@ -41,14 +41,13 @@ promote(E_0,F)
 promote(D_0,F)
 
 use F
-e = map(F,G,{z=>a})					    -- this failed in 1.2 (no method for applying promote), but it worked in 1.1
+e = map(F,G,{a})					    -- this failed in 1.2 (no method for applying promote), but it worked in 1.1
 e a_G							    -- this must be related to the difference between the generator 'a' and the primitive element
 assert( a == e a_G )					    -- fails in 1.3, didn't get to here in 1.2, but it worked in 1.1
 
 use D
 promote(a,F)						    -- fixed
--- deferred:
--- z+a							    -- fails
+z+a
 p = F.PrimitiveElement
 
 use F
@@ -62,6 +61,6 @@ p = 13;
 F = GF 13^3;
 G = F[z];
 use F
-e = map(F,G,{z=>a})
+e = map(F,G,{a})
 e a_G
 assert( a == e a_G )					    -- this works!
