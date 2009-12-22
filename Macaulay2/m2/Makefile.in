@@ -131,6 +131,19 @@ clean::; rm -f .Macaulay2-made
 all: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
+all: .gdb-directories
+.gdb-directories:
+	echo 'echo -- loading .gdb-directories\n' >$@
+	for i in \
+		../../libraries/*/build/*/. \
+		../../libraries/ntl/build/*/src/. \
+		../../libraries/libfac/build/*/factor/. \
+		../../libraries/libfac/build/*/charset/. \
+		;\
+	do if [ -d $$i ] ;\
+	   then echo directory $$i >>$@ ;\
+	   fi ;\
+	done
 .gdbinit.$(USER):; touch $@
 clean::; rm -f .gdbinit
 .gdb-files: Makefile

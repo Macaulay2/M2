@@ -861,7 +861,7 @@ ring_elem PolyRing::power(const ring_elem f0, int n) const
       g = tmp;
 
       mpz_mul_ui(bin_c, bin_c, n-i+1);
-      mpz_div_ui(bin_c, bin_c, i);
+      mpz_fdiv_q_ui(bin_c, bin_c, i);
 
       coef1 = K_->from_int(bin_c);
 

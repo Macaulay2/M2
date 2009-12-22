@@ -28,6 +28,12 @@ clean uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf include/factor.h lib/libfac.a ;\
 	fi
+ifeq (@DEBUG@,yes)
+post-install: $(LIBRARIESDIR)/lib/libfac.a
+$(LIBRARIESDIR)/lib/libfac.a:
+	ln -s libfac-g.a $@
+endif
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/libfac "
 # End:

@@ -193,7 +193,7 @@ void enter_M2::exit() {
     if (debugging) advertise();
   }
 
-static MP_INT toInteger(CanonicalForm h) {
+static __mpz_struct toInteger(CanonicalForm h) {
 //// we don't have access to int_cf.h and int_int.h from factory, so the following commented-out code won't compile; but it might have worked.
 //     struct enter_factory foo;
 //     assert(h.inZ());
@@ -244,7 +244,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	       struct enter_factory c;
 	       CanonicalForm hnum = h.num(), hden = h.den();
 	       struct enter_M2 d;
-	       MP_RAT z = {toInteger(h.num()), toInteger(h.den())};
+	       __mpq_struct z = {toInteger(h.num()), toInteger(h.den())};
 	       RingElement *ret = RingElement::make_raw(R,R->from_rational(&z));
 	       mpq_clear(&z);
 	       return ret;
@@ -299,6 +299,8 @@ void showvar(Variable &t) { cout << t << endl; }
 void showcf(CanonicalForm &t) { cout << t << endl; }
 void showcfl(CFList &t) { cout << t << endl; }
 void showcffl(CFFList &t) { cout << t << endl; }
+void showmpint(MP_INT *p) { mpz_out_str (stdout, 10, p); cout << endl; }
+void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); cout << endl; }
 #endif
 
 static struct enter_factory foo2;

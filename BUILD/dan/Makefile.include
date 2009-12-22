@@ -7,6 +7,7 @@ DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
 # include builds.tmp/$(DIRECTORY)/include/configuration
+all:builds.tmp/$(DIRECTORY)/include/configuration
 else
 $(warning DIRECTORY variable unset)
 endif

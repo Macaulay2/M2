@@ -5,7 +5,7 @@ URL = http://www.math.tu-berlin.de/~jensen/software/gfan
 TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
 CONFIGURECMD = true
-BUILDOPTIONS = gmppath=$(BUILTLIBPATH) cddpath=$(BUILTLIBPATH) CC="$(CC)" CCC="$(CXX)"
+BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CCC="$(CXX) $(CPPFLAGS)" CLINKER="$(CC)" CCLINKER="$(CXX)" PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = .
 STRIPFILES = gfan@EXEEXT@
