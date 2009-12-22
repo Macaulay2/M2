@@ -1288,8 +1288,8 @@ void GBRing::gbvector_replace_2by2_ZZ(
   gbvector_add_to(F,new_g,g2);
   gbvector_add_to(Fsyz,new_gsyz,gsyz2);
 
-  mpz_div(u,g->coeff.get_mpz(),gd);
-  mpz_div(v,f->coeff.get_mpz(),gd);
+  mpz_fdiv_q(u,g->coeff.get_mpz(),gd);
+  mpz_fdiv_q(v,f->coeff.get_mpz(),gd);
   mpz_neg(v,v);
 
   gbvector *new_f = gbvector_mult_by_coeff(f,ring_elem(u));

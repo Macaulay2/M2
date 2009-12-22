@@ -161,9 +161,9 @@ Ext(Module,Module) := Module => (M,N) -> (
     transpose sum(keys blks, m -> S_m * toS sum blks#m),
     Degree => { -1, degreeLength A:0 });
   DeltaBar := Delta ** (toS ** N');
-  assert isHomogeneous DeltaBar;
-  assert(DeltaBar * DeltaBar == 0);
   if debugLevel > 10 then (
+       assert isHomogeneous DeltaBar;
+       assert(DeltaBar * DeltaBar == 0);
        stderr << describe ring DeltaBar <<endl;
        stderr << toExternalString DeltaBar << endl;
        );

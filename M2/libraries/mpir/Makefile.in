@@ -1,13 +1,26 @@
 # license for mpir: GNU LGPL v2.1
 VERSION = 1.2.1
 # still beta:
-# VERSION = 1.3.0
+# VERSION = 1.3.0-rc3
+# TARDIR = mpir-1.3.0
+
+
 URL = http://www.mpir.org
 CONFIGOPTIONS += --enable-gmpcompat --enable-cxx
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 include ../Makefile.library
+
+ifeq (@DEBUG@ @GCC@,yes yes)
+CC := $(CC) -g
+CXX := $(CXX) -g
+endif
+
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-assert
+endif
+
 COMPILEFLAGS = 
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import

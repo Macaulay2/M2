@@ -35,7 +35,7 @@ CONFIGENV     = env \
 	$(COMPILEFLAGS) \
 	CPPFLAGS="$(CPPFLAGS)" \
 	CC="$(CC)" \
-	CXX="@CXX@" \
+	CXX="$(CXX)" \
 	LDFLAGS="$(LDFLAGS)" \
 	LOADLIBES="$(LOADLIBES)" \
 	LDLIBS="$(LDLIBS)"
@@ -66,7 +66,7 @@ reconfigure: unconfigure configure
 uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
-diffs: .patched-$(VERSION) .untarred2-$(VERSION) always
+diffs: .untarred2-$(VERSION) always
 	D=`pwd`; cd $(UNTARDIR) && diff -ur --exclude=configure $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi

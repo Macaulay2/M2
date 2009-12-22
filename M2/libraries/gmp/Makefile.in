@@ -1,3 +1,4 @@
+VPATH = @srcdir@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
 

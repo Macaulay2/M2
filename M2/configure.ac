@@ -817,8 +817,17 @@ then AC_LANG(C)
      then AC_SEARCH_LIBS(Py_Initialize,python2.5,,AC_MSG_ERROR(libpython2.5 not found))
      else LIBS="$LIBPYTHON $LIBS"
      fi
-     AC_CHECK_HEADER(python2.5/Python.h,,AC_MSG_ERROR(include file python2.5/Python.h))
+     AC_CHECK_HEADER(python2.5/Python.h,,AC_MSG_ERROR(include file python2.5/Python.h not found))
 fi
+
+AC_CHECK_HEADER(libxml/parser.h,,
+   [
+      CPPFLAGS="-I/usr/include/libxml2 $CPPFLAGS"
+      unset ac_cv_header_libxml_parser_h
+      AC_CHECK_HEADER(libxml/parser.h,,
+          [AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS or install libxml2 development files])]
+ 	  )
+   ])
 
 if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
@@ -830,12 +839,21 @@ fi
 
 if test $BUILD_glpk = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
+     AC_CHECK_HEADER(glpk.h,,[
+     	CPPFLAGS="-I/usr/include/glpk $CPPFLAGS"
+	unset ac_cv_header_glpk_h
+     	AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)])
 fi
 
 if test $BUILD_cddlib = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(cdd.h,,BUILD_cddlib=yes,[#include <setoper.h>])
+     AC_CHECK_HEADER(cdd.h,,
+     	[ 
+	  CPPFLAGS="-I/usr/include/cddlib $CPPFLAGS"
+	  unset ac_cv_header_cdd_h
+	  AC_CHECK_HEADER(cdd.h,,BUILD_cdd=yes,[#include <setoper.h>])
+	],
+	[#include <setoper.h>])
 fi
 
 AC_SUBST(ULIMIT_T,yes)
@@ -1248,6 +1266,7 @@ AC_MSG_NOTICE([using LIBS_STATIC   = $LIBS_STATIC])
 AC_MSG_NOTICE([using LIBS_STATIC_OR_DYNAMIC  = $LIBS_STATIC_OR_DYNAMIC])
 AC_MSG_NOTICE([using LIBS_DYNAMIC  = $LIBS_DYNAMIC])
 AC_MSG_NOTICE([using CC            = $CC])
+AC_MSG_NOTICE([using CPPFLAGS      = $CPPFLAGS])
 AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])
 AC_MSG_NOTICE([using CXX           = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
