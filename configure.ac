@@ -851,7 +851,7 @@ then AC_LANG(C)
      	[ 
 	  CPPFLAGS="-I/usr/include/cddlib $CPPFLAGS"
 	  unset ac_cv_header_cdd_h
-	  AC_CHECK_HEADER(cdd.h,,BUILD_cdd=yes,[#include <setoper.h>])
+	  AC_CHECK_HEADER(cdd.h,,BUILD_cddlib=yes,[#include <setoper.h>])
 	],
 	[#include <setoper.h>])
 fi
