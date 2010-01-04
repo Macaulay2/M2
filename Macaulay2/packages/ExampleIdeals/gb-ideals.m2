@@ -445,8 +445,36 @@ I = ideal"bip-dfq,djm-ehn,-bim+cgn,-gmp+hkq,cnp-dkr,-bhk+cfl,anq-bks,-bhnr+cgms,
 time gb(I, Algorithm=>LinearAlgebra);
 time gb I;
 ----------------------------------------------
---
+--chow-flag-7-7-over-h
+(m,n) = (7,7)
+R = QQ[a_1..a_m, b_1..b_n, h_1..h_(m+n), Degrees=>{1..m,1..n,1..m+n}]
+S = R[x]
+fx = (d, a) -> x^d + sum(1..d, i -> a_i * x^(d-i))
+F = fx(m,a) * fx(n,b) - fx(m+n,h)
+--F = (x^m + sum(1..m, i -> a_i * x^(m-i))) * (x^n + sum(1..n, i -> b_i * x^(n-i))) - sum(1..m+n)
+I = sub(ideal last coefficients F, R)
+gbTrace=3
+time gens gb I;
 ----------------------------------------------
---
+--chow-flag-7-7
+(m,n) = (7,7)
+R = QQ[a_1..a_m, b_1..b_n, Degrees=>{1..m,1..n}]
+S = R[x]
+fx = (d, a) -> x^d + sum(1..d, i -> a_i * x^(d-i))
+F = fx(m,a) * fx(n,b) - x^(m+n)
+--F = (x^m + sum(1..m, i -> a_i * x^(m-i))) * (x^n + sum(1..n, i -> b_i * x^(n-i))) - sum(1..m+n)
+I = sub(ideal last coefficients F, R)
+gbTrace=3
+time gens gb I;
 ----------------------------------------------
---
+--chow-flag-7-9
+(m,n) = (7,9)
+R = QQ[a_1..a_m, b_1..b_n, Degrees=>{1..m,1..n}, MonomialSize=>8]
+S = R[x]
+fx = (d, a) -> x^d + sum(1..d, i -> a_i * x^(d-i))
+F = fx(m,a) * fx(n,b) - x^(m+n)
+--F = (x^m + sum(1..m, i -> a_i * x^(m-i))) * (x^n + sum(1..n, i -> b_i * x^(n-i))) - sum(1..m+n)
+I = sub(ideal last coefficients F, R)
+gbTrace=3
+time gens gb(I, DegreeLimit=>m*n);
+----------------------------------------------

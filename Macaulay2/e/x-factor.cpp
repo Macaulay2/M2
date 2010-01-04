@@ -55,10 +55,10 @@ extern "C" {
 static void advertise () {
      static enum { none, withGC, withGCindirect, withFactory } lastMessage = none;
      if (debugging == 0) return;
-     if (__gmp_allocate_func == (void *(*) (size_t))getmem) {
+     if (__gmp_allocate_func == (void *(*) (size_t))getmem_atomic) {
 	  if (lastMessage == withGCindirect) return;
 	  lastMessage = withGCindirect;
-	  printf("--gmp allocating with gc (indirectly, via getmem())\n");
+	  printf("--gmp allocating with gc (indirectly, via getmem_atomic())\n");
      }
 #if 0
      else if (__gmp_allocate_func == GC_malloc) {
@@ -242,9 +242,8 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	  }
 	  else if (h.inQ()) {
 	       struct enter_factory c;
-	       CanonicalForm hnum = h.num(), hden = h.den();
+	       MP_RAT z = {toInteger(h.num()), toInteger(h.den())};
 	       struct enter_M2 d;
-	       __mpq_struct z = {toInteger(h.num()), toInteger(h.den())};
 	       RingElement *ret = RingElement::make_raw(R,R->from_rational(&z));
 	       mpq_clear(&z);
 	       return ret;
@@ -469,6 +468,18 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
       ERROR("encountered different rings");
       return 0;
     }
+
+  if (f->is_zero()) {
+    *A = RingElement::make_raw(P,P->zero());
+    *B = RingElement::make_raw(P,P->one());
+    return g;
+  }
+
+  if (g->is_zero()) {
+    *A = RingElement::make_raw(P,P->one());
+    *B = RingElement::make_raw(P,P->zero());
+    return f;
+  }
 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;

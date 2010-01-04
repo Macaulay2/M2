@@ -315,6 +315,7 @@ I = ideal"y10+(-2494x2+474)y8+(84366+2042158x4-660492x2)y6
 R = S/I
 R' = integralClosureHypersurface R
 time R' = integralClosureDenominator(R,x)  -- NEED also: allow R to be a fractional ring
+time R' = integralClosureDenominator(R,x*(29*x^2+3))  -- NEED also: allow R to be a fractional ring
 ringFromFractions oo
 --------------------------------------------------
 --vanHoeij2

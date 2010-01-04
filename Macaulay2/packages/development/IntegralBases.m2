@@ -141,7 +141,10 @@ trager1 = (omega, Ms, dx) -> (
      KA := ring omega;
      A := KA.baseRings#-1;
      M := dx*id_(A^n) | sub(omega,A);
+     << "place a" << endl << flush;
+     print toString M;
      H := hermiteNF(M, ChangeMatrix=>false);
+     << "place b" << endl << flush;
      H = submatrix(H, 0..n-1);
      H = transpose sub(H,KA);
      -- columns of dx * H^-1 are the A-generators of rad(dx)
@@ -152,10 +155,13 @@ trager1 = (omega, Ms, dx) -> (
      Msnewbasis := apply(entries transpose sub(Hinv,A), rs -> (
 	  sum apply(#rs, i -> rs#i * Ms#i)
 	  ));
+     << "place c" << endl << flush;
      MM := matrix{apply(Msnewbasis, m -> transpose(1/dx * H * m))};
      --MM = lift(MM,A); -- for some reason thi sfails now!
      MM = sub(MM,A);
+     << "place d" << endl << flush;     
      L := hermiteNF(MM, ChangeMatrix => false);
+     << "place e" << endl << flush;     
      L = transpose submatrix(L, 0..n-1);
      (L, (sub(L,KA))^-1)
      --(H, Hinv, Msnewbasis, MM, L)
@@ -179,7 +185,9 @@ trager Ring := opts -> (R) -> (
      while (
 	 if #Ds === 0 then break;
 	 dx := selectdisc(Ds);
+	 << "about to trager1" << endl;
 	 (L, Linv) = trager1(omega, Ms, dx);
+	 << "done with trager1" << endl;
 	 detL = det L;
 	 << "det L: " << detL << endl;
 	 not isUnit(detL))
@@ -403,4 +411,19 @@ S = B1[y]
 R = S/ideal((y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11)
 time trager R
 ideal oo
+see oo
 
+--vanHoeij1
+restart
+debug loadPackage "IntegralBases"
+loadPackage "MatrixNormalForms"
+loadPackage "TraceForm"
+A1 = QQ[x]
+B1 = frac A1
+S = B1[y]
+I = ideal"y10+(-2494x2+474)y8+(84366+2042158x4-660492x2)y6
+           +(128361096x4-4790216x2+6697080-761328152x6)y4
+	   +(-12024807786x4-506101284x2+15052058268x6+202172841+134266087241x8)y2
+	   +34263110700x4-228715574724x6+5431439286x2+201803238-9127158539954x10-3212722859346x8"
+R = S/I
+time trager R  -- crash!!

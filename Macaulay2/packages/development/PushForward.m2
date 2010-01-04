@@ -19,15 +19,22 @@ pushFwd(RingMap):=(f)->
      psh:=pushAux f;
      matB:=psh_0;
      k:=psh_1;
-     
+     mapf:=psh_7;
+          
      ke:=kernel map(B^1,A^k,f,matB);
-     A^k/ke,matB --the output should remember the generators as elts of the ring 
+     A^k/ke,matB,mapf --the output should remember the generators as elts of the ring 
      )
 
 pushFwd(Module,RingMap):=(N,f)->
 (
-     matB:=(pushAux f)_0;
-     makeModule(N,f,matB)
+     B:=target f;
+     aN:=ann N;
+     C:=B/aN;
+     bc:=map(C,B);
+     g:=bc*f;
+     
+     matB:=(pushAux g)_0;
+     makeModule(N**C,g,matB)
      )
 
 pushFwd(ModuleMap,RingMap):=(d,f)->
@@ -35,10 +42,17 @@ pushFwd(ModuleMap,RingMap):=(d,f)->
      A:=source f;
      B:=target f;
      pols:=f.matrix;
-     M:=source d;
-     N:=target d;
-          
-     psh:=pushAux f;
+     pM:=source d;
+     pN:=target d;
+     
+     amn:=intersect(ann pM,ann pN);
+     C:=B/amn;
+     bc:=map(C,B);
+     g:=bc*f;     
+     M:=pM**C;
+     N:=pN**C;
+   
+     psh:=pushAux g;
      matB:=psh_0;
      k:=psh_1;
      R:=psh_2;
@@ -46,33 +60,24 @@ pushFwd(ModuleMap,RingMap):=(d,f)->
      mat:=psh_4;
      n:=psh_5;
      varsA:=psh_6;
-     
-     vR:=matrix{(gens R)_{0..(n-1)}};     
-     pushM:=makeModule(M,f,matB);
-     pushN:=makeModule(N,f,matB);
+     mapf:=psh_7;
+          
+     pushM:=makeModule(M,g,matB);
+     pushN:=makeModule(N,g,matB);
      
      matMap:=symbol matMap;
-     
-     if d!=0 then
-     (
-     dR:=sub(matrix d,vR);
-     gR:=mat**dR;
-     c:=degree source gR;
-     l:=degree target gR;
+     gR:=matB**matrix d;
+     c:=numgens source gR;
+     l:=numgens target gR;
      matMap=mutableMatrix(A,k*l,c);
      
      for i1 from 0 to c-1 do
      	  for i2 from 0 to l-1 do
 	  (
-       	   e:=gR_i1_i2%I;
-	   for i3 from 0 to k-1 do
-    	     matMap_(i2+l*i3,i1)=sub(e//mat_i3_0,matrix{{n:0}|varsA});
+       	       e:=mapf(gR_i1_i2);
+	       for i3 from 0 to k-1 do matMap_(i2+l*i3,i1)=e_0_i3;	       
 	   );
-     )
-     else
-     (
-     matMap=mutableMatrix(A,numgens pushM,numgens pushN);	  
-     );
+
      map(pushN,pushM,matrix matMap)
      )
 
@@ -91,67 +96,99 @@ pushAux(RingMap):=(f)->
      B:=target f;
      pols:=f.matrix;
           
-     kA:=A;
-     varsA:={};
-     kB:=B;
-     varsB:={};
-               
-     while (not isField kA) or (not any(B.baseRings,r->r===kA)) do
-     (
-	  varsA=varsA|gens kA;
-	  kA=coefficientRing kA;
-	  );
-     
-     while (kA=!=kB) do 
-     (
-	  varsB=varsB|gens kB;
-      	  kB=coefficientRing kB;
-	  );
-
+     FlatA:=flattenRing A;
+     FA:=FlatA_0;
+     varsA:=flatten entries FlatA_1^-1 vars FA;
+     FlatB:=flattenRing B;
+     FB:=FlatB_0;
+     varsB:=flatten entries FlatB_1^-1 vars FB;
+     m:=numgens FA;
+     n:=numgens FB;
+     kk:=coefficientRing FA;
      x:=symbol x;
      y:=symbol y;
-     kk:=kA;
-     m:=length varsA;
-     PA:=kk[x_1..x_m];
-     idealA:=kernel map(A,PA,varsA);
-     n:=length varsB;
-     PB:=kk[y_1..y_n];
-     idealB:=kernel map(B,PB,varsB);
      
      pols=pols_{0..(m-1)};
           
      R:=kk[y_1..y_n,x_1..x_m,MonomialOrder=>{n,m}];
-     iA:=sub(idealA,matrix{{x_1..x_m}});
-     iB:=sub(idealB,matrix{{y_1..y_n}});
+     iA:=sub(ideal FA,matrix{{x_1..x_m}});
+     iB:=sub(ideal FB,matrix{{y_1..y_n}});
      iGraph:=ideal(matrix{{x_1..x_m}}-sub(pols,matrix{{y_1..y_n}}));
      I:=iA+iB+iGraph;
      inI:=leadTerm I;
      
      r:=ideal(sub(inI,matrix{{y_1..y_n,m:0}}));     
      for i from 1 to n do
-	if ideal(sub(gens r,matrix{{(i-1):0,y_i,(m+n-i):0}}))==ideal(0_R) then
+	if ideal(sub(gens r,matrix{{(i-1):0,1_R,(m+n-i):0}}))!=ideal(1_R) then
      	  error "map is not finite";
-	  
+
      mat:=lift(basis(R/(r+ideal(x_1..x_m))),R);
      k:=numgens source mat;
      matB:=sub(mat,matrix{varsB|toList(m:0_B)});
-     matB,k,R,I,mat,n,varsA
+
+     phi:=map(R,B,matrix{{y_1..y_n}});
+     toA:=map(A,R,flatten{n:0_A,varsA});
+     mapf:=(b)->(
+	  (mons,cfs)=coefficients((phi b)%I,Monomials=>mat,Variables=>{y_1..y_n});
+	  toA cfs	  
+	  );
+     
+     matB,k,R,I,mat,n,varsA,mapf
      )
 
-end
 beginDocumentation()
 
-multidoc ///
-Node
-  Key
-    PushForward
-  Headline
-    pushforward functor for finite ring maps
-  Description
-    Text
-  Caveat
-  SeeAlso
-///
+document{
+  Key => PushForward,
+  Headline => "pushforward functor for finite ring maps",
+  EM "PushForward", " is a package that implements the pushforward functor for finite ring maps",
+  Caveat => "Works only for maps of rings finitely generated over a base field "
+  }
+
+document{
+  Key => pushFwd,
+  Headline => "push forward",
+  Subnodes => {
+       TO {(pushFwd,RingMap), " - for a ring map"},
+       TO {(pushFwd,Module,RingMap), " - for a module"}
+       }
+  }   
+
+document{
+  Key => {(pushFwd,RingMap),pushFwd},
+  Headline => "pushes forward a finite ring map",
+  Usage => "pushFwd f",
+  Inputs => { "f" },
+  Outputs => {{"a presentation of the target of ",TT "f", " as a module over the base"},{"the matrix of generators of the target of ",TT "f"," as a module over the base"},{"a map that assigns to each element of the target its representation as an element of the pushed forward module"}},
+  EXAMPLE lines ///
+  kk = QQ
+  S = kk[a..d]
+  I = monomialCurveIdeal(S, {1,3,4})
+  R = S/I
+  A = kk[a,d]
+  use R
+  F = map(R,A)
+  pushFwd F
+  ///
+  }
+
+document{
+  Key => {(pushFwd,Module,RingMap),pushFwd},
+  Headline => "pushes forward a module over the target which is finite over the source (the ring map does not have to be finite)",
+  Usage => "pushFwd(N,f)",
+  Inputs => { "N", "f" },
+  Outputs => {{"a presentation of ",TT "N", " as a module over the source of ",TT "f"}},
+  EXAMPLE lines ///
+  kk = QQ
+  S = kk[a..d]
+  I = monomialCurveIdeal(S, {1,3,4})
+  R = S/I
+  A = kk[a,d]
+  use R
+  F = map(R,A)
+  pushFwd F
+  ///
+  }
 
 TEST ///
 -- test code and assertions here
@@ -159,25 +196,10 @@ TEST ///
 ///
 
 end
------------  
-Node
-  Key
-    pushFwd
-    (pushFwd,RingMap)
-  Headline
-    push forward functor for finite ring maps
-  Usage
-  Inputs
-  Outputs
-  Consequences
-  Description
-    Text
-    Example
-    Code
-    Pre
-  Caveat
-  SeeAlso
-///
+
+restart
+installPackage "PushForward"
+viewHelp PushForward
 
 restart
 
@@ -225,10 +247,13 @@ MT2=MT**MT
 mtt2=map(MT2,MT,un**id_MT-id_MT**un)
 MMS=kernel mtt2
 
-
 trim minimalPresentation kernel pushFwd(mtt2,rs)
 trim minimalPresentation pushFwd(MMS,rs)
 trim (pushFwd rs)_0
+
+matB=pst_1
+gnB=st(gens MMS)
+matB*gnB
 --last three outputs should be all the same
 
 --
@@ -276,3 +301,36 @@ pushFwd f
 
 i=ideal(q^2-t*x,q*x*y-t)
 pushFwd(i/i^3,f)
+
+--zero map
+kk=QQ
+A=kk[x]
+B=kk[y]/(y^2)
+f=map(B,A,{y})
+pushFwd f
+use B
+d=map(B^1,B^1,matrix{{y^2}})
+pushFwd(d,f)
+
+--not finite map of rings
+i=symbol i;x=symbol x;
+kk=QQ
+A=kk[t]
+B=kk[x,y]/(x*y)
+use B
+i=ideal(x)
+f=map(B,A,{x})
+pushFwd(module i,f)
+
+
+--over ZZ
+ZZ[x,y]/(x^3,y^5,4*x^2*y,3*x*y^3)
+basis oo
+ZZ[x,y,z]/(4*x*y,6*x*z,10*y*z,x^2,y^2,z^2)
+basis oo
+--
+kk=ZZ
+A=kk[x,y,z]
+B=kk[a,b,c]/(4*a*b,7*a*c,10*b*c)
+f=map(B,A,{a^2,b^2,c^2})
+pushFwd f
