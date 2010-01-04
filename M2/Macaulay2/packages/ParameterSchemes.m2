@@ -10,10 +10,13 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export { smallerMonomials, 
-     standardMonomials, 
+export { 
+     findWtVec,
+     smallerMonomials, 
+     standardMonomials,
      parameterFamily, 
      parameterIdeal, 
+     parameterRing,
      pruneParameterScheme, 
      groebnerScheme
      }
@@ -68,10 +71,12 @@ standardMonomials(List) := (L) -> (
      apply(L, f -> standardMonomials(degree f, I))
      )
 
-
-findWtVec = (I) -> (
+findWtVec = method(Options => {Standard => false});
+findWtVec Ideal := opts -> (I) -> (
      M := I_*;
-     L := smallerMonomials I;
+     L := if opts.Standard 
+           then standardMonomials I 
+	   else smallerMonomials I;
      W := flatten apply(#M, i -> (
 	       e := first exponents M#i;
 	       apply(L#i, t -> e - first exponents t)));
@@ -80,7 +85,11 @@ findWtVec = (I) -> (
      w := flatten entries sum(numColumns C, i -> C_{i});
      maxw := max w;
      result := apply(#w, i -> maxw+1-w#i);
-     (result, tally flatten entries(matrix {result} * W))
+     minw := min flatten entries(matrix {result} * W);
+     if minw > 0 then (
+	  << "minimal weight is " << minw << endl;
+	  result
+	  )
      )
 
 findWeightCone = method()
@@ -100,6 +109,66 @@ findWeightCone Ideal := (I) -> (
      minw := min w;
      result := apply(#w, i -> -minw+1+w#i);
      (result,C,M)
+     )
+
+findEliminants = (M,J) -> (
+     S := ring J;
+     SP1 := (gens J) * sub(syz gens M, S);
+     SP2 := SP1 % sub(M,S);
+     L1 := trim ideal flatten last coefficients SP2;
+     L1 = sub(L1,coefficientRing S);
+     -- set1 will be the variables which are lead terms here:
+     set1 := sort ((flatten entries leadTerm L1)/index);
+     set2 := sort toList(set toList(0..numgens coefficientRing S - 1) - set set1);
+     << netList J_* << endl;
+     << set1 << endl;
+     << set2 << endl;
+     (set1, set2)
+     )
+
+parameterRing = method()
+parameterRing(Ideal,List,Symbol) := (M,L,t) -> (
+     -- M is a monomial ideal
+     -- L is a list of lists of monomials, #L is the
+     --  number of generators of M.
+     R := ring M;
+     kk := coefficientRing R;
+     nv := sum apply(L, s -> #s);
+     Mlist := M_*;
+     D := flatten apply(#Mlist, i -> (
+	       m := Mlist_i;
+	       apply(L#i, s -> (
+			 first exponents m - first exponents s))));
+     Dxvars := entries id_(ZZ^(numgens R));
+     Dall := join(Dxvars, D);
+     s := local s;
+     u := local u;
+     R0 := kk (monoid[u_1..u_(numgens R), s_1..s_nv, Degrees => Dall]);
+     w := heft R0;
+     heftvals := flatten entries(matrix D * transpose matrix{w});
+     R1 := kk[t_1..t_nv, Degrees => D, Heft => w];
+     U := R1 (monoid([gens R, Join=>false, Degrees => Dxvars, Heft => w]));
+     phi := map(U,R1);
+     lastv := -1;
+     elems := apply(#Mlist, i -> (
+	       m := Mlist_i;
+	       substitute(m,U) + sum apply(L#i, p -> (
+			 lastv = lastv + 1;
+			 phi(R1_lastv) * substitute(p,U)))));
+     J := ideal elems;
+     -- Next step: determine the variables to eliminate
+     (indices1, indices2) := findEliminants(M,J); -- 
+     gens1 := apply(indices1, i -> (heftvals#i, i));
+     indices1 = apply(rsort gens1, (h,i) -> i);
+     -- Now make the actual coeff ring:
+     R2 := kk[(gens R1)_indices1, (gens R1)_indices2, Degrees => join(D_indices1,D_indices2), MonomialOrder => {Lex => (#indices1), #indices2}, Heft => w];
+     U := R2 (monoid([gens R, Join=>false, Degrees => Dxvars, Heft => w]));
+     f1 := map(R2,R1);
+     f2 := map(U, ring J, vars U | f1.matrix);
+     J = f2 J;
+     -- last step: create the relations on these coeffs:
+     J
+     --(parameterIdeal(M, J), J)
      )
 
 parameterFamily = method(Options=>{Local=>false, Weights=>null})
@@ -135,7 +204,7 @@ parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
      else (
 	 R1 = if opts.Weights === null then 
 	          kk[t_1..t_nv] -- removed MonomialSize=>8
-	      else kk[t_1..t_nv,Degrees=>degs,MonomialOrder=>{Weights=>2*degs-splice{#degs:1}}];
+	      else kk[t_1..t_nv,Degrees=>degs,MonomialOrder=>{Weights=>degs}];
      	 U = R1 (monoid R);
 	 U = newRing(U, Join=>false);
 	 phi = map(U,R1);
@@ -780,4 +849,18 @@ see J
 R = ZZ/101[x,y]/(y-x^3-x^5-x^7)
 I = ideal presentation R
 minimalPresentation I
+
+-- Test of parameterRing:
+restart
+loadPackage "ParameterSchemes"
+kk = ZZ/32003
+R = kk[a..d]
+B = ideal{a*c, a*b, a^2, b^4*c, b^5}
+L = smallerMonomials(B)
+D = parameterRing(B,L,symbol t)
+#D
+S = kk[t_1..t_60, Degrees=>D]
+debug Core
+raw S
+(matrix D) * transpose matrix{{0,-7,-9,-11}}
 
