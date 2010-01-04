@@ -15,11 +15,9 @@
 ----------------------------------------------------------------
 -- Questions/Problems:
 ----------------------------------------------------------------
-
---
 --There is a problem with makeSmooth (and thus also resolveSingularities). 
 --It would be fixed if we checked the input variety with "isPrimitive" and 
---then "makePrimitive" (if the first is false). Greg had said he wanted to 
+--then "makePrimitive" (if the first is false). Greg said that he wanted to 
 --assume there were no quotient singularities, but maybe this would change 
 --his mind. 
 ----------------------------------------------------------------
@@ -130,14 +128,6 @@ makeSmooth (NormalToricVariety):= options -> X ->(
 	);
 	Xsimp
 )
--- THERE IS A PROBLEM: If X is one-dimensional, this doesn't work properly. 
--- For example, 	X = weightedProjectiveSpace {1,2}; 
--- 			Y = makeSmooth X;
---			isSmooth Y --false
---			X === Y --true
-
--- this gives error at the line X = weightedProjectiveSpace {1,2}; 
--- error is "1-elements have a common factor" (maybe something that Greg changed? )
 
 resolveSingularities = method(Options=>{Strategy=>"max"}) 
 resolveSingularities (NormalToricVariety) := options -> X ->(
@@ -220,7 +210,7 @@ doc ///
 	with vertices whose entries are +1 and -1.	
   Example
 	X = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
--- ATTENTION: here applying makeSmooth X directly does not work; the error seems to stem from stellarSubdivision
+-- ATTENTION: here applying makeSmooth X directly does not work; the error from stellarSubdivision, which assumes the input is simplicial.
 	Y = makeSimplicial X;
 	Z = makeSmooth Y;
 	expression Z
@@ -232,7 +222,7 @@ doc ///
 	Y = makeSmooth X;
 	Z = makeSimplicial Y;
 	expression Z
-Text
+  Text
 	There is a Strategy option. The Strategy arguments currentl available are "min" and "max" which correspond to choosing 
 	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
 	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
@@ -242,31 +232,31 @@ Text
 	Y1 = makeSmooth (X, Strategy => "max")
 	Y2 = makeSmooth (X, Strategy => "min")
 	Y1 === Y2
-Text	
+--ATTENTION: I get the following error for Y2: 
+-- ToricResolve.m2:101:61:(1):[6]: error: array index 0 out of bounds 0 .. -1
+-- ToricResolve.m2:125:24:(1):[3]: --back trace--
+--
+--ATTENTION: There is another strange problem (with the Strategy option) here, unless I don't understand "===" properly. 
+--	Y' = makeSmooth X; --This should be the same as Y1, since "max" is the default Strategy. 
+--	Y1 === Y' --false, but 
+--	expression Y1 === expression Y' --true
+--
+  Text	
 	In this example the "max" strategy uses only 17 blowups while the "min" strategy uses 28 blowups.
-   Example
+  Example
 	X = weightedProjectiveSpace {1,2,3,5,17};
 	Y1 = makeSmooth (X, Strategy => "max")
 	Y2 = makeSmooth (X, Strategy => "min")
 	Y1 === Y2
---------------------------
---------------------------
--- fixed this AS 12/18/2009  
-
---Text
---	THERE IS A PROBLEM: If X is one-dimensional, this doesn't work properly. 
---  Example
---	X = normalToricVariety({{2}},{{0}}); 
--- 	Y = makeSmooth X;
---	isSmooth Y --false
---	X === Y --true
---  Example
---	X = weightedProjectiveSpace {1,2}; 
--- 	Y = makeSmooth X;
---	isSmooth Y --false
---	X === Y --true
---------------------------
---------------------------
+--ATTENTION: I get the same error as above for Y2, as well as the second situation. 
+--
+  Text
+      This command even works for 1-dimensional toric varieties.    
+  Example
+	X = normalToricVariety({{2}},{{0}}); 
+ 	Y = makeSmooth X;
+	isSmooth Y 
+	X === Y 
   Caveat
 	It is assumed that {\tt X} is simplicial.
   SeeAlso
@@ -314,16 +304,14 @@ doc ///
 	V' = resolveSingularities U';
 	expression V'
 	isSmooth V'
-	U' === V' --true
+	U' === V' 
 --  Example
---	--Again, we see quotient singularities are not resolved.
+--	--Here we see that quotient singularities are not resolved.
 --	U' = normalToricVariety({{8,-2},{0,1}},{{0},{1}});
 --	V' = resolveSingularities U';
 --	expression V'
 --	isSmooth V' --false
 --	U' === V' --true
---
---
   Text 
 	Showing again that the input need not be 
 	full-dimensional, this example would also 
@@ -372,7 +360,7 @@ doc ///
 --------------------------
 --------------------------
   Text
-	There is a Strategy option. The Strategy arguments currentl available are "min" and "max" which correspond to choosing 
+	There is a Strategy option. The Strategy arguments currently available are "min" and "max" which correspond to choosing 
 	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
 	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
 	are different.
@@ -430,7 +418,7 @@ latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
 -- but eventually it must be changed by Greg in NormalToricVarieties.m2
 
 ------------------------------------------------------------------------------
--- The method stellarSubdivision with missatributed cached lattice index commented out 
+-- The method stellarSubdivision with misatributed cached lattice index commented out 
 -----------------------------------------------------------------------------
 stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
      replacement := {};
@@ -567,15 +555,8 @@ doc ///
   Outputs
 	Y:NormalToricVariety
 	  The normal toric variety obtained by adding the ray defined by {\tt v} to the fan of {\tt X}. 
-  Description
-   Text
-   Text
-   Example
-   Text
-   Example
   Caveat
 	The input matrix {\tt v} must be a column vector in the ambient space of the fan of {\tt X}.
---  SeeAlso
 ///
 
 
