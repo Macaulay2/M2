@@ -24,8 +24,8 @@ export {
      primitivePolynomialGCD,
      subresultantGCD,
      mySquareFreeDecomposition,
-     myFactorization,
-     myFactor,
+     --myFactorization,
+     --myFactor,
      factorization,
      setUFD,
      makeTower,
@@ -60,9 +60,8 @@ myCoefficients = (f) -> (
      if f == 0 then {} else (
      	  d := deg f;
      	  x := (ring f)_0;
-     	  apply(d+1, i -> f_(x^i))))
+	  for i from 0 to d list coefficient(x^i, f)))
 
-myContent = (f) -> if f == 0 or isField ring f then 1_(coefficientRing ring f) else myGCD myCoefficients f
 myContent = (f) -> (if f == 0 or isField ring f then 1_(ring f) 
   else if isField coefficientRing ring f then leadCoefficient f
   else myGCD myCoefficients f
@@ -96,17 +95,17 @@ myPolynomialExactDivision = (f,g) -> (
      Q)
 
 setUFD = (R) -> (
-     if isPolynomialRing R then (
+     if isField R then (
+     	  R.myIsDivisibleBy = ZZ.myIsDivisibleBy;
+     	  R.myExactDivision = ZZ.myExactDivision;
+     	  R.myGCD = (f,g) -> if f == 0 and g == 0 then 0_R else 1_R;
+	  )
+     else if isPolynomialRing R then (
      	  R.myIsDivisibleBy = myPolynomialIsDivBy;
      	  R.myExactDivision = myPolynomialExactDivision;
      	  R.myGCD = primitivePolynomialGCD;
      	  R.myGCD = subresultantGCD;	  
 	  )
-     else if isField R then (
-     	  R.myIsDivisibleBy = ZZ.myIsDivisibleBy;
-     	  R.myExactDivision = ZZ.myExactDivision;
-     	  R.myGCD = (f,g) -> if f == 0 and g == 0 then 0_R else 1_R;
-	  );
      );
 
 makeTower = (R) -> (
@@ -353,7 +352,19 @@ mySquareFreeDecomposition RingElement := (f) -> (
      result
      );
 
+---------------------------------------------------
+-- Factorization over algebraic extension fields --
+---------------------------------------------------
+-- See H. Cohen's book (starting pg. 143) for the algorithm used
+-- Is this correct over finite fields? (Always? Mostly?)
+
 myfac0 = (F, S, G, phis) -> (
+     -- F is a squarefree polynomial in R = K[x], K = kk[a]/G(a)
+     -- S = kk[x][a],
+     -- G is in S
+     -- phi: a list of pairs of ring maps (S <-- R, R <-- S),
+     --   changing coordinates to find a resultant which is squarefree
+     --   (created in myFactorization)
      for k from 0 to #phis-1 do (
 	  -- we will return on the first one that works
 	  (f,g) := phis#k;
@@ -377,6 +388,7 @@ myfac0 = (F, S, G, phis) -> (
 
 myFactorization = method()
 myFactorization RingElement := (F) -> (
+     -- For univariate polynomials over a singly generated extension field
      R := ring F;
      K := coefficientRing R;
      -- check: if R is a tower of form kk[a]/(g(a))[t], then keep it
@@ -385,18 +397,20 @@ myFactorization RingElement := (F) -> (
      if numgens R =!= 1 then error "expected univariate polynomial";
      if not isField K then error "expected coefficient ring to be a field";
      if numgens K >= 2 then error "expected prime field or singly generated extension field";
+     kk := coefficientRing coefficientRing K;  -- K = kk[a]/(g(a)) []
      if not K.?myGCD then setUFD K;
      if not R.?myGCD then setUFD R;
-     S1 := K (monoid [t]); setUFD S1;
+     S1 := kk (monoid [t]); setUFD S1;
      S := S1 (monoid [a]); setUFD S;
+     alpha := K_0;
      phi0 := map(S,R,{S_1,S_0});
-     phi0' := map(R,S,{R_1,R_0});
-     IR := (ideal coefficientRing R)_0;
+     phi0' := map(R,S,{alpha,R_0});
+     IR := (ideal coefficientRing K)_0; -- coefficientRing K is, if K is a toField, is the corresp poly ring
      i0 := map(S,ring IR,{S_0});
      G := i0 IR;
      phis := apply(1..8, k -> (
 	       (map(S,R,{S_1-k*S_0,S_0}),
-     		map(R,S,{R_1,R_0+k*R_1})
+     		map(R,S,{alpha,R_0+k*alpha})
 	       )));
      sqfree := mySquareFreeDecomposition F;
      -- set up S, G, and the various maps: R --> S, inverses S --> R.
@@ -406,28 +420,35 @@ myFactorization RingElement := (F) -> (
 	       ))
      )
 
+factorGF = (F) -> (
+     -- assumption: coeff ring of F is a Galois field
+     -- and the ring of F has one variable
+     K := coefficientRing ring F;
+     K1 := toField(ambient K);
+     R1 := K1[Variables=>1];
+     toR := map(R, R1, {R_0, K_0});
+     toR1 := map(R1, R, {R1_0, K1_0});
+     apply(myFactorization toR1 F, (i,f) -> (i,toR f))
+     )
+
+-- not used currently:
 myFactor = method()
 myFactor RingElement := (F) -> (
      facs := myFactorization F;
      product apply(facs, (i,g) -> (hold g)^(hold i)))
 
-factorization = (F) -> (
-     << "factoring " << F << " over " << describe ring F << endl;
-     result := if coefficientRing ring F =!= QQ then
-       myFactorization F
-     else (
-       select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0));
-     result
-     )
-
-factorization = (F) -> (
-     << "factoring " << F << " over " << describe ring F << endl;
-     result := if coefficientRing ring F === QQ then
-       --select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0)
-       select(VerticalList factor F, f -> first degree f#0 > 0)/toSequence/reverse
+factorization = method()
+factorization RingElement := (F) -> (
+     --<< "factoring " << F << " over " << describe ring F << endl;
+     R := ring F;
+     K := coefficientRing R;
+     result := if isPolynomialRing K and numgens R === 1 then
+       VerticalList myFactorization F
+     else if instance(K, GaloisField) and numgens R === 1 then
+       VerticalList factorGF F
      else
-       myFactorization F;
-     << "  result: " << netList result << endl;
+       select(VerticalList factor F, f -> first degree f#0 > 0)/toSequence/reverse;
+     --<< "  result: " << netList result << endl;
      result
      )
 
@@ -443,8 +464,6 @@ adjoinRoot RingElement := (f) -> (
      R := ring f;
      t := R_0;
      K := coefficientRing R;
-     I := ideal K;
-     n := numgens K;
      if deg f == 1 then (
 	  -- we need to solve for the root
 	  a := coefficient(t, f);
@@ -455,20 +474,24 @@ adjoinRoot RingElement := (f) -> (
 	  -- We need to create a new ring
 	  -- The default will be to make one non-tower ring out of all of this
 	  -- Assuming that f is monic?
-	  if numgens K == 0 then (
+	  if not isPolynomialRing K then (
+     	       -- in this case, K is QQ or a prime finite field
 	       K1top = K[vars 0];
 	       K1 = K1top/sub(f, t => K1top_0);
-	       toField K1;
+	       K1 = toField K1;
 	       setUFD K1;
 	       K1_0
 	       )
 	  else (
+	    K = coefficientRing K;
+     	    I := ideal K;
+     	    n := numgens K;
 	    K1top = (coefficientRing K)[vars n, gens K, MonomialOrder=>Lex];
 	    to1 := map(K1top, ring I, drop(gens K1top,1));
 	    to2 := map(K1top, R, gens K1top);
 	    J := ideal to2 f + to1 I;
 	    K1 = K1top/J;
-	    toField K1;
+	    K1 = toField K1;
 	    setUFD K1;
 	    K1_0
 	  )
@@ -477,19 +500,18 @@ adjoinRoot RingElement := (f) -> (
 
 beginDocumentation()
 
-doc ///
-Key
-  UPolynomials
-Headline
-  univariate polynomial operations implemented at top level in Macaulay2
-Description
-  Text
-  Example
-Caveat
-SeeAlso
-///
-
-doc ///
+multidoc ///
+Node
+  Key
+    UPolynomials
+  Headline
+    univariate polynomial operations implemented at top level in Macaulay2
+  Description
+    Text
+    Example
+  Caveat
+  SeeAlso
+Node
   Key
     adjoinRoot
     (adjoinRoot,RingElement)
@@ -522,8 +544,57 @@ doc ///
     then it is possible for some operations to give errors
   SeeAlso
     toField
+Node
+   Key
+     factorization
+     (factorization, RingElement)
+   Headline
+     factor a univariate polynomial over a number field
+   Usage
+     L = factorization F
+   Inputs
+     F:RingElement
+       F should be an element of K[x], where K is a field.  
+   Outputs
+     L:List
+       of pairs (i, G), where G is irreducible, and F = G1^i1 * ... * Gr^ir
+       up to a scalar
+   Description
+    Text
+      If the base ring is 
+    Example
+      K = toField(QQ[i]/(i^2+1))
+      R = K[x]
+      F = 3*(x^8-1)
+      factorization F
+      netList oo
+   Caveat
+     This function does not factor multivariate polynomials over number fields, nor
+     does it factor univariate polynomials over towers of number fields.
+     This function is based on toplevel Macaulay2 code, and so can sometimes be slow.
+     It should be rewritten in the engine!
+   SeeAlso
+     factor
 ///
 
+///
+Node
+   Key
+   Headline
+   Usage
+   Inputs
+   Outputs
+   Consequences
+    Item
+   Description
+    Text
+    Code
+    Pre
+    Example
+   Subnodes
+   Caveat
+   SeeAlso
+///
 
 TEST ///
 R = ZZ[x]
@@ -622,6 +693,40 @@ F = (b*t^4-a*t-1)*(a*t^3-b*t-1)
 myExactDivision(F, a*t^3-b*t-1)
 ///
 
+-- Factorization tests --
+TEST ///
+K = toField(QQ[i]/(i^2+1))
+R = K[x]
+F = 3*(x^8-1)
+L = factorization F
+--assert(product(L, (r,f) -> f^r) == F) -- FAILS, since the 3 is lost...
+assert(
+     set factorization F
+     === set {(1,x+i), (1,x-i), (1,x-1), (1,x+1), (1,x^2+i), (1,x^2-i)})
+///
+
+TEST ///
+K = toField(ZZ/32003[a]/(a^8-a-1))
+R = K[x]
+F = x^8-x-1
+L = factorization F
+assert(#L == 8)
+assert(product(L, (r,f) -> f^r) == F)
+///
+
+TEST ///
+K = GF(25, Variable=>a)
+R = K[x]
+F = x^8-x-1
+L = factorization F
+assert(#L == 4)
+assert(product(L, (r,f) -> f^r) == F)
+///
+
+end
+
+------------------------------------------------------------
+-- Below this needs to be rewritten as useful tests
 TEST ///
 -- Here we test gcd's and square free decomposition over algebraic number fields
 R = QQ[t];
@@ -629,11 +734,12 @@ a = adjoinRoot(t^2+t+1)
 A = ring a
 S = A[t];
 b = adjoinRoot(t^3-a)
-B = ring b
+B = coefficientRing ring b -- this coefficientRing picks out the poly ring from the field
+use ring ideal B
 eliminate(a,ideal B)
 
 A = QQ[b]/(b^6+b^3+1)
-toField A
+A = toField A
 setUFD A
 
 R = A[t]
@@ -649,14 +755,14 @@ F' = sub(F, R')
 use R'
 phi = map(R',R,{t-2*b,b})
 F' =  phi F
-G' = sub((ideal A)_0, R')
+G' = sub((ideal coefficientRing A)_0, R')
 resultant(F',G',b)
 factor oo
 facs = oo//toList/toList/first
-phi1 = map(R,R',{R_1, R_0 + 2*R_1})
+phi1 = map(R,R',{A_0, R_0 + 2*A_0}) -- FAILS
 apply(facs, f -> myGCD(phi1 f, F))
 
-G' = sub((ideal A)_0, R')
+G' = sub((ideal coefficientRing A)_0, R')
 
 resultant(F',G',t)
 -- We want to factor F...
@@ -665,23 +771,22 @@ resultant(F',G',t)
 ///
 
 TEST ///
-loadPackage "UPolynomials"
+--loadPackage "UPolynomials"
 -- test of factorization over algebraic extensions of QQ
-A = QQ[b]/(b^6+b^3+1); toField A; setUFD A
+A = toField(QQ[b]/(b^6+b^3+1)); setUFD A
 R = A[t]; setUFD R
 F = t^6+t^3+1
 time myFactorization F
 time myFactor F
 
-A = QQ[b]/(b^6+b^3+1); toField A;
+A = toField(QQ[b]/(b^6+b^3+1));
 R = A[t];
 F = t^6+t^3+1
 time myFactorization F
 time myFactor F
 value oo
 
-A = QQ[b]/(b^8+b^3+1)
-toField A
+A = toField(QQ[b]/(b^8+b^3+1))
 setUFD A
 
 R = A[t]
@@ -689,20 +794,21 @@ setUFD R
 F = t^8+t^3+1
 time fac = myFactorization F
 use A; use R
-myExactDivision(F,t-b)
+F1 = myExactDivision(F,t-b)
+
 -- TODO: adjoin a root of this, and factor over that ring.
 
-F1 = sub(oo, {t => t-2*b})
+F1 = sub(F1, {t => t-2*b})
 D = myResultant(diff(t,F1), F1)
      
 use A
 use R
 time gcd(F, t+b^5+b^2)
 
-
+{*
 restart
-path = prepend("~/src/M2/Macaulay2/packages/development/", path)
 loadPackage "UPolynomials"
+*}
 R1 = QQ[t]
 a = adjoinRoot(t^8+t^3+1)
 A = ring a;
@@ -720,7 +826,7 @@ use B
 ker map(B, QQ[t], {2*a+b})
 ker map(B, QQ[t], {a+2*b})
 
-restart
+--restart
 R1 = QQ[t,b,a]
 I = ideal"a8+a3+1,b8+b3+1"
 time primaryDecomposition I
