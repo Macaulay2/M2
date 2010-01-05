@@ -19,7 +19,7 @@ debug Core
 kk = QQ[a]/(a^2+1)
 K = toField kk
 R = K[x, y]
-G = a*x^28+x^28
+G = a*x^28+x^28 + a*x^2*y^5
 terms G
 terms(coefficientRing ring G, G)
 terms(coefficientRing coefficientRing ring G, G)

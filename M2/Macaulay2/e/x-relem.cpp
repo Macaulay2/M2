@@ -801,7 +801,7 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
 
 	  int nvars0 = P->n_vars();
 	  const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
-	  if (K != 0)
+	  if (K != 0 && K != P->getCoefficients())
 	    nvars0 -= K->n_vars();
 	  int *exp = newarray_atomic(int,nvars0);
 	  varpower::to_ntuple(nvars0, m->ints(), exp);
