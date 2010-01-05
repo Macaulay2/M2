@@ -1,3 +1,5 @@
+-- fixed, 1/5/09, test in test/terms.m2
+
 restart
 K = toField(QQ[a]/(a^2+1))
 R = K[x, y]/(x^30,x^28*y,x^26*y^2,x^24*y^3,x^22*y^4,x^20*y^5,x^18*y^6,x^16*y^7,x^14*y^8,x^
