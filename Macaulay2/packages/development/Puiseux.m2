@@ -135,7 +135,7 @@ newtonTerms(NewtonEdge) := (E) -> (
      -- adding its root to the field.
      -- result: a list of NewtonTerm's
      (p,q,ell,g) := toSequence E;
-     gs := factorization g; -- TODO: use UPolynomials.m2
+     gs := factorization g;
      if DoingRationalPuiseux
      then (
        -- RATIONAL CASE:
@@ -387,10 +387,26 @@ findVanHoeijWeights = (PT) -> (
      leaves
      )
      
-puiseux = method(Options => {OriginOnly => false})
+puiseux = method(Options => {OriginOnly => false, Center => null})
 puiseux(RingElement, ZZ) := opts -> (F, trunclimit) -> (
+     R := ring F;
+     x := R_0;
+     changecenter := opts.Center =!= null and opts.Center != x;
+     if changecenter then (
+	  K := coefficientRing R;
+	  Ra := K[Variables=>1];
+	  g := sub(opts.Center, {R_0 => Ra_0, R_1 => 0});
+	  a := adjoinRoot g;
+	  R1 := if ring a === K then R else (ring a)(monoid R);
+	  F = sub(F, {R_0 => R1_0 + a, R_1 => R1_1});
+	  );
+     opts = new OptionTable from select(pairs opts, x -> first x =!= Center);
      P := (branches(F,opts))/(b -> extend(b,trunclimit));
-     P/series
+     P = P/series;
+     if changecenter then (
+	  P = apply(P, (xf,f) -> (xf + sub(a,ring xf), f));
+	  );
+     P
      )
 
 testPuiseux = method()
@@ -577,6 +593,8 @@ TEST ///
   test'puiseux(F,10)
   test'puiseux(F,20)
 
+  puiseux(F,10,Center=>4*x^4+4*x^3-1)
+
   P = puiseux(F,10,OriginOnly=>true)
   netList P
 
@@ -585,6 +603,9 @@ TEST ///
   P = puiseux(F,10)
   test'puiseux(F,10)
   test'puiseux(F,20)
+  
+  puiseuxTree F
+  branches F
 ///
 
 TEST ///
@@ -601,6 +622,27 @@ TEST ///
   P = puiseux(F,10)
   test'puiseux(F,10)
   test'puiseux(F,20)
+///
+
+TEST ///
+  -- simple Duval example
+  R = QQ[x,y]
+  F = (x^2+y^2)^3 - 4*x^2*y^2
+  time P = puiseux(F,10)
+  puiseuxTree F
+  assert(#P == 4)
+  debug Puiseux
+  time test'puiseux(F,10)
+  time test'puiseux(F,20)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,10)
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+  
+  use ring F
+  puiseux(F,10,Center=>27*x^2-16)
 ///
 
 TEST ///
@@ -685,8 +727,8 @@ TEST ///
 ///
 
 TEST ///
+  --boehm3, also the example used in M2 aug 2009 meeting
   R = QQ[x,y]
-  --boehm3
   F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
 
   P = puiseux(F,40)
@@ -700,6 +742,32 @@ TEST ///
 ///
 
 TEST ///
+  --boehm3, also the example used in M2 aug 2009 meeting
+  R = QQ[x,y]
+  F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+
+  P = puiseux(F,5)
+  F1 = sub(F, {x => x-1})
+  P1 = puiseux(F1,5)
+  kk = toField(QQ[a]/(a^2-a+1))
+  QQ[a];
+  puiseux(F, 5, Center => x^2-x+1) -- this would be nice, results would be over a new ring, which includes a.
+  puiseux(F, 5, Center => x+1) -- default is Center => x
+  R2 = kk[x,y]
+  use ring F
+  F2 = sub(F, {x => R2_0-a, y => R2_1})
+  P2 = puiseux(F2, 5)
+  debug Puiseux
+  test'puiseux(F,40)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,40)
+  test'puiseux(F,40)
+///
+
+
+TEST ///
 R = QQ[x,y]
 F = x^2 + y^3 + y^5
 P = puiseux(F,30)
@@ -709,12 +777,14 @@ puiseux(F,30,OriginOnly => true)
 ///
 
 TEST ///
+R = QQ[x,y]
 F = x^2 + y*x^3+y^4*x + 3
 puiseux(F,30) -- gives an error.  We should catch this error higher up
 ///
 
 TEST ///
 debug Puiseux
+loadPackage "UPolynomials"
 R = QQ[x,y]
 -- the degree of F in y is 8.
 F = x^8+14*x^7*y+84*x^6*y^2+282*x^5*y^3+576*x^4*y^4+720*x^3*y^5+518*x^2*y^6+184*x*y^7+25*y^8+8*x^7+102*x^6*y+546*x^5*y^2+1590*x^4*y^3+2706*x^3*y^4+2646*x^2*y^5+1326*x*y^6+244*y^7+28*x^6+318*x^5*y+1476*x^4*y^2+3582*x^3*y^3+4770*x^2*y^4+3252*x*y^5+854*y^6+56*x^5+550*x^4*y+2124*x^3*y^2+4030*x^2*y^3+3740*x*y^4+1338*y^5+70*x^4+570*x^3*y+1716*x^2*y^2+2264*x*y^3+1101*y^4+56*x^3+354*x^2*y+738*x*y^2+508*y^3+28*x^2+122*x*y+132*y^2+8*x+18*y+1
@@ -769,8 +839,10 @@ restart
 load "development/Puiseux.m2"
 debug Puiseux
 R = QQ[x,y]
-K = toField QQ[z,w]/ideal(z^3-1,w^2-2);
+K = toField (QQ[z,w]/ideal(z^3-1,w^2-2))
 F = makePuiseuxExample(R,4,{1,2},K,{z,w})
+
+puiseux(F, 10)
 
 R1 = QQ[t,z,w,x,y,MonomialOrder=>{3,2}]
 p = sub(p,R1)

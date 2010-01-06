@@ -395,6 +395,7 @@ myFactorization RingElement := (F) -> (
      --        if not, is R a ring of this form? if so, do setUFD's.
      --        if not: error
      if numgens R =!= 1 then error "expected univariate polynomial";
+     if deg F === 1 then return {(1,F)};
      if not isField K then error "expected coefficient ring to be a field";
      if numgens K >= 2 then error "expected prime field or singly generated extension field";
      kk := coefficientRing coefficientRing K;  -- K = kk[a]/(g(a)) []
