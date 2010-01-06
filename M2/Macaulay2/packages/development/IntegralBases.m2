@@ -342,6 +342,9 @@ R = kk[x,y]
 F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
 disc(F,y)
 
+puiseux(F, 10)
+
+
 S = QQ[y,x,MonomialOrder=>{1,1}]
 A = S/(sub(F,S))
 integralClosureHypersurface A -- generated over A by one fraction with denom. x^2(x^3+1).
