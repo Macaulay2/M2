@@ -27,6 +27,8 @@ export {
      findPuiseuxSeries,
      puiseuxTruncations,
      findBranches,
+     findTruncations,
+     displayTruncations,
      traceRadical,
      trager
      }
@@ -113,6 +115,40 @@ findBranches(RingElement) := (F) -> (
 	  << netList P << endl;
 	  apply(P, p -> (series p#0, p#1))
 	  ))
+     )
+findBranches(RingElement) := (F) -> (
+     R := ring F;
+     ds := disc(F, R_1);
+     ds = ds/first;
+     Fs := apply(ds, d -> center(F,d));
+     hashTable apply(#Fs, i -> (ds#i,Fs#i#1) => (
+	  P := branches(Fs#i#0);
+	  apply(P, p -> (series p#0, p#1))
+	  ))
+     )
+
+findTruncations = method()
+findTruncations(RingElement) := (F) -> (
+     R := ring F;
+     ds := disc(F, R_1);
+     ds = ds/first;
+     Fs := apply(ds, d -> center(F,d));
+     hashTable apply(#Fs, i -> ds#i => Fs#i#1 => (
+	  puiseuxTruncations(Fs#i#0)
+	  ))
+     )
+
+displayTruncations = method()
+displayTruncations HashTable := (H) -> (
+     L := apply(pairs H, (k,v) -> (k, (v#0, flatten apply(v#1, x -> drop(x,3)))));
+     L = apply(L, (k,v) -> (k, v#0 => netList apply(v#1, x -> (
+			 R := ring x#1;
+			 K := coefficientRing R;
+			 if isPolynomialRing K then K = coefficientRing K;
+			 {VerticalList flatten entries gens ideal K, x})
+		      )));
+--     L := hashTable apply(pairs H, (k,v) -> (k,(v#0 => netList v#1)));
+     print netList L;
      )
 
 -- van Hoeij algorithm
@@ -241,16 +277,232 @@ SeeAlso
 restart
 loadPackage "IntegralBases"
 
+TEST ///
+  R = QQ[x,y]
+  F = y^4-y^2+x^3+x^4
+  H = findTruncations F
+  displayTruncations H
+///
+
+TEST ///
+  R = QQ[x,y]
+  F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
+  H = findTruncations F
+  displayTruncations H
+  
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+///
+
+TEST ///
+  -- simple Duval example
+  R = QQ[x,y]
+  F = (x^2+y^2)^3 - 4*x^2*y^2
+  H = findTruncations F
+  displayTruncations H
+///
+
+TEST ///
+  -- Duval example
+  R = QQ[x,y]
+  F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
+  H = findTruncations F
+  displayTruncations H 
+///
+
+TEST ///
+  -- Leonard example
+  R = QQ[x,y]
+  F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
+  H = findTruncations F
+  displayTruncations H 
+///
+
+TEST ///
+  --vanHoeij1 -- this one is BAD!!
+  R = QQ[x,y]
+  F = poly"y10+(-2494x2+474)y8+(84366+2042158x4-660492x2)y6
+           +(128361096x4-4790216x2+6697080-761328152x6)y4
+	   +(-12024807786x4-506101284x2+15052058268x6+202172841+134266087241x8)y2
+	   +34263110700x4-228715574724x6+5431439286x2+201803238-9127158539954x10-3212722859346x8"
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+//
+
+TEST ///
+  --vanHoeij2
+  R = QQ[x,y]
+  F = poly"y20+y13x+x4y5+x3(x+1)2"
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+//
+
+TEST ///
+  --vanHoeij3
+  R = QQ[x,y]
+  F = poly"y30+y13x+x4y5+x3(x+1)2"
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+//
+
+TEST ///
+  --vanHoeij4
+  R = QQ[x,y]
+  F = poly"y40+y13x+x4y5+x3(x+1)2"
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+//
+
+TEST ///
+  --boehm3, also the example used in M2 aug 2009 meeting
+  R = QQ[x,y]
+  F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+//
+
+TEST ///
+  R = QQ[x,y]
+  F = y^3-7*x^5-8*x^7
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+//
+
+TEST ///
+  --boehm4, over QQ
+  R = QQ[x,y]
+  F = 25*x^8+184*x^7*y+518*x^6*y^2+720*x^5*y^3+576*x^4*y^4+282*x^3*y^5+84*x^2*y^6+
+        14*x*y^7+y^8+244*x^7+1326*x^6*y+2646*x^5*y^2+2706*x^4*y^3+1590*x^3*y^4+
+	546*x^2*y^5+102*x*y^6+8*y^7+854*x^6+3252*x^5*y+4770*x^4*y^2+
+	3582*x^3*y^3+1476*x^2*y^4+318*x*y^5+28*y^6+1338*x^5+3740*x^4*y+
+	4030*x^3*y^2+2124*x^2*y^3+550*x*y^4+56*y^5+1101*x^4+
+	2264*x^3*y+1716*x^2*y^2+570*x*y^3+70*y^4+508*x^3+738*x^2*y+
+	354*x*y^2+56*y^3+132*x^2+122*x*y+28*y^2+18*x+8*y+1
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+//
+
+TEST ///
+  --boehm5, over QQ
+  R = QQ[x,y]
+  F = 25*x^8+184*x^7*y+518*x^6*y^2+720*x^5*y^3+576*x^4*y^4+282*x^3*y^5+84*x^2*y^6+14*x*y^7+y^8+244*x^7+1326*x^6*y+2646*x^5*y^2+2706*x^4*y^3+1590*x^3*y^4+546*x^2*y^5+102*x*y^6+8*y^7+854*x^6+3252*x^5*y+4770*x^4*y^2+3582*x^3*y^3+1476*x^2*y^4+318*x*y^5+28*y^6+1338*x^5+3740*x^4*y+4030*x^3*y^2+2124*x^2*y^3+550*x*y^4+56*y^5+1101*x^4+2264*x^3*y+1716*x^2*y^2+570*x*y^3+70*y^4+508*x^3+738*x^2*y+354*x*y^2+56*y^3+132*x^2+122*x*y+28*y^2+18*x+8*y+1
+
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+///
+
+TEST ///
+--singular-sakai1
+  R = QQ[x,y] -- genus 0 4 nodes and 6 cusps
+  F = poly "(x2+y2-1)3 +27x2y2"
+
+  H = findTruncations F
+  displayTruncations H 
+
+  use R
+  G = sub(F, {x=>y,y=>x})
+  H = findTruncations G
+  displayTruncations H
+///
+
+TEST ///
+--singular-sakai2
+  R = QQ[x,y] -- genus 0
+  F = poly "(x-y2)2 - yx3"
+
+  H = findTruncations F
+  displayTruncations H 
+///
+
+TEST ///
+  --singular-sakai5
+  R = QQ[x,y]
+  F = poly "55x8+66y2x9+837x2y6-75y4x2-70y6-97y7x2"
+  F = sub(F, {x => y+x})
+  time   H = findTruncations F
+  displayTruncations H 
+///
+
+
+---------------------
+-- A first example --
+---------------------
+-- This example doesn
 -- ZZZ
-kk = ZZ/32003
+--kk = ZZ/32003
 kk = QQ
-P = kk[x]
+--P = kk[x]
 R = kk[x,y]
 F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+H = findTruncations F
+hashTable apply(pairs H, (k,v) -> (k,(v#0 => netList v#1)))
 ds = disc(F,y)
-dx = disc(F,x)
-ds = apply(ds, d -> sub(d#0,P))
-as = apply(ds, adjoinRoot)
+
+netList puiseuxTruncations F
+
+(G,a) = center(F, x+1)
+puiseuxTruncations G
+
+use ring F
+(G,a) = center(F, x^2-x+1)
+netList puiseuxTruncations G
+
+ds = ds/first
+--dx = disc(F,x)
+--ds = apply(ds, d -> sub(d#0,P))
+--as = apply(ds, adjoinRoot)
+puiseux(F, 10, Center => ds#0)
+puiseux(F, 10, Center => ds#1)
+puiseux(F, 5, Center => ds#2)
+netList oo
+
+netList apply(pairs findBranches F, (a,b) -> prepend(a#0, b/first))
+
+netList puiseux(F, 10)
+(branches F)/first
+netList oo
 Rs = apply(as, a -> if ring a === coefficientRing R then R else (ring a)[gens R])
 Fs = apply(#ds, i -> (S := Rs#i; sub(F, {R_0 => S_0 + as#i, R_1 => S_1})))
 netList puiseux(Fs#0,10)
@@ -267,7 +519,7 @@ syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
 -- how does Fractional Ideals do on this one?
 S = kk[y,x,MonomialOrder=>{1,1}]
 A = S/(sub(F,S))
-integralClosureHypersurface A
+time integralClosureHypersurface A
 
 --------------------
 -- A good example --
@@ -277,6 +529,21 @@ needsPackage "IntegralBases"
 P = QQ[x]
 R = QQ[x,y]
 F = y^4-y^2+x^3+x^4
+
+H = findTruncations F
+hashTable apply(pairs H, (k,v) -> (k,(v#0 => netList v#1)))
+
+disc(F,y)
+netList puiseuxTruncations F
+
+use ring F
+(G,a) = center(F,4*x^4+4*x^3-1)
+netList puiseuxTruncations G
+
+
+
+netList apply(pairs findBranches F, (a,b) -> prepend(a#0, b/first))
+
 ds = disc(F,y)
 dx = disc(F,x)
 ds = apply(ds, d -> sub(d#0,P))
@@ -292,6 +559,8 @@ testPuiseux(P2a_0,F,15)
 yt^3-yt -- something seems wrong here...
 
 
+(branches F)/first//netList
+(branches F)/first/series
 -- 
 
 
@@ -305,6 +574,11 @@ restart
 needsPackage "IntegralBases"
 R = QQ[x,y]
 F = y^4-y^2+x^3+x^4
+
+H = findTruncations F
+hashTable apply(pairs H, (k,v) -> (k,(v#0 => netList v#1)))
+
+
 puiseuxTruncations F
 Ps = oo/last
 syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
@@ -340,6 +614,10 @@ loadPackage "IntegralBases"
 kk = QQ
 R = kk[x,y]
 F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+
+H = findTruncations F
+hashTable apply(pairs H, (k,v) -> (k,(v#0 => netList v#1)))
+
 disc(F,y)
 
 puiseux(F, 10)
