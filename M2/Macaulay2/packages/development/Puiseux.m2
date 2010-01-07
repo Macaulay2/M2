@@ -21,6 +21,7 @@ newPackage(
 needsPackage "UPolynomials"
 
 export {
+     center,
      newtonEdges,
      branches,
      puiseuxTree,
@@ -270,6 +271,22 @@ branches1 = (F,negativeSlopeOnly) -> (
      apply(tms, tm -> new NewtonBranch from {{tm}, applyTerm(tm,F)})
      )
 
+center = method()
+center(RingElement, RingElement) := (F, g) -> (
+     -- F = (F(x1, ...)
+     -- g = g(x1)
+     -- Let a be a root of g (possibly extending the coeff ring of F)
+     -- and return (F(x1+a,x2,...,xn), a)
+     K := coefficientRing R;
+     Rg := ring g;
+     Rg' := if numgens Rg === 1 then Rg else K[Variables=>1];
+     g = sub(g, prepend(R_0 => Rg'_0, apply(drop(gens R, 1), v -> v => 0)));
+     a := adjoinRoot g;
+     R1 := if ring a === K then R else (ring a)(monoid R);
+     phi := map(R1, R, prepend(R1_0 + a, drop(gens R1, 1)));
+     (phi F,a)
+     )
+
 branches = method(Options => {OriginOnly=>false})
 branches(RingElement) := opts -> (F) -> branches(new NewtonBranch from {{}, F}, opts)
 branches NewtonBranch := opts -> (B) -> (
@@ -287,7 +304,17 @@ branches NewtonBranch := opts -> (B) -> (
 	         branches(b1, OriginOnly => true)
 	       ))
      )
-
+branches(RingElement, RingElement) := opts -> (F,g) -> (
+     -- F = F(x,y)
+     -- g is the poly whose root we will center at
+     (G,a) := center(F,g);
+     branches G
+     )
+-------------------------------
+-- puiseux tree: this stuff can be removed once 
+--  a more direct way to compute the van Hoeij weights 
+--  is in place
+------------------------------
 Info = new Type of HashTable
 
 makenode = (tm,children) -> new HashTable from {
@@ -386,20 +413,17 @@ findVanHoeijWeights = (PT) -> (
      scan(leaves, f -> f.cache#"Ni" = f.cache#"MaxValuation" + maxinti - f.cache#"Int");
      leaves
      )
-     
+
+-- Above this to be removed, once v.H weights are determined
+--------------------------------------------
+
 puiseux = method(Options => {OriginOnly => false, Center => null})
 puiseux(RingElement, ZZ) := opts -> (F, trunclimit) -> (
      R := ring F;
      x := R_0;
+     local a;
      changecenter := opts.Center =!= null and opts.Center != x;
-     if changecenter then (
-	  K := coefficientRing R;
-	  Ra := K[Variables=>1];
-	  g := sub(opts.Center, {R_0 => Ra_0, R_1 => 0});
-	  a := adjoinRoot g;
-	  R1 := if ring a === K then R else (ring a)(monoid R);
-	  F = sub(F, {R_0 => R1_0 + a, R_1 => R1_1});
-	  );
+     if changecenter then (F,a) = center(F, opts.Center);
      opts = new OptionTable from select(pairs opts, x -> first x =!= Center);
      P := (branches(F,opts))/(b -> extend(b,trunclimit));
      P = P/series;
@@ -594,7 +618,12 @@ TEST ///
   test'puiseux(F,20)
 
   puiseux(F,10,Center=>4*x^4+4*x^3-1)
-
+  
+  use ring F
+  (G,a) = center(F, 4*x^4+4*x^3-1)
+  branches G
+  puiseux(G, 10)
+       
   P = puiseux(F,10,OriginOnly=>true)
   netList P
 
