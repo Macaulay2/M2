@@ -294,25 +294,28 @@ faceLyubeznik = (m,L) -> (
 	       if (#L1==0) then true else lcmMonomials(L1)//L_i == 0)))
 
 lyubeznikComplex = method()
-lyubeznikComplex(List,Ring) := (L,R) -> (
-     if not isSuperficial(L) then error "expected a superficially ordered list of monomials";
-     P := ideal apply(gens R, x -> x^2);
-     nonfaces := {};
-     d := 1;
-     while (L1 = flatten entries basis(d,coker gens P); #L1 > 0) do (
-	  L1 = select(L1, m -> not faceLyubeznik(m,L));
-	  << "new nonfaces in degree " << d << ": " << L1 << endl;	  
-	  nonfaces = join(nonfaces,L1);
-	  if #nonfaces > 0 then
-	      P = P + ideal nonfaces;
-	  d = d+1;
-          );
-     simplicialComplex monomialIdeal nonfaces
-     )
+
+
 
 lyubeznikComplex(MonomialIdeal) := (I) -> (
      lyubeznikComplex(flatten entries gens I, ring I))
 
+lyubeznikComplex(List) := SimplicialComplex =>(L) -> (
+        m := symbol m;
+        J := symbol J;
+        S := ZZ[m_0 .. m_(#L-1)];
+        Delta := simplicialComplex monomialIdeal (S_0);
+        apply(toList (1..#L-2), i -> (
+           if (i > dim Delta) then break;
+           rmF := select(apply(flatten entries faces(i, Delta), F ->
+                  select(toList(0..#L-1), i -> (
+                        (F%S_i) == 0))), F -> (
+               lcmF := lcm apply(F, i -> L_i);
+               any(min F, j -> ((lcmF % L_j) == 0)))); 
+           J := monomialIdeal Delta + monomialIdeal apply(rmF, F ->
+                                product(F, i -> S_i));
+           Delta = simplicialComplex J;));
+        simplicialComplex flatten entries (matrix{{S_0}}*(facets Delta)))
 
 faceSuperficial = (m,L) -> (
 -- true iff the monomial m (in #L vars) defines a face in the Superficial complex
