@@ -149,14 +149,71 @@ check PackageTemplate
   newIdeal = ideal (x*y+x^3, x*y-y, x^2+x, y^2+y)
   groebnerBasis newIdeal
 
+  R = ZZ/2[x,y,z]/(x^2+x, y^2+y, z^2+z)
+  R = ZZ/2[x,y,z]
+  I = ideal (x*y+x^3, x*y-y, x^2+x, y^2+y)
+  I = ideal (x^2)
+  I = ideal (x^2+x, y^2 + y, z^2+z, x*y+z)
+  I = ideal (x*y+z)
+  gens gb I
+  groebnerBasis(I)
+
+  help gens
+viewHelp Buchberger
+
+--  Class Brp - binary representation of polynomials in F2 inherits from Polynomial
+    -- This class can convert multilinear (later all) polynomials into their
+    binary representation. It does addition and multiplication using binary
+    representation
+      * poly -> brp -> poly 
+          input (multilinear poly, number of n), output bitwise rep
+      * addition
+      * multiplication
+      * isDivisble
+
+-- Boolean Gröbner basis: add FPs to ideal, mod out FPs (x^2 +x)
+
+-- S-polynomials: distinguish between (FP,X) and (X,Y). For the case S(FP,X) use
+"shortcut" rule, for S(X,Y) use regular lcm/ lt(X)X  +lcm/ lt(Y)Y
+-- shortcut rule: S(x^2+x,fx+g) = xg+g
 
 
---  brp - binary representation of polynomials: assume we have already code that
---  simplifies a polynomial and translates it into brp form. 
---  also assume we have the operators (Multiplication, Addition, Division)
---  implemented for brp
---
---  Next we implement Buchberger's Algorithm over a ring but it's using brp
---  instead of normal polynomials
+--  Next we implement Buchberger's Algorithm but it's using brp and the above
+S-polynomials instead of normal polynomials
+
+-- Use binary representation with bitwise computations  instead of symbolic
+representation for speed up (hopefully :) )
+
+-- need computation on bit level - has this been implemented?
+
+"It is well-known that polynomial reduc- tion is the costliest part for any
+practical implementation of Buchberger’s algorithm for Groebner basis
+computation. We follow Buchberger’s algorithm in a novel way in that extremely
+efficient bit operations are used for polynomial reduction."
+
+end
+
+QQ[x,y,z]
+
+Z = new Type of PolynomialRing
+Z = new Type of R 
+Z+Z := (a,b) -> a;
+Z+Z := (a,b) -> b;
+
+ggg = new Z from x+y*z
+fff = new Z from y
+
+ggg + fff
+ggg*fff
+
+g = x+y
+
+z + fff
+z
+gg = 2*x + y^2
+gg
+z = new Z from g
+
+
 
 
