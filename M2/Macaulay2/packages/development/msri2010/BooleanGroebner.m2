@@ -1,13 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"BooleanGroebner",
-    	Version => "1.0", 
-    	Date => "April 28, 2005",
+    	Version => "0.0", 
+    	Date => "January, 2010",
     	Authors => {
 	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
-    	Headline => "an example Macaulay2 package",
+    	Headline => "Boolean Groebner Basis algorithm",
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
     	DebuggingMode => true		 -- set to true only during development
     	)
@@ -111,9 +111,21 @@ document {
 	  }
      }
 TEST ///
-  assert(firstFunction 1 === "Hello, World!")
-  assert(secondFunction(1,3) === 4)
-  assert(secondFunction(1,3,MyOption=>5) === 9)
+
+
+
+
+  assert( booleanGroebner(x*y+x^3, x*y-y, x^2+x, y^2+y) === x+y)
+  --  R = ZZ/2[x,y]
+  --  I = ideal (x*y+x^3, x*y-y, x^2+x, y^2+y)
+  --  J = groebnerBasis I
+  -- x+y, y^2+y 
+  -- In boolean should be x+y
+
+
+  --assert(firstFunction 1 === "Hello, World!")
+  --assert(secondFunction(1,3) === 4)
+  --assert(secondFunction(1,3,MyOption=>5) === 9)
 ///
   
        
@@ -130,3 +142,9 @@ check PackageTemplate
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
 -- End:
+  
+  R = (ZZ/2) [x,y]
+  I = ideal (x^2+x, y^2+y)
+  R/I
+  newIdeal = ideal (x*y+x^3, x*y-y, x^2+x, y^2+y)
+  groebnerBasis newIdeal
