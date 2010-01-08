@@ -148,3 +148,15 @@ check PackageTemplate
   R/I
   newIdeal = ideal (x*y+x^3, x*y-y, x^2+x, y^2+y)
   groebnerBasis newIdeal
+
+
+
+--  brp - binary representation of polynomials: assume we have already code that
+--  simplifies a polynomial and translates it into brp form. 
+--  also assume we have the operators (Multiplication, Addition, Division)
+--  implemented for brp
+--
+--  Next we implement Buchberger's Algorithm over a ring but it's using brp
+--  instead of normal polynomials
+
+
