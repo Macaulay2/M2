@@ -5,7 +5,7 @@
 
 newPackage(
      "Depth",
-     Version => "0.5.1", 
+     Version => "0.5.2", 
      Date => "May 2009",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"}
@@ -170,7 +170,7 @@ regularSequence = method(Options => {Sparseness => .5, Bound => 1, Attempts => 1
 regularSequence(Ideal,Ring) := Matrix => opts -> (I,A) -> (
      k := coefficientRing A;
      f := gens I;
-     r := numgens source f;
+     r := numColumns f;
      c := codim I;
      if c == infinity then return map(A^1,A^0,0);
      PHI := 0;
