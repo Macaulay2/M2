@@ -4,41 +4,35 @@ newPackage(
     	Version => "0.1", 
     	Date => "April 28, 2005",
     	Authors => {
-	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
+	     {Name => "Beth, Franzi, Samuel", Email => ""}
 	     },
-    	HomePage => "http://www.math.uiuc.edu/~doe/",
-    	Headline => "an example Macaulay2 package",
+    	HomePage => "http://",
+    	Headline => "Computation for polynomials in ZZ/2 using binary
+      representation",
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
     	DebuggingMode => true		 -- set to true only during development
     	)
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {firstFunction, secondFunction, MyOption}
+export {+,*, New}
 exportMutable {}
 
-+ = method(TypicalValue => String)
-+ (a,b) :=  n -> (
-	if n == 1
-	then "Hello, World!"
-	else "D'oh!"	
-	)
+Brp = new Type from List -- this is not quite right yet
+
+-- Convert regular polynomial into its binary representation
+convert = method(TypicalValue => Brp)
+convert := f -> ( exponents f)
+
+-- Addition: concatenate and eliminate double monomials 
+Brp + Brp = method(TypicalValue => Brp)
+Brp + Brp := (a,b) ->  a+b 
    
--- A function with an optional argument
-secondFunction = method(
-     TypicalValue => ZZ,
-     Options => {MyOption => 0}
-     )
-secondFunction(ZZ,ZZ) := o -> (m,n) -> (
-     if not instance(o.MyOption,ZZ)
-     then error "The optional MyOption argument must be an integer";
-     m + n + o.MyOption
-     )
-secondFunction(ZZ,List) := o -> (m,n) -> (
-     if not instance(o.MyOption,ZZ)
-     then error "The optional MyOption argument must be an integer";
-     m + #n + o.MyOption
-     )
+-- Multiplication: bitwise OR
+Brp * Brp = method(TypicalValue => Brp)
+Brp * Brp := (a,b) ->  a*b 
+   
+
 
 beginDocumentation()
 document { 
