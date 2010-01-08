@@ -566,9 +566,9 @@ cohomology (ZZ,NormalToricVariety,SheafOfRings) := Module => opts -> (
 --------------------------------------------------------------------------------
 -- code that interfaces with the Polyhedra package
 
-normalToricVariety Fan := F -> (
+normalToricVariety Fan := opts -> F -> (
      R := rays F;
-     Fs := apply(genCones F, C -> (Cr:=rays C; Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
+     Fs := apply(maxCones F, C -> (Cr:=rays C; Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
      X := new NormalToricVariety from {
 	  symbol rays => apply(R, r -> flatten entries r),
 	  symbol max => Fs,
@@ -707,7 +707,7 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 	  symbol max => newMax,
 	  symbol cache => new CacheTable};
      if X.cache.?halfspaces then Y.cache.halfspaces = X.cache.halfspaces;
-     Y.cache.cones = X.cache.cones;
+     Y.cache.cones = new MutableHashTable from for k in max Y list if X.cache.cones#?k then k => X.cache.cones#k else continue;
      Y)
 
 makePrimitive = method()
