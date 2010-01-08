@@ -4,13 +4,13 @@ newPackage("Graphs",
 	  {Name => "Amelia Taylor"},
 	  {Name => "Others"}
 	  },
-     DebuggingMode => false,
+     DebuggingMode => true,
      Headline => "Data types, visualization, and basic funcitons for graphs",
      Version => "0.1"
      )
 
 export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
-     parents, children, neighbors, nonneighbors}
+     parents, children, neighbors, nonneighbors,displayGraph}
 exportMutable {dotBinary,jpgViewer}
 
 
@@ -34,6 +34,7 @@ Graph = new Type of Digraph
      -- version removes the redunancy of each edge appearing twice. 
      -- simpleGraph is an internal conversion function. 
 
+union = method()
 union := S -> (
      x = new MutableHashTable;
      for t in S do scanKeys(t, z -> x#z = 1);
@@ -45,6 +46,9 @@ graph List := opts -> (g) -> (
      --         edges of the graph. 
      -- Output:  A hash table with keys the names of the nodes and the 
      --          values are the neighbors corresponding to that node. 
+     ---- Note to Selves --- this code should also nicely build
+     ---- hypergraphs as hash tables with again, nodes as keys and
+     ---- neighbors as values. 
      h := new MutableHashTable;
      vertices := toList set flatten g;
      if opts.Singletons === null then (
@@ -53,6 +57,7 @@ graph List := opts -> (g) -> (
 		    then set g#k - set {vertices#j} 
 		    else continue)
 	       );
+	  error "what does union do?";
 	  neighbors = apply(neighbors, i -> union i);
 	  )
      else (vertices = join(vertices, opts.Singletons);
@@ -62,6 +67,7 @@ graph List := opts -> (g) -> (
 		    then set g#k - set {vertices#j} 
 		    else continue)
 	       );
+	  error "what does union do?";
 	  neighbors = apply(neighbors, i -> union i);
 	  neighbors = join(neighbors,newEdges);
 	  );
@@ -226,3 +232,9 @@ doc ///
 ///
 
 end
+
+
+A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
+flatten {{a,b},{c,d},{a,d},{b,c}}
+set oo
+toList oo
