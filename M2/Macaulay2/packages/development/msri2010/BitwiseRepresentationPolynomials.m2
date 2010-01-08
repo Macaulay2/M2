@@ -26,8 +26,10 @@ convert := f -> ( exponents f)
 
 -- Addition: concatenate and eliminate double monomials 
 Brp + Brp = method(TypicalValue => Brp)
-Brp + Brp := (a,b) ->  a+b 
-   
+Brp + Brp := (a,b) ->  (a|b
+   -- delete doubles
+   )
+
 -- Multiplication: bitwise OR
 Brp * Brp = method(TypicalValue => Brp)
 Brp * Brp := (a,b) ->  a*b 
