@@ -1120,3 +1120,95 @@ assert(D1 ==  promote(matrix {{0, 1, 4, 3}, {4, 0, 3, 2}, {1, 2, 0, 4}, {2, 3, 1
 
 ///
 
+
+height (Poset) := HashTable => (P) -> (
+  nP := #(P.GroundSet);
+  nEltsBelow := apply(entries transpose(P.RelationMatrix), l -> (
+    (sum l) - 1));
+  eltsPAndCountBelow := flatten apply(sort unique nEltsBelow, i -> 
+    apply(select(toList(0..nP-1), j ->
+      (nEltsBelow#j == i)), j -> {P.GroundSet#j, i}));
+  nEltsBelowHT := hashTable eltsPAndCountBelow;
+  eltsP := eltsPAndCountBelow / (l -> l#0);
+  htP := hashTable (select(eltsP, F -> 
+    (nEltsBelowHT#F == 0)) / (F -> (F, 1)));
+  last apply(nP, i -> (
+    if (nEltsBelowHT#(eltsP#i) > 0) then (
+        htP = hashTable flatten {pairs htP,
+          (eltsP#i, 1 + max apply(select(toList (0..i-1), j ->
+            ((eltsP#i % eltsP#j) == 0)), j -> htP#(eltsP#j)))})
+    else htP)))
+
+coverRelations = method();
+
+coverRelations (Poset) := List => (P) -> (
+  nP := #(P.GroundSet);
+  entriesRelMat := entries P.RelationMatrix;
+  onesToBeRem := sort unique (select((3:0)..(3:(nP-1)), s -> 
+        s#0!=s#1 and s#1!=s#2 and s#0!=s#2 and
+        entriesRelMat#(s#0)#(s#1)*entriesRelMat#(s#1)#(s#2) == 1) /
+          (s -> (s#0, s#2)));
+  covMat := matrix(apply(nP, i -> apply(nP, j -> 
+    if any(onesToBeRem, s -> (s ==(i,j))) then 0 
+       else entriesRelMat#i#j))) - 
+    diagonalMatrix toList (nP:1);
+  flatten apply(nP, i -> apply(select(toList (0..nP-1), j ->
+    (entries covMat)#i#j == 1), j -> (P.GroundSet#i, P.GroundSet#j))))
+
+hasseDiagram = method();
+
+hasseDiagram (Poset) := DirectedGraph => (P) -> (
+  directedGraph(P.GroundSet, coverRelations P))
+
+inducedPoset = method();
+
+inducedPoset (Poset, List) := Poset => (P, L) -> (
+  rel := select(P.Relations, R -> (
+    any(L, G -> (G == R#0)) & any(L, G -> (G == R#1))));
+  poset(L, rel))
+
+atoms = method();
+
+atoms (Poset) := List => (P) -> (
+  hP := height P;
+  select(P.GroundSet, F -> (hP#F == 1)))
+
+
+moebiusFunction = method();
+
+moebiusFunction (Poset) := HashTable => (P) -> (
+  nP := #(P.GroundSet);
+  nEltsBelow := apply(entries transpose(P.RelationMatrix), l -> (
+    (sum l) - 1));
+  eltsPAndCountBelow := flatten apply(sort unique nEltsBelow, i ->
+    apply(select(toList(0..nP-1), j ->
+      (nEltsBelow#j == i)), j -> {P.GroundSet#j, i}));
+  nEltsBelowHT := hashTable eltsPAndCountBelow; 
+  eltsP := eltsPAndCountBelow / (l -> l#0);
+  htP := hashTable (select(eltsP, F -> 
+    (nEltsBelowHT#F == 0)) / (F -> (F, -1)));
+  last apply(nP, i -> (
+    if (nEltsBelowHT#(eltsP#i) > 0) then (
+        htP = hashTable flatten {pairs htP,
+          (eltsP#i, -(1+sum apply(select(toList (0..i-1), j ->
+            ((eltsP#i % eltsP#j) == 0)), j -> htP#(eltsP#j))))}))))
+
+
+orderComplex = method();
+
+orderComplex (Poset) := SimplicialComplex => (P) -> (
+  -- computes the order complex of P after removing the bottom and top
+  -- elements if they exist.
+  m := symbol m;
+  S := ZZ[m_0..m_(#P.GroundSet-1)];
+  relM := entries (P.RelationMatrix + transpose(P.RelationMatrix));
+  nonFaces := select((0,0)..(#P.GroundSet-1, #P.GroundSet-1), l -> (
+    relM_(l#0)_(l#1) == 0)) / (l -> m_(l#0)*m_(l#1));
+  uniqueBottom := select(0..#P.GroundSet-1, i -> 
+    all(flatten entries ((P.RelationMatrix)_{i}), a -> (a==1))) / 
+    (i -> m_i);
+  uniqueTop := select(0..#P.GroundSet-1, i -> 
+    all(flatten entries ((P.RelationMatrix)^{i}), a -> (a==1))) / 
+    (i -> m_i);
+  nonFaces1 := splice (nonFaces, uniqueBottom, uniqueTop);
+  simplicialComplex monomialIdeal unique nonFaces1)
