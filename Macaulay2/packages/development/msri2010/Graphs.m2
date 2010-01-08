@@ -57,7 +57,7 @@ graph List := opts -> (g) -> (
 		    then set g#k - set {vertices#j} 
 		    else continue)
 	       );
-	  error "what does union do?";
+	 -- error "what does union do?";
 	  neighbors = apply(neighbors, i -> union i);
 	  )
      else (vertices = join(vertices, opts.Singletons);
