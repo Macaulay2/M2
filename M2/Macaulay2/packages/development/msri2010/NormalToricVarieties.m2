@@ -724,13 +724,11 @@ makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
 --   vector bundles?
 --   faces
 --   linear series
---   isComplete
---   isProjective
 --   isCartier
 --   isAmple
 --   isVeryAmple
 --   isSemiprojective
---
+--   isOrbifold
 
 --------------------------------------------------------------------------------
 -- DOCUMENTATION
