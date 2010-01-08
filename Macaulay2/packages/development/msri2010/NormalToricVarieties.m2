@@ -3,7 +3,7 @@
 needsPackage "Polyhedra"
 newPackage(
      "NormalToricVarieties",
-     AuxiliaryFiles => true,
+--     AuxiliaryFiles => true,
      Version => "0.76",
      Date => "4 December 2009",
      Authors => {{
