@@ -374,7 +374,10 @@ PDWorker(Ideal, Ideal, ZZ) := opts -> (I, resultSoFar, callDepth) ->
       );
       if (not isSubset(resultSoFar,Isat)) then
       (
-	 (comps,newResultSoFar) = primDecZeroDim(Isat, variables, resultSoFar,opts);
+	 --colonList := getColonList(J, variables, resultSoFar);
+	 colonList := {Isat};
+	 (comps,newResultSoFar) = fold(apply(colonList, x -> primDecZeroDim(x, variables, resultSoFar,opts)), (i,j) -> (flatten append(i#0,j#0), intersect(i#1,j#1)));
+	 --(comps,newResultSoFar) = primDecZeroDim(Isat, variables, resultSoFar,opts);
 	 if opts.Verbosity >= 2 then (
             << "Components Found : " << netList comps << endl;
 	 );
@@ -481,12 +484,13 @@ doc ///
 ///
 
 TEST ///
--- ERROR
+-- CORRECT
 restart
 load "newGTZ.m2"
 R = QQ[a,b,c]
 I = ideal apply(1 .. 3, i -> random(3,R))
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
+isPrimary I
 I = ideal flatten gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
@@ -494,7 +498,7 @@ time m2PD = primaryDecomposition I;
 ///
 
 TEST ///
--- CORRECT
+-- VERY SLOW
 restart
 load "newGTZ.m2"
 R = ZZ/32003[a,b,c,d]
@@ -602,7 +606,7 @@ time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten gens I
 time m2PD = primaryDecomposition I;
 
--- ERROR
+-- CORRECT
 -- in this example, it seems we could be more careful with choosing the separator itself.  It goes quite far down the recursion
 -- before it at last reaches the zero dimensional primary component.  Maybe nothing can be done about it.
 restart
@@ -618,7 +622,7 @@ time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
 
--- ERROR
+-- CORRECT
 -- in this example, it seems we could be more careful with choosing the separator itself.  It goes quite far down the recursion
 -- before it at last reaches the zero dimensional primary component.  Maybe nothing can be done about it.
 restart
@@ -633,6 +637,7 @@ I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
+apply({ourPD3, ourPD, m2PD}, i -> apply(i, j -> degree j))
 
 -- CORRECT
 restart
@@ -644,8 +649,9 @@ I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
+apply({ourPD3, ourPD, m2PD}, i -> apply(i, j -> degree j))
 
--- ERROR
+-- CORRECT
 restart
 load "newGTZ.m2"
 R = ZZ/32003[x,y,z];
@@ -694,7 +700,7 @@ I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
 ///
 
--- ERROR
+-- ERROR - does not finish?
 TEST ///
 restart
 load "newGTZ.m2"
