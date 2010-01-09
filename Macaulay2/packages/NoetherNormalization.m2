@@ -2,7 +2,7 @@
 
 newPackage(
      "NoetherNormalization",
-     Version => "0.9.1", 
+     Version => "0.9.2", 
      Date => "Jan 18, 2007",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"},
@@ -31,20 +31,13 @@ newPackage(
 export{noetherNormalization,LimitList,RandomRange} 
         
 --=========================================================================--
+-- initial comments: noetherNormalization takes an ideal I of a ring R
+-- over a field k such that the dimension of I in R is d (fix these
+-- symbols for all comments) and returns 1) a linear transformation
+-- that puts the ideal in Noether position and 2) the independent
+-- variables of R
 
--- initial comments: noetherNormalization takes in an ideal I of a
--- ring R over a field k such that the dimension of I in R is d (fix
--- these symbols for all comments) and returns a linear transformation
--- that puts the ideal in Noether position as well as the independent
--- variables of R.
-
--- comments: The procedure integralSet takes a Groebner basis G (ie. a
--- list of polynomials) and returns the variables that already have an
--- integral relation. It does this by taking the lead monomial of each
--- polynomial and checking whether or not it consists of a power of a
--- single variable. We are assuming that the ring is over a field and
--- thus we don't check the lead coefficient.
-
+-----------------------------------------------------------------------------
 
 integralSet = G -> (
      J := {};
@@ -55,28 +48,26 @@ integralSet = G -> (
      J = unique flatten J; --note that according to the algorithm J is a set of integers (in fact indices), we choose to return the variables
      J);
 
---=========================================
---comments: 
+-- comments: The procedure integralSet takes a Groebner basis G (ie a
+-- list of polynomials) and returns the variables that already have an
+-- integral relation. It does this by taking the lead monomial of each
+-- polynomial and checking whether or not it consists of a power of a
+-- single variable. We are assuming that the ring is over a field and
+-- thus we don't check the lead coefficient.
 
--- varPrep is the initial function we run on the Groebner basis of the
--- inputted ideal I. It returns sets U and V, with U being
--- algebraically independent and V being algebraically dependent. For
--- all prime ideals it returns a maximal algebraically independent set
--- of variables whose cardinality is equal to d.
+-----------------------------------------------------------------------------
 
 varPrep = (X,I) -> (
      U := support (independentSets(I,Limit => 1))_0;
      (U,X - set U)
      );
+-- comments: varPrep is the initial function we run on the Groebner
+-- basis of the inputted ideal I. It returns sets U and V, with U
+-- being algebraically independent and V being algebraically
+-- dependent. For all prime ideals it returns a maximal algebraically
+-- independent set of variables whose cardinality is equal to d.
 
---================================================== 
-
--- comments: We use lastCheck to check that our final Groebner basis
--- (the gb of the ideal after the change of variables) witnesses the
--- integrality of each variable that should be integral. It first
--- checks that there are no elements of the Groebner basis with support
--- in the independent variables and then that each variable that
--- should be integral after the linear transformation is integral.
+-----------------------------------------------------------------------------
 
 lastCheck = (X,G,d) -> (
      M := gens G;
@@ -90,14 +81,17 @@ lastCheck = (X,G,d) -> (
 	  );
      true
      );
---==============================================
 
--- comments: inverseSequence is used to give the inverse of a ring
--- map. A ring map is given by a list explaining where each of the
--- ring's variables should go. If the ring map is just a permutation
--- of the variables then it is obviously an isomorphism and
--- inverseSequence returns the sequence that gives the inverse
--- morphism.
+-- comments: We use lastCheck to check that our final Groebner basis
+-- (the gb of the ideal after the change of variables) witnesses the
+-- integrality of each variable that should be integral. It first
+-- checks that there are no elements of the Groebner basis with
+-- support in the independent variables and then that each variable
+-- that should be integral after the linear transformation is
+-- integral.
+
+
+-----------------------------------------------------------------------------
 
 inverseSequence = (U,X) -> (
      N := {};
@@ -112,13 +106,15 @@ inverseSequence = (U,X) -> (
      return N;
      );
 
---========================================================
+-- comments: inverseSequence is used to give the inverse of a ring
+-- map. A ring map is given by a list explaining where each of the
+-- ring's variables should go. If the ring map is just a permutation
+-- of the variables then it is obviously an isomorphism and
+-- inverseSequence returns the sequence that gives the inverse
+-- morphism.
 
--- comments: randomSum is used to make the random linear
--- transformations which are candidates for putting I in
--- noetherPosition. It takes in two lists and adds the second to the
--- first with random coefficients.
 
+-----------------------------------------------------------------------------
 
 randomSum1 = (U,V,k,rr) -> (
      for j to #V - 1 do (
@@ -137,21 +133,25 @@ randomSum = (U,V,k,rr) -> (
 	  );
      return U;
      );
---========================================================
 
 
--- comments: noetherNormalization is the main method. I is passed to
--- it by the user and it's Groebner basis is immediately computed.  It
--- takes the ideal and does a random linear transformation adding to
--- the independent variables the dependent ones that are not initially
--- integral. It then checks that the transformation put the ideal in
--- Noether position. It does this by partially computing a Groebner
--- basis for the ideal until the partially computed Groebner basis
--- witnesses the integrality of all of the dependent variables. If the
--- entire Groebner basis is computed and the integrality is never
--- witnessed then we apply another random linear transformation and
--- start the process again. While doing all this we keep track of the
--- maps and the inverses of the maps that we use.
+-- comments: randomSum is used to make the random linear
+-- transformations which are candidates for putting I in
+-- noetherPosition. It takes in two lists and adds the second to the
+-- first with random coefficients.
+
+-----------------------------------------------------------------------------
+
+-- comments: noetherNormalization is the main method. An ideal I is
+-- passed to it and its Groebner basis is immediately computed.  Next
+-- a random linear transformation is applied and we check to see if
+-- the ideal is in Noether position. We then check to see if the the
+-- ideal in Noether position by partially computing a Groebner basis
+-- for the ideal. If the partially computed Groebner basis witnesses
+-- the integrality of all of the dependent variables, we are done, if
+-- not we try again.  If the entire Groebner basis is computed and the
+-- integrality is never witnessed then we apply another random linear
+-- transformation and start the process again. 
 
 noetherNormalization = method(Options => {Verbose => false, LimitList => {5,20,40,60,80,infinity}, RandomRange => 0})
 noetherNormalization(Ideal) := opts -> I -> (
@@ -194,7 +194,8 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  finverse = finverse*ginverse;
      	  while (not done and seqindex < #limitsequence) do (
 	       if opts.Verbose then (<< "--trying with basis element limit: " << limitsequence_seqindex << endl;);
-	       G = gb(f I, BasisElementLimit => limitsequence_seqindex); 
+	       fI := f I;
+	       G = gb(fI, BasisElementLimit => limitsequence_seqindex); 
 	       done = lastCheck(X,G,d);-- may want to define f I above, but this causes noetherNormalization to fail at the moment
      	       seqindex = seqindex + 1;
 	       );
@@ -234,7 +235,7 @@ homNoetherNormalization = (I,R,k,X) -> (
      return g*f;
      );
 
---======================================================================================================================
+-----------------------------------------------------------------------------
 
 noetherNormalization(QuotientRing) := noetherNormalization(PolynomialRing) := opts -> R -> (
      if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
@@ -339,7 +340,6 @@ document {
 
 --=========================================================================--
 
---======================================================================================================================
 --Assertions
 
 TEST ///
