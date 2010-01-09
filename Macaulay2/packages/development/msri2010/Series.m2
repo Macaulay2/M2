@@ -29,11 +29,11 @@ series(ZZ, RingElement) := Series => (n,f) -> (
      df := denominator f;
      nf := numerator f;
      degnf := first degree nf;
-     m := min(first degree df,n);
-     dC := (coefficients(df,Monomials=>apply(0..m,i->x^i)))_1;
+     degdf := first degree df;
+     dC := (coefficients(df,Monomials=>apply(0..n,i->x^i)))_1;
      if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
-     a := i -> if i == 0 then (dC_(0,0))^(-1) else -(dC_(0,0))^(-1)*sum(1..i, j -> dC_(j,0)*a(i-j));    
-     s := nf * sum(0..n-degnf,i -> a(i) * x^i);
+     a := i -> if i == 0 then (dC_(0,0))^(-1) else (dC_(0,0))^(-1)*sum(1..i, j -> -dC_(j,0)*a(i-j));    
+     s := sum select(terms (nf * sum(0..n,i -> a(i) * x^i)), i -> first degree i <= n);
      new Series from {rationalFunction => f, degree => n, series => s}
      );
 
@@ -47,33 +47,40 @@ seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
      );
 
 
-A = ZZ[x]
-g = series(3,(x^3+2*x-3)/(x^2+x-1))
-g = seriesOLD(3,(x^3+2*x-3)/(x^2+x-1))
-
-g = series(2,(x^6)/(x^2+x-1))
-g = seriesOLD(2,(x^6)/(x^2+x-1))
-
-code methods reduceHilbert
-
-R = ZZ/5[x]
-
-
-(1-x)^(-1)
-
-K=toField R
-promote(1/(1-x),R)
-denominator(1+x)
-
-
-R=QQ[x]/(x^2+1)
-K=toField R
-promote(1/x,R)
+series(ZZ, Function) := Series => (n,f) -> (
+     s := sum for i from 0 to n if f i == 0 then continue else if first degree f i > n list f i do i = i+1;
+     new Series from {genTerm => f, degree => n, series => s}
+     );
 
 
 series(ZZ, Function) := Series => (n,f) -> (
+     i := 0;
+     s := sum while first degree f i <= n list f i do i = i+1;
+     new Series from {genTerm => f, degree => n, series => s}
+     );
+A = ZZ/5051[x]
+series(10, n -> n*x^(5*n))
+
+
+
+f = i -> if 1*x^i if i == 0 else 
+i = 0
+n = 8
+
+
+viewHelp
+
+first degree f 4
+
+first degree(0_A) <= 8
+
+
+
+series(ZZ, RingElement) := Series => (n,f) -> (
+     sum(0..n, f);
      new Series from {genFunction => f, degree => first degree f n, series => sum(n+1,f)}
      );
+
 
 
 
