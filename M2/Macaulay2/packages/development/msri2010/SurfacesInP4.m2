@@ -12,9 +12,22 @@ newPackage(
         )
 needsPackage "BGG"
 
+--- TODO:
+---
+--- * maybe we should use the type "CohomolgyTable" from BBG???
+--- * make construcSurface a Method
+--- * automatically find good windows
+--- * figure out how to automatically do tests
+--- * check many more surfaces
+--- * put real roots into a separate file
+--- * fix BBG in the case where beilinson returns an empty matrix
+--- * check smoothness?
+--- * adjunction?
+
 export {
      hilbertPolynomialFromInvariants,
      guessCohomologyTable,
+     diag,
      guessDifferentials,
      constructSurface,
      numPosRoots
@@ -276,22 +289,34 @@ guessCohomologyTable(RingElement,ZZ,ZZ) := (hilbPoly, lo,hi) -> (
 
 -- calculate the free E-Modules corresponding to a diagonal in the
 -- cohomology table
-diag = (M,k)->E^(flatten toList apply(max(k,0)..min(k+4,4),j->toList(M_(j-k,j):(j-4))))
+diag = (M,k,E)->E^(flatten toList apply(max(k,0)..min(k+4,4),j->toList(M_(j-k,j):(j-4))))
 
--- construct a surface from a cohomology table
-constructSurface = (cohTable,E,S) -> ( 
+-- guess the differenials
+guessDifferentials = (cohTable,E) -> (
+     -- test if the cohTable is square 5x5
+     if (rank source cohTable,rank target cohTable) != (5,5)
+     	  then error "The cohomology Table must be square 5x5";
      -- test if the cohTable gives a monad
-     if apply({-4,-3,-2,2,3,4},k->diag(cohTable,k)==0) != toList(6:true)
-	  then error "The cohomology Table does not give a Monad";
+     if apply({-4,-3,-2,2,3,4},k->diag(cohTable,k,E)==0) != toList(6:true)
+	  then error "The cohomology Table must be 0 ouside of the 3 central diagonals";
      -- OK
-     -- start with beta
-     beta := random(diag(cohTable,1),diag(cohTable,0));
+     -- start with generic beta
+     beta := random(diag(cohTable,1,E),diag(cohTable,0,E));
      -- find alpha among the syzygies
      sbeta := syz beta;
-     betti (alpha := sbeta*random(source sbeta,diag(cohTable,-1)));
+     betti (alpha := sbeta*random(source sbeta,diag(cohTable,-1,E)));
+     chainComplex{beta,alpha}
+     )
+
+---
+--- This must be made a Method !!!!
+---
+
+-- construct a surface from a monad over the exterior algebra
+constructSurface = (monadE,S) -> (
      -- apply BBG to get the beilinson Monad
-     alphaBeil := beilinson(alpha,S);
-     betaBeil := beilinson(beta,S);
+     alphaBeil := beilinson(monadE.dd_2,S);
+     betaBeil := beilinson(monadE.dd_1,S);
      --
      -- BBG does not give correctly graded 0-Matrices!!!!
      --
@@ -312,7 +337,7 @@ constructSurface = (cohTable,E,S) -> (
      betti (fphi := res coker transpose fI.dd_1);
      ideal fphi.dd_2
      )
-     
+    
      
 beginDocumentation()
 
@@ -382,6 +407,109 @@ Caveat
 SeeAlso
 ///
 
+doc ///
+Key
+  guessDifferentials
+Headline
+  try to construct a monad of the exterior algebra from a given cohomology table
+Usage
+  monadE = guessDifferential(M,E)
+Inputs
+  M:Matrix
+    a square 5x5 window of the cohomology table of the surface
+  E:PolynomialRing
+    Exterior Algebra in 5 variables
+ Outputs
+  monadE:ChainComplex
+    a chain Complex over E whose grading matches the given cohomology table 
+Consequences
+Description
+  Text
+  Example
+    K = ZZ/32003
+    E = K[e_0..e_4,SkewCommutative=>true]
+    S = K[x_0..x_4]
+    H = hilbertPolynomialFromInvariants(8,5,1,0)
+    M = guessCohomologyTable(H,-1,3)
+    monadE = guessDifferentials(M,E)
+    betti monadE
+Caveat
+  works only when the cohomology table gives a Monad
+  A -alpha-> B -beta-> C, 
+  i.e when only the 3 diagonals in the middle have values. Furthermore
+  beta is chosen generically and alpha generically among the syzygies of beta.
+  There are many surfaces where the monad has to be chosen more carefully.
+SeeAlso
+///
+
+doc ///
+Key
+  constructSurface(ChainComplex,PolynomialRing)
+Headline
+  try to construct a surface from a given monad over the Exterior Algebra
+Usage
+  I=construcSurvace(C,S)
+Inputs
+  C:Matrix
+    a monad over the exterior algebra
+  S:PolynomialRing
+    Symmetric Algebra in 5 variables
+Outputs
+  I:Ideal
+    ideal of a surface with the given monad as part of the tate resolution
+Consequences
+Description
+  Text
+  Example
+    K = ZZ/32003
+    E = K[e_0..e_4,SkewCommutative=>true]
+    S = K[x_0..x_4]
+    H = hilbertPolynomialFromInvariants(8,5,1,0)
+    M = guessCohomologyTable(H,-1,3)
+    monadE = guessDifferentials(M,E)
+    betti res constructSurface(monadE,S)
+Caveat
+     this only gives a surface if the monad is carefully chosen.
+SeeAlso
+     guessDifferentials
+///
+
+doc ///
+Key
+  constructSurface(Matrix,PolynomialRing,PolynomialRing)
+Headline
+  try to construct a surface from a given cohomology table
+Usage
+  I=construcSurvace(M,E,S)
+Inputs
+  M:Matrix
+    a square window of the cohomology table of the surface
+  E:PolynomialRing
+    Exterior Algebra in 5 variables
+  S:PolynomialRing
+    Symmetric Algebra in 5 variables
+Outputs
+  I:Ideal
+    ideal of a surface with the given cohomology table 
+Consequences
+Description
+  Text
+  Example
+    K = ZZ/32003
+    E = K[e_0..e_4,SkewCommutative=>true]
+    S = K[x_0..x_4]
+    H = hilbertPolynomialFromInvariants(8,5,1,0)
+    M = guessCohomologyTable(H,-1,3)
+    betti res constructSurface(M,E,S)
+Caveat
+  works only when the cohomology table gives a Beilinson Monad
+  A -alpha-> B -beta-> C, 
+  i.e when only the 3 diagonals in the middle have values. Furthermore
+  beta is chosen generically and alpha generically among the syzygies of beta.
+  There are many surfaces where this does not work.
+SeeAlso
+///
+
 TEST ///
 H = hilbertPolynomialFromInvariants(8,5,1,0)
 i = (vars ring H)_(0,0);
@@ -399,4 +527,29 @@ Low=-1;
 High=4;
 M=guessCohomologyTable(H,Low,High);
 assert( M_(4-3,-1-Low) == 4)
+///
+
+TEST ///
+-- Abo's degree 8 surface
+K = ZZ/32003
+E = K[e_0..e_4,SkewCommutative=>true]
+S = K[x_0..x_4]
+H = hilbertPolynomialFromInvariants(8,5,1,0)
+M = guessCohomologyTable(H,-1,3)
+monadE = guessDifferentials(M,E)
+expectedBetti = new BettiTally from {(0,{0},0) => 1, (1,{4},4) => 6, (2,{5},5) => 4, (2,{6},6)
+      => 5, (3,{6},6) => 1, (3,{7},7) => 4, (4,{8},8) => 1}
+assert(betti res constructSurface(monadE,S) == expectedBetti)
+///
+
+TEST ///
+-- The rational normal scroll
+K = ZZ/32003
+E = K[e_0..e_4,SkewCommutative=>true]
+S = K[x_0..x_4]
+H = hilbertPolynomialFromInvariants(3,0,0,0)
+M = guessCohomologyTable(H,-2,2)
+monadE = guessDifferentials(M,E)
+expectedBetti = new BettiTally from {(0,{0},0) => 1, (1,{2},2) => 3, (2,{3},3) => 2}
+assert(betti res constructSurface(monadE,S) == expectedBetti)
 ///
