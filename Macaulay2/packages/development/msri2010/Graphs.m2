@@ -100,7 +100,7 @@ digraph HashTable := (g) -> (
      -- Input:  A hash table with keys the names of the nodes of 
      --         the graph and the values the children of that node. 
      -- Output: A hash table of type Diraph. 
-     new Diraph from g)
+     new Digraph from g)
      
 -----------------------------
 -- Graph Display Functions --
@@ -151,15 +151,7 @@ writeDotFile(String, Graph) := (filename, G) -> (
      fil << "}" << endl << close;
      )
 
-///
-restart
-loadPackage "Graphs"
-A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
-B = digraph({{a,{b,d}},{b,{c}},{d,{a,c}}})
-flatten {{a,b},{c,d},{a,d},{b,c}}
-set oo
-toList oo
-///
+
 
 writeDotFile(String, Digraph) := (filename, G) -> (
      -- Input:  The desired file name for the Dot file created and a digraph
@@ -191,12 +183,17 @@ runcmd := cmd -> (
      )
 
 displayGraph = method()
-
+    -- Displays a graph or digraph using Graphviz
+    -- Input:  A digraph or graph and optionally names for the dot
+    --         and jpg files.
 displayGraph(String,String,Digraph) := (dotfilename,jpgfilename,G) -> (
      writeDotFile(dotfilename,G);
      runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
      runcmd(jpgViewer | " " | jpgfilename);
      )
+-- Note, when specifying a jpgfilename w/o the .jpg extension the
+-- graph opens in Quicktime player.  Otherwise the graph opens in
+-- Preview.  Why?  Does this matter? -T.O.
 displayGraph(String,Digraph) := (dotfilename,G) -> (
      jpgfilename := temporaryFileName() | ".jpg";
      displayGraph(dotfilename,jpgfilename,G);
@@ -212,23 +209,47 @@ displayGraph Digraph := (G) -> (
 -- Graph basics --
 ------------------
 
+
 descendents = method()
-descendents(Digraph,ZZ) := (G,v) -> (
+     -- Input: A digraph and the key for the vertex of interest.
+descendents(Digraph,Thing) := (G,v) -> (
      -- returns a set of vertices
      result := G#v;
-     scan(reverse(1..v-1), i -> (
+     --scan(reverse(1..#v-1), i -> (
+     scan(reverse(keys(G), i -> (
 	  if member(i,result) then result = result + G#i;
      ));
+     --error "what is result?";
      result)
 
 nondescendents = method()
-nondescendents(Digraph,ZZ) := (G,v) -> set(1..#G) - descendents(G,v) - set {v}
+     -- Input: A digraph and the key for the vertex of interest.
+nondescendents(Digraph,Thing) := (G,v) -> set(1..#G) - descendents(G,v) - set {v}
 
 parents = method()
-parents(Digraph,ZZ) := (G,v) -> set select(1..#G, i -> member(v, G#i))
+     -- Input: A digraph and the key for the vertex of interest.
+--parents(Digraph,Thing) := (G,v) -> set select(1..#G, i -> member(v, G#i))
+parents(Digraph,Thing) := (G,v) -> set select(keys(G), i -> member(v,
+G#i))
+
+
+///
+restart
+loadPackage "Graphs"
+A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
+B = digraph({{a,{b,d}},{b,{c}},{d,{a,c}}})
+C = digraph({{a,{b,c}}, {b,{d}}})
+flatten {{a,b},{c,d},{a,d},{b,c}}
+set oo
+toList oo
+///
+
+
+
 
 children = method()
-children(Digraph,ZZ) := (G,v) -> G#v
+     -- Input: A digraph and the key for the vertex of interest.
+children(Digraph,Thing) := (G,v) -> G#v
 
 neighbors = method()
 neighbors(Graph,Thing) := (G,v) -> G#v  
