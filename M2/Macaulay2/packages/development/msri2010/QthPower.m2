@@ -46,8 +46,67 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     -- Initialisation
     R := ring I;
     q := char R;
-    Dq := qConductor(I, deps);
-    d := Dq^(q - 1);
+    qc := qConductor(I, deps);
+    dq := qc^(q - 1);
+);
+
+-------------
+-- Helpers --
+-------------
+
+-- Reduction modulo a module.
+red = method(TypicalValue => RingElement);
+red (RingElement, Ideal, RingElement, List) := (g, I, dq, modfoot) -> (
+    h := g;
+    i := #modfoot - 1;
+    while i >= 0 and g != 0 do (
+        h = (g % (dq * modfoot#i)) % I;
+        if g != h then (
+            g = h;
+            i = #modfoot - 1;
+        );
+        i = i - 1;
+    );
+    g % I
+);
+
+-- Fast qth powers of a RingElement modulo I
+fastq = method(TypicalValue => RingElement);
+fastq (RingElement, Ideal) := (g, I) -> (
+    q := char ring I;
+    res := 1;
+    while q != 0 do (
+        if q%2 == 1 then res = (res * g) % I;
+        q = q//2;
+        g = (g^2) % I;
+    );
+    res
+);
+
+-- Compare "logs".
+geqlog = method(TypicalValue => Boolean);
+geqlog (List, List) := (v, w) -> (
+    for i to #v - 1 do if v#i < w#i then return false;
+    true
+);
+
+-- "Log" of a polynomial.
+logpoly = method(TypicalValue => List);
+logpoly (RingElement, List, List) := (v, dep, ind) -> (
+    lv := leadMonomial v;
+    indlog := {};
+    indprod := 1;
+    for i to #ind - 1 do (
+        indlog = append(indlog, degree(ind#i, lv));
+        indprod = indprod * (ind#i)^indlog#i;
+    );
+    deplog := {};
+    depprod := 1;
+    for i to #dep - 1 do (
+        deplog = append(deplog, degree(dep#i, lv));
+        depprod = depprod * (dep#i)^deplog#i;
+    );
+    {deplog, depprod, indlog, indprod}
 );
 
 -------------------
