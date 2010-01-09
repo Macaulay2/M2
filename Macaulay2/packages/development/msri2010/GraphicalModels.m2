@@ -1,12 +1,17 @@
 -- -*- coding: utf-8 -*-
-newPackage("GraphicalModels",
+
+needsPackage"Graphs"
+
+newPackage(
+     "GraphicalModels",
+     Version => "1.2",
      Authors => {
 	  {Name => "Luis Garcia"},
 	  {Name => "Mike Stillman"}
 	  },
-     DebuggingMode => false,
-     Headline => "Markov ideals, arising from Bayesian networks in statistics",
-     Version => "1.2"
+     Headline => "Markov ideals, arising from Bayesian networks in
+     statistics",
+     DebuggingMode => true
      )
 
 ---- 28.10.09 ---- 
@@ -40,7 +45,7 @@ newPackage("GraphicalModels",
 
 
 export {localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
-       markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
+       markovRing, marginMap, hideMap, markovMatrices, markovIdeal, removeRedundants, 
        gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal}
      
 needsPackage"Graphs"
@@ -84,18 +89,6 @@ needsPackage"Graphs"
 -- Statements -----------
 -------------------------
 
-------------------
--- Graph basics --
-------------------
-
-removeNodes = method()
-removeNodes(DiGraph,List) := (G,v) -> (
-     v = set v;
-     G = select(pairs G, x -> not member(x#0,v));
-     G = apply(G, x -> (x#0, x#1 - v));
-     new DiGraph from G
-     )
-removeNodes(DiGraph,ZZ) := (G,v) -> removeNodes(G, {v})
 
 -----------------------------------------------------------
 -- Statement calculus ----  Local and Global Statements ---
@@ -258,7 +251,7 @@ bayesBall = (A,C,G) -> (
 -- Markov relationships --
 --------------------------
 pairMarkovStmts = method()
-pairMarkovStmts DiGraph := (G) -> (
+pairMarkovStmts Digraph := (G) -> (
      -- given a graph G, returns a list of triples {A,B,C}
      -- where A,B,C are disjoint sets, and for every vertex v
      -- and non-descendent w of v,
@@ -269,7 +262,7 @@ pairMarkovStmts DiGraph := (G) -> (
 	       apply(toList W, w -> {set {v}, set{w}, ND - set{w}}))))
 
 localMarkovStmts = method()			 
-localMarkovStmts DiGraph := (G) -> (
+localMarkovStmts Digraph := (G) -> (
      -- Given a graph G, return a list of triples {A,B,C}
      -- of the form {v, nondescendents - parents, parents}
      result := {};
@@ -281,7 +274,7 @@ localMarkovStmts DiGraph := (G) -> (
      removeRedundants result)
 
 globalMarkovStmts = method()
-globalMarkovStmts DiGraph := (G) -> (
+globalMarkovStmts Digraph := (G) -> (
      -- Given a graph G, return a complete list of triples {A,B,C}
      -- so that A and B are d-separated by C (in the graph G).
      -- If G is large, this should maybe be rewritten so that
@@ -434,6 +427,7 @@ gaussMinors(Matrix,List) := (M,D) -> (
      M1 = submatrix(M,rows,cols);
      minors(#D#2 + 1, M1)
      )
+
 gaussIdeal = method()
 gaussIdeal(Ring, List) := (R,Stmts) -> (
      -- for each statement, we take a set of minors
@@ -441,10 +435,10 @@ gaussIdeal(Ring, List) := (R,Stmts) -> (
      M = genericSymmetricMatrix(R, R#gaussRing);
      sum apply(Stmts, D -> gaussMinors(M,D))     
      )
-gaussIdeal(Ring,Graph) := (R,G) -> gaussIdeal(R,globalMarkovStmts G)
+gaussIdeal(Ring,Digraph) := (R,G) -> gaussIdeal(R,globalMarkovStmts G)
 
 gaussTrekIdeal = method()
-gaussTrekIdeal(Ring, DiGraph) := (R,G) -> (
+gaussTrekIdeal(Ring, Digraph) := (R,G) -> (
      n := max keys G;
      P := toList apply(1..n, i -> toList parents(G,i));
      nv := max(P/(p -> #p));
@@ -538,12 +532,12 @@ document {
      }
 
 document { 
-     Key => {gaussIdeal, (gaussIdeal,Ring,DiGraph), (gaussIdeal,Ring,List)},
+     Key => {gaussIdeal, (gaussIdeal,Ring,Digraph), (gaussIdeal,Ring,List)},
      Headline => "correlation ideal of a Bayesian network of joint Gaussian variables",
      Usage => "gaussIdeal(R,G)",
      Inputs => { 
 	  "R" => Ring => {"created with ", TO  "gaussRing", ""},
-	  "G" => {ofClass DiGraph, " or ", ofClass List}
+	  "G" => {ofClass Digraph, " or ", ofClass List}
 	   },
      Outputs => {
 	  "the ideal in R of the relations in the correlations of the random variables implied by the
