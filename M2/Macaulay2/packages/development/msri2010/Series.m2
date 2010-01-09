@@ -24,18 +24,20 @@ tex Series := s -> tex expression s;
 html Series := s -> html expression s;
 
 
-series = method()
-series(ZZ, RingElement) := Series => (n,f) -> (
+series = method(Options => {Limit => 5})
+series RingElement := Series => opts -> f -> (
      df := denominator f;
      nf := numerator f;
      degnf := first degree nf;
      degdf := first degree df;
-     dC := (coefficients(df,Monomials=>apply(0..n,i->x^i)))_1;
+     dC := (coefficients(df,Monomials=>apply(0..opts.Limit,i->x^i)))_1;
      if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
      a := i -> if i == 0 then (dC_(0,0))^(-1) else (dC_(0,0))^(-1)*sum(1..i, j -> -dC_(j,0)*a(i-j));    
-     s := sum select(terms (nf * sum(0..n,i -> a(i) * x^i)), i -> first degree i <= n);
-     new Series from {rationalFunction => f, degree => n, series => s}
+     s := sum select(terms (nf * sum(0..opts.Limit,i -> a(i) * x^i)), i -> first degree i <= opts.Limit);
+     new Series from {rationalFunction => f, degree => opts.Limit, series => s}
      );
+
+
 
 seriesOLD = method()
 seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
@@ -47,7 +49,7 @@ seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
      );
 
 
-series(ZZ, FunctionClosure) := Series => (n,f) -> (
+series(ZZ, Function) := Series => (n,f) -> (
      s:=0;
      for i from 0 to n do (if f i == 0 then continue else if first degree f i > n then break else s=s+f i);
      new Series from {genTerm => f, degree => n, series => s}
