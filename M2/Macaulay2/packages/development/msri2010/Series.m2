@@ -26,6 +26,7 @@ html Series := s -> html expression s;
 
 series = method(Options => {Limit => 5})
 series RingElement := Series => opts -> f -> (
+     f = f/(1_(ring f));
      df := denominator f;
      nf := numerator f;
      degnf := first degree nf;
@@ -34,10 +35,8 @@ series RingElement := Series => opts -> f -> (
      if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
      a := i -> if i == 0 then (dC_(0,0))^(-1) else (dC_(0,0))^(-1)*sum(1..i, j -> -dC_(j,0)*a(i-j));    
      s := sum select(terms (nf * sum(0..opts.Limit,i -> a(i) * x^i)), i -> first degree i <= opts.Limit);
-     new Series from {rationalFunction => f, degree => opts.Limit, series => s}
+     new Series from {rationalFunction => f, degree => if degdf < 1 then infinity else opts.Limit, series => s}
      );
-
-
 
 seriesOLD = method()
 seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
@@ -49,15 +48,35 @@ seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
      );
 
 
-series(ZZ, Function) := Series => (n,f) -> (
+series(Function) := Series => opts -> f -> (
      s:=0;
-     for i from 0 to n do (if f i == 0 then continue else if first degree f i > n then break else s=s+f i);
-     new Series from {genTerm => f, degree => n, series => s}
+     for i from 0 to opts.Limit do (if f i == 0 then continue else if first degree f i > opts.Limit then break else s=s+f i);
+     new Series from {genTerm => f, degree => opts.Limit, series => s}
+     );
+
+A = ZZ[x]
+f = i -> if i< 5 then i*x^i else 0
+f(2)
+
+s = series(s, Limit => 11)
+
+series(RingElement, Function) := Series => opts -> f -> (
+     s:=0;
+     for i from 0 to opts.Limit do (if f i == 0 then continue else if first degree f i > opts.Limit then break else s=s+f i);
+     new Series from {genTerm => f, degree => opts.Limit, series => s}
      );
 
 
-f = i -> if i==0 then 1_A else x^i+0_A;
-series(10,f)
+Series == Series := (f,g) -> (
+     f.rationalFunction == g.rationalFunction
+     );
+
+
+Series + Series := (f,g) -> (
+     u:=s#0+t#0;
+     new Series from {part(0,min(s#1,t#1),numgens(class(u)):1,u),min(s#1,t#1)}
+     )
+
 
 f=i->(2*i)*x^(5*i)
 series(20,f)
