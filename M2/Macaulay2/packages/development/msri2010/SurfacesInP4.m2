@@ -274,9 +274,43 @@ guessCohomologyTable(RingElement,ZZ,ZZ) := (hilbPoly, lo,hi) -> (
     apply(lo..hi, j -> M_(4- numPosRoots(sub(H, matrix{{iv + j}}) ),j-lo) = abs sub(sub(hilbPoly,matrix{{j*1_QQ}}),ZZ));
     matrix M)
 
-diagonal(cohTable,k) -> (
-     if rank source cohTable != rank target cohTable then error "expected square matrix as cohomology table";
-     
+-- calculate the free E-Modules corresponding to a diagonal in the
+-- cohomology table
+diag = (M,k)->E^(flatten toList apply(max(k,0)..min(k+4,4),j->toList(M_(j-k,j):(j-4))))
+
+-- construct a surface from a cohomology table
+constructSurface = (cohTable,E,S) -> ( 
+     -- test if the cohTable gives a monad
+     if apply({-4,-3,-2,2,3,4},k->diag(cohTable,k)==0) != toList(6:true)
+	  then error "The cohomology Table does not give a Monad";
+     -- OK
+     -- start with beta
+     beta := random(diag(cohTable,1),diag(cohTable,0));
+     -- find alpha among the syzygies
+     sbeta := syz beta;
+     betti (alpha := sbeta*random(source sbeta,diag(cohTable,-1)));
+     -- apply BBG to get the beilinson Monad
+     alphaBeil := beilinson(alpha,S);
+     betaBeil := beilinson(beta,S);
+     --
+     -- BBG does not give correctly graded 0-Matrices!!!!
+     --
+     if alphaBeil == 0 then alphaBeil = random(source betaBeil,S^{});
+     if betaBeil == 0 then betaBeil = random(S^{},target alphaBeil);
+     --
+     -- !!!!!!!!
+     --
+     -- test if it is a monad
+     if betaBeil*alphaBeil != 0 then error "betaBeil*alphaBeil != 0";
+     -- is beta surjective?
+     if codim coker betaBeil < 5 then error "beta is not surjective";
+     -- is alpha injektive?
+     if ker alphaBeil != 0 then error "alpha is not injective";
+     -- the Ideal of the Surface is the homology of the Monad     
+     I := prune homology(betaBeil,alphaBeil);
+     betti (fI := res I);  
+     betti (fphi := res coker transpose fI.dd_1);
+     ideal fphi.dd_2
      )
      
      
