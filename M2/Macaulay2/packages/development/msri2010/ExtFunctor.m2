@@ -324,11 +324,11 @@ doc ///
     Text
        This package allows elements of an Ext module to be represented in three distinct ways:
        
-       1. Literally as an element, i.e. a map Ext^i(M,N) <--- R^1, or
+       1. Literally as an element, i.e. a map Ext^i(M,N) $\leftarrow$ R^1, or
        
        2. As an ``i-extension,'' an exact sequence of length i starting with N and ending with M, or
        
-       3. As a map from the i^{th} module of a free resolution of M to N which can be extended to a degree i map of chain complexes res N <--- res M.
+       3. As a map from the i^{th} module of a free resolution of M to N which can be extended to a degree i map of chain complexes res N $\leftarrow$ res M.
   
        Corresponding to these three types are three functions:
        
@@ -355,7 +355,7 @@ doc ///
     C = extension(f)
   Inputs
     f:Matrix
-      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) <-- R^1
+      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) $\leftarrow$ R^1
   Outputs
     C:ChainComplex
       an exact sequence, an r-extension of N by M corresponding to f.
@@ -370,13 +370,18 @@ doc ///
    Text
      In this case Ext^1(k,k) is isomorphic to the vector space k^2:
    Example
-     E1 = Ext^1(k,k)
+     E = Ext^1(k,k)
    Text
      So we can look at the first and second generators of the Ext module and get two essentially different extensions:
    Example
-     extension E1_{0}
-     extension E1_{1}
+     extension E_{0}
+     extension E_{1}
    Text
+     Since the elements of Ext are module elements, we can add them and use extension to see the effect:
+   Example
+     extension (E_{0} - 3*E_{1})
+   Text
+
      Ext^2(k,k) is a single copy of k:
    Example
      E2 = Ext^2(k,k)
@@ -405,8 +410,8 @@ doc ///
     f:Matrix
       a map N <- (res M)_r representing an element of Ext^r(M,N).
   Outputs
-    c:ChainComplex
-      an exact sequence, an r-extension of N by M represented by f.
+    C:ChainComplex
+      an exact sequence; an r-extension of N by M represented by f.
   Description
    Text
      A map N <- (res M)_r does not contain enough information
@@ -414,16 +419,25 @@ doc ///
      
      In the following example, we get an extension of M by k and demonstrate the module structure on extensions.
    Example
-     R = ZZ/101[x,y]
-     N = comodule ideal"x2-y3"
-     k = comodule ideal"x,y"  
-     F = map(N,(res k)_1,{{y^2,x}})
-     G = y*F
-     H = F + G
+     R = ZZ/101[x,y];
+     N = comodule ideal"x2-y3";
+     k = comodule ideal"x,y";
+   Text
+   
+     This map from (res k)_1 to N represents an extension:
+   Example
+     F = map(N,(res k)_1,{{y^2,x}});
      e1 = extension(1,k,N,F)
+   Text
+   
+     We can also find the extension ``y*F'' and the extension ``y*F + F:''
+   Example
+     G = y*F;
      e2 = extension(1,k,N,G)
+     H = F + G;
      e3 = extension(1,k,N,H)
    Text
+   
      We can make sure that these different extensions are nonequivalent:
    Example
      isYonedaEquivalent(e1,e2)
@@ -448,10 +462,10 @@ doc ///
       an exact sequence, an r-extension of N by M.
   Outputs
     f:Matrix
-      a map N <- (res M)_r corresponding to C.
+      a map N $\leftarrow$ (res M)_r corresponding to C.
   Description
    Text
-     Such a map will always be zero when composed with the map (res M).dd_(r+1).
+     Such a map will always be zero when composed with the map (res M).dd_{(r+1)}.
    Example
      R = ZZ/101[x,y]
      N = comodule ideal"x"
@@ -477,10 +491,10 @@ doc ///
     f = yonedaExt(g)
   Inputs
     g:Matrix
-      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) <- R^1.
+      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) $\leftarrow$ R^1.
   Outputs
     f:Matrix
-      the map N <- (res M)_r corresponding to g.
+      the map N $\leftarrow$ (res M)_r corresponding to g.
   Description
    Text
      Enough information is stored in Ext^r(M,N).cache.Ext to recover r, M, and N.
