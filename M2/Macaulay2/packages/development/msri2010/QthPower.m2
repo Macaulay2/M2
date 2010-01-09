@@ -58,9 +58,11 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     now := 0;
     before := -1;
     oldg := footprint;
-    i := j := w := k := deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := 0;
+    
+    -- local variables
+    i := j := w := k := deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := gx := pos := 0;
     skip := skip1 := skip2 := true;
-    logei := logj := logk := wi := ww := {};
+    f := logei := logj := logk := wi := ww := {};
     
     -- Compute the next module generating set; continue to loop until no changes.
     loop := true;
@@ -106,12 +108,13 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 			                            loop = true;
 	    		                    )
 		                            else (
-			                            if g#i < g#j * w then (  
-        		                            extendj = extending(g#j,h#j,e#j,w);  
-	            	                        g = extendj#0;
-			                                h = extendj#1;
-			                                e = extendj#2;
-			                                s = extendj#3;
+			                            if g#i < g#j * w then (
+                                            gx = (g#j) * w;
+                                            pos = position(sort(toList(append(g,gx))), a->a==gx);
+                                            g = new MutableList from insert(pos, gx, toList(g));
+                                            h = new MutableList from insert(pos, (h#j)*w^q, toList(h));
+                                            e = new MutableList from insert(pos, red((e#j)*w^q, I, dq, footprint), toList(e));
+                                            s = new MutableList from insert(pos, before, toList(s));
                                             j = j + 1;
 			                                loop = true;
  			                            )
@@ -162,11 +165,12 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 		                            );
                                 );
 	                            if not skip1 then (
-                                    extendi = extending(g#i,h#i,e#i,prod);
-	                                g = extendi#0;
-                                    h = extendi#1;
-                                    e = extendi#2;
-                                    s = extendi#3;
+                                    gx = (g#i) * prod;
+                                    pos = position(sort(toList(append(g,gx))), a->a==gx);
+                                    g = new MutableList from insert(pos, gx, toList(g));
+                                    h = new MutableList from insert(pos, (h#i)*prod^q, toList(h));
+                                    e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, footprint), toList(e));
+                                    s = new MutableList from insert(pos, before, toList(s));
 	                                loop = true;
 		                        );
 		                    );          
@@ -184,11 +188,12 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 			                                ex = (ww#iii)//q;  
 			                                prod = prod * (indq#iii)^ex;
 			                            );
-		                                extendi = extending(g#i,h#i,e#i,prod);
-                                        g = extendi#0;
-                                        h = extendi#1;
-                                        e = extendi#2;
-                                        s = extendi#3;			      
+                                        gx = (g#i) * prod;
+                                        pos = position(sort(toList(append(g,gx))), a->a==gx);
+                                        g = new MutableList from insert(pos, gx, toList(g));
+                                        h = new MutableList from insert(pos, (h#i)*prod^q, toList(h));
+                                        e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, footprint), toList(e));
+                                        s = new MutableList from insert(pos, before, toList(s));
 			                            loop = true;
                                     );
 	                            );
@@ -332,4 +337,4 @@ doc ///
 ///
 
 end
-
+-- Happy Happy Joy Joy!
