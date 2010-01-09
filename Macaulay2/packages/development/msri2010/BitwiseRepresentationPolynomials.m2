@@ -43,11 +43,14 @@ brpOR (Brp, Brp) := Brp => (a,b) ->
 brpOR (List, Brp) := Brp => (a,b) -> 
   apply (#a, i -> max (a#i, b#0#i) )
 
---  is polynomial a divisible by monomial m
+--  is monomial a divisible by monomial b
 -- TODO
 isDivisible = method()
-isDivisible (Brp, Brp) := Boolean => (a,m) -> false
+isDivisible (Brp, Brp) := Boolean => (a,b) ->
+  min flatten (a - b) > -1
+  
 
+-- divide 
 
 beginDocumentation()
 document { 
@@ -67,6 +70,14 @@ TEST ///
   firstpoly = new Brp from { {1,1,0}, {1,0,0}}
   secondpoly = new Brp from {{1,0,0}}
   thirdpoly = new Brp from {{0,1,0}, {1,1,1}}
+  
+  monoA= new Brp from {{1,0,1}}
+  monoB= new Brp from {{1,0,0}}
+  monoC= new Brp from {{0,1,0}}
+
+  assert ( isDivisible(monoA, monoB) == true )
+  assert isDivisible(monoA, monoB) 
+  assert ( isDivisible(monoA, monoC) == false)
 
   assert ( convert(x*y*z + x*z) === new Brp from rsort {{1,1,1}, {1,0,1}})
 
@@ -82,23 +93,10 @@ firstpoly + secondpoly
 
 
   assert ( (firstpoly + thirdpoly) * secondpoly == new Brp from rsort {{1, 0, 0}, {1,1,1}} )
---  assert ( firstpoly * secondpoly * thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
---  assert ( (firstpoly * secondpoly) * thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
+  assert ( firstpoly * secondpoly * secondpoly == new Brp from rsort {{1, 1, 0}, {1, 0, 0}} )
 
   assert ( (new List from (firstpoly * secondpoly)) == rsort {{1, 1, 0}, {1, 0, 0}})
 --  assert (false) -- I have this in to be sure that the tests are run
---  -- TODO make other assertions for the following 
---  firstpoly + secondpoly + thirdpoly
--- firstpoly * secondpoly * thirdpoly + myHash1 
--- myHash = firstpoly + thirdpoly
--- tt = {}
--- tt
--- myHash1 = firstpoly + secondpoly
---  
---  firstpoly + myHash1 
---firstpoly 
---firstpoly + secondpoly 
---myHash1 
 ///
 
 end
