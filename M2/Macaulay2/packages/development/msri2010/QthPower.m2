@@ -48,6 +48,17 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     q := char R;
     qc := qConductor(I, deps);
     dq := qc^(q - 1);
+    g := new MutableList from footprint;
+    h := apply(g, s->fastq(s, I));
+    e := apply(h, s->red(s, I, dq, footprint));
+    s := new MutableList from apply(#footprint, i->-1);
+    now := 0;
+    before := -1;
+    oldg := footprint;
+    
+    -- do stuff
+    
+    e
 );
 
 -------------
