@@ -21,11 +21,9 @@ exportMutable {}
 Brp = new Type of List -- this is not quite right yet
 
 -- Convert regular polynomial into its binary representation
-convert = method(TypicalValue => Brp)
-convert := f -> ( exponents f)
+convert := Brp => f -> new Brp from  exponents f
 
 -- Addition: concatenate and eliminate double monomials 
-   -- delete doubles, by using tally and check for `odd/even
 Brp + Brp := Brp => (a,b) -> new Brp from keys select(tally a + tally b, odd)
 
 -- Multiplication: bitwise OR
@@ -54,7 +52,6 @@ thirdpoly = new Brp from {{1,0,0}, {1,1,1}}
  firstpoly * secondpoly * thirdpoly + myHash1 
  myHash = firstpoly + thirdpoly
  tt = {}
- scanKeys(myHash, i -> append(tt, i))
  tt
  myHash1 = firstpoly + secondpoly
   
@@ -137,21 +134,39 @@ document {
 	  }
      }
 TEST ///
-  assert(firstFunction 1 === "Hello, World!")
-  assert(secondFunction(1,3) === 4)
-  assert(secondFunction(1,3,MyOption=>5) === 9)
+  firstpoly = new Brp from { {1,1,0}, {1,0,0}}
+  secondpoly = new Brp from {{1,0,0}}
+  thirdpoly = new Brp from {{1,0,0}, {1,1,1}}
+
+-- -- TODO check the following by hand (work them out on paper)
+  assert ( firstpoly * secondpoly == new Brp from {{1, 1, 0}, {1, 0, 0}} )
+  assert ( firstpoly * secondpoly === new Brp from {{1, 1, 0}, {1, 0, 0}} )
+  assert ( (new List from (firstpoly * secondpoly)) == {{1, 1, 0}, {1, 0, 0}})
+--  -- TODO make other assertions for the following 
+--  firstpoly + secondpoly + thirdpoly
+-- firstpoly * secondpoly * thirdpoly + myHash1 
+-- myHash = firstpoly + thirdpoly
+-- tt = {}
+-- tt
+-- myHash1 = firstpoly + secondpoly
+--  
+--  firstpoly + myHash1 
+--firstpoly 
+--firstpoly + secondpoly 
+--myHash1 
 ///
-  
-       
+
 end
+
 
 -- Here place M2 code that you find useful while developing this
 -- package.  None of it will be executed when the file is loaded,
 -- because loading stops when the symbol "end" is encountered.
 
-installPackage "PackageTemplate"
-installPackage("PackageTemplate", RemakeAllDocumentation=>true)
-check PackageTemplate
+installPackage "BitwiseRepresentationPolynomials"
+installPackage("BitwiseRepresentationPolynomials", RemakeAllDocumentation=>true)
+check BitwiseRepresentationPolynomials
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
