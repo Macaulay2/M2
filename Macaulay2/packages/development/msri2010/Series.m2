@@ -47,25 +47,14 @@ seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
      );
 
 
-series(ZZ, Function) := Series => (n,f) -> (
-     s := sum for i from 0 to n if f i == 0 then continue else if first degree f i > n list f i do i = i+1;
+series(ZZ, FunctionClosure) := Series => (n,f) -> (
+     s:=0;
+     for i from 0 to n do (if f i == 0 then continue else if first degree f i > n then break else s=s+f i);
      new Series from {genTerm => f, degree => n, series => s}
      );
+f = i -> if i==0 then 1 else 0;
+series(10, (i -> if i==0 then 1 else 0*x^i))
 
-
-series(ZZ, Function) := Series => (n,f) -> (
-     i := 0;
-     s := sum while first degree f i <= n list f i do i = i+1;
-     new Series from {genTerm => f, degree => n, series => s}
-     );
-A = ZZ/5051[x]
-series(10, n -> n*x^(5*n))
-
-
-
-f = i -> if 1*x^i if i == 0 else 
-i = 0
-n = 8
 
 
 viewHelp
