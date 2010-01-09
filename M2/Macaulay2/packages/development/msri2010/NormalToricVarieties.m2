@@ -11,7 +11,7 @@ newPackage(
 	       Email => "ggsmith@mast.queensu.ca", 
 	       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
      Headline => "normal toric varieties",
-     DebuggingMode => false
+     DebuggingMode => true
      )
 
 export { 
@@ -616,33 +616,46 @@ halfspaces (List,NormalToricVariety) := Matrix => (sigma,X) -> (
      if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = -(fourierMotzkin matrix transpose ((rays X)_sigma))#0;
      X.cache.halfspaces#sigma)
 
-makeSimplicial = method()
-makeSimplicial NormalToricVariety := NormalToricVariety => X ->(
+makeSimplicial = method(Options => {Strategy => "centre"})
+makeSimplicial NormalToricVariety := NormalToricVariety => options -> X ->(
      R := rays X;
      Rm := matrix rays X;
+     local Xsimp;
      Cones := partition(l -> dim(l,X) == #l,max X);
      simpCones := if Cones#?true then Cones#true else {};
      Cones = if Cones#?false then Cones#false else {};
-     while Cones != {} do (
-	  C := Cones#0;
-	  HS := halfspaces(C,X);
-	  FL := reverse faceLatticeSimple(dim(C,X),transpose Rm^C,HS);
-	  r := {};
-	  for i from 1 to #FL-1 do (
-	       nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
-	       if nonsimpFace != {} then (r = makePrimitive flatten entries sum toList nonsimpFace#0#0; break));
-	  Y := normalToricVariety(R,Cones);
-	  Y.cache.halfspaces = X.cache.halfspaces;
-	  Y.cache.cones = X.cache.cones;
-	  X = stellarSubdivision(Y,r);
-	  R = rays X;
-	  Rm = matrix R;
-	  Cones = partition(l -> dim(l,X) == #l, max X);
-	  if Cones#?true then simpCones = simpCones | Cones#true;
-	  if Cones#?false then Cones = Cones#false else Cones = {});
-     Xsimp := normalToricVariety(R,simpCones);
-     Xsimp.cache.cones = X.cache.cones;
-     if X.cache.?halfspaces then Xsimp.cache.halfspaces = X.cache.halfspaces;
+     if options.Strategy == "centre" then (
+	  while Cones != {} do (
+	       C := Cones#0;
+	       HS := halfspaces(C,X);
+	       FL := reverse faceLatticeSimple(dim(C,X),transpose Rm^C,HS);
+	       r := {};
+	       for i from 1 to #FL-1 do (
+	       	    nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
+	       	    if nonsimpFace != {} then (r = makePrimitive flatten entries sum toList nonsimpFace#0#0; break));
+	       Y := normalToricVariety(R,Cones);
+	       Y.cache.halfspaces = new MutableHashTable from for k in max Y list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
+	       Y.cache.cones = new MutableHashTable from for k in max Y list if X.cache.cones#?k then k => X.cache.cones#k else continue;X.cache.cones;
+	       X = stellarSubdivision(Y,r);
+	       R = rays X;
+	       Rm = matrix R;
+	       Cones = partition(l -> dim(l,X) == #l, max X);
+	       if Cones#?true then simpCones = simpCones | Cones#true;
+	       if Cones#?false then Cones = Cones#false else Cones = {});
+	  Xsimp = normalToricVariety(R,simpCones))
+     else if options.Strategy == "ray" then (
+	  usedrays := {};
+	  while Cones != {} do (
+	       Ctally := tally select(flatten Cones, e -> not member(e,usedrays));
+	       mCtally := max values Ctally;
+	       r1 := (select(keys Ctally, k -> Ctally#k == mCtally))#0;
+	       usedrays = usedrays | {r1};
+	       r1 = (rays X)#r1;
+	       X = stellarSubdivision(X,r1);
+	       Cones = select(max X, l -> dim(l,X) =!= #l));
+	  Xsimp = X);
+     if X.cache.?halfspaces then Xsimp.cache.halfspaces = new MutableHashTable from for k in max Xsimp list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
+     Xsimp.cache.cones = new MutableHashTable from for k in max Xsimp list if X.cache.cones#?k then k => X.cache.cones#k else continue;
      Xsimp)
 
 
@@ -665,7 +678,7 @@ faceLatticeSimple = (d,R,HS) -> (
 stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
      replacement := {};
      rm := matrix transpose {r};
-     n := #(rays X);
+     (n,newRays) := if member(r,rays X) then (position(rays X, e -> e == r),rays X) else (#(rays X),rays X | {r});
      R := matrix rays X;
      newMax := flatten apply(max X, C -> (
 	       M := promote(R^C,QQ);
@@ -686,7 +699,7 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 			 w := flatten entries (HS * rm);
 			 if all(w, i -> i >= 0) then (
 			      replacement = positions(w, i -> i == 0);
-			      correctFaces := submatrix'(HS,replacement);
+			      correctFaces := submatrix'(HS,replacement,);
 			      HS = HS^replacement;
 			      replacement = select(C, i -> HS * (transpose R^{i}) == 0);
 			      apply(numRows correctFaces, i -> select(C, j -> (correctFaces^{i}) * (transpose R^{j}) == 0) | {n}))
@@ -702,7 +715,6 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 			      for i from 0 to numRows HS1 -1 list (
 				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
 		    else {C})));
-     newRays := rays X | {r};
      Y := new NormalToricVariety from {
 	  symbol rays => newRays,
 	  symbol max => newMax,
@@ -783,15 +795,13 @@ insertCone (NormalToricVariety,List) := (X,C) -> (
 --------------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
 --   isFano
---   cotangentBundle
+--   cotangentBundle -> See Package ToricVectorBundles by Birkner,Ilten,Petersen
 --   homology,NormalToricVariety
 --   blow-ups
 --   operational Chow rings
---   vector bundles?
+--   vector bundles? -> See Package ToricVectorBundles by Birkner,Ilten,Petersen
 --   faces
 --   linear series
---   isComplete
---   isProjective
 --   isCartier
 --   isAmple
 --   isVeryAmple
