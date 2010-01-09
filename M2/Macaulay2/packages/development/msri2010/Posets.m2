@@ -182,7 +182,7 @@ compare(Poset, Thing, Thing) := Boolean => (P,A,B) -> (
 
 
 --------------------------------------------------
---Covering Relations
+--Covering Relations and Hasse Diagrams
 --------------------------------------------------
 --input: A poset with any type of relation C (minimal, maximal, etc.)
 --output: The minimal relations defining our poset
@@ -196,6 +196,15 @@ coveringRelations (Poset) := (P) -> (
 		R -> set apply(select(P.Relations, S -> (first S == last R and first R != last R and first S != last S)), S -> (first R, last S) ));
 	P.cache.coveringRelations = P.Relations - (nonCovers + set apply(P.GroundSet, x -> (x,x)))
 )
+
+--input:  A poset P
+--output:  A directedGraph which represents the Hasse Diagram of P
+hasseDiagram = method();
+hasseDiagram (Poset) := DirectedGraph => (P) -> (
+  if P.cache.?coveringRelations then (
+		return directedGraph(P.GroundSet, P.cache.coveringRelations);
+		);   
+  directedGraph(P.GroundSet, coveringRelations P))
 
 --------------------------------------------------
 --Minimal/Maximal Elements 
