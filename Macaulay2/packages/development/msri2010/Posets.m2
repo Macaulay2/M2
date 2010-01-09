@@ -264,7 +264,7 @@ dropElements (Poset, Function) := (P, f) -> (
 inducedPoset = method();
 
 inducedPoset (Poset, List) := Poset => (P, L) -> (
-  rel := select(P1.Relations, R -> (
+  rel := select(P.Relations, R -> (
 	    any(L, G -> (G == R#0)) and any(L, G -> (G == R#1))));
   poset(L, rel))
 
