@@ -23,7 +23,8 @@ Brp = new Type of List -- this is not quite right yet
 -- Convert regular polynomial into its binary representation
 convert = method()
 convert(RingElement) := Brp => f -> new Brp from rsort exponents f
--- Todo convert (Brp) := RingElement
+convert (Brp, Ring ) := RingElement => (l, R) -> sum (#l, i -> R_(l#i) )
+ 
 
 -- Addition: concatenate and eliminate double monomials 
 Brp + Brp := Brp => (a,b) -> removeDups (a|b)
@@ -72,13 +73,20 @@ document {
 
 TEST ///
   R = ZZ/2[x,y,z]
+
   firstpoly = new Brp from { {1,1,0}, {1,0,0}}
   secondpoly = new Brp from {{1,0,0}}
   thirdpoly = new Brp from {{0,1,0}, {1,1,1}}
   
+  zeropoly = new Brp from {}
+
+  
   monoA= new Brp from {{1,0,1}}
   monoB= new Brp from {{1,0,0}}
   monoC= new Brp from {{0,1,0}}
+  
+  assert ( monoB + zeropoly == new Brp from {{1, 0, 0}}) 
+  assert ( zeropoly *monoB == new Brp from {} )
 
 
   assert ( isDivisible(monoA, monoB) == true )
@@ -88,6 +96,12 @@ TEST ///
   assert( divide(monoA, monoB) == new Brp from {{0,0,1}})
   
   assert ( convert(x*y*z + x*z) === new Brp from rsort {{1,1,1}, {1,0,1}})
+  assert ( convert(convert(x*y*z + x*z),R) === x*y*z + x*z )
+  assert ( convert(convert(x*y+x*y), R) == 0)
+  assert (convert (firstpoly, R) == x*y + x)
+  assert (convert( convert (firstpoly, R) ) == firstpoly )
+
+
 
 -- -- TODO check the following by hand (work them out on paper)
   assert ( firstpoly * secondpoly == new Brp from rsort {{1, 0, 0}, {1, 1, 0}})
