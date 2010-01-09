@@ -10,9 +10,10 @@ newPackage("GraphicalModels",
      )
 
 ---- 28.10.09 ---- 
----- Version by the Working group at Aim 
----- Ania K., Sonja Petrovic, Brandy Stigler, Amelia Taylor 
+---- Version by the Working group at Aim  and MSRI
+---- Amelia Taylor and Augustine O'Keefe
 ---- Comments from this group have 4 dashes, those with 2 are Mike/Luis. 
+
 
 ------------------------------------------
 -- markov ideals in Macaulay2
@@ -76,6 +77,8 @@ needsPackage"Graphs"
 ---- isMonomial works well as long as m is actually a polynomial or monomial and not 
 ---- an element of ZZ, QQ, RR, etc.
 
+---- NOTE ALL basic graph functionality has been moved to Graphs.m2
+---- Should removeNodes also be moved?
 
 -------------------------
 -- Statements -----------

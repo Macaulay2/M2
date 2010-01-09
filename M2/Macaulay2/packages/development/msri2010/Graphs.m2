@@ -230,6 +230,15 @@ neighbors(Graph,Thing) := (G,v) -> G#v
 nonneighbors = method()
 nonneighbors(Graph, Thing) := (G,v) -> set(1..#G) - neighbors(G,v)-set{v}
 
+removeNodes = method()
+removeNodes(DiGraph,List) := (G,v) -> (
+     v = set v;
+     G = select(pairs G, x -> not member(x#0,v));
+     G = apply(G, x -> (x#0, x#1 - v));
+     new DiGraph from G
+     )
+removeNodes(DiGraph,ZZ) := (G,v) -> removeNodes(G, {v})
+
 
 --------------------
 -- Documentation  --
