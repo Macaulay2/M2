@@ -77,15 +77,9 @@ needsPackage"Graphs"
 ---- an element of ZZ, QQ, RR, etc.
 
 
-
-
 -------------------------
 -- Statements -----------
 -------------------------
-
-----   Then this section needs appropriate functions for the new types of graphs. 
-----   Not sure yet what would need to be here, but likely less for nondirected and 
-----   many would be the same for chain graphs. 
 
 ------------------
 -- Graph basics --
@@ -121,7 +115,6 @@ removeNodes(DiGraph,ZZ) := (G,v) -> removeNodes(G, {v})
 ---- This is the section where the local and global statements are done. 
 
 equivStmts = (S,T) -> S#2 === T#2 and set{S#0,S#1} === set{T#0,T#1}
-
 
 -- More serious removal of redundancies.  This was taken from MES's indeps.m2
 setit = (d) -> {set{d#0,d#1},d#2}
