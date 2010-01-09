@@ -62,7 +62,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     -- local variables
     i := j := w := k := deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := gx := pos := 0;
     skip := skip1 := skip2 := true;
-    f := logei := logj := logk := wi := ww := {};
+    logei := logj := logk := wi := ww := {};
     
     -- Compute the next module generating set; continue to loop until no changes.
     loop := true;
@@ -86,7 +86,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 	                );
 	                if skip2 then i = i + 1;
 	            );
-                e#i = red(e#i, I, dq, footprint);	      
+                e#i = red(e#i, I, dq, oldg);	      
                 -- row-reduction
                 j = 0;
                 while j < i and e#i != 0 do (
@@ -102,8 +102,8 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 		                            lc = leadCoefficient(e#i)//leadCoefficient(e#j);
 			                        if g#i > g#j * w then (
                                         g#i = g#i - lc * (g#j) * w;
-	                                    h#i = (h#i - lc * (h#j) * w^q) % Iq;
-                                        e#i = red(e#i - lc * (e#j) * w^q, I, dq, footprint);
+	                                    h#i = (h#i - lc * (h#j) * w^q) % I;
+                                        e#i = red(e#i - lc * (e#j) * w^q, I, dq, oldg);
 	                                    j = 0;
 			                            loop = true;
 	    		                    )
@@ -113,7 +113,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                                             pos = position(sort(toList(append(g,gx))), a->a==gx);
                                             g = new MutableList from insert(pos, gx, toList(g));
                                             h = new MutableList from insert(pos, (h#j)*w^q, toList(h));
-                                            e = new MutableList from insert(pos, red((e#j)*w^q, I, dq, footprint), toList(e));
+                                            e = new MutableList from insert(pos, red((e#j)*w^q, I, dq, oldg), toList(e));
                                             s = new MutableList from insert(pos, before, toList(s));
                                             j = j + 1;
 			                                loop = true;
@@ -148,7 +148,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 	                    deplmei = logei#1;
 	                    indlmei = logei#3;
 	                    for j to #oldg-1 do (
-	                        logj = logpoly(d * oldg#j, depq, indq);
+	                        logj = logpoly(dq * oldg#j, depq, indq);
 	                        deplmj = logj#1;
 	                        indlmj = logj#3;
 	                        if deplmj == deplmei then(
@@ -169,7 +169,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                                     pos = position(sort(toList(append(g,gx))), a->a==gx);
                                     g = new MutableList from insert(pos, gx, toList(g));
                                     h = new MutableList from insert(pos, (h#i)*prod^q, toList(h));
-                                    e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, footprint), toList(e));
+                                    e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, oldg), toList(e));
                                     s = new MutableList from insert(pos, before, toList(s));
 	                                loop = true;
 		                        );
@@ -192,7 +192,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                                         pos = position(sort(toList(append(g,gx))), a->a==gx);
                                         g = new MutableList from insert(pos, gx, toList(g));
                                         h = new MutableList from insert(pos, (h#i)*prod^q, toList(h));
-                                        e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, footprint), toList(e));
+                                        e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, oldg), toList(e));
                                         s = new MutableList from insert(pos, before, toList(s));
 			                            loop = true;
                                     );
@@ -218,7 +218,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
         );
         before = before + 1;
         oldg = for iiii from 0 to #g - 1 list if s#iiii == before and e#iiii == 0 then g#iiii else continue;
-        e = apply(h, s->red(s, I, dq, footprint));
+        e = apply(h, s->red(s, I, dq, oldg));
     );
 
     -- Post-process
@@ -283,17 +283,20 @@ geqlog (List, List) := (v, w) -> (
 logpoly = method(TypicalValue => List);
 logpoly (RingElement, List, List) := (v, dep, ind) -> (
     lv := leadMonomial v;
+    de := 0;
     indlog := {};
     indprod := 1;
     for i to #ind - 1 do (
-        indlog = append(indlog, degree(ind#i, lv));
-        indprod = indprod * (ind#i)^indlog#i;
+        de = degree(ind#i, lv);
+        indlog = append(indlog, de);
+        indprod = indprod * (ind#i)^de;
     );
     deplog := {};
     depprod := 1;
     for i to #dep - 1 do (
-        deplog = append(deplog, degree(dep#i, lv));
-        depprod = depprod * (dep#i)^deplog#i;
+        de = degree(dep#i, lv);
+        deplog = append(deplog, de);
+        depprod = depprod * (dep#i)^de;
     );
     {deplog, depprod, indlog, indprod}
 );
