@@ -1,0 +1,3 @@
+document the typical return value construction used here:
+
+	X + X := X => (x,y) -> ...
