@@ -28,6 +28,13 @@ convert := f -> ( exponents f)
    -- delete doubles, by using tally and check for `odd/even
 Brp + Brp := Brp => (a,b) -> select(tally a + tally b, odd)
 
+a = secondpoly 
+b = firstpoly
+select(tally a + tally b, odd)A
+
+tally a + tally b
+tally a
+tally b
 
 -- Multiplication: bitwise OR
 Brp * Brp = method(TypicalValue => Brp)
@@ -37,10 +44,16 @@ Brp * Brp := (a, m) ->  (
 )
 
 firstpoly = new Brp from { {1,1,0}, {1,0,0}}
-secondpoly = new Brp from {1,0,0}
+secondpoly = new Brp from {{1,0,0}}
+thirdpoly = new Brp from {{1,0,0}, {1,1,1}}
 
  firstpoly * secondpoly
- firstpoly + secondpoly
+ firstpoly + secondpoly + thirdpoly
+ myHash = firstpoly + thirdpoly
+ tt = {}
+ scanKeys(myHash, i -> append(tt, i))
+ tt
+ myHash = firstpoly + secondpoly
 
 -- bitwise OR for 2 monomials
 brpOR = method(TypicalValue => Brp)
