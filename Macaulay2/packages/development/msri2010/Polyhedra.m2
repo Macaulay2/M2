@@ -48,7 +48,6 @@ needsPackage "FourierMotzkin"
 
 -- WISHLIST
 --  -Symmetry group for polytopes
---  -mixed volumes
 
 
 -- Definind the new type PolyhedralObject
