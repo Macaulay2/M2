@@ -46,7 +46,9 @@ export {
 	dropElements,
 	maximalChains,
 	orderComplex,
-	VariableName
+	VariableName,
+	hasseDiagram,
+	inducedPoset
 }
 
 needsPackage "SimplicialComplexes"
@@ -233,9 +235,11 @@ maximalElements (Poset) := (P) -> (
 )
 
 --------------------------------------------------
--- dropElements -- Poset on a smaller ground set
+-- dropElements/induced poset
 --------------------------------------------------
-
+-- dropElements
+-- inputs:  poset P and a list L of elements to drop
+-- outputs: P without L
 dropElements = method()
 
 dropElements (Poset, List) := (P, L) -> (
@@ -253,6 +257,18 @@ dropElements (Poset, Function) := (P, f) -> (
 	newRelations := select(P.Relations, r -> not f(first r) and not f(last r));
 	poset(newGroundSet, newRelations, newRelationMatrix)
 )
+
+-- inducedPoset
+-- inputs:  a poset P and a list L of elements from P to "keep"
+-- outputs:  induced poset the list L
+inducedPoset = method();
+
+inducedPoset (Poset, List) := Poset => (P, L) -> (
+  rel := select(P1.Relations, R -> (
+	    any(L, G -> (G == R#0)) and any(L, G -> (G == R#1))));
+  poset(L, rel))
+
+
 
 --------------------------------------------------
 -- maximalChains 
