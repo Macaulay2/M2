@@ -28,6 +28,7 @@ export {
      hilbertPolynomialFromInvariants,
      guessCohomologyTable,
      diag,
+     findMonadWindows,
      guessDifferentials,
      constructSurface,
      numPosRoots
@@ -291,6 +292,19 @@ guessCohomologyTable(RingElement,ZZ,ZZ) := (hilbPoly, lo,hi) -> (
 -- cohomology table
 diag = (M,k,E)->E^(flatten toList apply(max(k,0)..min(k+4,4),j->toList(M_(j-k,j):(j-4))))
 
+-- check if a given window gives a monad
+givesMonad = (cohTable,E) -> (
+     apply({-4,-3,-2,2,3,4},k->diag(cohTable,k,E)==0) == toList(6:true)
+	  )
+
+-- find windows that give a monad
+findMonadWindows = (H,E,lo,hi) -> (
+     flatten apply(lo..hi,j->(
+	       M := guessCohomologyTable(H,j,j+4);
+	       if givesMonad(M,E) then {M} else {}
+	       ))
+     )
+
 
 -- guess the differenials
 guessDifferentials = (cohTable,E) -> (
@@ -298,8 +312,7 @@ guessDifferentials = (cohTable,E) -> (
      if (rank source cohTable,rank target cohTable) != (5,5)
      	  then error "The cohomology Table must be square 5x5";
      -- test if the cohTable gives a monad
-     if apply({-4,-3,-2,2,3,4},k->diag(cohTable,k,E)==0) != toList(6:true)
-	  then error "The cohomology Table must be 0 ouside of the 3 central diagonals";
+     if not givesMonad(cohTable,E) then error "The cohomology Table must be 0 ouside of the 3 central diagonals";
      -- OK
      -- start with generic beta
      beta := random(diag(cohTable,1,E),diag(cohTable,0,E));
@@ -412,6 +425,36 @@ Caveat
 SeeAlso
 ///
 
+doc ///
+Key
+  findMonadWindows
+Headline
+  for a given hilbert Polynomial find windows in the minimal cohomology table that will lead via bgg to a monad
+Usage
+  L = findMonadWindows(H,E,lo,hi)
+Inputs
+  H:RingElement
+    a hilbert Polynomial
+  E:PolynomialRing
+    Exterior Algebra in 5 variables
+  lo:ZZ
+    start seach at [lo,lo+4]
+  hi:ZZ
+    stop search at [hi,hi+4]
+Outputs
+  L:List
+    a list of cohomology tables for this hilbert function that lead to monads
+Consequences
+Description
+  Text
+  Example
+    K = ZZ/32003
+    E = K[e_0..e_4,SkewCommutative=>true]
+    H = hilbertPolynomialFromInvariants(8,5,1,0)
+    L = findMonadWindows(H,E,-10,10)
+Caveat
+SeeAlso
+///
 doc ///
 Key
   guessDifferentials
