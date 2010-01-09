@@ -254,7 +254,7 @@ maximalChains (Poset) := (P) -> (
 	if P.cache.?maximalChains then (
 		return P.cache.maximalChains;
 	);
-	nonMaximalChains := apply(minimalElements(P1), x -> {x});
+	nonMaximalChains := apply(minimalElements(P), x -> {x});
 	maxChains := {};
 	n := #P.GroundSet;
 	i := 0;
