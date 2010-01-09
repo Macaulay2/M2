@@ -313,15 +313,16 @@ guessDifferentials = (cohTable,E) -> (
 ---
 
 -- construct a surface from a monad over the exterior algebra
-constructSurface = (monadE,S) -> (
+constructSurface = method()
+constructSurface(ChainComplex,PolynomialRing):=(monadE,S) -> (
      -- apply BBG to get the beilinson Monad
      alphaBeil := beilinson(monadE.dd_2,S);
      betaBeil := beilinson(monadE.dd_1,S);
      --
      -- BBG does not give correctly graded 0-Matrices!!!!
      --
-     if alphaBeil == 0 then alphaBeil = random(source betaBeil,S^{});
-     if betaBeil == 0 then betaBeil = random(S^{},target alphaBeil);
+     if alphaBeil == 0 then alphaBeil = map(source betaBeil,S^{},0);
+     if betaBeil == 0 then betaBeil = map(S^{},target alphaBeil, 0);
      --
      -- !!!!!!!!
      --
@@ -335,9 +336,12 @@ constructSurface = (monadE,S) -> (
      I := prune homology(betaBeil,alphaBeil);
      betti (fI := res I);  
      betti (fphi := res coker transpose fI.dd_1);
-     ideal fphi.dd_2
+     saturate ideal fphi.dd_2
      )
-    
+constructSurface(Matrix,PolynomialRing,PolynomialRing) := (M,E,S) -> (
+     constructSurface(guessDifferentials(M,E),S)
+     )
+  
      
 beginDocumentation()
 
@@ -419,9 +423,9 @@ Inputs
     a square 5x5 window of the cohomology table of the surface
   E:PolynomialRing
     Exterior Algebra in 5 variables
- Outputs
+Outputs
   monadE:ChainComplex
-    a chain Complex over E whose grading matches the given cohomology table 
+         a chain Complex over E whose grading matches the given cohomology table 
 Consequences
 Description
   Text
@@ -443,14 +447,21 @@ SeeAlso
 ///
 
 doc ///
+Key 
+  constructSurface
+Headline 
+  try to construct a surface
+///
+
+doc ///
 Key
-  constructSurface(ChainComplex,PolynomialRing)
+  (constructSurface,ChainComplex,PolynomialRing)
 Headline
   try to construct a surface from a given monad over the Exterior Algebra
 Usage
-  I=construcSurvace(C,S)
+  I=constructSurface(C,S)
 Inputs
-  C:Matrix
+  C:ChainComplex
     a monad over the exterior algebra
   S:PolynomialRing
     Symmetric Algebra in 5 variables
@@ -476,11 +487,11 @@ SeeAlso
 
 doc ///
 Key
-  constructSurface(Matrix,PolynomialRing,PolynomialRing)
+  (constructSurface,Matrix,PolynomialRing,PolynomialRing)
 Headline
   try to construct a surface from a given cohomology table
 Usage
-  I=construcSurvace(M,E,S)
+  I=constructSurface(M,E,S)
 Inputs
   M:Matrix
     a square window of the cohomology table of the surface
