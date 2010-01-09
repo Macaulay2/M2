@@ -56,9 +56,176 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     before := -1;
     oldg := footprint;
     
-    -- do stuff
-    
-    e
+    -- Compute the next module generating set; continue to loop until no changes.
+    loop := true;
+    while loop do (
+        loop = false;
+        before = now - 1;
+        i = 0;
+        skip = false;
+        while i < #g do (	
+            if s#i == before then (
+	            skip2 = true;	 
+	            while i > 0 and skip2 do (
+	                j = i - 1;
+	                skip2 = false;
+	                while j >= 0 do (
+	                    if leadMonomial(g#i) == leadMonomial(g#j) then (
+		                    skip2 = true;
+		                    break;
+	                    );
+	                    j = j - 1;
+	                );
+	                if skip2 then i = i + 1;
+	            );
+                e#i = red(e#i, I, dq, footprint);	      
+                -- row-reduction
+                j = 0;
+                while j < i and e#i != 0 do (
+	                if s#j == before and e#j != 0 then (
+	                    logei = logpoly(e#i, depq, indq);
+	                    logj = logpoly(e#j, depq, indq);	
+	                    if e#j != 0 and logj#0 == logei#0 then (
+                            if geqlog(logei#2, logj#2) then (
+	                            wi = apply((logei#2 - logj#2), v->v%q);
+		                        if wi == apply(inds, v->0) then (
+		                            w = 1;
+		                            for k to inds - 1 do w = w * (indq#k)^((logei#2 - logj#2)#k//q);
+		                            lc = leadCoefficient(e#i)//leadCoefficient(e#j);
+			                        if g#i > g#j * w then (
+                                        g#i = g#i - lc * (g#j) * w;
+	                                    h#i = (h#i - lc * (h#j) * w^q) % Iq;
+                                        e#i = red(e#i - lc * (e#j) * w^q, I, dq, footprint);
+	                                    j = 0;
+			                            loop = true;
+	    		                    )
+		                            else (
+			                            if g#i < g#j * w then (  
+        		                            extendj = extending(g#j,h#j,e#j,w);  
+	            	                        g = extendj#0;
+			                                h = extendj#1;
+			                                e = extendj#2;
+			                                s = extendj#3;
+                                            j = j + 1;
+			                                loop  =true;
+ 			                            )
+		                                 else ( 
+                                             j=j+1;
+                                         );
+			                        );   
+	                            ) 
+		                        else(
+                                    j = j + 1;
+                                );
+		                    )
+	                        else(
+                                j = j + 1;
+                            );
+	                    )
+                        else(
+                            j = j + 1;
+                        );
+	                )
+                    else (
+                        j = j + 1;
+                    );
+                );
+	            if e#i == 0 then s#i = now;
+                -- Extension
+                if e#i != 0 then (
+	                if s#i >= before then (
+	                    loop = true;   
+                        logei = logpoly(e#i, depq, indq);
+	                    deplmei = logei#1;
+	                    indlmei = logei#3;
+	                    for j to #oldg-1 do (
+	                        logj = logpoly(d * oldg#j, depq, indq);
+	                        deplmj = logj#1;
+	                        indlmj = logj#3;
+	                        if deplmj == deplmei then(
+	                            prod = 1;
+		                        for k to inds - 1 do (
+		                            mx = -((-(((logj)#2)#k-((logei)#2)#k))//q);
+		                            if mx > 0 then prod = prod * (indq#k)^mx;
+		                        ); 
+	                            skip1 = false;
+		                        for l to #g - 1 do (
+                                    if s#l >= before and g#l != 0 and leadMonomial(g#l) == leadMonomial(g#i*prod) then (
+                                        skip1 = true;
+		 	                            break;
+		                            );
+                                );
+	                            if not skip1 then (
+                                    extendi = extending(g#i,h#i,e#i,prod);
+	                                g = extendi#0;
+                                    h = extendi#1;
+                                    e = extendi#2;
+                                    s = extendi#3;
+	                                loop = true;
+		                        );
+		                    );          
+	                    );
+                        for k to #g - 1 do (
+	                        if s#k >= before and g#k != 0 and e#k != 0 then (	 	 
+	                            logk = logpoly(e#k, depq, indq);
+	                            if k < i and logk#0 == logei#0 then (
+	                                if apply((logei#2 - logk#2), v->v%q) == apply(inds, v->0) then (
+		                                ll = lcm(indlmei, logk#3);
+		                                w = ll//logei#3;
+		                                ww = apply(inds, v->degree(indq#v,w));
+			                            prod = 1;
+			                            for iii to #ww - 1 do(
+			                                ex = (ww#iii)//q;  
+			                                prod = prod * (indq#iii)^ex;
+			                            );
+		                                extendi = extending(g#i,h#i,e#i,prod);
+                                        g = extendi#0;
+                                        h = extendi#1;
+                                        e = extendi#2;
+                                        s = extendi#3;			      
+			                            loop = true;
+                                    );
+	                            );
+	                        );
+	                    );
+                    );
+                );
+            );
+            i = i + 1;
+        );    
+        -- initialize next P-module generator
+        now = now + 1;
+        iii = #g - 1;
+        while iii >= 0 do (
+            if g#iii == 0 then (
+	            g = drop(g,{iii,iii});
+	            h = drop(h,{iii,iii});
+	            e = drop(e,{iii,iii});
+	            s = drop(s,{iii,iii});
+            );
+            iii = iii - 1;
+        );
+        before = before + 1;
+        oldg = for iiii from 0 to #g - 1 list if s#iiii == before and e#iiii == 0 then g#iiii else continue;
+        e = apply(h, s->red(s, I, dq, footprint));
+    );
+
+    -- Post-process
+    i = #oldg - 1;
+    while i > 0 do (
+        logi = logpoly(oldg#i, depq, indq);
+        j = i - 1;
+        while j >= 0 do (
+            logj=logpoly(oldg#j, depq, indq);
+            if logi#0 == logj#0 and geqlog(logi#2, logj#2) then (
+	            oldg = delete(oldg#i, oldg);
+	            break;
+            );
+            j = j - 1;
+        );
+        i = i - 1;
+    );
+    oldg
 );
 
 -------------
@@ -85,13 +252,13 @@ red (RingElement, Ideal, RingElement, List) := (g, I, dq, modfoot) -> (
 fastq = method(TypicalValue => RingElement);
 fastq (RingElement, Ideal) := (g, I) -> (
     q := char ring I;
-    res := 1;
+    result := 1;
     while q != 0 do (
-        if q%2 == 1 then res = (res * g) % I;
+        if q%2 == 1 then result = (result * g) % I;
         q = q//2;
         g = (g^2) % I;
     );
-    res
+    result
 );
 
 -- Compare "logs".
