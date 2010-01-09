@@ -52,10 +52,13 @@ series(ZZ, FunctionClosure) := Series => (n,f) -> (
      for i from 0 to n do (if f i == 0 then continue else if first degree f i > n then break else s=s+f i);
      new Series from {genTerm => f, degree => n, series => s}
      );
-f = i -> if i==0 then 1 else 0;
-series(10, (i -> if i==0 then 1 else 0*x^i))
 
 
+f = i -> if i==0 then 1_A else x^i+0_A;
+series(10,f)
+
+f=i->(2*i)*x^(5*i)
+series(20,f)
 
 viewHelp
 
