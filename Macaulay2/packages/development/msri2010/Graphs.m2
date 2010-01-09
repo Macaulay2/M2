@@ -122,17 +122,9 @@ simpleGraph(Graph) := H -> (
 	  testVertices := set for i to k-1 list pairH#i#0;
       	  pairH#k = (pairH#k#0, pairH#k#1-testVertices)
 	  );
-     error "what is going on here?";
      new Graph from hashTable pairH)
 
-///
-restart
-loadPackage "Graphs"
-A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
-flatten {{a,b},{c,d},{a,d},{b,c}}
-set oo
-toList oo
-///
+
  
 writeDotFile = method()
 writeDotFile(String, Graph) := (filename, G) -> (
@@ -155,6 +147,16 @@ writeDotFile(String, Graph) := (filename, G) -> (
 	  );
      fil << "}" << endl << close;
      )
+
+///
+restart
+loadPackage "Graphs"
+A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
+B = digraph({{a,{b,d}},{b,{c}},{d,{a,c}}})
+flatten {{a,b},{c,d},{a,d},{b,c}}
+set oo
+toList oo
+///
 
 writeDotFile(String, Digraph) := (filename, G) -> (
      fil := openOut filename;
