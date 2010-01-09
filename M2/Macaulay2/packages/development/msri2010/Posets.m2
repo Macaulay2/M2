@@ -269,6 +269,8 @@ maximalChains (Poset) := (P) -> (
 	P.cache.maximalChains = maxChains
 )
 
+--input:  P a poset
+--output:  length of maximal chain in P
 
 height (Poset) := Poset => (P) -> (
      max apply (maximalChains P, s-> #s))
