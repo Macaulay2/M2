@@ -26,22 +26,24 @@ convert := f -> ( exponents f)
 
 -- Addition: concatenate and eliminate double monomials 
    -- delete doubles, by using tally and check for `odd/even
-Brp + Brp := Brp => (a,b) -> select(tally a + tally b, odd)
-
-a = secondpoly 
-b = firstpoly
-select(tally a + tally b, odd)A
-
-tally a + tally b
-tally a
-tally b
+Brp + Brp := Brp => (a,b) -> new Brp from keys select(tally a + tally b, odd)
 
 -- Multiplication: bitwise OR
-Brp * Brp = method(TypicalValue => Brp)
-Brp * Brp := (a, m) ->  (
-  apply (#a, i  -> brpOR( a#i, m)
-  )
-)
+Brp * Brp := Brp => (a, m) ->  
+  new Brp from apply (#a, i  -> brpOR( a#i, m))
+
+-- bitwise OR for 2 monomials
+brpOR (Brp, Brp) := Brp => (a,b) -> 
+  apply (#a, i -> max (a#i, b#0#i) )
+brpOR (List, Brp) := Brp => (a,b) -> 
+  apply (#a, i -> max (a#i, b#0#i) )
+
+
+end
+
+s = { {aa,ba,ca}, {da,ea,af}}
+s#0#0
+s#0#1
 
 firstpoly = new Brp from { {1,1,0}, {1,0,0}}
 secondpoly = new Brp from {{1,0,0}}
@@ -49,18 +51,19 @@ thirdpoly = new Brp from {{1,0,0}, {1,1,1}}
 
  firstpoly * secondpoly
  firstpoly + secondpoly + thirdpoly
+ firstpoly * secondpoly * thirdpoly + myHash1 
  myHash = firstpoly + thirdpoly
  tt = {}
  scanKeys(myHash, i -> append(tt, i))
  tt
- myHash = firstpoly + secondpoly
+ myHash1 = firstpoly + secondpoly
+  
+  firstpoly + myHash1 
+firstpoly 
+firstpoly + secondpoly 
+myHash1 
+ 
 
--- bitwise OR for 2 monomials
-brpOR = method(TypicalValue => Brp)
-brpOR (Brp, Brp) := (a,b) -> 
-  apply (#a, i -> max (a#i, b#i) )
-brpOR (List, Brp) := (a,b) -> 
-  apply (#a, i -> max (a#i, b#i) )
    
 
 
