@@ -26,13 +26,25 @@ convert := f -> ( exponents f)
 
 -- Addition: concatenate and eliminate double monomials 
 Brp + Brp = method(TypicalValue => Brp)
-Brp + Brp := (a,b) ->  (a|b
-   -- delete doubles
-   )
+Brp + Brp := (a,b) ->  ( t = tally(a|b)
+   -- delete doubles, by using tally and check for `odd/even
+  scan( #(keys t), i -> ( if t_((keys t)#i) % 2 == 0 
+    then print "double" 
+    else tt = append(tt, (keys t)#i) 
+    )
+  tt
+)
 
 -- Multiplication: bitwise OR
 Brp * Brp = method(TypicalValue => Brp)
-Brp * Brp := (a,b) ->  a*b 
+Brp * Brp := (a, m) ->  (
+  apply (#a, i  -> brpOR( a#i, m)
+  )
+
+-- bitwise OR for 2 monomials
+brpOR = method(TypicalValue => Brp)
+brpOR := (a,b) -> 
+  apply (#a, i -> max (a#i, b#i) )
    
 
 
