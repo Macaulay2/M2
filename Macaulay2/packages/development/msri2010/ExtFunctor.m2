@@ -8,6 +8,7 @@ newPackage(
 	  DebuggingMode => true
 	  )
 
+needsPackage("Functoriality")
 export {extension,yonedaExt,toExt,isYonedaEquivalent,yonedaProduct}
 
 mapsAndModules = method()
@@ -309,14 +310,34 @@ yonedaProduct(Matrix,Matrix) := (f,g) -> (
      toExt(i+j,L,N,map(N,LL_(j),yonedaExt(g) * F_j))  
      );
 
+
+
 beginDocumentation()
 needsPackage "SimpleDoc";
 
 doc ///
   Key
-    ConnectingHomomorphism
+    ExtFunctor
   Headline
-    Homological algebra tools, including some connecting homomorphisms.
+    A package allowing manipulation of elements of Ext modules.
+  Description
+    Text
+      This package allows elements of a module to be represented in three distinct ways:
+
+      * Literally as an element, i.e. a map Ext^i(M,N) <--- R^1, or
+      * As an ``i-extension,'' an exact sequence of length i starting with N and ending with M, or
+      * As a map from the i^{th} module of a free resolution of M to N which can be extended to a degree i map of chain complexes res N <--- res M.
+ 
+      Corresponding to these three types are three functions:
+
+      * The function @TO toExt@ returns an element of Ext given either of the other representations.
+      * The function @TO extension@ returns an i-extension given either of the other representations. 
+      * The function @TO yonedaExt@ returns the third type, given either of the first two. 
+
+      Note that the package does not have a preferred representation for an element; instead the functions each accept any of the representations.
+      Once these three representations are available, some manipulations are possible. The first is that two different i-extensions sometimes correspond to the same element of Ext: the function @TO isYonedaEquivalent@ checks this. The second is that elements of Ext^i(L,M) and Ext^j(M,N) can compose to form elements of Ext^{i+j}(L,N). The function @TO yonedaProduct@ accomplishes this composition.
+  SeeAlso
+    Functoriality
 ///
 doc ///
   Key
