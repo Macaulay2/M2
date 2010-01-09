@@ -48,7 +48,8 @@ export {
 	orderComplex,
 	VariableName,
 	hasseDiagram,
-	inducedPoset
+	inducedPoset,
+	atoms
 }
 
 needsPackage "SimplicialComplexes"
@@ -209,9 +210,10 @@ hasseDiagram (Poset) := DirectedGraph => (P) -> (
   directedGraph(P.GroundSet, coveringRelations P))
 
 --------------------------------------------------
---Minimal/Maximal Elements 
+--Minimal/Maximal Elements, and atoms 
 --------------------------------------------------
-
+-- input:  poset
+-- output:  list of minimal elements
 minimalElements = method()
 minimalElements (Poset) := (P) -> (
 	if P.cache.?minimalElements then (
@@ -223,6 +225,9 @@ minimalElements (Poset) := (P) -> (
 	P.cache.minimalElements = select(L, x -> x =!= null) 
 )
 
+
+-- input: poset
+-- output:  list of maximal elements
 maximalElements = method()
 maximalElements (Poset) := (P) -> (
 	if P.cache.?maximalElements then (
@@ -233,6 +238,16 @@ maximalElements (Poset) := (P) -> (
 	L := apply(n, i -> if all(n, j -> M_(i,j) == 0 or i == j) then P.GroundSet#i);
 	P.cache.maximalElements = select(L, x -> x =!= null) 
 )
+
+
+--input:  poset
+--output:  list of elements covering minimal elements
+
+atoms = method();
+atoms (Poset) := List => (P) -> (
+  if P.cache.?coveringRelations == false then coveringRelations P;
+  apply(select(P.cache.coveringRelations, R -> any(minimalElements P, elt -> (elt == R#0))), rels-> rels_1)    
+  )
 
 --------------------------------------------------
 -- dropElements/induced poset
