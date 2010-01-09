@@ -28,7 +28,6 @@ series = method()
 series(ZZ, RingElement) := Series => (n,f) -> (
      df := denominator f;
      nf := numerator f;
-     degdf := first degree df;
      degnf := first degree nf;
      dC := (coefficients(df,Monomials=>apply(0..n-degnf,i->x^i)))_1;
      if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
