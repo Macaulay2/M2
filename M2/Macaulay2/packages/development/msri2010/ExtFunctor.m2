@@ -321,20 +321,25 @@ doc ///
   Headline
     A package allowing manipulation of elements of Ext modules.
   Description
-   Text
-       This package allows elements of a module to be represented in three distinct ways:
+    Text
+       This package allows elements of an Ext module to be represented in three distinct ways:
        
-       * Literally as an element, i.e. a map Ext^i(M,N) <--- R^1, or
-       * As an ``i-extension,'' an exact sequence of length i starting with N and ending with M, or
-       * As a map from the i^{th} module of a free resolution of M to N which can be extended to a degree i map of chain complexes res N <--- res M.
+       1. Literally as an element, i.e. a map Ext^i(M,N) <--- R^1, or
        
+       2. As an ``i-extension,'' an exact sequence of length i starting with N and ending with M, or
+       
+       3. As a map from the i^{th} module of a free resolution of M to N which can be extended to a degree i map of chain complexes res N <--- res M.
+  
        Corresponding to these three types are three functions:
        
-       * The function @TO toExt@ returns an element of Ext given either of the other representations.
-       * The function @TO extension@ returns an i-extension given either of the other representations. 
-       * The function @TO yonedaExt@ returns the third type, given either of the first two. 
+       1. The function @TO toExt@ returns an element of Ext given either of the other representations.
        
+       2. The function @TO extension@ returns an i-extension given either of the other representations (analogous to @TO homomorphism@. 
+       
+       3. The function @TO yonedaExt@ returns the third type, given either of the first two. 
+              
        Note that the package does not have a preferred representation for an element; instead the functions each accept any of the representations.
+       
        Once these three representations are available, some manipulations are possible. The first is that two different i-extensions sometimes correspond to the same element of Ext: the function @TO isYonedaEquivalent@ checks this. The second is that elements of Ext^i(L,M) and Ext^j(M,N) can compose to form elements of Ext^{i+j}(L,N). The function @TO yonedaProduct@ accomplishes this composition.
   SeeAlso
     Functoriality
