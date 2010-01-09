@@ -18,32 +18,35 @@ newPackage(
 export {+,*, New}
 exportMutable {}
 
-Brp = new Type from List -- this is not quite right yet
+Brp = new Type of List -- this is not quite right yet
 
 -- Convert regular polynomial into its binary representation
 convert = method(TypicalValue => Brp)
 convert := f -> ( exponents f)
 
 -- Addition: concatenate and eliminate double monomials 
-Brp + Brp = method(TypicalValue => Brp)
-Brp + Brp := (a,b) ->  ( t = tally(a|b)
    -- delete doubles, by using tally and check for `odd/even
-  scan( #(keys t), i -> ( if t_((keys t)#i) % 2 == 0 
-    then print "double" 
-    else tt = append(tt, (keys t)#i) 
-    )
-  tt
-)
+Brp + Brp := Brp => (a,b) -> select(tally a + tally b, odd)
+
 
 -- Multiplication: bitwise OR
 Brp * Brp = method(TypicalValue => Brp)
 Brp * Brp := (a, m) ->  (
   apply (#a, i  -> brpOR( a#i, m)
   )
+)
+
+firstpoly = new Brp from { {1,1,0}, {1,0,0}}
+secondpoly = new Brp from {1,0,0}
+
+ firstpoly * secondpoly
+ firstpoly + secondpoly
 
 -- bitwise OR for 2 monomials
 brpOR = method(TypicalValue => Brp)
-brpOR := (a,b) -> 
+brpOR (Brp, Brp) := (a,b) -> 
+  apply (#a, i -> max (a#i, b#i) )
+brpOR (List, Brp) := (a,b) -> 
   apply (#a, i -> max (a#i, b#i) )
    
 
