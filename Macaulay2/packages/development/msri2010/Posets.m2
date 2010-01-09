@@ -208,7 +208,7 @@ minimalElements (Poset) := (P) -> (
 	);
 	M := P.RelationMatrix;
 	n := #P.GroundSet;
-	L := apply(n, i -> if all(n, j -> M_(j,i) === 0 or i === j) then P.GroundSet#i);
+	L := apply(n, i -> if all(n, j -> M_(j,i) == 0 or i == j) then P.GroundSet#i);
 	P.cache.minimalElements = select(L, x -> x =!= null) 
 )
 
@@ -219,7 +219,7 @@ maximalElements (Poset) := (P) -> (
 	);
 	M := P.RelationMatrix;
 	n := #P.GroundSet;
-	L := apply(n, i -> if all(n, j -> M_(i,j) === 0 or i === j) then P.GroundSet#i);
+	L := apply(n, i -> if all(n, j -> M_(i,j) == 0 or i == j) then P.GroundSet#i);
 	P.cache.maximalElements = select(L, x -> x =!= null) 
 )
 
@@ -254,7 +254,7 @@ maximalChains (Poset) := (P) -> (
 	if P.cache.?maximalChains then (
 		return P.cache.maximalChains;
 	);
-	nonMaximalChains := apply(minimalElements(P), x -> {x});
+	nonMaximalChains := apply(minimalElements(P1), x -> {x});
 	maxChains := {};
 	n := #P.GroundSet;
 	i := 0;
@@ -269,6 +269,9 @@ maximalChains (Poset) := (P) -> (
 	P.cache.maximalChains = maxChains
 )
 
+
+height (Poset) := Poset => (P) -> (
+     max apply (maximalChains P, s-> #s))
 --------------------------------------------------
 -- Order-Complex 
 --------------------------------------------------
