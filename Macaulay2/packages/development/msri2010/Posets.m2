@@ -58,7 +58,7 @@ poset(List,List,Matrix) := (I,C,M) ->
 	  symbol GroundSet => I,
 	  symbol Relations => C,
 	  symbol RelationMatrix => M,
-	  symbol cache => CacheTable
+	  symbol cache => new CacheTable from {}
 	  }
      
 DirectedGraph = new Type of HashTable
@@ -68,7 +68,7 @@ directedGraph(List, List) := (V,E) ->
      new DirectedGraph from {
      	  symbol Vertices => V,
      	  symbol DirectedEdges => E,
-	  symbol cache => CacheTable
+	  symbol cache => new CacheTable from {}
      }
 
 --------------
