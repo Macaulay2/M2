@@ -91,6 +91,38 @@ connectingHomomorphism(ZZ,ChainComplexMap,ChainComplexMap) := Matrix => opts -> 
      (inverse HH_(n-1) alpha) * HH_n beta
      )
 
+coneInjectTarget = method()
+coneInjectTarget(ChainComplexMap) := ChainComplexMap => (f) -> (
+      C := source f;
+      D := target f;
+      E := cone f;
+      map(E,D,k->E_k_[0])
+      )
+
+coneInjectSource = method()
+coneInjectSource(ChainComplexMap) := ChainComplexMap => (f) -> (
+      C := source f;
+      D := target f;
+      E := cone f;
+      map(E,C[-1],k->E_k_[1])
+      )
+ 
+coneProjectTarget = method()
+coneProjectTarget(ChainComplexMap) := ChainComplexMap => (f) -> (
+      C := source f;
+      D := target f;
+      E := cone f;
+      map(D,E,k->E_k^[0])
+      )
+  
+coneProjectSource = method()
+coneProjectSource(ChainComplexMap) := ChainComplexMap => (f) -> (
+      C := source f;
+      D := target f;
+      E := cone f;
+      map(C[-1],E,k->E_k^[1])
+      )
+
 connectingExt = method(TypicalValue => ChainComplexMap)
 connectingExt(Module,Matrix,Matrix) := ChainComplexMap => (N,f,g) -> (
      D := res N;
@@ -184,6 +216,46 @@ Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
      E.cache.Ext = {i,M,N};
      E
      );
+
+-- Computes the map of Tor modules Tor_i(f,N)
+-- Returns the map (Matrix) Tor_i(source f,N) --> Tor_i(target f,N)
+Tor(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
+	if ring source f != ring N then error "expected the same ring";
+	R := ring N;
+	if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings";
+	if i < 0 then map(R^0,R^0,0)
+	else if i === 0 then  f ** N
+	else (
+	     F := resolution(f,LengthLimit=>i+1);
+	     C := source F;
+	     D := target F;
+	     tC := C ** N;
+	     tD := D ** N;	     
+	     tf := F_i ** N;
+	     inducedMap(HH_i(tD), HH_i(tC), tf)
+	     )
+	)
+   
+
+-- Computes the map of Tor modules Tor_i(N,f)
+-- Returns the map (Matrix) Tor_i(N, source f) --> Tor_i(N, target f)
+Tor(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
+	if ring source f != ring N then error "expected the same ring";
+	R := ring N;
+	if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings";
+	if i < 0 then map(R^0,R^0,0)
+	else if i === 0 then  N ** f
+	else (
+	     F := resolution(f,LengthLimit=>i+1);
+	     C := source F;
+	     D := target F;
+	     tC := N ** C;
+	     tD := N ** D;	     
+	     tf := N ** F_i;
+	     inducedMap(HH_i(tD), HH_i(tC), tf)
+	     )
+	)
+
 
 toHom = method()
 toHom(Matrix) := f -> (
@@ -500,3 +572,22 @@ doc ///
   SeeAlso
     homomorphism
 ///        
+
+restart
+loadPackage"Functoriality"
+R = ZZ/3[x_1..x_5]
+m = ideal vars R
+N = comodule m
+M = comodule m^2
+L = m/m^2
+f = inducedMap(N,M)
+e = inducedMap(M,L)
+P = N
+time connectingTor_1(P,e,f);
+
+time (D,F,G) = horseshoe(e,f);
+time F2 = P ** F;
+time G2 = P ** G;
+time connectingHomomorphism(1,F2,G2)
+
+
