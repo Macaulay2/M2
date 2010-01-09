@@ -15,20 +15,26 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {brpOR,isDivisible, Brp}
+export {brpOR,isDivisible, Brp, convert, removeDups}
 exportMutable {}
 
 Brp = new Type of List -- this is not quite right yet
 
 -- Convert regular polynomial into its binary representation
-convert := Brp => f -> new Brp from  exponents f
+convert = method()
+convert(RingElement) := Brp => f -> new Brp from rsort exponents f
+-- Todo convert (Brp) := RingElement
 
 -- Addition: concatenate and eliminate double monomials 
-Brp + Brp := Brp => (a,b) -> new Brp from keys select(tally a + tally b, odd)
+Brp + Brp := Brp => (a,b) -> removeDups (a|b)
 
 -- Multiplication of polynomial with monomial: bitwise OR
 Brp * Brp := Brp => (a, m) ->  
-  new Brp from apply (#a, i  -> brpOR( a#i, m))
+  removeDups new Brp from rsort apply (#a, i  -> brpOR( a#i, m))
+
+-- remove duplicate monomials ( because = 0 )
+removeDups = method() 
+removeDups (Brp) := Brp => p -> new Brp from rsort keys select(tally p, odd)
 
 -- bitwise OR for 2 monomials
 brpOR = method()
@@ -57,15 +63,30 @@ document {
 	}
 
 TEST ///
+  R = ZZ/2[x,y,z]
   firstpoly = new Brp from { {1,1,0}, {1,0,0}}
   secondpoly = new Brp from {{1,0,0}}
-  thirdpoly = new Brp from {{1,0,0}, {1,1,1}}
+  thirdpoly = new Brp from {{0,1,0}, {1,1,1}}
+
+  assert ( convert(x*y*z + x*z) === new Brp from rsort {{1,1,1}, {1,0,1}})
 
 -- -- TODO check the following by hand (work them out on paper)
-  assert ( firstpoly * secondpoly == new Brp from {{1, 1, 0}, {1, 0, 0}} )
-  assert ( firstpoly * secondpoly === new Brp from {{1, 1, 0}, {1, 0, 0}} )
-  assert ( (new List from (firstpoly * secondpoly)) == {{1, 1, 0}, {1, 0, 0}})
-  assert (false) -- I have this in to be sure that the tests are run
+  assert ( firstpoly * secondpoly == new Brp from rsort {{1, 0, 0}, {1, 1, 0}})
+  assert ( firstpoly * secondpoly === new Brp from rsort {{1, 0, 0}, {1, 1, 0}})
+  assert ( thirdpoly * secondpoly === new Brp from rsort {{1, 1, 0}, {1, 1, 1}} )
+firstpoly + secondpoly
+  assert ( firstpoly + secondpoly == new Brp from {{1, 1, 0}} )
+  assert ( firstpoly + secondpoly + thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
+  assert ( (firstpoly + secondpoly) + thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
+  (firstpoly + thirdpoly) * secondpoly
+
+
+  assert ( (firstpoly + thirdpoly) * secondpoly == new Brp from rsort {{1, 0, 0}, {1,1,1}} )
+--  assert ( firstpoly * secondpoly * thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
+--  assert ( (firstpoly * secondpoly) * thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
+
+  assert ( (new List from (firstpoly * secondpoly)) == rsort {{1, 1, 0}, {1, 0, 0}})
+--  assert (false) -- I have this in to be sure that the tests are run
 --  -- TODO make other assertions for the following 
 --  firstpoly + secondpoly + thirdpoly
 -- firstpoly * secondpoly * thirdpoly + myHash1 
