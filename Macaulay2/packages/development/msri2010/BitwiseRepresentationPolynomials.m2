@@ -15,7 +15,7 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {brpOR,isDivisible, Brp, convert, removeDups}
+export {brpOR,isDivisible, Brp, convert, removeDups, divide}
 exportMutable {}
 
 Brp = new Type of List -- this is not quite right yet
@@ -50,7 +50,12 @@ isDivisible (Brp, Brp) := Boolean => (a,b) ->
   min flatten (a - b) > -1
   
 
--- divide 
+-- divide monomial a by monomial b
+divide = method()
+divide (Brp, Brp) := Brp => (a,b) -> (
+  assert isDivisible( a,b );
+  new Brp from {first (a-b)}
+)
 
 beginDocumentation()
 document { 
@@ -75,10 +80,13 @@ TEST ///
   monoB= new Brp from {{1,0,0}}
   monoC= new Brp from {{0,1,0}}
 
+
   assert ( isDivisible(monoA, monoB) == true )
   assert isDivisible(monoA, monoB) 
   assert ( isDivisible(monoA, monoC) == false)
-
+  divide(monoA, monoB) 
+  assert( divide(monoA, monoB) == new Brp from {{0,0,1}})
+  
   assert ( convert(x*y*z + x*z) === new Brp from rsort {{1,1,1}, {1,0,1}})
 
 -- -- TODO check the following by hand (work them out on paper)
