@@ -424,7 +424,7 @@ isLattice(Poset) := (P) -> (
 	                apply (P.GroundSet, elt2-> joinExists(P,elt, elt2)));
     checkMeets :=  unique flatten flatten apply(P.GroundSet, elt -> 
 	                apply (P.GroundSet, elt2-> meetExists(P,elt, elt2) ));
-    if member(false, set (flatten{checkJoins,checkMeets})) === true then false else true 
+    if member(false, set (flatten{checkJoins,checkMeets})) === true then P.cache.isLattice = false else P.cache.isLattice = true 
      )
 
 
@@ -580,6 +580,14 @@ allMultiDegreesLessThan = (d) -> (
 	);
 	L
 )
+
+
+
+
+---------------------------------
+-- MOEBIUS FUNCTION
+---------------------------------
+
 
 
 
