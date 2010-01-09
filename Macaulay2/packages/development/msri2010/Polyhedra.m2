@@ -36,7 +36,7 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
 	isPure, isSmooth,
 	dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, 
 	latticePoints, maxFace, minFace, objectiveVector,
-	minkSummandCone, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
+	minkSummandCone, mixedVolume, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
 	volume, vertexEdgeMatrix, vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
 	dualCone, faceFan, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
@@ -1665,6 +1665,39 @@ minkSummandCone Polyhedron := P -> (
 		     zerovec :=  map(source R,ZZ^1,0);
 		     Q := intersection(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))
+ 
+ 
+mixedVolume = method()
+mixedVolume List := L -> (
+     n := #L;
+     Elist = apply(L, P -> apply(faces(dim P -1,P),vertices));
+     liftings := apply(n, i -> map(ZZ^n,ZZ^n,1)||matrix{apply(n, j -> random 25)});
+     Qlist := apply(n, i -> affineImage(liftings#i,L#i));
+     local Qsum;
+     Qsums := apply(n, i -> if i == 0 then Qsum = Qlist#0 else Qsum = Qsum + Qlist#i);
+     mV := 0;
+     Elist = apply(n, i -> apply(Elist#i, e -> (e,(liftings#i)*e)));
+     E1 := Elist#0;
+     Elist = drop(Elist,1);
+     center := matrix{{1/2},{1/2}};
+     edgeTuple := {};
+     k := 0;
+     selectRecursion := (E1,edgeTuple,Elist,mV,Qsums,Qlist,k) -> (
+	  for e1 in E1 do (
+	       Elocal := Elist;
+	       if Elocal == {} then (print(edgeTuple|{e1}); mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et)))
+	       else (
+		    Elocal = for i from 0 to #Elocal-1 list (
+			 HP := halfspaces(Qsums#k + Qlist#(k+i+1));
+			 HP = for j from 0 to numRows(HP#0)-1 list if (HP#0)_(j,n) < 0 then ((HP#0)^{j},(HP#1)^{j}) else continue;
+			 returnE := select(Elocal#i, e -> (
+				   p := (sum apply(edgeTuple|{e1}, et -> et#1 * center)) + (e#1 * center);
+				   any(HP, pair -> (pair#0)*p - pair#1 == 0)));
+			 --if returnE == {} then break{};
+			 returnE);
+		    mV = selectRecursion(Elocal#0,edgeTuple|{e1},drop(Elocal,1),mV,Qsums,Qlist,k+1)));
+	  mV);
+     selectRecursion(E1,edgeTuple,Elist,mV,Qsums,Qlist,k))
  
  
 objectiveVector = method()
