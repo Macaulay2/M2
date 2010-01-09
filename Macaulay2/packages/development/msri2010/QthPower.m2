@@ -45,6 +45,9 @@ qthPower = method(TypicalValue => List);
 qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     -- Initialisation
     R := ring I;
+    inds := #gens R - deps;
+    depq := take(gens R, deps);
+    indq := take(gens R, -inds);
     q := char R;
     qc := qConductor(I, deps);
     dq := qc^(q - 1);
@@ -55,6 +58,9 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     now := 0;
     before := -1;
     oldg := footprint;
+    i := j := w := k := deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := 0;
+    skip := skip1 := skip2 := true;
+    logei := logj := logk := wi := ww := {};
     
     -- Compute the next module generating set; continue to loop until no changes.
     loop := true;
@@ -107,22 +113,22 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 			                                e = extendj#2;
 			                                s = extendj#3;
                                             j = j + 1;
-			                                loop  =true;
+			                                loop = true;
  			                            )
 		                                 else ( 
-                                             j=j+1;
+                                             j = j + 1;
                                          );
 			                        );   
 	                            ) 
-		                        else(
+		                        else (
                                     j = j + 1;
                                 );
 		                    )
-	                        else(
+	                        else (
                                 j = j + 1;
                             );
 	                    )
-                        else(
+                        else (
                             j = j + 1;
                         );
 	                )
