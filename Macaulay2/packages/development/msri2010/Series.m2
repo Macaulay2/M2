@@ -29,17 +29,30 @@ series(ZZ, RingElement) := Series => (n,f) -> (
      df := denominator f;
      nf := numerator f;
      degnf := first degree nf;
-     dC := (coefficients(df,Monomials=>apply(0..n-degnf,i->x^i)))_1;
+     m := min(first degree df,n);
+     dC := (coefficients(df,Monomials=>apply(0..m,i->x^i)))_1;
      if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
-     a := i -> if i == 0 then (dC_(0,0))^(-1) else -sum(1..i, j -> dC_(j,0)*a(i-j))/dC_(0,0);    
+     a := i -> if i == 0 then (dC_(0,0))^(-1) else -(dC_(0,0))^(-1)*sum(1..i, j -> dC_(j,0)*a(i-j));    
      s := nf * sum(0..n-degnf,i -> a(i) * x^i);
      new Series from {rationalFunction => f, degree => n, series => s}
      );
 
-A = ZZ[x]
+seriesOLD = method()
+seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
+     df := denominator f;
+     nf := numerator f;
+     c := coefficient(1_(ring df), df); -- pulls out constant term
+     s := sum select(terms lift(nf*(1/c)*sum(n+1, i -> (1-df/c)^i), ring df), i -> first degree i <= n);
+     new Series from {rationalFunction => f, degree => n, series => s}
+     );
 
-# gens(A)
-g = series(3,1/(x-1))
+
+A = ZZ[x]
+g = series(3,(x^3+2*x-3)/(x^2+x-1))
+g = seriesOLD(3,(x^3+2*x-3)/(x^2+x-1))
+
+g = series(2,(x^6)/(x^2+x-1))
+g = seriesOLD(2,(x^6)/(x^2+x-1))
 
 code methods reduceHilbert
 
@@ -65,14 +78,7 @@ series(ZZ, Function) := Series => (n,f) -> (
 
 
 
-seriesOLD = method()
-seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
-     df := denominator f;
-     nf := numerator f;
-     c := coefficient(1_(ring df), df); -- pulls out constant term
-     s := sum select(terms lift(nf*(1/c)*sum(n+1, i -> (1-df/c)^i), ring df), i -> first degree i <= n);
-     new Series from {rationalFunction => f, degree => n, series => s}
-     );
+
 
 
 installPackage "FormalGroupLaws"
