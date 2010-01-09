@@ -1,5 +1,7 @@
 -- this file is licenced for use under the GNU General Public Licence version 2
 
+needsPackage "SimplicialComplexes"
+
 newPackage(
 	"Posets",
     	Version => "0.1", 
@@ -14,31 +16,40 @@ newPackage(
     	)
  
 export {
-     Poset,
-     poset,
-     DirectedGraph,
-     directedGraph,
-     adjacencyMatrix,
-     allPairsShortestPath,
-     transitiveClosure,
+	Poset,
+	poset,
+	DirectedGraph,
+	directedGraph,
+	adjacencyMatrix,
+	allPairsShortestPath,
+	transitiveClosure,
 --     FullRelationMatrix,
-     RelationMatrix,
-     compare,
-     orderIdeal,
-     filter,
-     Relations,
-     GroundSet,
-     Vertices,
-     DirectedEdges,
-     posetMeet, 
-     meetExists, -- do tests for
-     posetJoin,
-     joinExists,
-     isLattice,
-     --lcm,
-     lcmLattice
-     }
+	RelationMatrix,
+	compare,
+	orderIdeal,
+	filter,
+	Relations,
+	GroundSet,
+	Vertices,
+	DirectedEdges,
+	posetMeet, 
+	meetExists, -- do tests for
+	posetJoin,
+	joinExists,
+	isLattice,
+	--lcm,
+	lcmLattice,
+	divisorPoset, 
+	coveringRelations,
+	maximalElements,
+	minimalElements,
+	dropElements,
+	maximalChains,
+	orderComplex,
+	VariableName
+}
 
+needsPackage "SimplicialComplexes"
 
 
 Poset = new Type of HashTable
@@ -49,7 +60,7 @@ poset(List,List) := (I,C) ->
 	 symbol GroundSet => I,
 	 symbol Relations => C,
      	 symbol RelationMatrix => transitiveClosure(I,C),
-	 symbol cache => new CacheTable from {}
+	 symbol cache => new CacheTable
 	 }
     
 -- in case you actually have M to begin with    
@@ -58,7 +69,7 @@ poset(List,List,Matrix) := (I,C,M) ->
 	  symbol GroundSet => I,
 	  symbol Relations => C,
 	  symbol RelationMatrix => M,
-	  symbol cache => new CacheTable from {}
+	  symbol cache => new CacheTable
 	  }
      
 DirectedGraph = new Type of HashTable
@@ -68,7 +79,7 @@ directedGraph(List, List) := (V,E) ->
      new DirectedGraph from {
      	  symbol Vertices => V,
      	  symbol DirectedEdges => E,
-	  symbol cache => new CacheTable from {}
+	  symbol cache => new CacheTable
      }
 
 --------------
@@ -173,59 +184,102 @@ compare(Poset, Thing, Thing) := Boolean => (P,A,B) -> (
 --------------------------------------------------
 --Covering Relations
 --------------------------------------------------
-
-testcover=(P,A,B) -> (
-     L:=poset(P.GroundSet,fullPosetRelation(P));
-     k:=#L.GroundSet-2; 
-         
-     if sum(nonnull(apply(k, i-> if compare(L,A,(toList(set(L.GroundSet)-{A,B}))_i)==true and
-	       compare(L,(toList(set(L.GroundSet)-{A,B}))_i,B)==true
-	       then 1)))=!=0 then C=C+set{(A,B)};
-     C
-)		
-
 --input: A poset with any type of relation C (minimal, maximal, etc.)
 --output: The minimal relations defining our poset
 
-coveringRelations:=(P) -> (
-     C=set{};
-     apply(#P.CRelations,i->testcover(P,P.CRelations#i#0,P.CRelations#i#1));
-     toList(set(P.CRelations)-C)
-     )
-
---input: A poset with any type of relation C (minimal, maximal, etc.)
---output:  A new poset P with the minimal relations
-
-coveringRelationsPoset:=(P) -> (
-     L=poset(P.GroundSet,coveringRelations(P))
-     )
+coveringRelations = method();
+coveringRelations (Poset) := (P) -> (
+	if P.cache.?coveringRelations then (
+		return P.cache.coveringRelations;
+	);
+	nonCovers := sum apply(P.Relations, 
+		R -> set apply(select(P.Relations, S -> (first S == last R and first R != last R and first S != last S)), S -> (first R, last S) ));
+	P.cache.coveringRelations = P.Relations - (nonCovers + set apply(P.GroundSet, x -> (x,x)))
+)
 
 --------------------------------------------------
---Minimal Element Construction
+--Minimal/Maximal Elements 
 --------------------------------------------------
 
-minimalElementIndex:=(P)-> (
-     M:=P.RelationMatrix;
-     nonnull(apply(numcols(M), k-> if (apply(numcols(M), j-> (sum((apply(numrows(M),i-> (transpose(M))_i))))_j))#k==1 then k))
-     )
+minimalElements = method()
+minimalElements (Poset) := (P) -> (
+	if P.cache.?minimalElements then (
+		return P.cache.minimalElements;
+	);
+	M := P.RelationMatrix;
+	n := #P.GroundSet;
+	L := apply(n, i -> if all(n, j -> M_(j,i) === 0 or i === j) then P.GroundSet#i);
+	P.cache.minimalElements = select(L, x -> x =!= null) 
+)
 
-minimalElements:=(P) -> (
-     L:=minimalElementIndex(P);
-     apply(#L,i-> P.GroundSet#(L#i))
-     )
+maximalElements = method()
+maximalElements (Poset) := (P) -> (
+	if P.cache.?maximalElements then (
+		return P.cache.maximalElements;
+	);
+	M := P.RelationMatrix;
+	n := #P.GroundSet;
+	L := apply(n, i -> if all(n, j -> M_(i,j) === 0 or i === j) then P.GroundSet#i);
+	P.cache.maximalElements = select(L, x -> x =!= null) 
+)
 
-PosetMinusMins:=(P)-> (
-     L:=minimalElements(P);
-     K:=fullPoset(P);
-     N:=set{};
-     S:=apply(#L, j-> apply(#K.CRelations,i->(K.CRelations#i)#0===L#j));
-     E:=sum set nonnull(apply(#K.CRelations,l->if member(true,set apply(#L,k->S#k#l)) then N=N+set{K.CRelations#l}));
-     C:=toList (set(K.CRelations)-N);
-     I:=toList (set(K.GroundSet)-set(L));
-     poset(I,C)
-     )
+--------------------------------------------------
+-- dropElements -- Poset on a smaller ground set
+--------------------------------------------------
 
+dropElements = method()
 
+dropElements (Poset, List) := (P, L) -> (
+	keptIndices := select(toList(0..#P.GroundSet-1), i-> not member(P.GroundSet#i,L));
+	newGroundSet := apply(keptIndices, i-> P.GroundSet#i);
+	newRelationMatrix := P.RelationMatrix_keptIndices^keptIndices;
+	newRelations := select(P.Relations, r -> not member(first r, L) and not member(last r, L));
+	poset(newGroundSet, newRelations, newRelationMatrix)
+)
+
+dropElements (Poset, Function) := (P, f) -> (
+	keptIndices := select(toList(0..#P.GroundSet-1), i-> not f(P.GroundSet#i));
+	newGroundSet := apply(keptIndices, i-> P.GroundSet#i);
+	newRelationMatrix := P.RelationMatrix_keptIndices^keptIndices;
+	newRelations := select(P.Relations, r -> not f(first r) and not f(last r));
+	poset(newGroundSet, newRelations, newRelationMatrix)
+)
+
+--------------------------------------------------
+-- maximalChains 
+--------------------------------------------------
+
+maximalChains = method()
+maximalChains (Poset) := (P) -> (
+	if P.cache.?maximalChains then (
+		return P.cache.maximalChains;
+	);
+	nonMaximalChains := apply(minimalElements(P), x -> {x});
+	maxChains := {};
+	n := #P.GroundSet;
+	i := 0;
+	while #nonMaximalChains =!= 0 and i <= n do (
+		nonMaximalChains = flatten apply(nonMaximalChains, c -> (
+			nexts := select(coveringRelations P, r -> first r == last c);
+			if #nexts == 0 then maxChains = append(maxChains, c);
+			apply(nexts, r -> c | {last r})
+			)
+		)
+	);
+	P.cache.maximalChains = maxChains
+)
+
+--------------------------------------------------
+-- Order-Complex 
+--------------------------------------------------
+
+orderComplex = method(Options => { symbol VariableName => symbol v, symbol CoefficientRing => QQ } )
+orderComplex (Poset) := opts -> (P) -> (
+	s := opts.VariableName;
+	R := (opts.CoefficientRing)[s_0..s_(#P.GroundSet -1)];
+	variableMap := hashTable apply(#P.GroundSet, i -> P.GroundSet#i => R_i);
+	simplicialComplex apply(maximalChains P, c -> product apply(c, x -> variableMap#x))
+)
 
 --------------------------------------------------
 --Order and Filter Ideals
@@ -237,12 +291,11 @@ PosetMinusMins:=(P)-> (
 
 orderIdeal= method()
 orderIdeal(Poset, Thing) := (P, a) -> (
-     M:=P.RelationMatrix;
-     aindex := indexElement (P,a);
-     GreaterThana:= entries((transpose(M))_aindex);
-     nonnull(apply(#GreaterThana, i-> if GreaterThana_i == 1 then P.GroundSet#i)) 
-     )	
-	   
+	M:=P.RelationMatrix;
+	aindex := indexElement (P,a);
+	GreaterThana:= entries((transpose(M))_aindex);
+	nonnull(apply(#GreaterThana, i-> if GreaterThana_i == 1 then P.GroundSet#i)) 
+	)
 
 
 -- input: a poset, and an element from I
@@ -343,24 +396,149 @@ isLattice(Poset) := (P) -> (
 -- output: lcm lattice of that monomial ideal, without the minimal element
 -- potential problem:  subsets dies when a set is too big (> 18)
 
-lcmLattice = method()     
-lcmLattice(Ideal) := Poset => (I) -> (
-	   L := flatten entries gens I;
-	   subsetsL := flatten apply(#L, i-> subsets (L,i+1));
-	   Ground := unique flatten apply (subsetsL, r-> lcm(r));
-	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s%r == 0 then (r,s)));
-	   RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
-	   P = poset (Ground, Rels, RelsMatrix);
-	   P)
+lcmLattice = method( Options => { Strategy => 1 })     
+lcmLattice(Ideal) := Poset => opts -> (I) -> (
+	   lcmLattice(monomialIdeal I, opts)
+	   )
 
-lcmLattice(MonomialIdeal) := Poset => (M) -> (
-     	   L := flatten entries gens M;
-	   subsetsL := flatten apply(#L, i-> subsets (L,i+1));
-	   Ground := unique flatten apply (subsetsL, r-> lcm(r));
-	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s%r == 0 then (r,s)));
+lcmLattice(MonomialIdeal) := Poset => opts -> (M) -> (
+	   L := flatten entries gens M;
+	   Ground := null;
+	   if opts.Strategy === 0 then (
+		subsetsL := flatten apply(#L, i-> subsets (L,i+1));
+		Ground = unique flatten apply (subsetsL, r-> lcm(r));
+		) else (
+		Ground = lcmLatticeProduceGroundSet L;
+		Ground = apply(Ground, D -> product apply(numgens ring M, i-> (ring M)_i^(D#i)));
+		);
+	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s % r == 0 then (r,s)));
 	   RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
-	   P = poset (Ground, Rels, RelsMatrix);
-	   P)
+	   poset (Ground, Rels, RelsMatrix)
+	   )
+
+
+--Subroutine of lcmLatticeProduceGroundSet
+--Makes a pair storing a multi-degree and 
+--a list of multi-degrees which are to be 
+--joined with this degree.
+degreeNextPair = (D, nextDegrees) -> 
+	hashTable { 
+		symbol degree => D, 
+		symbol next => nextDegrees
+		};
+
+--Subroutine of lcmLatticeProduceGroundSet
+--Takes the lcm of two degrees and determines which 
+--of the lowerNexts can later be joined to newDegree
+--and change its multidegree. Note that the lower nexts are not
+--all multi-degrees. They have already been chosen so that they 
+--would not change the degrees of the first i variables where
+--i appears in the for loop of lcmLatticeProduceGroundSet.
+joinDegrees = (A,B, lowerNexts) ->  (
+	C := lcmDegree {A.degree, B};
+	nexts := select(lowerNexts, D -> not dividesDegree(D, C));
+	degreeNextPair( C, nexts )
+)
+
+--Subroutine of lcmLatticeProduceGroundSet (used in joinDegrees)
+--Checks if D divides E as multidegrees
+dividesDegree = (D,E) -> all(E-D, i-> i >= 0);
+
+--Subroutine of lcmLatticeProduceGroundSet (used in joinDegrees)
+--Takes the lcm of two multidegrees
+lcmDegree = L -> apply(transpose L, l -> max l);
+
+--Subroutine of lcmLatticeProduceGroundSet (used in determineLCMsForVariable)
+--Take a list of degreeNextPairs and drop duplicate degrees
+uniqueMultiDegrees = L -> (
+	P := partition(D -> (D.degree) , L);
+	apply(keys P, d -> first P#d)
+)
+
+
+--Subroutine of lcmLatticeProduceGroundSet 
+--Builds the possible multidegrees by changes in variable i.
+determineLCMsForVariable = (lcmDegrees, i) -> (
+	VERBOSE := false;
+	newLCMDegrees := flatten apply(lcmDegrees, D -> (
+		if VERBOSE then << "Working on " << D.degree << endl << D.next << endl;
+		-- Take D's nexts are partition them by the exponent 
+		-- of the i-th variable. Store in P.
+		P := partition(E -> E#i, D.next);
+		-- Partition the possible degrees of the i-th variable
+		-- into those that change multi-degree D in the i-th coordinate
+		-- and those that don't. Store in Q.
+		Q := partition(d -> d > (D.degree)#i, keys P);
+		--Restrict P to only those which change the degree the i-th variable of D.
+		upperPartition := hashTable apply(if Q#?true then Q#true else {}, d -> d => P#d);
+		if VERBOSE then << "Upper Partition" << endl << upperPartition << endl;
+		-- The lowerNexts are those multi degrees that can change D in
+		-- the indices larger than i, but not in i itself.
+		lowerNexts := flatten apply(if Q#?false then Q#false else {},  d -> P#d);
+		newD := degreeNextPair( D.degree, lowerNexts ); -- D with fewer nexts
+		newMultiDegrees := flatten apply(keys upperPartition, d -> (
+			lowerNexts = lowerNexts | upperPartition#d; -- build these as we go
+			apply(upperPartition#d, E -> joinDegrees(D,E,lowerNexts))
+			)
+		);
+		{newD } | newMultiDegrees 
+		)
+	);
+	newLCMDegrees = select(newLCMDegrees, D -> D =!= null);
+	uniqueMultiDegrees newLCMDegrees
+)
+
+lcmLatticeProduceGroundSet = G -> (
+	VERBOSE := false;
+	initialExps := flatten apply(G, m -> exponents m);
+	n := if #initialExps === 0 then 0 else #(first initialExps);
+	lcmDegrees := { degreeNextPair(apply(n, i -> 0), initialExps) };
+	for i from 0 to n-1 do (
+		if VERBOSE then << "Variable " << i << endl;
+		if VERBOSE then printDegreeList L;
+		-- lcmDegrees contains all possible multi-degrees restricted
+		-- to the first i varibles. For each of these multi-degrees
+		-- we have a list of "nexts" which are atoms which could
+		-- affect degrees of variables after i without changing 
+		-- the degrees of variables before i.
+		lcmDegrees = determineLCMsForVariable(lcmDegrees, i);
+	);
+	sort apply(lcmDegrees, D -> D.degree)
+)
+
+
+-----------------------------------------------
+-- divisorPoset
+-----------------------------------------------
+-- input:  a monomial m (and an ideal I)
+-- output: lattice of all monomials dividing m (and contained in I)
+
+divisorPoset = method()
+divisorPoset (RingElement) := Poset => (m) -> (
+	d := flatten exponents m;
+	Ground := apply(allMultiDegreesLessThan d, e -> makeMonomialFromDegree(ring m, e));
+	Rels :=  unique flatten apply (Ground, r-> apply(Ground, s-> if s % r == 0 then (r,s)));
+	Rels = select(Rels, r -> r =!= null);
+	RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
+	poset (Ground, Rels, RelsMatrix)
+	)
+
+makeMonomialFromDegree = (R, d) -> (
+	product apply(numgens R, i-> R_i^(d#i))
+)
+
+allMultiDegreesLessThan = (d) -> (
+	L := {{}};
+	for i from 0 to (#d) -1 do (
+		maxDegree := d#i;
+		L = flatten apply(L, H -> apply(maxDegree+1, i -> H | {i}));
+	);
+	L
+)
+
+
+
+
 ----------------------------------
 -- DOCUMENTATION
 ----------------------------------
@@ -907,6 +1085,227 @@ doc ///
 	  fixed by the next release of this package.	 
 /// 
 
+     
+-----------------
+-- divisorPoset
+-----------------
+
+doc ///
+	Key
+		divisorPoset
+		(divisorPoset,RingElement)
+	Headline
+		returns the poset of all divisors of a given monomial
+	Usage
+		P = divisorPoset (M)
+	Inputs 
+		M : RingElement
+	Outputs
+		P : Poset
+	Description
+		Text
+			This command computes the poset of all divisors of a given monomial. For two monomials,
+			u and v with u strictly dividing v, we have u < v in this poset.
+		Example
+			S = QQ[a,b,c,d];
+			P = divisorPoset(a*b^2*d^3)
+/// 
+
+     
+
+-----------------
+-- coveringRelations
+-----------------
+
+doc ///
+	Key
+		coveringRelations
+		(coveringRelations,Poset)
+	Headline
+		returns a list of all relations (a < b) with no intermediates
+	Usage
+		C = coveringRelations (P)
+	Inputs 
+		P : Poset
+	Outputs
+		C : List
+			all pairs (a,b) of elements of P where a < b and there is no c with a < c < b
+	Description
+		Text
+			This command computes the list of all covering relations of a poset P. 
+			A relation (a,b) is said to be a covering relation if a < b and there
+			is no element c with a < c < b. The result of this method is cached.
+		Example
+			S = QQ[a,b,c,d];
+			P = divisorPoset(a*b^2*d);
+			P.GroundSet
+			P.Relations
+			C = coveringRelations P
+/// 
+
+-----------------
+-- dropElements
+-----------------
+
+doc ///
+	Key
+		dropElements
+		(dropElements,Poset,List)
+		(dropElements,Poset,Function)
+	Headline
+		returns the poset obtained by removing a list of elements 
+	Usage
+		Q = dropElements (P, L)
+		Q = dropElements (P, f)
+	Inputs 
+		P : Poset
+		L : List
+			elements of P
+		f : Function
+			boolean valued giving true on those elements to be removed
+	Outputs
+		Q : Poset
+			on elements of P that are not in L (or for which f is false) and all induced relations
+	Description
+		Text
+			This command take a poset P and returns a new poset that
+			contains all elements in P that are not in L.
+			The relations on the remaining elements are all relations that held in P.
+
+			Alternately, if a boolean function is given as input instead of a list, all 
+			elements for which the function returns true are removed from P.
+
+		Example
+			S = QQ[a,b];
+			P = divisorPoset(a*b^2);
+			P.GroundSet
+			Q = dropElements(P, {a,a*b^2})
+			R = dropElements(P, m -> first degree m === 2)
+/// 
+
+-----------------
+-- maximalChains
+-----------------
+
+doc ///
+	Key
+		maximalChains
+		(maximalChains,Poset)
+	Headline
+		returns all maximal chains of a poset
+	Usage
+		C = maximalChains (P)
+	Inputs 
+		P : Poset
+	Outputs
+		C : List
+			of maximal chains of P
+	Description
+		Text
+			The maximal chains of P are totally orders subsets of P which are not properly contained
+			in any other totally ordered subsets.
+
+			This method returns a list of all maximal chains. The maximal chains are themselves
+			lists of elements in P ordered from smallest to largest.
+
+			The results of this method are cached.
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b^2*c);
+			C = maximalChains P
+/// 
+
+-----------------
+-- minimalElements
+-----------------
+
+doc ///
+	Key
+		minimalElements
+		(minimalElements,Poset)
+	Headline
+		returns all minimal elements of a poset
+	Usage
+		L = minimalElements (P)
+	Inputs 
+		P : Poset
+	Outputs
+		L : List
+			of all minimal elements of P
+	Description
+		Text
+			This method returns a list of all minimal elements of P.
+			The results of this method are cached.
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b^2*c);
+			minimalElements P
+			Q = dropElements(P, minimalElements(P));
+			minimalElements Q
+/// 
+
+-----------------
+-- maximalElements
+-----------------
+
+doc ///
+	Key
+		maximalElements
+		(maximalElements,Poset)
+	Headline
+		returns all maximal elements of a poset
+	Usage
+		L = maximalElements (P)
+	Inputs 
+		P : Poset
+	Outputs
+		L : List
+			of all maximal elements of P
+	Description
+		Text
+			This method returns a list of all maximal elements of P.
+			The results of this method are cached.
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b^2*c);
+			maximalElements P
+			Q = dropElements(P, maximalElements(P));
+			maximalElements Q
+/// 
+
+-----------------
+-- orderComplex
+-----------------
+
+doc ///
+	Key
+		orderComplex
+		(orderComplex,Poset)
+	Headline
+		returns the simplicial complex with faces given by chains
+	Usage
+		D = orderComplex (P)
+	Inputs 
+		P : Poset
+	Outputs
+		D : SimplicialComplex
+			the order complex of P
+	Description
+		Text
+			This method returns the order complex of a poset P. The order
+			complex is the simplicial complex whose faces are chains of P
+			(and whose facets are maximal chains of P).
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b*c);
+			C = maximalChains P
+			D = orderComplex P
+/// 
+
 doc ///
      Key 
      	  GroundSet
@@ -1121,94 +1520,3 @@ assert(D1 ==  promote(matrix {{0, 1, 4, 3}, {4, 0, 3, 2}, {1, 2, 0, 4}, {2, 3, 1
 ///
 
 
-height (Poset) := HashTable => (P) -> (
-  nP := #(P.GroundSet);
-  nEltsBelow := apply(entries transpose(P.RelationMatrix), l -> (
-    (sum l) - 1));
-  eltsPAndCountBelow := flatten apply(sort unique nEltsBelow, i -> 
-    apply(select(toList(0..nP-1), j ->
-      (nEltsBelow#j == i)), j -> {P.GroundSet#j, i}));
-  nEltsBelowHT := hashTable eltsPAndCountBelow;
-  eltsP := eltsPAndCountBelow / (l -> l#0);
-  htP := hashTable (select(eltsP, F -> 
-    (nEltsBelowHT#F == 0)) / (F -> (F, 1)));
-  last apply(nP, i -> (
-    if (nEltsBelowHT#(eltsP#i) > 0) then (
-        htP = hashTable flatten {pairs htP,
-          (eltsP#i, 1 + max apply(select(toList (0..i-1), j ->
-            ((eltsP#i % eltsP#j) == 0)), j -> htP#(eltsP#j)))})
-    else htP)))
-
-coverRelations = method();
-
-coverRelations (Poset) := List => (P) -> (
-  nP := #(P.GroundSet);
-  entriesRelMat := entries P.RelationMatrix;
-  onesToBeRem := sort unique (select((3:0)..(3:(nP-1)), s -> 
-        s#0!=s#1 and s#1!=s#2 and s#0!=s#2 and
-        entriesRelMat#(s#0)#(s#1)*entriesRelMat#(s#1)#(s#2) == 1) /
-          (s -> (s#0, s#2)));
-  covMat := matrix(apply(nP, i -> apply(nP, j -> 
-    if any(onesToBeRem, s -> (s ==(i,j))) then 0 
-       else entriesRelMat#i#j))) - 
-    diagonalMatrix toList (nP:1);
-  flatten apply(nP, i -> apply(select(toList (0..nP-1), j ->
-    (entries covMat)#i#j == 1), j -> (P.GroundSet#i, P.GroundSet#j))))
-
-hasseDiagram = method();
-
-hasseDiagram (Poset) := DirectedGraph => (P) -> (
-  directedGraph(P.GroundSet, coverRelations P))
-
-inducedPoset = method();
-
-inducedPoset (Poset, List) := Poset => (P, L) -> (
-  rel := select(P.Relations, R -> (
-    any(L, G -> (G == R#0)) & any(L, G -> (G == R#1))));
-  poset(L, rel))
-
-atoms = method();
-
-atoms (Poset) := List => (P) -> (
-  hP := height P;
-  select(P.GroundSet, F -> (hP#F == 1)))
-
-
-moebiusFunction = method();
-
-moebiusFunction (Poset) := HashTable => (P) -> (
-  nP := #(P.GroundSet);
-  nEltsBelow := apply(entries transpose(P.RelationMatrix), l -> (
-    (sum l) - 1));
-  eltsPAndCountBelow := flatten apply(sort unique nEltsBelow, i ->
-    apply(select(toList(0..nP-1), j ->
-      (nEltsBelow#j == i)), j -> {P.GroundSet#j, i}));
-  nEltsBelowHT := hashTable eltsPAndCountBelow; 
-  eltsP := eltsPAndCountBelow / (l -> l#0);
-  htP := hashTable (select(eltsP, F -> 
-    (nEltsBelowHT#F == 0)) / (F -> (F, -1)));
-  last apply(nP, i -> (
-    if (nEltsBelowHT#(eltsP#i) > 0) then (
-        htP = hashTable flatten {pairs htP,
-          (eltsP#i, -(1+sum apply(select(toList (0..i-1), j ->
-            ((eltsP#i % eltsP#j) == 0)), j -> htP#(eltsP#j))))}))))
-
-
-orderComplex = method();
-
-orderComplex (Poset) := SimplicialComplex => (P) -> (
-  -- computes the order complex of P after removing the bottom and top
-  -- elements if they exist.
-  m := symbol m;
-  S := ZZ[m_0..m_(#P.GroundSet-1)];
-  relM := entries (P.RelationMatrix + transpose(P.RelationMatrix));
-  nonFaces := select((0,0)..(#P.GroundSet-1, #P.GroundSet-1), l -> (
-    relM_(l#0)_(l#1) == 0)) / (l -> m_(l#0)*m_(l#1));
-  uniqueBottom := select(0..#P.GroundSet-1, i -> 
-    all(flatten entries ((P.RelationMatrix)_{i}), a -> (a==1))) / 
-    (i -> m_i);
-  uniqueTop := select(0..#P.GroundSet-1, i -> 
-    all(flatten entries ((P.RelationMatrix)^{i}), a -> (a==1))) / 
-    (i -> m_i);
-  nonFaces1 := splice (nonFaces, uniqueBottom, uniqueTop);
-  simplicialComplex monomialIdeal unique nonFaces1)
