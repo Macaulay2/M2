@@ -49,7 +49,7 @@ poset(List,List) := (I,C) ->
 	 symbol GroundSet => I,
 	 symbol Relations => C,
      	 symbol RelationMatrix => transitiveClosure(I,C),
-	 symbol cache => CacheTable
+	 symbol cache => new CacheTable from {}
 	 }
     
 -- in case you actually have M to begin with    
