@@ -128,7 +128,7 @@ simpleGraph(Graph) := H -> (
  
 writeDotFile = method()
 writeDotFile(String, Graph) := (filename, G) -> (
-     -- Input: The desired file name for the DOT file and a graph.
+     -- Input: The desired file name for the DOT file created and a graph.
      -- Output: The code for the inputted graph to be constructed in Graphviz 
      --         with the specified file name.
      G = simpleGraph G;
@@ -137,7 +137,7 @@ writeDotFile(String, Graph) := (filename, G) -> (
      q := pairs G;
      for i from 0 to #q-1 do (
 	  e := q#i;
-	  fil << "  " << toString e#0;
+	  fil << "  " << toString e#0; -- number of spaces added before the node is arbitrary
 	  if #e#1 === 0 or all(q, j->member(e#0,j#1)) then
 	    fil << ";" << endl
 	  else (
@@ -162,6 +162,9 @@ toList oo
 ///
 
 writeDotFile(String, Digraph) := (filename, G) -> (
+     -- Input:  The desired file name for the Dot file created and a digraph
+     -- Output:  The code for the inputted digraph to be constructed in Graphviz 
+     --          with the specified file name.
      fil := openOut filename;
      fil << "digraph G {" << endl;
      q := pairs G;
