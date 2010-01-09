@@ -116,7 +116,7 @@ simpleGraph(Graph) := H -> (
      -- Input: A Graph.
      -- Output: A new Graph in which the keys are still the nodes but
      --         the values are the lists of neighbors so that if an
-     --         edge has already appeared before, it will not again.
+     --         edge has already appeared before, it will not appear again.
      pairH := new MutableList from pairs H;
      for k from 1 to #pairH-1 do (
 	  testVertices := set for i to k-1 list pairH#i#0;
@@ -128,6 +128,9 @@ simpleGraph(Graph) := H -> (
  
 writeDotFile = method()
 writeDotFile(String, Graph) := (filename, G) -> (
+     -- Input: The desired file name for the DOT file and a graph.
+     -- Output: The code for the inputted graph to be constructed in Graphviz 
+     --         with the specified file name.
      G = simpleGraph G;
      fil := openOut filename;
      fil << "graph G {" << endl;
@@ -231,13 +234,13 @@ nonneighbors = method()
 nonneighbors(Graph, Thing) := (G,v) -> set(1..#G) - neighbors(G,v)-set{v}
 
 removeNodes = method()
-removeNodes(DiGraph,List) := (G,v) -> (
+removeNodes(Digraph,List) := (G,v) -> (
      v = set v;
      G = select(pairs G, x -> not member(x#0,v));
      G = apply(G, x -> (x#0, x#1 - v));
-     new DiGraph from G
+     new Digraph from G
      )
-removeNodes(DiGraph,ZZ) := (G,v) -> removeNodes(G, {v})
+removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
 
 
 --------------------
