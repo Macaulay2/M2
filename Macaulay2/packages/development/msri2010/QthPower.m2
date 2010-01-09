@@ -6,11 +6,11 @@ newPackage(
     Version => "0.0.1 pre-alpha", 
     Date => "January 08, 2010",
     Authors => {{Name => "Douglas Leonard", Email => "leonada@auburn.edu", HomePage => "http://www.dms.auburn.edu/~leonada"}},
-    Headline => "An implementation of the Qth-Power algorithm for computing the integral closure of an ideal.",
+    Headline => "An implementation of the Qth-Power algorithm for computing the integral closure of a ring.",
     DebuggingMode => true
 )
 
-export {qConductor};
+export {qConductor, qthPower};
 
 ------------
 --  Code  --
@@ -40,6 +40,16 @@ qConductor (Ideal, ZZ) := (I, deps) -> (
     sub(DP, R)
 );
 
+-- Find the integral closure of the quotient ring using the Qth-Power algorithm.
+qthPower = method(TypicalValue => List);
+qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
+    -- Initialisation
+    R := ring I;
+    q := char R;
+    Dq := qConductor(I, deps);
+    d := Dq^(q - 1);
+);
+
 -------------------
 -- Documentation --
 -------------------
@@ -49,10 +59,10 @@ doc ///
     Key
         QthPower
     Headline
-        An implementation of the Qth-Power algorithm for computing the integral closure of an ideal.
+        An implementation of the Qth-Power algorithm for computing the integral closure of a ring.
     Description
         Text
-            This package is an alternative method for computing the integral closure of an ideal.
+            This package is an alternative method for computing the integral closure of a ring.
 ///
 
 doc ///
@@ -60,7 +70,7 @@ doc ///
         qConductor
         (qConductor, Ideal, ZZ)
     Headline
-        Computes the conductor of an ideal where the number of dependent variables is known.
+        Computes the conductor of a ring where the number of dependent variables is known.
     Usage
         qConductor(I, deps)
     Inputs
@@ -70,7 +80,7 @@ doc ///
         D:RingElement
     Description
         Text
-            {\tt D} is a conductor of {\tt I} where there are {\tt deps} dependent variables.
+            {\tt D} is a conductor of the quotient ring of {\tt I} where there are {\tt deps} dependent variables.
         Example
             Rq = ZZ/23[y,x, MonomialOrder => {Weights => {11,7}, Weights => {1,0}}];
             deps = 1;
