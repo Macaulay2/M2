@@ -10,7 +10,7 @@ newPackage("Graphs",
      )
 
 export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
-     parents, children, neighbors, nonneighbors,displayGraph}
+     parents, children, neighbors, nonneighbors, displayGraph, simpleGraph}
 exportMutable {dotBinary,jpgViewer}
 
 
@@ -34,8 +34,11 @@ Graph = new Type of Digraph
      -- version removes the redunancy of each edge appearing twice. 
      -- simpleGraph is an internal conversion function. 
 
-union = method()
 union := S -> (
+     -- Input:  A list of lists of sets, in particular the list of the
+     --         sets of individual neighbors of nodes, and the position of
+     --         a particular node.
+     -- Output:  A set of all the neighbors of a particular node.
      x = new MutableHashTable;
      for t in S do scanKeys(t, z -> x#z = 1);
      new Set from x)  
@@ -57,7 +60,6 @@ graph List := opts -> (g) -> (
 		    then set g#k - set {vertices#j} 
 		    else continue)
 	       );
-	 -- error "what does union do?";
 	  neighbors = apply(neighbors, i -> union i);
 	  )
      else (vertices = join(vertices, opts.Singletons);
@@ -67,7 +69,6 @@ graph List := opts -> (g) -> (
 		    then set g#k - set {vertices#j} 
 		    else continue)
 	       );
-	  error "what does union do?";
 	  neighbors = apply(neighbors, i -> union i);
 	  neighbors = join(neighbors,newEdges);
 	  );
@@ -85,7 +86,7 @@ graph HashTable := opts -> (g) -> (
 
 digraph = method()
 digraph List := (g) -> (
-     -- Input:  A list pairs where the first element is the 
+     -- Input:  A list of pairs where the first element is the 
      --         name of the node and the second is the set of 
      --         children for that node. 
      -- Output:  A hashtable with keys the names of the nodes 
@@ -93,6 +94,7 @@ digraph List := (g) -> (
      h := new MutableHashTable;
      apply(#g, i -> h#(g#i#0) = set g#i#1);
      new Digraph from h)
+     
 
 digraph HashTable := (g) -> (
      -- Input:  A hash table with keys the names of the nodes of 
@@ -109,16 +111,28 @@ dotBinary = "dot"
 -- jpgViewer = "/usr/bin/open"
 jpgViewer = "open"
 
-simpleGraph := H -> (
+simpleGraph = method()
+simpleGraph(Graph) := H -> (
      -- Input: A Graph.
-     -- Output: A new Graph that has 
+     -- Output: A new Graph in which the keys are still the nodes but
+     --         the values are the lists of neighbors so that if an
+     --         edge has already appeared before, it will not again.
      pairH := new MutableList from pairs H;
      for k from 1 to #pairH-1 do (
 	  testVertices := set for i to k-1 list pairH#i#0;
       	  pairH#k = (pairH#k#0, pairH#k#1-testVertices)
 	  );
+     error "what is going on here?";
      new Graph from hashTable pairH)
 
+///
+restart
+loadPackage "Graphs"
+A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
+flatten {{a,b},{c,d},{a,d},{b,c}}
+set oo
+toList oo
+///
  
 writeDotFile = method()
 writeDotFile(String, Graph) := (filename, G) -> (
@@ -234,7 +248,4 @@ doc ///
 end
 
 
-A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
-flatten {{a,b},{c,d},{a,d},{b,c}}
-set oo
-toList oo
+break
