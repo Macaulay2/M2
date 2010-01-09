@@ -573,6 +573,10 @@ doc ///
     homomorphism
 ///        
 
+end
+
+
+
 restart
 loadPackage"Functoriality"
 R = ZZ/3[x_1..x_5]

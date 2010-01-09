@@ -355,7 +355,7 @@ doc ///
     C = extension(f)
   Inputs
     f:Matrix
-      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) <- R^1
+      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) <-- R^1
   Outputs
     C:ChainComplex
       an exact sequence, an r-extension of N by M corresponding to f.
@@ -365,12 +365,24 @@ doc ///
      
      Here we look at some different extensions of k by k.
    Example
-     R = QQ[x,y]
-     k = comodule ideal"x,y"
+     R = QQ[x,y];
+     k = comodule ideal vars R;
+   Text
+     In this case Ext^1(k,k) is isomorphic to the vector space k^2:
+   Example
      E1 = Ext^1(k,k)
+   Text
+     So we can look at the first and second generators of the Ext module and get two essentially different extensions:
+   Example
      extension E1_{0}
      extension E1_{1}
+   Text
+     Ext^2(k,k) is a single copy of k:
+   Example
      E2 = Ext^2(k,k)
+   Text
+     So we can use extension to see a 2-extension of k by k:
+   Example
      extension E2_{0}
   SeeAlso
     (yonedaExt,ChainComplex)
