@@ -15,7 +15,7 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {+,*, New}
+export {brpOR,isDivisible, Brp}
 exportMutable {}
 
 Brp = new Type of List -- this is not quite right yet
@@ -26,42 +26,21 @@ convert := Brp => f -> new Brp from  exponents f
 -- Addition: concatenate and eliminate double monomials 
 Brp + Brp := Brp => (a,b) -> new Brp from keys select(tally a + tally b, odd)
 
--- Multiplication: bitwise OR
+-- Multiplication of polynomial with monomial: bitwise OR
 Brp * Brp := Brp => (a, m) ->  
   new Brp from apply (#a, i  -> brpOR( a#i, m))
 
 -- bitwise OR for 2 monomials
+brpOR = method()
 brpOR (Brp, Brp) := Brp => (a,b) -> 
   apply (#a, i -> max (a#i, b#0#i) )
 brpOR (List, Brp) := Brp => (a,b) -> 
   apply (#a, i -> max (a#i, b#0#i) )
 
-
-end
-
-s = { {aa,ba,ca}, {da,ea,af}}
-s#0#0
-s#0#1
-
-firstpoly = new Brp from { {1,1,0}, {1,0,0}}
-secondpoly = new Brp from {{1,0,0}}
-thirdpoly = new Brp from {{1,0,0}, {1,1,1}}
-
- firstpoly * secondpoly
- firstpoly + secondpoly + thirdpoly
- firstpoly * secondpoly * thirdpoly + myHash1 
- myHash = firstpoly + thirdpoly
- tt = {}
- tt
- myHash1 = firstpoly + secondpoly
-  
-  firstpoly + myHash1 
-firstpoly 
-firstpoly + secondpoly 
-myHash1 
- 
-
-   
+--  is polynomial a divisible by monomial m
+-- TODO
+isDivisible = method()
+isDivisible (Brp, Brp) := Boolean => (a,m) -> false
 
 
 beginDocumentation()
@@ -71,68 +50,12 @@ document {
 	EM "BitwiseRepresentationPolynomials", " is an package."
 	}
 document {
-	Key => {firstFunction, (firstFunction,ZZ)},
+-- -- TODO complete documentation
+	Key => {isDivisible, (isDivisible,Brp,Brp)},
 	Headline => "a silly first function",
-	Usage => "firstFunction n",
-	Inputs => {
-		"n" => ZZ => {}
-		},
-	Outputs => {
-		String => {}
-		},
-	"This function is provided by the package ", TO PackageTemplate, ".",
-	EXAMPLE {
-		"firstFunction 1",
-		"firstFunction 0"
-		}
+	Usage => "isDivisible polynomial monomial",
 	}
-document {
-	Key => secondFunction,
-	Headline => "a silly second function",
-	"This function is provided by the package ", TO PackageTemplate, "."
-	}
-document {
-	Key => (secondFunction,ZZ,ZZ),
-	Headline => "a silly second function",
-	Usage => "secondFunction(m,n)",
-	Inputs => {
-	     "m" => {},
-	     "n" => {}
-	     },
-	Outputs => {
-	     {"The sum of ", TT "m", ", and ", TT "n", 
-	     ", and "}
-	},
-	EXAMPLE {
-		"secondFunction(1,3)",
-		"secondFunction(23213123,445326264, MyOption=>213)"
-		}
-	}
-document {
-     Key => MyOption,
-     Headline => "optional argument specifying a level",
-     TT "MyOption", " -- an optional argument used to specify a level",
-     PARA{},
-     "This symbol is provided by the package ", TO PackageTemplate, "."
-     }
-document {
-     Key => [secondFunction,MyOption],
-     Headline => "add level to result",
-     Usage => "secondFunction(...,MyOption=>n)",
-     Inputs => {
-	  "n" => ZZ => "the level to use"
-	  },
-     Consequences => {
-	  {"The value ", TT "n", " is added to the result"}
-	  },
-     "Any more description can go ", BOLD "here", ".",
-     EXAMPLE {
-	  "secondFunction(4,6,MyOption=>3)"
-	  },
-     SeeAlso => {
-	  "firstFunction"
-	  }
-     }
+
 TEST ///
   firstpoly = new Brp from { {1,1,0}, {1,0,0}}
   secondpoly = new Brp from {{1,0,0}}
@@ -142,6 +65,7 @@ TEST ///
   assert ( firstpoly * secondpoly == new Brp from {{1, 1, 0}, {1, 0, 0}} )
   assert ( firstpoly * secondpoly === new Brp from {{1, 1, 0}, {1, 0, 0}} )
   assert ( (new List from (firstpoly * secondpoly)) == {{1, 1, 0}, {1, 0, 0}})
+  assert (false) -- I have this in to be sure that the tests are run
 --  -- TODO make other assertions for the following 
 --  firstpoly + secondpoly + thirdpoly
 -- firstpoly * secondpoly * thirdpoly + myHash1 
@@ -163,6 +87,7 @@ end
 -- package.  None of it will be executed when the file is loaded,
 -- because loading stops when the symbol "end" is encountered.
 
+restart
 installPackage "BitwiseRepresentationPolynomials"
 installPackage("BitwiseRepresentationPolynomials", RemakeAllDocumentation=>true)
 check BitwiseRepresentationPolynomials
