@@ -291,6 +291,7 @@ guessCohomologyTable(RingElement,ZZ,ZZ) := (hilbPoly, lo,hi) -> (
 -- cohomology table
 diag = (M,k,E)->E^(flatten toList apply(max(k,0)..min(k+4,4),j->toList(M_(j-k,j):(j-4))))
 
+
 -- guess the differenials
 guessDifferentials = (cohTable,E) -> (
      -- test if the cohTable is square 5x5
