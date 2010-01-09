@@ -50,7 +50,8 @@ export {
 	hasseDiagram,
 	inducedPoset,
 	atoms,
-	interval
+	interval,
+	moebiusFunction
 }
 
 needsPackage "SimplicialComplexes"
@@ -601,7 +602,25 @@ allMultiDegreesLessThan = (d) -> (
 ---------------------------------
 -- MOEBIUS FUNCTION
 ---------------------------------
+moebiusFunction = method();
 
+moebiusFunction (Poset) := Poset => (P) -> ( 
+  if #minimalElements P == 1 then (    
+  nP := #(P.GroundSet);
+  nEltsBelow := apply(entries transpose(P.RelationMatrix), l -> (
+    (sum l) - 1));
+  eltsPAndCountBelow := flatten apply(sort unique nEltsBelow, i ->
+    apply(select(toList(0..nP-1), j ->
+      (nEltsBelow#j == i)), j -> {P.GroundSet#j, i}));
+  nEltsBelowHT := hashTable eltsPAndCountBelow; 
+  eltsP := eltsPAndCountBelow / (l -> l#0);
+  htP := hashTable (select(eltsP, F -> 
+    (nEltsBelowHT#F == 0)) / (F -> (F, 1)));
+  last apply(toList(0..nP-1), i -> if (nEltsBelowHT#(eltsP#i) > 0) then (
+        htP = hashTable flatten {pairs htP,
+          (eltsP#i, -(sum apply(select(toList (0..i-1), j ->
+            (compare(P, eltsP#j, eltsP#i) == true)), j -> htP#(eltsP#j))))})))
+  else error "this poset has more than one minimal element - specify an interval")
 
 
 
