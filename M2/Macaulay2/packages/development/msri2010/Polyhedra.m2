@@ -46,6 +46,10 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
 
 needsPackage "FourierMotzkin"
 
+-- WISHLIST
+--  -Symmetry group for polytopes
+--  -mixed volumes
+
 
 -- Definind the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
@@ -2342,14 +2346,15 @@ minkowskiSum = method(TypicalValue => Polyhedron)
 minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
      -- Checking for input errors
      if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same space");
-     -- Saving the vertices and rays
-     V1 := vertices P1;
-     V2 := vertices P2;
-     R := promote(rays P1 | rays P2,QQ) | map(target V1,QQ^1,0);
-     Vnew := map(target V1,QQ^0,0);
-     -- Collecting all sums of vertices of P1 with vertices of P2
-     Vnew = matrix {unique flatten apply(numColumns V1, i -> apply(numColumns V2, j -> V1_{i}+V2_{j}))};
-     convexHull(Vnew,R))
+     if isEmpty P1 or isEmpty P2 then P1 else (
+	  -- Saving the vertices and rays
+     	  V1 := vertices P1;
+     	  V2 := vertices P2;
+     	  R := promote(rays P1 | rays P2,QQ) | map(target V1,QQ^1,0);
+     	  Vnew := map(target V1,QQ^0,0);
+     	  -- Collecting all sums of vertices of P1 with vertices of P2
+     	  Vnew = matrix {unique flatten apply(numColumns V1, i -> apply(numColumns V2, j -> V1_{i}+V2_{j}))};
+     	  convexHull(Vnew,R)))
 
 
 --   INPUT : '(C1,C2)',  two cones

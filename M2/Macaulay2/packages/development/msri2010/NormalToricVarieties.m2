@@ -36,7 +36,8 @@ export {
      nef,
      smoothFanoToricVariety,
      WeilToClass,
-     weilToClass
+     weilToClass,
+     insertCone
      }
 --------------------------------------------------------------------------------
 needsPackage "FourierMotzkin"
@@ -706,12 +707,77 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 	  symbol rays => newRays,
 	  symbol max => newMax,
 	  symbol cache => new CacheTable};
-     if X.cache.?halfspaces then Y.cache.halfspaces = X.cache.halfspaces;
+     if X.cache.?halfspaces then Y.cache.halfspaces = new MutableHashTable from for k in max Y list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
      Y.cache.cones = new MutableHashTable from for k in max Y list if X.cache.cones#?k then k => X.cache.cones#k else continue;
      Y)
 
 makePrimitive = method()
 makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
+
+insertCone = method()
+insertCone (NormalToricVariety,List) := (X,C) -> (
+     R := matrix rays X;
+     Cr := transpose matrix C;
+     C1 := {};
+     maxX := max X;
+     for i from 0 to #maxX - 1 do (
+	  bigC := maxX#i;
+	  M := promote(R^bigC,QQ);
+	  v := if dim(bigC,X) == #bigC then (transpose inverse M) * Cr else (transpose halfspaces(bigC,X)) * Cr;
+	  if all(flatten entries v, e -> e >= 0) then (
+	       C1 = bigC;
+	       maxX = drop(maxX,{i,i});
+	       break)
+	  else if any(numColumns v, i -> all(flatten entries v_{i}, e -> e > 0)) then break);
+     if C1 == {} then error("The additional cone is not contained in any cone of the variety");
+     oldMaxX := {};
+     cones2handle := {(C1,C)} | for bigC in maxX list (
+	  M := if dim(bigC,X) == #bigC then inverse promote(R^bigC,QQ) else halfspaces(bigC,X);
+	  pos := select(C, r -> all(flatten entries(matrix{r}*M), e -> e >= 0));
+	  if pos != {} then (bigC,pos) else (
+	       oldMaxX = oldMaxX | {bigC};
+	       continue));
+     raysX := rays X | select(C, r -> not member(r,rays X));
+     totalNewCones := flatten apply(cones2handle, p -> (
+	       C1 = p#0;
+	       C = p#1;
+	       Cr = transpose matrix C;
+     	       C1r := (rays X)_C1;
+     	       CM := matrix transpose C;
+     	       HS := if rank CM == numRows CM then (-(fourierMotzkin CM)#0,0) else (CM = posHull CM; (transpose halfspaces CM,transpose hyperplanes CM));
+     	       newCones := apply(numColumns HS#0, i -> (
+	       		 v := (HS#0)_{i};
+	       		 select(C1r, r -> (matrix{r} * v)_(0,0) < 0) | select(C, r -> (matrix{r} *v)_(0,0) == 0)));
+     	       if HS#1 != 0 then (
+	  	    newCones = newCones | apply(numColumns HS#1, i -> (
+		    	      v := (HS#1)_{i};
+		    	      select(C1r, r -> (matrix{r} * v)_(0,0) < 0) | select(C, r -> (matrix{r} *v)_(0,0) == 0)));
+	  	    newCones = newCones | apply(numColumns HS#1, i -> (
+		    	      v := -(HS#1)_{i};
+		    	      select(C1r, r -> (matrix{r} * v)_(0,0) < 0) | select(C, r -> (matrix{r} *v)_(0,0) == 0))));
+     	       HS = halfspaces(C1,X);
+     	       newCones = newCones | for i from 0 to numColumns HS - 1 list (
+	  	    v := HS_{i};
+	  	    facetrays := select(C1r, r -> (matrix{r} * v)_(0,0) == 0);
+	  	    if any(newCones, nC -> isSubset(set facetrays, set nC)) then continue;
+	  	    pos := transpose Cr * v;
+	  	    posmin := min flatten entries pos;
+	  	    if posmin == 0 then continue;
+	  	    pos = positions(flatten entries pos, e -> e == posmin);
+	  	    facetrays | C_pos);
+     	       newCones = unique(newCones | {C});
+     	       for i from 0 to #newCones - 1 list (
+	  	    nC := newCones#i;
+	  	    if any(drop(newCones,{i,i}), e -> isSubset(nC,e)) then continue;
+	  	    nC)));	       
+     maxX = oldMaxX | apply(totalNewCones, nC -> apply(nC, r -> position(raysX, e -> e == r)));
+     Y := new NormalToricVariety from {
+	  symbol rays => raysX,
+	  symbol max => maxX,
+	  symbol cache => new CacheTable};
+     if X.cache.?halfspaces then Y.cache.halfspaces = new MutableHashTable from for k in max Y list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
+     if X.cache.?cones then Y.cache.cones = new MutableHashTable from for k in max Y list if X.cache.cones#?k then k => X.cache.cones#k else continue;
+     Y)
 
 
 --------------------------------------------------------------------------------
@@ -724,11 +790,13 @@ makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
 --   vector bundles?
 --   faces
 --   linear series
+--   isComplete
+--   isProjective
 --   isCartier
 --   isAmple
 --   isVeryAmple
 --   isSemiprojective
---   isOrbifold
+--
 
 --------------------------------------------------------------------------------
 -- DOCUMENTATION
