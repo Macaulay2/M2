@@ -38,6 +38,58 @@ series RingElement := Series => opts -> f -> (
      new Series from {rationalFunction => f, degree => if degdf < 1 then infinity else opts.Limit, series => s}
      );
 
+A = ZZ[x]
+f = 1/(1+x)
+A = series(f)
+A.rationalFunction
+A.generatingFunction
+keys A
+member(rationalFunction,keys A)
+member(genTerm, keys A)
+isMember(rationalFunction,keys A)
+
+A.rationalFunction
+series(A.rationalFunction + A.rationalFunction)
+
+
+
+
+
+ 
+
+-- One way to do sums, do we want to do inheritance with 'growable series'?
+seriesSum = method(Options => {Limit => 5})
+seriesSum(Series,Series) := Series => opts -> (A,B) -> (
+     -- If rational functions, add them
+     if member(rationalFunction,keys A) then(
+	  if member(rationalFunction,keys B) then(
+	       series(A.rationalFunction + B.rationalFunction)
+	       )
+	  else if member(genTerm,keys B) then(
+	       -- Coming Soon
+	       )
+	  else if member(poly,keys B) then(
+	       -- Coming Soon
+	       )
+	  )
+     else if member(genTerm, keys A) then(
+	  if member(rationalFunction,keys B) then(
+	       --
+	       )
+	  else if member(genTerm, keys B) then(
+	       f := A.genTerm;
+	       g := B.genTerm;
+	       h := n -> f(n) + g(n);
+	       series(h)
+	       )
+	  else if member(poly, keys B) then(
+	       --
+	       )
+	  )
+     )
+
+
+
 seriesOLD = method()
 seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
      df := denominator f;
@@ -56,8 +108,15 @@ series(Function) := Series => opts -> f -> (
 
 A = ZZ[x]
 f = i -> if i< 5 then i*x^i else 0
-f(2)
+B = series(f)
+seriesSum(B,B)
 
+g = n -> f(n) + f(n)
+series(g)
+f(2)
+A = series(f)
+A.genTerm
+seriesSum(A,A)
 s = series(s, Limit => 11)
 
 series(RingElement, Function) := Series => opts -> f -> (
@@ -187,3 +246,35 @@ instance(ring f,FractionField)
 
 could replace the 1/x with a pair, (1/x,FractionField)
 
+
+
+-- How to do inheritance of functions
+
+Thing1 = new Type of HashTable
+
+thing1 = method()
+thing1(ZZ) := Thing1 => n -> (
+     new Thing1 from {int => n, up => (i-> i + n)}
+     );
+
+up = method()
+up(Thing1,ZZ) := Thing1 => (A,i) -> (
+     new Thing1 from { int => A#up(i), up => A#up}
+     );
+
+add2 = method()
+add2(Thing1,Thing1) := Thing1 => (A,B) -> (
+     new Thing1 from { int => A.int + B.int, up => i -> A#up(i) + B#up(i)}
+     );
+member(up,keys A)
+A = thing1(5)
+A.int
+A#up
+up(A,1)
+B = add2(A,A)
+B#up(1)
+B
+B = thing1(4)
+A.up(3)
+up(A,3)
+f=
