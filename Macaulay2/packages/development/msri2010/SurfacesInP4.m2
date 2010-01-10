@@ -4,6 +4,7 @@ newPackage(
         Version => "0.1", 
         Date => "January 8, 2010",
         Authors => {
+	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "http://www.webpages.uidaho.edu/~abo/"}, 
 	     {Name => "Hans-Christian Graf v. Bothmer", Email => "bothmer@math.uni-hannover.de", HomePage => "http://www.crcg.de/wiki/Hans-Christian_Graf_v._Bothmer"},
 	     {Name => "Florian Geiss", Email => "fg@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/fg/"}
 	     },
@@ -31,7 +32,8 @@ export {
      findMonadWindows,
      guessDifferentials,
      constructSurface,
-     numPosRoots
+     numPosRoots, 
+     firstAdjoint
      }
 
 ----
@@ -366,6 +368,32 @@ constructSurface(Sequence,PolynomialRing) := (invariants,S) -> (
     if #Ilist == 0 then null else Ilist#0
     )
   
+firstAdjoint = method()
+firstAdjoint(Ideal) := List => I -> (
+     S := ring I;
+     N := dim S-1;
+     d := degree I;
+     omega := truncate(-N,Ext^1(I,S));
+     n1 := rank target presentation omega;
+     n2 := rank source presentation omega;
+     K := coefficientRing S;
+     y := symbol y;
+     Y := toList(y_0..y_(n1-1));
+     SxR := K(monoid[toList(x_0..x_4)|Y, MonomialOrder=>Eliminate 5]);
+     b := substitute(presentation omega,SxR);
+     c := matrix{(gens SxR)_{5..n1+4}}*map(SxR^{n1:-1},SxR^{n2:-2},b);
+     J := ideal(c):ideal(SxR_4);
+     h' := new MutableHashTable;
+     scan(2,i -> h'#i = ideal sub(c,{SxR_i => 0}));
+     h := new MutableHashTable;
+     scan(2,i -> h#i = h'#i:ideal(SxR_4));
+     R := K(monoid[y_0..y_(n1-1)]);
+     X := sub(ideal selectInSubring(1,gens gb J),R);
+     H := new MutableHashTable;
+     scan(2, i->H#i = sub(ideal selectInSubring(1, gens gb h#i),R));
+     bs := degree (H#0+H#1);
+     {trim substitute(X,R),bs - d}
+     );
      
 beginDocumentation()
 
@@ -611,6 +639,34 @@ Caveat
 SeeAlso
 ///
 
+doc ///
+Key
+  firstAdjoint
+Headline
+  Compute the ideal of the first adjoint surface.  
+Usage
+  L = firstAdjoint(I)
+Inputs
+  I:Ideal
+    the ideal of a non-singular surface in projective fourspace.  
+Outputs
+  L:List 
+    L#0 is the ideal of the image of the surface V(I) under the adjunction map and L#1 is the number of exceptional lines in V(I).xs
+Consequences
+Description
+  Text
+  Example
+   KK = ZZ/32003
+   R = KK[x_0..x_4]
+   I = minors(3,random(R^{4:0},R^{3:-1})); 
+   hilbertPolynomial I
+   L = firstAdjoint(I);
+   hilbertPolynomial L#0
+   L#1
+Caveat
+SeeAlso
+///
+
 TEST ///
 H = hilbertPolynomialFromInvariants(8,5,1,0)
 i = (vars ring H)_(0,0);
@@ -653,4 +709,14 @@ M = guessCohomologyTable(H,-2,2)
 monadE = guessDifferentials(M,E)
 expectedBetti = new BettiTally from {(0,{0},0) => 1, (1,{2},2) => 3, (2,{3},3) => 2}
 assert(betti res constructSurface(monadE,S) == expectedBetti)
+///
+
+
+TEST ///
+-- Bordiga surface 
+KK = ZZ/32003
+R = KK[x_0..x_4]
+I = minors(3,random(R^{4:0},R^{3:-1})); 
+L = firstAdjoint(I);
+assert(degree (L#0) == 6 and L#1 == 10)
 ///
