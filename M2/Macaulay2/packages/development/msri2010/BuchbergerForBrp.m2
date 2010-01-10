@@ -79,13 +79,6 @@ SPolynomial( List, HashTable ) := Brp => (l,G) -> (
   )
 )
 
-getNonDivisiblePart = method()
-getNonDivisiblePart (Brp, Brp) := Brp => (f,x) -> 
-  select (f, mono -> isDivisible(mono,x) ) 
-  
-  mono -> isDivisible(new Brp from mono,x)
-
-
  
 -- Make a list with all possible pairs of elements of the separate lists, but
 -- remove self-pairs 
