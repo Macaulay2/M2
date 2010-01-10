@@ -86,9 +86,10 @@ graph HashTable := opts -> (g) -> (
 
 digraph = method()
 digraph List := (g) -> (
-     -- Input:  A list of pairs where the first element is the 
-     --         name of the node and the second is the set of 
-     --         children for that node. 
+     -- Input:  A list of pairs where the first element of the pair is the 
+     --         name of a node and the second is the list of 
+     --         children for that node. If a node has no children,
+     --         then the second element of the pair should be empty. 
      -- Output:  A hashtable with keys the names of the nodes 
      --          with values the children.
      h := new MutableHashTable;
@@ -98,7 +99,7 @@ digraph List := (g) -> (
 
 digraph HashTable := (g) -> (
      -- Input:  A hash table with keys the names of the nodes of 
-     --         the graph and the values the children of that node. 
+     --         and the values the children of that node. 
      -- Output: A hash table of type Diraph. 
      new Digraph from g)
      
@@ -215,16 +216,15 @@ descendents = method()
 descendents(Digraph,Thing) := (G,v) -> (
      -- returns a set of vertices
      result := G#v;
-     --scan(reverse(1..#v-1), i -> (
-     scan(reverse(keys(G), i -> (
+     scan(keys(G), i -> (
 	  if member(i,result) then result = result + G#i;
      ));
-     --error "what is result?";
      result)
+
 
 nondescendents = method()
      -- Input: A digraph and the key for the vertex of interest.
-nondescendents(Digraph,Thing) := (G,v) -> set(1..#G) - descendents(G,v) - set {v}
+nondescendents(Digraph,Thing) := (G,v) -> set keys G - descendents(G,v) - set {v}
 
 parents = method()
      -- Input: A digraph and the key for the vertex of interest.
@@ -238,7 +238,7 @@ restart
 loadPackage "Graphs"
 A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
 B = digraph({{a,{b,d}},{b,{c}},{d,{a,c}}})
-C = digraph({{a,{b,c}}, {b,{d}}})
+C = digraph({{a,{b,c}}, {b,{d}}, {c,{}}, {d,{}}})
 flatten {{a,b},{c,d},{a,d},{b,c}}
 set oo
 toList oo
@@ -255,13 +255,16 @@ neighbors = method()
 neighbors(Graph,Thing) := (G,v) -> G#v  
 
 nonneighbors = method()
-nonneighbors(Graph, Thing) := (G,v) -> set(1..#G) - neighbors(G,v)-set{v}
+nonneighbors(Graph, Thing) := (G,v) -> keys G - neighbors(G,v)-set{v}
 
 removeNodes = method()
 removeNodes(Digraph,List) := (G,v) -> (
      v = set v;
+     error "are you broken here?";
      G = select(pairs G, x -> not member(x#0,v));
+     error "or here?";
      G = apply(G, x -> (x#0, x#1 - v));
+     error "or maybe here?";
      new Digraph from G
      )
 removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
