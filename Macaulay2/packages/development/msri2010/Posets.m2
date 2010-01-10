@@ -453,7 +453,7 @@ isLattice(Poset) := (P) -> (
 --    )
 
 -- input:  generators of a monomial ideal
--- output: lcm lattice of that monomial ideal, without the minimal element
+-- output: lcm lattice of that monomial ideal
 -- potential problem:  subsets dies when a set is too big (> 18)
 
 lcmLattice = method( Options => { Strategy => 1 })     
@@ -1435,8 +1435,89 @@ doc ///
 -----------------
 -- moebiusFunction
 -----------------
+doc///
+     Key
+     	  moebiusFunction
+     Headline
+     	  returns Moebius function values
+     Usage
+     	  M = moebiusFunction(P) or moebiusFunction(P,a,b)	  
+     Inputs
+     	  P : Poset
+	  a : Thing
+	       an element of P
+	  b: Thing
+	       an element of P
+     Outputs
+     	  M : HashTable
+	       Moebius function values on the poset P or on the interval from a to b
+     Description
+     	  Text
+	       This routine returns values of the Moebius function for the minimal element of the poset P to each element in P, or the minimal elemnt 
+	       of the interval between a and b to each element of the interval from a to b.
+     SeeAlso
+     	  (moebiusFunction,Poset)
+	  (moebiusFunction,Poset,Thing,Thing)	 
+///
+doc///
+     Key
+     	  moebiusFunction
+	  (moebiusFunction,Poset)
+     Headline
+     	  returns the Moebius function values for the unique minimal element to each element of the poset
+     Usage
+     	  M = moebiusFunction(P)
+     Inputs
+     	  P : Poset
+     Outputs
+	  M : HashTable
+	       Moebius function values for the minimal element of the poset to each element of the poset
+     Description
+     	  Text 
+	       This routine returns the Moebius function values for the unique minimal element to each element of the poset.
+	       In this example, $a$ is the minimal element of $P$; $M$ lists the Moebius function values from $a$ to each element of $P$.
+	  Example
+	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
+	       M = moebiusFunction(P)	
+	  Text
+	       In the following example, the poset $Q$ has two distinct minimal elements and the routine returns an error. 
+	  Example
+	       Q = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
+	       moebiusFunction(Q)	          
+     SeeAlso
+     	  (moebiusFunction,Poset,Thing,Thing)
+	  Poset
+///
 
-
+doc///
+     Key
+     	  moebiusFunction
+	  (modebiusFunction,Poset,Thing,Thing)
+     Headline
+     	  returns the Moebius function values for the minimal element of an interval to each element of the interval
+     Usage
+     	  M = moebiusFunction(P,a,b)
+     Inputs
+     	  P : Poset
+	  a : Thing
+	       a is an element of P
+	  b : Thing
+	       b is an element of P
+     Outputs
+     	  M : HashTable
+	       Moebius function values for the lesser of a and b to each element of the interval between a and b	       
+     Description
+     	  Text
+	       For elements a and b of a poset P, this routine returns the Mobius function values for the minimal element in the interval between 
+	       elements a and b to each element of the interval between a and b. The routine handles both of the cases a<b and b<a.
+	  Example
+	       P = poset poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       moebiusFunction(P,b,g)
+	       moebiusFunction(P,g,b)	       
+     SeeAlso
+     	  (moebiusFunction, Poset)
+	  Poset
+///	  
 
 -----------------
 -- inducedPoset
