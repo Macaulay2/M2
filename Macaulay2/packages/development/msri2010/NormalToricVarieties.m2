@@ -1,4 +1,4 @@
-
+-- -*- coding: utf-8 -*-
 needsPackage "Polyhedra"
 newPackage(
      "NormalToricVarieties",
@@ -20,8 +20,13 @@ export {
      hirzebruchSurface, 
      weightedProjectiveSpace, 
      kleinschmidt,
-     classGroup, 
+     anticanonicalDivisor,
+     classGroup,
+     isAmple,
+     isCartier,
+     isQQCartier,
      isDegenerate,
+     isFano,
      isProjective,
      isSimplicial,
      latticeIndex,
@@ -260,15 +265,61 @@ isWellDefined NormalToricVariety := Boolean => X -> (
 		    flag = false; 
 		    break)));
 
-     return flag)     
+     return flag)
 
 
-   
+isAmple = method()
+isAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isAmple then X.cache.isAmple = new MutableHashTable;
+     if not X.cache.isAmple#?D then (
+	  X.cache.isAmple#D = isCartier(D,X) and isComplete X and (
+	       complementSelect := (L,ind) -> L_(sort toList(set(0..#L-1) - set ind));
+	       M := - X.cache.isQQCartier#D;
+	       all(#(max X), i -> (
+		    	 C := (max X)#i;
+		    	 m := M#i;
+		    	 R := complementSelect(rays X,C);
+		    	 a := - complementSelect(D,C);
+		    	 all(#R, j -> ((matrix{R#j} * m) - a#j)_(0,0) > 0)))));
+     X.cache.isAmple#D)
+
+
+isCartier = method()
+isCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isCartier then X.cache.isCartier = new MutableHashTable;
+     if not X.cache.isCartier#?D then X.cache.isCartier#D = isQQCartier(D,X) and all(X.cache.isQQCartier#D, m -> liftable(m,ZZ));
+     X.cache.isCartier#D)
+
+isQQCartier = method()
+isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isQQCartier then X.cache.isQQCartier = new MutableHashTable;
+     if not X.cache.isQQCartier#?D then (
+	  systemSolver := (R,F) -> (
+     	       (R1,Lmatrix,Rmatrix) := smithNormalForm lift(R,ZZ);
+     	       F1 := entries(Lmatrix * F);
+     	       Rmatrix * (matrix apply(numRows R1, i -> F1#i / R1_(i,i)) || map(QQ^(numColumns R1 - numRows R1),QQ^(#(F1#0)),0)));
+     	  X.cache.isQQCartier#D = for C in max X list (
+	       U := matrix((rays X)_C);
+	       a := transpose matrix {D_C};
+	       n := numColumns U;
+	       m := systemSolver(U^{0..n-1},a^{0..n-1});
+	       if U*m-a != 0 then break{} else m));
+     X.cache.isQQCartier#D != {})
+
+
 isDegenerate = method()
 isDegenerate NormalToricVariety := Boolean => (cacheValue symbol isDegenerate)(
      X -> kernel matrix rays X != 0)
 
 
+isFano = method()
+isFano NormalToricVariety := Boolean => (cacheValue symbol isFano)(
+     X -> (
+	  D := anticanonicalDivisor X;
+	  isCartier(D,X) and isAmple(D,X)))     
+
+
+   
 isSimplicial = method()
 isSimplicial NormalToricVariety := Boolean => (cacheValue symbol isSimplicial)(
      X -> (
@@ -282,6 +333,11 @@ isSmooth NormalToricVariety := Boolean => (cacheValue symbol isSmooth)(
      	  b := all(max X, s -> #s == rank V_s and 1 == minors(#s,V_s));
 	  if b == true then X.cache.simplicial = true;
 	  return b))
+
+
+anticanonicalDivisor = method()
+anticanonicalDivisor NormalToricVariety := List => X -> toList(#(rays X):1)
+
 
 
 classGroup = method()
@@ -923,7 +979,7 @@ document {
 	  varieties", ", preprint available at ", 
 	  HREF("http://www.cs.amherst.edu/~dac/toric.html", 
 	       TT "www.cs.amherst.edu/~dac/toric.html")},	       
-	  {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
+	  {"GÃ¼nter Ewald, ", EM "Combinatorial convexity and algebraic
            geometry", ", Graduate Texts in Mathematics 168. 
 	   Springer-Verlag, New York, 1996. ISBN: 0-387-94755-8" },
 	  {"William Fulton, ", EM "Introduction to toric varieties",
@@ -940,7 +996,7 @@ document {
      UL {
 	  {HREF("http://www.math.purdue.edu/~cberkesc/","Christine Berkesch")},
 	  {HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm",
-		    "René Birkner")},
+		    "Rene Birkner")},
      	  {HREF("http://www.warwick.ac.uk/staff/D.Maclagan/","Diane Maclagan")},
 	  {HREF("http://www.math.uiuc.edu/~asecele2/","Alexandra Seceleanu")},
 	  },
@@ -2569,7 +2625,7 @@ document {
      HREF("http://arxiv.org/abs/math.AC/0305214", "Multigraded
      Castelnuovo-Mumford regularity"), ", ", EM "J. Reine
      Angew. Math. ", BOLD "571", " (2004), 179-212.  The general case
-     uses the methods described in David Eisenbud, Mircea Mustaţǎ,
+     uses the methods described in David Eisenbud, Mircea MustaÅ£Ç,
      Mike Stillman, ", HREF("http://arxiv.org/abs/math.AG/0001159",
      "Cohomology on toric varieties and local cohomology with monomial
      supports"), ", ", EM "J. Symbolic Comput. ", BOLD "29", " (2000),
