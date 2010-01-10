@@ -78,11 +78,11 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      if dictionary.frameID == 0 then (
 	  -- this allows the global frame to grow
 	  frameindex = enlarge(globalFrame))
-     else if dictionary.frameID == localFrame.frameID then (
+     else if dictionary.frameID == threadLocalInterpState.localFrame.frameID then (
 	  -- this should take care of scopes which span a file,
 	  -- or the dictionary for a break loop
 	  -- and have a single frame which ought to be allowed to grow
-	  frameindex = enlarge(localFrame) )
+	  frameindex = enlarge(threadLocalInterpState.localFrame) )
      else (
 	  -- this is a dynamic frame, not allocated yet
 	  frameindex = dictionary.framesize;

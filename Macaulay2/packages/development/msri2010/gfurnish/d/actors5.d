@@ -574,7 +574,7 @@ examine(e:Expr):Expr := (
 	  nullE)
      is s:Sequence do (
 	  if length(s) == 0 then (
-     	       showFrames(localFrame);
+     	       showFrames(threadLocalInterpState.localFrame);
 	       nullE)
 	  else WrongNumArgs(1))
      is s:List do (
@@ -1708,7 +1708,7 @@ listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else 
 frame(e:Expr):Expr := (
      when e
      is s:Sequence do 
-     if length(s) == 0 then Expr(listFrame(localFrame)) else WrongNumArgs(1,2)
+     if length(s) == 0 then Expr(listFrame(threadLocalInterpState.localFrame)) else WrongNumArgs(1,2)
      is sc:SymbolClosure do Expr(listFrame(sc.frame))
      is c:CodeClosure do Expr(listFrame(c.frame))
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
@@ -1727,7 +1727,7 @@ listFrames(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (
 
 frames(e:Expr):Expr := (
      when e
-     is a:Sequence do if length(a) == 0 then listFrames(localFrame) else WrongNumArgs(0,1) 
+     is a:Sequence do if length(a) == 0 then listFrames(threadLocalInterpState.localFrame) else WrongNumArgs(0,1) 
      is sc:SymbolClosure do Expr(listFrames(sc.frame))
      is c:CodeClosure do Expr(listFrames(c.frame))
      is fc:FunctionClosure do Expr(listFrames(fc.frame))
@@ -1741,7 +1741,7 @@ localDictionaries(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do 
 
 localDictionaries(e:Expr):Expr := (
      when e
-     is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
+     is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(threadLocalInterpState.localFrame))
      is x:DictionaryClosure do localDictionaries(x.frame)
      is x:SymbolClosure do localDictionaries(x.frame)
      is x:CodeClosure do localDictionaries(x.frame)
