@@ -1395,6 +1395,60 @@ doc ///
 			D = orderComplex P
 /// 
 
+
+-----------------
+-- interval
+-----------------
+doc ///
+	Key
+		interval
+		(interval,Poset, Thing, Thing)
+	Headline
+		returns the interval in the poset between two elements
+	Usage
+		I = interval(P,a,b)
+	Inputs 
+		P : Poset
+		a : Thing
+		b : Thing
+	Outputs
+		I : Poset
+			the interval between a and b in P
+	Description
+		Text
+		     This routine returns the interval between the elements a and b in P,
+		     and an error message if the two elements are not comparable in P.
+
+		Example
+		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)};
+		     interval(P,a,d)	  
+			  
+/// 
+
+
+-----------------
+-- hasseDiagram
+-----------------
+
+
+
+-----------------
+-- moebiusFunction
+-----------------
+
+
+
+-----------------
+-- inducedPoset
+-----------------
+
+-----------------
+-- atoms
+-----------------
+
+
+
+
 doc ///
      Key 
      	  GroundSet
