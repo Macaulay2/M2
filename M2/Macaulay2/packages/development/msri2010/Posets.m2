@@ -211,6 +211,9 @@ hasseDiagram (Poset) := DirectedGraph => (P) -> (
 		);   
   directedGraph(P.GroundSet, coveringRelations P))
 
+--G = digraph(apply(P.GroundSet, elt-> {elt, apply(select(P.cache.coveringRelations, rel -> rel#0 == elt), goodrel-> goodrel#1)})) 
+
+
 --------------------------------------------------
 --Minimal/Maximal Elements, and atoms 
 --------------------------------------------------
