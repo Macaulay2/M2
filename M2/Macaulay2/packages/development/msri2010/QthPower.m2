@@ -93,7 +93,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 	                    logei = logpoly(e#i, depq, indq);
 	                    logj = logpoly(e#j, depq, indq);	
 	                    if e#j != 0 and logj#0 == logei#0 then (
-                            if logei#2 >= logj#2 then (
+                            if geqlog(logei#2, logj#2) then (
 	                            wi = apply((logei#2 - logj#2), v->v%q);
 		                        if wi == apply(inds, v->0) then (
 		                            w = 1;
@@ -224,15 +224,13 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     i = #oldg - 1;
     while i > 0 do (
         logi = logpoly(oldg#i, depq, indq);
-        j = i - 1;
-        while j >= 0 do (
+        for j from 0 to i - 1 do {
             logj=logpoly(oldg#j, depq, indq);
-            if logi#0 == logj#0 and (logi#2 >= logj#2) then (
+            if logi#0 == logj#0 and geqlog(logi#2, logj#2) then (
 	            oldg = delete(oldg#i, oldg);
 	            break;
             );
-            j = j - 1;
-        );
+        };
         i = i - 1;
     );
     oldg
@@ -249,9 +247,7 @@ red (RingElement, Ideal, RingElement, List) := (g, I, dq, modfoot) -> (
     i := #modfoot - 1;
     while i >= 0 and g != 0 do (
         h = (g % (dq * modfoot#i)) % I;
-        -- Did we change in the last iteration?
         if g != h then (
-            -- Update and start over
             g = h;
             i = #modfoot - 1;
         );
@@ -275,7 +271,13 @@ fastq (RingElement, Ideal) := (g, I) -> (
     result
 );
 
--- "Log" of a polynomial split along independent and dependent parts.
+-- Compare "logs".
+geqlog = method(TypicalValue => Boolean);
+geqlog (List, List) := (v, w) -> (
+    for i from 0 to #v - 1 do if v#i < w#i then return false; true
+);
+
+-- "Log" of a polynomial.
 logpoly = method(TypicalValue => List);
 logpoly (RingElement, List, List) := (v, dep, ind) -> (
     lv := leadMonomial v;
