@@ -32,8 +32,8 @@ newPackage("Polyhedra",
 
 export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, fan, addCone, 
         ambDim, cones, maxCones, halfspaces, hyperplanes, linSpace, rays, vertices,
-        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isPolytopal, 
-	isPure, isSmooth,
+        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isLatticePolytope, isPointed, isPolytopal, 
+	isPure, isSmooth, isVeryAmple,
 	dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, 
 	latticePoints, maxFace, minFace, objectiveVector,
 	minkSummandCone, mixedVolume, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
@@ -1011,6 +1011,10 @@ isFace(Cone,Cone) := (C1,C2) -> (
 	  any(faces(c,C2), f -> f === C1))
      else false)
 
+
+isLatticePolytope = method()
+isLatticePolytope Polyhedron := Boolean => P -> liftable(vertices P,ZZ)
+
 isNormal Polyhedron := P -> (
      -- Checking for input errors
      if not isCompact P then error ("The polyhedron must be compact");
@@ -1168,6 +1172,46 @@ isSmooth Cone := C -> (
 isSmooth Fan := F -> (
      if not F.cache.?isSmooth then F.cache.isSmooth = all(toList F#"generatingCones",isSmooth);
      F.cache.isSmooth)
+
+
+isVeryAmple = method()
+isVeryAmple Polyhedron := P -> (
+     if not isCompact P then error("The polyhedron must be compact");
+     if not dim P == ambDim P then error("The polyhedron must be full dimensional");
+     if not isLatticePolytope P then error("The polyhedron must be a lattice polytope");
+     if not P.cache.?isVeryAmple then (
+	  E := apply(faces(dim P -1, P), e -> (e = vertices e; {e_{0},e_{1}}));
+     	  V := vertices P;
+     	  V = apply(numColumns V, i -> V_{i});
+     	  HS := -(halfspaces P)#0;
+     	  HS = apply(numRows HS, i -> HS^{i});
+     	  P.cache.isVeryAmple = all(V, v -> (
+	       	    Ev := select(E, e -> member(v,e));
+	       	    Ev = apply(Ev, e -> makePrimitiveMatrix(if e#0 == v then e#1-e#0 else e#0-e#1));
+	       	    ind := (smithNormalForm matrix {Ev})_0;
+	       	    ind = product toList apply(rank ind, i-> ind_(i,i));
+	       	    ind == 1 or (
+		    	 EvSums := apply(subsets Ev, s -> sum(s|{v}));
+	       	    	 all(EvSums, e -> contains(P,e)) or (
+		    	      Ev = matrix{Ev};
+		    	      HSV := matrix for h in HS list if all(flatten entries(h*Ev), e -> e >= 0) then {h} else continue;
+		    	      C := new Cone from {
+	   		      	   "ambient dimension" => numRows Ev,
+	   		      	   "dimension of the cone" => numRows Ev,
+	   		      	   "dimension of lineality space" => 0,
+	   		      	   "linealitySpace" => map(ZZ^(numRows Ev),ZZ^0,0),
+	   		      	   "number of rays" => numColumns Ev,
+	   		      	   "rays" => Ev,
+	   		      	   "number of facets" => numColumns HSV,
+	   		      	   "halfspaces" => HSV,
+	   		      	   "hyperplanes" => map(ZZ^0,ZZ^(numRows Ev),0),
+	   		      	   "genrays" => (Ev,map(ZZ^(numRows Ev),ZZ^0,0)),
+	   		      	   "dualgens" => (-(transpose HSV),map(ZZ^(numRows Ev),ZZ^0,0)),
+	   		      	   symbol cache => new CacheTable};
+		    	      HB := hilbertBasis C;
+		    	      all(HB, e -> contains(P,e+v)))))));
+     P.cache.isVeryAmple)
+     
 
 
 
