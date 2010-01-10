@@ -284,6 +284,12 @@ isAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
      X.cache.isAmple#D)
 
 
+isVeryAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isVeryAmple then X.cache.isVeryAmple = new MutableHashTable;
+     if not X.cache.isVeryAmple#?D then X.cache.isVeryAmple#D = isAmple(D,X) and isVeryAmple polytope(D,X);
+     X.cache.isVeryAmple#D)
+
+
 isCartier = method()
 isCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
      if not X.cache.?isCartier then X.cache.isCartier = new MutableHashTable;
@@ -302,7 +308,8 @@ isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
 	       U := matrix((rays X)_C);
 	       a := transpose matrix {D_C};
 	       n := numColumns U;
-	       m := systemSolver(U,a);--^{0..n-1},a^{0..n-1});
+	       print(U,a);
+	       m := systemSolver(if numRows U > n then (U^{0..n-1},a^{0..n-1}) else (U,a));--^{0..n-1},a^{0..n-1});
 	       if U*m-a != 0 then break{} else m));
      X.cache.isQQCartier#D != {})
 
@@ -652,6 +659,9 @@ isProjective NormalToricVariety := X -> (
      if not X.cache.isFan then error("The data does not define a Fan");
      isPolytopal X.cache.Fan)
 
+
+
+
 fan NormalToricVariety := X -> (
      if not X.cache.?Fan then (
 	  R := promote(matrix transpose rays X,QQ);
@@ -723,6 +733,7 @@ makeSimplicial NormalToricVariety := NormalToricVariety => options -> X ->(
      Xsimp)
 
 
+
 faceLatticeSimple = (d,R,HS) -> (
      R = apply(numColumns R, i -> R_{i});
      HS = apply(numColumns HS, i -> transpose HS_{i});
@@ -737,6 +748,14 @@ faceLatticeSimple = (d,R,HS) -> (
 				   (set newrs,set(l#1|{hs}),set newHS)));
 			 lnew = select(lnew, e -> all(lnew, f -> not isSubset(e#0,f#0) or e === f))));
 	       L = unique Lnew)))
+
+
+polytope NormalToricVariety := Polyhedron => X -> polytope fan X
+
+polytope (List,NormalToricVariety) := Polyhedron => (D,X) -> (
+     U := -matrix rays X;
+     a := transpose matrix {D};
+     intersection(U,a))
 
 
 stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
