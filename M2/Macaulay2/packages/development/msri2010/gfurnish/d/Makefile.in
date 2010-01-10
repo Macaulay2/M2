@@ -158,6 +158,7 @@ DFILES += varstrin.d
 DFILES += strings.d 
 DFILES += system.d
 DFILES += C.d
+DFILES += thread.d
 
 actors4.oo basic.oo engine.oo interface.oo objects.oo : ../e/engine.h
 

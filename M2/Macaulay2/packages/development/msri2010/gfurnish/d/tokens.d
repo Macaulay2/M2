@@ -401,7 +401,9 @@ export newGlobalDictionary():Dictionary := record(Dictionary(nextHash(),newSymbo
 export globalDictionary := Macaulay2Dictionary;
 
 numLocalDictionaries := 0;
-export localFrame := dummyFrame;
+-- export localFrame := dummyFrame;
+export threadLocalInterp := { localFrame:Frame }; 
+export threadLocalInterpState := threadLocalInterp(dummyFrame);
 
 export dummySymbolHashTable := newSymbolHashTable();
 
