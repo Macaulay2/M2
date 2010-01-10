@@ -104,6 +104,21 @@ Series*Series := (x,y) -> new Series from {generator = decider(x,y), degree => m
 
 --=========================================================================--
 --=========================================================================--
+makeSeriesCompatible = method()
+makeSeriesCompatible(Series,Series) := Sequence => (A,B) -> (
+      if A.computedDegree == B.computedDegree then (A,B)
+      else (
+      	   newComputedDegree := min(A.maxDegree,B.maxDegree,max(A.computedDegree,B.computedDegree));
+           A' := setDegree(newComputedDegree,A);
+	   B' := setDegree(newComputedDegree,B);
+	   (A',B')
+	   )
+      )
+ 
+Series + Series := Series => (A,B) -> (
+     (A',B') := makeSeriesCompatible(A,B);
+     
+      )
 --=========================================================================--
 
 
