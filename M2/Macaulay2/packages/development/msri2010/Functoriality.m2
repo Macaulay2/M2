@@ -8,7 +8,7 @@ newPackage(
 	  DebuggingMode => true
 	  )
      
-export {connectingHomomorphism,cylinder,connectingExt,connectingTor,horseshoe,toHom,Prune}
+export {connectingHomomorphism,cylinder,connectingExt,connectingTor,horseshoe,toHom,Prune,coneProjectSource,coneInjectSource,coneProjectTarget,coneInjectTarget}
 
 horseshoe = method()
 horseshoe(Matrix,Matrix) := (f,g) -> (
