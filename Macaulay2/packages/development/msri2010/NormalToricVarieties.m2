@@ -21,14 +21,17 @@ export {
      hirzebruchSurface, 
      weightedProjectiveSpace, 
      kleinschmidt,
-     classGroup, 
+     anticanonicalDivisor,
+     classGroup,
+     isAmple,
+     isCartier,
+     isQQCartier,
+     isFano,
      isDegenerate,
      isProjective,
      isSimplicial,
      latticeIndex,
      makeSimplicial,
-     makeSmooth,
-     resolveSingularities,
      weilDivisors, 
      cartierDivisors, 
      cartierToPicard,
@@ -261,8 +264,54 @@ isWellDefined NormalToricVariety := Boolean => X -> (
 		    flag = false; 
 		    break)));
 
-     return flag)     
+     return flag)
 
+
+isAmple = method()
+isAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isAmple then X.cache.isAmple = new MutableHashTable;
+     if not X.cache.isAmple#?D then (
+	  X.cache.isAmple#D = isCartier(D,X) and isComplete X and (
+	       complementSelect := (L,ind) -> L_(sort toList(set(0..#L-1) - set ind));
+	       M := - X.cache.isQQCartier#D;
+	       all(#(max X), i -> (
+		    	 C := (max X)#i;
+		    	 m := M#i;
+		    	 R := complementSelect(rays X,C);
+		    	 a := - complementSelect(D,C);
+		    	 all(#R, j -> ((matrix{R#j} * m) - a#j)_(0,0) > 0)))));
+     X.cache.isAmple#D)
+
+
+isCartier = method()
+isCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isCartier then X.cache.isCartier = new MutableHashTable;
+     if not X.cache.isCartier#?D then X.cache.isCartier#D = isQQCartier(D,X) and all(X.cache.isQQCartier#D, m -> liftable(m,ZZ));
+     X.cache.isCartier#D)
+
+
+isQQCartier = method()
+isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isQQCartier then X.cache.isQQCartier = new MutableHashTable;
+     if not X.cache.isQQCartier#?D then (
+	  systemSolver := (R,F) -> (
+     	       (R1,Lmatrix,Rmatrix) := smithNormalForm lift(R,ZZ);
+     	       F1 := entries(Lmatrix * F);
+     	       Rmatrix * (matrix apply(numRows R1, i -> F1#i / R1_(i,i)) || map(QQ^(numColumns R1 - numRows R1),QQ^(#(F1#0)),0)));
+     	  X.cache.isQQCartier#D = for C in max X list (
+	       U := matrix((rays X)_C);
+	       a := transpose matrix {D_C};
+	       n := numColumns U;
+	       m := systemSolver(U^{0..n-1},a^{0..n-1});
+	       if U*m-a != 0 then break{} else m));
+     X.cache.isQQCartier#D != {})
+
+
+isFano = method()
+isFano NormalToricVariety := Boolean => (cacheValue symbol isFano)(
+     X -> (
+	  D := anticanonicalDivisor X;
+	  isCartier(D,X) and isAmple(D,X)))
 
    
 isDegenerate = method()
@@ -283,6 +332,10 @@ isSmooth NormalToricVariety := Boolean => (cacheValue symbol isSmooth)(
      	  b := all(max X, s -> #s == rank V_s and 1 == minors(#s,V_s));
 	  if b == true then X.cache.simplicial = true;
 	  return b))
+
+
+anticanonicalDivisor = method()
+anticanonicalDivisor NormalToricVariety := List => X -> toList(#(rays X):1)
 
 
 classGroup = method()
@@ -794,96 +847,6 @@ insertCone (NormalToricVariety,List) := (X,C) -> (
      Y)
 
 
-
-----------------------------------------------------------------
--- The following developed by Christine Berkesch, Diane Maclagan, Alexandra Seceleanu
----------------------------------------------------------------
---Internal procedures (no documentation)
-----------------------------------------------------------------
---Procedure to return the largest prime dividing a number 
-maxPrime=n->(
-     f:=factor(n);
-     return(max apply(#f,i->((f#i)#0)));
-);
-
---Procedure to return the smallest prime dividing a number 
-minPrime=n->(
-     f:=factor(n);
-     return(min apply(#f,i->((f#i)#0)));
-);
-
---Procedure to find the mod p representative of a vector v with
---all entries between 0 (inclusive) and p (exclusive)
-makePos=(v,pp)->(
-	local i,j;
-	i=0;
-	while i<#v do (
-		while v_i < 0 do (
-			v=v+pp*(apply(#v,j->(if j==i then 1 else 0)));
-		);
-		while v_i > pp-1 do (
-			v=v-pp*(apply(#v,j->(if j==i then 1 else 0)));
-		);
-		i=i+1;
-	);
-	v
-)
-
--- Procedure to compute the maximal lattice index for the facets of X.
--- Note: (X is NOT required to be pure or simplicial)
-maxIndex = method()
-maxIndex (NormalToricVariety):= X ->(
-	max apply(max X,sigma-> latticeIndex(sigma,X))
-)
-
--------------------------------------------------------------------------
---This is currently an internal procedure
--- Procedure to find a new ray (as a List) at which to subdivide.
-
-findNewRay = method(Options => {Strategy => "max"} ) 
-findNewRay (NormalToricVariety,ZZ) := options ->(X,maxInd) ->(
-	sigma := (select(1,max X, C -> latticeIndex(C,X) == maxInd))#0;
-	--Now find the vector in this sigma to add
-	p := 0;
-	if options.Strategy == "min" then p = minPrime(floor maxInd) else if options.Strategy == "max" then p = maxPrime(floor maxInd); 
-	R := ZZ/p;
-	Ap := substitute(transpose matrix (rays X)_sigma, R);
-	K := transpose gens ker Ap;
-	k := flatten entries substitute(matrix({(entries(K))_0}),ZZ);
-	k = matrix {makePos(k,p)};
-	newA := flatten entries (k*matrix (rays X)_sigma);
-	makePrimitive newA --output new vector in list form
-)
-
-
-----------------------------------------------------------------
---Internal procedures for resolution of singularities; 
--- resolve a simplicial normal toric variety
-
-makeSmooth = method(Options => {Strategy=>"max"})
-makeSmooth NormalToricVariety := NormalToricVariety => options -> X ->(
-	if dim X ==1 then return normalToricVariety(apply(rays X, r-> makePrimitive r),max X);
-	Xsimp := X; 
-	maxInd := maxIndex Xsimp;
-	--Now the main part of the procedure
-	count := 0;
-	while(maxInd > 1) do (
-		count = count +1;	     
-		newA = findNewRay(Xsimp,maxInd,Strategy=>options.Strategy);
-		print concatenate{"blowup #",toString count," at ",toString newA," with lattice index ",toString maxInd};
-		Xsimp = stellarSubdivision( Xsimp, newA);
-		--Now update maxInd
-		maxInd = maxIndex Xsimp;
-	);
-	Xsimp
-)
-
-resolveSingularities = method(Options=>{Strategy=>"max"}) 
-resolveSingularities NormalToricVariety := NormalToricVariety => options -> X ->(
-	Xsimp:=X;
-	if isSimplicial X then Xsimp = X else Xsimp = makeSimplicial X;
-	if isSmooth Xsimp then Xsimp else makeSmooth (Xsimp, Strategy => options.Strategy)
-)
 --------------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
 --   isFano
@@ -2595,284 +2558,8 @@ document {
      SeeAlso => {
 	  NormalToricVariety, 
 	  }
-     }
-     
-doc ///
-  Key
-	makeSmooth
-	(makeSmooth, NormalToricVariety)
-  Headline
-	resolve a simplicial normal toric variety
-  Usage
-	Y = makeSmooth X
-  Inputs
-	X:NormalToricVariety
-  Outputs
-	Y:NormalToricVariety
-  Description
-    Text
-	Resolves the singularities of a simplicial {\tt X}, 
-	yielding a smooth {\tt Y}.
-    Text
-	Given a simplicial @TO NormalToricVariety@ {\tt X}, 
-	makeSmooth {\tt X} is obtained by successive 
-	@TO stellarSubdivision@s of the fan of X until each 
-	cone in the fan is contained in some basis for the 
-	ambient lattice. 
-    Text
-	As a simple example, consider the affine (simplicial) 
-	@TO NormalToricVariety@ determined by the 
-	two-dimensional cone in \RR^2 with rays (4,-1) and (0,1) and 
-	another with rays (3,-2) and (0,1). 
-    Example
-	U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
-	V = makeSmooth U;
-	expression V
-	isSmooth V
-    Example
-	X = normalToricVariety({{3,-2},{0,1}},{{0,1}});
-	Y = makeSmooth X;
-	expression Y
-    Text
-	We now consider a small weightedProjectiveSpace. 
-    Example
-	X = weightedProjectiveSpace {1,2,3};
-	Y = makeSmooth X;
-	expression Y
-	isSmooth Y
-    Text
-	If {\tt X} is already smooth, makeSmooth X will return {\tt X}.
-    Example
-	X = projectiveSpace 5;
-	Y = makeSmooth X;
-	X === Y
-    Text
-	Here is a three-dimensional affine non-simplicial 
-	normalToricVariety {\tt X}. To make it smooth, we 
-	first apply @TO makeSimplicial@ to {\tt X}. 
-	These two methods combine to give the command 
-	@TO resolveSingularities@.
-    Example
-	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
-	Y = makeSimplicial X;
-	Z = makeSmooth Y;
-	expression Z
-	isSmooth Z
-	U = resolveSingularities X;
-	U === Z	
-    Text
-	Here is the normalToricVariety whose fan is determined 
-	by the cube centered at the origin in three dimensions 
-	with vertices whose entries are +1 and -1.	
-    Example
-	X = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
-	Y = makeSimplicial X;
-	Z = makeSmooth Y;
-	expression Z
-	isSmooth Z
-    Text
-	The input variety need not be pure-dimensional.
-    Example
-	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,1},{1,0,-1}},{{0,1,2,3},{0,4}});
-	Y = makeSmooth X;
-	Z = makeSimplicial Y;
-	expression Z
-    Text
-	There is a Strategy option. The Strategy arguments currentl available are "min" and "max" which correspond to choosing 
-	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
-	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
-	are different.
-    Example
-	X = weightedProjectiveSpace ({1,9,10});
-	Y1 = makeSmooth (X, Strategy => "max")
-	Y2 = makeSmooth (X, Strategy => "min")
-	Y1 === Y2
-    Text	
-	In this example the "max" strategy uses only 17 blowups while the "min" strategy uses 28 blowups.
-    Example
-	X = weightedProjectiveSpace {1,2,3,5,17};
-	Y1 = makeSmooth (X, Strategy => "max")
-	Y2 = makeSmooth (X, Strategy => "min")
-	Y1 === Y2
-    Text
-      This command even works for 1-dimensional toric varieties.    
-    Example
-	X = normalToricVariety({{2}},{{0}}); 
- 	Y = makeSmooth X;
-	isSmooth Y 
-	X === Y 
-  Caveat
-	It is assumed that {\tt X} is simplicial.
-  SeeAlso
-	 (isSmooth,NormalToricVariety)
-	 makeSmooth
-	 makeSimplicial
-	 resolveSingularities
-	 stellarSubdivision
-///
+     }     
 
-
-doc ///
-  Key
-	resolveSingularities
-	(resolveSingularities, NormalToricVariety)
-  Headline
-	resolve the singularities of a normal toric variety
-  Usage
-	Y = resolveSingularities X
-  Inputs
-	X:NormalToricVariety
-  Outputs
-	Y:NormalToricVariety
-	  a resolution of {\tt X}
-  Description
-    Text
-	This function returns the resolution of X obtained 
-	by applying @TO makeSimplicial@ and then @TO makeSmooth@. 
-    Text
-	A simplicial @TO NormalToricVariety@ 
-	{\tt X} is smooth exactly when 
-	its fan is composed of simplicial cones whose generators 
-	are subsets of bases of the ambient lattice.
-    Text
-	As a simple example, consider the affine (simplicial) 
-	@TO NormalToricVariety@ {\tt X} determined by the cone 
-	with rays (4,-1) and (0,1) in \ZZ^2. 
-    Example
-	U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
-	V = resolveSingularities U;
-	expression V
-	isSmooth V
-    Text
-	The input variety need not be full-dimensional.
-    Example
-	U' = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
-	V' = resolveSingularities U';
-	expression V'
-	isSmooth V'
-	U' === V' 
---  Example
---	--Here we see that quotient singularities are not resolved.
---	U' = normalToricVariety({{8,-2},{0,1}},{{0},{1}});
---	V' = resolveSingularities U';
---	expression V'
---	isSmooth V' --false
---	U' === V' --true
-    Text 
-	Showing again that the input need not be 
-	full-dimensional, this example would also 
-	be a good one on which to try the Strategy 
-	(min,max) option.
-    Example
-	U' = normalToricVariety({{-2,3,0},{1,0,0},{0,-1,0},{0,0,1}},{{0,1},{0,2},{1,2},{2,3}});
-	V' = resolveSingularities U';
-	expression V'
-	isSmooth V'
-	U' === V' 
-    Text
-	Now consider a small weightedProjectiveSpace. 
-    Example
-	X = weightedProjectiveSpace {1,2,3};
-	Y = resolveSingularities X;
-	expression Y
-    Text
-	If {\tt X} is already smooth, resolveSingularities X will return {\tt X}.
-    Example
-	X = projectiveSpace 5;
-	Y = resolveSingularities X;
-	X === Y
-    Text
-	Here is a three-dimensional affine non-simplicial 
-	normalToricVariety {\tt X}. 
-    Example
-	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
-	Y = resolveSingularities X;
-	expression Y
-	isSmooth Y
-    Text
-	Here is the normalToricVariety whose fan is determined 
-	by the cube centered at the origin in three dimensions 
-	with vertices whose entries are +1 and -1.	
-    Example
-	X = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
-	Y = resolveSingularities X;
-	expression Y
-    Text
-	The input variety need not be pure-dimensional.
-    Example
-	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,1},{1,0,-1}},{{0,1,2,3},{0,4}});  	
-	Y = resolveSingularities X;
-	expression Y
-    Text
-	There is a Strategy option. The Strategy arguments currently available are "min" and "max" which correspond to choosing 
-	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
-	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
-	are different.
-    Example
-	X = weightedProjectiveSpace ({1,9,10});
-	Y1 = resolveSingularities (X, Strategy => "max")
-	Y2 = resolveSingularities (X, Strategy => "min")
-	Y1 === Y2
-    Text	
-	In this example the "max" strategy uses only 17 blowups while the "min" strategy uses 28 blowups.
-    Example
-	X = weightedProjectiveSpace {1,2,3,5,17};
-	Y1 = resolveSingularities (X, Strategy => "max")
-	Y2 = resolveSingularities (X, Strategy => "min")
-	Y1 === Y2
-  SeeAlso
-	makeSimplicial
-	makeSmooth
-	stellarSubdivision
-///
-
-
-doc ///
-  Key
-	latticeIndex
-	(latticeIndex,List,NormalToricVariety)
-  Headline
-	the index in the ambient lattice of a lattice generated by primitive vectors in the fan of a normal toric variety
-  Usage
-	m = latticeIndex(sigma, X)
-  Inputs
-	X:NormalToricVariety
-	sigma:List
-	  of integers indexing a subset of (rays X)
-  Outputs
-	m:ZZ
-	  The index in the ambient lattice of the lattice generated by the rays indexed by {\tt sigma}.
-  Description
-    Text
-	Given a cone sigma in a @TO normalToricVariety@, 
-	the lattice (or group) generated by the integer vectors 
-	in sigma need not coincide with the collection of 
-	integer vectors found in its linear span. This method
-	computes the number of (translated) copies it takes to 
-	cover this a priori larger collection of integral points. 
-    Text
-	A cone corresponds to a nonsingular variety when 
-	it is simplicial and has latticeIndex equal to 1.
-    Text
-	We provide an example of an affine singular 
-	@TO normalToricVariety@, as well as a complete one. 
-    Example
-	U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
-	sigma = (max U)#0;
-	latticeIndex(sigma,U)
-	tau = {0};
-	latticeIndex(tau,U)
-    Text
-	Here we see a smooth divisor within a singular variety. 
-    Example
-	X = weightedProjectiveSpace {1,2,3,5,17};
-	sigma = (max X)#0;
-	latticeIndex(sigma,X)
-	tau = {0,1,2};
-	latticeIndex(tau,X)	
-  Caveat
-	It is not checked that {\tt sigma} actually defines a face of the fan of X.
-///
 -------------------------------------------------------------------------------- 
 -- TEST
 --------------------------------------------------------------------------------
@@ -2983,52 +2670,6 @@ assert(cartierDivisors Q == ZZ^4)
 assert(weilDivisors Q == ZZ^8)
 assert(classGroup Q == cokernel transpose matrix{{2,0,0,0,0,0,0},{0,2,0,0,0,0,0}})
 assert(picardGroup Q == ZZ^1)
-///
-
-TEST ///
-PP4 = projectiveSpace 4;
-assert(makeSmooth PP4 === PP4)
-assert(resolveSingularities PP4 === PP4)
-assert(apply(max PP4,i-> latticeIndex(i,PP4)) == apply(max PP4,i-> 1))
-///
-
-TEST ///
-PP1 = projectiveSpace 1;
-assert(makeSmooth PP1 === PP1)
-assert(resolveSingularities PP1 === PP1)
-assert(apply(max PP1,i-> latticeIndex(i,PP1)) == apply(max PP0,i-> 1))
-///
-
-TEST ///
-FF2 = hirzebruchSurface 2;
-assert(makeSmooth FF2 === FF2)
-assert(resolveSingularities FF2 === FF2)
-assert(apply(max FF2,i-> latticeIndex(i,FF2)) == apply(max FF2,i-> 1))
-///
-
-TEST ///
-X = weightedProjectiveSpace {1,2,3};
---assert(makeSmooth X === normalToricVariety({{-2,3},{1,0},{0,1},{-1,2},{0,-1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
---assert(resolveSingularities X === normalToricVariety({{-2,3},{1,0},{0,1},{-1,2},{0,-1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
-assert(apply(max X,i-> latticeIndex(i,X)) == {3,2,1})
-///
-
-TEST ///
-U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
-assert(rays U == {{4,-1},{0,1}})
-assert(max U == {{0,1}})
---assert(makeSmooth U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
---assert(resolveSingularities U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
-assert(apply(max U,i-> latticeIndex(i,U)) == {4})
-///
-
-TEST ///
-U' = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
-assert(rays U' == {{4,-1},{0,1}})
-assert(max U' == {{0},{1}})
-assert(makeSmooth U' === U')
-assert(resolveSingularities U' === U')
-assert(apply(max U',i-> latticeIndex(i,U')) == apply(max U',i-> 1))
 ///
 
 end     
