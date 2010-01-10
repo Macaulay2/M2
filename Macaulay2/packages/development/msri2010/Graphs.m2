@@ -2,7 +2,7 @@
 newPackage("Graphs",
      Authors => {
 	  {Name => "Amelia Taylor"},
-	  {Name => "Others"}
+	  {Name => "Augustine O'Keefe"}
 	  },
      DebuggingMode => true,
      Headline => "Data types, visualization, and basic funcitons for graphs",
@@ -233,6 +233,30 @@ parents = method()
 parents(Digraph,Thing) := (G,v) -> set select(keys(G), i -> member(v,
 G#i))
 
+children = method()
+     -- Input: A digraph and the key for the vertex of interest.
+children(Digraph,Thing) := (G,v) -> G#v
+
+neighbors = method()
+neighbors(Graph,Thing) := (G,v) -> G#v  
+
+nonneighbors = method()
+nonneighbors(Graph, Thing) := (G,v) -> keys G - neighbors(G,v)-set{v}
+
+removeNodes = method()
+removeNodes(Digraph,List) := (G,v) -> (
+     v = set v;
+     G = select(pairs G, x -> not member(x#0,v));
+     G = apply(G, x -> (x#0, x#1 - v));
+     new Digraph from G
+     )
+removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
+
+
+--------------------
+-- Documentation  --
+--------------------
+
 
 ///
 restart
@@ -247,34 +271,6 @@ toList oo
 
 
 
-
-children = method()
-     -- Input: A digraph and the key for the vertex of interest.
-children(Digraph,Thing) := (G,v) -> G#v
-
-neighbors = method()
-neighbors(Graph,Thing) := (G,v) -> G#v  
-
-nonneighbors = method()
-nonneighbors(Graph, Thing) := (G,v) -> keys G - neighbors(G,v)-set{v}
-
-removeNodes = method()
-removeNodes(Digraph,List) := (G,v) -> (
-     v = set v;
-     --error "are you broken here?";
-     G = select(pairs G, x -> not member(x#0,v));
-     --error "or here?";
-     G = apply(G, x -> (x#0, x#1 - v));
-     --error "or maybe here?";
-     new Digraph from G
-     )
-removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
-
-
---------------------
--- Documentation  --
---------------------
-
 beginDocumentation()
 
 doc ///
@@ -284,7 +280,141 @@ doc ///
     Data types and basic functions on graphs used in algebra and algebraic geometry. 
   Description
     Text
-      This package is used to construct graphs. 
+      This package is used to construct digraphs and graphs. 
+///
+
+doc ///
+  Key
+    Graph
+  Headline
+    The data type for an undirected graph
+  Description
+    Text
+      Graphs are awesome!
+///
+
+doc ///
+  Key
+    Digraph
+  Headline
+    The data type for a directed graph
+  Description
+    Text
+      Digraphs are even more awesome!
+///
+
+end
+
+doc ///
+  Key
+    graph
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    digraph
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    Singletons
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    descendents
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    nondescendents
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    parents
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    children
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    neighbors
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    nonneighbors
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    displayGraph
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    simpleGraph
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    removeNodes
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    dotBinary
+  Headline
+  Description
+    Text
+///
+
+doc ///
+  Key
+    jpgViewer
+  Headline
+  Description
+    Text
 ///
 
 end
