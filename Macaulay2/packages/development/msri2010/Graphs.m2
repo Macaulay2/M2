@@ -34,6 +34,9 @@ Graph = new Type of Digraph
      -- edge that are not a key earlier in the hash table. This 
      -- version removes the redunancy of each edge appearing twice. 
      -- simpleGraph is an internal conversion function. 
+     
+LabeledGraph = new Type of Graph 
+   
 
 union := S -> (
      -- Input:  A list of lists of sets, in particular the list of the
@@ -44,7 +47,7 @@ union := S -> (
      for t in S do scanKeys(t, z -> x#z = 1);
      new Set from x)  
 
-graph = method(Options => {Singletons => null})
+graph = method(Options => {Singletons => null,})
 graph List := opts -> (g) -> (
      -- Input:  A list of lists with two elements which describe the 
      --         edges of the graph. 
@@ -74,7 +77,26 @@ graph List := opts -> (g) -> (
 	  neighbors = join(neighbors,newEdges);
 	  );
      apply(#vertices, i -> h#(vertices#i) = neighbors#i);
-     new Graph from h)
+     new Graph from h
+     )
+
+labeledGraph = method()
+labeledGraph (Digraph,List) := opts -> (g,L) -> (
+     -- Input:  A graph and a list of lists with two elements one of
+     --         which is a list giving an edge and the other is the lables. 
+     -- Output:  A hash table with keys the names of the nodes and the 
+     --          values are the neighbors corresponding to that node. 
+     ---- Note to Selves --- this code should also nicely build
+     ---- hypergraphs as hash tables with again, nodes as keys and
+     ---- neighbors as values. 
+     lg := new MutableHashTable;
+     lg#graphData = g;
+     label := new MutableHashTable;
+     apply(L, i -> label#(i#0) = i#1);	   
+     lg#labels = label;
+     new LabeledGraph from lg
+     )
+
 
 --graph MutableHashTable := opts -> (g) -> (
 --     new Graph from h)
