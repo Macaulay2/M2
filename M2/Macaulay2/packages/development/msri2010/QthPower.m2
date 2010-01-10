@@ -59,7 +59,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     oldg := footprint;
     
     -- local variables
-    i := j := w := k :=  deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := gx := pos := 0;
+    i := j := w := k := prod := mx := ll := ex := l := gx := pos := 0;
     skip := skip1 := updating := true;
     logei := logj := logk := posl := ww := {};
     
@@ -91,63 +91,52 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 	                if s#j == before and e#j != 0 then (
 	                    logei = logpoly(e#i, depq, indq);
 	                    logj = logpoly(e#j, depq, indq);	
-	                    if e#j != 0 and logj#0 == logei#0 and geqlog(logei#2, logj#2) then (
-		                    if apply((logei#2 - logj#2), v->v%q) == apply(inds, v->0) then (
-		                        w = 1;
-		                        for k to inds - 1 do w = w * (indq#k)^((logei#2 - logj#2)#k//q);
-			                    loop = true;
-			                    if g#i > g#j * w then (
-		                            lc = leadCoefficient(e#i)//leadCoefficient(e#j);
-                                    g = replace(i, g#i - lc * (g#j) * w, g);
-                                    h = replace(i, (h#i - lc * (h#j) * w^q) % I, h);
-	                                e = replace(i, red(e#i - lc * (e#j) * w^q, I, dq, oldg), e);
-                                    j = -1; -- updates to zero
-	    		                )
-		                        else if g#i < g#j * w then (
-                                    gx = (g#j) * w;
-                                    pos = position(sort(append(g,gx)), a->a==gx);
-                                    g = insert(pos, gx, g);
-                                    h = insert(pos, (h#j)*w^q, h);
-                                    e = insert(pos, red((e#j)*w^q, I, dq, oldg), e);
-                                    s = insert(pos, before,s);
-			                    );   
-                            );
+	                    if e#j != 0 and logj#0 == logei#0 and geqlog(logei#2, logj#2) and apply((logei#2 - logj#2), v->v%q) == apply(inds, v->0) then (
+		                    w = 1;
+		                    for k to inds - 1 do w = w * (indq#k)^((logei#2 - logj#2)#k//q);
+			                loop = true;
+			                if g#i > g#j * w then (
+		                        lc = leadCoefficient(e#i)//leadCoefficient(e#j);
+                                g = replace(i, g#i - lc * (g#j) * w, g);
+                                h = replace(i, (h#i - lc * (h#j) * w^q) % I, h);
+	                            e = replace(i, red(e#i - lc * (e#j) * w^q, I, dq, oldg), e);
+                                j = -1; -- updates to zero
+	    		            )
+		                    else if g#i < g#j * w then (
+                                gx = (g#j) * w;
+                                g = sort(append(g,gx));
+                                pos = position(g, a->a==gx);
+                                h = insert(pos, (h#j)*w^q, h);
+                                e = insert(pos, red((e#j)*w^q, I, dq, oldg), e);
+                                s = insert(pos, before, s);
+			                );   
                         );
                     );
                     j = j + 1;
                 );
-                if e#i == 0 then s = replace(i, now, s); 
                 -- Extension
-                if e#i != 0 then (
+                if e#i == 0 then (
+                    s = replace(i, now, s);
+                )
+                else (
 	                if s#i >= before then (
 	                    loop = true;   
                         logei = logpoly(e#i, depq, indq);
-	                    deplmei = logei#1;
-	                    indlmei = logei#3;
 	                    for j to #oldg-1 do (
 	                        logj = logpoly(dq * oldg#j, depq, indq);
-	                        deplmj = logj#1;
-	                        indlmj = logj#3;
-	                        if deplmj == deplmei then(
+	                        if logj#1 == logei#1 then (
 	                            prod = 1;
 		                        for k to inds - 1 do (
 		                            mx = -((-(((logj)#2)#k-((logei)#2)#k))//q);
 		                            if mx > 0 then prod = prod * (indq#k)^mx;
-		                        ); 
-	                            skip1 = false;
-		                        for l to #g - 1 do (
-                                    if s#l >= before and g#l != 0 and leadMonomial(g#l) == leadMonomial(g#i*prod) then (
-                                        skip1 = true;
-		 	                            break;
-		                            );
-                                );
-	                            if not skip1 then (
+		                        );
+	                            if all(apply(#g, l->s#l >= before and g#l != 0 and leadMonomial(g#l) == leadMonomial(g#i*prod)), l->l==false) then (
                                     gx = (g#i) * prod;
                                     pos = position(sort(append(g,gx)), a->a==gx);
-                                    g = insert(pos, gx, (g));
-                                    h = insert(pos, (h#i)*prod^q, (h));
-                                    e = insert(pos, red((e#i)*prod^q, I, dq, oldg), (e));
-                                    s = insert(pos, before, (s));
+                                    g = insert(pos, gx, g);
+                                    h = insert(pos, (h#i)*prod^q, h);
+                                    e = insert(pos, red((e#i)*prod^q, I, dq, oldg), e);
+                                    s = insert(pos, before, s);
 	                                loop = true;
 		                        );
 		                    );          
@@ -156,21 +145,15 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 	                        if s#k >= before and g#k != 0 and e#k != 0 then (	 	 
 	                            logk = logpoly(e#k, depq, indq);
 	                            if k < i and logk#0 == logei#0 then (
-	                                if apply((logei#2 - logk#2), v->v%q) == apply(inds, v->0) then (
-		                                ll = lcm(indlmei, logk#3);
-		                                w = ll//logei#3;
-		                                ww = apply(inds, v->degree(indq#v,w));
-			                            prod = 1;
-			                            for iii to #ww - 1 do(
-			                                ex = (ww#iii)//q;  
-			                                prod = prod * (indq#iii)^ex;
-			                            );
+	                                if all(apply((logei#2 - logk#2), v->v%q), v->v==0) then (
+		                                ww = apply(inds, v->degree(indq#v,lcm(logei#3, logk#3)//logei#3));
+                                        prod = product(#ww, l->(indq#l)^((ww#l)//q));
                                         gx = (g#i) * prod;
-                                        pos = position(sort((append(g,gx))), a->a==gx);
-                                        g = insert(pos, gx, (g));
-                                        h = insert(pos, (h#i)*prod^q, (h));
-                                        e = insert(pos, red((e#i)*prod^q, I, dq, oldg), (e));
-                                        s = insert(pos, before, (s));
+                                        g = sort(append(g,gx));
+                                        pos = position(g, a->a==gx);
+                                        h = insert(pos, (h#i)*prod^q, h);
+                                        e = insert(pos, red((e#i)*prod^q, I, dq, oldg), e);
+                                        s = insert(pos, before, s);
 			                            loop = true;
                                     );
 	                            );
@@ -184,12 +167,12 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
         -- initialize next P-module generator
         now = now + 1;
         posl = positions(toList g, i->i!=0);
-        g = (g)_posl;
-        h = (h)_posl;
-        e = (e)_posl;
-        s = (s)_posl;
+        g = g_posl;
+        h = h_posl;
+        e = e_posl;
+        s = s_posl;
         before = before + 1;
-        oldg = for iiii from 0 to #g - 1 list if s#iiii == before and e#iiii == 0 then g#iiii else continue;
+        oldg = for i from 0 to #g - 1 list if s#i == before and e#i == 0 then g#i else continue;
         e = apply(h, s->red(s, I, dq, oldg));
     );
 
