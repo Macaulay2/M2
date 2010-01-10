@@ -278,3 +278,30 @@ B = thing1(4)
 A.up(3)
 up(A,3)
 f=
+
+
+
+------ Growable Rationals
+restart
+GrowableRational = new Type of HashTable;
+expression GrowableRational := R -> toRR R#value;
+net GrowableRational := R -> toRR R#value;
+toString GrowableRational := R -> toRR R#value;
+tex GrowableRational := R -> toRR R#value;
+html GrowableRational := R -> toRR R#value;
+
+
+growableRational = method();
+growableRational(ZZ,ZZ) := GrowableRational => (a,b) -> (
+     new GrowableRational from {value=>a//b,growMe => (i -> (a*10^i // b)/10^i)}
+     );
+     
+growMe = method();
+growMe(GrowableRational,ZZ) := GrowableRational => (R,i) -> (
+     new GrowableRational from {value => R#growMe(i), growMe => (j -> R#growMe(j+i))}
+     );
+
+growableRational(7,6)
+growMe(oo,1)
+growMe(oo,1)
+growMe(oo,2)
