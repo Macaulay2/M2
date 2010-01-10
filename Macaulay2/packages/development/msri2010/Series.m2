@@ -30,7 +30,7 @@ series = method(Options => {Degree => 5})
 series(Function) := Series => opts -> f -> (
      s:=0;
      for i from 0 to opts.Degree do (if f i == 0 then continue else if first degree f i > opts.Degree then break else s=s+f i);
-     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s}
+     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, setDegree => i -> }
      );
 
 ZZ[x]
