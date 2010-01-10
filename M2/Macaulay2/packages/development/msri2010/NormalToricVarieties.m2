@@ -981,7 +981,6 @@ resolveSingularities NormalToricVariety := NormalToricVariety => options -> X ->
 )
 --------------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
---   isFano
 --   cotangentBundle -> See Package ToricVectorBundles by Birkner,Ilten,Petersen
 --   homology,NormalToricVariety
 --   blow-ups
@@ -989,9 +988,6 @@ resolveSingularities NormalToricVariety := NormalToricVariety => options -> X ->
 --   vector bundles? -> See Package ToricVectorBundles by Birkner,Ilten,Petersen
 --   faces
 --   linear series
---   isCartier
---   isAmple
---   isVeryAmple
 --   isSemiprojective
 --
 
