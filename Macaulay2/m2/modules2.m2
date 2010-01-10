@@ -173,8 +173,8 @@ hilbertSeries Module := opts -> (M) -> (
 		    	 num = part(,ord-1,wts,num);
 			 scan(denominator h, denom -> (
 				   rec := recipN(ord-lo,wts,denom#0);
-				   scan(denom#1, i -> num = part(,ord-1,num * rec))));
-			 part(,ord-1,wts,num))));
+				   scan(denom#1, i -> num = part(,ord-1,wts,num * rec))));
+			 num)));
 	  M.cache#approxKey = (ord,s);
 	  s))
 
