@@ -31,9 +31,9 @@ series(Function) := Series => opts -> f -> (
      s:=0;
      for i from 0 to opts.Degree do (if f i == 0 then continue else if first degree f i > opts.Degree then break else s=s+f i);
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
-	  setDegree => (n -> (SS := s;
-		              for i from opts.Degree + 1 to n do SS = SS + f i;
-			      (SS,max(opts.Degree,n))
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (newPolynomial := oldPolynomial;
+		              for i from oldComputedDegree + 1 to newDegree do newPolynomial = newPolynomial + f i;
+			      (newPolynomial,max(oldComputedDegree,newDegree))
 		             )
 		        ) 
 		     }
@@ -41,19 +41,35 @@ series(Function) := Series => opts -> f -> (
 
 setDegree = method()
 setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warning: cannot exceed max degree "  << S.maxDegree <<endl;);
-     (f,c) := S#setDegree n;
-     new Series from {polynomial => f, computedDegree => c, maxDegree => S#maxDegree, degree => n, setDegree=> S#setDegree}
+     (f,c) := S#setDegree (S#polynomial,S#computedDegree,n);
+     new Series from {polynomial => f, computedDegree => c, maxDegree => S#maxDegree, degree => (min(n,S#maxDegree)), setDegree=> S#setDegree}
      );
 
 
 ZZ[x]
 f = i -> x^i;
-S = series f
+F = series f
+peek F
+F = setDegree(3,F)     
+peek F
+F = setDegree(7,F)
+peek F
+F = setDegree(3,F)
+peek F
+
+series(ZZ, RingElement) := Series => opts -> (n,f) -> (
+     new Series from {degree => n, maxDegree => max(first degree f,n), computedDegree => max(first degree f,n), polynomial => f,
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial,oldComputedDegree))}
+     );
+S = series(4,x^2 + x)     
 peek S
-G = setDegree(3,S)     
-peek G
-H = setDegree(7,G)
-peek H
+S = setDegree(7,S)
+peek S
+S = setDegree(3,S)
+peek S
+
+
+
 
 series(RingElement, Function) := Series => opts -> f -> (
      s:=0;
@@ -93,12 +109,6 @@ series(ZZ, Function) := Series => opts -> (n,f) -> (
      new Series from {genFunction => f, degree => first degree f n, series => sum(n+1,f)}
      );
 
-
-series(ZZ, RingElement) := Series => opts -> (n,f) -> (
-     new Series from {degree => n, maxDegree => max(first degree f,n), computedDegree => max(first degree f,n), polynomial => f}
-     );
-S = series(4,x^2 + x)     
-peek S
 
 
 
