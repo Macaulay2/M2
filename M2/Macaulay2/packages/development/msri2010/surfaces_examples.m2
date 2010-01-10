@@ -76,9 +76,8 @@ M = guessCohomologyTable(H,0,4)
 betti res constructSurface(M,E,S)
 
 --B1.16
--- doesn't work: constant entries of beta are non-zero but should be zero
 H = hilbertPolynomialFromInvariants(10,9,0,0);
-M = guessCohomologyTable(H,0,4)
+-- non minimal cohomology table
 M = matrix{{0,0,0,0,0},{0,0,0,0,0},{0,2,0,0,0},{0,0,0,2,1},{0,0,0,0,2}}
 betti res constructSurface(M,E,S)
 
@@ -136,11 +135,18 @@ M = guessCohomologyTable(H,0,4)
 betti res constructSurface(M,E,S)
 --B4.6
 H = hilbertPolynomialFromInvariants(10,9,0,1);
-M = guessCohomologyTable(H,0,4)
-betti res constructSurface(M,E,S)
--- does not work, since Cohomology Tabel non minimal
---B4.6
--- does not work, since Cohomology Tabel non minimal
+-- non minimal coohomology table
+M = matrix{{0,0,0,0,0},{1,0,0,0,0},{0,1,0,0,0},{0,0,1,3,1},{0,0,0,0,1}}
+betti res (I = constructSurface(M,E,S))
+-- gives different syzygies. This is actually the elliptic surface B7.4
+-- does not work.
+
+-- B4.7.
+-- non minimal coohomology table
+M = matrix{{0,0,0,0,0},{1,0,0,0,0},{0,1,0,0,0},{0,0,1,3,2},{0,0,0,0,2}}
+betti res (I = constructSurface(M,E,S))
+-- does not work
+
 --B4.8
 H = hilbertPolynomialFromInvariants(11,11,0,1);
 M = guessCohomologyTable(H,0,4)
@@ -181,18 +187,16 @@ betti res constructSurface(M,E,S)
 -- B6 Abelian surfaces
 
 --B6.1
--- doesn't work
-H = hilbertPolynomialFromInvariants(10,6,2,1);
-M = guessCohomologyTable(H,-1,3)
+-- non minimal cohomology table
+M = matrix{{0,0,0,0,0},{5,1,0,0,0},{0,2,0,0,0},{0,0,0,5,10},{0,0,0,0,0}}
 betti res constructSurface(M,E,S)
-
+-- does not work
 
 -- B6.2
--- doesn't work
-H = hilbertPolynomialFromInvariants(15,21,2,1);
-M = guessCohomologyTable(H,0,4)
+-- non minimal cohomology table
+M = matrix{{0,0,0,0,0},{1,0,0,0,0},{2,10,10,5,0},{0,0,0,0,0},{0,0,0,0,0}}
 betti res constructSurface(M,E,S)
-
+-- does not give a monad
 
 -- B7 Elliptic surfaces
 --B7.1
