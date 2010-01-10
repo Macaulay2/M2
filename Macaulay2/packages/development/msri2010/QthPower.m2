@@ -60,7 +60,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     
     -- local variables
     i := j := w := k := deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := gx := pos := 0;
-    skip := skip1 := skip2 := true;
+    skip := skip1 := updating := true;
     logei := logj := logk := wi := ww := {};
     
     -- Compute the next module generating set; continue to loop until no changes.
@@ -72,19 +72,18 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
         skip = false;
         while i < #g do (	
             if s#i == before then (
-	            skip2 = true;	 
-	            while i > 0 and skip2 do (
-	                j = i - 1;
-	                skip2 = false;
-	                while j >= 0 do (
-	                    if leadMonomial(g#i) == leadMonomial(g#j) then (
-		                    skip2 = true;
-		                    break;
-	                    );
-	                    j = j - 1;
-	                );
-	                if skip2 then i = i + 1;
-	            );
+                updating = true;
+                -- look for the next unique leading monomial
+                while updating do (
+                    updating = false;
+                    for j from 0 to i - 1 do {
+                        if leadMonomial(g#i) == leadMonomial(g#j) then (
+                            i = i + 1;
+                            updating = true;
+                            break;
+                        );
+                    };
+                );
                 e#i = red(e#i, I, dq, oldg);	      
                 -- row-reduction
                 j = 0;
@@ -92,51 +91,30 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 	                if s#j == before and e#j != 0 then (
 	                    logei = logpoly(e#i, depq, indq);
 	                    logj = logpoly(e#j, depq, indq);	
-	                    if e#j != 0 and logj#0 == logei#0 then (
-                            if geqlog(logei#2, logj#2) then (
-	                            wi = apply((logei#2 - logj#2), v->v%q);
-		                        if wi == apply(inds, v->0) then (
-		                            w = 1;
-		                            for k to inds - 1 do w = w * (indq#k)^((logei#2 - logj#2)#k//q);
+	                    if e#j != 0 and logj#0 == logei#0 and geqlog(logei#2, logj#2) then (
+		                    if apply((logei#2 - logj#2), v->v%q) == apply(inds, v->0) then (
+		                        w = 1;
+		                        for k to inds - 1 do w = w * (indq#k)^((logei#2 - logj#2)#k//q);
+			                    loop = true;
+			                    if g#i > g#j * w then (
 		                            lc = leadCoefficient(e#i)//leadCoefficient(e#j);
-			                        if g#i > g#j * w then (
-                                        g#i = g#i - lc * (g#j) * w;
-	                                    h#i = (h#i - lc * (h#j) * w^q) % I;
-                                        e#i = red(e#i - lc * (e#j) * w^q, I, dq, oldg);
-	                                    j = 0;
-			                            loop = true;
-	    		                    )
-		                            else (
-			                            if g#i < g#j * w then (
-                                            gx = (g#j) * w;
-                                            pos = position(sort(toList(append(g,gx))), a->a==gx);
-                                            g = new MutableList from insert(pos, gx, toList(g));
-                                            h = new MutableList from insert(pos, (h#j)*w^q, toList(h));
-                                            e = new MutableList from insert(pos, red((e#j)*w^q, I, dq, oldg), toList(e));
-                                            s = new MutableList from insert(pos, before, toList(s));
-                                            j = j + 1;
-			                                loop = true;
- 			                            )
-		                                 else ( 
-                                             j = j + 1;
-                                         );
-			                        );   
-	                            ) 
-		                        else (
-                                    j = j + 1;
-                                );
-		                    )
-	                        else (
-                                j = j + 1;
+                                    g#i = g#i - lc * (g#j) * w;
+	                                h#i = (h#i - lc * (h#j) * w^q) % I;
+                                    e#i = red(e#i - lc * (e#j) * w^q, I, dq, oldg);
+	                                j = -1; -- updates to zero
+	    		                )
+		                        else if g#i < g#j * w then (
+                                    gx = (g#j) * w;
+                                    pos = position(sort(toList(append(g,gx))), a->a==gx);
+                                    g = new MutableList from insert(pos, gx, toList(g));
+                                    h = new MutableList from insert(pos, (h#j)*w^q, toList(h));
+                                    e = new MutableList from insert(pos, red((e#j)*w^q, I, dq, oldg), toList(e));
+                                    s = new MutableList from insert(pos, before, toList(s));
+			                    );   
                             );
-	                    )
-                        else (
-                            j = j + 1;
                         );
-	                )
-                    else (
-                        j = j + 1;
                     );
+                    j = j + 1;
                 );
 	            if e#i == 0 then s#i = now;
                 -- Extension
