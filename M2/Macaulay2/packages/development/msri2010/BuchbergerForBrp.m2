@@ -27,8 +27,7 @@ exportMutable {}
 -- list of input polynomials
 -- F = {poly}  -- list of input
  
-f = new HashTable from { "1" => "x*2+y"}
-viewHelp HashTable
+--f = new HashTable from { "1" => "x*2+y"}
 
 -- pairs of indexes referring to polynomials, changing as we find more pairs
 -- listOfPairs = {}
@@ -61,21 +60,21 @@ viewHelp HashTable
 SPolynomial = method()
 SPolynomial( List, HashTable ) := Brp => (l,G) -> (
   assert (#l == 2);
-  j = last l
-  n = 3
-  variables = entries(id_(ZZ^n))
+  j = last l;
+  n = 3;
+  variables = entries(id_(ZZ^n));
   if ( i < 0 ) then (-- we are working with a FP
-    i = - first l
+    i = - first l;
     f = G#j;
     xx = new Brp from {variables#i};
     g = new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
     g*xx+g
   )
   else (
-    i = first l
-    f = G#i
-    g = G#j
-    f*ltm g + .....
+    i = first l;
+    f = G#i;
+    g = G#j;
+--    f*ltm g + .....
   )
 )
 
@@ -115,8 +114,6 @@ end
 -- because loading stops when the symbol "end" is encountered.
 
 restart
-needsPackage "BitwiseRepresentationPolynomials"
-installPackage "BitwiseRepresentationPolynomials"
 installPackage "BuchbergerForBrp"
 installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
 check BuchbergerForBrp
