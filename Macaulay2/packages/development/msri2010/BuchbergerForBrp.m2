@@ -61,36 +61,22 @@ viewHelp HashTable
 SPolynomial = method()
 SPolynomial( List, HashTable ) := Brp => (l,G) -> (
   assert (#l == 2);
-  i = - first l
   j = last l
-  n = 8
+  n = 3
   variables = entries(id_(ZZ^n))
-  if ( i < 0 ) then -- check if we are working with a FP
-    f = G#j
-    R = ZZ[x,y,z]
-    load "BitwiseRepresentationPolynomials.m2"
-    f = convert (x*y + z)
-g
-f
-#f
-viewHelp select
-
-select( 2, odd)
-    g = select( #f, i -> isDivisible(f#i, vars#i ))
-    g*i + g
-
-    -- generate monomial for FP
-    ind = - (first l) - 1
-
-ind = 7
-n
-    splice{(ind-1):0,1,(n-ind):0 }
-
-    zeros = apply( n, i -> if(i == ind) then 1 else  0)
-    x = new Brp from zeros
-    f = G_j
-    getNonDivisiblePart(f,x)
-  else
+  if ( i < 0 ) then (-- we are working with a FP
+    i = - first l
+    f = G#j;
+    xx = new Brp from {variables#i};
+    g = new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
+    g*xx+g
+  )
+  else (
+    i = first l
+    f = G#i
+    g = G#j
+    f*ltm g + .....
+  )
 )
 
 getNonDivisiblePart = method()
