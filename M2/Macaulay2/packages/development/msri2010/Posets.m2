@@ -289,11 +289,11 @@ inducedPoset (Poset, List) := Poset => (P, L) -> (
   poset(L, rel))
 
 
--- interval
+-- closedInterval
 -- input:  poset, and two elements
 -- output:  the induced poset with minimal element and maximal element corresponding to the 2 given elements
-interval = method()
-interval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
+closedInterval = method()
+closedInterval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
      if (compare(P,elt1,elt2) == true or compare(P,elt2,elt1) == true) == false then return error "these elments are uncomparable";
      -- find elements between a and b
      if compare(P,elt1,elt2) === true 
@@ -302,6 +302,14 @@ interval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
           then return inducedPoset(P, select(P.GroundSet, elt -> compare(P,elt2,elt) == true and compare(P,elt,elt1) == true));
       )
 
+--openInterval
+--input: poset and two elements
+-- output: the induced poset coming from the poset with minimal element and maximal element corresponding to the 2 given elements
+     --with these 2 elements removed 
+openInterval = method()
+openInterval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
+     dropElements(closedInterval(P, elt1, elt2), {elt1, elt2})
+)
 
 
 --------------------------------------------------
@@ -628,7 +636,7 @@ moebiusFunction (Poset) := Poset => (P) -> (
 
 
 moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
-     moebiusFunction (interval(P,elt1,elt2)))
+     moebiusFunction (closedInterval(P,elt1,elt2)))
 
 
 
@@ -1401,34 +1409,65 @@ doc ///
 
 
 -----------------
--- interval
+-- closedInterval
 -----------------
---doc ///
---	Key
---		interval
---		(interval,Poset, Thing, Thing)
---	Headline
---		returns the interval in the poset between two elements
---	Usage
---		I = interval(P,a,b)
---	Inputs 
---		P : Poset
---		a : Thing
---		b : Thing
---	Outputs
---		I : Poset
---			the interval between a and b in P
---	Description
---		Text
---		     This routine returns the interval between the elements a and b in P,
---		     and an error message if the two elements are not comparable in P.
---
---		Example
---		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)};
---		     interval(P,a,d)	  
---			  
---/// 
+doc ///
+	Key
+		closedInterval
+		(closdedInterval,Poset, Thing, Thing)
+	Headline
+		returns the closed interval in the poset between two elements
+	Usage
+		I = closedInterval(P,a,b)
+	Inputs 
+		P : Poset
+		a : Thing
+     	    	     an element of P 
+		b : Thing
+     	    	     an element of P 
+	Outputs
+		I : Poset
+			the closed interval between a and b 
+	Description
+		Text
+		     This routine returns the interval between the elements a and b in P, 
+                     including a and b,
+		     and an error message if the two elements are not comparable in P.
 
+		Example
+		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)}
+		     closedInterval(P,a,d)	  
+/// 
+
+----------------
+--openInterval
+----------------
+doc///
+     Key
+     	  openInterval
+	  (openInterval,Poset,Thing,Thing)
+     Headline
+     	  returns the open interval in the poset between two elements
+     Usage
+     	  I = openInterval(P,a,b)
+     Inputs
+     	  P : Poset
+	  a : Thing
+	       an element of P
+	  b : Thing
+	       an element of P
+     Outputs
+     	  I : Poset
+	       the open interval between a and b
+     Description
+     	  Text
+	       This routine returns the intreval between the elements a and b in P, not including a and b,
+	       and an error message if the two elements are not comparable in P.
+	  
+	  Example
+     	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       openInterval(P,a,g)
+///
 
 -----------------
 -- hasseDiagram
@@ -1454,11 +1493,11 @@ doc///
 	       an element of P
      Outputs
      	  M : HashTable
-	       Moebius function values on the poset P or on the interval from a to b
+	       Moebius function values on the poset P or on the closed interval from a to b
      Description
      	  Text
 	       This routine returns values of the Moebius function for the minimal element of the poset P to each element in P, or the minimal elemnt 
-	       of the interval between a and b to each element of the interval from a to b.
+	       of the interval between a and b to each element of the closed interval between a and b.
      SeeAlso
      	  (moebiusFunction,Poset)
 	  (moebiusFunction,Poset,Thing,Thing)	 
@@ -1498,7 +1537,7 @@ doc///
      	  moebiusFunction
 	  (moebiusFunction,Poset,Thing,Thing)
      Headline
-     	  returns the Moebius function values for the minimal element of an interval to each element of the interval
+     	  returns the Moebius function values for the minimal element of a closed interval to each element of the interval
      Usage
      	  M = moebiusFunction(P,a,b)
      Inputs
@@ -1512,8 +1551,8 @@ doc///
 	       Moebius function values for the lesser of a and b to each element of the interval between a and b	       
      Description
      	  Text
-	       For elements a and b of a poset P, this routine returns the Mobius function values for the minimal element in the interval between 
-	       elements a and b to each element of the interval between a and b. The routine handles both of the cases a<b and b<a.
+	       For elements a and b of a poset P, this routine returns the Mobius function values for the minimal element in the closed 
+	       interval between elements a and b to each element of the interval between a and b. The routine handles both of the cases a<b and b<a.
 	  Example
 	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
 	       moebiusFunction(P,b,g)
@@ -1746,5 +1785,7 @@ D1 =allPairsShortestPath(matrix({{0,1,1/0.,4},{1/0.,0,1/0.,2},{1,1/0.,0,1/0.},{1
 assert(D1 ==  promote(matrix {{0, 1, 4, 3}, {4, 0, 3, 2}, {1, 2, 0, 4}, {2, 3, 1, 0}}, RR))
 
 ///
+
+
 
 
