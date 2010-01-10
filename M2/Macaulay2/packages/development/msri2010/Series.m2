@@ -79,15 +79,17 @@ seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
 
 
 
-series(ZZ, RingElement) := Series => (n,f) -> (
+series(ZZ, Function) := Series => opts -> (n,f) -> (
      sum(0..n, f);
      new Series from {genFunction => f, degree => first degree f n, series => sum(n+1,f)}
      );
 
 
-
-
-
+series(ZZ, RingElement) := Series => opts -> (n,f) -> (
+     new Series from {degree => n, maxDegree => max(first degree f,n), computedDegree => max(first degree f,n), polynomial => f}
+     );
+S = series(4,x^2 + x)     
+peek S
 
 
 Series+Series := (x,y) -> new Series from {generator = decider(x,y), degree => min(x#degree,y#degree), series => x+y}; -- not right
