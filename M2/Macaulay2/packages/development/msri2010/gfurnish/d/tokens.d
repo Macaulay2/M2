@@ -124,12 +124,12 @@ export isatty(f:TokenFile):bool := isatty(f.posFile);
 
 export CompiledFunction := {fn:fun,hash:int};
 export CompiledFunctionClosure := {
-     fn:function(Expr,Sequence):Expr,
+     fn:function(threadLocalInterp,Expr,Sequence):Expr,
      hash:int,
      env:Sequence
      };
 export CompiledFunctionBody := {
-     fn:function(Expr,Sequence):Expr			    -- it's hard to make hash codes for these things!
+     fn:function(threadLocalInterp,Expr,Sequence):Expr			    -- it's hard to make hash codes for these things!
      };
 
 -- Code
@@ -200,11 +200,11 @@ export arrayCode    := {z:CodeSequence, position:Position};
 export semiCode     := {w:CodeSequence, position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
 export forCode := {inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
-export unop := function(Code):Expr;
-export binop := function(Code,Code):Expr;
+export unop := function(threadLocalInterp,Code):Expr;
+export binop := function(threadLocalInterp,Code,Code):Expr;
 export binopExpr := function(Expr,Expr):Expr;
-export ternop := function(Code,Code,Code):Expr;
-export multop := function(CodeSequence):Expr;
+export ternop := function(threadLocalInterp,Code,Code,Code):Expr;
+export multop := function(threadLocalInterp,CodeSequence):Expr;
 
 export newLocalFrameCode := {
      frameID:int,
@@ -351,7 +351,7 @@ export Expr := (
      pythonObject or
      xmlNode or xmlAttr
      );
-export fun := function(Expr):Expr;
+export fun := function(threadLocalInterp,Expr):Expr;
 
 export True := Expr(Boolean(true));	  -- don't make new ones!
 export False := Expr(Boolean(false));	  -- use toExpr instead
@@ -473,16 +473,16 @@ export dummyWord    := Word("{*dummy word*}",TCnone,0,newParseinfo());
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();
-export dummyUnaryFun(c:Code):Expr := (
+export dummyUnaryFun(localInterpState:threadLocalInterp,c:Code):Expr := (
      error("dummy unary function called");
      nullE);
-export dummyPostfixFun(c:Code):Expr := (
+export dummyPostfixFun(localInterpState:threadLocalInterp,c:Code):Expr := (
      error("dummy postfix function called");
      nullE);
-export dummyBinaryFun(c:Code,d:Code):Expr := (
+export dummyBinaryFun(localInterpState:threadLocalInterp,c:Code,d:Code):Expr := (
      error("dummy binary function called");
      nullE);
-export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
+export dummyTernaryFun(localInterpState:threadLocalInterp,c:Code,d:Code,e:Code):Expr := (
      error("dummy ternary function called");
      nullE);
 export emptySequenceE := Expr(emptySequence);
@@ -667,10 +667,10 @@ export (x:Expr) === (y:Symbol):bool := (
      );
 
 -- operator names for the disassembler
-export dummyUnop(c:Code):Expr := nullE;
-export dummyBinop(c:Code,d:Code):Expr := nullE;
-export dummyTernop(c:Code,d:Code,e:Code):Expr := nullE;
-export dummyMultop(s:CodeSequence):Expr := nullE;
+export dummyUnop(localInterpState:threadLocalInterp,c:Code):Expr := nullE;
+export dummyBinop(localInterpState:threadLocalInterp,c:Code,d:Code):Expr := nullE;
+export dummyTernop(localInterpState:threadLocalInterp,c:Code,d:Code,e:Code):Expr := nullE;
+export dummyMultop(localInterpState:threadLocalInterp,s:CodeSequence):Expr := nullE;
 export unopNameListCell := {f:unop,name:string,next:unopNameListCell};
 export binopNameListCell := {f:binop,name:string,next:binopNameListCell};
 export ternopNameListCell := {f:ternop,name:string,next:ternopNameListCell};

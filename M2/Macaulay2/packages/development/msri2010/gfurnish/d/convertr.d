@@ -15,7 +15,7 @@ use varstrin;
 use strings;
 use basic;
 
-dummyMultaryFun(c:CodeSequence):Expr := (
+dummyMultaryFun(localInterpState:threadLocalInterp,c:CodeSequence):Expr := (
      error("dummy multary function called");
      nullE);
 

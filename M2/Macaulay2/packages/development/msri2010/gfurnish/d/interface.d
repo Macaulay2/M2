@@ -29,25 +29,25 @@ use common;
 -----------------------------------------------------------------------------
 -- random numbers
 
-export rawRandomZZ(e:Expr):Expr := (
+export rawRandomZZ(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is Nothing do Expr(Ccode(ZZ, "(gmp_ZZ)rawRandomInteger(", "(M2_Integer)0)"))
      is maxN:ZZ do Expr(Ccode(ZZ, "(gmp_ZZ)rawRandomInteger(", "(M2_Integer)", maxN, ")"))
      else WrongArgZZ());
 setupfun("rawRandomZZ",rawRandomZZ);
-export rawRandomQQ(e:Expr):Expr := (
+export rawRandomQQ(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is Nothing do Expr(Ccode(QQ, "(gmp_QQ)rawRandomQQ(", "(M2_Integer)0)"))
      is ht:ZZ do Expr(Ccode(QQ, "(gmp_QQ)rawRandomQQ(", "(M2_Integer)", ht, ")"))
      else WrongArgZZ());
 setupfun("rawRandomQQ",rawRandomQQ);
-export rawRandomRR(e:Expr):Expr := (
+export rawRandomRR(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is prec:ZZ do if !isULong(prec) then WrongArgSmallInteger() 
      else Expr(Ccode(RR, "(gmp_RR)rawRandomRR(", toULong(prec), ")"))
      else WrongArgZZ());
 setupfun("rawRandomRR",rawRandomRR);
-export rawRandomCC(e:Expr):Expr := (
+export rawRandomCC(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is prec:ZZ do if !isULong(prec) then WrongArgSmallInteger() 
      else Expr(Ccode(CC, "(gmp_CC)rawRandomCC(", toULong(prec), ")"))
@@ -57,7 +57,7 @@ setupfun("rawRandomCC",rawRandomCC);
 -----------------------------------------------------------------------------
 -- monomials
 
-export rawVarMonomial(a:Expr):Expr := (
+export rawVarMonomial(localInterpState:threadLocalInterp,a:Expr):Expr := (
      when a
      is v:ZZ do 
      if isInt(v) then toExpr(
@@ -81,7 +81,7 @@ export rawVarMonomial(a:Expr):Expr := (
      );
 setupfun("rawVarMonomial",rawVarMonomial);
 
-export rawSparseListFormMonomial(e:Expr):Expr := (
+export rawSparseListFormMonomial(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is x:RawMonomial do (
 	  y := Ccode(RawArrayInt, "(engine_RawArrayInt)rawSparseListFormMonomial((Monomial*)",x,")" );
@@ -95,7 +95,7 @@ export rawSparseListFormMonomial(e:Expr):Expr := (
      );
 setupfun("rawSparseListFormMonomial",rawSparseListFormMonomial);
 
-export rawMakeMonomial(e:Expr):Expr := (
+export rawMakeMonomial(localInterpState:threadLocalInterp,e:Expr):Expr := (
      -- accepts a list of pairs : {(2, 1), (3, 7), (5, 4)}
      -- we reverse the list before giving it to the engine
      when e
@@ -112,7 +112,7 @@ export rawMakeMonomial(e:Expr):Expr := (
      else WrongArg("a list of pairs of integers"));
 setupfun("rawMakeMonomial",rawMakeMonomial);
 
-export rawMonomialIsOne(e:Expr):Expr := (
+export rawMonomialIsOne(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence 
      do if length(s) == 2 
      then when s.0 is x:RawMonomial 
@@ -126,7 +126,7 @@ export rawMonomialIsOne(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(Expr(EqualEqualS), rawMonomialClass,ZZClass, Expr(CompiledFunction(rawMonomialIsOne,nextHash())));
 
-export rawCompareMonomial(e:Expr):Expr := (
+export rawCompareMonomial(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMonoid do
      when s.1 is x:RawMonomial do
@@ -140,7 +140,7 @@ export rawCompareMonomial(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawCompareMonomial",rawCompareMonomial);
 
-export rawMonomialDivides(e:Expr):Expr := (
+export rawMonomialDivides(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMonoid do
      when s.1 is x:RawMonomial do
@@ -153,7 +153,7 @@ export rawMonomialDivides(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMonomialDivides",rawMonomialDivides);
 
-export rawMonomialDivide(e:Expr):Expr := (
+export rawMonomialDivide(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMonoid do
      when s.1 is x:RawMonomial do
@@ -164,14 +164,14 @@ export rawMonomialDivide(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMonomialDivide",rawMonomialDivides);
 
-export rawRadical(e:Expr):Expr := (
+export rawRadical(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawMonomial do Expr(Ccode(RawMonomial, "(engine_RawMonomial)", "rawRadicalMonomial(", "(Monomial*)", x, ")" ) )
      is I:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "rawRadicalMonomialIdeal(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial or monomial ideal"));
 setupfun("rawRadical",rawRadical);
 
-export rawGCD(e:Expr):Expr := (
+export rawGCD(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 2 then
      when s.0 is x:RawMonomial do (
@@ -209,7 +209,7 @@ export rawGCD(e:Expr):Expr := (
      );
 setupfun("rawGCD",rawGCD);
 
-export rawExtendedGCD(e:Expr):Expr := (
+export rawExtendedGCD(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawRingElement do (
@@ -232,7 +232,7 @@ export rawExtendedGCD(e:Expr):Expr := (
      );
 setupfun("rawExtendedGCD",rawExtendedGCD);
 
-export rawLCM(e:Expr):Expr := (
+export rawLCM(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
@@ -244,7 +244,7 @@ export rawLCM(e:Expr):Expr := (
      );
 setupfun("rawLCM",rawLCM);
 
-export rawSaturate(e:Expr):Expr := (
+export rawSaturate(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
@@ -265,7 +265,7 @@ export rawSaturate(e:Expr):Expr := (
      );
 setupfun("rawSaturate",rawSaturate);
 
-export rawSyzygy(e:Expr):Expr := (
+export rawSyzygy(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
@@ -276,7 +276,7 @@ export rawSyzygy(e:Expr):Expr := (
      );
 setupfun("rawSyzygy",rawSyzygy);
 
-export rawColon(e:Expr):Expr := (
+export rawColon(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawMonomial do 
@@ -292,7 +292,7 @@ export rawColon(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawColon",rawColon);
 
-export rawAlexanderDual(e:Expr):Expr := (
+export rawAlexanderDual(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is I:RawMonomialIdeal do
@@ -310,7 +310,7 @@ export rawAlexanderDual(e:Expr):Expr := (
      );
 setupfun("rawAlexanderDual",rawAlexanderDual);
 
-export rawMonomialIdealLCM(e:Expr):Expr := (
+export rawMonomialIdealLCM(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawMonomialIdeal do toExpr(
 	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawMonomialIdealLCM(",
@@ -401,7 +401,7 @@ getmaker(sym:SymbolClosure):funtypeornull := (
 --      "(engine_RawMonomial)rawMakeMonomial(", "(M2_arrayint)", array(int)(), ")" 
 --      );
 
-export rawMonomialOrdering(e:Expr):Expr := (
+export rawMonomialOrdering(localInterpState:threadLocalInterp,e:Expr):Expr := (
      -- This routine gets an expression like this:
      -- { GRevLexSmallS => {1,2,3}, PositionS, LexTinyS => 4, LexS => 5, WeightsS => {1,2,3} }
      -- For GRevLexS, the weights are already provided by top level code.
@@ -475,7 +475,7 @@ export rawMonomialOrdering(e:Expr):Expr := (
      else WrongArg("a list of options"));
 setupfun("rawMonomialOrdering",rawMonomialOrdering);
 
-export rawProductMonomialOrdering(e:Expr):Expr := (
+export rawProductMonomialOrdering(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is m:RawMonomialOrdering do e
      is s:Sequence do 
@@ -490,13 +490,13 @@ export rawProductMonomialOrdering(e:Expr):Expr := (
      else WrongArg("a sequence of raw monomial orderings"));
 setupfun("rawProductMonomialOrdering",rawProductMonomialOrdering);
 
-export rawNumberOfVariables(e:Expr):Expr := (
+export rawNumberOfVariables(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is m:RawMonomialOrdering do toExpr(Ccode( int, "rawNumberOfVariables(", "(MonomialOrdering *)", m, ")" ))
      else WrongArg("a monomial ordering"));
 setupfun("rawNumberOfVariables",rawNumberOfVariables);
 
-export rawNumberOfInvertibleVariables(e:Expr):Expr := (
+export rawNumberOfInvertibleVariables(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is m:RawMonomialOrdering do toExpr(Ccode( int, "rawNumberOfInvertibleVariables(", "(MonomialOrdering *)", m, ")" ))
      else WrongArg("a monomial ordering"));
@@ -517,7 +517,7 @@ export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,
      is m:RawMonoid do Expr(m)
      is null do buildErrorPacket(EngineError("internal error: unexplained failure to make raw monoid"))
      );
-export rawMonoid(e:Expr):Expr := (
+export rawMonoid(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then Expr(Ccode(RawMonoid,"(engine_RawMonoid)IM2_Monoid_trivial()"))
      else if length(s) == 5 then 
@@ -551,7 +551,7 @@ setupfun("rawMonoid",rawMonoid);
 
 -- rings
 
-export rawZZ(e:Expr):Expr := (
+export rawZZ(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
      then Expr(Ccode(RawRing,"(engine_RawRing)IM2_Ring_ZZ()"))
      else WrongNumArgs(0)
@@ -559,7 +559,7 @@ export rawZZ(e:Expr):Expr := (
      );
 setupfun("rawZZ", rawZZ);
 
-export rawQQ(e:Expr):Expr := (
+export rawQQ(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
      then Expr(Ccode(RawRing,"(engine_RawRing)IM2_Ring_QQ()"))
      else WrongNumArgs(0)
@@ -567,37 +567,37 @@ export rawQQ(e:Expr):Expr := (
      );
 setupfun("rawQQ", rawQQ);
 
-export rawZZp(e:Expr):Expr := (
+export rawZZp(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is p:ZZ do if !isInt(p) then WrongArgSmallInteger(1) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_ZZp(", toInt(p), ")" ))
      else WrongArgZZ());
 setupfun("rawZZp", rawZZp);
 
-export rawRR(e:Expr):Expr := (
+export rawRR(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is prec:ZZ do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR(",toInt(prec),")" ))
      else WrongArgZZ(1));
 setupfun("rawRR",rawRR);
 
-export rawCC(e:Expr):Expr := (
+export rawCC(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is prec:ZZ do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC(",toInt(prec),")" ))
      else WrongArgZZ(1));
 setupfun("rawCC",rawCC);
 
-export rawIndexIfVariable(e:Expr):Expr := (
+export rawIndexIfVariable(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:RawRingElement do (
 	  i := Ccode(int, "IM2_RingElement_index_if_var(", "(RingElement *)", f, ")" );
 	  if i == -1 then nullE else toExpr(i))
      else WrongArg("a raw ring element"));
 setupfun("rawIndexIfVariable",rawIndexIfVariable);
 
-export rawIndices(e:Expr):Expr := (
+export rawIndices(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:RawRingElement do toExpr(Ccode(array(int), "(engine_RawArrayInt)rawRingElementIndices(", "(RingElement *)", f, ")" ))
      else when e is m:RawMatrix do toExpr(Ccode(array(int), "(engine_RawArrayInt)rawMatrixIndices(", "(Matrix *)", m, ")" ))
      else WrongArg("a raw ring element or raw matrix"));
 setupfun("rawIndices",rawIndices);
 
-export rawPolynomialRing(e:Expr):Expr := (
+export rawPolynomialRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 0 then Expr(Ccode( RawRing, "(engine_RawRing)IM2_Ring_trivial_polyring()" ))
      else if length(a) == 2 then 
@@ -614,7 +614,7 @@ export rawPolynomialRing(e:Expr):Expr := (
      else WrongArg("0 or 2 arguments"));
 setupfun("rawPolynomialRing",rawPolynomialRing);
 
-export rawSkewPolynomialRing(e:Expr):Expr := (
+export rawSkewPolynomialRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -630,7 +630,7 @@ export rawSkewPolynomialRing(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSkewPolynomialRing",rawSkewPolynomialRing);
 
-export rawWeylAlgebra(e:Expr):Expr := (
+export rawWeylAlgebra(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 4 then 
      when a.0 is R:RawRing do 
@@ -650,7 +650,7 @@ export rawWeylAlgebra(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawWeylAlgebra",rawWeylAlgebra);
 
-export rawSolvableAlgebra(e:Expr):Expr := (
+export rawSolvableAlgebra(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -666,7 +666,7 @@ export rawSolvableAlgebra(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSolvableAlgebra",rawSolvableAlgebra);
 
-export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
+export rawLocalRing(localInterpState:threadLocalInterp,e:Expr):Expr := (			    -- localization at a prime ideal
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -682,7 +682,7 @@ export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
      else WrongNumArgs(2));
 setupfun("rawLocalRing",rawLocalRing);
 
-export rawQuotientRing(e:Expr):Expr := (
+export rawQuotientRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -704,12 +704,12 @@ export rawQuotientRing(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawQuotientRing",rawQuotientRing);
 
-export rawGaloisField(e:Expr):Expr := (
+export rawGaloisField(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:RawRingElement do toExpr(Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawGaloisField((RingElement *)", f, ")"))
      else WrongArg("a raw ring element"));
 setupfun("rawGaloisField", rawGaloisField);
 
-export rawFractionRing(e:Expr):Expr := (
+export rawFractionRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is R:RawRing do toExpr(
 	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)IM2_Ring_frac(",
 	       "(Ring *)", R,
@@ -718,7 +718,7 @@ export rawFractionRing(e:Expr):Expr := (
      );
 setupfun("rawFractionRing", rawFractionRing);
 
-export rawAmbientRing(e:Expr):Expr := (
+export rawAmbientRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is R:RawRing do toExpr(
 	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawAmbientRing(",
 	       "(Ring *)", R,
@@ -727,7 +727,7 @@ export rawAmbientRing(e:Expr):Expr := (
      );
 setupfun("rawAmbientRing", rawAmbientRing);
 
-export rawDenominatorRing(e:Expr):Expr := (
+export rawDenominatorRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is R:RawRing do toExprOrNull(
 	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawDenominatorRing(",
 	       "(Ring *)", R,
@@ -736,17 +736,17 @@ export rawDenominatorRing(e:Expr):Expr := (
      );
 setupfun("rawDenominatorRing", rawDenominatorRing);
 
-export rawSchurRing(e:Expr):Expr := (
+export rawSchurRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is R:RawRing do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_schur(", "(Ring *)", R, ")" ) )
      else WrongArg("a raw ring"));
 setupfun("rawSchurRing",rawSchurRing);
 
-export rawIsField(e:Expr):Expr := (
+export rawIsField(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is K:RawRing do toExpr(Ccode(bool, "IM2_Ring_is_field(", "(Ring *)", K, ")" ))
      else WrongArg("a raw ring"));
 setupfun("rawIsField",rawIsField);
 
-export rawDeclareField(e:Expr):Expr := (
+export rawDeclareField(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is K:RawRing do (
 	  r := Ccode(bool, "IM2_Ring_declare_field(", "(Ring *)", K, ")" );
 	  if !r then buildErrorPacket(EngineError("ring can't be declared to be field"))
@@ -754,7 +754,7 @@ export rawDeclareField(e:Expr):Expr := (
      else WrongArg("a raw ring"));
 setupfun("rawDeclareField",rawDeclareField);
 
-export rawGetNonUnit(e:Expr):Expr := (
+export rawGetNonUnit(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is K:RawRing do Expr(Ccode(RawRingElement, 
 	       "(engine_RawRingElement)rawGetNonUnit(", "(Ring *)", K, ")" ))
      else WrongArg("a raw ring"));
@@ -763,7 +763,7 @@ setupfun("rawGetNonUnit",rawGetNonUnit);
 -----------------------------------------------------------------------------
 -- ring elements
 
-export rawRingVar(e:Expr):Expr := (
+export rawRingVar(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do
@@ -776,7 +776,7 @@ export rawRingVar(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawRingVar",rawRingVar);
 
-export rawFromNumber(e:Expr):Expr := (
+export rawFromNumber(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 2 then
      when s.0
      is R:RawRing do
@@ -801,7 +801,7 @@ export rawFromNumber(e:Expr):Expr := (
      );
 setupfun("rawFromNumber", rawFromNumber);
 
-export rawMultiDegree(e:Expr):Expr := (
+export rawMultiDegree(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr(
 	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_RingElement_multidegree(",
@@ -816,7 +816,7 @@ export rawMultiDegree(e:Expr):Expr := (
      );
 setupfun("rawMultiDegree",rawMultiDegree);
 
-export rawDiscreteLog(e:Expr):Expr := (
+export rawDiscreteLog(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do (
 	  r := Ccode(int, "rawDiscreteLog((RingElement*)",x, ")" );
@@ -825,7 +825,7 @@ export rawDiscreteLog(e:Expr):Expr := (
      );
 setupfun("rawDiscreteLog",rawDiscreteLog);
 
-export rawWeightRange(e:Expr):Expr := (
+export rawWeightRange(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do 
      if length(s) != 2 then buildErrorPacket("expected 1 or 2 arguments") else
@@ -842,7 +842,7 @@ export rawWeightRange(e:Expr):Expr := (
      );
 setupfun("rawWeightRange",rawWeightRange);
 
-export rawTermCount(e:Expr):Expr := (
+export rawTermCount(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do
      if length(args) == 2 then
@@ -856,7 +856,7 @@ export rawTermCount(e:Expr):Expr := (
      );
 setupfun("rawTermCount",rawTermCount);
 
-export rawIsHomogeneous(e:Expr):Expr := (
+export rawIsHomogeneous(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_graded(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_graded(", "(Matrix*)",x, ")" ))
@@ -864,13 +864,13 @@ export rawIsHomogeneous(e:Expr):Expr := (
      );
 setupfun("rawIsHomogeneous",rawIsHomogeneous);
 
-export rawIsDense(e:Expr):Expr := (
+export rawIsDense(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is x:RawMatrix do
      toExpr(Ccode( bool, "IM2_Matrix_is_implemented_as_dense(", "(Matrix*)",x, ")" ))
      else WrongArgMatrix());
 setupfun("rawIsDense",rawIsDense);
 
-export rawIsZero(e:Expr):Expr := (
+export rawIsZero(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_zero(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_zero(", "(Matrix*)",x, ")" ))
@@ -879,7 +879,7 @@ export rawIsZero(e:Expr):Expr := (
      );
 setupfun("rawIsZero",rawIsZero);
 
-export rawToInteger(e:Expr):Expr := (
+export rawToInteger(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( IntegerOrNull, "(engine_IntegerOrNull)IM2_RingElement_to_Integer(", "(RingElement*)",x, ")" ))
@@ -887,7 +887,7 @@ export rawToInteger(e:Expr):Expr := (
      );
 setupfun("rawToInteger",rawToInteger);
 
-export rawToRational(e:Expr):Expr := (
+export rawToRational(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RationalOrNull, "(engine_RationalOrNull)IM2_RingElement_to_rational(", "(RingElement*)",x, ")" ))
@@ -895,19 +895,19 @@ export rawToRational(e:Expr):Expr := (
      );
 setupfun("rawToRational",rawToRational);
 
-export rawToRR(e:Expr):Expr := (
+export rawToRR(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr(Ccode(RRorNull, "(engine_RRorNull)IM2_RingElement_to_BigReal((RingElement*)",x, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawToRR",rawToRR);
 
-export rawToCC(e:Expr):Expr := (
+export rawToCC(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr(Ccode(CCorNull, "(engine_CCorNull)IM2_RingElement_to_BigComplex((RingElement*)",x, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawToCC",rawToCC);
 
-export rawLeadCoefficient(e:Expr):Expr := (
+export rawLeadCoefficient(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do
      if length(args) == 2 then
@@ -922,7 +922,7 @@ export rawLeadCoefficient(e:Expr):Expr := (
      );
 setupfun("rawLeadCoefficient",rawLeadCoefficient);
 
-export rawLeadMonomial(e:Expr):Expr := (
+export rawLeadMonomial(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do
      if length(args) == 2 then
@@ -940,7 +940,7 @@ export rawLeadMonomial(e:Expr):Expr := (
      );
 setupfun("rawLeadMonomial",rawLeadMonomial);
 
-export rawPairs(e:Expr):Expr := (
+export rawPairs(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do
      if length(args) == 2 then 
@@ -957,7 +957,7 @@ export rawPairs(e:Expr):Expr := (
      );
 setupfun("rawPairs",rawPairs);
 
-export rawGetParts(e:Expr):Expr := (
+export rawGetParts(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do
      if length(args) == 2 then 
@@ -973,7 +973,7 @@ export rawGetParts(e:Expr):Expr := (
      );
 setupfun("rawGetParts",rawGetParts);
 
-export rawGetPart(e:Expr):Expr := (
+export rawGetPart(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do
      if length(args) != 4 then WrongNumArgs(4) else
@@ -995,7 +995,7 @@ export rawGetPart(e:Expr):Expr := (
      );
 setupfun("rawGetPart",rawGetPart);
 
-export ringElementMod(e:Expr):Expr := (
+export ringElementMod(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
@@ -1006,7 +1006,7 @@ export ringElementMod(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(PercentS,rawRingElementClass,rawRingElementClass,ringElementMod);
 
-export rawDivMod(e:Expr):Expr := (
+export rawDivMod(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
@@ -1025,7 +1025,7 @@ export rawDivMod(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawDivMod",rawDivMod);
 
-export rawPromote(e:Expr):Expr := (
+export rawPromote(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do (
@@ -1047,7 +1047,7 @@ export rawPromote(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawPromote", rawPromote);
 
-export rawLift(e:Expr):Expr := (
+export rawLift(localInterpState:threadLocalInterp,e:Expr):Expr := (
      success := 0;
      when e is a:Sequence do 
      if length(a) == 2 then 
@@ -1074,7 +1074,7 @@ export rawLift(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawLift", rawLift);
 
-export rawRing(e:Expr):Expr := (
+export rawRing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do Expr(
 	  Ccode(RawRing, "(engine_RawRing)IM2_RingElement_ring(", "(RingElement *)",x, ")" ))
@@ -1084,7 +1084,7 @@ export rawRing(e:Expr):Expr := (
      );
 setupfun("rawRing", rawRing);
 
-export rawHomogenize(e:Expr):Expr := (
+export rawHomogenize(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then (
 	  when s.0
@@ -1136,7 +1136,7 @@ export rawHomogenize(e:Expr):Expr := (
      else buildErrorPacket("expected 3 or 4 arguments"));
 setupfun("rawHomogenize",rawHomogenize);
 
-export rawTerm(e:Expr):Expr := (
+export rawTerm(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 
      when s.0 is R:RawRing do 
@@ -1151,7 +1151,7 @@ export rawTerm(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawTerm",rawTerm);
 
-export rawGetTerms(e:Expr):Expr := (
+export rawGetTerms(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 4 then 
      when s.0 is nvars:ZZ do if !isInt(nvars) then WrongArgSmallInteger(1) else
@@ -1169,7 +1169,7 @@ export rawGetTerms(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawGetTerms",rawGetTerms);
 
-export rawCoefficient(e:Expr):Expr := (
+export rawCoefficient(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is coeffRing:RawRing do
@@ -1188,7 +1188,7 @@ export rawCoefficient(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawCoefficient",rawCoefficient);
 
-export rawAssociateDivisor(e:Expr):Expr := (
+export rawAssociateDivisor(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
@@ -1197,7 +1197,7 @@ export rawAssociateDivisor(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawAssociateDivisor",rawAssociateDivisor);
 
-export rawNumerator(e:Expr):Expr := (
+export rawNumerator(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
@@ -1206,7 +1206,7 @@ export rawNumerator(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawNumerator",rawNumerator);
 
-export rawDenominator(e:Expr):Expr := (
+export rawDenominator(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
@@ -1216,7 +1216,7 @@ export rawDenominator(e:Expr):Expr := (
      );
 setupfun("rawDenominator",rawDenominator);
 
-export rawFraction(e:Expr):Expr := (
+export rawFraction(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 
      when s.0 is R:RawRing do 
@@ -1231,7 +1231,7 @@ export rawFraction(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawFraction",rawFraction);
 
-export rawFactor(e:Expr):Expr := (
+export rawFactor(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do (
 	  resultFactors := RawRingElementArrayOrNull(NULL);
@@ -1246,21 +1246,21 @@ export rawFactor(e:Expr):Expr := (
      );
 setupfun("rawFactor",rawFactor);
 
-export rawCharSeries(e:Expr):Expr := (
+export rawCharSeries(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawMatrix do toExpr( Ccode( RawMatrixArrayOrNull, "(engine_RawMatrixArrayOrNull)rawCharSeries(", "(Matrix *)",x, ")" ))
      else WrongArgMatrix()
      );
 setupfun("rawCharSeries",rawCharSeries);
 
-export rawIdealReorder(e:Expr):Expr := (
+export rawIdealReorder(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawMatrix do toExpr( Ccode( RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawIdealReorder(", "(Matrix *)",x, ")" ))
      else WrongArgMatrix()
      );
 setupfun("rawIdealReorder",rawIdealReorder);
 
-export rawPseudoRemainder(e:Expr):Expr := (
+export rawPseudoRemainder(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawRingElement do 
@@ -1271,13 +1271,13 @@ export rawPseudoRemainder(e:Expr):Expr := (
      );
 setupfun("rawPseudoRemainder",rawPseudoRemainder);
 
-export rawSchurDimension(e:Expr):Expr := (
+export rawSchurDimension(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( IntegerOrNull, "(engine_IntegerOrNull)rawSchurDimension(", "(RingElement*)",x, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawSchurDimension",rawSchurDimension);
 
-export rawCompare(e:Expr):Expr := (
+export rawCompare(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
@@ -1290,7 +1290,7 @@ export rawCompare(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawCompare",rawCompare);
 
-export rawClean(e:Expr):Expr := (
+export rawClean(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is epsilon:RR do (
 	  when s.1 is M:RawMatrix do (
@@ -1308,7 +1308,7 @@ export rawClean(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawClean", rawClean);
 
-export rawNorm(e:Expr):Expr := (
+export rawNorm(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is p:RR do (
 	  when s.1 is M:RawMatrix do (
@@ -1329,14 +1329,14 @@ setupfun("rawNorm", rawNorm);
 -----------------------------------------------------------------------------
 -- free modules
 
-export rawRank(e:Expr):Expr := (
+export rawRank(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawFreeModule do toExpr( Ccode( int, "IM2_FreeModule_rank(", "(FreeModule*)",x, ")" ))
      else WrongArg("a raw free module")
      );
 setupfun("rawRank",rawRank);
 
-export rawSchreyerSource(e:Expr):Expr := (
+export rawSchreyerSource(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is m:RawMatrix do toExpr(
 	  Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)IM2_FreeModule_make_schreyer(",
@@ -1344,7 +1344,7 @@ export rawSchreyerSource(e:Expr):Expr := (
      else WrongArgMatrix());
 setupfun("rawSchreyerSource",rawSchreyerSource);
 
-export rawFreeModule(e:Expr):Expr := (
+export rawFreeModule(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do
      if length(s) == 2 then (
@@ -1371,14 +1371,14 @@ export rawFreeModule(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawFreeModule",rawFreeModule);
 
-export rawGetSchreyer(e:Expr):Expr := (
+export rawGetSchreyer(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is F:RawFreeModule do Expr(
 	  Ccode(RawMatrix, "(engine_RawMatrix)IM2_FreeModule_get_schreyer(", "(FreeModule *)", F, ")" ) )
      else WrongArg("a raw free module"));
 setupfun("rawGetSchreyer",rawGetSchreyer);
 
-export rawZero(e:Expr):Expr := (
+export rawZero(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is F:RawFreeModule do
      when s.1 is G:RawFreeModule do
@@ -1395,7 +1395,7 @@ export rawZero(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawZero",rawZero);
 
-export rawExteriorPower(e:Expr):Expr := (
+export rawExteriorPower(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 2 then
      when s.0 is n:ZZ do
@@ -1426,7 +1426,7 @@ export rawExteriorPower(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("rawExteriorPower",rawExteriorPower);
 
-export rawSymmetricPower(e:Expr):Expr := (
+export rawSymmetricPower(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is n:ZZ do
      if !isInt(n) then WrongArgSmallInteger(1) else
@@ -1446,14 +1446,14 @@ export rawSymmetricPower(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSymmetricPower",rawSymmetricPower);
 
-export rawDual(e:Expr):Expr := (
+export rawDual(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is F:RawFreeModule do toExpr(Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)", "IM2_FreeModule_dual(", "(FreeModule *)", F, ")" ))
      is M:RawMatrix do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_Matrix_transpose(", "(Matrix *)", M, ")" ))
      else WrongArg("a raw free module or matrix"));
 setupfun("rawDual",rawDual);
 
-export rawDirectSum(e:Expr):Expr := (
+export rawDirectSum(localInterpState:threadLocalInterp,e:Expr):Expr := (
      if isSequenceOfMatrices(e) then toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
 	       "IM2_Matrix_direct_sum(", 
 	       "(Matrix_array *)", getSequenceOfMatrices(e),
@@ -1470,7 +1470,7 @@ export rawDirectSum(e:Expr):Expr := (
      );
 setupfun("rawDirectSum",rawDirectSum);
 
-export rawSubmodule(e:Expr):Expr := (
+export rawSubmodule(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is M:RawFreeModule do
@@ -1488,7 +1488,7 @@ setupfun("rawSubmodule",rawSubmodule);
 -----------------------------------------------------------------------------
 -- matrices
 
-export rawIsEqual(e:Expr):Expr := (
+export rawIsEqual(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMatrix do
      when s.1 is y:RawMatrix do (
@@ -1504,14 +1504,14 @@ export rawIsEqual(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawIsEqual",rawIsEqual);
 
-export rawSource(e:Expr):Expr := (
+export rawSource(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is M:RawMatrix do Expr( Ccode( RawFreeModule, "(engine_RawFreeModule)IM2_Matrix_get_source(", "(Matrix*)",M, ")" ))
      else WrongArgMatrix()
      );
 setupfun("rawSource",rawSource);
 
-export rawTarget(e:Expr):Expr := (
+export rawTarget(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is M:RawMatrix do Expr( Ccode( RawFreeModule, "(engine_RawFreeModule)IM2_Matrix_get_target(", "(Matrix*)",M, ")" ))
      is F:RawRingMap do Expr( Ccode( RawRing, "(engine_RawRing)IM2_RingMap_target(", "(RingMap *)",F, ")" ))
@@ -1519,7 +1519,7 @@ export rawTarget(e:Expr):Expr := (
      );
 setupfun("rawTarget",rawTarget);
 
-export rawMatrix1(e:Expr):Expr := (
+export rawMatrix1(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is target:RawFreeModule do 
@@ -1540,7 +1540,7 @@ export rawMatrix1(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawMatrix1",rawMatrix1);
 
-export rawMatrix2(e:Expr):Expr := (
+export rawMatrix2(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is target:RawFreeModule do 
@@ -1562,7 +1562,7 @@ export rawMatrix2(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrix2",rawMatrix2);
 
-export rawMatrixRemake1(e:Expr):Expr := (
+export rawMatrixRemake1(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is target:RawFreeModule do 
@@ -1579,7 +1579,7 @@ export rawMatrixRemake1(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMatrixRemake1",rawMatrixRemake1);
 
-export rawMatrixRemake2(e:Expr):Expr := (
+export rawMatrixRemake2(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is target:RawFreeModule do 
@@ -1602,7 +1602,7 @@ export rawMatrixRemake2(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrixRemake2",rawMatrixRemake2);
 
-export rawSparseMatrix1(e:Expr):Expr := (
+export rawSparseMatrix1(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is target:RawFreeModule do 
@@ -1629,7 +1629,7 @@ export rawSparseMatrix1(e:Expr):Expr := (
      else WrongNumArgs(6));
 setupfun("rawSparseMatrix1",rawSparseMatrix1);
 
-export rawRandomConstantMatrix(e:Expr):Expr := (
+export rawRandomConstantMatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is R:RawRing do 
      when s.1 is r:ZZ do if !isInt(r) then WrongArgSmallInteger(2) else
@@ -1655,7 +1655,7 @@ export rawRandomConstantMatrix(e:Expr):Expr := (
      else WrongNumArgs(6));
 setupfun("rawRandomConstantMatrix",rawRandomConstantMatrix);
 
-export rawSparseMatrix2(e:Expr):Expr := (
+export rawSparseMatrix2(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 7 then WrongNumArgs(7) else
      when s.0 is target:RawFreeModule do 
@@ -1685,7 +1685,7 @@ export rawSparseMatrix2(e:Expr):Expr := (
      else WrongNumArgs(7));
 setupfun("rawSparseMatrix2",rawSparseMatrix2);
 
-export rawConcat(e:Expr):Expr := (
+export rawConcat(localInterpState:threadLocalInterp,e:Expr):Expr := (
      if isSequenceOfMatrices(e) then
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
 	       "IM2_Matrix_concat(", 
@@ -1695,7 +1695,7 @@ export rawConcat(e:Expr):Expr := (
      );
 setupfun("rawConcat",rawConcat);
 
-export rawMatrixEntry(e:Expr):Expr := (
+export rawMatrixEntry(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
@@ -1720,7 +1720,7 @@ export rawMatrixEntry(e:Expr):Expr := (
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
 
-export rawSortColumns(e:Expr):Expr := (
+export rawSortColumns(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do
@@ -1744,7 +1744,7 @@ export rawSortColumns(e:Expr):Expr := (
      );
 setupfun("rawSortColumns",rawSortColumns);
 
-export rawEliminateVariables(e:Expr):Expr := (
+export rawEliminateVariables(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is nparts:ZZ do if !isInt(nparts) then WrongArgSmallInteger(1) else 
@@ -1760,7 +1760,7 @@ export rawEliminateVariables(e:Expr):Expr := (
      );
 setupfun("rawEliminateVariables",rawEliminateVariables);
 
-export rawKeepVariables(e:Expr):Expr := (
+export rawKeepVariables(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is nparts:ZZ do if !isInt(nparts) then WrongArgSmallInteger(1) else 
@@ -1776,7 +1776,7 @@ export rawKeepVariables(e:Expr):Expr := (
      );
 setupfun("rawKeepVariables",rawKeepVariables);
 
-export rawDivideByVariable(e:Expr):Expr := (
+export rawDivideByVariable(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do
@@ -1797,7 +1797,7 @@ export rawDivideByVariable(e:Expr):Expr := (
      );
 setupfun("rawDivideByVariable",rawDivideByVariable);
 
-export rawMinors(e:Expr):Expr := (
+export rawMinors(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is p:ZZ do if !isInt(p) then WrongArgSmallInteger(1) else
@@ -1823,7 +1823,7 @@ export rawMinors(e:Expr):Expr := (
      );
 setupfun("rawMinors",rawMinors);
 
-export rawInitial(e:Expr):Expr := (
+export rawInitial(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is p:ZZ do if !isInt(p) then WrongArgSmallInteger(1) else
@@ -1842,7 +1842,7 @@ export rawInitial(e:Expr):Expr := (
      );
 setupfun("rawInitial",rawInitial);
 
-export rawPfaffians(e:Expr):Expr := (
+export rawPfaffians(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is p:ZZ do if !isInt(p) then WrongArgSmallInteger(1) else
@@ -1855,7 +1855,7 @@ export rawPfaffians(e:Expr):Expr := (
      );
 setupfun("rawPfaffians",rawPfaffians);
 
-export rawTensor(e:Expr):Expr := (
+export rawTensor(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0
      is f:RawMatrix do
@@ -1885,7 +1885,7 @@ export rawTensor(e:Expr):Expr := (
      );
 setupfun("rawTensor",rawTensor);
 
-export rawModuleTensor(e:Expr):Expr := (
+export rawModuleTensor(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0
      is f:RawMatrix do
@@ -1896,7 +1896,7 @@ export rawModuleTensor(e:Expr):Expr := (
      );
 setupfun("rawModuleTensor",rawModuleTensor);
 
-export rawBasis(e:Expr):Expr := (
+export rawBasis(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is M:RawMatrix do
      if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
@@ -1921,7 +1921,7 @@ export rawBasis(e:Expr):Expr := (
      else WrongNumArgs(7));
 setupfun("rawBasis",rawBasis);
 
-export rawMatrixDiff(e:Expr):Expr := (
+export rawMatrixDiff(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is f:RawMatrix do
      when s.1 is g:RawMatrix do (
@@ -1939,7 +1939,7 @@ export rawMatrixDiff(e:Expr):Expr := (
      );
 setupfun("rawMatrixDiff",rawMatrixDiff);
 
-export rawMatrixContract(e:Expr):Expr := (
+export rawMatrixContract(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is f:RawMatrix do
      when s.1 is g:RawMatrix do (
@@ -1957,7 +1957,7 @@ export rawMatrixContract(e:Expr):Expr := (
      );
 setupfun("rawMatrixContract",rawMatrixContract);
 
-export rawIdentity(e:Expr):Expr := (
+export rawIdentity(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is F:RawFreeModule do
      when s.1 is preference:ZZ do if !isInt(preference) then WrongArgSmallInteger(2) else
@@ -1971,7 +1971,7 @@ export rawIdentity(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawIdentity",rawIdentity);
 
-export rawMutableIdentity(e:Expr):Expr := (
+export rawMutableIdentity(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is R:RawRing do
      when s.1 is nrows:ZZ do if !isInt(nrows) then WrongArgSmallInteger(2) else
@@ -1988,7 +1988,7 @@ export rawMutableIdentity(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMutableIdentity",rawMutableIdentity);
 
-export rawMutableMatrix(e:Expr):Expr := (
+export rawMutableMatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is M:RawMatrix do Expr(Ccode(RawMutableMatrix, "(engine_RawMutableMatrix)",
 	       "IM2_MutableMatrix_from_matrix(",
@@ -2033,12 +2033,12 @@ export rawMutableMatrix(e:Expr):Expr := (
      else WrongArg("1, 2, or 4 arguments"));
 setupfun("rawMutableMatrix",rawMutableMatrix);
 
-export rawMatrix(e:Expr):Expr := (
+export rawMatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is M:RawMutableMatrix do Expr(Ccode(RawMatrix, "(engine_RawMatrix)", "IM2_MutableMatrix_to_matrix(", "(MutableMatrix *)", M, ")" ))
      else WrongArgMutableMatrix());
 setupfun("rawMatrix",rawMatrix);
 
-export rawMonomials(e:Expr):Expr := (
+export rawMonomials(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      if !isSequenceOfSmallIntegers(s.0) then WrongArg(1,"a sequence of small integers") else 
@@ -2054,7 +2054,7 @@ export rawMonomials(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawMonomials",rawMonomials);
 
-export rawCoefficients(e:Expr):Expr := (
+export rawCoefficients(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      if isSequenceOfSmallIntegers(s.0) then
      when s.1 is monoms:RawMatrix do 
@@ -2071,7 +2071,7 @@ export rawCoefficients(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawCoefficients",rawCoefficients);
 
-export rawSubmatrix(e:Expr):Expr := (
+export rawSubmatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then
      when s.0 is M:RawMatrix do 
@@ -2123,7 +2123,7 @@ export rawSubmatrix(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("rawSubmatrix",rawSubmatrix);
 
-export rawReshape(e:Expr):Expr := (
+export rawReshape(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 
      when s.0 is M:RawMatrix do 
@@ -2138,7 +2138,7 @@ export rawReshape(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawReshape",rawReshape);
 
-export rawFlip(e:Expr):Expr := (
+export rawFlip(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 2 then 
      when s.0 is F:RawFreeModule do
@@ -2151,7 +2151,7 @@ export rawFlip(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawFlip",rawFlip);
 
-export rawKoszul(e:Expr):Expr := (
+export rawKoszul(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is n:ZZ do
      if !isInt(n) then WrongArgSmallInteger(1) else
@@ -2163,7 +2163,7 @@ export rawKoszul(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawKoszul",rawKoszul);
 
-export rawKoszulMonomials(e:Expr):Expr := (
+export rawKoszulMonomials(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is n:ZZ do
@@ -2177,7 +2177,7 @@ export rawKoszulMonomials(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawKoszulMonomials",rawKoszulMonomials);
 
-export rawHilbert(e:Expr):Expr := (
+export rawHilbert(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is M:RawMatrix do (
 	  toExpr(Ccode(RawRingElementOrNull,"(engine_RawRingElementOrNull)",
@@ -2191,7 +2191,7 @@ export rawHilbert(e:Expr):Expr := (
      );
 setupfun("rawHilbert",rawHilbert);
 
-export rawInsertRows(e:Expr):Expr := (
+export rawInsertRows(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is position:ZZ do if !isInt(position) then WrongArgSmallInteger(2) else
@@ -2208,7 +2208,7 @@ export rawInsertRows(e:Expr):Expr := (
      );
 setupfun("rawInsertRows",rawInsertRows);
 
-export rawDeleteRows(e:Expr):Expr := (
+export rawDeleteRows(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is position:ZZ do if !isInt(position) then WrongArgSmallInteger(2) else
@@ -2225,7 +2225,7 @@ export rawDeleteRows(e:Expr):Expr := (
      );
 setupfun("rawDeleteRows",rawDeleteRows);
 
-export rawInsertColumns(e:Expr):Expr := (
+export rawInsertColumns(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is position:ZZ do if !isInt(position) then WrongArgSmallInteger(2) else
@@ -2242,7 +2242,7 @@ export rawInsertColumns(e:Expr):Expr := (
      );
 setupfun("rawInsertColumns",rawInsertColumns);
 
-export rawDeleteColumns(e:Expr):Expr := (
+export rawDeleteColumns(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is position:ZZ do if !isInt(position) then WrongArgSmallInteger(2) else
@@ -2259,7 +2259,7 @@ export rawDeleteColumns(e:Expr):Expr := (
      );
 setupfun("rawDeleteColumns",rawDeleteColumns);
 
-export rawSortColumns2(e:Expr):Expr := (
+export rawSortColumns2(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is position:ZZ do if !isInt(position) then WrongArgSmallInteger(2) else
@@ -2276,7 +2276,7 @@ export rawSortColumns2(e:Expr):Expr := (
      );
 setupfun("rawSortColumns2",rawSortColumns2);
 
-export rawPermuteRows(e:Expr):Expr := (
+export rawPermuteRows(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is start:ZZ do if !isInt(start) then WrongArgSmallInteger(2) else
@@ -2292,7 +2292,7 @@ export rawPermuteRows(e:Expr):Expr := (
      );
 setupfun("rawPermuteRows",rawPermuteRows);
 
-export rawPermuteColumns(e:Expr):Expr := (
+export rawPermuteColumns(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is start:ZZ do if !isInt(start) then WrongArgSmallInteger(2) else
@@ -2308,7 +2308,7 @@ export rawPermuteColumns(e:Expr):Expr := (
      );
 setupfun("rawPermuteColumns",rawPermuteColumns);
 
-export rawMatrixColumnOperation2(e:Expr):Expr := (
+export rawMatrixColumnOperation2(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 8 then WrongNumArgs(8) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is c1:ZZ do 
@@ -2339,7 +2339,7 @@ export rawMatrixColumnOperation2(e:Expr):Expr := (
      else WrongNumArgs(8));
 setupfun("rawMatrixColumnOperation2",rawMatrixColumnOperation2);
 
-export rawMatrixRowOperation2(e:Expr):Expr := (
+export rawMatrixRowOperation2(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 8 then WrongNumArgs(8) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is r1:ZZ do 
@@ -2370,7 +2370,7 @@ export rawMatrixRowOperation2(e:Expr):Expr := (
      else WrongNumArgs(8));
 setupfun("rawMatrixRowOperation2",rawMatrixRowOperation2);
 
-export rawWedgeProduct(e:Expr):Expr := (
+export rawWedgeProduct(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is p:ZZ do if !isInt(p) then WrongArgSmallInteger(1) else
@@ -2382,19 +2382,19 @@ export rawWedgeProduct(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawWedgeProduct",rawWedgeProduct);
 
-export rawTopCoefficients(e:Expr):Expr := (
+export rawTopCoefficients(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawMatrix do toExpr( Ccode( RawMatrixPairOrNull, "(engine_RawMatrixPairOrNull)rawTopCoefficients(", "(Matrix *)",x, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawTopCoefficients",rawTopCoefficients);
 
-export rawMatrixCompress(e:Expr):Expr := (
+export rawMatrixCompress(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RawMatrix do Expr( Ccode( RawMatrix, "(engine_RawMatrix)rawMatrixCompress(", "(Matrix *)",x, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawMatrixCompress",rawMatrixCompress);
 
-export rawRemoveMonomialFactors(e:Expr):Expr := (
+export rawRemoveMonomialFactors(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      when s.0 is m:RawMatrix do 
      if isBoolean(s.1) then Expr(Ccode(RawMatrix, "(engine_RawMatrix)rawRemoveMonomialFactors(", "(Matrix *)", m, ",", toBoolean(s.1), ")" ))
@@ -2403,27 +2403,27 @@ export rawRemoveMonomialFactors(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawRemoveMonomialFactors",rawRemoveMonomialFactors);
 
-export rawRemoveScalarMultiples(e:Expr):Expr := (
+export rawRemoveScalarMultiples(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is m:RawMatrix 
      do Expr(Ccode(RawMatrix, "(engine_RawMatrix)rawRemoveScalarMultiples(", "(Matrix *)", m, ")" ))
      else WrongArgMatrix());
 setupfun("rawRemoveScalarMultiples",rawRemoveScalarMultiples);
 
-export rawReduceByPivots(e:Expr):Expr := (
+export rawReduceByPivots(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is m:RawMutableMatrix
      do toExpr(Ccode(bool, "IM2_MutableMatrix_reduce_by_pivots(", "(MutableMatrix *)", m, ")" ))
      else WrongArgMutableMatrix());
 setupfun("rawReduceByPivots",rawReduceByPivots);
 
-export rawKernelOfGB(e:Expr):Expr := (
+export rawKernelOfGB(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is m:RawMatrix
      do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_kernel_of_GB(", "(Matrix *)", m, ")" ))
      else WrongArgMatrix());
 setupfun("rawKernelOfGB",rawKernelOfGB);
 
-export rawMutableMatrixFillRandomDensity(e:Expr):Expr := (
+export rawMutableMatrixFillRandomDensity(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else 
      when s.0 is m:RawMutableMatrix do
@@ -2438,7 +2438,7 @@ export rawMutableMatrixFillRandomDensity(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMutableMatrixFillRandomDensity",rawMutableMatrixFillRandomDensity);
 
-export rawMutableMatrixFillRandom(e:Expr):Expr := (
+export rawMutableMatrixFillRandom(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else 
      when s.0 is m:RawMutableMatrix do
@@ -2451,7 +2451,7 @@ export rawMutableMatrixFillRandom(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawMutableMatrixFillRandom",rawMutableMatrixFillRandom);
 
-rawContent(e:Expr):Expr := (
+rawContent(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:RawRingElement do (
 	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawRingElementContent((RingElement *)", f, ")"))
 	  )
@@ -2462,7 +2462,7 @@ rawContent(e:Expr):Expr := (
      );
 setupfun("rawContent",rawContent);
 
-rawRemoveContent(e:Expr):Expr := (
+rawRemoveContent(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:RawRingElement do (
 	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawRingElementRemoveContent((RingElement *)", f, ")"))
 	  )
@@ -2473,7 +2473,7 @@ rawRemoveContent(e:Expr):Expr := (
      );
 setupfun("rawRemoveContent",rawRemoveContent);
 
-rawSplitContent(e:Expr):Expr := (
+rawSplitContent(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:RawRingElement do (
 	  f2 := RawRingElementOrNull(NULL);
 	  con := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawRingElementSplitContent((RingElement *)", f, ",(RingElementOrNull **)&", f2, ")");
@@ -2497,14 +2497,14 @@ setupfun("rawSplitContent",rawSplitContent);
 -----------------------------------------------------------------------------
 -- monomial ideals
 
-export rawMonomialIdealToMatrix(e:Expr):Expr := (
+export rawMonomialIdealToMatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is I:RawMonomialIdeal do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_MonomialIdeal_to_matrix(", "(MonomialIdeal *)", I, ")" ))
      else WrongArg("a raw monomial ideal")
      );
 setupfun("rawMonomialIdealToMatrix",rawMonomialIdealToMatrix);
 
-export rawMonomialIdeal(e:Expr):Expr := (
+export rawMonomialIdeal(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is m:RawMatrix do
      when s.1 is n:ZZ do 
@@ -2517,14 +2517,14 @@ export rawMonomialIdeal(e:Expr):Expr := (
      );
 setupfun("rawMonomialIdeal",rawMonomialIdeal);
 
-export rawNumgens(e:Expr):Expr := (
+export rawNumgens(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is I:RawMonomialIdeal do Expr( toInteger(
 	       Ccode(int, "IM2_MonomialIdeal_n_gens(", "(MonomialIdeal *)", I, ")" )))
      else WrongArg("a raw free module"));
 setupfun("rawNumgens",rawNumgens);
 
-export rawIntersect(e:Expr):Expr := (
+export rawIntersect(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is I:RawMonomialIdeal do
      when s.1 is J:RawMonomialIdeal do
@@ -2541,27 +2541,27 @@ export rawIntersect(e:Expr):Expr := (
      );
 setupfun("rawIntersect",rawIntersect);
 
-export rawStronglyStableClosure(e:Expr):Expr := (
+export rawStronglyStableClosure(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is I:RawMonomialIdeal do toExpr(
 	  Ccode(RawMonomialIdealOrNull,"(engine_RawMonomialIdealOrNull)",
 	       "IM2_MonomialIdeal_borel(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial ideal"));
 setupfun("rawStronglyStableClosure",rawStronglyStableClosure);
 
-export rawIsStronglyStable(e:Expr):Expr := (
+export rawIsStronglyStable(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is I:RawMonomialIdeal do toExpr(
 	  Ccode(bool, "IM2_MonomialIdeal_is_borel(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial ideal"));
 setupfun("rawIsStronglyStable",rawIsStronglyStable);
 
-export rawCodimension(e:Expr):Expr := (
+export rawCodimension(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is I:RawMonomialIdeal do (
 	  r := Ccode(int, "IM2_MonomialIdeal_codim(", "(MonomialIdeal *)", I, ")" );
 	  if r == -1 then engineErrorMessage() else toExpr(r))
      else WrongArg("a raw monomial ideal"));
 setupfun("rawCodimension",rawCodimension);
 
-export rawMonomialMinimalPrimes(e:Expr):Expr := (
+export rawMonomialMinimalPrimes(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is m:RawMonomialIdeal do
      when s.1 is n:ZZ do 
@@ -2577,7 +2577,7 @@ export rawMonomialMinimalPrimes(e:Expr):Expr := (
      );
 setupfun("rawMonomialMinimalPrimes",rawMonomialMinimalPrimes);
 
-export rawMaximalIndependentSets(e:Expr):Expr := (
+export rawMaximalIndependentSets(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is m:RawMonomialIdeal do
      when s.1 is n:ZZ do 
@@ -2592,14 +2592,14 @@ setupfun("rawMaximalIndependentSets",rawMaximalIndependentSets);
 -----------------------------------------------------------------------------
 -- ring maps
 
-export rawRingMap(e:Expr):Expr := (
+export rawRingMap(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is M:RawMatrix do Expr( Ccode( RawRingMap, "(engine_RawRingMap)IM2_RingMap_make1(", "(Matrix*)",M, ")" ))
      else WrongArg("a raw matrix")
      );
 setupfun("rawRingMap",rawRingMap);
 
-export rawRingMapEval(e:Expr):Expr := (
+export rawRingMapEval(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do
      if length(s) == 2 then 
@@ -2639,21 +2639,21 @@ export rawRingMapEval(e:Expr):Expr := (
      );
 setupfun("rawRingMapEval",rawRingMapEval);
 
-export rawNumberOfRows(e:Expr):Expr := (
+export rawNumberOfRows(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is M:RawMatrix do toExpr(Ccode( int, "IM2_Matrix_n_rows(", "(Matrix *)", M, ")" ))
      is M:RawMutableMatrix do toExpr(Ccode( int, "IM2_MutableMatrix_n_rows(", "(MutableMatrix *)", M, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawNumberOfRows",rawNumberOfRows);
 
-export rawNumberOfColumns(e:Expr):Expr := (
+export rawNumberOfColumns(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is M:RawMatrix do toExpr(Ccode( int, "IM2_Matrix_n_cols(", "(Matrix *)", M, ")" ))
      is M:RawMutableMatrix do toExpr(Ccode( int, "IM2_MutableMatrix_n_cols(", "(MutableMatrix *)", M, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawNumberOfColumns",rawNumberOfColumns);
 
-export rawMatrixRowSwap(e:Expr):Expr := (
+export rawMatrixRowSwap(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is i:ZZ do if !isInt(i) then WrongArgSmallInteger(2) else
@@ -2665,7 +2665,7 @@ export rawMatrixRowSwap(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMatrixRowSwap",rawMatrixRowSwap);
 
-export rawMatrixColumnSwap(e:Expr):Expr := (
+export rawMatrixColumnSwap(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is i:ZZ do if !isInt(i) then WrongArgSmallInteger(2) else
@@ -2677,7 +2677,7 @@ export rawMatrixColumnSwap(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMatrixColumnSwap",rawMatrixColumnSwap);
 
-export rawColumnDotProduct(e:Expr):Expr := (
+export rawColumnDotProduct(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is c1:ZZ do if !isInt(c1) then WrongArgSmallInteger(2) else
@@ -2689,7 +2689,7 @@ export rawColumnDotProduct(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawColumnDotProduct",rawColumnDotProduct);
 
-export rawMatrixRowChange(e:Expr):Expr := (
+export rawMatrixRowChange(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is targetRow:ZZ do if !isInt(targetRow) then WrongArgSmallInteger(2) else
@@ -2705,7 +2705,7 @@ export rawMatrixRowChange(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrixRowChange",rawMatrixRowChange);
 
-export rawMatrixColumnChange(e:Expr):Expr := (
+export rawMatrixColumnChange(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is targetColumn:ZZ do if !isInt(targetColumn) then WrongArgSmallInteger(2) else
@@ -2721,7 +2721,7 @@ export rawMatrixColumnChange(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrixColumnChange",rawMatrixColumnChange);
 
-export rawMatrixRowScale(e:Expr):Expr := (
+export rawMatrixRowScale(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is r:RawRingElement do 
@@ -2735,7 +2735,7 @@ export rawMatrixRowScale(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawMatrixRowScale",rawMatrixRowScale);
 
-export rawMatrixColumnScale(e:Expr):Expr := (
+export rawMatrixColumnScale(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is r:RawRingElement do
@@ -2753,19 +2753,19 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 -- Groebner bases and resolutions and computations
 -----------------------------------------------------------------------------
 
-export rawStartComputation(e:Expr):Expr := (
+export rawStartComputation(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is c:RawComputation do toExpr(Ccode(RawComputationOrNull, "(engine_RawComputationOrNull)rawStartComputation(", "(Computation *)", c, ")"))
      else WrongArg("a raw computation"));
 setupfun("rawStartComputation",rawStartComputation);
 
-export rawShowComputation(e:Expr):Expr := (
+export rawShowComputation(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is c:RawComputation do (
 	  Ccode(void, "rawShowComputation(", "(Computation *)", c, ")");
 	  nullE)
      else WrongArg("a raw computation"));
 setupfun("rawShowComputation",rawShowComputation);
 
-export rawStatusResolution(e:Expr):Expr := (
+export rawStatusResolution(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is G:RawComputation do (
 	  completionDegree := 0;
 	  completionLevel := 0;
@@ -2781,7 +2781,7 @@ export rawStatusResolution(e:Expr):Expr := (
      );
 setupfun("rawStatusResolution", rawStatusResolution);
 
-export rawGB(e:Expr):Expr := (
+export rawGB(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 9 then WrongNumArgs(9) else
      when s.0 is m:RawMatrix do
@@ -2821,7 +2821,7 @@ export rawGB(e:Expr):Expr := (
      );
 setupfun("rawGB",rawGB);
 
-export rawResolution(e:Expr):Expr := (
+export rawResolution(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 7 then WrongNumArgs(7) else
      when s.0 is m:RawMatrix do
@@ -2856,7 +2856,7 @@ export rawResolution(e:Expr):Expr := (
      );
 setupfun("rawResolution",rawResolution);
 
-export rawGBSetHilbertFunction(e:Expr):Expr := (
+export rawGBSetHilbertFunction(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -2872,7 +2872,7 @@ export rawGBSetHilbertFunction(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBSetHilbertFunction", rawGBSetHilbertFunction);
 
-export rawGBForce(e:Expr):Expr := (
+export rawGBForce(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 4 then 
      when a.0 is m:RawMatrix do 
@@ -2894,7 +2894,7 @@ export rawGBForce(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawGBForce", rawGBForce);
 
-export rawMarkedGB(e:Expr):Expr := (
+export rawMarkedGB(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 5 then 
      when a.0 is leadterms:RawMatrix do
@@ -2919,7 +2919,7 @@ export rawMarkedGB(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMarkedGB", rawMarkedGB);
 
-export rawGBSetStop(e:Expr):Expr := (
+export rawGBSetStop(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 10 then WrongNumArgs(10) else
      when s.0 is G:RawComputation do
@@ -2964,43 +2964,43 @@ export rawGBSetStop(e:Expr):Expr := (
      );
 setupfun("rawGBSetStop", rawGBSetStop);
 
-export rawStatus1(e:Expr):Expr := (
+export rawStatus1(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(int, "rawStatus1(", "(Computation *)", G, ")" ))
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawStatus1", rawStatus1);
 
-export rawStatus2(e:Expr):Expr := (
+export rawStatus2(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(int, "rawStatus2(", "(Computation *)", G, ")" ))
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawStatus2", rawStatus2);
 
-export rawGBGetMatrix(e:Expr):Expr := (
+export rawGBGetMatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBGetMatrix(", "(Computation *)", G, ")" ))
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawGBGetMatrix", rawGBGetMatrix);
 
-export rawGBMinimalGenerators(e:Expr):Expr := (
+export rawGBMinimalGenerators(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBMinimalGenerators(", "(Computation *)", G, ")" ))
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawGBMinimalGenerators", rawGBMinimalGenerators);
 
-export rawGBChangeOfBasis(e:Expr):Expr := (
+export rawGBChangeOfBasis(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBChangeOfBasis(", "(Computation *)", G, ")" ))
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawGBChangeOfBasis", rawGBChangeOfBasis);
 
-export rawGBSyzygies(e:Expr):Expr := (
+export rawGBSyzygies(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBSyzygies(", "(Computation *)", G, ")" ))
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawGBSyzygies", rawGBSyzygies);
 
-export rawResolutionGetMatrix(e:Expr):Expr := (
+export rawResolutionGetMatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -3013,7 +3013,7 @@ export rawResolutionGetMatrix(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawResolutionGetMatrix", rawResolutionGetMatrix);
 
-export rawResolutionStatusLevel(e:Expr):Expr := (
+export rawResolutionStatusLevel(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is G:RawComputation do
@@ -3038,7 +3038,7 @@ export rawResolutionStatusLevel(e:Expr):Expr := (
      );
 setupfun("rawResolutionStatusLevel", rawResolutionStatusLevel);
 
-export rawGBGetLeadTerms(e:Expr):Expr := (
+export rawGBGetLeadTerms(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -3051,7 +3051,7 @@ export rawGBGetLeadTerms(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBGetLeadTerms", rawGBGetLeadTerms);
 
-export rawGBGetParallelLeadTerms(e:Expr):Expr := (
+export rawGBGetParallelLeadTerms(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do (
@@ -3065,7 +3065,7 @@ export rawGBGetParallelLeadTerms(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBGetParallelLeadTerms", rawGBGetParallelLeadTerms);
 
-export rawResolutionGetFree(e:Expr):Expr := (
+export rawResolutionGetFree(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -3078,7 +3078,7 @@ export rawResolutionGetFree(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawResolutionGetFree", rawResolutionGetFree);
 
-export rawGBMatrixRemainder(e:Expr):Expr := (
+export rawGBMatrixRemainder(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -3098,7 +3098,7 @@ toSequence(a:RawMatrixOrNull,b:RawMatrixOrNull,c:bool):Expr := (
      is B:RawMatrix do
      Expr(Sequence(Expr(A),Expr(B),toExpr(c))));
 
-export rawGBMatrixLift(e:Expr):Expr := (
+export rawGBMatrixLift(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -3126,7 +3126,7 @@ export rawGBMatrixLift(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBMatrixLift", rawGBMatrixLift);
 
-export rawGBContains(e:Expr):Expr := (
+export rawGBContains(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -3142,7 +3142,7 @@ export rawGBContains(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBContains", rawGBContains);
 
-export rawGBBetti(e:Expr):Expr := (
+export rawGBBetti(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -3156,7 +3156,7 @@ export rawGBBetti(e:Expr):Expr := (
 setupfun("rawGBBetti", rawGBBetti);
 
 
-export rawSolve(e:Expr):Expr := (
+export rawSolve(localInterpState:threadLocalInterp,e:Expr):Expr := (
      -- rawSolve(A, b, x)
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -3172,7 +3172,7 @@ export rawSolve(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawSolve", rawSolve);
 
-export rawNullspaceU(e:Expr):Expr := (
+export rawNullspaceU(localInterpState:threadLocalInterp,e:Expr):Expr := (
      -- rawNullspaceU(A, x)
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
@@ -3191,12 +3191,12 @@ setupfun("rawNullspaceU", rawNullspaceU);
 -- LU
 -----------------------------------------------------------------------------
 
---export rawLU(e:Expr):Expr := (
+--export rawLU(localInterpState:threadLocalInterp,e:Expr):Expr := (
 --     when e is A:RawMutableMatrix do toExpr(Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(MutableMatrix *)", A, ")"))
 --     else WrongArgMutableMatrix());
 --setupfun("rawLU", rawLU);
 
-export rawLU(e:Expr):Expr := (
+export rawLU(localInterpState:threadLocalInterp,e:Expr):Expr := (
      -- rawLU(A, L, U) returns a list of integers (permutation)
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -3211,7 +3211,7 @@ export rawLU(e:Expr):Expr := (
 setupfun("rawLU", rawLU);
 
 
-export rawFFLU(e:Expr):Expr := (
+export rawFFLU(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is M:RawMutableMatrix do toExpr( Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_FF_LU(", "(MutableMatrix *)", M, ")" ) )
      else WrongArgMutableMatrix());
 setupfun("rawFFLU",rawFFLU);
@@ -3220,7 +3220,7 @@ setupfun("rawFFLU",rawFFLU);
 -- integer matrix normal forms
 -----------------------------------------------------------------------------
 
-export rawLLL(e:Expr):Expr := (
+export rawLLL(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMutableMatrix do
      when s.2 is threshold:QQ do     
@@ -3236,17 +3236,17 @@ export rawLLL(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawLLL",rawLLL);
 
-export rawSmithNormalForm(e:Expr):Expr := (
+export rawSmithNormalForm(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_SmithNormalForm(", "(MutableMatrix *)", M, ")" ) )
      else WrongArgMutableMatrix());
 setupfun("rawSmithNormalForm",rawSmithNormalForm);
 
-export rawHermiteNormalForm(e:Expr):Expr := (
+export rawHermiteNormalForm(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_HermiteNormalForm(", "(MutableMatrix *)", M, ")" ) )
      else WrongArgMutableMatrix());
 setupfun("rawHermiteNormalForm",rawHermiteNormalForm);
 
-export rawSubduction(e:Expr):Expr := (
+export rawSubduction(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do
      when s.1 is F:RawRingMap do 
@@ -3262,7 +3262,7 @@ setupfun("rawSubduction",rawSubduction);
 -- LAPACK 
 -----------------------------------------------------------------------------
 
-export rawSetMatrixEntry(e:Expr):Expr := (
+export rawSetMatrixEntry(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 4 then 
      when s.0 is M:RawMutableMatrix do
@@ -3281,7 +3281,7 @@ export rawSetMatrixEntry(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawSetMatrixEntry", rawSetMatrixEntry);
 
-export rawGetMatrixEntry(e:Expr):Expr := (
+export rawGetMatrixEntry(localInterpState:threadLocalInterp,e:Expr):Expr := (
      -- rawGetEntry(M, r, c, double)
      when e is s:Sequence do
      if length(s) == 3 then 
@@ -3296,7 +3296,7 @@ export rawGetMatrixEntry(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGetMatrixEntry", rawGetMatrixEntry);
 
-export rawSetMatrixValues(e:Expr):Expr := (
+export rawSetMatrixValues(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 4 then
      when s.0 is M:RawMutableMatrix do 
@@ -3318,7 +3318,7 @@ export rawSetMatrixValues(e:Expr):Expr := (
      );
 setupfun("rawSetMatrixValues",rawSetMatrixValues);
 
-export rawGetSubmatrix(e:Expr):Expr := (
+export rawGetSubmatrix(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then
      when s.0
@@ -3340,7 +3340,7 @@ export rawGetSubmatrix(e:Expr):Expr := (
      );
 setupfun("rawGetSubmatrix",rawGetSubmatrix);
 
-export rawEigenvalues(e:Expr):Expr := (
+export rawEigenvalues(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
@@ -3356,7 +3356,7 @@ export rawEigenvalues(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawEigenvalues", rawEigenvalues);
 
-export rawEigenvectors(e:Expr):Expr := (
+export rawEigenvectors(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 4 then WrongNumArgs(4) else
      when s.0 
@@ -3376,7 +3376,7 @@ export rawEigenvectors(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawEigenvectors", rawEigenvectors);
 
-export rawSVD(e:Expr):Expr := (
+export rawSVD(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 5 then WrongNumArgs(4) else
      when s.0 
@@ -3397,7 +3397,7 @@ export rawSVD(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawSVD", rawSVD);
 
-export rawLeastSquares(e:Expr):Expr := (
+export rawLeastSquares(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 4 then WrongNumArgs(4) else
      when s.0 
@@ -3416,14 +3416,14 @@ export rawLeastSquares(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawLeastSquares", rawLeastSquares);
 
-pi0(e:Expr):Expr := (
+pi0(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is prec:ZZ do
      if !isULong(prec) then WrongArgSmallUInteger(1)
      else Expr(pi(toULong(prec)))
      else WrongArgZZ(1));
 setupfun("pi0",pi0);
 
-mpfrConstantEuler(e:Expr):Expr := (
+mpfrConstantEuler(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is prec:ZZ do if !isULong(prec) then WrongArgSmallUInteger(1) else (
 	  z := newRR(toULong(prec));
 	  Ccode( void, "mpfr_const_euler(", "(__mpfr_struct *)", z, ", GMP_RNDN)" );
@@ -3431,7 +3431,7 @@ mpfrConstantEuler(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("mpfrConstantEuler",mpfrConstantEuler);
 
-ConstantII(e:Expr):Expr := (
+ConstantII(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is prec:ZZ do
      if !isULong(prec)
      then WrongArgSmallUInteger(1)
@@ -3439,7 +3439,8 @@ ConstantII(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("ConstantII",ConstantII);
 
-export rawDummy(e:Expr):Expr := (
+export rawDummy(localInterpState:threadLocalInterp,
+e:Expr):Expr := (
      Ccode(void,"rawDummy();");
      nullE);
 setupfun("rawDummy",rawDummy);

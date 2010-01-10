@@ -55,10 +55,10 @@ extern "C" {
 static void advertise () {
      static enum { none, withGC, withGCindirect, withFactory } lastMessage = none;
      if (debugging == 0) return;
-     if (__gmp_allocate_func == (void *(*) (size_t))getmem) {
+     if (__gmp_allocate_func == (void *(*) (size_t))getmem_atomic) {
 	  if (lastMessage == withGCindirect) return;
 	  lastMessage = withGCindirect;
-	  printf("--gmp allocating with gc (indirectly, via getmem())\n");
+	  printf("--gmp allocating with gc (indirectly, via getmem_atomic())\n");
      }
 #if 0
      else if (__gmp_allocate_func == GC_malloc) {
@@ -193,7 +193,7 @@ void enter_M2::exit() {
     if (debugging) advertise();
   }
 
-static MP_INT toInteger(CanonicalForm h) {
+static __mpz_struct toInteger(CanonicalForm h) {
 //// we don't have access to int_cf.h and int_int.h from factory, so the following commented-out code won't compile; but it might have worked.
 //     struct enter_factory foo;
 //     assert(h.inZ());
@@ -242,9 +242,8 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	  }
 	  else if (h.inQ()) {
 	       struct enter_factory c;
-	       CanonicalForm hnum = h.num(), hden = h.den();
-	       struct enter_M2 d;
 	       MP_RAT z = {toInteger(h.num()), toInteger(h.den())};
+	       struct enter_M2 d;
 	       RingElement *ret = RingElement::make_raw(R,R->from_rational(&z));
 	       mpq_clear(&z);
 	       return ret;
@@ -299,6 +298,8 @@ void showvar(Variable &t) { cout << t << endl; }
 void showcf(CanonicalForm &t) { cout << t << endl; }
 void showcfl(CFList &t) { cout << t << endl; }
 void showcffl(CFFList &t) { cout << t << endl; }
+void showmpint(MP_INT *p) { mpz_out_str (stdout, 10, p); cout << endl; }
+void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); cout << endl; }
 #endif
 
 static struct enter_factory foo2;
@@ -467,6 +468,18 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
       ERROR("encountered different rings");
       return 0;
     }
+
+  if (f->is_zero()) {
+    *A = RingElement::make_raw(P,P->zero());
+    *B = RingElement::make_raw(P,P->one());
+    return g;
+  }
+
+  if (g->is_zero()) {
+    *A = RingElement::make_raw(P,P->one());
+    *B = RingElement::make_raw(P,P->zero());
+    return f;
+  }
 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;

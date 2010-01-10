@@ -14,13 +14,13 @@ use basic;
 use convertr;
 use common;
 
-export copy(e:Expr):Expr := (
+export copy(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:List do if a.mutable then Expr(copy(a)) else e
      is o:HashTable do if o.mutable then Expr(copy(o)) else e
      else e);
 setupfun("copy",copy);
-reverse(e:Expr):Expr := (
+reverse(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do Expr(reverse(a))
      is a:List do Expr(reverse(a))
@@ -50,7 +50,7 @@ export splice(a:Sequence):Sequence := (
      do foreach j in ii do provide j
      else provide i
      else a);
-export splice(e:Expr):Expr := (
+export splice(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is v:Sequence do Expr(splice(v))
      is a:List do list(

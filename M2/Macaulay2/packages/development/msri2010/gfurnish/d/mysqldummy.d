@@ -3,7 +3,7 @@
 use common;
 use tokens;
 
-err(e:Expr):Expr := buildErrorPacket("mysql library not available");
+err(localInterpState:threadLocalInterp,e:Expr):Expr := buildErrorPacket("mysql library not available");
 setupfun("mysqlRealConnect",err);
 setupfun("mysqlRealQuery",err);
 setupfun("mysqlQuery",err);

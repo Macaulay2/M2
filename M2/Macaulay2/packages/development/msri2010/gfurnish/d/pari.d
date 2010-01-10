@@ -7,7 +7,7 @@ toExpr(x:array(ZZ)):Expr := new Sequence len length(x) do foreach i in x do prov
 toExpr(x:array(array(ZZ))):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
 
 import factorint(x:ZZ,flags:long):array(array(ZZ));
-pfactorint(e:Expr):Expr := (
+pfactorint(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do toExpr(factorint(x,long(0)))
      is s:Sequence do if length(s) != 2 then WrongNumArgs(1,2) else
@@ -21,11 +21,11 @@ pfactorint(e:Expr):Expr := (
 setupfun("Pari$factorint",pfactorint);
 
 import isprime(x:ZZ):bool;
-pisprime(e:Expr):Expr := when e is x:ZZ do toExpr(isprime(x)) else WrongArgZZ();
+pisprime(localInterpState:threadLocalInterp,e:Expr):Expr := when e is x:ZZ do toExpr(isprime(x)) else WrongArgZZ();
 setupfun("Pari$isprime",pisprime);
 
 import ispseudoprime(x:ZZ,flags:long):bool;
-pispseudoprime(e:Expr):Expr := (
+pispseudoprime(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do toExpr(ispseudoprime(x,long(0)))
      is s:Sequence do if length(s) != 2 then WrongNumArgs(1,2) else
@@ -39,7 +39,7 @@ pispseudoprime(e:Expr):Expr := (
 setupfun("Pari$ispseudoprime",pispseudoprime);
 
 import test():void;
-ptest(e:Expr):Expr := (test();nullE);
+ptest(localInterpState:threadLocalInterp,e:Expr):Expr := (test();nullE);
 setupfun("Pari$test",ptest);
 
 -- Local Variables:
