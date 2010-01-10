@@ -26,12 +26,15 @@ needsPackage "BGG"
 --- * adjunction?
 
 export {
+     hilbIdealFromHilbStructureSheaf,
      hilbertPolynomialFromInvariants,
+     hilbSpaceCurve,
      guessCohomologyTable,
      diag,
      findMonadWindows,
      guessDifferentials,
      constructSurface,
+     constructSpaceCurve,
      numPosRoots, 
      firstAdjoint
      }
@@ -277,32 +280,57 @@ numRealTrace = A -> (
 ----
 ----
 
+hilbIdealFromHilbStructureSheaf = method()
+hilbIdealFromHilbStructureSheaf(RingElement,ZZ) := (H,n) -> (
+     -- to get the ring in which hilbertPolynomials are usually expressed
+     i:=(vars ring H)_(0,0); 
+     -- the hilbertpolynomial \Chi(P^n,O(i))
+     HPn := product apply(n,k->(i+n-k)/(n-k));
+     HPn-H
+     )
+
+
 hilbertPolynomialFromInvariants = (deg, sectionalGenus, speciality, geometricGenus) -> (
      -- to get the ring in which hilbertPolynomials are usually expressed
      i:=(vars ring hilbertPolynomial(ZZ[ttt], Projective => false))_(0,0); 
-     (i+4)*(i+3)*(i+2)*(i+1)/24 - (i+1)*i/2 * deg + i*(sectionalGenus-1) - 1 + speciality - geometricGenus
+     hilbIdealFromHilbStructureSheaf((i+1)*i/2 * deg - i*(sectionalGenus-1) + 1 - speciality + geometricGenus,4)
      )
+
+hilbSpaceCurve = (d,g) -> (
+     -- to get the ring in which hilbertPolynomials are usually expressed
+     i:=(vars ring hilbertPolynomial(ZZ[ttt], Projective => false))_(0,0); 
+     hilbIdealFromHilbStructureSheaf(d*i+1-g,3)
+    )
+  
 
 guessCohomologyTable = method()
 guessCohomologyTable(RingElement,ZZ,ZZ) := (hilbPoly, lo,hi) -> (
+    -- variable used in hilbert Polynomials
     iv:= (vars ring hilbPoly)_(0,0);
-    M := mutableMatrix(ZZ,5,hi-lo+1);
-    apply(lo..hi, j -> M_(4- numPosRoots(sub(hilbPoly, matrix{{iv + j}}) ),j-lo) = abs sub(sub(hilbPoly,matrix{{j*1_QQ}}),ZZ));
+    -- dimension of ambient space
+    n := (degree hilbPoly)#0;
+    M := mutableMatrix(ZZ,n+1,hi-lo+1);
+    apply(lo..hi, j -> M_(n- numPosRoots(sub(hilbPoly, matrix{{iv + j}}) ),j-lo) = abs sub(sub(hilbPoly,matrix{{j*1_QQ}}),ZZ));
     matrix M)
 
 -- calculate the free E-Modules corresponding to a diagonal in the
 -- cohomology table
-diag = (M,k,E)->E^(flatten toList apply(max(k,0)..min(k+4,4),j->toList(M_(j-k,j):(j-4))))
+diag = (M,k,E)->(
+     n := (rank target M) - 1;
+     E^(flatten toList apply(max(k,0)..min(k+n,n),j->toList(M_(j-k,j):(j-n))))
+     )
 
 -- check if a given window gives a monad
 givesMonad = (cohTable,E) -> (
-     apply({-4,-3,-2,2,3,4},k->diag(cohTable,k,E)==0) == toList(6:true)
+     n = (rank target cohTable) - 1;
+     apply(toList(-n..-2)|toList(2..n),k->diag(cohTable,k,E)==0) == toList(2*n-2:true)
 	  )
 
 -- find windows that give a monad
 findMonadWindows = (H,E,lo,hi) -> (
+     n := (degree H)#0;
      flatten apply(lo..hi,j->(
-	       M := guessCohomologyTable(H,j,j+4);
+	       M := guessCohomologyTable(H,j,j+n);
 	       if givesMonad(M,E) then {M} else {}
 	       ))
      )
@@ -310,9 +338,15 @@ findMonadWindows = (H,E,lo,hi) -> (
 
 -- guess the differenials
 guessDifferentials = (cohTable,E) -> (
-     -- test if the cohTable is square 5x5
-     if (rank source cohTable,rank target cohTable) != (5,5)
-     	  then error "The cohomology Table must be square 5x5";
+     -- test if the cohTable is square
+     if (rank source cohTable) != (rank target cohTable)
+     	  then error "The cohomology Table must be square";
+     -- test if number of variables is the same as the size of the table
+     if (rank source cohTable) != (rank source vars E) 
+     	  then error "The exterior Algebra has tha wrong number of variables";
+     -- test if E is an exterior algebra
+     if not E#?SkewCommutative 
+          then error "The Exterior algebra is not SkewCommutative";
      -- test if the cohTable gives a monad
      if not givesMonad(cohTable,E) then error "The cohomology Table must be 0 ouside of the 3 central diagonals";
      -- OK
@@ -331,6 +365,8 @@ guessDifferentials = (cohTable,E) -> (
 -- construct a surface from a monad over the exterior algebra
 constructSurface = method()
 constructSurface(ChainComplex,PolynomialRing):=(monadE,S) -> (
+     -- dimension of ambient P^n
+     n := (rank source vars ring monadE)-1;
      -- apply BBG to get the beilinson Monad
      alphaBeil := beilinson(monadE.dd_2,S);
      betaBeil := beilinson(monadE.dd_1,S);
@@ -345,7 +381,7 @@ constructSurface(ChainComplex,PolynomialRing):=(monadE,S) -> (
      -- test if it is a monad
      if betaBeil*alphaBeil != 0 then error "betaBeil*alphaBeil != 0";
      -- is beta surjective?
-     if codim coker betaBeil < 5 then return; -- "beta is not surjective";
+     if codim coker betaBeil <= n then return; -- "beta is not surjective";
      -- is alpha injektive?
      if ker alphaBeil != 0 then return; --"alpha is not injective";
      -- the Ideal of the Surface is the homology of the Monad     
@@ -368,6 +404,20 @@ constructSurface(Sequence,PolynomialRing) := (invariants,S) -> (
     if #Ilist == 0 then null else Ilist#0
     )
   
+constructSpaceCurve = (d,g,S) -> (
+    E := K[e_0..e_3,SkewCommutative=>true];
+    H := hilbSpaceCurve(d,g);
+    Ilist = flatten apply(findMonadWindows(H,E,-10,10), M->(
+    	      monadE := guessDifferentials(M,E);
+    	      I := constructSurface(monadE,S);
+     	      if I === null then {} else {I}
+	      ));
+    if #Ilist == 0 then null else Ilist#0
+    )
+      
+     
+     
+     
 firstAdjoint = method()
 firstAdjoint(Ideal) := List => I -> (
      S := ring I;
@@ -405,6 +455,32 @@ Headline
 ///
 
 
+doc ///
+Key 
+  hilbIdealFromHilbStructureSheaf
+Headline 
+  the Hilbert polynomial of I_X in P^n from the Hilbert Polynomial of O_X
+Usage 
+  hI = hilbIdealFromHilbStructureSheaf(h,n)
+Inputs 
+  h:RingElement
+    the Hilbert Polynomial of a structure Sheaf in P^n
+  n:ZZ 
+    the dimension of the ambient P^n
+Outputs
+  h:RingElement
+    The Hilbert polynomial of the corresponding Ideal
+Description
+  Text
+  Example
+    R = QQ[t]	
+    d=5
+    g=1
+    hilbIdealFromHilbStructureSheaf(d*t+1-g,3)   
+Caveat
+  This function only works for surfaces in P4
+SeeAlso
+///
 
  
 doc ///
@@ -444,7 +520,7 @@ Usage
   M=guessCohomologyTable(H,Low,High)
 Inputs
   H:RingElement
-    the Hilbert polynomial of the variety
+    the Hilbert polynomial of the Ideal of an variety
   Low:ZZ
     lower bound for j
   High:ZZ
@@ -459,7 +535,7 @@ Description
     H = hilbertPolynomialFromInvariants(8,5,1,0)
     M = guessCohomologyTable(H,-1,4)
 Caveat
-  works also for other varieties in P4
+  might also work for varieties in P^n
 SeeAlso
 ///
 
@@ -474,14 +550,14 @@ Inputs
   H:RingElement
     a hilbert Polynomial
   E:PolynomialRing
-    Exterior Algebra in 5 variables
+    Exterior Algebra in n+1 variables
   lo:ZZ
-    start seach at [lo,lo+4]
+    start seach at [lo,lo+n]
   hi:ZZ
-    stop search at [hi,hi+4]
+    stop search at [hi,hi+n]
 Outputs
   L:List
-    a list of cohomology tables for this hilbert function that lead to monads
+    a list of cohomology tables for this hilbert Polynomial that lead to monads
 Consequences
 Description
   Text
@@ -503,9 +579,9 @@ Usage
   monadE = guessDifferential(M,E)
 Inputs
   M:Matrix
-    a square 5x5 window of the cohomology table of the surface
+    a square nxn window of the cohomology table of the surface
   E:PolynomialRing
-    Exterior Algebra in 5 variables
+    Exterior Algebra in n variables
 Outputs
   monadE:ChainComplex
          a chain Complex over E whose grading matches the given cohomology table 
@@ -525,7 +601,7 @@ Caveat
   A -alpha-> B -beta-> C, 
   i.e when only the 3 diagonals in the middle have values. Furthermore
   beta is chosen generically and alpha generically among the syzygies of beta.
-  There are many surfaces where the monad has to be chosen more carefully.
+  There are many varieties where the monad has to be chosen more carefully.
 SeeAlso
 ///
 
@@ -565,6 +641,7 @@ Description
 Caveat
      this only gives a surface if the monad is carefully chosen.
      returns null if the monad is not exact in the beginning or in the end.
+     Works also for other varieties.
 SeeAlso
      guessDifferentials
 ///
@@ -603,6 +680,7 @@ Caveat
   beta is chosen generically and alpha generically among the syzygies of beta.
   There are many surfaces where this does not work.
   In this case null is returned.
+  Works also for other varieties than surfaces in P^4
 SeeAlso
 ///
 
@@ -635,6 +713,41 @@ Caveat
   Furthermore
   beta is chosen generically and alpha generically among the syzygies of beta.
   There are many surfaces where this does not work.
+  In this case null is returned.
+SeeAlso
+///
+
+doc ///
+Key
+  constructSpaceCurve
+Headline
+  try to construct a curve in P^4 with given degree and genus
+Usage
+  I=constructSpaceCurve(d,g,S)
+Inputs
+  d:ZZ
+    the degree of the curve
+  g:ZZ
+    the genus of the curve
+  S:PolynomialRing
+    Symmetric Algebra in 5 variables
+Outputs
+  I:Ideal
+    ideal of a curve with the given invariants or null if 
+    the construction did not work
+Consequences
+Description
+  Text
+  Example
+    K = ZZ/32003
+    S = K[x_0..x_3]
+    betti res constructSpaceCurve(5,1,S)
+Caveat
+  works only when the minimal cohomology table computed from the
+  invariants contains a window that gives a Beilinson Monad.
+  Furthermore
+  beta is chosen generically and alpha generically among the syzygies of beta.
+  There are many curves where this does not work.
   In this case null is returned.
 SeeAlso
 ///
