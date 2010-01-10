@@ -30,7 +30,7 @@ series = method(Options => {Degree => 5})
 series(ZZ,Function) := Series => opts -> (n,f) -> (
      s := sum(n,f);
      -- now make a new series.
-     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => first degree s, polynomial => s, 
           -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
 	  -- to know how to tack on the new terms to the old polynomial.
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (newPolynomial := oldPolynomial;
@@ -39,11 +39,6 @@ series(ZZ,Function) := Series => opts -> (n,f) -> (
 		             )) });
 	 
 series(Function) := Series => opts -> f -> series(opts.Degree+1,f);
-
-series(i -> x^i)
-
-
-
 
 setDegree = method()
 setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warning: cannot exceed max degree "  << S.maxDegree <<endl;);
@@ -61,6 +56,13 @@ peek F
 F = setDegree(7,F)
 peek F
 F = setDegree(3,F)
+peek F
+
+f = i -> x^(i+1)
+F = series f
+peek F
+F = setDegree(3,F)
+F = setDegree(8,F) 
 peek F
 
 series(ZZ, RingElement) := Series => opts -> (n,f) -> (
