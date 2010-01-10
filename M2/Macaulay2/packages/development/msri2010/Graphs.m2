@@ -10,7 +10,8 @@ newPackage("Graphs",
      )
 
 export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
-     parents, children, neighbors, nonneighbors, displayGraph, simpleGraph}
+     parents, children, neighbors, nonneighbors, displayGraph,
+     simpleGraph, removeNodes}
 exportMutable {dotBinary,jpgViewer}
 
 
@@ -260,11 +261,11 @@ nonneighbors(Graph, Thing) := (G,v) -> keys G - neighbors(G,v)-set{v}
 removeNodes = method()
 removeNodes(Digraph,List) := (G,v) -> (
      v = set v;
-     error "are you broken here?";
+     --error "are you broken here?";
      G = select(pairs G, x -> not member(x#0,v));
-     error "or here?";
+     --error "or here?";
      G = apply(G, x -> (x#0, x#1 - v));
-     error "or maybe here?";
+     --error "or maybe here?";
      new Digraph from G
      )
 removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
