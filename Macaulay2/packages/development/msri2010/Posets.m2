@@ -211,7 +211,7 @@ hasseDiagram (Poset) := DirectedGraph => (P) -> (
 		);   
   directedGraph(P.GroundSet, coveringRelations P))
 
---G = digraph(apply(P.GroundSet, elt-> {elt, apply(select(P.cache.coveringRelations, rel -> rel#0 == elt), goodrel-> goodrel#1)})) 
+--G = digraph(apply(P.GroundSet, elt-> {elt, apply(select(P.cache.coveringRelations, rel -> rel#1 == elt), goodrel-> goodrel#0)})) 
 
 
 --------------------------------------------------
