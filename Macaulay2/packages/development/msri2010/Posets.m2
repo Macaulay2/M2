@@ -1414,7 +1414,7 @@ doc ///
 doc ///
 	Key
 		closedInterval
-		(closdedInterval,Poset, Thing, Thing)
+		(closedInterval,Poset, Thing, Thing)
 	Headline
 		returns the closed interval in the poset between two elements
 	Usage
