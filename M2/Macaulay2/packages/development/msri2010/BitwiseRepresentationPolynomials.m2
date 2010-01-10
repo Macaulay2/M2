@@ -97,6 +97,7 @@ Description
 doc ///
 Key 
   (isDivisible,Brp,Brp)
+  isDivisible
 Headline
   Check if a is divisible by m
 Usage
@@ -106,6 +107,8 @@ Usage
 doc ///
 Key 
   (brpOR,Brp,Brp)
+  (brpOR,List,Brp)
+  brpOR
 Headline
   bitwiseOR for two monomials
 ///
@@ -113,11 +116,13 @@ Headline
 doc ///
 Key 
   (lcmBrps,Brp,Brp)
+  lcmBrps
 ///
 
 doc ///
 Key 
   (convert,Brp,Ring)
+  convert
 Headline
   convert a Brp into its symbolic representation 
 ///
