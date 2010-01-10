@@ -27,12 +27,8 @@ html Series := s -> html expression s;
 truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
 
 series = method(Options => {Degree => 5})
-series(Function) := Series => opts -> f -> (
-     -- Start with the zero polynomial.
-     s:=0;
-     -- add terms to s until the degree of a term is too high -- note that the ith termmay not have degree i!
-     for i from 0 to opts.Degree do (if f i == 0 then continue else if first degree f i > opts.Degree then break else s=s+f i);
-
+series(ZZ,Function) := Series => opts -> (n,f) -> (
+     s := sum(n,f);
      -- now make a new series.
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
           -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
@@ -40,10 +36,14 @@ series(Function) := Series => opts -> f -> (
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (newPolynomial := oldPolynomial;
 		              for i from oldComputedDegree + 1 to newDegree do newPolynomial = newPolynomial + f i;
 			      (newPolynomial,max(oldComputedDegree,newDegree))
-		             )
-		        ) 
-		     }
-     );
+		             )) });
+	 
+series(Function) := Series => opts -> f -> series(opts.Degree+1,f);
+
+series(i -> x^i)
+
+
+
 
 setDegree = method()
 setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warning: cannot exceed max degree "  << S.maxDegree <<endl;);
