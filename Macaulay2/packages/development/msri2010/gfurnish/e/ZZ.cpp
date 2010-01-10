@@ -306,7 +306,7 @@ ring_elem RingZZ::invert(const ring_elem f) const
 ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
-  mpz_div(result, f.get_mpz(), g.get_mpz());
+  mpz_fdiv_q(result, f.get_mpz(), g.get_mpz());
   return ring_elem(result);
 }
 

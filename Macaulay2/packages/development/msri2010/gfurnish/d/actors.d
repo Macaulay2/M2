@@ -28,7 +28,8 @@ export times0():Expr := Expr(toInteger(1));
 export plus1(e:Expr) : Expr := e;
 times1 := plus1;
 
-export (lhs:Expr) + (rhs:Expr) : Expr := (
+
+RealPlus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
@@ -37,7 +38,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      	  is y:RR do Expr(y + x)			    -- # typical value: symbol +, ZZ, RR, RR
      	  is y:CC do Expr(toRR(x,precision(y.re)) + y)	    -- # typical value: symbol +, ZZ, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is x:QQ do (
 	  when rhs
 	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, QQ, ZZ, QQ
@@ -45,7 +46,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      	  is y:RR do Expr(y + x)			    -- # typical value: symbol +, QQ, RR, RR
      	  is y:CC do Expr(toRR(x,precision(y.re)) + y)	    -- # typical value: symbol +, QQ, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is x:RawRingElement do (
 	  when rhs
 	  is y:RawRingElement do (			    -- # typical value: symbol +, RawRingElement, RawRingElement, RawRingElement
@@ -54,7 +55,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("polynomial addition failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is x:RR do (
 	  when rhs
 	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, RR, ZZ, RR
@@ -62,7 +63,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      	  is y:RR do Expr(x + y)			    -- # typical value: symbol +, RR, RR, RR
      	  is y:CC do Expr(x + y)			    -- # typical value: symbol +, RR, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is x:CC do (
 	  when rhs
 	  is y:ZZ do Expr(x + toRR(y,precision(x.re)))	    -- # typical value: symbol +, CC, ZZ, CC
@@ -70,7 +71,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      	  is y:RR do Expr(x + y)			    -- # typical value: symbol +, CC, RR, CC
      	  is y:CC do Expr(x + y)			    -- # typical value: symbol +, CC, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is x:RawMatrix do (
 	  when rhs
 	  is y:RawMatrix do (				    -- # typical value: symbol +, RawMatrix, RawMatrix, RawMatrix
@@ -79,7 +80,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("matrix addition failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is x:RawMutableMatrix do (
 	  when rhs
 	  is y:RawMutableMatrix do (			    -- # typical value: symbol +, RawMutableMatrix, RawMutableMatrix, RawMutableMatrix
@@ -88,7 +89,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("mutable matrix addition failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is x:RawMonomialIdeal do (
 	  when rhs
 	  is y:RawMonomialIdeal do (			    -- # typical value: symbol +, RawMonomialIdeal, RawMonomialIdeal, RawMonomialIdeal
@@ -97,13 +98,16 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("monomial ideal addition failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is Error do lhs
-     else binarymethod(lhs,rhs,PlusS));
-plus(e:Expr):Expr := accumulate(plus0,plus1,op+,e);
+     else binarymethod(localInterpState,lhs,rhs,PlusS));
+
+export (lhs:Expr) + (rhs:Expr) : Expr := RealPlus(threadLocalInterpState,lhs,rhs);
+
+plus(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(plus0,plus1,op+,e);
 setupfun("plus",plus);
 
-plusfun1(rhs:Code):Expr := (
+plusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := (
      r := eval(rhs);
      when r
      is Error do r
@@ -115,7 +119,7 @@ plusfun1(rhs:Code):Expr := (
      is RawMatrix do r					    -- # typical value: symbol +, RawMatrix, RawMatrix
      is RawMutableMatrix do r				    -- # typical value: symbol +, RawMutableMatrix, RawMutableMatrix
      else unarymethod(rhs,PlusS));
-plusfun(lhs:Code,rhs:Code):Expr := (
+plusfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
      else (
@@ -123,7 +127,9 @@ plusfun(lhs:Code,rhs:Code):Expr := (
      	  when r is Error do r
 	  else l+r));
 setup(PlusS,plusfun1,plusfun);
-export - (rhs:Expr) : Expr := (
+
+
+RealMinus(localInterpState:threadLocalInterp,rhs:Expr):Expr := (
      when rhs
      is x:ZZ do Expr(-x)				    -- # typical value: symbol -, ZZ, ZZ                            
      is x:RR do Expr(-x)				    -- # typical value: symbol -, RR, RR                            
@@ -140,9 +146,12 @@ export - (rhs:Expr) : Expr := (
 	  if method == nullE
 	  then buildErrorPacket("no method found")
 	  else applyEE(method,Expr(rhs))));
-minusfun1(rhs:Code):Expr := - eval(rhs);
 
-export (lhs:Expr) - (rhs:Expr) : Expr := (
+export - (rhs:Expr) : Expr := RealMinus(threadLocalInterpState, rhs);
+
+minusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := - eval(rhs);
+
+RealMinus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
@@ -151,7 +160,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:RR do Expr(toRR(x,precision(y)) - y)		    -- # typical value: symbol -, ZZ, RR, RR
 	  is y:CC do Expr(toRR(x,precision(y.re)) - y)	    -- # typical value: symbol -, ZZ, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	  else binarymethod(localInterpState,lhs,rhs,MinusS))
      is x:QQ do (
 	  when rhs
 	  is y:ZZ do Expr(x - y)			    -- # typical value: symbol -, QQ, ZZ, QQ
@@ -159,7 +168,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:RR do Expr(toRR(x,precision(y)) - y)		    -- # typical value: symbol -, QQ, RR, RR
 	  is y:CC do Expr(toRR(x,precision(y.re)) - y)	    -- # typical value: symbol -, QQ, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	  else binarymethod(localInterpState,lhs,rhs,MinusS))
      is x:RawRingElement do (
 	  when rhs
 	  is y:RawRingElement do (			    -- # typical value: symbol -, RawRingElement, RawRingElement, RawRingElement
@@ -168,7 +177,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("polynomial subtraction failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	  else binarymethod(localInterpState,lhs,rhs,MinusS))
      is x:RR do (
 	  when rhs
 	  is y:ZZ do Expr(x - y)			    -- # typical value: symbol -, RR, ZZ, RR
@@ -176,7 +185,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:RR do Expr(x - y)			    -- # typical value: symbol -, RR, RR, RR
 	  is y:CC do Expr(x - y)			    -- # typical value: symbol -, RR, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	  else binarymethod(localInterpState,lhs,rhs,MinusS))
      is x:CC do (
 	  when rhs
 	  is y:ZZ do Expr(x - toRR(y,precision(x.re)))	    -- # typical value: symbol -, CC, ZZ, CC
@@ -184,7 +193,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:RR do Expr(x - y)			    -- # typical value: symbol -, CC, RR, CC
 	  is y:CC do Expr(x - y)			    -- # typical value: symbol -, CC, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	  else binarymethod(localInterpState,lhs,rhs,MinusS))
      is x:RawMatrix do (
 	  when rhs
 	  is y:RawMatrix do (				    -- # typical value: symbol -, RawMatrix, RawMatrix, RawMatrix
@@ -193,7 +202,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	  else binarymethod(localInterpState,lhs,rhs,MinusS))
      is x:RawMutableMatrix do (				    -- # typical value: symbol -, RawMutableMatrix, RawMutableMatrix, RawMutableMatrix
 	  when rhs
 	  is y:RawMutableMatrix do (
@@ -202,7 +211,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	  else binarymethod(localInterpState,lhs,rhs,MinusS))
      is x:RawMonomialIdeal do (				    -- # typical value: symbol -, RawMonomialIdeal, RawMonomialIdeal, RawMonomialIdeal
 	  when rhs
 	  is y:RawMonomialIdeal do (
@@ -211,10 +220,14 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("monomial ideal difference failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	  else binarymethod(localInterpState,lhs,rhs,PlusS))
      is Error do lhs
-     else binarymethod(lhs,rhs,MinusS));
-minusfun2(lhs:Code,rhs:Code):Expr := (
+     else binarymethod(localInterpState,lhs,rhs,MinusS));
+
+
+export (lhs:Expr) - (rhs:Expr) : Expr := RealMinus(threadLocalInterpState,lhs,rhs);
+
+minusfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
      else (
@@ -222,14 +235,14 @@ minusfun2(lhs:Code,rhs:Code):Expr := (
      	  when r is Error do r
 	  else l-r));
 setup(MinusS,minusfun1,minusfun2);
-minusfun(e:Expr):Expr := (
+minusfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 1 then -a.0
 	  else WrongNumArgs(1))
      else -e);
 setupfun("minus",minusfun);
-differencefun(e:Expr):Expr := (
+differencefun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then a.0-a.1
@@ -239,7 +252,7 @@ setupfun("difference",differencefun);
 one := toInteger(1);
 minusone := toInteger(-1);
 
-export (lhs:Expr) * (rhs:Expr) : Expr := (
+RealTimes(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
@@ -248,7 +261,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
      	  is y:RR do Expr(toRR(x,precision(y)) * y)		    -- # typical value: symbol *, ZZ, RR, RR
      	  is y:CC do Expr(x * y)	    -- # typical value: symbol *, ZZ, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:QQ do (
 	  when rhs
 	  is y:ZZ do Expr(x * y)			    -- # typical value: symbol *, QQ, ZZ, QQ
@@ -256,7 +269,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
      	  is y:RR do Expr(y * x)			    -- # typical value: symbol *, QQ, RR, RR
      	  is y:CC do Expr(y * toRR(x,precision(y.re)))	    -- # typical value: symbol *, QQ, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:RawRingElement do (
 	  when rhs
 	  is y:RawRingElement do (			    -- # typical value: symbol *, RawRingElement, RawRingElement, RawRingElement
@@ -275,7 +288,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:RR do (
 	  when rhs
 	  is y:ZZ do Expr(x * y)			    -- # typical value: symbol *, RR, ZZ, RR
@@ -283,7 +296,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
      	  is y:RR do Expr(x * y)			    -- # typical value: symbol *, RR, RR, RR
      	  is y:CC do Expr(x * y)			    -- # typical value: symbol *, RR, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:CC do (
 	  when rhs
 	  is y:ZZ do Expr(x * y)	    -- # typical value: symbol *, CC, ZZ, CC
@@ -291,7 +304,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
      	  is y:RR do Expr(y * x)			    -- # typical value: symbol *, CC, RR, CC
      	  is y:CC do Expr(y * x)			    -- # typical value: symbol *, CC, CC, CC
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:RawMonomial do (
 	  when rhs
 	  is y:RawMonomial do (				    -- # typical value: symbol *, RawMonomialIdeal, RawMonomial, RawMonomial
@@ -299,7 +312,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is z:RawMonomial do Expr(z)
 	       is null do buildErrorPacket(EngineError("monomial multiplication overflow"))
 	       )
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:RawMonomialIdeal do (				    -- # typical value: symbol *, RawMonomialIdeal, RawMonomialIdeal, RawMonomialIdeal
 	  when rhs
 	  is y:RawMonomialIdeal do (
@@ -307,7 +320,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is z:RawMonomialIdeal do Expr(z)
 	       is null do buildErrorPacket(EngineError("monomial ideal multiplication failed"))
 	       )
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:RawMatrix do (				    -- # typical value: symbol *, RawMatrix, RawRingElement, RawRingElement
 	  when rhs
 	  is y:RawRingElement do (
@@ -321,7 +334,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:RawMutableMatrix do (
 	  when rhs
 	  is y:RawRingElement do (			    -- # typical value: symbol *, RawMutableMatrix, RawRingElement, RawMutableMatrix
@@ -335,15 +348,18 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is Error do lhs
      else (
 	  when rhs is Error do rhs
-	  else binarymethod(lhs,rhs,StarS)));
-times(e:Expr):Expr := accumulate(times0,times1,op*,e);
+	  else binarymethod(localInterpState,lhs,rhs,StarS)));
+
+export (lhs:Expr) * (rhs:Expr) : Expr := RealTimes(threadLocalInterpState,lhs,rhs);
+
+times(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(times0,times1,op*,e);
 setupfun("times",times);
 
-export (lhs:Expr) / (rhs:Expr) : Expr := (
+RealDivide(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
@@ -360,7 +376,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
      	  is y:CC do (					    -- # typical value: symbol /, ZZ, CC, CC
 	       Expr(x / y))
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,DivideS))
+	  else binarymethod(localInterpState,lhs,rhs,DivideS))
      is x:QQ do (
 	  when rhs
 	  is y:ZZ do (					    -- # typical value: symbol /, QQ, ZZ, QQ
@@ -378,7 +394,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       if y === 0 then buildErrorPacket("division by zero") else
 	       Expr(toRR(x,precision(y.re)) / y))
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,DivideS))
+	  else binarymethod(localInterpState,lhs,rhs,DivideS))
      is x:RR do (
 	  when rhs
 	  is y:ZZ do (					    -- # typical value: symbol /, RR, ZZ, RR
@@ -396,7 +412,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       -- if y === 0 then buildErrorPacket("division by zero") else
 	       Expr(x / y))
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,DivideS))
+	  else binarymethod(localInterpState,lhs,rhs,DivideS))
      is x:CC do (
 	  when rhs
 	  is y:ZZ do (					    -- # typical value: symbol /, CC, ZZ, CC
@@ -416,7 +432,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       -- if y === 0 then buildErrorPacket("division by zero") else
 	       Expr(x / y))
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,DivideS))
+	  else binarymethod(localInterpState,lhs,rhs,DivideS))
      is x:RawMonomial do (
 	  when rhs
 	  is y:RawMonomial do (				    -- # typical value: symbol /, RawMonomial, RawMonomial, RawMonomial
@@ -424,10 +440,13 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       is z:RawMonomial do Expr(z)
 	       is null do buildErrorPacket(EngineError("monomial division overflow"))
 	       )
-	  else binarymethod(lhs,rhs,DivideS))
+	  else binarymethod(localInterpState,lhs,rhs,DivideS))
      is Error do lhs
-     else binarymethod(lhs,rhs,DivideS));
-divideC(lhs:Code,rhs:Code):Expr := (
+     else binarymethod(localInterpState,lhs,rhs,DivideS));
+
+export (lhs:Expr) / (rhs:Expr) : Expr := RealDivide(threadLocalInterpState,lhs,rhs);
+
+divideC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
      else (
@@ -435,7 +454,7 @@ divideC(lhs:Code,rhs:Code):Expr := (
      	  when r is Error do r
 	  else l/r));
 setup(DivideS,divideC);
-export (lhs:Expr) // (rhs:Expr) : Expr := (
+RealQuotient(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
@@ -445,7 +464,7 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
 	       else Expr(x//y)
 	       )
      	  is Error do rhs
-	  else binarymethod(lhs,rhs,SlashSlashS))
+	  else binarymethod(localInterpState,lhs,rhs,SlashSlashS))
      is x:RawRingElement do (
 	  when rhs
 	  is y:RawRingElement do (			    -- # typical value: symbol //, RawRingElement, RawRingElement, RawRingElement
@@ -454,10 +473,11 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("polynomial division failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,SlashSlashS))
+	  else binarymethod(localInterpState,lhs,rhs,SlashSlashS))
      is Error do lhs
-     else binarymethod(lhs,rhs,SlashSlashS));
-quotientC(lhs:Code,rhs:Code):Expr := (
+     else binarymethod(localInterpState,lhs,rhs,SlashSlashS));
+export (lhs:Expr) // (rhs:Expr) : Expr := RealQuotient(threadLocalInterpState,lhs,rhs);
+quotientC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
      else (
@@ -466,10 +486,10 @@ quotientC(lhs:Code,rhs:Code):Expr := (
 	  else l//r));
 setup(SlashSlashS,quotientC);
 
-BackslashBackslashFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BackslashBackslashS);
+BackslashBackslashFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,BackslashBackslashS);
 setup(BackslashBackslashS,BackslashBackslashFun);
 
-adjacentFun(lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
+adjacentFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
 setup(AdjacentS,adjacentFun);
 
 doublepower(x:double,n:int):double := (
@@ -519,7 +539,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       );
 	  z)
      else WrongArgZZ(2));
-BinaryPowerMethodFun(e:Expr):Expr := (
+BinaryPowerMethodFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
      if length(a)==2 then
      BinaryPowerMethod(a . 0, a . 1)
@@ -549,7 +569,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       );
 	  z)
      else WrongArgZZ(2));
-SimplePowerMethodFun(e:Expr):Expr := (
+SimplePowerMethodFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
      if length(a)==2 then
      SimplePowerMethod(a . 0, a . 1)
@@ -557,7 +577,7 @@ SimplePowerMethodFun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("SimplePowerMethod",SimplePowerMethodFun);
 
-export (lhs:Expr) ^ (rhs:Expr) : Expr := (
+RealPower(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is Error do lhs
      is x:ZZ do (
@@ -591,7 +611,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       )
 	  is y:CC do Expr(toRR(x,precision(y))^y)
      	  is Error do rhs
-	  else binarymethod(lhs,rhs,PowerS))
+	  else binarymethod(localInterpState,lhs,rhs,PowerS))
      is x:QQ do (
 	  when rhs
 	  is y:ZZ do Expr(x^y)
@@ -613,7 +633,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       else Expr(toRR(x,precision(y))^y))
 	  is y:CC do Expr(toRR(x,precision(y))^y)
      	  is Error do rhs
-	  else binarymethod(lhs,rhs,PowerS))
+	  else binarymethod(localInterpState,lhs,rhs,PowerS))
      is x:RR do (
 	  when rhs
 	  is y:ZZ do Expr(x^y)
@@ -636,7 +656,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       )
 	  is y:CC do Expr(x^y)
      	  is Error do rhs
-	  else binarymethod(lhs,rhs,PowerS))
+	  else binarymethod(localInterpState,lhs,rhs,PowerS))
      is x:CC do (
 	  when rhs
 	  is y:ZZ do Expr(x^y)
@@ -647,7 +667,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  is y:RR do Expr(x^y)
 	  is y:CC do Expr(x^y)
      	  is Error do rhs
-	  else binarymethod(lhs,rhs,PowerS))
+	  else binarymethod(localInterpState,lhs,rhs,PowerS))
      is x:RawRingElement do (
 	  when rhs
 	  is y:ZZ do (
@@ -656,7 +676,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("polynomial power failed"))
 	       )
 	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
+	  else binarymethod(localInterpState,lhs,rhs,StarS))
      is x:RawMonomial do (
 	  when rhs
 	  is y:ZZ do
@@ -667,9 +687,11 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("monomial power overflow"))
 	       )
 	  else WrongArgSmallInteger(2)
-	  else binarymethod(lhs,rhs,DivideS))
-     else binarymethod(lhs,rhs,PowerS));
-powerC(lhs:Code,rhs:Code):Expr := (
+	  else binarymethod(localInterpState,lhs,rhs,DivideS))
+     else binarymethod(localInterpState,lhs,rhs,PowerS));
+
+export (lhs:Expr) ^ (rhs:Expr) : Expr := RealPower(threadLocalInterpState,lhs,rhs);
+powerC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
      else (
@@ -677,13 +699,13 @@ powerC(lhs:Code,rhs:Code):Expr := (
      	  when r is Error do r
 	  else l^r));
 setup(PowerS,powerC);
-powerfun(e:Expr):Expr := (
+powerfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
      if length(a) == 2 then a.0^a.1
      else WrongNumArgs("^",2)
      else WrongNumArgs("^",2));
 setupfun("power",powerfun);
-logorfun(lhs:Code,rhs:Code):Expr := (
+logorfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left
      is Error do left
@@ -696,12 +718,12 @@ logorfun(lhs:Code,rhs:Code):Expr := (
 	       else (
 		    if right == True then True
 		    else if right == False then False
-		    else binarymethod(left,right,orS)))
+		    else binarymethod(localInterpState,left,right,orS)))
 	  else binarymethod(left,rhs,orS)));
 setup(orS,logorfun);
-BarBarF(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarBarS);
+BarBarF(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,BarBarS);
 setup(BarBarS,BarBarF);
-logandfun(lhs:Code,rhs:Code):Expr := (
+logandfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      a := eval(lhs);
      when a
      is Error do a
@@ -714,11 +736,11 @@ logandfun(lhs:Code,rhs:Code):Expr := (
 	       else (
 		    if b == True then True
 		    else if b == False then False
-		    else binarymethod(a,b,andS)))
+		    else binarymethod(localInterpState,a,b,andS)))
 	  else binarymethod(a,rhs,andS)));
 setup(andS,logandfun);
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
-export notFun(rhs:Code):Expr := (
+export notFun(localInterpState:threadLocalInterp,rhs:Code):Expr := (
      a := eval(rhs);
      when a
      is Error do a
@@ -726,7 +748,7 @@ export notFun(rhs:Code):Expr := (
      else if a == False then True
      else unarymethod(a,notS));
 setup(notS,notFun);
-EqualEqualEqualfun(lhs:Code,rhs:Code):Expr := (
+EqualEqualEqualfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x
      else (
@@ -737,13 +759,13 @@ setup(EqualEqualEqualS,EqualEqualEqualfun);
 quicknot(z:Expr):Expr := (
      when z is Error do z else if z == True then False else True
      );
-notEqualEqualEqualfun(lhs:Code,rhs:Code):Expr := quicknot(EqualEqualEqualfun(lhs,rhs));
+notEqualEqualEqualfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := quicknot(EqualEqualEqualfun(localInterpState,lhs,rhs));
 setup(NotEqualEqualEqualS,notEqualEqualEqualfun);
 smallintarrays0 := new array(Expr) len 20 at i do (
      provide Expr(new Sequence len i+1 at k do provide toInteger(k)));
 smallintarrays1 := new array(Expr) len 20 at i do (
      provide Expr(new Sequence len i at k do provide toInteger(1+k)));
-DotDotfun(lhs:Code,rhs:Code):Expr := (
+DotDotfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left
      is Error do left
@@ -771,11 +793,11 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 			 m := toInt(z);
 			 Expr(new Sequence len m+1 at k do provide x+k))
 		    else printErrorMessageE(rhs,"range too large")))
-	  else binarymethod(left,right,DotDotS))
+	  else binarymethod(localInterpState,left,right,DotDotS))
      else binarymethod(left,rhs,DotDotS));
 setup(DotDotS,DotDotfun);
 
-DotDotLessFun(lhs:Code,rhs:Code):Expr := (
+DotDotLessFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left
      is Error do left
@@ -803,18 +825,18 @@ DotDotLessFun(lhs:Code,rhs:Code):Expr := (
 			 m := toInt(z)-1;
 			 Expr(new Sequence len m+1 at k do provide x+k))
 		    else printErrorMessageE(rhs,"range too large")))
-	  else binarymethod(left,right,DotDotLessS))
+	  else binarymethod(localInterpState,left,right,DotDotLessS))
      else binarymethod(left,rhs,DotDotLessS));
 setup(DotDotLessS,DotDotLessFun);
 
-assignNewFun(newclass:Code,rhs:Code):Expr := (
+assignNewFun(localInterpState:threadLocalInterp,newclass:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c
      is Error do c
      is o:HashTable do installMethod(NewE,o,eval(rhs))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFun = assignNewFun;
-assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
+assignNewOfFun(localInterpState:threadLocalInterp,newclass:Code,newparent:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c is Error do c
      is cc:HashTable do (
@@ -824,7 +846,7 @@ assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
 	  else printErrorMessageE(newparent,"expected a hash table as prospective parent"))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewOfFun = assignNewOfFun;
-assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
+assignNewFromFun(localInterpState:threadLocalInterp,newclass:Code,newinitializer:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c is Error do c
      is cc:HashTable do (
@@ -834,7 +856,7 @@ assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
      	  else printErrorMessageE(newinitializer,"expected a hash table"))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFromFun = assignNewFromFun;
-assignNewOfFromFun(args:CodeSequence):Expr := (
+assignNewOfFromFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr := (
      newclass := args.0;
      newparent := args.1;
      newinitializer := args.2;
@@ -922,13 +944,13 @@ installMethodFun2(arg1:Expr,args:CodeSequence):Expr := (
 		    else installMethod(opr,aa,bb,eval(args.3)))
 	       else buildErrorPacket("expected right hand parameter to be a hash table")))
      else buildErrorPacket("expected left hand parameter to be a function, type, or a hash table"));
-installMethodFun(args:CodeSequence):Expr := installMethodFun2(eval(args.1),args);
+installMethodFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr := installMethodFun2(eval(args.1),args);
 InstallMethodFun = installMethodFun;
 
 mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
 
 -- this new version just looks up a method for user code, which *could* do the same thing
-installValueFun(args:CodeSequence):Expr := (
+installValueFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr := (
      oper := eval(args.0);
      when oper is Error do return oper else nothing;
      x := eval(args.1);
@@ -938,7 +960,7 @@ installValueFun(args:CodeSequence):Expr := (
      meth := lookupBinaryMethod(Class(x),Class(y),Expr(Sequence(oper,EqualE))); -- i.e., x*y=z is looked up under ((symbol *,symbol =),class x,class y)
      if meth == nullE then return MissingAssignmentMethodPair(oper,x,y);
      z := eval(args.3);
-     applyEEE(meth,x,y,z));
+     applyEEE(localInterpState,meth,x,y,z));
 -- this old version was used for stashing values somewhere
 -- installValueFun(args:CodeSequence):Expr := (
 --      a := eval(args.1);
@@ -959,7 +981,7 @@ installValueFun(args:CodeSequence):Expr := (
 --      else buildErrorPacket(mess1));
 InstallValueFun = installValueFun;
 
-unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
+unaryInstallMethodFun(localInterpState:threadLocalInterp,meth:Code,argtype:Code,body:Code):Expr := (
      f := eval(meth);
      when f is Error do f
      else (
@@ -973,7 +995,7 @@ unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
 	  else printErrorMessageE(argtype,"expected a hash table")));
 UnaryInstallMethodFun = unaryInstallMethodFun;
 
-unaryInstallValueFun(meth:Code,lhs:Code,rhs:Code):Expr := (
+unaryInstallValueFun(localInterpState:threadLocalInterp,meth:Code,lhs:Code,rhs:Code):Expr := (
      oper := eval(meth);
      when oper is Error do return oper else nothing;
      y := eval(lhs);
@@ -981,7 +1003,7 @@ unaryInstallValueFun(meth:Code,lhs:Code,rhs:Code):Expr := (
      method := lookup(Class(y),Expr(Sequence(oper,EqualE))); -- i.e., *y=z is looked up under ((symbol *,symbol =),class y)
      if method == nullE then return MissingAssignmentMethod(oper,y);
      z := eval(rhs);
-     applyEEE(method,y,z));
+     applyEEE(localInterpState,method,y,z));
 -- this old version was used for stashing values somewhere
 -- unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
 --      Argtype := eval(argtype);
@@ -1037,7 +1059,7 @@ flatten(a:Sequence):Sequence := (
 			 )
      	       	    else provide i)))
      else a);
-flatten(e:Expr):Expr := (
+flatten(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is v:Sequence do Expr(flatten(v))
      is a:List do list(
@@ -1051,14 +1073,14 @@ flatten(e:Expr):Expr := (
      else WrongArg("a list or sequence"));
 setupfun("flatten",flatten);
 
-subvalue(lhs:Code,rhs:Code):Expr := (
+subvalue(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left is Error do left
      else (
       	  right := eval(rhs);
       	  when right is Error do right
       	  else subvalue(left,right)));
-lengthFun(rhs:Code):Expr := (
+lengthFun(localInterpState:threadLocalInterp,rhs:Code):Expr := (
      e := eval(rhs);
      when e
      is Error do e
@@ -1070,7 +1092,7 @@ lengthFun(rhs:Code):Expr := (
      is n:Net do Expr(toInteger(length(n.body)))
      else buildErrorPacket("expected a list, sequence, hash table, or string"));
 setup(SharpS,lengthFun,subvalue);
-subvalueQ(lhs:Code,rhs:Code):Expr := (
+subvalueQ(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left is Error do left
      else (
@@ -1079,7 +1101,7 @@ subvalueQ(lhs:Code,rhs:Code):Expr := (
       	  else subvalueQ(left,right)));
 setup(SharpQuestionS,subvalueQ);
 
-isFinite(e:Expr):Expr := (
+isFinite(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do True
      is x:QQ do True
@@ -1089,7 +1111,7 @@ isFinite(e:Expr):Expr := (
      );
 setupfun("isFinite",isFinite);
 
-isANumber(e:Expr):Expr := (
+isANumber(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do True
      is x:QQ do True
@@ -1099,7 +1121,7 @@ isANumber(e:Expr):Expr := (
      );
 setupfun("isANumber",isANumber);
 
-isInfinite(e:Expr):Expr := (
+isInfinite(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do False
      is x:QQ do False

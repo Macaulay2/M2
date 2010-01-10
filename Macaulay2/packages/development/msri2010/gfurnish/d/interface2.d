@@ -29,7 +29,7 @@ use common;
 
 -- straight line programs
 
-export rawSLP(e:Expr):Expr := (
+export rawSLP(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is M:RawMatrix do (
@@ -44,7 +44,7 @@ export rawSLP(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSLP",rawSLP);
 
-export rawEvaluateSLP(e:Expr):Expr := (
+export rawEvaluateSLP(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is slp:RawStraightLineProgram do (
@@ -61,7 +61,7 @@ export rawEvaluateSLP(e:Expr):Expr := (
      );
 setupfun("rawEvaluateSLP",rawEvaluateSLP);
 
-export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
+export rawPathTrackerPrecookedSLPs(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is slp1:RawStraightLineProgram do 
@@ -78,7 +78,7 @@ export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
      );
 setupfun("rawPathTrackerPrecookedSLPs",rawPathTrackerPrecookedSLPs);
 
-export rawPathTracker(e:Expr):Expr := (
+export rawPathTracker(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is HH:RawMatrix do 
 		toExpr(Ccode(RawPathTrackerOrNull,
 		    "(engine_RawPathTrackerOrNull)rawPathTracker(",
@@ -89,7 +89,7 @@ export rawPathTracker(e:Expr):Expr := (
      );
 setupfun("rawPathTracker",rawPathTracker);
 
-export rawSetParametersPT(e:Expr):Expr := (
+export rawSetParametersPT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 12 then WrongNumArgs(11)
      else when s.0 is PT:RawPathTracker do 
@@ -138,7 +138,7 @@ export rawSetParametersPT(e:Expr):Expr := (
      );
 setupfun("rawSetParametersPT",rawSetParametersPT);
 
-export rawLaunchPT(e:Expr):Expr := (
+export rawLaunchPT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is PT:RawPathTracker do 
@@ -156,7 +156,7 @@ export rawLaunchPT(e:Expr):Expr := (
      );
 setupfun("rawLaunchPT",rawLaunchPT);
 
-export rawGetSolutionPT(e:Expr):Expr := (
+export rawGetSolutionPT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is PT:RawPathTracker do 
@@ -173,7 +173,7 @@ export rawGetSolutionPT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionPT",rawGetSolutionPT);
 
-export rawGetAllSolutionsPT(e:Expr):Expr := (
+export rawGetAllSolutionsPT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is PT:RawPathTracker  do 
 		toExpr(Ccode(RawMatrixOrNull,
 		    "(engine_RawMatrixOrNull)rawGetAllSolutionsPT(",
@@ -184,7 +184,7 @@ export rawGetAllSolutionsPT(e:Expr):Expr := (
      );
 setupfun("rawGetAllSolutionsPT",rawGetAllSolutionsPT);
 
-export rawGetSolutionStatusPT(e:Expr):Expr := (
+export rawGetSolutionStatusPT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is PT:RawPathTracker do 
@@ -201,7 +201,7 @@ export rawGetSolutionStatusPT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionStatusPT",rawGetSolutionStatusPT);
 
-export rawGetSolutionLastTvaluePT(e:Expr):Expr := (
+export rawGetSolutionLastTvaluePT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is PT:RawPathTracker do 
@@ -217,7 +217,7 @@ export rawGetSolutionLastTvaluePT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionLastTvaluePT",rawGetSolutionLastTvaluePT);
 
-export rawGetSolutionStepsPT(e:Expr):Expr := (
+export rawGetSolutionStepsPT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is PT:RawPathTracker do 
@@ -234,7 +234,7 @@ export rawGetSolutionStepsPT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionStepsPT",rawGetSolutionStepsPT);
 
-export rawGetSolutionRcondPT(e:Expr):Expr := (
+export rawGetSolutionRcondPT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is PT:RawPathTracker do 
@@ -250,7 +250,7 @@ export rawGetSolutionRcondPT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionRcondPT",rawGetSolutionRcondPT);
 
-export rawRefinePT(e:Expr):Expr := (
+export rawRefinePT(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 4 then WrongNumArgs(4)
      else when s.0 is PT:RawPathTracker do 

@@ -57,7 +57,7 @@ use engine;
 --      else WrongNumArgs(2));
 -- setupfun("replaceContents",replaceContents);
 
-getParsing(e:Expr):Expr := (
+getParsing(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:SymbolClosure
      do (
@@ -66,7 +66,7 @@ getParsing(e:Expr):Expr := (
      else nullE);
 setupfun("getParsing",getParsing);
 
-dumpdatafun(e:Expr):Expr := (
+dumpdatafun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:string do (
 	  o := stdin.insize;
@@ -85,7 +85,7 @@ dumpdatafun(e:Expr):Expr := (
      );
 setupfun("dumpdata",dumpdatafun);
 
-loaddatafun(e:Expr):Expr := (
+loaddatafun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do (
 	  when s.0 is x:Boolean do
@@ -103,29 +103,29 @@ loaddatafun(e:Expr):Expr := (
      );
 setupfun("loaddata",loaddatafun);
 
-LongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleRightArrowS);
+LongDoubleRightArrowFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongDoubleRightArrowS);
 setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);
 
-LongLongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleRightArrowS);
+LongLongDoubleRightArrowFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongLongDoubleRightArrowS);
 setup(LongLongDoubleRightArrowS,LongLongDoubleRightArrowFun);
 
-LongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongDoubleLeftArrowS);
-LongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleLeftArrowS);
+LongDoubleLeftArrowFun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LongDoubleLeftArrowS);
+LongDoubleLeftArrowFun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongDoubleLeftArrowS);
 setup(LongDoubleLeftArrowS,LongDoubleLeftArrowFun1,LongDoubleLeftArrowFun2);
 
-LongLongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongLongDoubleLeftArrowS);
-LongLongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleLeftArrowS);
+LongLongDoubleLeftArrowFun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LongLongDoubleLeftArrowS);
+LongLongDoubleLeftArrowFun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongLongDoubleLeftArrowS);
 setup(LongLongDoubleLeftArrowS,LongLongDoubleLeftArrowFun1,LongLongDoubleLeftArrowFun2);
 
-LongBiDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongBiDoubleArrowS);
+LongBiDoubleArrowFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongBiDoubleArrowS);
 setup(LongBiDoubleArrowS,LongBiDoubleArrowFun);
 
-binaryDeductionFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DeductionS);
-unaryDeductionFun(rhs:Code):Expr := unarymethod(rhs,DeductionS);
+binaryDeductionFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,DeductionS);
+unaryDeductionFun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,DeductionS);
 setup(DeductionS,unaryDeductionFun,binaryDeductionFun);
 
--- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
-optionFun(lhs:Code,rhs:Code):Expr := (
+-- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,DoubleArrowS);
+optionFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
      else (
@@ -134,7 +134,7 @@ optionFun(lhs:Code,rhs:Code):Expr := (
 	  else list(optionClass,Sequence(l,r))));
 setup(DoubleArrowS,optionFun);
 
-prependfun(e:Expr):Expr := (
+prependfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is a:Sequence do (
 	  if length(a) != 2
@@ -165,7 +165,7 @@ prependfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("prepend",prependfun);
 
-appendfun(e:Expr):Expr := (
+appendfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is a:Sequence do (
 	  if length(a) != 2
@@ -196,7 +196,7 @@ appendfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("append",appendfun);
 
-exitfun(e:Expr):Expr := (
+exitfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is ZZ do (
 	  if isInt(e) 
@@ -209,7 +209,7 @@ setupfun("exit",exitfun).protected = false;
 
 applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
 
-lookupCountFun(e:Expr):Expr := (
+lookupCountFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:SymbolClosure do Expr(toInteger(s.symbol.lookupCount))
      else WrongArg(1,"a symbol")
@@ -217,7 +217,7 @@ lookupCountFun(e:Expr):Expr := (
 setupfun("lookupCount",lookupCountFun);
 
 use GC;
-CollectGarbage(e:Expr):Expr := (
+CollectGarbage(localInterpState:threadLocalInterp,e:Expr):Expr := (
      gcollect();
      nullE);
 setupfun("collectGarbage",CollectGarbage);
@@ -227,7 +227,7 @@ setupfun("collectGarbage",CollectGarbage);
 --     nullE);
 --setupfun("gcDump",gcdump);
 
-integermod(e:Expr):Expr := (
+integermod(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:ZZ do 
@@ -240,56 +240,56 @@ integermod(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(PercentS,ZZClass,ZZClass,integermod);
 
-modC(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PercentS);
+modC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,PercentS);
 setup(PercentS,modC);
 
-AtAtfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtAtS);
+AtAtfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,AtAtS);
 setup(AtAtS,AtAtfun);
 
-StarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,StarStarS);
+StarStarfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,StarStarS);
 setup(StarStarS,StarStarfun);
 
-doubleplusfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PlusPlusS);
+doubleplusfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,PlusPlusS);
 setup(PlusPlusS,doubleplusfun);
 
-lesslessfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LessLessS);
-lesslessfun1(rhs:Code):Expr := unarymethod(rhs,LessLessS);
+lesslessfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LessLessS);
+lesslessfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LessLessS);
 setup(LessLessS,lesslessfun1,lesslessfun2);
 
-greatergreaterfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,GreaterGreaterS);
+greatergreaterfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,GreaterGreaterS);
 setup(GreaterGreaterS,greatergreaterfun2);
 
-barfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarS);
+barfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,BarS);
 setup(BarS,barfun);
 
-PowerStarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerStarStarS);
+PowerStarStarfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,PowerStarStarS);
 setup(PowerStarStarS,PowerStarStarfun);
 
-colonfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,ColonS);
+colonfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,ColonS);
 setup(ColonS,colonfun);
 
-ampersandfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AmpersandS);
+ampersandfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,AmpersandS);
 setup(AmpersandS,ampersandfun);
 
-hathatfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,HatHatS);
+hathatfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,HatHatS);
 setup(HatHatS,hathatfun);
 
-Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
+Tildefun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 
-ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
+ParenStarParenfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
 setuppostfix(ParenStarParenS,ParenStarParenfun);
 
-UnderscoreStarfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
+UnderscoreStarfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
 setuppostfix(UnderscoreStarS,UnderscoreStarfun);
 
-PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
+PowerStarfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,PowerStarS);
 setuppostfix(PowerStarS,PowerStarfun);
 
-Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
+Exclamationfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,ExclamationS);
 setuppostfix(ExclamationS,Exclamationfun);
 
-factorial(x:Expr):Expr := (
+factorial(localInterpState:threadLocalInterp,x:Expr):Expr := (
      when x
      is x:RR do Expr(factorial(x))
      is x:QQ do Expr(factorial(toRR(x)))
@@ -305,10 +305,10 @@ installMethod(ExclamationS,RRClass,factorial);
 installMethod(ExclamationS,ZZClass,factorial);
 installMethod(ExclamationS,QQClass,factorial);
 
-underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
+underscorefun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,UnderscoreS);
 setup(UnderscoreS,underscorefun);
 
-dotfun(lhs:Code,rhs:Code):Expr := (
+dotfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left is Error do left
      is x:HashTable do (
@@ -319,7 +319,7 @@ dotfun(lhs:Code,rhs:Code):Expr := (
      );
 setup(DotS,dotfun);
 
-dotQfun(lhs:Code,rhs:Code):Expr := (
+dotQfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left is Error do left
      is x:HashTable do (
@@ -329,15 +329,15 @@ dotQfun(lhs:Code,rhs:Code):Expr := (
      else False);
 setup(DotQuestionS,dotQfun);
 
-atfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtS);
+atfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,AtS);
 setup(AtS,atfun);
 
-leftDividefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LeftDivideS);
+leftDividefun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LeftDivideS);
 setup(LeftDivideS,leftDividefun);
 
 import WindowWidth(fd:int):int;
 import WindowHeight(fd:int):int;
-fileWidth(e:Expr):Expr := (
+fileWidth(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is o:file do (
 	  if o.infd == -1 && o.outfd == -1
@@ -346,7 +346,7 @@ fileWidth(e:Expr):Expr := (
 	  )
      else WrongArg("a file"));
 setupfun("fileWidth",fileWidth);
-fileHeight(e:Expr):Expr := (
+fileHeight(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is o:file do (
 	  if o.infd == -1 && o.outfd == -1
@@ -356,8 +356,8 @@ fileHeight(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("fileHeight",fileHeight);
 
-horizontalJoin(s:Sequence):Expr := (
-     s = deepsplice(s);
+horizontalJoin(localInterpState:threadLocalInterp,s:Sequence):Expr := (
+     s = deepsplice(localInterpState,s);
      ln := 0;
      foreach f at i in s do (
 	  when f 
@@ -373,18 +373,18 @@ horizontalJoin(s:Sequence):Expr := (
 	       is s:string do provide toNet(s)
 	       else nothing));
      Expr(HorizontalJoin(v)));
-horizontalJoin(e:Expr):Expr := (
+horizontalJoin(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is s:Sequence do horizontalJoin(s)
-     is s:List do horizontalJoin(s.v)
+     is s:Sequence do horizontalJoin(localInterpState,s)
+     is s:List do horizontalJoin(localInterpState,s.v)
      is n:Net do e
      is s:string do Expr(toNet(s))
-     is Nothing do horizontalJoin(emptySequence)
+     is Nothing do horizontalJoin(localInterpState,emptySequence)
      else WrongArg("a net, a string, or a list or sequence of nets and strings"));
 setupfun("horizontalJoin",horizontalJoin);
 
-stack(s:Sequence):Expr := (
-     s = deepsplice(s);
+stack(localInterpState:threadLocalInterp,s:Sequence):Expr := (
+     s = deepsplice(localInterpState,s);
      ln := 0;
      foreach f at i in s do (
 	  when f 
@@ -400,17 +400,17 @@ stack(s:Sequence):Expr := (
 	       is s:string do provide toNet(s)
 	       else nothing));
      Expr(VerticalJoin(v)));
-stack(e:Expr):Expr := (
+stack(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is s:Sequence do stack(s)
-     is s:List do stack(s.v)
+     is s:Sequence do stack(localInterpState,s)
+     is s:List do stack(localInterpState,s.v)
      is n:Net do e
      is s:string do Expr(toNet(s))
-     is Nothing do stack(emptySequence)
+     is Nothing do stack(localInterpState,emptySequence)
      else WrongArg("a sequence of nets and strings"));
 setupfun("stack",stack);
 
-raisef(e:Expr):Expr := (
+raisef(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do (
 	  if length(s) == 2 then
@@ -424,7 +424,7 @@ raisef(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("raise",raisef);
 
-replicate(e:Expr):Expr := (
+replicate(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then (
@@ -440,7 +440,7 @@ replicate(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(ColonS,ZZClass,thingClass,replicate);
 
-bitorfun(e:Expr):Expr := (
+bitorfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do (
      	  if length(a) == 2 then (
      	       when a.0 is x:ZZ do (
@@ -452,7 +452,7 @@ bitorfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(BarS,ZZClass,ZZClass,bitorfun);
 
-bitandfun(e:Expr):Expr := (
+bitandfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do (
      	  if length(a) == 2 then (
 	       when a.0 is x:ZZ do (
@@ -463,21 +463,21 @@ bitandfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(AmpersandS,ZZClass,ZZClass,bitandfun);
 
-newNetFile(e:Expr):Expr := (
+newNetFile(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 0 then Expr(newNetFile())
 	  else WrongNumArgs(0))
      else WrongNumArgs(0));
 setupfun("newNetFile",newNetFile);
 
-getNetFile(e:Expr):Expr := (
+getNetFile(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is n:NetFile do (
 	  v := tonets(n);
 	  Expr(new Sequence len length(v) do foreach n in v do provide Expr(n)))
      else WrongArg("a net file"));
 setupfun("getNetFile",getNetFile);
 
-NetFileAppend(e:Expr):Expr := (
+NetFileAppend(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2 then (
 	       when a.0 is n:NetFile do (
@@ -490,7 +490,7 @@ NetFileAppend(e:Expr):Expr := (
 installMethod(LessLessS,netFileClass,stringClass,NetFileAppend);
 installMethod(LessLessS,netFileClass,netClass,NetFileAppend);
 		   
-showFrames(f:Frame):void := (
+showFrames(localInterpState:threadLocalInterp,f:Frame):void := (
      stdout << " frames bound :";
      while (
 	  stdout << " " << f.frameID;
@@ -505,7 +505,7 @@ showFrames(f:Frame):void := (
      stdout << endl;
      );
 
-examine(e:Expr):Expr := (
+examine(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is sc:SymbolClosure do (
 	  f := sc.frame;
@@ -517,12 +517,12 @@ examine(e:Expr):Expr := (
 	  << " frameindex : " << s.frameindex << endl
 	  << " lookupCount : " << s.lookupCount << endl
 	  << " protected : " << s.protected << endl;
-     	  showFrames(f);
+     	  showFrames(localInterpState,f);
           if s.frameID != f.frameID then stdout << " -- warning: incorrect frameID on first frame" << endl;
 	  nullE)
      is c:CodeClosure do (
 	  f := c.frame;
-     	  showFrames(f);
+     	  showFrames(localInterpState,f);
 	  nullE)
      is fc:FunctionClosure do (
 	  f := fc.frame;
@@ -535,7 +535,7 @@ examine(e:Expr):Expr := (
 	  << " frameID : " << desc.frameID << endl
 	  << " framesize : " << desc.framesize << endl
 	  << " numparms : " << desc.numparms << endl;
-     	  showFrames(f);
+     	  showFrames(localInterpState,f);
 	  nullE)
      is model:functionCode do (
 	  desc := model.desc;
@@ -569,12 +569,12 @@ examine(e:Expr):Expr := (
 	  << " transient : " << d.transient << endl
 	  << " protected : " << d.protected << endl
 	  << " symboltable size : " << d.symboltable.numEntries << endl;
-     	  showFrames(f);
+     	  showFrames(localInterpState,f);
           if d.frameID != f.frameID then stdout << " -- warning: incorrect frameID on first frame" << endl;
 	  nullE)
      is s:Sequence do (
 	  if length(s) == 0 then (
-     	       showFrames(threadLocalInterpState.localFrame);
+     	       showFrames(localInterpState,threadLocalInterpState.localFrame);
 	       nullE)
 	  else WrongNumArgs(1))
      is s:List do (
@@ -587,47 +587,47 @@ examine(e:Expr):Expr := (
      is s:SpecialExpr do (
 	  stdout
 	  << "special expr:" << endl;
-	  examine(s.e);
+	  examine(localInterpState,s.e);
 	  nullE)
      is x:xmlNode do (examine(x); nullE)
      else WrongArg("(), a function, a symbol, or a basic list"));
 setupfun("examine",examine);
 
-numparms(e:Expr):Expr := (
+numparms(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is fc:FunctionClosure do Expr(toInteger(if fc.model.desc.restargs then -1 else fc.model.desc.numparms))
      is fn:CompiledFunction do Expr(toInteger(-1))
      is fnc:CompiledFunctionClosure do Expr(toInteger(-1))
-     is s:SpecialExpr do numparms(s.e)
+     is s:SpecialExpr do numparms(localInterpState,s.e)
      else WrongArg("a function"));
 setupfun("numparms",numparms);
 
-netWidth(e:Expr):Expr := (
+netWidth(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is n:Net do Expr(toInteger(n.width))
      else WrongArg("a net"));
 setupfun("netWidth",netWidth);
 
-netHeight(e:Expr):Expr := (
+netHeight(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is n:Net do Expr(toInteger(n.height))
      else WrongArg("a net"));
 setupfun("netHeight",netHeight);
 
-netDepth(e:Expr):Expr := (
+netDepth(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is n:Net do Expr(toInteger(length(n.body)-n.height))
      else WrongArg("a net"));
 setupfun("netDepth",netDepth);
 
-unstack(e:Expr):Expr := (
+unstack(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is n:Net do list(new Sequence len length(n.body) do foreach s in n.body do provide Expr(s))
      is s:string do list(e)
      else WrongArg("a net"));
 setupfun("unstack",unstack);
 
-alarm(e:Expr):Expr := (
+alarm(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is i:ZZ do 
      if isInt(i)
      then Expr(toInteger(int(alarm(uint(toInt(i))))))
@@ -636,7 +636,7 @@ alarm(e:Expr):Expr := (
      );
 setupfun("alarm",alarm);
 
-endlfun(e:Expr):Expr := (
+endlfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is o:file do if o.output then Expr(o << endl) else WrongArg("an output file")
      is n:NetFile do Expr(endlnetfile(n))
@@ -734,7 +734,7 @@ remove(x:List,i:int):List := (
      r.hash = hash(r);
      r);
 
-removefun(e:Expr):Expr := (
+removefun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do (
 	  if length(args) != 2
@@ -763,7 +763,7 @@ removefun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("remove",removefun);
 
-erase(e:Expr):Expr := (
+erase(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is t:SymbolClosure do (
 	  s := t.symbol;
 	  d := globalDictionary;
@@ -806,7 +806,7 @@ erase(e:Expr):Expr := (
      );
 setupfun("erase", erase);
 
-factorInt(n:int):Expr := (
+factorInt(localInterpState:threadLocalInterp,n:int):Expr := (
      facs := newHashTable(Tally,nothingClass);
      if n == 0 then (
 	  storeInHashTable(facs,Expr(toInteger(n)),Expr(toInteger(1)));
@@ -845,15 +845,15 @@ factorInt(n:int):Expr := (
 	  );
      Expr(facs));
 
-factorInteger(e:Expr):Expr := (
+factorInteger(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is i:ZZ do (
-	  if isInt(i) then factorInt(toInt(i))
+	  if isInt(i) then factorInt(localInterpState,toInt(i))
 	  else WrongArgSmallInteger())
      else WrongArgSmallInteger());
 setupfun("factorInteger",factorInteger);
 
 -- method functions for use in closures
-method1(e:Expr,env:Sequence):Expr := (
+method1(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
      f := lookup(Class(e),env.0);
@@ -862,7 +862,7 @@ method1(e:Expr,env:Sequence):Expr := (
      r := applyEE(if f == nullE then env.1 else f,e);
      recursionDepth = recursionDepth - 1;
      r);
-method1c(e:Expr,env:Sequence):Expr := (
+method1c(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
      when e is c:HashTable do (
@@ -870,7 +870,7 @@ method1c(e:Expr,env:Sequence):Expr := (
      	  applyEE(if f == nullE then env.1 else f,e))
      else WrongArg("a class")
      );
-newmethod1(e:Expr):Expr := (
+newmethod1(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  f := s.0;
 	  output := s.1;
@@ -881,49 +881,49 @@ newmethod1(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("newmethod1",newmethod1);
 
-applyEOS(f:Expr,o:Expr,s:Sequence):Expr := (
-     if o == nullE then applyES(f,s)
+applyEOS(localInterpState:threadLocalInterp,f:Expr,o:Expr,s:Sequence):Expr := (
+     if o == nullE then applyES(localInterpState,f,s)
      else (
      	  g := applyEE(f,o);
-     	  when g is Error do g else applyES(g,s)));
+     	  when g is Error do g else applyES(localInterpState,g,s)));
 
-applyEOE(f:Expr,o:Expr,x:Expr):Expr := (
+applyEOE(localInterpState:threadLocalInterp,f:Expr,o:Expr,x:Expr):Expr := (
      if o == nullE then applyEE(f,x)
      else (
      	  g := applyEE(f,o);
      	  when g is Error do g else applyEE(g,x)));
 
-method1234(e:Expr,env:Sequence):Expr := (
+method1234(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
      when e is args:Sequence do (
 	  if length(args) == 2 then (
 	       f := lookupBinaryMethod(Class(args.0),Class(args.1),env.0);
 	       if f == nullE then f = env.1;
-	       applyES(f, args))
+	       applyES(localInterpState,f, args))
 	  else if length(args) == 3 then (
 	       f := lookupTernaryMethod(Class(args.0),Class(args.1),Class(args.2),env.0);
 	       if f == nullE then f = env.1;
-	       applyES(f, args))
+	       applyES(localInterpState,f, args))
 	  else if length(args) == 1 then (
 	       f := lookup(Class(args.0),env.0);
 	       if f == nullE then f = env.1;
-	       applyEE(f, args.0))
+	       applyEE(localInterpState,f, args.0))
 	  else if length(args) == 0 then (
 	       f := lookup(env.0);
 	       if f == nullE then f = env.1;
-	       applyES(f, emptySequence))
+	       applyES(localInterpState,f, emptySequence))
 	  else if length(args) == 4 then (
 	       f := lookupQuaternaryMethod(Class(args.0),Class(args.1),Class(args.2),Class(args.3),env.0);
 	       if f == nullE then f = env.1;
-	       applyES(f, args))
-	  else applyES(env.1, args))
+	       applyES(localInterpState,f, args))
+	  else applyES(localInterpState,env.1, args))
      else (
 	  f := lookup(Class(e),env.0);
 	  if f == nullE then applyEE(env.1,e)
 	  else applyEE(f,e)));
 
-method1234o(e:Expr,env:Sequence):Expr := (
+method1234o(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- e is (opt,arg);
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
@@ -933,32 +933,32 @@ method1234o(e:Expr,env:Sequence):Expr := (
 	  when arg is args:Sequence do (
 	       if length(args) == 2 then (
 		    f := lookupBinaryMethod(Class(args.0),Class(args.1),env.0);
-		    if f == nullE then applyES(env.1, args)
-		    else applyEOS(f, opt, args))
+		    if f == nullE then applyES(localInterpState,env.1, args)
+		    else applyEOS(localInterpState,f, opt, args))
 	       else if length(args) == 3 then (
 		    f := lookupTernaryMethod(Class(args.0),Class(args.1),Class(args.2),env.0);
-		    if f == nullE then applyES(env.1, args)
-		    else applyEOS(f, opt, args))
+		    if f == nullE then applyES(localInterpState,env.1, args)
+		    else applyEOS(localInterpState,f, opt, args))
 	       else if length(args) == 1 then (
 		    f := lookup(Class(args.0),env.0);
-		    if f == nullE then applyEE(env.1, args.0)
-		    else applyEOE(f, opt, args.0))
+		    if f == nullE then applyEE(localInterpState,env.1, args.0)
+		    else applyEOE(localInterpState,f, opt, args.0))
 	       else if length(args) == 0 then (
 		    f := lookup(env.0);
-		    if f == nullE then applyES(env.1, args)
-		    else applyEOS(f, opt, args))
+		    if f == nullE then applyES(localInterpState,env.1, args)
+		    else applyEOS(localInterpState,f, opt, args))
 	       else if length(args) == 4 then (
 		    f := lookupQuaternaryMethod(Class(args.0),Class(args.1),Class(args.2),Class(args.3),env.0);
-		    if f == nullE then applyES(env.1, args)
-		    else applyEOS(f, opt, args))
-	       else applyES(env.1, args))
+		    if f == nullE then applyES(localInterpState,env.1, args)
+		    else applyEOS(localInterpState,f, opt, args))
+	       else applyES(localInterpState,env.1, args))
 	  else (
 	       f := lookup(Class(arg),env.0);
 	       if f == nullE then applyEE(env.1,arg)
-	       else applyEOE(f,opt,arg)) )
+	       else applyEOE(localInterpState,f,opt,arg)) )
      else WrongNumArgs(2));
 
-method1234p(e:Expr,env:Sequence):Expr := ( -- just like method1234o, except we call the method function f as f(opt,arg)
+method1234p(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := ( -- just like method1234o, except we call the method function f as f(opt,arg)
      -- e is (opt,arg);
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
@@ -968,26 +968,26 @@ method1234p(e:Expr,env:Sequence):Expr := ( -- just like method1234o, except we c
 	  when arg is args:Sequence do (
 	       if length(args) == 2 then (
 		    f := lookupBinaryMethod(Class(args.0),Class(args.1),env.0);
-		    if f == nullE then applyES(env.1, args) else applyES(f,s))
+		    if f == nullE then applyES(localInterpState,env.1, args) else applyES(localInterpState,f,s))
 	       else if length(args) == 3 then (
 		    f := lookupTernaryMethod(Class(args.0),Class(args.1),Class(args.2),env.0);
-		    if f == nullE then applyES(env.1, args) else applyES(f,s))
+		    if f == nullE then applyES(localInterpState,env.1, args) else applyES(localInterpState,f,s))
 	       else if length(args) == 1 then (
 		    f := lookup(Class(args.0),env.0);
-		    if f == nullE then applyEE(env.1, args.0) else applyEOE(f, opt, args.0))
+		    if f == nullE then applyEE(localInterpState,env.1, args.0) else applyEOE(localInterpState,f, opt, args.0))
 	       else if length(args) == 0 then (
 		    f := lookup(env.0);
-		    if f == nullE then applyES(env.1, args) else applyES(f,s))
+		    if f == nullE then applyES(localInterpState,env.1, args) else applyES(localInterpState,f,s))
 	       else if length(args) == 4 then (
 		    f := lookupQuaternaryMethod(Class(args.0),Class(args.1),Class(args.2),Class(args.3),env.0);
-		    if f == nullE then applyES(env.1, args) else applyES(f,s))
-	       else applyES(env.1, args))
+		    if f == nullE then applyES(localInterpState,env.1, args) else applyES(localInterpState,f,s))
+	       else applyES(localInterpState,env.1, args))
 	  else (
 	       f := lookup(Class(arg),env.0);
-	       if f == nullE then applyEE(env.1,arg) else applyES(f,s)) )
+	       if f == nullE then applyEE(env.1,arg) else applyES(localInterpState,f,s)) )
      else WrongNumArgs(2));
 
-method1234c(e:Expr,env:Sequence):Expr := (
+method1234c(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- ClassArgument version
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
@@ -1024,7 +1024,7 @@ method1234c(e:Expr,env:Sequence):Expr := (
 		    then Class(dispseq.1)
 		    else when dispseq.1 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(1)),disp))));
 	       f := lookupBinaryMethod(a0,a1,env.0);
-	       if f == nullE then applyES(env.1, dispseq) else applyEOE(f,opt,arg))
+	       if f == nullE then applyES(localInterpState,env.1, dispseq) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 3 then (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
@@ -1039,14 +1039,14 @@ method1234c(e:Expr,env:Sequence):Expr := (
 		    then Class(dispseq.2)
 		    else when dispseq.2 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(2)),disp))));
 	       f := lookupTernaryMethod(a0,a1,a2,env.0);
-	       if f == nullE then applyES(env.1, dispseq) else applyEOE(f,opt,arg))
+	       if f == nullE then applyES(localInterpState,env.1, dispseq) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 1 then (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(dispseq.0)
 		    else when dispseq.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
 	       f := lookup(a0,env.0);
-	       if f == nullE then applyEE(env.1, dispseq.0) else applyEOE(f,opt,arg))
+	       if f == nullE then applyEE(env.1, dispseq.0) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 4 then (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
@@ -1065,20 +1065,20 @@ method1234c(e:Expr,env:Sequence):Expr := (
 		    then Class(dispseq.3)
 		    else when dispseq.3 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(3)),disp))));
 	       f := lookupQuaternaryMethod(a0,a1,a2,a3,env.0);
-	       if f == nullE then applyES(env.1, dispseq) else applyEOE(f,opt,arg))
+	       if f == nullE then applyES(localInterpState,env.1, dispseq) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 0 then (
 	       f := lookup(env.0);
-	       if f == nullE then applyES(env.1, dispseq) else applyEOE(f,opt,arg))
-	  else applyES(env.1, dispseq)			    -- it's too long!
+	       if f == nullE then applyES(localInterpState,env.1, dispseq) else applyEOE(localInterpState,f,opt,arg))
+	  else applyES(localInterpState,env.1, dispseq)			    -- it's too long!
 	  else (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(disp)
 		    else when disp is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(-1)),disp))));
 	       f := lookup(a0,env.0);
-	       if f == nullE then applyEE(env.1,disp) else applyEOE(f,opt,arg)))
+	       if f == nullE then applyEE(env.1,disp) else applyEOE(localInterpState,f,opt,arg)))
      else buildErrorPacket("env.3: not a list"));
-newmethod1234c(e:Expr):Expr := (
+newmethod1234c(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is env:Sequence do (
 	  -- see above for description of elements of env, except that env.0 is supplanted by us if it is null or a type of CompiledFunctionClosure
 	  if length(env) == 5
@@ -1177,7 +1177,7 @@ drop(v:Sequence,b:Expr):Expr := (
 	       else WrongArg("a list of integers"))
 	  else WrongArg("a list of two integers"))
      else WrongArg(2,"an integer or list of integers"));
-drop(e:Expr):Expr := (
+drop(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do 
      if length(args) == 2 then (
@@ -1195,7 +1195,7 @@ drop(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("drop",drop);
 
-take(v:Sequence,b:Expr):Expr := (
+take(localInterpState:threadLocalInterp,v:Sequence,b:Expr):Expr := (
      when b
      is n:ZZ do (
 	  if isInt(n) then (
@@ -1238,19 +1238,19 @@ take(v:Sequence,b:Expr):Expr := (
 	       else WrongArg("a list of integers"))
 	  else WrongArg("a list of two integers"))
      else WrongArg(2,"an integer or list of integers"));
-take(e:Expr):Expr := (
+take(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do 
      if length(args) == 2 then (
 	  when args.0
 	  is x:List do (
-	       vv := take(x.v,args.1);
+	       vv := take(localInterpState,x.v,args.1);
 	       when vv
 	       is v:Sequence do (
 	       	    if v == x.v && x.mutable then v = copy(v);
 	       	    list(x.class,v,x.mutable))
 	       else vv)
-	  is v:Sequence do take(v,args.1)
+	  is v:Sequence do take(localInterpState,v,args.1)
 	  else WrongArg(1,"a list or sequence"))
      else WrongNumArgs(2)
      else WrongNumArgs(2));
@@ -1282,7 +1282,7 @@ unhex(s:string):string := (
 	  else (provide c;);
 	  while true do provide ' '			    -- shouldn't happen
 	  ));
-unhex(e:Expr):Expr := (
+unhex(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:string do Expr(unhex(s))
      else WrongArgString());
@@ -1291,7 +1291,7 @@ setupfun("unhex",unhex);
 echo(f:file,v:bool):Expr := (
      if f.input then ( f.echo = v; nullE)
      else WrongArg("an input file"));
-echoOn(e:Expr):Expr := (
+echoOn(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do
      if length(s) == 0 then echo(stdIO,true)
@@ -1300,7 +1300,7 @@ echoOn(e:Expr):Expr := (
      else WrongArg("a file or ()")
      );
 setupfun("echoOn",echoOn);
-echoOff(e:Expr):Expr := (
+echoOff(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do
      if length(s) == 0 then echo(stdIO,false)
@@ -1309,7 +1309,7 @@ echoOff(e:Expr):Expr := (
      else WrongArg("a file or ()")
      );
 setupfun("echoOff",echoOff);
-kill(e:Expr):Expr := (
+kill(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is pid:ZZ do if !isInt(pid) then WrongArgSmallInteger() else (
 	  id := toInt(pid);
@@ -1331,14 +1331,14 @@ kill(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("kill",kill);
 
-setEcho(e:Expr):Expr := (
+setEcho(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:file do (
 	  f.echo = true;
 	  nullE
 	  )
      else nullE);
 setupfun("setEcho",setEcho);
-clearEcho(e:Expr):Expr := (
+clearEcho(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:file do (
 	  f.echo = false;
 	  nullE
@@ -1346,19 +1346,19 @@ clearEcho(e:Expr):Expr := (
      else nullE);
 setupfun("clearEcho",clearEcho);
 
-readlinkfun(e:Expr):Expr := (
+readlinkfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is filename:string do (
 	  v := readlink(expandFileName(filename));
 	  if length(v) == 0 then nullE else Expr(v))
      else WrongArgString());
 setupfun("readlink",readlinkfun);
 
-changeDirectory(e:Expr):Expr := (
+changeDirectory(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is filename:string do if chdir(filename) == -1 then buildErrorPacket(syscallErrorMessage("changing directory")) else nullE
      else WrongArgString());
 setupfun("changeDirectory",changeDirectory);
 
-realpathfun(e:Expr):Expr := (
+realpathfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:string do (
      	  when realpath(expandFileName(f))
      	  is null do buildErrorPacket(syscallErrorMessage("realpath"))
@@ -1375,13 +1375,13 @@ setupconst("fixedBinaryOperators",    Expr(new array(Expr) len length(fixedBinar
 setupconst("fixedPrefixOperators",    Expr(new array(Expr) len length(fixedPrefixOperators)  do foreach s in fixedPrefixOperators do provide Expr(s)));
 setupconst("fixedPostfixOperators",   Expr(new array(Expr) len length(fixedPostfixOperators) do foreach s in fixedPostfixOperators do provide Expr(s)));
 
-fileExists(e:Expr):Expr := (
+fileExists(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is name:string do toExpr(fileExists(expandFileName(name)))
      else WrongArgString()
      );
 setupfun("fileExists",fileExists);
 
-removeDirectory(e:Expr):Expr := (
+removeDirectory(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is name:string do
      if rmdir(expandFileName(name)) == ERROR 
      then buildErrorPacket(syscallErrorMessage("removing a directory"))
@@ -1390,7 +1390,7 @@ removeDirectory(e:Expr):Expr := (
      );
 setupfun("removeDirectory",removeDirectory);
 
-removeFile(e:Expr):Expr := (
+removeFile(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is name:string do
      if unlink(expandFileName(name)) == ERROR 
      then buildErrorPacket(syscallErrorMessage("removing a file"))
@@ -1399,7 +1399,7 @@ removeFile(e:Expr):Expr := (
      );
 setupfun("removeFile",removeFile);
 
-readDirectory(e:Expr):Expr := (
+readDirectory(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is filename:string do (
 	  filename = expandFileName(filename);
 	  r := readDirectory(filename);
@@ -1408,7 +1408,7 @@ readDirectory(e:Expr):Expr := (
      else WrongArgString());
 setupfun("readDirectory",readDirectory);
 
-isDirectory(e:Expr):Expr := (
+isDirectory(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is filename:string do (
 	  filename = expandFileName(filename);
 	  if !fileExists(filename) then return False;
@@ -1419,7 +1419,7 @@ isDirectory(e:Expr):Expr := (
      );
 setupfun("isDirectory",isDirectory);
 
-isRegularFile(e:Expr):Expr := (
+isRegularFile(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is filename:string do (
      	  filename = expandFileName(filename);
 	  r := isRegularFile(filename);
@@ -1429,7 +1429,7 @@ isRegularFile(e:Expr):Expr := (
      );
 setupfun("isRegularFile",isRegularFile);
 
-linkfun(e:Expr):Expr := (
+linkfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is oldfilename:string do
      when s.1 is newfilename:string do (
@@ -1443,7 +1443,7 @@ linkfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("linkFile",linkfun);
 
-symlinkfun(e:Expr):Expr := (
+symlinkfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is oldfilename:string do
      when s.1 is newfilename:string do (
@@ -1457,7 +1457,7 @@ symlinkfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("symlinkFile",symlinkfun);
 
-fileTime(e:Expr):Expr := (
+fileTime(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is filename:string do (
 	  filename = expandFileName(filename);
 	  r := fileTime(filename);
@@ -1480,14 +1480,14 @@ fileTime(e:Expr):Expr := (
      else WrongArg("string, or integer and string"));
 setupfun("fileTime",fileTime);
 
-currentTime(e:Expr):Expr := (
+currentTime(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
      if length(a) == 0 then Expr(toInteger(currentTime()))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentTime",currentTime);
 
-mkdir(e:Expr):Expr := (
+mkdir(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is filename:string do (
 	  filename = expandFileName(filename);
 	  r := mkdir(filename);
@@ -1498,7 +1498,7 @@ setupfun("mkdir",mkdir);
 
 export printWidth := 0;
 
-wrap(e:Expr):Expr := (
+wrap(localInterpState:threadLocalInterp,e:Expr):Expr := (
      wid := printWidth;
      sep := char(0);
      net := dummyNet;
@@ -1536,20 +1536,20 @@ wrap(e:Expr):Expr := (
      Expr(wrap(wid,sep,net)));
 setupfun("wrap",wrap);
 
-dillyDallyFun(e:Expr):Expr := (				    -- for debugging interrupts in compiled code
+dillyDallyFun(localInterpState:threadLocalInterp,e:Expr):Expr := (				    -- for debugging interrupts in compiled code
      while true do (
 	  sleep(1);
 	  if interruptedFlag then return buildErrorPacket("dillyDally: interrupted");
 	  ));
 setupfun("dillyDally",dillyDallyFun);
 
-minimizeFilename(e:Expr):Expr := (
+minimizeFilename(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:string do Expr(minimizeFilename(s))
      else WrongArgString()
      );
 setupfun("minimizeFilename",minimizeFilename);
 
-relativizeFilename(e:Expr):Expr := (
+relativizeFilename(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is t:Sequence do
      if length(t) == 2 then
@@ -1602,7 +1602,7 @@ getglobalsym(s:string):Expr := (
 	  t := makeSymbol(w,dummyPosition,globalDictionary);
 	  globalFrame.values.(t.frameindex)));
 
-getGlobalSymbol(e:Expr):Expr := (
+getGlobalSymbol(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is s:string do getglobalsym(s)
      is z:Sequence do if length(z) != 2 then WrongNumArgs(2) else (
@@ -1621,7 +1621,7 @@ setupfun("getGlobalSymbol",getGlobalSymbol);
 
 isglobalsym(s:string):Expr := when globalLookup(makeUniqueWord(s,parseWORD)) is x:Symbol do True is null do False;
 
-isGlobalSymbol(e:Expr):Expr := when e is s:string do isglobalsym(s) else WrongArgString();
+isGlobalSymbol(localInterpState:threadLocalInterp,e:Expr):Expr := when e is s:string do isglobalsym(s) else WrongArgString();
 setupfun("isGlobalSymbol",isGlobalSymbol);
 
 -- history(e:Expr):Expr := (
@@ -1642,7 +1642,7 @@ toPairs(r:array(int)):Expr := Expr(
 	  )
      );
 
-regexmatch(e:Expr):Expr := (
+regexmatch(localInterpState:threadLocalInterp,e:Expr):Expr := (
      ignorecase := false;
      when e is a:Sequence do
      if length(a) == 2 then
@@ -1686,7 +1686,7 @@ regexmatch(e:Expr):Expr := (
 setupfun("regex",regexmatch);
 
 foo := "foo";
-replace(e:Expr):Expr := (
+replace(localInterpState:threadLocalInterp,e:Expr):Expr := (
      ignorecase := false;
      when e is a:Sequence do
      if length(a) == 3 then
@@ -1705,7 +1705,7 @@ setupfun("replaceStrings",replace);
      
 listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
 listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables
-frame(e:Expr):Expr := (
+frame(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do 
      if length(s) == 0 then Expr(listFrame(threadLocalInterpState.localFrame)) else WrongNumArgs(1,2)
@@ -1714,7 +1714,7 @@ frame(e:Expr):Expr := (
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(listFrame(cfc.env))
      is CompiledFunction do Expr(listFrame(emptySequence))
-     is s:SpecialExpr do frame(s.e)
+     is s:SpecialExpr do frame(localInterpState,s.e)
      else WrongNumArgs(1,2));
 setupfun("frame", frame);
 
@@ -1723,23 +1723,23 @@ numFrames(f:Frame):int := (
      while ( n = n+1; f != f.outerFrame ) do f = f.outerFrame;
      n);
 
-listFrames(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (provide listFrame(f) ; f != f.outerFrame ) do f = f.outerFrame));     
+listFrames(localInterpState:threadLocalInterp,f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (provide listFrame(f) ; f != f.outerFrame ) do f = f.outerFrame));     
 
-frames(e:Expr):Expr := (
+frames(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is a:Sequence do if length(a) == 0 then listFrames(threadLocalInterpState.localFrame) else WrongNumArgs(0,1) 
-     is sc:SymbolClosure do Expr(listFrames(sc.frame))
-     is c:CodeClosure do Expr(listFrames(c.frame))
-     is fc:FunctionClosure do Expr(listFrames(fc.frame))
+     is a:Sequence do if length(a) == 0 then listFrames(localInterpState,threadLocalInterpState.localFrame) else WrongNumArgs(0,1) 
+     is sc:SymbolClosure do Expr(listFrames(localInterpState,sc.frame))
+     is c:CodeClosure do Expr(listFrames(localInterpState,c.frame))
+     is fc:FunctionClosure do Expr(listFrames(localInterpState,fc.frame))
      is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
      is CompiledFunction do Expr(list(listFrame(emptySequence)))
-     is s:SpecialExpr do frames(s.e)
+     is s:SpecialExpr do frames(localInterpState,s.e)
      else WrongArg("a function, a symbol, or ()"));
 setupfun("frames", frames);
 
 localDictionaries(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do ( while ( provide Expr(localDictionaryClosure(f)); f != f.outerFrame ) do f = f.outerFrame)));
 
-localDictionaries(e:Expr):Expr := (
+localDictionaries(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(threadLocalInterpState.localFrame))
      is x:DictionaryClosure do localDictionaries(x.frame)
@@ -1748,7 +1748,7 @@ localDictionaries(e:Expr):Expr := (
      is x:FunctionClosure do localDictionaries(x.frame)
      is CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
      is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
-     is s:SpecialExpr do localDictionaries(s.e)
+     is s:SpecialExpr do localDictionaries(localInterpState,s.e)
      else WrongArg("a function, a symbol, or ()"));
 setupfun("localDictionaries", localDictionaries);
 
@@ -1762,7 +1762,7 @@ globalDictionaryList():Expr := (		    -- get the current globalDictionary list
      g = globalDictionary;
      Expr(list(new Sequence len n do while true do ( provide Expr(DictionaryClosure(globalFrame,g)); g = g.outerDictionary ))));
 
-dictionaryPath(e:Expr):Expr := (
+dictionaryPath(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 0 then globalDictionaryList()
@@ -1789,17 +1789,17 @@ dictionaryPath(e:Expr):Expr := (
      else WrongNumArgs(0));
 dictionaryPathS := setupvar("dictionaryPath",globalDictionaryList());
 setupfun("internalDictionaryPathFunction",dictionaryPath);
-storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
+storeGlobalDictionaries(localInterpState:threadLocalInterp,e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  sym := s.0;
 	  if !(sym === dictionaryPathS)
 	  then buildErrorPacket("global assignment hook encountered unknown symbol")
-	  else dictionaryPath(s.1))
+	  else dictionaryPath(localInterpState,s.1))
      else WrongNumArgs(2));
 storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,dictionaryPathS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
 
-getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
+getcwdfun(localInterpState:threadLocalInterp,e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
      when e is s:Sequence do
      if length(s) == 0 then cwd() else WrongNumArgs(0)
      else WrongNumArgs(0));
@@ -1894,7 +1894,7 @@ export sethandleInterrupts(b:bool):void := (
      setGlobalVariable(handleInterruptsS,toExpr(b));
      );
 msg := "internal assignment hook encountered unknown symbol/value combination";
-store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
+store(localInterpState:threadLocalInterp,e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  sym := s.0;
@@ -1970,7 +1970,7 @@ export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
      storeInHashTable(fileDictionaries,Expr(filename),Expr(d));
      d);
 
-fileMode(e:Expr):Expr := (
+fileMode(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do (
 	  if length(s) != 2 
 	  then WrongNumArgs(2) 
@@ -2015,7 +2015,7 @@ fileMode(e:Expr):Expr := (
      else WrongArg("string, integer and string or file"));
 setupfun("fileMode",fileMode);
 
-rawRandomInitializeFun(e:Expr):Expr := (
+rawRandomInitializeFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0 then (
 	  Ccode(void, "rawRandomInitialize()");
 	  nullE
@@ -2024,13 +2024,13 @@ rawRandomInitializeFun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("rawRandomInitialize",rawRandomInitializeFun);
 
-recursionDepthFun(e:Expr):Expr := (
+recursionDepthFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0 then Expr(toInteger(recursionDepth))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("recursionDepth",recursionDepthFun);
 
-fileLength(e:Expr):Expr := (
+fileLength(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do (
 	  if f.input && f.infd != -1 then (
@@ -2049,19 +2049,19 @@ fileLength(e:Expr):Expr := (
      else WrongArg("a string or a file"));     
 setupfun("fileLength",fileLength);
 
-functionBody(e:Expr):Expr := (
+functionBody(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:FunctionClosure do Expr(f.model)
      is f:CompiledFunction do e
      is f:CompiledFunctionClosure do Expr(CompiledFunctionBody(f.fn))
-     is s:SpecialExpr do functionBody(s.e)
+     is s:SpecialExpr do functionBody(localInterpState,s.e)
      else WrongArg("a function")
      );
 setupfun("functionBody",functionBody);
 
-dumpNodes(e:Expr):Expr := (dumpNodes(); nullE);
+dumpNodes(localInterpState:threadLocalInterp,e:Expr):Expr := (dumpNodes(); nullE);
 setupfun("dumpNodes",dumpNodes);
 
-toExternalString(e:Expr):Expr := (
+toExternalString(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(toExternalString(x))
      is x:CC do Expr(toExternalString(x))

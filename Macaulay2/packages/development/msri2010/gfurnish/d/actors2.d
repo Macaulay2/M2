@@ -23,7 +23,7 @@ use struct;
 use objects;
 use util;
 
-dbmfirst(e:Expr):Expr := (
+dbmfirst(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:Database do dbmfirst(f)
      else buildErrorPacket("expected a database"));
@@ -33,36 +33,36 @@ dbmnext(f:Database):Expr := (
      when dbmnext(f.handle)
      is a:string do Expr(a)
      else nullE);
-dbmnext(e:Expr):Expr := (
+dbmnext(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:Database do dbmnext(f)
      is Sequence do WrongNumArgs(1)
      else WrongArg(1,"a database"));
 setupfun("nextkey",dbmnext);
-dbmreorganize(e:Expr):Expr := (
+dbmreorganize(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:Database do dbmreorganize(f)
      else buildErrorPacket("expected a database"));
 setupfun("reorganize",dbmreorganize);
-dbmopenin(e:Expr):Expr := (
+dbmopenin(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:string do dbmopenin(a)
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabase",dbmopenin);
-dbmopenout(e:Expr):Expr := (
+dbmopenout(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:string do dbmopenout(a)
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabaseOut",dbmopenout);
 
-keys(e:Expr):Expr := (
+keys(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is o:DictionaryClosure do keys(o.dictionary)
      is f:Database do keys(f)
      is o:HashTable do keys(o)
      else WrongArg("a hash table, database, or dictionary"));
 setupfun("keys",keys);
-toList(e:Expr):Expr := (
+toList(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is o:HashTable do if ancestor(o.class,Set) then keys(o) else WrongArg("list, sequence, or set")
      -- is o:DictionaryClosure do keys(o.dictionary)
@@ -76,7 +76,7 @@ toList(e:Expr):Expr := (
 	       	    false)))
      else WrongArg("list, sequence, or set"));
 setupfun("toList",toList);
-values(e:Expr):Expr := (
+values(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
 	  o := oc.dictionary;
@@ -102,7 +102,7 @@ values(e:Expr):Expr := (
      else WrongArg("a hash table or dictionary"));
 setupfun("values",values);
 
-pairs(e:Expr):Expr := (
+pairs(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
 	  o := oc.dictionary;
@@ -131,7 +131,7 @@ setupfun("pairs",pairs);
 -- operators
 
 basictype(e:Expr):HashTable := basictype(Class(e));
-basictypefun(e:Expr):Expr := Expr(basictype(e));
+basictypefun(localInterpState:threadLocalInterp,e:Expr):Expr := Expr(basictype(e));
 setupfun("basictype",basictypefun);
 
 expected(type:string,returned:bool):Expr := buildErrorPacket(
@@ -142,7 +142,7 @@ expected(type:string,returned:bool):Expr := buildErrorPacket(
 
 wrongTarget():Expr := buildErrorPacket("'new' expected a type of list or hash table");
 
-newClassParent(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
+newClassParent(localInterpState:threadLocalInterp,e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      -- same as below, but parent specified
      basicType := basictype(class);
      when e
@@ -181,13 +181,13 @@ newClassParent(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is s:SpecialExpr do (
-	  if s.class == class && Parent(s.e) == parent then e else newClassParent(s.e,class,parent,returned)
+	  if s.class == class && Parent(localInterpState,s.e) == parent then e else newClassParent(localInterpState,s.e,class,parent,returned)
 	  )
      else (
 	  c := Class(e);
 	  if c == class then e
 	  else if !ancestor(class,c) then buildErrorPacket("expected new class to be a specialization of the old one")
-	  else if Parent(e) != parent then buildErrorPacket("unable to set new parent")
+	  else if Parent(localInterpState,e) != parent then buildErrorPacket("unable to set new parent")
 	  else Expr(SpecialExpr(class,e))));
 
 newClass(e:Expr,class:HashTable,returned:bool):Expr := (
@@ -244,7 +244,7 @@ newClass(e:Expr,class:HashTable,returned:bool):Expr := (
 	  else if !ancestor(class,c) 
 	  then buildErrorPacket("expected new class to be a specialization of the old one")
 	  else Expr(SpecialExpr(class,e))));
-newclassfun(e:Expr):Expr := (
+newclassfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do
      if length(a) == 2
@@ -255,7 +255,7 @@ newclassfun(e:Expr):Expr := (
      then when a.0
      is class:HashTable do (
 	  when a.1
-	  is parent:HashTable do newClassParent(a.2,class,parent,false)
+	  is parent:HashTable do newClassParent(localInterpState,a.2,class,parent,false)
 	  else WrongArg(2,"a hash table"))
      else WrongArg(1,"a hash table")
      else WrongNumArgs(2,3)
@@ -302,7 +302,7 @@ makenew(class:HashTable):Expr := makenew(class,nothingClass);
 errt(newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"new: expected a hash table as prospective class");
 errp(newParentCode:Code):Expr := printErrorMessageE(newParentCode,"new: expected a hash table as prospective parent");
 
-newfun(newClassCode:Code):Expr := (
+newfun(localInterpState:threadLocalInterp,newClassCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
@@ -313,7 +313,7 @@ newfun(newClassCode:Code):Expr := (
 	  else makenew(class))
      else errt(newClassCode));
 NewFun = newfun;
-newoffun(newClassCode:Code,newParentCode:Code):Expr := (
+newoffun(localInterpState:threadLocalInterp,newClassCode:Code,newParentCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
@@ -324,12 +324,12 @@ newoffun(newClassCode:Code,newParentCode:Code):Expr := (
 	  is parent:HashTable do (
 	       method := lookupBinaryMethod(class,parent,NewOfS);
 	       if method != nullE
-	       then newClassParent(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
+	       then newClassParent(localInterpState,applyEEE(localInterpState,method,Expr(class),Expr(parent)),class,parent,true)
 	       else makenew(class,parent))
 	  else errp(newParentCode))
      else errt(newClassCode));
 NewOfFun = newoffun;
-newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
+newfromfun(localInterpState:threadLocalInterp,newClassCode:Code,newInitCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
@@ -340,7 +340,7 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 	  else (
 	       method := lookupBinaryMethod(class,Class(newInitExpr),NewFromS);
 	       if method != nullE
-	       then newClass(applyEEE(method,Expr(class),newInitExpr),class,true)
+	       then newClass(applyEEE(localInterpState,method,Expr(class),newInitExpr),class,true)
 	       else (
 		    when newInitExpr
 		    is s:Sequence do newClass(newInitExpr,class,false)
@@ -355,7 +355,7 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 		    else newClass(newInitExpr,class,false))))
      else errt(newClassCode));
 NewFromFun = newfromfun;
-newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
+newoffromfun(localInterpState:threadLocalInterp,newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
@@ -370,19 +370,19 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 	       else (
 		    method := lookupTernaryMethod(class,parent,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
 		    if method != nullE 
-		    then newClassParent(applyEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
+		    then newClassParent(localInterpState,applyEEE(localInterpState,method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
 		    else (
 			 when newInitExpr
-			 is p:Sequence do newClassParent(newInitExpr,class,parent,false)
+			 is p:Sequence do newClassParent(localInterpState,newInitExpr,class,parent,false)
 			 is p:List do (
 			      if p.class == class && nothingClass == parent
 			      then Expr(if p.mutable then copy(p) else p)
-			      else newClassParent(newInitExpr,class,parent,false))
+			      else newClassParent(localInterpState,newInitExpr,class,parent,false))
 			 is p:HashTable do (
 			      if p.class == class && p.parent == parent
 			      then Expr(if p.mutable then copy(p) else p)
-			      else newClassParent(newInitExpr,class,parent,false))
-			 else newClassParent(newInitExpr,class,parent,false))))
+			      else newClassParent(localInterpState,newInitExpr,class,parent,false))
+			 else newClassParent(localInterpState,newInitExpr,class,parent,false))))
 	  else errp(newParentCode))
      else errt(newClassCode));
 NewOfFromFun = newoffromfun;
@@ -391,7 +391,7 @@ NewOfFromFun = newoffromfun;
 export stdioS  := setupconst("stdio", Expr(stdIO));
 export stderrS := setupconst("stderr",Expr(stderr));
 
-openfilesfun(e:Expr):Expr := (
+openfilesfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      n := 0;
      ff := openfiles;
      while true do (
@@ -407,7 +407,7 @@ openfilesfun(e:Expr):Expr := (
 	  );
      list(v));
 setupfun("openFiles",openfilesfun);
-openIn(filename:Expr):Expr := (
+openIn(localInterpState:threadLocalInterp,filename:Expr):Expr := (
      when filename
      is f:file do (
 	  when openIn(f)
@@ -420,7 +420,7 @@ openIn(filename:Expr):Expr := (
      is Error do filename
      else WrongArgString());
 setupfun("openIn",openIn);
-openOut(filename:Expr):Expr := (
+openOut(localInterpState:threadLocalInterp,filename:Expr):Expr := (
      when filename
      is f:file do (
 	  when openOut(f)
@@ -433,7 +433,7 @@ openOut(filename:Expr):Expr := (
      is Error do filename
      else WrongArgString());
 setupfun("openOut",openOut);
-openOutAppend(filename:Expr):Expr := (
+openOutAppend(localInterpState:threadLocalInterp,filename:Expr):Expr := (
      when filename
      is f:string do (
 	  when openOutAppend(f)
@@ -442,7 +442,7 @@ openOutAppend(filename:Expr):Expr := (
      is Error do filename
      else WrongArgString());
 setupfun("openOutAppend",openOutAppend);
-openInOut(filename:Expr):Expr := (
+openInOut(localInterpState:threadLocalInterp,filename:Expr):Expr := (
      when filename
      is f:file do (
 	  when openInOut(f)
@@ -455,7 +455,7 @@ openInOut(filename:Expr):Expr := (
      is Error do filename
      else WrongArgString());
 setupfun("openInOut",openInOut);
-openListener(filename:Expr):Expr := (
+openListener(localInterpState:threadLocalInterp,filename:Expr):Expr := (
      when filename
      is f:string do (
 	  when openListener(f)
@@ -464,28 +464,28 @@ openListener(filename:Expr):Expr := (
      is Error do filename
      else WrongArgString());
 setupfun("openListener",openListener);
-isOpen(e:Expr):Expr := (
+isOpen(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do toExpr(f.listener || f.input || f.output)
      is x:Database do toExpr(x.isopen)
      else WrongArg("a file or database"));
 setupfun("isOpen",isOpen);
-isInputFile(e:Expr):Expr := (
+isInputFile(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do toExpr(f.input)
      else False);
 setupfun("isInputFile",isInputFile);
-isOutputFile(e:Expr):Expr := (
+isOutputFile(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do toExpr(f.output)
      else False);
 setupfun("isOutputFile",isOutputFile);
-isListener(e:Expr):Expr := (
+isListener(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do toExpr(f.listener)
      else False);
 setupfun("isListener",isListener);
-close(g:Expr):Expr := (
+close(localInterpState:threadLocalInterp,g:Expr):Expr := (
      when g
      is m:MysqlConnectionWrapper do (
 	  when m.mysql
@@ -499,15 +499,15 @@ close(g:Expr):Expr := (
      is x:Database do dbmclose(x)
      else buildErrorPacket("expected a file or database"));
 setupfun("close",close).protected = false;
-closeIn(g:Expr):Expr := (
+closeIn(localInterpState:threadLocalInterp,g:Expr):Expr := (
      when g is f:file do when closeIn(f) is m:errmsg do buildErrorPacket(m.message) else g
      else WrongArg("an input file"));
 setupfun("closeIn",closeIn).protected = false;
-closeOut(g:Expr):Expr := (
+closeOut(localInterpState:threadLocalInterp,g:Expr):Expr := (
      when g is f:file do when closeOut(f) is m:errmsg do buildErrorPacket(m.message) else g
      else WrongArg("an output file"));
 setupfun("closeOut",closeOut).protected = false;
-flush(g:Expr):Expr := (
+flush(localInterpState:threadLocalInterp,g:Expr):Expr := (
      when g
      is f:file do (
 	  if f.output
@@ -515,7 +515,7 @@ flush(g:Expr):Expr := (
 	  else WrongArg("an output file"))
      else WrongArg("a file"));
 setupfun("flush",flush).protected = false;
-protect(e:Expr):Expr := (
+protect(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
 	  d := dc.dictionary;
@@ -533,7 +533,7 @@ protect(e:Expr):Expr := (
 	  e)
      else WrongArg("a symbol or a dictionary"));
 setupfun("protect",protect);
-flagSymbol(e:Expr):Expr := (
+flagSymbol(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is q:SymbolClosure do (
 	  q.symbol.flagLookup = !q.symbol.flagLookup;
@@ -547,7 +547,7 @@ export chars := new array(Expr) len 256 do (
 	  provide Expr(string(char(i)));
 	  i = i+1;
 	  ));
-getcfun(e:Expr):Expr := (
+getcfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do (
 	  i := getc(f);
@@ -556,7 +556,7 @@ getcfun(e:Expr):Expr := (
      else buildErrorPacket("expected an input file"));
 setupfun("getc",getcfun);
 
-leftshiftfun(e:Expr):Expr := (
+leftshiftfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then (
@@ -592,7 +592,7 @@ installMethod(Expr(LessLessS),CCClass,ZZClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
 
-rightshiftfun(e:Expr):Expr := (
+rightshiftfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then (
@@ -628,38 +628,38 @@ installMethod(Expr(GreaterGreaterS),CCClass,ZZClass,
      Expr(CompiledFunction(rightshiftfun,nextHash()))
      );
 
-unSingleton(e:Expr):Expr := (
+unSingleton(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is v:Sequence do if length(v) == 1 then v.0 else e
      else e);
 setupfun("unsequence",unSingleton);
 
-disassemble(e:Expr):Expr := (
+disassemble(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:FunctionClosure do Expr(tostring(Code(f.model)))
      is f:functionCode do Expr(tostring(Code(f)))
      is c:CodeClosure do Expr(tostring(c.code))
-     is s:SpecialExpr do disassemble(s.e)
+     is s:SpecialExpr do disassemble(localInterpState,s.e)
      else WrongArg("pseudocode or a function closure derived from Macaulay 2 code")
      );
 setupfun("disassemble", disassemble);
 
-pseudocode(e:Expr):Expr := (
+pseudocode(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:FunctionClosure do Expr(CodeClosure(f.frame, Code(f.model)))
-     is s:SpecialExpr do pseudocode(s.e)
+     is s:SpecialExpr do pseudocode(localInterpState,s.e)
      else WrongArg("a function closure derived from Macaulay 2 code")
      );
 setupfun("pseudocode", pseudocode);
 
-cpuTime(e:Expr):Expr := (
+cpuTime(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do if length(s) == 0 then toExpr(etime())
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("cpuTime",cpuTime);
 
-timefun(a:Code):Expr := (
+timefun(localInterpState:threadLocalInterp,a:Code):Expr := (
      v := etime();
      ret := eval(a);
      x := etime();
@@ -667,7 +667,7 @@ timefun(a:Code):Expr := (
      is Error do ret
      else list(timeClass,Sequence(toExpr(x-v),ret)));
 setupop(timingS,timefun);
-showtimefun(a:Code):Expr := (
+showtimefun(localInterpState:threadLocalInterp,a:Code):Expr := (
      v := etime();
      ret := eval(a);
      x := etime();
@@ -675,7 +675,7 @@ showtimefun(a:Code):Expr := (
      ret);
 setupop(timeS,showtimefun);
 
-exponent(e:Expr):Expr := (
+exponent(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do toExpr(exponent(x))	      -- # typical value: size2, ZZ, ZZ
      -- is x:QQ do toExpr(exponent(x))
@@ -684,7 +684,7 @@ exponent(e:Expr):Expr := (
      else WrongArg("a number"));
 setupfun("size2",exponent);
 
-realPart(e:Expr):Expr := (
+realPart(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is ZZ do e
      is RR do e
@@ -692,7 +692,7 @@ realPart(e:Expr):Expr := (
      is QQ do e
      else WrongArg("a number"));
 setupfun("realPart",realPart);
-imaginaryPart(e:Expr):Expr := (
+imaginaryPart(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is ZZ do Expr(toInteger(0))
      is RR do toExpr(0)
@@ -706,7 +706,7 @@ finalizer(x:Foo,msg:string):void := (
      stderr << "--finalization: " << msg << endl ;
      );
 finalizerCount := 0;
-registerFinalizer(e:Expr):Expr := (
+registerFinalizer(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(2) else
  	  when s.1 is msg:string do (

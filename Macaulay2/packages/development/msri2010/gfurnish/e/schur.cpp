@@ -325,7 +325,7 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
   for (i=1; i<nvars_; i++)
     for (j=i+1; j<=nvars_; j++)
       if (exp[i] != exp[j])
-	mpz_div_ui(result, result, j - i);
+	mpz_fdiv_q_ui(result, result, j - i);
 }
 
 ring_elem SchurRing::dimension(const ring_elem f) const

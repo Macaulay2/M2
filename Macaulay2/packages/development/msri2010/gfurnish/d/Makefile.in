@@ -127,7 +127,7 @@ DFILES += mysql.d
 else
 DFILES += mysqldummy.d
 endif
-
+DFILES += thread.d
 DFILES += evaluate.d
 DFILES += objects.d
 DFILES += struct.d
@@ -158,7 +158,6 @@ DFILES += varstrin.d
 DFILES += strings.d 
 DFILES += system.d
 DFILES += C.d
-DFILES += thread.d
 
 actors4.oo basic.oo engine.oo interface.oo objects.oo : ../e/engine.h
 

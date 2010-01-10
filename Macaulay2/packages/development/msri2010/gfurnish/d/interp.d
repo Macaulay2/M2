@@ -67,7 +67,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else applyEE(method,g)
      );
-readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
+readeval4(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
      mode := topLevelMode;
      modeBeforePrint := list(mode,Expr(BeforePrint));
@@ -244,7 +244,7 @@ decrementInterpreterDepth():void := (
      setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
 
 
-readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
+readeval3(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      saveLocalFrame := threadLocalInterpState.localFrame;
      threadLocalInterpState.localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
@@ -253,17 +253,17 @@ readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
         currentPosFile = file.posFile;
-	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue,returnIfError);
+	ret := readeval4(localInterpState,file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue,returnIfError);
       setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
       currentPosFile = savepf;
      threadLocalInterpState.localFrame = saveLocalFrame;
      ret);
-readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
+readeval(localInterpState:threadLocalInterp,file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      savefe := getGlobalVariable(fileExitHooks);
      setGlobalVariable(fileExitHooks,emptyList);
      printout := false; mode := nullE;
-     ret := readeval3(file,printout,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false,returnIfError);
+     ret := readeval3(localInterpState,file,printout,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false,returnIfError);
      haderror := when ret is Error do True else False;
      hadexiterror := false;
      hook := getGlobalVariable(fileExitHooks);
@@ -307,24 +307,24 @@ topLevelPrompt():string := (
      promptcount = promptcount + 1;
      p);
 
-loadprintstdin(dc:DictionaryClosure,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
+loadprintstdin(localInterpState:threadLocalInterp,dc:DictionaryClosure,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      when openTokenFile("-")
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
 	  if !file.posFile.file.fulllines		    --texmacs !
 	  then setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,dc,false,stopIfBreakReturnContinue,returnIfError);
+	  r := readeval3(localInterpState,file,true,dc,false,stopIfBreakReturnContinue,returnIfError);
 	  file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 	  r));
 
-loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
+loadprint(localInterpState:threadLocalInterp,filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
      when openTokenFile(filename)
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  if !file.posFile.file.fulllines		    --texmacs !
 	  then setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,dc,false,false,returnIfError);
+	  r := readeval3(localInterpState,file,true,dc,false,false,returnIfError);
 	  t := (
 	       if filename === "-"			 -- whether it's stdin
 	       then (
@@ -342,11 +342,11 @@ loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
 	       if t == ERROR
 	       then buildErrorPacket("error closing file") 
 	       else nullE)));
-load(filename:string):Expr := (
+load(localInterpState:threadLocalInterp,filename:string):Expr := (
      when openTokenFile(filename)
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
-	  r := readeval(file,true,true);
+	  r := readeval(localInterpState,file,true,true);
 	  t := if !(filename==="-") then close(file) else 0;
 	  when r is err:Error do (
 	       if err.message == returnMessage
@@ -359,9 +359,9 @@ load(filename:string):Expr := (
 	       then buildErrorPacket("error closing file") 
  	       else r)));
 
-load(e:Expr):Expr := (
+load(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is s:string do load(s)
+     is s:string do load(localInterpState,s)
      else buildErrorPacket("expected string as file name"));
 setupfun("simpleLoad",load);
 
@@ -372,12 +372,12 @@ currentLineNumber(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("currentLineNumber",currentLineNumber);
 
-input(e:Expr):Expr := (
+input(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is filename:string do (
 	  -- we should have a way of setting normal prompts while inputting
      	  incrementInterpreterDepth();
-	  ret := loadprint(filename,newStaticLocalDictionaryClosure(filename),true);
+	  ret := loadprint(localInterpState,filename,newStaticLocalDictionaryClosure(filename),true);
      	  decrementInterpreterDepth();
 	  previousLineNumber = -1;
 	  ret)
@@ -483,14 +483,14 @@ debugger(f:Frame,c:Code):Expr := (
 debuggerFun = debugger;
 
 currentString := setupvar("currentString", nullE);
-value(e:Expr):Expr := (
+value(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
      is c:CodeClosure do eval(c.frame,c.code)
      is s:string do (
       	  savecs := getGlobalVariable(currentString);
 	  setGlobalVariable(currentString,Expr(s));
-	  r := readeval(stringTokenFile("currentString", s+newline),true,true);
+	  r := readeval(localInterpState,stringTokenFile("currentString", s+newline),true,true);
 	  setGlobalVariable(currentString,savecs);
 	  when r 
 	  is err:Error do (
@@ -505,7 +505,7 @@ setupfun("value",value).protected = false;
 
 tmpbuf := new string len 100 do provide ' ' ;
 
-internalCapture(e:Expr):Expr := (
+internalCapture(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:string do (
      	  flush(stdIO);
@@ -525,7 +525,7 @@ internalCapture(e:Expr):Expr := (
 	  previousLineNumber = -1;
 	  setLineNumber(0);
 	  setprompt(stringFile,topLevelPrompt);
-	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
+	  r := readeval3(localInterpState,stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
 	  out := substrAlwaysCopy(stdIO.outbuffer,0,stdIO.outindex);
 	  stdIO.outfd = oldfd;
 	  stdIO.outbuffer = oldbuf;
@@ -549,7 +549,7 @@ Exit(err:Error):void := exit(
      else errorExit
      );
 
-export process():void := (
+export process(localInterpState:threadLocalInterp):void := (
      threadLocalInterpState.localFrame = globalFrame;
      previousLineNumber = -1;			  -- might have done dumpdata()
      stdin .inisatty  =   0 != isatty(0) ;
@@ -561,7 +561,7 @@ export process():void := (
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
-     ret := readeval(stringTokenFile(startupFile,startupString),false,false);
+     ret := readeval(localInterpState,stringTokenFile(startupFile,startupString),false,false);
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError

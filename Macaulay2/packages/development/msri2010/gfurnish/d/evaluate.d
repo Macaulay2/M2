@@ -85,7 +85,7 @@ export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
 	  val := eval(rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val)));
 
-export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
+export storeInDictionary(localInterpState:threadLocalInterp,dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
      ival := eval(i);
      when ival
      is newname:string do (
@@ -143,7 +143,7 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
 	  else printErrorMessageE(CONTENT,"expected a string"))
      else printErrorMessageE(KEY,"expected a string"));
 
-assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
+assignelemfun(localInterpState:threadLocalInterp,lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
      when x
      is Error do x
@@ -156,7 +156,7 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      is x:Database do dbmstore(x,lhsindex,rhs)
      is dc:DictionaryClosure do (
 	  if dc.dictionary.protected then printErrorMessageE(lhsarray,"attempted to create symbol in protected dictionary")
-	  else storeInDictionary(dc,lhsindex,rhs))
+	  else storeInDictionary(localInterpState,dc,lhsindex,rhs))
      else printErrorMessageE(lhsarray,"expected a list, hash table, database, or dictionary")
      );
 
@@ -169,7 +169,7 @@ assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
      else printErrorMessageE(i,"'.' expected right hand argument to be a symbol")
      );
 
-assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
+assignquotedelemfun(localInterpState:threadLocalInterp,lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
      when x
      is x:HashTable do assignquotedobject(x,lhsindex,rhs)
@@ -568,7 +568,7 @@ wrongModel1(model:functionCode):Expr := printErrorMessageE(
      "expected " + tostring(model.desc.numparms) + " argument" + (if model.desc.numparms == 1 then "" else "s") + " but got 1"
      );
 
-export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
+export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):Expr := (
      if recursionDepth > recursionLimit then return RecursionLimit();
      previousFrame := fc.frame;
      model := fc.model;
@@ -669,7 +669,7 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 					break)
 				   else (
 				   	recursionDepth = recursionDepth + 1;
-					ret = ff.fn(z);
+					ret = ff.fn(localInterpState,z);
 				   	recursionDepth = recursionDepth - 1;
 					break))
 			      is ff:CompiledFunctionClosure do (
@@ -883,16 +883,16 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 	       )
 	  )
      );
-export applyES(f:Expr,v:Sequence):Expr := (
+export applyES(localInterpState:threadLocalInterp,f:Expr,v:Sequence):Expr := (
      when f
-     is ff:CompiledFunction do ff.fn(Expr(v))
+     is ff:CompiledFunction do ff.fn(localInterpState,Expr(v))
      is ff:CompiledFunctionClosure do ff.fn(Expr(v),ff.env)
      is c:FunctionClosure do applyFCS(c,v)
-     is s:SpecialExpr do applyES(s.e,v)
+     is s:SpecialExpr do applyES(localInterpState,s.e,v)
      else buildErrorPacket("expected a function"));
-export applyEE(f:Expr,e:Expr):Expr := (
+export applyEE(localInterpState:threadLocalInterp,f:Expr,e:Expr):Expr := (
      when f
-     is ff:CompiledFunction do ff.fn(e)
+     is ff:CompiledFunction do ff.fn(localInterpState,e)
      is ff:CompiledFunctionClosure do ff.fn(e,ff.env)
      is c:FunctionClosure do (
 	  when e
@@ -903,12 +903,12 @@ export applyEE(f:Expr,e:Expr):Expr := (
      else buildErrorPacket("expected a function"));
 --------
 -- could optimize later
-export applyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
+export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr):Expr := (
      -- was simply apply(f,Expr(Sequence(e0,e1)))
      when g
-     is ff:CompiledFunction do ff.fn(Expr(Sequence(e0,e1)))
+     is ff:CompiledFunction do ff.fn(localInterpState,Expr(Sequence(e0,e1)))
      is ff:CompiledFunctionClosure do ff.fn(Expr(Sequence(e0,e1)),ff.env)
-     is s:SpecialExpr do applyEEE(s.e,e0,e1)
+     is s:SpecialExpr do applyEEE(localInterpState,s.e,e0,e1)
      is c:FunctionClosure do (
 	  model := c.model;
 	  desc := model.desc;
@@ -972,12 +972,12 @@ export applyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
 	       )
 	  )
      else buildErrorPacket("expected a function"));     
-export applyEEE(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
+export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
      -- was simply apply(f,Expr(Sequence(e0,e1,e2)));
      when g
-     is ff:CompiledFunction do ff.fn(Expr(Sequence(e0,e1,e2)))
+     is ff:CompiledFunction do ff.fn(localInterpState,Expr(Sequence(e0,e1,e2)))
      is ff:CompiledFunctionClosure do ff.fn(Expr(Sequence(e0,e1,e2)),ff.env)
-     is s:SpecialExpr do applyEEE(s.e,e0,e1,e2)
+     is s:SpecialExpr do applyEEE(localInterpState,s.e,e0,e1,e2)
      is c:FunctionClosure do (
 	  model := c.model;
 	  desc := model.desc;
@@ -1050,7 +1050,7 @@ export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
 	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
 	  if method == nullE then MissingMethod(methodkey)
 	  else applyEE(method,right)));
-export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
+export binarymethod(localInterpState:threadLocalInterp,lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
      left := eval(lhs);
      when left is Error do left
      else (
@@ -1060,8 +1060,8 @@ export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
 	       method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
 		    methodkey.symbol.hash);
 	       if method == nullE then MissingMethodPair(methodkey,left,right)
-	       else applyEEE(method,left,right))));
-export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
+	       else applyEEE(localInterpState,method,left,right))));
+export binarymethod(localInterpState:threadLocalInterp,left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
      right := eval(rhs);
      when right is Error do right
      else (
@@ -1073,11 +1073,11 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
 	       else MissingMethodPair(methodkey,left,right)
 	       else MissingMethodPair(methodkey,left,right)
 	       )
-	  else applyEEE(method,left,right)));
+	  else applyEEE(localInterpState,method,left,right)));
 
 -----------------------------------------------------------------------------
 
-globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
+globalAssignmentHook(localInterpState:threadLocalInterp,t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
      method := lookup(Class(oldvalue),GlobalReleaseE);
      sym := Expr(SymbolClosure(globalFrame,t));
      -- top level hooks for assignment to a global variable
@@ -1086,24 +1086,24 @@ globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
 	  y := when g
 	  is s:List do (
 	       foreach f in s.v do (
-		    r := applyEEE(f,sym,newvalue);
+		    r := applyEEE(localInterpState,f,sym,newvalue);
 		    when r is Error do return r else nothing;
 		    );
 	       nullE)
-	  is f:CompiledFunction do applyEEE(g,sym,newvalue)
-	  is f:CompiledFunctionClosure do applyEEE(g,sym,newvalue)
-	  is f:FunctionClosure do applyEEE(g,sym,newvalue)
-	  is f:SpecialExpr do applyEEE(f.e,sym,newvalue)
+	  is f:CompiledFunction do applyEEE(localInterpState,g,sym,newvalue)
+	  is f:CompiledFunctionClosure do applyEEE(localInterpState,g,sym,newvalue)
+	  is f:FunctionClosure do applyEEE(localInterpState,g,sym,newvalue)
+	  is f:SpecialExpr do applyEEE(localInterpState,f.e,sym,newvalue)
 	  else buildErrorPacket("expected global assignment hook for " + t.word.name + " to be a function or list of functions");
 	  when y is Error do return y else nothing;
 	  );
      if method != nullE then (
-	  y := applyEEE(method,sym,oldvalue);
+	  y := applyEEE(localInterpState,method,sym,oldvalue);
 	  when y is Error do return y else nothing;
 	  );
      method = lookup(Class(newvalue),GlobalAssignE);
      if method != nullE then (
-	  y := applyEEE(method,sym,newvalue);
+	  y := applyEEE(localInterpState,method,sym,newvalue);
 	  when y is Error do return y else nothing;
 	  );
      nullE
@@ -1122,26 +1122,26 @@ localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- fram
      f.values.frameindex = newvalue;
      newvalue);
 
-globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
+globalAssignment(localInterpState:threadLocalInterp,frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
      if t.protected then return buildErrorPacket("assignment to protected variable '" + t.word.name + "'");
      vals := globalFrame.values;
-     r := globalAssignmentHook(t,vals.frameindex,newvalue);
+     r := globalAssignmentHook(localInterpState,t,vals.frameindex,newvalue);
      when r is Error do return r else nothing;
      vals.frameindex = newvalue;
      newvalue);
 
-assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
+assignment(localInterpState:threadLocalInterp,nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
      if nestingDepth == -1
-     then globalAssignment(frameindex,t,newvalue)
+     then globalAssignment(localInterpState,frameindex,t,newvalue)
      else localAssignment(nestingDepth,frameindex,newvalue));
 
-globalAssignmentFun(x:globalAssignmentCode):Expr := (
+globalAssignmentFun(localInterpState:threadLocalInterp,x:globalAssignmentCode):Expr := (
      t := x.lhs;
      newvalue := eval(x.rhs);
      when newvalue is Error do return newvalue else nothing;
-     globalAssignment(t.frameindex,t,newvalue));
+     globalAssignment(localInterpState,t.frameindex,t,newvalue));
 
-parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
+parallelAssignmentFun(localInterpState:threadLocalInterp,x:parallelAssignmentCode):Expr := (
      syms := x.lhs;
      nestingDepth := x.nestingDepth;
      frameindex := x.frameindex;
@@ -1153,7 +1153,7 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      is values:Sequence do 
      if nlhs == length(values) then (
 	  for i from 0 to nlhs-1 do (
-	       r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+	       r := assignment(localInterpState,nestingDepth.i,frameindex.i,syms.i,values.i);
 	       when r is Error do return r else nothing;
 	       );
 	  value
@@ -1280,7 +1280,7 @@ handleError(c:Code,e:Expr):Expr := (
 	  else e)
      else e);
 
-export eval(c:Code):Expr := (
+export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
      e := (
 	  if exceptionFlag && !steppingFurther(c) then (    -- compare this code to the code in evalexcept() below
 	       if steppingFlag then (
@@ -1299,24 +1299,24 @@ export eval(c:Code):Expr := (
 		    buildErrorPacket("unknown exception")
 		    ))
 	  else when c
-	  is u:unaryCode do u.f(u.rhs)
-	  is b:binaryCode do b.f(b.lhs,b.rhs)
+	  is u:unaryCode do u.f(localInterpState,u.rhs)
+	  is b:binaryCode do b.f(localInterpState,b.lhs,b.rhs)
 	  is b:adjacentCode do (
 	       left := eval(b.lhs);
 	       when left
-	       is fc:FunctionClosure do applyFCC(fc,b.rhs)
+	       is fc:FunctionClosure do applyFCC(localInterpState,fc,b.rhs)
 	       is ff:CompiledFunction do (
 		    z := eval(b.rhs);
 		    when z is Error do z
-		    else ff.fn(z))
+		    else ff.fn(localInterpState,z))
 	       is ff:CompiledFunctionClosure do (
 		    z := eval(b.rhs);
 		    when z is Error do z
 		    else ff.fn(z,ff.env))
 	       is s:SpecialExpr do (
 		    when s.e
-		    is fc:FunctionClosure do applyFCC(fc,b.rhs)
-		    is ff:CompiledFunction do ( z := eval(b.rhs); when z is Error do z else ff.fn(z))
+		    is fc:FunctionClosure do applyFCC(localInterpState,fc,b.rhs)
+		    is ff:CompiledFunction do ( z := eval(b.rhs); when z is Error do z else ff.fn(localInterpState,z))
 		    is ff:CompiledFunctionClosure do ( z := eval(b.rhs); when z is Error do z else ff.fn(z,ff.env))
      	       	    else binarymethod(left,b.rhs,AdjacentS))
 	       is Error do left
@@ -1339,8 +1339,8 @@ export eval(c:Code):Expr := (
 	       newvalue := eval(x.rhs);
 	       when newvalue is Error do return newvalue 
 	       else localAssignment(x.nestingDepth,x.frameindex,newvalue))
-	  is a:globalAssignmentCode do globalAssignmentFun(a)
-	  is p:parallelAssignmentCode do parallelAssignmentFun(p)
+	  is a:globalAssignmentCode do globalAssignmentFun(localInterpState,a)
+	  is p:parallelAssignmentCode do parallelAssignmentFun(localInterpState,p)
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:tryCode do (
 	       oldSuppressErrors := SuppressErrors;
@@ -1379,8 +1379,8 @@ export eval(c:Code):Expr := (
 		    );
 	       noRecycle(f);
 	       return Expr(SymbolClosure(f,r.symbol)))
-	  is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
-	  is b:multaryCode do b.f(b.args)
+	  is b:ternaryCode do b.f(localInterpState,b.arg1,b.arg2,b.arg3)
+	  is b:multaryCode do b.f(localInterpState,b.args)
 	  is n:newLocalFrameCode do (
 	       threadLocalInterpState.localFrame = Frame(threadLocalInterpState.localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
 	       x := eval(n.body);
@@ -1390,10 +1390,10 @@ export eval(c:Code):Expr := (
 	  is c:whileListDoCode do evalWhileListDoCode(c)
 	  is c:whileDoCode do evalWhileDoCode(c)
 	  is c:whileListCode do evalWhileListCode(c)
-	  is c:newCode do NewFun(c.newClause)
-	  is c:newOfCode do NewOfFun(c.newClause,c.ofClause)
-	  is c:newFromCode do NewFromFun(c.newClause,c.fromClause)
-	  is c:newOfFromCode do NewOfFromFun(c.newClause,c.ofClause,c.fromClause)
+	  is c:newCode do NewFun(localInterpState,c.newClause)
+	  is c:newOfCode do NewOfFun(localInterpState,c.newClause,c.ofClause)
+	  is c:newFromCode do NewFromFun(localInterpState,c.newClause,c.fromClause)
+	  is c:newOfFromCode do NewOfFromFun(localInterpState,c.newClause,c.ofClause,c.fromClause)
 	  is nullCode do return nullE
 	  is v:realCode do return Expr(v.x)
 	  is v:integerCode do return Expr(v.x)
@@ -1463,7 +1463,7 @@ export eval(f:Frame,c:Code):Expr := (
      threadLocalInterpState.localFrame = saveLocalFrame;
      ret);
 
-shieldfun(a:Code):Expr := (
+shieldfun(localInterpState:threadLocalInterp,a:Code):Expr := (
      if interruptShield then eval(a)
      else (
      	  interruptPending = interruptedFlag;
@@ -1480,24 +1480,24 @@ shieldfun(a:Code):Expr := (
      	  ret));
 setupop(shieldS,shieldfun);     
 
-returnFun(a:Code):Expr := (
+returnFun(localInterpState:threadLocalInterp,a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,returnMessage,e,false,dummyFrame)));
 setupop(returnS,returnFun);
 
-throwFun(a:Code):Expr := (
+throwFun(localInterpState:threadLocalInterp,a:Code):Expr := (
      e := eval(a);
      when e is Error do e else Expr(Error(dummyPosition,throwMessage,e,false,dummyFrame)));
 setupop(throwS,throwFun);
 
-continueFun(a:Code):Expr := (
+continueFun(localInterpState:threadLocalInterp,a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,
 	       if a == dummyCode then continueMessage else continueMessageWithArg,
 	       e,false,dummyFrame)));
 setupop(continueS,continueFun);
 
-stepFun(a:Code):Expr := (
+stepFun(localInterpState:threadLocalInterp,a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else (
 	  Expr(Error(dummyPosition,
@@ -1505,12 +1505,12 @@ stepFun(a:Code):Expr := (
 	       e,false,dummyFrame))));
 setupop(stepS,stepFun);
 
-breakFun(a:Code):Expr := (
+breakFun(localInterpState:threadLocalInterp,a:Code):Expr := (
      e := if a == dummyCode then dummyExpr else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 
-assigntofun(lhs:Code,rhs:Code):Expr := (
+assigntofun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left
      is q:SymbolClosure do (
@@ -1529,42 +1529,42 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 	  else (
 	       value := eval(rhs);
 	       when value is Error do return value else nothing;
-	       applyEEE(method,left,value))));
+	       applyEEE(localInterpState,method,left,value))));
 setup(LeftArrowS,assigntofun);
 
-idfun(e:Expr):Expr := e;
+idfun(localInterpState:threadLocalInterp,e:Expr):Expr := e;
 setupfun("identity",idfun);
-scanpairs(f:Expr,obj:HashTable):Expr := (
+scanpairs(localInterpState:threadLocalInterp,f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       v := applyEEE(f,p.key,p.value);
+	       v := applyEEE(localInterpState,f,p.key,p.value);
 	       when v is Error do return v else nothing;
 	       p = p.next;
 	       ));
      nullE);
-scanpairsfun(e:Expr):Expr := (
+scanpairsfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
      then when a.0 is o:HashTable 
      do
      if	       o.mutable
      then      WrongArg("an immutable hash table")
-     else      scanpairs(a.1,o)
+     else      scanpairs(localInterpState,a.1,o)
      else      WrongArg(1,"a hash table")
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
-mappairs(f:Expr,obj:HashTable):Expr := (
+mappairs(localInterpState:threadLocalInterp,f:Expr,obj:HashTable):Expr := (
      newobj := newHashTable(obj.class,obj.parent);
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       v := applyEEE(f,p.key,p.value);
+	       v := applyEEE(localInterpState,f,p.key,p.value);
 	       when v 
 	       is Error do return v 
 	       is Nothing do nothing
@@ -1586,14 +1586,14 @@ mappairs(f:Expr,obj:HashTable):Expr := (
 	       ));
      sethash(newobj,obj.mutable);
      Expr(newobj));
-mappairsfun(e:Expr):Expr := (
+mappairsfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
      then when a.0 is o:HashTable 
      do
      if        o.mutable 
      then      WrongArg("an immutable hash table")
-     else      mappairs(a.1,o)
+     else      mappairs(localInterpState,a.1,o)
      else      WrongArg(1,"a hash table")
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
@@ -1613,7 +1613,7 @@ export mapkeys(f:Expr,obj:HashTable):Expr := (
 	       ));
      sethash(newobj,obj.mutable);
      Expr(newobj));
-mapkeysfun(e:Expr):Expr := (
+mapkeysfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
      then when a.0 is o:HashTable 
@@ -1652,7 +1652,7 @@ export mapvalues(f:Expr,obj:HashTable):Expr := (
      if hadError then return errm;
      sethash(u,obj.mutable);
      Expr(u));
-mapvaluesfun(e:Expr):Expr := (
+mapvaluesfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
      then when a.0 is o:HashTable 
@@ -1665,7 +1665,7 @@ mapvaluesfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("applyValues",mapvaluesfun);
 
-merge(e:Expr):Expr := (
+merge(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is v:Sequence do (
 	  if length(v) != 3 then return WrongNumArgs(3);
 	  g := v.2;
@@ -1681,7 +1681,7 @@ merge(e:Expr):Expr := (
 		    while q != q.next do (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
-			      t := applyEEE(g,val,q.value);
+			      t := applyEEE(localInterpState,g,val,q.value);
 			      when t is err:Error do (
 			      	   if err.message != continueMessage then return t else remove(z,q.key);
 			      	   )
@@ -1712,7 +1712,7 @@ merge(e:Expr):Expr := (
 		    while q != q.next do (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
-			      t := applyEEE(g,q.value,val);
+			      t := applyEEE(localInterpState,g,q.value,val);
 			      when t is err:Error do (
 			      	   if err.message != continueMessage then return t else remove(z,q.key);
 			      	   )
@@ -1740,7 +1740,7 @@ merge(e:Expr):Expr := (
 	  else WrongArg(1,"a hash table"))
      else WrongNumArgs(3));
 setupfun("merge",merge);		  -- see objects.d
-combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
+combine(localInterpState:threadLocalInterp,f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
      z := newHashTable(x.class,x.parent);
      foreach pp in x.table do (
 	  p := pp;
@@ -1748,13 +1748,13 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 	       foreach qq in y.table do (
 		    q := qq;
 		    while q != q.next do (
-			 pqkey := applyEEE(f,p.key,q.key);
+			 pqkey := applyEEE(localInterpState,f,p.key,q.key);
 			 when pqkey 
 			 is err:Error do (
 			      if err.message != continueMessage then return pqkey;
 			      )
 			 else (
-			      pqvalue := applyEEE(g,p.value,q.value);
+			      pqvalue := applyEEE(localInterpState,g,p.value,q.value);
 			      when pqvalue
 			      is err:Error do (
 				   if err.message != continueMessage then return pqvalue else nothing;
@@ -1768,7 +1768,7 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 					when r is Error do return r else nothing;
 					)
 				   else (
-					t := applyEEE(h,previous,pqvalue);
+					t := applyEEE(localInterpState,h,previous,pqvalue);
 					when t is err:Error do (
 					     if err.message == continueMessage
 					     then remove(z,pqkey)
@@ -1783,7 +1783,7 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 	       p = p.next));
      sethash(z,x.mutable | y.mutable);
      z);
-combine(e:Expr):Expr := (
+combine(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is v:Sequence do
      if length(v) == 5 then 
@@ -1791,7 +1791,7 @@ combine(e:Expr):Expr := (
      if x.mutable then WrongArg(1,"an immutable hash table") else
      when v.1 is y:HashTable do
      if y.mutable then WrongArg(2,"an immutable hash table") else
-     combine(v.2,v.3,v.4,x,y)
+     combine(localInterpState,v.2,v.3,v.4,x,y)
      else WrongArg(1+1,"a hash table")
      else WrongArg(0+1,"a hash table")
      else WrongNumArgs(5)
@@ -1804,18 +1804,18 @@ export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      if method == nullE then MissingMethod(methodkey)
      else applyEE(method,right));
 
-export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
+export binarymethod(localInterpState:threadLocalInterp,left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),methodkey.symbol.hash);
      if method == nullE then MissingMethodPair(methodkey,left,right)
-     else applyEEE(method,left,right));
+     else applyEEE(localInterpState,method,left,right));
 
-export binarymethod(left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Expr := (
+export binarymethod(localInterpState:threadLocalInterp,left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Expr := (
      method := lookupBinaryMethod(Class(left),Class(right),methodkey,hash(methodkey));
      if method == nullE then MissingMethodPair(methodkeyname,left,right)
-     else applyEEE(method,left,right));
+     else applyEEE(localInterpState,method,left,right));
 
-AssignElemFun = assignelemfun;
-AssignQuotedElemFun = assignquotedelemfun;
+-- HACK AssignElemFun = assignelemfun;
+-- HACK AssignQuotedElemFun = assignquotedelemfun;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

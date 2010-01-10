@@ -45,13 +45,13 @@ shrink(object:HashTable):void := (
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;)));
-hashfun(e:Expr):Expr := Expr(toInteger(int(hash(e))));
+hashfun(localInterpState:threadLocalInterp,e:Expr):Expr := Expr(toInteger(int(hash(e))));
 setupfun("hash",hashfun);
 export toExpr(h:int):Expr := Expr(toInteger(h));
 export toExpr(h:long):Expr := Expr(toInteger(h));
 export toExpr(h:ulong):Expr := Expr(toInteger(h));
 export toExpr(h:ushort):Expr := Expr(toInteger(h));
-mutablefun(e:Expr):Expr := Expr(toExpr(
+mutablefun(localInterpState:threadLocalInterp,e:Expr):Expr := Expr(toExpr(
      	  when e is o:HashTable do o.mutable
      	  is x:List do x.mutable
      	  is s:SymbolClosure do !s.symbol.protected
@@ -397,7 +397,7 @@ export storeInHashTableMustClobber(x:HashTable,key:Expr,value:Expr):Expr := (
      storeInHashTableMustClobber(x,key,hash(key),value)
      );
 
-bucketsfun(e:Expr):Expr := (
+bucketsfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
 	  d := dc.dictionary;
@@ -437,12 +437,12 @@ bucketsfun(e:Expr):Expr := (
 		    provide list(s))))
      else WrongArg("a hash table"));
 setupfun("buckets",bucketsfun);
-export Parent(e:Expr):HashTable := (
+export Parent(localInterpState:threadLocalInterp,e:Expr):HashTable := (
      when e
      is obj:HashTable do obj.parent
-     is s:SpecialExpr do Parent(s.e)
+     is s:SpecialExpr do Parent(localInterpState,s.e)
      else nothingClass);
-export parentfun(e:Expr):Expr := Expr(Parent(e));
+export parentfun(localInterpState:threadLocalInterp,e:Expr):Expr := Expr(Parent(localInterpState,e));
 setupfun("parent",parentfun);
 
 export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
@@ -493,7 +493,7 @@ export Class(e:Expr):HashTable := (
      is RawStraightLineProgram do rawStraightLineProgramClass
      is RawPathTracker do rawPathTrackerClass
      );
-classfun(e:Expr):Expr := Expr(Class(e));
+classfun(localInterpState:threadLocalInterp,e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);
 -- these couldn't have been right
 --export lookup(e:Expr,key:Expr,keyhash:int):Expr := (
@@ -895,7 +895,7 @@ export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTabl
      nullE);
 export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr):Expr := lookupQuaternaryMethod(s1,s2,s3,s4,meth,hash(meth));
 -----------------------------------------------------------------------------
-installfun(e:Expr):Expr := (
+installfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then installMethod(a.0,a.1)
@@ -935,7 +935,7 @@ installfun(e:Expr):Expr := (
      else WrongNumArgs(3,5));
 setupfun("installMethod",installfun);
 -----------------------------------------------------------------------------
-export lookupfun(e:Expr):Expr := (
+export lookupfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is a:Sequence do
      if length(a) == 1 then lookup0(e)
@@ -1008,7 +1008,7 @@ makeSet(v:Sequence):Expr := (
      foreach e in v do storeInHashTable(o,e,one);
      sethash(o,false);
      Expr(o));
-makeSet(e:Expr):Expr := (
+makeSet(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is v:Sequence do makeSet(v)
      is w:List do if ancestor(w.class,visibleListClass) then makeSet(w.v)
@@ -1035,7 +1035,7 @@ makeTally(v:Sequence):Expr := (
      foreach e at i in v do modify(o,e,addone,one);
      sethash(o,false);
      Expr(o));
-makeTally(e:Expr):Expr := (
+makeTally(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is v:Sequence do makeTally(v)
      is w:List do if ancestor(w.class,visibleListClass) then makeTally(w.v)

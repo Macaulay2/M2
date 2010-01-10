@@ -35,7 +35,7 @@ internalName(s:string):string := (
      s
      );
 
-sleepfun(e:Expr):Expr := (
+sleepfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is i:ZZ do (
 	  if isInt(i)
@@ -44,7 +44,7 @@ sleepfun(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("sleep",sleepfun);
 
-forkfun(e:Expr):Expr := (
+forkfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 0
@@ -56,7 +56,7 @@ forkfun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("fork",forkfun);
 
-getpidfun(e:Expr):Expr := (
+getpidfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is o:file do Expr(toInteger(o.pid))
      is a:Sequence do (
@@ -66,7 +66,7 @@ getpidfun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("processID",getpidfun);
 
-getpgrpfun(e:Expr):Expr := (
+getpgrpfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 0
@@ -75,7 +75,7 @@ getpgrpfun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("groupID",getpgrpfun);
 
-setpgidfun(e:Expr):Expr := (
+setpgidfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2
@@ -95,7 +95,7 @@ setpgidfun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("setGroupID",setpgidfun);
 
-absfun(e:Expr):Expr := (
+absfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is i:ZZ do Expr(abs(i))				    -- # typical value: abs, ZZ, ZZ
      is x:RR do Expr(if sign(x) then -x else x)		    -- # typical value: abs, RR, RR
@@ -104,7 +104,7 @@ absfun(e:Expr):Expr := (
      else WrongArg("a number, real or complex"));
 setupfun("abs",absfun);
 
-select(a:Sequence,f:Expr):Expr := (
+select(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
      found := 0;
      foreach x at i in a do (
@@ -119,15 +119,15 @@ select(a:Sequence,f:Expr):Expr := (
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
 foo := array(string)();
-select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := (
+select(localInterpState:threadLocalInterp,pat:string,rep:string,subj:string,ignorecase:bool):Expr := (
      r := regexselect(pat,rep,subj,foo,ignorecase);
      if r == foo then return buildErrorPacket("select: "+regexmatchErrorMessage);
      Expr(list(new Sequence len length(r) do foreach s in r do provide Expr(s))));
-select(e:Expr,f:Expr,ignorecase:bool):Expr := (
+select(localInterpState:threadLocalInterp,e:Expr,f:Expr,ignorecase:bool):Expr := (
      when e
      is pat:string do (
      	  when f is subj:string
-	  do select(pat,"\\0",subj,ignorecase) 
+	  do select(localInterpState,pat,"\\0",subj,ignorecase) 
      	  else WrongArgString(2)
 	  )
      is obj:HashTable do (
@@ -146,16 +146,16 @@ select(e:Expr,f:Expr,ignorecase:bool):Expr := (
 		    ));
 	  sethash(u,obj.mutable);
 	  Expr(u))
-     is a:Sequence do Expr(select(a,f))
+     is a:Sequence do Expr(select(localInterpState,a,f))
      is b:List do (
-	  c := select(b.v,f);
+	  c := select(localInterpState,b.v,f);
 	  when c
 	  is Error do c
 	  is v:Sequence do list(b.class,v)
 	  else e			  -- shouldn't happen
 	  )
      else WrongArg(0+1,"a list or a string"));
-select(n:int,a:Sequence,f:Expr):Expr := (
+select(localInterpState:threadLocalInterp,n:int,a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
      found := 0;
      foreach x at i in a do (
@@ -171,10 +171,10 @@ select(n:int,a:Sequence,f:Expr):Expr := (
 	  else b.i = false);
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
-select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
+select(localInterpState:threadLocalInterp,n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
      when n is pat:string do
      when e is rep:string do
-     when f is subj:string do select(pat,rep,subj,ignorecase)
+     when f is subj:string do select(localInterpState,pat,rep,subj,ignorecase)
      else WrongArgString(3)
      else WrongArgString(2)
      is nn:ZZ do
@@ -201,9 +201,9 @@ select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
 		    ));
 	  sethash(u,obj.mutable);
 	  Expr(u))
-     is a:Sequence do Expr(select(toInt(n),a,f))
+     is a:Sequence do Expr(select(localInterpState,toInt(n),a,f))
      is b:List do (
-	  c := select(toInt(n),b.v,f);
+	  c := select(localInterpState,toInt(n),b.v,f);
 	  when c
 	  is Error do c
 	  is v:Sequence do list(b.class,v)
@@ -212,13 +212,13 @@ select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
      else WrongArg(1+1,"a list")
      else WrongArg(0+1,"an integer or string")
      else WrongArgZZ(0+1));
-select(e:Expr):Expr := (
+select(localInterpState:threadLocalInterp,e:Expr):Expr := (
      ignorecase := false;
      when e is a:Sequence do (
 	  if length(a) == 2
-	  then select(a.0,a.1,ignorecase)
+	  then select(localInterpState,a.0,a.1,ignorecase)
 	  else if length(a) == 3
-	  then select(a.0,a.1,a.2,ignorecase)
+	  then select(localInterpState,a.0,a.1,a.2,ignorecase)
 	  else WrongNumArgs(2,3))  -- could change this later
      else WrongNumArgs(2,3));
 setupfun("select",select);
@@ -231,19 +231,19 @@ any(f:Expr,n:int):Expr := (
 	  if v != False then return buildErrorPacket("any: expected true or false");
 	  );
      False);
-any(f:Expr,obj:HashTable):Expr := (
+any(localInterpState:threadLocalInterp,f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       v := applyEEE(f,p.key,p.value);
+	       v := applyEEE(localInterpState,f,p.key,p.value);
 	       when v is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return v else nothing;
 	       if v == True then return True;
 	       if v != False then return buildErrorPacket("any: expected true or false");
 	       p = p.next;
 	       ));
      False);
-any(f:Expr,a:Sequence):Expr := (
+any(localInterpState:threadLocalInterp,f:Expr,a:Sequence):Expr := (
      foreach x at i in a do (
 	  y := applyEE(f,x);
 	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
@@ -251,38 +251,38 @@ any(f:Expr,a:Sequence):Expr := (
 	  if y != False then return buildErrorPacket("any: expected true or false");
 	  );
      False);
-any(f:Expr,e:Expr):Expr := (
+any(localInterpState:threadLocalInterp,f:Expr,e:Expr):Expr := (
      when e
-     is a:Sequence do Expr(any(f,a))
-     is b:List do Expr(any(f,b.v))
+     is a:Sequence do Expr(any(localInterpState,f,a))
+     is b:List do Expr(any(localInterpState,f,b.v))
      is i:ZZ do if isInt(i) then Expr(any(f,toInt(i))) else WrongArgSmallInteger(1)
      is c:HashTable do 
      if c.mutable then WrongArg(1,"an immutable hash table") else
-     Expr(any(f,c))
+     Expr(any(localInterpState,f,c))
      else WrongArg("a list or a hash table"));
-any(f:Expr,a:Sequence,b:Sequence):Expr := (
+any(localInterpState:threadLocalInterp,f:Expr,a:Sequence,b:Sequence):Expr := (
      if length(a) != length(b) then return buildErrorPacket("expected lists of the same length");
      foreach x at i in a do (
-	  y := applyEEE(f,x,b.i);
+	  y := applyEEE(localInterpState,f,x,b.i);
 	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
 	  if y == True then return True;
 	  if y != False then return buildErrorPacket("any: expected true or false");
 	  );
      False);
-any(f:Expr,a:Sequence,y:Expr):Expr := (
+any(localInterpState:threadLocalInterp,f:Expr,a:Sequence,y:Expr):Expr := (
      when y
-     is c:Sequence do Expr(any(f,a,c))
-     is d:List do Expr(any(f,a,d.v))
+     is c:Sequence do Expr(any(localInterpState,f,a,c))
+     is d:List do Expr(any(localInterpState,f,a,d.v))
      else WrongArg("a basic list or sequence"));
-any(f:Expr,x:Expr,y:Expr):Expr := (
+any(localInterpState:threadLocalInterp,f:Expr,x:Expr,y:Expr):Expr := (
      when x
-     is a:Sequence do Expr(any(f,a,y))
-     is b:List do Expr(any(f,b.v,y))
+     is a:Sequence do Expr(any(localInterpState,f,a,y))
+     is b:List do Expr(any(localInterpState,f,b.v,y))
      else WrongArg("a basic list or sequence"));
-any(e:Expr):Expr := (
+any(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do (
-	  if length(a) == 2 then any(a.1,a.0)
-	  else if length(a) == 3 then any(a.2,a.0,a.1)
+	  if length(a) == 2 then any(localInterpState,a.1,a.0)
+	  else if length(a) == 3 then any(localInterpState,a.2,a.0,a.1)
 	  else WrongNumArgs(2,3))
      else WrongNumArgs(2));
 setupfun("any",any);
@@ -322,7 +322,7 @@ setupfun("any",any);
 --     else WrongNumArgs(2));
 --setupfun("find",find);
 
-characters(e:Expr):Expr := (
+characters(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:string do list(
 	  new Sequence len length(s) do (
@@ -330,7 +330,7 @@ characters(e:Expr):Expr := (
      else buildErrorPacket("expects a string"));
 setupfun("characters",characters);
 
-ascii(e:Expr):Expr := (
+ascii(localInterpState:threadLocalInterp,e:Expr):Expr := (
      if isIntArray(e)
      then Expr((
 	  v := toIntArray(e);
@@ -346,7 +346,7 @@ ascii(e:Expr):Expr := (
      else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
 setupfun("ascii",ascii);
 
-utf8(v:array(int)):Expr := (
+utf8(localInterpState:threadLocalInterp,v:array(int)):Expr := (
      w := newvarstring(length(v)+10);
      foreach i in v do (
 	  if (i &     ~0x7f) == 0 then w << char(i) else
@@ -358,8 +358,8 @@ utf8(v:array(int)):Expr := (
 
 erru():Expr := buildErrorPacket("string ended unexpectedly during utf-8 decoding");
 errb():Expr := buildErrorPacket("unexpected byte encountered in utf-8 decoding");
-utf8(y:Expr):Expr := (
-     if isIntArray(y) then utf8(toIntArray(y))
+utf8(localInterpState:threadLocalInterp,y:Expr):Expr := (
+     if isIntArray(y) then utf8(localInterpState,toIntArray(y))
      else when y is s:string do (
 	  n := length(s);
 	  x := newvararrayint(n+10);
@@ -409,7 +409,7 @@ utf8(y:Expr):Expr := (
      	  Expr(list(new Sequence len length(a) do foreach i in a do provide Expr(toInteger(i)))))
      is i:ZZ do (
 	  if !isInt(i) then return WrongArgSmallInteger();
-	  Expr(utf8(array(int)(toInt(i)))))
+	  Expr(utf8(localInterpState,array(int)(toInt(i)))))
      else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
 setupfun("utf8",utf8);
 
@@ -421,7 +421,7 @@ export checknoargs(e:Expr):Expr := (
      else WrongNumArgs(0)
      );
 
-randomint(e:Expr):Expr := (
+randomint(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when checknoargs(e) is f:Error do return Expr(f) else nothing;
      Expr(toInteger(randomint()))
      );
@@ -445,7 +445,7 @@ outseq(x:file,y:Sequence):Expr := (
 	  is s:string do (x << s;)
 	  else return WrongArg(2,"a string, or list or sequence of strings and integers, or null"));
      Expr(x));
-outstringfun(e:Expr):Expr := (
+outstringfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then (
@@ -477,12 +477,12 @@ outstringfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("printString",outstringfun);			 
 
-lenseq(y:Sequence):int := (
+lenseq(localInterpState:threadLocalInterp,y:Sequence):int := (
      l := 0;
      foreach z in y do (
 	  when z
 	  is w:List do (
-	       m := lenseq(w.v);
+	       m := lenseq(localInterpState,w.v);
 	       if m == -1 then return -1;
 	       l = l + m;
 	       )
@@ -493,7 +493,7 @@ lenseq(y:Sequence):int := (
 	       then l = l + toInt(y)
 	       else return -1)
 	  is w:Sequence do (
-	       m := lenseq(w);
+	       m := lenseq(localInterpState,w);
 	       if m == -1 then return -1;
 	       l = l + m;
 	       )
@@ -502,20 +502,20 @@ lenseq(y:Sequence):int := (
 	       )
 	  else return -1);
      l);
-stringlenfun(e:Expr):Expr := (
+stringlenfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is y:string do Expr(toInteger(length(y)))
      is Nothing do Expr(toInteger(0))
      is y:SymbolClosure do Expr(toInteger(length(y.symbol.word.name)))
      is y:List do (
-	  l := lenseq(y.v);
+	  l := lenseq(localInterpState,y.v);
 	  if l == -1 
 	  then WrongArg(1,"a string, or list or sequence of strings and integers, or null")
 	  else Expr(toInteger(l))
 	  )
      is y:ZZ do e
      is y:Sequence do (
-	  l := lenseq(y);
+	  l := lenseq(localInterpState,y);
 	  if l == -1 
 	  then WrongArg(1,"a string, or list or sequence of strings and integers, or null")
 	  else Expr(toInteger(l))
@@ -523,29 +523,29 @@ stringlenfun(e:Expr):Expr := (
      else WrongArg(1,"a string, or list or sequence of strings and integers, or null"));
 setupfun("stringlen",stringlenfun);
 
-stringcat2(a:Sequence,s:string,i:int):int := ( -- returns next available index
+stringcat2(localInterpState:threadLocalInterp,a:Sequence,s:string,i:int):int := ( -- returns next available index
      foreach x in a do (
 	  when x
-	  is a:Sequence do i = stringcat2(a,s,i)
+	  is a:Sequence do i = stringcat2(localInterpState,a,s,i)
      	  is y:SymbolClosure do foreach c in y.symbol.word.name do (s.i = c; i = i+1;)
-	  is a:List do i = stringcat2(a.v,s,i)
+	  is a:List do i = stringcat2(localInterpState,a.v,s,i)
 	  is n:ZZ do for toInt(n) do (s.i = ' '; i = i+1;)
 	  is t:string do foreach c in t do (s.i = c; i = i+1;)
 	  else nothing;
 	  );
      i);
-export stringcatseq(a:Sequence):Expr := (
-     l := lenseq(a);
+export stringcatseq(localInterpState:threadLocalInterp,a:Sequence):Expr := (
+     l := lenseq(localInterpState,a);
      if l == -1 
      then WrongArg("strings, integers, or symbols")
      else (
 	  s := new string len l do provide ' ';
-	  stringcat2(a,s,0);
+	  stringcat2(localInterpState,a,s,0);
 	  Expr(s)));
-stringcatfun(e:Expr):Expr := (
+stringcatfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is a:Sequence do stringcatseq(a)
-     is a:List do stringcatseq(a.v)
+     is a:Sequence do stringcatseq(localInterpState,a)
+     is a:List do stringcatseq(localInterpState,a.v)
      is Nothing do Expr("")
      is y:SymbolClosure do Expr(y.symbol.word.name)
      is n:ZZ do (
@@ -561,8 +561,8 @@ stringcatfun(e:Expr):Expr := (
      else WrongArg("a sequence or list of strings, integers, or symbols"));
 setupfun("concatenate",stringcatfun);
 
-errorfun(e:Expr):Expr := (
-     e = stringcatfun(e);
+errorfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
+     e = stringcatfun(localInterpState,e);
      when e
      is s:string do buildErrorPacket(s)
      else buildErrorPacket("expects a string or sequence of strings as its argument"));
@@ -580,7 +580,7 @@ mingleseq(a:Sequence):Expr := (
      list ( new Sequence len newlen do
      	  for j from 0 to newlen-1 do for i from 0 to n-1 do
      	  if j < length(b.i) then provide b.i.j));
-minglefun(e:Expr):Expr := (
+minglefun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do mingleseq(a)
      is a:List do mingleseq(a.v)
@@ -597,7 +597,7 @@ packlist(v:Sequence,n:int):Expr := (
 		    j := i;
 		    i = i+1;
 	       	    provide v.j))));
-packfun(e:Expr):Expr := (
+packfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
      	  if length(a) == 2 then (
@@ -649,13 +649,13 @@ packfun(e:Expr):Expr := (
      else WrongNumArgs(2));	  
 setupfun("pack", packfun);
 
-getenvfun(e:Expr):Expr := (
+getenvfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:string do Expr(getenv(s))
      else WrongArgString());
 setupfun("getenv",getenvfun);
 
-getfun(e:Expr):Expr := (
+getfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do (
 	  if f.infd == -1
@@ -677,7 +677,7 @@ setupfun("get",getfun);
 readprompt := "";
 readpromptfun():string := readprompt;
 
-isReadyFun(e:Expr):Expr := (
+isReadyFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do toExpr ( 
 	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) 
@@ -691,7 +691,7 @@ isReadyFun(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("isReady",isReadyFun);
 
-atEOFfun(e:Expr):Expr := (
+atEOFfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do toExpr ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 
 	  && 0 == filbuf(f) )
@@ -730,7 +730,7 @@ fdlist(s:Sequence):array(int) := (
      do provide if g.input then g.infd else if g.listener then g.listenerfd else if g.output then g.outfd else -1
      else nothing
      );
-wait(s:Sequence):Expr := (
+wait(localInterpState:threadLocalInterp,s:Sequence):Expr := (
      if allIntegers(s) then (
 	  stats := waitNoHang(new array(int) len length(s) do foreach pid in s do provide toInt(pid));
 	  Expr(list(new Sequence len length(s) do foreach status in stats do provide Expr(toInteger(status)))))
@@ -738,15 +738,15 @@ wait(s:Sequence):Expr := (
      else if numberReadyOnes(s) > 0 then list(toArrayExpr(readyOnes(s)))
      else list(toArrayExpr(select(fdlist(s))))
      );
-wait(f:file):Expr := (
+wait(localInterpState:threadLocalInterp,f:file):Expr := (
      if !f.input then WrongArg("an input file or list of input files")
      else if f.insize > f.inindex then nullE
      else ( filbuf(f); nullE ));
-wait(e:Expr):Expr := (
+wait(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is f:List do wait(f.v)
-     is v:Sequence do wait(v)
-     is f:file do wait(f)
+     is f:List do wait(localInterpState,f.v)
+     is v:Sequence do wait(localInterpState,v)
+     is f:file do wait(localInterpState,f)
      is x:ZZ do (
 	  if isInt(x) then (
 	       ret := wait(toInt(x));
@@ -765,7 +765,7 @@ readE(f:file):Expr := (
      is e:errmsg do buildErrorPacket(e.message)
      is s:string do Expr(s));
 
-readfun(e:Expr):Expr := (
+readfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do readE(f)
      is p:string do (
@@ -821,7 +821,7 @@ export setupargv():void := (
      setupconst("environment",toExpr(envp));
      );
 
-substrfun(e:Expr):Expr := (
+substrfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is args:Sequence do
      if length(args) == 3 then
      when args.0
@@ -859,10 +859,10 @@ substrfun(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
      
-linesE(s:string):Expr := (
+linesE(localInterpState:threadLocalInterp,s:string):Expr := (
      v := lines(s);
      list(new Sequence len length(v) do foreach t in v do provide Expr(t)));
-lines(s:string,c:char):Expr := (
+lines(localInterpState:threadLocalInterp,s:string,c:char):Expr := (
      nlines := 1;
      i := 0;
      while true do (
@@ -887,7 +887,7 @@ lines(s:string,c:char):Expr := (
 			 provide Expr(substr(s,i,j-i));
 			 i = j+1;
 			 )))));
-lines(s:string,c:char,d:char):Expr := (
+lines(localInterpState:threadLocalInterp,s:string,c:char,d:char):Expr := (
      -- nlines := 0;
      nlines := 1;
      i := 0;
@@ -913,28 +913,28 @@ lines(s:string,c:char,d:char):Expr := (
 			 provide Expr(substr(s,i,j-i));
 			 i = j+2;
 			 )))));
-lines(s:string,ch:string):Expr := (
+lines(localInterpState:threadLocalInterp,s:string,ch:string):Expr := (
      if length(ch) == 1 
-     then Expr(lines(s,ch.0))
+     then Expr(lines(localInterpState,s,ch.0))
      else if length(ch) == 2
-     then Expr(lines(s,ch.0,ch.1))
+     then Expr(lines(localInterpState,s,ch.0,ch.1))
      else WrongArg(1,"a string of length 1 or 2")
      );
-linesfun(e:Expr):Expr := (
+linesfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do
      if length(a) == 2 then
      when a.1
      is s:string do 
-     when a.0 is ch:string do lines(s,ch)
+     when a.0 is ch:string do lines(localInterpState,s,ch)
      else WrongArgString(1)
      else WrongArgString(2)
      else WrongNumArgs(2)
-     is s:string do linesE(s)
+     is s:string do linesE(localInterpState,s)
      else WrongArgString());
 setupfun("separate",linesfun);
 
-tostring(m:MysqlConnectionWrapper):string := (
+tostring(localInterpState:threadLocalInterp,m:MysqlConnectionWrapper):string := (
      Ccode(void, "extern string tostring2(const char *)");
      "<<MysqlConnection : " + (
 	  when m.mysql 
@@ -945,7 +945,7 @@ tostring(m:MysqlConnectionWrapper):string := (
 	  )
      + ">>");
 
-tostringfun(e:Expr):Expr := (
+tostringfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
      when e 
      is i:ZZ do Expr(tostring(i))
@@ -956,7 +956,7 @@ tostringfun(e:Expr):Expr := (
      is b:Boolean do Expr(if b.v then "true" else "false")
      is Nothing do Expr("null")
      is f:Database do Expr(f.filename)
-     is m:MysqlConnectionWrapper do Expr(tostring(m))
+     is m:MysqlConnectionWrapper do Expr(tostring(localInterpState,m))
      is res:MysqlResultWrapper do Expr(
 	  "<<MysqlResult : " 
 	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_rows((MYSQL_RES *)", res.res, ") \n #else \n 0 \n #endif \n"))
@@ -984,7 +984,7 @@ tostringfun(e:Expr):Expr := (
      is Sequence do Expr("<<a sequence>>")
      is HashTable do Expr("<<a hash table>>")
      is List do Expr("<<a list>>")
-     is s:SpecialExpr do tostringfun(s.e)
+     is s:SpecialExpr do tostringfun(localInterpState,s.e)
      is x:RawMonomial do Expr(Ccode(string, "(string)IM2_Monomial_to_string((Monomial*)",x,")" ))
      is x:RawFreeModule do Expr(Ccode(string, "(string)IM2_FreeModule_to_string((FreeModule*)",x,")" ))
      is x:RawMatrix do Expr(Ccode(string, "(string)IM2_Matrix_to_string((Matrix*)",x,")" ))
@@ -1012,18 +1012,18 @@ tostringfun(e:Expr):Expr := (
      );
 setupfun("simpleToString",tostringfun);
 
-connectionCount(e:Expr):Expr := (
+connectionCount(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is f:file do if f.listener then Expr(toInteger(f.numconns))
      else WrongArg(1,"an open socket listening for connections")
      else WrongArg(1,"a file")
      );
 setupfun("connectionCount", connectionCount);
 
-format(e:Expr):Expr := (
+format(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:string do Expr("\"" + present(s) + "\"")
-     is RR do format(Expr(Sequence(e)))
-     is CC do format(Expr(Sequence(e)))
+     is RR do format(localInterpState,Expr(Sequence(e)))
+     is CC do format(localInterpState,Expr(Sequence(e)))
      is args:Sequence do (
 	  s := printingPrecision;
 	  ac := printingAccuracy;
@@ -1049,18 +1049,18 @@ format(e:Expr):Expr := (
      else WrongArg("string, or real number, integer, integer, integer, string"));
 setupfun("format",format);
 
-numfun(e:Expr):Expr := (
+numfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is r:QQ do Expr(numerator(r))
      else WrongArg("a rational number"));
 setupfun("numerator",numfun);
-denfun(e:Expr):Expr := (
+denfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is r:QQ do Expr(denominator(r))
      else WrongArg("a rational number"));
 setupfun("denominator",denfun);
 
-join(e:Expr):Expr := (
+join(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  n := length(a);
@@ -1089,7 +1089,7 @@ join(e:Expr):Expr := (
      else WrongArg("lists or sequences"));
 setupfun("join",join);
 
-instanceof(e:Expr):Expr := (
+instanceof(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do (
 	  when args.1
@@ -1098,7 +1098,7 @@ instanceof(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("instance",instanceof);
 
-ancestorfun(e:Expr):Expr := (
+ancestorfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is args:Sequence do (
 	  x := args.1;					    -- args reversed
@@ -1141,7 +1141,7 @@ deepinsert(a:Sequence):int := (
 	       );
 	  );
      n);
-export deepsplice(a:Sequence):Sequence := (
+export deepsplice(localInterpState:threadLocalInterp,a:Sequence):Sequence := (
      -- warning: this returns its arg if no change is required.
      hadseq = false;
      newlen := deeplen(a);
@@ -1153,11 +1153,11 @@ export deepsplice(a:Sequence):Sequence := (
      	  deepseq = emptySequence;
      	  w)
      else a);
-deepsplice(e:Expr):Expr := (
+deepsplice(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is args:Sequence do Expr(deepsplice(args))
+     is args:Sequence do Expr(deepsplice(localInterpState,args))
      is a:List do (
-	  r := deepsplice(a.v);
+	  r := deepsplice(localInterpState,a.v);
 	  if r == a.v 
 	  then (
 	       if a.mutable
@@ -1167,7 +1167,7 @@ deepsplice(e:Expr):Expr := (
      else e);
 setupfun("deepSplice",deepsplice);
 
-exec(a:Sequence):Expr := (
+exec(localInterpState:threadLocalInterp,a:Sequence):Expr := (
      newargv := new array(string) len length(a) do provide "";
      foreach x at i in a do (
 	  when x
@@ -1175,15 +1175,15 @@ exec(a:Sequence):Expr := (
 	  else return WrongArgString(i+1));
      exec(newargv);
      buildErrorPacket("exec failed"));
-exec(e:Expr):Expr := (
+exec(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is a:Sequence do exec(a)
-     is a:List do exec(a.v)
-     is s:string do exec(Sequence(e))
+     is a:Sequence do exec(localInterpState,a)
+     is a:List do exec(localInterpState,a.v)
+     is s:string do exec(localInterpState,Sequence(e))
      else WrongArg( "a string or a sequence or list of strings"));
 setupfun("exec",exec);
 
-youngest(e:Expr):Expr := (
+youngest(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is y:HashTable do if !y.mutable then nullE else e
      is b:Sequence do (
@@ -1204,7 +1204,7 @@ youngest(e:Expr):Expr := (
      else nullE);
 setupfun("youngest", youngest);
 
-toRR(e:Expr):Expr := (
+toRR(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do Expr(toRR(x,defaultPrecision))
      is x:QQ do Expr(toRR(x,defaultPrecision))
@@ -1226,7 +1226,7 @@ toRR(e:Expr):Expr := (
      else WrongArg("an integral, rational, or real number, or a pair"));
 setupfun("toRR",toRR);
 
-toCC(e:Expr):Expr := (
+toCC(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:ZZ do Expr(toCC(x,defaultPrecision)) -- # typical value: toCC, ZZ, CC
      is x:QQ do Expr(toCC(x,defaultPrecision)) -- # typical value: toCC, QQ, CC
@@ -1286,7 +1286,7 @@ toCC(e:Expr):Expr := (
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
 setupfun("toCC",toCC);
 
-precision(e:Expr):Expr := (
+precision(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is x:RR do Expr(toInteger(precision(x)))
      is x:CC do Expr(toInteger(precision(x)))
@@ -1377,10 +1377,10 @@ locate2(c:Code):Expr := (
 	       Expr(toInteger(int(p.line))),
 	       Expr(toInteger(int(p.column)))
 	       )));
-locate(e:Expr):Expr := (
+locate(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is Nothing do nullE
-     is Sequence do locate(lookupfun(e))
+     is Sequence do locate(localInterpState,lookupfun(localInterpState,e))
      is CompiledFunction do nullE
      is CompiledFunctionClosure do nullE
      is s:SymbolClosure do (
@@ -1398,7 +1398,7 @@ locate(e:Expr):Expr := (
 	  locate0();
 	  locate(c.code);
 	  locate2(c.code))
-     is s:SpecialExpr do locate(s.e)
+     is s:SpecialExpr do locate(localInterpState,s.e)
      is f:FunctionClosure do (
 	  locate0();
 	  locate(f.model.arrow);
@@ -1408,7 +1408,7 @@ locate(e:Expr):Expr := (
 setupfun("locate",locate);
 
 export bar := 1;
-export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,handler:Expr):Expr := (
+export storeInHashTableWithCollisionHandler(localInterpState:threadLocalInterp,x:HashTable,key:Expr,value:Expr,handler:Expr):Expr := (
      if !x.mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      h := hash(key);
      hmod := int(h & (length(x.table)-1));
@@ -1416,7 +1416,7 @@ export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,hand
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
-	       ret := applyEEE(handler,p.value,value);
+	       ret := applyEEE(localInterpState,handler,p.value,value);
 	       return when ret is Error do ret else (p.value = ret; ret));
 	  p = p.next);
      if 4 * x.numEntries == 3 * length(x.table) -- SEE ABOVE
@@ -1427,24 +1427,24 @@ export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,hand
      x.numEntries = x.numEntries + 1;
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
      value);
-toHashTableWithCollisionHandler(v:Sequence,handler:Expr):Expr := (
+toHashTableWithCollisionHandler(localInterpState:threadLocalInterp,v:Sequence,handler:Expr):Expr := (
      o := newHashTable(hashTableClass,nothingClass);
      foreach e at i in v do (
 	  when e
 	  is Nothing do nothing
 	  is pair:Sequence do (
 	       if length(pair) == 2 
-	       then (storeInHashTableWithCollisionHandler(o,pair.0,pair.1,handler);)
+	       then (storeInHashTableWithCollisionHandler(localInterpState,o,pair.0,pair.1,handler);)
 	       else return toHashTableError(i))
 	  is z:List do (
 	       pair := z.v;
 	       if length(pair) == 2 
-	       then (storeInHashTableWithCollisionHandler(o,pair.0,pair.1,handler);)
+	       then (storeInHashTableWithCollisionHandler(localInterpState,o,pair.0,pair.1,handler);)
 	       else return toHashTableError(i))
 	  else return toHashTableError(i));
      sethash(o,false);
      Expr(o));
-toHashTable(e:Expr):Expr := (
+toHashTable(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is w:List do toHashTable(w.v)
      is s:Sequence do (
@@ -1454,12 +1454,12 @@ toHashTable(e:Expr):Expr := (
 	  is CompiledFunction do nothing
 	  is CompiledFunctionClosure do nothing
 	  else return WrongArg(1,"a function");
-	  when s.1 is w:List do toHashTableWithCollisionHandler(w.v,s.0)
+	  when s.1 is w:List do toHashTableWithCollisionHandler(localInterpState,w.v,s.0)
 	  else WrongArg(2,"a list"))
      else WrongArg("a list"));
 setupfun("hashTable",toHashTable);
 
-powermod(e:Expr):Expr := (
+powermod(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then
      when s.0 is base:ZZ do 
@@ -1474,7 +1474,7 @@ powermod(e:Expr):Expr := (
      );
 setupfun("powermod",powermod);
 
-partsRR(x:Expr):Expr := (
+partsRR(localInterpState:threadLocalInterp,x:Expr):Expr := (
      when x is xx:RR do (
 	  p := Ccode(ulong,"(unsigned long)((__mpfr_struct *)",xx,")->_mpfr_prec");
 	  sz := 8 * Ccode(int,"sizeof(*((__mpfr_struct *)",xx,")->_mpfr_d)");
@@ -1491,7 +1491,7 @@ partsRR(x:Expr):Expr := (
      else WrongArg("a real number"));
 setupfun("partsRR",partsRR);
 
-segmentationFault(e:Expr):Expr := (segmentationFault();e);
+segmentationFault(localInterpState:threadLocalInterp,e:Expr):Expr := (segmentationFault();e);
 setupfun("segmentationFault",segmentationFault);
 
 -- Local Variables:

@@ -95,7 +95,7 @@ override(v:Sequence,numopts:int):Expr := (
 	  );
      sethash(z,false);
      Expr(Sequence(Expr(z),newargs)));
-override(e:Expr):Expr := (
+override(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is args:Sequence do (
 	  if length(args) == 2 then (
 	       when args.0
@@ -113,12 +113,12 @@ override(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("override",override);
 -----------------------------------------------------------------------------
-equalmethod(x:Expr,y:Expr):Expr := (
+equalmethod(localInterpState:threadLocalInterp,x:Expr,y:Expr):Expr := (
      method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
      if method == nullE 
      then MissingMethodPair(EqualEqualS,x,y)
-     else applyEEE(method,x,y));
-EqualEqualfun(x:Expr,y:Expr):Expr := (
+     else applyEEE(localInterpState,method,x,y));
+EqualEqualfun(localInterpState:threadLocalInterp,x:Expr,y:Expr):Expr := (
      -- some cases, where the types are equal, call immediately for strict equality
      -- some cases call for simple recursive routines
      when x
@@ -128,11 +128,11 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:QQ do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, QQ, Boolean
 	  is yy:RR do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, RR, Boolean
 	  is yy:CC do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, CC, Boolean
-	  else equalmethod(x,y)
+	  else equalmethod(localInterpState,x,y)
 	  )
      is xx:SymbolClosure do (
 	  when y is yy:SymbolClosure do toExpr(xx === yy)             -- # typical value: symbol ==, Symbol, Symbol, Boolean
-	  else equalmethod(x,y)
+	  else equalmethod(localInterpState,x,y)
      	  )
      is xx:QQ do (
 	  when y
@@ -140,7 +140,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:QQ do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, QQ, Boolean
 	  is yy:RR do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, RR, Boolean
 	  is yy:CC do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, CC, Boolean
-	  else equalmethod(x,y)
+	  else equalmethod(localInterpState,x,y)
 	  )
      is xx:RR do (
 	  when y
@@ -148,7 +148,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:QQ do toExpr(xx === yy)			    -- # typical value: symbol ==, RR, QQ, Boolean
 	  is yy:RR do toExpr(xx === yy)			    -- # typical value: symbol ==, RR, RR, Boolean
 	  is yy:CC do toExpr(xx === yy)			    -- # typical value: symbol ==, RR, CC, Boolean
-	  else equalmethod(x,y)
+	  else equalmethod(localInterpState,x,y)
 	  )
      is xx:CC do (
 	  when y
@@ -156,31 +156,31 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:QQ do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, QQ, Boolean
 	  is yy:RR do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, RR, Boolean
 	  is yy:CC do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, CC, Boolean
-	  else equalmethod(x,y)
+	  else equalmethod(localInterpState,x,y)
 	  )
      is xx:Boolean do (
 	  when y is yy:Boolean do if xx == yy then True else False -- # typical value: symbol ==, Boolean, Boolean, Boolean
-	  else equalmethod(x,y)
+	  else equalmethod(localInterpState,x,y)
      	  )
      is xx:Net do (
 	  when y is yy:Net do toExpr(xx === yy)	-- # typical value: symbol ==, Net, Net, Boolean
-	  else equalmethod(x,y)
+	  else equalmethod(localInterpState,x,y)
      	  )
      is xx:string do (
 	  when y 
 	  is yy:string do toExpr(xx === yy)	 -- # typical value: symbol ==, String, String, Boolean
-	  else equalmethod(x,y))
+	  else equalmethod(localInterpState,x,y))
      is s:Sequence do when y is t:Sequence do (				 -- # typical value: symbol ==, Sequence, Sequence, Boolean
 	  if length(s) != length(t) then return False;
 	  for i from 0 to length(s)-1 do (
-	       ret := EqualEqualfun(s.i,t.i);
+	       ret := EqualEqualfun(localInterpState,s.i,t.i);
 	       when ret is Error do return ret else nothing;
 	       if ret == False then return False;
 	       );
 	  True
-	  ) else equalmethod(x,y)
-     else equalmethod(x,y));
-listComparison(e:Expr):Expr := (
+	  ) else equalmethod(localInterpState,x,y)
+     else equalmethod(localInterpState,x,y));
+listComparison(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
      is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
 	  when args.0 is a:List do
@@ -190,7 +190,7 @@ listComparison(e:Expr):Expr := (
 	       t := b.v;
 	       if length(s) != length(t) then return False;
 	       for i from 0 to length(s)-1 do (
-		    ret := EqualEqualfun(s.i,t.i);
+		    ret := EqualEqualfun(localInterpState,s.i,t.i);
 		    when ret is Error do return ret else nothing;
 		    if ret == False then return False;
 		    );
@@ -201,12 +201,12 @@ listComparison(e:Expr):Expr := (
 	  )
      else WrongNumArgs(2));
 installMethod(EqualEqualS,visibleListClass,visibleListClass,listComparison);
-EqualEqualfun(lhs:Code,rhs:Code):Expr := (
+EqualEqualfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x
      else (
      	  y := eval(rhs);
-	  when y is Error do y else EqualEqualfun(x,y)));
+	  when y is Error do y else EqualEqualfun(localInterpState,x,y)));
 setup(EqualEqualS,EqualEqualfun);
 not(z:Expr):Expr := (
      when z is Error do z 
@@ -214,16 +214,16 @@ not(z:Expr):Expr := (
      else if z == False then True
      else buildErrorPacket("expected true or false"));
 
-NotEqualfun(lhs:Code,rhs:Code):Expr := (
+NotEqualfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x
      else (
      	  y := eval(rhs);
      	  when y is Error do y
-	  else notFun(EqualEqualfun(x,y))));
+	  else notFun(EqualEqualfun(localInterpState,x,y))));
 setup(NotEqualS,NotEqualfun);
 
-compare(left:Expr,right:Expr):Expr := (
+compare(localInterpState:threadLocalInterp,left:Expr,right:Expr):Expr := (
      if left == right then EqualEqualE else
      when left
      is x:ZZ do (
@@ -243,7 +243,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is x:string do (
 	  when right
 	  is y:string do (
@@ -259,7 +259,7 @@ compare(left:Expr,right:Expr):Expr := (
      	       else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is x:SymbolClosure do (
 	  when right
 	  is y:SymbolClosure do (
@@ -276,7 +276,7 @@ compare(left:Expr,right:Expr):Expr := (
 			 )
 		    )
 	       )
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is x:QQ do (
 	  when right
 	  is y:ZZ do 
@@ -294,7 +294,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is x:RR do (
 	  when right
 	  is y:ZZ do (
@@ -318,7 +318,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is x:CC do (
 	  when right
 	  is y:ZZ do (
@@ -342,7 +342,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is x:Net do (
 	  when right
 	  is y:Net do (
@@ -358,7 +358,7 @@ compare(left:Expr,right:Expr):Expr := (
      	       else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is s:Sequence do (
 	  when right
 	  is t:Sequence do (
@@ -371,17 +371,17 @@ compare(left:Expr,right:Expr):Expr := (
 		    else return LessE
 		    else if i == lt then return GreaterE
 		    else (
-			 c := compare(s.i,t.i);
+			 c := compare(localInterpState,s.i,t.i);
 			 if !(c === EqualEqualS) then return c);
 		    i = i+1);
 	       nullE)
-	  else binarymethod(left,right,QuestionS))
+	  else binarymethod(localInterpState,left,right,QuestionS))
      is Error do left
      else (
 	  when right
 	  is Error do right
-	  else binarymethod(left,right,QuestionS)));
-compareop(lhs:Code,rhs:Code):Expr := (
+	  else binarymethod(localInterpState,left,right,QuestionS)));
+compareop(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x
      is Error do x
@@ -389,13 +389,13 @@ compareop(lhs:Code,rhs:Code):Expr := (
 	  y := eval(rhs);
 	  when y
 	  is Error do y
-	  else compare(x,y)));
-unaryQuestionFun(rhs:Code):Expr := unarymethod(rhs,QuestionS);
+	  else compare(localInterpState,x,y)));
+unaryQuestionFun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,QuestionS);
 setup(QuestionS,unaryQuestionFun,compareop);
 
 whichway := GreaterS;
 sortlist := emptySequence;
-subsort(l:int,r:int):Expr := (
+subsort(localInterpState:threadLocalInterp,l:int,r:int):Expr := (
      b := r+1-l;
      a := randomint() % b;
      if a < 0 then a = a+b;
@@ -410,11 +410,11 @@ subsort(l:int,r:int):Expr := (
 	  -- spots j+1 .. r contain elements greater or equal to the pivot
 	  -- when i > j we've partitioned all the elements into two parts
 	  if (
-	       c := compare(sortlist.i,pivot);
+	       c := compare(localInterpState,sortlist.i,pivot);
 	       when c is Error do return c else nothing;
 	       !(c === whichway)) then i = i+1
 	  else if (
-	       c := compare(pivot, sortlist.j);
+	       c := compare(localInterpState,pivot, sortlist.j);
 	       when c is Error do return c else nothing;
 	       !(c === whichway)) then j = j-1
 	  else (
@@ -423,76 +423,76 @@ subsort(l:int,r:int):Expr := (
 	       sortlist.j = tmp;
 	       i = i+1;
 	       j = j-1));
-     if l+1 < j then subsort(l+1,j);
-     if j+1 < r then subsort(j+1,r);
+     if l+1 < j then subsort(localInterpState,l+1,j);
+     if j+1 < r then subsort(localInterpState,j+1,r);
      for k from l+1 to j do sortlist.(k-1) = sortlist.k;
      sortlist.j = pivot;
      nullE);
-basicsort(s:Sequence,ww:SymbolClosure):Expr := (
+basicsort(localInterpState:threadLocalInterp,s:Sequence,ww:SymbolClosure):Expr := (
      if length(s) <= 1 then return Expr(s);
      savesortlist := sortlist;
      savewhichway := whichway;
      sortlist = new Sequence len length(s) do foreach x in s do provide x;
      whichway = ww;
-     ret := subsort(0,length(s)-1);
+     ret := subsort(localInterpState,0,length(s)-1);
      when ret is Error do nothing else ret = Expr(sortlist);
      whichway = savewhichway;
      sortlist = savesortlist;
      ret);
-basicsort2(e:Expr,ww:SymbolClosure):Expr := (
+basicsort2(localInterpState:threadLocalInterp,e:Expr,ww:SymbolClosure):Expr := (
      answer :=
      when e is s:Sequence do (
-	  if length(s) <= 1 then e else basicsort(s,ww))
+	  if length(s) <= 1 then e else basicsort(localInterpState,s,ww))
      is t:List do (
 	   if ancestor(t.class, listClass) then (
 		if length(t.v) <= 1 then e else (
-		     r := basicsort(t.v,ww);
+		     r := basicsort(localInterpState,t.v,ww);
 		     when r is b:Sequence do list(t.class,b) else r))
       	   else WrongArg("a list or sequence"))
      else WrongArg("a list or sequence");
      answer);
-sortfun(e:Expr):Expr := basicsort2(e,GreaterS);
-rsortfun(e:Expr):Expr := basicsort2(e,LessS);
+sortfun(localInterpState:threadLocalInterp,e:Expr):Expr := basicsort2(localInterpState,e,GreaterS);
+rsortfun(localInterpState:threadLocalInterp,e:Expr):Expr := basicsort2(localInterpState,e,LessS);
 setupfun("internalsort",sortfun);
 setupfun("internalrsort",rsortfun);
 
-lessfun1(rhs:Code):Expr := unarymethod(rhs,LessS);
-lessfun2(lhs:Code,rhs:Code):Expr := (
-     e := compareop(lhs,rhs);
+lessfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LessS);
+lessfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
+     e := compareop(localInterpState,lhs,rhs);
      when e 
      is Error do e
      else if LessS.symbol === e then True else False
      );
 setup(LessS,lessfun1,lessfun2);
 
-greaterequalfun1(rhs:Code):Expr := unarymethod(rhs,GreaterEqualS);
-greaterequalfun2(lhs:Code,rhs:Code):Expr := (
-     e := compareop(lhs,rhs);
+greaterequalfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,GreaterEqualS);
+greaterequalfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
+     e := compareop(localInterpState,lhs,rhs);
      when e 
      is Error do e
      else if GreaterS.symbol === e || EqualEqualS.symbol === e then True else False
      );
 setup(GreaterEqualS,greaterequalfun1,greaterequalfun2);
 
-greaterfun1(rhs:Code):Expr := unarymethod(rhs,GreaterS);
-greaterfun2(lhs:Code,rhs:Code):Expr := (
-     e := compareop(lhs,rhs);
+greaterfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,GreaterS);
+greaterfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
+     e := compareop(localInterpState,lhs,rhs);
      when e 
      is Error do e
      else if GreaterS.symbol === e then True else False
      );
 setup(GreaterS,greaterfun1,greaterfun2);
 
-lessequalfun1(rhs:Code):Expr := unarymethod(rhs,LessEqualS);
-lessequalfun2(lhs:Code,rhs:Code):Expr := (
-     e := compareop(lhs,rhs);
+lessequalfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LessEqualS);
+lessequalfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
+     e := compareop(localInterpState,lhs,rhs);
      when e 
      is Error do e
      else if LessS.symbol === e || EqualEqualS.symbol === e then True else False
      );
 setup(LessEqualS,lessequalfun1,lessequalfun2);
 
-mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
+mergepairs(localInterpState:threadLocalInterp,xx:Expr,yy:Expr,f:Expr):Expr := (
      when xx is xl:List do
      when yy is yl:List do (
 	  x := xl.v;
@@ -520,7 +520,7 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	       if length(yj) != 2
 	       then return WrongArg(2,"a list of pairs")
 	       else (
-		    c := compare(xi.0,yj.0);
+		    c := compare(localInterpState,xi.0,yj.0);
 		    when c is Error do return c else nothing;
 		    if GreaterS.symbol === c then (
 			 z.n = yj;
@@ -533,7 +533,7 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 			 n = n+1;
 			 )
 		    else (
-			 z.n = Sequence(xi.0, applyEEE(f,xi.1,yj.1));
+			 z.n = Sequence(xi.0, applyEEE(localInterpState,f,xi.1,yj.1));
 			 i = i+1;
 			 j = j+1;
 			 n = n+1;
@@ -545,11 +545,11 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	  Expr(sethash(List(commonAncestor(xl.class,yl.class), z,0,false),xl.mutable | yl.mutable)))
      else WrongArg(2,"a list")
      else WrongArg(1,"a list"));
-mergepairsfun(e:Expr):Expr := (
+mergepairsfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do
      if length(a) == 3 then
-     mergepairs(a.0,a.1,a.2)
+     mergepairs(localInterpState,a.0,a.1,a.2)
      else WrongNumArgs(3)
      else WrongNumArgs(3));
 setupfun("mergePairs",mergepairsfun);
@@ -615,7 +615,7 @@ setupfun("mergePairs",mergepairsfun);
 --     else WrongNumArgs(3)
 --     else WrongNumArgs(3));
 --setupfun("rmergepairs",rmergepairsfun);
-bitxorfun(e:Expr):Expr := (
+bitxorfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
      if length(a) == 2 then
      when a.0
@@ -627,10 +627,10 @@ bitxorfun(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("xor",bitxorfun);
-semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
+semicolonfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
 setup(SemicolonS,semicolonfun);
-starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
-timesfun(lhs:Code,rhs:Code):Expr := (
+starfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,StarS);
+timesfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
      else (
@@ -641,7 +641,7 @@ setup(StarS,starfun,timesfun);
 
 -- functions
 
-sin(e:Expr):Expr := (
+sin(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(sin(x))				    -- # typical value: sin, CC, CC
      is x:RR do Expr(sin(x))				    -- # typical value: sin, RR, RR
@@ -650,7 +650,7 @@ sin(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("sin",sin);
-cos(e:Expr):Expr := (
+cos(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(cos(x))				    -- # typical value: cos, CC, CC
      is x:RR do Expr(cos(x))				    -- # typical value: cos, RR, RR
@@ -659,7 +659,7 @@ cos(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("cos",cos);
-tan(e:Expr):Expr := (
+tan(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(tan(x))				    -- # typical value: tan, CC, CC
      is x:RR do Expr(tan(x))				    -- # typical value: tan, RR, RR
@@ -668,7 +668,7 @@ tan(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("tan",tan);
-acos(e:Expr):Expr := (
+acos(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(acos(x))				    -- # typical value: acos, CC, CC
      is x:RR do (
@@ -689,7 +689,7 @@ acos(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("acos",acos);
-sec(e:Expr):Expr := (
+sec(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(sec(x))				    -- # typical value: sec, CC, CC
      is x:RR do Expr(sec(x))				    -- # typical value: sec, RR, RR
@@ -698,7 +698,7 @@ sec(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("sec",sec);
-csc(e:Expr):Expr := (
+csc(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(csc(x))				    -- # typical value: csc, CC, CC
      is x:RR do Expr(csc(x))				    -- # typical value: csc, RR, RR
@@ -707,7 +707,7 @@ csc(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("csc",csc);
-cot(e:Expr):Expr := (
+cot(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(cot(x))				    -- # typical value: cot, CC, CC
      is x:RR do Expr(cot(x))				    -- # typical value: cot, RR, RR
@@ -716,7 +716,7 @@ cot(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("cot",cot);
-sech(e:Expr):Expr := (
+sech(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(sech(x))				    -- # typical value: sech, CC, CC
      is x:RR do Expr(sech(x))				    -- # typical value: sech, RR, RR
@@ -725,7 +725,7 @@ sech(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("sech",sech);
-csch(e:Expr):Expr := (
+csch(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(csch(x))				    -- # typical value: csch, CC, CC
      is x:RR do Expr(csch(x))				    -- # typical value: csch, RR, RR
@@ -734,7 +734,7 @@ csch(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("csch",csch);
-coth(e:Expr):Expr := (
+coth(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(coth(x))				    -- # typical value: coth, CC, CC
      is x:RR do Expr(coth(x))				    -- # typical value: coth, RR, RR
@@ -743,7 +743,7 @@ coth(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("coth",coth);
-asin(e:Expr):Expr := (
+asin(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(asin(x))				    -- # typical value: asin, CC, CC
      is x:RR do (
@@ -764,7 +764,7 @@ asin(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("asin",asin);
-log1p(e:Expr):Expr := (
+log1p(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(log1p(x))				    -- # typical value: log1p, RR, RR
      is x:ZZ do Expr(log1p(toRR(x)))			    -- # typical value: log1p, ZZ, RR
@@ -772,7 +772,7 @@ log1p(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("log1p",log1p);
-expm1(e:Expr):Expr := (
+expm1(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(expm1(x))				    -- # typical value: expm1, RR, RR
      is x:ZZ do Expr(expm1(toRR(x)))			    -- # typical value: expm1, ZZ, RR
@@ -780,7 +780,7 @@ expm1(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("expm1",expm1);
-eint(e:Expr):Expr := (
+eint(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(eint(x))				    -- # typical value: eint, RR, RR
      is x:ZZ do Expr(eint(toRR(x)))			    -- # typical value: eint, ZZ, RR
@@ -788,7 +788,7 @@ eint(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("eint",eint);
-Gamma(e:Expr):Expr := (
+Gamma(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(Gamma(x))				    -- # typical value: Gamma, RR, RR
      is x:ZZ do Expr(Gamma(toRR(x)))			    -- # typical value: Gamma, ZZ, RR
@@ -796,7 +796,7 @@ Gamma(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("Gamma",Gamma);
---lngamma(e:Expr):Expr := (
+--lngamma(localInterpState:threadLocalInterp,e:Expr):Expr := (
 --     when e
 --     is x:RR do Expr(lngamma(x))			    -- typical value: lngamma, RR, RR
 --     is x:ZZ do Expr(lngamma(toRR(x)))			    -- typical value: lngamma, ZZ, RR
@@ -804,20 +804,20 @@ setupfun("Gamma",Gamma);
 --     else buildErrorPacket("expected a number")
 --     );
 --setupfun("lngamma",lngamma);
-export lgamma(x:RR):Expr := (
+export lgamma(localInterpState:threadLocalInterp,x:RR):Expr := (
      z := newRR(precision(x));
      i := 0;
      Ccode( void, "mpfr_lgamma((__mpfr_struct *)", z, ",&",i,",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      Expr(Sequence(z,toInteger(i))));
-lgamma(e:Expr):Expr := (
+lgamma(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is x:RR do Expr(lgamma(x))				    -- # typical value: lgamma, RR, RR
-     is x:ZZ do Expr(lgamma(toRR(x)))			    -- # typical value: lgamma, ZZ, RR
-     is x:QQ do Expr(lgamma(toRR(x)))			    -- # typical value: lgamma, QQ, RR
+     is x:RR do Expr(lgamma(localInterpState,x))				    -- # typical value: lgamma, RR, RR
+     is x:ZZ do Expr(lgamma(localInterpState,toRR(x)))			    -- # typical value: lgamma, ZZ, RR
+     is x:QQ do Expr(lgamma(localInterpState,toRR(x)))			    -- # typical value: lgamma, QQ, RR
      else buildErrorPacket("expected a number")
      );
 setupfun("lgamma",lgamma);
-zeta(e:Expr):Expr := (
+zeta(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(zeta(x))				    -- # typical value: zeta, RR, RR
      is x:ZZ do (					    -- # typical value: zeta, ZZ, RR
@@ -829,7 +829,7 @@ zeta(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("zeta",zeta);
-erf(e:Expr):Expr := (
+erf(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(erf(x))				    -- # typical value: erf, RR, RR
      is x:ZZ do Expr(erf(toRR(x)))			    -- # typical value: erf, ZZ, RR
@@ -837,7 +837,7 @@ erf(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("erf",erf);
-erfc(e:Expr):Expr := (
+erfc(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do Expr(erfc(x))				    -- # typical value: erfc, RR, RR
      is x:ZZ do Expr(erfc(toRR(x)))			    -- # typical value: erfc, ZZ, RR
@@ -845,17 +845,17 @@ erfc(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("erfc",erfc);
-BesselJ(n:long,x:RR):RR := (
+BesselJ(localInterpState:threadLocalInterp,n:long,x:RR):RR := (
      if n == long(0) then j0(x)
      else if n == long(1) then j1(x)
      else jn(n,x));
-BesselJ(e:Expr):Expr := (
+BesselJ(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do (
 	  when s.0 is n:ZZ do if !isLong(n) then WrongArg(1,"a small integer") else (
 	       when s.1 
-	       is x:RR do Expr(BesselJ(toLong(n),x))	    -- # typical value: BesselJ, ZZ, RR, RR
-	       is x:ZZ do Expr(BesselJ(toLong(n),toRR(x)))  -- # typical value: BesselJ, ZZ, ZZ, RR
-	       is x:QQ do Expr(BesselJ(toLong(n),toRR(x)))  -- # typical value: BesselJ, ZZ, QQ, RR
+	       is x:RR do Expr(BesselJ(localInterpState,toLong(n),x))	    -- # typical value: BesselJ, ZZ, RR, RR
+	       is x:ZZ do Expr(BesselJ(localInterpState,toLong(n),toRR(x)))  -- # typical value: BesselJ, ZZ, ZZ, RR
+	       is x:QQ do Expr(BesselJ(localInterpState,toLong(n),toRR(x)))  -- # typical value: BesselJ, ZZ, QQ, RR
 	       else WrongArg(2,"a number"))
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
@@ -864,7 +864,7 @@ BesselY(n:long,x:RR):RR := (
      if n == long(0) then y0(x)
      else if n == long(1) then y1(x)
      else yn(n,x));
-BesselY(e:Expr):Expr := (
+BesselY(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do (
 	  when s.0 is n:ZZ do if !isLong(n) then WrongArg(1,"a small integer") else (
 	       when s.1 
@@ -875,7 +875,7 @@ BesselY(e:Expr):Expr := (
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
 setupfun("BesselY",BesselY);
-atan2(yy:Expr,xx:Expr):Expr := (
+atan2(localInterpState:threadLocalInterp,yy:Expr,xx:Expr):Expr := (
      when yy
      is y:RR do (
 	  when xx
@@ -897,7 +897,7 @@ atan2(yy:Expr,xx:Expr):Expr := (
      	  else WrongArg(1,"a number"))
      else WrongArg(2,"a number")
      );
-atan(e:Expr):Expr := (
+atan(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(atan(x))				    -- # typical value: atan, CC, CC
      is x:RR do Expr(atan(x))				    -- # typical value: atan, RR, RR
@@ -908,12 +908,12 @@ atan(e:Expr):Expr := (
      else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("atan",atan);
-atan2(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) == 2 then atan2(s.0,s.1)
+atan2(localInterpState:threadLocalInterp,e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 2 then atan2(localInterpState,s.0,s.1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("atan2",atan2);
-cosh(e:Expr):Expr := (
+cosh(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(cosh(x))				    -- # typical value: cosh, CC, CC
      is x:RR do Expr(cosh(x))				    -- # typical value: cosh, RR, RR
@@ -922,7 +922,7 @@ cosh(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("cosh",cosh);
-sinh(e:Expr):Expr := (
+sinh(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(sinh(x))				    -- # typical value: sinh, CC, CC
      is x:RR do Expr(sinh(x))				    -- # typical value: sinh, RR, RR
@@ -931,7 +931,7 @@ sinh(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("sinh",sinh);
-tanh(e:Expr):Expr := (
+tanh(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:CC do Expr(tanh(x))				    -- # typical value: tanh, CC, CC
      is x:RR do Expr(tanh(x))				    -- # typical value: tanh, RR, RR
@@ -940,16 +940,16 @@ tanh(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("tanh",tanh);
-exp(e:Expr):Expr := (
+exp(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is x:CC do Expr(exp(x))			-- # typical value: exp, CC, CC
-     is x:RR do Expr(exp(x))			-- # typical value: exp, RR, RR
-     is x:ZZ do Expr(exp(toRR(x)))			    -- # typical value: exp, ZZ, RR
-     is x:QQ do Expr(exp(toRR(x)))			    -- # typical value: exp, QQ, RR
+     is x:CC do Expr(exp(x))
+     is x:RR do Expr(exp(x))
+     is x:ZZ do Expr(exp(toRR(x)))
+     is x:QQ do Expr(exp(toRR(x)))
      else buildErrorPacket("expected a number")
      );
-setupfun("exp",exp);
-log(e:Expr):Expr := (
+setupfun("exp'",exp);
+log(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) != 2 then WrongNumArgs(1,2) 
      else (
@@ -1007,7 +1007,7 @@ log(e:Expr):Expr := (
      else WrongArg("a number or a pair of numbers")
      );
 setupfun("log",log);
-agm(e:Expr):Expr := (
+agm(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) != 2 then WrongNumArgs(2) 
      else (
@@ -1044,8 +1044,8 @@ agm(e:Expr):Expr := (
      else WrongNumArgs(2)
      );
 setupfun("agm",agm);
-abs(x:double):double := if x < 0. then -x else x;
-floor(e:Expr):Expr := (
+abs(localInterpState:threadLocalInterp,x:double):double := if x < 0. then -x else x;
+floor(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do (
 	  if isnan(x) then buildErrorPacket("encountered NotANumber in conversion to integer") else
@@ -1063,7 +1063,7 @@ floor(e:Expr):Expr := (
      );
 setupfun("floor",floor);
 
-round0(e:Expr):Expr := (
+round0(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:RR do (
 	  if isnan(x) then buildErrorPacket("encountered NotANumber in conversion to integer") else
@@ -1077,14 +1077,14 @@ round0(e:Expr):Expr := (
      );
 setupfun("round0",round0);
 
-run(e:Expr):Expr := (
+run(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is x:string do Expr(toInteger(run(x)))
      else buildErrorPacket("expected a string")
      );
 setupfun("run",run);
 
-sqrt(a:Expr):Expr := (
+sqrt(localInterpState:threadLocalInterp,a:Expr):Expr := (
      when a
      is x:ZZ do (
 	  if x < 0
@@ -1105,7 +1105,7 @@ sqrt(a:Expr):Expr := (
      is Error do a
      else WrongArgRR());
 setupfun("sqrt",sqrt);
-map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
+map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
      if newlen != length(a2) then return WrongArg("lists of the same length");
      if newlen == 0 then return emptySequenceE;
@@ -1200,7 +1200,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  fn := cf.fn;
 	  ret := new Sequence len newlen at i do (
 	       recursionDepth = recursionDepth + 1;
-	       tmp := fn(Expr(Sequence(a1.i,a2.i)));
+	       tmp := fn(localInterpState,Expr(Sequence(a1.i,a2.i)));
 	       recursionDepth = recursionDepth - 1;
 	       when tmp is Error do (
 		    errret = tmp;
@@ -1223,9 +1223,9 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       );
 	  if errret != nullE then errret else Expr(ret)
 	  )
-     is s:SpecialExpr do map(a1,a2,s.e)
+     is s:SpecialExpr do map(localInterpState,a1,a2,s.e)
      else WrongArg(2,"a function"));
-map(a:Sequence,f:Expr):Expr := (
+map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
      newlen := length(a);
      if newlen == 0 then return emptySequenceE;
      haderror := false;
@@ -1424,7 +1424,7 @@ map(a:Sequence,f:Expr):Expr := (
 	  fn := cf.fn;
 	  ret := new Sequence len newlen do (
 	       foreach arg in a do (
-		    tmp := fn(arg);
+		    tmp := fn(localInterpState,arg);
 		    when tmp is Error do (
 			 errret = tmp;
 			 while true do provide nullE; )
@@ -1448,12 +1448,12 @@ map(a:Sequence,f:Expr):Expr := (
 	  if errret != nullE then errret else Expr(ret)
 	  )
      is s:SpecialExpr do (
-	  ret := map(a,s.e);
+	  ret := map(localInterpState,a,s.e);
 	  recursionDepth = recursionDepth - 1;
 	  ret)
      else WrongArg(2,"a function")
      );
-map(newlen:int,f:Expr):Expr := (
+map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
      if newlen <= 0 then return emptyList;
      haderror := false;
      errret := nullE;
@@ -1524,7 +1524,7 @@ map(newlen:int,f:Expr):Expr := (
 	  is cf:CompiledFunction do (	  -- compiled code
 	       fn := cf.fn;
 	       for i from 0 to newlen-1 do (
-		    tmp := fn(Expr(toInteger(i)));
+		    tmp := fn(localInterpState,Expr(toInteger(i)));
 		    when tmp is Error do (
 			 errret = tmp;
 			 while true do provide nullE; )
@@ -1558,10 +1558,10 @@ map(newlen:int,f:Expr):Expr := (
 	  list(ret)
 	  ));
 
-map(e:Expr,f:Expr):Expr := (
+map(localInterpState:threadLocalInterp,e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do (
-	  b := map(a,f);
+	  b := map(localInterpState,a,f);
 	  when b
 	  is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else b
 	  else b
@@ -1570,7 +1570,7 @@ map(e:Expr,f:Expr):Expr := (
 --	  if obj.mutable then return WrongArg("an immutable hash table");
 --	  if ancestor(obj.class,Tally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
-	  c := map(b.v,f);
+	  c := map(localInterpState,b.v,f);
 	  when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	  is v:Sequence do list(b.class,v,b.mutable)
 	  else nullE			  -- will not happen
@@ -1578,20 +1578,20 @@ map(e:Expr,f:Expr):Expr := (
      is i:ZZ do (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
-	  else map(toInt(i),f))
+	  else map(localInterpState,toInt(i),f))
      else WrongArg(1,"a list, sequence, or an integer"));
-map(e1:Expr,e2:Expr,f:Expr):Expr := (
+map(localInterpState:threadLocalInterp,e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
 	  when e2
 	  is a2:Sequence do (
-	       c := map(a1,a2,f);
+	       c := map(localInterpState,a1,a2,f);
 	       when c
 	       is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	       else c
 	       )
 	  is b2:List do (
-	       c := map(a1,b2.v,f);
+	       c := map(localInterpState,a1,b2.v,f);
 	       when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	       is v:Sequence do list(b2.class,v,b2.mutable)
 	       else nullE		  -- will not happen
@@ -1600,7 +1600,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
      is b1:List do (
 	  when e2
 	  is a2:Sequence do (
-	       c := map(b1.v,a2,f);
+	       c := map(localInterpState,b1.v,a2,f);
 	       when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	       is v:Sequence do list(b1.class,v,b1.mutable)
 	       else nullE		  -- will not happen
@@ -1612,24 +1612,24 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 		    mutable = false;
 		    class = listClass;
 		    );
-	       c := map(b1.v,b2.v,f);
+	       c := map(localInterpState,b1.v,b2.v,f);
 	       when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	       is v:Sequence do list(class,v,mutable)
 	       else nullE		  -- will not happen
 	       )
 	  else WrongArg(2,"a list or sequence"))
      else WrongArg(1,"a list or sequence"));
-map(e:Expr):Expr := (
+map(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
-	  then map(a.0,a.1)
+	  then map(localInterpState,a.0,a.1)
 	  else if length(a) == 3
-	  then map(a.0,a.1,a.2)
+	  then map(localInterpState,a.0,a.1,a.2)
 	  else WrongNumArgs(2,3))
      else WrongNumArgs(2,3));
 setupfun("apply",map);
 
-scan(n:int,f:Expr):Expr := (
+scan(localInterpState:threadLocalInterp,n:int,f:Expr):Expr := (
      if n <= 0 then return nullE;
      if recursionDepth > recursionLimit then RecursionLimit()
      else when f is fc:FunctionClosure do (
@@ -1696,7 +1696,7 @@ scan(n:int,f:Expr):Expr := (
      	  saveLocalFrame := threadLocalInterpState.localFrame;
 	  fn := cf.fn;
 	  for i from 0 to n-1 do (
-	       tmp := fn(Expr(toInteger(i)));
+	       tmp := fn(localInterpState,Expr(toInteger(i)));
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -1724,10 +1724,10 @@ scan(n:int,f:Expr):Expr := (
 	  threadLocalInterpState.localFrame = saveLocalFrame;
 	  recursionDepth = recursionDepth - 1;
 	  nullE)
-     is s:SpecialExpr do scan(n,s.e)
+     is s:SpecialExpr do scan(localInterpState,n,s.e)
      else WrongArg(2,"a function"));
 
-scan(a:Sequence,f:Expr):Expr := (
+scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
      oldlen := length(a);
      if oldlen == 0 then return nullE;
      recursionDepth = recursionDepth + 1;
@@ -1885,7 +1885,7 @@ scan(a:Sequence,f:Expr):Expr := (
      is cf:CompiledFunction do (	  -- compiled code
 	  fn := cf.fn;
 	  foreach arg in a do (
-	       tmp := fn(arg);
+	       tmp := fn(localInterpState,arg);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -1929,7 +1929,7 @@ scan(a:Sequence,f:Expr):Expr := (
 -- 	  );
 --      nullE);
 
-scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
+scan(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
      if newlen != length(a2) then return WrongArg("lists of the same length");
      if newlen == 0 then return nullE;
@@ -2004,7 +2004,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      is cf:CompiledFunction do (	  -- compiled code
 	  fn := cf.fn;
 	  for i from 0 to newlen - 1 do (
-	       tmp := fn(Expr(Sequence(a1.i,a2.i)));
+	       tmp := fn(localInterpState,Expr(Sequence(a1.i,a2.i)));
 	       when tmp is Error do (
 	  	    recursionDepth = recursionDepth - 1;
 		    return tmp;
@@ -2028,39 +2028,39 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  recursionDepth = recursionDepth - 1;
 	  nullE)
      is s:SpecialExpr do (
-	  ret := scan(a1,a2,s.e);
+	  ret := scan(localInterpState,a1,a2,s.e);
 	  recursionDepth = recursionDepth - 1;
 	  ret)
      else WrongArg(2,"a function")
      );
-scan(e1:Expr,e2:Expr,f:Expr):Expr := (
+scan(localInterpState:threadLocalInterp,e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
 	  when e2
-	  is a2:Sequence do scan(a1,a2,f)
-	  is b2:List do scan(a1,b2.v,f)
+	  is a2:Sequence do scan(localInterpState,a1,a2,f)
+	  is b2:List do scan(localInterpState,a1,b2.v,f)
 	  else WrongArg(2,"a list or sequence"))
      is b1:List do (
 	  when e2
-	  is a2:Sequence do scan(b1.v,a2,f)
-	  is b2:List do scan(b1.v,b2.v,f)
+	  is a2:Sequence do scan(localInterpState,b1.v,a2,f)
+	  is b2:List do scan(localInterpState,b1.v,b2.v,f)
 	  else WrongArg(2,"a list or sequence"))
      else WrongArg(1,"a list or sequence"));
-scan(e:Expr,f:Expr):Expr := (
+scan(localInterpState:threadLocalInterp,e:Expr,f:Expr):Expr := (
      when e
-     is a:Sequence do scan(a,f)
-     is b:List do scan(b.v,f)
+     is a:Sequence do scan(localInterpState,a,f)
+     is b:List do scan(localInterpState,b.v,f)
      is i:ZZ do (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
-	  else scan(toInt(i),f))
+	  else scan(localInterpState,toInt(i),f))
      else buildErrorPacket("scan expects a list"));
-scan(e:Expr):Expr := (
+scan(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
-	  then scan(a.0,a.1)
+	  then scan(localInterpState,a.0,a.1)
 	  else if length(a) == 3
-	  then scan(a.0,a.1,a.2)
+	  then scan(localInterpState,a.0,a.1,a.2)
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("scan",scan);
@@ -2071,10 +2071,10 @@ gcd(x:Expr,y:Expr):Expr := (
 	  is b:ZZ do Expr(gcd(a,b))
 	  else buildErrorPacket("expected an integer"))
      else buildErrorPacket("expected an integer"));
-gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
+gcdfun(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd0",gcdfun);
 
-toSequence(e:Expr):Expr := (
+toSequence(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is Sequence do e
      is b:List do (
@@ -2085,7 +2085,7 @@ toSequence(e:Expr):Expr := (
      else WrongArg("a list or sequence"));
 setupfun("toSequence",toSequence);
 
-sequencefun(e:Expr):Expr := (
+sequencefun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do e
      else Expr(Sequence(e)));
@@ -2106,7 +2106,7 @@ setupfun("sequence",sequencefun);
 -- 	       f)
 -- 	  else apply(f,arg)));
 -- setup(SharpSharpS,iteratedApply);
-iteratedApply(e:Expr):Expr := (
+iteratedApply(localInterpState:threadLocalInterp,e:Expr):Expr := (
      -- uncurry(f,(x,y,z)) becomes ((f x) y) z
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  f := s.0;
