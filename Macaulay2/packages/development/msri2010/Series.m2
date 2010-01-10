@@ -98,12 +98,6 @@ S = series(4,x^2 + x)
 peek S
 
 
-Series+Series := (x,y) -> new Series from {generator = decider(x,y), degree => min(x#degree,y#degree), series => x+y}; -- not right
-Series*Series := (x,y) -> new Series from {generator = decider(x,y), degree => min(x#degree,y#degree), series => x*y}; -- not right
-
-
-
-
 
 
 -----------------------------------------------------------------------------
@@ -123,7 +117,7 @@ makeSeriesCompatible(Series,Series) := Sequence => (A,B) -> (
  
 Series + Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
-     
+     new Series from {degree => min(A'.degree,B'.degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial + B'.polynomial, setDegree => i -> ( 
       )
 --=========================================================================--
 
