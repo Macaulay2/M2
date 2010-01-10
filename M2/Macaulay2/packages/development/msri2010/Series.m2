@@ -17,27 +17,39 @@
 
 
 Series = new Type of HashTable
-expression Series := s -> expression "O(" expression(s#degree+1) expression ")" + expression s#series;
+expression Series := s -> expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
 net Series := s -> net expression s;
 toString Series := s -> toString expression s;
 tex Series := s -> tex expression s;
 html Series := s -> html expression s;
 
 
-series = method(Options => {Limit => 5})
+truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
 
-
+series = method(Options => {Degree => 5})
 series(Function) := Series => opts -> f -> (
      s:=0;
-     for i from 0 to opts.Limit do (if f i == 0 then continue else if first degree f i > opts.Limit then break else s=s+f i);
-     new Series from {genTerm => f, degree => opts.Limit, series => s}
+     for i from 0 to opts.Degree do (if f i == 0 then continue else if first degree f i > opts.Degree then break else s=s+f i);
+     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s}
      );
+
+ZZ[x]
+f = i -> x^i;
+s = series f
+peek s
+
+setDegree = method()
+setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warning: cannot exceed max degree "  << S.maxDegree <<endl;);
+     S#setDegree(n);
+     S
+     );
+     
 
 
 series(RingElement, Function) := Series => opts -> f -> (
      s:=0;
-     for i from 0 to opts.Limit do (if f i == 0 then continue else if first degree f i > opts.Limit then break else s=s+f i);
-     new Series from {genTerm => f, degree => opts.Limit, series => s}
+     for i from 0 to opts.Degree do (if f i == 0 then continue else if first degree f i > opts.Degree then break else s=s+f i);
+     new Series from {genTerm => f, degree => opts.Degree, series => s}
      );
 
 series RingElement := Series => opts -> f -> (
@@ -46,11 +58,11 @@ series RingElement := Series => opts -> f -> (
      nf := numerator f;
      degnf := first degree nf;
      degdf := first degree df;
-     dC := (coefficients(df,Monomials=>apply(0..opts.Limit,i->x^i)))_1;
+     dC := (coefficients(df,Monomials=>apply(0..opts.Degree,i->x^i)))_1;
      if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
      a := i -> if i == 0 then (dC_(0,0))^(-1) else (dC_(0,0))^(-1)*sum(1..i, j -> -dC_(j,0)*a(i-j));    
-     s := sum select(terms (nf * sum(0..opts.Limit,i -> a(i) * x^i)), i -> first degree i <= opts.Limit);
-     new Series from {rationalFunction => f, degree => if degdf < 1 then infinity else opts.Limit, series => s}
+     s := sum select(terms (nf * sum(0..opts.Degree,i -> a(i) * x^i)), i -> first degree i <= opts.Degree);
+     new Series from {rationalFunction => f, degree => if degdf < 1 then infinity else opts.Degree, series => s}
      );
 
 
@@ -122,7 +134,7 @@ Series + Series := (f,g) -> (
 
 
 -- One way to do sums, do we want to do inheritance with 'growable series'?
-seriesSum = method(Options => {Limit => 5})
+seriesSum = method(Options => {Degree => 5})
 seriesSum(Series,Series) := Series => opts -> (A,B) -> (
      -- If rational functions, add them
      if member(rationalFunction,keys A) then(
