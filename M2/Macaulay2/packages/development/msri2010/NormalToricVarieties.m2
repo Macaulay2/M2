@@ -670,8 +670,15 @@ fan NormalToricVariety := X -> (
 
 halfspaces (List,NormalToricVariety) := Matrix => (sigma,X) -> (
      if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
-     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = -(fourierMotzkin matrix transpose ((rays X)_sigma))#0;
-     X.cache.halfspaces#sigma)
+     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = fourierMotzkin matrix transpose ((rays X)_sigma);
+     -(X.cache.halfspaces#sigma#0))
+
+
+hyperplanes (List,NormalToricVariety) := Matrix => (sigma,X) -> (
+     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
+     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = fourierMotzkin matrix transpose ((rays X)_sigma);
+     X.cache.halfspaces#sigma#1)
+
 
 makeSimplicial = method(Options => {Strategy => "addNoRays"})
 makeSimplicial NormalToricVariety := NormalToricVariety => options -> X ->(
@@ -742,19 +749,32 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 	       if replacement == {} then (		    
 		    if dim(C,X) == #C then (
 			 -- Simplicial Cone
-			 M = inverse M;
-			 v := flatten entries (transpose M * rm);
-			 if all(v, i -> i >= 0) then (
-			      replacement = positions(v, i -> i > 0);
-			      replacement = apply(replacement, i -> C#i);
-			      C = toList (set C - set replacement) | {n};
-			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
-			 else {C})
+			 if numColumns M == numRows M then (
+			      -- full dimensional Cone
+			      M = inverse M;
+			      v := flatten entries (transpose M * rm);
+			      if all(v, i -> i >= 0) then (
+			      	   replacement = positions(v, i -> i > 0);
+			      	   replacement = apply(replacement, i -> C#i);
+			      	   C = toList (set C - set replacement) | {n};
+			      	   apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			      else {C})
+			 else (
+			      -- not full dimensional cone
+			      K := mingens ker M;
+			      M = (inverse(M|| transpose K))_{0..numRows M -1};
+			      vnf := flatten entries (transpose M * rm); print (M,K,vnf);
+			      if all(vnf, i -> i >= 0) and transpose K * rm == 0 then (
+			      	   replacement = positions(vnf, i -> i > 0);
+			      	   replacement = apply(replacement, i -> C#i);
+			      	   C = toList (set C - set replacement) | {n};
+			      	   apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			      else {C}))
 		    else (
 			 -- Non-simplicial Cone
 			 HS := transpose halfspaces(C,X);
 			 w := flatten entries (HS * rm);
-			 if all(w, i -> i >= 0) then (
+			 if all(w, i -> i >= 0) and (dim(C,X) == numColumns HS or (transpose hyperplanes(C,X)) * rm == 0) then (
 			      replacement = positions(w, i -> i == 0);
 			      correctFaces := submatrix'(HS,replacement,);
 			      HS = HS^replacement;
@@ -772,6 +792,7 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 			      for i from 0 to numRows HS1 -1 list (
 				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
 		    else {C})));
+     if replacement == {} then newRays = rays X;
      Y := new NormalToricVariety from {
 	  symbol rays => newRays,
 	  symbol max => newMax,
