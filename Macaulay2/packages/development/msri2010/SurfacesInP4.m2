@@ -351,10 +351,14 @@ guessDifferentials = (cohTable,E) -> (
      if not givesMonad(cohTable,E) then error "The cohomology Table must be 0 ouside of the 3 central diagonals";
      -- OK
      -- start with generic beta
-     beta := random(diag(cohTable,1,E),diag(cohTable,0,E));
+     betaWithConstants := random(diag(cohTable,1,E),diag(cohTable,0,E));
+     -- set constant entries to zero
+     -- (this is important if the cohTable is not minimal)
+     beta = betaWithConstants - sub(betaWithConstants,matrix{{rank source vars E:0_E}});     
      -- find alpha among the syzygies
      sbeta := syz beta;
      betti (alpha := sbeta*random(source sbeta,diag(cohTable,-1,E)));
+     --alpha0 = alpha; --  - sub(alpha,matrix{{rank source vars E:0_E}});
      chainComplex{beta,alpha}
      )
 
