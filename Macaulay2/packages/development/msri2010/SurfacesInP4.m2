@@ -394,9 +394,11 @@ constructSurface(ChainComplex,PolynomialRing):=(monadE,S) -> (
      betti (fphi := res coker transpose fI.dd_1);
      saturate ideal fphi.dd_2
      )
+
 constructSurface(Matrix,PolynomialRing,PolynomialRing) := (M,E,S) -> (
      constructSurface(guessDifferentials(M,E),S)
      )
+
 constructSurface(Sequence,PolynomialRing) := (invariants,S) -> (
     E := K[e_0..e_4,SkewCommutative=>true];
     H := hilbertPolynomialFromInvariants invariants;
