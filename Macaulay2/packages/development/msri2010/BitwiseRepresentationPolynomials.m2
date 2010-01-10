@@ -71,33 +71,46 @@ Headline
 ///
 
 doc ///
+Key
+  (Brp)
+Headline
+  Bitwise Represented Polynomials
+///
+
+doc ///
 Key 
-  divide
+  (divide,Brp,Brp)
 Headline
  divide monomial a by monomial b
 Usage
-  Brp = divide (a,b)
+  c=divide(a,b)
 Inputs 
   a:Brp
-    a brp
+    a monomial 
   b:Brp
-    a brp
+    a monomial that divides a
 Outputs
   d:Brp
     a divided by b
 Consequences
 Description
+  Text
+  Example
+    R = ZZ[x,y,z];
+    a = convert(x*y);
+    b = convert(x);
+    convert(divide(a,b),R)
 Caveat
 SeeAlso
 ///
 
 doc ///
 Key 
-  isDivisible
+  (isDivisible,Brp,Brp)
 Headline
   Check if a is divisible by m
 Usage
-  isDivisible (polynomial, monomial)
+  p + m
 Inputs 
 Outputs
 Consequences
@@ -194,4 +207,6 @@ check BitwiseRepresentationPolynomials
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
 -- End:
 
+restart
 installPackage "BitwiseRepresentationPolynomials"
+viewHelp Brp
