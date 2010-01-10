@@ -1,0 +1,133 @@
+# @configure_input@
+include ../../include/config.Makefile
+VPATH = @srcdir@
+SRCDIR = @srcdir@
+DEPENDS = yes
+
+PRE.cc   = $(COMPILE.cc) -E 
+
+include @srcdir@/Makefile.files
+include Makefile.common
+CPPFLAGS := -I. $(CPPFLAGS)
+
+.PHONY : tags
+
+###################################################################
+## Targets ##
+#############
+
+all: initialize
+
+ifneq (@ETAGS@,)
+all: tags
+endif
+tags:: @srcdir@/TAGS
+@srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
+		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
+		 statuscodes
+	cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
+
+
+# overflows
+LDLIBS = @GC_LIBS@
+
+all: run-overflow-test
+run-overflow-test : overflow-test
+	./$^ sub 2>/dev/null || echo test succeeded
+	./$^ minus 2>/dev/null || echo test succeeded
+	./$^ mult 2>/dev/null || echo test succeeded
+	./$^ div 2>/dev/null || echo test succeeded
+	./$^ add 2>/dev/null || echo test succeeded
+	touch $@
+clean :: ; rm -f run-overflow-test
+pi overflow-test : overflow.o ../d/debug.o
+clean :: ; rm -f overflow-test
+pi : pi.h
+
+# the target 'initialize' is used by the Makefile in the parent directory
+initialize all: $(addsuffix .hpp, $(GENERATED_H))
+
+all:; $(MAKE) -C f4
+
+ifeq "$(SHARED)" "yes"
+all: ../lib/libengine1.so ../lib/libengine2.so
+else
+all: $(ENGINE_OFILES)
+endif
+
+%.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%.ii: %.cc; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cc; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%.ss : %.s ; demangle <$< >$@
+
+%.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
+../lib/libengine.so : $(LOFILES); @CC@ -shared $^ $(OUTPUT_OPTION)
+
+VEC =   -e "s/geobucket/vecHeap/g"      -e "s/FREEMODULETYPE/const FreeModule/g" -e "s/VECTYPE/vecterm */g"
+GBVEC = -e "s/geobucket/gbvectorHeap/g" -e "s/FREEMODULETYPE/GBRing/g"     -e "s/VECTYPE/gbvector */g"
+RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g"  -e "s/VECTYPE/res2term */g"
+
+#geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
+geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
+geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
+
+clean::
+	rm -f *.lo *.o *.rpo TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
+	$(MAKE) -C f4 $@
+Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
+all: Makefile.common
+Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
+Makefile.include : Makefile.include.in; cd ../..; ./config.status Macaulay2/e/Makefile.include
+clean::; rm -f *.dep dep-*.tmp
+ifeq "$(DEPENDS)" "yes"
+include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
+endif
+
+# this requires gnu sort and gnu uniq commands
+NMFLAGS = -o
+ifeq (@NM_DEMANGLES@,yes)
+NMFLAGS += --demangle
+endif
+dups-tmp: $(ENGINE_OBJFILES)
+	nm $(NMFLAGS) $(ENGINE_OBJFILES) |grep ' T ' |sort +2 |uniq -2 -d |tee dups-tmp
+dups-okay: dups-tmp
+	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
+	 else touch $@; fi
+doxygen : ; cd @srcdir@ && doxygen
+distclean: clean; rm -f Makefile
+
+ifeq (@NM_DEMANGLES@,yes)
+all: check-global-new-delete
+check-global-new-delete : $(ENGINE_OBJFILES)
+	nm $(NMFLAGS) $^ | egrep '[WUT] operator (new|delete)' > refnewdel.tmp
+	@if [ -s refnewdel.tmp ] ; then \
+		echo "--warning: 'operator new' or 'operator delete' referred to in the following files:" >&2 ;\
+		sed 's/^/   /' refnewdel.tmp ;\
+	fi
+clean::; rm -f refnewdel.tmp
+endif
+
+initialize : statuscodes.h
+statuscodes.h : statuscodes
+	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
+clean::; rm -f statuscodes.h
+
+pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o : pi.h pi-masks.h
+pi-test : exceptions.o overflow.o
+# check :: pi-test-run
+pi-test-run : pi-test ; ./pi-test
+pi-masks.h : pi-genmask
+	./$^ >$@
+
+pm-test.o : pm.hpp
+
+clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
+clean :: ; rm -rf *.dSYM
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+# End:
+
