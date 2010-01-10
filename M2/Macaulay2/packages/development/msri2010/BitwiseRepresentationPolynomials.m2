@@ -15,7 +15,7 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {brpOR,isDivisible, Brp, convert, removeDups, divide}
+export {brpOR,isDivisible, Brp, convert, removeDups, divide, lcmBrps}
 exportMutable {}
 
 Brp = new Type of List -- this is not quite right yet
@@ -57,6 +57,12 @@ divide (Brp, Brp) := Brp => (a,b) -> (
   assert isDivisible( a,b );
   new Brp from {first (a-b)}
 )
+  
+-- calculate least common multiple of two monomials
+lcmBrps = method()
+lcmBrps (Brp, Brp) := Brp => (a,b) -> 
+  new Brp from {apply( first a, first b, (i,j) -> max(i,j) )}
+
 
 beginDocumentation()
 document { 
@@ -84,7 +90,10 @@ TEST ///
   monoA= new Brp from {{1,0,1}}
   monoB= new Brp from {{1,0,0}}
   monoC= new Brp from {{0,1,0}}
-  
+ 
+  assert (lcmBrps( monoA, monoB) == new Brp from {{1,0,1}})
+  assert (lcmBrps( monoC, monoB) == new Brp from {{1,1,0}})
+
   assert ( monoB + zeropoly == new Brp from {{1, 0, 0}}) 
   assert ( zeropoly *monoB == new Brp from {} )
 
