@@ -163,15 +163,22 @@ Series + Series := Series => (A,B) -> (
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    newA := setDegree(newDegree,A);
 		    newB := setDegree(newDegree,B);
-		    (truncate(newDegree,A.polynomial + B.polynomial), newDegree)
+		    (truncate(newDegree,newA.polynomial + newB.polynomial), newDegree)
 		    )
 	       )}
      )
-
+S
+peek S
+T = S + S
+peek T
+setDegree(6,T)
+setDegree(9,T)
 F		     
+peek F
 B = F + F	        
 peek B
 setDegree(6,B)
+
 
 peek F     
 (A,B) = makeSeriesCompatible(F,F)
