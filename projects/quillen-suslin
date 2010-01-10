@@ -1,0 +1,53 @@
+-*- M2 -*-
+
+Title: Quillen-Suslin
+
+Description: 
+
+    If M is a projective module over a polynomial ring k[x1,..,xn], the
+    Quillen-Suslin Theorem asserts that M is free. However, given a
+    presentation of M by generators and relations, it is not trivial to find a
+    set of free generators. There is a Maple implementation:
+    [http://wwwb.math.rwth-aachen.de/QuillenSuslin/], based on the first paper
+    below (thanks to Bernd Sturmfels for the link). Algorithms for doing this
+    are contained in the papers:
+
+    * Logar, Alessandro; Sturmfels, Bernd, Algorithms for the Quillen-Suslin
+      theorem. J. Algebra 145 (1992), no. 1, 231--239.
+
+    * Laubenbacher, Reinhard C.; Woodburn, Cynthia J. A new algorithm for the
+      Quillen-Suslin theorem.  Beiträge Algebra Geom.  41 (2000), no. 1,
+      23--31.
+
+    and in the more general case of a module over a monomial ring in
+
+    * Laubenbacher, Reinhard C.; Woodburn, Cynthia J. An algorithm for the
+      Quillen-Suslin theorem for monoid rings. Algorithms for algebra
+      (Eindhoven, 1996).  J. Pure Appl. Algebra 117/118 (1997), 395--429.
+
+    * Here is some Maple code the implements an algorithm, wiht some
+      added heuristics:
+
+      	http://wwwb.math.rwth-aachen.de/QuillenSuslin/
+
+    Potential Application: If A is a 2-dimensional ring with Noether
+    Normalization k[x,y], then the integral closure B of A is a free module
+    over k[x,y]. Current algorithms to produce module generators of B may
+    produce sets of generators that are too large. An example is given by Doug
+    Leonard at his site[http://www.dms.auburn.edu/~leonada], under "example of
+    the qth-power algorithm with two free variables and a larger than expected
+    module generating set". This is a module of rank 9, given with 10
+    generators. The desired algorithm would produce a 9-generator presentation
+    (with no relations.)
+
+=============================================================================
+
+Proposed by: David Eisenbud
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
