@@ -289,6 +289,15 @@ inducedPoset (Poset, List) := Poset => (P, L) -> (
 -- interval
 -- input:  poset, and two elements
 -- output:  the induced poset with minimal element and maximal element corresponding to the 2 given elements
+interval = method()
+interval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
+     if (compare(P,elt1,elt2) == true or compare(P,elt2,elt1) == true) == false then return error "these elments are uncomparable";
+     -- find elements between a and b
+     if compare(P,elt1,elt2) === true 
+          then return inducedPoset(P,select(P.GroundSet, elt -> compare(P,elt1,elt) == true and compare(P,elt,elt2) == true));
+     if compare(P,elt2,elt1) === true 	  
+          then return inducedPoset(P, select(P.GroundSet, elt -> compare(P,elt2,elt) == true and compare(P,elt,elt1) == true));
+      )
 
 
 
