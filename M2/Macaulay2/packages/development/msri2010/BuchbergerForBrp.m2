@@ -26,6 +26,9 @@ exportMutable {}
 
 -- list of input polynomials
 -- F = {poly}  -- list of input
+ 
+f = new HashTable from { "1" => "x*2+y"}
+viewHelp HashTable
 
 -- pairs of indexes referring to polynomials, changing as we find more pairs
 -- listOfPairs = {}
@@ -52,7 +55,52 @@ exportMutable {}
 --)
 --
 --minimizeBasis(G)
+ 
+-- from pair of indices get corresponding polynomials, then compute their S
+-- polynomial
+SPolynomial = method()
+SPolynomial( List, HashTable ) := Brp => (l,G) -> (
+  assert (#l == 2);
+  i = - first l
+  j = last l
+  n = 8
+  variables = entries(id_(ZZ^n))
+  if ( i < 0 ) then -- check if we are working with a FP
+    f = G#j
+    R = ZZ[x,y,z]
+    load "BitwiseRepresentationPolynomials.m2"
+    f = convert (x*y + z)
+g
+f
+#f
+viewHelp select
+
+select( 2, odd)
+    g = select( #f, i -> isDivisible(f#i, vars#i ))
+    g*i + g
+
+    -- generate monomial for FP
+    ind = - (first l) - 1
+
+ind = 7
+n
+    splice{(ind-1):0,1,(n-ind):0 }
+
+    zeros = apply( n, i -> if(i == ind) then 1 else  0)
+    x = new Brp from zeros
+    f = G_j
+    getNonDivisiblePart(f,x)
+  else
+)
+
+getNonDivisiblePart = method()
+getNonDivisiblePart (Brp, Brp) := Brp => (f,x) -> 
+  select (f, mono -> isDivisible(mono,x) ) 
   
+  mono -> isDivisible(new Brp from mono,x)
+
+
+ 
 -- Make a list with all possible pairs of elements of the separate lists, but
 -- remove self-pairs 
 makePairsFromLists = method()
