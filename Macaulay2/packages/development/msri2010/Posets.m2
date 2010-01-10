@@ -289,15 +289,7 @@ inducedPoset (Poset, List) := Poset => (P, L) -> (
 -- interval
 -- input:  poset, and two elements
 -- output:  the induced poset with minimal element and maximal element corresponding to the 2 given elements
-interval = method()
-interval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
-     if (compare(P,elt1,elt2) == true or compare(P,elt2,elt1) == true) == false then return error "these elments are uncomparable";
-     -- find elements between a and b
-     if compare(P,elt1,elt2) === true 
-          then return inducedPoset(P,select(P.GroundSet, elt -> compare(P,elt1,elt) == true and compare(P,elt,elt2) == true));
-     if compare(P,elt2,elt1) === true 	  
-          then return inducedPoset(P, select(P.GroundSet, elt -> compare(P,elt2,elt) == true and compare(P,elt,elt1) == true));
-      )
+
 
 
 --------------------------------------------------
@@ -1399,31 +1391,31 @@ doc ///
 -----------------
 -- interval
 -----------------
-doc ///
-	Key
-		interval
-		(interval,Poset, Thing, Thing)
-	Headline
-		returns the interval in the poset between two elements
-	Usage
-		I = interval(P,a,b)
-	Inputs 
-		P : Poset
-		a : Thing
-		b : Thing
-	Outputs
-		I : Poset
-			the interval between a and b in P
-	Description
-		Text
-		     This routine returns the interval between the elements a and b in P,
-		     and an error message if the two elements are not comparable in P.
-
-		Example
-		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)};
-		     interval(P,a,d)	  
-			  
-/// 
+--doc ///
+--	Key
+--		interval
+--		(interval,Poset, Thing, Thing)
+--	Headline
+--		returns the interval in the poset between two elements
+--	Usage
+--		I = interval(P,a,b)
+--	Inputs 
+--		P : Poset
+--		a : Thing
+--		b : Thing
+--	Outputs
+--		I : Poset
+--			the interval between a and b in P
+--	Description
+--		Text
+--		     This routine returns the interval between the elements a and b in P,
+--		     and an error message if the two elements are not comparable in P.
+--
+--		Example
+--		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)};
+--		     interval(P,a,d)	  
+--			  
+--/// 
 
 
 -----------------
@@ -1492,7 +1484,7 @@ doc///
 doc///
      Key
      	  moebiusFunction
-	  (modebiusFunction,Poset,Thing,Thing)
+	  (moebiusFunction,Poset,Thing,Thing)
      Headline
      	  returns the Moebius function values for the minimal element of an interval to each element of the interval
      Usage
@@ -1511,11 +1503,11 @@ doc///
 	       For elements a and b of a poset P, this routine returns the Mobius function values for the minimal element in the interval between 
 	       elements a and b to each element of the interval between a and b. The routine handles both of the cases a<b and b<a.
 	  Example
-	       P = poset poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
 	       moebiusFunction(P,b,g)
 	       moebiusFunction(P,g,b)	       
      SeeAlso
-     	  (moebiusFunction, Poset)
+     	  (moebiusFunction,Poset)
 	  Poset
 ///	  
 
