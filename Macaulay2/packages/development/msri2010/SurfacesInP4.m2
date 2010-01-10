@@ -285,7 +285,7 @@ guessCohomologyTable = method()
 guessCohomologyTable(RingElement,ZZ,ZZ) := (hilbPoly, lo,hi) -> (
     iv:= (vars ring hilbPoly)_(0,0);
     M := mutableMatrix(ZZ,5,hi-lo+1);
-    apply(lo..hi, j -> M_(4- numPosRoots(sub(H, matrix{{iv + j}}) ),j-lo) = abs sub(sub(hilbPoly,matrix{{j*1_QQ}}),ZZ));
+    apply(lo..hi, j -> M_(4- numPosRoots(sub(hilbPoly, matrix{{iv + j}}) ),j-lo) = abs sub(sub(hilbPoly,matrix{{j*1_QQ}}),ZZ));
     matrix M)
 
 -- calculate the free E-Modules corresponding to a diagonal in the
@@ -343,9 +343,9 @@ constructSurface(ChainComplex,PolynomialRing):=(monadE,S) -> (
      -- test if it is a monad
      if betaBeil*alphaBeil != 0 then error "betaBeil*alphaBeil != 0";
      -- is beta surjective?
-     if codim coker betaBeil < 5 then error "beta is not surjective";
+     if codim coker betaBeil < 5 then return; -- "beta is not surjective";
      -- is alpha injektive?
-     if ker alphaBeil != 0 then error "alpha is not injective";
+     if ker alphaBeil != 0 then return; --"alpha is not injective";
      -- the Ideal of the Surface is the homology of the Monad     
      I := prune homology(betaBeil,alphaBeil);
      betti (fI := res I);  
@@ -355,6 +355,16 @@ constructSurface(ChainComplex,PolynomialRing):=(monadE,S) -> (
 constructSurface(Matrix,PolynomialRing,PolynomialRing) := (M,E,S) -> (
      constructSurface(guessDifferentials(M,E),S)
      )
+constructSurface(Sequence,PolynomialRing) := (invariants,S) -> (
+    E := K[e_0..e_4,SkewCommutative=>true];
+    H := hilbertPolynomialFromInvariants invariants;
+    Ilist = flatten apply(findMonadWindows(H,E,-10,10), M->(
+    	      monadE := guessDifferentials(M,E);
+    	      I := constructSurface(monadE,S);
+     	      if I === null then {} else {I}
+	      ));
+    if #Ilist == 0 then null else Ilist#0
+    )
   
      
 beginDocumentation()
@@ -455,6 +465,7 @@ Description
 Caveat
 SeeAlso
 ///
+
 doc ///
 Key
   guessDifferentials
@@ -525,6 +536,7 @@ Description
     betti res constructSurface(monadE,S)
 Caveat
      this only gives a surface if the monad is carefully chosen.
+     returns null if the monad is not exact in the beginning or in the end.
 SeeAlso
      guessDifferentials
 ///
@@ -562,6 +574,40 @@ Caveat
   i.e when only the 3 diagonals in the middle have values. Furthermore
   beta is chosen generically and alpha generically among the syzygies of beta.
   There are many surfaces where this does not work.
+  In this case null is returned.
+SeeAlso
+///
+
+doc ///
+Key
+  (constructSurface,Sequence,PolynomialRing)
+Headline
+  try to construct a surface in P^4 for given invariants
+Usage
+  I=constructSurface(invariants,S)
+Inputs
+  invariants: Sequence 
+    the invariants (deg, sectionalGenus, speciality, geometricGenus)
+  S:PolynomialRing
+    Symmetric Algebra in 5 variables
+Outputs
+  I:Ideal
+    ideal of a surface with the given invariants or null if 
+    the construction did not work
+Consequences
+Description
+  Text
+  Example
+    K = ZZ/32003
+    S = K[x_0..x_4]
+    betti res constructSurface((8,5,1,0),S)
+Caveat
+  works only when the minimal cohomology table computed from the
+  invariants contains a window that gives a Beilinson Monad.
+  Furthermore
+  beta is chosen generically and alpha generically among the syzygies of beta.
+  There are many surfaces where this does not work.
+  In this case null is returned.
 SeeAlso
 ///
 
