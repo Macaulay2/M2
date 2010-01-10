@@ -31,26 +31,29 @@ series(Function) := Series => opts -> f -> (
      s:=0;
      for i from 0 to opts.Degree do (if f i == 0 then continue else if first degree f i > opts.Degree then break else s=s+f i);
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
-	  setDegree => (n -> (SS := value s;
-		              for i from value opts.Degree + 1 to n do SS = SS + f i;
-			      (SS,n)
+	  setDegree => (n -> (SS := s;
+		              for i from opts.Degree + 1 to n do SS = SS + f i;
+			      (SS,max(opts.Degree,n))
 		             )
 		        ) 
 		     }
      );
 
-ZZ[x]
-f = i -> x^i;
-s = series f
-peek s
-
 setDegree = method()
 setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warning: cannot exceed max degree "  << S.maxDegree <<endl;);
-     S#setDegree(n);
-     S
+     (f,c) := S#setDegree n;
+     new Series from {polynomial => f, computedDegree => c, maxDegree => S#maxDegree, degree => n, setDegree=> S#setDegree}
      );
-     
 
+
+ZZ[x]
+f = i -> x^i;
+S = series f
+peek S
+G = setDegree(3,S)     
+peek G
+H = setDegree(7,G)
+peek H
 
 series(RingElement, Function) := Series => opts -> f -> (
      s:=0;
