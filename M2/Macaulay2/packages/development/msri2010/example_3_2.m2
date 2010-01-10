@@ -2,7 +2,7 @@
 --------input----------------------------------------------------
 
 ----------------------------------------------------------------
-q=23;
+q=2;
 degr=7;
 Rq=ZZ/q[y,x,
           MonomialOrder=>{
@@ -24,5 +24,5 @@ end
 restart
 load "example_3_2.m2"
 needsPackage "QthPower"
-gbTrace=3
-qthPower(Iq, deps, footq)
+time { qthPower(Iq, deps, footq); }
+
