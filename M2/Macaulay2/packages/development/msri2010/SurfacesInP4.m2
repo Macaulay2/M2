@@ -429,14 +429,14 @@ firstAdjoint(Ideal) := List => I -> (
      K := coefficientRing S;
      y := symbol y;
      Y := toList(y_0..y_(n1-1));
-     SxR := K(monoid[toList(x_0..x_4)|Y, MonomialOrder=>Eliminate 5]);
+     SxR := K(monoid[toList S_*|Y, MonomialOrder=>Eliminate N+1]);
      b := substitute(presentation omega,SxR);
-     c := matrix{(gens SxR)_{5..n1+4}}*map(SxR^{n1:-1},SxR^{n2:-2},b);
-     J := ideal(c):ideal(SxR_4);
+     c := matrix{(gens SxR)_{N..n1+4}}*map(SxR^{n1:-1},SxR^{n2:-2},b);
+     J := ideal(c):ideal(SxR_N);
      h' := new MutableHashTable;
      scan(2,i -> h'#i = ideal sub(c,{SxR_i => 0}));
      h := new MutableHashTable;
-     scan(2,i -> h#i = h'#i:ideal(SxR_4));
+     scan(2,i -> h#i = h'#i:ideal(SxR_N));
      R := K(monoid[y_0..y_(n1-1)]);
      X := sub(ideal selectInSubring(1,gens gb J),R);
      H := new MutableHashTable;
