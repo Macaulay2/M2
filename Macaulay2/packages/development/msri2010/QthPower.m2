@@ -3,9 +3,11 @@
 ------------
 newPackage(
     "QthPower",
-    Version => "0.0.1 pre-alpha", 
-    Date => "January 08, 2010",
-    Authors => {{Name => "Douglas Leonard", Email => "leonada@auburn.edu", HomePage => "http://www.dms.auburn.edu/~leonada"}},
+    Version => "0.1", 
+    Date => "January 10, 2010",
+    Authors => {{Name => "Douglas Leonard",
+                 Email => "leonada@auburn.edu",
+                 HomePage => "http://www.dms.auburn.edu/~leonada"}},
     Headline => "An implementation of the Qth-Power algorithm for computing the integral closure of a ring.",
     DebuggingMode => true
 )
@@ -20,18 +22,15 @@ export {qConductor, qthPower};
 qConductor = method(TypicalValue => RingElement);
 qConductor (Ideal, ZZ) := (I, deps) -> (
     R := ring I;
-    q := char R;
-    RP := ZZ/q[gens R, MonomialOrder => {Position => Up, {deps, #gens R - deps}}];
+    RP := ZZ/(char R)[gens R, MonomialOrder => {Position => Up, {deps, #gens R - deps}}];
     IP := sub(I, RP);
-    MP := transpose jacobian IP;
-    SP := RP/IP;
-    GP := gens gb sub(MP, SP);
+    GP := gens gb sub(transpose jacobian IP, RP/IP);
     DP := 1;
     j := 0;
     for i from 0 to numRows GP - 1 do (
         gc = 0;
         while GP_(i,j) == 0 do j = j + 1;
-        while max apply(deps,v -> degree(SP_v, leadMonomial(GP_(i,j)))) == 0 do (
+        while max apply(deps, v -> degree(RP_v, leadMonomial(GP_(i,j)))) == 0 do (
             gc = gcd(gc, GP_(i,j));
             j = j + 1;
         );
@@ -94,7 +93,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 	                    logei = logpoly(e#i, depq, indq);
 	                    logj = logpoly(e#j, depq, indq);	
 	                    if e#j != 0 and logj#0 == logei#0 then (
-                            if geqlog(logei#2, logj#2) then (
+                            if logei#2 >= logj#2 then (
 	                            wi = apply((logei#2 - logj#2), v->v%q);
 		                        if wi == apply(inds, v->0) then (
 		                            w = 1;
@@ -228,7 +227,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
         j = i - 1;
         while j >= 0 do (
             logj=logpoly(oldg#j, depq, indq);
-            if logi#0 == logj#0 and geqlog(logi#2, logj#2) then (
+            if logi#0 == logj#0 and (logi#2 >= logj#2) then (
 	            oldg = delete(oldg#i, oldg);
 	            break;
             );
@@ -250,7 +249,9 @@ red (RingElement, Ideal, RingElement, List) := (g, I, dq, modfoot) -> (
     i := #modfoot - 1;
     while i >= 0 and g != 0 do (
         h = (g % (dq * modfoot#i)) % I;
+        -- Did we change in the last iteration?
         if g != h then (
+            -- Update and start over
             g = h;
             i = #modfoot - 1;
         );
@@ -264,6 +265,8 @@ fastq = method(TypicalValue => RingElement);
 fastq (RingElement, Ideal) := (g, I) -> (
     q := char ring I;
     result := 1;
+    -- Starting from the LSBit, multiply by appropriate powers of g.
+    -- See any standard cryptography text for this.
     while q != 0 do (
         if q%2 == 1 then result = (result * g) % I;
         q = q//2;
@@ -272,32 +275,14 @@ fastq (RingElement, Ideal) := (g, I) -> (
     result
 );
 
--- Compare "logs".
-geqlog = method(TypicalValue => Boolean);
-geqlog (List, List) := (v, w) -> (
-    for i to #v - 1 do if v#i < w#i then return false;
-    true
-);
-
--- "Log" of a polynomial.
+-- "Log" of a polynomial split along independent and dependent parts.
 logpoly = method(TypicalValue => List);
 logpoly (RingElement, List, List) := (v, dep, ind) -> (
     lv := leadMonomial v;
-    de := 0;
-    indlog := {};
-    indprod := 1;
-    for i to #ind - 1 do (
-        de = degree(ind#i, lv);
-        indlog = append(indlog, de);
-        indprod = indprod * (ind#i)^de;
-    );
-    deplog := {};
-    depprod := 1;
-    for i to #dep - 1 do (
-        de = degree(dep#i, lv);
-        deplog = append(deplog, de);
-        depprod = depprod * (dep#i)^de;
-    );
+    indlog := apply(#ind, i->degree(ind#i, lv));
+    indprod := product(#ind, i->(ind#i)^(indlog#i));
+    deplog := apply(#dep, i->degree(dep#i, lv));
+    depprod := product(#dep, i->(dep#i)^(deplog#i));
     {deplog, depprod, indlog, indprod}
 );
 
