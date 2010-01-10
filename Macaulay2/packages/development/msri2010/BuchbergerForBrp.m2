@@ -51,9 +51,21 @@ while notEmpty listOfPairs
 
 minimizeBasis(G)
   
+-- Make a list with all possible pairs of elements of the separate lists, but
+remove self-pairs 
+makePairsFromLists = method()
+makePairsFromLists (List,List) := List => (a,b) -> (
+  ll = (apply( a, i-> apply(b, j-> if (i != j) then sort {i,j} else 0 ) ));
+  unique delete(0, flatten ll)
+)
 
 
 
+
+-- Make a list with all possible pairs of elements of the separate lists  
+makePairsFromLists = method()
+makePairsFromLists (List,List) := List => (a,b) -> 
+  flatten apply( a, i-> apply(b, j-> if (i != j) then sort(i,j) ) )
 beginDocumentation()
 document { 
 	Key => BuchbergerForBrp,
@@ -62,7 +74,10 @@ document {
 	be used as a template for user packages."
 	}
 TEST ///
-  assert(false)
+  assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {{1, 2}, {1, 3},
+  {1, 4}, {1, 5}, {2, 3}, {2, 4}, {2, 5}, {3, 4}, {3, 5}, {4, 5}})
+  assert(  makePairsFromLists( {1,2,3}, {10,100,1000}) == {{1, 10}, {1, 100},
+  {1, 1000}, {2, 10}, {2, 100}, {2, 1000}, {3, 10}, {3, 100}, {3, 1000}})
 ///
   
        
