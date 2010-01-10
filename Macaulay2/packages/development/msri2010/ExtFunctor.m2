@@ -324,23 +324,23 @@ doc ///
     Text
        This package allows elements of an Ext module to be represented in three distinct ways:
        
-       1. Literally as an element, i.e. a map Ext^i(M,N) $\leftarrow$ R^1, or
+       1. Literally as an element, i.e. a map Ext^r(M,N) $\leftarrow$ R^1, or
        
-       2. As an ``i-extension,'' an exact sequence of length i starting with N and ending with M, or
+       2. As an ``r-extension,'' an exact sequence of length r starting with N and ending with M, or
        
-       3. As a map from the i^{th} module of a free resolution of M to N which can be extended to a degree i map of chain complexes res N $\leftarrow$ res M.
+       3. As a map from the r^{th} module of a free resolution of M to N which can be extended to a degree i map of chain complexes res N $\leftarrow$ res M.
   
        Corresponding to these three types are three functions:
        
        1. The function @TO toExt@ returns an element of Ext given either of the other representations.
        
-       2. The function @TO extension@ returns an i-extension given either of the other representations (analogous to @TO homomorphism@. 
+       2. The function @TO extension@ returns an r-extension given either of the other representations (analogous to @TO homomorphism@). 
        
        3. The function @TO yonedaExt@ returns the third type, given either of the first two. 
               
-       Note that the package does not have a preferred representation for an element; instead the functions each accept any of the representations.
+       Note that the package does not have a preferred representation for an element of Ext; instead the three above functions each accept any of the representations.
        
-       Once these three representations are available, some manipulations are possible. The first is that two different i-extensions sometimes correspond to the same element of Ext: the function @TO isYonedaEquivalent@ checks this. The second is that elements of Ext^i(L,M) and Ext^j(M,N) can compose to form elements of Ext^{i+j}(L,N). The function @TO yonedaProduct@ accomplishes this composition.
+       Once these three representations are available, some manipulations are possible. The first is that two different r-extensions sometimes correspond to the same element of Ext: the function @TO isYonedaEquivalent@ checks this. The second is that elements of Ext^i(L,M) and Ext^j(M,N) can compose to form elements of Ext^{i+j}(L,N). The function @TO yonedaProduct@ accomplishes this composition.
   SeeAlso
     Functoriality
 ///
@@ -388,7 +388,7 @@ doc ///
    Text
      So we can use extension to see a 2-extension of k by k:
    Example
-     extension E2_{0}
+     (extension E2_{0}).dd
   SeeAlso
     (yonedaExt,ChainComplex)
     (yonedaExt,Matrix)
@@ -408,13 +408,13 @@ doc ///
     M:Module
     N:Module
     f:Matrix
-      a map N <- (res M)_r representing an element of Ext^r(M,N).
+      a map N $\leftarrow$ (res M)_r representing an element of Ext^r(M,N).
   Outputs
     C:ChainComplex
       an exact sequence; an r-extension of N by M represented by f.
   Description
    Text
-     A map N <- (res M)_r does not contain enough information
+     A map N $\leftarrow$ (res M)_r does not contain enough information
      to link itself to Ext^r(M,N), so r, M, and N are all inputs.
      
      In the following example, we get an extension of M by k and demonstrate the module structure on extensions.
@@ -438,7 +438,7 @@ doc ///
      e3 = extension(1,k,N,H)
    Text
    
-     We can make sure that these different extensions are nonequivalent:
+     We can make sure that these different extensions are nonequivalent using @TO isYonedaEquivalent@:
    Example
      isYonedaEquivalent(e1,e2)
   SeeAlso
@@ -465,15 +465,25 @@ doc ///
       a map N $\leftarrow$ (res M)_r corresponding to C.
   Description
    Text
-     Such a map will always be zero when composed with the map (res M).dd_{(r+1)}.
+     Note that such a map will always be zero when composed with the map (res M).dd_{r+1}, since it represents an element of the Ext module.
+
+     Here we construct an extension of k by N by hand, in the form of a chain complex C:
    Example
-     R = ZZ/101[x,y]
-     N = comodule ideal"x"
-     k = comodule ideal"x,y"  
-     E1 = cokernel matrix {{0,1,x},{x,y,0}}
-     C = chainComplex(map(k,E1,{{0,1}}),map(E1,N,{{1},{0}}))         
-     f = yonedaExt C   
-     source f == ((res k)_1)  
+     R = ZZ/101[x,y];
+     N = comodule ideal"x";
+     k = comodule ideal"x,y";  
+     E1 = cokernel matrix {{0,1,x},{x,y,0}};
+     C = chainComplex(map(k,E1,{{0,1}}),map(E1,N,{{1},{0}}))
+   Text
+     
+     Now that we have an extension, we can go up and find the relevant map N $\leftarrow$ (res k)_1.
+   Example
+     f = yonedaExt C
+     source f == ((res k)_1)
+   Text
+   
+     Ext elements are representatives in homology, so composing with (res k).dd_2 will give zero:
+   Example  
      f * (res k).dd_2
   SeeAlso
     (yonedaExt,Matrix)
@@ -498,14 +508,28 @@ doc ///
   Description
    Text
      Enough information is stored in Ext^r(M,N).cache.Ext to recover r, M, and N.
+
+     In the following example, we show that an element of Ext^1(k,k) corresponds to a particular map from (res k)_1 to k. We start by finding Ext^1(k,k):
    Example
-     R = ZZ/101[x,y]
-     k = comodule ideal"x,y"
+     R = ZZ/101[x,y];
+     k = comodule ideal"x,y";
      E = Ext^1(k,k)
-     e1 = map(E,R^1,{{1},{0}})
-     e2 = map(E,R^1,{{0},{1}})
+   Text
+   
+     It has two generators, which we will call e1 and e2:
+   Example
+     e1 = map(E,R^1,{{1},{0}});
+     e2 = map(E,R^1,{{0},{1}});
+   Text
+   
+     These will give two different maps from (res k)_1 to k:
+   Example
      yonedaExt e1
      yonedaExt e2
+   Text
+   
+     We can even see soome of the module structure of the Ext group in these maps:
+   Example
      yonedaExt(3*e1+e2)
   SeeAlso
     (yonedaExt,ChainComplex)
@@ -527,36 +551,47 @@ doc ///
       an exact sequence, an r-extension of N by M.
   Outputs
     f:Matrix
-      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) <- R^1.     
+      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) $\leftarrow$ R^1.     
   Description
    Text
-     Note that toExt gives the well-defined element of Ext^r corresponding to an extension,
-     so that it can return the same element for different extensions.
+     The function toExt gives the well-defined element of Ext^r corresponding to an extension,
+     so that it can return the same module element when given two different extensions. Below we find two equivalent extensions of k by k.
    Example
-     R = QQ[x]
-     M = comodule ideal x
-     N = comodule ideal x
+     R = QQ[x];
+     k = comodule ideal x;
    Text
      Here is one extension:
    Example
-     E1 = comodule ideal x^2
-     f = map(E1,N,3*x)
-     g = map(M,E1,1)
-     C = chainComplex(g,f)
-     e1 = toExt C
-     target e1 == Ext^1(M,N) 
+     E1 = comodule ideal x^2;
+     f = map(E1,k,3*x);
+     g = map(k,E1,1);
+     C = chainComplex(g,f);
+     C.dd
    Text
-     Here is a second extension, which is equivalent:
+     Its element of Ext is as follows:
    Example
-     D = extension e1
+     e1 = toExt C
+     target e1 == Ext^1(k,k) 
+   Text
+
+     Here is a second extension, which is equivalent although this is not clear from inspection:
+   Example
+     D = extension e1;
      D.dd  
      e2 = toExt D
+   Text
+     We can check equivalence by checking equality in the Ext module:
+   Example
      e1 == e2
+   Text
+   
+     Note: the function isYonedaEquivalent accomplishes the above tasks for two extensions.
+   Example
+     isYonedaEquivalent(C,D)     
   SeeAlso
     (yonedaExt,ChainComplex)
     (yonedaExt,Matrix)
     (toExt,ZZ,Module,Module,Matrix)
-    (toExt,ChainComplex)
     (extension,Matrix)
     (extension,ZZ,Module,Module,Matrix)    
     isYonedaEquivalent
@@ -573,35 +608,39 @@ doc ///
     M:Module
     N:Module
     g:Matrix
-      a map N <- (res M)_r corresponding to an element of Ext^r(M,N).
+      a map N $\leftarrow$ (res M)_r corresponding to an element of Ext^r(M,N).
   Outputs
     f:Matrix
-      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) <- R^1.     
+      an element of Ext^r(M,N), in the form of a map Ext^r(M,N) $\leftarrow$ R^1.     
   Description
    Text
-     A map N <- (res M)_r does not contain enouugh information
+     A map N $\leftarrow$ (res M)_r does not contain enough information
      to link itself to Ext^r(M,N), so r, M, and N are all inputs.
 
-     Different maps can give the same elementof Ext:
+     Different maps can give the same element of the Ext module. Below we start by constructing two different maps that will represent elements of Ext^1(k,N):
    Example
-     R = ZZ/101[x,y]
-     N = comodule ideal"x"
-     k = comodule ideal"x,y"  
+     R = ZZ/101[x,y];
+     N = comodule ideal"x";
+     k = comodule ideal"x,y";  
      f1 = map(N,(res k)_1,{{0,1}})
      f2 = map(N,(res k)_1,{{0,1+x}})
+   Text
+     If we look at their corresponding module elements of Ext^1(k,N), we get identical results:
+   Example
      toExt(1,k,N,f1)
      toExt(1,k,N,f2)
    Text
+
      The fact that they correspond to the same element of Ext means their corresponding extensions are equivalent:
    Example
      isYonedaEquivalent(extension(1,k,N,f1),extension(1,k,N,f2))
   SeeAlso
     (yonedaExt,ChainComplex)
     (yonedaExt,Matrix)
-    (toExt,ZZ,Module,Module,Matrix)
     (toExt,ChainComplex)
     (extension,Matrix)
     (extension,ZZ,Module,Module,Matrix) 
+    (isYonedaEquivalent,ChainComplex,ChainComplex)
 ///
 doc ///
   Key
@@ -620,21 +659,29 @@ doc ///
     :Boolean
   Description
    Text
-     Since there is not a canonical r-extension to represent
-     an element of Ext^r(M,N), the function 
-     extension is not inverse to the function toExt. However,
-     the extension returned will be Yoneda equivalent, which
-     can be checked here.
+     Elements of Ext^r(M,N) correspond to r-extensions of N by M, but this correspondence is not one-to-one. 
+     To check whether two different r-extensions corrrespond to the same element of Ext^r(M,N), one could use
+     @TO toExt@ and check equality in the Ext module, but a shorter way is to use this function. 
+     
+     The following example verifies the equivalence of two extensions of k by k. 
    Example
-     R = QQ[x]
-     M = comodule ideal x
-     E1 = comodule ideal x^2
-     N = comodule ideal x
-     f = map(E1,N,3*x)
-     g = map(M,E1,1)
-     C = chainComplex(g,f)
-     extension toExt C 
+     R = QQ[x];
+     k = comodule ideal x;
+     E1 = comodule ideal x^2;
+     f = map(E1,k,3*x);
+     g = map(k,E1,1);
+   Text
+     The chain complex C is an exact sequence that is an extension of k by k:
+   Example
+     C = chainComplex(g,f);
+     C.dd
+   Text
+     We can get another extension by composing @TO toExt@ with @TO extension@, but this composition is not the identity:
+   Example   
      extension toExt C == C
+   Text
+     The result, however, is an equivalent extension.
+   Example
      isYonedaEquivalent(C,extension toExt(C))
   SeeAlso
     (yonedaExt,ChainComplex)
@@ -654,29 +701,67 @@ doc ///
     h = yonedaProduct(f,g)
   Inputs
     f:Matrix
-      an element of Ext^r(L,M), in the form of a map Ext^r(L,M) <- R^1.
+      an element of Ext^r(L,M), in the form of a map Ext^r(L,M) $\leftarrow$ R^1.
     g:Matrix
-      an element of Ext^s(M,N), in the form of a map Ext^s(M,N) <- R^1.    
+      an element of Ext^s(M,N), in the form of a map Ext^s(M,N) $\leftarrow$ R^1.    
   Outputs
     h:Matrix
-      an element of Ext^{(r+s)}(L,N), in the form of a map Ext^{(r+s)}(L,N) <-- R^1.
+      an element of Ext^{(r+s)}(L,N), in the form of a map Ext^{(r+s)}(L,N) $\leftarrow$ R^1.
   Description
    Text
-     Here we experimentally find that the elements of Ext^2(k,k)
-     are generated by the elements of Ext^1.
+     Here we experimentally find that over this particular ring, k's self-Ext algebra in degree 2 
+     is generated by the elements of Ext^1(k,k).
+     
+     We start by creating Ext^1 and Ext^2.
    Example
-     R = QQ[a,b,c]
-     k = cokernel vars R
+     R = QQ[a,b,c];
+     k = cokernel vars R;
      E1 = Ext^1(k,k)
      E2 = Ext^2(k,k)
-     f = E1_{0}
-     g = E1_{1}
-     h = E1_{2}
+   Text
+     
+     The generators of Ext^1(k,k) will be called f, g, and h:
+   Example
+     f = E1_{0};
+     g = E1_{1};
+     h = E1_{2};
+   Text
+   
+     Then we can find what elements of Ext^2(k,k) we get on multiplying the generators of Ext^1(k,k):  
+   Example
      yonedaProduct(f,f)
      yonedaProduct(f,g)
      yonedaProduct(g,f)
      yonedaProduct(f,h)
      yonedaProduct(g,h)
+   Text
+     This covers all of Ext^2, as desired.
+
+     In the following example, the degree 2 part of the self-Ext algebra is not generated by the degree 1 elements:
+     We start by creating Ext^1 and Ext^2.
+   Example
+     R = QQ[a,b,c]/(a^3,b^3,c^3);
+     k = cokernel vars R;
+     E1 = Ext^1(k,k)
+     E2 = Ext^2(k,k)
+   Text
+     
+     The generators of Ext^1(k,k) will again be called f, g, and h:
+   Example
+     f = E1_{0};
+     g = E1_{1};
+     h = E1_{2};
+   Text
+   
+     Then only three dimensions of Ext^2(k,k) are spanned by products of elements of Ext^1(k,k):  
+   Example
+     yonedaProduct(f,f)
+     yonedaProduct(f,g)
+     yonedaProduct(g,f)
+     yonedaProduct(f,h)
+     yonedaProduct(g,h)
+  Caveat     
+    Note that yonedaExt does not return the complete algebra structure on Ext(k,k) - but it does allow the multiplication of any individual elements of the Ext algebra.
   SeeAlso
     (yonedaExt,ChainComplex)
     (yonedaExt,Matrix)
