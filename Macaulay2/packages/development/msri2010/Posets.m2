@@ -1,6 +1,7 @@
 -- this file is licenced for use under the GNU General Public Licence version 2
 
 needsPackage "SimplicialComplexes"
+needsPackage "Graphs"
 
 newPackage(
 	"Posets",
@@ -56,7 +57,7 @@ export {
 }
 
 needsPackage "SimplicialComplexes"
-
+needsPackage "Graphs"
 
 Poset = new Type of HashTable
 
@@ -208,9 +209,11 @@ coveringRelations (Poset) := (P) -> (
 hasseDiagram = method();
 hasseDiagram (Poset) := DirectedGraph => (P) -> (
   if P.cache.?coveringRelations then (
-		return directedGraph(P.GroundSet, P.cache.coveringRelations);
-		);   
-  directedGraph(P.GroundSet, coveringRelations P))
+		return digraph(apply(P.GroundSet, elt-> 
+			  {elt, apply(select(P.cache.coveringRelations, rel -> 
+					 rel#1 == elt), goodrel-> goodrel#0)})));   
+  digraph(apply(P.GroundSet, elt-> {elt, apply(select(coveringRelations P, rel -> rel#1 == elt), goodrel-> goodrel#0)})) 
+)
 
 --G = digraph(apply(P.GroundSet, elt-> {elt, apply(select(P.cache.coveringRelations, rel -> rel#1 == elt), goodrel-> goodrel#0)})) 
 
@@ -283,7 +286,6 @@ dropElements (Poset, Function) := (P, f) -> (
 -- inputs:  a poset P and a list L of elements from P to "keep"
 -- outputs:  induced poset the list L
 inducedPoset = method();
-
 inducedPoset (Poset, List) := Poset => (P, L) -> (
   rel := select(P.Relations, R -> (
 	    any(L, G -> (G == R#0)) and any(L, G -> (G == R#1))));
