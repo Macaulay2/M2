@@ -550,7 +550,7 @@ export chars := new array(Expr) len 256 do (
 getcfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do (
-	  i := getc(f);
+	  i := getc(localInterpState,f);
 	  if i == -1 then Expr("") else chars.(i & 255))
      is Error do e
      else buildErrorPacket("expected an input file"));

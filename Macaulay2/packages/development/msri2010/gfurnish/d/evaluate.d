@@ -38,12 +38,12 @@ stepCount := -1;
 microStepCount := -1;
 lastCode := dummyCode;
 lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
-export eval(c:Code):Expr;
-export applyEE(f:Expr,e:Expr):Expr;
-export evalAllButTail(c:Code):Code := while true do c = (
+export eval(localInterpState:threadLocalInterp,c:Code):Expr;
+export applyEE(localInterpState:threadLocalInterp,f:Expr,e:Expr):Expr;
+export evalAllButTail(localInterpState:threadLocalInterp,c:Code):Code := while true do c = (
      when c
      is i:ifCode do (
-	  p := eval(i.predicate);
+	  p := eval(localInterpState,i.predicate);
 	  when p is e:Error do Code(e)
 	  else if p == True then i.thenClause
 	  else if p == False then i.elseClause
@@ -53,23 +53,23 @@ export evalAllButTail(c:Code):Code := while true do c = (
      is v:semiCode do (
 	  w := v.w;
 	  n := length(w);				    -- at least 2
-	  r := eval(w.0);
+	  r := eval(localInterpState,w.0);
 	  when r is e:Error do return Code(e) else nothing;
 	  if n == 2 then w.1 else (
-	       r = eval(w.1);
+	       r = eval(localInterpState,w.1);
 	       when r is e:Error do return Code(e) else nothing;
 	       if n == 3 then w.2 else (
-		    r = eval(w.2);
+		    r = eval(localInterpState,w.2);
 		    when r is e:Error do return Code(e) else nothing;
 		    if n == 4 then w.3 else (
-			 r = eval(w.3);
+			 r = eval(localInterpState,w.3);
 			 when r is e:Error do return Code(e) else nothing;
 			 if n == 5 then w.4 else (
-			      r = eval(w.4);
+			      r = eval(localInterpState,w.4);
 			      when r is e:Error do return Code(e) else nothing;
 			      i := 5;
 			      while i < n-1 do (
-				   r = eval(w.i);
+				   r = eval(localInterpState,w.i);
 				   when r is e:Error do return Code(e) else i = i+1);
 			      w.i)))))
      else (
@@ -79,17 +79,17 @@ export evalAllButTail(c:Code):Code := while true do c = (
 export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionLimit) + " exceeded");
 export InternalRecursionLimit():Expr := buildErrorPacket("internal recursion limit of " + tostring(recursionLimit) + " exceeded");
 
-export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
-     ival := eval(i);
+export storeInHashTable(localInterpState:threadLocalInterp,x:HashTable,i:Code,rhs:Code):Expr := (
+     ival := eval(localInterpState,i);
      when ival is Error do ival else (
-	  val := eval(rhs);
+	  val := eval(localInterpState,rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val)));
 
 export storeInDictionary(localInterpState:threadLocalInterp,dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
-     ival := eval(i);
+     ival := eval(localInterpState,i);
      when ival
      is newname:string do (
-	  rhsval := eval(rhs);
+	  rhsval := eval(localInterpState,rhs);
 	  when rhsval
 	  is sc:SymbolClosure do (
 	       if dc.frame != sc.frame then buildErrorPacket("expected a symbol with the same dictionary frame")
@@ -105,9 +105,9 @@ export storeInDictionary(localInterpState:threadLocalInterp,dc:DictionaryClosure
      is Error do ival
      else printErrorMessageE(i,"expected a string"));
 
-assignvector(m:List,i:Code,rhs:Code):Expr := (
+assignvector(localInterpState:threadLocalInterp,m:List,i:Code,rhs:Code):Expr := (
      x := m.v;
-     ival := eval(i);
+     ival := eval(localInterpState,i);
      when ival
      is j:ZZ do (
 	  if isInt(j)
@@ -115,7 +115,7 @@ assignvector(m:List,i:Code,rhs:Code):Expr := (
 	       k := toInt(j);
 	       if k < 0 then k = k + length(x);
 	       if k < 0 then return printErrorMessageE(i,"negative subscript out of bounds 0 .. "+tostring(length(x)-1));
-	       val := eval(rhs);
+	       val := eval(localInterpState,rhs);
 	       when val is Error do return val else (
 		    if k >= length(x) then (
 			 x = new Sequence len k+1 do (
@@ -130,12 +130,12 @@ assignvector(m:List,i:Code,rhs:Code):Expr := (
      else printErrorMessageE(i,"index not an integer")
      );
 
-dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
-     Key := eval(KEY);
+dbmstore(localInterpState:threadLocalInterp,f:Database,KEY:Code,CONTENT:Code):Expr := (
+     Key := eval(localInterpState,KEY);
      when Key
      is Error do Key
      is key:string do (
-	  Content := eval(CONTENT);
+	  Content := eval(localInterpState,CONTENT);
 	  when Content
 	  is Error do Content
 	  is content:string do dbmstore(f,key,content)
@@ -144,45 +144,45 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
      else printErrorMessageE(KEY,"expected a string"));
 
 assignelemfun(localInterpState:threadLocalInterp,lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
-     x := eval(lhsarray);
+     x := eval(localInterpState,lhsarray);
      when x
      is Error do x
      is x:List do (
-	  if x.mutable then assignvector(x,lhsindex,rhs)
+	  if x.mutable then assignvector(localInterpState,x,lhsindex,rhs)
 	  else buildErrorPacket("assignment attempted to element of immutable list")
 	  )
      is x:Sequence do buildErrorPacket("assignment attempted to element of sequence")
-     is x:HashTable do storeInHashTable(x,lhsindex,rhs)
-     is x:Database do dbmstore(x,lhsindex,rhs)
+     is x:HashTable do storeInHashTable(localInterpState,x,lhsindex,rhs)
+     is x:Database do dbmstore(localInterpState,x,lhsindex,rhs)
      is dc:DictionaryClosure do (
 	  if dc.dictionary.protected then printErrorMessageE(lhsarray,"attempted to create symbol in protected dictionary")
 	  else storeInDictionary(localInterpState,dc,lhsindex,rhs))
      else printErrorMessageE(lhsarray,"expected a list, hash table, database, or dictionary")
      );
 
-assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
+assignquotedobject(localInterpState:threadLocalInterp,x:HashTable,i:Code,rhs:Code):Expr := (
      when i
      is c:globalSymbolClosureCode do (
 	  ival := Expr(SymbolClosure(globalFrame,c.symbol));
-	  val := eval(rhs);
+	  val := eval(localInterpState,rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val))
      else printErrorMessageE(i,"'.' expected right hand argument to be a symbol")
      );
 
 assignquotedelemfun(localInterpState:threadLocalInterp,lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
-     x := eval(lhsarray);
+     x := eval(localInterpState,lhsarray);
      when x
-     is x:HashTable do assignquotedobject(x,lhsindex,rhs)
+     is x:HashTable do assignquotedobject(localInterpState,x,lhsindex,rhs)
      else printErrorMessageE(lhsarray,"'.' expected left hand side to be a hash table")
      );
 
-evalWhileDoCode(c:whileDoCode):Expr := (
+evalWhileDoCode(localInterpState:threadLocalInterp,c:whileDoCode):Expr := (
      while true do (
-	  p := eval(c.predicate);
+	  p := eval(localInterpState,c.predicate);
 	  when p is err:Error 
 	  do return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else p
 	  else if p == True then (
-	       b := eval(c.doClause);
+	       b := eval(localInterpState,c.doClause);
 	       when b is err:Error 
 	       do if err.message == continueMessage then nothing
 	       else return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else b 
@@ -192,16 +192,16 @@ evalWhileDoCode(c:whileDoCode):Expr := (
 	  else return printErrorMessageE(c.predicate,"expected true or false"));
      nullE);
 
-evalWhileListCode(c:whileListCode):Expr := (
+evalWhileListCode(localInterpState:threadLocalInterp,c:whileListCode):Expr := (
      n := 1;
      r := new Sequence len n do provide nullE;
      i := 0;
      while true do (
-	  p := eval(c.predicate);
+	  p := eval(localInterpState,c.predicate);
 	  when p is err:Error
 	  do return if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else p
 	  else if p == True then (
-	       b := eval(c.listClause);
+	       b := eval(localInterpState,c.listClause);
 	       useb := true;
 	       when b is err:Error 
 	       do if err.message == continueMessage then useb = false
@@ -234,11 +234,11 @@ evalWhileListCode(c:whileListCode):Expr := (
 	       else if i == n then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
-evalWhileListDoCode(c:whileListDoCode):Expr := (
+evalWhileListDoCode(localInterpState:threadLocalInterp,c:whileListDoCode):Expr := (
      r := new Sequence len 1 do provide nullE;
      i := 0;
      while true do (
-	  p := eval(c.predicate);
+	  p := eval(localInterpState,c.predicate);
 	  when p is err:Error do (
 	       return if err.message == breakMessage then (
 		    if err.value == dummyExpr then Expr(
@@ -249,7 +249,7 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 		    else err.value)
 	       else p)
 	  else if p == True then (
-	       b := eval(c.listClause);
+	       b := eval(localInterpState,c.listClause);
 	       useb := true;
 	       when b is err:Error
 	       do if err.message == continueMessage then useb = false
@@ -273,7 +273,7 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 		    r.i = b;
 		    i = i+1;
 		    );
-	       d := eval(c.doClause);
+	       d := eval(localInterpState,c.doClause);
 	       when d is err:Error
 	       do return if err.message == breakMessage then (
 		    if err.value == dummyExpr then Expr(
@@ -293,7 +293,7 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
-evalForCode(c:forCode):Expr := (
+evalForCode(localInterpState:threadLocalInterp,c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
      i := 0;				    -- index in r
      j := 0;				    -- the value of the loop variable if it's an integer loop, else the index in the list if it's "for i in w ..."
@@ -303,7 +303,7 @@ evalForCode(c:forCode):Expr := (
      toLimit := false;
      if c.inClause != dummyCode then (
      	  listLoop = true;
-	  invalue := eval(c.inClause);
+	  invalue := eval(localInterpState,c.inClause);
 	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
@@ -311,7 +311,7 @@ evalForCode(c:forCode):Expr := (
 	  )
      else (
 	  if c.fromClause != dummyCode then (
-	       fromvalue := eval(c.fromClause);
+	       fromvalue := eval(localInterpState,c.fromClause);
 	       when fromvalue 
 	       is Error do return fromvalue
 	       is f:ZZ do (
@@ -320,7 +320,7 @@ evalForCode(c:forCode):Expr := (
 	       else return printErrorMessageE(c.fromClause,"expected an integer"));
 	  if c.toClause != dummyCode then (
 	       toLimit = true;
-	       tovalue := eval(c.toClause);
+	       tovalue := eval(localInterpState,c.toClause);
 	       when tovalue 
 	       is Error do return tovalue
 	       is f:ZZ do (
@@ -335,7 +335,7 @@ evalForCode(c:forCode):Expr := (
 	  threadLocalInterpState.localFrame.values.0 = if listLoop then w.j else Expr(toInteger(j));		    -- should be the frame spot for the loop var
 	  j = j+1;
 	  if c.whenClause != dummyCode then (
-	       p := eval(c.whenClause);
+	       p := eval(localInterpState,c.whenClause);
 	       when p is err:Error do (
 		    threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
 		    return if err.message == breakMessage then (
@@ -353,7 +353,7 @@ evalForCode(c:forCode):Expr := (
 		    threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
 		    return printErrorMessageE(c.whenClause,"expected true or false")));
 	  if c.listClause != dummyCode then (
-	       b := eval(c.listClause);
+	       b := eval(localInterpState,c.listClause);
 	       useb := true;
 	       when b is err:Error
 	       do if err.message == continueMessage then useb = false
@@ -380,7 +380,7 @@ evalForCode(c:forCode):Expr := (
 		    i = i+1;
 		    ));
 	  if c.doClause != dummyCode then (
-	       b := eval(c.doClause);
+	       b := eval(localInterpState,c.doClause);
 	       when b is err:Error do (
 		    if err.message != continueMessage then (
 			 threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
@@ -404,12 +404,12 @@ evalForCode(c:forCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
-export evalSequence(v:CodeSequence):Sequence := (
+export evalSequence(localInterpState:threadLocalInterp,v:CodeSequence):Sequence := (
      evalSequenceHadError = false;
      n := length(v);
      if n == 0 then emptySequence
      else if n == 1 then (
-	  x := eval(v.0);
+	  x := eval(localInterpState,v.0);
 	  when x is Error do (
 	       evalSequenceHadError = true;
 	       evalSequenceErrorMessage = x;
@@ -418,14 +418,14 @@ export evalSequence(v:CodeSequence):Sequence := (
 	  else Sequence(x)
 	  )
      else if n == 2 then (
-	  x := eval(v.0);
+	  x := eval(localInterpState,v.0);
 	  when x is Error do (
 	       evalSequenceHadError = true;
 	       evalSequenceErrorMessage = x;
 	       emptySequence
 	       )
 	  else (
-	       y := eval(v.1);
+	       y := eval(localInterpState,v.1);
 	       when y is Error do (
 		    evalSequenceHadError = true;
 		    evalSequenceErrorMessage = y;
@@ -435,7 +435,7 @@ export evalSequence(v:CodeSequence):Sequence := (
      else (
 	  r := new Sequence len n do (
 		    foreach c in v do (
-			 value := eval(c);
+			 value := eval(localInterpState,c);
 			 when value 
 			 is Error do (
 			      evalSequenceHadError = true;
@@ -448,10 +448,10 @@ export evalSequence(v:CodeSequence):Sequence := (
 	  if evalSequenceHadError then r = emptySequence;
 	  r));
 
-export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr;
-export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr;
+export binarymethod(localInterpState:threadLocalInterp,left:Expr,rhs:Code,methodkey:SymbolClosure):Expr;
+export applyFCCS(localInterpState:threadLocalInterp,c:FunctionClosure,cs:CodeSequence):Expr;
 
-export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
+export applyFCS(localInterpState:threadLocalInterp,c:FunctionClosure,v:Sequence):Expr := (
      previousFrame := c.frame;
      model := c.model;
      desc := model.desc;
@@ -478,7 +478,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 	       saveLocalFrame := threadLocalInterpState.localFrame;
 	       threadLocalInterpState.localFrame = f;
 	       recursionDepth = recursionDepth + 1;
-	       ret := eval(model.body);			    -- do tail recursion here
+	       ret := eval(localInterpState,model.body);			    -- do tail recursion here
 	       recursionDepth = recursionDepth - 1;
 	       threadLocalInterpState.localFrame = saveLocalFrame;
 	       if !f.notrecyclable then (
@@ -497,7 +497,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 	       saveLocalFrame := threadLocalInterpState.localFrame;
 	       threadLocalInterpState.localFrame = f;
 	       recursionDepth = recursionDepth + 1;
-	       ret := eval(model.body);
+	       ret := eval(localInterpState,model.body);
 	       recursionDepth = recursionDepth - 1;
 	       threadLocalInterpState.localFrame = saveLocalFrame;
 	       when ret is err:Error do returnFromFunction(ret) else ret
@@ -510,7 +510,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 	       saveLocalFrame := threadLocalInterpState.localFrame;
 	       threadLocalInterpState.localFrame = previousFrame;
 	       recursionDepth = recursionDepth + 1;
-	       ret := eval(model.body);
+	       ret := eval(localInterpState,model.body);
 	       recursionDepth = recursionDepth - 1;
 	       threadLocalInterpState.localFrame = saveLocalFrame;
 	       when ret is err:Error do returnFromFunction(ret) else ret
@@ -535,7 +535,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 		    saveLocalFrame := threadLocalInterpState.localFrame;
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
 		    if !f.notrecyclable then (
@@ -554,7 +554,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 			      while true do provide nullE));
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
 		    when ret is err:Error do returnFromFunction(ret) else ret
@@ -574,13 +574,13 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
      model := fc.model;
      desc := model.desc;
      framesize := desc.framesize;
-     when ec is cs:sequenceCode do applyFCCS(fc,cs.x)
+     when ec is cs:sequenceCode do applyFCCS(localInterpState,fc,cs.x)
      else (
 	  recursionDepth = recursionDepth + 1;
-	  e := eval(ec);
+	  e := eval(localInterpState,ec);
 	  recursionDepth = recursionDepth - 1;
 	  when e is Error do return e 
-	  is v:Sequence do applyFCS(fc,v)
+	  is v:Sequence do applyFCS(localInterpState,fc,v)
 	  else (
 	       -- this is the case where the argument is one Expr, not a Sequence
 	       if desc.numparms != 1 then return wrongModel1(model);
@@ -600,7 +600,7 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 		    while true do (
 			 threadLocalInterpState.localFrame = f;
 	  		 recursionDepth = recursionDepth + 1;
-			 tailCode := evalAllButTail(model.body);
+			 tailCode := evalAllButTail(localInterpState,model.body);
 	  		 recursionDepth = recursionDepth - 1;
 			 -- formerly, just ret := eval(model.body); now do tail recursion instead
 			 when tailCode
@@ -608,25 +608,25 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 			      ret = Expr(e);
 			      break;)
 			 is b:adjacentCode do (			    -- this bit as in eval below, except for the tail recursion case
-			      left := eval(b.lhs);
+			      left := eval(localInterpState,b.lhs);
 			      when left
 			      is c2:FunctionClosure do (
 				   rhs := b.rhs;
 				   when rhs is cs:sequenceCode do (
 					recursionDepth = recursionDepth + 1;
-					ret = applyFCCS(c2,cs.x);
+					ret = applyFCCS(localInterpState,c2,cs.x);
 					recursionDepth = recursionDepth - 1;
 					break)
 				   else (
 					recursionDepth = recursionDepth + 1;
-					e = eval(rhs);
+					e = eval(localInterpState,rhs);
 					recursionDepth = recursionDepth - 1;
 					when e is Error do (
 					     ret = e;
 					     break;)
 					is v:Sequence do (
 				   	     recursionDepth = recursionDepth + 1;
-					     ret = applyFCS(c2,v);
+					     ret = applyFCS(localInterpState,c2,v);
 				   	     recursionDepth = recursionDepth - 1;
 					     break)
 					else (			    -- here is the tail recursion
@@ -662,7 +662,7 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 					     )))
 			      is ff:CompiledFunction do (
 				   recursionDepth = recursionDepth + 1;
-				   z := eval(b.rhs);
+				   z := eval(localInterpState,b.rhs);
 				   recursionDepth = recursionDepth - 1;
 				   when z is Error do (
 					ret = z;
@@ -674,35 +674,35 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 					break))
 			      is ff:CompiledFunctionClosure do (
 				   recursionDepth = recursionDepth + 1;
-				   z := eval(b.rhs);
+				   z := eval(localInterpState,b.rhs);
 				   recursionDepth = recursionDepth - 1;
 				   when z is Error do (
 					ret = z;
 					break)
 				   else (
 		    	      		recursionDepth = recursionDepth + 1;
-					ret = ff.fn(z,ff.env);
+					ret = ff.fn(localInterpState,z,ff.env);
 		    	      		recursionDepth = recursionDepth - 1;
 					break))
 			      is s:SpecialExpr do (
-				   z := eval(b.rhs);
+				   z := eval(localInterpState,b.rhs);
 				   when z is Error do (
 					ret = z;
 					break)
 				   else (
 		    	      		recursionDepth = recursionDepth + 1;
-					ret = applyEE(s.e,z);
+					ret = applyEE(localInterpState,s.e,z);
 		    	      		recursionDepth = recursionDepth - 1;
 					break))
 			      is Error do (
 				   ret = left;
 				   break)
 			      else (
-				   ret = binarymethod(left,b.rhs,AdjacentS);
+				   ret = binarymethod(localInterpState,left,b.rhs,AdjacentS);
 				   break))
 			 else (
 		    	      recursionDepth = recursionDepth + 1;
-			      ret = eval(tailCode);
+			      ret = eval(localInterpState,tailCode);
 		    	      recursionDepth = recursionDepth - 1;
 			      break));
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -722,12 +722,12 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 			      while true do provide nullE));
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
+		    ret := eval(localInterpState,model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
 		    when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 		    ))));
-export applyFCE(fc:FunctionClosure,e:Expr):Expr := (
+export applyFCE(localInterpState:threadLocalInterp,fc:FunctionClosure,e:Expr):Expr := (
      -- single argument 'e' provided not a sequence, so framesize > 0 -- or should we check, for safety??
      if recursionDepth > recursionLimit then return RecursionLimit();
      previousFrame := fc.frame;
@@ -749,7 +749,7 @@ export applyFCE(fc:FunctionClosure,e:Expr):Expr := (
 	       );
 	  threadLocalInterpState.localFrame = f;
      	  recursionDepth = recursionDepth + 1;
-	  ret := eval(model.body);
+	  ret := eval(localInterpState,model.body);
      	  recursionDepth = recursionDepth - 1;
 	  threadLocalInterpState.localFrame = saveLocalFrame;
 	  if !f.notrecyclable then (
@@ -768,13 +768,13 @@ export applyFCE(fc:FunctionClosure,e:Expr):Expr := (
 		    while true do provide nullE));
      	  threadLocalInterpState.localFrame = f;
      	  recursionDepth = recursionDepth + 1;
-	  ret := eval(model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
+	  ret := eval(localInterpState,model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
      	  recursionDepth = recursionDepth - 1;
 	  threadLocalInterpState.localFrame = saveLocalFrame;
 	  when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 	  )
      );
-export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
+export applyFCCS(localInterpState:threadLocalInterp,c:FunctionClosure,cs:CodeSequence):Expr := (
      -- in this version we try to avoid allocating an array of exprs to
      -- hold the parameters, preferring to stuff them into the frame
      -- directly
@@ -784,9 +784,9 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
      else if desc.restargs
      then (
 	  recursionDepth = recursionDepth + 1;
-	  v := evalSequence(cs);
+	  v := evalSequence(localInterpState,cs);
 	  recursionDepth = recursionDepth - 1;
-	  if evalSequenceHadError then evalSequenceErrorMessage else applyFCS(c,v)
+	  if evalSequenceHadError then evalSequenceErrorMessage else applyFCS(localInterpState,c,v)
 	  )
      else if desc.numparms != length(cs)
      then WrongNumArgs(model.arrow,desc.numparms,length(cs))
@@ -797,7 +797,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 	       saveLocalFrame := threadLocalInterpState.localFrame;
 	       threadLocalInterpState.localFrame = previousFrame;
 	       recursionDepth = recursionDepth + 1;
-	       ret := eval(model.body);			    -- do tail recursion here
+	       ret := eval(localInterpState,model.body);			    -- do tail recursion here
 	       recursionDepth = recursionDepth - 1;
 	       when ret is err:Error do ret = returnFromFunction(ret)
 	       else nothing;
@@ -813,7 +813,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 			 f = Frame(previousFrame,desc.frameID,framesize,false,
 			      new Sequence len framesize do (
 				   foreach code in cs do (
-					codevalue := eval(code);
+					codevalue := eval(localInterpState,code);
 					when codevalue
 					is Error do (
 					     haderror = true;
@@ -830,7 +830,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 			 f.outerFrame = previousFrame;
 			 f.frameID = desc.frameID;
 			 foreach code at i in cs do (
-			      codevalue := eval(code);
+			      codevalue := eval(localInterpState,code);
 			      when codevalue
 			      is Error do return codevalue
 			      else f.values.i = codevalue;
@@ -839,7 +839,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    saveLocalFrame := threadLocalInterpState.localFrame;
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
@@ -859,7 +859,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
 			 new Sequence len framesize do (
 			      foreach code in cs do (
-				   codevalue := eval(code);
+				   codevalue := eval(localInterpState,code);
 				   when codevalue 
 				   is Error do (
 					haderror = true;
@@ -873,7 +873,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    if haderror then return errorreturn;
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
@@ -886,20 +886,20 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 export applyES(localInterpState:threadLocalInterp,f:Expr,v:Sequence):Expr := (
      when f
      is ff:CompiledFunction do ff.fn(localInterpState,Expr(v))
-     is ff:CompiledFunctionClosure do ff.fn(Expr(v),ff.env)
-     is c:FunctionClosure do applyFCS(c,v)
+     is ff:CompiledFunctionClosure do ff.fn(localInterpState,Expr(v),ff.env)
+     is c:FunctionClosure do applyFCS(localInterpState,c,v)
      is s:SpecialExpr do applyES(localInterpState,s.e,v)
      else buildErrorPacket("expected a function"));
 export applyEE(localInterpState:threadLocalInterp,f:Expr,e:Expr):Expr := (
      when f
      is ff:CompiledFunction do ff.fn(localInterpState,e)
-     is ff:CompiledFunctionClosure do ff.fn(e,ff.env)
+     is ff:CompiledFunctionClosure do ff.fn(localInterpState,e,ff.env)
      is c:FunctionClosure do (
 	  when e
-	  is v:Sequence do applyFCS(c,v)
-	  else applyFCE(c,e)
+	  is v:Sequence do applyFCS(localInterpState,c,v)
+	  else applyFCE(localInterpState,c,e)
 	  )
-     is s:SpecialExpr do applyEE(s.e,e)
+     is s:SpecialExpr do applyEE(localInterpState,s.e,e)
      else buildErrorPacket("expected a function"));
 --------
 -- could optimize later
@@ -907,13 +907,13 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr):Expr 
      -- was simply apply(f,Expr(Sequence(e0,e1)))
      when g
      is ff:CompiledFunction do ff.fn(localInterpState,Expr(Sequence(e0,e1)))
-     is ff:CompiledFunctionClosure do ff.fn(Expr(Sequence(e0,e1)),ff.env)
+     is ff:CompiledFunctionClosure do ff.fn(localInterpState,Expr(Sequence(e0,e1)),ff.env)
      is s:SpecialExpr do applyEEE(localInterpState,s.e,e0,e1)
      is c:FunctionClosure do (
 	  model := c.model;
 	  desc := model.desc;
 	  if desc.restargs
-	  then applyFCS(c,Sequence(e0,e1))
+	  then applyFCS(localInterpState,c,Sequence(e0,e1))
 	  else if desc.numparms != 2
 	  then WrongNumArgs(model.arrow,desc.numparms,2)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
@@ -942,7 +942,7 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr):Expr 
 		    saveLocalFrame := threadLocalInterpState.localFrame;
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -963,7 +963,7 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr):Expr 
 			      while true do provide nullE));
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -976,13 +976,13 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr,e2:Exp
      -- was simply apply(f,Expr(Sequence(e0,e1,e2)));
      when g
      is ff:CompiledFunction do ff.fn(localInterpState,Expr(Sequence(e0,e1,e2)))
-     is ff:CompiledFunctionClosure do ff.fn(Expr(Sequence(e0,e1,e2)),ff.env)
+     is ff:CompiledFunctionClosure do ff.fn(localInterpState,Expr(Sequence(e0,e1,e2)),ff.env)
      is s:SpecialExpr do applyEEE(localInterpState,s.e,e0,e1,e2)
      is c:FunctionClosure do (
 	  model := c.model;
 	  desc := model.desc;
 	  if desc.restargs
-	  then applyFCS(c,Sequence(e0,e1,e2))
+	  then applyFCS(localInterpState,c,Sequence(e0,e1,e2))
 	  else if desc.numparms != 3
 	  then WrongNumArgs(model.arrow,desc.numparms,3)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
@@ -1013,7 +1013,7 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr,e2:Exp
 		    saveLocalFrame := threadLocalInterpState.localFrame;
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -1034,7 +1034,7 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr,e2:Exp
 			      while true do provide nullE));
 		    threadLocalInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
-		    ret := eval(model.body);
+		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -1043,18 +1043,18 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr,e2:Exp
 
 -----------------------------------------------------------------------------
 
-export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
-     right := eval(rhs);
+export unarymethod(localInterpState:threadLocalInterp,rhs:Code,methodkey:SymbolClosure):Expr := (
+     right := eval(localInterpState,rhs);
      when right is Error do right
      else (
 	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
 	  if method == nullE then MissingMethod(methodkey)
-	  else applyEE(method,right)));
+	  else applyEE(localInterpState,method,right)));
 export binarymethod(localInterpState:threadLocalInterp,lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left is Error do left
      else (
-	  right := eval(rhs);
+	  right := eval(localInterpState,rhs);
 	  when right is Error do right
 	  else (
 	       method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
@@ -1062,7 +1062,7 @@ export binarymethod(localInterpState:threadLocalInterp,lhs:Code,rhs:Code,methodk
 	       if method == nullE then MissingMethodPair(methodkey,left,right)
 	       else applyEEE(localInterpState,method,left,right))));
 export binarymethod(localInterpState:threadLocalInterp,left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
-     right := eval(rhs);
+     right := eval(localInterpState,rhs);
      when right is Error do right
      else (
 	  method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
@@ -1137,7 +1137,7 @@ assignment(localInterpState:threadLocalInterp,nestingDepth:int,frameindex:int,t:
 
 globalAssignmentFun(localInterpState:threadLocalInterp,x:globalAssignmentCode):Expr := (
      t := x.lhs;
-     newvalue := eval(x.rhs);
+     newvalue := eval(localInterpState,x.rhs);
      when newvalue is Error do return newvalue else nothing;
      globalAssignment(localInterpState,t.frameindex,t,newvalue));
 
@@ -1147,7 +1147,7 @@ parallelAssignmentFun(localInterpState:threadLocalInterp,x:parallelAssignmentCod
      frameindex := x.frameindex;
      nlhs := length(frameindex);
      foreach sym in syms do if sym.protected then return buildErrorPacket("assignment to protected variable '" + sym.word.name + "'");
-     value := eval(x.rhs);
+     value := eval(localInterpState,x.rhs);
      when value 
      is Error do return value 
      is values:Sequence do 
@@ -1224,7 +1224,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
 	  microStepCount >= 0)
      else false);
 
-handleError(c:Code,e:Expr):Expr := (
+handleError(localInterpState:threadLocalInterp,c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  if SuppressErrors then return e;
 	  if err.message == returnMessage
@@ -1250,7 +1250,7 @@ handleError(c:Code,e:Expr):Expr := (
 		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger (type help to see debugger commands)");
-			 z := debuggerFun(threadLocalInterpState.localFrame,c);
+			 z := debuggerFun(localInterpState,threadLocalInterpState.localFrame,c);
 			 -- printErrorMessage(err.position,"--leaving debugger");
 			 when z is z:Error do (
 			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
@@ -1269,8 +1269,8 @@ handleError(c:Code,e:Expr):Expr := (
 					microStepCount = - stepCount;
 					stepCount = -1;
 					);
-				   eval(c))
-			      else if z.message == continueMessage then eval(c)
+				   eval(localInterpState,c))
+			      else if z.message == continueMessage then eval(localInterpState,c)
 			      else e)
 			 else e)
 		    else (
@@ -1302,25 +1302,25 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	  is u:unaryCode do u.f(localInterpState,u.rhs)
 	  is b:binaryCode do b.f(localInterpState,b.lhs,b.rhs)
 	  is b:adjacentCode do (
-	       left := eval(b.lhs);
+	       left := eval(localInterpState,b.lhs);
 	       when left
 	       is fc:FunctionClosure do applyFCC(localInterpState,fc,b.rhs)
 	       is ff:CompiledFunction do (
-		    z := eval(b.rhs);
+		    z := eval(localInterpState,b.rhs);
 		    when z is Error do z
 		    else ff.fn(localInterpState,z))
 	       is ff:CompiledFunctionClosure do (
-		    z := eval(b.rhs);
+		    z := eval(localInterpState,b.rhs);
 		    when z is Error do z
-		    else ff.fn(z,ff.env))
+		    else ff.fn(localInterpState,z,ff.env))
 	       is s:SpecialExpr do (
 		    when s.e
 		    is fc:FunctionClosure do applyFCC(localInterpState,fc,b.rhs)
-		    is ff:CompiledFunction do ( z := eval(b.rhs); when z is Error do z else ff.fn(localInterpState,z))
-		    is ff:CompiledFunctionClosure do ( z := eval(b.rhs); when z is Error do z else ff.fn(z,ff.env))
-     	       	    else binarymethod(left,b.rhs,AdjacentS))
+		    is ff:CompiledFunction do ( z := eval(localInterpState,b.rhs); when z is Error do z else ff.fn(localInterpState,z))
+		    is ff:CompiledFunctionClosure do ( z := eval(localInterpState,b.rhs); when z is Error do z else ff.fn(localInterpState,z,ff.env))
+     	       	    else binarymethod(localInterpState,left,b.rhs,AdjacentS))
 	       is Error do left
-	       else binarymethod(left,b.rhs,AdjacentS))
+	       else binarymethod(localInterpState,left,b.rhs,AdjacentS))
 	  is m:functionCode do return Expr(FunctionClosure(noRecycle(threadLocalInterpState.localFrame),m))
 	  is r:localMemoryReferenceCode do (
 	       f := threadLocalInterpState.localFrame;
@@ -1336,7 +1336,7 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	       return f.values.(r.frameindex))
 	  is r:globalMemoryReferenceCode do return globalFrame.values.(r.frameindex)
 	  is x:localAssignmentCode do (
-	       newvalue := eval(x.rhs);
+	       newvalue := eval(localInterpState,x.rhs);
 	       when newvalue is Error do return newvalue 
 	       else localAssignment(x.nestingDepth,x.frameindex,newvalue))
 	  is a:globalAssignmentCode do globalAssignmentFun(localInterpState,a)
@@ -1345,7 +1345,7 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	  is c:tryCode do (
 	       oldSuppressErrors := SuppressErrors;
 	       SuppressErrors = true;
-	       p := eval(c.code);
+	       p := eval(localInterpState,c.code);
 	       if !SuppressErrors then p		  -- eval could have turned it off
 	       else (
 		    SuppressErrors = oldSuppressErrors;
@@ -1354,17 +1354,17 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 			 err.message == continueMessage || err.message == continueMessageWithArg || 
 			 err.message == unwindMessage || err.message == throwMessage
 			 then p
-			 else eval(c.elseClause))
-		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
+			 else eval(localInterpState,c.elseClause))
+		    else if c.thenClause == NullCode then p else eval(localInterpState,c.thenClause)))
 	  is c:catchCode do (
-	       p := eval(c.code);
+	       p := eval(localInterpState,c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
 	       else p)
 	  is c:ifCode do (
-	       p := eval(c.predicate);
+	       p := eval(localInterpState,c.predicate);
 	       when p is Error do p
-	       else if p == True then eval(c.thenClause)
-	       else if p == False then eval(c.elseClause)
+	       else if p == True then eval(localInterpState,c.thenClause)
+	       else if p == False then eval(localInterpState,c.elseClause)
 	       else printErrorMessageE(c.predicate,"expected true or false"))
 	  is r:localSymbolClosureCode do (
 	       f := threadLocalInterpState.localFrame;
@@ -1383,13 +1383,13 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	  is b:multaryCode do b.f(localInterpState,b.args)
 	  is n:newLocalFrameCode do (
 	       threadLocalInterpState.localFrame = Frame(threadLocalInterpState.localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
-	       x := eval(n.body);
+	       x := eval(localInterpState,n.body);
 	       threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
 	       x)
-	  is c:forCode do return evalForCode(c)
-	  is c:whileListDoCode do evalWhileListDoCode(c)
-	  is c:whileDoCode do evalWhileDoCode(c)
-	  is c:whileListCode do evalWhileListCode(c)
+	  is c:forCode do return evalForCode(localInterpState,c)
+	  is c:whileListDoCode do evalWhileListDoCode(localInterpState,c)
+	  is c:whileDoCode do evalWhileDoCode(localInterpState,c)
+	  is c:whileListCode do evalWhileListCode(localInterpState,c)
 	  is c:newCode do NewFun(localInterpState,c.newClause)
 	  is c:newOfCode do NewOfFun(localInterpState,c.newClause,c.ofClause)
 	  is c:newFromCode do NewFromFun(localInterpState,c.newClause,c.fromClause)
@@ -1402,42 +1402,42 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	  is v:semiCode do (
 	       w := v.w;
 	       n := length(w);				    -- at least 2
-	       r := eval(w.0);
+	       r := eval(localInterpState,w.0);
 	       when r is Error do r else (
-	       	    r = eval(w.1);
+	       	    r = eval(localInterpState,w.1);
 	       	    when r is Error do r else (
 	       		 if n == 2 then return r;
-	       		 r = eval(w.2);
+	       		 r = eval(localInterpState,w.2);
 	       		 when r is Error do r else (
 			      if n == 3 then return r;
-			      r = eval(w.3);
+			      r = eval(localInterpState,w.3);
 			      when r is Error do r else (
 				   if n == 4 then return r;
-				   r = eval(w.4);
+				   r = eval(localInterpState,w.4);
 				   when r is Error do r else (
 					i := 5;
 					while i < n do (
-					     r = eval(w.i);
+					     r = eval(localInterpState,w.i);
 					     i = when r is Error do n else i+1;
 					     );
 					r))))))
 	  is v:sequenceCode do (
 	       if length(v.x) == 0 then return emptySequence;
-	       r := evalSequence(v.x);
+	       r := evalSequence(localInterpState,v.x);
 	       if evalSequenceHadError then evalSequenceErrorMessage else Expr(r)) -- speed up
 	  is v:listCode do (
 	       if length(v.y) == 0 then return emptyList;
-	       r := evalSequence(v.y);
+	       r := evalSequence(localInterpState,v.y);
 	       if evalSequenceHadError then evalSequenceErrorMessage else list(r))
 	  is v:arrayCode do (
 	       if length(v.z) == 0 then return emptyArray;
-	       r := evalSequence(v.z);
+	       r := evalSequence(localInterpState,v.z);
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
 	       ));
-     when e is Error do handleError(c,e) else e);
+     when e is Error do handleError(localInterpState,c,e) else e);
 
-export evalexcept(c:Code):Expr := (
-     e := eval(c);
+export evalexcept(localInterpState:threadLocalInterp,c:Code):Expr := (
+     e := eval(localInterpState,c);
      if exceptionFlag then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (
 	       clearAlarmedFlag();
@@ -1456,19 +1456,19 @@ export evalexcept(c:Code):Expr := (
 	       printErrorMessageE(c,"unknown exception")))
      else e);
 
-export eval(f:Frame,c:Code):Expr := (
+export eval(localInterpState:threadLocalInterp,f:Frame,c:Code):Expr := (
      saveLocalFrame := threadLocalInterpState.localFrame;
      threadLocalInterpState.localFrame = f;
-     ret := evalexcept(c);
+     ret := evalexcept(localInterpState,c);
      threadLocalInterpState.localFrame = saveLocalFrame;
      ret);
 
 shieldfun(localInterpState:threadLocalInterp,a:Code):Expr := (
-     if interruptShield then eval(a)
+     if interruptShield then eval(localInterpState,a)
      else (
      	  interruptPending = interruptedFlag;
      	  interruptShield = true;
-     	  ret := eval(a);
+     	  ret := eval(localInterpState,a);
      	  interruptShield = false;
      	  interruptedFlag = interruptPending;
      	  determineExceptionFlag();
@@ -1481,24 +1481,24 @@ shieldfun(localInterpState:threadLocalInterp,a:Code):Expr := (
 setupop(shieldS,shieldfun);     
 
 returnFun(localInterpState:threadLocalInterp,a:Code):Expr := (
-     e := if a == dummyCode then nullE else eval(a);
+     e := if a == dummyCode then nullE else eval(localInterpState,a);
      when e is Error do e else Expr(Error(dummyPosition,returnMessage,e,false,dummyFrame)));
 setupop(returnS,returnFun);
 
 throwFun(localInterpState:threadLocalInterp,a:Code):Expr := (
-     e := eval(a);
+     e := eval(localInterpState,a);
      when e is Error do e else Expr(Error(dummyPosition,throwMessage,e,false,dummyFrame)));
 setupop(throwS,throwFun);
 
 continueFun(localInterpState:threadLocalInterp,a:Code):Expr := (
-     e := if a == dummyCode then nullE else eval(a);
+     e := if a == dummyCode then nullE else eval(localInterpState,a);
      when e is Error do e else Expr(Error(dummyPosition,
 	       if a == dummyCode then continueMessage else continueMessageWithArg,
 	       e,false,dummyFrame)));
 setupop(continueS,continueFun);
 
 stepFun(localInterpState:threadLocalInterp,a:Code):Expr := (
-     e := if a == dummyCode then nullE else eval(a);
+     e := if a == dummyCode then nullE else eval(localInterpState,a);
      when e is Error do e else (
 	  Expr(Error(dummyPosition,
 	       if a == dummyCode then stepMessage else stepMessageWithArg,
@@ -1506,19 +1506,19 @@ stepFun(localInterpState:threadLocalInterp,a:Code):Expr := (
 setupop(stepS,stepFun);
 
 breakFun(localInterpState:threadLocalInterp,a:Code):Expr := (
-     e := if a == dummyCode then dummyExpr else eval(a);
+     e := if a == dummyCode then dummyExpr else eval(localInterpState,a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 
 assigntofun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left
      is q:SymbolClosure do (
 	  if q.symbol.protected then (
 	       buildErrorPacket("assignment to protected variable '" + q.symbol.word.name + "'")
 	       )
 	  else (
-	       value := eval(rhs);
+	       value := eval(localInterpState,rhs);
 	       when value is Error do return value else nothing;
 	       q.frame.values.(q.symbol.frameindex) = value;
 	       value))
@@ -1527,7 +1527,7 @@ assigntofun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 	  method := lookup(Class(left),LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
 	  if method == nullE then buildErrorPacket("'<-': no method for object on left")
 	  else (
-	       value := eval(rhs);
+	       value := eval(localInterpState,rhs);
 	       when value is Error do return value else nothing;
 	       applyEEE(localInterpState,method,left,value))));
 setup(LeftArrowS,assigntofun);
@@ -1599,13 +1599,13 @@ mappairsfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
 
-export mapkeys(f:Expr,obj:HashTable):Expr := (
+export mapkeys(localInterpState:threadLocalInterp,f:Expr,obj:HashTable):Expr := (
      newobj := newHashTable(obj.class,obj.parent);
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       newkey := applyEE(f,p.key);
+	       newkey := applyEE(localInterpState,f,p.key);
 	       if newkey == nullE then return buildErrorPacket("null key encountered"); -- remove soon!!!
 	       when newkey is Error do return newkey else nothing;
 	       storeInHashTableNoClobber(newobj,newkey,p.value);
@@ -1620,13 +1620,13 @@ mapkeysfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      do        
      if        o.mutable
      then      WrongArg("an immutable hash table")
-     else      mapkeys(a.1,o)
+     else      mapkeys(localInterpState,a.1,o)
      else      WrongArg(1,"a hash table")
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("applyKeys",mapkeysfun);
 
-export mapvalues(f:Expr,obj:HashTable):Expr := (
+export mapvalues(localInterpState:threadLocalInterp,f:Expr,obj:HashTable):Expr := (
      u := newHashTable(obj.class,obj.parent);
      hadError := false;
      errm := nullE;
@@ -1636,7 +1636,7 @@ export mapvalues(f:Expr,obj:HashTable):Expr := (
 	       p := bucket;
 	       q := bucketEnd;
 	       while p != p.next do (
-		    newvalue := applyEE(f,p.value);
+		    newvalue := applyEE(localInterpState,f,p.value);
 		    when newvalue is Error do (
 			 errm = newvalue;
 			 hadError = true;
@@ -1659,7 +1659,7 @@ mapvaluesfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      do        
      if        o.mutable
      then      WrongArg("an immutable hash table")
-     else      mapvalues(a.1,o)
+     else      mapvalues(localInterpState,a.1,o)
      else      WrongArg(1,"a hash table")
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
@@ -1799,10 +1799,10 @@ combine(localInterpState:threadLocalInterp,e:Expr):Expr := (
 setupfun("combine",combine);
 
 
-export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
+export unarymethod(localInterpState:threadLocalInterp,right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
      if method == nullE then MissingMethod(methodkey)
-     else applyEE(method,right));
+     else applyEE(localInterpState,method,right));
 
 export binarymethod(localInterpState:threadLocalInterp,left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),methodkey.symbol.hash);

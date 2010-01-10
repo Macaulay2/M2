@@ -42,7 +42,7 @@ export topLevelTeXmacs():int := (
 		    applyEE(method,Expr(item));
 		    )
 	       )));
-topLevelTeXmacs(e:Expr):Expr := toExpr(topLevelTeXmacs());
+topLevelTeXmacs(localInterpState:threadLocalInterp,e:Expr):Expr := toExpr(topLevelTeXmacs());
 setupfun("topLevelTeXmacs",topLevelTeXmacs);
 
 -- Local Variables:

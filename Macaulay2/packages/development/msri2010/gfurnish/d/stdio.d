@@ -50,8 +50,8 @@ export file := {
 				-- we always have inindex <= insize
 	eof:bool,		-- last read got 0 characters (still might have some chars in inbuffer)
         promptq:bool,           -- whether to prompt and to reward for input
-	prompt:function():string, -- function to call to get prompt string when input is required
-        reward:function():string, -- function to call to get reward string when input has been obtained
+	prompt:function(threadLocalInterp):string, -- function to call to get prompt string when input is required
+        reward:function(threadLocalInterp):string, -- function to call to get reward string when input has been obtained
 	fulllines:bool,		-- whether to read at least up to the next newline each time input is required
         bol:bool,     	   	-- at the beginning of a line, and a prompt is needed
 	echo:bool,     	   	-- whether to echo characters read to corresponding output file
@@ -85,7 +85,7 @@ export clearFileError(o:file):void := (
      o.errorMessage = "";
      );
 export fileErrorMessage(o:file):string := o.errorMessage;
-export noprompt():string := "";
+export noprompt(localInterpState:threadLocalInterp):string := "";
 newbuffer():string := new string len bufsize do provide ' ';
 export dummyfile := file(nextHash(), "dummy",0, 
      false, "",
@@ -131,12 +131,12 @@ export tostring(i:ulong):string := (
 
 export interpreterDepth := 0;
 export lineNumber := 0;
-texmacsprompt():string := (
+texmacsprompt(localInterpState:threadLocalInterp):string := (
      s := "";
      for i from 1 to interpreterDepth do s = s + "i";
      "\2prompt#" + s + tostring(lineNumber) + " : \5\5"
      );
-texmacsreward():string := "\2verbatim:";
+texmacsreward(localInterpState:threadLocalInterp):string := "\2verbatim:";
 
 init():void := (
      stdIO.readline = stdIO.infd == STDIN && stdIO.inisatty ;
@@ -551,9 +551,9 @@ endlfun(o:file):int := (
 	  );
      0);
 
-maybeprompt(o:file):void := (
+maybeprompt(localInterpState:threadLocalInterp,o:file):void := (
      o.bol = false;
-     if o.promptq then stdout << o.prompt();
+     if o.promptq then stdout << o.prompt(localInterpState);
      );
 
 octal(c:char):string := (
@@ -596,7 +596,7 @@ export present(x:string):string := (
 	       ))
      else x);
 
-export filbuf(o:file):int := (
+export filbuf(localInterpState:threadLocalInterp,o:file):int := (
 --      if o.fulllines then (
 -- 	  flush(stdIO);
 -- 	  stderr << "--filbuf (fulllines, bol=" << (if o.bol then "true" else "false")
@@ -628,7 +628,7 @@ export filbuf(o:file):int := (
 	  if o.readline then (
 	       flush(stdout);
 	       if interruptedFlag then return ERROR;
-	       r = readline(o.inbuffer,n,o.insize,o.prompt());
+	       r = readline(o.inbuffer,n,o.insize,o.prompt(localInterpState));
 	       if interruptedFlag then (
 		    -- ignore interrupt flags set by our handler during calls to readline
 		    -- because readline uses interrupts for its own purposes
@@ -637,7 +637,7 @@ export filbuf(o:file):int := (
 		    );
 	       )
 	  else (
-	       if o.bol then maybeprompt(o);
+	       if o.bol then maybeprompt(localInterpState,o);
 	       flush(stdout);
 	       if interruptedFlag then return ERROR;
 	       r = read(o.infd,o.inbuffer,n,o.insize);
@@ -662,7 +662,7 @@ export filbuf(o:file):int := (
 	       if o.fulllines then (
 		    for i from newsize-1 to oldsize by -1 do if o.inbuffer.i == '\n' then (
 			 if o.promptq then (
-			      o << o.reward();
+			      o << o.reward(localInterpState);
 			      flush(o);
 			      );
 			 return r;
@@ -763,14 +763,14 @@ export (o:file) << (x:double) : file := o << tostringRR(x);
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 
-export getc(o:file):int := (
+export getc(localInterpState:threadLocalInterp,o:file):int := (
      if !o.input then return EOF;
      if o.inindex == o.insize then (
-	  r := filbuf(o);
+	  r := filbuf(localInterpState,o);
 	  if r == 0 then return EOF
 	  else if r == ERROR then return ERROR;
 	  )
-     else if o.bol && !o.readline then maybeprompt(o);
+     else if o.bol && !o.readline then maybeprompt(localInterpState,o);
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
      if o.echo && o.echoindex < o.inindex then (
@@ -788,12 +788,12 @@ export getc(o:file):int := (
 	  if o.echo then flush(stdout);
 	  );
      int(uchar(c)));
-export read(o:file):(string or errmsg) := (
+export read(localInterpState:threadLocalInterp,o:file):(string or errmsg) := (
      if o.inindex == o.insize then (
-	  r := filbuf(o);
+	  r := filbuf(localInterpState,o);
 	  if r == ERROR then return (string or errmsg)(errmsg(fileErrorMessage(o)));
 	  )
-     else if o.bol && !o.readline then maybeprompt(o);
+     else if o.bol && !o.readline then maybeprompt(localInterpState,o);
      s := substrAlwaysCopy(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;
@@ -802,13 +802,13 @@ export read(o:file):(string or errmsg) := (
 	  flush(stdout);
 	  );
      s);
-export peek(o:file,offset:int):int := (
+export peek(localInterpState:threadLocalInterp,o:file,offset:int):int := (
      if !o.input then return EOF;
      if offset >= bufsize then return ERROR;		    -- tried to peek too far
      if o.inindex+offset >= o.insize then (
 	  if o.eof then return EOF;
      	  while (
-	       r := filbuf(o);
+	       r := filbuf(localInterpState,o);
 	       if r == ERROR then return ERROR;
 	       o.inindex+offset >= o.insize
 	       )
@@ -817,7 +817,7 @@ export peek(o:file,offset:int):int := (
 	       );
 	  );
      int(uchar(o.inbuffer.(o.inindex+offset))));
-export peek(o:file):int := peek(o,0);
+export peek(localInterpState:threadLocalInterp,o:file):int := peek(localInterpState,o,0);
 someblanks := new array(string) len 20 at n do provide new string len n do provide ' ';
 export blanks(n:int):string := if n < length(someblanks) then someblanks.n else new string len n do provide ' ';
 padto(s:string,n:int):string := (
@@ -837,7 +837,7 @@ padto(s:string,n:int):string := (
 export (v:varstring) << (i:int) : varstring := v << tostring(i);
 export (o:file) << (s:string, n:int) : file := o << padto(s,n);
 export (o:file) << (i:int, n:int) : file := o << (tostring(i),n);
-export setprompt(o:file,prompt:function():string):void := ( o.promptq = true; o.prompt = prompt; o.reward=noprompt;);
+export setprompt(o:file,prompt:function(threadLocalInterp):string):void := ( o.promptq = true; o.prompt = prompt; o.reward=noprompt;);
 export unsetprompt(o:file):void := ( o.promptq = false; o.prompt = noprompt; o.reward=noprompt; );
 export clean(o:file):void := flush(o);
 
