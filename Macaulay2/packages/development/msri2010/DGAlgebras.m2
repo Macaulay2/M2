@@ -166,15 +166,125 @@ representativeCycles(DGAlgebra,ZZ) := (A,n) -> (
 --homology(DGAlgebra,ZZ) := (A,n) -> polyHomology(A,n)
 
 homologyAlgebra = method()
-homologyAlgebra(DGAlgebra, ZZ) := (A,n) -> (
-  -- the homology algebra is an H_0(A)-algebra, which we will assume for now to be the coefficient ring of R
+homologyAlgebra(DGAlgebra, ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
+  cycleList := {};
+  relList := {};
+  n := 1;
+  -- get the generators of the homology algebra
+  while (n <= genDegreeLimit) do (cycleList = flatten append(cycleList, findDegNGenerators(A,cycleList,n)); n = n + 1;);
+  n = 2;
+  while (n <= relDegreeLimit) do (relList = flatten append(relList, findDegNRelations(A,cycleList,relList,n)); n = n + 1;);
+  defIdeal := ideal relList;
+  (ring first relList)/defIdeal
+)
+
+homologyAlgebra(DGAlgebra) := (A) -> (
+  A
+)
+
+makeCycleRing = method()
+makeCycleRing(DGAlgebra,List) := (A, cycleList) -> (
   --baseRing := A.ring/(ideal flatten entries polyDifferential(A,1));
   baseRing := coefficientRing (A.ring);
-  -- get HH_1 of the DG algebra.  These are algebra generators for sure.
-  cycleList := representativeCycles(A,1);
-  -- now need to take the span of cycleList^2 in HH_2, and find elements that form a basis of what is left.
-  products := apply(toList ((set toList #cycleList) ** (set toList #cycleList)), i -> cycleList#(i#0)*cycleList#(i#1));
-  (baseRing,products)
+  degreesList := apply(cycleList, i -> first degree i);
+  varList = toList (X_1..X_(#cycleList));
+  baseRing[varList, Degrees => degreesList, SkewCommutative => select(toList(0..(#degreesList-1)), i -> odd degreesList#i)]
+)
+
+getCycleProductList = method()
+getCycleProductList(DGAlgebra,List,ZZ) := (A,cycleList,N) -> (
+  -- this function returns a list containing all monomials of degree N in the cycleList that was input, decomposed using the basis of monomials given by monListA
+  subRing := makeCycleRing(A,cycleList);
+  monListHA := flatten entries basis(N,subRing);
+  expListHA := flatten(monListHA / exponents);
+  monListA := flatten entries basis ({N,0},A.algebra);
+  apply(apply(expListHA, xs -> product apply(#xs, i -> (cycleList#i)^(xs#i))), z -> (coefficients(z, Monomials => monListA))#1)
+)
+
+findDegNGenerators = method()
+findDegNGenerators(DGAlgebra,List,ZZ) := (A,oldCycleList,N) -> (
+  -- I am assuming that the oldCycleList contains a (minimal?) set of algebra
+  -- generators needed to generate the homology algebra up to degree n-1.
+  -- the goal of this function is to return the generators and relations in degree n.
+
+  cycleList := {};
+  relsList := {};
+  varList := {};
+  if (N == 1) then (
+     -- here, we know all the degree 1 elements are generators
+     cycleList = representativeCycles(A,1);
+  )
+  else  (
+     -- the below matrix contains all monomials of degree n in the cycleList that was input, put into a matrix using the basis of monomials given by monListA
+     cycleProductList := getCycleProductList(A,oldCycleList,N);
+     if (cycleProductList != {}) then (
+        cycleProductMatrix := substitute(fold(cycleProductList, (i,j) -> i | j), R);
+        nthHomology := polyHomology(A,N);
+        newHomology := prune (nthHomology / (image map (target gens nthHomology, source cycleProductMatrix, matrix entries cycleProductMatrix)));
+        monListA := flatten entries basis ({N,0},A.algebra);
+        newGenerators := apply(entries transpose gens image newHomology.cache.pruningMap, zList -> apply(#zList, i -> zList#i*monListA#i)) / sum;
+        cycleList = newGenerators;
+     ); 
+  );
+  cycleList
+)
+
+findDegNRelations = method()
+findDegNRelations(DGAlgebra,List,List,ZZ) := (A,algGens,algRels,N) -> (
+  -- this function tries to find the relations in degree N that involve the generators in the list algGens
+  -- no checking is done to see if algGens are actually minimal generators at this point.
+  retVal := 0;
+  polyRing := {};
+  defIdeal := 0;
+  if (algRels != {}) then (
+     polyRing = ring first algRels;
+     defIdeal = ideal algRels;
+  )   
+  else (
+     polyRing = makeCycleRing(A,algGens);
+     defIdeal = ideal 0_polyRing;
+  );
+  -- initialize retVal
+  if (algRels != {}) then retVal = algRels else retVal = {0_polyRing};
+  ringSoFar := polyRing/defIdeal;
+  -- using algRels, check if there are indeed any new relations in degree n
+  nthHomology := polyHomology(A,N);
+  rankOfNthHomology := numgens prune nthHomology;
+  rankOfAlgebraSoFar := hilbertFunction(N,ringSoFar);
+  if (rankOfNthHomology != rankOfAlgebraSoFar) then
+  (
+    -- when in here, we know there is a relation in degree N.
+    -- so take each monomial of the correct degree, build the cycle corresponding to that
+    -- and define a map from the residue field to the homology class representing each cycle.
+    -- then take the kernel, prune, and use cache.pruningMap to get the actual minimal generating
+    -- set of the kernel.  Finally, reconstruct the elements from the monomials and viola!
+    cycleProductList := getCycleProductList(A,algGens,N);
+    if (cycleProductList != {}) then (
+       cycleProductMatrix := substitute(fold(cycleProductList, (i,j) -> i | j), R);
+       baseRing := coker vars (A.ring);
+       myMatrix := cycleProductMatrix // (gens nthHomology);
+       multMap := map(nthHomology,baseRing^(rank source cycleProductMatrix),myMatrix);
+       kernelMultMap := ker multMap;       
+       error "err";
+    );
+  );
+  retVal
+)
+
+TEST ///
+restart
+loadPackage "DGAlgebras"
+debug DGAlgebras
+R = ZZ/32003[x,y,z]/ideal{x^3,y^4,z^5}
+B = koszulComplexDGA(R)
+homologyAlgebra(B,4,4)
+R = ZZ/32003[x,y,z,w]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
+B = koszulComplexDGA(R)
+homologyAlgebra(B,4,4)
+///
+
+findDegNRelations(DGAlgebra,ZZ) := (A,N) -> (
+  A
 )
 
 divPowDiffMonomial = method()
@@ -204,12 +314,12 @@ end
 restart
 loadPackage "DGAlgebras"
 debug DGAlgebras
-R = ZZ/32003[x,y,z,w]/ideal{x^3,y^4,z^5}
+R = ZZ/32003[x,y,z]/ideal{x^3,y^4,z^5}
 B = koszulComplexDGA(R)
-cycleList = representativeCycles(B,1)
-products = apply(toList ((set (0..(#cycleList-1))) ** (set (0..(#cycleList-1)))), i -> cycleList#(i#0)*cycleList#(i#1));
-cycleList = last homologyAlgebra(B,4)
-cycleList_0*cycleList_1
+homologyAlgebra(B,4,4)
+R = ZZ/32003[x,y,z,w]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
+B = koszulComplexDGA(R)
+homologyAlgebra(B,4)
 
 h2 = polyHomology(B,2)
 newh2 = prune (h2 / (image map (target gens h2, R^1, matrix {{-x^2*y^3},{0},{0},{0},{0},{0}})))
