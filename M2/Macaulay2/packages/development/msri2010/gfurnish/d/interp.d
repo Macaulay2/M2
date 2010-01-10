@@ -49,23 +49,23 @@ Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
 AfterPrint := makeProtectedSymbolClosure("AfterPrint");
 AfterNoPrint := makeProtectedSymbolClosure("AfterNoPrint");
-runmethod(methodname:SymbolClosure,g:Expr):Expr := (
+runmethod(localInterpState:threadLocalInterp,methodname:SymbolClosure,g:Expr):Expr := (
      method := lookup(Class(g),methodname);
-     if method == nullE then g else applyEE(method,g)
+     if method == nullE then g else applyEE(localInterpState,method,g)
      );
-runmethod(methodname:Expr,g:Expr):Expr := (
+runmethod(localInterpState:threadLocalInterp,methodname:Expr,g:Expr):Expr := (
      method := lookup(Class(g),methodname);
-     if method == nullE then g else applyEE(method,g)
+     if method == nullE then g else applyEE(localInterpState,method,g)
      );
 
 endInput := makeProtectedSymbolClosure("end");
 
-PrintOut(g:Expr,semi:bool,f:Code):Expr := (
+PrintOut(localInterpState:threadLocalInterp,g:Expr,semi:bool,f:Code):Expr := (
      methodname := if semi then NoPrint else Print;
      method := lookup(Class(g),methodname);
      if method == nullE 
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
-     else applyEE(method,g)
+     else applyEE(localInterpState,method,g)
      );
 readeval4(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
@@ -177,9 +177,9 @@ readeval4(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dictio
 				   -- result of BeforeEval is ignored unless error:
 				   -- BeforeEval method is independent of mode
 				   f := convert(parsed); -- convert to runnable code
-				   be := runmethod(BeforeEval,nullE);
+				   be := runmethod(localInterpState,BeforeEval,nullE);
 				   when be is err:Error do ( be = update(err,"before eval",f); if stopIfError || returnIfError then return be; ) else nothing;
-				   lastvalue = evalexcept(f);	  -- run it
+				   lastvalue = evalexcept(localInterpState,f);	  -- run it
 				   if lastvalue == endInput then return nullE;
 				   -- when f is globalAssignmentCode do lastvalue = nullE else nothing;
 				   when lastvalue is err:Error do (
@@ -208,7 +208,7 @@ readeval4(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dictio
 						  modeAfterPrint = list(mode,Expr(AfterPrint));
 						  );
 					     -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it:
-					     g := runmethod(AfterEval,lastvalue);
+					     g := runmethod(localInterpState,AfterEval,lastvalue);
 					     when g is err:Error
 					     do (
 						  g = update(err,"after eval",f); 
@@ -218,15 +218,15 @@ readeval4(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dictio
 					     else lastvalue = g;
 					     -- result of BeforePrint is printed instead unless error:
 					     printvalue := nullE;
-					     g = runmethod(modeBeforePrint,lastvalue);
+					     g = runmethod(localInterpState,modeBeforePrint,lastvalue);
 					     when g is err:Error
 					     do ( g = update(err,"before print",f); if stopIfError || returnIfError then return g; )
 					     else printvalue = g;
 					     -- result of Print is ignored:
-					     g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue);
+					     g = runmethod(localInterpState,if s.word == SemicolonW then modeNoPrint else modePrint,printvalue);
 					     when g is err:Error do ( g = update(err,"at print",f); if stopIfError || returnIfError then return g; ) else nothing;
 					     -- result of AfterPrint is ignored:
-					     g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue);
+					     g = runmethod(localInterpState,if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue);
 					     when g is err:Error do ( g = update(err,"after print",f); if stopIfError || returnIfError then return g; ) else nothing;
 					     )
 					)
@@ -268,7 +268,7 @@ readeval(localInterpState:threadLocalInterp,file:TokenFile,returnLastvalue:bool,
      hadexiterror := false;
      hook := getGlobalVariable(fileExitHooks);
      when hook is x:List do foreach f in x.v do (
-	  r := applyEE(f,haderror);
+	  r := applyEE(localInterpState,f,haderror);
 	  when r is err:Error do (
 	       if err.position == dummyPosition then stderr << "error in file exit hook: " << err.message << endl;
 	       hadexiterror = true;
@@ -282,7 +282,7 @@ InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
 
 promptcount := 0;
-topLevelPrompt():string := (
+topLevelPrompt(localInterpState:threadLocalInterp):string := (
      if debugLevel == 123 then (
 	  stderr <<  "-- topLevelPrompt:" 
 	  << " previousLineNumber = " << previousLineNumber 
@@ -294,7 +294,7 @@ topLevelPrompt():string := (
 	  list(topLevelMode, Expr(if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt))));
      p := (
 	  if method == nullE then ""
-     	  else when applyEE(method,toExpr(lineNumber)) is s:string do s
+     	  else when applyEE(localInterpState,method,toExpr(lineNumber)) is s:string do s
      	  is n:ZZ do if isInt(n) then blanks(toInt(n)) else ""
      	  else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
 	  );
@@ -365,7 +365,7 @@ load(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else buildErrorPacket("expected string as file name"));
 setupfun("simpleLoad",load);
 
-currentLineNumber(e:Expr):Expr := (
+currentLineNumber(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then Expr(toInteger(int(currentPosFile.line)))
      else WrongNumArgs(0)
@@ -424,33 +424,33 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       )),
 	  NULL));
 
-export topLevel():bool := (
-     when loadprint("-",newStaticLocalDictionaryClosure(),false)
+export topLevel(localInterpState:threadLocalInterp):bool := (
+     when loadprint(localInterpState,"-",newStaticLocalDictionaryClosure(),false)
      is err:Error do (
 	  -- printErrorMessage(err);		    -- this message may not have been printed before (?)
 	  false)
      else true
      );
 
-commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",dc,false);
-commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
-commandInterpreter(e:Expr):Expr := (
+commandInterpreter(localInterpState:threadLocalInterp,dc:DictionaryClosure):Expr := loadprint(localInterpState,"-",dc,false);
+commandInterpreter(localInterpState:threadLocalInterp,f:Frame):Expr := commandInterpreter(localInterpState,newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
+commandInterpreter(localInterpState:threadLocalInterp,e:Expr):Expr := (
      --saveLoadDepth := loadDepth;
      --setLoadDepth(loadDepth+1);
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
-	    if length(s) == 0 then loadprint("-",newStaticLocalDictionaryClosure(),false)
+	    if length(s) == 0 then loadprint(localInterpState,"-",newStaticLocalDictionaryClosure(),false)
 	    else WrongNumArgs(0,1)
 	    )
-       is Nothing do loadprint("-",newStaticLocalDictionaryClosure(),false)
-       is x:DictionaryClosure do commandInterpreter(x)
-       is x:SymbolClosure do commandInterpreter(x.frame)
-       is x:CodeClosure do commandInterpreter(x.frame)
-       is x:FunctionClosure do commandInterpreter(x.frame)
-       is cfc:CompiledFunctionClosure do commandInterpreter(emptyFrame)	    -- some values are there, but no symbols
-       is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
-       is s:SpecialExpr do commandInterpreter(s.e)
+       is Nothing do loadprint(localInterpState,"-",newStaticLocalDictionaryClosure(),false)
+       is x:DictionaryClosure do commandInterpreter(localInterpState,x)
+       is x:SymbolClosure do commandInterpreter(localInterpState,x.frame)
+       is x:CodeClosure do commandInterpreter(localInterpState,x.frame)
+       is x:FunctionClosure do commandInterpreter(localInterpState,x.frame)
+       is cfc:CompiledFunctionClosure do commandInterpreter(localInterpState,emptyFrame)	    -- some values are there, but no symbols
+       is CompiledFunction do commandInterpreter(localInterpState,emptyFrame)		    -- no values or symbols are there
+       is s:SpecialExpr do commandInterpreter(localInterpState,s.e)
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
      --setLoadDepth(saveLoadDepth);
@@ -458,7 +458,7 @@ commandInterpreter(e:Expr):Expr := (
 setupfun("commandInterpreter",commandInterpreter);
 
 currentS := setupvar("current",nullE);
-debugger(f:Frame,c:Code):Expr := (
+debugger(localInterpState:threadLocalInterp,f:Frame,c:Code):Expr := (
      -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
@@ -467,12 +467,12 @@ debugger(f:Frame,c:Code):Expr := (
        setGlobalVariable(currentS,Expr(CodeClosure(f,c)));
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
-		r := applyEE(debuggerHook,True);
+		r := applyEE(localInterpState,debuggerHook,True);
 		when r is Error do return r else nothing;
 		);
-	   ret := loadprintstdin(newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true,false);
+	   ret := loadprintstdin(localInterpState,newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true,false);
 	   if debuggerHook != nullE then (
-		r := applyEE(debuggerHook,False);
+		r := applyEE(localInterpState,debuggerHook,False);
 		when r is Error do return r else nothing;
 		);
 	 decrementInterpreterDepth();
@@ -486,7 +486,7 @@ currentString := setupvar("currentString", nullE);
 value(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
-     is c:CodeClosure do eval(c.frame,c.code)
+     is c:CodeClosure do eval(localInterpState,c.frame,c.code)
      is s:string do (
       	  savecs := getGlobalVariable(currentString);
 	  setGlobalVariable(currentString,Expr(s));
@@ -566,15 +566,15 @@ export process(localInterpState:threadLocalInterp):void := (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError
 	  then Exit(err)	 -- probably can't happen, because layout.m2 doesn't set stopIfError
-	  else if !topLevel()				    -- give a prompt for debugging
+	  else if !topLevel(localInterpState)				    -- give a prompt for debugging
 	  then Exit(err))
      else nothing;
      when ret is n:ZZ do (
 	  if isInt(n) then (
-     	       value(Expr("exit " + tostring(toInt(n))));   -- try to exit the user's way
+     	       value(localInterpState,Expr("exit " + tostring(toInt(n))));   -- try to exit the user's way
      	       ))
      else nothing;
-     value(Expr("exit 0"));				    -- try to exit the user's way
+     value(localInterpState,Expr("exit 0"));				    -- try to exit the user's way
      exit(failedExitExit);		   -- if that doesn't work, try harder and indicate an error
      );
 

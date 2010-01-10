@@ -1214,7 +1214,7 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  env := cf.env;
 	  ret := new Sequence len newlen at i do (
 	       recursionDepth = recursionDepth + 1;
-	       tmp := fn(Expr(Sequence(a1.i,a2.i)),env);
+	       tmp := fn(localInterpState,Expr(Sequence(a1.i,a2.i)),env);
 	       recursionDepth = recursionDepth - 1;
 	       when tmp is Error do (
 		    errret = tmp;
@@ -1439,7 +1439,7 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	  env := cf.env;
 	  ret := new Sequence len newlen do (
 	       foreach arg in a do (
-		    tmp := fn(arg,env);
+		    tmp := fn(localInterpState,arg,env);
 		    when tmp is Error do (
 			 errret = tmp;
 			 while true do provide nullE; )
@@ -1533,7 +1533,7 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 	       fn := cf.fn;
 	       env := cf.env;
 	       for i from 0 to newlen-1 do (
-		    tmp := fn(Expr(toInteger(i)),env);
+		    tmp := fn(localInterpState,Expr(toInteger(i)),env);
 		    when tmp is Error do (
 			 errret = tmp;
 			 while true do provide nullE; )
@@ -1713,7 +1713,7 @@ scan(localInterpState:threadLocalInterp,n:int,f:Expr):Expr := (
 	  fn := cf.fn;
 	  env := cf.env;
 	  for i from 0 to n-1 do (
-	       tmp := fn(Expr(toInteger(i)),env);
+	       tmp := fn(localInterpState,Expr(toInteger(i)),env);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -1896,7 +1896,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	  fn := cf.fn;
 	  env := cf.env;
 	  foreach arg in a do (
-	       tmp := fn(arg,env);
+	       tmp := fn(localInterpState,arg,env);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -2018,7 +2018,7 @@ scan(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := 
 	  fn := cf.fn;
 	  env := cf.env;
 	  for i from 0 to newlen - 1 do (
-	       tmp := fn(Expr(Sequence(a1.i,a2.i)),env);
+	       tmp := fn(localInterpState,Expr(Sequence(a1.i,a2.i)),env);
 	       when tmp is Error do (
 	  	    recursionDepth = recursionDepth - 1;
 		    return tmp;

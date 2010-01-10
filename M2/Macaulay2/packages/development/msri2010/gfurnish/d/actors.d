@@ -719,7 +719,7 @@ logorfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 		    if right == True then True
 		    else if right == False then False
 		    else binarymethod(localInterpState,left,right,orS)))
-	  else binarymethod(left,rhs,orS)));
+	  else binarymethod(localInterpState,left,rhs,orS)));
 setup(orS,logorfun);
 BarBarF(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,BarBarS);
 setup(BarBarS,BarBarF);
@@ -737,7 +737,7 @@ logandfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 		    if b == True then True
 		    else if b == False then False
 		    else binarymethod(localInterpState,a,b,andS)))
-	  else binarymethod(a,rhs,andS)));
+	  else binarymethod(localInterpState,a,rhs,andS)));
 setup(andS,logandfun);
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
 export notFun(localInterpState:threadLocalInterp,rhs:Code):Expr := (
@@ -794,7 +794,7 @@ DotDotfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 			 Expr(new Sequence len m+1 at k do provide x+k))
 		    else printErrorMessageE(rhs,"range too large")))
 	  else binarymethod(localInterpState,left,right,DotDotS))
-     else binarymethod(left,rhs,DotDotS));
+     else binarymethod(localInterpState,left,rhs,DotDotS));
 setup(DotDotS,DotDotfun);
 
 DotDotLessFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
@@ -826,7 +826,7 @@ DotDotLessFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 			 Expr(new Sequence len m+1 at k do provide x+k))
 		    else printErrorMessageE(rhs,"range too large")))
 	  else binarymethod(localInterpState,left,right,DotDotLessS))
-     else binarymethod(left,rhs,DotDotLessS));
+     else binarymethod(localInterpState,left,rhs,DotDotLessS));
 setup(DotDotLessS,DotDotLessFun);
 
 assignNewFun(localInterpState:threadLocalInterp,newclass:Code,rhs:Code):Expr := (

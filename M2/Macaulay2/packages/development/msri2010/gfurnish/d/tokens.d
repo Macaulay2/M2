@@ -530,7 +530,7 @@ export cwd():Expr := (
      r := getcwd();
      if r === "" then buildErrorPacket("can't get current working directory: " + syserrmsg())
      else Expr(r));
-dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
+dummyDebuggerFun(localInterpState:threadLocalInterp,f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
 export handleInterrupts := true;
 export stopIfError := false;

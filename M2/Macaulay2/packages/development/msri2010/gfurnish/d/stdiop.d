@@ -161,12 +161,12 @@ export fileError(f:PosFile):bool := fileError(f.file);
 export clearFileError(f:PosFile):void := clearFileError(f.file);
 export fileErrorMessage(f:PosFile):string := fileErrorMessage(f.file);
 export makePosFile(o:file):PosFile := PosFile(o, 0, o.filename, ushort(1), ushort(0));
-export peek(o:PosFile, offset:int):int := (
+export peek(localInterpState:threadLocalInterp,o:PosFile, offset:int):int := (
      i := 0;
      prevchar := o.lastchar;
      c := 0;
      while (
-	  c = peek(o.file,i);
+	  c = peek(localInterpState,o.file,i);
 	  if c == ERROR || c == EOF then return c;
 	  prevchar = c;
 	  i < offset
@@ -175,12 +175,12 @@ export peek(o:PosFile, offset:int):int := (
 	  i = i+1;
 	  );
      c);
-export peek(o:PosFile):int := peek(o,0);
+export peek(localInterpState:threadLocalInterp,o:PosFile):int := peek(localInterpState,o,0);
 export isatty(o:PosFile):bool := o.file.inisatty;
 export close(o:PosFile):int := (
      when close(o.file) is errmsg do ERROR else 0
      );
-export setprompt(o:PosFile,prompt:function():string):void := setprompt(o.file,prompt);
+export setprompt(o:PosFile,prompt:function(threadLocalInterp):string):void := setprompt(o.file,prompt);
 export unsetprompt(o:PosFile):void := unsetprompt(o.file);
 export openPosIn(filename:string):(PosFile or errmsg) := (
      when openIn(filename)
@@ -189,7 +189,7 @@ export openPosIn(filename:string):(PosFile or errmsg) := (
      );
 roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
 tabwidth := 8;
-export getc(o:PosFile):int := (
+export getc(localInterpState:threadLocalInterp,o:PosFile):int := (
      prevchar := o.lastchar;
      c := getc(o.file);
      if c == ERROR || c == EOF then return c;
