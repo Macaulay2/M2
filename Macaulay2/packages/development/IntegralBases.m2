@@ -282,6 +282,24 @@ TEST ///
   F = y^4-y^2+x^3+x^4
   H = findTruncations F
   displayTruncations H
+
+  H#x#1
+Ps = apply(puiseuxTruncations F, last)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
+syz matrix makeEquations(Ps, {x*1_R,x*y,x*y^2,y^3,y^4}, 2)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3,y^4}, 2)
+
+  Ps = apply(H#(first keys H)#1, last)
+  
+  B = ring Ps_0_1
+  K = coefficientRing coefficientRing B
+  R1 = first flattenRing(K (monoid B))
+  Y = Ps_0_1
+  sub(Y, R1)  
+  Y^2
+  use R1
+  coefficients(sub(Y^2,R1), Variables=>{b,t})
+  syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
 ///
 
 TEST ///

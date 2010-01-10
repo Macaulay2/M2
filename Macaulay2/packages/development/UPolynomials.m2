@@ -21,6 +21,7 @@ export {
      myPseudoDivision,
      myPseudoRemainder,
      myResultant,
+     CRA,
      primitivePolynomialGCD,
      subresultantGCD,
      mySquareFreeDecomposition,
@@ -118,6 +119,137 @@ makeTower = (R) -> (
 	       A = B));
      A)
 
+--------------------------------------------
+-- Lift numbers mod m to rational numbers --
+--------------------------------------------
+
+liftToQQ = (c, m) -> (
+     -- return either null or a rational number a/b.
+     -- a/b is returned if there are a, b s.t. 2*(a^2 + b^2) < m such
+     --  that a == b*c (mod m)
+     -- If not, returns null
+     (v1,v2,v3) := (0,1,c);
+     (u1,u2,u3) := (1,0,m);
+     while 2*v3*v3 >= m do (
+	  q := u3 // v3;
+	  (r1,r2,r3) := (u1-q*v1,u2-q*v2,u3-q*v3);
+	  (u1,u2,u3) = (v1,v2,v3);
+	  (v1,v2,v3) = (r1,r2,r3);
+	  );
+     if 2*v2*v2 >= m then null
+     else v3/v2)
+
+-----------------------------------------
+-- Integer Chinese remainder algorithm --
+-- CRA for a set of integers mod a     --
+-- set of prime moduli                 --
+-- (or at least pairwise rel prime)    --
+-----------------------------------------
+myCoefficientsToPoly = (coeffs, var) -> (
+     -- If var is a variable, this creates a polynomial
+     -- If var is a scalar, this evaluates the corresponding polynomial
+     n := #coeffs - 1;
+     val := coeffs#n;
+     for i from 1 to n do
+       val = coeffs#(n-i) + val * var;
+     val)
+
+cra0 = (ps) -> (
+     -- ps is a list of pairwise relatively prime integers, {m1, m2, ..., mn}
+     -- returns a list {d1, ..., dn}, where
+     -- di = (m1 m2 ... m(i-1))^(-1) mod mi
+     for i from 1 to #ps-1 list (
+	  m := ps#i;
+	  val := ps#0 % m;
+	  for j from 1 to i-1 do 
+	    val = (val * ps#j) % m;
+	  (g,u,v) = toSequence gcdCoefficients(val, m);
+	  u))
+
+cra1 = (ps,us,ds) -> (
+     -- Returns a list vs of mixed-radix numbers.
+     n := #ps;
+     vs := new MutableList from toList(n:0);
+     vs#0 = us#0 % ps#0;
+     for k from 1 to n-1 do (
+	  m := ps#k;
+	  temp := vs#(k-1);
+	  for j from 0 to k-2 do 
+	    temp = (temp * ps#(k-2-j) + vs#(k-2-j)) % m;
+	  vs#k = ((us#k - temp) * ds#(k-1)) % m);
+     toList vs
+     )
+
+cra2 = (ps,vs) -> (
+     -- Returns an integer.
+     -- if ps = {m1,...,mn}
+     -- and vs = {v1,...,vn}, this returns the integer
+     -- v1 + v2 * m1 + v3 * m1 * m2 + ... + vn * m1 * ... * m(n-1)
+     n := #ps-1;
+     val := vs#n;
+     for i from 1 to n do
+       val = val * ps#(n-i) + vs#(n-i);
+     val)
+
+cra = (ps,us) -> (
+     -- Returns an integer.
+     ds := cra0 ps;
+     vs := cra1(ps,us,ds);
+     cra2(ps,vs)
+     )
+
+CRA = (ps,fs) -> (
+     -- ps should be a list of pairwise rel prime integers
+     -- fs should be a list of polynomials, same length as ps.
+     -- lift each coeff using integer Chinese remainder alg
+     x := (ring (fs#0))_0;
+     cfs := apply(fs, myCoefficients);
+     lens := apply(cfs, a -> #a);
+     d := max lens;
+     lifted := apply(d, i -> (
+	       cs := apply(cfs, cf -> if #cf >= i then cf#i else 0);
+	       cra(ps,cs)));
+     myCoefficientsToPoly(lifted,x))
+
+///
+restart
+debug loadPackage "UPolynomials"
+
+kk = ZZ/32003
+a = lift(3_kk/5_kk,ZZ)
+liftToQQ(a, 32003)
+
+a = lift(3_kk/8_kk,ZZ)
+liftToQQ(a, 32003)
+
+a = lift(28_kk/29_kk,ZZ)
+liftToQQ(a, 32003)
+
+debug oo
+cra0{2,3,5,7,11}
+cra({2,3,5},{1,1,2})
+m = cra({1048583, 1048589, 1048601, 1048609, 1048613, 1048627, 1048633, 1048661},{1,1,3,4,7,123,654,1000})
+apply(select(1..10000, i -> isPrime(2^29+2*i+1)), a -> 2^29 + 2*a + 1)
+product toList oo
+ms = {1048583, 1048589, 1048601, 1048609, 1048613, 1048627, 1048633, 1048661}
+product ms
+apply(ms, p -> m % p)
+
+
+R = ZZ[x]
+f1 = x^3+x+1
+f2 = x^3+x^2+4*x+6
+g = CRA({23,31},{f1,f2})
+apply(myCoefficients g, c -> c % 23)
+apply(myCoefficients g, c -> c % 31)
+
+
+R = ZZ[x]
+f1 = x^3+x+1
+f2 = x^3+x^2+4*x+6
+f3 = 2*x^3+13*x^2+4*x+16
+g = CRA({23,1048583,101},{f1,f2,f3})
+///
 
 ---------------------
 -- Pseudo division --
