@@ -108,7 +108,9 @@ COMMANDS = \
 	x-monideal \
 	x-gb \
 	x-ringmap \
-	x-mutablemat
+	x-mutablemat \
+	thread \
+	threadpool
 
 NAMES_H = ringelem \
 	style \
