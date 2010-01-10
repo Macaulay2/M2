@@ -2,14 +2,13 @@
 newPackage(
 	"BitwiseRepresentationPolynomials",
     	Version => "0.1", 
-    	Date => "April 28, 2005",
+    	Date => "January 10, 2010",
     	Authors => {
-	     {Name => "Beth, Franzi, Samuel", Email => ""}
+	     {Name => "Beth, Franzi, Samuel", Email => "foo"}
 	     },
     	HomePage => "http://",
-    	Headline => "Computation for polynomials in ZZ/2 using binary
-      representation",
-	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
+    	Headline => "Computation for polynomials in ZZ/2 using binary representation",
+      AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
     	DebuggingMode => true		 -- set to true only during development
     	)
 
@@ -18,7 +17,7 @@ newPackage(
 export {brpOR,isDivisible, Brp, convert, removeDups, divide, lcmBrps}
 exportMutable {}
 
-Brp = new Type of List -- this is not quite right yet
+Brp = new Type of List 
 
 -- Convert regular polynomial into its binary representation
 convert = method()
@@ -45,7 +44,6 @@ brpOR (List, Brp) := Brp => (a,b) ->
   apply (#a, i -> max (a#i, b#0#i) )
 
 --  is monomial a divisible by monomial b
--- TODO
 isDivisible = method()
 isDivisible (Brp, Brp) := Boolean => (a,b) ->
   min flatten (a - b) > -1
@@ -60,13 +58,12 @@ divide (Brp, Brp) := Brp => (a,b) -> (
   
 -- calculate least common multiple of two monomials
 lcmBrps = method()
-lcmBrps (Brp, Brp) := Brp => (a,b) -> 
-  new Brp from {apply( first a, first b, (i,j) -> max(i,j) )}
+lcmBrps (Brp, Brp) := Brp => (a,b) -> new Brp from {apply( first a, first b, (i,j) -> max(i,j) )}
 
 doc /// 
 Key 
   BitwiseRepresentationPolynomials
-  Brp
+  (Brp)
 Headline 
  Binary representation of polynomials in ZZ/2
 ///
@@ -95,10 +92,7 @@ Description
     a = convert(x*y);
     b = convert(x);
     convert(divide(a,b),R)
-Caveat
-SeeAlso
 ///
-viewHelp Brp
 
 doc ///
 Key 
@@ -107,12 +101,32 @@ Headline
   Check if a is divisible by m
 Usage
   p + m
-Inputs 
-Outputs
-Consequences
-Description
-Caveat
-SeeAlso
+///
+
+doc ///
+Key 
+  (brpOR,Brp,Brp)
+Headline
+  bitwiseOR for two monomials
+///
+
+doc ///
+Key 
+  (lcmBrps,Brp,Brp)
+///
+
+doc ///
+Key 
+  (convert,Brp,Ring)
+Headline
+  convert a Brp into its symbolic representation 
+///
+
+doc ///
+Key 
+  (symbol*,Brp,Brp)
+Headline
+  multiply a polynomial by a monomial  
 ///
 
 doc ///
@@ -121,28 +135,25 @@ Key
 Headline
   add 2 Brps
 Usage
-  isDivisible (polynomial, monomial)
+  c=a+b 
 Inputs 
+  a:Brp
+    a polynomial 
+  b:Brp
+    a polynomial
 Outputs
-Consequences
-Description
-Caveat
-SeeAlso
+  c:Brp
+    sum of a and b
 ///
-
 
 -- -- TODO complete documentation
 
 TEST ///
   R = ZZ/2[x,y,z]
-
   firstpoly = new Brp from { {1,1,0}, {1,0,0}}
   secondpoly = new Brp from {{1,0,0}}
   thirdpoly = new Brp from {{0,1,0}, {1,1,1}}
-  
   zeropoly = new Brp from {}
-
-  
   monoA= new Brp from {{1,0,1}}
   monoB= new Brp from {{1,0,0}}
   monoC= new Brp from {{0,1,0}}
@@ -152,7 +163,6 @@ TEST ///
 
   assert ( monoB + zeropoly == new Brp from {{1, 0, 0}}) 
   assert ( zeropoly *monoB == new Brp from {} )
-
 
   assert ( isDivisible(monoA, monoB) == true )
   assert isDivisible(monoA, monoB) 
@@ -166,18 +176,12 @@ TEST ///
   assert (convert (firstpoly, R) == x*y + x)
   assert (convert( convert (firstpoly, R) ) == firstpoly )
 
-
-
--- -- TODO check the following by hand (work them out on paper)
   assert ( firstpoly * secondpoly == new Brp from rsort {{1, 0, 0}, {1, 1, 0}})
   assert ( firstpoly * secondpoly === new Brp from rsort {{1, 0, 0}, {1, 1, 0}})
   assert ( thirdpoly * secondpoly === new Brp from rsort {{1, 1, 0}, {1, 1, 1}} )
-firstpoly + secondpoly
   assert ( firstpoly + secondpoly == new Brp from {{1, 1, 0}} )
   assert ( firstpoly + secondpoly + thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
   assert ( (firstpoly + secondpoly) + thirdpoly == new Brp from rsort {{0, 1, 0}, { 1, 1, 0}, {1,1,1}} )
-  (firstpoly + thirdpoly) * secondpoly
-
 
   assert ( (firstpoly + thirdpoly) * secondpoly == new Brp from rsort {{1, 0, 0}, {1,1,1}} )
   assert ( firstpoly * secondpoly * secondpoly == new Brp from rsort {{1, 1, 0}, {1, 0, 0}} )
@@ -204,5 +208,5 @@ check BitwiseRepresentationPolynomials
 -- End:
 
 restart
-installPackage "BitwiseRepresentationPolynomials"
+installPackage("BitwiseRepresentationPolynomials", RemakeAllDocumentation=>true)
 viewHelp Brp
