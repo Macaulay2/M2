@@ -623,6 +623,9 @@ moebiusFunction (Poset) := Poset => (P) -> (
   else error "this poset has more than one minimal element - specify an interval")
 
 
+moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
+     moebiusFunction (interval(P,elt1,elt2)))
+
 
 
 ----------------------------------
