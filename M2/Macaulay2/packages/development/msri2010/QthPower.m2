@@ -50,18 +50,18 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
     q := char R;
     qc := qConductor(I, deps);
     dq := qc^(q - 1);
-    g := new MutableList from footprint;
+    g := footprint;
     h := apply(g, s->fastq(s, I));
     e := apply(h, s->red(s, I, dq, footprint));
-    s := new MutableList from apply(#footprint, i->-1);
+    s := apply(#footprint, i->-1);
     now := 0;
     before := -1;
     oldg := footprint;
     
     -- local variables
-    i := j := w := k := deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := gx := pos := 0;
+    i := j := w := k :=  deplmei := indlmei := indlmj := deplmj := prod := mx := ll := ex := iii := gx := pos := 0;
     skip := skip1 := updating := true;
-    logei := logj := logk := wi := ww := {};
+    logei := logj := logk := posl := ww := {};
     
     -- Compute the next module generating set; continue to loop until no changes.
     loop := true;
@@ -84,7 +84,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                         );
                     };
                 );
-                e#i = red(e#i, I, dq, oldg);	      
+                e = replace(i, red(e#i, I, dq, oldg), e);
                 -- row-reduction
                 j = 0;
                 while j < i and e#i != 0 do (
@@ -98,25 +98,25 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 			                    loop = true;
 			                    if g#i > g#j * w then (
 		                            lc = leadCoefficient(e#i)//leadCoefficient(e#j);
-                                    g#i = g#i - lc * (g#j) * w;
-	                                h#i = (h#i - lc * (h#j) * w^q) % I;
-                                    e#i = red(e#i - lc * (e#j) * w^q, I, dq, oldg);
-	                                j = -1; -- updates to zero
+                                    g = replace(i, g#i - lc * (g#j) * w, g);
+                                    h = replace(i, (h#i - lc * (h#j) * w^q) % I, h);
+	                                e = replace(i, red(e#i - lc * (e#j) * w^q, I, dq, oldg), e);
+                                    j = -1; -- updates to zero
 	    		                )
 		                        else if g#i < g#j * w then (
                                     gx = (g#j) * w;
-                                    pos = position(sort(toList(append(g,gx))), a->a==gx);
-                                    g = new MutableList from insert(pos, gx, toList(g));
-                                    h = new MutableList from insert(pos, (h#j)*w^q, toList(h));
-                                    e = new MutableList from insert(pos, red((e#j)*w^q, I, dq, oldg), toList(e));
-                                    s = new MutableList from insert(pos, before, toList(s));
+                                    pos = position(sort(append(g,gx)), a->a==gx);
+                                    g = insert(pos, gx, g);
+                                    h = insert(pos, (h#j)*w^q, h);
+                                    e = insert(pos, red((e#j)*w^q, I, dq, oldg), e);
+                                    s = insert(pos, before,s);
 			                    );   
                             );
                         );
                     );
                     j = j + 1;
                 );
-	            if e#i == 0 then s#i = now;
+                if e#i == 0 then s = replace(i, now, s); 
                 -- Extension
                 if e#i != 0 then (
 	                if s#i >= before then (
@@ -143,11 +143,11 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                                 );
 	                            if not skip1 then (
                                     gx = (g#i) * prod;
-                                    pos = position(sort(toList(append(g,gx))), a->a==gx);
-                                    g = new MutableList from insert(pos, gx, toList(g));
-                                    h = new MutableList from insert(pos, (h#i)*prod^q, toList(h));
-                                    e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, oldg), toList(e));
-                                    s = new MutableList from insert(pos, before, toList(s));
+                                    pos = position(sort(append(g,gx)), a->a==gx);
+                                    g = insert(pos, gx, (g));
+                                    h = insert(pos, (h#i)*prod^q, (h));
+                                    e = insert(pos, red((e#i)*prod^q, I, dq, oldg), (e));
+                                    s = insert(pos, before, (s));
 	                                loop = true;
 		                        );
 		                    );          
@@ -166,11 +166,11 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
 			                                prod = prod * (indq#iii)^ex;
 			                            );
                                         gx = (g#i) * prod;
-                                        pos = position(sort(toList(append(g,gx))), a->a==gx);
-                                        g = new MutableList from insert(pos, gx, toList(g));
-                                        h = new MutableList from insert(pos, (h#i)*prod^q, toList(h));
-                                        e = new MutableList from insert(pos, red((e#i)*prod^q, I, dq, oldg), toList(e));
-                                        s = new MutableList from insert(pos, before, toList(s));
+                                        pos = position(sort((append(g,gx))), a->a==gx);
+                                        g = insert(pos, gx, (g));
+                                        h = insert(pos, (h#i)*prod^q, (h));
+                                        e = insert(pos, red((e#i)*prod^q, I, dq, oldg), (e));
+                                        s = insert(pos, before, (s));
 			                            loop = true;
                                     );
 	                            );
@@ -183,16 +183,11 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
         );    
         -- initialize next P-module generator
         now = now + 1;
-        iii = #g - 1;
-        while iii >= 0 do (
-            if g#iii == 0 then (
-	            g = drop(g,{iii,iii});
-	            h = drop(h,{iii,iii});
-	            e = drop(e,{iii,iii});
-	            s = drop(s,{iii,iii});
-            );
-            iii = iii - 1;
-        );
+        posl = positions(toList g, i->i!=0);
+        g = (g)_posl;
+        h = (h)_posl;
+        e = (e)_posl;
+        s = (s)_posl;
         before = before + 1;
         oldg = for iiii from 0 to #g - 1 list if s#iiii == before and e#iiii == 0 then g#iiii else continue;
         e = apply(h, s->red(s, I, dq, oldg));
