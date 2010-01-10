@@ -50,7 +50,8 @@ export {
 	hasseDiagram,
 	inducedPoset,
 	atoms,
-	interval,
+	closedInterval,
+	openInterval,
 	moebiusFunction
 }
 
@@ -1435,7 +1436,7 @@ doc ///
 		     and an error message if the two elements are not comparable in P.
 
 		Example
-		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)}
+		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)});
 		     closedInterval(P,a,d)	  
 /// 
 
