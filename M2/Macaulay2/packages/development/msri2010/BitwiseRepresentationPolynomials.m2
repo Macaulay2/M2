@@ -66,20 +66,15 @@ lcmBrps (Brp, Brp) := Brp => (a,b) ->
 doc /// 
 Key 
   BitwiseRepresentationPolynomials
+  Brp
 Headline 
  Binary representation of polynomials in ZZ/2
 ///
 
 doc ///
-Key
-  (Brp)
-Headline
-  Bitwise Represented Polynomials
-///
-
-doc ///
 Key 
   (divide,Brp,Brp)
+  divide
 Headline
  divide monomial a by monomial b
 Usage
@@ -103,6 +98,7 @@ Description
 Caveat
 SeeAlso
 ///
+viewHelp Brp
 
 doc ///
 Key 
