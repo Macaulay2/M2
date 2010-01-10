@@ -76,11 +76,31 @@ peek S
 S = setDegree(7,S)
 peek S
 
-series(RingElement, Function) := Series => opts -> f -> (
+series(RingElement, Function) := Series => opts -> (X,f) -> (
+     -- Start with the zero polynomial.
      s:=0;
-     for i from 0 to opts.Degree do (if f i == 0 then continue else if first degree f i > opts.Degree then break else s=s+f i);
-     new Series from {genTerm => f, degree => opts.Degree, series => s}
+     -- add opts.Degree terms to s.
+     for i from 0 to opts.Degree do s = s + (f i)*X^i;
+     
+     -- now make a new series.
+     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
+	  -- to know how to tack on the new terms to the old polynomial.
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (newPolynomial := oldPolynomial;
+		              for i from oldComputedDegree + 1 to newDegree do newPolynomial = newPolynomial + (f i)*X^i;
+			      (newPolynomial,max(oldComputedDegree,newDegree))
+		        )
+		       ) 
+		     }
      );
+S = series(x,i -> i)
+peek S
+S = setDegree(7,S)
+peek S
+S = setDegree(1,S)
+peek S
+S = setDegree(3,S)
+peek S
 
 
 
