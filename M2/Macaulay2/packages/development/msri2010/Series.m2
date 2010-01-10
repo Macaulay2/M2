@@ -300,8 +300,17 @@ growMe = method();
 growMe(GrowableRational,ZZ) := GrowableRational => (R,i) -> (
      new GrowableRational from {value => R#growMe(i), growMe => (j -> R#growMe(j+i))}
      );
+add2 = method()
+add2(GrowableRational,GrowableRational) := GrowableRational => (A,B) -> (
+     new GrowableRational from { value => A#value + B#value, growMe => (i -> A#growMe(i) + B#growMe(i))}
+     );
+multiply2 = method()
+multiply2(GrowableRational,GrowableRational) := GrowableRational => (A,B) -> (
+     new GrowableRational from { value => A#value * B#value, growMe => (i -> A#growMe(i) + B#growMe(i))}
+     );
 
-growableRational(7,6)
+A = growableRational(7,6)
+A = growMe(A,1)
+B = growableRational(9,4)
+add2(A,B)
 growMe(oo,1)
-growMe(oo,1)
-growMe(oo,2)
