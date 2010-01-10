@@ -63,19 +63,66 @@ lcmBrps = method()
 lcmBrps (Brp, Brp) := Brp => (a,b) -> 
   new Brp from {apply( first a, first b, (i,j) -> max(i,j) )}
 
+doc /// 
+Key 
+  BitwiseRepresentationPolynomials
+Headline 
+ Binary representation of polynomials in ZZ/2
+///
 
-beginDocumentation()
-document { 
-	Key => BitwiseRepresentationPolynomials,
-	Headline => "Binary representation of polynomials in ZZ/2",
-	EM "BitwiseRepresentationPolynomials", " is an package."
-	}
-document {
+doc ///
+Key 
+  divide
+Headline
+ divide monomial a by monomial b
+Usage
+  Brp = divide (a,b)
+Inputs 
+  a:Brp
+    a brp
+  b:Brp
+    a brp
+Outputs
+  d:Brp
+    a divided by b
+Consequences
+Description
+Caveat
+SeeAlso
+///
+
+doc ///
+Key 
+  isDivisible
+Headline
+  Check if a is divisible by m
+Usage
+  isDivisible (polynomial, monomial)
+Inputs 
+Outputs
+Consequences
+Description
+Caveat
+SeeAlso
+///
+
+doc ///
+Key 
+  (symbol+,Brp, Brp) 
+Headline
+  add 2 Brps
+Usage
+  isDivisible (polynomial, monomial)
+Inputs 
+Outputs
+Consequences
+Description
+Caveat
+SeeAlso
+///
+
+
 -- -- TODO complete documentation
-	Key => {isDivisible, (isDivisible,Brp,Brp)},
-	Headline => "a silly first function",
-	Usage => "isDivisible polynomial monomial",
-	}
 
 TEST ///
   R = ZZ/2[x,y,z]
@@ -146,3 +193,5 @@ check BitwiseRepresentationPolynomials
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
 -- End:
+
+installPackage "BitwiseRepresentationPolynomials"
