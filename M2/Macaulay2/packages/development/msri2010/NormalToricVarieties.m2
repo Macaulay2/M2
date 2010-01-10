@@ -302,7 +302,7 @@ isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
 	       U := matrix((rays X)_C);
 	       a := transpose matrix {D_C};
 	       n := numColumns U;
-	       m := systemSolver(U^{0..n-1},a^{0..n-1});
+	       m := systemSolver(U,a);--^{0..n-1},a^{0..n-1});
 	       if U*m-a != 0 then break{} else m));
      X.cache.isQQCartier#D != {})
 
@@ -673,7 +673,7 @@ halfspaces (List,NormalToricVariety) := Matrix => (sigma,X) -> (
      if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = -(fourierMotzkin matrix transpose ((rays X)_sigma))#0;
      X.cache.halfspaces#sigma)
 
-makeSimplicial = method(Options => {Strategy => "centre"})
+makeSimplicial = method(Options => {Strategy => "addNoRays"})
 makeSimplicial NormalToricVariety := NormalToricVariety => options -> X ->(
      R := rays X;
      Rm := matrix rays X;
@@ -700,7 +700,7 @@ makeSimplicial NormalToricVariety := NormalToricVariety => options -> X ->(
 	       if Cones#?true then simpCones = simpCones | Cones#true;
 	       if Cones#?false then Cones = Cones#false else Cones = {});
 	  Xsimp = normalToricVariety(R,simpCones))
-     else if options.Strategy == "ray" then (
+     else if options.Strategy == "addNoRays" then (
 	  usedrays := {};
 	  while Cones != {} do (
 	       Ctally := tally select(flatten Cones, e -> not member(e,usedrays));
