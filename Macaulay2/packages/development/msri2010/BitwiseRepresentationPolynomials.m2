@@ -24,7 +24,6 @@ Brp = new Type of List -- this is not quite right yet
 convert = method()
 convert (RingElement) := Brp => f -> new Brp from rsort exponents f
 convert (Brp, Ring ) := RingElement => (l, R) -> sum (#l, i -> R_(l#i) )
-convert (Brp, PolynomialRing ) := RingElement => (l, R) -> sum (#l, i -> R_(l#i) )
  
 
 -- Addition: concatenate and eliminate double monomials 
