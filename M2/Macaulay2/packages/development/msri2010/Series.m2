@@ -163,7 +163,7 @@ Series + Series := Series => (A,B) -> (
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    newA := setDegree(newDegree,A);
 		    newB := setDegree(newDegree,B);
-		    (truncate(newDegree,A.polynomial * B.polynomial), newDegree)
+		    (truncate(newDegree,A.polynomial + B.polynomial), newDegree)
 		    )
 	       )}
      )
