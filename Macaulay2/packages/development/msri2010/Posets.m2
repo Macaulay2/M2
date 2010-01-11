@@ -1474,7 +1474,31 @@ doc///
 -----------------
 -- hasseDiagram
 -----------------
-
+doc///
+     Key
+     	  hasseDiagram
+	  (hasseDiagram,Poset)
+     Headline
+     	  returns Hasse diagram for the poset
+     Usage
+     	  G = hasseDiagram(P)
+     Inputs
+     	  P : Poset
+     Outputs
+	  G : Digraph
+	       Directed graph whose edges correspond to covering relations in P
+     Description
+     	  Text 
+	       This routine returns the Hasse diagram which is a directed graph (defined in the Graphs package)
+	       whose edges correspond to the covering relations in P.  Specifically, the vertices in the graph 
+	       correspond to the elements in the ground set of P, and two vertices a and b have a directed edge 
+	       from a to b if a > b.
+	  Example
+	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
+	       G = hasseDiagram(P)	
+     SeeAlso
+     	 displayGraph
+///
 
 
 -----------------
