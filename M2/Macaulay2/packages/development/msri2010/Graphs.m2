@@ -11,7 +11,7 @@ newPackage("Graphs",
 
 export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
      parents, children, neighbors, nonneighbors, foreFathers, displayGraph,
-     simpleGraph, removeNodes}
+     simpleGraph, removeNodes, inducedSubgraph}
 exportMutable {dotBinary,jpgViewer}
 
 
@@ -238,11 +238,24 @@ descendents = method()
      -- Input: A digraph and the key for the vertex of interest.
 descendents(Digraph,Thing) := (G,v) -> (
      -- returns a set of vertices
-     result := G#v;
-     scan(keys(G), i -> (
-	  if member(i,result) then result = result + G#i;
-     ));
-     result)
+     notDone := true;
+     cC := children(G,v);
+     dE := cC;
+     while notDone === true do(
+	  if (toList cC) === {} then notDone = false
+	  else (
+	       cC = set flatten apply(toList cC, i -> toList children(G,i));
+	       dE = dE + cC;
+	       )
+	  );
+     dE)
+     
+     
+--     result := G#v;
+--     scan(keys(G), i -> (
+--	  if member(i,result) then result = result + G#i;
+--     ));
+--     result)
 
 
 nondescendents = method()
@@ -286,7 +299,25 @@ removeNodes(Digraph,List) := (G,v) -> (
      G = apply(G, x -> (x#0, x#1 - v));
      new Digraph from G
      )
-removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
+--removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
+
+inducedSubgraph = method()
+inducedSubgraph(Digraph, List) := (G,v) -> (
+     G = removeNodes(G,toList(keys(G)-set v));
+     new Digraph from G
+     )
+
+-------------------
+-- Common Graphs --
+-------------------
+
+completeGraph = method()
+completeGraph(ZZ) := n -> (
+      i:= 1;
+      G := new MutableHashTable;
+      while i <= n do (
+	   G#(i#0) = 
+	   i = i+1;
 
 
 --------------------
