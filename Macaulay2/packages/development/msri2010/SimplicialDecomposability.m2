@@ -17,15 +17,24 @@ needsPackage "SimplicialComplexes";
 -------------------
 -- Exports
 -------------------
-export {isShellable,
-        isShelling,
-        isSimplex,
-        hVector,
-        shellingOrder};
+export {
+    faceDelete,
+    isShellable,
+    isShelling,
+    isSimplex,
+    hVector,
+    shellingOrder
+};
 
 -------------------
 -- Exported Code
 -------------------
+
+-- Face Deletion: Remove all faces of a complex containing the given face.
+faceDelete = method(TypicalValue => SimplicialComplex);
+faceDelete (SimplicialComplex, RingElement) := (S,F) -> (
+    simplicialComplex monomialIdeal (ideal S + ideal(F))
+);
 
 -- Determines if a pure simplicial complex is shellable.
 isShellable = method(TypicalValue => Boolean);
@@ -108,6 +117,32 @@ doc ///
     Description
         Text
             Determines pure k-Decomposability (including shellability) for simplicial complexes.
+///
+
+doc ///
+    Key
+        faceDelete
+        (faceDelete, SimplicialComplex, RingElement)
+    Headline
+        computes the face deletion for a simplicial complex
+    Usage
+        faceDelete(S, F)
+    Inputs
+        S:SimplicialComplex
+        F:RingElement
+            a face of {\tt S}
+    Outputs
+        T:SimplicialComplex
+            the simplicial complex of all faces in {\tt S} not containing the face {\tt F}
+    Description
+        Text
+            T = {G in S such that F is not contained in G}
+        Example
+            R = QQ[a,b,c,d,e];
+            S = simplicialComplex {a*b*c*d*e};
+            faceDelete(S, a)
+            faceDelete(S, a*b*c)
+            faceDelete(S, a*b*c*d*e) == boundary S
 ///
 
 doc ///
@@ -271,6 +306,15 @@ assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2});
 assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
 assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1});
 assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
+///
+
+-- Tests of faceDelete
+TEST ///
+R = QQ[a,b,c,d,e];
+S = simplicialComplex {a*b*c*d*e};
+assert(faceDelete(S, a) == simplicialComplex {b*c*d*e});
+assert(faceDelete(S, a*b*c) == simplicialComplex {b*c*d*e, a*c*d*e, a*b*d*e});
+assert(faceDelete(S, a*b*c*d*e) == boundary S)
 ///
 
 end
