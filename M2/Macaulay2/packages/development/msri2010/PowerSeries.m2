@@ -1,5 +1,5 @@
 newPackage(
-        "Series",
+        "PowerSeries",
         Version => "0.1", 
         Date => "1/2010",
         Authors => {{Name => "", 
@@ -9,7 +9,7 @@ newPackage(
         DebuggingMode => true
         )
 
-export {series, setDegree}
+export {series, setDegree,toPolynomial}
 
 
 Series = new Type of HashTable
@@ -21,6 +21,11 @@ html Series := s -> html expression s;
 
 
 truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
+
+toPolynomial = method()
+toPolynomial(Series) := RingElement => s -> truncate(s#degree,s#polynomial);
+toPolynomial(ZZ,Series) := RingElement => (n,s) -> truncate(n,s#polynomial);
+
 
 series = method(Options => {Degree => 5})
 
