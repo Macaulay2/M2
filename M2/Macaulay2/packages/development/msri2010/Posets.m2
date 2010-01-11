@@ -54,7 +54,9 @@ export {
 	closedInterval,
 	openInterval,
 	moebiusFunction,
-	isAntichain
+	isAntichain,
+	meetIrreducibles
+       
 }
 
 needsPackage "SimplicialComplexes"
@@ -262,6 +264,19 @@ atoms (Poset) := List => (P) -> (
   if P.cache.?coveringRelations == false then coveringRelations P;
   apply(select(P.cache.coveringRelations, R -> any(minimalElements P, elt -> (elt == R#0))), rels-> rels_1)    
   )
+
+-- input:  poset
+-- output:  meet irreducibles of poset
+meetIrreducibles = method()
+meetIrreducibles(Poset) := P -> (
+     -- want to compute meets only for non-comparable elements
+     nonComparablePairs := select(subsets(P.GroundSet,2), posspair-> 
+	  compare(P, posspair#0,posspair#1) == false and compare(P,posspair#1,posspair#0)== false);
+     meets := nonnull unique flatten apply(nonComparablePairs, posspair -> if meetExists(P, posspair#0, posspair#1) == true 
+	  then posetMeet(P,posspair#0, posspair#1));
+     toList (set P.GroundSet - set meets)
+     )
+
 
 --------------------------------------------------
 -- dropElements/induced poset
