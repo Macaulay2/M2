@@ -27,8 +27,8 @@ dominantTerm(Series) := RingElement => S -> last terms toPolynomial S;
 
 
 toPolynomial = method()
-toPolynomial(Series) := RingElement => s -> truncate(s#degree,s#polynomial);
-toPolynomial(ZZ,Series) := RingElement => (n,s) -> truncate(n,s#polynomial);
+toPolynomial(Series) := RingElement => s -> toPolynomial(s#degree,s);
+toPolynomial(ZZ,Series) := RingElement => (n,s) -> truncate(n,(setDegree(n,s))#polynomial);
 
 series = method(Options => {Degree => 5})
 
