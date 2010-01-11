@@ -19,9 +19,11 @@ needsPackage "SimplicialComplexes";
 -------------------
 export {
     faceDelete,
+    iskDecomposable,
     isShellable,
     isShelling,
     isSimplex,
+    isVertexDecomposable,
     hVector,
     shellingOrder
 };
@@ -34,6 +36,27 @@ export {
 faceDelete = method(TypicalValue => SimplicialComplex);
 faceDelete (SimplicialComplex, RingElement) := (S,F) -> (
     simplicialComplex monomialIdeal (ideal S + ideal(F))
+);
+
+-- Determines if a pure simplicial complex is k-decomposable.
+iskDecomposable = method(TypicalValue => Boolean);
+iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
+    -- any of {non-pure, negatives in hVector} imply not pure k-decomposable
+    if not isPure S then return false;
+    if any(hVector S, i -> i<0) then return false;
+
+    -- if S is k-decomposable, then S is k+1-decomposable 
+    -- S is (dim S)-decomposable if and only if S is shellable (see thm 2.8 is Provan-Billera)
+    if dim S <= k then return isShellable S;
+
+    -- base case: simplexes are k-decomposable for all nonnegative k
+    if isSimplex S then return true;
+
+    -- Find all possible relevant faces:
+    L := flatten for i from 0 to k list flatten entries faces(i, S);
+    -- Check for happiness.
+    for F in L do if iskDecomposable(link(S, F), k) and iskDecomposable(faceDelete(S, F), k) then return true;
+    false
 );
 
 -- Determines if a pure simplicial complex is shellable.
@@ -79,6 +102,12 @@ isShelling (List) := (L) -> (
 isSimplex = method(TypicalValue => Boolean);
 isSimplex (SimplicialComplex) := (S) -> (
     #flatten entries facets S <= 1
+);
+
+-- Determines if a simplicial complex is (pure) vertex decomposable.
+isVertexDecomposable = method(TypicalValue => Boolean);
+isVertexDecomposable (SimplicialComplex) := (S) -> (
+    iskDecomposable(S, 0)
 );
 
 -- Determines the hVector of the Stanley-Reisner ideal of a simplicial complex.
@@ -144,6 +173,39 @@ doc ///
             faceDelete(S, a)
             faceDelete(S, a*b*c)
             faceDelete(S, a*b*c*d*e) == boundary S
+    SeeAlso
+        link
+///
+
+doc ///
+    Key
+        iskDecomposable
+        (iskDecomposable, SimplicialComplex, ZZ)
+    Headline
+        determines if a simplicial complex is (pure) k-decomposable or not
+    Usage
+        iskDecomposable(S,k)
+    Inputs
+        S:SimplicialComplex
+        k:ZZ
+    Outputs
+        B:Boolean
+            true if and only if {\tt S} is (pure) k-decomposable
+    Description
+        Text
+            This function uses the recursive definition that a simplicial complex is k-decomoosable
+            if either it is a simplex or there is a face of dimension at most k such that the face deletion
+            and link of the face (from the simplicial complex) are also k-decomposable.
+
+            See section two of J. S. Provan and L. J. Billera, "Decompositions of Simplicial Complexes Related to Diameters of Convex Polyhedra,"
+            Mathematics of Operations Research, Vol. 5, No. 4 (Nov., 1980), pp. 576-594.
+        Example
+            R = QQ[a,b,c,d,e];
+            iskDecomposable(simplicialComplex {a*b*c*d*e}, 0)
+            iskDecomposable(simplicialComplex {a*b*c,c*d*e,c*d*e}, 2)
+    SeeAlso
+        isShellable
+        isVertexDecomposable
 ///
 
 doc ///
@@ -167,6 +229,11 @@ doc ///
             isShellable simplicialComplex {a*b*c*d*e}
             isShellable simplicialComplex {a*b*c,c*d*e}
             isShellable simplicialComplex {a*b*c,b*c*d,c*d*e}
+    SeeAlso
+        iskDecomposable
+        isShelling
+        isVertexDecomposable
+        shellingOrder
 ///
 
 doc ///
@@ -190,6 +257,9 @@ doc ///
             R = QQ[a,b,c,d,e];
             isShelling {a*b*c, c*d*e}
             isShelling {a*b*c, b*c*d, c*d*e}
+    SeeAlso
+        isShellable
+        shellingOrder
 ///
 
 doc ///
@@ -215,6 +285,32 @@ doc ///
 
 doc ///
     Key
+        isVertexDecomposable
+        (isVertexDecomposable, SimplicialComplex)
+    Headline
+        determines if a simplicial complex is (pure) vertex-decomposable or not
+    Usage
+        isVertexDecomposable S
+    Inputs
+        S:SimplicialComplex
+    Outputs
+        B:Boolean
+            true if and only if {\tt S} is (pure) vertex-decomposable
+    Description
+        Text
+            Vertex-decomposability is just 0-decomposability.
+        Example
+            R = QQ[a,b,c,d,e];
+            isVertexDecomposable simplicialComplex {a*b*c*d*e}
+            isVertexDecomposable boundary simplicialComplex {a*b*c*d*e}
+            isVertexDecomposable simplicialComplex {a*b*c,c*d*e,c*d*e}
+    SeeAlso
+        isShellable
+        iskDecomposable
+///
+
+doc ///
+    Key
         hVector
         (hVector, SimplicialComplex)
     Headline
@@ -231,7 +327,7 @@ doc ///
             R = QQ[a,b,c,d];
             hVector simplicialComplex {a*b*c,d}
     SeeAlso
-            fVector
+        fVector
 ///
 
 doc ///
@@ -255,6 +351,9 @@ doc ///
             shellingOrder simplicialComplex {a*b*c*d*e}
             shellingOrder simplicialComplex {a*b*c, b*c*d, c*d*e}
             shellingOrder simplicialComplex {a*b*c, c*d*e}
+    SeeAlso
+        isShellable
+        isShelling
 ///
 
 -------------------
@@ -316,6 +415,21 @@ S = simplicialComplex {a*b*c*d*e};
 assert(faceDelete(S, a) == simplicialComplex {b*c*d*e});
 assert(faceDelete(S, a*b*c) == simplicialComplex {b*c*d*e, a*c*d*e, a*b*d*e});
 assert(faceDelete(S, a*b*c*d*e) == boundary S)
+///
+
+-- Tests of iskDecomposable (and hence isVertexDecomposable)
+TEST ///
+R = QQ[a,b,c,d,e];
+S = simplicialComplex {a*b*c*d*e};
+assert(iskDecomposable(S, 0));
+assert(iskDecomposable(S, 1));
+assert(iskDecomposable(S, 2));
+assert(iskDecomposable(S, 3));
+assert(iskDecomposable(S, 4));
+assert(iskDecomposable(boundary S, 0)); -- prop 2.2 in Provan-Billera
+assert(iskDecomposable(simplicialComplex {a*b*c, b*c*d, c*d*e}, 2));
+assert(not iskDecomposable(simplicialComplex {a*b*c, c*d*e}, 2));
+
 ///
 
 end
