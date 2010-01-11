@@ -5,7 +5,7 @@ newPackage(
         Authors => {{Name => "", 
                   Email => "", 
                   HomePage => ""}},
-        Headline => "computations involving series",
+        Headline => "computations involving power series",
         DebuggingMode => true
         )
 
@@ -20,7 +20,7 @@ tex Series := s -> tex expression s;
 html Series := s -> html expression s;
 
 truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
-
+-- should be replaced with "part"
 
 dominantTerm = method()
 dominantTerm(Series) := RingElement => S -> last terms toPolynomial S;
