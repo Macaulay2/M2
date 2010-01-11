@@ -10,7 +10,7 @@ newPackage("Graphs",
      )
 
 export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
-     parents, children, neighbors, nonneighbors, displayGraph,
+     parents, children, neighbors, nonneighbors, foreFathers , displayGraph,
      simpleGraph, removeNodes}
 exportMutable {dotBinary,jpgViewer}
 
@@ -254,6 +254,21 @@ parents = method()
 --parents(Digraph,Thing) := (G,v) -> set select(1..#G, i -> member(v, G#i))
 parents(Digraph,Thing) := (G,v) -> set select(keys(G), i -> member(v,
 G#i))
+
+foreFathers = method()
+foreFathers(Digraph, Thing) := (G,v) -> (
+     notDone := true;
+     cP := parents(G,v);
+     aN := cP;
+     while notDone === true do(
+	  pA = set flatten apply(cP, i -> parents(H,i));
+     	  if pA === null then notDone = false
+     	  else (
+	       cP = pA;
+	       aN = aN + cP;
+	       )
+	  );
+     aN)	  
 
 children = method()
      -- Input: A digraph and the key for the vertex of interest.
