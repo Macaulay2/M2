@@ -1932,8 +1932,8 @@ smoothSubfan Fan := F -> (
 -- PURPOSE : Computing the stellar subdivision
 --   INPUT : '(F,r)', where 'F' is a Fan and 'r' is a ray
 --  OUTPUT : A fan, which is the stellar subdivision
-stellarSubdivision = method(TypicalValue => Fan)
-stellarSubdivision (Fan,Matrix) := (F,r) -> (
+stellarSubdivision = method()
+stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
      -- Checking for input errors
      if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
      divider := (C,r) -> if dim C != 1 then flatten apply(faces(1,C), f -> if not contains(f,r) then posHull {f,r} else divider(f,r)) else {C};
