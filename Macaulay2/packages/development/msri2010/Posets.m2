@@ -394,8 +394,8 @@ orderIdeal(Poset, Thing) := (P,a) -> (
 
 posetJoin = method()     
 posetJoin(Poset,Thing,Thing) := (P,a,b)  -> (
-     OIa := orderIdeal(P,a);     
-     OIb := orderIdeal(P,b);
+     OIa := filter(P,a);     
+     OIb := filter(P,b);
      upperBounds := toList (set(OIa)*set(OIb));
      if upperBounds == {} then (error "your elements do not share any upper bounds") else (M := P.RelationMatrix;
      	  heightUpperBounds := flatten apply(upperBounds, element-> sum entries M_{indexElement(P,element)});
@@ -406,8 +406,8 @@ posetJoin(Poset,Thing,Thing) := (P,a,b)  -> (
 
 joinExists = method()
 joinExists(Poset,Thing,Thing) := (P,a,b) -> (
-     OIa := orderIdeal(P,a);     
-     OIb := orderIdeal(P,b);
+     OIa := filter(P,a);     
+     OIb := filter(P,b);
      upperBounds := toList (set(OIa)*set(OIb));
      if upperBounds == {} then false else (M := P.RelationMatrix;
      	  heightUpperBounds := flatten apply(upperBounds, element-> sum entries M_{indexElement(P,element)});
@@ -421,8 +421,8 @@ joinExists(Poset,Thing,Thing) := (P,a,b) -> (
 -- usage:  MeetExits used in isLattice
 posetMeet = method()
 posetMeet(Poset,Thing,Thing) := (P,a,b) ->(
-     Fa:= filter(P,a);
-     Fb:= filter(P,b);
+     Fa:= orderIdeal(P,a);
+     Fb:= orderIdeal(P,b);
      lowerBounds:= toList (set(Fa)*set(Fb));
      if lowerBounds == {} then (error "your elements do not share any lower bounds") else (
 	  M := P.RelationMatrix;
@@ -433,8 +433,8 @@ posetMeet(Poset,Thing,Thing) := (P,a,b) ->(
 
 meetExists = method()
 meetExists(Poset, Thing, Thing) := (P,a,b) -> (
-     Fa:= filter(P,a);
-     Fb:= filter(P,b);
+     Fa:= orderIdeal(P,a);
+     Fb:= orderIdeal(P,b);
      lowerBounds:= toList (set(Fa)*set(Fb));
      if lowerBounds == {} then false else (
 	  M := P.RelationMatrix;
