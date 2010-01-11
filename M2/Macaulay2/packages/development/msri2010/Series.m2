@@ -95,7 +95,7 @@ series(RingElement, Function) := Series => opts -> (X,f) -> (
 		       ) 
 		     }
      );
-S = series(x,i -> i)
+T = series(x,i -> i)
 peek S
 S = setDegree(7,S)
 peek S
@@ -161,19 +161,31 @@ Series + Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
      new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial + B'.polynomial, 
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
-		    newA := setDegree(newDegree,A);
-		    newB := setDegree(newDegree,B);
-		    (truncate(newDegree,newA.polynomial + newB.polynomial), newDegree)
+		    if newDegree > oldComputedDegree then (
+		    	 newA := setDegree(newDegree,A);
+		    	 newB := setDegree(newDegree,B);
+		    	 (truncate(newDegree,newA.polynomial + newB.polynomial), newDegree)
+			 )
+		    else (oldPolynomial, oldComputedDegree)
 		    )
 	       )}
      )
+
+
+
+
 S
 peek S
 T = S + S
 peek T
 setDegree(6,T)
 setDegree(9,T)
-F		     
+F	
+R = T + S
+R = R + R + R + R
+setDegree(6,R)
+T	     
+S
 peek F
 B = F + F	        
 peek B
