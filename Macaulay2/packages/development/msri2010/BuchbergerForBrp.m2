@@ -102,7 +102,8 @@ reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies reducible(f,g_i)
 reduceOneStep(Brp, HashTable) := Brp => (f,G) -> (
-  f = scan( (values G), p -> if reducible(f, p) then break reduceOneStep(f,p) ) 
+  scan( (values G), p -> if reducible(f, p) then (break f = reduceOneStep(f,p)));
+  f
 )
  
 
@@ -167,6 +168,8 @@ TEST ///
   assert ( reduceOneStep( convert(x*y*z + y*z+z), convert(x+y+z) ) == convert( y*z+z))
   FF = new HashTable from { 1 => convert(x+y+z) } 
   assert ( reduceOneStep( convert(x*y*z + y*z+z), FF)  == convert( y*z+z))
+
+  assert ( reduceOneStep( convert(y+z), F) == convert( y+z) )
 
 
   reduceOneStep( convert(x*y*z + y*z + z), F )
