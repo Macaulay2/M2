@@ -114,6 +114,10 @@ recip = (denom,oldDegree,newDegree,oldApprox) -> (
      if m === 2^endingTwo then g else part(,2^endingTwo-1,wts,g));
 
 
+Series == Series := (M,N) -> (
+     -- This checks like floating point numbers -- we only check up to he precision of the least-precise one.
+     precision:= min(degree M, degree N);
+     truncate(precision,M#polynomial) == truncate(precision,N#polynomial))
 
 series(RingElement) := Series => opts -> (f) -> (
      f = f/(1_(ring f));
