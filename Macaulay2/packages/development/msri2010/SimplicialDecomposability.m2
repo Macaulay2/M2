@@ -92,13 +92,14 @@ shellingOrder = method(TypicalValue => List);
 shellingOrder (SimplicialComplex) := (S) -> (
     -- any of {non-pure, non-CM, negatives in hVector} imply not pure shellable
     if not isPure S then return {};
-    if not isCM quotient ideal S then return {};
+    --if not isCM quotient ideal S then return {};  -- good idea, but this is REALLY slow
     if any(hVector S, i -> i<0) then return {};
 
     -- ULTRA NAIVE: simply look at all facet permutations
     P := permutations first entries facets S;
-    for L in P do if isShelling L then return L;
-    {}
+    o := {};
+    for L in P do if isShelling L then ( o = L; break; );
+    o
 );
 
 -------------------
