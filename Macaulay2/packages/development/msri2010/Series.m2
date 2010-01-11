@@ -30,7 +30,6 @@ setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warn
      new Series from {polynomial => f, computedDegree => c, maxDegree => S#maxDegree, degree => (min(n,S#maxDegree)), setDegree=> S#setDegree}
      );
 
-
 series(ZZ, RingElement) := Series => opts -> (n,f) -> (
      new Series from {degree => n, maxDegree => max(first degree f,n), computedDegree => max(first degree f,n), polynomial => f,
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial,oldComputedDegree))}
@@ -90,8 +89,13 @@ series RingElement := Series => opts -> h -> (
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
           -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
 	  -- to know how to tack on the new terms to the old polynomial.
-	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> 
-	       (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)))})  
+	  setDegree => (
+	       (oldPolynomial,oldComputedDegree,newDegree) -> 
+	       (
+		    if newDegree > oldComputedDegree then (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)) else
+	       	    (oldPolynomial, oldComputedDegree)
+	       )
+	  )});  
 
 
 
