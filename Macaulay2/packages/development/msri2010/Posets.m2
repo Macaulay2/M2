@@ -53,7 +53,8 @@ export {
 	atoms,
 	closedInterval,
 	openInterval,
-	moebiusFunction
+	moebiusFunction,
+	isAntichain
 }
 
 needsPackage "SimplicialComplexes"
@@ -349,8 +350,10 @@ height (Poset) := Poset => (P) -> (
 -------------------------------------------------
 --Anti-Chains
 -------------------------------------------------
+-- isAntichain
 --input: P a poset and L a list of elements of the poset
 --output T/F whether L is an antichain in P
+
 
 isAntichain = method()
 
