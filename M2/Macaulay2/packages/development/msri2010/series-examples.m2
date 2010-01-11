@@ -1,25 +1,25 @@
 restart
 loadPackage "PowerSeries"
 
-ZZ[x]
+R = ZZ[x]
 
 -- We can create a series from a rational function:
-series(1/(1-x), Degree =>10) --(series, RingElement)
+series(3/(1-x))             --method is (series, RingElement)
 
 -- We can create a series using a generating function:
-series(x,i->i^2) --(series, RingElement, Function) 
+series(x,i->i^2)            --method is (series, RingElement, Function) 
 
 -- We can create a series given a function that computes successive polynomial approximations:
 f = i -> sum(i,j-> j*(x)^j)
-series(f) --(series, Function) 
+series(f)                   --method is (series, Function) 
 
--- We can create a series by manually typing in some terms of it:
-series(20,1+x+x^2+x^3+x^10) --(series, ZZ, RingElement) 
+-- We can create a series by manually typing in some terms of it to a given precision:
+series(20,1+x+x^2+x^3+x^10) --method is (series, ZZ, RingElement) 
 
 
 
 -- We can create a series to any given precision using the "Degree" option:
-series(1/(1-x),Degree=>8) --(series, RingElement)
+S = series(1/(1-x),Degree=>8) --(series, RingElement)
 
 -- The key is that series created in most ways can have their precision increased or decreased at will:
 setDegree(10,s1)
