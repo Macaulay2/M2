@@ -5,7 +5,7 @@ needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "0.0.1",
+    Version => "0.1",
     Date => "xx. January 2010",
     Authors => {{Name => "David W. Cook II", Email => "dcook@ms.uky.edu", HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Pure k-Decomposability for simplicial complexes.",
@@ -81,17 +81,13 @@ hVector (SimplicialComplex) := (S) -> (
 -- Attempts to find a shelling order of a pure simplicial complex.
 shellingOrder = method(TypicalValue => List);
 shellingOrder (SimplicialComplex) := (S) -> (
-    -- not pure => not pure shellable
+    -- any of {non-pure, non-CM, negatives in hVector} imply not pure shellable
     if not isPure S then return {};
-    -- not CM => not shellable
     if not isCM quotient ideal S then return {};
-    -- negatives in the h-Vector => not shellable
     if any(hVector S, i -> i<0) then return {};
-    -- simplexes are nice
-    if isSimplex S then return flatten entries facets S;
 
-    -- ULTRA NAIVE
-    P = permutations first entries facets S;
+    -- ULTRA NAIVE: simply look at all facet permutations
+    P := permutations first entries facets S;
     for L in P do if isShelling L then return L;
     {}
 );
@@ -129,7 +125,7 @@ doc ///
             true if and only if {\tt S} is (pure) shellable
     Description
         Text
-            This function simply checks if a shelling order exists.
+            This function simply checks if a (pure) shelling order exists.
         Example
             R = QQ[a,b,c,d,e];
             isShellable simplicialComplex {a*b*c*d*e}
@@ -214,7 +210,7 @@ doc ///
         S:SimplicialComplex
     Outputs
         L:List
-            a shelling order of the facets of {\tt S}, if one exists, otherwise any empty list
+            a (pure) shelling order of the facets of {\tt S}, if one exists
     Description
         Text
             Currently this routine employs the incredibly naive approach of checking all permutations of the facets.
@@ -223,6 +219,58 @@ doc ///
             shellingOrder simplicialComplex {a*b*c*d*e}
             shellingOrder simplicialComplex {a*b*c, b*c*d, c*d*e}
             shellingOrder simplicialComplex {a*b*c, c*d*e}
+///
+
+-------------------
+-- Tests
+-------------------
+
+-- Tests of isSimplex
+TEST ///
+R = QQ[a..d];
+assert(isSimplex simplicialComplex {a*b*c*d});
+assert(isSimplex simplicialComplex {a*b*c});
+assert(isSimplex simplicialComplex {a*b});
+assert(isSimplex simplicialComplex {a});
+assert(isSimplex simplicialComplex monomialIdeal {a,b,c,d}); -- empty complex
+assert(not isSimplex simplicialComplex {a*b, b*c, c*d});
+assert(not isSimplex simplicialComplex {a*b, b*c*d});
+assert(not isSimplex simplicialComplex {a*b, c});
+assert(not isSimplex simplicialComplex {a, b, c, d});
+///
+
+-- Tests of isShelling
+TEST ///
+R = QQ[a..f];
+assert(isShelling {a*b*c});
+assert(isShelling {a*b*c, b*c*d});
+assert(isShelling {a*b*c, b*c*d, c*d*e});
+assert(isShelling {a*b*c, b*c*d, c*d*e, d*e*f});
+assert(not isShelling {a*b*c, c*d*e});
+assert(not isShelling {a*b*c, d*e*f});
+///
+
+-- Tests of isShellable (and hence shellingOrder by invocation)
+-- NB: shellingOrder can only be tested this way as a shelling order need not be unique.
+TEST ///
+R = QQ[a..e];
+assert(isShellable simplicialComplex {a*b*c});
+assert(isShellable simplicialComplex {a*b*c, b*c*d});
+assert(isShellable simplicialComplex {a*b*c, b*c*d, c*d*e});
+assert(isShellable simplicialComplex monomialIdeal {a,b,c,d,e}); -- empty complex
+assert(not isShellable simplicialComplex {a*b*c, c*d*e});
+assert(not isShellable simplicialComplex {a*b*c, b*c*d, e});
+///
+
+-- Tests of hVector
+TEST ///
+R = QQ[a..e];
+assert(hVector simplicialComplex {a, b, c, d, e} === {1,4});
+assert(hVector simplicialComplex {a*b*c*d*e} === {1});
+assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2});
+assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
+assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1});
+assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 ///
 
 end
