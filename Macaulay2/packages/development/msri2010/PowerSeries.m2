@@ -41,17 +41,6 @@ series(ZZ, RingElement) := Series => opts -> (n,f) -> (
      );
 
 
-series(ZZ) := Series => opts -> (n,f) -> (
-     new Series from {degree => n, maxDegree => infinity, computedDegree => max(first degree f,n), polynomial => f,
-	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial,oldComputedDegree))}
-     );
-
-series(QQ) := Series => opts -> (n,f) -> (
-     new Series from {degree => n, maxDegree => max(first degree f,n), computedDegree => max(first degree f,n), polynomial => f,
-	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial,oldComputedDegree))}
-     );
-
-
 series(RingElement, Function) := Series => opts -> (X,f) -> (
      -- Start with the zero polynomial.
      s:=0;
