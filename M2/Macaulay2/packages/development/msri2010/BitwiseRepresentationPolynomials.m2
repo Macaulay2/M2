@@ -14,7 +14,16 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {brpOR,isDivisible, Brp, convert, removeDups, divide, lcmBrps, leading}
+export {brpOR,
+        isDivisible, 
+        Brp, 
+        convert, 
+        removeDups, 
+        divide, 
+        lcmBrps, 
+        isRelativelyPrime,
+        leading}
+        
 exportMutable {}
 
 Brp = new Type of List 
@@ -57,11 +66,20 @@ isDivisible (Brp, Brp) := Boolean => (a,b) ->
   min flatten (a - b) > -1
   
 
+-- check if two monomials are relatively prime
+-- do a bitwise AND and check that they are all 0
+isRelativelyPrime = method()
+isRelativelyPrime (Brp, Brp) := Boolean => (f,g) -> (
+  ret = true;
+  scan( first f, first g, (i,j) -> (if min(i,j) == 1 then ( ret = false; break)));
+  ret
+)
+
 -- divide monomial a by monomial b
 divide = method()
 divide (Brp, Brp) := Brp => (a,b) -> (
   assert isDivisible( a,b );
-  new Brp from {first (a-b)}
+  new Brp from {first (a-b)} 
 )
   
 -- calculate least common multiple of two monomials
@@ -162,6 +180,7 @@ Outputs
 -- -- TODO complete documentation
 
 TEST ///
+
   R = ZZ/2[x,y,z]
   firstpoly = new Brp from { {1,1,0}, {1,0,0}}
   secondpoly = new Brp from {{1,0,0}}
@@ -207,6 +226,10 @@ TEST ///
   assert(leading (convert( x*y*z + y*z )) == convert(x*y*z))
   assert(leading (convert( y*z*x + y*z )) == convert(x*y*z))
 
+  assert( isRelativelyPrime(convert (x*y*z), convert( x) ) == false )
+
+  assert (isRelativelyPrime( monoA, monoB) == false )
+  assert isRelativelyPrime( monoC, monoB)
 
 --  assert (false) -- I have this in to be sure that the tests are run
 ///
@@ -222,12 +245,3 @@ restart
 uninstallPackage "BitwiseRepresentationPolynomials"
 installPackage("BitwiseRepresentationPolynomials", RemakeAllDocumentation=>true)
 check BitwiseRepresentationPolynomials
-
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
--- End:
-
-restart
-installPackage("BitwiseRepresentationPolynomials", RemakeAllDocumentation=>true)
-viewHelp Brp

@@ -44,6 +44,7 @@ runner -> (
   -- pairs of indexes referring to polynomials, changing as we find more pairs
   -- listOfIndexPairs = every FP with every Brp, every Brp with every Brp
   listOfIndexPairs = makePairsFromLists( keys F, keys F) | makePairsFromLists(keys F, toList(-n..-1) );
+  listOfIndexPairs = updatePairs( listOfIndexPairs );
   nextIndex = #F ;
 
 
@@ -56,13 +57,30 @@ runner -> (
 
   --  remainder = reduce (S,G)
   --  if (remainder != 0 ) then (
-  --    nextIndex += 1
-  --    append(G, remainder) 
-  --    makeMorePairs(G, remainder)
+  --    nextIndex += 1;
+  --    append(G, remainder) ;
+  --    G = append( G, remainder);
+  --    listOfIndexPairs = updatePairs( listOfIndexPairs );
   --  )
   )
   --
   --minimizeBasis(G)
+)
+
+-- remove all relatively prime pairs
+updatePairs = method()
+updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
+  variables = entries(id_(ZZ^n));
+  select( l, pair -> (
+    if ( first pair < 0 ) then (
+      i = - first pair;
+      j = last pair;
+      f = G#j;
+      xx = new Brp from {variables#(i-1)};
+      isDivisible(leading f, xx) 
+    )
+  )
+  )
 )
  
 -- from pair of indices get corresponding polynomials, then compute their S
@@ -78,7 +96,6 @@ SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
     i = - i;
     f = G#j;
     xx = new Brp from {variables#(i-1)};
-    print xx;
     g = new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
     g*xx+g
   )
