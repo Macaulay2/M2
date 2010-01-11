@@ -70,7 +70,7 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
         before = now - 1;
         i = 0;
         skip = false;
-        while i < #g do (	
+        while i < #g do (    
             if s#i == before then (
                 updating = true;
                 -- look for the next unique leading monomial
@@ -88,28 +88,28 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                 -- row-reduction
                 j = 0;
                 while j < i and e#i != 0 do (
-	                if s#j == before and e#j != 0 then (
-	                    logei = logpoly(e#i, depq, indq);
-	                    logj = logpoly(e#j, depq, indq);	
-	                    if e#j != 0 and logj#0 == logei#0 and geqlog(logei#2, logj#2) and apply((logei#2 - logj#2), v->v%q) == apply(inds, v->0) then (
-		                    w = 1;
-		                    for k to inds - 1 do w = w * (indq#k)^((logei#2 - logj#2)#k//q);
-			                loop = true;
-			                if g#i > g#j * w then (
-		                        lc = leadCoefficient(e#i)//leadCoefficient(e#j);
+                    if s#j == before and e#j != 0 then (
+                        logei = logpoly(e#i, depq, indq);
+                        logj = logpoly(e#j, depq, indq);    
+                        if e#j != 0 and logj#0 == logei#0 and geqlog(logei#2, logj#2) and apply((logei#2 - logj#2), v->v%q) == apply(inds, v->0) then (
+                            w = 1;
+                            for k to inds - 1 do w = w * (indq#k)^((logei#2 - logj#2)#k//q);
+                            loop = true;
+                            if g#i > g#j * w then (
+                                lc = leadCoefficient(e#i)//leadCoefficient(e#j);
                                 g = replace(i, g#i - lc * (g#j) * w, g);
                                 h = replace(i, (h#i - lc * (h#j) * w^q) % I, h);
-	                            e = replace(i, red(e#i - lc * (e#j) * w^q, I, dq, oldg), e);
+                                e = replace(i, red(e#i - lc * (e#j) * w^q, I, dq, oldg), e);
                                 j = -1; -- updates to zero
-	    		            )
-		                    else if g#i < g#j * w then (
+                            )
+                            else if g#i < g#j * w then (
                                 gx = (g#j) * w;
                                 g = sort(append(g,gx));
                                 pos = position(g, a->a==gx);
                                 h = insert(pos, (h#j)*w^q, h);
                                 e = insert(pos, red((e#j)*w^q, I, dq, oldg), e);
                                 s = insert(pos, before, s);
-			                );   
+                            );   
                         );
                     );
                     j = j + 1;
@@ -119,34 +119,34 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                     s = replace(i, now, s);
                 )
                 else (
-	                if s#i >= before then (
-	                    loop = true;   
+                    if s#i >= before then (
+                        loop = true;   
                         logei = logpoly(e#i, depq, indq);
-	                    for j to #oldg-1 do (
-	                        logj = logpoly(dq * oldg#j, depq, indq);
-	                        if logj#1 == logei#1 then (
-	                            prod = 1;
-		                        for k to inds - 1 do (
-		                            mx = -((-(((logj)#2)#k-((logei)#2)#k))//q);
-		                            if mx > 0 then prod = prod * (indq#k)^mx;
-		                        );
-	                            if all(apply(#g, l->s#l >= before and g#l != 0 and leadMonomial(g#l) == leadMonomial(g#i*prod)), l->l==false) then (
+                        for j to #oldg-1 do (
+                            logj = logpoly(dq * oldg#j, depq, indq);
+                            if logj#1 == logei#1 then (
+                                prod = 1;
+                                for k to inds - 1 do (
+                                    mx = -((-(((logj)#2)#k-((logei)#2)#k))//q);
+                                    if mx > 0 then prod = prod * (indq#k)^mx;
+                                );
+                                if all(apply(#g, l->s#l >= before and g#l != 0 and leadMonomial(g#l) == leadMonomial(g#i*prod)), l->l==false) then (
                                     gx = (g#i) * prod;
                                     pos = position(sort(append(g,gx)), a->a==gx);
                                     g = insert(pos, gx, g);
                                     h = insert(pos, (h#i)*prod^q, h);
                                     e = insert(pos, red((e#i)*prod^q, I, dq, oldg), e);
                                     s = insert(pos, before, s);
-	                                loop = true;
-		                        );
-		                    );          
-	                    );
+                                    loop = true;
+                                );
+                            );          
+                        );
                         for k to #g - 1 do (
-	                        if s#k >= before and g#k != 0 and e#k != 0 then (	 	 
-	                            logk = logpoly(e#k, depq, indq);
-	                            if k < i and logk#0 == logei#0 then (
-	                                if all(apply((logei#2 - logk#2), v->v%q), v->v==0) then (
-		                                ww = apply(inds, v->degree(indq#v,lcm(logei#3, logk#3)//logei#3));
+                            if s#k >= before and g#k != 0 and e#k != 0 then (          
+                                logk = logpoly(e#k, depq, indq);
+                                if k < i and logk#0 == logei#0 then (
+                                    if all(apply((logei#2 - logk#2), v->v%q), v->v==0) then (
+                                        ww = apply(inds, v->degree(indq#v,lcm(logei#3, logk#3)//logei#3));
                                         prod = product(#ww, l->(indq#l)^((ww#l)//q));
                                         gx = (g#i) * prod;
                                         g = sort(append(g,gx));
@@ -154,11 +154,11 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
                                         h = insert(pos, (h#i)*prod^q, h);
                                         e = insert(pos, red((e#i)*prod^q, I, dq, oldg), e);
                                         s = insert(pos, before, s);
-			                            loop = true;
+                                        loop = true;
                                     );
-	                            );
-	                        );
-	                    );
+                                );
+                            );
+                        );
                     );
                 );
             );
@@ -183,8 +183,8 @@ qthPower (Ideal, ZZ, List) := (I, deps, footprint) -> (
         for j from 0 to i - 1 do {
             logj=logpoly(oldg#j, depq, indq);
             if logi#0 == logj#0 and geqlog(logi#2, logj#2) then (
-	            oldg = delete(oldg#i, oldg);
-	            break;
+                oldg = delete(oldg#i, oldg);
+                break;
             );
         };
         i = i - 1;
