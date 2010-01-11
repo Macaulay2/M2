@@ -49,7 +49,7 @@ export {
 	orderComplex,
 	VariableName,
 	hasseDiagram,
-	inducedPoset,
+	subPoset,
 	atoms,
 	closedInterval,
 	openInterval,
@@ -285,11 +285,10 @@ dropElements (Poset, Function) := (P, f) -> (
 -- inducedPoset
 -- inputs:  a poset P and a list L of elements from P to "keep"
 -- outputs:  induced poset the list L
-inducedPoset = method();
-inducedPoset (Poset, List) := Poset => (P, L) -> (
-  rel := select(P.Relations, R -> (
-	    any(L, G -> (G == R#0)) and any(L, G -> (G == R#1))));
-  poset(L, rel))
+subPoset = method();
+subPoset (Poset, List) := Poset => (P, L) -> (
+  dropElements(P, toList(set P.GroundSet - set L))
+  )
 
 
 -- closedInterval
@@ -300,9 +299,9 @@ closedInterval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
      if (compare(P,elt1,elt2) == true or compare(P,elt2,elt1) == true) == false then return error "these elments are uncomparable";
      -- find elements between a and b
      if compare(P,elt1,elt2) === true 
-          then return inducedPoset(P,select(P.GroundSet, elt -> compare(P,elt1,elt) == true and compare(P,elt,elt2) == true));
+          then return subPoset(P,select(P.GroundSet, elt -> compare(P,elt1,elt) == true and compare(P,elt,elt2) == true));
      if compare(P,elt2,elt1) === true 	  
-          then return inducedPoset(P, select(P.GroundSet, elt -> compare(P,elt2,elt) == true and compare(P,elt,elt1) == true));
+          then return subPoset(P, select(P.GroundSet, elt -> compare(P,elt2,elt) == true and compare(P,elt,elt1) == true));
       )
 
 --openInterval
@@ -1589,8 +1588,34 @@ doc///
 ///	  
 
 -----------------
--- inducedPoset
+-- subPoset
 -----------------
+doc///
+     Key
+     	  subPoset
+	  (subPoset,Poset,List)
+     Headline
+     	  returns the subposet supported on elements in a given list
+     Usage
+     	  Q = subPoset(P,L)
+     Inputs
+     	  P : Poset
+	  L : List
+	       L consists of element in P
+     Outputs
+     	  Q : Poset
+	       subposet of P supported on elements in L	       
+     Description
+     	  Text
+	       	This command take a poset P and returns a new poset that
+	        contains all elements in P that are in L.
+		The relations on the remaining elements are all relations that held in P.
+	  Example
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       subPoset(P, {a,e,g})	       
+     SeeAlso
+     	 dropElements
+///
 
 -----------------
 -- atoms
