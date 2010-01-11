@@ -9,7 +9,7 @@ newPackage(
         DebuggingMode => true
         )
 
-export {series, setDegree,toPolynomial}
+export {series, setDegree,toPolynomial,dominantTerm}
 
 
 Series = new Type of HashTable
@@ -19,13 +19,16 @@ toString Series := s -> toString expression s;
 tex Series := s -> tex expression s;
 html Series := s -> html expression s;
 
-
 truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
+
+
+dominantTerm = method()
+dominantTerm(Series) := RingElement => S -> last terms toPolynomial S;
+
 
 toPolynomial = method()
 toPolynomial(Series) := RingElement => s -> truncate(s#degree,s#polynomial);
 toPolynomial(ZZ,Series) := RingElement => (n,s) -> truncate(n,s#polynomial);
-
 
 series = method(Options => {Degree => 5})
 
