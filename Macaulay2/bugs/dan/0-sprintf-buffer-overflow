@@ -1,0 +1,1 @@
+audit all uses of sprintf for possible buffer overflows
