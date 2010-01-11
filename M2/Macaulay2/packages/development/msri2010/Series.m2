@@ -45,7 +45,7 @@ setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warn
      (f,c) := S#setDegree (S#polynomial,S#computedDegree,n);
      new Series from {polynomial => f, computedDegree => c, maxDegree => S#maxDegree, degree => (min(n,S#maxDegree)), setDegree=> S#setDegree}
      );
-
+peek s
 
 ZZ[x]
 f = i -> x^i;
@@ -105,22 +105,48 @@ S = setDegree(3,S)
 peek S
 
 
+-- the following code is from modules2.m2
+recipN = (n,wts,f) -> (
+     -- n is a positive integer
+     -- wts is a weight vector
+     -- f is a polynomial of the form 1 plus terms of positive weight, which we verify
+     -- we compute the terms of the expansion of 1/f of weight less than n
+     if n <= 0 then error "expected a positive integer";
+     if part(,0,wts,f) != 1 then error "expected a polynomial of the form 1 plus terms of positive weight";
+     g := 1_(ring f);  -- g always has the form 1 plus terms weight 1,2,...,m-1
+     m := 1;			   -- 1-f*g always has terms of wt m and higher
+     tr := h -> part(,m-1,wts,h);
+     while m < n do (
+	  m = 2*m;
+	  g = g + tr(g * (1 - tr(g * tr f)));
+	  );
+     if m === n then g else part(,n-1,wts,g));
 
-series RingElement := Series => opts -> f -> (
-     f = f/(1_(ring f));
-     df := denominator f;
-     nf := numerator f;
-     degnf := first degree nf;
-     degdf := first degree df;
-     dC := (coefficients(df,Monomials=>apply(0..opts.Degree,i->x^i)))_1;
-     if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
-     a := i -> if i == 0 then (dC_(0,0))^(-1) else (dC_(0,0))^(-1)*sum(1..i, j -> -dC_(j,0)*a(i-j));    
-     s := sum select(terms (nf * sum(0..opts.Degree,i -> a(i) * x^i)), i -> first degree i <= opts.Degree);
-     new Series from {rationalFunction => f, degree => if degdf < 1 then infinity else opts.Degree, series => s}
-     );
+rationalSeries = (ord,h) -> ( -- essentially the code used by hilbert series see: modules2.m2
+	  num := numerator h;
+	  if num == 0 then 0_(ring num) else (
+	       wts := (options ring num).Heft;
+	       (lo,hi) := weightRange(wts,num);
+	       if ord <= lo then 0_(ring num) else (
+		    s := part(,ord-1,wts,part(,ord-1,wts,num) * recipN(ord-lo,wts,denominator h)))));
 
+rationalSeries(5,1/(1-x))
 
- 
+series RingElement := Series => opts -> h -> ( 
+     	  s := rationalSeries(opts.Degree+1,h);
+	   -- now make a new series.
+     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
+	  -- to know how to tack on the new terms to the old polynomial.
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> 
+	       (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)))})  
+
+peek s 
+s = series(1/(1-x))
+setDegree(10,s)
+
+methods series 
+
 
 seriesOLD = method()
 seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
@@ -362,4 +388,21 @@ growableRational(7,6)
 growMe(oo,1)
 growMe(oo,1)
 growMe(oo,2)
+
+
+BrokenSeries RingElement := Series => opts -> f -> (
+     f = f/(1_(ring f));
+     df := denominator f;
+     nf := numerator f;
+     degnf := first degree nf;
+     degdf := first degree df;
+     dC := (coefficients(df,Monomials=>apply(0..opts.Degree,i->x^i)))_1;
+     if not isUnit dC_(0,0) then error "lowest degree coefficient not a unit";
+     a := i -> if i == 0 then (dC_(0,0))^(-1) else (dC_(0,0))^(-1)*sum(1..i, j -> -dC_(j,0)*a(i-j));    
+     s := sum select(terms (nf * sum(0..opts.Degree,i -> a(i) * x^i)), i -> first degree i <= opts.Degree);
+     new Series from {rationalFunction => f, degree => if degdf < 1 then infinity else opts.Degree, series => s}
+     );
+
+
+ 
 
