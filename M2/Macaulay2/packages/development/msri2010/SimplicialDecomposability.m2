@@ -81,9 +81,6 @@ hVector (SimplicialComplex) := (S) -> (
 -- Attempts to find a shelling order of a pure simplicial complex.
 shellingOrder = method(TypicalValue => List);
 shellingOrder (SimplicialComplex) := (S) -> (
-    --------------
-    -- Easy checks
-    --------------
     -- not pure => not pure shellable
     if not isPure S then return {};
     -- not CM => not shellable
@@ -93,14 +90,9 @@ shellingOrder (SimplicialComplex) := (S) -> (
     -- simplexes are nice
     if isSimplex S then return flatten entries facets S;
 
-    --------------
-    -- Naive build
-    --------------
-    -- TODO
-    -- build up a shelling of S, pruning where possible
-    -- remember that only the newest additions "shellosity"
-    -- needs to be checked; i.e., it has a unique minimal
-    -- element in the intersection
+    -- ULTRA NAIVE
+    P = permutations first entries facets S;
+    for L in P do if isShelling L then return L;
     {}
 );
 
@@ -137,7 +129,7 @@ doc ///
             true if and only if {\tt S} is (pure) shellable
     Description
         Text
-            This function currently uses the naive approach of checking all permutations of the facets.
+            This function simply checks if a shelling order exists.
         Example
             R = QQ[a,b,c,d,e];
             isShellable simplicialComplex {a*b*c*d*e}
@@ -222,8 +214,10 @@ doc ///
         S:SimplicialComplex
     Outputs
         L:List
-            a shelling order of the facets of {\tt S}
+            a shelling order of the facets of {\tt S}, if one exists, otherwise any empty list
     Description
+        Text
+            Currently this routine employs the incredibly naive approach of checking all permutations of the facets.
         Example
             R = QQ[a,b,c,d,e];
             shellingOrder simplicialComplex {a*b*c*d*e}
