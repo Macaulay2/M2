@@ -97,10 +97,13 @@ SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
 -- leading element of any element in G
 reduce = method()
 reduce (Brp, HashTable) := Brp => (f,G) -> (
-  newF = null;
-  while  (newF == f or newF == new Brp from {}) do 
-    newF = reduceOneStep(f,G); 
-  newF;
+  zeroBrp = new Brp from {};
+  while (newF = reduceOneStep(f,G); newF != f and newF != zeroBrp ) do 
+    f = newF;
+  newF
+)
+reduce (Brp, Brp) := Brp => (f,g) -> (
+  reduce ( f, new HashTable from { 1=> g} )
 )
 
  
@@ -167,6 +170,8 @@ TEST ///
                            4 => myPoly4,
                            5 => myPoly5
                            }
+  FOnePoly = new HashTable from { 1 => convert(x+y+z) } 
+
   S = SPolynomial({-1,1}, F, n)
   assert (S == convert( x*z + z) )
   S = SPolynomial({-1,2}, F, n)
@@ -176,15 +181,15 @@ TEST ///
   S = SPolynomial({4,5}, F, n)
   assert (S == convert( x*y + x + y*z) ) 
 
-  R = ZZ[x,y,z]
-  assert ( reduceOneStep( convert(x*y*z + y*z+z), convert(x+y+z) ) == convert( y*z+z))
-  FF = new HashTable from { 1 => convert(x+y+z) } 
-  assert ( reduceOneStep( convert(x*y*z + y*z+z), FF)  == convert( y*z+z))
-
+  assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
+  assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
+  assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
+  
   assert ( reduceOneStep( convert(y+z), F) == convert( y+z) )
 
 
-  reduceOneStep( convert(x*y*z + y*z + z), F )
+  assert ( reduceOneStep( convert(x*y*z + y*z + z), F ) == convert( y*z))
+  assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
 
 ///
   
