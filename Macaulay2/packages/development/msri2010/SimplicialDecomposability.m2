@@ -35,8 +35,25 @@ isShellable (SimplicialComplex) := (S) -> (
 
 -- Determines if a list of equidimensional faces is a shelling.
 isShelling = method(TypicalValue => Boolean);
-isShelling (List) := (S) -> (
+isShelling (List) := (L) -> (
     -- TODO
+    -- recall: a set of equidimensional faces F_0, ..., F_k is
+    --         a shelling order if for 2 <= i < k the set
+    --         sc(F_0..F_i) - sc(F_0..F_(i-1)) has a unique minimal
+    --         element with respect to inclusion.
+    
+    -- compute s0 & f0 outside for i = 0;
+    -- in each iteration, put s1 & f1 in s0 & f0 before loop
+    -- thus only s1 & f1 need be recomputed each loop
+    -- for i from 1 to #L - 1 do (
+    --    s0 = simplicialComplex take(L, i-1);
+    --    s1 = simplicialComplex take(L, i);
+    --    f0 = flatten for i from 0 to dim s0 - 1 list flatten entries faces(i, s0);
+    --    f1 = flatten for i from 0 to dim s1 - 1 list flatten entries faces(i, s1);
+    --    di = toList(set(f1) - set(f0));  
+    --    ta = tally flatten apply(di, degree);
+    --    if ta_(min keys ta) != 1 then return false;
+    -- );
     false
 );
 
@@ -63,7 +80,7 @@ shellingOrder (SimplicialComplex) := (S) -> (
     -- not CM => not shellable
     if not isCM quotient ideal S then return {};
     -- negatives in the h-Vector => not shellable
-    if any(hVector S, i -> i==0) then return {};
+    if any(hVector S, i -> i<0) then return {};
     -- simplexes are nice
     if isSimplex S then return flatten entries facets S;
 
@@ -71,7 +88,10 @@ shellingOrder (SimplicialComplex) := (S) -> (
     -- Naive build
     --------------
     -- TODO
-    -- use isShelling to build up a shelling of S
+    -- build up a shelling of S, pruning where possible
+    -- remember that only the newest additions "shellosity"
+    -- needs to be checked; i.e., it has a unique minimal
+    -- element in the intersection
     {}
 );
 
