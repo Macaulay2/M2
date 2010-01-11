@@ -275,6 +275,8 @@ Series * Series := Series => (A,B) -> (
 	       )}
      );
 
+Series / Series := Series => (A,B) -> A * inverse B;     
+
 - Series := Series => A -> (new Series from{
      degree => A#degree,
      maxDegree => A.maxDegree,
