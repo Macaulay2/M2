@@ -1773,6 +1773,94 @@ doc ///
 --  SeeAlso
 --///
 
+document {
+     Key => {isAmple, (isAmple,List,NormalToricVariety)},
+     Headline => "whether a Cartier divisor on a complete normal toric variety is ample",
+     Usage => "isAmple(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is ample and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO List," ",TT "D"," is considered as a divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Note that the input may not define 
+     a Cartier divisor and if it does not the function returns ", TO2(false,"false"),". Furthermore, if ",TT "X"," is not complete the 
+     function also returns ", TO2(false,"false"),".",
+     
+     PARA{}, "Let ", TEX ///$a_{\rho}$///," be the entry corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the
+      primitive point on that ray. Then, if the variety is complete and the divisor is Cartier (see ",TO isCartier,"), the divisor ",TT "D"," 
+     is ample if the support function is strictly convex. The support function is given by the following: Since ",TT "D"," is Cartier there is a point 
+     ", TEX///$m_{\sigma}$///," in the dual lattice for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,". Then the support 
+     function ", TEX ///$\phi_D$///," is given on each maximal cone ", TEX ///$\sigma$///," 
+     by ", TEX ///$\phi(u) = < m_{\sigma},u>$///," for ", TEX ///$u\in \sigma$///,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = {1,2,3}",
+	  " isAmple(D,PP2)",
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = {0,0,0,0}",
+	  " isAmple(D,X)"
+	  }
+     }
+	  
+
+document { 
+     Key => {isCartier, (isCartier,List,NormalToricVariety)},
+     Headline => "whether a Weil divisor on a normal toric variety is Cartier",
+     Usage => "isCartier(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO List," ",TT "D"," is considered as a Weil divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," there exists a lattice point ", TEX///$m_{\sigma}$///," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = {1,2,3}",
+	  " isCartier(D,PP2)",
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = {1,0,0,-1}",
+	  " isCartier(D,X)"
+	  }
+     }
+
+document { 
+     Key => {isQQCartier, (isQQCartier,List,NormalToricVariety)},
+     Headline => "whether a Weil divisor on a normal toric variety is QQ-Cartier",
+     Usage => "isQQCartier(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO List," ",TT "D"," is considered as a Weil divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is ",TO QQ,"-Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," there exists a point ", TEX///$m_{\sigma}$///," in the 
+     associated ",TO QQ," vector space of the dual lattice such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     EXAMPLE {
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = {1,0,0,-1}",
+	  " isCartier(D,X)",
+	  " isQQCartier(D,X)"
+	  }
+     }
+     
 
 document { 
      Key => {isDegenerate, 
@@ -1801,6 +1889,24 @@ document {
 	  (ring, NormalToricVariety)}
      }     
 
+document {
+     Key => (isFano,NormalToricVariety),
+     Headline => "checks if a normal toric variety is Fano",
+     Usage => "isFano X",
+     Inputs => {"X" => NormalToricVariety},
+     Outputs => {Boolean => {TO2(true,"true"), " if the normal toric 
+	       variety is Fano", TO2(false, "false"), "otherwise"}},
+     "A complete normal toric variety is Fano if the anticanonical divisor (see ", TO anticanonicalDivisor,") is 
+     Cartier (see ", TO isCartier,") and ample (see ",TO isAmple,"). Note, that the function also returns ", TO2(false, "false")," 
+     if ",TT "X"," is not complete.",
+     
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " isFano PP3",
+	  " H2 = hirzebruchSurface 2",
+	  " isFano H2"
+	  }
+     } 
 
 document { 
      Key => {isProjective, (isProjective,NormalToricVariety)},
