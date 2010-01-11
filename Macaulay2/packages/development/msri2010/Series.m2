@@ -185,6 +185,7 @@ Series - Series := Series => (A,B) -> (
 	       )}
      )
 
+
 Series * Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
      new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial + B'.polynomial, 
