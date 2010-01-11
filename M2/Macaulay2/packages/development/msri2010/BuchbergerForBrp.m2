@@ -22,6 +22,7 @@ export {makePairsFromLists,
       runner, 
       reduceOneStep, 
       reduce,
+      updatePairs,
       isReducible }
 exportMutable {}
 
@@ -76,12 +77,12 @@ updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
     j = last pair;
     if ( i < 0 ) then (
       i = - i;
-      f = G#j;
+      f = F#j;
       g = new Brp from {variables#(i-1)}
     ) 
     else (
-      f = G#i;
-      g = G#j
+      f = F#i;
+      g = F#j
     );
     not isRelativelyPrime(leading f, leading g)
   )
@@ -215,6 +216,18 @@ TEST ///
   assert ( reduceOneStep( convert(x*y*z + y*z + z), F ) == convert( y*z))
   assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
 
+  l = makePairsFromLists( keys F, keys F) 
+  assert( l == {{1, 2}, {1, 3}, {1, 4},
+  {1, 5}, {2, 3}, {2, 4}, {2, 5}, {3, 4}, {3, 5}, {4, 5}} )
+
+  assert ( updatePairs (l, F, n) == {{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 4},
+  {2, 5}, {3, 4}, {3, 5}, {4, 5}} )
+
+  ll = makePairsFromLists( keys F, {-1} )
+  assert ( updatePairs( ll, F, n) == {{-1, 1}, {-1, 2}, {-1, 4}, {-1, 5}} )
+  
+  lll = makePairsFromLists( keys F, {-3} )
+  assert ( updatePairs( lll, F, n) == {{-3,3}, {-3,4}} )
 ///
   
        
