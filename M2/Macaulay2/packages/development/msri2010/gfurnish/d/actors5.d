@@ -574,7 +574,7 @@ examine(localInterpState:threadLocalInterp,e:Expr):Expr := (
 	  nullE)
      is s:Sequence do (
 	  if length(s) == 0 then (
-     	       showFrames(localInterpState,threadLocalInterpState.localFrame);
+     	       showFrames(localInterpState,localInterpState.localFrame);
 	       nullE)
 	  else WrongNumArgs(1))
      is s:List do (
@@ -1708,7 +1708,7 @@ listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else 
 frame(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is s:Sequence do 
-     if length(s) == 0 then Expr(listFrame(threadLocalInterpState.localFrame)) else WrongNumArgs(1,2)
+     if length(s) == 0 then Expr(listFrame(localInterpState.localFrame)) else WrongNumArgs(1,2)
      is sc:SymbolClosure do Expr(listFrame(sc.frame))
      is c:CodeClosure do Expr(listFrame(c.frame))
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
@@ -1727,7 +1727,7 @@ listFrames(localInterpState:threadLocalInterp,f:Frame):Expr := Expr( list( new S
 
 frames(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is a:Sequence do if length(a) == 0 then listFrames(localInterpState,threadLocalInterpState.localFrame) else WrongNumArgs(0,1) 
+     is a:Sequence do if length(a) == 0 then listFrames(localInterpState,localInterpState.localFrame) else WrongNumArgs(0,1) 
      is sc:SymbolClosure do Expr(listFrames(localInterpState,sc.frame))
      is c:CodeClosure do Expr(listFrames(localInterpState,c.frame))
      is fc:FunctionClosure do Expr(listFrames(localInterpState,fc.frame))
@@ -1741,7 +1741,7 @@ localDictionaries(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do 
 
 localDictionaries(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
-     is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(threadLocalInterpState.localFrame))
+     is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localInterpState.localFrame))
      is x:DictionaryClosure do localDictionaries(x.frame)
      is x:SymbolClosure do localDictionaries(x.frame)
      is x:CodeClosure do localDictionaries(x.frame)

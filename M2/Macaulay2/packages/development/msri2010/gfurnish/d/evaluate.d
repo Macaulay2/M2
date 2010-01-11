@@ -328,16 +328,16 @@ evalForCode(localInterpState:threadLocalInterp,c:forCode):Expr := (
 		    else return printErrorMessageE(c.toClause,"expected a small integer"))
 	       else return printErrorMessageE(c.toClause,"expected an integer"));
 	  );
-     threadLocalInterpState.localFrame = Frame(threadLocalInterpState.localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
+     localInterpState.localFrame = Frame(localInterpState.localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
      while true do (
 	  if toLimit && j > n then break;
 	  if listLoop && j >= length(w) then break;
-	  threadLocalInterpState.localFrame.values.0 = if listLoop then w.j else Expr(toInteger(j));		    -- should be the frame spot for the loop var
+	  localInterpState.localFrame.values.0 = if listLoop then w.j else Expr(toInteger(j));		    -- should be the frame spot for the loop var
 	  j = j+1;
 	  if c.whenClause != dummyCode then (
 	       p := eval(localInterpState,c.whenClause);
 	       when p is err:Error do (
-		    threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
+		    localInterpState.localFrame = localInterpState.localFrame.outerFrame;
 		    return if err.message == breakMessage then (
 			 if err.value == dummyExpr then (
 			      if c.listClause == dummyCode then nullE
@@ -350,7 +350,7 @@ evalForCode(localInterpState:threadLocalInterp,c:forCode):Expr := (
 		    else p)
 	       else if p == False then break
 	       else if p != True then (
-		    threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
+		    localInterpState.localFrame = localInterpState.localFrame.outerFrame;
 		    return printErrorMessageE(c.whenClause,"expected true or false")));
 	  if c.listClause != dummyCode then (
 	       b := eval(localInterpState,c.listClause);
@@ -367,7 +367,7 @@ evalForCode(localInterpState:threadLocalInterp,c:forCode):Expr := (
 				   else if i == length(r) then r
 				   else new Sequence len i do foreach x in r do provide x))
 			 else err.value);
-		    threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
+		    localInterpState.localFrame = localInterpState.localFrame.outerFrame;
 		    return b;
 		    )
 	       else nothing;
@@ -383,7 +383,7 @@ evalForCode(localInterpState:threadLocalInterp,c:forCode):Expr := (
 	       b := eval(localInterpState,c.doClause);
 	       when b is err:Error do (
 		    if err.message != continueMessage then (
-			 threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
+			 localInterpState.localFrame = localInterpState.localFrame.outerFrame;
 			 return
 			 if err.message == breakMessage then (
 			      if err.value == dummyExpr then (
@@ -396,7 +396,7 @@ evalForCode(localInterpState:threadLocalInterp,c:forCode):Expr := (
 			      else err.value)
 		    	 else b))
 	       else nothing));
-     threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
+     localInterpState.localFrame = localInterpState.localFrame.outerFrame;
      if c.listClause == dummyCode then nullE
      else Expr(
 	  list(
@@ -475,12 +475,12 @@ export applyFCS(localInterpState:threadLocalInterp,c:FunctionClosure,v:Sequence)
 		    f.frameID = desc.frameID;
 		    f.values.0 = v;
 		    );
-	       saveLocalFrame := threadLocalInterpState.localFrame;
-	       threadLocalInterpState.localFrame = f;
+	       saveLocalFrame := localInterpState.localFrame;
+	       localInterpState.localFrame = f;
 	       recursionDepth = recursionDepth + 1;
 	       ret := eval(localInterpState,model.body);			    -- do tail recursion here
 	       recursionDepth = recursionDepth - 1;
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       if !f.notrecyclable then (
 	       	    foreach x in f.values do x = nullE;
 		    f.outerFrame = recycleBin.framesize;
@@ -494,12 +494,12 @@ export applyFCS(localInterpState:threadLocalInterp,c:FunctionClosure,v:Sequence)
 		    new Sequence len framesize do (
 			 provide v;
 			 while true do provide nullE));
-	       saveLocalFrame := threadLocalInterpState.localFrame;
-	       threadLocalInterpState.localFrame = f;
+	       saveLocalFrame := localInterpState.localFrame;
+	       localInterpState.localFrame = f;
 	       recursionDepth = recursionDepth + 1;
 	       ret := eval(localInterpState,model.body);
 	       recursionDepth = recursionDepth - 1;
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  )
@@ -507,12 +507,12 @@ export applyFCS(localInterpState:threadLocalInterp,c:FunctionClosure,v:Sequence)
      then WrongNumArgs(model.arrow,desc.numparms,length(v))
      else (
 	  if framesize == 0 then (
-	       saveLocalFrame := threadLocalInterpState.localFrame;
-	       threadLocalInterpState.localFrame = previousFrame;
+	       saveLocalFrame := localInterpState.localFrame;
+	       localInterpState.localFrame = previousFrame;
 	       recursionDepth = recursionDepth + 1;
 	       ret := eval(localInterpState,model.body);
 	       recursionDepth = recursionDepth - 1;
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  else (
@@ -532,12 +532,12 @@ export applyFCS(localInterpState:threadLocalInterp,c:FunctionClosure,v:Sequence)
 			 f.frameID = desc.frameID;
 			 foreach x at i in v do f.values.i = x; -- f.values can be NULL here!!
 			 );
-		    saveLocalFrame := threadLocalInterpState.localFrame;
-		    threadLocalInterpState.localFrame = f;
+		    saveLocalFrame := localInterpState.localFrame;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
@@ -547,16 +547,16 @@ export applyFCS(localInterpState:threadLocalInterp,c:FunctionClosure,v:Sequence)
 		    when ret is err:Error do returnFromFunction(ret) else ret
 		    )
 	       else (
-		    saveLocalFrame := threadLocalInterpState.localFrame;
+		    saveLocalFrame := localInterpState.localFrame;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
 			 new Sequence len framesize do (
 			      foreach x in v do provide x;
 			      while true do provide nullE));
-		    threadLocalInterpState.localFrame = f;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    when ret is err:Error do returnFromFunction(ret) else ret
 		    )
 	       )
@@ -584,7 +584,7 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 	  else (
 	       -- this is the case where the argument is one Expr, not a Sequence
 	       if desc.numparms != 1 then return wrongModel1(model);
-	       saveLocalFrame := threadLocalInterpState.localFrame;
+	       saveLocalFrame := localInterpState.localFrame;
 	       if framesize < length(recycleBin) then (
 		    f := recycleBin.framesize;
 		    if f == f.outerFrame then (		    -- self-pointer distinguishes the last one
@@ -598,7 +598,7 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 			 );
 		    ret := nullE;
 		    while true do (
-			 threadLocalInterpState.localFrame = f;
+			 localInterpState.localFrame = f;
 	  		 recursionDepth = recursionDepth + 1;
 			 tailCode := evalAllButTail(localInterpState,model.body);
 	  		 recursionDepth = recursionDepth - 1;
@@ -705,7 +705,7 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 			      ret = eval(localInterpState,tailCode);
 		    	      recursionDepth = recursionDepth - 1;
 			      break));
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    if !f.notrecyclable && framesize < length(recycleBin) then (
 			 -- clean it and recycle it
 			 foreach x in f.values do x = nullE;
@@ -720,11 +720,11 @@ export applyFCC(localInterpState:threadLocalInterp,fc:FunctionClosure,ec:Code):E
 			 new Sequence len framesize do (
 			      provide e;
 			      while true do provide nullE));
-		    threadLocalInterpState.localFrame = f;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 		    ))));
 export applyFCE(localInterpState:threadLocalInterp,fc:FunctionClosure,e:Expr):Expr := (
@@ -735,7 +735,7 @@ export applyFCE(localInterpState:threadLocalInterp,fc:FunctionClosure,e:Expr):Ex
      desc := model.desc;
      framesize := desc.framesize;
      if desc.numparms != 1 then return wrongModel1(model);
-     saveLocalFrame := threadLocalInterpState.localFrame;
+     saveLocalFrame := localInterpState.localFrame;
      if framesize < length(recycleBin) then (
 	  f := recycleBin.framesize;
 	  if f == f.outerFrame then (		    -- self-pointer distinguishes the last one
@@ -747,11 +747,11 @@ export applyFCE(localInterpState:threadLocalInterp,fc:FunctionClosure,e:Expr):Ex
 	       f.frameID = desc.frameID;
 	       f.values.0 = e;
 	       );
-	  threadLocalInterpState.localFrame = f;
+	  localInterpState.localFrame = f;
      	  recursionDepth = recursionDepth + 1;
 	  ret := eval(localInterpState,model.body);
      	  recursionDepth = recursionDepth - 1;
-	  threadLocalInterpState.localFrame = saveLocalFrame;
+	  localInterpState.localFrame = saveLocalFrame;
 	  if !f.notrecyclable then (
 	       -- clean it and recycle it
 	       foreach x in f.values do x = nullE;
@@ -766,11 +766,11 @@ export applyFCE(localInterpState:threadLocalInterp,fc:FunctionClosure,e:Expr):Ex
 	       new Sequence len framesize do (
 		    provide e;
 		    while true do provide nullE));
-     	  threadLocalInterpState.localFrame = f;
+     	  localInterpState.localFrame = f;
      	  recursionDepth = recursionDepth + 1;
 	  ret := eval(localInterpState,model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
      	  recursionDepth = recursionDepth - 1;
-	  threadLocalInterpState.localFrame = saveLocalFrame;
+	  localInterpState.localFrame = saveLocalFrame;
 	  when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 	  )
      );
@@ -794,14 +794,14 @@ export applyFCCS(localInterpState:threadLocalInterp,c:FunctionClosure,cs:CodeSeq
      	  previousFrame := c.frame;
      	  framesize := desc.framesize;
 	  if framesize == 0 then (
-	       saveLocalFrame := threadLocalInterpState.localFrame;
-	       threadLocalInterpState.localFrame = previousFrame;
+	       saveLocalFrame := localInterpState.localFrame;
+	       localInterpState.localFrame = previousFrame;
 	       recursionDepth = recursionDepth + 1;
 	       ret := eval(localInterpState,model.body);			    -- do tail recursion here
 	       recursionDepth = recursionDepth - 1;
 	       when ret is err:Error do ret = returnFromFunction(ret)
 	       else nothing;
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       ret
 	       )
 	  else (
@@ -836,14 +836,14 @@ export applyFCCS(localInterpState:threadLocalInterp,c:FunctionClosure,cs:CodeSeq
 			      else f.values.i = codevalue;
 			      );
 			 );
-		    saveLocalFrame := threadLocalInterpState.localFrame;
-		    threadLocalInterpState.localFrame = f;
+		    saveLocalFrame := localInterpState.localFrame;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
@@ -853,7 +853,7 @@ export applyFCCS(localInterpState:threadLocalInterp,c:FunctionClosure,cs:CodeSeq
 		    ret
 		    )
 	       else (
-		    saveLocalFrame := threadLocalInterpState.localFrame;
+		    saveLocalFrame := localInterpState.localFrame;
 		    haderror := false;
 		    recursionDepth = recursionDepth + 1;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
@@ -871,13 +871,13 @@ export applyFCCS(localInterpState:threadLocalInterp,c:FunctionClosure,cs:CodeSeq
 			      while true do provide nullE));
 		    recursionDepth = recursionDepth - 1;
 		    if haderror then return errorreturn;
-		    threadLocalInterpState.localFrame = f;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    ret
 		    )
 	       )
@@ -939,13 +939,13 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr):Expr 
 			 f.values.0 = e0;
 			 f.values.1 = e1;
 			 );
-		    saveLocalFrame := threadLocalInterpState.localFrame;
-		    threadLocalInterpState.localFrame = f;
+		    saveLocalFrame := localInterpState.localFrame;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
@@ -955,18 +955,18 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr):Expr 
 		    ret
 		    )
 	       else (
-		    saveLocalFrame := threadLocalInterpState.localFrame;
+		    saveLocalFrame := localInterpState.localFrame;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
 			 new Sequence len framesize do (
 			      provide e0;
 			      provide e1;
 			      while true do provide nullE));
-		    threadLocalInterpState.localFrame = f;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    ret
 		    )
 	       )
@@ -1010,13 +1010,13 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr,e2:Exp
 			 f.values.1 = e1;
 			 f.values.2 = e2;
 			 );
-		    saveLocalFrame := threadLocalInterpState.localFrame;
-		    threadLocalInterpState.localFrame = f;
+		    saveLocalFrame := localInterpState.localFrame;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
@@ -1025,19 +1025,19 @@ export applyEEE(localInterpState:threadLocalInterp,g:Expr,e0:Expr,e1:Expr,e2:Exp
 			 );
 		    ret)
 	       else (
-		    saveLocalFrame := threadLocalInterpState.localFrame;
+		    saveLocalFrame := localInterpState.localFrame;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
 			 new Sequence len framesize do (
 			      provide e0;
 			      provide e1;
 			      provide e2;
 			      while true do provide nullE));
-		    threadLocalInterpState.localFrame = f;
+		    localInterpState.localFrame = f;
 		    recursionDepth = recursionDepth + 1;
 		    ret := eval(localInterpState,model.body);
 		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    ret)))
      else buildErrorPacket("expected a function"));     
 
@@ -1109,8 +1109,8 @@ globalAssignmentHook(localInterpState:threadLocalInterp,t:Symbol,oldvalue:Expr,n
      nullE
      );
 
-localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- frameID != 0
-     f := threadLocalInterpState.localFrame;
+localAssignment(localInterpState:threadLocalInterp,nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- frameID != 0
+     f := localInterpState.localFrame;
      if nestingDepth == 0 then nothing
      else if nestingDepth == 1 then f = f.outerFrame
      else if nestingDepth == 2 then f = f.outerFrame.outerFrame
@@ -1133,7 +1133,7 @@ globalAssignment(localInterpState:threadLocalInterp,frameindex:int,t:Symbol,newv
 assignment(localInterpState:threadLocalInterp,nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
      if nestingDepth == -1
      then globalAssignment(localInterpState,frameindex,t,newvalue)
-     else localAssignment(nestingDepth,frameindex,newvalue));
+     else localAssignment(localInterpState,nestingDepth,frameindex,newvalue));
 
 globalAssignmentFun(localInterpState:threadLocalInterp,x:globalAssignmentCode):Expr := (
      t := x.lhs;
@@ -1244,13 +1244,13 @@ handleError(localInterpState:threadLocalInterp,c:Code,e:Expr):Expr := (
 	  clearAlarm();
 	  if p.loadDepth >= errorDepth && !err.position === p then (
 	       oldReportFrame := err.frame;
-	       err.frame = noRecycle(threadLocalInterpState.localFrame);
+	       err.frame = noRecycle(localInterpState.localFrame);
 	       err.position = p;
-	       if !err.printed || backtrace && threadLocalInterpState.localFrame != oldReportFrame then (
+	       if !err.printed || backtrace && localInterpState.localFrame != oldReportFrame then (
 		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger (type help to see debugger commands)");
-			 z := debuggerFun(localInterpState,threadLocalInterpState.localFrame,c);
+			 z := debuggerFun(localInterpState,localInterpState.localFrame,c);
 			 -- printErrorMessage(err.position,"--leaving debugger");
 			 when z is z:Error do (
 			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
@@ -1321,9 +1321,9 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
      	       	    else binarymethod(localInterpState,left,b.rhs,AdjacentS))
 	       is Error do left
 	       else binarymethod(localInterpState,left,b.rhs,AdjacentS))
-	  is m:functionCode do return Expr(FunctionClosure(noRecycle(threadLocalInterpState.localFrame),m))
+	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localInterpState.localFrame),m))
 	  is r:localMemoryReferenceCode do (
-	       f := threadLocalInterpState.localFrame;
+	       f := localInterpState.localFrame;
 	       nd := r.nestingDepth;
 	       if nd == 0 then nothing
 	       else if nd == 1 then f = f.outerFrame
@@ -1338,7 +1338,7 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	  is x:localAssignmentCode do (
 	       newvalue := eval(localInterpState,x.rhs);
 	       when newvalue is Error do return newvalue 
-	       else localAssignment(x.nestingDepth,x.frameindex,newvalue))
+	       else localAssignment(localInterpState,x.nestingDepth,x.frameindex,newvalue))
 	  is a:globalAssignmentCode do globalAssignmentFun(localInterpState,a)
 	  is p:parallelAssignmentCode do parallelAssignmentFun(localInterpState,p)
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
@@ -1367,7 +1367,7 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	       else if p == False then eval(localInterpState,c.elseClause)
 	       else printErrorMessageE(c.predicate,"expected true or false"))
 	  is r:localSymbolClosureCode do (
-	       f := threadLocalInterpState.localFrame;
+	       f := localInterpState.localFrame;
 	       nd := r.nestingDepth;
 	       if nd == 0 then nothing
 	       else if nd == 1 then f = f.outerFrame
@@ -1382,9 +1382,9 @@ export eval(localInterpState:threadLocalInterp,c:Code):Expr := (
 	  is b:ternaryCode do b.f(localInterpState,b.arg1,b.arg2,b.arg3)
 	  is b:multaryCode do b.f(localInterpState,b.args)
 	  is n:newLocalFrameCode do (
-	       threadLocalInterpState.localFrame = Frame(threadLocalInterpState.localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
+	       localInterpState.localFrame = Frame(localInterpState.localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
 	       x := eval(localInterpState,n.body);
-	       threadLocalInterpState.localFrame = threadLocalInterpState.localFrame.outerFrame;
+	       localInterpState.localFrame = localInterpState.localFrame.outerFrame;
 	       x)
 	  is c:forCode do return evalForCode(localInterpState,c)
 	  is c:whileListDoCode do evalWhileListDoCode(localInterpState,c)
@@ -1457,10 +1457,10 @@ export evalexcept(localInterpState:threadLocalInterp,c:Code):Expr := (
      else e);
 
 export eval(localInterpState:threadLocalInterp,f:Frame,c:Code):Expr := (
-     saveLocalFrame := threadLocalInterpState.localFrame;
-     threadLocalInterpState.localFrame = f;
+     saveLocalFrame := localInterpState.localFrame;
+     localInterpState.localFrame = f;
      ret := evalexcept(localInterpState,c);
-     threadLocalInterpState.localFrame = saveLocalFrame;
+     localInterpState.localFrame = saveLocalFrame;
      ret);
 
 shieldfun(localInterpState:threadLocalInterp,a:Code):Expr := (

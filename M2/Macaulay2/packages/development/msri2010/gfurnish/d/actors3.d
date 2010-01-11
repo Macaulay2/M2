@@ -1123,9 +1123,9 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  -- since the function closure has no code inside it that makes
 	  -- a closure, we can re-use its frame.
 	  if desc.restargs then (	  -- x -> ...
-	       saveLocalFrame := threadLocalInterpState.localFrame;
+	       saveLocalFrame := localInterpState.localFrame;
 	       values := new Sequence len framesize do provide nullE;
-	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       ret := new Sequence len newlen do (
 		    for i from 0 to newlen-1 do (
 			 values.0 = Sequence(a1.i,a2.i);
@@ -1142,15 +1142,15 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   )
 			      )
 			 else provide tmp;
-			 if threadLocalInterpState.localFrame.notrecyclable then (
+			 if localInterpState.localFrame.notrecyclable then (
 			      values = new Sequence len framesize do provide nullE;
-			      threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			      )
 			 else for i from 1 to framesize - 1 do values.i = nullE;
 			 );
 		    -- while true do provide nullE;
 		    );
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       if errret != nullE then return errret;
 	       -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 	       Expr(ret)
@@ -1158,9 +1158,9 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  else (				  -- (x,y) -> ...
 	       if numparms != 2 then WrongNumArgs(model.arrow,numparms,2)
 	       else (
-		    saveLocalFrame := threadLocalInterpState.localFrame;
+		    saveLocalFrame := localInterpState.localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+		    localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    ret := new Sequence len newlen do (
 			 for i from 0 to newlen - 1 do (
 			      values.0 = a1.i;
@@ -1178,9 +1178,9 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 					)
 				   )
 			      else provide tmp;
-			      if threadLocalInterpState.localFrame.notrecyclable then (
+			      if localInterpState.localFrame.notrecyclable then (
 				   values = new Sequence len framesize do provide nullE;
-				   threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 				   )
 			      else (
 				   -- it would be faster to do a byte copy here:
@@ -1189,7 +1189,7 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      );
 			 -- while true do provide nullE;
 			 );
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    if errret != nullE then return errret;
 	       	    -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 		    Expr(ret)
@@ -1241,9 +1241,9 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	  numparms := desc.numparms;
 	  framesize := desc.framesize;
 	  if desc.restargs then (	  -- x -> ...
-	       saveLocalFrame := threadLocalInterpState.localFrame;
+	       saveLocalFrame := localInterpState.localFrame;
 	       values := new Sequence len framesize do provide nullE;
-	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       ret := new Sequence len newlen do (
 		    foreach arg in a do (
 			 values.0 = arg;
@@ -1258,15 +1258,15 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 				   )
 			      )
 			 else provide tmp;
-		    	 if threadLocalInterpState.localFrame.notrecyclable then (
+		    	 if localInterpState.localFrame.notrecyclable then (
 			      values = new Sequence len framesize do provide nullE;
-			      threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			      )
 			 else for i from 1 to framesize - 1 do values.i = nullE;
 			 );
 		    -- while true do provide nullE;
 		    );
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       recursionDepth = recursionDepth - 1;
 	       if errret != nullE then return errret;
 	       -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
@@ -1274,9 +1274,9 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	       )
 	  else (				  -- (x,y) -> ...
 	       if numparms == 1 then (
-		    saveLocalFrame := threadLocalInterpState.localFrame;
+		    saveLocalFrame := localInterpState.localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+		    localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    ret := new Sequence len newlen do (
 			 if framesize == 1 then (
 			      foreach arg in a do (
@@ -1299,9 +1299,9 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					     )
 					)
 				   else provide tmp;
-		    		   if threadLocalInterpState.localFrame.notrecyclable then (
+		    		   if localInterpState.localFrame.notrecyclable then (
 					values = new Sequence len framesize do provide nullE;
-					threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+					localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 					);
 				   )
 			      )
@@ -1326,16 +1326,16 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					     )
 					)
 				   else provide tmp;
-		    		   if threadLocalInterpState.localFrame.notrecyclable then (
+		    		   if localInterpState.localFrame.notrecyclable then (
 					values = new Sequence len framesize do provide nullE;
-					threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+					localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 					)
 				   else for i from 1 to framesize - 1 do values.i = nullE;
 				   )
 			      );
 			 -- while true do provide nullE;
 			 );
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    recursionDepth = recursionDepth - 1;
 		    if errret != nullE then return errret;
 	       	    -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
@@ -1343,8 +1343,8 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 		    )
 	       else (
 		    if framesize == 0 then (
-			 saveLocalFrame := threadLocalInterpState.localFrame;
-			 threadLocalInterpState.localFrame = previousFrame;
+			 saveLocalFrame := localInterpState.localFrame;
+			 localInterpState.localFrame = previousFrame;
 			 ret := new Sequence len newlen do (
 			      foreach arg in a do (
 				   when arg is args:Sequence do (
@@ -1371,16 +1371,16 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 				   );
 			      -- while true do provide nullE;
 			      );
-			 threadLocalInterpState.localFrame = saveLocalFrame;
+			 localInterpState.localFrame = saveLocalFrame;
 			 recursionDepth = recursionDepth - 1;
 			 if errret != nullE then return errret;
 	       	    	 -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
 			 Expr(ret)
 			 )
 		    else (	  -- framesize != 0
-			 saveLocalFrame := threadLocalInterpState.localFrame;
+			 saveLocalFrame := localInterpState.localFrame;
 			 values := new Sequence len framesize do provide nullE;
-			 threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 ret := new Sequence len newlen do (
 			      foreach arg in a do (
 				   when arg is args:Sequence do (
@@ -1407,15 +1407,15 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					     )
 					)
 				   else provide tmp;
-		    		   if threadLocalInterpState.localFrame.notrecyclable then (
+		    		   if localInterpState.localFrame.notrecyclable then (
 					values = new Sequence len framesize do provide nullE;
-					threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+					localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
      	       	    	      	   	)
 				   else for i from numparms to framesize - 1 do values.i = nullE;
 				   );
 			      -- while true do provide nullE;
 			      );
-			 threadLocalInterpState.localFrame = saveLocalFrame;
+			 localInterpState.localFrame = saveLocalFrame;
 			 recursionDepth = recursionDepth - 1;
     			 if errret != nullE then return errret;
 	       	    	 -- if newlen < length(ret) then ret = new Sequence len newlen do foreach x in ret do provide x;
@@ -1458,7 +1458,7 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
      haderror := false;
      errret := nullE;
      recursionDepth = recursionDepth + 1;
-     saveLocalFrame := threadLocalInterpState.localFrame;
+     saveLocalFrame := localInterpState.localFrame;
      ret := new Sequence len newlen do (
 	  if recursionDepth > recursionLimit then (
 	       errret = RecursionLimit();
@@ -1477,7 +1477,7 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 		    )
 	       else (
 		    values := new Sequence len framesize do provide nullE;
-		    threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+		    localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    if framesize == 1 then (
 			 for i from 0 to newlen-1 do (
 			      values.0 = toInteger(i);
@@ -1492,9 +1492,9 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 					)
 				   )
 			      else provide tmp;
-		    	      if threadLocalInterpState.localFrame.notrecyclable then (
+		    	      if localInterpState.localFrame.notrecyclable then (
 				   values = new Sequence len framesize do provide nullE;
-				   threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 				   );				   
 			      )
 			 )
@@ -1512,9 +1512,9 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 					)
 				   )
 			      else provide tmp;
-		    	      if threadLocalInterpState.localFrame.notrecyclable then (
+		    	      if localInterpState.localFrame.notrecyclable then (
 				   values = new Sequence len framesize do provide nullE;
-				   threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 				   )
 			      else for i from 1 to framesize - 1 do values.i = nullE;
 			      )
@@ -1549,7 +1549,7 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 	  else errret = WrongArg(2,"a function");
 	  while true do provide nullE;
 	  );
-     threadLocalInterpState.localFrame = saveLocalFrame;
+     localInterpState.localFrame = saveLocalFrame;
      recursionDepth = recursionDepth - 1;
      when errret
      is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else errret
@@ -1634,7 +1634,7 @@ scan(localInterpState:threadLocalInterp,n:int,f:Expr):Expr := (
      if recursionDepth > recursionLimit then RecursionLimit()
      else when f is fc:FunctionClosure do (
      	  recursionDepth = recursionDepth + 1;
-     	  saveLocalFrame := threadLocalInterpState.localFrame;
+     	  saveLocalFrame := localInterpState.localFrame;
 	  previousFrame := fc.frame;
 	  model := fc.model;
 	  desc := model.desc;
@@ -1648,80 +1648,80 @@ scan(localInterpState:threadLocalInterp,n:int,f:Expr):Expr := (
 	       );
 	  if framesize == 1 then (
 	       values := new Sequence len framesize do provide nullE;
-	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       for i from 0 to n-1 do (
 		    values.0 = toInteger(i);
 		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      recursionDepth = recursionDepth - 1;
-			      threadLocalInterpState.localFrame = saveLocalFrame;
+			      localInterpState.localFrame = saveLocalFrame;
 			      return returnFromLoop(tmp); 
 			      )
 			 )
 		    else nothing;
-		    if threadLocalInterpState.localFrame.notrecyclable then (
+		    if localInterpState.localFrame.notrecyclable then (
 			 values = new Sequence len framesize do provide nullE;
-			 threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 );
 		    );
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       recursionDepth = recursionDepth - 1;
 	       nullE)
 	  else (
 	       values := new Sequence len framesize do provide nullE;
-	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       for i from 0 to n-1 do (
 		    values.0 = toInteger(i);
 		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      recursionDepth = recursionDepth - 1;
-			      threadLocalInterpState.localFrame = saveLocalFrame;
+			      localInterpState.localFrame = saveLocalFrame;
 			      return returnFromLoop(tmp); 
 			      )
 			 )
 		    else nothing;
-		    if threadLocalInterpState.localFrame.notrecyclable then (
+		    if localInterpState.localFrame.notrecyclable then (
 			 values = new Sequence len framesize do provide nullE;
-			 threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 )
 		    else for i from 1 to framesize - 1 do values.i = nullE;
 		    );
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       recursionDepth = recursionDepth - 1;
 	       nullE))
      is cf:CompiledFunction do (	  -- compiled code
      	  recursionDepth = recursionDepth + 1;
-     	  saveLocalFrame := threadLocalInterpState.localFrame;
+     	  saveLocalFrame := localInterpState.localFrame;
 	  fn := cf.fn;
 	  for i from 0 to n-1 do (
 	       tmp := fn(localInterpState,Expr(toInteger(i)));
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    return tmp; 
 		    )
 	       else nothing; 
 	       );
-	  threadLocalInterpState.localFrame = saveLocalFrame;
+	  localInterpState.localFrame = saveLocalFrame;
 	  recursionDepth = recursionDepth - 1;
 	  nullE)
      is cf:CompiledFunctionClosure do (	  -- compiled code closure
      	  recursionDepth = recursionDepth + 1;
-     	  saveLocalFrame := threadLocalInterpState.localFrame;
+     	  saveLocalFrame := localInterpState.localFrame;
 	  fn := cf.fn;
 	  env := cf.env;
 	  for i from 0 to n-1 do (
 	       tmp := fn(localInterpState,Expr(toInteger(i)),env);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    return tmp; 
 		    )
 	       else nothing; 
 	       );
-	  threadLocalInterpState.localFrame = saveLocalFrame;
+	  localInterpState.localFrame = saveLocalFrame;
 	  recursionDepth = recursionDepth - 1;
 	  nullE)
      is s:SpecialExpr do scan(localInterpState,n,s.e)
@@ -1731,7 +1731,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
      oldlen := length(a);
      if oldlen == 0 then return nullE;
      recursionDepth = recursionDepth + 1;
-     saveLocalFrame := threadLocalInterpState.localFrame;
+     saveLocalFrame := localInterpState.localFrame;
      if recursionDepth > recursionLimit then (
 	  recursionDepth = recursionDepth - 1;
 	  return RecursionLimit();
@@ -1746,21 +1746,21 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	  framesize := desc.framesize;
 	  if desc.restargs then (	  -- x -> ...
 	       values := new Sequence len framesize do provide nullE;
-	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       foreach arg in a do (
 		    values.0 = arg;
 		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      recursionDepth = recursionDepth - 1;
-			      threadLocalInterpState.localFrame = saveLocalFrame;
+			      localInterpState.localFrame = saveLocalFrame;
 			      return returnFromLoop(tmp);
 			      )
 			 )
 		    else nothing;
-		    if threadLocalInterpState.localFrame.notrecyclable then (
+		    if localInterpState.localFrame.notrecyclable then (
 			 values = new Sequence len framesize do provide nullE;
-			 threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 )
 		    else for i from 1 to framesize - 1 do values.i = nullE;
 		    )
@@ -1768,14 +1768,14 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	  else (				  -- (x,y) -> ...
 	       if numparms == 1 then (
 		    values := new Sequence len framesize do provide nullE;
-		    threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+		    localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    if framesize == 1 then (
 			 foreach arg in a do (
 			      when arg is args:Sequence do (
 				   if 1 == length(args) then values.0 = args.0
 				   else (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return WrongNumArgs(model.arrow,numparms,length(args));
 					)
 				   )
@@ -1784,14 +1784,14 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing;
-		    	      if threadLocalInterpState.localFrame.notrecyclable then (
+		    	      if localInterpState.localFrame.notrecyclable then (
 				   values = new Sequence len framesize do provide nullE;
-				   threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 				   );
 			      )
 			 )
@@ -1801,7 +1801,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 				   if 1 == length(args) then values.0 = args.0
 				   else (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return WrongNumArgs(model.arrow,numparms,length(args));
 					)
 				   )
@@ -1810,14 +1810,14 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing;
-		    	      if threadLocalInterpState.localFrame.notrecyclable then (
+		    	      if localInterpState.localFrame.notrecyclable then (
 				   values = new Sequence len framesize do provide nullE;
-				   threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 				   )
 			      else for i from 1 to framesize - 1 do values.i = nullE;
 			      )
@@ -1825,32 +1825,32 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 		    )
 	       else (
 		    if framesize == 0 then (
-			 threadLocalInterpState.localFrame = previousFrame;
+			 localInterpState.localFrame = previousFrame;
 			 foreach arg in a do (
 			      when arg is args:Sequence do (
 				   if 0 != length(args) then (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return WrongNumArgs(model.arrow,0,length(args));
 					)
 				   )
 			      else (
 				   recursionDepth = recursionDepth - 1;
-				   threadLocalInterpState.localFrame = saveLocalFrame;
+				   localInterpState.localFrame = saveLocalFrame;
 				   return WrongNumArgs(model.arrow,numparms,1);
 				   );
 			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing))
 		    else (	  -- framesize != 0
 			 values := new Sequence len framesize do provide nullE;
-			 threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 foreach arg in a do (
 			      when arg is args:Sequence do (
 				   if numparms == length(args) then (
@@ -1858,27 +1858,27 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					)
 				   else (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return WrongNumArgs(model.arrow,numparms,length(args));
 					)
 				   )
 			      else (
 				   recursionDepth = recursionDepth - 1;
-				   threadLocalInterpState.localFrame = saveLocalFrame;
+				   localInterpState.localFrame = saveLocalFrame;
 				   return WrongNumArgs(model.arrow,numparms,1);
 				   );
 			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
-					threadLocalInterpState.localFrame = saveLocalFrame;
+					localInterpState.localFrame = saveLocalFrame;
 					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing;
-		    	      if threadLocalInterpState.localFrame.notrecyclable then (
+		    	      if localInterpState.localFrame.notrecyclable then (
 				   values = new Sequence len framesize do provide nullE;
-				   threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 				   )
 			      else for i from numparms to framesize - 1 do values.i = nullE;
 			      )))))
@@ -1888,7 +1888,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	       tmp := fn(localInterpState,arg);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    return tmp;
 		    )
 	       else nothing; ))
@@ -1899,7 +1899,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	       tmp := fn(localInterpState,arg,env);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    return tmp;
 		    )
 	       else nothing; ))
@@ -1909,16 +1909,16 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	       tmp := applyEE(localInterpState,fn,arg);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    return tmp;
 		    )
 	       else nothing; ))
      else (
 	  recursionDepth = recursionDepth - 1;
-	  threadLocalInterpState.localFrame = saveLocalFrame;
+	  localInterpState.localFrame = saveLocalFrame;
 	  return WrongArg(2,"a function");
 	  );
-     threadLocalInterpState.localFrame = saveLocalFrame;
+     localInterpState.localFrame = saveLocalFrame;
      recursionDepth = recursionDepth - 1;
      nullE);
 
@@ -1945,37 +1945,37 @@ scan(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := 
 	  numparms := desc.numparms;
 	  framesize := desc.framesize;
 	  if desc.restargs then (	  -- x -> ...
-	       saveLocalFrame := threadLocalInterpState.localFrame;
+	       saveLocalFrame := localInterpState.localFrame;
 	       values := new Sequence len framesize do provide nullE;
-	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       for i from 0 to newlen - 1 do (
 		    values.0 = Sequence(a1.i,a2.i);
 		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      -- stash
-			      threadLocalInterpState.localFrame = saveLocalFrame;
+			      localInterpState.localFrame = saveLocalFrame;
 			      recursionDepth = recursionDepth - 1;
 			      return returnFromLoop(tmp);
 			      )
 			 )
 		    else nothing;
-		    if threadLocalInterpState.localFrame.notrecyclable then (
+		    if localInterpState.localFrame.notrecyclable then (
 			 values = new Sequence len framesize do provide nullE;
-			 threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 )
 		    else for i from 1 to framesize - 1 do values.i = nullE;
 		    );
 	       -- stash
-	       threadLocalInterpState.localFrame = saveLocalFrame;
+	       localInterpState.localFrame = saveLocalFrame;
 	       recursionDepth = recursionDepth - 1;
 	       nullE)
 	  else (				  -- (x,y) -> ...
 	       if numparms != 2 then WrongNumArgs(model.arrow,numparms,2)
 	       else (
-		    saveLocalFrame := threadLocalInterpState.localFrame;
+		    saveLocalFrame := localInterpState.localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+		    localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    for i from 0 to newlen - 1 do (
 			 values.0 = a1.i;
 			 values.1 = a2.i;
@@ -1983,22 +1983,22 @@ scan(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := 
 			 when tmp is err:Error do (
 			      if err.message != returnMessage then (
 				   -- stash
-				   threadLocalInterpState.localFrame = saveLocalFrame;
+				   localInterpState.localFrame = saveLocalFrame;
 				   recursionDepth = recursionDepth - 1;
 				   return returnFromLoop(tmp);
 				   )
 			      )
 			 else nothing;
-		    	 if threadLocalInterpState.localFrame.notrecyclable then (
+		    	 if localInterpState.localFrame.notrecyclable then (
 			      values = new Sequence len framesize do provide nullE;
-			      threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      localInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			      )
 			 else (
 			      -- it would be faster to do a byte copy here:
 			      for i from 2 to framesize - 1 do values.i = nullE;
 			      );
 			 );
-		    threadLocalInterpState.localFrame = saveLocalFrame;
+		    localInterpState.localFrame = saveLocalFrame;
 		    recursionDepth = recursionDepth - 1;
 		    nullE ) ) )
      is cf:CompiledFunction do (	  -- compiled code

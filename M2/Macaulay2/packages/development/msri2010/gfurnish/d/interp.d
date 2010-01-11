@@ -245,8 +245,8 @@ decrementInterpreterDepth():void := (
 
 
 readeval3(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
-     saveLocalFrame := threadLocalInterpState.localFrame;
-     threadLocalInterpState.localFrame = dc.frame;
+     saveLocalFrame := localInterpState.localFrame;
+     localInterpState.localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
       savecd := getGlobalVariable(currentFileDirectory);
       savepf := currentPosFile;
@@ -257,7 +257,7 @@ readeval3(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dc:Dic
       setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
       currentPosFile = savepf;
-     threadLocalInterpState.localFrame = saveLocalFrame;
+     localInterpState.localFrame = saveLocalFrame;
      ret);
 readeval(localInterpState:threadLocalInterp,file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      savefe := getGlobalVariable(fileExitHooks);
@@ -551,7 +551,8 @@ Exit(err:Error):void := exit(
      );
 
 export process(localInterpState:threadLocalInterp):void := (
-     threadLocalInterpState.localFrame = globalFrame;
+     localInterpState = threadLocalInterpState;
+     localInterpState.localFrame = globalFrame;
      previousLineNumber = -1;			  -- might have done dumpdata()
      stdin .inisatty  =   0 != isatty(0) ;
      stdin.echo       = !(0 != isatty(0));
