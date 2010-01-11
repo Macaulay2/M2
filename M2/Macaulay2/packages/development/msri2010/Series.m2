@@ -23,56 +23,19 @@ html Series := s -> html expression s;
 truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
 
 series = method(Options => {Degree => 5})
-series(ZZ,Function) := Series => opts -> (n,f) -> (
-     s := sum(n,f);
-     -- now make a new series.
-     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => first degree s, polynomial => s, 
-          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
-	  -- to know how to tack on the new terms to the old polynomial.
-	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (newPolynomial := oldPolynomial;
-		              for i from oldComputedDegree + 1 to newDegree do newPolynomial = newPolynomial + f i;
-			      (newPolynomial,max(oldComputedDegree,newDegree))
-		             )) });
-	 
-series(Function) := Series => opts -> f -> series(opts.Degree+1,f);
 
 setDegree = method()
 setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warning: cannot exceed max degree "  << S.maxDegree <<endl;);
      (f,c) := S#setDegree (S#polynomial,S#computedDegree,n);
      new Series from {polynomial => f, computedDegree => c, maxDegree => S#maxDegree, degree => (min(n,S#maxDegree)), setDegree=> S#setDegree}
      );
-peek s
 
-ZZ[x]
-f = i -> x^i;
-F = series f
-peek F
-F = setDegree(3,F)     
-peek F
-F = setDegree(7,F)
-peek F
-F = setDegree(3,F)
-peek F
-
-f = i -> x^(i+1)
-F = series f
-peek F
-F = setDegree(3,F)
-F = setDegree(8,F) 
-peek F
 
 series(ZZ, RingElement) := Series => opts -> (n,f) -> (
      new Series from {degree => n, maxDegree => max(first degree f,n), computedDegree => max(first degree f,n), polynomial => f,
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial,oldComputedDegree))}
      );
-S = series(4,x^2 + x)     
-peek S
-S = setDegree(7,S)
-peek S
-S = setDegree(3,S)
-peek S
-S = setDegree(7,S)
-peek S
+
 
 series(RingElement, Function) := Series => opts -> (X,f) -> (
      -- Start with the zero polynomial.
@@ -91,14 +54,7 @@ series(RingElement, Function) := Series => opts -> (X,f) -> (
 		       ) 
 		     }
      );
-T = series(x,i -> i)
-peek S
-S = setDegree(7,S)
-peek S
-S = setDegree(1,S)
-peek S
-S = setDegree(3,S)
-peek S
+
 
 
 -- the following code is from modules2.m2
@@ -126,7 +82,7 @@ rationalSeries = (ord,h) -> ( -- essentially the code used by hilbert series see
 	       if ord <= lo then 0_(ring num) else (
 		    s := part(,ord-1,wts,part(,ord-1,wts,num) * recipN(ord-lo,wts,denominator h)))));
 
-rationalSeries(5,1/(1-x))
+
 
 series RingElement := Series => opts -> h -> ( 
      	  s := rationalSeries(opts.Degree+1,h);
@@ -137,11 +93,6 @@ series RingElement := Series => opts -> h -> (
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> 
 	       (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)))})  
 
-peek s 
-s = series(1/(1-x))
-setDegree(10,s)
-
-methods series 
 
 
 seriesOLD = method()
@@ -154,11 +105,6 @@ seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
      );
 
 
-
-series(ZZ, Function) := Series => opts -> (n,f) -> (
-     sum(0..n, f);
-     new Series from {genFunction => f, degree => first degree f n, series => sum(n+1,f)}
-     );
 
 
 
@@ -411,6 +357,13 @@ BrokenSeries RingElement := Series => opts -> f -> (
      new Series from {rationalFunction => f, degree => if degdf < 1 then infinity else opts.Degree, series => s}
      );
 
+
+
+
+series(ZZ, Function) := Series => opts -> (n,f) -> (
+     sum(0..n, f);
+     new Series from {genFunction => f, degree => first degree f n, series => sum(n+1,f)}
+     );
 
  
 
