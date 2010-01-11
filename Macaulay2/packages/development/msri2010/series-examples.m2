@@ -1,7 +1,5 @@
-restart
 loadPackage "PowerSeries"
-
-R = ZZ[x]
+R = QQ[x]
 
 -- We can create a series from a rational function:
 series(3/(1-x))             --method is (series, RingElement)
@@ -9,66 +7,70 @@ series(3/(1-x))             --method is (series, RingElement)
 -- We can create a series using a generating function:
 series(x,i->i^2)            --method is (series, RingElement, Function) 
 
--- We can create a series given a function that computes successive polynomial approximations:
-f = i -> sum(i,j-> j*(x)^j)
+-- We can create a series given a function that computes successive
+-- polynomial approximations:
+f = i -> sum(i,j-> j*(x)^j);
 series(f)                   --method is (series, Function) 
 
--- We can create a series by manually typing in some terms of it to a given precision:
+-- We can create a series by manually typing in some terms of it to a
+-- given precision:
 series(20,1+x+x^2+x^3+x^10) --method is (series, ZZ, RingElement) 
 
+-- Note this is not the same as casting the polynomial as a series
+series(1+x+x^2+x^3+x^10) --method is (series, ZZ, RingElement) 
 
+-- We can create a series to any given precision using the "Degree"
+-- option:
+S = series(1/(1-x),Degree => 3) --(series, RingElement)
 
--- We can create a series to any given precision using the "Degree" option:
-S = series(1/(1-x),Degree=>8) --(series, RingElement)
+-- The key is that series created in most ways can have their
+-- precision increased or decreased at will:
+s1 = setDegree(7,S)
+s2 = setDegree(2,s1)
 
--- The key is that series created in most ways can have their precision increased or decreased at will:
-setDegree(10,s1)
-setDegree(2,s5)
-
--- and old precision calculations are cached when precision is artificially decreased:
-peek s6
+-- and old precision calculations are cached when precision is
+-- artificially decreased:
+peek s2
 
 -- Series can be added, multiplied, subtracted, and negated:
 S = s1 + s2
 -S
+x*S
+7+S
+S = s1*s2
+setDegree(11,S)
+-- recall the initial precision of s1 and s2 was lower.
 
-prod = S*S
-prod = setDegree(12,prod)
-prod = setDegree(1,prod)
-peek prod
 
 -- Precision does reasonable things on addition:
-s1
-prod
-s1+prod
-peek oo
+s1 = series(3,1+x+x^2)
+s2 = series(1/(1+x))
+S = s1 + s2
+setDegree(10,S)
 
 
--- We can create a series from a rational function:
-s = series(1/(1-x), Degree =>10) --(series, RingElement)
-s.polynomial
-s#polynomial
-s#"polynomial"
-s#symbol polynomial
-keys s
-s#((keys s)_3)
+-- Note that we can turn these into polynomials
+
+toPolynomial(s2)
+toPolynomial(2,s2)
+toPolynomial(10,s2)
 
 -- inverses of Series.
-restart
-loadPackage"PowerSeries"
-R = QQ[x]
-F = series(1-x,Degree=>2)
-time G = inverse F
+F = series(2-x)
+G = inverse F
 peek G
 setDegree(4,G)
 
-F2 = series(2-x,Degree=>2)
-time G2 = inverse F2
-peek G2
-setDegree(4,G2)
-peek oo
+S = series (1/(1+x+x^2))
+T = inverse S
+timing setDegree(2000,T)
 
--- equality of series.
+
+S = series (3,1+x+x^2)
+T = inverse S
+timing setDegree(2000,T)
+
+-- Equality of Series.
 -- By analogy with floating-point numbers.
 1.
 1p1
