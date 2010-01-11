@@ -22,6 +22,6 @@ i23 : examine oo
 function closure :				it's not a closure !(?)
  hash : 1032890
  restargs : true
- frameID : 5812					change "frameID" to "functionBodyID"
+ frameID : 5812					change "frameID" to "functionBodyID" or "scopeID" (?)
  framesize : 1
  numparms : 1
