@@ -11,7 +11,7 @@ series(x,i->i^2) --(series, RingElement, Function)
 
 -- We can create a series given a function that computes sucessive polynomial approximations:
 f = i -> sum(i,j-> j*(x)^j)
-series(f) --(series, ZZ, RingElement) 
+series(f) --(series, Function) 
 
 -- We can create a series by manually typing in some terms of it:
 series(20,1+x+x^2+x^3+x^10) --(series, ZZ, RingElement) 
@@ -42,3 +42,13 @@ s1
 prod
 s1+prod
 peek oo
+
+
+-- We can create a series from a rational function:
+s = series(1/(1-x), Degree =>10) --(series, RingElement)
+s.polynomial
+s#polynomial
+s#"polynomial"
+s#symbol polynomial
+keys s
+s#((keys s)_3)
