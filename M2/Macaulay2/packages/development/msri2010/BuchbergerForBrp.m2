@@ -84,8 +84,8 @@ SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
   else (
     f = G#i;
     g = G#j;
-    lcmI = lcmBrps( leading(f), leading(g) ) / leading f
-    lcmJ = lcmBrps( leading(f), leading(g) ) / leading g
+    lcmI = lcmBrps( leading(f), leading(g) ) / leading f;
+    lcmJ = lcmBrps( leading(f), leading(g) ) / leading g;
     f*lcmI + g*lcmJ
   )
 )
@@ -135,4 +135,3 @@ restart
 installPackage "BuchbergerForBrp"
 installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
 check BuchbergerForBrp
- load "BuchbergerForBrp.m2"
