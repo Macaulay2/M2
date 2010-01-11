@@ -1915,6 +1915,20 @@ assert(D1 ==  promote(matrix {{0, 1, 4, 3}, {4, 0, 3, 2}, {1, 2, 0, 4}, {2, 3, 1
 
 ///
 
+TEST ///
+P1 = poset ({a,b,c,d},{(a,b), (b,c), (b,d)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, x*y, y^3, y*z);
+L = lcmLattice I;
+
+assert( (moebiusFunction(L)) === new HashTable from {x^2*y^3*z => 0, y^3*z => 1, x^2*y*z => 0, y^3 => -1, x*y^3*z => -1, y*z => -1, x^2 => -1,
+      x*y => -1, x*y^3 => 1, x^2*y^3 => 0, 1 => 1, x^2*y => 1, x*y*z => 1} )
+assert( (moebiusFunction(P2, b,g)) === new HashTable from {e => -1, b => 1, g => 0} )
+assert( (moebiusFunction(P1)) === new HashTable from {a => 1, b => -1, c => 0, d => 0} )
+///
+
+
 
 
 
