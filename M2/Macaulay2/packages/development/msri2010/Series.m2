@@ -176,15 +176,6 @@ Series * Series := Series => (A,B) -> (
      setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->(- oldPolynomial, oldComputedDegree))});
 
 
-S = series(4,x^2 + x)  
--S
-T = series(x,i -> i)
-S
-S.computedDegree
-T - T + T
-setDegree(9,T - T + T)
-setDegree(12,T*T)
-
 end
 
 
