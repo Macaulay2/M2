@@ -1737,11 +1737,24 @@ doc ///
 	d:ZZ
 	  The dimension of the cone in the fan of {\tt X} defined by the rays indexed by {\tt sigma}.
   Description
-   Text
-   Text
    Example
-   Text
+   	X = projectiveSpace 1;
+	dim((max X)_0,X)
    Example
+	X = projectiveSpace 5;
+	dim((max X)_0,X)
+   Example	
+	X = weightedProjectiveSpace {1,2,2,3,4};
+	dim((max X)_0,X)	
+   Text
+        Here is a non-pure toric variety:	
+   Example	
+	rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,-1}};
+	sigma = {{0,1,2},{3}};
+	X = normalToricVariety (rho, sigma);
+	dim ({0,1,2},X)
+	dim ({3}, X)
+	isPure X  
   Caveat 
 	It is not checked that {\tt sigma} actually defines a face of the fan of X.
   SeeAlso
@@ -2100,7 +2113,104 @@ document {
 	  (max, NormalToricVariety)
 	  }
      }   
+
+
+document {
+     Key => {(isComplete,NormalToricVariety)},
+     Headline => "checks completeness of a NormalToricVariety",
+     Usage => " b = isComplete X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "b" => Boolean => { TO true, " if the ", TO NormalToricVariety, " is complete, ", TO false, " otherwise"}
+	  },
+     PARA{}, "a ", TO NormalToricVariety, " is complete if its support (i.e. the semigroup spanned by the ray generators ", TO rays, 
+     	     " of the normat toric variety) is equal to the ambient lattice. ",
+     PARA{}, TT "isComplete"," calls an entry in the hash table of the ", TO NormalToricVariety, ".",
+     
+     EXAMPLE {
+	  " rho = {{1,0},{0,1}};",
+	  " sigma ={{0,1}};",
+	  " X = normalToricVariety (rho, sigma);",
+	  " isComplete X"
+	  },
+     
+     PARA{}, "Hence the toric variety  above is not complete, but we can add a ray to make it complete (the new variety is ",TEX ///$\PP^2$///, " ):",
+     
+     EXAMPLE {
+	  " rho = {{1,0},{0,1},{-1,-1}};",
+	  " sigma = {{0,1},{1,2},{0,2}}",
+  	  " X = normalToricVariety (rho, sigma);",
+	  " isComplete X"
+	  }
+     
+     }
   
+
+document {
+     Key => {(isPure,NormalToricVariety)},
+     Headline => "checks if a ", TO NormalToricVariety, " is of pure dimension",
+     Usage => " b = isPure X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "b" => {TO true," if the ", TO NormalToricVariety," is of pure dimension, ",TO false," otherwise"}
+	  },
+     
+     PARA{}, "a ", TO NormalToricVariety," is pure if the cones in fan associated to the toric varietya 
+      are all of the same dimension.",
+     
+     PARA{}, "Let us construct a fan consisting of the positive orthant and the ray ",TT "v"," that is the 
+     negative sum of the canonical basis, which is obviously not pure:",
+     
+     EXAMPLE {
+	  " rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,-1}}",
+	  " sigma = {{0,1,2},{3}}",
+	  " X = normalToricVariety (rho, sigma)",
+	  " isPure X",
+	  },
+     
+     PARA{}, "On the other hand the following toric variety is pure of dimension two:",
+     
+     EXAMPLE {
+	  " rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,-1}}",
+	  " sigma = {{0,1},{1,2},{2,3},{0,3}}",
+  	  " X = normalToricVariety (rho, sigma)",
+	  " isPure X"
+	  }
+     
+     }
+
+
+document {
+     Key => { (stellarSubdivision,NormalToricVariety,List)},
+     Headline => "computes the normal toric variety associated to the stellar subdivision of a given toric variety",
+     Usage => "Y = stellarSubdivision(X,r)",
+     Inputs => {
+	  "X" => NormalToricVariety,
+	  "r" => List => {"in the ambient space of the fan of X"}
+	  },
+     Outputs => {
+	  "Y" => NormalToricVariety
+	  },
+     
+     PARA{}, "This function computes the stellar subdivision of ",TT "X"," by inserting the 
+     ray given by ",TT "r",".",
+     
+     EXAMPLE {
+	  " X = normalToricVariety (normalFan hypercube 2)",
+	  " r = {1,1}",
+	  " Y = stellarSubdivision(X,r)",
+	  " rays Y ",
+	  " max Y "
+	  }
+     }
+
+
+
+
 
 document { 
      Key => "Working with Cartier and Weil divisors",
@@ -2844,6 +2954,7 @@ document {
 document { 
      Key => "Resolution of singularities",
      Subnodes => {
+	  TO resolveSingularities,
 	  TO (makeSimplicial,NormalToricVariety),
 	  }
      }  
