@@ -56,8 +56,7 @@ export {
 	moebiusFunction,
 	isAntichain,
 	meetIrreducibles
-       
-}
+       }
 
 needsPackage "SimplicialComplexes"
 needsPackage "Graphs"
@@ -1687,6 +1686,32 @@ doc///
 	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
 	       atoms(P)	       
 ///	
+
+
+--------------
+-- meetIrreducibles
+--------------
+doc///
+     Key
+     	  meetIrreducibles
+	  (meetIrreducibles,Poset)
+     Headline
+     	  returns the meet-irreducibles of a poset
+     Usage
+     	  L = meetIrreducibles(P)
+     Inputs
+     	  P : Poset
+     Outputs
+     	  L : List
+	      subset of the ground set of P consisting of meet-irreducible elements	       
+     Description
+     	  Text
+	       	An element a of a poset P is meet irreducible if it is not the meet of any set of elements (not containing a).  
+		This routine returns a list of all such elements in the poset P.  
+	  Example
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       meetIrreducibles(P)	       
+///
 
 
 
