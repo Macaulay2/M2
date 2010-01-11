@@ -744,6 +744,24 @@ Outputs
 Consequences
 Description
   Text
+    This function tries to construct space curves of given
+    degree an genus. It usually works if degree and genus are
+    of similar size. For d and g smaller than 10 the following
+    table contains a "1" if the construction works at the moment 
+    $$\begin{pmatrix}
+       & d=1 & d=2 & d=3 & d=4 & d=5 & d=6 & d=7 & d=8 & d=9 & d=10\\
+      g=0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+      g=1 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+      g=2 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 0 & 0\\
+      g=3 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 0\\
+      g=4 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0\\
+      g=5 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0\\
+      g=6 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0\\
+      g=7 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1\\
+      g=8 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1\\
+      g=9 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1\\
+      g=10 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1\\
+      \end{pmatrix}$$
   Example
     K = ZZ/32003
     S = K[x_0..x_3]
@@ -785,6 +803,7 @@ Description
 Caveat
 SeeAlso
 ///
+
 
 TEST ///
 H = hilbertPolynomialFromInvariants(8,5,1,0)
