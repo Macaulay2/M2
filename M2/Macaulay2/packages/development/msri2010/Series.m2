@@ -171,6 +171,35 @@ Series + Series := Series => (A,B) -> (
 	       )}
      )
 
+Series - Series := Series => (A,B) -> (
+     (A',B') := makeSeriesCompatible(A,B);
+     new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial + B'.polynomial, 
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
+		    if newDegree > oldComputedDegree then (
+		    	 newA := setDegree(newDegree,A);
+		    	 newB := setDegree(newDegree,B);
+		    	 (truncate(newDegree,newA.polynomial - newB.polynomial), newDegree)
+			 )
+		    else (oldPolynomial, oldComputedDegree)
+		    )
+	       )}
+     )
+
+Series * Series := Series => (A,B) -> (
+     (A',B') := makeSeriesCompatible(A,B);
+     new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial + B'.polynomial, 
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
+		    if newDegree > oldComputedDegree then (
+		    	 newA := setDegree(newDegree,A);
+		    	 newB := setDegree(newDegree,B);
+		    	 (truncate(newDegree,newA.polynomial + newB.polynomial), newDegree)
+			 )
+		    else (oldPolynomial, oldComputedDegree)
+		    )
+	       )}
+     )
+
+
 
 
 
@@ -178,7 +207,7 @@ S
 peek S
 T = S + S
 peek T
-setDegree(6,T)
+setDegree(2,T)
 setDegree(9,T)
 F	
 R = T + S
