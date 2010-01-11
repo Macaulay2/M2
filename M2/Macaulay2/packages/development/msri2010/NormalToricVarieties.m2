@@ -2964,7 +2964,7 @@ document {
      }  
 
 document { 
-     Key => {makeSimplicial, (makeSimplicial,NormalToricVariety)},
+     Key => {makeSimplicial, (makeSimplicial,NormalToricVariety), [makeSimplicial,Strategy]},
      Headline => "subdivides a normal toric variety for the purpose of making it simplicial" ,
      Usage => "makeSimplical X",
      Inputs => {"X" => NormalToricVariety},
@@ -3004,6 +3004,7 @@ doc ///
   Key
 	makeSmooth
 	(makeSmooth, NormalToricVariety)
+	[makeSmooth,Strategy]
   Headline
 	resolve a simplicial normal toric variety
   Usage
@@ -3119,6 +3120,7 @@ doc ///
   Key
 	resolveSingularities
 	(resolveSingularities, NormalToricVariety)
+	[resolveSingularities,Strategy]
   Headline
 	resolve the singularities of a normal toric variety
   Usage
