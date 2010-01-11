@@ -61,6 +61,7 @@ runner -> (
  
 -- from pair of indices get corresponding polynomials, then compute their S
 -- polynomial
+-- assume that the pairs are good (i.e., leading terms not relatively prime)
 SPolynomial = method()
 SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
   assert (#l == 2);
@@ -81,10 +82,11 @@ SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
     g*xx+g
   )
   else (
-    i = first l;
     f = G#i;
     g = G#j;
---    f*ltm g + .....
+    lcmI = lcmBrps( leading(f), leading(g) ) / leading f
+    lcmJ = lcmBrps( leading(f), leading(g) ) / leading g
+    f*lcmI + g*lcmJ
   )
 )
 

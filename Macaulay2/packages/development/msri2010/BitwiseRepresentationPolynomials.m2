@@ -4,7 +4,7 @@ newPackage(
     	Version => "0.1", 
     	Date => "January 10, 2010",
     	Authors => {
-	     {Name => "Beth, Franzi, Samuel", Email => "foo"}
+	     {Name => "Beth, Franzi, Samuel", Email => ""}
 	     },
     	HomePage => "http://",
     	Headline => "Computation for polynomials in ZZ/2 using binary representation",
@@ -14,7 +14,7 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {brpOR,isDivisible, Brp, convert, removeDups, divide, lcmBrps}
+export {brpOR,isDivisible, Brp, convert, removeDups, divide, lcmBrps, leading}
 exportMutable {}
 
 Brp = new Type of List 
@@ -31,6 +31,14 @@ Brp + Brp := Brp => (a,b) -> removeDups (a|b)
 -- Multiplication of polynomial with monomial: bitwise OR
 Brp * Brp := Brp => (a, m) ->  
   removeDups new Brp from rsort apply (#a, i  -> brpOR( a#i, m))
+
+-- return the leading term of a polynomials, for now we are restricted to lex
+leading = method()
+leading (Brp) := Brp => p -> (
+  p = rsort p;
+  new Brp from {first p}
+)
+
 
 -- remove duplicate monomials ( because = 0 )
 removeDups = method() 
@@ -192,6 +200,14 @@ TEST ///
   assert ( firstpoly * secondpoly * secondpoly == new Brp from rsort {{1, 1, 0}, {1, 0, 0}} )
 
   assert ( (new List from (firstpoly * secondpoly)) == rsort {{1, 1, 0}, {1, 0, 0}})
+
+  assert(leading (convert( x*y)) == convert(x*y))
+  assert(leading (convert( x + x*y )) == convert(x*y))
+  assert(leading (convert( x + y*z )) == convert(x))
+  assert(leading (convert( x*y*z + y*z )) == convert(x*y*z))
+  assert(leading (convert( y*z*x + y*z )) == convert(x*y*z))
+
+
 --  assert (false) -- I have this in to be sure that the tests are run
 ///
 
@@ -203,7 +219,7 @@ end
 -- because loading stops when the symbol "end" is encountered.
 
 restart
-installPackage "BitwiseRepresentationPolynomials"
+uninstallPackage "BitwiseRepresentationPolynomials"
 installPackage("BitwiseRepresentationPolynomials", RemakeAllDocumentation=>true)
 check BitwiseRepresentationPolynomials
 
