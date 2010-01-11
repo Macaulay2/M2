@@ -1814,8 +1814,8 @@ export binarymethod(localInterpState:threadLocalInterp,left:Expr,right:Expr,meth
      if method == nullE then MissingMethodPair(methodkeyname,left,right)
      else applyEEE(localInterpState,method,left,right));
 
--- HACK AssignElemFun = assignelemfun;
--- HACK AssignQuotedElemFun = assignquotedelemfun;
+AssignElemFun = assignelemfun;
+AssignQuotedElemFun = assignquotedelemfun;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

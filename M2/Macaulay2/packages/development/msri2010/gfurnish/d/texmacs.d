@@ -17,7 +17,7 @@ use struct;
 
 TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
 
-export topLevelTeXmacs():int := (
+export topLevelTeXmacs(localInterpState:threadLocalInterp):int := (
      unsetprompt(stdin);
      while true do (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
@@ -39,10 +39,10 @@ export topLevelTeXmacs():int := (
 		    stderr << "no method for TeXmacsEvaluate" << endl;
 		    )
 	       else (
-		    applyEE(method,Expr(item));
+		    applyEE(localInterpState,method,Expr(item));
 		    )
 	       )));
-topLevelTeXmacs(localInterpState:threadLocalInterp,e:Expr):Expr := toExpr(topLevelTeXmacs());
+topLevelTeXmacs(localInterpState:threadLocalInterp,e:Expr):Expr := toExpr(topLevelTeXmacs(localInterpState));
 setupfun("topLevelTeXmacs",topLevelTeXmacs);
 
 -- Local Variables:

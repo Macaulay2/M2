@@ -108,7 +108,7 @@ plus(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(plus0,plus1,o
 setupfun("plus",plus);
 
 plusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := (
-     r := eval(rhs);
+     r := eval(localInterpState,rhs);
      when r
      is Error do r
      is ZZ do r						    -- # typical value: symbol +, ZZ, ZZ
@@ -118,12 +118,12 @@ plusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := (
      is RawRingElement do r				    -- # typical value: symbol +, RawRingElement, RawRingElement
      is RawMatrix do r					    -- # typical value: symbol +, RawMatrix, RawMatrix
      is RawMutableMatrix do r				    -- # typical value: symbol +, RawMutableMatrix, RawMutableMatrix
-     else unarymethod(rhs,PlusS));
+     else unarymethod(localInterpState,rhs,PlusS));
 plusfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     l := eval(lhs);
+     l := eval(localInterpState,lhs);
      when l is Error do l
      else (
-     	  r := eval(rhs);
+     	  r := eval(localInterpState,rhs);
      	  when r is Error do r
 	  else l+r));
 setup(PlusS,plusfun1,plusfun);
@@ -145,11 +145,11 @@ RealMinus(localInterpState:threadLocalInterp,rhs:Expr):Expr := (
 	  method := lookup(Class(rhs),MinusS);
 	  if method == nullE
 	  then buildErrorPacket("no method found")
-	  else applyEE(method,Expr(rhs))));
+	  else applyEE(localInterpState,method,Expr(rhs))));
 
 export - (rhs:Expr) : Expr := RealMinus(threadLocalInterpState, rhs);
 
-minusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := - eval(rhs);
+minusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := - eval(localInterpState,rhs);
 
 RealMinus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
@@ -228,10 +228,10 @@ RealMinus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
 export (lhs:Expr) - (rhs:Expr) : Expr := RealMinus(threadLocalInterpState,lhs,rhs);
 
 minusfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     l := eval(lhs);
+     l := eval(localInterpState,lhs);
      when l is Error do l
      else (
-     	  r := eval(rhs);
+     	  r := eval(localInterpState,rhs);
      	  when r is Error do r
 	  else l-r));
 setup(MinusS,minusfun1,minusfun2);
@@ -447,10 +447,10 @@ RealDivide(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
 export (lhs:Expr) / (rhs:Expr) : Expr := RealDivide(threadLocalInterpState,lhs,rhs);
 
 divideC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     l := eval(lhs);
+     l := eval(localInterpState,lhs);
      when l is Error do l
      else (
-     	  r := eval(rhs);
+     	  r := eval(localInterpState,rhs);
      	  when r is Error do r
 	  else l/r));
 setup(DivideS,divideC);
@@ -478,10 +478,10 @@ RealQuotient(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      else binarymethod(localInterpState,lhs,rhs,SlashSlashS));
 export (lhs:Expr) // (rhs:Expr) : Expr := RealQuotient(threadLocalInterpState,lhs,rhs);
 quotientC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     l := eval(lhs);
+     l := eval(localInterpState,lhs);
      when l is Error do l
      else (
-     	  r := eval(rhs);
+     	  r := eval(localInterpState,rhs);
      	  when r is Error do r
 	  else l//r));
 setup(SlashSlashS,quotientC);
@@ -489,7 +489,7 @@ setup(SlashSlashS,quotientC);
 BackslashBackslashFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,BackslashBackslashS);
 setup(BackslashBackslashS,BackslashBackslashFun);
 
-adjacentFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
+adjacentFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := eval(localInterpState,Code(adjacentCode(lhs,rhs,codePosition(rhs))));
 setup(AdjacentS,adjacentFun);
 
 doublepower(x:double,n:int):double := (
@@ -506,7 +506,7 @@ doublepower(x:double,n:int):double := (
      z
      );
 OneE := Expr(toInteger(1));
-BinaryPowerMethod(x:Expr,y:Expr):Expr := (
+BinaryPowerMethod(localInterpState:threadLocalInterp,x:Expr,y:Expr):Expr := (
      when y is i:ZZ do (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
@@ -519,7 +519,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       i = -i;
 	       inver := lookup(Class(x),InverseS);
 	       if inver == nullE then return MissingMethod("^","InverseMethod");
-	       x = applyEE(inver,x);
+	       x = applyEE(localInterpState,inver,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
@@ -542,11 +542,11 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 BinaryPowerMethodFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
      if length(a)==2 then
-     BinaryPowerMethod(a . 0, a . 1)
+     BinaryPowerMethod(localInterpState, a . 0, a . 1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("BinaryPowerMethod",BinaryPowerMethodFun);
-SimplePowerMethod(x:Expr,y:Expr):Expr := (
+SimplePowerMethod(localInterpState:threadLocalInterp,x:Expr,y:Expr):Expr := (
      when y is i:ZZ do (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
@@ -558,7 +558,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       i = -i;
 	       inver := lookup(Class(x),InverseS);
 	       if inver == nullE then return MissingMethod("^","InverseMethod");
-	       x = applyEE(inver,x);
+	       x = applyEE(localInterpState,inver,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
@@ -572,7 +572,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 SimplePowerMethodFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
      if length(a)==2 then
-     SimplePowerMethod(a . 0, a . 1)
+     SimplePowerMethod(localInterpState,a . 0, a . 1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("SimplePowerMethod",SimplePowerMethodFun);
@@ -692,10 +692,10 @@ RealPower(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
 
 export (lhs:Expr) ^ (rhs:Expr) : Expr := RealPower(threadLocalInterpState,lhs,rhs);
 powerC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     l := eval(lhs);
+     l := eval(localInterpState,lhs);
      when l is Error do l
      else (
-     	  r := eval(rhs);
+     	  r := eval(localInterpState,rhs);
      	  when r is Error do r
 	  else l^r));
 setup(PowerS,powerC);
@@ -706,13 +706,13 @@ powerfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else WrongNumArgs("^",2));
 setupfun("power",powerfun);
 logorfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left
      is Error do left
      else (
 	  if left == True then True
 	  else if left == False then (
-	       right := eval(rhs);
+	       right := eval(localInterpState,rhs);
 	       when right
 	       is Error do right
 	       else (
@@ -724,13 +724,13 @@ setup(orS,logorfun);
 BarBarF(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,BarBarS);
 setup(BarBarS,BarBarF);
 logandfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     a := eval(lhs);
+     a := eval(localInterpState,lhs);
      when a
      is Error do a
      else (
 	  if a == False then False
 	  else if a == True then (
-	       b := eval(rhs);
+	       b := eval(localInterpState,rhs);
 	       when b
 	       is Error do b
 	       else (
@@ -739,20 +739,20 @@ logandfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 		    else binarymethod(localInterpState,a,b,andS)))
 	  else binarymethod(localInterpState,a,rhs,andS)));
 setup(andS,logandfun);
-export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
+export notFun(localInterpState:threadLocalInterp,a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(localInterpState,a,notS);
 export notFun(localInterpState:threadLocalInterp,rhs:Code):Expr := (
-     a := eval(rhs);
+     a := eval(localInterpState,rhs);
      when a
      is Error do a
      else if a == True then False
      else if a == False then True
-     else unarymethod(a,notS));
+     else unarymethod(localInterpState,a,notS));
 setup(notS,notFun);
 EqualEqualEqualfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     x := eval(lhs);
+     x := eval(localInterpState,lhs);
      when x is Error do x
      else (
-     	  y := eval(rhs);
+     	  y := eval(localInterpState,rhs);
      	  when y is Error do y
 	  else equal(x,y)));
 setup(EqualEqualEqualS,EqualEqualEqualfun);
@@ -766,11 +766,11 @@ smallintarrays0 := new array(Expr) len 20 at i do (
 smallintarrays1 := new array(Expr) len 20 at i do (
      provide Expr(new Sequence len i at k do provide toInteger(1+k)));
 DotDotfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left
      is Error do left
      is x:ZZ do (
-	  right := eval(rhs);
+	  right := eval(localInterpState,rhs);
 	  when right
 	  is Error do right
 	  is y:ZZ do (
@@ -798,11 +798,11 @@ DotDotfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 setup(DotDotS,DotDotfun);
 
 DotDotLessFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left
      is Error do left
      is x:ZZ do (
-	  right := eval(rhs);
+	  right := eval(localInterpState,rhs);
 	  when right
 	  is Error do right
 	  is y:ZZ do (
@@ -830,29 +830,29 @@ DotDotLessFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 setup(DotDotLessS,DotDotLessFun);
 
 assignNewFun(localInterpState:threadLocalInterp,newclass:Code,rhs:Code):Expr := (
-     c := eval(newclass);
+     c := eval(localInterpState,newclass);
      when c
      is Error do c
-     is o:HashTable do installMethod(NewE,o,eval(rhs))
+     is o:HashTable do installMethod(NewE,o,eval(localInterpState,rhs))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFun = assignNewFun;
 assignNewOfFun(localInterpState:threadLocalInterp,newclass:Code,newparent:Code,rhs:Code):Expr := (
-     c := eval(newclass);
+     c := eval(localInterpState,newclass);
      when c is Error do c
      is cc:HashTable do (
-	  p := eval(newparent);
+	  p := eval(localInterpState,newparent);
 	  when p is Error do p
-	  is pp:HashTable do installMethod(NewOfE,cc,pp,eval(rhs))
+	  is pp:HashTable do installMethod(NewOfE,cc,pp,eval(localInterpState,rhs))
 	  else printErrorMessageE(newparent,"expected a hash table as prospective parent"))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewOfFun = assignNewOfFun;
 assignNewFromFun(localInterpState:threadLocalInterp,newclass:Code,newinitializer:Code,rhs:Code):Expr := (
-     c := eval(newclass);
+     c := eval(localInterpState,newclass);
      when c is Error do c
      is cc:HashTable do (
-	  i := eval(newinitializer);
+	  i := eval(localInterpState,newinitializer);
 	  when i is Error do i
-	  is ii:HashTable do installMethod(NewFromE,cc,ii,eval(rhs))
+	  is ii:HashTable do installMethod(NewFromE,cc,ii,eval(localInterpState,rhs))
      	  else printErrorMessageE(newinitializer,"expected a hash table"))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFromFun = assignNewFromFun;
@@ -861,19 +861,19 @@ assignNewOfFromFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr :=
      newparent := args.1;
      newinitializer := args.2;
      rhs := args.3;
-     c := eval(newclass);
+     c := eval(localInterpState,newclass);
      when c 
      is Error do c 
      is cc:HashTable do (
-	  p := eval(newparent);
+	  p := eval(localInterpState,newparent);
 	  when p
 	  is Error do p
 	  is pp:HashTable do (
-	       i := eval(newinitializer);
+	       i := eval(localInterpState,newinitializer);
 	       when i 
 	       is Error do i 
 	       is ii:HashTable do (
-	       	    r := eval(rhs);
+	       	    r := eval(localInterpState,rhs);
 	       	    when r 
 		    is Error do r
 	       	    else installMethod(NewOfFromE,cc,pp,ii,r))
@@ -882,13 +882,13 @@ assignNewOfFromFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr :=
      else printErrorMessageE(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFromFun = assignNewOfFromFun;
-installFun2(a:Expr,args:CodeSequence):Expr := (
-     opr := eval(args.0);
+installFun2(localInterpState:threadLocalInterp,a:Expr,args:CodeSequence):Expr := (
+     opr := eval(localInterpState,args.0);
      when opr 
      is Error do opr
      is oper:SymbolClosure do (
 	  if oper === AdjacentS then (
-	       b := eval(args.2);
+	       b := eval(localInterpState,args.2);
 	       when b
 	       is Error do b
 	       is bcd:Sequence do (
@@ -896,14 +896,14 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 when bcd.0
 			 is bb:HashTable do
 			 when bcd.1
-			 is cc:HashTable do installMethod(a,bb,cc,eval(args.3))
+			 is cc:HashTable do installMethod(a,bb,cc,eval(localInterpState,args.3))
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
 		    else if length(bcd) == 3 then (
 			 when bcd.0 is bb:HashTable do
 			 when bcd.1 is cc:HashTable do
-			 when bcd.2 is dd:HashTable do installMethod(a,bb,cc,dd,eval(args.3)) 
+			 when bcd.2 is dd:HashTable do installMethod(a,bb,cc,dd,eval(localInterpState,args.3)) 
 			 else buildErrorPacket("expected third parameter to be a hash table")
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
@@ -912,67 +912,67 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 when bcd.0 is bb:HashTable do
 			 when bcd.1 is cc:HashTable do
 			 when bcd.2 is dd:HashTable do
-			 when bcd.3 is ee:HashTable do installMethod(a,bb,cc,dd,ee,eval(args.3)) 
+			 when bcd.3 is ee:HashTable do installMethod(a,bb,cc,dd,ee,eval(localInterpState,args.3)) 
 			 else buildErrorPacket("expected fourth parameter to be a hash table")
 			 else buildErrorPacket("expected third parameter to be a hash table")
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
 		    else buildErrorPacket("expected 1, 2, 3, or 4 parameter types"))
-	       is bb:HashTable do installMethod(a,bb,eval(args.3))
+	       is bb:HashTable do installMethod(a,bb,eval(localInterpState,args.3))
 	       else buildErrorPacket("expected right hand parameter to be a hash table or sequence"))
 	  else buildErrorPacket("expected adjacency operator ' ' on left"))
      else buildErrorPacket("expected operator to be a symbol"));
-installMethodFun2(arg1:Expr,args:CodeSequence):Expr := (
+installMethodFun2(localInterpState:threadLocalInterp,arg1:Expr,args:CodeSequence):Expr := (
      when arg1 
      is Error do arg1
-     is CompiledFunction do installFun2(arg1,args)
-     is CompiledFunctionClosure do installFun2(arg1,args)
-     is FunctionClosure do installFun2(arg1,args)
-     is s:SpecialExpr do if ancestor(s.class,functionClass) then installFun2(arg1,args) else buildErrorPacket("expected right hand parameter to be a type of function")
+     is CompiledFunction do installFun2(localInterpState,arg1,args)
+     is CompiledFunctionClosure do installFun2(localInterpState,arg1,args)
+     is FunctionClosure do installFun2(localInterpState,arg1,args)
+     is s:SpecialExpr do if ancestor(s.class,functionClass) then installFun2(localInterpState,arg1,args) else buildErrorPacket("expected right hand parameter to be a type of function")
      is aa:HashTable do (
 	  if aa.parent == nothingClass
 	  then (
-	       installFun2(arg1,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
+	       installFun2(localInterpState,arg1,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
 	       )
 	  else (
-	       b := eval(args.2);
+	       b := eval(localInterpState,args.2);
 	       when b is Error do b 
 	       is bb:HashTable do (
-		    opr := eval(args.0);
+		    opr := eval(localInterpState,args.0);
 		    when opr is Error do opr
-		    else installMethod(opr,aa,bb,eval(args.3)))
+		    else installMethod(opr,aa,bb,eval(localInterpState,args.3)))
 	       else buildErrorPacket("expected right hand parameter to be a hash table")))
      else buildErrorPacket("expected left hand parameter to be a function, type, or a hash table"));
-installMethodFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr := installMethodFun2(eval(args.1),args);
+installMethodFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr := installMethodFun2(localInterpState,eval(localInterpState,args.1),args);
 InstallMethodFun = installMethodFun;
 
 mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
 
 -- this new version just looks up a method for user code, which *could* do the same thing
 installValueFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr := (
-     oper := eval(args.0);
+     oper := eval(localInterpState,args.0);
      when oper is Error do return oper else nothing;
-     x := eval(args.1);
+     x := eval(localInterpState,args.1);
      when x is Error do return x else nothing;
-     y := eval(args.2);
+     y := eval(localInterpState,args.2);
      when y is Error do return y else nothing;
      meth := lookupBinaryMethod(Class(x),Class(y),Expr(Sequence(oper,EqualE))); -- i.e., x*y=z is looked up under ((symbol *,symbol =),class x,class y)
      if meth == nullE then return MissingAssignmentMethodPair(oper,x,y);
-     z := eval(args.3);
+     z := eval(localInterpState,args.3);
      applyEEE(localInterpState,meth,x,y,z));
 -- this old version was used for stashing values somewhere
 -- installValueFun(args:CodeSequence):Expr := (
---      a := eval(args.1);
+--      a := eval(localInterpState,args.1);
 --      when a is Error do a
 --      is aa:HashTable do (
--- 	  b := eval(args.2);
+-- 	  b := eval(localInterpState,args.2);
 -- 	  when b is Error do b 
 -- 	  is bb:HashTable do (
--- 	       opr := eval(args.0);
+-- 	       opr := eval(localInterpState,args.0);
 -- 	       when opr is Error do opr
 -- 	       else (
--- 		    x := eval(args.3);
+-- 		    x := eval(localInterpState,args.3);
 -- 		    when x is Error do x
 -- 		    else installValue(opr,aa,bb,x)
 -- 		    )
@@ -982,13 +982,13 @@ installValueFun(localInterpState:threadLocalInterp,args:CodeSequence):Expr := (
 InstallValueFun = installValueFun;
 
 unaryInstallMethodFun(localInterpState:threadLocalInterp,meth:Code,argtype:Code,body:Code):Expr := (
-     f := eval(meth);
+     f := eval(localInterpState,meth);
      when f is Error do f
      else (
-	  t := eval(argtype);
+	  t := eval(localInterpState,argtype);
 	  when t is Error do t 
 	  else when t is T:HashTable do (
-	       b := eval(body);
+	       b := eval(localInterpState,body);
 	       when b is Error do b
 	       else installMethod(f,T,b)
 	       )
@@ -996,24 +996,24 @@ unaryInstallMethodFun(localInterpState:threadLocalInterp,meth:Code,argtype:Code,
 UnaryInstallMethodFun = unaryInstallMethodFun;
 
 unaryInstallValueFun(localInterpState:threadLocalInterp,meth:Code,lhs:Code,rhs:Code):Expr := (
-     oper := eval(meth);
+     oper := eval(localInterpState,meth);
      when oper is Error do return oper else nothing;
-     y := eval(lhs);
+     y := eval(localInterpState,lhs);
      when y is Error do return y else nothing;
      method := lookup(Class(y),Expr(Sequence(oper,EqualE))); -- i.e., *y=z is looked up under ((symbol *,symbol =),class y)
      if method == nullE then return MissingAssignmentMethod(oper,y);
-     z := eval(rhs);
+     z := eval(localInterpState,rhs);
      applyEEE(localInterpState,method,y,z));
 -- this old version was used for stashing values somewhere
 -- unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
---      Argtype := eval(argtype);
+--      Argtype := eval(localInterpState,argtype);
 --      when Argtype is Error 
 --      do Argtype 
 --      else when Argtype is
 --      o:HashTable do (
--- 	  methv := eval(meth);
+-- 	  methv := eval(localInterpState,meth);
 -- 	  when methv is Error do methv else (
--- 	       bodyv := eval(body);
+-- 	       bodyv := eval(localInterpState,body);
 -- 	       when bodyv is Error do bodyv else (
 -- 	  	    storeInHashTable(o,
 -- 			 Expr(Sequence(methv)),  -- distinguishing feature of "values"
@@ -1074,14 +1074,14 @@ flatten(localInterpState:threadLocalInterp,e:Expr):Expr := (
 setupfun("flatten",flatten);
 
 subvalue(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left is Error do left
      else (
-      	  right := eval(rhs);
+      	  right := eval(localInterpState,rhs);
       	  when right is Error do right
       	  else subvalue(left,right)));
 lengthFun(localInterpState:threadLocalInterp,rhs:Code):Expr := (
-     e := eval(rhs);
+     e := eval(localInterpState,rhs);
      when e
      is Error do e
      is x:HashTable do Expr(toInteger(x.numEntries))
@@ -1093,10 +1093,10 @@ lengthFun(localInterpState:threadLocalInterp,rhs:Code):Expr := (
      else buildErrorPacket("expected a list, sequence, hash table, or string"));
 setup(SharpS,lengthFun,subvalue);
 subvalueQ(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left is Error do left
      else (
-      	  right := eval(rhs);
+      	  right := eval(localInterpState,rhs);
       	  when right is Error do right
       	  else subvalueQ(left,right)));
 setup(SharpQuestionS,subvalueQ);
