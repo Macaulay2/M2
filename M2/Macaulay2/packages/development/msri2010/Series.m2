@@ -1,19 +1,15 @@
---================
--- THIS IS NOT A PACKAGE YET!
---
---================
---series(rational function) = series(polynomial)
---series(n,polynomial)
---series(Hilbert)
---series(generating function)
---series(degree, poly)
+newPackage(
+        "Series",
+        Version => "0.1", 
+        Date => "1/2010",
+        Authors => {{Name => "", 
+                  Email => "", 
+                  HomePage => ""}},
+        Headline => "computations involving series",
+        DebuggingMode => true
+        )
 
-
---arithmetic addion 
---reduction for series not in exact for
---set global default
---handle polys. 
---handle 
+export {series, setDegree}
 
 
 Series = new Type of HashTable
@@ -233,6 +229,9 @@ T = series(x,i -> i)
 T - T + T
 setDegree(9,T - T + T)
 setDegree(12,T*T)
+
+end
+
 
 --=========================================================================--
 
