@@ -19,8 +19,8 @@ newPackage(
 export {
 	Poset,
 	poset,
-	DirectedGraph,
-	directedGraph,
+--	DirectedGraph,
+--	directedGraph,
 	adjacencyMatrix,
 	allPairsShortestPath,
 	transitiveClosure,
@@ -31,8 +31,8 @@ export {
 	filter,
 	Relations,
 	GroundSet,
-	Vertices,
-	DirectedEdges,
+--	Vertices,
+--	DirectedEdges,
 	posetMeet, 
 	meetExists, -- do tests for
 	posetJoin,
@@ -690,27 +690,27 @@ doc ///
 ///     
 
 
-doc ///
-     Key
-     	  DirectedGraph
-     Headline 
-     	  a class for directed graphs
-     Description
-     	  Text
-	       This class is a type of HashTable which represents directed graphs.  It consists of a vertex 
-	       set and a set of sequences (a,b) representing a directed edge from a to b. 
-	  Example
-	       V = {a,b,c,d,e}; -- the vertex set
-	       E = {(a,b),(b,c),(a,c),(a,d),(d,e)}; -- directed edges; (a,b) means a directed edge from a to b.
-	       G = directedGraph(V,E)
-	       allPairsShortestPath(G)
-     SeeAlso
-     	  directedGraph
-	  Vertices
-	  DirectedEdges
-	  adjacencyMatrix
-	  allPairsShortestPath
-/// 
+--doc ///
+--     Key
+--     	  DirectedGraph
+--     Headline 
+--     	  a class for directed graphs
+--     Description
+--     	  Text
+--	       This class is a type of HashTable which represents directed graphs.  It consists of a vertex 
+--	       set and a set of sequences (a,b) representing a directed edge from a to b. 
+--	  Example
+--	       V = {a,b,c,d,e}; -- the vertex set
+--	       E = {(a,b),(b,c),(a,c),(a,d),(d,e)}; -- directed edges; (a,b) means a directed edge from a to b.
+--	       G = directedGraph(V,E)
+--	       allPairsShortestPath(G)
+--     SeeAlso
+--     	  directedGraph
+--	  Vertices
+--	  DirectedEdges
+--	  adjacencyMatrix
+--	  allPairsShortestPath
+--/// 
 
 
 -------------
@@ -762,35 +762,35 @@ doc ///
 	  RelationMatrix
 ///
  
-doc ///
-     Key
-     	  directedGraph
-	  (directedGraph, List, List)
-     Headline
-     	  creating a directed graph
-     Usage
-     	  G = directedGraph(V,E)
-     Inputs
-     	  V : List 
-	       elements in the vertices of G
-	  E : List 
-	       sequences (a,b) which represents a directed edge from a to b
-     Outputs
-     	  G : DirectedGraph 
-	       a directed graph on vertex set V with directed edges E
-     Description
-      	   Text
-	   	This function allows one to create a directed graph by defining the vertices and directed edges between them.
-	   Example
-	   	V = {a,b,c,d};
-		E = {(a,b), (a,c), (c,d)};
-		G = directedGraph (V,E)	
-     SeeAlso
-     	  DirectedGraph
-	  Vertices
-	  DirectedEdges
-     	  adjacencyMatrix     
-/// 
+--doc ///
+--     Key
+--     	  directedGraph
+--	  (directedGraph, List, List)
+--     Headline
+--     	  creating a directed graph
+--     Usage
+--     	  G = directedGraph(V,E)
+--     Inputs
+--     	  V : List 
+--	       elements in the vertices of G
+--	  E : List 
+--	       sequences (a,b) which represents a directed edge from a to b
+--     Outputs
+--     	  G : DirectedGraph 
+--	       a directed graph on vertex set V with directed edges E
+--     Description
+--      	   Text
+--	   	This function allows one to create a directed graph by defining the vertices and directed edges between them.
+--	   Example
+--	   	V = {a,b,c,d};
+--		E = {(a,b), (a,c), (c,d)};
+--		G = directedGraph (V,E)	
+--     SeeAlso
+--     	  DirectedGraph
+--	  Vertices
+--	  DirectedEdges
+--     	  adjacencyMatrix     
+--/// 
  
 -----------
 -- finding relations
@@ -799,17 +799,17 @@ doc ///
 doc ///
      Key 
      	  adjacencyMatrix
-	  (adjacencyMatrix, DirectedGraph)
+--	  (adjacencyMatrix, DirectedGraph)
 	  (adjacencyMatrix, Poset)
 	  (adjacencyMatrix, List, List)
      Headline
 	  returns adjacency matrix of a directed graph
      Usage
-	  M = adjacencyMatrix(G)
+--	  M = adjacencyMatrix(G)
 	  M = adjacencyMatrix(P)
 	  M = adjacencyMatrix(I,C)
      Inputs
-	  G : DirectedGraph
+--	  G : DirectedGraph
 	  P : Poset
        	  I : List
 	  C : List
@@ -817,36 +817,35 @@ doc ///
       	  M : Matrix 
 	       whose rows and columns are indexed by G.Vertices 
 	       or P.GroundSet or I. The (i,j) entry of M  is 1 if (i,j) is 
-	       in G.DirectedEdges or P.Relations or C, 
-	       and infinity otherwise.  Diagonal entries are 0. 
+	       in P.Relations or C, and infinity otherwise.  Diagonal entries are 0. 
      Description
 	  Example
      	       I = {a,b,c,d,e};
 	       C = {(a,b),(b,c),(a,c),(a,d),(d,e)};
-	       G = directedGraph(I,C);
+--	       G = directedGraph(I,C);
 	       P = poset(I,C);
-	       adjacencyMatrix(G)
+--	       adjacencyMatrix(G)
 	       adjacencyMatrix(P)
 	       adjacencyMatrix(I,C)	       	       
      Caveat
      	  Diagonal entries are 0.  Output matrix is over RR.
      SeeAlso
-     	  DirectedGraph
+--     	  DirectedGraph
      	  allPairsShortestPath    
 /// 
  
 doc ///
      Key 
      	  allPairsShortestPath
-	  (allPairsShortestPath, DirectedGraph)
+--	  (allPairsShortestPath, DirectedGraph)
 	  (allPairsShortestPath, Matrix)
      Headline
      	  computes lengths of shortest paths between all pairs in a directed graph
      Usage
-     	  D = allPairsShortestPath(G)
+--     	  D = allPairsShortestPath(G)
 	  D = allPairsShortestPath(A)
      Inputs
-     	  G : DirectedGraph 
+--     	  G : DirectedGraph 
 	  A : Matrix
 	      adjacency matrix of a directed graph, whose (i,j) entry is the length of the directed edge from i to j and is infinity (1/0.) if there is no such directed edge.
      Outputs
@@ -856,15 +855,15 @@ doc ///
       	   Text
 	   	This function uses the Floyd-Warshall algorithm to compute the lengths of shortest paths between all pairs of vertices in a directed graph.
 	   Example
-	       G = directedGraph( {a,b,c,d,e}, {(a,b),(b,c),(a,c),(a,d),(d,e)});
-	       allPairsShortestPath(G)
-	       allPairsShortestPath(adjacencyMatrix(G))
+--	       G = directedGraph( {a,b,c,d,e}, {(a,b),(b,c),(a,c),(a,d),(d,e)});
+--	       allPairsShortestPath(G)
+--	       allPairsShortestPath(adjacencyMatrix(G))
 	       A = matrix({{0,1,3,5},{1/0.,0,1,3},{1/0.,1/0.,0,1},{2,1/0.,1/0.,0}})
 	       allPairsShortestPath(A)
      Caveat
      	  Assume there is no negative cycles.  Output matrix is over RR.
      SeeAlso
-     	  DirectedGraph
+--     	  DirectedGraph
      	  adjacencyMatrix   
 /// 
   
@@ -1662,53 +1661,53 @@ doc ///
 	  Poset
 ///
 
-doc ///
-     Key 
-     	  Vertices
-     Headline
-     	  the set of vertices a directed graph
-     Usage
-     	  V = G.Vertices
-     Inputs
-     	  G : DirectedGraph
-     Outputs
-     	  V : List
-	       list of vertices of the directed graph G
-     Description
-     	  Text
-     	       Since any DirectedGraph is in fact a HashTable this symbol denotes the data in the HashTable consisting of the vertices of the directed graph.
-	  Example
-	       G = directedGraph({a,b,c,d,e},  {(a,b),(b,c),(a,c),(a,d),(d,e)});
-	       V = G.Vertices -- the vertex set
-     SeeAlso
-     	  DirectedGraph
-	  directedGraph
-	  DirectedEdges
-///
+--doc ///
+--     Key 
+--     	  Vertices
+--     Headline
+--     	  the set of vertices a directed graph
+--     Usage
+--     	  V = G.Vertices
+--     Inputs
+--     	  G : DirectedGraph
+--     Outputs
+--     	  V : List
+--	       list of vertices of the directed graph G
+--     Description
+--     	  Text
+--     	       Since any DirectedGraph is in fact a HashTable this symbol denotes the data in the HashTable consisting of the vertices of the directed graph.
+--	  Example
+--	       G = directedGraph({a,b,c,d,e},  {(a,b),(b,c),(a,c),(a,d),(d,e)});
+--	       V = G.Vertices -- the vertex set
+--     SeeAlso
+--     	  DirectedGraph
+--	  directedGraph
+--	  DirectedEdges
+--///
 
-doc ///
-     Key 
-     	  DirectedEdges
-     Headline
-     	  the set of directed edges of a directed graph
-     Usage
-     	  E = G.DirectedEdges
-     Inputs
-     	  G : DirectedGraph
-     Outputs
-     	  E : List
-	       list of directed edges of the directed graph G
-     Description
-     	  Text
-     	       Since any DirectedGraph is in fact a HashTable this symbol denotes the data in the HashTable consisting of the directed edges of the directed graph.
-	  Example
-	       G = directedGraph({a,b,c,d,e},  {(a,b),(b,c),(a,c),(a,d),(d,e)});
-	       E = G.DirectedEdges -- the vertex set
-     SeeAlso
-     	  DirectedGraph
-	  directedGraph
-	  Vertices
-///
+--doc ///
+--     Key 
+--     	  DirectedEdges
+--     Headline
+--     	  the set of directed edges of a directed graph
+--     Usage
+--     	  E = G.DirectedEdges
+--     Inputs
+--     	  G : DirectedGraph
+--     Outputs
+--     	  E : List
+--	       list of directed edges of the directed graph G
+--     Description
+--     	  Text
+--     	       Since any DirectedGraph is in fact a HashTable this symbol denotes the data in the HashTable consisting of the directed edges of the directed graph.
+--	  Example
+--	       G = directedGraph({a,b,c,d,e},  {(a,b),(b,c),(a,c),(a,d),(d,e)});
+--	       E = G.DirectedEdges -- the vertex set
+--     SeeAlso
+--     	  DirectedGraph
+--	  directedGraph
+--	  Vertices
+--///
  
  
  
