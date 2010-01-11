@@ -30,6 +30,7 @@ dgAlgebra(Ring,List) := (R,degList) -> (
      A#(symbol algebra) = (A.ring)[A.vars, Degrees => degList, SkewCommutative => select(toList(0..(#degList-1)), i -> odd degList#i)];
      A#(symbol degreeList) = degList;
      A#(symbol cache) = new CacheTable;
+     A.cache#(symbol homology) = new MutableHashTable;
      -- should verify that the differential is indeed of degree -1
      new DGAlgebra from A
 )
@@ -141,7 +142,8 @@ polyHomology(DGAlgebra,ZZ) := (A,n) -> (
   dn := 0;
   dnplus1 := 0;
   retVal := 0;
-  if (#(flatten entries basis({n,0}, A.algebra, Limit => 1)) != 0) then
+  if (A.cache.homology#?n) then retVal = A.cache.homology#n
+  else if (#(flatten entries basis({n,0}, A.algebra, Limit => 1)) != 0) then
   (
      if n == 0 then dn = map(R^0, R^1, 0) else dn = polyDifferential(A,n);
      if (#(flatten entries basis({n+1,0}, A.algebra, Limit => 1)) != 0) then
@@ -149,6 +151,7 @@ polyHomology(DGAlgebra,ZZ) := (A,n) -> (
      else
         dnplus1 = map(source dn, R^0, 0);
      retVal = homology(dn,dnplus1);
+     A.cache.homology#n = retVal;
   )
   else
      retVal = R^0;
@@ -163,23 +166,35 @@ representativeCycles(DGAlgebra,ZZ) := (A,n) -> (
   cycleList
 )
 
---homology(DGAlgebra,ZZ) := (A,n) -> polyHomology(A,n)
-
 homologyAlgebra = method()
 homologyAlgebra(DGAlgebra, ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
+  if (A.cache#?homologyAlgebra) then A.cache#homologyAlgebra
+  else (
   cycleList := {};
   relList := {};
   n := 1;
   -- get the generators of the homology algebra
   while (n <= genDegreeLimit) do (cycleList = flatten append(cycleList, findDegNGenerators(A,cycleList,n)); n = n + 1;);
+  polyRing := makeCycleRing(A,cycleList);
   n = 2;
-  while (n <= relDegreeLimit) do (relList = flatten append(relList, findDegNRelations(A,cycleList,relList,n)); n = n + 1;);
-  defIdeal := ideal relList;
-  (ring first relList)/defIdeal
+  while (n <= relDegreeLimit) do (relList = flatten append(relList,findDegNRelations(A,polyRing,{cycleList,relList},n)); n = n + 1;);
+  defIdeal := trim ideal relList;
+  HA := polyRing/defIdeal;
+  -- put the cycles that the variables represent in the cache.
+  HA.cache = new CacheTable;
+  HA.cache#cycles = cycleList;
+  A.cache#homologyAlgebra = HA;
+  HA
+  )
 )
 
 homologyAlgebra(DGAlgebra) := (A) -> (
-  A
+  -- this is a routine that will compute the complete homology algebra
+  -- if the DG Algebra is known to be finite rank over the base ring.
+  degreesList := degrees B.algebra / first;
+  if (any(degreesList, i -> even i)) then error "Must supply upper degree bound on generators and relations if there is a DG Algebra generator of even degree.";
+  -- otherwise, all are odd, and we can compute the whole thing.  
+  
 )
 
 makeCycleRing = method()
@@ -194,11 +209,16 @@ makeCycleRing(DGAlgebra,List) := (A, cycleList) -> (
 getCycleProductList = method()
 getCycleProductList(DGAlgebra,List,ZZ) := (A,cycleList,N) -> (
   -- this function returns a list containing all monomials of degree N in the cycleList that was input, decomposed using the basis of monomials given by monListA
-  subRing := makeCycleRing(A,cycleList);
-  monListHA := flatten entries basis(N,subRing);
+  HA := makeCycleRing(A,cycleList);
+  getCycleProductList(A,HA,cycleList,N)
+)
+
+getCycleProductList(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,N) -> (
+  monListHA := flatten entries basis(N,HA);
   expListHA := flatten(monListHA / exponents);
   monListA := flatten entries basis ({N,0},A.algebra);
-  apply(apply(expListHA, xs -> product apply(#xs, i -> (cycleList#i)^(xs#i))), z -> (coefficients(z, Monomials => monListA))#1)
+  cycleProductList := apply(expListHA, xs -> product apply(#xs, i -> (cycleList#i)^(xs#i)));
+  (apply(cycleProductList, z -> (coefficients(z, Monomials => monListA))#1),monListHA)
 )
 
 findDegNGenerators = method()
@@ -206,7 +226,6 @@ findDegNGenerators(DGAlgebra,List,ZZ) := (A,oldCycleList,N) -> (
   -- I am assuming that the oldCycleList contains a (minimal?) set of algebra
   -- generators needed to generate the homology algebra up to degree n-1.
   -- the goal of this function is to return the generators and relations in degree n.
-
   cycleList := {};
   relsList := {};
   varList := {};
@@ -214,9 +233,10 @@ findDegNGenerators(DGAlgebra,List,ZZ) := (A,oldCycleList,N) -> (
      -- here, we know all the degree 1 elements are generators
      cycleList = representativeCycles(A,1);
   )
+  else if (flatten entries basis({N,0},A.algebra, Limit => 1) == {}) then cycleList = {}
   else  (
      -- the below matrix contains all monomials of degree n in the cycleList that was input, put into a matrix using the basis of monomials given by monListA
-     cycleProductList := getCycleProductList(A,oldCycleList,N);
+     cycleProductList := (getCycleProductList(A,oldCycleList,N))#0;
      if (cycleProductList != {}) then (
         cycleProductMatrix := substitute(fold(cycleProductList, (i,j) -> i | j), R);
         nthHomology := polyHomology(A,N);
@@ -230,43 +250,53 @@ findDegNGenerators(DGAlgebra,List,ZZ) := (A,oldCycleList,N) -> (
 )
 
 findDegNRelations = method()
-findDegNRelations(DGAlgebra,List,List,ZZ) := (A,algGens,algRels,N) -> (
+findDegNRelations(DGAlgebra,Ring,List,ZZ) := (A,polyRing,gensAndRels,N) -> (
   -- this function tries to find the relations in degree N that involve the generators in the list algGens
   -- no checking is done to see if algGens are actually minimal generators at this point.
-  retVal := 0;
-  polyRing := {};
+  algGens := gensAndRels#0;
+  algRels := gensAndRels#1;
   defIdeal := 0;
-  if (algRels != {}) then (
-     polyRing = ring first algRels;
-     defIdeal = ideal algRels;
-  )   
+  local cycleProductList;
+  local monListHA;
+  if (algRels != {}) then defIdeal = ideal algRels else defIdeal = ideal 0_polyRing;
+  retVal = {0_polyRing};
+  -- check if the DGA is zero in this degree. If so, just return back the algRels.
+  if (flatten entries basis({N,0},A.algebra, Limit => 1) != {}) then (
+     ringSoFar := polyRing/defIdeal;
+     nthHomology := polyHomology(A,N);
+     -- using algRels, check if there are indeed any new relations in degree n
+     pruneNthHomology := prune nthHomology;
+     rankOfNthHomology := numgens pruneNthHomology;
+     rankOfAlgebraSoFar := hilbertFunction(N,ringSoFar);
+     if (rankOfNthHomology != rankOfAlgebraSoFar) then
+     (
+       -- when in here, we know there is a relation in degree N.
+       -- so take each monomial of the correct degree, build the cycle corresponding to that
+       -- and define a map from the residue field to the homology class representing each cycle.
+       -- then take the kernel, prune, and use cache.pruningMap to get the actual minimal generating
+       -- set of the kernel.  Finally, reconstruct the elements from the monomials and viola!
+       if (pruneNthHomology == 0) then (
+          -- if we are here, all monomials in the polyRing of this degree are zero.
+          retVal = flatten entries basis (N,polyRing);
+       )
+       else (
+          (cycleProductList,monListHA) = getCycleProductList(A,polyRing,algGens,N);
+          if (cycleProductList != {}) then (
+             -- if the homology is zero in this degree, then all monomials are also zero here.
+             cycleProductMatrix := substitute(fold(cycleProductList, (i,j) -> i | j), R);
+             baseRing := coker vars (A.ring);
+             myMatrix := cycleProductMatrix // (gens nthHomology);
+             multMap := map(nthHomology,baseRing^(rank source cycleProductMatrix),myMatrix);
+             kernelMultMap := prune ker multMap;       
+             kernelGens := entries transpose substitute(gens image kernelMultMap.cache.pruningMap, coefficientRing (A.ring));
+             --retVal = flatten append(retVal / rightRingMap, apply(kernelGens, z -> sum apply(#z, i -> (monListHA#i)*(z#i))));
+	     retVal = apply(kernelGens, z -> sum apply(#z, i -> (monListHA#i)*(z#i)));
+          );
+       );
+     );
+  )
   else (
-     polyRing = makeCycleRing(A,algGens);
-     defIdeal = ideal 0_polyRing;
-  );
-  -- initialize retVal
-  if (algRels != {}) then retVal = algRels else retVal = {0_polyRing};
-  ringSoFar := polyRing/defIdeal;
-  -- using algRels, check if there are indeed any new relations in degree n
-  nthHomology := polyHomology(A,N);
-  rankOfNthHomology := numgens prune nthHomology;
-  rankOfAlgebraSoFar := hilbertFunction(N,ringSoFar);
-  if (rankOfNthHomology != rankOfAlgebraSoFar) then
-  (
-    -- when in here, we know there is a relation in degree N.
-    -- so take each monomial of the correct degree, build the cycle corresponding to that
-    -- and define a map from the residue field to the homology class representing each cycle.
-    -- then take the kernel, prune, and use cache.pruningMap to get the actual minimal generating
-    -- set of the kernel.  Finally, reconstruct the elements from the monomials and viola!
-    cycleProductList := getCycleProductList(A,algGens,N);
-    if (cycleProductList != {}) then (
-       cycleProductMatrix := substitute(fold(cycleProductList, (i,j) -> i | j), R);
-       baseRing := coker vars (A.ring);
-       myMatrix := cycleProductMatrix // (gens nthHomology);
-       multMap := map(nthHomology,baseRing^(rank source cycleProductMatrix),myMatrix);
-       kernelMultMap := ker multMap;       
-       error "err";
-    );
+     retVal = flatten entries basis (N,polyRing); 
   );
   retVal
 )
@@ -277,10 +307,15 @@ loadPackage "DGAlgebras"
 debug DGAlgebras
 R = ZZ/32003[x,y,z]/ideal{x^3,y^4,z^5}
 B = koszulComplexDGA(R)
-homologyAlgebra(B,4,4)
+homologyAlgebra(B,5,5)
 R = ZZ/32003[x,y,z,w]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 B = koszulComplexDGA(R)
-homologyAlgebra(B,4,4)
+time HB = homologyAlgebra(B,5,5)
+reduceHilbert hilbertSeries HB
+time HB = homologyAlgebra(B,5,6)
+reduceHilbert hilbertSeries HB
+numgens trim ideal HB
+prune HH(koszul vars R)
 ///
 
 findDegNRelations(DGAlgebra,ZZ) := (A,N) -> (
