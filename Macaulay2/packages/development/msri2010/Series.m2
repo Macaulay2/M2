@@ -83,8 +83,24 @@ rationalSeries = (ord,h) -> ( -- essentially the code used by hilbert series see
 
 
 
-series RingElement := Series => opts -> h -> ( 
-     	  s := rationalSeries(opts.Degree+1,h);
+--series RingElement := Series => opts -> h -> ( 
+--     	  s := rationalSeries(opts.Degree+1,h);
+--	   -- now make a new series.
+--     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+--          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
+--	  -- to know how to tack on the new terms to the old polynomial.
+--	  setDegree => (
+--	       (oldPolynomial,oldComputedDegree,newDegree) -> 
+--	       (
+--		    if newDegree > oldComputedDegree then (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)) else
+--	       	    (oldPolynomial, oldComputedDegree)
+--	       )
+--	  )});  
+
+
+
+series Function := Series => opts -> f -> ( 
+     	  s := f(opts.Degree+1);
 	   -- now make a new series.
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
           -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
@@ -92,10 +108,13 @@ series RingElement := Series => opts -> h -> (
 	  setDegree => (
 	       (oldPolynomial,oldComputedDegree,newDegree) -> 
 	       (
-		    if newDegree > oldComputedDegree then (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)) else
+		    if newDegree > oldComputedDegree then (f(newDegree+1),max(oldComputedDegree,newDegree)) else
 	       	    (oldPolynomial, oldComputedDegree)
 	       )
 	  )});  
+
+
+series RingElement := Series => opts -> h -> series(i -> rationalSeries(i,h),Degree=>opts.Degree);
 
 
 
