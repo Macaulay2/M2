@@ -207,7 +207,7 @@ makeSeriesCompatible(Series,Series) := Sequence => (A,B) -> (
 	   B' := setDegree(newComputedDegree,B);
 	   (A',B')
 	   )
-      )
+      );
  
 Series + Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
@@ -221,7 +221,7 @@ Series + Series := Series => (A,B) -> (
 		    else (oldPolynomial, oldComputedDegree)
 		    )
 	       )}
-     )
+     );
 
 Series - Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
@@ -235,7 +235,7 @@ Series - Series := Series => (A,B) -> (
 		    else (oldPolynomial, oldComputedDegree)
 		    )
 	       )}
-     )
+     );
 
 
 Series * Series := Series => (A,B) -> (
@@ -250,15 +250,38 @@ Series * Series := Series => (A,B) -> (
 		    else (oldPolynomial, oldComputedDegree)
 		    )
 	       )}
-     )
+     );
 
 - Series := Series => A -> (new Series from{
      degree => A#degree,
      maxDegree => A.maxDegree,
      computedDegree => A.computedDegree,
      polynomial => - A.polynomial,
-     setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->(- oldPolynomial, oldComputedDegree))});
+     setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->(
+	       if newDegree > oldComputedDegree then(
+		    newA := setDegree(newDegree,A);
+		    (- newA.polynomial, newA.computedDegree)
+		    )
+	       else (oldPolynomial, oldComputedDegree)
+	       )
+	  )
+     });
 
+
+RingElement * Series := Series => (f,A) -> (new Series from{
+     degree => A#degree,
+     maxDegree => A.maxDegree,
+     computedDegree => A.computedDegree,
+     polynomial => part(,A.computedDegree,part(,A.computedDegree,f) * A.polynomial),
+     setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->( 
+	       if newDegree > oldComputedDegree then(
+		    newA := setDegree(newDegree,A);
+		    (part(,newA.computedDegree,part(,newA.computedDegree,f) * newA.polynomial), newA.computedDegree)
+		    )
+	       else (oldPolynomial, oldComputedDegree)
+	       )
+	  )
+     });
 
 end
 
