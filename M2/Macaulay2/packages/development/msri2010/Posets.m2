@@ -63,15 +63,19 @@ needsPackage "Graphs"
 Poset = new Type of HashTable
 
 poset = method()
-poset(List,List) := (I,C) ->
-     new Poset from {
-	 symbol GroundSet => I,
-	 symbol Relations => C,
-     	 symbol RelationMatrix => transitiveClosure(I,C),
-	 symbol cache => new CacheTable
-	 }
-    
--- in case you actually have M to begin with    
+poset(List,List) := (I,C) ->( 
+    if (rank(transitiveClosure(I,C)) == #I) then
+         (new Poset from {
+	      symbol GroundSet => I,
+	      symbol Relations => C,
+     	      symbol RelationMatrix => transitiveClosure(I,C),
+	      symbol cache => new CacheTable
+	      })
+    else error "antisymmetry fails"
+    )
+
+-- in case you actually have M to begin with 
+--used in LCMLattices   
 poset(List,List,Matrix) := (I,C,M) ->
      new Poset from {
 	  symbol GroundSet => I,
@@ -756,18 +760,24 @@ doc ///
 	       with entries ij equal to one when the jth element in G is less than or equal to the ith element in G
      Outputs
      	  P : Poset
-	       a poset consisting of the elements in G, with the order relations determined by R and or M
+	       a poset consisting of the elements in G, with the order relations determined by R 
+	       and or M
      Description
       	   Text
 	   	This function allows one to create a poset by defining the set and giving the order relations between the elements in the set.
+		The function assumes that each element in the defining list given is distinct, and operates by taking the transitive and reflexive 
+		closure of the relations that it is given.  The function returns an error
+		if the input relations are incompatible with creating a poset.
 	   Example
 	   	G = {a,b,c,d};
 		R = {(a,b), (a,c), (c,d)};
-		P = poset (G,R)
+		P = poset (G,R)	
 	   Text
 	   	Sometimes in finding "enough" relations one inadverdently finds all of the relations in the poset.  In this case, the user
 		can bypass having the function poset calculate the transitive closure of the relations by entering the matrix encoding the
-		relations in when calling the poset function.
+		relations in when calling the poset function.  In this scenario, the function does not check that the resulting object is 
+		actually a poset because in order to do this, the function needs to compute the transitive closure of the relations and check
+		that this matches the matrix given.  The purpose of entering a matrix is to bypass that computation.
 	   Example
 	   	S = QQ[x,y,z];
 		G = {x^2, x*y, z^2, x^2*y*z, x*y*z^3, x^2*y^2*z^3};
