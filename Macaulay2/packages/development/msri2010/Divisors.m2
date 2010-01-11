@@ -20,7 +20,9 @@ export{
      linearlyEquivalent,
      effective,
      divisorFromModule,
-     canonicalDivisor
+     canonicalDivisor,
+     lineBundleFromDivisor,
+     divisorFromLineBundle
      }
 
 
@@ -154,7 +156,15 @@ canonicalDivisor= SX ->(
         M = coker substitute(presentation M, SX);
         divisorFromModule M
         );
-   
+
+
+lineBundleFromDivisor=method()
+lineBundleFromDivisor(Divisor, ProjectiveVariety):=(D,X) -> (
+       sheaf(module D#1)**sheafHom(sheaf(module D#0),OO_X))
+
+
+
+
 beginDocumentation()
 
 doc ///
@@ -458,6 +468,166 @@ Key
 Headline
   checks if two divisors are linearly equivalent
 ///
+
+
+doc ///
+Key
+ (linearlyEquivalent,Divisor,Divisor)
+Headline
+ checks if two divisors are linearly equivalent 
+Usage
+ val=linearlyEquivalent(D,E)
+Inputs
+ D:Divisor
+   a divisor
+ E:Divisor
+   a divisor
+Outputs
+ val:Boolean
+     returns true if the two divisors are equivalent and false otherwise
+Consequences
+Description
+  Text
+  Example
+    R = QQ[x,y];
+    D = divisor ideal x^4;
+    E = divisor ideal y^4;
+    linearlyEquivalent(D,E)
+Caveat
+SeeAlso
+///
+
+doc ///
+Key
+ (linearlyEquivalent,Divisor,Divisor,Boolean)
+Headline
+ checks if two divisors are linearly equivalent 
+Usage
+ val=linearlyEquivalent(D,E,Section)
+Inputs
+ D:Divisor
+   a divisor
+ E:Divisor
+   a divisor
+ Section:Boolean
+   a boolean variable 
+Outputs
+ val:Boolean
+     returns (true,f/g) if the two divisors are equivalent and D = E +(f/g) and false otherwise
+Consequences
+Description
+  Text
+  Example
+    R = QQ[x,y];
+    D = divisor ideal x^4;
+    E = divisor ideal y^4;
+    linearlyEquivalent(D,E,true)
+Caveat
+SeeAlso
+///
+
+doc ///
+Key
+ effective
+Headline
+ finds for a divisor with global sections a linearly equivalent effective divisor
+Usage
+ E=effective(D)
+Inputs
+ D:Divisor
+Outputs
+ E:Divisor
+     effective divisor that is linearly equivalent to D
+Consequences
+Description
+  Text
+  Example
+    R = QQ[x,y];
+    D = divisor ideal x^4
+    E = divisor ideal y^2
+    effective(D-E)
+Caveat
+SeeAlso
+///
+
+doc ///
+Key
+ canonicalDivisor
+Headline
+ computes a canonical divisor
+Usage
+ K=canonicalDivisor(SX)
+Inputs
+ SX:Ring
+    the coordinate ring of X
+Outputs
+ K:Divisor
+     a canonical divisor of X
+Consequences
+Description
+  Text
+  Example
+    R = QQ[x_0..x_2];
+    C = random(4,R);
+    K = canonicalDivisor(R/C)
+  Text
+     We construct a canonical curve of genus 7
+  Example
+    kk = ZZ/32003;
+    R = kk[x_0..x_2];
+    Pts = intersect(ideal(x_1,x_2), ideal(x_0,x_2), ideal(x_0,x_1)); 
+    A = mingens Pts;
+    B = mingens intersect( (ideal(x_1,x_2))^2, (ideal(x_0,x_2))^2, (ideal(x_0,x_1))^2);
+    X = ideal (B*random(source B,R^{-6}));
+    phi = matrix {apply(7, i -> (A*random(source A, R^{-3}))_(0,0))};
+    S = kk[y_0..y_6];
+    PHI = map(R,S,phi);
+  Text
+      and compute the canonical divisor of this curve
+  Example
+     C = preimage_PHI(X);	  
+     degree C
+     genus C
+     K = canonicalDivisor(S/C)
+///
+
+doc ///
+Key
+ lineBundleFromDivisor
+Headline
+ computes a line bundle from a divisor
+Usage
+ L=lineBundleFromDivisor(D,X)
+Inputs
+ D:Divisor
+ X:ProjectiveVariety
+Outputs
+ L:CoherentSheaf
+   line bundle on X associated to D
+Consequences
+Description
+  Text
+  Example
+    R = QQ[a..d];
+    I = ideal(random(6,R));
+    S = R/I;
+    X = Proj(S);
+    D = divisor( ideal a^3, ideal b^2);
+    lineBundleFromDivisor(D,X)
+  Example
+    kk = ZZ/101;
+    R = kk[x_0..x_3];	  
+    C = ideal (x_0*x_3 - x_1*x_2);
+    S = R/C;
+    X = Proj(S);
+    I = ideal(x_0,x_1);
+    D = divisor I
+    lineBundleFromDivisor(D,X)  
+Caveat
+SeeAlso
+///
+
+
 
 
 end
