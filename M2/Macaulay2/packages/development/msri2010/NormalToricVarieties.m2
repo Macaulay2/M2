@@ -308,7 +308,6 @@ isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
 	       U := matrix((rays X)_C);
 	       a := transpose matrix {D_C};
 	       n := numColumns U;
-	       print(U,a);
 	       m := systemSolver(if numRows U > n then (U^{0..n-1},a^{0..n-1}) else (U,a));--^{0..n-1},a^{0..n-1});
 	       if U*m-a != 0 then break{} else m));
      X.cache.isQQCartier#D != {})
