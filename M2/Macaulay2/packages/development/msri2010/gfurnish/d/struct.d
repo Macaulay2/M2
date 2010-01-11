@@ -79,6 +79,22 @@ export accumulate(
 	       g))
      else f1(e));
 
+export accumulate(localInterpState:threadLocalInterp,
+     f0:function():Expr, f1:function(Expr):Expr,
+     f2:function(threadLocalInterp,Expr,Expr):Expr, e:Expr):Expr := (
+     when e
+     is a:Sequence do (
+	  if length(a) == 0 then f0()
+	  else if length(a) == 1 then f1(a.0)
+	  else (
+	       g := a.0;
+	       for i from 1 to length(a)-1 do (
+		    g = f2(localInterpState,g,a.i);
+		    when g is Error do return g else nothing;
+		    );
+	       g))
+     else f1(e));
+
 export map(f:function(Expr):Expr,a:Sequence):Sequence := (
      new Sequence len length(a) do foreach x in a do provide f(x));
 export join(v:Sequence,w:Sequence):Sequence := (

@@ -636,7 +636,7 @@ timesfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      else (
      	  r := eval(localInterpState,rhs);
      	  when r is Error do r
-	  else l*r));
+	  else RealTimes(localInterpState,l,r)));
 setup(StarS,starfun,timesfun);
 
 -- functions

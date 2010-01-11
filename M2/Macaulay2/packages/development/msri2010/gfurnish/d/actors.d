@@ -29,7 +29,7 @@ export plus1(e:Expr) : Expr := e;
 times1 := plus1;
 
 
-RealPlus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
+export RealPlus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
@@ -102,9 +102,7 @@ RealPlus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      is Error do lhs
      else binarymethod(localInterpState,lhs,rhs,PlusS));
 
-export (lhs:Expr) + (rhs:Expr) : Expr := RealPlus(threadLocalInterpState,lhs,rhs);
-
-plus(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(plus0,plus1,op+,e);
+plus(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(localInterpState,plus0,plus1,RealPlus,e);
 setupfun("plus",plus);
 
 plusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := (
@@ -125,7 +123,7 @@ plusfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      else (
      	  r := eval(localInterpState,rhs);
      	  when r is Error do r
-	  else l+r));
+	  else RealPlus(localInterpState,l,r)));
 setup(PlusS,plusfun1,plusfun);
 
 
@@ -147,9 +145,7 @@ RealMinus(localInterpState:threadLocalInterp,rhs:Expr):Expr := (
 	  then buildErrorPacket("no method found")
 	  else applyEE(localInterpState,method,Expr(rhs))));
 
-export - (rhs:Expr) : Expr := RealMinus(threadLocalInterpState, rhs);
-
-minusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := - eval(localInterpState,rhs);
+minusfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := RealMinus( localInterpState, eval(localInterpState,rhs));
 
 RealMinus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
@@ -224,35 +220,32 @@ RealMinus(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      is Error do lhs
      else binarymethod(localInterpState,lhs,rhs,MinusS));
 
-
-export (lhs:Expr) - (rhs:Expr) : Expr := RealMinus(threadLocalInterpState,lhs,rhs);
-
 minusfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(localInterpState,lhs);
      when l is Error do l
      else (
      	  r := eval(localInterpState,rhs);
      	  when r is Error do r
-	  else l-r));
+	  else RealMinus(localInterpState,l,r)));
 setup(MinusS,minusfun1,minusfun2);
 minusfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
-	  if length(a) == 1 then -a.0
+	  if length(a) == 1 then RealMinus(localInterpState,a.0)
 	  else WrongNumArgs(1))
-     else -e);
+     else RealMinus(localInterpState,e));
 setupfun("minus",minusfun);
 differencefun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is a:Sequence do (
-	  if length(a) == 2 then a.0-a.1
+	  if length(a) == 2 then RealMinus(localInterpState,a.0,a.1)
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("difference",differencefun);
 one := toInteger(1);
 minusone := toInteger(-1);
 
-RealTimes(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
+export RealTimes(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
@@ -354,9 +347,7 @@ RealTimes(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
 	  when rhs is Error do rhs
 	  else binarymethod(localInterpState,lhs,rhs,StarS)));
 
-export (lhs:Expr) * (rhs:Expr) : Expr := RealTimes(threadLocalInterpState,lhs,rhs);
-
-times(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(times0,times1,op*,e);
+times(localInterpState:threadLocalInterp,e:Expr):Expr := accumulate(localInterpState,times0,times1,RealTimes,e);
 setupfun("times",times);
 
 RealDivide(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
@@ -444,7 +435,7 @@ RealDivide(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      is Error do lhs
      else binarymethod(localInterpState,lhs,rhs,DivideS));
 
-export (lhs:Expr) / (rhs:Expr) : Expr := RealDivide(threadLocalInterpState,lhs,rhs);
+
 
 divideC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(localInterpState,lhs);
@@ -452,7 +443,7 @@ divideC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      else (
      	  r := eval(localInterpState,rhs);
      	  when r is Error do r
-	  else l/r));
+	  else RealDivide(localInterpState,l,r)));
 setup(DivideS,divideC);
 RealQuotient(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
      when lhs
@@ -476,14 +467,14 @@ RealQuotient(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
 	  else binarymethod(localInterpState,lhs,rhs,SlashSlashS))
      is Error do lhs
      else binarymethod(localInterpState,lhs,rhs,SlashSlashS));
-export (lhs:Expr) // (rhs:Expr) : Expr := RealQuotient(threadLocalInterpState,lhs,rhs);
+
 quotientC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(localInterpState,lhs);
      when l is Error do l
      else (
      	  r := eval(localInterpState,rhs);
      	  when r is Error do r
-	  else l//r));
+	  else RealQuotient(localInterpState,l,r)));
 setup(SlashSlashS,quotientC);
 
 BackslashBackslashFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,BackslashBackslashS);
@@ -529,12 +520,12 @@ BinaryPowerMethod(localInterpState:threadLocalInterp,x:Expr,y:Expr):Expr := (
 	       if (n & 1) != 0 then (
 		    if z == nullE then z=w
 		    else (
-			 z=z*w;
+			 z=RealTimes(localInterpState,z,w);
 			 when z is Error do return z else nothing;
 			 ));
 	       n = n >> 1;
 	       if n == 0 then break;
-	       w = w*w;
+	       w = RealTimes(localInterpState,w,w);
 	       when w is Error do return w else nothing;
 	       );
 	  z)
@@ -564,7 +555,7 @@ SimplePowerMethod(localInterpState:threadLocalInterp,x:Expr,y:Expr):Expr := (
 	  n := toInt(i);
 	  z := x;
 	  while n>1 do (
-	       z = x*z;
+	       z = RealTimes(localInterpState,x,z);
 	       n = n-1;
 	       );
 	  z)
@@ -690,18 +681,17 @@ RealPower(localInterpState:threadLocalInterp,lhs:Expr,rhs:Expr):Expr := (
 	  else binarymethod(localInterpState,lhs,rhs,DivideS))
      else binarymethod(localInterpState,lhs,rhs,PowerS));
 
-export (lhs:Expr) ^ (rhs:Expr) : Expr := RealPower(threadLocalInterpState,lhs,rhs);
 powerC(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      l := eval(localInterpState,lhs);
      when l is Error do l
      else (
      	  r := eval(localInterpState,rhs);
      	  when r is Error do r
-	  else l^r));
+	  else RealPower(localInterpState,l,r)));
 setup(PowerS,powerC);
 powerfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is a:Sequence do
-     if length(a) == 2 then a.0^a.1
+     if length(a) == 2 then RealPower(localInterpState,a.0,a.1)
      else WrongNumArgs("^",2)
      else WrongNumArgs("^",2));
 setupfun("power",powerfun);
