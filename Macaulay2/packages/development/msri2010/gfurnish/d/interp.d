@@ -172,7 +172,7 @@ readeval4(localInterpState:threadLocalInterp,file:TokenFile,printout:bool,dictio
 			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
 			      )
 			 else (
-			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
+			      if localBind(localInterpState,parsed,dictionary) -- assign scopes to tokens, look up symbols
 			      then (		  
 				   -- result of BeforeEval is ignored unless error:
 				   -- BeforeEval method is independent of mode
@@ -283,7 +283,7 @@ InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt")
 
 promptcount := 0;
 topLevelPrompt():string := (
-     localInterpState := threadLocalInterpState;
+     localInterpState := Ccode(threadLocalInterp, "getCurrentThreadLocalInterp()");
      if debugLevel == 123 then (
 	  stderr <<  "-- topLevelPrompt:" 
 	  << " previousLineNumber = " << previousLineNumber 
@@ -550,8 +550,10 @@ Exit(err:Error):void := exit(
      else errorExit
      );
 
-export process(localInterpState:threadLocalInterp):void := (
-     localInterpState = threadLocalInterpState;
+export process():void := (
+     localInterpState := threadLocalInterp(dummyFrame);
+     Ccode(void, "setCurrentThreadLocalInterp(",localInterpState,")");
+--     threadLocalInterpState = localInterpState;
      localInterpState.localFrame = globalFrame;
      previousLineNumber = -1;			  -- might have done dumpdata()
      stdin .inisatty  =   0 != isatty(0) ;

@@ -1910,7 +1910,11 @@ enum gbTraceValues
   M2_RRRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN);
   const MatrixOrNull *rawRefinePT(PathTracker* PT, const Matrix* sols, M2_RRR tolerance, int max_corr_steps_refine);
 
-  void rawLaunchThread();
+  void startThreadPool(int numPoolThreads);
+  struct threadLocalInterp;
+  void setCurrentThreadLocalInterp(struct threadLocalInterp* tli);
+  struct threadLocalInterp* getCurrentThreadLocalInterp();
+  struct threadLocalInterp* getStartupThreadLocalInterp();
 
 
 #if defined(__cplusplus)

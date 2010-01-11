@@ -818,7 +818,7 @@ factorInt(localInterpState:threadLocalInterp,n:int):Expr := (
 	       key := Expr(toInteger(d));
 	       storeInHashTable(facs,key, 
 		    if hadone 
-		    then lookup1(facs,key) + Expr(toInteger(1))
+		    then RealPlus(localInterpState,lookup1(facs,key),Expr(toInteger(1)))
 		    else Expr(toInteger(1)));
 	       n = n / d;
 	       hadone = true;
@@ -834,7 +834,7 @@ factorInt(localInterpState:threadLocalInterp,n:int):Expr := (
 	       	    key := Expr(toInteger(d));
 		    storeInHashTable(facs,key, 
 			 if hadodd
-			 then lookup1(facs,key) + Expr(toInteger(1))
+			 then RealPlus(localInterpState,lookup1(facs,key),Expr(toInteger(1)))
 			 else Expr(toInteger(1)));
 		    n = n / d;
 		    hadodd = true;
@@ -1585,33 +1585,33 @@ setupconst("operatorNames",Expr(operatorNames));
 
 issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
 
-getglobalsym(d:Dictionary,s:string):Expr := (
+getglobalsym(localInterpState:threadLocalInterp,d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
 	  if d.protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,d);
+	  t := makeSymbol(localInterpState,w,dummyPosition,d);
 	  globalFrame.values.(t.frameindex)));
 
-getglobalsym(s:string):Expr := (
+getglobalsym(localInterpState:threadLocalInterp,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when globalLookup(w)
      is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
 	  if globalDictionary.protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,globalDictionary);
+	  t := makeSymbol(localInterpState,w,dummyPosition,globalDictionary);
 	  globalFrame.values.(t.frameindex)));
 
 getGlobalSymbol(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e 
-     is s:string do getglobalsym(s)
+     is s:string do getglobalsym(localInterpState,s)
      is z:Sequence do if length(z) != 2 then WrongNumArgs(2) else (
 	  when z.0
 	  is dc:DictionaryClosure do (
 	       d := dc.dictionary;
 	       if !isglobaldict(d) then WrongArg(1,"a global dictionary") else
 	       when z.1
-	       is s:string do getglobalsym(d,s)
+	       is s:string do getglobalsym(localInterpState,d,s)
 	       else WrongArgString(2)
 	       )
 	  else WrongArg(1,"a dictionary")

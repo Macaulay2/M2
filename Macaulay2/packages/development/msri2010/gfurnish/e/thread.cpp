@@ -7,10 +7,27 @@
 #include "threadpool.hpp"
 #include "thread.hpp"
 
+extern "C" {
+extern void interp_process(), interp_process2();
+}
 
-void* threadEntryPoint(void* userPtr);
 
-M2Thread::M2Thread(M2ThreadPool* pool, int id):m_ThreadId(id),m_ThreadPool(pool)
+void setCurrentThreadLocalInterp(struct threadLocalInterp* tli)
+{
+  M2Thread::getCurrentThread()->setThreadLocalInterp(tli);
+}
+struct threadLocalInterp* getCurrentThreadLocalInterp()
+{
+  struct threadLocalInterp* tli = M2Thread::getCurrentThread()->getThreadLocalInterp();
+  return tli;
+}
+struct threadLocalInterp* getStartupThreadLocalInterp()
+{
+  struct threadLocalInterp* tli = M2ThreadPool::m_Singleton->startThread()->getThreadLocalInterp();
+  return tli;
+}
+
+M2Thread::M2Thread(M2ThreadPool* pool, int id):m_ThreadId(id),m_ThreadPool(pool),m_ThreadLocalInterp(NULL)
 {
   
 }
@@ -27,28 +44,15 @@ void M2Thread::join()
 void* M2Thread::threadEntryPoint()
 {
   setCurrentThread();
-  std::cout << "Thread Test" << std::endl;
-  std::cout << IM2_Ring_ZZ() << std::endl;
-  const Ring* ZZ = IM2_Ring_ZZ();
-  buffer buf;
-  ZZ->text_out(buf);
-  std::cout << buf.str() << std::endl;
-  std::cout << this << " " << getCurrentThread() << std::endl;
-  for(int i = 0; i < 20000000; ++i)
-    {
-      ring_elem rz = ZZ->random();
-      buffer buf2;
-      ZZ->elem_text_out(buf2,rz);
-    }
-  std::cout << "stress test done" << std::endl;
+  interp_process();
   return NULL;
 }
 void posixDestructor(void*) { }
 void M2Thread::setCurrentThread()
 {
-  pthread_setspecific(m_ThreadPool->ThreadKey(),this);
+  pthread_setspecific(M2ThreadPool::m_Singleton->ThreadKey(),this);
 }
 M2Thread* M2Thread::getCurrentThread()
 {
-  return (M2Thread*) pthread_getspecific(m_ThreadPool->ThreadKey());
+  return (M2Thread*) pthread_getspecific(M2ThreadPool::m_Singleton->ThreadKey());
 }

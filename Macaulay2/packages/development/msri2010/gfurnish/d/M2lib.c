@@ -792,7 +792,7 @@ char **argv;
 	  }
      else {
           out_of_memory_jump_set = TRUE;
-          interp_process();
+	  startThreadPool(0);
      }
      clean_up();
 #if 0

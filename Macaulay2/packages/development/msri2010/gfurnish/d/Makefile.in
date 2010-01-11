@@ -127,7 +127,6 @@ DFILES += mysql.d
 else
 DFILES += mysqldummy.d
 endif
-DFILES += thread.d
 DFILES += evaluate.d
 DFILES += objects.d
 DFILES += struct.d

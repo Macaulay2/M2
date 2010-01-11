@@ -64,7 +64,7 @@ enlarge(f:Frame):int := (
 	       foreach value in f.values do provide value;
 	       while true do provide nullE));
      n);
-export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
+export makeEntry(localInterpState:threadLocalInterp,word:Word,position:Position,dictionary:Dictionary):Symbol := (
      while dictionary.protected do (
 	  if dictionary == dictionary.outerDictionary then (
 	       -- shouldn't occur
@@ -78,11 +78,11 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      if dictionary.frameID == 0 then (
 	  -- this allows the global frame to grow
 	  frameindex = enlarge(globalFrame))
-     else if dictionary.frameID == threadLocalInterpState.localFrame.frameID then (
+     else if dictionary.frameID == localInterpState.localFrame.frameID then (
 	  -- this should take care of scopes which span a file,
 	  -- or the dictionary for a break loop
 	  -- and have a single frame which ought to be allowed to grow
-	  frameindex = enlarge(threadLocalInterpState.localFrame) )
+	  frameindex = enlarge(localInterpState.localFrame) )
      else (
 	  -- this is a dynamic frame, not allocated yet
 	  frameindex = dictionary.framesize;
@@ -101,26 +101,27 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	       false
 	       ),
 	  dictionary.symboltable));
-export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     entry := makeEntry(word,position,dictionary);
+export makeSymbol(localInterpState:threadLocalInterp,word:Word,position:Position,dictionary:Dictionary):Symbol := (
+     entry := makeEntry(localInterpState,word,position,dictionary);
      if dictionary.frameID == 0 && isalnum(word.name)
      then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
      entry);
-export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
-     entry := makeSymbol(w,dummyPosition,globalDictionary);
+export makeProtectedSymbolClosure(localInterpState:threadLocalInterp,w:Word):SymbolClosure := (
+     entry := makeSymbol(localInterpState,w,dummyPosition,globalDictionary);
      entry.protected = true;
      when globalFrame.values.(entry.frameindex)
      is s:SymbolClosure do s
      else SymbolClosure(globalFrame,entry));
-makeKeyword(w:Word):SymbolClosure := (
+makeKeyword(localInterpState:threadLocalInterp,w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
-     entry := makeEntry(w,dummyPosition,globalDictionary);
+     entry := makeEntry(localInterpState,w,dummyPosition,globalDictionary);
      entry.protected = true;
      sc := SymbolClosure(globalFrame,entry);
      globalFrame.values.(entry.frameindex) = Expr(sc);
      sc);
-export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
-makeKeyword(s:string):SymbolClosure := makeKeyword(makeUniqueWord(s,parseWORD));
+export bindThreadLocalInterp := threadLocalInterp(dummyFrame);
+export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(bindThreadLocalInterp,makeUniqueWord(s,parseWORD));
+makeKeyword(s:string):SymbolClosure := makeKeyword(bindThreadLocalInterp,makeUniqueWord(s,parseWORD));
 -----------------------------------------------------------------------------
 prec := 0;
 bump():void := prec = prec + 2;
@@ -154,11 +155,11 @@ parens(left:string,right:string,leftprec:int,rightprec:int,unaryStrength:int):Wo
      install(left,l);
      install(right,r);
      addmatch(left,right);
-     makeKeyword(l);
-     makeKeyword(r);
+     makeKeyword(bindThreadLocalInterp,l);
+     makeKeyword(bindThreadLocalInterp,r);
      l);
 special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:int):SymbolClosure := (
-     makeKeyword(makeUniqueWord(s, parseinfo(lprec, nopr, rprec, parsefuns(f, defaultbinary)))));
+     makeKeyword(bindThreadLocalInterp,makeUniqueWord(s, parseinfo(lprec, nopr, rprec, parsefuns(f, defaultbinary)))));
 
 -- Now the symbols and operators:
 
@@ -180,103 +181,103 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:
 
 bump();
      wordEOF = nleftword("{*end of file*}");
-     makeKeyword(wordEOF);
+     makeKeyword(bindThreadLocalInterp,wordEOF);
 bump();
      wordEOC = nleftword("{*end of cell*}");
-     makeKeyword(wordEOC);
+     makeKeyword(bindThreadLocalInterp,wordEOC);
 bump();
      precRightParen := prec;
 bump();
      export SemicolonW := nright(";");
-     export SemicolonS := makeKeyword(SemicolonW);
+     export SemicolonS := makeKeyword(bindThreadLocalInterp,SemicolonW);
      NewlineW = nleftword("{*newline*}");
 bump();
-     export CommaW := nunarybinaryleft(","); export commaS := makeKeyword(CommaW);
+     export CommaW := nunarybinaryleft(","); export commaS := makeKeyword(bindThreadLocalInterp,CommaW);
 bump();
      wide := prec;
-     elseW = token("else"); makeKeyword(elseW);
-     thenW = token("then"); makeKeyword(thenW);
-     doW = token("do"); makeKeyword(doW);
-     listW = token("list"); makeKeyword(listW);
+     elseW = token("else"); makeKeyword(bindThreadLocalInterp,elseW);
+     thenW = token("then"); makeKeyword(bindThreadLocalInterp,thenW);
+     doW = token("do"); makeKeyword(bindThreadLocalInterp,doW);
+     listW = token("list"); makeKeyword(bindThreadLocalInterp,listW);
 bump();
-     export ColonEqualW := binaryright(":="); export ColonEqualS := makeKeyword(ColonEqualW);
-     export EqualW := binaryright("="); export EqualS := makeKeyword(EqualW);
-     export LeftArrowW := binaryright("<-"); export LeftArrowS := makeKeyword(LeftArrowW);
-     export RightArrowW := binaryright("->",arrowop); export RightArrowS := makeKeyword(RightArrowW);
-     export DoubleArrowS := makeKeyword(binaryright("=>"));
-     export GreaterGreaterS := makeKeyword(binaryright(">>"));
+     export ColonEqualW := binaryright(":="); export ColonEqualS := makeKeyword(bindThreadLocalInterp,ColonEqualW);
+     export EqualW := binaryright("="); export EqualS := makeKeyword(bindThreadLocalInterp,EqualW);
+     export LeftArrowW := binaryright("<-"); export LeftArrowS := makeKeyword(bindThreadLocalInterp,LeftArrowW);
+     export RightArrowW := binaryright("->",arrowop); export RightArrowS := makeKeyword(bindThreadLocalInterp,RightArrowW);
+     export DoubleArrowS := makeKeyword(bindThreadLocalInterp,binaryright("=>"));
+     export GreaterGreaterS := makeKeyword(bindThreadLocalInterp,binaryright(">>"));
 bump();
-     whenW = token("when"); makeKeyword(whenW);
-     ofW = token("of"); makeKeyword(ofW);
-     inW = token("in"); makeKeyword(inW);
-     fromW = token("from"); makeKeyword(fromW);
-     toW = token("to"); makeKeyword(toW);
+     whenW = token("when"); makeKeyword(bindThreadLocalInterp,whenW);
+     ofW = token("of"); makeKeyword(bindThreadLocalInterp,ofW);
+     inW = token("in"); makeKeyword(bindThreadLocalInterp,inW);
+     fromW = token("from"); makeKeyword(bindThreadLocalInterp,fromW);
+     toW = token("to"); makeKeyword(bindThreadLocalInterp,toW);
      narrow := prec;
 bump();
-     export LessLessS := makeKeyword(unarybinaryleft("<<"));	    -- also binary
+     export LessLessS := makeKeyword(bindThreadLocalInterp,unarybinaryleft("<<"));	    -- also binary
 bump();
-     export DeductionS := makeKeyword(unarybinaryright("|-"));	    -- also binary
+     export DeductionS := makeKeyword(bindThreadLocalInterp,unarybinaryright("|-"));	    -- also binary
 bump();
-     export LongLongDoubleRightArrowS := makeKeyword(binaryright("===>"));
-     export LongLongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==="));
+     export LongLongDoubleRightArrowS := makeKeyword(bindThreadLocalInterp,binaryright("===>"));
+     export LongLongDoubleLeftArrowS := makeKeyword(bindThreadLocalInterp,unarybinaryright("<==="));
 bump();
-     export LongBiDoubleArrowS := makeKeyword(binaryright("<==>"));
+     export LongBiDoubleArrowS := makeKeyword(bindThreadLocalInterp,binaryright("<==>"));
 bump();
-     export LongDoubleRightArrowS := makeKeyword(binaryright("==>"));
-     export LongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==")); -- also binary
+     export LongDoubleRightArrowS := makeKeyword(bindThreadLocalInterp,binaryright("==>"));
+     export LongDoubleLeftArrowS := makeKeyword(bindThreadLocalInterp,unarybinaryright("<==")); -- also binary
 bump();
-     export orS := makeKeyword(binaryrightword("or"));
+     export orS := makeKeyword(bindThreadLocalInterp,binaryrightword("or"));
 bump();
-     export andS := makeKeyword(binaryrightword("and"));
+     export andS := makeKeyword(bindThreadLocalInterp,binaryrightword("and"));
 bump();
-     export notS := makeKeyword(unaryword("not"));
+     export notS := makeKeyword(bindThreadLocalInterp,unaryword("not"));
 -- binary predicates on terms:
 bump();
      export incomparableS := makeProtectedSymbolClosure("incomparable");
-     export LessS := makeKeyword(unarybinaryright("<"));
-     export GreaterS := makeKeyword(unarybinaryright(">"));
-     export LessEqualS := makeKeyword(unarybinaryright("<="));
-     export GreaterEqualS := makeKeyword(unarybinaryright(">="));
-     export EqualEqualEqualS := makeKeyword(binaryright("==="));
-     export EqualEqualS := makeKeyword(binaryright("=="));
-     export QuestionS := makeKeyword(unarybinaryright("?"));
-     export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
-     export NotEqualS := makeKeyword(binaryright("!="));
+     export LessS := makeKeyword(bindThreadLocalInterp,unarybinaryright("<"));
+     export GreaterS := makeKeyword(bindThreadLocalInterp,unarybinaryright(">"));
+     export LessEqualS := makeKeyword(bindThreadLocalInterp,unarybinaryright("<="));
+     export GreaterEqualS := makeKeyword(bindThreadLocalInterp,unarybinaryright(">="));
+     export EqualEqualEqualS := makeKeyword(bindThreadLocalInterp,binaryright("==="));
+     export EqualEqualS := makeKeyword(bindThreadLocalInterp,binaryright("=="));
+     export QuestionS := makeKeyword(bindThreadLocalInterp,unarybinaryright("?"));
+     export NotEqualEqualEqualS := makeKeyword(bindThreadLocalInterp,binaryright("=!="));
+     export NotEqualS := makeKeyword(bindThreadLocalInterp,binaryright("!="));
 -- operations on terms that yield terms:
 bump();
-     export BarBarS := makeKeyword(binaryleft("||"));
+     export BarBarS := makeKeyword(bindThreadLocalInterp,binaryleft("||"));
 bump();
-     export ColonS := makeKeyword(binaryright(":"));
+     export ColonS := makeKeyword(bindThreadLocalInterp,binaryright(":"));
 bump();
-     export BarS := makeKeyword(binaryleft("|"));
+     export BarS := makeKeyword(bindThreadLocalInterp,binaryleft("|"));
 bump();
-     export HatHatS := makeKeyword(binaryleft("^^"));
+     export HatHatS := makeKeyword(bindThreadLocalInterp,binaryleft("^^"));
 bump();
-     export AmpersandS := makeKeyword(binaryleft("&"));
+     export AmpersandS := makeKeyword(bindThreadLocalInterp,binaryleft("&"));
 bump();
-     export DotDotS := makeKeyword(binaryleft(".."));
-     export DotDotLessS := makeKeyword(binaryleft("..<"));
+     export DotDotS := makeKeyword(bindThreadLocalInterp,binaryleft(".."));
+     export DotDotLessS := makeKeyword(bindThreadLocalInterp,binaryleft("..<"));
 bump();
-     export MinusS := makeKeyword(unarybinaryleft("-"));	    -- also binary
-     export PlusS := makeKeyword(unarybinaryleft("+"));	    -- also binary
-     export PlusPlusS := makeKeyword(binaryleft("++"));
+     export MinusS := makeKeyword(bindThreadLocalInterp,unarybinaryleft("-"));	    -- also binary
+     export PlusS := makeKeyword(bindThreadLocalInterp,unarybinaryleft("+"));	    -- also binary
+     export PlusPlusS := makeKeyword(bindThreadLocalInterp,binaryleft("++"));
 bump();
-     export StarStarS := makeKeyword(binaryleft("**"));
+     export StarStarS := makeKeyword(bindThreadLocalInterp,binaryleft("**"));
 bump();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
 bump();
-     export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
-     export StarS := makeKeyword(unarybinaryleft("*"));	    -- also binary
-     export DivideS := makeKeyword(binaryleft("/"));
-     export LeftDivideS := makeKeyword(binaryright("\\"));
-     export PercentS := makeKeyword(binaryleft("%"));
-     export SlashSlashS := makeKeyword(binaryleft("//"));
+     export BackslashBackslashS := makeKeyword(bindThreadLocalInterp,binaryright("\\\\"));
+     export StarS := makeKeyword(bindThreadLocalInterp,unarybinaryleft("*"));	    -- also binary
+     export DivideS := makeKeyword(bindThreadLocalInterp,binaryleft("/"));
+     export LeftDivideS := makeKeyword(bindThreadLocalInterp,binaryright("\\"));
+     export PercentS := makeKeyword(bindThreadLocalInterp,binaryleft("%"));
+     export SlashSlashS := makeKeyword(bindThreadLocalInterp,binaryleft("//"));
 bump();
-     export AtS := makeKeyword(binaryright("@"));
+     export AtS := makeKeyword(bindThreadLocalInterp,binaryright("@"));
 bump();
      precSpace = prec;
-     export AdjacentS:=makeKeyword(binaryright("SPACE"));
+     export AdjacentS:=makeKeyword(bindThreadLocalInterp,binaryright("SPACE"));
      export leftparen   := parens("(",")",precSpace, precRightParen, precRightParen);
      export leftbrace   := parens("{","}",precSpace, precRightParen, precRightParen);
      parseWORD.precedence = prec; parseWORD.binaryStrength = nopr; parseWORD.unaryStrength = nopr;
@@ -296,23 +297,23 @@ bump();
      special("try",unarytry,precSpace,wide);
      special("catch",unarycatch,precSpace,wide);
 bump();
-     export ParenStarParenS := makeKeyword(postfix("(*)"));
+     export ParenStarParenS := makeKeyword(bindThreadLocalInterp,postfix("(*)"));
 bump();
-     export AtAtS := makeKeyword(binaryleft("@@"));
+     export AtAtS := makeKeyword(bindThreadLocalInterp,binaryleft("@@"));
 bump();
-     export TildeS := makeKeyword(postfix("~"));
-     export UnderscoreStarS := makeKeyword(postfix("_*"));
-     export PowerStarS := makeKeyword(postfix("^*"));
+     export TildeS := makeKeyword(bindThreadLocalInterp,postfix("~"));
+     export UnderscoreStarS := makeKeyword(bindThreadLocalInterp,postfix("_*"));
+     export PowerStarS := makeKeyword(bindThreadLocalInterp,postfix("^*"));
 bump();
-     export PowerS := makeKeyword(binaryleft("^"));
-     export PowerStarStarS := makeKeyword(binaryleft("^**"));
-     export UnderscoreS := makeKeyword(binaryleft("_"));
-     export SharpS := makeKeyword(unarybinaryleft("#")); SharpS.symbol.word.parse.unaryStrength = precSpace-1;
-     export SharpQuestionS := makeKeyword(binaryleft("#?"));
-     export DotS := makeKeyword(binaryleft("."));
-     export DotQuestionS := makeKeyword(binaryleft(".?"));
+     export PowerS := makeKeyword(bindThreadLocalInterp,binaryleft("^"));
+     export PowerStarStarS := makeKeyword(bindThreadLocalInterp,binaryleft("^**"));
+     export UnderscoreS := makeKeyword(bindThreadLocalInterp,binaryleft("_"));
+     export SharpS := makeKeyword(bindThreadLocalInterp,unarybinaryleft("#")); SharpS.symbol.word.parse.unaryStrength = precSpace-1;
+     export SharpQuestionS := makeKeyword(bindThreadLocalInterp,binaryleft("#?"));
+     export DotS := makeKeyword(bindThreadLocalInterp,binaryleft("."));
+     export DotQuestionS := makeKeyword(bindThreadLocalInterp,binaryleft(".?"));
 bump();
-     export ExclamationS := makeKeyword(postfix("!"));
+     export ExclamationS := makeKeyword(bindThreadLocalInterp,postfix("!"));
 bump();
      special("symbol",unarysymbol,precSpace,prec);
      special("global",unaryglobal,precSpace,prec);
@@ -347,8 +348,8 @@ export NewOfFromE := Expr(NewOfFromS);
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
 -----------------------------------------------------------------------------
-export makeSymbol(token:Token):Symbol := (
-     e := makeSymbol(token.word,position(token),token.dictionary);
+export makeSymbol(localInterpState:threadLocalInterp,token:Token):Symbol := (
+     e := makeSymbol(localInterpState,token.word,position(token),token.dictionary);
      token.entry = e;
      e);
 HadError := false;
@@ -360,11 +361,11 @@ export makeErrorTree(e:Token,message:string):void := (
      HadError = true;
      printErrorMessage(e,message);
      );
-makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
+makeSymbol(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary):void := (
      when e
      is token:Token do (
 	  token.dictionary = dictionary;
-	  makeSymbol(token);)
+	  makeSymbol(localInterpState,token);)
      else makeErrorTree(e,"expected single identifier"));
 -----------------------------------------------------------------------------
 cleanGlobalFrame():void := globalFrame.values = emptySequence;
@@ -399,7 +400,7 @@ export lookup(w:Word,d:Dictionary):(null or Symbol) := (
 	  when lookup(w,d.symboltable) is null do nothing is e:Symbol do return e;
 	  d != d.outerDictionary ) do d = d.outerDictionary;
      globalLookup(w));
-lookup(token:Token,forcedef:bool):void := (
+lookup(localInterpState:threadLocalInterp,token:Token,forcedef:bool):void := (
      n := length(token.word.name);
      if n >= 1 && isdigit(token.word.name.0) 
      || n >= 2 && token.word.name.0 == '.' && isdigit(token.word.name.1)
@@ -418,13 +419,13 @@ lookup(token:Token,forcedef:bool):void := (
 	       then (
 		    -- undefined variables are defined as global and static here
 	       	    token.dictionary = globalDictionary;
-	       	    makeSymbol(token);
+	       	    makeSymbol(localInterpState,token);
 		    )
 	       else (
 	       	    printErrorMessage(token,"undefined token " + token.word.name);
 	       	    HadError=true;))));
-lookup(token:Token):void := lookup(token,true);
-lookuponly(token:Token):void := lookup(token,false);
+lookup(localInterpState:threadLocalInterp,token:Token):void := lookup(localInterpState,token,true);
+lookuponly(localInterpState:threadLocalInterp,token:Token):void := lookup(localInterpState,token,false);
 -----------------------------------------------------------------------------
 export opsWithBinaryMethod := array(SymbolClosure)(
      LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, 
@@ -450,46 +451,46 @@ export fixedPrefixOperators := array(SymbolClosure)(commaS,SharpS);
 export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
 
 -----------------------------------------------------------------------------
-bind(token:Token,dictionary:Dictionary):void := (
+bind(localInterpState:threadLocalInterp,token:Token,dictionary:Dictionary):void := (
      token.dictionary = dictionary;
-     lookup(token););
-bindop(token:Token,dictionary:Dictionary):void := (
+     lookup(localInterpState,token););
+bindop(localInterpState:threadLocalInterp,token:Token,dictionary:Dictionary):void := (
      token.dictionary = dictionary;
-     lookuponly(token););
-export bind(e:ParseTree,dictionary:Dictionary):void;
-bindFormalParm(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
+     lookuponly(localInterpState,token););
+export bind(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary):void;
+bindFormalParm(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e
      is t:Token do (
-	  if t.word.typecode == TCid then makeSymbol(e,dictionary)
+	  if t.word.typecode == TCid then makeSymbol(localInterpState,e,dictionary)
 	  else makeErrorTree(t,"expected symbol");
 	  desc.numparms = desc.numparms + 1;
 	  )
      else makeErrorTree(e,"syntax error: expected function parameter"));
-bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
+bindFormalParmList(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is binary:Binary do (
 	  if binary.operator.word == CommaW
 	  then (
-	       bindFormalParmList(binary.lhs,dictionary,desc);
-	       bindop(binary.operator,dictionary);
-	       bindFormalParm(binary.rhs,dictionary,desc);)
+	       bindFormalParmList(localInterpState,binary.lhs,dictionary,desc);
+	       bindop(localInterpState,binary.operator,dictionary);
+	       bindFormalParm(localInterpState,binary.rhs,dictionary,desc);)
 	  else makeErrorTree(e,"syntax error: expected function parameter list"))
-     else bindFormalParm(e,dictionary,desc));
-bindSingleParm(e:ParseTree,dictionary:Dictionary):void := (
+     else bindFormalParm(localInterpState,e,dictionary,desc));
+bindSingleParm(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary):void := (
      when e 
      is t:Token do (
-	  if t.word.typecode == TCid then makeSymbol(e,dictionary)
+	  if t.word.typecode == TCid then makeSymbol(localInterpState,e,dictionary)
 	  else makeErrorTree(t,"expected symbol")
 	  )
      else makeErrorTree(e,"expected symbol"));
-bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
+bindParenParmList(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is t:Token do (
-	  bindFormalParm(e,dictionary,desc);
+	  bindFormalParm(localInterpState,e,dictionary,desc);
 	  desc.restargs = true;
 	  )
      is p:Parentheses do (
-	  bindFormalParmList(p.contents,dictionary,desc)
+	  bindFormalParmList(localInterpState,p.contents,dictionary,desc)
 	  )
      is p:EmptyParentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
@@ -505,7 +506,7 @@ opHasPostfixMethod(o:Symbol):bool := (
      foreach s in opsWithPostfixMethod do if s.symbol == o then return true;
      return false;
      );
-bindTokenLocally(token:Token,dictionary:Dictionary):void := (
+bindTokenLocally(localInterpState:threadLocalInterp,token:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 0;
      r := lookup(token.word,dictionary);
      lookupCountIncrement = 1;
@@ -516,55 +517,55 @@ bindTokenLocally(token:Token,dictionary:Dictionary):void := (
 	  )
      else nothing;
      token.dictionary = dictionary;
-     makeSymbol(token);
+     makeSymbol(localInterpState,token);
      );
-bindToken(token:Token,dictionary:Dictionary,colon:bool):void := (
-     if colon then bindTokenLocally(token,dictionary) else bind(token,dictionary);
+bindToken(localInterpState:threadLocalInterp,token:Token,dictionary:Dictionary,colon:bool):void := (
+     if colon then bindTokenLocally(localInterpState,token,dictionary) else bind(localInterpState,token,dictionary);
      );
-bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
+bindParallelAssignmentItem(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is token:Token do (
 	  if token.word.typecode != TCid then makeErrorTree(token,"syntax error: parallel assignment expected symbol")
-	  else bindToken(token,dictionary,colon);
+	  else bindToken(localInterpState,token,dictionary,colon);
 	  )
      else makeErrorTree(e,"syntax error: parallel assignment expected symbol"));
-bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
+bindParallelAssignmentList(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is binary:Binary do (
 	  if binary.operator.word == CommaW
 	  then (
-	       bindParallelAssignmentList(binary.lhs,dictionary,colon);
-	       bindop(binary.operator,dictionary);
-	       bindParallelAssignmentItem(binary.rhs,dictionary,colon);
+	       bindParallelAssignmentList(localInterpState,binary.lhs,dictionary,colon);
+	       bindop(localInterpState,binary.operator,dictionary);
+	       bindParallelAssignmentItem(localInterpState,binary.rhs,dictionary,colon);
 	       )
      	  else makeErrorTree(e,"syntax error: parallel assignment expected symbol list")
 	  )
-     else bindParallelAssignmentItem(e,dictionary,colon));
-bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
-     bindop(assn.operator,dictionary);
+     else bindParallelAssignmentItem(localInterpState,e,dictionary,colon));
+bindassignment(localInterpState:threadLocalInterp,assn:Binary,dictionary:Dictionary,colon:bool):void := (
+     bindop(localInterpState,assn.operator,dictionary);
      body := assn.rhs;
      when assn.lhs
      is p:Parentheses do (
-	  bindParallelAssignmentList(p.contents,dictionary,colon);
-	  bind(body,dictionary);
+	  bindParallelAssignmentList(localInterpState,p.contents,dictionary,colon);
+	  bind(localInterpState,body,dictionary);
 	  )
      is token:Token do (
 	  if token.word.typecode != TCid then (
 	       makeErrorTree(assn.operator, "expected a symbol to left of '"+assn.operator.entry.word.name+"'");
 	       return;
 	       );
-	  bindToken(token,dictionary,colon);
-	  bind(body,dictionary);
+	  bindToken(localInterpState,token,dictionary,colon);
+	  bind(localInterpState,body,dictionary);
 	  )
      is a:Adjacent do (
-	  bind(a.lhs,dictionary);
-	  bind(a.rhs,dictionary);
-	  bind(body,dictionary);
+	  bind(localInterpState,a.lhs,dictionary);
+	  bind(localInterpState,a.rhs,dictionary);
+	  bind(localInterpState,body,dictionary);
 	  )
      is unary:Unary do (
-	  bindop(unary.operator,dictionary);
-	  bind(unary.rhs,dictionary);
-	  bind(body,dictionary);
+	  bindop(localInterpState,unary.operator,dictionary);
+	  bind(localInterpState,unary.rhs,dictionary);
+	  bind(localInterpState,body,dictionary);
 	  if colon
 	  then (
 	       if ! opHasUnaryMethod(unary.operator.entry)
@@ -576,9 +577,9 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	       )
 	  )
      is unary:Postfix do (
-	  bind(unary.lhs,dictionary);
-	  bindop(unary.operator,dictionary);
-	  bind(body,dictionary);
+	  bind(localInterpState,unary.lhs,dictionary);
+	  bindop(localInterpState,unary.operator,dictionary);
+	  bind(localInterpState,body,dictionary);
 	  if colon
 	  then (
 	       if ! opHasPostfixMethod(unary.operator.entry)
@@ -590,10 +591,10 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	       )
 	  )
      is binary:Binary do (
-	  bind(binary.lhs,dictionary);
-	  bindop(binary.operator,dictionary);
-	  bind(binary.rhs, if binary.operator.word == DotS.symbol.word then globalDictionary else dictionary );
-	  bind(body,dictionary);
+	  bind(localInterpState,binary.lhs,dictionary);
+	  bindop(localInterpState,binary.operator,dictionary);
+	  bind(localInterpState,binary.rhs, if binary.operator.word == DotS.symbol.word then globalDictionary else dictionary );
+	  bind(localInterpState,body,dictionary);
 	  if colon then (
 	       if ! opHasBinaryMethod(binary.operator.entry)
 	       then makeErrorTree( assn.operator, "can't assign a method for this binary operator");
@@ -616,49 +617,49 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  )
      is n:New do (
 	  if colon then (
-	       bind(n.newclass,dictionary);
-	       bind(n.newparent,dictionary);
-	       bind(n.newinitializer,dictionary);
-	       bind(body,dictionary))
+	       bind(localInterpState,n.newclass,dictionary);
+	       bind(localInterpState,n.newparent,dictionary);
+	       bind(localInterpState,n.newinitializer,dictionary);
+	       bind(localInterpState,body,dictionary))
 	  else makeErrorTree(assn.operator, 
 	       "left hand side of assignment inappropriate"))
      else makeErrorTree(assn.operator, 
 	  "left hand side of assignment inappropriate"));
-bindnewdictionary(e:ParseTree,dictionary:Dictionary):ParseTree := (
+bindnewdictionary(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary):ParseTree := (
      n := newLocalDictionary(dictionary);
-     bind(e,n);
+     bind(localInterpState,e,n);
      ParseTree(StartDictionary(n,e)));
-export bind(e:ParseTree,dictionary:Dictionary):void := (
+export bind(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary):void := (
      when e
-     is s:StartDictionary do bind(s.body,dictionary)
+     is s:StartDictionary do bind(localInterpState,s.body,dictionary)
      is i:IfThen do (
-	  bind(i.predicate,dictionary);
+	  bind(localInterpState,i.predicate,dictionary);
 	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  bind(localInterpState,i.thenclause,dictionary);
 	  )
      is i:IfThenElse do (
-	  bind(i.predicate,dictionary);
+	  bind(localInterpState,i.predicate,dictionary);
 	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  bind(localInterpState,i.thenclause,dictionary);
 	  -- i.elseClause = bindnewdictionary(i.elseClause,dictionary);
-	  bind(i.elseClause,dictionary);
+	  bind(localInterpState,i.elseClause,dictionary);
 	  )
      is token:Token do (
-	  if token.word.typecode == TCid then bind(token,dictionary);
+	  if token.word.typecode == TCid then bind(localInterpState,token,dictionary);
 	  )
      is adjacent:Adjacent do (
-	  bind(adjacent.lhs,dictionary); 
-	  bind(adjacent.rhs,dictionary))
+	  bind(localInterpState,adjacent.lhs,dictionary); 
+	  bind(localInterpState,adjacent.rhs,dictionary))
      is binary:Binary do (
 	  if binary.operator.word == EqualW
-	  then bindassignment(binary,dictionary,false)
+	  then bindassignment(localInterpState,binary,dictionary,false)
 	  else if binary.operator.word == ColonEqualW
-	  then bindassignment(binary,dictionary,true)
+	  then bindassignment(localInterpState,binary,dictionary,true)
 	  else if binary.operator.word == DotS.symbol.word
 	  then (
-	       bind(binary.lhs,dictionary);
-	       bindop(binary.operator,dictionary);
-	       bind(binary.rhs,globalDictionary);
+	       bind(localInterpState,binary.lhs,dictionary);
+	       bindop(localInterpState,binary.operator,dictionary);
+	       bind(localInterpState,binary.rhs,globalDictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
@@ -668,9 +669,9 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	       )
 	  else if binary.operator.word == DotQuestionS.symbol.word
 	  then (
-	       bind(binary.lhs,dictionary);
-	       bindop(binary.operator,dictionary);
-	       bind(binary.rhs,globalDictionary);
+	       bind(localInterpState,binary.lhs,dictionary);
+	       bindop(localInterpState,binary.operator,dictionary);
+	       bind(localInterpState,binary.rhs,globalDictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
@@ -679,94 +680,94 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	       else makeErrorTree(binary.operator, "expected a symbol to right of '.?'" );
 	       )
 	  else (
-	       bind(binary.lhs,dictionary);
-	       bindop(binary.operator,dictionary);
-	       bind(binary.rhs,dictionary);
+	       bind(localInterpState,binary.lhs,dictionary);
+	       bindop(localInterpState,binary.operator,dictionary);
+	       bind(localInterpState,binary.rhs,dictionary);
 	       );
 	  )
      is q:LocalQuote do (
-	  bind(q.operator,dictionary);
+	  bind(localInterpState,q.operator,dictionary);
 	  tok := q.rhs;
 	  tok.dictionary = dictionary;
 	  r := lookup(tok.word,dictionary.symboltable);
 	  when r
 	  is entry:Symbol do ( tok.entry = entry; )
-	  else ( makeSymbol(tok); );
+	  else ( makeSymbol(localInterpState,tok); );
 	  )
      is q:GlobalQuote do (
-	  bind(q.operator,dictionary);
-	  bind(q.rhs,globalDictionary);
+	  bind(localInterpState,q.operator,dictionary);
+	  bind(localInterpState,q.rhs,globalDictionary);
 	  )
      is q:Quote do (
-	  bind(q.operator,dictionary);
-	  bind(q.rhs,dictionary);
+	  bind(localInterpState,q.operator,dictionary);
+	  bind(localInterpState,q.rhs,dictionary);
 	  )
      is a:Arrow do (
 	  newdict := newLocalDictionary(dictionary);
 	  a.desc = functionDescription(newdict.frameID,0,0,false);
-	  bindParenParmList(a.lhs,newdict,a.desc);
-	  bind(a.rhs,newdict);
+	  bindParenParmList(localInterpState,a.lhs,newdict,a.desc);
+	  bind(localInterpState,a.rhs,newdict);
 	  a.desc.framesize = newdict.framesize;
 	  )
      is unary:Unary do (
-	  bindop(unary.operator,dictionary);
-	  bind(unary.rhs,dictionary);)
+	  bindop(localInterpState,unary.operator,dictionary);
+	  bind(localInterpState,unary.rhs,dictionary);)
      is postfix:Postfix do (
-	  bind(postfix.lhs,dictionary);
-	  bindop(postfix.operator,dictionary);)
-     is ee:Parentheses do bind(ee.contents,dictionary)
+	  bind(localInterpState,postfix.lhs,dictionary);
+	  bindop(localInterpState,postfix.operator,dictionary);)
+     is ee:Parentheses do bind(localInterpState,ee.contents,dictionary)
      is EmptyParentheses do nothing
      is dummy do nothing
      is w:WhileDo do (
-	  bind(w.predicate,dictionary);
+	  bind(localInterpState,w.predicate,dictionary);
 	  -- w.body = bindnewdictionary(w.body,dictionary);
-	  bind(w.doClause,dictionary);
+	  bind(localInterpState,w.doClause,dictionary);
 	  )
      is w:For do (
 	  newdict := newLocalDictionary(dictionary);
-	  bindSingleParm(w.variable,newdict);
-	  bind(w.inClause,dictionary);
-	  bind(w.fromClause,dictionary);
-	  bind(w.toClause,dictionary);
-	  bind(w.whenClause,newdict);
-	  bind(w.listClause,newdict);
-	  bind(w.doClause,newdict);
+	  bindSingleParm(localInterpState,w.variable,newdict);
+	  bind(localInterpState,w.inClause,dictionary);
+	  bind(localInterpState,w.fromClause,dictionary);
+	  bind(localInterpState,w.toClause,dictionary);
+	  bind(localInterpState,w.whenClause,newdict);
+	  bind(localInterpState,w.listClause,newdict);
+	  bind(localInterpState,w.doClause,newdict);
 	  w.dictionary = newdict;
 	  )
      is w:WhileList do (
-	  bind(w.predicate,dictionary);
-	  bind(w.listClause,dictionary);
+	  bind(localInterpState,w.predicate,dictionary);
+	  bind(localInterpState,w.listClause,dictionary);
 	  )
      is w:WhileListDo do (
-	  bind(w.predicate,dictionary);
-	  bind(w.listClause,dictionary);
-	  bind(w.doClause,dictionary);
+	  bind(localInterpState,w.predicate,dictionary);
+	  bind(localInterpState,w.listClause,dictionary);
+	  bind(localInterpState,w.doClause,dictionary);
 	  )
      is n:New do (
-     	  bind(n.newclass,dictionary);
-     	  bind(n.newparent,dictionary);
-     	  bind(n.newinitializer,dictionary);)
+     	  bind(localInterpState,n.newclass,dictionary);
+     	  bind(localInterpState,n.newparent,dictionary);
+     	  bind(localInterpState,n.newinitializer,dictionary);)
      is i:TryElse do (
 	  -- i.primary = bindnewdictionary(i.primary,dictionary);
-	  bind(i.primary,dictionary);
+	  bind(localInterpState,i.primary,dictionary);
 	  -- i.alternate = bindnewdictionary(i.alternate,dictionary);
-	  bind(i.alternate,dictionary);
+	  bind(localInterpState,i.alternate,dictionary);
 	  )
      is i:TryThenElse do (
-	  bind(i.primary,dictionary);
-	  bind(i.sequel,dictionary);
-	  bind(i.alternate,dictionary);
+	  bind(localInterpState,i.primary,dictionary);
+	  bind(localInterpState,i.sequel,dictionary);
+	  bind(localInterpState,i.alternate,dictionary);
 	  )
      is i:Try do (
-	  bind(i.primary,dictionary);
+	  bind(localInterpState,i.primary,dictionary);
 	  )
      is i:Catch do (
-	  bind(i.primary,dictionary);
+	  bind(localInterpState,i.primary,dictionary);
 	  )
      );
-export localBind(e:ParseTree,dictionary:Dictionary):bool := (
+export localBind(localInterpState:threadLocalInterp,e:ParseTree,dictionary:Dictionary):bool := (
      HadError = false;
-     bind(e,dictionary);
+     bind(localInterpState,e,dictionary);
      !HadError
      );
 

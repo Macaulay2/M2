@@ -121,29 +121,29 @@ export tostring(c:Code):string := (
      );
 
 export setup(word:Word):void := (
-     makeSymbol(word,dummyPosition,globalDictionary);
+     makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      );
 export setup(word:Word,fn:unop):void := (
      unopNameList = unopNameListCell(fn,word.name,unopNameList);
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      e.unary = fn;
      );
 export setup(word:Word,fn:binop):void := (
      binopNameList = binopNameListCell(fn,word.name,binopNameList);
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      e.binary = fn;
      );
 export setup(word:Word,fun1:unop,fun2:binop):void := (
      unopNameList = unopNameListCell(fun1,word.name,unopNameList);
      binopNameList = binopNameListCell(fun2,word.name,binopNameList);
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      e.unary = fun1;
      e.binary = fun2;
      );
 export setup(word:Word,fun1:unop,fun2:unop):void := (
      unopNameList = unopNameListCell(fun1,word.name,unopNameList);
      unopNameList = unopNameListCell(fun2,word.name,unopNameList);
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      e.unary = fun1;
      e.postfix = fun2;
      );
@@ -179,13 +179,13 @@ export setupfun(name:string,fun:unop):Symbol := (
      unopNameList = unopNameListCell(fun,name,unopNameList);
      word := makeUniqueWord(name,
 	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
-     entry := makeSymbol(word,dummyPosition,globalDictionary);
+     entry := makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      entry.unary = fun;
      entry.protected = true;
      entry);     
 export setupfun(name:string,value:fun):Symbol := (
      word := makeUniqueWord(name,parseWORD);
-     entry := makeSymbol(word,dummyPosition,globalDictionary);
+     entry := makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
      entry.protected = true;
      entry);
@@ -193,7 +193,7 @@ export setupvar(name:string,value:Expr):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      when lookup(word,globalDictionary)
      is null do (
-     	  entry := makeSymbol(word,dummyPosition,globalDictionary);
+     	  entry := makeSymbol(bindThreadLocalInterp,word,dummyPosition,globalDictionary);
      	  globalFrame.values.(entry.frameindex) = value;
 	  entry)
      is entry:Symbol do (
