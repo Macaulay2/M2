@@ -131,7 +131,7 @@ makeSeriesCompatible(Series,Series) := Sequence => (A,B) -> (
  
 Series + Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
-     new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial + B'.polynomial, 
+     new Series from {degree => min(A#degree,B#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial + B'.polynomial, 
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    if newDegree > oldComputedDegree then (
 		    	 newA := setDegree(newDegree,A);
@@ -145,7 +145,7 @@ Series + Series := Series => (A,B) -> (
 
 Series - Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
-     new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial - B'.polynomial, 
+     new Series from {degree => min(A#degree,B#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial - B'.polynomial, 
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    if newDegree > oldComputedDegree then (
 		    	 newA := setDegree(newDegree,A);
@@ -160,7 +160,7 @@ Series - Series := Series => (A,B) -> (
 
 Series * Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
-     new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => truncate(A'.computedDegree ,A'.polynomial * B'.polynomial), 
+     new Series from {degree => min(A#degree,B#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => truncate(A'.computedDegree ,A'.polynomial * B'.polynomial), 
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    if newDegree > oldComputedDegree then (
 		    	 newA := setDegree(newDegree,A);
