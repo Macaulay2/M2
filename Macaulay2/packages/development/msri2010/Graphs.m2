@@ -10,7 +10,7 @@ newPackage("Graphs",
      )
 
 export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
-     parents, children, neighbors, nonneighbors, foreFathers , displayGraph,
+     parents, children, neighbors, nonneighbors, foreFathers, displayGraph,
      simpleGraph, removeNodes}
 exportMutable {dotBinary,jpgViewer}
 
@@ -261,10 +261,9 @@ foreFathers(Digraph, Thing) := (G,v) -> (
      cP := parents(G,v);
      aN := cP;
      while notDone === true do(
-	  pA = set flatten apply(cP, i -> parents(H,i));
-     	  if pA === null then notDone = false
-     	  else (
-	       cP = pA;
+	  if (toList cP) === {} then notDone = false
+	  else (
+	       cP = set flatten apply(toList cP, i -> toList parents(G,i));
 	       aN = aN + cP;
 	       )
 	  );
