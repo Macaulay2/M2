@@ -1,10 +1,8 @@
-restart
 uninstallPackage "SurfacesInP4"
 restart
-loadPackage "SurfacesInP4"
-installPackage "SurfacesInP4"
-restart;
-loadPackage "SurfacesInP4";
+path = append(path, homeDirectory | "M2/msri2010/")
+installPackage("SurfacesInP4", UserMode => true) 
+
 -- See also Decker/Ein/Schreyer: Construction of Surfaces in PP^4
 kk = ZZ/32003;
 S = kk[x_0..x_4];
@@ -93,6 +91,12 @@ betti res constructSurface(M,E,S)
 
 H = hilbertPolynomialFromInvariants(5,1,1,0);
 M = guessCohomologyTable(H,-2,2)
+betti res constructSurface(M,E,S)
+
+-- B2.2 Elliptic conic bundle
+
+H = hilbertPolynomialFromInvariants(8,5,1,0);
+M = guessCohomologyTable(H,-1,3)
 betti res constructSurface(M,E,S)
 
 -- B3 Enriques Surfaces
