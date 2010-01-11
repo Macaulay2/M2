@@ -481,6 +481,7 @@ lcmLattice(MonomialIdeal) := Poset => opts -> (M) -> (
 	   if opts.Strategy === 0 then (
 		subsetsL := flatten apply(#L, i-> subsets (L,i+1));
 		Ground = unique flatten apply (subsetsL, r-> lcm(r));
+		Ground = prepend(1_(ring M), Ground);
 		) else (
 		Ground = lcmLatticeProduceGroundSet L;
 		Ground = apply(Ground, D -> product apply(numgens ring M, i-> (ring M)_i^(D#i)));
