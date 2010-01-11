@@ -343,6 +343,23 @@ maximalChains (Poset) := (P) -> (
 
 height (Poset) := Poset => (P) -> (
      max apply (maximalChains P, s-> #s))
+
+
+
+-------------------------------------------------
+--Anti-Chains
+-------------------------------------------------
+--input: P a poset and L a list of elements of the poset
+--output T/F whether L is an antichain in P
+
+isAntichain = method()
+
+isAntichain(Poset, List) := (P, L) ->(
+     Q := subPoset(P, L);
+     if  minimalElements(Q) == maximalElements(Q) then true
+          else false)
+     
+     
 --------------------------------------------------
 -- Order-Complex 
 --------------------------------------------------
