@@ -6,7 +6,7 @@ needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
     Version => "0.0.1",
-    Date => "10. January 2010",
+    Date => "xx. January 2010",
     Authors => {{Name => "David W. Cook II", Email => "dcook@ms.uky.edu", HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Pure k-Decomposability for simplicial complexes.",
     DebuggingMode => true
@@ -36,25 +36,34 @@ isShellable (SimplicialComplex) := (S) -> (
 -- Determines if a list of equidimensional faces is a shelling.
 isShelling = method(TypicalValue => Boolean);
 isShelling (List) := (L) -> (
-    -- TODO
-    -- recall: a set of equidimensional faces F_0, ..., F_k is
-    --         a shelling order if for 2 <= i < k the set
-    --         sc(F_0..F_i) - sc(F_0..F_(i-1)) has a unique minimal
-    --         element with respect to inclusion.
+    -- Check for (i) equidimensional, (ii) monomials, (iii) squarefree, and (iv) monic
+    if #unique apply(L, degree) > 1 then return false;
+    if any(apply(L, size), i->i!=1) then return false;
+    if max flatten flatten apply(L, exponents) > 1 then return false;
+    if any(flatten flatten apply(L, i->entries (coefficients i)_1), i->i!=1) then return false;
     
-    -- compute s0 & f0 outside for i = 0;
-    -- in each iteration, put s1 & f1 in s0 & f0 before loop
-    -- thus only s1 & f1 need be recomputed each loop
-    -- for i from 1 to #L - 1 do (
-    --    s0 = simplicialComplex take(L, i-1);
-    --    s1 = simplicialComplex take(L, i);
-    --    f0 = flatten for i from 0 to dim s0 - 1 list flatten entries faces(i, s0);
-    --    f1 = flatten for i from 0 to dim s1 - 1 list flatten entries faces(i, s1);
-    --    di = toList(set(f1) - set(f0));  
-    --    ta = tally flatten apply(di, degree);
-    --    if ta_(min keys ta) != 1 then return false;
-    -- );
-    false
+    -- Sets with zero or one face are always shellings 
+    if #L <= 1 then return true;
+
+    -- prime the loop
+    s0 := f0 := ta := null;
+    s1 := simplicialComplex take(L, 1);
+    di := dim s1;
+    f1 := flatten for i from 0 to di list flatten entries faces(i, s1);
+    -- for each face in the list
+    for i from 2 to #L do (
+        -- copy the last step
+        s0 = s1;
+        f0 = f1;
+        -- update the newest
+        s1 = simplicialComplex take(L, i);
+        f1 = flatten for i from 0 to di list flatten entries faces(i, s1);
+        -- find the added faces & count their dimensions (+1)
+        ta = tally flatten apply(toList(set f1 - set f0), degree);
+        -- make sure the minimal face is unique
+        if ta_(min keys ta) != 1 then return false;
+    );
+    true
 );
 
 -- Determines if a simplicial complex is (isomorphic to) a simplex.
@@ -146,6 +155,7 @@ doc ///
         isShelling L
     Inputs
         L:List
+            a list of equidimensional faces (i.e., squarefree monic monomials)
     Outputs
         B:Boolean
             true if and only if {\tt L} is (pure) shelling
