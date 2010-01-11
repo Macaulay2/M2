@@ -1620,7 +1620,27 @@ doc///
 -----------------
 -- atoms
 -----------------
-
+doc///
+     Key
+     	  atoms
+	  (atoms,Poset)
+     Headline
+     	  returns the atoms of a poset
+     Usage
+     	  A = atoms(P)
+     Inputs
+     	  P : Poset
+     Outputs
+     	  A : List
+	      subset of the ground set of P consisting of elements covering minimal elements	       
+     Description
+     	  Text
+	       	This routine returns a list of elements which cover any minimal elements in P, these are known
+		as the atoms of P.
+	  Example
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       atoms(P)	       
+///	
 
 
 
