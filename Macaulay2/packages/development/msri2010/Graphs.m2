@@ -311,6 +311,7 @@ inducedSubgraph(Digraph, List) := (G,v) -> (
 -- Common Graphs --
 -------------------
 
+///
 completeGraph = method()
 completeGraph(ZZ) := n -> (
       i:= 1;
@@ -318,7 +319,7 @@ completeGraph(ZZ) := n -> (
       while i <= n do (
 	   G#(i#0) = 
 	   i = i+1;
-
+///
 
 --------------------
 -- Documentation  --
