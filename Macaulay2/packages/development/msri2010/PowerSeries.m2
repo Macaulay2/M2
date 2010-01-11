@@ -123,15 +123,13 @@ series(RingElement) := Series => opts -> (f) -> (
      f = f/(1_(ring f));
      num := numerator f;
      den := denominator f;
-     if first degree den < 1 then s := num else s = num*inverse(series(den));
+     if first degree den < 1 then s := num else return num*inverse(series(den,Degree => opts.Degree));
      -- now make a new series.
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
           -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
 	  -- to know how to tack on the new terms to the old polynomial.
-	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
-		    if newDegree > oldComputedDegree then (series(f,newDegree),max(oldComputedDegree,newDegree)) else
-		    (oldPolynomial, oldComputedDegree)
-		    ))});
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial, max(oldComputedDegree,newDegree))
+		    )});
 
 
 --series RingElement := Series => opts -> h -> (
