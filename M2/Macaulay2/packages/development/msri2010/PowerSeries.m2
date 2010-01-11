@@ -57,10 +57,7 @@ series(RingElement, Function) := Series => opts -> (X,f) -> (
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (newPolynomial := oldPolynomial;
 		              for i from oldComputedDegree + 1 to newDegree do newPolynomial = newPolynomial + (f i)*X^i;
 			      (newPolynomial,max(oldComputedDegree,newDegree))
-		        )
-		       ) 
-		     }
-     );
+		        ))});
 
 degree(Series) := Series => F -> F#degree;
 
@@ -118,30 +115,54 @@ recip = (denom,oldDegree,newDegree,oldApprox) -> (
 
 
 
--- the following code is from modules2.m2
-recipN = (n,wts,f) -> (
-     -- n is a positive integer
-     -- wts is a weight vector
-     -- f is a polynomial of the form 1 plus terms of positive weight, which we verify
-     -- we compute the terms of the expansion of 1/f of weight less than n
-     if n <= 0 then error "expected a positive integer";
-     if part(,0,wts,f) != 1 then error "expected a polynomial of the form 1 plus terms of positive weight";
-     g := 1_(ring f);  -- g always has the form 1 plus terms weight 1,2,...,m-1
-     m := 1;			   -- 1-f*g always has terms of wt m and higher
-     tr := h -> part(,m-1,wts,h);
-     while m < n do (
-	  m = 2*m;
-	  g = g + tr(g * (1 - tr(g * tr f)));
-	  );
-     if m === n then g else part(,n-1,wts,g));
+series(RingElement) := Series => opts -> (f) -> (
+     f = f/(1_(ring f));
+     num := numerator f;
+     den := denominator f;
+     if first degree den < 1 then s := num else s = num*inverse(series(den));
+     -- now make a new series.
+     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
+	  -- to know how to tack on the new terms to the old polynomial.
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
+		    if newDegree > oldComputedDegree then (series(f,newDegree),max(oldComputedDegree,newDegree)) else
+		    (oldPolynomial, oldComputedDegree)
+		    ))});
 
-rationalSeries = (ord,h) -> ( -- essentially the code used by hilbert series see: modules2.m2
-	  num := numerator h;
-	  if num == 0 then 0_(ring num) else (
-	       wts := (options ring num).Heft;
-	       (lo,hi) := weightRange(wts,num);
-	       if ord <= lo then 0_(ring num) else (
-		    s := part(,ord-1,wts,part(,ord-1,wts,num) * recipN(ord-lo,wts,denominator h)))));
+
+--series RingElement := Series => opts -> h -> (
+--     h = h/(1_(ring h));
+--     series(i -> rationalSeries(i,h),Degree=>opts.Degree));
+
+
+
+
+
+
+-- the following code is from modules2.m2
+--recipN = (n,wts,f) -> (
+--     -- n is a positive integer
+--     -- wts is a weight vector
+--     -- f is a polynomial of the form 1 plus terms of positive weight, which we verify
+--     -- we compute the terms of the expansion of 1/f of weight less than n
+--     if n <= 0 then error "expected a positive integer";
+--     if part(,0,wts,f) != 1 then error "expected a polynomial of the form 1 plus terms of positive weight";
+--     g := 1_(ring f);  -- g always has the form 1 plus terms weight 1,2,...,m-1
+--     m := 1;			   -- 1-f*g always has terms of wt m and higher
+--     tr := h -> part(,m-1,wts,h);
+--     while m < n do (
+--	  m = 2*m;
+--	  g = g + tr(g * (1 - tr(g * tr f)));
+--	  );
+--     if m === n then g else part(,n-1,wts,g));
+
+--rationalSeries = (ord,h) -> ( -- essentially the code used by hilbert series see: modules2.m2
+--	  num := numerator h;
+--	  if num == 0 then 0_(ring num) else (
+--	       wts := (options ring num).Heft;
+--	       (lo,hi) := weightRange(wts,num);
+--	       if ord <= lo then 0_(ring num) else (
+--		    s := part(,ord-1,wts,part(,ord-1,wts,num) * recipN(ord-lo,wts,denominator h)))));
 
 
 
@@ -154,8 +175,8 @@ rationalSeries = (ord,h) -> ( -- essentially the code used by hilbert series see
 --	  setDegree => (
 --	       (oldPolynomial,oldComputedDegree,newDegree) -> 
 --	       (
---		    if newDegree > oldComputedDegree then (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)) else
---	       	    (oldPolynomial, oldComputedDegree)
+		    if newDegree > oldComputedDegree then (rationalSeries(newDegree+1,h),max(oldComputedDegree,newDegree)) else
+	       	    (oldPolynomial, oldComputedDegree)
 --	       )
 --	  )});  
 
@@ -174,11 +195,6 @@ series Function := Series => opts -> f -> (
 	       	    (oldPolynomial, oldComputedDegree)
 	       )
 	  )});  
-
-
-series RingElement := Series => opts -> h -> (
-     h = h/(1_(ring h));
-     series(i -> rationalSeries(i,h),Degree=>opts.Degree));
 
 
 
