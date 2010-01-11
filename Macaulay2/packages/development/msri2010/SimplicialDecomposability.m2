@@ -5,7 +5,7 @@ needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "0.1",
+    Version => "0.2",
     Date => "xx. January 2010",
     Authors => {{Name => "David W. Cook II", Email => "dcook@ms.uky.edu", HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Pure k-Decomposability for simplicial complexes.",
@@ -47,7 +47,7 @@ iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
 
     -- if S is k-decomposable, then S is k+1-decomposable 
     -- S is (dim S)-decomposable if and only if S is shellable (see thm 2.8 is Provan-Billera)
-    if dim S <= k then return isShellable S;
+    -- if dim S <= k then return isShellable S;
 
     -- base case: simplexes are k-decomposable for all nonnegative k
     if isSimplex S then return true;
@@ -410,7 +410,7 @@ assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 
 -- Tests of faceDelete
 TEST ///
-R = QQ[a,b,c,d,e];
+R = QQ[a..e];
 S = simplicialComplex {a*b*c*d*e};
 assert(faceDelete(S, a) == simplicialComplex {b*c*d*e});
 assert(faceDelete(S, a*b*c) == simplicialComplex {b*c*d*e, a*c*d*e, a*b*d*e});
@@ -419,7 +419,7 @@ assert(faceDelete(S, a*b*c*d*e) == boundary S)
 
 -- Tests of iskDecomposable (and hence isVertexDecomposable)
 TEST ///
-R = QQ[a,b,c,d,e];
+R = QQ[a..e];
 S = simplicialComplex {a*b*c*d*e};
 assert(iskDecomposable(S, 0));
 assert(iskDecomposable(S, 1));
@@ -429,7 +429,22 @@ assert(iskDecomposable(S, 4));
 assert(iskDecomposable(boundary S, 0)); -- prop 2.2 in Provan-Billera
 assert(iskDecomposable(simplicialComplex {a*b*c, b*c*d, c*d*e}, 2));
 assert(not iskDecomposable(simplicialComplex {a*b*c, c*d*e}, 2));
+///
 
+-- Tests iskDecomposable (a second way)
+-- See Example V6F10-{1,6,7} in S. Moriyama and F. Takeuchi, "Incremental construction properties in dimension two:
+-- shellability, extendable shellability and vertex decomposability," Volume 263, Issue 1-3 (February 2003), 295-296.
+TEST ///
+R = QQ[a..f];
+S1 = simplicialComplex {a*b*c, a*b*d, a*b*f, a*c*d, a*c*e, b*d*e, b*e*f, c*d*f, c*e*f, d*e*f};
+S6 = simplicialComplex {a*b*c, a*b*d, a*b*e, a*c*d, a*c*f, b*d*e, b*e*f, c*d*f, c*e*f, d*e*f};
+S7 = simplicialComplex {a*b*c, a*b*e, a*b*f, a*c*d, a*d*e, b*c*d, b*e*f, c*d*f, c*e*f, d*e*f};
+assert(not isVertexDecomposable(S1));
+assert(iskDecomposable(S1, 1));
+assert(not isVertexDecomposable(S6));
+assert(iskDecomposable(S6, 1));
+assert(not isVertexDecomposable(S7));
+assert(iskDecomposable(S7, 1));
 ///
 
 end
