@@ -62,26 +62,29 @@ series(RingElement, Function) := Series => opts -> (X,f) -> (
 		     }
      );
 
+degree(Series) := Series => F -> F#degree;
 
 inverse(Series) := Series => F -> (
      R := (ring F.polynomial);
+     denominatorDegree := degree F;
      -- We have a function that computes the inverse of a polynomial to a given degree,
      -- given the inverse of the polynomial already given to some other degree.
      -- That function is called recip(denom,oldDegree,newDegree,oldApprox) and returns a polynomial.
      if not isUnit(dominantTerm F) then error "This series is not invertible: its dominant term is not a unit.";
-     G = ((dominantTerm F)^-1) * F;
+     G := ((dominantTerm F)^-1) * F;
      
      new Series from {
-	  polynomial => dominantTerm F * recip(G,0,F.degree,1_R),
-	  computedDegree => F.degree,
-	  degree => F.degree,
+	  polynomial => (dominantTerm F)^-1 * recip(toPolynomial G,0,denominatorDegree,1_R),
+	  computedDegree => 2^(ceiling log(2,denominatorDegree+1))-1,
+	  degree => denominatorDegree,
 	  maxDegree => F.maxDegree,
 	  setDegree => (oldPolynomial,oldComputedDegree,newDegree) -> (
                if newDegree < oldComputedDegree then (
 		    (oldPolynomial,oldComputedDegree)
 		    )
 	       else (
-		    (recip((setDegree(newDegree,G)).polynomial,oldComputedDegree,newComputedDegree,oldPolynomial),newComputedDegree)
+		    newApprox := (dominantTerm F)^-1 * recip(((setDegree(newDegree,G)).polynomial),oldComputedDegree,newDegree,(dominantTerm F) * oldPolynomial);
+	            (newApprox,newDegree)
 		    )
 	       )
 	  }
@@ -90,28 +93,28 @@ inverse(Series) := Series => F -> (
 
 recip = (denom,oldDegree,newDegree,oldApprox) -> (
      wts = (options ring oldApprox).Heft;
-     if denom.ring != oldApprox.ring then error "Rings of denominator and approximation must agree.";
-     if oldDegree < degree oldApprox then error "Old approximation had more accuracy than claimed.";
+     if ring denom =!= ring oldApprox then error "Rings of denominator and approximation must agree.";
+     if oldDegree < (first degree oldApprox) then error "Old approximation had more accuracy than claimed.";
      if newDegree < oldDegree then error "recip does not know how to decrease precision.";
       
      -- Really this algorithm computes terms 0&1, then terms 2&3, then terms 4&5&6&7, etc.
      -- So we need to know which powers of two are relevant.
-     startingTwo = floor log (2,oldDegree);
-     endingTwo = ceiling log (2,newDegree);
+     if oldDegree == 0 then startingTwo = 0
+                       else startingTwo = floor log (2,oldDegree);
+     endingTwo = ceiling log (2,newDegree+1);
      oldApprox = truncate(2^startingTwo,oldApprox);
        
      -- denom is a polynomial of the form 1 plus terms of positive weight, which we verify
      -- we compute the terms of the expansion of 1/f of weight less than n
-     if oldDegree <= 0 then error "expected a positive integer";
-     if part(,0,wts,f) != 1 then error "expected a polynomial of the form 1 plus terms of positive weight";
+     if part(,0,wts,denom) != 1 then error "expected a polynomial of the form 1 plus terms of positive weight";
      g := oldApprox;  -- g always has the form 1 plus terms weight 1,2,...,m-1
-     m := startingTwo;			   -- 1-f*g always has terms of wt m and higher
+     m := 2^startingTwo;			   -- 1-f*g always has terms of wt m and higher
      tr := h -> part(,m-1,wts,h);
-     while m < endingTwo do (
+     while m < 2^endingTwo do (
 	  m = 2*m;
-	  g = g + tr(g * (1 - tr(g * tr f)));
+	  g = g + tr(g * (1 - tr(g * tr denom)));
 	  );
-     if m === n then g else part(,n-1,wts,g));
+     if m === 2^endingTwo then g else part(,2^endingTwo-1,wts,g));
 
 
 
