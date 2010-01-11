@@ -193,7 +193,7 @@ Series * Series := Series => (A,B) -> (
 		    if newDegree > oldComputedDegree then (
 		    	 newA := setDegree(newDegree,A);
 		    	 newB := setDegree(newDegree,B);
-		    	 (truncate(newDegree,newA.polynomial + newB.polynomial), newDegree)
+		    	 (truncate(newDegree,newA.polynomial * newB.polynomial), newDegree)
 			 )
 		    else (oldPolynomial, oldComputedDegree)
 		    )
