@@ -1751,6 +1751,33 @@ doc ///
 	  Poset
 ///
 
+doc///
+     Key
+     	  isAntichain
+	  (isAntichain, Poset, List)
+     Headline
+     	  checks whether a subposet is an anti-chain
+     Usage
+     	  isAntichain(P, L)
+     Inputs
+     	 P : Poset
+	 L : List
+	      a list of elements of P 
+     Outputs
+     	 true : Boolean
+               if L is an antichain in P
+	 false : Boolean
+	       otherwise
+     Description
+     	  Text
+	       This function determines whether a list of elements of a poset is an anti-chain.
+          
+	  Example
+	       P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       isAntichain(P2, {a,b})     
+	       isAntichain(P2, {b,c,d}) 
+///     
+
 --doc ///
 --     Key 
 --     	  Vertices
