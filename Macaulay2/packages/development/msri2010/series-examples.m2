@@ -10,19 +10,19 @@ s3 = series(20,1+x+x^2+x^3 + x^4 + x^5 + x^6 + x^10) --(series, ZZ, RingElement)
 
 s4 = setDegree(10,s1)
 peek s4
-s5 = setDegree(2,s1)
+s5 = setDegree(2,s4)
 peek s5
 
 
 s6 = setDegree(10,s2)
 peek s6
-s7 = setDegree(2,s2)
+s7 = setDegree(2,s6)
 peek s7
 
 
 s6 = setDegree(10,s3)
 peek s6
-s7 = setDegree(2,s3)
+s7 = setDegree(2,s6)
 peek s7
 
 
