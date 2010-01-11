@@ -4,8 +4,12 @@ loadPackage "Series"
 ZZ[x]
 
 -- We can create a series from a rational function:
-s1 = series(1/(1-x)) --(series, RingElement)
+timing s1 = series(1/(1-x)^700, Degree =>200) --(series, RingElement)
+timing s1 = series(1/(1-x)^700,Degree =>300) --(series, RingElement)
 
+s1.polynomial
+peek s1
+s1#((keys s1)_3)
 -- We can create a series using a generating function:
 s2 = series(x,i->i^2) --(series, RingElement, Function) 
 
