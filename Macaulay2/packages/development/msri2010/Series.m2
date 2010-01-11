@@ -210,7 +210,7 @@ Series - Series := Series => (A,B) -> (
 
 Series * Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
-     new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => A'.polynomial * B'.polynomial, 
+     new Series from {degree => min(A'#degree,B'#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => truncate(A'.computedDegree ,A'.polynomial * B'.polynomial), 
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    if newDegree > oldComputedDegree then (
 		    	 newA := setDegree(newDegree,A);
@@ -222,10 +222,19 @@ Series * Series := Series => (A,B) -> (
 	       )}
      )
 
+- Series := Series => A -> (new Series from{
+     degree => A#degree,
+     maxDegree => A.maxDegree,
+     computedDegree => A.computedDegree,
+     polynomial => - A.polynomial,
+     setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->(- oldPolynomial, oldComputedDegree))});
+
 
 S = series(4,x^2 + x)  
+-S
 T = series(x,i -> i)
-
+S
+S.computedDegree
 T - T + T
 setDegree(9,T - T + T)
 setDegree(12,T*T)
