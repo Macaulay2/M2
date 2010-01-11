@@ -67,3 +67,16 @@ time G2 = inverse F2
 peek G2
 setDegree(4,G2)
 peek oo
+
+-- equality of series.
+-- By analogy with floating-point numbers.
+1.
+1p1
+1p1 == 1.00000000000000070
+1p1 == 1.00000000000000007
+
+A1 = series(1,1+x)
+A2 = series(6,1+x)
+B = series(1+x+x^2+x^3)
+A1 == B
+A2 == B
