@@ -273,14 +273,27 @@ localMarkovStmts Digraph := (G) -> (
 	         result = append(result,{set{v}, ND - P, P})));
      removeRedundants result)
 
+
+\\\
+
+convertToIntegers := (G) -> (
+     n := #G;
+     h = new MutableHashTable from G;
+     vertices := keys G;
+     ---- do a loop applying to the values first if g#blah is a member
+     ---- of the set that is the value then convert to the appropriate
+     ---- number. Not totally clear to me how to do this, or do we fix
+     ---- bayes - ball.  Hmmm...
+
+\\\
+
 globalMarkovStmts = method()
 globalMarkovStmts Digraph := (G) -> (
      -- Given a graph G, return a complete list of triples {A,B,C}
      -- so that A and B are d-separated by C (in the graph G).
      -- If G is large, this should maybe be rewritten so that
      -- one huge list of subsets is not made all at once
-     n := #G;
-     vertices := toList(1..n);
+     vertices := keys G;
      result := {};
      AX := subsets vertices;
      AX = drop(AX,1); -- drop the empty set
@@ -299,7 +312,7 @@ globalMarkovStmts Digraph := (G) -> (
 			      then 
 			          result = append(result, {A,B,C});
 	       )))));
-     {removeRedundants result, result}
+     {flatten removeRedundants result, flatten result}
      )
 -------------------
 -- Markov rings ---
