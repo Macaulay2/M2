@@ -1,5 +1,5 @@
 restart
-loadPackage "Series"
+loadPackage "PowerSeries"
 
 ZZ[x]
 
@@ -9,7 +9,7 @@ series(1/(1-x), Degree =>10) --(series, RingElement)
 -- We can create a series using a generating function:
 series(x,i->i^2) --(series, RingElement, Function) 
 
--- We can create a series given a function that computes sucessive polynomial approximations:
+-- We can create a series given a function that computes successive polynomial approximations:
 f = i -> sum(i,j-> j*(x)^j)
 series(f) --(series, Function) 
 
