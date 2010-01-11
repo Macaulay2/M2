@@ -7,13 +7,11 @@ use strings;
 use varstrin;
 use ctype;
 
-
-
 tokenbuf := newvarstring(100);
-export getLine(localInterpState:threadLocalInterp,o:file):(string or errmsg) := (
+export getLine(o:file):(string or errmsg) := (
      ch := 0;
      while (
-	  ch = getc(localInterpState,o);
+	  ch = getc(o);
 	  if iserror(ch) then return (string or errmsg)(errmsg("failed to read file : "+syserrmsg()));
 	  !(isnewline(ch) || iseof(ch))
 	  )

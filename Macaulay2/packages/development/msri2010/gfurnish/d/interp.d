@@ -282,7 +282,8 @@ InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
 
 promptcount := 0;
-topLevelPrompt(localInterpState:threadLocalInterp):string := (
+topLevelPrompt():string := (
+     localInterpState := threadLocalInterpState;
      if debugLevel == 123 then (
 	  stderr <<  "-- topLevelPrompt:" 
 	  << " previousLineNumber = " << previousLineNumber 

@@ -108,7 +108,7 @@ select(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
      found := 0;
      foreach x at i in a do (
-	  y := applyEE(f,x);
+	  y := applyEE(localInterpState,f,x);
 	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
 	  if y == True then (
 	       b.i = true;
@@ -136,7 +136,7 @@ select(localInterpState:threadLocalInterp,e:Expr,f:Expr,ignorecase:bool):Expr :=
 	  foreach bucket in obj.table do (
 	       p := bucket;
 	       while p != p.next do (
-		    newvalue := applyEE(f,p.value);
+		    newvalue := applyEE(localInterpState,f,p.value);
 		    when newvalue
 		    is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return newvalue
 		    else if newvalue == True 
@@ -160,7 +160,7 @@ select(localInterpState:threadLocalInterp,n:int,a:Sequence,f:Expr):Expr := (
      found := 0;
      foreach x at i in a do (
 	  if found < n then (
-	       y := applyEE(f,x);
+	       y := applyEE(localInterpState,f,x);
 	       when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
 	       if y == True then (
 		    b.i = true;
@@ -188,7 +188,7 @@ select(localInterpState:threadLocalInterp,n:Expr,e:Expr,f:Expr,ignorecase:bool):
 	  foreach bucket in obj.table do (
 	       p := bucket;
 	       while nval > 0 && p != p.next do (
-		    newvalue := applyEE(f,p.value);
+		    newvalue := applyEE(localInterpState,f,p.value);
 		    when newvalue 
 		    is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return newvalue
 		    else if newvalue == True 
@@ -223,9 +223,9 @@ select(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("select",select);
 
-any(f:Expr,n:int):Expr := (
+any(localInterpState:threadLocalInterp,f:Expr,n:int):Expr := (
      for i from 0 to n-1 do (
-	  v := applyEE(f,Expr(toInteger(i)));
+	  v := applyEE(localInterpState,f,Expr(toInteger(i)));
 	  when v is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return v else nothing;
 	  if v == True then return True;
 	  if v != False then return buildErrorPacket("any: expected true or false");
@@ -245,7 +245,7 @@ any(localInterpState:threadLocalInterp,f:Expr,obj:HashTable):Expr := (
      False);
 any(localInterpState:threadLocalInterp,f:Expr,a:Sequence):Expr := (
      foreach x at i in a do (
-	  y := applyEE(f,x);
+	  y := applyEE(localInterpState,f,x);
 	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
 	  if y == True then return True;
 	  if y != False then return buildErrorPacket("any: expected true or false");
@@ -255,7 +255,7 @@ any(localInterpState:threadLocalInterp,f:Expr,e:Expr):Expr := (
      when e
      is a:Sequence do Expr(any(localInterpState,f,a))
      is b:List do Expr(any(localInterpState,f,b.v))
-     is i:ZZ do if isInt(i) then Expr(any(f,toInt(i))) else WrongArgSmallInteger(1)
+     is i:ZZ do if isInt(i) then Expr(any(localInterpState,f,toInt(i))) else WrongArgSmallInteger(1)
      is c:HashTable do 
      if c.mutable then WrongArg(1,"an immutable hash table") else
      Expr(any(localInterpState,f,c))

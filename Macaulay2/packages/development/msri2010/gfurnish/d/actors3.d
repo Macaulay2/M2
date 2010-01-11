@@ -202,10 +202,10 @@ listComparison(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(EqualEqualS,visibleListClass,visibleListClass,listComparison);
 EqualEqualfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     x := eval(lhs);
+     x := eval(localInterpState,lhs);
      when x is Error do x
      else (
-     	  y := eval(rhs);
+     	  y := eval(localInterpState,rhs);
 	  when y is Error do y else EqualEqualfun(localInterpState,x,y)));
 setup(EqualEqualS,EqualEqualfun);
 not(z:Expr):Expr := (
@@ -215,12 +215,12 @@ not(z:Expr):Expr := (
      else buildErrorPacket("expected true or false"));
 
 NotEqualfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     x := eval(lhs);
+     x := eval(localInterpState,lhs);
      when x is Error do x
      else (
-     	  y := eval(rhs);
+     	  y := eval(localInterpState,rhs);
      	  when y is Error do y
-	  else notFun(EqualEqualfun(localInterpState,x,y))));
+	  else notFun(localInterpState,EqualEqualfun(localInterpState,x,y))));
 setup(NotEqualS,NotEqualfun);
 
 compare(localInterpState:threadLocalInterp,left:Expr,right:Expr):Expr := (
@@ -382,15 +382,15 @@ compare(localInterpState:threadLocalInterp,left:Expr,right:Expr):Expr := (
 	  is Error do right
 	  else binarymethod(localInterpState,left,right,QuestionS)));
 compareop(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     x := eval(lhs);
+     x := eval(localInterpState,lhs);
      when x
      is Error do x
      else (
-	  y := eval(rhs);
+	  y := eval(localInterpState,rhs);
 	  when y
 	  is Error do y
 	  else compare(localInterpState,x,y)));
-unaryQuestionFun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,QuestionS);
+unaryQuestionFun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,QuestionS);
 setup(QuestionS,unaryQuestionFun,compareop);
 
 whichway := GreaterS;
@@ -456,7 +456,7 @@ rsortfun(localInterpState:threadLocalInterp,e:Expr):Expr := basicsort2(localInte
 setupfun("internalsort",sortfun);
 setupfun("internalrsort",rsortfun);
 
-lessfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LessS);
+lessfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,LessS);
 lessfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      e := compareop(localInterpState,lhs,rhs);
      when e 
@@ -465,7 +465,7 @@ lessfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      );
 setup(LessS,lessfun1,lessfun2);
 
-greaterequalfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,GreaterEqualS);
+greaterequalfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,GreaterEqualS);
 greaterequalfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      e := compareop(localInterpState,lhs,rhs);
      when e 
@@ -474,7 +474,7 @@ greaterequalfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      );
 setup(GreaterEqualS,greaterequalfun1,greaterequalfun2);
 
-greaterfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,GreaterS);
+greaterfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,GreaterS);
 greaterfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      e := compareop(localInterpState,lhs,rhs);
      when e 
@@ -483,7 +483,7 @@ greaterfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      );
 setup(GreaterS,greaterfun1,greaterfun2);
 
-lessequalfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LessEqualS);
+lessequalfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,LessEqualS);
 lessequalfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
      e := compareop(localInterpState,lhs,rhs);
      when e 
@@ -627,14 +627,14 @@ bitxorfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("xor",bitxorfun);
-semicolonfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
+semicolonfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := when eval(localInterpState,lhs) is err:Error do Expr(err) else eval(localInterpState,rhs);
 setup(SemicolonS,semicolonfun);
-starfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,StarS);
+starfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,StarS);
 timesfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     l := eval(lhs);
+     l := eval(localInterpState,lhs);
      when l is Error do l
      else (
-     	  r := eval(rhs);
+     	  r := eval(localInterpState,rhs);
      	  when r is Error do r
 	  else l*r));
 setup(StarS,starfun,timesfun);
@@ -1130,7 +1130,7 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 		    for i from 0 to newlen-1 do (
 			 values.0 = Sequence(a1.i,a2.i);
      			 recursionDepth = recursionDepth + 1;
-			 tmp := eval(body);
+			 tmp := eval(localInterpState,body);
      			 recursionDepth = recursionDepth - 1;
 			 when tmp is err:Error do (
 			      if err.message == returnMessage then provide err.value
@@ -1166,7 +1166,7 @@ map(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      values.0 = a1.i;
 			      values.1 = a2.i;
      			      recursionDepth = recursionDepth + 1;
-			      tmp := eval(body);
+			      tmp := eval(localInterpState,body);
      			      recursionDepth = recursionDepth - 1;
 			      when tmp is err:Error do (
 				   if err.message == returnMessage then provide err.value
@@ -1247,7 +1247,7 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	       ret := new Sequence len newlen do (
 		    foreach arg in a do (
 			 values.0 = arg;
-			 tmp := eval(body);
+			 tmp := eval(localInterpState,body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage then provide err.value
 			      -- else if err.message == continueMessageWithArg then provide err.value
@@ -1288,7 +1288,7 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					     )
 					)
 				   else values.0 = arg;
-				   tmp := eval(body);
+				   tmp := eval(localInterpState,body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
 			      		-- else if err.message == continueMessageWithArg then provide err.value
@@ -1315,7 +1315,7 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					     )
 					)
 				   else values.0 = arg;
-				   tmp := eval(body);
+				   tmp := eval(localInterpState,body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
 			      		-- else if err.message == continueMessageWithArg then provide err.value
@@ -1357,7 +1357,7 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					errret = WrongNumArgs(model.arrow,numparms,1);
 					while true do provide nullE;
 					);
-				   tmp := eval(body);
+				   tmp := eval(localInterpState,body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
 			      		-- else if err.message == continueMessageWithArg then provide err.value
@@ -1396,7 +1396,7 @@ map(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					errret = WrongNumArgs(model.arrow,numparms,1);
 					while true do provide nullE;
 					);
-				   tmp := eval(body);
+				   tmp := eval(localInterpState,body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage then provide err.value
 			      		-- else if err.message == continueMessageWithArg then provide err.value
@@ -1481,7 +1481,7 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 		    if framesize == 1 then (
 			 for i from 0 to newlen-1 do (
 			      values.0 = toInteger(i);
-			      tmp := eval(body);
+			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage then provide err.value
 				   -- else if err.message == continueMessageWithArg then provide err.value
@@ -1501,7 +1501,7 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 		    else (
 			 for i from 0 to newlen-1 do (
 			      values.0 = toInteger(i);
-			      tmp := eval(body);
+			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage then provide err.value
 				   -- else if err.message == continueMessageWithArg then provide err.value
@@ -1541,7 +1541,7 @@ map(localInterpState:threadLocalInterp,newlen:int,f:Expr):Expr := (
 	  is s:SpecialExpr do (
 	       fn := s.e;
 	       for i from 0 to newlen-1 do (
-		    tmp := applyEE(fn,Expr(toInteger(i)));
+		    tmp := applyEE(localInterpState,fn,Expr(toInteger(i)));
 		    when tmp is Error do (
 			 errret = tmp;
 			 while true do provide nullE; )
@@ -1651,7 +1651,7 @@ scan(localInterpState:threadLocalInterp,n:int,f:Expr):Expr := (
 	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       for i from 0 to n-1 do (
 		    values.0 = toInteger(i);
-		    tmp := eval(body);
+		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      recursionDepth = recursionDepth - 1;
@@ -1673,7 +1673,7 @@ scan(localInterpState:threadLocalInterp,n:int,f:Expr):Expr := (
 	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       for i from 0 to n-1 do (
 		    values.0 = toInteger(i);
-		    tmp := eval(body);
+		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      recursionDepth = recursionDepth - 1;
@@ -1749,7 +1749,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       foreach arg in a do (
 		    values.0 = arg;
-		    tmp := eval(body);
+		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      recursionDepth = recursionDepth - 1;
@@ -1780,7 +1780,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					)
 				   )
 			      else values.0 = arg;
-			      tmp := eval(body);
+			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
@@ -1806,7 +1806,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 					)
 				   )
 			      else values.0 = arg;
-			      tmp := eval(body);
+			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
@@ -1839,7 +1839,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 				   threadLocalInterpState.localFrame = saveLocalFrame;
 				   return WrongNumArgs(model.arrow,numparms,1);
 				   );
-			      tmp := eval(body);
+			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
@@ -1867,7 +1867,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
 				   threadLocalInterpState.localFrame = saveLocalFrame;
 				   return WrongNumArgs(model.arrow,numparms,1);
 				   );
-			      tmp := eval(body);
+			      tmp := eval(localInterpState,body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursionDepth = recursionDepth - 1;
@@ -1906,7 +1906,7 @@ scan(localInterpState:threadLocalInterp,a:Sequence,f:Expr):Expr := (
      is s:SpecialExpr do (
 	  fn := s.e;
 	  foreach arg in a do (
-	       tmp := applyEE(fn,arg);
+	       tmp := applyEE(localInterpState,fn,arg);
 	       when tmp is Error do (
 		    recursionDepth = recursionDepth - 1;
 		    threadLocalInterpState.localFrame = saveLocalFrame;
@@ -1950,7 +1950,7 @@ scan(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := 
 	       threadLocalInterpState.localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       for i from 0 to newlen - 1 do (
 		    values.0 = Sequence(a1.i,a2.i);
-		    tmp := eval(body);
+		    tmp := eval(localInterpState,body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
 			      -- stash
@@ -1979,7 +1979,7 @@ scan(localInterpState:threadLocalInterp,a1:Sequence,a2:Sequence,f:Expr):Expr := 
 		    for i from 0 to newlen - 1 do (
 			 values.0 = a1.i;
 			 values.1 = a2.i;
-			 tmp := eval(body);
+			 tmp := eval(localInterpState,body);
 			 when tmp is err:Error do (
 			      if err.message != returnMessage then (
 				   -- stash
@@ -2114,11 +2114,11 @@ iteratedApply(localInterpState:threadLocalInterp,e:Expr):Expr := (
 	  when arg
 	  is args:Sequence do (
 	       foreach x in args do (
-		    f = applyEE(f,x);
+		    f = applyEE(localInterpState,f,x);
 		    when f is Error do return f else nothing;
 		    );
 	       f)
-	  else applyEE(f,arg))
+	  else applyEE(localInterpState,f,arg))
      else WrongNumArgs(2));
 setupfun("uncurry",iteratedApply);
 

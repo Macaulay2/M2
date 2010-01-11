@@ -109,11 +109,11 @@ setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);
 LongLongDoubleRightArrowFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongLongDoubleRightArrowS);
 setup(LongLongDoubleRightArrowS,LongLongDoubleRightArrowFun);
 
-LongDoubleLeftArrowFun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LongDoubleLeftArrowS);
+LongDoubleLeftArrowFun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,LongDoubleLeftArrowS);
 LongDoubleLeftArrowFun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongDoubleLeftArrowS);
 setup(LongDoubleLeftArrowS,LongDoubleLeftArrowFun1,LongDoubleLeftArrowFun2);
 
-LongLongDoubleLeftArrowFun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LongLongDoubleLeftArrowS);
+LongLongDoubleLeftArrowFun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,LongLongDoubleLeftArrowS);
 LongLongDoubleLeftArrowFun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LongLongDoubleLeftArrowS);
 setup(LongLongDoubleLeftArrowS,LongLongDoubleLeftArrowFun1,LongLongDoubleLeftArrowFun2);
 
@@ -121,15 +121,15 @@ LongBiDoubleArrowFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr 
 setup(LongBiDoubleArrowS,LongBiDoubleArrowFun);
 
 binaryDeductionFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,DeductionS);
-unaryDeductionFun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,DeductionS);
+unaryDeductionFun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,DeductionS);
 setup(DeductionS,unaryDeductionFun,binaryDeductionFun);
 
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,DoubleArrowS);
 optionFun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     l := eval(lhs);
+     l := eval(localInterpState,lhs);
      when l is Error do l
      else (
-     	  r := eval(rhs);
+     	  r := eval(localInterpState,rhs);
      	  when r is Error do r
 	  else list(optionClass,Sequence(l,r))));
 setup(DoubleArrowS,optionFun);
@@ -207,7 +207,7 @@ exitfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("exit",exitfun).protected = false;
 
-applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
+applythem(localInterpState:threadLocalInterp,obj:HashTable,fn:FunctionClosure):void := applyFCE(localInterpState,fn,Expr(obj));
 
 lookupCountFun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
@@ -253,7 +253,7 @@ doubleplusfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := bina
 setup(PlusPlusS,doubleplusfun);
 
 lesslessfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,LessLessS);
-lesslessfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,LessLessS);
+lesslessfun1(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,LessLessS);
 setup(LessLessS,lesslessfun1,lesslessfun2);
 
 greatergreaterfun2(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,GreaterGreaterS);
@@ -274,19 +274,19 @@ setup(AmpersandS,ampersandfun);
 hathatfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := binarymethod(localInterpState,lhs,rhs,HatHatS);
 setup(HatHatS,hathatfun);
 
-Tildefun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,TildeS);
+Tildefun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 
-ParenStarParenfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
+ParenStarParenfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,ParenStarParenS);
 setuppostfix(ParenStarParenS,ParenStarParenfun);
 
-UnderscoreStarfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
+UnderscoreStarfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,UnderscoreStarS);
 setuppostfix(UnderscoreStarS,UnderscoreStarfun);
 
-PowerStarfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,PowerStarS);
+PowerStarfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,PowerStarS);
 setuppostfix(PowerStarS,PowerStarfun);
 
-Exclamationfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(rhs,ExclamationS);
+Exclamationfun(localInterpState:threadLocalInterp,rhs:Code):Expr := unarymethod(localInterpState,rhs,ExclamationS);
 setuppostfix(ExclamationS,Exclamationfun);
 
 factorial(localInterpState:threadLocalInterp,x:Expr):Expr := (
@@ -309,7 +309,7 @@ underscorefun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := bina
 setup(UnderscoreS,underscorefun);
 
 dotfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left is Error do left
      is x:HashTable do (
 	  when rhs
@@ -320,7 +320,7 @@ dotfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
 setup(DotS,dotfun);
 
 dotQfun(localInterpState:threadLocalInterp,lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
+     left := eval(localInterpState,lhs);
      when left is Error do left
      is x:HashTable do (
 	  when rhs
@@ -859,7 +859,7 @@ method1(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      f := lookup(Class(e),env.0);
      if recursionDepth > recursionLimit then return InternalRecursionLimit();
      recursionDepth = recursionDepth + 1;
-     r := applyEE(if f == nullE then env.1 else f,e);
+     r := applyEE(localInterpState,if f == nullE then env.1 else f,e);
      recursionDepth = recursionDepth - 1;
      r);
 method1c(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
@@ -867,7 +867,7 @@ method1c(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- env.1 : the function to call if no method found
      when e is c:HashTable do (
      	  f := lookup(c,env.0);
-     	  applyEE(if f == nullE then env.1 else f,e))
+     	  applyEE(localInterpState,if f == nullE then env.1 else f,e))
      else WrongArg("a class")
      );
 newmethod1(localInterpState:threadLocalInterp,e:Expr):Expr := (
@@ -884,14 +884,14 @@ setupfun("newmethod1",newmethod1);
 applyEOS(localInterpState:threadLocalInterp,f:Expr,o:Expr,s:Sequence):Expr := (
      if o == nullE then applyES(localInterpState,f,s)
      else (
-     	  g := applyEE(f,o);
+     	  g := applyEE(localInterpState,f,o);
      	  when g is Error do g else applyES(localInterpState,g,s)));
 
 applyEOE(localInterpState:threadLocalInterp,f:Expr,o:Expr,x:Expr):Expr := (
-     if o == nullE then applyEE(f,x)
+     if o == nullE then applyEE(localInterpState,f,x)
      else (
-     	  g := applyEE(f,o);
-     	  when g is Error do g else applyEE(g,x)));
+     	  g := applyEE(localInterpState,f,o);
+     	  when g is Error do g else applyEE(localInterpState,g,x)));
 
 method1234(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
@@ -920,8 +920,8 @@ method1234(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
 	  else applyES(localInterpState,env.1, args))
      else (
 	  f := lookup(Class(e),env.0);
-	  if f == nullE then applyEE(env.1,e)
-	  else applyEE(f,e)));
+	  if f == nullE then applyEE(localInterpState,env.1,e)
+	  else applyEE(localInterpState,f,e)));
 
 method1234o(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
      -- e is (opt,arg);
@@ -954,7 +954,7 @@ method1234o(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
 	       else applyES(localInterpState,env.1, args))
 	  else (
 	       f := lookup(Class(arg),env.0);
-	       if f == nullE then applyEE(env.1,arg)
+	       if f == nullE then applyEE(localInterpState,env.1,arg)
 	       else applyEOE(localInterpState,f,opt,arg)) )
      else WrongNumArgs(2));
 
@@ -984,7 +984,7 @@ method1234p(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := ( --
 	       else applyES(localInterpState,env.1, args))
 	  else (
 	       f := lookup(Class(arg),env.0);
-	       if f == nullE then applyEE(env.1,arg) else applyES(localInterpState,f,s)) )
+	       if f == nullE then applyEE(localInterpState,env.1,arg) else applyES(localInterpState,f,s)) )
      else WrongNumArgs(2));
 
 method1234c(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
@@ -1018,52 +1018,52 @@ method1234c(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(dispseq.0)
-		    else when dispseq.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
+		    else when dispseq.0 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
 	       a1 := (
 		    if length(outputs) <= 1 || outputs.1 == False
 		    then Class(dispseq.1)
-		    else when dispseq.1 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(1)),disp))));
+		    else when dispseq.1 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(1)),disp))));
 	       f := lookupBinaryMethod(a0,a1,env.0);
 	       if f == nullE then applyES(localInterpState,env.1, dispseq) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 3 then (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(dispseq.0)
-		    else when dispseq.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
+		    else when dispseq.0 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
 	       a1 := (
 		    if length(outputs) <= 1 || outputs.1 == False
 		    then Class(dispseq.1)
-		    else when dispseq.1 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(1)),disp))));
+		    else when dispseq.1 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(1)),disp))));
 	       a2 := (
 		    if length(outputs) <= 2 || outputs.2 == False
 		    then Class(dispseq.2)
-		    else when dispseq.2 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(2)),disp))));
+		    else when dispseq.2 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(2)),disp))));
 	       f := lookupTernaryMethod(a0,a1,a2,env.0);
 	       if f == nullE then applyES(localInterpState,env.1, dispseq) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 1 then (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(dispseq.0)
-		    else when dispseq.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
+		    else when dispseq.0 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
 	       f := lookup(a0,env.0);
-	       if f == nullE then applyEE(env.1, dispseq.0) else applyEOE(localInterpState,f,opt,arg))
+	       if f == nullE then applyEE(localInterpState,env.1, dispseq.0) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 4 then (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(dispseq.0)
-		    else when dispseq.0 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
+		    else when dispseq.0 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(0)),disp))));
 	       a1 := (
 		    if length(outputs) <= 1 || outputs.1 == False
 		    then Class(dispseq.1)
-		    else when dispseq.1 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(1)),disp))));
+		    else when dispseq.1 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(1)),disp))));
 	       a2 := (
 		    if length(outputs) <= 2 || outputs.2 == False
 		    then Class(dispseq.2)
-		    else when dispseq.2 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(2)),disp))));
+		    else when dispseq.2 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(2)),disp))));
 	       a3 := (
 		    if length(outputs) <= 3 || outputs.3 == False
 		    then Class(dispseq.3)
-		    else when dispseq.3 is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(3)),disp))));
+		    else when dispseq.3 is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(3)),disp))));
 	       f := lookupQuaternaryMethod(a0,a1,a2,a3,env.0);
 	       if f == nullE then applyES(localInterpState,env.1, dispseq) else applyEOE(localInterpState,f,opt,arg))
 	  else if length(dispseq) == 0 then (
@@ -1074,9 +1074,9 @@ method1234c(localInterpState:threadLocalInterp,e:Expr,env:Sequence):Expr := (
 	       a0 := (
 		    if length(outputs) <= 0 || outputs.0 == False
 		    then Class(disp)
-		    else when disp is o:HashTable do o else return applyEE(env.2, Expr(Sequence(Expr(toInteger(-1)),disp))));
+		    else when disp is o:HashTable do o else return applyEE(localInterpState,env.2, Expr(Sequence(Expr(toInteger(-1)),disp))));
 	       f := lookup(a0,env.0);
-	       if f == nullE then applyEE(env.1,disp) else applyEOE(localInterpState,f,opt,arg)))
+	       if f == nullE then applyEE(localInterpState,env.1,disp) else applyEOE(localInterpState,f,opt,arg)))
      else buildErrorPacket("env.3: not a list"));
 newmethod1234c(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e is env:Sequence do (

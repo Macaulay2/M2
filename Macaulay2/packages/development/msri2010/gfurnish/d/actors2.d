@@ -303,22 +303,22 @@ errt(newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"new: expected
 errp(newParentCode:Code):Expr := printErrorMessageE(newParentCode,"new: expected a hash table as prospective parent");
 
 newfun(localInterpState:threadLocalInterp,newClassCode:Code):Expr := (
-     classExpr := eval(newClassCode);
+     classExpr := eval(localInterpState,newClassCode);
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
 	  method := lookup(class,NewS);
 	  if method != nullE
-	  then newClass(applyEE(method,Expr(class)),class,true)
+	  then newClass(applyEE(localInterpState,method,Expr(class)),class,true)
 	  else makenew(class))
      else errt(newClassCode));
 NewFun = newfun;
 newoffun(localInterpState:threadLocalInterp,newClassCode:Code,newParentCode:Code):Expr := (
-     classExpr := eval(newClassCode);
+     classExpr := eval(localInterpState,newClassCode);
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  newParentExpr := eval(newParentCode);
+	  newParentExpr := eval(localInterpState,newParentCode);
 	  when newParentExpr
 	  is Error do newParentExpr
 	  is parent:HashTable do (
@@ -330,11 +330,11 @@ newoffun(localInterpState:threadLocalInterp,newClassCode:Code,newParentCode:Code
      else errt(newClassCode));
 NewOfFun = newoffun;
 newfromfun(localInterpState:threadLocalInterp,newClassCode:Code,newInitCode:Code):Expr := (
-     classExpr := eval(newClassCode);
+     classExpr := eval(localInterpState,newClassCode);
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  newInitExpr := eval(newInitCode);
+	  newInitExpr := eval(localInterpState,newInitCode);
 	  when newInitExpr
 	  is Error do newInitExpr
 	  else (
@@ -356,15 +356,15 @@ newfromfun(localInterpState:threadLocalInterp,newClassCode:Code,newInitCode:Code
      else errt(newClassCode));
 NewFromFun = newfromfun;
 newoffromfun(localInterpState:threadLocalInterp,newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
-     classExpr := eval(newClassCode);
+     classExpr := eval(localInterpState,newClassCode);
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  newParentExpr := eval(newParentCode);
+	  newParentExpr := eval(localInterpState,newParentCode);
 	  when newParentExpr
 	  is Error do newParentExpr
 	  is parent:HashTable do (
-	       newInitExpr := eval(newInitCode);
+	       newInitExpr := eval(localInterpState,newInitCode);
 	       when newInitExpr
 	       is Error do newInitExpr
 	       else (
@@ -550,7 +550,7 @@ export chars := new array(Expr) len 256 do (
 getcfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      when e
      is f:file do (
-	  i := getc(localInterpState,f);
+	  i := getc(f);
 	  if i == -1 then Expr("") else chars.(i & 255))
      is Error do e
      else buildErrorPacket("expected an input file"));
@@ -661,7 +661,7 @@ setupfun("cpuTime",cpuTime);
 
 timefun(localInterpState:threadLocalInterp,a:Code):Expr := (
      v := etime();
-     ret := eval(a);
+     ret := eval(localInterpState,a);
      x := etime();
      when ret
      is Error do ret
@@ -669,7 +669,7 @@ timefun(localInterpState:threadLocalInterp,a:Code):Expr := (
 setupop(timingS,timefun);
 showtimefun(localInterpState:threadLocalInterp,a:Code):Expr := (
      v := etime();
-     ret := eval(a);
+     ret := eval(localInterpState,a);
      x := etime();
      stdout << "     -- used " << x-v << " seconds" << endl;
      ret);
