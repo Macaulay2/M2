@@ -71,21 +71,19 @@ SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
   if ( i < 0 ) then (-- we are working with a FP
     i = - i;
     f = G#j;
-    print xx;
-    print "Hello ";
-    print class Brp;
-    print Brp;
-    print variables#(i-1);
     xx = new Brp from {variables#(i-1)};
     print xx;
     g = new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
     g*xx+g
   )
   else (
+    print "Hello ";
     f = G#i;
     g = G#j;
-    lcmI = lcmBrps( leading(f), leading(g) ) / leading f;
-    lcmJ = lcmBrps( leading(f), leading(g) ) / leading g;
+    print f;
+    print g;
+    lcmI = divide( lcmBrps(leading(f), leading(g)) , leading f);
+    lcmJ = divide( lcmBrps(leading(f), leading(g)) , leading g);
     f*lcmI + g*lcmJ
   )
 )
@@ -99,7 +97,12 @@ makePairsFromLists (List,List) := List => (a,b) -> (
   unique delete(0, flatten ll)
 )
 
-
+--doc ///
+--key 
+--  BuchbergerForBrp
+--Headline
+--  BuchbergerForBrp making use of bit-wise representation
+--///
 beginDocumentation()
 document { 
 	Key => BuchbergerForBrp,
@@ -115,12 +118,27 @@ TEST ///
   
   R = ZZ[x,y,z]
   n = 3
-  myPoly = convert( x*y + z)
-  F = new HashTable from { 1 => myPoly}
-  pair = {-1,1}
-
-  S = SPolynomial(pair, F, n)
+  myPoly1 = convert( x*y + z)
+  myPoly2 = convert( x )
+  myPoly3 = convert( y*z + z)
+  myPoly4 = convert( x*y*z + x*y + x)
+  myPoly5 = convert( x*y + y*z)
+  F = new HashTable from { 1 => myPoly1,
+                           2 => myPoly2,
+                           3 => myPoly3,
+                           4 => myPoly4,
+                           5 => myPoly5
+                           }
+  S = SPolynomial({-1,1}, F, n)
   assert (S == convert( x*z + z) )
+  S = SPolynomial({-1,2}, F, n)
+  assert (S == new Brp from {}) 
+  S = SPolynomial({1,3}, F, n)
+  assert (S == convert( x*z+z) ) 
+  S = SPolynomial({4,5}, F, n)
+  assert (S == convert( x*y + x + y*z) ) 
+
+
 
 ///
   
