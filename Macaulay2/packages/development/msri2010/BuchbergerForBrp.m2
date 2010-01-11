@@ -72,16 +72,23 @@ updatePairs = method()
 updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
   variables = entries(id_(ZZ^n));
   select( l, pair -> (
-    if ( first pair < 0 ) then (
-      i = - first pair;
-      j = last pair;
+    i = first pair;
+    j = last pair;
+    if ( i < 0 ) then (
+      i = - i;
       f = G#j;
-      xx = new Brp from {variables#(i-1)};
-      isDivisible(leading f, xx) 
-    )
+      g = new Brp from {variables#(i-1)}
+    ) 
+    else (
+      f = G#i;
+      g = G#j
+    );
+    not isRelativelyPrime(leading f, leading g)
   )
   )
 )
+
+  
  
 -- from pair of indices get corresponding polynomials, then compute their S
 -- polynomial
