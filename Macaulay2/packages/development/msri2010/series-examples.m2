@@ -52,3 +52,18 @@ s#"polynomial"
 s#symbol polynomial
 keys s
 s#((keys s)_3)
+
+-- inverses of Series.
+restart
+loadPackage"PowerSeries"
+R = QQ[x]
+F = series(1-x,Degree=>2)
+time G = inverse F
+peek G
+setDegree(4,G)
+
+F2 = series(2-x,Degree=>2)
+time G2 = inverse F2
+peek G2
+setDegree(4,G2)
+peek oo
