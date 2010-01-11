@@ -64,13 +64,13 @@ series(RingElement, Function) := Series => opts -> (X,f) -> (
 
 
 inverse(Series) := Series => F -> (
-     R := (F.polynomial.ring);
+     R := (ring F.polynomial);
      -- We have a function that computes the inverse of a polynomial to a given degree,
      -- given the inverse of the polynomial already given to some other degree.
      -- That function is called recip(denom,oldDegree,newDegree,oldApprox) and returns a polynomial.
      if not isUnit(dominantTerm F) then error "This series is not invertible: its dominant term is not a unit.";
-     G = (inverse (dominantTerm F)) * F
-
+     G = ((dominantTerm F)^-1) * F;
+     
      new Series from {
 	  polynomial => dominantTerm F * recip(G,0,F.degree,1_R),
 	  computedDegree => F.degree,
