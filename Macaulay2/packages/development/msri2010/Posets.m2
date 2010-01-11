@@ -363,8 +363,8 @@ orderComplex (Poset) := opts -> (P) -> (
 -- output: the order ideal of a, i.e. all elements in the poset that are >= a
 -- usage:
 
-orderIdeal= method()
-orderIdeal(Poset, Thing) := (P, a) -> (
+filter= method()
+filter(Poset, Thing) := (P, a) -> (
 	M:=P.RelationMatrix;
 	aindex := indexElement (P,a);
 	GreaterThana:= entries((transpose(M))_aindex);
@@ -375,8 +375,8 @@ orderIdeal(Poset, Thing) := (P, a) -> (
 -- input: a poset, and an element from I
 -- output:  the filter of a, i.e. all elements in the poset that are <= a
 -- usage:
-filter = method()
-filter(Poset, Thing) := (P,a) -> (
+orderIdeal = method()
+orderIdeal(Poset, Thing) := (P,a) -> (
      M:=P.RelationMatrix;
      aindex := indexElement (P,a);
      LessThana:= entries M_aindex;
@@ -953,7 +953,7 @@ doc ///
 	       a is an element of P
      Outputs
      	  F : List
-	       a list of all elements in P that are less than or equal to a
+	       a list of all elements in P that are greater than or equal to a
      Description
      	  Example
 	       G = {a,b,c,d};
@@ -978,13 +978,13 @@ doc ///
 	       a is an element of P
      Outputs
      	  O : List
-	       a list of all elements in P that are greater than or equal to a
+	       a list of all elements in P that are less than or equal to a
      Description
      	  Example
 	       G = {a,b,c,d};
 	       R = {(a,b), (a,c), (c,d)};
 	       P = poset (G,R);
-	       O = filter (P,c)
+	       O = orderIdeal (P,c)
      SeeAlso
      	  filter    
 /// 
