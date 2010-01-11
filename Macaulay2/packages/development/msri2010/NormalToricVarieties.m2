@@ -641,7 +641,7 @@ normalToricVariety Fan := opts -> F -> (
      X.cache.Fan = F;
      X)
 
-normalToricVariety Polyhedron := P -> normalToricVariety normalFan P
+normalToricVariety Polyhedron := opts -> P -> normalToricVariety normalFan P
 
 
 isComplete NormalToricVariety := X -> (
@@ -1338,6 +1338,48 @@ document {
 	  (max,NormalToricVariety)
 	  }
      }	
+
+document {
+     Key => (normalToricVariety,Fan),
+     Headline => "transform a fan from polyheda into a normal toric variety",
+     Usage => " X = normalToricVariety F",
+     Inputs => {
+	  "F" => Fan
+	  },
+     Outputs => {
+	  "X" => NormalToricVariety
+	  },
+     
+     PARA{}, TO "Polyhedra::Fan"," is an object from the package ",TO "Polyhedra::Polyhedra"," representing a fan of convex rational polyhedral cones.
+     When the function is applied to a fan it returns the normal toric variety defined by the fan as 
+     an object of class ",TO NormalToricVariety,".",
+     
+     EXAMPLE {
+	  " F = faceFan hypercube 2",
+	  " normalToricVariety F"
+	  }
+     }
+
+document {
+     Key => (normalToricVariety,Polyhedron),
+     Headline => "transform a polyhedron from polyheda into a normal toric variety",
+     Usage => " X = normalToricVariety P",
+     Inputs => {
+	  "P" => Polyhedron
+	  },
+     Outputs => {
+	  "X" => NormalToricVariety
+	  },
+     
+     PARA{}, TO "Polyhedra::Polyhedron"," is an object from the package ",TO "Polyhedra::Polyhedra"," representing 
+     rational convex polyhedra. If applied to a polyhedron the function computes the (inner) normal fan of the polyhedron and returns 
+     the normal toric variety defined by this fan as an object of class ",TO NormalToricVariety,".",
+     
+     EXAMPLE {
+	  " P = hypercube 2",
+	  " normalToricVariety P"
+	  }
+     }
 
 
 document { 
@@ -2056,6 +2098,30 @@ document {
 	  (ring,NormalToricVariety)}
 
      }   
+
+document {
+     Key => {anticanonicalDivisor, (anticanonicalDivisor, NormalToricVariety)},
+     Headline => "generates the anticanonical divisor of a normal toric variety",
+     Usage => "anticanonicalDivisor X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  List => "which defines the anticanonical divisor by the coefficients of the 
+	       prime divisors corresponding to the rays"
+	  },
+     
+     "for a normal toric variety the anticanonical divisor ", TEX ///$-K_X$///," is the sum 
+     of the prime torus invariant divisors ", TEX ///$D_{\rho}$///, " given by the rays of the fan. 
+     Note, that this means we get a list of ones, one for each ray of the fan.",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 4",
+	  " anticanonicalDivisor X",
+	  " X = normalToricVariety normalFan hypercube 3",
+	  " anticanonicalDivisor X"
+	  }
+     }  
 
 
 document { 
