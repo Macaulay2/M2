@@ -2056,3 +2056,16 @@ assert( ((orderComplex L).facets) === map(QQ[v_0, v_1, v_2, v_3, v_4, v_5, v_6, 
 ///
 
 
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)})
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+R = QQ[x,y,z,w]
+I = ideal(x^2, x*y, y^3, y*z)
+L = lcmLattice I
+assert( (isAntichain(P1, {j, k})) === true )
+assert( (isAntichain(P1, {j, k, h})) === false )
+assert( (isAntichain(P2, {a, b, g})) === false )
+assert( (isAntichain(P2, {b, c, d})) === true )
+assert( (isAntichain(L, {y*z, y^3, x*y})) === true )
+assert( (isAntichain(L, {y*z, x^2*y, x*y*x})) === true )
+///
