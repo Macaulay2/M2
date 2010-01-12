@@ -17,13 +17,16 @@ newPackage(
 
 export {series, setDegree,toPolynomial,dominantTerm,inefficientSeries,efficientSeries}
 
-
 Series = new Type of HashTable
-expression Series := s -> expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
-net Series := s -> net expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
-toString Series := s -> toString expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
-tex Series := s -> tex expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
-html Series := s -> html expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
+
+-- pretty needs to be modified if we work with more general series
+pretty Series := s -> net new Sum from apply(apply(select(apply(s#degree+2,i -> part_i( truncate(s#degree, s#polynomial) )), p-> p!=0),expression),e -> if instance(e,Sum) then new Parenthesize from {e} else e)
+
+expression Series := s -> pretty s + expression "O(" expression(s#degree+1) expression ")"
+net Series := s -> net pretty s + expression "O(" expression(s#degree+1) expression ")"
+toString Series := s -> toString pretty s + expression "O(" expression(s#degree+1) expression ")"
+tex Series := s -> tex pretty s + expression "O(" expression(s#degree+1) expression ")"
+html Series := s -> html pretty s + expression "O(" expression(s#degree+1) expression ")"
 
 truncate(ZZ,RingElement) := RingElement => (n,f) -> (sum select(terms f, i -> first degree i <= n) + 0_(ring f));
 -- should be replaced with "part"
