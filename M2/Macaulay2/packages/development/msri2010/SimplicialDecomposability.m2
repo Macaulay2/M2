@@ -15,7 +15,6 @@ needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 
 -- TODO
----- add tests for:  allFaces, isShellable's different strategies
 ---- add impure variants of iskDecomposable, isSheddingFace, isShellable, isShelling, isVertexDecomposable, shellingOrder
 
 -------------------
