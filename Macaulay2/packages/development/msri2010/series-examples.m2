@@ -11,17 +11,17 @@ series(x,i->i^2)            --method is (series, RingElement, Function)
 -- We can create a series [inefficiently!] given a function that computes 
 -- the ith polynomial approximation from scratch in order to get it to degree i:
 f = i -> sum(i,j-> j*(x)^j);
-S1 = inefficientSeries(f)                   --method is (inefficientSeries, Function) 
+S1 = seriesPartialSums(f)                   --method is (seriesPartialSums, Function) 
 setDegree(10,S1)
 
 -- We can create a series [efficiently!] given a function that knows how to add
 -- the ith term to a given polynomial approximation of itself.
 f = (g,m,n) -> g + sum(m+1..n,j -> j*(x)^j)
 
-S2 = efficientSeries(R,f)                     --method is (efficientSeries, Ring, Function)
+S2 = series(R,f)                     --method is (series, Ring, Function)
 setDegree(10,S2)
 
-S3 = efficientSeries(x+2*x^2,2,f)             --method is (efficientSeries, RingElement,ZZ,Function) 
+S3 = series(x+2*x^2,2,f)             --method is (efficientSeries, RingElement,ZZ,Function) 
 setDegree(10,S3)
 
 -- We can create a series by manually typing in some terms of it to a
