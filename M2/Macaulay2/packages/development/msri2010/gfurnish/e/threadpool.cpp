@@ -42,7 +42,6 @@ void M2ThreadPool::createThreads()
 void M2ThreadPool::test()
 {
   m_PoolThreads[0]->start();
-  std::cout << "Finished starting" << std::endl;
 }
 void M2ThreadPool::joinThreads()
 {
