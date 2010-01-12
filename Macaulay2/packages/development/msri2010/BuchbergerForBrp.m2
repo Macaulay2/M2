@@ -73,11 +73,25 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
 reduceLtBrp = method()
 reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
   while (l= select(f, m ->  isReducible(new Brp from {m}, leading(g)));  #l!=0) do (
-    print first l;
-	  f= f+ divide(new Brp from {first l}, leading(g))*g
+   	  f= f+ divide(new Brp from {first l}, leading(g))*g
   );
   f
 )
+
+-- Reduce lower terms of intermediate GB by leading terms of other polynomials
+reduceGbBrp = method()
+reduceGbBrp( gbComputation ) := gbComputation => F -> (
+  scan( pairs F, (fKey,f) -> ( print "starting with"; print f; scan(values F, g -> F#fKey = reduceLtBrp(f,g) )) )
+)
+
+ R = ZZ[x,y,z]
+  F = new gbComputation from { 0 => convert( x*y + z),
+                           1 => convert( x ) ,
+                           2 => convert( y*z + z),
+                           3 => convert( x*y*z + x*y + x) ,
+                           4 => convert( x*y + y*z)
+                           }
+reduceGbBrp(F)
 
 
 -- remove all relatively prime pairs
