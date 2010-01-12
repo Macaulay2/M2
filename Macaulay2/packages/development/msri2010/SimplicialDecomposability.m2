@@ -71,7 +71,7 @@ isSheddingFace (SimplicialComplex, RingElement, ZZ) := (S, F, k) -> (
 );
 
 -- Determines if a pure simplicial complex is shellable.
-isShellable = method(TypicalValue => Boolean, Options => {Strategy => "dDecomposable"});
+isShellable = method(TypicalValue => Boolean, Options => {Strategy => "Recursive"});
 isShellable (SimplicialComplex) := options -> (S) -> (
     if options.Strategy == "dDecomposable" then (
         -- S is (dim S)-decomposable if and only if S is shellable (see thm 2.8 is Provan-Billera)
@@ -135,24 +135,48 @@ hVector (SimplicialComplex) := (S) -> (
 );
 
 -- Attempts to find a shelling order of a pure simplicial complex.
-shellingOrder = method(TypicalValue => List, Options => {Strategy => "Naive"});
+shellingOrder = method(TypicalValue => List, Options => {Strategy => "Recursive"});
 shellingOrder (SimplicialComplex) := options -> (S) -> (
     -- any of {non-pure, non-CM, negatives in hVector} imply not pure shellable
     if not isPure S then return {};
     --if not isCM quotient ideal S then return {};  -- good idea, but this is REALLY slow
     if any(hVector S, i -> i<0) then return {};
 
-    --if options.Strategy == "Naive" then (
+    if options.Strategy == "Naive" then (
         -- NAIVE: simply look at all facet permutations
         P := permutations first entries facets S;
         for L in P do if isShelling L then return L;
-    --);
+    )
+    else (
+        -- RECURSIVE: try to prune where possible (and not use ridiculous RAM)
+        O := flatten entries facets S;
+        Q := {};
+        for i from 0 to #O - 1 do (
+            Q = recursiveShell({}, drop(O, {i,i}), O_i);
+            if Q != {} then return Q;
+        );
+    );
     {}
 );
 
 -------------------
 -- Local-Only Code
 -------------------
+
+-- Build up a shelling recursively.  Called by shellingOrder with Strategy => "Recursive"
+recursiveShell = method(TypicalValue => List);
+recursiveShell (List, List, RingElement) := (O, P, F) -> (
+    N := append(O, F);
+    if isShelling(N) then (
+        if P == {} then return N;
+        Q := {};
+        for i from 0 to #P - 1 do (
+            Q = recursiveShell(N, drop(P, {i,i}), P_i);
+            if Q != {} then return Q;
+        );
+    );
+    {}
+);
 
 -------------------
 -- Documentation
@@ -275,9 +299,9 @@ doc ///
             true if and only if {\tt S} is (pure) shellable
     Description
         Text
-            This function takes an optional Strategy which determines how the method works.  The default is Strategy => "dDecomposable"
-            which checks if {\tt S} is {\tt dim S}-decomposable.  Any other Strategy results in simply checking if a shelling order
-            exists and the input Strategy is passed on to the shellingOrder method.
+            This function takes an optional Strategy which determines how the method works.  The options are those available in
+            shellingOrder (in particular, "Recursive" is the default) and also "dDecomposable" which checks if {\tt S} is 
+            {\tt dim S}-decomposable.
         Example
             R = QQ[a,b,c,d,e];
             isShellable simplicialComplex {a*b*c*d*e}
@@ -399,8 +423,9 @@ doc ///
             a (pure) shelling order of the facets of {\tt S}, if one exists
     Description
         Text
-            This method behaves differently depending on the Strategy passed as an option.  Currently there is only one Strategy,
-            "Naive", which simply checks all permutations of the facet with the isShelling routine until one is found, if one exists.
+            This method behaves differently depending on the Strategy passed as an option.  The default strategy is "Recursive" which
+            attempts to recursively find a shelling order.  An alternate strategy is "Naive" which simply checks all permutations
+            of the facets with the isShelling routine until one is found, if one exists.
         Example
             R = QQ[a,b,c,d,e];
             shellingOrder simplicialComplex {a*b*c*d*e}
