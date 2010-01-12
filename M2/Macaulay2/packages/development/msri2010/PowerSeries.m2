@@ -236,14 +236,35 @@ seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
 --=========================================================================--
 makeSeriesCompatible = method()
 makeSeriesCompatible(Series,Series) := Sequence => (A,B) -> (
-      if A.computedDegree == B.computedDegree then (A,B)
-      else (
-      	   newComputedDegree := min(A.maxDegree,B.maxDegree,max(A.computedDegree,B.computedDegree));
-           A' := setDegree(newComputedDegree,A);
-	   B' := setDegree(newComputedDegree,B);
-	   (A',B')
-	   )
-      );
+     newComputedDegree := min(degree(A),degree(B));
+     (
+	  new Series from {degree => newComputedDegree, 
+	       	    	   computedDegree => newComputedDegree,
+			   maxDegree => A.maxDegree,
+			   polynomial => truncate(newComputedDegree,A.polynomial),
+			   setDegree => A#setDegree},
+	  new Series from {degree => newComputedDegree, 
+	       	    	   computedDegree => newComputedDegree,
+			   maxDegree => A.maxDegree,
+			   polynomial => truncate(newComputedDegree,A.polynomial),
+			   setDegree => A#setDegree}
+     	  )
+     
+     
+     );
+     
+     
+     
+
+
+      --if A.computedDegree == B.computedDegree then (A,B)
+      --else (
+      	--   newComputedDegree := min(degree(A),degree(B));
+          -- newA := setDegree(newComputedDegree,A);
+	  -- newB := setDegree(newComputedDegree,B);
+	  -- (newA,newB)
+	  -- )
+      --);
  
 Series + Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
