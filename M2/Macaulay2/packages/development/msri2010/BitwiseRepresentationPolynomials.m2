@@ -4,9 +4,9 @@ newPackage(
     	Version => "0.1", 
     	Date => "January 10, 2010",
     	Authors => {
-	     {Name => "Beth, Franzi, Samuel", Email => ""}
+	     {Name => "Beth Arnold, Franziska Hinkelmann, Samuel", Email => "fhinkel@vt.edu"}
 	     },
-    	HomePage => "http://",
+    	HomePage => "http://math.vt.edu/people/fhinkel",
     	Headline => "Computation for polynomials in ZZ/2 using binary representation",
       AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
     	DebuggingMode => true		 -- set to true only during development
