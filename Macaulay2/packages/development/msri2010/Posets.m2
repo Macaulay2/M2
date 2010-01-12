@@ -261,7 +261,7 @@ maximalElements (Poset) := (P) -> (
 atoms = method();
 atoms (Poset) := List => (P) -> (
   if P.cache.?coveringRelations == false then coveringRelations P;
-  apply(select(P.cache.coveringRelations, R -> any(minimalElements P, elt -> (elt == R#0))), rels-> rels_1)    
+  unique apply(select(P.cache.coveringRelations, R -> any(minimalElements P, elt -> (elt == R#0))), rels-> rels_1)    
   )
 
 -- input:  poset
