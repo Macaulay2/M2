@@ -183,8 +183,8 @@ series(RingElement) := Series => opts -> (f) -> (
 --	  )});  
 
 
-
-inefficientSeries Function := Series => opts -> f -> ( 
+inefficientSeries = method()
+inefficientSeries(Function) := Series => opts -> f -> ( 
      	  s := f(opts.Degree+1);
 	   -- now make a new series.
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
@@ -201,6 +201,7 @@ inefficientSeries Function := Series => opts -> f -> (
 -- efficientSeries takes the current approximation, the current computed degree, and the function f, which does
 -- f(oldApproximation,oldComputedDegree,newDegree) which returns a new approximation to degree newDegree.
 -- We promise not to call f if newDegree <= oldComputedDegree.
+efficientSeries = method()
 efficientSeries (RingElement,ZZ,Function) := Series => opts -> (approximation,approxDegree,f) -> ( 
      	  s := f(opts.Degree+1);
 	   -- now make a new series.
@@ -210,8 +211,7 @@ efficientSeries (RingElement,ZZ,Function) := Series => opts -> (approximation,ap
 	  setDegree => (
 	       (oldPolynomial,oldComputedDegree,newDegree) -> 
 	       (
-		    if newDegree > oldComputedDegree then (f(oldPolynomial,oldComputedDegree,newDegree),newDegree)) 
-		    else (oldPolynomial, oldComputedDegree)
+		    if newDegree > oldComputedDegree then (f(oldPolynomial,oldComputedDegree,newDegree),newDegree) else (oldPolynomial, oldComputedDegree)
 	       )
 	  )});
 
