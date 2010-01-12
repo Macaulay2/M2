@@ -39,8 +39,12 @@ convert (Brp, Ring ) := RingElement => (l, R) -> sum (#l, i -> R_(l#i) )
 Brp + Brp := Brp => (a,b) -> removeDups (a|b)
 
 -- Multiplication of polynomial with monomial: bitwise OR
-Brp * Brp := Brp => (a, m) ->  
-  removeDups new Brp from rsort apply (#a, i  -> brpOR( a#i, m))
+Brp * Brp := Brp => (a, m) -> ( 
+  if a == 0 or m == 0 then new Brp from {} else (
+    assert (#m == 1);
+    removeDups new Brp from rsort apply (#a, i  -> brpOR( a#i, m))
+  )
+)
 
 -- return the leading term of a polynomials, for now we are restricted to lex
 leading = method()
@@ -194,18 +198,15 @@ TEST ///
   
   zeropoly = new Brp from {}
   assert (zeropoly == 0)
-
   monoA= new Brp from {{1,0,1}}
   monoB= new Brp from {{1,0,0}}
   monoC= new Brp from {{0,1,0}}
- 
   assert (lcmBrps( monoA, monoB) == new Brp from {{1,0,1}})
   assert (lcmBrps( monoC, monoB) == new Brp from {{1,1,0}})
 
   assert ( monoB + zeropoly == new Brp from {{1, 0, 0}}) 
-  assert ( zeropoly *monoB == new Brp from {} )
-  assert ( zeropoly *monoB == 0 )
-
+  assert ( zeropoly * monoB == new Brp from {} )
+  assert ( zeropoly * monoB == 0 )
   assert ( isDivisible(monoA, monoB) == true )
   assert isDivisible(monoA, monoB) 
   assert ( isDivisible(monoA, monoC) == false)
@@ -217,6 +218,9 @@ TEST ///
   assert ( convert(convert(x*y+x*y), R) == 0)
   assert (convert (firstpoly, R) == x*y + x)
   assert (convert( convert (firstpoly, R) ) == firstpoly )
+firstpoly
+secondpoly
+firstpoly * secondpoly
 
   assert ( firstpoly * secondpoly == new Brp from rsort {{1, 0, 0}, {1, 1, 0}})
   assert ( firstpoly * secondpoly === new Brp from rsort {{1, 0, 0}, {1, 1, 0}})
