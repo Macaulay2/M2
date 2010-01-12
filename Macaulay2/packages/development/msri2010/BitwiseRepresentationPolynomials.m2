@@ -88,6 +88,9 @@ lcmBrps (Brp, Brp) := Brp => (a,b) -> new Brp from {apply( first a, first b, (i,
 
 Brp == ZZ := (x,i) -> if even i then #x === 0 else #x===1 and all(x,isZero)all
 
+
+nullBrp = new Brp from {}
+
 doc /// 
 Key 
   BitwiseRepresentationPolynomials

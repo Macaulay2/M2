@@ -167,18 +167,18 @@ TEST ///
   myPoly3 = convert( y*z + z)
   myPoly4 = convert( x*y*z + x*y + x)
   myPoly5 = convert( x*y + y*z)
-  F = new HashTable from { 1 => myPoly1,
+  F = new gbComputation from { 1 => myPoly1,
                            2 => myPoly2,
                            3 => myPoly3,
                            4 => myPoly4,
                            5 => myPoly5
                            }
-  FOnePoly = new HashTable from { 1 => convert(x+y+z) } 
+  FOnePoly = new gbComputation from { 1 => convert(x+y+z) } 
 
   S = SPolynomial((-1,1), F, n)
   assert (S == convert( x*z + z) )
   S = SPolynomial((-1,2), F, n)
-  assert (S == new Brp from {}) 
+  assert (S == 0 )
   S = SPolynomial((1,3), F, n)
   assert (S == convert( x*z+z) ) 
   S = SPolynomial((4,5), F, n)
@@ -230,16 +230,6 @@ TEST ///
   F = new MutableHashTable from {0 => myPoly1,
                           1 => myPoly2,
                           2 => myPoly3};
-		     
---Example with 4 variables. Not currently working		     
---R = ZZ/2[x,y,z, w]
---  n=4
---  F = new MutableHashTable from { 1 => convert (x*y*w+w*x+z),
---                                  2 => convert (x*z+w*y)
---				  }
-		     
---  apply (values runner(F,n), poly -> convert(poly,R))
--- Output should be {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z}, not minimized, Lex
 ///
   
        
