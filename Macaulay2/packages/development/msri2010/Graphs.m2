@@ -47,7 +47,7 @@ union := S -> (
      for t in S do scanKeys(t, z -> x#z = 1);
      new Set from x)  
 
-graph = method(Options => {Singletons => null,})
+graph = method(Options => {Singletons => null})
 graph List := opts -> (g) -> (
      -- Input:  A list of lists with two elements which describe the 
      --         edges of the graph. 
@@ -107,7 +107,7 @@ graph HashTable := opts -> (g) -> (
      -- Output: A hash table of type Graph. 
      new Graph from g)
 
-digraph = method()
+digraph = method(Options => {Singletons => null})
 digraph List := (g) -> (
      -- Input:  A list of pairs where the first element of the pair is the 
      --         name of a node and the second is the list of 
@@ -387,9 +387,10 @@ doc ///
     Data types and basic functions on graphs used in algebra and algebraic geometry. 
   Description
     Text
-      This package is used to construct digraphs and graphs. The user
-      should note that this package assumes that all digraphs are
-      acyclic.  Also, graphs are assumed to have no loops or multiple edges. 
+      This package is used to construct digraphs and graphs and
+      perform basic functions on them. The user should note that this
+      package assumes that all digraphs are acyclic.  Also, graphs are 
+      assumed to have no loops or multiple edges. 
 ///
 
 doc ///
@@ -423,7 +424,8 @@ doc ///
     K:List 
       of isolated nodes of the graph
     H:HashTable 
-      whose keys are the nodes of the graphs and whose values are the neighbors of the nodes
+      whose keys are the nodes of the graphs and whose values are the
+      neighbors of the nodes
   Outputs
     G:Graph
   Description
@@ -440,15 +442,37 @@ doc ///
       the neighbors of the nodes.
 ///
 
-end
+
 
 doc ///
   Key
     digraph
   Headline
+    The function that creates a digraph
+  Usage
+    D = digraph(L) or D = digraph(H)
+  Inputs
+    L:List
+      of pairs consisting of a node and its children
+    H:HashTable
+      whose keys are the nodes of the digraph and whose values are the
+      children of the nodes
+  Outputs
+    D:Digraph
   Description
     Text
+      The digraph is stored as a hash table whose keys are the names
+      of the nodes and whose values are the children of those nodes.
+      The user inputs a digraph by inputting a list of pairs whose first
+      element is a node and whose second element is the list of children
+      of that node.  If a node has no children, it should still be
+      included in the list of pairs followed by an empty list.
+    Example
+      D = digraph({{a, {b,c}}, {b,{d,e}}, {c, {e,h}}, {d, {f}}, {e, {f,g}},
+  	  {f, {}}, {g, {}}, {h, {}}})
 ///
+
+end
 
 doc ///
   Key
