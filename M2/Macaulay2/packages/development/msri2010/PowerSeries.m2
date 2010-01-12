@@ -393,17 +393,23 @@ ZZ + Series := Series => (f,A) -> f_(ring A.polynomial) + A
 Series - ZZ := Series => (A,f) -> A-f_(ring A.polynomial)
 ZZ - Series := Series => (f,A) -> f_(ring A.polynomial) - A
 
+Series / ZZ := Series => (A,f) -> A * (f_(ring A.polynomial))^-1
+ZZ / Series := Series => (f,A) -> f_(ring A.polynomial) * inverse A
 
--- Doesn't work:
+Series * QQ := Series => (A,f) -> A*(f_(ring A.polynomial))
+QQ * Series := Series => (f,A) -> (f_(ring A.polynomial)) * A
 
---Series * QQ := Series => (A,f) -> A*f_(frac ring A.polynomial)
---QQ * Series := Series => (f,A) -> f_(frac ring A.polynomial) * A
+Series + QQ := Series => (A,f) -> A+(f_(ring A.polynomial))
+QQ + Series := Series => (f,A) -> (f_(ring A.polynomial)) + A
 
---Series + QQ := Series => (A,f) -> A+f_(frac ring A.polynomial)
---QQ + Series := Series => (f,A) -> f_(frac ring A.polynomial) + A
+Series - QQ := Series => (A,f) -> A-(f_(ring A.polynomial))
+QQ - Series := Series => (f,A) -> (f_(ring A.polynomial)) - A
 
---Series - QQ := Series => (A,f) -> A-f_(frac ring A.polynomial)
---QQ - Series := Series => (f,A) -> f_(frac ring A.polynomial) - A
+Series / QQ := Series => (A,f) -> A * (f_(ring A.polynomial))^-1
+QQ / Series := Series => (f,A) -> f_(ring A.polynomial) * inverse A
+
+Series / RingElement := Series => (A,f) -> A * inverse series f_(ring A.polynomial)
+RingElement / Series := Series => (f,A) -> f_(ring A.polynomial) * inverse A
 
 
 end

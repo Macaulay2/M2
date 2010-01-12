@@ -1,3 +1,4 @@
+restart
 loadPackage "PowerSeries"
 R = QQ[x]
 
@@ -36,7 +37,18 @@ peek s2
 S = s1 + s2
 -S
 x*S
+S*x
 7+S
+S+7
+1/2 + S
+S + 1/2
+1/2 * S
+S * 1/2
+S / 3
+3 / S
+S / (1/3)
+S / (1+x)
+x / S
 S = s1*s2
 setDegree(11,S)
 -- recall the initial precision of s1 and s2 was lower.
