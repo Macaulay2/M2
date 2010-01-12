@@ -9,7 +9,7 @@ newPackage(
         DebuggingMode => true
         )
 
-export {series, setDegree,toPolynomial,dominantTerm}
+export {series, setDegree,toPolynomial,dominantTerm,inefficientSeries,efficientSeries}
 
 
 Series = new Type of HashTable
@@ -184,7 +184,7 @@ series(RingElement) := Series => opts -> (f) -> (
 
 
 
-series Function := Series => opts -> f -> ( 
+inefficientSeries Function := Series => opts -> f -> ( 
      	  s := f(opts.Degree+1);
 	   -- now make a new series.
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
@@ -198,7 +198,19 @@ series Function := Series => opts -> f -> (
 	       )
 	  )});  
 
-
+efficientSeries (RingElement,ZZ,Function) := Series => opts -> (approximation,approxDegree,f) -> ( 
+     	  s := f(opts.Degree+1);
+	   -- now make a new series.
+          new Series from {degree => approxDegree, maxDegree => infinity, computedDegree => approxDegree, polynomial => approximation, 
+          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
+	  -- to know how to tack on the new terms to the old polynomial.
+	  setDegree => (
+	       (oldPolynomial,oldComputedDegree,newDegree) -> 
+	       (
+		    if newDegree > oldComputedDegree then (f(oldPolynomial,oldComputedDegree,newDegree),newDegree)) 
+		    else (oldPolynomial, oldComputedDegree)
+	       )
+	  )});
 
 seriesOLD = method()
 seriesOLD(ZZ, RingElement) := PowerSeries => (n,f) -> (
