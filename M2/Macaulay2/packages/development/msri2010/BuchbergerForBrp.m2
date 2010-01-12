@@ -237,7 +237,6 @@ TEST ///
 
   R = ZZ/2[x,y,z];
   F = new gbComputation from { 0 => convert (x*y+z) }
-  gbBrp(F,numgens R)
   assert(flatten flatten values gbBrp(F, numgens R) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
 
 
@@ -261,11 +260,8 @@ TEST ///
   R = ZZ/2[x,y,z,w]
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
                               1 => convert (x*z+w*y) }
-
   gbBasis = gbBrp(F,numgens R)
-
   assert( apply (values gbBasis, poly -> convert(poly,R) ) == {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z})
-
 
   R = ZZ[x,y,z]
   F = new gbComputation from { 0 => convert( x*y + z),
@@ -274,7 +270,7 @@ TEST ///
                            3 => convert( x*y*z + x*y + x) ,
                            4 => convert( x*y + y*z)
                            }
-R = ZZ[x,y,z]
+  R = ZZ[x,y,z]
   myPoly1 = convert( x*y + z)
   myPoly2 = convert( x )
   myPoly3 = convert( y*z + z)
@@ -287,28 +283,26 @@ R = ZZ[x,y,z]
                            5 => myPoly5
                            }
   FOnePoly = new gbComputation from { 1 => convert(x+y+z) } 
+  minimalGbBrp(F)
 
-minimalGbBrp(F)
+  peek F
+  assert ( #F == 2 ) 
+  assert (F#2 == new Brp from {{1, 0, 0}} )
+  assert (F#3 == new Brp from {{0, 1, 1}, {0, 0, 1}} )
 
-peek F
-assert ( #F == 2 ) 
-assert (F#2 == new Brp from {{1, 0, 0}} )
-assert (F#3 == new Brp from {{0, 1, 1}, {0, 0, 1}} )
+  R = ZZ/2[x,y,z]
+  a = convert(x*z + y*z + z)
+  b = convert(y+z)
+  assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}} )
+  a = convert(x*z + y*z + y)
+  b = convert(y+z)
+  assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}} )
+  a = convert(x*z + y*z + y + z)
+  assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0,0,1}} )
 
-R = ZZ/2[x,y,z]
-a = convert(x*z + y*z + z)
-b = convert(y+z)
-assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0, 0, 1}} )
-
-a = convert(x*z + y*z + y)
-b = convert(y+z)
-assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}} )
-a = convert(x*z + y*z + y + z)
-assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0,0,1}} )
-
-a = convert(x*y + y*z +z)
-b= convert(y*z +z)
-assert( reduceLtBrp(a,b)== new Brp from {{1, 1, 0}})
+  a = convert(x*y + y*z +z)
+  b= convert(y*z +z)
+  assert( reduceLtBrp(a,b)== new Brp from {{1, 1, 0}})
 
 ///
   
