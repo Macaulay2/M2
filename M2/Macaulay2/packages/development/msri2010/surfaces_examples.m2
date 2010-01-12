@@ -4,9 +4,9 @@ path = append(path, homeDirectory | "M2/msri2010/")
 installPackage("SurfacesInP4", UserMode => true) 
 
 -- See also Decker/Ein/Schreyer: Construction of Surfaces in PP^4
-kk = ZZ/32003;
-S = kk[x_0..x_4];
-E = kk[e_0..e_4, SkewCommutative=>true];
+KK = ZZ/32003;
+S = KK[x_0..x_4];
+E = KK[e_0..e_4, SkewCommutative=>true];
 
 -- B1. Rational Surfaces
 
@@ -14,6 +14,7 @@ E = kk[e_0..e_4, SkewCommutative=>true];
 H = hilbertPolynomialFromInvariants(3,0,0,0);
 M = guessCohomologyTable(H,-2,2);
 betti res constructSurface(M,E,S)
+
 
 --B1.6 (Veronese)
 H = hilbertPolynomialFromInvariants(4,0,0,0);
