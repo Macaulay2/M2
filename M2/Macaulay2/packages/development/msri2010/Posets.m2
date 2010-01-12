@@ -2069,3 +2069,20 @@ assert( (isAntichain(P2, {b, c, d})) === true )
 assert( (isAntichain(L, {y*z, y^3, x*y})) === true )
 assert( (isAntichain(L, {y*z, x^2*y, x*y*x})) === true )
 ///
+
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)})
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+R = QQ[x,y,z,w]
+I = ideal(x^2, x*y, y^3, y*z)
+L = lcmLattice I
+assert( (maximalChains(P1)) === {{h,i,j},{h,i,k}} )
+assert( (maximalChains(P2)) === {{a,b,e,g},{a,c,e,g},{a,c,f,g},{a,d,f,g}})
+assert( (maximalChains(L)) === {{1,y*z,y^3*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x*y^3*z,x^2*y^3*z},{1,y*z,x
+      *y*z,x^2*y*z,x^2*y^3*z},{1,y^3,y^3*z,x*y^3*z,x^2*y^3*z},{1,y^3,x*y^3,x*y^
+      3*z,x^2*y^3*z},{1,y^3,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x*y*z,x*y^3*z,x^2*y
+      ^3*z},{1,x*y,x*y*z,x^2*y*z,x^2*y^3*z},{1,x*y,x*y^3,x*y^3*z,x^2*y^3*z},{1,
+      x*y,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x^2*y,x^2*y*z,x^2*y^3*z},{1,x*y,x^2*y
+      ,x^2*y^3,x^2*y^3*z},{1,x^2,x^2*y,x^2*y*z,x^2*y^3*z},{1,x^2,x^2*y,x^2*y^3,
+      x^2*y^3*z}} )
+///
