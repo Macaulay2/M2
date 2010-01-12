@@ -1966,6 +1966,7 @@ TEST ///
 I1={a,b,c,d,e,f};
 C1={(a,c),(a,d),(b,c),(b,d),(c,e),(d,e),(e,f)};
 P1=poset(I1,C1);
+
 --G1 = directedGraph(I1,C1)
 
 --Poset P1 with additional relations (a,e) and (a,f) added
@@ -1975,9 +1976,9 @@ P2=poset(I2,C2);
 --G2=directedGraph(I2,C2) -- adds the non minimal edges
 
 assert (P1.RelationMatrix == P2.RelationMatrix)    
-assert (filter(P1,b) == {b})
-assert (filter(P1,c) == {a,b,c})
-assert (orderIdeal (P1,b) == {b,c,d,e,f})
+assert (orderIdeal(P1,b) == {b})
+assert (orderIdeal(P1,c) == {a,b,c})
+assert (filter (P1,b) == {b,c,d,e,f})
 assert (isLattice (P1) == false)
 -- do joins and meets
 ///
