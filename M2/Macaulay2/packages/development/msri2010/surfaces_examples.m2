@@ -310,8 +310,8 @@ betti res constructSurface(M,E,S)
 -- Use the surface obtained in B6.1. Then construct the surface via linkage
 V = ideal (gens I*random(source gens I,S^{2:-5}));
 J = V : I;
-betti V
-
+betti J
+codim singularLocus J == 5
 
 -- B7 Elliptic surfaces
 --B7.1
