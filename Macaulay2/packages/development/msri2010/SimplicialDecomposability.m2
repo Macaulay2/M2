@@ -20,6 +20,7 @@ needsPackage "SimplicialComplexes";
 export {
     faceDelete,
     iskDecomposable,
+    isSheddingFace,
     isShellable,
     isShelling,
     isSimplex,
@@ -50,9 +51,19 @@ iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
 
     -- Find all possible relevant faces:
     L := flatten for i from 0 to k list flatten entries faces(i, S);
-    -- Check for happiness.
+    -- Check for any shedding faces.
     for F in L do if iskDecomposable(link(S, F), k) and iskDecomposable(faceDelete(S, F), k) then return true;
     false
+);
+
+-- Determines if a face is a shedding face of a pure simplicial complex.
+isSheddingFace = method(TypicalValue => Boolean);
+isSheddingFace (SimplicialComplex, RingElement) := (S, F) -> (
+    isSheddingFace(S, F, first degree F - 1)
+);
+isSheddingFace (SimplicialComplex, RingElement, ZZ) := (S, F, k) -> (
+    d := max(k, first degree F - 1);
+    iskDecomposable(link(S,F), d) and iskDecomposable(faceDelete(S, F), d)
 );
 
 -- Determines if a pure simplicial complex is shellable.
@@ -208,6 +219,39 @@ doc ///
             iskDecomposable(simplicialComplex {a*b*c*d*e}, 0)
             iskDecomposable(simplicialComplex {a*b*c,c*d*e,c*d*e}, 2)
     SeeAlso
+        isSheddingFace
+        isShellable
+        isVertexDecomposable
+///
+
+doc ///
+    Key
+        isSheddingFace
+        (isSheddingFace, SimplicialComplex, RingElement)
+        (isSheddingFace, SimplicialComplex, RingElement, ZZ)
+    Headline
+        determines if a face of a pure simplicial complex is a shedding face.
+    Usage
+        isSheddingFace(S, F)
+        isSheddingFace(S, F, k)
+    Inputs
+        S:SimplicialComplex
+        F:RingElement
+            a face of {\tt S}
+        k:ZZ
+            the dimension of the shedding nature
+    Outputs
+        B:Boolean
+            true if and only if {\tt F} is a shedding face of {\tt S} in dimension max(dim F, {\tt k})
+    Description
+        Text
+            A face is a shedding face if both link(S, F) and faceDelete(S, F) are (pure) k-decomposable.
+        Example
+            R = QQ[a..d];
+            S = simplicialComplex {a*b*c*d};
+            isSheddingFace(S, a)
+    SeeAlso
+        isSheddingFace
         isShellable
         isVertexDecomposable
 ///
@@ -452,6 +496,17 @@ assert(not isVertexDecomposable(S6));
 assert(iskDecomposable(S6, 1));
 assert(not isVertexDecomposable(S7));
 assert(iskDecomposable(S7, 1));
+///
+
+-- Tests isSheddingFace
+TEST ///
+R = QQ[a..e];
+S = simplicialComplex {a*b*c*d*e};
+assert(isSheddingFace(S, a, 0));
+assert(isSheddingFace(S, a, 3));
+T = simplicialComplex {a*b*c, b*c*d, c*d*e};
+assert(isSheddingFace(T, e, 2));
+assert(not isSheddingFace(T, b*c*d, 2));
 ///
 
 end
