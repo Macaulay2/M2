@@ -102,8 +102,7 @@ SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
 -- leading element of any element in G
 reduce = method()
 reduce (Brp, HashTable) := Brp => (f,G) -> (
-  zeroBrp = new Brp from {};
-  while (newF = reduceOneStep(f,G); newF != f and newF != zeroBrp ) do 
+  while (newF = reduceOneStep(f,G); newF != f and newF != 0) do 
     f = newF;
   newF
 )
@@ -114,22 +113,20 @@ reduce (Brp, Brp) := Brp => (f,g) -> (
 -- Reduce the leading term of a polynomial one step using a polynomial
 reduceOneStep = method()
 reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
-  zeroBrp = new Brp from {};
-  if f != zeroBrp then (
+  if f != 0 then (
     assert( isReducible(f, g));
     leadingLcm =  lcmBrps(leading(f), leading(g));
     f + g * divide(leadingLcm, leading g) 
-  ) else zeroBrp
+  ) else new Brp from {} -- TODO make 0 automatically turn into 0
 )
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
 reduceOneStep(Brp, HashTable) := Brp => (f,G) -> (
-  zeroBrp = new Brp from {};
-  if f != zeroBrp then (
+  if f != 0 then (
     scan( (values G), p -> if isReducible(f, p) then (break f = reduceOneStep(f,p)));
     f
-  ) else zeroBrp
+  ) else new Brp from {} 
 )
 
 -- Make a list with all possible pairs of elements of the separate lists, but
