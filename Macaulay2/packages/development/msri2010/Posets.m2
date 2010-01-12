@@ -269,11 +269,14 @@ atoms (Poset) := List => (P) -> (
 meetIrreducibles = method()
 meetIrreducibles(Poset) := P -> (
      -- want to compute meets only for non-comparable elements
+     if (isLattice P) == true
+     then (
      nonComparablePairs := select(subsets(P.GroundSet,2), posspair-> 
 	  compare(P, posspair#0,posspair#1) == false and compare(P,posspair#1,posspair#0)== false);
-     meets := nonnull unique flatten apply(nonComparablePairs, posspair -> if meetExists(P, posspair#0, posspair#1) == true 
-	  then posetMeet(P,posspair#0, posspair#1));
-     toList (set P.GroundSet - set meets)
+     meets :=  nonnull unique flatten apply(nonComparablePairs, posspair -> if meetExists(P, posspair#0, posspair#1) == true 
+	  then posetMeet(P,posspair#0, posspair#1)); 
+     meetIrred := toList (set P.GroundSet - set meets))
+     else error "P is not a lattice"
      )
 
 
