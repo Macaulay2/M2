@@ -15,7 +15,6 @@ needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 
 -- TODO
----- add more strategies to shellingOrder
 ---- add impure variants of iskDecomposable, isSheddingFace, isShellable, isShelling, isVertexDecomposable, shellingOrder
 
 -------------------
@@ -148,13 +147,9 @@ shellingOrder (SimplicialComplex) := options -> (S) -> (
         for L in P do if isShelling L then return L;
     )
     else (
-        -- RECURSIVE: try to prune where possible (and not use ridiculous RAM)
-        O := flatten entries facets S;
-        Q := {};
-        for i from 0 to #O - 1 do (
-            Q = recursiveShell({}, drop(O, {i,i}), O_i);
-            if Q != {} then return Q;
-        );
+        -- RECURSIVE: start the recursion
+        O := recursiveShell({}, flatten entries facets S);
+        if O != {} then return O;
     );
     {}
 );
@@ -165,13 +160,26 @@ shellingOrder (SimplicialComplex) := options -> (S) -> (
 
 -- Build up a shelling recursively.  Called by shellingOrder with Strategy => "Recursive"
 recursiveShell = method(TypicalValue => List);
-recursiveShell (List, List, RingElement) := (O, P, F) -> (
-    N := append(O, F);
-    if isShelling(N) then (
-        if P == {} then return N;
+recursiveShell (List, List) := (O, P) -> (
+    OisShellable := false;
+    -- if it's "obvious", then keep going
+    if #O <= 1 then ( OisShellable = true; )
+    else (
+        -- s0 is already shellable, is s1?
+        s0 := simplicialComplex drop(O, -1);
+        s1 := simplicialComplex O;
+        f0 := flatten for i from 0 to dim s0 list flatten entries faces(i, s0);
+        f1 := flatten for i from 0 to dim s1 list flatten entries faces(i, s1);
+        ta := tally flatten apply(toList(set f1 - set f0), degree);
+        OisShellable = (ta_(min keys ta) == 1);
+    );
+    if OisShellable then (
+        -- Nothing else to add: we're done
+        if P == {} then return O;
+        -- Recurse until success, if possible
         Q := {};
         for i from 0 to #P - 1 do (
-            Q = recursiveShell(N, drop(P, {i,i}), P_i);
+            Q = recursiveShell(append(O, P_i), drop(P, {i,i}));
             if Q != {} then return Q;
         );
     );
@@ -578,7 +586,8 @@ isShellable T
 isShellable U
 shellingOrder U
 
--- We can do it in two ways: Naively and dDecomposability
+-- We can do it in three ways: Recursively, Naively, and dDecomposability
+time isShellable(V, Strategy => "Recursive") -- default
 time isShellable(V, Strategy => "dDecomposable")
 -- bad idea! 
 --time isShellable(V, Strategy => "Naive")
