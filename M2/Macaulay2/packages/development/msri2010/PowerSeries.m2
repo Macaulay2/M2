@@ -425,6 +425,90 @@ end
 
 --=========================================================================--
 --Chris's space
+beginDocumentation()
+needsPackage "SimpleDoc";
+
+doc ///
+  Key
+    PowerSeries
+  Headline
+    A package allowing construction andmanipulatioon of power series in one variable.
+  Description
+    Text     
+      A power series is normally described on paper in the form "a_0 + a_1x + a_2 x^2 + ...", and
+      the ellipsis in the above description is implemented to maximize efficiency. By analogy
+      with floating point numbers, a power series is only ever calculated to finite precision,
+      but power series in this package also contain enough information to generate arbitrarily
+      more precision when needed. Combined with some caching abilities, this means that
+      power series whose coefficients are very difficult to compute can be manipulated
+      without sacrificing the ability to calculate more terms at a later time.
+      
+      There are large documentation nodes included for @TO "Creating Series"@ and
+      @TO"Operations on Series"@.
+///
+
+doc ///
+  Key
+    "Creating Series"
+  Headline
+    An overview of the various ways to create power series.
+  Description
+   Text
+     Most series have enough information to extend their polynomial approximation to 
+     arbitrary degree when needed. This means that even though sums and products of
+     series will return finite-precision results, the precision can be increased at
+     any time. The easiest examples of such series are:
+     
+     1. Creating series by the @TO2 (series,RingElement),"input of a rational function"@.
+     
+     2. Creating series @TO2 (series,Divide),"from a Divide"@, for instance to process the result of a @TO hilbertSeries@ computation.
+
+     3. Creating series @TO2 (series,RingElement,Function)@ "given the coefficients"@, by giving a function that computes the i^{th} coefficient of the power series.
+
+     4. Creating series by @TO2( (seriesPartialSums,Function) "giving a function") that given i, computes the i^{th} polynomial approximation to the series.
+
+     Series can also be created that have finite precision. If the user only knows the series
+     up to a certain degree, series computations can still be used on it. If the precision 
+     of such a series is ever increased too far, an error will result.
+     
+     5. Creating @TO2 (series,ZZ,RingElement),"series with finite precision"@.
+     
+     The best way to implement a power series whose coefficients are difficult to compute is
+     using one of the following two constructions: 
+     
+     6. Creating @TO2 (series,Ring,Function),"series given the ability to calculate individual terms"@, and
+     
+     7. Creating @TO2 (series,RingElement,ZZ,Function),"series given the ability to calculate individual terms"@ where some computation is already done.
+     
+     Methods 4, 6, and 7 provide great flexibility and allow almost any power series to be entered, but the last two provide a
+     significant computational advantages if the coefficients of the power series are difficult to compute. In the last two cases,
+     previously computed coefficients will never be computed again.
+    
+     As an example, we will enter a power series whose coefficients involve (needless) heavy computation:
+   Example
+     f = i -> value factor(10^i + 1);
+   Text
+     If a function for the i^{th} coefficient is used to construct the series, then successive increases in precision do not redo computations:
+   Example
+     R = ZZ[x];
+     A = series(x,f);
+     time A = setDegree(39,A);
+     time A = setDegree(40,A);
+   Text
+     If a function for the i^{th} polynomial approximation is ussed instead, then successive precision increases repeat old computations:
+   Example
+     B = seriesPartialSums(i -> sum(i,(j -> f(j)*x^j)));
+     time B = setDegree(39,B);
+     time B = setDegree(40,B);
+   Text
+     Even if a closed form for the i^{th} coefficient is not known, and instead the user only knows how to recursively increase the precision, one of methods 6 or 7 successfully uses the cache:
+   Example
+     C = series(R,(oldPolynomial,oldDegree,newDegree) -> oldPolynomial + sum(oldDegree+1:newDegree,j -> f(j)*x^j));
+     time C = setDegree(40,C);
+     time C = setDegree(41,C); 
+///    
+
+
 
 --=========================================================================--
 --Jason's space
