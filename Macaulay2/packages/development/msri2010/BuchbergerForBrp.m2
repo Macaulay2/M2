@@ -42,9 +42,9 @@ runner (gbComputation, ZZ) := gbComputation => (F,n) -> (
   while #listOfIndexPairs > 0 do (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
-    S = SPolynomial(pair, F, n);
-    reducedS = reduce (S,F);
-    if (reducedS != 0 ) then (
+    S := SPolynomial(pair, F, n);
+    reducedS := reduce (S,F);
+    if reducedS != 0 then (
       -- add reducedS to intermediate basis
       listOfIndexPairs = listOfIndexPairs | toList((-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) ) ;
       F##F = reducedS;
@@ -58,14 +58,11 @@ runner (gbComputation, ZZ) := gbComputation => (F,n) -> (
 -- remove all relatively prime pairs
 updatePairs = method()
 updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
-
-  select( l, pair -> (
-    i = first pair;
-    j = last pair;
-    if ( i < 0 ) then (
+  select( l, (i,j) -> (
+    if i < 0 then (
       i = - i;
-      f = F#j;
-      g = new Brp from {unitvector( i-1,n)}
+      f := F#j;
+      g := new Brp from {unitvector( i-1,n)}
     ) 
     else (
       f = F#i;
@@ -81,21 +78,19 @@ updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
 -- polynomial
 -- assume that the pairs are good (i.e., leading terms not relatively prime)
 SPolynomial = method()
-SPolynomial( Sequence, HashTable, ZZ ) := Brp => (l,G,n) -> (
-  assert (#l == 2);
-  i = first l;
-  j = last l;
-  if ( i < 0 ) then (-- we are working with a FP
+SPolynomial( Sequence, HashTable, ZZ ) := Brp => (pair,G,n) -> (
+  (i,j) := pair;
+  if i < 0 then ( -- we are working with an FP
     i = - i;
-    f = G#j;
-    xx = new Brp from {unitvector( i-1,n)};
-    g = new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
+    f := G#j;
+    xx := new Brp from {unitvector( i-1,n)};
+    g := new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
     g*xx+g
   )
   else (
     f = G#i;
     g = G#j;
-    leadingLcm = lcmBrps(leading(f), leading(g));
+    leadingLcm := lcmBrps(leading(f), leading(g));
     f* (divide( leadingLcm, leading f)) + g* (divide( leadingLcm, leading g)) 
   )
 )
@@ -117,7 +112,7 @@ reduceOneStep = method()
 reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
   if f != 0 then (
     assert( isReducible(f, g));
-    leadingLcm =  lcmBrps(leading(f), leading(g));
+    leadingLcm :=  lcmBrps(leading(f), leading(g));
     f + g * divide(leadingLcm, leading g) 
   ) else new Brp from {} -- TODO make 0 automatically turn into 0
 )
@@ -135,14 +130,14 @@ reduceOneStep(Brp, HashTable) := Brp => (f,G) -> (
 -- remove self-pairs 
 makePairsFromLists = method()
 makePairsFromLists (List,List) := List => (a,b) -> (
-  ll = (apply( a, i-> apply(b, j-> if (i != j) then toSequence sort {i,j} else 0 ) ));
+  ll := (apply( a, i-> apply(b, j-> if i != j then toSequence sort {i,j} else 0 ) ));
   unique delete(0, flatten ll)
 )
 
 -- check if the leading term of one polynomial can be reduced by another polynomial
 isReducible = method()
 isReducible (Brp, Brp) := Boolean => (f,g) -> (
-  assert (f != new Brp from {} );
+  assert (f != 0 );
   isDivisible(leading f, leading g)
 )
 
@@ -192,7 +187,6 @@ TEST ///
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
-  
   assert ( reduceOneStep( convert(y+z), F) == convert( y+z) )
   assert ( reduceOneStep( convert(x*y*z + y*z + z), F ) == convert( y*z))
   assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
