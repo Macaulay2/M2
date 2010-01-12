@@ -230,6 +230,24 @@ TEST ///
   F = new MutableHashTable from {0 => myPoly1,
                           1 => myPoly2,
                           2 => myPoly3};
+
+  R = ZZ[x,y,z,w]
+  n = 4
+  F = new gbComputation from { 0 => convert( x*y*w+w*x+z),
+                              1 => convert (x*z+w*y)}
+  gbBasis = runner(F,n)
+  assert( apply (values runner(F,n), poly -> convert(poly,R) ) == {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z})
+
+  peek oo
+
+  R = ZZ[x,y,z]
+  n = 3
+  F = new gbComputation from { 0 => convert( x*y + z),
+                           1 => convert( x ) ,
+                           2 => convert( y*z + z),
+                           3 => convert( x*y*z + x*y + x) ,
+                           4 => convert( x*y + y*z)
+                           }
 ///
   
        
