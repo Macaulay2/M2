@@ -2112,11 +2112,12 @@ assert( (isAntichain(L, {y*z, x^2*y, x*y*x})) === true )
 ///
 
 TEST ///
-P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)})
-P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
-R = QQ[x,y,z,w]
-I = ideal(x^2, x*y, y^3, y*z)
-L = lcmLattice I
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, x*y, y^3, y*z);
+L = lcmLattice I;
+
 assert( (maximalChains(P1)) === {{h,i,j},{h,i,k}} )
 assert( (maximalChains(P2)) === {{a,b,e,g},{a,c,e,g},{a,c,f,g},{a,d,f,g}})
 assert( (maximalChains(L)) === {{1,y*z,y^3*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x*y^3*z,x^2*y^3*z},{1,y*z,x
@@ -2126,4 +2127,38 @@ assert( (maximalChains(L)) === {{1,y*z,y^3*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x*y
       x*y,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x^2*y,x^2*y*z,x^2*y^3*z},{1,x*y,x^2*y
       ,x^2*y^3,x^2*y^3*z},{1,x^2,x^2*y,x^2*y*z,x^2*y^3*z},{1,x^2,x^2*y,x^2*y^3,
       x^2*y^3*z}} )
+///
+
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, x*y, y^3, y*z);
+L = lcmLattice I;
+
+assert( (try meetIrreducibles P1  else oops) === oops )
+assert( (meetIrreducibles P2) === {e,f,g,a,b,c,d} )
+assert( (meetIrreducibles L) === {x^2*z^2,x^2*y^2*z^2,x^2*y^2,y^2*z^2} )
+///
+
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, x*y, y^3, y*z);
+L = lcmLattice I;
+assert( (coveringRelations P1) === {(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)} )
+assert( (coveringRelations P2) === {(h,a),(h,b),(h,c),(h,d),(a,e),(b,e),(e,f),(c,f),(f,g),(d,g)} )
+assert( (coveringRelations L) === {(1,z^2),(1,y^2),(1,x^2),(z^2,y^2*z^2),(z^2,x^2*z^2),(y^2,y^2*z^2),(y^2,x^2*y^2),(y^2*z^2,x^2*y^2*z^2),(x^2,x^2*z^2),(x^2,x^2*y^2),(x^2*z^2,x^2*y^2*z^2),(x^2*y^2,x^2*y^2*z^2)} )
+///
+
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+
+assert( ((openInterval(P1,a,e)).Relations) === {(c,c),(d,d)} )
+assert( ((closedInterval(P1,b,c)).Relations) === {(b,b),(b,c),(c,c)} )
+assert( ((openInterval(P2,h,f)).Relations) === {(a,a),(a,e),(b,b),(b,e),(c,c),(e,e)} )
+assert( ((closedInterval(P2,h,f)).Relations) === {(a,a),(a,e),(a,f),(b,b),(b,e),(b,f),(c,c),(c,f),(e,e),(e,f),(f,f),(h,a),(h,b),(h,c),(h,e),(h,f),(h,h)} )
+
 ///
