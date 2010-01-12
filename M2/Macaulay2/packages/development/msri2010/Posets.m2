@@ -694,9 +694,11 @@ Boolean Lattices
 booleanLattice = method ()
 
 booleanLattice (ZZ) := n ->(
-     baseRing := ZZ[x_1 .. x_n];
-     I := ideal(x_1 .. x_n);
-     lcmLattice(I)
+     if n>0 then (	       
+          baseRing := ZZ[x_1 .. x_n];
+          I := ideal(x_1 .. x_n);
+          lcmLattice(I))
+     else error "no such lattice"
      )
  
 
@@ -1847,6 +1849,30 @@ doc///
 	       isAntichain(P2, {a,b})     
 	       isAntichain(P2, {b,c,d}) 
 ///     
+
+doc ///
+     Key     
+     	  booleanLattice
+	  (booleanLattice, ZZ)
+     Headline
+     	  computes a Boolean lattice
+     Usage
+     	  B = booleanLattice(n)
+     Inputs
+     	  n : ZZ
+	       a positive integer
+     Outputs
+     	  B : Poset
+	       a Boolean lattice on n atoms
+     Description
+     	  Text
+	       This function returns a Boolean lattice on the specified number of atoms, in the form of an lcm-lattice computed from the
+	       irrelevant maximal ideal in the polynomial ring over the integers with the specified number of variables.
+	  Example
+	       booleanLattice(3)
+     SeeAlso
+     	  lcmLattice
+///
 
 --doc ///
 --     Key 
