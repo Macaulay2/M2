@@ -86,7 +86,7 @@ setDegree(4,G)
 
 S = series (1/(1+x+x^2))
 T = inverse S
-timing setDegree(2000,T)
+time setDegree(2000,T)
 
 
 S = series (3,1+x+x^2)
