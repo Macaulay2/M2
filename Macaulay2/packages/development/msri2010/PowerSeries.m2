@@ -198,6 +198,9 @@ inefficientSeries Function := Series => opts -> f -> (
 	       )
 	  )});  
 
+-- efficientSeries takes the current approximation, the current computed degree, and the function f, which does
+-- f(oldApproximation,oldComputedDegree,newDegree) which returns a new approximation to degree newDegree.
+-- We promise not to call f if newDegree <= oldComputedDegree.
 efficientSeries (RingElement,ZZ,Function) := Series => opts -> (approximation,approxDegree,f) -> ( 
      	  s := f(opts.Degree+1);
 	   -- now make a new series.
