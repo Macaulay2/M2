@@ -65,6 +65,16 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
   scan( values F, f -> ( print "starting with"; print f; scan( pairs F, (gKey, g) -> (print gKey; if f != g and isReducible( g, f) then remove(F,gKey) ))) )
 )
 
+
+
+--Reduce lower terms of the first polynomial with the leading term of the second
+
+ReduceLtBrp = method()
+ReduceLtBrp(Brp, Brp) := Brp => (f,g) -> (while (l= select(f, m ->  isReducible(m, leading(g)));  #l!=0) do
+	  f= f- divide(first l, leading(g))*g;
+      f
+           )
+
 -- remove all relatively prime pairs
 updatePairs = method()
 updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
