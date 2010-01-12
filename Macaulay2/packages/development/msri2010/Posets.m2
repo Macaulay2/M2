@@ -2025,7 +2025,18 @@ assert( ((dropElements(L2, m-> first degree m > 2)).RelationMatrix) === map(ZZ^6
 
 ///
 
-
+TEST ///
+P1 = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+R = QQ[x,y,z,w]
+I = ideal(x^2, x*y, y^3, y*z)
+L = lcmLattice I
+P3 = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
+assert( (maximalChains(L)) === {{1,y*z,y^3*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x^2*y*z,x^2*y^3*z},{1,y^3,y^3*z,x*y^3*z,x^2*y^3*z},{1,y^3,x*y^3,x*y^3*z,x^2*y^3*z},{1,y^3,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x*y*z,x*y^3*z,x^2*y^3*z},{1,x*y,x*y*z,x^2*y*z,x^2*y^3*z},{1,x*y,x*y^3,x*y^3*z,x^2*y^3*z},{1,x*y,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x^2*y,x^2*y*z,x^2*y^3*z},{1,x*y,x^2*y,x^2*y^3,x^2*y^3*z},{1,x^2,x^2*y,x^2*y*z,x^2*y^3*z},{1,x^2,x^2*y,x^2*y^3,x^2*y^3*z}} )
+assert( (maximalChains(P1)) === {{a,b,c},{a,b,d}} )
+assert( (maximalChains(P2)) === {{a,b,e,g},{a,c,e,g},{a,c,f,g},{a,d,f,g}} )
+assert( (maximalChains(P3)) === {{a,c,d},{b,c,d}} )
+///
 
 
 
