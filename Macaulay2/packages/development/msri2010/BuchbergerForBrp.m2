@@ -57,8 +57,6 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
   F
 )
 
-
-
 -- delete elements where the leading term is divisible by another leading term
 minimalGbBrp = method()
 minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
@@ -66,14 +64,12 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
   scan( values F, f -> ( print "starting with"; print f; scan( pairs F, (gKey, g) -> (print gKey; if f != g and isReducible( g, f) then remove(F,gKey) ))) )
 )
 
-
-
 --Reduce lower terms of the first polynomial with the leading term of the second
-
 reduceLtBrp = method()
 reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
-  while (l= select(f, m ->  isReducible(new Brp from {m}, leading(g)));  #l!=0) do (
-   	  f= f+ divide(new Brp from {first l}, leading(g))*g
+  while ( l= select(f, m ->  isReducible(new Brp from {m}, leading(g))); #l!=0) do (
+      assert isDivisible( new Brp from {first l}, leading(g));
+   	  f= f+ g*divide(new Brp from {first l}, leading(g))
   );
   f
 )
@@ -83,15 +79,6 @@ reduceGbBrp = method()
 reduceGbBrp( gbComputation ) := gbComputation => F -> (
   scan( pairs F, (fKey,f) -> ( print "starting with"; print f; scan(values F, g ->( F#fKey = if f==g then f else reduceLtBrp(f,g); print F#fKey ))) )
 )
-
- R = ZZ[x,y,z]
-  F = new gbComputation from { 0 => convert( x*y+y*z + z),
-                           1 => convert(y*z+z ) ,
-                           2 => convert(x*z+z)
-                          
-                           }
-reduceGbBrp(F)
-
 
 -- remove all relatively prime pairs
 updatePairs = method()
@@ -321,8 +308,8 @@ assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0,0,1}} )
 
 a = convert(x*y + y*z +z)
 b= convert(y*z +z)
-reduceLtBrp(a,b)
-assert( reduceLtBrp(a,b)== new Brp from {{1, 1, 0}, {0, 0, 1}})
+assert( reduceLtBrp(a,b)== new Brp from {{1, 1, 0}})
+
 ///
   
        
