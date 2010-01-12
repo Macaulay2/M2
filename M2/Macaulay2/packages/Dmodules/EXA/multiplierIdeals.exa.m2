@@ -14,4 +14,4 @@ aS = analyticSpread a
 -- candidates for jumping numbers below the analytic spread
 lowJumps = select(sort(bFunctionRoots generalB(a_*, 1_R) / minus), c->c<aS)
 mI = multiplierIdeal(a,lowJumps)
-all(#mI, i->all((mI#i)_*,g->isInMultiplierIdeal(g,a,lowJumps#i))) 
+all(#mI, i->all((mI#i)_*,g->isInMultiplierIdeal(g,a,lowJumps#i)))

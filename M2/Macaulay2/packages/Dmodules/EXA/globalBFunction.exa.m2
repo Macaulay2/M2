@@ -64,6 +64,7 @@ F = I_*;
 W = makeWA(QQ[x_1..x_3]);
 F = {x_2^2-x_1*x_3, x_1^3-x_3^2}; 
 b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g))
+b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
 --            3      7      9      11      13      17      19      23      25
 --(s + 2)(s + -)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
 --            2      4      4       6       6      12      12      12      12
@@ -120,8 +121,12 @@ next one takes > 1 day
 restart
 loadPackage "Dmodules"
 R = QQ[x,y];
-F = {x*y*(x+y)*(x+2*y)}; g = 1_R; m = 2;
-factorBFunction generalB (F,g, Exponent=>m)
+F = {x*y*(x+y)*(x+2*y)}; g = 1_R;
+g = F_0;
+g = x^2; 
+factorBFunction generalB (F,g)
+factorBFunction generalB (F,g, Exponent=>1)
+factorBFunction generalB (F,g, Exponent=>2)
  
 
 -- b = {1_W,x_1,x_2,x_3} / (g->print factorBFunction generalB (F,g,GuessedRoots=>{-2}))
