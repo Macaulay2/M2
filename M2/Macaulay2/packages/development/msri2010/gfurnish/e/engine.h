@@ -1915,6 +1915,7 @@ enum gbTraceValues
   void setCurrentThreadLocalInterp(struct threadLocalInterp* tli);
   struct threadLocalInterp* getCurrentThreadLocalInterp();
   struct threadLocalInterp* getStartupThreadLocalInterp();
+  void rawTestThread(void* expr);
 
 
 #if defined(__cplusplus)

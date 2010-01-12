@@ -39,6 +39,11 @@ void M2ThreadPool::createThreads()
     }
   m_StartThread->threadEntryPoint();
 }
+void M2ThreadPool::test()
+{
+  m_PoolThreads[0]->start();
+  std::cout << "Finished starting" << std::endl;
+}
 void M2ThreadPool::joinThreads()
 {
   for(int i = 0; i < m_NumPoolThreads; ++i)
@@ -49,7 +54,7 @@ void M2ThreadPool::joinThreads()
 void M2ThreadPool::createThread(int threadId)
 {
   M2Thread* thread = new M2Thread(this, threadId);
-  thread->start();
+  //  thread->start();
   m_PoolThreads[threadId] = thread;
 }
 M2ThreadPool::~M2ThreadPool()
