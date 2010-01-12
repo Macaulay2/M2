@@ -36,25 +36,32 @@ runner (MutableHashTable, ZZ) := MutableHashTable => (F,n) -> (
   -- n FPs, m Brps
   -- pairs of indexes referring to polynomials, changing as we find more pairs
   -- listOfIndexPairs = every FP with every Brp, every Brp with every Brp
+  --F = new MutableHashTable from { 1 => convert (x*y+z) }
   listOfIndexPairs = makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
+  listOfIndexPairs;
   listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
+  listOfIndexPairs ;
   nextIndex = #F ;
-  print nextIndex;
+  nextIndex;
   zeroBrp = new Brp from {};
 
   while (#listOfIndexPairs > 0) do (
+    listOfIndexPairs ;
+    nextIndex ;
     pair = first listOfIndexPairs;
+    pair;
     listOfIndexPairs = delete(pair, listOfIndexPairs);
     S = SPolynomial(pair, F, n);
-    print S;
-    print peek F;
+    S;
     reducedS = reduce (S,F);
-    print reducedS;
+    reducedS;
     if (reducedS != zeroBrp ) then (
-      nextIndex =+ 1;
+      nextIndex = nextIndex + 1;
+      nextIndex;
       -- add reducedS to intermediate basis
-      F#nextIndex = reducedS;
+      values F;
       listOfIndexPairs = listOfIndexPairs | toList({-n,nextIndex}..{-1, nextIndex}) | apply( keys F, i-> {i,nextIndex} ) ;
+      F#nextIndex = reducedS;
       listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
   );
@@ -229,7 +236,25 @@ TEST ///
   R = ZZ/2[x,y,z];
   n=3;
   F = new MutableHashTable from { 1 => convert x }
-  runner(F,n)
+  assert ( first values runner(F,n) == new Brp from {{1, 0, 0}} )
+  F = new MutableHashTable from { 1 => convert x,
+                                  2 => convert y}
+  runner(F,n)                                
+  assert ( first values runner(F,n) == new Brp from {{1, 0, 0}} )
+  F = new MutableHashTable from { 1 => convert (x*y),
+                                  2 => convert y}
+  runner(F,n)                                
+
+  R = ZZ/2[x,y,z];
+  n=3;
+  F = new MutableHashTable from { 1 => convert (x*y+z) }
+  assert(values runner(F,n) ==  {{{1, 1, 0}, {0, 0, 1}}, {{0, 1, 1}, {0, 0, 1}}, {{1, 0, 1}, {0, 0, 1}}}
+
+
+-- R = ZZ/2[x,y,z]/ideal(x*y+z)
+-- i11 : gens gb ideal(x*y+z)
+
+-- o11 = | yz+z xz+z xy+z |
 
   myPoly1 = new Brp from {{1,0,0}};
   myPoly2 = new Brp from {{1,0,1}};
