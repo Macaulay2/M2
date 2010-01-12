@@ -91,17 +91,22 @@ time setDegree(2000,T)
 
 S = series (3,1+x+x^2)
 T = inverse S
-timing setDegree(2000,T)
+time setDegree(2000,T)
 
 -- Equality of Series.
 -- By analogy with floating-point numbers.
-1.
-1p1
-1p1 == 1.00000000000000070
-1p1 == 1.00000000000000007
+1. == 1.00000000000000070
+1. == 1.00000000000000007
 
 A1 = series(1,1+x)
 A2 = series(6,1+x)
 B = series(1+x+x^2+x^3)
 A1 == B
 A2 == B
+
+-- Hilbert Series?
+R = QQ[a..symbol f]
+M = comodule ideal"ab,cd,ef"
+H = hilbertSeries M
+series H
+hilbertSeries(M,Order=>6)
