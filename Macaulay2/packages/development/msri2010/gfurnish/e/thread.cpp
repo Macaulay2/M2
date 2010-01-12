@@ -17,22 +17,17 @@ extern "C" {
 void* outptr;
 void rawTestThread(void* inptr)
 {
-  std::cout << "RAW" << std::endl;
-  std::cout << "In " << inptr << std::endl;
   outptr = inptr;
   M2ThreadPool::m_Singleton->test();
-  std::cout << "OUT OF RAW" << std::endl;
 }
 
 void setCurrentThreadLocalInterp(struct threadLocalInterp* tli)
 {
-  std::cout << "SET " << tli << std::endl;
   M2Thread::getCurrentThread()->setThreadLocalInterp(tli);
 }
 struct threadLocalInterp* getCurrentThreadLocalInterp()
 {
   struct threadLocalInterp* tli = M2Thread::getCurrentThread()->getThreadLocalInterp();
-  std::cout << "TLI " << tli << std::endl;
   return tli;
 }
 struct threadLocalInterp* getStartupThreadLocalInterp()
@@ -49,7 +44,6 @@ M2Thread::M2Thread(M2ThreadPool* pool, int id):m_ThreadId(id),m_ThreadPool(pool)
 void M2Thread::start()
 {
   pthread_create(&m_Thread,0,sThreadEntryPoint,this);
-  std::cout <<"Done starting" << std::endl;
 }
 void M2Thread::join()
 {
@@ -61,19 +55,13 @@ void* M2Thread::threadEntryPoint()
   setCurrentThread();
   if(this!=m_ThreadPool->startThread())
     {
-      std::cout << getCurrentThreadLocalInterp() << std::endl;
       interp_initializeLocalInterpState();
-      std::cout << "GO" << std::endl;
-      std::cout << getCurrentThreadLocalInterp() << std::endl;
-       std::cout << "out " << outptr << std::endl;
        thread_rawRunSequence(getCurrentThreadLocalInterp(),outptr);
-      std::cout << "bar" << std::endl;
     }
   else
     {
       interp_process();
     }
-  std::cout << "M" << std::endl;
   return NULL;
 }
 void posixDestructor(void*) { }
