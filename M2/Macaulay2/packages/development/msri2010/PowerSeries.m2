@@ -201,7 +201,7 @@ series (RingElement,ZZ,Function) := Series => opts -> (approximation,approxDegre
 		    if newDegree > oldComputedDegree then (f(oldPolynomial,oldComputedDegree,newDegree),newDegree) else (oldPolynomial, oldComputedDegree)
 	       )
 	  )});
-series (Ring,Function) := Series => opts -> (R,f) -> efficientSeries(0_R,-1,f);    
+series (Ring,Function) := Series => opts -> (R,f) -> series(0_R,-1,f);    
 
 
 makeSeriesCompatible = method()
