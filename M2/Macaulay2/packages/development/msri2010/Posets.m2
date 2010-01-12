@@ -281,6 +281,12 @@ meetIrreducibles(Poset) := P -> (
 --------------------------------------------------
 -- dropElements/induced poset
 --------------------------------------------------
+-- only intended for input where M = P.RelationMatrix 
+allRelations := (P,M) -> (
+     rows := entries M;
+     rels := nonnull flatten apply(#rows, i -> flatten apply((#(rows_i), j -> if (rows_i)_j == 1 then (P.GroundSet#i, P.GroundSet#j))))  
+     )
+
 -- dropElements
 -- inputs:  poset P and a list L of elements to drop
 -- outputs: P without L
@@ -290,7 +296,7 @@ dropElements (Poset, List) := (P, L) -> (
 	keptIndices := select(toList(0..#P.GroundSet-1), i-> not member(P.GroundSet#i,L));
 	newGroundSet := apply(keptIndices, i-> P.GroundSet#i);
 	newRelationMatrix := P.RelationMatrix_keptIndices^keptIndices;
-	newRelations := select(P.Relations, r -> not member(first r, L) and not member(last r, L));
+	newRelations := select(allRelations(P,P.RelationMatrix), r -> not member(first r, L) and not member(last r, L));
 	poset(newGroundSet, newRelations, newRelationMatrix)
 )
 
@@ -298,7 +304,7 @@ dropElements (Poset, Function) := (P, f) -> (
 	keptIndices := select(toList(0..#P.GroundSet-1), i-> not f(P.GroundSet#i));
 	newGroundSet := apply(keptIndices, i-> P.GroundSet#i);
 	newRelationMatrix := P.RelationMatrix_keptIndices^keptIndices;
-	newRelations := select(P.Relations, r -> not f(first r) and not f(last r));
+	newRelations := select(allRelations(P,P.RelationMatrix), r -> not f(first r) and not f(last r));
 	poset(newGroundSet, newRelations, newRelationMatrix)
 )
 
