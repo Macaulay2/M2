@@ -55,14 +55,15 @@ runner (gbComputation, ZZ) := gbComputation => (F,n) -> (
 -- remove all relatively prime pairs
 updatePairs = method()
 updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
-  variables = entries(id_(ZZ^n));
+  unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
+
   select( l, pair -> (
     i = first pair;
     j = last pair;
     if ( i < 0 ) then (
       i = - i;
       f = F#j;
-      g = new Brp from {variables#(i-1)}
+      g = new Brp from {unitvector( i-1,n)}
     ) 
     else (
       f = F#i;
@@ -192,8 +193,6 @@ TEST ///
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
   
   assert ( reduceOneStep( convert(y+z), F) == convert( y+z) )
-
-
   assert ( reduceOneStep( convert(x*y*z + y*z + z), F ) == convert( y*z))
   assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
 
