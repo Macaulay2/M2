@@ -2,14 +2,14 @@
 load "BitwiseRepresentationPolynomials.m2"
 newPackage(
 	"BuchbergerForBrp",
-    	Version => "1.0", 
-    	Date => "April 28, 2005",
+    	Version => "0.0", 
+    	Date => "January 11,2010",
     	Authors => {
-	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
+	     {Name => "Franziska Hinkelmann", Email => "fhinkel@vt.edu"}
 	     },
-    	HomePage => "http://www.math.uiuc.edu/~doe/",
-    	Headline => "an example Macaulay2 package",
-	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
+    	HomePage => "http://www.math.vt.edu/people/fhinkel",
+    	Headline => "compute a Boolean Groebner Basis using a bit-wise representation",
+      AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
     	DebuggingMode => true		 -- set to true only during development
     	)
 
@@ -23,29 +23,28 @@ export {makePairsFromLists,
       reduceOneStep, 
       reduce,
       updatePairs,
+      gbComputation,
       isReducible }
 exportMutable {}
 
+-- keys should start with 0
+gbComputation = new Type of MutableHashTable; 
 
 -- wrapper script for debugging purposes, creates a Groebner basis from the
 -- input list - all with Brps
 runner = method()
-runner (MutableHashTable, ZZ) := MutableHashTable => (F,n) -> ( 
-  listOfIndexPairs = makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
+runner (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
+  listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
   listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
-  nextKey = #F ;
-  zeroBrp = new Brp from {};
-
-  while (#listOfIndexPairs > 0) do (
-    pair = first listOfIndexPairs;
-    listOfIndexPairs = delete(pair, listOfIndexPairs);
+  while #listOfIndexPairs > 0 do (
+    pair := first listOfIndexPairs;
+    listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
     S = SPolynomial(pair, F, n);
     reducedS = reduce (S,F);
-    if (reducedS != zeroBrp ) then (
-      nextKey = nextKey + 1;
+    if (reducedS != 0 ) then (
       -- add reducedS to intermediate basis
-      listOfIndexPairs = listOfIndexPairs | toList({-n,nextKey}..{-1, nextKey}) | apply( keys F, i-> {i,nextKey} ) ;
-      F#nextKey = reducedS;
+      listOfIndexPairs = listOfIndexPairs | toList({-n,#F}..{-1, #F}) | apply( keys F, i-> {i,#F} ) ;
+      F##F = reducedS;
       listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
   );
@@ -216,19 +215,19 @@ TEST ///
   
   R = ZZ/2[x,y,z];
   n=3;
-  F = new MutableHashTable from { 1 => convert x }
+  F = new gbComputation from { 0 => convert x }
   assert ( first values runner(F,n) == new Brp from {{1, 0, 0}} )
-  F = new MutableHashTable from { 1 => convert x,
-                                  2 => convert y}
+  F = new gbComputation from { 0 => convert x,
+                                  1 => convert y}
   runner(F,n)                                
   assert ( first values runner(F,n) == new Brp from {{1, 0, 0}} )
-  F = new MutableHashTable from { 1 => convert (x*y),
-                                  2 => convert y}
+  F = new gbComputation from { 0 => convert (x*y),
+                                  1 => convert y}
   runner(F,n)                                
 
   R = ZZ/2[x,y,z];
   n=3;
-  F = new MutableHashTable from { 1 => convert (x*y+z) }
+  F = new gbComputation from { 0 => convert (x*y+z) }
   assert(flatten flatten values runner(F,n) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
 
 
@@ -241,9 +240,9 @@ TEST ///
   myPoly2 = new Brp from {{1,0,1}};
   myPoly3 = new Brp from {{1,1,0}, {0,0,1}};
   -- list of input polynomials
-  F = new MutableHashTable from {1 => myPoly1,
-                          2 => myPoly2,
-                          3 => myPoly3};
+  F = new MutableHashTable from {0 => myPoly1,
+                          1 => myPoly2,
+                          2 => myPoly3};
 ///
   
        
