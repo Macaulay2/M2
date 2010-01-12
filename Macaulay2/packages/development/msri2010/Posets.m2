@@ -162,7 +162,7 @@ transitiveClosure(List,List) := List => (I,C)-> (
 	  if D_(i,j) ==1/0. then D_(i,j) = 0 else D_(i,j) = 1;	  
 	  )
 	  );
-     matrix D
+     matrix applyTable (entries D, i -> lift(i, ZZ))
      )
 
 
