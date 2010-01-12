@@ -550,11 +550,16 @@ Exit(err:Error):void := exit(
      else errorExit
      );
 
-export process():void := (
+export initializeLocalInterpState():void := (
      localInterpState := threadLocalInterp(dummyFrame);
      Ccode(void, "setCurrentThreadLocalInterp(",localInterpState,")");
---     threadLocalInterpState = localInterpState;
      localInterpState.localFrame = globalFrame;
+);
+     
+
+export process():void := (
+     initializeLocalInterpState();
+     localInterpState := Ccode(threadLocalInterp, "getCurrentThreadLocalInterp()");
      previousLineNumber = -1;			  -- might have done dumpdata()
      stdin .inisatty  =   0 != isatty(0) ;
      stdin.echo       = !(0 != isatty(0));

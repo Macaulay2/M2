@@ -15,6 +15,7 @@ public:
   ~M2ThreadPool();
   M2Thread* startThread() { return m_StartThread; }
   static M2ThreadPool* m_Singleton;
+  void test();
 protected:
   friend class M2Thread;
   void createThread(int threadId);
