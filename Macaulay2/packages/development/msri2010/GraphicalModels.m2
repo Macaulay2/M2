@@ -46,7 +46,7 @@ newPackage(
 
 export {localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, removeRedundants, 
-       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, convertToIntegers}
+       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal}
      
 needsPackage"Graphs"
 
@@ -86,9 +86,23 @@ needsPackage"Graphs"
 ---- Should removeNodes also be moved?
 
 -------------------------
--- Statements -----------
+-- Digraph can now have any labels for the nodes, not just integers.
+-- However, all the code in this package requires integer lables.  For
+-- now, we just conver the labels with an eye towards fixing all the
+-- code. 
 -------------------------
 
+
+convertToIntegers := (G) -> (
+     n := #G;
+     h := new MutableHashTable;
+     scan(n, i -> h#(i+1) = (values G)#i);
+     mid := new MutableHashTable;
+     vertices := keys G;
+     scan(n, i -> mid#(vertices#i) = (keys h)#i);
+     scan(n, i -> h#(i+1) = set apply(toList h#(i+1), j -> mid#j));
+     new Digraph from h
+     )
 
 -----------------------------------------------------------
 -- Statement calculus ----  Local and Global Statements ---
@@ -256,6 +270,7 @@ pairMarkovStmts Digraph := (G) -> (
      -- where A,B,C are disjoint sets, and for every vertex v
      -- and non-descendent w of v,
      -- {v, w, nondescendents(G,v) - w}
+     G = convertToIntegers(G);
      removeRedundants flatten apply(toList(1..#G), v -> (
 	       ND := nondescendents(G,v);
 	       W := ND - parents(G,v);
@@ -265,6 +280,7 @@ localMarkovStmts = method()
 localMarkovStmts Digraph := (G) -> (
      -- Given a graph G, return a list of triples {A,B,C}
      -- of the form {v, nondescendents - parents, parents}
+     G = convertToIntegers(G);
      result := {};
      scan(1..#G, v -> (
 	       ND := nondescendents(G,v);
@@ -280,17 +296,7 @@ G = digraph({{a,{b,c}},{b,{c,d}},{c,{}},{d,{}}})
 convertToIntegers(G)
  ///   
 
-convertToIntegers = method()
-convertToIntegers Digraph := (G) -> (
-     n := #G;
-     h := new MutableHashTable;
-     scan(n, i -> h#(i+1) = (values G)#i);
-     mid := new MutableHashTable;
-     vertices := keys G;
-     scan(n, i -> mid#(vertices#i) = (keys h)#i);
-     scan(n, i -> h#(i+1) = set apply(toList h#(i+1), j -> mid#j));
-     new Digraph from h
-     )
+
  
      ---- do a loop applying to the values first if g#blah is a member
      ---- of the set that is the value then convert to the appropriate
@@ -304,6 +310,7 @@ globalMarkovStmts Digraph := (G) -> (
      -- so that A and B are d-separated by C (in the graph G).
      -- If G is large, this should maybe be rewritten so that
      -- one huge list of subsets is not made all at once
+     G = convertToIntegers;
      n := #G;
      vertices := toList(1..n);
 --     vertices := keys G;
@@ -468,6 +475,7 @@ gaussIdeal(Ring,Digraph) := (R,G) -> gaussIdeal(R,globalMarkovStmts G)
 
 gaussTrekIdeal = method()
 gaussTrekIdeal(Ring, Digraph) := (R,G) -> (
+     G = convertToIntegers(G);
      n := max keys G;
      P := toList apply(1..n, i -> toList parents(G,i));
      nv := max(P/(p -> #p));
