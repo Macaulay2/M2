@@ -46,7 +46,7 @@ newPackage(
 
 export {localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, removeRedundants, 
-       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal}
+       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, convertToIntegers}
      
 needsPackage"Graphs"
 
@@ -273,19 +273,30 @@ localMarkovStmts Digraph := (G) -> (
 	         result = append(result,{set{v}, ND - P, P})));
      removeRedundants result)
 
+///
+restart 
+loadPackage"GraphicalModels"
+G = digraph({{a,{b,c}},{b,{c,d}},{c,{}},{d,{}}})
+convertToIntegers(G)
+ ///   
 
-\\\
-
-convertToIntegers := (G) -> (
+convertToIntegers = method()
+convertToIntegers Digraph := (G) -> (
      n := #G;
-     h = new MutableHashTable from G;
+     h := new MutableHashTable;
+     scan(n, i -> h#(i+1) = (values G)#i);
+     mid := new MutableHashTable;
      vertices := keys G;
+     scan(n, i -> mid#(vertices#i) = (keys h)#i);
+     scan(n, i -> h#(i+1) = set apply(toList h#(i+1), j -> mid#j));
+     new Digraph from h
+     )
+ 
      ---- do a loop applying to the values first if g#blah is a member
      ---- of the set that is the value then convert to the appropriate
      ---- number. Not totally clear to me how to do this, or do we fix
      ---- bayes - ball.  Hmmm...
 
-\\\
 
 globalMarkovStmts = method()
 globalMarkovStmts Digraph := (G) -> (
@@ -293,7 +304,9 @@ globalMarkovStmts Digraph := (G) -> (
      -- so that A and B are d-separated by C (in the graph G).
      -- If G is large, this should maybe be rewritten so that
      -- one huge list of subsets is not made all at once
-     vertices := keys G;
+     n := #G;
+     vertices := toList(1..n);
+--     vertices := keys G;
      result := {};
      AX := subsets vertices;
      AX = drop(AX,1); -- drop the empty set
@@ -312,8 +325,11 @@ globalMarkovStmts Digraph := (G) -> (
 			      then 
 			          result = append(result, {A,B,C});
 	       )))));
-     {flatten removeRedundants result, flatten result}
+     removeRedundants result
      )
+--- The function above gives output as they describe it,  the first
+--- set is independent of the second set, given the third set.  
+
 -------------------
 -- Markov rings ---
 -------------------
