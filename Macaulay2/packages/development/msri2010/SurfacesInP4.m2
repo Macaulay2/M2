@@ -400,7 +400,7 @@ constructSurface(Matrix,PolynomialRing,PolynomialRing) := (M,E,S) -> (
      )
 
 constructSurface(Sequence,PolynomialRing) := (invariants,S) -> (
-    E := K[e_0..e_4,SkewCommutative=>true];
+    E := (coefficientRing S)[e_0..e_4,SkewCommutative=>true];
     H := hilbertPolynomialFromInvariants invariants;
     Ilist = flatten apply(findMonadWindows(H,E,-10,10), M->(
     	      monadE := guessDifferentials(M,E);
@@ -409,9 +409,15 @@ constructSurface(Sequence,PolynomialRing) := (invariants,S) -> (
 	      ));
     if #Ilist == 0 then null else Ilist#0
     )
+
+constructSurface(Sequence,ZZ) := (invariants,p) -> (
+     K := ZZ/p; 
+     S := K[x_0..x_4];
+     constructSurface(invariants,S)
+     )  
   
 constructSpaceCurve = (d,g,S) -> (
-    E := K[e_0..e_3,SkewCommutative=>true];
+    E := (coefficientRing S)[e_0..e_3,SkewCommutative=>true];
     H := hilbSpaceCurve(d,g);
     Ilist = flatten apply(findMonadWindows(H,E,-10,10), M->(
     	      monadE := guessDifferentials(M,E);
@@ -699,7 +705,7 @@ Usage
   I=constructSurface(invariants,S)
 Inputs
   invariants: Sequence 
-    the invariants (deg, sectionalGenus, speciality, geometricGenus)
+    the invariants (deg, sectionalGenus, irregularity, geometricGenus)
   S:PolynomialRing
     Symmetric Algebra in 5 variables
 Outputs
@@ -725,9 +731,42 @@ SeeAlso
 
 doc ///
 Key
+  (constructSurface,Sequence,ZZ)
+Headline
+  try to construct a surface in P^4 for given invariants over ZZ/p
+Usage
+  I = constructSurface(invariants,p)
+Inputs
+  invariants: Sequence 
+    the invariants (deg, sectionalGenus, irregularity, geometricGenus)
+  p:ZZ
+    prime 
+Outputs
+  I:Ideal
+    ideal of a surface with the given invariants or null if 
+    the construction did not work
+Consequences
+Description
+  Text
+  Example
+    K = ZZ/32003
+    S = K[x_0..x_4]
+    betti res constructSurface((8,5,1,0),32003)
+Caveat
+  works only when the minimal cohomology table computed from the
+  invariants contains a window that gives a Beilinson Monad.
+  Furthermore
+  beta is chosen generically and alpha generically among the syzygies of beta.
+  There are many surfaces where this does not work.
+  In this case null is returned.
+SeeAlso
+///
+
+doc ///
+Key
   constructSpaceCurve
 Headline
-  try to construct a curve in P^4 with given degree and genus
+  try to construct a curve in P^3 with given degree and genus
 Usage
   I=constructSpaceCurve(d,g,S)
 Inputs
