@@ -1113,44 +1113,43 @@ ancestorfun(localInterpState:threadLocalInterp,e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("ancestor",ancestorfun);
 
-hadseq := false;
-deeplen(a:Sequence):int := (
+SpliceState := { seq:Sequence, index:int, hadseq:bool };
+newSpliceState():SpliceState := SpliceState(emptySequence,0,false);
+deeplen(o:SpliceState,a:Sequence):int := (
      n := 0;
      foreach x in a do (
 	  when x
 	  is b:Sequence do (
-	       hadseq = true;
-	       n = n + deeplen(b);
+	       o.hadseq = true;
+	       n = n + deeplen(o,b);
 	       )
 	  else (
 	       n = n+1;
 	       );
 	  );
      n);
-deepseq := emptySequence;
-deepindex := 0;
-deepinsert(a:Sequence):int := (
+deepinsert(o:SpliceState,a:Sequence):int := (
      n := 0;
      foreach x in a do (
 	  when x
-	  is b:Sequence do n = n + deepinsert(b)
+	  is b:Sequence do n = n + deepinsert(o,b)
 	  else (
-	       deepseq.deepindex = x;
-	       deepindex = deepindex+1;
+	       o.seq.(o.index) = x;
+	       o.index = o.index+1;
 	       n = n+1;
 	       );
 	  );
      n);
 export deepsplice(localInterpState:threadLocalInterp,a:Sequence):Sequence := (
      -- warning: this returns its arg if no change is required.
-     hadseq = false;
-     newlen := deeplen(a);
-     if hadseq then (
-     	  deepseq = new Sequence len deeplen(a) do provide nullE;
-     	  deepindex = 0;
-     	  deepinsert(a);
-     	  w := deepseq;
-     	  deepseq = emptySequence;
+     o := newSpliceState();
+     newlen := deeplen(o,a);
+     if o.hadseq then (
+     	  o.seq = new Sequence len newlen do provide nullE;
+     	  o.index = 0;
+     	  deepinsert(o,a);
+     	  w := o.seq;
+     	  o.seq = emptySequence;
      	  w)
      else a);
 deepsplice(localInterpState:threadLocalInterp,e:Expr):Expr := (
