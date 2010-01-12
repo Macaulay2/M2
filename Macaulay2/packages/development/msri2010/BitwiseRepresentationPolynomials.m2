@@ -86,6 +86,8 @@ divide (Brp, Brp) := Brp => (a,b) -> (
 lcmBrps = method()
 lcmBrps (Brp, Brp) := Brp => (a,b) -> new Brp from {apply( first a, first b, (i,j) -> max(i,j) )}
 
+Brp == ZZ := (x,i) -> if even i then #x === 0 else #x===1 and all(x,isZero)all
+
 doc /// 
 Key 
   BitwiseRepresentationPolynomials
@@ -185,7 +187,10 @@ TEST ///
   firstpoly = new Brp from { {1,1,0}, {1,0,0}}
   secondpoly = new Brp from {{1,0,0}}
   thirdpoly = new Brp from {{0,1,0}, {1,1,1}}
+  
   zeropoly = new Brp from {}
+  assert (zeropoly == 0)
+
   monoA= new Brp from {{1,0,1}}
   monoB= new Brp from {{1,0,0}}
   monoC= new Brp from {{0,1,0}}
@@ -195,6 +200,7 @@ TEST ///
 
   assert ( monoB + zeropoly == new Brp from {{1, 0, 0}}) 
   assert ( zeropoly *monoB == new Brp from {} )
+  assert ( zeropoly *monoB == 0 )
 
   assert ( isDivisible(monoA, monoB) == true )
   assert isDivisible(monoA, monoB) 
