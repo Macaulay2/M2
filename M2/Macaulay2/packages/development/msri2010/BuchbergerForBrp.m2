@@ -230,6 +230,16 @@ TEST ///
   F = new MutableHashTable from {0 => myPoly1,
                           1 => myPoly2,
                           2 => myPoly3};
+		     
+--Example with 4 variables. Not currently working		     
+--R = ZZ/2[x,y,z, w]
+--  n=4
+--  F = new MutableHashTable from { 1 => convert (x*y*w+w*x+z),
+--                                  2 => convert (x*z+w*y)
+--				  }
+		     
+--  apply (values runner(F,n), poly -> convert(poly,R))
+-- Output should be {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z}, not minimized, Lex
 ///
   
        
