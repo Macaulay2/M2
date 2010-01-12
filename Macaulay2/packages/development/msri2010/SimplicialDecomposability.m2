@@ -15,12 +15,15 @@ needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 
 -- TODO
+---- add documentation for allFaces
+---- add tests for:  allFaces, isShellable's different strategies
 ---- add impure variants of iskDecomposable, isSheddingFace, isShellable, isShelling, isVertexDecomposable, shellingOrder
 
 -------------------
 -- Exports
 -------------------
 export {
+    allFaces,
     faceDelete,
     iskDecomposable,
     isSheddingFace,
@@ -35,6 +38,12 @@ export {
 -------------------
 -- Exported Code
 -------------------
+
+-- Returns all faces of a simplicial complex (except {})
+allFaces = method(TypicalValue => List);
+allFaces (SimplicialComplex) := (S) -> (
+    flatten for i from 0 to dim S list flatten entries faces(i, S)
+);
 
 -- Face Deletion: Remove all faces of a complex containing the given face.
 faceDelete = method(TypicalValue => SimplicialComplex);
@@ -95,18 +104,14 @@ isShelling (List) := (L) -> (
     if #L <= 1 then return true;
 
     -- prime the loop
-    s0 := f0 := ta := null;
-    s1 := simplicialComplex take(L, 1);
-    di := dim s1;
-    f1 := flatten for i from 0 to di list flatten entries faces(i, s1);
+    f0 := ta := null;
+    f1 := allFaces simplicialComplex take(L, 1);
     -- for each face in the list
     for i from 2 to #L do (
         -- copy the last step
-        s0 = s1;
         f0 = f1;
         -- update the newest
-        s1 = simplicialComplex take(L, i);
-        f1 = flatten for i from 0 to di list flatten entries faces(i, s1);
+        f1 = allFaces simplicialComplex take(L, i);
         -- find the added faces & count their dimensions (+1)
         ta = tally flatten apply(toList(set f1 - set f0), degree);
         -- make sure the minimal face is unique
@@ -161,19 +166,16 @@ shellingOrder (SimplicialComplex) := options -> (S) -> (
 -- Build up a shelling recursively.  Called by shellingOrder with Strategy => "Recursive"
 recursiveShell = method(TypicalValue => List);
 recursiveShell (List, List) := (O, P) -> (
-    OisShellable := false;
     -- if it's "obvious", then keep going
-    if #O <= 1 then ( OisShellable = true; )
-    else (
-        -- s0 is already shellable, is s1?
-        s0 := simplicialComplex drop(O, -1);
-        s1 := simplicialComplex O;
-        f0 := flatten for i from 0 to dim s0 list flatten entries faces(i, s0);
-        f1 := flatten for i from 0 to dim s1 list flatten entries faces(i, s1);
+    OisShelling := true;
+    if #O > 1 then (
+        -- drop(O, -1) is already a shelling order, is O?
+        f0 := allFaces simplicialComplex drop(O, -1);
+        f1 := allFaces simplicialComplex O;
         ta := tally flatten apply(toList(set f1 - set f0), degree);
-        OisShellable = (ta_(min keys ta) == 1);
+        OisShelling = (ta_(min keys ta) == 1);
     );
-    if OisShellable then (
+    if OisShelling then (
         -- Nothing else to add: we're done
         if P == {} then return O;
         -- Recurse until success, if possible
