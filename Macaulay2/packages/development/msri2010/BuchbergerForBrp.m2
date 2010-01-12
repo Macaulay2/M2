@@ -82,7 +82,7 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
 
 -- remove all relatively prime pairs
 updatePairs = method()
-updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
+updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
   select( l, (i,j) -> (
     if i < 0 then (
       i = - i;
@@ -103,7 +103,7 @@ updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
 -- polynomial
 -- assume that the pairs are good (i.e., leading terms not relatively prime)
 SPolynomial = method()
-SPolynomial( Sequence, HashTable, ZZ ) := Brp => (pair,G,n) -> (
+SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
   (i,j) := pair;
   if i < 0 then ( -- we are working with an FP
     i = - i;
@@ -123,14 +123,14 @@ SPolynomial( Sequence, HashTable, ZZ ) := Brp => (pair,G,n) -> (
 -- Reduce the polynomial until the leading term is not divisible by the
 -- leading element of any element in G
 reduce = method()
-reduce (Brp, HashTable) := Brp => (f,G) -> (
+reduce (Brp, gbComputation) := Brp => (f,G) -> (
   while (newF = reduceOneStep(f,G); newF != f and newF != 0) do 
     f = newF;
   newF
 )
 
 reduce (Brp, Brp) := Brp => (f,g) -> (
-  reduce ( f, new HashTable from { 1=> g} )
+  reduce ( f, new gbComputation from { 1=> g} )
 )
 
 -- Reduce the leading term of a polynomial one step using a polynomial
@@ -145,7 +145,7 @@ reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
-reduceOneStep(Brp, HashTable) := Brp => (f,G) -> (
+reduceOneStep(Brp, gbComputation) := Brp => (f,G) -> (
   if f != 0 then (
     scan( (values G), p -> if isReducible(f, p) then (break f = reduceOneStep(f,p)));
     f
@@ -167,19 +167,29 @@ isReducible (Brp, Brp) := Boolean => (f,g) -> (
   isDivisible(leading f, leading g)
 )
 
---doc ///
---key 
---  BuchbergerForBrp
---Headline
---  BuchbergerForBrp making use of bit-wise representation
---///
-beginDocumentation()
-document { 
-	Key => BuchbergerForBrp,
-	Headline => "BuchbergerForBrp making use of bit-wise representation",
-	EM "PackageTemplate", " is an example package which can
-	be used as a template for user packages."
-	}
+doc ///
+Key 
+  BuchbergerForBrp
+Headline
+  BuchbergerForBrp making use of bit-wise representation
+///
+
+doc ///
+Key 
+  (reduce,Brp,gbComputation)
+  reduce
+Usage
+  g=reduce(f,F)
+Inputs 
+  f:Brp
+    a polynomial
+  F:gbComputation
+    a list of polynomials
+Outputs
+  g:Brp
+    f reduced by F 
+///
+
 TEST ///
   assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
   assert(  makePairsFromLists( {1,2,3}, {10,100,1000}) == {(1, 10), (1, 100), (1, 1000), (2, 10), (2, 100), (2, 1000), (3, 10), (3, 100), (3, 1000)})
