@@ -248,7 +248,8 @@ TEST ///
   R = ZZ/2[x,y,z];
   n=3;
   F = new MutableHashTable from { 1 => convert (x*y+z) }
-  assert(values runner(F,n) ==  {{{1, 1, 0}, {0, 0, 1}}, {{0, 1, 1}, {0, 0, 1}}, {{1, 0, 1}, {0, 0, 1}}}
+  values runner(F,n)
+  assert(flatten flatten values runner(F,n) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
 
 
 -- R = ZZ/2[x,y,z]/ideal(x*y+z)
