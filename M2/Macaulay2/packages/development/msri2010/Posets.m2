@@ -1995,7 +1995,7 @@ TEST ///
 P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
 R = QQ[x,y,z];
 L = lcmLattice ideal (x^2, y^2, z^2);
-L2 = divisorPoset(x^2*y^3);
+
 -- testing hasseDiagram
 assert( (hasseDiagram P1) === new Digraph from {e => new Set from {c => 1, d => 1}, a => new Set from {}, b => new Set from {}, c => new Set from {a => 1, b => 1}, d => new Set from {a => 1, b => 1}} )
 assert( (hasseDiagram L) === new Digraph from {x^2*y^2*z^2 => new Set from {x^2*y^2 => 1, x^2*z^2 => 1, y^2*z^2 => 1}, x^2*y^2 => new Set from {x^2 => 1, y^2 => 1}, x^2*z^2 => new Set from {x^2 => 1, z^2 => 1}, x^2 => new Set from {1 => 1}, y^2*z^2 => new Set from {y^2 => 1, z^2 => 1}, 1 => new Set from {}, z^2 => new Set from {1 => 1}, y^2 => new Set from {1 => 1}} )
@@ -2006,9 +2006,6 @@ TEST ///
 P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
 R = QQ[x,y,z];
 L = lcmLattice ideal (x^2, y^2, z^2);
-L2 = divisorPoset(x^2*y^3);
-
-
 --testing max/min elts
 assert( (maximalElements P1) === {e} )
 assert( (maximalElements L) === {x^2*y^2*z^2} )
@@ -2050,17 +2047,12 @@ assert( ((dropElements(L2, m-> first degree m > 2)).RelationMatrix) === map(ZZ^6
 ///
 
 TEST ///
-P1 = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
-P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
-R = QQ[x,y,z,w]
-I = ideal(x^2, x*y, y^3, y*z)
-L = lcmLattice I
-P3 = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
-assert( (maximalChains(L)) === {{1,y*z,y^3*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x^2*y*z,x^2*y^3*z},{1,y^3,y^3*z,x*y^3*z,x^2*y^3*z},{1,y^3,x*y^3,x*y^3*z,x^2*y^3*z},{1,y^3,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x*y*z,x*y^3*z,x^2*y^3*z},{1,x*y,x*y*z,x^2*y*z,x^2*y^3*z},{1,x*y,x*y^3,x*y^3*z,x^2*y^3*z},{1,x*y,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x^2*y,x^2*y*z,x^2*y^3*z},{1,x*y,x^2*y,x^2*y^3,x^2*y^3*z},{1,x^2,x^2*y,x^2*y*z,x^2*y^3*z},{1,x^2,x^2*y,x^2*y^3,x^2*y^3*z}} )
-assert( (maximalChains(P1)) === {{a,b,c},{a,b,d}} )
-assert( (maximalChains(P2)) === {{a,b,e,g},{a,c,e,g},{a,c,f,g},{a,d,f,g}} )
-assert( (maximalChains(P3)) === {{a,c,d},{b,c,d}} )
-///
+P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
+R = QQ[x,y,z];
+L = lcmLattice ideal (x^2, y^2, z^2);
 
+assert( ((orderComplex P1).facets) === map(QQ[v_0, v_1, v_2, v_3, v_4]^1,QQ[v_0, v_1, v_2, v_3, v_4]^{{-3},{-3},{-3},{-3}},{{v_1*v_3*v_4, v_0*v_3*v_4, v_1*v_2*v_4, v_0*v_2*v_4}}) )
+assert( ((orderComplex L).facets) === map(QQ[v_0, v_1, v_2, v_3, v_4, v_5, v_6, v_7]^1,QQ[v_0, v_1, v_2, v_3, v_4, v_5, v_6,v_7]^{{-4},{-4},{-4},{-4},{-4},{-4}},{{v_0*v_4*v_6*v_7, v_0*v_2*v_6*v_7, v_0*v_4*v_5*v_7, v_0*v_1*v_5*v_7, v_0*v_2*v_3*v_7, v_0*v_1*v_3*v_7}}) )
+///
 
 
