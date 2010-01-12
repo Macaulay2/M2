@@ -5,7 +5,7 @@ needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "0.2",
+    Version => "0.3",
     Date => "xx. January 2010",
     Authors => {{Name => "David W. Cook II", Email => "dcook@ms.uky.edu", HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Pure k-Decomposability for simplicial complexes.",
@@ -13,6 +13,10 @@ newPackage (
 );
 needsPackage "Depth";
 needsPackage "SimplicialComplexes";
+
+-- TODO
+---- add more strategies to shellingOrder
+---- add impure variants of iskDecomposable, isSheddingFace, isShellable, isShelling, isVertexDecomposable, shellingOrder
 
 -------------------
 -- Exports
@@ -52,7 +56,7 @@ iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
     -- Find all possible relevant faces:
     L := flatten for i from 0 to k list flatten entries faces(i, S);
     -- Check for any shedding faces.
-    for F in L do if iskDecomposable(link(S, F), k) and iskDecomposable(faceDelete(S, F), k) then return true;
+    for F in L do if isSheddingFace(S, F, k) then return true;
     false
 );
 
@@ -63,7 +67,7 @@ isSheddingFace (SimplicialComplex, RingElement) := (S, F) -> (
 );
 isSheddingFace (SimplicialComplex, RingElement, ZZ) := (S, F, k) -> (
     d := max(k, first degree F - 1);
-    iskDecomposable(link(S,F), d) and iskDecomposable(faceDelete(S, F), d)
+    iskDecomposable(link(S, F), d) and iskDecomposable(faceDelete(S, F), d)
 );
 
 -- Determines if a pure simplicial complex is shellable.
@@ -139,7 +143,7 @@ shellingOrder (SimplicialComplex) := options -> (S) -> (
     if any(hVector S, i -> i<0) then return {};
 
     --if options.Strategy == "Naive" then (
-        -- ULTRA NAIVE: simply look at all facet permutations
+        -- NAIVE: simply look at all facet permutations
         P := permutations first entries facets S;
         for L in P do if isShelling L then return L;
     --);
@@ -510,4 +514,47 @@ assert(not isSheddingFace(T, b*c*d, 2));
 ///
 
 end
--- Happy Happy Joy Joy!
+
+-------------------
+-- Demo Usage
+-------------------
+restart;
+needsPackage "SimplicialDecomposability";
+R = QQ[a..f];
+S = simplicialComplex {a*b*c*d*e};
+T = simplicialComplex {a*b*c, c*d*e};
+U = simplicialComplex {a*b*c, b*c*d, c*d*e}; 
+V = simplicialComplex {a*b*c, a*b*d, a*b*f, a*c*d, a*c*e, b*d*e, b*e*f, c*d*f, c*e*f, d*e*f};
+
+-- We can delete faces
+faceDelete(S, a)
+faceDelete(S, a*b*c*d*e)
+boundary(S)
+
+-- We can ask if it's a simplex
+isSimplex S
+isSimplex T
+
+-- We can get the hVector
+hVector U
+hVector V
+
+-- We can ask if it's k-decomposable (& about shedding faces)
+iskDecomposable(S, 0)
+iskDecomposable(S, 1)
+isSheddingFace(S, a*b*c)
+
+iskDecomposable(V, 0)
+iskDecomposable(V, 1)
+isSheddingFace(V, d*e*f)
+
+-- We can ask if it's shellable
+isShellable T
+isShellable U
+shellingOrder U
+
+-- We can do it in two ways: Naively and dDecomposability
+time isShellable(V, Strategy => "dDecomposable")
+-- bad idea! 
+--time isShellable(V, Strategy => "Naive")
+(#flatten entries facets V)!
