@@ -14,8 +14,10 @@ newPackage(
      )
 
 export { 
-     NormalToricVariety, 
+     NormalToricVariety,
+     ToricDivisor,
      normalToricVariety, 
+     toricDivisor,
      projectiveSpace, 
      hirzebruchSurface, 
      weightedProjectiveSpace, 
@@ -60,6 +62,13 @@ NormalToricVariety.GlobalReleaseHook = globalReleaseFunction
 expression NormalToricVariety := X -> new FunctionApplication from { 
      normalToricVariety, Adjacent{rays X, Adjacent{",",max X}}}
 
+ToricDivisor = new Type of HashTable
+ToricDivisor.synonym = "toric divisor"
+globalAssignment ToricDivisor
+
+--expression ToricDivisor := D -> new FunctionApplication from { 
+--     toricDivisor, Adjacent{coefficients D, Adjacent{",",variety D}}}
+
 -- The methods 'rays' is defined in 'Polyhedra'
 -- rays = method(TypicalValue => List)
 rays NormalToricVariety := List => X -> X.rays
@@ -81,6 +90,18 @@ normalToricVariety (List, List) := opts -> (V,F) -> (
      X.cache.CoefficientRing = opts.CoefficientRing;
      X.cache.Variable = opts.Variable;
      return X)
+
+toricDivisor = method()
+
+toricDivisor (List,NormalToricVariety) := (L,X) -> (
+     new ToricDivisor from {
+	  symbol coefficients => L,
+	  symbol variety => X,
+	  symbol cache => new CacheTable})
+
+
+coefficients ToricDivisor := List => opts -> D -> D.coefficients
+variety ToricDivisor := NormalToricVariety => D -> D.variety
 
 
 projectiveSpace = method()
@@ -267,6 +288,8 @@ isWellDefined NormalToricVariety := Boolean => (cacheValue symbol isWellDefined)
 
      return flag))
 
+isWellDefined ToricDivisor := Boolean => (cacheValue symbol isWellDefined)(D -> #(coefficients D) == #(rays variety D) and isWellDefined variety D)
+
 
 isAmple = method()
 isAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
@@ -283,11 +306,24 @@ isAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
 		    	 all(#R, j -> ((matrix{R#j} * m) - a#j)_(0,0) > 0)))));
      X.cache.isAmple#D)
 
+isAmple ToricDivisor := Boolean => (cacheValue symbol isAmple)(D -> (
+	  isCartier D and isComplete variety D and (
+	       complementSelect := (L,ind) -> L_(sort toList(set(0..#L-1) - set ind));
+	       M := - D.cache.cartierCoefficients;
+	       all(#(max variety D), i -> (
+		    	 C := (max variety D)#i;
+		    	 m := M#i;
+		    	 R := complementSelect(rays variety D,C);
+		    	 a := - complementSelect(coefficients D,C);
+		    	 all(#R, j -> ((matrix{R#j} * m) - a#j)_(0,0) > 0))))))
+
 
 isVeryAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
      if not X.cache.?isVeryAmple then X.cache.isVeryAmple = new MutableHashTable;
      if not X.cache.isVeryAmple#?D then X.cache.isVeryAmple#D = isAmple(D,X) and isVeryAmple polytope(D,X);
      X.cache.isVeryAmple#D)
+
+isVeryAmple ToricDivisor := Boolean => (cacheValue symbol isVeryAmple)(D -> isAmple D and isVeryAmple polytope D)
 
 
 isCartier = method()
@@ -295,6 +331,8 @@ isCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
      if not X.cache.?isCartier then X.cache.isCartier = new MutableHashTable;
      if not X.cache.isCartier#?D then X.cache.isCartier#D = isQQCartier(D,X) and all(X.cache.isQQCartier#D, m -> liftable(m,ZZ));
      X.cache.isCartier#D)
+
+isCartier ToricDivisor := Boolean => (cacheValue symbol isCartier)(D -> isQQCartier D and all(D.cache.cartierCoefficients, m -> liftable(m,ZZ)))
 
 isQQCartier = method()
 isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
@@ -312,6 +350,21 @@ isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
 	       if U*m-a != 0 then break{} else m));
      X.cache.isQQCartier#D != {})
 
+isQQCartier ToricDivisor := Boolean => (cacheValue symbol isQQCartier)(D -> (
+	  systemSolver := (R,F) -> (
+     	       (R1,Lmatrix,Rmatrix) := smithNormalForm lift(R,ZZ);
+     	       F1 := entries(Lmatrix * F);
+     	       Rmatrix * (matrix apply(numRows R1, i -> F1#i / R1_(i,i)) || map(QQ^(numColumns R1 - numRows R1),QQ^(#(F1#0)),0)));
+	  D.cache.cartierCoefficients = for C in max variety D list (
+	       U := matrix((rays variety D)_C);
+	       a := transpose matrix {(coefficients D)_C};
+	       n := numColumns U;
+	       m := systemSolver(if numRows U > n then (U^{0..n-1},a^{0..n-1}) else (U,a));
+	       if U*m-a != 0 then break{} else m);
+	  D.cache.cartierCoefficients != {}))
+     
+     
+
 
 isDegenerate = method()
 isDegenerate NormalToricVariety := Boolean => (cacheValue symbol isDegenerate)(
@@ -322,7 +375,7 @@ isFano = method()
 isFano NormalToricVariety := Boolean => (cacheValue symbol isFano)(
      X -> (
 	  D := anticanonicalDivisor X;
-	  isCartier(D,X) and isAmple(D,X)))     
+	  isCartier D and isAmple D))     
 
 
    
@@ -342,7 +395,7 @@ isSmooth NormalToricVariety := Boolean => (cacheValue symbol isSmooth)(
 
 
 anticanonicalDivisor = method()
-anticanonicalDivisor NormalToricVariety := List => X -> toList(#(rays X):1)
+anticanonicalDivisor NormalToricVariety := ToricDivisor => X -> toricDivisor(toList(#(rays X):1),X)
 
 
 
@@ -748,15 +801,17 @@ faceLatticeSimple = (d,R,HS) -> (
 	       L = unique Lnew)))
 
 
-polytope NormalToricVariety := Polyhedron => X -> polytope fan X
+polytope NormalToricVariety := Polyhedron => (cacheValue symbol polytope)(X -> polytope fan X)
 
 polytope (List,NormalToricVariety) := Polyhedron => (D,X) -> (
      U := -matrix rays X;
      a := transpose matrix {D};
      intersection(U,a))
 
+polytope ToricDivisor := Polyhedron => (cacheValue symbol polytope)(D -> intersection(-matrix rays variety D,transpose matrix {coefficients D}))
 
-stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
+
+stellarSubdivision (NormalToricVariety,List) := NormalToricVariety => (X,r) -> (
      replacement := {};
      rm := matrix transpose {r};
      (n,newRays) := if member(r,rays X) then (position(rays X, e -> e == r),rays X) else (#(rays X),rays X | {r});
@@ -819,10 +874,10 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
      Y)
 
 makePrimitive = method()
-makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
+makePrimitive List := List => w -> (g := gcd w; apply(w, e -> e//g))
 
 insertCone = method()
-insertCone (NormalToricVariety,List) := (X,C) -> (
+insertCone (NormalToricVariety,List) := NormalToricVariety => (X,C) -> (
      R := matrix rays X;
      Cr := transpose matrix C;
      C1 := {};
