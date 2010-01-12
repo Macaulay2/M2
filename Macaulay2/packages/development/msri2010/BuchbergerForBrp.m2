@@ -21,6 +21,7 @@ export {makePairsFromLists,
       SPolynomial, 
       gbBrp, 
       reduceOneStep, 
+      reduceLtBrp,
       reduce,
       updatePairs,
       gbComputation,
@@ -69,11 +70,15 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
 
 --Reduce lower terms of the first polynomial with the leading term of the second
 
-ReduceLtBrp = method()
-ReduceLtBrp(Brp, Brp) := Brp => (f,g) -> (while (l= select(f, m ->  isReducible(m, leading(g)));  #l!=0) do
-	  f= f- divide(first l, leading(g))*g;
-      f
-           )
+reduceLtBrp = method()
+reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
+  while (l= select(f, m ->  isReducible(new Brp from {m}, leading(g)));  #l!=0) do (
+    print first l;
+	  f= f+ divide(new Brp from {first l}, leading(g))*g
+  );
+  f
+)
+
 
 -- remove all relatively prime pairs
 updatePairs = method()
@@ -123,6 +128,7 @@ reduce (Brp, HashTable) := Brp => (f,G) -> (
     f = newF;
   newF
 )
+
 reduce (Brp, Brp) := Brp => (f,g) -> (
   reduce ( f, new HashTable from { 1=> g} )
 )
@@ -288,6 +294,11 @@ peek F
 assert ( #F == 2 ) 
 assert (F#2 == new Brp from {{1, 0, 0}} )
 assert (F#3 == new Brp from {{0, 1, 1}, {0, 0, 1}} )
+
+R = ZZ/2[x,y,z]
+a = convert(x*z + y*z + z)
+b = convert(y+z)
+assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0, 0, 1}} )
 
 ///
   
