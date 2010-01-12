@@ -24,6 +24,7 @@ export {makePairsFromLists,
       reduce,
       updatePairs,
       gbComputation,
+      minimalGbBrp,
       isReducible }
 exportMutable {}
 
@@ -53,6 +54,15 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
   );
   --minimizeBasis(F)
   F
+)
+
+
+
+-- delete elements where the leading term is divisible by another leading term
+minimalGbBrp = method()
+minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
+  -- Todo remove extra looping, we want to scan over the "changing" values F
+  scan( values F, f -> ( print "starting with"; print f; scan( pairs F, (gKey, g) -> (print gKey; if f != g and isReducible( g, f) then remove(F,gKey) ))) )
 )
 
 -- remove all relatively prime pairs
@@ -161,7 +171,6 @@ TEST ///
   assert ( makePairsFromLists ( {0,1,2}, {22} ) == {(0, 22), (1, 22), (2, 22)})
   
   R = ZZ[x,y,z]
-  n = 3
   myPoly1 = convert( x*y + z)
   myPoly2 = convert( x )
   myPoly3 = convert( y*z + z)
@@ -175,13 +184,13 @@ TEST ///
                            }
   FOnePoly = new gbComputation from { 1 => convert(x+y+z) } 
 
-  S = SPolynomial((-1,1), F, n)
+  S = SPolynomial((-1,1), F, numgens R)
   assert (S == convert( x*z + z) )
-  S = SPolynomial((-1,2), F, n)
+  S = SPolynomial((-1,2), F, numgens R)
   assert (S == 0 )
-  S = SPolynomial((1,3), F, n)
+  S = SPolynomial((1,3), F, numgens R)
   assert (S == convert( x*z+z) ) 
-  S = SPolynomial((4,5), F, n)
+  S = SPolynomial((4,5), F, numgens R)
   assert (S == convert( x*y + x + y*z) ) 
 
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
@@ -193,29 +202,27 @@ TEST ///
 
   l = makePairsFromLists( keys F, keys F) 
   assert( l == {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4,5)})
-  assert ( updatePairs (l, F, n) == {(1, 2), (1, 3), (1, 4), (1, 5), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
+  assert ( updatePairs (l, F, numgens R) == {(1, 2), (1, 3), (1, 4), (1, 5), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
   ll = makePairsFromLists( keys F, {-1} )
-  assert ( updatePairs( ll, F, n) ==  {(-1, 1), (-1, 2), (-1, 4), (-1, 5)} )
+  assert ( updatePairs( ll, F, numgens R) ==  {(-1, 1), (-1, 2), (-1, 4), (-1, 5)} )
   lll = makePairsFromLists( keys F, {-3} )
-  assert ( updatePairs( lll, F, n) == {(-3, 3), (-3, 4)} )
+  assert ( updatePairs( lll, F, numgens R) == {(-3, 3), (-3, 4)} )
   
   R = ZZ/2[x,y,z];
-  n=3;
   F = new gbComputation from { 0 => convert x }
-  assert ( first values gbBrp(F,n) == new Brp from {{1, 0, 0}} )
+  assert ( first values gbBrp(F,numgens R) == new Brp from {{1, 0, 0}} )
   F = new gbComputation from { 0 => convert x,
                                   1 => convert y}
-  gbBrp(F,n)                                
-  assert ( first values gbBrp(F,n) == new Brp from {{1, 0, 0}} )
+  gbBrp(F,numgens R)                                
+  assert ( first values gbBrp(F,numgens R) == new Brp from {{1, 0, 0}} )
   F = new gbComputation from { 0 => convert (x*y),
                                   1 => convert y}
-  gbBrp(F,n)                                
+  gbBrp(F,numgens R)                                
 
   R = ZZ/2[x,y,z];
-  n=3;
   F = new gbComputation from { 0 => convert (x*y+z) }
-  gbBrp(F,n)
-  assert(flatten flatten values gbBrp(F,n) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
+  gbBrp(F,numgens R)
+  assert(flatten flatten values gbBrp(F, numgens R) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
 
 
 -- R = ZZ/2[x,y,z]/ideal(x*y+z)
@@ -236,7 +243,6 @@ TEST ///
  -- gens gb J
 
   R = ZZ/2[x,y,z,w]
-
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
                               1 => convert (x*z+w*y) }
 
@@ -246,13 +252,33 @@ TEST ///
 
 
   R = ZZ[x,y,z]
-  n = 3
   F = new gbComputation from { 0 => convert( x*y + z),
                            1 => convert( x ) ,
                            2 => convert( y*z + z),
                            3 => convert( x*y*z + x*y + x) ,
                            4 => convert( x*y + y*z)
                            }
+R = ZZ[x,y,z]
+  myPoly1 = convert( x*y + z)
+  myPoly2 = convert( x )
+  myPoly3 = convert( y*z + z)
+  myPoly4 = convert( x*y*z + x*y + x)
+  myPoly5 = convert( x*y + y*z)
+  F = new gbComputation from { 1 => myPoly1,
+                           2 => myPoly2,
+                           3 => myPoly3,
+                           4 => myPoly4,
+                           5 => myPoly5
+                           }
+  FOnePoly = new gbComputation from { 1 => convert(x+y+z) } 
+
+minimalGbBrp(F)
+
+peek F
+assert ( #F == 2 ) 
+assert (F#2 == new Brp from {{1, 0, 0}} )
+assert (F#3 == new Brp from {{0, 1, 1}, {0, 0, 1}} )
+
 ///
   
        
