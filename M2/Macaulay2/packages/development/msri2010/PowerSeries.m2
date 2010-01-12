@@ -25,7 +25,7 @@ toString Series := s -> toString expression "O(" expression(s#degree+1) expressi
 tex Series := s -> tex expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
 html Series := s -> html expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
 
-truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
+truncate(ZZ,RingElement) := RingElement => (n,f) -> (sum select(terms f, i -> first degree i <= n) + 0_(ring f));
 -- should be replaced with "part"
 
 dominantTerm = method()
@@ -303,12 +303,14 @@ Series - Series := Series => (A,B) -> (
 
 Series * Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
-     new Series from {degree => min(A#degree,B#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => A'.computedDegree, polynomial => truncate(A'.computedDegree ,A'.polynomial * B'.polynomial), 
+     newComputedDegree = A'.computedDegree;
+     -- newComputedDegree should be changed when we do Laurent Series
+     new Series from {degree => min(A#degree,B#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => newComputedDegree, polynomial => truncate(newComputedDegree ,A'.polynomial * B'.polynomial), 
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    if newDegree > oldComputedDegree then (
 		    	 newA := setDegree(newDegree,A);
 		    	 newB := setDegree(newDegree,B);
-		    	 (truncate(newDegree,newA.polynomial * newB.polynomial), newDegree)
+		    	 (truncate(newDegree, newA.polynomial * newB.polynomial), newDegree)
 			 )
 		    else (oldPolynomial, oldComputedDegree)
 		    )
