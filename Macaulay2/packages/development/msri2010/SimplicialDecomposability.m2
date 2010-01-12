@@ -45,10 +45,6 @@ iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
     if not isPure S then return false;
     if any(hVector S, i -> i<0) then return false;
 
-    -- if S is k-decomposable, then S is k+1-decomposable 
-    -- S is (dim S)-decomposable if and only if S is shellable (see thm 2.8 is Provan-Billera)
-    -- if dim S <= k then return isShellable S;
-
     -- base case: simplexes are k-decomposable for all nonnegative k
     if isSimplex S then return true;
 
@@ -60,9 +56,16 @@ iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
 );
 
 -- Determines if a pure simplicial complex is shellable.
-isShellable = method(TypicalValue => Boolean);
-isShellable (SimplicialComplex) := (S) -> (
-    shellingOrder(S) != {}
+isShellable = method(TypicalValue => Boolean, Options => {Strategy => "dDecomposable"});
+isShellable (SimplicialComplex) := options -> (S) -> (
+    if options.Strategy == "dDecomposable" then (
+        -- S is (dim S)-decomposable if and only if S is shellable (see thm 2.8 is Provan-Billera)
+        iskDecomposable(S, dim S)
+    )
+    else (
+        -- otherwise pass the options to the shellingOrder routine
+        shellingOrder(S, options) != {}
+    )
 );
 
 -- Determines if a list of equidimensional faces is a shelling.
@@ -117,18 +120,19 @@ hVector (SimplicialComplex) := (S) -> (
 );
 
 -- Attempts to find a shelling order of a pure simplicial complex.
-shellingOrder = method(TypicalValue => List);
-shellingOrder (SimplicialComplex) := (S) -> (
+shellingOrder = method(TypicalValue => List, Options => {Strategy => "Naive"});
+shellingOrder (SimplicialComplex) := options -> (S) -> (
     -- any of {non-pure, non-CM, negatives in hVector} imply not pure shellable
     if not isPure S then return {};
     --if not isCM quotient ideal S then return {};  -- good idea, but this is REALLY slow
     if any(hVector S, i -> i<0) then return {};
 
-    -- ULTRA NAIVE: simply look at all facet permutations
-    P := permutations first entries facets S;
-    o := {};
-    for L in P do if isShelling L then ( o = L; break; );
-    o
+    --if options.Strategy == "Naive" then (
+        -- ULTRA NAIVE: simply look at all facet permutations
+        P := permutations first entries facets S;
+        for L in P do if isShelling L then return L;
+    --);
+    {}
 );
 
 -------------------
@@ -223,7 +227,9 @@ doc ///
             true if and only if {\tt S} is (pure) shellable
     Description
         Text
-            This function simply checks if a (pure) shelling order exists.
+            This function takes an optional Strategy which determines how the method works.  The default is Strategy => "dDecomposable"
+            which checks if {\tt S} is {\tt dim S}-decomposable.  Any other Strategy results in simply checking if a shelling order
+            exists and the input Strategy is passed on to the shellingOrder method.
         Example
             R = QQ[a,b,c,d,e];
             isShellable simplicialComplex {a*b*c*d*e}
@@ -345,7 +351,8 @@ doc ///
             a (pure) shelling order of the facets of {\tt S}, if one exists
     Description
         Text
-            Currently this routine employs the incredibly naive approach of checking all permutations of the facets.
+            This method behaves differently depending on the Strategy passed as an option.  Currently there is only one Strategy,
+            "Naive", which simply checks all permutations of the facet with the isShelling routine until one is found, if one exists.
         Example
             R = QQ[a,b,c,d,e];
             shellingOrder simplicialComplex {a*b*c*d*e}
