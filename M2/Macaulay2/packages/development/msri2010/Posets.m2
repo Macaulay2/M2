@@ -55,7 +55,8 @@ export {
 	openInterval,
 	moebiusFunction,
 	isAntichain,
-	meetIrreducibles
+	meetIrreducibles,
+	booleanLattice
        }
 
 needsPackage "SimplicialComplexes"
@@ -689,7 +690,7 @@ moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
      moebiusFunction (closedInterval(P,elt1,elt2)))
 
 -----------------------------------
-Boolean Lattices
+--Boolean Lattices
 -----------------------------------
 booleanLattice = method ()
 
@@ -724,7 +725,7 @@ doc ///
 	       routines which use or produce posets.   A poset or a partially ordered set is a set together with a binary relation satisfying reflexivity, antisymmetry, and transitivity.
 ///
 	 
-----------
+---------
 -- types
 ----------	       
 doc ///
