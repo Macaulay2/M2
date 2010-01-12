@@ -289,9 +289,9 @@ makeSeriesCompatible(Series,Series) := Sequence => (A,B) -> (
 			   setDegree => A#setDegree},
 	  new Series from {degree => newComputedDegree, 
 	       	    	   computedDegree => newComputedDegree,
-			   maxDegree => A.maxDegree,
-			   polynomial => truncate(newComputedDegree,A.polynomial),
-			   setDegree => A#setDegree}
+			   maxDegree => B.maxDegree,
+			   polynomial => truncate(newComputedDegree,B.polynomial),
+			   setDegree => B#setDegree}
      	  )
      
      
@@ -343,7 +343,7 @@ Series * Series := Series => (A,B) -> (
      (A',B') := makeSeriesCompatible(A,B);
      newComputedDegree = A'.computedDegree;
      -- newComputedDegree should be changed when we do Laurent Series
-     new Series from {degree => min(A#degree,B#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => newComputedDegree, polynomial => truncate(newComputedDegree ,A'.polynomial * B'.polynomial), 
+     new Series from {degree => min(A#degree,B#degree), maxDegree => min(A'.maxDegree,B'.maxDegree), computedDegree => newComputedDegree, polynomial => truncate(newComputedDegree ,toPolynomial(A') * toPolynomial(B')), 
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (
 		    if newDegree > oldComputedDegree then (
 		    	 newA := setDegree(newDegree,A);
