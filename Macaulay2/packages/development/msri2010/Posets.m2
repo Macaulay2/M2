@@ -1846,7 +1846,31 @@ doc///
 	       P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
 	       isAntichain(P2, {a,b})     
 	       isAntichain(P2, {b,c,d}) 
-///     
+///  
+
+doc///
+     Key
+     	  booleanLattice
+	  (booleanLattice, ZZ)
+     Headline
+     	  gives the booleanLattice on specified number of atoms
+     Usage
+     	  L = booleanLattice(n)
+     Inputs
+     	  n : ZZ
+	       this should be a positive integer
+     Outputs
+     	  L : Poset
+	       the Boolean lattice on n atoms
+     Description
+     	  Text
+	       The function returns the Boolean lattice on the specified number of atoms in the format of an LCM-lattice on 
+	       the irrelevant maximal ideal in a polynomial ring over the integers with n-variables.
+	  Example
+	       booleanLattice(5)
+     SeeAlso
+     	  lcmLattice
+///	       
 
 --doc ///
 --     Key 
