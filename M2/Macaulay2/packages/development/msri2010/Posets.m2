@@ -1983,6 +1983,8 @@ assert( (maximalElements L) === {x^2*y^2*z^2} )
 assert( (minimalElements P1) === {a,b} )
 assert( (minimalElements L) === {1} )
 
+assert( (atoms(P1) ) === {c,d} )
+assert( (atoms(L)) === {z^2,y^2,x^2} )
 
 ///
 
