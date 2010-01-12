@@ -17,8 +17,12 @@ setDegree(10,S1)
 -- We can create a series [efficiently!] given a function that knows how to add
 -- the ith term to a given polynomial approximation of itself.
 f = (g,m,n) -> g + sum(m+1..n,j -> j*(x)^j)
+
 S2 = efficientSeries(R,f)                     --method is (efficientSeries, Ring, Function)
+setDegree(10,S2)
+
 S3 = efficientSeries(x+2*x^2,2,f)             --method is (efficientSeries, RingElement,ZZ,Function) 
+setDegree(10,S3)
 
 -- We can create a series by manually typing in some terms of it to a
 -- given precision:
