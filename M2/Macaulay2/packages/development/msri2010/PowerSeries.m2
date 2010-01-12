@@ -2,9 +2,15 @@ newPackage(
         "PowerSeries",
         Version => "0.1", 
         Date => "1/2010",
-        Authors => {{Name => "", 
-                  Email => "", 
-                  HomePage => ""}},
+        Authors => {{Name => "Chris Cunningham", 
+                  Email => "cjc258@cornell.edu"},
+	     {Name => "Jason McCullough", 
+	     Email => "jmccullo@math.ucr.edu",
+	     HomePage => "http://www.math.ucr.edu/~jmccullo/"},
+	{Name => "Bart Snapp", 
+	     Email => "snapp@math.ohio-state.edu",
+	     HomePage => "http://www.math.ohio-state.edu/~snapp/"}
+	},
         Headline => "computations involving power series",
         DebuggingMode => true
         )
@@ -14,10 +20,10 @@ export {series, setDegree,toPolynomial,dominantTerm,inefficientSeries,efficientS
 
 Series = new Type of HashTable
 expression Series := s -> expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
-net Series := s -> net expression s;
-toString Series := s -> toString expression s;
-tex Series := s -> tex expression s;
-html Series := s -> html expression s;
+net Series := s -> net expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
+toString Series := s -> toString expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
+tex Series := s -> tex expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
+html Series := s -> html expression "O(" expression(s#degree+1) expression ")" + expression truncate(s#degree, s#polynomial);
 
 truncate(ZZ,RingElement) := RingElement => (n,f) -> sum select(terms f, i -> first degree i <= n);
 -- should be replaced with "part"
