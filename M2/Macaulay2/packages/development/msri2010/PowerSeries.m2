@@ -33,8 +33,13 @@ truncate(ZZ,RingElement) := RingElement => (n,f) -> part(,n,f);
 -- The above is what was there before "part" was discovered.
 
 dominantTerm = method()
-dominantTerm(Series) := RingElement => S -> last terms toPolynomial S;
-
+dominantTerm(Series) := RingElement => S -> (
+     -- This is bad, it depends on the monomial order:last terms toPolynomial S;
+     -- This seems slow but at least correct:
+     f := toPolynomial S;
+     minDegree := min apply(terms f, i -> first degree i);
+     part(minDegree,minDegree,f)
+     )
 
 toPolynomial = method()
 toPolynomial(Series) := RingElement => s -> toPolynomial(s#degree,s);
@@ -99,16 +104,18 @@ inverse(Series) := Series => F -> (
      )
 
 recip = (denom,oldDegree,newDegree,oldApprox) -> (
-     wts = (options ring oldApprox).Heft;
+     wts := (options ring oldApprox).Heft;
+     if wts === null then wts = {1};
+
      if ring denom =!= ring oldApprox then error "Rings of denominator and approximation must agree.";
      if oldDegree < (first degree oldApprox) then error "Old approximation had more accuracy than claimed.";
      if newDegree < oldDegree then error "recip does not know how to decrease precision.";
       
      -- Really this algorithm computes terms 0&1, then terms 2&3, then terms 4&5&6&7, etc.
      -- So we need to know which powers of two are relevant.
-     if oldDegree == 0 then startingTwo = 0
+     if oldDegree == 0 then startingTwo := 0
                        else startingTwo = floor log (2,oldDegree);
-     endingTwo = ceiling log (2,newDegree+1);
+     endingTwo := ceiling log (2,newDegree+1);
      oldApprox = truncate(2^startingTwo,oldApprox);
        
      -- denom is a polynomial of the form 1 plus terms of positive weight, which we verify
@@ -130,27 +137,43 @@ Series == Series := (M,N) -> (
      truncate(precision,M#polynomial) == truncate(precision,N#polynomial))
 
 series(RingElement) := Series => opts -> f -> (
-     f = f/(1_(ring f));
-     num := numerator f;
-     den := denominator f;
-     if first degree den < 1 then s := num else return num*inverse(series(den,Degree => opts.Degree));
-     -- now make a new series.
-     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+     -- To check whether this thing has a denominator or not, we ask its ring.
+     -- If it has a denominator, we need to invert the denominator to form a 
+     -- power series, then multiply by the numerator.
+     R := ring f;
+     if R#?denominator then (
+	  if denominator f == 1 then(
+	       f = numerator f;
+	       )
+	  else(
+	       num := numerator f;
+	       den := denominator f;
+	       return num*inverse(series(den,Degree => opts.Degree));
+	       );
+	  );
+     
+     -- If we got to this point, f does not have a denominator -- it is
+     -- just a polynomial that we need to make an exact series for. 
+     
+     new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => f, 
           -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
 	  -- to know how to tack on the new terms to the old polynomial.
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial, max(oldComputedDegree,newDegree))
 		    )});
 
 series(Divide) := Series => opts -> f -> (
-        num := numerator f;
+        num := value numerator f;
      	den := value denominator f;
-     	if first degree den < 1 then s := num else return num*inverse(series(new Divide from den/1,Degree => opts.Degree));
-     	-- now make a new series.
-     	new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
-          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
-	  -- to know how to tack on the new terms to the old polynomial.
-	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial, max(oldComputedDegree,newDegree))
-		    )});
+	num * inverse series den
+	)
+	
+--     	if first degree den < 1 then s := num else return num*inverse(series(new Divide from den/1,Degree => opts.Degree));
+--     	-- now make a new series.
+--     	new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+--          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
+--	  -- to know how to tack on the new terms to the old polynomial.
+--	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial, max(oldComputedDegree,newDegree))
+--		    )});
 
 
 --series RingElement := Series => opts -> h -> (
