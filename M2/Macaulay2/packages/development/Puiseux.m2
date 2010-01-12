@@ -1,4 +1,5 @@
 -- -*- coding: utf-8 -*-
+
 newPackage(
 	"Puiseux",
     	Version => "0.1", 
