@@ -688,6 +688,17 @@ moebiusFunction (Poset) := Poset => (P) -> (
 moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
      moebiusFunction (closedInterval(P,elt1,elt2)))
 
+-----------------------------------
+Boolean Lattices
+-----------------------------------
+booleanLattice = method ()
+
+booleanLattice (ZZ) := n ->(
+     baseRing := ZZ[x_1 .. x_n];
+     I := ideal(x_1 .. x_n);
+     lcmLattice(I)
+     )
+ 
 
 
 ----------------------------------
