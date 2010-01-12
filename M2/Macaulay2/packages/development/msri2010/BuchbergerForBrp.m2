@@ -231,20 +231,16 @@ TEST ///
                           1 => myPoly2,
                           2 => myPoly3};
 
-----------------------
-  R = ZZ/2[x,y,z,w,MonomialOrder=>Lex]/(x^2+x,y^2+y,z^2+z,w^2+w)
-  J = ideal(x*y*w+w*x+z, x*z+w*y)
-  gens gb J
+ -- R = ZZ/2[x,y,z,w,MonomialOrder=>Lex]/(x^2+x,y^2+y,z^2+z,w^2+w)
+ -- J = ideal(x*y*w+w*x+z, x*z+w*y)
+ -- gens gb J
 
-  R = ZZ[x,y,z,w]
+  R = ZZ/2[x,y,z,w]
+
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
                               1 => convert (x*z+w*y) }
+
   gbBasis = gbBrp(F,numgens R)
-  peek gbBasis
-  JBrp =ideal apply (values gbBasis, poly -> convert(poly,R) )
-  gens gb JBrp
-----------------------
-  
 
   assert( apply (values gbBasis, poly -> convert(poly,R) ) == {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z})
 
