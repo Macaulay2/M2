@@ -236,6 +236,8 @@ displayGraph Digraph := (G) -> (
 
 descendents = method()
      -- Input: A digraph and the key for the vertex of interest.
+     -- Output: The set of vertices that are descendents of the vertex 
+     --         of interest.
 descendents(Digraph,Thing) := (G,v) -> (
      -- returns a set of vertices
      notDone := true;
@@ -260,15 +262,21 @@ descendents(Digraph,Thing) := (G,v) -> (
 
 nondescendents = method()
      -- Input: A digraph and the key for the vertex of interest.
+     -- Output: The set of vertices that are not descendents of 
+     --	        the vertex of interest.
 nondescendents(Digraph,Thing) := (G,v) -> set keys G - descendents(G,v) - set {v}
 
 parents = method()
      -- Input: A digraph and the key for the vertex of interest.
---parents(Digraph,Thing) := (G,v) -> set select(1..#G, i -> member(v, G#i))
+     -- Output: The set of vertices that are the parents of the vertex 
+     --	    	of interest.
 parents(Digraph,Thing) := (G,v) -> set select(keys(G), i -> member(v,
 G#i))
 
 foreFathers = method()
+     -- Input: A digraph and the key for the vertex of interest.
+     -- Output: The set of vertices that are the ancestors of the vertex 
+     --	    	of interest.
 foreFathers(Digraph, Thing) := (G,v) -> (
      notDone := true;
      cP := parents(G,v);
@@ -284,15 +292,26 @@ foreFathers(Digraph, Thing) := (G,v) -> (
 
 children = method()
      -- Input: A digraph and the key for the vertex of interest.
+     -- Output: The set of vertices that are the children of the vertex 
+     --	    	of interest.
 children(Digraph,Thing) := (G,v) -> G#v
 
 neighbors = method()
+     -- Input: A digraph and the key for the vertex of interest.
+     -- Output: The set of vertices that are neighbors of the vertex 
+     --	    	of interest.
 neighbors(Graph,Thing) := (G,v) -> G#v  
 
 nonneighbors = method()
+     -- Input: A digraph and the key for the vertex of interest.
+     -- Output: The set of vertices that are not neighbors of the vertex 
+     --	    	of interest.
 nonneighbors(Graph, Thing) := (G,v) -> keys G - neighbors(G,v)-set{v}
 
 removeNodes = method()
+     -- Input: A digraph and the list of nodes you want to remove.
+     -- Output: The digraph induced by removing the specified nodes
+     --         and all edges incident to those nodes.
 removeNodes(Digraph,List) := (G,v) -> (
      v = set v;
      G = select(pairs G, x -> not member(x#0,v));
@@ -302,6 +321,9 @@ removeNodes(Digraph,List) := (G,v) -> (
 --removeNodes(Digraph,ZZ) := (G,v) -> removeNodes(G, {v})
 
 inducedSubgraph = method()
+     -- Input: A digraph and the list of nodes you want to keep.
+     -- Output: The digraph induced by keeping the specified nodes and 
+     --         all edges whose endpoints are in the specified list.
 inducedSubgraph(Digraph, List) := (G,v) -> (
      G = removeNodes(G,toList(keys(G)-set v));
      new Digraph from G
@@ -348,9 +370,10 @@ loadPackage "Graphs"
 A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
 B = digraph({{a,{b,d}},{b,{c}},{d,{a,c}}})
 C = digraph({{a,{b,c}}, {b,{d}}, {c,{}}, {d,{}}})
-flatten {{a,b},{c,d},{a,d},{b,c}}
-set oo
-toList oo
+H = digraph({{a,{d,f}}, {d,{h,e}}, {f,{e,c}}, {h,{g}}, {e,{g,b}}, {g,{}}, {b,{}}, {c,{}}})
+inducedSubgraph(H,{a,f,h,g})
+K = graph({{a,b},{b,c},{c,d},{d,e},{a,e},{b,e}})
+inducedSubgraph(K,{a,e,b})
 ///
 
 
@@ -361,10 +384,12 @@ doc ///
   Key
     Graphs
   Headline
-    Data types and basic functions on graphs used in algebra and algebraic geometry. 
+    Data types and basic functions on graphs used in algebra and
+    algebraic geometry. 
   Description
     Text
-      This package is used to construct digraphs and graphs. 
+      This package is used to construct digraphs and graphs. The user
+      should note that this package assumes that all digraphs are acyclic.
 ///
 
 doc ///
@@ -374,7 +399,13 @@ doc ///
     The data type for an undirected graph
   Description
     Text
-      Graphs are awesome!
+      The graph is stored as a hash table whose keys are the nodes and
+      whose values are the neighbors of the nodes.  The user inputs a
+      graph by inputting a list of edges. There is an optional
+      argument to input nodes that have no neighbors.
+      
+    Example
+      A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})      
 ///
 
 doc ///
