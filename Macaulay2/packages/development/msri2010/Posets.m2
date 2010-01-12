@@ -55,8 +55,7 @@ export {
 	openInterval,
 	moebiusFunction,
 	isAntichain,
-	meetIrreducibles,
-	booleanLattice
+	meetIrreducibles
        }
 
 needsPackage "SimplicialComplexes"
@@ -686,19 +685,6 @@ moebiusFunction (Poset) := Poset => (P) -> (
 moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
      moebiusFunction (closedInterval(P,elt1,elt2)))
 
---------------------------------
---Boolean Lattices
---------------------------------
---input: n, integer greater than 0
---output: boolean lattice on n atoms
-booleanLattice = method()
-
-booleanLattice(ZZ) := n -> (
-     if n>0 then (
-          baseRing := ZZ[x_1 .. x_n];
-          I := ideal(x_1 .. x_n);
-          lcmLattice(I))
-     else error "no such lattice")
 
 
 ----------------------------------
@@ -1846,31 +1832,7 @@ doc///
 	       P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
 	       isAntichain(P2, {a,b})     
 	       isAntichain(P2, {b,c,d}) 
-///  
-
-doc///
-     Key
-     	  booleanLattice
-	  (booleanLattice, ZZ)
-     Headline
-     	  gives the booleanLattice on specified number of atoms
-     Usage
-     	  L = booleanLattice(n)
-     Inputs
-     	  n : ZZ
-	       this should be a positive integer
-     Outputs
-     	  L : Poset
-	       the Boolean lattice on n atoms
-     Description
-     	  Text
-	       The function returns the Boolean lattice on the specified number of atoms in the format of an LCM-lattice on 
-	       the irrelevant maximal ideal in a polynomial ring over the integers with n-variables.
-	  Example
-	       booleanLattice(5)
-     SeeAlso
-     	  lcmLattice
-///	       
+///     
 
 --doc ///
 --     Key 
@@ -2029,6 +1991,17 @@ assert( (minimalElements L) === {1} )
 
 assert( (atoms(P1) ) === {c,d} )
 assert( (atoms(L)) === {z^2,y^2,x^2} )
+
+assert( ((subPoset(P1, {a,b,e})).GroundSet) === {a,b,e} )
+assert( ((subPoset(P1, {a,b,e})).Relations) === {(a,a),(a,e),(b,b),(b,e),(e,e)} )
+assert( ((subPoset(P1, {a,b,e})).RelationMatrix) === map(ZZ^3,ZZ^3,{{1, 0, 1}, {0, 1, 1}, {0, 0, 1}}) )
+assert( ((subPoset(P2, {a,e,f,d})).GroundSet) === {a,d,e,f} )
+assert( ((subPoset(P2, {a,e,f,d})).Relations) === {(a,a),(a,e),(a,f),(d,d),(e,e),(e,f),(f,f)} )
+assert( ((subPoset(P2, {a,e,f,d})).RelationMatrix) === map(ZZ^4,ZZ^4,{{1, 0, 1, 1}, {0, 1, 0, 0}, {0, 0, 1, 1}, {0, 0, 0, 1}}) )
+assert( ((subPoset(L, {x^2,y^2,x^2*y^2})).GroundSet) === {y^2,x^2,x^2*y^2} )
+assert( ((subPoset(L, {x^2,y^2,x^2*y^2})).Relations) === {(y^2,y^2),(y^2,x^2*y^2),(x^2,x^2),(x^2,x^2*y^2),(x^2*y^2,x^2*y^2)} )
+assert( ((subPoset(L, {x^2,y^2,x^2*y^2})).RelationMatrix) === map(ZZ^3,ZZ^3,{{1, 0, 1}, {0, 1, 1}, {0, 0, 1}}) )
+
 
 ///
 
