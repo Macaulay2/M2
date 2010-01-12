@@ -1969,6 +1969,24 @@ assert( (moebiusFunction(P1)) === new HashTable from {a => 1, b => -1, c => 0, d
 ///
 
 
+TEST ///
+P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)})
+P2 = poset({a,b,c,d,e,f,g,h},{(h,a),(h,b),(h,c),(h,d),(a,e),(b,e),(e,f),(c,f),(f,g),(d,g)})
+R = QQ[x,y,z]
+L = lcmLattice ideal (x^2, y^2, z^2)
+
+assert( (hasseDiagram P1) === new Digraph from {e => new Set from {c => 1, d => 1}, a => new Set from {}, b => new Set from {}, c => new Set from {a => 1, b => 1}, d => new Set from {a => 1, b => 1}} )
+assert( (hasseDiagram L) === new Digraph from {x^2*y^2*z^2 => new Set from {x^2*y^2 => 1, x^2*z^2 => 1, y^2*z^2 => 1}, x^2*y^2 => new Set from {x^2 => 1, y^2 => 1}, x^2*z^2 => new Set from {x^2 => 1, z^2 => 1}, x^2 => new Set from {1 => 1}, y^2*z^2 => new Set from {y^2 => 1, z^2 => 1}, 1 => new Set from {}, z^2 => new Set from {1 => 1}, y^2 => new Set from {1 => 1}} )
+
+assert( (maximalElements P1) === {e} )
+assert( (maximalElements L) === {x^2*y^2*z^2} )
+assert( (minimalElements P1) === {a,b} )
+assert( (minimalElements L) === {1} )
+
+
+///
+
+
 
 
 
