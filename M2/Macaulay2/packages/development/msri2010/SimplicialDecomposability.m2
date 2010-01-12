@@ -15,7 +15,6 @@ needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 
 -- TODO
----- add documentation for allFaces
 ---- add tests for:  allFaces, isShellable's different strategies
 ---- add impure variants of iskDecomposable, isSheddingFace, isShellable, isShelling, isVertexDecomposable, shellingOrder
 
@@ -200,6 +199,28 @@ doc ///
     Description
         Text
             Determines pure k-Decomposability (including shellability) for simplicial complexes.
+///
+
+doc ///
+    Key
+        allFaces
+        (allFaces, SimplicialComplex)
+    Headline
+        returns all faces of a simplicial complex
+    Usage
+        allFaces S
+    Inputs
+        S:SimplicialComplex
+    Outputs
+        L:List
+            the list of all faces of {\tt S} (excluding the empty face)
+    Description
+        Example
+            R = QQ[a,b,c,d,e];
+            allFaces simplicialComplex {a*b*c*d*e};
+    SeeAlso
+        faces
+        facets
 ///
 
 doc ///
@@ -475,7 +496,7 @@ assert(not isShelling {a*b*c, c*d*e});
 assert(not isShelling {a*b*c, d*e*f});
 ///
 
--- Tests of isShellable (and hence shellingOrder by invocation)
+-- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Recursive"
 -- NB: shellingOrder can only be tested this way as a shelling order need not be unique.
 TEST ///
 R = QQ[a..e];
@@ -485,6 +506,17 @@ assert(isShellable simplicialComplex {a*b*c, b*c*d, c*d*e});
 assert(isShellable simplicialComplex monomialIdeal {a,b,c,d,e}); -- empty complex
 assert(not isShellable simplicialComplex {a*b*c, c*d*e});
 assert(not isShellable simplicialComplex {a*b*c, b*c*d, e});
+///
+
+-- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Naive"
+TEST ///
+R = QQ[a..e];
+assert(isShellable(simplicialComplex {a*b*c}, Strategy => "Naive"));
+assert(isShellable(simplicialComplex {a*b*c, b*c*d}, Strategy => "Naive"));
+assert(isShellable(simplicialComplex {a*b*c, b*c*d, c*d*e}, Strategy => "Naive"));
+assert(isShellable(simplicialComplex monomialIdeal {a,b,c,d,e}, Strategy => "Naive")); -- empty complex
+assert(not isShellable(simplicialComplex {a*b*c, c*d*e}, Strategy => "Naive"));
+assert(not isShellable(simplicialComplex {a*b*c, b*c*d, e}, Strategy => "Naive"));
 ///
 
 -- Tests of hVector
@@ -546,6 +578,14 @@ assert(isSheddingFace(S, a, 3));
 T = simplicialComplex {a*b*c, b*c*d, c*d*e};
 assert(isSheddingFace(T, e, 2));
 assert(not isSheddingFace(T, b*c*d, 2));
+///
+
+-- Tests allFaces
+TEST ///
+R = QQ[a,b,c];
+assert(allFaces simplicialComplex {a*b*c} === {a, b, c, a*b, a*c, b*c, a*b*c});
+assert(allFaces simplicialComplex {a*b} === {a, b, a*b});
+assert(allFaces simplicialComplex {a, b*c} === {a, b, c, b*c});
 ///
 
 end
