@@ -343,11 +343,11 @@ RingElement * Series := Series => (f,A) -> (new Series from{
      degree => A#degree,
      maxDegree => A.maxDegree,
      computedDegree => A.computedDegree,
-     polynomial => part(,A.computedDegree,part(,A.computedDegree,f) * A.polynomial),
+     polynomial => truncate(A.computedDegree,truncate(A.computedDegree,f) * A.polynomial),
      setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->( 
 	       if newDegree > oldComputedDegree then(
 		    newA := setDegree(newDegree,A);
-		    (part(,newA.computedDegree,part(,newA.computedDegree,f) * newA.polynomial), newA.computedDegree)
+		    (truncate(newA.computedDegree,truncate(newA.computedDegree,f) * newA.polynomial), newA.computedDegree)
 		    )
 	       else (oldPolynomial, oldComputedDegree)
 	       )
@@ -358,11 +358,11 @@ Series * RingElement := Series => (A,f) -> (new Series from{
      degree => A#degree,
      maxDegree => A.maxDegree,
      computedDegree => A.computedDegree,
-     polynomial => part(,A.computedDegree, A.polynomial*part(,A.computedDegree,f)),
+     polynomial => truncate(A.computedDegree, A.polynomial*truncate(A.computedDegree,f)),
      setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->( 
 	       if newDegree > oldComputedDegree then(
 		    newA := setDegree(newDegree,A);
-		    (part(,newA.computedDegree, newA.polynomial*part(,newA.computedDegree,f)), newA.computedDegree)
+		    (truncate(newA.computedDegree, newA.polynomial*truncate(newA.computedDegree,f)), newA.computedDegree)
 		    )
 	       else (oldPolynomial, oldComputedDegree)
 	       )
@@ -378,7 +378,7 @@ RingElement + Series := Series => (f,A) -> (new Series from{
      setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->( 
 	       if newDegree > oldComputedDegree then(
 		    newA := setDegree(newDegree,A);
-		    (part(,newA.computedDegree,part(,newA.computedDegree,f) + newA.polynomial), newA.computedDegree)
+		    (truncate(newA.computedDegree,truncate(newA.computedDegree,f) + newA.polynomial), newA.computedDegree)
 		    )
 	       else (oldPolynomial, oldComputedDegree)
 	       )
@@ -389,11 +389,11 @@ Series + RingElement := Series => (A,f) -> (new Series from{
      degree => A#degree,
      maxDegree => A.maxDegree,
      computedDegree => A.computedDegree,
-     polynomial => part(,A.computedDegree, A.polynomial+part(,A.computedDegree,f)),
+     polynomial => truncate(A.computedDegree, A.polynomial+truncate(A.computedDegree,f)),
      setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->( 
 	       if newDegree > oldComputedDegree then(
 		    newA := setDegree(newDegree,A);
-		    (part(,newA.computedDegree, newA.polynomial+part(,newA.computedDegree,f)), newA.computedDegree)
+		    (truncate(newA.computedDegree, newA.polynomial+truncate(newA.computedDegree,f)), newA.computedDegree)
 		    )
 	       else (oldPolynomial, oldComputedDegree)
 	       )
@@ -405,11 +405,11 @@ RingElement - Series := Series => (f,A) -> (new Series from{
      degree => A#degree,
      maxDegree => A.maxDegree,
      computedDegree => A.computedDegree,
-     polynomial => part(,A.computedDegree,part(,A.computedDegree,f) - A.polynomial),
+     polynomial => truncate(A.computedDegree,truncate(A.computedDegree,f) - A.polynomial),
      setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->( 
 	       if newDegree > oldComputedDegree then(
 		    newA := setDegree(newDegree,A);
-		    (part(,newA.computedDegree,part(,newA.computedDegree,f) - newA.polynomial), newA.computedDegree)
+		    (truncate(newA.computedDegree,truncate(newA.computedDegree,f) - newA.polynomial), newA.computedDegree)
 		    )
 	       else (oldPolynomial, oldComputedDegree)
 	       )
@@ -420,11 +420,11 @@ Series - RingElement := Series => (A,f) -> (new Series from{
      degree => A#degree,
      maxDegree => A.maxDegree,
      computedDegree => A.computedDegree,
-     polynomial => part(,A.computedDegree, A.polynomial-part(,A.computedDegree,f)),
+     polynomial => truncate(A.computedDegree, A.polynomial-truncate(A.computedDegree,f)),
      setDegree => ((oldPolynomial,oldComputedDegree,newDegree)->( 
 	       if newDegree > oldComputedDegree then(
 		    newA := setDegree(newDegree,A);
-		    (part(,newA.computedDegree, newA.polynomial-part(,newA.computedDegree,f)), newA.computedDegree)
+		    (truncate(newA.computedDegree, newA.polynomial-truncate(newA.computedDegree,f)), newA.computedDegree)
 		    )
 	       else (oldPolynomial, oldComputedDegree)
 	       )
