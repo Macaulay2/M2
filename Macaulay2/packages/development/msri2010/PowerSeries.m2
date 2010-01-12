@@ -41,6 +41,8 @@ dominantTerm(Series) := RingElement => S -> (
      part(minDegree,minDegree,f)
      )
 
+isUnit(Series) := Boolean => A -> isUnit(dominantTerm(A));
+
 toPolynomial = method()
 toPolynomial(Series) := RingElement => s -> toPolynomial(s#degree,s);
 toPolynomial(ZZ,Series) := RingElement => (n,s) -> truncate(n,(setDegree(n,s))#polynomial);
@@ -512,5 +514,60 @@ doc ///
 
 --=========================================================================--
 --Jason's space
+
+doc ///
+  Key
+    "Operations on Series",
+    (Series + Series),
+    (Series * Series),
+    (Series - Series),
+    (Series / Series)
+  Headline
+    Operations on Series
+  Description
+   Text
+        Series may be added, subtracted, and multiplied.  The inverse of a
+	series and negative of a series are implemented.  Series may be divided provided that the divisor
+	is a unit.  Similar operations involving one series and one integer or rational number are also possible.
+	First we show some series operations, nothing that the particular method for constructing a series
+	does not matter.  
+   Example
+        R = QQ[x]
+	A = series(x)
+	B = series(1/(1 - x)^2)
+	C = series(x,i->1/(i!))
+	A + B
+	A - B
+	B * B
+	A * A
+	A / B
+	5 * A
+	3 - B
+	inverse B
+   Text
+   	As expected, operations may be composed in any order.
+   Example
+	A * (B - C) * inverse(A)/7 - 5
+   Text
+        If we take two series with different precisions, then the sum, difference, product, quotient of them
+	has the minimum of the two precisions.
+   Example
+        R = QQ[x]
+	A = series(1/(1-x))
+	B = series(x^2 + x)
+	C = setDegree(3,A)
+	B + C
+   Text
+        If we want more terms than are currently computed, we can use setDegree to show all terms up to degree n
+	even after doing arbitrarily many operations.
+   Example
+        R = QQ[x]
+	A = series(1/(1-x))
+	B = series(x^2)
+	C = A + B
+	setDegree(10,C)
+	setDegree(20,C)
+   SeeAlso
+ ///
 
 --=========================================================================--
