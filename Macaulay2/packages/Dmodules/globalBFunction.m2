@@ -162,8 +162,8 @@ globalBFunction RingElement := RingElement => o -> f -> (
 -- global generalized Bernstein-Sato polynomial
 generalB = method(Options => {
 	  -- GuessedRoots => null, -- should this be removed?
-	  Strategy => ViaLinearAlgebra,
-	  Exponent => 1
+	  Strategy => StarIdeal,
+	  Exponent => null
 	  })
 generalB List := RingElement => o-> F -> generalB(F, 1_(ring first F), o)     
 generalB (List, RingElement) := RingElement => o->(F,g) -> (
@@ -171,7 +171,7 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
 --          g, a polynomial
 -- Output:  b_{f,g}^{(m)}, a generalized B-S polynomial, an element of QQ[s]
      m := o.Exponent;
-     if class m =!= ZZ or m<1 then error "expected a positive integer for Exponent";
+     if m =!= null and (class m =!= ZZ or m<1) then error "expected a positive integer for Exponent";
      if #F == 0 then error "the list is empty";
      if #(options (ring first F).monoid)#WeylAlgebra == 0 -- not WA 
      then (
@@ -184,28 +184,37 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      DY := ring AnnI;
      K := coefficientRing DY;
      n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
-     I0 := if g==1 then AnnI else intersect(AnnI, ideal sub(g, DY));
-     w := toList(n:0) | toList(r:1);
-     --I1 := inw(I0, -w|w); 
-     --I1 := inw(I0, w|(-w)); 
-     Istar := star(I0,-w|w);
-     I1 = Istar + (sub(ideal F, DY))^m;
+          w := toList(n:0) | toList(r:1);
+     I1 := 
+     if m===null and o.Strategy===InitialIdeal then (
+	  inw(intersect(AnnI, ideal sub(g, DY)), -w|w)
+	  ) 
+     else if m===null and o.Strategy===StarIdeal then (
+	  star(AnnI,-w|w) + sub(g*ideal F,DY)
+	  )
+     else if m=!=null then (
+	  star(AnnI,-w|w) + (sub(ideal F, DY))^m
+	  )
+     else error "uknwnown Strategy";
+     
+     -- use linear algebra
      s := symbol s; 
-     if o.Strategy === ViaLinearAlgebra then (
-	  P := -sum(r,i->DY_(2*n+r+i)*DY_(n+i)); -- s = -(dt_1*t_1 + ... + dt_r*t_r)
-	  powers := matrix{{sub(g,DY)}};
-	  d := 1;
-	  while true do (
-	       powers = powers | matrix {{P^d*sub(g,DY) % I1}};
-	       Cpowers = coefficients powers;
-	       KerC := ker lift(Cpowers#1, K); -- kernel of the coefficients matrix
-	       if KerC != 0 then (
-		    Sring := K(monoid[s]);
-		    return sum(d+1, i->(gens KerC)_(i,0)*Sring_0^i);
-		    ) ;
-	       d = d + 1;
-	       )
+     P := -sum(r,i->DY_(2*n+r+i)*DY_(n+i)); -- s = -(dt_1*t_1 + ... + dt_r*t_r)
+     gg := sub(g,DY);
+     powers := matrix(DY,{{}});
+     d := 0;
+     while true do (
+	  powers = powers | matrix {{P^d*gg % I1}};
+	  Cpowers = coefficients powers;
+	  KerC := ker lift(Cpowers#1, K); -- kernel of the coefficients matrix
+	  if KerC != 0 then (
+	       Sring := K(monoid[s]);
+	       return sum(d+1, i->(gens KerC)_(i,0)*Sring_0^i);
+	       ) ;
+	  d = d + 1;
 	  );
+     
+     /// -- old code below
      SDY := K (monoid [s, gens DY, WeylAlgebra => DY.monoid.Options.WeylAlgebra, MonomialOrder=>{Weights=>toList(n+1:0)|toList(n+2*r:1)}]);
      v := gens SDY; 
      SX := take(v,{0,n}); notSX := drop(v,{0,n}); 
@@ -223,6 +232,7 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      I4 := eliminate(drop(gens SXring,1), I3);
      Sring = K(monoid [SXring_0]);
      sub(I4_0, Sring)
+     ///
      )
 
 --------------------------------------------------------------

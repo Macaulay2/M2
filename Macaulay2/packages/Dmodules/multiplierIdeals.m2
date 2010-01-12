@@ -5,7 +5,10 @@ isInMultiplierIdeal = method()
 -- OUT: Boolean, is in multiplier ideal J(I^c)?     
 isInMultiplierIdeal(RingElement, Ideal, QQ) := (g,I,c) -> (
      if c <= 0 then return true;
-     roots := bFunctionRoots generalB(I_*, g);
+     l := lct I;
+     m := ceiling(c+l); -- Need c < lct(I) + m
+     if liftable(c+l,ZZ) then m = m + 1; 
+     roots := bFunctionRoots generalB(I_*, g, Exponent=>m);
      -c > max roots
      )
 
@@ -68,4 +71,90 @@ multiplierIdeal (Ideal, List) := (a,cs) -> (
      	       	    );
 	       exceptionalLocusB(R,I2,b) -- ring I2 has to eliminate s 
 	       ))
+     )
+
+-- log canonical threshold computation via b-function
+lct = method(Options => {Strategy=>GeneralBernsteinSato})
+lct Ideal := RingElement => o -> I -> (
+-- IN:  I,      ideal in QQ[x_1,...,x_n]
+-- OUT: lct(I), an element of QQ
+     W := makeWeylAlgebra ring I;
+     F := (sub(I,W))_*;
+     if o.Strategy === ViaBFunction then (
+     	  w := toList (numgens ring I:0) | toList(#F:1); 
+     	  b := bFunction(AnnFs F, w);
+     	  S := ring b;
+     	  r := numgens I;
+     	  -- lct(I) = min root of b(s-r)
+     	  b = sub(b, {S_0=>S_0-r})
+	  )  
+     else if o.Strategy === GeneralBernsteinSato then (
+	  b = generalB(F,1_W);
+	  S = ring b;
+     	  b = sub(b, {S_0=>-S_0});
+	  )
+     else error "unknown Strategy";
+     min bFunctionRoots b
+     )   
+
+hasRationalSing = method()
+-- IN: F, a regular sequence in QQ[x] 
+-- OUT: Boolean, has at most rational singularities?
+hasRationalSing(List) := F ->(
+     r := codim(ideal F);
+     if r != #F then error "regular sequence expected";
+     b := generalB(F,g);
+     b = sub(b, {S_0=>-S_0});
+     bRoots := bFunctionRoots b;
+     LCT: = min bRoots;
+     if LCT != r then return false else if 
+		-- need to check that r has multiplicity one as a root
+     )
+   
+-- EXPERIMENTAL CODE BELOW --
+
+isFsLocallyIntegrable = method()
+isFsLocallyIntegrable (RingElement, QQ) := Boolean => (f,s) -> (
+     R := ring f;
+     -- makeWeylAlgebra R;
+     n := numgens R;
+     F := sub(f,RR_100(monoid [gens R]));
+     num'steps := 100;
+     num'samples := 1000;
+     infinity'threshold := 1e20;
+     epsilon := 1e-6;
+     nbhd := 0.1^(n*first degree f); -- current size of the neighborhood
+     shrink'factor := 10;
+     integral := 0;
+     for i from 1 to num'steps do (
+     	  ave := 0; -- current average
+	  next'nbhd := nbhd/shrink'factor;
+     	  for j from 1 to num'samples do (
+	       x := matrix{apply(n, i->random(-nbhd,nbhd))}; -- random point
+	       if norm x > next'nbhd then ave = ave + abs(sub(F,x))^s;
+	       );
+     	  << "s = " << s << ", ave = " << (
+	       d'integral=ave*(2*nbhd)^n/num'samples
+	       ) << endl; 
+	  if d'integral < integral * epsilon then return true;
+	  nbhd = next'nbhd;
+	  integral = integral + d'integral;
+	  );
+     false
+     )
+ 
+-- real log canonical threshold 
+rlct = method()
+rlct RingElement := RingElement => I -> (
+-- IN:  f,  polynomial in QQ[x_1,...,x_n]
+-- OUT: rlct(f), an element of QQ
+     roots := reverse sort bFunctionRoots globalBFunction f;
+     left := isFsLocallyIntegrable(f, roots#0 / 2);
+     for i from 0 to #roots-2 do (
+	  right := isFsLocallyIntegrable(f, (roots#i+roots#(i+1))/2);
+	  print(left,right);
+	  if left and not right then return -roots#i
+	  else left = right;
+	  );
+     error "rlct not amongst the roots of the b-function, but it should be";
      )
