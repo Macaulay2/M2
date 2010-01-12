@@ -107,7 +107,7 @@ graph HashTable := opts -> (g) -> (
      -- Output: A hash table of type Graph. 
      new Graph from g)
 
-digraph = method(Options => {Singletons => null})
+digraph = method()
 digraph List := (g) -> (
      -- Input:  A list of pairs where the first element of the pair is the 
      --         name of a node and the second is the list of 
