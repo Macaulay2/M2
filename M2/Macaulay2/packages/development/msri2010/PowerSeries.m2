@@ -33,7 +33,7 @@ toPolynomial(ZZ,Series) := RingElement => (n,s) -> truncate(n,(setDegree(n,s))#p
 series = method(Options => {Degree => 5})
 
 setDegree = method()
-setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then (<< "--warning: cannot exceed max degree "  << S.maxDegree <<endl;);
+setDegree(ZZ, Series) := Series => (n,S) -> (if n > S.maxDegree then error concatenate("Cannot exceed max degree ",toString S.maxDegree," for this power series.");
      (f,c) := S#setDegree (S#polynomial,S#computedDegree,n);
      new Series from {polynomial => f, computedDegree => c, maxDegree => S#maxDegree, degree => (min(n,S#maxDegree)), setDegree=> S#setDegree}
      );
