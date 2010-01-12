@@ -384,12 +384,12 @@ doc ///
   Key
     Graphs
   Headline
-    Data types and basic functions on graphs used in algebra and
-    algebraic geometry. 
+    Data types and basic functions on graphs used in algebra and algebraic geometry. 
   Description
     Text
       This package is used to construct digraphs and graphs. The user
-      should note that this package assumes that all digraphs are acyclic.
+      should note that this package assumes that all digraphs are
+      acyclic.  Also, graphs are assumed to have no loops or multiple edges. 
 ///
 
 doc ///
@@ -398,14 +398,7 @@ doc ///
   Headline
     The data type for an undirected graph
   Description
-    Text
-      The graph is stored as a hash table whose keys are the nodes and
-      whose values are the neighbors of the nodes.  The user inputs a
-      graph by inputting a list of edges. There is an optional
-      argument to input nodes that have no neighbors.
-      
-    Example
-      A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})      
+    Text    
 ///
 
 doc ///
@@ -415,18 +408,39 @@ doc ///
     The data type for a directed graph
   Description
     Text
-      Digraphs are even more awesome!
 ///
-
-end
 
 doc ///
   Key
     graph
   Headline
+    The function that creates a graph
+  Usage
+    G = graph(L) or G = graph(L, Singletons => K) or G = graph(H)
+  Inputs
+    L:List 
+      of edges of the graph
+    K:List 
+      of isolated nodes of the graph
+    H:HashTable 
+      whose keys are the nodes of the graphs and whose values are the neighbors of the nodes
+  Outputs
+    G:Graph
   Description
     Text
+      The graph is stored as a hash table whose keys are the nodes and
+      whose values are the neighbors of the nodes.  The user inputs a
+      graph by inputting a list of edges. There is an optional
+      argument called Singletons to input nodes that have no neighbors. 
+    Example
+      A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
+    Text  
+      Alternatively, one can also create a graph by inputting a hash
+      table whose keys are again the nodes of the graph and the values
+      the neighbors of the nodes.
 ///
+
+end
 
 doc ///
   Key
