@@ -13,11 +13,11 @@
 export CC =
 export CXX = 
 
-PRODUCTION = no
-DEBUG = no
-PROFILE = no
-M64 = yes
-FIX_UNWIND = no
+PRODUCTION=no
+DEBUG=no
+PROFILE=no
+M64=yes
+FIX_UNWIND=no
 
 ifeq ($(FIX_UNWIND),yes)
 # try this one if configuration fails because of an undefined symbol Unwind_Resume
