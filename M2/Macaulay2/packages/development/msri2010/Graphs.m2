@@ -9,9 +9,9 @@ newPackage("Graphs",
      Version => "0.1"
      )
 
-export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
+export {Graph, Digraph, LabeledGraph, graph, digraph, labeledGraph, Singletons, descendents, nondescendents, 
      parents, children, neighbors, nonneighbors, foreFathers, displayGraph,
-     simpleGraph, removeNodes, inducedSubgraph}
+     simpleGraph, removeNodes, inducedSubgraph, completeGraph, cycleGraph}
 exportMutable {dotBinary,jpgViewer}
 
 
@@ -311,15 +311,31 @@ inducedSubgraph(Digraph, List) := (G,v) -> (
 -- Common Graphs --
 -------------------
 
-///
+
 completeGraph = method()
+     -- Input: a positive integer n
+     -- Output: the complete graph on n nodes labeled 0 through n-1
 completeGraph(ZZ) := n -> (
-      i:= 1;
+      i:= 0;
       G := new MutableHashTable;
-      while i <= n do (
-	   G#(i#0) = 
-	   i = i+1;
-///
+      L := while i < n list i do i = i+1;
+      apply(L, i-> G#i =  set L - set {i});
+      G = graph(G)
+      )   
+
+cycleGraph = method()
+     -- Input: a positive integer n
+     -- Output: the cyclic graph on n nodes labeled 0 through n-1 
+cycleGraph(ZZ) := n -> (
+     i := 0;
+     G := new MutableHashTable;
+     while i < n do(
+	  G#i = set{(i-1)%n,(i+1)%n}; 
+	  i = i+1;
+	  );
+     G = graph(G)
+     )
+  
 
 --------------------
 -- Documentation  --
