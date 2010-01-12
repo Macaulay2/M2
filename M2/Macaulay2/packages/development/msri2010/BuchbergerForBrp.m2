@@ -81,15 +81,14 @@ reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
 -- Reduce lower terms of intermediate GB by leading terms of other polynomials
 reduceGbBrp = method()
 reduceGbBrp( gbComputation ) := gbComputation => F -> (
-  scan( pairs F, (fKey,f) -> ( print "starting with"; print f; scan(values F, g -> F#fKey = reduceLtBrp(f,g) )) )
+  scan( pairs F, (fKey,f) -> ( print "starting with"; print f; scan(values F, g ->( F#fKey = if f==g then f else reduceLtBrp(f,g); print F#fKey ))) )
 )
 
  R = ZZ[x,y,z]
-  F = new gbComputation from { 0 => convert( x*y + z),
-                           1 => convert( x ) ,
-                           2 => convert( y*z + z),
-                           3 => convert( x*y*z + x*y + x) ,
-                           4 => convert( x*y + y*z)
+  F = new gbComputation from { 0 => convert( x*y+y*z + z),
+                           1 => convert(y*z+z ) ,
+                           2 => convert(x*z+z)
+                          
                            }
 reduceGbBrp(F)
 
@@ -320,8 +319,10 @@ assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}} )
 a = convert(x*z + y*z + y + z)
 assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0,0,1}} )
 
-
-
+a = convert(x*y + y*z +z)
+b= convert(y*z +z)
+reduceLtBrp(a,b)
+assert( reduceLtBrp(a,b)== new Brp from {{1, 1, 0}, {0, 0, 1}})
 ///
   
        
