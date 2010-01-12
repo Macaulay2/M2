@@ -8,10 +8,17 @@ series(3/(1-x))             --method is (series, RingElement)
 -- We can create a series using a generating function:
 series(x,i->i^2)            --method is (series, RingElement, Function) 
 
--- We can create a series given a function that computes successive
--- polynomial approximations:
+-- We can create a series [inefficiently!] given a function that computes 
+-- the ith polynomial approximation from scratch in order to get it to degree i:
 f = i -> sum(i,j-> j*(x)^j);
-series(f)                   --method is (series, Function) 
+S1 = inefficientSeries(f)                   --method is (inefficientSeries, Function) 
+setDegree(10,S1)
+
+-- We can create a series [efficiently!] given a function that knows how to add
+-- the ith term to a given polynomial approximation of itself.
+f = (g,m,n) -> g + sum(m+1..n,j -> j*(x)^j)
+S2 = efficientSeries(R,f)                     --method is (efficientSeries, Ring, Function)
+S3 = efficientSeries(x+2*x^2,2,f)             --method is (efficientSeries, RingElement,ZZ,Function) 
 
 -- We can create a series by manually typing in some terms of it to a
 -- given precision:
