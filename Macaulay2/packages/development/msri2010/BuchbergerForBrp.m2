@@ -30,6 +30,9 @@ exportMutable {}
 -- keys should start with 0
 gbComputation = new Type of MutableHashTable; 
 
+-- generate the unit vectors representing x_i
+unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
+
 -- wrapper script for debugging purposes, creates a Groebner basis from the
 -- input list - all with Brps
 runner = method()
@@ -43,7 +46,7 @@ runner (gbComputation, ZZ) := gbComputation => (F,n) -> (
     reducedS = reduce (S,F);
     if (reducedS != 0 ) then (
       -- add reducedS to intermediate basis
-      listOfIndexPairs = listOfIndexPairs | toList({-n,#F}..{-1, #F}) | apply( keys F, i-> {i,#F} ) ;
+      listOfIndexPairs = listOfIndexPairs | toList((-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) ) ;
       F##F = reducedS;
       listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
@@ -55,7 +58,6 @@ runner (gbComputation, ZZ) := gbComputation => (F,n) -> (
 -- remove all relatively prime pairs
 updatePairs = method()
 updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
-  unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 
   select( l, pair -> (
     i = first pair;
@@ -79,15 +81,14 @@ updatePairs(List, HashTable, ZZ) := List => ( l, F, n) -> (
 -- polynomial
 -- assume that the pairs are good (i.e., leading terms not relatively prime)
 SPolynomial = method()
-SPolynomial( List, HashTable, ZZ ) := Brp => (l,G,n) -> (
+SPolynomial( Sequence, HashTable, ZZ ) := Brp => (l,G,n) -> (
   assert (#l == 2);
   i = first l;
   j = last l;
-  variables = entries(id_(ZZ^n));
   if ( i < 0 ) then (-- we are working with a FP
     i = - i;
     f = G#j;
-    xx = new Brp from {variables#(i-1)};
+    xx = new Brp from {unitvector( i-1,n)};
     g = new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
     g*xx+g
   )
@@ -134,7 +135,7 @@ reduceOneStep(Brp, HashTable) := Brp => (f,G) -> (
 -- remove self-pairs 
 makePairsFromLists = method()
 makePairsFromLists (List,List) := List => (a,b) -> (
-  ll = (apply( a, i-> apply(b, j-> if (i != j) then sort {i,j} else 0 ) ));
+  ll = (apply( a, i-> apply(b, j-> if (i != j) then toSequence sort {i,j} else 0 ) ));
   unique delete(0, flatten ll)
 )
 
@@ -159,10 +160,10 @@ document {
 	be used as a template for user packages."
 	}
 TEST ///
-  assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 3}, {2, 4}, {2, 5}, {3, 4}, {3, 5}, {4, 5}})
-  assert(  makePairsFromLists( {1,2,3}, {10,100,1000}) == {{1, 10}, {1, 100}, {1, 1000}, {2, 10}, {2, 100}, {2, 1000}, {3, 10}, {3, 100}, {3, 1000}})
-  assert ( makePairsFromLists( {-1,-3,-2}, {100, 10}) == {{-1, 100}, {-1, 10}, {-3, 100}, {-3, 10}, {-2, 100}, {-2, 10}} )
-  assert ( makePairsFromLists ( {0,1,2}, {22} ) == {{0, 22}, {1, 22}, {2, 22}})
+  assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
+  assert(  makePairsFromLists( {1,2,3}, {10,100,1000}) == {(1, 10), (1, 100), (1, 1000), (2, 10), (2, 100), (2, 1000), (3, 10), (3, 100), (3, 1000)})
+  assert ( makePairsFromLists( {-1,-3,-2}, {100, 10}) == {(-1, 100), (-1, 10), (-3, 100), (-3, 10), (-2, 100), (-2, 10)} )
+  assert ( makePairsFromLists ( {0,1,2}, {22} ) == {(0, 22), (1, 22), (2, 22)})
   
   R = ZZ[x,y,z]
   n = 3
@@ -179,13 +180,13 @@ TEST ///
                            }
   FOnePoly = new HashTable from { 1 => convert(x+y+z) } 
 
-  S = SPolynomial({-1,1}, F, n)
+  S = SPolynomial((-1,1), F, n)
   assert (S == convert( x*z + z) )
-  S = SPolynomial({-1,2}, F, n)
+  S = SPolynomial((-1,2), F, n)
   assert (S == new Brp from {}) 
-  S = SPolynomial({1,3}, F, n)
+  S = SPolynomial((1,3), F, n)
   assert (S == convert( x*z+z) ) 
-  S = SPolynomial({4,5}, F, n)
+  S = SPolynomial((4,5), F, n)
   assert (S == convert( x*y + x + y*z) ) 
 
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
@@ -197,17 +198,12 @@ TEST ///
   assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
 
   l = makePairsFromLists( keys F, keys F) 
-  assert( l == {{1, 2}, {1, 3}, {1, 4},
-  {1, 5}, {2, 3}, {2, 4}, {2, 5}, {3, 4}, {3, 5}, {4, 5}} )
-
-  assert ( updatePairs (l, F, n) == {{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 4},
-  {2, 5}, {3, 4}, {3, 5}, {4, 5}} )
-
+  assert( l == {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4,5)})
+  assert ( updatePairs (l, F, n) == {(1, 2), (1, 3), (1, 4), (1, 5), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
   ll = makePairsFromLists( keys F, {-1} )
-  assert ( updatePairs( ll, F, n) == {{-1, 1}, {-1, 2}, {-1, 4}, {-1, 5}} )
-  
+  assert ( updatePairs( ll, F, n) ==  {(-1, 1), (-1, 2), (-1, 4), (-1, 5)} )
   lll = makePairsFromLists( keys F, {-3} )
-  assert ( updatePairs( lll, F, n) == {{-3,3}, {-3,4}} )
+  assert ( updatePairs( lll, F, n) == {(-3, 3), (-3, 4)} )
   
   R = ZZ/2[x,y,z];
   n=3;
@@ -224,6 +220,7 @@ TEST ///
   R = ZZ/2[x,y,z];
   n=3;
   F = new gbComputation from { 0 => convert (x*y+z) }
+  runner(F,n)
   assert(flatten flatten values runner(F,n) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
 
 
