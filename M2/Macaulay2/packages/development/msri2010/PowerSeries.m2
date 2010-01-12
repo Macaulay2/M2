@@ -28,8 +28,9 @@ toString Series := s -> toString pretty s + expression "O(" expression(s#degree+
 tex Series := s -> tex pretty s + expression "O(" expression(s#degree+1) expression ")"
 html Series := s -> html pretty s + expression "O(" expression(s#degree+1) expression ")"
 
-truncate(ZZ,RingElement) := RingElement => (n,f) -> (sum select(terms f, i -> first degree i <= n) + 0_(ring f));
--- should be replaced with "part"
+truncate(ZZ,RingElement) := RingElement => (n,f) -> part(,n,f);
+-- (sum select(terms f, i -> first degree i <= n) + 0_(ring f));
+-- The above is what was there before "part" was discovered.
 
 dominantTerm = method()
 dominantTerm(Series) := RingElement => S -> last terms toPolynomial S;
