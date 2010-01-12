@@ -18,15 +18,16 @@ needsPackage "BitwiseRepresentationPolynomials"
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {makePairsFromLists, 
-      SPolynomial, 
       gbBrp, 
-      reduceOneStep, 
-      reduceLtBrp,
-      reduce,
-      updatePairs,
       gbComputation,
+      isReducible,
       minimalGbBrp,
-      isReducible }
+      reduce,
+      reduceLtBrp,
+      reduceOneStep, 
+      SPolynomial, 
+      updatePairs
+      }
 exportMutable {}
 
 -- keys should start with 0
@@ -129,6 +130,7 @@ reduce (Brp, gbComputation) := Brp => (f,G) -> (
   newF
 )
 
+-- 
 reduce (Brp, Brp) := Brp => (f,g) -> (
   reduce ( f, new gbComputation from { 1=> g} )
 )
@@ -176,8 +178,83 @@ Headline
 
 doc ///
 Key 
+  (updatePairs,List, gbComputation, ZZ) 
+  updatePairs
+Headline
+  update a list of indices for good indices
+///
+
+doc ///
+Key 
+  (reduceLtBrp,Brp,Brp)
+  reduceLtBrp
+Headline
+  reduce polynomial by the leading term of another
+///
+
+doc ///
+Key 
+  gbComputation
+Headline
+  MutableHashTable for an intermediate Groebner basis
+///
+
+doc ///
+Key 
+  (minimalGbBrp,gbComputation)
+  minimalGbBrp
+Headline
+  delete elements where the leading term is divisible by another leading term
+///
+
+doc ///
+Key 
+  (isReducible,Brp,Brp)
+  isReducible
+Headline
+  check if the leading term of one polynomial can be reduced by another polynomial
+///
+
+doc ///
+Key 
+  (SPolynomial, Sequence, gbComputation, ZZ)
+  SPolynomial
+Headline
+  from pair of indices get corresponding polynomials, then compute their S polynomial assume that the pairs are good (i.e., leading terms not relatively prime)
+///
+
+doc ///
+Key
+  (makePairsFromLists,List,List)
+  makePairsFromLists
+Headline
+  Make a list with all possible pairs of elements of the separate lists, but remove self-pairs 
+///
+
+doc ///
+Key
+  (reduceOneStep,Brp,gbComputation)
+  (reduceOneStep,Brp,Brp)
+  reduceOneStep
+Headline
+  Reduce the leading term of a polynomial one step using a polynomial
+///
+
+doc ///
+Key
+  (gbBrp,gbComputation,ZZ)
+  gbBrp
+Headline
+  wrapper script for debugging purposes, creates a Groebner basis from the input list - all with Brps
+///
+
+doc ///
+Key 
   (reduce,Brp,gbComputation)
+  (reduce,Brp,Brp)
   reduce
+Headline
+  Reduce the polynomial until the leading term is not divisible by the leading element of any element in G
 Usage
   g=reduce(f,F)
 Inputs 
