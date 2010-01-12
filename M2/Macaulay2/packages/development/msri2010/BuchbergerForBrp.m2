@@ -300,6 +300,14 @@ a = convert(x*z + y*z + z)
 b = convert(y+z)
 assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0, 0, 1}} )
 
+a = convert(x*z + y*z + y)
+b = convert(y+z)
+assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}} )
+a = convert(x*z + y*z + y + z)
+assert( reduceLtBrp(a,b) == new Brp from {{1, 0, 1}, {0,0,1}} )
+
+
+
 ///
   
        
