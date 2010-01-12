@@ -129,13 +129,24 @@ Series == Series := (M,N) -> (
      precision:= min(degree M, degree N);
      truncate(precision,M#polynomial) == truncate(precision,N#polynomial))
 
-series(RingElement) := Series => opts -> (f) -> (
+series(RingElement) := Series => opts -> f -> (
      f = f/(1_(ring f));
      num := numerator f;
      den := denominator f;
      if first degree den < 1 then s := num else return num*inverse(series(den,Degree => opts.Degree));
      -- now make a new series.
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
+          -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
+	  -- to know how to tack on the new terms to the old polynomial.
+	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial, max(oldComputedDegree,newDegree))
+		    )});
+
+series(Divide) := Series => opts -> f -> (
+        num := numerator f;
+     	den := value denominator f;
+     	if first degree den < 1 then s := num else return num*inverse(series(new Divide from den/1,Degree => opts.Degree));
+     	-- now make a new series.
+     	new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
           -- setDegree takes an old polynomial, the old computed degree, and a new degree, and needs
 	  -- to know how to tack on the new terms to the old polynomial.
 	  setDegree => ((oldPolynomial,oldComputedDegree,newDegree) -> (oldPolynomial, max(oldComputedDegree,newDegree))
