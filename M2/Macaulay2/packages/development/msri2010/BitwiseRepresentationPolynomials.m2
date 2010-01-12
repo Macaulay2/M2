@@ -29,6 +29,7 @@ exportMutable {}
 Brp = new Type of List 
 
 -- Convert regular polynomial into its binary representation
+-- TODO assert that the polynomials is over F2, i.e., coefficients are only 1 and 0, right now convert(x*x) return -- x, because x+x = 2x and has coefficient 1 
 convert = method()
 convert (RingElement) := Brp => f -> new Brp from rsort exponents f
 convert (Brp, Ring ) := RingElement => (l, R) -> sum (#l, i -> R_(l#i) )

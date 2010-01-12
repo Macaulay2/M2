@@ -19,7 +19,7 @@ needsPackage "BitwiseRepresentationPolynomials"
 -- must be placed in one of the following two lists
 export {makePairsFromLists, 
       SPolynomial, 
-      runner, 
+      gbBrp, 
       reduceOneStep, 
       reduce,
       updatePairs,
@@ -35,8 +35,8 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 
 -- wrapper script for debugging purposes, creates a Groebner basis from the
 -- input list - all with Brps
-runner = method()
-runner (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
+gbBrp = method()
+gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
   listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
   while #listOfIndexPairs > 0 do (
@@ -202,20 +202,20 @@ TEST ///
   R = ZZ/2[x,y,z];
   n=3;
   F = new gbComputation from { 0 => convert x }
-  assert ( first values runner(F,n) == new Brp from {{1, 0, 0}} )
+  assert ( first values gbBrp(F,n) == new Brp from {{1, 0, 0}} )
   F = new gbComputation from { 0 => convert x,
                                   1 => convert y}
-  runner(F,n)                                
-  assert ( first values runner(F,n) == new Brp from {{1, 0, 0}} )
+  gbBrp(F,n)                                
+  assert ( first values gbBrp(F,n) == new Brp from {{1, 0, 0}} )
   F = new gbComputation from { 0 => convert (x*y),
                                   1 => convert y}
-  runner(F,n)                                
+  gbBrp(F,n)                                
 
   R = ZZ/2[x,y,z];
   n=3;
   F = new gbComputation from { 0 => convert (x*y+z) }
-  runner(F,n)
-  assert(flatten flatten values runner(F,n) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
+  gbBrp(F,n)
+  assert(flatten flatten values gbBrp(F,n) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
 
 
 -- R = ZZ/2[x,y,z]/ideal(x*y+z)
@@ -231,14 +231,23 @@ TEST ///
                           1 => myPoly2,
                           2 => myPoly3};
 
-  R = ZZ[x,y,z,w]
-  n = 4
-  F = new gbComputation from { 0 => convert( x*y*w+w*x+z),
-                              1 => convert (x*z+w*y)}
-  gbBasis = runner(F,n)
-  assert( apply (values runner(F,n), poly -> convert(poly,R) ) == {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z})
+----------------------
+  R = ZZ/2[x,y,z,w,MonomialOrder=>Lex]/(x^2+x,y^2+y,z^2+z,w^2+w)
+  J = ideal(x*y*w+w*x+z, x*z+w*y)
+  gens gb J
 
-  peek oo
+  R = ZZ[x,y,z,w]
+  F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
+                              1 => convert (x*z+w*y) }
+  gbBasis = gbBrp(F,numgens R)
+  peek gbBasis
+  JBrp =ideal apply (values gbBasis, poly -> convert(poly,R) )
+  gens gb JBrp
+----------------------
+  
+
+  assert( apply (values gbBasis, poly -> convert(poly,R) ) == {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z})
+
 
   R = ZZ[x,y,z]
   n = 3
