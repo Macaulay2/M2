@@ -55,7 +55,8 @@ export {
 	openInterval,
 	moebiusFunction,
 	isAntichain,
-	meetIrreducibles
+	meetIrreducibles,
+	booleanLattice
        }
 
 needsPackage "SimplicialComplexes"
@@ -679,6 +680,19 @@ moebiusFunction (Poset) := Poset => (P) -> (
 moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
      moebiusFunction (closedInterval(P,elt1,elt2)))
 
+--------------------------------
+--Boolean Lattices
+--------------------------------
+--input: n, integer greater than 0
+--output: boolean lattice on n atoms
+booleanLattice = method()
+
+booleanLattice(ZZ) := n -> (
+     if n>0 then (
+          baseRing := ZZ[x_1 .. x_n];
+          I := ideal(x_1 .. x_n);
+          lcmLattice(I))
+     else error "no such lattice")
 
 
 ----------------------------------
