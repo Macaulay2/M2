@@ -1119,6 +1119,36 @@ document {
 	  }
      }  
 
+document {
+     Key => ToricDivisor,
+     Headline => "the class of all torus invariant divisors on normal toric varieties",
+     "A torus invariant divisor is a linear combination of the prime torus invariant divisors. The prime divisors are given by the rays of 
+     the underlying fan of the normal toric variety. Let ",TEX ///$\rho$///," be a ray of the fan then the corresponding torus invariant 
+     prime divisor is the closure of the orbit ",TEX ///$O(\rho)$///,".",
+     
+     PARA{}," An object of class ",TT "ToricDivisor"," consists of a ", TO NormalToricVariety," and a list of coefficients, one for each ray of 
+     the fan. Note that the input is not checked. This can be generated with function ",TO toricDivisor," which takes the ", TO List," of coefficients 
+     and the ",TO NormalToricVariety,", as input.",
+     
+     "As an example consider the following divisor on ", TEX /// $\mathbb{P}^2$ ///,":",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " L = {1,2,3}",
+	  " D = toricDivisor(L,PP2)"
+	  },
+     
+     "The coefficients can be accessed with the function ",TO (coefficients,ToricDivisor)," and the underlying normal 
+     toric variety with ",TO (variety,ToricDivisor),".",
+     
+     EXAMPLE {
+	  " coefficients D",
+	  " variety D"
+	  },
+     
+     SeeAlso => {toricDivisor, (coefficients,ToricDivisor), (variety,ToricDivisor)}
+     
+     }
 
 document { 
      Key => {(rays, NormalToricVariety)},
@@ -1435,6 +1465,92 @@ document {
 	  }
      }
 
+document {
+     Key => {toricDivisor, (toricDivisor,List,NormalToricVariety)},
+     Headline => "create a toric divisor",
+     Usage => " D = toricDivisor(L,X)",
+     Inputs => {
+	  "L" => List,
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "D" => ToricDivisor
+	  },
+     
+     "The entries of the list ",TT "L"," are considered as the coefficients of the prime torus invariant divisors given 
+     by the rays of ",TT "X"," considere in the order of ",TT "rays X",". This defines a divisor on the normal toric 
+     variety ",TT "X",". For example the anticanonical divisor is the sum of all prime divisors, i.e. it is given by a 
+     list of ones, one for each ray.",
+     
+     EXAMPLE {
+	  " H2 = hirzebruchSurface 2",
+	  " L = {1,2,3,1}",
+	  " D = toricDivisor(L,H2)"
+	  },
+     
+     "We can get the coefficients with ",TO (coefficients,ToricDivisor),":",
+     
+     EXAMPLE {
+	  " coefficients D"
+	  },
+     
+     "the variety is returned with ",TO (variety,ToricDivisor),":",
+     
+     EXAMPLE {
+	  " variety D"
+	  }
+     
+     }
+
+document {
+     Key => {(variety,ToricDivisor)},
+     Headline => "the normal toric variety over which the divisor is defined",
+     Usage => " X = variety D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {
+	  "X" => NormalToricVariety
+	  },
+     
+     "A torus invariant divisor is defined on a normal toric variety by the coefficients of the prime 
+     torus invariant divisors given by the rays of the fan. This function returns this 
+     toric variety as an object of class ",TO NormalToricVariety,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)",
+	  " variety D"
+	  },
+     
+     SeeAlso => {ToricDivisor,NormalToricVariety,(coefficients,ToricDivisor)}
+     
+     }
+
+document {
+     Key => {(coefficients,ToricDivisor)},
+     Headline => "the coefficients of the prime torus invariant divisors",
+     Usage => " L = coefficients D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     "A torus invariant divisor is defined on a normal toric variety by the coefficients of the prime 
+     torus invariant divisors given by the rays of the fan. This function returns the coefficients as 
+     a ",TO List,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)",
+	  " coefficients D"
+	  },
+     
+     SeeAlso => {ToricDivisor,NormalToricVariety,(variety,ToricDivisor)}
+     
+     }
 
 document { 
      Key => {WeilToClass},
@@ -1815,7 +1931,59 @@ doc ///
 ///
 
 document {
-     Key => {isAmple, (isAmple,List,NormalToricVariety)},
+     Key => {isAmple, (isAmple,ToricDivisor)},
+     Headline => "whether a Cartier divisor on a complete normal toric variety is ample",
+     Usage => "isAmple D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is ample and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Note that the input may not define 
+     a Cartier divisor and if it does not the function returns ", TO2(false,"false"),". Furthermore, if the underlying variety (",TT "variety X",") 
+     is not complete the function also returns ", TO2(false,"false"),".",
+     
+     PARA{}, "Let ", TEX ///$a_{\rho}$///," be the entry corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the
+      primitive point on that ray. Then, if the variety is complete and the divisor is Cartier (see ",TO isCartier,"), the divisor ",TT "D"," 
+     is ample if the support function is strictly convex. The support function is given by the following: Since ",TT "D"," is Cartier there is a point 
+     ", TEX///$m_{\sigma}$///," in the dual lattice for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,". Then the support 
+     function ", TEX ///$\phi_D$///," is given on each maximal cone ", TEX ///$\sigma$///," 
+     by ", TEX ///$\phi(u) = < m_{\sigma},u>$///," for ", TEX ///$u\in \sigma$///,".",
+     
+     "Consider the following Cartier divisor on ",TEX ///$\mathbb{P}^2$///,":",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)",
+	  " isCartier D"
+	  },
+     
+     "Then we can check if this divisor is ample.",
+     
+     EXAMPLE {
+	  " isAmple D"
+	  },
+     
+     "On the other hand consider the following Cartier divisor on the product of two projective one spaces:",
+     
+     EXAMPLE {
+	  " X = normalToricVariety normalFan hypercube 2",
+	  " D = toricDivisor({1,0,0,0},X)",
+	  " isCartier D"
+	  },
+     
+     "Then this function reveals that it is not ample.",
+     
+     EXAMPLE {
+	  " isAmple D"
+	  }
+     }
+
+document {
+     Key => {(isAmple,List,NormalToricVariety)},
      Headline => "whether a Cartier divisor on a complete normal toric variety is ample",
      Usage => "isAmple(D,X)",
      Inputs => {
@@ -1850,7 +2018,54 @@ document {
 	  
 
 document { 
-     Key => {isCartier, (isCartier,List,NormalToricVariety)},
+     Key => {isCartier, (isCartier,ToricDivisor)},
+     Headline => "whether a Weil divisor on a normal toric variety is Cartier",
+     Usage => "isCartier D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "variety D"," there exists a lattice point ", TEX///$m_{\sigma}$///," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     "Consider the following divisor on projective two space:",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)"
+	  },
+     
+     "Then one can check if it is Cartier.",
+     
+     EXAMPLE {
+	  " isCartier D"
+	  },
+     
+     "On the other hand take the following divisor:",
+     
+     EXAMPLE {
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = toricDivisor({1,0,0,-1},X)",
+	  " isCartier D"
+	  },
+     
+     "This one is not Cartier but at least ",TO QQ,"-Cartier:",
+     
+     EXAMPLE {
+	  " isQQCartier D"
+	  },
+     
+     SeeAlso => {isQQCartier}
+     
+     }
+
+document { 
+     Key => {(isCartier,List,NormalToricVariety)},
      Headline => "whether a Weil divisor on a normal toric variety is Cartier",
      Usage => "isCartier(D,X)",
      Inputs => {
@@ -1877,7 +2092,32 @@ document {
      }
 
 document { 
-     Key => {isQQCartier, (isQQCartier,List,NormalToricVariety)},
+     Key => {isQQCartier, (isQQCartier,ToricDivisor)},
+     Headline => "whether a Weil divisor on a normal toric variety is QQ-Cartier",
+     Usage => "isQQCartier D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is ",TO QQ,"-Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," there exists a point ", TEX///$m_{\sigma}$///," in the 
+     associated ",TO QQ," vector space of the dual lattice such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     EXAMPLE {
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = toricDivisor({1,0,0,-1},X)",
+	  " isCartier D",
+	  " isQQCartier D"
+	  }
+     }
+
+document { 
+     Key => {(isQQCartier,List,NormalToricVariety)},
      Headline => "whether a Weil divisor on a normal toric variety is QQ-Cartier",
      Usage => "isQQCartier(D,X)",
      Inputs => {
@@ -2173,6 +2413,34 @@ document {
 	  }
      }   
 
+document {
+     Key => {(isWellDefined,ToricDivisor)},
+     Headline => "whether a toric divisor is well defined",
+     Usage => " isWellDefined D",
+     Inputs => {"D" => ToricDivisor},
+     Outputs => {{TO2(true,"true"), " if the underlying normal toric variety is well defined and there is 
+	       exactly one coefficient for each ray"}},
+     "The pair of a ",TO List," and a ",TO NormalToricVariety," is well defined if the normal 
+     toric variety is well defined (see ",TO (isWellDefined,NormalToricVariety),") and there is exactly 
+     one coefficient for each ray of the fan.",
+     
+     "The first example shows a well defined toric divisor.",
+     
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " D = toricDivisor({1,2,1,2},PP3)",
+	  " isWellDefined D"
+	  },
+     
+     "If there are for example coefficients missing then this does not define a toric divisor.",
+     
+     EXAMPLE {
+	  " H2 = hirzebruchSurface 2",
+	  " D = toricDivisor({1,2,3},H2)",
+	  " isWellDefined D"
+	  }
+     
+     }
 
 document {
      Key => {(isComplete,NormalToricVariety)},
@@ -2377,13 +2645,12 @@ document {
 document {
      Key => {anticanonicalDivisor, (anticanonicalDivisor, NormalToricVariety)},
      Headline => "generates the anticanonical divisor of a normal toric variety",
-     Usage => "anticanonicalDivisor X",
+     Usage => "D = anticanonicalDivisor X",
      Inputs => {
 	  "X" => NormalToricVariety
 	  },
      Outputs => {
-	  List => "which defines the anticanonical divisor by the coefficients of the 
-	       prime divisors corresponding to the rays"
+	  "D" => ToricDivisor
 	  },
      
      "for a normal toric variety the anticanonical divisor ", TEX ///$-K_X$///," is the sum 
@@ -2392,9 +2659,11 @@ document {
      
      EXAMPLE {
 	  " X = projectiveSpace 4",
-	  " anticanonicalDivisor X",
+	  " D = anticanonicalDivisor X",
+	  " coefficients D",
 	  " X = normalToricVariety normalFan hypercube 3",
-	  " anticanonicalDivisor X"
+	  " D = anticanonicalDivisor X",
+	  " coefficients D"
 	  }
      }  
 
@@ -3493,6 +3762,42 @@ document {
      }
 
 document {
+     Key => {(isVeryAmple,ToricDivisor)},
+     Headline => "checks if a divisor is very ample",
+     Usage => "isVeryAmple D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is very ample and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Note that the input may not define 
+     a Cartier divisor and if it does not the function returns ", TO2(false,"false"),". Furthermore, if ",TT "X"," is not complete the 
+     function also returns ", TO2(false,"false"),".",
+     
+     PARA{}, "The divisor ",TT "D"," on ",TT "X"," is very ample if it is ample (see ",TO isAmple,") and the polytope ",TEX ///$P_D$///," of 
+     the divisor (see ",TO (polytope,ToricDivisor),") is very ample. This means if and only if for every vertex ",TEX ///$v\in P_D$///," 
+     the semigroup generated by ",TEX ///$M\cap P_D - v$///," is saturated. Note that since ",TT "D"," is ample, ",TEX ///$P_D$///," is in 
+     fact a lattice polytope.",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 3",
+	  " D = toricDivisor({1,2,3,4},X)",
+	  " isVeryAmple D"
+	  },
+     
+     "In the following example we give a divisor that is ample but not very ample.",
+     
+     EXAMPLE {
+	  " X = normalToricVariety({{4,-1,-5},{1,1,-5},{-1,-1,0},{0,0,1},{-1,4,-5}},{{0,1,2},{0,2,3},{2,3,4},{1,2,4},{0,1,3,4}})",
+	  " D = toricDivisor({0,0,5,0,0},X)",
+	  " isAmple D",
+	  " isVeryAmple D"
+	  }
+     }
+
+document {
      Key => {(isVeryAmple,List,NormalToricVariety)},
      Headline => "checks if a divisor is very ample",
      Usage => "isVeryAmple(D,X)",
@@ -3554,6 +3859,32 @@ document {
 	  " vertices P"
 	  },
      SeeAlso => {"Polyhedra::isPolytopal",isProjective,"Polyhedra::polytope", (polytope,List,NormalToricVariety)}
+     }
+
+document {
+     Key => {(polytope,ToricDivisor)},
+     Headline => "the polyhedron given by a weil divisor on a normal toric variety",
+     Usage => " P = polytope D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {
+	  "P" => Polyhedron
+	  },
+     
+     "The coefficients of the prime torus invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, 
+     corresponding to them in the order of ",TT "rays X"," are the entries of ",TT "coefficients D",". For example, the anticanonical divisor 
+     is a list of ones, one for each ray. Let ", TEX ///$a_{\rho}$///," be the entry corresponding to the ray ", TEX ///$\rho$///," 
+     and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the polyhedron of that divisor 
+     is P",TEX ///$=\{m\,|\, <m,u_{\rho}> \geq -a_{\rho}\}$///,".",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 3",
+	  " D = toricDivisor({1,2,3,4},X)",
+	  " P = polytope D",
+	  " vertices P"
+	  },
+     SeeAlso => {"Polyhedra::isPolytopal",isProjective,"Polyhedra::polytope", (polytope,NormalToricVariety)}
      }
 
 document {
