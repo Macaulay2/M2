@@ -55,15 +55,16 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
   );
-  --minimizeBasis(F)
-  F
+  F = minimalGbBrp(F);
+  reduceGbBrp(F)
 )
 
 -- delete elements where the leading term is divisible by another leading term
 minimalGbBrp = method()
 minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
   -- Todo remove extra looping, we want to scan over the "changing" values F
-  scan( values F, f -> ( print "starting with"; print f; scan( pairs F, (gKey, g) -> (print gKey; if f != g and isReducible( g, f) then remove(F,gKey) ))) )
+  scan( values F, f -> scan( pairs F, (gKey, g) -> if f != g and isReducible( g, f) then remove(F,gKey) ));
+  F
 )
 
 --Reduce lower terms of the first polynomial with the leading term of the second
@@ -79,21 +80,23 @@ reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
 -- Reduce lower terms of intermediate GB by leading terms of other polynomials
 reduceGbBrp = method()
 reduceGbBrp( gbComputation ) := gbComputation => F -> (
-  scan( pairs F, (fKey,f) -> ( 
-    print "starting with"; 
-    print f; 
-    scan(values F, g ->
-      if f!=g then (
-        tmpF := reduceLtBrp(f,g);
-        if f !=  tmpF then (
-          print ("changing F of " , fKey ," to " , tmpF);
-          F#fKey = tmpF;
-          break
+  changesHappened := true;
+  while changesHappened do (
+    changesHappened = false;
+    scan( pairs F, (fKey,f) ->  
+      scan(values F, g ->
+        if f!=g then (
+          tmpF := reduceLtBrp(f,g);
+          if f !=  tmpF then (
+            F#fKey = tmpF;
+            changesHappened = true;
+            break
+          )
         )
       )
     )
-   ) 
-  )
+  );
+  F
 )
 
 -- remove all relatively prime pairs
@@ -355,15 +358,17 @@ TEST ///
                           1 => myPoly2,
                           2 => myPoly3};
 
- -- R = ZZ/2[x,y,z,w,MonomialOrder=>Lex]/(x^2+x,y^2+y,z^2+z,w^2+w)
- -- J = ideal(x*y*w+w*x+z, x*z+w*y)
- -- gens gb J
+  R = ZZ/2[x,y,z,w,MonomialOrder=>Lex]/(x^2+x,y^2+y,z^2+z,w^2+w)
+  J = ideal(x*y*w+w*x+z, x*z+w*y)
+  gens gb J
+  -- z yw xw
 
   R = ZZ/2[x,y,z,w]
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
                               1 => convert (x*z+w*y) }
   gbBasis = gbBrp(F,numgens R)
-  assert( apply (values gbBasis, poly -> convert(poly,R) ) == {x*y*w + x*w + z, x*z + y*w, z, y*w + z, x*w + y*w + z})
+  apply (values gbBasis, poly -> convert(poly,R) )
+  assert( sort apply (values gbBasis, poly -> convert(poly,R) ) == sort {x*w, z, y*w})
 
   R = ZZ[x,y,z]
   F = new gbComputation from { 0 => convert( x*y + z),
