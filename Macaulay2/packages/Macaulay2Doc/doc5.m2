@@ -215,13 +215,13 @@ document {
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
      the next time the same arguments are presented.",
      PARA{},
-     EXAMPLE {
-	  "fib = n -> if n <= 1 then 1 else fib(n-1) + fib(n-2)",
-      	  "time fib 16",
-      	  "fib = memoize fib",
-      	  "time fib 16",
-      	  "time fib 16",
-	  },
+     EXAMPLE lines ///
+     fib = n -> if n <= 1 then 1 else fib(n-1) + fib(n-2)
+     time fib 28
+     fib = memoize fib
+     time fib 28
+     time fib 28
+     ///,
      PARA{},
      "The function ", TT "memoize", " operates by constructing 
      a ", TO "MutableHashTable", " in which the argument sequences are used
