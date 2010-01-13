@@ -358,10 +358,44 @@ TEST ///
                           1 => myPoly2,
                           2 => myPoly3};
 
-  R = ZZ/2[x,y,z,w,MonomialOrder=>Lex]/(x^2+x,y^2+y,z^2+z,w^2+w)
-  J = ideal(x*y*w+w*x+z, x*z+w*y)
+  R = ZZ/2[a..j, MonomialOrder=>Lex]
+ I = ideal (a^2+a,
+            b^2+b,
+            c^2+c,
+            d^2+d,
+            e^2+e,
+            f^2+f,
+            g^2+g,
+            h^2+h,
+            i^2+i,
+            j^2+j)
+
+  R = ZZ/2[a..j, MonomialOrder=>Lex]/(a^2+a,
+                                    b^2+b,
+                                    c^2+c,
+                                    d^2+d,
+                                    e^2+e,
+                                    f^2+f,
+                                    g^2+g,
+                                    h^2+h,
+                                    i^2+i,
+                                    j^2+j)
+  J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f, g+f, a+d, j+i+d*c)
+  J = J + I
   gens gb J
-  -- z yw xw
+  --g+hj+i f+hj+i ei+ej di+dj+i+j c+i+j bi+bj+b+de+d+i+j be bd+b a+d 
+  
+  R = ZZ/2[a..j]
+  F = new gbComputation from { 0=> convert(a*b*c*d*e),
+          1=> convert( a+b*c+d*e+a+b+c+d),
+          2=> convert( j*h+i+f),
+          3=> convert( g+f),
+          4=> convert( a+d),
+          5=> convert( j+i+d*c)
+          }
+  gbBasis = gbBrp( F, numgens R)
+  sort apply (values gbBasis, poly -> convert(poly,R) )
+  sort {g+h*j+i,f+h*j+i,e*i+e*j,d*i+d*j+i+j,c+i+j,b*i+b*j+b+d*e+d+i+j,b*e,b*d+b,a+d}
 
   R = ZZ/2[x,y,z,w]
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
@@ -418,6 +452,16 @@ TEST ///
   F = new gbComputation from {0=>a, 1=>b, 2=>c}
   reduceGbBrp(F)
   assert( apply( values F, i -> convert(i,R) ) == {x*y, y*z + z, x*z + z} )
+
+  R = ZZ/2[x,y,z,w]
+  a = convert(x*y + y*w*z + w*z +w)
+  b = convert(y*z + w*z)
+  c = convert(w)
+  F = new gbComputation from {0=>a, 1=>b, 2=>c}
+  reduceGbBrp(F)
+  assert( sort apply( values F, i -> convert(i,R) ) == sort{x*y, y*z, w} )
+
+
 ///
   
        
