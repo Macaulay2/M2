@@ -1,6 +1,6 @@
 newPackage(
         "PowerSeries",
-        Version => "0.5", 
+        Version => "1.0", 
         Date => "1/2010",
         Authors => {{Name => "Chris Cunningham", 
                   Email => "cjc258@cornell.edu"},
