@@ -123,7 +123,7 @@ loadPackage "Dmodules"
 R = QQ[x,y];
 F = {x*y*(x+y)*(x+2*y)}; g = 1_R;
 g = F_0;
-g = x^2; 
+g = x-y; 
 factorBFunction generalB (F,g)
 factorBFunction generalB (F,g, Exponent=>1)
 factorBFunction generalB (F,g, Exponent=>2)

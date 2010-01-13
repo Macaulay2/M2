@@ -107,7 +107,7 @@ hasRationalSing(List) := F ->(
      b = sub(b, {S_0=>-S_0});
      bRoots := bFunctionRoots b;
      LCT: = min bRoots;
-     if LCT != r then return false else if 
+     if LCT != r then return false --else if 
 		-- need to check that r has multiplicity one as a root
      )
    
