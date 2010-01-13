@@ -151,6 +151,37 @@ Headline
 
 doc ///
 Key 
+  (leading,Brp)
+  leading
+Headline
+ return the leading term of a polynomials, for now we are restricted to lex 
+///
+
+doc ///
+Key 
+  (removeDups,Brp)
+  removeDups
+Headline
+  remove duplicate monomials ( because = 0 )
+///
+
+doc ///
+Key 
+  (symbol==,Brp,ZZ)
+Headline
+  Compare to 0 polynomial and constant 1 polynomial
+///
+
+doc ///
+Key 
+  (isRelativelyPrime,Brp,Brp)
+  isRelativelyPrime
+Headline
+  check if two monomials are relatively prime
+///
+
+doc ///
+Key 
   (lcmBrps,Brp,Brp)
   lcmBrps
 ///
@@ -158,6 +189,7 @@ Key
 doc ///
 Key 
   (convert,Brp,Ring)
+  (convert,RingElement)
   convert
 Headline
   convert a Brp into its symbolic representation 
@@ -250,12 +282,11 @@ firstpoly * secondpoly
 
 end
 
-
 -- Here place M2 code that you find useful while developing this
 -- package.  None of it will be executed when the file is loaded,
 -- because loading stops when the symbol "end" is encountered.
 
 restart
-uninstallPackage "BitwiseRepresentationPolynomials"
+installPackage "BitwiseRepresentationPolynomials"
 installPackage("BitwiseRepresentationPolynomials", RemakeAllDocumentation=>true)
 check BitwiseRepresentationPolynomials
