@@ -23,6 +23,7 @@ export {makePairsFromLists,
       isReducible,
       minimalGbBrp,
       reduce,
+      reduceGbBrp,
       reduceLtBrp,
       reduceOneStep, 
       SPolynomial, 
@@ -78,7 +79,21 @@ reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
 -- Reduce lower terms of intermediate GB by leading terms of other polynomials
 reduceGbBrp = method()
 reduceGbBrp( gbComputation ) := gbComputation => F -> (
-  scan( pairs F, (fKey,f) -> ( print "starting with"; print f; scan(values F, g ->( F#fKey = if f==g then f else reduceLtBrp(f,g); print F#fKey ))) )
+  scan( pairs F, (fKey,f) -> ( 
+    print "starting with"; 
+    print f; 
+    scan(values F, g ->
+      if f!=g then (
+        tmpF := reduceLtBrp(f,g);
+        if f !=  tmpF then (
+          print ("changing F of " , fKey ," to " , tmpF);
+          F#fKey = tmpF;
+          break
+        )
+      )
+    )
+   ) 
+  )
 )
 
 -- remove all relatively prime pairs
@@ -391,6 +406,13 @@ TEST ///
   b= convert(y*z +z)
   assert( reduceLtBrp(a,b)== new Brp from {{1, 1, 0}})
 
+  R = ZZ/2[x,y,z]
+  a = convert(x*y + y*z + z)
+  b = convert(y*z + z)
+  c = convert(x*z + z)
+  F = new gbComputation from {0=>a, 1=>b, 2=>c}
+  reduceGbBrp(F)
+  assert( apply( values F, i -> convert(i,R) ) == {x*y, y*z + z, x*z + z} )
 ///
   
        
