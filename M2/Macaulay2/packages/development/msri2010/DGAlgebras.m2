@@ -9,8 +9,8 @@ newPackage("DGAlgebras",
      Version => "0.1"
      )
 
-export {DGAlgebra, dgAlgebra, setDiff, algebra, koszulComplexDGA, toComplex, acyclicClosure, killCycles, adjoinVariables,
-        homologyAlgebra, polyDifferential, polyHomology}
+export {DGAlgebra, dgAlgebra, setDiff, algebra, toComplex, koszulComplexDGA, acyclicClosure, killCycles, adjoinVariables,
+        homologyAlgebra, torAlgebra, polyDifferential, polyHomology}
 
 ------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
@@ -28,7 +28,7 @@ dgAlgebra(Ring,List) := (R,degList) -> (
      varsList := toList (T_1..T_(#degList));
      A#(symbol diff) = {};
      A#(symbol algebra) = (A.ring)[varsList, Degrees => degList, SkewCommutative => select(toList(0..(#degList-1)), i -> odd degList#i)];
-     A#(symbol degreeList) = degList;
+     A#(symbol Degrees) = degList;
      A#(symbol cache) = new CacheTable;
      A.cache#(symbol homology) = new MutableHashTable;
      A.cache#(symbol differentials) = new MutableHashTable;
@@ -63,9 +63,7 @@ taylorDGA(MonomialIdeal) := (I) -> (
 )
 
 toComplex = method()
-toComplex(DGAlgebra) := (A) -> (
-   A
-)
+toComplex(ZZ,DGAlgebra) := (N,A) -> chainComplex(apply(N, i -> polyDifferential(A,i+1)))
 
 killCycles = method(Options => {StartDegree => 1, EndDegree => -1})
 killCycles(DGAlgebra) := opts -> (A) -> (
@@ -93,18 +91,21 @@ killCycles(DGAlgebra) := opts -> (A) -> (
 adjoinVariables = method()
 adjoinVariables(DGAlgebra, List) := (A,cycleList) -> (
   -- this function will add a new variable to make the elements of cycles boundaries in a new DG algebra (semifree over the input)
-  newDegreesList := flatten append(A.degreeList, apply(cycleList, z -> (first degree z) + 1));
+  newDegreesList := flatten append(A.Degrees, apply(cycleList, z -> (first degree z) + 1));
   B := dgAlgebra(A.ring,newDegreesList);
   newDiffList := apply(flatten append(take(flatten entries matrix A.diff, numgens A.algebra), cycleList), f -> substitute(f, B.algebra));
   setDiff(B,newDiffList);
   B
 )
 
-acyclicClosure = method()
-acyclicClosure(Ring,ZZ) := (R, homologicalDegreeLimit) -> (
+acyclicClosure = method(Options => {StartDegree => 1})
+acyclicClosure(Ring,ZZ) := opts -> (R, homologicalDegreeLimit) -> (
   K := koszulComplexDGA(R);
-  n := 1;
-  A := K;
+  acyclicClosure(K,homologicalDegreeLimit)
+)
+
+acyclicClosure(DGAlgebra,ZZ) := opts -> (A, homologicalDegreeLimit) -> (
+  n := opts.StartDegree;
   while (n <= homologicalDegreeLimit) do (
      A = killCycles(A,StartDegree => n);
      n = n + 1;
@@ -117,12 +118,13 @@ polyDiffMonomial(DGAlgebra,RingElement) := (A,m) -> (
   -- uses the Leibniz rule to compute the differential of a traditional monomial
   dgSign := 1;
   monSupport := support m;
-  monSupportPowers := apply(monSupport, x -> x^(degree(x,m)));
+  monExponents := select(first exponents m, i -> i > 0);
+  monSupportPowers := apply(#monSupport, i -> (monSupport#i)^(monExponents#i));
   firstDiffTerms := apply(#monSupport, i -> product take(monSupportPowers,i));
   lastDiffTerms := apply(#monSupport, i -> product drop(monSupportPowers,i+1));
   --diffCoeffs := apply(monSupport, l -> A.diff(l)*l^(degree(l,m)-1));
-  diffCoeffs := apply(monSupport, l -> A.diff(l)*degree(l,m)*l^(degree(l,m)-1));
-  diffSigns := apply(#monSupport, l -> product apply(l, i -> (-1)^((first degree monSupport#i)*(degree(monSupport#i,m)))));
+  diffCoeffs := apply(#monSupport, i -> A.diff(monSupport#i)*(monExponents#i)*(monSupport#i)^((monExponents#i)-1));
+  diffSigns := apply(#monSupport, l -> product apply(l, i -> (-1)^((first degree monSupport#i)*(monExponents#i))));
   allTerms := apply(#monSupport, i -> (diffSigns#i)*(firstDiffTerms#i)*(diffCoeffs#i)*(lastDiffTerms#i));
   sum allTerms
 )
@@ -134,9 +136,9 @@ polyDifferential(DGAlgebra,ZZ) := (A,n) -> (
   else (
      sourceList := flatten entries basis({n,0},A.algebra);
      targetList := flatten entries basis({n-1,0},A.algebra);
-     diffList := matrix {apply(sourceList, i -> polyDiffMonomial(A,i))};
+     diffList := matrix {apply(sourceList, m -> polyDiffMonomial(A,m))};
      coeffMatrix := substitute((coefficients(diffList, Monomials => targetList))#1, A.ring);
-     newDiffl := map((A.ring)^(#targetList), (A.ring)^(#sourceList), entries coeffMatrix);
+     newDiffl := map((A.ring)^(#targetList), (A.ring)^(#sourceList), coeffMatrix);
      A.cache.differentials#n = newDiffl;
      newDiffl
   )
@@ -167,6 +169,24 @@ polyHomology(DGAlgebra,ZZ) := (A,n) -> (
   retVal
 )
 
+torAlgebra = method()
+torAlgebra(Ring,ZZ) := (R,n) -> (
+  -- can do this much faster without computing acyclic closure, since ACs are minimal.  One need only check bases.
+  acycClos := acyclicClosure(R,1);
+  secondHomology := polyHomology(acycClos,2);
+  if (prune secondHomology != 0) then acycClos = acyclicClosure(acycClos,n);
+  (coefficientRing R)[gens (acycClos.algebra), Degrees => acycClos.Degrees, SkewCommutative => select(toList (0..(#acycClos.Degrees - 1)), i -> odd (acycClos.Degrees)#i)]
+)
+
+torAlgebra(Ring) := (R) -> torAlgebra(R,2)
+
+torAlgebra(Ring,Ring,ZZ,ZZ) := (R,S,genDegree,relDegree) -> (
+  -- S is an R-algebra
+  acycClos := acyclicClosure(R,genDegree);
+  acycClos' := acycClos ** S;
+  homologyAlgebra(acycClos',genDegree,relDegree)
+)
+
 representativeCycles = method()
 representativeCycles(DGAlgebra,ZZ) := (A,n) -> (
   homologyGenerators := entries transpose generators image (prune polyHomology(A,n)).cache.pruningMap;
@@ -176,7 +196,7 @@ representativeCycles(DGAlgebra,ZZ) := (A,n) -> (
 )
 
 homologyAlgebra = method()
-homologyAlgebra(DGAlgebra,     ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
+homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
   if (A.cache#?homologyAlgebra) then A.cache#homologyAlgebra
   else (
   cycleList := {};
@@ -366,10 +386,10 @@ findDegNRelations(DGAlgebra,Ring,List,ZZ) := (A,polyRing,gensAndRels,N) -> (
   retVal
 )
 
-DGAlgebra ** Ring := (A,k) -> (
-  B := dgAlgebra(k, A.degreeList);
-  myMap := map(B.algebra,A.algebra);
-  B.diff = A.diff ** myMap;
+DGAlgebra ** Ring := (A,S) -> (
+  B := dgAlgebra(S, A.Degrees);
+  newDiff := apply(flatten entries matrix (A.diff), f -> substitute(f,B.algebra));
+  B.diff = map(B.algebra,B.algebra, newDiff);
   B
 )
 
@@ -407,19 +427,44 @@ doc ///
 
 end
 
--- Tutorial
+--Tutorial
 
--- Differentials
+-- Tate resolution, toComplex
+restart
+loadPackage "DGAlgebras"
+debug DGAlgebras
+R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
+A3 = acyclicClosure(R3,1)
+time A3dd = toComplex(50,A3);
+time kRes = res(coker vars R3, LengthLimit => 50);
+
+-- Homology
 restart
 loadPackage "DGAlgebras"
 R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
-A3 = dgAlgebra(R3,{1,1,1,2,2,2})
-setDiff(A3,{x,y,z,x^2*T_1,y^3*T_2,z^4*T_3})
-time apply(17, i -> time polyHomology(A3,i));
+A3 = acyclicClosure(R3,1)
+time apply(7, i -> time numgens prune polyHomology(A3,i))
 time kRes = res(coker vars R3, LengthLimit=> 18)
-time apply(17, i -> presentation HH_i(kRes));
+time apply(17, i -> time HH_i(kRes));
 
--- acyclic closures
+-- Tor algebras
+restart
+loadPackage "DGAlgebras"
+R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
+TorR3 = torAlgebra(R3)
+apply(15, i -> hilbertFunction(i,TorR3))
+res(coker vars R3, LengthLimit => 15)
+R4 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
+TorR4 = torAlgebra(R4,5)
+apply(8, i -> hilbertFunction(i,TorR4))
+res(coker vars R4, LengthLimit => 8)
+TorR3R4 = torAlgebra(R3,R4,4,10)
+reduceHilbert hilbertSeries TorR3R4
+use R3
+R4mod = coker matrix {{x^2*y^3*z^4}}
+res(R4mod, LengthLimit => 6)
+
+-- Acyclic closures
 restart
 loadPackage "DGAlgebras"
 R3 = ZZ/32003[x,y]/ideal{x^3,y^4,x^2*y^3}
@@ -427,12 +472,6 @@ A3 = acyclicClosure(R3,3)
 time apply(10, i -> time prune polyHomology(A3,i));
 HA3 = homologyAlgebra(A3,5,15)
 return; continue; listLocalSymbols
-
-R4 = ZZ/32003[x,y]/ideal{x*y}
-A4 = acyclicClosure(R4,3)
-peek A4
-A4' = A4 ** (R4/ideal vars R4)
-torAlgebra = homologyAlgebra(A4',3,3)
 
 -- Koszul Complex and homology algebras
 restart
@@ -456,45 +495,5 @@ describe oo
 peek HA3.cache
 betti prune HH(koszul vars R3)
 reduceHilbert hilbertSeries HA3
-
-apply(6,i -> trim ideal flatten entries polyDifferential(A3,i))
-A3' = A3 ** (R3/ideal vars R3)
-torAlgebra = homologyAlgebra(A3',3,3)
-peek torAlgebra.cache
-
-generateAssertions
-loadPackage("DGAlgebras", LoadDocumentation => true)
-check PackageName
-
-restart
-loadPackage "DGAlgebras"
-debug DGAlgebras
-R = ZZ/32003[x,y,z]/ideal{x^3,y^4,z^5}
-B = koszulComplexDGA(R)
-homologyAlgebra(B,4,4)
-R = ZZ/32003[x,y,z,w]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
-B = koszulComplexDGA(R)
-homologyAlgebra(B,4)
-
-h2 = polyHomology(B,2)
-newh2 = prune (h2 / (image map (target gens h2, R^1, matrix {{-x^2*y^3},{0},{0},{0},{0},{0}})))
-newh2.cache.pruningMap
-
-C = koszulComplexDGA(ideal {x^2,y^2,z^2})
-B' = killCycles(B)
-polyHomology(B',3)
-D = acyclicClosure(R,2)
-
-R = ZZ/101[a,b,c]
-I = (ideal vars R)^2
-S = R/I
-res coker vars S
-D = acyclicClosure(S,3)
-numgens source basis({4,0},D.algebra)
-polyHomology(D,0)
-polyHomology(D,1)
-polyHomology(D,2)
-polyHomology(D,3)
-
 
 break
