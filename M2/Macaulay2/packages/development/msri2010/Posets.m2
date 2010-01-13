@@ -2163,3 +2163,10 @@ assert( ((openInterval(P2,h,f)).Relations) === {(a,a),(a,e),(b,b),(b,e),(c,c),(e
 assert( ((closedInterval(P2,h,f)).Relations) === {(a,a),(a,e),(a,f),(b,b),(b,e),(b,f),(c,c),(c,f),(e,e),(e,f),(f,f),(h,a),(h,b),(h,c),(h,e),(h,f),(h,h)} )
 
 ///
+
+TEST ///
+B = booleanLattice(2)   
+assert( (B.GroundSet) === {1,x_2,x_1,x_1*x_2} )
+assert( (B.RelationMatrix) === map(ZZ^4,ZZ^4,{{1, 1, 1, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}, {0, 0, 0, 1}}) )
+assert( (B.Relations) === {(1,1),(1,x_2),(1,x_1),(1,x_1*x_2),(x_2,x_2),(x_2,x_1*x_2),(x_1,x_1),(x_1, x_1*x_2),(x_1*x_2,x_1*x_2)} )
+///
