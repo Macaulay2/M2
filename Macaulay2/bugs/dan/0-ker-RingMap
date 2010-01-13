@@ -1,0 +1,12 @@
+
+i23 : R = QQ[x]
+
+o23 = R
+
+o23 : PolynomialRing
+
+i24 : ker map(R/1_R,R)
+
+o24 = ideal ()				<---- !!
+
+o24 : Ideal of R
