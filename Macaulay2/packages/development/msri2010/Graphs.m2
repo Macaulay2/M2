@@ -11,7 +11,8 @@ newPackage("Graphs",
 
 export {Graph, Digraph, LabeledGraph, graph, digraph, labeledGraph, Singletons, descendents, nondescendents, 
      parents, children, neighbors, nonneighbors, foreFathers, displayGraph,
-     simpleGraph, removeNodes, inducedSubgraph, completeGraph, cycleGraph}
+     simpleGraph, removeNodes, inducedSubgraph, completeGraph,
+     cycleGraph, writeDotFile}
 exportMutable {dotBinary,jpgViewer}
 
 
@@ -81,11 +82,12 @@ graph List := opts -> (g) -> (
      )
 
 labeledGraph = method()
-labeledGraph (Digraph,List) := opts -> (g,L) -> (
+labeledGraph (Digraph,List) := (g,L) -> (
      -- Input:  A graph and a list of lists with two elements one of
      --         which is a list giving an edge and the other is the lables. 
-     -- Output:  A hash table with keys the names of the nodes and the 
-     --          values are the neighbors corresponding to that node. 
+     -- Output:  A list of two hash tables, the first of which is the
+     --      	 base graph and the second of which has for keys edges of the
+     --      	 graph whose values are the name of the edge.  
      ---- Note to Selves --- this code should also nicely build
      ---- hypergraphs as hash tables with again, nodes as keys and
      ---- neighbors as values. 
@@ -93,7 +95,7 @@ labeledGraph (Digraph,List) := opts -> (g,L) -> (
      lg#graphData = g;
      label := new MutableHashTable;
      apply(L, i -> label#(i#0) = i#1);	   
-     lg#labels = label;
+     lg#labels = new HashTable from label;
      new LabeledGraph from lg
      )
 
@@ -391,6 +393,13 @@ doc ///
       perform basic functions on them. The user should note that this
       package assumes that all digraphs are acyclic.  Also, graphs are 
       assumed to have no loops or multiple edges. 
+      To view graphs and digraphs the software Graphviz 
+  Caveat
+    When asked to display a graph, this package converts the way M2 
+    stores information for a graph into a format readable by the 
+    external software Graphviz.  The way in which this is currently
+    done does not support node names that include superscripts or 
+    subscripts.
 ///
 
 doc ///
@@ -435,7 +444,8 @@ doc ///
       graph by inputting a list of edges. There is an optional
       argument called Singletons to input nodes that have no neighbors. 
     Example
-      A = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
+      A = graph({{x_1,x_3},{x_2,x_4},{x_1,x_4}})
+      B = graph({{a,b},{c,d},{a,d},{b,c}}, Singletons => {f})
     Text  
       Alternatively, one can also create a graph by inputting a hash
       table whose keys are again the nodes of the graph and the values
@@ -467,51 +477,125 @@ doc ///
       element is a node and whose second element is the list of children
       of that node.  If a node has no children, it should still be
       included in the list of pairs followed by an empty list.
+      Alternatively, one could also input a hash table where the keys are
+      the nodes and the values the set of children.
     Example
       D = digraph({{a, {b,c}}, {b,{d,e}}, {c, {e,h}}, {d, {f}}, {e, {f,g}},
   	  {f, {}}, {g, {}}, {h, {}}})
+///
+
+
+
+doc ///
+  Key
+    Singletons
+  Headline
+    Optional argument for the function graph
+  Description
+    Text
+      This is an optional argument for @TO graph@ to input a list of nodes
+      with no neighbors.
+  
+///
+
+doc ///
+  Key
+    descendents
+  Headline 
+    Returns the descendents of a node in a digraph
+  Usage
+    dE = descendents(D,v)
+  Inputs
+    D:Digraph
+    v:Thing
+      representing a node in the digraph
+  Outputs
+    dE:Set
+       consisting of the descendents of v.
+  Description
+    Text
+      This is a function which takes as input a @TO digraph@ and the key
+      from its hash table for the node of interest.  It returns a set 
+      of the keys for the descendents of that node.
+    Example
+      D = digraph({{a, {b,c}}, {b,{d,e}}, {c, {e,h}}, {d, {f}}, {e, {f,g}},
+  	  {f, {}}, {g, {}}, {h, {}}})
+      dE = descendents(D,c)
+///
+
+
+
+doc ///
+  Key
+    nondescendents
+  Headline
+    Returns the nondescendents of a node in a digraph
+  Usage
+    nD = nondescendents(D,v)
+  Inputs
+    D:Digraph
+    v:Thing
+      representing a node in the digraph
+  Outputs
+    nD:Set
+       consisting of the nondescendents of v. 
+  Description
+    Text
+      This function takes as input a @TO digraph@ and the name given
+      to the node of interest.  It returns the set of vertices that
+      are not descendents of that node.
+    Example
+      D = digraph({{a, {b,c}}, {b,{d,e}}, {c, {e,h}}, {d, {f}}, {e, {f,g}},
+  	  {f, {}}, {g, {}}, {h, {}}})
+      nD = nondescendents(D,c)
+///
+
+
+
+doc ///
+  Key
+    parents
+  Headline
+    Returns the parents of a vertex in a digraph
+  Usage
+    pA = parents(D,v)
+  Inputs
+    D:Digraph
+    v:Thing
+      that is the name of the node of interest
+  Outputs
+    pA:Set
+       containing the names of the parents of the node
+  Description
+    Text
+      This function takes as input a @TO digraph@ and the name given
+      to the node of interest.  It returns the set of the names
+      for the vertices that are the parents of that node.
+    Example
+      D = digraph({{a, {b,c}}, {b,{d,e}}, {c, {e,h}}, {d, {f}}, {e, {f,g}},
+  	  {f, {}}, {g, {}}, {h, {}}})
+      pA = parents(D,e)
 ///
 
 end
 
 doc ///
   Key
-    Singletons
-  Headline
-  Description
-    Text
-///
-
-doc ///
-  Key
-    descendents
-  Headline
-  Description
-    Text
-///
-
-doc ///
-  Key
-    nondescendents
-  Headline
-  Description
-    Text
-///
-
-doc ///
-  Key
-    parents
-  Headline
-  Description
-    Text
-///
-
-doc ///
-  Key
     children
   Headline
+    Returns the children of a node in a digraph
+  Usage
+    cH = children(D,v)
+  Inputs
+    D:Digraph
+    v:Thing
+      that is the name of the node of interest
+  Outputs
+    cH:Set
+       containing the names of the children of the node
   Description
     Text
+      lkjlkjlkj
 ///
 
 doc ///
