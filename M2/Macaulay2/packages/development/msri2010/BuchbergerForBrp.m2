@@ -416,7 +416,6 @@ TEST ///
           }
   gbBasis = gbBrp( F, numgens R)
   assert( sort apply (values gbBasis, poly -> convert(poly,R) ) == sort {g+h*j+i,f+h*j+i,e*i+e*j,d*i+d*j+i+j,c+i+j,b*i+b*j+b+d*e+d+i+j,b*e,b*d+b,a+d})
-  --ll = {g + h*j + i, e*i + e*j, d*i + d*j + i + j, c + i + j, b*i + b*j + b + d*e + d + i +  j, b*e, b*d + b, a + d}
 
   R = ZZ/2[x,y,z,w]
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
@@ -446,8 +445,6 @@ TEST ///
                            }
   FOnePoly = new gbComputation from { 1 => convert(x+y+z) } 
   minimalGbBrp(F)
-
-  peek F
   assert ( #F == 2 ) 
   assert (F#2 == new Brp from {{1, 0, 0}} )
   assert (F#3 == new Brp from {{0, 1, 1}, {0, 0, 1}} )
