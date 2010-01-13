@@ -68,9 +68,9 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
 --Reduce lower terms of the first polynomial with the leading term of the second
 reduceLtBrp = method()
 reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
-  while ( l= select(f, m ->  isReducible(new Brp from {m}, leading(g))); #l!=0) do (
-      assert isDivisible( new Brp from {first l}, leading(g));
-   	  f= f+ g*divide(new Brp from {first l}, leading(g))
+  while ( l := select(f, m ->  isReducible(new Brp from {m}, leading g) ); #l != 0) do (
+      assert isDivisible( new Brp from {first l}, leading g );
+   	  f = f + g*divide( new Brp from {first l}, leading g)
   );
   f
 )
@@ -125,7 +125,7 @@ SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
 -- leading element of any element in G
 reduce = method()
 reduce (Brp, gbComputation) := Brp => (f,G) -> (
-  while (newF = reduceOneStep(f,G); newF != f and newF != 0) do 
+  while (newF := reduceOneStep(f,G); newF != f and newF != 0) do 
     f = newF;
   newF
 )
