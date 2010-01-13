@@ -1,6 +1,6 @@
 newPackage(
         "PowerSeries",
-        Version => "0.1", 
+        Version => "0.5", 
         Date => "1/2010",
         Authors => {{Name => "Chris Cunningham", 
                   Email => "cjc258@cornell.edu"},
@@ -15,7 +15,7 @@ newPackage(
         DebuggingMode => true
         )
 
-export {series, setDegree, toPolynomial, dominantTerm, seriesPartialSums}
+export {series, setDegree, toPolynomial, dominantTerm, Series}
 
 Series = new Type of HashTable
 
@@ -168,14 +168,8 @@ series(Divide) := Series => opts -> f -> (
      	den := value denominator f;
 	num * inverse series den
 	)
-	
 
-
- 
-
-
-seriesPartialSums = method(Options => {Degree => 5})
-seriesPartialSums(Function) := Series => opts -> f -> ( 
+series(Function) := Series => opts -> f -> ( 
      	  s := f(opts.Degree+1);
 	   -- now make a new series.
      new Series from {degree => opts.Degree, maxDegree => infinity, computedDegree => opts.Degree, polynomial => s, 
@@ -422,9 +416,6 @@ Series / RingElement := Series => (A,f) -> A * inverse series f_(ring A.polynomi
 RingElement / Series := Series => (f,A) -> f_(ring A.polynomial) * inverse A
 
 
-end
-
-
 --=========================================================================--
 --Chris's space
 beginDocumentation()
@@ -433,8 +424,9 @@ needsPackage "SimpleDoc";
 doc ///
   Key
     PowerSeries
+    Series
   Headline
-    A package allowing construction andmanipulatioon of power series in one variable.
+    A package allowing construction and manipulation of power series in one variable.
   Description
     Text     
       A power series is normally described on paper in the form "a_0 + a_1x + a_2 x^2 + ...", and
@@ -452,6 +444,7 @@ doc ///
 doc ///
   Key
     "Creating Series"
+    series
   Headline
     An overview of the various ways to create power series.
   Description
@@ -460,68 +453,331 @@ doc ///
      arbitrary degree when needed. This means that even though sums and products of
      series will return finite-precision results, the precision can be increased at
      any time. The easiest examples of such series are:
+  
+     1. Creating series by the @TO2 ((series,RingElement),"input of a rational function")@,
      
-     1. Creating series by the @TO2 (series,RingElement),"input of a rational function"@.
-     
-     2. Creating series @TO2 (series,Divide),"from a Divide"@, for instance to process the result of a @TO hilbertSeries@ computation.
+     2. Creating series @TO2 ((series,Divide),"from a Divide")@, for instance to process the result of a @TO hilbertSeries@ computation,and
 
-     3. Creating series @TO2 (series,RingElement,Function)@ "given the coefficients"@, by giving a function that computes the i^{th} coefficient of the power series.
-
-     4. Creating series by @TO2( (seriesPartialSums,Function) "giving a function") that given i, computes the i^{th} polynomial approximation to the series.
+     3. Creating series @TO2 ((series,RingElement,Function),"given the coefficients")@, by giving a function that computes the i^{th} coefficient of the power series.
 
      Series can also be created that have finite precision. If the user only knows the series
      up to a certain degree, series computations can still be used on it. If the precision 
-     of such a series is ever increased too far, an error will result.
-     
-     5. Creating @TO2 (series,ZZ,RingElement),"series with finite precision"@.
+     of such a series is ever increased too far, an error will result:
+          
+     4. Creating @TO2 ((series,ZZ,RingElement),"series with finite precision")@.
+
+     If the calculation of a coefficient of the power series is difficult, and a closed form is not known for the i^{th} term, a series can be created by
+     giving the i^{th} polynomial approximation to the series:
+
+     5. Creating series by @TO2( ((series,Function),"giving a function"))@ that given i, computes the i^{th} polynomial approximation to the series.
      
      The best way to implement a power series whose coefficients are difficult to compute is
-     using one of the following two constructions: 
+     using the following construction: 
      
-     6. Creating @TO2 (series,Ring,Function),"series given the ability to calculate individual terms"@, and
-     
-     7. Creating @TO2 (series,RingElement,ZZ,Function),"series given the ability to calculate individual terms"@ where some computation is already done.
-     
-     Methods 4, 6, and 7 provide great flexibility and allow almost any power series to be entered, but the last two provide a
-     significant computational advantages if the coefficients of the power series are difficult to compute. In the last two cases,
+     6. Creating @TO2 ((series,Ring,Function),"series given the ability to calculate successive approximations")@.
+                
+     Methods 5 and 6 provide great flexibility and allow almost any power series to be entered, but the latter provides a
+     significant computational advantage if the coefficients of the power series are difficult to compute. In the former
+     case, computations will be repeated when precision is changed, but in the latter,
      previously computed coefficients will never be computed again.
     
      As an example, we will enter a power series whose coefficients involve (needless) heavy computation:
    Example
      f = i -> value factor(10^i + 1);
    Text
-     If a function for the i^{th} coefficient is used to construct the series, then successive increases in precision do not redo computations:
+     If a function for the i^{th} coefficient is used to construct the series (method 3), then successive increases in precision do not redo computations:
    Example
      R = ZZ[x];
-     A = series(x,f);
-     time A = setDegree(39,A);
-     time A = setDegree(40,A);
+     A = series(x,f)
+     time A = setDegree(24,A); -- increase precision to 24
+     time A = setDegree(25,A); -- increase precision one more
    Text
-     If a function for the i^{th} polynomial approximation is ussed instead, then successive precision increases repeat old computations:
+     If a function for the i^{th} polynomial approximation is used instead (method 5), then successive precision increases repeat old computations:
    Example
-     B = seriesPartialSums(i -> sum(i,(j -> f(j)*x^j)));
-     time B = setDegree(39,B);
-     time B = setDegree(40,B);
+     B = series(i -> sum(i,(j -> f(j)*x^j)))
+     time B = setDegree(24,B); -- increase precision to 24
+     time B = setDegree(25,B); -- increase precision one more
    Text
-     Even if a closed form for the i^{th} coefficient is not known, and instead the user only knows how to recursively increase the precision, one of methods 6 or 7 successfully uses the cache:
+     Even if a closed form for the i^{th} coefficient is not known, and instead the user only knows how to recursively increase the precision, method 6 successfully uses the cache:
    Example
-     C = series(R,(oldPolynomial,oldDegree,newDegree) -> oldPolynomial + sum(oldDegree+1:newDegree,j -> f(j)*x^j));
-     time C = setDegree(40,C);
-     time C = setDegree(41,C); 
+     g = (oldPolynomial,oldDegree,newDegree) -> oldPolynomial + sum(oldDegree+1..newDegree,j -> f(j)*x^j);
+     C = series(R,g) -- watch the output: no terms have been computed yet!
+     time C = setDegree(24,C); -- increase precision to 24
+     time C = setDegree(25,C); -- increase precision one more 
+  SeeAlso
+    hilbertSeries
 ///    
 
+doc ///
+  Key
+    (series,Divide)
+  Headline
+    Create a series from a Divide. 
+  Usage
+    F = series D
+  Inputs
+    D:Divide
+      representing a rational function in one variable
+  Outputs
+    F:Series
+  Description
+   Text
+     This method is meant for accepting the output of the @TO hilbertSeries@ command.
+     Creating a Series object allows manipulations to be performed on the Hilbert series while
+     reserving the option of calculating more terms later (without calling hilbertSeries).
+   Example
+     R = ZZ/101[x,Degrees => {2}];
+     I = ideal"x2";
+     H = hilbertSeries module I
+     S = series H
+   Text
+     By default a new series has low precision, but the degree of the approximating polynomial is increased with setDegree.
+   Example
+     setDegree(8,S)
+  SeeAlso
+    hilbertSeries
+    "Creating Series"
+///
 
+
+doc ///
+  Key
+    (series,Function)
+  Headline
+    Create a series by giving the i^{th} polynomial approximation.
+  Usage
+    F = series f
+  Inputs
+    f:Function
+      which takes an integer i and returns a polynomial which equals F up to degree i
+  Outputs
+    F:Series
+  Description
+   Text
+     This method is useful if it is easy to compute an approximation to degree i, but
+     difficult to produce a closed formula for the i^{th} coefficient. However,
+     it is not very efficient, since very time the precision of the series is changed,
+     the entire polynomial approximation will be recomputed using f. To avoid this issue
+     for series whose coefficients should be cached for future use, see creating a @TO2((series,Ring,Function),"series from successive approximations")@.
+ 
+     In the following example a series for cos(x) is created: this method of construction
+     is appropriate because it is annoying to produce a function for the i^{th} coefficient,
+     but it is computationally easy to produce these coefficients.
+   Example
+     R = QQ[x];
+     costerm = j -> ((-1)^j * x^(2*j) / (2*j)!);
+     f = i -> sum(0..floor(i/2),(j -> costerm j));    
+     cosine = series f
+   Text
+     By default a new series has low precision, but the degree of the approximating polynomial is increased with setDegree. 
+     In this case, the old coefficients are recomputed every time the precision is increased.
+   Example
+     setDegree(8,cosine)
+   Text
+     We can do computations with the series, and then check the results up to any precision.
+     
+     Here is the series for sin x:
+   Example 
+     sinterm = j -> ((-1)^j * x^(2*j+1) / (2*j+1)!);
+     f = i -> sum(0..floor((i-1)/2),(j -> sinterm j));    
+     sine = series f
+   Text
+     And we can check an identity:
+   Example
+     shouldBeOne = cosine * cosine + sine * sine
+   Text
+     Even up to degree 100:
+   Example
+     setDegree(100,shouldBeOne)
+  SeeAlso
+    "Creating Series"
+///
+
+doc ///
+  Key
+    (series,RingElement)
+  Headline
+    Create a series from a rational function.
+  Usage
+    F = series r
+  Inputs
+    r:RingElement
+      a rational function in one variable
+  Outputs
+    F:Series
+  Description
+   Text
+    This is a straightforward constructor for a series from a rational function.
+   Example
+     R = ZZ/101[x];
+     F = series(1/(1-x))
+     G = series(1-x)
+     G == inverse F
+  Caveat
+     If the denominator of the rational function is not invertible even in the power series ring, an error will result.
+  SeeAlso
+    "Creating Series"
+///
+
+doc ///
+  Key
+    (series,RingElement,Function)
+  Headline
+    Create a series by giving the i^{th} coefficient.
+  Usage
+    F = series (v,f)
+  Inputs
+    v:RingElement
+      The variable to use in the power series
+    f:Function
+      which takes an integer i and returns the i^{th} coefficient (degree zero in the ring, please!)
+  Outputs
+    F:Series
+  Description
+   Text
+    This is a straightforward constructor and is useful when it is easy to write a closed form
+    for the i^{th} coefficient of the power series. If this is not easy, see @TO "Creating Series"@
+    for an exposition of other series creation methods.
+   Example
+     R = ZZ[x];
+     F = series(x,i -> i^2)
+     setDegree(10,F)
+  SeeAlso
+    "Creating Series"
+///
+
+doc ///
+  Key
+    (series,ZZ,RingElement)
+  Headline
+    Create a series of finite precision from a polynomial.
+  Usage
+    F = series(n,f)
+  Inputs
+    n:ZZ
+      The finite degree to which f is an accurate representation of the series
+    f:RingElement
+      a polynomial in one variable
+  Outputs
+    F:Series
+  Description
+   Text
+    All series are only computed up to a finite precision at any time, but if only
+    a finite precision is possible for the series, it can be constructed in this way.
+    Such a series can interact with normal series, but an error will be returned if
+    any resulting expression has its precision increased beyond the limit n.
+ 
+    Below we create the series F = 1+x to precision 3, and compute with the series G = 1/(1+x).
+   Example
+     R = ZZ/101[x];
+     F = series(3,1+x)
+     G = series(1/(1+x))
+   Text
+     Although G is known to possibly infinite precision, F*G is only equal to 1 up to a finite precision.
+   Example
+     F*G
+   Text
+     Trying to check whether F*G is 1 to higher precision would return an error.
+  SeeAlso
+    "Creating Series"
+///
+
+doc ///
+  Key
+    (series,Ring,Function)
+    (series,RingElement,ZZ,Function)
+  Headline
+    Create a series using an inductive definition.
+  Usage
+    F = series(R,f)
+    F = series(approx,n,f)
+  Inputs
+    R:Ring
+      The ring the new power series will live in
+    f:Function
+      a function that takes arguments (oldPolynomial,oldComputedDegree,newDegree) and returns a new polynomial.
+  Outputs
+    F:Series
+  Description
+   Text
+    All series are only computed up to a finite precision at any time, and internally
+    there is always a function like f involved, which takes an old approximation and
+    possibly uses it to find the new approximation.
+
+    This is somewhat complex: if your series has an easy formula for its general term,
+    or the terms will not be computationally hard to find, you should use a different
+    method from @TO "Creating Series"@.
+ 
+    Below we create the series whose i^{th} coefficient is the i^{th} Fibonacci number.
+   Example
+     R = ZZ[x];
+   Text
+     The function f in this case, then, takes an old polynomial and
+     adds on terms, starting with oldComputedDegree+1 and going up to newDegree.
+   Example  
+     f = (oldPolynomial,oldComputedDegree,newDegree) -> (
+          newPolynomial := oldPolynomial;
+	  for i from oldComputedDegree + 1 to newDegree do 
+	       newPolynomial = newPolynomial + x^i * sum flatten entries (coefficients part(i-2,i-1,newPolynomial))_1;
+          newPolynomial);
+   Text
+     We can create a series that doesn't know any of its terms, but only knows how to add
+     more terms to itself, using series(Ring,Function):
+   Example
+     F = series(R,f)     
+   Text
+     But of course using the Fibonacci series starting with no terms will never create any terms:
+   Example
+     setDegree(10,F)
+   Text
+     Instead if you have already computed some of the terms, you can use series(RingElement,ZZ,Function)
+     to give a first approximation and its precision. In the case of this Fibonacci series,
+     a first approximation is necessary to get the right series.
+   Example
+     G = series(1+x,1,f)
+     setDegree(10,G)     
+   Text
+     Of course you need to be careful: since old coefficient calculations are not re-checked,
+     different starting approximations can give subtly different resulting series. Here
+     we start with x^2 + x^3 and use the Fibonacci code for generating new series terms.
+   Example
+     H = series(x^2+x^3,3,f)
+     setDegree(10,H)
+  SeeAlso
+    "Creating Series"
+///
 
 --=========================================================================--
 --Jason's space
 
 doc ///
   Key
-    "Operations on Series",
-    (Series + Series),
-    (Series * Series),
-    (Series - Series),
-    (Series / Series)
+    "Operations on Series"
+    (symbol +,Series,Series)
+    (symbol *,Series,Series)
+    (symbol -,Series,Series)
+    (symbol /,Series,Series)
+    (symbol *,QQ,Series)
+    (symbol +,QQ,Series)
+    (symbol -,QQ,Series)
+    (symbol /,QQ,Series)
+    (symbol *,RingElement,Series)
+    (symbol +,RingElement,Series)
+    (symbol -,RingElement,Series)
+    (symbol /,RingElement,Series)
+    (symbol *,Series,QQ)
+    (symbol *,Series,RingElement)
+    (symbol *,Series,ZZ)
+    (symbol +,Series,QQ)
+    (symbol +,Series,RingElement)
+    (symbol +,Series,ZZ)
+    (symbol -,Series,QQ)
+    (symbol -,Series,RingElement)
+    (symbol -,Series,ZZ)
+    (symbol /,Series,QQ)
+    (symbol /,Series,RingElement)
+    (symbol /,Series,ZZ)
+    (symbol -,Series)
   Headline
     Operations on Series
   Description
@@ -547,7 +803,7 @@ doc ///
    Text
    	As expected, operations may be composed in any order.
    Example
-	A * (B - C) * inverse(A)/7 - 5
+	A * (B - C) * inverse(B)/7 - 5
    Text
         If we take two series with different precisions, then the sum, difference, product, quotient of them
 	has the minimum of the two precisions.
@@ -567,7 +823,8 @@ doc ///
 	C = A + B
 	setDegree(10,C)
 	setDegree(20,C)
-   SeeAlso
- ///
+  SeeAlso
+        setDegree
+///
 
 --=========================================================================--
