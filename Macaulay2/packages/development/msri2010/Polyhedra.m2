@@ -1728,7 +1728,7 @@ mixedVolume List := L -> (
      selectRecursion := (E1,edgeTuple,Elist,mV,Qsums,Qlist,k) -> (
 	  for e1 in E1 do (
 	       Elocal := Elist;
-	       if Elocal == {} then (print(edgeTuple|{e1}); mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et)))
+	       if Elocal == {} then mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et))
 	       else (
 		    Elocal = for i from 0 to #Elocal-1 list (
 			 HP := halfspaces(Qsums#k + Qlist#(k+i+1));
@@ -2483,7 +2483,7 @@ newMinkSum = (P,Q) -> (
 			 dQ := rank QfaceHS#0;
 			 PfaceHS = ((PfaceHS#0)^{0..dP-1},(PfaceHS#1)^{0..dP-1});
 			 QfaceHS = ((QfaceHS#0)^{0..dQ-1},(QfaceHS#1)^{0..dQ-1});
-			 kPQ := transpose mingens ker transpose(PfaceHS#0|| -QfaceHS#0); --print kPQ;
+			 kPQ := transpose mingens ker transpose(PfaceHS#0|| -QfaceHS#0); 
 			 if numRows kPQ != 1 then continue else (
 			      dPfaceHS := numRows PfaceHS#0;
 			      newHS := transpose (kPQ_{0..dPfaceHS-1} * PfaceHS#0 | kPQ*(PfaceHS#1||QfaceHS#1));
@@ -3062,8 +3062,8 @@ fMReplacement = (R,HS,HP) -> (
      HS = sort makePrimitiveMatrix HS;
      R = apply(numColumns R, i -> R_{i});
      R = select(R, r -> (r != 0 and (
-		    pos := positions(flatten entries((transpose HS) * r), e -> e == 0);-- print pos;
-		    #pos >= n-alpha-beta-1 and (n <= 3 or rank HS_pos >= n-alpha-beta-1))));--number(flatten entries((transpose HS) * r), e -> e == 0) >= n-alpha-beta-1));
+		    pos := positions(flatten entries((transpose HS) * r), e -> e == 0);
+		    #pos >= n-alpha-beta-1 and (n <= 3 or rank HS_pos >= n-alpha-beta-1))));
      if R == {} then R = map(ZZ^(numRows LS),ZZ^0,0) else R = sort matrix {unique apply(R, makePrimitiveMatrix)};
      LS = sort makePrimitiveMatrix LS;
      HP = sort makePrimitiveMatrix HP;
@@ -5025,7 +5025,7 @@ document {
      }
 
 document {
-     Key => {isPure, (isPure,Fan)},
+     Key => {isPure,(isPure,Fan)},
      Headline => "checks if a Fan is of pure dimension",
      Usage => " b = isPure F",
      Inputs => {
