@@ -438,7 +438,7 @@ doc ///
       without sacrificing the ability to calculate more terms at a later time.
       
       There are large documentation nodes included for @TO "Creating Series"@ and
-      @TO"Operations on Series"@.
+      @TO"Operations on Series"@. You may also be interested in how @TO2((symbol ==,Series,Series),"equality of series")@ is computed.
 ///
 
 doc ///
@@ -747,6 +747,128 @@ doc ///
     "Creating Series"
 ///
 
+doc ///
+  Key
+    dominantTerm
+    (dominantTerm,Series)
+  Headline
+    Find the dominant term of a series.
+  Usage
+    t = dominantTerm F
+  Inputs
+    F:Series
+  Outputs
+    t:RingElement
+      the lowest-degree nonzero term of the power series.
+///
+doc ///
+  Key
+    toPolynomial
+    (toPolynomial,Series)
+    (toPolynomial,ZZ,Series)
+  Headline
+    Return a polynomial approximation to a series.
+  Usage
+    f = toPolynomial f
+  Inputs
+    F:Series
+  Outputs
+    f:RingElement
+      a polynomial approximation to F
+  Description
+    Text
+      toPolynomial does not return the best approximation currently known: sometimes
+      calculations have been done in the past which are not displayed if the series
+      has had its precision artificially decreased with setDegree.
+      
+      Below a series is created, then its precision is reduced.
+    Example
+      R = ZZ[x];
+      F = series(1/(1-x))
+      F = setDegree(2,F)
+    Text
+      The resulting polynomial approximation is of the lower precision, as requested by the user.
+    Example
+      toPolynomial F
+    Text
+      Regardless of how much precision is currently being displayed or how much had been calculated,
+      the user can request a specific amount of precision using toPolynomial(ZZ,Series).
+    Example
+      toPolynomial(8,F)
+  SeeAlso
+    setDegree            
+///
+doc ///
+  Key
+    (symbol ==, Series, Series)
+  Headline
+    Equality testing for series
+  Description
+   Text
+    By analogy with floating-point numbers, equality of two objects is only tested up to the precision of the least precise object.
+
+    The number 1. has finite precision, so it will be "equal" to one of the numbers below but unequal to the other.
+   Example
+    1. == 1.0000000000000007
+    1. == 1.00000000000000007
+   Text
+    Series work the same way. The series 1/(1-x) has finite precision 5 at first, so it will be "equal" to one of the series below but not the other.
+   Example
+    R = ZZ[x]
+    series(1/(1-x))
+    series(1/(1-x)) == series(1 + x +x^2 + x^3 + x^4 + 100*x^5)
+    series(1/(1-x)) == series(1 + x +x^2 + x^3 + x^4 + x^5     + 100*x^6)
+///
+doc ///
+  Key
+    setDegree
+    (setDegree,ZZ,Series)
+    [series,Degree]
+  Headline
+    Set the computed degree of a series
+  Description
+   Text
+    All series are only computed to finite precision, but almost every series remembers
+    how to calculate itself to higher precision. To see which types of series can have their
+    precision increased, look at @TO "Creating Series"@. This precision change is accomplished
+    with either the setDegree function or the Degree option when creating the series. 
+   Example
+    R = ZZ[x];
+   Text
+    By default, a power series is computed to degree 5.
+   Example
+    F = series(1/(1-x))
+   Text
+    The Degree option to every series constructor allows the initial computed degree to be anything.
+    This can be used either to get more computation or to prevent computation if the coefficients are difficult to find.
+   Example
+    G = series(1/(1-x),Degree => 2)
+   Text
+    Any series can have its degree increased or decreased using the setDegree command.
+   Example
+    G = setDegree(10,G)
+    G = setDegree(1,G)
+   Text
+    
+    If the precision of a series is artificially decreased, the computations are not discarded:
+    instead they are cached, and coefficients are only recomputed if they are new.
+   
+    Here is a series whose coefficients are difficult to compute since they involve needless factoring:
+   Example
+    H = series(x,i -> (value factor(10^i+1)))
+   Text
+    So it takes a long time to increase its precision to 25.
+   Example
+    time H = setDegree(25,H);
+   Text
+    If we lower its precision and then raise it again, it takes no time at all: the old calculations are stored.
+   Example
+    H = setDegree(2,H)
+    time H = setDegree(25,H);
+  SeeAlso
+   "Creating Series"  
+///
+
 --=========================================================================--
 --Jason's space
 
@@ -778,6 +900,10 @@ doc ///
     (symbol /,Series,RingElement)
     (symbol /,Series,ZZ)
     (symbol -,Series)
+    (symbol *,ZZ,Series)
+    (symbol +,ZZ,Series)
+    (symbol -,ZZ,Series)
+    (symbol /,ZZ,Series)
   Headline
     Operations on Series
   Description
