@@ -809,12 +809,17 @@ doc ///
 
     The number 1. has finite precision, so it will be "equal" to one of the numbers below but unequal to the other.
    Example
+    1.
     1. == 1.0000000000000007
     1. == 1.00000000000000007
    Text
-    Series work the same way. The series 1/(1-x) has finite precision 5 at first, so it will be "equal" to one of the series below but not the other.
+
+    Series work the same way:
    Example
     R = ZZ[x]
+   Text  
+    The series 1/(1-x) has finite precision 5 at first, so it will be "equal" to one of the series below but not the other.
+   Example
     series(1/(1-x))
     series(1/(1-x)) == series(1 + x +x^2 + x^3 + x^4 + 100*x^5)
     series(1/(1-x)) == series(1 + x +x^2 + x^3 + x^4 + x^5     + 100*x^6)
