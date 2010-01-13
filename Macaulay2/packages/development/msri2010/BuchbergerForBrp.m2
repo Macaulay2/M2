@@ -39,6 +39,7 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 
 -- wrapper script for debugging purposes, creates a Groebner basis from the
 -- input list - all with Brps
+n = 10
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
@@ -63,9 +64,34 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
 minimalGbBrp = method()
 minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
   -- Todo remove extra looping, we want to scan over the "changing" values F
-  scan( values F, f -> scan( pairs F, (gKey, g) -> if f != g and isReducible( g, f) then remove(F,gKey) ));
+  notFinished = true;  
+  while ( notFinished ) do (
+    notFinished = false;
+    resetF = false;
+    f = values F;
+    scan( values F, f -> (
+      scan( pairs F, (gKey, g) -> (
+        if f != g and isReducible( g, f) then (
+          
+          remove(F,gKey); 
+          resetF = true
+        )
+        )
+      ) ;
+      if resetF then (
+        notFinished = true;
+        break
+      )
+     )
+    );
+  );
   F
+--for sth like this it doesn work
+--  F = {x+y, x+z}
+--  scan( values F, f -> scan( pairs F, (gKey, g) -> if f != g and isReducible( g, f) then remove(F,gKey) ));
+--  F
 )
+
 
 --Reduce lower terms of the first polynomial with the leading term of the second
 reduceLtBrp = method()
@@ -286,11 +312,11 @@ Outputs
 ///
 
 TEST ///
+
   assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
   assert(  makePairsFromLists( {1,2,3}, {10,100,1000}) == {(1, 10), (1, 100), (1, 1000), (2, 10), (2, 100), (2, 1000), (3, 10), (3, 100), (3, 1000)})
   assert ( makePairsFromLists( {-1,-3,-2}, {100, 10}) == {(-1, 100), (-1, 10), (-3, 100), (-3, 10), (-2, 100), (-2, 10)} )
   assert ( makePairsFromLists ( {0,1,2}, {22} ) == {(0, 22), (1, 22), (2, 22)})
-  
   R = ZZ[x,y,z]
   myPoly1 = convert( x*y + z)
   myPoly2 = convert( x )
@@ -313,7 +339,6 @@ TEST ///
   assert (S == convert( x*z+z) ) 
   S = SPolynomial((4,5), F, numgens R)
   assert (S == convert( x*y + x + y*z) ) 
-
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
@@ -328,7 +353,6 @@ TEST ///
   assert ( updatePairs( ll, F, numgens R) ==  {(-1, 1), (-1, 2), (-1, 4), (-1, 5)} )
   lll = makePairsFromLists( keys F, {-3} )
   assert ( updatePairs( lll, F, numgens R) == {(-3, 3), (-3, 4)} )
-  
   R = ZZ/2[x,y,z];
   F = new gbComputation from { 0 => convert x }
   assert ( first values gbBrp(F,numgens R) == new Brp from {{1, 0, 0}} )
@@ -343,13 +367,9 @@ TEST ///
   R = ZZ/2[x,y,z];
   F = new gbComputation from { 0 => convert (x*y+z) }
   assert(flatten flatten values gbBrp(F, numgens R) == {1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1})
-
-
 -- R = ZZ/2[x,y,z]/ideal(x*y+z)
 -- i11 : gens gb ideal(x*y+z)
-
 -- o11 = | yz+z xz+z xy+z |
-
   myPoly1 = new Brp from {{1,0,0}};
   myPoly2 = new Brp from {{1,0,1}};
   myPoly3 = new Brp from {{1,1,0}, {0,0,1}};
@@ -369,6 +389,8 @@ TEST ///
             h^2+h,
             i^2+i,
             j^2+j)
+  J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f, g+f, a+d, j+i+d*c)
+  J = J + I
 
   R = ZZ/2[a..j, MonomialOrder=>Lex]/(a^2+a,
                                     b^2+b,
@@ -381,7 +403,7 @@ TEST ///
                                     i^2+i,
                                     j^2+j)
   J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f, g+f, a+d, j+i+d*c)
-  J = J + I
+  gb J
   gens gb J
   --g+hj+i f+hj+i ei+ej di+dj+i+j c+i+j bi+bj+b+de+d+i+j be bd+b a+d 
   
@@ -395,7 +417,8 @@ TEST ///
           }
   gbBasis = gbBrp( F, numgens R)
   sort apply (values gbBasis, poly -> convert(poly,R) )
-  sort {g+h*j+i,f+h*j+i,e*i+e*j,d*i+d*j+i+j,c+i+j,b*i+b*j+b+d*e+d+i+j,b*e,b*d+b,a+d}
+  --sort {g+h*j+i,f+h*j+i,e*i+e*j,d*i+d*j+i+j,c+i+j,b*i+b*j+b+d*e+d+i+j,b*e,b*d+b,a+d}
+  --ll = {g + h*j + i, e*i + e*j, d*i + d*j + i + j, c + i + j, b*i + b*j + b + d*e + d + i +  j, b*e, b*d + b, a + d}
 
   R = ZZ/2[x,y,z,w]
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
@@ -444,7 +467,6 @@ TEST ///
   a = convert(x*y + y*z +z)
   b= convert(y*z +z)
   assert( reduceLtBrp(a,b)== new Brp from {{1, 1, 0}})
-
   R = ZZ/2[x,y,z]
   a = convert(x*y + y*z + z)
   b = convert(y*z + z)
@@ -460,7 +482,6 @@ TEST ///
   F = new gbComputation from {0=>a, 1=>b, 2=>c}
   reduceGbBrp(F)
   assert( sort apply( values F, i -> convert(i,R) ) == sort{x*y, y*z, w} )
-
 
 ///
   
