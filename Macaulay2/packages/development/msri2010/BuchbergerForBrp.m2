@@ -68,7 +68,6 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
   while ( notFinished ) do (
     notFinished = false;
     resetF = false;
-    f = values F;
     scan( values F, f -> (
       scan( pairs F, (gKey, g) -> (
         if f != g and isReducible( g, f) then (
@@ -407,7 +406,7 @@ TEST ///
   gens gb J
   --g+hj+i f+hj+i ei+ej di+dj+i+j c+i+j bi+bj+b+de+d+i+j be bd+b a+d 
   
-  R = ZZ/2[a..j]
+  R := ZZ/2[a..j]
   F = new gbComputation from { 0=> convert(a*b*c*d*e),
           1=> convert( a+b*c+d*e+a+b+c+d),
           2=> convert( j*h+i+f),
@@ -416,8 +415,7 @@ TEST ///
           5=> convert( j+i+d*c)
           }
   gbBasis = gbBrp( F, numgens R)
-  sort apply (values gbBasis, poly -> convert(poly,R) )
-  --sort {g+h*j+i,f+h*j+i,e*i+e*j,d*i+d*j+i+j,c+i+j,b*i+b*j+b+d*e+d+i+j,b*e,b*d+b,a+d}
+  assert( sort apply (values gbBasis, poly -> convert(poly,R) ) == sort {g+h*j+i,f+h*j+i,e*i+e*j,d*i+d*j+i+j,c+i+j,b*i+b*j+b+d*e+d+i+j,b*e,b*d+b,a+d})
   --ll = {g + h*j + i, e*i + e*j, d*i + d*j + i + j, c + i + j, b*i + b*j + b + d*e + d + i +  j, b*e, b*d + b, a + d}
 
   R = ZZ/2[x,y,z,w]
