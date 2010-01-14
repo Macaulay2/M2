@@ -9,6 +9,7 @@ isInMultiplierIdeal(RingElement, Ideal, QQ) := (g,I,c) -> (
      m := ceiling(c+l); -- Need c < lct(I) + m
      if liftable(c+l,ZZ) then m = m + 1; 
      roots := bFunctionRoots generalB(I_*, g, Exponent=>m);
+	--Be careful when adding a strategy option! When m=Exponent option is used in generalBFunction, than we need c<(lct(I)+m)
      -c > max roots
      )
 
@@ -106,7 +107,7 @@ hasRationalSing(List) := F ->(
      b := generalB(F,g);
      b = sub(b, {S_0=>-S_0});
      bRoots := bFunctionRoots b;
-     LCT: = min bRoots;
+     LCT := min bRoots;
      if LCT != r then return false --else if 
 		-- need to check that r has multiplicity one as a root
      )
