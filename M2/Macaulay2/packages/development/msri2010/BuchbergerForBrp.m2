@@ -5,7 +5,7 @@ newPackage(
     	Version => "0.0", 
     	Date => "January 11,2010",
     	Authors => {
-	     {Name => "Franziska Hinkelmann", Email => "fhinkel@vt.edu"}
+	     {Name => "Franziska Hinkelmann, Elizabeth Arnold, Samuel S", Email => "fhinkel@vt.edu"}
 	     },
     	HomePage => "http://www.math.vt.edu/people/fhinkel",
     	Headline => "compute a Boolean Groebner Basis using a bit-wise representation",
