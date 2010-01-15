@@ -28,7 +28,7 @@ static listentry * blocklist[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 #ifdef DEBUG
 #define RECORD_COUNT(p) (*((int*)(p)+2) = trapcount)
-#define HEADER_WORDS 3
+#define HEADER_WORDS0 3
 #define GOOD_MAGIC 0xbeef
 #define DEAD_MAGIC 0xdead
 #define MARK_GOOD(p) (*((int*)(p)+1) = GOOD_MAGIC, trapchk(p), RECORD_COUNT(p))
@@ -36,12 +36,14 @@ static listentry * blocklist[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 #define CHECK_GOOD(p) (*((int*)(p)+1) != GOOD_MAGIC ? badBlock() : 0, trapchk(p))
 #define CHECK_DEAD(p) (*((int*)(p)+1) != DEAD_MAGIC ? badBlock() : 0, trapchk(p))
 #else
-#define HEADER_WORDS 1
+#define HEADER_WORDS0 1
 #define MARK_GOOD(p)
 #define MARK_DEAD(p)
 #define CHECK_GOOD(p)
 #define CHECK_DEAD(p)
 #endif
+
+#define HEADER_WORDS (((HEADER_WORDS0+1)/2)*2)
 
 #define HEADER_BYTES (HEADER_WORDS * sizeof(int))
 
