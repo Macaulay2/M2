@@ -104,12 +104,14 @@ hasRationalSing = method()
 hasRationalSing(List) := F ->(
      r := codim(ideal F);
      if r != #F then error "regular sequence expected";
-     b := generalB(F,g);
-     b = sub(b, {S_0=>-S_0});
+     b := generalB F;
+     S := (ring b)_0;
+     b = sub(b, {S=>-S});
      bRoots := bFunctionRoots b;
      LCT := min bRoots;
-     if LCT != r then return false --else if 
-		-- need to check that r has multiplicity one as a root
+     return ( 
+	  LCT == r and LCT < min bFunctionRoots(b//(S-LCT)) 
+	  ) 
      )
    
 -- EXPERIMENTAL CODE BELOW --
