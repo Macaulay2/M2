@@ -2,6 +2,7 @@ GNUmakefile
 Makefile.configfiles
 check-configure/Makefile
 include/config.Makefile
+include/M2/synchronization.h
 include/configuration
 distributions/Makefile
 distributions/install/Makefile

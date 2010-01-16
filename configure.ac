@@ -657,8 +657,50 @@ AC_LANG(C++)
 AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
-AC_SUBST(BUILTLIBS,)
+AC_MSG_CHECKING(for the presence of synchronization builtins)
+AC_SUBST(SYNC_MACROS,)
+AC_LINK_IFELSE([
+    #include <stdint.h>
+    main() { uint64_t x; __sync_lock_test_and_set(&x,1); __sync_lock_release(&x); }
+    ],
+    SYNC_MACROS="
+    #define SYNC_T uint64_t
+    #define ACQUIRE(x) __sync_lock_test_and_set(&x,1)
+    #define RELEASE(x) __sync_lock_release(&x)
+    ")
+AC_LINK_IFELSE([
+    #include <stdint.h>
+    main() { uint32_t x; __sync_lock_test_and_set(&x,1); __sync_lock_release(&x); }
+    ],
+    SYNC_MACROS="
+    #define SYNC_T uint32_t
+    #define ACQUIRE(x) __sync_lock_test_and_set(&x,1)
+    #define RELEASE(x) __sync_lock_release(&x)
+    ")
+AC_LINK_IFELSE([
+    #include <stdint.h>
+    main() { uint16_t x; __sync_lock_test_and_set(&x,1); __sync_lock_release(&x); }
+    ],
+    SYNC_MACROS="
+    #define SYNC_T uint16_t
+    #define ACQUIRE(x) __sync_lock_test_and_set(&x,1)
+    #define RELEASE(x) __sync_lock_release(&x)
+    ")
+AC_LINK_IFELSE([
+    #include <stdint.h>
+    main() { uint8_t x; __sync_lock_test_and_set(&x,1); __sync_lock_release(&x); }
+    ],
+    SYNC_MACROS="
+    #define SYNC_T uint8_t
+    #define ACQUIRE(x) __sync_lock_test_and_set(&x,1)
+    #define RELEASE(x) __sync_lock_release(&x)
+    ")
+if test "$SYNC_MACROS"
+then AC_MSG_RESULT(found)
+else AC_MSG_RESULT(none found)
+fi
 
+AC_SUBST(BUILTLIBS,)
 # the list LIBLIST is the list of libraries that might be used and linked into M2
 # the list PROGLIST is the list of programs and libraries for them that are distributed with M2
 #     initially, we offer no option for not compiling some of them
