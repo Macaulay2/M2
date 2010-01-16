@@ -2465,16 +2465,30 @@ newMinkSum = (P,Q) -> (
      LQ := reverse apply(dim Q + 1, k -> facePairBuilder(k,Q));
      LQ = LQ | toList(max(0,d-#LQ):{});
      HS := unique flatten apply(d, i -> (
-	       if i == 0 then for f in LQ#(d-1) list (
-		    if all(flatten entries((f#1#0#0)*(rays P)), e -> e <= 0) then (
+	       if i == 0 then flatten for f in LQ#(d-1) list (
+		    if f#1 == {} then (
+			 entP := flatten entries((HPQ#0)*(rays P));
+			 maxP := flatten entries((HPQ#0)*(vertices P));
+			 if all(entP, e -> e == 0) then {(HPQ#0,matrix{{max maxP}} + HPQ#1),(-HPQ#0,-(matrix{{min maxP}} + HPQ#1))}
+			 else if all(entP, e -> e <= 0) then {(HPQ#0,matrix{{max maxP}} + HPQ#1)} 
+			 else if all(entP, e -> e >= 0) then {(-HPQ#0,-(matrix{{min maxP}} + HPQ#1))}
+			 else continue)
+		    else if all(flatten entries((f#1#0#0)*(rays P)), e -> e <= 0) then (
 			 mP := max flatten entries((f#1#0#0)*(vertices P));
 			 mP = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mP}}));
-			 (submatrix'(mP,{n}),mP_{n})) else continue)
-	       else if i == d-1 then for f in LP#(d-1) list (
-		    if all(flatten entries((f#1#0#0)*(rays Q)), e -> e <= 0) then (
+			 {(submatrix'(mP,{n}),mP_{n})}) else continue)
+	       else if i == d-1 then flatten for f in LP#(d-1) list (
+		    if f#1 == {} then (
+			 entQ := flatten entries((HPP#0)*(rays Q));
+			 maxQ := flatten entries((HPP#0)*(vertices Q));
+			 if all(entQ, e -> e == 0) then {(HPP#0,matrix{{max maxQ}} + HPP#1),(-HPP#0,-(matrix{{min maxQ}} + HPP#1))}
+			 else if all(entQ, e -> e <= 0) then {(HPP#0,matrix{{max maxQ}} + HPP#1)} 
+			 else if all(entQ, e -> e >= 0) then {(-HPP#0,-(matrix{{min maxQ}} + HPP#1))}
+			 else continue)
+		    else if all(flatten entries((f#1#0#0)*(rays Q)), e -> e <= 0) then (
 			 mQ := max flatten entries((f#1#0#0)*(vertices Q));
 			 mQ = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mQ}}));
-			 (submatrix'(mQ,{n}),mQ_{n})) else continue)
+			 {(submatrix'(mQ,{n}),mQ_{n})}) else continue)
 	       else flatten for Pface in LP#i list (
 		    for Qface in LQ#(d-i-1) list (
 			 PfaceHS := if Pface#1 != {} then (matrix apply(Pface#1, f -> {f#0}) || HPP#0,matrix apply(Pface#1, f -> {f#1}) || HPP#1) else HPP;
