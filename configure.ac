@@ -121,6 +121,7 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
 	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
 	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
 	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
+	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
 	 "") ISSUE_FLAVOR=unknown ;;
      esac
      case $ISSUE_RELEASE in
