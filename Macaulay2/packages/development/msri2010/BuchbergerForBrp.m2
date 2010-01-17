@@ -192,7 +192,7 @@ reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
 reduceOneStep(Brp, gbComputation) := Brp => (f,G) -> (
   if f != 0 then (
-    scan( (values G), p -> if isReducible(f, p) then (break f = reduceOneStep(f,p)));
+    scan( (values G), poly -> if isReducible(f, poly) then (break f = reduceOneStep(f,poly)));
     f
   ) else new Brp from {} 
 )
@@ -391,22 +391,7 @@ TEST ///
   J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f, g+f, a+d, j+i+d*c)
   J = J + I
 
-  R = ZZ/2[a..j, MonomialOrder=>Lex]/(a^2+a,
-                                    b^2+b,
-                                    c^2+c,
-                                    d^2+d,
-                                    e^2+e,
-                                    f^2+f,
-                                    g^2+g,
-                                    h^2+h,
-                                    i^2+i,
-                                    j^2+j)
-  J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f, g+f, a+d, j+i+d*c)
-  gb J
-  gens gb J
-  --g+hj+i f+hj+i ei+ej di+dj+i+j c+i+j bi+bj+b+de+d+i+j be bd+b a+d 
-  
-  R := ZZ/2[a..j]
+  R = ZZ/2[a..j, MonomialOrder=>Lex]
   F = new gbComputation from { 0=> convert(a*b*c*d*e),
           1=> convert( a+b*c+d*e+a+b+c+d),
           2=> convert( j*h+i+f),
@@ -415,7 +400,62 @@ TEST ///
           5=> convert( j+i+d*c)
           }
   gbBasis = gbBrp( F, numgens R)
-  assert( sort apply (values gbBasis, poly -> convert(poly,R) ) == sort {g+h*j+i,f+h*j+i,e*i+e*j,d*i+d*j+i+j,c+i+j,b*i+b*j+b+d*e+d+i+j,b*e,b*d+b,a+d})
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  QR = R/(a^2+a,
+          b^2+b,
+          c^2+c,
+          d^2+d,
+          e^2+e,
+          f^2+f,
+          g^2+g,
+          h^2+h,
+          i^2+i,
+          j^2+j)
+  J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f, g+f, a+d, j+i+d*c)
+  M = apply(flatten entries gens gb J, i-> lift(i,R))
+  assert(N == M)
+
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  F = new gbComputation from { 0=> convert(a*b*c*d*e),
+          1=> convert( a+b*c+d*e+a+b+c+d),
+          2=> convert( j*h+i+f),
+          3=> convert( g+f),
+          4=> convert( a+d),
+          5=> convert( j+i+d*c),
+          6=> convert( r+s+t),
+          7=> convert( m*n+o*p),
+          8=> convert( t+a),
+          9=> convert( b*s+q+p*n*m+i),
+          10=> convert( b*s+q+p+h),
+          11=> convert( b*s+q*n*m+i),
+          12=> convert( b*k+q+l*n*m+i)
+          }
+  time gbBasis = gbBrp( F, numgens R)
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  QR = R/(a^2+a,
+          b^2+b,
+          c^2+c,
+          d^2+d,
+          e^2+e,
+          f^2+f,
+          g^2+g,
+          h^2+h,
+          i^2+i,
+          j^2+j,
+          k^2+k,
+          l^2+l,
+          m^2+m,
+          n^2+n,
+          o^2+o,
+          p^2+p,
+          q^2+q,
+          r^2+r,
+          s^2+s,
+          t^2+t)
+  J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i)
+  time M = apply(flatten entries gens gb J, i-> lift(i,R))
+  assert(N == M)
+
 
   R = ZZ/2[x,y,z,w]
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
