@@ -49,7 +49,6 @@ Brp * Brp := Brp => (a, m) -> (
 -- return the leading term of a polynomials, for now we are restricted to lex
 leading = method()
 leading (Brp) := Brp => p -> (
-  p = rsort p;
   new Brp from {first p}
 )
 
@@ -60,25 +59,31 @@ removeDups (Brp) := Brp => p -> new Brp from rsort keys select(tally p, odd)
 
 -- bitwise OR for 2 monomials
 brpOR = method()
-brpOR (Brp, Brp) := Brp => (a,b) -> 
+brpOR (Brp, Brp) := Brp => (a,b) -> (
+  assert( #a == 1);
+  assert( #b == 1);
   apply (#a, i -> max (a#i, b#0#i) )
-brpOR (List, Brp) := Brp => (a,b) -> 
+)
+brpOR (List, Brp) := Brp => (a,b) -> (
+  assert( #b == 1);
   apply (#a, i -> max (a#i, b#0#i) )
+)
 
 --  is monomial a divisible by monomial b
 isDivisible = method()
-isDivisible (Brp, Brp) := Boolean => (a,b) ->
-  min flatten (a - b) > -1
+isDivisible (Brp, Brp) := Boolean => (a,b) -> (
+  assert (#a == 1);
+  assert (#b == 1);
+  all(flatten (a - b), i -> i > -1)
+)
   
 
 -- check if two monomials are relatively prime
 -- do a bitwise AND and check that they are all 0
 isRelativelyPrime = method()
-isRelativelyPrime (Brp, Brp) := Boolean => (f,g) -> (
-  ret = true;
-  scan( first f, first g, (i,j) -> (if min(i,j) == 1 then ( ret = false; break)));
-  ret
-)
+isRelativelyPrime (Brp, Brp) := Boolean => (f,g) -> 
+  all( first f, first g, (i,j) -> min(i,j) == 0 )
+
 
 -- divide monomial a by monomial b
 divide = method()
