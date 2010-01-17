@@ -2475,8 +2475,8 @@ newMinkSum = (P,Q) -> (
 			 else continue)
 		    else if all(flatten entries((f#1#0#0)*(rays P)), e -> e <= 0) then (
 			 mP := max flatten entries((f#1#0#0)*(vertices P));
-			 mP = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mP}}));
-			 {(submatrix'(mP,{n}),mP_{n})}) else continue)
+			 --mP = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mP}}));
+			 {(f#1#0#0,f#1#0#1 + matrix{{mP}})}) else continue)
 	       else if i == d-1 then flatten for f in LP#(d-1) list (
 		    if f#1 == {} then (
 			 entQ := flatten entries((HPP#0)*(rays Q));
@@ -2487,8 +2487,8 @@ newMinkSum = (P,Q) -> (
 			 else continue)
 		    else if all(flatten entries((f#1#0#0)*(rays Q)), e -> e <= 0) then (
 			 mQ := max flatten entries((f#1#0#0)*(vertices Q));
-			 mQ = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mQ}}));
-			 {(submatrix'(mQ,{n}),mQ_{n})}) else continue)
+			 --mQ = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mQ}}));
+			 {(f#1#0#0,f#1#0#1 + matrix{{mQ}})}) else continue)
 	       else flatten for Pface in LP#i list (
 		    for Qface in LQ#(d-i-1) list (
 			 PfaceHS := if Pface#1 != {} then (matrix apply(Pface#1, f -> {f#0}) || HPP#0,matrix apply(Pface#1, f -> {f#1}) || HPP#1) else HPP;
@@ -2500,8 +2500,8 @@ newMinkSum = (P,Q) -> (
 			 kPQ := transpose mingens ker transpose(PfaceHS#0|| -QfaceHS#0); 
 			 if numRows kPQ != 1 then continue else (
 			      dPfaceHS := numRows PfaceHS#0;
-			      newHS := transpose (kPQ_{0..dPfaceHS-1} * PfaceHS#0 | kPQ*(PfaceHS#1||QfaceHS#1));
-			      newHS = transpose makePrimitiveMatrix newHS;
+			      newHS := kPQ_{0..dPfaceHS-1} * PfaceHS#0 | kPQ*(PfaceHS#1||QfaceHS#1);
+			      --newHS = transpose makePrimitiveMatrix newHS;
 			      newHS = (submatrix'(newHS,{n}),newHS_{n});
 			      checkValueP := (newHS#0 *(Pface#0#0#0))_(0,0);
 			      checkValueQ := (newHS#0 *(Qface#0#0#0))_(0,0);
