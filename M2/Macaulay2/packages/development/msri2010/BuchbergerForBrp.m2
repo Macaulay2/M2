@@ -26,7 +26,6 @@ exportMutable {
       reduceGbBrp,
       reduceLtBrp,
       reduceOneStep, 
-      reduceOneStepSingle, 
       SPolynomial, 
       updatePairs,
       gbBrp
@@ -51,7 +50,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
     S := SPolynomial(pair, F, n);
-    time reducedS := reduce (S,F);
+    reducedS := reduce (S,F);
     if reducedS != 0 then (
       -- add reducedS to intermediate basis
       listOfIndexPairs = listOfIndexPairs | toList((-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) ) ;
@@ -177,8 +176,8 @@ reduce (Brp, Brp) := Brp => (f,g) -> (
 )
 
 -- Reduce the leading term of a polynomial one step using a polynomial
-reduceOneStepSingle = method()
-reduceOneStepSingle(Brp, Brp) := Brp => (f,g) -> (
+reduceOneStep = method()
+reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
   if f != 0 then (
     --assert( isReducible(f, g));
     leadingLcm :=  lcmBrps(leading(f), leading(g));
@@ -188,10 +187,9 @@ reduceOneStepSingle(Brp, Brp) := Brp => (f,g) -> (
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
-reduceOneStep = method()
 reduceOneStep(Brp, gbComputation) := Brp => (f,G) -> (
   if f != 0 then (
-    scan( (values G), poly -> if isReducible(f, poly) then (break (f = reduceOneStepSingle(f,poly))));
+    scan( (values G), g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
     f
   ) else new Brp from {} 
 )
@@ -337,7 +335,7 @@ TEST ///
   assert (S == convert( x*z+z) ) 
   S = SPolynomial((4,5), F, numgens R)
   assert (S == convert( x*y + x + y*z) ) 
-  assert ( reduceOneStepSingle( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
+  assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
   assert ( reduceOneStep( convert(y+z), F) == convert( y+z) )
@@ -555,7 +553,6 @@ reduce= profile  reduce;
 reduceGbBrp= profile  reduceGbBrp;
 reduceLtBrp= profile  reduceLtBrp;
 reduceOneStep= profile  reduceOneStep; 
-reduceOneStepSingle= profile  reduceOneStepSingle; 
 SPolynomial= profile  SPolynomial; 
 updatePairs= profile  updatePairs;
  
@@ -574,5 +571,5 @@ updatePairs= profile  updatePairs;
           11=> convert( b*s+q*n*m+i),
           12=> convert( b*k+q+l*n*m+i)
           }
-  time gbBasis = gbBrp( F, numgens R)
+  timing ( gbBrp( F, numgens R) )
 profileSummary
