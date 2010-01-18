@@ -54,11 +54,11 @@ faceDelete (SimplicialComplex, RingElement) := (S,F) -> (
 -- Uses definition 2.1 in [PB].
 iskDecomposable = method(TypicalValue => Boolean);
 iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
+    -- negatives in the h-Vector imply not shellable for pure complexes
+    if isPure S and any(hVector S, i -> i<0) then return {};
+
     -- k must be nonnegative!    
     if k < 0 then return false;
-
-    -- negatives in the h-Vector imply not k-decomposable
-    if any(hVector S, i -> i<0) then return false;
 
     -- base case: simplexes are k-decomposable for all nonnegative k
     if isSimplex S then return true;
@@ -159,8 +159,8 @@ hVector (SimplicialComplex) := (S) -> (
 -- Uses definition III.2.1 in [St].
 shellingOrder = method(TypicalValue => List, Options => {Strategy => "Recursive"});
 shellingOrder (SimplicialComplex) := options -> (S) -> (
-    -- negatives in the h-Vector imply not shellable
-    --if any(hVector S, i -> i<0) then return {};
+    -- negatives in the h-Vector imply not shellable for pure complexes
+    if isPure S and any(hVector S, i -> i<0) then return {};
 
     if options.Strategy == "Naive" then (
         -- NAIVE: simply look at all facet permutations
