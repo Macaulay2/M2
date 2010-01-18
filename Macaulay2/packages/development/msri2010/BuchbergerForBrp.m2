@@ -17,8 +17,8 @@ needsPackage "BitwiseRepresentationPolynomials"
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {makePairsFromLists, 
-      gbBrp, 
+exportMutable {
+      makePairsFromLists, 
       gbComputation,
       isReducible,
       minimalGbBrp,
@@ -26,10 +26,13 @@ export {makePairsFromLists,
       reduceGbBrp,
       reduceLtBrp,
       reduceOneStep, 
+      reduceOneStepSingle, 
       SPolynomial, 
-      updatePairs
+      updatePairs,
+      gbBrp
       }
-exportMutable {}
+export {
+      }
 
 -- keys should start with 0
 gbComputation = new Type of MutableHashTable; 
@@ -48,7 +51,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
     S := SPolynomial(pair, F, n);
-    reducedS := reduce (S,F);
+    time reducedS := reduce (S,F);
     if reducedS != 0 then (
       -- add reducedS to intermediate basis
       listOfIndexPairs = listOfIndexPairs | toList((-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) ) ;
@@ -56,8 +59,8 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
   );
-  F = minimalGbBrp(F);
-  reduceGbBrp(F)
+  time F = minimalGbBrp(F);
+  time reduceGbBrp(F)
 )
 
 -- delete elements where the leading term is divisible by another leading term
@@ -71,7 +74,6 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
     scan( values F, f -> (
       scan( pairs F, (gKey, g) -> (
         if f != g and isReducible( g, f) then (
-          
           remove(F,gKey); 
           resetF = true
         )
@@ -85,19 +87,15 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
     );
   );
   F
---for sth like this it doesn work
---  F = {x+y, x+z}
---  scan( values F, f -> scan( pairs F, (gKey, g) -> if f != g and isReducible( g, f) then remove(F,gKey) ));
---  F
 )
 
 
 --Reduce lower terms of the first polynomial with the leading term of the second
 reduceLtBrp = method()
 reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
-  while ( l := select(f, m ->  isReducible(new Brp from {m}, leading g) ); #l != 0) do (
-      assert isDivisible( new Brp from {first l}, leading g );
-   	  f = f + g*divide( new Brp from {first l}, leading g)
+  while ( p := scan(f, m ->  (m = new Brp from {m}; if isReducible(m, leading g) then break m)); instance(p,Brp) ) do (
+      --assert isDivisible( p, leading g);
+   	  f = f + g*divide( p, leading g)
   );
   f
 )
@@ -179,10 +177,10 @@ reduce (Brp, Brp) := Brp => (f,g) -> (
 )
 
 -- Reduce the leading term of a polynomial one step using a polynomial
-reduceOneStep = method()
-reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
+reduceOneStepSingle = method()
+reduceOneStepSingle(Brp, Brp) := Brp => (f,g) -> (
   if f != 0 then (
-    assert( isReducible(f, g));
+    --assert( isReducible(f, g));
     leadingLcm :=  lcmBrps(leading(f), leading(g));
     f + g * divide(leadingLcm, leading g) 
   ) else new Brp from {} -- TODO make 0 automatically turn into 0
@@ -190,9 +188,10 @@ reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
+reduceOneStep = method()
 reduceOneStep(Brp, gbComputation) := Brp => (f,G) -> (
   if f != 0 then (
-    scan( (values G), poly -> if isReducible(f, poly) then (break f = reduceOneStep(f,poly)));
+    scan( (values G), poly -> if isReducible(f, poly) then (break (f = reduceOneStepSingle(f,poly))));
     f
   ) else new Brp from {} 
 )
@@ -277,7 +276,7 @@ Headline
 doc ///
 Key
   (reduceOneStep,Brp,gbComputation)
-  (reduceOneStep,Brp,Brp)
+  --(reduceOneStep,Brp,Brp)
   reduceOneStep
 Headline
   Reduce the leading term of a polynomial one step using a polynomial
@@ -338,7 +337,7 @@ TEST ///
   assert (S == convert( x*z+z) ) 
   S = SPolynomial((4,5), F, numgens R)
   assert (S == convert( x*y + x + y*z) ) 
-  assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
+  assert ( reduceOneStepSingle( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
   assert ( reduceOneStep( convert(y+z), F) == convert( y+z) )
@@ -531,3 +530,49 @@ restart
 installPackage "BuchbergerForBrp"
 installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
 check BuchbergerForBrp
+
+  
+  R = ZZ/2[a..j, MonomialOrder=>Lex]
+  F = new gbComputation from { 0=> convert(a*b*c*d*e),
+          1=> convert( a+b*c+d*e+a+b+c+d),
+          2=> convert( j*h+i+f),
+          3=> convert( g+f),
+          4=> convert( a+d),
+          5=> convert( j+i+d*c)
+          }
+ time  gbBasis = gbBrp( F, numgens R)
+
+restart
+installPackage "BuchbergerForBrp"
+installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
+leading = profile leading;
+gbBrp= profile gbBrp;
+makePairsFromLists= profile  makePairsFromLists; 
+gbComputation= profile  gbComputation;
+isReducible= profile  isReducible;
+minimalGbBrp= profile  minimalGbBrp;
+reduce= profile  reduce;
+reduceGbBrp= profile  reduceGbBrp;
+reduceLtBrp= profile  reduceLtBrp;
+reduceOneStep= profile  reduceOneStep; 
+reduceOneStepSingle= profile  reduceOneStepSingle; 
+SPolynomial= profile  SPolynomial; 
+updatePairs= profile  updatePairs;
+ 
+ R = ZZ/2[a..t, MonomialOrder=>Lex]
+  F = new gbComputation from { 0=> convert(a*b*c*d*e),
+          1=> convert( a+b*c+d*e+a+b+c+d),
+          2=> convert( j*h+i+f),
+          3=> convert( g+f),
+          4=> convert( a+d),
+          5=> convert( j+i+d*c),
+          6=> convert( r+s+t),
+          7=> convert( m*n+o*p),
+          8=> convert( t+a),
+          9=> convert( b*s+q+p*n*m+i),
+          10=> convert( b*s+q+p+h),
+          11=> convert( b*s+q*n*m+i),
+          12=> convert( b*k+q+l*n*m+i)
+          }
+  time gbBasis = gbBrp( F, numgens R)
+profileSummary

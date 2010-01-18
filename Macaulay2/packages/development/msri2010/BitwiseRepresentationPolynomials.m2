@@ -21,10 +21,12 @@ export {brpOR,
         removeDups, 
         divide, 
         lcmBrps, 
-        isRelativelyPrime,
-        leading}
+        isRelativelyPrime
+        }
         
-exportMutable {}
+exportMutable {
+        leading
+        }
 
 Brp = new Type of List 
 
@@ -51,6 +53,7 @@ leading = method()
 leading (Brp) := Brp => p -> (
   new Brp from {first p}
 )
+
 
 
 -- remove duplicate monomials ( because = 0 )
