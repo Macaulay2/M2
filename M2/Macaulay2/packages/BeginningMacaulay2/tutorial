@@ -1,4 +1,4 @@
--- -*- mode: M2; mode: auto-fill; coding: utf-8; fill-column: 100 -*-
+-- -*- Mode: M2; mode: auto-fill; coding: utf-8; fill-column: 100 -*-
 Key
      "BeginningMacaulay2"
 Headline
@@ -672,5 +672,5 @@ Description
      Example
 	  HH^1 (sheaf (S^{-2}**(S^1/IX)))
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=BeginningMacaulay2 RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- compile-command: "make -C /Users/de/src/M2/Macaulay2/packages PACKAGES=BeginningMacaulay2 RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
