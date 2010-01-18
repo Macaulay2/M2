@@ -1,21 +1,18 @@
 -------------------
 -- Package Header
 -------------------
-needsPackage "Depth";
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "0.3",
-    Date => "xx. January 2010",
-    Authors => {{Name => "David W. Cook II", Email => "dcook@ms.uky.edu", HomePage => "http://www.ms.uky.edu/~dcook"}},
-    Headline => "Pure k-Decomposability for simplicial complexes.",
+    Version => "0.9",
+    Date => "18. January 2010",
+    Authors => {{Name => "David W. Cook II",
+                 Email => "dcook@ms.uky.edu",
+                 HomePage => "http://www.ms.uky.edu/~dcook"}},
+    Headline => "k-Decomposability for simplicial complexes.",
     DebuggingMode => true
 );
-needsPackage "Depth";
 needsPackage "SimplicialComplexes";
-
--- TODO
----- add impure variants of iskDecomposable, isSheddingFace, isShellable, isShelling, isVertexDecomposable, shellingOrder
 
 -------------------
 -- Exports
@@ -37,10 +34,14 @@ export {
 -- Exported Code
 -------------------
 
--- Returns all faces of a simplicial complex (except {})
+-- Returns all faces of a simplicial complex (except {}, the (-1)-face) up to a
+-- given dimension
 allFaces = method(TypicalValue => List);
 allFaces (SimplicialComplex) := (S) -> (
-    flatten for i from 0 to dim S list flatten entries faces(i, S)
+    allFaces(S, dim S)
+);
+allFaces (SimplicialComplex, ZZ) := (S, k) -> (
+    flatten for i from 0 to min(k, dim S) list flatten entries faces(i, S)
 );
 
 -- Face Deletion: Remove all faces of a complex containing the given face.
@@ -49,38 +50,53 @@ faceDelete (SimplicialComplex, RingElement) := (S,F) -> (
     simplicialComplex monomialIdeal (ideal S + ideal(F))
 );
 
--- Determines if a pure simplicial complex is k-decomposable.
+-- Determines whether or not a simplicial complex is k-decomposable
+-- Uses definition 2.1 in [PB].
 iskDecomposable = method(TypicalValue => Boolean);
 iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
-    -- any of {non-pure, negatives in hVector} imply not pure k-decomposable
-    if not isPure S then return false;
+    -- k must be nonnegative!    
+    if k < 0 then return false;
+
+    -- negatives in the h-Vector imply not k-decomposable
     if any(hVector S, i -> i<0) then return false;
 
     -- base case: simplexes are k-decomposable for all nonnegative k
     if isSimplex S then return true;
 
-    -- Find all possible relevant faces:
-    L := flatten for i from 0 to k list flatten entries faces(i, S);
-    -- Check for any shedding faces.
-    for F in L do if isSheddingFace(S, F, k) then return true;
-    false
+    -- Check for shedding faces
+    any(allFaces(S, k), F -> isSheddingFace(S, F, k))
 );
 
--- Determines if a face is a shedding face of a pure simplicial complex.
+-- Determines whether or not a face is a shedding face of a simplicial complex.
+-- Uses definition 2.1 in [PB].
 isSheddingFace = method(TypicalValue => Boolean);
 isSheddingFace (SimplicialComplex, RingElement) := (S, F) -> (
     isSheddingFace(S, F, first degree F - 1)
 );
 isSheddingFace (SimplicialComplex, RingElement, ZZ) := (S, F, k) -> (
-    d := max(k, first degree F - 1);
-    iskDecomposable(link(S, F), d) and iskDecomposable(faceDelete(S, F), d)
+    -- if S is pure, then we needn't check the dimension requirements
+    if isPure S then (
+        return (iskDecomposable(faceDelete(S, F), k) and iskDecomposable(link(S, F), k));
+    )
+    else (
+        d := dim S;
+        D := faceDelete(S, F);
+        if dim D == d and iskDecomposable(D, k) then (
+            L := link(S, F);
+            if dim L == (d - first degree F) and iskDecomposable(L, k) then (
+                return true;
+            );
+        );
+    );
+    false
 );
 
--- Determines if a pure simplicial complex is shellable.
+-- Determines whether or not a simplicial complex is shellable.
 isShellable = method(TypicalValue => Boolean, Options => {Strategy => "Recursive"});
 isShellable (SimplicialComplex) := options -> (S) -> (
-    if options.Strategy == "dDecomposable" then (
-        -- S is (dim S)-decomposable if and only if S is shellable (see thm 2.8 is Provan-Billera)
+    if isPure S and options.Strategy == "dDecomposable" then (
+        -- Theorem 2.8 in [PB]: If S is pure, then
+        -- S is (dim S)-decomposable if and only if S is shellable
         iskDecomposable(S, dim S)
     )
     else (
@@ -89,42 +105,45 @@ isShellable (SimplicialComplex) := options -> (S) -> (
     )
 );
 
--- Determines if a list of equidimensional faces is a shelling.
+-- Determines whether or not a list of faces is a shelling.
+-- Uses definition III.2.1 in [St] for pure shellability.
 isShelling = method(TypicalValue => Boolean);
 isShelling (List) := (L) -> (
-    -- Check for (i) equidimensional, (ii) monomials, (iii) squarefree, and (iv) monic
-    if #unique apply(L, degree) > 1 then return false;
+    -- Check for (i) monomials, (ii) squarefree, and (iii) monic
     if any(apply(L, size), i->i!=1) then return false;
     if max flatten flatten apply(L, exponents) > 1 then return false;
     if any(flatten flatten apply(L, i->entries (coefficients i)_1), i->i!=1) then return false;
-    
-    -- Sets with zero or one face are always shellings 
+
+    -- Sets with zero or one face are always shellings--they are simplices!
     if #L <= 1 then return true;
+
+    -- if not pure, then an alternate routine is needed.
+    if #unique apply(L, degree) > 1 then return isImpureShelling(L);
 
     -- prime the loop
     f0 := ta := null;
-    f1 := allFaces simplicialComplex take(L, 1);
+    f1 := set allFaces simplicialComplex take(L, 1);
     -- for each face in the list
     for i from 2 to #L do (
         -- copy the last step
         f0 = f1;
-        -- update the newest
-        f1 = allFaces simplicialComplex take(L, i);
+        -- update with the new step
+        f1 = set allFaces simplicialComplex take(L, i);
         -- find the added faces & count their dimensions (+1)
-        ta = tally flatten apply(toList(set f1 - set f0), degree);
+        ta = tally flatten apply(toList(f1 - f0), degree);
         -- make sure the minimal face is unique
         if ta_(min keys ta) != 1 then return false;
     );
     true
 );
 
--- Determines if a simplicial complex is (isomorphic to) a simplex.
+-- Determines whether or not a simplicial complex is a simplex.
 isSimplex = method(TypicalValue => Boolean);
 isSimplex (SimplicialComplex) := (S) -> (
     #flatten entries facets S <= 1
 );
 
--- Determines if a simplicial complex is (pure) vertex decomposable.
+-- Determines whether or not a simplicial complex is vertex (0-) decomposable.
 isVertexDecomposable = method(TypicalValue => Boolean);
 isVertexDecomposable (SimplicialComplex) := (S) -> (
     iskDecomposable(S, 0)
@@ -136,13 +155,12 @@ hVector (SimplicialComplex) := (S) -> (
     flatten entries sub(last coefficients numerator reduceHilbert hilbertSeries ideal S, ZZ)
 );
 
--- Attempts to find a shelling order of a pure simplicial complex.
+-- Attempts to find a shelling order of a simplicial complex.
+-- Uses definition III.2.1 in [St].
 shellingOrder = method(TypicalValue => List, Options => {Strategy => "Recursive"});
 shellingOrder (SimplicialComplex) := options -> (S) -> (
-    -- any of {non-pure, non-CM, negatives in hVector} imply not pure shellable
-    if not isPure S then return {};
-    --if not isCM quotient ideal S then return {};  -- good idea, but this is REALLY slow
-    if any(hVector S, i -> i<0) then return {};
+    -- negatives in the h-Vector imply not shellable
+    --if any(hVector S, i -> i<0) then return {};
 
     if options.Strategy == "Naive" then (
         -- NAIVE: simply look at all facet permutations
@@ -151,8 +169,23 @@ shellingOrder (SimplicialComplex) := options -> (S) -> (
     )
     else (
         -- RECURSIVE: start the recursion
-        O := recursiveShell({}, flatten entries facets S);
-        if O != {} then return O;
+        O := {};
+        -- the pure case is easier, so separate it
+        if isPure S then (
+            O = recursivePureShell({}, flatten entries facets S);
+            if O != {} then return O;
+        )
+        else (
+            d := 1 + dim S;
+            L := flatten entries facets S;
+            for i from 0 to #L - 1 do (
+                -- Lemma 2.2 in [BW] shows dim L_0 == dim L, if L is a shelling
+                if first degree L_i == d then (
+                    O = recursiveImpureShell({L_i}, drop(L, {i,i})); 
+                    if O != {} then return O;
+                );
+            );
+        );
     );
     {}
 );
@@ -161,13 +194,82 @@ shellingOrder (SimplicialComplex) := options -> (S) -> (
 -- Local-Only Code
 -------------------
 
--- Build up a shelling recursively.  Called by shellingOrder with Strategy => "Recursive"
-recursiveShell = method(TypicalValue => List);
-recursiveShell (List, List) := (O, P) -> (
+-- Determines whether or not a list of (non-equidimensional) faces is a shelling.
+-- Should only be called by isShelling, as it assumes other checks have been made.
+-- Uses definition 2.1 in [BW].
+isImpureShelling = method(TypicalValue => Boolean);
+isImpureShelling (List) := (L) -> (
+    -- Lemma 2.2 in [BW] shows dim L_0 == dim L, if L is a shelling
+    if (max flatten apply(L, degree)) != first degree L_0 then return false;
+    -- prime the loop
+    S := fi := I := null;
+    fa := set apply(drop(subsets support L_0, {0,0}), product);
+    -- for each face in the list
+    for i from 1 to #L - 1 do (
+        -- get the next set of faces
+        fi = set apply(drop(subsets support L_i, {0,0}), product);
+        -- find simplicial complex of the intersection
+        I = toList(fa * fi);
+        -- handle the empty intersection case separately
+        if #I == 0 then (
+            if first degree L_i != 1 then return false;
+        )
+        else (
+            S = simplicialComplex I;
+            -- check it is pure and properly dimensional
+            if not isPure S or dim S != (first degree L_i - 2) then return false;
+        );
+        -- update the union new step
+        fa = fa + fi;
+    );
+    true
+);
+
+-- Build up a (impure) shelling recursively.
+-- Called by shellingOrder with Strategy => "Recursive"
+-- Uses definition 2.1 in [BW].
+recursiveImpureShell = method(TypicalValue => List);
+recursiveImpureShell (List, List) := (O, P) -> (
     -- if it's "obvious", then keep going
     OisShelling := true;
     if #O > 1 then (
-        -- drop(O, -1) is already a shelling order, is O?
+        -- the previous step is a shelling, but is the newest step?
+        fa := set allFaces simplicialComplex drop(O, -1);
+        Oi := take(O, -1);
+        fi := set allFaces simplicialComplex Oi;
+        I := toList(fa * fi);
+        -- handle the empty intersection case separately
+        if #I == 0 then (
+            OisShelling = (first degree first Oi == 1);
+        )
+        else (
+            S := simplicialComplex toList(fa * fi);
+            -- check it is pure and properly dimensional
+            OisShelling = (isPure S and dim S == (first degree first Oi - 2));
+        );
+    );
+    if OisShelling then (
+        -- Nothing else to add: we're done
+        if P == {} then return O;
+        -- Recurse until success, if possible
+        Q := {};
+        for i from 0 to #P - 1 do (
+            Q = recursiveImpureShell(append(O, P_i), drop(P, {i,i}));
+            if Q != {} then return Q;
+        );
+    );
+    {}
+);
+
+-- Build up a (pure) shelling recursively.
+-- Called by shellingOrder with Strategy => "Recursive"
+-- Uses definition III.2.1 in [St].
+recursivePureShell = method(TypicalValue => List);
+recursivePureShell (List, List) := (O, P) -> (
+    -- if it's "obvious", then keep going
+    OisShelling := true;
+    if #O > 1 then (
+        -- the previous step is a shelling, but is the newest step?
         f0 := allFaces simplicialComplex drop(O, -1);
         f1 := allFaces simplicialComplex O;
         ta := tally flatten apply(toList(set f1 - set f0), degree);
@@ -179,7 +281,7 @@ recursiveShell (List, List) := (O, P) -> (
         -- Recurse until success, if possible
         Q := {};
         for i from 0 to #P - 1 do (
-            Q = recursiveShell(append(O, P_i), drop(P, {i,i}));
+            Q = recursivePureShell(append(O, P_i), drop(P, {i,i}));
             if Q != {} then return Q;
         );
     );
@@ -190,33 +292,59 @@ recursiveShell (List, List) := (O, P) -> (
 -- Documentation
 -------------------
 beginDocumentation()
+
 doc ///
     Key
         SimplicialDecomposability
     Headline
-        Pure k-Decomposability for simplicial complexes.
+        k-Decomposability for simplicial complexes.
     Description
         Text
-            Determines pure k-Decomposability (including shellability) for simplicial complexes.
+            Determines k-Decomposability (including shellability) for
+            simplicial complexes.
+
+            References:
+            
+            [BW] A. Bjoerner and M. Wachs, "Shellable nonpure complexes and
+            posets, I," Trans. of the AMS 348 (1996), 1299-1327.
+            
+            [MT] S. Moriyama and F. Takeuchi, "Incremental construction
+            properties in dimension two: shellability, extendable shellability
+            and vertex decomposability," Discrete Math. 263 (2003), 295-296.
+            
+            [PB] J. S. Provan and L. J. Billera, "Decompositions of Simplicial
+            Complexes Related to Diameters of Convex Polyhedra," Math. of
+            Operations Research 5 (1980), 576-594.
+            
+            [St] R. Stanley, "Combinatorics and Commutative Algebra," 2nd
+            edition.  Progress in Mathematics, 41. Birkhaeuser Boston, Inc.
+            Boston, MA, 1996.
 ///
 
 doc ///
     Key
         allFaces
         (allFaces, SimplicialComplex)
+        (allFaces, SimplicialComplex, ZZ)
     Headline
-        returns all faces of a simplicial complex
+        returns all faces of a simplicial complex, up to a given dimension
     Usage
         allFaces S
+        allFaces(S, 2)
     Inputs
         S:SimplicialComplex
+        k:ZZ
+            the highest dimension to return (dim {\tt S} by default)
     Outputs
         L:List
-            the list of all faces of {\tt S} (excluding the empty face)
+            the list of all faces of {\tt S} (excluding the (-1)-dimensional face {})
+            up to dimension {\tt k}
     Description
         Example
-            R = QQ[a,b,c,d,e];
-            allFaces simplicialComplex {a*b*c*d*e};
+            R = QQ[a..e];
+            S = simplicialComplex {a*b*c*d*e};
+            allFaces S
+            allFaces(S, 2)
     SeeAlso
         faces
         facets
@@ -236,16 +364,17 @@ doc ///
             a face of {\tt S}
     Outputs
         T:SimplicialComplex
-            the simplicial complex of all faces in {\tt S} not containing the face {\tt F}
+            the simplicial complex of all faces in {\tt S} not containing the
+            face {\tt F}
     Description
-        Text
-            T = {G in S such that F is not contained in G}
         Example
-            R = QQ[a,b,c,d,e];
+            R = QQ[a..e];
             S = simplicialComplex {a*b*c*d*e};
             faceDelete(S, a)
             faceDelete(S, a*b*c)
             faceDelete(S, a*b*c*d*e) == boundary S
+    Caveat
+        Do not confuse face deletion with normal deletion.
     SeeAlso
         link
 ///
@@ -255,31 +384,31 @@ doc ///
         iskDecomposable
         (iskDecomposable, SimplicialComplex, ZZ)
     Headline
-        determines if a simplicial complex is (pure) k-decomposable or not
+        determines whether or not a simplicial complex is k-decomposable
     Usage
-        iskDecomposable(S,k)
+        iskDecomposable(S, k)
     Inputs
         S:SimplicialComplex
         k:ZZ
     Outputs
         B:Boolean
-            true if and only if {\tt S} is (pure) k-decomposable
+            true if and only if {\tt S} is {\tt k}-decomposable
     Description
         Text
-            This function uses the recursive definition that a simplicial complex is k-decomoosable
-            if either it is a simplex or there is a face of dimension at most k such that the face deletion
-            and link of the face (from the simplicial complex) are also k-decomposable.
-
-            See section two of J. S. Provan and L. J. Billera, "Decompositions of Simplicial Complexes Related to Diameters of Convex Polyhedra,"
-            Mathematics of Operations Research, Vol. 5, No. 4 (Nov., 1980), pp. 576-594.
+            Definition 2.1 of [PB] states that a simplicial complex {\tt S} is
+            {\tt k}-decomposable if {\tt S} is either a simplex or there exists
+            a shedding face {\tt F} of {\tt S} of dimension at most {\tt k}.
         Example
-            R = QQ[a,b,c,d,e];
-            iskDecomposable(simplicialComplex {a*b*c*d*e}, 0)
-            iskDecomposable(simplicialComplex {a*b*c,c*d*e,c*d*e}, 2)
+            R = QQ[a..f];
+            iskDecomposable(simplicialComplex {a*b*c*d*e*f}, 0)
+            iskDecomposable(simplicialComplex {a*b*c, b*c*d, c*d*e}, 2)
+            iskDecomposable(simplicialComplex {a*b*c, c*d, d*e*f}, 2)
     SeeAlso
+        faceDelete
         isSheddingFace
         isShellable
         isVertexDecomposable
+        link
 ///
 
 doc ///
@@ -288,7 +417,7 @@ doc ///
         (isSheddingFace, SimplicialComplex, RingElement)
         (isSheddingFace, SimplicialComplex, RingElement, ZZ)
     Headline
-        determines if a face of a pure simplicial complex is a shedding face.
+        determines whether or not a face of a simplicial complex is a shedding face
     Usage
         isSheddingFace(S, F)
         isSheddingFace(S, F, k)
@@ -300,18 +429,27 @@ doc ///
             the dimension of the shedding nature
     Outputs
         B:Boolean
-            true if and only if {\tt F} is a shedding face of {\tt S} in dimension max(dim F, {\tt k})
+            true if and only if {\tt F} is a shedding face of {\tt S} in
+            dimension {\tt k} (dim {\tt F}, if {\tt k} undefined)
     Description
         Text
-            A face is a shedding face if both link(S, F) and faceDelete(S, F) are (pure) k-decomposable.
+            Definition 2.1 of [PB] states that:  A shedding face {\tt F} of
+            a simplicial complex {\tt S} is a face such that the face 
+            deletion of {\tt F} from {\tt S} is dim {\tt S}-dimensional, the
+            link of {\tt F} in {\tt S} is (dim {\tt S} - |F|)-dimensional, and
+            both are also {\tt k}-decomposable.
         Example
             R = QQ[a..d];
             S = simplicialComplex {a*b*c*d};
             isSheddingFace(S, a)
+            isSheddingFace(S, a*b)
     SeeAlso
+        faceDelete
+        iskDecomposable
         isSheddingFace
         isShellable
         isVertexDecomposable
+        link
 ///
 
 doc ///
@@ -319,28 +457,44 @@ doc ///
         isShellable
         (isShellable, SimplicialComplex)
     Headline
-        determines if a simplicial complex is (pure) shellable or not
+        determines whether or not a simplicial complex is shellable
     Usage
         isShellable S
     Inputs
         S:SimplicialComplex
     Outputs
         B:Boolean
-            true if and only if {\tt S} is (pure) shellable
+            true if and only if {\tt S} is shellable
     Description
         Text
-            This function takes an optional Strategy which determines how the method works.  The options are those available in
-            shellingOrder (in particular, "Recursive" is the default) and also "dDecomposable" which checks if {\tt S} is 
-            {\tt dim S}-decomposable.
+            The pure and impure cases are handled separately.  If {\tt S} is
+            pure, then definition III.2.1 in [St] is used.  That is, {\tt S} is
+            shellable if its facets can be ordered {\tt F_1, .., F_n} so that
+            the difference in the {\tt j}th and {\tt j-1}th subcomplex has a 
+            unique minimal face, for {\tt 2 <= j <= n}.
+
+            If {\tt S} is impure, then definition 2.1 in [BW] is used.  Namely:
+            A simplicial complex {\tt S} is shellable if the facets of {\tt S}
+            can be ordered {\tt F_1, .., F_n} such that the intersection of the
+            faces of the first {\tt j-1} with the faces of the {\tt F_j} is
+            pure and dim {\tt F_j - 1}-dimensional.
+
+            This function takes an optional Strategy which determines how the
+            method works.  The options are those available in shellingOrder           
+            (in particular, "Recursive" is the default) and also, when {\tt S}
+            is pure, then "dDecomposable" which checks if {\tt S} is
+            {\tt dim S}-decomposable, after Theorem 2.8 in [PB].
         Example
-            R = QQ[a,b,c,d,e];
+            R = QQ[a..f];
             isShellable simplicialComplex {a*b*c*d*e}
-            isShellable simplicialComplex {a*b*c,c*d*e}
-            isShellable simplicialComplex {a*b*c,b*c*d,c*d*e}
+            isShellable simplicialComplex {a*b*c, c*d*e}
+            isShellable simplicialComplex {a*b*c, b*c*d, c*d*e}
+            isShellable simplicialComplex {a*b*c, c*d, d*e, e*f, d*f}
+            isShellable simplicialComplex {a*b*c, c*d, d*e*f}
     SeeAlso
+        facets
         iskDecomposable
         isShelling
-        isVertexDecomposable
         shellingOrder
 ///
 
@@ -349,22 +503,23 @@ doc ///
         isShelling
         (isShelling, List)
     Headline
-        determines if a list of equidimensional faces is a shelling
+        determines whether or not a list of faces is a shelling
     Usage
         isShelling L
     Inputs
         L:List
-            a list of equidimensional faces (i.e., squarefree monic monomials)
+            a list of faces (i.e., squarefree monic monomials)
     Outputs
         B:Boolean
-            true if and only if {\tt L} is (pure) shelling
+            true if and only if {\tt L} is shelling
     Description
         Text
-            Determines if a list of equidimensional faces is a shelling of the simplicial complex generated by the faces.
+            Determines if a list of faces is a shelling of the simplicial
+            complex generated by the list.
         Example
-            R = QQ[a,b,c,d,e];
-            isShelling {a*b*c, c*d*e}
+            R = QQ[a..e];
             isShelling {a*b*c, b*c*d, c*d*e}
+            isShelling {a*b*c, c*d*e, b*c*d}
     SeeAlso
         isShellable
         shellingOrder
@@ -375,7 +530,7 @@ doc ///
         isSimplex
         (isSimplex, SimplicialComplex)
     Headline
-        determines if a simplicial complex is simplex
+        determines whether or not a simplicial complex is simplex
     Usage
         isSimplex S
     Inputs
@@ -385,10 +540,12 @@ doc ///
             true if and only if {\tt S} is simplex
     Description
         Example
-            R = QQ[a,b,c,d];
+            R = QQ[a..d];
             isSimplex simplicialComplex {a*b*c*d}
             isSimplex simplicialComplex {a*b}
-            isSimplex simplicialComplex {a*b,c*d}
+            isSimplex simplicialComplex {a*b, c*d}
+    SeeAlso
+        facets
 ///
 
 doc ///
@@ -396,24 +553,23 @@ doc ///
         isVertexDecomposable
         (isVertexDecomposable, SimplicialComplex)
     Headline
-        determines if a simplicial complex is (pure) vertex-decomposable or not
+        determines whether or not a simplicial complex is vertex-decomposable
     Usage
         isVertexDecomposable S
     Inputs
         S:SimplicialComplex
     Outputs
         B:Boolean
-            true if and only if {\tt S} is (pure) vertex-decomposable
+            true if and only if {\tt S} is vertex-decomposable
     Description
         Text
-            Vertex-decomposability is just 0-decomposability.
+            Vertex-decomposability is just zero-decomposability.
         Example
-            R = QQ[a,b,c,d,e];
+            R = QQ[a..e];
             isVertexDecomposable simplicialComplex {a*b*c*d*e}
             isVertexDecomposable boundary simplicialComplex {a*b*c*d*e}
-            isVertexDecomposable simplicialComplex {a*b*c,c*d*e,c*d*e}
+            isVertexDecomposable simplicialComplex {a*b*c, c*d*e}
     SeeAlso
-        isShellable
         iskDecomposable
 ///
 
@@ -432,7 +588,7 @@ doc ///
             the h-Vector of {\tt S}
     Description
         Example
-            R = QQ[a,b,c,d];
+            R = QQ[a..d];
             hVector simplicialComplex {a*b*c,d}
     SeeAlso
         fVector
@@ -443,24 +599,31 @@ doc ///
         shellingOrder
         (shellingOrder, SimplicialComplex)
     Headline
-        finds a shelling of a pure simplicial complex, if one exists
+        finds a shelling of a simplicial complex, if one exists
     Usage
         L = shellingOrder S
     Inputs
         S:SimplicialComplex
     Outputs
         L:List
-            a (pure) shelling order of the facets of {\tt S}, if one exists
+            a shelling order of the facets of {\tt S}, if one exists
     Description
         Text
-            This method behaves differently depending on the Strategy passed as an option.  The default strategy is "Recursive" which
-            attempts to recursively find a shelling order.  An alternate strategy is "Naive" which simply checks all permutations
-            of the facets with the isShelling routine until one is found, if one exists.
+            This method behaves differently depending on the Strategy passed
+            as an option.  The default strategy is "Recursive" which attempts
+            to recursively find a shelling order.  An alternate strategy is
+            "Naive" which simply checks all permutations of the facets with
+            the isShelling routine until one is found, if one exists.
         Example
-            R = QQ[a,b,c,d,e];
+            R = QQ[a..f];
             shellingOrder simplicialComplex {a*b*c*d*e}
             shellingOrder simplicialComplex {a*b*c, b*c*d, c*d*e}
             shellingOrder simplicialComplex {a*b*c, c*d*e}
+            shellingOrder simplicialComplex {a*b*c, c*d, d*e, e*f, d*f}
+            shellingOrder simplicialComplex {a*b*c, c*d, d*e*f}
+    Caveat
+        The Naive strategy uses a tremendous amount of memory, exponential
+        in the number of facets.
     SeeAlso
         isShellable
         isShelling
@@ -470,63 +633,13 @@ doc ///
 -- Tests
 -------------------
 
--- Tests of isSimplex
+-- Tests allFaces
 TEST ///
-R = QQ[a..d];
-assert(isSimplex simplicialComplex {a*b*c*d});
-assert(isSimplex simplicialComplex {a*b*c});
-assert(isSimplex simplicialComplex {a*b});
-assert(isSimplex simplicialComplex {a});
-assert(isSimplex simplicialComplex monomialIdeal {a,b,c,d}); -- empty complex
-assert(not isSimplex simplicialComplex {a*b, b*c, c*d});
-assert(not isSimplex simplicialComplex {a*b, b*c*d});
-assert(not isSimplex simplicialComplex {a*b, c});
-assert(not isSimplex simplicialComplex {a, b, c, d});
-///
-
--- Tests of isShelling
-TEST ///
-R = QQ[a..f];
-assert(isShelling {a*b*c});
-assert(isShelling {a*b*c, b*c*d});
-assert(isShelling {a*b*c, b*c*d, c*d*e});
-assert(isShelling {a*b*c, b*c*d, c*d*e, d*e*f});
-assert(not isShelling {a*b*c, c*d*e});
-assert(not isShelling {a*b*c, d*e*f});
-///
-
--- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Recursive"
--- NB: shellingOrder can only be tested this way as a shelling order need not be unique.
-TEST ///
-R = QQ[a..e];
-assert(isShellable simplicialComplex {a*b*c});
-assert(isShellable simplicialComplex {a*b*c, b*c*d});
-assert(isShellable simplicialComplex {a*b*c, b*c*d, c*d*e});
-assert(isShellable simplicialComplex monomialIdeal {a,b,c,d,e}); -- empty complex
-assert(not isShellable simplicialComplex {a*b*c, c*d*e});
-assert(not isShellable simplicialComplex {a*b*c, b*c*d, e});
-///
-
--- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Naive"
-TEST ///
-R = QQ[a..e];
-assert(isShellable(simplicialComplex {a*b*c}, Strategy => "Naive"));
-assert(isShellable(simplicialComplex {a*b*c, b*c*d}, Strategy => "Naive"));
-assert(isShellable(simplicialComplex {a*b*c, b*c*d, c*d*e}, Strategy => "Naive"));
-assert(isShellable(simplicialComplex monomialIdeal {a,b,c,d,e}, Strategy => "Naive")); -- empty complex
-assert(not isShellable(simplicialComplex {a*b*c, c*d*e}, Strategy => "Naive"));
-assert(not isShellable(simplicialComplex {a*b*c, b*c*d, e}, Strategy => "Naive"));
-///
-
--- Tests of hVector
-TEST ///
-R = QQ[a..e];
-assert(hVector simplicialComplex {a, b, c, d, e} === {1,4});
-assert(hVector simplicialComplex {a*b*c*d*e} === {1});
-assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2});
-assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
-assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1});
-assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
+R = QQ[a,b,c];
+assert(allFaces simplicialComplex {a*b*c} === {a, b, c, a*b, a*c, b*c, a*b*c});
+assert(allFaces simplicialComplex {a*b} === {a, b, a*b});
+assert(allFaces simplicialComplex {a, b*c} === {a, b, c, b*c});
+assert(allFaces(simplicialComplex {a*b*c}, 1) === {a, b, c, a*b, a*c, b*c});
 ///
 
 -- Tests of faceDelete
@@ -552,9 +665,7 @@ assert(iskDecomposable(simplicialComplex {a*b*c, b*c*d, c*d*e}, 2));
 assert(not iskDecomposable(simplicialComplex {a*b*c, c*d*e}, 2));
 ///
 
--- Tests iskDecomposable (a second way)
--- See Example V6F10-{1,6,7} in S. Moriyama and F. Takeuchi, "Incremental construction properties in dimension two:
--- shellability, extendable shellability and vertex decomposability," Volume 263, Issue 1-3 (February 2003), 295-296.
+-- Tests iskDecomposable: see Examples V6F10-{1,6,7} in [MT].
 TEST ///
 R = QQ[a..f];
 S1 = simplicialComplex {a*b*c, a*b*d, a*b*f, a*c*d, a*c*e, b*d*e, b*e*f, c*d*f, c*e*f, d*e*f};
@@ -573,63 +684,82 @@ TEST ///
 R = QQ[a..e];
 S = simplicialComplex {a*b*c*d*e};
 assert(isSheddingFace(S, a, 0));
-assert(isSheddingFace(S, a, 3));
+assert(isSheddingFace(S, a*b, 3));
 T = simplicialComplex {a*b*c, b*c*d, c*d*e};
 assert(isSheddingFace(T, e, 2));
 assert(not isSheddingFace(T, b*c*d, 2));
 ///
 
--- Tests allFaces
+-- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Recursive"
+-- NB: shellingOrder can only be tested this way as a shelling order need not be unique.
 TEST ///
-R = QQ[a,b,c];
-assert(allFaces simplicialComplex {a*b*c} === {a, b, c, a*b, a*c, b*c, a*b*c});
-assert(allFaces simplicialComplex {a*b} === {a, b, a*b});
-assert(allFaces simplicialComplex {a, b*c} === {a, b, c, b*c});
+R = QQ[a..f];
+-- Extreme cases
+assert(isShellable simplicialComplex {a*b*c*d*e});
+assert(isShellable simplicialComplex monomialIdeal {a,b,c,d,e}); -- empty complex
+-- The following are from [St], Example 2.2.
+assert(isShellable simplicialComplex {a*b*c, b*c*d, c*d*e});
+assert(not isShellable simplicialComplex {a*b*c, c*d*e});
+-- The following are from [BW], Figure 1.
+assert(isShellable simplicialComplex {a*b, c});
+assert(not isShellable simplicialComplex {a*b, c*d});
+assert(isShellable simplicialComplex {a*b*c, c*d, d*e, e*f, d*f});
+assert(not isShellable simplicialComplex {a*b*c, c*d, d*e*f});
+///
+
+-- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Naive"
+-- Only small cases are used, as Naive takes a tremendous amount of memory.
+TEST ///
+R = QQ[a..f];
+-- Extreme cases
+assert(isShellable(simplicialComplex {a*b*c*d*e}, Strategy => "Naive"));
+-- The following are from [St], Example 2.2.
+assert(isShellable(simplicialComplex {a*b*c, b*c*d, c*d*e}, Strategy => "Naive"));
+assert(not isShellable(simplicialComplex {a*b*c, c*d*e}, Strategy => "Naive"));
+-- The following are from [BW], Figure 1.
+assert(isShellable(simplicialComplex {a*b, c}, Strategy => "Naive"));
+assert(not isShellable(simplicialComplex {a*b*c, c*d, d*e*f}, Strategy => "Naive"));
+///
+
+-- Tests of isShelling
+TEST ///
+R = QQ[a..f];
+assert(isShelling {a*b*c*d*e*f});
+-- The following are from [St], Example 2.2.
+assert(isShelling {a*b*c, b*c*d, c*d*e});
+assert(not isShelling {a*b*c, c*d*e});
+-- The following are from [BW], Figure 1.
+assert(isShelling {a*b, c});
+assert(not isShelling {a*b, c*d});
+assert(isShelling {a*b*c, c*d, d*e, e*f, d*f});
+assert(not isShelling {a*b*c, c*d, d*e*f});
+///
+
+-- Tests of isSimplex
+TEST ///
+R = QQ[a..d];
+-- Simplices
+assert(isSimplex simplicialComplex {a*b*c*d});
+assert(isSimplex simplicialComplex {a*b*c});
+assert(isSimplex simplicialComplex {a*b});
+assert(isSimplex simplicialComplex {a});
+assert(isSimplex simplicialComplex monomialIdeal {a,b,c,d}); -- empty complex
+-- Non-simplices
+assert(not isSimplex simplicialComplex {a*b, b*c, c*d});
+assert(not isSimplex simplicialComplex {a*b, b*c*d});
+assert(not isSimplex simplicialComplex {a*b, c});
+assert(not isSimplex simplicialComplex {a, b, c, d});
+///
+
+-- Tests of hVector
+TEST ///
+R = QQ[a..e];
+assert(hVector simplicialComplex {a, b, c, d, e} === {1,4});
+assert(hVector simplicialComplex {a*b*c*d*e} === {1});
+assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2});
+assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
+assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1});
+assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 ///
 
 end
-
--------------------
--- Demo Usage
--------------------
-restart;
-needsPackage "SimplicialDecomposability";
-R = QQ[a..f];
-S = simplicialComplex {a*b*c*d*e};
-T = simplicialComplex {a*b*c, c*d*e};
-U = simplicialComplex {a*b*c, b*c*d, c*d*e}; 
-V = simplicialComplex {a*b*c, a*b*d, a*b*f, a*c*d, a*c*e, b*d*e, b*e*f, c*d*f, c*e*f, d*e*f};
-
--- We can delete faces
-faceDelete(S, a)
-faceDelete(S, a*b*c*d*e)
-boundary(S)
-
--- We can ask if it's a simplex
-isSimplex S
-isSimplex T
-
--- We can get the hVector
-hVector U
-hVector V
-
--- We can ask if it's k-decomposable (& about shedding faces)
-iskDecomposable(S, 0)
-iskDecomposable(S, 1)
-isSheddingFace(S, a*b*c)
-
-iskDecomposable(V, 0)
-iskDecomposable(V, 1)
-isSheddingFace(V, d*e*f)
-
--- We can ask if it's shellable
-isShellable T
-isShellable U
-shellingOrder U
-
--- We can do it in three ways: Recursively, Naively, and dDecomposability
-time isShellable(V, Strategy => "Recursive") -- default
-time isShellable(V, Strategy => "dDecomposable")
--- bad idea! 
---time isShellable(V, Strategy => "Naive")
-(#flatten entries facets V)!
