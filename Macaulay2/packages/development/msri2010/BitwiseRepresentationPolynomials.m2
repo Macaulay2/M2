@@ -91,7 +91,7 @@ isRelativelyPrime (Brp, Brp) := Boolean => (f,g) ->
 -- divide monomial a by monomial b
 divide = method()
 divide (Brp, Brp) := Brp => (a,b) -> (
-  assert isDivisible( a,b );
+  --assert isDivisible( a,b );
   new Brp from {first (a-b)} 
 )
   
