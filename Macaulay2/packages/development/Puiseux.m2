@@ -278,6 +278,7 @@ center(RingElement, RingElement) := (F, g) -> (
      -- g = g(x1)
      -- Let a be a root of g (possibly extending the coeff ring of F)
      -- and return (F(x1+a,x2,...,xn), a)
+     R := ring F;
      K := coefficientRing R;
      Rg := ring g;
      Rg' := if numgens Rg === 1 then Rg else K[Variables=>1];
