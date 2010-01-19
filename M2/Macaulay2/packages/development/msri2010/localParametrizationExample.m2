@@ -10,13 +10,17 @@ n=4
 R = K[x_0..x_n]
 
 -- precision
-maxe = 7
+maxe = 10
 E = apply(maxe,i->K[e]/ideal(e^(i+1)))
 
 -- make an Ideal
 F = random(2,R);
 G = random(3,R);
 H = random(2,R)
+
+I = intersect(ideal random(R^2, R^{-2}), ideal random(R^2, R^{-2}))
+F = random(5,R) * random(5,R)
+time factor F
 
 betti (I=ideal (F*G,G*H))
 -- time decompose I;
@@ -28,6 +32,14 @@ L = for i from 1 to 20 list (
      if sub(I,r) == 0 then r else continue
      )
 
+tally apply(100, j -> (
+  L = for i from 1 to 7 * 39 list (
+     r = random(K^1,K^(n+1));
+     if sub(I,r) == 0 then r else continue
+     );
+  #L))
+
+(2 + 2*sqrt(2.))^2
 
 -- random kernel element
 -- M: a matrix over K
