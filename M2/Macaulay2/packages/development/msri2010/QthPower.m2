@@ -1,305 +1,38 @@
+
 ------------
 -- Header --
 ------------
-newPackage(
-    "QthPower",
-    Version => "0.1", 
-    Date => "January 10, 2010",
-    Authors => {{Name => "Douglas Leonard",
-                 Email => "leonada@auburn.edu",
-                 HomePage => "http://www.dms.auburn.edu/~leonada"}},
-    Headline => "An implementation of the Qth-Power algorithm for computing the integral closure of a ring.",
-    DebuggingMode => true
-)
+--newPackage(
+--    "QthPower",
+--    Version => "0.3", 
+--    Date => "January 18, 2010",
+--    Authors => {{Name => "Douglas Leonard",
+--                 Email => "leonada@auburn.edu",
+--                 HomePage => "http://www.dms.auburn.edu/~leonada"}},
+--    Headline => "An implementation of the Qth-Power algorithm 
+--                for computing the integral closure 
+--		of an integral extension, R, 
+--		of a ring, P, of free variables",
+--    DebuggingMode => true
+--)
 
-export {qConductor, qthPower};
+--export {qthConductor, icRfractions, qthIntegralclosure, rationalIntegralClosure};
 
 ------------
 --  Code  --
 ------------
 
-------------
--- Exportable methods --
 
--- Find an element D in the Noether noramlization of R and in the conductor of R,
--- with an option to provide that element for cases when this is called 
--- possibly unnecessarily by the qth-power method
 
---qConductor = method(TypicalValue => RingElement);
---qConductor (Ideal, ZZ) := (I, deps) -> (
---   R := ring I;
---   RP := ZZ/(char R)[gens R,MonomialOrder=>{Position=>Up,{deps,#gens R-deps}}];
---   IP := sub(I,RP);
---   GP := gens gb sub(transpose jacobian IP, RP/IP);
---   DP := 1;
---   j := 0;
---   for i to numRows GP-1 do(
---      gc = 0;
---      while GP_(i,j)==0 do j=j+1;
---      while max apply(deps, v -> degree(RP_v, leadMonomial(GP_(i,j))))==0 do(
---         gc = gcd(gc,GP_(i,j));
---         j=j+1;
---      );
---      if gc!=0 then DP=DP*gc;
---   );
---   sub(DP,R)
---);
-
-qConductor = method(TypicalValue => RingElement,Options=>{Element=>null});
-qConductor (Ideal, ZZ) := o->(I, deps) -> (
-   if o.Element===null then(
-      R := ring I;
-      RP := ZZ/(char R)[gens R,MonomialOrder=>{Position=>Up,{deps,#gens R-deps}}];
-      IP := sub(I,RP);
-      GP := gens gb sub(transpose jacobian IP, RP/IP);
-      DP := 1;
-      col := 0;
-      for row to numRows GP-1 do(
-         gc = 0;
-         while GP_(row,col)==0 do col=col+1;
-         while max apply(deps, v -> degree(RP_v, leadMonomial(GP_(row,col))))==0 do(
-            gc = gcd(gc,GP_(row,col));
-            col=col+1;
-         );
-         if gc!=0 then DP=DP*gc;
-      );
-      sub(DP,R)
-   )
-   else( o.Element)
-);
-
--- Find the numerators of the fractions defining the P-module presentation 
--- of the integral closure of a quotient ring 
--- using the qth-power algorithm,
--- the first numerator being also the common denominator, an element of P
-
-qthPower = method(TypicalValue => List);
-qthPower (Ideal, ZZ, List) := (I,deps,footprint) ->(
-   -- Initialisation
-   R := ring I;
-   inds := #gens R -deps;
-   depq := take(gens R, deps);
-   indq := take(gens R, -inds);
-   q := char R;
-   qc := qConductor(I, deps);
-   dq := qc^(q-1);
-   g := footprint;
-   h := apply(g,s->fastq(s,I));
-   e := apply(h, s->red(s,I,dq,footprint));
-   s := apply(#footprint, i->-1);
-   now := 0;
-   before := -1;
-   oldg := footprint;
-    
-   -- local variables
-   i := j := w := k := prod := mx := ll := ex := l := gx := pos := 0;
-   skip := skip1 := updating := true;
-   logei := logj := logk := posl := ww := {};
-    
-   -- Compute the next module generating set; 
-   -- continue to loop as long as different modules are generated.
-   loop := true;
-   while loop do(
-      loop = false;
-      before = now-1;
-      i = 0;
-      skip = false;
-      while i < #g do(	
-         if s#i==before then(
-            updating=true;
-            -- look for the next unique leading monomial
-            while updating do(
-               updating=false;
-               for j to i-1 do{
-                  if leadMonomial(g#i)==leadMonomial(g#j) then(
-                     i=i+1;
-                     updating=true;
-                     break;
-                  );
-               };
-            );
-            e=replace(i,red(e#i,I,dq,oldg),e);
-            -- "row-reduction", that is, taking F-linear combinations
-            j=0;
-            while j<i and e#i!=0 do(
-               if s#j==before and e#j!=0 then(
-                  logei=logpoly(e#i,depq,indq);
-                  logj=logpoly(e#j,depq,indq);	
-                  if e#j!=0 
-		  and logj#0==logei#0 
-		  and geqlog(logei#2,logj#2) 
-		  and apply((logei#2-logj#2), v->v%q)==apply(inds, v->0) 
-		  then (
-		     w = 1;
-		     for k to inds-1 do w=w*(indq#k)^((logei#2-logj#2)#k//q);
-			loop=true;
-			if g#i>g#j*w then(
-		           lc=leadCoefficient(e#i)//leadCoefficient(e#j);
-                           g=replace(i,g#i-lc*(g#j)*w,g);
-                           h=replace(i,(h#i-lc*(h#j)*w^q)%I,h);
-	                   e=replace(i,red(e#i-lc*(e#j)*w^q,I,dq,oldg),e);
-                           j=-1; 
-			   -- updates to zero
-	    		)
-		        else if g#i<g#j*w then(
-                           gx=(g#j)*w;
-                           g=sort(append(g,gx));
-                           pos=position(g, a->a==gx);
-                           h=insert(pos,(h#j)*w^q,h);
-                           e=insert(pos,red((e#j)*w^q,I,dq,oldg),e);
-                           s=insert(pos,before,s);
-			);   
-                     );
-                  );
-                  j=j+1;
-               );
-               -- shifting, that is multiplication by a free variable
-               if e#i==0 then(
-                  s=replace(i,now,s);
-               )
-               else(
-	          if s#i>=before then(
-	             loop=true;   
-                     logei=logpoly(e#i,depq,indq);
-	             for j to #oldg-1 do(
-	                logj=logpoly(dq*oldg#j,depq,indq);
-	                if logj#1==logei#1 then(
-	                   prod=1;
-		           for k to inds-1 do(
-		              mx=-((-(((logj)#2)#k-((logei)#2)#k))//q);
-		              if mx>0 then prod=prod*(indq#k)^mx;
-		           );
-	                   if all(apply(#g,l->s#l>=before and g#l!=0 and leadMonomial(g#l)==leadMonomial(g#i*prod)), l->l==false) then(
-                                 gx=(g#i)*prod;
-                                 pos=position(sort(append(g,gx)),a->a==gx);
-                                 g=insert(pos,gx,g);
-                                 h=insert(pos,(h#i)*prod^q,h);
-                                 e=insert(pos,red((e#i)*prod^q,I,dq,oldg),e);
-                                 s=insert(pos,before,s);
-                                 loop=true;
-	                      );
-	                   );          
-	                );
-                        for k to #g-1 do(
-	                   if s#k>=before and g#k!=0 and e#k!=0 then(	 	 
-	                      logk=logpoly(e#k,depq,indq);
-	                      if k<i and logk#0==logei#0 then(
-	                         if all(apply((logei#2-logk#2), v->v%q), v->v==0) then(
-		                    ww=apply(inds, v->degree(indq#v,lcm(logei#3,logk#3)//logei#3));
-                                    prod=product(#ww, l->(indq#l)^((ww#l)//q));
-                                    gx=(g#i)*prod;
-                                    g=sort(append(g,gx));
-                                    pos=position(g,a->a==gx);
-                                    h= insert(pos,(h#i)*prod^q,h);
-                                    e=insert(pos,red((e#i)*prod^q,I,dq,oldg),e);
-                                    s=insert(pos,before,s);
-			            loop=true;
-                                 );
-	                      );
-	                   );
-	                );
-                     );
-                 );
-             );
-             i=i+1;
-         );    
-        -- initialize next P-module generator
-         now=now+1;
-	 gg=toList g;
-	--remove any elements that are zeroed out  
-         posl=positions(gg, v->v!=0);
-         g=g_posl;
-         h=h_posl;
-         e=e_posl;
-         s=s_posl;
-	 pos2=positions(s, v->v==before+1);
-	--save only elemtns describing the next module 
-	 g=g_pos2;
-         h=h_pos2;
-         e=e_pos2;
-         s=s_pos2;
-	 before=before+1;
-         oldg=for i to #g-1 list if s#i==before and e#i==0 then g#i else continue;
-         
-	 
-	 
-         e=apply(h,s->red(s,I,dq,oldg));
-      );
-
-      -- paring down to the final set of numerators
-      i=#oldg-1;
-      while i>0 do(
-         logi=logpoly(oldg#i,depq,indq);
-         for j to i-1 do{
-            logj=logpoly(oldg#j,depq,indq);
-            if logi#0==logj#0 and geqlog(logi#2,logj#2) then(
-	       oldg=delete(oldg#i,oldg);
-	       break;
-            );
-         };
-         i=i-1;
-      );
-      oldg
-   );
-
---produce a presentation as a P-affine algebra
--- by producing the P-quadratic and P-linear relations 
-
-presentationPalgebra = method(TypicalValue => List);
-presentationPalgebra (List,Ideal,RingElement) := (oldvars,I,D) ->(
-
-loop1:=true;lmi:=0;logi:=0;j:=0;lmj:=0;logj:=0;lc:=0;
-lti:=0;ltj:=0;
-H:=rsort(oldvars)
-
---compute the P-quadratic relations matrix, M
-U:=new MutableList from 
-   apply((first entries (symmetricPower(2,matrix{H}))),v->(v%I//(D )))
-M:=mutableMatrix(ring I,#H,#U);
-
-while loop1==true do(
-   loop1=false;
-   for i from 0 to #H-1 do(
-      lmi=leadMonomial(H#i);
-      logi=logev(lmi);	
-      j=0;
-      while j<#U do(
-         if U#j!=0 then(
-	    lmj=leadMonomial(U#j);
-	    logj=logv(lmj);  
-            if logj#0==logi#0 and geq(logj#2,logi#2) then(
-               lc=leadCoefficient(U#j)//leadCoefficient(H#i);
-	       lti=leadTerm(H#i);
-	       ltj=leadTerm(U#j);
-               M_(i,j)=M_(i,j)+ltj//lti;
-               U#j=U#j-ltj//lti*H#i;
-               j=0;
-               loop1=true;
-            )
-            else(
-               j=j+1;
-            );
-         )
-         else(
-            j=j+1;
-         );
-      );
-   );
-);
-
---compute the P-linear relations matrix,L
---construct the new ring icR
---turn both M and L into relations for the new ideal icI
--- return icR, icI, phi, psi, and the weight matrix explicitly
-
-----------------
+------------------------------
 -- non-exported helper methods 
 ------------------------------
 
 -- Reduction modulo \Delta^(q-1) times the previous module.
 
-red = method(TypicalValue => RingElement);
-red (RingElement, Ideal, RingElement, List) := (g, I, dq, modfoot) -> (
+--red = method(TypicalValue => RingElement);
+--red (RingElement, Ideal, RingElement, List) 
+red:= (g, I, dq, modfoot) -> (
    h := g;
    i := #modfoot-1;
    while i >= 0 and g != 0 do (
@@ -315,8 +48,9 @@ red (RingElement, Ideal, RingElement, List) := (g, I, dq, modfoot) -> (
 
 -- repeated squaring to compute qth powers of a RingElement modulo I
 
-fastq = method(TypicalValue => RingElement);
-fastq (RingElement, Ideal) := (g, I) -> (
+--fastq = method(TypicalValue => RingElement);
+--fastq (RingElement, Ideal) 
+fastq := (g, I) -> (
    q := char ring I;
    result := 1;
     -- Starting from the LSBit, multiply by appropriate powers of g.
@@ -332,8 +66,9 @@ fastq (RingElement, Ideal) := (g, I) -> (
 
 -- dependent and independent "logs" and leading monomials of a polynomial.
 
-logpoly = method(TypicalValue => List);
-logpoly (RingElement, List, List) := (v, dep, ind) -> (
+--logpoly = method(TypicalValue => List);
+--logpoly (RingElement, List, List) 
+logpoly := (v, dep, ind) -> (
    lv := leadMonomial v;
    indlog := apply(#ind, i->degree(ind#i, lv));
    indprod := product(#ind, i->(ind#i)^(indlog#i));
@@ -344,8 +79,9 @@ logpoly (RingElement, List, List) := (v, dep, ind) -> (
 
 -- Compare "logs".
 
-geqlog = method(TypicalValue => Boolean);
-geqlog (List, List) := (v, w) -> (
+--geqlog = method(TypicalValue => Boolean);
+--geqlog (List, List) 
+geqlog := (v, w) -> (
     for i from 0 to #v-1 do if v#i < w#i then return false; true
 );
 
@@ -354,8 +90,10 @@ geqlog (List, List) := (v, w) -> (
 ----------------------------------------------
 
 --the extended Euclidean algorithm
-eea = method(TypicalValue => List);
-eea (ZZ,ZZ) :=(a,b)->(
+
+--eea = method(TypicalValue => List);
+--eea (ZZ,ZZ) 
+eea :=(a,b)->(
      r:={a,b};
      u:={0,1};
      v:={1,0};
@@ -372,16 +110,18 @@ eea (ZZ,ZZ) :=(a,b)->(
 
 --the Chinese remainder theorem for two integers-------
 
-crt=method(TypicalValue=>RingElement)
-crt (ZZ,ZZ,ZZ,ZZ):=(c,d,p,n)->(
+--crt=method(TypicalValue=>RingElement)
+--crt(ZZ,ZZ,ZZ,ZZ)
+crt :=(c,d,p,n)->(
      (r,u,v):=eea(p,n);
      (-c*u#-2*n+d*v#-2*p)*(-1)^(#r)
      );
 
 --the Chinese remainder theorem for two polynomials 
 
-polycrt=method(TypicalValue=>RingElement)
-polycrt(RingElement,RingElement,ZZ,ZZ):=(poly1,poly2,mod1,mod2)->(
+--polycrt=method(TypicalValue=>RingElement)
+--polycrt(RingElement,RingElement,ZZ,ZZ)
+polycrt :=(poly1,poly2,mod1,mod2)->(
    temp1:=poly1;
    temp2:=poly2;
    poly3:=0;
@@ -411,8 +151,10 @@ polycrt(RingElement,RingElement,ZZ,ZZ):=(poly1,poly2,mod1,mod2)->(
 );
 
 --reconstructing fractions from reaminders mod N using the extended Euclidea algorithm
-recon:=method(TypicalValue=>List)
-recon(ZZ,ZZ):=(a,n)->(
+
+--recon:=method(TypicalValue=>List)
+--recon(ZZ,ZZ)
+recon :=(a,n)->(
    rold:=n;
    uold:=0;
    rnew:=a;
@@ -430,13 +172,34 @@ recon(ZZ,ZZ):=(a,n)->(
    {rold,uold}
 );   
 
+---reconstructing polynomials over Q from polynomials over Z
+polyrecon:=(pol,md)->(
+   co:=(coefficients(pol))#1;
+   --list of coefficients as integers mod mo
+   ent:=flatten entries(co);     
+   --pairs (numerator,denominator)          
+   ap:=apply(ent,v->recon(v,md));
+   --lift these to QQ
+   app:=apply(ap, v->toQ(v#0)/toQ(v#1));
+   --list of monomials
+   appp:=apply( flatten (entries (coefficients(pol))#0),v->toQ(v));
+   mons:=(coefficients(pol))#0;
+   newpoly:=0;
+   for i to #mons-1 do(
+      newpoly=newpoly+mons#i*app#i;
+   );
+   newpoly
+);
+
 -----------------------------------------------------
 --non-exported methods for defining monomial orderings from matrices
 -------------------------------------------------------
 
 --defining the grevlex over weight monomial ordering matrix
-grevlexWeight=method(TypicalValue=>Matrix)
-grevlexWeight(Matrix):=(matr)->(
+
+--grevlexWeight=method(TypicalValue=>Matrix)
+--grevlexWeight(Matrix)
+grevlexWeight :=(matr)->(
 grev:=for i to numColumns(matr)-numRows(matr)-1 list (
          for j to numColumns(matr)-1 list(
 	    if i+j<numColumns(matr)-numRows(matr) then 1 else 0
@@ -446,8 +209,10 @@ grev:=for i to numColumns(matr)-numRows(matr)-1 list (
      );
 
 --defining the weight-over-grevlex monomial ordering matrix
-weightGrevlex=method(TypicalValue=>Matrix)
-weightGrevlex(Matrix):=(matr)->(
+
+--weightGrevlex=method(TypicalValue=>Matrix)
+--weightGrevlex(Matrix)
+weightGrevlex :=(matr)->(
 grev:=for i to numColumns(matr)-numRows(matr)-1 list (
          for j to numColumns(matr)-1 list(
 	    if i+j<numColumns(matr)-numRows(matr) then 1 else 0
@@ -460,52 +225,433 @@ grev:=for i to numColumns(matr)-numRows(matr)-1 list (
 --defining a ring with a monomial ordering given by a matrix
 --not just from the two types of matrices defined above
 
-matrixOrder=method(TypicalValue=>List)
-matrixOrder(Ring,Matrix):=(field,matr)->(
+--matrixOrder=method(TypicalValue=>List)
+--matrixOrder(Ring,Matrix)
+matrixOrder :=(field,matr)->(
      field[Variables=>numColumns matr,Weights=>entries matr]
 );   
 
+--weights from a matrix
+
+--wt = method()
+--wt(RingElement, Matrix) 
+wt := (F,M) -> (
+     for i to numRows(M)-1 list 
+        (weightRange(flatten entries M^{i},F))#1
+     )
 
 
+------------------------
+-- Exportable methods --
+------------------------
 
--------------------
--- Documentation --
--------------------
+-- Find an element D in the Noether noramlization P of R 
+-- also in the conductor of R,
+-- with an option to provide that element for cases when this is called 
+-- possibly unnecessarily by the qth-power method
 
-beginDocumentation()
-doc ///
-    Key
-        QthPower
-    Headline
-        An implementation of the Qth-Power algorithm for computing the integral closure of a ring.
-    Description
-        Text
-            This package is an alternative method for computing the integral closure of a ring.
-///
+--qthConductor = method(TypicalValue => RingElement);
+--qthConductor (Ideal,ZZ) 
+qthConductor := (I,depno) -> (
+     R := ring I;
+    RP := (coefficientRing R)[gens R,MonomialOrder=>{Position=>Up,{depno,#gens R-depno}}];
+    IP := sub(I,RP);
+    GP := gens gb sub(transpose jacobian IP, RP/IP);
+    DP := 1;
+   col := 0;
+   for row to numRows GP-1 do(
+      rowDP = 0;
+      while GP_(row,col)==0 do col=col+1;
+      while max apply(depno, v -> degree(RP_v, leadMonomial(GP_(row,col))))==0 do(
+         rowDP = gcd(rowDP,GP_(row,col));
+         col=col+1;
+      );
+      if rowDP!=0 then DP=DP*rowDP;
+   );
+   sub(DP,R)
+   
+);
 
-doc ///
-    Key
-        qConductor
-        (qConductor, Ideal, ZZ)
-    Headline
-        Computes the conductor of a ring where the number of dependent variables is known.
-    Usage
-        qConductor(I, deps)
-    Inputs
-        I:Ideal
-        deps:ZZ
-    Outputs
-        D:RingElement
-    Description
-        Text
-            {\tt D} is a conductor of the quotient ring of {\tt I} where there are {\tt deps} dependent variables.
-        Example
-            Rq = ZZ/23[y,x, MonomialOrder => {Weights => {11,7}, Weights => {1,0}}];
-            deps = 1;
-            Iq = ideal (y^7+y^6*(3*x+1)+y^5*(3*x^3+6*x^2)+y^4*9*x^4+y^3*(4*x^6-x^5)-3*y^2*x^7-3*y*x^9-x^11);
-            D = qConductor(Iq, deps)
-///
+-- Find the numerators of the fractions defining the P-module presentation 
+-- of the integral closure of a quotient ring 
+-- using the qth-power algorithm,
+-- the first numerator being also the common denominator, an element of P
+-- There is an option to provide your own conductor element
 
-end
+icRfractions = method(TypicalValue => List,Options=>{Delta=>null});
+icRfractions (Ideal,ZZ,List) :=o-> (I,depno,footq) ->(
+   -- Initialisation
+   R := ring I;
+   indno := #gens R -depno;
+   depvars := take(gens R, depno);
+   indvars := take(gens R, -indno);
+   q := char R;
+   Deltaq := if o.Delta===null then qthConductor(I,depno) else o.Delta;
+   dq := Deltaq^(q-1);   
+   g := footq;
+   h := apply(g,s->fastq(s,I));
+   e := apply(h, s->red(s,I,dq,footq));
+   s := apply(#footq, i->-1);
+   modulenumber := -1;
+   numerators := footq;
+   --------------------------------------------    
+   -- local variables
+   i := j := w := k := prod := mx := ll := ex := l := gx := pos := 0;
+   skip := skip1 := updatng := true;
+   logei := logj := logk := posl := pos2 := ww := {};
+   -----------------------------------------------------    
+   -- Compute the next module generating set; 
+   -- continue to loop as long as different modules are generated.
+   loop := true;
+   while loop==true do(       	
+      loop = false;
+      i = 0;
+      skip = false;
+      while i < #g do(	   	
+         if s#i==modulenumber then(	      
+            updating=true;
+            -- look for the next unique leading monomial
+            while updating==true do(		 
+               updating=false;
+               for j to i-1 do(		    
+                  if leadMonomial(g#i)==leadMonomial(g#j) then(
+                     i=i+1;
+                     updating=true;
+                     break;
+                  );
+               );
+            );
+            e=replace(i,red(e#i,I,dq,numerators),e);	    
+            -- "row-reduction", that is, taking F-linear combinations
+            j=0;
+            while j<i and e#i!=0 do(
+               if s#j==modulenumber and e#j!=0 then(
+                  logei=logpoly(e#i,depvars,indvars);
+                  logj=logpoly(e#j,depvars,indvars);	
+                  if e#j!=0 and logj#0==logei#0 and geqlog(logei#2,logj#2) and apply((logei#2-logj#2), v->v%q)==apply(indno, v->0) then(
+		     w = 1;
+		     for k to indno-1 do( w=w*(indvars#k)^((logei#2-logj#2)#k//q));
+		     loop=true;
+		     if g#i>g#j*w then(
+		        lc=leadCoefficient(e#i)//leadCoefficient(e#j);
+                        g=replace(i,g#i-lc*(g#j)*w,g);
+                        h=replace(i,(h#i-lc*(h#j)*w^q)%I,h);
+	                e=replace(i,red(e#i-lc*(e#j)*w^q,I,dq,numerators),e);
+                        j=-1; 
+			
+	    	     )
+		     else( 
+		        if g#i<g#j*w then(
+                           gx=(g#j)*w;
+                           g=sort(append(g,gx));
+			   pos=position(g, a->a==gx);
+                           h=insert(pos,(h#j)*w^q,h);
+                           e=insert(pos,red((e#j)*w^q,I,dq,numerators),e);
+                           s=insert(pos,modulenumber,s);
+		        );   
+                     );
+                  );
+               );
+               j=j+1;
+	    );
+	    -- shifting, that is multiplication by a free variable	       
+            if e#i==0 then(		 
+               s=replace(i,modulenumber+1,s);
+            )
+            else(		    
+	       if s#i>=modulenumber then(
+	          loop=true;   
+                  logei=logpoly(e#i,depvars,indvars);
+	          for j to #numerators-1 do(
+	             logj=logpoly(dq*numerators#j,depvars,indvars);
+	             if logj#1==logei#1 then(
+	                prod=1;
+		        for k to indno-1 do(
+		           mx=-((-(((logj)#2)#k-((logei)#2)#k))//q);
+		           if mx>0 then( prod=prod*(indvars#k)^mx);
+		        );
+	                if all(apply(#g,l->s#l>=modulenumber and g#l!=0 and leadMonomial(g#l)==leadMonomial(g#i*prod)), l->l==false) then(
+                           gx=(g#i)*prod;
+                           pos=position(sort(append(g,gx)),a->a==gx);
+                           g=insert(pos,gx,g);
+                           h=insert(pos,(h#i)*prod^q,h);
+                           e=insert(pos,red((e#i)*prod^q,I,dq,numerators),e);
+                           s=insert(pos,modulenumber,s);
+                           loop=true;
+	                );
+	             );          
+	          );
+                  for k to #g-1 do(
+	             if s#k>=modulenumber and g#k!=0 and e#k!=0 then(	 	 
+	                logk=logpoly(e#k,depvars,indvars);
+	                if k<i and logk#0==logei#0 then(
+	                   if all(apply((logei#2-logk#2), v->v%q), v->v==0) then(
+		              ww=apply(indno, v->degree(indvars#v,lcm(logei#3,logk#3)//logei#3));
+                              prod=product(#ww, l->(indvars#l)^((ww#l)//q));
+                              gx=(g#i)*prod;
+                              g=sort(append(g,gx));
+                              pos=position(g,a->a==gx);
+                              h= insert(pos,(h#i)*prod^q,h);
+                              e=insert(pos,red((e#i)*prod^q,I,dq,numerators),e);
+                              s=insert(pos,modulenumber,s);
+		              loop=true;
+                           );
+	                );
+	             );
+	          );
+               );
+            );
+         );
+         i=i+1;
+      );    
+      -- initialize next P-module generator
+      modulenumber=modulenumber+1;
+      gg=toList g;	 
+      --remove any elements that are zeroed out  
+      posl=positions(gg, v->v!=0);
+      g=g_posl;
+      h=h_posl;
+      e=e_posl;
+      s=s_posl;
+      pos2=positions(s, v->v==modulenumber);
+      --save only elements describing the next module 
+      g=g_pos2;
+      h=h_pos2;
+      e=e_pos2;
+      s=s_pos2;	 
+      numerators=for i to #g-1 list if s#i==modulenumber and e#i==0 then g#i else  continue
+print(numerators);
+      e=apply(h,s->red(s,I,dq,numerators));	 
+   );
+   -- paring down to the final set of numerators
+   i=#numerators-1;
+   while i>0 do(
+      logi=logpoly(numerators#i,depvars,indvars);
+      for j to i-1 do(
+         logj=logpoly(numerators#j,depvars,indvars);
+         if logi#0==logj#0 and geqlog(logi#2,logj#2) then(
+            numerators=delete(numerators#i,numerators);
+	    break;
+         );
+      );
+      i=i-1;
+   );
+   for i to #numerators-1 list(
+      head=leadTerm(numerators#i);
+      tail=numerators#i-head;
+      for j to i-1 do(
+	  tail=tail%numerators#(i-1-j);
+      );
+      head+tail
+    )  	  
+);
+
+------------------------------
+--weight matrix from fractions
+------------------------------
+
+--icRweightmatrix = method(TypicalValue => Matrix);
+--icRweightmatrix (List,Matrix) 
+icRweightmatrix := (fractions,matr) ->(
+   revfrac:=rsort(fractions);
+   weightlist:=for i to #revfrac-2 list( 
+      wt(revfrac#i,matr)-wt(revfrac#-1,matr)
+   );
+   transpose matrix(weightlist)|matr_{numColumns(matr)-numRows(matr)..numColumns(matr)-1}   
+     
+);
+
+----------------------------------
+--integral closure polynomial ring
+----------------------------------
+
+--icR=method(TypicalValue=>Ring);
+--icR(List,Matrix) 
+icR :=(fractions,wtR)->
+   matrixOrder(coefficientRing Rq,grevlexWeight(icRweightmatrix(fractions,wtR))
+);
+
+---------------------------------
+--icRrelations
+---------------------------------
+
+--icRrelations=method(TypicalValue=>List);
+--icRrelations(List,Ideal,Ring,ZZ) 
+icRrelations := (fractions,Rq,I,icR,depno)->(
+--   Rq:=ring I;  
+   noeth:=for i to #gens Rq-1 list if i<depno then 0 else icR_(#fractions+i-depno-1);
+   psi:=map(icR,Rq,noeth);
+   revold:=rsort(fractions);
+   quads:=flatten( 
+      for i to #fractions-2 list(
+         for j from i to #fractions-2 list(
+            relij= icR_i*icR_j;
+            tailij=((revold#i)*(revold#j))%I//(revold#-1);
+            k=#fractions-1;
+            while tailij !=0 and k>=0 do(
+	       if (logpoly(tailij,depvars,indvars))#0==(logpoly(revold#k,depvars,indvars))#0
+	       and geqlog((logpoly(tailij,depvars,indvars))#2,(logpoly(revold#k,depvars,indvars))#2)
+	       then(
+	          l=leadTerm(tailij)//leadTerm(revold#k);
+	          tailij=tailij-l*revold#k;
+	          relij=if k==#fractions-1 then relij-psi(l) else relij-psi(l)*(icR_k);
+	          k=#fractions-1;
+	       )
+               else(
+	          k=k-1;
+	       );
+	    );
+            relij
+         )
+      )	
+   );
+   lins:=flatten( 
+      for i to #fractions-2 list(
+         for j from i+1 to #fractions-2 list(
+	    if (logpoly(revold#i,depvars,indvars))#0==(logpoly(revold#j,depvars,indvars))#0 then(
+	       GCD=gcd(leadMonomial(revold#i),leadMonomial(revold#j));	
+	       tailji=(revold#i*leadTerm(revold#j))//GCD-(revold#j*leadTerm(revold#i))//GCD;
+	       relji=icR_i*psi(leadTerm(revold#j)//GCD)-icR_j*psi(leadTerm(revold#i)//GCD);
+               k=#fractions-2; 
+               while tailji !=0 do(
+	          if (logpoly(tailji,depvars,indvars))#0==(logpoly(revold#k,depvars,indvars))#0
+	          and geqlog((logpoly(tailji,depvars,indvars))#2,(logpoly(revold#k,depvars,indvars))#2)
+	          then(
+	             l=leadTerm(tailji)//leadTerm(revold#k);
+	             tailji=tailji-l*revold#k;
+	             relji=relji-psi(l)*(icR_k);
+	    	     k=#fractions-2;
+	          )
+                  else(
+	             k=k-1;
+	          );
+	       );
+               relji
+            )
+         )	
+      )
+   );
+   delete(0_icR,delete(null,quads|lins))
+);
 
 
+-------------------------------------
+-- ZZ/q version
+-------------------------------------
+
+
+--qthIntegralclosure:=method(TypicalValue=>List);
+--qthIntegralclosure(Matrix,Ring,List)
+qthIntegralclosure :=(wtR,Rq,Iq)->(
+   q:=char Rq;
+   indno:=numRows wtR;
+   depno:=(numColumns wtR) -indno;
+   indvars:=take(gens Rq, -indno);
+   depvars:=take(gens Rq, depno);
+   I:=ideal(Iq);
+   degs:=for dv in depvars list max(apply(Iq,v->degree(dv,v)));
+   footq:={1};
+   for i to depno-1 do footq=flatten for j to degs#i-1 list for f in footq list f*(depvars#i)^j;
+   LMideal:=ideal(apply(Iq, v->leadMonomial v));
+   footq=sort(delete(0_Rq,for f in footq list f%LMideal));
+   degr:=#footq;
+   fractions:=icRfractions(I,depno,footq);
+   wticR:=icRweightmatrix(fractions,wtR);
+   icR:=matrixOrder(coefficientRing Rq,grevlexWeight(wticR));
+   relicR:=icRrelations(fractions,I,icR,depno);
+   {fractions,wticR,icR,relicR}
+);
+
+
+-----------------------------------
+--QQ version
+-----------------------------------
+
+--rationalIntegralClosure:=method(TypicalValue=>List);
+--rationalIntegralClosure(Ideal,ZZ,ZZ,List,List,RingElement,List):=(I,depno,degr,dep,ind,f,foot)->(
+--   R:=ring I;
+--   RZ=ZZ(monoid R);
+--   toQ=map(R,RZ);
+--   -----------------------------------------
+--   D0=qthConductor(I,depno);
+--   ----------------------------------------------------------------------
+--   --find primes that definitely can't be used---------------------------
+--   badprimes=lcm(apply(apply(flatten entries ((coefficients(f))#1),v->substitute(v,QQ)),v->denominator(v)));
+--   badprimes=badprimes*degr;
+--   ----------------------------------------------------------------------
+--   --look for good primes, and run the qth power algorithm using ZZ/q instead of QQ
+--   q=2;
+--   firstPrime=true;
+--   stable=false;
+--   while stable==false do(
+--      stable=true;
+--      while isPrime(q)==false do(
+--         q=q+1;
+--      );
+--      Rq=(ZZ/q)(monoid R);
+--      toq=map(Rq,R);
+--      Iq=toq(I);
+--      footq=apply(foot,v->toq(v));
+--      depq=apply(dep,v->toq(v));
+--      indq=apply(ind,v->toq(v));
+--      ----------------------------------------------------
+--      Dq=qthConductor(I,depno);
+--      --q is good if D%q matches Dq----------------------------------   
+--      if Dq==sub(D,Rq) then(
+--         d=Dq^(q-1);
+--         --this next part will be replaced by a call to the qth power method
+--         --with Iq, footq, etc..      
+--         {icRfractions,icRweightmatrix,icRring,icRrelations}:=
+--         moduleIntegralClosure(wtR,I,footq); 
+--         -----------------------------------------------------------------
+--         --if more than one good prime has been used, 
+--         --it is then necessary to use CRT and EEA------------------------
+--         if firstPrime==true then(
+--	    oldvarsZ=apply(icRfractions,v->toZ(v));
+--	    olrelsZ=apply(icRrelations,v->toZ(v));  
+--	    oldvarsQ=for i to #oldvarsZ-1 list polyrecon(oldvarsZ#i,q);
+--	    oldrelsQ=for i to #oldrelsZ-1 list polyrecon(oldrelsZ#i,q);
+--	    oldmod=q;
+--	    stable=false;
+--         )
+--         else(
+--            --find variables and relations mod the product of all primes so far
+--            toZ=map(RZ,Rq);	      
+--	    newvarsZ=for i to #oldvarsZ-1 list polyCRT(oldvarsZ#i,qfractions#i,oldmod,q);
+--	    newrelsZ=for i to #oldrelsZ-1 list polyCRT(oldrelsZ#i,rels2#i,oldmod,q);
+--	    oldmod=oldmod*q;
+--	    newvarsQ=for i to #newvarsZ-1 list polyrecon(newvarsZ#i,oldmod);
+--	    newrelsQ=for i to #newrelsZ-1 list polyrecon(newrelsZ#i,oldmod);
+--            --Has this process stabilized yet or not?	 
+--	    if newvarsQ!=oldvarsQ or newrelsQ!=oldrelsQ then(
+--	       oldvarsQ=newvarsQ;
+--	       oldrelsQ=newrelsQ;
+--	       stable=false;
+--	    );   
+--         );
+--         q=q+1;
+--      );
+--   );
+--   {weightmatrixICR,icR,oldvarsQ,oldrelsQ}   
+--);
+
+
+--example 1, disguised Hermitian-----------------------------------------
+wtR=matrix{{9,8}}
+Rq=ZZ/31[y,x,Weights=>entries(weightGrevlex(wtR))]
+Iq={y^8-x^9+2*y*x^6-y^2*x^3}
+
+toString(qthIntegralclosure(wtR,Rq,Iq))
+
+--example 7, Leonard 2009 -----------------------------------------------
+wtR:=matrix{{19,15,12,9,9},{12,9,9,9,0}};
+
+Rq=ZZ/2[z19,y15,y12,x9,u9,Weights=>entries(weightGrevlex(wtR))]
+
+Iq = {y15^2+y12*x9*u9,
+      y15*y12+x9^2*u9+x9*u9^2+y15,
+      y12^2+y15*x9+y15*u9+y12,
+      z19^3+z19*(y15+y12)*(x9+1)*u9+(y15*(x9+u9)+y12*(x9*u9+1))*x9^2*u9}
+
+toString(qthIntegralclosure(wtR,Rq,Iq))
+-------------------------------------------------------------------------
