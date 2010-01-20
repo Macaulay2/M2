@@ -1,5 +1,4 @@
 -- -*- coding: utf-8 -*-
---------------------------------------------------------------------------------
 needsPackage "Polyhedra"
 newPackage(
      "NormalToricVarieties",
@@ -11,22 +10,31 @@ newPackage(
 	       Email => "ggsmith@mast.queensu.ca", 
 	       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
      Headline => "normal toric varieties",
-     DebuggingMode => false
+     DebuggingMode => true
      )
 
 export { 
-     NormalToricVariety, 
+     NormalToricVariety,
+     ToricDivisor,
      normalToricVariety, 
+     toricDivisor,
      projectiveSpace, 
      hirzebruchSurface, 
      weightedProjectiveSpace, 
      kleinschmidt,
-     classGroup, 
+     anticanonicalDivisor,
+     classGroup,
+     isAmple,
+     isCartier,
+     isQQCartier,
      isDegenerate,
+     isFano,
      isProjective,
      isSimplicial,
      latticeIndex,
      makeSimplicial,
+     makeSmooth,
+     resolveSingularities,
      weilDivisors, 
      cartierDivisors, 
      cartierToPicard,
@@ -36,7 +44,8 @@ export {
      nef,
      smoothFanoToricVariety,
      WeilToClass,
-     weilToClass
+     weilToClass,
+     insertCone
      }
 --------------------------------------------------------------------------------
 needsPackage "FourierMotzkin"
@@ -52,6 +61,13 @@ NormalToricVariety.GlobalReleaseHook = globalReleaseFunction
 
 expression NormalToricVariety := X -> new FunctionApplication from { 
      normalToricVariety, Adjacent{rays X, Adjacent{",",max X}}}
+
+ToricDivisor = new Type of HashTable
+ToricDivisor.synonym = "toric divisor"
+globalAssignment ToricDivisor
+
+--expression ToricDivisor := D -> new FunctionApplication from { 
+--     toricDivisor, Adjacent{coefficients D, Adjacent{",",variety D}}}
 
 -- The methods 'rays' is defined in 'Polyhedra'
 -- rays = method(TypicalValue => List)
@@ -74,6 +90,18 @@ normalToricVariety (List, List) := opts -> (V,F) -> (
      X.cache.CoefficientRing = opts.CoefficientRing;
      X.cache.Variable = opts.Variable;
      return X)
+
+toricDivisor = method()
+
+toricDivisor (List,NormalToricVariety) := (L,X) -> (
+     new ToricDivisor from {
+	  symbol coefficients => L,
+	  symbol variety => X,
+	  symbol cache => new CacheTable})
+
+
+coefficients ToricDivisor := List => opts -> D -> D.coefficients
+variety ToricDivisor := NormalToricVariety => D -> D.variety
 
 
 projectiveSpace = method()
@@ -204,7 +232,7 @@ latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
 	X.cache.cones#sigma#1)
 
 
-isWellDefined NormalToricVariety := Boolean => X -> (
+isWellDefined NormalToricVariety := Boolean => (cacheValue symbol isWellDefined)(X -> (
      V := rays X;
      F := max X;
      m := #F;
@@ -258,15 +286,99 @@ isWellDefined NormalToricVariety := Boolean => X -> (
 		    flag = false; 
 		    break)));
 
-     return flag)     
+     return flag))
+
+isWellDefined ToricDivisor := Boolean => (cacheValue symbol isWellDefined)(D -> #(coefficients D) == #(rays variety D) and isWellDefined variety D)
 
 
-   
+isAmple = method()
+isAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isAmple then X.cache.isAmple = new MutableHashTable;
+     if not X.cache.isAmple#?D then (
+	  X.cache.isAmple#D = isCartier(D,X) and isComplete X and (
+	       complementSelect := (L,ind) -> L_(sort toList(set(0..#L-1) - set ind));
+	       M := - X.cache.isQQCartier#D;
+	       all(#(max X), i -> (
+		    	 C := (max X)#i;
+		    	 m := M#i;
+		    	 R := complementSelect(rays X,C);
+		    	 a := - complementSelect(D,C);
+		    	 all(#R, j -> ((matrix{R#j} * m) - a#j)_(0,0) > 0)))));
+     X.cache.isAmple#D)
+
+isAmple ToricDivisor := Boolean => (cacheValue symbol isAmple)(D -> (
+	  isCartier D and isComplete variety D and (
+	       complementSelect := (L,ind) -> L_(sort toList(set(0..#L-1) - set ind));
+	       M := - D.cache.cartierCoefficients;
+	       all(#(max variety D), i -> (
+		    	 C := (max variety D)#i;
+		    	 m := M#i;
+		    	 R := complementSelect(rays variety D,C);
+		    	 a := - complementSelect(coefficients D,C);
+		    	 all(#R, j -> ((matrix{R#j} * m) - a#j)_(0,0) > 0))))))
+
+
+isVeryAmple (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isVeryAmple then X.cache.isVeryAmple = new MutableHashTable;
+     if not X.cache.isVeryAmple#?D then X.cache.isVeryAmple#D = isAmple(D,X) and isVeryAmple polytope(D,X);
+     X.cache.isVeryAmple#D)
+
+isVeryAmple ToricDivisor := Boolean => (cacheValue symbol isVeryAmple)(D -> isAmple D and isVeryAmple polytope D)
+
+
+isCartier = method()
+isCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isCartier then X.cache.isCartier = new MutableHashTable;
+     if not X.cache.isCartier#?D then X.cache.isCartier#D = isQQCartier(D,X) and all(X.cache.isQQCartier#D, m -> liftable(m,ZZ));
+     X.cache.isCartier#D)
+
+isCartier ToricDivisor := Boolean => (cacheValue symbol isCartier)(D -> isQQCartier D and all(D.cache.cartierCoefficients, m -> liftable(m,ZZ)))
+
+isQQCartier = method()
+isQQCartier (List,NormalToricVariety) := Boolean => (D,X) -> (
+     if not X.cache.?isQQCartier then X.cache.isQQCartier = new MutableHashTable;
+     if not X.cache.isQQCartier#?D then (
+	  systemSolver := (R,F) -> (
+     	       (R1,Lmatrix,Rmatrix) := smithNormalForm lift(R,ZZ);
+     	       F1 := entries(Lmatrix * F);
+     	       Rmatrix * (matrix apply(numRows R1, i -> F1#i / R1_(i,i)) || map(QQ^(numColumns R1 - numRows R1),QQ^(#(F1#0)),0)));
+     	  X.cache.isQQCartier#D = for C in max X list (
+	       U := matrix((rays X)_C);
+	       a := transpose matrix {D_C};
+	       n := numColumns U;
+	       m := systemSolver(if numRows U > n then (U^{0..n-1},a^{0..n-1}) else (U,a));--^{0..n-1},a^{0..n-1});
+	       if U*m-a != 0 then break{} else m));
+     X.cache.isQQCartier#D != {})
+
+isQQCartier ToricDivisor := Boolean => (cacheValue symbol isQQCartier)(D -> (
+	  systemSolver := (R,F) -> (
+     	       (R1,Lmatrix,Rmatrix) := smithNormalForm lift(R,ZZ);
+     	       F1 := entries(Lmatrix * F);
+     	       Rmatrix * (matrix apply(numRows R1, i -> F1#i / R1_(i,i)) || map(QQ^(numColumns R1 - numRows R1),QQ^(#(F1#0)),0)));
+	  D.cache.cartierCoefficients = for C in max variety D list (
+	       U := matrix((rays variety D)_C);
+	       a := transpose matrix {(coefficients D)_C};
+	       n := numColumns U;
+	       m := systemSolver(if numRows U > n then (U^{0..n-1},a^{0..n-1}) else (U,a));
+	       if U*m-a != 0 then break{} else m);
+	  D.cache.cartierCoefficients != {}))
+     
+     
+
+
 isDegenerate = method()
 isDegenerate NormalToricVariety := Boolean => (cacheValue symbol isDegenerate)(
      X -> kernel matrix rays X != 0)
 
 
+isFano = method()
+isFano NormalToricVariety := Boolean => (cacheValue symbol isFano)(
+     X -> (
+	  D := anticanonicalDivisor X;
+	  isCartier D and isAmple D))     
+
+
+   
 isSimplicial = method()
 isSimplicial NormalToricVariety := Boolean => (cacheValue symbol isSimplicial)(
      X -> (
@@ -280,6 +392,11 @@ isSmooth NormalToricVariety := Boolean => (cacheValue symbol isSmooth)(
      	  b := all(max X, s -> #s == rank V_s and 1 == minors(#s,V_s));
 	  if b == true then X.cache.simplicial = true;
 	  return b))
+
+
+anticanonicalDivisor = method()
+anticanonicalDivisor NormalToricVariety := ToricDivisor => X -> toricDivisor(toList(#(rays X):1),X)
+
 
 
 classGroup = method()
@@ -566,9 +683,9 @@ cohomology (ZZ,NormalToricVariety,SheafOfRings) := Module => opts -> (
 --------------------------------------------------------------------------------
 -- code that interfaces with the Polyhedra package
 
-normalToricVariety Fan := F -> (
+normalToricVariety Fan := opts -> F -> (
      R := rays F;
-     Fs := apply(genCones F, C -> (Cr:=rays C; Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
+     Fs := apply(maxCones F, C -> (Cr:=rays C; Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
      X := new NormalToricVariety from {
 	  symbol rays => apply(R, r -> flatten entries r),
 	  symbol max => Fs,
@@ -577,7 +694,7 @@ normalToricVariety Fan := F -> (
      X.cache.Fan = F;
      X)
 
-normalToricVariety Polyhedron := P -> normalToricVariety normalFan P
+normalToricVariety Polyhedron := opts -> P -> normalToricVariety normalFan P
 
 
 isComplete NormalToricVariety := X -> (
@@ -588,11 +705,13 @@ isPure NormalToricVariety := X -> (
      if not X.cache.?Fan or not X.cache.?isPure then X.cache.isPure = isPure fan X;
      X.cache.isPure)
 
-isProjective = method(TypicalValue => Boolean)
-isProjective NormalToricVariety := X -> (
-     if not X.cache.?isFan then isFan X;
-     if not X.cache.isFan then error("The data does not define a Fan");
-     isPolytopal X.cache.Fan)
+isProjective = method()
+isProjective NormalToricVariety := Boolean => (cacheValue symbol isProjective)(X -> (
+	  if not isWellDefined X then error("The data does not define a Fan");
+	  isPolytopal fan X))
+
+
+
 
 fan NormalToricVariety := X -> (
      if not X.cache.?Fan then (
@@ -612,37 +731,58 @@ fan NormalToricVariety := X -> (
 
 halfspaces (List,NormalToricVariety) := Matrix => (sigma,X) -> (
      if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
-     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = -(fourierMotzkin matrix transpose ((rays X)_sigma))#0;
-     X.cache.halfspaces#sigma)
+     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = fourierMotzkin matrix transpose ((rays X)_sigma);
+     -(X.cache.halfspaces#sigma#0))
 
-makeSimplicial = method()
-makeSimplicial NormalToricVariety := NormalToricVariety => X ->(
+
+hyperplanes (List,NormalToricVariety) := Matrix => (sigma,X) -> (
+     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
+     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = fourierMotzkin matrix transpose ((rays X)_sigma);
+     X.cache.halfspaces#sigma#1)
+
+
+makeSimplicial = method(Options => {Strategy => "addNoRays"})
+makeSimplicial NormalToricVariety := NormalToricVariety => options -> X ->(
      R := rays X;
      Rm := matrix rays X;
+     local Xsimp;
      Cones := partition(l -> dim(l,X) == #l,max X);
      simpCones := if Cones#?true then Cones#true else {};
      Cones = if Cones#?false then Cones#false else {};
-     while Cones != {} do (
-	  C := Cones#0;
-	  HS := halfspaces(C,X);
-	  FL := reverse faceLatticeSimple(dim(C,X),transpose Rm^C,HS);
-	  r := {};
-	  for i from 1 to #FL-1 do (
-	       nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
-	       if nonsimpFace != {} then (r = makePrimitive flatten entries sum toList nonsimpFace#0#0; break));
-	  Y := normalToricVariety(R,Cones);
-	  Y.cache.halfspaces = X.cache.halfspaces;
-	  Y.cache.cones = X.cache.cones;
-	  X = stellarSubdivision(Y,r);
-	  R = rays X;
-	  Rm = matrix R;
-	  Cones = partition(l -> dim(l,X) == #l, max X);
-	  if Cones#?true then simpCones = simpCones | Cones#true;
-	  if Cones#?false then Cones = Cones#false else Cones = {});
-     Xsimp := normalToricVariety(R,simpCones);
-     Xsimp.cache.cones = X.cache.cones;
-     if X.cache.?halfspaces then Xsimp.cache.halfspaces = X.cache.halfspaces;
+     if options.Strategy == "centre" then (
+	  while Cones != {} do (
+	       C := Cones#0;
+	       HS := halfspaces(C,X);
+	       FL := reverse faceLatticeSimple(dim(C,X),transpose Rm^C,HS);
+	       r := {};
+	       for i from 1 to #FL-1 do (
+	       	    nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
+	       	    if nonsimpFace != {} then (r = makePrimitive flatten entries sum toList nonsimpFace#0#0; break));
+	       Y := normalToricVariety(R,Cones);
+	       Y.cache.halfspaces = new MutableHashTable from for k in max Y list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
+	       Y.cache.cones = new MutableHashTable from for k in max Y list if X.cache.cones#?k then k => X.cache.cones#k else continue;X.cache.cones;
+	       X = stellarSubdivision(Y,r);
+	       R = rays X;
+	       Rm = matrix R;
+	       Cones = partition(l -> dim(l,X) == #l, max X);
+	       if Cones#?true then simpCones = simpCones | Cones#true;
+	       if Cones#?false then Cones = Cones#false else Cones = {});
+	  Xsimp = normalToricVariety(R,simpCones))
+     else if options.Strategy == "addNoRays" then (
+	  usedrays := {};
+	  while Cones != {} do (
+	       Ctally := tally select(flatten Cones, e -> not member(e,usedrays));
+	       mCtally := max values Ctally;
+	       r1 := (select(keys Ctally, k -> Ctally#k == mCtally))#0;
+	       usedrays = usedrays | {r1};
+	       r1 = (rays X)#r1;
+	       X = stellarSubdivision(X,r1);
+	       Cones = select(max X, l -> dim(l,X) =!= #l));
+	  Xsimp = X);
+     if X.cache.?halfspaces then Xsimp.cache.halfspaces = new MutableHashTable from for k in max Xsimp list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
+     Xsimp.cache.cones = new MutableHashTable from for k in max Xsimp list if X.cache.cones#?k then k => X.cache.cones#k else continue;
      Xsimp)
+
 
 
 faceLatticeSimple = (d,R,HS) -> (
@@ -661,31 +801,54 @@ faceLatticeSimple = (d,R,HS) -> (
 	       L = unique Lnew)))
 
 
-stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
+polytope NormalToricVariety := Polyhedron => (cacheValue symbol polytope)(X -> polytope fan X)
+
+polytope (List,NormalToricVariety) := Polyhedron => (D,X) -> (
+     U := -matrix rays X;
+     a := transpose matrix {D};
+     intersection(U,a))
+
+polytope ToricDivisor := Polyhedron => (cacheValue symbol polytope)(D -> intersection(-matrix rays variety D,transpose matrix {coefficients D}))
+
+
+stellarSubdivision (NormalToricVariety,List) := NormalToricVariety => (X,r) -> (
      replacement := {};
      rm := matrix transpose {r};
-     n := #(rays X);
+     (n,newRays) := if member(r,rays X) then (position(rays X, e -> e == r),rays X) else (#(rays X),rays X | {r});
      R := matrix rays X;
      newMax := flatten apply(max X, C -> (
 	       M := promote(R^C,QQ);
 	       if replacement == {} then (		    
 		    if dim(C,X) == #C then (
 			 -- Simplicial Cone
-			 M = inverse M;
-			 v := flatten entries (transpose M * rm);
-			 if all(v, i -> i >= 0) then (
-			      replacement = positions(v, i -> i > 0);
-			      replacement = apply(replacement, i -> C#i);
-			      C = toList (set C - set replacement) | {n};
-			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
-			 else {C})
+			 if numColumns M == numRows M then (
+			      -- full dimensional Cone
+			      M = inverse M;
+			      v := flatten entries (transpose M * rm);
+			      if all(v, i -> i >= 0) then (
+			      	   replacement = positions(v, i -> i > 0);
+			      	   replacement = apply(replacement, i -> C#i);
+			      	   C = toList (set C - set replacement) | {n};
+			      	   apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			      else {C})
+			 else (
+			      -- not full dimensional cone
+			      K := mingens ker M;
+			      M = (inverse(M|| transpose K))_{0..numRows M -1};
+			      vnf := flatten entries (transpose M * rm); print (M,K,vnf);
+			      if all(vnf, i -> i >= 0) and transpose K * rm == 0 then (
+			      	   replacement = positions(vnf, i -> i > 0);
+			      	   replacement = apply(replacement, i -> C#i);
+			      	   C = toList (set C - set replacement) | {n};
+			      	   apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			      else {C}))
 		    else (
 			 -- Non-simplicial Cone
 			 HS := transpose halfspaces(C,X);
 			 w := flatten entries (HS * rm);
-			 if all(w, i -> i >= 0) then (
+			 if all(w, i -> i >= 0) and (dim(C,X) == numColumns HS or (transpose hyperplanes(C,X)) * rm == 0) then (
 			      replacement = positions(w, i -> i == 0);
-			      correctFaces := submatrix'(HS,replacement);
+			      correctFaces := submatrix'(HS,replacement,);
 			      HS = HS^replacement;
 			      replacement = select(C, i -> HS * (transpose R^{i}) == 0);
 			      apply(numRows correctFaces, i -> select(C, j -> (correctFaces^{i}) * (transpose R^{j}) == 0) | {n}))
@@ -701,34 +864,183 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 			      for i from 0 to numRows HS1 -1 list (
 				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
 		    else {C})));
-     newRays := rays X | {r};
+     if replacement == {} then newRays = rays X;
      Y := new NormalToricVariety from {
 	  symbol rays => newRays,
 	  symbol max => newMax,
 	  symbol cache => new CacheTable};
-     if X.cache.?halfspaces then Y.cache.halfspaces = X.cache.halfspaces;
-     Y.cache.cones = X.cache.cones;
+     if X.cache.?halfspaces then Y.cache.halfspaces = new MutableHashTable from for k in max Y list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
+     Y.cache.cones = new MutableHashTable from for k in max Y list if X.cache.cones#?k then k => X.cache.cones#k else continue;
      Y)
 
 makePrimitive = method()
-makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
+makePrimitive List := List => w -> (g := gcd w; apply(w, e -> e//g))
+
+insertCone = method()
+insertCone (NormalToricVariety,List) := NormalToricVariety => (X,C) -> (
+     R := matrix rays X;
+     Cr := transpose matrix C;
+     C1 := {};
+     maxX := max X;
+     for i from 0 to #maxX - 1 do (
+	  bigC := maxX#i;
+	  M := promote(R^bigC,QQ);
+	  v := if dim(bigC,X) == #bigC then (transpose inverse M) * Cr else (transpose halfspaces(bigC,X)) * Cr;
+	  if all(flatten entries v, e -> e >= 0) then (
+	       C1 = bigC;
+	       maxX = drop(maxX,{i,i});
+	       break)
+	  else if any(numColumns v, i -> all(flatten entries v_{i}, e -> e > 0)) then break);
+     if C1 == {} then error("The additional cone is not contained in any cone of the variety");
+     oldMaxX := {};
+     cones2handle := {(C1,C)} | for bigC in maxX list (
+	  M := if dim(bigC,X) == #bigC then inverse promote(R^bigC,QQ) else halfspaces(bigC,X);
+	  pos := select(C, r -> all(flatten entries(matrix{r}*M), e -> e >= 0));
+	  if pos != {} then (bigC,pos) else (
+	       oldMaxX = oldMaxX | {bigC};
+	       continue));
+     raysX := rays X | select(C, r -> not member(r,rays X));
+     totalNewCones := flatten apply(cones2handle, p -> (
+	       C1 = p#0;
+	       C = p#1;
+	       Cr = transpose matrix C;
+     	       C1r := (rays X)_C1;
+     	       CM := matrix transpose C;
+     	       HS := if rank CM == numRows CM then (-(fourierMotzkin CM)#0,0) else (CM = posHull CM; (transpose halfspaces CM,transpose hyperplanes CM));
+     	       newCones := apply(numColumns HS#0, i -> (
+	       		 v := (HS#0)_{i};
+	       		 select(C1r, r -> (matrix{r} * v)_(0,0) < 0) | select(C, r -> (matrix{r} *v)_(0,0) == 0)));
+     	       if HS#1 != 0 then (
+	  	    newCones = newCones | apply(numColumns HS#1, i -> (
+		    	      v := (HS#1)_{i};
+		    	      select(C1r, r -> (matrix{r} * v)_(0,0) < 0) | select(C, r -> (matrix{r} *v)_(0,0) == 0)));
+	  	    newCones = newCones | apply(numColumns HS#1, i -> (
+		    	      v := -(HS#1)_{i};
+		    	      select(C1r, r -> (matrix{r} * v)_(0,0) < 0) | select(C, r -> (matrix{r} *v)_(0,0) == 0))));
+     	       HS = halfspaces(C1,X);
+     	       newCones = newCones | for i from 0 to numColumns HS - 1 list (
+	  	    v := HS_{i};
+	  	    facetrays := select(C1r, r -> (matrix{r} * v)_(0,0) == 0);
+	  	    if any(newCones, nC -> isSubset(set facetrays, set nC)) then continue;
+	  	    pos := transpose Cr * v;
+	  	    posmin := min flatten entries pos;
+	  	    if posmin == 0 then continue;
+	  	    pos = positions(flatten entries pos, e -> e == posmin);
+	  	    facetrays | C_pos);
+     	       newCones = unique(newCones | {C});
+     	       for i from 0 to #newCones - 1 list (
+	  	    nC := newCones#i;
+	  	    if any(drop(newCones,{i,i}), e -> isSubset(nC,e)) then continue;
+	  	    nC)));	       
+     maxX = oldMaxX | apply(totalNewCones, nC -> apply(nC, r -> position(raysX, e -> e == r)));
+     Y := new NormalToricVariety from {
+	  symbol rays => raysX,
+	  symbol max => maxX,
+	  symbol cache => new CacheTable};
+     if X.cache.?halfspaces then Y.cache.halfspaces = new MutableHashTable from for k in max Y list if X.cache.halfspaces#?k then k => X.cache.halfspaces#k else continue;
+     if X.cache.?cones then Y.cache.cones = new MutableHashTable from for k in max Y list if X.cache.cones#?k then k => X.cache.cones#k else continue;
+     Y)
 
 
+
+----------------------------------------------------------------
+-- The following developed by Christine Berkesch, Diane Maclagan, Alexandra Seceleanu
+---------------------------------------------------------------
+--Internal procedures (no documentation)
+----------------------------------------------------------------
+--Procedure to return the largest prime dividing a number 
+maxPrime=n->(
+     f:=factor(n);
+     return(max apply(#f,i->((f#i)#0)));
+);
+
+--Procedure to return the smallest prime dividing a number 
+minPrime=n->(
+     f:=factor(n);
+     return(min apply(#f,i->((f#i)#0)));
+);
+
+--Procedure to find the mod p representative of a vector v with
+--all entries between 0 (inclusive) and p (exclusive)
+makePos=(v,pp)->(
+	local i,j;
+	i=0;
+	while i<#v do (
+		while v_i < 0 do (
+			v=v+pp*(apply(#v,j->(if j==i then 1 else 0)));
+		);
+		while v_i > pp-1 do (
+			v=v-pp*(apply(#v,j->(if j==i then 1 else 0)));
+		);
+		i=i+1;
+	);
+	v
+)
+
+-- Procedure to compute the maximal lattice index for the facets of X.
+-- Note: (X is NOT required to be pure or simplicial)
+maxIndex = method()
+maxIndex (NormalToricVariety):= X ->(
+	max apply(max X,sigma-> latticeIndex(sigma,X))
+)
+
+-------------------------------------------------------------------------
+--This is currently an internal procedure
+-- Procedure to find a new ray (as a List) at which to subdivide.
+
+findNewRay = method(Options => {Strategy => "max"} ) 
+findNewRay (NormalToricVariety,ZZ) := options ->(X,maxInd) ->(
+	sigma := (select(1,max X, C -> latticeIndex(C,X) == maxInd))#0;
+	--Now find the vector in this sigma to add
+	p := 0;
+	if options.Strategy == "min" then p = minPrime(floor maxInd) else if options.Strategy == "max" then p = maxPrime(floor maxInd); 
+	R := ZZ/p;
+	Ap := substitute(transpose matrix (rays X)_sigma, R);
+	K := transpose gens ker Ap;
+	k := flatten entries substitute(matrix({(entries(K))_0}),ZZ);
+	k = matrix {makePos(k,p)};
+	newA := flatten entries (k*matrix (rays X)_sigma);
+	makePrimitive newA --output new vector in list form
+)
+
+
+----------------------------------------------------------------
+--Internal procedures for resolution of singularities; 
+-- resolve a simplicial normal toric variety
+
+makeSmooth = method(Options => {Strategy=>"max"})
+makeSmooth NormalToricVariety := NormalToricVariety => options -> X ->(
+	if dim X ==1 then return normalToricVariety(apply(rays X, r-> makePrimitive r),max X);
+	Xsimp := X; 
+	maxInd := maxIndex Xsimp;
+	--Now the main part of the procedure
+	count := 0;
+	while(maxInd > 1) do (
+		count = count +1;	     
+		newA = findNewRay(Xsimp,maxInd,Strategy=>options.Strategy);
+		print concatenate{"blowup #",toString count," at ",toString newA," with lattice index ",toString maxInd};
+		Xsimp = stellarSubdivision( Xsimp, newA);
+		--Now update maxInd
+		maxInd = maxIndex Xsimp;
+	);
+	Xsimp
+)
+
+resolveSingularities = method(Options=>{Strategy=>"max"}) 
+resolveSingularities NormalToricVariety := NormalToricVariety => options -> X ->(
+	Xsimp:=X;
+	if isSimplicial X then Xsimp = X else Xsimp = makeSimplicial X;
+	if isSmooth Xsimp then Xsimp else makeSmooth (Xsimp, Strategy => options.Strategy)
+)
 --------------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
---   isFano
---   cotangentBundle
+--   cotangentBundle -> See Package ToricVectorBundles by Birkner,Ilten,Petersen
 --   homology,NormalToricVariety
 --   blow-ups
 --   operational Chow rings
---   vector bundles?
+--   vector bundles? -> See Package ToricVectorBundles by Birkner,Ilten,Petersen
 --   faces
 --   linear series
---   isComplete
---   isProjective
---   isCartier
---   isAmple
---   isVeryAmple
 --   isSemiprojective
 --
 
@@ -756,7 +1068,7 @@ document {
 	  varieties", ", preprint available at ", 
 	  HREF("http://www.cs.amherst.edu/~dac/toric.html", 
 	       TT "www.cs.amherst.edu/~dac/toric.html")},	       
-	  {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
+	  {"GÃ¼nter Ewald, ", EM "Combinatorial convexity and algebraic
            geometry", ", Graduate Texts in Mathematics 168. 
 	   Springer-Verlag, New York, 1996. ISBN: 0-387-94755-8" },
 	  {"William Fulton, ", EM "Introduction to toric varieties",
@@ -773,7 +1085,7 @@ document {
      UL {
 	  {HREF("http://www.math.purdue.edu/~cberkesc/","Christine Berkesch")},
 	  {HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm",
-		    "René Birkner")},
+		    "Rene Birkner")},
      	  {HREF("http://www.warwick.ac.uk/staff/D.Maclagan/","Diane Maclagan")},
 	  {HREF("http://www.math.uiuc.edu/~asecele2/","Alexandra Seceleanu")},
 	  },
@@ -807,6 +1119,36 @@ document {
 	  }
      }  
 
+document {
+     Key => ToricDivisor,
+     Headline => "the class of all torus invariant divisors on normal toric varieties",
+     "A torus invariant divisor is a linear combination of the prime torus invariant divisors. The prime divisors are given by the rays of 
+     the underlying fan of the normal toric variety. Let ",TEX ///$\rho$///," be a ray of the fan then the corresponding torus invariant 
+     prime divisor is the closure of the orbit ",TEX ///$O(\rho)$///,".",
+     
+     PARA{}," An object of class ",TT "ToricDivisor"," consists of a ", TO NormalToricVariety," and a list of coefficients, one for each ray of 
+     the fan. Note that the input is not checked. This can be generated with function ",TO toricDivisor," which takes the ", TO List," of coefficients 
+     and the ",TO NormalToricVariety,", as input.",
+     
+     "As an example consider the following divisor on ", TEX /// $\mathbb{P}^2$ ///,":",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " L = {1,2,3}",
+	  " D = toricDivisor(L,PP2)"
+	  },
+     
+     "The coefficients can be accessed with the function ",TO (coefficients,ToricDivisor)," and the underlying normal 
+     toric variety with ",TO (variety,ToricDivisor),".",
+     
+     EXAMPLE {
+	  " coefficients D",
+	  " variety D"
+	  },
+     
+     SeeAlso => {toricDivisor, (coefficients,ToricDivisor), (variety,ToricDivisor)}
+     
+     }
 
 document { 
      Key => {(rays, NormalToricVariety)},
@@ -1081,6 +1423,134 @@ document {
 	  }
      }	
 
+document {
+     Key => (normalToricVariety,Fan),
+     Headline => "transform a fan from polyheda into a normal toric variety",
+     Usage => " X = normalToricVariety F",
+     Inputs => {
+	  "F" => Fan
+	  },
+     Outputs => {
+	  "X" => NormalToricVariety
+	  },
+     
+     PARA{}, TO "Polyhedra::Fan"," is an object from the package ",TO "Polyhedra::Polyhedra"," representing a fan of convex rational polyhedral cones.
+     When the function is applied to a fan it returns the normal toric variety defined by the fan as 
+     an object of class ",TO NormalToricVariety,".",
+     
+     EXAMPLE {
+	  " F = faceFan hypercube 2",
+	  " normalToricVariety F"
+	  }
+     }
+
+document {
+     Key => (normalToricVariety,Polyhedron),
+     Headline => "transform a polyhedron from polyheda into a normal toric variety",
+     Usage => " X = normalToricVariety P",
+     Inputs => {
+	  "P" => Polyhedron
+	  },
+     Outputs => {
+	  "X" => NormalToricVariety
+	  },
+     
+     PARA{}, TO "Polyhedra::Polyhedron"," is an object from the package ",TO "Polyhedra::Polyhedra"," representing 
+     rational convex polyhedra. If applied to a polyhedron the function computes the (inner) normal fan of the polyhedron and returns 
+     the normal toric variety defined by this fan as an object of class ",TO NormalToricVariety,".",
+     
+     EXAMPLE {
+	  " P = hypercube 2",
+	  " normalToricVariety P"
+	  }
+     }
+
+document {
+     Key => {toricDivisor, (toricDivisor,List,NormalToricVariety)},
+     Headline => "create a toric divisor",
+     Usage => " D = toricDivisor(L,X)",
+     Inputs => {
+	  "L" => List,
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "D" => ToricDivisor
+	  },
+     
+     "The entries of the list ",TT "L"," are considered as the coefficients of the prime torus invariant divisors given 
+     by the rays of ",TT "X"," considere in the order of ",TT "rays X",". This defines a divisor on the normal toric 
+     variety ",TT "X",". For example the anticanonical divisor is the sum of all prime divisors, i.e. it is given by a 
+     list of ones, one for each ray.",
+     
+     EXAMPLE {
+	  " H2 = hirzebruchSurface 2",
+	  " L = {1,2,3,1}",
+	  " D = toricDivisor(L,H2)"
+	  },
+     
+     "We can get the coefficients with ",TO (coefficients,ToricDivisor),":",
+     
+     EXAMPLE {
+	  " coefficients D"
+	  },
+     
+     "the variety is returned with ",TO (variety,ToricDivisor),":",
+     
+     EXAMPLE {
+	  " variety D"
+	  }
+     
+     }
+
+document {
+     Key => {(variety,ToricDivisor)},
+     Headline => "the normal toric variety over which the divisor is defined",
+     Usage => " X = variety D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {
+	  "X" => NormalToricVariety
+	  },
+     
+     "A torus invariant divisor is defined on a normal toric variety by the coefficients of the prime 
+     torus invariant divisors given by the rays of the fan. This function returns this 
+     toric variety as an object of class ",TO NormalToricVariety,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)",
+	  " variety D"
+	  },
+     
+     SeeAlso => {ToricDivisor,NormalToricVariety,(coefficients,ToricDivisor)}
+     
+     }
+
+document {
+     Key => {(coefficients,ToricDivisor)},
+     Headline => "the coefficients of the prime torus invariant divisors",
+     Usage => " L = coefficients D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     "A torus invariant divisor is defined on a normal toric variety by the coefficients of the prime 
+     torus invariant divisors given by the rays of the fan. This function returns the coefficients as 
+     a ",TO List,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)",
+	  " coefficients D"
+	  },
+     
+     SeeAlso => {ToricDivisor,NormalToricVariety,(variety,ToricDivisor)}
+     
+     }
 
 document { 
      Key => {WeilToClass},
@@ -1437,42 +1907,241 @@ doc ///
 	d:ZZ
 	  The dimension of the cone in the fan of {\tt X} defined by the rays indexed by {\tt sigma}.
   Description
-   Text
-   Text
    Example
-   Text
+   	X = projectiveSpace 1;
+	dim((max X)_0,X)
    Example
+	X = projectiveSpace 5;
+	dim((max X)_0,X)
+   Example	
+	X = weightedProjectiveSpace {1,2,2,3,4};
+	dim((max X)_0,X)	
+   Text
+        Here is a non-pure toric variety:	
+   Example	
+	rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,-1}};
+	sigma = {{0,1,2},{3}};
+	X = normalToricVariety (rho, sigma);
+	dim ({0,1,2},X)
+	dim ({3}, X)
+	isPure X  
   Caveat 
 	It is not checked that {\tt sigma} actually defines a face of the fan of X.
   SeeAlso
 ///
 
-doc ///
-  Key
-	latticeIndex
-	(latticeIndex,List,NormalToricVariety)
-  Headline
-	the index in the ambient lattice of a lattice generated by primitive vectors in the fan of a normal toric variety
-  Usage
-	m = latticeIndex(sigma, X)
-  Inputs
-	sigma:List
-	  of integers indexing a subset of (rays X)
-	X:NormalToricVariety
-  Outputs
-	m:ZZ
-	  The index in the ambient lattice of the lattice generated by the rays indexed by {\tt sigma}.
-  Description
-   Text
-   Text
-   Example
-   Text
-   Example
-  Caveat
-	It is not checked that {\tt sigma} actually defines a face of the fan of X.
-  SeeAlso
-///
+document {
+     Key => {isAmple, (isAmple,ToricDivisor)},
+     Headline => "whether a Cartier divisor on a complete normal toric variety is ample",
+     Usage => "isAmple D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is ample and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Note that the input may not define 
+     a Cartier divisor and if it does not the function returns ", TO2(false,"false"),". Furthermore, if the underlying variety (",TT "variety X",") 
+     is not complete the function also returns ", TO2(false,"false"),".",
+     
+     PARA{}, "Let ", TEX ///$a_{\rho}$///," be the entry corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the
+      primitive point on that ray. Then, if the variety is complete and the divisor is Cartier (see ",TO isCartier,"), the divisor ",TT "D"," 
+     is ample if the support function is strictly convex. The support function is given by the following: Since ",TT "D"," is Cartier there is a point 
+     ", TEX///$m_{\sigma}$///," in the dual lattice for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,". Then the support 
+     function ", TEX ///$\phi_D$///," is given on each maximal cone ", TEX ///$\sigma$///," 
+     by ", TEX ///$\phi(u) = < m_{\sigma},u>$///," for ", TEX ///$u\in \sigma$///,".",
+     
+     "Consider the following Cartier divisor on ",TEX ///$\mathbb{P}^2$///,":",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)",
+	  " isCartier D"
+	  },
+     
+     "Then we can check if this divisor is ample.",
+     
+     EXAMPLE {
+	  " isAmple D"
+	  },
+     
+     "On the other hand consider the following Cartier divisor on the product of two projective one spaces:",
+     
+     EXAMPLE {
+	  " X = normalToricVariety normalFan hypercube 2",
+	  " D = toricDivisor({1,0,0,0},X)",
+	  " isCartier D"
+	  },
+     
+     "Then this function reveals that it is not ample.",
+     
+     EXAMPLE {
+	  " isAmple D"
+	  }
+     }
 
+document {
+     Key => {(isAmple,List,NormalToricVariety)},
+     Headline => "whether a Cartier divisor on a complete normal toric variety is ample",
+     Usage => "isAmple(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is ample and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO List," ",TT "D"," is considered as a divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Note that the input may not define 
+     a Cartier divisor and if it does not the function returns ", TO2(false,"false"),". Furthermore, if ",TT "X"," is not complete the 
+     function also returns ", TO2(false,"false"),".",
+     
+     PARA{}, "Let ", TEX ///$a_{\rho}$///," be the entry corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the
+      primitive point on that ray. Then, if the variety is complete and the divisor is Cartier (see ",TO isCartier,"), the divisor ",TT "D"," 
+     is ample if the support function is strictly convex. The support function is given by the following: Since ",TT "D"," is Cartier there is a point 
+     ", TEX///$m_{\sigma}$///," in the dual lattice for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,". Then the support 
+     function ", TEX ///$\phi_D$///," is given on each maximal cone ", TEX ///$\sigma$///," 
+     by ", TEX ///$\phi(u) = < m_{\sigma},u>$///," for ", TEX ///$u\in \sigma$///,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = {1,2,3}",
+	  " isAmple(D,PP2)",
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = {0,0,0,0}",
+	  " isAmple(D,X)"
+	  }
+     }
+	  
+
+document { 
+     Key => {isCartier, (isCartier,ToricDivisor)},
+     Headline => "whether a Weil divisor on a normal toric variety is Cartier",
+     Usage => "isCartier D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "variety D"," there exists a lattice point ", TEX///$m_{\sigma}$///," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     "Consider the following divisor on projective two space:",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = toricDivisor({1,2,3},PP2)"
+	  },
+     
+     "Then one can check if it is Cartier.",
+     
+     EXAMPLE {
+	  " isCartier D"
+	  },
+     
+     "On the other hand take the following divisor:",
+     
+     EXAMPLE {
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = toricDivisor({1,0,0,-1},X)",
+	  " isCartier D"
+	  },
+     
+     "This one is not Cartier but at least ",TO QQ,"-Cartier:",
+     
+     EXAMPLE {
+	  " isQQCartier D"
+	  },
+     
+     SeeAlso => {isQQCartier}
+     
+     }
+
+document { 
+     Key => {(isCartier,List,NormalToricVariety)},
+     Headline => "whether a Weil divisor on a normal toric variety is Cartier",
+     Usage => "isCartier(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO List," ",TT "D"," is considered as a Weil divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," there exists a lattice point ", TEX///$m_{\sigma}$///," such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     EXAMPLE {
+	  " PP2 = projectiveSpace 2",
+	  " D = {1,2,3}",
+	  " isCartier(D,PP2)",
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = {1,0,0,-1}",
+	  " isCartier(D,X)"
+	  }
+     }
+
+document { 
+     Key => {isQQCartier, (isQQCartier,ToricDivisor)},
+     Headline => "whether a Weil divisor on a normal toric variety is QQ-Cartier",
+     Usage => "isQQCartier D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is ",TO QQ,"-Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," there exists a point ", TEX///$m_{\sigma}$///," in the 
+     associated ",TO QQ," vector space of the dual lattice such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     EXAMPLE {
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = toricDivisor({1,0,0,-1},X)",
+	  " isCartier D",
+	  " isQQCartier D"
+	  }
+     }
+
+document { 
+     Key => {(isQQCartier,List,NormalToricVariety)},
+     Headline => "whether a Weil divisor on a normal toric variety is QQ-Cartier",
+     Usage => "isQQCartier(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is Cartier and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO List," ",TT "D"," is considered as a Weil divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Let ", TEX ///$a_{\rho}$///," be the entry 
+     corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the divisor ",TT "D"," 
+     is ",TO QQ,"-Cartier if for every maximal cone ",TEX ///$\sigma$///," in ",TT "X"," there exists a point ", TEX///$m_{\sigma}$///," in the 
+     associated ",TO QQ," vector space of the dual lattice such that ", 
+     TEX ///$<m_{\sigma},u_{\rho}> = a_{\rho}$///," for all rays ", TEX ///$\rho$///," in ", TEX ///$\sigma$///,".",
+     
+     EXAMPLE {
+	  " X = normalToricVariety faceFan hypercube 2",
+	  " D = {1,0,0,-1}",
+	  " isCartier(D,X)",
+	  " isQQCartier(D,X)"
+	  }
+     }
+     
 
 document { 
      Key => {isDegenerate, 
@@ -1501,6 +2170,24 @@ document {
 	  (ring, NormalToricVariety)}
      }     
 
+document {
+     Key => {isFano, (isFano,NormalToricVariety)},
+     Headline => "checks if a normal toric variety is Fano",
+     Usage => "isFano X",
+     Inputs => {"X" => NormalToricVariety},
+     Outputs => {Boolean => {TO2(true,"true"), " if the normal toric 
+	       variety is Fano", TO2(false, "false"), "otherwise"}},
+     "A complete normal toric variety is Fano if the anticanonical divisor (see ", TO anticanonicalDivisor,") is 
+     Cartier (see ", TO isCartier,") and ample (see ",TO isAmple,"). Note, that the function also returns ", TO2(false, "false")," 
+     if ",TT "X"," is not complete.",
+     
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " isFano PP3",
+	  " H2 = hirzebruchSurface 2",
+	  " isFano H2"
+	  }
+     } 
 
 document { 
      Key => {isProjective, (isProjective,NormalToricVariety)},
@@ -1508,9 +2195,40 @@ document {
      Usage => "isProjective X",
      Inputs => {"X" => NormalToricVariety},
      Outputs => {{TO2(true,"true"), " if ", TT "X", " is a projective
-     	       variety" }},
-     "Insert details.",     
+     	       variety", TO2(false, "false"), "otherwise" }},
+     "The normal toric variety ",TT "X"," is projective if its underlying fan is the normal fan of a polytope. I.e. the fan is complete 
+     (covers the whole space) and there is a polytope such that each cone of the fan is a normal cone of one of the faces of this polytope.",
+     
+     "The Hirzebruch surface is projective.",
+     
+     EXAMPLE {
+	  " X = hirzebruchSurface 3",
+	  " isProjective X"
+	  },
+     
+     "The following variety is also projective allthough this is not obvious.",
+     
+     EXAMPLE {
+	  " X = normalToricVariety({{4,-1,-5},{1,1,-5},{-1,-1,0},{0,0,1},{-1,4,-5}},{{0,1,2},{0,2,3},{2,3,4},{1,2,4},{0,1,3,4}})",
+	  " isProjective X"
+	  },
+     
+     "Whereas the following variety is not projective:",
+     
+     EXAMPLE {
+	  " R = {{-1,-1,1},{3,-1,1},{0,0,1},{1,0,1},{0,1,1},{-1,3,1},{0,0,-1}}",
+	  " maxX = {{0,1,3},{0,1,6},{0,2,3},{0,2,5},{0,5,6},{1,3,4},{1,4,5},{1,5,6},{2,3,4},{2,4,5}}",
+	  " X = normalToricVariety(R,maxX)",
+	  " isComplete X",
+	  " isProjective X"
+	  },
+     
+     "This example are the two cones with three rays where one sits paralell inside the other and the rays are connected in a circle plus 
+     three cones that make the fan complete.",
+          
      SeeAlso => {
+	  isComplete,
+	  "Polyhedra::normalFan",
 	  (max, NormalToricVariety)
 	  }
      }     
@@ -1694,7 +2412,132 @@ document {
 	  (max, NormalToricVariety)
 	  }
      }   
+
+document {
+     Key => {(isWellDefined,ToricDivisor)},
+     Headline => "whether a toric divisor is well defined",
+     Usage => " isWellDefined D",
+     Inputs => {"D" => ToricDivisor},
+     Outputs => {{TO2(true,"true"), " if the underlying normal toric variety is well defined and there is 
+	       exactly one coefficient for each ray"}},
+     "The pair of a ",TO List," and a ",TO NormalToricVariety," is well defined if the normal 
+     toric variety is well defined (see ",TO (isWellDefined,NormalToricVariety),") and there is exactly 
+     one coefficient for each ray of the fan.",
+     
+     "The first example shows a well defined toric divisor.",
+     
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " D = toricDivisor({1,2,1,2},PP3)",
+	  " isWellDefined D"
+	  },
+     
+     "If there are for example coefficients missing then this does not define a toric divisor.",
+     
+     EXAMPLE {
+	  " H2 = hirzebruchSurface 2",
+	  " D = toricDivisor({1,2,3},H2)",
+	  " isWellDefined D"
+	  }
+     
+     }
+
+document {
+     Key => {(isComplete,NormalToricVariety)},
+     Headline => "checks completeness of a NormalToricVariety",
+     Usage => " b = isComplete X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "b" => Boolean => { TO true, " if the ", TO NormalToricVariety, " is complete, ", TO false, " otherwise"}
+	  },
+     PARA{}, "a ", TO NormalToricVariety, " is complete if its support (i.e. the semigroup spanned by the ray generators ", TO rays, 
+     	     " of the normat toric variety) is equal to the ambient lattice. ",
+     PARA{}, TT "isComplete"," calls an entry in the hash table of the ", TO NormalToricVariety, ".",
+     
+     EXAMPLE {
+	  " rho = {{1,0},{0,1}};",
+	  " sigma ={{0,1}};",
+	  " X = normalToricVariety (rho, sigma);",
+	  " isComplete X"
+	  },
+     
+     PARA{}, "Hence the toric variety  above is not complete, but we can add a ray to make it complete (the new variety is ",TEX ///$\PP^2$///, " ):",
+     
+     EXAMPLE {
+	  " rho = {{1,0},{0,1},{-1,-1}};",
+	  " sigma = {{0,1},{1,2},{0,2}}",
+  	  " X = normalToricVariety (rho, sigma);",
+	  " isComplete X"
+	  }
+     
+     }
   
+
+document {
+     Key => {(isPure,NormalToricVariety)},
+     Headline => "checks if a ", TO NormalToricVariety, " is of pure dimension",
+     Usage => " b = isPure X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "b" => {TO true," if the ", TO NormalToricVariety," is of pure dimension, ",TO false," otherwise"}
+	  },
+     
+     PARA{}, "a ", TO NormalToricVariety," is pure if the cones in fan associated to the toric varietya 
+      are all of the same dimension.",
+     
+     PARA{}, "Let us construct a fan consisting of the positive orthant and the ray ",TT "v"," that is the 
+     negative sum of the canonical basis, which is obviously not pure:",
+     
+     EXAMPLE {
+	  " rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,-1}}",
+	  " sigma = {{0,1,2},{3}}",
+	  " X = normalToricVariety (rho, sigma)",
+	  " isPure X",
+	  },
+     
+     PARA{}, "On the other hand the following toric variety is pure of dimension two:",
+     
+     EXAMPLE {
+	  " rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,-1}}",
+	  " sigma = {{0,1},{1,2},{2,3},{0,3}}",
+  	  " X = normalToricVariety (rho, sigma)",
+	  " isPure X"
+	  }
+     
+     }
+
+
+document {
+     Key => { (stellarSubdivision,NormalToricVariety,List)},
+     Headline => "computes the normal toric variety associated to the stellar subdivision of a given toric variety",
+     Usage => "Y = stellarSubdivision(X,r)",
+     Inputs => {
+	  "X" => NormalToricVariety,
+	  "r" => List => {"in the ambient space of the fan of X"}
+	  },
+     Outputs => {
+	  "Y" => NormalToricVariety
+	  },
+     
+     PARA{}, "This function computes the stellar subdivision of ",TT "X"," by inserting the 
+     ray given by ",TT "r",".",
+     
+     EXAMPLE {
+	  " X = normalToricVariety (normalFan hypercube 2)",
+	  " r = {1,1}",
+	  " Y = stellarSubdivision(X,r)",
+	  " rays Y ",
+	  " max Y "
+	  }
+     }
+
+
+
+
 
 document { 
      Key => "Working with Cartier and Weil divisors",
@@ -1798,6 +2641,31 @@ document {
 	  (ring,NormalToricVariety)}
 
      }   
+
+document {
+     Key => {anticanonicalDivisor, (anticanonicalDivisor, NormalToricVariety)},
+     Headline => "generates the anticanonical divisor of a normal toric variety",
+     Usage => "D = anticanonicalDivisor X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "D" => ToricDivisor
+	  },
+     
+     "for a normal toric variety the anticanonical divisor ", TEX ///$-K_X$///," is the sum 
+     of the prime torus invariant divisors ", TEX ///$D_{\rho}$///, " given by the rays of the fan. 
+     Note, that this means we get a list of ones, one for each ray of the fan.",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 4",
+	  " D = anticanonicalDivisor X",
+	  " coefficients D",
+	  " X = normalToricVariety normalFan hypercube 3",
+	  " D = anticanonicalDivisor X",
+	  " coefficients D"
+	  }
+     }  
 
 
 document { 
@@ -2402,7 +3270,7 @@ document {
      HREF("http://arxiv.org/abs/math.AC/0305214", "Multigraded
      Castelnuovo-Mumford regularity"), ", ", EM "J. Reine
      Angew. Math. ", BOLD "571", " (2004), 179-212.  The general case
-     uses the methods described in David Eisenbud, Mircea Mustaţǎ,
+     uses the methods described in David Eisenbud, Mircea MustaÅ£Ç,
      Mike Stillman, ", HREF("http://arxiv.org/abs/math.AG/0001159",
      "Cohomology on toric varieties and local cohomology with monomial
      supports"), ", ", EM "J. Symbolic Comput. ", BOLD "29", " (2000),
@@ -2414,20 +3282,639 @@ document {
 document { 
      Key => "Resolution of singularities",
      Subnodes => {
+	  TO resolveSingularities,
 	  TO (makeSimplicial,NormalToricVariety),
 	  }
      }  
 
 document { 
-     Key => {makeSimplicial, (makeSimplicial,NormalToricVariety)},
-     Headline => "???",
+     Key => {makeSimplicial, (makeSimplicial,NormalToricVariety), [makeSimplicial,Strategy]},
+     Headline => "subdivides a normal toric variety for the purpose of making it simplicial" ,
      Usage => "makeSimplical X",
      Inputs => {"X" => NormalToricVariety},
      Outputs => {NormalToricVariety},
+     PARA{},
+     "A ", TO NormalToricVariety, " is simplicial if the number of ray generators of every cone is
+     the same as the dimension of that cone. In particular it is enough to check this for the maximal cones. For
+     checking whether a ", TO NormalToricVariety, " is simplicial, use ", TO isSimplicial, " .",
+     PARA{},
+     "The routine ", TO makeSimplicial, "has two strategies implemented. The user may specify a prefered strategy
+     by giving the name of the prefered stratefy for the optional Strategy argument. The default strategy is \tt{addNoRays}. 
+     The other possible strategy is called \tt{centre}.",
+     PARA{},
+     "The strategy \tt{addNoRays} attempts to make the variety simplicial by triangulating the boundary of the
+     associated lattice polytope. The strategy \tt{centre} attempts to make the variety simplicial by using ",
+     TO stellarSubdivision, " along new rays that lie inside the existing cones.",
+     PARA{},
+     "We illustrate by considering the toric variety defined by the fan given by the boundary of a hypercube.
+     Note that typically the strategy \tt{addNoRays} will produce less new cones as well.",
+     EXAMPLE lines ///
+	  X = normalToricVariety faceFan hypercube 3; 
+	  Y1 = makeSimplicial X 
+	  Y2 = makeSimplicial(X, Strategy => "addNoRays") 
+	  rays Y1 == rays Y2 
+	  Y3 =makeSimplicial( X, Strategy => "centre")
+	  rays Y1 == rays Y3 
+	  #max X 
+	  #max Y2 
+	  #max Y3 
+    ///,
      SeeAlso => {
 	  NormalToricVariety, 
 	  }
-     }     
+     }
+     
+doc ///
+  Key
+	makeSmooth
+	(makeSmooth, NormalToricVariety)
+	[makeSmooth,Strategy]
+  Headline
+	resolve a simplicial normal toric variety
+  Usage
+	Y = makeSmooth X
+  Inputs
+	X:NormalToricVariety
+  Outputs
+	Y:NormalToricVariety
+  Description
+    Text
+	Resolves the singularities of a simplicial {\tt X}, 
+	yielding a smooth {\tt Y}.
+    Text
+	Given a simplicial @TO NormalToricVariety@ {\tt X}, 
+	makeSmooth {\tt X} is obtained by successive 
+	@TO stellarSubdivision@s of the fan of X until each 
+	cone in the fan is contained in some basis for the 
+	ambient lattice. 
+    Text
+	As a simple example, consider the affine (simplicial) 
+	@TO NormalToricVariety@ determined by the 
+	two-dimensional cone in \RR^2 with rays (4,-1) and (0,1) and 
+	another with rays (3,-2) and (0,1). 
+    Example
+	U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+	V = makeSmooth U;
+	expression V
+	isSmooth V
+    Example
+	X = normalToricVariety({{3,-2},{0,1}},{{0,1}});
+	Y = makeSmooth X;
+	expression Y
+    Text
+	We now consider a small weightedProjectiveSpace. 
+    Example
+	X = weightedProjectiveSpace {1,2,3};
+	Y = makeSmooth X;
+	expression Y
+	isSmooth Y
+    Text
+	If {\tt X} is already smooth, makeSmooth X will return {\tt X}.
+    Example
+	X = projectiveSpace 5;
+	Y = makeSmooth X;
+	X === Y
+    Text
+	Here is a three-dimensional affine non-simplicial 
+	normalToricVariety {\tt X}. To make it smooth, we 
+	first apply @TO makeSimplicial@ to {\tt X}. 
+	These two methods combine to give the command 
+	@TO resolveSingularities@.
+    Example
+	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
+	Y = makeSimplicial X;
+	Z = makeSmooth Y;
+	expression Z
+	isSmooth Z
+	U = resolveSingularities X;
+	U === Z	
+    Text
+	Here is the normalToricVariety whose fan is determined 
+	by the cube centered at the origin in three dimensions 
+	with vertices whose entries are +1 and -1.	
+    Example
+	X = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
+	Y = makeSimplicial X;
+	Z = makeSmooth Y;
+	expression Z
+	isSmooth Z
+    Text
+	The input variety need not be pure-dimensional.
+    Example
+	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,1},{1,0,-1}},{{0,1,2,3},{0,4}});
+	Y = makeSmooth X;
+	Z = makeSimplicial Y;
+	expression Z
+    Text
+	There is a Strategy option. The Strategy arguments currentl available are "min" and "max" which correspond to choosing 
+	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
+	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
+	are different.
+    Example
+	X = weightedProjectiveSpace ({1,9,10});
+	Y1 = makeSmooth (X, Strategy => "max")
+	Y2 = makeSmooth (X, Strategy => "min")
+	Y1 === Y2
+    Text	
+	In this example the "max" strategy uses only 17 blowups while the "min" strategy uses 28 blowups.
+    Example
+	X = weightedProjectiveSpace {1,2,3,5,17};
+	Y1 = makeSmooth (X, Strategy => "max")
+	Y2 = makeSmooth (X, Strategy => "min")
+	Y1 === Y2
+    Text
+      This command even works for 1-dimensional toric varieties.    
+    Example
+	X = normalToricVariety({{2}},{{0}}); 
+ 	Y = makeSmooth X;
+	isSmooth Y 
+	X === Y 
+  Caveat
+	It is assumed that {\tt X} is simplicial.
+  SeeAlso
+	 (isSmooth,NormalToricVariety)
+	 makeSmooth
+	 makeSimplicial
+	 resolveSingularities
+	 stellarSubdivision
+///
+
+
+doc ///
+  Key
+	resolveSingularities
+	(resolveSingularities, NormalToricVariety)
+	[resolveSingularities,Strategy]
+  Headline
+	resolve the singularities of a normal toric variety
+  Usage
+	Y = resolveSingularities X
+  Inputs
+	X:NormalToricVariety
+  Outputs
+	Y:NormalToricVariety
+	  a resolution of {\tt X}
+  Description
+    Text
+	This function returns the resolution of X obtained 
+	by applying @TO makeSimplicial@ and then @TO makeSmooth@. 
+    Text
+	A simplicial @TO NormalToricVariety@ 
+	{\tt X} is smooth exactly when 
+	its fan is composed of simplicial cones whose generators 
+	are subsets of bases of the ambient lattice.
+    Text
+	As a simple example, consider the affine (simplicial) 
+	@TO NormalToricVariety@ {\tt X} determined by the cone 
+	with rays (4,-1) and (0,1) in \ZZ^2. 
+    Example
+	U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+	V = resolveSingularities U;
+	expression V
+	isSmooth V
+    Text
+	The input variety need not be full-dimensional.
+    Example
+	U' = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
+	V' = resolveSingularities U';
+	expression V'
+	isSmooth V'
+	U' === V' 
+--  Example
+--	--Here we see that quotient singularities are not resolved.
+--	U' = normalToricVariety({{8,-2},{0,1}},{{0},{1}});
+--	V' = resolveSingularities U';
+--	expression V'
+--	isSmooth V' --false
+--	U' === V' --true
+    Text 
+	Showing again that the input need not be 
+	full-dimensional, this example would also 
+	be a good one on which to try the Strategy 
+	(min,max) option.
+    Example
+	U' = normalToricVariety({{-2,3,0},{1,0,0},{0,-1,0},{0,0,1}},{{0,1},{0,2},{1,2},{2,3}});
+	V' = resolveSingularities U';
+	expression V'
+	isSmooth V'
+	U' === V' 
+    Text
+	Now consider a small weightedProjectiveSpace. 
+    Example
+	X = weightedProjectiveSpace {1,2,3};
+	Y = resolveSingularities X;
+	expression Y
+    Text
+	If {\tt X} is already smooth, resolveSingularities X will return {\tt X}.
+    Example
+	X = projectiveSpace 5;
+	Y = resolveSingularities X;
+	X === Y
+    Text
+	Here is a three-dimensional affine non-simplicial 
+	normalToricVariety {\tt X}. 
+    Example
+	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
+	Y = resolveSingularities X;
+	expression Y
+	isSmooth Y
+    Text
+	Here is the normalToricVariety whose fan is determined 
+	by the cube centered at the origin in three dimensions 
+	with vertices whose entries are +1 and -1.	
+    Example
+	X = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
+	Y = resolveSingularities X;
+	expression Y
+    Text
+	The input variety need not be pure-dimensional.
+    Example
+	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,1},{1,0,-1}},{{0,1,2,3},{0,4}});  	
+	Y = resolveSingularities X;
+	expression Y
+    Text
+	There is a Strategy option. The Strategy arguments currently available are "min" and "max" which correspond to choosing 
+	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
+	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
+	are different.
+    Example
+	X = weightedProjectiveSpace ({1,9,10});
+	Y1 = resolveSingularities (X, Strategy => "max")
+	Y2 = resolveSingularities (X, Strategy => "min")
+	Y1 === Y2
+    Text	
+	In this example the "max" strategy uses only 17 blowups while the "min" strategy uses 28 blowups.
+    Example
+	X = weightedProjectiveSpace {1,2,3,5,17};
+	Y1 = resolveSingularities (X, Strategy => "max")
+	Y2 = resolveSingularities (X, Strategy => "min")
+	Y1 === Y2
+  SeeAlso
+	makeSimplicial
+	makeSmooth
+	stellarSubdivision
+///
+
+
+doc ///
+  Key
+	latticeIndex
+	(latticeIndex,List,NormalToricVariety)
+  Headline
+	the index in the ambient lattice of a lattice generated by primitive vectors in the fan of a normal toric variety
+  Usage
+	m = latticeIndex(sigma, X)
+  Inputs
+	X:NormalToricVariety
+	sigma:List
+	  of integers indexing a subset of (rays X)
+  Outputs
+	m:ZZ
+	  The index in the ambient lattice of the lattice generated by the rays indexed by {\tt sigma}.
+  Description
+    Text
+	Given a cone sigma in a @TO normalToricVariety@, 
+	the lattice (or group) generated by the integer vectors 
+	in sigma need not coincide with the collection of 
+	integer vectors found in its linear span. This method
+	computes the number of (translated) copies it takes to 
+	cover this a priori larger collection of integral points. 
+    Text
+	A cone corresponds to a nonsingular variety when 
+	it is simplicial and has latticeIndex equal to 1.
+    Text
+	We provide an example of an affine singular 
+	@TO normalToricVariety@, as well as a complete one. 
+    Example
+	U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+	sigma = (max U)#0;
+	latticeIndex(sigma,U)
+	tau = {0};
+	latticeIndex(tau,U)
+    Text
+	Here we see a smooth divisor within a singular variety. 
+    Example
+	X = weightedProjectiveSpace {1,2,3,5,17};
+	sigma = (max X)#0;
+	latticeIndex(sigma,X)
+	tau = {0,1,2};
+	latticeIndex(tau,X)	
+  Caveat
+	It is not checked that {\tt sigma} actually defines a face of the fan of X.
+///
+
+document {
+     Key => {(fan,NormalToricVariety)},
+     Headline => "the fan of the normal toric variety",
+     Usage => "F = fan X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "F" => Fan
+	  },
+     "Returns the underlying fan of the normal toric variety as an object of 
+     class ",TO "Polyhedra::Fan",". This means it takes the sets of rays given by ",
+     TT "max X",", computes their positive hull as an object of class ",TO "Polyhedra::Cone"," 
+     and returns the fan generated by these cones and all their faces. Note that the data 
+     in ",TT "X"," does not necessarily define a fan. This can be checked with ",TO (isWellDefined,NormalToricVariety),". 
+     If it is not well defined, ",TT "fan"," still returns a fan, but this fan contains wrong data and might result 
+     and further errors when used. Hence, if the user is unsure whether ",TT "X"," is well defined, he/she should 
+     run ",TT "isWellDefined"," before applying ",TT "fan",".",
+     
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " F = fan PP3",
+	  " rays F",
+	  " H2 = hirzebruchSurface 2",
+	  " F = fan H2",
+	  " rays F"
+	  }
+     }
+
+document {
+     Key => {(halfspaces,List,NormalToricVariety)},
+     Headline => "the defining halfspaces of a cone",
+     Usage => "HS = halfspaces(sigma,X)",
+     Inputs => {
+	  "sigma" => List => {"of integers indexing a subset of ",TT "rays X"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "HS" => Matrix => {"over ",TO ZZ}
+	  },
+     "The defining halfspaces of the cone given by the ", TO List," ",TT "C"," are 
+     the rays of the dual cone. They are returned as a matrix where the rays of the 
+     dual cone are the columns. Note that if ",TT "C"," is not of full dimension then 
+     it is given by halfspaces and hyperplanes. I.e. the dual cone has a non trivial 
+     lineality space. Thus the rays of the dual cone are given modulo the lineality space. 
+     Furthermore, the lineality space is given by the equations of the defining hyperplanes 
+     in which ",TT "C"," is contained. The hyperplanes can be accessed 
+     with ",TO (hyperplanes,List,NormalToricVariety),".",
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " C = {0,1,2}",
+	  " halfspaces(C,PP3)"
+	  },
+     "Here is an example which is not of full dimension, so that the cones lie in defining 
+     hyperplanes",
+     EXAMPLE {
+	  " X = normalToricVariety({{1,2,0},{2,1,0},{0,0,1}},{{0,1},{1,2},{0,2}})",
+	  " C = {0,1}",
+	  " halfspaces(C,X)",
+	  " hyperplanes(C,X)"
+	  },
+     SeeAlso => {(hyperplanes,List,NormalToricVariety), "Polyhedra::halfspaces", 
+	  "Polyhedra::hyperplanes"}
+     }
+
+document {
+     Key => {(hyperplanes,List,NormalToricVariety)},
+     Headline => "the defining hyperplanes of a cone",
+     Usage => "HP = hyperplanes(sigma,X)",
+     Inputs => {
+	  "sigma" => List => {"of integers indexing a subset of ",TT "rays X"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "HP" => Matrix => {"over ",TO ZZ}
+	  },
+     "The defining hyperplanes of the cone given by the ", TO List," ",TT "C"," are 
+     the generating rays of the lineality space of the dual cone. They are returned as a 
+     matrix where the generators are the columns. Note that if ",TT "C"," is full dimension then 
+     there are no defining hyperplanes. I.e. the dual cone has a trivial 
+     lineality space. The halfspaces can be accessed 
+     with ",TO (halfspaces,List,NormalToricVariety),".",
+     
+     PARA{},"When the cone is of full dimension the zero matrix is returned:",
+     
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " C = {0,1,2}",
+	  " hyperplanes(C,PP3)"
+	  },
+     
+     "Here the cone is not of full dimension:",
+     EXAMPLE {
+	  " X = normalToricVariety({{1,2,0},{2,1,0},{0,0,1}},{{0,1},{1,2},{0,2}})",
+	  " C = {0,1}",
+	  " halfspaces(C,X)",
+	  " hyperplanes(C,X)"
+	  },
+     SeeAlso => {(halfspaces,List,NormalToricVariety), "Polyhedra::halfspaces", 
+	  "Polyhedra::hyperplanes"}
+     }
+
+document {
+     Key => {insertCone, (insertCone,NormalToricVariety,List)},
+     Headline => "subdivides the fan so that it contains the new cone",
+     Usage => " Y = insertCone(X,C)",
+     Inputs => {
+	  "X" => NormalToricVariety,
+	  "C" => List => {"of lists giving the rays of a cone"}
+	  },
+     Outputs => {
+	  "Y" => NormalToricVariety
+	  },
+     PARA{}, TT "insertCone"," inserts the cone given by ",TT "C"," into the fan of the normal 
+     toric variety ",TT "X"," if it is contained in one of the maximal cones in ",TT "X",". If 
+     it is not contained in one of the maximal cones an error will be returned.",
+     
+     PARA{}, " First of all, if 
+     ", TT "C"," is contained in only one of the maximal cones ",TT "Cm",", i.e. in its relative interior, then 
+     the functions runs first through the defining halfspaces of ",TT "C",". For each halfspace it collects 
+     all rays of ",TT "Cm"," that lie in the complement of that halfspace and takes the cone over these 
+     rays and the rays in the facet of ",TT "C"," given by that halfspace. Then it runs through all defining 
+     hyperplanes of ",TT "C",". For each hyperplane it first collects all rays of ",TT "Cm"," lying on one 
+     side of the hyperplane and takes the cone over these and ",TT "C"," and then it does the same with the rays 
+     on the other side of the hyperplane. By this we get a collection of cones. Finally, it removes cones from this 
+     collection that are faces of others and replaces ",TT "Cm"," by the jcollection and ",TT "C",".",
+     
+     PARA{}," In the general case, some faces of ",TT "C"," might also be contained in different cones. Then it does the above 
+     for every maximal cone, that contains a face of ",TT "C"," to this cone and the face of ",TT "C",". This results in a 
+     refinement of the fan ",TT "X"," that contains the cone ",TT "C",". Note that in general there is not a unique refinement 
+     containing ",TT "C",".",
+     
+     PARA{},"The first example is the three dimensional cone over a square where we want to insert the cone over the line from 
+     one of the vertices to the center of the square.",
+     
+     EXAMPLE {
+	  " X = normalToricVariety({{1,1,1},{1,-1,1},{-1,1,1},{-1,-1,1}},{{0,1,2,3}})",
+	  " C = {{1,1,1},{0,0,1}}",
+	  " Y = insertCone(X,C)",
+	  " rays Y",
+	  " max Y"
+	  },
+     
+     "This divides the cone into three cones.",
+     "Now we take the face fan over the three dimensional cube and a cone over a smaller square on one of the facets of the cube.",
+     
+     EXAMPLE {
+	  " X = normalToricVariety faceFan hypercube 3",
+	  " C = {{1,1,1},{1,0,1},{0,1,1},{0,0,1}}",
+	  " Y = insertCone(X,C)",
+	  " rays Y",
+	  " max Y"
+	  },
+     
+     "This divides the cone that contains ",TT "C"," into three cones where one is ",TT "C"," and the two adjacent ones that contain a two 
+     dimensional face of ",TT "C"," into two new cones.",
+     }
+
+document {
+     Key => {(isVeryAmple,ToricDivisor)},
+     Headline => "checks if a divisor is very ample",
+     Usage => "isVeryAmple D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is very ample and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO ToricDivisor," ",TT "D"," is considered as a divisor in the following way. The coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X"," are the entries of ",TT "coefficients D",". Note that the input may not define 
+     a Cartier divisor and if it does not the function returns ", TO2(false,"false"),". Furthermore, if ",TT "X"," is not complete the 
+     function also returns ", TO2(false,"false"),".",
+     
+     PARA{}, "The divisor ",TT "D"," on ",TT "X"," is very ample if it is ample (see ",TO isAmple,") and the polytope ",TEX ///$P_D$///," of 
+     the divisor (see ",TO (polytope,ToricDivisor),") is very ample. This means if and only if for every vertex ",TEX ///$v\in P_D$///," 
+     the semigroup generated by ",TEX ///$M\cap P_D - v$///," is saturated. Note that since ",TT "D"," is ample, ",TEX ///$P_D$///," is in 
+     fact a lattice polytope.",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 3",
+	  " D = toricDivisor({1,2,3,4},X)",
+	  " isVeryAmple D"
+	  },
+     
+     "In the following example we give a divisor that is ample but not very ample.",
+     
+     EXAMPLE {
+	  " X = normalToricVariety({{4,-1,-5},{1,1,-5},{-1,-1,0},{0,0,1},{-1,4,-5}},{{0,1,2},{0,2,3},{2,3,4},{1,2,4},{0,1,3,4}})",
+	  " D = toricDivisor({0,0,5,0,0},X)",
+	  " isAmple D",
+	  " isVeryAmple D"
+	  }
+     }
+
+document {
+     Key => {(isVeryAmple,List,NormalToricVariety)},
+     Headline => "checks if a divisor is very ample",
+     Usage => "isVeryAmple(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {Boolean => {TO2(true,"true"), " if the divisor is very ample and ", TO2(false, "false"), " otherwise" }},
+     
+     "The ",TO List," ",TT "D"," is considered as a divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Note that the input may not define 
+     a Cartier divisor and if it does not the function returns ", TO2(false,"false"),". Furthermore, if ",TT "X"," is not complete the 
+     function also returns ", TO2(false,"false"),".",
+     
+     PARA{}, "The divisor ",TT "D"," on ",TT "X"," is very ample if it is ample (see ",TO isAmple,") and the polytope ",TEX ///$P_D$///," of 
+     the divisor (see ",TO (polytope,List,NormalToricVariety),") is very ample. This means if and only if for every vertex ",TEX ///$v\in P_D$///," 
+     the semigroup generated by ",TEX ///$M\cap P_D - v$///," is saturated. Note that since ",TT "D"," is ample, ",TEX ///$P_D$///," is in 
+     fact a lattice polytope.",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 3",
+	  " D = {1,2,3,4}",
+	  " isVeryAmple(D,X)"
+	  },
+     
+     "In the following example we give a divisor that is ample but not very ample.",
+     
+     EXAMPLE {
+	  " X = normalToricVariety({{4,-1,-5},{1,1,-5},{-1,-1,0},{0,0,1},{-1,4,-5}},{{0,1,2},{0,2,3},{2,3,4},{1,2,4},{0,1,3,4}})",
+	  " D = {0,0,5,0,0}",
+	  " isAmple(D,X)",
+	  " isVeryAmple(D,X)"
+	  }
+     }
+
+document {
+     Key => {(polytope,NormalToricVariety)},
+     Headline => "returns is a polytope with normal fan giving the normal toric variety if projective",
+     Usage => " P = polytope X",
+     Inputs => {
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "P" => Polyhedron
+	  },
+     
+     PARA{}, "If the normal toric variety ",TT "X"," is projective then there are polytopes such that the underlying 
+     fan of ",TT "X"," is the normal fan and the function returns one of them. For this it uses the function ",TO "Polyhedra::polytope"," 
+     from the package ",TO "Polyhedra::Polyhedra",". If ",TT "X"," is not projective an error is returned. Note that the polytope is not 
+     unique.",
+     
+     EXAMPLE {
+	  " PP3 = projectiveSpace 3",
+	  " P = polytope PP3",
+	  " vertices P",
+	  " H2 = hirzebruchSurface 2",
+	  " P = polytope H2",
+	  " vertices P"
+	  },
+     SeeAlso => {"Polyhedra::isPolytopal",isProjective,"Polyhedra::polytope", (polytope,List,NormalToricVariety)}
+     }
+
+document {
+     Key => {(polytope,ToricDivisor)},
+     Headline => "the polyhedron given by a weil divisor on a normal toric variety",
+     Usage => " P = polytope D",
+     Inputs => {
+	  "D" => ToricDivisor
+	  },
+     Outputs => {
+	  "P" => Polyhedron
+	  },
+     
+     "The coefficients of the prime torus invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, 
+     corresponding to them in the order of ",TT "rays X"," are the entries of ",TT "coefficients D",". For example, the anticanonical divisor 
+     is a list of ones, one for each ray. Let ", TEX ///$a_{\rho}$///," be the entry corresponding to the ray ", TEX ///$\rho$///," 
+     and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the polyhedron of that divisor 
+     is P",TEX ///$=\{m\,|\, <m,u_{\rho}> \geq -a_{\rho}\}$///,".",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 3",
+	  " D = toricDivisor({1,2,3,4},X)",
+	  " P = polytope D",
+	  " vertices P"
+	  },
+     SeeAlso => {"Polyhedra::isPolytopal",isProjective,"Polyhedra::polytope", (polytope,NormalToricVariety)}
+     }
+
+document {
+     Key => {(polytope,List,NormalToricVariety)},
+     Headline => "the polyhedron given by a weil divisor on a normal toric variety",
+     Usage => " P = polytope(D,X)",
+     Inputs => {
+	  "D" => List => {"with entries in ",TO ZZ," which are the coefficients of the prime torus invariant divisors given by the rays"},
+	  "X" => NormalToricVariety
+	  },
+     Outputs => {
+	  "P" => Polyhedron
+	  },
+     
+     "The ",TO List," ",TT "D"," is considered as a divisor in the following way. The entries are the coefficients of the prime torus 
+     invariant divisors ", TEX ///$D_{\rho}$///," given by the rays ", TEX ///$\rho$///," of the fan, corresponding to them in the order 
+     of ",TT "rays X",". For example, the anticanonical divisor is a list of ones, one for each ray. Let ", TEX ///$a_{\rho}$///," be the 
+     entry corresponding to the ray ", TEX ///$\rho$///," and ", TEX ///$u_{\rho}$///," the primitive point on that ray. Then the polyhedron 
+     of that divisor is P",TEX ///$=\{m\,|\, <m,u_{\rho}> \geq -a_{\rho}\}$///,".",
+     
+     EXAMPLE {
+	  " X = projectiveSpace 3",
+	  " D = {1,2,3,4}",
+	  " P = polytope(D,X)",
+	  " vertices P"
+	  },
+     SeeAlso => {"Polyhedra::isPolytopal",isProjective,"Polyhedra::polytope", (polytope,NormalToricVariety)}
+     }
+
+
 
 -------------------------------------------------------------------------------- 
 -- TEST
@@ -2539,6 +4026,52 @@ assert(cartierDivisors Q == ZZ^4)
 assert(weilDivisors Q == ZZ^8)
 assert(classGroup Q == cokernel transpose matrix{{2,0,0,0,0,0,0},{0,2,0,0,0,0,0}})
 assert(picardGroup Q == ZZ^1)
+///
+
+TEST ///
+PP4 = projectiveSpace 4;
+assert(makeSmooth PP4 === PP4)
+assert(resolveSingularities PP4 === PP4)
+assert(apply(max PP4,i-> latticeIndex(i,PP4)) == apply(max PP4,i-> 1))
+///
+
+TEST ///
+PP1 = projectiveSpace 1;
+assert(makeSmooth PP1 === PP1)
+assert(resolveSingularities PP1 === PP1)
+assert(apply(max PP1,i-> latticeIndex(i,PP1)) == apply(max PP0,i-> 1))
+///
+
+TEST ///
+FF2 = hirzebruchSurface 2;
+assert(makeSmooth FF2 === FF2)
+assert(resolveSingularities FF2 === FF2)
+assert(apply(max FF2,i-> latticeIndex(i,FF2)) == apply(max FF2,i-> 1))
+///
+
+TEST ///
+X = weightedProjectiveSpace {1,2,3};
+--assert(makeSmooth X === normalToricVariety({{-2,3},{1,0},{0,1},{-1,2},{0,-1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
+--assert(resolveSingularities X === normalToricVariety({{-2,3},{1,0},{0,1},{-1,2},{0,-1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
+assert(apply(max X,i-> latticeIndex(i,X)) == {3,2,1})
+///
+
+TEST ///
+U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+assert(rays U == {{4,-1},{0,1}})
+assert(max U == {{0,1}})
+--assert(makeSmooth U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
+--assert(resolveSingularities U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
+assert(apply(max U,i-> latticeIndex(i,U)) == {4})
+///
+
+TEST ///
+U' = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
+assert(rays U' == {{4,-1},{0,1}})
+assert(max U' == {{0},{1}})
+assert(makeSmooth U' === U')
+assert(resolveSingularities U' === U')
+assert(apply(max U',i-> latticeIndex(i,U')) == apply(max U',i-> 1))
 ///
 
 end     
