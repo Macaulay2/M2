@@ -31,6 +31,7 @@ exportMutable {
       gbBrp
       }
 export {
+      getPolysFromList
       }
 
 -- keys should start with 0
@@ -61,6 +62,15 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
   time F = minimalGbBrp(F);
   time reduceGbBrp(F)
 )
+
+--Take polynomials from a list and make into a gbComputation
+getPolysFromList = method()
+getPolysFromList(List) := gbComputation => S -> (
+     F:= new gbComputation;
+     scan(0 .. #S-1, i -> F#i = convert(S#i));
+     F
+     )
+    
 
 -- delete elements where the leading term is divisible by another leading term
 minimalGbBrp = method()
@@ -515,6 +525,17 @@ TEST ///
   reduceGbBrp(F)
   assert( sort apply( values F, i -> convert(i,R) ) == sort{x*y, y*z, w} )
 
+-- R=ZZ/2[x,y,z]
+-- S={x*y+y*z+1, y*z+x+1, x*y*z+x*y+y*z+x*z, z+y, y+1}
+-- L=getPolysFromList(S)
+--  assert(getPolysFromList(S) == new gbComputation from {0 => {{1, 1, 0}, {0, 1, 1}, {0, 0, 0}},           
+--                   1 => {{1, 0, 0}, {0, 1, 1}, {0, 0, 0}},
+--                   2 => {{1, 1, 1}, {1, 1, 0}, {1, 0, 1}, {0, 1, 1}},
+--                   3 => {{0, 1, 0}, {0, 0, 1}},
+--                   4 => {{0, 1, 0}, {0, 0, 0}}
+--		   })
+ 
+  
 ///
   
        
@@ -527,6 +548,7 @@ end
 restart
 installPackage "BuchbergerForBrp"
 installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
+installPackage("BitwiseRepresentationPolynomials")
 check BuchbergerForBrp
 
   
@@ -540,13 +562,6 @@ check BuchbergerForBrp
           }
  time  gbBasis = gbBrp( F, numgens R)
  
---little code for converting list of polys to a gbComputation Hashtable
---could make into a function
-
-F = new gbComputation
-S={x^2-1, y^2*x+4}
-scan(0 .. #S-1, i -> F#i = convert(S#i))
-peek F
 
 restart
 installPackage "BuchbergerForBrp"
