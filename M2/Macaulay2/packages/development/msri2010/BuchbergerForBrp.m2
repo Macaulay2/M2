@@ -539,6 +539,14 @@ check BuchbergerForBrp
           5=> convert( j+i+d*c)
           }
  time  gbBasis = gbBrp( F, numgens R)
+ 
+--little code for converting list of polys to a gbComputation Hashtable
+--could make into a function
+
+F = new gbComputation
+S={x^2-1, y^2*x+4}
+scan(0 .. #S-1, i -> F#i = convert(S#i))
+peek F
 
 restart
 installPackage "BuchbergerForBrp"
