@@ -38,54 +38,61 @@ time multiplierIdeal(ideal xF,19/30)
 ---- Line arrangements in \CC^3 (from Section 7 of arXiv:0508308v1):
 
 --The first two are 3 noncollinear/collinear points in \PP^2:
-load "Dmodules/Dloadfile.m2"
+restart
+debug loadPackage "Dmodules"
 R = QQ[x,y,z];
-I = intersect(ideal(x-1,y-1,z-1),ideal(x-3/2,y-5/2,z-1),ideal(x-11,y-13/5,z)); --3 noncollinear points
-xF = flatten entries mingens I;
-W = makeWeylAlgebra R;
-F = apply(xF,i->sub(i,W));
-time print factorBFunction generalB (F,1_W,Strategy=>InitialIdeal)
---time print factorBFunction generalB (F,1_W,Strategy=>StarIdeal)
+--I = intersect(ideal(x-1,y-1,z-1),ideal(x-3/2,y-5/2,z-1),ideal(x-11,y-13/5,z)); --3 noncollinear points
+--F = flatten entries mingens I;
+I = intersect(ideal(x-z,y-z),ideal(3*x-2*z,5*y-2*z),ideal(55*y-13*x,z));
+F = flatten entries mingens I;
+time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
+time print factorBFunction generalB (F,1_R,Strategy=>StarIdeal)
+lct ideal F
 --Expect: lct = 3/2
-multiplierIdeal(ideal xF, 3/2)
+multiplierIdeal(ideal F, 3/2)
 
 R = QQ[x,y,z];
-I = intersect(ideal(x-1,y,z),ideal(x-2,y-1,z-1),ideal(x-3,y-2,z-2)); --3 collinear points
-xF = flatten entries mingens I;
-W = makeWeylAlgebra R;
-F = apply(xF,i->sub(i,W));
-time print factorBFunction generalB (F,1_W,Strategy=>InitialIdeal)
---time print factorBFunction generalB (F,1_W,Strategy=>StarIdeal)
+--I = intersect(ideal(x-1,y,z),ideal(x-2,y-1,z-1),ideal(x-3,y-2,z-2)); --3 collinear points
+--F = flatten entries mingens I;
+I = intersect(ideal(y,z),ideal(x-2*z,y-z),ideal(2*x-3*z,y-z));
+F = flatten entries mingens I;
+time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
+time print factorBFunction generalB (F,1_R,Strategy=>StarIdeal)
+lct ideal F
 --Expect: lct = 5/3
-multiplierIdeal(ideal xF, 5/3)
+multiplierIdeal(ideal F, 5/3)
 
 
 --The next two are 6 points in general position vs. 6 general points on a conic in \PP^2:
 --6 points in general position in \PP^2: 
 R = QQ[a,b,c];
-x = take(unique apply(101, i -> random (coefficientRing R)), 6);
-y = take(unique apply(101, i -> random (coefficientRing R)), 6);
-xym = matrix {x, y, toList (6:1)};
-all(flatten entries gens minors(3, xym), i -> (i!=0))
-I = intersect (entries transpose xym /(l -> ideal {a-l#0*c, b-l#1*c}));
-xF = flatten entries mingens I;
-W = makeWeylAlgebra R;
-F = apply(xF,i->sub(i,W));
-time print factorBFunction generalB (F,1_W,Strategy=>InitialIdeal)
-time print factorBFunction generalB (F,1_W,Strategy=>StarIdeal)
+small = 3;
+setRandomSeed 1;
+while true do (
+     x = apply(6, i -> random small - small//2);
+     y = apply(6, i -> random small - small//2);
+     z = apply(6, i -> random 2 + 1);
+     --z = toList (6:1);
+     xym = matrix {x, y, z};
+     I = intersect (entries transpose xym /(l -> ideal {l#2*a-l#0*c, l#2*b-l#1*c}));
+     if multiplicity I == 15 and all(z,zz->zz!=0) and all(flatten entries gens minors(3, xym), i -> (i!=0)) then break;
+     );
+F = flatten entries mingens I;
+time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
+time print factorBFunction generalB (F,1_R,Strategy=>StarIdeal)
+lct ideal F
 --Expect: lct = 1
 
 --6 general points on a^2-b*c in \PP^2: 
 R = QQ[a,b,c];
-x = take(unique apply(101, i -> random (coefficientRing R)), 6);
+--x = take(unique apply(101, i -> random (coefficientRing R)), 6);
+x = { -2,-1,0,1,2,3 };
 y = x/(i -> i^2);
 xym = matrix {x, y, toList (6:1)};
 all(flatten entries gens minors(3, xym), i -> (i!=0))
 I = intersect (entries transpose xym /(l -> ideal {a-l#0*c, b-l#1*c}));
-xF = flatten entries mingens I;
-W = makeWeylAlgebra R;
-F = apply(xF,i->sub(i,W));
-time print factorBFunction generalB (F,1_W,Strategy=>InitialIdeal)
+F = flatten entries mingens I;
+time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
 ///
        2     3      4      5      7
 (s + 2) (s + -)(s + -)(s + -)(s + -)
@@ -104,17 +111,14 @@ time print factorBFunction generalB (F,1_W,Strategy=>StarIdeal)
 --Zach does not know the multiplier ideals for this one.
 --11 general points on a^3-b*c^2 in \PP^2: --(This code is courtesy of Manoj Kummini.)
 R = QQ[a,b,c];
-x = take(unique apply(101, i -> random (coefficientRing R)), 11);
+--x = take(unique apply(101, i -> random (coefficientRing R)), 11);
+x = toList(-5..5);
 y = x/(i -> i^3);
 xym = matrix {x, y, toList (11:1)};
 all(flatten entries gens minors(3, xym), i -> (i!=0))
 I = intersect (entries transpose xym /(l -> ideal {a-l#0*c, b-l#1*c}));
-xF = flatten entries mingens I;
-W = makeWeylAlgebra R;
-F = apply(xF,i->sub(i,W));
-time print factorBFunction generalB (F,1_W,Strategy=>InitialIdeal)
---time print factorBFunction generalB (F,1_W,Strategy=>StarIdeal)
-
+F = flatten entries mingens I;
+time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
 
 ---- Monomial curves:
 --A monomial curve in \PP^3: 
@@ -125,9 +129,7 @@ H = gkz(A,{0,0})
 phi = map(R,ring H, {0,0,0,0,x_1..x_4});
 xIA = ideal mingens phi(H);
 F = toList apply(numColumns(gens xIA),i-> (gens xIA)_i_0);
-W = makeWeylAlgebra R;
-dF = apply(F,i->sub(i,W))
-time print factorBFunction generalB (dF,1_W,Strategy=>StarIdeal)
+time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
 --b = {1_W,x_1,F#0,x_1*x_4,x_1*x_2} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
 --use roots to decide which multiplier ideals to compute
 analyticSpread (ideal dF)
