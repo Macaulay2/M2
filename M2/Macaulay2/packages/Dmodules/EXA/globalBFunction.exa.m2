@@ -63,7 +63,7 @@ F = I_*;
 
 W = makeWA(QQ[x_1..x_3]);
 F = {x_2^2-x_1*x_3, x_1^3-x_3^2}; 
-b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g))
+b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
 b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
 --            3      7      9      11      13      17      19      23      25
 --(s + 2)(s + -)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)

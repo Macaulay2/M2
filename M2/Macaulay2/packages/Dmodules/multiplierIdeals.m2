@@ -4,12 +4,17 @@ isInMultiplierIdeal = method()
 --     c, QQ
 -- OUT: Boolean, is in multiplier ideal J(I^c)?     
 isInMultiplierIdeal(RingElement, Ideal, QQ) := (g,I,c) -> (
-     if c <= 0 then return true;
-     l := lct I;
-     m := ceiling(c+l); -- Need c < lct(I) + m
-     if liftable(c+l,ZZ) then m = m + 1; 
-     roots := bFunctionRoots generalB(I_*, g, Exponent=>m);
-	--Be careful when adding a strategy option! When m=Exponent option is used in generalBFunction, than we need c<(lct(I)+m)
+     roots := bFunctionRoots ( if Strategy===mGeneralizedBFunction then (
+	       if c <= 0 then return true;
+     	       l := lct I;
+     	       m := ceiling(c+l); -- Need c < lct(I) + m
+     	       if liftable(c+l,ZZ) then m = m + 1; 
+     	       generalB(I_*, g, Exponent=>m)
+	       -- When m=Exponent option is used in generalBFunction, than we need c<(lct(I)+m)
+	       ) else if Strategy===generalizedBFunction then (
+	       	    generalB(I_*, g)
+	       ) else error "unknown Strategy"
+	  ); 
      -c > max roots
      )
 
