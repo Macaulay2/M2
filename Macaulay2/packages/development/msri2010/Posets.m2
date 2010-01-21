@@ -49,7 +49,7 @@ poset(List,List) := (I,C) ->
 	 symbol GroundSet => I,
 	 symbol Relations => C,
      	 symbol RelationMatrix => transitiveClosure(I,C),
-	 symbol cache => CacheTable
+	 symbol cache => new CacheTable
 	 }
     
 -- in case you actually have M to begin with    
@@ -58,7 +58,7 @@ poset(List,List,Matrix) := (I,C,M) ->
 	  symbol GroundSet => I,
 	  symbol Relations => C,
 	  symbol RelationMatrix => M,
-	  symbol cache => CacheTable
+	  symbol cache => new CacheTable
 	  }
      
 DirectedGraph = new Type of HashTable
@@ -68,7 +68,7 @@ directedGraph(List, List) := (V,E) ->
      new DirectedGraph from {
      	  symbol Vertices => V,
      	  symbol DirectedEdges => E,
-	  symbol cache => CacheTable
+	  symbol cache => new CacheTable
      }
 
 --------------
@@ -1120,3 +1120,8 @@ assert(D1 ==  promote(matrix {{0, 1, 4, 3}, {4, 0, 3, 2}, {1, 2, 0, 4}, {2, 3, 1
 
 ///
 
+end
+
+restart
+installPackage("Posets", RemakeAllDocumentation=>true)
+check Posets 
