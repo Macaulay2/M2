@@ -525,15 +525,16 @@ TEST ///
   reduceGbBrp(F)
   assert( sort apply( values F, i -> convert(i,R) ) == sort{x*y, y*z, w} )
 
--- R=ZZ/2[x,y,z]
--- S={x*y+y*z+1, y*z+x+1, x*y*z+x*y+y*z+x*z, z+y, y+1}
--- L=getPolysFromList(S)
---  assert(getPolysFromList(S) == new gbComputation from {0 => {{1, 1, 0}, {0, 1, 1}, {0, 0, 0}},           
---                   1 => {{1, 0, 0}, {0, 1, 1}, {0, 0, 0}},
---                   2 => {{1, 1, 1}, {1, 1, 0}, {1, 0, 1}, {0, 1, 1}},
---                   3 => {{0, 1, 0}, {0, 0, 1}},
---                   4 => {{0, 1, 0}, {0, 0, 0}}
---		   })
+ --R=ZZ/2[x,y,z]
+ --S={x*y+y*z+1, y*z+x+1, x*y*z+x*y+y*z+x*z, z+y, y+1}
+ --L=getPolysFromList(S)
+ --assert(#L == 5)
+-- assert(L#0 == new Brp from {{1, 1, 0}, {0, 1, 1}, {0, 0, 0}})          
+-- assert(L#1 == new Brp from {{1, 0, 0}, {0, 1, 1}, {0, 0, 0}})
+-- assert(L#2 == new Brp from {{1, 1, 1}, {1, 1, 0}, {1, 0, 1}, {0, 1, 1}})
+-- assert(L#3 == new Brp from {{0, 1, 0}, {0, 0, 1}})
+-- assert(L#4 == new Brp from {{0, 1, 0}, {0, 0, 0}})
+	
  
   
 ///
