@@ -1,17 +1,17 @@
-isInMultiplierIdeal = method()
+isInMultiplierIdeal = method(Options => {Strategy=>generalizedBFunction})
 -- IN: g, an element of QQ[x]
 --     I, an Ideal of QQ[x]
 --     c, QQ
 -- OUT: Boolean, is in multiplier ideal J(I^c)?     
-isInMultiplierIdeal(RingElement, Ideal, QQ) := (g,I,c) -> (
-     roots := bFunctionRoots ( if Strategy===mGeneralizedBFunction then (
+isInMultiplierIdeal(RingElement, Ideal, QQ) := o -> (g,I,c) -> (
+     roots := bFunctionRoots ( if o.Strategy===mGeneralizedBFunction then (
 	       if c <= 0 then return true;
      	       l := lct I;
      	       m := ceiling(c+l); -- Need c < lct(I) + m
      	       if liftable(c+l,ZZ) then m = m + 1; 
      	       generalB(I_*, g, Exponent=>m)
 	       -- When m=Exponent option is used in generalBFunction, than we need c<(lct(I)+m)
-	       ) else if Strategy===generalizedBFunction then (
+	       ) else if o.Strategy===generalizedBFunction then (
 	       	    generalB(I_*, g)
 	       ) else error "unknown Strategy"
 	  ); 
@@ -31,7 +31,7 @@ star (Ideal,List) := (I,vw) -> (
      ) 
 
 multiplierIdeal = method()
-multiplierIdeal (Ideal, QQ) := (a,c)->multiplierIdeal(a,{c}) 
+multiplierIdeal (Ideal, QQ) := (a,c) -> first multiplierIdeal(a,{c}) 
 multiplierIdeal (Ideal, List) := (a,cs) -> (
      R := ring a;
      LCT := lct a;
@@ -77,6 +77,23 @@ multiplierIdeal (Ideal, List) := (a,cs) -> (
      	       	    );
 	       exceptionalLocusB(R,I2,b) -- ring I2 has to eliminate s 
 	       ))
+     )
+
+
+jumpingCoefficients = method()
+-- jumping numbers and multiplier ideals up to the analytic spead
+jumpingCoefficients Ideal := I -> jumpingCoefficients(I,0, analyticSpread I)
+-- jumping numbers and multiplier ideals in the interval [a,b]
+jumpingCoefficients (Ideal, ZZ, ZZ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
+jumpingCoefficients (Ideal, QQ, ZZ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
+jumpingCoefficients (Ideal, ZZ, QQ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
+jumpingCoefficients (Ideal, QQ, QQ) := (I,a,b) -> (
+     -- candidates
+     r := sort( bFunctionRoots generalB I_* / minus); 
+     cs := (if min r>=a then {} else {last select(r, c->c<a)} ) | select(r, c->c<=b and c>=a);
+     mI := multiplierIdeal(I,cs);
+     jumps := toList select(0..#cs-1, i->i==0 or mI#i != mI#(i-1));
+     ( jumps/(i->cs#i), jumps/(i->mI#i) )
      )
 
 -- log canonical threshold computation via b-function

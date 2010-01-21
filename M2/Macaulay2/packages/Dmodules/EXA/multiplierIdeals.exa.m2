@@ -1,47 +1,36 @@
 restart
 debug loadPackage "Dmodules"
 
---R = QQ[x,y];
---a = ideal {x^2-y^3}; 
---a = ideal {x*y*(x+y)*(x+2*y)}; 
---a = ideal {x*y*(x+y)*(x+2*y)*(x+3*y)};
-
 R = QQ[x_1..x_3];
-a = ideal {x_2^2-x_1*x_3, x_1^3-x_3^2}; 
-a = ideal {x_1^3-x_2^2, x_2^3-x_3^2};
-a = ideal {x_1^4-x_2^3, x_3^2-x_1*x_2^2};
-a = ideal {x_1,x_2};
+I = ideal {x_2^2-x_1*x_3, x_1^3-x_3^2}; 
+I = ideal {x_1^3-x_2^2, x_2^3-x_3^2};
+I = ideal {x_1^4-x_2^3, x_3^2-x_1*x_2^2};
+I = ideal {x_1,x_2};
 
-aS = analyticSpread a
-hasRationalSing a_*
-
--- candidates for jumping numbers below the analytic spread
-lowJumps = select(sort(bFunctionRoots generalB(a_*, 1_R) / minus), c->c<aS)
-mI = multiplierIdeal(a,lowJumps)
-all(#mI, i->all((mI#i)_*,g->isInMultiplierIdeal(g,a,lowJumps#i)))
+sort(bFunctionRoots generalB I_* / minus)
+(jumps,mI) = jumpingCoefficients I
+assert all(#jumps, i->all( (mI#i)_*,g->isInMultiplierIdeal(g,I,jumps#i) ))
 
 
 ------
 ------
 R = QQ[x,y,z];
-W = makeWeylAlgebra R;
 F = {-y^3*z^3+y^5+x^2*z^3-x^2*y^2}; --intersect( ideal(x^2-y^3),ideal(y^2-z^3) )
-b = {1_W,x} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
-b = {1_W,x} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
-xF = apply(F,i->sub(i,R)); --lct(ideal xF) --is 19/30
-time multiplierIdeal(ideal xF, 19/30)
+b = scan({1_R,x}, g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
+b = scan({1_R,x}, g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
+lct ideal F --is 19/30
+time multiplierIdeal(ideal F,19/30)
 
 
 -----------------------------------------------
 -------------Examples from [ELSV]:-------------
 -----------------------------------------------
 R = QQ[x,y];
-W = makeWeylAlgebra R;
 F = {x^5+y^4+x^3*y^2}; --Example 2.5 (not all roots are JCs)
-b = {1_W,x,5*x^4+3*x^2*y^2,4*y^3+2*x^3*y,x*y,x-y} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
-b = {1_W,x,5*x^4+3*x^2*y^2,4*y^3+2*x^3*y,x*y,x-y} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
-xF = apply(F,i->sub(i,R)); --lct(ideal xF) -- is ?
---time multiplierIdeal(ideal xF,)
+for strategy in {InitialIdeal, StarIdeal} do
+scan({1_R,x,5*x^4+3*x^2*y^2,4*y^3+2*x^3*y,x*y,x-y}, g->time print factorBFunction generalB (F,g,Strategy=>strategy))
+lct ideal F -- is ?
+time multiplierIdeal(ideal F, 9/20)
 --***also compute the q_i's for this one!***
 
 -----------------------------------------------
