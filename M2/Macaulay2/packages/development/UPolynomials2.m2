@@ -29,7 +29,8 @@ export {
      integerContent,
      makePrimitive,
      makeMonic,
-     reduceModM
+     reduceModM,
+     liftToQQ
      }
 
 tower = method()
@@ -187,13 +188,33 @@ reduceModM(QQ, ZZ) := (f,M) -> (
      )
 reduceModM(ZZ, ZZ) := (f,M) -> (c := f % M; if c == 0 then null else if c > M//2 then c-M else c)
 
+liftZmToQQ = (c, m) -> (
+     -- return either null or a rational number a/b.
+     -- a/b is returned if there are a, b s.t. 2*(a^2 + b^2) < m such
+     --  that a == b*c (mod m)
+     -- If not, returns null
+     (v1,v2,v3) := (0,1,c);
+     (u1,u2,u3) := (1,0,m);
+     while 2*v3*v3 >= m do (
+	  q := u3 // v3;
+	  (r1,r2,r3) := (u1-q*v1,u2-q*v2,u3-q*v3);
+	  (u1,u2,u3) = (v1,v2,v3);
+	  (v1,v2,v3) = (r1,r2,r3);
+	  );
+     if 2*v2*v2 >= m then null
+     else v3/v2)
 
 liftToQQ = method()
-liftToQQ UPoly := (F) -> (
      -- F should be a poly defined over ZZ/m, for some m
      -- returns a poly over QQ, or null
-     error "not implemented yet"
+liftToQQ(UPolyList,ZZ) := (F,M) -> for f in F list (
+     c := liftToQQ(f, M);
+     if c === null then return null;
+     c
      )
+liftToQQ(Nothing,ZZ) := (F,M) -> null
+liftToQQ(ZZ,ZZ) := (F,M) -> liftZmToQQ(F,M)
+liftToQQ(QQ,ZZ) := (F,M) -> F
 
 CRA = method()
 CRA(UPoly, UPoly) := (F,G) -> (
@@ -309,19 +330,17 @@ modularGCD(UPoly, UPoly) := (F1, F2) -> (
      )
 ---------------------------------------------
 
-upolyRing = method()
-upolyRing(ZZ, List) := (p, L) -> new UPolyRing from {p,L,{},tower(ZZ/p,L)}
-upolyRing Ring := (R) -> new UPolyRing from {char R, varNames A, extensions A, R}
-
 upoly0 = (L, F) -> (
+     -- L is a list of variable names.  Note: currently this is 
+     --  only used to determine depth of recursion.  REWRITE!!
+     -- F is a polynomial in a tower
      if #L == 0 
      then F
-     else if F == 0 then new UPolyList from {null}
+     else if F == 0 then new UPolyList from {}
      else (
+       x := (ring F)_0;
        L1 := drop(L,1);
-       x := L#0;
        d := degree(x,F);
-       (mons, cfs) := coefficients(F, Variables=>{x});
        C := for i from 0 to d list (
 	    c := coefficient(x^i, F);
 	    if c == 0 then null else upoly0(L1, c)
@@ -329,12 +348,27 @@ upoly0 = (L, F) -> (
        new UPolyList from if #L1 == 0 then flatten C else C
      ))
 
+upolyRing = method()
+upolyRing(ZZ, List) := (p, L) -> new UPolyRing from {p,L,{},tower(ZZ/p,L)}
+upolyRing Ring := (R) -> (
+     L := varNames A;
+     E := extensions A;
+     ext := apply(E, f -> (
+	       << "doing " << L << " and " << f << endl;
+	       result := if f === null then null else upoly0(L,f);
+	       L = drop(L,1);
+     	       result
+	       ));
+     new UPolyRing from {char R, varNames A, ext, R}
+     )
+
 upoly = method()
 upoly(RingElement, UPolyRing) := (F, R) -> new UPoly from {R, upoly0(R#1, F)}
   -- take an element from a tower ring, and make a UPoly from it
 upoly(UPolyList, UPolyRing) := (F, R) -> new UPoly from {R, F}
 
-relem = method()
+-- relem: go from upoly to RingElement
+relem = method() 
 relem(List, UPolyList) := (V, f) -> (
      V1 := drop(V,1);
      x := V#0;
@@ -434,6 +468,7 @@ assert(integerContent G == 3/8)
 assert(first makePrimitive F == upoly(2*x^2+(s+t)*x+2*t*s, R))
 assert(relem leadCoefficient G1 == 8)
 reduceModM(G1, 12)
+liftToQQ(poly oo, 12)
 ///
 
 TEST ///
@@ -442,6 +477,24 @@ debug loadPackage "UPolynomials2"
 kk = QQ
 A = kk[t]/(t^2-2)[s]/(s^3-s-t)[x]
 R = upolyRing A
+F = x^2 + 1/2*(s+t)*x + s*t
+G = upoly(3*F^3 + 6*F, R)
+F = upoly(F, R)
+F + F
+F + G
+F*G
+///
+
+
+TEST ///
+restart
+debug loadPackage "UPolynomials2"
+kk = QQ
+A = kk[x]
+R = upolyRing A
+F = upoly(13*23*(3/13*x^3-x-1/23), R)
+makeMonic(F)
+reduceModM(F, 101)
 F = x^2 + 1/2*(s+t)*x + s*t
 G = upoly(3*F^3 + 6*F, R)
 F = upoly(F, R)
