@@ -87,6 +87,8 @@ UPoly = new Type of List
 
 poly UPoly := (F) -> F#1
 ring UPoly := (F) -> F#0
+varNames UPolyRing := (R) -> R#1
+char UPolyRing := (R) -> R#0
 ------------------------------------------
 -- Translation to/from usual ring types --
 ------------------------------------------
@@ -99,7 +101,7 @@ UPoly == UPoly := (F,G) -> F === G
 
 degree UPoly := (F) -> (
      -- degree of F in the main variable of F
-     #(poly F) + 1
+     #(poly F) - 1
      )
 
 integerContent = method()
@@ -111,6 +113,7 @@ integerContent UPolyList := (f) -> (
      	  a := integerContent(f#(#f-1));
      	  if a == 1 then return a;
 	  for j from 0 to #f-2 do (
+	       if f#j === null then continue;
 	       b := integerContent f#j;
 	       a = gcd(a,b);
 	       if a == 1 then return a;
@@ -121,10 +124,18 @@ integerContent UPolyList := (f) -> (
 integerContent ZZ := (f) -> f
 integerContent QQ := (f) -> f
 
+multiplyByConstant = method()
+multiplyByConstant(UPoly, QQ) := (F,c) -> upoly(multiplyByConstant(poly F, c), ring F)
+multiplyByConstant(UPolyList, QQ) := (f, c) -> apply(f, t -> multiplyByConstant(t, c))
+multiplyByConstant(Nothing, QQ) := (f,c) -> f
+multiplyByConstant(QQ, QQ) := (f,c) -> f*c
+multiplyByConstant(ZZ, QQ) := (f,c) -> f*c
+
 makePrimitive = method()
 makePrimitive UPoly := (F) -> (
      -- returns (G, c), where c is a rational number, and G is F//c.
-     error "not implemented yet"
+     c := integerContent F;
+     (multiplyByConstant (F, 1/c), c)
      )
 
 makeMonic = method()
@@ -255,27 +266,47 @@ modularGCD(UPoly, UPoly) := (F1, F2) -> (
 	  );
      )
 ---------------------------------------------
+
 upolyRing = method()
-upolyRing(ZZ, List) := (p, L) -> new UPolyRing from {p,L}
+upolyRing(ZZ, List) := (p, L) -> new UPolyRing from {p,L,{},tower(ZZ/p,L)}
+upolyRing Ring := (R) -> new UPolyRing from {char R, varNames A, extensions A, R}
 
 upoly0 = (L, F) -> (
      if #L == 0 
      then F
+     else if F == 0 then new UPolyList from {null}
      else (
        L1 := drop(L,1);
        x := L#0;
        d := degree(x,F);
        (mons, cfs) := coefficients(F, Variables=>{x});
        C := for i from 0 to d list (
-	    c := sub(contract(x^i, F), {x => 0});
+	    c := coefficient(x^i, F);
 	    if c == 0 then null else upoly0(L1, c)
 	    );
-       if #L1 == 0 then flatten C else C
+       new UPolyList from if #L1 == 0 then flatten C else C
      ))
 
 upoly = method()
 upoly(RingElement, UPolyRing) := (F, R) -> new UPoly from {R, upoly0(R#1, F)}
   -- take an element from a tower ring, and make a UPoly from it
+upoly(UPolyList, UPolyRing) := (F, R) -> new UPoly from {R, F}
+
+relem = method()
+relem(List, UPolyList) := (V, f) -> (
+     V1 := drop(V,1);
+     x := V#0;
+     result := sum for i from 0 to #f-1 list (
+	  if f#i === null then continue;
+	  relem(V1, f#i) * x^i
+	  );
+     result
+     )
+relem(List, ZZ) := (V, f) -> f
+relem(List, QQ) := (V, f) -> f
+relem(UPoly) := (F) -> relem(varNames ring F, poly F)
+
+net UPoly := (F) -> net relem F
 
 beginDocumentation()
 
@@ -283,7 +314,7 @@ beginDocumentation()
 end
 
 restart
-loadPackage "UPolynomials2"
+debug loadPackage "UPolynomials2"
 
 A = QQ[x,y,z]
 R = tower(QQ, gens A)
@@ -297,9 +328,10 @@ z
 describe R
 degree x
 degree y
-F = x^3-(x+y)^2-x-y+3+z^3-z^2
-degree_x (x+x^2*y^10)
-coefficient(x^2, F)
+F = x^3-(x+y)^2-x-y^10+3+z^3-z^2
+assert(degree_x F == 3)
+assert(coefficient(x^2, F) == -1)
+assert(coefficient(x, F) == -(2*y+1))
 
 use A
 F = x^3-(x+y)^2-x-y+3+z^3-z^2
@@ -316,7 +348,30 @@ sub(H,oo)
 
 -- towers:
 kk = QQ
-kk[t]/(t^2-2)[s]/(s^3-s-t)[x]
-varNames oo
-extensions o29
-tower(ZZ/101, varNames o29, extensions o29)
+A = kk[t]/(t^2-2)[s]/(s^3-s-t)[x]
+varNames A
+extensions A
+tower(ZZ/101, varNames A, extensions A)
+
+R = upolyRing A
+useTower A
+F = x^2 + (s+t)*x + s*t
+upoly(F, R)
+relem oo
+
+G = F^3
+G1 = upoly(G,R)
+G2 = relem G1
+assert(G == G2)
+
+G = upoly(1_A,R)
+assert(1_A == relem G)
+
+G = upoly(0_A,R)
+assert(0_A == relem G)
+relem G
+
+F = upoly(34*x^2 + 17/5*(s+t)*x + 85*s*t, R)
+integerContent F
+multiplyByConstant(F, 5/17)
+makePrimitive F

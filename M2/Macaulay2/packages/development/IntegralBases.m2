@@ -240,6 +240,8 @@ trager Ring := opts -> (R) -> (
      matrix{vs} * S
      )
 
+--------------------------------------------------
+
 beginDocumentation()
 
 doc ///
