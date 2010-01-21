@@ -30,6 +30,7 @@ exportMutable {
       updatePairs,
       gbBrp
       }
+      
 export {
       getPolysFromList
       }
@@ -59,8 +60,8 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
   );
-  time F = minimalGbBrp(F);
-  time reduceGbBrp(F)
+  F = minimalGbBrp(F);
+  reduceGbBrp(F)
 )
 
 --Take polynomials from a list and make into a gbComputation
@@ -132,6 +133,7 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
 )
 
 -- remove all relatively prime pairs
+-- updatePairs returns a list of all the pairs, that have to be updated
 updatePairs = method()
 updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
   select( l, (i,j) -> (
@@ -423,6 +425,69 @@ longTest = false
   M = apply(flatten entries gens gb J, i-> lift(i,R))
   assert(N == M)
 
+--longTest = true
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  F = new gbComputation from { 0=> convert(a*b*c*d*e),
+          1=> convert( a+b*c+d*e+a+b+c+d),
+          2=> convert( j*h+i+f),
+          3=> convert( g+f),
+          4=> convert( a+d),
+          5=> convert( j+i+d*c),
+          6=> convert( r+s+t),
+          7=> convert( m*n+o*p),
+          8=> convert( t+a),
+          9=> convert( b*s+q+p*n*m+i),
+          10=> convert( b*s+q+p+h),
+          11=> convert( b*s+q*n*m+i),
+          12=> convert( b*s+q*n*m+i+j*s*t +s),
+          13=> convert( b*k+s+t),
+          14=> convert( b*k+r*q+l*m+i*j+n),
+          15=> convert( b*a+l+q*m+i),
+          16=> convert( b*k+d*n*m+i),
+          17=> convert( b+q+l*n*m+i*d),
+          18=> convert( a*k+c*l*n*f),
+          19=> convert( q*r+c+q+l*n*m+i)
+          }
+if longTest then          
+  time gbBasis = gbBrp( F, numgens R)
+
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  QR = R/(a^2+a,
+          b^2+b,
+          c^2+c,
+          d^2+d,
+          e^2+e,
+          f^2+f,
+          g^2+g,
+          h^2+h,
+          i^2+i,
+          j^2+j,
+          k^2+k,
+          l^2+l,
+          m^2+m,
+          n^2+n,
+          o^2+o,
+          p^2+p,
+          q^2+q,
+          r^2+r,
+          s^2+s,
+          t^2+t)
+  J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i,
+          b*s+q*n*m+i, 
+          b*s+q*n*m+i+j*s*t+s, 
+          b*k+s+t, 
+          b*k+r*q+l*m+i*j+n, 
+          b*a+l+q*m+i, 
+          b*k+d*n*m+i, 
+          b+q+l*n*m+i*d, 
+          a*k+c*l*n*f,
+          q*r+c+q+l*n*m+i)
+  time M = apply(flatten entries gens gb J, i-> lift(i,R))
+  time M = apply(flatten entries gens gb ideal (a,b,a+b), i-> lift(i,R))
+if longTest then          
+  assert(N == M)
+
+--longTest = true
   R = ZZ/2[a..t, MonomialOrder=>Lex]
   F = new gbComputation from { 0=> convert(a*b*c*d*e),
           1=> convert( a+b*c+d*e+a+b+c+d),
@@ -464,6 +529,7 @@ if longTest then
           t^2+t)
   J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i)
   time M = apply(flatten entries gens gb J, i-> lift(i,R))
+  time M = apply(flatten entries gens gb ideal (a,b,a+b), i-> lift(i,R))
 if longTest then          
   assert(N == M)
 
@@ -553,7 +619,6 @@ end
 restart
 installPackage "BuchbergerForBrp"
 installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
-installPackage("BitwiseRepresentationPolynomials")
 check BuchbergerForBrp
 
   
