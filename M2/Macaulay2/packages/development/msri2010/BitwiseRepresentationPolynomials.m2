@@ -21,11 +21,11 @@ export {brpOR,
         removeDups, 
         divide, 
         lcmBrps, 
+        leading,
         isRelativelyPrime
         }
         
 exportMutable {
-        leading
         }
 
 Brp = new Type of List 
