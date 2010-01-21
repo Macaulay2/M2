@@ -21,7 +21,6 @@ b = scan({1_R,x}, g->time print factorBFunction generalB (F,g,Strategy=>StarIdea
 lct ideal F --is 19/30
 time multiplierIdeal(ideal F,19/30)
 
-
 -----------------------------------------------
 -------------Examples from [ELSV]:-------------
 -----------------------------------------------
