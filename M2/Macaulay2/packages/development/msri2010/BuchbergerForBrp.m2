@@ -67,7 +67,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
 getPolysFromList = method()
 getPolysFromList(List) := gbComputation => S -> (
      F:= new gbComputation;
-     scan(0 .. #S-1, i -> F#i = convert(S#i));
+     scan(S, i -> F##F = convert(i));
      F
      )
     
@@ -318,6 +318,7 @@ Outputs
 ///
 
 TEST ///
+longTest = false
 
   assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
   assert(  makePairsFromLists( {1,2,3}, {10,100,1000}) == {(1, 10), (1, 100), (1, 1000), (2, 10), (2, 100), (2, 1000), (3, 10), (3, 100), (3, 1000)})
@@ -437,7 +438,9 @@ TEST ///
           11=> convert( b*s+q*n*m+i),
           12=> convert( b*k+q+l*n*m+i)
           }
+if longTest then          
   time gbBasis = gbBrp( F, numgens R)
+
   N = sort apply (values gbBasis, poly -> convert(poly,R) )
   QR = R/(a^2+a,
           b^2+b,
@@ -461,6 +464,7 @@ TEST ///
           t^2+t)
   J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i)
   time M = apply(flatten entries gens gb J, i-> lift(i,R))
+if longTest then          
   assert(N == M)
 
 
@@ -525,15 +529,15 @@ TEST ///
   reduceGbBrp(F)
   assert( sort apply( values F, i -> convert(i,R) ) == sort{x*y, y*z, w} )
 
- --R=ZZ/2[x,y,z]
- --S={x*y+y*z+1, y*z+x+1, x*y*z+x*y+y*z+x*z, z+y, y+1}
- --L=getPolysFromList(S)
- --assert(#L == 5)
--- assert(L#0 == new Brp from {{1, 1, 0}, {0, 1, 1}, {0, 0, 0}})          
--- assert(L#1 == new Brp from {{1, 0, 0}, {0, 1, 1}, {0, 0, 0}})
--- assert(L#2 == new Brp from {{1, 1, 1}, {1, 1, 0}, {1, 0, 1}, {0, 1, 1}})
--- assert(L#3 == new Brp from {{0, 1, 0}, {0, 0, 1}})
--- assert(L#4 == new Brp from {{0, 1, 0}, {0, 0, 0}})
+ R=ZZ/2[x,y,z]
+ S={x*y+y*z+1, y*z+x+1, x*y*z+x*y+y*z+x*z, z+y, y+1}
+ L=getPolysFromList(S)
+ assert(#L == 5)
+ assert(L#0 == new Brp from {{1, 1, 0}, {0, 1, 1}, {0, 0, 0}})          
+ assert(L#1 == new Brp from {{1, 0, 0}, {0, 1, 1}, {0, 0, 0}})
+ assert(L#2 == new Brp from {{1, 1, 1}, {1, 1, 0}, {1, 0, 1}, {0, 1, 1}})
+ assert(L#3 == new Brp from {{0, 1, 0}, {0, 0, 1}})
+ assert(L#4 == new Brp from {{0, 1, 0}, {0, 0, 0}})
 	
  
   
