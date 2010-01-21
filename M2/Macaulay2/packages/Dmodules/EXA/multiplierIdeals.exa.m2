@@ -61,10 +61,7 @@ time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal))
 --lct(ideal F) -- is ?
 --time multiplierIdeal(ideal F, )
 
------
-R = QQ[x,y];
-F = {}; --"
-
+ 
 
 -----------------------------------------------
 -------Examples from Zach's suggestions:-------
