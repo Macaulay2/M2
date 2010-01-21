@@ -54,10 +54,16 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
     S := SPolynomial(pair, F, n);
     reducedS := reduce (S,F);
     if reducedS != 0 then (
-      -- add reducedS to intermediate basis
-      listOfIndexPairs = listOfIndexPairs | toList((-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) ) ;
+      -- add reducedS to intermediate basis and update the list of pairs
+      newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
-      listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
+      newPairs = updatePairs( newPairs, F, n );
+      listOfIndexPairs = listOfIndexPairs | newPairs;
+      
+      --updatePairs( listOfIndexPairs,F,n )
+      --listOfIndexPairs = listOfIndexPairs | toList((-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) ) ;
+      --F##F = reducedS;
+      --listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
   );
   F = minimalGbBrp(F);
@@ -666,3 +672,8 @@ updatePairs= profile  updatePairs;
           }
   timing ( gbBrp( F, numgens R) )
 profileSummary
+
+restart
+installPackage "BuchbergerForBrp"
+installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
+check BuchbergerForBrp
