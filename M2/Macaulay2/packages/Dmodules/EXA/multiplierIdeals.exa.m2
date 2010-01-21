@@ -29,7 +29,7 @@ F = {-y^3*z^3+y^5+x^2*z^3-x^2*y^2}; --intersect( ideal(x^2-y^3),ideal(y^2-z^3) )
 b = {1_W,x} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
 b = {1_W,x} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
 xF = apply(F,i->sub(i,R)); --lct(ideal xF) --is 19/30
-time multiplierIdeal(ideal xF,19/30)
+time multiplierIdeal(ideal xF, 19/30)
 
 
 -----------------------------------------------
@@ -45,15 +45,26 @@ xF = apply(F,i->sub(i,R)); --lct(ideal xF) -- is ?
 --***also compute the q_i's for this one!***
 
 -----------------------------------------------
-------Example from one of Saito's papers:------
+---------Example from Saito's papers:----------
 -----------------------------------------------
 R = QQ[x,y];
-W = makeWeylAlgebra R;
-F = {(x^2-y^2)*(x^2-1)*(y^2-1)};
-b = {1_W,x,x*y,x-y} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
-b = {1_W,x,x*y,x-y} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
-xF = apply(F,i->sub(i,R)); --lct(ideal xF) -- is ?
---time multiplierIdeal(ideal xF,)
+F = {(x^2-y^2)*(x^2-1)*(y^2-1)}; --"Mult" 5.5
+--b = {1_W,x,x*y,x-y} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
+--b = {1_W,x,x*y,x-y} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
+--lct(ideal F) -- is ?
+--time multiplierIdeal(ideal F, )
+
+-----
+R = QQ[x,y];
+F = {}; --"Intro" 7.5 are all monomial ideals
+time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal))
+--lct(ideal F) -- is ?
+--time multiplierIdeal(ideal F, )
+
+-----
+R = QQ[x,y];
+F = {}; --"
+
 
 -----------------------------------------------
 -------Examples from Zach's suggestions:-------
@@ -211,3 +222,126 @@ xF = apply(F,h->sub(h,R)) --analyticSpread(ideal xF) --1
 k = binomial(4,2); multiplierIdeal( ideal xF, 1/k ) --This tests a conjecture of Kyungyong.
 --multiplierIdeal( ideal xF, 1_QQ )
 
+------------------------------------------------------------
+-- Below are the most notable comparisons I've looked at to compare the InitialIdeal and StarIdeal Strategies.
+-- When one is faster, it's typically InitialIdeal, but they're usually fairly similar.
+
+-- Are these comparisons significant?
+R = QQ[x,y,z,w];
+F = {x^2+y^2+z^2+w^2};
+b = {1_W,x,y,z,w} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
+///
+(s + 1)(s + 2)
+     -- used 0.085398 seconds
+(s + 1)(s + 3)
+     -- used 0.045261 seconds
+(s + 1)(s + 3)
+     -- used 0.041292 seconds
+(s + 1)(s + 3)
+     -- used 0.042321 seconds
+(s + 1)(s + 3)
+     -- used 0.086999 seconds
+///
+
+b = {1_W,x,y,z,w} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
+///
+(s + 1)(s + 2)
+     -- used 0.039125 seconds
+(s + 1)(s + 3)
+     -- used 0.039227 seconds
+(s + 1)(s + 3)
+     -- used 0.079084 seconds
+(s + 1)(s + 3)
+     -- used 0.038432 seconds
+(s + 1)(s + 3)
+     -- used 0.03973 seconds
+///
+
+
+Ex 5.5
+W = makeWeylAlgebra(QQ[x_1..x_3]);
+F = {x_2^2 - x_1*x_3, x_1^3 - x_3^2};
+b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
+///
+            3      7      9      11      13      17      19      23      25
+(s + 2)(s + -)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4      4       6       6      12      12      12      12
+     -- used 0.863465 seconds
+            5      7      9      13      17      23      25      29      31
+(s + 2)(s + -)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4      4       6       6      12      12      12      12
+     -- used 14.1046 seconds
+            5      9      11      11      13      29      31      35      37
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4       4       6       6      12      12      12      12
+     -- used 2.36621 seconds
+            5      9      11      17      19      23      25      29      31
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4       4       6       6      12      12      12      12
+     -- used 20.3367 seconds
+///
+
+b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
+///
+            3      7      9      11      13      17      19      23      25
+(s + 2)(s + -)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4      4       6       6      12      12      12      12
+     -- used 3.13178 seconds
+            5      7      9      13      17      23      25      29      31
+(s + 2)(s + -)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4      4       6       6      12      12      12      12
+     -- used 19.8134 seconds
+            5      9      11      11      13      29      31      35      37
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4       4       6       6      12      12      12      12
+     -- used 23.4829 seconds
+            5      9      11      17      19      23      25      29      31
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            2      4       4       6       6      12      12      12      12
+     -- used 24.1593 seconds
+///
+
+
+-- Here, InitialIdeal is faster. This is the most significant difference between them that I found.
+Shibuta Ex 5.6
+W = makeWeylAlgebra(QQ[x_1..x_3]);
+F = {x_1^3 - x_2^2, x_2^3 - x_3^2};
+b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>InitialIdeal))
+///
+             4      5      11      13      25      29      31      35      37      41
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6      18      18      18      18      18      18
+     -- used 0.312574 seconds
+            5      7      11      13      17      29      35      37      41      43      49
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6       6      18      18      18      18      18      18
+     -- used 0.621569 seconds
+            7      8      13      17      19      31      35      37      41      43      47
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6       6      18      18      18      18      18      18
+     -- used 0.816695 seconds
+            7      8      11      13      17      19      43      47      49      53      55      59
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6       6       6      18      18      18      18      18      18
+     -- used 0.765971 seconds
+///
+
+b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
+///
+           4      5      11      13      25      29      31      35      37      41
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6      18      18      18      18      18      18
+     -- used 0.72619 seconds
+            5      7      11      13      17      29      35      37      41      43      49
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6       6      18      18      18      18      18      18
+     -- used 2.40067 seconds
+            7      8      13      17      19      31      35      37      41      43      47
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6       6      18      18      18      18      18      18
+     -- used 3.24806 seconds
+            7      8      11      13      17      19      43      47      49      53      55      59
+(s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+            3      3       6       6       6       6      18      18      18      18      18      18
+     -- used 29.5326 seconds
+///
