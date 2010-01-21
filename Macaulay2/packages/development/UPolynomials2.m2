@@ -25,7 +25,11 @@ export {
      towerP,
      useTower,
      varNames,
-     extensions
+     extensions,
+     integerContent,
+     makePrimitive,
+     makeMonic,
+     reduceModM
      }
 
 tower = method()
@@ -89,6 +93,7 @@ poly UPoly := (F) -> F#1
 ring UPoly := (F) -> F#0
 varNames UPolyRing := (R) -> R#1
 char UPolyRing := (R) -> R#0
+coefficientRing UPolyRing := (R) -> new UPolyRing from {R#0, drop(R#1,1), drop(R#2,1)}
 ------------------------------------------
 -- Translation to/from usual ring types --
 ------------------------------------------
@@ -111,12 +116,10 @@ integerContent UPolyList := (f) -> (
      if #f == 0 then 0_QQ 
      else (
      	  a := integerContent(f#(#f-1));
-     	  if a == 1 then return a;
 	  for j from 0 to #f-2 do (
 	       if f#j === null then continue;
 	       b := integerContent f#j;
 	       a = gcd(a,b);
-	       if a == 1 then return a;
 	       );
 	  a
 	  )
@@ -131,6 +134,14 @@ multiplyByConstant(Nothing, QQ) := (f,c) -> f
 multiplyByConstant(QQ, QQ) := (f,c) -> f*c
 multiplyByConstant(ZZ, QQ) := (f,c) -> f*c
 
+
+isOne = method()
+isOne(UPoly) := (F) -> isOne(poly F);
+isOne(UPolyList) := (f) -> #f == 1 and isOne f#0
+isOne(Nothing) := (f) -> false
+isOne(QQ) := (f) -> f == 1
+isOne(ZZ) := (f) -> f == 1
+
 makePrimitive = method()
 makePrimitive UPoly := (F) -> (
      -- returns (G, c), where c is a rational number, and G is F//c.
@@ -138,17 +149,44 @@ makePrimitive UPoly := (F) -> (
      (multiplyByConstant (F, 1/c), c)
      )
 
+leadCoefficient UPoly := (F) -> upoly(leadCoefficient(poly F), coefficientRing ring F)
+leadCoefficient UPolyList := (f) -> f#(#f-1)
+
 makeMonic = method()
 makeMonic UPoly := (F) -> (
      -- returns (G, c), where c is the lead coefficient of F, and G is F//c.
-     error "not implemented yet"
+     c := leadCoefficient F;
+     if isOne c
+     then c 
+     else (
+	  c1 := invert c;
+	  multiplyByCoefficient(c1, F)
+     ))
+
+compress UPolyList := (f) -> (
+     if #f == 0 or f#(#f-1) =!= null then f
+     else (
+	  d := #f-1;
+	  topdeg := -1;
+	  for i from 0 to #f-1 do if f#(d-i) =!= null then (topdeg = d-i; break;);
+	  new UPolyList from for i from 0 to topdeg list f#i
+	  )
      )
 
 reduceModM = method()
-reduceModM(UPoly, ZZ) := (F, M) -> (
-     -- reduce the polynomial F modulo M.
-     error "not implemented yet"
+reduceModM(UPolyRing, ZZ) := (R,M) -> new UPolyRing from {M, R#1, apply(R#2, f -> reduceModM(f,M))}
+reduceModM(UPoly, ZZ) := (F,M) -> upoly(reduceModM(poly F, M), reduceModM(ring F, M))
+reduceModM(UPolyList, ZZ) := (f, M) -> compress apply(f, t -> reduceModM(t, M))
+reduceModM(Nothing, ZZ) := (f,M) -> f
+reduceModM(QQ, ZZ) := (f,M) -> (
+     -- assumption: f is primitive?
+     a := numerator f;
+     b := denominator f;
+     if b != 1 then error "reduceModM expected primitive polynomial";
+     reduceModM(a, M)
      )
+reduceModM(ZZ, ZZ) := (f,M) -> (c := f % M; if c == 0 then null else if c > M//2 then c-M else c)
+
 
 liftToQQ = method()
 liftToQQ UPoly := (F) -> (
@@ -168,15 +206,18 @@ CRA(UPoly, UPoly) := (F,G) -> (
      )
 
 UPoly + UPoly := (F,G) -> (
-     error "not implemented yet"
+     -- rewrite to use only upoly structure...
+     upoly(relem F + relem G, ring F)
      )
 
 UPoly - UPoly := (F,G) -> (
-     error "not implemented yet"
+     -- rewrite to use only upoly structure...
+     upoly(relem F - relem G, ring F)
      )
 
 UPoly * UPoly := (F,G) -> (
-     error "not implemented yet"
+     -- rewrite to use only upoly structure and reduction...
+     upoly(relem F * relem G, ring F)
      )
 
 divisionAlgorithm = method()
@@ -203,6 +244,7 @@ gcd(UPoly, UPoly) := (F,G) -> (
 trialDivision = method()
 trialDivision(UPoly, UPoly) := (F,G) -> (
      -- returns F//G, if G divides F, else null
+     error "not implemented yet"
      )
 
 invert = method()
@@ -375,3 +417,35 @@ F = upoly(34*x^2 + 17/5*(s+t)*x + 85*s*t, R)
 integerContent F
 multiplyByConstant(F, 5/17)
 makePrimitive F
+
+TEST ///
+restart
+debug loadPackage "UPolynomials2"
+kk = QQ
+A = kk[t]/(t^2-2)[s]/(s^3-s-t)[x]
+R = upolyRing A
+F = x^2 + 1/2*(s+t)*x + s*t
+G = upoly(3*F^3 + 6*F, R)
+F = upoly(F, R)
+(G1,c1) = makePrimitive G -- wrong
+makePrimitive F 
+assert(integerContent F == 1/2)
+assert(integerContent G == 3/8)
+assert(first makePrimitive F == upoly(2*x^2+(s+t)*x+2*t*s, R))
+assert(relem leadCoefficient G1 == 8)
+reduceModM(G1, 12)
+///
+
+TEST ///
+restart
+debug loadPackage "UPolynomials2"
+kk = QQ
+A = kk[t]/(t^2-2)[s]/(s^3-s-t)[x]
+R = upolyRing A
+F = x^2 + 1/2*(s+t)*x + s*t
+G = upoly(3*F^3 + 6*F, R)
+F = upoly(F, R)
+F + F
+F + G
+F*G
+///
