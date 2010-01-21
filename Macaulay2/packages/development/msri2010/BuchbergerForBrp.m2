@@ -183,7 +183,7 @@ SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
 -- leading element of any element in G
 reduce = method()
 reduce (Brp, gbComputation) := Brp => (f,G) -> (
-  while (newF := reduceOneStep(f,G); newF != f and newF != 0) do 
+  while (newF := reduceOneStep(f,values G); newF != f and newF != 0) do 
     f = newF;
   newF
 )
@@ -197,17 +197,18 @@ reduce (Brp, Brp) := Brp => (f,g) -> (
 reduceOneStep = method()
 reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
   if f != 0 then (
-    --assert( isReducible(f, g));
-    leadingLcm :=  lcmBrps(leading(f), leading(g));
-    f + g * divide(leadingLcm, leading g) 
+    --assert( isReducible(f, g)); -> leading f divisible by g
+    --leadingLcm :=  lcmBrps(leading(f), leading(g));
+    --f + g * divide(leadingLcm, leading g) 
+    f + g * divide(leading f, leading g) 
   ) else new Brp from {} -- TODO make 0 automatically turn into 0
 )
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
-reduceOneStep(Brp, gbComputation) := Brp => (f,G) -> (
+reduceOneStep(Brp, List) := Brp => (f,valuesG) -> (
   if f != 0 then (
-    scan( (values G), g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
+    scan( valuesG, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
     f
   ) else new Brp from {} 
 )
@@ -223,7 +224,7 @@ makePairsFromLists (List,List) := List => (a,b) -> (
 -- check if the leading term of one polynomial can be reduced by another polynomial
 isReducible = method()
 isReducible (Brp, Brp) := Boolean => (f,g) -> (
-  assert (f != 0 );
+  --assert (f != 0 );
   isDivisible(leading f, leading g)
 )
 
@@ -291,7 +292,7 @@ Headline
 
 doc ///
 Key
-  (reduceOneStep,Brp,gbComputation)
+  (reduceOneStep,Brp,List)
   --(reduceOneStep,Brp,Brp)
   reduceOneStep
 Headline
@@ -357,8 +358,8 @@ longTest = false
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
-  assert ( reduceOneStep( convert(y+z), F) == convert( y+z) )
-  assert ( reduceOneStep( convert(x*y*z + y*z + z), F ) == convert( y*z))
+  assert ( reduceOneStep( convert(y+z), values F) == convert( y+z) )
+  assert ( reduceOneStep( convert(x*y*z + y*z + z), values F ) == convert( y*z))
   assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
 
   l = makePairsFromLists( keys F, keys F) 
@@ -654,7 +655,10 @@ reduceLtBrp= profile  reduceLtBrp;
 reduceOneStep= profile  reduceOneStep; 
 SPolynomial= profile  SPolynomial; 
 updatePairs= profile  updatePairs;
- 
+lcmBrps = profile lcmBrps;
+divide = profile divide;
+
+
  R = ZZ/2[a..t, MonomialOrder=>Lex]
   F = new gbComputation from { 0=> convert(a*b*c*d*e),
           1=> convert( a+b*c+d*e+a+b+c+d),
