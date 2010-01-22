@@ -107,7 +107,6 @@ time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
      -- used 19.39 seconds
 ///
 
-time print factorBFunction generalB (F,1_R,Strategy=>StarIdeal)
 lct ideal F --lct = 3/2
 jumpingCoefficients ideal F
 ///
