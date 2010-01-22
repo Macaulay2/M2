@@ -64,7 +64,8 @@ multiplierIdeal (Ideal, List) := (a,cs) -> (
 
      I2' := sub(Istar,SDY) + (sub(a, SDY))^m + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- Istar + a^m + (s-\sigma)
      I2 := SDYtoSX eliminateWA(I2', notSX);
-     
+     pInfo(0, toString I2);
+          
      -- b-function part
      b'f1'm := generalB(a_*, 1_R, Exponent=>m);
      S := ring b'f1'm;
