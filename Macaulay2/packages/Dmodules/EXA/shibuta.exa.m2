@@ -4,7 +4,7 @@
 --Shibuta's examples:
 ---------------------
 restart; 
-loadPackage "Dmodules";
+debug loadPackage "Dmodules";
 
 --Ex 5.1
 --(i) 
@@ -13,14 +13,16 @@ loadPackage "Dmodules";
 R = QQ[x_1..x_6];
 I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, x_5, x_6}}) 
 F = I_*;
-b = {1_W,x_1,x_2} / (g->time print factorBFunction generalB (F,g))
+time print factorBFunction generalB F
+time jumpingCoefficients I
 ///
-(s + 2)(s + 3)
-     -- used 0.1473 seconds
-(s + 2)(s + 4)
-     -- used 1.19142 seconds
-(s + 2)(s + 4)
-     -- used 1.83544 seconds
+                                                                      2 2                2 2   2                                  2                  2    2                  2 2                2 2       2  
+o7 = ({2, 3}, {ideal (x x  - x x , x x  - x x , x x  - x x ), ideal (x x  - 2x x x x  + x x , x x x  - x x x x  - x x x x  + x x x , x x x x  - x x x  - x x x  + x x x x , x x  - 2x x x x  + x x , x x x  -
+                       3 5    2 6   3 4    1 6   2 4    1 5           3 5     2 3 5 6    2 6   3 4 5    2 3 4 6    1 3 5 6    1 2 6   2 3 4 5    1 3 5    2 4 6    1 2 5 6   3 4     1 3 4 6    1 6   2 3 4  
+     --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                            2       2 2                2 2
+     x x x x  - x x x x  + x x x , x x  - 2x x x x  + x x )})
+      1 3 4 5    1 2 4 6    1 5 6   2 4     1 2 4 5    1 5
 ///
 
 --Ex 5.2
@@ -80,22 +82,55 @@ b = {1_W,x_1,x_2} / (g->time print factorBFunction generalB (F,g))
      -- used 0.133331 seconds
 ///
 
---Ex 5.3 --not yet verified
+--Ex 5.3
 R = QQ[x,y];
 F = {(x+y)^2-(x-y)^5};
-b = {1_W,x,y,x+y,x*y} / (g->time print factorBFunction generalB (F,g))
-time multiplierIdeal(F,7/10)
-time multiplierIdeal(F,9/10)
-time multiplierIdeal(F,1)
+b = {1_R,x,y,x+y,x*y} / (g->time print factorBFunction generalB (F,g))
+///
+             7       9      11      13
+(s + 1)(s + --)(s + --)(s + --)(s + --)
+            10      10      10      10
+     -- used 0.06 seconds
+             9      11      13      17
+(s + 1)(s + --)(s + --)(s + --)(s + --)
+            10      10      10      10
+     -- used 1.3 seconds
+             9      11      13      17
+(s + 1)(s + --)(s + --)(s + --)(s + --)
+            10      10      10      10
+     -- used 1.21 seconds
+            17      19      21      23
+(s + 1)(s + --)(s + --)(s + --)(s + --)
+            10      10      10      10
+     -- used 0.39 seconds
+            11      13      17      19
+(s + 1)(s + --)(s + --)(s + --)(s + --)
+            10      10      10      10
+     -- used 25.86 seconds
+///
+time jumpingCoefficients ideal F
+///
+///
 
 --Ex 5.4 --not yet verified
 R = QQ[x,y];
 F = {x*y*(x+y)*(x+2*y)};
-b = {1_W,x,y,x^2,y^2} / (g->time print factorBFunction generalB (F,g))
-b = {1_W} / (g->time print factorBFunction generalB (F,g,Exponent=>2))
-time multiplierIdeal(F,1/4)
-time multiplierIdeal(F,1/2)
-time multiplierIdeal(F,3/4)
+b = {1_R,x,y,x^2,y^2} / (g->time print factorBFunction generalB (F,g))
+b = {1_R} / (g->time print factorBFunction generalB (F,g,Exponent=>2))
+///
+       2       2     1      3      5      3      5      7      9
+(s + 1) (s + 2) (s + -)(s + -)(s + -)(s + -)(s + -)(s + -)(s + -)
+                     2      2      2      4      4      4      4
+     -- used 1.92 seconds
+///
+time jumpingCoefficients ideal F
+///
+     -- used 0.57 seconds
+
+        1  3                             2        2          3      2 2       3
+o19 = ({-, -, 1}, {ideal (y, x), ideal (y , x*y, x ), ideal(x y + 3x y  + 2x*y )})
+        2  4
+///
 
 --Ex 5.5
 R = QQ[x_1..x_3];
@@ -164,7 +199,7 @@ time print multiplierIdeal(ideal F,23/12)
 --Ex 5.6
 R = QQ[x_1..x_3];
 F = {x_1^3 - x_2^2, x_2^3 - x_3^2};
-b = {1_W,x_1,x_2} / (g->time print factorBFunction generalB (F,g))
+b = {1_R,x_1,x_2} / (g->time print factorBFunction generalB (F,g))
 ///
             4      5      11      13      25      29      31      35      37      41
 (s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
@@ -175,61 +210,70 @@ b = {1_W,x_1,x_2} / (g->time print factorBFunction generalB (F,g))
             3      3       6       6       6      18      18      18      18      18      18
      -- used 0.621569 seconds
 ///
-time multiplierIdeal(ideal F,1) --not yet verified
-time multiplierIdeal(ideal F,4/3)
-time multiplierIdeal(ideal F,29/18)
-time multiplierIdeal(ideal F,31/18)
-time multiplierIdeal(ideal F,11/6)
-time multiplierIdeal(ideal F,35/8)
+time jumpingCoefficients ideal F
+///
+     -- used 4.75 seconds
+
+       4  29  31  11  35                                           2               2         2           2               2         3           2               2   2     3           3    2   3    2
+o6 = ({-, --, --, --, --, 2}, {ideal (x , x , x ), ideal (x , x , x ), ideal (x , x , x x , x ), ideal (x , x x , x x , x , x x , x ), ideal (x , x x , x x , x , x x , x ), ideal (x  - x , x  - x )})
+       3  18  18   6  18               3   2   1           3   2   1           3   2   1 2   1           3   2 3   1 3   2   1 2   1           3   2 3   1 3   2   1 2   1           2    3   1    2
+///
 
 --Ex 5.7
 R = QQ[x_1..x_3];
 F = {x_1^3 - x_2^2, x_3^2 - x_1^2*x_2};
-b = {1_W} / (g->time print factorBFunction generalB (F,g))
+b = {1_R} / (g->time print factorBFunction generalB (F,g))
 ///
             4      5      11      13      19      23      25      27      29      31
 (s + 2)(s + -)(s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
             3      3       6       6      14      14      14      14      14      14
      -- used 2.94278 seconds
 ///
-time multiplierIdeal(ideal F,1) --not yet verified
-time multiplierIdeal(ideal F,4/3)
-time multiplierIdeal(ideal F,23/14)
-time multiplierIdeal(ideal F,25/14)
-time multiplierIdeal(ideal F,11/6)
-time multiplierIdeal(ideal F,27/14)
-
---Ex 5.8 --not yet verified
+time jumpingCoefficients ideal F
+///
+        4  23  25  11  27                                           2               2         2           2               2         2           2               2         3           3      2   2      2   3  
+o12 = ({-, --, --, --, --, 2}, {ideal (x , x , x ), ideal (x , x , x ), ideal (x , x , x x , x ), ideal (x , x x , x x , x , x x , x ), ideal (x , x x , x x , x , x x , x ), ideal (x  - x x , x x  - x , x  -
+        3  14  14   6  14               3   2   1           3   2   1           3   2   1 2   1           3   2 3   1 3   2   1 2   1           3   2 3   1 3   2   1 2   1           2    1 3   1 2    3   1  
+      -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+       2
+      x )})
+       2
+///
+--Ex 5.8 --in multiplierIdeals.exa.m2
 R = QQ[x_1..x_3];
 F = {x_1^4 - x_2^3, x_3^2 - x_1*x_2^2};
-b = {1_W} / (g->time print factorBFunction generalB (F,g))
-time multiplierIdeal(F,1)
-time multiplierIdeal(F,9/8)
-time multiplierIdeal(F,11/8)
-time multiplierIdeal(F,35/24)
-time multiplierIdeal(F,19/12)
-time multiplierIdeal(F,13/8)
-time multiplierIdeal(F,41/24)
-time multiplierIdeal(F,43/24)
-time multiplierIdeal(F,11/6)
-time multiplierIdeal(F,15/8)
-time multiplierIdeal(F,23/12)
-time multiplierIdeal(F,47/24)
+b = {1_R} / (g->time print factorBFunction generalB (F,g))
+time jumpingCoefficients ideal F -- could not finish
 
---Ex 5.9 --not yet verified
+--Ex 5.9 
 R = QQ[x_1..x_3];
 F = {x_1^2 - x_2*x_3, x_2^2 - x_1*x_3, x_3^2 - x_1*x_2};
-b = {1_W,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g))
-b = {1_W} / (g->time print factorBFunction generalB (F,g,Exponent=>2))
-time multiplierIdeal(F,1)
-time multiplierIdeal(F,3/2)
-time multiplierIdeal(F,2)
-time multiplierIdeal(F,5/2)
+b = {1_R,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g))
+///
+       2     3
+(s + 2) (s + -)
+             2
+     -- used 2.82 seconds
+       2     5
+(s + 2) (s + -)
+             2
+     -- used 174.67 seconds
+       2     5
+(s + 2) (s + -)
+             2
+     -- used 101.8 seconds
+       2     5
+(s + 2) (s + -)
+             2
+     -- used 72.66 seconds
+///
+b = {1_R} / (g->time print factorBFunction generalB (F,g,Exponent=>2))
+time jumpingCoefficients ideal F -- could not finish
 
 --Ex 5.10 --not yet verified
 R = QQ[x_1..x_3];
 F = {x_1^3 - x_2*x_3, x_2^2 - x_1*x_3, x_3^2 - x_1^2*x_2};
-b = {1_W} / (g->time print factorBFunction generalB (F,g))
+factorBFunction generalB F
 time multiplierIdeal(F,1)
 time multiplierIdeal(F,13/9)
 time multiplierIdeal(F,16/9)
