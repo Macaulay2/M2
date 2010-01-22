@@ -26,14 +26,23 @@ exportMutable {
       reduceGbBrp,
       reduceLtBrp,
       reduceOneStep, 
+      reduceOneStepList, 
       SPolynomial, 
       updatePairs,
-      gbBrp
+      gbBrp,
+      scanProfile,
+      applyProfile
       }
       
 export {
       getPolysFromList
       }
+
+scanProfile = method();
+scanProfile = scan;
+
+applyProfile = method();
+applyProfile = applyValues;
 
 -- keys should start with 0
 gbComputation = new Type of MutableHashTable; 
@@ -52,6 +61,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
     S := SPolynomial(pair, F, n);
+    --print "reduce";
     reducedS := reduce (S,F);
     if reducedS != 0 then (
       -- add reducedS to intermediate basis and update the list of pairs
@@ -181,9 +191,10 @@ SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
 
 -- Reduce the polynomial until the leading term is not divisible by the
 -- leading element of any element in G
+-- f could be 0
 reduce = method()
 reduce (Brp, gbComputation) := Brp => (f,G) -> (
-  while (newF := reduceOneStep(f,values G); newF != f and newF != 0) do 
+  while (newF := reduceOneStepList(f,G); newF != f and newF != 0) do 
     f = newF;
   newF
 )
@@ -206,9 +217,11 @@ reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
-reduceOneStep(Brp, List) := Brp => (f,valuesG) -> (
+reduceOneStepList = method()
+reduceOneStepList(Brp, gbComputation) := Brp => (f, G) -> (
   if f != 0 then (
-    scan( valuesG, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
+    --applyProfile( G, g -> if isReducible(f, g) then (f = reduceOneStep(f,g), break ));
+    scanProfile( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
     f
   ) else new Brp from {} 
 )
@@ -292,8 +305,8 @@ Headline
 
 doc ///
 Key
-  (reduceOneStep,Brp,List)
-  --(reduceOneStep,Brp,Brp)
+  --(reduceOneStep,Brp,List)
+  (reduceOneStep,Brp,Brp)
   reduceOneStep
 Headline
   Reduce the leading term of a polynomial one step using a polynomial
@@ -358,8 +371,8 @@ longTest = false
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
-  assert ( reduceOneStep( convert(y+z), values F) == convert( y+z) )
-  assert ( reduceOneStep( convert(x*y*z + y*z + z), values F ) == convert( y*z))
+  assert ( reduceOneStepList( convert(y+z), F) == convert( y+z) )
+  assert ( reduceOneStepList( convert(x*y*z + y*z + z), F ) == convert( y*z))
   assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
 
   l = makePairsFromLists( keys F, keys F) 
@@ -646,17 +659,19 @@ installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
 leading = profile leading;
 gbBrp= profile gbBrp;
 makePairsFromLists= profile  makePairsFromLists; 
-gbComputation= profile  gbComputation;
 isReducible= profile  isReducible;
 minimalGbBrp= profile  minimalGbBrp;
 reduce= profile  reduce;
 reduceGbBrp= profile  reduceGbBrp;
 reduceLtBrp= profile  reduceLtBrp;
 reduceOneStep= profile  reduceOneStep; 
+reduceOneStepList= profile  reduceOneStepList; 
 SPolynomial= profile  SPolynomial; 
 updatePairs= profile  updatePairs;
 lcmBrps = profile lcmBrps;
 divide = profile divide;
+scanProfile = profile scan;
+applyProfile = profile apply;
 
 
  R = ZZ/2[a..t, MonomialOrder=>Lex]
@@ -674,10 +689,77 @@ divide = profile divide;
           11=> convert( b*s+q*n*m+i),
           12=> convert( b*k+q+l*n*m+i)
           }
-  timing ( gbBrp( F, numgens R) )
+  time ( gbBrp( F, numgens R) )
 profileSummary
 
 restart
 installPackage "BuchbergerForBrp"
 installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
 check BuchbergerForBrp
+
+l = 10000
+a = cpuTime();
+myHash = new HashTable from apply( l, i -> if i == l-1 then i => new Brp from {} else i => new Brp from { {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} });
+b = cpuTime();
+b-a
+a = cpuTime();
+myList = apply( l, i -> if i == l-1 then new Brp from {} else new Brp from { {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} });
+b = cpuTime();
+b-a
+values myHash == myList
+f = false
+a = cpuTime();
+applyValues(myHash, i -> if i == 0 then 0 else i)
+b = cpuTime();
+b-a
+a = cpuTime();
+values myHash;
+b = cpuTime();
+b-a
+a = cpuTime();
+scan(myList, i -> if i == 0 then (found = true,break) )
+b = cpuTime();
+b-a
+
+apply( values myHash, i -> if i == 0 then break f )
+
+
+restart
+installPackage "BuchbergerForBrp"
+installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
+check BuchbergerForBrp
+ 
+ R = ZZ/2[a..t, MonomialOrder=>Lex]
+  F = new gbComputation from { 0=> convert(a*b*c*d*e),
+          1=> convert( a+b*c+d*e+a+b+c+d),
+          2=> convert( j*h+i+f),
+          3=> convert( g+f),
+          4=> convert( a+d),
+          5=> convert( j+i+d*c),
+          6=> convert( r+s+t),
+          7=> convert( m*n+o*p),
+          8=> convert( t+a),
+          9=> convert( b*s+q+p*n*m+i),
+          10=> convert( b*s+q+p+h),
+          11=> convert( b*s+q*n*m+i),
+          12=> convert( b*k+q+l*n*m+i)
+          };
+scanTimeSum = 0;
+  time ( gbBrp( F, numgens R) )
+scanTimeSum
+profileSummary
+
+scanTimeSum = 0;
+-- reduce the leading term of a polynomial f one step by the first polynomial
+-- g_i in the intermediate basis that satisfies isReducible(f,g_i)
+reduceOneStepList = method()
+reduceOneStepList(Brp, gbComputation) := Brp => (f, G) -> (
+  if f != 0 then (
+    --applyProfile( G, g -> if isReducible(f, g) then (f = reduceOneStep(f,g), break ));
+    t1 = cpuTime();
+    scanProfile( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
+    t2 = cpuTime();
+    scanTimeSum = scanTimeSum + t2 - t1;
+    f
+  ) else new Brp from {} 
+)
