@@ -13,7 +13,7 @@ o8 = {{17/12, 7/4, 11/6, 23/12, 2}, {ideal(x_3,x_2,x_1), ideal(x_3,x_2,x_1^2), i
 assert all(#jumps, i->all( (mI#i)_*,g->isInMultiplierIdeal(g,I,jumps#i) ))
 
 
-I = ideal {x_1^3-x_2^2, x_2^3-x_3^2};
+I = ideal {x_1^3-x_2^2, x_2^3-x_3^2}; --Shibuta Ex 5.6
 time sort(bFunctionRoots generalB I_* / minus)
 time (jumps,mI) = jumpingCoefficients I
 ///
@@ -76,14 +76,14 @@ o5 = ({-, 1}, {ideal (y  - 1, x  - 1), ideal(x y  - x y  - x  + y  + x  - y )})
 ///
 decompose oo#1#0 -- nontrivial decomposition
 
------
-R = QQ[x,y];
-F = {}; --"Intro" 7.5 are all monomial ideals
-time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal))
---lct(ideal F) -- is ?
---time multiplierIdeal(ideal F, )
+--Here J_f(1) is: 
+I2 = ideal( 9*s^4+36*s^3+53*s^2+34*s+8, s*x^4-s*y^4-2*s*x^2+2*s*y^2+x^4-y^4-2*x^2+2*y^2, 3*s^3*y^2-3*s^3+10*s^2*y^2-10*s^2+11*s*y^2-11*s+4*y^2-4,
+      3*s^3*x^2-3*s^3+10*s^2*x^2-10*s^2+11*s*x^2-11*s+4*x^2-4, x^4*y^2-x^2*y^4-x^4+y^4+x^2-y^2, 2*s*x^2*y^3-s*y^5-2*s*x^2*y+s*y+2*x^2*y^3-y^5-2*x^2*y+y,
+      2*s*x^3*y^2-s*x*y^4-2*s*x^3+s*x+2*x^3*y^2-x*y^4-2*x^3+x, 3*s^2*y^4-6*s^2*y^2+3*s^2-2*s*x^2*y^2+8*s*y^4+2*s*x^2-14*s*y^2+6*s-2*x^2*y^2+5*y^4+2*x^2-8*y^2+3,
+      3*s^2*x^2*y^2-3*s^2*x^2-3*s^2*y^2+3*s^2+5*s*x^2*y^2+s*y^4-5*s*x^2-7*s*y^2+6*s+2*x^2*y^2+y^4-2*x^2-4*y^2+3 )
+ass I2
+primaryDecomposition I2
 
- 
 
 -----------------------------------------------
 -------Examples from Zach's suggestions:-------
@@ -94,9 +94,9 @@ R = QQ[x,y,z];
 
 ---- Line arrangements in \CC^3 (from Section 7 of arXiv:0508308v1):
 
---The first two are 3 noncollinear/collinear points in \PP^2:
+--The first two are 3 non-collinear/collinear points in \PP^2:
 
---3 noncollinear points
+--3 non-collinear points
 I = intersect(ideal(x-z,y-z),ideal(3*x-z,y-2*z),ideal(5*y-x,z)); --better
 F = flatten entries mingens I;
 time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
@@ -108,7 +108,7 @@ time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
 ///
 
 time print factorBFunction generalB (F,1_R,Strategy=>StarIdeal)
-lct ideal F --Expect: lct = 3/2
+lct ideal F --lct = 3/2
 jumpingCoefficients ideal F
 ///
 ///
@@ -221,7 +221,7 @@ multiplierIdeal(ideal F,1_QQ)
 
 ---------------------------------------------------------------------------
 ---- The "big diagonal" of (\CC^d)^n: 
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 restart
 debug loadPackage "Dmodules"
 --Note: It would be great if we had a way to mod out by the "small diagonal" ideal(x_1-x_3,x_1-x_5,x_2-x_4,x_2-x_6).
@@ -251,7 +251,7 @@ R = QQ[x_1..x_5,y_1..y_5];
 W = makeWeylAlgebra R; 
 bigDiag = mingens intersect (flatten toList(apply(1..n,i-> toList(apply(1..(i-1),j-> ideal(x_i-x_j, y_i-y_j))))))
 F = entries bigDiag_0;
-time print factorBFunction generalB (F,1_W) --****Note****: If we can compute this, many people would be very happy!
+time print factorBFunction generalB (F,1_W) --****Note****: If we can compute even this, many people would be very happy!
 --time print factorBFunction generalB (F,1_W,Exponent=>2)
 --b = {1_W,x_1,x_1^2,x_1*x_2,x_1*x_2*x_3} / (g->time print factorBFunction generalB (F,g,Strategy=>StarIdeal))
 xF = apply(F,h->sub(h,R)) --analyticSpread(ideal xF) --1
