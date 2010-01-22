@@ -19,12 +19,12 @@ export {brpOR,
         Brp, 
         convert, 
         removeDups, 
-        leading,
         isRelativelyPrime
         }
         
 exportMutable {
         divide, 
+        leading,
         lcmBrps
         }
 
