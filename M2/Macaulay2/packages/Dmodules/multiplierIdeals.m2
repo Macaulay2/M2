@@ -93,6 +93,7 @@ jumpingCoefficients (Ideal, QQ, QQ) := (I,a,b) -> (
      cs := (if min r>=a then {} else {last select(r, c->c<a)} ) | select(r, c->c<=b and c>=a);
      mI := multiplierIdeal(I,cs);
      jumps := toList select(0..#cs-1, i->i==0 or mI#i != mI#(i-1));
+     if min r < a then jumps = drop(jumps,1);
      ( jumps/(i->cs#i), jumps/(i->mI#i) )
      )
 
@@ -101,7 +102,7 @@ lct = method(Options => {Strategy=>GeneralBernsteinSato})
 lct Ideal := RingElement => o -> I -> (
 -- IN:  I,      ideal in QQ[x_1,...,x_n]
 -- OUT: lct(I), an element of QQ
-     W := makeWeylAlgebra ring I;
+     W := makeWeylAlgebra(ring I, SetVariables=>false);
      F := (sub(I,W))_*;
      if o.Strategy === ViaBFunction then (
      	  w := toList (numgens ring I:0) | toList(#F:1); 
