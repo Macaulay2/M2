@@ -296,6 +296,14 @@ o6 = ({-, 2, -, 3}, {ideal (x , x , x ), ideal (x  - x x , x x  - x , x  - x x )
 R = QQ[x_1..x_3];
 F = {x_1^3 - x_2*x_3, x_2^2 - x_1*x_3, x_3^2 - x_1^2*x_2};
 time factorBFunction generalB F
+///
+     -- used 21613.5 seconds
+
+            2     3      13      14      16      17      19      20
+o6 = (s + 2) (s + -)(s + --)(s + --)(s + --)(s + --)(s + --)(s + --)
+                  2       9       9       9       9       9       9
+///
+time jumpingCoefficients ideal F
 time multiplierIdeal(F,1)
 time multiplierIdeal(F,13/9)
 time multiplierIdeal(F,16/9)
