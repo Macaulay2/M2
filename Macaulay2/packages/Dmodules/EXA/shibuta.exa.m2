@@ -275,7 +275,22 @@ b = {1_R} / (g->time print factorBFunction generalB (F,g,Exponent=>2))
      -- used 2029.66 seconds
 ///
 time jumpingCoefficients ideal F -- could not finish
+///
+Computing generalB(..., Exponent=>2)
+     -- used 5021.17 seconds
 
+       3     5                                   2                 2   2                  2        2            3   2        2   3    3 
+o6 = ({-, 2, -, 3}, {ideal (x , x , x ), ideal (x  - x x , x x  - x , x  - x x ), ideal (x x  - x x , x x x  - x , x x  - x x , x  - x ,
+       2     2               3   2   1           2    1 3   1 2    3   1    2 3           2 3    1 3   1 2 3    3   1 3    2 3   2    3 
+     ---------------------------------------------------------------------------------------------------------------------------------------
+        2      2   2        2   3    3           3      3           2    4   4       2      2 2     3    2        2 2      3   2 2         2
+     x x  - x x , x x  - x x , x  - x ), ideal (x x  + x x  - 3x x x  + x , x  - 2x x x  + x x , x x  - x x x  - x x  + x x , x x  - 2x x x 
+      1 2    2 3   1 2    1 3   1    3           1 3    2 3     1 2 3    3   2     1 2 3    1 3   1 2    1 2 3    2 3    1 3   1 2     1 2 3
+     ---------------------------------------------------------------------------------------------------------------------------------------
+        4   3        2      2 2      3   4     2        2 2
+     + x , x x  - x x x  - x x  + x x , x  - 2x x x  + x x )})
+        3   1 2    1 2 3    1 3    2 3   1     1 2 3    2 3
+///
 --Ex 5.10 --not yet verified
 R = QQ[x_1..x_3];
 F = {x_1^3 - x_2*x_3, x_2^2 - x_1*x_3, x_3^2 - x_1^2*x_2};
