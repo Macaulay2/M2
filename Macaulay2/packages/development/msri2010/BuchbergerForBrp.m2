@@ -52,7 +52,6 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 
 -- wrapper script for debugging purposes, creates a Groebner basis from the
 -- input list - all with Brps
-n = 10
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
@@ -745,11 +744,12 @@ check BuchbergerForBrp
           12=> convert( b*k+q+l*n*m+i)
           };
 scanTimeSum = 0;
+reduceTimeSum = 0;
   time ( gbBrp( F, numgens R) )
 scanTimeSum
+reduceTimeSum
 profileSummary
 
-scanTimeSum = 0;
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
 reduceOneStepList = method()
@@ -757,9 +757,37 @@ reduceOneStepList(Brp, gbComputation) := Brp => (f, G) -> (
   if f != 0 then (
     --applyProfile( G, g -> if isReducible(f, g) then (f = reduceOneStep(f,g), break ));
     t1 = cpuTime();
-    scanProfile( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
+    scan( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
     t2 = cpuTime();
     scanTimeSum = scanTimeSum + t2 - t1;
     f
   ) else new Brp from {} 
+)
+
+-- wrapper script for debugging purposes, creates a Groebner basis from the
+-- input list - all with Brps
+gbBrp = method()
+gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
+  print "in the right function!";
+  listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
+  listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
+  while #listOfIndexPairs > 0 do (
+    pair := first listOfIndexPairs;
+    listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
+    S := SPolynomial(pair, F, n);
+    t1 = cpuTime();
+    reducedS := reduce (S,F);
+    t2 = cpuTime();
+    reduceTimeSum = reduceTimeSum +  t2 - t1;
+
+    if reducedS != 0 then (
+      -- add reducedS to intermediate basis and update the list of pairs
+      newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
+      F##F = reducedS;
+      newPairs = updatePairs( newPairs, F, n );
+      listOfIndexPairs = listOfIndexPairs | newPairs;
+    );
+  );
+  F = minimalGbBrp(F);
+  reduceGbBrp(F)
 )
