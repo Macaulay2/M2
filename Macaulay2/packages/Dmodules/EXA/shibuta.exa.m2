@@ -291,10 +291,11 @@ o6 = ({-, 2, -, 3}, {ideal (x , x , x ), ideal (x  - x x , x x  - x , x  - x x )
      + x , x x  - x x x  - x x  + x x , x  - 2x x x  + x x )})
         3   1 2    1 2 3    1 3    2 3   1     1 2 3    2 3
 ///
+
 --Ex 5.10 --not yet verified
 R = QQ[x_1..x_3];
 F = {x_1^3 - x_2*x_3, x_2^2 - x_1*x_3, x_3^2 - x_1^2*x_2};
-factorBFunction generalB F
+time factorBFunction generalB F
 time multiplierIdeal(F,1)
 time multiplierIdeal(F,13/9)
 time multiplierIdeal(F,16/9)
@@ -305,14 +306,17 @@ time multiplierIdeal(F,22/9) --*******Shibuta can't do this one. Can we?*******
 --Ex 5.11 --not yet verified
 R = QQ[x,y,z];
 F = {x^3*z^3+y^3*z^3+y^2};
-b = {1_W} / (g->time print factorBFunction generalB (F,g))
---Do local/q_i's?
+time print factorBFunction generalB F
+///
+            3      5 2     7 2
+(s + 1)(s + -)(s + -) (s + -)
+            2      6       6
+     -- used 0.46 seconds
+///
 
 --Ex 5.12 --not yet verified
 R = QQ[x,y,z];
 F = {x^3-y^2*z, x^2+y^2+z^2-1};
-b = {1_W} / (g->time print factorBFunction generalB (F,g))
+time print factorBFunction generalB F
 --Do local/J_f(1)?
-time multiplierIdeal(F,1)
-time multiplierIdeal(F,11/6)
-
+time jumpingCoefficients ideal F
