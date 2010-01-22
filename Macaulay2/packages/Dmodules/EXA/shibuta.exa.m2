@@ -268,6 +268,12 @@ b = {1_R,x_1,x_2,x_3} / (g->time print factorBFunction generalB (F,g))
      -- used 72.66 seconds
 ///
 b = {1_R} / (g->time print factorBFunction generalB (F,g,Exponent=>2))
+///
+       2       2     3      5
+(s + 2) (s + 3) (s + -)(s + -)
+                     2      2
+     -- used 2029.66 seconds
+///
 time jumpingCoefficients ideal F -- could not finish
 
 --Ex 5.10 --not yet verified
