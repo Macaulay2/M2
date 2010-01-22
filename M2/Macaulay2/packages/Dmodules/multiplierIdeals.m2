@@ -90,6 +90,12 @@ jumpingCoefficients (Ideal, ZZ, QQ) := (I,a,b) -> jumpingCoefficients(I,promote(
 jumpingCoefficients (Ideal, QQ, QQ) := (I,a,b) -> (
      -- candidates
      r := sort( bFunctionRoots generalB I_* / minus); 
+     l := min r;
+     m := ceiling(b-l); -- Need b < lct(I) + m
+     if liftable(b-l,ZZ) then m = m + 1; 
+     pInfo(0, "Computing generalB(..., Exponent=>"|toString m|")");
+     if m>1 then r = sort( bFunctionRoots generalB(I_*, 1_(ring I), Exponent=>m) / minus);
+     
      cs := (if min r>=a then {} else {last select(r, c->c<a)} ) | select(r, c->c<=b and c>=a);
      mI := multiplierIdeal(I,cs);
      jumps := toList select(0..#cs-1, i->i==0 or mI#i != mI#(i-1));

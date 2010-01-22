@@ -99,12 +99,6 @@ time print factorBFunction generalB (F,1_R,Strategy=>StarIdeal)
 lct ideal F --Expect: lct = 3/2
 jumpingCoefficients ideal F
 ///
-       3                                               2            2              2    2       2           
-o6 = ({-, 2}, {ideal (z, y, x), ideal (3x*z + 2y*z - 5z , 3x*y - 15y  + 46y*z - 34z , 9x  - 225y  + 683y*z -
-       2
-     ---------------------------------------------------------------------------------------------------------
-         2   2        2     3
-     467z , y z - 3y*z  + 2z )})
 ///
 
 --3 collinear points
