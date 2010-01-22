@@ -45,9 +45,13 @@ jumpingCoefficients ideal F
 -----------------------------------------------
 R = QQ[x,y];
 F = {x^5+y^4+x^3*y^2}; --Example 2.5 (not all roots are JCs)
-lct ideal F -- is ?
---time multiplierIdeal(ideal F, 9/20)
+lct ideal F -- is 9/20
 jumpingCoefficients ideal F
+///
+         9  13   7  17   9  19                                2           2        2           2        3           2   2    3           3     2   2    3          5    3 2    4
+o14 = ({--, --, --, --, --, --, 1}, {ideal (y, x), ideal (y, x ), ideal (y , x*y, x ), ideal (y , x*y, x ), ideal (y , x y, x ), ideal (y , x*y , x y, x ), ideal(x  + x y  + y )})
+        20  20  10  20  10  20
+///
 --***also compute the q_i's for this one!***
 
 -----------------------------------------------
