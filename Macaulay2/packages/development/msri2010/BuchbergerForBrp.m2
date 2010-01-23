@@ -56,12 +56,15 @@ gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
   listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
+  reduceTimeSum := 0;
   while #listOfIndexPairs > 0 do (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
     S := SPolynomial(pair, F, n);
-    --print "reduce";
+    t1 := cpuTime();
     reducedS := reduce (S,F);
+    t2 := cpuTime();
+    reduceTimeSum = reduceTimeSum +  t2 - t1;
     if reducedS != 0 then (
       -- add reducedS to intermediate basis and update the list of pairs
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
@@ -76,6 +79,8 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
     );
   );
   F = minimalGbBrp(F);
+  print "Reduce Time Sum:";
+  print reduceTimeSum;
   reduceGbBrp(F)
 )
 
@@ -219,7 +224,6 @@ reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
 reduceOneStepList = method()
 reduceOneStepList(Brp, gbComputation) := Brp => (f, G) -> (
   if f != 0 then (
-    --applyProfile( G, g -> if isReducible(f, g) then (f = reduceOneStep(f,g), break ));
     scanProfile( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
     f
   ) else new Brp from {} 
@@ -744,24 +748,23 @@ check BuchbergerForBrp
           12=> convert( b*k+q+l*n*m+i)
           };
 scanTimeSum = 0;
-reduceTimeSum = 0;
   time ( gbBrp( F, numgens R) )
 scanTimeSum
-reduceTimeSum
 profileSummary
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
 reduceOneStepList = method()
 reduceOneStepList(Brp, gbComputation) := Brp => (f, G) -> (
+  t1 := cpuTime();
   if f != 0 then (
     --applyProfile( G, g -> if isReducible(f, g) then (f = reduceOneStep(f,g), break ));
-    t1 = cpuTime();
     scan( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
-    t2 = cpuTime();
-    scanTimeSum = scanTimeSum + t2 - t1;
     f
-  ) else new Brp from {} 
+  ) else f = new Brp from {} ;
+  t2 := cpuTime();
+  scanTimeSum = scanTimeSum + t2 - t1;
+  f
 )
 
 -- wrapper script for debugging purposes, creates a Groebner basis from the
@@ -775,9 +778,9 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
     S := SPolynomial(pair, F, n);
-    t1 = cpuTime();
+    t1 := cpuTime();
     reducedS := reduce (S,F);
-    t2 = cpuTime();
+    t2 := cpuTime();
     reduceTimeSum = reduceTimeSum +  t2 - t1;
 
     if reducedS != 0 then (
