@@ -198,9 +198,11 @@ SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
 -- f could be 0
 reduce = method()
 reduce (Brp, gbComputation) := Brp => (f,G) -> (
-  while (newF := reduceOneStepList(f,G); newF != f and newF != 0) do 
-    f = newF;
-  newF
+  fullyReducedFlag := false;
+  while (not fullyReducedFlag) do (
+    (f, fullyReducedFlag) = reduceOneStepList(f,G)
+  );
+  f
 )
 
 -- 
@@ -222,11 +224,13 @@ reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
 reduceOneStepList = method()
-reduceOneStepList(Brp, gbComputation) := Brp => (f, G) -> (
+reduceOneStepList(Brp, gbComputation) := (Brp, Boolean) => (f, G) -> (
   if f != 0 then (
-    scanProfile( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
-    f
-  ) else new Brp from {} 
+    ret := true;
+    scanProfile( values G, g -> if isReducible(f, g) then ( f = reduceOneStep(f,g); ret = false; break) );
+    (f,ret)
+  ) 
+  else ( new Brp from {}, true)
 )
 
 -- Make a list with all possible pairs of elements of the separate lists, but
@@ -343,8 +347,8 @@ Outputs
 ///
 
 TEST ///
-longTest = false
-
+  
+  longTest = false
   assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
   assert(  makePairsFromLists( {1,2,3}, {10,100,1000}) == {(1, 10), (1, 100), (1, 1000), (2, 10), (2, 100), (2, 1000), (3, 10), (3, 100), (3, 1000)})
   assert ( makePairsFromLists( {-1,-3,-2}, {100, 10}) == {(-1, 100), (-1, 10), (-3, 100), (-3, 10), (-2, 100), (-2, 10)} )
@@ -374,8 +378,8 @@ longTest = false
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
-  assert ( reduceOneStepList( convert(y+z), F) == convert( y+z) )
-  assert ( reduceOneStepList( convert(x*y*z + y*z + z), F ) == convert( y*z))
+  assert ( reduceOneStepList( convert(y+z), F) == (convert( y+z), true) )
+  assert ( reduceOneStepList( convert(x*y*z + y*z + z), F ) == (convert( y*z), false))
   assert ( reduce( convert(x*y*z + y*z + z), F ) == convert( z))
 
   l = makePairsFromLists( keys F, keys F) 
@@ -748,49 +752,81 @@ check BuchbergerForBrp
           12=> convert( b*k+q+l*n*m+i)
           };
 scanTimeSum = 0;
+timeInReduce = 0;
   time ( gbBrp( F, numgens R) )
 scanTimeSum
+timeInReduce
 profileSummary
+
 
 -- reduce the leading term of a polynomial f one step by the first polynomial
 -- g_i in the intermediate basis that satisfies isReducible(f,g_i)
 reduceOneStepList = method()
-reduceOneStepList(Brp, gbComputation) := Brp => (f, G) -> (
+reduceOneStepList(Brp, gbComputation) := (Brp, Boolean) => (f, G) -> (
   t1 := cpuTime();
   if f != 0 then (
-    --applyProfile( G, g -> if isReducible(f, g) then (f = reduceOneStep(f,g), break ));
-    scan( values G, g -> if isReducible(f, g) then (break (f = reduceOneStep(f,g))));
-    f
-  ) else f = new Brp from {} ;
+    ret := true;
+    scanProfile( values G, g -> if isReducible(f, g) then ( f = reduceOneStep(f,g); ret = false; break) );
+  ) 
+  else ( 
+    f = new Brp from {};
+    ret = true
+  );
   t2 := cpuTime();
   scanTimeSum = scanTimeSum + t2 - t1;
+  (f,ret)
+)
+
+-- Reduce the polynomial until the leading term is not divisible by the
+-- leading element of any element in G
+-- f could be 0
+reduce = method()
+reduce (Brp, gbComputation) := Brp => (f,G) -> (
+  t1 := cpuTime();
+  fullyReducedFlag := false;
+  while (not fullyReducedFlag) do (
+    (f, fullyReducedFlag) = reduceOneStepList(f,G)
+  );
+  t2 := cpuTime();
+  timeInReduce = timeInReduce + t2 - t1;
   f
 )
 
--- wrapper script for debugging purposes, creates a Groebner basis from the
--- input list - all with Brps
-gbBrp = method()
-gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
-  print "in the right function!";
-  listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
-  listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
-  while #listOfIndexPairs > 0 do (
-    pair := first listOfIndexPairs;
-    listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
-    S := SPolynomial(pair, F, n);
-    t1 := cpuTime();
-    reducedS := reduce (S,F);
-    t2 := cpuTime();
-    reduceTimeSum = reduceTimeSum +  t2 - t1;
+new AA of BB := (A,B) -> 
 
-    if reducedS != 0 then (
-      -- add reducedS to intermediate basis and update the list of pairs
-      newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
-      F##F = reducedS;
-      newPairs = updatePairs( newPairs, F, n );
-      listOfIndexPairs = listOfIndexPairs | newPairs;
-    );
-  );
-  F = minimalGbBrp(F);
-  reduceGbBrp(F)
-)
+new Type of BasicList := (type,array) -> ( 
+  print "--new type";
+  stderr << "--new " << type << " of " << array << " being made" << endl; 
+  new MutableHashTable) 
+
+M = new Type of BasicList
+
+A = apply( {1,2,3}, i -> new Type of BasicList)
+
+foo =  method()
+foo (BasicList) := BasicList => l -> (print "hello foo"; l)
+
+copy A 
+foo A
+B = A
+scan(A, i -> print "hello")
+
+x = new HashTable from { a => 1, b => 2 }
+new Thing of Thing from Thing := (A,B,c) -> (
+  << "-- new " << A << " of " << B 
+  << " from " << toString c << endl;
+  c);
+new ImmutableType of Vector from x
+
+
+newClass(ImmutableType,Vector,x)
+
+new ImmutableType of Vector from x
+
+
+
+
+
+
+
+
