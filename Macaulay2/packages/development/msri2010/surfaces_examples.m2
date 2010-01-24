@@ -288,8 +288,14 @@ betti res constructSurface(M,E,S)
 M = matrix{{0,0,0,0,0},{5,1,0,0,0},{0,2,0,0,0},{0,0,0,5,10},{0,0,0,0,0}}
 betti res constructSurface(M,E,S)
 -- does not work
+--betti guessDifferentials(M,E)
+
 alphad  = map(E^{5:0},E^{2:-2},{{e_4*e_1,e_2*e_3},{e_0*e_2,e_3*e_4},{e_1*e_3,e_4*e_0},{e_2*e_4,e_0*e_1},{e_3*e_0,e_1*e_2}})
 betad = syz alphad
+betti alphad
+betti betad
+--constructSurface(chainComplex{alphad,betad},S)
+
 loadPackage "BGG"
 alpha = beilinson(alphad,S)
 beta = beilinson(betad,S)
@@ -298,7 +304,7 @@ betti F
 fF = res F
 betti fF
 rd = random(target presentation F,S^{1:-3})
-tphi = transpose (presentation F | rd);     
+betti (tphi = transpose (presentation F | rd))
 ftphi = res prune coker tphi
 betti ftphi     
 I = ideal ftphi.dd_2;
