@@ -358,7 +358,7 @@ guessDifferentials = (cohTable,E) -> (
      beta = betaWithConstants - sub(betaWithConstants,matrix{{rank source vars E:0_E}});     
      -- find alpha among the syzygies
      sbeta := syz beta;
-     print betti sbeta;
+     --print betti sbeta;
      betti (alpha := sbeta*random(source sbeta,diag(cohTable,-1,E)));
      --alpha0 = alpha; --  - sub(alpha,matrix{{rank source vars E:0_E}});
      chainComplex{beta,alpha}
