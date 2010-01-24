@@ -38,6 +38,26 @@ genericPowerMatrix(Module, Module, RingElement) := Matrix => (F,G,a) -> (
 	       h
 	       ))
      )
+
+dimHom = method()
+dimHom(Module, Module) := ZZ => (F,G) -> (
+     -- F, G are graded free modules over a ring R = A[x1..xn]
+     -- Assumption: the degrees of A are all 0.
+     -- return value: dim Hom=(F <--- G)
+     -- with coefficients of the monomials in x's te different variables in the ring A
+     -- starting with a.  If there is not enough, then an error is given.
+     if not isFreeModule F or not isFreeModule G then error "dimHom: expected free modules";
+     R := ring F;
+     if R =!= ring G then error "modules over different rings";
+     dF := degrees F;
+     dG := degrees G;
+     sum apply(dG,g-> (
+	       sum apply(dF,f->(
+	       		 rank source basis(g - f,R)
+	       ))
+     ))
+)
+
 end
 ---
 

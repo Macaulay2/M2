@@ -33,6 +33,7 @@ export {
      diag,
      findMonadWindows,
      guessDifferentials,
+     guessDifferentialsTranspose,
      constructSurface,
      constructSpaceCurve,
      numPosRoots, 
@@ -357,8 +358,35 @@ guessDifferentials = (cohTable,E) -> (
      beta = betaWithConstants - sub(betaWithConstants,matrix{{rank source vars E:0_E}});     
      -- find alpha among the syzygies
      sbeta := syz beta;
+     print betti sbeta;
      betti (alpha := sbeta*random(source sbeta,diag(cohTable,-1,E)));
      --alpha0 = alpha; --  - sub(alpha,matrix{{rank source vars E:0_E}});
+     chainComplex{beta,alpha}
+     )
+
+-- guess the transpose of the differenials 
+guessDifferentialsTranspose = (cohTable,E) -> (
+     -- test if the cohTable is square
+     if (rank source cohTable) != (rank target cohTable)
+     	  then error "The cohomology Table must be square";
+     -- test if number of variables is the same as the size of the table
+     if (rank source cohTable) != (rank source vars E) 
+     	  then error "The exterior Algebra has tha wrong number of variables";
+     -- test if E is an exterior algebra
+     if not E#?SkewCommutative 
+          then error "The Exterior algebra is not SkewCommutative";
+     -- test if the cohTable gives a monad
+     if not givesMonad(cohTable,E) then error "The cohomology Table must be 0 ouside of the 3 central diagonals";
+     -- OK
+     -- start with generic alpha
+     alphaWithConstants := random(diag(cohTable,0,E),diag(cohTable,-1,E));
+     -- set constant entries to zero
+     -- (this is important if the cohTable is not minimal)
+     alpha := alphaWithConstants - sub(alphaWithConstants,matrix{{rank source vars E:0_E}});     
+     -- find alpha among the syzygies
+     salpha := transpose syz transpose alpha;
+     --print betti salpha;
+     betti (beta := random(diag(cohTable,1,E),target salpha)*salpha);
      chainComplex{beta,alpha}
      )
 
