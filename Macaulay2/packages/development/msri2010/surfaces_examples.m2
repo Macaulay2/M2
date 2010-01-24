@@ -61,6 +61,9 @@ betti res constructSurface(M,E,S)
 H = hilbertPolynomialFromInvariants(9,7,0,0);
 M = guessCohomologyTable(H,0,4)
 betti res constructSurface(M,E,S)
+monadE = guessDifferentials(M,E)
+monadEt = guessDifferentialsTranspose(M,E)
+betti res constructSurface(monadEt,S)
 
 --B1.14
 --doesn't work
@@ -263,6 +266,7 @@ betti res constructSurface(M,E,S)
 H = hilbertPolynomialFromInvariants(13,16,0,1);
 M = guessCohomologyTable(H,0,4)
 betti res constructSurface(M,E,S)
+
 --B4.15
 -- doesn't work
 H = hilbertPolynomialFromInvariants(14,19,0,1);
