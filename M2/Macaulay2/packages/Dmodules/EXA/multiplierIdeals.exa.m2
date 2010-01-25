@@ -3,8 +3,8 @@ debug loadPackage "Dmodules"
 
 R = QQ[x_1..x_3];
 I = ideal {x_2^2-x_1*x_3, x_1^3-x_3^2}; 
-sort(bFunctionRoots generalB I_* / minus)
-(jumps,mI) = jumpingCoefficients I
+time sort(bFunctionRoots generalB I_* / minus)
+time (jumps,mI) = jumpingCoefficients I
 toString oo
 ///
 o8 = {{17/12, 7/4, 11/6, 23/12, 2}, {ideal(x_3,x_2,x_1), ideal(x_3,x_2,x_1^2), ideal(x_3,x_2^2,x_1*x_2,x_1^2),
@@ -65,9 +65,27 @@ o14 = ({--, --, --, --, --, --, 1}, {ideal (y, x), ideal (y, x ), ideal (y , x*y
 -----------------------------------------------
 ---------Example from Saito's papers:----------
 -----------------------------------------------
+restart
+needsPackage "Dmodules"
 R = QQ[x,y];
 I = ideal {(x^2-y^2)*(x^2-1)*(y^2-1)}; --"Mult" 5.5
 time sort(bFunctionRoots generalB I_* / minus)
+
+-- SORTING OUT Example 6.2
+W = makeWA R; createDpairs W;
+f = sub(I_0,W);
+I = ideal W.dpairVars#1;
+b = globalB(I, f)
+factorBFunction b.Bpolynomial
+J = AnnFs f; A = ring J;
+
+--see if b-poly - b-oper * f is in AnnFs
+bb = (map(A,ring b.Bpolynomial,{A_(numgens A-1)})) b.Bpolynomial 
+bb % gb (J + sub(ideal f,A))
+
+-- this shows Saito is wrong?
+assert((bb - (map(A, ring b.Boperator, vars A)) b.Boperator * sub(f,A)) % J == 0)
+
 jumpingCoefficients I
 ///
        2               2       2              4 2    2 4    4    4    2    2
@@ -97,7 +115,7 @@ R = QQ[x,y,z];
 --The first two are 3 non-collinear/collinear points in \PP^2:
 
 --3 non-collinear points
-I = intersect(ideal(x-z,y-z),ideal(3*x-z,y-2*z),ideal(5*y-x,z)); --better
+I = intersect(ideal(x-z,y-z),ideal(3*x-z,y-2*z),ideal(y-x,z)); --better
 F = flatten entries mingens I;
 time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
 ///

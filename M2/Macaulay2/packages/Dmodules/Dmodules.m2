@@ -1,7 +1,8 @@
 export { 
-     localBFunction,
+     localBFunction, multiplierIdeal, 
+     isInMultiplierIdeal, generalizedBFunction, mGeneralizedBFunction,
+     jumpingCoefficients, hasRationalSing,
      bFunctionRoots, lct, GeneralBernsteinSato, ViaBFunction, generalB, Exponent, InitialIdeal, StarIdeal, 
-     --GuessedRoots, 
      ViaLinearAlgebra,
      ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,
      bFunction,NonGeneric,TryGeneric,IntRing,LocalizeMap,

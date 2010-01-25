@@ -64,7 +64,7 @@ multiplierIdeal (Ideal, List) := (a,cs) -> (
 
      I2' := sub(Istar,SDY) + (sub(a, SDY))^m + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- Istar + a^m + (s-\sigma)
      I2 := SDYtoSX eliminateWA(I2', notSX);
-     pInfo(0, toString I2);
+     pInfo(1, "J_I("|toString m|") = "|toString I2);
           
      -- b-function part
      b'f1'm := generalB(a_*, 1_R, Exponent=>m);
@@ -84,7 +84,7 @@ multiplierIdeal (Ideal, List) := (a,cs) -> (
 jumpingCoefficients = method()
 -- jumping numbers and multiplier ideals up to the analytic spead
 jumpingCoefficients Ideal := I -> jumpingCoefficients(I,0, analyticSpread I)
--- jumping numbers and multiplier ideals in the interval [a,b]
+-- jumping numbers and multiplier ideals in the interval (a,b)
 jumpingCoefficients (Ideal, ZZ, ZZ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
 jumpingCoefficients (Ideal, QQ, ZZ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
 jumpingCoefficients (Ideal, ZZ, QQ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
@@ -94,13 +94,13 @@ jumpingCoefficients (Ideal, QQ, QQ) := (I,a,b) -> (
      l := min r;
      m := ceiling(b-l); -- Need b < lct(I) + m
      if liftable(b-l,ZZ) then m = m + 1; 
-     pInfo(0, "Computing generalB(..., Exponent=>"|toString m|")");
+     pInfo(1, "Computing generalB(..., Exponent=>"|toString m|")");
      if m>1 then r = sort( bFunctionRoots generalB(I_*, 1_(ring I), Exponent=>m) / minus);
      
-     cs := (if min r>=a then {} else {last select(r, c->c<a)} ) | select(r, c->c<=b and c>=a);
+     cs := (if min r>a then {} else {last select(r, c->c<=a)} ) | select(r, c->c<b and c>a);
      mI := multiplierIdeal(I,cs);
      jumps := toList select(0..#cs-1, i->i==0 or mI#i != mI#(i-1));
-     if min r < a then jumps = drop(jumps,1);
+     if min r <= a then jumps = drop(jumps,1);
      ( jumps/(i->cs#i), jumps/(i->mI#i) )
      )
 
