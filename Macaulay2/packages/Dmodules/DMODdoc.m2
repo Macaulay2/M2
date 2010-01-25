@@ -52,7 +52,7 @@ document {
 	  TO {"globalBFunction", " -- global b-function"},
 	  TO {"globalB", " -- global b-function and b-operator"},
 	  TO {"globalBoperator", " -- global b-operator"},
-	  TO {"generalB", " -- general Bernstein-Sato polynomial"},
+	  TO {"generalB", " -- generalized Bernstein-Sato polynomial"},
 	  TO {"localBFunction", " -- local b-function"},
 	  TO {"paramBpoly", " -- Bernstein-Sato polynomials of a
 	       polynomial with parametric coefficients"},
@@ -301,7 +301,7 @@ document {
 
 document { 
      Key => {(generalB,List,RingElement), (generalB,List), generalB},
-     Headline => "global general Bernstein-Sato polynomial",
+     Headline => "global generalized Bernstein-Sato polynomial",
      Usage => "b = generalB(F,g), b = generalB F",
      Inputs => {
 	  "F" => {"a list of polynomials"},
@@ -311,24 +311,36 @@ document {
 	  "b" => RingElement => {"the general Bernstein-Sato polynomial ", 
 	       EM "b(s)",  " in ", EM "Q[s]"}
 	  },
+     "Bernstein-Sato polynomial for an arbitrary affine variety was introduced in ",
+     "Budur, Mustata, and Saito ", "``Bernstein--Sato polynomials of arbitrary varieties''. ",
+     "If the option ", TO "Exponent", " is specified, then the m-generalized Bernstein-Sato polynomial is computed. ",
+     "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for definitions.",     
      EXAMPLE lines ///
      W = makeWA(QQ[x_1..x_3]);
      factorBFunction generalB ({x_2^2-x_1*x_3, x_1^3-x_3^2}, x_2)
      ///,
      Caveat => {
-	  "The Weyl algebra should not have any parameters. 
-     	  Similarly, it should not be a homogeneous Weyl algebra"
+	  "The input could be either in a polynomial ring or the Weyl algebra. In the latter case the algebra 
+	  should not have any central variables and should not be a homogeneous Weyl algebra."
 	  },
-     SeeAlso => { "bFunction", "globalBFunction", "lct" }
+     SeeAlso => { "bFunction", "globalBFunction", "lct", "multiplierIdeal" }
      }
 document {
-     Key => [generalB,Strategy],
-     Headline => "specify strategy for computing general Bernstein-Sato polynomial",
+     Key => {[generalB,Strategy], InitialIdeal, StarIdeal},
+     Headline => "specify strategy for computing generalized Bernstein-Sato polynomial",
      UL { 
-	  {BOLD "ViaLinearAlgebra", 
-	       " -- use linear algebra to find a relation for the powers of indeterminate ", 
-	       EM "s" }
-	  }
+	  { BOLD "InitialIdeal", 
+	       " -- use the initial ideal in_{(-w,w)} Ann f^s; this Strategy is the fastest on many examples, 
+	       but can not be used with the ", TO "Exponent", " option." },
+	  { BOLD "StarIdeal", 
+	       " -- use ``star ideal'', the (-w,w) homogeneous elements of the Ann f^s"}
+	  },
+     "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals''."
+     }
+document {
+     Key => {[generalB,Exponent], Exponent},
+     Headline => "specify exponent m for m-generalized Bernstein-Sato polynomial",
+     "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals''."
      }
 document {
      Key => ViaLinearAlgebra,
@@ -2737,6 +2749,105 @@ document {
      	  ///,
      SeeAlso => { "bFunction", "factorBFunction", "globalBFunction", "generalB", "globalB" }
      }
+
+document { 
+     Key => {(multiplierIdeal, Ideal, QQ), (multiplierIdeal, Ideal, List), multiplierIdeal},
+     Headline => "multiplier ideal",
+     Usage => "mI = multiplierIdeal(I,c)",
+     Inputs => {
+	  "I" => {"an ideal in a polynomial ring"},
+	  "c" => {"coefficient (or a list of coefficients)"}
+	  },
+     Outputs => {
+	  "mI" => Ideal => {"multiplier ideal ", EM "J_I(c)", " (or a list of)"}
+	  },
+     PARA {
+	  "Computes the multiplier ideal for given ideal and coefficient. ",
+     	  "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals''."
+	  },
+     EXAMPLE lines ///
+R = QQ[x_1..x_4];
+multiplierIdeal(ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)
+     	  ///,
+     SeeAlso => { "jumpingCoefficients" }
+     }
+
+document { 
+     Key => {(jumpingCoefficients, Ideal), (jumpingCoefficients, Ideal, QQ, QQ), (jumpingCoefficients, Ideal, QQ, ZZ), (jumpingCoefficients, Ideal, ZZ, QQ), (jumpingCoefficients, Ideal, ZZ, ZZ), jumpingCoefficients},
+     Headline => "jumping coefficients and corresponding multiplier ideals",
+     Usage => "(cs, mI) = jumpingCoefficients I, (cs, mI) = jumpingCoefficients(I,a,b)",
+     Inputs => {
+	  "I" => {"an ideal in a polynomial ring"}
+	  },
+     Outputs => {
+	  "cs" => List => {"the list of jumping coefficients"},
+	  "mI" => List => {"the list of corresponding multiplier ideals"}
+	  },
+     PARA {
+	  "Computes the jumping coefficients and their multiplier ideals in an open interval (a,b). By default a = 0, b = ", TO "analyticSpread", " I.",
+     	  "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals''."
+	  },
+     EXAMPLE lines ///
+R = QQ[x_1..x_4];
+jumpingCoefficients ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}
+     	  ///,
+     SeeAlso => { "jumpingCoefficients" }
+     }
+
+document { 
+     Key => {(hasRationalSing, List), hasRationalSing},
+     Headline => "check if a complete intersection has at most rational singularities",
+     Usage => "b = hasRationalSing F",
+     Inputs => {
+	  "F" => {"a regular sequence (of polynomials)"}
+	  },
+     Outputs => {
+	  "b" => Boolean => {"answers: are the singularities of the given variety at most rational?"}
+	  },
+     PARA {
+	  
+	  },
+     EXAMPLE lines ///
+R = QQ[x_1..x_4];
+multiplierIdeal(ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)
+     	  ///,
+     SeeAlso => { "jumpingCoefficients" }
+     }
+
+
+document { 
+     Key => {(isInMultiplierIdeal, RingElement, Ideal, QQ), isInMultiplierIdeal, [isInMultiplierIdeal,Strategy], 
+	  generalizedBFunction, mGeneralizedBFunction},
+     Headline => "multiplier ideal membership test",
+     Usage => "b = isInMultiplierIdeal(g,I,c)",
+     Inputs => {
+	  "g" => {"a polynomial"},
+	  "I" => {"an ideal in a polynomial ring"},
+	  "c" => {"coefficient (or a list of coefficients)"}
+	  },
+     Outputs => {
+	  "b" => Boolean => {"answers: is in the multiplier ideal ", EM "J_I(c)", "?"}
+	  },
+     PARA {
+	  "Test if the given polynomial is in the multiplier ideal for given ideal and coefficient. ",
+	  "In general, the test is cheaper than computing the whole multiplier ideal. "
+	  },
+     "There are two options for strategy:",
+	  UL { 
+	       { BOLD "generalizedBFunction", 
+	       " -- via computation of the generalized Bernstein-Sato polynomial"},
+	       { BOLD "mGeneralizedBFunction", 
+	       " -- via computation of the m-generalized Bernstein-Sato polynomial"}
+	  },
+     "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.",
+     EXAMPLE lines ///
+R = QQ[x_1..x_4];
+isInMultiplierIdeal(x_1, ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)
+isInMultiplierIdeal(x_1*x_2, ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)
+     	  ///,
+     SeeAlso => { "multiplierIdeal", "jumpingCoefficients", "generalB" }
+     }
+
 
 end
 ------------------------------------------------------------------------------------------------------------

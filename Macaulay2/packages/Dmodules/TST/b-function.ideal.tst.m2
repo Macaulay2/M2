@@ -18,8 +18,17 @@ for str in {IntRing, TryGeneric, NonGeneric, GeneralBernsteinSato} do (
 		    ))
 	  );
 	  
+clearAll()
+pInfo(1, "testing generalB...")
+for str in {InitialIdeal, StarIdeal} do (
+     	  pInfo(1, "Strategy=>" | toString str);
+	  R = QQ[x_1..x_4];
+	  F = {x_3*x_1^2 + x_4*x_2^3};
+	  b = {1_R,x_1,x_2} / (g->toString factorBFunction generalB (F,g,Strategy=>str));
+	  assert(toString b == "{(s+1)*(s+2)*(s+3/2)*(s+4/3)*(s+5/3)*(s+5/6)*(s+7/6), (s+1)*(s+2)*(s+5/2)*(s+4/3)*(s+5/3)*(s+11/6)*(s+13/6), (s+1)*(s+2)*(s+3/2)*(s+5/3)*(s+7/3)*(s+7/6)*(s+11/6)}")
+	  );
 
-
+assert(toString factorBFunction generalB (F,1_R,Exponent=>2) == "(s+1)*(s+2)^2*(s+3)*(s+3/2)*(s+5/2)*(s+4/3)*(s+5/3)*(s+7/3)*(s+8/3)*(s+5/6)*(s+7/6)*(s+11/6)*(s+13/6)")
 
 
 

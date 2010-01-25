@@ -161,7 +161,6 @@ globalBFunction RingElement := RingElement => o -> f -> (
 --------------------------------------------------------------
 -- global generalized Bernstein-Sato polynomial
 generalB = method(Options => {
-	  -- GuessedRoots => null, -- should this be removed?
 	  Strategy => InitialIdeal,
 	  Exponent => null
 	  })
