@@ -69,8 +69,20 @@ restart
 needsPackage "Dmodules"
 R = QQ[x,y];
 I = ideal {(x^2-y^2)*(x^2-1)*(y^2-1)}; --"Mult" 5.5
+R = QQ[x,y,z];
+I = ideal{(x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z}
 time sort(bFunctionRoots generalB I_* / minus)
+///
+     -- used 29672.1 seconds
 
+       3  4  2  5  6     8  9  4  10  11
+o11 = {-, -, -, -, -, 1, -, -, -, --, --}
+       7  7  3  7  7     7  7  3   7   7
+///
+toString generalB(I_*, Exponent=>1)
+///
+s^13+13*s^12+(34079/441)*s^11+(122617/441)*s^10+(2084951/3087)*s^9+(1203191/1029)*s^8+(174569373/117649)*s^7+(70434991/50421)*s^6+(50601521674/51883209)*s^5+(25864232372/51883209)*s^4+(9403010536/51883209)*s^3+(255696192/5764801)*s^2+(5390720/823543)*s+2534400/5764801
+///     
 -- SORTING OUT Example 6.2
 W = makeWA R; createDpairs W;
 f = sub(I_0,W);
