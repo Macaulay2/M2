@@ -86,8 +86,10 @@ document {
 	  TO {"diffOps", " -- differential operators on affine varieties"},
 	  {TO "populateCechComplexCC", ", ", TO "pruneCechComplexCC", 
 	       " -- characteristic cycles of local cohomology"},
-	  TO {"logCohomology", "-- logarithmic cohomology groups"},
-	  TO {"lct", "-- log canonical threshold"}
+	  TO {"logCohomology", " -- logarithmic cohomology groups"},
+	  TO {"lct", "-- log canonical threshold"},
+	  {TO "mutiplierIdeals", ", ", TO "isInMultiplierIdeal", ", ", TO "jumpingCoefficients", " -- multiplier ideals"},
+	  TO "hasRationalSing"
 	  },
      HEADER3 "Programming aids:",
      UL{TO {"createDpairs", " -- tags coordinate and derivation variables"},
