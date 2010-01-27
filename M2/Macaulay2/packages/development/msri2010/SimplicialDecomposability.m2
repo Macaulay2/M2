@@ -4,8 +4,8 @@
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "0.9.1",
-    Date => "19. January 2010",
+    Version => "0.9.3",
+    Date => "27. January 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -20,6 +20,9 @@ needsPackage "SimplicialComplexes";
 export {
     allFaces,
     faceDelete,
+    fTriangle,
+    hTriangle,
+    hVector,
     iskDecomposable,
     isSheddingFace,
     isSheddingVertex,
@@ -27,7 +30,6 @@ export {
     isShelling,
     isSimplex,
     isVertexDecomposable,
-    hVector,
     shellingOrder
 };
 
@@ -49,6 +51,31 @@ allFaces (SimplicialComplex, ZZ) := (S, k) -> (
 faceDelete = method(TypicalValue => SimplicialComplex);
 faceDelete (SimplicialComplex, RingElement) := (S,F) -> (
     simplicialComplex (monomialIdeal S + monomialIdeal F)
+);
+
+-- fTriangle is a generalisation of the fVector introduced
+-- in Definition 3.1 in [BW-1].
+fTriangle = method(TypicalValue => HashTable);
+fTriangle (SimplicialComplex) := S -> (
+    -- (reverse) sort the facets by dimension
+    F := rsort flatten entries facets S;
+    -- tally up face degree, dimension pairs (add the empty face)
+    t := tally join({(dim S + 1, 0)}, for f in allFaces(S) list (faceDeg(F, f), first degree f));
+    new HashTable from flatten for i from 0 to dim S + 1 list for j from 0 to i list ((i,j) => t_(i,j))
+);
+
+-- hTriangle is a generalisation of the hVector introduced
+-- in Definition 3.1 in [BW-1].
+hTriangle = method(TypicalValue => HashTable);
+hTriangle (SimplicialComplex) := S -> (
+    fT := fTriangle S;
+    new HashTable from flatten for i from 0 to dim S + 1 list for j from 0 to i list (i,j) => sum(j+1, k -> (-1)^(j-k)*binomial(i-k,j-k)*fT#(i,k))
+);
+
+-- Determines the hVector of the Stanley-Reisner ideal of a simplicial complex.
+hVector = method(TypicalValue => List);
+hVector (SimplicialComplex) := (S) -> (
+    flatten entries sub(last coefficients numerator reduceHilbert hilbertSeries ideal S, ZZ)
 );
 
 -- Determines whether or not a pure simplicial complex is k-decomposable
@@ -87,17 +114,9 @@ isSheddingVertex (SimplicialComplex, RingElement) := (S, x) -> (
 );
 
 -- Determines whether or not a simplicial complex is shellable.
-isShellable = method(TypicalValue => Boolean, Options => {Strategy => "Recursive"});
-isShellable (SimplicialComplex) := options -> (S) -> (
-    if isPure S and options.Strategy == "dDecomposable" then (
-        -- Theorem 2.8 in [PB]: If S is pure, then
-        -- S is (dim S)-decomposable if and only if S is shellable
-        iskDecomposable(S, dim S)
-    )
-    else (
-        -- otherwise pass the options to the shellingOrder routine
-        shellingOrder(S, options) != {}
-    )
+isShellable = method(TypicalValue => Boolean);
+isShellable (SimplicialComplex) := (S) -> (
+    shellingOrder(S) != {}
 );
 
 -- Determines whether or not a list of faces is a shelling.
@@ -177,55 +196,46 @@ isVertexDecomposable (SimplicialComplex) := (S) -> (
     any(first entries faces(0, S), x -> isSheddingVertex(S, x))
 );
 
--- Determines the hVector of the Stanley-Reisner ideal of a simplicial complex.
-hVector = method(TypicalValue => List);
-hVector (SimplicialComplex) := (S) -> (
-    flatten entries sub(last coefficients numerator reduceHilbert hilbertSeries ideal S, ZZ)
-);
-
 -- Attempts to find a shelling order of a simplicial complex.
 -- Uses definition III.2.1 in [St].
-shellingOrder = method(TypicalValue => List, Options => {Strategy => "Recursive"});
-shellingOrder (SimplicialComplex) := options -> (S) -> (
-    -- negatives in the h-Vector imply not shellable for pure complexes
-    if isPure S and any(hVector S, i -> i<0) then return {};
-
-    if options.Strategy == "Naive" then (
-        -- NAIVE: simply look at all facet permutations
-        P := permutations first entries facets S;
-        for L in P do if isShelling L then return L;
+shellingOrder = method(TypicalValue => List);
+shellingOrder (SimplicialComplex) := (S) -> (
+    O := {};
+    -- the pure case is easier, so separate it
+    if isPure S then (
+        -- Negatives in the h-Vector imply not shellable for pure complexes
+        if any(hVector S, i -> i < 0) then return {};
+        -- start the recursion
+        O = recursivePureShell({}, flatten entries facets S);
     )
     else (
-        -- RECURSIVE: start the recursion
-        L := flatten entries facets S;
-        O := {};
-        -- the pure case is easier, so separate it
-        if isPure S then (
-            O = recursivePureShell({}, L);
-            if O != {} then return O;
-        )
-        else (
-            d := 1 + dim S;
-            for i from 0 to #L - 1 do (
-                -- Lemma 2.2 in [BW-1] shows dim L_0 == dim L, if L is a shelling
-                -- So we can restrict ourselves to look only at those.
-                if first degree L_i == d then (
-                    O = recursiveImpureShell({L_i}, drop(L, {i,i})); 
-                    if O != {} then return O;
-                );
-            );
-        );
+        -- Negatives in the h-Triangle imply not shellable for all complexes
+        -- See Theorem 3.4 in [BW-1].
+        if any(values hTriangle S, i -> i < 0) then return {};
+        -- Lemma 2.6 in [BW-1] shows that if S is shellable, then
+        -- there is a shelling with the facets in dimension order
+        O = recursiveImpureShell({}, rsort flatten entries facets S);
     );
-    {}
+    O
 );
 
 -------------------
 -- Local-Only Code
 -------------------
 
+-- Returns the cardinality of the largest face containing in the list F containing f.
+-- The code assumes F is sorted in reverse order by dimension.
+faceDeg = method(TypicalValue => ZZ);
+faceDeg (List, RingElement) := (F, f) -> (
+    s := support f;
+    for i from 0 to #F-1 do if isSubset(s, support F_i) then return(first degree F_i);
+    -- If it's not contained in any face, then give a reasonable number.
+    infinity
+);
+
 -- Build up a (impure) shelling recursively.
--- Called by shellingOrder with Strategy => "Recursive"
 -- Uses definition 2.1 in [BW-1].
+-- *Assumes P is reverse sorted by dimension.
 recursiveImpureShell = method(TypicalValue => List);
 recursiveImpureShell (List, List) := (O, P) -> (
     -- if it's "obvious", then keep going
@@ -251,7 +261,11 @@ recursiveImpureShell (List, List) := (O, P) -> (
         if P == {} then return O;
         -- Recurse until success, if possible
         Q := {};
+        d := degree P_0;
         for i from 0 to #P - 1 do (
+            -- if the dimension of the face drops,
+            -- then we can bail (see Lemma 2.6 in [BW-1])
+            if degree P_i != d then return {};
             Q = recursiveImpureShell(append(O, P_i), drop(P, {i,i}));
             if Q != {} then return Q;
         );
@@ -260,7 +274,6 @@ recursiveImpureShell (List, List) := (O, P) -> (
 );
 
 -- Build up a (pure) shelling recursively.
--- Called by shellingOrder with Strategy => "Recursive"
 -- Uses definition III.2.1 in [St].
 recursivePureShell = method(TypicalValue => List);
 recursivePureShell (List, List) := (O, P) -> (
@@ -380,6 +393,86 @@ doc ///
         Do not confuse face deletion with normal deletion.
     SeeAlso
         link
+///
+
+doc ///
+    Key
+        fTriangle
+        (fTriangle, SimplicialComplex)
+    Headline
+        determines the f-Triangle of a simplicial complex
+    Usage
+        fTriangle S
+    Inputs
+        S:SimplicialComplex
+    Outputs
+        f:HashTable
+            the f-Triangle of {\tt S}
+    Description
+        Text
+            Definition 3.1 in [BW-1] defines the f-Triangle, a generalisation
+            of the f-Vector, to have entries {\tt f#(i,j)} equal to the number of
+            faces of {\tt S} with degree {\tt i} and dimension {\tt j-1}.
+            The degree of a face is the dimension of the largest face of {\tt S}
+            containing it, plus one.
+
+            If {\tt S} is pure, then the last row is the traditional f-Vector.
+        Example
+            R = QQ[a..e];
+            fTriangle simplicialComplex {a*b*c, c*d*e, a*d, a*e, b*d, b*e}
+            fTriangle simplicialComplex {a*b*c*d*e}
+    SeeAlso
+        fVector
+        hTriangle
+///
+
+doc ///
+    Key
+        hTriangle
+        (hTriangle, SimplicialComplex)
+    Headline
+        determines the h-Triangle of a simplicial complex
+    Usage
+        hTriangle S
+    Inputs
+        S:SimplicialComplex
+    Outputs
+        h:HashTable
+            the h-Triangle of {\tt S}
+    Description
+        Text
+            Definition 3.1 in [BW-1] defines the h-Triangle, a generalisation
+            of the h-Vector. 
+
+            If {\tt S} is pure, then the last row is the traditional h-Vector.
+        Example
+            R = QQ[a..e];
+            hTriangle simplicialComplex {a*b*c, c*d*e, a*d, a*e, b*d, b*e}
+            hTriangle simplicialComplex {a*b*c*d*e}
+    SeeAlso
+        fTriangle
+        hVector
+///
+
+doc ///
+    Key
+        hVector
+        (hVector, SimplicialComplex)
+    Headline
+        determines the h-Vector of a simplicial complex
+    Usage
+        hVector S
+    Inputs
+        S:SimplicialComplex
+    Outputs
+        h:List
+            the h-Vector of {\tt S}
+    Description
+        Example
+            R = QQ[a..d];
+            hVector simplicialComplex {a*b*c,d}
+    SeeAlso
+        fVector
 ///
 
 doc ///
@@ -513,12 +606,6 @@ doc ///
             can be ordered {\tt F_1, .., F_n} such that the intersection of the
             faces of the first {\tt j-1} with the faces of the {\tt F_j} is
             pure and dim {\tt F_j - 1}-dimensional.
-
-            This function takes an optional Strategy which determines how the
-            method works.  The options are those available in shellingOrder           
-            (in particular, "Recursive" is the default) and also, when {\tt S}
-            is pure, then "dDecomposable" which checks if {\tt S} is
-            {\tt dim S}-decomposable, after Theorem 2.8 in [PB].
         Example
             R = QQ[a..f];
             isShellable simplicialComplex {a*b*c*d*e}
@@ -616,27 +703,6 @@ doc ///
 
 doc ///
     Key
-        hVector
-        (hVector, SimplicialComplex)
-    Headline
-        determines the h-Vector of a simplicial complex
-    Usage
-        hVector S
-    Inputs
-        S:SimplicialComplex
-    Outputs
-        h:List
-            the h-Vector of {\tt S}
-    Description
-        Example
-            R = QQ[a..d];
-            hVector simplicialComplex {a*b*c,d}
-    SeeAlso
-        fVector
-///
-
-doc ///
-    Key
         shellingOrder
         (shellingOrder, SimplicialComplex)
     Headline
@@ -650,11 +716,10 @@ doc ///
             a shelling order of the facets of {\tt S}, if one exists
     Description
         Text
-            This method behaves differently depending on the Strategy passed
-            as an option.  The default strategy is "Recursive" which attempts
-            to recursively find a shelling order.  An alternate strategy is
-            "Naive" which simply checks all permutations of the facets with
-            the isShelling routine until one is found, if one exists.
+            This function attempts to build up a shelling order of {\tt S}
+            recursively.  It uses different routines for the pure and impure
+            cases.  In particular, the impure case returns a shelling order
+            in reverse dimension order.
         Example
             R = QQ[a..f];
             shellingOrder simplicialComplex {a*b*c*d*e}
@@ -662,9 +727,6 @@ doc ///
             shellingOrder simplicialComplex {a*b*c, c*d*e}
             shellingOrder simplicialComplex {a*b*c, c*d, d*e, e*f, d*f}
             shellingOrder simplicialComplex {a*b*c, c*d, d*e*f}
-    Caveat
-        The Naive strategy uses a tremendous amount of memory, exponential
-        in the number of facets.
     SeeAlso
         isShellable
         isShelling
@@ -690,6 +752,56 @@ S = simplicialComplex {a*b*c*d*e};
 assert(faceDelete(S, a) == simplicialComplex {b*c*d*e});
 assert(faceDelete(S, a*b*c) == simplicialComplex {b*c*d*e, a*c*d*e, a*b*d*e});
 assert(faceDelete(S, a*b*c*d*e) == boundary S)
+///
+
+-- Tests of fTriangle
+TEST ///
+R = QQ[a..e];
+-- pure complex
+S = simplicialComplex {a*b*c*d*e};
+fT = fTriangle S;
+-- pure complexes should have all zeros
+assert(not any(5, i -> any(i+1, j -> fT#(i,j) != 0)));
+-- except in the last row, where the should be the traditional fVector;
+fV = fVector S;
+assert(not any(6, i -> fV#(i-1) != fT#(5, i)));
+-- impure complex: see Example 3.2 in [BW-1].
+S = simplicialComplex {a*b*c, c*d*e, a*d, a*e, b*d, b*e};
+fT = fTriangle S;
+assert(fT#(0,0) == 0);
+assert(fT#(1,0) == 0 and fT#(1,1) == 0);
+assert(fT#(2,0) == 0 and fT#(2,1) == 0 and fT#(2,2) == 4);
+assert(fT#(3,0) == 1 and fT#(3,1) == 5 and fT#(3,2) == 6 and fT#(3,3) == 2);
+///
+
+-- Tests of hTriangle
+TEST ///
+R = QQ[a..e];
+-- pure complex
+S = simplicialComplex {a*b*c*d*e};
+hT = hTriangle S;
+-- pure complexes should have all zeros 
+assert(not any(5, i -> any(i+1, j -> hT#(i,j) != 0)));
+-- except in the last row, where the should be the traditional hVector;
+assert(hT#(5,0) == 1 and all(5, i -> hT#(5,i+1) == 0));
+-- impure complex: see Example 3.2 in [BW-1].
+S = simplicialComplex {a*b*c, c*d*e, a*d, a*e, b*d, b*e};
+hT = hTriangle S;
+assert(hT#(0,0) == 0); 
+assert(hT#(1,0) == 0 and hT#(1,1) == 0);
+assert(hT#(2,0) == 0 and hT#(2,1) == 0 and hT#(2,2) == 4);
+assert(hT#(3,0) == 1 and hT#(3,1) == 2 and hT#(3,2) == -1 and hT#(3,3) == 0);
+///
+
+-- Tests of hVector
+TEST ///
+R = QQ[a..e];
+assert(hVector simplicialComplex {a, b, c, d, e} === {1,4});
+assert(hVector simplicialComplex {a*b*c*d*e} === {1});
+assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2});
+assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
+assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1});
+assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 ///
 
 -- Tests of iskDecomposable (and hence isVertexDecomposable)
@@ -735,7 +847,7 @@ assert(not isSheddingVertex(S, a));
 assert(isSheddingVertex(S, f));
 ///
 
--- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Recursive"
+-- Tests of isShellable (and hence shellingOrder by invocation)
 -- NB: shellingOrder can only be tested this way as a shelling order need not be unique.
 TEST ///
 R = QQ[a..f];
@@ -750,20 +862,6 @@ assert(isShellable simplicialComplex {a*b, c});
 assert(not isShellable simplicialComplex {a*b, c*d});
 assert(isShellable simplicialComplex {a*b*c, c*d, d*e, e*f, d*f});
 assert(not isShellable simplicialComplex {a*b*c, c*d, d*e*f});
-///
-
--- Tests of isShellable (and hence shellingOrder by invocation): Strategy => "Naive"
--- Only small cases are used, as Naive takes a tremendous amount of memory.
-TEST ///
-R = QQ[a..f];
--- Extreme cases
-assert(isShellable(simplicialComplex {a*b*c*d*e}, Strategy => "Naive"));
--- The following are from [St], Example 2.2.
-assert(isShellable(simplicialComplex {a*b*c, b*c*d, c*d*e}, Strategy => "Naive"));
-assert(not isShellable(simplicialComplex {a*b*c, c*d*e}, Strategy => "Naive"));
--- The following are from [BW-1], Figure 1.
-assert(isShellable(simplicialComplex {a*b, c}, Strategy => "Naive"));
-assert(not isShellable(simplicialComplex {a*b*c, c*d, d*e*f}, Strategy => "Naive"));
 ///
 
 -- Tests of isShelling
@@ -804,17 +902,6 @@ R = QQ[a..f];
 assert(isVertexDecomposable simplicialComplex {a*b, c});
 assert(isVertexDecomposable simplicialComplex {a*b*c, c*d, d*e, e*f, d*f});
 assert(not isVertexDecomposable simplicialComplex {a*b*c, c*d, d*e*f});
-///
-
--- Tests of hVector
-TEST ///
-R = QQ[a..e];
-assert(hVector simplicialComplex {a, b, c, d, e} === {1,4});
-assert(hVector simplicialComplex {a*b*c*d*e} === {1});
-assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2});
-assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
-assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1});
-assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 ///
 
 end
