@@ -200,6 +200,9 @@ isVertexDecomposable (SimplicialComplex) := (S) -> (
 -- Uses definition III.2.1 in [St].
 shellingOrder = method(TypicalValue => List);
 shellingOrder (SimplicialComplex) := (S) -> (
+    -- check the cache
+    if S.cache.?shellingOrder then return S.cache.shellingOrder;
+
     O := {};
     -- the pure case is easier, so separate it
     if isPure S then (
@@ -216,7 +219,9 @@ shellingOrder (SimplicialComplex) := (S) -> (
         -- there is a shelling with the facets in dimension order
         O = recursiveImpureShell({}, rsort flatten entries facets S);
     );
-    O
+
+    -- cache & return
+    S.cache.shellingOrder = O
 );
 
 -------------------
@@ -727,6 +732,8 @@ doc ///
             shellingOrder simplicialComplex {a*b*c, c*d*e}
             shellingOrder simplicialComplex {a*b*c, c*d, d*e, e*f, d*f}
             shellingOrder simplicialComplex {a*b*c, c*d, d*e*f}
+    Caveat
+        The shelling order is cached (or {} if none exists).
     SeeAlso
         isShellable
         isShelling
