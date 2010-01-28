@@ -69,13 +69,9 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       -- add reducedS to intermediate basis and update the list of pairs
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
+       -- F = reduceGbBrp(F);
       newPairs = updatePairs( newPairs, F, n );
       listOfIndexPairs = listOfIndexPairs | newPairs;
-      
-      --updatePairs( listOfIndexPairs,F,n )
-      --listOfIndexPairs = listOfIndexPairs | toList((-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) ) ;
-      --F##F = reducedS;
-      --listOfIndexPairs = updatePairs( listOfIndexPairs,F,n )
     );
   );
   F = minimalGbBrp(F);
@@ -166,7 +162,9 @@ updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
       f = F#i;
       g = F#j
     );
-    not isRelativelyPrime(leading f, leading g)
+    if not isRelativelyPrime(leading f, leading g) then 
+      --check if leading G divides lcm(leading f,leading g)
+
   )
   )
 )
@@ -186,6 +184,7 @@ SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
     g*xx+g
   )
   else (
+    -- check if keys i,j are really in G, otherwise return 0
     f = G#i;
     g = G#j;
     leadingLcm := lcmBrps(leading(f), leading(g));
@@ -791,42 +790,4 @@ reduce (Brp, gbComputation) := Brp => (f,G) -> (
   timeInReduce = timeInReduce + t2 - t1;
   f
 )
-
-new AA of BB := (A,B) -> 
-
-new Type of BasicList := (type,array) -> ( 
-  print "--new type";
-  stderr << "--new " << type << " of " << array << " being made" << endl; 
-  new MutableHashTable) 
-
-M = new Type of BasicList
-
-A = apply( {1,2,3}, i -> new Type of BasicList)
-
-foo =  method()
-foo (BasicList) := BasicList => l -> (print "hello foo"; l)
-
-copy A 
-foo A
-B = A
-scan(A, i -> print "hello")
-
-x = new HashTable from { a => 1, b => 2 }
-new Thing of Thing from Thing := (A,B,c) -> (
-  << "-- new " << A << " of " << B 
-  << " from " << toString c << endl;
-  c);
-new ImmutableType of Vector from x
-
-
-newClass(ImmutableType,Vector,x)
-
-new ImmutableType of Vector from x
-
-
-
-
-
-
-
 
