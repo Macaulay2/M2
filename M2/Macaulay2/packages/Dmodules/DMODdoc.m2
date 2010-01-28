@@ -88,7 +88,7 @@ document {
 	       " -- characteristic cycles of local cohomology"},
 	  TO {"logCohomology", " -- logarithmic cohomology groups"},
 	  TO {"lct", "-- log canonical threshold"},
-	  {TO "mutiplierIdeals", ", ", TO "isInMultiplierIdeal", ", ", TO "jumpingCoefficients", " -- multiplier ideals"},
+	  {TO "multiplierIdeal", ", ", TO "isInMultiplierIdeal", ", ", TO "jumpingCoefficients", " -- multiplier ideals"},
 	  TO "hasRationalSing"
 	  },
      HEADER3 "Programming aids:",

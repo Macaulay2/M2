@@ -1,6 +1,13 @@
 restart
 debug loadPackage "Dmodules"
 
+///
+R = QQ[x]
+I = ideal x^2;
+time (jumps,mI) = jumpingCoefficients I
+time multiplierIdeal(I, 1/2, Strategy=>ViaLinearAlgebra, DegreeLimit=>2)
+///
+
 R = QQ[x_1..x_3];
 I = ideal {x_2^2-x_1*x_3, x_1^3-x_3^2}; 
 time sort(bFunctionRoots generalB I_* / minus)
@@ -11,6 +18,7 @@ o8 = {{17/12, 7/4, 11/6, 23/12, 2}, {ideal(x_3,x_2,x_1), ideal(x_3,x_2,x_1^2), i
      ideal(x_3^2,x_2*x_3,x_1*x_3,x_2^2,x_1*x_2,x_1^2), ideal(x_2^2-x_1*x_3,x_1^3-x_3^2)}}
 ///
 assert all(#jumps, i->all( (mI#i)_*,g->isInMultiplierIdeal(g,I,jumps#i) ))
+time multiplierIdeal(I, 7/4, Strategy=>ViaLinearAlgebra, DegreeLimit=>2)
 
 
 I = ideal {x_1^3-x_2^2, x_2^3-x_3^2}; --Shibuta Ex 5.6
@@ -61,14 +69,14 @@ o14 = ({--, --, --, --, --, --, 1}, {ideal (y, x), ideal (y, x ), ideal (y , x*y
         20  20  10  20  10  20
 ///
 --***also compute the q_i's for this one!***
+time multiplierIdeal(ideal F, {9/20,19/20}, Strategy=>ViaLinearAlgebra, DegreeLimit=>4)
 
 -----------------------------------------------
 ---------Example from Saito's papers:----------
 -----------------------------------------------
 restart
 needsPackage "Dmodules"
-R = QQ[x,y];
-I = ideal {(x^2-y^2)*(x^2-1)*(y^2-1)}; --"Mult" 5.5
+ --"Mult" 5.5
 R = QQ[x,y,z];
 I = ideal{(x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z}
 time sort(bFunctionRoots generalB I_* / minus)
@@ -79,41 +87,12 @@ time sort(bFunctionRoots generalB I_* / minus)
 o11 = {-, -, -, -, -, 1, -, -, -, --, --}
        7  7  3  7  7     7  7  3   7   7
 ///
-toString generalB(I_*, Exponent=>1)
+
+multiplierIdeal(I, {3/7, 4/7, 2/3, 5/7, 6/7})
 ///
-s^13+13*s^12+(34079/441)*s^11+(122617/441)*s^10+(2084951/3087)*s^9+(1203191/1029)*s^8+(174569373/117649)*s^7+(70434991/50421)*s^6+(50601521674/51883209)*s^5+(25864232372/51883209)*s^4+(9403010536/51883209)*s^3+(255696192/5764801)*s^2+(5390720/823543)*s+2534400/5764801
-///     
--- SORTING OUT Example 6.2
-W = makeWA R; createDpairs W;
-f = sub(I_0,W);
-I = ideal W.dpairVars#1;
-b = globalB(I, f)
-factorBFunction b.Bpolynomial
-J = AnnFs f; A = ring J;
-
---see if b-poly - b-oper * f is in AnnFs
-bb = (map(A,ring b.Bpolynomial,{A_(numgens A-1)})) b.Bpolynomial 
-bb % gb (J + sub(ideal f,A))
-
--- this shows Saito is wrong?
-assert((bb - (map(A, ring b.Boperator, vars A)) b.Boperator * sub(f,A)) % J == 0)
-
-jumpingCoefficients I
+ {ideal(z,y,x), ideal(z^2,y*z,x*z,y^2,x*y,x^2), ideal(y^2*z-z^3,x^2*z-z^3,x*y^2-x*z^2,x^2*y-y*z^2), ideal(y^2*z-z^3,x^2*z-z^3,x*y^2-x*z^2,x^2*y-y*z^2),
+             ideal(y^2*z^2-z^4,x^2*z^2-z^4,y^3*z-y*z^3,x*y^2*z-x*z^3,x^2*y*z-y*z^3,x^3*z-x*z^3,x*y^3-x*y*z^2,x^2*y^2-z^4,x^3*y-x*y*z^2)}
 ///
-       2               2       2              4 2    2 4    4    4    2    2
-o5 = ({-, 1}, {ideal (y  - 1, x  - 1), ideal(x y  - x y  - x  + y  + x  - y )})
-       3
-///
-decompose oo#1#0 -- nontrivial decomposition
-
---Here J_f(1) is: 
-I2 = ideal( 9*s^4+36*s^3+53*s^2+34*s+8, s*x^4-s*y^4-2*s*x^2+2*s*y^2+x^4-y^4-2*x^2+2*y^2, 3*s^3*y^2-3*s^3+10*s^2*y^2-10*s^2+11*s*y^2-11*s+4*y^2-4,
-      3*s^3*x^2-3*s^3+10*s^2*x^2-10*s^2+11*s*x^2-11*s+4*x^2-4, x^4*y^2-x^2*y^4-x^4+y^4+x^2-y^2, 2*s*x^2*y^3-s*y^5-2*s*x^2*y+s*y+2*x^2*y^3-y^5-2*x^2*y+y,
-      2*s*x^3*y^2-s*x*y^4-2*s*x^3+s*x+2*x^3*y^2-x*y^4-2*x^3+x, 3*s^2*y^4-6*s^2*y^2+3*s^2-2*s*x^2*y^2+8*s*y^4+2*s*x^2-14*s*y^2+6*s-2*x^2*y^2+5*y^4+2*x^2-8*y^2+3,
-      3*s^2*x^2*y^2-3*s^2*x^2-3*s^2*y^2+3*s^2+5*s*x^2*y^2+s*y^4-5*s*x^2-7*s*y^2+6*s+2*x^2*y^2+y^4-2*x^2-4*y^2+3 )
-ass I2
-primaryDecomposition I2
-
 
 -----------------------------------------------
 -------Examples from Zach's suggestions:-------

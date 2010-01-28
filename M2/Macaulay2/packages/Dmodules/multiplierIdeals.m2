@@ -30,9 +30,9 @@ star (Ideal,List) := (I,vw) -> (
      sub(eliminateWA(Ih,{u1,u2}),W)
      ) 
 
-multiplierIdeal = method()
-multiplierIdeal (Ideal, QQ) := (a,c) -> first multiplierIdeal(a,{c}) 
-multiplierIdeal (Ideal, List) := (a,cs) -> (
+multiplierIdeal = method(Options => {Strategy=>ViaElimination, DegreeLimit=>null})
+multiplierIdeal (Ideal, QQ) := o -> (a,c) -> first multiplierIdeal(a, {c}, Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit) 
+multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      R := ring a;
      LCT := lct a;
      m := max{ceiling(max cs - LCT),1};
@@ -54,29 +54,81 @@ multiplierIdeal (Ideal, List) := (a,cs) -> (
      w := toList(n:0) | toList(r:1);
      Istar := star(I0,-w|w);
 
-     -- intersection part     	  
-     SDY := K (monoid [s, gens DY, WeylAlgebra => DY.monoid.Options.WeylAlgebra]);
-     v := gens SDY; 
-     SX := take(v,{0,n}); notSX := drop(v,{0,n}); 
-     T := take(v,{n+1,n+r}); dT := take(v,{2*n+r+1,2*(n+r)});
-     SXring := K(monoid [SX,MonomialOrder=>Eliminate 1]);
-     SDYtoSX := map(SXring,SDY, gens SXring | toList(n+2*r:0) );
-
-     I2' := sub(Istar,SDY) + (sub(a, SDY))^m + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- Istar + a^m + (s-\sigma)
-     I2 := SDYtoSX eliminateWA(I2', notSX);
-     pInfo(1, "J_I("|toString m|") = "|toString I2);
-          
-     -- b-function part
-     b'f1'm := generalB(a_*, 1_R, Exponent=>m);
-     S := ring b'f1'm;
+     if  o.Strategy == ViaElimination then (
+     	  SDY := K (monoid [s, gens DY, WeylAlgebra => DY.monoid.Options.WeylAlgebra]);
+     	  v := gens SDY; 
+     	  SX := take(v,{0,n}); notSX := drop(v,{0,n}); 
+     	  T := take(v,{n+1,n+r}); dT := take(v,{2*n+r+1,2*(n+r)});
+     	  SXring := K(monoid [SX,MonomialOrder=>Eliminate 1]);
+     	  SDYtoSX := map(SXring,SDY, gens SXring | toList(n+2*r:0) );
+	  --
+	  I2' := sub(Istar,SDY) + (sub(a, SDY))^m + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- Istar + a^m + (s-\sigma)
+     	  I2 := SDYtoSX eliminateWA(I2', notSX);
+     	  pInfo(1, "J_I("|toString m|") = "|toString I2);
+     	  -- b-function part
+     	  b'f1'm := generalB(a_*, 1_R, Exponent=>m);
+     	  S := ring b'f1'm;
+	  )
+     else if o.Strategy == ViaLinearAlgebra then (
+	  v = gens DY;
+	  X := take(v,{0,n-1}); -- x variables
+     	  T = take(v,{n,n+r-1}); dT = take(v,{2*n+r,2*(n+r)-1});
+	  G2 := gb ( Istar + sub(a^m, DY) );
+     	  powers := matrix(DY,{{}});
+	  b'f1'm = null;
+	  sigma := -sum(r,i->dT#i*T#i);
+     	  d := 0;
+     	  while b'f1'm === null do (
+	       powers = powers | matrix {{sigma^d % G2}};
+	       Cpowers = coefficients powers;
+	       KerC := ker lift(Cpowers#1, K); -- kernel of the coefficients matrix
+	       if KerC != 0 then (
+	       	    S = K(monoid[s]);
+	       	    b'f1'm = sum(d+1, i->(gens KerC)_(i,0)*S_0^i);
+	       	    ) ;
+	       d = d + 1;
+	       );
+	  )
+     else error "unknown Strategy";
      
+     dim'zero := if isHomogeneous a then 1 else 0;
      apply(cs, c->(
 	       b := b'f1'm;
      	       roots := select(bFunctionRoots b'f1'm, c'->-c'<=c); 
      	       for r in roots do (
      	       	    while b%(S_0-r)==0 do b = b//(S_0-r) 
      	       	    );
+	       if o.Strategy == ViaLinearAlgebra then (
+	       	    sigma := -sum(r,i->dT#i*T#i);
+	       	    f'b'sigma := matrix(DY,{{}});
+		    monoms := {};
+	       	    d := 0;
+		    ret := null; -- ideal to return
+     	       	    while d <= o.DegreeLimit do (
+		    	 -- add reductions of all monomials of degree d times b(s)
+    		    	 for f in ((ideal X)^d)_* do (
+			      -- taking monomials not in the initial ideal of ret 
+			      -- could be optimized more: delete the initial terms discovered on the previous step from monoms and f'b'sigma (MutableList? MutableHashTable?)
+			      if ret === null or sub(f,R) % ideal( (flatten entries gens gb ret)/ leadMonomial ) != 0 
+			      then (
+			      	   f'b'sigma = f'b'sigma | matrix{{ ( f * ( (map(DY,ring b, {sigma})) b ) ) % G2}}; -- f*b(s) mod GB
+			      	   monoms = monoms | {sub(f,R)};
+				   )
+			      );
+	  	    	 C = coefficients f'b'sigma;
+	  	    	 KerC := ker lift(C#1, K); -- kernel of the coefficients matrix
+	  	    	 if KerC != 0 then (
+			      ret = ideal apply(numcols gens KerC, j->sum(#monoms, i->(gens KerC)_(i,j)*monoms#i));
+			      if dim ret <= dim'zero then break;
+	       		      ) ;
+	  	    	 d = d + 1;
+	  	    	 );
+		    if d > o.DegreeLimit then print "Warning! DegreeLimit exceeded and (partial) multiplier ideal is not 0-dim";
+		    ideal mingens ret
+     	  	    ) 
+	       else if o.Strategy == ViaElimination then
 	       exceptionalLocusB(R,I2,b) -- ring I2 has to eliminate s 
+	       else error "unknown Strategy"
 	       ))
      )
 
