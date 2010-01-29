@@ -162,14 +162,17 @@ updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
       f = F#i;
       g = F#j
     );
-    if not isRelativelyPrime(leading f, leading g) then 
-      --check if leading G divides lcm(leading f,leading g)
-
+    not isRelativelyPrime(leading f, leading g) 
+--    if not isRelativelyPrime(leading f, leading g) then 
+--      ( 
+--        lcmPair = lcmBrps(leading f, leading g);
+--        not any( values F, h -> ( if (h == g or h == f) then false else isDivisible( lcmPair, leading h)))
+--      )
+--    else false
   )
   )
 )
 
-  
 -- from pair of indices get corresponding polynomials, then compute their S
 -- polynomial
 -- assume that the pairs are good (i.e., leading terms not relatively prime)
@@ -451,7 +454,6 @@ TEST ///
   M = apply(flatten entries gens gb J, i-> lift(i,R))
   assert(N == M)
 
---longTest = true
   R = ZZ/2[a..t, MonomialOrder=>Lex]
   F = new gbComputation from { 0=> convert(a*b*c*d*e),
           1=> convert( a+b*c+d*e+a+b+c+d),
@@ -474,46 +476,20 @@ TEST ///
           18=> convert( a*k+c*l*n*f),
           19=> convert( q*r+c+q+l*n*m+i)
           }
+longTest = true 
 if longTest then          
   time gbBasis = gbBrp( F, numgens R)
-
   N = sort apply (values gbBasis, poly -> convert(poly,R) )
-  QR = R/(a^2+a,
-          b^2+b,
-          c^2+c,
-          d^2+d,
-          e^2+e,
-          f^2+f,
-          g^2+g,
-          h^2+h,
-          i^2+i,
-          j^2+j,
-          k^2+k,
-          l^2+l,
-          m^2+m,
-          n^2+n,
-          o^2+o,
-          p^2+p,
-          q^2+q,
-          r^2+r,
-          s^2+s,
-          t^2+t)
-  J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i,
-          b*s+q*n*m+i, 
-          b*s+q*n*m+i+j*s*t+s, 
-          b*k+s+t, 
-          b*k+r*q+l*m+i*j+n, 
-          b*a+l+q*m+i, 
-          b*k+d*n*m+i, 
-          b+q+l*n*m+i*d, 
-          a*k+c*l*n*f,
-          q*r+c+q+l*n*m+i)
+
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t)
+  J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i)
   time M = apply(flatten entries gens gb J, i-> lift(i,R))
-  time M = apply(flatten entries gens gb ideal (a,b,a+b), i-> lift(i,R))
 if longTest then          
   assert(N == M)
+  
+  time M = apply(flatten entries gens gb ideal (a,b,a+b), i-> lift(i,R))
 
---longTest = true
+longTest = true
   R = ZZ/2[a..t, MonomialOrder=>Lex]
   F = new gbComputation from { 0=> convert(a*b*c*d*e),
           1=> convert( a+b*c+d*e+a+b+c+d),
@@ -531,31 +507,11 @@ if longTest then
           }
 if longTest then          
   time gbBasis = gbBrp( F, numgens R)
-
   N = sort apply (values gbBasis, poly -> convert(poly,R) )
-  QR = R/(a^2+a,
-          b^2+b,
-          c^2+c,
-          d^2+d,
-          e^2+e,
-          f^2+f,
-          g^2+g,
-          h^2+h,
-          i^2+i,
-          j^2+j,
-          k^2+k,
-          l^2+l,
-          m^2+m,
-          n^2+n,
-          o^2+o,
-          p^2+p,
-          q^2+q,
-          r^2+r,
-          s^2+s,
-          t^2+t)
+
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t)
   J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i)
   time M = apply(flatten entries gens gb J, i-> lift(i,R))
-  time M = apply(flatten entries gens gb ideal (a,b,a+b), i-> lift(i,R))
 if longTest then          
   assert(N == M)
 
@@ -791,3 +747,7 @@ reduce (Brp, gbComputation) := Brp => (f,G) -> (
   f
 )
 
+restart
+installPackage "BuchbergerForBrp"
+installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
+check BuchbergerForBrp
