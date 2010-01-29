@@ -54,30 +54,25 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 -- input list - all with Brps
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
+  reduceGbBrp F;
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
-  listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
-  reduceTimeSum := 0;
+  listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
   while #listOfIndexPairs > 0 do (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
     S := SPolynomial(pair, F, n);
-    t1 := cpuTime();
     reducedS := reduce (S,F);
-    t2 := cpuTime();
-    reduceTimeSum = reduceTimeSum +  t2 - t1;
     if reducedS != 0 then (
       -- add reducedS to intermediate basis and update the list of pairs
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
-       -- F = reduceGbBrp(F);
-      newPairs = updatePairs( newPairs, F, n );
+      --F = minimalGbBrp(F);
+      newPairs = updatePairsFast( newPairs, F, n );
       listOfIndexPairs = listOfIndexPairs | newPairs;
     );
   );
-  F = minimalGbBrp(F);
-  print "Reduce Time Sum:";
-  print reduceTimeSum;
-  reduceGbBrp(F)
+  F = minimalGbBrp F;
+  reduceGbBrp F
 )
 
 --Take polynomials from a list and make into a gbComputation
@@ -97,9 +92,9 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
   while ( notFinished ) do (
     notFinished = false;
     resetF = false;
-    scan( values F, f -> (
+    scan( pairs F, (fKey, f) -> (
       scan( pairs F, (gKey, g) -> (
-        if f != g and isReducible( g, f) then (
+        if fKey =!= gKey and isReducible( g, f) then (
           remove(F,gKey); 
           resetF = true
         )
@@ -133,11 +128,11 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
   while changesHappened do (
     changesHappened = false;
     scan( pairs F, (fKey,f) ->  
-      scan(values F, g ->
-        if f!=g then (
+      scan( pairs F, (gKey,g) ->
+        if fKey != gKey then (
           tmpF := reduceLtBrp(f,g);
           if f !=  tmpF then (
-            F#fKey = tmpF;
+            if tmpF != 0 then F#fKey = tmpF else remove(F,fKey);
             changesHappened = true;
             break
           )
@@ -149,29 +144,66 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
 )
 
 -- remove all relatively prime pairs
--- updatePairs returns a list of all the pairs, that have to be updated
+-- updatePairs returns a list of all the pairs, that have to be used to compute S polynomials
 updatePairs = method()
 updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
-  select( l, (i,j) -> (
-    if i < 0 then (
-      i = - i;
+  select(l, (i,j) -> (
+    if not F#?j or (i >= 0 and not F#?j) then false 
+    else ( 
+      if i < 0 then g := new Brp from {unitvector( -i-1,n)}
+      else g = F#i;
       f := F#j;
-      g := new Brp from {unitvector( i-1,n)}
-    ) 
-    else (
-      f = F#i;
-      g = F#j
-    );
-    not isRelativelyPrime(leading f, leading g) 
---    if not isRelativelyPrime(leading f, leading g) then 
---      ( 
---        lcmPair = lcmBrps(leading f, leading g);
---        not any( values F, h -> ( if (h == g or h == f) then false else isDivisible( lcmPair, leading h)))
---      )
---    else false
-  )
-  )
+      not isRelativelyPrime(leading f, leading g) 
+    )
+  ))
 )
+-- remove all relatively prime pairs
+-- updatePairs returns a list of all the pairs, that have to be used to compute S polynomials
+updatePairsFast = method()
+updatePairsFast(List, gbComputation, ZZ) := List => ( l, F, n) -> (
+  select(l, (i,j) -> (
+    if not F#?j or (i >= 0 and not F#?j) then false 
+    else ( 
+      if i < 0 then g := new Brp from {unitvector( -i-1,n)}
+      else g = F#i;
+      f := F#j;
+      if isRelativelyPrime(leading f, leading g) then false
+      else (
+        lcmPair := lcmBrps(leading f, leading g);
+        not any( values F, h-> h != g and h != f and isDivisible(lcmPair, leading h))
+      )
+    )
+  ))
+)
+--  select( l, (i,j) -> (
+--    if F#?j then (
+--      if i < 0 then (
+--        i = - i;
+--        g := new Brp from {unitvector( i-1,n)}
+--      ) 
+--      else (
+--        if F#?i then g = F#i else g = 0
+--      );
+--      f := F#j;
+--      if g != 0 then (
+--        --not isRelativelyPrime(leading f, leading g) 
+--        if not isRelativelyPrime(leading f, leading g) then 
+--          ( 
+--            lcmPair := lcmBrps(leading f, leading g);
+--            not any( values F, h -> ( if (h == g or h == f) then false else (
+--            if isDivisible( lcmPair, leading h ) then (
+--              print convert(lcmPair,R);
+--              print convert(h,R);
+--              true
+--            )
+--            else false)))
+--          )
+--        else false
+--      ) else false
+--    ) else false
+--  )
+--  )
+--)
 
 -- from pair of indices get corresponding polynomials, then compute their S
 -- polynomial
@@ -180,18 +212,22 @@ SPolynomial = method()
 SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
   (i,j) := pair;
   if i < 0 then ( -- we are working with an FP
-    i = - i;
-    f := G#j;
-    xx := new Brp from {unitvector( i-1,n)};
-    g := new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
-    g*xx+g
+    if G#?j then (
+      f := G#j;
+      i = - i;
+      xx := new Brp from {unitvector( i-1,n)};
+      g := new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
+      g*xx+g
+    ) else new Brp from {}
   )
   else (
     -- check if keys i,j are really in G, otherwise return 0
-    f = G#i;
-    g = G#j;
-    leadingLcm := lcmBrps(leading(f), leading(g));
-    f* (divide( leadingLcm, leading f)) + g* (divide( leadingLcm, leading g)) 
+    if G#?i and G#?j then (
+      g = G#i;
+      f = G#j;
+      leadingLcm := lcmBrps(leading(f), leading(g));
+      f* (divide( leadingLcm, leading f)) + g* (divide( leadingLcm, leading g)) 
+    ) else new Brp from {}
   )
 )
 
@@ -476,10 +512,10 @@ TEST ///
           18=> convert( a*k+c*l*n*f),
           19=> convert( q*r+c+q+l*n*m+i)
           }
-longTest = true 
+longTest = true
 if longTest then          
   time gbBasis = gbBrp( F, numgens R)
-  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+N = sort apply (values gbBasis, poly -> convert(poly,R) )
 
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t)
   J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i)
@@ -487,7 +523,6 @@ if longTest then
 if longTest then          
   assert(N == M)
   
-  time M = apply(flatten entries gens gb ideal (a,b,a+b), i-> lift(i,R))
 
 longTest = true
   R = ZZ/2[a..t, MonomialOrder=>Lex]
@@ -515,6 +550,38 @@ if longTest then
 if longTest then          
   assert(N == M)
 
+  JJ = ideal(a*b*c*d*e, b*c+d*e+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i)
+  time MM = apply(flatten entries gens gb JJ, i-> lift(i,R))
+if longTest then          
+  assert(MM == M)
+
+  F = new gbComputation from { 0 => convert(a), 1 => convert(a)}
+  time gbBasis = gbBrp( F, numgens R)
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  assert (N == {a})
+  
+  F = new gbComputation from { 0 => convert(a), 1 => convert(a)}
+  time gbBasis = minimalGbBrp F
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  assert (N == {a})
+  
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  F = new gbComputation from { 0 => convert(a), 1 => convert(a)}
+  time gbBasis = reduceGbBrp F
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  assert (N == {a})
+  
+  F = new gbComputation from { 0 => convert(a+b*c), 1 => convert(a+d*e), 2 => convert(a)}
+  time gbBasis = gbBrp( F, numgens R)
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  time M = apply(flatten entries gens gb ideal(a+b*c, a+d*e, a), i-> lift(i,R))
+  assert( N == M)
+
+  F = new gbComputation from { 0 => convert(a+b*c), 1 => convert(a+d*e), 2 => convert(a)}
+  time gbBasis = reduceGbBrp F
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  time M = apply(flatten entries gens gb ideal(a+b*c, a+d*e, a), i-> lift(i,R))
+  assert( N == M)
 
   R = ZZ/2[x,y,z,w]
   F = new gbComputation from { 0 => convert(x*y*w+w*x+z),
