@@ -6,6 +6,7 @@ R = QQ[x]
 I = ideal x^2;
 time (jumps,mI) = jumpingCoefficients I
 time multiplierIdeal(I, 1/2, Strategy=>ViaLinearAlgebra, DegreeLimit=>2)
+time multiplierIdeal(I, 1/2, Strategy=>ViaColonIdeal, DegreeLimit=>2)
 ///
 
 R = QQ[x_1..x_3];
@@ -18,7 +19,9 @@ o8 = {{17/12, 7/4, 11/6, 23/12, 2}, {ideal(x_3,x_2,x_1), ideal(x_3,x_2,x_1^2), i
      ideal(x_3^2,x_2*x_3,x_1*x_3,x_2^2,x_1*x_2,x_1^2), ideal(x_2^2-x_1*x_3,x_1^3-x_3^2)}}
 ///
 assert all(#jumps, i->all( (mI#i)_*,g->isInMultiplierIdeal(g,I,jumps#i) ))
-time multiplierIdeal(I, 7/4, Strategy=>ViaLinearAlgebra, DegreeLimit=>2)
+time multiplierIdeal(I, 7/4, Strategy=>ViaLinearAlgebra, DegreeLimit=>10)
+time multiplierIdeal(I, 7/4, Strategy=>ViaColonIdeal)
+time multiplierIdeal(I, 7/4, Strategy=>ViaElimination)
 
 
 I = ideal {x_1^3-x_2^2, x_2^3-x_3^2}; --Shibuta Ex 5.6
@@ -52,9 +55,9 @@ jumpingCoefficients ideal F
 -------------Examples from [ELSV]:-------------
 -----------------------------------------------
 R = QQ[x,y];
-F = {x^5+y^4+x^3*y^2}; --Example 2.5 (not all roots are JCs)
-time lct ideal F -- is 9/20
-time jumpingCoefficients ideal F
+I = ideal{x^5+y^4+x^3*y^2}; --Example 2.5 (not all roots are JCs)
+time lct I -- is 9/20
+time jumpingCoefficients I
 ///
 ideal(s*y^4+y^4,s*x*y^3+x*y^3,10*s^2*y^3+23*s*y^3+13*y^3,s*x^3*y+2*s*y^3+x^3*y+2*y^3,x^5+x^3*y^2+y^4,5*s*x^4+3*s*x^2*y^2+5*x^4+3*x^2*y^2,20*s^2*x^2*y^2+47*s*x^2*y^2+27*x^2*y^2,400*s^3*x*y^2+1400*s^2*x*y^2+1621*s*x*y^2+621*x*y^2,8000000*s^4*y^2+35600000*s^3*y^2-66000*s^2*x^3-40200*s^2*x*y^2+59020000*s^2*y^2-207*s*x^2*y^2-141300*s*x^3-86190*s*x*y^2+43219000*s*y^2-207*x^2*y^2-75300*x^3-45990*x*y^2+11799000*y^2,40000*s^3*x^3+134000*s^2*x^3-3000*s^2*x*y^2-9*s*x^2*y^2+148600*s*x^3-6690*s*x*y^2-9*x^2*y^2+54600*x^3-3690*x*y^2,2000*s^4*x^2*y+9500*s^3*x^2*y+16840*s^2*x^2*y+13201*s*x^2*y+3861*x^2*y,400000*s^6*x*y+2720000*s^5*x*y+7677000*s^4*x*y+11511100*s^3*x*y+9670490*s^2*x*y+4315617*s*x*y+799227*x*y,4000000000*s^6*x^2+26600000000*s^5*x^2+73350000000*s^4*x^2+107351500000*s^3*x^2-300000*s^3*y^2-85500*s^2*x^3-39600*s^2*x*y^2+87945200000*s^2*x^2-1410000*s^2*y^2+54*s*x^2*y^2-204525*s*x^3-95220*s*x*y^2+38235585000*s*x^2-2061750*s*y^2+54*x^2*y^2-119025*x^3-55620*x*y^2+6891885000*x^2-951750*y^2,1600000000*s^9*y+15200000000*s^8*y+63920000000*s^7*y+156158000000*s^6*y+244221230000*s^5*y+253537070000*s^4*y+174696073000*s^3*y+77028097200*s^2*y+19718105211*s*y+2232241011*y,64000000000*s^10*x+659200000000*s^9*x+3042720000000*s^8*x+8287536000000*s^7*x+14749686000000*s^6*x+17921068200000*s^5*x+15052608563000*s^4*x+8629231520900*s^3*x+3230731189110*s^2*x+713185068843*s*x+70475037633*x,256000000000000*s^13+3072000000000000*s^12+16896000000000000*s^11+56383360000000000*s^10+127342723200000000*s^9+205500504000000000*s^8+243718270400000000*s^7+215017045188000000*s^6+141070385814930000*s^5+67957957559690000*s^4+23356087269375000*s^3+5421098380872600*s^2+761337645337269*s+48839201079669)
 
@@ -69,7 +72,10 @@ o14 = ({--, --, --, --, --, --, 1}, {ideal (y, x), ideal (y, x ), ideal (y , x*y
         20  20  10  20  10  20
 ///
 --***also compute the q_i's for this one!***
-time multiplierIdeal(ideal F, {9/20,19/20}, Strategy=>ViaLinearAlgebra, DegreeLimit=>4)
+time multiplierIdeal(I, {9/20,19/20}, Strategy=>ViaLinearAlgebra, DegreeLimit=>4)
+time multiplierIdeal(I, 17/20, Strategy=>ViaLinearAlgebra, DegreeLimit=>10)      -- used 73.28 seconds
+time multiplierIdeal(I, 17/20, Strategy=>ViaColonIdeal) -- used 84.58 seconds   
+time multiplierIdeal(I, 17/20, Strategy=>ViaElimination)  -- used 89.45 seconds    
 
 -----------------------------------------------
 ---------Example from Saito's papers:----------
