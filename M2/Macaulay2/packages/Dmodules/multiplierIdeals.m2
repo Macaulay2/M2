@@ -142,14 +142,14 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      )
 
 
-jumpingCoefficients = method()
+jumpingCoefficients = method(Options => {Strategy=>ViaElimination, DegreeLimit=>null})
 -- jumping numbers and multiplier ideals up to the analytic spead
-jumpingCoefficients Ideal := I -> jumpingCoefficients(I,0, analyticSpread I)
+jumpingCoefficients Ideal := o -> I -> jumpingCoefficients(I,0, analyticSpread I)
 -- jumping numbers and multiplier ideals in the interval (a,b)
-jumpingCoefficients (Ideal, ZZ, ZZ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
-jumpingCoefficients (Ideal, QQ, ZZ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
-jumpingCoefficients (Ideal, ZZ, QQ) := (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
-jumpingCoefficients (Ideal, QQ, QQ) := (I,a,b) -> (
+jumpingCoefficients (Ideal, ZZ, ZZ) := o -> (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
+jumpingCoefficients (Ideal, QQ, ZZ) := o -> (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
+jumpingCoefficients (Ideal, ZZ, QQ) := o -> (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))
+jumpingCoefficients (Ideal, QQ, QQ) := o -> (I,a,b) -> (
      -- candidates
      r := sort( bFunctionRoots generalB I_* / minus); 
      l := min r;
