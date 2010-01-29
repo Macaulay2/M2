@@ -78,10 +78,10 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
 --Take polynomials from a list and make into a gbComputation
 getPolysFromList = method()
 getPolysFromList(List) := gbComputation => S -> (
-     F:= new gbComputation;
-     scan(S, i -> F##F = convert(i));
-     F
-     )
+  F:= new gbComputation;
+  scan(S, i -> F##F = convert(i));
+  F
+)
     
 
 -- delete elements where the leading term is divisible by another leading term
@@ -157,8 +157,11 @@ updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
     )
   ))
 )
--- remove all relatively prime pairs
+
+-- remove all relatively prime pairs, and through out all pairs (i,j), if there is an h in G, with 
+-- lcm(i,j) is divisible by leading h
 -- updatePairs returns a list of all the pairs, that have to be used to compute S polynomials
+-- this can not be used on an arbitrary gbComputation, it has to be reducedGbBrp first
 updatePairsFast = method()
 updatePairsFast(List, gbComputation, ZZ) := List => ( l, F, n) -> (
   select(l, (i,j) -> (
@@ -175,35 +178,6 @@ updatePairsFast(List, gbComputation, ZZ) := List => ( l, F, n) -> (
     )
   ))
 )
---  select( l, (i,j) -> (
---    if F#?j then (
---      if i < 0 then (
---        i = - i;
---        g := new Brp from {unitvector( i-1,n)}
---      ) 
---      else (
---        if F#?i then g = F#i else g = 0
---      );
---      f := F#j;
---      if g != 0 then (
---        --not isRelativelyPrime(leading f, leading g) 
---        if not isRelativelyPrime(leading f, leading g) then 
---          ( 
---            lcmPair := lcmBrps(leading f, leading g);
---            not any( values F, h -> ( if (h == g or h == f) then false else (
---            if isDivisible( lcmPair, leading h ) then (
---              print convert(lcmPair,R);
---              print convert(h,R);
---              true
---            )
---            else false)))
---          )
---        else false
---      ) else false
---    ) else false
---  )
---  )
---)
 
 -- from pair of indices get corresponding polynomials, then compute their S
 -- polynomial
@@ -249,12 +223,10 @@ reduce (Brp, Brp) := Brp => (f,g) -> (
 )
 
 -- Reduce the leading term of a polynomial one step using a polynomial
+-- only call this when isReducible(f,g)
 reduceOneStep = method()
 reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
   if f != 0 then (
-    --assert( isReducible(f, g)); -> leading f divisible by g
-    --leadingLcm :=  lcmBrps(leading(f), leading(g));
-    --f + g * divide(leadingLcm, leading g) 
     f + g * divide(leading f, leading g) 
   ) else new Brp from {} -- TODO make 0 automatically turn into 0
 )
@@ -275,8 +247,8 @@ reduceOneStepList(Brp, gbComputation) := (Brp, Boolean) => (f, G) -> (
 -- remove self-pairs 
 makePairsFromLists = method()
 makePairsFromLists (List,List) := List => (a,b) -> (
-  ll := (apply( a, i-> apply(b, j-> if i != j then toSequence sort {i,j} else 0 ) ));
-  unique delete(0, flatten ll)
+  l := (apply( a, i-> apply(b, j-> if i != j then toSequence sort {i,j} else 0 ) ));
+  unique delete(0, flatten l)
 )
 
 -- check if the leading term of one polynomial can be reduced by another polynomial
@@ -718,6 +690,7 @@ F = new gbComputation from { 0=> convert(a*b*c*d*e),
         11=> convert( b*s+q*n*m+i),
         12=> convert( b*k+q+l*n*m+i)
         }
+time gbBasis =  reduceGbBrp F
 time gbBasis =  gbBrp( F, numgens R) 
 N = sort apply (values gbBasis, poly -> convert(poly,R) )
 profileSummary
@@ -778,10 +751,8 @@ check BuchbergerForBrp
           11=> convert( b*s+q*n*m+i),
           12=> convert( b*k+q+l*n*m+i)
           };
-scanTimeSum = 0;
 timeInReduce = 0;
   time ( gbBrp( F, numgens R) )
-scanTimeSum
 timeInReduce
 profileSummary
 
