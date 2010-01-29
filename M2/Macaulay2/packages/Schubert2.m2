@@ -2,8 +2,8 @@
 newPackage(
 	"Schubert2",
 	AuxiliaryFiles => true,
-    	Version => "0.2",
-    	Date => "May, 2008",
+    	Version => "0.3",
+    	Date => "December, 2009",
 	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
