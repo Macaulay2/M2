@@ -2728,6 +2728,10 @@ document {
      "see ", TO "ExternalProduct"
      }
 
+
+-- END better docs needed
+
+
 document { 
      Key => {(localBFunction,RingElement,Ideal), localBFunction},
      Headline => "local b-function (a.k.a. the local Bernstein-Sato polynomial)",
@@ -2753,7 +2757,10 @@ document {
      }
 
 document { 
-     Key => {(multiplierIdeal, Ideal, QQ), (multiplierIdeal, Ideal, List), multiplierIdeal},
+     Key => {(multiplierIdeal, Ideal, QQ), (multiplierIdeal, Ideal, List), 
+	  [multiplierIdeal, Strategy], [jumpingCoefficients, Strategy], 
+	  [multiplierIdeal, DegreeLimit], [jumpingCoefficients, DegreeLimit], 
+	  multiplierIdeal},
      Headline => "multiplier ideal",
      Usage => "mI = multiplierIdeal(I,c)",
      Inputs => {
@@ -2764,8 +2771,21 @@ document {
 	  "mI" => Ideal => {"multiplier ideal ", EM "J_I(c)", " (or a list of)"}
 	  },
      PARA {
-	  "Computes the multiplier ideal for given ideal and coefficient. ",
-     	  "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals''."
+	  "Computes the multiplier ideal for given ideal and coefficient. "
+	  },
+     "There are three options for ", BOLD "Strategy", ":",
+	  UL { 
+	       { BOLD "ViaElimination", " -- the default;"},
+	       { BOLD "ViaLinearAlgebra", " -- skips one expensive elimination step by using linear algebra;"},
+	       { BOLD "ViaColonIdeal", " -- same as elimination, but may be slightly faster."}
+	  },
+     "The option ", BOLD "DegreeLimit", 
+     " specifies the maximal degree of polynomials to consider for membership in the multiplier ideal.",
+     "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.",
+     Caveat => {
+	  "When ", BOLD "Strategy=>ViaLinearAlgebra", " the option ", BOLD "DegreeLimit", 
+	  " must be specified. The output it guaranteed to be the whole multiplier ideal only when dim(I)=0. ",
+	  "For positive-dimensional input the up-to-specified-degree part of the multiplier ideal is returned."
 	  },
      EXAMPLE lines ///
 R = QQ[x_1..x_4];
@@ -2786,14 +2806,15 @@ document {
 	  "mI" => List => {"the list of corresponding multiplier ideals"}
 	  },
      PARA {
-	  "Computes the jumping coefficients and their multiplier ideals in an open interval (a,b). By default a = 0, b = ", TO "analyticSpread", " I.",
-     	  "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals''."
+	  "Computes the jumping coefficients and their multiplier ideals in an open interval (a,b). By default a = 0, b = ", TO "analyticSpread", " I. ",
+	  "The options are passed to ", TO "multiplierIDeal",".",
 	  },
+     "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.",
      EXAMPLE lines ///
 R = QQ[x_1..x_4];
 jumpingCoefficients ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}
      	  ///,
-     SeeAlso => { "jumpingCoefficients" }
+     SeeAlso => { "multiplierIdeal" }
      }
 
 document { 
