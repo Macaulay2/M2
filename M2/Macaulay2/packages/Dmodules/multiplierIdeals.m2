@@ -54,7 +54,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      w := toList(n:0) | toList(r:1);
      Istar := star(I0,-w|w);
 
-     if  o.Strategy == ViaElimination then (
+     if member(o.Strategy, {ViaElimination, ViaColonIdeal}) then (
      	  SDY := K (monoid [s, gens DY, WeylAlgebra => DY.monoid.Options.WeylAlgebra]);
      	  v := gens SDY; 
      	  SX := take(v,{0,n}); notSX := drop(v,{0,n}); 
@@ -63,7 +63,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      	  SDYtoSX := map(SXring,SDY, gens SXring | toList(n+2*r:0) );
 	  --
 	  I2' := sub(Istar,SDY) + (sub(a, SDY))^m + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- Istar + a^m + (s-\sigma)
-     	  I2 := SDYtoSX eliminateWA(I2', notSX);
+     	  if o.Strategy == ViaElimination then I2 := SDYtoSX eliminateWA(I2', notSX);
      	  pInfo(1, "J_I("|toString m|") = "|toString I2);
      	  -- b-function part
      	  b'f1'm := generalB(a_*, 1_R, Exponent=>m);
@@ -93,19 +93,21 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      
      dim'zero := if isHomogeneous a then 1 else 0;
      apply(cs, c->(
+	       sigma := -sum(r,i->dT#i*T#i);
 	       b := b'f1'm;
      	       roots := select(bFunctionRoots b'f1'm, c'->-c'<=c); 
      	       for r in roots do (
      	       	    while b%(S_0-r)==0 do b = b//(S_0-r) 
      	       	    );
 	       if o.Strategy == ViaLinearAlgebra then (
-	       	    sigma := -sum(r,i->dT#i*T#i);
 	       	    f'b'sigma := matrix(DY,{{}});
 		    monoms := {};
 	       	    d := 0;
 		    ret := null; -- ideal to return
+		    new'monoms := true;
      	       	    while d <= o.DegreeLimit do (
 		    	 -- add reductions of all monomials of degree d times b(s)
+			 new'monoms = false;
     		    	 for f in ((ideal X)^d)_* do (
 			      -- taking monomials not in the initial ideal of ret 
 			      -- could be optimized more: delete the initial terms discovered on the previous step from monoms and f'b'sigma (MutableList? MutableHashTable?)
@@ -113,13 +115,15 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
 			      then (
 			      	   f'b'sigma = f'b'sigma | matrix{{ ( f * ( (map(DY,ring b, {sigma})) b ) ) % G2}}; -- f*b(s) mod GB
 			      	   monoms = monoms | {sub(f,R)};
+				   new'monoms = true;
 				   )
 			      );
+			 if not new'monoms then break;
 	  	    	 C = coefficients f'b'sigma;
 	  	    	 KerC := ker lift(C#1, K); -- kernel of the coefficients matrix
 	  	    	 if KerC != 0 then (
 			      ret = ideal apply(numcols gens KerC, j->sum(#monoms, i->(gens KerC)_(i,j)*monoms#i));
-			      if dim ret <= dim'zero then break;
+			      --if dim ret <= dim'zero then break;
 	       		      ) ;
 	  	    	 d = d + 1;
 	  	    	 );
@@ -128,6 +132,11 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      	  	    ) 
 	       else if o.Strategy == ViaElimination then
 	       exceptionalLocusB(R,I2,b) -- ring I2 has to eliminate s 
+	       else if o.Strategy == ViaColonIdeal then (
+	  	    I2'' = I2' : ( (map(SDY, ring b, {sigma})) b ); 
+		    notX := {SDY_0}|notSX;
+     	       	    SDYtoSX eliminateWA(I2'', notX)
+		    )
 	       else error "unknown Strategy"
 	       ))
      )
