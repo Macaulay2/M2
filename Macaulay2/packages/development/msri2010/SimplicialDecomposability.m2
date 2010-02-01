@@ -4,8 +4,8 @@
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "0.9.3",
-    Date => "27. January 2010",
+    Version => "0.9.4",
+    Date => "01. February 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -59,7 +59,7 @@ fTriangle = method(TypicalValue => HashTable);
 fTriangle (SimplicialComplex) := S -> (
     -- (reverse) sort the facets by dimension
     F := rsort flatten entries facets S;
-    -- tally up face degree, dimension pairs (add the empty face)
+    -- tally up (face degree, dimension) pairs and join the empty face)
     t := tally join({(dim S + 1, 0)}, for f in allFaces(S) list (faceDeg(F, f), first degree f));
     new HashTable from flatten for i from 0 to dim S + 1 list for j from 0 to i list ((i,j) => t_(i,j))
 );
@@ -78,22 +78,32 @@ hVector (SimplicialComplex) := (S) -> (
     flatten entries sub(last coefficients numerator reduceHilbert hilbertSeries ideal S, ZZ)
 );
 
--- Determines whether or not a pure simplicial complex is k-decomposable
--- Uses definition 2.1 in [PB].
+-- Determines whether or not a pure simplicial complex is k-decomposable, as
+-- introduced in Definition 2.1 in [PB].
 iskDecomposable = method(TypicalValue => Boolean);
 iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
     -- k must be nonnegative and S must be pure
     if k < 0 and not isPure S then return false;
+    -- check the cache (pure vertex-decomposable => pure k-decomposable)
+    if S.cache.?isVD and S.cache.isVD then return true;
+
+    iskd := false;
     -- base case: simplexes are k-decomposable for all nonnegative k
-    if isSimplex S then return true;
+    if isSimplex S then ( iskd = true; )
     -- negatives in the h-Vector imply not k-decomposable for pure complexes
-    if any(hVector S, i -> i<0) then return false;
+    else if any(hVector S, i -> i<0) then ( iskd = false; )
     -- Check for shedding faces
-    any(allFaces(S, k), F -> isSheddingFace(S, F, k))
+    else ( iskd = any(allFaces(S, k), F -> isSheddingFace(S, F, k)); );
+
+    -- update the cache (if necessary)
+    -- 0-decomposable == vertex-decomposable, and a complex which is
+    -- not k-decomposable is not j-decomposable for j <= k.
+    if k == 0 or iskd == false then S.cache.isVD = iskd;
+    iskd
 );
 
--- Determines whether or not a face is a shedding face of a pure simplicial complex.
--- Uses definition 2.1 in [PB].
+-- Determines whether or not a face is a shedding face of a pure simplicial
+-- complex, as introduced in Definition 2.1 in [PB].
 isSheddingFace = method(TypicalValue => Boolean);
 isSheddingFace (SimplicialComplex, RingElement) := (S, F) -> (
     isSheddingFace(S, F, first degree F - 1)
@@ -103,35 +113,37 @@ isSheddingFace (SimplicialComplex, RingElement, ZZ) := (S, F, k) -> (
     iskDecomposable(link(S, F), k) and iskDecomposable(faceDelete(S, F), k)
 );
 
--- Determines whether or not a vertex is a shedding vertex of a simplicial complex.
--- Uses definition 11.1 in [BW-2].
+-- Determines whether or not a vertex is a shedding vertex of a simplicial
+-- complex using Definition 11.1 in [BW-2].
 isSheddingVertex = method(TypicalValue => Boolean);
 isSheddingVertex (SimplicialComplex, RingElement) := (S, x) -> (
-    d := dim S;
     L := link(S, x);
     D := faceDelete(S, x);
     #((set first entries facets L) * (set first entries facets D)) == 0 and isVertexDecomposable(D) and isVertexDecomposable(L)
 );
 
--- Determines whether or not a simplicial complex is shellable.
+-- Determines whether or not a simplicial complex is shellable by checking
+-- for the existance of a shelling order.
 isShellable = method(TypicalValue => Boolean);
 isShellable (SimplicialComplex) := (S) -> (
+    -- Vertex-decomposability implies shellability for the pure case (Theorem
+    -- 2.8 in [PB]) and the impure case (Theorem 11.3 in [BW-2]).
+    if S.cache.?isVD and S.cache.isVD then return S.cache.isVD;
+
+    -- otherwise, look for a shelling order
     shellingOrder(S) != {}
 );
 
 -- Determines whether or not a list of faces is a shelling.
--- Uses definition III.2.1 in [St] for pure shellability.
 isShelling = method(TypicalValue => Boolean);
 isShelling (List) := (L) -> (
-    -- Check for (i) monomials, (ii) squarefree, and (iii) monic
-    if any(apply(L, size), i->i!=1) then return false;
-    if max flatten flatten apply(L, exponents) > 1 then return false;
-    if any(flatten flatten apply(L, i->entries (coefficients i)_1), i->i!=1) then return false;
+    -- Check for squarefree monic monomials
+    if any(L, f -> (size f != 1) or (max first exponents f > 1) or (entries last coefficients f != {{1}})) then return false;
 
     -- Sets with zero or one face are always shellings--they are simplices!
     if #L <= 1 then return true;
 
-    -- Uses definition 2.1 in [BW-1] for impure shellability.
+    -- Use Definition 2.1 in [BW-1] for impure shellability.
     if #unique apply(L, degree) > 1 then (
         -- Lemma 2.2 in [BW-1] shows dim L_0 == dim L, if L is a shelling
         if (max flatten apply(L, degree)) != first degree L_0 then return false;
@@ -142,7 +154,7 @@ isShelling (List) := (L) -> (
         for i from 1 to #L - 1 do (
             -- get the next set of faces
             fi = set apply(drop(subsets support L_i, {0,0}), product);
-            -- find simplicial complex of the intersection
+            -- find the simplicial complex of the intersection
             I = toList(fa * fi);
             -- handle the empty intersection case separately
             if #I == 0 then (
@@ -157,7 +169,7 @@ isShelling (List) := (L) -> (
             fa = fa + fi;
         );
     )
-    -- Uses definition III.2.1. in [St] for pure shellability.
+    -- Use Definition III.2.1. in [St] for pure shellability.
     else (
         -- prime the loop
         f0 := ta := null;
@@ -184,20 +196,29 @@ isSimplex (SimplicialComplex) := (S) -> (
 );
 
 -- Determines whether or not a simplicial complex is vertex (0-) decomposable.
--- Uses definition 2.1 in [PB] for pure complexes.
--- Uses definition 11.1 in [BW-2] for impure complexes.
+-- Uses Definition 2.1 in [PB] for pure complexes.
+-- Uses Definition 11.1 in [BW-2] for impure complexes.
 isVertexDecomposable = method(TypicalValue => Boolean);
 isVertexDecomposable (SimplicialComplex) := (S) -> (
-    -- base case: simplexes are vertex decomposable
-    if isSimplex S then return true;
-    -- pure cases are handled otherwise
-    if isPure S then return iskDecomposable(S, 0);
+    -- check the cache
+    if S.cache.?isVD then return S.cache.isVD;
+
+    -- base case: simplices are vertex-decomposable
+    if isSimplex S then return(S.cache.isVD = true);
+
+    -- pure case: vertex-decomposable => shellable => nonnegative h-Vector
+    if isPure S then (
+        if any(hVector S, i -> i < 0) then return(S.cache.isVD = false);
+    )
+    -- impure case: Theorem 11.3 in [BW-2] shows vertex-decomposable implies
+    -- shellable, hence nonnegative h-Triangle by Theorem 3.4 in [BW-1].
+    else if any(values hTriangle S, i -> i < 0) then return(S.cache.isVD = false);
+
     -- Check for shedding vertices
-    any(first entries faces(0, S), x -> isSheddingVertex(S, x))
+    S.cache.isVD = any(first entries faces(0, S), x -> isSheddingVertex(S, x))
 );
 
 -- Attempts to find a shelling order of a simplicial complex.
--- Uses definition III.2.1 in [St].
 shellingOrder = method(TypicalValue => List);
 shellingOrder (SimplicialComplex) := (S) -> (
     -- check the cache
@@ -238,9 +259,9 @@ faceDeg (List, RingElement) := (F, f) -> (
     infinity
 );
 
--- Build up a (impure) shelling recursively.
--- Uses definition 2.1 in [BW-1].
--- *Assumes P is reverse sorted by dimension.
+-- Build up an impure shelling recursively.
+-- Uses Definition 2.1 in [BW-1].
+-- !! Assumes P is reverse sorted by dimension.
 recursiveImpureShell = method(TypicalValue => List);
 recursiveImpureShell (List, List) := (O, P) -> (
     -- if it's "obvious", then keep going
@@ -268,8 +289,8 @@ recursiveImpureShell (List, List) := (O, P) -> (
         Q := {};
         d := degree P_0;
         for i from 0 to #P - 1 do (
-            -- if the dimension of the face drops,
-            -- then we can bail (see Lemma 2.6 in [BW-1])
+            -- if the dimension of the face drops, then we can bail (see
+            -- Lemma 2.6 in [BW-1])
             if degree P_i != d then return {};
             Q = recursiveImpureShell(append(O, P_i), drop(P, {i,i}));
             if Q != {} then return Q;
@@ -278,8 +299,8 @@ recursiveImpureShell (List, List) := (O, P) -> (
     {}
 );
 
--- Build up a (pure) shelling recursively.
--- Uses definition III.2.1 in [St].
+-- Build up a pure shelling recursively.
+-- Uses Definition III.2.1 in [St].
 recursivePureShell = method(TypicalValue => List);
 recursivePureShell (List, List) := (O, P) -> (
     -- if it's "obvious", then keep going
@@ -501,6 +522,9 @@ doc ///
             is {\tt k}-decomposable if {\tt S} is either a simplex or there
             exists a shedding face {\tt F} of {\tt S} of dimension at most
             {\tt k}.
+        Text
+            Checks the cache to see if the complex is vertex-decomposable to 
+            determine if it is {\tt k}-decomposable.
         Example
             R = QQ[a..f];
             iskDecomposable(simplicialComplex {a*b*c*d*e*f}, 0)
@@ -695,6 +719,8 @@ doc ///
             definiton (which is equivalent for pure complexes):  A complex
             {\tt S} is vertex decomposable if it is either a simplex or there
             exists a shedding vertex.
+        Text
+            Whether or not the complex is vertex-decomposable is cached.
         Example
             R = QQ[a..f];
             isVertexDecomposable simplicialComplex {a*b*c*d*e}
