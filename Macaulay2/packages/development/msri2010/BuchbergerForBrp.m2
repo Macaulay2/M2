@@ -57,7 +57,6 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   removeDoubleEntries F;
-  reduceGbBrp F;
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
   listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
   while #listOfIndexPairs > 0 do (
@@ -69,8 +68,8 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       -- add reducedS to intermediate basis and update the list of pairs
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
-      --reduceGbBrp F;
       newPairs = updatePairsFast( newPairs, F, n );
+      reduceGbBrp F;
       listOfIndexPairs = listOfIndexPairs | newPairs;
     );
   );
@@ -78,6 +77,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
   F
 )
 
+-- remove polynomials that appear twice in the ideal
 removeDoubleEntries = method()
 removeDoubleEntries(gbComputation) := gbComputation => F -> (
   scan( pairs F, (fKey,f) -> 
@@ -550,7 +550,7 @@ TEST ///
           18=> convert( a*k+c*l*n*f),
           19=> convert( q*r+c+q+l*n*m+i)
           }
-longTest = false 
+longTest = false
   if longTest then          
     time gbBasis = gbBrp( F, numgens R)
   N = sort apply (values gbBasis, poly -> convert(poly,R) )
