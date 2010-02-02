@@ -214,10 +214,9 @@ fVector SimplicialComplex := HashTable => S -> (
      ) else (
      	  d := dim D + 1;
      	  t := first gens ring N;
-     	  while 0 == substitute(N, t => 1) do N = N // (1-t);
      	  h := apply(reverse toList(0..d), i -> coefficient(t^i,N));
      	  f := j -> sum(0..j+1, i -> binomial(d-i, j+1-i)*h#(d-i));
-     	  new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
+     	  new HashTable from prepend(-1=>1, apply(d, j -> j => f(j)))
      ))
 
 boundary SimplicialComplex := (D) -> (
