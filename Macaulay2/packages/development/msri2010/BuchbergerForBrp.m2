@@ -35,7 +35,8 @@ exportMutable {
       }
       
 export {
-      getPolysFromList
+      getPolysFromList,
+      inList
       }
 
 scanProfile = method();
@@ -54,7 +55,7 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 -- input list - all with Brps
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
-  reduceGbBrp F;
+  removeDoubleEntries F;
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
   listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
   while #listOfIndexPairs > 0 do (
@@ -67,10 +68,12 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
       newPairs = updatePairsFast( newPairs, F, n );
+      reduceGbBrp F;
       listOfIndexPairs = listOfIndexPairs | newPairs;
     );
   );
-  reduceGbBrp F
+  reduceGbBrp F;
+  F
 )
 
 --Take polynomials from a list and make into a gbComputation
@@ -171,10 +174,21 @@ updatePairsFast(List, gbComputation, ZZ) := List => ( l, F, n) -> (
       if isRelativelyPrime(leading f, leading g) then false
       else (
         lcmPair := lcmBrps(leading f, leading g);
-        not any( values F, h-> h != g and h != f and isDivisible(lcmPair, leading h))
+        --not any( pairs F, (hKey, h) -> hKey != i and hKey != j and isDivisible(lcmPair, leading h))
+        not any( pairs F, (hKey, h)-> hKey != i and hKey != j and isDivisible(lcmPair, leading h) and not inList(j,hKey,l) and not inList(j,hKey,l) )
       )
     )
   ))
+)
+
+-- use keys of f and h and check if (f,h) is in the list
+inList= method()
+inList( ZZ, ZZ, List) := Boolean => (fKey,hKey,l) -> (
+  if fKey < hKey then 
+    pair := (fKey, hKey) 
+  else 
+    pair = (hKey, fKey);
+  any(l, p-> p == pair) -- true if it is in the list
 )
 
 -- from pair of indices get corresponding polynomials, then compute their S
@@ -355,6 +369,13 @@ Outputs
 ///
 
 TEST ///
+
+  l = {(1,2), (1,3), (-2,3), (-5,3)}
+  assert inList( 1, 2, l)
+  assert inList( 2, 1, l)
+  assert inList( 3, -2, l)
+  assert not inList(1,-2, l)
+  assert not inList(1,5, l)
   
   longTest = false
   assert( makePairsFromLists( {1,2,3,4,5}, {1,2,3,4,5}) ==  {(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5), (3, 4), (3, 5), (4, 5)})
@@ -482,7 +503,7 @@ TEST ///
           18=> convert( a*k+c*l*n*f),
           19=> convert( q*r+c+q+l*n*m+i)
           }
-longTest = true
+longTest = false 
   if longTest then          
     time gbBasis = gbBrp( F, numgens R)
   N = sort apply (values gbBasis, poly -> convert(poly,R) )
@@ -787,6 +808,8 @@ reduce (Brp, gbComputation) := Brp => (f,G) -> (
   timeInReduce = timeInReduce + t2 - t1;
   f
 )
+
+
 
 restart
 installPackage "BuchbergerForBrp"
