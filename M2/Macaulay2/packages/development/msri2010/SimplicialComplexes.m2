@@ -295,26 +295,28 @@ faceLyubeznik = (m,L) -> (
 
 lyubeznikComplex = method()
 
-
-
 lyubeznikComplex(MonomialIdeal) := (I) -> (
-     lyubeznikComplex(flatten entries gens I, ring I))
+-- Warning: lyubeznikComplex is generated with the global order given
+-- by 'gens'.
+     lyubeznikComplex(flatten entries gens I))
 
 lyubeznikComplex(List) := SimplicialComplex =>(L) -> (
         m := symbol m;
         J := symbol J;
         S := ZZ[m_0 .. m_(#L-1)];
         Delta := simplicialComplex monomialIdeal (S_0);
-        apply(toList (1..#L-2), i -> (
-           if (i > dim Delta) then break;
-           rmF := select(apply(flatten entries faces(i, Delta), F ->
-                  select(toList(0..#L-1), i -> (
-                        (F%S_i) == 0))), F -> (
-               lcmF := lcm apply(F, i -> L_i);
-               any(min F, j -> ((lcmF % L_j) == 0)))); 
-           J := monomialIdeal Delta + monomialIdeal apply(rmF, F ->
-                                product(F, i -> S_i));
-           Delta = simplicialComplex J;));
+        scan (toList (1..#L-2), i1 -> (
+           if (i1 > dim Delta) then break;
+           rmF := select(apply(flatten entries faces(i1, Delta), F ->
+                  select(toList(0..#L-1), i2 -> (
+                        (F%S_i2) == 0))), F -> (
+               lcmF := lcm apply(F, i3 -> L_i3);
+               any(min F, i4 -> ((lcmF % L_i4) == 0)))); 
+           IrmF := if (#rmF ===0) then monomialIdeal 0_S else
+		  monomialIdeal apply(rmF, F ->
+                                product(F, i5 -> S_i5));
+           J := monomialIdeal Delta + IrmF;
+           Delta = simplicialComplex J;))
         simplicialComplex flatten entries (matrix{{S_0}}*(facets Delta)))
 
 faceSuperficial = (m,L) -> (
@@ -635,19 +637,25 @@ document {
 
 
 document { 
-     Key => {lyubeznikComplex, (lyubeznikComplex,List,Ring), (lyubeznikComplex,MonomialIdeal)},
+     Key => {lyubeznikComplex, (lyubeznikComplex,List), (lyubeznikComplex,MonomialIdeal)},
      Headline => "Simplicial complex supporting the Lyubeznik resolution of a  monomial ideal",
-     Usage => "lyubeznikComplex(L,R)\nlyubeznikComplex I",
+     Usage => "lyubeznikComplex(L)\nlyubeznikComplex I",
      Inputs => {
+          "L" => List => "list of monomials in a polynomial ring",
+          "I" => MonomialIdeal => monomial ideal in a polynomial ring.
           },
      Outputs => {
+          SimplicialComplex => {"simplicial complex supporting the
+          Lyubeznik Resolution of", TT "I"}
           },
      Consequences => {
           },     
      "description",
      EXAMPLE {
           },
-     Caveat => {},
+     Caveat => {"Since", TT "lyubeznikComplex (MonomialIdeal)", "uses", 
+     TT "gens", the order of generators may be different from the one
+     given."},
 
      SeeAlso => {SimplicialComplexes}
      }
