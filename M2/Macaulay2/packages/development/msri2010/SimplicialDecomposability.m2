@@ -839,7 +839,7 @@ assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1, 0});
 assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 ///
 
--- Tests of iskDecomposable (and hence isVertexDecomposable)
+-- Tests of iskDecomposable
 TEST ///
 R = QQ[a..e];
 S = simplicialComplex {a*b*c*d*e};
@@ -929,10 +929,12 @@ assert(not isSimplex simplicialComplex {a*b, c});
 assert(not isSimplex simplicialComplex {a, b, c, d});
 ///
 
--- Tests of isVertexDecomposable (for impure complexes only, pure complexes are checked
--- when checking iskDecomposable(-, 0)).
+-- Tests of isVertexDecomposable
 TEST ///
 R = QQ[a..f];
+S = simplicialComplex {a*b*c*d*e*f};
+assert(isVertexDecomposable S);
+assert(isVertexDecomposable boundary S); -- prop 2.2 in Provan-Billera
 -- The following are from [BW-1], Figure 1.
 assert(isVertexDecomposable simplicialComplex {a*b, c});
 assert(isVertexDecomposable simplicialComplex {a*b*c, c*d, d*e, e*f, d*f});
