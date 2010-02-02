@@ -75,7 +75,9 @@ hTriangle (SimplicialComplex) := S -> (
 -- Determines the hVector of the Stanley-Reisner ideal of a simplicial complex.
 hVector = method(TypicalValue => List);
 hVector (SimplicialComplex) := (S) -> (
-    flatten entries sub(last coefficients numerator reduceHilbert hilbertSeries ideal S, ZZ)
+    N := numerator reduceHilbert hilbertSeries ideal S;
+    t := first gens ring N;
+    apply(dim S + 2, i -> coefficient(t^i,N))
 );
 
 -- Determines whether or not a pure simplicial complex is k-decomposable, as
