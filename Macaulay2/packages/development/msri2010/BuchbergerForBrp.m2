@@ -27,6 +27,7 @@ exportMutable {
       reduceLtBrp,
       reduceOneStep, 
       reduceOneStepList, 
+      removeDoubleEntries,
       SPolynomial, 
       updatePairs,
       gbBrp,
@@ -56,6 +57,7 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   removeDoubleEntries F;
+  reduceGbBrp F;
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
   listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
   while #listOfIndexPairs > 0 do (
@@ -67,14 +69,25 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       -- add reducedS to intermediate basis and update the list of pairs
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
+      --reduceGbBrp F;
       newPairs = updatePairsFast( newPairs, F, n );
-      reduceGbBrp F;
       listOfIndexPairs = listOfIndexPairs | newPairs;
     );
   );
   reduceGbBrp F;
   F
 )
+
+removeDoubleEntries = method()
+removeDoubleEntries(gbComputation) := gbComputation => F -> (
+  scan( pairs F, (fKey,f) -> 
+    scan( pairs F, (gKey,g) -> if fKey != gKey and f == g then remove(F,fKey)) 
+  );
+  F
+)
+
+
+
 
 --Take polynomials from a list and make into a gbComputation
 getPolysFromList = method()
@@ -175,7 +188,7 @@ updatePairsFast(List, gbComputation, ZZ) := List => ( l, F, n) -> (
       else (
         lcmPair := lcmBrps(leading f, leading g);
         --not any( pairs F, (hKey, h) -> hKey != i and hKey != j and isDivisible(lcmPair, leading h))
-        not any( pairs F, (hKey, h)-> hKey != i and hKey != j and isDivisible(lcmPair, leading h) and not inList(j,hKey,l) and not inList(j,hKey,l) )
+        not any( pairs F, (hKey, h)-> hKey != i and hKey != j and isDivisible(lcmPair, leading h) and not inList(i,hKey,l) and not inList(j,hKey,l) )
       )
     )
   ))
@@ -369,6 +382,40 @@ Outputs
 ///
 
 TEST ///
+
+  R = ZZ/2[x,y,z]
+  F = new gbComputation from { 0=>convert(x*y), 
+                                1=>convert(x*y)
+                              }
+  removeDoubleEntries F
+  N = sort apply (values F, poly -> convert(poly,R) )
+  assert( N == {x*y} )
+
+  F = new gbComputation from { 0=>convert(x*y), 
+                                1=>convert(x*y),
+                                2=>convert(x*y)
+                              }
+  removeDoubleEntries F
+  N = sort apply (values F, poly -> convert(poly,R) )
+  assert( N == {x*y} )
+
+  F = new gbComputation from { 0=>convert(x*y), 
+                                1=>convert(x*y+x),
+                                2=>convert(x*y)
+                              }
+  removeDoubleEntries F
+  N = sort apply (values F, poly -> convert(poly,R) )
+  assert( N == {x*y, x*y+x} )
+
+  F = new gbComputation from { 0=>convert(x*y), 
+                                1=>convert(x*y+x),
+                                2=>convert(x*y),
+                                3=>convert(x*y+x+z),
+                                4=>convert(x*y+x)
+                              }
+  removeDoubleEntries F
+  N = sort apply (values F, poly -> convert(poly,R) )
+  assert( N == {x*y, x*y+x, x*y+x+z} )
 
   l = {(1,2), (1,3), (-2,3), (-5,3)}
   assert inList( 1, 2, l)
