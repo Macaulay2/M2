@@ -206,25 +206,19 @@ homology(Nothing,SimplicialComplex) :=
 homology(SimplicialComplex) := Chaincomplex => opts -> Delta -> (
      homology(chainComplex Delta))
 
--- Modified fVector routine by David Cook II [dcook@ms.uky.edu]
--- Makes use of the reduceHilbert routine, rather than doing it manually.
--- This makes it nearly twice as fast.
 fVector = method(TypicalValue => List)
 fVector SimplicialComplex := HashTable => S -> (
-    -- get the hVector
-    h := flatten entries sub(last coefficients numerator reduceHilbert hilbertSeries ideal S, ZZ);
-    -- check for the zero-complex
-    if #h == 0 then (
-        new HashTable from {-1 => 0}
-    )
-    else (
-        d := dim S + 1;
-        -- pad with enough zeros
-        h = join(h, toList((d - #h + 1):0));
-        -- make the fVector
-        new HashTable from prepend(-1 => 1, apply(d, j -> j => sum(j+2, i -> binomial(d-i, j+1-i)*h_i)))
-    )
-);
+    N := numerator reduceHilbert hilbertSeries ideal D;
+     if N == 0 then (
+	  new HashTable from {-1 => 0}
+     ) else (
+     	  d := dim D + 1;
+     	  t := first gens ring N;
+     	  while 0 == substitute(N, t => 1) do N = N // (1-t);
+     	  h := apply(reverse toList(0..d), i -> coefficient(t^i,N));
+     	  f := j -> sum(0..j+1, i -> binomial(d-i, j+1-i)*h#(d-i));
+     	  new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
+     ))
 
 boundary SimplicialComplex := (D) -> (
      F := first entries facets D;
