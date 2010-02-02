@@ -66,12 +66,10 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       -- add reducedS to intermediate basis and update the list of pairs
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
-      --minimalGbBrp F;
       newPairs = updatePairsFast( newPairs, F, n );
       listOfIndexPairs = listOfIndexPairs | newPairs;
     );
   );
-  minimalGbBrp F;
   reduceGbBrp F
 )
 
@@ -111,7 +109,7 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
 )
 
 
---Reduce lower terms of the first polynomial with the leading term of the second
+--Reduce all terms of the first polynomial with the leading term of the second
 reduceLtBrp = method()
 reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
   while ( p := scan(f, m ->  (m = new Brp from {m}; if isReducible(m, leading g) then break m)); instance(p,Brp) ) do (
@@ -485,9 +483,9 @@ TEST ///
           19=> convert( q*r+c+q+l*n*m+i)
           }
 longTest = true
-if longTest then          
-  time gbBasis = gbBrp( F, numgens R)
-N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  if longTest then          
+    time gbBasis = gbBrp( F, numgens R)
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
 
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t)
   J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i)
