@@ -832,10 +832,10 @@ assert(hT#(3,0) == 1 and hT#(3,1) == 2 and hT#(3,2) == -1 and hT#(3,3) == 0);
 TEST ///
 R = QQ[a..e];
 assert(hVector simplicialComplex {a, b, c, d, e} === {1,4});
-assert(hVector simplicialComplex {a*b*c*d*e} === {1});
-assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2});
+assert(hVector simplicialComplex {a*b*c*d*e} === {1,0,0,0,0,0});
+assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2,0,0});
 assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
-assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1});
+assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1, 0});
 assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 ///
 
