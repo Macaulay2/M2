@@ -69,7 +69,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
       F##F = reducedS;
       newPairs = updatePairsFast( newPairs, F, n );
-      reduceGbBrp F;
+      --reduceGbBrp F;
       listOfIndexPairs = listOfIndexPairs | newPairs;
     );
   );
