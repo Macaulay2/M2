@@ -57,7 +57,9 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   removeDoubleEntries F;
+  reduceGbBrp F;
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
+  --listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
   --listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
   while #listOfIndexPairs > 0 do (
     pair := first listOfIndexPairs;
@@ -70,7 +72,6 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
         newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
         F##F = reducedS;
         --newPairs = updatePairsFast( newPairs, F, n );
-        --reduceGbBrp F;
         listOfIndexPairs = listOfIndexPairs | newPairs
       );
     );
@@ -92,7 +93,7 @@ isGoodPair = method()
 isGoodPair(Sequence, gbComputation, List,ZZ) := Boolean => ( pair, F, l, n) -> (
   assert (#pair == 2);
   (i,j) := pair;
-  if not F#?j or (i >= 0 and not F#?j) then false 
+  if not F#?j or (i >= 0 and not F#?i) then false 
   else ( 
     if i < 0 then g := new Brp from {unitvector( -i-1,n)}
     else g = F#i;
@@ -190,7 +191,7 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
 updatePairs = method()
 updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
   select(l, (i,j) -> (
-    if not F#?j or (i >= 0 and not F#?j) then false 
+    if not F#?j or (i >= 0 and not F#?i) then false 
     else ( 
       if i < 0 then g := new Brp from {unitvector( -i-1,n)}
       else g = F#i;
@@ -784,10 +785,8 @@ F = new gbComputation from { 0=> convert(a*b*c*d*e),
         11=> convert( b*s+q*n*m+i),
         12=> convert( b*k+q+l*n*m+i)
         }
-time gbBasis =  reduceGbBrp F
 time gbBasis =  gbBrp( F, numgens R) 
 N = sort apply (values gbBasis, poly -> convert(poly,R) )
-profileSummary
 QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t)
 J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i)
 time M = apply(flatten entries gens gb J, i-> lift(i,R))
