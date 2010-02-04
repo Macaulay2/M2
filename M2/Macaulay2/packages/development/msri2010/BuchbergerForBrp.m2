@@ -58,23 +58,51 @@ gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   removeDoubleEntries F;
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
-  listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
+  --listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
   while #listOfIndexPairs > 0 do (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
-    S := SPolynomial(pair, F, n);
-    reducedS := reduce (S,F);
-    if reducedS != 0 then (
-      -- add reducedS to intermediate basis and update the list of pairs
-      newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
-      F##F = reducedS;
-      newPairs = updatePairsFast( newPairs, F, n );
-      --reduceGbBrp F;
-      listOfIndexPairs = listOfIndexPairs | newPairs;
+    if isGoodPair(pair, F, listOfIndexPairs, n) then (
+      S := SPolynomial(pair, F, n);
+      reducedS := reduce (S,F);
+      if reducedS != 0 then (
+        -- add reducedS to intermediate basis and update the list of pairs
+        newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
+        F##F = reducedS;
+        --newPairs = updatePairsFast( newPairs, F, n );
+        --reduceGbBrp F;
+        listOfIndexPairs = listOfIndexPairs | newPairs
+      );
     );
   );
   reduceGbBrp F;
   F
+)
+
+-- return true if the Spolynomail for this pair needs to be computed
+-- input: * a Sequence (i,j)
+--        * an intermediate Groebner basis
+--        * the remaining list of pairs
+--        * n, number of variables in ring
+-- a pair (i,j) is good if both
+--        * not relatively prime
+--        * for all k, (i,k) or (j,k) must still be in the
+--            list, or leading term of k does not divide lcm(i,j)
+isGoodPair = method()
+isGoodPair(Sequence, gbComputation, List,ZZ) := Boolean => ( pair, F, l, n) -> (
+  assert (#pair == 2);
+  (i,j) := pair;
+  if not F#?j or (i >= 0 and not F#?j) then false 
+  else ( 
+    if i < 0 then g := new Brp from {unitvector( -i-1,n)}
+    else g = F#i;
+    f := F#j;
+    if isRelativelyPrime(leading f, leading g) then false
+    else (
+      lcmPair := lcmBrps(leading f, leading g);
+      not any( pairs F, (hKey, h)-> hKey != i and hKey != j and isDivisible(lcmPair, leading h) and not inList(i,hKey,l) and not inList(j,hKey,l) )
+    )
+  )
 )
 
 -- remove polynomials that appear twice in the ideal
@@ -172,10 +200,10 @@ updatePairs(List, gbComputation, ZZ) := List => ( l, F, n) -> (
   ))
 )
 
--- remove all relatively prime pairs, and through out all pairs (i,j), if there is an h in G, with 
--- lcm(i,j) is divisible by leading h
 -- updatePairs returns a list of all the pairs, that have to be used to compute S polynomials
--- this can not be used on an arbitrary gbComputation, it has to be reducedGbBrp first
+-- remove all relatively prime pairs, and throw out all pairs (i,j), if there is an h in G, with 
+-- lcm(i,j) is divisible by leading h
+-- this must be run on a intermediate basis with no double entries. 
 updatePairsFast = method()
 updatePairsFast(List, gbComputation, ZZ) := List => ( l, F, n) -> (
   select(l, (i,j) -> (
