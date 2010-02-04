@@ -164,13 +164,17 @@ reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
   f
 )
 
--- Reduce lower terms of intermediate GB by leading terms of other polynomials
+-- Reduce allterms of intermediate GB by leading terms of other polynomials
 reduceGbBrp = method()
 reduceGbBrp( gbComputation ) := gbComputation => F -> (
   changesHappened := true;
   while changesHappened do (
     changesHappened = false;
-    scan( pairs F, (fKey,f) ->  
+    N = sort apply (values F, p -> convert(p,R) );
+    print N;
+    scan( pairs F, (fKey,f) -> ( 
+      N = sort apply (values F, p -> convert(p,R) );
+      print N;
       scan( pairs F, (gKey,g) ->
         if fKey != gKey then (
           tmpF := reduceLtBrp(f,g);
@@ -181,6 +185,7 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
           )
         )
       )
+     )
     )
   );
   F
