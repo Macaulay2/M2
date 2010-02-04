@@ -316,8 +316,8 @@ lyubeznikComplex(List) := SimplicialComplex =>(L) -> (
 		  monomialIdeal apply(rmF, F ->
                                 product(F, i5 -> S_i5));
            J := monomialIdeal Delta + IrmF;
-           Delta = simplicialComplex J;))
-        simplicialComplex flatten entries (matrix{{S_0}}*(facets Delta)))
+           Delta = simplicialComplex J;));
+        simplicialComplex flatten entries (matrix{{S_0}}*(facets Delta)));
 
 faceSuperficial = (m,L) -> (
 -- true iff the monomial m (in #L vars) defines a face in the Superficial complex

@@ -4,8 +4,8 @@
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "0.9.4",
-    Date => "01. February 2010",
+    Version => "1.0",
+    Date => "04. February 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
