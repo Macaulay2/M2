@@ -1,5 +1,5 @@
 restart
-debug loadPackage "Dmodules"
+loadPackage "Dmodules"
 
 ///
 R = QQ[x]
@@ -122,9 +122,14 @@ time print factorBFunction generalB (F,1_R,Strategy=>InitialIdeal)
      -- used 19.39 seconds
 ///
 
-lct ideal F --lct = 3/2
-jumpingCoefficients ideal F
+Dtrace 1
+time toString jumpingCoefficients(ideal F,Strategy=>ViaLinearAlgebra,DegreeLimit=>10)
 ///
+ ({3/2, 2, 5/2},{ideal(z,y,x),
+      ideal(3*x*z+2*y*z-5*z^2,3*x*y-3*y^2+10*y*z-10*z^2,9*x^2-9*y^2+35*y*z-35*z^2,y^2*z-3*
+      y*z^2+2*z^3), ideal(3*x*z^2+2*y*z^2-5*z^3,y^2*z-3*y*z^2+2*z^3,3*x*y*z+y*z^2-4*z^3,9*
+      x^2*z+8*y*z^2-17*z^3,3*x*y^2-3*y^3+20*y*z^2-20*z^3,9*x^2*y-9*y^3+70*y*z^2-70*z^3,27*
+      x^3-27*y^3+215*y*z^2-215*z^3)})
 ///
 
 --3 collinear points
