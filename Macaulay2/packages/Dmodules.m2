@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage("Dmodules", 
-     Version => "1.3",
-     Date => "09/21/2009",
+     Version => "1.3.1.1",
+     Date => "02/08/2010",
      Headline => "functions for computations with D-modules",
      HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
      AuxiliaryFiles => true,
