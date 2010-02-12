@@ -1,10 +1,7 @@
------------------------------------------------------------------------
------------------------ Header ----------------------------------------
------------------------------------------------------------------------
 newPackage(
     "QthPower",
-    Version => "0.6", 
-    Date => "February 09, 2010",
+    Version => "0.7", 
+    Date => "February 12, 2010",
     Authors => {{Name => "Douglas A. Leonard",
                  Email => "leonada@auburn.edu",
                  HomePage => "http://www.dms.auburn.edu/~leonada"}},
@@ -12,10 +9,11 @@ newPackage(
     DebuggingMode => true
 )
 ------------------------------------------------------------------------
-export{"qthConductor", 
-       "qthIntegralClosure", 
-       "rationalIntegralClosure", 
-       "minimization"
+export{qthConductor, 
+       qthIntegralClosure, 
+       rationalIntegralClosure, 
+       minimization,
+       weightGrevlex
 }
 
 
@@ -49,7 +47,7 @@ export{"qthConductor",
 ------------------------------------------------------------------------
 
 -- dependent and independent "logs" and leading monomials of a polynomial
-logpoly := (v) -> (
+logpoly := (v,depvars,indvars) -> (
         lv := leadMonomial v;
     indlog := apply(#indvars, i->degree(indvars#i, lv));
    indprod := product(#indvars, i->(indvars#i)^(indlog#i));
@@ -64,9 +62,9 @@ geqlog := (v, w) -> (
 );
 -------------------------------------------------------------------------
 --equal dependent monomials , comparable independent monomials
-pgeq := (a,b)->(
-  if (logpoly(a))#0 == (logpoly(b))#0
-  and geqlog((logpoly(a))#2,(logpoly(b))#2)
+pgeq := (a,b,depvars,indvars)->(
+  if (logpoly(a,depvars,indvars))#0 == (logpoly(b,depvars,indvars))#0
+  and geqlog((logpoly(a,depvars,indvars))#2,(logpoly(b,depvars,indvars))#2)
   then return true;false
 );       
 -------------------------------------------------------------------------
@@ -202,7 +200,7 @@ polyrecon:=(pol,md,rng)->(
    newpoly
 );
 --------------------------------------------------------------------------------
---non-exported methods for defining monomial orderings from matrices
+--methods for defining monomial orderings from matrices
 --------------------------------------------------------------------------------
 --defining the grevlex over weight monomial ordering matrix
 grevlexWeight :=(matr)->(
@@ -215,19 +213,21 @@ grev := for i to numColumns(matr)-numRows(matr)-1 list (
        );
 --------------------------------------------------------------------------------
 --defining the weight-over-grevlex monomial ordering matrix
-weightGrevlex :=(matr)->(
-grev := for i to numColumns(matr)-numRows(matr)-1 list (
-           for j to numColumns(matr)-1 list(
-	      if i+j<numColumns(matr)-numRows(matr) then 1 else 0
-              )
-           );
-           matr||matrix(grev)
-       );
+--exported because it is used in the documentation examples
+weightGrevlex = method();
+weightGrevlex(Matrix) := (matr)-> (
+   grev := for i to numColumns(matr)-numRows(matr)-1 list (
+              for j to numColumns(matr)-1 list(
+	         if i+j < numColumns(matr)-numRows(matr) then 1 else 0
+                 )
+              );
+              matr||matrix(grev)
+          );
 --------------------------------------------------------------------------------
 --defining a ring with a monomial ordering given by a matrix
 --not just from the two types of matrices defined above
-matrixOrder :=(field,matr)->(
-     field[Variables=>numColumns matr,Weights=>entries matr]
+matrixOrder := (field,matr)-> (
+     field[Variables=>numColumns matr, Weights=>entries matr]
 );   
 --------------------------------------------------------------------------------
 --weights from a matrix
@@ -240,7 +240,7 @@ wt := (F,M) -> (
 --------------------------------------------------------------------------------
 -- Find an element D in the Noether noramlization P of R 
 -- also in the conductor,
-qthConductor := method(TypicalValue => RingElement);
+qthConductor = method(TypicalValue => RingElement);
 qthConductor(Ideal,ZZ) := (I,depno) -> (
     R := ring I;
     RP := (coefficientRing R)[gens R,MonomialOrder=>{Position=>Up,{depno,#gens R-depno}}];
@@ -253,11 +253,11 @@ qthConductor(Ideal,ZZ) := (I,depno) -> (
     j := numColumns(GP)-1;
     i := numRows(GP)-1;
     while i >= 0 and j >= 0 do(
-       while i>=0 and j>=0 and (GP_(i,j) == 0 or (logpoly(GP_(i,j)))#1 != 1) do(
+       while i>=0 and j>=0 and (GP_(i,j) == 0 or (logpoly(GP_(i,j),depvars,indvars))#1 != 1) do(
           j = j-1;
        );
        rowconductor = 0;
-       while i >= 0 and j >= 0 and GP_(i,j) != 0 and (logpoly(GP_(i,j)))#1 == 1 do(
+       while i >= 0 and j >= 0 and GP_(i,j) != 0 and (logpoly(GP_(i,j),depvars,indvars))#1 == 1 do(
 	  rowconductor=gcd(rowconductor,GP_(i,j));
 	  j = j-1;
        );
@@ -271,14 +271,14 @@ qthConductor(Ideal,ZZ) := (I,depno) -> (
 -- of the integral closure of a quotient ring 
 -- using the qth-power algorithm,
 -- the first numerator also being the common denominator, an element of P.
-icRfractions = method(TypicalValue => List);
+icRfractions = method();
 icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
    -- Initialization
-              R := ring I;
-          indno := #gens R -depno;
-        depvars := take(gens R, depno);
-        indvars := take(gens R, -indno);
-              q := char R;
+              R = ring I;
+          indno = #gens R -depno;
+        depvars = take(gens R, depno);
+        indvars = take(gens R, -indno);
+              q = char R;
               J := ideal(1_R);
          Deltaq := qthConductor(I,depno);
              fa := factor Deltaq;
@@ -309,7 +309,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 	    );
             if i !=0 then(
 	       for j to i-1 do(
-	          if e#(i-1-j) == 0 and pgeq(g#i,g#(i-1-j)) then(
+	          if e#(i-1-j) == 0 and pgeq(g#i,g#(i-1-j),depvars,indvars) then(
 		     skip = true;
 		     break;
 	          );
@@ -325,7 +325,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
                if e#i != 0 then(
                   j = #g-1;
                   while j > i and e#j != 0 do(
-                     if pgeq(g#j,g#i) and pgeq(e#j,e#i)then(  
+                     if pgeq(g#j,g#i,depvars,indvars) and pgeq(e#j,e#i,depvars,indvars) then(  
                         g = drop(g,{j,j});
 		        h = drop(h,{j,j}); 
                         e=drop(e,{j,j});
@@ -336,7 +336,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 	       --removal-----------------------
 	       j = #g-1;
 	       while j > i do(
-	          if pgeq(g#j,g#i) then(
+	          if pgeq(g#j,g#i,depvars,indvars) then(
 		     g = drop(g,{j,j});
 		     h = drop(h,{j,j});
 		     e = drop(e,{j,j});
@@ -347,9 +347,9 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
                j = 0;
                while j < i and e#i != 0 do(
                   if e#j != 0 then(
-                     logei = logpoly(e#i);
-                     logj = logpoly(e#j);	
-                     if pgeq(e#i,e#j) 
+                     logei = logpoly(e#i,depvars,indvars);
+                     logj = logpoly(e#j,depvars,indvars);	
+                     if pgeq(e#i,e#j,depvars,indvars) 
 		     and apply((logei#2-logj#2), v->v%q)==apply(indno, v->0) 
 		     then(
 		        prod = 1;
@@ -366,7 +366,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 			    h = replace(i,hi,h);
                             m = #numerators-1;
 			   while m >= 0 and ei != 0 do(
-			      if pgeq(ei,dq*numerators#m) then(
+			      if pgeq(ei,dq*numerators#m,depvars,indvars) then(
 			         ei = ei-leadTerm(ei)//leadTerm(dq*numerators#m)*dq*numerators#m; 
 			          m = #numerators;
 			      );
@@ -385,7 +385,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 			       h = insert(pos,hi,h);
 			      ei = prod^q*e#j; 
 			      while m >= 0 and ei != 0 do(
-			         if pgeq(ei,dq*numerators#m) then(
+			         if pgeq(ei,dq*numerators#m,depvars,indvars) then(
 			            ei = ei-leadTerm(ei)//leadTerm(dq*numerators#m)*dq*numerators#m; 
 			             m = #numerators;
 			         );
@@ -401,7 +401,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
                if e#i == 0 then( 
 	          j = #g-1;
 	          while j > i do(
-		     if pgeq(g#j,g#i) then( 
+		     if pgeq(g#j,g#i,depvars,indvars) then( 
 		        g=drop(g,{j,j});
 		        h=drop(h,{j,j});
 		        e=drop(e,{j,j});
@@ -414,9 +414,9 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 	       -- shifting, that is multiplication by a free variable	       
                if e#i != 0 then(
                   loop = true;   
-                  logei = logpoly(e#i);
+                  logei = logpoly(e#i,depvars,indvars);
 	          for j to #numerators-1 do(
-	             logj = logpoly(dq*numerators#j);
+	             logj = logpoly(dq*numerators#j,depvars,indvars);
 	             if logj#1 == logei#1 then(
 	                prod = 1;
 	                for k to indno-1 do(
@@ -433,7 +433,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 		            m = #numerators-1;
 			   ei = (e#i)*prod^q; 
 			   while m >= 0 and ei != 0 do(
-			      if pgeq(ei,dq*numerators#m) then(
+			      if pgeq(ei,dq*numerators#m,depvars,indvars) then(
 	                         ei = ei-leadTerm(ei)//leadTerm(dq*numerators#m)*dq*numerators#m;
 			          m = #numerators;
 			      );
@@ -447,7 +447,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 	          k = 0;
                   while k < #g do(
 	             if g#k != 0 and e#k != 0 then(	 	 
-	                logk = logpoly(e#k);
+	                logk = logpoly(e#k,depvars,indvars);
 	                if k < i and logk#0 == logei#0 then(
 	                   if all(apply((logei#2-logk#2), v->v%q), v->v==0) then(
 	                      ww = apply(indno, v->degree(indvars#v,lcm(logei#3,logk#3)//logei#3));
@@ -460,7 +460,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 			       h = insert(pos,hi,h);
 			      ei = (e#i)*prod^q; 
 			      while m >= 0 and ei != 0 do(
-			         if pgeq(ei,dq*numerators#m) then(
+			         if pgeq(ei,dq*numerators#m,depvars,indvars) then(
 	                            ei = ei-leadTerm(ei)//leadTerm(dq*numerators#m)*dq*numerators#m; 
 			             m = #numerators;
 			         );
@@ -493,7 +493,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
          i = #numerators-1;
          while i > 0 do(
             for j to i-1 do(
-               if pgeq(numerators#i,numerators#j) then(
+               if pgeq(numerators#i,numerators#j,depvars,indvars) then(
                   numerators = delete(numerators#i,numerators);
 	          break;
                );
@@ -520,13 +520,13 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
    );
    J1 = first entries gens gb J;
    J2 = sort flatten for i to #foot-1 list for j to #J1-1 list (foot#i)*(J1#j) % I;
-   J3 = for i to #J2-1 list if J2#i != 0 and member((logpoly(J2#i))#1,foot) then J2#i else continue;
+   J3 = for i to #J2-1 list if J2#i != 0 and member((logpoly(J2#i,depvars,indvars))#1,foot) then J2#i else continue;
    J4 = unique J3;
    i = #J4-1;
    while i > 0 do(
       j = i-1;
       while j >= 0 do(
-         if pgeq(J4#i,J4#j) then(
+         if pgeq(J4#i,J4#j,depvars,indvars) then(
 	    J4 = drop(J4,{i,i});
 	    break;
          );
@@ -569,7 +569,7 @@ icRring(List,Matrix) := (fractions,wtR) ->
 -------------------------------------------------------------------------------
 --induced relations for the integral closure presentation
 -------------------------------------------------------------------------------
-icRrelations = method(TypicalValue => List);
+icRrelations = method();
 icRrelations(List,Ideal,Ring,ZZ) := (fractions,I,icR,depno)-> (
           Rq := ring I;
        indno := #gens Rq - depno;  
@@ -586,7 +586,7 @@ icRrelations(List,Ideal,Ring,ZZ) := (fractions,I,icR,depno)-> (
             tailij = ((revold#i)*(revold#j))%I//(revold#-1);
             k = #fractions-1;
             while tailij != 0 and k >= 0 do(
-	       if pgeq(tailij,revold#k) then(
+	       if pgeq(tailij,revold#k,depvars,indvars) then(
 	          l = leadTerm(tailij)//leadTerm(revold#k);
 	          tailij = tailij-l*revold#k;
 	          relij = if k == #fractions-1 then relij-psi(l) else relij-psi(l)*(icR_k);
@@ -604,13 +604,13 @@ icRrelations(List,Ideal,Ring,ZZ) := (fractions,I,icR,depno)-> (
    lins := flatten( 
       for i to #fractions-2 list(
          for j from i+1 to #fractions-2 list(
-	    if (logpoly(revold#i))#0 == (logpoly(revold#j))#0 then(
+	    if (logpoly(revold#i,depvars,indvars))#0 == (logpoly(revold#j,depvars,indvars))#0 then(
 	       GCD = gcd(leadMonomial(revold#i),leadMonomial(revold#j));	
 	       tailji = (revold#i*leadTerm(revold#j))//GCD-(revold#j*leadTerm(revold#i))//GCD;
 	       relji = icR_i*psi(leadTerm(revold#j)//GCD)-icR_j*psi(leadTerm(revold#i)//GCD);
                k = #fractions-2; 
                while tailji != 0 do(
-	          if pgeq(tailji,revold#k) then(
+	          if pgeq(tailji,revold#k,depvars,indvars) then(
 	             l = leadTerm(tailji)//leadTerm(revold#k);
 	             tailji = tailji-l*revold#k;
 	             relji = relji-psi(l)*(icR_k);
@@ -630,7 +630,7 @@ icRrelations(List,Ideal,Ring,ZZ) := (fractions,I,icR,depno)-> (
 -------------------------------------------------------------------------------
 -- ZZ/q version
 -------------------------------------------------------------------------------
-qthIntegralClosure := method(TypicalValue => List);
+qthIntegralClosure = method();
 qthIntegralClosure(Matrix,Ring,List) := (wtR,Rq,Iq) -> (
          q = char Rq;
      indno = numRows wtR;
@@ -660,7 +660,7 @@ qthIntegralClosure(Matrix,Ring,List) := (wtR,Rq,Iq) -> (
 ------------------------------------------------------------------------------
 --QQ version
 ------------------------------------------------------------------------------
-rationalIntegralClosure := method(TypicalValue => List);
+rationalIntegralClosure = method();
 rationalIntegralClosure(Matrix,Ring,List) := (wtR,R0,I0) -> (
            I = ideal(I0);
        indno = numRows(wtR);
@@ -766,7 +766,7 @@ rationalIntegralClosure(Matrix,Ring,List) := (wtR,R0,I0) -> (
 -------------------------------------------------------------------------------
 -- possible change of Noether normalization 
 -- to minimize the number of dependent variables needed
-minimization := method(TypicalValue => List);
+minimization = method();
 minimization(List,Matrix,Ring,List) := (fractions,wticR,icR,relicR) -> (
      depno := #fractions -1;
          T := reverse(entries transpose wticR);
@@ -812,83 +812,312 @@ minimization(List,Matrix,Ring,List) := (fractions,wticR,icR,relicR) -> (
       I2 = for i to #I1-1 list if first degree(leadMonomial(I1#i)) != 1 then I1#i; 
       I3 = delete(,I2);
       I4 = apply(I3,v->sub(v,R1));
-    return  {wtR1,R1,I4}
+      return {wtR1,R1,I4}
    )
    else(
-     return {wticR,icR,relicR}
+      return {wticR,icR,relicR}
    );   	   
 );   
 
+
 -------------------------------------------------------------------------------
+----------------------  Documentation -----------------------------------------
 -------------------------------------------------------------------------------
---TEST 
+beginDocumentation()
+
+document {
+     Key => QthPower,
+     ---------------------------------------------------------------------------
+     -- PURPOSE : Compute the integral closure of a type I integral domain
+     --           (see Leonard 2001, Leonard and Pellikaan 2003, Leonard 2009)
+     -- PROGRAMS : qthConductor
+     --            qthIntegralClosure
+     --            rationalIntegralClosure
+     --            minimization
+     -- wtR is a weight matrix for the input R/I 
+     -- with the last indno variables defining a Noether normalization of R 
+     -- qthConductor computes a conductor element in P
+     -- icRfractions computes a list of numerators
+     -- defining numerators for a P-module generating set of fractions for icR,  
+     -- with the zero-th numerator also the common denominator 
+     -- qthIntegralClosure also returns the ring icR, 
+     -- and the induced relations for the ideal presenting the integral closure
+     -- PROGRAMMERs : This implementation was written by and is maintained by
+     --               Douglas A. Leonard.
+     -- THANKS: Mark van Hoeij, David Cook, and those who wrote IntegralClosure.m2
+     --         and/or helped me understand some of Macaulay 2's philosophy  
+     -- UPDATE HISTORY : 11 February 2010
+     ---------------------------------------------------------------------------
+     PARA {
+	  "This package computes the integral closure of type I affine domains 
+	  using the qth-power algorithm from 
+	  D.A.Leonard, 
+	  Finding the missing functions for one-point AG codes, 
+	  IEEE Trans. Inform.Theory, 47(6), 2001, pp. 2566-3573,
+	  D.A.Leonard and R.Pellikaan,
+	  Integral closures and weight functions over finite fields,
+          Finite Fields and Their Applications 9(4), 2003, pp. 479-504,
+	  D.A.Leonard,
+	  A weighted module view of integral closures of affine domains of type I, 
+	  Advances in Mathematics of Communication 3(1), 2009, pp. 1-11. 
+	  (icFracP in the IntegralClosure package of Macaulay 2 and normalP
+          in Singular's normal package are attempts to generalize this by ignoring
+          all of the structure that is required by this package in order to produce similarly
+          structured output.) Also this package contains the extension to examples
+          over the rationals; which, in turn, allows for quicker answers over ZZ/q for most large q."
+	  }
+     }
+--------------------------------------------------------------------------------------------------------
+
+document {
+     Key => {
+	  weightGrevlex, (weightGrevlex, Matrix)
+	  },
+     Headline => "transform a weight matrix into a monomial ordering matrix",
+     Usage => "wtgrev=weightGrevlex(wtR)",
+     Inputs => {
+	  "wtR" => "a weight matrix"
+	  },
+     Outputs => { 
+	  "wtgrev" => Matrix => "weight-over-grevlex matrix" 
+	  },
+     EXAMPLE lines ///
+          wtR = matrix{{5,6,6},{3,6,0}};
+          weightGrevlex(wtR) 
+          ///,
+     PARA {
+     	  "The rest of the world only completes single row weights this way,
+	   whereas M2 only completes a single row and does it differently."
+     	  }
+     }	
+
+document {
+     Key => {
+	  qthIntegralClosure, (qthIntegralClosure, Matrix, Ring, List)
+	  },
+     Headline => "computes integral closures in positive characteristic",
+     Usage => "(fractions,wticR,icR,relicR) = qthIntegralClosure(wtR,Rq,Iq)",
+     Inputs => {
+	  "wtR" => "weight matrix",
+	  "Rq" => "ring with weight-over-grevlex order",
+	  "Iq" => "set of generators for the ideal of relations"
+	  },
+     Outputs => {
+	  "fractions" => List => "numerators of P-module generating set", 
+	  "wticR" => Matrix => "weight matrix for the integral closure",
+	  "icR" => Ring => "grevlex-over-weight polynomial ring for the presentation",
+	  "relicR" => List => "and Gr\"obner basis for the ideal of induced relations"
+	  },
+     EXAMPLE lines ///
+           wtR = matrix{{5,6,6},{3,6,0}}; 
+	       Rq = ZZ/23[x,y,z,Weights=>entries weightGrevlex(wtR)];
+           Iq = {x^6+x^3*z-y^3*z^2};
+      	   (fractions,wticR,icR,relicR) = qthIntegralClosure(wtR,Rq,Iq)
+          ///,
+     PARA {
+     	  "There are probably still problems with this taking 
+	  too much time and space on the last pass."
+     	  }
+     }	   
+-----------------------------------------------------------------------------------
+ document {
+     Key => {
+	  rationalIntegralClosure, (rationalIntegralClosure, Matrix, Ring, List)
+	  },
+     Headline => "computes integral closures over the rationals",
+     Usage => "(fractions,wticR,icR,relicR) = rationalIntegralClosure(wtR,Rq,Iq)",
+     Inputs => {
+	  "wtR" => {"weight matrix"},
+	  "R0" => {"ring with weight-over-grevlex order"},
+	  "I0" => {"set of generators for the ideal of relations"}
+	  },
+     Outputs => {
+	  "fractions" => List => "a list of numerators for a P-module generating set", 
+	  "wticR" => Matrix => " weight matrix for the integral closure", 
+	  "icR" => Ring => "a grevlex-over-weight polynomial ring for the presentation", 
+	  "relicR" => List => "a Gr\"obner basis for the ideal of induced relations"
+	  },
+     EXAMPLE lines ///
+           wtR = matrix{{11,6}};
+           R0 = QQ[y,x,Weights=> entries weightGrevlex(wtR)];
+           I0 = {(y^2-3/4*y-15/17*x)^3-9*y*x^4*(y^2-3/4*y-15/17*x)-27*x^11};
+           (fractions,wticR,icR,relicR) = rationalIntegralClosure(wtR,R0,I0)
+          ///,
+     PARA {
+     	  "There are no extra problems noted here yet."
+     	  }
+     }	   
+ -----------------------------------------------------------------------------------
+ document {
+     Key => {
+	  qthConductor, (qthConductor, Ideal, ZZ)
+	  },
+     Headline => "computes a conductor element which also lives in the given Noether normalization",
+     Usage => "qthConductor(I,depno)",
+     Inputs => {
+	  "I" => {"ideal of relations"},
+	  "depno" => {"number of dependent variables"}
+	  },
+     Outputs => {
+	  "delta"=> RingElement => {"a conductor element"}
+	  },
+--     EXAMPLE lines ///
+--           wtR = matrix{{12,5}};
+--           Rq = ZZ/2[y,x,Weights=> entries weightGrevlex(wtR)];
+--           Iq = {y^5+y^2*(x^4+x)+y*x^2+x^12};
+--	     indno = numRows wtR;
+--           depno = (numColumns wtR) -indno;
+--           indvars = take(gens Rq, -indno);
+--           depvars = take(gens Rq, depno);
+--           delta = qthConductor(ideal Iq,depno)
+--          ///,
+     PARA {
+     	  "Why doesn't this documentation example work?"
+     	  }
+     }	   
+
+-----------------------------------------------------------------------------------
+ document {
+     Key => {
+	  minimization, (minimization, List, Matrix, Ring, List)
+	  },
+     Headline => "change to a better Noether normalization",
+     Usage => "(newwticR,newicR,newrelicR) = minimization(fractions, wticR, icR, relicR)",
+     Inputs => {
+	  "fractions" => {"ring elements defining a P-module generating set for icR"},
+	  "wticR" => {"a weight matrix"},
+	  "icR" => {"a ring"},
+	  "relicR" => {"a grobner basis for the relation ideal"}
+	  },
+     Outputs => { 
+	  "newwticR" => Matrix => "weight matrix", 
+	  "newicR" => Ring => "ring", 
+	  "newrelicR" => List => "Gr\"obner basis of relations"
+	  },
+     EXAMPLE lines ///
+          wtR = matrix{{31,12}};
+           Rq = ZZ/2[y,x,Weights=>entries weightGrevlex(wtR)];
+    	   Iq = {y^12+y^11+y^10*x^2+y^8*x^9+x^31};
+          ic1 = qthIntegralClosure(wtR,Rq,Iq)
+          ic2 = minimization(ic1);
+    	  ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+          ///,
+     PARA {
+     	  "What can I do to pass the output of ic2 to ic3?"
+     	  }
+     }	
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+TEST ///
 -------------------------------------------------------------------------------
 -- SINGULAR example 3.7.3 modified slightly to make it more interesting
 wtR1 = matrix{{5,6,6},{3,6,0}};
 Rq = ZZ/109[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 Iq = {x^6+x^3*z-y^3*z^2};
-time icq = qthIntegralClosure(wtR1,Rq,Iq);
--- compare to time ICq = gens gb presentation integralClosure(Rq/Iq)
+time icq = qthIntegralClosure(wtR1,Rq,Iq)
+assert(icq#1 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
+-- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
 
 R0 = QQ[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 I0 = {x^6+x^3*z-y^3*z^2};
-time ic = rationalIntegralClosure(wtR1,R0,I0);
--- compare to time IC0=gens gb presentation integralClosure(R0/I0)
+time ic = rationalIntegralClosure(wtR1,R0,I0)
+assert(ic#1 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
+-- compare to/contrast with time IC0=gens gb presentation integralClosure(R0/I0)
 
 
 --example 1, disguised Hermitian-----------------------------------------
+-- so, in need of minimization--------------------------------
 wtR2 = matrix{{9,8}};
 Rq = ZZ/17[y,x,Weights=>entries(weightGrevlex(wtR2))];
 Iq = {y^8-x^9+2*y*x^6-y^2*x^3};
 time ic1 = qthIntegralClosure(wtR2,Rq,Iq)
 time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2);
--- compare to time ICq = gens gb presentation integralClosure(Rq/Iq)
+time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+assert( ic3#1 == matrix{{15,10,5,4}})
+-- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
 
 wtR3 = matrix{{9,8}};
 R0 = QQ[y,x,Weights=>entries(weightGrevlex(wtR3))];
 I0 = {y^8-x^9+2*y*x^6-y^2*x^3};
 time rationalIntegralClosure(wtR3,R0,I0);
-time ic1 = qthIntegralClosure(wtR3,Rq,Iq);
+time ic1 = qthIntegralClosure(wtR3,Rq,Iq)
 time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2);
--- compare to time IC0 = gens gb presentation integralClosure(R0/I0)
+time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+assert(ic3#1 == matrix{{15,10,5,4}})
+-- compare to/contrast with time IC0 = gens gb presentation integralClosure(R0/I0)
 
 --generic example over QQ with moderate coefficients to be reconstructed 
 wtR4 = matrix{{11,6}};
 R0 = QQ[y,x,MonomialOrder=>{Weights=>{11,6},Weights=>{1,0}}];
 I0 = {(y^2-3/4*y-15/17*x)^3-9*y*x^4*(y^2-3/4*y-15/17*x)-27*x^11};
-time rationalIntegralClosure(wtR4,R0,I0);
+time ic = rationalIntegralClosure(wtR4,R0,I0)
+assert(ic#1 == matrix{{25,21,20,11,10,6}})
+--compare to/contrast with time IC0 = gens gb presentation integralClosure(R0/I0)
 
-
---time IC0 = gens gb presentation integralClosure(R0/I0)
-
---example 7, Leonard 2009 not free---------------------------------------
+--example 7, Leonard 2009 not free as a P-module--------------------------
 wtR5 := matrix{{19,15,12,9,9},{12,9,9,9,0}};
 Rq = ZZ/2[z19,y15,y12,x9,u9,Weights=>entries(weightGrevlex(wtR5))];
 Iq = {y15^2+y12*x9*u9,
       y15*y12+x9^2*u9+x9*u9^2+y15,
       y12^2+y15*x9+y15*u9+y12,
       z19^3+z19*(y15+y12)*(x9+1)*u9+(y15*(x9+u9)+y12*(x9*u9+1))*x9^2*u9};
-time qthIntegralClosure(wtR5,Rq,Iq);
-
--- compare to time ICq = gens gb presentation integralClosure(Rq/Iq)
+time icq = qthIntegralClosure(wtR5,Rq,Iq)
+assert(icq#1 == matrix{{34,34,31,29,26,23,19,15,12,9,9},{30,21,21,24,24,15,12,9,9,9,0}})
+-- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
 
 --generic example with non-trivial minimization-------------------------
+-- M2's integralClosure never gives an answer
+-- icFracP takes 8873 seconds for even ZZ/5
 wtR6 := matrix{{31,12}};
 Rq = ZZ/2[y,x,Weights=>entries(weightGrevlex(wtR6))];
 Iq = {y^12+y^11+y^10*x^2+y^8*x^9+x^31};
-time ic1 = qthIntegralClosure(wtR6,Rq,Iq);
+time ic1 = qthIntegralClosure(wtR6,Rq,Iq)
 time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2);
+time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+assert(ic3#1 == matrix{{38,31,24,12,5}})
+-- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
+-- compare to/contrast with time Icq = icFracP(Rq/Iq);
 
--- compare to time ICq = gens gb presentation integralClosure(Rq/Iq)
--- compare to time Icq = icFracP(Rq/Iq);
+--from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs. 
+--QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+--written as though it is in (QQ[x])[y] and without any thought of the underlying weights 7 and 4
+wtR7 = matrix{{7,4}};
+Rq = QQ[y,x,Weights=>entries weightGrevlex(wtR7)];
+Iq = {y^4-x^7-4*y*x^5-2*y^2*x^3+x^6};
+time ic1 = rationalIntegralClosure(wtR7,Rq,Iq);
+time ic2 = minimization(ic1);
+--time ic3 = rationalIntegralClosure(ic2#0,ic2#1,ic2#2)
+--assert(ic3#1 == matrix{{3,2}}
 
+
+--from the IntegralClosure package
+-- not type I, but amenable to grevlex weights
+wtR8 = matrix{{1,1}};
+R0=QQ[v,u,Weights=>entries weightGrevlex(wtR8)];
+I0={1/5*(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)};
+time ic = rationalIntegralClosure(wtR8,R0,I0);
+assert(ic#1 == matrix{{2,2,2,2,1,1}})
+--MAGMA example found in GLS-----------------------
+-- genus 1, but try to figure that out from most pesentations
+--(x-y)*x*(y+x^2)^3-y^3*(x^3+x*y-y^2)=0
+--change of variables gives a type I problem
+
+wtR9 = matrix{{11,7}};
+Rq = ZZ/5[w,z,Weights => entries weightGrevlex(wtR9)];
+Iq = {w^7+3*w^6*z+w^6+3*w^5*z^3+6*w^5*z^2+9*w^4*z^4+4*w^3*z^6-w^3*z^5-3*w^2*z^7-3*w*z^9-z^11};
+time ic1 = qthIntegralClosure(wtR9,Rq,Iq)
+time ic2 = minimization(ic1);
+time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+assert(ic3#1 == matrix{{3,2}})
+--compare to/contrast with time icf = icFracP(Rq/Iq)
+--compare to/contrast with time ic = integralClosure(Rq/Iq)
 
 --possibly too large an example unless separated-------------------------
-wtR7 := matrix{{25,21}};
-Rq := ZZ/2[y,x,Weights=>entries(weightGrevlex(wtR7))];
+wtR10 := matrix{{25,21}};
+Rq := ZZ/2[y,x,Weights=>entries(weightGrevlex(wtR10))];
 Iq := {
    y^21
   +y^20*x
@@ -912,171 +1141,10 @@ Iq := {
   +y*(x^23+x^22+x^20+x^17+x^15+x^14+x^12+x^9)
   +(x^25+x^23+x^19+x^17+x^15+x^13+x^11+x^5)};
 
---time ic1 = qthIntegralClosure(wtR7,Rq,Iq);
+--time ic1 = qthIntegralClosure(wtR10,Rq,Iq)
+--time ic2 = minimization(ic1);
+--time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+--assert(ic3#1 == matrix{{16,15,13,12,11,10,7}}
 
 
---from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs. 
---QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
---written as though it is in (QQ[x])[y] and without any thought of the underlying weights 7 and 4
-wtR8 = matrix{{7,4}};
-Rq = QQ[y,x,Weights=>entries weightGrevlex(wtR8)];
-Iq = {y^4-x^7-4*y*x^5-2*y^2*x^3+x^6};
-time ic1 = rationalIntegralClosure(wtR8,Rq,Iq);
-time ic2 = minimization(ic1);
-
-
-wtR9 = matrix{{31,12}};
-Rq = ZZ/2[y,x,Weights=>entries weightGrevlex(wtR9)];
-Iq = {y^12+x^31+y^8*x^9+y^11+y^10*x^2};
-time ic1 = qthIntegralClosure(wtR9,Rq,Iq);
-time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2);
-
-wtR10 = matrix{{1,1}};
-R0=QQ[v,u,Weights=>entries weightGrevlex(wtR10)];
-I0={1/5*(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)};
-time ic = rationalIntegralClosure(wtR10,R0,I0);
-
-
--------------------------------------------------------------------------------
-----------------------  Documentation -----------------------------------------
--------------------------------------------------------------------------------
-beginDocumentation()
-
-document {
-     Key => QthPower,
-     ---------------------------------------------------------------------------
-     -- PURPOSE : Compute the integral closure of a type I integral domain
-     --           (see Leonard 2001, Leonard and Pellikaan 2003, Leonard 2009)
-     -- PROGRAMS : qthConductor
-     --            qthIntegralClosure
-     --            rationalIntegralClosure
-     --            minimization
-     -- wtR is a weight matrix for the input R/I 
-     -- with the last indno variables defining a Noether normalization of R 
-     -- qthConductor computes a conductor element in P
-     -- icRfractions computes a list of numerators
-     -- defining numerators for a P-module generating set of fractions for icR,  
-     -- with the zero-th also the common denominator 
-     -- qthIntegralClosure also returns the ring icR, 
-     -- and the induced relations for the ideal presenting the integral closure
-
-     -- PROGRAMMERs : This implementation was written by and is maintained by
-     --               Douglas A. Leonard.
-     -- THANKS: Mark van Hoeij, David Cook, and those who wrote IntegralClosure.m2
-     --         and/or helped me understand some of Macaulay 2's philosophy  
-     -- UPDATE HISTORY : 09 February 2010
-     ---------------------------------------------------------------------------
-     PARA {
-	  "This package computes the integral closure of type I affine domains 
-	  using the qth-power algorithm from Leonard's 2001 paper in IEEE Transactions
-          on Information Theory, also found in the 2003 paper by Leonard and Pellikaan
-          in Finite Fields and their Applications, and in the 2009 paper by Leonard 
-	  in Advances in the Mathematics of Communication 
-	  (icFracP in the IntegralClosure package of Macaulay 2 and normalP
-          in Singular's normal package are attempts to generalize this by ignoring
-          all of the structure required by this package in order to produce similarly
-          structured output.) Also this package contains the extension to examples
-          over the rationals, which allow for quicker answers over ZZ/q for most large q."
-	  }
-     }
-
-
-document {
-     Key => {qthIntegralClosure, (qthIntegralClosure, Matrix,Ring,List)},
-     Headline => "Compute the integral closure of a type I integral domain in positive characteristic",
-     Usage => "qthIntegralClosure(wtR,Rq,Iq)",
-     Inputs => {
-	TT "wtR" => {" an indno by (depno+indno) matrix of weights"},
-	TT "Rq" => {" the input polynomial ring, with weight-over-grevlex order "},
-	TT "Iq" => {" a list of generators for the input ideal"},
-	  },
-     Outputs => {{ofClass List,  
-	       TT "fractions", "the list of numerators for fractions for a P-module presentation", 
-	       TT "wticR", "the new weight matrix",
-	       TT "icR", "the new polynomial ring with grevlex-over-weight monomial order for the presentation",
-	       TT "relicR", "a Gr\"obner basis for the ideal of induced relations defining the integral closure."  
-               }
-	  },
-
-     PARA{
-     	  "A simple example."
-	  },
-      EXAMPLE {
-	  "wtR = matrix{{5,6,6},{3,6,0}};", 
-	  "Rq = ZZ/23[x,y,z,Weights=>entries weightGrevlex(wtR)];",
-          "Iq ={x^6+x^3*z-y^3*z^2};",
-      	  "qthIntegralClosure(wtR,Rq,Iq)"},
-     
-document {
-     Key => {rationalIntegralClosure, (rationalIntegralClosure, Matrix,Ring,List)},
-     Headline => "Compute the integral closure of a type I integral domain over the rationals",
-     Usage => "rationalIntegralClosure(wtR,R0,I0)",
-     Inputs => {
-	TT "wtR" => {" an indno by (depno+indno) matrix of weights"},
-	TT "R0" => {" the input polynomial ring, with weight-over-grevlex order "},
-	TT "I0" => {" a list of generators for the input ideal"},
-	  },
-     Outputs => {{ofClass List,  
-	       TT "fractions", "the list of numerators for fractions for a P-module presentation", 
-	       TT "wticR", "the new weight matrix",
-	       TT "icR", "the new polynomial ring with grevlex-over-weight monomial order for the presentation",
-	       TT "relicR", "a Gr\"obner basis for the ideal of induced relations defining the integral closure."  
-               }
-	  },
-
-     PARA{
-     	  "A simple example with non-trivial coefficients to reconstruct."
-	  },
-      EXAMPLE {
-          "wtR = matrix{{11,6}};",
-	  "R0 = QQ[y,x,Weights=> entries weightGrevlex(wtR)];",
-	  "I0 = (y^2-3/4*y-15/17)^3-9*y*(y^2-3/4*y-15/17*x)-27*x^11;",
-	  "rationalIntegralClosure(wtR,R0,I0)",
-     
-
-document {
-     Key => {qthConductor,(qthConductor,Ideal,ZZ)},
-     Headline => "compute a conductor element that is restricted to the implicit Noether normalization, P",
-     Usage => "qthConductor(I,depno)",
-     Inputs => {
-	 TT "I" => {"the ideal generated by the integral closure input"}, 
-	 TT "depno" => {"the number of dependent variables"},
-	  },
-     Outputs => {
-	  {ofClass RingElement, " that is a conductor of the input ring into its integral closure"
-	  },
-     " Delta ic(Rq/Iq) subset Rq/Iq", 
-     EXAMPLE {
-	  "qthConductor(ideal I0,1)",
-	  },
-
-
-document {
-     Key => {minimization, (minimization, List, Matrix, Ring, List)},
-     Headline => "change to a better Noether normalization, if possible",
-     Usage => "minimization(fractions, wticR, icR, relicR)",
-     Inputs => {
-	TT "fractions" => {"a list from icRfractions"},
-        TT "wticR" => {"a weight matrix from icRweightmatrix"},
-	TT "icR" => {"a ring from icRring "},
-	TT "relicR" => {"a list of relations from icRrelations"}, 
-	},
-     Outputs => {{ofClass List, TT "(wtR1,R1,I1)", "useable as input to qthIntegralClosure or rationalIntegralClosure",
-          },
-
-     PARA{},
-     "A simple example",
-     EXAMPLE {
-          "wtR = matrix{{31,12}};",
-	  "Rq = ZZ/2[y,x,Weights=>entries weightGrevlex(wtR)];",
-	  "Iq = {y^12+y^11+y^10*x^2+y^8*x^9+x^31};",
-          "ic1 = qthIntegralClosure(wtR,Rq,Iq);",
-	  "ic2 = minimization(ic1);",
-	  "ic3 = qthIntegralClosure(ic2)",
-     },
-}
-
-
-
-
+///
