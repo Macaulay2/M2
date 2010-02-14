@@ -2,8 +2,8 @@
 load "BitwiseRepresentationPolynomials.m2"
 newPackage(
 	"BuchbergerForBrp",
-    	Version => "0.0", 
-    	Date => "January 11,2010",
+    	Version => "0.3", 
+    	Date => "February11,2010",
     	Authors => {
 	     {Name => "Franziska Hinkelmann, Elizabeth Arnold, Samuel S", Email => "fhinkel@vt.edu"}
 	     },
@@ -17,7 +17,7 @@ needsPackage "BitwiseRepresentationPolynomials"
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-exportMutable {
+exportMutable { -- these should all be private, but for testing purposes, they are here
       makePairsFromLists, 
       gbComputation,
       isReducible,
@@ -31,36 +31,32 @@ exportMutable {
       SPolynomial, 
       updatePairs,
       gbBrp,
-      scanProfile,
-      applyProfile
+      inList
       }
       
 export {
-      getPolysFromList,
-      inList
+      getPolysFromList
       }
 
-scanProfile = method();
-scanProfile = scan;
-
-applyProfile = method();
-applyProfile = applyValues;
-
+-- for intermediate groebner basis
+-- polynomials are indexed by their key
 -- keys should start with 0
 gbComputation = new Type of MutableHashTable; 
 
 -- generate the unit vectors representing x_i
 unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 
--- wrapper script for debugging purposes, creates a Groebner basis from the
--- input list - all with Brps
+-- create a Groebner basis from the input list - all with Brps
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   removeDoubleEntries F;
+
+  -- do this here, it changes the order of polynomials and makes iterating through the list faster
+  reduceGbBrp F;
   nextIndex = #F; --index polynomial should have if added to F (better than #F because reduction might remove elements from F
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
 
-  --- maybe we should pre-process the list, because isGoodPair is doint a inList? 
+  --- maybe we should pre-process the list, because isGoodPair is doing a inList? 
   --listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
   --listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
 
@@ -118,9 +114,6 @@ removeDoubleEntries(gbComputation) := gbComputation => F -> (
   F
 )
 
-
-
-
 --Take polynomials from a list and make into a gbComputation
 getPolysFromList = method()
 getPolysFromList(List) := gbComputation => S -> (
@@ -129,7 +122,6 @@ getPolysFromList(List) := gbComputation => S -> (
   F
 )
     
-
 -- delete elements where the leading term is divisible by another leading term
 minimalGbBrp = method()
 minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
@@ -297,7 +289,7 @@ reduceOneStepList = method()
 reduceOneStepList(Brp, gbComputation) := (Brp, Boolean) => (f, G) -> (
   if f != 0 then (
     ret := true;
-    scanProfile( values G, g -> if isReducible(f, g) then ( f = reduceOneStep(f,g); ret = false; break) );
+    scan( values G, g -> if isReducible(f, g) then ( f = reduceOneStep(f,g); ret = false; break) );
     (f,ret)
   ) 
   else ( new Brp from {}, true)
@@ -586,15 +578,15 @@ TEST ///
           19=> convert( q*r+c+q+l*n*m+i)
           }
 longTest = false
-  if longTest then          
-    time gbBasis = gbBrp( F, numgens R)
-  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  if longTest then (         
+    time gbBasis = gbBrp( F, numgens R);
+    N = sort apply (values gbBasis, poly -> convert(poly,R) );
 
-  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t)
-  J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i)
-  time M = apply(flatten entries gens gb J, i-> lift(i,R))
-if longTest then          
-  assert(N == M)
+    QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+    J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i);
+    time M = apply(flatten entries gens gb J, i-> lift(i,R));
+    assert(N == M)
+  )
   
 
 longTest = true
@@ -727,8 +719,6 @@ if longTest then
  assert(L#3 == new Brp from {{0, 1, 0}, {0, 0, 1}})
  assert(L#4 == new Brp from {{0, 1, 0}, {0, 0, 0}})
 	
- 
-  
 ///
   
        
@@ -737,158 +727,6 @@ end
 -- Here place M2 code that you find useful while developing this
 -- package.  None of it will be executed when the file is loaded,
 -- because loading stops when the symbol "end" is encountered.
-
-restart
-installPackage "BuchbergerForBrp"
-installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
-check BuchbergerForBrp
-
-  
-  R = ZZ/2[a..j, MonomialOrder=>Lex]
-  F = new gbComputation from { 0=> convert(a*b*c*d*e),
-          1=> convert( a+b*c+d*e+a+b+c+d),
-          2=> convert( j*h+i+f),
-          3=> convert( g+f),
-          4=> convert( a+d),
-          5=> convert( j+i+d*c)
-          }
- time  gbBasis = gbBrp( F, numgens R)
- 
-
-restart
-installPackage "BuchbergerForBrp"
-installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
-leading = profile leading;
-gbBrp= profile gbBrp;
-makePairsFromLists= profile  makePairsFromLists; 
-isReducible= profile  isReducible;
-minimalGbBrp= profile  minimalGbBrp;
-reduce= profile  reduce;
-reduceGbBrp= profile  reduceGbBrp;
-reduceLtBrp= profile  reduceLtBrp;
-reduceOneStep= profile  reduceOneStep; 
-reduceOneStepList= profile  reduceOneStepList; 
-SPolynomial= profile  SPolynomial; 
-updatePairs= profile  updatePairs;
-lcmBrps = profile lcmBrps;
-divide = profile divide;
-scanProfile = profile scan;
-applyProfile = profile apply;
-
-
-R = ZZ/2[a..t, MonomialOrder=>Lex]
-F = new gbComputation from { 0=> convert(a*b*c*d*e),
-        1=> convert( a+b*c+d*e+a+b+c+d),
-        2=> convert( j*h+i+f),
-        3=> convert( g+f),
-        4=> convert( a+d),
-        5=> convert( j+i+d*c),
-        6=> convert( r+s+t),
-        7=> convert( m*n+o*p),
-        8=> convert( t+a),
-        9=> convert( b*s+q+p*n*m+i),
-        10=> convert( b*s+q+p+h),
-        11=> convert( b*s+q*n*m+i),
-        12=> convert( b*k+q+l*n*m+i)
-        }
-time gbBasis =  gbBrp( F, numgens R) 
-N = sort apply (values gbBasis, poly -> convert(poly,R) )
-QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t)
-J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i)
-time M = apply(flatten entries gens gb J, i-> lift(i,R))
-assert(N == M)
-
-restart
-installPackage "BuchbergerForBrp"
-installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
-check BuchbergerForBrp
-
-l = 10000
-a = cpuTime();
-myHash = new HashTable from apply( l, i -> if i == l-1 then i => new Brp from {} else i => new Brp from { {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} });
-b = cpuTime();
-b-a
-a = cpuTime();
-myList = apply( l, i -> if i == l-1 then new Brp from {} else new Brp from { {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} });
-b = cpuTime();
-b-a
-values myHash == myList
-f = false
-a = cpuTime();
-applyValues(myHash, i -> if i == 0 then 0 else i)
-b = cpuTime();
-b-a
-a = cpuTime();
-values myHash;
-b = cpuTime();
-b-a
-a = cpuTime();
-scan(myList, i -> if i == 0 then (found = true,break) )
-b = cpuTime();
-b-a
-
-apply( values myHash, i -> if i == 0 then break f )
-
-
-restart
-installPackage "BuchbergerForBrp"
-installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
-check BuchbergerForBrp
- 
- R = ZZ/2[a..t, MonomialOrder=>Lex]
-  F = new gbComputation from { 0=> convert(a*b*c*d*e),
-          1=> convert( a+b*c+d*e+a+b+c+d),
-          2=> convert( j*h+i+f),
-          3=> convert( g+f),
-          4=> convert( a+d),
-          5=> convert( j+i+d*c),
-          6=> convert( r+s+t),
-          7=> convert( m*n+o*p),
-          8=> convert( t+a),
-          9=> convert( b*s+q+p*n*m+i),
-          10=> convert( b*s+q+p+h),
-          11=> convert( b*s+q*n*m+i),
-          12=> convert( b*k+q+l*n*m+i)
-          };
-timeInReduce = 0;
-  time ( gbBrp( F, numgens R) )
-timeInReduce
-profileSummary
-
-
--- reduce the leading term of a polynomial f one step by the first polynomial
--- g_i in the intermediate basis that satisfies isReducible(f,g_i)
-reduceOneStepList = method()
-reduceOneStepList(Brp, gbComputation) := (Brp, Boolean) => (f, G) -> (
-  t1 := cpuTime();
-  if f != 0 then (
-    ret := true;
-    scanProfile( values G, g -> if isReducible(f, g) then ( f = reduceOneStep(f,g); ret = false; break) );
-  ) 
-  else ( 
-    f = new Brp from {};
-    ret = true
-  );
-  t2 := cpuTime();
-  scanTimeSum = scanTimeSum + t2 - t1;
-  (f,ret)
-)
-
--- Reduce the polynomial until the leading term is not divisible by the
--- leading element of any element in G
--- f could be 0
-reduce = method()
-reduce (Brp, gbComputation) := Brp => (f,G) -> (
-  t1 := cpuTime();
-  fullyReducedFlag := false;
-  while (not fullyReducedFlag) do (
-    (f, fullyReducedFlag) = reduceOneStepList(f,G)
-  );
-  t2 := cpuTime();
-  timeInReduce = timeInReduce + t2 - t1;
-  f
-)
-
 
 
 restart
