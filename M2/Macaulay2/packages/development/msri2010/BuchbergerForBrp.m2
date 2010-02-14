@@ -57,10 +57,13 @@ unitvector = memoize((i,n) -> ( apply(n,j -> if i === j then 1 else 0)));
 gbBrp = method()
 gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> ( 
   removeDoubleEntries F;
-  reduceGbBrp F;
+  nextIndex = #F; --index polynomial should have if added to F (better than #F because reduction might remove elements from F
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
+
+  --- maybe we should pre-process the list, because isGoodPair is doint a inList? 
   --listOfIndexPairs = updatePairs( listOfIndexPairs, F, n );
   --listOfIndexPairs = updatePairsFast( listOfIndexPairs, F, n );
+
   while #listOfIndexPairs > 0 do (
     pair := first listOfIndexPairs;
     listOfIndexPairs = delete(pair, listOfIndexPairs); -- very slow, order n^2
@@ -69,14 +72,14 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       reducedS := reduce (S,F);
       if reducedS != 0 then (
         -- add reducedS to intermediate basis and update the list of pairs
-        newPairs = toList( (-n,#F)..(-1, #F)) | apply( keys F, i-> (i,#F) );
-        F##F = reducedS;
-        --newPairs = updatePairsFast( newPairs, F, n );
-        listOfIndexPairs = listOfIndexPairs | newPairs
+        newPairs = toList( (-n,nextIndex)..(-1, nextIndex)) | apply( keys F, i-> (i,nextIndex) );
+        F#nextIndex = reducedS;
+        nextIndex = nextIndex + 1;
+        listOfIndexPairs = listOfIndexPairs | newPairs;
+        reduceGbBrp F
       );
     );
   );
-  reduceGbBrp F;
   F
 )
 
@@ -171,10 +174,8 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
   while changesHappened do (
     changesHappened = false;
     N = sort apply (values F, p -> convert(p,R) );
-    print N;
     scan( pairs F, (fKey,f) -> ( 
       N = sort apply (values F, p -> convert(p,R) );
-      print N;
       scan( pairs F, (gKey,g) ->
         if fKey != gKey then (
           tmpF := reduceLtBrp(f,g);
