@@ -26,12 +26,34 @@ export {
      }
 
 gfan'path = gfanInterface#Options#Configuration#"path"
-if gfan'path == "" then gfan'path = prefixDirectory | currentLayout#"programs"
+--if gfan'path == "" then gfan'path = prefixDirectory | currentLayout#"programs"
 
 fig2dev'path = gfanInterface#Options#Configuration#"fig2devpath"
 
 needsPackage "FourierMotzkin"
 needsPackage "Polymake"
+
+
+writePolynomial = f -> (
+	E := exponents f;
+	C := flatten entries (coefficients f)_1;
+	concatenate apply(#E, i -> writeMonomial(C_i, E_i))
+)
+
+writeMonomial = (coeff, expList) -> (
+	coeffStr := toExternalString coeff;
+	if leadCoefficient coeff > 0 then (
+		coeffStr = "+" | coeffStr
+	);
+	coeffStr | concatenate apply(#expList, i-> "*" | writeVariable(i, #expList) | "^" |expList_i)
+)
+
+writeVariable = (i,n) -> (
+	numDigits := # toExternalString n;
+	numString := toExternalString i;
+	paddingZeros := concatenate apply(numDigits - #numString, j -> "0");
+	"g_" | paddingZeros | numString
+)
 
 wtvec = (inL,L) -> (
   W := flatten apply(#inL, i -> (
@@ -47,17 +69,18 @@ wtvec = (inL,L) -> (
 
 weightVector = method(TypicalValue=>List)
 weightVector(List,List) := (inL,L) -> (
-     (w,W',H,W) := wtvec(inL,L);
-     --(W',H) is the "cone": W' are the positive edges, and H is contained inside.
-     -- we need to find a positive element in here
-     if min w > 0 then w else
-     if numgens source H > 0 then (
-	  h := sum entries transpose H;
-	  if min h <= 0 then error "need to try harder to find a weight vector";
-     	  while min w <= 0 do w = w + h;
-     	  w)
-     -- other cases should return null
-     )
+	(w,W',H,W) := wtvec(inL,L);
+	--(W',H) is the "cone": W' are the positive edges, and H is contained inside.
+	-- we need to find a positive element in here
+	if min w > 0 then w else
+	if numgens source H > 0 then (
+		h := sum entries transpose H;
+		if min h <= 0 then error "need to try harder to find a weight vector";
+		while min w <= 0 do w = w + h;
+		w
+	)
+	-- other cases should return null
+)
 
 runchk = cmd -> if 0 != run cmd then error("command failed: ", cmd)
 
@@ -69,150 +92,164 @@ render(Ideal) := opts->(I) -> (
 		runchk ex;
 		show URL("file://"|F|".png");
 )
+
 render(String, Ideal) := opts-> (F, I) -> (
-     R := ring I;
-     p := char R;
-     if p === 0 and coefficientRing(R) =!= QQ then 
-     error "expected prime field or QQ";
-     -- Create the input file
-     f := temporaryFileName();
-     -- << "using temporary file " << f << endl;
-     ex := "";
-     if opts.Symmetries =!= {}
-     then (
-	  if not instance(opts.Symmetries, VisibleList)
-	  then error "Symmetries value should be a list of permutations (list of lists of integers)";
-	  ex = ex|" --symmetry";
-	  );
-     ex = gfan'path| "gfan " | ex | "  <" | f | " | "|gfan'path|"gfan_render > " | F;
-     writeGfanIdeal(f, I, opts.Symmetries);
-     runchk ex;
-     removeFile f;
-  )
+	R := ring I;
+	p := char R;
+	if p === 0 and coefficientRing(R) =!= QQ then 
+	error "expected prime field or QQ";
+	-- Create the input file
+	f := temporaryFileName();
+	-- << "using temporary file " << f << endl;
+	ex := "";
+	if opts.Symmetries =!= {}
+	then (
+	if not instance(opts.Symmetries, VisibleList)
+	then error "Symmetries value should be a list of permutations (list of lists of integers)";
+	ex = ex|" --symmetry";
+	);
+	ex = gfan'path| "gfan " | ex | "  <" | f | " | "|gfan'path|"gfan_render > " | F;
+	writeGfanIdeal(f, I, opts.Symmetries);
+	runchk ex;
+	removeFile f;
+)
+
 
 renderStaircase = method()
 renderStaircase(Ideal) := (I) -> (
-	 d := 2 +max( flatten entries gens I / exponents /flatten /max );
-	 renderStaircase(d, I);
+	d := 2 +max( flatten entries gens I / exponents /flatten /max );
+	renderStaircase(d, I);
 )
 renderStaircase(String, Ideal) := (F, I) -> (
-	 d := 2 +max( flatten entries gens I / exponents /flatten /max );
-	 renderStaircase(F, d, I);
+	d := 2 +max( flatten entries gens I / exponents /flatten /max );
+	renderStaircase(F, d, I);
 )
 
 renderStaircase(ZZ,Ideal) := (d,I) -> renderStaircase(d,1,{I})
 renderStaircase(String,ZZ,Ideal) := (F,d,I) -> renderStaircase(F,d,1,{I})
 renderStaircase(ZZ,ZZ,List) := (d,n,L) -> (
-    F := temporaryFileName();
-		renderStaircase(F,d,n,L);		
-		ex := fig2dev'path |"fig2dev -Lpng "| F | " " | F |".png";
-		runchk ex;
-		show URL("file://"|F|".png");
+	F := temporaryFileName();
+	renderStaircase(F,d,n,L);		
+	ex := fig2dev'path |"fig2dev -Lpng "| F | " " | F |".png";
+	runchk ex;
+	show URL("file://"|F|".png");
 )
+
 renderStaircase(String,ZZ,ZZ,List) := (F,d,w,L) -> (
-		if class L#0 === List then L = apply(L, ideal);
-	  R := ring L#0;
-    p := char R;
-    if p === 0 and coefficientRing(R) =!= QQ then 
-        error "expected prime field or QQ";
-		if any(L, J-> ring J =!= R) then
-				error "all ideals should have the same ring";
+	if class L#0 === List then L = apply(L, ideal);
+	R := ring L#0;
+	p := char R;
+	if p === 0 and coefficientRing(R) =!= QQ then 
+		error "expected prime field or QQ";
+	if any(L, J-> ring J =!= R) then
+		error "all ideals should have the same ring";
 
-    ex := "";
-    f := temporaryFileName();
-    -- << "using temporary file " << f << endl;
+	ex := "";
+	f := temporaryFileName();
+	-- << "using temporary file " << f << endl;
 
-     ex = gfan'path| "gfan_renderstaircase -m -d "| d | " -w " | w ;
-		 ex = ex | " < " | f |" >" | F;
-		
-     writeGfanIdealList(f, L);
-     runchk ex;
-     removeFile f;
-    )
+	ex = gfan'path| "gfan_renderstaircase -m -d "| d | " -w " | w ;
+	ex = ex | " < " | f |" >" | F;
+
+	writeGfanIdealList(f, L);
+	runchk ex;
+	removeFile f;
+)
 
 groebnerCone = method()
 groebnerCone(List,List) := (inL,L) -> (
-     (w,W',H,W) := wtvec(inL,L);
-     (W',H)
-     )
+	(w,W',H,W) := wtvec(inL,L);
+	(W',H)
+)
 
 initialIdeal = method(TypicalValue=>Ideal)
 initialIdeal Ideal  := (I) -> ideal leadTerm I
 initialIdeal(List,Ideal) := (w,I) -> (
-     R := ring I;
-     R1 := (coefficientRing R)[gens R, 
-	      Degrees=>(monoid R).Options.Degrees, 
-	      MonomialOrder=>Weights=>w];
-     I' := substitute(I,R1);
-     ideal substitute(leadTerm(1, gens gb I'), R))
+	R := ring I;
+	R1 := (coefficientRing R)[gens R, 
+	Degrees=>(monoid R).Options.Degrees, 
+	MonomialOrder=>Weights=>w];
+	I' := substitute(I,R1);
+	ideal substitute(leadTerm(1, gens gb I'), R)
+)
+
+writeGfanRing = (R) -> (
+	p := char R;
+	outStr := if p === 0 then "Q" else "Z/"|p|"Z";
+	outStr = outStr | "[";
+	for i from 0 to numgens R - 1 do (
+		outStr = outStr | writeVariable(i, numgens R);
+		if i =!= numgens R -1 then outStr = outStr | ", ";
+	);
+	outStr | "]"
+)
 
 writeGfanIdeal = method()
 writeGfanIdeal(String,Ideal,List) := (filename,I,symms) -> (
-     F := openOut filename;
-     R := ring I;
-     p := char R;
-     F << if p === 0 then "Q" else "Z/"|p|"Z";
-     F << toExternalString(new Array from gens R) << endl;
-     -- Now make the list of the gens of I
-     F << "{";
-     n := numgens I - 1;
-     for i from 0 to n do (
-     	  F << toExternalString(I_i);
-	  if i < n then F << "," else F << "}";
-	  F << endl;
-	  );
-     symms = apply(symms, x -> apply(x,index));
-     -- If any symmetries, write them here
-     if #symms > 0 then (
-	  F << toString symms << endl;
-	  );
-     F << close;
-     )
+	F := openOut filename;
+	R := ring I;
+	F << writeGfanRing R << endl;
+
+	-- Now make the list of the gens of I
+	F << "{";
+	n := numgens I - 1;
+	for i from 0 to n do (
+	F << writePolynomial(I_i);
+	if i < n then F << "," else F << "}";
+		F << endl;
+	);
+	symms = apply(symms, x -> apply(x,index));
+	-- If any symmetries, write them here
+	if #symms > 0 then (
+		F << toString symms << endl;
+	);
+	F << close;
+)
 
 writeGfanIdealList = method()
 writeGfanIdealList(String,List) := (filename,L) -> (
-     F := openOut filename;
-     R := ring L#0;
-     p := char R;
-     F << if p === 0 then "Q" else "Z/"|p|"Z";
-     F << toExternalString(new Array from gens R) << endl;
-     F << "{" << endl;
-     for j from 0 to #L-1 do (
-       -- Now make the list of the gens of I
-			 I = initialIdeal L#j;
-       F << "{" << endl;
-       n := numgens I - 1;
-       for i from 0 to n do (
-     	  F << toExternalString(I_i);
-	  		if i < n then F << "," else (
-				  F << endl << "}";
-					if j =!= #L-1 then F << ",";
-				);
-				F << endl;
-			 )
-	  );
-     F << "}" << endl;
-     F << close;
-     )
+	F := openOut filename;
+	R := ring L#0;
+	F << writeGfanRing R << endl;
+
+	F << "{" << endl;
+	for j from 0 to #L-1 do (
+		-- Now make the list of the gens of I
+		I = initialIdeal L#j;
+		F << "{" << endl;
+		n := numgens I - 1;
+		for i from 0 to n do (
+			F << writePolynomial(I_i);
+			if i < n then F << "," else (
+				F << endl << "}";
+				if j =!= #L-1 then F << ",";
+			);
+			F << endl;
+		 )
+	);
+	F << "}" << endl;
+	F << close;
+)
 
 readGfanIdeals = method()
-readGfanIdeals String := (f) -> (
-     -- Reads using the current ring
-     s := get f;
-     G := separate("\n,",s);
+readGfanIdeals (String, PolynomialRing) := (f, R) -> (
+	-- Reads using the current ring
+	s := get f;
+	G := separate("\n,",s);
 
-     firstLine := G#0;
-		 firstLine = separate("\n", firstLine);
-		 firstLine = drop(firstLine, 1);  -- remove the ring from the first line
-		 tempStr  := "";
-		 apply(firstLine, t -> tempStr = concatenate(tempStr, "\n", t)); -- build the firstline
+	firstLine := G#0;
+	firstLine = separate("\n", firstLine);
+	firstLine = drop(firstLine, 1);  -- remove the ring from the first line
+	tempStr  := "";
+	apply(firstLine, t -> tempStr = concatenate(tempStr, "\n", t)); -- build the firstline
 
-     G = drop(G,1);  -- drop the old first entry
-		 G = prepend(tempStr, G); -- and then add the first entry minus the ring
-     H := apply(G, t -> replace(///[\{\}]*///,"",t));
-     apply(H, s -> value("{"|s|"}"))
-		)
-			
+	G = drop(G,1);  -- drop the old first entry
+	G = prepend(tempStr, G); -- and then add the first entry minus the ring
+	H := apply(G, t -> replace(///[\{\}]*///,"",t));
+	S := (coefficientRing R)[(symbol g)_0..(symbol g)_(numgens R - 1)];
+	rsMap := map(R,S, gens R);
+	apply(H, s -> apply(value("{"|s|"}"), p -> rsMap(p)))
+)
 
 -- The following routines are lifted from Polymake.m2, but should be taken out, once that package
 -- is ready for prime time.
@@ -259,8 +296,8 @@ gfan Ideal := opts -> (I) -> (
      runchk ex;
      ex2 := gfan'path| "gfan_leadingterms -m <" | f | ".out >" | f | ".lt";
      runchk ex2;
-     L := readGfanIdeals(f | ".out");
-     M := readGfanIdeals(f | ".lt");
+     L := readGfanIdeals(f | ".out", R);
+     M := readGfanIdeals(f | ".lt", R);
      removeFile f;
      removeFile(f | ".out");
      removeFile(f | ".lt");
@@ -363,7 +400,12 @@ doc ///
 			(inL1, L1) = gfan(I, Symmetries=>{(b,c,d,a,e)});
 			#inL1
 		Text
-			
+			Internally gfanInterface uses a polynomial ring in variables g_i. If you are using the variable g in your ring, you may need to reasign the old ring to a variable in order to recover the use of g as a variable.
+		Example
+			QQ[f,g,h]
+			I = ideal"fg + gh";
+			gfan I;
+			R = ring I;
 	SeeAlso
 		weightVector
 		initialIdeal
