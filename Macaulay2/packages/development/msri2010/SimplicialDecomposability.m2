@@ -1,6 +1,10 @@
 -------------------
 -- Package Header
 -------------------
+-- Released under the GNU GPL v2
+-- As this package is intended to be used with Macaulay 2, see the file 
+-- COPYING in the root directory of the Macaulay 2 installation.
+
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
