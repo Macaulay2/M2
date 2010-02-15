@@ -3,8 +3,8 @@ needsPackage "Polymake"
 
 newPackage(
 	"gfanInterface",
-    	Version => "0.2", 
-    	Date => "July 2, 2008",
+    	Version => "0.2.1", 
+    	Date => "Feb 15, 2010",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
 	     {Name => "Andrew Hoefel", Email => "handrew@mathstat.dal.ca", HomePage => ""}
