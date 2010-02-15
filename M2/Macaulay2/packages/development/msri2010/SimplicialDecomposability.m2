@@ -4,8 +4,8 @@
 needsPackage "SimplicialComplexes";
 newPackage (
     "SimplicialDecomposability",
-    Version => "1.0",
-    Date => "04. February 2010",
+    Version => "1.0.1",
+    Date => "15. February 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -80,22 +80,38 @@ hVector (SimplicialComplex) := (S) -> (
     apply(dim S + 2, i -> coefficient(t^i,N))
 );
 
--- Determines whether or not a pure simplicial complex is k-decomposable, as
--- introduced in Definition 2.1 in [PB].
+-- Determines whether or not a simplicial complex is k-decomposable, as
+-- in Defintion 3.6 in [Wo].
 iskDecomposable = method(TypicalValue => Boolean);
 iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
-    -- k must be nonnegative and S must be pure
-    if k < 0 and not isPure S then return false;
-    -- check the cache (pure vertex-decomposable => pure k-decomposable)
+    -- k must be nonnegative
+    if k < 0 then return false;
+    -- check the cache (vertex-decomposable => k-decomposable)
     if S.cache.?isVD and S.cache.isVD then return true;
 
     iskd := false;
+    done := false;
     -- base case: simplexes are k-decomposable for all nonnegative k
-    if isSimplex S then ( iskd = true; )
-    -- negatives in the h-Vector imply not k-decomposable for pure complexes
-    else if any(hVector S, i -> i<0) then ( iskd = false; )
-    -- Check for shedding faces
-    else ( iskd = any(allFaces(S, k), F -> isSheddingFace(S, F, k)); );
+    if isSimplex S then ( iskd = done = true; );
+
+    -- short-circuit via the h-Vector or h-Triangle, depending on purity
+    if not done then (
+        if isPure S then (
+            if any(hVector S, i -> i<0) then ( iskd = false; done = true; )
+        )
+        else (
+            if any(values hTriangle S, i -> i < 0) then ( iskd = false; done = true; );
+        );
+    );
+
+    -- Check for shedding faces which are also happy faces
+    if not done then (
+        iskd = any(allFaces(S, k), F ->
+                isSheddingFace(S, F)
+                and iskDecomposable(link(S, F), k)
+                and iskDecomposable(faceDelete(S, F), k)
+            );
+    );
 
     -- update the cache (if necessary)
     -- 0-decomposable == vertex-decomposable, and a complex which is
@@ -104,15 +120,27 @@ iskDecomposable (SimplicialComplex, ZZ) := (S, k) -> (
     iskd
 );
 
--- Determines whether or not a face is a shedding face of a pure simplicial
--- complex, as introduced in Definition 2.1 in [PB].
+-- Determines whether or not a face is a shedding face of a simplicial
+-- complex, as introduced in Definition 3.1 in [Wo].
 isSheddingFace = method(TypicalValue => Boolean);
 isSheddingFace (SimplicialComplex, RingElement) := (S, F) -> (
-    isSheddingFace(S, F, first degree F - 1)
-);
-isSheddingFace (SimplicialComplex, RingElement, ZZ) := (S, F, k) -> (
-    if not isPure S then return false;
-    iskDecomposable(link(S, F), k) and iskDecomposable(faceDelete(S, F), k)
+    -- star(S,F) = (all faces of S containing F)
+    star := select(flatten for i from (first degree F - 1) to dim S list flatten entries faces(i, S), G -> G % F == 0);
+
+    -- for each face G in the star
+    all(star, G -> (
+        gfaces := first entries faces(first degree G - 1, S);
+        gsup := support G;
+        -- for each vertex v in F
+        all(support F, v -> (
+            -- check that (G\v)+w is a face in S for some w not in support G
+            Gd := G // v;
+            -- w = (H//Gd), make sure its not in the support of G
+            any(gfaces, H -> (
+                H % Gd == 0 and not member(H // Gd, gsup)
+            ))
+        ))
+    ))
 );
 
 -- Determines whether or not a vertex is a shedding vertex of a simplicial
@@ -341,8 +369,8 @@ doc ///
         Text
             This package includes routines for vertex decomposability and
             shellability for arbitrary simplicial complexes as well as routines
-            for k-decomposability for pure simplicial complexes.  Moreover, it
-            can find a shelling order for a shellable simplicial complex.
+            for k-decomposability.  Moreover, it can find a shelling order for
+            a shellable simplicial complex.
 
             References:
             
@@ -363,6 +391,9 @@ doc ///
             [St] R. Stanley, "Combinatorics and Commutative Algebra," 2nd
             edition.  Progress in Mathematics, 41. Birkhaeuser Boston, Inc.
             Boston, MA, 1996.
+
+            [Wo] R. Woodroofe, "Chordal and sequentially Cohen-Macaulay clutters,"
+            arXiv:0911.4697v1.
 ///
 
 doc ///
@@ -508,22 +539,22 @@ doc ///
         iskDecomposable
         (iskDecomposable, SimplicialComplex, ZZ)
     Headline
-        determines whether or not a pure simplicial complex is k-decomposable
+        determines whether or not a simplicial complex is k-decomposable
     Usage
         iskDecomposable(S, k)
     Inputs
         S:SimplicialComplex
-            which is pure
         k:ZZ
     Outputs
         B:Boolean
             true if and only if {\tt S} is {\tt k}-decomposable
     Description
         Text
-            Definition 2.1 of [PB] states that a pure simplicial complex {\tt S}
+            Definition 3.6 of [Wo] states that a simplicial complex {\tt S}
             is {\tt k}-decomposable if {\tt S} is either a simplex or there
             exists a shedding face {\tt F} of {\tt S} of dimension at most
-            {\tt k}.
+            {\tt k} such that both the face deletion and link of {\tt S} by
+            {\tt F} are again {\tt k}-decomposable.
         Text
             Checks the cache to see if the complex is vertex-decomposable to 
             determine if it is {\tt k}-decomposable.
@@ -543,37 +574,33 @@ doc ///
     Key
         isSheddingFace
         (isSheddingFace, SimplicialComplex, RingElement)
-        (isSheddingFace, SimplicialComplex, RingElement, ZZ)
     Headline
-        determines whether or not a face of a pure simplicial complex is a shedding face
+        determines whether or not a face of a simplicial complex is a shedding face
     Usage
         isSheddingFace(S, F)
-        isSheddingFace(S, F, k)
     Inputs
         S:SimplicialComplex
-            which is pure
         F:RingElement
             a face of {\tt S}
-        k:ZZ
-            the dimension of the shedding nature
     Outputs
         B:Boolean
-            true if and only if {\tt F} is a shedding face of {\tt S} in
-            dimension {\tt k} (dim {\tt F}, if {\tt k} undefined)
+            true if and only if {\tt F} is a shedding face of {\tt S}
     Description
         Text
-            Definition 2.1 of [PB] states that:  A shedding face {\tt F} of
-            a pure simplicial complex {\tt S} is a face such that the face 
-            deletion and link of {\tt F} from {\tt S} are both {\tt k}-decomposable.
+            Definition 3.1 in [Wo] states that a face {\tt F} of a simplicial
+            complex {\tt S} is a shedding face if every face {\tt G} of the star
+            of {\tt S} by {\tt F} satisfies the exchange property, that is,
+            for every vertex {\tt v} of {\tt F} there is a vertex {\tt w} of
+            the face deletion of {\tt S} by {\tt G} such that
+            {\tt (G \cup w) \setminus v} is a face of {\tt S}.
         Example
-            R = QQ[a..d];
-            S = simplicialComplex {a*b*c*d};
-            isSheddingFace(S, a)
-            isSheddingFace(S, a*b)
+            R = QQ[a..e];
+            T = simplicialComplex {a*b*c, b*c*d, c*d*e};
+            isSheddingFace(T, b*d)
+            isSheddingFace(T, b*c*d)
     SeeAlso
         faceDelete
         iskDecomposable
-        isSheddingFace
         isShellable
         isVertexDecomposable
         link
@@ -844,7 +871,7 @@ TEST ///
 R = QQ[a..e];
 S = simplicialComplex {a*b*c*d*e};
 assert(iskDecomposable(S, 0));
-assert(iskDecomposable(boundary S, 0)); -- prop 2.2 in Provan-Billera
+assert(iskDecomposable(boundary S, 0)); -- prop 2.2 in [PB]
 assert(iskDecomposable(simplicialComplex {a*b*c, b*c*d, c*d*e}, 2));
 assert(not iskDecomposable(simplicialComplex {a*b*c, c*d*e}, 2));
 ///
@@ -866,12 +893,17 @@ assert(iskDecomposable(S7, 1));
 -- Tests isSheddingFace
 TEST ///
 R = QQ[a..e];
-S = simplicialComplex {a*b*c*d*e};
-assert(isSheddingFace(S, a, 0));
-assert(isSheddingFace(S, a*b, 3));
+S = boundary simplicialComplex {a*b*c*d*e};
+assert(all(allFaces S, F -> isSheddingFace(S,F)));
 T = simplicialComplex {a*b*c, b*c*d, c*d*e};
-assert(isSheddingFace(T, e, 2));
-assert(not isSheddingFace(T, b*c*d, 2));
+assert(isSheddingFace(T, a));
+assert(isSheddingFace(T, e));
+assert(isSheddingFace(T, b*d));
+assert(not isSheddingFace(T, b));
+assert(not isSheddingFace(T, c));
+assert(not isSheddingFace(T, d));
+assert(not isSheddingFace(T, b*c));
+assert(not isSheddingFace(T, b*c*d));
 ///
 
 -- Tests isSheddingVertex
