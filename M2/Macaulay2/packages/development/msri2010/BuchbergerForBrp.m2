@@ -67,12 +67,14 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       S := SPolynomial(pair, F, n);
       reducedS := reduce (S,F);
       if reducedS != 0 then (
+        -- reduce lower terms of reducedS with leading terms in F
+        apply( values F, g -> reducedS = reduceLtBrp(reducedS, g));
         -- add reducedS to intermediate basis and update the list of pairs
         newPairs = toList( (-n,nextIndex)..(-1, nextIndex)) | apply( keys F, i-> (i,nextIndex) );
         F#nextIndex = reducedS;
         nextIndex = nextIndex + 1;
         listOfIndexPairs = listOfIndexPairs | newPairs;
-        reduceGbBrp F
+        reduceGbBrp F;
       );
     );
   );
@@ -165,9 +167,7 @@ reduceGbBrp( gbComputation ) := gbComputation => F -> (
   changesHappened := true;
   while changesHappened do (
     changesHappened = false;
-    N = sort apply (values F, p -> convert(p,R) );
     scan( pairs F, (fKey,f) -> ( 
-      N = sort apply (values F, p -> convert(p,R) );
       scan( pairs F, (gKey,g) ->
         if fKey != gKey then (
           tmpF := reduceLtBrp(f,g);
@@ -577,7 +577,7 @@ TEST ///
           18=> convert( a*k+c*l*n*f),
           19=> convert( q*r+c+q+l*n*m+i)
           }
-longTest = false
+longTest = true 
   if longTest then (         
     time gbBasis = gbBrp( F, numgens R);
     N = sort apply (values gbBasis, poly -> convert(poly,R) );
