@@ -161,14 +161,20 @@ void testLT() {
     cout << "Testing LT(): " << (bar.LT() == 8 ? "is good" : "is bad") << endl;
   }
 }
-  
+ 
+void clearAll(list<int> l) {
+  l.clear();
+}
+
 void testLeadingIsRelativelyPrime() {
   list<int> foo;
   foo.push_back(3);
   foo.push_back(8);
   foo.push_back(5);
   foo.push_back(5);
-  
+ 
+  clearAll(foo);
+//  foo.clear();
   BRP bar = BRP(foo);
   
   list<int> foo1;
@@ -235,21 +241,6 @@ void testIsLeadingReducibleBy() {
   
 }
   
-void testDivisiblePart() { //f = ax+g 
-  BRP f = BRP(2) * BRP(8) + BRP(7);
-  if ( (BRP(2) )  != f.divisiblePart(BRP(8) ) ) { 
-    cout << "error" << endl;
-  }
-  if ( (BRP(4) )  == f.divisiblePart(BRP(8) ) ) { 
-    cout << "error" << endl;
-  }
-
-  BRP a = BRP(8) + BRP(5);
-  if ( a != f.divisiblePart( BRP(2) ) ){
-    cout << "error" << endl;
-  }
-}
-
 void testRemainder() { //f = ax+g 
   BRP f = BRP(2) * BRP(8) + BRP(7);
   if ( (BRP(7) )  != f.remainder(BRP(8) ) ) { 
@@ -277,7 +268,6 @@ int main() {
   testLT();
   testLeadingIsRelativelyPrime();
   testIsLeadingReducibleBy();
-  testDivisiblePart();
   testRemainder();
 }
 

@@ -4,7 +4,7 @@ BRP::BRP() {
   //cout << "empty init" << endl;
 }
 
-BRP::BRP(list<int> alist) {
+BRP::BRP(const list<int> &alist) {
   //cout << "called init" << endl;
   mylist = mod2(alist);
 }
@@ -13,10 +13,10 @@ BRP::BRP(int val) {
   mylist.push_back(val);
 }
 
-bool BRP::operator!=(int val) {
+bool BRP::operator!=(int val) const {
   return !( (*this) == val);
 }
-bool BRP::operator==(int val) {
+bool BRP::operator==(int val) const{
   if(val == 0) {
     return mylist.empty();
   } else if(val == 1) {
@@ -25,22 +25,21 @@ bool BRP::operator==(int val) {
   return false;
 }
 
-bool BRP::operator==(BRP other) {
+bool BRP::operator==(const BRP &other) const {
   return mylist == other.mylist;
 }
 
-bool BRP::operator!=(BRP other) {
+bool BRP::operator!=(const BRP &other) const{
   return !(  (*this) == other);
 }
 
 BRP BRP::operator+(BRP other) {
-  list<int> tmp = other.mylist;
-  list<int> tmp2 = mylist;
-  tmp.merge(tmp2);
-  return BRP(tmp); 
+  //list<int> tmp2 = other.mylist;
+  mylist.merge(other.mylist);
+  return BRP(mylist); 
 }
 
-BRP BRP::operator*(BRP other) {
+BRP BRP::operator*(const BRP &other) const {
   // other _must_ be a monomial
   if(other == 0) {
     cout << "Multiplication by 0" << endl;
@@ -50,31 +49,39 @@ BRP BRP::operator*(BRP other) {
   } else {
     int monomial = other.mylist.front();
     list<int> tmp;
-    for(i=mylist.begin(); i != mylist.end(); ++i) {
+    for(list<int>::const_iterator i=mylist.begin(); i != mylist.end(); ++i) {
       tmp.push_back(*i | monomial);
     }
     return BRP(tmp);
   }
 }
 
-BRP BRP::operator/(BRP other) {
-  if(!isDivisibleBy(other)) {
-    throw "not divisible";
+BRP BRP::operator*(int other) const {
+  list<int> tmp;
+  for(list<int>::const_iterator i=mylist.begin(); i != mylist.end(); ++i) {
+    tmp.push_back(*i | other);
   }
+  return BRP(tmp);
+}
+
+int BRP::operator/(const BRP &other) const {
   // divide a by b
   int a = mylist.front();
   int b = other.mylist.front();
-  list<int> tmp;
-  tmp.push_back(a ^ b);
-  return BRP(tmp);
-  
+  return (a^b);
 }
 
-bool BRP::isDivisibleBy(BRP other) {
+int BRP::operator/(int other) const {
+  // divide a by b
+  int a = mylist.front();
+  return (a^other);
+}
+
+bool BRP::isDivisibleBy(const BRP &other) const {
   // both _must_ be a monomial
-  if(other.mylist.size() != 1 || mylist.size() != 1) {
-    throw "Not monomial";
-  }
+//  if(other.mylist.size() != 1 || mylist.size() != 1) {
+//    throw "Not monomial";
+//  }
   // check if a is divisible by b
   int a = mylist.front();
   int b = other.mylist.front();
@@ -82,13 +89,13 @@ bool BRP::isDivisibleBy(BRP other) {
   return lcm == a;
 }
 
-bool BRP::isLeadingReducibleBy(BRP other) {
+bool BRP::isLeadingReducibleBy(const BRP &other) const {
   BRP a = BRP(LT());
   BRP b = BRP(other.LT());
   return a.isDivisibleBy(b);
 }
 
-bool BRP::leadingIsRelativelyPrime(BRP other) {
+bool BRP::leadingIsRelativelyPrime(const BRP &other) const {
   // check if a is relatively prime with regards to b
   int a = LT();
   int b = other.LT();
@@ -96,9 +103,9 @@ bool BRP::leadingIsRelativelyPrime(BRP other) {
 }
 
 // write f as f = ax+b, return a
-BRP BRP::remainder(BRP x){
+BRP BRP::remainder(const BRP &x) const {
   list<int> tmp;
-  for(i=mylist.begin(); i != mylist.end(); ++i) {
+  for(list<int>::const_iterator i=mylist.begin(); i != mylist.end(); ++i) {
     BRP m = BRP(*i);
     if ( !m.isDivisibleBy(x) ) {
       tmp.push_back( m.mylist.front() );
@@ -107,20 +114,6 @@ BRP BRP::remainder(BRP x){
   return BRP(tmp);
 }
 
-// this function is not needed!
-// write f as f = ax+b, return a
-BRP BRP::divisiblePart(BRP x){
-  list<int> tmp;
-  for(i=mylist.begin(); i != mylist.end(); ++i) {
-    BRP m = BRP(*i);
-    if ( m.isDivisibleBy(x) ) {
-      BRP t = m / x;
-      tmp.push_back( t.mylist.front() );
-    }
-  }
-  return BRP(tmp);
-}
-
-int BRP::LT() {
+int BRP::LT() const {
   return mylist.front();
 }

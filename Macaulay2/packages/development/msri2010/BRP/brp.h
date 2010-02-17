@@ -9,7 +9,6 @@ using namespace std;
 class BRP
 {
   list<int> mylist;
-  list<int>::iterator i;
 
   friend ostream& operator<< (ostream &out, BRP &self) {
     for(list<int>::iterator i=self.mylist.begin(); i != self.mylist.end(); ++i) {
@@ -19,14 +18,12 @@ class BRP
     return out;
   }
 
-  list<int> mod2(list<int> alist) {
+  list<int> mod2(const list<int> &alist) {
     map<int,int> tally;
     list<int> tmp;
-    for(i=alist.begin(); i != alist.end(); ++i) {
+    for (list<int>::const_iterator i=alist.begin(); i != alist.end(); ++i) {
       ++tally[*i];
-//      cout << *i << ": " << tally[*i] << endl;
     }
-//    cout << tally.size() << endl;
     for(map<int,int>::iterator iter = tally.begin(); iter != tally.end();
     ++iter) {
       if(iter->second % 2 == 1) {
@@ -42,32 +39,33 @@ class BRP
 
   BRP();
 
-  BRP(list<int> alist);
+  BRP(const list<int> &alist);
 
   BRP(int val);
 
-  bool operator==(int val);
-  bool operator!=(int val);
+  bool operator==(int val) const;
+  bool operator!=(int val) const;
 
-  bool operator==(BRP other);
-  bool operator!=(BRP other);
+  bool operator==(const BRP &other) const;
+  bool operator!=(const BRP &other) const;
 
   BRP operator+(BRP other);
 
-  BRP operator*(BRP other);
+  BRP operator*(const BRP &other) const;
+  BRP operator*(int other) const;
 
-  BRP operator/(BRP other);
+  int operator/(const BRP &other) const;
+  int operator/(int other) const;
 
-  bool isDivisibleBy(BRP other);
+  bool isDivisibleBy(const BRP &other) const;
 
-  bool leadingIsRelativelyPrime(BRP other);
+  bool leadingIsRelativelyPrime(const BRP &other) const;
 
-  bool isLeadingReducibleBy(BRP other);
+  bool isLeadingReducibleBy(const BRP &other) const;
   
-  BRP divisiblePart(BRP x);
-  BRP remainder(BRP x);
+  BRP remainder(const BRP &x) const;
 
-  int LT();
+  int LT() const;
 };
 
 
