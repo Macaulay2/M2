@@ -50,6 +50,7 @@ class BRP
   bool operator!=(int val);
 
   bool operator==(BRP other);
+  bool operator!=(BRP other);
 
   BRP operator+(BRP other);
 
@@ -64,6 +65,7 @@ class BRP
   bool isLeadingReducibleBy(BRP other);
   
   BRP divisiblePart(BRP x);
+  BRP remainder(BRP x);
 
   int LT();
 };
