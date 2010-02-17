@@ -1,6 +1,8 @@
 #include "brp.h"
+#include <sys/time.h>
 #include <set>
 #include <math.h>
+#include <time.h>
 
 class Pair {
   friend bool operator< (const Pair &pair1, const Pair &pair2) {
@@ -120,9 +122,9 @@ bool isGoodPair(const Pair &pair, const map<int,BRP> &F, const set<Pair> &B, int
   int lcm = g | f;
   for(map<int, BRP>::const_iterator it = F.begin(); it != F.end(); ++it) {
     int k = it->first;
-    BRP K = it->second;
+    const BRP *K = &(it->second);
 
-    if(( k != i && k != j && BRP::isDivisibleBy(lcm, K.LT() ) && !inList(i,k,B) && !inList(j,k,B))) {
+    if(( k != i && k != j && BRP::isDivisibleBy(lcm, K->LT() ) && !inList(i,k,B) && !inList(j,k,B))) {
       return false;
     }
   }
@@ -151,68 +153,62 @@ BRP sPolynomial(const Pair &pair, const map<int,BRP> &F, int n) {
 // Reduce the leading term of a polynomial one step using the leading term of
 // another a polynomial
 // only call this when isLeadingReducibleBy(f,g)
-BRP reduceLTOnce(const BRP &f, const BRP &g) {
+void reduceLTOnce(BRP &f, const BRP &g) {
   int a = f.LT() ^ g.LT();
-  return g * a + f ;
+  f = g * a + f;
 }
 
 // Reduce the leading term of f one step with the first polynomial g_i in the
 // intermediate basis that satisfies isLeadingReducibleBy(f,g_i)
-BRP reduceLTOnce(const BRP &f, const map<int,BRP> &F) {
+bool reduceLTOnce(BRP &f, const map<int,BRP> &F) {
   for(map<int, BRP>::const_iterator it = F.begin(); it != F.end(); ++it) {
-    BRP g = it->second;
-    if (f.isLeadingReducibleBy(g.LT())) {
-      return reduceLTOnce(f, g);
+    const BRP *g = &(it->second);
+    if (f.isLeadingReducibleBy(g->LT())) {
+      reduceLTOnce(f, *g);
+      return true;
     }
   }
-  return f;
+  return false;
 }
 
 // reduce all term of f with leading term of g
-BRP reduceLowerTerms(const BRP &f, const BRP &g) {
-  BRP tmp = f;
+// return true if a change happened, otherwise false
+// f is being changes to its reduction
+bool reduceLowerTerms(BRP &f, const BRP &g) {
   int a = g.LT();
-  list<int>::iterator it  = tmp.mylist.begin();
-  while (it != tmp.mylist.end() ) {
+  list<int>::iterator it  = f.mylist.begin();
+  while (it != f.mylist.end() ) {
     int m = *it;
     if ( BRP::isDivisibleBy(m,a) ) {
-      tmp = tmp + g * ( m ^ a );
-      break; 
+      f = f + g * ( m ^ a );
+      return true;
     }
     ++it;
   }
-  return tmp;
+  return false;
 }
 
 // reduce all terms of f with leading terms of all polynomials in F
 // if f is in F, then f is reduced to 0
-BRP reduceLowerTerms(BRP f, const map<int,BRP> &F) {
+void reduceLowerTerms(BRP &f, const map<int,BRP> &F) {
   for(map<int, BRP>::const_iterator it = F.begin(); it != F.end() && f != 0; ++it) {
-    BRP g = it->second;
-    f = reduceLowerTerms(f,g);
+    const BRP *g = &(it->second);
+    reduceLowerTerms(f, *g);
     // don't start over with the loop, because the everytime we check all
     // terms of f, so if no term of f was reducible by g, then so is no term
     // of the new f
   }
-  return f;
 }
 
 // reduce all terms in f by the leading terms of all polynomials in F
 // first reduce the leading term completely, then the lower terms
-BRP reduce(BRP f, const map<int,BRP> &F) {
-  while (f!=0) {
-    BRP g = reduceLTOnce(f, F); // always start over at the beginning of F,
-    // the leading term of the new f might be reducible
-    if ( f == g || g == 0 ) {
-      f = g;
-      break; // fully reduced leading term
+void reduce(BRP &f, const map<int,BRP> &F) {
+  while (f != 0) {
+    if ( !reduceLTOnce(f,F) || f == 0 ){
+      reduceLowerTerms(f, F); 
+      break;
     }
-    f = g;
   }
-  if ( f != 0 ) {
-    f = reduceLowerTerms(f, F); 
-  }
-  return f;
 }
 
 // make a reduced Groebner basis
@@ -224,15 +220,13 @@ void reduce(map<int,BRP> &F) {
     map<int, BRP>::iterator it1 = F.begin(); 
     bool iteratorIncreased = false;
     while (it1 != F.end() ) {
-      BRP f = it1->second;
+      BRP *f = &(it1->second);
       iteratorIncreased = false;
       for(map<int, BRP>::iterator it2 = F.begin(); it2 != F.end(); ++it2) {
-        BRP g = it2->second;
+        BRP *g = &(it2->second);
         if ( it1 != it2) {
-          BRP tmp = reduceLowerTerms(f,g);
-          if (tmp != f) {
-            if (tmp != 0 ) {
-              it1->second = tmp;
+          if( reduceLowerTerms(*f,*g) ) {
+            if ( (*f) != 0 ) {
               ++it1;
             }
             else {
@@ -261,7 +255,7 @@ void gb( map<int,BRP> &F, int n) {
     B.erase(B.begin());
     if (isGoodPair(pair,F,B,n)) {
       BRP S = sPolynomial(pair,F,n);
-      S = reduce(S,F);
+      reduce(S,F);
       if (S != 0 ) {
         set<Pair> newList = makeNewPairs(nextIndex, F, n);
         F[nextIndex] = S;
@@ -364,8 +358,17 @@ void testLongBasis() {
   c[13] = BRP(131072);
   c[14] = BRP(262144);
   c[15] = BRP(524288);
-  
+
+  timeval begin, end;
+  gettimeofday(&begin, NULL);
   gb(G,n);
+  gettimeofday(&end, NULL);
+  long beginmilli= (begin.tv_sec * 1000) + (begin.tv_usec / 1000);
+  long endmilli= (end.tv_sec * 1000) + (end.tv_usec / 1000);
+
+  long diff = endmilli - beginmilli;
+  cout << "It took " << diff << " milliseconds to run a complex Groebner Basis example (not cpu time) " << endl;
+
   for (int i = 0; i < 16; i++ ) {
     bool found = false;
     for (map<int,BRP>::iterator it = G.begin(); it != G.end(); ++it) {
