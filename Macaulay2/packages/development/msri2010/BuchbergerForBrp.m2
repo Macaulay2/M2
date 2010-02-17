@@ -19,7 +19,6 @@ needsPackage "BitwiseRepresentationPolynomials"
 -- must be placed in one of the following two lists
 exportMutable { -- these should all be private, but for testing purposes, they are here
       makePairsFromLists, 
-      gbComputation,
       isReducible,
       minimalGbBrp,
       reduce,
@@ -30,11 +29,13 @@ exportMutable { -- these should all be private, but for testing purposes, they a
       removeDoubleEntries,
       SPolynomial, 
       updatePairs,
-      gbBrp,
+      unitvector,
       inList
       }
       
 export {
+      gbComputation,
+      gbBrp,
       getPolysFromList
       }
 
@@ -154,7 +155,7 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
 --Reduce all terms of the first polynomial with the leading term of the second
 reduceLtBrp = method()
 reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
-  while ( p := scan(f, m ->  (m = new Brp from {m}; if isReducible(m, leading g) then break m)); instance(p,Brp) ) do (
+  while ( p := scan(f, m ->  (m = new Brp from {m}; if isReducible(m, g) then break m)); instance(p,Brp) ) do (
       --assert isDivisible( p, leading g);
    	  f = f + g*divide( p, leading g)
   );
@@ -242,6 +243,7 @@ SPolynomial( Sequence, gbComputation, ZZ ) := Brp => (pair,G,n) -> (
       f := G#j;
       i = - i;
       xx := new Brp from {unitvector( i-1,n)};
+      -- f = ax+g
       g := new Brp from select( f, mono -> isDivisible( new Brp from {mono}, xx) == false );
       g*xx+g
     ) else new Brp from {}
@@ -468,7 +470,6 @@ TEST ///
                            4 => myPoly4,
                            5 => myPoly5
                            }
-  FOnePoly = new gbComputation from { 1 => convert(x+y+z) } 
 
   S = SPolynomial((-1,1), F, numgens R)
   assert (S == convert( x*z + z) )
@@ -480,6 +481,7 @@ TEST ///
   assert (S == convert( x*y + x + y*z) ) 
   assert ( reduceOneStep( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
   assert ( reduce( convert(x*y*z + y*z + z), convert(x+y+z) ) == convert( y*z+z))
+  FOnePoly = new gbComputation from { 1 => convert(x+y+z) } 
   assert ( reduce( convert(x*y*z + y*z + z), FOnePoly ) == convert( y*z+z))
   assert ( reduceOneStepList( convert(y+z), F) == (convert( y+z), true) )
   assert ( reduceOneStepList( convert(x*y*z + y*z + z), F ) == (convert( y*z), false))
@@ -530,6 +532,31 @@ TEST ///
             j^2+j)
   J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f, g+f, a+d, j+i+d*c)
   J = J + I
+
+  R = ZZ/2[a..j, MonomialOrder=>Lex]
+  F = new gbComputation from { 0=> convert(a*b*c*d*e),
+          1=> convert( a+b*c+d*e+a+b+c+d),
+          2=> convert( j*h+i+f)
+          }
+  F#2
+  unitvector(-(-10)-1, numgens R)
+  S = SPolynomial((-6,2), F, numgens R)
+  S = SPolynomial((1,2), F, numgens R)
+  gbBasis = gbBrp( F, numgens R)
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+  QR = R/(a^2+a,
+          b^2+b,
+          c^2+c,
+          d^2+d,
+          e^2+e,
+          f^2+f,
+          g^2+g,
+          h^2+h,
+          i^2+i,
+          j^2+j)
+  J = ideal(a*b*c*d*e, a+b*c+d*e+a+b+c+d, j*h+i+f)
+  M = apply(flatten entries gens gb J, i-> lift(i,R))
+  assert(N == M)
 
   R = ZZ/2[a..j, MonomialOrder=>Lex]
   F = new gbComputation from { 0=> convert(a*b*c*d*e),
