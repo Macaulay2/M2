@@ -14,7 +14,7 @@ BRP::BRP(int val) {
 }
 
 bool BRP::operator!=(int val) {
-  return (! this == val);
+  return !( (*this) == val);
 }
 bool BRP::operator==(int val) {
   if(val == 0) {
@@ -27,6 +27,10 @@ bool BRP::operator==(int val) {
 
 bool BRP::operator==(BRP other) {
   return mylist == other.mylist;
+}
+
+bool BRP::operator!=(BRP other) {
+  return !(  (*this) == other);
 }
 
 BRP BRP::operator+(BRP other) {
@@ -88,10 +92,23 @@ bool BRP::leadingIsRelativelyPrime(BRP other) {
   // check if a is relatively prime with regards to b
   int a = LT();
   int b = other.LT();
-  return ((a | b) ^ a) == b;
+  return ( ((a | b) ^ a) == b);
 }
 
-// write f as f = ax+b
+// write f as f = ax+b, return a
+BRP BRP::remainder(BRP x){
+  list<int> tmp;
+  for(i=mylist.begin(); i != mylist.end(); ++i) {
+    BRP m = BRP(*i);
+    if ( !m.isDivisibleBy(x) ) {
+      tmp.push_back( m.mylist.front() );
+    }
+  }
+  return BRP(tmp);
+}
+
+// this function is not needed!
+// write f as f = ax+b, return a
 BRP BRP::divisiblePart(BRP x){
   list<int> tmp;
   for(i=mylist.begin(); i != mylist.end(); ++i) {
@@ -101,7 +118,6 @@ BRP BRP::divisiblePart(BRP x){
       tmp.push_back( t.mylist.front() );
     }
   }
-
   return BRP(tmp);
 }
 
