@@ -111,19 +111,18 @@ bool isGoodPair(const Pair &pair, const map<int,BRP> &F, const set<Pair> &B, int
   int i = pair.i;
   int j = pair.j;
 
-  BRP g = fp.g;
-  BRP f = fp.f;
-  if( (g).leadingIsRelativelyPrime(f)) {
+  int g = fp.g.LT();
+  int f = fp.f.LT();
+  if( BRP::isRelativelyPrime(g,f) ) {
     return false;
   }
 
-  BRP lcm = BRP( g.LT() | f.LT() );
-
+  int lcm = g | f;
   for(map<int, BRP>::const_iterator it = F.begin(); it != F.end(); ++it) {
     int k = it->first;
     BRP K = it->second;
 
-    if(( k != i && k != j && lcm.isDivisibleBy( K.LT() ) && !inList(i,k,B) && !inList(j,k,B))) {
+    if(( k != i && k != j && BRP::isDivisibleBy(lcm, K.LT() ) && !inList(i,k,B) && !inList(j,k,B))) {
       return false;
     }
   }
@@ -143,9 +142,10 @@ BRP sPolynomial(const Pair &pair, const map<int,BRP> &F, int n) {
     BRP a = (fp.f).remainder(fp.g);
     return a * fp.g + a;
   } 
-  int lcm = fp.f.LT() | fp.g.LT();
-  return fp.f*(lcm ^ fp.f.LT() ) + fp.g*( lcm ^ fp.g.LT() );
-  //return fp.f* BRP( lcm/ BRP(fp.f.LT()) ) + fp.g*BRP(lcm/ BRP(fp.g.LT()) );
+  int f = fp.f.LT();
+  int g = fp.g.LT();
+  int lcm = f | g;
+  return fp.f*(lcm ^ f ) + fp.g*( lcm ^ g );
 }
 
 // Reduce the leading term of a polynomial one step using the leading term of
@@ -154,15 +154,14 @@ BRP sPolynomial(const Pair &pair, const map<int,BRP> &F, int n) {
 BRP reduceLTOnce(const BRP &f, const BRP &g) {
   int a = f.LT() ^ g.LT();
   return g * a + f ;
-  //return f + g *( f.LT() / g.LT() );
 }
 
 // Reduce the leading term of f one step with the first polynomial g_i in the
 // intermediate basis that satisfies isLeadingReducibleBy(f,g_i)
-BRP reduceLTOnce(BRP f, const map<int,BRP> &F) {
+BRP reduceLTOnce(const BRP &f, const map<int,BRP> &F) {
   for(map<int, BRP>::const_iterator it = F.begin(); it != F.end(); ++it) {
     BRP g = it->second;
-    if (f.isLeadingReducibleBy(g)) {
+    if (f.isLeadingReducibleBy(g.LT())) {
       return reduceLTOnce(f, g);
     }
   }
@@ -170,21 +169,19 @@ BRP reduceLTOnce(BRP f, const map<int,BRP> &F) {
 }
 
 // reduce all term of f with leading term of g
-BRP reduceLowerTerms(BRP f, BRP g) {
+BRP reduceLowerTerms(const BRP &f, const BRP &g) {
   BRP tmp = f;
-  while (tmp != 0) {
-    // get each monomial
-    BRP m = BRP(tmp.LT());
-    tmp = tmp + m; // remove leading term from tmp
-    if ( m.isLeadingReducibleBy(g) ) {
-      int a = g.LT();
-      f = f + g * ( m / g.LT() );
-      //f = f + g *( m / g.LT());
-      tmp = f; // look at all monomials of the new f
+  int a = g.LT();
+  list<int>::iterator it  = tmp.mylist.begin();
+  while (it != tmp.mylist.end() ) {
+    int m = *it;
+    if ( BRP::isDivisibleBy(m,a) ) {
+      tmp = tmp + g * ( m ^ a );
       break; 
     }
+    ++it;
   }
-  return f;
+  return tmp;
 }
 
 // reduce all terms of f with leading terms of all polynomials in F
