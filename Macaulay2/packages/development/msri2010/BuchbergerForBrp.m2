@@ -614,6 +614,32 @@ longTest = true
     time M = apply(flatten entries gens gb J, i-> lift(i,R));
     assert(N == M)
   )
+    
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+  J = ideal(a*b*c*d*e,
+  a+b*c+d*e+a+b+c+d , 
+  j*h+i+f, 
+  g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i);
+  t1 = cpuTime();
+  gens gb J
+  t2 = cpuTime();
+  timediff =  t2 - t1;
+  timediff * 1000
+
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+  J = ideal(a*b*c*d*e,
+  a+b*c+d*e+a+b+c+d , 
+  j*h+i+f, 
+  g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i);
+  t1 = cpuTime();
+  gens gb J
+  t2 = cpuTime();
+  timediff =  t2 - t1;
+  timediff * 1000
+
+  
   
 
 longTest = true
@@ -760,3 +786,13 @@ restart
 installPackage "BuchbergerForBrp"
 installPackage("BuchbergerForBrp", RemakeAllDocumentation=>true)
 check BuchbergerForBrp
+
+restart
+installPackage "BuchbergerForBrp"
+S=ZZ/2[a..p]
+load "tmp2.m2"
+F = getPolysFromList(L)
+"tmp4.m2" << peek F << endl << close
+time gens gb ideal L;
+
+
