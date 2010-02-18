@@ -32,7 +32,7 @@ Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -
 VirtualTally = new Type of Tally
 VirtualTally.synonym = "virtual tally"
 - VirtualTally := y -> applyValues(y,minus)
-VirtualTally + VirtualTally := VirtualTally => (x,y) -> merge(x,y,continueIfNonPositive @@ plus)
+VirtualTally + VirtualTally := VirtualTally => (x,y) -> merge(x,y,plus)
 VirtualTally - VirtualTally := VirtualTally => (x,y) -> x + -y
 
 Tally ? Tally := (x,y) -> (
