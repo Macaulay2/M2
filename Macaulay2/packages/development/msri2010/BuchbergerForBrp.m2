@@ -791,8 +791,18 @@ restart
 installPackage "BuchbergerForBrp"
 S=ZZ/2[a..p]
 load "tmp2.m2"
+load "tmp3.m2"
 F = getPolysFromList(L)
 "tmp4.m2" << peek F << endl << close
+time gens gb ideal L;
+
+restart
+installPackage "BuchbergerForBrp"
+S=ZZ/2[a..p]
+load "tmp3.m2"
+F = getPolysFromList(L)
+"tmp3.m2" << peek F << endl << close
+"~/Documents/Research/BooleanGroebner/tmp3.m2" << peek F << endl << close
 time gens gb ideal L;
 
 
