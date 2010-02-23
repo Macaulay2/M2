@@ -22,7 +22,7 @@ exportMutable { -- these should all be private, but for testing purposes, they a
       isReducible,
       minimalGbBrp,
       reduce,
-      reduceGbBrp,
+      --reduceGbBrp,
       reduceLtBrp,
       reduceOneStep, 
       reduceOneStepList, 
@@ -53,7 +53,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
   removeDoubleEntries F;
 
   -- do this here, it changes the order of polynomials and makes iterating through the list faster
-  reduceGbBrp F;
+  --reduceGbBrp F;
   nextIndex = #F; --index polynomial should have if added to F (better than #F because reduction might remove elements from F
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
 
@@ -69,13 +69,13 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
       reducedS := reduce (S,F);
       if reducedS != 0 then (
         -- reduce lower terms of reducedS with leading terms in F
-        apply( values F, g -> reducedS = reduceLtBrp(reducedS, g));
+        --apply( values F, g -> reducedS = reduceLtBrp(reducedS, g));
         -- add reducedS to intermediate basis and update the list of pairs
         newPairs = toList( (-n,nextIndex)..(-1, nextIndex)) | apply( keys F, i-> (i,nextIndex) );
         F#nextIndex = reducedS;
         nextIndex = nextIndex + 1;
         listOfIndexPairs = listOfIndexPairs | newPairs;
-        reduceGbBrp F;
+        --reduceGbBrp F;
       );
     );
   );
@@ -156,7 +156,7 @@ minimalGbBrp( gbComputation ) := gbComputation => (F) -> (
 reduceLtBrp = method()
 reduceLtBrp(Brp, Brp) := Brp => (f,g) -> (
   while ( p := scan(f, m ->  (m = new Brp from {m}; if isReducible(m, g) then break m)); instance(p,Brp) ) do (
-      --assert isDivisible( p, leading g);
+      assert isDivisible( p, leading g);
    	  f = f + g*divide( p, leading g)
   );
   f
@@ -280,6 +280,7 @@ reduce (Brp, Brp) := Brp => (f,g) -> (
 -- only call this when isReducible(f,g)
 reduceOneStep = method()
 reduceOneStep(Brp, Brp) := Brp => (f,g) -> (
+  assert (isReducible(f,g));
   if f != 0 then (
     f + g * divide(leading f, leading g) 
   ) else new Brp from {} -- TODO make 0 automatically turn into 0
@@ -308,7 +309,7 @@ makePairsFromLists (List,List) := List => (a,b) -> (
 -- check if the leading term of one polynomial can be reduced by another polynomial
 isReducible = method()
 isReducible (Brp, Brp) := Boolean => (f,g) -> (
-  --assert (f != 0 );
+  assert (f != 0 );
   isDivisible(leading f, leading g)
 )
 
@@ -636,14 +637,12 @@ longTest = true
     i + l*m*n + q*r + q
   };
   F = getPolysFromList L;
-  "~/Documents/Research/BooleanGroebner/tmp7.m2" << peek F << endl << close
   time gbBasis = gbBrp( F, numgens R);
   N = sort apply (values gbBasis, poly -> convert(poly,R) );
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   J = ideal L;
   time M = apply(flatten entries gens gb J, i-> lift(i,R));
   F = getPolysFromList M;
-  "~/Documents/Research/BooleanGroebner/tmp-solution7.m2" << peek F << endl << close
   assert(N == M)
 
   R = ZZ/2[a..t, MonomialOrder=>Lex]
@@ -842,3 +841,37 @@ F = getPolysFromList(L)
 "~/Documents/Research/BooleanGroebner/tmp3.m2" << peek F << endl << close
 time gens gb ideal L;
 
+
+restart
+installPackage "BuchbergerForBrp"
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  L = {
+    b*c,
+    a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
+    b*c*l*o*r*s + b*s + i + m*n*q, 
+    a*c*e*i*q + d*m*o*q + f*g, 
+    i + l*m*n + q*r + q
+  };
+  F = getPolysFromList L;
+  reduceGbBrp F;
+  N = sort apply (values F, poly -> convert(poly,R) );
+  
+  
+restart
+installPackage "BuchbergerForBrp"
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  L = {
+    b*c,
+    a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
+    b*c*l*o*r*s + b*s + i + m*n*q, 
+    a*c*e*i*q + d*m*o*q + f*g, 
+    i + l*m*n + q*r + q
+  };
+  F = getPolysFromList L;
+  time gbBasis = gbBrp( F, numgens R);
+  N = sort apply (values gbBasis, poly -> convert(poly,R) );
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+  J = ideal L;
+  time M = apply(flatten entries gens gb J, i-> lift(i,R));
+  F = getPolysFromList M;
+  assert(N == M)
