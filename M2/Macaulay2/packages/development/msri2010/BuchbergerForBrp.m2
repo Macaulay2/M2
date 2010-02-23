@@ -22,7 +22,7 @@ exportMutable { -- these should all be private, but for testing purposes, they a
       isReducible,
       minimalGbBrp,
       reduce,
-      --reduceGbBrp,
+      reduceGbBrp,
       reduceLtBrp,
       reduceOneStep, 
       reduceOneStepList, 
@@ -53,7 +53,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
   removeDoubleEntries F;
 
   -- do this here, it changes the order of polynomials and makes iterating through the list faster
-  --reduceGbBrp F;
+  reduceGbBrp F;
   nextIndex = #F; --index polynomial should have if added to F (better than #F because reduction might remove elements from F
   listOfIndexPairs := makePairsFromLists( keys F, keys F) | makePairsFromLists( keys F, toList(-n..-1) );
 
@@ -75,7 +75,7 @@ gbBrp (gbComputation, ZZ) := gbComputation => (F,n) -> (
         F#nextIndex = reducedS;
         nextIndex = nextIndex + 1;
         listOfIndexPairs = listOfIndexPairs | newPairs;
-        --reduceGbBrp F;
+        reduceGbBrp F;
       );
     );
   );
@@ -605,11 +605,10 @@ TEST ///
           18=> convert( a*k+c*l*n*f),
           19=> convert( q*r+c+q+l*n*m+i)
           }
-longTest = true 
+longTest = false
   if longTest then (         
     time gbBasis = gbBrp( F, numgens R);
     N = sort apply (values gbBasis, poly -> convert(poly,R) );
-
     QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
     J = ideal(a*b*c*d*e,a+b*c+d*e+a+b+c+d, j*h+i+f, g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i);
     time M = apply(flatten entries gens gb J, i-> lift(i,R));
@@ -618,17 +617,6 @@ longTest = true
     
   R = ZZ/2[a..t, MonomialOrder=>Lex]
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
-  J = ideal(a*b*c*d*e,
-  a+b*c+d*e+a+b+c+d , 
-  j*h+i+f, 
-  g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i);
-  t1 = cpuTime();
-  gens gb J
-  t2 = cpuTime();
-  timediff =  t2 - t1;
-  timediff * 1000
-
-  R = ZZ/2[a..t, MonomialOrder=>Lex]
   L = {
     b*c,
     a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
@@ -639,13 +627,12 @@ longTest = true
   F = getPolysFromList L;
   time gbBasis = gbBrp( F, numgens R);
   N = sort apply (values gbBasis, poly -> convert(poly,R) );
-  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   J = ideal L;
   time M = apply(flatten entries gens gb J, i-> lift(i,R));
-  F = getPolysFromList M;
-  assert(N == M)
+  assert(N == M);
 
   R = ZZ/2[a..t, MonomialOrder=>Lex]
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   L = {a*b*c*d*e,
     a+b*c+d*e+a+b+c+d , 
     j*h+i+f, 
@@ -655,7 +642,7 @@ longTest = true
     m*n+o*p, 
     b*s+q+p*n*m+i, 
     b*s+q*n*m+i+b*l*o*r*s*c, 
-    b*k+q+l*n*m;
+    b*k+q+l*n*m,
     i*q*a*c*e+f*g+o*q*d*m, 
     b*s+q*n*m+i+j*s*t+s, 
     b*k+r*q+l*m+i*j+n, 
@@ -664,18 +651,16 @@ longTest = true
     a*k+c*l*n*f, 
     q*r+c+q+l*n*m+i
   };
-  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   J = ideal L;
-  time M = apply(flatten entries gens gb J, i-> lift(i,R));
+if longTest then
+  time M = apply(flatten entries gens gb J, i-> lift(i,R))
+  F = getPolysFromList L
+if longTest then
+  time gbBasis = gbBrp( F, numgens R)
+  N = sort apply (values gbBasis, poly -> convert(poly,R) )
+if longTest then 
+  assert( N == M ) 
 
-
-  t1 = cpuTime();
-  gens gb J
-  t2 = cpuTime();
-  timediff =  t2 - t1;
-  timediff * 1000
-
-  
   
 
 longTest = true
@@ -837,7 +822,7 @@ installPackage "BuchbergerForBrp"
 S=ZZ/2[a..p]
 load "tmp3.m2"
 F = getPolysFromList(L)
-"tmp3.m2" << peek F << endl << close
+--"tmp3.m2" << peek F << endl << close
 "~/Documents/Research/BooleanGroebner/tmp3.m2" << peek F << endl << close
 time gens gb ideal L;
 
@@ -845,6 +830,7 @@ time gens gb ideal L;
 restart
 installPackage "BuchbergerForBrp"
   R = ZZ/2[a..t, MonomialOrder=>Lex]
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   L = {
     b*c,
     a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
@@ -857,21 +843,3 @@ installPackage "BuchbergerForBrp"
   N = sort apply (values F, poly -> convert(poly,R) );
   
   
-restart
-installPackage "BuchbergerForBrp"
-  R = ZZ/2[a..t, MonomialOrder=>Lex]
-  L = {
-    b*c,
-    a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
-    b*c*l*o*r*s + b*s + i + m*n*q, 
-    a*c*e*i*q + d*m*o*q + f*g, 
-    i + l*m*n + q*r + q
-  };
-  F = getPolysFromList L;
-  time gbBasis = gbBrp( F, numgens R);
-  N = sort apply (values gbBasis, poly -> convert(poly,R) );
-  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
-  J = ideal L;
-  time M = apply(flatten entries gens gb J, i-> lift(i,R));
-  F = getPolysFromList M;
-  assert(N == M)
