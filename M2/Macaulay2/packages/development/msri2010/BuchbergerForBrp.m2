@@ -628,11 +628,55 @@ longTest = true
   timediff * 1000
 
   R = ZZ/2[a..t, MonomialOrder=>Lex]
+  L = {a*b*c*d*e,
+    a+b*c+d*e+a+b+c+d , 
+    j*h+i+f, 
+    g+f +m*n+o,
+    j+i+d*c, 
+    r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
+    m*n+o*p, 
+    b*s+q+p*n*m+i, 
+    b*s+q*n*m+i+b*l*o*r*s*c, 
+ --   b*k+q+l*n*m+i*q*a*c*e+f*g+o*q*d*m, 
+    b*s+q*n*m+i+j*s*t+s, 
+    b*k+r*q+l*m+i*j+n, 
+    b*k+d*n*m+i, 
+    b+q+l*n*m+i*d, 
+    a*k+c*l*n*f, 
+    q*r+c+q+l*n*m+i
+  };
+  F = getPolysFromList L;
+  time gbBasis = gbBrp( F, numgens R);
+  N = sort apply (values gbBasis, poly -> convert(poly,R) );
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
-  J = ideal(a*b*c*d*e,
-  a+b*c+d*e+a+b+c+d , 
-  j*h+i+f, 
-  g+f,a+d,j+i+d*c, r+s+t, m*n+o*p, t+a, b*s+q+p*n*m+i,  b*s+q+p+h, b*s+q*n*m+i, b*k+q+l*n*m+i, b*s+q*n*m+i, b*s+q*n*m+i+j*s*t+s, b*k+s+t, b*k+r*q+l*m+i*j+n, b*a+l+q*m+i, b*k+d*n*m+i, b+q+l*n*m+i*d, a*k+c*l*n*f, q*r+c+q+l*n*m+i);
+  J = ideal L;
+  time M = apply(flatten entries gens gb J, i-> lift(i,R));
+  assert(N == M)
+
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  L = {a*b*c*d*e,
+    a+b*c+d*e+a+b+c+d , 
+    j*h+i+f, 
+    g+f +m*n+o,
+    j+i+d*c, 
+    r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
+    m*n+o*p, 
+    b*s+q+p*n*m+i, 
+    b*s+q*n*m+i+b*l*o*r*s*c, 
+    b*k+q+l*n*m;
+    i*q*a*c*e+f*g+o*q*d*m, 
+    b*s+q*n*m+i+j*s*t+s, 
+    b*k+r*q+l*m+i*j+n, 
+    b*k+d*n*m+i, 
+    b+q+l*n*m+i*d, 
+    a*k+c*l*n*f, 
+    q*r+c+q+l*n*m+i
+  };
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+  J = ideal L;
+  time M = apply(flatten entries gens gb J, i-> lift(i,R));
+
+
   t1 = cpuTime();
   gens gb J
   t2 = cpuTime();
@@ -806,3 +850,28 @@ F = getPolysFromList(L)
 time gens gb ideal L;
 
 
+restart
+installPackage "BuchbergerForBrp"
+  R = ZZ/2[a..t, MonomialOrder=>Lex]
+  L = {
+ --   a*b*c*d*e,
+    a+b*c+d*e+a+b+c+d , 
+ --   j*h+i+f, 
+ --   g+f+m*n+o,
+ --   j+i+d*c, 
+    r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
+ --   m*n+o*p, 
+ --   b*s+q+p*n*m+i, 
+    b*s+q*n*m+i+b*l*o*r*s*c, 
+ --   b*k+q+n*m;
+    i*q*a*c*e+f*g+o*q*d*m, 
+ --   b*s+q*n*m+i+j*s*t+s, 
+ --   b*k+r*q+l*m+i*j+n, 
+ --   b*k*d*n*m+i, 
+ --   b+q+l*n*m+i*d, 
+    a*k+c*l*n*f, 
+    q*r+q+l*n*m+i
+  };
+  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+  J = ideal L;
+  time M = apply(flatten entries gens gb J, i-> lift(i,R));
