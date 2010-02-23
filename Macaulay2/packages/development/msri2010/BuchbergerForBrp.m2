@@ -628,29 +628,22 @@ longTest = true
   timediff * 1000
 
   R = ZZ/2[a..t, MonomialOrder=>Lex]
-  L = {a*b*c*d*e,
-    a+b*c+d*e+a+b+c+d , 
-    j*h+i+f, 
-    g+f +m*n+o,
-    j+i+d*c, 
-    r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
-    m*n+o*p, 
-    b*s+q+p*n*m+i, 
-    b*s+q*n*m+i+b*l*o*r*s*c, 
- --   b*k+q+l*n*m+i*q*a*c*e+f*g+o*q*d*m, 
-    b*s+q*n*m+i+j*s*t+s, 
-    b*k+r*q+l*m+i*j+n, 
-    b*k+d*n*m+i, 
-    b+q+l*n*m+i*d, 
-    a*k+c*l*n*f, 
-    q*r+c+q+l*n*m+i
+  L = {
+    b*c,
+    a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
+    b*c*l*o*r*s + b*s + i + m*n*q, 
+    a*c*e*i*q + d*m*o*q + f*g, 
+    i + l*m*n + q*r + q
   };
   F = getPolysFromList L;
+  "~/Documents/Research/BooleanGroebner/tmp7.m2" << peek F << endl << close
   time gbBasis = gbBrp( F, numgens R);
   N = sort apply (values gbBasis, poly -> convert(poly,R) );
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   J = ideal L;
   time M = apply(flatten entries gens gb J, i-> lift(i,R));
+  F = getPolysFromList M;
+  "~/Documents/Research/BooleanGroebner/tmp-solution7.m2" << peek F << endl << close
   assert(N == M)
 
   R = ZZ/2[a..t, MonomialOrder=>Lex]
@@ -849,29 +842,3 @@ F = getPolysFromList(L)
 "~/Documents/Research/BooleanGroebner/tmp3.m2" << peek F << endl << close
 time gens gb ideal L;
 
-
-restart
-installPackage "BuchbergerForBrp"
-  R = ZZ/2[a..t, MonomialOrder=>Lex]
-  L = {
- --   a*b*c*d*e,
-    a+b*c+d*e+a+b+c+d , 
- --   j*h+i+f, 
- --   g+f+m*n+o,
- --   j+i+d*c, 
-    r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
- --   m*n+o*p, 
- --   b*s+q+p*n*m+i, 
-    b*s+q*n*m+i+b*l*o*r*s*c, 
- --   b*k+q+n*m;
-    i*q*a*c*e+f*g+o*q*d*m, 
- --   b*s+q*n*m+i+j*s*t+s, 
- --   b*k+r*q+l*m+i*j+n, 
- --   b*k*d*n*m+i, 
- --   b+q+l*n*m+i*d, 
-    a*k+c*l*n*f, 
-    q*r+q+l*n*m+i
-  };
-  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
-  J = ideal L;
-  time M = apply(flatten entries gens gb J, i-> lift(i,R));
