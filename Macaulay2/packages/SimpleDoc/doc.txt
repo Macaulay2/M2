@@ -175,7 +175,7 @@ Node
 
     The lines in the @TO Subnodes@ section not beginning with a colon are keys
     giving links to the subnodes of the current documentation node.  The
-    purpose to allow the documentation of the package to be arranged linearly,
+    purpose is to allow the documentation of the package to be arranged linearly,
     as in a book.  The lines in the @TO Subnodes@ section beginning with a
     colon are subheadings used to classify the subnodes.
 
