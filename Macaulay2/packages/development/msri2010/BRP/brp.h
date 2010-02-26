@@ -1,6 +1,6 @@
-#include <list>
+#include <set>
 #include <iostream>
-#include <vector>
+#include <list>
 #include <map>
 #include <string>
 
@@ -11,79 +11,99 @@
 
 using namespace std;
 
+inline bool funccomp(const int &a, const int &b) {
+  return b < a;
+}
+
+class Bits
+{
+  public:
+  static int numberOfBits(int a);
+  static bool reverseLex(int a, int b);
+};
+
+inline bool funccompGRL(const int &lhs, const int &rhs) {
+  if (Bits::numberOfBits(lhs) > Bits::numberOfBits(rhs) ) {
+    return true;
+  } else if (Bits::numberOfBits(lhs) < Bits::numberOfBits(rhs) ) {
+    return false;
+  } else {
+    return Bits::reverseLex(lhs,rhs);
+  }
+}
+
+struct lex {
+  bool operator() (const int& lhs, const int& rhs) const {
+    return lhs>rhs;
+  }
+};
+
+struct gRevLex {
+  bool operator() (const int& lhs, const int& rhs) const {
+    if (Bits::numberOfBits(lhs) > Bits::numberOfBits(rhs) ) {
+      return true;
+    } else if (Bits::numberOfBits(lhs) < Bits::numberOfBits(rhs) ) {
+      return false;
+    } else {
+      return Bits::reverseLex(lhs,rhs);
+    }
+  }
+};
+
+typedef list<int> monomials;
+typedef set<int,lex> monomials_set;
+
 class BRP
 {
 
-  friend ostream& operator<< (ostream &out, BRP &self) {
-    for(list<int>::iterator i=self.mylist.begin(); i != self.mylist.end(); ++i) {
+  friend ostream& operator<< (ostream &out, const BRP &self) {
+    for(monomials::const_iterator i = self.m.begin(); i != self.m.end(); ++i) {
       out << *i;
       out << " ";
     }
     return out;
   }
 
-  static void mod2(list<int> &alist) {
-    map<int,int> tally;
-    for (list<int>::const_iterator i=alist.begin(); i != alist.end(); ++i) {
-      ++tally[*i];
-    }
-    
-    list<int> tmp;
-    for(map<int,int>::iterator iter = tally.begin(); iter != tally.end(); ++iter) {
-      if(iter->second % 2 == 1) {
-        tmp.push_back(iter->first);
-      }
-    }
-    tmp.sort();
-    tmp.reverse();
-    alist = tmp;
-  }
-
   public:
   
-  list<int> mylist;
+  monomials m; // this is the ordered list of monomials represented as integers
 
-  static bool isDivisibleBy(int a, int b) {
+  static bool isDivisibleBy(const int &a, const int &b) {
     // check if a is divisible by b
     int lcm = a | b;
     return lcm == a;
   }
 
-  static bool isRelativelyPrime(int a, int b) {
+  static bool isRelativelyPrime( const int &a, const int &b) {
     // check if a and b are relatively prime
     return ( ((a | b) ^ a) == b);
   }
 
-  BRP();
+  BRP() {};
+  BRP(const monomials &other) { m = other; }
+  BRP(const monomials_set &other);
+  BRP(const int &val) { m.push_back(val); }
 
-  BRP(const list<int> &alist);
+  bool operator==(const int &val) const;
+  bool operator!=(const int &val) const { return !( (*this) == val); }
 
-  BRP(int val);
+  bool operator==(const BRP &other) const { return m == other.m; }
+  bool operator!=(const BRP &other) const { return !(  (*this) == other); }
 
-  bool operator==(int val) const;
-  bool operator!=(int val) const;
-
-  bool operator==(const BRP &other) const;
-  bool operator!=(const BRP &other) const;
-
-  BRP operator+(BRP other);
+  BRP& operator+(const BRP &other);
 
   BRP operator*(const BRP &other) const;
-  BRP operator*(int other) const;
-
-  int operator/(const BRP &other) const;
-  int operator/(int other) const;
-
-  bool leadingIsRelativelyPrime(const BRP &other) const;
+  BRP operator*(const int &other) const;
 
   bool isLeadingReducibleBy(const BRP &other) const;
-  bool isLeadingReducibleBy(int other) const;
+  bool isLeadingReducibleBy(const int &other) const;
   
   BRP remainder(const BRP &x) const;
 
-  int LT() const;
+  int LT() const { return *(m.begin()); }
 
-  void removeLeading();
+  bool reduceLowerTerms(const BRP &g);
+
 };
 
 

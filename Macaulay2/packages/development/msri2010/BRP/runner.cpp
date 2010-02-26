@@ -1,8 +1,22 @@
 #include "brp.h"
+#include "long.h"
+#include "longTest1.h"
+#include "longTest2.h"
+#include "longTest3.h"
+#include "longTest4.h"
+#include "longTest5.h"
+//#include "longGRevLex.h"
+#include "long1.h"
+#include "long5.h"
+#include "long6.h"
+#include "long7.h"
+#include "long8.h"
 #include <sys/time.h>
 #include <set>
-#include <math.h>
 #include <time.h>
+
+typedef map<int,set<int> > memoryMap;
+typedef map<int,BRP> intermediateBasis;
 
 class Pair {
   friend bool operator< (const Pair &pair1, const Pair &pair2) {
@@ -32,33 +46,33 @@ class Pair {
   }
 }; 
 
+typedef set<Pair> Pairs;
+
 class FunctionPair {
+  BRP fieldpolynomial;
   public: 
-  BRP f;
-  BRP g;
+  const BRP *f;
+  const BRP *g;
   bool good;
 
-//  FunctionPair(BRP a, BRP b) {
-//    f = a;
-//    g = b;
-//    good = true;
-//  }
-
   // i < j
-  FunctionPair(const Pair &pair, const map<int,BRP> &F, int n )  {
+  FunctionPair(const Pair &pair, const intermediateBasis &F, int n )  {
     int i = pair.i;
     int j = pair.j;
-
-    if(F.find(j) == F.end() || (i >= 0 && F.find(i) == F.end())) {
+    
+    intermediateBasis::const_iterator end = F.end();
+    if(F.find(j) == end || (i >= 0 && F.find(i) == end)) {
       good = false;
     } else { 
       good = true;
       if(i < 0) { // working with field polynomial, generate x_(-i)
-        g = BRP(pow(2,( n - (-i) )));
+        //g = BRP( 1 << n-(-i) );
+        fieldpolynomial = BRP( 1 << n-(-i) );
+        g = &fieldpolynomial;
       } else {
-        g = F.find(i) ->second;
+        g = &F.find(i) ->second;
       }
-      f = F.find(j) ->second;
+      f = &F.find(j) ->second;
     }
   }
 };
@@ -67,10 +81,11 @@ class FunctionPair {
     F = map of functions
     n = number of variables in the ring
 */
-set<Pair> makeList(const map<int,BRP> &F, int n) {
-  set<Pair> B;
-  set<Pair>::iterator position = B.begin();
-  for(map<int,BRP>::const_iterator iter = F.begin(); iter != F.end(); ++iter) {
+Pairs makeList(const intermediateBasis &F, int n) {
+  Pairs B;
+  Pairs::iterator position = B.begin();
+  intermediateBasis::const_iterator end = F.end();
+  for(intermediateBasis::const_iterator iter = F.begin(); iter != end; ++iter) {
     int j = iter->first;
     for(int i=-n; i<0; i++) {
       Pair pair = Pair(i, j);
@@ -84,14 +99,15 @@ set<Pair> makeList(const map<int,BRP> &F, int n) {
   return B;
 }
 
-set<Pair> makeNewPairs(int newIndex, const map<int,BRP> &F, int n) {
-  set<Pair> B;
-  set<Pair>::iterator position = B.begin();
+Pairs makeNewPairs(int newIndex, const intermediateBasis &F, int n) {
+  Pairs B;
+  Pairs::iterator position = B.begin();
   for(int i=-n; i<0; i++) {
     Pair pair = Pair(i, newIndex);
     position = B.insert(position, pair);
   }
-  for(map<int,BRP>::const_iterator iter = F.begin(); iter != F.end(); ++iter) {
+  intermediateBasis::const_iterator end = F.end();
+  for(intermediateBasis::const_iterator iter = F.begin(); iter != end; ++iter) {
     int j = iter->first;
     Pair pair = Pair(newIndex, j);
     position = B.insert(position, pair);
@@ -99,12 +115,12 @@ set<Pair> makeNewPairs(int newIndex, const map<int,BRP> &F, int n) {
   return B;
 }
 
-bool inList(int i, int j, const set<Pair> &B) {
+bool inList(int i, int j, const Pairs &B) {
   Pair p = Pair(i,j);
   return B.find(p) != B.end();
 }
 
-bool isGoodPair(const Pair &pair, const map<int,BRP> &F, const set<Pair> &B, int n) {
+bool isGoodPair(const Pair &pair, const intermediateBasis &F, const Pairs &B, int n) {
   FunctionPair fp = FunctionPair(pair, F, n);
   if (!fp.good) {
     return false;
@@ -113,14 +129,15 @@ bool isGoodPair(const Pair &pair, const map<int,BRP> &F, const set<Pair> &B, int
   int i = pair.i;
   int j = pair.j;
 
-  int g = fp.g.LT();
-  int f = fp.f.LT();
+  int g = fp.g->LT();
+  int f = fp.f->LT();
   if( BRP::isRelativelyPrime(g,f) ) {
     return false;
   }
 
   int lcm = g | f;
-  for(map<int, BRP>::const_iterator it = F.begin(); it != F.end(); ++it) {
+  intermediateBasis::const_iterator end = F.end();
+  for(intermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
     int k = it->first;
     const BRP *K = &(it->second);
 
@@ -133,7 +150,7 @@ bool isGoodPair(const Pair &pair, const map<int,BRP> &F, const set<Pair> &B, int
 }
 
 
-BRP sPolynomial(const Pair &pair, const map<int,BRP> &F, int n) {
+BRP sPolynomial(const Pair &pair, const intermediateBasis &F, int n) {
   FunctionPair fp = FunctionPair(pair, F, n);
   if (!fp.good) {
     return BRP();
@@ -141,13 +158,13 @@ BRP sPolynomial(const Pair &pair, const map<int,BRP> &F, int n) {
 
   if (pair.i < 0 ) { 
     // g = ax + b
-    BRP a = (fp.f).remainder(fp.g);
-    return a * fp.g + a;
+    BRP a = (fp.f)->remainder(*fp.g);
+    return a * *fp.g + a;
   } 
-  int f = fp.f.LT();
-  int g = fp.g.LT();
+  int f = fp.f->LT();
+  int g = fp.g->LT();
   int lcm = f | g;
-  return fp.f*(lcm ^ f ) + fp.g*( lcm ^ g );
+  return *fp.f * (lcm ^ f ) + *fp.g * ( lcm ^ g );
 }
 
 // Reduce the leading term of a polynomial one step using the leading term of
@@ -155,13 +172,14 @@ BRP sPolynomial(const Pair &pair, const map<int,BRP> &F, int n) {
 // only call this when isLeadingReducibleBy(f,g)
 void reduceLTOnce(BRP &f, const BRP &g) {
   int a = f.LT() ^ g.LT();
-  f = g * a + f;
+  f + g * a;
 }
 
 // Reduce the leading term of f one step with the first polynomial g_i in the
 // intermediate basis that satisfies isLeadingReducibleBy(f,g_i)
-bool reduceLTOnce(BRP &f, const map<int,BRP> &F) {
-  for(map<int, BRP>::const_iterator it = F.begin(); it != F.end(); ++it) {
+bool reduceLTOnce(BRP &f, const intermediateBasis &F) {
+  intermediateBasis::const_iterator end = F.end();
+  for(intermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
     const BRP *g = &(it->second);
     if (f.isLeadingReducibleBy(g->LT())) {
       reduceLTOnce(f, *g);
@@ -171,29 +189,16 @@ bool reduceLTOnce(BRP &f, const map<int,BRP> &F) {
   return false;
 }
 
-// reduce all term of f with leading term of g
-// return true if a change happened, otherwise false
-// f is being changes to its reduction
-bool reduceLowerTerms(BRP &f, const BRP &g) {
-  int a = g.LT();
-  list<int>::iterator it  = f.mylist.begin();
-  while (it != f.mylist.end() ) {
-    int m = *it;
-    if ( BRP::isDivisibleBy(m,a) ) {
-      f = f + g * ( m ^ a );
-      return true;
-    }
-    ++it;
-  }
-  return false;
-}
-
 // reduce all terms of f with leading terms of all polynomials in F
 // if f is in F, then f is reduced to 0
-void reduceLowerTerms(BRP &f, const map<int,BRP> &F) {
-  for(map<int, BRP>::const_iterator it = F.begin(); it != F.end() && f != 0; ++it) {
-    const BRP *g = &(it->second);
-    reduceLowerTerms(f, *g);
+void reduceLowerTerms(BRP &f, const intermediateBasis &F) {
+  intermediateBasis::const_iterator end = F.end();
+  for(intermediateBasis::const_iterator it = F.begin(); it != end && f != 0; ++it) {
+    f.reduceLowerTerms(it->second);
+    if (f == 0 ) {
+      cout << "f is zero" << endl;
+      break;
+    }
     // don't start over with the loop, because the everytime we check all
     // terms of f, so if no term of f was reducible by g, then so is no term
     // of the new f
@@ -202,7 +207,7 @@ void reduceLowerTerms(BRP &f, const map<int,BRP> &F) {
 
 // reduce all terms in f by the leading terms of all polynomials in F
 // first reduce the leading term completely, then the lower terms
-void reduce(BRP &f, const map<int,BRP> &F) {
+void reduce(BRP &f, const intermediateBasis &F) {
   while (f != 0) {
     if ( !reduceLTOnce(f,F) || f == 0 ){
       reduceLowerTerms(f, F); 
@@ -211,34 +216,80 @@ void reduce(BRP &f, const map<int,BRP> &F) {
   }
 }
 
+// some effort could be saved on average if we arranged the 
+// f i so that their leading terms are listed in increasing order with respect to the cho- 
+// sen monomial ordering
+void rearrangeBasis(intermediateBasis &F, int nextIndex) {
+  for( intermediateBasis::iterator j = F.begin(); j != F.end(); ++j ) {
+    if (j->first != nextIndex ) {
+      for( intermediateBasis::iterator i = F.begin(); i->first < j->first; ++i) {
+        //if ( funccompGRL(i->second.LT(), j->second.LT() )) {
+        if ( i->second.LT() > j->second.LT() ) {
+          BRP tmp = i->second;
+          i->second = j->second;
+          j->second = tmp;
+        }
+      }
+    }
+  }
+}
+
+
+//initialize memoryMap assuming that the first m elements have already been fully
+//reduced
+memoryMap initializeMemoryMap(const int &n, const intermediateBasis &F) {
+  set<int> dontReduce;
+  memoryMap m;
+  intermediateBasis::const_iterator end = F.end();
+  for(intermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
+    m[it->first].insert(n);
+  }
+  m.erase(n);
+  m[n];
+  return m;
+}
+
+
 // make a reduced Groebner basis
-void reduce(map<int,BRP> &F) {
+// assume the first #F entries have already been reduced with each other
+void reduce(intermediateBasis &F, memoryMap &notReducible) {
   bool changesHappened = true;
+  intermediateBasis::iterator end = F.end();
   while (changesHappened) {
     changesHappened = false;
-    //for(map<int, BRP>::iterator it1 = F.begin(); it1 != F.end(); it1++) {
-    map<int, BRP>::iterator it1 = F.begin(); 
+    intermediateBasis::iterator it1 = F.begin(); 
     bool iteratorIncreased = false;
-    while (it1 != F.end() ) {
+    while (it1 != end ) {
       BRP *f = &(it1->second);
       iteratorIncreased = false;
-      for(map<int, BRP>::iterator it2 = F.begin(); it2 != F.end(); ++it2) {
-        BRP *g = &(it2->second);
+      for(intermediateBasis::iterator it2 = F.begin(); it2 != end; ++it2) {
         if ( it1 != it2) {
-          if( reduceLowerTerms(*f,*g) ) {
-            if ( (*f) != 0 ) {
-              ++it1;
+          memoryMap::iterator dontReduce = notReducible.find(it1->first);
+          if ( dontReduce == notReducible.end() || dontReduce->second.find(it2->first) != dontReduce->second.end()) { // there is no map OR it2 is in the list
+            if( f->reduceLowerTerms(it2->second) ) {
+              if ( (*f) != 0 ) {
+                // it1 changed, so we remove it from the map
+                notReducible.erase(it1->first);
+                // and add it to all reduceSets
+                for( memoryMap::iterator m = notReducible.begin(); m != notReducible.end(); ++m) {
+                  m->second.insert(it1->first);
+                }
+                ++it1;
+              }
+              else {
+                F.erase(it1++);
+              }
+              iteratorIncreased = true;
+              changesHappened = true;
+              break; // use the next f and compare it to all others
             }
-            else {
-              F.erase(it1++);
-            }
-            iteratorIncreased = true;
-            changesHappened = true;
-            break; // use the next f and compare it to all others
           }
         }
       } 
-      if ( (!iteratorIncreased) && it1 != F.end() ) { 
+      if ( (!iteratorIncreased) && it1 != end ) { 
+        // it1->first is not reducible by any fi, so we reset it to an empty list
+        notReducible.erase(it1->first);
+        notReducible[it1->first];
         ++it1;
       }
     }
@@ -246,10 +297,15 @@ void reduce(map<int,BRP> &F) {
 }
 
 // complete algorithm to compute a Groebner basis F  
-void gb( map<int,BRP> &F, int n) {
-  reduce(F);
+void gb( intermediateBasis &F, int n) {
+  memoryMap notReducible;
+  cout << "." << endl;
+  reduce(F, notReducible);
+  rearrangeBasis(F, -1);
+  int counter = 0;
   int nextIndex = F.size(); 
-  set<Pair> B = makeList(F, n);
+  Pairs B = makeList(F, n);
+  cout << "." << endl;
   while (!B.empty()) {
     Pair pair = *(B.begin());
     B.erase(B.begin());
@@ -257,18 +313,25 @@ void gb( map<int,BRP> &F, int n) {
       BRP S = sPolynomial(pair,F,n);
       reduce(S,F);
       if (S != 0 ) {
-        set<Pair> newList = makeNewPairs(nextIndex, F, n);
+        //cout << ".";
+        Pairs newList = makeNewPairs(nextIndex, F, n);
         F[nextIndex] = S;
-        nextIndex++;
         B.insert(newList.begin(), newList.end());
-        reduce(F);
+        notReducible = initializeMemoryMap(nextIndex,F); // temporarily not reducible by lt(),
+        //second list is polynomails that have changed since checking
+        reduce(F, notReducible);
+        rearrangeBasis(F, nextIndex);
+        B = makeList(F, n);
+        //cout << F.size() << " ";
+        //cout << S.LT() << endl;
+        nextIndex++;
       }
     }
   }
 }
 
 void testSPolynomial() {
-  map<int,BRP> G;
+  intermediateBasis G;
   G[0] = BRP(992);
   G[1] = BRP(384) + BRP(256) + BRP(128) + BRP(96) + BRP(64);
   G[2] = BRP(16) + BRP(5) + BRP(2);
@@ -290,31 +353,88 @@ void testSPolynomial() {
   }
 }  
 
+void testInList() {
+  intermediateBasis F;
+  F[0] = BRP(7);
+  F[1] = BRP(8);
+  F[2] = BRP(2);
+  Pairs B = makeList(F, 4);
+  if ( ! inList(1,2,B) || ! inList(2,1,B) ||  ! inList(-4,1,B) || inList(5,7,B) ) { 
+    cout << "error in inList" << endl;
+  }
+}
+  
+void testChecker( const intermediateBasis &G, intermediateBasis &correct) {
+  bool found = false;
+  for (map<int,BRP>::const_iterator it1 = G.begin(); it1 != G.end(); ++it1) {
+    found = false;
+    for (map<int,BRP>::iterator it2 = correct.begin(); it2 != correct.end(); ++it2) {
+      if ( it1->second == it2->second ) {
+        found = true;
+        correct.erase(it2);
+        break;
+      }
+    }
+    if (!found) {  
+      cout << "error in basis," << it1->second << " not in it" << endl;
+      return;
+    }
+  }
+  if (!correct.empty()) {
+    cout << "error in basis, too many elements" << endl;
+  } else {
+    cout << "test passed" << endl;
+  }
+}
+
+void testPartialChecker( const intermediateBasis &G, intermediateBasis &correct) { //for when the full basis is too long to compile
+  bool found = false;
+  for (map<int,BRP>::const_iterator it1 = G.begin(); it1 != G.end(); ++it1) {
+    found = false;
+    for (map<int,BRP>::iterator it2 = correct.begin(); it2 != correct.end(); ++it2) {
+      if ( it1->second == it2->second ) {
+        found = true;
+        correct.erase(it2);
+        break;
+      }
+    }
+  }
+  if (!correct.empty()) {
+    cout << "error in basis, too many elements" << endl;
+  } else {
+    cout << "test passed" << endl;
+  }
+}
+
+
+void timer(intermediateBasis &G, int n) {
+  clock_t start, end;
+  double cpu_time_used;
+  start = clock();
+  gb(G,n);
+  end = clock();
+  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+  cout << "It took " << cpu_time_used << " seconds to run a complex Groebner Basis example." << endl;
+}
 
 void testShortBasis() {
-  map<int,BRP> G;
+  intermediateBasis G;
   G[0] = BRP(992);
   G[1] = BRP(384) + BRP(256) + BRP(128) + BRP(96) + BRP(64);
   G[2] = BRP(16) + BRP(5) + BRP(2);
   int n = 10;
-
-  gb(G,n);
-  map<int,BRP> correctG;
-  correctG[0] = BRP(384) + BRP(256) + BRP(128) + BRP(96) + BRP(64);
-  correctG[1] = BRP( 16) + BRP(5) + BRP(2);
+  timer(G,n);
+  intermediateBasis correctG;
+  correctG[0] = BRP( 16) + BRP(5) + BRP(2);
+  correctG[1] = BRP(384) + BRP(256) + BRP(128) + BRP(96) + BRP(64);
   correctG[2] = BRP(192) + BRP(128);
   correctG[3] = BRP(320) + BRP(256);
   correctG[4] = BRP(160);
   correctG[5] = BRP(288);
-  map<int,BRP>::iterator it2 = correctG.begin();
-  for(map<int,BRP>::iterator it = G.begin(); it != G.end(); ++it) {
-    BRP f = it->second;
-    BRP correctf = (it2++)->second;
-    if( f != correctf ) {
-      cout << "error wrong basis" << f << endl;
-    }
-  }
+  testChecker(G, correctG);
 }
+
 
 void testLongBasis() {
   map<int,BRP> G;
@@ -359,56 +479,85 @@ void testLongBasis() {
   c[14] = BRP(262144);
   c[15] = BRP(524288);
 
-  timeval begin, end;
-  gettimeofday(&begin, NULL);
-  gb(G,n);
-  gettimeofday(&end, NULL);
-  long beginmilli= (begin.tv_sec * 1000) + (begin.tv_usec / 1000);
-  long endmilli= (end.tv_sec * 1000) + (end.tv_usec / 1000);
-
-  long diff = endmilli - beginmilli;
-  cout << "It took " << diff << " milliseconds to run a complex Groebner Basis example (not cpu time) " << endl;
-
-  for (int i = 0; i < 16; i++ ) {
-    bool found = false;
-    for (map<int,BRP>::iterator it = G.begin(); it != G.end(); ++it) {
-      if (it->second == c[i] ) { 
-        found = true;
-        G.erase(it);
-        break;
-      }
-    }
-    if (!found) {
-      cout << "error in basis," << c[i] << " not in it" << endl;
-    }
-  }
-  if (!G.empty()) {
-    cout << "error in basis, too many elements" << endl;
-  }
+  timer(G, n);
+  testChecker(G, c);
 }
 
-void clearAll(map<int,BRP> F) {
-  F.clear();
-}
-
-void testInList() {
-  map<int,BRP> F;
-
-  F[0] = BRP(7);
-  F[1] = BRP(8);
-  F[2] = BRP(2);
-//  F.clear();
-  set<Pair> B = makeList(F, 4);
-  if ( ! inList(1,2,B) || ! inList(2,1,B) ||  ! inList(-4,1,B) || inList(5,7,B) ) { 
-    cout << "error in inList" << endl;
+void test1Example() {
+  cout << "-Example 1-" << endl;
+  map<int,BRP> G = testLongTest1Example();
+  map<int,BRP> correct = testLongTest1ExampleCorrect();
+  timer(G,16);
+  if (G.size() != 80) {
+    cout << "error in basis for example 1" << endl;
   }
+  testPartialChecker(G,correct);
 }
+
+void test2Example() {
+  cout << "-Example 2-" << endl;
+  map<int,BRP> G = testLongTest2Example();
+  map<int,BRP> correct = testLongTest2ExampleCorrect();
+  timer(G,20);
+  if (G.size() != 51) {
+    cout << "error in basis for example 2" << endl;
+  }
+  testChecker(G,correct);
+}
+
+void test3Example() {
+  cout << "-Example 3-" << endl;
+  map<int,BRP> G = testLongTest3Example();
+  map<int,BRP> correct = testLongTest3ExampleCorrect();
+  timer(G,20);
+  if (G.size() != 90) {
+    cout << "error in basis for example 3" << endl;
+  }
+  testChecker(G,correct);
+}
+
+void test4Example() {
+  cout << "-Example 4-" << endl;
+  map<int,BRP> G = testLongTest4Example();
+  map<int,BRP> correct = testLongTest4ExampleCorrect();
+  timer(G,20);
+  if (G.size() != 29) {
+    cout << "error in basis for example 4" << endl;
+  }
+  testChecker(G,correct);
+}
+
+void test5Example() {
+  cout << "-Example 5-" << endl;
+  map<int,BRP> G = testLongTest5Example();
+  //map<int,BRP> correct = testLongTest5ExampleCorrect();
+  timer(G,20);
+  //if (G.size() != 29) {
+    //cout << "error in basis for example 5" << endl;
+  //}
+  //testChecker(G,correct);
+}
+
+//void testGRevLex() {
+//  cout << "-Example graded Reverse Lex-" << endl;
+//  map<int,BRP> G = testLongGRevLexExample();
+//  map<int,BRP> correct = testLongGRevLexExampleCorrect();
+//  timer(G,20);
+//  testChecker(G,correct);
+//}
 
 int main() {
   testSPolynomial();
   testInList();
   testShortBasis(); 
   testLongBasis(); 
+  test1Example();
+  test2Example();
+  test3Example();
+  test4Example();
+  test5Example();
+  //testGRevLex();
+
   cout << "done testing" << endl;
 
 }
