@@ -680,7 +680,7 @@ moebiusFunction (Poset) := Poset => (P) -> (
   htP := hashTable (select(eltsP, F -> 
     (nEltsBelowHT#F == 0)) / (F -> (F, 1)));
   last apply(toList(0..nP-1), i -> if (nEltsBelowHT#(eltsP#i) > 0) then (
-        htP = hashTable flatten {pairs htP,
+        htP := hashTable flatten {pairs htP,
           (eltsP#i, -(sum apply(select(toList (0..i-1), j ->
             (compare(P, eltsP#j, eltsP#i) == true)), j -> htP#(eltsP#j))))})))
   else error "this poset has more than one minimal element - specify an interval")
