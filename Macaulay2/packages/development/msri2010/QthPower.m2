@@ -1,7 +1,11 @@
+
+
+
+
 newPackage(
     "QthPower",
-    Version => "0.7", 
-    Date => "February 12, 2010",
+    Version => "0.9", 
+    Date => "March 1, 2010",
     Authors => {{Name => "Douglas A. Leonard",
                  Email => "leonada@auburn.edu",
                  HomePage => "http://www.dms.auburn.edu/~leonada"}},
@@ -31,8 +35,10 @@ export{qthConductor,
 --	   standard modular exponentiation, as well as functions
 --	   for dealing with certain weighted monomial orderings,
 --	   none of which are exported.
---	   (2) The type I restriction can be generalized, 
---	   and maybe the domain part as well.
+--	   (2) The type I restriction can probably be generalized a bit 
+--         to integral extensions if wt(LT(f))=wt(f-LT(f)), 
+--	   and maybe the domain part as well,
+--         though it is better to tackle problems one domain at a time.
 --	   (3) Methods are local, in that the conductor is factored,
 --	   and separate closures for each local factor are reconciled
 --	   to get the result.  
@@ -383,7 +389,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
                                m = #numerators-1;
 			      hi = prod^q*h#j;
 			       h = insert(pos,hi,h);
-			      ei = prod^q*e#j; 
+			      ei = prod^q*e#j;
 			      while m >= 0 and ei != 0 do(
 			         if pgeq(ei,dq*numerators#m,depvars,indvars) then(
 			            ei = ei-leadTerm(ei)//leadTerm(dq*numerators#m)*dq*numerators#m; 
@@ -431,7 +437,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 			   hi = (h#i)*prod^q;
 			    h = insert(pos,hi,h);
 		            m = #numerators-1;
-			   ei = (e#i)*prod^q; 
+			   ei = (e#i)*prod^q;
 			   while m >= 0 and ei != 0 do(
 			      if pgeq(ei,dq*numerators#m,depvars,indvars) then(
 	                         ei = ei-leadTerm(ei)//leadTerm(dq*numerators#m)*dq*numerators#m;
@@ -446,7 +452,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 	          );
 	          k = 0;
                   while k < #g do(
-	             if g#k != 0 and e#k != 0 then(	 	 
+	             if g#k != 0 and e#k != 0 then(
 	                logk = logpoly(e#k,depvars,indvars);
 	                if k < i and logk#0 == logei#0 then(
 	                   if all(apply((logei#2-logk#2), v->v%q), v->v==0) then(
@@ -458,7 +464,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
                                m = #numerators-1;
                               hi = (h#i)*prod^q;
 			       h = insert(pos,hi,h);
-			      ei = (e#i)*prod^q; 
+			      ei = (e#i)*prod^q;
 			      while m >= 0 and ei != 0 do(
 			         if pgeq(ei,dq*numerators#m,depvars,indvars) then(
 	                            ei = ei-leadTerm(ei)//leadTerm(dq*numerators#m)*dq*numerators#m; 
@@ -500,7 +506,7 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
             );
             i = i-1;
          );
-         numerators=for i to #numerators-1 list(
+         numerators=for i to #numerators-1 list(  
             head = leadTerm(numerators#i);
             tail = numerators#i-head;
 	    j = i-1;
@@ -514,7 +520,11 @@ icRfractions (Ideal,ZZ,List) := (I,depno,foot) ->(
 	    );   	
             (head+tail) % I
          );
-         e= apply(h,v->red(v,I,dq,numerators));	 
+         numerators=for i to #numerators-1 list if numerators#i !=0 then numerators#i;
+         numerators=delete(,numerators);
+--	 print(numerators);
+         e= apply(h,v->red(v,I,dq,numerators));
+collectGarbage;	 
       );
       J=intersect(J,ideal(numerators));
    );
@@ -654,8 +664,9 @@ qthIntegralClosure(Matrix,Ring,List) := (wtR,Rq,Iq) -> (
      wticR = icRweightmatrix(fractions,wtR);
        icR = matrixOrder(coefficientRing Rq,grevlexWeight(wticR));
     relicR = icRrelations(fractions,I,icR,depno);
+       icR = ring(relicR#0);
    ---------------------------------------------------------------------------	
-             (fractions,wticR,icR,relicR)
+             (fractions,relicR,icR,wticR)
 );
 ------------------------------------------------------------------------------
 --QQ version
@@ -717,7 +728,7 @@ rationalIntegralClosure(Matrix,Ring,List) := (wtR,R0,I0) -> (
             d = Dq^(q-1);
          --this next part will be replaced by a call to the qth power method
          --with Iq, footq, etc..      
-         (Numerators,wticR,icRq,relationsicRq) := 
+         (Numerators,relationsicRq,icRq,wticR) := 
                qthIntegralClosure(wtR,Rq,Iq);	 
          ----------------------------------------------------------------------
          --if more than one good prime has been used, 
@@ -760,14 +771,15 @@ rationalIntegralClosure(Matrix,Ring,List) := (wtR,R0,I0) -> (
          stable = false;  
       );
    );
-   icR := matrixOrder(QQ,grevlexWeight(wticR));
-   (oldvarsQ,wticR,icR,oldrelsQ)   
+--   icR := matrixOrder(QQ,grevlexWeight(wticR));
+   icR := ring(oldrelsQ#0); 
+   (oldvarsQ,oldrelsQ,icR,wticR)   
 );
 -------------------------------------------------------------------------------
 -- possible change of Noether normalization 
 -- to minimize the number of dependent variables needed
 minimization = method();
-minimization(List,Matrix,Ring,List) := (fractions,wticR,icR,relicR) -> (
+minimization(List,List,Ring,Matrix) := (fractions,relicR,icR,wticR) -> (
      depno := #fractions -1;
          T := reverse(entries transpose wticR);
      indno := #gens icR -depno;
@@ -887,16 +899,16 @@ document {
           ///,
      PARA {
      	  "The rest of the world only completes single row weights this way,
-	   whereas M2 only completes a single row and does it differently."
+	   whereas M2 only completes a single row and does the other rows differently."
      	  }
      }	
-
+----------------------------------------------------------------------------
 document {
      Key => {
 	  qthIntegralClosure, (qthIntegralClosure, Matrix, Ring, List)
 	  },
      Headline => "computes integral closures in positive characteristic",
-     Usage => "(fractions,wticR,icR,relicR) = qthIntegralClosure(wtR,Rq,Iq)",
+     Usage => "(fractions,relicR,icR,wticR) = qthIntegralClosure(wtR,Rq,Iq)",
      Inputs => {
 	  "wtR" => "weight matrix",
 	  "Rq" => "ring with weight-over-grevlex order",
@@ -904,15 +916,15 @@ document {
 	  },
      Outputs => {
 	  "fractions" => List => "numerators of P-module generating set", 
-	  "wticR" => Matrix => "weight matrix for the integral closure",
-	  "icR" => Ring => "grevlex-over-weight polynomial ring for the presentation",
-	  "relicR" => List => "and Gr\"obner basis for the ideal of induced relations"
-	  },
+	  "relicR" => List => "and Gr\"obner basis for the ideal of induced relations",
+          "icR" => Ring => "grevlex-over-weight polynomial ring for the presentation",
+	  "wticR" => Matrix => "weight matrix for the integral closure"
+       	  },
      EXAMPLE lines ///
            wtR = matrix{{5,6,6},{3,6,0}}; 
-	       Rq = ZZ/23[x,y,z,Weights=>entries weightGrevlex(wtR)];
+           Rq = ZZ/23[x,y,z,Weights=>entries weightGrevlex(wtR)];
            Iq = {x^6+x^3*z-y^3*z^2};
-      	   (fractions,wticR,icR,relicR) = qthIntegralClosure(wtR,Rq,Iq)
+      	   (fractions,relicR,icR,wticR) = qthIntegralClosure(wtR,Rq,Iq)
           ///,
      PARA {
      	  "There are probably still problems with this taking 
@@ -925,7 +937,7 @@ document {
 	  rationalIntegralClosure, (rationalIntegralClosure, Matrix, Ring, List)
 	  },
      Headline => "computes integral closures over the rationals",
-     Usage => "(fractions,wticR,icR,relicR) = rationalIntegralClosure(wtR,Rq,Iq)",
+     Usage => "(fractions,relicR,icR,wticR) = rationalIntegralClosure(wtR,Rq,Iq)",
      Inputs => {
 	  "wtR" => {"weight matrix"},
 	  "R0" => {"ring with weight-over-grevlex order"},
@@ -933,15 +945,15 @@ document {
 	  },
      Outputs => {
 	  "fractions" => List => "a list of numerators for a P-module generating set", 
-	  "wticR" => Matrix => " weight matrix for the integral closure", 
-	  "icR" => Ring => "a grevlex-over-weight polynomial ring for the presentation", 
-	  "relicR" => List => "a Gr\"obner basis for the ideal of induced relations"
+	  "relicR" => List => "a Gr\"obner basis for the ideal of induced relations",
+          "icR" => Ring => "a grevlex-over-weight polynomial ring for the presentation", 
+	  "wticR" => Matrix => " weight matrix for the integral closure" 
 	  },
      EXAMPLE lines ///
            wtR = matrix{{11,6}};
            R0 = QQ[y,x,Weights=> entries weightGrevlex(wtR)];
            I0 = {(y^2-3/4*y-15/17*x)^3-9*y*x^4*(y^2-3/4*y-15/17*x)-27*x^11};
-           (fractions,wticR,icR,relicR) = rationalIntegralClosure(wtR,R0,I0)
+           (fractions,relicR,icR,wticR) = rationalIntegralClosure(wtR,R0,I0)
           ///,
      PARA {
      	  "There are no extra problems noted here yet."
@@ -961,33 +973,31 @@ document {
      Outputs => {
 	  "delta"=> RingElement => {"a conductor element"}
 	  },
---     EXAMPLE lines ///
---           wtR = matrix{{12,5}};
---           Rq = ZZ/2[y,x,Weights=> entries weightGrevlex(wtR)];
---           Iq = {y^5+y^2*(x^4+x)+y*x^2+x^12};
---	     indno = numRows wtR;
---           depno = (numColumns wtR) -indno;
---           indvars = take(gens Rq, -indno);
---           depvars = take(gens Rq, depno);
---           delta = qthConductor(ideal Iq,depno)
---          ///,
+     EXAMPLE lines ///
+           wtR = matrix{{12,5}};
+           Rq = ZZ/2[y,x,Weights=> entries weightGrevlex(wtR)];
+           Iq = {y^5+y^2*(x^4+x)+y*x^2+x^12};
+           I  = ideal(Iq);
+           depno = (numColumns wtR) -(numRows wtR);
+           delta = qthConductor(I,depno)
+          ///,
      PARA {
-     	  "Why doesn't this documentation example work?"
+     	  "This gives a quick conductor element in P."
      	  }
      }	   
 
 -----------------------------------------------------------------------------------
  document {
      Key => {
-	  minimization, (minimization, List, Matrix, Ring, List)
+	  minimization, (minimization, List, List, Ring, Matrix)
 	  },
      Headline => "change to a better Noether normalization",
-     Usage => "(newwticR,newicR,newrelicR) = minimization(fractions, wticR, icR, relicR)",
+     Usage => "(newwticR,newicR,newrelicR) = minimization(fractions, relicR, icR, wticR)",
      Inputs => {
 	  "fractions" => {"ring elements defining a P-module generating set for icR"},
-	  "wticR" => {"a weight matrix"},
+          "relicR" => {"a grobner basis for the relation ideal"},
 	  "icR" => {"a ring"},
-	  "relicR" => {"a grobner basis for the relation ideal"}
+	  "wticR" => {"a weight matrix"}
 	  },
      Outputs => { 
 	  "newwticR" => Matrix => "weight matrix", 
@@ -1003,119 +1013,131 @@ document {
     	  ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
           ///,
      PARA {
-     	  "What can I do to pass the output of ic2 to ic3?"
+     	  "What can I do to pass the output of ic2 to ic3
+	   the same way I passed the output of ic1 to ic2?
+	   Also if the min weight is 1, ic3 will give an error,
+	   since I don't know how/why to present a genus 0 curve."
      	  }
      }	
-
-
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 TEST ///
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- SINGULAR example 3.7.3 modified slightly to make it more interesting
+------------------------------------------------------------------------------
 wtR1 = matrix{{5,6,6},{3,6,0}};
 Rq = ZZ/109[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 Iq = {x^6+x^3*z-y^3*z^2};
-time icq = qthIntegralClosure(wtR1,Rq,Iq)
+icq = qthIntegralClosure(wtR1,Rq,Iq)
 assert(icq#1 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
--- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
 
 R0 = QQ[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 I0 = {x^6+x^3*z-y^3*z^2};
-time ic = rationalIntegralClosure(wtR1,R0,I0)
-assert(ic#1 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
--- compare to/contrast with time IC0=gens gb presentation integralClosure(R0/I0)
+ic0 = rationalIntegralClosure(wtR1,R0,I0)
+assert(ic0#1 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
 
-
---example 1, disguised Hermitian-----------------------------------------
--- so, in need of minimization--------------------------------
+------------------------------------------------------------------------------
+--example 1, disguised Hermitian----------------------------------------------
+-- so, in need of minimization------------------------------------------------
+------------------------------------------------------------------------------
 wtR2 = matrix{{9,8}};
-Rq = ZZ/17[y,x,Weights=>entries(weightGrevlex(wtR2))];
+Rq = ZZ/109[y,x,Weights=>entries(weightGrevlex(wtR2))];
 Iq = {y^8-x^9+2*y*x^6-y^2*x^3};
-time ic1 = qthIntegralClosure(wtR2,Rq,Iq)
-time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+ic1 = qthIntegralClosure(wtR2,Rq,Iq)
+ic2 = minimization(ic1);
+ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
 assert( ic3#1 == matrix{{15,10,5,4}})
--- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
 
-wtR3 = matrix{{9,8}};
-R0 = QQ[y,x,Weights=>entries(weightGrevlex(wtR3))];
+R0 = QQ[y,x,Weights=>entries(weightGrevlex(wtR2))];
 I0 = {y^8-x^9+2*y*x^6-y^2*x^3};
-time rationalIntegralClosure(wtR3,R0,I0);
-time ic1 = qthIntegralClosure(wtR3,Rq,Iq)
-time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+ic1 = rationalIntegralClosure(wtR2,R0,I0)
+ic2 = minimization(ic1);
+ic3 = rationalIntegralClosure(ic2#0,ic2#1,ic2#2)
 assert(ic3#1 == matrix{{15,10,5,4}})
--- compare to/contrast with time IC0 = gens gb presentation integralClosure(R0/I0)
 
---generic example over QQ with moderate coefficients to be reconstructed 
+------------------------------------------------------------------------------
+--pseudo-weights--------------------------------------------------------------
+------------------------------------------------------------------------------
+wtR3=matrix{{7,4}};
+R0 = QQ[u,r,Weights=>entries weightGrevlex(wtR3)];
+I0 = {u^7-u^3*r^7-r^3};
+ic0 = rationalIntegralClosure(wtR3,R0,I0)
+assert(ic0#3==matrix{{34,27,24,17,14,7,4}})
+
+------------------------------------------------------------------------------
+--generic example over QQ with moderate coefficients to be reconstructed------
+------------------------------------------------------------------------------ 
 wtR4 = matrix{{11,6}};
 R0 = QQ[y,x,MonomialOrder=>{Weights=>{11,6},Weights=>{1,0}}];
 I0 = {(y^2-3/4*y-15/17*x)^3-9*y*x^4*(y^2-3/4*y-15/17*x)-27*x^11};
-time ic = rationalIntegralClosure(wtR4,R0,I0)
-assert(ic#1 == matrix{{25,21,20,11,10,6}})
---compare to/contrast with time IC0 = gens gb presentation integralClosure(R0/I0)
+ic0 = rationalIntegralClosure(wtR4,R0,I0)
+assert(ic0#1 == matrix{{25,21,20,11,10,6}})
 
---example 7, Leonard 2009 not free as a P-module--------------------------
+------------------------------------------------------------------------------
+--example 7, Leonard 2009 with a presentation that is not free as a P-module--
+------------------------------------------------------------------------------
 wtR5 := matrix{{19,15,12,9,9},{12,9,9,9,0}};
 Rq = ZZ/2[z19,y15,y12,x9,u9,Weights=>entries(weightGrevlex(wtR5))];
 Iq = {y15^2+y12*x9*u9,
       y15*y12+x9^2*u9+x9*u9^2+y15,
       y12^2+y15*x9+y15*u9+y12,
       z19^3+z19*(y15+y12)*(x9+1)*u9+(y15*(x9+u9)+y12*(x9*u9+1))*x9^2*u9};
-time icq = qthIntegralClosure(wtR5,Rq,Iq)
+icq = qthIntegralClosure(wtR5,Rq,Iq)
 assert(icq#1 == matrix{{34,34,31,29,26,23,19,15,12,9,9},{30,21,21,24,24,15,12,9,9,9,0}})
--- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
 
---generic example with non-trivial minimization-------------------------
--- M2's integralClosure never gives an answer
--- icFracP takes 8873 seconds for even ZZ/5
-wtR6 := matrix{{31,12}};
+------------------------------------------------------------------------------
+--generic example with non-trivial minimization-------------------------------
+-- M2's integralClosure seizes on flattenRing --------------------------------
+-- icFracP takes 8873 seconds for even ZZ/5-----------------------------------
+------------------------------------------------------------------------------
+wtR6 = matrix{{31,12}};
 Rq = ZZ/2[y,x,Weights=>entries(weightGrevlex(wtR6))];
 Iq = {y^12+y^11+y^10*x^2+y^8*x^9+x^31};
-time ic1 = qthIntegralClosure(wtR6,Rq,Iq)
-time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+ic1 = qthIntegralClosure(wtR6,Rq,Iq)
+ic2 = minimization(ic1);
+ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
 assert(ic3#1 == matrix{{38,31,24,12,5}})
--- compare to/contrast with time ICq = gens gb presentation integralClosure(Rq/Iq)
--- compare to/contrast with time Icq = icFracP(Rq/Iq);
 
---from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs. 
---QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
---written as though it is in (QQ[x])[y] and without any thought of the underlying weights 7 and 4
+------------------------------------------------------------------------------
+--from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs.------ 
+--QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)-------------------------------------
+--written as though it is in (QQ[x])[y]--------------------------------------- 
+--and without any thought of the underlying weights 7 and 4-------------------
+------------------------------------------------------------------------------
 wtR7 = matrix{{7,4}};
 Rq = QQ[y,x,Weights=>entries weightGrevlex(wtR7)];
 Iq = {y^4-x^7-4*y*x^5-2*y^2*x^3+x^6};
-time ic1 = rationalIntegralClosure(wtR7,Rq,Iq);
-time ic2 = minimization(ic1);
---time ic3 = rationalIntegralClosure(ic2#0,ic2#1,ic2#2)
---assert(ic3#1 == matrix{{3,2}}
+ic1 = rationalIntegralClosure(wtR7,Rq,Iq)
+ic2 = minimization(ic1);
+assert(ic1#3==matrix{{3,2,1,4}})
 
-
---from the IntegralClosure package
--- not type I, but amenable to grevlex weights
+------------------------------------------------------------------------------
+--from the IntegralClosure package--------------------------------------------
+-- not type I, but amenable to grevlex weights--------------------------------
+------------------------------------------------------------------------------
 wtR8 = matrix{{1,1}};
 R0=QQ[v,u,Weights=>entries weightGrevlex(wtR8)];
 I0={1/5*(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)};
-time ic = rationalIntegralClosure(wtR8,R0,I0);
-assert(ic#1 == matrix{{2,2,2,2,1,1}})
---MAGMA example found in GLS-----------------------
--- genus 1, but try to figure that out from most pesentations
---(x-y)*x*(y+x^2)^3-y^3*(x^3+x*y-y^2)=0
---change of variables gives a type I problem
+ic0 = rationalIntegralClosure(wtR8,R0,I0)
+assert(ic0#1 == matrix{{2,2,2,2,1,1}})
 
+------------------------------------------------------------------------------
+--MAGMA example found in GLS--------------------------------------------------
+-- genus 1, but try to figure that out from most pesentations-----------------
+--(x-y)*x*(y+x^2)^3-y^3*(x^3+x*y-y^2)=0---------------------------------------
+--change of variables gives a type I problem----------------------------------
+------------------------------------------------------------------------------
 wtR9 = matrix{{11,7}};
-Rq = ZZ/5[w,z,Weights => entries weightGrevlex(wtR9)];
+Rq = ZZ/109[w,z,Weights => entries weightGrevlex(wtR9)];
 Iq = {w^7+3*w^6*z+w^6+3*w^5*z^3+6*w^5*z^2+9*w^4*z^4+4*w^3*z^6-w^3*z^5-3*w^2*z^7-3*w*z^9-z^11};
-time ic1 = qthIntegralClosure(wtR9,Rq,Iq)
-time ic2 = minimization(ic1);
-time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
+ic1 = qthIntegralClosure(wtR9,Rq,Iq)
+ic2 = minimization(ic1);
+ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
 assert(ic3#1 == matrix{{3,2}})
---compare to/contrast with time icf = icFracP(Rq/Iq)
---compare to/contrast with time ic = integralClosure(Rq/Iq)
 
---possibly too large an example unless separated-------------------------
+------------------------------------------------------------------------------
+--possibly too large an example unless separated------------------------------
 wtR10 := matrix{{25,21}};
 Rq := ZZ/2[y,x,Weights=>entries(weightGrevlex(wtR10))];
 Iq := {
@@ -1141,10 +1163,20 @@ Iq := {
   +y*(x^23+x^22+x^20+x^17+x^15+x^14+x^12+x^9)
   +(x^25+x^23+x^19+x^17+x^15+x^13+x^11+x^5)};
 
---time ic1 = qthIntegralClosure(wtR10,Rq,Iq)
---time ic2 = minimization(ic1);
---time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
---assert(ic3#1 == matrix{{16,15,13,12,11,10,7}}
-
+--this took 41 hours and 16 gb-----------------------------------------------
+--ic1 = qthIntegralClosure(wtR10,Rq,Iq)--------------------------------------
+--ic2 = minimization(ic1);---------------------------------------------------
+--ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)--------------------------------
+--assert(ic3#1 == matrix{{16,15,13,12,11,10,7}}------------------------------
 
 ///
+
+
+
+
+
+
+
+
+
+
