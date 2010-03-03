@@ -1030,12 +1030,12 @@ wtR1 = matrix{{5,6,6},{3,6,0}};
 Rq = ZZ/109[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 Iq = {x^6+x^3*z-y^3*z^2};
 icq = qthIntegralClosure(wtR1,Rq,Iq)
-assert(icq#1 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
+assert(icq#3 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
 
 R0 = QQ[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 I0 = {x^6+x^3*z-y^3*z^2};
 ic0 = rationalIntegralClosure(wtR1,R0,I0)
-assert(ic0#1 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
+assert(ic0#3 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
 
 ------------------------------------------------------------------------------
 --example 1, disguised Hermitian----------------------------------------------
@@ -1047,14 +1047,14 @@ Iq = {y^8-x^9+2*y*x^6-y^2*x^3};
 ic1 = qthIntegralClosure(wtR2,Rq,Iq)
 ic2 = minimization(ic1);
 ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
-assert( ic3#1 == matrix{{15,10,5,4}})
+assert( ic3#3 == matrix{{15,10,5,4}})
 
 R0 = QQ[y,x,Weights=>entries(weightGrevlex(wtR2))];
 I0 = {y^8-x^9+2*y*x^6-y^2*x^3};
 ic1 = rationalIntegralClosure(wtR2,R0,I0)
 ic2 = minimization(ic1);
 ic3 = rationalIntegralClosure(ic2#0,ic2#1,ic2#2)
-assert(ic3#1 == matrix{{15,10,5,4}})
+assert(ic3#3 == matrix{{15,10,5,4}})
 
 ------------------------------------------------------------------------------
 --pseudo-weights--------------------------------------------------------------
@@ -1072,7 +1072,7 @@ wtR4 = matrix{{11,6}};
 R0 = QQ[y,x,MonomialOrder=>{Weights=>{11,6},Weights=>{1,0}}];
 I0 = {(y^2-3/4*y-15/17*x)^3-9*y*x^4*(y^2-3/4*y-15/17*x)-27*x^11};
 ic0 = rationalIntegralClosure(wtR4,R0,I0)
-assert(ic0#1 == matrix{{25,21,20,11,10,6}})
+assert(ic0#3 == matrix{{25,21,20,11,10,6}})
 
 ------------------------------------------------------------------------------
 --example 7, Leonard 2009 with a presentation that is not free as a P-module--
@@ -1084,7 +1084,7 @@ Iq = {y15^2+y12*x9*u9,
       y12^2+y15*x9+y15*u9+y12,
       z19^3+z19*(y15+y12)*(x9+1)*u9+(y15*(x9+u9)+y12*(x9*u9+1))*x9^2*u9};
 icq = qthIntegralClosure(wtR5,Rq,Iq)
-assert(icq#1 == matrix{{34,34,31,29,26,23,19,15,12,9,9},{30,21,21,24,24,15,12,9,9,9,0}})
+assert(icq#3 == matrix{{34,34,31,29,26,23,19,15,12,9,9},{30,21,21,24,24,15,12,9,9,9,0}})
 
 ------------------------------------------------------------------------------
 --generic example with non-trivial minimization-------------------------------
@@ -1097,7 +1097,7 @@ Iq = {y^12+y^11+y^10*x^2+y^8*x^9+x^31};
 ic1 = qthIntegralClosure(wtR6,Rq,Iq)
 ic2 = minimization(ic1);
 ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
-assert(ic3#1 == matrix{{38,31,24,12,5}})
+assert(ic3#3 == matrix{{38,31,24,12,5}})
 
 ------------------------------------------------------------------------------
 --from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs.------ 
@@ -1120,7 +1120,7 @@ wtR8 = matrix{{1,1}};
 R0=QQ[v,u,Weights=>entries weightGrevlex(wtR8)];
 I0={1/5*(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)};
 ic0 = rationalIntegralClosure(wtR8,R0,I0)
-assert(ic0#1 == matrix{{2,2,2,2,1,1}})
+assert(ic0#3 == matrix{{2,2,2,2,1,1}})
 
 ------------------------------------------------------------------------------
 --MAGMA example found in GLS--------------------------------------------------
@@ -1134,7 +1134,7 @@ Iq = {w^7+3*w^6*z+w^6+3*w^5*z^3+6*w^5*z^2+9*w^4*z^4+4*w^3*z^6-w^3*z^5-3*w^2*z^7-
 ic1 = qthIntegralClosure(wtR9,Rq,Iq)
 ic2 = minimization(ic1);
 ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)
-assert(ic3#1 == matrix{{3,2}})
+assert(ic3#3 == matrix{{3,2}})
 
 ------------------------------------------------------------------------------
 --possibly too large an example unless separated------------------------------
@@ -1167,7 +1167,7 @@ Iq := {
 --ic1 = qthIntegralClosure(wtR10,Rq,Iq)--------------------------------------
 --ic2 = minimization(ic1);---------------------------------------------------
 --ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)--------------------------------
---assert(ic3#1 == matrix{{16,15,13,12,11,10,7}}------------------------------
+--assert(ic3#3 == matrix{{16,15,13,12,11,10,7}}------------------------------
 
 ///
 
