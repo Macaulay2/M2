@@ -26,7 +26,7 @@ export {
      }
 
 gfan'path = gfanInterface#Options#Configuration#"path"
---if gfan'path == "" then gfan'path = prefixDirectory | currentLayout#"programs"
+if gfan'path == "" then gfan'path = prefixDirectory | currentLayout#"programs"
 
 fig2dev'path = gfanInterface#Options#Configuration#"fig2devpath"
 
