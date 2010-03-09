@@ -1174,7 +1174,7 @@ for i in $FCLIBS
 do case $i in
 	-L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
 	-lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; # see discussion in emacs info about -static-libgcc and -shared-libgcc
-	-lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
+	-ldl | -lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
 	*) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
    esac
 done
