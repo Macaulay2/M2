@@ -345,6 +345,7 @@ AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h exe
 AC_CHECK_HEADERS(sys/types.h)
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(hstrerror,resolv)
+AC_SEARCH_LIBS(dlopen,dl)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
