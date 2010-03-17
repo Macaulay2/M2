@@ -513,6 +513,9 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   SRdeformations
   NumericalAlgebraicGeometry
   BeginningMacaulay2
+  FormalGroupLaws
+  Graphics
+  WeylGroups
 ")
 # pending packages: SRdeformations
 

@@ -1,0 +1,34 @@
+/* This is a general style sheet */
+
+a.retour {
+font-size: small;
+color: black
+}
+
+.version {
+text-align: right;
+font-size: small
+}
+
+.validation {
+text-align: right;
+font-size: small
+}
+
+.right {
+text-align: right;
+float: right
+}
+
+.left {
+text-align: left;
+float: left;
+}
+
+.centre {
+text-align: center;
+}
+
+.switch {
+font-size: small;
+}
