@@ -1,0 +1,645 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   
+   <link rel="stylesheet" type="text/css" href="general.css">
+   <link rel="stylesheet" type="text/css" href="M2packages.css">
+
+   <title>Tutorial for the Macaulay 2 package WeylGroups</title>
+</head>
+<body>
+<h1>Tutorial for the Macaulay2 package WeylGroups</h1>
+
+<p class="decale">
+The purpose of this tutorial is to explain how to use the basic commands and data structures of the package WeylGroups. 
+You need a working installation of Macaulay 2 (see <a href="http://www.math.uiuc.edu/Macaulay2/">here</a>). You also need to install the package WeylGroups and the package Graphics that it uses.
+</p>
+<p class="decale">
+Some familiarity with the Macaulay 2 language is probably useful, and as far as mathematics are concerned, if you don't know what a root system or a Weyl group is, you are probably on the wrong webpage. 
+Anyway, general information about root systems and Weyl groups can be found in <em>Bourbaki, Lie groups and Lie Algebras, chapter VI</em> (especially in the tables at the end) and information about the Bruhat order can be found in the book of Bj&ouml;rner and Brenti called <em>Combinatorics of the Bruhat order</em>. 
+</p>
+<hr class="informatique" />
+<p class="decale"><h3>Recall...</h3></p>
+<p class="decale">
+As usual in M2, help about a particular command or class (say RootSystem) is available by typing
+</p>
+<pre class="codemain">
+help "RootSystem"
+</pre>
+<p class="decale">
+or even
+</p>
+<pre class="codemain">
+viewHelp "RootSystem"
+</pre>
+<p class="decale">
+to open the help file in a browser (assuming M2 has been properly configured and knows your browser).
+</p>
+<hr class="informatique" />
+<p class="decale"><h3>Root systems and their Dynkin types</h3></p>
+<p class="decale">
+Let us first define a simple root system by giving its type.
+</p>
+<pre class="codemain">
+i2 : R=rootSystemA(3)
+</pre>
+<p class="decale">
+The system outputs
+</p>
+<pre class="codemain">
+o2 = RootSystem{...8...}
+o2 : RootSystem
+</pre>
+<p class="decale">
+because a root system is implemented as a kind of hash table in which some information is stored when it has been computed. At first, only the Cartan matrix and its inverse are computed. It is possible to see how it looks like internally</ p> 
+<pre class="codemain">
+i3 : peek R 
+
+o3 = RootSystem{CartanMatrixTr =&gt; | 2  -1 0  |             }
+                                  | -1 2  -1 |
+				  | 0  -1 2  |
+		CartanMatrixTrInv =&gt; | 3/4 1/2 1/4 |
+		                     | 1/2 1   1/2 |
+				     | 1/4 1/2 3/4 |
+		PositiveRoots =&gt; set {}
+		ReducedDecompositions =&gt; MutableHashTable{}
+		Reflections =&gt; HashTable{}
+		RootNorms =&gt; {1, 1, 1}
+		RootSystemRank =&gt; 3
+		WeylGroupList =&gt; {}
+</pre>
+<p class="decale">
+but it should not really matter to the normal user.
+</p>
+<p class="decale">
+We can take the direct sum of root systems. 
+</p>
+<pre class="codemain">
+i4 : S=rootSystemA(3) ++ rootSystemF4
+</pre>
+<p class="decale">
+It is possible to obtain basic information about any root system. First of all, its Dynkin type (as a list of simple types, stored as a class called <code>DynkinType</code>):
+</p>
+<pre class="codemain">
+i5 : dynkinType S
+
+o5 = DynkinType{{A, 3}, {F, 4}}
+o5 : DynkinType
+</pre>
+<p class="decale">
+Note that <code>dynkinType</code> is not fooled by low rank isomorphisms.</p>
+<pre class="codemain">
+i6 : dynkinType(rootSystemD(3))
+
+o6 = DynkinType{{A,3}}
+o6 : DynkinType
+</pre>
+<p class="decale">
+With the same command <code>dynkinType</code>, one can construct a <code>DynkinType</code> by hand, giving the simple types in a list. Note that there is no capital letter in the command <code>dynkinType</code> as opposed to the class <code>DynkinType</code>. In general, for every class in the package, there is a constructing command with the same name but with no capital letter (sorry Mr Dynkin).
+</p>
+<pre class="codemain">
+i7 : D = dynkinType({{"A",2},{"B",3}})
+
+o7 = DynkinType{{A, 2}, {B, 3}}
+o7 : DynkinType
+</pre>
+<p class="decale">
+Starting with a <code>DynkinType</code>, you can get a root system of that type.
+</p>
+<pre class="codemain">
+i8 : rootSystem D
+
+o8 = RootSystem{...8...}
+o8 : RootSystem
+</pre>
+<p class="decale">
+You can extract the Cartan matrix of the root system and its rank.
+</p>
+<pre class="codemain">
+i9 : cartanMatrix(S)
+
+o9 = | 2  -1 0  0  0  0  0  |
+     | -1 2  -1 0  0  0  0  |
+     | 0  -1 2  0  0  0  0  |
+     | 0  0  0  2  -1 0  0  |
+     | 0  0  0  -1 2  -2 0  |
+     | 0  0  0  0  -1 2  -1 |
+     | 0  0  0  0  0  -1 2  |
+	      7       7
+o9 : Matrix ZZ  &lt;---ZZ
+
+i10 : rank S
+o10 = 7
+</pre>
+
+<hr class="informatique" />
+<p class="decale"><h3>Roots, weights and reflections</h3></p>
+<p class="decale">
+Since a root system is mainly a set of roots, we should play a bit with them, and also with weights.
+</p>
+<p class="decale">
+The n-th simple root (say n=3) is given by
+</p>
+<pre class="codemain">
+i11 : r3=simpleRoot(R,3)
+o11 = | 0  |
+      | -1 |
+      | 2  |
+o11 : Root
+</pre>
+<p class="decale">
+The class <code>Root</code> is a subclass of <code>Weight</code> and both are implemented as vectors with coordinates on the set of fundamental weights. Note that the simple roots or the fundamental weights are ordered as they are in the Cartan matrix of the root system. There is no canonical convention. This package tends to give them in the same order as in the tables of Bourbaki.
+</p>
+<p class="decale">
+The norm of a root is given by
+</p>
+<pre class="codemain">
+i12 : norm(R,r3)
+
+o12 = 1
+</pre>
+
+<p class="decale">
+You can reflect the root r3 using the 2nd simple reflection to get another root
+</p>
+<pre class="codemain">
+i13 : reflect(R,2,r3)
+
+o13 = | -1 |
+      | 1  |
+      | 1  |
+o13 : Root
+</pre>
+<p class="decale">
+and you can even apply several simple reflections at a time by giving them in a list.
+</p>
+<pre class="codemain">
+i14 : myroot=reflect(R,{2,1,3},r3)
+
+o14 = | 1  |
+      | -1 |
+      | -1 |
+o14 : Root
+</pre>
+<p class="decale">
+Note that they are applied from the right as in the usual notation for composition i.e. the 3rd simple reflection is applied first in this example.
+</p>
+<p class="decale">
+Finally, one can compute the reflection corresponding to a root, as an element of the Weyl group of the root system, and then apply it to any root to get another root.
+</p>
+<pre class="codemain">
+i15 : myreflection=reflection(R,myroot)
+
+o15 = WeylGroupElement{RootSystem{...8...}, | 3  |}
+                                            | -1 |
+                                            | -1 |
+o15 : WeylGroupElement 
+
+i16 : myreflection*r3
+
+o16 = | 1  |
+      | -2 |
+      | 1  |
+o16 : Root
+</pre>
+<p class="decale">
+We will see more about Weyl group elements and their implementation in the next section so don't bother about the way <code>o15</code> looks.
+</p>
+
+<p class="decale">
+The coefficients of a root on the simple roots is given by
+</p>
+<pre class="codemain">
+i17 : rootCoefficients(R,myroot)
+
+o17 = | 0  |
+      | -1 |
+      | -1 |
+        3
+o17 : ZZ
+</pre>
+
+<p class="decale">
+One can also construct a weight by hand.
+</p>
+<pre class="codemain">
+i18 : l=weight(R,{1,2,1})
+
+o18 = | 1 |
+      | 2 |
+      | 1 |
+o18 : Weight
+</pre>
+<p class="decale">
+and check if it is a root.
+</p>
+<pre class="codemain">
+i19 : isRoot(R,l)
+
+o19 = false
+</pre>
+<p class="decale">
+Note that to do this checking, all positive roots are computed and stored in the root system (try <code>peek</code> again), so the first check can be longer than subsequent ones. 
+</p>
+
+<p class="decale">
+Weights can be summed, subtracted or multiplied by integers like vectors.
+</p>
+<pre class="codemain">
+i20 : (l+l, 2*l, l-l)
+
+o20 = (| 2 |, | 2 |, 0)
+       | 4 |  | 4 |
+       | 2 |  | 4 |
+o20 : Sequence 
+</pre>
+
+<p class="decale">
+Given a root r and a weight l, one can get the integer &lt;l,r&#711;&gt; i.e. evaluate the dual of r at l.
+</p>
+<pre class="codemain">
+i21 : eval(R,l,r3)
+
+o21 = 1
+
+i22 : eval(R,r3,r3)
+
+o22 = 2
+</pre>
+
+<hr class="informatique" />
+<p class="decale"><h3>Working with a Weyl group</h3></p>
+<p class="decale">
+The Weyl group of a root system is not implemented as a structure that is computed once and for all. 
+Instead, there is a class called <code>WeylGroupElement</code> representing an element of the Weyl group of a root system. 
+Internally, it contains a reference to the root system and a weight. 
+This weight is w(&rho;) where &rho; is the sum of the fundamental weights and w is the Weyl group element represented. Since the cone on the fundamental weights is a fundamental domain for the action of the Weyl group on the vector space of the root system and &rho; is in the interior of this cone, we have w(&rho;)=w'(&rho;) if and only if w=w'. So we use w(&rho;) to describe w internally. 
+</p>
+
+<p class="decale">
+There are two particular elements that are often useful: the neutral element of the Weyl group and the longest element (with respect to the chosen set of simple reflections).
+</p>
+<pre class="codemain">
+i23 : wn = neutralWeylGroupElement R
+
+o23 = WeylGroupElement{RootSystem{...8...}, | 1 |}
+					    | 1 |
+					    | 1 |
+o23 : WeylGroupElement
+
+i24 : w0 = longestWeylGroupElement R
+
+o24 = WeylGroupElement{RootSystem{...8...}, | -1 |}
+					    | -1 |
+					    | -1 |
+o24 : WeylGroupElement
+</pre>
+<p class="decale">
+As you can see, the weight w(&rho;) when w is the neutral element is just &rho; itself whereas when w is the longest element w<sub>0</sub> the weight is -&rho;. 
+</p>
+
+<p class="decale">
+Other Weyl group elements can be defined by using <code>reflection</code> to obtain the reflection corresponding to a root as above, or by giving them as products of simple reflections as follows.
+</p>
+<pre class="codemain">
+i25 : w1=reduce(R,{1,2,3,2,1,3})
+
+o25 = WeylGroupElement{RootSystem{...8...}, | -1 |}
+					    | 2  |
+					    | -3 |
+o25 : WeylGroupElement
+</pre>
+<p class="decale">
+Conversely, given the element w1, you can get its length and a reduced decomposition of it.
+</p>
+<pre class="codemain">
+i26 : coxeterLength(w1)
+
+o26 = 4
+
+i27 : reducedDecomposition(w1)
+
+o27 = {1,3,2,1}
+o27 : List
+</pre>
+<p class="decale">
+Note that the reduced decomposition returned is the smallest one for the lexicographic order, so it also identifies uniquely the Weyl group element.
+</p>
+
+<p class="decale">
+Given a decomposition in simple roots (as a list of numbers), you can check if it is reduced.
+</p>
+<pre class="codemain">
+i28 : isReduced(R,{3,2,1})
+
+o28 = true
+</pre>
+
+<p class="decale">
+Naturally, you can multiply elements of a Weyl group.
+</p>
+<pre class="codemain">
+i29 : w1=reduce(R,{1,2,3}); w2=reduce(R,{2,3,2});
+
+i31 : w1*w2
+
+o31 = WeylGroupElement{RootSystem{...8...}, | -1 |}
+                                            | 3  |
+                                            | -1 |
+o31 : WeylGroupElement
+
+i32 : reducedDecomposition(w1*w2)
+
+o32 = {1, 3}
+o32 : List
+</pre>
+
+<hr class="informatique" />
+<p class="decale"><h3>Left, right and double cosets</h3></p>
+
+<p class="decale">
+The package provides a way to deal with left and right cosets of a Weyl group, when these cosets are defined using standard parabolic subgroups, i.e. subgroups generated by a subset of the simple reflections. Such a subgroup is implemented as an object of the class <code>Parabolic</code>.
+</p>
+<pre class="codemain">
+i33 : R=rootSystemF4; P=parabolic(R,set{1,2})
+
+o34 = set {1, 2}
+o34 : Parabolic
+</pre>
+
+<p class="decale">
+Let W<sub>P</sub> denote the subgroup of the Weyl group W generated by the chosen reflections (here 1 and 2). In fact, it is naturally the Weyl group of a root system (corresponding to a Levy subgroup of the associated parabolic subgroup in the algebraic group giving rise to the original root system). You can obtain this root system.
+</p>
+<pre class="codemain">
+i35 : rootSystem(R,P)
+
+o35 = RootSystem{...8...}
+o35 : RootSystem
+</pre>
+
+<p class="decale">
+Left cosets, i.e. elements of the form w+W<sub>P</sub> are represented as objects of the class <code>WeylGroupLeftCoset</code>. 
+</p>
+<pre class="codemain">
+i36 : lc= reduce(R,{1,3,4})%P
+
+o36 = WeylGroupLeftCoset{set {1, 2}, WeylGroupElement{RootSystem{...8...}, | 1  |}}
+                                                                           | 3  |
+                                                                           | -2 |
+                                                                           | 1  |
+o36 : WeylGroupLeftCoset
+</pre>
+
+<p class="decale">
+In fact, any such coset has a representative in W that is minimal for the Bruhat order, and internally, we store this minimal element. You can see it by asking: 
+</p>
+<pre class="codemain">
+i37 : minimalRepresentative(lc)
+
+o37 = WeylGroupElement{RootSystem{...8...}, | 1  |}
+                                            | 3  |
+                                            | -2 |
+                                            | 1  |
+o37 : WeylGroupElement
+
+i38 : reducedDecomposition(minimalRepresentative(lc))
+
+o38 = {3, 4}
+o38 : List
+</pre>
+
+<p class="decale">
+The Weyl group acts on the left on left cosets.
+</p>
+<pre class="codemain">
+i39 : w0=longestWeylGroupElement R;
+
+i40 : w0*lc
+
+o40 = WeylGroupLeftCoset{set {1, 2}, WeylGroupElement{RootSystem{...8...}, | 1  |}}
+                                                                          | -5 |
+                                                                          | 6  |
+                                                                          | -5 |
+o40 : WeylGroupLeftCoset
+</pre>
+
+
+<p class="decale">
+The same kind of objects and functions exist for right cosets and double cosets as in 
+</p>
+<pre class="codemain">
+i41 : P%reduce(R,{1,3,4})  
+
+o41 = WeylGroupRightCoset{set {1, 2}, WeylGroupElement{RootSystem{...8...}, | 1  |}}
+                                                                            | 3  |
+                                                                            | -2 |
+                                                                            | 1  |
+o41 : WeylGroupRightCoset
+
+i42 : P % reduce(R,{1,3,4}) % P
+
+o42 = WeylGroupDoubleCoset{set {1, 2}, set {1, 2}, WeylGroupElement{RootSystem{...8...}, | 1  |}}
+                                                                                         | 3  |
+                                                                                         | -2 |
+                                                                                         | 1  |
+o42 : WeylGroupDoubleCoset
+</pre>
+<p class="decale">
+and you can ask for minimal representatives, but note that there is no action remaining on double cosets.
+</p>
+
+<hr class="informatique" />
+<p class="decale"><h3>Bruhat order and Hasse diagrams</h3></p>
+
+<p class="decale">
+There are several functions in the package to deal with the (strong) Bruhat order on a Weyl group or on a quotient of it by a parabolic subgroup. Some pictures of Hasse diagrams can be produced and this is why the package "WeylGroups" needs to load the package "Graphics". To display these pictures (in SVG format), you will need an SVG compatible browser (Firefox, for example) or any other application that can display SVG pictures.
+</p>
+
+<p class="decale">
+Given an element w of a WeylGroup, you can compute the elements that are just below (resp. above) it in the Bruhat order, i.e. there is no element in between, i.e. the ones that have length one less (resp. one more).
+</p>
+<pre class="codemain">
+i43 : R=rootSystemF4; w=reduce(R,{1,2,3,4,1,2}); L=underBruhat(w)
+
+o45 = {{WeylGroupElement{RootSystem{...8...}, | -2 |}, | 0  |},
+                                             | -2 |   | 0  |  
+                                             | 5  |   | -1 |  
+                                             | 4  |   | 2  |  
+     ----------------------------------------------------------
+     {WeylGroupElement{RootSystem{...8...}, | -3 |}, | -1 |},
+                                            | -1 |   | 2  |  
+                                            | 6  |   | -2 |  
+                                            | 1  |   | 0  |  
+     ----------------------------------------------------------
+     {WeylGroupElement{RootSystem{...8...}, | -5 |}, | 1  |},
+                                            | 2  |   | 1  |  
+                                            | 2  |   | -2 |  
+                                            | 3  |   | 0  |  
+     ----------------------------------------------------------
+     {WeylGroupElement{RootSystem{...8...}, | 3  |}, | -1 |}}
+                                            | -5 |   | 0  |
+                                            | 6  |   | 0  |
+                                            | 3  |   | 2  |
+o45 : List
+</pre>
+<p class="decale">
+Notice that M2 returns a list of pairs {w',r} made of a Weyl group element w' and a root r. The root tells you that you have to take the reflection s with respect to r so that ws=w'. You can see how all these elements w' decompose in simple reflections.
+</p>
+<pre class="codemain">
+i46 : apply(L,x->reducedDecomposition(x#0))
+
+o46 = {{1, 2, 1, 3, 2}, {1, 2, 1, 3, 4}, {1, 2, 3, 2, 4}, {2, 1, 3, 2, 4}}
+o46 : List
+</pre>
+
+<p class="decale">
+Given two elements w1 and w2, you might also want to compute the interval [w2,w1] for the Bruhat order, i.e. the set of w' less or equal to w1 and greater or equal to w2.
+</p>
+<pre class="codemain">
+i47 : w1=reduce(R,{1,2,3,4}); w2=reduce(R,{1,2,3,4,1,2}); ib=intervalBruhat(w1,w2)
+
+o47 = ... a big mess that I don't want to display here...
+o47 : HasseDiagram
+</pre>
+<p class="decale">
+Note the order in which the arguments w1 and w2 are written.
+The interval is returned as an object of class <code>HasseDiagram</code>. It contains all information on the Bruhat order for the given interval and for that reason, it does not display very well. Basically, it describes the Hasse Diagram of the interval, layer by layer. Let us extract part of it and see what there is to see.
+</p>
+<pre class="codemain">
+i48 : ib#0
+
+o48 = {{WeylGroupElement{RootSystem{...8...}, | -3 |}, {{0, | -1 |}, {1, | 1  |}}}}
+                                              | -2 |        | 2  |       | 1  |
+                                              | 6  |        | -2 |       | -2 |
+                                              | 3  |        | 0  |       | 0  |
+o48 : List
+</pre>
+<p class="decale">
+In M2, the first element of a list has index 0. So here, we have extracted this first element. It represents the top row of the Hasse diagram. Since this Hasse diagram is an interval, the top row just has one vertex w1 together with edges to the second row. This top row is of the form {{w1,someEdges}} where someEdges is a list {{0,r1},{1,r2}} describing edges frow w1 to the second row. The {0,r1} and {1,r2} are these edges. The 0 tells us that the first edge goes to the element of index 0 in the next row (with the M2 convention for lists) and the r1 is the root corresponding to the reflection to get there. So, all in all, this layer has one vertex connected to two vertices in the next row. Let us see this next row.
+</p>
+<pre class="codemain">
+i49 : ib#1
+
+o49 = {{WeylGroupElement{RootSystem{...8...}, | -3 |}, {{0, | 2  |}}},
+                                              | -1 |        | -1 |    
+                                              | 6  |        | 0  |    
+                                              | 1  |        | 0  |    
+      ----------------------------------------------------------------
+      {WeylGroupElement{RootSystem{...8...}, | -5 |}, {{0, | -1 |}}}}
+                                             | 2  |        | 2  |
+                                             | 2  |        | -2 |
+                                             | 3  |        | 0  |
+o49 : List
+</pre>
+<p class="decale">
+This time, we have two vertices, each of them having one edge to the next row. Finally, the last row
+</p>
+<pre class="codemain">
+i50 : ib#2
+
+o50 = {{WeylGroupElement{RootSystem{...8...}, | -4 |}, {}}}
+                                              | 1  |
+                                              | 4  |
+                                              | 1  |
+o50 : List
+</pre>
+<p class="decale">
+has one vertex w2 and of course no edge to the next row. We therefore recognize the structure of a non-empty interval with l(w2)=l(w1)-2.
+</p>
+<p class="decale">
+We can also produce pictures of Hasse diagrams in SVG format. First, we transform the Hasse diagram into an object of class HasseGraph, which is nearly the same thing, except that it contains strings instead of Weyl group elements and roots. In other words, it is really ready to be displayed as a graph with labels (the strings).
+</p>
+<pre class="codemain">
+i51 : mygraph=hasseDiagramToGraph(ib,"labels"=&gt;"reducedDecomposition")
+
+o51 = HasseGraph{{{121324, {{2, 0}, {121, 1}}}}, {{12134, {{1, 0}}}, {12324, {{2, 0}}}}, {{1234, {}}}}
+
+o51 : HasseGraph
+</pre>
+<p class="decale">
+The option says that we want the labels on the vertices and edges to be reduced decompositions (of the elemenents and of the reflections). 
+</p>
+<p class="decale">
+Then we can produce the description of a picture as a list of graphic primitives in the specifications of the package <code>Graphics</code> and finally turn this list of graphic primitives into an SVG picture that we store in a file called "myinterval.svg".
+</p>
+<pre class="codemain">
+i52 : svgPicture(hasseGraphToPicture(mygraph),"myinterval")
+
+o52 = myinterval.svg
+o52 : File
+</pre>
+<p class="decale">
+Your browser can be directly called from M2 to view the SVG picture:
+</p>
+<pre class="codemain">
+i53 : viewPicture "myinterval.svg"
+</pre>
+<p class="decale">
+If your browser does not support SVG, it will not display anything. Instead, you can manually open the picture in anything that opens SVG images. The SVG picture that you should see is <a href="myinterval.svg">here</a> so if your browser displays it, you should be fine.
+</p>
+
+<p class="decale">
+It is also possible to compute and display intervals for the Bruhat order (induced) on quotients of the Weyl group by a parabolic subgroup. For the fun of it, let us compute the whole Hasse diagram of the Weyl group of E6 modulo the parabolic subgroup generated by the reflections 1,2,3,4 and 5. This parabolic subgroup is a Weyl group of type D5.
+</p>
+<pre class="codemain">
+i54 : R=rootSystemE(6);
+
+i55 : P=parabolic(R,set {1,2,3,4,5});
+
+i56 : myinter=intervalBruhat((neutralWeylGroupElement R) % P,
+(longestWeylGroupElement R) % P);
+
+i57 : mygraph=hasseDiagramToGraph(myinter,"labels"=&gt;"reduced decomposition");
+
+i58 : mypicture=hasseGraphToPicture(mygraph); 
+
+i59 : svgPicture(mypicture,"hasseDiagE6modD5");
+
+i60 : viewPicture("hasseDiagE6modD5.svg")
+</pre>
+<p class="decale">
+See the result <a href="hasseDiagE6modD5.svg">here</a>.
+</p>
+<p class="decale">
+The picture can be made nicer by passing svg options to svgPicture.
+</p>
+<pre class="codemain">
+i61 : myfancypicture=hasseGraphToPicture(mygraph,
+"point radius"=&gt;4,
+"edge options"=&gt;new HashTable from {"stroke-width"=&gt;"4"},
+"point options"=&gt;new HashTable from {"fill-opacity"=&gt;"1","fill"=&gt;"red"});
+
+i62 : svgPicture(myfancypicture,"fancyhasseDiagE6modD5");
+
+i63 : viewPicture("fancyhasseDiagE6modD5.svg")
+</pre>
+<p class="decale">
+See the result <a href="fancyhasseDiagE6modD5.svg">here</a>.
+</p>
+<p class="decale">
+Note that it is also possible to generate a picture in the <a href="http://en.wikipedia.org/wiki/PGF/TikZ">pgf/tikz</a> language to include in a tex or latex document, by using the command pgfPicture of the package Graphics.
+</p>
+<p class="decale">
+Maybe a word of caution is needed. Recall that the number of elements in a Weyl group grows quickly with the rank of the group: for example, the Weyl group of E6 already has 2<sup>7</sup>.3<sup>4</sup>.5=51840 elements, so if you wanted to compute the whole Hasse diagram, your computer would probably do it, but it would take several hours and occupy some memory.
+</p>
+
+<p class="decale">
+Since the hasse diagram contains a lot of information on a Weyl group and can take some time to be computed, it can be convenient to store it in a file. Strictly speaking, this is not possible for the moment, but it is possible to store an object of class HasseGraph in a file, and then from it, it is quite quick to recover the original Hasse diagram. 
+</p>
+<pre class="codemain">
+i64 : storeHasseGraph(mygraph,"mygraph.txt")
+
+o64 = mygraph.txt
+o64 : File
+
+i65 : mygraph2=loadHasseGraph("mygraph.txt");
+
+i66 : mygraph===mygraph2
+
+o66 = true
+</pre>
+
+</body>
+</html>

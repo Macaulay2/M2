@@ -1,0 +1,40 @@
+/* This is a style sheet for my teaching webpage. */
+
+body {
+background-color: #E59467;
+}
+
+h1 {
+text-align: center;
+}
+
+h2 {
+margin-left: 5%;
+}
+
+h3 {
+margin-left: 5%;
+}
+
+hr.informatique {
+width: 90%;
+}
+
+code {
+font-family: Courier, Courier New, Verdana, Arial;
+}
+
+.decale {
+margin-left: 5%;
+margin-right: 5%;
+}
+
+.codemain {
+font-family: Courier, Courier New, Verdana, Arial, monospace;
+color: #465584;
+background-color: #FFDA9A;
+border: 1px dotted #000;
+padding: 2px;
+margin-left: 10%;
+margin-right: 10%;
+}

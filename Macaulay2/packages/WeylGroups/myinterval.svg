@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg width="300" height="400" version="1.1"
+xmlns="http://www.w3.org/2000/svg">
+
+<circle fill-opacity="1" stroke-width="0" r="2" fill="black" cx="150" cy="100" stroke-opacity="1" stroke="black" />
+
+<text id="TextElement" fill-opacity="1" stroke-width="0" font-family="Verdana" fill="black" stroke-opacity="0" stroke="black" x="150" y="100" font-size="12" >121324</text>
+
+<line stroke-width="toString(linewidth)" stroke-opacity="1" y1="100" stroke="black" x1="150" y2="200" x2="100" />
+
+<line stroke-width="toString(linewidth)" stroke-opacity="1" y1="100" stroke="black" x1="150" y2="200" x2="200" />
+
+<circle fill-opacity="1" stroke-width="0" r="2" fill="black" cx="100" cy="200" stroke-opacity="1" stroke="black" />
+
+<text id="TextElement" fill-opacity="1" stroke-width="0" font-family="Verdana" fill="black" stroke-opacity="0" stroke="black" x="100" y="200" font-size="12" >12134</text>
+
+<line stroke-width="toString(linewidth)" stroke-opacity="1" y1="200" stroke="black" x1="100" y2="300" x2="150" />
+
+<circle fill-opacity="1" stroke-width="0" r="2" fill="black" cx="200" cy="200" stroke-opacity="1" stroke="black" />
+
+<text id="TextElement" fill-opacity="1" stroke-width="0" font-family="Verdana" fill="black" stroke-opacity="0" stroke="black" x="200" y="200" font-size="12" >12324</text>
+
+<line stroke-width="toString(linewidth)" stroke-opacity="1" y1="200" stroke="black" x1="200" y2="300" x2="150" />
+
+<circle fill-opacity="1" stroke-width="0" r="2" fill="black" cx="150" cy="300" stroke-opacity="1" stroke="black" />
+
+<text id="TextElement" fill-opacity="1" stroke-width="0" font-family="Verdana" fill="black" stroke-opacity="0" stroke="black" x="150" y="300" font-size="12" >1234</text>
+
+</svg>
+
