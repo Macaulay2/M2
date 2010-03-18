@@ -163,8 +163,11 @@ current window added to it."
      ((equal current-prefix-arg '(16)) (read-from-minibuffer "M2 buffer name tag: " "M2" nil nil 'M2-tag-history '("M2" "M2-1.1")))
      (M2-tag-history (car M2-tag-history))
      (t "M2"))))
-  (switch-to-buffer (make-comint name M2-shell-exe nil "-c" (concat "echo; set -x; " command)))
-  (M2-comint-mode))
+  (if (get-buffer (concat "*" name "*"))
+      (switch-to-buffer (get-buffer (concat "*" name "*")))
+    (progn
+      (switch-to-buffer (make-comint name M2-shell-exe nil "-c" (concat "echo; set -x; " command)))
+      (M2-comint-mode))))
 (defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
 (defvar M2-comint-prompt-regexp "^\\([ \t]*[io]*[1-9][0-9]* [:=] \\)?"
   "Regular expression used to recognize the Macaulay 2 prompt.")
