@@ -5,14 +5,14 @@ all:
 .PHONY: all
 $(foreach d,top tar deb freebsd rpm dmg cygwin,	\
 	$(eval .PHONY: all-in-$d)		\
-	$(eval all-in-$d:; $(MAKE) -C $d all))
+	$(eval all-in-$d:; + $(MAKE) -C $d all))
 ifeq "@M2TARFILE@" "yes"
 all: all-in-tar
 endif
 ifeq "@DEB@" "yes"
 all: all-in-deb
 check: check-in-deb
-check-in-deb:; $(MAKE) -C deb check
+check-in-deb:; + $(MAKE) -C deb check
 endif
 ifeq "@FREEBSD@" "yes"
 all: all-in-freebsd
@@ -32,13 +32,13 @@ $(foreach t,clean distclean,						\
 						          )$(eval	\
       $t: $t-in-$d							\
 						          )$(eval	\
-      $t-in-$d:; $(MAKE) -C $d $t					\
+      $t-in-$d:; + $(MAKE) -C $d $t					\
 						)))
 $(foreach t,install,					\
 	$(foreach d,top install,			\
 		$(eval .PHONY: $t $t-in-$d)		\
 		$(eval $t: $t-in-$d)			\
-		$(eval $t-in-$d:; $(MAKE) -C $d $t)))
+		$(eval $t-in-$d:; + $(MAKE) -C $d $t)))
 Makefile: Makefile.in; cd ..; ./config.status distributions/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions "
