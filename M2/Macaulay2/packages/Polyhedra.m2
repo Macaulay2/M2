@@ -32,19 +32,22 @@ newPackage("Polyhedra",
 
 export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, fan, addCone, 
         ambDim, cones, maxCones, halfspaces, hyperplanes, linSpace, rays, vertices,
-        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isPolytopal, 
-	isPure, isSmooth,
+        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isLatticePolytope, isPointed, isPolytopal, 
+	isPure, isSmooth, isVeryAmple,
 	dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, 
 	latticePoints, maxFace, minFace, objectiveVector,
-	minkSummandCone, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
+	minkSummandCone, mixedVolume, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
 	volume, vertexEdgeMatrix, vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
 	dualCone, faceFan, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
 	crossPolytope, cellDecompose, cyclicPolytope, ehrhart, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, 
-	secondaryPolytope, statePolytope, stdSimplex,
+	secondaryPolytope, statePolytope, stdSimplex, faceBuilder,
 	saveSession}
 
 needsPackage "FourierMotzkin"
+
+-- WISHLIST
+--  -Symmetry group for polytopes
 
 
 -- Definind the new type PolyhedralObject
@@ -477,19 +480,25 @@ intersection List := L -> (
      else if instance(C,Sequence) then (
 	  -- Checking for input errors
 	  if not isValidPair C then error("Inequalities must be given as a sequence of a matrix and a column vector");
-	  Ml = chkQQZZ(C#0,"half-spaces");
-	  n = numColumns Ml;
-	  vl = if C#1 == 0 then map(target Ml,ZZ^1,0) else chkQQZZ(C#1,"condition vector for half-spaces");
+	  --Ml = chkQQZZ(C#0,"half-spaces");
+	  n = numColumns C#0;
+	  Ml = if C#1 == 0 then ((transpose chkQQZZ(transpose C#0,"half-spaces"))|map(ZZ^(numRows C#0),ZZ^1,0)) else transpose chkQQZZ(transpose(C#0|C#1),"halfspaces or condition vector");
+	  vl = Ml_{n};
+	  Ml = submatrix'(Ml,{n});
+     	  --vl = if C#1 == 0 then map(target Ml,ZZ^1,0) else chkQQZZ(C#1,"condition vector for half-spaces");
 	  Nl = map(ZZ^1,source Ml,0);
 	  wl = map(ZZ^1,ZZ^1,0))
      else (
 	  -- Checking for input errors
 	  if not isValidPair C then error("Equalities must be given as a list of a matrix and a column vector");
-	  Nl = chkQQZZ(C#0,"hyperplanes");
-	  n = numColumns Nl;
+	  --Nl = chkQQZZ(C#0,"hyperplanes");
+	  n = numColumns C#0;
+	  Nl = if C#1 == 0 then ((transpose chkQQZZ(transpose C#0,"hyperplanes"))|map(ZZ^(numRows C#0),ZZ^1,0)) else transpose chkQQZZ(transpose(C#0|C#1),"hyperplanes or condition vector");
+	  wl = Nl_{n};print wl;
+	  Nl = submatrix'(Nl,{n});
 	  Ml = map(ZZ^1,source Nl,0);
-	  vl = map(ZZ^1,ZZ^1,0);
-	  wl = if C#1 == 0 then map(target Nl,ZZ^1,0) else chkQQZZ(C#1,"condition vector for half-spaces"));
+	  vl = map(ZZ^1,ZZ^1,0));
+	  --wl = if C#1 == 0 then map(target Nl,ZZ^1,0) else chkQQZZ(C#1,"condition vector for half-spaces"));
      --  Adding the inequalities and equalities to 'M,v,N,w', for each remaining element in 'L', depending on the type of 'C'
      L = apply(drop(L,1), C1 -> (
 	       -- Checking for further input errors
@@ -505,16 +514,20 @@ intersection List := L -> (
 		    -- Checking for input errors
 		    if not isValidPair C1 then error("Inequalities must be given as a sequence of a matrix and a column vector");
 		    if numColumns C1#0 != n then error("Inequalities must be for the same ambient space.");
-		    C1 = (chkQQZZ(C1#0,"half-spaces"),chkQQZZ(C1#1,"condition vector for half-spaces"));
-		    if C1#1 == 0 then (C1#0,map(target C1#0,ZZ^1,0),map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0))
-		    else (C1#0,C1#1,map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0)))
+		    C1 = if C1#1 == 0 then ((transpose chkQQZZ(transpose C1#0,"half-spaces"))|map(ZZ^(numRows C1#0),ZZ^1,0)) else transpose chkQQZZ(transpose(C1#0|C1#1),"halfspaces or condition vector");
+		    (submatrix'(C1,{n}),C1_{n},map(ZZ^1,ZZ^n,0),map(ZZ^1,ZZ^1,0)))		      	   
+--		    C1 = (chkQQZZ(C1#0,"half-spaces"),chkQQZZ(C1#1,"condition vector for half-spaces"));
+--		    if C1#1 == 0 then (C1#0,map(target C1#0,ZZ^1,0),map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0))
+--		    else (C1#0,C1#1,map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0)))
 	       else (
 		    -- Checking for input errors
 		    if not isValidPair C1 then error("Equalities must be given as a list of a matrix and a column vector");
 		    if numColumns C1#0 != n then error ("Inequalities must be for the same ambient space.");
-		    C1 = (chkQQZZ(C1#0,"hyperplanes"),chkQQZZ(C1#1,"condition vector for hyperplanes"));
-		    if C1#1 == 0 then (map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0),C1#0,map(target C1#0,ZZ^1,0))
-		    else (map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0),C1#0,C1#1))));
+		    C1 = if C1#1 == 0 then ((transpose chkQQZZ(transpose C1#0,"hyperplanes"))|map(ZZ^(numRows C1#0),ZZ^1,0)) else transpose chkQQZZ(transpose(C1#0|C1#1),"hyperplanes or condition vector");
+		    (map(ZZ^1,ZZ^n,0),map(ZZ^1,ZZ^1,0),submatrix'(C1,{n}),C1_{n}))));
+--		    C1 = (chkQQZZ(C1#0,"hyperplanes"),chkQQZZ(C1#1,"condition vector for hyperplanes"));
+--		    if C1#1 == 0 then (map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0),C1#0,map(target C1#0,ZZ^1,0))
+--		    else (map(ZZ^1,source C1#0,0),map(ZZ^1,ZZ^1,0),C1#0,C1#1))));
      LM := flatten apply(L, l -> entries(l#0));
      if LM != {} then Ml = Ml || matrix LM;
      LM = flatten apply(L, l -> entries(l#1));
@@ -1008,6 +1021,10 @@ isFace(Cone,Cone) := (C1,C2) -> (
 	  any(faces(c,C2), f -> f === C1))
      else false)
 
+
+isLatticePolytope = method()
+isLatticePolytope Polyhedron := Boolean => P -> liftable(vertices P,ZZ)
+
 isNormal Polyhedron := P -> (
      -- Checking for input errors
      if not isCompact P then error ("The polyhedron must be compact");
@@ -1165,6 +1182,46 @@ isSmooth Cone := C -> (
 isSmooth Fan := F -> (
      if not F.cache.?isSmooth then F.cache.isSmooth = all(toList F#"generatingCones",isSmooth);
      F.cache.isSmooth)
+
+
+isVeryAmple = method()
+isVeryAmple Polyhedron := P -> (
+     if not isCompact P then error("The polyhedron must be compact");
+     if not dim P == ambDim P then error("The polyhedron must be full dimensional");
+     if not isLatticePolytope P then error("The polyhedron must be a lattice polytope");
+     if not P.cache.?isVeryAmple then (
+	  E := apply(faces(dim P -1, P), e -> (e = vertices e; {e_{0},e_{1}}));
+     	  V := vertices P;
+     	  V = apply(numColumns V, i -> V_{i});
+     	  HS := -(halfspaces P)#0;
+     	  HS = apply(numRows HS, i -> HS^{i});
+     	  P.cache.isVeryAmple = all(V, v -> (
+	       	    Ev := select(E, e -> member(v,e));
+	       	    Ev = apply(Ev, e -> makePrimitiveMatrix(if e#0 == v then e#1-e#0 else e#0-e#1));
+	       	    ind := (smithNormalForm matrix {Ev})_0;
+	       	    ind = product toList apply(rank ind, i-> ind_(i,i));
+	       	    ind == 1 or (
+		    	 EvSums := apply(subsets Ev, s -> sum(s|{v}));
+	       	    	 all(EvSums, e -> contains(P,e)) or (
+		    	      Ev = matrix{Ev};
+		    	      HSV := matrix for h in HS list if all(flatten entries(h*Ev), e -> e >= 0) then {h} else continue;
+		    	      C := new Cone from {
+	   		      	   "ambient dimension" => numRows Ev,
+	   		      	   "dimension of the cone" => numRows Ev,
+	   		      	   "dimension of lineality space" => 0,
+	   		      	   "linealitySpace" => map(ZZ^(numRows Ev),ZZ^0,0),
+	   		      	   "number of rays" => numColumns Ev,
+	   		      	   "rays" => Ev,
+	   		      	   "number of facets" => numColumns HSV,
+	   		      	   "halfspaces" => HSV,
+	   		      	   "hyperplanes" => map(ZZ^0,ZZ^(numRows Ev),0),
+	   		      	   "genrays" => (Ev,map(ZZ^(numRows Ev),ZZ^0,0)),
+	   		      	   "dualgens" => (-(transpose HSV),map(ZZ^(numRows Ev),ZZ^0,0)),
+	   		      	   symbol cache => new CacheTable};
+		    	      HB := hilbertBasis C;
+		    	      all(HB, e -> contains(P,e+v)))))));
+     P.cache.isVeryAmple)
+     
 
 
 
@@ -1663,6 +1720,39 @@ minkSummandCone Polyhedron := P -> (
 		     (C,summList,vertices(Q))))))
  
  
+mixedVolume = method()
+mixedVolume List := L -> (
+     n := #L;
+     Elist = apply(L, P -> apply(faces(dim P -1,P),vertices));
+     liftings := apply(n, i -> map(ZZ^n,ZZ^n,1)||matrix{apply(n, j -> random 25)});
+     Qlist := apply(n, i -> affineImage(liftings#i,L#i));
+     local Qsum;
+     Qsums := apply(n, i -> if i == 0 then Qsum = Qlist#0 else Qsum = Qsum + Qlist#i);
+     mV := 0;
+     Elist = apply(n, i -> apply(Elist#i, e -> (e,(liftings#i)*e)));
+     E1 := Elist#0;
+     Elist = drop(Elist,1);
+     center := matrix{{1/2},{1/2}};
+     edgeTuple := {};
+     k := 0;
+     selectRecursion := (E1,edgeTuple,Elist,mV,Qsums,Qlist,k) -> (
+	  for e1 in E1 do (
+	       Elocal := Elist;
+	       if Elocal == {} then mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et))
+	       else (
+		    Elocal = for i from 0 to #Elocal-1 list (
+			 HP := halfspaces(Qsums#k + Qlist#(k+i+1));
+			 HP = for j from 0 to numRows(HP#0)-1 list if (HP#0)_(j,n) < 0 then ((HP#0)^{j},(HP#1)^{j}) else continue;
+			 returnE := select(Elocal#i, e -> (
+				   p := (sum apply(edgeTuple|{e1}, et -> et#1 * center)) + (e#1 * center);
+				   any(HP, pair -> (pair#0)*p - pair#1 == 0)));
+			 --if returnE == {} then break{};
+			 returnE);
+		    mV = selectRecursion(Elocal#0,edgeTuple|{e1},drop(Elocal,1),mV,Qsums,Qlist,k+1)));
+	  mV);
+     selectRecursion(E1,edgeTuple,Elist,mV,Qsums,Qlist,k))
+ 
+ 
 objectiveVector = method()
 objectiveVector (Polyhedron,Polyhedron) := (P,Q) -> (
      -- Checking for input errors
@@ -1852,8 +1942,8 @@ smoothSubfan Fan := F -> (
 -- PURPOSE : Computing the stellar subdivision
 --   INPUT : '(F,r)', where 'F' is a Fan and 'r' is a ray
 --  OUTPUT : A fan, which is the stellar subdivision
-stellarSubdivision = method(TypicalValue => Fan)
-stellarSubdivision (Fan,Matrix) := (F,r) -> (
+stellarSubdivision = method()
+stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
      -- Checking for input errors
      if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
      divider := (C,r) -> if dim C != 1 then flatten apply(faces(1,C), f -> if not contains(f,r) then posHull {f,r} else divider(f,r)) else {C};
@@ -2342,6 +2432,10 @@ minkowskiSum = method(TypicalValue => Polyhedron)
 minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
      -- Checking for input errors
      if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same space");
+     if isEmpty P1 or isEmpty P2 then emptyPolyhedron ambDim P1 else if P1 == P2 then 2 * P1 else if ambDim P1 <= 3 then oldMinkSum(P1,P2) else newMinkSum(P1,P2))
+
+
+oldMinkSum = (P1,P2) -> (
      -- Saving the vertices and rays
      V1 := vertices P1;
      V2 := vertices P2;
@@ -2350,6 +2444,92 @@ minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
      -- Collecting all sums of vertices of P1 with vertices of P2
      Vnew = matrix {unique flatten apply(numColumns V1, i -> apply(numColumns V2, j -> V1_{i}+V2_{j}))};
      convexHull(Vnew,R))
+
+
+newMinkSum = (P,Q) -> (
+     facePairBuilder := (k,P) -> (
+	  L := faceBuilder(k,P);
+	  HS := halfspaces P;
+	  HS = apply(numRows HS#0, i -> ((HS#0)^{i},(HS#1)^{i}));
+	  apply(L, l -> (
+		    l = (toList l#0,toList l#1);
+		    (l,select(HS, hs -> all(l#0, v -> (hs#0)*v - hs#1 == 0) and all(l#1, r -> (hs#0)*r == 0))))));
+     uniqueColumns := M -> matrix{(unique apply(numColumns M, i -> M_{i}))};
+     n := ambDim P;
+     HPP := hyperplanes P;
+     HPQ := hyperplanes Q;
+     HP := if HPP == (0,0) or HPQ == (0,0) then (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
+	  k := transpose mingens ker transpose(HPP#0|| -HPQ#0);
+	  if k == 0 then (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
+	       dHPP := numRows HPP#0;
+	       (k_{0..dHPP-1} * HPP#0,k*(HPP#1||HPQ#1))));
+     d := n - numRows(HP#0);
+     if d != n then (
+	  if numRows HPP#0 == numRows HP#0 then HPP = (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
+	       kPP := (transpose mingens ker(HP#0 * transpose HPP#0))_{0..(numRows HPP#0)-1};
+	       HPP = (kPP * HPP#0,kPP * HPP#1));
+	  if numRows HPQ#0 == numRows HP#0 then HPQ = (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
+	       kPQ := (transpose mingens ker(HP#0 * transpose HPQ#0))_{0..(numRows HPQ#0)-1};
+	       HPQ = (kPQ * HPQ#0,kPQ * HPQ#1)));
+     LP := reverse apply(dim P + 1, k -> facePairBuilder(k,P));
+     LP = LP | toList(max(0,d-#LP):{});
+     LQ := reverse apply(dim Q + 1, k -> facePairBuilder(k,Q));
+     LQ = LQ | toList(max(0,d-#LQ):{});
+     HS := unique flatten apply(d, i -> (
+	       if i == 0 then flatten for f in LQ#(d-1) list (
+		    if f#1 == {} then (
+			 entP := flatten entries((HPQ#0)*(rays P));
+			 maxP := flatten entries((HPQ#0)*(vertices P));
+			 if all(entP, e -> e == 0) then {(HPQ#0,matrix{{max maxP}} + HPQ#1),(-HPQ#0,-(matrix{{min maxP}} + HPQ#1))}
+			 else if all(entP, e -> e <= 0) then {(HPQ#0,matrix{{max maxP}} + HPQ#1)} 
+			 else if all(entP, e -> e >= 0) then {(-HPQ#0,-(matrix{{min maxP}} + HPQ#1))}
+			 else continue)
+		    else if all(flatten entries((f#1#0#0)*(rays P)), e -> e <= 0) then (
+			 mP := max flatten entries((f#1#0#0)*(vertices P));
+			 --mP = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mP}}));
+			 {(f#1#0#0,f#1#0#1 + matrix{{mP}})}) else continue)
+	       else if i == d-1 then flatten for f in LP#(d-1) list (
+		    if f#1 == {} then (
+			 entQ := flatten entries((HPP#0)*(rays Q));
+			 maxQ := flatten entries((HPP#0)*(vertices Q));
+			 if all(entQ, e -> e == 0) then {(HPP#0,matrix{{max maxQ}} + HPP#1),(-HPP#0,-(matrix{{min maxQ}} + HPP#1))}
+			 else if all(entQ, e -> e <= 0) then {(HPP#0,matrix{{max maxQ}} + HPP#1)} 
+			 else if all(entQ, e -> e >= 0) then {(-HPP#0,-(matrix{{min maxQ}} + HPP#1))}
+			 else continue)
+		    else if all(flatten entries((f#1#0#0)*(rays Q)), e -> e <= 0) then (
+			 mQ := max flatten entries((f#1#0#0)*(vertices Q));
+			 --mQ = transpose makePrimitiveMatrix transpose(f#1#0#0|(f#1#0#1 + matrix{{mQ}}));
+			 {(f#1#0#0,f#1#0#1 + matrix{{mQ}})}) else continue)
+	       else flatten for Pface in LP#i list (
+		    for Qface in LQ#(d-i-1) list (
+			 PfaceHS := if Pface#1 != {} then (matrix apply(Pface#1, f -> {f#0}) || HPP#0,matrix apply(Pface#1, f -> {f#1}) || HPP#1) else HPP;
+			 QfaceHS := if Qface#1 != {} then (matrix apply(Qface#1, f -> {f#0}) || HPQ#0,matrix apply(Qface#1, f -> {f#1}) || HPQ#1) else HPQ;
+			 dP := rank PfaceHS#0;
+			 dQ := rank QfaceHS#0;
+			 PfaceHS = ((PfaceHS#0)^{0..dP-1},(PfaceHS#1)^{0..dP-1});
+			 QfaceHS = ((QfaceHS#0)^{0..dQ-1},(QfaceHS#1)^{0..dQ-1});
+			 kPQ := transpose mingens ker transpose(PfaceHS#0|| -QfaceHS#0); 
+			 if numRows kPQ != 1 then continue else (
+			      dPfaceHS := numRows PfaceHS#0;
+			      newHS := kPQ_{0..dPfaceHS-1} * PfaceHS#0 | kPQ*(PfaceHS#1||QfaceHS#1);
+			      --newHS = transpose makePrimitiveMatrix newHS;
+			      newHS = (submatrix'(newHS,{n}),newHS_{n});
+			      checkValueP := (newHS#0 *(Pface#0#0#0))_(0,0);
+			      checkValueQ := (newHS#0 *(Qface#0#0#0))_(0,0);
+			      if all(flatten entries(newHS#0 *(vertices P)), e -> e <= checkValueP) and all(flatten entries(newHS#0 *(vertices Q)), e -> e <= checkValueQ) then (
+				   if all(Pface#0#1, r -> (newHS#0 *r)_(0,0) <= 0) and all(Qface#0#1, r -> (newHS*r)_(0,0) <= 0) then newHS else continue) 
+			      else if all(flatten entries(newHS#0 *(vertices P)), e -> e >= checkValueP) and all(flatten entries(newHS#0 *(vertices Q)), e -> e >= checkValueQ) then (
+				   if all(Pface#0#1, r -> (newHS#0 *r)_(0,0) >= 0) and all(Qface#0#1, r -> (newHS*r)_(0,0) >= 0) then (-(newHS#0),-(newHS#1)) else continue) 
+			      else continue)))));
+     HS = (matrix apply(HS, e -> {first e}),matrix apply(HS, e -> {last e}));
+     V := matrix {unique flatten apply(numColumns vertices P, i -> apply(numColumns vertices Q, j -> (vertices P)_{i}+(vertices Q)_{j}))};
+     R := promote(rays P | rays Q,QQ) | map(target V,QQ^1,0);
+     V = (map(QQ^1,source V,(i,j)->1) || V) | (map(QQ^1,source R,0) || R);
+     HS = sort makePrimitiveMatrix transpose(-(HS#1)|HS#0);
+     HS = uniqueColumns HS;
+     HP = sort makePrimitiveMatrix transpose(-(HP#1)|HP#0);
+     HP = uniqueColumns HP;
+     polyhedronBuilder reverse fMReplacement(V,HS,HP))
 
 
 --   INPUT : '(C1,C2)',  two cones
@@ -2892,6 +3072,7 @@ makePrimitiveMatrix = M -> if M != 0 then lift(transpose matrix apply(entries tr
      
 
 fMReplacement = (R,HS,HP) -> (
+     uniqueColumns := M -> matrix{(unique apply(numColumns M, i -> M_{i}))};
      n := numRows R;
      LS := mingens ker transpose(HS|HP);
      alpha := rank LS;
@@ -2906,12 +3087,14 @@ fMReplacement = (R,HS,HP) -> (
 	  CHS := mingens ker transpose HP;
 	  CHS = CHS * (inverse(HP|CHS))^{beta..n-1};
 	  HS = CHS * HS);
-     HS = sort makePrimitiveMatrix HS;
+     HS = if HS == 0 then map(ZZ^(numRows HS),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix HS;
      R = apply(numColumns R, i -> R_{i});
-     R = select(R, r -> (r != 0 and  number(flatten entries((transpose HS) * r), e -> e == 0) >= n-alpha-beta-1));
+     R = select(R, r -> (r != 0 and (
+		    pos := positions(flatten entries((transpose HS) * r), e -> e == 0);
+		    #pos >= n-alpha-beta-1 and (n <= 3 or rank HS_pos >= n-alpha-beta-1))));
      if R == {} then R = map(ZZ^(numRows LS),ZZ^0,0) else R = sort matrix {unique apply(R, makePrimitiveMatrix)};
-     LS = sort makePrimitiveMatrix LS;
-     HP = sort makePrimitiveMatrix HP;
+     LS = if LS == 0 then map(ZZ^(numRows LS),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix LS;
+     HP = if HP == 0 then map(ZZ^(numRows HP),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix HP;
      ((R,LS),(HS,HP)))
 
 
@@ -4870,7 +5053,7 @@ document {
      }
 
 document {
-     Key => {isPure, (isPure,Fan)},
+     Key => {isPure,(isPure,Fan)},
      Headline => "checks if a Fan is of pure dimension",
      Usage => " b = isPure F",
      Inputs => {
