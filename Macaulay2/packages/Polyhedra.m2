@@ -4,12 +4,12 @@
 -- PURPOSE: Computations with convex polyhedra 
 -- PROGRAMMER : René Birkner 
 -- UPDATE HISTORY : April 2008, December 2008, March 2009, Juli 2009,
---     	    	    September 2009, October 2009
+--     	    	    September 2009, October 2009, January 2010
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
     Version => "1.1",
-    Date => "November 25, 2009",
+    Date => "January 20, 2010",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -27,7 +27,7 @@ newPackage("Polyhedra",
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
 	  Email => "rbirkner@mi.fu-berlin.de"}},
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, fan, addCone, 
