@@ -1,0 +1,7 @@
+Idea:
+
+Ask authors of compiled code if we can update our license to GPL v3 or later.
+Then Mike and I will update to GPL v2 or v3.
+
+State in the packing materials that the packages have independent licenses, and
+Macaulay2 is an aggregate.
