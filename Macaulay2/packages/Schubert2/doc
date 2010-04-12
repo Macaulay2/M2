@@ -567,13 +567,13 @@ Node
   Headline
     make an abstract sheaf
   Usage
-    abstractSheaf(X,c,Rank=>n)
+    abstractSheaf(X,cc,Rank=>n)
     abstractSheaf(X,Rank=>n)
     abstractSheaf(X,ChernClass=>c,Rank=>n)
     abstractSheaf(X,ChernCharacter=>cc)
   Inputs
     X:
-    c:
+    cc:
       an element of the intersection ring of {\tt X}
     Rank => RingElement
     ChernCharacter => RingElement
