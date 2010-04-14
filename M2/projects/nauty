@@ -1,0 +1,22 @@
+-*- M2 -*-
+
+Title: Nauty Interface
+
+Description:
+
+An interface to the software package nauty and gtools, written by Brendan
+McKay, a program for computing automorphism groups of graphs and digraphs.  The
+package is available at http://cs.anu.edu.au/~bdm/nauty/.
+
+=============================================================================
+
+Proposed by: David Cook II <dcook@ms.uky.edu>
+Potential Advisor:
+Project assigned to: David Cook II <dcook@ms.uky.edu>, 14 April, 2010
+Current status: 
+
+=============================================================================
+
+Progress log:
+
+14 April, 2010: Under development.
