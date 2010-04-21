@@ -19,4 +19,14 @@ Current status:
 
 Progress log:
 
-14 April, 2010: Under development.
+April 14, 2010: Under development.
+
+April 21, 2010:
+
+    I have a minor release (0.4) of nauty available at
+
+       http://www.ms.uky.edu/~dcook/files/Nauty.m2
+
+    It is fairly complete and has tests for every exported function but it
+    is lacking documentation.
+
