@@ -9,7 +9,7 @@ genericPowerElement = (R, deg, var, i) -> (
      -- var is a variable in A
      -- i is the next power of a to be used
      -- result: (F, nextvar).
-     A := ring var;
+     --A := ring var;
      m := rsort basis(deg,R);
      n := m * matrix apply(numgens source m, j->{var^(j+i)});
      (n_(0,0), i + numgens source m))
