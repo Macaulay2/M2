@@ -1,0 +1,3 @@
+Document that names of options in packages should be exported
+
+Perhaps improve the error message, too, which comes when the documentation is processed.
