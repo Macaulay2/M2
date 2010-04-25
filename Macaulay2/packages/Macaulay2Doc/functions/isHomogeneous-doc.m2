@@ -2,10 +2,7 @@
 --- author(s): MES
 --- notes: 
 
-undocumented {
-	  (isHomogeneous,FractionField),
-	  (isHomogeneous,PolynomialRing),
-	  (isHomogeneous,QuotientRing)}
+undocumented {(isHomogeneous,EngineRing)}
 
 document { 
      Key => {isHomogeneous,
