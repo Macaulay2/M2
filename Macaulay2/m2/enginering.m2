@@ -228,7 +228,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
        describe FractionField := F -> net expression F
 
 -- freduce := (f) -> (numerator f)/(denominator f)
-
+isHomogeneous EngineRing := R -> isHomogeneous 0_R
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
 factoryAlmostGood = R -> (
