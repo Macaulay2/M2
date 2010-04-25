@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 203253857 *}
+-- -*- M2-comint -*- {* hash: 1095333746 *}
 
 i1 : R = ZZ/32003[symbol a..symbol d];
 
@@ -11,7 +11,7 @@ o2 : Ideal of R
 
 i3 : time (M,L) = gfan I;
 LP algorithm being used: "cddgmp".
-     -- used 0.00248 seconds
+     -- used 0.01995 seconds
 
 i4 : M/toString/print;
 {b*d^2, a*d, a*c^2, a^2*c}
@@ -54,13 +54,38 @@ LP algorithm being used: "cddgmp".
 
 i9 : #inL
 
-o9 = 96
+o9 = 2
 
 i10 : (inL1, L1) = gfan(I, Symmetries=>{(b,c,d,a,e)});
 LP algorithm being used: "cddgmp".
 
 i11 : #inL1
 
-o11 = 24
+o11 = 2
 
-i12 : 
+i12 : QQ[f,g,h]
+
+o12 = QQ[f, g, h]
+
+o12 : PolynomialRing
+
+i13 : I = ideal"fg + gh";
+
+o13 : Ideal of QQ[f, g, h]
+
+i14 : gfan I;
+LP algorithm being used: "cddgmp".
+--warning: clearing value of symbol g to allow access to subscripted variables based on it
+
+i15 : R = ring I;
+
+i16 : 
+extra_bit=1
+sticky=1 sticky3=1592 inex=1
+vsize=1 qsize=1
+extra_bit=0
+sticky=1 sticky3=910 inex=1
+vsize=1 qsize=1
+extra_bit=1
+sticky=1 sticky3=1592 inex=1
+vsize=1 qsize=1

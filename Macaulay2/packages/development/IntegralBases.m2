@@ -338,6 +338,11 @@ TEST ///
   F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
   H = findTruncations F
   displayTruncations H 
+
+  -- n = 6
+  factor discriminant(F,y) -- x^27 * sqfree
+  eliminate(ideal F + ideal jacobian ideal F, {y}) -- (x^9)
+  
 ///
 
 TEST ///
