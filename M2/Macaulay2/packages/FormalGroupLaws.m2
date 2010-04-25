@@ -1,5 +1,5 @@
 -- -*- coding: utf-8 -*-
-
+-- licensed under GPL, any version
 newPackage(
 	"FormalGroupLaws",
 	Version => "0.2",
