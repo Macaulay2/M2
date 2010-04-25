@@ -40,7 +40,7 @@ private:
   void insert(gm_elem *p);
 
   void reduce(gm_elem *&p, gm_elem *q);
-  void reduce(vec &f, vec &fsyz);
+  void reduce(vec &f, vec &fsyz, bool tail_only=false);
   void reduce(vec &f);
 protected:
   virtual bool stop_conditions_ok() { return true; }

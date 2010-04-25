@@ -146,6 +146,7 @@ void GaussElimComputation::reduce(gm_elem *&p, gm_elem *q)
   q->f = v1;
   q->fsyz = s1;
 }
+
 void GaussElimComputation::reduce(vec &f)
 {
   vecterm head;
@@ -173,11 +174,20 @@ void GaussElimComputation::reduce(vec &f)
   result->next = NULL;
   f = head.next;
 }
-void GaussElimComputation::reduce(vec &f, vec &fsyz)
+void GaussElimComputation::reduce(vec &f, vec &fsyz, bool tail_only)
 {
+  
+if (f == 0) return;
   vecterm head;
   vecterm *result = &head;
 
+  if (tail_only)
+    {
+      // Don't reduce the head term.
+      result->next = f;
+      f = f->next;
+      result = result->next;
+    }
   while (f != NULL)
     {
       int r = f->comp;
@@ -240,6 +250,18 @@ void GaussElimComputation::start_computation()
 	      return;
 	    }
 	}
+    }
+  // Now auto reduce these
+  for (int r = 1; r < gens->n_rows(); r++)
+    {
+      if (gb_list[r] == 0) continue;
+      reduce(gb_list[r]->f, gb_list[r]->fsyz, true);
+    }
+  if (gbTrace >= 1)
+    {
+      buffer o;
+      text_out(o);
+      emit_line(o.str());
     }
   set_status(COMP_DONE);
 }
