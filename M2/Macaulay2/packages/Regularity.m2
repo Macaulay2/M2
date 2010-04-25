@@ -72,7 +72,7 @@ isNested = (I,d) -> (
      S := {};
      flag := false;
      for i to d-1 do (
-    	  f = map(R,R,X_{0..n-(i+2)}|{1}|X_{n-(i)..n-1});
+    	  f := map(R,R,X_{0..n-(i+2)}|{1}|X_{n-(i)..n-1});
 	  S = S|{monomialIdeal f I};
      	  if i > 0 and S_i:S_(i-1) != ideal 1_R then return false;
 	  );
@@ -143,11 +143,11 @@ regMonNested = (I,d,dp) -> (
      n := # X-1;
      p := n-dp;
      B = for q from p+1 to n list 0 ;
-     u = map(R,R,X_{0..p}|B);
+     u := map(R,R,X_{0..p}|B);
      T= u I; 
      l=for i from n-d+1 to p list (
 	  B = for q from i+1 to n list 0;
-	  J = (map(R,R,X_{0..(i-1)}|{1}|B)) I; 
+	  J := (map(R,R,X_{0..(i-1)}|{1}|B)) I; 
 	  satMon(J,X_{0..(i-1)})
 	  );
      return max({satMon(T,X_{0..p})}|l)
@@ -202,9 +202,9 @@ mRegularity (Ideal):= opts -> I -> (
 	  f = map(R,R,X_{0..n-d}|upTRT2(k,X,d));
 	  	  );
      dp := depthHomogMon J;
-     r = regMonNested (J,d,dp);
+     r := regMonNested (J,d,dp);
      use S;
-     return r
+     r
      );
 
 

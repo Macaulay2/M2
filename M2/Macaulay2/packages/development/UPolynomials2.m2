@@ -150,7 +150,11 @@ makePrimitive UPoly := (F) -> (
      (multiplyByConstant (F, 1/c), c)
      )
 
-leadCoefficient UPoly := (F) -> upoly(leadCoefficient(poly F), coefficientRing ring F)
+leadCoefficient UPoly := (F) -> (
+     inf := leadCoefficient(poly F);
+     K := coefficientRing ring F;
+     if K === QQ then inf else upoly(inf, K)
+     )
 leadCoefficient UPolyList := (f) -> f#(#f-1)
 
 makeMonic = method()

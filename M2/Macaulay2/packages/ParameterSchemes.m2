@@ -11,6 +11,7 @@ newPackage(
     	)
 
 export { 
+     findHeft,
      findWtVec,
      smallerMonomials, 
      standardMonomials,
@@ -70,6 +71,26 @@ standardMonomials(List) := (L) -> (
      I := ideal L;
      apply(L, f -> standardMonomials(degree f, I))
      )
+
+
+----------------------------------
+findHeft = (degs) -> (
+     A := transpose matrix degs;
+     needsPackage "FourierMotzkin";
+     B := ((value getGlobalSymbol "fourierMotzkin") A)#0;
+     r := rank source B;
+     f := (matrix{toList(r:-1)} * transpose B);
+     if f == 0 then return;
+     heft := first entries f;
+     g := gcd heft;
+     if g > 1 then heft = apply(heft, h -> h // g);
+     minheft := min heft;
+     if minheft <= 0 then heft = apply(heft, a -> a - minheft + 1);
+     heftvals := apply(degs, d -> sum apply(d, heft, times));
+     if not all(heftvals, d -> d > 0) then return;
+     (heft, heftvals)
+     )
+----------------------------------
 
 findWtVec = method(Options => {Standard => false});
 findWtVec Ideal := opts -> (I) -> (
@@ -858,6 +879,33 @@ R = kk[a..d]
 B = ideal{a*c, a*b, a^2, b^4*c, b^5}
 L = smallerMonomials(B)
 D = parameterRing(B,L,symbol t)
+L = parameterIdeal(B,D)
+L1 = select(L_*, f -> f != 0 and sum first exponents f === 1);
+L2 = partition(f -> index leadMonomial f, L1);
+L3 = gens gb ideal flatten apply(keys L2, x -> (m := min(L2#x/size); select(1, L2#x, g -> size g == m)))
+L4 = ideal compress((gens L) % L3);
+L3up = promote(L3, ring D);
+Dup = ideal((gens D) % L3up);
+trim L4
+gens gb L4;
+
+
+IB = sheaf module B
+HH^1(IB(4))
+codim L4
+L4_*/factor//netList
+
+hilbertPolynomial(comodule B, Projective=>false)
+B1 = truncate(4,B)
+L = standardMonomials B1
+D = parameterRing(B1,L,symbol t)
+L = parameterIdeal(B1,D);
+L2a = ideal flatten apply(keys L2, x -> (m := min(L2#x/size); select(1, L2#x, g -> size g == m)));
+gens gb (L2a, Algorithm=>Homogeneous2, Strategy=>LongPolynomial);
+
+
+
+
 #D
 S = kk[t_1..t_60, Degrees=>D]
 debug Core
