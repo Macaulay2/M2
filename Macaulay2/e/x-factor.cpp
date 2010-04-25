@@ -402,6 +402,11 @@ void displayCF(PolynomialRing *R, const CanonicalForm &h) // for debugging
   emit(o.str());
 }
 
+bool factoryGoodRing(const PolynomialRing *P) {
+    struct enter_factory foo(P);
+    return foo.mode != modeError;
+}
+
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g,
 					   const RingElement *mipo, const M2_bool inExtension)
 {

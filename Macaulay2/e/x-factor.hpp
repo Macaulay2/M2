@@ -1,0 +1,1 @@
+bool factoryGoodRing(const PolynomialRing *);
