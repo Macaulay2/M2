@@ -126,7 +126,7 @@ NAMES_H = ringelem \
 C_FILES = error table exptable monordering complex rand
 
 D_FILES = 
-DD_FILES = test
+DD_FILES = #test
 
 ##############################
 ## end of source code files ##
