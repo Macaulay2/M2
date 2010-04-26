@@ -65,7 +65,7 @@ protected:
   bool _coeffs_ZZ; // is K == globalZZ?
   CoefficientRingZZp *zzp; // Only set to non-null if coeff ring is ZZ/p
 
-  int gbvector_size;
+  size_t gbvector_size;
   stash *mem;
 
   int _nvars;
@@ -90,11 +90,8 @@ protected:
   //////////////////////////
   // Pre-allocated values //
   //////////////////////////
-  int * _EXP1, *_EXP2, *_EXP3, *_EXP4;
-  int * _SKEW1, *_SKEW2;
-  int * _MONOM1, *_MONOM2;
-  int * MONOMlead_exp1_; // monomial in M, only used in gbvector_get_lead_exponents
-  int * EXPskew_mult1_,  * EXPskew_mult2_; // exponents used in skew mult only
+  size_t exp_size;   // byte size of exponent vectors 
+  size_t monom_size; // and monomials
 
   //////////////////////////////
   // Private support routines //
@@ -130,9 +127,9 @@ protected:
   // returns 0 if exp1, exp2 are not disjoint for skew comm variables
   // returns 1 if exp1 * exp2 = sort(exp1,exp2).
 
-  void divide_coeff_exact_to_ZZ(gbvector * f, M2_Integer u) const;
+  void divide_coeff_exact_to_ZZ(gbvector * f, gmp_ZZ u) const;
 
-  void lower_content_ZZ(gbvector *f, M2_Integer content) const;
+  void lower_content_ZZ(gbvector *f, gmp_ZZ content) const;
 
   void gbvector_remove_content_ZZ(gbvector *f, 
 				  gbvector *fsyz,
@@ -190,6 +187,11 @@ public:
   exponents exponents_make();
 
   void exponents_delete(exponents e);
+
+  size_t exponent_byte_size() const { return exp_size; }
+  // use ALLOCATE_EXPONENTS(R->exponent_byte_size())
+  // to allocate on the stack an unitialized exponent vector (#ints = nvars+2)
+  // it will be deallocated at the end of that function
 
   //////////////////////
   // gbvector support //

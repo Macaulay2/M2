@@ -26,7 +26,7 @@ typedef int * exponents;
 
 class MonomialTableZZ : public our_new_delete {
 public:
-  struct mon_term : our_new_delete {
+  struct mon_term : public our_new_delete {
     mon_term  *_next;
     mon_term  *_prev;
     exponents _lead;		/* Who owns this? */

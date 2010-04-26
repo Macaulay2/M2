@@ -13,8 +13,8 @@ const int slab_size = 2032;
 const char bad_pattern = '\245';
 const int word_size = sizeof(void *);
 
-extern unsigned int engine_allocated;
-extern unsigned int engine_highwater;
+extern size_t engine_allocated;
+extern size_t engine_highwater;
 
 // Each type should include something like the following:
 #if 0
@@ -65,10 +65,10 @@ private:
 				// elements are 'delete'd directly.
 
   // statistics
-  int n_allocs;
-  int n_inuse;
-  int highwater;
-  int n_frees;
+  size_t n_allocs;
+  size_t n_inuse;
+  size_t highwater;
+  size_t n_frees;
 
   static stash *stash_list;
   static slab *slab_freelist;
@@ -144,14 +144,14 @@ private:
 
 extern doubling_stash *doubles;
 
-static inline void engine_alloc(unsigned int n)
+static inline void engine_alloc(size_t n)
 {
   engine_allocated += n;
   if (engine_allocated > engine_highwater)
     engine_highwater = engine_allocated;
 }
 
-static inline void engine_dealloc(unsigned int n)
+static inline void engine_dealloc(size_t n)
 {
   engine_allocated -= n;
 }

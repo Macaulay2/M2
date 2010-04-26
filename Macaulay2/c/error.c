@@ -17,9 +17,9 @@ void fatal(char *s,...)
      }
 
 int n_errors = 0;
-#define ERRLIMIT 24
+#define ERRLIMIT 120
 int warnings = 0;
-#define WARNLIMIT 24
+#define WARNLIMIT 240
 
 void error(char *s,...)
 {
@@ -44,7 +44,7 @@ void warning(char *s,...)
      fflush(stderr);
      va_end(ap);
      warnings++;
-     if (warnings > WARNLIMIT) fatal("too many errors");
+     if (warnings > WARNLIMIT) fatal("too many warnings");
      }
 
 void fatalpos(node p, char *s,...)
@@ -83,26 +83,26 @@ void warningpos(node p, char *s,...)
      fflush(stderr);
      va_end(ap);
      warnings++;
-     if (warnings > WARNLIMIT) fatal("too many errors");
+     if (warnings > WARNLIMIT) fatal("too many warnings");
      }
 
 node typemismatch(node e){
      errorpos(e,"type mismatch");
-     return bad_K;
+     return bad__K;
      }
 
 node badnumargs(node e,int n){
      errorpos(e,"should have %d argument%s",n,n==1?"":"s");
-     return bad_K;
+     return bad__K;
      }
 
 node notimpl(node e){
      errorpos(e,"not implemented yet");
-     return bad_K;
+     return bad__K;
      }
 
 void quit(){
-     myexit(n_errors != 0);
+     exit(n_errors != 0);
      }
 
 void fail(char *filename, int lineno) {
@@ -111,7 +111,7 @@ void fail(char *filename, int lineno) {
      	  fprintf(stderr,"%s:%d: <- here\n",
 	       cur.filename, cur.lineno);
 	  }
-     myexit(1);
+     exit(1);
      }
 
 void downpos(node n){
@@ -122,18 +122,16 @@ void downpos(node n){
      else if (cur.filename != NULL) {
 	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column+1,"");
 	  }
-     else fprintf(stderr,errfmt,"",0,0,"");
+     else assert(FALSE);
      }
 
 
 void failpos(char *filename, int lineno, node p) {
      downpos(p);
-     fprintf(stderr,"(%s:%d): assertion failed\n", filename,lineno);
-     if (cur.filename != NULL) {
-     	  fprintf(stderr,"%s:%d: <- here\n",
-	       cur.filename, cur.lineno);
-	  }
-     myexit(1);
+     fprintf(stderr,"internal error\n");
+     fprintf(stderr,errfmtnc,filename,lineno,"... assertion failed\n");
+     if (cur.filename != NULL) fprintf(stderr,errfmtnc,cur.filename,cur.lineno,"... here\n");
+     exit(1);
      }
 
 /*

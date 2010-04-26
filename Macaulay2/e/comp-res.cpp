@@ -5,9 +5,7 @@
 #include "res-a1.hpp"
 #include "res-a0.hpp"
 #include "res-a2.hpp"
-
-static int nfinalized = 0;
-static int nremoved = 0;
+#include "finalize.hpp"
 
 //////////////////////////////////////////////
 // EngineResolutionComputation ///////////////
@@ -47,23 +45,6 @@ long EngineResolutionComputation::complete_thru_degree() const
   return C->complete_thru_degree();
 }
 //////////////////////////////////////////////
-
-void remove_res(void *p, void *cd)
-{
-  ResolutionComputation *G = static_cast<ResolutionComputation *>(p);
-  nremoved++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\nremoving res %d at %p\n",nremoved, G);
-  G->remove_res();
-}
-
-void intern_res(ResolutionComputation *G)
-{
-  GC_REGISTER_FINALIZER(G,remove_res,0,0,0);
-  nfinalized++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering res %d at %p\n", nfinalized, (void *)G);
-}
 
 ResolutionComputation::ResolutionComputation()
 {
@@ -123,7 +104,7 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
 	return 0;
       }
-    if (gbTrace > 0) emit_line("resolution Strategy=>1");
+    if (M2_gbTrace > 0) emit_line("resolution Strategy=>1");
     C = new res_comp(m, max_level, strategy);
     break;
   case 0: 
@@ -137,17 +118,17 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
 	return 0;
       }
-    if (gbTrace > 0) emit_line("resolution Strategy=>0");
+    if (M2_gbTrace > 0) emit_line("resolution Strategy=>0");
     C = new res2_comp(m, max_level, use_max_slanted_degree, max_slanted_degree, strategy);
     break;
   case 2 : 
     origsyz = m->n_cols();
-    if (gbTrace > 0) emit_line("resolution Strategy=>2");
+    if (M2_gbTrace > 0) emit_line("resolution Strategy=>2");
     C = new gbres_comp(m, max_level+1, origsyz, strategy);
     break;
   case 3: 
     origsyz = m->n_cols();
-    if (gbTrace > 0) emit_line("resolution Strategy=>3");
+    if (M2_gbTrace > 0) emit_line("resolution Strategy=>3");
     C = new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
     break;
   }
@@ -200,7 +181,7 @@ M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bett
   if (len1 > len) len1 = len;
 
   int totallen = (hi1-lo+1)*(len1+1);
-  M2_arrayint result = makearrayint(3 + totallen);
+  M2_arrayint result = M2_makearrayint(3 + totallen);
 
   result->array[0] = lo;
   result->array[1] = hi1;

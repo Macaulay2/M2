@@ -5,11 +5,9 @@
 #include "varpower-monomial.hpp"
 #include "f4-monlookup.hpp"
 
-extern int gbTrace;
-
 template <typename Key>
 typename F4MonomialLookupTableT<Key>::mi_node *
-F4MonomialLookupTableT<Key>::new_mi_node(int v, int e, mi_node *d)
+F4MonomialLookupTableT<Key>::new_mi_node(varpower_word v, varpower_word e, mi_node *d)
 {
   mi_node *p = reinterpret_cast<mi_node *>(mi_stash->new_elem());
   p->var = v;
@@ -24,7 +22,7 @@ F4MonomialLookupTableT<Key>::new_mi_node(int v, int e, mi_node *d)
 
 template <typename Key>
 typename F4MonomialLookupTableT<Key>::mi_node *
-F4MonomialLookupTableT<Key>::new_mi_node(int v, int e, Key k)
+F4MonomialLookupTableT<Key>::new_mi_node(varpower_word v, varpower_word e, Key k)
 {
   mi_node *p = reinterpret_cast<mi_node *>(mi_stash->new_elem());
   p->var = v;
@@ -77,13 +75,13 @@ void F4MonomialLookupTableT<Key>::insert1(mi_node *&top, const_varpower_monomial
 {
   count += 2;
   mi_node **p = &top, *up = NULL;
-  int one_element = 1;
+  bool one_element = true;
 
   for (index_varpower_monomial i = b; i.valid();)
     {
-      one_element = 0;
-      int insert_var = i.var();
-      int insert_exp;
+      one_element = false;
+      varpower_word insert_var = i.var();
+      varpower_word insert_exp;
       
       if (*p == NULL)
 	{
@@ -218,7 +216,7 @@ void F4MonomialLookupTableT<Key>::update_exponent_vector(int topvar, const_varpo
 {
   int nvars = topvar + 1;
   if (*m > 0 && m[1] >= nvars)
-    nvars = m[1] + 1;
+    nvars = static_cast<int>(m[1] + 1);
   if (size_of_exp <= nvars)
     {
       // Increase size of exponent vector
@@ -231,7 +229,7 @@ void F4MonomialLookupTableT<Key>::update_exponent_vector(int topvar, const_varpo
       exp0 = newarray_atomic_clear(ntuple_word,size_of_exp);
     }
 
-  int nparts = *m++;
+  int nparts = static_cast<int>(*m++);
   for (int i=nparts; i>0; i--, m+=2)
     {
       exp0[*m] = m[1];
@@ -241,7 +239,7 @@ void F4MonomialLookupTableT<Key>::update_exponent_vector(int topvar, const_varpo
 template <typename Key>
 void F4MonomialLookupTableT<Key>::reset_exponent_vector(const_varpower_monomial m)
 {
-  int nparts = *m++;
+  int nparts = static_cast<int>(*m++);
   for (int i=nparts; i>0; i--, m+=2)
     {
       exp0[*m] = 0;
@@ -258,7 +256,7 @@ bool F4MonomialLookupTableT<Key>::find_one_divisor_vp(long comp,
   if (mi == NULL) return false;
 
   F4MonomialLookupTableT *me = const_cast<F4MonomialLookupTableT *>(this);
-  me->update_exponent_vector(mi->var, m);
+  me->update_exponent_vector(static_cast<int>(mi->var), m);
   bool result = find_one_divisor1(mi, exp0, result_k);
   me->reset_exponent_vector(m);
   return result;
@@ -274,7 +272,7 @@ void F4MonomialLookupTableT<Key>::find_all_divisors_vp(long comp,
   if (mi == NULL) return;
 
   F4MonomialLookupTableT *me = const_cast<F4MonomialLookupTableT *>(this);
-  me->update_exponent_vector(mi->var, m);
+  me->update_exponent_vector(static_cast<int>(mi->var), m);
   find_all_divisors1(mi, exp0, result_k);
   me->reset_exponent_vector(m);
 }
@@ -313,7 +311,7 @@ void F4MonomialLookupTableT<Key>::insert_minimal_vp(long comp,
 {
   if (comp >= mis.size())
     {
-      for (int j=comp-mis.size(); j>=0; j--)
+      for (long j=comp-mis.size(); j>=0; j--)
 	mis.push_back(0);
     }
   insert1(mis[comp],m,k);
@@ -510,7 +508,7 @@ minimalize_varpower_monomials(
     {
       varpower_word d = varpower_monomials::simple_degree(elems[j]);
       if (d >= bins.size())
-	for (int i=bins.size(); i<=d; i++)
+	for (int i=INTSIZE(bins); i<=d; i++)
 	  bins.push_back(NULL);
       if (bins[d] == NULL)
 	bins[d] = new VECTOR(int);

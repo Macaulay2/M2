@@ -1,25 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use system;
-use stdio;
-use stdiop;
-use binding;
-use strings;
-use nets;
-use tokens;
-use err;
-use stdio;
-use gmp;
-use basic;
-use convertr;
 use common;
 
-export copy(e:Expr):Expr := (
-     when e
-     is a:List do if a.mutable then Expr(copy(a)) else e
-     is o:HashTable do if o.mutable then Expr(copy(o)) else e
-     else e);
-setupfun("copy",copy);
 reverse(e:Expr):Expr := (
      when e
      is a:Sequence do Expr(reverse(a))
@@ -54,13 +35,13 @@ export splice(e:Expr):Expr := (
      when e
      is v:Sequence do Expr(splice(v))
      is a:List do list(
-	  a.class,
-	  if a.mutable then (
+	  a.Class,
+	  if a.Mutable then (
 	       r := splice(a.v);
 	       if r == a.v then copy(r) else r
 	       )
 	  else splice(a.v),
-	  a.mutable)
+	  a.Mutable)
      else e);
 setupfun("splice",splice);
 export accumulate(
@@ -89,8 +70,8 @@ export subarray(v:Sequence,start:int,leng:int):Sequence := (
      new Sequence len leng at i do provide v.(start+i));
 export subarray(v:Sequence,leng:int):Sequence := subarray(v,0,leng);
 
-export isInteger(e:Expr):bool := when e is ZZ do true else false;
-export isInt(e:Expr):bool := when e is i:ZZ do isInt(i) else false;
+export isInteger(e:Expr):bool := when e is ZZcell do true else false;
+export isInt(e:Expr):bool := when e is i:ZZcell do isInt(i) else false;
 export isIntArray(e:Sequence):bool := (
      foreach x in e do if !isInt(x) then return false;
      true);
@@ -100,9 +81,12 @@ export isIntArray(e:Expr):bool := (
      is b:List do isIntArray(b.v)
      else false);     
 export toInt(e:Expr):int := (
+     -- This is getting used incorrectly in interface2.dd, so a user error could be labelled an internal error.
+     -- We should have no internal errors.
+     -- To fix it, we should have this function, and similar ones, return union types that have to be tested.
      when e 
-     is i:ZZ do toInt(i)
-     else (fatal("internal error"); 0));
+     is i:ZZcell do toInt(i)
+     else fatal("internal error"));
 export toIntArray(e:Sequence):array(int) := (
      new array(int) len length(e) do foreach x in e do provide toInt(x));
 export toIntArray(e:Expr):array(int) := (
@@ -115,7 +99,7 @@ export toIntArray(e:Expr):array(int) := (
 	  )
      );
 export toArrayExpr(v:array(int)):Sequence := (
-     new Sequence len length(v) do foreach i in v do provide Expr(toInteger(i))
+     new Sequence len length(v) do foreach i in v do provide Expr(ZZcell(toInteger(i)))
      );
 
 export newlist(class:HashTable,v:Sequence):List := (
@@ -130,5 +114,5 @@ export basictype(o:HashTable):HashTable := (
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d struct.o "
 -- End:

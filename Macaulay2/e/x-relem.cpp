@@ -20,28 +20,8 @@
 #include "polyquotient.hpp"
 
 #include "matrix.hpp"
-#include "../d/M2mem.h"
 #include "exceptions.hpp"
-
-static long polyrings_nfinalized = 0;
-static long polyrings_nremoved = 0;
-
-void remove_polyring(void *p, void *cd)
-{
-  PolynomialRing *G = static_cast<PolynomialRing *>(p);
-  polyrings_nremoved++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\nremoving polynomial ring %ld at %p\n",polyrings_nremoved, G);
-  G->clear();
-}
-
-void intern_polyring(const PolynomialRing *G)
-{
-  GC_REGISTER_FINALIZER_IGNORE_SELF(const_cast<PolynomialRing *>(G),remove_polyring,0,0,0);
-  polyrings_nfinalized++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering polynomial ring %ld at %p\n", polyrings_nfinalized, (const void *)G);
-}
+#include "finalize.hpp"
 
 unsigned long IM2_Ring_hash(const Ring *R)
 {
@@ -69,7 +49,7 @@ const Ring *IM2_Ring_QQ(void)
   return globalQQ;
 }
 
-const RingOrNull *IM2_Ring_ZZp(int p)
+const Ring /* or null */ *IM2_Ring_ZZp(int p)
   /* p must be a prime number <= 32767 */
 {
   if (p <= 1 || p >= 32750)
@@ -80,7 +60,7 @@ const RingOrNull *IM2_Ring_ZZp(int p)
   return Z_mod::create(p);
 }
 
-const RingOrNull *rawGaloisField(const RingElement *f)
+const Ring /* or null */ *rawGaloisField(const RingElement *f)
 {
   // Check that the ring R of f is a polynomial ring in one var over a ZZ/p
   // Check that f has degree >= 2
@@ -95,12 +75,12 @@ const RingOrNull *rawGaloisField(const RingElement *f)
      }
 }
 
-const RingOrNull *IM2_Ring_RRR(unsigned long prec)
+const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
   return RRR::create(prec);
 }
 
-const RingOrNull *IM2_Ring_CCC(unsigned long prec)
+const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec)
 {
   return CCC::create(prec);
 }
@@ -110,7 +90,7 @@ const Ring *IM2_Ring_trivial_polyring()
   return PolyRing::get_trivial_poly_ring();
 }
 
-const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
+const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
      try {
 #if 0
@@ -130,7 +110,7 @@ const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
      }
 }
 
-const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
+const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
 					 M2_arrayint skewvars)
 {
      try {
@@ -163,7 +143,7 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
      }
 }
 
-const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
+const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
 					M2_arrayint comm_vars,
 					M2_arrayint diff_vars,
 					int homog_var)
@@ -201,7 +181,7 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
      }
 }
 
-const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
+const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
 					    const Matrix *Q)
 {
      try {
@@ -221,7 +201,7 @@ const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
      }
 }
 
-const RingOrNull *IM2_Ring_frac(const Ring *R)
+const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
 {
      try {
 	  if (R == globalZZ) return globalQQ;
@@ -254,7 +234,7 @@ const RingOrNull *IM2_Ring_frac(const Ring *R)
      }
 }
 
-const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
+const Ring /* or null */ *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
 {
      try {
 	  const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -278,7 +258,7 @@ const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
      }
 }
 
-const RingOrNull * IM2_Ring_quotient(const Ring *R, 
+const Ring /* or null */ * IM2_Ring_quotient(const Ring *R, 
 				     const Matrix *I)
 {
      try {
@@ -307,7 +287,7 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
      }
 }
 
-const RingOrNull * IM2_Ring_quotient1(const Ring *R, 
+const Ring /* or null */ * IM2_Ring_quotient1(const Ring *R, 
 				      const Ring *B)
   /* R is a poly ring of the form A[x], B = A/I, constructs A[x]/I */
 /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
@@ -336,7 +316,7 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
      }
 }
 
-const RingOrNull *IM2_Ring_schur(const Ring *R)
+const Ring /* or null */ *IM2_Ring_schur(const Ring *R)
 {
      try {
 	  const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -377,7 +357,7 @@ const RingElement * rawGetNonUnit(const Ring *K)
   return RingElement::make_raw(K, K->get_non_unit());
 }
 
-const RingOrNull *rawAmbientRing(const Ring *R)
+const Ring /* or null */ *rawAmbientRing(const Ring *R)
 /* If R is a quotient of a polynomial ring, or is a fraction ring, return the
    polynomial ring over a basic ring of which this is a quotient (or fraction ring) of.
    For example, if R = frac(ZZ[s,t]/(s^2-1))[x,y,z]/(s*x+t*y+z^2), then the returned
@@ -392,7 +372,7 @@ const RingOrNull *rawAmbientRing(const Ring *R)
   return P->getAmbientRing();
 }
 
-const RingOrNull *rawDenominatorRing(const Ring *R)
+const Ring /* or null */ *rawDenominatorRing(const Ring *R)
 /* If elements of R may have denominators, then this routine returns true, and 
    the ambient ring for denominators is placed into resultRing. Otherwise, false
    is returned. This routine is provided only for debugging the engine. */
@@ -419,17 +399,17 @@ M2_string IM2_RingElement_to_string(const RingElement *f)
   return o.to_string();
 }
 
-const RingElement *IM2_RingElement_from_Integer(const Ring *R, M2_Integer d)
+const RingElement *IM2_RingElement_from_Integer(const Ring *R, gmp_ZZ d)
 {
   return RingElement::make_raw(R, R->from_int(d));
 }
 
-const RingElement *IM2_RingElement_from_rational(const Ring *R, M2_Rational r)
+const RingElement *IM2_RingElement_from_rational(const Ring *R, gmp_QQ r)
 {
   return RingElement::make_raw(R, R->from_rational(r));
 }
 
-const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
+const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, gmp_CC z)
 {
   ring_elem f;
   if (R->from_BigComplex(z,f))
@@ -437,7 +417,7 @@ const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
   return 0;
 }
 
-const RingElement *IM2_RingElement_from_BigReal(const Ring *R, M2_RRR z)
+const RingElement *IM2_RingElement_from_BigReal(const Ring *R, gmp_RR z)
 {
   ring_elem f;
   if (R->from_BigReal(z,f))
@@ -446,7 +426,7 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, M2_RRR z)
 }
 
 
-M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
+gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
   /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
      Otherwise, NULL is returned, and an error is given */
 {
@@ -454,11 +434,11 @@ M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   if (R->is_ZZ())
     {
       void *f = a->get_value().poly_val;
-      return static_cast<M2_Integer>(f);
+      return static_cast<gmp_ZZ>(f);
     }
   if (R->cast_to_Z_mod() != 0)
     {
-      M2_Integer result = newitem(__mpz_struct);
+      gmp_ZZ result = newitem(__mpz_struct);
       mpz_init_set_si(result, R->coerce_to_int(a->get_value()));
       return result;
     }
@@ -466,7 +446,7 @@ M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   return 0;
 }
 
-M2_RationalOrNull IM2_RingElement_to_rational(const RingElement *a)
+gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a)
 {
   if (!a->get_ring()->is_QQ())
     {
@@ -474,10 +454,10 @@ M2_RationalOrNull IM2_RingElement_to_rational(const RingElement *a)
       return 0;
     }
   void *f = a->get_value().poly_val;
-  return static_cast<M2_Rational>(f);
+  return static_cast<gmp_QQ>(f);
 }
 
-M2_RRRorNull IM2_RingElement_to_BigReal(const RingElement *a)
+gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 {
   if (!a->get_ring()->is_RRR())
     {
@@ -485,10 +465,10 @@ M2_RRRorNull IM2_RingElement_to_BigReal(const RingElement *a)
       return 0;
     }
   void *f = a->get_value().poly_val;
-  return static_cast<M2_RRR>(f);
+  return static_cast<gmp_RR>(f);
 }
 
-M2_CCCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
+gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
 {
   if (!a->get_ring()->is_CCC())
     {
@@ -496,7 +476,7 @@ M2_CCCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
       return 0;
     }
   void *f = a->get_value().poly_val;
-  return static_cast<M2_CCC>(f);
+  return static_cast<gmp_CC>(f);
 }
 
 int rawDiscreteLog(const RingElement *h)
@@ -505,7 +485,7 @@ int rawDiscreteLog(const RingElement *h)
   return R->discrete_log(h->get_value());
 }
 
-const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v)
+const RingElement /* or null */ *IM2_RingElement_make_var(const Ring *R, int v)
 {
      try {
 	  ring_elem a = R->var(v);
@@ -531,100 +511,7 @@ M2_bool IM2_RingElement_is_equal(const RingElement *a,
   return R->is_equal(a->get_value(), b->get_value());
 }
 
-const RingElement *IM2_RingElement_negate(const RingElement *a)
-{
-     try {
-	  return -(*a);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const RingElementOrNull *IM2_RingElement_add(const RingElement *a, 
-					     const RingElement *b)
-{
-     try {
-	  return (*a) + (*b);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const RingElementOrNull *IM2_RingElement_subtract(const RingElement *a, 
-						  const RingElement *b)
-{
-     try {
-	  return (*a) - (*b);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const RingElementOrNull *IM2_RingElement_mult(const RingElement *a, 
-					      const RingElement *b)
-{
-     try {
-	  return (*a) * (*b);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-#if 0
-// const RingElement *IM2_RingElement_mult_int(const RingElement *a, int b)
-// {
-//   return (*a) * b;
-// }
-#endif
-const RingElementOrNull *IM2_RingElement_div(const RingElement *a, 
-					     const RingElement *b)
-{
-     try {
-	  const Ring *R = a->get_ring();
-	  if (R != b->get_ring())
-	    {
-	      ERROR("ring division requires both elements to have the same base ring");
-	      return 0;
-	    }
-	  ring_elem result = R->quotient(a->get_value(), b->get_value());
-	  if (error()) return 0;
-	  return RingElement::make_raw(R, result);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const RingElementOrNull *IM2_RingElement_mod(const RingElement *a, 
-					     const RingElement *b)
-{
-     try {
-	  const Ring *R = a->get_ring();
-	  if (R != b->get_ring())
-	    {
-	      ERROR("ring remainder requires both elements to have the same base ring");
-	      return 0;
-	    }
-	  ring_elem result = R->remainder(a->get_value(), b->get_value());
-	  if (error()) return 0;
-	  return RingElement::make_raw(R, result);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const RingElement_pair *IM2_RingElement_divmod(const RingElement *a, 
+engine_RawRingElementPair IM2_RingElement_divmod(const RingElement *a, 
 					       const RingElement *b)
 {
      try {
@@ -638,23 +525,10 @@ const RingElement_pair *IM2_RingElement_divmod(const RingElement *a,
 	  ring_elem frem = R->remainderAndQuotient(a->get_value(), b->get_value(), fquot);
 	  if (error())  return NULL;
 
-	  RingElement_pair *result = new RingElement_pair;
+	  engine_RawRingElementPair result = new engine_RawRingElementPair_struct;
 	  result->a = RingElement::make_raw(R, fquot);
 	  result->b = RingElement::make_raw(R, frem);
 	  return result;
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const RingElementOrNull *IM2_RingElement_power(const RingElement *a, 
-					       M2_Integer n)
-{
-     try {
-       RingElement *z = a->power(n);
-       return error() ? NULL : z;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -698,7 +572,7 @@ const RingElement *IM2_RingElement_promote(const Ring *S,
      }
 }
 
-const RingElementOrNull *IM2_RingElement_lift(int *success_return, const Ring *S, 
+const RingElement /* or null */ *IM2_RingElement_lift(int *success_return, const Ring *S, 
 					const RingElement *f)
 {
      try {
@@ -732,7 +606,7 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
      }
 }
 
-M2_Integer_pair_OrNull *rawWeightRange(M2_arrayint wts, 
+gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts, 
 				       const RingElement *a)
   /* The first component of the degree is used, unless the degree monoid is trivial,
      in which case the degree of each variable is taken to be 1. 
@@ -744,7 +618,7 @@ M2_Integer_pair_OrNull *rawWeightRange(M2_arrayint wts,
 	  int lo,hi;
 	  a->degree_weights(wts,lo,hi);
 	  if (error()) return 0;
-	  M2_Integer_pair *p = new M2_Integer_pair;
+	  gmp_ZZpair p = new gmp_ZZpair_struct;
 	  p->a = newitem(__mpz_struct);
 	  p->b = newitem(__mpz_struct);
 	  mpz_init_set_si(p->a, static_cast<long>(lo));
@@ -757,7 +631,7 @@ M2_Integer_pair_OrNull *rawWeightRange(M2_arrayint wts,
      }
 }
 
-const RingElementOrNull *IM2_RingElement_homogenize_to_degree(const RingElement *a,
+const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(const RingElement *a,
 							      int v,
 							      int deg,
 							      M2_arrayint wts)
@@ -771,7 +645,7 @@ const RingElementOrNull *IM2_RingElement_homogenize_to_degree(const RingElement 
      }
 }
 
-const RingElementOrNull *IM2_RingElement_homogenize(const RingElement *a,
+const RingElement /* or null */ *IM2_RingElement_homogenize(const RingElement *a,
 						    int v,
 						    M2_arrayint wts)
 {
@@ -784,7 +658,7 @@ const RingElementOrNull *IM2_RingElement_homogenize(const RingElement *a,
      }
 }
 						
-const RingElementOrNull *IM2_RingElement_term(const Ring *R,
+const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
 					      const RingElement *a,
 					      const Monomial *m)
   /* R must be a polynomial ring, and 'a' an element of the
@@ -814,7 +688,7 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
      }
 }
 
-const RingElementOrNull *IM2_RingElement_get_terms(
+const RingElement /* or null */ *IM2_RingElement_get_terms(
             int nvars, /* n variables in an outermost monoid */
             const RingElement *a,
 	    int lo, int hi)
@@ -827,7 +701,7 @@ const RingElementOrNull *IM2_RingElement_get_terms(
   return a->get_terms(nvars,lo,hi);
 }
 
-const RingElementOrNull *IM2_RingElement_get_coeff(
+const RingElement /* or null */ *IM2_RingElement_get_coeff(
 	   const Ring * coeffRing, /* ring of the result */
 	   const RingElement *a,
 	   const Monomial *m)
@@ -844,7 +718,7 @@ const RingElementOrNull *IM2_RingElement_get_coeff(
      }
 }
 
-const RingElementOrNull *IM2_RingElement_lead_coeff(
+const RingElement /* or null */ *IM2_RingElement_lead_coeff(
            const Ring * coeffRing, /* ring of the result */
 	   const RingElement *a)
 {
@@ -857,7 +731,7 @@ const RingElementOrNull *IM2_RingElement_lead_coeff(
      }
 }
 
-const MonomialOrNull *IM2_RingElement_lead_monomial(
+const Monomial /* or null */ *IM2_RingElement_lead_monomial(
            int nvars, /* number of variables in an outermost monoid */
 	   const RingElement *a)
 {
@@ -883,7 +757,7 @@ int IM2_RingElement_n_terms(
      }
 }
 
-ArrayPairOrNull IM2_RingElement_list_form(
+engine_RawArrayPairOrNull IM2_RingElement_list_form(
           const Ring * coeffRing, /* ring of the result coefficients */
           const RingElement *f)
 {
@@ -902,7 +776,7 @@ ArrayPairOrNull IM2_RingElement_list_form(
   }
 }
 
-const RingElement_array *rawGetParts(const M2_arrayint wts,
+engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
 				     const RingElement *f)
 /* Return an array of RingElement's, each having pure weight, and sorted by
    strictly increasing weight value.  The wt vector values must fit into 
@@ -917,10 +791,9 @@ const RingElement_array *rawGetParts(const M2_arrayint wts,
       }
     long relems_len;
     ring_elem *relems = P->get_parts(wts, f->get_value(), relems_len);
-    RingElement_array *result = reinterpret_cast<RingElement_array *>(
-				    getmem(sizeofarray((result),relems_len)));
-    result->len = relems_len;
-    for (int i=0; i<relems_len; i++)
+    engine_RawRingElementArray result = getmemarraytype(engine_RawRingElementArray,relems_len);
+    result->len = static_cast<int>(relems_len);
+    for (int i=0; i<result->len; i++)
       result->array[i] = RingElement::make_raw(P,relems[i]);
     deletearray(relems);
     return result;
@@ -931,7 +804,7 @@ const RingElement_array *rawGetParts(const M2_arrayint wts,
   }
 }
 
-const RingElementOrNull *rawGetPart(const M2_arrayint wts,
+const RingElement /* or null */ *rawGetPart(const M2_arrayint wts,
 				   const RingElement *f,
 				   M2_bool lobound_given,
 				   M2_bool hibound_given,
@@ -977,7 +850,7 @@ M2_arrayint rawRingElementIndices(const RingElement *f)
   return R->support(f->get_value());
 }
 
-const RingElementOrNull * rawAssociateDivisor(const RingElement *f)
+const RingElement /* or null */ * rawAssociateDivisor(const RingElement *f)
 {
      try {
 	  const PolyRing *P = f->get_ring()->cast_to_PolyRing();
@@ -999,26 +872,26 @@ const RingElementOrNull * rawAssociateDivisor(const RingElement *f)
      }
 }
 
-const RingElementOrNull *rawRingElementContent(const RingElement *f)
+const RingElement /* or null */ *rawRingElementContent(const RingElement *f)
 // returns the content of f (as a matrix over the base coefficient ring)
 {
   return f->content();
 }
 
-const RingElementOrNull *rawRingElementRemoveContent(const RingElement *f)
+const RingElement /* or null */ *rawRingElementRemoveContent(const RingElement *f)
 // returns the polynomial which results after division by the content
 {
   return f->remove_content();
 }
 
-const RingElementOrNull *rawRingElementSplitContent(const RingElement *f, RingElementOrNull **result)
+const RingElement /* or null */ *rawRingElementSplitContent(const RingElement *f, const RingElement /* or null */ **result)
 // returns the content of f (as a matrix over the base coefficient ring)
 // result is set to the polynomial which results after division by the content
 {
   return f->split_off_content(*result);
 }
 
-const RingElementOrNull *IM2_RingElement_numerator(const RingElement *a)
+const RingElement /* or null */ *IM2_RingElement_numerator(const RingElement *a)
 {
      try {
 	  return a->numerator();
@@ -1029,7 +902,7 @@ const RingElementOrNull *IM2_RingElement_numerator(const RingElement *a)
      }
 }
 
-const RingElementOrNull *IM2_RingElement_denominator(const RingElement *a)
+const RingElement /* or null */ *IM2_RingElement_denominator(const RingElement *a)
 {
      try {
 	  return a->denominator();
@@ -1040,7 +913,7 @@ const RingElementOrNull *IM2_RingElement_denominator(const RingElement *a)
      }
 }
 
-const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
+const RingElement /* or null */ *IM2_RingElement_fraction(const Ring *R,
 						  const RingElement *a,
 						  const RingElement *b)
 {
@@ -1055,7 +928,7 @@ const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
      }
 }
 
-M2_IntegerOrNull rawSchurDimension(const RingElement *f)
+gmp_ZZorNull rawSchurDimension(const RingElement *f)
 {
      try {
 	  const SchurRing *S = f->get_ring()->cast_to_SchurRing();
@@ -1074,5 +947,5 @@ M2_IntegerOrNull rawSchurDimension(const RingElement *f)
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-relem.o "
 // End:

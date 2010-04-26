@@ -6,8 +6,6 @@
 #include "frac.hpp"
 #include "text-io.hpp"
 
-extern char system_interruptedFlag;
-
 bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 {
   // Makes sure that 1/4 < num/den <= 1
@@ -27,7 +25,7 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 }
 
 bool LLLoperations::initializeLLL(const MutableMatrix *A,
-			    M2_Rational threshold,
+			    gmp_QQ threshold,
 			    MutableMatrix *& LLLstate)
 {
   // First check m: should be a matrix over globalZZ.
@@ -261,13 +259,13 @@ int LLLoperations::doLLL(MutableMatrix *A,
   LLLstate->get_entry(0,n+2,alphaTop);  // Don't free alphaTop!
   LLLstate->get_entry(0,n+3,alphaBottom);
 
-  while (k < n && nsteps != 0 && !system_interruptedFlag)
+  while (k < n && nsteps != 0 && !test_Field(interrupts_interruptedFlag))
     {
-      if (gbTrace >= 1)
+      if (M2_gbTrace >= 1)
 	{
 	  o.reset();
 	  o << ".";
-	  if (gbTrace >= 2)
+	  if (M2_gbTrace >= 2)
 	    o << k;
 	  if (nsteps % 20 == 0)
 	    o << newline;
@@ -277,7 +275,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
 
       if (k > kmax)
 	{
-	  if (gbTrace == 1)
+	  if (M2_gbTrace == 1)
 	    {
 	      o.reset();
 	      o << "." << k;
@@ -345,7 +343,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
 
 bool LLLoperations::LLL(MutableMatrix *A, 
 			MutableMatrix *Achange, // can be NULL
-			M2_Rational threshold)
+			gmp_QQ threshold)
 {
   MutableMatrix *LLLstate;
   if (!initializeLLL(A,threshold,LLLstate))

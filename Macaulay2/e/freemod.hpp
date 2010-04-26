@@ -13,8 +13,6 @@ class FreeModule : public immutable_object
 {
   friend class Ring;
   FreeModule(const Ring *R, int n, bool has_schreyer_order);
-  // if n>0, and has_schreyer_order is true, then all base monomials are set to 0.
-
 protected:
 
   array<int *> components; // Degrees of each component
@@ -26,9 +24,6 @@ protected:
   void initialize(const Ring *RR);
 
   virtual FreeModule *new_free() const;
-
-  void symm1(int lastn, int pow) const;   // used in 'symm'
-
 public:
 
   static FreeModule *make_schreyer(const Matrix *m);

@@ -1,15 +1,12 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
-#include <factoryconf.h>
-extern const char factoryVersion[]; /* extracted from factory's factory.h */
-extern int libfac_interruptflag; /* extracted from libfac's factor.h */
-#include <NTL/version.h>
+#include "interp-exports.h"
+
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
 #define GDBM_STATIC
 #include <gdbm.h>
 
 #include "M2mem.h"
-#include "M2mem2.h"
 #include "M2inits.h"
 #include "../dumpdata/map.h"
 #include "types.h"
@@ -25,9 +22,6 @@ extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 #endif
 
 #endif
-
-/* char *config_args[] = { CONFIG_ARGS 0 }; */
-const char *config_args = CONFIG_ARGS ;
 
 #if !defined(PROFILING)
 #error PROFILING not defined
@@ -47,49 +41,14 @@ const char *config_args = CONFIG_ARGS ;
 extern long personality(unsigned long persona);
 #endif
 
-const char *get_libfac_version();	/* in version.cc */
-const char *get_frobby_version();	/* in version.cc */
-
-#ifdef HAVE_SCSCP
- #include <scscp.h>
- void scscp_dummy() { SCSCP_sc_init(NULL,NULL); /* just to force linking with the library */ }
- static const char *get_scscp_version() {
-    static char buf[20];
-    sprintf(buf,"%d.%d.%d", SCSCP_VERSION_MAJOR, SCSCP_VERSION_MINOR, SCSCP_VERSION_PATCH);
-    return buf;
- }
-#else
- static const char *get_scscp_version() {
-    return "not present"; 
- }
-#endif
-
-extern const char *get_pari_version();
-#if !HAVE_PARI
-const char *get_pari_version() { 
-  return "not present"; 
-}
-#else
-/* it's in pari-c.c */
-#endif
-
-static const char *get_cc_version(void) {
-  static char buf[100] = "cc (unknown)";
-# ifdef __GNUC__
-#  ifdef __GNUC_PATCHLEVEL__
-   sprintf(buf,"gcc %d.%d.%d",__GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__);
-#  else
-   sprintf(buf,"gcc %d.%d",__GNUC__,__GNUC_MINOR__);
-#  endif
-# endif  
-  return buf;
-}
+static void ignore(int);
 
 static void putstderr(const char *m) {
-  int r;
-  r = write(STDERR,m,strlen(m));
-  r = write(STDERR,NEWLINE,strlen(NEWLINE));
-}
+     ignore(write(STDERR,m,strlen(m)));
+     ignore(write(STDERR,NEWLINE,strlen(NEWLINE)));
+     }
+
+static void ignore(int x) { }
 
 void WerrorS(const char *m) {
   putstderr(m);
@@ -100,17 +59,6 @@ void WarnS(const char *m) {
   putstderr(m);
 }
 
-#ifdef includeX11
-Display *display;
-Font font;
-#endif
-
-M2_bool system_exceptionFlag = FALSE;
-M2_bool system_interruptedFlag = FALSE;
-M2_bool system_interruptPending = FALSE;
-M2_bool system_interruptShield = FALSE;
-M2_bool system_alarmedFlag = FALSE;
-
 static void alarm_handler(int sig), interrupt_handler(int sig);
 static void oursignal(int sig, void (*handler)(int)) {
   struct sigaction act;
@@ -120,7 +68,7 @@ static void oursignal(int sig, void (*handler)(int)) {
   sigfillset(&act.sa_mask);
   sigaction(sig,&act,NULL); /* old way: signal(sig,interrupt_handler); */
 }
-void system_handleInterruptsSetup(int handleInterrupts) {
+void system_handleInterruptsSetup(M2_bool handleInterrupts) {
   oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
   oursignal(SIGINT,handleInterrupts ? interrupt_handler : SIG_DFL);
 }
@@ -133,12 +81,32 @@ static void unblock(int sig) {
 }
 
 static void alarm_handler(int sig) {
-     extern void evaluate_setAlarmedFlag();
-     evaluate_setAlarmedFlag();
+     interrupts_setAlarmedFlag();
      oursignal(SIGALRM,alarm_handler);
      }
 
-#if __GNUC__
+#define BACKTRACE_WORKS 0	/* doesn't work under ubuntu, or works very slowly when threads are involved */
+
+#if defined(HAVE_EXECINFO_H) && defined(HAVE_BACKTRACE)
+#include <execinfo.h>
+#endif
+
+#if !BACKTRACE_WORKS
+int backtrace(void **buffer, int size) {
+  buffer[0] = NULL;		/* see GC_save_callers() in gc's os_dep.c, which insists on at least one */
+  return 1;
+}
+#endif
+
+#if defined(HAVE_BACKTRACE) && BACKTRACE_WORKS
+#define STACK_SIZE 20
+void stack_trace() {
+  static void *buf[STACK_SIZE];
+  int n = backtrace(buf,STACK_SIZE);
+  backtrace_symbols_fd(buf,n,STDERR);
+}
+
+#elif __GNUC__
 
 static sigjmp_buf stack_trace_jump;
 
@@ -150,7 +118,7 @@ void segv_handler2(int sig) {
 void stack_trace() {
      void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
      unblock(SIGSEGV);
-     fprintf(stderr,"-- stack trace:\n");
+     fprintf(stderr,"-- stack trace, pid %ld, tid %ld:\n", (long)syscall(SYS_getpid), (long)syscall(SYS_gettid));
      if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
 #	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
 #	  define i 0
@@ -216,10 +184,75 @@ void stack_trace() {
 #	  define i 20
 	  D;
 #	  undef i
+#	  define i 20
+	  D;
+#	  undef i
+#	  define i 21
+	  D;
+#	  undef i
+#	  define i 22
+	  D;
+#	  undef i
+#	  define i 23
+	  D;
+#	  undef i
+#	  define i 24
+	  D;
+#	  undef i
+#	  define i 25
+	  D;
+#	  undef i
+#	  define i 26
+	  D;
+#	  undef i
+#	  define i 27
+	  D;
+#	  undef i
+#	  define i 28
+	  D;
+#	  undef i
+#	  define i 29
+	  D;
+#	  undef i
+#	  define i 30
+	  D;
+#	  undef i
+#	  define i 31
+	  D;
+#	  undef i
+#	  define i 32
+	  D;
+#	  undef i
+#	  define i 33
+	  D;
+#	  undef i
+#	  define i 34
+	  D;
+#	  undef i
+#	  define i 35
+	  D;
+#	  undef i
+#	  define i 36
+	  D;
+#	  undef i
+#	  define i 37
+	  D;
+#	  undef i
+#	  define i 38
+	  D;
+#	  undef i
+#	  define i 39
+	  D;
+#	  undef i
      }
      fprintf(stderr,"-- end stack trace\n");
      signal(SIGSEGV,old);
 }
+#else
+void stack_trace() {
+  fprintf(stderr,"-- stack trace not available\n");
+}
+#endif
 
 void segv_handler(int sig) {
   static int level;
@@ -234,94 +267,95 @@ void segv_handler(int sig) {
   _exit(1);
 }
 
-#endif
-
 #if DUMPDATA
 static sigjmp_buf loaddata_jump;
 #endif
 
 static sigjmp_buf abort_jump;
-static bool abort_jump_set = FALSE;
 
 sigjmp_buf interrupt_jump;
 bool interrupt_jump_set = FALSE;
 
 #undef ABORT
 
-#include <readline/readline.h>
+static bool abort_jump_set = FALSE;
 
-static void interrupt_handler(int sig)
-{
-#if 0
+#include <readline/readline.h>
+static void interrupt_handler(int sig) {
+     #if 0
      int r;
      if (isatty(STDIN) && isatty(STDOUT) && !reading_from_readline) {
-        r = write(STDERR,"\n",1);
-     }
-#endif
-     if (system_interruptedFlag || system_interruptPending) {
-	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
-	       char buf[10];
-#              ifdef ABORT
-	       printf("\nAbort (y/n)? ");
-#              else
-	       printf("\nExit (y/n)? ");
-#              endif
-	       fflush(stdout);
-	       if (NULL == fgets(buf,sizeof(buf),stdin)) {
-		    fprintf(stderr,"exiting\n");
-		    exit(11);
-	            }
-	       if (buf[0]=='y' || buf[0]=='Y') {
-#                   ifdef DEBUG
-     		      trap();
-#                   endif
-#                   ifdef ABORT
-		    if (!tokens_stopIfError && abort_jump_set) {
-			 extern void evaluate_clearInterruptFlag(), evaluate_determineExceptionFlag(), evaluate_clearAlarmedFlag();
-     	  		 fprintf(stderr,"returning to top level\n");
-     	  		 fflush(stderr);
-			 evaluate_clearInterruptFlag();
-			 libfac_interruptflag = FALSE;
-			 system_interruptPending = FALSE;
-			 system_interruptShield = FALSE;
-			 evaluate_clearAlarmedFlag();
-			 evaluate_determineExceptionFlag();
-     	  		 siglongjmp(abort_jump,1); 
-			 }
-		    else {
-#                   endif
+	  r = write(STDERR,"\n",1);
+	  }
+     #endif
+     if (test_Field(interrupts_interruptedFlag) || interrupts_interruptPending) {
+	  if (isatty(STDIN) && isatty(STDOUT)) 
+	       while (TRUE) {
+		    char buf[10];
+		    #              ifdef ABORT
+		    printf("\nAbort (y/n)? ");
+		    #              else
+		    printf("\nExit (y=yes/n=no/b=backtrace)? ");
+		    #              endif
+		    fflush(stdout);
+		    if (NULL == fgets(buf,sizeof(buf),stdin)) {
 			 fprintf(stderr,"exiting\n");
-		    	 exit(12);
-#                   ifdef ABORT
+			 exit(11);
 			 }
-#                   endif
+		    if (buf[0]=='b' || buf[0]=='B') {
+			 stack_trace();
+			 fprintf(stderr,"exiting\n");
+			 exit(12);
+			 }
+		    if (buf[0]=='y' || buf[0]=='Y') {
+			 #                   ifdef DEBUG
+			 trap();
+			 #                   endif
+			 #                   ifdef ABORT
+			 if (!tokens_stopIfError && abort_jump_set) {
+			      extern void evaluate_clearInterruptFlag(), evaluate_determineExceptionFlag(), evaluate_clearAlarmedFlag();
+			      fprintf(stderr,"returning to top level\n");
+			      fflush(stderr);
+			      interrupts_clearInterruptFlag();
+			      libfac_interruptflag = FALSE;
+			      interrupts_interruptPending = FALSE;
+			      interrupts_interruptShield = FALSE;
+			      evaluate_clearAlarmedFlag();
+			      evaluate_determineExceptionFlag();
+			      siglongjmp(abort_jump,1); 
+			      }
+			 else {
+			      #                   endif
+			      fprintf(stderr,"exiting\n");
+			      exit(12);
+			      #                   ifdef ABORT
+			      }
+			 #                   endif
+			 }
+		    else if (buf[0]=='n' || buf[0]=='N') {
+			 break;
+			 }
 		    }
-	       else if (buf[0]=='n' || buf[0]=='N') {
-		    break;
-		    }
-	       }
 	  else {
-#              ifndef NDEBUG
+	       #              ifndef NDEBUG
      	       trap();
-#              endif
+	       #              endif
 	       exit(13);
 	       }
 	  }
      else {
-	  if (system_interruptShield) system_interruptPending = TRUE;
+	  if (interrupts_interruptShield) interrupts_interruptPending = TRUE;
 	  else {
-	       extern void evaluate_setInterruptFlag();
 	       if (tokens_stopIfError) {
 		    int interruptExit = 2;	/* see also interp.d */
 		    fprintf(stderr,"interrupted, stopping\n");
 		    exit(interruptExit);
-	       }
-	       evaluate_setInterruptFlag();
-	       libfac_interruptflag = TRUE;
-# if 0
+		    }
+	       interrupts_setInterruptFlag();
+	       # if 0
 	       /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
 	       if (reading_from_readline) rl_free_line_state();
-#endif
+	       #endif
 	       if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 	       }
 	  }
@@ -333,12 +367,7 @@ static struct COUNTER {
      struct COUNTER *next;
      } *counters = NULL;
 
-int register_fun(count, filename, lineno, funname)
-int *count;
-char *filename;
-int lineno;
-char *funname;
-{
+int register_fun(int *count, char *filename, int lineno, char *funname) {
      struct COUNTER *p = (struct COUNTER *) getmem(sizeof(struct COUNTER));
      p->count = count;
      p->filename = filename;
@@ -349,85 +378,80 @@ char *funname;
      return 0;
      }
 
-M2_string actors5_CCVERSION;
-M2_string actors5_VERSION;
-M2_string actors5_OS;
-M2_string actors5_ARCH;
-M2_string actors5_ISSUE;
-M2_string actors5_MACHINE;
-M2_string actors5_NODENAME;
-M2_string actors5_REL;
-M2_string actors5_timestamp;
-M2_string actors5_GCVERSION;
-M2_string actors5_GMPVERSION;
-M2_string actors5_MPIRVERSION;
-M2_string actors5_MysqlVERSION;
-M2_string actors5_PYTHONVERSION;
-M2_string actors5_startupString;
-M2_string actors5_startupFile;
-M2_string actors5_NTLVERSION;
-M2_string actors5_LIBFACVERSION;
-M2_string actors5_FROBBYVERSION;
-M2_string actors5_PARIVERSION;
-M2_string actors5_SCSCPVERSION;
-M2_string actors5_FACTORYVERSION;
-M2_string actors5_READLINEVERSION;
-M2_string actors5_MPFRVERSION;
-M2_string actors5_M2SUFFIX;
-M2_string actors5_EXEEXT;
-M2_string actors5_endianness;
-M2_string actors5_packages;
-M2_string actors5_build;
-M2_string actors5_host;
-int actors5_pointersize;
-M2_bool actors5_DUMPDATA;
-M2_bool actors5_FACTORY;
-M2_bool actors5_MP;
+#ifdef HAVE_CLOCK_GETTIME
 
-M2_stringarray system_envp;
-M2_stringarray system_argv;
-M2_stringarray system_args;
-M2_string actors5_configargs;
-int system_loadDepth;
+	#ifdef HAVE_SYS_TYPES_H
+	#include <sys/types.h>
+	#endif
+	#include <stdlib.h>
+	#ifdef HAVE_SYSCALL_H
+	#include <syscall.h>
+	#endif
+	#include <time.h>
+	#include <stdio.h>
+	#include <unistd.h> // for sysconf
+	static __thread double startTime;
+	double system_cpuTime(void) {
+	     struct timespec t;
+	     int err = clock_gettime(CLOCK_THREAD_CPUTIME_ID,&t);
+	     if (err) return 0;		/* silent about error */
+	     double u = t.tv_sec + t.tv_nsec * 1e-9;
+	     return u - startTime;
+	     }
+        void system_cpuTime_init(void) {
+	     startTime = system_cpuTime();
+	     }
 
-#if !defined(CLOCKS_PER_SEC) || CLOCKS_PER_SEC > 10000
-static struct itimerval it;
-#define INITVAL 1000000		/* a million seconds is very long */
-void system_stime(void) {
-     it.it_value.tv_sec = INITVAL;
-     it.it_value.tv_usec = 0;
-     (void) setitimer(ITIMER_VIRTUAL,&it,(struct itimerval *)NULL);
-     }
-double system_etime(void) {
-     long sec,usec;
-     (void) getitimer(ITIMER_VIRTUAL,&it);
-     sec = INITVAL - it.it_value.tv_sec;
-     usec =   0    - it.it_value.tv_usec;
-     if (usec<0) usec+=1000000, sec-=1;
-     return sec + usec / 1000000.;
-     }
 #else
-				/* ANSI C */
-static clock_t start_time;
-void system_stime(void) {
-     start_time = clock();
-     }
-double system_etime(void) {
-     return (double)(clock()-start_time) / CLOCKS_PER_SEC;
-     }
+
+    #if !defined(CLOCKS_PER_SEC) || CLOCKS_PER_SEC > 10000
+
+	
+	#define INITVAL 100000000 /* very long, and then an interrupt occurs, sadly */
+        void system_cpuTime_init(void) {
+	     struct itimerval it;
+	     int ret;
+	     it.it_value.tv_sec = INITVAL;
+	     it.it_value.tv_usec = 0;
+	     it.it_interval.tv_sec = INITVAL;
+	     it.it_interval.tv_usec = 0;
+	     ret = setitimer(ITIMER_VIRTUAL,&it,(struct itimerval *)NULL);
+	     if (ret) perror("setitimer() failed");
+	     signal(SIGVTALRM,SIG_IGN);
+	     }
+	double system_cpuTime(void) {
+	     struct itimerval it;
+	     long sec,usec;
+	     getitimer(ITIMER_VIRTUAL,&it);
+	     sec = INITVAL - it.it_value.tv_sec;
+	     usec =   0    - it.it_value.tv_usec;
+	     return sec + usec / 1000000.;
+	     }
+
+    #else
+					/* ANSI C */
+	static clock_t start_time;
+	void system_cpuTime_init(void) {
+	     start_time = clock();
+	     }
+	double system_cpuTime(void) {
+	     return (double)(clock()-start_time) / CLOCKS_PER_SEC;
+	     }
+    #endif
+
 #endif
 
-#if HAVE___ENVIRON
+#if defined HAVE___ENVIRON
     #define our_environ __environ
     #if !HAVE_DECL___ENVIRON
     extern char **__environ;
     #endif
-#elif HAVE__ENVIRON
+#elif defined HAVE__ENVIRON
     #define our_environ _environ
     #if !HAVE_DECL__ENVIRON
     extern char **_environ;
     #endif
-#elif HAVE_ENVIRON
+#elif defined HAVE_ENVIRON
     #define our_environ environ
     #if !HAVE_DECL_ENVIRON
     extern char **environ;
@@ -436,77 +460,11 @@ double system_etime(void) {
     #error "no environment variable available"
 #endif
 
-
-extern char timestamp[];
-static void clean_up();
-
-void dummy_GC_warn_proc(char *msg, GC_word arg) { }
-
-#define stringify(x) #x
-
-#if defined(__GNUC__)
-#define stringize(a) #a
-char CCVERSION[] = "gcc " stringize(__GNUC__) "." stringize(__GNUC_MINOR__) ;
-#else
-char CCVERSION[] = "unknown" ;
-#endif
-
+extern void clean_up();
 extern void init_readline_variables();
 extern char *GC_stackbottom;
 extern void arginits(int, const char **);
-
 extern bool gotArg(const char *arg, const char ** argv);
-
-int pid;			/* initialized below */
-int system_getpid(void) {
-     return pid;
-}
-
-int system_getpgrp(void) {
-  return getpgrp();
-}
-
-int system_setpgid(int pid0, int pgid) {
-  return setpgid(pid0,pgid);
-}
-
-static char *endianness() {
-     static int32_t x[2] = {0x61626364,0};
-     return (char *)x;
-}
-
-#if 0
-static void warning(const char *s,...)
-{
-  char buf[200];
-  va_list ap;
-  va_start(ap,s);
-  vsprintf(buf,s,ap);
-  if (errno != 0)
-    fprintf(stderr,"warning: %s: %s\n", buf, strerror(errno));
-  else
-    fprintf(stderr,"warning: %s\n", buf);
-  fflush(stderr);
-  va_end(ap);
-}
-#endif
-
-#if 0
-static void error(const char *s,...)
-{
-  char buf[200];
-  va_list ap;
-  va_start(ap,s);
-  vsprintf(buf,s,ap);
-  if (errno != 0)
-    fprintf(stderr,"error: %s: %s\n", buf, strerror(errno));
-  else
-    fprintf(stderr,"error: %s\n", buf);
-  fflush(stderr);
-  va_end(ap);
-  exit(1);
-}
-#endif
 
 #include <dlfcn.h>
 
@@ -530,11 +488,12 @@ static void call_shared_library() {
 #include <python2.5/Python.h>
 #endif
 
+/* these get put into startup.c by Makefile.in */
+
 int Macaulay2_main(argc,argv)
 int argc; 
 char **argv;
 {
-     char READLINEVERSION[8];	/* big enough for "255.255" */
      char dummy;
      int returncode = 0;
      int volatile envc = 0;
@@ -549,12 +508,11 @@ char **argv;
 #endif
      void main_inits();
      static void *reserve = NULL;
-     extern void actors4_setupargv();
-     extern void interp_process(), interp_process2();
-     extern int interp_topLevel();
 
      char **x = our_environ; 
      while (*x) envc++, x++;
+
+     system_cpuTime_init();
 
      call_shared_library();
 
@@ -594,10 +552,9 @@ char **argv;
      }
 #endif
 
-     out_of_memory_jump_set = FALSE;
      abort_jump_set = FALSE;
 
-#if HAVE__SETMODE
+#ifdef HAVE__SETMODE
      {
      extern void _setmode(int, int);
      _setmode(STDIN ,_O_BINARY);
@@ -628,12 +585,8 @@ char **argv;
      }
 #endif
 
-     pid = getpid();
-
 #if DUMPDATA
-     savepid = pid;		/* glibc getpid() caches the result in memory and performs the system call only once, so we can't use it after dumpdata */
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
-	  pid = savepid;
 	  if (gotArg("--notify", saveargv)) putstderr("--loaded cached memory data");
 	  struct GC_stack_base sb;
 	  GC_get_stack_base(&sb);
@@ -667,105 +620,29 @@ char **argv;
 	  }
 #endif
 
-     system_stime();
-
      if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
           FATAL("possible memory leak, gmp allocator not set up properly");
 	  fprintf(stderr,"--internal warning: possible memory leak, gmp allocator not set up properly, resetting\n");
-	  enterM2();
      }
 
      signal(SIGPIPE,SIG_IGN);
      system_handleInterruptsSetup(TRUE);
+     init_readline_variables();
      arginits(argc,(const char **)saveargv);
 
-     if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
-     system_newline = tostring(newline);
-     actors5_CCVERSION = tostring(get_cc_version());
-     actors5_VERSION = tostring(PACKAGE_VERSION);
-     actors5_OS = tostring(OS);
-     actors5_ARCH = tostring(ARCH);
-     actors5_MACHINE = tostring(MACHINE);
-     actors5_ISSUE = tostring(ISSUE);
-     actors5_NODENAME = tostring(NODENAME);
-     actors5_REL = tostring(REL);
-     {
-	  char const * p = strrchr(factoryVersion,' ');
-	  p = p ? p+1 : factoryVersion;
-	  actors5_FACTORYVERSION = tostring(p);
-     }
-     actors5_LIBFACVERSION = tostring(get_libfac_version());
-     actors5_FROBBYVERSION = tostring(get_frobby_version());
-     actors5_PARIVERSION = tostring(get_pari_version());
-     actors5_SCSCPVERSION = tostring(get_scscp_version());
-     sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
-     actors5_READLINEVERSION = tostring(READLINEVERSION);
-     actors5_MPFRVERSION = tostring(mpfr_version);
-     actors5_M2SUFFIX = tostring(M2SUFFIX);
-     actors5_EXEEXT = tostring(EXEEXT);
-     actors5_timestamp = tostring(timestamp);
-     actors5_startupString = tostring(startupString);
-     actors5_startupFile = tostring(startupFile);
-     actors5_endianness = tostring(endianness());
-     actors5_packages = tostring(PACKAGES);
-     actors5_pointersize = sizeof(void *);
-     actors5_host = tostring(hostsystemtype);
-     actors5_build = tostring(buildsystemtype);
-#if DUMPDATA
-     actors5_DUMPDATA = TRUE;
-     if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enabled at configuration time, we may not have implemented it in the C code */
-#else
-     actors5_DUMPDATA = FALSE;
-#endif
-     {
-	  char buf[100];
-	  unsigned major, minor, alpha;
-	  major = GC_version >> 16;
-	  minor = (GC_version >> 8) & 0xff;
-	  alpha = GC_version & 0xff;
-	  if (alpha == 0xff) {
-	       sprintf(buf,"%d.%d", major, minor);
-	       }
-	  else {
-	       sprintf(buf,"%d.%d alpha %d", major, minor, alpha);
-	       }
-	  actors5_GCVERSION = tostring(buf);
-	  }
-#ifdef __MPIR_VERSION
-     actors5_GMPVERSION = tostring("not present");
-     actors5_MPIRVERSION = tostring(__mpir_version);
-#else
-     actors5_GMPVERSION = tostring(__gmp_version);
-     actors5_MPIRVERSION = tostring("not present");
-#endif
-     actors5_PYTHONVERSION = tostring(
-#ifdef HAVE_PYTHON
-         PY_VERSION				      
-#else
-	 "not present"
-#endif
-         );
-     actors5_MysqlVERSION = tostring(
-#if USE_MYSQL
-         mysql_get_client_info()
-#else
-	 "not present"
-#endif
-         );
-     actors5_NTLVERSION = tostring(NTL_VERSION);
-     system_envp = tostrings(envc,(const char **)saveenvp);
-     system_argv = tostrings(argc,(const char **)saveargv);
-     system_args = tostrings(argc == 0 ? 0 : argc - 1, (const char **)saveargv + 1);
-     /*     actors5_configargs = tostrings(sizeof(config_args)/sizeof(char *) - 1, config_args); */
-     actors5_configargs = tostring(config_args);
+     void M2__prepare();
+     M2__prepare();
 
-#ifdef includeX11
-     display = XOpenDisplay(NULL);
-     font = XLoadFont(display,"6x13");
+     if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
+     
+     M2_envp = M2_tostrings(envc,(char **)saveenvp);
+     M2_argv = M2_tostrings(argc,(char **)saveargv);
+     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
+#if 0
+     /* not needed, now that the *__prepare functions are all run as constructors */
+     interp__prepare();		/* run all the startup code in the *.d files */
 #endif
-     init_readline_variables();
-     main_inits();		/* run all the startup code in the *.d files, see tmp_init.c */
-     actors4_setupargv();
+     interp_setupargv();
      if (reserve == NULL) {
 	  reserve = GC_MALLOC_ATOMIC(102400);
 	  }
@@ -776,24 +653,8 @@ char **argv;
      signal(SIGSEGV, segv_handler);
 #endif
 
-     if (sigsetjmp(out_of_memory_jump,TRUE)) {
-	  if (reserve != NULL) {
-	       GC_FREE(reserve);
-	       reserve = NULL;
-	       }
-#if 0
-	  fprintf(stderr,", collecting garbage");
-	  fflush(stderr);
-	  GC_gcollect();
-#endif
-	  fprintf(stderr,"\n");
-	  fflush(stderr);
-          returncode = ! interp_topLevel();
-	  }
-     else {
-          out_of_memory_jump_set = TRUE;
-          interp_process();
-     }
+     interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
+
      clean_up();
 #if 0
      fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
@@ -803,15 +664,15 @@ char **argv;
      return returncode;
      }
 
-static void clean_up(void) {
+void clean_up(void) {
      extern void close_all_dbms();
      close_all_dbms();
      while (pre_final_list != NULL) {
-	  pre_final_list->final();
+	  pre_final_list->fun();
 	  pre_final_list = pre_final_list->next;
 	  }
      while (final_list != NULL) {
-	  final_list->final();
+	  final_list->fun();
 	  final_list = final_list->next;
 	  }
 #ifdef HAVE_PYTHON
@@ -822,16 +683,7 @@ static void clean_up(void) {
 #    endif
      }
 
-void system_exit(x)
-int x;
-{
-     clean_up();
-     exit(x);
-     }
-
 void scclib__prepare(void) {}
-
-extern int etext, end;
 
 int system_dumpdata(M2_string datafilename)
 {
@@ -859,19 +711,17 @@ int system_loaddata(int notify, M2_string datafilename){
      volatile int fence1 = FENCE;
      /* int loadDepth = system_loadDepth; */
      memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
-     if (ERROR == loaddata(notify,datafilename_s)) return ERROR;
+     if (ERROR == loaddata(M2_notify,datafilename_s)) return ERROR;
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
      /* system_loadDepth = loadDepth + 1; */
      if (fence0 != FENCE || fence1 != FENCE) {
        putstderr("--internal error: fence around loaddata longjmp save area on stack destroyed, aborting");
        abort();
      }
-     if (notify) putstderr("--loaddata: data loaded, ready for longjmp");
+     if (M2_notify) putstderr("--loaddata: data loaded, ready for longjmp");
      siglongjmp(loaddata_jump,1);
 #endif
      }
-
-void C__prepare(void) {}
 
 int system_isReady(int fd) {
   int ret;
@@ -895,19 +745,6 @@ int system_hasException(int fd) {
   return ret;
 }
 
-int actors5_WindowWidth(int fd) {
-     struct winsize x;
-     ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
-     return x.ws_col;
-     }
-
-int actors5_WindowHeight(int fd) {
-     struct winsize x;
-     ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
-     return x.ws_row;
-     }
-
-
 #include "../e/rand.h"
 
 int system_randomint(void) {
@@ -924,7 +761,7 @@ int system_randomint(void) {
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+// compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d M2lib.o "
 // tags-file-name: "TAGS"
 // End:
 */

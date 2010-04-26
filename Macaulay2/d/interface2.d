@@ -2,42 +2,24 @@
 
 -- this file contains top level routines that call the C++ code in the engine
 
-use C;
-use system; 
-use util;
-use convertr;
-use binding;
-use nets;
-use parser;
-use lex;
-use gmp;
 use engine;
-use util;
-use tokens;
-use err;
-use stdiop;
-use ctype;
-use stdio;
-use varstrin;
-use strings;
-use basic;
-use struct;
-use objects;
-use evaluate;
 use common;
-
+use hashtables;
+use util;
+use struct;
+header "#include <engine.h>";
 
 -- straight line programs
 
 export rawSLP(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is M:RawMatrix do (
+     else when s.0 is M:RawMatrixCell do (
 	  if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
 	  toExpr(Ccode(RawStraightLineProgramOrNull,
-		    "(engine_RawStraightLineProgramOrNull)rawSLP(",
-		    "(Matrix *)", M, ",",
-		    "(M2_arrayint)", getSequenceOfSmallIntegers(s.1),
+		    "rawSLP(",
+		    M.p, ",",
+		    getSequenceOfSmallIntegers(s.1),
 		    ")"
 		    )))
      else WrongArgMatrix(1)
@@ -47,12 +29,12 @@ setupfun("rawSLP",rawSLP);
 export rawEvaluateSLP(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is slp:RawStraightLineProgram do (
-	  when s.1 is M:RawMatrix do (
+     else when s.0 is slp:RawStraightLineProgramCell do (
+	  when s.1 is M:RawMatrixCell do (
 	       toExpr(Ccode(RawMatrixOrNull,
-		    	 "(engine_RawMatrixOrNull)rawEvaluateSLP(",
-		    	 "(StraightLineProgram *)", slp, ",",
-		    	 "(Matrix *)", M,
+		    	 "rawEvaluateSLP(",
+		    	 slp.p, ",",
+		    	 M.p,
 		    	 ")"
 		    	 )))
 	  else WrongArgMatrix(1))
@@ -64,12 +46,12 @@ setupfun("rawEvaluateSLP",rawEvaluateSLP);
 export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is slp1:RawStraightLineProgram do 
-     	  when s.1 is slp2:RawStraightLineProgram do
+     else when s.0 is slp1:RawStraightLineProgramCell do 
+     	  when s.1 is slp2:RawStraightLineProgramCell do
 	       toExpr(Ccode(RawPathTrackerOrNull,
-			"(engine_RawPathTrackerOrNull)rawPathTrackerPrecookedSLPs(",
-	       	   	"(StraightLineProgram *)", slp1, ",",
-		   	"(StraightLineProgram *)", slp2, 
+			"rawPathTrackerPrecookedSLPs(",
+	       	   	slp1.p, ",",
+		   	slp2.p, 
 		   	")"
 		    ))
      	  else WrongArg(2,"a raw straight line program")
@@ -79,10 +61,10 @@ export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
 setupfun("rawPathTrackerPrecookedSLPs",rawPathTrackerPrecookedSLPs);
 
 export rawPathTracker(e:Expr):Expr := (
-     when e is HH:RawMatrix do 
+     when e is HH:RawMatrixCell do 
 		toExpr(Ccode(RawPathTrackerOrNull,
-		    "(engine_RawPathTrackerOrNull)rawPathTracker(",
-		    "(Matrix *)", HH, 
+		    "rawPathTracker(",
+		    HH.p, 
 		    ")"
 		    ))
      else WrongArgMatrix()
@@ -92,32 +74,32 @@ setupfun("rawPathTracker",rawPathTracker);
 export rawSetParametersPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 12 then WrongNumArgs(11)
-     else when s.0 is PT:RawPathTracker do 
+     else when s.0 is PT:RawPathTrackerCell do 
 	  when s.1 is isProj:Boolean do
-	  when s.2 is initDt:RR do
-	  when s.3 is minDt:RR do
-	  when s.4 is dtIncreaseFactor:RR do 
-	  when s.5 is dtDecreeaseFactor:RR do
-	  when s.6 is numSuccessesBeforeIncrease:ZZ do
-	  when s.7 is epsilon:RR do 
-	  when s.8 is maxCorrSteps:ZZ do
-	  when s.9 is endZoneFactor:RR do 
-	  when s.10 is infinityThreshold:RR do 
-	  when s.11 is predType:ZZ do 
+	  when s.2 is initDt:RRcell do
+	  when s.3 is minDt:RRcell do
+	  when s.4 is dtIncreaseFactor:RRcell do 
+	  when s.5 is dtDecreaseFactor:RRcell do
+	  when s.6 is numSuccessesBeforeIncrease:ZZcell do
+	  when s.7 is epsilon:RRcell do 
+	  when s.8 is maxCorrSteps:ZZcell do
+	  when s.9 is endZoneFactor:RRcell do 
+	  when s.10 is infinityThreshold:RRcell do 
+	  when s.11 is predType:ZZcell do 
 	  (
 	       Ccode(void,
 		    	 "rawSetParametersPT(",
-		    	 "(PathTracker *)", PT, ",",
+		    	 PT.p, ",",
 			 toBoolean(s.1),",",
-			 "(M2_RRR)", initDt,",",
-			 "(M2_RRR)", minDt,",",
-			 "(M2_RRR)", dtIncreaseFactor,",",
-			 "(M2_RRR)", dtDecreeaseFactor,",",
+			 initDt.v,",",
+			 minDt.v,",",
+			 dtIncreaseFactor.v,",",
+			 dtDecreaseFactor.v,",",
 			 toInt(s.6),",",
-			 "(M2_RRR)", epsilon,",",
+			 epsilon.v,",",
 			 toInt(s.8),",",
-			 "(M2_RRR)", endZoneFactor,",",
-			 "(M2_RRR)", infinityThreshold,",",
+			 endZoneFactor.v,",",
+			 infinityThreshold.v,",",
 			 toInt(s.11),
 		    	 ")"
 		    	 );
@@ -141,12 +123,12 @@ setupfun("rawSetParametersPT",rawSetParametersPT);
 export rawLaunchPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is PT:RawPathTracker do 
-	  when s.1 is startSols:RawMatrix do (
+     else when s.0 is PT:RawPathTrackerCell do 
+	  when s.1 is startSols:RawMatrixCell do (
 	       Ccode(void,
 		    	 "rawLaunchPT(",
-		    	 "(PathTracker *)", PT, ",",
-	                 "(Matrix *)", startSols, 
+		    	 PT.p, ",",
+	                 startSols.p, 
 		    	 ")"
 	       );
 	       nullE)
@@ -159,11 +141,11 @@ setupfun("rawLaunchPT",rawLaunchPT);
 export rawGetSolutionPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is PT:RawPathTracker do 
-          when s.1 is solN:ZZ do 
+     else when s.0 is PT:RawPathTrackerCell do 
+          when s.1 is solN:ZZcell do 
 		toExpr(Ccode(RawMatrixOrNull,
-		    "(engine_RawMatrixOrNull)rawGetSolutionPT(",
-		    "(PathTracker *)", PT, ",",
+		    "rawGetSolutionPT(",
+		    PT.p, ",",
 		    toInt(s.1), 		    
 		    ")"
 		    ))
@@ -174,10 +156,10 @@ export rawGetSolutionPT(e:Expr):Expr := (
 setupfun("rawGetSolutionPT",rawGetSolutionPT);
 
 export rawGetAllSolutionsPT(e:Expr):Expr := (
-     when e is PT:RawPathTracker  do 
+     when e is PT:RawPathTrackerCell  do 
 		toExpr(Ccode(RawMatrixOrNull,
-		    "(engine_RawMatrixOrNull)rawGetAllSolutionsPT(",
-		    "(PathTracker *)", PT, 
+		    "rawGetAllSolutionsPT(",
+		    PT.p, 
 		    ")"
 		    ))
      else WrongArg("a path tracker")
@@ -187,11 +169,11 @@ setupfun("rawGetAllSolutionsPT",rawGetAllSolutionsPT);
 export rawGetSolutionStatusPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is PT:RawPathTracker do 
-          when s.1 is solN:ZZ do 
+     else when s.0 is PT:RawPathTrackerCell do 
+          when s.1 is solN:ZZcell do 
 		toExpr(Ccode(int,
 		    "rawGetSolutionStatusPT(",
-		    "(PathTracker *)", PT, ",",
+		    PT.p, ",",
 		    toInt(s.1), 		    
 		    ")"
 		    ))
@@ -204,10 +186,10 @@ setupfun("rawGetSolutionStatusPT",rawGetSolutionStatusPT);
 export rawGetSolutionLastTvaluePT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is PT:RawPathTracker do 
-          when s.1 is solN:ZZ do 
-		toExpr(Ccode(RRorNull, "(engine_RRorNull)rawGetSolutionLastTvaluePT(",
-		    "(PathTracker *)", PT, ",",
+     else when s.0 is PT:RawPathTrackerCell do 
+          when s.1 is solN:ZZcell do 
+		toExpr(Ccode(RRorNull, "rawGetSolutionLastTvaluePT(",
+		    PT.p, ",",
 		    toInt(s.1), 		    
 		    ")"
 		    ))
@@ -220,11 +202,11 @@ setupfun("rawGetSolutionLastTvaluePT",rawGetSolutionLastTvaluePT);
 export rawGetSolutionStepsPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is PT:RawPathTracker do 
-          when s.1 is solN:ZZ do 
+     else when s.0 is PT:RawPathTrackerCell do 
+          when s.1 is solN:ZZcell do 
 		toExpr(Ccode(int,
 		    "rawGetSolutionStepsPT(",
-		    "(PathTracker *)", PT, ",",
+		    PT.p, ",",
 		    toInt(s.1), 		    
 		    ")"
 		    ))
@@ -237,10 +219,10 @@ setupfun("rawGetSolutionStepsPT",rawGetSolutionStepsPT);
 export rawGetSolutionRcondPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
-     else when s.0 is PT:RawPathTracker do 
-          when s.1 is solN:ZZ do 
-		toExpr(Ccode(RRorNull, "(engine_RRorNull)rawGetSolutionRcondPT(",
-		    "(PathTracker *)", PT, ",",
+     else when s.0 is PT:RawPathTrackerCell do 
+          when s.1 is solN:ZZcell do 
+		toExpr(Ccode(RRorNull, "rawGetSolutionRcondPT(",
+		    PT.p, ",",
 		    toInt(s.1), 		    
 		    ")"
 		    ))
@@ -253,15 +235,15 @@ setupfun("rawGetSolutionRcondPT",rawGetSolutionRcondPT);
 export rawRefinePT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 4 then WrongNumArgs(4)
-     else when s.0 is PT:RawPathTracker do 
-	  when s.1 is sols:RawMatrix do 
-	  when s.2 is tolerance:RR do
-          when s.3 is maxSteps:ZZ do 
+     else when s.0 is PT:RawPathTrackerCell do 
+	  when s.1 is sols:RawMatrixCell do 
+	  when s.2 is tolerance:RRcell do
+          when s.3 is maxSteps:ZZcell do 
 	       toExpr(Ccode(RawMatrixOrNull,
-		    "(engine_RawMatrixOrNull)rawRefinePT(",
-		    	 "(PathTracker *)", PT, ",",
-	                 "(Matrix *)", sols, ",",
-			 "(M2_RRR)", tolerance,",",
+		    "rawRefinePT(",
+		    	 PT.p, ",",
+	                 sols.p, ",",
+			 tolerance.v,",",
                          toInt(s.3),
 		    	 ")"
 	       ))
@@ -273,3 +255,18 @@ export rawRefinePT(e:Expr):Expr := (
      );
 setupfun("rawRefinePT",rawRefinePT);
 
+export rawGbBoolean(e:Expr):Expr := (
+  when e is m:RawMatrixCell do 
+		toExpr(Ccode(RawMatrixOrNull,
+		    "rawGbBoolean(",
+		    m.p, 		    
+		    ")"
+		    ))
+    else WrongArg(1, "a raw matrix") 
+     );
+setupfun("rawGbBoolean",rawGbBoolean);
+
+
+-- Local Variables:
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface2.o "
+-- End:

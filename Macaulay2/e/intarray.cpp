@@ -8,7 +8,7 @@ void intarray::expand(int newtop)
   for (int j = 0; j<max; j++) tmp[j] = entries[j];
   doubles->delete_elem(entries);
   entries = tmp;
-  len = doubles->allocated_size(entries)/sizeof(int);
+  len = static_cast<int>(doubles->allocated_size(entries)/sizeof(int));
 }
 
 void intarray::text_out(buffer &o) const

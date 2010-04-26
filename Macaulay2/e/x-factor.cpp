@@ -1,6 +1,7 @@
 // copyright Daniel R. Grayson, 1995
 
 #include "../d/M2inits.h"
+
 #include "exceptions.hpp"
 #include <M2/config.h>
 #include <assert.h>
@@ -13,31 +14,27 @@ using std::endl;
 #include <factor.h>		// from Messollen's libfac
 #undef Matrix
 //#include <templates/ftmpl_list.cc>
+#include <NTL/ZZ.h>
 
 #include "matrix.hpp"
 #include "ZZp.hpp"
 #include "ZZ.hpp"
 #include "frac.hpp"
-#include "polyring.hpp"
+#include "poly.hpp"
 
 #include "relem.hpp"
 #include "GF.hpp"
-#include "../d/M2mem.h"
-
 #include "text-io.hpp"
 #include "buffer.hpp"
 
-#include <NTL/ZZ.h>
+using namespace NTL;
+
 
 #define REVERSE_VARIABLES 1	// did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
-extern "C" {
-  extern void factory_setup_2();
-};
-
 enum factoryCoeffMode { modeError = 0, modeQQ, modeZZ, modeZn, modeGF, modeUnknown };
 static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
-     const Ring *F = P->Ncoeffs();
+     const Ring *F = P->getCoefficientRing();
      if (F->cast_to_QQ()) return modeQQ;
      if (F->cast_to_RingZZ()) return modeZZ;
      if (F->cast_to_Z_mod()) return modeZn;
@@ -47,33 +44,6 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
 }
 
 int debugging;
-
-extern "C" {
-     extern void *GC_malloc_function(size_t);
-};
-
-static void advertise () {
-     static enum { none, withGC, withGCindirect, withFactory } lastMessage = none;
-     if (debugging == 0) return;
-     if (__gmp_allocate_func == (void *(*) (size_t))getmem_atomic) {
-	  if (lastMessage == withGCindirect) return;
-	  lastMessage = withGCindirect;
-	  printf("--gmp allocating with gc (indirectly, via getmem_atomic())\n");
-     }
-#if 0
-     else if (__gmp_allocate_func == GC_malloc) {
-	  if (lastMessage == withGC) return;
-	  lastMessage = withGC;
-	  printf("--gmp allocating with gc\n");
-     }
-#endif
-     else {
-	  if (lastMessage == withFactory) return;
-	  lastMessage = withFactory;
-	  printf("--gmp allocating with functions provided by factory\n");
-     }
-}
-
 static void init_seeds() {
      SetSeed(ZZ::zero());	// NTL
      factoryseed(0);		// factory (which uses NTL, as we've compiled it)
@@ -90,9 +60,6 @@ struct enter_factory {
   int newRatlState;
   const Z_mod *Zn;
   const GF *gf;
-  void *(*save_gmp_allocate_func  )(size_t);
-  void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
-  void  (*save_gmp_free_func      )(void *, size_t);
   void enter();
   void exit();
 
@@ -105,8 +72,8 @@ struct enter_factory {
   enter_factory(const PolynomialRing *P) :
        mode(coeffMode(P)),
        newcharac(mode == modeZn || mode == modeGF ? P->charac() : 0),
-       Zn(mode == modeZn ? P->Ncoeffs()->cast_to_Z_mod() : NULL),
-       gf(mode == modeGF ? P->Ncoeffs()->cast_to_GF(): NULL)
+       Zn(mode == modeZn ? P->getCoefficientRing()->cast_to_Z_mod() : NULL),
+       gf(mode == modeGF ? P->getCoefficientRing()->cast_to_GF(): NULL)
      { enter(); }
 
   ~enter_factory() { exit(); }
@@ -114,12 +81,6 @@ struct enter_factory {
 };
 
 void enter_factory::enter() {
-      if (debugging) advertise();
-      save_gmp_allocate_func = __gmp_allocate_func;
-      save_gmp_reallocate_func = __gmp_reallocate_func;
-      save_gmp_free_func = __gmp_free_func;
-      enterFactory();
-      if (debugging) advertise();
       oldcharac = getCharacteristic();
       oldRatlState = isOn(SW_RATIONAL);
       switch (mode) {
@@ -155,42 +116,10 @@ void enter_factory::enter() {
 void enter_factory::exit() {
        if (oldRatlState) On(SW_RATIONAL); else Off(SW_RATIONAL);
        setCharacteristic(oldcharac);
-       if (debugging) advertise();
-       __gmp_allocate_func = save_gmp_allocate_func;
-       __gmp_reallocate_func = save_gmp_reallocate_func;
-       __gmp_free_func = save_gmp_free_func;
        if (debugging) {
-	    advertise();
 	    if (oldcharac != newcharac) printf("--changing factory characteristic back from %d to %d\n",newcharac,oldcharac);
 	    if (oldRatlState != newRatlState) printf(oldRatlState ? "--setting factory rational mode back on\n" : "--setting factory rational mode back off\n");
        }
-  }
-
-struct enter_M2 { 
-  void *(*save_gmp_allocate_func  )(size_t);
-  void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
-  void  (*save_gmp_free_func      )(void *, size_t);
-  void enter();
-  void exit();
-  enter_M2() { enter(); }
-  ~enter_M2() { exit(); }
-};
-
-void enter_M2::enter() {
-    if (debugging) advertise();
-    save_gmp_allocate_func = __gmp_allocate_func;
-    save_gmp_reallocate_func = __gmp_reallocate_func;
-    save_gmp_free_func = __gmp_free_func;
-    enterM2();
-    if (debugging) advertise();
-  }
-
-void enter_M2::exit() {
-    if (debugging) advertise();
-    __gmp_allocate_func = save_gmp_allocate_func;
-    __gmp_reallocate_func = save_gmp_reallocate_func;
-    __gmp_free_func = save_gmp_free_func;
-    if (debugging) advertise();
   }
 
 static __mpz_struct toInteger(CanonicalForm h) {
@@ -199,12 +128,10 @@ static __mpz_struct toInteger(CanonicalForm h) {
 //     assert(h.inZ());
 //     InternalCF *value = h.getval();
 //     MP_INT y = value->MPI();
-//     struct enter_M2 bar;
 //     mpz_t x;
 //     mpz_init(x);
 //     mpz_set(x,y);
 //     return *x;
-     struct enter_M2 b;
      static const unsigned int base = 1 << 16;
      intarray v;
      int sign;
@@ -231,7 +158,6 @@ static __mpz_struct toInteger(CanonicalForm h) {
 
 static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h) {
      // this seems not to handle polynomials with rational coefficients at all!!
-     struct enter_M2 foo;
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (h.inZ()) {
@@ -242,8 +168,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	  }
 	  else if (h.inQ()) {
 	       struct enter_factory c;
-	       MP_RAT z = {toInteger(h.num()), toInteger(h.den())};
-	       struct enter_M2 d;
+	       __mpq_struct z = {toInteger(h.num()), toInteger(h.den())};
 	       RingElement *ret = RingElement::make_raw(R,R->from_rational(&z));
 	       mpq_clear(&z);
 	       return ret;
@@ -286,7 +211,6 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
      return RingElement::make_raw(R,result);
 }
 
-static struct enter_M2 b1;
 static struct enter_factory foo1;
     static int base_set = 0;
     static CanonicalForm base;
@@ -298,12 +222,11 @@ void showvar(Variable &t) { cout << t << endl; }
 void showcf(CanonicalForm &t) { cout << t << endl; }
 void showcfl(CFList &t) { cout << t << endl; }
 void showcffl(CFFList &t) { cout << t << endl; }
-void showmpint(MP_INT *p) { mpz_out_str (stdout, 10, p); cout << endl; }
+void showmpint(gmp_ZZ p) { mpz_out_str (stdout, 10, p); cout << endl; }
 void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); cout << endl; }
 #endif
 
 static struct enter_factory foo2;
-static struct enter_M2 b2;
 
 static CanonicalForm convertToFactory(const mpz_ptr p) {
      struct enter_factory foo;
@@ -323,7 +246,7 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 	       if (k < 0) k = 0;
 	       int n = j - k;
 	       int subbase = 1 << n;
-	       m = subbase * m + ((digit >> k) & (subbase - 1));
+	       m = subbase * m + (static_cast<int>(digit >> k) & (subbase - 1));
 	       j = k;
 	  }
      }
@@ -337,8 +260,8 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
   const PolynomialRing *A = k->originalR();
   RingElement *g = RingElement::make_raw(A,k->get_rep(q));
   intarray vp;
-  const Monoid *M = A->Nmonoms();
-  const Z_mod *Zn = k->originalR()->Ncoeffs()->cast_to_Z_mod();
+  const Monoid *M = A->getMonoid();
+  const Z_mod *Zn = k->originalR()->getCoefficientRing()->cast_to_Z_mod();
   CanonicalForm f = 0;
   for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
     vp.shrink(0);
@@ -360,7 +283,7 @@ static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
 	 return 0;
        }
      const int n = P->n_vars();
-     const Monoid *M = P->Nmonoms();
+     const Monoid *M = P->getMonoid();
      intarray vp;
      struct enter_factory foo(P);
      if (foo.mode == modeError) return 0;
@@ -407,7 +330,7 @@ bool factoryGoodRing(const PolynomialRing *P) {
     return foo.mode != modeError;
 }
 
-const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g,
+const RingElement /* or null */ *rawGCDRingElement(const RingElement *f, const RingElement *g,
 					   const RingElement *mipo, const M2_bool inExtension)
 {
   const RingElement *ret = NULL;
@@ -428,8 +351,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
       assert( ! inExtension );
       algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
       {
-	struct enter_M2 bar;
-	(RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
+	(RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
       }
     }
     if (inExtension) {
@@ -441,7 +363,6 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     CanonicalForm h = gcd(p,q);
     if (inExtension) {
       assert( foo.mode != modeGF );
-      struct enter_M2 bar;
       algebraicElement_M2 = RingElement::make_raw(P,P->var(P->n_vars()-1)); // the algebraic generator is always the last variable in M2, the first one in factory
     }
     ret = convertToM2(P,h);
@@ -455,7 +376,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
   return RingElement::make_raw(P,r);
 }
 
-const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B)
+const RingElement /* or null */ *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B)
 {
   const bool inExtension = false;
   const RingElement *ret;
@@ -491,8 +412,7 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
   if (foo.mode == modeGF) {
     algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
     {
-      struct enter_M2 bar;
-      (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
+      (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
     }
   }
   CanonicalForm p = convertToFactory(*f,inExtension);
@@ -509,7 +429,7 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
   return ret;
 }
 
-const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
+const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f, const RingElement *g)
 {
   const bool inExtension = false;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
@@ -530,8 +450,7 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   if (foo.mode == modeGF) {
     algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
     {
-      struct enter_M2 bar;
-      (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
+      (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
     }
   }
   CanonicalForm p = convertToFactory(*f,inExtension);
@@ -544,8 +463,8 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
 }
 
 void rawFactor(const RingElement *g, 
-	       RingElement_array_OrNull **result_factors, 
-	       M2_arrayint_OrNull *result_powers)
+	       engine_RawRingElementArrayOrNull *result_factors, 
+	       M2_arrayintOrNull *result_powers)
 {
   const bool inExtension = false;
      try {
@@ -574,10 +493,10 @@ void rawFactor(const RingElement *g,
 	  }
 	  int nfactors = q.length();
 
-	  *result_factors = reinterpret_cast<RingElement_array *>(getmem(sizeofarray((*result_factors),nfactors)));
+	  *result_factors = getmemarraytype(engine_RawRingElementArray,nfactors);
 	  (*result_factors)->len = nfactors;
 
-	  *result_powers = makearrayint(nfactors);
+	  *result_powers = M2_makearrayint(nfactors);
 
 	  int next = 0;
 	  for (CFFListIterator i = q; i.hasItem(); i++) {
@@ -592,7 +511,7 @@ void rawFactor(const RingElement *g,
      }
 }
 
-M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
+M2_arrayintOrNull rawIdealReorder(const Matrix *M)
 {
   const bool inExtension = false;
      try {
@@ -618,7 +537,6 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 		  for (int j=0; j < M->n_cols(); j++) {
 		    const RingElement *g;
 		    {
-		      struct enter_M2 c;
 		      g = RingElement::make_raw(P, M->elem(i,j));
 		    }
 		    I.append(convertToFactory(*g,inExtension));
@@ -640,7 +558,7 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 	     }
 	     for (i=n; i<N; i++) u.append(i);
 
-	     M2_arrayint result = makearrayint(N);
+	     M2_arrayint result = M2_makearrayint(N);
 	     for (i=0; i<N; i++)
 	       result->array[i] = u[i];
 	     return result;
@@ -651,7 +569,7 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
      }
 }    
 
-Matrix_array_OrNull * rawCharSeries(const Matrix *M)
+engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
 {
   const bool inExtension = false;
      try {
@@ -675,7 +593,6 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 		  for (int j=0; j < M->n_cols(); j++) {
 		    const RingElement *g;
 		    {
-		      struct enter_M2 c;
 		      g = RingElement::make_raw(P, M->elem(i,j));
 		    }
 		    I.append(convertToFactory(*g,inExtension));
@@ -684,20 +601,19 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 
 	     List<CFList> t = IrrCharSeries(I);
 
-	     Matrix_array *result = reinterpret_cast<Matrix_array *>(getmem(sizeofarray(result,t.length())));
+	     engine_RawMatrixArray result = getmemarraytype(engine_RawMatrixArray,t.length());
 	     result->len = t.length();
 
 	     int next = 0;
 	     for (ListIterator<List<CanonicalForm> > ii = t; ii.hasItem(); ii++) {
 		  CFList u = ii.getItem();
-		  RingElement_array *result1 = reinterpret_cast<RingElement_array *>(getmem(sizeofarray(result1,u.length())));
+		  engine_RawRingElementArray result1 = getmemarraytype(engine_RawRingElementArray,u.length());
 		  result1->len = u.length();
 		  int next1 = 0;
 		  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
 		    result1->array[next1++] = convertToM2(P,j.getItem());
 		    if (error()) return NULL;
 		  }
-		  struct enter_M2 b;
 		  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false);
 	     }
 
@@ -731,5 +647,5 @@ void rawDummy(void) {
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-factor.o "
 // End:

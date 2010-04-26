@@ -1,41 +1,30 @@
 --		Copyright 2000 by Daniel R. Grayson
 
-use C;
-use system;
-use strings;
-use stdio;
-use varstrin;
-use ctype;
 use getline;
-use tokens;
-use objects;
-use binding;
-use convertr;
+use util;
 use evaluate;
-use common;
-use struct;
 
 TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
 
 export topLevelTeXmacs():int := (
-     unsetprompt(stdin);
+     unsetprompt(stdIO);
      while true do (
-	  stdin.bol = false;				    -- sigh, prevent a possible prompt
-     	  stdin.echo = false;
-	  r := getLine(stdin);
+	  stdIO.bol = false;				    -- sigh, prevent a possible prompt
+     	  stdIO.echo = false;
+	  r := getLine(stdIO);
 	  when r is e:errmsg do (
-	       flush(stdout);
-     	       endLine(stderr);
-	       stderr << "can't get line : " << e.message << endl << Flush;
+	       flush(stdIO);
+     	       endLine(stdError);
+	       stderr << "can't get line : " << e.message << endl;
 	       exit(1);
 	       )
-	  is item:string do (
-	       if stdin.eof then return 0;
+	  is item:stringCell do (
+	       if stdIO.eof then return 0;
 	       method := lookup(stringClass,TeXmacsEvaluate);
 	       if method == nullE 
 	       then (
-		    flush(stdout);
-     		    endLine(stderr);
+		    flush(stdIO);
+     		    endLine(stdError);
 		    stderr << "no method for TeXmacsEvaluate" << endl;
 		    )
 	       else (
@@ -46,5 +35,5 @@ topLevelTeXmacs(e:Expr):Expr := toExpr(topLevelTeXmacs());
 setupfun("topLevelTeXmacs",topLevelTeXmacs);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d texmacs.o "
 -- End:

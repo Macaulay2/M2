@@ -277,7 +277,7 @@ void KBasis::compute()
     }
 }
 
-MatrixOrNull *KBasis::k_basis(const Matrix *bottom, 
+Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom, 
 			      M2_arrayint lo_degree,
 			      M2_arrayint hi_degree,
 			      M2_arrayint wt, 

@@ -292,7 +292,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
-     	  RM.indexStrings = applyKeys(RM.indexSymbols, toString);
+     	  RM.indexStrings = hashTable apply(pairs RM.indexSymbols, (k,v) -> (toString k, v));
 	  RM))
 
 samering := (f,g) -> (

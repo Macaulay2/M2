@@ -8,7 +8,6 @@
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
-#include "../d/M2mem.h"
 
 bool QQ::initialize_QQ() 
 {
@@ -38,31 +37,35 @@ void QQ::text_out(buffer &o) const
   o << "QQ";
 }
 
-M2_Rational QQ::new_elem() const
+gmp_QQ QQ::new_elem() const
 {
-  M2_Rational result = reinterpret_cast<M2_Rational>(getmem(_elem_size));
+  gmp_QQ result = getmemstructtype(gmp_QQ);
   mpq_init(result);
   return result;
 }
 
-void QQ::remove_elem(M2_Rational f) const
+void QQ::remove_elem(gmp_QQ f) const
 {
 }
 
 int QQ::coerce_to_int(ring_elem a) const
 { 
-  return mpz_get_si(mpq_numref(MPQ_VAL(a)));
+  return static_cast<int>(mpz_get_si(mpq_numref(MPQ_VAL(a))));
 }
 
 ring_elem QQ::random() const
 {
-  M2_Rational result = rawRandomQQ(0);
+  gmp_QQ result = rawRandomQQ(0);
   return MPQ_RINGELEM(result);
 }
 
-void QQ::elem_text_out(buffer &o, const ring_elem ap) const
+void QQ::elem_text_out(buffer &o, 
+			   const ring_elem ap, 
+			   bool p_one, 
+			   bool p_plus, 
+			   bool p_parens) const
 {
-  M2_Rational a = MPQ_VAL(ap);
+  gmp_QQ a = MPQ_VAL(ap);
 
   char s[1000];
   char *str;
@@ -70,8 +73,8 @@ void QQ::elem_text_out(buffer &o, const ring_elem ap) const
   bool is_neg = (mpq_sgn(a) == -1);
   bool is_one = (mask_mpq_cmp_si(a, 1, 1) == 0 || mask_mpq_cmp_si(a, -1, 1) == 0);
 
-  int size = mpz_sizeinbase (mpq_numref(a), 10)
-    + mpz_sizeinbase (mpq_denref(a), 10) + 3;
+  int size = static_cast<int>(mpz_sizeinbase (mpq_numref(a), 10)
+			      + mpz_sizeinbase (mpq_denref(a), 10) + 3);
 
   char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
@@ -101,7 +104,7 @@ ring_elem QQ::denominator(ring_elem q) const
 
 ring_elem QQ::fraction(ring_elem top, ring_elem bottom) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpz_set(mpq_numref(result),top.get_mpz());
   mpz_set(mpq_denref(result),bottom.get_mpz());
   mpq_canonicalize(result);
@@ -110,7 +113,7 @@ ring_elem QQ::fraction(ring_elem top, ring_elem bottom) const
 
 ring_elem QQ::from_int(int n) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpq_set_si(result, n, 1);
 
   return MPQ_RINGELEM(result);
@@ -118,7 +121,7 @@ ring_elem QQ::from_int(int n) const
 
 ring_elem QQ::from_int(mpz_ptr n) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpz_set(mpq_numref(result), n); // denominator is still 1.
 
   return MPQ_RINGELEM(result);
@@ -126,7 +129,7 @@ ring_elem QQ::from_int(mpz_ptr n) const
 
 ring_elem QQ::from_rational(mpq_ptr a) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpq_set(result, a);
   return MPQ_RINGELEM(result);
 }
@@ -149,7 +152,7 @@ bool QQ::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
   if (Rg->is_ZZ())
     {
-      M2_Rational h = MPQ_VAL(f);
+      gmp_QQ h = MPQ_VAL(f);
       if (mask_mpz_cmp_si(mpq_denref(h),1) == 0)
 	{
 	  result = globalZZ->RingZZ::from_int(mpq_numref(h));
@@ -161,27 +164,27 @@ bool QQ::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
 bool QQ::is_unit(const ring_elem f) const
 {
-  M2_Rational a = MPQ_VAL(f);
+  gmp_QQ a = MPQ_VAL(f);
   return mpq_sgn(a) != 0;
 }
 
 bool QQ::is_zero(const ring_elem f) const
 {
-  M2_Rational a = MPQ_VAL(f);
+  gmp_QQ a = MPQ_VAL(f);
   return mpq_sgn(a) == 0;
 }
 
 bool QQ::is_equal(const ring_elem f, const ring_elem g) const
 {
-  M2_Rational a = MPQ_VAL(f);
-  M2_Rational b = MPQ_VAL(g);
+  gmp_QQ a = MPQ_VAL(f);
+  gmp_QQ b = MPQ_VAL(g);
 
   return mpq_equal(a, b);
 }
 int QQ::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  M2_Rational a = MPQ_VAL(f);
-  M2_Rational b = MPQ_VAL(g);
+  gmp_QQ a = MPQ_VAL(f);
+  gmp_QQ b = MPQ_VAL(g);
 
   int cmp = mpq_cmp(a,b);
   if (cmp > 0) return 1;
@@ -190,7 +193,7 @@ int QQ::compare_elems(const ring_elem f, const ring_elem g) const
 }
 int QQ::is_positive(const ring_elem f) const
 {
-  M2_Rational a = MPQ_VAL(f);
+  gmp_QQ a = MPQ_VAL(f);
   return mpq_sgn(a) > 0;
 }
 
@@ -208,7 +211,7 @@ void QQ::remove(ring_elem &f) const
 
 ring_elem QQ::preferred_associate(ring_elem f) const
 {
-  M2_Rational a = MPQ_VAL(f);
+  gmp_QQ a = MPQ_VAL(f);
   if (mpq_sgn(a) >= 0)
     return QQ::from_int(1);
   return QQ::from_int(-1);
@@ -216,12 +219,12 @@ ring_elem QQ::preferred_associate(ring_elem f) const
 
 bool QQ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
 {
-  M2_Rational a = MPQ_VAL(f);
-  M2_Rational b = MPQ_VAL(g);
+  gmp_QQ a = MPQ_VAL(f);
+  gmp_QQ b = MPQ_VAL(g);
   int sa = mpq_sgn(a);
   int sb = mpq_sgn(b);
   int s = (sa == 0 ? sb : sa);
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
 
   mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
   mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
@@ -238,10 +241,10 @@ void QQ::lower_content(ring_elem &c, const ring_elem g) const
       c = g;
       return;
     }
-  M2_Rational a = MPQ_VAL(c);
-  M2_Rational b = MPQ_VAL(g);
+  gmp_QQ a = MPQ_VAL(c);
+  gmp_QQ b = MPQ_VAL(g);
   int sa = mpq_sgn(a);
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
 
   mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
   mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
@@ -269,35 +272,35 @@ void QQ::internal_subtract_to(ring_elem &f, ring_elem &g) const
 
 ring_elem QQ::negate(const ring_elem f) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpq_sub(result, _zero_elem, MPQ_VAL(f));
   return MPQ_RINGELEM(result);
 }
 
 ring_elem QQ::add(const ring_elem f, const ring_elem g) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpq_add(result, MPQ_VAL(f), MPQ_VAL(g));
   return MPQ_RINGELEM(result);
 }
 
 ring_elem QQ::subtract(const ring_elem f, const ring_elem g) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpq_sub(result, MPQ_VAL(f), MPQ_VAL(g));
   return MPQ_RINGELEM(result);
 }
 
 ring_elem QQ::mult(const ring_elem f, const ring_elem g) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpq_mul(result, MPQ_VAL(f), MPQ_VAL(g));
   return MPQ_RINGELEM(result);
 }
 
 ring_elem QQ::power(const ring_elem f, int n) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   if (n > 0)
     {
       mpz_pow_ui(mpq_numref(result), mpq_numref(MPQ_VAL(f)), n);
@@ -341,7 +344,7 @@ ring_elem QQ::invert(const ring_elem f) const
     return QQ::from_int(0);
   else
     {
-      M2_Rational result = QQ::new_elem();
+      gmp_QQ result = QQ::new_elem();
       mpq_inv(result, MPQ_VAL(f));
       return MPQ_RINGELEM(result);
     }
@@ -349,7 +352,7 @@ ring_elem QQ::invert(const ring_elem f) const
 
 ring_elem QQ::divide(const ring_elem f, const ring_elem g) const
 {
-  M2_Rational result = QQ::new_elem();
+  gmp_QQ result = QQ::new_elem();
   mpq_div(result, MPQ_VAL(f), MPQ_VAL(g));
   return MPQ_RINGELEM(result);
 }
@@ -368,7 +371,7 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a, int) const
   return S->from_rational(MPQ_VAL(a));
 #if 0
 //   const PolynomialRing *SP = S->cast_to_PolynomialRing();
-//   M2_Rational f = MPQ_VAL(a);
+//   gmp_QQ f = MPQ_VAL(a);
 //   if (S == globalQQ || (SP != 0 && SP->getCoefficients() == globalQQ))
 //     {
 //       return S->from_QQ(a);

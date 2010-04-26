@@ -141,30 +141,30 @@ public:
 
   virtual const PolynomialRing *get_ring() { return originalR; }
 
-  virtual const MatrixOrNull *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const MatrixOrNull *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const MatrixOrNull *get_change();
+  virtual const Matrix /* or null */ *get_change();
 
-  virtual const MatrixOrNull *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
 
-  virtual const MatrixOrNull *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
-  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w);
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
 
-  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   MatrixOrNull **result_remainder,
-			   MatrixOrNull **result_quotient
+			   const Matrix /* or null */ **result_remainder,
+			   const Matrix /* or null */ **result_quotient
 			   );
 
   virtual int contains(const Matrix *m);
 
   virtual void text_out(buffer &o) const; 
   /* This displays statistical information, and depends on the
-     gbTrace value */
+     M2_gbTrace value */
 
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.

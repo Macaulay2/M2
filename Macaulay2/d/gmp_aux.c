@@ -24,6 +24,6 @@ int mpfr_hash(mpfr_t x) {
 
 /*
  Local Variables:
- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
  End:
 */

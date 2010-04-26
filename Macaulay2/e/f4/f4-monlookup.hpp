@@ -17,8 +17,8 @@ class F4MonomialLookupTableT : public our_new_delete
 {
   struct mi_node : public our_new_delete // monomial ideal internal node ///
   {
-    int                 var;
-    int                 exp;		
+    varpower_word       var;
+    varpower_word       exp;		
     mi_node           * left;
     mi_node           * right;
     mi_node           * header;
@@ -47,8 +47,8 @@ class F4MonomialLookupTableT : public our_new_delete
   int size_of_exp; // in ints, size of exp0
   ntuple_word *exp0; // Always set to be all zeros, except during searches, inserts?
 private:
-  mi_node *new_mi_node(int v, int e, mi_node *d);
-  mi_node *new_mi_node(int v, int e, Key k);
+  mi_node *new_mi_node(varpower_word v, varpower_word e, mi_node *d);
+  mi_node *new_mi_node(varpower_word v, varpower_word e, Key k);
   void delete_mi_node(mi_node *p);
 
   void update_exponent_vector(int topvar, const_varpower_monomial m);

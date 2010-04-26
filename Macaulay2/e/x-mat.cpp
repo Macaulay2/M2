@@ -8,8 +8,7 @@
 #include "text-io.hpp"
 #include "exceptions.hpp"
 #include "NAG.hpp"
-
-extern Matrix_int_pair global_Matrix_int_pair;
+#include "engine.h"
 
 const FreeModule * IM2_Matrix_get_target(const Matrix *M)
 {
@@ -54,7 +53,7 @@ unsigned long IM2_Matrix_hash(const Matrix *M)
   return M->get_hash_value();
 }
 
-const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
+const RingElement /* or null */ * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
 {
      try {
 	  if (r < 0 || r >= M->n_rows())
@@ -86,7 +85,7 @@ const Matrix * IM2_Matrix_identity(const FreeModule *F,
   return Matrix::identity(F);
 }
 
-const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
+const Matrix /* or null */ * IM2_Matrix_zero(const FreeModule *F,
 				     const FreeModule *G,
 				     int preference)
 {
@@ -97,9 +96,9 @@ const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
 }
 
 
-const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
+const Matrix /* or null */ * IM2_Matrix_make1(const FreeModule *target,
 				      int ncols,
-				      const RingElement_array *M,
+				      const engine_RawRingElementArray M,
 				      int preference)
 {
 #ifdef DEVELOPMENT
@@ -108,10 +107,10 @@ const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
   return Matrix::make(target, ncols, M);
 }
 
-const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
+const Matrix /* or null */ * IM2_Matrix_make2(const FreeModule *target,
 				      const FreeModule *source,
 				      M2_arrayint deg,
-				      const RingElement_array *M,
+				      const engine_RawRingElementArray M,
 				      int preference)
 {
 #ifdef DEVELOPMENT
@@ -120,11 +119,11 @@ const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
   return Matrix::make(target, source, deg, M);
 }
 
-const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
+const Matrix /* or null */ * IM2_Matrix_make_sparse1(const FreeModule *target,
 					     int ncols,
 					     M2_arrayint rows,
 					     M2_arrayint cols,
-					     const RingElement_array *entries,
+					     const engine_RawRingElementArray entries,
 					     int preference)
 {
 #ifdef DEVELOPMENT
@@ -133,12 +132,12 @@ const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
   return Matrix::make_sparse(target, ncols, rows, cols, entries);
 }
   
-const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
+const Matrix /* or null */ * IM2_Matrix_make_sparse2(const FreeModule *target,
 					     const FreeModule *source,
 					     M2_arrayint deg,
 					     M2_arrayint rows,
 					     M2_arrayint cols,
-					     const RingElement_array *entries,
+					     const engine_RawRingElementArray entries,
 					     int preference)
 {
 #ifdef DEVELOPMENT
@@ -156,7 +155,7 @@ M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M)
   return 0;
 }
 
-const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
+const Matrix /* or null */ * IM2_Matrix_remake2(const FreeModule *target,
 					const FreeModule *source,
 					M2_arrayint deg,
 					const Matrix *M,
@@ -172,7 +171,7 @@ const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
   return M->remake(target, source, deg);
 }
 
-const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
+const Matrix /* or null */ * IM2_Matrix_remake1(const FreeModule *target,
 					const Matrix *M,
 					int preference)
   /* Create a new matrix, from M, with new target,
@@ -193,7 +192,7 @@ const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
      }
 }
 
-MatrixOrNull *IM2_Matrix_random(const Ring *R, 
+const Matrix /* or null */ *IM2_Matrix_random(const Ring *R, 
 				int r, int c, 
 				double fraction_non_zero, 
 				int special_type, // 0: general, 1:upper triangular, others?
@@ -233,74 +232,7 @@ M2_bool IM2_Matrix_is_graded(const Matrix *M)
   return M->is_homogeneous();
 }
 
-const MatrixOrNull * IM2_Matrix_add(const Matrix *M, const Matrix *N)
-  /* If the sizes do not match, then NULL is returned.  If they do match,
-     the addition is performed, and the source,target,degree are taken from the
-     first matrix. */
-{
-     try {
-	  return *M + *N;
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const MatrixOrNull * IM2_Matrix_subtract(const Matrix *M, const Matrix *N)
-{
-     try {
-	  return *M - *N;
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const Matrix * IM2_Matrix_negate(const Matrix *M)
-{
-     try {
-	  return - *M;
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const MatrixOrNull * IM2_Matrix_mult(const Matrix *M, 
-				     const Matrix *N, 
-				     M2_bool opposite_mult)
-{
-     try {
-	  return M->mult(N, opposite_mult);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const MatrixOrNull * IM2_Matrix_scalar_mult(const RingElement *f,
-					    const Matrix *M,
-					    M2_bool opposite_mult)
-{
-     try {
-	  if (f->get_ring() != M->get_ring())
-	    {
-	      ERROR("ring element and matrix should have the same base ring");
-	      return 0;
-	    }
-	  return M->scalar_mult(f->get_value(), opposite_mult);
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
+const Matrix /* or null */ * IM2_Matrix_concat(const engine_RawMatrixArray Ms)
 {
      try {
 	  unsigned int n = Ms->len;
@@ -340,7 +272,7 @@ const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
      }
 }
 
-const MatrixOrNull * IM2_Matrix_direct_sum(const Matrix_array *Ms)
+const Matrix /* or null */ * IM2_Matrix_direct_sum(const engine_RawMatrixArray Ms)
 {
      try {
 	  // Check that the matrices all have the same ring, and that there is
@@ -370,7 +302,7 @@ const MatrixOrNull * IM2_Matrix_direct_sum(const Matrix_array *Ms)
      }
 }
 
-const MatrixOrNull * IM2_Matrix_tensor(const Matrix *M,
+const Matrix /* or null */ * IM2_Matrix_tensor(const Matrix *M,
 				       const Matrix *N)
 {
      try {
@@ -383,7 +315,7 @@ const MatrixOrNull * IM2_Matrix_tensor(const Matrix *M,
 }
 
 
-const MatrixOrNull * rawModuleTensor(const Matrix *M,
+const Matrix /* or null */ * rawModuleTensor(const Matrix *M,
 				     const Matrix *N)
 {
      try {
@@ -395,7 +327,7 @@ const MatrixOrNull * rawModuleTensor(const Matrix *M,
      }
 }
 
-const MatrixOrNull * IM2_Matrix_transpose(const Matrix *M)
+const Matrix /* or null */ * IM2_Matrix_transpose(const Matrix *M)
 {
      try {
 	  return M->transpose();
@@ -406,7 +338,7 @@ const MatrixOrNull * IM2_Matrix_transpose(const Matrix *M)
      }
 }
 
-const MatrixOrNull * IM2_Matrix_reshape(const Matrix *M,
+const Matrix /* or null */ * IM2_Matrix_reshape(const Matrix *M,
 					const FreeModule *F,
 					const FreeModule *G)
 {
@@ -419,7 +351,7 @@ const MatrixOrNull * IM2_Matrix_reshape(const Matrix *M,
      }
 }
 
-const MatrixOrNull * IM2_Matrix_flip(const FreeModule *F,
+const Matrix /* or null */ * IM2_Matrix_flip(const FreeModule *F,
 				     const FreeModule *G)
 {
      try {
@@ -431,7 +363,7 @@ const MatrixOrNull * IM2_Matrix_flip(const FreeModule *F,
      }
 }
 
-const MatrixOrNull * rawWedgeProduct(int p,
+const Matrix /* or null */ * rawWedgeProduct(int p,
 				     int q,
 				     const FreeModule *F)
   /* Constructs the map
@@ -447,7 +379,7 @@ const MatrixOrNull * rawWedgeProduct(int p,
      }
 }
 
-const MatrixOrNull * IM2_Matrix_submatrix(const Matrix *M,
+const Matrix /* or null */ * IM2_Matrix_submatrix(const Matrix *M,
 					  M2_arrayint rows,
 					  M2_arrayint cols)
 {
@@ -460,7 +392,7 @@ const MatrixOrNull * IM2_Matrix_submatrix(const Matrix *M,
      }
 }
 
-const MatrixOrNull * IM2_Matrix_submatrix1(const Matrix *M,
+const Matrix /* or null */ * IM2_Matrix_submatrix1(const Matrix *M,
 					   M2_arrayint cols)
 {
      try {
@@ -472,7 +404,7 @@ const MatrixOrNull * IM2_Matrix_submatrix1(const Matrix *M,
      }
 }
 
-const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M)
+const Matrix /* or null */ * IM2_Matrix_koszul(int p, const Matrix *M)
 {
      try {
 	  return M->koszul(p);
@@ -483,7 +415,7 @@ const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M)
      }
 }
 
-const MatrixOrNull * 
+const Matrix /* or null */ * 
 rawKoszulMonomials(int nskew,
 		     const Matrix *M,
 		     const Matrix *N)
@@ -505,7 +437,7 @@ rawKoszulMonomials(int nskew,
      }
 }
 
-const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)
+const Matrix /* or null */ * IM2_Matrix_symm(int p, const Matrix *M)
 {
      try {
 	  return M->symm(p);
@@ -516,12 +448,12 @@ const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)
      }
 }
 
-const MatrixOrNull * IM2_Matrix_exterior(int p, const Matrix *M, int strategy)
+const Matrix /* or null */ * IM2_Matrix_exterior(int p, const Matrix *M, int strategy)
 {
   return M->exterior(p,strategy); 
 }
 
-M2_arrayint_OrNull IM2_Matrix_sort_columns(const Matrix *M, 
+M2_arrayintOrNull IM2_Matrix_sort_columns(const Matrix *M, 
 						 int deg_order, 
 						 int mon_order)
 {
@@ -535,17 +467,17 @@ M2_arrayint_OrNull IM2_Matrix_sort_columns(const Matrix *M,
 }
 
 
-const MatrixOrNull * IM2_Matrix_minors(int p, const Matrix *M, int strategy)
+const Matrix /* or null */ * IM2_Matrix_minors(int p, const Matrix *M, int strategy)
 {
   return M->minors(p,strategy);
 }
 
-const MatrixOrNull * rawMinors(int p, 
+const Matrix /* or null */ * rawMinors(int p, 
 			 const Matrix *M, 
 			 int strategy,
 			 int n_minors_to_compute, /* -1 means all */
-			 M2_arrayint_OrNull first_row_set,
-			 M2_arrayint_OrNull first_col_set
+			 M2_arrayintOrNull first_row_set,
+			 M2_arrayintOrNull first_col_set
 			 ) 
 /* If first_row_set or first_col_set is not NULL, they should both be non-NULL,
    and both have length p.  If not, NULL is returned.
@@ -556,38 +488,38 @@ const MatrixOrNull * rawMinors(int p,
   return M->minors(p,strategy,n_minors_to_compute,first_row_set,first_col_set);
 }
 
-const MatrixOrNull * IM2_Matrix_pfaffians(int p, const Matrix *M)
+const Matrix /* or null */ * IM2_Matrix_pfaffians(int p, const Matrix *M)
 {
   return M->pfaffians(p);
 }
 
-const MatrixOrNull * IM2_Matrix_diff(const Matrix *M,
+const Matrix /* or null */ * IM2_Matrix_diff(const Matrix *M,
 				     const Matrix *N)
 {
   return M->diff(N,1);
 }
 
-const MatrixOrNull * IM2_Matrix_contract(const Matrix *M,
+const Matrix /* or null */ * IM2_Matrix_contract(const Matrix *M,
 					 const Matrix *N)
 {
   return M->diff(N,0);
 }
 
-const MatrixOrNull * IM2_Matrix_contract0(int n_top_variables,
+const Matrix /* or null */ * IM2_Matrix_contract0(int n_top_variables,
 					  const Matrix *M,
 					  const Matrix *N)
 {
   return M->contract0(n_top_variables, N);
 }
 
-const MatrixOrNull * IM2_Matrix_homogenize(const Matrix *M,
+const Matrix /* or null */ * IM2_Matrix_homogenize(const Matrix *M,
 					   int var,
 					   M2_arrayint wts)
 {
   return M->homogenize(var, wts);
 }
 
-const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars)
+const engine_RawMatrixPair_struct *IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars)
 {
 #ifdef DEVELOPMENT
 #warning "implement IM2_Matrix_coeffs"
@@ -595,14 +527,14 @@ const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars)
   return 0;
 }
 
-const MatrixOrNull * rawCoefficients(M2_arrayint vars,
+const Matrix /* or null */ * rawCoefficients(M2_arrayint vars,
 				     const Matrix *monoms,
 				     const Matrix *M)
 {
   return M->coeffs(vars,monoms);
 }
 
-const MatrixOrNull * rawBasis(const Matrix *M,
+const Matrix /* or null */ * rawBasis(const Matrix *M,
 			      M2_arrayint lo_degree, /* possibly length 0 */
 			      M2_arrayint hi_degree,
 			      M2_arrayint wt,
@@ -613,14 +545,14 @@ const MatrixOrNull * rawBasis(const Matrix *M,
   return M->Matrix::basis(lo_degree,hi_degree,wt,vars,do_truncation,limit);
 }
 
-M2_arrayint_OrNull rawMatrixIndices(const Matrix *f)
+M2_arrayintOrNull rawMatrixIndices(const Matrix *f)
   /* The list of indices of variables which occur in f is returned. */
   /* currently requires a polynomial ring */
 {
   return f->support();
 }
 
-const MatrixOrNull * IM2_Matrix_monomials(M2_arrayint vars, 
+const Matrix /* or null */ * IM2_Matrix_monomials(M2_arrayint vars, 
 					  const Matrix *M)
 {
   return M->monomials(vars);
@@ -641,20 +573,20 @@ M2_arrayint IM2_Matrix_keep_vars(int nparts, const Matrix *M)
   return M->elim_keep(nparts);
 }
 
-Matrix_pair_OrNull * rawTopCoefficients(const Matrix *M)
+engine_RawMatrixPairOrNull rawTopCoefficients(const Matrix *M)
 {
   Matrix *coeffs;
   Matrix *monoms;
   coeffs = M->top_coefficients(monoms);
   if (coeffs == NULL)
     return NULL;
-  Matrix_pair_OrNull *result = new Matrix_pair;
+  engine_RawMatrixPair result = new engine_RawMatrixPair_struct;
   result->a = monoms;
   result->b = coeffs;
   return result;
 }
 
-Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegree)
+engine_RawMatrixAndInt IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegree)
   /* If M = [v1, ..., vn], and x = 'var'th variable in the ring, 
      return the matrix [w1,...,wn], where wi * x^(ai) = vi,
      and wi is not divisible by x, or ai = maxdegree, 
@@ -664,9 +596,9 @@ Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegr
 {
   int actualdegree;
   Matrix *N = M->divide_by_var(var, maxdegree, actualdegree);
-  Matrix_int_pair *result = &global_Matrix_int_pair;
-  result->a = N;
-  result->b = actualdegree;
+  engine_RawMatrixAndInt result = new engine_RawMatrixAndInt_struct;
+  result->M = N;
+  result->i = actualdegree;
   return result;
 }
 
@@ -678,7 +610,7 @@ const Matrix * rawMatrixCompress(const Matrix *M)
 
 #include "Eschreyer.hpp"
 
-Matrix * IM2_kernel_of_GB(const Matrix *m)
+const Matrix * IM2_kernel_of_GB(const Matrix *m)
   /* Assuming that the columns of G form a GB, this computes
      a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
      source of G. */
@@ -702,30 +634,30 @@ const Matrix * rawRemoveScalarMultiples(const Matrix *m)
 
 // See engine.h for our definition of 'content'
 
-const MatrixOrNull *rawMatrixContent(const Matrix *M)
+const Matrix /* or null */ *rawMatrixContent(const Matrix *M)
 // returns the matrix of the content of each column of M.
 {
   return M->content();
 }
 
-const MatrixOrNull *rawMatrixRemoveContent(const Matrix *M)
+const Matrix /* or null */ *rawMatrixRemoveContent(const Matrix *M)
 {
   return M->remove_content();
 }
 
-const MatrixOrNull *rawMatrixSplitContent(const Matrix *M, MatrixOrNull **result)
+const Matrix /* or null */ *rawMatrixSplitContent(const Matrix *M, const Matrix /* or null */ **result)
 {
   return M->split_off_content(*result);
 }
 
-const MatrixOrNull *IM2_Matrix_remove_content(const Matrix *M) {
+const Matrix /* or null */ *IM2_Matrix_remove_content(const Matrix *M) {
 #ifdef DEVELOPMENT
-#warning "const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"
+#warning "const Matrix /* or null */ * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"
 #endif
      return NULL;
 }
 
-const MatrixOrNull *IM2_Matrix_promote(const FreeModule *newTarget,
+const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget,
 				 const Matrix *f)
 {
      try {
@@ -752,7 +684,7 @@ const MatrixOrNull *IM2_Matrix_promote(const FreeModule *newTarget,
      }
 }
 
-const MatrixOrNull *IM2_Matrix_lift(int *success_return, const FreeModule *newTarget, 
+const Matrix /* or null */ *IM2_Matrix_lift(int *success_return, const FreeModule *newTarget, 
 			      const Matrix *f)
 {
      try {
@@ -780,45 +712,45 @@ const MatrixOrNull *IM2_Matrix_lift(int *success_return, const FreeModule *newTa
      }
 }
 
-const StraightLineProgram_OrNull *rawSLP(Matrix *consts, M2_arrayint program)
+StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program)
 {
   return StraightLineProgram::make(consts, program);
 }
 
-const MatrixOrNull *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals)
+const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals)
 {
   return SLP->evaluate(vals);
 }
 
-M2_string rawStraightLineProgramToString(const StraightLineProgram *slp) {
+M2_string rawStraightLineProgramToString(StraightLineProgram *slp) {
   buffer o;
   slp->text_out(o);
   return o.to_string();
 }
 
-unsigned long rawStraightLineProgramHash(const StraightLineProgram *slp) {
+unsigned long rawStraightLineProgramHash(StraightLineProgram *slp) {
   return slp->get_hash_value();
 }
 
 /// PathTracker /////////////////////////////////////////////////////
 
-const PathTracker_OrNull *rawPathTrackerPrecookedSLPs(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr)
+PathTracker /* or null */ *rawPathTrackerPrecookedSLPs(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr)
 {
   return PathTracker::make(slp_pred, slp_corr);
 }
 
-const PathTracker_OrNull *rawPathTracker(Matrix *HH)
+PathTracker /* or null */ *rawPathTracker(const Matrix *HH)
 {
   return PathTracker::make(HH);
 }
 
-M2_string rawPathTrackerToString(const PathTracker *p) {
+M2_string rawPathTrackerToString(PathTracker *p) {
   buffer o;
   p->text_out(o);
   return o.to_string();
 }
 
-unsigned long rawPathTrackerHash(const PathTracker *p) {
+unsigned long rawPathTrackerHash(PathTracker *p) {
   return p->get_hash_value();
 }
 

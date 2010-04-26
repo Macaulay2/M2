@@ -60,17 +60,20 @@ ntl_interface.o: ntl_interface.cpp
 	@ $(COMPILE.c) $(OUTPUT_OPTION) $<
 
 % : %.o
-	@ echo '$(LINK.cc) $^ $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo '$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** linking $^ to get $@"
-	@ $(LINK.cc) $^ $(OUTPUT_OPTION)
+	@ $(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 %.dep: %.cpp
-	@ echo "@CXX@ -MM -MG -MP $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo "@CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"
-	@       @CXX@ -MM -MG -MP $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	@       @CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
-	@ echo "@CC@  -MM -MG -MP $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo "@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"
-	@       @CC@  -MM -MG -MP $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	@       @CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "
+# End:

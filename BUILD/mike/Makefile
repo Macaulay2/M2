@@ -33,6 +33,7 @@ debug64nofrobby : always
 	cd debug64; ../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
+		--with-mpir-config-options="ABI=64" \
 		--build=x86_64-apple-darwin \
 		--enable-debug \
 		--disable-optimize \
@@ -88,6 +89,17 @@ profile32 : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+# icc versions
+icc-darwin :
+	mkdir -p icc-darwin
+	cd icc-darwin; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="icc" CXX="icpc" \
+		--enable-scscp \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
+
 # These are for use on linux/ubuntu/redhat
 
 opt : always
@@ -96,15 +108,40 @@ opt : always
 		--prefix="`pwd`/installed" \
 		--enable-tarfile \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pa
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
+
 opt64-ubuntu : always
 	mkdir -p opt
 	cd opt;	../../../configure \
 		--prefix="`pwd`/installed" \
 		--build=x86_64-unknown-linux-gnu \
 		--enable-tarfile \
+		--enable-scscp \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
+
+icc-ubuntu64 :
+	mkdir -p icc-opt
+	cd icc-opt; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="icc" CXX="icpc" \
+		--enable-tarfile \
+		--enable-scscp \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
+  # ntl hangs on ./MakeDesc, so workaround:
+  # cd libraries/ntl/build/ntl-5.5.2/src/
+  # make CFLAGS=-g
+icc-debug : always
+	mkdir -p icc-debug
+	cd icc-debug; ../../../configure \
+		CC="icc" CXX="icpc" \
+		--prefix="`pwd`/installed" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
+
 
 debug : always
 	mkdir -p debug
@@ -119,6 +156,15 @@ profile : always
 	mkdir -p profile
 	cd profile; ../../../configure \
 		--prefix="`pwd`/installed" \
+		--enable-profile \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
+
+profile64-ubuntu : always
+	mkdir -p profile
+	cd profile; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--build=x86_64-unknown-linux-gnu \
 		--enable-profile \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"

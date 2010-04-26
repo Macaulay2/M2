@@ -1,12 +1,5 @@
 --		Copyright 1994-2006 by Daniel R. Grayson
-
-use C;
-use system;
-use strings;
-use varstrin;
-use ctype;
 use nets;
-
 -- varnets:
 -- a varnet is a net whose strings are varstrings
 -- you can make a new empty varnet
@@ -76,7 +69,7 @@ export hash(v:vaNet):int := (
 
 -- netfile
 
-export NetFile := { v:vaNet, x:varnet };
+export NetFile := {+ v:vaNet, x:varnet };
 export hash(n:NetFile):int := 0x7fffffff & (hash(n.v) + 43 * hash(n.x));
 export newNetFile():NetFile := NetFile(newvaNet(),newvarnet());
 export (n:NetFile) << (i:int) : NetFile := ( n.x << i; n );
@@ -87,5 +80,5 @@ export popnet(n:NetFile):Net := ( r := toNet(n.x); n.x = newvarnet(); r);
 export tonets(n:NetFile):array(Net) := toarray(n.v);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d varnets.o "
 -- End:

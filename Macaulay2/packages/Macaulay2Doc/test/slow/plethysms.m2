@@ -8,3 +8,7 @@ time apply(0 .. 20, i -> chi exteriorPower_i E)
 assert( oo == (1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1) )
 time integral ( chern_20 E * (chern_1 G.TangentBundle)^4 )
 assert( oo == 14520000 )
+
+end
+-- Mike starting to look at this
+time apply(0 .. 20, i -> time chi exteriorPower_i E)

@@ -308,3 +308,4 @@ From source:
           make
 	  make install # places M2 into /usr/local
 	  make check # optional, but recommended
+

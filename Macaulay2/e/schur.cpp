@@ -83,7 +83,6 @@ bool SchurRing::initialize_schur()
   _SMfinalwt = 0;
   _SMresult = 0;
   
-  _EXP1 = newarray_atomic(int,nvars_);
   _SMtab.p = newarray_atomic_clear(int,nvars_+1);
   return true;
 }
@@ -91,13 +90,10 @@ bool SchurRing::initialize_schur()
 SchurRing * SchurRing::create(const PolynomialRing *R)
 {
   SchurRing *result = new SchurRing;
-#ifdef DEVELOPMENT
-#warning "Schur rings have a problem with flattened monoids"
-#endif
   result->initialize_poly_ring(R->getCoefficients(),
 			       R->getMonoid());
   if (!result->initialize_schur()) return 0;
-  // NO gbring, grtype...
+  // No GBRing
   return result;
 }
 
@@ -113,17 +109,20 @@ void SchurRing::text_out(buffer &o) const
 void SchurRing::to_partition(const int *m, int *exp) const
     // exp[1]..exp[nvars] are set
 {
-  M_->to_expvector(m, const_cast<SchurRing *>(this)->_EXP1);
-  exp[nvars_] = _EXP1[nvars_-1];
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size); // 0..nvars-1
+  // remark: exp_size is defined in an ancestor class of SchurRing
+  M_->to_expvector(m, EXP1);
+  exp[nvars_] = EXP1[nvars_-1];
   for (int i=nvars_-1; i>=1; i--)
-    exp[i] = exp[i+1] + _EXP1[i-1];
+    exp[i] = exp[i+1] + EXP1[i-1];
 }
 void SchurRing::from_partition(const int *exp, int *m) const
 {
-  _EXP1[nvars_-1] = exp[nvars_];
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size); // 0..nvars-1
+  EXP1[nvars_-1] = exp[nvars_];
   for (int i=nvars_-1; i>0; i--)
-    const_cast<SchurRing *>(this)->_EXP1[i-1] = exp[i] - exp[i+1];
-  M_->from_expvector(_EXP1, m);
+    EXP1[i-1] = exp[i] - exp[i+1];
+  M_->from_expvector(EXP1, m);
 }
 
 void SchurRing::bounds(int &lo, int &hi)
@@ -223,11 +222,11 @@ Nterm *SchurRing::skew_schur(int *lambda, int *p)
 ring_elem SchurRing::mult_monomials(const int *m, const int *n)
 {
   int i;
-  intarray a_part_a, b_part_a, lambda_a, p_a;
-  int *a_part = a_part_a.alloc(nvars_+1);
-  int *b_part = b_part_a.alloc(nvars_+1);
-  int *lambda = lambda_a.alloc(2*nvars_+2);
-  int *p      = p_a.alloc(2*nvars_+2);
+
+  exponents a_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents b_part = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
+  exponents lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
+  exponents p = ALLOCATE_EXPONENTS(2 * sizeof(int) * (nvars_ + 1));
 
   // First: obtain the partitions
   to_partition(m, a_part);
@@ -309,11 +308,11 @@ ring_elem SchurRing::power(const ring_elem f, int n) const
 }
 
 void SchurRing::dimension(const int *exp, mpz_t result) const
+    // exp: 0..nvars_
     // Return in 'result' the dimension of the irreducible
     // GL(nvars_) representation having highest weight
     // 'exp'
 {
-  // MES: this might not be efficient enough in practice?
   int i,j;
 
   mpz_set_ui(result, 1);
@@ -330,15 +329,14 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
 
 ring_elem SchurRing::dimension(const ring_elem f) const
 {
-  intarray expa;
-  int *exp = expa.alloc(nvars_+1);
+  exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
   ring_elem result = K_->from_int(0);
   mpz_t dim;
   mpz_init(dim);
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      to_partition(t->monom, exp);
-      dimension(exp, dim);
+      to_partition(t->monom, EXP);
+      dimension(EXP, dim);
       ring_elem h = K_->from_int(dim);
       ring_elem h2 = K_->mult(t->coeff, h);
       K_->add_to(result, h2);
@@ -347,42 +345,37 @@ ring_elem SchurRing::dimension(const ring_elem f) const
   return result;
 }
 
-void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
+void SchurRing::elem_text_out(buffer &o, 
+			const ring_elem f, 
+			bool p_one, 
+			bool p_plus, 
+			bool p_parens) const
 {
-  intarray exp_a;
-  int *exp = exp_a.alloc(nvars_+1);
+  exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
   int n = n_terms(f);
 
-  int old_plus = p_plus;
-  int needs_parens = p_parens && (n > 1);
+  bool needs_parens = p_parens && (n > 1);
   if (needs_parens) 
     {
-      if (old_plus) o << '+';
+      if (p_plus) o << '+';
       o << '(';
-      p_plus = 0;
+      p_plus = false;
     }
 
+  p_one = false;
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      int old_one = p_one;
-      int old_parens = p_parens;
       int isone = M_->is_one(t->monom);
       p_parens = !isone;
-      //p_one = old_one && isone;
-      p_one = 0;
-      K_->elem_text_out(o,t->coeff);
-      p_one = 0;
-      to_partition(t->monom, exp);
-      o << "{" << exp[1];
-      for (int i=2; i<=nvars_ && exp[i] != 0; i++)
-	o << "," << exp[i];
+      K_->elem_text_out(o,t->coeff, p_one,p_plus,p_parens);
+      to_partition(t->monom, EXP);
+      o << "{" << EXP[1];
+      for (int i=2; i<=nvars_ && EXP[i] != 0; i++)
+	o << "," << EXP[i];
       o << "}";
-      p_one = old_one;
-      p_parens = old_parens;
-      p_plus = 1;
+      p_plus = true;
     }
   if (needs_parens) o << ')';
-  p_plus = old_plus;
 }
 
 // Local Variables:

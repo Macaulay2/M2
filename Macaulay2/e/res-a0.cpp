@@ -6,13 +6,6 @@
 #include "buffer.hpp"
 #include "text-io.hpp"
 
-extern char system_interruptedFlag;
-extern int gbTrace;
-
-static int n_ones = 0;
-static int n_unique = 0;
-static int n_others = 0;
-
 bool res2_comp::stop_conditions_ok()
 {
 
@@ -69,7 +62,7 @@ enum ComputationStatusCode res2_comp::skeleton(int level)
       // so this routine may be used to increase the degree bound
       // note: also need to redo monomial ideals...
       new_pairs(p);
-      if (system_interruptedFlag) return COMP_INTERRUPTED;	  
+      if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;	  
     }
   resn[level]->state = RES_MONORDER;
   return COMP_COMPUTING;
@@ -117,7 +110,7 @@ enum ComputationStatusCode res2_comp::do_pairs(int level, int degree)
   // If this number is 0, continue
   res2_pair *p;
 
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     {
       p = resn[level]->next_pair;
       int nelems = 0;
@@ -149,7 +142,7 @@ enum ComputationStatusCode res2_comp::do_pairs(int level, int degree)
 	  if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
 	    return COMP_DONE_SYZYGY_LIMIT;
 	}
-      if (system_interruptedFlag) return COMP_INTERRUPTED;
+      if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }
@@ -160,7 +153,7 @@ enum ComputationStatusCode res2_comp::do_pairs_by_level(int level)
   
   res2_pair *p;
 
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     {
       int nelems = resn[level]->nleft;
       if (nelems > 0)
@@ -177,7 +170,7 @@ enum ComputationStatusCode res2_comp::do_pairs_by_level(int level)
       if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
 	return COMP_DONE_PAIR_LIMIT;
       //      if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
-      if (system_interruptedFlag) return COMP_INTERRUPTED;
+      if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
     }
 
   if (do_by_level == 2) 
@@ -209,7 +202,7 @@ enum ComputationStatusCode res2_comp::do_pairs_by_level(int level)
 	  g->next = NULL;
 	  p->pivot_term = head.next;
 	}
-      if (gbTrace >= 3)
+      if (M2_gbTrace >= 3)
 	{
 	  buffer o;
 	  o << "[kept " << nmonoms << " killed " << nkilled << "]";
@@ -226,7 +219,7 @@ enum ComputationStatusCode res2_comp::do_pairs_by_degree(int level, int degree)
   // If this number is 0, continue
   res2_pair *p;
 
-  if (gbTrace >= 2 && level > 1)
+  if (M2_gbTrace >= 2 && level > 1)
     {
       p = resn[level]->next_pair;
       int nelems = 0;
@@ -256,7 +249,7 @@ enum ComputationStatusCode res2_comp::do_pairs_by_degree(int level, int degree)
 	  if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
 	    return COMP_DONE_SYZYGY_LIMIT;
 	}
-      if (system_interruptedFlag) return COMP_INTERRUPTED;
+      if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }
@@ -286,7 +279,7 @@ void res2_comp::start_computation()
   for (level=1; level<=length_limit+1; level++)
     DO(skeleton(level));
 
-  if (gbTrace >= 3)
+  if (M2_gbTrace >= 3)
     {
       buffer o;
       o << "--- The total number of pairs in each level/slanted degree -----" << newline;
@@ -355,7 +348,7 @@ void res2_comp::start_computation()
 	      set_status(COMP_DONE_DEGREE_LIMIT);
 	      return;
 	    }
-	  if (gbTrace >= 1)
+	  if (M2_gbTrace >= 1)
 	    {
 	      buffer o;
 	      o << '{' << deg+lodegree << '}';
@@ -377,7 +370,7 @@ void res2_comp::start_computation()
 	  set_status(COMP_DONE_DEGREE_LIMIT);
 	  return;
 	}
-      if (gbTrace >= 1)
+      if (M2_gbTrace >= 1)
 	{
 	  buffer o;
 	  o << '{' << deg+lodegree << '}';
@@ -399,7 +392,7 @@ void res2_comp::start_computation()
 // 	  set_status(COMP_DONE_DEGREE_LIMIT);
 // 	  return;
 // 	}
-//       if (gbTrace >= 1)
+//       if (M2_gbTrace >= 1)
 // 	{
 // 	  buffer o;
 // 	  o << '{' << deg+lodegree << '}';
@@ -430,9 +423,12 @@ void res2_comp::initialize(const Matrix *mat,
   P = mat->get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
   R = new res2_poly(const_cast<PolynomialRing *>(P));
-  M = P->Nmonoms();
-  K = P->Ncoeffs();
+  M = P->getMonoid();
+  K = P->getCoefficientRing();
   generator_matrix = mat;
+
+  exp_size = EXPONENT_BYTE_SIZE(P->n_vars());
+  monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
 
   res2_pair_stash = new stash("res2pair", sizeof(res2_pair));
   mi_stash = new stash("res2 minodes", sizeof(Nmi_node));
@@ -494,10 +490,11 @@ void res2_comp::initialize(const Matrix *mat,
 	insert_pair(p);
       }
 
-  REDUCE_exp = newarray_atomic(int,P->n_vars());
-  REDUCE_mon = M->make_one();
-  PAIRS_mon = M->make_one();
-  MINIMAL_mon = M->make_one();
+  // Set variables for compare_res2_pairs
+  compare_type = COMPARE_LEX;
+  compare_use_degree = 0;
+  compare_use_descending = 1;
+  compare_use_reverse = 0;
 
   skeleton_sort = SortStrategy & 63;
   reduction_sort = (SortStrategy >> 6) & 63;
@@ -509,7 +506,7 @@ void res2_comp::initialize(const Matrix *mat,
   use_respolyHeaps = (unsigned char)(SortStrategy & FLAGS_GEO ? 1 : 0);
 
   if (do_by_degree) do_by_level = 0;
-  if (gbTrace >= 3)
+  if (M2_gbTrace >= 3)
     {
       buffer o;
       o << "auto-reduce level = " << auto_reduce << newline;
@@ -601,10 +598,6 @@ void res2_comp::remove_res()
   for (i=0; i<resn.length(); i++)
     remove_res2_level(resn[i]);
 
-  deletearray(REDUCE_exp);
-  M->remove(REDUCE_mon);
-  M->remove(PAIRS_mon);
-  M->remove(MINIMAL_mon);
   delete res2_pair_stash;
   delete mi_stash;
   delete R;
@@ -726,18 +719,12 @@ void res2_comp::multi_degree(const res2_pair *p, int *deg) const
 //  Sorting //////////////////////////////////
 //////////////////////////////////////////////
 
-static int EXP1[1000], EXP2[1000], EXP3[1000], EXP4[1000];
-
-static int compare_type = COMPARE_LEX;
-static int compare_use_degree = 0;
-static int compare_use_descending = 1;
-static int compare_use_reverse = 0;
-
 int res2_comp::compare_res2_pairs(res2_pair *f, res2_pair *g) const
 {
   // Lots of different orders appear here, controlled by the above
   // static variables.
   // if compare(f,g) returns -1, this says place g BEFORE f on the list.
+  exponents EXP1, EXP2, EXP3, EXP4;
   int cmp, df, dg;
 
   if (compare_use_degree)
@@ -758,6 +745,8 @@ int res2_comp::compare_res2_pairs(res2_pair *f, res2_pair *g) const
     if (cmp > 0) return -1;
     return 0;
   case COMPARE_LEX:
+    EXP1 = ALLOCATE_EXPONENTS(exp_size);
+    EXP2 = ALLOCATE_EXPONENTS(exp_size);
     M->to_expvector(f->syz->monom, EXP1);
     M->to_expvector(g->syz->monom, EXP2);
     if (compare_use_reverse)
@@ -785,6 +774,8 @@ int res2_comp::compare_res2_pairs(res2_pair *f, res2_pair *g) const
     if (cmp > 0) return compare_use_descending;
     return 0;
   case COMPARE_LEX_EXTENDED:
+    EXP1 = ALLOCATE_EXPONENTS(exp_size);
+    EXP2 = ALLOCATE_EXPONENTS(exp_size);
     while (f->level >= 1)
       {
 	M->to_expvector(f->syz->monom, EXP1);
@@ -811,6 +802,10 @@ int res2_comp::compare_res2_pairs(res2_pair *f, res2_pair *g) const
       }
     return 0;
   case COMPARE_LEX_EXTENDED2:
+    EXP1 = ALLOCATE_EXPONENTS(exp_size);
+    EXP2 = ALLOCATE_EXPONENTS(exp_size);
+    EXP3 = ALLOCATE_EXPONENTS(exp_size);
+    EXP4 = ALLOCATE_EXPONENTS(exp_size);
     M->to_expvector(f->syz->monom, EXP1);
     M->to_expvector(g->syz->monom, EXP2);
     if (compare_use_reverse)
@@ -921,7 +916,7 @@ void res2_comp::sort_res2_pairs(res2_pair *& p) const
   p = merge_res2_pairs(p1, p2);
 }
 
-void res2_comp::sort_skeleton(res2_pair *&p) const
+void res2_comp::sort_skeleton(res2_pair *&p)
 {
   compare_type = (skeleton_sort & FLAGS_SORT);
   compare_use_descending = (skeleton_sort & FLAGS_DESCEND ? 1 : -1);
@@ -929,14 +924,14 @@ void res2_comp::sort_skeleton(res2_pair *&p) const
   compare_use_degree = (skeleton_sort & FLAGS_DEGREE);
   sort_res2_pairs(p);
 }
-void res2_comp::sort_monorder(res2_pair *&p) const
+void res2_comp::sort_monorder(res2_pair *&p)
 {
   // Rest of the compare_* don't matter in this case, except degree
   compare_type = COMPARE_MONORDER;
   compare_use_degree = 0;
   sort_res2_pairs(p);
 }
-void res2_comp::sort_reduction(res2_pair *&p) const
+void res2_comp::sort_reduction(res2_pair *&p)
 {
   compare_type = (reduction_sort & FLAGS_SORT);
   compare_use_descending = (reduction_sort & FLAGS_DESCEND ? 1 : -1);
@@ -947,6 +942,7 @@ void res2_comp::sort_reduction(res2_pair *&p) const
 
 int res2_comp::sort_value(res2_pair *p, const int *sort_order) const
 {
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   M->to_expvector(p->syz->monom, REDUCE_exp);
   int result = 0;
   for (int i=0; i<P->n_vars(); i++)
@@ -967,7 +963,9 @@ void res2_comp::new_pairs(res2_pair *p)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  if (gbTrace >= 10)
+  monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
+
+  if (M2_gbTrace >= 10)
     {
       buffer o;
       o << "Computing pairs with first = " << p->pair_num << newline;
@@ -1041,7 +1039,7 @@ void res2_comp::new_pairs(res2_pair *p)
   while (rejects.remove(b))
     delete b;
 
-  if (gbTrace>= 11) mi.debug_out(1);
+  if (M2_gbTrace>= 11) mi.debug_out(1);
 
   int *m = M->make_one();
   for (j = mi.first(); j.valid(); j++)
@@ -1073,7 +1071,7 @@ int res2_comp::find_ring_divisor(const int *exp, ring_elem &result) const
 
 int res2_comp::find_divisor(const MonomialIdeal *mi, 
 				   const int *exp,
-				   res2_pair *&result) const
+				   res2_pair *&result)
 {
   // Find all the posible matches, use some criterion for finding the best...
   res2_pair *p;
@@ -1082,7 +1080,7 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
   if (bb.length() == 0) return 0;
   result = reinterpret_cast<res2_pair *>((bb[0]->basis_ptr()));
   // Now search through, and find the best one.  If only one, just return it.
-  if (gbTrace >= 5)
+  if (M2_gbTrace >= 5)
     if (mi->length() > 1)
       {
 	buffer o;
@@ -1144,6 +1142,9 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
      // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
 
   res2_pair *q;
@@ -1151,7 +1152,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
   //  Bag *b;
 
   int count = 0;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
   
   while (f != NULL)
@@ -1176,7 +1177,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 	  pivot = lastterm;
 	  if (q->syz_type == SYZ2_S_PAIR || q->syz_type == SYZ2_MAYBE_MINIMAL) 
 	    {
-	      if (gbTrace >= 4)
+	      if (M2_gbTrace >= 4)
 		{
 		  buffer o;
 		  o << count;
@@ -1197,7 +1198,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 	  R->remove(tmp);
 	}
     }
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1214,6 +1215,9 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
      // 'p' is just here for auto-reduction...
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
   res2term head;
   res2term *red = &head;
@@ -1222,7 +1226,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
   ring_elem rg;
 
   int count = 0;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
 
   while (f != NULL)
@@ -1296,7 +1300,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
     }
   red->next = NULL;
   f = head.next;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1314,6 +1318,9 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
      // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
   res2term head;
   res2term *red = &head;
@@ -1328,7 +1335,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
   //  Bag *b;
 
   int count = 0;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
@@ -1385,7 +1392,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
     }
   red->next = NULL;
   f = head.next;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1403,6 +1410,9 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
      // 'p' is just here for auto-reduction...
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   res2term *lastterm = fsyz;
   while (lastterm->next != NULL) lastterm = lastterm->next;
 
@@ -1413,7 +1423,7 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
   ring_elem rg;
 
   int count = total_reduce_count;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
 
   while (f != NULL)
@@ -1473,7 +1483,7 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
     }
   red->next = NULL;
   f = head.next;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << (total_reduce_count - count);
@@ -1489,13 +1499,16 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
      // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
 
   res2_pair *q;
   ring_elem rg;
 
   int count = 0;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
   
   while (f != NULL)
@@ -1528,7 +1541,7 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
 	  R->remove(tmp);
 	}
     }
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1540,6 +1553,9 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
 res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
   res2_pair *q;
   ring_elem rg;
@@ -1550,7 +1566,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
   res2term *lead;
 
   int count = 0;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
@@ -1588,7 +1604,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
 	}
     }
   f = NULL;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1637,7 +1653,7 @@ void res2_comp::handle_pair(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (gbTrace >= 2) emit_wrapped("z");
+      if (M2_gbTrace >= 2) emit_wrapped("z");
       if (projdim == 0) projdim = 1;
       nminimal++;
       return;
@@ -1680,7 +1696,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	  if (p->level > projdim)
 	    projdim = p->level;
 	}
-      if (gbTrace >= 2) emit_wrapped("z");
+      if (M2_gbTrace >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1703,7 +1719,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	{
 	}
 
-      if (gbTrace >= 2) emit_wrapped("m");
+      if (M2_gbTrace >= 2) emit_wrapped("m");
     }
 }
 
@@ -1716,7 +1732,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (gbTrace >= 2) emit_wrapped("z");
+      if (M2_gbTrace >= 2) emit_wrapped("z");
       return;
     }
 
@@ -1734,7 +1750,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (f == NULL)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (gbTrace >= 2) emit_wrapped("z");
+      if (M2_gbTrace >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1759,7 +1775,7 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
       if (p->syz_type != SYZ2_NOT_NEEDED)
 	{
 	  p->syz_type = SYZ2_MINIMAL;
-	  if (gbTrace >= 2) emit_wrapped("z");
+	  if (M2_gbTrace >= 2) emit_wrapped("z");
 	  nminimal++;
 	}
       return;
@@ -1778,18 +1794,18 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 	  p->syz_type = SYZ2_MINIMAL;
 	  nminimal++;
 	  resn[p->level]->nminimal++;
-	  if (gbTrace >= 2) emit_wrapped("z");
+	  if (M2_gbTrace >= 2) emit_wrapped("z");
 	}
       else
 	{
-	  if (gbTrace >= 2) emit_wrapped("o");
+	  if (M2_gbTrace >= 2) emit_wrapped("o");
 	}
     }
   else 
     {
       p->syz_type = SYZ2_NOT_MINIMAL;
       q->syz_type = SYZ2_NOT_NEEDED;
-      if (gbTrace >= 2) emit_wrapped("m");
+      if (M2_gbTrace >= 2) emit_wrapped("m");
     }
 }
 
@@ -1954,7 +1970,7 @@ void res2_comp::text_out(buffer &o, const res2_pair *p) const
 #endif
   M->elem_text_out(o, p->syz->monom);
   o << " [" << R->n_terms(p->syz) << "] ";
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       // Display the vector
       o << " syz: ";
@@ -1982,7 +1998,7 @@ void res2_comp::text_out(buffer &o) const
   o << "--- (Lower bounds of) the minimal betti numbers ----------" << newline;
   a = betti_minimal();
   betti_display(o, a);
-  if (gbTrace >= 1)
+  if (M2_gbTrace >= 1)
     {
       o << "-- #Reduction steps = " << total_reduce_count << "--" 
 	   << " ones " << n_ones 
@@ -1994,7 +2010,7 @@ void res2_comp::text_out(buffer &o) const
     }
 
   // If the printlevel is high enough, display each element
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     for (int lev=0; lev<resn.length(); lev++)
       {
 	if (resn[lev]->pairs == NULL) continue;
@@ -2065,6 +2081,7 @@ void res2_comp::reduce_minimal(int x, res2term *&f,
 			       array<res2term *> &stripped) const
 {
   // Reduce any components of 'f' that correspond to non minimal syzygies.
+  monomial MINIMAL_mon = ALLOCATE_MONOMIAL(monom_size);
   const res2term *tm;
 
   for (int i=x-1; i>=0; i--)

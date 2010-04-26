@@ -75,7 +75,7 @@ bool GBWalker::stop_conditions_ok()
 GBComputation * GBWalker::make_gb(const Matrix *M) const
   // return the GB of g, keep = 0 or 1.
 {
-  M2_arrayint weights = makearrayint(R->n_vars());
+  M2_arrayint weights = M2_makearrayint(R->n_vars());
   for (int i=0; i<R->n_vars(); i++) weights->array[i] = 1;
 
   GBComputation *G0 = GBComputation::choose_gb(M,
@@ -184,57 +184,57 @@ const PolynomialRing *GBWalker::get_ring()
   return 0; 
 }
 
-ComputationOrNull *GBWalker::set_hilbert_function(const RingElement *h)
+Computation /* or null */ *GBWalker::set_hilbert_function(const RingElement *h)
 {
   // MES: TO WRITE
   return 0;
 }
 
-const MatrixOrNull *GBWalker::get_gb()
+const Matrix /* or null */ *GBWalker::get_gb()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const MatrixOrNull *GBWalker::get_mingens()
+const Matrix /* or null */ *GBWalker::get_mingens()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const MatrixOrNull *GBWalker::get_change()
+const Matrix /* or null */ *GBWalker::get_change()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const MatrixOrNull *GBWalker::get_syzygies()
+const Matrix /* or null */ *GBWalker::get_syzygies()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const MatrixOrNull *GBWalker::get_initial(int nparts)
+const Matrix /* or null */ *GBWalker::get_initial(int nparts)
 {
   // MES: TO WRITE
   return 0;
 }
 
-const MatrixOrNull *GBWalker::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GBWalker::get_parallel_lead_terms(M2_arrayint w)
 {
   // MES: TO WRITE
   return 0;
 }
 
-const MatrixOrNull *GBWalker::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *GBWalker::matrix_remainder(const Matrix *m)
 {
   // MES: TO WRITE
   return 0;
 }
 
 M2_bool GBWalker::matrix_lift(const Matrix *m,
-		 MatrixOrNull **result_remainder,
-		 MatrixOrNull **result_quotient
+		 const Matrix /* or null */ **result_remainder,
+		 const Matrix /* or null */ **result_quotient
 		 )
 {
   // MES: TO WRITE, should this be written?
@@ -252,14 +252,14 @@ int GBWalker::contains(const Matrix *m)
 
 void GBWalker::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
-     gbTrace value */
+     M2_gbTrace value */
 {
   // MES: TO WRITE
 }
 
 void GBWalker::show() const
   /* This displays statistical information, and depends on the
-     gbTrace value */
+     M2_gbTrace value */
 {
   // MES: TO WRITE
 }

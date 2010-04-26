@@ -1,7 +1,49 @@
-diff -ur --exclude=configure tmp/factory/newdelete.cc factory/newdelete.cc
---- tmp/factory/newdelete.cc	2008-10-28 04:16:24.000000000 -0500
-+++ factory/newdelete.cc	2008-10-30 13:28:52.000000000 -0500
-@@ -1,6 +1,8 @@
+diff -ur --exclude=configure /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/fac_cantzass.cc factory/fac_cantzass.cc
+--- /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/fac_cantzass.cc	2005-12-09 02:35:38.000000000 -0600
++++ factory/fac_cantzass.cc	2010-02-02 08:41:56.000000000 -0600
+@@ -5,6 +5,10 @@
+ 
+ #include "cf_gmp.h"
+ 
++#ifndef mpz_mdivmod_ui
++#define mpz_mdivmod_ui(q,r,n,d) (((r) == 0) ? mpz_fdiv_q_ui (q,n,d) : mpz_fdiv_qr_ui (q,r,n,d))
++#endif
++
+ #include "assert.h"
+ 
+ #include "cf_defs.h"
+diff -ur --exclude=configure /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/int_int.cc factory/int_int.cc
+--- /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/int_int.cc	2008-01-08 08:23:35.000000000 -0600
++++ factory/int_int.cc	2010-02-02 08:43:13.000000000 -0600
+@@ -8,6 +8,9 @@
+ #include "int_int.h"
+ #include "int_rat.h"
+ #include "cf_gmp.h"
++
++#define mpz_mmod_ui(r,n,d) (((r) == 0) ? mpz_fdiv_ui (n,d) : mpz_fdiv_r_ui (r,n,d))
++
+ #include "gmpext.h"
+ 
+ #ifdef HAVE_OMALLOC
+diff -ur --exclude=configure /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/int_pp.cc factory/int_pp.cc
+--- /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/int_pp.cc	2006-05-15 04:03:06.000000000 -0500
++++ factory/int_pp.cc	2010-02-02 08:43:34.000000000 -0600
+@@ -11,6 +11,8 @@
+ #include "cf_factory.h"
+ #include "imm.h"
+ 
++#define mpz_mmod_ui(r,n,d) (((r) == 0) ? mpz_fdiv_ui (n,d) : mpz_fdiv_r_ui (r,n,d))
++
+ MP_INT InternalPrimePower::primepow;
+ MP_INT InternalPrimePower::primepowhalf;
+ int InternalPrimePower::prime;
+diff -ur --exclude=configure /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/newdelete.cc factory/newdelete.cc
+--- /Users/dan/src/M2/development/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/newdelete.cc	2008-10-28 04:16:24.000000000 -0500
++++ factory/newdelete.cc	2010-02-01 21:15:13.000000000 -0600
+@@ -1,6 +1,11 @@
++#if 0
++
++
  /* emacs edit mode for this file is -*- C++ -*- */
  /* $Id: newdelete.cc,v 1.3 2008/10/25 11:04:06 Singular Exp $ */
  
@@ -10,3 +52,10 @@ diff -ur --exclude=configure tmp/factory/newdelete.cc factory/newdelete.cc
  #include <config.h>
  
  #include "assert.h"
+@@ -93,3 +98,6 @@
+ }
+ 
+ #endif /* USE_OLD_MEMMAN */
++
++
++#endif

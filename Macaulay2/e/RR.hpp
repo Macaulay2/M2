@@ -46,7 +46,7 @@ public:
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
-  virtual bool from_BigReal(M2_RRR a, ring_elem &result) const;  
+  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;  
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
@@ -76,7 +76,7 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, const ring_elem f, bool p_one, bool p_plus, bool p_parens) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };

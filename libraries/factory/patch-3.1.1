@@ -1,0 +1,75 @@
+diff -ur --exclude=configure /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/assert.h factory/assert.h
+--- /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/assert.h	2009-11-02 04:12:22.000000000 -0600
++++ factory/assert.h	2010-03-12 13:11:55.000000000 -0600
+@@ -42,6 +42,9 @@
+ #include <stdlib.h>
+ #endif
+ 
++/* need a declaration of "abort" */
++#include <stdlib.h>
++
+ /* {{{ permanent macro definitions */
+ #ifndef __GNUC__
+ #define __ASSERT(expression, message, file, line) \
+diff -ur --exclude=configure /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/fac_cantzass.cc factory/fac_cantzass.cc
+--- /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/fac_cantzass.cc	2009-11-02 04:12:22.000000000 -0600
++++ factory/fac_cantzass.cc	2010-03-12 13:17:27.000000000 -0600
+@@ -4,6 +4,10 @@
+ #include <config.h>
+ 
+ #include "cf_gmp.h"
++ 
++#ifndef mpz_mdivmod_ui
++#define mpz_mdivmod_ui(q,r,n,d) (((r) == 0) ? mpz_fdiv_q_ui (q,n,d) : mpz_fdiv_qr_ui (q,r,n,d))
++#endif
+ 
+ #include "assert.h"
+ 
+diff -ur --exclude=configure /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/gfops.cc factory/gfops.cc
+--- /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/gfops.cc	2009-11-02 04:12:22.000000000 -0600
++++ factory/gfops.cc	2010-03-12 13:20:21.000000000 -0600
+@@ -183,7 +183,7 @@
+ 
+ void gf_setcharacteristic ( int p, int n, char name )
+ {
+-    ASSERT( gf_valid_combination( p, n ), "illegal immediate GF(q)" );
++//    ASSERT( gf_valid_combination( p, n ), "illegal immediate GF(q)" );
+     gf_name = name;
+     gf_get_table( p, n );
+ }
+diff -ur --exclude=configure /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/int_int.cc factory/int_int.cc
+--- /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/int_int.cc	2009-11-02 04:12:22.000000000 -0600
++++ factory/int_int.cc	2010-03-12 13:20:46.000000000 -0600
+@@ -518,6 +518,8 @@
+   return (int)mpz_get_si( &thempi );
+ }
+ 
++#define mpz_mmod_ui(r,n,d) (((r) == 0) ? mpz_fdiv_ui (n,d) : mpz_fdiv_r_ui (r,n,d))
++
+ int InternalInteger::intmod( int p ) const
+ {
+   return (int)mpz_mmod_ui( 0, &thempi, (unsigned long)p );
+diff -ur --exclude=configure /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/int_pp.cc factory/int_pp.cc
+--- /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/int_pp.cc	2009-11-02 04:12:22.000000000 -0600
++++ factory/int_pp.cc	2010-03-12 13:21:24.000000000 -0600
+@@ -400,6 +400,8 @@
+   return (int)mpz_get_si( &thempi );
+ }
+ 
++#define mpz_mmod_ui(r,n,d) (((r) == 0) ? mpz_fdiv_ui (n,d) : mpz_fdiv_r_ui (r,n,d))
++
+ int
+ InternalPrimePower::intmod( int p ) const
+ {
+diff -ur --exclude=configure /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/variable.cc factory/variable.cc
+--- /home/dan/src/M2/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/factory/tmp/factory/variable.cc	2009-11-02 04:12:22.000000000 -0600
++++ factory/variable.cc	2010-03-12 13:21:51.000000000 -0600
+@@ -169,7 +169,7 @@
+ 
+ Variable rootOf( const CanonicalForm & mipo, char name )
+ {
+-    ASSERT( legal_mipo( mipo ), "not a legal extension" );
++  // ASSERT( legal_mipo( mipo ), "not a legal extension" );
+ 
+     int l;
+     if ( var_names_ext == 0 ) {

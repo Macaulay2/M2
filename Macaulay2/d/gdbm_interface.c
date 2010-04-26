@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <gdbm.h>
-#include "M2types.h"
+#include <stdlib.h>
 #include "M2mem.h"
 
 #define TRUE 1
@@ -22,13 +22,15 @@ void close_all_dbms(void) {
 	  }
      }
 
+#include "M2-exports.h"
+
 int system_dbmopen(M2_string filename, M2_bool mutable) {
      int gdbm_handle;
      int flags = mutable ? GDBM_WRCREAT : GDBM_READER;
      int mode = 0666;
-     char *FileName = tocharstar(filename);
+     char *FileName = M2_tocharstar(filename);
      GDBM_FILE f = gdbm_open(FileName, 0, flags, mode, NULL);
-     GC_FREE(FileName);
+     freemem(FileName);
      if (f == NULL) return ERROR;
      if (numfiles == 0) {
 	  int i;
@@ -75,6 +77,7 @@ static M2_string fromdatum(datum y) {
      x = (M2_string)getmem(sizeofarray(x,y.dsize));
      x->len = y.dsize;
      memcpy(x->array, y.dptr, y.dsize);
+     free(y.dptr);
      return x;
      }
 
@@ -117,5 +120,11 @@ int system_dbmreorganize(int handle) {
      }
 
 M2_string system_dbmstrerror(void) {
-     return tostring(gdbm_strerror(gdbm_errno));
+     return M2_tostring(gdbm_strerror(gdbm_errno));
      }
+
+/*
+ Local Variables:
+ compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d gdbm-interface.o "
+ End:
+*/

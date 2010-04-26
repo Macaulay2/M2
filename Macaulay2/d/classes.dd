@@ -1,0 +1,172 @@
+--		Copyright 1994,2010 by Daniel R. Grayson
+use common;
+
+setupconst("Type",Expr(typeClass));
+setupconst("Thing",Expr(thingClass));
+setupconst("HashTable",Expr(hashTableClass));
+setupconst("Dictionary",Expr(dictionaryClass));
+setupconst("LocalDictionary",Expr(localDictionaryClass));
+setupconst("GlobalDictionary",Expr(globalDictionaryClass));
+setupconst("Pseudocode",Expr(codeClass));
+setupconst("FunctionBody",Expr(functionBodyClass));
+setupconst("SymbolBody",Expr(symbolBodyClass));
+setupconst("CompiledFunctionBody",Expr(compiledFunctionBodyClass));
+setupconst("MutableHashTable",Expr(mutableHashTableClass));
+setupconst("CacheTable",Expr(cacheTableClass));
+setupconst("BasicList",Expr(basicListClass));
+setupconst("List",Expr(listClass));
+setupconst("MutableList",Expr(mutableListClass));
+setupconst("ZZ",Expr(ZZClass));
+setupconst("QQ",Expr(QQClass));
+setupconst("RingFamily",Expr(ringFamilyClass));
+setupconst("InexactFieldFamily",Expr(inexactNumberTypeClass));
+setupconst("RR",Expr(RRClass));
+setupconst("CC",Expr(CCClass));
+setupconst("RingElement",Expr(ringElementClass));
+setupconst("Number",Expr(numberClass));
+setupconst("InexactNumber",Expr(inexactNumberClass));
+setupconst("RawObject",Expr(rawObjectClass));
+setupconst("RawMonomial",Expr(rawMonomialClass));
+setupconst("RawMonomialOrdering",Expr(rawMonomialOrderingClass));
+setupconst("RawMonoid",Expr(rawMonoidClass));
+setupconst("RawRing",Expr(rawRingClass));
+setupconst("RawFreeModule",Expr(rawFreeModuleClass));
+setupconst("RawMatrix",Expr(rawMatrixClass));
+setupconst("RawMutableMatrix",Expr(rawMutableMatrixClass));
+setupconst("RawStraightLineProgram",Expr(rawStraightLineProgramClass));
+setupconst("RawPathTracker",Expr(rawPathTrackerClass));
+setupconst("RawComputation",Expr(rawComputationClass));
+setupconst("RawRingElement",Expr(rawRingElementClass));
+setupconst("RawRingMap",Expr(rawRingMapClass));
+setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
+setupconst("MysqlConnection",Expr(mysqlConnectionClass));
+setupconst("PythonObject",Expr(pythonObjectClass));
+setupconst("LibxmlNode",Expr(xmlNodeClass));
+setupconst("LibxmlAttribute",Expr(xmlAttrClass));
+setupconst("MysqlField",Expr(mysqlFieldClass));
+setupconst("MysqlResult",Expr(mysqlResultClass));
+setupconst("File",Expr(fileClass));
+setupconst("String",Expr(stringClass));
+setupconst("Function",Expr(functionClass));
+setupconst("FunctionClosure",Expr(functionClosureClass));
+setupconst("CompiledFunction",Expr(compiledFunctionClass));
+setupconst("CompiledFunctionClosure",Expr(compiledFunctionClosureClass));
+setupconst("Symbol",Expr(symbolClass));
+setupconst("Keyword",Expr(keywordClass));
+setupconst("Time",Expr(timeClass));
+setupconst("Option",Expr(optionClass));
+setupconst("OptionTable",Expr(optionTableClass));
+setupconst("Net",Expr(netClass));
+setupconst("NetFile",Expr(netFileClass));
+setupconst("true",True);
+setupconst("false",False);
+setupconst("null",nullE);
+setupconst("Boolean",Expr(booleanClass));
+setupconst("Database",Expr(dbClass));
+setupconst("Sequence",Expr(sequenceClass));
+setupconst("VisibleList",Expr(visibleListClass));
+setupconst("Array",Expr(arrayClass));
+setupconst("Ring",Expr(ringClass));
+setupconst("Nothing",Expr(nothingClass));
+setupconst("Thread",Expr(threadClass));
+
+export ancestor(o:HashTable,p:HashTable):bool := (
+     while true do (
+	  if o == p then return true;
+	  if o == thingClass then return false;
+	  o = o.parent;
+	  ));
+
+ancestorfun(e:Expr):Expr := (
+     when e
+     is args:Sequence do (
+	  x := args.1;					    -- args reversed
+	  y := args.0;
+	  if x==y then return True;
+	  when x
+	  is xx:HashTable do (
+	       when y 
+	       is yy:HashTable do if ancestor(xx,yy) then True else False
+	       else WrongArg(1,"a hash table"))
+	  else WrongArg(2,"a hash table"))
+     else WrongNumArgs(2));
+setupfun("ancestor",ancestorfun);
+
+export Parent(e:Expr):HashTable := (
+     when e
+     is obj:HashTable do obj.parent
+     is s:SpecialExpr do Parent(s.e)
+     else nothingClass);
+
+export parentfun(e:Expr):Expr := Expr(Parent(e));
+setupfun("parent",parentfun);
+
+
+export Class(e:Expr):HashTable := (
+     when e 
+     is obj:HashTable do obj.Class
+     is x:List do x.Class
+     is ZZcell do ZZClass
+     is CodeClosure do codeClass
+     is pythonObjectCell do pythonObjectClass
+     is xmlNodeCell do xmlNodeClass
+     is ThreadCell do threadClass
+     is xmlAttrCell do xmlAttrClass
+     is MysqlConnectionWrapper do mysqlConnectionClass
+     is MysqlResultWrapper do mysqlResultClass
+     is MysqlFieldWrapper do mysqlFieldClass
+     is functionCode do functionBodyClass
+     is CompiledFunctionBody do compiledFunctionBodyClass
+     is QQcell do QQClass
+     is file do fileClass
+     is dc:DictionaryClosure do if isglobaldict(dc.dictionary) then globalDictionaryClass else localDictionaryClass
+     is stringCell do stringClass
+     is FunctionClosure do functionClosureClass
+     is Net do netClass
+     is NetFile do netFileClass
+     is Error do errorClass
+     is Sequence do sequenceClass
+     is CompiledFunction do compiledFunctionClass
+     is CompiledFunctionClosure do compiledFunctionClosureClass
+     is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
+     is s:SymbolBody do symbolBodyClass
+     is RRcell do RRClass
+     is CCcell do CCClass
+     is RawComputationCell do rawComputationClass
+     is Nothing do nothingClass
+     is Database do dbClass
+     is e:SpecialExpr do e.Class
+     is Boolean do booleanClass
+     is RawMonomialCell do rawMonomialClass
+     is RawMonomialOrderingCell do rawMonomialOrderingClass
+     is RawMonoidCell do rawMonoidClass
+     is RawMonomialIdealCell do rawMonomialIdealClass
+     is RawRingCell do rawRingClass
+     is RawRingElementCell do rawRingElementClass
+     is RawRingMapCell do rawRingMapClass
+     is RawFreeModuleCell do rawFreeModuleClass
+     is RawMatrixCell do rawMatrixClass
+     is RawMutableMatrixCell do rawMutableMatrixClass
+     is RawStraightLineProgramCell do rawStraightLineProgramClass
+     is RawPathTrackerCell do rawPathTrackerClass
+     );
+classfun(e:Expr):Expr := Expr(Class(e));
+setupfun("class",classfun);
+
+export commonAncestor(x:HashTable,y:HashTable):HashTable := (
+     if x == y then return x;
+     t := x;
+     while t != thingClass do ( t.numEntries = - 1 - t.numEntries; t = t.parent; );
+     a := thingClass;
+     t = y;
+     while t != thingClass do (
+	  if t.numEntries < 0 then ( a = t; break; );
+	  t = t.parent;
+     	  );
+     t = x;
+     while t != thingClass do ( t.numEntries = - 1 - t.numEntries; t = t.parent; );
+     a);
+
+-- Local Variables:
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d classes.o "
+-- End:

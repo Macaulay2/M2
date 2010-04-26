@@ -1,0 +1,227 @@
+--		Copyright 1994,2010 by Daniel R. Grayson
+use util;
+
+header "
+  #include <engine.h>
+  #include <monomial.hpp>
+";
+
+equal(lhs:Expr,rhs:Expr):Expr;
+
+equal(x:HashTable,y:HashTable):Expr := (
+     if x == y then return True;
+     if x.hash != y.hash then return False;
+     if x.Class != y.Class || x.parent != y.parent then return False;
+     if x.hash == 0 && x.Class == cacheTableClass then return True; -- cache tables have hash code 0
+     if x.Mutable || y.Mutable then return False;
+     if x.numEntries != y.numEntries || length(x.table) != length(y.table) then return False;
+     foreach a at i in x.table do (
+	  p := a;
+	  q := y.table.i;
+	  if p.next == q.next then (
+	       -- p.next and q.next must both be bucketEnd
+	       if p.hash != q.hash 
+	       || p.key != q.key && False == equal(p.key,q.key) 
+	       || p.value != q.value && False == equal(p.value,q.value) 
+	       then return False;)
+	  else (
+	       plen := 0; pp := p; while pp != pp.next do (pp=pp.next; plen=plen+1);
+	       qlen := 0; qq := q; while qq != qq.next do (qq=qq.next; qlen=qlen+1);
+	       if plen != qlen then return False;
+	       while true do (
+		    if p == p.next then break;
+		    z := q;
+		    while true do (
+			 if z.key == p.key
+			 || z.hash == p.hash && equal(z.key,p.key)==True
+			 then (
+			      if z.value == p.value
+			      || True == equal(z.value, p.value)
+			      then break
+			      else return False;
+			      );
+			 z = z.next;
+			 if z == z.next then return False;
+			 );
+		    p = p.next;
+		    )));
+     True);
+
+export equal(lhs:Expr,rhs:Expr):Expr := (
+     if lhs == rhs then True else 
+     when lhs
+     is Error do lhs
+     is x:List do (
+	  when rhs
+	  is y:List do (
+     	       if x.hash != y.hash
+	       || x.Mutable 
+	       || y.Mutable
+	       || length(x.v) != length(y.v)
+	       || x.Class != y.Class && False == equal(x.Class,y.Class) 
+	       then False
+	       else (
+		    foreach z at i in x.v do (
+			 if equal(z,y.v.i) == False then return False;
+			 );
+		    True ) )
+	  else False)
+     is x:ZZcell do (
+	  when rhs 
+	  is y:ZZcell do (
+	       if x.v === y.v then True else False
+	       )
+	  -- other cases needed soon
+	  else False)
+     is x:HashTable do (
+	  when rhs
+	  is y:HashTable do equal(x,y)
+	  else False)		    
+     is x:stringCell do (
+	  when rhs 
+	  is y:stringCell do if x.v === y.v then True else False
+	  else False
+	  )
+     is x:Net do (
+	  when rhs
+	  is y:Net do if x === y then True else False
+	  else False)
+     is x:Sequence do (
+	  when rhs
+	  is y:Sequence do (
+	       if length(x) != length(y)
+	       then False
+	       else (
+		    foreach z at i in x do (
+			 if equal(z,y.i) == False then return False;
+			 );
+		    True))
+	  else False)
+     is Boolean do False
+     is Nothing do False
+     is file do False
+     is CompiledFunction do False
+     is CompiledFunctionClosure do False
+     is a:DictionaryClosure do (
+	  when rhs
+	  is b:DictionaryClosure do (
+	       if a.frame == b.frame
+	       && a.dictionary == b.dictionary		    -- strictly speaking, this part is redundant
+	       then True else False
+	       )
+	  else False)
+     is x:QQcell do (
+	  when rhs
+	  is y:QQcell do (
+	       if x.v === y.v then True else False
+	       )
+	  -- other cases needed soon
+	  else False)
+     is c:CodeClosure do (
+	  when rhs
+	  is d:CodeClosure do (
+	       if c.frame == d.frame
+	       && c.code == d.code
+	       then True else False)
+	  else False
+	  )
+     is x:RRcell do (
+	  when rhs
+	  is y:RRcell do (
+	       if strictequality(x.v,y.v) then True else False
+	       )
+	  else False)
+     is x:CCcell do (
+	  when rhs
+	  is y:CCcell do (
+	       if strictequality(x.v,y.v) then True else False
+	       )
+	  else False)
+     is x:SymbolClosure do (
+	  when rhs 
+	  is y:SymbolClosure do (
+       	       if x === y
+	       then True else False
+	       )
+	  else False
+	  )
+     is x:SymbolBody do (
+	  when rhs is y:SymbolBody do if x.symbol == y.symbol then True else False
+	  else False)
+     is FunctionClosure do False
+     is NetFile do False
+     is RawMonomialOrderingCell do False
+     is RawMonoidCell do False
+     is x:RawMonomialCell do (
+	  when rhs
+	  is y:RawMonomialCell do (
+	       if Ccode(bool, "(",x.p,")->is_equal(*(",y.p,"))")
+	       then True else False
+	       )
+	  else False
+	  )
+     is RawRingCell do False
+     is x:RawMonomialIdealCell do (
+	  when rhs
+	  is y:RawMonomialIdealCell do (
+	       r := Ccode(int, "IM2_MonomialIdeal_is_equal(",x.p,",",y.p,")");
+	       if r == -1 then engineErrorMessage() else toExpr(r == 1))
+	  else False
+	  )
+     is x:RawRingElementCell do (
+	  when rhs
+	  is y:RawRingElementCell do (
+	       if Ccode(bool, "IM2_RingElement_is_equal(",x.p,",",y.p,")")
+	       then True else False
+	       )
+	  else False
+	  )
+     is x:RawFreeModuleCell do (
+	  when rhs
+	  is y:RawFreeModuleCell do (
+	       if Ccode(bool, "IM2_FreeModule_is_equal(",x.p,",",y.p,")")
+	       then True else False
+	       )
+	  else False
+	  )
+     is x:RawMatrixCell do (
+	  when rhs
+	  is y:RawMatrixCell do toExpr(Ccode(bool, "IM2_Matrix_is_equal(",x.p,",",y.p,")"))
+	  else False
+	  )
+     is x:MysqlConnectionWrapper do (
+	  when rhs
+	  is y:MysqlConnectionWrapper do if x.mysql == y.mysql then True else False
+	  else False
+	  )
+     is MysqlFieldWrapper do False
+     is MysqlResultWrapper do False
+     is RawMutableMatrixCell do False			    -- mutable matrices may not stay equal, so they aren't equal
+     is RawStraightLineProgramCell do False
+     is RawPathTrackerCell do False
+     is x:RawComputationCell do (
+	  when rhs
+	  is y:RawComputationCell do (
+	       False
+	       -- toExpr(Ccode(bool, "IM2_GB_is_equal(",x,",",y,")"))
+	       )
+	  else False
+	  )
+     is functionCode do False
+     is f:CompiledFunctionBody do when rhs is g:CompiledFunctionBody do if f.fn == g.fn then True else False else False
+     is s:SpecialExpr do when rhs is t:SpecialExpr do if s.Class == t.Class && equal(s.e,t.e) == True then True else False else False
+     is x:RawRingMapCell do (
+	  when rhs
+	  is y:RawRingMapCell do toExpr(Ccode(bool, "IM2_RingMap_is_equal(",x.p,",",y.p,")"))
+	  else False
+	  )
+     is Database do False
+     is pythonObjectCell do False
+     is xmlNodeCell do False				    -- unimplemented
+     is xmlAttrCell do False				    -- unimplemented
+     is x:ThreadCell do False
+     );
+
+-- Local Variables:
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d equality.o "
+-- End:

@@ -3,9 +3,6 @@
 #include "det.hpp"
 #include "text-io.hpp"
 
-extern char system_interruptedFlag;
-extern int gbTrace;
-
 DetComputation::DetComputation(const Matrix *M0, int p0,
 			       bool do_exterior0,
 			       int strategy0)
@@ -161,13 +158,13 @@ int DetComputation::calc(int nsteps)
   for (;;)
     {
       int r = step();
-      if (gbTrace >= 3)
+      if (M2_gbTrace >= 3)
 	emit_wrapped(".");
       if (r == COMP_DONE)
 	return COMP_DONE;
       if (--nsteps == 0)
 	return COMP_DONE_STEPS;
-      if (system_interruptedFlag)
+      if (test_Field(interrupts_interruptedFlag))
 	return COMP_INTERRUPTED;
     }
 }
@@ -310,7 +307,7 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p0)
   return answer;
 }
 
-MatrixOrNull *Matrix::exterior(int p,int strategy) const
+Matrix /* or null */ *Matrix::exterior(int p,int strategy) const
 {
   if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)
     {
@@ -325,7 +322,7 @@ MatrixOrNull *Matrix::exterior(int p,int strategy) const
   return result;
 }
 
-MatrixOrNull *Matrix::minors(int p,int strategy) const
+Matrix /* or null */ *Matrix::minors(int p,int strategy) const
 {
   if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)
     {
@@ -339,11 +336,11 @@ MatrixOrNull *Matrix::minors(int p,int strategy) const
   return result;
 }
 
-MatrixOrNull *Matrix::minors(int p,
+Matrix /* or null */ *Matrix::minors(int p,
 		       int strategy, 
 		       int n_to_compute, // -1 means all
-		       M2_arrayint_OrNull first_row, // possibly NULL
-		       M2_arrayint_OrNull first_col // possibly NULL
+		       M2_arrayintOrNull first_row, // possibly NULL
+		       M2_arrayintOrNull first_col // possibly NULL
 		       ) const
 {
   if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)

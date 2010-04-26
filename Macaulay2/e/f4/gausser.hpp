@@ -6,6 +6,7 @@
 #include "../coeffrings.hpp"
 
 typedef void *F4CoefficientArray;
+class F4Mem;
 
 struct dense_row : public our_new_delete {
   int len; // coeffs is an array 0..len-1
@@ -18,12 +19,13 @@ class Gausser : public our_new_delete
   const Ring *K;
 
   CoefficientRingZZp *Kp;
+  F4Mem *Mem;
 
-  Gausser(const Z_mod *K0);
+  Gausser(const Z_mod *K0, F4Mem *Mem0);
 public:
   ~Gausser() {}
 
-  static Gausser *newGausser(const Ring *K);
+  static Gausser *newGausser(const Ring *K, F4Mem *Mem0);
 
   const Ring * get_ring() const { return K; }
 
@@ -54,7 +56,7 @@ public:
 
   // evaluation of multivariate poly's or fcn's.
 
-  void dense_row_allocate(dense_row &r, long nelems) const;
+  void dense_row_allocate(dense_row &r, int nelems) const;
   // create a row of 0's (over K).
 
   void dense_row_clear(dense_row &r, int first, int last) const;
@@ -90,6 +92,9 @@ public:
   {
     return Kp->to_int(f);
   }
+
+  mutable long n_dense_row_cancel;
+  mutable long n_subtract_multiple;
 };
 
 #endif

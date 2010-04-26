@@ -1,5 +1,368 @@
-The code generated for 
+To do:
 
-     b := new Sequence len n do (
+    Give error message if a function parameter is named something such as "errno", etc.
 
-does not check n to see whether it's nonnegative!
+    -----------------------------------------------------------------------------
+
+    Add a new operator x.%i that translates to x->array[(uint)i % x->len], so
+    we can access arrays cyclically with no bounds checking.  That will speed up
+    hash table access.
+
+    -----------------------------------------------------------------------------
+
+    Use GC_remove_roots at thread termination.
+
+    Add a thread local variable so the *__thread_prepare() routines get run
+    just once -- it can be surprising for variables to be initialized more than
+    once, as they are now.
+
+    Stop using GC_add_roots for registering thread local memory with gc (this
+    should be a command line option for scc1.)
+
+    We could just wait until gc knows how to find the thread local memory.
+
+    Or, instead, we could put a copy of any pointer stored in thread local memory
+    on the stack.  Do that by changing code such as
+	static void tmp_(){
+	  errorreturn = tokens_nullE;
+	  GC_add_roots(&(errorreturn),(char *)&(errorreturn)+sizeof(errorreturn));
+	  }
+    to
+	static void tmp_(char **tls){
+	  errorreturnpointer = (tokens_Expr*)(*tls);
+	  tls += sizeof(tokens_Expr*);
+	  *errorreturnpointer = tokens_nullE;
+	  }
+    The translator precomputes the size of the tls.  Change
+    	void evaluate__prepare(){
+    to
+    	void evaluate__prepare(char **tls){
+    That means evaluate__prepare can no longer be a constructor, and we have to make
+    sure that all of them get called.
+    In M2lib.c change
+         interp__prepare();
+    to
+    	 char *tls = (char *)alloca(TLSSIZE), *tls_tmp = tls;
+         interp__prepare(&tls_tmp);
+    and move it somewhere so it can get called by the thread startup routine in 
+    pthread.d, and so it can call the real startup routine, leaving the tls on the stack.
+    Once we do that, then for Darwin we can use pthread_getspecific, since __thread
+    isn't implemented.
+
+    No, better than the translator computing the total size of the tls, is
+    for each file's thread preparation routine to take what it needs with alloca,
+    and then to *call* another thread preparation routine.  Eventually, when they've 
+    all been called, the last one would call the real thread startup routine.  This
+    might require the thread startup routines to be linearly ordered.
+
+    Alternatively, there could be two thread startup routines, one that
+    returns the number of bytes of tls needed by it and all the others it
+    knows about, and one that takes its share of memory from an area near
+    the top of the stack.
+
+    -------------------------------------------------------------------------
+
+    The code generated for 
+	 b := new Sequence len n do (
+    should check n to see whether it's nonnegative.
+
+=============================================================================
+
+Various keywords in C++ can not be used as member names of structs, nor as
+identifiers: mutable, protected, operator, class, ...  .  We should give an
+error if used as a member name or used a function parameter, and silently
+renumber if used as a local variable, or as an unexported/unimported variable,
+because the error message from g++ are inscrutable!
+
+-----------------------------------------------------------------------------
+
+This non-safety has been fixed:
+
+	ttt := {i:int};
+	ggg():ttt;
+	xxx := ggg();
+	ggg():ttt := xxx;
+
+It now gives this pair of error messages :
+
+    foo.d:3:9: assignment while previous deferred definition active
+    foo.d:2:14: warning: previous deferred definition
+
+-----------------------------------------------------------------------------
+change log
+
+	the translator now emits makefiles named *.dep to show
+		the dependence of *.d files on *.sig files.
+	always run make twice before giving up on mysterious errors, 
+		as the first time, the translator may correct an erroneous
+		*.dep file or *.sig file.
+	take out statements of the form foo:type; and foo:type:=...;
+	or(a,b) is replace by a or b
+	put or-type declarations AFTER the declarations of the component parts
+	typecase is replaced by when ... is ... do ... is ... do ... else ...
+		(we also need predicates for type)
+	break() is now break
+	provide(x) is now provide x
+
+brief outline of documentation
+
+files
+
+	scc1	the translator
+
+	*.d	source file
+	*.sg	signature file produced from *.d by translator
+		Needed for "use" statements, after renaming to *.sig
+	*.c	C file produced from *.d by translator
+	*.out	internal representation of the parsed source code
+	*.log	internal representation of the C code produced
+	*.sym	symbol table, type list, string table
+
+packages
+
+	Each *.d file is a package whose name is the base name of the file.
+	Use "export" on a definition statement to export a definition.
+	Use
+		use foo;
+	to open a package for use.  The exported variables, types, and 
+	functions are available to the end of the current scope.
+
+	This feature is not used:
+
+	    Packages can be explicitly coded with
+		    package foo ( ... )
+	    where ... represents the code in the package.  
+
+	    Packages can be nested (bug: the initialization code doesn't get called).
+
+Types:
+
+	basic types defined internally:
+
+	   null			the type of the null pointer
+	   			to construct a null pointer, use null()
+
+	   void			the type returned by a function that returns no value
+	   			the type of a sequence (a;b;...;d;) that has an empty last sub-expression
+
+ 	   exits		the type of an expression where the flow of control never comes back
+	   			to the enclosing function.
+
+				Example:  Ccode(exits, "exit(0)")
+
+	   returns		the type of an expression where the flow of control never moves past the end
+	   			(but it can return from the enclosing function)
+
+				Example:  Ccode(returns, "return 1")
+
+	integer types defined internally:
+
+	   int			used for: array access indices, array lengths, integer constants (1),
+	   			the type of an index in a "for" loop or a "new" loop
+
+	   char			used for: character constants ('a') and the elements of a string constant ("a")
+
+	   bool			used for: predicates of "if", "while", "until" expressions,
+	   			arguments of boolean operators "&&" "||"
+	   			values of expressions involving operators "==" and "!="
+
+	arithmetic types defined internally:
+
+	   double		used for: floating point constants (0.123)
+
+	integer types defined by macros:
+
+	   ushort, ulong, short, long, uint, uchar
+
+	arithmetic types defined by macros:
+
+	   float
+
+	package				...
+
+	function(t,u,...):w		function with arguments of types t,u,..., returning a value of type w, possibly void
+
+	array(t)			(pointer to) array with elements of type t, variable length
+	array(t,n)			(pointer to) array with elements of type t, length n.  Here n
+					should be an integer constant or a macro expanding to an integer
+					constant (see ::= );
+
+					an array of fixed length does not have a field inside it for the length, so
+					cannot be cast to an array of variable length					
+
+	{ a:t, b:u, ...}		(pointer to) struct type with component names a,b,... and types t,u,...
+
+	tarray(t)			(pointer to) tagged array with elements of type t, variable length
+	tarray(t,4)			(pointer to) tagged array with elements of type t, length 4
+	{+a:t, b:u, ...}		(pointer to) tagged struct with component names a,b,... and types t,u,...
+
+					"tagged" means that the first field in the object is a small integer specifying
+					the type
+
+	t or u or ...			union type with members of types t, u, ..., each of which is a pointer
+					to an array, a pointer to a struct, or null.
+					If there is more than one member not equal to null, then they must all
+					be tagged types, so dispatching by type can happen at run-time (see "when").
+
+	Pointer "bar"			a new pointer type, declared as "bar" in the C or C++ code produced
+	atomicPointer "bar"		a new atomic pointer type, declared as "bar" in the C or C++ code produced
+	malloc(T)			returns a pointer of type T pointing to new memory on the heap
+					the number of bytes allocated is sizeof(*((T)0))
+					if T is a pointer type, the memory is cleared by GC_MALLOC
+					if T an an atomic pointer type, the memory is not cleared by GC_MALLOC_ATOMIC
+					(to improve type safety, we should clear it, anyway)
+					
+	Type "foo"			a new data type, declared as "foo" in the C or C++ code produced, which
+					may contain pointers to memory obtained from libgc.
+					(memory for structs containing an element of this type will be allocated
+					with GC_MALLOC)
+
+	atomicType "foo"		a new atomic data type, declared as "foo" in the C or C++ code produced, which
+					may not contain pointers to memory obtained from libgc.
+					(memory for structs containing an element of this type will be allocated
+					with GC_MALLOC or GC_MALLOC_ATOMIC)
+
+	arithmeticType "foo"		a new arithmetic data type, declared as "foo" in the C or C++ code produced
+	integerType "foo"		a new integer (and arithmetic) data type, declared as "foo" in the C or C++ 
+					code produced
+
+					Arithmetic types and integer types can be cast to other ones.  Memory for structs
+					containing an element of this type will be allocated with GC_MALLOC or
+					GC_MALLOC_ATOMIC)
+
+Expressions:
+
+	(e)				parentheses
+	(e;f;...;g)			begin block (new scope), returns value of g
+	(e;f;...;g;)			begin block (new scope), returns nothing
+	t(a,b,c)			construct an object/array of type t
+					with initial values a,b,c
+	null()				a new null pointer (really (void *)0)
+	self				the object currently under 
+					construction, as in t(a,b,self).
+					(what about doubly recursive constructions?)
+	t(x)				cast x to type t
+	x.a				select component a of object x
+	x.i				select i-th member of array x
+	length(x)			length of array x
+	a:t				declares a to have type t
+	a = b				assignment (after declaration)
+	a := b				Declaration with initial value
+	a:t := b			... with type t explicit
+	f(x:T,y:V):W := e		function declaration (with overloading)
+	- (x:T) : W := e		prefix operator declaration
+	(x:T) << (y:U) : W := e		infix operator declaration
+	(x:T) << (y:U,z:W) : S := e	infix operator declaration with three arguments
+	f ::= e				macro variable declaration
+	f(x:T,y:V) ::= e		macro function declaration (with overloading)
+					unfortunately, just simple macros can be exported successfully, because
+					of printing problems in "dprint()"
+	op				operator as identifier, e.g., op<<, op+, op==, etc
+	if a then b else c
+	if a then b
+	until a do b
+	while a do b			evaluates b as long as a is true
+	while a list b			produces a list of the values of b, as long as a is true
+	foreach a in b do c		
+	foreach a at i in b do c
+	foreach a at i in b by s do c
+	foreach a in b by s do c
+		-- warning: assignment to the variable 'a' in these 'foreach'
+		-- commands replaces the entry in the array!  Do we want to
+		-- change this feature?
+	for n do e
+	for i to n do e
+	for i from m to n do e
+	for i from m to n by s do e
+	return ()
+	return (e)
+	break
+	new t len n do e			array initialization
+	new t len n at i do e			array initialization
+	provide x				provide another element
+						of array within body of array
+						initialization
+
+	export a := b				export a variable or function (by declaring it in *.sig)
+	import a				import a variable (used mainly in *.sig files)
+	thread a := b				declare a thread local variable
+
+	f(x,y)					function application
+	when e 					examine e
+	  is x:t do f				  if type t, assign to x, do f
+	  is v   do h				  if type v, do h
+	  else      i				  else do i
+
+	Ccode(t,a,b,c,d)			has type t, inserts a,b,c,d into generated C code.
+						String constants are inserted literally into the code.
+						Other expressions are compiled to C, and the code, or
+						a temporary variable containing the computed value, is 
+						inserted into the code.  This construction cannot be depended
+						on to do the right thing if the C code contains flow-of-control
+						constructions.
+
+	lvalue(x)				same as x, but gives an error message if x is not an lvalue.
+						useful with Ccode
+
+	!=					unequal
+	==					equal (for pointers, this is equality of addresses)
+	true
+	false
+
+Statements
+
+	leftOperator 4 "$$"			define $$ as a left-associative binary operator of precedence 4
+	rightOperator 4 "$$"			define $$ as a right-associative binary operator of precedence 4
+	prefixOperator 4 "$$"			define $$ as a prefix operator of precedence 4
+
+Useful functions
+
+	!					not
+	|					or
+	&					and
+	>>					right shift
+	<<					left shift, io, etc
+	<	>	<=	>=
+	+	-	*	/	%
+	^^					exclusive or
+	^					power (for doubles)
+	::					nothing
+
+Operators
+
+  by grammar
+
+     :  || && - { } , ; ( )
+
+  prefix, by precedence
+
+     4:  !
+     5:  ~
+
+  infix, by precedence
+
+     1:  ::=   := 
+     2:  = 
+     3:  |   ^^   << 
+     3 right:  >> 
+     4:  & 
+     5:  <   >   <=   >=   ==   !=   ===   =!= 
+     6:  + 
+     7:  *   /   //   % 
+     8:  ^ 
+     10:  . 
+
+Constants
+
+	"asdf"					string
+	'a'					char
+	0xabcd					hex format int
+	1234					int
+	12.34					double
+
+Caveats
+
+	a.1					a syntax error
+	a. 1					first element of array a
+	a .1					another syntax error
+	a . 1					first element of array a

@@ -171,7 +171,7 @@ namespace safe {
 	  return div_by(x,y,"overflow: int32 / int32");
      }
 
-};
+}
 
 #endif
 

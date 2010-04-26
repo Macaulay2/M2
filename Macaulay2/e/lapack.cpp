@@ -10,7 +10,7 @@
 
 typedef double *LapackDoubles;
 
-M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
+M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
 			      LMatrixRR *L,
 			      LMatrixRR *U)
 {
@@ -22,7 +22,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
-  M2_arrayint result = makearrayint(rows);
+  M2_arrayint result = M2_makearrayint(rows);
 
   L->resize(rows, min);
   U->resize(min, cols);
@@ -43,7 +43,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
 	  &rows, perm, &info);
 
   /* set the lower triangular matrix L */
-  __mpfr_struct *vals = L->get_array();
+  gmp_RR vals = L->get_array();
   int loc = 0;
   for (int j=0; j<min; j++) {
     for (int i=0; i<rows; i++) {
@@ -109,7 +109,7 @@ M2_RRR Lapack::det(const LMatrixRR *A)
   int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
-  M2_arrayint result = makearrayint(rows);
+  M2_arrayint result = M2_makearrayint(rows);
   int *perm = newarray_atomic(int, min);
 
   LapackDoubles copyA = A->make_lapack_array();
@@ -121,7 +121,7 @@ M2_RRR Lapack::det(const LMatrixRR *A)
 	  &rows, perm, &info);
 
   /* set the lower triangular matrix L */
-  __mpfr_struct *vals = L->get_array();
+  gmp_RR vals = L->get_array();
   int loc = 0;
   for (int j=0; j<min; j++) {
     for (int i=0; i<rows; i++) {
@@ -223,7 +223,7 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
 
   // Now set x
   x->resize(size, bsize);
-  __mpfr_struct *vals = x->get_array();
+  gmp_RR vals = x->get_array();
   long len = size*bsize;
   double *p = copyb;
   for (long i=0; i<len; i++)
@@ -293,7 +293,7 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   else
     {
       eigvals->resize(size, 1);
-      M2_CCC_struct *elems = eigvals->get_array();
+      gmp_CC_struct *elems = eigvals->get_array();
       for (int i = 0; i < size; i++) {
 	mpfr_set_d(elems[i].re, real[i], GMP_RNDN);
 	mpfr_set_d(elems[i].im, imag[i], GMP_RNDN);
@@ -363,7 +363,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
       // Make the complex arrays of eigvals and eigvecs
       eigvals->resize(size, 1);
       eigvecs->resize(size, size);
-      M2_CCC_struct *elems = eigvecs->get_array();
+      gmp_CC_struct *elems = eigvecs->get_array();
       for (int j = 0; j < size; j++) {
 	mpfr_set_d(eigvals->get_array()[j].re, real[j], GMP_RNDN);
 	mpfr_set_d(eigvals->get_array()[j].im, imag[j], GMP_RNDN);
@@ -821,7 +821,7 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
 }
 
 
-M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
+M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
 			      LMatrixCC *L,
 			      LMatrixCC *U)
 {
@@ -833,7 +833,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
   int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
-  M2_arrayint result = makearrayint(rows);
+  M2_arrayint result = M2_makearrayint(rows);
 
   L->resize(rows, min);
   U->resize(min, cols);
@@ -863,11 +863,11 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
   else
     {
       // set L
-      M2_CCC_struct *elemsL = L->get_array();
+      gmp_CC_struct *elemsL = L->get_array();
       int loc = 0;
       for (int j=0; j<min; j++) {
 	for (int i=0; i<rows; i++) {
-	  M2_CCC_struct *val = elemsL++;
+	  gmp_CC_struct *val = elemsL++;
 	  if (i > j) {
 	    mpfr_set_d(val->re, copyA[loc], GMP_RNDN);
 	    mpfr_set_d(val->im, copyA[loc+1], GMP_RNDN);
@@ -883,11 +883,11 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
       }
 
       // set U
-      M2_CCC_struct *elemsU = U->get_array();
+      gmp_CC_struct *elemsU = U->get_array();
       loc = 0;
       for (int j=0; j<cols; j++) {
 	for (int i=0; i<min; i++) {
-	  M2_CCC_struct *val = elemsU++;
+	  gmp_CC_struct *val = elemsU++;
 	  if (i > j) {
 	    mpfr_set_si(val->re, 0, GMP_RNDN);
 	    mpfr_set_si(val->im, 0, GMP_RNDN);

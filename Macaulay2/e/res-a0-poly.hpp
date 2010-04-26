@@ -21,7 +21,7 @@ class res2_poly : public our_new_delete
   const Monoid *M;
   const Ring *K;		// Coefficient field of R.
 
-  int respoly_size;
+  size_t respoly_size;
   stash *resterm_stash;
 
   res2term *new_term() const;

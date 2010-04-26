@@ -109,8 +109,8 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K,
 //   if (newM == 0) return 0;
 //   
 //   int nvars = M->n_vars();
-//   M2_arrayint new_derivs = makearrayint(_nderivatives);
-//   M2_arrayint new_comms = makearrayint(_nderivatives);
+//   M2_arrayint new_derivs = M2_makearrayint(_nderivatives);
+//   M2_arrayint new_comms = M2_makearrayint(_nderivatives);
 // 
 //   int new_homog_var;
 //   if (_homog_var >= 0)

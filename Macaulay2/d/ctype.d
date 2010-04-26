@@ -1,6 +1,4 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use system;
 use strings;
 chartypes := new array(short) len 256 do provide short(0);
 setchartype(c:char,t:int):void := chartypes.(int(uchar(c))) = short(t | int(chartypes.(int(uchar(c)))));
@@ -59,5 +57,5 @@ export isalnum  (s:string):bool := (
      true);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

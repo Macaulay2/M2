@@ -6,12 +6,13 @@
 void ntuple::elem_text_out(buffer &o, 
 			   unsigned int nvars,
 			   const int *a, 
-			   M2_stringarray varnames)
+			   M2_ArrayString varnames,
+			   bool p_one)
 {
-  int len = 0;
+  int len_ = 0;
   for (unsigned int v=0; v<nvars; v++)
     if (a[v] != 0) {
-      len++;
+      len_++;
 	if (varnames->len < v)
 	  o << ".";
 	else
@@ -22,7 +23,7 @@ void ntuple::elem_text_out(buffer &o,
       else if (e > 1) o << "^" << e;
       else if (e < 0) o << "^(" << e << ")";	
     }
-  if (len == 0 && p_one) o << "1";
+  if (len_ == 0 && p_one) o << "1";
 }
 
 

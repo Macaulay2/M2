@@ -8,13 +8,13 @@ DOTS ?= ../../..
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 40
 # one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
-MLIMIT ?= 235000
-VLIMIT ?= 235000
+MLIMIT ?= 400000
+VLIMIT ?= 400000
 else
 # give the debug version more time and space
 TLIMIT ?= 60
-MLIMIT ?= 300000
-VLIMIT ?= 300000
+MLIMIT ?= 600000
+VLIMIT ?= 600000
 endif
 # make the stack limit always the same as it would be under MacOS
 SLIMIT ?= 8192

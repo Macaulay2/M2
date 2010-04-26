@@ -205,6 +205,7 @@ class binomialGB : public our_new_delete
 
   bool use_bigcell;
   bool is_homogeneous_prime;
+
 public:
   binomialGB(const binomial_ring *R, bool bigcell, bool homogprime);
   ~binomialGB();
@@ -323,15 +324,15 @@ public:
 
   void start_computation();
 
-  virtual const MatrixOrNull *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const MatrixOrNull *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const MatrixOrNull *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
   virtual void text_out(buffer &o) const { /* to do */ }
   /* This displays statistical information, and depends on the
-     gbTrace value */
+     M2_gbTrace value */
 
   virtual int complete_thru_degree() const { return top_degree; }
   // The computation is complete up through this degree.
@@ -341,18 +342,18 @@ public:
   // But they are not implemented... and there is no plan to implement them
   ////////////////////////////////////////////////////////
 
-  virtual const MatrixOrNull *get_change();
+  virtual const Matrix /* or null */ *get_change();
   // not planned to be implemented
 
-  virtual const MatrixOrNull *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
   //not planned to be implemented
 
-  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
   // likely not planned to be implemented
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   MatrixOrNull **result_remainder,
-			   MatrixOrNull **result_quotient
+			   const Matrix /* or null */ **result_remainder,
+			   const Matrix /* or null */ **result_quotient
 			   );
   //not planned to be implemented
 

@@ -2,41 +2,52 @@
 
 #include "pfaff.hpp"
 
-extern char system_interruptedFlag;
-extern int gbTrace;
-
 PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
   : R(M0->get_ring()),
     M(M0),
     p(p0),
-    I(0),
-    row_set(p0)
+    done(false),
+    row_set(0)
 {
-  endI = comb::binom(M->n_rows(), p);
   pfaffs = MatrixConstructor(R->make_FreeModule(1),0);
   if (p == 0)
     {
       pfaffs.append(R->make_vec(0,R->one()));
-      I = endI;
+      done = true;
+      return;
     }
+  if (p % 2 != 0 || p < 0 || (p > M->n_cols()) || (p > M->n_rows()))
+    {
+      done = true;
+      return;
+    }
+  row_set = newarray_atomic(int,p);
+  for (int i=0; i<p; i++) row_set[i] = i;
 }
 
 PfaffianComputation::~PfaffianComputation()
 {
+  deletearray(row_set);
 }
 
 int PfaffianComputation::step()
      // Compute one more pfafferminant of size p.
      // increments I and/or J and updates 'pfaffs', 'table'.
 {
-  if (I == endI) return COMP_DONE;
-  comb::decode(I++, row_set.raw(), p);
-  ring_elem r = calc_pfaff(row_set.raw(), p);
+  if (done) return COMP_DONE;
+
+  ring_elem r = calc_pfaff(row_set, p);
   if (!R->is_zero(r))
     pfaffs.append(R->make_vec(0,r));
   else
     R->remove(r);
-  return COMP_COMPUTING;
+
+  if (comb::increment(p, M->n_cols(), row_set))
+    return COMP_COMPUTING;
+
+  // Otherwise, we are at the end.
+  done = true;
+  return COMP_DONE;
 }
 
 int PfaffianComputation::calc(int nsteps)
@@ -48,9 +59,8 @@ int PfaffianComputation::calc(int nsteps)
 	return COMP_DONE;
       if (--nsteps == 0)
 	return COMP_DONE_STEPS;
-      if (system_interruptedFlag)
+      if (test_Field(interrupts_interruptedFlag))
 	return COMP_INTERRUPTED;
-      
     }
 }
 
@@ -59,15 +69,11 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
      // minor with rows and columns r[0]..r[p2-1].
      // assumption: p2 is an even number.
 {
-//  int found;
-//  const ring_elem &result = lookup(r,p2,found);
-//  if (found) return result;
-  int i;
   if (p2 == 2) return M->elem(r[0],r[1]);
   ring_elem result = R->from_int(0);
 
-  int negate = 1;
-  for (i=p2-2; i>=0; i--)
+  bool negate = true;
+  for (int i=p2-2; i>=0; i--)
     {
       std::swap(r[i],r[p2-2]);
       negate = !negate;
@@ -90,25 +96,23 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
   // pulling out the columns has disordered r. Fix it.
   
   int temp = r[p2-2];
-  for (i=p2-2; i>0; i--)
+  for (int i=p2-2; i>0; i--)
     r[i] = r[i-1];
   r[0] = temp;
 
   return result;
 }
 
-MatrixOrNull *Matrix::pfaffians(int p) const
+Matrix *Matrix::pfaffians(int p) const
 {
   if (get_ring()->get_precision() > 0)
     {
       ERROR("pfaffian computations over RR or CC not yet implemented");
       return 0;
     }
-  PfaffianComputation *d = new PfaffianComputation(this,p);
-  d->calc(-1);
-  Matrix *result = d->pfaffians();
-  deleteitem(d);
-  return result;
+  PfaffianComputation d = PfaffianComputation(this,p);
+  d.calc();
+  return d.pfaffians();
 }
 
 

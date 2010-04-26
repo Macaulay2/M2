@@ -24,7 +24,7 @@ stash::stash(const char *s, size_t len)
   // Make sure element_size is a multiple of the word size.
   if (len <= 0) len = word_size;
   element_size = word_size * ((len + word_size - 1) / word_size);
-  n_per_slab = (slab_size - sizeof(void *)) / element_size;
+  n_per_slab = static_cast<int>((slab_size - sizeof(void *)) / element_size);
   this->next = stash_list;
   stash_list = this;
 
@@ -113,11 +113,11 @@ void stash::text_out(buffer &o) const
     // Display statistics about this stash.
 {
   char s[200];
-  sprintf(s, "%16s %9dk %9dk %10d %10d %10d %10d %10d%s",
+  sprintf(s, "%16s %9dk %9dk %10zd %10lu %10lu %10lu %10lu%s",
 	  name, 
 	  static_cast<int>((element_size * highwater + 1023)/1024),
 	  static_cast<int>((element_size * n_inuse + 1023)/1024),
-	  static_cast<int>(element_size),
+	  element_size,
 	  n_allocs,
 	  n_inuse,
 	  highwater,
@@ -126,8 +126,8 @@ void stash::text_out(buffer &o) const
   o << s;
 }
 
-unsigned int engine_allocated = 0;
-unsigned int engine_highwater = 0;
+size_t engine_allocated = 0;
+size_t engine_highwater = 0;
 
 int stash::num_slab_freelist() {
      int i=0;

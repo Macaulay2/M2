@@ -3,39 +3,67 @@
 # http://www.shoup.net
 # a library for doing number theory
 VERSION = 5.5.2
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 URL = http://shoup.net/ntl
 CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
-CONFIGUREOPTIONS = \
-	PREFIX=@pre_librariesdir@ \
-	LIBDIR=@pre_librariesdir@/lib \
-	INCLUDEDIR=@pre_librariesdir@/include \
-	DOCDIR=@pre_librariesdir@/share/doc \
-	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on \
-	CC="@CXX@" \
-	CXX="@CXX@" \
-	CFLAGS="$(CFLAGS) -O2" \
-	CXXFLAGS="$(CXXFLAGS) -O2" \
-	CPPFLAGS="$(CPPFLAGS)" \
-	LDFLAGS="$(LDFLAGS)"
+
+ifeq (@DEBUG@,yes)
+DEB_CPPFLAGS = -DDEBUG
+DEB_CFLAGS = -g -O0
+DEB_CXXFLAGS = -g -O0
+DEB_LDFLAGS = -g
+else
+DEB_CPPFLAGS = -DNDEBUG
+DEB_CFLAGS = -O2
+DEB_CXXFLAGS = -O2
+DEB_LDFLAGS =
+endif
+
+CONFIGUREOPTIONS =								\
+	PREFIX=@pre_librariesdir@						\
+	LIBDIR=@pre_librariesdir@/lib						\
+	INCLUDEDIR=@pre_librariesdir@/include					\
+	DOCDIR=@pre_librariesdir@/share/doc					\
+	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on	\
+	CC="@CXX@"								\
+	CXX="@CXX@"								\
+	CFLAGS="$(CFLAGS) $(DEB_CFLAGS)"					\
+	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"					\
+	CPPFLAGS="$(CPPFLAGS) $(DEB_CPPFLAGS)"					\
+	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"					\
+	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"
+
 ifeq (@DEBUG@,yes)
 CONFIGUREOPTIONS += WIZARD=off
 endif
-BUILDOPTIONS := \
-	CFLAGS="$(CFLAGS) -O2" \
-	CXXFLAGS="$(CXXFLAGS) -O2"
-CHECKOPTIONS := \
-	CFLAGS="$(CFLAGS) -O2" \
-	CXXFLAGS="$(CXXFLAGS) -O2"
-INSTALLOPTIONS = \
-	CFLAGS="$(CFLAGS) -O2" \
-	CXXFLAGS="$(CXXFLAGS) -O2" \
-	PREFIX=$(LIBRARIESDIR) \
-	LIBDIR=$(LIBRARIESDIR)/lib \
-	INCLUDEDIR=$(LIBRARIESDIR)/include \
+
+BUILDOPTIONS =					\
+	MakeDescCFLAGS=-O0			\
+	CPPFLAGS="$(CPPFLAGS) $(DEB_CPPFLAGS)"	\
+	CFLAGS="$(CFLAGS) $(DEB_CFLAGS)"	\
+	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"	\
+	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"	\
+	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"
+
+CHECKOPTIONS =					\
+	CFLAGS="$(CFLAGS) $(DEB_CFLAGS)"	\
+	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"	\
+	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"	\
+	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"
+
+INSTALLOPTIONS =				\
+	CFLAGS="$(CFLAGS) $(DEB_CFLAGS)"	\
+	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"	\
+	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"	\
+	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"	\
+	PREFIX=$(LIBRARIESDIR)			\
+	LIBDIR=$(LIBRARIESDIR)/lib		\
+	INCLUDEDIR=$(LIBRARIESDIR)/include	\
 	DOCDIR=$(LIBRARIESDIR)/share/doc
+
 INSTALLCMD = $(MAKE) $(INSTALLOPTIONS) install
 
 include ../Makefile.library
@@ -49,6 +77,9 @@ clean uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf include/NTL lib/libntl.* share/doc/NTL  ;\
 	fi
+
+foo:;: LDFLAGS = $(LDFLAGS)
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/ntl "
 # End:

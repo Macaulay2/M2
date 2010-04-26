@@ -46,7 +46,7 @@ public:
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
-  virtual bool from_BigReal(M2_RRR r, ring_elem &a) const;
+  virtual bool from_BigReal(gmp_RR r, ring_elem &a) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
@@ -78,12 +78,16 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, 
+			     const ring_elem f, 
+			     bool p_one=true, 
+			     bool p_plus=false, 
+			     bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
-  virtual ring_elem zeroize_tiny(M2_RRR epsilon, const ring_elem f) const;
-  virtual void increase_maxnorm(M2_RRR norm, const ring_elem f) const;
+  virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 
 };

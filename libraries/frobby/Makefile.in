@@ -11,6 +11,7 @@ TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
 URL = http://www.broune.com/frobby
 # URL = http://www.math.uiuc.edu/Macaulay2/Extra
+
 BUILDTARGET = library
 BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \
 	CFLAGS="$(CFLAGS)" \
@@ -22,9 +23,6 @@ CHECKOPTIONS = $(BUILDOPTIONS)
 # this ought to prevent trouble with carriage returns
 PATCHOPTIONS = --ignore-whitespace
 
-ifeq (@DEBUG@,yes)
-BUILDOPTIONS += MODE=debug
-endif
 CONFIGURECMD = true
 INSTALLCMD = \
 	$(MKDIR_P) $(LIBRARIESDIR)/lib && \
@@ -34,6 +32,13 @@ INSTALLCMD = \
 	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h
 CHECKTARGET = test
 include ../Makefile.library
+
+ifeq (@DEBUG@,yes)
+#### Building frobby in debug mode causes it to redefine operators new and delete.  So we don't do that.
+# BUILDOPTIONS += MODE=debug
+CPPFLAGS += -UDEBUG
+endif
+
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif

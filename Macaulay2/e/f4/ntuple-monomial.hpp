@@ -6,6 +6,8 @@
 #include "../style.hpp"
 #include "../engine.h"
 
+class buffer;
+
 // This class implements monomial operations on ntuples:
 // i.e. exponent vectors.  No allocation is done by any of these
 // routines.  The format for an exponent vector is simply:
@@ -86,7 +88,8 @@ public:
   static void elem_text_out(buffer &o, 
 			    unsigned int nvars,
 			    const_ntuple_monomial a, 
-			    M2_stringarray varnames);
+			    M2_ArrayString varnames,
+			    bool p_one);
 };
 
 inline 

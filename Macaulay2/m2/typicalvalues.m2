@@ -55,7 +55,6 @@ isListener(File) := Boolean => isListener
 isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
-isReady(File) := Boolean => isReady
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
 regex(String,String) := List => regex

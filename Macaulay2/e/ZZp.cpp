@@ -105,7 +105,11 @@ inline int Z_mod::int_to_exp(int a) const
   return _log_table[(n < 0 ? n+P : n)];
 }
 
-void Z_mod::elem_text_out(buffer &o, ring_elem a) const
+void Z_mod::elem_text_out(buffer &o, 
+			const ring_elem a, 
+			bool p_one, 
+			bool p_plus, 
+			bool p_parens) const
 {
   int n = to_int(a);
   if (n < 0) 
@@ -134,7 +138,7 @@ ring_elem Z_mod::from_int(mpz_ptr n) const
   mpz_t result;
   mpz_init(result);
   mpz_mod_ui(result, n, P);
-  int m = mpz_get_si(result);
+  int m = static_cast<int>(mpz_get_si(result));
 //  cout << m << endl;
   if (m < 0) m += P;
   m = _log_table[m];
@@ -320,5 +324,5 @@ ring_elem Z_mod::random() const
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e ZZp.o "
 // End:

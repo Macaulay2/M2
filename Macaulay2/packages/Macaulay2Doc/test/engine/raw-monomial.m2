@@ -5,9 +5,6 @@
 -- Test of engine monomial code --
 ----------------------------------
 
-needs "raw-util.m2"
-errorDepth = 0
-
 -- These monomials use the internal 'varpower' representation
 -- and are not connected to any ring or monoid.  Monomials can have
 -- negative exponents, etc.

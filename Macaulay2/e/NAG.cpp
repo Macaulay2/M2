@@ -5,7 +5,7 @@
 #include <dlfcn.h>
 #include <time.h>
 #include "lapack.hpp"
-
+#include "poly.hpp"
  
 // Straiight Line Program class
 
@@ -27,7 +27,7 @@ StraightLineProgram::~StraightLineProgram()
 int StraightLineProgram::num_slps = 0;
 StraightLineProgram* StraightLineProgram::catalog[MAX_NUM_SLPs];
 
-StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_arrayint program)
+StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *m_consts, M2_arrayint program)
 {
   // todo: move some of these lines to rawSLP
   StraightLineProgram* res;
@@ -76,11 +76,11 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
   return res;
 }
 
-StraightLineProgram_OrNull *StraightLineProgram::copy()
+StraightLineProgram /* or null */ *StraightLineProgram::copy()
 {
   StraightLineProgram* res = new StraightLineProgram;
   res->is_relative_position = is_relative_position;
-  res->program = makearrayint(program->len);
+  res->program = M2_makearrayint(program->len);
   memcpy(res->program->array, program->array, program->len*sizeof(int));
   res->nodes = newarray_atomic(complex, num_consts+num_inputs+num_operations);
   for(int i=0; i<num_consts; i++)
@@ -181,7 +181,7 @@ void monomials_to_conventional_exponent_vectors(int n, Nterm *f) //auxiliary
 }
 
 
-StraightLineProgram_OrNull *StraightLineProgram::make(const PolyRing *R, ring_elem e)
+StraightLineProgram /* or null */ *StraightLineProgram::make(const PolyRing *R, ring_elem e)
 {
   // todo: move some of these lines to rawSLP
   StraightLineProgram* res;
@@ -213,7 +213,7 @@ StraightLineProgram_OrNull *StraightLineProgram::make(const PolyRing *R, ring_el
     }
 
     // make program
-    res->program = makearrayint(prog.length() + 2/* accounts for lines +2,+3 */ + SLP_HEADER_LEN);
+    res->program = M2_makearrayint(prog.length() + 2/* accounts for lines +2,+3 */ + SLP_HEADER_LEN);
     res->program->array[0] = res->num_consts = consts.length();
     prog.append(slpEND);
     prog.append(out+res->num_consts+res->num_inputs); // position of the output
@@ -231,7 +231,7 @@ StraightLineProgram_OrNull *StraightLineProgram::make(const PolyRing *R, ring_el
   return res;
 }
 
-StraightLineProgram_OrNull *StraightLineProgram::concatenate(const StraightLineProgram* slp)
+StraightLineProgram /* or null */ *StraightLineProgram::concatenate(const StraightLineProgram* slp)
 {
   if (!is_relative_position || !slp->is_relative_position  
       || num_inputs!=slp->num_inputs || rows_out!=slp->rows_out) 
@@ -257,7 +257,7 @@ StraightLineProgram_OrNull *StraightLineProgram::concatenate(const StraightLineP
   //  array<complex> consts; // !!! use to optimize constants
   
   // make program
-  res->program = makearrayint(program->len + slp_len - 1 + slp_num_outputs);
+  res->program = M2_makearrayint(program->len + slp_len - 1 + slp_num_outputs);
   res->program->array[1] = res->num_inputs;
   res->program->array[2] = res->rows_out;
   res->program->array[3] = res->cols_out;
@@ -440,7 +440,7 @@ int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by 
   }
 }
 
-StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH)
+StraightLineProgram /* or null */ *StraightLineProgram::jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH)
   /* Produces a jacobian of the slp H: (i,j)-th output = dH_j/dx_i
      Constructs also HxH and HxtH. */ 
 {
@@ -473,7 +473,7 @@ StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool makeHxH, Straight
       out_pos[i*res->cols_out+j] = res->diffNodeInput(end_program[j]-num_consts-num_inputs/*position of j-th output in prog*/,
 						      i,prog); //uses res->num_operations
   // make program
-  res->program = makearrayint(SLP_HEADER_LEN + prog.length() + 1 + res->rows_out*res->cols_out);
+  res->program = M2_makearrayint(SLP_HEADER_LEN + prog.length() + 1 + res->rows_out*res->cols_out);
   res->program->array[0] = res->num_consts = num_consts + 1; //!!! assume: appending ZERO
   res->program->array[1] = res->num_inputs;
   res->program->array[2] = res->rows_out;
@@ -501,7 +501,7 @@ StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool makeHxH, Straight
     slpHxtH = res->copy();
     slpHxtH->rows_out++;
     // how to kill M2_arrayint ???
-    slpHxtH->program = makearrayint(slpHxtH->program->len + cols_out);
+    slpHxtH->program = M2_makearrayint(slpHxtH->program->len + cols_out);
     memcpy(slpHxtH->program->array, res->program->array, sizeof(int)*res->program->len);
     int *c = slpHxtH->program->array + res->program->len;
     for (int j=0; j<num_outputs; j++,c++)
@@ -1175,7 +1175,7 @@ PathTracker::~PathTracker()
 // a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
 // input: a (1-row) matrix of polynomials 
 // out: the number of PathTracker
-PathTracker_OrNull* PathTracker::make(Matrix *HH) 
+PathTracker /* or null */* PathTracker::make(const Matrix *HH) 
 {
   /* 
   if (HH->n_rows()!=1) { 
@@ -1215,7 +1215,7 @@ PathTracker_OrNull* PathTracker::make(Matrix *HH)
 }
 
 // for SLPs constructed on the top level
-PathTracker_OrNull* PathTracker::make(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr)
+PathTracker /* or null */* PathTracker::make(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr)
 {
   PathTracker *p = new PathTracker;
   p->H = NULL;
@@ -1226,7 +1226,7 @@ PathTracker_OrNull* PathTracker::make(StraightLineProgram* slp_pred, StraightLin
   return p;
 }
 
-int PathTracker::makeFromHomotopy(Matrix *HH) 
+int PathTracker::makeFromHomotopy(const Matrix *HH) 
 {
   if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
     ERROR("max number of path trackers exceeded");
@@ -1245,9 +1245,9 @@ int PathTracker::makeFromHomotopy(Matrix *HH)
 
 
 void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
-			M2_RRR init_dt, M2_RRR min_dt, 
-			M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
-			M2_RRR epsilon, int max_corr_steps, M2_RRR end_zone_factor, M2_RRR infinity_threshold,
+			gmp_RR init_dt, gmp_RR min_dt, 
+			gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
+			gmp_RR epsilon, int max_corr_steps, gmp_RR end_zone_factor, gmp_RR infinity_threshold,
 			int pred_type)
 {
   PT->is_projective = is_projective;
@@ -1268,12 +1268,12 @@ void rawLaunchPT(PathTracker* PT, const Matrix* start_sols)
   PT->track(start_sols);
 }
 
-const MatrixOrNull *rawGetSolutionPT(PathTracker* PT, int solN)
+const Matrix /* or null */ *rawGetSolutionPT(PathTracker* PT, int solN)
 {
   return PT->getSolution(solN);
 }
 
-const MatrixOrNull *rawGetAllSolutionsPT(PathTracker* PT)
+const Matrix /* or null */ *rawGetAllSolutionsPT(PathTracker* PT)
 {
   return PT->getAllSolutions();
 }
@@ -1288,17 +1288,17 @@ int rawGetSolutionStepsPT(PathTracker* PT, int solN)
   return PT->getSolutionSteps(solN);
 }
 
-M2_RRRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN)
+gmp_RRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN)
 {
   return PT->getSolutionLastT(solN);
 }
 
-M2_RRRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN)
+gmp_RRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN)
 {
   return PT->getSolutionRcond(solN);
 }
 
-const MatrixOrNull *rawRefinePT(PathTracker* PT, const Matrix* sols, M2_RRR tolerance, int max_corr_steps_refine)
+const Matrix /* or null */ *rawRefinePT(PathTracker* PT, const Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine)
 {
   return PT->refine(sols, tolerance, max_corr_steps_refine);
 }
@@ -1319,7 +1319,7 @@ int PathTracker::track(const Matrix* start_sols)
   int n = n_coords = start_sols->n_cols();  
   n_sols = start_sols->n_rows();
 
-  if (gbTrace>1) printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n", 
+  if (M2_gbTrace>1) printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n", 
 			epsilon2, t_step, dt_min_dbl, dt_increase_factor_dbl, dt_decrease_factor_dbl);
 
   // memory distribution for arrays
@@ -1381,7 +1381,7 @@ int PathTracker::track(const Matrix* start_sols)
 	  *dt = complex(1 - end_zone_factor_dbl - t0->getreal()); 
 	}  
       
-      bool LAPACK_success;
+      bool LAPACK_success = false;
          
       // PREDICTOR in: x0t0,dt,pred_type
       //           out: dx
@@ -1515,7 +1515,7 @@ int PathTracker::track(const Matrix* start_sols)
     slpHxH->evaluate(n+1,x0t0,HxH);
     cond_number_via_svd(n, HxH/*Hx*/, t_s->rcond);
     t_s->num_steps = count;
-    if (gbTrace>0) {
+    if (M2_gbTrace>0) {
       if (sol_n%50==0) printf("\n");
       switch (t_s->status) {
       case REGULAR: printf("."); break;
@@ -1527,7 +1527,7 @@ int PathTracker::track(const Matrix* start_sols)
       fflush(stdout);
     }
   }
-  if (gbTrace>0) printf("\n");
+  if (M2_gbTrace>0) printf("\n");
   
 
   // clear arrays
@@ -1548,7 +1548,7 @@ int PathTracker::track(const Matrix* start_sols)
   return n_sols;
 }
 
-MatrixOrNull* PathTracker::refine(const Matrix *sols, M2_RRR tolerance, int max_corr_steps_refine)
+Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, int max_corr_steps_refine)
 {
   double epsilon2 = mpfr_get_d(tolerance,GMP_RNDN); epsilon2 *= epsilon2;
   int n = n_coords; 
@@ -1627,7 +1627,7 @@ MatrixOrNull* PathTracker::refine(const Matrix *sols, M2_RRR tolerance, int max_
   return mat.to_matrix();
 }
 
-MatrixOrNull* PathTracker::getSolution(int solN)
+Matrix /* or null */* PathTracker::getSolution(int solN)
 {
   if (solN<0 || solN>=n_sols) return NULL;
   // construct output 
@@ -1648,7 +1648,7 @@ MatrixOrNull* PathTracker::getSolution(int solN)
   return mat.to_matrix();
 }
 
-MatrixOrNull* PathTracker::getAllSolutions()
+Matrix /* or null */* PathTracker::getAllSolutions()
 {
   // construct output 
   FreeModule* S = C->make_FreeModule(n_coords); 
@@ -1683,19 +1683,19 @@ int PathTracker::getSolutionSteps(int solN)
 }
 
 
-M2_RRRorNull PathTracker::getSolutionLastT(int solN)
+gmp_RRorNull PathTracker::getSolutionLastT(int solN)
 {
   if (solN<0 || solN>=n_sols) return NULL;
-  M2_RRR result = (M2_RRR)getmem(sizeof(__mpfr_struct));
+  gmp_RR result = getmemstructtype(gmp_RR);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].t, GMP_RNDN);  
   return result;
 }
 
-M2_RRRorNull PathTracker::getSolutionRcond(int solN)
+gmp_RRorNull PathTracker::getSolutionRcond(int solN)
 {
   if (solN<0 || solN>=n_sols) return NULL;
-  M2_RRR result = (M2_RRR)getmem(sizeof(__mpfr_struct));
+  gmp_RR result = getmemstructtype(gmp_RR);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].rcond, GMP_RNDN);  
   return result;
@@ -1729,7 +1729,7 @@ void PathTracker::text_out(buffer& o) const
   */
 
 }
- 
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

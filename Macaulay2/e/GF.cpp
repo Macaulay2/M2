@@ -5,10 +5,8 @@
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
-#include "polyring.hpp"
+#include "poly.hpp"
 #include "gbring.hpp"
-
-extern char system_interruptedFlag;
 
 bool GF::initialize_GF(const RingElement *prim)
 {
@@ -74,7 +72,7 @@ bool GF::initialize_GF(const RingElement *prim)
   _one_table[0] = Q_-1;
   for (i=1; i<=Q_-1; i++)
     {
-      if (system_interruptedFlag)
+      if (test_Field(interrupts_interruptedFlag))
 	return false;
       ring_elem f1 = _originalR->add(polys[i], oneR);
       for (j=1; j<=Q_-1; j++)
@@ -166,7 +164,11 @@ ring_elem GF::random() const
   return ring_elem(exp);
 }
 
-void GF::elem_text_out(buffer &o, const ring_elem a) const
+void GF::elem_text_out(buffer &o, 
+		       const ring_elem a,
+		       bool p_one,
+		       bool p_plus, 
+		       bool p_parens) const
 {
   if (a.get_int() == _ZERO) 
     {
@@ -174,7 +176,7 @@ void GF::elem_text_out(buffer &o, const ring_elem a) const
       return;
     }
   ring_elem h = _originalR->power(_primitive_element->get_value(), a.int_val);
-  _originalR->elem_text_out(o, h);
+  _originalR->elem_text_out(o, h, p_one, p_plus, p_parens);
   _originalR->remove(h);
 }
 
@@ -196,7 +198,7 @@ ring_elem GF::from_int(mpz_ptr n) const
   mpz_t result;
   mpz_init(result);
   mpz_mod_ui(result, n, P);
-  int m = mpz_get_si(result);
+  int m = static_cast<int>(mpz_get_si(result));
   if (m < 0) m += P;
   m = _from_int_table[m];
   return ring_elem(m);
@@ -228,8 +230,8 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   int exp[1];
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      ring_elem coef = from_int(_originalR->Ncoeffs()->coerce_to_int(t->coeff));
-      _originalR->Nmonoms()->to_expvector(t->monom, exp);
+      ring_elem coef = from_int(_originalR->getCoefficientRing()->coerce_to_int(t->coeff));
+      _originalR->getMonoid()->to_expvector(t->monom, exp);
       // exp[0] is the variable we want.  Notice that since the ring is a quotient,
       // this degree is < n (where Q_ = P^n).
       ring_elem g = power(_x_exponent, exp[0]);

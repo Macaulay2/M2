@@ -69,6 +69,8 @@ document {
      	  "packages",
 	      TO "packages",
 	      -- Mike wanted this: TO "a sample package: Quaternions",
+	  "parallel programming ",
+	      TO "programming with threads",
      	  "system facilities",
 	      TO "system facilities",
 	  "debugging",

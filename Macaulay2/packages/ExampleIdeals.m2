@@ -349,6 +349,11 @@ toSingular Ideal := (I) -> (
      g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
      a | g | ";\n"
      )
+toSingular (Ideal, String) := (I,str) -> (
+     a := "ideal " | str | " = \n";
+     g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
+     a | g | ";\n"
+     )
 
 timerWrap = (str) -> (
      "rtimer = 1;\nint ti=rtimer;"

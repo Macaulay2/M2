@@ -41,7 +41,7 @@ public:
   M2_string to_string(); // Copies the string, leaves buffer intact
 
   void put(const char *s);		// Place null-terminated string into buffer
-  void put(const char *s, int len);	// Place a string possible containing null chars
+  void put(const char *s, long len);	// Place a string possible containing null chars
   void put(char c);		// Place a single character
   void put(int n);		// Format the integer, place into buffer
   void put(int n, int width);	// Format the integer, with given width field.

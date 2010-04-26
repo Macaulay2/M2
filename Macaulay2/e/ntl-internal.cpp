@@ -50,18 +50,10 @@ ZZ ntl_ZZ_from_mpz(mpz_t a)
   return result;		// returning causes the result to be copied!
 }
 
-void removeNTL_mat_ZZ(void *p, void *cd)
-{
-  mat_ZZ *A = static_cast<mat_ZZ *>(p);
-  fprintf(stderr, "removing mat_ZZ\n");
-  delete A;			// this uses builtin operator delete
-}
-
 mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols)
 {
-  mat_ZZ *X = new mat_ZZ;	// this uses builtin operator new
+  mat_ZZ *X = new mat_ZZ;
   X->SetDims(nrows,ncols);
-  GC_REGISTER_FINALIZER(X, removeNTL_mat_ZZ, 0, 0, 0); // how can this work if X was not allocated by gc?
   return X;
 }
 

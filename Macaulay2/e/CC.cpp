@@ -8,14 +8,6 @@
 #include "random.hpp"
 #include "coeffrings.hpp"
 
-extern "C" M2_CC make_M2_Complex(double re, double im)
-{
-  M2_CC z = newitem_atomic(M2_CC_struct);
-  z->re = re;
-  z->im = im;
-  return z;
-}
-
 bool CC::initialize_CC(double epsilon) 
 {
   initialize_ring(0);
@@ -42,24 +34,24 @@ void CC::text_out(buffer &o) const
   o << "CC";
 }
 
-M2_CC CC::new_elem() const
+gmp_CC CC::new_elem() const
 {
-  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result = getmemstructtype(gmp_CC);
   result->re = 0.0;
   result->im = 0.0;
   return result;
 }
 
-ring_elem CC::from_M2_CC_struct(M2_CC_struct &a) const
+ring_elem CC::from_gmp_CC_struct(gmp_CC_struct &a) const
 {
-  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result = getmemstructtype(gmp_CC);
   *result = a;
   return CC_RINGELEM(result);
 }
 
 ring_elem CC::from_double(double a) const
 {
-  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result = getmemstructtype(gmp_CC);
   result->re = a;
   result->im = 0.0;
   return CC_RINGELEM(result);
@@ -71,7 +63,7 @@ double CC::to_double(ring_elem a) const
 
 ring_elem CC::from_rational(mpq_ptr r) const
 {
-  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result = getmemstructtype(gmp_CC);
   result->re = mpq_get_d(r);
   result->im = 0.0;
   return CC_RINGELEM(result);
@@ -79,15 +71,15 @@ ring_elem CC::from_rational(mpq_ptr r) const
 
 ring_elem CC::from_BigReal(mpfr_ptr a) const
 {
-  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result = getmemstructtype(gmp_CC);
   result->re = mpfr_get_d(a, GMP_RNDN);
   result->im = 0.0;
   return CC_RINGELEM(result);
 }
 
-ring_elem CC::from_complex(M2_CC z) const
+ring_elem CC::from_complex(gmp_CC z) const
 {
-  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result = getmemstructtype(gmp_CC);
   result->re = z->re;
   result->im = z->im;
   return CC_RINGELEM(result);
@@ -95,22 +87,22 @@ ring_elem CC::from_complex(M2_CC z) const
 
 ring_elem CC::from_doubles(double a, double b) const
 {
-  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result = getmemstructtype(gmp_CC);
   result->re = a;
   result->im = b;
   return CC_RINGELEM(result);
 }
 
-bool CC::from_BigComplex(M2_CCC z, ring_elem &result) const
+bool CC::from_BigComplex(gmp_CC z, ring_elem &result) const
 {
-  M2_CC result1 = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  gmp_CC result1 = getmemstructtype(gmp_CC);
   result1->re = mpfr_get_d(z->re, GMP_RNDN);
   result1->im = mpfr_get_d(z->im, GMP_RNDN);
   result = CC_RINGELEM(result1);
   return true;
 }
 
-void CC::remove_elem(M2_CC f) const
+void CC::remove_elem(gmp_CC f) const
 {
   //  if (f == NULL) return;
   //  CC_stash->delete_elem(f);
@@ -252,7 +244,7 @@ ring_elem CC::copy(const ring_elem f) const
 void CC::remove(ring_elem &f) const
 {
 #if 0
-//   M2_CC a = CCELEM_VAL(f);
+//   gmp_CC a = CCELEM_VAL(f);
 //   remove_elem(a);
 //   f = CC_RINGELEM(NULL);
 #endif
@@ -271,23 +263,23 @@ ring_elem CC::negate(const ring_elem f) const
 
 ring_elem CC::add(const ring_elem f, const ring_elem g) const
 {
-  M2_CC_struct result;
+  gmp_CC_struct result;
   CCArithmetic::add(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
-  return CC::from_M2_CC_struct(result);
+  return CC::from_gmp_CC_struct(result);
 }
 
 ring_elem CC::subtract(const ring_elem f, const ring_elem g) const
 {
-  M2_CC_struct result;
+  gmp_CC_struct result;
   CCArithmetic::subtract(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
-  return CC::from_M2_CC_struct(result);
+  return CC::from_gmp_CC_struct(result);
 }
 
 ring_elem CC::mult(const ring_elem f, const ring_elem g) const
 {
-  M2_CC_struct result;
+  gmp_CC_struct result;
   CCArithmetic::mult(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
-  return CC::from_M2_CC_struct(result);
+  return CC::from_gmp_CC_struct(result);
 }
 
 ring_elem CC::power(const ring_elem f, int n) const
@@ -300,7 +292,7 @@ ring_elem CC::power(const ring_elem f, int n) const
 
   if (n < 0)
     {
-      M2_CC_struct g;
+      gmp_CC_struct g;
       CCArithmetic::invert(g, *CCELEM_VAL(f));
       a1 = g.re;
       a2 = g.im;
@@ -328,16 +320,16 @@ ring_elem CC::power(const ring_elem f, mpz_t n) const
 
 ring_elem CC::invert(const ring_elem f) const
 {
-  M2_CC_struct result;
+  gmp_CC_struct result;
   CCArithmetic::invert(result,*CCELEM_VAL(f));
-  return CC::from_M2_CC_struct(result);
+  return CC::from_gmp_CC_struct(result);
 }
 
 ring_elem CC::divide(const ring_elem f, const ring_elem g) const
 {
-  M2_CC_struct result;
+  gmp_CC_struct result;
   CCArithmetic::divide(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
-  return CC::from_M2_CC_struct(result);
+  return CC::from_gmp_CC_struct(result);
 }
 
 void CC::syzygy(const ring_elem a, const ring_elem b,

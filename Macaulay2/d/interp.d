@@ -1,40 +1,21 @@
 --		Copyright 1994-2000 by Daniel R. Grayson
 
 newStartupMethod := true;				    -- for testing purposes
-
-use C;
-use system;
-use actors;
-use convertr;
 use evaluate;
-use common;
-use binding;
-use actors2;
-use actors3;
-use actors4;
-use actors5;
 use parser;
-use lex;
-use gmp;
-use nets;
-use tokens;
-use err;
-use stdiop;
-use ctype;
-use stdio;
-use varstrin;
-use strings;
-use objects;
-use basic;
-use struct;
 use texmacs;
-
+use actors5;
 import dirname(s:string):string;
+
+export setupargv():void := (
+     setupconst("commandLine",toExpr(argv));
+     setupconst("environment",toExpr(envp));
+     );
 
 fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
 currentFileName := setupvar("currentFileName", nullE);
 currentPosFile  := dummyPosFile;
-currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
+currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
      if err.position == dummyPosition
      then printErrorMessageE(f,prefix + ": " + err.message)
@@ -93,12 +74,12 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  if issuePrompt then (
 	       if debugLevel == 123 then stderr <<  "-- issuePrompt" << endl;
 	       previousLineNumber = -1;
-	       stdout << file.posFile.file.prompt();
+	       stdIO << file.posFile.file.prompt();
 	       issuePrompt = false;
 	       );
 	  clearAllFlags();
 	  if debugLevel == 123 then (
-	       stderr << "-- file: " << file.posFile.filename << ":" << file.posFile.line << ":" << file.posFile.column << endl;
+	       stderr << "-- file: " << file.posFile.filename << ":" << file.posFile.line << ":" << file.posFile.column << newline;
 	       c := peek(file.posFile.file);
 	       stderr << "-- next character: ";
 	       if c == int('\n') then stderr << "NEWLINE" else if c >= 0 then stderr << char(c) else stderr << c;
@@ -106,12 +87,13 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       );
 	  u := peektoken(file,true);
 	  interruptPending = false; determineExceptionFlag();
-	  if u == errorToken || interruptedFlag then (
+	  if u == errorToken || test(interruptedFlag) then (
 	       gettoken(file,true);
-	       if interruptedFlag then (
+	       if test(interruptedFlag) then (
 		    if debugLevel == 123 then stderr <<  "-- token read interrupted" << endl;
 		    clearFileError(file);
-	       	    interruptedFlag = false; determineExceptionFlag();
+	       	    store(interruptedFlag, false);
+		    determineExceptionFlag();
 		    promptWanted = true;
 		    issuePrompt = true;
 		    )
@@ -142,10 +124,11 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << position(u) << endl;
 		    parsed := parse(file,SemicolonW.parse.precedence,true);
 		    if parsed == errorTree then (
-			 if interruptedFlag then (
+			 if test(interruptedFlag) then (
 		    	      if debugLevel == 123 then stderr <<  "-- parsing interrupted" << endl;
 		    	      clearFileError(file);
-	       	    	      interruptedFlag = false; determineExceptionFlag();
+	       	    	      store(interruptedFlag, false);
+			      determineExceptionFlag();
 			      promptWanted = true;
 			      -- issuePrompt = true;
 			      )
@@ -156,8 +139,11 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      );
 			 )
 		    else (
-			 if debugLevel == 123 then stderr <<  "-- parsing successful" << endl;
-		    	 if debugLevel == 123 then stderr << "-- parse tree size: " << size(parsed) << endl;
+			 if debugLevel == 123 then (
+			      stderr
+			      << "-- parsing successful" << newline
+			      << "-- parse tree size: " << size(parsed) << endl;
+			      );
      	       	    	 bumpLineNumber = true;
 			 -- { [ (
 			 -- get the token that terminated the parsing of the expression
@@ -181,7 +167,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 				   when be is err:Error do ( be = update(err,"before eval",f); if stopIfError || returnIfError then return be; ) else nothing;
 				   lastvalue = evalexcept(f);	  -- run it
 				   if lastvalue == endInput then return nullE;
-				   -- when f is globalAssignmentCode do lastvalue = nullE else nothing;
 				   when lastvalue is err:Error do (
 					if err.message == returnMessage
 					|| err.message == continueMessage || err.message == continueMessageWithArg 
@@ -235,7 +220,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      then flush(file)
 			      else return buildErrorPacket("error while loading file")))))));
 
-interpreterDepthS := setupvar("interpreterDepth",toExpr(0));
+interpreterDepthS := setupvar("interpreterDepth",zeroE);
 incrementInterpreterDepth():void := (
      interpreterDepth = interpreterDepth + 1;
      setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
@@ -250,8 +235,8 @@ readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool
       savecf := getGlobalVariable(currentFileName);
       savecd := getGlobalVariable(currentFileDirectory);
       savepf := currentPosFile;
-	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
-	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
+	setGlobalVariable(currentFileName,toExpr(file.posFile.file.filename));
+	setGlobalVariable(currentFileDirectory,toExpr(dirname(file.posFile.file.filename)));
         currentPosFile = file.posFile;
 	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue,returnIfError);
       setGlobalVariable(currentFileDirectory,savecd);
@@ -294,14 +279,14 @@ topLevelPrompt():string := (
 	  list(topLevelMode, Expr(if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt))));
      p := (
 	  if method == nullE then ""
-     	  else when applyEE(method,toExpr(lineNumber)) is s:string do s
-     	  is n:ZZ do if isInt(n) then blanks(toInt(n)) else ""
+     	  else when applyEE(method,toExpr(lineNumber)) is s:stringCell do s.v
+     	  is n:ZZcell do if isInt(n) then blanks(toInt(n)) else ""
      	  else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
 	  );
      if debugLevel == 123 then (
 	  p = "[" + tostring(promptcount) + "]  " + p;
 	  stderr <<  "-- topLevelPrompt:" 
-	  << " prompt = \"" << present(p) << "\""
+	  << " prompt = \"" << presentn(p) << "\""
 	  << endl;
 	  );
      promptcount = promptcount + 1;
@@ -321,12 +306,12 @@ loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
      when openTokenFile(filename)
      is errmsg do False
      is file:TokenFile do (
-	  if file.posFile.file != stdin then file.posFile.file.echo = true;
+	  if file.posFile.file != stdIO then file.posFile.file.echo = true;
 	  if !file.posFile.file.fulllines		    --texmacs !
 	  then setprompt(file,topLevelPrompt);
 	  r := readeval3(file,true,dc,false,false,returnIfError);
 	  t := (
-	       if filename === "-"			 -- whether it's stdin
+	       if filename === "-"			 -- whether it's stdIO
 	       then (
 		    file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 		    0
@@ -361,20 +346,21 @@ load(filename:string):Expr := (
 
 load(e:Expr):Expr := (
      when e
-     is s:string do load(s)
+     is s:stringCell do load(s.v)
      else buildErrorPacket("expected string as file name"));
 setupfun("simpleLoad",load);
 
 currentLineNumber(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) == 0 then Expr(toInteger(int(currentPosFile.line)))
+     if length(s) == 0 then toExpr(int(currentPosFile.line))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentLineNumber",currentLineNumber);
 
 input(e:Expr):Expr := (
      when e
-     is filename:string do (
+     is f:stringCell do (
+	  filename := f.v;
 	  -- we should have a way of setting normal prompts while inputting
      	  incrementInterpreterDepth();
 	  ret := loadprint(filename,newStaticLocalDictionaryClosure(filename),true);
@@ -485,12 +471,17 @@ debuggerFun = debugger;
 currentString := setupvar("currentString", nullE);
 value(e:Expr):Expr := (
      when e
-     is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
+     is q:SymbolClosure do (
+	  vals := q.frame.values;
+	  i := q.symbol.frameindex;
+	  if i < length(vals) then vals.i 
+	  else nullE					    -- localFrame is the only one that might be short
+	  )
      is c:CodeClosure do eval(c.frame,c.code)
-     is s:string do (
+     is s:stringCell do (
       	  savecs := getGlobalVariable(currentString);
-	  setGlobalVariable(currentString,Expr(s));
-	  r := readeval(stringTokenFile("currentString", s+newline),true,true);
+	  setGlobalVariable(currentString,e);
+	  r := readeval(stringTokenFile("currentString", s.v+newline),true,true);
 	  setGlobalVariable(currentString,savecs);
 	  when r 
 	  is err:Error do (
@@ -501,25 +492,25 @@ value(e:Expr):Expr := (
 	       else r)
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
-setupfun("value",value).protected = false;
+setupfun("value",value).Protected = false;
 
 tmpbuf := new string len 100 do provide ' ' ;
 
 internalCapture(e:Expr):Expr := (
      when e
-     is s:string do (
+     is s:stringCell do (
      	  flush(stdIO);
 	  oldfd := stdIO.outfd;
 	  oldDebuggingMode := debuggingMode;
 	  setDebuggingMode(false);
 	  oldStderrE := getGlobalVariable(stderrS);
-	  oldstderr := stderr;
-	  stderr = stdIO;
+	  oldstderr := stdError;
+	  stdError = stdIO;
 	  setGlobalVariable(stderrS,getGlobalVariable(stdioS));
 	  stdIO.outfd = NOFD;
 	  oldbuf := stdIO.outbuffer;
 	  stdIO.outbuffer = tmpbuf;
-	  stringFile := stringTokenFile("currentString", s+newline);
+	  stringFile := stringTokenFile("currentString", s.v+newline);
 	  stringFile.posFile.file.echo = true;
 	  oldLineNumber := lineNumber;
 	  previousLineNumber = -1;
@@ -531,11 +522,11 @@ internalCapture(e:Expr):Expr := (
 	  stdIO.outbuffer = oldbuf;
 	  stdIO.outindex = 0;
 	  setGlobalVariable(stderrS,oldStderrE);
-	  stderr = oldstderr;
+	  stdError = oldstderr;
 	  setLineNumber(oldLineNumber);
 	  setDebuggingMode(oldDebuggingMode);
 	  previousLineNumber = -1;
-	  Expr(Sequence( when r is err:Error do True else False, Expr(out) )))
+	  Expr(Sequence( when r is err:Error do True else False, toExpr(out) )))
      else WrongArg(1,"a string"));
 setupfun("internalCapture",internalCapture);
 
@@ -549,13 +540,14 @@ Exit(err:Error):void := exit(
      else errorExit
      );
 
+header "#include <unistd.h>";
 export process():void := (
      localFrame = globalFrame;
      previousLineNumber = -1;			  -- might have done dumpdata()
-     stdin .inisatty  =   0 != isatty(0) ;
-     stdin.echo       = !(0 != isatty(0));
-     stdout.outisatty =   0 != isatty(1) ;
-     stderr.outisatty =   0 != isatty(2) ;
+     stdIO .inisatty  =   0 != isatty(0) ;
+     stdIO.echo       = !(0 != isatty(0));
+     stdIO.outisatty =   0 != isatty(1) ;
+     stdError.outisatty =   0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      sethandleInterrupts(true);
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
@@ -569,15 +561,15 @@ export process():void := (
 	  else if !topLevel()				    -- give a prompt for debugging
 	  then Exit(err))
      else nothing;
-     when ret is n:ZZ do (
+     when ret is n:ZZcell do (
 	  if isInt(n) then (
-     	       value(Expr("exit " + tostring(toInt(n))));   -- try to exit the user's way
+     	       value(toExpr("exit " + tostring(toInt(n))));   -- try to exit the user's way
      	       ))
      else nothing;
-     value(Expr("exit 0"));				    -- try to exit the user's way
+     value(toExpr("exit 0"));				    -- try to exit the user's way
      exit(failedExitExit);		   -- if that doesn't work, try harder and indicate an error
      );
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "
 -- End:

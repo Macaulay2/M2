@@ -1,0 +1,203 @@
+# @configure_input@
+VPATH = @srcdir@
+NORULES = yes
+include ../../include/config.Makefile
+include ../d/Makefile.files
+include @srcdir@/../e/Makefile.files
+include @srcdir@/../e/f4/Makefile.files
+
+%.o : %.c
+%.o : %-tmp.cc
+%.o : %.cc
+%.o : %.cpp
+%.s : %.cpp
+%.o : %.s
+
+M2_OBJECTS := $(M2_OBJECTS:%=../d/%) 
+M2_OBJECTS += $(patsubst %, ../d/%.o, $(M2_DNAMES))
+M2_OBJECTS += $(ENGINE_OFILES:%=../e/%)
+M2_OBJECTS += $(F4_OBJECT_FILES:%=../e/f4/%) 
+
+EXEFILE = @pre_bindir@/M2@EXE@
+
+all: $(EXEFILE)
+
+relink:
+	rm -f $(EXEFILE)
+	$(MAKE)
+
+ifeq (@OS@ @SHARED@,Linux yes)
+ifneq (@BUILDLIST@,)
+M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
+ifneq (@OBJDUMP@,)
+	@OBJDUMP@ -x $< | egrep RPATH
+	@OBJDUMP@ -x $< | egrep "RPATH +@librariesdir@/lib$$"
+else
+	echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
+endif
+endif
+endif
+
+
+## standard options
+M2_LDFLAGS  =
+
+ifeq (@OS@,MacOS)
+## This option should increase the stack size to 16MB, but it makes M2 crash.
+## The number 1000000 is hex.
+## M2_LDFLAGS += -Wl,-stack_size,1000000
+endif
+
+M2_LDFLAGS += $(LDFLAGS)
+
+ifeq (gcc,@CC@)
+ifeq (@ISSUE@,Cygwin)
+M2_LDFLAGS  += -Wl,--enable-auto-import
+    # we add this linker option to prevent these warning messages:
+    # /usr/lib/gcc/i686-pc-cygwin/3.4.4/../../../../i686-pc-cygwin/bin/ld: warning: auto-importing has been activated without --enable-auto-import specified on the command line.
+    # This should work unless it involves constant data structures referencing symbols from auto-imported DLLs.
+    # Info: resolving _rl_attempted_completion_over by linking to __imp__rl_attempted_completion_over (auto-import)
+    # Info: resolving __rl_comment_begin by linking to __imp___rl_comment_begin (auto-import)
+    # Info: resolving _rl_readline_name by linking to __imp__rl_readline_name (auto-import)
+    # Info: resolving _rl_attempted_completion_function by linking to __imp__rl_attempted_completion_function (auto-import)
+    # Info: resolving _rl_basic_word_break_characters by linking to __imp__rl_basic_word_break_characters (auto-import)
+    # Info: resolving _rl_readline_version by linking to __imp__rl_readline_version (auto-import)
+    # Info: resolving _gdbm_errno by linking to __imp__gdbm_errno (auto-import)
+endif
+ifeq ($(MAPFILE),yes)
+ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
+## - use this to get a memory map listing from the gnu linker
+M2_LDFLAGS  += -Wl,-Map,mapfile
+endif
+endif
+endif
+mapfile.demangled: mapfile ; demangle <$< >$@
+clean::; rm -f mapfile.demangled
+
+
+############################## macros
+
+TOSTATIC =
+UNSTATIC =
+
+ifeq (@OS@ @ISSUE@,MicrosoftWindows Cygwin)
+TOSTATIC = -Wl,-Bstatic
+UNSTATIC = -Wl,-Bdynamic
+else
+ifeq (@OS@,Linux)
+TOSTATIC = -Wl,-Bstatic
+UNSTATIC = -Wl,-Bdynamic
+else
+ifeq (@OS@,FreeBSD)
+TOSTATIC = -Wl,-Bstatic
+UNSTATIC = -Wl,-Bdynamic
+else
+ifeq (@OS@,SunOS)
+TOSTATIC = -Wl,-Bstatic
+UNSTATIC = -Wl,-Bdynamic
+else
+ifeq (@OS@,MacOS)
+# we know about it
+else
+$(warning no static linking method configured for this OS or linker)
+endif
+endif
+endif
+endif
+endif
+
+ifeq "@STATIC@" "yes"
+MAYBESTATIC = $(TOSTATIC)
+else 
+MAYBESTATIC = $(UNSTATIC)
+endif
+
+M2_LIBRARIES :=
+
+ifeq (@STATIC@,yes)
+M2_LIBRARIES += $(MAYBESTATIC)
+ifeq (@OS@,Linux)
+# This is for gc, see the end of gc/doc/README.linux:
+# --Dynamic libraries are supported on an ELF system.  A static executable
+# --should be linked with the gcc option "-Wl,-defsym,_DYNAMIC=0".
+# I'm turning this off, because we are never completely static any longer,
+# and because I don't understand it.
+# M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
+endif
+endif
+
+ifeq "@DUMPDATA@" "yes"
+M2_LIBDEPS += ../dumpdata/libdump.a
+M2_LIBRARIES += -L../dumpdata -ldump
+endif
+
+###################### libraries
+
+# the order of this list should agree with that in ../../configure.ac
+
+M2_LIBRARIES +=  @BUILTLIBS@
+M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
+M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
+# I'm not sure whether compiling statically with libstdc++ is a good idea
+M2_LIBRARIES += -lstdc++
+
+M2_LDFLAGS += @FCLIBS_FLAGS@
+M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+
+ifeq (@MYSQL@,yes)
+M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
+endif
+ifeq (@XML@,yes)
+M2_LIBRARIES += -lxml2
+endif
+M2_LIBRARIES += -lm -lc
+ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
+M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
+else
+M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
+endif
+M2_LIBDEPS += ../d/libM2inits2.a
+ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
+M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
+else
+M2_OBJECTS := $(M2_OBJECTS) ../d/M2inits.o
+endif
+
+clean::; rm -f $(EXEFILE) timestamp.o
+@pre_bindir@ : ; $(MKDIR_P) "$@"
+$(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
+	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
+	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
+	printenv LD_LIBRARY_PATH
+ifneq (@LDD@,)
+	- @LDD@ $@.tmp
+endif
+ifneq "@OBJCOPY@" ""
+	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
+endif
+ifeq "$(STRIP)" "yes"
+ifneq "@STRIPCMD@" ""
+ifeq (@STRIP_REMOVE_SECTION@,yes)
+	@STRIPCMD@ --remove-section=.comment --remove-section=.note "$@".tmp
+else
+	@STRIPCMD@ "$@".tmp
+ifneq "@OBJCOPY@" ""
+	@OBJCOPY@ --add-gnu-debuglink=M2.debug-info "$@".tmp
+endif
+endif
+endif
+endif
+	mv "$@".tmp "$@"
+	ln -sf $(EXEFILE) @abs_top_builddir@
+all:
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
+	: Macaulay2 executable location:
+	:    "$(EXEFILE)"
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
+clean::; rm -f @abs_top_builddir@/M2@EXE@
+distclean: clean; rm -f Makefile
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/bin/Makefile
+
+# Local Variables:
+# compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/bin'\" && make -C $M2BUILDDIR/Macaulay2/bin "
+# End:

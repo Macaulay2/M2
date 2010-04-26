@@ -1,0 +1,52 @@
+--		Copyright 1994,2010 by Daniel R. Grayson
+use hashtables;
+
+newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+export Tally := newtypeof(hashTableClass);
+setupconst("Tally",Expr(Tally));
+export Set := newtypeof(Tally);
+one := Expr(ZZcell(toInteger(1)));
+setupconst("Set",Expr(Set));
+makeSet(v:Sequence):Expr := (
+     o := newHashTable(Set,nothingClass);
+     o.beingInitialized = true;
+     foreach e in v do storeInHashTable(o,e,one);
+     Expr(sethash(o,false)));
+makeSet(e:Expr):Expr := (
+     when e
+     is v:Sequence do makeSet(v)
+     is w:List do if ancestor(w.Class,visibleListClass) then makeSet(w.v)
+     else WrongArg("a visible list")
+     else WrongArg("a visible list"));
+setupfun("set",makeSet);
+
+modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (
+     keyhash:= hash(key);
+     keymod := int(keyhash & (length(object.table)-1));
+     bucket := object.table.keymod;
+     while bucket != bucket.next do (
+	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
+	       bucket.value = f(bucket.value); -- notice: no error checking here
+	       return;
+	       );
+	  bucket = bucket.next;
+	  );
+     storeInHashTable(object,key,keyhash,v);
+     );
+addone(i:Expr):Expr := when i is j:ZZcell do Expr(ZZcell(j.v+1)) else i;
+makeTally(v:Sequence):Expr := (
+     o := newHashTable(Tally,nothingClass);
+     o.beingInitialized = true;
+     foreach e at i in v do modify(o,e,addone,one);
+     Expr(sethash(o,false)));
+makeTally(e:Expr):Expr := (
+     when e
+     is v:Sequence do makeTally(v)
+     is w:List do if ancestor(w.Class,visibleListClass) then makeTally(w.v)
+     else WrongArg("a visible list")
+     else WrongArg("a list or sequence"));
+setupfun("tally",makeTally);
+
+-- Local Variables:
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d sets.o "
+-- End:

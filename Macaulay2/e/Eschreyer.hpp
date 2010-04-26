@@ -40,9 +40,10 @@ class GBKernelComputation : public Computation
   array<gbvector *> gb;            // This is the "stripped" GB.
   array<gbvector *> syzygies;     // This is basically the result.
 
-  int *PAIRS_mon;   // A monomial in M, used only in new_pairs.
-  int *REDUCE_mon;  // A monomial in M, used only in reduce.
-  int *REDUCE_exp;  // An exponent vector, used only in reduce.
+  // byte sizes for allocating temp exp vectors and monomials on the stack
+  size_t exp_size;
+  size_t monom_size;
+
   int n_ones;
   int n_unique;
   int n_others;

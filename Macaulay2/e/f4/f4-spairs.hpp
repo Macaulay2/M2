@@ -58,6 +58,11 @@ public:
 
   void display();
   // A debugging routine which displays the spairs in the set
+
+  long n_unneeded_pairs() const { return nsaved_unneeded; }
+  // Returns how many pairs were created, then later removed due to 
+  // spair criteria.
+
  private:
   MemoryBlock<pre_spair> PS; // passed to constructor routine
   MemoryBlock<varpower_word> VP; // used for constructing new pairs
@@ -68,6 +73,9 @@ public:
   spair *heap; // list of pairs
   spair *this_set;
   stash *spair_stash;
+
+  // stats
+  long nsaved_unneeded;
 };
 
 #endif

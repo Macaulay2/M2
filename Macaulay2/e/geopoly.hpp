@@ -35,7 +35,7 @@ public:
 
 inline polyheap::polyheap(const PolynomialRing *FF)
 : F(FF),
-  K(FF->Ncoeffs()),
+  K(FF->getCoefficientRing()),
   top_of_heap(-1)
 {
   // set K

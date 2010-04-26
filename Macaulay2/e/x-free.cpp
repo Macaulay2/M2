@@ -25,7 +25,7 @@ M2_string IM2_FreeModule_to_string(const FreeModule *F)
 
 unsigned long int IM2_FreeModule_hash(const FreeModule *F); /* TODO */
 
-const FreeModuleOrNull *IM2_FreeModule_make(const Ring *R, int rank)
+const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank)
 {
      try {
 	  if (rank < 0)
@@ -41,7 +41,7 @@ const FreeModuleOrNull *IM2_FreeModule_make(const Ring *R, int rank)
      }
 }
 
-const FreeModuleOrNull *IM2_FreeModule_make_degs(const Ring *R, 
+const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R, 
 						 M2_arrayint degs)
 {
      try {
@@ -72,7 +72,7 @@ const FreeModuleOrNull *IM2_FreeModule_make_degs(const Ring *R,
      }
 }
 
-const FreeModuleOrNull *IM2_FreeModule_make_schreyer(const Matrix *m)
+const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
 {
      try {
 	  return FreeModule::make_schreyer(m);
@@ -87,7 +87,7 @@ M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
 {
   const Ring *R = F->get_ring();
   const Monoid *D = R->degree_monoid();
-  M2_arrayint result = makearrayint(F->rank() * D->n_vars());
+  M2_arrayint result = M2_makearrayint(F->rank() * D->n_vars());
   int next = 0;
   int *exp = newarray_atomic(int,D->n_vars());
   for (int i=0; i<F->rank(); i++)
@@ -115,13 +115,13 @@ M2_bool IM2_FreeModule_is_equal(const FreeModule *F,
 }
 
 
-const FreeModuleOrNull * IM2_FreeModule_sum(const FreeModule *F,
+const FreeModule /* or null */ * IM2_FreeModule_sum(const FreeModule *F,
 					    const FreeModule *G)
 {
   return F->direct_sum(G);
 }
 
-const FreeModuleOrNull * IM2_FreeModule_tensor(const FreeModule *F,
+const FreeModule /* or null */ * IM2_FreeModule_tensor(const FreeModule *F,
 					       const FreeModule *G)
 {
      try {
@@ -133,7 +133,7 @@ const FreeModuleOrNull * IM2_FreeModule_tensor(const FreeModule *F,
      }
 }
 
-const FreeModuleOrNull *IM2_FreeModule_dual(const FreeModule *F)
+const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F)
 {
      try {
 	  return F->transpose();

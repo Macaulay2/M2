@@ -66,7 +66,7 @@ class MatrixSorter
 public:
   MatrixSorter(const Matrix *m, int degorder, int ringorder);
 
-  M2_arrayint_OrNull value();
+  M2_arrayintOrNull value();
 };
 
 MatrixSorter::MatrixSorter(const Matrix *m, int degorder, int ringorder)
@@ -84,7 +84,7 @@ MatrixSorter::MatrixSorter(const Matrix *m, int degorder, int ringorder)
 	sort_degs[i] = m->cols()->primary_degree(i);
     }
 
-  result = makearrayint(nelems);
+  result = M2_makearrayint(nelems);
 
   sort_vals = result->array;
   for (int i=0; i<nelems; i++)
@@ -95,7 +95,7 @@ MatrixSorter::MatrixSorter(const Matrix *m, int degorder, int ringorder)
     sort_vecs[i] = m->elem(i);
 }
 
-M2_arrayint_OrNull MatrixSorter::value()
+M2_arrayintOrNull MatrixSorter::value()
 {
   sort_range(0,result->len-1);
   return result;

@@ -1,3 +1,5 @@
+HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
+
 # license for gc: "Permission is hereby granted to use or copy this program for any purpose ... " 
 #  for details, see if file README.QUICK
 
@@ -8,16 +10,33 @@
 # That's why it's better for sharable libraries to be distributed as separate packages.
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 
+CVSROOT = :pserver:anonymous@bdwgc.cvs.sourceforge.net:/cvsroot/bdwgc
+# cvs -z3 -d:pserver:anonymous@bdwgc.cvs.sourceforge.net:/cvsroot/bdwgc co -P bdwgc
+
 #VERSION = 7.1
 #PATCHFILE = @abs_srcdir@/patch-7.1
 #TARDIR = gc-7.1
 
-VERSION = 7.2alpha2
+# VERSION = 7.2alpha2
+# AOVERSION = -1.2
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
+VERSION = 7.2alpha4
+AOVERSION = 
+# this version is not ready yet:
+#    misc.c:462: error: 'SIGRTMIN' undeclared (first use in this function)
+# bit it works under 32 bit ubuntu.  Perhaps it was darwin?
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
+VERSION = 7.2.2010.2.16
+AOVERSION = 
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+URL = http://www.math.uiuc.edu/Macaulay2/Extra
+
+#################################
+
 TARDIR = gc-$(VERSION)
-
-PRECONFIGURE = (cd libatomic_ops-1.2 && autoconf)
-
+PRECONFIGURE = (cd libatomic_ops$(AOVERSION) && autoconf)
 VPATH = @srcdir@
 ifeq (@PTHREADS@,yes)
 CONFIGOPTIONS += --enable-threads=posix
@@ -37,6 +56,9 @@ CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-fina
 # PATCHFILE = @abs_srcdir@/patch-7.0
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
+CONFIGURECMD += && cd libatomic_ops$(AOVERSION) && $(CONFIGENV) ./configure --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
+BUILDCMD     += && $(MAKE) -C libatomic_ops$(AOVERSION) $(BUILDOPTIONS) $(BUILDTARGET)
+INSTALLCMD   += && $(MAKE) -C libatomic_ops$(AOVERSION) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 clean uninstall::
 	if [ -d $(LIBRARIESDIR) ] ; \
 	then cd $(LIBRARIESDIR) && \

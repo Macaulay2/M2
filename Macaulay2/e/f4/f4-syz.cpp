@@ -8,9 +8,7 @@
 #include "f4.hpp"
 #include "monsort.hpp"
 #include "../freemod.hpp"
-#include "../poly.hpp"
-
-static clock_t syz_clock_sort_columns = 0;
+#include "../polyring.hpp"
 
 ////////////////////////////////////////////////////////////////
 // Append rows to the syzygy matrix
@@ -37,9 +35,9 @@ void F4GB::syz_load_gen(int which)
   syz_r.monom = m;
   syz_r.elem = which; // here info is duplicated: which == M->get_component(m)
   syz_r.len = 1;
-  syz_r.coeffs = F4Mem::coefficients.allocate(1);
+  syz_r.coeffs = Mem->coefficients.allocate(1);
   static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
-  syz_r.comps = F4Mem::components.allocate(1);
+  syz_r.comps = Mem->components.allocate(1);
   static_cast<int *>(syz_r.comps)[0] = newcol;
   syz->rows.push_back(syz_r); 
 }
@@ -56,11 +54,11 @@ void F4GB::syz_load_row(packed_monomial monom, int which)
 
   row_elem syz_r;
   syz_r.monom = m;
-  syz_r.elem = M->get_component(m); // .elem is not used at the monoment 
+  syz_r.elem = static_cast<int>(M->get_component(m)); // .elem is not used at the monoment 
   syz_r.len = 1;
-  syz_r.coeffs = F4Mem::coefficients.allocate(1);
+  syz_r.coeffs = Mem->coefficients.allocate(1);
   static_cast<int *>(syz_r.coeffs)[0] = 0; // this represents 1 in the coefficient field 
-  syz_r.comps = F4Mem::components.allocate(1);
+  syz_r.comps = Mem->components.allocate(1);
   static_cast<int *>(syz_r.comps)[0] = newcol;
   syz->rows.push_back(syz_r);
 }
@@ -78,8 +76,8 @@ void F4GB::clear_syz_matrix()
   for (int i=0; i<syz->rows.size(); i++)
     {
       row_elem &r = syz->rows[i];
-      F4Mem::coefficients.deallocate((int*&)(r.coeffs));
-      F4Mem::components.deallocate(r.comps);
+      Mem->coefficients.deallocate((int*&)(r.coeffs));
+      Mem->components.deallocate(r.comps);
       r.len = 0;
       r.elem = -1;
       r.monom = 0;
@@ -98,8 +96,8 @@ void F4GB::clear_master_syz()
   for (int i=0; i<master_syz->rows.size(); i++)
     {
       row_elem &r = master_syz->rows[i];
-      F4Mem::coefficients.deallocate((int*&)(r.coeffs));
-      F4Mem::components.deallocate(r.comps);
+      Mem->coefficients.deallocate((int*&)(r.coeffs));
+      Mem->components.deallocate(r.comps);
       r.len = 0;
       r.elem = -1;
       r.monom = 0;
@@ -146,7 +144,7 @@ int F4GB::syz_new_column(packed_monomial m)
   syz_next_monom++;
 
   column_elem c;
-  int next_column = syz->columns.size();
+  int next_column = INTSIZE(syz->columns);
   m[-1] = next_column;
   c.monom = m;
   c.head = -2;
@@ -160,13 +158,13 @@ void F4GB::syz_reorder_columns()
 
   // Same as reorder_columns(), but for syzygy matrix
 
-  int nrows = syz->rows.size();
-  int ncols = syz->columns.size();
+  int nrows = INTSIZE(syz->rows);
+  int ncols = INTSIZE(syz->columns);
 
   // sort the columns
 
-  int *column_order = F4Mem::components.allocate(ncols);
-  int *ord = F4Mem::components.allocate(ncols);
+  int *column_order = Mem->components.allocate(ncols);
+  int *ord = Mem->components.allocate(ncols);
 
   clock_t begin_time = clock();
   for (int i=0; i<ncols; i++)
@@ -174,19 +172,20 @@ void F4GB::syz_reorder_columns()
       column_order[i] = i;
     }
 
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     fprintf(stderr, "ncomparisons = ");
 
   ColumnsSorter C(M, syz);
   QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
 
-  if (gbTrace >= 2)
-    fprintf(stderr, "%ld, ", C.ncomparisons());
   clock_t end_time = clock();
-  syz_clock_sort_columns += end_time - begin_time;
-  double nsecs = end_time - begin_time;
-  nsecs /= CLOCKS_PER_SEC;
-  if (gbTrace >= 2)
+
+  if (M2_gbTrace >= 2)
+    fprintf(stderr, "%ld, ", C.ncomparisons());
+  double nsecs = (double)(end_time - begin_time)/CLOCKS_PER_SEC;
+  syz_clock_sort_columns += nsecs;
+  
+  if (M2_gbTrace >= 2)
     fprintf(stderr, " time = %f\n", nsecs);
 
   for (int i=0; i<ncols; i++)
@@ -216,8 +215,8 @@ void F4GB::syz_reorder_columns()
     }
 
   std::swap(syz->columns, newcols);
-  F4Mem::components.deallocate(column_order);
-  F4Mem::components.deallocate(ord);
+  Mem->components.deallocate(column_order);
+  Mem->components.deallocate(ord);
 }
 
 ////////////////////////////////////////////////
@@ -276,14 +275,14 @@ void F4GB::syz_dense_row_to_sparse_row(row_elem& s)
   
   // let's be lazy!!!
   int first = 0;
-  int last = syz->columns.size()-1; 
+  int last = INTSIZE(syz->columns)-1; 
   
   int *elems = static_cast<int *>(syz_row.coeffs);
   int len = 0;
   for (int i=first; i<=last; i++)
     if (!Kp->is_zero(elems[i])) len++;
-  int *in_sparse = F4Mem::coefficients.allocate(len);
-  int *in_comps = F4Mem::components.allocate(len);
+  int *in_sparse = Mem->coefficients.allocate(len);
+  int *in_comps = Mem->components.allocate(len);
   result_len = len;
   result_sparse = in_sparse;
   result_comps = in_comps;
@@ -306,9 +305,9 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
   // At the moment...
   // just appends the syzygy to syz_basis
 
-  long length = r.len + (g<0?0:1);
-  long nslots = M->max_monomial_size();
-  long nlongs = length * nslots;
+  int length = r.len + (g<0?0:1);
+  int nslots = M->max_monomial_size();
+  int nlongs = length * nslots;
 
   gbelem *result = new gbelem;
   result->f.len = length;
@@ -319,7 +318,7 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
   if (g<0) 
     result->f.coeffs = KK->copy_F4CoefficientArray(r.len, r.coeffs);
   else {
-    result->f.coeffs = F4Mem::coefficients.allocate(length); 
+    result->f.coeffs = Mem->coefficients.allocate(length); 
     int* rcoeffs = (int*)result->f.coeffs;
     int* elems = (int*)r.coeffs;
 
@@ -332,7 +331,7 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
       rcoeffs[i+1] = elems[i];    
   }
 
-  result->f.monoms = F4Mem::allocate_monomial_array(nlongs);
+  result->f.monoms = Mem->allocate_monomial_array(nlongs);
 
   packed_monomial nextmonom = result->f.monoms;
   if (g>=0) // the leading term is (monom=1,comp=g)
@@ -343,17 +342,17 @@ void F4GB::insert_syz(row_elem &r, int g/*=-1*/)
   for (int i=0; i<r.len; i++)
     {
       packed_monomial m = syz->columns[r.comps[i]].monom;
-      int comp = M->get_component(m);
+      int comp = static_cast<int>(M->get_component(m));
       packed_monomial n =  //lead monom of corresponding gens or gb element 
 	(comp < gens.size() ? gens[comp] : gb[comp-gens.size()])->f.monoms;
       M->unchecked_divide(m, n, nextmonom); // m = n*(real monomial)
       nextmonom += nslots;
     }
 
-  F4Mem::components.deallocate(r.comps);
+  Mem->components.deallocate(r.comps);
   r.len = 0;
   result->deg = this_degree;
-  result->alpha = M->last_exponent(result->f.monoms);
+  result->alpha = static_cast<int>(M->last_exponent(result->f.monoms));
   result->minlevel = ELEM_POSSIBLE_MINGEN; 
 
   syz_basis.push_back(result);
@@ -371,7 +370,7 @@ void F4GB::append_to_syzF(const_packed_monomial m, int compare_number)
   long comp;
   M->to_exponent_vector(m, lexp, comp);
   for (int a=0; a<M->n_vars(); a++)
-    exp[a] = lexp[a];
+    exp[a] = static_cast<int>(lexp[a]);
   //!!!
 
   const Monoid* MM = R->getMonoid();
@@ -426,3 +425,7 @@ void F4GB::show_syz_basis()
     }
   emit(o.str());
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4 f4-syz.o "
+// End:

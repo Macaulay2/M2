@@ -12,9 +12,9 @@ class comb
 // tab[0][n] == 1, tab[d][0] == 0, tab[0][0] = 1.
 // tab[d][n] == tab[d][n-1] + tab[d-1][n-1]
 
-  static void expand(int n, int d);
+  void expand(int n, int d);
 
-  static int d_len(int n)
+  int d_len(int n)
     {
       int i = tab.rawelem(n).length();
       if (i == 0)
@@ -25,14 +25,17 @@ class comb
       return i;
     }
 
-  static void text_out(buffer &o);
+  void text_out(buffer &o);
 public:
-  static array_class<array<int> > tab;
+  array_class<array<int> > tab;
 
-  static int fast_binom(int n, int p)
-    { return tab.rawelem(p).rawelem(n); }
+  comb(int n, int d);
+  // insure that all numbers in (n choose d) and (n choose (d-1)) can be encoded/decoded.
+  // The table can be built larger than this.
 
-  static int binom(int n, int p) 
+  ~comb() {}
+
+  int binom(int n, int p) 
     { 
       if (p < 0) return 0;
       if (p >= tab.length())
@@ -41,9 +44,10 @@ public:
 	expand(n,p);
       return tab[p][n]; 
     }
-  static int encode(int *a, int p);
-  static void decode(int c, int *a, int p);
+  int encode(int *a, int p);
+  void decode(int c, int *a, int p);
 
+  // The following static functions do not access 'tab'
   static bool increment(int p, int n, int *s);
   static bool valid_subset(int p, int n, const int *s);
   static int mult_subsets(int p, const int *s, 

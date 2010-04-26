@@ -1,7 +1,6 @@
 --		Copyright 2008 by Daniel R. Grayson
 
 use common;
-use tokens;
 
 err(e:Expr):Expr := buildErrorPacket("mysql library not available");
 setupfun("mysqlRealConnect",err);
@@ -22,5 +21,5 @@ setupfun("mysqlDebug", err);
 setupfun("mysqlNextResult", err);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d mysqldummy.o "
 -- End:

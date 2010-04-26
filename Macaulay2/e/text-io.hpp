@@ -7,13 +7,7 @@
 #include "buffer.hpp"
 #include "debug.hpp"
 
-extern int gbTrace;
-extern int p_one;
-extern int p_plus;
-extern int p_parens;
 extern int i_text_io();
-
-extern "C" char newline[];
 
 #define wrapping_prefix "   -- "
 
@@ -22,7 +16,7 @@ void bignum_text_out(buffer &o, mpz_t a);
 void clear_emit_size();
 void emit_wrapped(const char *s);
 inline void emit_wrapped(int prlevel, const char *s) {
-  if (gbTrace >= prlevel) emit_wrapped(s);
+  if (M2_gbTrace >= prlevel) emit_wrapped(s);
 }
 
 void emit(const char *s); // print onto stderr, or cerr.

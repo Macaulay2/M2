@@ -7,7 +7,7 @@
 using namespace std;
 
 namespace exc {
-     struct engine_error : public runtime_error, our_new_delete {
+     struct engine_error : public runtime_error, public our_new_delete {
 	  explicit engine_error(const string &msg) : runtime_error(msg) {}
      };
      struct overflow_error : public engine_error {

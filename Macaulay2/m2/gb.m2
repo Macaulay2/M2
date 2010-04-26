@@ -111,6 +111,7 @@ processAlgorithm := (a,f) -> (
      else if a === Homogeneous2 then 5
      else if a === LinearAlgebra then (warnexp(); 6)
      else if a === Toric then (warnexp(); 7)
+     else if a === Test then 8
      else error ("unknown algorithm encountered"))
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
@@ -387,6 +388,10 @@ gbRemove Module := gbRemove Ideal := (M) -> (
      scan(keys c, o -> if instance(o,GroebnerBasisOptions) then remove(c,o));
      )
 gbRemove Matrix := (M) -> gbRemove generators M
+
+-- 
+gbBoolean = method()
+gbBoolean Ideal := Ideal => I -> ideal map(ring I, rawGbBoolean(raw compress generators I))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

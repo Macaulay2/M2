@@ -7,6 +7,7 @@ F4_CCFILES := \
   f4-computation \
   f4-spairs \
   f4-m2-interface \
+  hilb-fcn \
   monhashtable \
   monsort \
   moninfo \

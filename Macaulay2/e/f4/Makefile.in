@@ -5,6 +5,8 @@ DEPENDS = yes
 include ../Makefile.include
 include ../Makefile.common
 
+CPPFLAGS := -I. -I@srcdir@/.. -I../../e-includes $(CPPFLAGS) -I../../d -I@srcdir@/../../c
+
 .PHONY: place_into_lib
 
 include @srcdir@/Makefile.files
@@ -14,6 +16,10 @@ check_it: $(F4_OBJECT_FILES) check_it.o
 	gcc -o check_it check_it.o $(F4_OBJECT_FILES) -L/sw/lib -lgc
 
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+
+MORE_OPTIONS = -Wno-cast-qual
+COMPILE.c += $(MORE_OPTIONS)
+COMPILE.cc += $(MORE_OPTIONS)
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/f4/Makefile
 clean::; rm -f *.o *.rpo
@@ -25,6 +31,6 @@ include $(F4_CFILES:=.dep) $(F4_CCFILES:=.dep)
 endif
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4 "
 # End:
 

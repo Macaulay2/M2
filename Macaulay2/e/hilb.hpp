@@ -53,8 +53,8 @@ class hilb_comp : public mutable_object
 {
   const PolynomialRing *S;		// This is the base ring of the monomial ideal
   const PolynomialRing *R;		// This is the output degree ring.
-  const Monoid *M;		// S->Nmonoms()
-  const Monoid *D;		// R->Nmonoms() == S->degree_monoid()
+  const Monoid *M;		// S->getMonoid()
+  const Monoid *D;		// R->getMonoid() == S->degree_monoid()
 
   stash *mi_stash; // for all of the nodes in all of the monomial ideals
 
@@ -112,7 +112,7 @@ public:
 //   // return to the user.
 #endif
 
-  static RingElementOrNull *hilbertNumerator(const Matrix *M);
+  static RingElement /* or null */ *hilbertNumerator(const Matrix *M);
   /* This routine computes the numerator of the Hilbert series
      for coker leadterms(M), using the degrees of the rows of M. 
      NULL is returned if the ring is not appropriate for
@@ -120,7 +120,7 @@ public:
 
   static RingElement *hilbertNumerator(const FreeModule *F);
 
-  static RingElementOrNull *hilbertNumerator(const MonomialIdeal *I);
+  static RingElement /* or null */ *hilbertNumerator(const MonomialIdeal *I);
   /* This routine computes the numerator of the Hilbert series
      for coker I.   NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
@@ -134,7 +134,7 @@ public:
 // 
 //   ring_elem hilbert(const MonomialTable *M);
 //   
-//   RingElementOrNull *hilbert(const Matrix *M);
+//   RingElement /* or null */ *hilbert(const Matrix *M);
 //   // This one is pretty easy: loop through each component,
 //   // make a monomial ideal, and compute its hilbert function, 
 //   // then multiply it by the degree of that row component.
@@ -146,8 +146,8 @@ public:
 // {
 //   const PolynomialRing *S;		// This is the base ring of the monomial ideal
 //   const PolynomialRing *R;		// This is the output degree ring.
-//   const Monoid *M;		// S->Nmonoms()
-//   const Monoid *D;		// R->Nmonoms() == S->degree_monoid()
+//   const Monoid *M;		// S->getMonoid()
+//   const Monoid *D;		// R->getMonoid() == S->degree_monoid()
 // 
 //   // Collected values from the matrix
 //   const Matrix *input_mat;	// The input matrix
@@ -202,7 +202,7 @@ public:
 // //   // return to the user.
 // #endif
 // 
-//   static RingElementOrNull *hilbertNumerator(const Matrix *M);
+//   static RingElement /* or null */ *hilbertNumerator(const Matrix *M);
 //   /* This routine computes the numerator of the Hilbert series
 //      for coker leadterms(M), using the degrees of the rows of M. 
 //      NULL is returned if the ring is not appropriate for
@@ -223,11 +223,11 @@ public:
 // 
 //   insert_generator(const int *m, int comp);
 // 
-//   RingElementOrNull * multDegreeHilbert(const FreeModule *F);
-//   RingElementOrNull * hilbert(VECTOR(int) &comp);
+//   RingElement /* or null */ * multDegreeHilbert(const FreeModule *F);
+//   RingElement /* or null */ * hilbert(VECTOR(int) &comp);
 // 
 //   // The following routines all use the singly graded degree ring.
-//   static RingElementOrNull * hilbert(const Ring *R, 
+//   static RingElement /* or null */ * hilbert(const Ring *R, 
 // 				     VECTOR(exponents) &exps,
 // 				     VECTOR(int) &comps,
 // 				     VECTOR(int) &comp_degs,
@@ -240,13 +240,13 @@ public:
 //   static int reduce_hilb_fcn(const RingElement *hf, RingElement *&result_hf);
 //   // returns the codimension, and places hf/(1-t)^codim into result_hf.
 // 
-//   static RingElementOrNull * multDegreeHilbert(const Ring *R, 
+//   static RingElement /* or null */ * multDegreeHilbert(const Ring *R, 
 // 					       VECTOR(exponents) &exps,
 // 					       VECTOR(int) &comps,
 // 					       const FreeModule *F);
 // 
 //   // The following routines all use the singly graded degree ring.
-//   static RingElementOrNull * hilbert(const Ring *R, 
+//   static RingElement /* or null */ * hilbert(const Ring *R, 
 // 				     VECTOR(exponents) &exps,
 // 				     VECTOR(int) &comps,
 // 				     VECTOR(int) &comp_degs,

@@ -3,13 +3,13 @@
 #include "f4-spairs.hpp"
 #include "monsort.hpp"
 
-long nsaved_unneeded = 0;
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
   : M(M0),
     gb(gb0),
     heap(0),
-    this_set(0)
+    this_set(0),
+    nsaved_unneeded(0)
 {
   max_varpower_size = 2 * M->n_vars() + 1;
 
@@ -73,6 +73,7 @@ void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 bool F4SPairSet::pair_not_needed(spair *p, gbelem *m)
 {
   if (p->type != F4_SPAIR_SPAIR && p->type != F4_SPAIR_RING) return false;
+  if (M->get_component(p->lcm) != M->get_component(m->f.monoms)) return false;
   return M->unnecessary(m->f.monoms, 
 			gb[p->i]->f.monoms,
 			gb[p->j]->f.monoms,
@@ -237,7 +238,8 @@ F4SPairSet::create_pre_spair(int j)
 		    result->quot, 
 		    result->deg1, 
 		    result->are_disjoint);
-  VP.intern(varpower_monomials::length(result->quot));
+  int len = static_cast<int>(varpower_monomials::length(result->quot));
+  VP.intern(len);
   return result;
 }
 
@@ -258,7 +260,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
   VP.reset();
   PS.reset();
   gbelem *me = gb[gb.size()-1];
-  int me_component = M->get_component(me->f.monoms);
+  int me_component = static_cast<int>(M->get_component(me->f.monoms));
 
   typedef VECTOR(pre_spair *) spairs;
 
@@ -311,7 +313,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 	      // The following condition is that gcd is not one
 	      if (!remove_disjoints || !chosen->are_disjoint)
 		{
-		  insert_spair(chosen, gb.size()-1);
+		  insert_spair(chosen, INTSIZE(gb)-1);
 		  n_new_pairs++;
 		}
 	    }

@@ -11,10 +11,10 @@ class CoefficientRingZZ_NTL;
 // #define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
 // #define MPZ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
-#define MPQ_VAL(f) (reinterpret_cast<M2_Rational>((f).poly_val))
+#define MPQ_VAL(f) (reinterpret_cast<gmp_QQ>((f).poly_val))
 #define MPQ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
-#define CCELEM_VAL(f) (reinterpret_cast<M2_CC>((f).poly_val))
+#define CCELEM_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
 #define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 #define CC_IM(f) ((CCELEM_VAL(f))->im)
 #define CC_RE(f) ((CCELEM_VAL(f))->re)
@@ -23,7 +23,7 @@ class CoefficientRingZZ_NTL;
 #define MPF_VAL(f) (reinterpret_cast<mpfr_ptr>((f).poly_val))
 #define MPF_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
-#define BIGCC_VAL(f) (reinterpret_cast<M2_CCC>((f).poly_val))
+#define BIGCC_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
 #define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 #define BIGCC_RE(f) (BIGCC_VAL(f)->re)  // returns actual value, not copy
 #define BIGCC_IM(f) (BIGCC_VAL(f)->im)
@@ -129,7 +129,11 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, 
+			     const ring_elem f, 
+			     bool p_one=true, 
+			     bool p_plus=false, 
+			     bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 

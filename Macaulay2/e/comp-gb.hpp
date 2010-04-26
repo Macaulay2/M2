@@ -50,7 +50,7 @@ public:
   // Values for algorithm and strategy are documented in engine.h
   // Returns NULL if an error occurs
 
-  virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
+  virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
   // The default version returns an error saying that Hilbert functions cannot be used.
 
   virtual void start_computation() = 0;
@@ -63,27 +63,27 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const MatrixOrNull *get_gb() = 0;
+  virtual const Matrix /* or null */ *get_gb() = 0;
 
-  virtual const MatrixOrNull *get_mingens() = 0;
+  virtual const Matrix /* or null */ *get_mingens() = 0;
 
-  virtual const MatrixOrNull *get_change() = 0;
+  virtual const Matrix /* or null */ *get_change() = 0;
 
-  virtual const MatrixOrNull *get_syzygies() = 0;
+  virtual const Matrix /* or null */ *get_syzygies() = 0;
 
-  virtual const MatrixOrNull *get_initial(int nparts) = 0;
+  virtual const Matrix /* or null */ *get_initial(int nparts) = 0;
 
-  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w);
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
 
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const MatrixOrNull *matrix_remainder(const Matrix *m) = 0;
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) = 0;
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   MatrixOrNull **result_remainder,
-			   MatrixOrNull **result_quotient) = 0;
+			   const Matrix /* or null */ **result_remainder,
+			   const Matrix /* or null */ **result_quotient) = 0;
 
   virtual int contains(const Matrix *m) = 0;
 
@@ -93,12 +93,9 @@ public:
 
   virtual void text_out(buffer &o) const;
   // This displays statistical information, and depends on the
-  // gbTrace value.
+  // M2_gbTrace value.
 
 };
-
-extern "C" void remove_gb(void *p, void *cd);
-void intern_GB(GBComputation *G);
 
 #endif
 

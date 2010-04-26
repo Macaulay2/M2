@@ -10,8 +10,8 @@
 
 M2_bool rawIdealOfPoints(const Ring *R,
 			 const MutableMatrix *Pts,
-			 MatrixOrNull ** result_GB,
-			 MatrixOrNull ** result_std_monoms)
+			 Matrix /* or null */ ** result_GB,
+			 Matrix /* or null */ ** result_std_monoms)
 {
   // Branch depending on the type of K, the ring of Pts.
   // If Pts is not a DMatrix, make it one.

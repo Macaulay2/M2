@@ -60,9 +60,8 @@ GBKernelComputation::GBKernelComputation(const GBMatrix *m)
   SF = F->get_schreyer_order();
   SG = G->get_schreyer_order();
 
-  PAIRS_mon = M->make_one();
-  REDUCE_mon = M->make_one();
-  REDUCE_exp = newarray_atomic(int,M->n_vars());
+  exp_size = EXPONENT_BYTE_SIZE(M->n_vars());
+  monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
 
   // Set 'gb'.
   strip_gb(m);
@@ -70,9 +69,6 @@ GBKernelComputation::GBKernelComputation(const GBMatrix *m)
 
 GBKernelComputation::~GBKernelComputation()
 {
-  M->remove(PAIRS_mon);
-  M->remove(REDUCE_mon);
-  deletearray(REDUCE_exp);
   // Remove gb
   // Remove syzygies
   // Remove mi
@@ -89,7 +85,7 @@ int GBKernelComputation::calc()
     mm->append(GR->gbvector_copy(syzygies[p]));
   buffer o;
   Matrix *m = mm->to_matrix();
-  if (gbTrace >= 5)
+  if (M2_gbTrace >= 5)
     {
       o << "skeleton = " << newline;
       m->text_out(o);
@@ -166,6 +162,7 @@ void GBKernelComputation::new_pairs(int i)
     // Create and insert all of the pairs which will have lead term 'gb[i]'.
     // This also places 'in(gb[i])' into the appropriate monomial ideal
 {
+
   Index<MonomialIdeal> j;
   queue<Bag *> elems;
   intarray vp;			// This is 'p'.
@@ -173,6 +170,7 @@ void GBKernelComputation::new_pairs(int i)
 
   if (SF) 
     {
+      monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
       SF->schreyer_down(gb[i]->monom, gb[i]->comp-1, PAIRS_mon);
       M->to_varpower(PAIRS_mon, vp);
     }
@@ -282,7 +280,7 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
   if (ndivisors == 0) return 0;
   result = bb[0]->basis_elem();
   // Now search through, and find the best one.  If only one, just return it.
-  if (gbTrace >= 5)
+  if (M2_gbTrace >= 5)
     if (this_mi->length() > 1)
       {
 	buffer o;
@@ -355,7 +353,7 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
 	}
     }
 #if 0
-//   if (gbTrace >= 5) 
+//   if (M2_gbTrace >= 5) 
 //     {
 //       buffer o;
 //       o << "[" << nterms << ",s" << nsaved << "]";
@@ -366,6 +364,9 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
 
 void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 {
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   const Ring *gbringK = GR->get_flattened_coefficients();
   ring_elem one = gbringK->from_int(1);
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
@@ -377,7 +378,7 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
   int max_len = GR->gbvector_n_terms(f);
 
   int count = 0;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
 
   while (f != NULL)
@@ -442,7 +443,7 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 	}
     }
 
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -453,6 +454,9 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 
 void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
 {
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   const Ring *gbringK = GR->get_flattened_coefficients();
   ring_elem one = gbringK->from_int(1);
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
@@ -464,7 +468,7 @@ void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
   int q;
 
   int count = 0;
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     emit_wrapped(",");
 
   while ((lead = fb.get_lead_term()) != NULL)
@@ -523,7 +527,7 @@ void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
 	}
     }
 
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << count;

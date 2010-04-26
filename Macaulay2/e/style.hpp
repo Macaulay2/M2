@@ -14,8 +14,7 @@
 #include <mpfr.h>
 
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
-
-extern "C" char newline[];
+#define INTSIZE(a) static_cast<int>((a).size())
 
 #include "error.h"
 #include "buffer.hpp"
@@ -44,7 +43,7 @@ const int EXCEPTION = -2;
 // Used for all of the heap types: polynomial, vector, resolution vectors.
 #define GEOHEAP_SIZE 15
 
-extern int heap_size[GEOHEAP_SIZE];
+extern const int heap_size[GEOHEAP_SIZE];
 
 
 #endif

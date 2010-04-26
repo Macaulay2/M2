@@ -9,9 +9,9 @@ Monoid *IM2_Monoid_trivial()
   return Monoid::get_trivial_monoid(); // Set up in IM2_initialize()
 }
 
-MonoidOrNull *IM2_Monoid_make(MonomialOrdering *mo,
-			      M2_stringarray names,
-			      Ring *deg_ring,
+engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering *mo,
+			      M2_ArrayString names,
+			      const Ring *deg_ring,
 			      M2_arrayint degs,
 			      M2_arrayint hefts)
 {
@@ -24,7 +24,7 @@ MonoidOrNull *IM2_Monoid_make(MonomialOrdering *mo,
   return Monoid::create(mo,names,P,degs,hefts);
 }
 
-unsigned long IM2_Monoid_hash(Monoid *M)
+unsigned long IM2_Monoid_hash(const Monoid *M)
 {
   return M->get_hash_value();
 }

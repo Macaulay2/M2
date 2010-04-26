@@ -8,7 +8,7 @@ PRE.cc   = $(COMPILE.cc) -E
 
 include @srcdir@/Makefile.files
 include Makefile.common
-CPPFLAGS := -I. $(CPPFLAGS)
+CPPFLAGS := -I. -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c
 
 .PHONY : tags
 
@@ -16,17 +16,14 @@ CPPFLAGS := -I. $(CPPFLAGS)
 ## Targets ##
 #############
 
-all: initialize
-
 ifneq (@ETAGS@,)
 all: tags
 endif
 tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
-		 statuscodes
+		 @srcdir@/../e-includes/statuscodes
 	cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
-
 
 # overflows
 LDLIBS = @GC_LIBS@
@@ -43,9 +40,6 @@ clean :: ; rm -f run-overflow-test
 pi overflow-test : overflow.o ../d/debug.o
 clean :: ; rm -f overflow-test
 pi : pi.h
-
-# the target 'initialize' is used by the Makefile in the parent directory
-initialize all: $(addsuffix .hpp, $(GENERATED_H))
 
 all:; $(MAKE) -C f4
 
@@ -66,16 +60,12 @@ endif
 %.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
 ../lib/libengine.so : $(LOFILES); @CC@ -shared $^ $(OUTPUT_OPTION)
 
-VEC =   -e "s/geobucket/vecHeap/g"      -e "s/FREEMODULETYPE/const FreeModule/g" -e "s/VECTYPE/vecterm */g"
-GBVEC = -e "s/geobucket/gbvectorHeap/g" -e "s/FREEMODULETYPE/GBRing/g"     -e "s/VECTYPE/gbvector */g"
-RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g"  -e "s/VECTYPE/res2term */g"
-
-#geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
-geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
-geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
+MORE_OPTIONS = -Wno-cast-qual
+COMPILE.c += $(MORE_OPTIONS)
+COMPILE.cc += $(MORE_OPTIONS)
 
 clean::
-	rm -f *.lo *.o *.rpo TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
+	rm -f *.lo *.o *.rpo LOGFILE
 	$(MAKE) -C f4 $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 all: Makefile.common
@@ -92,28 +82,12 @@ ifeq (@NM_DEMANGLES@,yes)
 NMFLAGS += --demangle
 endif
 dups-tmp: $(ENGINE_OBJFILES)
-	nm $(NMFLAGS) $(ENGINE_OBJFILES) |grep ' T ' |sort +2 |uniq -2 -d |tee dups-tmp
+	nm $(NMFLAGS) $(ENGINE_OBJFILES) |grep ' T ' |sort -k 2 |uniq -2 -d |tee dups-tmp
 dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
 doxygen : ; cd @srcdir@ && doxygen
-distclean: clean; rm -f Makefile
-
-ifeq (@NM_DEMANGLES@,yes)
-all: check-global-new-delete
-check-global-new-delete : $(ENGINE_OBJFILES)
-	nm $(NMFLAGS) $^ | egrep '[WUT] operator (new|delete)' > refnewdel.tmp
-	@if [ -s refnewdel.tmp ] ; then \
-		echo "--warning: 'operator new' or 'operator delete' referred to in the following files:" >&2 ;\
-		sed 's/^/   /' refnewdel.tmp ;\
-	fi
-clean::; rm -f refnewdel.tmp
-endif
-
-initialize : statuscodes.h
-statuscodes.h : statuscodes
-	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
-clean::; rm -f statuscodes.h
+distclean: clean; rm -f Makefile @srcdir@/TAGS
 
 pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o : pi.h pi-masks.h
 pi-test : exceptions.o overflow.o
@@ -124,10 +98,20 @@ pi-masks.h : pi-genmask
 
 pm-test.o : pm.hpp
 
+SCCFLAGS += -I../d
+
+# a stand-alone program made from test.dd
+# test : ../c/scc-core.o
+test : complex.o
+test : LDFLAGS += -L../d -lmpfr -lmpir -lfac -lcf -lcfmem
+test : LDLIBS += -ld
+
+test.o : CXXFLAGS += -Wno-unused -Wno-uninitialized -Wno-cast-qual
+
 clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
 clean :: ; rm -rf *.dSYM
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e "
 # End:
 

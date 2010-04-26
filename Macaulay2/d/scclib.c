@@ -2,12 +2,15 @@
 
 #include <dirent.h>
 
+#include "tokens-exports.h"
 #include "types.h"
 #include "M2mem.h"
 #include "../c/compat.c"
 #include "debug.h"
 
 int reading_from_readline = FALSE;
+
+extern void stack_trace();
 
 void
 #if defined(__STDC__)
@@ -33,16 +36,11 @@ va_dcl
 #ifndef NDEBUG
      trap();
 #endif
+     /* stack_trace(); */
      exit(1);
      }
 
-void fatalarrayindex(indx, len, file, line, column)
-int indx;
-int len;
-const char *file;
-int line;
-int column;
-{
+void fatalarrayindex(int indx, int len, const char *file, int line, int column) {
      char msg[100];
      sprintf(msg,"array index %d out of bounds 0 .. %d",indx,len-1);
      if (column == -1) {
@@ -54,11 +52,7 @@ int column;
      /* eventually when there is an interpreter we will have break loop here */
      }
 
-void fatalarraylen(len, file, line, column)
-int len;
-char *file;
-int line;
-int column;
+void fatalarraylen(int len, const char *file, int line, int column)
 {
      char msg[100];
      sprintf(msg,"new array length %d less than zero",len);
@@ -68,76 +62,55 @@ int column;
      else {
      	  fatal(errfmt,file,line,column,msg);
 	  }
-     /* eventually when there is an interpreter we will have break loop here */
      }
 
-void fatalrefctcheck(file,line,column)
-char *file;
-int line;
-int column;
-{
+void invalidTypeTag(int typecode, const char *file, int line, int column) {
+     char msg[100];
+     sprintf(msg,"internal error: unrecognized type code: %d\n",typecode);
      if (column == -1) {
-     	  fatal("%s:%d: item already freed (internal error)", file,line);
+     	  fatal(errfmtnc,file,line,msg);
 	  }
      else {
-     	  fatal("%s:%d.%d: item already freed (internal error)",
-	       file,line,column);
+     	  fatal(errfmt,file,line,column,msg);
 	  }
      }
 
-int system_write(int fd, M2_string buffer, int len){
-     if ((int)buffer->len < len) fatalarrayindex(len-1,buffer->len,__FILE__,__LINE__,-1);
-     return write(fd,buffer->array,len);
+void invalidNullPointer(const char *file, int line, int column) {
+     char msg[100];
+     sprintf(msg,"internal error: invalid null pointer\n");
+     if (column == -1) {
+     	  fatal(errfmtnc,file,line,msg);
+	  }
+     else {
+     	  fatal(errfmt,file,line,column,msg);
+	  }
      }
 
-int system_write_1(int fd, M2_string buffer, int len, int off){
-     if ((int)buffer->len < len+off) fatalarrayindex(len+off-1,buffer->len,__FILE__,__LINE__,-1);
-     return write(fd,buffer->array+off,len);
-     }
-
-int system_sleep(int t) {
-  return sleep(t);
-}
-
-int system_openin(filename)
-M2_string filename;
-{
-     char *fname = tocharstar(filename);
+int system_openin(M2_string filename) {
+     char *fname = M2_tocharstar(filename);
      int fd;
      fd = open(fname, O_BINARY | O_RDONLY);
      GC_FREE(fname);
      return fd;
      }
 
-int system_openout(filename)
-M2_string filename;
-{
-     char *fname = tocharstar(filename);
+int system_openout(M2_string filename) {
+     char *fname = M2_tocharstar(filename);
      int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_TRUNC, 0644);
      GC_FREE(fname);
      return fd;
      }
 
-int system_openoutappend(filename)
-M2_string filename;
-{
-     char *fname = tocharstar(filename);
+int system_openoutappend(M2_string filename) {
+     char *fname = M2_tocharstar(filename);
      int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_APPEND, 0644);
      GC_FREE(fname);
      return fd;
      }
 
-int system_pipe(fildes)
-M2_arrayint fildes;
-{
-     return pipe(fildes->array);
-     }
-
-int system_exec(argv)
-M2_stringarray argv;
-{
+int system_exec(M2_ArrayString argv) {
      int i;
-     char **av = tocharstarstar(argv);
+     char **av = M2_tocharstarstar(argv);
      execvp(av[0],av);
      for (i=0; i<(int)argv->len; i++) {
      	  GC_FREE(av[i]);
@@ -146,30 +119,14 @@ M2_stringarray argv;
      return ERROR;
      }
 
-int actors5_sizeofDouble(void) { return sizeof(double); }
-
-double actors5_convertnettodouble(M2_string p,int pos) {
-  double x;
-  memcpy((char *)&x,p->array+pos,sizeof(double));
-  return x;
-}
-
-M2_string actors5_convertdoubletonet(double x) {
-  int n = sizeof (double);
-  M2_string p = (M2_string)getmem_atomic(n);
-  p->len = n;
-  memcpy(p->array,(char *)&x,n);
-  return p;
-}
-
 M2_string interp_dirname(M2_string s) {
-  char *t = tocharstar(s);
+  char *t = M2_tocharstar(s);
   char *u = t;
   char *v = u;
   for (; *u; u++) if (*u == '/') v=u+1;	/* on MacOS?? */
   if (v != NULL) *v = '\0';
-  if (*t == '\0') return tostring("./"); /* on MacOS?? */
-  return tostring(t);
+  if (*t == '\0') return M2_tostring("./"); /* on MacOS?? */
+  return M2_tostring(t);
 }
 
 M2_string system_getcwd()
@@ -178,29 +135,26 @@ M2_string system_getcwd()
      char buf[700];
      /* We have to get the cwd each time, because otherwise we might pick up the
         cwd from when dumpdata was run, which could have been different from now. */
-     char *x = getcwd(buf,sizeof(buf)-1);
+     static const char slash[] = "/";
+     char *x = getcwd(buf,sizeof(buf)-strlen(slash));
 #if defined(_WIN32)
      char *p;
      for (p=x; *p; p++) if (*p == '\\') *p = '/';
 #endif
-     if (0 != strcmp(buf,"/")) strcat(buf,"/");
-     if (x != NULL) return tostring(x);
-     return tostring("");
+     if (0 != strcmp(buf,slash)) strcat(buf,slash);
+     if (x != NULL) return M2_tostring(x);
+     return M2_tostring("");
      }
 
-M2_string system_getenv(s)
-M2_string s;
-{
-     char *ss = tocharstar(s);
+M2_string system_getenv(M2_string s) {
+     char *ss = M2_tocharstar(s);
      char *x = getenv(ss);
      GC_FREE(ss);
-     if (x == NULL) return tostring("");
-     else return tostring(x);
+     if (x == NULL) return M2_tostring("");
+     else return M2_tostring(x);
      }
 
-int system_strcmp(s,t)
-M2_string s,t;
-{
+int system_strcmp(M2_string s, M2_string t) {
   int slen = s->len, tlen = t->len, i;
   int ret = 0;
   int len = slen < tlen ? slen : tlen;
@@ -233,9 +187,7 @@ M2_string s,t;
   return ret;
 }
 
-int system_strnumcmp(s,t)
-M2_string s,t;
-{
+int system_strnumcmp(M2_string s,M2_string t) {
      int slen = s->len, tlen = t->len, i;
      int ret = 0;
      int len = slen < tlen ? slen : tlen;
@@ -285,15 +237,6 @@ M2_string s,t;
      return ret;
 }
 
-int system_wait(pid)
-int pid;
-{
-     int status;
-     int ret = waitpid(pid,&status,0);
-     if (ret == ERROR) return ERROR;
-     return status>>8;
-     }
-
 M2_arrayint system_waitNoHang(M2_arrayint pids)
 {
      int n = pids->len;
@@ -332,9 +275,7 @@ M2_arrayint system_select(M2_arrayint v) {
   return z;
 }
 
-unsigned int system_hash(x)
-double x;
-{
+int system_hash(double x){
      unsigned int h = 0;
 #if 0
      /* ieee version */
@@ -354,18 +295,18 @@ double x;
      }
 
 M2_string system_readlink(M2_string filename) {
-  char *fn = tocharstar(filename);
+  char *fn = M2_tocharstar(filename);
   int size = 100;
   M2_string s = NULL;
   while (TRUE) {
     char buf[size];
     int r = readlink(fn,buf,sizeof buf);
     if (r == -1) {
-      s = tostring("");
+      s = M2_tostring("");
       break;
     }
     if (r < size) {
-      s = tostringn(buf,r);
+      s = M2_tostringn(buf,r);
       break;
     }
     size *= 2;			/* r == size, try again */
@@ -375,7 +316,7 @@ M2_string system_readlink(M2_string filename) {
 }
 
 int system_chdir(M2_string filename) {
-  char *fn = tocharstar(filename);
+  char *fn = M2_tocharstar(filename);
   int ret = chdir(fn);
   GC_FREE(fn);
   return ret;
@@ -388,55 +329,27 @@ static bool isDirectory(const char *cname) {
 }
 
 M2_string system_realpath(M2_string filename) {
-  char *fn = tocharstar(filename);
+  char *fn = M2_tocharstar(filename);
   char buf[PATH_MAX+1];
   char *r = realpath(*fn ? fn : ".",buf);
   if (isDirectory(r)) strcat(r,"/");
   GC_FREE(fn);
-  return r == NULL ? NULL : tostring(buf);
+  return r == NULL ? NULL : M2_tostring(buf);
 }
 
 M2_string system_errfmt(M2_string filename, int lineno, int colno, int loaddepth) {
 	char *s = getmem_atomic(filename->len+strlen(posfmt)+10);
-	char *fn = tocharstar(filename);
+	char *fn = M2_tocharstar(filename);
 	M2_string ret;
 	sprintf(s,posfmt,fn,lineno,colno,loaddepth);
-	ret = tostring(s);
+	ret = M2_tostring(s);
 	GC_FREE(s);
 	GC_FREE(fn);
 	return ret;
 }
 
-int system_read(fd,buffer,len)
-int fd;
-M2_string buffer;
-int len;
-{
-     if ((int)buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
-     if (len == 0) return 0;
-     return read(fd,buffer->array,len);
-     }
-
-int system_read_1(fd,buffer,len,offset)
-int fd;
-M2_string buffer;
-int len;
-int offset;
-{
-     if (offset < 0) {
-	  fatalarrayindex(offset,buffer->len,__FILE__,__LINE__,-1);
-	  }
-     if ((int)buffer->len < len+offset) {
-	  fatalarrayindex(len+offset,buffer->len,__FILE__,__LINE__,-1);
-	  }
-     if (len == 0) return 0;
-     return read(fd,buffer->array+offset,len);
-     }
-
 #include <readline/readline.h>
 #include <readline/history.h>
-
-extern M2_stringarray objects_completions(M2_string);
 
 static char *M2_completion_generator(const char *text, int state) {
   static int i;
@@ -444,13 +357,17 @@ static char *M2_completion_generator(const char *text, int state) {
   char *p;
   if (state == 0) {
     M2_string s;
-    M2_stringarray ret;
+    M2_ArrayString ret;
     i = 0;
+#ifdef free
+#warning "'free' defined as macro, but we want to use the libc function"
+#define free x
+#endif
     if (v != NULL) free(v);
-    s = tostring(text);
-    ret = objects_completions(s);
+    s = M2_tostring(text);
+    ret = tokens_completions(s);
     GC_FREE(s);
-    v = tocharstarstar_malloc(ret); /* readline will use free() to free these strings */
+    v = M2_tocharstarstarmalloc(ret); /* readline will use free() to free these strings */
     GC_FREE(ret);
   }
   p = v[i];
@@ -485,7 +402,7 @@ static int read_via_readline(char *buf,int len,char *prompt) {
     p = readline(prompt);
     reading_from_readline = FALSE;
 #if 0
-    if (system_interruptedFlag) return ERROR; /* interrupted system call, for example */
+    if (test_Field(interrupts_interruptedFlag)) return ERROR; /* interrupted system call, for example */
 #endif
     if (p == NULL) return 0;	/* EOF */
     i = 0;
@@ -503,7 +420,7 @@ static int read_via_readline(char *buf,int len,char *prompt) {
 }
 
 int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
-  char *p = tocharstar(prompt);
+  char *p = M2_tocharstar(prompt);
   int r;
   if (offset < 0 || (int)buffer->len - offset < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
   r = read_via_readline(buffer->array + offset,len,p);
@@ -512,14 +429,14 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
 }
 
 #if 0
-M2_stringarray system_history(void) {
-  M2_stringarray a;
+M2_ArrayString system_history(void) {
+  M2_ArrayString a;
   HIST_ENTRY **h = history_list();
   int i,n;
   for (n=0; h != NULL && h[n] != NULL && h[n]->data != NULL; n++);
-  a = (M2_stringarray) getmem (sizeofarray(a,n));
+  a = (M2_ArrayString) getmem (sizeofarray(a,n));
   a->len = n;
-  for (i=0; i<n; i++) a->array[i] = tostring(h[i]->line);
+  for (i=0; i<n; i++) a->array[i] = M2_tostring(h[i]->line);
   return a;
 }
 #endif
@@ -535,8 +452,8 @@ M2_stringarray system_history(void) {
 #endif
 #endif
 
-int system_fileExists(M2_string name) {
-  char *cname = tocharstar(name);
+M2_bool system_fileExists(M2_string name) {
+  char *cname = M2_tocharstar(name);
   struct stat buf;
   int r = stat(cname,&buf);
   GC_FREE(cname);
@@ -544,7 +461,7 @@ int system_fileExists(M2_string name) {
 }
 
 int system_fileMode(M2_string name) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   struct stat buf;
   int r = stat(cname,&buf);
   GC_FREE(cname);
@@ -558,21 +475,21 @@ int system_fileModeFD(int fd) {
 }
 
 int system_chmod(M2_string name,int mode) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   int r = chmod(cname,mode);
   GC_FREE(cname);
   return r;
 }
 
 int system_isDirectory(M2_string name) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   int r = isDirectory(cname);
   GC_FREE(cname);
   return r;
 }
 
 int system_isRegularFile(M2_string name) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   struct stat buf;
   int r = lstat(cname,&buf);
   GC_FREE(cname);
@@ -581,10 +498,10 @@ int system_isRegularFile(M2_string name) {
 
 int always(const struct dirent *p) { return 1; }
 
-M2_stringarray system_readDirectory(M2_string name) {
+M2_ArrayString system_readDirectory(M2_string name) {
   int n=0, i=0;
-  M2_stringarray a;
-  char *cname = tocharstar(name);
+  M2_ArrayString a;
+  char *cname = M2_tocharstar(name);
   struct dirent *entry;
   DIR *dir = opendir(cname);
   GC_FREE(cname);
@@ -596,10 +513,10 @@ M2_stringarray system_readDirectory(M2_string name) {
     return NULL;
   }
   rewinddir(dir);
-  a = (M2_stringarray) getmem (sizeofarray(a,n));
+  a = (M2_ArrayString) getmem (sizeofarray(a,n));
   a->len = n;
-  for (i=0; i<n && (entry = readdir(dir)) != NULL; i++) a->array[i] = tostring(entry->d_name);
-  for (   ; i<n ; i++) a->array[i] = tostring("");
+  for (i=0; i<n && (entry = readdir(dir)) != NULL; i++) a->array[i] = M2_tostring(entry->d_name);
+  for (   ; i<n ; i++) a->array[i] = M2_tostring("");
   closedir(dir);
   if (errno != 0) return NULL;
   return a;
@@ -612,7 +529,7 @@ int system_fileLength(int fd) {
 }
 
 int system_fileLength_1(M2_string filename) {
-  char *cname = tocharstar(filename);
+  char *cname = M2_tocharstar(filename);
   struct stat statbuf;
   int ret = stat(cname,&statbuf);
   GC_FREE(cname);
@@ -621,7 +538,7 @@ int system_fileLength_1(M2_string filename) {
 }
 
 int system_fileTime(M2_string name) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   struct stat buf;
   int r;
   r = lstat(cname,&buf);
@@ -631,7 +548,7 @@ int system_fileTime(M2_string name) {
 }
 
 int system_setFileTime(M2_string name, int modtime) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   struct utimbuf buf = { time(NULL), modtime };
   int r;
   r = utime(cname,&buf);
@@ -640,34 +557,30 @@ int system_setFileTime(M2_string name, int modtime) {
   return 0;
 }
 
-int system_currentTime() {
-  return time(NULL);
-}
-
 int system_mkdir(M2_string name) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   int r = mkdir(cname,0777);
   GC_FREE(cname);
   return r;
 }
 
 int system_rmdir(M2_string name) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   int r = rmdir(cname);
   GC_FREE(cname);
   return r;
 }
 
 int system_unlink(M2_string name) {
-  char *cname = tocharstar(name);
+  char *cname = M2_tocharstar(name);
   int r = unlink(cname);
   GC_FREE(cname);
   return r;
 }
 
 int system_link(M2_string oldfilename,M2_string newfilename) {
-  char *old = tocharstar(oldfilename);
-  char *new = tocharstar(newfilename);
+  char *old = M2_tocharstar(oldfilename);
+  char *new = M2_tocharstar(newfilename);
   int r = link(old,new);
   GC_FREE(old);
   GC_FREE(new);
@@ -675,17 +588,15 @@ int system_link(M2_string oldfilename,M2_string newfilename) {
 }
 
 int system_symlink(M2_string oldfilename,M2_string newfilename) {
-  char *old = tocharstar(oldfilename);
-  char *new = tocharstar(newfilename);
+  char *old = M2_tocharstar(oldfilename);
+  char *new = M2_tocharstar(newfilename);
   int r = symlink(old,new);
   GC_FREE(old);
   GC_FREE(new);
   return r;
 }
 
-M2_string system_readfile(fd)
-int fd;
-{
+M2_string system_readfile(int fd) {
      struct stat buf;
      size_t bufsize = 1024;
      char *text;
@@ -911,8 +822,8 @@ int opensocket(char *host, char *service) {
 }
 
 int system_opensocket(M2_string host,M2_string serv) {
-     char *tmphost = tocharstar(host);
-     char *tmpserv = tocharstar(serv);
+     char *tmphost = M2_tocharstar(host);
+     char *tmpserv = M2_tocharstar(serv);
      int sd = opensocket(tmphost,tmpserv);
      GC_FREE(tmphost);
      GC_FREE(tmpserv);
@@ -920,8 +831,8 @@ int system_opensocket(M2_string host,M2_string serv) {
      }
 
 int system_openlistener(M2_string interface,M2_string serv) {
-     char *tmpinterface = tocharstar(interface);
-     char *tmpserv = tocharstar(serv);
+     char *tmpinterface = M2_tocharstar(interface);
+     char *tmpserv = M2_tocharstar(serv);
      int sd = openlistener(*tmpinterface ? tmpinterface : NULL,tmpserv);
      GC_FREE(tmpinterface);
      GC_FREE(tmpserv);
@@ -963,27 +874,27 @@ char const *system_strerror(void) {
 	  errno = 0;
 	  return msg;
      }
-     if (system_interruptedFlag) return "interrupted";
+     if (test_Field(interrupts_interruptedFlag)) return "interrupted";
      return "no system error indication found";
 }
 
 M2_string system_syserrmsg()
 {
-     return tostring(system_strerror());
+     return M2_tostring(system_strerror());
 }
 
 int system_run(M2_string command){
-     char *c = tocharstar(command);
+     char *c = M2_tocharstar(command);
      int r = system(c);
      GC_FREE(c);
      return r;
      }
 
-struct FINAL *final_list, *pre_final_list;
+struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
 
 void system_atend(void (*f)()){
-     struct FINAL *this_final = (struct FINAL *)getmem(sizeof(struct FINAL));
-     this_final -> final = f;
+     struct FUNCTION_CELL *this_final = (struct FUNCTION_CELL *)getmem(sizeof(struct FUNCTION_CELL));
+     this_final -> fun = f;
      this_final -> next = pre_final_list;
      pre_final_list = this_final;
      }
@@ -1033,7 +944,7 @@ M2_arrayint system_regexmatch(M2_string pattern, int start, int range, M2_string
     if (last_pattern != NULL) regfree(&regex_pattern), last_pattern = NULL;
     regcomp_return = re_compile_pattern(pattern->array, pattern->len, &regex_pattern);
     if (regcomp_return != NULL) {
-         system_regexmatchErrorMessage = tostring(regcomp_return);
+         system_regexmatchErrorMessage = M2_tostring(regcomp_return);
 	 regfree(&regex_pattern);
 	 return empty;
     }
@@ -1046,7 +957,7 @@ M2_arrayint system_regexmatch(M2_string pattern, int start, int range, M2_string
     if (regexec_return == re_search_empty_return) return empty;
     else {
       int n = match_num(match);
-      M2_arrayint m = makearrayint(2*n);
+      M2_arrayint m = M2_makearrayint(2*n);
       int i;
       for (i = 0; i<n; i++) {
 	m->array[2*i  ] = match_start(match,i);
@@ -1080,7 +991,7 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
       regcomp_return = re_compile_pattern(pattern->array, pattern->len, &regex_pattern);
     }
     if (regcomp_return != NULL) {
-         system_regexmatchErrorMessage = tostring(regcomp_return);
+         system_regexmatchErrorMessage = M2_tostring(regcomp_return);
 	 return errorflag;
     }
     last_pattern = pattern;
@@ -1130,11 +1041,11 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
     }
     /* copy the last part of the text */
     cat(&buflen,&bufct,&buf, textlen-start, text->array+start);
-    return tostringn(buf, bufct);
+    return M2_tostringn(buf, bufct);
   }
 }
 
-M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_string text, M2_stringarray errorflag, M2_bool ignorecase) {
+M2_ArrayString system_regexselect(M2_string pattern, M2_string replacement, M2_string text, M2_ArrayString errorflag, M2_bool ignorecase) {
   const char *regcomp_return;
   system_regexmatchErrorMessage = &noErrorMessage;
   re_set_syntax(SYNTAX_FLAGS);
@@ -1142,7 +1053,7 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
     if (last_pattern != NULL) regfree(&regex_pattern), last_pattern = NULL;
     regcomp_return = re_compile_pattern(pattern->array, pattern->len, &regex_pattern);
     if (regcomp_return != NULL) {
-         system_regexmatchErrorMessage = tostring(regcomp_return);
+         system_regexmatchErrorMessage = M2_tostring(regcomp_return);
 	 return errorflag;
     }
     last_pattern = pattern;
@@ -1155,7 +1066,7 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
     char *buf = getmem_atomic(buflen);
     int i;
     int retlen = 10, retct = 0;
-    M2_stringarray ret = (M2_stringarray)getmem_atomic(sizeofarray(ret,retlen));
+    M2_ArrayString ret = (M2_ArrayString)getmem_atomic(sizeofarray(ret,retlen));
     while (re_search(&regex_pattern, text->array, text->len, start, text->len - start, &match) != re_search_empty_return) {
          int n = match_num(match);
 	 int bufct = 0;
@@ -1188,13 +1099,13 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
 	      if (retct == retlen) {
 		   int newlen = 2 * retlen;
 		   int k;
-		   M2_stringarray newret = (M2_stringarray)getmem_atomic(sizeofarray(ret,newlen));
+		   M2_ArrayString newret = (M2_ArrayString)getmem_atomic(sizeofarray(ret,newlen));
 		   for (k=0; k<retlen; k++) newret->array[k] = ret->array[k];
 		   GC_FREE(ret);
 		   ret = newret;
 		   retlen = newlen;
 	      }
-	      ret->array[retct++] = tostringn(buf,bufct);
+	      ret->array[retct++] = M2_tostringn(buf,bufct);
 	 }
 	 /* if the matched part was empty, move onward a bit */
 	 if (match_end(match,0) == match_start(match,0)) {
@@ -1213,14 +1124,8 @@ bool gotArg(const char *arg, const char **argv) {
   return FALSE;
 }
 
-int system_fchmod(int fd, int mode) {
-  return fchmod(fd,mode);
-}
-
-void system_segmentationFault() { *((int*)1)=0; } /* for debugging our handling of segmentation faults */
-
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+// compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
 // End:
 */

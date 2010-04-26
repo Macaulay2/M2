@@ -41,7 +41,7 @@ RingElement *RingElement::invert() const
   return new RingElement(R,R->invert(val));
 }
 
-RingElementOrNull *RingElement::operator+(const RingElement &b) const
+RingElement /* or null */ *RingElement::operator+(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
@@ -53,7 +53,7 @@ RingElementOrNull *RingElement::operator+(const RingElement &b) const
   return new RingElement(R, result);
 }
 
-RingElementOrNull *RingElement::operator-(const RingElement &b) const
+RingElement /* or null */ *RingElement::operator-(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
@@ -65,7 +65,7 @@ RingElementOrNull *RingElement::operator-(const RingElement &b) const
   return new RingElement(R, result);
 }
 
-RingElementOrNull *RingElement::operator*(const RingElement &b) const
+RingElement /* or null */ *RingElement::operator*(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
@@ -86,7 +86,7 @@ RingElement *RingElement::operator*(int n) const
     return new RingElement(R, R->mult(nR,get_value()));
 }
 
-RingElementOrNull *RingElement::operator/(const RingElement &b) const
+RingElement /* or null */ *RingElement::operator/(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
@@ -103,7 +103,7 @@ RingElementOrNull *RingElement::operator/(const RingElement &b) const
   return new RingElement(R, result);
 }
 
-RingElementOrNull *RingElement::power(int n) const
+RingElement /* or null */ *RingElement::power(int n) const
 {
   // n negative is handled.
   ring_elem f = R->power(val,n);
@@ -111,7 +111,7 @@ RingElementOrNull *RingElement::power(int n) const
   return new RingElement(R, f);
 }
 
-RingElementOrNull *RingElement::power(mpz_t n) const
+RingElement /* or null */ *RingElement::power(mpz_t n) const
 {
   ring_elem f = R->power(val,n);
   if (error()) return 0;
@@ -128,7 +128,7 @@ void RingElement::text_out(buffer &o) const
   R->elem_text_out(o, val);
 }
 
-RingElementOrNull *RingElement::get_terms(int nvars, int lo, int hi) const
+RingElement /* or null */ *RingElement::get_terms(int nvars, int lo, int hi) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -139,7 +139,7 @@ RingElementOrNull *RingElement::get_terms(int nvars, int lo, int hi) const
   return new RingElement(P, P->get_terms(nvars, val, lo, hi));
 }
 
-RingElementOrNull *RingElement::lead_coeff(const Ring *coeffR) const
+RingElement /* or null */ *RingElement::lead_coeff(const Ring *coeffR) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -154,7 +154,7 @@ RingElementOrNull *RingElement::lead_coeff(const Ring *coeffR) const
   return new RingElement(coeffR, P->lead_logical_coeff(coeffR,val));
 }
 
-RingElementOrNull *RingElement::get_coeff(const Ring *coeffR, const Monomial *m) const
+RingElement /* or null */ *RingElement::get_coeff(const Ring *coeffR, const Monomial *m) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -337,7 +337,7 @@ bool RingElement::lift(const Ring *S, const RingElement * &result) const
   return false;
 }
 
-const RingElementOrNull *RingElement::content() const
+const RingElement /* or null */ *RingElement::content() const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   const Ring *targetR = (P == 0 ? R : P->getCoefficients());
@@ -345,13 +345,13 @@ const RingElementOrNull *RingElement::content() const
   return new RingElement(targetR, R->content(val));
 }
 
-const RingElementOrNull *RingElement::remove_content() const
+const RingElement /* or null */ *RingElement::remove_content() const
 {
   ring_elem g = R->divide_by_content(val);
   return new RingElement(R, g);
 }
 
-const RingElementOrNull *RingElement::split_off_content(RingElementOrNull *&result) const
+const RingElement /* or null */ *RingElement::split_off_content(const RingElement /* or null */ *&result) const
 {
   const RingElement *c = content();
   ring_elem g = R->divide_by_given_content(val, c->val);

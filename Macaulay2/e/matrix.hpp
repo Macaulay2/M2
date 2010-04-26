@@ -30,7 +30,7 @@ private:
 			       int ncols,
 			       M2_arrayint rows,
 			       M2_arrayint cols,
-			       const RingElement_array *entries);
+			       const engine_RawRingElementArray entries);
   // returns false if an error, true otherwise.
   // Places the elements into 'mat'.
 
@@ -41,33 +41,33 @@ private:
   int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
 
 public:
-  static const MatrixOrNull * make(const FreeModule *target,
+  static const Matrix /* or null */ * make(const FreeModule *target,
 				   int ncols,
-				   const RingElement_array *M);
+				   const engine_RawRingElementArray M);
 
-  static const MatrixOrNull * make(const FreeModule *target,
+  static const Matrix /* or null */ * make(const FreeModule *target,
 				   const FreeModule *source,
 				   M2_arrayint deg,
-				   const RingElement_array *M);
+				   const engine_RawRingElementArray M);
 
-  static const MatrixOrNull * make_sparse(const FreeModule *target,
+  static const Matrix /* or null */ * make_sparse(const FreeModule *target,
 					  int ncols,
 					  M2_arrayint rows,
 					  M2_arrayint cols,
-					  const RingElement_array *entries);
+					  const engine_RawRingElementArray entries);
 
-  static const MatrixOrNull * make_sparse(const FreeModule *target,
+  static const Matrix /* or null */ * make_sparse(const FreeModule *target,
 					  const FreeModule *source,
 					  M2_arrayint deg,
 					  M2_arrayint rows,
 					  M2_arrayint cols,
-					  const RingElement_array *entries);
+					  const engine_RawRingElementArray entries);
 
-  const MatrixOrNull * remake(const FreeModule *target,
+  const Matrix /* or null */ * remake(const FreeModule *target,
 			      const FreeModule *source,
 			      M2_arrayint deg) const;
 
-  const MatrixOrNull * remake(const FreeModule *target) const;
+  const Matrix /* or null */ * remake(const FreeModule *target) const;
 
   static const Matrix * make(const MonomialIdeal * mi);
 
@@ -96,12 +96,12 @@ public:
   MonomialIdeal * make_monideal(int n, bool use_only_monomials_with_unit_coeffs=false) const;
   
   // matrices over RRR, CCC
-  MatrixOrNull *clean(M2_RRR epsilon) const;
-  M2_RRRorNull norm(M2_RRR p) const;
+  Matrix /* or null */ *clean(gmp_RR epsilon) const;
+  gmp_RRorNull norm(gmp_RR p) const;
 
   // Matrix operations
-  MatrixOrNull *sub_matrix(M2_arrayint r, M2_arrayint c) const;
-  MatrixOrNull *sub_matrix(M2_arrayint c) const;
+  Matrix /* or null */ *sub_matrix(M2_arrayint r, M2_arrayint c) const;
+  Matrix /* or null */ *sub_matrix(M2_arrayint c) const;
   Matrix *transpose() const;
   Matrix *operator+(const Matrix &m) const;
   Matrix *operator-() const;
@@ -111,38 +111,38 @@ public:
   Matrix *concat(const Matrix &m) const;
 
   static Matrix *identity(const FreeModule *F);
-  static MatrixOrNull *zero(const FreeModule *F, const FreeModule *G);
+  static Matrix /* or null */ *zero(const FreeModule *F, const FreeModule *G);
 
-  MatrixOrNull *koszul(int p) const;
-  static MatrixOrNull *koszul(const Matrix *rows, const Matrix *cols);
-  static MatrixOrNull *koszul_monomials(int nskew, const Matrix *rows, const Matrix *cols);
+  Matrix /* or null */ *koszul(int p) const;
+  static Matrix /* or null */ *koszul(const Matrix *rows, const Matrix *cols);
+  static Matrix /* or null */ *koszul_monomials(int nskew, const Matrix *rows, const Matrix *cols);
 
-  MatrixOrNull *reshape(const FreeModule *G, const FreeModule *H) const;
-  static MatrixOrNull *flip(const FreeModule *G, const FreeModule *H);
+  Matrix /* or null */ *reshape(const FreeModule *G, const FreeModule *H) const;
+  static Matrix /* or null */ *flip(const FreeModule *G, const FreeModule *H);
 
-  MatrixOrNull *direct_sum(const Matrix *m) const;
-  MatrixOrNull *module_tensor(const Matrix *m) const;
-  MatrixOrNull *tensor(const Matrix *m) const;
-  MatrixOrNull *diff(const Matrix *m, int use_coef) const;
+  Matrix /* or null */ *direct_sum(const Matrix *m) const;
+  Matrix /* or null */ *module_tensor(const Matrix *m) const;
+  Matrix /* or null */ *tensor(const Matrix *m) const;
+  Matrix /* or null */ *diff(const Matrix *m, int use_coef) const;
 
-  MatrixOrNull *contract0(int n_top_variables, const Matrix *N) const;
+  Matrix /* or null */ *contract0(int n_top_variables, const Matrix *N) const;
   // see doc for IM2_Matrix_contract0 to see what this does, and
   // what assumptions there are.
 
-  MatrixOrNull *symm(int n) const; // in symm.cpp
+  Matrix /* or null */ *symm(int n) const; // in symm.cpp
 
-  MatrixOrNull *coeffs(const int *vars, Matrix * &result_monoms) const;
+  Matrix /* or null */ *coeffs(const int *vars, Matrix * &result_monoms) const;
 
-  MatrixOrNull *coeffs(M2_arrayint vars, const Matrix *monoms) const;
+  Matrix /* or null */ *coeffs(M2_arrayint vars, const Matrix *monoms) const;
 
-  MatrixOrNull *monomials(M2_arrayint vars) const;
+  Matrix /* or null */ *monomials(M2_arrayint vars) const;
 
-  M2_arrayint_OrNull support() const;
+  M2_arrayintOrNull support() const;
   // gives error if not a polynomial ring, other wise the array of indices appearing in this.
 
   Matrix *top_coefficients(Matrix * &monoms) const;
 
-  const MatrixOrNull * basis(M2_arrayint lo_degree,
+  const Matrix /* or null */ * basis(M2_arrayint lo_degree,
 			     M2_arrayint hi_degree,
 			     M2_arrayint wt,
 			     M2_arrayint vars,
@@ -151,11 +151,11 @@ public:
 
   Matrix *exterior(int p,int strategy) const;
   Matrix *minors(int p,int strategy) const;
-  MatrixOrNull *minors(int p,
+  Matrix /* or null */ *minors(int p,
 		       int strategy, 
 		       int n_to_compute, // -1 means all
-		       M2_arrayint_OrNull first_row, // possibly NULL
-		       M2_arrayint_OrNull first_col // possibly NULL
+		       M2_arrayintOrNull first_row, // possibly NULL
+		       M2_arrayintOrNull first_col // possibly NULL
 		       ) const;
     
   Matrix *pfaffians(int p) const;  // in pfaff.cpp
@@ -196,9 +196,9 @@ public:
 				// Over ZZ, this gives the dimension over QQ.
 
   // See engine.h for the definition of 'content' here
-  const MatrixOrNull *content() const;
-  const MatrixOrNull *remove_content() const;
-  const MatrixOrNull *split_off_content(MatrixOrNull *&result) const;
+  const Matrix /* or null */ *content() const;
+  const Matrix /* or null */ *remove_content() const;
+  const Matrix /* or null */ *split_off_content(const Matrix /* or null */ *&result) const;
 
 private:
   void minimal_lead_terms_ZZ(intarray &result) const;

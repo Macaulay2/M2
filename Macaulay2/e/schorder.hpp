@@ -19,24 +19,21 @@ class SchreyerOrder : public our_new_delete
   int _nslots;
   int _rank;
 
-  void symm1(int lastn,	     // can use lastn..rank()-1 in product
-	     int pow) const;   // remaining power to take
-
   SchreyerOrder(const Monoid *m) : M(m), _nslots(m->monomial_size() + 1), _rank(0) {}
+  ~SchreyerOrder() { abort(); }
+
 public:
 
   static SchreyerOrder *create(const Monoid *m);
   static SchreyerOrder *create(const Matrix *m);
   static SchreyerOrder *create(const GBMatrix *m);
 
-  void intern();
   void remove();
-  ~SchreyerOrder() { remove(); }
 
   int rank() const { return _rank; }
   int compare_num(int i) const { return _order[i * _nslots]; }
   const int *base_monom(int i) const { return _order.raw() + i*_nslots + 1; }
-
+  const Monoid *getMonoid() const { return M; }
 
   bool is_equal(const SchreyerOrder *G) const;
   SchreyerOrder *copy() const;

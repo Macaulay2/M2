@@ -44,6 +44,7 @@ load "./ov_ringmaps.m2"
 load "./ov_matrices.m2"
 load "./ov_language.m2"
 load "./ov_files.m2"
+load "./threads.m2"
 
 load "./doc_lists.m2"
 load "./doc_strings.m2"

@@ -2,13 +2,13 @@
 
 #include "../newdelete.hpp"
 #include "moninfo.hpp"
+#include "monordering.h"
 #include <cstdio>
 #include <cstdlib>
 
-MonomialInfo::MonomialInfo(int nvars0)
+MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
 {
   nvars = nvars0;
-  nslots = 2 + nvars;
   hashfcn = newarray_atomic(monomial_word,nvars);
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
@@ -28,6 +28,34 @@ MonomialInfo::MonomialInfo(int nvars0)
   ncalls_unneccesary = 0;
   ncalls_quotient_as_vp = 0;
 
+  nweights = 0;
+  weight_vectors = 0;
+  if (moIsLex(mo))
+    {
+      compare = &MonomialInfo::compare_lex;
+
+      if (M2_gbTrace >= 1)
+	fprintf(stderr, "lex order\n");
+    }
+  else if (moIsGRevLex(mo))
+    {
+      compare = &MonomialInfo::compare_grevlex;
+
+      if (M2_gbTrace >= 1)
+	fprintf(stderr, "grevlex order\n");
+    }
+  else
+    {
+      weight_vectors = moGetWeightValues(mo);
+      nweights = weight_vectors->len / nvars;
+      compare = &MonomialInfo::compare_weightvector;
+
+      if (M2_gbTrace >= 1)
+	fprintf(stderr, "weight order\n");
+    }
+
+  nslots = 2 + nvars + nweights;
+  firstvar = 2 + nweights;
 }
 
 MonomialInfo::~MonomialInfo()

@@ -10,28 +10,9 @@
 #include "exceptions.hpp"
 #include "text-io.hpp"
 #include "../d/M2inits.h"
+#include "finalize.hpp"
 
-static int monideals_nfinalized = 0;
-static int monideals_nremoved = 0;
-
-void remove_monideal(void *p, void *cd)
-{
-  MonomialIdeal *G = static_cast<MonomialIdeal *>(p);
-  monideals_nremoved++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\nremoving monomial ideal %d at %p\n",monideals_nremoved, G);
-  G->remove_MonomialIdeal();
-}
-
-void intern_monideal(MonomialIdeal *G)
-{
-  GC_REGISTER_FINALIZER(G,remove_monideal,0,0,0);
-  monideals_nfinalized++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering monomial ideal %d at %p\n", monideals_nfinalized, (void *)G);
-}
-
-const MonomialIdealOrNull *IM2_MonomialIdeal_make(const Matrix *m, int n)
+engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
      try {
 	  MonomialIdeal *result = m->make_monideal(n);
@@ -44,7 +25,7 @@ const MonomialIdealOrNull *IM2_MonomialIdeal_make(const Matrix *m, int n)
      }
 }
 
-const MatrixOrNull *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
+const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
 {
      try {
 	  return Matrix::make(I);
@@ -87,7 +68,7 @@ int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
      }
 }
 
-const MonomialIdealOrNull *rawRadicalMonomialIdeal(const MonomialIdeal *I)
+const MonomialIdeal /* or null */ *rawRadicalMonomialIdeal(const MonomialIdeal *I)
 {
      try {
 	  MonomialIdeal *result = I->radical();
@@ -101,52 +82,7 @@ const MonomialIdealOrNull *rawRadicalMonomialIdeal(const MonomialIdeal *I)
      }
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_add(const MonomialIdeal *I, 
-					   const MonomialIdeal *J)
-{
-  if (I->get_ring() != J->get_ring())
-    {
-      ERROR("expected ideals in the same ring");
-      return 0;
-    }
-  MonomialIdeal *result = (*I) + (*J);
-  intern_monideal(result);
-  return result;
-}
-
-const MonomialIdeal *IM2_MonomialIdeal_setminus(const MonomialIdeal *I, 
-						const MonomialIdeal *J)
-{
-  if (I->get_ring() != J->get_ring())
-    {
-      ERROR("expected ideals in the same ring");
-      return 0;
-    }
-  MonomialIdeal *result = (*I) - (*J);
-  intern_monideal(result);
-  return result;
-}
-
-const MonomialIdealOrNull *IM2_MonomialIdeal_product(const MonomialIdeal *I, 
-					       const MonomialIdeal *J)
-{
-     try {
-	  if (I->get_ring() != J->get_ring())
-	    {
-	      ERROR("expected ideals in the same ring");
-	      return 0;
-	    }
-	  MonomialIdeal *result = (*I) * (*J);
-	  intern_monideal(result);
-	  return result;
-     }
-     catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
-     }
-}
-
-const MonomialIdealOrNull *IM2_MonomialIdeal_intersect(const MonomialIdeal *I, 
+const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(const MonomialIdeal *I, 
 						 const MonomialIdeal *J)
 {
      try {
@@ -167,7 +103,7 @@ const MonomialIdealOrNull *IM2_MonomialIdeal_intersect(const MonomialIdeal *I,
 
 #include "debug.hpp"
 
-const MonomialIdealOrNull *rawColonMonomialIdeal1(const MonomialIdeal *I, 
+const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(const MonomialIdeal *I, 
 						 const Monomial *a)
 {
      try {
@@ -181,7 +117,7 @@ const MonomialIdealOrNull *rawColonMonomialIdeal1(const MonomialIdeal *I,
      }
 }
 
-const MonomialIdealOrNull *rawColonMonomialIdeal2(const MonomialIdeal *I, 
+const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(const MonomialIdeal *I, 
 						const MonomialIdeal *J)
 {
      try {
@@ -192,7 +128,7 @@ const MonomialIdealOrNull *rawColonMonomialIdeal2(const MonomialIdeal *I,
 	    }
 	  MonomialIdeal *result = I->quotient(*J);
 	  intern_monideal(result);
-	  if (gbTrace >= 1)
+	  if (M2_gbTrace >= 1)
 	    dstash();
 	  return result;
 
@@ -203,7 +139,7 @@ const MonomialIdealOrNull *rawColonMonomialIdeal2(const MonomialIdeal *I,
      }
 }
 
-const MonomialIdealOrNull *rawSaturateMonomialIdeal1(const MonomialIdeal *I, 
+const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(const MonomialIdeal *I, 
 					    const Monomial *a)
 {
      try {
@@ -217,7 +153,7 @@ const MonomialIdealOrNull *rawSaturateMonomialIdeal1(const MonomialIdeal *I,
      }
 }
 
-const MonomialIdealOrNull *rawSaturateMonomialIdeal2(const MonomialIdeal *I, 
+const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal2(const MonomialIdeal *I, 
 					   const MonomialIdeal *J)
 {
      try {
@@ -236,7 +172,7 @@ const MonomialIdealOrNull *rawSaturateMonomialIdeal2(const MonomialIdeal *I,
      }
 }
 
-const MonomialIdealOrNull *IM2_MonomialIdeal_borel(const MonomialIdeal *I)
+const MonomialIdeal /* or null */ *IM2_MonomialIdeal_borel(const MonomialIdeal *I)
 {
      try {
 	  MonomialIdeal *result =  I->borel();
@@ -266,7 +202,7 @@ int IM2_MonomialIdeal_codim(const MonomialIdeal *I)
      }
 }
 
-const MonomialIdealOrNull *rawMonomialMinimalPrimes(const MonomialIdeal *I,
+const MonomialIdeal /* or null */ *rawMonomialMinimalPrimes(const MonomialIdeal *I,
 					      int codim_limit,
 					      int count)
 {
@@ -282,7 +218,7 @@ const MonomialIdealOrNull *rawMonomialMinimalPrimes(const MonomialIdeal *I,
      }
 }
 
-const MonomialIdealOrNull *rawMaximalIndependentSets(const MonomialIdeal *I,
+const MonomialIdeal /* or null */ *rawMaximalIndependentSets(const MonomialIdeal *I,
 					       int count)
 {
      try {
@@ -297,7 +233,7 @@ const MonomialIdealOrNull *rawMaximalIndependentSets(const MonomialIdeal *I,
      }
 }
 
-const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)
+const RingElement /* or null */ * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)
 /* This routine computes the numerator of the Hilbert series
    for coker I.  NULL is returned if the ring is not appropriate for
    computing Hilbert series, or the computation was interrupted. */
@@ -339,9 +275,9 @@ public:
   { 
     // insert into J.  This is a minimal generator of J
     for (int i=0; i<nv; i++)
-      exp[i] = mpz_get_si(exponentVector[i]); // overflow should not occur, as input fit
+      exp[i] = static_cast<int>(mpz_get_si(exponentVector[i])); // overflow should not occur, as input fit
 
-    if (gbTrace >= 5)
+    if (M2_gbTrace >= 5)
       {
 	fprintf(stderr, "got ");
 	for (int j=0; j<nv; j++)
@@ -366,13 +302,13 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const mpz_t *t
       Bag *b = I->operator[](i);
       varpower::to_ntuple(nv, b->monom().raw(), exp);
 
-      if (gbTrace >= 4) fprintf(stderr, "adding ");
+      if (M2_gbTrace >= 4) fprintf(stderr, "adding ");
       for (int j=0; j<nv; j++)
 	{
-	  if (gbTrace >= 4) fprintf(stderr, "%d ", exp[j]);
+	  if (M2_gbTrace >= 4) fprintf(stderr, "%d ", exp[j]);
 	  F.addExponent(exp[j]);
 	}
-      if (gbTrace >= 4) fprintf(stderr, "\n");
+      if (M2_gbTrace >= 4) fprintf(stderr, "\n");
     }
 
   // Now create the consumer object, and call Frobby
@@ -403,9 +339,7 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I, const M
 	mpz_init_set_si(topvec[i], top->array[i]);
     }
 
-  enterMalloc();  // WARNING: the consumer should not create or destroy M2 gmp ints
   MonomialIdeal *result = FrobbyAlexanderDual(I, topvec);
-  enterM2(); // resets memory functions
 
   // Clean up
   if (topvec != 0)
@@ -419,25 +353,25 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I, const M
 }
 #endif
 
-static MonomialIdealOrNull *alexDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
+static MonomialIdeal /* or null */ *alexDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
 {
   if (I->topvar() < 0)
     strategy = 1; // i.e. don't use frobby if there are no generators and/or variables
   switch (strategy) {
 #if HAVE_FROBBY
   case 0:
-    if (gbTrace >= 1) emit_line(" -- [Alexander dual: frobby]");
+    if (M2_gbTrace >= 1) emit_line(" -- [Alexander dual: frobby]");
     return wrapperFrobbyAlexanderDual(I,top);
 #else
 #warning "frobby not enabled"
 #endif
   default:
-    if (gbTrace >= 1) emit_line(" -- [Alexander dual: M2 monideal]");
+    if (M2_gbTrace >= 1) emit_line(" -- [Alexander dual: M2 monideal]");
     return I->alexander_dual(top);
   }
 }
 
-const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
+const MonomialIdeal /* or null */ *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
 {
   try {
     MonomialIdeal *result = alexDual(I,top,strategy);

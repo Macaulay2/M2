@@ -1,34 +1,27 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use system;
-use strings;
-use varstrin;
 use nets;
-use libfac;
+use interrupts;
+use errio;
 
-export determineExceptionFlag():void := (
-     exceptionFlag = interruptedFlag || steppingFlag || alarmedFlag;
-     interruptflag = if interruptedFlag then 1 else 0;
-     );
-
-export HashCounter := 1000000;
+threadCounter := 0;
+threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + (threadCounter-1) * 10000 );
 export nextHash():int := (
      HashCounter = HashCounter + 1;
      HashCounter);
 
-export ERROR := -1;
-export NOFD := -1;
-export EOF := -2;					    -- end of file
-export NULL := null();
-export STDIN := 0;
-export STDOUT := 1;
-export STDERR := 2;
-bufsize := 4 * 1024;
+export ERROR ::= -1;
+export NOFD ::= -1;
+export EOF ::= -2;					    -- end of file
+export NULL ::= null();
+export STDIN ::= 0;
+export STDOUT ::= 1;
+export STDERR ::= 2;
+bufsize ::= 4 * 1024;
 
 export iseof      (c:int ):bool := c == EOF;
 export iserror    (c:int ):bool := c == ERROR;
 
-export file := {
+export file := {+
         -- general stuff
      	hash:int,     	   	-- hash code
 	filename:string,	-- name of file
@@ -87,12 +80,21 @@ export clearFileError(o:file):void := (
 export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt():string := "";
 newbuffer():string := new string len bufsize do provide ' ';
+threadLocal export stdError := file(
+     -- contrast with stderr, defined in errio.d
+     -- intended just for top level use where nets might be printed
+     nextHash(), "stderr", 0, 
+     false, "",
+     false,NOFD,NOFD,0,
+     false,NOFD  ,false,          "",        0,0,false,false,noprompt,noprompt,false,true,false,0,
+     true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
+-- we give a way for other threads to know whether stder is there
 export dummyfile := file(nextHash(), "dummy",0, 
      false, "",
      false,NOFD,NOFD,0,
      false,NOFD,false,        "",          0,0,false,false,noprompt,noprompt,false,true,false,0,
      false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0,-1,false);
-export stdIO  := file(nextHash(),  "stdio",  0, 
+threadLocal export stdIO  := file(nextHash(),  "stdio",  0, 
      false, "",
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,noprompt,false,true,false,0,
@@ -162,14 +164,7 @@ init():void := (
 
 everytime(init);
 
-export stdin  := stdIO;
-export stdout := stdIO;
-export stderr := file(nextHash(), "stderr", 0, 
-     false, "",
-     false,NOFD,NOFD,0,
-     false,NOFD  ,false,          "",        0,0,false,false,noprompt,noprompt,false,true,false,0,
-     true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
-export errmsg := { message:string };
+export errmsg := {+ message:string };
 export FileCell := {file:file,next:(null or FileCell)};
 export openfiles := (null or FileCell)(NULL);
 addfile(o:file):file := (
@@ -187,20 +182,20 @@ rmfile(o:file):void := (
 	       else prevcell = x;
 	       x = thiscell.next;
 	       )));
-addfile(stdout);
-addfile(stderr);
+addfile(stdIO);
+addfile(stdError);
 opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg) := (
-     host := substr(filename,1);
+     host0 := substr(filename,1);
      serv := "2500";		  -- Macaulay 2 default port
      foreach c at j in filename do if c == ':' then (
-	  host = substr(filename,1,j-1);
+	  host0 = substr(filename,1,j-1);
 	  if j+1 < length(filename) then serv = substr(filename,j+1);
 	  break;
 	  );
      so := NOFD;
      sd := NOFD;
-     if length(host) == 0 || listener then (
-	  so = openlistener(host,serv);
+     if length(host0) == 0 || listener then (
+	  so = openlistener(host0,serv);
      	  if so == ERROR then return (file or errmsg)(errmsg("can't open listener : "+syserrmsg()));
 	  if input || output then (
 	       sd = acceptBlocking(so);
@@ -211,7 +206,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	       )
 	  )
      else (
-	  sd = opensocket(host,serv);
+	  sd = opensocket(host0,serv);
      	  if sd == ERROR then return (file or errmsg)(errmsg("can't open socket : "+syserrmsg()));
 	  );
      (file or errmsg)(addfile(file(nextHash(), filename, 0,
@@ -251,24 +246,31 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
 	  if  toChild.1 != NOFD then close(  toChild.1);
 	  return errmsg("can't make pipe : "+syserrmsg());
 	  );
+     arglist := tocharstarstar(array(string)("/bin/sh","-c",substr(filename,1)));
      pid := fork();
+     -- Don't call GC_malloc after forking; it causes problems when there are multiple threads, because
+     -- a call by GC_malloc to pthread_mutex_lock hangs.  That's why we compute "arglist" above.
      if pid == -1 then (
-	  if  toChild.0 != NOFD then close(  toChild.0);
-	  if  toChild.1 != NOFD then close(  toChild.1);
+	  if  toChild.0 != NOFD then close(toChild.0);
+	  if  toChild.1 != NOFD then close(toChild.1);
 	  return errmsg("can't fork : "+syserrmsg());
 	  );
      listener := false;
      if pid == 0 then (
 	  close(STDIN);
 	  if output then (
-	       close(  toChild.1);
-	       if toChild.0 != STDIN then (dup2(toChild.0, STDIN); close(toChild.0););
-	       );
+	       close(toChild.1);
+	       if toChild.0 != STDIN then (
+		    dup2(toChild.0, STDIN);
+		    close(toChild.0);
+		    ));
 	  if input then (
 	       close(fromChild.0);
-	       if fromChild.1 != STDOUT then (dup2(fromChild.1, STDOUT); close(fromChild.1););
-	       );
-	  exec(array(string)("/bin/sh","-c",substr(filename,1)));
+	       if fromChild.1 != STDOUT then (
+		    dup2(fromChild.1, STDOUT);
+		    close(fromChild.1);
+		    ));
+	  execstar(arglist);
 	  write(2,"exec of /bin/sh failed!\n",24);
 	  exit(1);
 	  );
@@ -295,7 +297,7 @@ export expandFileName(filename:string):string := (
      else filename);
 export openIn(filename:string):(file or errmsg) := (
      if filename === "-"
-     then (file or errmsg)(stdin)
+     then (file or errmsg)(stdIO)
      else if length(filename) > 0 && filename . 0 == '$'
      then opensocket(filename,true,false,false)
      else if length(filename) > 0 && filename . 0 == '!'
@@ -312,7 +314,7 @@ export openIn(filename:string):(file or errmsg) := (
 		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0,-1,false)))));
 export openOut(filename:string):(file or errmsg) := (
      if filename === "-"
-     then (file or errmsg)(stdout)
+     then (file or errmsg)(stdIO)
      else if length(filename) > 0 && filename . 0 == '$'
      then opensocket(filename,false,true,false)
      else if length(filename) > 0 && filename . 0 == '!'
@@ -361,7 +363,7 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
      if o.outfd != -1 then (
 	  off := 0;
 	  n := 0;
-	  while n >= 0 && off < o.outindex && !interruptedFlag do (
+	  while n >= 0 && off < o.outindex && !test(interruptedFlag) do (
 	       n = write(o.outfd,o.outbuffer,o.outindex-off,off);
 	       if n > 0 then (
 	       	    off = off + n;
@@ -373,17 +375,17 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
 	  if n == -1 then (
 	       fileErrorMessage(o,"writing");
 	       return -1);
-	  if interruptedFlag then (
+	  if test(interruptedFlag) then (
 	       o.outindex = 0;				    -- erase the output buffer after an interrupt
 	       return ERROR))
      else if o.outindex == length(o.outbuffer)
      then o.outbuffer = enlarge(length(o.outbuffer),o.outbuffer);
      0);
-simpleout(o:file,c:char):int := (
-     if o.outindex == length(o.outbuffer) && simpleflush(o) == ERROR then return ERROR;
-     o.outbuffer.(o.outindex) = c;
-     o.outindex = o.outindex + 1;
-     0);
+-- simpleout(o:file,c:char):int := (
+--      if o.outindex == length(o.outbuffer) && simpleflush(o) == ERROR then return ERROR;
+--      o.outbuffer.(o.outindex) = c;
+--      o.outindex = o.outindex + 1;
+--      0);
 simpleout(o:file,x:string):int := (
      i := 0;						    -- bytes of x transferred so far
      m := length(x);
@@ -435,7 +437,7 @@ export closeListener(o:file):(errmsg or null) := (
 export closeIn(o:file):(errmsg or null) := (
      stat := 0;
      if o.infd == NOFD then return errmsg("close: file not open");
-     if o == stdin then return null();			    -- silently refuse to close stdin
+     if o == stdIO then return null();			    -- silently refuse to close stdIO
      if o.input then flushinput(o);
      haderror := false;
      haderror = haderror || o.infd != o.outfd && close(o.infd) == ERROR;
@@ -510,7 +512,7 @@ export (o:file) << (n:Net) : file := (
 	  );
      o);
 export (o:file) << (c:char) : file := (
-     if interruptedFlag then return o;
+     if test(interruptedFlag) then return o;
      if o.output then (
 	  if o.hadNet then (
      	       o.hadNet = true;
@@ -541,7 +543,7 @@ endlfun(o:file):int := (
      if o.output then (
 	  if o.hadNet then if ERROR == flushnets(o) then return ERROR;
 	  o << newline;
-	  if o.outisatty || o == stderr 
+	  if o.outisatty || o == stdError 
 	  then (
 	       if ERROR == simpleflush(o) then return ERROR;
 	       )
@@ -553,7 +555,7 @@ endlfun(o:file):int := (
 
 maybeprompt(o:file):void := (
      o.bol = false;
-     if o.promptq then stdout << o.prompt();
+     if o.promptq then stdIO << o.prompt();
      );
 
 octal(c:char):string := (
@@ -595,6 +597,27 @@ export present(x:string):string := (
 		    )
 	       ))
      else x);
+export presentn(x:string):string := ( -- fix newlines, also
+     fixesneeded := 0;
+     foreach cc in x do (
+	  c := cc; 
+	  if c == char(0) || c == '\t' || c == '\b' || c == '\r' || c == '\"' || c == '\\' || c == '\n' 
+	  then fixesneeded = fixesneeded + 1 
+	  );
+     if fixesneeded != 0 then (
+	  new string len length(x)+fixesneeded do foreach cc in x do (
+	       c := cc;
+	       if c == char(0) then (provide '\\'; provide '0';)
+	       else if c == '\r' then (provide '\\'; provide 'r';)
+	       else if c == '\n' then (provide '\\'; provide 'n';)
+	       else if c == '\b' then (provide '\\'; provide 'b';)
+	       else if c == '\t' then (provide '\\'; provide 't';)
+	       else (
+		    if c == '\"' || c == '\\' then provide '\\';
+	       	    provide c;
+		    )
+	       ))
+     else x);
 
 export filbuf(o:file):int := (
 --      if o.fulllines then (
@@ -626,20 +649,20 @@ export filbuf(o:file):int := (
      while true do (
 	  n := length(o.inbuffer) - o.insize;
 	  if o.readline then (
-	       flush(stdout);
-	       if interruptedFlag then return ERROR;
+	       flush(stdIO);
+	       if test(interruptedFlag) then return ERROR;
 	       r = readline(o.inbuffer,n,o.insize,o.prompt());
-	       if interruptedFlag then (
+	       if test(interruptedFlag) then (
 		    -- ignore interrupt flags set by our handler during calls to readline
 		    -- because readline uses interrupts for its own purposes
-		    interruptedFlag = false;
+		    store(interruptedFlag, false);
 		    determineExceptionFlag();
 		    );
 	       )
 	  else (
 	       if o.bol then maybeprompt(o);
-	       flush(stdout);
-	       if interruptedFlag then return ERROR;
+	       flush(stdIO);
+	       if test(interruptedFlag) then return ERROR;
 	       r = read(o.infd,o.inbuffer,n,o.insize);
 	       );
 	  if r == ERROR then (
@@ -650,8 +673,8 @@ export filbuf(o:file):int := (
 	       o.eof = true;
 	       o.bol = true;
 	       if o.promptq then (
-		    stdout << newline;
-		    flush(stdout);
+		    stdIO << newline;
+		    flush(stdIO);
 		    );
 	       return r;
 	       )
@@ -674,7 +697,6 @@ export filbuf(o:file):int := (
 	       )));
 
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
-export putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putneg(o:file,x:int):void := (
      if x<0 then (
 	  q := x/10;
@@ -776,32 +798,33 @@ export getc(o:file):int := (
      if o.echo && o.echoindex < o.inindex then (
 	  while o.echoindex < o.insize && (
 	       e := o.inbuffer.(o.echoindex);
-	       stdout << e; 
+	       stdIO << e; 
 	       o.echoindex = o.echoindex + 1;
      	       e != '\n'
 	       )
 	  do nothing;
-	  flush(stdout);
+	  flush(stdIO);
 	  );
      if c == nl then (
 	  o.bol = true;
-	  if o.echo then flush(stdout);
+	  if o.echo then flush(stdIO);
 	  );
      int(uchar(c)));
-export read(o:file):(string or errmsg) := (
+export StringOrError := stringCell or errmsg;
+export read(o:file):StringOrError := (
      if o.inindex == o.insize then (
 	  r := filbuf(o);
-	  if r == ERROR then return (string or errmsg)(errmsg(fileErrorMessage(o)));
+	  if r == ERROR then return StringOrError(errmsg(fileErrorMessage(o)));
 	  )
      else if o.bol && !o.readline then maybeprompt(o);
      s := substrAlwaysCopy(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;
      if o.echo then (
-	  stdout << s;
-	  flush(stdout);
+	  stdIO << s;
+	  flush(stdIO);
 	  );
-     s);
+     stringCell(s));
 export peek(o:file,offset:int):int := (
      if !o.input then return EOF;
      if offset >= bufsize then return ERROR;		    -- tried to peek too far
@@ -841,20 +864,20 @@ export setprompt(o:file,prompt:function():string):void := ( o.promptq = true; o.
 export unsetprompt(o:file):void := ( o.promptq = false; o.prompt = noprompt; o.reward=noprompt; );
 export clean(o:file):void := flush(o);
 
-export get(filename:string):(string or errmsg) := (
+export get(filename:string):StringOrError := (
      when openIn(filename)
-     is x:errmsg do (string or errmsg)(x)
+     is x:errmsg do StringOrError(x)
      is f:file do (
 	  when readfile(f.infd)
 	  is null do (
 	       close(f);
-	       (string or errmsg)(errmsg(fileErrorMessage(f,"read")))
+	       StringOrError(errmsg(fileErrorMessage(f,"read")))
 	       )
 	  is s:string do (
 	       r := close(f);
 	       when r is m:errmsg
-	       do (string or errmsg)(m)
-	       else (string or errmsg)(s))));
+	       do StringOrError(m)
+	       else StringOrError(stringCell(s)))));
 
 export Manipulator := {fun:function(file):int};
 export (o:file) << (m:Manipulator) : file := (
@@ -863,7 +886,10 @@ export (o:file) << (m:Manipulator) : file := (
      );
 export endl := Manipulator(endlfun);
 export Flush := Manipulator(flush);
-
+export (o:BasicFile) << (m:Manipulator) : int := (
+     if m == endl then o << basicEndl
+     else if m == Flush then o << basicFlush
+     else -1);
 export fchmod(o:file,mode:int):int := (
      if o.input && o.infd != -1 then if -1 == fchmod(o.infd,mode) then return -1;
      if o.output && o.outfd != -1 then if -1 == fchmod(o.outfd,mode) then return -1;
@@ -872,14 +898,14 @@ export fchmod(o:file,mode:int):int := (
 lastCharWritten(o:file):int := if o.outindex > 0 then int(o.outbuffer.(o.outindex-1)) else o.lastCharOut;
 export atEndOfLine(o:file):bool := ( c := lastCharWritten(o); c == int('\n') || c == -1);
 export endLine(o:file):void := (
-     if !atEndOfLine(o) || !atEndOfLine(stdout) then o << '\n';
-     -- usually o == stderr != stdout
-     -- we might put a needless one out in the case where o.outfd == stdout.outfd, oh well.
+     if !atEndOfLine(o) || !atEndOfLine(stdIO) then o << '\n';
+     -- usually o == stderr != stdIO
+     -- we might put a needless one out in the case where o.outfd == stdIO.outfd, oh well.
      );
 
 export (o:file) << (x:long) : file :=  o << tostring(x);
 export (o:file) << (x:ulong) : file :=  o << tostring(x);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d stdio.o "
 -- End:

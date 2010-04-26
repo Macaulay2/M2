@@ -1,17 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use err;
-use system;
-use strings;
-use varstrin;
-use lex;
-use stdio;
-use stdiop;
-use gmp;
-use nets;
 use tokens;
-use ctype;
-use gmp;
+use lex;
 
 export parseInt(s:string):ZZ := (
      i := toInteger(0);
@@ -179,8 +168,8 @@ export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTr
      accumulate(ParseTree(token1),file,prec,obeylines)
      );
 export precSpace := 0;		-- filled in later by binding.d
-export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
-export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
+parse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
+nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
 export unaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret := parse(file,max(prec,token1.word.parse.unaryStrength),obeylines);
      if ret == errorTree then ret
@@ -404,24 +393,24 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 export unarysymbol(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     -- u := unstringToken(arg);
-     -- if u == errorToken then return errorTree;
      if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
      r := ParseTree(Quote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryglobal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     -- u := unstringToken(arg);
-     -- if u == errorToken then return errorTree;
      if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
      r := ParseTree(GlobalQuote(quotetoken,arg));
+     accumulate(r,file,prec,obeylines));
+export unarythread(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+     arg := gettoken(file,false);
+     if arg == errorToken then return errorTree;
+     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     r := ParseTree(ThreadQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unarylocal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     -- u := unstringToken(arg);
-     -- if u == errorToken then return errorTree;
      if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
      r := ParseTree(LocalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
@@ -473,7 +462,7 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       accumulate(ParseTree(TryThenElse(tryToken,primary,thenToken,thenClause,elseToken,elseClause)),file,prec,obeylines))
 	  else (
 	       printErrorMessage(tryToken,"syntax error : expected 'else' to match this 'try'");
-	       return errorTree))
+	       errorTree))
      else accumulate(ParseTree(Try(tryToken,primary)),file,prec,obeylines));
 export unarycatch(catchToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      primary := parse(file,catchToken.word.parse.unaryStrength,obeylines);
@@ -504,13 +493,14 @@ export treePosition(e:ParseTree):Position := (
 	  is dummy do return dummyPosition
 	  is token:Token do return position(token)
 	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do return position(binary.operator)
-	  is a:Arrow do return position(a.operator)
-	  is unary:Unary do return position(unary.operator)
-	  is postfix:Postfix do return position(postfix.operator)
-	  is a:Quote do return position(a.operator)
-	  is a:GlobalQuote do return position(a.operator)
-	  is a:LocalQuote do return position(a.operator)
+	  is binary:Binary do return position(binary.Operator)
+	  is a:Arrow do return position(a.Operator)
+	  is unary:Unary do return position(unary.Operator)
+	  is postfix:Postfix do return position(postfix.Operator)
+	  is a:Quote do return position(a.Operator)
+	  is a:GlobalQuote do return position(a.Operator)
+	  is a:ThreadQuote do return position(a.Operator)
+	  is a:LocalQuote do return position(a.Operator)
 	  is ee:Parentheses do return position(ee.left)
 	  is ee:EmptyParentheses do return position(ee.left)
      	  is i:IfThen do return position(i.ifToken)
@@ -536,13 +526,14 @@ export size(e:ParseTree):int := (
      is x:dummy do Ccode(int,"sizeof(*",x,")") + Ccode(int,"sizeof(*",x.position,")")
      is x:Token do size(x)
      is x:Adjacent do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs)
-     is x:Binary do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.operator)
-     is x:Arrow do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.operator) + size(x.desc)
-     is x:Unary do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
-     is x:Postfix do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.operator)
-     is x:Quote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
-     is x:GlobalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
-     is x:LocalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
+     is x:Binary do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.Operator)
+     is x:Arrow do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.Operator) + size(x.desc)
+     is x:Unary do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
+     is x:Postfix do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.Operator)
+     is x:Quote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
+     is x:GlobalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
+     is x:ThreadQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
+     is x:LocalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
      is x:Parentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right) + size(x.contents)
      is x:EmptyParentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right)
      is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause)
@@ -560,5 +551,5 @@ export size(e:ParseTree):int := (
      );
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

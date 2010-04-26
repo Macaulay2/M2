@@ -2,17 +2,31 @@
 # license: for mpfr version 2.4.2: same
 # license:          version 3.0  : might be distributed under LGPL 3+
 VERSION = 2.4.2
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 RELAX = yes
 URL = http://www.mpfr.org/mpfr-$(VERSION)
 # URL = http://macaulay2.com/Downloads/SourceCode
-CONFIGOPTIONS += 
+
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 # PRECONFIGURE = autoreconf -i
 include ../Makefile.library
+
+# These are old routines, long deprecated, missing in mpir 1.3.0
+# but mpfr 2.4.2 still uses them, try removing them with 2.4.3:
+CPPFLAGS += -Dmpz_div_2exp=mpz_tdiv_q_2exp -Dmpz_div_ui=mpz_tdiv_q_ui
+# I don't know what to do about gmp_randinit, which is also undefined.  Just run "make -k check" and ignore the errors.
+# So we need this, too:
+CFLAGS += -Wimplicit -Werror
+
+# the DEBUG flag just makes lots of junk print out:
+CPPFLAGS += -UDEBUG
+
+BUILDOPTIONS += CPPFLAGS="$(CPPFLAGS)"
+CHECKOPTIONS += CPPFLAGS="$(CPPFLAGS)"
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpfr/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/mpfr "

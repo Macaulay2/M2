@@ -26,9 +26,9 @@ public:
   varpower() {}
   ~varpower() {}
 
-  static void elem_text_out(buffer &o, const int *a);
+  static void elem_text_out(buffer &o, const int *a, bool p_one=true);
   static void elem_text_out(buffer &o, const int *a, 
-			    M2_stringarray varnames);
+			    M2_ArrayString varnames, bool p_one=true);
 
   static bool is_one(const int *a);
   static bool is_equal(const int *a, const int *b);

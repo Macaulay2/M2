@@ -224,7 +224,7 @@ void GaussElimComputation::start_computation()
 	  reduce_list[row] = p->next;
 	  p->next = NULL;
 	  reduce(gb_list[row], p); // replaces p
-	  if (gbTrace >= 3)
+	  if (M2_gbTrace >= 3)
 	    if (p->f == NULL)
 	      if (p->fsyz == NULL)
 		emit_wrapped("o");
@@ -234,7 +234,7 @@ void GaussElimComputation::start_computation()
 	      emit_wrapped("r");
 	  insert(p);
 	  n_pairs++;
-	  if (system_interruptedFlag)
+	  if (test_Field(interrupts_interruptedFlag))
 	    {
 	      set_status(COMP_INTERRUPTED);
 	      return;
@@ -257,7 +257,7 @@ void GaussElimComputation::start_computation()
       if (gb_list[r] == 0) continue;
       reduce(gb_list[r]->f, gb_list[r]->fsyz, true);
     }
-  if (gbTrace >= 1)
+  if (M2_gbTrace >= 1)
     {
       buffer o;
       text_out(o);
@@ -337,7 +337,7 @@ void GaussElimComputation::text_out(buffer &o) const
   o << newline;
 }
 
-const MatrixOrNull *GaussElimComputation::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *GaussElimComputation::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != R)
     {
@@ -362,8 +362,8 @@ const MatrixOrNull *GaussElimComputation::matrix_remainder(const Matrix *m)
 
 
 M2_bool GaussElimComputation::matrix_lift(const Matrix *m,
-				     MatrixOrNull **result_remainder,
-				     MatrixOrNull **result_quotient)
+				     const Matrix /* or null */ **result_remainder,
+				     const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != R)
     {

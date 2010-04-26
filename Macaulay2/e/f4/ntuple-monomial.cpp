@@ -6,7 +6,8 @@
 void ntuple_monomials::elem_text_out(buffer &o, 
 				     unsigned int nvars,
 				     const_ntuple_monomial a, 
-				     M2_stringarray varnames)
+				     M2_ArrayString varnames,
+				     bool p_one)
 {
   int len = 0;
   for (unsigned int v=0; v<nvars; v++)
@@ -16,8 +17,8 @@ void ntuple_monomials::elem_text_out(buffer &o,
 	  o << ".";
 	else
 	  o << varnames->array[v];
-      int e = a[v];
-      int single = (varnames->array[v]->len == 1);
+      ntuple_word e = a[v];
+      bool single = (varnames->array[v]->len == 1);
       if (e > 1 && single) o << e;
       else if (e > 1) o << "^" << e;
       else if (e < 0) o << "^(" << e << ")";	

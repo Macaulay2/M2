@@ -13,19 +13,17 @@
 #include "RRR.hpp"
 #include "CCC.hpp"
 
-#include "polyring.hpp"
+#include "poly.hpp"
 
 extern void factory_setup_1(); // M2-factory.cpp
 
 unsigned long mutable_object::next_hash_sequence_number = 1000;
-int object::next_hash_sequence_number = -7;
+long object::next_hash_sequence_number = -7;
 
 template class array< char * >;
 template class queue< int >;
 
-Matrix_int_pair global_Matrix_int_pair;
-
-int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
+const int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
 			       16384, 65536, 262144, 1048576, 4194304,
 			       16777216, 67108864, 268435456,
 			       1073741824};
@@ -56,13 +54,13 @@ void IM2_initialize()
  *  Any engine routine which encounters an error (e.g. Rings not
  *  the same) often returns a NULL value, and sets an error
  *  message, which can be obtained from this routine.  Any routine that can set
- *  this will return a type such as "MatrixOrNull *".  This routine
+ *  this may return a type such as "MatrixOrNull".  This routine
  *  clears the error message and returns it.
  */
 
 M2_string IM2_last_error_message()
 {
-  return tostring(error_message());
+  return M2_tostring(error_message());
 }
 
 

@@ -20,11 +20,6 @@
 #include "text-io.hpp"
 #include "matrix-con.hpp"
 
-int gbTrace = 0;
-
-
-extern ring_elem hilb(const Matrix *M, const Ring *RR);
-
 //////////////////////////////
 // Creation, initialization //
 //////////////////////////////
@@ -345,7 +340,7 @@ void GB_comp::find_pairs(gb_elem *p)
 	  if (_M->is_one(find_pairs_m))
 	    {
 	      _n_saved_gcd++;
-	      if (gbTrace >= 8)
+	      if (M2_gbTrace >= 8)
 		{
 		  buffer o;
 		  o << "removed pair[" << q->first->me << " " 
@@ -404,7 +399,7 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 
   int *div_totalexp = newarray_atomic(int,_M->n_vars());
   int count = 0;
-  if (gbTrace == 10)
+  if (M2_gbTrace == 10)
     {
       buffer o;
       o << "reducing ";
@@ -430,7 +425,7 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 	  _GR->gbvector_reduce_lead_term(_F,_Fsyz,head.next,f,fsyz,q->f,q->fsyz);
 	  count++;
 	  _n_reductions++;
-	  if (gbTrace == 10)
+	  if (M2_gbTrace == 10)
 	    {
 	      buffer o;
 	      o << "  reduced by ";
@@ -451,7 +446,7 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 	}
     }
 
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << "." << count;
@@ -507,7 +502,7 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	}
     }
 
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << "." << count;
@@ -596,7 +591,7 @@ int GB_comp::s_pair_step()
       return SPAIR_DONE;
     }
 
-  if (gbTrace == 100)
+  if (M2_gbTrace == 100)
     {
       // Traces the computation, in its way
       emit("Computing spair ");
@@ -614,7 +609,7 @@ int GB_comp::s_pair_step()
   gb_reduce(f, fsyz);
   if (!_GR->gbvector_is_zero(f))
     {
-      if (gbTrace == 100)
+      if (M2_gbTrace == 100)
 	{
 	  buffer o;
 	  o << "  inserting GB element " << _n_gb;
@@ -771,7 +766,7 @@ int GB_comp::next_degree()
   return result;
 }
 
-RingElementOrNull * GB_comp::compute_hilbert_function() const
+RingElement /* or null */ * GB_comp::compute_hilbert_function() const
 {
   // Computes the Hilbert function of an array of gbvector's...
   // using also the degrees of _F.
@@ -794,7 +789,7 @@ void GB_comp::start_computation()
       if (is_done != COMP_COMPUTING) break;
       is_done = computation_is_complete();
       if (is_done != COMP_COMPUTING) break;
-      if (system_interruptedFlag) 
+      if (test_Field(interrupts_interruptedFlag)) 
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;
@@ -835,7 +830,7 @@ void GB_comp::start_computation()
 	      _hilb_n_in_degree = hilb_comp::coeff_of(_hf_diff, _this_degree);
 	      if (_hilb_n_in_degree == 0) flush_pairs(_this_degree);
 	    }
-	  if (gbTrace >= 1)
+	  if (M2_gbTrace >= 1)
 	    {
 	      buffer o;
 	      o << '{' << _this_degree << '}';
@@ -854,7 +849,7 @@ void GB_comp::start_computation()
 	  break;
 	  
 	case GB_COMP_S_PAIRS:
-	  if (gbTrace < 2)
+	  if (M2_gbTrace < 2)
 	    {
 	      if (s_pair_step() == SPAIR_DONE) 
 		_state = GB_COMP_GENS;
@@ -883,7 +878,7 @@ void GB_comp::start_computation()
 	  break;
 
 	case GB_COMP_GENS:
-	  if (gbTrace < 2)
+	  if (M2_gbTrace < 2)
 	    {
 	      if (gen_step() == SPAIR_DONE) 
 		_state = GB_COMP_AUTO_REDUCE;
@@ -933,8 +928,8 @@ void GB_comp::start_computation()
 	  break;
 	}
     }
-  if (gbTrace >= 1) emit_line("");
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 1) emit_line("");
+  if (M2_gbTrace >= 4)
     {
       buffer o;
       o << "Number of gb elements       = " << _n_gb << newline;
@@ -968,7 +963,7 @@ void GB_comp::debug_out(s_pair *q) const
 // Top level Computation routines //
 ////////////////////////////////////
 
-ComputationOrNull *GB_comp::set_hilbert_function(const RingElement *hf)
+Computation /* or null */ *GB_comp::set_hilbert_function(const RingElement *hf)
 {
   // TODO Problems here:
   //  -- check that the ring is correct
@@ -981,7 +976,7 @@ ComputationOrNull *GB_comp::set_hilbert_function(const RingElement *hf)
   return this;
 }
 
-const MatrixOrNull *GB_comp::get_gb()
+const Matrix /* or null */ *GB_comp::get_gb()
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -994,7 +989,7 @@ const MatrixOrNull *GB_comp::get_gb()
   // TODO NOW sort it, and auto-reduce it
 }
 
-const MatrixOrNull *GB_comp::get_mingens()
+const Matrix /* or null */ *GB_comp::get_mingens()
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -1004,7 +999,7 @@ const MatrixOrNull *GB_comp::get_mingens()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *GB_comp::get_change()
+const Matrix /* or null */ *GB_comp::get_change()
 {
   start_computation();
   MatrixConstructor mat(_Fsyz, 0);
@@ -1013,7 +1008,7 @@ const MatrixOrNull *GB_comp::get_change()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *GB_comp::get_syzygies()
+const Matrix /* or null */ *GB_comp::get_syzygies()
 {
   start_computation();
   MatrixConstructor mat(_Fsyz, 0);
@@ -1022,7 +1017,7 @@ const MatrixOrNull *GB_comp::get_syzygies()
   return mat.to_matrix();
  }
 
-const MatrixOrNull *GB_comp::get_initial(int nparts)
+const Matrix /* or null */ *GB_comp::get_initial(int nparts)
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -1036,7 +1031,7 @@ const MatrixOrNull *GB_comp::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-const MatrixOrNull *GB_comp::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GB_comp::get_parallel_lead_terms(M2_arrayint w)
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -1048,7 +1043,7 @@ const MatrixOrNull *GB_comp::get_parallel_lead_terms(M2_arrayint w)
   return mat.to_matrix();
 }
 
-const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *GB_comp::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != originalR)
     {
@@ -1077,8 +1072,8 @@ const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
 }
 
 M2_bool GB_comp::matrix_lift(const Matrix *m,
-		 MatrixOrNull **result_remainder,
-		 MatrixOrNull **result_quotient
+		 const Matrix /* or null */ **result_remainder,
+		 const Matrix /* or null */ **result_quotient
 		 )
 {
   if (m->get_ring() != originalR)
@@ -1155,10 +1150,10 @@ int GB_comp::complete_thru_degree() const
 
 void GB_comp::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
-     gbTrace value */
+     M2_gbTrace value */
 {
   _spairs->stats();
-  if (gbTrace >= 5 && gbTrace % 2 == 1)
+  if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
     for (int i=0; i<_gb.length(); i++)
       {
 	o << i << '\t';

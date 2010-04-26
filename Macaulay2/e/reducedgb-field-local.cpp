@@ -3,7 +3,7 @@
 #include "reducedgb-field-local.hpp"
 #include "montable.hpp"
 #include "gbweight.hpp"
-#include "poly.hpp"
+#include "polyring.hpp"
 #include <functional>
 #include <algorithm>
 #include "text-io.hpp"
@@ -78,7 +78,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   int n0 = (ringtable ? ringtable->find_divisors(-1, h_exp, 1, &divisors) : 0);
   int n1 = T1->find_divisors(-1, h_exp, 1, &divisors);
   int n2 = T->find_divisors(-1, h_exp, h_comp, &divisors);
-  int n = divisors.size();
+  int n = INTSIZE(divisors);
   if (n == 0) return false;
 
   divisor_info *div_info = newarray(divisor_info, divisors.size());
@@ -104,7 +104,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
       div_info[next++] = gb_elems[id];
     }
 
-  if (gbTrace>=4)
+  if (M2_gbTrace>=4)
     {
       buffer o;
       o << "\nfind good divisor:";
@@ -177,7 +177,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
 	}
     }
 
-  if (nmatches > 1 && gbTrace == 3)
+  if (nmatches > 1 && M2_gbTrace == 3)
     {
       buffer o;
       o << nmatches;
@@ -188,7 +188,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   assert(result_i >= 0);
   result_g = div_info[result_i].g;
 
-  if (gbTrace>=4)
+  if (M2_gbTrace>=4)
     {
       buffer o;
       if (nmatches > 1)
@@ -238,7 +238,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
     }
   divisors.clear();
 
-  if (gbTrace>=4)
+  if (M2_gbTrace>=4)
     {
       buffer o;
       o << "\nfind good divisor:";
@@ -250,7 +250,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   if (n > 0)
     {
       POLY p;
-      if (gbTrace>=4)
+      if (M2_gbTrace>=4)
 	{
 	  buffer o;
 	  o << "\n  ndivisors from appended elements " << n;
@@ -295,7 +295,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   if (n > 0)
     {
       POLY p;
-      if (gbTrace>=4)
+      if (M2_gbTrace>=4)
 	{
 	  buffer o;
 	  o << "\n  ndivisors from GB " << n;
@@ -338,7 +338,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   divisors.clear();
 
 
-  if (gbTrace>=4)
+  if (M2_gbTrace>=4)
     {
       buffer o;
       o << "\n  chosen value: ";
@@ -365,7 +365,7 @@ void ReducedGB_Field_Local::store_in_table(const POLY &h,
 					   int h_comp,
 					   int h_alpha)
 {
-  int id = new_poly_elems.size();
+  int id = INTSIZE(new_poly_elems);
   divisor_info t;
   t.g = h;
   t.alpha = h_alpha;
@@ -445,13 +445,13 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
   int h_deg = wt->gbvector_weight(f);
   while (!R->gbvector_is_zero(h.f))
     {
-      if (gbTrace == 3)
+      if (M2_gbTrace == 3)
 	emit_wrapped(".");
       POLY g;
       R->gbvector_get_lead_exponents(F, h.f, h_exp);
       int h_comp = h.f->comp;
 
-      if (gbTrace >= 4)
+      if (M2_gbTrace >= 4)
 	{
 	  buffer o;
 	  o << "\nreducing ";
@@ -462,7 +462,7 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
       if (find_good_divisor(h_exp,h_comp,h_deg,
 			    h_alpha,g,g_alpha)) // sets these three values
 	{
-	  if (gbTrace >= 4)
+	  if (M2_gbTrace >= 4)
 	    {
 	      buffer o;
 	      o << "  h_alpha " << h_alpha << " g_alpha " << g_alpha; // << " reducing using ";
@@ -485,8 +485,8 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
 	      h_copy.f = R->gbvector_copy(h.f);
 	      h_copy.fsyz = 0;
 	      store_in_table(h_copy, h_exp, h_comp, h_alpha);
-	      if (gbTrace == 3) emit_wrapped("x");
-	      if (gbTrace == 4) emit("\nstored result\n");
+	      if (M2_gbTrace == 3) emit_wrapped("x");
+	      if (M2_gbTrace == 4) emit("\nstored result\n");
 	      h_deg += g_alpha - h_alpha;
 	      h_exp = R->exponents_make();
 	    }

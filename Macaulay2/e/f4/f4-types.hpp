@@ -23,9 +23,6 @@
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
 #define sizeofspair(s,len) (sizeof(*s) - sizeof(s->lcm) + (len)*sizeof(s->lcm[0]))
 
-extern char system_interruptedFlag;
-extern int gbTrace;
-
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
@@ -116,6 +113,8 @@ struct coefficient_matrix : public our_new_delete {
   column_array columns;
 };
 
+typedef int (MonomialInfo::*CompareFunction)(const monomial_word *, const monomial_word *) const;
+
 class ColumnsSorter
 {
 public:
@@ -124,16 +123,21 @@ public:
 private:
   const MonomialInfo *M;
   const coefficient_matrix *mat;
+  const coefficient_matrix::column_array col;
   long ncmps;
+  int (MonomialInfo::*compareFcn)(const monomial_word *, const monomial_word *) const;
 public:
   int compare(value a, value b)
   {
     ncmps ++;
-    return M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
+    return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom);
+    //    return (M->*compareFcn)(col[a].monom,col[b].monom);
+    //    return (M->*compareFcn)(mat->columns[a].monom,mat->columns[b].monom);
+    //    return M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
   }
 
   ColumnsSorter(const MonomialInfo *M0, const coefficient_matrix *mat0)
-    : M(M0), mat(mat0), ncmps(0) {}
+    : M(M0), mat(mat0), col(mat0->columns), ncmps(0), compareFcn(&MonomialInfo::compare_grevlex) {}
 
   long ncomparisons() const { return ncmps; }
   

@@ -45,9 +45,9 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const MatrixOrNull *get_matrix(int level) = 0;
+  virtual const Matrix /* or null */ *get_matrix(int level) = 0;
 
-  virtual const FreeModuleOrNull *get_free(int level) = 0;
+  virtual const FreeModule /* or null */ *get_free(int level) = 0;
 
   virtual M2_arrayint get_betti(int type) const = 0;
   // type is documented under rawResolutionBetti, in engine.h
@@ -58,7 +58,7 @@ public:
 
   virtual void text_out(buffer &o) const = 0;
   // This displays statistical information, and depends on the
-  // gbTrace value.
+  // M2_gbTrace value.
 
 };
 

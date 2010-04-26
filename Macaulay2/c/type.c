@@ -14,10 +14,6 @@ node IntegerN(char *s, unsigned int len) {
      return q;
      }
 
-node UniqueString(char *s) {
-     return UniqueStringN(s,strlen(s));
-     }
-
 node positionof(node n){
      node t;
      t = newnode(POSITION,position_tag);
@@ -37,6 +33,7 @@ node SETPOS(node e, struct POS *p){
 
 node setpos(node e, struct POS *p){
      if (p==NULL || !iscons(e)) return e;
+     assert(p->lineno != 0 || p->column != 0);
      e->body.cons.pos = *p;
      return e;
      }
@@ -52,6 +49,7 @@ node repos(node p,node n){
 node enpos(node e, struct POS *p){
      node t;
      if (p == NULL) return e;
+     if (e == NULL) return NULL;
      t = newnode(POSITION,position_tag);
      t->body.position.contents = e;
      t->body.position.pos = *p;
@@ -67,10 +65,9 @@ struct POS *pos(node n) {
 	  n = CDR(n);
 	  }
      return (
-	  ispos(n) 
-	  ? &n->body.position.pos 
-	  : issym(n) && n->body.symbol.pos.filename != NULL 
-	  ? &n->body.symbol.pos 
+	  ispos(n) ? &n->body.position.pos 
+	  : issym(n) && n->body.symbol.pos.filename != NULL ? &n->body.symbol.pos 
+	  : istype(n) && n->body.type.name != NULL ? pos(n->body.type.name)
 	  : NULL );
      }
 
@@ -81,14 +78,31 @@ node unpos(node e){
 
 node typeforward(node e){
      assert(istype(e));
-     while (istype(e->body.type.forward)) e = e->body.type.forward;
+     while (e->body.type.forward != NULL) {
+       assert(istype(e->body.type.forward));
+       e = e->body.type.forward;
+     }
      return e;
      }
 
-void forwardtype(node old,node newn){
+bool forwardtype(node old,node newn){
      assert(istype(old));
      assert(istype(newn));
+     assert(old->body.type.flags & deferred_F);
+     assert(old != deferred__T);
+     old->body.type.flags &= ~deferred_F;
+     if ((old->body.type.flags & should_be_pointer_F) && !ispointertype(newn)) {
+       errorpos(newn,"expected a pointer type");
+       return FALSE;
+     }
+     old->body.type.flags &= ~should_be_pointer_F;
+     if ((old->body.type.flags & should_be_tagged_F) && !istaggedtype(newn)) {
+       errorpos(newn,"expected a tagged pointer type");
+       return FALSE;
+     }
+     old->body.type.flags &= ~should_be_tagged_F;
      old->body.type.forward = typeforward(newn);
+     return TRUE;
      }
 
 node typedefinition(node t){
@@ -99,7 +113,7 @@ node typedeftail(node t){
      return cdr(typedefinition(t));
      }
 
-node elementtype(node arraytype){
+node arrayElementType(node arraytype){
      node m, n;
      if (istype(arraytype)) m = typedeftail(arraytype);
      else m = cdr(arraytype);
@@ -107,11 +121,17 @@ node elementtype(node arraytype){
      return typeforward(n);
      }
 
+node arrayElementLength(node arraytype){
+     node m;
+     if (istype(arraytype)) m = typedeftail(arraytype);
+     else m = cdr(arraytype);
+     return length(m) == 1 ? NULL : cadr(m);
+     }
+
 node membertype(node structtype, node membername) {
      node m;
      membername = unpos(membername);
-     if (membername == refs__S) return int_T;
-     if (membername == len__S) return int_T;
+     if (membername == len_S) return int_T;
      if (membername == type__S) return int_T;
      if (istype(structtype)) m = typedeftail(structtype);
      else m = CDR(structtype);
@@ -148,61 +168,50 @@ node type(node e){		/* assume e is checked previously */
      switch(e->tag) {
 	  case position_tag: e = e->body.position.contents; goto again;
 	  case symbol_tag: return e->body.symbol.type;
-     	  case string_const_tag: {
-	       /* not implemented yet */
-	       return undefined_T;
-	       }
+     	  case string_const_tag: /* not implemented yet */ return bad_or_undefined_T;
      	  case char_const_tag: return char_T;
      	  case int_const_tag: return int_T;
      	  case double_const_tag: return double_T;
-     	  case string_tag: return undefined_T;
+     	  case string_tag: assert(FALSE); 
+     	  case unique_string_tag: assert(FALSE); /* was return bad_or_undefined_T; */
 	  case cons_tag: {
 	       node h, ht;
      	       h = unpos(CAR(e));
-	       if (h->tag == string_tag) {
-		    if (h == equal_S || h == unequal_S) return bool_T;
-		    if (h == cast_S) {
+	       if (h->tag == unique_string_tag) {
+		    if (h == equalequal__S || h == unequal_S) return bool_T;
+		    if (h == cast__S) {
 			 assert(istype(CADR(e)));
 			 return cadr(e);
 			 }
-		    if (h == function_S) return type_T;
-		    if (h == funcall_S || h == prefix_S || h == infix_S) {
+		    if (h == function_S) return type__T;
+		    if (h == funcall__S || h == prefix__S || h == infix__S) {
 			 return functionrettype(type(CADR(e)));
 			 }
-		    if (h == sizeof_S) return int_T;
-		    if (h == take_S) {
+		    if (h == take__S) {
 			 return membertype(type(CADR(e)),CADDR(e));
 			 }
-		    if (h == part_S) {
-			 if (CADDR(e) == type__S) return uint_T;
-			 assert(FALSE);
-			 return undefined_T;
-			 }
 		    if (h == array_take_S) {
-			 return elementtype(type(CADR(e)));
+			 return arrayElementType(type(CADR(e)));
 			 }
-		    if (h == return_S) return returned_T;
+		    if (h == return_S) return returns_T;
+		    if (h == exits_S) return exits_T;
 		    if (h == Ccode_S) return cadr(e);
 		    assert(FALSE);
 		    }
 	       ht = type(h);
-	       if (ht == type_T) return totype(h);
+	       if (ht == type__T) return totype(h);
 	       if (ht == keyword_T) {
 		    node w = ispos(h) ? h->body.position.contents : h;
-		    if (w == block_K) return void_T;
-     	       	    if (w == blockn_K) {
+		    if (w == block__K) return void_T;
+     	       	    if (w == blockn__K) {
 			 if (length(e) < 2) return void_T;
 			 return type(last(e));
 			 }
-		    if (w == block1_K) {
-			 if (length(e) < 2) return void_T;
-			 return type(CADR(e));
+		    if ( w == object__K || w == tagged_object_K || w == array_K || w == tarray_K || w == or_K) {
+			 return type__T;
 			 }
-		    if ( w == object_K || w == array_K || w == or_K) {
-			 return type_T;
-			 }
-		    if (w == label_S) return void_T;
-		    if (w == goto_S) return void_T;
+		    if (w == label__S) return void_T;
+		    if (w == goto__S) return void_T;
 		    assert(FALSE); /* there must be some other keywords! */
 		    }
 	       ht = ht->body.type.definition;
@@ -215,23 +224,13 @@ node type(node e){		/* assume e is checked previously */
 		    }
 	       assert(FALSE); return NULL;
 	       }
-	  case type_tag: return type_T;
+	  case type_tag: return type__T;
 	  }
      assert(FALSE);
      return NULL;
      }
 
-node realtype(node e){
-     while (iscons(e) && equal(CAR(e),cast_S)) {
-     	  if (CADR(e) == null_T) return null_T;
-	  e = CADDR(e);
-	  if (iscons(e) && CAR(e) == brace_list_S) e = CADDR(e);
-	  /* sigh, maybe we should have typecast_S instead */
-	  }
-     return type(e);
-     }
-
-node chktypelist(node e,env v) {
+node chktypelist(node e,scope v) {
      node l = NULL, m;
      if (ispos(e)) e = e->body.position.contents;
      while (e != NULL) {
@@ -246,8 +245,9 @@ node newtype(node definition, node name, bool basic_type){
      node s = newnode (TYPE,type_tag);
      s->body.type.definition = definition;
      s->body.type.name = name;
-     s->body.type.basic_type = basic_type;
+     if (basic_type) s->body.type.flags |= basic_type_F;
      s->body.type.seqno = -1;
+     s->body.type.runtime_type_code = -1;
      return s;
      }
 
@@ -267,7 +267,7 @@ struct DISTIN {
 
 void printtypelist(){
      int i;
-     pput("\nType List\n");
+     pput("Type List\n");
      for (i=0; i<numtypes; i++) {
 	  printf("%3d : %3d : ",i,typelist[i]->body.type.seqno);
 	  if (typelist[i]->body.type.name != NULL
@@ -278,6 +278,7 @@ void printtypelist(){
 	       }
 	  else pp(typelist[i]);
 	  }
+     pput("\n");
      }
 
 node thetype(int i){
@@ -362,7 +363,7 @@ void interntype(node t){
 	       for (m = typedeftail(t); m != NULL; m = CDR(m)) {
 		    node n, u = CAR(m);
 	       	    if (u == null_T) goto out;
-		    if (!isobjecttype(u)) goto out;
+		    if (!(isobjecttype(u) || istaggedobjecttype(u))) goto out;
 		    n = typedeftail(u);
 		    if (i > length(n)) goto out;
 		    u = nth(n,i);
@@ -380,7 +381,7 @@ void interntype(node t){
 	  for (m = typedeftail(t); m != NULL; m = CDR(m)) {
 	       if (CAR(m) != null_T) nonnulls ++;
 	       }
-	  t->body.type.composite = nonnulls >= 2;
+	  if (nonnulls >= 2) t->body.type.flags |= composite_F;
 	  }
      }
 
@@ -392,11 +393,11 @@ node ExpandType(node t, node *f) {
 	  case position_tag: return ExpandType(t->body.position.contents,f);
      	  case type_tag: return t;
      	  case symbol_tag: {
-	       if (t->body.symbol.type == type_T) {
+	       if (t->body.symbol.type == type__T) {
 	  	    assert(istype(t->body.symbol.value));
 		    return t->body.symbol.value;
 		    }
-	       if (t == bad_K) return undefined_T;
+	       if (t == bad__K) return bad_or_undefined_T;
 	       assert(FALSE); return NULL;
 	       }
 	  case cons_tag: {
@@ -420,7 +421,7 @@ node ExpandType(node t, node *f) {
 		    push(*f,newN);
 		    return newN;
 		    }
-	       else if (fun == object_K) {
+	       else if (fun == object__K || fun == tagged_object_K /* ? */ ) {
 		    node newN = NULL;
 		    while (t != NULL) {
 			 node name = CAAR(t);
@@ -433,7 +434,7 @@ node ExpandType(node t, node *f) {
 		    push(*f,newN);
 		    return newN;
 		    }
-	       else if (fun == array_K) {
+	       else if (fun == array_K || fun == tarray_K) {
 		    node newN;
 		    newN = cons(fun,cons(ExpandType(car(t),f),cdr(t)));
 		    newN = newtype(newN,NULL,FALSE);
@@ -459,24 +460,20 @@ node ExpandType(node t, node *f) {
 		    }
 	       else assert(FALSE); return NULL;
 	       }
-	  case string_tag:
-	  case char_const_tag:
-	  case int_const_tag:
-	  case double_const_tag:
-	  case string_const_tag: assert(FALSE); return NULL;
+	  default: assert(FALSE); return NULL;
 	  }
-     assert(FALSE);
-     return NULL;
      }
 
-int typeseqno(node t){
+static int typeseqno(node t){
      assert(istype(t));
      return totype(t)->body.type.seqno;
      }
 
 void totypesRec(node e) {
      int i, j;
-     /* e is a list of TYPEs to be defined recursively
+     /* 
+	e is a list of TYPEs to be defined recursively
+
         The recursion is handled through the type fields of the symbols
 	involved, which are assumed to be already set, or through TYPEs.
 	TYPEs have no POSITIONs in them.
@@ -485,6 +482,10 @@ void totypesRec(node e) {
      	We assume that the value fields have been run through ExpandType,
 	so that each value field is an expression constructed from other
 	TYPEs.
+
+	This routine probably has bugs, with the result that the order of
+	declarations makes a difference.
+
         */
      numnewtypes = length(e);
      newtypeslist = newarray(node,numnewtypes);
@@ -506,18 +507,22 @@ void totypesRec(node e) {
      for (i=numtypes; i<numnewtypes+numtypes; i++) {
 	  for (j=0; j<i; j++) {
 	       struct DISTIN *dd = table(i,j);
-	       node t = thetype(i);
-	       node u = thetype(j);
-	       node tval = t -> body.type.definition;
-	       node uval = u -> body.type.definition;
-	       node th, uh;
-	       assert(! dd->distinguishable );
-	       if (t->body.type.basic_type || u->body.type.basic_type) {
+	       node t = thetype(i), u = thetype(j), tval, uval, th, uh;
+	       assertpos(istype(t),t);
+	       assertpos(istype(u),u);
+	       if ((t->body.type.flags & basic_type_F) || (u->body.type.flags & basic_type_F)) {
 		    assert(t != u);
 		    differ: mark(i,j);
 		    continue;
 		    }
-	       assert(iscons(tval) && iscons(uval));
+	       tval = t -> body.type.definition;
+	       uval = u -> body.type.definition;
+	       assertpos(tval != NULL,t);
+	       assertpos(uval != NULL,u);
+	       if (equal(tval,uval)) continue;
+	       assertpos(iscons(tval),t);
+	       assertpos(iscons(uval),u);
+	       assert(! dd->distinguishable );
 	       th = car(tval);
 	       uh = car(uval);
 	       tval = cdr(tval);
@@ -537,7 +542,7 @@ void totypesRec(node e) {
 			 }
 		    if (tval != NULL || uval != NULL) goto differ;
 		    }
-	       else if (th == object_K) {
+	       else if (th == object__K || th == tagged_object_K) {
 		    for (;tval != NULL && uval != NULL;
 			 tval = cdr(tval), uval = cdr(uval)) {
 			 node tmem = car(tval);
@@ -554,16 +559,19 @@ void totypesRec(node e) {
 			 }
 		    if (tval != NULL || uval != NULL) goto differ;
 		    }
-	       else if (th == array_K) {
+	       else if (th == array_K || th == tarray_K) {
 		    node tt,uu;
 		    int ii = typeseqno(tt=typeforward(car(tval)));
 		    int jj = typeseqno(uu=typeforward(car(uval)));
 		    if (tt!=uu) {
 		    	 if (ii == -1 || jj == -1) goto differ;	/* not defined yet... */
-		    	 if (distinguishable(ii,jj)) goto differ;
-		    	 appendlt(ii,jj,i,j);
-		    	 if (!equal(cdr(tval),cdr(uval))) goto differ;
+		    	 else if (distinguishable(ii,jj)) goto differ;
+		    	 else if (!equal(cdr(tval),cdr(uval))) goto differ;
+		    	 else appendlt(ii,jj,i,j);
 			 }
+		    else {
+		         if (!equal(cdr(tval),cdr(uval))) goto differ;
+		         }
 		    }
 	       else if (th == function_S) {
 		    node ttt,uuu;
@@ -594,6 +602,7 @@ void totypesRec(node e) {
      for (i=0; i<numnewtypes; i++) {
 	  for (j=0;j<i+numtypes;j++) {
 	       if (!distinguishable(i+numtypes,j)) {
+		    /* indistinguishable types are identified here */
 		    node t = newtypeslist[i];
 		    node n = t->body.type.name;
 		    if (n != NULL) {
@@ -601,6 +610,7 @@ void totypesRec(node e) {
 			 n->body.symbol.value = thetype(j);
 			 }
 		    t->body.type.forward = thetype(j);
+		    t->body.type.flags = identified_F;
 		    newtypeslist[i] = NULL;
 		    break;
 		    }
@@ -624,26 +634,90 @@ bool isarraytype(node e){
      return iscons(e) && equal(car(e),array_K);
      }
 
+bool istaggedarraytype(node e){
+     e = typedefinition(e);
+     return iscons(e) && equal(car(e),tarray_K);
+     }
+
 bool isobjecttype(node e){
      e = typedefinition(e);
-     return iscons(e) && equal(car(e),object_K);
+     return iscons(e) && (equal(car(e),object__K));
      }
+
+bool istaggedobjecttype(node e){
+     e = typedefinition(e);
+     return iscons(e) && equal(car(e),tagged_object_K);
+     }
+
+bool israwpointertype(node e) {
+  assert(istype(e));
+  return !!(e->body.type.flags & (raw_pointer_type_F | raw_atomic_pointer_type_F));
+}
+
+bool israwtype(node e) {
+  assert(istype(e));
+  return !!(e->body.type.flags & (raw_type_F | raw_atomic_type_F));
+}
+
+bool ispointertype(node e) {
+  assert(istype(e));
+  return israwpointertype(e) || isobjecttype(e) || istaggedobjecttype(e) || isarraytype(e) || istaggedarraytype(e);
+}
+
+bool istaggedtype(node e) {
+  return istaggedobjecttype(e) || istaggedarraytype(e);
+}
+
+bool ispointertypeexpr(node e) {
+  return israwpointertypeexpr(e) || isobjecttypeexpr(e) || istaggedobjecttypeexpr(e) || isarraytypeexpr(e) || istaggedarraytypeexpr(e);
+}
+
+bool israwpointertypeexpr(node e) {
+     while (ispos(e)) e = e->body.position.contents;
+     while (issym(e)) {
+	  if (e->body.symbol.type != type__T) return FALSE;
+	  e = e->body.symbol.value;
+	  }
+     if (!istype(e)) return FALSE;
+     return ispointertype(e);
+}
+
+bool israwtypeexpr(node e) {
+     while (ispos(e)) e = e->body.position.contents;
+     while (issym(e)) {
+	  if (e->body.symbol.type != type__T) return FALSE;
+	  e = e->body.symbol.value;
+	  }
+     if (!istype(e)) return FALSE;
+     return israwtype(e);
+}
 
 bool isobjecttypeexpr(node e){
      while (ispos(e)) e = e->body.position.contents;
      while (issym(e)) {
-	  if (e->body.symbol.type != type_T) return FALSE;
+	  if (e->body.symbol.type != type__T) return FALSE;
 	  e = e->body.symbol.value;
 	  }
      if (istype(e)) return isobjecttype(e);
      if (!iscons(e)) return FALSE;
-     return equal(car(e),object_K);
+     return equal(car(e),object__K);
+     }
+
+bool istaggedobjecttypeexpr(node e){
+     while (ispos(e)) e = e->body.position.contents;
+     while (issym(e)) {
+	  if (e->body.symbol.type != type__T) return FALSE;
+	  e = e->body.symbol.value;
+	  }
+     if (istype(e)) return istaggedobjecttype(e);
+     if (!iscons(e)) return FALSE;
+     return equal(car(e),tagged_object_K);
      }
 
 bool isarraytypeexpr(node e){
      while (ispos(e)) e = e->body.position.contents;
      while (issym(e)) {
-	  if (e->body.symbol.type != type_T) return FALSE;
+	  if (e->body.symbol.type != type__T) return FALSE;
 	  e = e->body.symbol.value;
 	  }
      if (istype(e)) return isarraytype(e);
@@ -651,17 +725,32 @@ bool isarraytypeexpr(node e){
      return equal(car(e),array_K);
      }
 
+bool istaggedarraytypeexpr(node e){
+     while (ispos(e)) e = e->body.position.contents;
+     while (issym(e)) {
+	  if (e->body.symbol.type != type__T) return FALSE;
+	  e = e->body.symbol.value;
+	  }
+     if (istype(e)) return istaggedarraytype(e);
+     if (!iscons(e)) return FALSE;
+     return equal(car(e),tarray_K);
+     }
+
 bool isortype(node e){
      node f = istype(e) ? typedefinition(e) : e;
      return iscons(f) && car(f) == or_K;
      }
+
+bool isdeferredtype(node e) {
+  return istype(e) && (e->body.type.flags & deferred_F) != 0;
+}
 
 bool iscompositeortype(node e){
      node f;
      assert(istype(e));
      e = typeforward(e);
      f = e->body.type.definition;
-     return iscons(f) && car(f) == or_K && e->body.type.composite;
+     return iscons(f) && car(f) == or_K && (e->body.type.flags & composite_F);
      }
 
 node functionargtypes(node t){
@@ -681,10 +770,13 @@ node functionrettype(node t){
 node totype(node e){
      /* e is a type expression, return a unique TYPE */
      node f=NULL;
+     if (e == NULL) return NULL;
      if (e->tag == type_tag) return typeforward(e);
      if (e->tag == position_tag) e = e->body.position.contents;
      if (issym(e)) {
-	  assert(type(e) == type_T);
+          node t = type(e);
+	  if (t == NULL) return NULL;
+	  assert(t == type__T);
 	  return typeforward(e->body.symbol.value);
 	  }
      ExpandType(e,&f);
@@ -696,20 +788,18 @@ node totype(node e){
 				/* not recursive) */
      }
 
-bool isundefinedsym(node e, env v) {
-     e = unpos(e);
-     return (isstr(e) && NULL == lookupword(e,v));
-     }
-
-node chktype2(node e,env v){
+node chktype2(node e,scope v){
      node f, ftype;
      f = chk(e,v);
-     if (f == bad_K) return undefined_T;
-     if (equal(f,type_K)) return type_T;
+     if (f == bad__K) return bad_or_undefined_T;
+     if (equal(f,type__K)) return type__T;
      ftype = type(f);
-     if (ftype != type_T) {
+     if (ftype != type__T) {
 	  node sym;
-	  if (ftype != deferred_T) errorpos(e,"not valid type");
+	  if (ftype != deferred__T) {
+	    errorpos(e,"not valid type");
+	    return NULL;
+	  }
      	  sym = unpos(f);
 	  assert(issym(sym));
 	  if (sym->body.symbol.value == NULL) {
@@ -724,11 +814,11 @@ node chktype2(node e,env v){
      return f;			/* was totype(f) */
      }
 
-node chktype(node ee,env v){
+node chktype(node ee,scope v){
      node e = chktype2(ee,v);
-     if (e==type_T) {
+     if (e==type__T) {
 	  errorpos(ee,"not valid type");
-	  return undefined_T;
+	  return bad_or_undefined_T;
 	  }
      return e;
      }
@@ -740,7 +830,7 @@ bool subtype(node s, node t){
      s = typeforward(s);
      t = typeforward(t);
      if (s == t) return TRUE;
-     if (s == undefined_T || t == undefined_T) return TRUE;
+     if (s == bad_or_undefined_T || t == bad_or_undefined_T) return TRUE;
      if (isortype(s) && isortype(t)) {
 	  int i, j, slen, tlen;
 	  s = typedeftail(s); slen = length(s);
@@ -763,7 +853,7 @@ bool subtype(node s, node t){
 	       }
 	  return FALSE;
 	  }
-     return FALSE;
+     return FALSE; /* for other types, we assume that totypesRec has worked and made equivalent types identical */
      }
 
 bool checkargtypes(node argtypes, node funargtypes){
@@ -780,32 +870,12 @@ node returntype(node fun){
      if (iscons(t) && car(t) == function_S && length(t) == 3) {
 	  return caddr(t);
 	  }
-     else return undefined_T;
+     else return bad_or_undefined_T;
      }
 
 bool couldbenull(node t){
      assert(istype(t));
      return t==null_T || (isortype(t) && member(null_T,typedeftail(t)));
-     }
-
-bool reservable(node e){
-     node t = e;
-     node c;
-     t = typedefinition(t);
-     if (!iscons(t)) return FALSE;
-     c = car(t);
-     if (ispos(c)) c = c->body.position.contents;
-     if (c == object_K) return TRUE;
-     if (c == array_K) return TRUE;
-     if (c == or_K) {
-	  t = cdr(t);
-	  while (t != NULL) {
-	       if (reservable(car(t))) return TRUE;
-	       t = cdr(t);
-	       }
-	  return FALSE;
-	  }
-     return FALSE;
      }
 
 node nextfun(node fun){
@@ -819,7 +889,7 @@ node nextfun(node fun){
      if (sym->tag != symbol_tag) return NULL;
      name = sym->body.symbol.name;
      assert(isstr(name));
-     symbol_list = name->body.string.symbol_list;
+     symbol_list = name->body.unique_string.symbol_list;
      while (car(symbol_list) != sym) {
 	  symbol_list = cdr(symbol_list);
 	  }
@@ -830,25 +900,21 @@ node nextfun(node fun){
      }
 
 bool isbasictype(node e){
-     return istype(e) && e->body.type.basic_type;
+     return istype(e) && (e->body.type.flags & basic_type_F);
      }
 
 bool isarithmetictype(node e){
-     return istype(e) && e->body.type.arithmetic_type;
-     }
-
-bool isobject(node e){
-     return isobjecttype(type(e));
+     return istype(e) && (e->body.type.flags & arithmetic_type_F);
      }
 
 node basictype(node n){
      node t;
      assert(n->tag == symbol_tag);
-     n->body.symbol.type = type_T;
+     n->body.symbol.type = type__T;
      t = newtype(NULL,n,TRUE);
      interntype(t);
      n->body.symbol.value = t;
-     assert(n->body.symbol.name->tag == string_tag);
+     assert(n->body.symbol.name->tag == unique_string_tag);
      return t;
      }
 
@@ -860,43 +926,60 @@ node ormemberindex(node u, node t){
      return integer(i);
      }
 
-bool atomic(node t){
-     /* return true if the memory allocated for an object of type t
-        contains no pointers */
-     if (isobjecttype(t)) {
+bool is_atomic_memory(node t){
+     assert(istype(t));
+     if (isobjecttype(t) || istaggedobjecttype(t)) return FALSE;
+     if (isortype(t)) return FALSE;
+     if (isarraytype(t)||istaggedarraytype(t)) return FALSE;
+     if (t->body.type.flags & raw_pointer_type_F) return FALSE;
+     if (t->body.type.flags & raw_atomic_pointer_type_F) return FALSE;
+     if (t->body.type.flags & raw_type_F) return FALSE;
+     if (t->body.type.flags & raw_atomic_type_F) return TRUE;
+     if (isbasictype(t)) return TRUE;
+     assert(FALSE);
+     return FALSE;
+     }
+
+bool pointer_to_atomic_memory(node t){
+     /* return true if the memory allocated for an object of type t contains no pointers */
+     assert(istype(t));
+     if (isobjecttype(t) || istaggedobjecttype(t)) {
 	  node m;
-	  int i;
-	  for (i=1, m=typedeftail(t); m != NULL; m = CDR(m)) {
+	  for (m=typedeftail(t); m != NULL; m = CDR(m)) {
 	       node k = CADAR(m);
+	       assert(istype(k));
 	       if (k == void_T) continue;
-	       if (k == pointer_T) return FALSE;
-	       if (!isbasictype(CADAR(m))) return FALSE;
+	       if (k->body.type.flags & raw_atomic_type_F) continue;
+	       if (k->body.type.flags & (raw_pointer_type_F|raw_atomic_pointer_type_F)) return FALSE;
+	       if (isbasictype(CADAR(m))) continue;
+	       return FALSE;
 	       }
 	  return TRUE;
 	  }
      if (isortype(t)) {
 	  return FALSE;
 	  }
-     if (isarraytype(t)) {
+     if (isarraytype(t)||istaggedarraytype(t)) {
 	  node m = typedeftail(t);
-	  if (length(m) == 1) {
-	       node typ = CAR(m);
-	       if (typ == pointer_T) return FALSE;
-	       return isbasictype(typ);
+	  assert(length(m) >= 1);
+	  node typ = CAR(m);
+	  assert(istype(typ));
+	  if (typ->body.type.flags & (raw_pointer_type_F|raw_atomic_pointer_type_F)) {
+	       return FALSE; /* can we redefine isbasictype? */
 	       }
-	  else return FALSE;
+	  return isbasictype(typ);
 	  }
-     if (isbasictype(t)) {
-	  return TRUE;
-	  }
+     if (t->body.type.flags & raw_pointer_type_F) return FALSE;
+     if (t->body.type.flags & raw_atomic_pointer_type_F) return TRUE;
+     assert(!((t->body.type.flags & raw_type_F)));
+     assert(!((t->body.type.flags & raw_atomic_type_F)));
+     if (isbasictype(t)) return TRUE;
      assert(FALSE);
      return FALSE;
      }
 
-     
-
 /*
-# Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
-# End:
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+ End:
 */

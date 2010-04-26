@@ -6,7 +6,6 @@
 #include "matrix-con.hpp"
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
-extern int compare_type;
 
 gb_emitter::gb_emitter(const Matrix *m)
   : gens(m), g(NULL), n_left(m->n_cols()), n_i(0), n_in_degree(-1)
@@ -39,7 +38,7 @@ enum ComputationStatusCode gb_emitter::calc_gb(int degree)
     }
   for (;;)
     {
-      if (system_interruptedFlag)
+      if (test_Field(interrupts_interruptedFlag))
 	return COMP_INTERRUPTED;
       if (n_i >= n_gens) return COMP_DONE;
       if (g != NULL)
@@ -118,7 +117,7 @@ void gbres_comp::setup(const Matrix *m,
     {
       if (origsyz > m->n_cols())
 	origsyz = m->n_cols();
-      int *one = originalR->Nmonoms()->make_one();
+      int *one = originalR->getMonoid()->make_one();
       const int *mon;
       for (i=0; i<origsyz; i++)
 	{
@@ -131,7 +130,7 @@ void gbres_comp::setup(const Matrix *m,
 	    }
 	  Fsyz->append_schreyer(m->cols()->degree(i), mon, i);
 	}
-      originalR->Nmonoms()->remove(one);
+      originalR->getMonoid()->remove(one);
     }
 
   lo_degree = m->cols()->lowest_primary_degree();
@@ -212,23 +211,23 @@ bool gbres_comp::stop_conditions_ok()
 
 void gbres_comp::start_computation()
 {
-  int old_compare_type = compare_type;
-  compare_type = (strategy_flags >> 10);
-  if (gbTrace >= 4) 
-    {
-      buffer o;
-      o << "compare=" << compare_type << newline;
-      emit(o.str());
-    }
+  //  int old_compare_type = compare_type;
+  //  compare_type = (strategy_flags >> 10);
+  //  if (M2_gbTrace >= 4) 
+  //    {
+  //      buffer o;
+  //      o << "compare=" << compare_type << newline;
+  //      emit(o.str());
+  //    }
   for (int i=lo_degree; !is_done(); i++)
     {
       if (stop_.stop_after_degree && stop_.degree_limit->array[0] < i)
 	{
 	  set_status(COMP_DONE_DEGREE_LIMIT);
-	  compare_type = old_compare_type;
+	  //	  compare_type = old_compare_type;
 	  return;
 	}
-      if (gbTrace >= 1)	
+      if (M2_gbTrace >= 1)	
 	{
 	  buffer o;
 	  o << "{" << i << "}";
@@ -238,12 +237,12 @@ void gbres_comp::start_computation()
       if (ret != COMP_DONE)
 	{
 	  set_status(ret);
-	  compare_type = old_compare_type;
+	  //	  compare_type = old_compare_type;
 	  return;
 	}
       last_completed_degree = i;
     }
-  compare_type = old_compare_type;
+  //  compare_type = old_compare_type;
   set_status(COMP_DONE);
 }
 

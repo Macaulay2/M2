@@ -1,19 +1,20 @@
-#include "engine.h"
 #include "error.h"
 #include "monordering.h"
+#include "engine.h"
 #include <stdio.h>
+
 #include "../d/M2mem.h"
 
-static struct mon_part_rec_ *mo_make(int type, int nvars, int *wts)
+static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type, int nvars, int *wts)
 {
   mon_part result;
-  result = (mon_part) getmem(sizeof(*result));
+  result = getmemstructtype(mon_part);
   result->type = type;
   result->nvars = nvars;
   if (wts != 0)
     {
       int i;
-      result->wts = (int *) getmem_atomic(nvars * sizeof(int));
+      result->wts = getmematomicvectortype(int,nvars);
       for (i=0; i<nvars; i++)
 	result->wts[i] = wts[i];
     }
@@ -25,12 +26,67 @@ static struct mon_part_rec_ *mo_make(int type, int nvars, int *wts)
 static MonomialOrdering *make_mon_order(int n)
 {
   static unsigned long next_hash = 2300230023U;
-  MonomialOrdering *z = (MonomialOrdering *)getmem(sizeofarray(z,n));
+  MonomialOrdering *z = getmemarraytype(MonomialOrdering *,n);
   z->len = n;
   z->_hash = next_hash++;
   int i;
   for (i=0; i<n; i++) z->array[i] = NULL;
   return z;
+}
+
+int moIsLex(const MonomialOrdering *mo)
+{
+  // The monomial order is lex if what?
+  // one lex block, no grevlex blocks, no weightvector blocks.
+  // only: lex block and position blocks are allowed.
+  int nlex = 0;
+  int i;
+  for (i=0; i<mo->len; i++)
+    {
+      enum MonomialOrdering_type typ = mo->array[i]->type;
+      switch (typ) {
+      case MO_LEX:
+      case MO_LEX2:
+      case MO_LEX4:
+	nlex++;
+	break;
+      case MO_POSITION_UP:
+      case MO_POSITION_DOWN:
+	break;
+      default:
+	return 0;
+      }
+    }
+  return (nlex == 1);
+}
+
+int moIsGRevLex(const MonomialOrdering *mo)
+{
+  // The monomial order is lex if what?
+  // one lex block, no grevlex blocks, no weightvector blocks.
+  // only: lex block and position blocks are allowed.
+  int ngrevlex = 0;
+  int i;
+  for (i=0; i<mo->len; i++)
+    {
+      enum MonomialOrdering_type typ = mo->array[i]->type;
+      switch (typ) {
+      case MO_GREVLEX:
+      case MO_GREVLEX2:
+      case MO_GREVLEX4:
+      case MO_GREVLEX_WTS:
+      case MO_GREVLEX2_WTS:
+      case MO_GREVLEX4_WTS:
+	ngrevlex++;
+	break;
+      case MO_POSITION_UP:
+      case MO_POSITION_DOWN:
+	break;
+      default:
+	return 0;
+      }
+    }
+  return (ngrevlex == 1);
 }
 
 int rawNumberOfVariables(const MonomialOrdering *mo)
@@ -40,6 +96,25 @@ int rawNumberOfVariables(const MonomialOrdering *mo)
     if (mo->array[i]->type != MO_WEIGHTS)
       sum += mo->array[i]->nvars;
   return sum;
+}
+
+M2_arrayint moGetWeightValues(const MonomialOrdering *mo)
+{
+  int nvars = rawNumberOfVariables(mo);
+  // grab the first weight vector
+  if (mo->len == 0) return 0;
+  if (mo->array[0]->type == MO_WEIGHTS)
+    {
+      int i;
+      M2_arrayint result = M2_makearrayint(nvars);
+      int *wts = mo->array[0]->wts;
+      for (i=0; i<mo->array[0]->nvars; i++)
+	result->array[i] = wts[i];
+      for (; i<nvars; i++)
+	result->array[i] = 0;
+      return result;
+    }
+  return 0;
 }
 
 int rawNumberOfInvertibleVariables(const MonomialOrdering *mo)
@@ -58,7 +133,7 @@ M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo)
 {
   int i,j,sum,nextvar;
   int nvars = rawNumberOfVariables(mo);
-  int *gt = (int *) getmem_atomic(nvars * sizeof(int));
+  int *gt = getmematomicvectortype(int,nvars);
   for (i=0; i<nvars; i++)
     gt[i] = 0; // 0 means undecided, -1 means non term order, 1 means term order
   // Now we loop through the parts of the monomial order
@@ -113,7 +188,7 @@ M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo)
     }
   
   // Make an array of this length.
-  M2_arrayint result = makearrayint(sum);
+  M2_arrayint result = M2_makearrayint(sum);
   nextvar = 0;
   for (i=0; i<nvars; i++)
     if (gt[i] < 0)
@@ -137,7 +212,7 @@ MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing)
   return result;
 }
 
-MonomialOrderingOrNull *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing)
+MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing)
 {
   MonomialOrdering *result;
   mon_part p;
@@ -218,7 +293,7 @@ MonomialOrdering *rawPositionMonomialOrdering(M2_bool up_or_down)
   return result;
 }
 
-static MonomialOrdering *M2_mo_offset(MonomialOrdering *mo, int offset)
+static MonomialOrdering *M2_mo_offset(const MonomialOrdering *mo, int offset)
 {
   int i,j;
   MonomialOrdering *result = make_mon_order(mo->len);
@@ -230,7 +305,7 @@ static MonomialOrdering *M2_mo_offset(MonomialOrdering *mo, int offset)
       else
 	{
 	  mon_part q = mo_make(MO_WEIGHTS, offset + p->nvars, NULL);
-	  q->wts = (int *) getmem_atomic(q->nvars * sizeof(int));
+	  q->wts = getmemvectortype(int,q->nvars);
 	  for (j=0; j<offset; j++)
 	    q->wts[j] = 0;
 	  for ( ; j<q->nvars; j++)
@@ -265,9 +340,10 @@ static int is_good(mon_part p)
   return 0;
 }
 
-MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
+MonomialOrdering *rawJoinMonomialOrdering(engine_RawMonomialOrderingArray M)
 {
-  MonomialOrdering *result, *mo;
+  MonomialOrdering *result;
+  const MonomialOrdering *mo;
   int i,j,sum,next;
   int nvars_so_far = 0;
 
@@ -299,7 +375,7 @@ MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
 	    {
 	      /* Shift the weights over by nvars_so_far */
 	      mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, NULL);
-	      q->wts = (int *) getmem_atomic(q->nvars * sizeof(int));
+	      q->wts = getmemvectortype(int,q->nvars);
 	      for (j=0; j<nvars_so_far; j++)
 		q->wts[j] = 0;
 	      for ( ; j<q->nvars; j++)
@@ -312,7 +388,7 @@ MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
   return result;
 }
 
-MonomialOrdering *rawProductMonomialOrdering(MonomialOrdering_array M)
+MonomialOrdering *rawProductMonomialOrdering(engine_RawMonomialOrderingArray M)
 {
   MonomialOrdering *result;
   int i,j,sum,next,offset;
@@ -338,14 +414,14 @@ M2_string intarray_to_string(int len, int *p)
 {
   int i;
   char s[200];
-  M2_string result = tostring("{");
+  M2_string result = M2_tostring("{");
   for (i=0; i<len; i++)
     {
-      if (i > 0) result = strings_join(result, tostring(","));
+      if (i > 0) result = M2_join(result, M2_tostring(","));
       sprintf(s, "%d", p[i]);
-      result = strings_join(result, tostring(s));
+      result = M2_join(result, M2_tostring(s));
     }
-  result = strings_join(result,tostring("}"));
+  result = M2_join(result,M2_tostring("}"));
   return result;
 }
 
@@ -354,19 +430,19 @@ M2_string ones_to_string(int len)
   int i;
   char s[200];
   M2_string one;
-  M2_string result = tostring("{");
+  M2_string result = M2_tostring("{");
   sprintf(s, "1");
-  one = tostring(s);
+  one = M2_tostring(s);
   for (i=0; i<len; i++)
     {
-      if (i > 0) result = strings_join(result, tostring(","));
-      result = strings_join(result, one);
+      if (i > 0) result = M2_join(result, M2_tostring(","));
+      result = M2_join(result, one);
     }
-  result = strings_join(result,tostring("}"));
+  result = M2_join(result,M2_tostring("}"));
   return result;
 }
 
-unsigned long IM2_MonomialOrdering_hash(MonomialOrdering *mo)
+unsigned long IM2_MonomialOrdering_hash(const MonomialOrdering *mo)
 {
   return mo->_hash;
 }
@@ -376,15 +452,15 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
   int i;
   char s[200];
   int p_ones = 0;
-  M2_string result = tostring("MonomialOrder => {");
+  M2_string result = M2_tostring("MonomialOrder => {");
   for (i=0; i<mo->len; i++)
     {
       mon_part p = mo->array[i];
       p_ones = 0;
       if (i == 0)
-	result = strings_join(result, tostring("\n    "));
+	result = M2_join(result, M2_tostring("\n    "));
       else
-	result = strings_join(result, tostring(",\n    "));
+	result = M2_join(result, M2_tostring(",\n    "));
       switch (p->type) {
       case MO_LEX:
 	sprintf(s, "Lex => %d", p->nvars);
@@ -441,13 +517,13 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
 	sprintf(s, "UNKNOWN");
 	break;
       }
-      result = strings_join(result, tostring(s));
+      result = M2_join(result, M2_tostring(s));
       if (p->wts != NULL)
-	result = strings_join(result, intarray_to_string(p->nvars, p->wts));
+	result = M2_join(result, intarray_to_string(p->nvars, p->wts));
       else if (p_ones)
-	result = strings_join(result, ones_to_string(p->nvars));
+	result = M2_join(result, ones_to_string(p->nvars));
     }
-  result = strings_join(result, tostring("\n    }"));
+  result = M2_join(result, M2_tostring("\n    }"));
   return result;
 }
 

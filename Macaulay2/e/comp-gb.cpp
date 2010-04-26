@@ -3,6 +3,7 @@
 #include "comp-gb.hpp"
 
 #include "gb-homog2.hpp"
+#include "gb-test1.hpp"
 #include "gb-sugarless.hpp"
 #include "gb-toric.hpp"
 #include "gauss.hpp"
@@ -11,27 +12,7 @@
 #include "gbweight.hpp"
 #include "comp-gb-proxy.hpp"
 #include "text-io.hpp"
-
-static int nfinalized = 0;
-static int nremoved = 0;
-
-void remove_gb(void *p, void *cd)
-{
-  GBComputation *G = static_cast<GBComputation *>(p);
-  nremoved++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\nremoving gb %d at %p\n",nremoved, G);
-  G->remove_gb();
-}
-
-void intern_GB(GBComputation *G)
-{
-  //  GC_REGISTER_FINALIZER(G,remove_gb,0,0,0);
-  GC_REGISTER_FINALIZER_IGNORE_SELF(G,remove_gb,0,0,0);
-  nfinalized++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering gb %d at %p\n", nfinalized, (void *)G);
-}
+#include "finalize.hpp"
 
 /////////////////////////////////////
 // GBBComputation ///////////////////
@@ -57,7 +38,7 @@ void GBBComputation::text_out(buffer &o) const
 /////////////////////////////////////
 // GroebnerBasis ////////////////////
 /////////////////////////////////////
-const MatrixOrNull *GroebnerBasis::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GroebnerBasis::get_parallel_lead_terms(M2_arrayint w)
 {
   ERROR("Cannot compute parallel lead terms for this kind of Groebner computation");
   return 0;
@@ -121,12 +102,12 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
   //  const PolynomialRing *R = R2->get_flattened_ring();
   // bool is_graded = (R->is_graded() && m->is_homogeneous());
   //bool ring_is_base = R->is_basic_ring();
-  //bool base_is_ZZ = R->Ncoeffs()->is_ZZ(); 
+  //bool base_is_ZZ = R->getCoefficientRing()->is_ZZ(); 
 #ifdef DEVELOPMENT
 #warning "NOT QUITE!!  Need to know if it is ZZ or QQ"
 #warning "unused variables commented out"
 #endif
-  // bool base_is_field = !R->Ncoeffs()->is_ZZ();
+  // bool base_is_field = !R->getCoefficientRing()->is_ZZ();
 
   GBComputation *result;
 
@@ -166,6 +147,16 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			strategy,
 			use_max_degree,
 			max_degree);
+    break;
+  case 8:
+    result = gbB::create(m, 
+			 collect_syz, 
+			 n_rows_to_keep,
+			 gb_weights,
+			 strategy,
+			 use_max_degree,
+			 max_degree,
+			 max_reduction_count);
     break;
   default:
     result = gbA::create(m, 
@@ -242,14 +233,14 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 #endif
 }
 
-ComputationOrNull *GBComputation::set_hilbert_function(const RingElement *h)
+Computation /* or null */ *GBComputation::set_hilbert_function(const RingElement *h)
   // The default version returns an error saying that Hilbert functions cannot be used.
 {
   ERROR("Hilbert function use is not implemented for this GB algorithm");
   return 0;
 }
 
-const MatrixOrNull *GBComputation::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(M2_arrayint w)
 {
   ERROR("Cannot compute parallel lead terms for this kind of Groebner computation");
   return 0;

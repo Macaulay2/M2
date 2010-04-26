@@ -49,12 +49,12 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
 						  const MonomialInfo *MI,
 						  const M2_arrayint wts,
 						  const poly &f,
-						  int &deg, 
+						  int &deg_result, 
 						  int &alpha)
 {
   const monomial_word *w = f.monoms;
   monomial_word leaddeg = MI->monomial_weight(w, wts);
-  deg = leaddeg;
+  monomial_word deg = leaddeg;
   
   for (int i=1; i<f.len; i++)
     {
@@ -62,7 +62,8 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
       monomial_word degi = MI->monomial_weight(w,wts);
       if (degi > deg) deg = degi;
     }
-  alpha = deg-leaddeg;
+  alpha = static_cast<int>(deg-leaddeg);
+  deg_result = static_cast<int>(deg);
 }
 
 void F4toM2Interface::from_M2_matrix(const Gausser *KK,
@@ -113,7 +114,7 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
       MI->to_exponent_vector(w, lexp, comp);
       w = w + MI->monomial_size(w);
       for (int a=0; a<M->n_vars(); a++)
-	exp[a] = lexp[a];
+	exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
       Nterm * g = R->make_flat_term(relem_array[i], m1);
       g->next = 0;
@@ -149,7 +150,7 @@ Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
 				      gb_array &polys, 
 				      const FreeModule *F)
 {
-  MatrixConstructor result(F,polys.size());
+  MatrixConstructor result(F,INTSIZE(polys));
   for (int i=0; i<polys.size(); i++)
     result.set_column(i, to_M2_vec(KK,MI,polys[i]->f, F));
   return result.to_matrix();
@@ -160,8 +161,8 @@ MutableMatrix * F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
 						     gb_array &gens,
 						     gb_array &gb)
 {
-  int nrows = mat->rows.size();
-  int ncols = mat->columns.size();
+  int nrows = INTSIZE(mat->rows);
+  int ncols = INTSIZE(mat->columns);
   MutableMatrix *M = IM2_MutableMatrix_make(KK->get_ring(), nrows, ncols, false);
   for (int r=0; r<nrows; r++)
     {

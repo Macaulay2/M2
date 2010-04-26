@@ -1,7 +1,7 @@
 #include "reducedgb.hpp"
 
 #include "matrix-con.hpp"
-#include "poly.hpp"
+#include "polyring.hpp"
 #include "matrix.hpp"
 
 #include "reducedgb-field.hpp"
@@ -54,7 +54,7 @@ ReducedGB::~ReducedGB()
     }
 }
 
-const MatrixOrNull *ReducedGB::get_gb()
+const Matrix /* or null */ *ReducedGB::get_gb()
 {
   MatrixConstructor mat(F,0);
   for (VECTOR(POLY)::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -65,7 +65,7 @@ const MatrixOrNull *ReducedGB::get_gb()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *ReducedGB::get_mingens()
+const Matrix /* or null */ *ReducedGB::get_mingens()
 {
 #ifdef DEVELOPMENT
 #warning "mingens?"
@@ -73,7 +73,7 @@ const MatrixOrNull *ReducedGB::get_mingens()
   return 0;
 }
 
-const MatrixOrNull *ReducedGB::get_syzygies()
+const Matrix /* or null */ *ReducedGB::get_syzygies()
 {
 #ifdef DEVELOPMENT
 #warning "syzygies?"
@@ -81,7 +81,7 @@ const MatrixOrNull *ReducedGB::get_syzygies()
   return 0;
 }
 
-const MatrixOrNull *ReducedGB::get_change()
+const Matrix /* or null */ *ReducedGB::get_change()
 {
   MatrixConstructor mat(Fsyz,0);
   for (VECTOR(POLY)::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -92,7 +92,7 @@ const MatrixOrNull *ReducedGB::get_change()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *ReducedGB::get_initial(int nparts)
+const Matrix /* or null */ *ReducedGB::get_initial(int nparts)
 {
   MatrixConstructor mat(F,0);
   for (VECTOR(POLY)::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -104,7 +104,7 @@ const MatrixOrNull *ReducedGB::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-const MatrixOrNull *ReducedGB::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *ReducedGB::get_parallel_lead_terms(M2_arrayint w)
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<polys.size(); i++)
@@ -120,7 +120,7 @@ void ReducedGB::text_out(buffer &o) const
 {
 }
 
-const MatrixOrNull *ReducedGB::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *ReducedGB::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != originalR)
     {
@@ -150,8 +150,8 @@ const MatrixOrNull *ReducedGB::matrix_remainder(const Matrix *m)
 }
 
 M2_bool ReducedGB::matrix_lift(const Matrix *m,
-			    MatrixOrNull **result_remainder,
-			    MatrixOrNull **result_quotient)
+			    const Matrix /* or null */ **result_remainder,
+			    const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != originalR)
     {

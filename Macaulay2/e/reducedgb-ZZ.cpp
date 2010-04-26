@@ -88,7 +88,7 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) &polys0,
 		  R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
 		}
 	      
-	      T->insert(h.f->coeff.get_mpz(), e, h.f->comp, polys.size());
+	      T->insert(h.f->coeff.get_mpz(), e, h.f->comp, INTSIZE(polys));
 	      polys.push_back(h);
 	}
       else
@@ -135,15 +135,15 @@ void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents _EXP = R->exponents_make();
+  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   gbvector *r;
   POLY g;
   while (!R->gbvector_is_zero(h.f))
     {
       int w;
-      R->gbvector_get_lead_exponents(F, h.f, _EXP);
+      R->gbvector_get_lead_exponents(F, h.f, EXP);
       int x = h.f->comp;
-      enum divisor_type typ = find_divisor(_EXP,x,w);
+      enum divisor_type typ = find_divisor(EXP,x,w);
       switch (typ) {
       case DIVISOR_RING:
 	r = const_cast<gbvector *>(originalR->quotient_gbvector(w));
@@ -171,7 +171,6 @@ void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
   f.f = h.f;
   originalR->get_quotient_info()->gbvector_normal_form(Fsyz, h.fsyz);
   f.fsyz = h.fsyz;
-  R->exponents_delete(_EXP);
 }
 
 void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
@@ -181,16 +180,16 @@ void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   gbvector * h = f;
-  exponents _EXP = R->exponents_make();
+  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
 
   gbvector *r;
   POLY g;
   while (!R->gbvector_is_zero(h))
     {
       int w;
-      R->gbvector_get_lead_exponents(F, h, _EXP);
+      R->gbvector_get_lead_exponents(F, h, EXP);
       int x = h->comp;
-      enum divisor_type typ = find_divisor(_EXP,x,w);
+      enum divisor_type typ = find_divisor(EXP,x,w);
       switch (typ) {
       case DIVISOR_RING:
 	r = const_cast<gbvector *>(originalR->quotient_gbvector(w));
@@ -201,7 +200,7 @@ void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 	break;
       case DIVISOR_MODULE:
 	g = polys[w];
-	if (gbTrace >= 4)
+	if (M2_gbTrace >= 4)
 	  {
 	    buffer o;
 	    R->gbvector_text_out(o,F,h);
@@ -225,7 +224,6 @@ void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
     }
   h = head.next;
   f = h;
-  R->exponents_delete(_EXP);
 }
 
 // Local Variables:

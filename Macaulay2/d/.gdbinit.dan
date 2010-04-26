@@ -2,5 +2,5 @@ file ../c/scc1
 b warning
 b error
 b errorpos
-b myexit
-run +gc -J. t.d
+b exit
+b trap

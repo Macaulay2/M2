@@ -1,20 +1,11 @@
 --		Copyright 1994 by Daniel R. Grayson
-
 -- a flavor of input stream where line numbers and
 -- column numbers are maintained properly
-
 -- Also, if a \ comes at the end of the line, then it swallows the next
 -- line up to a nonspace
-
 -- Also, these are *text* files, so we translate all three flavors of line termination
 -- into a single \n.
-
-use C;
-use system;
-use strings;
 use stdio;
-use ctype;
-
 export Position := {filename:string, line:ushort, column:ushort, loadDepth:ushort};
 export (s:Position) === (t:Position) : bool := s == t || s.filename === t.filename && s.line == t.line && s.column == t.column;
 export dummyPosition := Position("{*dummy file name*}",ushort(0),ushort(0),loadDepth);
@@ -122,25 +113,28 @@ export tostring(w:Position) : string := (
      if w == dummyPosition 
      then "{*dummy position*}"
      else errfmt(verifyMinimizeFilename(w.filename),int(w.line),int(w.column + 1),int(w.loadDepth)));
-export (o:file) << (w:Position) : file := (
-     o << tostring(w)
-     );
-export SuppressErrors := false;
+export (o:file) << (w:Position) : file := o << tostring(w);
+export (o:BasicFile) << (w:Position) : BasicFile := o << tostring(w);
+threadLocal export SuppressErrors := false;
 cleanscreen():void := (
-     flush(stdout);
-     if stdout.outfd == stderr.outfd && !atEndOfLine(stdout) || interruptedFlag then (
-	  stdout << '\n';
-     	  flush(stdout);
+     flush(stdIO);
+     if stdIO.outfd == stdError.outfd && !atEndOfLine(stdIO) || test(interruptedFlag) then (
+	  stdIO << '\n';
+     	  flush(stdIO);
 	  )
      );
 
-export recursionDepth := 0;
-export recursionLimit := 300;
+threadLocal export recursionDepth := 0;
+threadLocal export recursionLimit := 300;
 
 printMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();
-     	  stderr << position << '[' << recursionDepth << "]: " << message << endl;
+     	  stderr << position;
+	  if recursionDepth > 0 then stderr << "[" << recursionDepth << "]:";
+	  tid := gettid();
+	  if tid != -1 && tid != getpid() then stderr << "<" << gettid() << ">:";
+	  stderr << " " << message << endl;
 	  );
      );
 export printErrorMessage(position:Position,message:string):void := (
@@ -150,11 +144,10 @@ export printWarningMessage(position:Position,message:string):void := printMessag
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
      printErrorMessage(Position(filename,line,column,ushort(0)), message);
      );
-export (o:file) << (p:(null or Position)):file := (
-     when p is null do o is w:Position do o << w
-     );
+export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Position do o << w;
+export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
 export copy(p:Position):Position := Position(p.filename, p.line, p.column, loadDepth);
-export PosFile := {file:file, lastchar:int, filename:string, line:ushort, column:ushort};
+export PosFile := {+ file:file, lastchar:int, filename:string, line:ushort, column:ushort };
 export position(file:PosFile):Position := Position(file.filename,file.line,file.column,loadDepth);
 export dummyPosFile := PosFile(dummyfile,0,"{*dummy file name*}",ushort(0),ushort(0));
 export fileError(f:PosFile):bool := fileError(f.file);
@@ -187,7 +180,7 @@ export openPosIn(filename:string):(PosFile or errmsg) := (
      is f:file do (PosFile or errmsg)(PosFile(f,0,absoluteFilename(f.filename), ushort(1),ushort(0)))
      is s:errmsg do (PosFile or errmsg)(s)
      );
-roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
+--roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
 tabwidth := 8;
 export getc(o:PosFile):int := (
      prevchar := o.lastchar;
@@ -208,5 +201,5 @@ export getc(o:PosFile):int := (
 export flush(o:PosFile):void := flushinput(o.file);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d stdiop.o "
 -- End:

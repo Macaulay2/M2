@@ -1,0 +1,236 @@
+--		Copyright 1994-2002, 2010 by Daniel R. Grayson
+
+use gmp;
+
+-- types
+export RawMonomial := Pointer "const struct Monomial *";
+export RawMonomialArray := array(RawMonomial);
+export RawMonomialOrNull := RawMonomial or null;
+export RawArrayInt := array(int);
+export RawArrayIntOrNull := RawArrayInt or null;
+export RawMonomialOrdering := Pointer "const struct MonomialOrdering *";
+export RawMonomialOrderingOrNull := RawMonomialOrdering or null;
+export RawMonoid := Pointer "const struct Monoid *";
+export RawMonoidOrNull := RawMonoid or null;
+export RawRing := Pointer "const struct Ring *";
+export RawRingMap := Pointer "const struct RingMap *";
+export RawRingOrNull := RawRing or null;
+export RawRingElement := Pointer "const struct RingElement *";
+export RawRingElementOrNull := RawRingElement or null;
+export RawMonomialIdeal := Pointer "const struct MonomialIdeal *";
+export RawMonomialIdealOrNull := RawMonomialIdeal or null;
+export RawFreeModule := Pointer "const struct FreeModule *";
+export RawFreeModuleOrNull := RawFreeModule or null;
+export RawMatrix := Pointer "const struct Matrix *";
+export RawMatrixOrNull := RawMatrix or null;
+export RawStraightLineProgram := Pointer "struct StraightLineProgram *";
+export RawStraightLineProgramOrNull := RawStraightLineProgram or null;
+export RawPathTracker := Pointer "struct PathTracker *";
+export RawPathTrackerOrNull := RawPathTracker or null;
+export RawMutableMatrix := Pointer "struct MutableMatrix *";
+export RawMutableMatrixOrNull := RawMutableMatrix or null;
+export RawMonomialOrderingArray := array(RawMonomialOrdering);
+export RawMatrixPair := { a:RawMatrix, b:RawMatrix };
+export RawMatrixPairOrNull := RawMatrixPair or null;
+export RawMatrixArray := array(RawMatrix);
+export RawMatrixArrayOrNull := array(RawMatrix) or null;
+export RawRingElementArray := array(RawRingElement);
+export RawRingElementArrayOrNull := array(RawRingElement) or null;
+export RawArrayPair := { monoms:array(RawMonomial), coeffs:array(RawRingElement) };
+export RawArrayPairOrNull := RawArrayPair or null;
+export RawMonomialPair := { a:RawMonomial, b:RawMonomial };
+export RawRingElementPair := { a:RawRingElement, b:RawRingElement };
+export RawMonomialPairOrNull := RawMonomialPair or null;
+export RawRingElementPairOrNull := RawRingElementPair or null;
+export RawMatrixAndInt := { M:RawMatrix, i:int };
+export RawComputation := Pointer "struct Computation *";
+export RawComputationOrNull := RawComputation or null;
+export RawComputationCell := {+ p:RawComputation };
+export RawFreeModuleCell := {+ p:RawFreeModule };
+export RawMatrixCell := {+ p:RawMatrix };
+export RawMonoidCell := {+ p:RawMonoid };
+export RawMonomialCell := {+ p:RawMonomial };
+export RawMonomialIdealCell := {+ p:RawMonomialIdeal };
+export RawMonomialOrderingCell := {+ p:RawMonomialOrdering };
+export RawMutableMatrixCell := {+ p:RawMutableMatrix };
+export RawStraightLineProgramCell := {+ p:RawStraightLineProgram };
+export RawPathTrackerCell := {+ p:RawPathTracker };
+export RawRingCell := {+ p:RawRing };
+export RawRingElementCell := {+ p:RawRingElement };
+export RawRingMapCell := {+ p:RawRingMap };
+
+-- functions
+
+header "
+    #include <../e/error.h>
+    #include <exceptions.hpp>
+    #include <monomial.hpp>
+    #include <relem.hpp>
+    #include <matrix.hpp>
+    #include <mat.hpp>
+";
+
+export EngineError(d:string):string := (
+     s := tostring(Ccode(constcharstarOrNull, "error_message()"));
+     if length(s) == 0 then d else s);
+
+-- operators
+export (x:RawMonomial) * (y:RawMonomial) : RawMonomialOrNull := Ccode(returns, "
+     try { return *x * *y; } catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (x:RawMonomial) ^ (n:int) : RawMonomialOrNull := Ccode(returns, "
+     try { return x->power(n); } catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (x:RawMonomial) / (y:RawMonomial) : RawMonomialOrNull := (
+     when y^-1 is z:RawMonomial do x*z
+     is null do RawMonomialOrNull(null()));
+export (x:RawRingElement) + (y:RawRingElement) : RawRingElementOrNull := Ccode(returns, "
+     try { return *x + *y; } catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export - (y:RawRingElement) : RawRingElement := Ccode(returns, "
+     try { return -*y; } catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (x:RawRingElement) - (y:RawRingElement) : RawRingElementOrNull := Ccode(returns, "
+     try { return *x - *y; } catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (x:RawRingElement) * (y:RawRingElement) : RawRingElementOrNull := Ccode(returns, "
+     try { return *x * *y; } 
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (a:RawRingElement) // (b:RawRingElement) : RawRingElementOrNull := Ccode(returns, "
+     try { const Ring *R = a->get_ring();
+	   if (R != b->get_ring()) {
+	       ERROR(\"ring division requires both elements to have the same base ring\");
+	       return 0; }
+	   ring_elem result = R->quotient(a->get_value(), b->get_value());
+	   if (error()) return 0;
+	   return RingElement::make_raw(R, result);
+     } catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (a:RawRingElement) % (b:RawRingElement) : RawRingElementOrNull := Ccode(returns, "
+    try { const Ring *R = a->get_ring();
+	  if (R != b->get_ring()) {
+	      ERROR(\"ring remainder requires both elements to have the same base ring\");
+	      return 0; }
+	  ring_elem result = R->remainder(a->get_value(), b->get_value());
+	  if (error()) return 0;
+	  return RingElement::make_raw(R, result); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (a:RawRingElement) ^ (n:ZZ) : RawRingElementOrNull := Ccode(returns, "
+     try { RingElement *z = a->power(n); return error() ? NULL : z; }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (M:RawMatrix) + (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
+     try { return *M + *N; }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "
+     -- If the sizes do not match, then NULL is returned.  If they do match,
+     -- the addition is performed.  If the targets are not equal, the target 
+     -- of the result is set to have each degree zero.  Similarly with the
+     -- source, and also with the degree of the matrix.
+     );
+export (x:RawMutableMatrix) + (y:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
+     ERROR(\"not implemented for mutable matrices\");
+     return 0;
+     // return M->add(N);
+     "
+     -- /* If the sizes do not match, then NULL is returned.  If they do match,
+     --    the addition is performed.  If the targets are not equal, the target 
+     --    of the result is set to have each degree zero.  Similarly with the
+     --    source, and also with the degree of the matrix. */
+     );
+-- matrix arithmetic
+export - (M:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
+     try { return - *M; }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export - (M:RawMutableMatrix) : RawMutableMatrix := Ccode(returns, "return M->negate();");
+export (M:RawMatrix) - (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
+     try { return *M - *N; }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "
+     -- If the sizes do not match, then NULL is returned.  If they do match,
+     -- the addition is performed.  If the targets are not equal, the target 
+     -- of the result is set to have each degree zero.  Similarly with the
+     -- source, and also with the degree of the matrix.
+     );
+export (M:RawMutableMatrix) - (N:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
+     ERROR(\"not implemented for mutable matrices\");
+     return 0;
+     // return M->subtract(N);
+     "
+     -- /* If the sizes do not match, then NULL is returned.  If they do match,
+     --    the addition is performed.  If the targets are not equal, the target 
+     --    of the result is set to have each degree zero.  Similarly with the
+     --    source, and also with the degree of the matrix. */
+     );
+export (f:RawRingElement) * (M:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
+     try { if (f->get_ring() != M->get_ring()) {
+	       ERROR(\"ring element and matrix should have the same base ring\");
+	       return 0; }
+	  return M->scalar_mult(f->get_value(), false); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (M:RawMatrix) * (f:RawRingElement) : RawMatrixOrNull := Ccode(returns, "
+     try { if (f->get_ring() != M->get_ring()) {
+	       ERROR(\"ring element and matrix should have the same base ring\");
+	       return 0; }
+	  return M->scalar_mult(f->get_value(), true); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export (f:RawRingElement) * (M:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
+     ERROR(\"scalar multiplication not implemented for mutable matrices\");
+     return 0;
+     // return M->mult(f);
+     ");
+export (M:RawMutableMatrix) * (f:RawRingElement) : RawMutableMatrixOrNull := Ccode(returns, "
+     ERROR(\"scalar multiplication not implemented for mutable matrices\");
+     return 0;
+     // return M->mult(f);
+     ");
+export (M:RawMatrix) * (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
+     try { return M->mult(N, true); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "
+     -- /* If the sizes do not match, then NULL is returned.  If they do match,
+     --    the multiplication is performed, and the source and target are taken from N,M
+     --    respectively.  The degree of the result is the sum of the two degrees */
+     );
+export (M:RawMutableMatrix) * (N:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
+     ERROR(\"not implemented for mutable matrices\");
+     return 0;
+     // return M->mult(N);
+     "
+     -- /* If the sizes do not match, then NULL is returned.  If they do match,
+     --    the multiplication is performed, and the source and target are taken from N,M
+     --    respectively.  The degree of the result is the sum of the two degrees */
+     );
+-- 
+
+header "
+  extern \"C\" void remove_monideal(void *, void *);
+  struct MonomialIdeal;
+  void intern_monideal(struct MonomialIdeal *);
+  ";
+
+export (I:RawMonomialIdeal) + (J:RawMonomialIdeal) : RawMonomialIdealOrNull := Ccode(returns, "
+     if (I->get_ring() != J->get_ring()) {
+	 ERROR(\"expected ideals in the same ring\");
+	 return 0; }
+     MonomialIdeal *result = *I + *J;
+     intern_monideal(result);
+     return result;
+     ");
+export (I:RawMonomialIdeal) - (J:RawMonomialIdeal) : RawMonomialIdealOrNull := Ccode(returns, "
+     if (I->get_ring() != J->get_ring()) {
+	 ERROR(\"expected ideals in the same ring\");
+	 return 0; }
+     MonomialIdeal *result = *I - *J;
+     intern_monideal(result);
+     return result;
+     ");
+export (I:RawMonomialIdeal) * (J:RawMonomialIdeal) : RawMonomialIdealOrNull := Ccode(returns, "
+     try { if (I->get_ring() != J->get_ring()) {
+	       ERROR(\"expected ideals in the same ring\");
+	       return 0; }
+	   MonomialIdeal *result = (*I) * (*J);
+	   intern_monideal(result);
+	   return result; }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+export tostring(a:RawMonomial):string := Ccode(returns,"
+     buffer o;
+     try { a->text_out(o); }
+     catch (exc::engine_error e) { o << \"[unprintable monomial]\"; }
+     return o.to_string();
+     ");
+export hash(a:RawMonomial):ulong := Ccode(ulong,"a->get_hash_value()");
+
+-- Local Variables:
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d engine.o "
+-- End:

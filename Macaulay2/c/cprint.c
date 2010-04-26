@@ -2,10 +2,8 @@
 
 #include "scc.h"
 
-void printstringconst(node p){
-     char *s;
-     assert(p!=NULL && p->tag == string_const_tag);
-     s = p->body.string.contents;
+static void printstringconst(node p){
+     char *s = tostring(p);
      putchar('"');
      while (*s) {
 	  switch(*s) {
@@ -26,13 +24,14 @@ char *tostring(node e){
      switch(e->tag){
           case cons_tag: pp(e);return "<<cons>>";
 	  case position_tag: return tostring(e->body.position.contents);
-	  case string_tag: return e->body.string.contents;
+	  case unique_string_tag: return e->body.unique_string.characters;
+	  case string_tag: return e->body.string.characters;
 	  case int_const_tag: return e->body.int_const.contents;
           case double_const_tag: return e->body.double_const.contents;
           case type_tag: return tostring(e->body.type.name);
 	  case symbol_tag: return tostring(e->body.symbol.name);
      	  case char_const_tag: return strperm(intToString(e->body.char_const.contents));
-	  case string_const_tag: return e->body.string_const.contents;
+	  case string_const_tag: return e->body.string_const.characters;
 	  default: assert(FALSE); return "<<unrecognized node type>>";
 	  }
      }
@@ -47,37 +46,21 @@ void printsymbol(node p){
 	  put(p->body.symbol.Cname);
 	  }
      else {
-	  put(p->body.symbol.name->body.string.contents);
+          put(tostring(p));
 	  }
      }
-
-int pcol=0;
 
 void pput(char *s){
      while (*s) {
 	  putchar(*s);
-	  if ((*s) == '\n') pcol = 0;
-	  else pcol++;
+	  if (*s == '\n') ;
 	  s++;
 	  }
      }
 
-void indent(int level){
-     int cols = 3 * level;
-     pput("\n");
-     while (cols >= 8) {
-	  cols -= 8;
-	  pput("\t");
-	  }
-     while (cols >= 1) {
-	  cols -= 1;
-	  pput(" ");
-	  }
-     }
-
 int clevel=0;
-void cindent(){
-     int cols = 5 * clevel;
+static void cindent(){
+     int cols = 2 * clevel;
      while (cols >= 8) {
 	  cols -= 8;
 	  pput("\t");
@@ -88,16 +71,26 @@ void cindent(){
 	  }
      }     
 
+void put(char *s){
+     if (0 == strcmp(s,"{")) clevel++;
+     if (0 == strcmp(s,"}")) clevel--;
+     while (*s) {
+	  putchar(*s);
+	  if (*s == '\n') cindent();
+	  s++;
+	  }
+     }
+
 static struct POS *curpos = NULL;
 
 struct POS *pos2(node n) {
-     /* this is a version of pos() which ignores the position where a
+     /* this is a version of pos() that ignores the position where a
         symbol was defined, and insists on seeing the position where it
 	is being used */
      /* it also ignores "define" commands */
      struct POS *p;
      while (iscons(n)) {
-     	  if (CAR(n) == define_S) return NULL;
+     	  if (CAR(n) == declare__S) return NULL;
 	  if (n->body.cons.pos.filename != NULL) return &n->body.cons.pos;
 	  p = pos2(CAR(n));
 	  if (p != NULL) return p;
@@ -110,21 +103,21 @@ struct POS *pos2(node n) {
 	  );
      }
 
-void foo() {}
-
 void locn(node n){
-     struct POS *p = pos2(n);
-     if (p != NULL) {
-	  curpos = p;
-	  if (p->lineno == 83) foo();
+     if (n == NULL) {
+	  curpos = NULL;
+	  return;
 	  }
+     struct POS *p = pos2(n);
+     if (p != NULL) 
+	  curpos = p;
      }
 
 void printpos(){
      if (curpos != NULL && !noline) {
-	  printf("\n# line %d \"%s\"\n",curpos->lineno,curpos->filename);
+	  printf("# line %d \"%s\"",curpos->lineno,curpos->filename);
+	  put("\n");
 	  }
-     cindent();
      }
 
 void pprint(node p){
@@ -134,7 +127,7 @@ void pprint(node p){
 	  }
      switch (p->tag) {
 	  case cons_tag: {
-	       if (debug && p->body.cons.pos.filename != NULL) {
+	       if (p->body.cons.pos.filename != NULL) {
 	       	    printf("@%d:%d ", p->body.cons.pos.lineno, p->body.cons.pos.column);
 		    }
 	       pput("(");
@@ -148,29 +141,43 @@ void pprint(node p){
 	       break;
 	       }
 	  case type_tag: {
-	       p = typeforward(p);
-	       if (p->body.type.name != NULL) {
-		    if (debug) printf("TYPE[%d]:name ",p->body.type.seqno);
-	       	    pprint(p->body.type.name);
-		    }
-	       else if (p->body.type.definition != NULL) {
-		    if (debug) printf("TYPE[%d]:definition ",p->body.type.seqno);
-	       	    pprint(p->body.type.definition);
-		    }
-	       else {
-		    printf("TYPE[%d]", p->body.type.seqno);
-		    }
+	       printf("{");
+	       while (TRUE) {
+		   if (p->body.type.name != NULL) {
+			printf("TYPE[%d]:name => ",p->body.type.seqno);
+			pprint(p->body.type.name);
+			}
+		   else if (p->body.type.definition != NULL) {
+			printf("TYPE[%d]:definition => ",p->body.type.seqno);
+			pprint(p->body.type.definition);
+			}
+		   else {
+			printf("TYPE[%d]", p->body.type.seqno);
+			}
+		   if (p->body.type.flags) {
+		     printf(" flags<");
+		     if (p->body.type.flags & deferred_F) printf(" deferred");
+		     if (p->body.type.flags & should_be_pointer_F) printf(" should_be_pointer");
+		     if (p->body.type.flags & should_be_tagged_F) printf(" should_be_tagged");
+		     if (p->body.type.flags & identified_F) printf(" identified");
+		     printf(" >");
+		   }
+		   if (p->body.type.forward == NULL) break;
+		   p = p->body.type.forward;
+		   printf(" ===> "); /* forwarding */
+	           }
+	       printf("}");
 	       break;
 	       }
 	  case position_tag: {
-	       if (debug && p->body.cons.pos.filename != NULL) {
-	       	    printf("@%d:%d ", p->body.cons.pos.lineno, p->body.cons.pos.column);
+	       if (p->body.cons.pos.filename != NULL) {
+	       	    printf("@%d:%d ", p->body.position.pos.lineno, p->body.position.pos.column);
 		    }
 	       pprint(p->body.position.contents);
 	       break;
 	       }
-	  case string_tag: {
-     	       pput(p->body.string.contents);
+	  case unique_string_tag: case string_tag: {
+	       pput(tostring(p));
 	       break;
 	       }
      	  case int_const_tag: {
@@ -201,12 +208,6 @@ void pp(node n){
      pput("\n");
      }
 
-void d(node n){
-     debug=1;
-     tty();
-     pp(n);
-     }
-
 void pprintl(node n){
      while (n != NULL) pp(CAR(n)), n = CDR(n);
      }
@@ -222,94 +223,58 @@ void cprintlist(node e){
      put(")");
      }
 
-void cprintbracelist(node e){
-     put("{");
-     if (e != NULL) while (TRUE) {
-	  cprint(CAR(e));
-	  e = CDR(e);
-	  if (e == NULL) break;
-	  put(",");
-	  }
-     put("}");
-     }
-
 void cprintsemi(node e){
      while (e != NULL) {
 	  node f = CAR(e);
 	  node g = iscons(f) ? CAR(f) : NULL;
      	  locn(f);
 	  printpos();
-	  cindent();
 	  cprint(f);
-	  if (!(g==block_K || g==defun_S || (!gc && g==define_destroy_S))) {
-	       put(";\n");
-	       }
+	  if (g==block__K || g==define__S ) ;
+	  else put(";\n");
 	  e = CDR(e);
 	  }
      }
 
-void cprinttypeseqno(node t){
-     printf("%d",typeforward(t)->body.type.seqno);
-     }
+static void cprintstructtag(node t,bool baseclass) {
+  assert(istype(t));
+  printf("struct ");
+  if (t->body.type.name) {
+    cprint(t->body.type.name);
+    printf("_struct");
+  }
+  else printf("M2_%d",t->body.type.seqno);
+  if (baseclass) printf(" BASECLASS");
+}
 
-void cprintorstructdef(node t){
-     bool composite = t->body.type.composite;
-     int i;
-     node m;
-     if (composite) {
-	  printf("struct SC%s%d_", couldbenull(t) ? "N" : "",
-	       t->body.type.seqno);
-	  printf(" {unsigned short type_; object_ ptr_;};\n");
-	  }
-     else {
-	  bool had_a_member = FALSE;
-	  printf("struct S%s%d_", couldbenull(t) ? "N" : "",
-	       t->body.type.seqno);
-	  put(" {");
-	  if (!gc) {
-	       put("unsigned int refs_;");
-	       had_a_member = TRUE;
-	       }
-	  for (i=1, m=t->body.type.commons; m != NULL; m = CDR(m)) {
-	       if (CADAR(m) == void_T) continue;
-	       cprinttypevar(CADAR(m),CAAR(m));
-	       put(";");
-	       had_a_member = TRUE;
-	       }
-	  if (!had_a_member) {
-	       put("char _;");
-	       }
-	  put("};\n");
-	  }
-     }
-
-void cprintarraydef(node t){
+static void cprintarraydef(node t){
+     bool tagged = istaggedarraytype(t);
      node m = typedeftail(t);
      node typ = CAR(m);
      node len;
-     printf("struct S%d_",t->body.type.seqno);
+     cprintstructtag(t,FALSE);
      if (length(m)==2) len = CADR(m); else len = NULL;
-     put(" {");
-     if (!gc) put("unsigned int refs_;");
-     put("int len_;");
+     put(" {");			/* the extra space prevents further indentation! */
+     if (tagged) {
+       put("unsigned short type_;");
+     }
+     if (length(m) == 1) put("int len;");
      cprint(typ);
-     put(" array_[");
+     put(" array[");
      if (len!=NULL) cprint(len); else put("1");
      put("];};\n");
      }
 
-void cprintobjectdef(node t){
-     int i;
+static void cprintobjectdef(node t){
      node m;
      bool had_a_member = FALSE;
-     printf("struct S%d_ {",t->body.type.seqno);
-     if (isobjecttype(t)) {
-	  if (!gc) {
-	       put("unsigned int refs_;");
-	       had_a_member = TRUE;
-	       }
-	  }
-     for (i=1, m=typedeftail(t); m != NULL; m = CDR(m)) {
+     cprintstructtag(t,TRUE);
+     printf(" {");
+     if (istaggedobjecttype(t)) {
+       put("unsigned int type_;");
+       had_a_member = TRUE;
+     }
+     for (m=typedeftail(t); m != NULL; m = CDR(m)) {
 	  if (CADAR(m) == void_T) continue;
 	  cprinttypevar(CADAR(m),CAAR(m));
 	  put(";");
@@ -321,31 +286,38 @@ void cprintobjectdef(node t){
      put("};\n");
      }
 
-void cprinttype(node t, bool withstar, bool usename){
+static void cprinttype(node t, bool withstar, bool usename){
      assert(istype(t));
-     assert(t != undefined_T);
+     if (t == bad_or_undefined_T) {
+       if (debug) warning("undefined type");
+       printf("<<undefined type>> ");
+       assert(FALSE);
+     }
      t = typeforward(t);
      if (t->body.type.Cname != NULL) {
+          assert(!(israwpointertype(t) && !withstar));
 	  put(t->body.type.Cname);
 	  }
      else if (t->body.type.name != NULL && withstar && usename) {
 	  cprint(t->body.type.name);
 	  }
      else if (isortype(t)) {
-	  printf("struct S%s%s%d_", 
-	       t->body.type.composite ? "C" : "", 
-	       couldbenull(t) ? "N" : "",
-	       t->body.type.seqno);
-	  if (withstar && !iscompositeortype(t)) put(" *");
-	  }
-     else if (isarraytype(t)) {
-	  printf("struct S%d_",t->body.type.seqno);
+       if (t->body.type.flags & composite_F)
+	 printf("struct tagged_union *");
+       else {
+	 node tt = typedeftail(t);
+	 while (tt != NULL) {
+	   if (car(tt) != null_T) {
+	     cprinttype(car(tt),TRUE,TRUE);
+	   }
+	   tt = cdr(tt);
+	 }
+       }
+     }
+     else if (isarraytype(t) || istaggedarraytype(t) || isobjecttype(t) || istaggedobjecttype(t)) {
+          cprintstructtag(t,FALSE);
 	  if (withstar) put(" *");
 	  }
-     else if (isobjecttype(t)) {
-	  printf("struct S%d_",t->body.type.seqno);
-	  if (withstar) put(" *");
-     	  }
      else if (t->body.type.definition != NULL) {
 	  cprint(t->body.type.definition);
 	  }
@@ -353,47 +325,34 @@ void cprinttype(node t, bool withstar, bool usename){
      return;
      }
 
-void cprintsizeof(node e){
-     node t = type(e);
-     put("(sizeof(");
-     cprinttype(t,FALSE,FALSE);
-     put(")");
-     if (isarraytype(t)) {
-	  node m = typedeftail(t);
-	  if (length(m)==1) {
-	       node typ = CAR(m);
-	       put(" + (");
-	       cprint(e);
-	       put("->len_-1)*sizeof(");
-	       cprint(typ);
-	       put(")");
-	       }
-	  }
-     put(")");
-     }
-
-void cprintsomesizeof(node t, node arraylen){
+static void cprintsomesizeof(node t, node arraylen){
      assert(istype(t));
      put("sizeof(");
-     cprinttype(t,FALSE,FALSE);
+     if (israwpointertype(t)) {
+       put("*((");
+       cprinttype(t,TRUE,FALSE);
+       put(")0)");
+     }
+     else cprinttype(t,FALSE,FALSE);
      put(")");
-     if (isarraytype(t)) {
+     if (isarraytype(t)||istaggedarraytype(t)) {
 	  node m = typedeftail(t);
-	  if (length(m)==1) {
+	  if (length(m) == 1) {
+	       /* if m has length 2, the second element is the declared length, already checked, so we don't have to add anything here */
 	       node typ = CAR(m);
+	       assert(arraylen != NULL);
 	       put(" + (");
 	       cprint(arraylen);
-	       put("-1)*sizeof(");
+	       put(")*sizeof(");
+	       cprint(typ);
+	       put(")-sizeof(");
 	       cprint(typ);
 	       put(")");
 	       }
-	  else assert(arraylen == NULL);
 	  }
      }
 
-#define CLEAR_MEMORY FALSE
-
-void cprintgetmem(node g){
+static void cprintgetmem(node g){
   node s = CAR(g);
   node t = type(s);
   cprint(s);
@@ -401,169 +360,18 @@ void cprintgetmem(node g){
   put("(");
   cprint(t);
   put(") ");
-  if (do_memstats) {
-    put("getmem"); 
-    put("(");
-    cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
-    put(")");
-  }
-  else {
-    if (gc) {
-      if (atomic(t)) put("GC_MALLOC_ATOMIC");
-      else {
-#if CLEAR_MEMORY
-	put("GC_malloc_clear"); /* see comment below! */
-#else
-	put("GC_MALLOC");
-#endif
-      }
-    }
-    else put("malloc");
-    put("(");
-    cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
-    put(");\n");
-#if CLEAR_MEMORY
-    /* we write GC_malloc_clear to include a test for return value zero */
-    if (!( gc && !atomic(t))) 
-#endif
-      {
-      put("     if (0 == ");
-      cprint(s);
-      put(") outofmem2((size_t)");
-      cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
-      put(")");
-      }
-  }
+  put(pointer_to_atomic_memory(t) ? "GC_MALLOC_ATOMIC" : "GC_MALLOC");
+  put("(");
+  cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
+  put(");\n");
+  put("if (0 == ");
+  cprint(s);
+  put(") outofmem2((size_t)");
+  cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
+  put(")");
 }
 
-void cprintdestroy(node t) {
-     node w;
-     if (gc) return;
-     w = typedeftail(t);
-     if (isortype(t) && couldbenull(t) && length(w)==2) {
-	  node u;
-     	  u = car(w);
-	  if (u == null_T) u = cadr(w);
-     	  printf("destroy");
-     	  cprinttypeseqno(u);
-     	  put("((");
-     	  cprint(u);
-	  put(")");
-	  }
-     else {
-     	  printf("destroy");
-     	  cprinttypeseqno(t);
-     	  put("(");
-	  }
-     }
-
-void cprintrelease(node s) {
-     node t;
-     bool cbnull;
-     if (gc) return;
-     t = type(s);
-     assert(reservable(t));
-     cbnull = isortype(t) && couldbenull(t);
-     locn(s);
-     printpos();
-     if (do_refctchks) {
-	  put("if (");
-	  if (cbnull) {
-	       cprint(s);
-	       put(" != 0  &&  ");
-	       }
-	  put("0 == ");
-	  cprint(s);
-	  put("->refs_) fatalrefctcheck(__FILE__,__LINE__,-1);\n");
-	  printpos();
-	  put("     ");
-	  }
-     if (cbnull) put("if ("), cprint(s), put(" != 0) { ");
-     put("if (0 == --");
-     cprint(s);
-     put("->refs_) ");
-     cprintdestroy(t);     cprint(s);     put(")");
-     if (do_refctchks) {put("; ");cprint(s);put(" = 0");}
-     if (cbnull) put(";}");
-     }
-
-void cprintreleasec(node s) {
-     node t;
-     bool cbnull;
-     if (gc) return;
-     t = type(s);
-     assert(reservable(t));
-     locn(s);
-     printpos();
-     cbnull = couldbenull(t);
-     if (do_refctchks) {
-	  put("if (");
-	  if (cbnull) {
-	       cprint(s);
-	       put(".ptr_ != 0  &&  ");
-	       }
-	  put("0 == ");
-	  cprint(s);
-	  put(".ptr_->refs_) fatalrefctcheck(__FILE__,__LINE__,-1);\n");
-	  printpos();
-	  put("     ");
-     	  }
-     if (cbnull) put("if ("), cprint(s), put(".ptr_ != 0) { ");
-     put("if (0 == --");
-     cprint(s);
-     put(".ptr_->refs_) ");
-     cprintdestroy(t);     cprint(s);     put(")");
-     if (do_refctchks) {put("; ");cprint(s);put(".ptr_ = 0");}
-     if (cbnull) put(";}");
-     }
-
-void cprintreserve(node g){
-     node s;
-     if (gc) return;
-     s = CAR(g);
-     locn(s);
-     printpos();
-     cprint(s);
-     put("->refs_++");
-     }
-
-void cprintreserven(node g){
-     node s;
-     if (gc) return;
-     s = CAR(g);
-     locn(s);
-     printpos();
-     put("if (");
-     cprint(s);
-     put(" != 0) ");
-     cprint(s);
-     put("->refs_++");
-     }
-
-void cprintreservec(node g){
-     node s;
-     if (gc) return;
-     s = CAR(g);
-     locn(s);
-     printpos();
-     cprint(s);
-     put(".ptr_->refs_++");
-     }
-
-void cprintreservenc(node g){
-     node s;
-     if (gc) return;
-     s = CAR(g);
-     locn(s);
-     printpos();
-     put("if (");
-     cprint(s);
-     put(".ptr_ != 0) ");
-     cprint(s);
-     put(".ptr_->refs_++");
-     }
-
-void cprinttypedef(node t) {
+static void cprinttypedef(node t) {
      /* define the structure/union tag */
      assert(istype(t));
      if (t->body.type.name != NULL) {
@@ -574,44 +382,55 @@ void cprinttypedef(node t) {
 	       put("(*");
 	       cprint(t->body.type.name);
 	       put(")");
-	       if (oldc) put("()");
-	       else cprintlist(functionargtypes(t));
+	       cprintlist(functionargtypes(t));
 	       }
 	  else {
 	       cprinttype(t,TRUE,FALSE);
 	       put(" ");
 	       cprint(t->body.type.name);
 	       }
+	  assert(issym(t->body.type.name));
+	  assert(isstr(t->body.type.name->body.symbol.name));
 	  put(";\n");
 	  }
      }
 
-void cprintdefine(node t) {
+static void cprintdefine(node t,bool definitions) {
      node typ = type(t);
+     int flags = t->body.symbol.flags;
+     assert( typ != void_T );
      t = unpos(t);
      assert(issym(t));
-     assert(!istype(t));
-     if (t->body.symbol.flags & import_F) put("extern ");
-     else if (!(t->body.symbol.flags & export_F)
-	  && 
+     /* assert( 0 != strcmp("node0",tostring(t)) ); */
+     if (definitions && (flags & import_F)) return;
+     if (definitions && (flags & macro_variable_F)) return;
+     if (flags & (export_F|import_F)) {
+       if (!definitions) 
+	 put("extern ");
+     }
+     else if ( 
 	  (
-	       (t->body.symbol.flags & global_F)
+	       (flags & global_F)
 	       || (
 	       	    isfunctiontype(typ)
 	       	    &&
-	       	    (t->body.symbol.flags & constant_F)
+	       	    (flags & constant_F)
 		    )
 	       )
 	  &&
-	  !(t->body.symbol.flags & visible_F)
+	  !(flags & visible_F)
 	  ) {
 	  put("static ");
 	  }
+#ifdef USE_THREADS
+     if (flags & threadLocal_F) put("__thread ");
+#endif
+     if (flags & const_F) put("const ");
      if (isfunctiontype(typ)) {
-	  if (t->body.symbol.flags & macro_F) return;
+	  if (flags & macro_function_F) return;
 	  cprint(functionrettype(typ));
 	  put(" ");
-	  if (t->body.symbol.flags & constant_F) {
+	  if (flags & constant_F) {
 	       cprint(t);
 	       }
 	  else {
@@ -619,214 +438,18 @@ void cprintdefine(node t) {
 	       cprint(t);
 	       put(")");
 	       }
-	  if (oldc) put("()");
-	  else cprintlist(functionargtypes(typ));
+	  cprintlist(functionargtypes(typ));
 	  }
      else {
 	  cprint(typ);
 	  put(" ");
 	  cprint(t);
 	  }
+     if (flags & constructor_F) put(" __attribute__ ((constructor))");
+     if (flags & destructor_F) put(" __attribute__ ((destructor))");
      }
 
-void cprintdeclaredestroy(node t) {
-     if (gc) return;
-#if 0
-     if (isortype(t) && couldbenull(t) && length(typedeftail(t))==2) {
-	  return;
-	  }
-#endif
-     if (gcc) put("__inline__ ");
-     put("static ");
-     if (oldc) {
-     	  printf("void destroy%d();\n",t->body.type.seqno);
-	  }
-     else {
-     	  printf("void destroy%d(",t->body.type.seqno);
-     	  cprint(t);
-     	  put(");\n");
-	  }
-     }
-
-node cleaner(node t) {
-     node slist;
-     for (slist = cleaners; slist != NULL; slist=cdr(slist)) {
-	  node sym = car(slist);
-	  if (equal(t,car(functionargtypes(type(sym))))) return sym;
-	  }
-     return NULL;
-     }
-
-void cprintdefinedestroy(node t) {
-     node m;
-     /* define the destroy routine */
-     if (gc) return;
-     if (gcc) put("__inline__ ");
-     put("static ");
-     if (oldc) {
-     	  printf("void destroy%d(p_)\n",t->body.type.seqno);
-     	  cprint(t);
-     	  put(" p_;\n");
-	  }
-     else {
-     	  printf("void destroy%d(",t->body.type.seqno);
-     	  cprint(t);
-     	  put(" p_)\n");
-	  }
-     put("{\n");
-     {
-	  node clean = cleaner(t);
-	  if (clean != NULL) {
-	       put("    p_");
-	       if (iscompositeortype(t)) put(".ptr_");
-	       put("->refs_++;\n");
-	       put("    "); cprint(clean); put("(p_);\n");
-	       put("    if (0 < --p_");
-	       if (iscompositeortype(t)) put(".ptr_");
-	       put("->refs_) return;\n");
-	       }
-	  }
-     if (isortype(t)) {
-	  int i, j, nmems, numnulls = 0, numnonnulls = 0;
-	  for (m=typedeftail(t), nmems=length(m); m!=NULL; m=CDR(m)) {
-	       node typ = CAR(m);
-	       if (typ == null_T) {
-		    numnulls ++;
-		    continue;
-		    }
-	       }
-	  for (i=0,j=1, m=typedeftail(t); m != NULL; m = CDR(m),j++) {
-	       node typ = CAR(m);
-	       if (typ == null_T) continue;
-	       numnonnulls ++;
-	       put("    ");
-	       if (i!=0) put("else ");
-	       if (numnulls + numnonnulls < nmems) {
-		    i++;
-		    put("if (p_");
-		    if (t->body.type.composite) put(".");
-		    else put("->");
-		    printf("type_ == %d) ",j);
-		    }
-	       put("destroy");
-	       cprinttypeseqno(typ);
-	       put("((");
-	       cprint(typ);
-	       put(")p_");
-	       if (t->body.type.composite) put(".ptr_");
-	       put(");\n");
-	       }
-	  }
-     else if (isarraytype(t)) {
-	  node len, typ;
-	  m = typedeftail(t);
-	  len = length(m)==2 ? CADR(m) : NULL;
-	  typ = CAR(m);
-	  if (reservable(typ)) {
-	       put("    int i;\n");
-	       put("    for (i=0; i<");
-	       if (len==NULL) {
-		    put("p_->len_");
-		    }
-	       else {
-		    cprint(len);
-		    }
-	       put("; i++) {\n");
-	       put("        if (");
-	       if (isortype(typ) && couldbenull(typ)) {
-		    if (iscompositeortype(typ)) {
-		    	 put("0 != p_->array_[i].ptr_ && ");
-			 }
-		    else{
-		    	 put("0 != p_->array_[i] && ");
-			 }
-		    }
-	       if (iscompositeortype(typ)) {
-	       	    put("0 >= --p_->array_[i].ptr_->refs_) {\n");
-		    }
-     	       else {
-	       	    put("0 >= --p_->array_[i]->refs_) {\n");
-		    }
-	       put("            destroy");
-	       cprinttypeseqno(typ);
-	       put("(p_->array_[i]);\n");
-	       put("        }\n");
-	       put("    }\n");
-	       }
-#ifndef DEBUG
-	  if (do_memstats) {
-	       put("    numchunks[1]++;\n    numbytes[1]+=sizeof(");
-	       cprinttype(t,FALSE,TRUE);
-	       put(")");
-	       if (isarraytype(t) && len == NULL) {
-		    put(" + (p_->len_-1)*sizeof(");
-		    cprint(typ);
-		    put(")");
-		    }
-	       put(";\n");
-	       }
-	  put("    free((char *)p_);\n");
-#else     
-	  put("    destroy((char *)p_,sizeof(");
-	  cprinttype(t,FALSE,TRUE);
-	  put(")");
-	  if (isarraytype(t) && len == NULL) {
-	       put(" + (p_->len_-1)*sizeof(");
-	       cprint(typ);
-	       put(")");
-	       }
-	  put(");\n");
-#endif
-	  }
-     else {
-	  assert(isobjecttype(t));
-	  for (m = typedeftail(t); m != NULL; m = CDR(m)) {
-	       node typ = CADAR(m);
-	       if (!reservable(typ)) continue;
-	       }
-	  for (m = typedeftail(t); m != NULL; m = CDR(m)) {
-	       node typ = CADAR(m);
-	       if (!reservable(typ)) continue;
-	       if (reservable(typ)) {
-		    put("    if (");
-		    if (isortype(typ) && couldbenull(typ)) {
-			 put("0 != p_->");
-			 cprint(CAAR(m));
-			 if (iscompositeortype(typ)) put(".ptr_");
-			 put("  &&  ");
-			 }
-		    put("0 >= --p_->");
-		    cprint(CAAR(m));
-		    if (iscompositeortype(typ)) put(".ptr_");
-		    put("->refs_) destroy");
-		    cprinttypeseqno(typ);
-		    put("(p_->");
-		    cprint(CAAR(m));
-		    put(");\n");
-		    }
-	       else {
-		    assert(FALSE);
-		    }
-	       }
-#ifndef DEBUG
-     	  if (do_memstats) {
-	       put("    numchunks[1]++;\n    numbytes[1]+=sizeof(");
-	       cprinttype(t,FALSE,TRUE);
-	       put(");\n");
-	       }
-	  if (!gc) put("    free((char *)p_);\n");
-#else
-     	  if (!gc) {
-	       put("    destroy((char *)p_,sizeof(");
-	       cprinttype(t,FALSE,TRUE);
-	       put("));\n");
-	       }
-#endif
-	  }
-     put("}\n");
-     }
-
-void cprintreturn(node s){
+static void cprintreturn(node s){
      if (length(s)==0) {
 	  put("return");
 	  }
@@ -836,7 +459,7 @@ void cprintreturn(node s){
 	  }
      }
 
-void cprintassign(node s, node t){
+static void cprintassign(node s, node t){
      cprint(s);
      put(" = ");
      cprint(t);
@@ -860,15 +483,14 @@ void cprinttypevar(node t, node v){
      }
 
 
-void cprintdefun(node g) {
+static void cprintdefun(node g) {
      node fun = CAAR(g);
      node args = CDAR(g);
      node funtype = type(fun);
      node rettype = functionrettype(funtype);
      assert(issym(fun));
      locn(g);
-     printpos();
-     cindent();
+     /* printpos(); */
      if (!(fun->body.symbol.flags & export_F)
 	  &&
 	  !(fun->body.symbol.flags & visible_F)
@@ -876,63 +498,29 @@ void cprintdefun(node g) {
      cprint(rettype);
      put(" ");
      cprint(fun);
-     if (oldc) {
-	  put("(");
-	  if (args != NULL) while (TRUE) {
-	       node w = CAR(args);
-	       cprint(w);
-	       args = CDR(args);
-	       if (args == NULL) break;
-	       put(",");
-	       }
-	  put(")");
-	  args = CDAR(g);
-	  if (args != NULL) while (TRUE) {
-	       node w = CAR(args);
-	       cprinttypevar(type(w),w);
-	       put(";");
-	       args = CDR(args);
-	       if (args == NULL) break;
-	       }
+     put("(");
+     if (args != NULL) while (TRUE) {
+	  node w = CAR(args);
+	  cprinttypevar(type(w),w);
+	  args = CDR(args);
+	  if (args == NULL) break;
+	  put(",");
 	  }
-     else {
-	  put("(");
-	  if (args != NULL) while (TRUE) {
-	       node w = CAR(args);
-	       cprinttypevar(type(w),w);
-	       args = CDR(args);
-	       if (args == NULL) break;
-	       put(",");
-	       }
-	  put(")");
-	  }
-     put("{\n");
-     clevel++;
-     if (do_countstats) {
-     	  printpos();
-     	  put("     static int count_ = 0;\n");
-     	  printpos();
-	  put("     int junk_ = count_++ != 0 ? 0 : ");
-	  printf(        "register_fun(&count_,\"%s\",%d,\"", 
-	       (fun->body.symbol.pos.filename==NULL?
-		    "(null)":fun->body.symbol.pos.filename),
-	       fun->body.symbol.pos.lineno);
-	  cprint(fun);
-	  put(	   	 "\");\n");
-	  }
+     put(")");
+     put("{");
+     put("\n");
      cprintsemi(CDDR(g));
-     clevel--;
-     cindent();
      printpos();
-     put("}\n");
+     put("}");
+     put("\n");
      }
 
-void cprintgoto(node l){
+static void cprintgoto(node l){
      put("goto ");
      cprint(l);
      }
 
-void cprintif(node g){
+static void cprintif(node g){
      put("if (");
      cprint(CAR(g));
      put(") ");
@@ -943,17 +531,17 @@ void cprintif(node g){
 	  }
      }
 
-void cprintlabel(node l){
+static void cprintlabel(node l){
      cprint(l);
      put(":");
      }
 
-void cprintisnull(node e){
+static void cprintisnull(node e){
      put("0 == ");
      cprint(e);
      }
 
-void cprintcast(node typ, node e){
+static void cprintcast(node typ, node e){
      put("((");
      cprint(typ);
      put(")");
@@ -961,14 +549,13 @@ void cprintcast(node typ, node e){
      put(")");
      }
 
-void cprintarraycheck(node indx, node len){
+static void cprintarraycheck(node indx, node len){
      struct POS *p;
      if (!arraychks) return;
      locn(len);
      locn(indx);
      p = pos(indx);
      printpos();
-     cindent();
      put("if (");
      cprint(indx);
      put(" < 0 || ");
@@ -989,7 +576,7 @@ void cprintarraycheck(node indx, node len){
      put(")");
      }
 
-void cprintarraylencheck(node len){
+static void cprintarraylencheck(node len){
      struct POS *p;
      if (!arraychks) return;
      p = pos(len);
@@ -1009,26 +596,20 @@ void cprintarraylencheck(node len){
      put(")");
      }
 
-void cprintarraytake(node arr, node indx){
+static void cprintarraytake(node arr, node indx){
      cprint(arr);
-     put("->array_[");
+     put("->array[");
      cprint(indx);
      put("]");
      }     
 
-void cprinttake(node f, node e){
+static void cprinttake(node f, node e){
      cprint(f);
      put("->");
      cprint(e);
      }
 
-void cprintpart(node f, node e){
-     cprint(f);
-     put(".");
-     cprint(e);
-     }
-
-void cprintprefix(node fun, node x){
+static void cprintprefix(node fun, node x){
      put("(");
      cprint(fun);
      put(" ");
@@ -1036,7 +617,7 @@ void cprintprefix(node fun, node x){
      put(")");
      }
 
-void cprintpostfix(node fun, node x){
+static void cprintpostfix(node fun, node x){
      put("(");
      cprint(x);
      put(" ");
@@ -1044,7 +625,7 @@ void cprintpostfix(node fun, node x){
      put(")");
      }
 
-void cprintinfix(node fun, node x, node y){
+static void cprintinfix(node fun, node x, node y){
      put("(");
      cprint(x);
      put(" ");
@@ -1054,7 +635,7 @@ void cprintinfix(node fun, node x, node y){
      put(")");
      }
 
-void cprintfuncall(node fun, node args){
+static void cprintfuncall(node fun, node args){
      node g = args;
      cprint(fun);
      printf("(");
@@ -1087,47 +668,41 @@ void put_unescape(char *s) {
   }
 }
 
-void cprintCcode(node s){
+static void cprintCcode(node s){
      while (s != NULL) {
 	  node a = CAR(s);
-	  if (a->tag == string_const_tag) put_unescape(a->body.string.contents);
+	  if (a->tag == string_const_tag) put_unescape(tostring(a));
 	  else cprint(a);
 	  s = CDR(s);
 	  }
      }
 
-void cprintcons(node f, node g) {
+static void cprintcons(node f, node g) {
      if (ispos(f)) f = f->body.position.contents;
-     if (f == getmem_S) cprintgetmem(g);
+     if (f == getmem__S) cprintgetmem(g);
      else if (f == array_len_check_S) cprintarraylencheck(CAR(g));
      else if (f == array_check_S) cprintarraycheck(CAR(g),CADR(g));
      else if (f == array_take_S) cprintarraytake(CAR(g),CADR(g));
-     else if (f == assign_S) cprintassign(CAR(g),CADR(g));
-     else if (f == cast_S) cprintcast(CAR(g),CADR(g));
-     else if (f == define_S) cprintdefine(CAR(g));
-     else if (f == defun_S) cprintdefun(g);
-     else if (f == equal_S) cprintinfix(f,CAR(g),CADR(g));
+     else if (f == assign__S) cprintassign(CAR(g),CADR(g));
+     else if (f == cast__S) cprintcast(CAR(g),CADR(g));
+     else if (f == declare__S) {
+       node s = CAR(g);
+       cprintdefine(s,TRUE);
+     }
+     else if (f == define__S) cprintdefun(g);
+     else if (f == equalequal__S) cprintinfix(f,CAR(g),CADR(g));
      else if (f == unequal_S) cprintinfix(f,CAR(g),CADR(g));
-     else if (f == funcall_S) cprintfuncall(CAR(g),CDR(g));
-     else if (f == goto_S) cprintgoto(CAR(g));
+     else if (f == funcall__S) cprintfuncall(CAR(g),CDR(g));
+     else if (f == goto__S) cprintgoto(CAR(g));
      else if (f == if_S) cprintif(g);
-     else if (f == infix_S) cprintinfix(CAR(g),CADR(g),CADDR(g));
-     else if (f == isnull_S) cprintisnull(CAR(g));
-     else if (f == label_S) cprintlabel(CAR(g));
-     else if (f == brace_list_S) cprintbracelist(g);
-     else if (f == prefix_S) cprintprefix(CAR(g),CADR(g));
-     else if (f == postfix_S) cprintpostfix(CAR(g),CADR(g));
-     else if (f == release_S) cprintrelease(CAR(g));
-     else if (f == reserve_S) cprintreserve(g);
-     else if (f == reserven_S) cprintreserven(g);
-     else if (f == releasec_S) cprintreleasec(CAR(g));
-     else if (f == reservec_S) cprintreservec(g);
-     else if (f == reservenc_S) cprintreservenc(g);
+     else if (f == infix__S) cprintinfix(CAR(g),CADR(g),CADDR(g));
+     else if (f == isnull__S) cprintisnull(CAR(g));
+     else if (f == label__S) cprintlabel(CAR(g));
+     else if (f == prefix__S) cprintprefix(CAR(g),CADR(g));
+     else if (f == postfix__S) cprintpostfix(CAR(g),CADR(g));
      else if (f == return_S) cprintreturn(g);
-     else if (f == sizeof_S) cprintsizeof(CAR(g));
      else if (f == Ccode_S) cprintCcode(CDR(g));
-     else if (f == take_S) cprinttake(CAR(g),CADR(g));
-     else if (f == part_S) cprintpart(CAR(g),CADR(g));
+     else if (f == take__S) cprinttake(CAR(g),CADR(g));
      else if (isbasictype(f)) {
 	  put("((");
 	  cprint(f);
@@ -1159,8 +734,8 @@ void cprint(node e){
 	       put(intToString(e->body.char_const.contents)); 
 	       return;
 	       }
-	  case string_tag: {
-	       put(e->body.string.contents); 
+	  case unique_string_tag: case string_tag: {
+	       put(tostring(e));
 	       return;
 	       }
 	  case string_const_tag: {
@@ -1176,78 +751,68 @@ void cprint(node e){
 		    put(" (*)");
 		    cprintlist(CADR(e));
 		    }
-	       else cprintcons(f,CDR(e)); 
+	       else {
+		 if (e->body.cons.pos.filename) curpos = &e->body.cons.pos;
+		 cprintcons(f,CDR(e)); 
+	         }
 	       return; 
 	       }
 	  }
      }
 
+static bool firsttype(node t) {
+  return israwpointertypeexpr(t) || israwtypeexpr(t) || isobjecttype(t) || istaggedobjecttype(t) || isortype(t) || isarraytype(t) || istaggedarraytype(t);
+}
+
 void cprinttypes(){
      int i;
      node n;
-     if (gc) {
-	  put("typedef void * object_;\n");
-	  }
-     else {
-     	  put("typedef struct OBJECT_ {unsigned int refs_;} * object_;\n");
-	  }
+     put("/* typedefs */\n");
      for (i=0; i<numtypes; i++) {
 	  node t = typelist[i];
-	  if (isobjecttype(t) || isortype(t) || isarraytype(t)) {
+	  if (firsttype(t)) {
 	       cprinttypedef(t);
 	       }
 	  }
+     put("/* array types */\n");
      for (i=0; i<numtypes; i++) {
 	  node t = typelist[i];
-	  if (isortype(t) && t->body.type.composite) cprintorstructdef(t);
+	  if (isarraytype(t)||istaggedarraytype(t)) cprintarraydef(t);
 	  }
+     put("/* struct types */\n");
      for (i=0; i<numtypes; i++) {
 	  node t = typelist[i];
-	  if (isarraytype(t)) cprintarraydef(t);
+	  if (isobjecttype(t) || istaggedobjecttype(t)) cprintobjectdef(t);
 	  }
+     put("/* basic types */\n");
      for (i=0; i<numtypes; i++) {
 	  node t = typelist[i];
-	  if (isobjecttype(t)) cprintobjectdef(t);
-	  }
-     for (i=0; i<numtypes; i++) {
-	  node t = typelist[i];
-	  if (isortype(t) && !t->body.type.composite) cprintorstructdef(t);
-	  }
-     for (i=0; i<numtypes; i++) {
-	  node t = typelist[i];
-	  if (!(isobjecttype(t) || isortype(t) || isarraytype(t) || isbasictype(t))) {
+	  if (!(firsttype(t) || isbasictype(t))) {
 	       cprinttypedef(t); /* if things are too circular this won't work! */
 	       }
 	  }
-     for (i=0; i<numtypes; i++) {
-	  node t = typelist[i];
-	  if (isobjecttype(t) || isortype(t) || isarraytype(t)) {
-	       cprintdeclaredestroy(t);
-	       }
-	  }
+     put("/* functions */\n");
      for (n=complete_symbol_list; n!=NULL; n=CDR(n)) {
 	  node s = CAR(n);
 	  node t = type(s);
-	  if (isfunctiontype(t) && (s->body.symbol.flags & constant_F)) {
-	       if (!(s->body.symbol.flags & macro_F)) {
-		    cprintdefine(s);
-		    put(";\n");
-		    }
-	       }
-	  }
-     for (i=0; i<numtypes; i++) {
-	  node t = typelist[i];
-	  if (isobjecttype(t) || isortype(t) || isarraytype(t)) {
-	       cprintdefinedestroy(t);
-	       }
-	  }
+	  /* assert( 0 != strcmp("node0",tostring(s)) ); */
+	  if (
+	      (isfunctiontype(t)
+	       && (s->body.symbol.flags & constant_F)
+	       && (s->body.symbol.flags & visible_F)
+	       && !(s->body.symbol.flags & macro_function_F))
+	      ||
+	      ((s->body.symbol.flags & (export_F | import_F))
+	       && t != type__T
+	       && t != void_T)
+	      ) {
+	    cprintdefine(s,FALSE);
+	    printf(";\n");
+	    }
+          }
      }     
 
 static int signest = 0;
-void dprinttype(node);
-void dprintcons(node,node);
-void dprint(node);
-void dprintlist(node);
 
 static void sigindent(){
      int i;
@@ -1273,7 +838,7 @@ void dprintlist(node e){
 	  }
      }
 
-void dprintsig(node g){
+static void dprintsig(node g){
      signest++;
      put("signature ");
      dprint(CAR(g)); g = CDR(g);
@@ -1288,12 +853,12 @@ void dprintsig(node g){
      put(")");
      }
 
-void dprintop(node f){
-     if (isstr(f) && !validtoken(f->body.string.contents)) put("op");
+static void dprintop(node f){
+     if (isstr(f) && !validtoken(tostring(f))) put("op");
      dprint(f);
      }
 
-void dprintinfix(node op, node args){
+static void dprintinfix(node op, node args){
      int i;
      put("(");
      for (i=1; ; ) {
@@ -1307,7 +872,7 @@ void dprintinfix(node op, node args){
      put(")");
      }
 
-void dprintfunction(node g){
+static void dprintfunction(node g){
      put("function(");
      dprintlist(car(g));
      put("):");
@@ -1316,32 +881,47 @@ void dprintfunction(node g){
 
 void dprintcons(node f, node g) {
      f = unpos(f);
-     if (f == colon_S) { dprint(CAR(g)); dprint(f); dprint(CADR(g));}
+     if (f == colon__S) { dprint(CAR(g)); dprint(f); dprint(CADR(g));}
+     else if (f == threadLocal_S) { put("threadLocal "); dprint(CAR(g)); }
+     else if (f == const_S) { put("const "); dprint(CAR(g)); }
      else if (f == export_S) { put("import "); dprint(CAR(g)); }
      else if (f == import_S) { put("import "); dprint(CAR(g)); }
      else if (f == use_S) { put("use "); dprint(CAR(g)); }
-     else if (f == colonequal_S) {dprint(CAR(g)); dprint(f); dprint(CADR(g));}
+     else if (f == Pointer_S) { put("Pointer "); dprint(CAR(g)); }
+     else if (f == atomicPointer_S) { put("atomicPointer "); dprint(CAR(g)); }
+     else if (f == Type_S) { put("Type "); dprint(CAR(g)); }
+     else if (f == atomicType_S) { put("atomicType "); dprint(CAR(g)); }
+     else if (f == arithmeticType_S) { put("arithmeticType "); dprint(CAR(g)); }
+     else if (f == integerType_S) { put("integerType "); dprint(CAR(g)); }
+     else if (f == header_S) { put("header "); dprint(CAR(g)); }
+     else if ( f == leftOperator_S || f == rightOperator_S || f == prefixOperator_S 
+	       ) { put(tostring(f)); put(" "); dprint(CAR(g)); put(" "); dprint(CADR(g)); }
+     else if (f == declarations_S) { put("declarations "); dprint(CAR(g)); }
+     else if (f == colonequal__S) {dprint(CAR(g)); dprint(f); dprint(CADR(g));}
+     else if (f == coloncolonequal__S) {dprint(CAR(g)); dprint(f); dprint(CADR(g));}
      else if (f == signature_S) dprintsig(g);
      else if (f == or_S) dprintinfix(f,g);
      else if (f == or_K) dprintinfix(f,g);
      else if (f == function_S) dprintfunction(g);
-     else if (f == object_K) { put("{"); dprintlist(g); put("}"); }
+     else if (f == object__K) { put("{ "); dprintlist(g); put(" }"); }
+     else if (f == tagged_object_K) { put("{+"); dprintlist(g); put(" }"); }
+     else if (f == while_S) { put ("while("); dprint(car(g)); put(") do ("); dprint(cadr(g)); put(")"); }
      else { dprintop(f); put("("); dprintlist(g); put(")"); }
      }
 
 void dprint(node e){
-     assert(e != NULL);
+     if (e == NULL) put("NULL");
      switch(e->tag){
-	  case type_tag: { dprinttype(e); return; }
-	  case double_const_tag: {put(e->body.double_const.contents); return;}
-	  case int_const_tag: { put(e->body.int_const.contents); return; }
-	  case char_const_tag: { 
-	       put(intToString(e->body.char_const.contents)); return; }
-	  case string_tag: { put(e->body.string.contents); return; }
-	  case string_const_tag: { printstringconst(e); return; }
-	  case symbol_tag: { dprint(e->body.symbol.name); return; }
-	  case position_tag: { cprint(e->body.position.contents); return; }
-	  case cons_tag: { dprintcons(CAR(e),CDR(e)); return; }
+	  case type_tag: dprinttype(e); return;
+	  case double_const_tag: put(e->body.double_const.contents); return;
+	  case int_const_tag: put(e->body.int_const.contents); return;
+	  case char_const_tag: put(intToString(e->body.char_const.contents)); return;
+          case unique_string_tag: case string_tag: put(tostring(e)); return;
+	  case string_const_tag: printstringconst(e); return;
+	  case symbol_tag: dprint(e->body.symbol.name); return;
+	  case position_tag: cprint(e->body.position.contents); return;
+	  case cons_tag: dprintcons(CAR(e),CDR(e)); return;
+          default: assert(FALSE);
 	  }
      }
 

@@ -116,7 +116,7 @@ rawStartEngineComputation(EngineComputation *C)
     clear_emit_size();
     C->start_computation();
 
-    if (gbTrace == 15)
+    if (M2_gbTrace == 15)
       {
 	ComputationStatusCode ret = C->status();
 	switch (ret) {
@@ -175,7 +175,7 @@ void rawShowEngineComputation(const EngineComputation *C)
   C->show();
 }
 
-const MatrixOrNull *rawEngineGBGetMatrix(EngineComputation *C)
+const Matrix /* or null */ *rawEngineGBGetMatrix(EngineComputation *C)
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */
 {
@@ -193,7 +193,7 @@ const MatrixOrNull *rawEngineGBGetMatrix(EngineComputation *C)
   }
 }
 
-const MatrixOrNull *rawEngineGBMinimalGenerators(EngineComputation *C)
+const Matrix /* or null */ *rawEngineGBMinimalGenerators(EngineComputation *C)
   /* Yields a matrix whose columns form a minimal generating set
      for the ideal or submodule, as computed so far.  In the
      inhomogeneous case, this yields a generating set which is
@@ -213,7 +213,7 @@ const MatrixOrNull *rawEngineGBMinimalGenerators(EngineComputation *C)
   }
 }
 
-const MatrixOrNull *rawEngineGBChangeOfBasis(EngineComputation *C)
+const Matrix /* or null */ *rawEngineGBChangeOfBasis(EngineComputation *C)
   /* Yields the change of basis matrix from the Groebner basis to
      the original generators, at least if n_rows_to_keep was set
      when creating the GB computation.  This matrix, after the 
@@ -234,7 +234,7 @@ const MatrixOrNull *rawEngineGBChangeOfBasis(EngineComputation *C)
   }
 }
 
-const MatrixOrNull *rawEngineGBGetLeadTerms(EngineComputation *C, int nparts)
+const Matrix /* or null */ *rawEngineGBGetLeadTerms(EngineComputation *C, int nparts)
 {
   try {
     clear_emit_size();
@@ -250,7 +250,7 @@ const MatrixOrNull *rawEngineGBGetLeadTerms(EngineComputation *C, int nparts)
   }
 }
 
-const MatrixOrNull *rawEngineGBGetParallelLeadTerms(EngineComputation *C, M2_arrayint w)
+const Matrix /* or null */ *rawEngineGBGetParallelLeadTerms(EngineComputation *C, M2_arrayint w)
 {
   try {
     clear_emit_size();
@@ -266,7 +266,7 @@ const MatrixOrNull *rawEngineGBGetParallelLeadTerms(EngineComputation *C, M2_arr
   }
 }
 
-const MatrixOrNull *rawEngineGBSyzygies(EngineComputation *C)
+const Matrix /* or null */ *rawEngineGBSyzygies(EngineComputation *C)
   /* Yields a matrix containing the syzygies computed so far
      via the GB computation C, assuming that 'collect_syz' was
      set when the computation was created.  If 'n_rows_to_keep' was
@@ -287,7 +287,7 @@ const MatrixOrNull *rawEngineGBSyzygies(EngineComputation *C)
   }
 }
 
-const MatrixOrNull *rawEngineGBMatrixRemainder(EngineComputation *C, 
+const Matrix /* or null */ *rawEngineGBMatrixRemainder(EngineComputation *C, 
 					       const Matrix *m)
 {
   try {
@@ -306,8 +306,8 @@ const MatrixOrNull *rawEngineGBMatrixRemainder(EngineComputation *C,
 
 void rawEngineGBMatrixDivMod(EngineComputation *C,
 			     const Matrix *m,
-			     MatrixOrNull **result_remainder,
-			     MatrixOrNull **result_quotient
+			     const Matrix /* or null */ **result_remainder,
+			     const Matrix /* or null */ **result_quotient
 			     )
 {
   try {
@@ -403,7 +403,7 @@ unsigned long rawEngineComputationHash(const Computation *C)
 }
 
 ////////////////////////////////////
-const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
+const RingElement /* or null */ * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
      for coker leadterms(M), using the degrees of the rows of M. 
      NULL is returned if the ring is not appropriate for
@@ -421,7 +421,7 @@ const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
 ///////////////////////////////////////////////////////////////////////////////////
 ///////// The following will be reomoved once the new code is functional //////////
 ///////////////////////////////////////////////////////////////////////////////////
-ComputationOrNull *IM2_GB_make(const Matrix *m,
+Computation /* or null */ *IM2_GB_make(const Matrix *m,
 			       M2_bool collect_syz,
 			       int n_rows_to_keep,
 			       M2_arrayint gb_weights,
@@ -452,7 +452,7 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
      }
 }
 
-ComputationOrNull *IM2_res_make(
+Computation /* or null */ *IM2_res_make(
            const Matrix *m,
 	   M2_bool resolve_cokernel,
 	   int max_level,
@@ -480,7 +480,7 @@ ComputationOrNull *IM2_res_make(
      }
 }
 
-ComputationOrNull *
+Computation /* or null */ *
 IM2_GB_set_hilbert_function(Computation *C,
 			    const RingElement *h)
 {
@@ -498,7 +498,7 @@ IM2_GB_set_hilbert_function(Computation *C,
      }
 }
 
-ComputationOrNull *
+Computation /* or null */ *
 IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
 	     const Matrix *gb,
 	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
@@ -514,7 +514,7 @@ IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb 
      }
 }
 
-ComputationOrNull *
+Computation /* or null */ *
 rawMarkedGB(const Matrix *leadterms,
 	     const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
 	     const Matrix *gb,
@@ -531,7 +531,7 @@ rawMarkedGB(const Matrix *leadterms,
      }
 }
 
-ComputationOrNull *
+Computation /* or null */ *
 rawGroebnerWalk(const Matrix *gb,
 		const MonomialOrdering *order1)
 {
@@ -544,7 +544,7 @@ rawGroebnerWalk(const Matrix *gb,
      }
 }
 
-ComputationOrNull* 
+Computation /* or null */* 
 IM2_Computation_set_stop(Computation *G,
 		M2_bool always_stop,
 		M2_arrayint degree_limit,
@@ -576,7 +576,7 @@ IM2_Computation_set_stop(Computation *G,
      }
 }
 
-ComputationOrNull* 
+Computation /* or null */* 
 rawStartComputation(Computation *C)
   /* start or continue the computation */
 {
@@ -584,7 +584,7 @@ rawStartComputation(Computation *C)
 	  clear_emit_size();
 	  C->start_computation();
 
-	  if (gbTrace == 15)
+	  if (M2_gbTrace == 15)
 	    {
 	      ComputationStatusCode ret = C->status();
 	      switch (ret) {
@@ -643,7 +643,7 @@ void rawShowComputation(const Computation *C)
   C->show();
 }
 
-const MatrixOrNull *rawGBGetMatrix(Computation *C)
+const Matrix /* or null */ *rawGBGetMatrix(Computation *C)
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */
 {
@@ -661,7 +661,7 @@ const MatrixOrNull *rawGBGetMatrix(Computation *C)
      }
 }
 
-const MatrixOrNull *rawGBMinimalGenerators(Computation *C)
+const Matrix /* or null */ *rawGBMinimalGenerators(Computation *C)
   /* Yields a matrix whose columns form a minimal generating set
      for the ideal or submodule, as computed so far.  In the
      inhomogeneous case, this yields a generating set which is
@@ -681,7 +681,7 @@ const MatrixOrNull *rawGBMinimalGenerators(Computation *C)
      }
 }
 
-const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
+const Matrix /* or null */ *rawGBChangeOfBasis(Computation *C)
   /* Yields the change of basis matrix from the Groebner basis to
      the original generators, at least if n_rows_to_keep was set
      when creating the GB computation.  This matrix, after the 
@@ -702,7 +702,7 @@ const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
      }
 }
 
-const MatrixOrNull *
+const Matrix /* or null */ *
 rawGBGetLeadTerms(Computation *C, int nparts)
 {
      try {
@@ -719,7 +719,7 @@ rawGBGetLeadTerms(Computation *C, int nparts)
      }
 }
 
-const MatrixOrNull *
+const Matrix /* or null */ *
 rawGBGetParallelLeadTerms(Computation *C, M2_arrayint w)
 {
      try {
@@ -736,7 +736,7 @@ rawGBGetParallelLeadTerms(Computation *C, M2_arrayint w)
      }
 }
 
-const MatrixOrNull *rawGBSyzygies(Computation *C)
+const Matrix /* or null */ *rawGBSyzygies(Computation *C)
   /* Yields a matrix containing the syzygies computed so far
      via the GB computation C, assuming that 'collect_syz' was
      set when the computation was created.  If 'n_rows_to_keep' was
@@ -757,7 +757,7 @@ const MatrixOrNull *rawGBSyzygies(Computation *C)
      }
 }
 
-const MatrixOrNull *
+const Matrix /* or null */ *
 rawGBMatrixRemainder(Computation *C, 
 		     const Matrix *m)
 {
@@ -777,8 +777,8 @@ rawGBMatrixRemainder(Computation *C,
 
 M2_bool IM2_GB_matrix_lift(Computation *C,
 			const Matrix *m,
-			MatrixOrNull **result_remainder,
-			MatrixOrNull **result_quotient
+			const Matrix /* or null */ **result_remainder,
+			const Matrix /* or null */ **result_quotient
 			)
 {
      try {
@@ -812,7 +812,7 @@ IM2_GB_contains(Computation *C,
      }
 }
 
-const MatrixOrNull *
+const Matrix /* or null */ *
 rawResolutionGetMatrix(Computation *C, 
 		       int level)
 {
@@ -830,7 +830,7 @@ rawResolutionGetMatrix(Computation *C,
      }
 }
 
-const FreeModuleOrNull *
+const FreeModule /* or null */ *
 rawResolutionGetFree(Computation *C, 
 		     int level)
 {
@@ -880,7 +880,7 @@ IM2_Resolution_status_level(Computation *C,
 #endif
 }
 
-M2_arrayint_OrNull
+M2_arrayintOrNull
 rawResolutionBetti(Computation *C,
 	     int type)
   /* see engine.h for description of what 'type' should be */
@@ -918,7 +918,7 @@ unsigned long IM2_GB_hash(const Computation *C)
   return C->get_hash_value();
 }
 
-MatrixOrNull * rawSubduction(const Matrix *M,
+Matrix /* or null */ * rawSubduction(const Matrix *M,
 			     const RingMap *F,
 			     Computation *C)
 {
@@ -936,6 +936,20 @@ MatrixOrNull * rawSubduction(const Matrix *M,
 	  return NULL;
      }
 }
+
+M2_string engineMemory()
+{
+     buffer o;
+     try {
+       stash::stats(o);
+       return o.to_string();
+     }
+     catch (exc::engine_error e) {
+	  o << "Internal error: [unprintable memory display]";
+	  return o.to_string();
+     }
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

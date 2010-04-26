@@ -8,10 +8,10 @@
 class QQ : public Ring
 {
   int _elem_size;
-  M2_Rational _zero_elem;
+  gmp_QQ _zero_elem;
 
-  M2_Rational new_elem() const;
-  void remove_elem(M2_Rational f) const;
+  gmp_QQ new_elem() const;
+  void remove_elem(gmp_QQ f) const;
 
 protected:
   QQ() {}
@@ -83,7 +83,11 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, 
+			     const ring_elem f, 
+			     bool p_one=true, 
+			     bool p_plus=false, 
+			     bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 

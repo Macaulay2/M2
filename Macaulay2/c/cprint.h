@@ -1,17 +1,26 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
-extern struct POS *pos2(node);
-extern void cprintlist(node);
-extern void cprinttypes(void);
-extern void pprintl(node);
-extern void cprint(node);
-extern void cprintsemi(node);
-extern void pput(char *);
-extern void pprint(node);
-extern void printsymbol(node);
-extern void pp(node);
-extern char *tostring(node);
-extern void dprint(node);
+struct POS *pos2(node);
+void cprintlist(node);
+void cprinttypes(void);
+void pprintl(node);
+void cprint(node);
+void dprinttype(node e);
+void cprintsemi(node);
+void pput(char *);
+void put(char *);
+void pprint(node);
+void printsymbol(node);
+void pp(node);
+char *tostring(node);
+void dprint(node);
+void put_unescape(char *s);
+void locn(node);
+void printpos();
+void dprinttype(node);
+void dprintcons(node,node);
+void dprint(node);
+void dprintlist(node);
 
 /*
 # Local Variables:

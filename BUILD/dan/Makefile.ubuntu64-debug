@@ -1,6 +1,6 @@
 #-*- Makefile -*-
-CONFIGOPTIONS += --enable-debug
-CONFIGOPTIONS += --enable-python
+CONFIGOPTIONS += --enable-debug --disable-optimize
+# CONFIGOPTIONS += --with-python
 DIRECTORY = ubuntu64-debug
 include Makefile.include
 default: check

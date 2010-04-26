@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "M2mem.h"
-#include "M2types.h"
+#include "M2-exports.h"
 #include "xml-c.h"
 #define TRUE 1
 #define FALSE 0
@@ -12,8 +12,8 @@ static char *copystring(const char *s) {
   return p;
 }
 
-void initxml() __attribute__ ((constructor));
-void initxml() {
+static void initxml() __attribute__ ((constructor));
+static void initxml() {
   xmlGcMemSetup(freemem,(void *(*)(size_t))getmem,(void *(*)(size_t))getmem_atomic,(void *(*)(void *,size_t))getmoremem1,copystring);
 }
 
@@ -144,17 +144,17 @@ int xml_isText(xml_node *n){
 
 M2_string xml_getElementName(xml_node *n){
   if (n->node->name == NULL) return NULL;
-  return tostring((char const *)n->node->name);
+  return M2_tostring((char const *)n->node->name);
 }
 
 M2_string xml_getAttrName(xml_attr *a){
   if (a->attr->name == NULL) return NULL;
-  return tostring((char const *)a->attr->name);
+  return M2_tostring((char const *)a->attr->name);
 }
 
 M2_string xml_getContent(xml_node *n){
   if (n->node->content == NULL) return NULL;
-  return tostring((char const *)n->node->content);
+  return M2_tostring((char const *)n->node->content);
 }
 
 xml_node *xml_getNextNode(xml_node *n){
@@ -195,20 +195,20 @@ xml_node *xml_getAttrChildren(xml_attr *a){
 
 xml_node *xml_NewDoc(M2_string version, M2_string name) {
   xml_node *r = (xml_node *)getmem(sizeof(*r));
-  char *s = tocharstar(name);
+  char *s = M2_tocharstar(name);
   r->doc = xmlNewDoc((unsigned const char*)"1.0");
   r->node = xmlNewNode(NULL,(unsigned const char*)s);
   xmlDocSetRootElement(r->doc, r->node);
-  GC_FREE(s);
+  freemem(s);
   return r;
 }
 
 xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
   xml_attr *r = (xml_attr *)getmem(sizeof(*r));
-  char *nam = tocharstar(name), *val = tocharstar(value);
+  char *nam = M2_tocharstar(name), *val = M2_tocharstar(value);
   r->doc = n->doc;
   r->attr = xmlNewProp(n->node,(unsigned const char*)nam,(unsigned const char*)val);
-  GC_FREE(nam), GC_FREE(val);
+  freemem(nam), freemem(val);
   return r;
 }
 
@@ -226,21 +226,21 @@ xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
 /* } */
 
 xml_node *xml_NewChild(xml_node *parent, M2_string name){
-  char *nam = tocharstar(name);
+  char *nam = M2_tocharstar(name);
   xml_node *r = (xml_node *)getmem(sizeof(*r));
   r->doc = parent->doc;
   r->node = xmlNewChild(parent->node,NULL,(unsigned const char*)nam,NULL);
-  GC_FREE(nam);
+  freemem(nam);
   return r;
 }
 
 xml_node *xml_NewText(xml_node *parent, M2_string content){
-  char *cont = tocharstar(content);
+  char *cont = M2_tocharstar(content);
   xml_node *r = (xml_node *)getmem(sizeof(*r));
   r->doc = parent->doc;
   r->node = xmlNewText((unsigned const char*)cont);
   xmlAddChild(parent->node,r->node);
-  GC_FREE(cont);
+  freemem(cont);
   return r;
 }
 
@@ -249,13 +249,13 @@ M2_string xml_toString(xml_node *n) {
   xmlBuffer *buf = xmlBufferCreate();
   int len = xmlNodeDump(buf,n->doc,n->node,2,TRUE);
   if (len == 0) return NULL;
-  s = tostringn((const char*)buf->content,len);
+  s = M2_tostringn((char*)buf->content,len);
   xmlBufferFree(buf);
   return s;
 }
 
 /*
  Local Variables:
- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/d xml-c.o "
  End:
 */

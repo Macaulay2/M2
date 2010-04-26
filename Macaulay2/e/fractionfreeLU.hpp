@@ -42,7 +42,7 @@ private:
 
   M2_arrayint get_column_permutation();
 public:
-  static M2_arrayint_OrNull DO(MutableMatrix *M);
+  static M2_arrayintOrNull DO(MutableMatrix *M);
   // Replace M with its column echelon form.  If M has
   // column recording going on, then one obtains the whole
   // LU decomposition.

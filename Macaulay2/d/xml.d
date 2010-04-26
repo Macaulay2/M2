@@ -1,10 +1,10 @@
 -- Copyright 2009 by Daniel R. Grayson
-use C;
--- use tokens;
--- use common;
+use M2;
 
 export xmlNode := { xmlNode:void };
 export xmlAttr := { xmlAttr:void };
+export xmlNodeCell := {+ v:xmlNode };
+export xmlAttrCell := {+ v:xmlAttr };
 export xmlNodeOrNull := xmlNode or null;
 export xmlAttrOrNull := xmlAttr or null;
 -- these routines are implemented in xml-c.c
@@ -28,5 +28,5 @@ import NewText(parent:xmlNode,content:string):xmlNode;
 import toString(n:xmlNode):string;
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d xml.o "
 -- End:

@@ -13,8 +13,8 @@ RingMap::RingMap(const Matrix *m)
   P = R->cast_to_PolynomialRing();
   if (P != 0)
     {
-      M = P->Nmonoms();
-      K = P->Ncoeffs();
+      M = P->getMonoid();
+      K = P->getCoefficientRing();
     }
   else 
     K = R;
@@ -224,7 +224,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   return result;
 }
 
-RingElementOrNull *RingMap::eval(const RingElement *r) const
+RingElement /* or null */ *RingMap::eval(const RingElement *r) const
 {
   RingElement *result = RingElement::make_raw(get_ring(), 
 					      r->get_ring()->eval(this, r->get_value(),0) );
@@ -232,7 +232,7 @@ RingElementOrNull *RingMap::eval(const RingElement *r) const
   return result;
 }
 
-MatrixOrNull *RingMap::eval(const FreeModule *F, const Matrix *m) const
+Matrix /* or null */ *RingMap::eval(const FreeModule *F, const Matrix *m) const
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<m->n_cols(); i++)

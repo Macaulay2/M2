@@ -3,7 +3,7 @@
 #ifndef _Schurring_hh_
 #define _Schurring_hh_
 
-#include "polyring.hpp"
+#include "poly.hpp"
 
 const int SCHUR_MAX_WT = 100;
 const int LARGE_NUMBER = 32000;
@@ -42,8 +42,6 @@ private:
   int _SMcurrent;
   int _SMfinalwt;
   Nterm *_SMresult;
-  intarray _part_exp_a;		// Used in to_partition, from_partition
-  int *_EXP1;		// Used in to_partition, from_partition
 
   void to_partition(const int *m, int *exp) const;
     // exp[1]..exp[nvars] are set
@@ -66,7 +64,11 @@ public:
   virtual       SchurRing * cast_to_SchurRing()       { return this; }
 
   virtual void text_out(buffer &o) const;
-  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, 
+			     const ring_elem f, 
+			     bool p_one=true, 
+			     bool p_plus=false, 
+			     bool p_parens=false) const;
 
   void dimension(const int *exp, mpz_t result) const;
   ring_elem dimension(const ring_elem f) const;

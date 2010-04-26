@@ -130,7 +130,7 @@ int MonomialTableZZ::find_divisors(int max,
 	    if (max >= 0 && nmatches >= max) break;
 	  }
       }
-  if (gbTrace == 15 && nmatches >= 2)
+  if (M2_gbTrace == 15 && nmatches >= 2)
     {
       char s[100000];
       mpz_get_str(s,10,coeff);
@@ -181,7 +181,7 @@ int MonomialTableZZ::find_term_divisors(int max,
 	    if (max >= 0 && nmatches >= max) break;
 	  }
       }
-  if (gbTrace == 15 && nmatches >= 2)
+  if (M2_gbTrace == 15 && nmatches >= 2)
     {
       char s[100000];
       mpz_get_str(s,10,coeff);
@@ -316,7 +316,7 @@ int MonomialTableZZ::find_monomial_divisors(int max,
 	  }
       }
 
-  if (gbTrace == 15 && nmatches >= 2)
+  if (M2_gbTrace == 15 && nmatches >= 2)
     {
       fprintf(stderr, "find_monomial_divisors called with [");
       for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
@@ -406,9 +406,9 @@ void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)
      in some order (lex order?).  No element is ever removed.
   */
 
-  if (comp >= static_cast<int>(_head.size()))
+  if (comp >= INTSIZE(_head))
     {
-      for (int i=_head.size(); i <= comp; i++)
+      for (int i=INTSIZE(_head); i <= comp; i++)
 	_head.push_back(make_list_head());
     }
 

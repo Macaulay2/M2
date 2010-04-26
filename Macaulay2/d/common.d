@@ -1,57 +1,50 @@
 --		Copyright 1994-2003 by Daniel R. Grayson
 
-use C;
-use system;
-use binding;
-use parser;
-use lex;
-use gmp;
-use nets;
-use tokens;
-use err;
-use stdiop;
-use ctype;
-use stdio;
-use varstrin;
-use strings;
 use basic;
+use binding;
 
 export codePosition(c:Code):Position := (
      when c
-     is f:binaryCode do f.position
      is f:adjacentCode do f.position
-     is f:forCode do f.position
-     is f:ifCode do f.position
-     is f:newOfFromCode do f.position
-     is f:newFromCode do f.position
-     is f:newOfCode do f.position
-     is f:newCode do f.position
-     is f:whileListDoCode do f.position
-     is f:whileListCode do f.position
-     is f:whileDoCode do f.position
-     is f:tryCode do f.position
+     is f:arrayCode do f.position
+     is f:binaryCode do f.position
      is f:catchCode do f.position
+     is f:Error do f.position
+     is f:forCode do f.position
      is f:functionCode do position(f.arrow)
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
      is f:globalSymbolClosureCode do f.position
+     is f:ifCode do f.position
      is f:integerCode do f.position
+     is f:listCode do f.position
      is f:localAssignmentCode do f.position
      is f:localMemoryReferenceCode do f.position
      is f:localSymbolClosureCode do f.position
      is f:multaryCode do f.position
-     is f:nullCode do dummyPosition
+     is f:newCode do f.position
+     is f:newFromCode do f.position
      is f:newLocalFrameCode do codePosition(f.body)
+     is f:newOfCode do f.position
+     is f:newOfFromCode do f.position
+     is f:nullCode do dummyPosition
      is f:parallelAssignmentCode do f.position
      is f:realCode do f.position
-     is f:sequenceCode do f.position
-     is f:listCode do f.position
-     is f:arrayCode do f.position
      is f:semiCode do f.position
-     is f:Error do f.position
+     is f:sequenceCode do f.position
      is f:stringCode do dummyPosition
      is f:ternaryCode do f.position
+     is f:threadMemoryReferenceCode do f.position
+     is f:threadSymbolClosureCode do f.position
+     is f:tryCode do f.position
      is f:unaryCode do f.position
+     is f:whileDoCode do f.position
+     is f:whileListCode do f.position
+     is f:whileListDoCode do f.position
+     );
+
+export pos(c:Code):void := (					    -- for use in the debugger
+     stdIO << codePosition(c) << endl;
      );
 
 export tostring(c:Code):string := (
@@ -83,12 +76,14 @@ export tostring(c:Code):string := (
 	       " framesize: ",tostring(x.desc.framesize),
 	       " frameID: ",tostring(x.desc.frameID),
 	       " ",tostring(x.body),")"))
-     is x:globalAssignmentCode do concatenate(array(string)("(= ",x.lhs.word.name," ",tostring(x.rhs),")"))
-     is x:globalMemoryReferenceCode do concatenate(array(string)("(fetch ",tostring(x.frameindex),")"))
-     is x:globalSymbolClosureCode  do join("'",x.symbol.word.name)
+     is x:globalAssignmentCode do concatenate(array(string)("(global-assign ",x.lhs.word.name," ",tostring(x.rhs),")"))
+     is x:localAssignmentCode do concatenate(array(string)("(local-assign ",tostring(x.frameindex)," ",tostring(x.nestingDepth)," ",tostring(x.rhs),")"))
+     is x:globalMemoryReferenceCode do concatenate(array(string)("(global-fetch ",tostring(x.frameindex),")"))
+     is x:threadMemoryReferenceCode do concatenate(array(string)("(thread-fetch ",tostring(x.frameindex),")"))
+     is x:globalSymbolClosureCode  do concatenate(array(string)("(global ",x.symbol.word.name,")"))
+     is x:threadSymbolClosureCode  do concatenate(array(string)("(thread ",x.symbol.word.name,")"))
      is x:integerCode do tostring(x.x)
      is x:listCode do concatenate(array(string)( "(list ", between(" ",new array(string) len length(x.y) do foreach s in x.y do provide tostring(s)), ")"))
-     is x:localAssignmentCode do concatenate(array(string)("(store ",tostring(x.frameindex)," ",tostring(x.nestingDepth)," ",tostring(x.rhs),")"))
      is x:localMemoryReferenceCode do concatenate(array(string)("(fetch ",tostring(x.frameindex)," ",tostring(x.nestingDepth),")"))
      is x:localSymbolClosureCode do concatenate(array(string)("(local ",x.symbol.word.name," nestingDepth: ",tostring(x.nestingDepth),")"))
      is x:multaryCode do concatenate(array(string)( "(OP ",getMultopName(x.f)," ", between(" ",new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")" ))
@@ -98,7 +93,7 @@ export tostring(c:Code):string := (
 	  n := length(x.nestingDepth);
 	  concatenate(
 	       array(string)(
-	       	    "(parallel= (",
+	       	    "(parallel-assign (",
 		    between(" ",
 			 new array(string) len length(x.nestingDepth) do 
 			 for i from 0 to n-1 do 
@@ -181,29 +176,31 @@ export setupfun(name:string,fun:unop):Symbol := (
 	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
      entry := makeSymbol(word,dummyPosition,globalDictionary);
      entry.unary = fun;
-     entry.protected = true;
+     entry.Protected = true;
      entry);     
 export setupfun(name:string,value:fun):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
-     entry.protected = true;
+     entry.Protected = true;
      entry);
-export setupvar(name:string,value:Expr):Symbol := (
+export setupvar(name:string,value:Expr,thread:bool):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      when lookup(word,globalDictionary)
      is null do (
-     	  entry := makeSymbol(word,dummyPosition,globalDictionary);
-     	  globalFrame.values.(entry.frameindex) = value;
+     	  entry := makeSymbol(word,dummyPosition,globalDictionary,thread);
+     	  (if thread then enlargeThreadFrame() else globalFrame).values.(entry.frameindex) = value;
 	  entry)
      is entry:Symbol do (
 	  -- we are doing it again after loading data with loaddata()
 	  -- or we are reassigning to o or oo in interpret.d
-     	  globalFrame.values.(entry.frameindex) = value;
+     	  (if thread then enlargeThreadFrame() else globalFrame).values.(entry.frameindex) = value;
 	  entry));
+export setupvar(name:string,value:Expr):Symbol := setupvar(name,value,false);
+export setupvarThread(name:string,value:Expr):Symbol := setupvar(name,value,true);
 export setupconst(name:string,value:Expr):Symbol := (
      s := setupvar(name,value);
-     s.protected = true;
+     s.Protected = true;
      s);
 setup(commaS,dummyBinaryFun);
 
@@ -265,7 +262,7 @@ export TooManyArgs(name:string,m:int):Expr := (
      then buildErrorPacket(quoteit(name) + " expected at most 1 argument")
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
-export errorDepth := ushort(0);
+threadLocal export errorDepth := ushort(0);
 export printErrorMessageE(c:Code,message:string):Expr := (
      p := codePosition(c);
      if p.loadDepth >= errorDepth
@@ -306,11 +303,17 @@ export MissingAssignmentMethod(method:Expr,left:Expr):Expr := (
 export MissingAssignmentMethodPair(method:Expr,left:Expr,right:Expr):Expr := (
      when method is sc:SymbolClosure do buildErrorPacket("expected pair to have an assignment method for " + quoteit(sc.symbol.word.name))
      else buildErrorPacket("expected pair to have an assignment method"));
+
+-----------------------------------------------------------------------------
+
+hashfun(e:Expr):Expr := Expr(ZZcell(toInteger(hash(e))));
+setupfun("hash",hashfun);
+
 -----------------------------------------------------------------------------
 -- Database stuff
 export dbmcheck(ret:int):Expr := (
      if ret == -1 then buildErrorPacket(dbmstrerror())
-     else Expr(toInteger(ret)));
+     else Expr(ZZcell(toInteger(ret))));
 export dbmopenin(filename:string):Expr := (
      mutable := false;
      filename = expandFileName(filename);
@@ -329,12 +332,12 @@ export dbmclose(f:Database):Expr := (
      if !f.isopen then return buildErrorPacket("database already closed");
      dbmclose(f.handle);
      f.isopen = false;
-     Expr(toInteger(0)));
+     Expr(ZZcell(toInteger(0))));
 export dbmstore(f:Database,key:string,content:string):Expr := (
      if !f.isopen then return buildErrorPacket("database closed");
-     if !f.mutable then return buildErrorPacket("database not mutable");
+     if !f.Mutable then return buildErrorPacket("database not mutable");
      ret := dbmstore(f.handle,key,content);
-     if 0 == ret then Expr(content)
+     if 0 == ret then Expr(stringCell(content))
      else dbmcheck(ret));
 export dbmquery(f:Database,key:string):Expr := (
      if !f.isopen then return buildErrorPacket("database closed");
@@ -344,14 +347,27 @@ export dbmquery(f:Database,key:string):Expr := (
 export dbmfirst(f:Database):Expr := (
      if !f.isopen then return buildErrorPacket("database closed");
      when dbmfirst(f.handle)
-     is a:string do Expr(a)
+     is a:string do Expr(stringCell(a))
      else nullE);
 export dbmreorganize(f:Database):Expr := (
      if !f.isopen then return buildErrorPacket("database closed");
-     if !f.mutable then return buildErrorPacket("database not mutable");
+     if !f.Mutable then return buildErrorPacket("database not mutable");
      dbmcheck(dbmreorganize(f.handle)));
-
+export keys(f:Database):Expr := (
+     if !f.isopen then return buildErrorPacket("database closed");
+     x := newvarstringarray(20);
+     k := dbmfirst(f.handle);
+     continue := true;
+     while continue do (
+	  when k
+	  is key:string do (
+	       append(x,key);
+	       k = dbmnext(f.handle);
+	       )
+	  else continue = false;
+	  );
+     Expr(list(new Sequence len x.n do foreach s in x.a do provide Expr(stringCell(s)))));
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d common.o "
 -- End:

@@ -6,6 +6,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>
+
 NTL_USE_NNS
 
 class MutableMatrix;

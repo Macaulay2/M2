@@ -72,7 +72,11 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, 
+			     const ring_elem f, 
+			     bool p_one=true, 
+			     bool p_plus=false, 
+			     bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };

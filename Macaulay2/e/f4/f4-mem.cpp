@@ -1,21 +1,11 @@
 #include "f4-mem.hpp"
 #include <cstdio>
 
-F4Vec F4Mem::components("comps");
-F4Vec F4Mem::coefficients("coeffs");
-
-unsigned int doublesize[DOUBLESIZE] = { 12, 24, 48, 96, 192, 384, 768, 
+const unsigned int doublesize[DOUBLESIZE] = { 12, 24, 48, 96, 192, 384, 768, 
 			      1536, 3072, 6144, 12288, 24576, 49152, 98304, 
 			      196608, 393216, 786432, 1572864, 3145728, 6291456,
 			      12582912, 25165824, 50331648, 100663296, 201326592, 
 			      402653184, 805306368, 1610612736, 3221225472U};
-
-long F4Mem::monom_alloc = 0;
-long F4Mem::monom_dealloc = 0;
-long F4Mem::monom_highwater = 0;
-long F4Mem::monom_total = 0;
-long F4Mem::monom_freed = 0;
-long F4Mem::monom_current = 0;
 
 void F4Vec::show()
 {
@@ -33,6 +23,20 @@ void F4Vec::show()
 		current[i]);
       }
 }
+
+F4Mem::F4Mem() 
+  : monom_alloc(0),
+    monom_total(0),
+    monom_freed(0),
+    monom_dealloc(0),
+    monom_highwater(0),
+    monom_current(0),
+    components("comps"),
+    coefficients("coeffs")
+{
+}
+
+
 void F4Mem::show()
 {
   fprintf(stderr, "class\tnalloc\tndealloc\thighwater\ttotal\tfreed\tcurrent\n");

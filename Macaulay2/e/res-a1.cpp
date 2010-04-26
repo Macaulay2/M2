@@ -4,9 +4,6 @@
 #include "res-a1.hpp"
 #include "text-io.hpp"
 
-extern char system_interruptedFlag;
-extern int gbTrace;
-
 //////////////////////////////////////////////
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
@@ -20,8 +17,8 @@ void res_comp::initialize(const Matrix *mat,
   P = mat->get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
   R = new res_poly(const_cast<PolynomialRing *>(P));
-  M = P->Nmonoms();
-  K = P->Ncoeffs();
+  M = P->getMonoid();
+  K = P->getCoefficientRing();
   generator_matrix = mat;
 
   // These next two lines may be added next (5/2/06)
@@ -110,10 +107,10 @@ void res_comp::initialize(const Matrix *mat,
       p->compare_num = i;
     }
 
-  REDUCE_exp = newarray_atomic(int,P->n_vars());
-  REDUCE_mon = M->make_one();
-  PAIRS_mon = M->make_one();
-  MINIMAL_mon = M->make_one();
+  exp_size = EXPONENT_BYTE_SIZE(P->n_vars());
+  monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
+
+  compare_type = 0;
 }
 
 res_comp::res_comp(const Matrix *m, 
@@ -169,10 +166,6 @@ void res_comp::remove_res()
   delete res_pair_stash;
   delete mi_stash;
   delete R;
-  deletearray(REDUCE_exp);
-  M->remove(REDUCE_mon);
-  M->remove(PAIRS_mon);
-  M->remove(MINIMAL_mon);
 
   // base_components have all been removed by this point
   // Since they appear in resn[0].
@@ -328,10 +321,9 @@ void res_comp::insert_res_pair(int level, res_pair *p)
 //  Sorting //////////////////////////////////
 //////////////////////////////////////////////
 
-static int compare_type = 0;
-static int EXP1[1000], EXP2[1000];
 int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
 {
+  exponents EXP1, EXP2;
   int cmp, df, dg, i;
 //  if (f->compare_num < g->compare_num) return 1;
 //  if (f->compare_num > g->compare_num) return -1;
@@ -340,6 +332,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
   case 1:
     // Compare using descending lexicographic order
     // on the usual set of variables
+    EXP1 = ALLOCATE_EXPONENTS(exp_size);
+    EXP2 = ALLOCATE_EXPONENTS(exp_size);
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
     for (i=0; i<M->n_vars(); i++)
@@ -351,6 +345,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
   case 2:
     // Compare using ascending lexicographic order
     // on the usual set of variables
+    EXP1 = ALLOCATE_EXPONENTS(exp_size);
+    EXP2 = ALLOCATE_EXPONENTS(exp_size);
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
     for (i=0; i<M->n_vars(); i++)
@@ -362,6 +358,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
   case 3:
     // Compare using descending lexicographic order
     // on the reversed set of variables
+    EXP1 = ALLOCATE_EXPONENTS(exp_size);
+    EXP2 = ALLOCATE_EXPONENTS(exp_size);
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
     for (i=M->n_vars()-1; i>=0; i--)
@@ -373,6 +371,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
   case 4:
     // Compare using ascending lexicographic order
     // on the reversed set of variables
+    EXP1 = ALLOCATE_EXPONENTS(exp_size);
+    EXP2 = ALLOCATE_EXPONENTS(exp_size);
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
     for (i=M->n_vars()-1; i>=0; i--)
@@ -468,6 +468,7 @@ void res_comp::sort_res_pairs(res_pair *& p) const
 
 int res_comp::sort_value(res_pair *p, const int *sort_order) const
 {
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   M->to_expvector(p->base_monom, REDUCE_exp);
   int result = 0;
   for (int i=0; i<P->n_vars(); i++)
@@ -626,7 +627,9 @@ void res_comp::new_pairs(res_pair *p)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  if (gbTrace >= 10)
+  monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
+
+  if (M2_gbTrace >= 10)
     {
       buffer o;
       o << "Computing pairs with first = " << p->me << newline;
@@ -699,7 +702,7 @@ void res_comp::new_pairs(res_pair *p)
   while (rejects.remove(b))
     delete b;
 
-  if (gbTrace>= 11) mi->debug_out(1);
+  if (M2_gbTrace>= 11) mi->debug_out(1);
 
   for (j = mi->first(); j.valid(); j++)
     {
@@ -758,6 +761,9 @@ res_pair *res_comp::reduce(resterm * &f, resterm * &fsyz, resterm * &pivot)
      // place a pointer to the corresponding term in "pivot".
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
 
   res_pair *q;
@@ -803,6 +809,9 @@ res_pair *res_comp::reduce(resterm * &f, resterm * &fsyz, resterm * &pivot)
 res_pair *res_comp::reduce_level_one(resterm * &f, resterm * &fsyz, resterm * &pivot)
 {
   // 'lastterm' is used to append the next monomial to fsyz->syz
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
 
   res_pair *q;
@@ -846,6 +855,9 @@ res_pair *res_comp::reduce_level_one(resterm * &f, resterm * &fsyz, resterm * &p
 
 void res_comp::reduce_gen(resterm * &f) const
 {
+  exponents REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
+  monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
+
   res_pair *q;
   ring_elem rg;
   Bag *b;
@@ -925,7 +937,7 @@ void res_comp::start_computation()
 	  set_status(COMP_DONE_DEGREE_LIMIT);
 	  return;
 	}
-      if (gbTrace >= 1) 
+      if (M2_gbTrace >= 1) 
 	{
 	  buffer o;
 	  o << '{' << n_degree << '}';
@@ -942,7 +954,7 @@ void res_comp::start_computation()
 
       for ( ; n_level <= length_limit+1; n_level++)
 	{
-	  if (gbTrace >= 1) emit_wrapped(".");
+	  if (M2_gbTrace >= 1) emit_wrapped(".");
 
 	  DO(pairs(n_level-1, n_degree));
 	  DO(pairs(n_level-1, n_degree+1));
@@ -953,7 +965,7 @@ void res_comp::start_computation()
 }
 enum ComputationStatusCode res_comp::gens(int deg)
 {
-  if (gbTrace >= 5) 
+  if (M2_gbTrace >= 5) 
     {
       buffer o;
       o << "gens(" << deg << ")" << newline;
@@ -976,7 +988,7 @@ enum ComputationStatusCode res_comp::gens(int deg)
 	    return COMP_DONE_PAIR_LIMIT;
 	  if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
 	    return COMP_DONE_SYZYGY_LIMIT;
-	  if (system_interruptedFlag) return COMP_INTERRUPTED;
+	  if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
 	}
       
       sort_pairs(1, deg); // Sort the level 1 GB elements
@@ -990,7 +1002,7 @@ enum ComputationStatusCode res_comp::pairs(int level, int deg)
   // Cases: level=1: gens(deg), pairs(1,deg-1)
   //        level=2: pairs(1,deg)
   //        level>2: pairs(level-1,deg), pairs(level-2,deg+1)
-  if (gbTrace >= 5) 
+  if (M2_gbTrace >= 5) 
     {
       buffer o;
       o << "pairs(" << level << ", " << deg << ")" << newline;
@@ -1005,7 +1017,7 @@ enum ComputationStatusCode res_comp::pairs(int level, int deg)
 	{
 	  mypairs->next_new_pair = p->next;
 	  new_pairs(p);
-	  if (system_interruptedFlag) return COMP_INTERRUPTED;
+	  if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
 	}
     }
   return COMP_COMPUTING;
@@ -1014,7 +1026,7 @@ enum ComputationStatusCode res_comp::pairs(int level, int deg)
 enum ComputationStatusCode res_comp::reductions(int level, int deg)
 {
   res_pair *p;
-  if (gbTrace >= 5)
+  if (M2_gbTrace >= 5)
     {
       buffer o;
       o << "reductions(" << level << ", " << deg << ")" << newline;
@@ -1035,7 +1047,7 @@ enum ComputationStatusCode res_comp::reductions(int level, int deg)
 	  return COMP_DONE_PAIR_LIMIT;
 	if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
 	  return COMP_DONE_SYZYGY_LIMIT;
-	if (system_interruptedFlag) return COMP_INTERRUPTED;
+	if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
       }
   return COMP_COMPUTING;
 }
@@ -1054,12 +1066,12 @@ void res_comp::handle_gen(res_pair *p)
       insert_res_pair(1, p);
       p->minimal_me = resn[1]->nminimal++;
       nminimal++;
-      if (gbTrace >= 2) emit_wrapped("z");
+      if (M2_gbTrace >= 2) emit_wrapped("z");
     }
   else
     {
       remove_res_pair(p);
-      if (gbTrace >= 2) emit_wrapped("o");
+      if (M2_gbTrace >= 2) emit_wrapped("o");
     }
 }
 void res_comp::handle_pair(res_pair *p)
@@ -1079,7 +1091,7 @@ void res_comp::handle_pair(res_pair *p)
       p->syz_type = SYZ_MINIMAL;
       p->minimal_me = resn[n_level]->nminimal++;
       nminimal++;
-      if (gbTrace >= 2) emit_wrapped("z");
+      if (M2_gbTrace >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1089,7 +1101,7 @@ void res_comp::handle_pair(res_pair *p)
       // non-minimal syzygy
       q->syz = f;
       q->syz_type = SYZ_NOT_NEEDED;
-      if (gbTrace >= 2) emit_wrapped("m");
+      if (M2_gbTrace >= 2) emit_wrapped("m");
       // MES: need to decrement nleft for 'q'.
     }
 }
@@ -1282,7 +1294,7 @@ void res_comp::text_out(buffer &o, const res_pair *p) const
 //     }
 #endif
   M->elem_text_out(o, p->base_monom);
-  if (gbTrace >= 3)
+  if (M2_gbTrace >= 3)
     {
       // Display the vector
       o << " syz: ";
@@ -1316,7 +1328,7 @@ void res_comp::text_out(buffer &o) const
   o << "--- (Lower bounds of) the minimal betti numbers ----------" << newline;
   a = betti_minimal();
   betti_display(o, a);
-  if (gbTrace >= 1)
+  if (M2_gbTrace >= 1)
     {
       o << "--- Number of monomials  ---------------------------------" << newline;
       a = betti_nmonoms();
@@ -1324,7 +1336,7 @@ void res_comp::text_out(buffer &o) const
     }
 
   // If the printlevel is high enough, display each element
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     for (int lev=0; lev<resn.length(); lev++)
       {
 	o << "---- level " << lev << " ----" << newline;
@@ -1417,6 +1429,8 @@ Matrix *res_comp::make(int level) const
 
 void res_comp::reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) const
 {
+  monomial MINIMAL_mon = ALLOCATE_MONOMIAL(monom_size);
+
   // Reduce any components of 'f' that correspond to non minimal syzygies.
   const resterm *tm;
 
@@ -1508,7 +1522,9 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  if (gbTrace >= 10)
+  monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
+
+  if (M2_gbTrace >= 10)
     {
       buffer o;
       o << "Computing pairs with first = " << p->me << newline;
@@ -1582,7 +1598,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   while (rejects.remove(b))
     delete b;
 
-  if (gbTrace>= 11) mi->debug_out(1);
+  if (M2_gbTrace>= 11) mi->debug_out(1);
 
   for (j = mi->first(); j.valid(); j++)
     {
@@ -1631,12 +1647,12 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
 	}
     }
   
-  // Now make an intarray so that we may just use betti_display
+  // Now make an arrayint so that we may just use betti_display
   int lo = lodegree;
   int hi = maxdegree;
   int len = maxlevel;
   int totallen = 3 + (hi-lo+1)*(len+1);
-  M2_arrayint betti = makearrayint(totallen);
+  M2_arrayint betti = M2_makearrayint(totallen);
 
   betti->array[0] = lo;
   betti->array[1] = hi;

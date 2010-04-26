@@ -31,8 +31,8 @@ mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
 {
   // AGAIN: form the TRANSPOSE of A
-  int ncols = A->NumRows();
-  int nrows = A->NumCols();
+  int ncols = static_cast<int>(A->NumRows());
+  int nrows = static_cast<int>(A->NumCols());
 
   MutableMatrix *B = MutableMatrix::zero_matrix(globalZZ, nrows, ncols, false);
 
@@ -70,9 +70,9 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
 
   ZZ d;
   long rk;
-  double delta = numer*1.0/denom;
+  double delta = static_cast<double>(numer)/static_cast<double>(denom);
 
-  if (gbTrace >= 10)
+  if (M2_gbTrace >= 10)
     printf("LLL: using strategy %d\n", strategy);
   mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
   mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : 0);

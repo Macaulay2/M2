@@ -30,7 +30,8 @@ document {
      Key => fork,
      Headline => "fork the process",
      TT "fork()", " -- forks the process, returning the process id of the child
-     in the parent, and returning 0 in the child."
+     in the parent, and returning 0 in the child.  Warning: if threads are running,
+     any attempt to allocate memory in the child will hang the process."
      }
 
 document {
