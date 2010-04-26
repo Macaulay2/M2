@@ -89,9 +89,10 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
 
   gb_ring_ = 0;
 
-  // A polynomial ring is ALWAYS graded (if the coeff vars, if any,
-  //   all have degree 0, which is hte case with our flattened poly rings
-  this->setIsGraded(true);  
+  if (deg_ring->getMonoid() == 0)
+    this->setIsGraded(true);
+  else
+    this->setIsGraded(deg_ring->getMonoid()->n_vars() > 0);
 
   _EXP1 = newarray_atomic(int,nvars_);
   _EXP2 = newarray_atomic(int,nvars_);
