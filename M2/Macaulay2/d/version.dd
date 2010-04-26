@@ -1,0 +1,187 @@
+--		Copyright 2010 by Daniel R. Grayson
+
+use hashtables;
+
+declarations "
+   #include <M2/config.h>
+   #if USE_MYSQL
+     #include <mysql/mysql.h>
+   #endif
+   #ifdef HAVE_PYTHON
+     #include <python2.5/Python.h>
+   #else
+     #define PyObject_Str(o) 0
+     #define PyString_AS_STRING(o) 0
+     #define Py_DECREF(o) 0
+   #endif
+   ";
+
+header "
+   #include <mpfr.h>
+   #define stringize0(a) #a
+   #define stringize(a) stringize0(a)
+   #define Matrix FactoryMatrix
+   #include <factor.h>
+   #undef Matrix
+   extern char timestamp[];
+   #include <factor.h>
+   #undef ASSERT
+   #ifdef HAVE_FROBBY
+     #include <stdinc.h>		// to get version number of frobby
+     #define FROBBY_VERSION constants::version
+   #else
+     #define FROBBY_VERSION \"not present\"
+   #endif
+   #include <pari/pari.h>
+   const char *get_pari_version() {
+     /*
+       /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843
+       /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+       It's disappointing that the version number of libpari.so is not available at run time.
+     */
+     static char buf[20];
+     sprintf(buf,\"%d.%d.%d\",
+	     0xff & (PARI_VERSION_CODE >> 16),
+	     0xff & (PARI_VERSION_CODE >> 8),
+	     0xff & (PARI_VERSION_CODE >> 0)
+	     );
+     return buf;
+   }
+   #ifdef HAVE_SCSCP
+     #include <scscp.h>
+     void scscp_dummy() { SCSCP_sc_init(NULL,NULL); /* just to force linking with the library */ }
+   #endif
+   #include <stdio.h>
+   extern unsigned int GC_version; /* in libgc.a */
+   #include <gmp.h>
+   #include <NTL/version.h>
+   #include <factoryconf.h>
+   #undef ASSERT
+   static int32_t endianness_string[2] = {0x61626364,0};
+   #include <readline/readline.h>
+   ";
+gcversion():constcharstar := Ccode(returns,"
+     static char buf[40];
+     unsigned major = GC_version >> 16, minor = (GC_version >> 8) & 0xff, alpha = GC_version & 0xff;
+     if (alpha == 0xff) sprintf(buf,\"%d.%d\", major, minor);
+     else sprintf(buf,\"%d.%d alpha %d\", major, minor, alpha);
+     return buf;
+     ");
+factoryversion():constcharstar := Ccode(returns,"
+     extern const char factoryVersion[]; /* extracted from factory's factory.h */
+     char const * p = strrchr(factoryVersion,' ');
+     return p ? p+1 : factoryVersion;
+     ");
+readlineversion():constcharstar := Ccode(returns,"
+     static char buf[8];
+     sprintf(buf, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
+     return buf;
+     ");
+
+ic := Ccode(int, "
+     #if defined(__INTEL_COMPILER)
+     	  __INTEL_COMPILER
+     #else
+     	  0
+     #endif
+     ");
+compiler := (
+     if ic != 0
+     then "icc " + (
+	  if ic % 10 == 0
+	  then tostring(ic/100) + "." + tostring((ic/10)%10)
+	  else tostring(ic/100) + "." + tostring(ic%100)
+	  )
+     else tostring(Ccode(constcharstar,"
+	    #if defined(__GNUC__)
+	    #ifdef __GNUC_PATCHLEVEL__
+		 \"gcc \" stringize(__GNUC__) \".\" stringize(__GNUC_MINOR__) \".\" stringize(__GNUC_PATCHLEVEL__)
+	    #else
+		 \"gcc \" stringize(__GNUC__) \".\" stringize(__GNUC_MINOR__)
+	    #endif
+	    #else
+	    \"unknown\"
+	    #endif
+	    ")));
+
+setupconst("version", Expr(toHashTable(Sequence(
+   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
+   "architecture" => Ccode(constcharstar,"ARCH"),
+   "issue" => Ccode(constcharstar,"ISSUE"),
+   "machine" => Ccode(constcharstar,"MACHINE"),
+   "operating system" => Ccode(constcharstar,"OS"),
+   "operating system release" => Ccode(constcharstar,"REL"),
+   "compiler" => compiler,
+   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
+   "compile time" => Ccode(constcharstar,"timestamp"),
+   "compile node name" => Ccode(constcharstar,"NODENAME"),
+   "dumpdata" => Ccode(bool,"
+	  #if DUMPDATA
+	       haveDumpdata()
+	  #else
+	       0
+	  #endif
+	  "),
+   "gc version" => gcversion(),
+   "mysql version" => Ccode(constcharstar,"
+	  #if USE_MYSQL
+		   mysql_get_client_info()
+	  #else
+		   \"not present\"
+	  #endif
+	  "),
+    "python version" => Ccode(constcharstar,"
+	#ifdef HAVE_PYTHON
+		 PY_VERSION				      
+	#else
+		 \"not present\"
+	#endif
+	"),
+   "gmp version" => Ccode(constcharstar,"
+	  #ifdef __MPIR_VERSION
+	       \"not present\"
+	  #else
+	       __gmp_version
+	  #endif
+	  "),
+   "mpir version" => Ccode(constcharstar,"
+	#ifdef __MPIR_VERSION
+	     __mpir_version
+	#else
+	     \"not present\"
+	#endif
+	"),
+   "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
+   "libfac version" => Ccode(constcharstar,"libfac_version"),
+   "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
+   "pari version" => Ccode(constcharstar,"
+	 #if HAVE_PARI
+	   get_pari_version()
+	 #else
+	   \"not present\"
+	 #endif
+	 "),
+   "scscp version" => Ccode(constcharstar,"
+	 #ifdef HAVE_SCSCP
+	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)
+	 #else
+	   \"not present\"
+	 #endif
+	 "),
+   "factory version" => factoryversion(),
+   "readline version" => readlineversion(),
+   "mpfr version" => Ccode(constcharstar,"mpfr_version"),
+   "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
+   "executable extension" => Ccode(constcharstar,"EXEEXT"),
+   "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
+   "endianness" => Ccode(constcharstar,"(char *)endianness_string"),
+   "pointer size" => Ccode(int,"sizeof(void *)"),
+   "packages" => Ccode(constcharstar,"PACKAGES"),
+   "build" => Ccode(constcharstar,"buildsystemtype"),
+   "host" => Ccode(constcharstar,"hostsystemtype"),
+   "threads" => USE_THREADS
+   ))));
+
+-- Local Variables:
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d version.o "
+-- End:

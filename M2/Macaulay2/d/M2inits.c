@@ -8,7 +8,6 @@
 #include <M2/config.h>
 #include <gc/gc.h>
 #include <string.h>
-#include "M2types.h"
 #include "M2inits.h"
 #include "M2mem.h"
 #include "debug.h"
@@ -16,19 +15,25 @@
 #define TRUE 1
 #define FALSE 0
 
-extern void IM2_initialize();
+/* to get IM2_initialize() : */
+#include "engine.h"
 
 char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
+
+#ifdef NDEBUG
+static void dummy_GC_warn_proc(char *x, GC_word y) {}
+#endif
+
+
 static void init_gc(void) {
-#include "gc_fixes.h"
      GC_all_interior_pointers = TRUE;
      GC_INIT();
      if (getenv("GC_free_space_divisor")) {
 	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
 	  if (GC_free_space_divisor <= 0) {
-	       fprintf(stderr, "%s: non-positive GC_free_space_divisor value, %ld\n", 
+	       fprintf(stderr, "%s: non-positive GC_free_space_divisor value, %lu\n", 
 		    progname, GC_free_space_divisor);
 	       exit (1);
 	       }
@@ -40,19 +45,6 @@ static void init_gc(void) {
      GC_set_warn_proc(dummy_GC_warn_proc);
 #endif
      }
-
-#if 0
-/* this is the same as getmem(), so use it instead */
-void *GC_malloc_function (size_t new) {
-     void *p = GC_MALLOC(new);
-     if (p == NULL) outofmem();
-#    ifdef DEBUG
-     trapchk(p);
-#    endif
-     return p;
-     }
-#endif
-
 
 void *malloc_function (size_t new) {
      void *p = malloc(new);
@@ -81,44 +73,26 @@ void *realloc_function (void *s, size_t old, size_t new) {
      return p;
      }
 
-extern int initializeGMP();
-
-static void *(*save_gmp_allocate_func  )(size_t);
-static void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
-static void  (*save_gmp_free_func      )(void *, size_t);
-
-void enterFactory() {
-  static int done = 0;
-  if (!done) {
-    done = 1;
-    initializeGMP_Cwrapper();
-    if (__gmp_allocate_func == (void * (*)(size_t)) getmem) {
-      fprintf(stderr, "internal error: gmp initialized before enterFactory called\n");
+int M2inits_firsttime = 1;
+void enterM2(void) {
+  /* this function is called initially, and also again after we call a third party library that sets gmp's memory allocation routines */
+  if (M2inits_firsttime) {
+    M2inits_firsttime = 0;
+    if (__gmp_allocate_func != __gmp_default_allocate) {
+      fprintf(stderr,"internal error: gmp memory allocation functions already set to non-default value\n");
       exit(1);
     }
-    save_gmp_allocate_func   = __gmp_allocate_func;
-    save_gmp_reallocate_func = __gmp_reallocate_func;
-    save_gmp_free_func       = __gmp_free_func;
-    }
-  else {
-    __gmp_allocate_func   = save_gmp_allocate_func;
-    __gmp_reallocate_func = save_gmp_reallocate_func;
-    __gmp_free_func       = save_gmp_free_func;
+    initializeGMP_Cwrapper(); /* this calls factory's initializeGMP() in factory/initgmp.cc, which will call __gmp_set_memory_functions just once */
   }
-}
-
-void enterM2(void) { 
-  mp_set_memory_functions
-    ( 
+  __gmp_set_memory_functions ( /* tell gmp to use gc for memory allocation, with our error messages */
+				/* this function is located in mpir-1.2.1/mp_set_fns.c */
      (void *(*) (size_t)) getmem_atomic,
      (void *(*) (void *, size_t, size_t)) getmoremem_atomic,
-     freememlen ); }
-
-void enterMalloc(void) {
-  mp_set_memory_functions( (void *(*) (size_t)) malloc_function, realloc_function, free_function);
+     freememlen
+     );
+  assert(__gmp_allocate_func == (void *(*) (size_t))getmem_atomic); /* check that __gmp_allocate_func did what we thought */
 }
 
-void M2inits(void) __attribute__ ((constructor));
 void M2inits(void) {
   static int done = 0;
   if (!done) {
@@ -127,17 +101,21 @@ void M2inits(void) {
     trap();			/* we call trap() once so variables (such as trapset) can be set */
 #   endif
     init_gc();
-    factory_init1();		/* just to make sure factory_init1.o gets linked in */
-    factory_init2();		/* just to make sure factory_init2.o gets linked in */
-    M2inits2();			/* just to make it link */
-    enterFactory();
     enterM2();
     IM2_initialize();
   }
 }
 
+void M2inits_linker_dummy(void) {
+    M2inits2();			/* just to make M2inits2.o link */
+}
+
+void scc_core_prepare() {
+  M2inits();
+}
+
 /*
  Local Variables:
- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
  End:
 */

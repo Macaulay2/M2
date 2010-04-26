@@ -1,9 +1,8 @@
 #include <python2.5/Python.h>
-#include "M2types.h"
-#include <gc/gc.h>
+#include "python-exports.h"
 
 int python_RunSimpleString(M2_string s) {
-  char *t = tocharstar(s);
+  char *t = M2_tocharstar(s);
   int ret = PyRun_SimpleString(t);
   GC_FREE(t);
   return ret;
@@ -26,7 +25,7 @@ static void init() {
 }
 
 PyObject *python_RunString(M2_string s) {
-  char *t = tocharstar(s);
+  char *t = M2_tocharstar(s);
   init();
   PyObject *ret = PyRun_String(t,Py_eval_input,globals,locals);
   GC_FREE(t);
@@ -57,7 +56,7 @@ int python_Main() {
 }
 
 PyObject *python_SysGetObject(M2_string s) {
-  char *t = tocharstar(s);
+  char *t = M2_tocharstar(s);
   PyObject *ret = PySys_GetObject(t);
   GC_FREE(t);
   return ret;
@@ -90,3 +89,8 @@ void python_initspam() {
   Py_INCREF(SpamError);
   PyModule_AddObject(m, "error", SpamError);
 }
+#if 0
+Local Variables:
+compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d python-c.o "
+End:
+#endif

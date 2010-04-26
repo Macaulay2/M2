@@ -1,6 +1,9 @@
 # @configure_input@
-############################## main target
-all: scc1
+############################## main targets
+ifneq (@ETAGS@,)
+all: tags
+endif
+all: scc1 scc-core.o
 include ../../include/config.Makefile
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -10,19 +13,27 @@ VPATH = @srcdir@
 	mv y.tab.c $*.c
 	rm -f y.tab.h y.output
 ############################################################
-.PHONY: tags
 YFLAGS := -vdlt
 
 # we don't include @LIBS@ here because including -llapack would make it also
 # necessary to link with the fortran support libraries:
-LOADLIBES += -lm
+LOADLIBES += -lgdbm -lm
 
-CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
-HFILES := $(CNAMES:.c=.h) scc.h grammar.h
+CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c debugging.c
+HFILES := $(CNAMES:.c=.h) scc.h grammar.h keywords.h
 OFILES := $(CNAMES:.c=.o) grammar.o
-SRCFILES := $(HFILES) $(CNAMES) grammar.y
+SRCFILES := $(HFILES) $(CNAMES) grammar.y scc-core.h scc-core.c
 CPPFLAGS := -I../../include -I/include -I@srcdir@/../../include -I@srcdir@ $(CPPFLAGS)
 
+# C standards
+# CFLAGS += -ansi
+CFLAGS += -std=c99
+# CFLAGS += -pedantic-errors
+
+CFLAGS += -Wall -Werror
+ifeq "@__INTEL_COMPILER@" "no"
+CFLAGS += -Wimplicit-function-declaration
+endif
 ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(BUILTLIBPATH)/lib
 endif
@@ -32,18 +43,31 @@ LOADLIBES += @GC_LIBS@
 scc1: $(OFILES)
 $(OFILES) : $(HFILES)
 grammar.o: grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
+############################## debugging, and building *.d and *.dd test programs
+all:.gdbinit
+.gdbinit:.gdbinit.in;cp $^ $@
+clean::; rm -f .gdbinit
+foo-tmp.c foo.sig.tmp: scc1
+# foo-tmp.c : SCCFLAGS += -noarraychks
+foo.o : CPPFLAGS += -Wno-unused-function
+foo-tmp.c : SCCFLAGS += -noline
+foo-tmp.c : SCCFLAGS += -debug
+scc-core.o : scc-core.h
+foo: scc-core.o | scc1
+run-foo:foo;./foo
+clean::; rm -f foo 
+.SECONDARY:
 ############################## tags
-ifneq (@ETAGS@,)
-all: tags
-endif
+.PHONY: tags
 tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(SRCFILES); cd @srcdir@ && @ETAGS@ $(SRCFILES)
+wc : $(SRCFILES) ; wc -l $^
 ############################## cleaning
-clean:
-	rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
-		scc.install TAGS scc core y.tab.h y.output grammar.c
+clean::; rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
+		scc.install scc core y.tab.h y.output grammar.c \
+		*-exports.h *-exports.h.tmp *.sig *.sig.tmp typecode.db *.sym *.dep *.log *-tmp.c *.out *.dep.tmp
 distclean: clean
-	rm -f Makefile
+	rm -f Makefile @srcdir@/TAGS
 
 Makefile: Makefile.in
 	cd ../..; ./config.status Macaulay2/c/Makefile

@@ -126,8 +126,7 @@ Node
 	     G := flagBundle({n-1,2});
 	     integral chern symmetricPower_(2*n-3) last G.Bundles
 	     )
-	for n from 2 to 8 list time f n
-	time f 20
+	for n from 2 to 10 list time f n
    Text
 	Note: in characteristic zero, using Bertini's theorem,
 	the numbers computed can be proved to be equal

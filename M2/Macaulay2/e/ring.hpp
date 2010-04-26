@@ -69,7 +69,7 @@ public:
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
-  const M2_arrayint get_heft_vector() const { return heft_vector; } // This CAN BE NULL
+  M2_arrayint get_heft_vector() const { return heft_vector; } // This CAN BE NULL
 
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
   virtual bool is_ZZ() const { return false; }
@@ -192,9 +192,9 @@ public:
 
   virtual ring_elem from_rational(mpq_ptr q) const = 0;  
   // The default version calls from_int(0). Change it?
-  virtual bool from_BigReal(M2_RRR a, ring_elem &result) const;  
+  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;  
   // The default version calls from_int(0) and returns false.
-  virtual bool from_BigComplex(M2_CCC z, ring_elem &result) const;  
+  virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;  
   // The default version calls from_int(0) and returns false.
 
   virtual ring_elem var(int v) const;
@@ -268,7 +268,11 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
+  virtual void elem_text_out(buffer &o, 
+			     const ring_elem f, 
+			     bool p_one=true, 
+			     bool p_plus=false, 
+			     bool p_parens=false) const = 0;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const = 0;
 
@@ -301,14 +305,14 @@ public:
   // Cleaning real and complex numbers /////
   //////////////////////////////////////////
   virtual unsigned long get_precision() const;  // if the ring is not over RRR or CCC, returns 0.
-  virtual ring_elem zeroize_tiny(M2_RRR epsilon, const ring_elem f) const;
+  virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
   // Default is to return f itself.
-  virtual void increase_maxnorm(M2_RRR norm, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
   // If any real number appearing in f has larger absolute value than norm, replace norm.
   // Default for rings not over RRR or CCC is to do nothing.
-  vec vec_zeroize_tiny(M2_RRR epsilon, const vec f) const;
+  vec vec_zeroize_tiny(gmp_RR epsilon, const vec f) const;
   // Default is to return f itself.
-  void vec_increase_maxnorm(M2_RRR norm, const vec f) const;
+  void vec_increase_maxnorm(gmp_RR norm, const vec f) const;
   // If any real number appearing in f has larger absolute value than norm, replace norm.
   // Default for rings not over RRR or CCC is to do nothing.
 
@@ -341,7 +345,7 @@ public:
   ring_elem get_entry(vec v, int r) const;
   vec sub_vector(const vecterm * v, M2_arrayint r) const;
   int n_nonzero_terms(const vecterm * v) const;
-  void vec_text_out(buffer &o, const vecterm * v) const;
+  void vec_text_out(buffer &o, const vecterm * v, bool p_one=true, bool p_plus=false, bool p_parens=false) const;
   vec vec_eval(const RingMap *map, const FreeModule *F,	const vec v) const;
 
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const;
@@ -383,7 +387,7 @@ public:
   ring_elem dot_product(const vecterm *v, const vecterm *w) const;
 
   /* Polynomial routines.  These all set an error if the ring is not
-     a polynomial ring.  OR, they will be moved to poly.hpp  */
+     a polynomial ring.  OR, they will be moved to polyring.hpp  */
   vec vec_diff(vec v, int rankFw, vec w, int use_coeff) const;
   vec vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const;
   int vec_in_subring(int n, const vec v) const;
@@ -429,7 +433,7 @@ public:
   ring_elem vec_split_off_content(vec f, vec &result) const;
 };
 
-#define ZERO_RINGELEM (ring_elem(reinterpret_cast<Nterm *>(0)))
+#define ZERO_RINGELEM (ring_elem(static_cast<Nterm *>(0)))
 
 #include "ZZ.hpp"
 extern RingZZ *globalZZ;
@@ -437,5 +441,5 @@ extern QQ *globalQQ;
 #endif
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e ring.o "
 // End:

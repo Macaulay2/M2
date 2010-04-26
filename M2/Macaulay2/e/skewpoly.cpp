@@ -2,6 +2,7 @@
 
 #include "skewpoly.hpp"
 #include "gbring.hpp"
+#include "skew.hpp"
 
 SkewPolynomialRing::~SkewPolynomialRing()
 {
@@ -34,29 +35,6 @@ void SkewPolynomialRing::text_out(buffer &o) const
   o << ")";
 }
 
-
-#if 0
-// const SkewPolynomialRing *SkewPolynomialRing::createPolyRing(const Monoid *M) const
-//   // creates this[M], which is commutative in M variables, but skew commutative in
-//   // (some of) the variables of this
-// {
-//   const Monoid *newM = Monoid::tensor_product(M, getMonoid());
-//   if (newM == 0) return 0;
-//   
-//   int nskew = n_skew_commutative_vars();
-//   int nvars = M->n_vars();
-//   M2_arrayint newskewvars = makearrayint(nskew);
-//   for (int i=0; i<nskew; i++)
-//     newskewvars->array[i] = nvars + skew_variable(i);
-// 
-//   return create(getCoefficients(),
-// 		newM,
-// 		this,
-// 		M,
-// 		newskewvars);
-// }
-#endif
-
 ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f, 
 					       const ring_elem c, 
 					       const int *m) const
@@ -65,12 +43,14 @@ ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
   Nterm head;
   Nterm *inresult = &head;
 
-  M_->to_expvector(m, _EXP1);
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  M_->to_expvector(m, EXP1);
 
   for (Nterm *s = f; s != NULL; s = s->next)
     {
-      M_->to_expvector(s->monom, _EXP2);
-      int sign = skew_.mult_sign(_EXP1, _EXP2);
+      M_->to_expvector(s->monom, EXP2);
+      int sign = skew_.mult_sign(EXP1, EXP2);
       if (sign == 0) continue;
 
       Nterm *t = new_term();

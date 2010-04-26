@@ -37,7 +37,7 @@ public:
 
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
-  virtual ComputationOrNull *set_hilbert_function(const RingElement *h)
+  virtual Computation /* or null */ *set_hilbert_function(const RingElement *h)
   { return G->set_hilbert_function(h); }
   // The default version returns an error saying that Hilbert functions cannot be used.
 
@@ -51,29 +51,29 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const MatrixOrNull *get_gb() { return G->get_gb(); }
+  virtual const Matrix /* or null */ *get_gb() { return G->get_gb(); }
 
-  virtual const MatrixOrNull *get_mingens() { return G->get_mingens(); }
+  virtual const Matrix /* or null */ *get_mingens() { return G->get_mingens(); }
 
-  virtual const MatrixOrNull *get_change() { return G->get_change(); }
+  virtual const Matrix /* or null */ *get_change() { return G->get_change(); }
 
-  virtual const MatrixOrNull *get_syzygies() { return G->get_syzygies(); }
+  virtual const Matrix /* or null */ *get_syzygies() { return G->get_syzygies(); }
 
-  virtual const MatrixOrNull *get_initial(int nparts) { return G->get_initial(nparts); }
+  virtual const Matrix /* or null */ *get_initial(int nparts) { return G->get_initial(nparts); }
 
-  virtual const MatrixOrNull *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
 
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const MatrixOrNull *matrix_remainder(const Matrix *m) {
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) {
     return G->matrix_remainder(m);
   }
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   MatrixOrNull **result_remainder,
-			   MatrixOrNull **result_quotient) {
+			   const Matrix /* or null */ **result_remainder,
+			   const Matrix /* or null */ **result_quotient) {
     return G->matrix_lift(m,result_remainder,result_quotient);
   }
 
@@ -86,7 +86,7 @@ public:
 
   virtual void text_out(buffer &o) const { G->text_out(o); }
   // This displays statistical information, and depends on the
-  // gbTrace value.
+  // M2_gbTrace value.
 
   virtual void show() const { G->show(); }
 };

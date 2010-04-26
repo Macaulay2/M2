@@ -1,5 +1,6 @@
 // Copyright 2005, Michael E. Stillman
 
+#include <functional>
 #include "reducedgb-marked.hpp"
 #include "monideal.hpp"
 #include "matrix-con.hpp"
@@ -118,14 +119,15 @@ void MarkedGB::marked_remainder(POLY &f, bool use_denom, ring_elem &denom, gbvec
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents _EXP = R->exponents_make();
+  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+
   while (!R->gbvector_is_zero(h.f))
     {
       if (h.f != marked_lead_term)
 	{
-	  R->gbvector_get_lead_exponents(F, h.f, _EXP);
+	  R->gbvector_get_lead_exponents(F, h.f, EXP);
 	  int x = h.f->comp;
-	  int w = T->find_divisor(_EXP,x);
+	  int w = T->find_divisor(EXP,x);
 	  if (w >= 0)
 	    {
 	      POLY g = polys[w];
@@ -149,7 +151,6 @@ void MarkedGB::marked_remainder(POLY &f, bool use_denom, ring_elem &denom, gbvec
   f.fsyz = h.fsyz;
   R->gbvector_sort(F, f.f);
   R->gbvector_sort(Fsyz, f.fsyz);
-  R->exponents_delete(_EXP);
 }
 
 void MarkedGB::remainder(POLY &f, bool use_denom, ring_elem &denom)
@@ -165,12 +166,13 @@ void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   gbvector * h = f;
-  exponents _EXP = R->exponents_make();
+  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+
   while (!R->gbvector_is_zero(h))
     {
-      R->gbvector_get_lead_exponents(F, h, _EXP);
+      R->gbvector_get_lead_exponents(F, h, EXP);
       int x = h->comp;
-      int w = T->find_divisor(_EXP,x);
+      int w = T->find_divisor(EXP,x);
       if (w < 0)
 	{
 	  frem->next = h;
@@ -192,7 +194,6 @@ void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   h = head.next;
   f = h;
   R->gbvector_sort(F, f);
-  R->exponents_delete(_EXP);
 }
 
 void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
@@ -206,12 +207,12 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   fb.add(f);
   
   const gbvector *lead;
-  exponents _EXP = R->exponents_make();
+  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while ((lead = fb.get_lead_term()) != NULL)
     {
-      R->gbvector_get_lead_exponents(F, lead, _EXP);
+      R->gbvector_get_lead_exponents(F, lead, EXP);
       int x = lead->comp;
-      int w = T->find_divisor(_EXP,x);
+      int w = T->find_divisor(EXP,x);
       if (w < 0)
 	{
 	  frem->next = fb.remove_lead_term();
@@ -223,7 +224,7 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 	  POLY g = polys[w];
 	  R->reduce_marked_lead_term_heap(F, Fsyz,
 					  lead,
-					  _EXP,
+					  EXP,
 					  head.next, fb, zero,
 					  leadterms[w],
 					  g.f, 0);
@@ -231,10 +232,9 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
     }
   f = head.next;
   R->gbvector_sort(F, f);
-  R->exponents_delete(_EXP);
 }
 
-const MatrixOrNull *MarkedGB::get_initial(int nparts)
+const Matrix /* or null */ *MarkedGB::get_initial(int nparts)
 {
   if (nparts > 0)
     {
@@ -250,7 +250,7 @@ const MatrixOrNull *MarkedGB::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-const MatrixOrNull *MarkedGB::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *MarkedGB::get_parallel_lead_terms(M2_arrayint w)
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<polys.size(); i++)

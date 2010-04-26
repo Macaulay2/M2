@@ -18,8 +18,6 @@ extern char errfmtnc[];
 
 #define ERROR (-1)
 
-#define GRAIN 8
-
 #if defined(__ppc__) && defined(__MACH__)
 /* This is how we identify MacOS X, and Darwin */
 #define __DARWIN__ 1
@@ -27,33 +25,33 @@ extern char errfmtnc[];
 
 #include <gc/gc.h>
 
-#if HAVE_UNISTD_H
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#if HAVE_SYSTYPES_H
+#ifdef HAVE_SYSTYPES_H
 #include <sys/types.h>
 #endif
 
-#if HAVE_TYPES_H
+#ifdef HAVE_TYPES_H
 #include <types.h>
 #endif
 
-#if HAVE_SYS_STAT_H
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 
-#if HAVE_STDLIB_H
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
 
-#if HAVE_STRING_H
+#ifdef HAVE_STRING_H
 #include <string.h>
 #endif
 
 #include <ctype.h>
 
-#if HAVE_MEMORY_H
+#ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
 
@@ -65,10 +63,6 @@ extern char errfmtnc[];
 #else
 #include <varargs.h>
 #endif
-
-#define malloc(n) GC_MALLOC(n)
-#define free(n) GC_FREE(n)
-
 
 /*
 # Local Variables:

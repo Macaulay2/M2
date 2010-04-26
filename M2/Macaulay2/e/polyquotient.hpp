@@ -3,7 +3,7 @@
 #ifndef _polyquotient_hpp_
 #define _polyquotient_hpp_
 
-#include "polyring.hpp"
+#include "poly.hpp"
 #include "monideal.hpp"
 #include "qring.hpp"
 
@@ -127,7 +127,10 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const {
+  virtual void elem_text_out(buffer &o, const ring_elem f,
+			     bool p_one=true, 
+			     bool p_plus=false, 
+			     bool p_parens=false) const {
     numerR_->PolyRing::elem_text_out(o,f);
   }
   
@@ -189,7 +192,7 @@ public:
     return numerR_->PolyRing::n_logical_terms(nvars0,f);
   }
 
-  virtual ArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const {
+  virtual engine_RawArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const {
     return numerR_->PolyRing::list_form(coeffR,f);
   }
 

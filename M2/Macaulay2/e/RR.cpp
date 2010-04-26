@@ -50,13 +50,13 @@ ring_elem RingRR::from_int(int n) const
 
 RingRR::RRelem RingRR::new_elem() const
 {
-  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
+  RRelem result = getmemstructtype(RRelem);
   result->val = 0.0;
   return result;
 }
 ring_elem RingRR::from_double(double a) const
 {
-  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
+  RRelem result = getmemstructtype(RRelem);
   result->val = a;
   return RR_RINGELEM(result);
 }
@@ -67,13 +67,13 @@ double RingRR::to_double(ring_elem a) const
 
 ring_elem RingRR::from_rational(mpq_ptr r) const
 {
-  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
+  RRelem result = getmemstructtype(RRelem);
   result->val = mpq_get_d(r);
   return RR_RINGELEM(result);
 }
-bool RingRR::from_BigReal(M2_RRR a, ring_elem &result1) const
+bool RingRR::from_BigReal(gmp_RR a, ring_elem &result1) const
 {
-  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
+  RRelem result = getmemstructtype(RRelem);
   result->val = mpfr_get_d(a,GMP_RNDN);
   result1 =  RR_RINGELEM(result);
   return true;

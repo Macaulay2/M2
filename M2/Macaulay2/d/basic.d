@@ -1,25 +1,23 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use system;
-use stdio;
-use stdiop;
-use xml;
-use engine;
-use binding;
-use strings;
-use nets;
-use varnets;
 use tokens;
-use err;
-use stdio;
-use gmp;
+
+header "
+  #include \"../e/engine.h\"
+  #include <M2/config.h>
+  #ifdef HAVE_PYTHON
+    #include <python2.5/Python.h>
+  #else
+    #define PyObject_Hash(o) 0
+  #endif
+";
 
 export hash(e:Expr):int := (
      when e
      is x:HashTable do x.hash
-     is x:SymbolClosure do x.symbol.hash
+     is x:SymbolClosure do x.symbol.hash -- should add in a hash code for the frame
+     is s:SymbolBody do s.symbol.hash
      is x:Database do x.hash
-     is x:ZZ do hash(x)
+     is x:ZZcell do hash(x.v)
      is b:Boolean do if b.v then 444777 else 777333
      is Nothing do 333889
      is x:List do x.hash
@@ -29,15 +27,15 @@ export hash(e:Expr):int := (
      is MysqlResultWrapper do 2374 -- improve this later!
      is CodeClosure do 73889				 -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash -- there may be many dictionary closures with the same dictionary and different frames, too bad
-     is x:QQ do hash(x)
-     is x:RR do hash(x)
-     is x:CC do hash(x)
+     is x:QQcell do hash(x.v)
+     is x:RRcell do hash(x.v)
+     is x:CCcell do hash(x.v)
      is x:Sequence do (
 	  -- the numbers here are the same as in binary lookup() in objects.d!!
 	  h := 27449;
 	  foreach y in x do h = h * 27457 + hash(y);
 	  h)
-     is x:string do hash(x)				    -- for strings, keep internal and external hash the same
+     is x:stringCell do hash(x.v)				    -- for strings, keep internal and external hash the same
      is n:Net do hash(n)
      is n:NetFile do hash(n)
      is x:file do x.hash
@@ -47,145 +45,63 @@ export hash(e:Expr):int := (
 	       hash(x.position.filename) 
 	       + 1299791 * (int(x.position.line) + 
 		    1299811 * int(x.position.column))))
-     is x:RawMonomial do int(Ccode(ulong, "IM2_Monomial_hash((Monomial*)",x,")" ))
-     is x:RawMonomialOrdering do int(Ccode(ulong, "IM2_MonomialOrdering_hash((MonomialOrdering*)",x,")" ))
-     is x:RawMonoid do int(Ccode(ulong, "IM2_Monoid_hash((Monoid*)",x,")" ))
-     is x:RawMatrix do int(Ccode(int, "IM2_Matrix_hash((Matrix*)",x,")" ))
-     is x:RawMutableMatrix do int(Ccode(int, "IM2_MutableMatrix_hash((MutableMatrix*)",x,")" ))
-     is x:RawStraightLineProgram do int(Ccode(int, "rawStraightLineProgramHash((StraightLineProgram*)",x,")" ))
-     is x:RawPathTracker do int(Ccode(int, "rawPathTrackerHash((PathTracker*)",x,")" ))
-     is x:RawRing do int(Ccode(ulong, "IM2_Ring_hash((Ring*)",x,")" ))
-     is x:RawComputation do int(Ccode(ulong, "IM2_GB_hash((Computation*)",x,")" ))
-     is x:RawFreeModule do (
+     is x:RawMonomialCell do int(hash(x.p))
+     is x:RawMonomialOrderingCell do int(Ccode(ulong, "IM2_MonomialOrdering_hash(",x.p,")" ))
+     is x:RawMonoidCell do int(Ccode(ulong, "IM2_Monoid_hash(",x.p,")" ))
+     is x:RawMatrixCell do int(Ccode(int, "IM2_Matrix_hash(",x.p,")" ))
+     is x:RawMutableMatrixCell do int(Ccode(int, "IM2_MutableMatrix_hash(",x.p,")" ))
+     is x:RawStraightLineProgramCell do int(Ccode(int, "rawStraightLineProgramHash(",x.p,")" ))
+     is x:RawPathTrackerCell do int(Ccode(int, "rawPathTrackerHash(",x.p,")" ))
+     is x:RawRingCell do int(Ccode(ulong, "IM2_Ring_hash(",x.p,")" ))
+     is x:RawComputationCell do int(Ccode(ulong, "IM2_GB_hash(",x.p,")" ))
+     is x:RawFreeModuleCell do (
 	  0
-	  -- int(Ccode(ulong, "IM2_FreeModule_hash((FreeModule*)",x,")" ))
+	  -- int(Ccode(ulong, "IM2_FreeModule_hash(",x.p,")" ))
 	  )
-     is x:RawRingMap do (
+     is x:RawRingMapCell do (
 	  0
-	  -- int(Ccode(ulong, "IM2_RingMap_hash((RingMap*)",x,")" ))
+	  -- int(Ccode(ulong, "IM2_RingMap_hash(",x.p,")" ))
 	  )
-     is x:RawRingElement do 12345
-     is x:RawMonomialIdeal do 12346
-     is s:SpecialExpr do s.class.hash + 221 * hash(s.e)
+     is x:RawRingElementCell do 12345
+     is x:RawMonomialIdealCell do 12346
+     is s:SpecialExpr do s.Class.hash + 221 * hash(s.e)
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
      is f:CompiledFunctionBody do 12347
-     is po:pythonObject do int(Ccode(long, "PyObject_Hash((PyObject *)",po,")"))
-     is xmlNode do int(123456)
-     is xmlAttr do int(123457)
+     is po:pythonObjectCell do int(Ccode(long, "PyObject_Hash(",po.v,")"))
+     is xmlNodeCell do int(123456)
+     is xmlAttrCell do int(123457)
+     is t:ThreadCell do t.body.tid
      );
+
 export hash(x:List):int := (
-     h := x.class.hash + 23407;
+     h := x.Class.hash + 23407;
      foreach y in x.v do h = h * 1299833 + hash(y);
      h);
 export sethash(x:List,mutable:bool):List := (
      if mutable 
      then (
-	  x.mutable = true;
+	  x.Mutable = true;
 	  x.hash = nextHash();
 	  )
      else (
-	  x.mutable = false;
+	  x.Mutable = false;
 	  x.hash = hash(x);
 	  );
      x);
-export setmutability(x:List,mutable:bool):List := (
-     if x.mutable == mutable 
-     then x
-     else if mutable 
-     then (
-	  x.mutable = true;
-	  x.hash = nextHash();
-	  x
-	  )
-     else (
-	  x.mutable = false;
-	  x.hash = hash(x);
-	  x
-	  ));
-export hash(x:HashTable):int := (
-     h := x.parent.hash + x.class.hash * 231 + 32455;
-     foreach bucket in x.table do (
-	  p := bucket;
-	  while p != p.next do (
-	       j := 48892373 + p.hash;
-	       h = h + j * j * hash(p.value);
-	       p = p.next;
-	       ));
-     h);
-export sethash(o:HashTable,mutable:bool):HashTable := (
-     if mutable 
-     then (
-	  o.mutable = true;
-	  o.hash = nextHash();
-	  )
-     else (
-	  o.mutable = false;
-	  o.hash = hash(o);
-	  );
-     o);
-export setmutability(o:HashTable,mutable:bool):HashTable := (
-     if o.mutable == mutable 
-     then o
-     else if mutable
-     then (
-	  o.mutable = true;
-	  o.hash = nextHash();
-	  o)
-     else (
-	  o.mutable = false;
-	  o.hash = hash(o);
-	  o));
 export copy(v:Sequence):Sequence := (
      new Sequence len length(v) do foreach i in v do provide i);
-export copy(table:array(KeyValuePair)):array(KeyValuePair) := (
-     new array(KeyValuePair) len length(table) do (
-	  foreach bucket in table do provide (
-	       if bucket == bucketEnd 
-	       then bucketEnd
-	       else if bucket.next == bucketEnd
-	       then KeyValuePair(
-		    bucket.key, bucket.hash, bucket.value,bucketEnd)
-	       else KeyValuePair(
-		    bucket.key, bucket.hash, bucket.value,
-		    KeyValuePair(
-			 bucket.next.key, bucket.next.hash,
-			 bucket.next.value, (
-			      newbucket := bucketEnd;
-			      p := bucket.next.next;
-			      while p != bucketEnd do (
-				   newbucket = KeyValuePair(
-					p.key,p.hash,p.value,newbucket);
-				   p = p.next;
-				   );
-			      newbucket))))));
-export copy(obj:HashTable):HashTable := HashTable(
-     copy(obj.table), 
-     obj.class, 
-     obj.parent, 
-     obj.numEntries,
-     obj.hash,
-     obj.mutable);
 export copy(a:List):List := List(
-     a.class, 
+     a.Class, 
      new Sequence len length(a.v) do foreach i in a.v do provide i,
      a.hash,
-     a.mutable);
+     a.Mutable);
 export reverse(a:Sequence):Sequence := (
      n := length(a);
      new Sequence len n do (n = n-1; provide a.n));
 export reverse(a:List):List := sethash( 
-     List( a.class, reverse(a.v), 0, a.mutable), a.mutable 
+     List( a.Class, reverse(a.v), 0, a.Mutable), a.Mutable 
      );
-copy(f:Frame):Frame := (
-     if f.frameID == 0			  -- the global dictionary?
-     then f
-     else Frame(
-	  copy(f.outerFrame),
-	  f.frameID,
-	  f.valuesUsed,
-	  false,
-	  new Sequence len length(f.values) do foreach e in f.values do provide e));
 export seq():Expr := emptySequenceE;
 export seq(e:Expr,f:Expr):Expr := Expr(Sequence(e,f));
 export seq(e:Expr,f:Expr,g:Expr):Expr := Expr(Sequence(e,f,g));
@@ -227,5 +143,5 @@ export Array(e:Expr,f:Expr,g:Expr):Expr := Array(Sequence(e,f,g));
 export Array(e:Expr,f:Expr,g:Expr,h:Expr):Expr := Array(Sequence(e,f,g,h));
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d basic.o "
 -- End:

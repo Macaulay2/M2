@@ -83,20 +83,10 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     solvable(0),
     _one(K->from_int(1))
 {
-  _EXP1 = newarray_atomic(int,_nvars+2);
-  _EXP2 = newarray_atomic(int,_nvars+2);
-  _EXP3 = newarray_atomic(int,_nvars+2);
-  _EXP4 = newarray_atomic(int,_nvars+2);
-  _SKEW1 = newarray_atomic(int,_nvars);
-  _SKEW2 = newarray_atomic(int,_nvars);
-  _MONOM1 = M->make_one();
-  _MONOM2 = M->make_one();
-  MONOMlead_exp1_ = M->make_one();
-  EXPskew_mult1_ = newarray_atomic(int,_nvars+2);
-  EXPskew_mult2_ = newarray_atomic(int,_nvars+2);
+  exp_size = EXPONENT_BYTE_SIZE(_nvars+2);
+  monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
 
-  gbvector *used_to_determine_size = 0;
-  gbvector_size = sizeofgbvector(used_to_determine_size,M->monomial_size());
+  gbvector_size = sizeofgbvector(((gbvector *)0),M->monomial_size());
   mem = new stash("gbvector", gbvector_size);
 
   const Z_mod *Kp = K->cast_to_Z_mod();
@@ -186,12 +176,15 @@ gbvector *GBRingSkew::mult_by_term1(const FreeModule *F,
   gbvector head;
   gbvector *inresult = &head;
 
-  M->to_expvector(m, EXPskew_mult1_);
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+
+  M->to_expvector(m, EXP1);
 
   for (const gbvector *s = f; s != NULL; s = s->next)
     {
-      gbvector_get_lead_exponents(F, s, EXPskew_mult2_);
-      int sign = _skew.mult_sign(EXPskew_mult1_, EXPskew_mult2_);
+      gbvector_get_lead_exponents(F, s, EXP2);
+      int sign = _skew.mult_sign(EXP1, EXP2);
       if (sign == 0) continue;
 
       gbvector *t = new_raw_term();
@@ -415,73 +408,16 @@ int GBRing::gbvector_n_terms(const gbvector *v) const
   return result;
 }
 
-#if 0
-// int GBRing::exponents_weight(const int *e) const
-//   // e is an exponent vector 0.._nvars-1
-// {
-//   int sum = 0;
-//   for (int i=0; i<_nvars; i++)
-//     sum += e[i] * _degrees[i];
-//   return sum;
-// }
-// 
-// void GBRing::gbvector_weight(const FreeModule *F, const gbvector *f,
-// 		     int &result_lead,
-// 		     int &result_lo,
-// 		     int &result_hi)
-// {
-// #ifdef DEVELOPMENT
-// #warning "gbvector_weight not implemented"
-// #endif
-//   assert(0);
-// }
-// 
-// int GBRing::gbvector_term_weight(const FreeModule *F, 
-// 			   const gbvector *f)
-// {
-//   if (f == 0) return 0;
-//   gbvector_get_lead_exponents(F,f,_EXP1);
-//   int fdeg = 0;
-//   if (f->comp > 0)
-//     fdeg = F->primary_degree(f->comp-1);
-//   fdeg += exponents_weight(_EXP1);
-//   return fdeg;
-// }
-// 
-// int GBRing::gbvector_degree(const FreeModule *F, 
-// 			    const gbvector *f)
-// {
-//   /* Return the maximum degree of any term of f */
-//   bool first_term = true;
-//   int deg = 0;
-//   if (f == 0) return 0;
-//   for (const gbvector *t=f; t != 0; t = t->next)
-//     {
-//       gbvector_get_lead_exponents(F,t,_EXP1);
-//       int tdeg = 0;
-//       if (t->comp > 0)
-// 	tdeg = F->primary_degree(t->comp-1);
-//       tdeg += exponents_weight(_EXP1);
-//       if (first_term)
-// 	{
-// 	  deg = tdeg;
-// 	  first_term = false;
-// 	}
-//       else
-// 	if (tdeg > deg) deg = tdeg;
-//     }
-//   return deg;
-// }
-#endif
-
 void GBRing::gbvector_multidegree(const FreeModule *F, 
 				  const gbvector *f,
 				  int *&result_degree)
 {
   /* Return the multi degree of the first term of f */
-  gbvector_get_lead_monomial(F,f,_MONOM1);
+  monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+
+  gbvector_get_lead_monomial(F,f,MONOM1);
   result_degree = M->degree_monoid()->make_one();
-  M->multi_degree(_MONOM1, result_degree);
+  M->multi_degree(MONOM1, result_degree);
   M->degree_monoid()->mult(result_degree, F->degree(f->comp-1), result_degree);
 }
 
@@ -576,9 +512,11 @@ gbvector * GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
   // loop through every term of v.  Keep those t that satisfy: exp(leadv) - exp(t)
   // is a multiple of w
   // 
-  exponents lead = exponents_make();
+  
+  exponents lead = ALLOCATE_EXPONENTS(exp_size);
+  exponents e = ALLOCATE_EXPONENTS(exp_size);
+
   M->to_expvector(leadv->monom, lead);
-  exponents e = exponents_make();
 
   gbvector head;
   gbvector *result = &head;
@@ -592,8 +530,6 @@ gbvector * GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
 	}
     }
   result->next = NULL;
-  exponents_delete(lead);
-  exponents_delete(e);
   return head.next;
 }
 
@@ -621,8 +557,10 @@ void GBRing::gbvector_get_lead_exponents(const FreeModule *F,
       && (S=F->get_schreyer_order()) != 0
       && f->comp > 0)
     {
-      S->schreyer_down(f->monom, f->comp-1, MONOMlead_exp1_);
-      M->to_expvector(MONOMlead_exp1_, result);
+      monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+
+      S->schreyer_down(f->monom, f->comp-1, MONOM1);
+      M->to_expvector(MONOM1, result);
     }
   else 
     M->to_expvector(f->monom, result);
@@ -849,27 +787,22 @@ void GBRing::gbvector_text_out(buffer &o,
       return;
     }
 
-  int old_one = p_one;
-  int old_parens = p_parens;
-  int old_plus = p_plus;
-
-  p_one = 0;
+  bool p_one = false;
+  bool p_plus = false;
+  bool p_parens = false;
   int count = nterms;
   const gbvector *t;
   for (t = v; t != NULL && count != 0; t = t->next, count--)
     {
       int isone = (M == NULL || M->is_one(t->monom));
-      K->elem_text_out(o,t->coeff);
+      K->elem_text_out(o,t->coeff,p_one,p_plus,p_parens);
       if (!isone)
-	M->elem_text_out(o, t->monom);
+	M->elem_text_out(o, t->monom, p_one);
       if (t->comp >= 1)
 	o << "<" << t->comp << ">";
-      p_plus = 1;
+      p_plus = true;
     }
   if (t != NULL) o << "+...";
-  p_one = old_one;
-  p_parens = old_parens;
-  p_plus = old_plus;
 }
 
 void GBRing::divide_exponents(const int *exp1,
@@ -938,55 +871,6 @@ void GBRing::gbvector_mult_by_term(const FreeModule *F,
   result_syz = mult_by_term(Fsyz,fsyz,a,m,0);
 }
 
-#if 0
-// This is the version active until 6/27/2005
-// void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
-// 				       const FreeModule *Fsyz,
-// 				       gbvector * flead,
-// 				       gbvector * &f,
-// 				       gbvector * &fsyz,
-// 				       const gbvector *g,
-// 				       const gbvector *gsyz,
-// 				       bool use_denom,
-// 				       ring_elem &denom)
-// {
-//   int comp;
-//   const ring_elem a = f->coeff;
-//   const ring_elem b = g->coeff;
-//   ring_elem u,v;
-//   K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
-//   gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
-//   gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
-//   divide_exponents(_EXP1,_EXP2,_EXP3);
-//   if (g->comp == 0)
-//     comp = f->comp;
-//   else
-//     comp = 0;
-//   if (!K->is_equal(u,_one))
-//     {
-//       gbvector_mult_by_coeff_to(f,u); // modifies f
-//       gbvector_mult_by_coeff_to(flead,u);
-//       gbvector_mult_by_coeff_to(fsyz,u);
-//       if (use_denom) K->mult_to(denom, u);
-//     }
-//   // mult f,flead by u (if u != 1)
-//   // now mult g to cancel
-//   if (is_skew_commutative())
-//     {
-//       if (_skew.mult_sign(_EXP3, _EXP2) < 0)
-// 	K->negate_to(v);
-//     }
-//   M->from_expvector(_EXP3, _MONOM1);
-//   gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
-//   gbvector_add_to(F,f,result1);
-//   if (gsyz != 0) 
-//     {
-//       gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
-//       gbvector_add_to(Fsyz,fsyz,result_syz1);
-//     }
-// }
-#endif
-
 void GBRing::find_reduction_coeffs(const FreeModule *F,
 				   const gbvector *f,
 				   const gbvector *g,
@@ -999,10 +883,13 @@ void GBRing::find_reduction_coeffs(const FreeModule *F,
 
   if (is_skew_commutative())
     {
-      gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
-      gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
-      divide_exponents(_EXP1,_EXP2,_EXP3);
-      if (_skew.mult_sign(_EXP3, _EXP2) < 0)
+      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+      gbvector_get_lead_exponents(F,f,EXP1); // Removes the Schreyer part
+      gbvector_get_lead_exponents(F,g,EXP2); // Removes the Schreyer part
+      divide_exponents(EXP1,EXP2,EXP3);
+      if (_skew.mult_sign(EXP3, EXP2) < 0)
 	K->negate_to(v);
     }
 }
@@ -1023,10 +910,13 @@ bool GBRing::find_reduction_coeffs_ZZ(const FreeModule *F,
 
   if (is_skew_commutative())
     {
-      gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
-      gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
-      divide_exponents(_EXP1,_EXP2,_EXP3);
-      if (_skew.mult_sign(_EXP3, _EXP2) < 0)
+      exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+      exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+      exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+      gbvector_get_lead_exponents(F,f,EXP1); // Removes the Schreyer part
+      gbvector_get_lead_exponents(F,g,EXP2); // Removes the Schreyer part
+      divide_exponents(EXP1,EXP2,EXP3);
+      if (_skew.mult_sign(EXP3, EXP2) < 0)
 	K->negate_to(v);
     }
 
@@ -1067,8 +957,10 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
   int comp;
   ring_elem u,v;
 
+  monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+
   find_reduction_coeffs(F,f,g,u,v);
-  find_reduction_monomial(F,f,g,comp,_MONOM1);
+  find_reduction_monomial(F,f,g,comp,MONOM1);
 
   if (!K->is_equal(u,_one))
     {
@@ -1078,11 +970,11 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
       if (use_denom) K->mult_to(denom, u);
     }
 
-  gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
+  gbvector *result1 = mult_by_term(F,g, v, MONOM1,comp);
   gbvector_add_to(F,f,result1);
   if (gsyz != 0) 
     {
-      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v, MONOM1, comp);
       gbvector_add_to(Fsyz,fsyz,result_syz1);
     }
 }
@@ -1101,8 +993,10 @@ void GBRing::gbvector_reduce_with_marked_lead_term(const FreeModule *F,
   int comp;
   ring_elem u,v;
 
+  monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+
   find_reduction_coeffs(F,f,ginitial,u,v);
-  find_reduction_monomial(F,f,ginitial,comp,_MONOM1);
+  find_reduction_monomial(F,f,ginitial,comp,MONOM1);
 
   if (!K->is_equal(u,_one))
     {
@@ -1112,52 +1006,14 @@ void GBRing::gbvector_reduce_with_marked_lead_term(const FreeModule *F,
       if (use_denom) K->mult_to(denom, u);
     }
 
-  gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
+  gbvector *result1 = mult_by_term(F,g, v,MONOM1,comp);
   gbvector_add_to(F,f,result1);
   if (gsyz != 0) 
     {
-      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,MONOM1, comp);
       gbvector_add_to(Fsyz,fsyz,result_syz1);
     }
 }
-
-#if 0
-// void GBRing::gbvector_ring_reduce_lead_term(const FreeModule *F,
-// 					    const FreeModule *Fsyz,
-// 					    gbvector * flead,
-// 					    gbvector * &f,
-// 					    gbvector * &fsyz,
-// 					    const Nterm *g,
-// 					    bool use_denom,
-// 					    ring_elem &denom)
-// {
-//   int comp;
-//   const ring_elem a = f->coeff;
-//   const ring_elem b = g->coeff;
-//   ring_elem u,v;
-//   K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
-//   gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
-//   M->to_expvector(g->monom, _EXP2);
-//   divide_exponents(_EXP1,_EXP2,_EXP3);
-//   if (!K->is_equal(u,_one))
-//     {
-//       gbvector_mult_by_coeff_to(f,u); // modifies f
-//       gbvector_mult_by_coeff_to(flead,u);
-//       gbvector_mult_by_coeff_to(fsyz,u);
-//       if (use_denom) K->mult_to(denom, u);
-//     }
-//   // mult f,flead by u (if u != 1)
-//   // now mult g to cancel
-//   if (is_skew_commutative())
-//     {
-//       if (_skew.mult_sign(_EXP3, _EXP2) < 0)
-// 	K->negate_to(v);
-//     }
-//   M->from_expvector(_EXP3, _MONOM1);
-//   gbvector *result1 = ring_mult_by_term(F,g, v,_MONOM1,f->comp);
-//   gbvector_add_to(F,f,result1);
-// }
-#endif
 
 void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 				       const FreeModule *Fsyz,
@@ -1183,16 +1039,18 @@ bool GBRing::gbvector_reduce_lead_term_ZZ(const FreeModule *F,
   int comp;
   ring_elem v;
 
+  monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+
   bool result = find_reduction_coeffs_ZZ(F,f,g,v);
   if (K->is_zero(v)) return false;
 
-  find_reduction_monomial(F,f,g,comp,_MONOM1);
+  find_reduction_monomial(F,f,g,comp,MONOM1);
 
-  gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
+  gbvector *result1 = mult_by_term(F,g, v,MONOM1,comp);
   gbvector_add_to(F,f,result1);
   if (gsyz != 0) 
     {
-      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,MONOM1, comp);
       gbvector_add_to(Fsyz,fsyz,result_syz1);
     }
   return result;
@@ -1219,32 +1077,41 @@ void GBRing::gbvector_cancel_lead_terms(
   const ring_elem a = f->coeff;
   const ring_elem b = g->coeff;
   ring_elem u,v;
+
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP4 = ALLOCATE_EXPONENTS(exp_size);
+
+  monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+  monomial MONOM2 = ALLOCATE_MONOMIAL(monom_size);
+
   K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
-  gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
-  gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
-  exponent_syzygy(_EXP1,_EXP2,_EXP3,_EXP4);
+  gbvector_get_lead_exponents(F,f,EXP1); // Removes the Schreyer part
+  gbvector_get_lead_exponents(F,g,EXP2); // Removes the Schreyer part
+  exponent_syzygy(EXP1,EXP2,EXP3,EXP4);
   if (g->comp == 0)
     comp = f->comp;
   else
     comp = 0;
   if (is_skew_commutative())
     {
-      // Note that _EXP3 * _EXP1 = _EXP4 * _EXP2 up to sign
-      if (_skew.mult_sign(_EXP3, _EXP1) !=
-	  _skew.mult_sign(_EXP4, _EXP2))
+      // Note that EXP3 * EXP1 = EXP4 * EXP2 up to sign
+      if (_skew.mult_sign(EXP3, EXP1) !=
+	  _skew.mult_sign(EXP4, EXP2))
 	K->negate_to(v);
     }
-  M->from_expvector(_EXP3, _MONOM1);
-  M->from_expvector(_EXP4, _MONOM2);
-  result = mult_by_term(F,f, u,_MONOM1,0);
-  gbvector *result1 = mult_by_term(F,g, v,_MONOM2,comp);
+  M->from_expvector(EXP3, MONOM1);
+  M->from_expvector(EXP4, MONOM2);
+  result = mult_by_term(F,f, u,MONOM1,0);
+  gbvector *result1 = mult_by_term(F,g, v,MONOM2,comp);
   gbvector_add_to(F,result,result1);
   if (fsyz == 0 && gsyz == 0) 
     result_syz = 0;
   else
     {
-      result_syz = mult_by_term(Fsyz,fsyz, u,_MONOM1,0);
-      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM2, comp);
+      result_syz = mult_by_term(Fsyz,fsyz, u,MONOM1,0);
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,MONOM2, comp);
       gbvector_add_to(Fsyz,result_syz,result_syz1);
     }
 }
@@ -1331,6 +1198,15 @@ void GBRing::gbvector_combine_lead_terms_ZZ(
   const ring_elem a = f->coeff;
   const ring_elem b = g->coeff;
   mpz_t gab,u1,v1;
+
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP3 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP4 = ALLOCATE_EXPONENTS(exp_size);
+
+  monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+  monomial MONOM2 = ALLOCATE_MONOMIAL(monom_size);
+
   mpz_init(gab);
   mpz_init(u1);
   mpz_init(v1);
@@ -1343,31 +1219,31 @@ void GBRing::gbvector_combine_lead_terms_ZZ(
       result_syz = 0;
       return;
     }
-  gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
-  gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
-  exponent_syzygy(_EXP1,_EXP2,_EXP3,_EXP4);
+  gbvector_get_lead_exponents(F,f,EXP1); // Removes the Schreyer part
+  gbvector_get_lead_exponents(F,g,EXP2); // Removes the Schreyer part
+  exponent_syzygy(EXP1,EXP2,EXP3,EXP4);
   if (g->comp == 0)
     comp = f->comp;
   else
     comp = 0;
   if (is_skew_commutative())
     {
-      // Note that _EXP3 * _EXP1 = _EXP4 * _EXP2 up to sign
-      if (_skew.mult_sign(_EXP3, _EXP1) !=
-	  _skew.mult_sign(_EXP4, _EXP2))
+      // Note that EXP3 * EXP1 = EXP4 * EXP2 up to sign
+      if (_skew.mult_sign(EXP3, EXP1) !=
+	  _skew.mult_sign(EXP4, EXP2))
 	K->negate_to(v);
     }
-  M->from_expvector(_EXP3, _MONOM1);
-  M->from_expvector(_EXP4, _MONOM2);
-  result = mult_by_term(F,f, u,_MONOM1,0);
-  gbvector *result1 = mult_by_term(F,g, v,_MONOM2,comp);
+  M->from_expvector(EXP3, MONOM1);
+  M->from_expvector(EXP4, MONOM2);
+  result = mult_by_term(F,f, u,MONOM1,0);
+  gbvector *result1 = mult_by_term(F,g, v,MONOM2,comp);
   gbvector_add_to(F,result,result1);
   if (fsyz == 0 && gsyz == 0) 
     result_syz = 0;
   else
     {
-      result_syz = mult_by_term(Fsyz,fsyz, u,_MONOM1,0);
-      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM2, comp);
+      result_syz = mult_by_term(Fsyz,fsyz, u,MONOM1,0);
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,MONOM2, comp);
       gbvector_add_to(Fsyz,result_syz,result_syz1);
     }
 }
@@ -1418,7 +1294,7 @@ void GBRing::gbvector_apply(const FreeModule *F,
 /////////////////////
 // Content removal //
 /////////////////////
-void GBRing::divide_coeff_exact_to_ZZ(gbvector * f, M2_Integer u) const
+void GBRing::divide_coeff_exact_to_ZZ(gbvector * f, gmp_ZZ u) const
 {
   mpz_t a;
   mpz_init(a);
@@ -1430,7 +1306,7 @@ void GBRing::divide_coeff_exact_to_ZZ(gbvector * f, M2_Integer u) const
   mpz_clear(a);
 }
 
-void GBRing::lower_content_ZZ(gbvector *f, M2_Integer content) const
+void GBRing::lower_content_ZZ(gbvector *f, gmp_ZZ content) const
   // content should be a positive number.  Modify this value
   // so that new value of content = gcd(old-content, content(f)).
 {
@@ -1581,7 +1457,7 @@ void GBRing::gbvector_auto_reduce(const FreeModule *F,
       gbvector_add_to(Fsyz,fsyz,gsyz1);
       gbvector_remove_content(f,fsyz);
 
-      if (gbTrace == 10)
+      if (M2_gbTrace == 10)
 	{
 	  buffer o;
 	  o << "auto reducing by ";
@@ -1618,7 +1494,7 @@ void GBRing::gbvector_auto_reduce_ZZ(const FreeModule *F,
       gbvector_add_to(F,f,g1);
       gbvector_add_to(Fsyz,fsyz,gsyz1);
 
-      if (gbTrace == 10)
+      if (M2_gbTrace == 10)
 	{
 	  buffer o;
 	  o << "auto reducing by ";
@@ -1785,8 +1661,10 @@ void GBRing::reduce_marked_lead_term_heap(const FreeModule *F,
   int comp;
   ring_elem u,v;
 
+  monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
+
   find_reduction_coeffs(F,fcurrent_lead,marked_in_g,u,v);
-  find_reduction_monomial(F,fcurrent_lead,marked_in_g,comp,_MONOM1);
+  find_reduction_monomial(F,fcurrent_lead,marked_in_g,comp,MONOM1);
 
   if (!K->is_equal(u,_one))
     {
@@ -1795,11 +1673,11 @@ void GBRing::reduce_marked_lead_term_heap(const FreeModule *F,
       fsyz.mult_by_coeff(u);
     }
 
-  gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
+  gbvector *result1 = mult_by_term(F,g, v,MONOM1,comp);
   f.add(result1);
   if (gsyz != 0) 
     {
-      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,MONOM1, comp);
       fsyz.add(result_syz1);
     }
 }

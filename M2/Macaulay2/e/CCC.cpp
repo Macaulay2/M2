@@ -9,14 +9,13 @@
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
-#include "../d/M2mem.h"
 
 bool CCC::initialize_CCC(unsigned long prec) 
 {
   initialize_ring(0);
   declare_field();
   precision = prec;
-  _elem_size = sizeof(M2_CCC_struct);
+  _elem_size = sizeofstructtype(gmp_CC);
   _zero_elem = new_elem();
 
   zeroV = from_int(0);
@@ -39,30 +38,34 @@ void CCC::text_out(buffer &o) const
   o << "CCC_" << precision;
 }
 
-M2_CCC CCC::new_elem() const
+gmp_CC CCC::new_elem() const
 {
-  M2_CCC result = reinterpret_cast<M2_CCC>(getmem(_elem_size));
-  result->re = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
-  result->im = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
+  gmp_CC result = getmemstructtype(gmp_CC);
+  result->re = getmemstructtype(gmp_RR);
+  result->im = getmemstructtype(gmp_RR);
   mpfr_init2(result->re,precision);
   mpfr_init2(result->im,precision);
   return result;
 }
-void CCC::remove_elem(M2_CCC f) const
+void CCC::remove_elem(gmp_CC f) const
 {
   // mpfr_clear(f);
 }
 
 ring_elem CCC::random() const
 {
-  M2_CCC result = rawRandomCC(precision);
+  gmp_CC result = rawRandomCC(precision);
   return BIGCC_RINGELEM(result);
 }
 
-void CCC::elem_text_out(buffer &o, const ring_elem ap) const
+void CCC::elem_text_out(buffer &o, 
+			const ring_elem ap, 
+			bool p_one, 
+			bool p_plus, 
+			bool p_parens) const
 {
-  M2_string s = (p_parens ? gmp_tonetCCparen(BIGCC_VAL(ap))
-		 : gmp_tonetCC(BIGCC_VAL(ap)));
+  M2_string s = (p_parens ? (*gmp_tonetCCparenpointer)(BIGCC_VAL(ap))
+		 : (*gmp_tonetCCpointer)(BIGCC_VAL(ap)));
 
   // if: first char is a "-", and p_plus, o << "+"
   // if: an internal "+" or "-", then put parens around it.
@@ -83,7 +86,7 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
 
 ring_elem CCC::from_int(int n) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_set_si(result->re, n, GMP_RNDN);
   mpfr_set_si(result->im, 0, GMP_RNDN);
 
@@ -92,7 +95,7 @@ ring_elem CCC::from_int(int n) const
 
 ring_elem CCC::from_int(mpz_ptr n) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_set_z(result->re, n, GMP_RNDN);
   mpfr_set_si(result->im, 0, GMP_RNDN);
 
@@ -101,16 +104,16 @@ ring_elem CCC::from_int(mpz_ptr n) const
 
 ring_elem CCC::from_rational(mpq_ptr r) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_set_q(result->re, r, GMP_RNDN);
   mpfr_set_si(result->im, 0, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
 
-bool CCC::from_BigReal(M2_RRR r, ring_elem &result1) const
+bool CCC::from_BigReal(gmp_RR r, ring_elem &result1) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_set(result->re, r, GMP_RNDN);
   mpfr_set_si(result->im, 0, GMP_RNDN);
 
@@ -120,16 +123,16 @@ bool CCC::from_BigReal(M2_RRR r, ring_elem &result1) const
 
 ring_elem CCC::from_BigReals(mpfr_ptr a, mpfr_ptr b) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_set(result->re, a, GMP_RNDN);
   mpfr_set(result->im, b, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
 
-bool CCC::from_BigComplex(M2_CCC z, ring_elem &result1) const
+bool CCC::from_BigComplex(gmp_CC z, ring_elem &result1) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_set(result->re, z->re, GMP_RNDN);
   mpfr_set(result->im, z->im, GMP_RNDN);
 
@@ -146,7 +149,7 @@ bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   if (Rf->is_ZZ())
     {
-      M2_CCC g = new_elem();
+      gmp_CC g = new_elem();
       mpfr_set_z(g->re, f.get_mpz(), GMP_RNDN);
       mpfr_set_si(g->im, 0, GMP_RNDN);
       result = BIGCC_RINGELEM(g);
@@ -154,7 +157,7 @@ bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
     }
   if (Rf->is_RRR())
     {
-      M2_CCC g = new_elem();
+      gmp_CC g = new_elem();
       mpfr_set(g->re, MPF_VAL(f), GMP_RNDN);
       mpfr_set_si(g->im, 0, GMP_RNDN);
       result = BIGCC_RINGELEM(g);
@@ -162,7 +165,7 @@ bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
     }
   if (Rf->is_CCC())
     {
-      M2_CCC g = new_elem();
+      gmp_CC g = new_elem();
       mpfr_set(g->re, BIGCC_RE(f), GMP_RNDN);
       mpfr_set(g->im, BIGCC_IM(f), GMP_RNDN);
       result = BIGCC_RINGELEM(g);
@@ -212,7 +215,7 @@ bool CCC::is_real(const ring_elem f) const
 
 ring_elem CCC::absolute(const ring_elem f) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
 
   mpfr_pow_ui(result->re, BIGCC_RE(f), 2, GMP_RNDN);
   mpfr_pow_ui(result->im, BIGCC_IM(f), 2, GMP_RNDN);
@@ -228,7 +231,7 @@ ring_elem CCC::copy(const ring_elem f) const
   mpfr_ptr a = BIGCC_RE(f);
   mpfr_ptr b = BIGCC_IM(f);
 
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_set(result->re, a, GMP_RNDN);
   mpfr_set(result->im, b, GMP_RNDN);
   return BIGCC_RINGELEM(result);
@@ -237,7 +240,7 @@ ring_elem CCC::copy(const ring_elem f) const
 void CCC::remove(ring_elem &f) const
 {
 #if 0
-//   M2_CCC z = BIGCC_VAL(f);
+//   gmp_CC z = BIGCC_VAL(f);
 //   remove_elem(z); // does nothing... get rid of this code?
 //   f = BIGCC_RINGELEM(NULL);
 #endif
@@ -271,7 +274,7 @@ void CCC::internal_subtract_to(ring_elem &f, ring_elem &g) const
 
 ring_elem CCC::negate(const ring_elem f) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_neg(result->re, BIGCC_RE(f), GMP_RNDN);
   mpfr_neg(result->im, BIGCC_IM(f), GMP_RNDN);
   return BIGCC_RINGELEM(result);
@@ -279,7 +282,7 @@ ring_elem CCC::negate(const ring_elem f) const
 
 ring_elem CCC::add(const ring_elem f, const ring_elem g) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_add(result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
   mpfr_add(result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   return BIGCC_RINGELEM(result);
@@ -287,7 +290,7 @@ ring_elem CCC::add(const ring_elem f, const ring_elem g) const
 
 ring_elem CCC::subtract(const ring_elem f, const ring_elem g) const
 {
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   mpfr_sub(result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
   mpfr_sub(result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   return BIGCC_RINGELEM(result);
@@ -295,8 +298,8 @@ ring_elem CCC::subtract(const ring_elem f, const ring_elem g) const
 
 ring_elem CCC::mult(const ring_elem f, const ring_elem g) const
 {
-  M2_CCC result = new_elem();
-  M2_CCC tmp = new_elem();
+  gmp_CC result = new_elem();
+  gmp_CC tmp = new_elem();
   mpfr_mul(result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
   mpfr_mul(tmp->re, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   mpfr_sub(result->re, result->re, tmp->re, GMP_RNDN);
@@ -351,8 +354,8 @@ ring_elem CCC::invert(const ring_elem f) const
   if (is_zero(f))
     return from_int(0);
   else {
-    M2_CCC result = new_elem();
-    M2_CCC tmp = new_elem();
+    gmp_CC result = new_elem();
+    gmp_CC tmp = new_elem();
     mpfr_mul(tmp->re, BIGCC_RE(f), BIGCC_RE(f), GMP_RNDN);
     mpfr_mul(tmp->im, BIGCC_IM(f), BIGCC_IM(f), GMP_RNDN);
     mpfr_add(tmp->re, tmp->re, tmp->im, GMP_RNDN);
@@ -391,7 +394,7 @@ ring_elem CCC::eval(const RingMap *map, const ring_elem f, int) const
   return result;
 }
 
-ring_elem CCC::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
+ring_elem CCC::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
 {
   // This is the one that needs to be rewritten: 14 Jan 2008 
   mpfr_ptr f1 = BIGCC_RE(f);
@@ -402,7 +405,7 @@ ring_elem CCC::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
   if (!re_is_zero && !im_is_zero)
     return f;
 
-  M2_CCC result = new_elem();
+  gmp_CC result = new_elem();
   if (re_is_zero)
     mpfr_set_si(result->re, 0, GMP_RNDN);
   else
@@ -415,7 +418,7 @@ ring_elem CCC::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
 
   return BIGCC_RINGELEM(result);
 }
-void CCC::increase_maxnorm(M2_RRR norm, const ring_elem f) const
+void CCC::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 {
   mpfr_t f1;

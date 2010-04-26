@@ -1,4 +1,4 @@
-// Copyright 2005 Michael E. Stillman
+// Copyright 2005-2010 Michael E. Stillman
 
 // TODO: this code needs to be worked on
 #include <ctime>
@@ -7,11 +7,8 @@
 #include "monsort.hpp"
 #include "../freemod.hpp"
 
-static clock_t clock_sort_columns = 0;
-static clock_t clock_gauss = 0;
-static clock_t clock_make_matrix = 0;
-
 F4GB::F4GB(const Gausser *KK0,
+	   F4Mem *Mem0,
 	   const MonomialInfo *M0,
 	   const FreeModule *F0,
 	   M2_bool collect_syz, 
@@ -31,6 +28,7 @@ F4GB::F4GB(const Gausser *KK0,
     complete_thru_this_degree(-1), // need to reset this in the body
     this_degree(), 
     is_ideal(F0->rank() == 1),
+    hilbert(0),
     gens(), 
     gb(), 
     syz_basis(),
@@ -39,6 +37,7 @@ F4GB::F4GB(const Gausser *KK0,
     next_col_to_process(0),
     mat(0),
     H(M0,17),
+    Mem(Mem0),
     B(), 
     next_monom(), 
     syz_next_col_to_process(0),
@@ -50,7 +49,11 @@ F4GB::F4GB(const Gausser *KK0,
     master_syzB(), 
     syz_next_monom(), 
     //syzF4Vec("syzygy vector manager"),
-    gauss_row()
+    gauss_row(),
+    clock_sort_columns(0),
+    clock_gauss(0),
+    clock_make_matrix(0),
+    syz_clock_sort_columns(0)
 {
   lookup = new MonomialLookupTable(M->n_vars());
   S = new F4SPairSet(M, gb);
@@ -59,18 +62,23 @@ F4GB::F4GB(const Gausser *KK0,
   //  mat->columns.reserve(200000);
 
   // set status
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     M->show();
 
   // initialize syzygy stuff
   using_syz = strategy & STRATEGY_USE_SYZ;
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     fprintf(stderr, "SYZ: using_syz = %i\n", using_syz);
   syz = new coefficient_matrix;
   master_syz = new coefficient_matrix;
   if (using_syz) 
     syzF = F->get_ring()->make_Schreyer_FreeModule();
 
+}
+
+void F4GB::set_hilbert_function(const RingElement *hf)
+{
+  if (!using_syz) hilbert = new HilbertController(F, hf);
 }
 
 void F4GB::delete_gb_array(gb_array &g)
@@ -113,7 +121,7 @@ int F4GB::new_column(packed_monomial m)
 {
   // m is a packed monomial, unique via the hash table H, B.
   column_elem c;
-  int next_column = mat->columns.size();
+  int next_column = INTSIZE(mat->columns);
   m[-1] = next_column;
   c.monom = m;
   c.head = -2;
@@ -125,7 +133,7 @@ int F4GB::find_or_append_column(packed_monomial m)
 {
   packed_monomial new_m;
   if (H.find_or_insert(m, new_m))
-    return new_m[-1];
+    return static_cast<int>(new_m[-1]);
   // At this point, m is a new monomial to be placed as a column
   m = next_monom;
   B.intern(1+M->monomial_size(m));
@@ -144,7 +152,7 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
   packed_monomial new_m;
   M->unchecked_mult(m,n,next_monom);
   if (H.find_or_insert(next_monom, new_m))
-    return new_m[-1]; // monom exists, don't save monomial space
+    return static_cast<int>(new_m[-1]); // monom exists, don't save monomial space
   m = next_monom;
   B.intern(1+M->monomial_size(m));
   next_monom = B.reserve(1+M->max_monomial_size());
@@ -162,7 +170,7 @@ void F4GB::load_gen(int which)
   
   r.len = g.len;
   r.coeffs = 0;  // will be fetched when needed via get_coeffs_array
-  r.comps = F4Mem::components.allocate(g.len);
+  r.comps = Mem->components.allocate(g.len);
 
   monomial_word *w = g.monoms;
   for (int i=0; i<g.len; i++)
@@ -188,7 +196,7 @@ void F4GB::load_row(packed_monomial monom, int which)
 
   r.len = g.len;
   r.coeffs = 0;  // will be fetched when needed via get_coeffs_array
-  r.comps = F4Mem::components.allocate(g.len);
+  r.comps = Mem->components.allocate(g.len);
 
   monomial_word *w = g.monoms;
   for (int i=0; i<g.len; i++)
@@ -223,7 +231,7 @@ void F4GB::process_column(int c)
       next_monom = B.reserve(1+M->max_monomial_size());
       next_monom++;
       //M->set_component(which, n);
-      ce.head = mat->rows.size();
+      ce.head = INTSIZE(mat->rows);
       load_row(n,which);
     }
   else 
@@ -257,7 +265,7 @@ void F4GB::process_s_pair(spair *p)
       next_monom++;
       load_row(n, p->j);
 
-      mat->columns[c].head = mat->rows.size()-1;
+      mat->columns[c].head = INTSIZE(mat->rows)-1;
     }
     break;
   }
@@ -278,13 +286,13 @@ void F4GB::reorder_columns()
   // Find the inverse of this permutation: place values into "ord" column fields.
   // Loop through every element of the matrix, changing its comp array.
 
-  int nrows = mat->rows.size();
-  int ncols = mat->columns.size();
+  int nrows = INTSIZE(mat->rows);
+  int ncols = INTSIZE(mat->columns);
 
   // sort the columns
 
-  int *column_order = F4Mem::components.allocate(ncols);
-  int *ord = F4Mem::components.allocate(ncols);
+  int *column_order = Mem->components.allocate(ncols);
+  int *ord = Mem->components.allocate(ncols);
 
   clock_t begin_time = clock();
   for (int i=0; i<ncols; i++)
@@ -292,19 +300,18 @@ void F4GB::reorder_columns()
       column_order[i] = i;
     }
 
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     fprintf(stderr, "ncomparisons = ");
 
   ColumnsSorter C(M, mat);
   QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
 
-  if (gbTrace >= 2)
-    fprintf(stderr, "%ld, ", C.ncomparisons());
   clock_t end_time = clock();
-  clock_sort_columns += end_time - begin_time;
-  double nsecs = end_time - begin_time;
-  nsecs /= CLOCKS_PER_SEC;
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
+    fprintf(stderr, "%ld, ", C.ncomparisons());
+  double nsecs = (double)(end_time - begin_time)/CLOCKS_PER_SEC;
+  clock_sort_columns += nsecs;
+  if (M2_gbTrace >= 2)
     fprintf(stderr, " time = %f\n", nsecs);
 
   for (int i=0; i<ncols; i++)
@@ -343,31 +350,31 @@ void F4GB::reorder_columns()
     }
 
   std::swap(mat->columns, newcols);
-  F4Mem::components.deallocate(column_order);
-  F4Mem::components.deallocate(ord);
+  Mem->components.deallocate(column_order);
+  Mem->components.deallocate(ord);
 }
 
 void F4GB::reorder_rows()
 {
   //??? reorder rows in <mat> and <syz> simultaneously?
 
-  long nrows = mat->rows.size();
-  long ncols = mat->columns.size();
+  int nrows = INTSIZE(mat->rows);
+  int ncols = INTSIZE(mat->columns);
   coefficient_matrix::row_array newrows;
   VECTOR(long) rowlocs; // 0..nrows-1 of where row as been placed
 
   newrows.reserve(nrows);
   rowlocs.reserve(nrows);
-  for (long r = 0; r < nrows; r++)
+  for (int r = 0; r < nrows; r++)
     rowlocs.push_back(-1);
 
-  for (long c = 0; c < ncols; c++)
+  for (int c = 0; c < ncols; c++)
     {
       int oldrow = mat->columns[c].head;
       if (oldrow >= 0)
 	{
 	  // Move the row into place
-	  long newrow = newrows.size();
+	  int newrow = INTSIZE(newrows);
 	  newrows.push_back(mat->rows[oldrow]);
 	  rowlocs[oldrow] = newrow;
 	  mat->columns[c].head = newrow;
@@ -376,7 +383,7 @@ void F4GB::reorder_rows()
 	}
       
     }
-  for (long r = 0; r < nrows; r++)
+  for (int r = 0; r < nrows; r++)
     if (rowlocs[r] < 0)
       newrows.push_back(mat->rows[r]);
   std::swap(mat->rows, newrows);
@@ -397,7 +404,7 @@ void F4GB::clear_matrix()
     {
       row_elem &r = mat->rows[i];
       if (r.coeffs) KK->deallocate_F4CCoefficientArray(r.coeffs, r.len);
-      F4Mem::components.deallocate(r.comps);
+      Mem->components.deallocate(r.comps);
       r.len = 0;
       r.elem = -1;
       r.monom = 0;
@@ -406,11 +413,11 @@ void F4GB::clear_matrix()
   mat->columns.clear();
   H.reset();
   B.reset();
-  if (gbTrace >= 4)
+  if (M2_gbTrace >= 4)
     {
-      F4Mem::components.show();
-      F4Mem::coefficients.show();
-      F4Mem::show();
+      Mem->components.show();
+      Mem->coefficients.show();
+      Mem->show();
     }
 }
 
@@ -432,7 +439,7 @@ void F4GB::make_matrix()
     process_column(next_col_to_process++);
 
   // DEBUGGING:
-  if (gbTrace >= 2) {
+  if (M2_gbTrace >= 2) {
     fprintf(stderr, "--matrix--%ld by %ld\n", 
 	    (long)mat->rows.size(), (long)mat->columns.size());
     if (using_syz) 
@@ -481,8 +488,16 @@ void F4GB::gauss_reduce(bool diagonalize)
   //  note that the row must be reducible, since the lead term corresponds to an spair cancellation
   //   actually: not true: generators will often not be reducible...
   //  also each such row must be non-zero, for the same reason
-  int nrows = mat->rows.size();
-  int ncols = mat->columns.size();
+  int nrows = INTSIZE(mat->rows);
+  int ncols = INTSIZE(mat->columns);
+
+  int n_newpivots = -1; // the number of new GB elements in this degree
+  int n_zero_reductions = 0;
+  if (hilbert)
+    {
+      n_newpivots = hilbert->nRemainingExpected();
+      if (n_newpivots == 0) return;
+    }
 
   KK->dense_row_allocate(gauss_row, ncols);
   if (using_syz) KK->dense_row_allocate(syz_row, nrows);  
@@ -518,7 +533,7 @@ void F4GB::gauss_reduce(bool diagonalize)
 	first = KK->dense_row_next_nonzero(gauss_row, first+1, last);
       } while (first <= last);
       if (r.coeffs) KK->deallocate_F4CCoefficientArray(r.coeffs, r.len);
-      F4Mem::components.deallocate(r.comps);
+      Mem->components.deallocate(r.comps);
       r.len = 0;
       KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
       // the above line leaves gauss_row zero, and also handles the case when r.len is 0
@@ -528,8 +543,8 @@ void F4GB::gauss_reduce(bool diagonalize)
 	if (s.len>0) // the opposite should not happen
 	  {
 	    int* scoeffs = static_cast<int *>(s.coeffs);
-	    F4Mem::coefficients.deallocate(scoeffs);
-	    F4Mem::components.deallocate(s.comps);
+	    Mem->coefficients.deallocate(scoeffs);
+	    Mem->components.deallocate(s.comps);
 	    s.len = 0;
 	  }
 	syz_dense_row_to_sparse_row(syz->rows[i]);
@@ -540,10 +555,16 @@ void F4GB::gauss_reduce(bool diagonalize)
 	  syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
 	  KK->sparse_row_make_monic(r.len, r.coeffs);
 	  mat->columns[r.comps[0]].head = i;
+	  if (--n_newpivots == 0) break;
 	}
+      else
+	n_zero_reductions++;
     }
   KK->dense_row_deallocate(gauss_row);
   if (using_syz) KK->dense_row_deallocate(syz_row);    
+
+  if (M2_gbTrace >= 3)
+    fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions);
 
   if (diagonalize)
     tail_reduce();
@@ -551,8 +572,8 @@ void F4GB::gauss_reduce(bool diagonalize)
 
 void F4GB::tail_reduce()
 {
-  int nrows = mat->rows.size();
-  int ncols = mat->columns.size();
+  int nrows = INTSIZE(mat->rows);
+  int ncols = INTSIZE(mat->columns);
   
   KK->dense_row_allocate(gauss_row, ncols);
   if (using_syz) KK->dense_row_allocate(syz_row, nrows);  
@@ -585,7 +606,7 @@ void F4GB::tail_reduce()
       };
       if (anychange)
 	{
-	  F4Mem::components.deallocate(r.comps);
+	  Mem->components.deallocate(r.comps);
 	  KK->deallocate_F4CCoefficientArray(r.coeffs, r.len); // the coeff array is owned by the row here
 	  r.len = 0;
 	  KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
@@ -594,8 +615,8 @@ void F4GB::tail_reduce()
 	    if (s.len>0) // the opposite should not happen
 	      {
 		int* scoeffs = static_cast<int *>(s.coeffs);
-		F4Mem::coefficients.deallocate(scoeffs);
-		F4Mem::components.deallocate(s.comps);
+		Mem->coefficients.deallocate(scoeffs);
+		Mem->components.deallocate(s.comps);
 		s.len = 0;
 	      }
 	    syz_dense_row_to_sparse_row(syz->rows[i]);
@@ -605,7 +626,7 @@ void F4GB::tail_reduce()
       else
 	{
 	  KK->dense_row_clear(gauss_row, firstnonzero, last);
-	  KK->dense_row_clear(gauss_row, 0, syz->columns.size()-1); //!!!lazy
+	  KK->dense_row_clear(gauss_row, 0, INTSIZE(syz->columns)-1); //!!!lazy
 	}
       if (r.len > 0)
 	{
@@ -631,8 +652,8 @@ void F4GB::insert_gb_element(row_elem &r)
   //  insert the monomial into the lookup table
   //  find new pairs associated to this new element
 
-  long nslots = M->max_monomial_size();
-  long nlongs = r.len * nslots;
+  int nslots = M->max_monomial_size();
+  int nlongs = r.len * nslots;
 
   gbelem *result = new gbelem;
   result->f.len = r.len;
@@ -643,7 +664,7 @@ void F4GB::insert_gb_element(row_elem &r)
   result->f.coeffs = (r.coeffs ? r.coeffs : KK->copy_F4CoefficientArray(r.len, get_coeffs_array(r)));
   r.coeffs = 0;;
   
-  result->f.monoms = F4Mem::allocate_monomial_array(nlongs);
+  result->f.monoms = Mem->allocate_monomial_array(nlongs);
 
   monomial_word *nextmonom = result->f.monoms;
   for (int i=0; i<r.len; i++)
@@ -651,15 +672,24 @@ void F4GB::insert_gb_element(row_elem &r)
       M->copy(mat->columns[r.comps[i]].monom, nextmonom);
       nextmonom += nslots;
     }
-  F4Mem::components.deallocate(r.comps);
+  Mem->components.deallocate(r.comps);
   r.len = 0;
   result->deg = this_degree;
-  result->alpha = M->last_exponent(result->f.monoms);
+  result->alpha = static_cast<int>(M->last_exponent(result->f.monoms));
   result->minlevel = ELEM_MIN_GB; // MES: How do
                                   // we distinguish between ELEM_MIN_GB, ELEM_POSSIBLE_MINGEN?
 
-  int which = gb.size();
+  int which = INTSIZE(gb);
   gb.push_back(result);
+
+  if (hilbert)
+    {
+      int x;
+      int *exp = newarray_atomic(int, M->n_vars());
+      M->to_intstar_vector(result->f.monoms, exp, x);
+      hilbert->addMonomial(exp, x+1);
+      deletearray(exp);
+    }
 
   // now insert the lead monomial into the lookup table
   varpower_monomial vp = newarray_atomic(varpower_word, 2 * M->n_vars() + 1);
@@ -687,11 +717,13 @@ void F4GB::new_GB_elements()
      we don't need to loop through all of these */
      
   for (int r=0; r<mat->rows.size(); r++)
-    if (is_new_GB_row(r)) {
-      insert_syz(syz->rows[r], gb.size());
-      insert_gb_element(mat->rows[r]);
-    } else {
-      insert_syz(syz->rows[r]);
+    {
+      if (is_new_GB_row(r)) {
+	insert_syz(syz->rows[r], INTSIZE(gb));
+	insert_gb_element(mat->rows[r]);
+      } else {
+	insert_syz(syz->rows[r]);
+      }
     }
 }
 
@@ -702,6 +734,12 @@ void F4GB::new_GB_elements()
 
 void F4GB::do_spairs()
 {
+  if (hilbert && hilbert->nRemainingExpected() == 0)
+    {
+      if (M2_gbTrace >= 1)
+	fprintf(stderr, "-- skipping degree...no elements expected in this degree\n");
+      return;
+    }
   reset_matrix();
   reset_syz_matrix();
   clock_t begin_time = clock();
@@ -709,7 +747,7 @@ void F4GB::do_spairs()
   n_lcmdups = 0;
   make_matrix();
 
-  if (gbTrace >= 5) {
+  if (M2_gbTrace >= 5) {
     fprintf(stderr, "---------\n");
     show_matrix();
     fprintf(stderr, "---------\n");
@@ -717,12 +755,12 @@ void F4GB::do_spairs()
 
   clock_t end_time = clock();
   clock_make_matrix += end_time - begin_time;
-  double nsecs = end_time - begin_time;
+  double nsecs = static_cast<double>(end_time - begin_time);
   nsecs /= CLOCKS_PER_SEC;
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     fprintf(stderr, " make matrix time = %f\n", nsecs);
   
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     H.dump();
 
   begin_time = clock();
@@ -734,14 +772,14 @@ void F4GB::do_spairs()
   //  show_matrix();
   //  fprintf(stderr, "---------\n");
 
-  nsecs = end_time - begin_time;
+  nsecs = static_cast<double>(end_time - begin_time);
   nsecs /= CLOCKS_PER_SEC;
-  if (gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     {
       fprintf(stderr, " gauss time          = %f\n", nsecs);
 
-      fprintf(stderr, " lcm dups            = %d\n", n_lcmdups);
-      if (gbTrace >= 5)
+      fprintf(stderr, " lcm dups            = %ld\n", n_lcmdups);
+      if (M2_gbTrace >= 5)
 	{
 	  fprintf(stderr, "---------\n");
 	  show_matrix();
@@ -751,13 +789,13 @@ void F4GB::do_spairs()
 	}
     }
   new_GB_elements();
-  int ngb = gb.size();
-  if (gbTrace >= 1) {
+  int ngb = INTSIZE(gb);
+  if (M2_gbTrace >= 1) {
     fprintf(stderr, " # GB elements   = %d\n", ngb);
-    if (gbTrace >= 5) show_gb_array(gb);
+    if (M2_gbTrace >= 5) show_gb_array(gb);
     if (using_syz) 
       fprintf(stderr, " # syzygies      = %ld\n", static_cast<long>(syz_basis.size()));
-    if (gbTrace >= 5) show_syz_basis();
+    if (M2_gbTrace >= 5) show_syz_basis();
   }
 
   clear_matrix();
@@ -819,7 +857,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
   for (;;)
     {
-      if (system_interruptedFlag) 
+      if (test_Field(interrupts_interruptedFlag)) 
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;
@@ -840,31 +878,41 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 	  is_done = COMP_DONE_DEGREE_LIMIT;
 	  break;
 	}
-      if (gbTrace >= 1)
-	fprintf(stderr, "DEGREE %d (npairs %d)\n", this_degree, npairs);
+
+      if (hilbert)
+	{
+	  if (!hilbert->setDegree(this_degree))
+	    {
+	      is_done = COMP_INTERRUPTED;
+	      break;
+	    }
+	}
+
+      if (M2_gbTrace >= 1)
+	{
+	  if (hilbert)
+	    fprintf(stderr, "DEGREE %d (nexpected %d npairs %d)\n", this_degree, hilbert->nRemainingExpected(), npairs);
+	  else
+	    fprintf(stderr, "DEGREE %d (npairs %d)\n", this_degree, npairs);
+	}
       do_spairs();
       complete_thru_this_degree = this_degree;
     }
 
   clear_master_syz();  
 
-  if (gbTrace>=2)
+  if (M2_gbTrace>=2)
     {
-      double clock_time = clock_sort_columns;
-      clock_time /= CLOCKS_PER_SEC;
-      fprintf(stderr, "total time for sorting columns: %f\n", clock_time);
-      
-      clock_time = clock_make_matrix;
-      clock_time /= CLOCKS_PER_SEC;
-      fprintf(stderr, "total time for making matrix (includes sort): %f\n", clock_time);
-      
-      clock_time = clock_gauss;
-      clock_time /= CLOCKS_PER_SEC;
-      fprintf(stderr, "total time for gauss: %f\n", clock_time);
+      fprintf(stderr, "number of calls to cancel row       : %ld\n", KK->n_dense_row_cancel);
+      fprintf(stderr, "number of calls to subtract_multiple: %ld\n", KK->n_subtract_multiple);
+      fprintf(stderr, "total time for sorting columns: %f\n", clock_sort_columns);
+      if (using_syz) 
+	fprintf(stderr, "total time for sorting syz columns: %f\n", syz_clock_sort_columns);
+      fprintf(stderr, "total time for making matrix (includes sort): %f\n", ((double)clock_make_matrix)/CLOCKS_PER_SEC);
+      fprintf(stderr, "total time for gauss: %f\n", ((double)clock_gauss)/CLOCKS_PER_SEC);
     }
 
-  extern long nsaved_unneeded;
-  fprintf(stderr, "number of spairs removed by criterion = %ld\n", nsaved_unneeded);
+  fprintf(stderr, "number of spairs removed by criterion = %ld\n", S->n_unneeded_pairs());
   M->show();
   return is_done;
 }
@@ -950,8 +998,8 @@ void F4GB::gauss_reduce_linbox()
   char fname[30];      
   sprintf(fname, "tmp.%i.matrix", this_degree);
   FILE* mfile = fopen(fname, "w");  
-  int nrows = mat->rows.size();
-  int ncols = mat->columns.size();
+  int nrows = INTSIZE(mat->rows);
+  int ncols = INTSIZE(mat->columns);
   
   fprintf(mfile, "%i %i M\n", nrows, ncols);
   for (int i=0; i<nrows; i++)
@@ -970,7 +1018,7 @@ void F4GB::gauss_reduce_linbox()
 
 void F4GB::show_new_rows_matrix()
 {
-  int ncols = mat->columns.size();
+  int ncols = INTSIZE(mat->columns);
   int nrows = 0;
   for (int nr=0; nr<mat->rows.size(); nr++)
     if (is_new_GB_row(nr)) nrows++;

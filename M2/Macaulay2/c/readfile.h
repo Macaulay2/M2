@@ -6,7 +6,6 @@ struct CURRENT {
      bool wrapit;
      } ;
 extern struct CURRENT cur;
-extern bool do_setup;
 extern bool iswhite(int);
 extern void read_setup();
 extern node gettoken(void);

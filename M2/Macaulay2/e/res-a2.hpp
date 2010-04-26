@@ -43,7 +43,7 @@ public:
 
   // Hilbert functions of these nodes...
   // Both of these return 0 if computed, non-zero if interrupted.
-  virtual RingElementOrNull * hilbertNumerator() = 0;
+  virtual RingElement /* or null */ * hilbertNumerator() = 0;
 
   virtual int n_gb_elems() const = 0;
   virtual const FreeModule *output_free_module() const = 0;
@@ -91,7 +91,7 @@ public:
   virtual void reduce(gbvector * &, gbvector * &) {}
 
   // The following routine should NEVER be called
-  virtual RingElementOrNull * hilbertNumerator();
+  virtual RingElement /* or null */ * hilbertNumerator();
 
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() const { return gens->rows(); }
@@ -223,7 +223,7 @@ public:
 
   virtual void reduce(gbvector * &f, gbvector * &fsyz);
 
-  virtual RingElementOrNull * hilbertNumerator();
+  virtual RingElement /* or null */ * hilbertNumerator();
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   int n_gb_elems() const { return n_gb; }
@@ -287,9 +287,9 @@ public:
   int complete_thru_degree() const;
   // The computation is complete up through this slanted degree.
 
-  const MatrixOrNull *get_matrix(int level);
+  const Matrix /* or null */ *get_matrix(int level);
 
-  const FreeModuleOrNull *get_free(int level) { return free_module(level); }
+  const FreeModule /* or null */ *get_free(int level) { return free_module(level); }
 
   M2_arrayint get_betti(int type) const;
   // type is documented under rawResolutionBetti, in engine.h
@@ -300,7 +300,7 @@ public:
 
   void text_out(buffer &o) const;
   // This displays statistical information, and depends on the
-  // gbTrace value.
+  // M2_gbTrace value.
 
   void stats() const;
   // Same as text_out, but writes its information directly, so as not

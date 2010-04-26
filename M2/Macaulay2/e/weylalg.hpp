@@ -3,7 +3,7 @@
 #ifndef _weylalg_hh_
 #define _weylalg_hh_
 
-#include "polyring.hpp"
+#include "poly.hpp"
 #include "gbring.hpp"
 
 ///// Ring Hierarchy ///////////////////////////////////

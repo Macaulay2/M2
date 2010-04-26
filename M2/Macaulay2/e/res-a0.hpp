@@ -8,7 +8,7 @@
 #include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
-#include "polyring.hpp"
+#include "poly.hpp"
 #include "comp-res.hpp"
 
 struct res2_pair;
@@ -138,7 +138,7 @@ class res2_comp : public ResolutionComputation
   // Algorithm choice:
   unsigned char do_by_level;    // if != 0, use this.  If == 2, use the strip components
 				// optimization.
-  unsigned char do_by_degree;;
+  unsigned char do_by_degree;
   unsigned char use_respolyHeaps;	// 0=don't use, 1=use (and implies auto_reduce>=1)
   int auto_reduce;		// 0=none, 1=partial, 2=full
 
@@ -148,14 +148,23 @@ class res2_comp : public ResolutionComputation
   int nminimal;
   int total_reduce_count;
 
-  // Internal variables.  Used locally in a single routine
-  int *REDUCE_exp;
-  int *REDUCE_mon;
-  int *PAIRS_mon;
-  int *MINIMAL_mon;
+  // More statistics, just for interest
+  int n_ones;
+  int n_unique;
+  int n_others;
+
+  // byte sizes for allocating temp exp vectors and monomials on the stack
+  size_t exp_size;
+  size_t monom_size;
+
+  // Variables for compare_res2_pairs
+  int compare_type;
+  int compare_use_degree;
+  int compare_use_descending;
+  int compare_use_reverse;
 
   int find_ring_divisor(const int *exp, ring_elem &result) const;
-  int find_divisor(const MonomialIdeal *mi, const int *exp, res2_pair *& result) const;
+  int find_divisor(const MonomialIdeal *mi, const int *exp, res2_pair *& result);
   res2_pair *reduce(res2term *&f, res2term *&fsyz, res2term *&pivot, res2_pair *p);
   res2_pair *reduce2(res2term *&f, res2term *&fsyz, res2term *&pivot, res2_pair *p);
   res2_pair *reduce3(res2term *&f, res2term *&fsyz, res2term *&pivot, res2_pair *p);
@@ -174,9 +183,9 @@ class res2_comp : public ResolutionComputation
   int compare_res2_pairs(res2_pair *f, res2_pair *g) const;
   res2_pair *merge_res2_pairs(res2_pair *f, res2_pair *g) const;
   void sort_res2_pairs(res2_pair *& p) const;
-  void sort_skeleton(res2_pair *&p) const;
-  void sort_monorder(res2_pair *&p) const;
-  void sort_reduction(res2_pair *&p) const;
+  void sort_skeleton(res2_pair *&p);
+  void sort_monorder(res2_pair *&p);
+  void sort_reduction(res2_pair *&p);
 
   void multi_degree(const res2_pair *q, int *result) const;
 
@@ -251,9 +260,9 @@ public:
   Matrix *make(int i) const;
   Matrix *make_minimal(int i) const;
 
-  const MatrixOrNull *get_matrix(int level) { return make_minimal(level); }
+  const Matrix /* or null */ *get_matrix(int level) { return make_minimal(level); }
 
-  const FreeModuleOrNull *get_free(int level) { return minimal_free_of(level); }
+  const FreeModule /* or null */ *get_free(int level) { return minimal_free_of(level); }
 
 //////////////////////////////////////////////
 //  Betti routines and numbers associated ////
@@ -293,8 +302,8 @@ public:
   res2_comp   * cast_to_res2_comp  ()       { return this; }
 
   const Ring   * get_ring() const { return P; }
-  const Monoid  * Nmonoms() const { return M; }
-  const Ring   * Ncoeffs() const { return K; }
+  const Monoid  * getMonoid() const { return M; }
+  const Ring   * getCoefficientRing() const { return K; }
   const Monoid  * degree_monoid() const { return P->degree_monoid(); }
 };
 #endif

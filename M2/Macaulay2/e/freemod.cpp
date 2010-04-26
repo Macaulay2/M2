@@ -34,7 +34,7 @@ FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
       const PolynomialRing *P = RR->cast_to_PolynomialRing();
       assert(P != 0);
       assert(n == 0);
-      schreyer = SchreyerOrder::create(P->Nmonoms());
+      schreyer = SchreyerOrder::create(P->getMonoid());
     }
   else
     schreyer = 0;
@@ -62,7 +62,7 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   assert(R);
   FreeModule *G = R->make_FreeModule();
-  int rk = m->elems.size();
+  int rk = INTSIZE(m->elems);
   if (rk == 0) return G;
 
   for (int i=0; i<rk; i++)
@@ -103,8 +103,7 @@ Matrix * FreeModule::get_induced_order() const
 
 FreeModule::~FreeModule()
 {
-  if (schreyer)
-    delete schreyer;
+  // schreyer order is finalized, so we don't remove it here
 }
 
 FreeModule *FreeModule::new_free() const
@@ -324,43 +323,61 @@ FreeModule *FreeModule::exterior(int p) const
   return result;
 }
 
-static FreeModule *symm1_result = NULL;
-static int *symm1_deg = NULL;
+struct FreeModule_symm {
+  const FreeModule *F; // original one
+  const Monoid *D; // degree monoid
+  int n;
 
-void FreeModule::symm1(int lastn,	     // can use lastn..rank()-1 in product
-			int pow) const   // remaining power to take
-{
-  if (pow == 0)
-    symm1_result->append(symm1_deg);
-  else
-    {
-      for (int i=lastn; i<rank(); i++)
-	{
-	  // increase symm1_deg, with e_i
-	  degree_monoid()->mult(symm1_deg, degree(i), symm1_deg);
+  FreeModule *symm1_result; // what is being computed
+  int *symm1_deg; // used in recursion
 
-	  symm1(i, pow-1);
+  void symm1(int lastn,	     // can use lastn..rank()-1 in product
+	     int pow) const   // remaining power to take
+  {
+    if (pow == 0)
+      symm1_result->append(symm1_deg);
+    else
+      {
+	for (int i=lastn; i<F->rank(); i++)
+	  {
+	    // increase symm1_deg, with e_i
+	    D->mult(symm1_deg, F->degree(i), symm1_deg);
+	    
+	    symm1(i, pow-1);
+	    
+	    // decrease symm1_deg back
+	    D->divide(symm1_deg, F->degree(i), symm1_deg);
+	  }
+      }
+  }
+  
+  FreeModule_symm(const FreeModule *F0, int n0)
+    : F(F0), 
+      D(F0->degree_monoid()),
+      n(n0), 
+      symm1_result(0),
+      symm1_deg(0) { }
 
-	  // decrease symm1_deg back
-	  degree_monoid()->divide(symm1_deg, degree(i), symm1_deg);
-	}
-    }
-}
+  FreeModule *value() {
+    if (symm1_result == 0)
+      {
+	symm1_result = F->get_ring()->make_FreeModule();
+	if (n >= 0)
+	  {
+	    symm1_deg = D->make_one();
+	    symm1(0, n);
+	    D->remove(symm1_deg);
+	  }
+      }
+    return symm1_result;
+  }
+};
 
 FreeModule *FreeModule::symm(int n) const
     // n th symmetric power
 {
-  symm1_result = new_free();
-  if (n >= 0)
-    {
-      symm1_deg = degree_monoid()->make_one();
-      
-      symm1(0, n);
-      
-      degree_monoid()->remove(symm1_deg);
-    }
-  FreeModule *result = symm1_result;
-  symm1_result = NULL;
+  FreeModule_symm SF(this, n);
+  FreeModule *result = SF.value();
   if (schreyer != NULL)
     result->schreyer = schreyer->symm(n);
   return result;

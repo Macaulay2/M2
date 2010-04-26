@@ -14,8 +14,6 @@
 
 #include "matrix.hpp"
 
-typedef MutableMatrix MutableMatrixOrNull;
-
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
 						 int n,
 						 M2_bool is_dense)
@@ -23,7 +21,7 @@ MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
   return MutableMatrix::identity(R, n, is_dense);
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_make(const Ring *R,
+MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
 					    int nrows,
 					    int ncols,
 					    M2_bool is_dense)
@@ -129,7 +127,7 @@ void rawMutableMatrixFillRandomDensity(MutableMatrix *M, double density, int spe
     }
 }
 
-const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
+const RingElement /* or null */ * IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
 {
   if (r < 0 || r >= M->n_rows())
     {
@@ -435,7 +433,7 @@ MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
 M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
 				     M2_arrayint rows,
 				     M2_arrayint cols,
-				     RingElement_array *values)
+				     engine_RawRingElementArray values)
 {
   return M->set_values(rows,cols,values);
 }
@@ -635,55 +633,7 @@ M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
   return true;
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N)
-/* If the sizes do not match, then NULL is returned.  If they do match,
-   the addition is performed.  If the targets are not equal, the target 
-   of the result is set to have each degree zero.  Similarly with the
-   source, and also with the degree of the matrix. */
-{
-  ERROR("not implemented for mutable matrices");
-  return 0;
-  return M->add(N);
-}
-
-MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N)
-/* If the sizes do not match, then NULL is returned.  If they do match,
-   the addition is performed.  If the targets are not equal, the target 
-   of the result is set to have each degree zero.  Similarly with the
-   source, and also with the degree of the matrix. */
-{
-  ERROR("not implemented for mutable matrices");
-  return 0;
-  return M->subtract(N);
-}
-
-MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M)
-{
-  return M->negate();
-}
-
-MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M, 
-					     const MutableMatrix *N, 
-					     M2_bool opposite_mult)
-/* If the sizes do not match, then NULL is returned.  If they do match,
-   the multiplication is performed, and the source and target are taken from N,M
-   respectively.  The degree of the result is the sum of the two degrees */
-{
-  ERROR("not implemented for mutable matrices");
-  return 0;
-  return M->mult(N);
-}
-
-MutableMatrixOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
-						    const MutableMatrix *M, 
-						    M2_bool opposite_mult)
-{
-  ERROR("not implemented for mutable matrices");
-  return 0;
-  return M->mult(f);
-}
-
-MutableMatrixOrNull * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
+MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
 						  M2_arrayint rows,
 						  M2_arrayint cols)
 {
@@ -698,7 +648,7 @@ bool IM2_MutableMatrix_set_submatrix(MutableMatrix *M,
   return M->set_submatrix(rows,cols,N);
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
+MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
 						   M2_arrayint cols)
 {
   return M->submatrix(cols);
@@ -708,14 +658,14 @@ MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
  ** Cmputations ****************
  *******************************/
 
-M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M)
+M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M)
 {
   return FF_LUComputation::DO(M);
 }
 
 M2_bool rawLLL(MutableMatrix *M, 
-		MutableMatrixOrNull *U,
-		M2_Rational threshold, 
+		MutableMatrix /* or null */ *U,
+		gmp_QQ threshold, 
 		int strategy)
 {
   if (strategy == 0)
@@ -756,7 +706,7 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
 //typedef DMat<CoefficientRingRRR> LMatrixRR;
 //typedef DMat<CoefficientRingCCC> LMatrixCC;
 
-M2_arrayint_OrNull rawLU(const MutableMatrix *A,
+M2_arrayintOrNull rawLU(const MutableMatrix *A,
 			 MutableMatrix *L,
 			 MutableMatrix *U)
 {
@@ -853,7 +803,7 @@ M2_bool rawLeastSquares(MutableMatrix *A,
 // Support for RRR and CCC operations //
 ////////////////////////////////////////
 
-const MatrixOrNull *rawMatrixClean(M2_RRR epsilon, const Matrix *M)
+const Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const Matrix *M)
 {
   if (M->get_ring()->get_precision() == 0)
     {
@@ -862,7 +812,7 @@ const MatrixOrNull *rawMatrixClean(M2_RRR epsilon, const Matrix *M)
     }
   return M->clean(epsilon);
 }
-const RingElementOrNull *rawRingElementClean(M2_RRR epsilon, const RingElement *f)
+const RingElement /* or null */ *rawRingElementClean(gmp_RR epsilon, const RingElement *f)
 {
   const Ring *R = f->get_ring();
   if (R->get_precision() == 0)
@@ -872,7 +822,7 @@ const RingElementOrNull *rawRingElementClean(M2_RRR epsilon, const RingElement *
     }
   return RingElement::make_raw(R, R->zeroize_tiny(epsilon,f->get_value()));
 }
-MutableMatrixOrNull *rawMutableMatrixClean(M2_RRR epsilon, MutableMatrix *M)
+MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon, MutableMatrix *M)
 {
 /* modifies M in place */
   if (M->get_ring()->get_precision() == 0)
@@ -884,14 +834,14 @@ MutableMatrixOrNull *rawMutableMatrixClean(M2_RRR epsilon, MutableMatrix *M)
   return NULL;
 } 
 
-static M2_RRRorNull get_norm_start(M2_RRR p, const Ring *R)
+static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
 {
   if (R->get_precision() == 0)
     {
       ERROR("expected ring over an RR or CC");
       return 0;
     }
-  M2_RRR norm = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
+  gmp_RR norm = getmemstructtype(gmp_RR);
   mpfr_init2(norm, mpfr_get_prec(p));
   mpfr_ui_div(norm,1,p,GMP_RNDN);
   if (!mpfr_zero_p(norm))
@@ -903,23 +853,23 @@ static M2_RRRorNull get_norm_start(M2_RRR p, const Ring *R)
   return norm;
 }
 
-M2_RRRorNull rawMatrixNorm(M2_RRR p, const Matrix *M)
+gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M)
 {
   return M->norm(p);
 }
 
-M2_RRRorNull rawRingElementNorm(M2_RRR p, const RingElement *f)
+gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 {
-  M2_RRR norm = get_norm_start(p, f->get_ring());
+  gmp_RR norm = get_norm_start(p, f->get_ring());
   if (!norm) return 0; // error already given.
   f->get_ring()->increase_maxnorm(norm, f->get_value());
   return norm;
 }
 
-M2_RRRorNull rawMutableMatrixNorm(M2_RRR p, const MutableMatrix *M)
+gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 {
 #if 0
-  M2_RRR nm = get_norm_start(p, M->get_ring());
+  gmp_RR nm = get_norm_start(p, M->get_ring());
   iterator *i = M->begin();
   for (int c=0; c<n_cols(); c++)
     {

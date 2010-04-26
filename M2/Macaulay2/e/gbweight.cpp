@@ -1,7 +1,7 @@
 #include "gbweight.hpp"
 #include "freemod.hpp"
 #include "gbring.hpp"
-#include "poly.hpp"
+#include "polyring.hpp"
 
 GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
   : F_(F)
@@ -20,7 +20,7 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
   const Monoid *M = R_->get_flattened_monoid();
   nvars_ = R_->n_vars();
   
-  wts_ = makearrayint(nvars_);
+  wts_ = M2_makearrayint(nvars_);
 
   if (!wts0 || wts0->len != nvars_)
     {
@@ -44,7 +44,7 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
 	}
     }
 
-  EXP_ = newarray_atomic(int, nvars_);
+  exp_size = EXPONENT_BYTE_SIZE(nvars_);
 
   if (use_component_degrees_)
     {
@@ -70,8 +70,9 @@ int GBWeight::exponents_weight(const int *e, int comp) const
 int GBWeight::gbvector_term_weight(const gbvector *f) const
 {
   if (f == 0) return 0;
-  R_->gbvector_get_lead_exponents(F_,f,EXP_);
-  return exponents_weight(EXP_,f->comp);
+  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  R_->gbvector_get_lead_exponents(F_,f,EXP);
+  return exponents_weight(EXP,f->comp);
 }
 
 int GBWeight::gbvector_weight(const gbvector *f, int &initial_term_weight) const
@@ -102,8 +103,9 @@ int GBWeight::gbvector_weight(const gbvector *f) const
 
 int GBWeight::monomial_weight(const int *monom, int comp) const
 {
-  R_->get_flattened_monoid()->to_expvector(monom, EXP_);
-  return exponents_weight(EXP_, comp);
+  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+  R_->get_flattened_monoid()->to_expvector(monom, EXP);
+  return exponents_weight(EXP, comp);
 }
 
 // Local Variables:

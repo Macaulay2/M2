@@ -7,7 +7,7 @@
 #include "geovec.hpp"
 
 res2_poly::res2_poly(PolynomialRing *RR)
-: R(RR), M(R->Nmonoms()), K(R->Ncoeffs())
+: R(RR), M(R->getMonoid()), K(R->getCoefficientRing())
 {
   respoly_size = sizeof(res2term *) + sizeof(res2_pair *)
     + sizeof(ring_elem)
@@ -244,7 +244,8 @@ void res2_poly::elem_text_out(const res2term *f) const
   elem_text_out(o, f);
   emit(o.str());
 }
-void res2_poly::elem_text_out(buffer &o, const res2term *f) const
+void res2_poly::elem_text_out(buffer &o, 
+			      const res2term *f) const
 {
   if (f == NULL)
     {
@@ -252,26 +253,18 @@ void res2_poly::elem_text_out(buffer &o, const res2term *f) const
       return;
     }
 
-  int old_one = p_one;
-  int old_parens = p_parens;
-  int old_plus = p_plus;
-
-  p_one = 0;
-  p_parens = 1;
-  p_plus = 0;
+  bool p_one = false;
+  bool p_parens = true;
+  bool p_plus = false;
   for (const res2term *t = f; t != NULL; t = t->next)
     {
       int isone = M->is_one(t->monom);
-      K->elem_text_out(o,t->coeff);
+      K->elem_text_out(o,t->coeff, p_one, p_plus, p_parens);
       if (!isone)
-	M->elem_text_out(o, t->monom);
+	M->elem_text_out(o, t->monom, p_one);
       o << "<" << t->comp->me << ">";
-      p_plus = 1;
+      p_plus = true;
     }
-
-  p_one = old_one;
-  p_parens = old_parens;
-  p_plus = old_plus;
 }
 
 vec res2_poly::to_vector(const res2term *f, const FreeModule *F, 

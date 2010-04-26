@@ -1,19 +1,5 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use system;
 use binding;
-use parser;
-use lex;
-use gmp;
-use nets;
-use tokens;
-use err;
-use stdiop;
-use ctype;
-use stdio;
-use varstrin;
-use strings;
-use basic;
 
 dummyMultaryFun(c:CodeSequence):Expr := (
      error("dummy multary function called");
@@ -37,17 +23,17 @@ export UnaryInstallMethodFun := dummyTernaryFun;
 export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
-export convert(e:ParseTree):Code;
+convert(e:ParseTree):Code;
 CodeSequenceLength(e:ParseTree,separator:Word):int := (
      i := 0;
      while true do (
      	  when e
      	  is b:Binary do (
-	       if b.operator.word == separator
+	       if b.Operator.word == separator
 	       then ( i = i + CodeSequenceLength(b.rhs,separator); e = b.lhs )
 	       else return i+1)
 	  is u:Unary do (
-	       if u.operator.word == separator
+	       if u.Operator.word == separator
 	       then ( i = i + 1; e = u.rhs )
 	       else return i+1)
 	  else return i+1));
@@ -58,11 +44,11 @@ fillCodeSequence(e:ParseTree,v:CodeSequence,m:int,separator:Word):int := (
      while true do
      when e
      is b:Binary do (
-	  if b.operator.word == separator
+	  if b.Operator.word == separator
 	  then (m=fillCodeSequence(b.rhs,v,m,separator); e=b.lhs )
 	  else (m=m-1; v.m=convert(e); return m))
      is u:Unary do (
-	  if u.operator.word == separator
+	  if u.Operator.word == separator
 	  then (m=fillCodeSequence(u.rhs,v,m,separator); m=m-1; v.m=Code(nullCode()); return m)
 	  else (m=m-1; v.m=convert(e); return m))
      is p:EmptyParentheses do ((m=m-1; v.m=convert(e); return m))
@@ -133,7 +119,7 @@ tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
 parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
      symbols := makeSymbolSequence(b.lhs);
      n := length(symbols);
-     nd := new array(int) len n do foreach x in symbols do provide nestingDepth(x.frameID,b.operator.dictionary);
+     nd := new array(int) len n do foreach x in symbols do provide nestingDepth(x.frameID,b.Operator.dictionary);
      fr := new array(int) len n do foreach x in symbols do provide x.frameindex;
      foreach x in symbols do if x.frameID != 0 then x = dummySymbol;
      Code(parallelAssignmentCode(
@@ -187,7 +173,11 @@ export convert(e:ParseTree):Code := (
 	       )
 	  else (
 	       if var.frameID == 0
-	       then Code(globalMemoryReferenceCode(var.frameindex,position(token)))
+	       then (
+		    if var.thread
+		    then Code(threadMemoryReferenceCode(var.frameindex,position(token)))
+		    else Code(globalMemoryReferenceCode(var.frameindex,position(token)))
+		    )
 	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,position(token)))
 	       )
 	  )
@@ -209,8 +199,8 @@ export convert(e:ParseTree):Code := (
 	  dummyCode			  -- should not happen
 	  )
      is b:Binary do (
-	  if b.operator.entry == DotS.symbol
-	  || b.operator.entry == DotQuestionS.symbol
+	  if b.Operator.entry == DotS.symbol
+	  || b.Operator.entry == DotQuestionS.symbol
 	  then (
 	       when b.rhs
 	       is token:Token do (
@@ -219,7 +209,7 @@ export convert(e:ParseTree):Code := (
 		    if wrd.typecode == TCid
 		    then (
 	       		 Code(binaryCode(
-			 	   b.operator.entry.binary,
+			 	   b.Operator.entry.binary,
 			 	   convert(b.lhs),
 	       	    	 	   Code(globalSymbolClosureCode(var,treePosition(b.rhs))),
 			 	   treePosition(e)
@@ -230,11 +220,11 @@ export convert(e:ParseTree):Code := (
 		    )
 	       else dummyCode		  -- should not occur
 	       )
-	  else if b.operator.word == CommaW
+	  else if b.Operator.word == CommaW
 	  then Code(sequenceCode(makeCodeSequence(e,CommaW),treePosition(e)))
-	  else if b.operator.word == SemicolonW
+	  else if b.Operator.word == SemicolonW
 	  then Code(semiCode(makeCodeSequence(e,SemicolonW),treePosition(e)))
-	  else if b.operator.word == EqualW
+	  else if b.Operator.word == EqualW
 	  then (
 	       when b.lhs
 	       is a:Adjacent do (
@@ -250,22 +240,22 @@ export convert(e:ParseTree):Code := (
 	       is u:Unary do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
 			 convert(u.rhs),
 			 convert(b.rhs),
 			 treePosition(e)))
 	       is u:Postfix do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
 			 convert(u.lhs),
 			 convert(b.rhs),
 			 treePosition(e)))
 	       is c:Binary do (
-		    if c.operator.entry == SharpS.symbol
+		    if c.Operator.entry == SharpS.symbol
 		    then Code(ternaryCode( AssignElemFun, convert(c.lhs),
 			      convert(c.rhs), convert(b.rhs), treePosition(e)))
-		    else if c.operator.entry == DotS.symbol
+		    else if c.Operator.entry == DotS.symbol
 		    then (
 			 when c.rhs
 			 is crhs:Token do
@@ -280,7 +270,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallValueFun,
 			      CodeSequence(
-				   Code(globalSymbolClosureCode(c.operator.entry,position(c.operator))), 
+				   Code(globalSymbolClosureCode(c.Operator.entry,position(c.Operator))), 
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),
@@ -289,7 +279,7 @@ export convert(e:ParseTree):Code := (
 	       is p:Parentheses do parallelAssignment(e,b,p)
 	       else dummyCode		  -- should not happen
 	       )
-	  else if b.operator.word == ColonEqualW
+	  else if b.Operator.word == ColonEqualW
 	  then (
 	       when b.lhs
 	       is n:New do (
@@ -332,17 +322,17 @@ export convert(e:ParseTree):Code := (
 			      treePosition(e))))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
 			 convert(u.rhs), convert(b.rhs), treePosition(e)))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
+			 Code(globalSymbolClosureCode(u.Operator.entry,position(u.Operator))),
 			 convert(u.lhs), convert(b.rhs), treePosition(e)))
 	       is c:Binary do (
-		    if c.operator.entry == SharpS.symbol
+		    if c.Operator.entry == SharpS.symbol
 		    then Code(ternaryCode( AssignElemFun, convert(c.lhs),
 			      convert(c.rhs), convert(b.rhs), treePosition(e)))
-		    else if c.operator.entry == UnderscoreS.symbol
+		    else if c.Operator.entry == UnderscoreS.symbol
 		    then Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence( 
@@ -351,7 +341,7 @@ export convert(e:ParseTree):Code := (
 				   convert(c.rhs),
 			      	   convert(b.rhs)),
 			      treePosition(e)))
-		    else if c.operator.entry == DotS.symbol
+		    else if c.Operator.entry == DotS.symbol
 		    then (
 			 when c.rhs
 			 is crhs:Token do
@@ -366,7 +356,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
-			 	   Code(globalSymbolClosureCode(c.operator.entry,position(c.operator))),
+			 	   Code(globalSymbolClosureCode(c.Operator.entry,position(c.Operator))),
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),
@@ -375,30 +365,39 @@ export convert(e:ParseTree):Code := (
 	       is p:Parentheses do parallelAssignment(e,b,p)
 	       else dummyCode		  -- should not happen
 	       )
-	  else Code(binaryCode(b.operator.entry.binary,convert(b.lhs),
+	  else Code(binaryCode(b.Operator.entry.binary,convert(b.lhs),
 	       	    convert(b.rhs),treePosition(e)))
 	  )
      is a:Arrow do Code(functionCode(
-	       a.operator,		  -- just for display purposes!
+	       a.Operator,		  -- just for display purposes!
 	       convert(a.rhs),a.desc,nextHash()))
      is u:Unary do (
-	  if u.operator.word == CommaW
+	  if u.Operator.word == CommaW
 	  then Code(sequenceCode(makeCodeSequence(e,CommaW),treePosition(e)))
-	  else if u.operator.word == SemicolonW
+	  else if u.Operator.word == SemicolonW
 	  then Code(semiCode(makeCodeSequence(e,SemicolonW),treePosition(e)))
-	  else Code(unaryCode(u.operator.entry.unary,convert(u.rhs),treePosition(e))))
+	  else Code(unaryCode(u.Operator.entry.unary,convert(u.rhs),treePosition(e))))
      is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
 	  pos := treePosition(e);
 	  if sym.frameID == 0
-	  then Code(globalSymbolClosureCode(sym,pos))
+	  then (
+	       if sym.thread
+	       then Code(threadSymbolClosureCode(sym,pos))
+	       else Code(globalSymbolClosureCode(sym,pos))
+	       )
 	  else Code(localSymbolClosureCode(nestingDepth(sym.frameID,token.dictionary),sym,pos)))
      is q:GlobalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
 	  pos := treePosition(e);
      	  Code(globalSymbolClosureCode(sym,pos)))
+     is q:ThreadQuote do (
+	  token := q.rhs;
+	  sym := token.entry;
+	  pos := treePosition(e);
+     	  Code(threadSymbolClosureCode(sym,pos)))
      is q:LocalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
@@ -409,10 +408,10 @@ export convert(e:ParseTree):Code := (
      is i:TryElse do Code(tryCode(convert(i.primary),NullCode,convert(i.alternate),treePosition(e)))
      is i:Try do Code(tryCode(convert(i.primary),NullCode,NullCode,treePosition(e)))
      is i:Catch do Code(catchCode(convert(i.primary),treePosition(e)))
-     is u:Postfix do Code(unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
+     is u:Postfix do Code(unaryCode(u.Operator.entry.postfix,convert(u.lhs),treePosition(e)))
      is d:dummy do dummyCode
      );
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d convertr.o "
 -- End:

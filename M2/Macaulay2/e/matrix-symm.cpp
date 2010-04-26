@@ -4,7 +4,7 @@
 class SymmMatrix
 {
 public:
-  static MatrixOrNull * symmetricPower(const Matrix *m0, int p)
+  static Matrix /* or null */ * symmetricPower(const Matrix *m0, int p)
   {
     if (m0->n_rows() != 1)
       {
@@ -67,7 +67,7 @@ private:
 
 };
 
-MatrixOrNull *Matrix::symm(int n) const
+Matrix /* or null */ *Matrix::symm(int n) const
 {
   return SymmMatrix::symmetricPower(this,n);
 }
@@ -75,7 +75,7 @@ MatrixOrNull *Matrix::symm(int n) const
 #if 0
 // 
 // namespace M2 {
-//   MatrixOrNull *M2::symmetricPower(const Matrix *m, int p)
+//   Matrix /* or null */ *M2::symmetricPower(const Matrix *m, int p)
 //   {
 //     if (m->n_rows() != 1)
 //       {
@@ -104,8 +104,8 @@ MatrixOrNull *Matrix::symm(int n) const
 //   void compute();
 //   Matrix * value();
 // public:
-//   friend MatrixOrNull *M2::symmetricPower(const Matrix *m, int p);
-//   static MatrixOrNull * symmetricPower(const Matrix *m, int p);
+//   friend Matrix /* or null */ *M2::symmetricPower(const Matrix *m, int p);
+//   static Matrix /* or null */ * symmetricPower(const Matrix *m, int p);
 // };
 // 
 // void SymmMatrix::symm1(vec f,           // product so far generated, consumed here
@@ -154,7 +154,7 @@ MatrixOrNull *Matrix::symm(int n) const
 //   return result.to_matrix();
 // }
 // 
-// MatrixOrNull * SymmMatrix::symmetricPower(const Matrix *m, int p)
+// Matrix /* or null */ * SymmMatrix::symmetricPower(const Matrix *m, int p)
 // {
 //   if (m->n_rows() != 1)
 //     {
@@ -167,7 +167,7 @@ MatrixOrNull *Matrix::symm(int n) const
 // }
 // 
 // namespace M2 {
-//   MatrixOrNull *M2::symmetricPower(const Matrix *m, int p)
+//   Matrix /* or null */ *M2::symmetricPower(const Matrix *m, int p)
 //   {
 //     return SymmMatrix::symmetricPower(m,p);
 //   }

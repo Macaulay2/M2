@@ -1,3 +1,0 @@
-This is wrong:
-
-VirtualTally + VirtualTally := VirtualTally => (x,y) -> merge(x,y,continueIfNonPositive @@ plus)

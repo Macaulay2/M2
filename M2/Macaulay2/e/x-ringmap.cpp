@@ -36,7 +36,7 @@ IM2_RingMap_make1(const Matrix *M)
   return RingMap::make(M);
 }
 
-const RingElementOrNull * 
+const RingElement /* or null */ * 
 IM2_RingMap_eval_ringelem(const RingMap *F, 
 			  const RingElement *a)
 {
@@ -49,7 +49,7 @@ IM2_RingMap_eval_ringelem(const RingMap *F,
      }
 }
 
-const MatrixOrNull * 
+const Matrix /* or null */ * 
 IM2_RingMap_eval_matrix(const RingMap *F, 
 			const FreeModule *newTarget,
 			const Matrix *M)

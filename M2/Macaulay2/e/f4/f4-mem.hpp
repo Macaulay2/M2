@@ -9,7 +9,7 @@
 typedef int *f4vec;
 
 #define DOUBLESIZE 30
-extern unsigned int doublesize[DOUBLESIZE];
+extern const unsigned int doublesize[DOUBLESIZE];
 
 #define SIZE_MASK 0x07ffffff
 #define STASH_SHIFT (8*sizeof(int)-5)
@@ -115,29 +115,20 @@ public:
 
 class F4Mem : public our_new_delete
 {
-  static long monom_alloc;
-  static long monom_total; // number of ints total asked for
-  static long monom_freed; // number of ints deallocated
-  static long monom_dealloc;
-  static long monom_highwater;
-  static long monom_current;
-
-  static void reset() {
-    monom_alloc = 0;
-    monom_total = 0;
-    monom_freed = 0;
-    monom_dealloc = 0;
-    monom_highwater = 0;
-    monom_current = 0;
-  }
+  long monom_alloc;
+  long monom_total; // number of ints total asked for
+  long monom_freed; // number of ints deallocated
+  long monom_dealloc;
+  long monom_highwater;
+  long monom_current;
 
 public:
-  static F4Vec components;
-  static F4Vec coefficients;
+  F4Vec components;
+  F4Vec coefficients;
 
-  F4Mem() { reset(); }
+  F4Mem();
 
-  static monomial_word * allocate_monomial_array(int len) {
+  monomial_word * allocate_monomial_array(int len) {
     if (len == 0) return 0;
     monom_alloc++;
     monom_total += len;
@@ -148,7 +139,7 @@ public:
     return result;
   }
 
-  static void deallocate_monomial_array(monomial_word * &a, int len) {
+  void deallocate_monomial_array(monomial_word * &a, int len) {
     if (len == 0) return;
     monom_dealloc++;
     monom_freed += len;
@@ -157,7 +148,7 @@ public:
     a = 0;
   }
 
-  static void show();
+  void show();
 };
 
 

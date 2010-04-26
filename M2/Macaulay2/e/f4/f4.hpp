@@ -70,6 +70,7 @@
 #include "monsort.hpp"
 #include "f4-spairs.hpp"
 #include "gausser.hpp"
+#include "hilb-fcn.hpp"
 #include "f4-m2-interface.hpp"
 #include "../mat.hpp"
 #include "../text-io.hpp"
@@ -83,7 +84,7 @@ class F4GB : public our_new_delete
   // Basic required information
   const Gausser *KK;
   const MonomialInfo *M;
-  const FreeModule *F;  // used for debugging only...
+  const FreeModule *F;
   FreeModule *syzF; // syzygies ambient module (gebug only)
   M2_arrayint weights; // The length of this is the number of variables, each entry is positive.
   M2_arrayint component_degrees; // Degree of each free module element.
@@ -91,15 +92,16 @@ class F4GB : public our_new_delete
   
   // Options and information about the computation
   bool using_syz;
-  int n_lcmdups;
-  int n_pairs_computed;
+  long n_lcmdups;
+  long n_pairs_computed;
   int n_gens_left;
   int n_subring;
   int complete_thru_this_degree;
   int this_degree; // The current degree we are working on
   bool is_ideal; // true if no syzygies are being computed, and rank of F is one.
+
   // Hilbert function information
-  // Maybe this will be an external class
+  HilbertController *hilbert; // null if not being used
   
   // Monomial order information.  Should this be in M?
   
@@ -114,6 +116,7 @@ class F4GB : public our_new_delete
   int next_col_to_process;
   coefficient_matrix *mat;
   MonomialHashTable<MonomialInfo> H;
+  F4Mem *Mem; // Used to allocate and deallocate arrays used in the matrix
   MemoryBlock<monomial_word> B;
   monomial_word *next_monom; // valid while creating the matrix
   
@@ -131,6 +134,13 @@ class F4GB : public our_new_delete
   
   // Local data for gaussian elimination
   dense_row gauss_row, syz_row;
+
+  // cumulative timing info
+  double clock_sort_columns;
+  clock_t clock_gauss;
+  clock_t clock_make_matrix;
+  double syz_clock_sort_columns;
+
 private:
 
   ////////////////////////////////////
@@ -211,6 +221,7 @@ private:
 
 public:
   F4GB(const Gausser *KK0,
+       F4Mem *Mem0,
        const MonomialInfo *MI,
        const FreeModule *F, // used for debugging only...
        M2_bool collect_syz, 
@@ -232,6 +243,8 @@ public:
 
   const gb_array &get_gb() const { return gb; }
   gb_array &get_gb() { return gb; }
+
+  void set_hilbert_function(const RingElement *hf);
 
   enum ComputationStatusCode start_computation(StopConditions &stop_);
   // ComputationStatusCode is defined in ../engine.h

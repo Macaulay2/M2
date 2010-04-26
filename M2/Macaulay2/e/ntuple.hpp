@@ -35,7 +35,8 @@ public:
   static void elem_text_out(buffer &o, 
 			    unsigned int nvars,
 			    const int *a, 
-			    M2_stringarray varnames);
+			    M2_ArrayString varnames,
+			    bool p_one=true);
 };
 
 inline 

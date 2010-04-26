@@ -50,8 +50,6 @@ int main() {
 
   GC_INIT();
 
-#include "gc_fixes.h"
-
   uniq("%s:%d: error: gc library doesn't find all the active pointers in registers or on the stack!\n"
        "           Perhaps GC_push_regs was configured incorrectly.\n",
        GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),

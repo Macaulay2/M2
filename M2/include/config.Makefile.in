@@ -1,4 +1,4 @@
-# @configure_input@ -*- GNUmakefile -*-
+# @configure_input@ -*- makefile -*-
 ifneq ($(CONFIG_MAKEFILE),)
 $(error config.Makefile already loaded)
 endif
@@ -75,14 +75,35 @@ ifeq "@GCC@" "yes"
 ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 # -Winline gives too many warning messages
-M2_BOTH      = -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare 
+
+M2_BOTH = -pipe -Wall -Wshadow -Wcast-qual
+
+ifeq "@__INTEL_COMPILER@" "yes"
+X = -diag-disable 981,869,383,2259,444
+CFLAGS += $X
+CXXFLAGS += $X
+ifeq "@DEBUG@" "yes"
+CFLAGS += -debug
+CXXFLAGS += -debug
+LDFLAGS += -debug
+endif
+else
+M2_BOTH += -Wno-parentheses
+M2_BOTH += -Wno-sign-compare 
+endif
+
+M2_BOTH += -fno-stack-protector
+
 ifeq "@OPTIMIZE@" "yes"
 # gcc 3.3.2 doesn't accept this:
 # M2_BOTH += -Werror=uninitialized
 M2_BOTH += -Wuninitialized
 endif
 # M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
-M2_CFLAGS   += -Wimplicit-function-declaration -Wwrite-strings $(M2_BOTH)
+ifeq "@__INTEL_COMPILER@" "no"
+M2_CFLAGS   += -Wimplicit-function-declaration
+endif
+M2_CFLAGS   += -Wwrite-strings $(M2_BOTH)
 M2_CXXFLAGS += -Wconversion $(M2_BOTH)
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
@@ -100,6 +121,54 @@ always:
 # pari tends to display plots during its tests, and we don't want that:
 export DISPLAY=
 
+# Safe C language:
+SCCFLAGS =
+ifeq "@DEBUG@" "no"
+SCCFLAGS += -O
+endif
+SCC1 = @abs_top_builddir@/Macaulay2/c/scc1
+
+# scc1 output files
+
+ifeq "$(NORULES)" ""
+
+.SUFFIXES : .sig.tmp .sig .dep .d .dd -exports.h.tmp -exports.h -tmp.c -tmp.cc
+
+%.sig: ;	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+%-exports.h: ;	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+
+%.sig.tmp %.dep: %.d
+	$(SCC1) -dep $(SCCFLAGS) $<
+	mv $*.dep.tmp $*.dep
+	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+%.sig.tmp %.dep: %.dd
+	$(SCC1) -dep $(SCCFLAGS) $<
+	mv $*.dep.tmp $*.dep
+	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+%-tmp.c  %-exports.h.tmp: %.d
+	$(SCC1) $(SCCFLAGS) $<
+	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+%-tmp.cc %-exports.h.tmp: %.dd
+	$(SCC1) $(SCCFLAGS) $<
+	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+%.o: %-tmp.c  %-exports.h;		$(COMPILE.c)  $(DCFLAGS) $< $(OUTPUT_OPTION)
+%.o: %-tmp.cc %-exports.h;		$(COMPILE.cc) $(DCFLAGS) $< $(OUTPUT_OPTION)
+
+# various compiler output files
+.SUFFIXES : .ss .ii .s
+%.ss: %.s; demangle <$< >$@
+%.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%.ii: %.cc; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cc; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%.ii: %.c; $(PRE.c)        $< $(OUTPUT_OPTION)
+%.s : %.c; $(COMPILE.c) -S $< $(OUTPUT_OPTION)
+
+endif
+
+# libgc
+export GC_LARGE_ALLOC_WARN_INTERVAL=1
+
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR include/config.Makefile"
+# compile-command: "make -C $M2BUILDDIR include/config.Makefile DEPENDS=no "
 # End:

@@ -149,4 +149,6 @@ viljnucoeffs = (m, tempoly,psi) -> (
 
 gbTrace = 3
 
+end
+load "7-swanson.m2"
 factorable(L, Mmat)

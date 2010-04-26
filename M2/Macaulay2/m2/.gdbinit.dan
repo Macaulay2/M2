@@ -10,10 +10,13 @@ b fatalarrayindex
 # can only do this after the program starts:
 # b __gmp_set_memory_functions
 # b main
+b fatal
 b ERROR
 b outofmem
-# b abort
+b abort
 b GC_err_printf
+handle SIGPWR nostop noprint
+handle SIGXCPU nostop noprint
 # source .gdb-run-it
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

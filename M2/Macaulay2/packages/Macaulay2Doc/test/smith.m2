@@ -13,6 +13,7 @@
 -- o3 = true
 -- 
 
+setRandomSeed 5						    -- the seed affects the time a lot
 
 (g,t,s) = smithNormalForm ( f = random(ZZ^15,ZZ^3) * matrix "14,,;,140,;,,1260" * random(ZZ^3,ZZ^20) );
 g

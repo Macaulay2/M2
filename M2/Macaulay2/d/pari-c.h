@@ -4,3 +4,5 @@ typedef struct { unsigned int n; mpz_col *el[VARLEN]; } mpz_mat;
 extern mpz_mat *pari_factorint(mpz_t, long flags);
 typedef char bool;
 extern bool pari_isprime(mpz_t);
+extern bool pari_ispseudoprime(mpz_t, long);
+void pari_test();

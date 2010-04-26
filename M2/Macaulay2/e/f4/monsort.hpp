@@ -7,6 +7,10 @@
 #include <cstdlib>
 #include "../newdelete.hpp"
 
+#if !defined(SAFEC_EXPORTS)
+#include <engine-exports.h>
+#endif
+
 template<typename Sorter>
 // Sorter S, needs to define:
 //   typename S::value
@@ -90,9 +94,8 @@ void QuickSorter<Sorter>::sort(long lo, long hi)
 
 template<typename Sorter>
 void QuickSorter<Sorter>::sort2(long begin, long end) {
-   /*** Use of static here will reduce memory footprint, but will make it thread-unsafe ***/
-   static value pivot;
-   static value t;     /* temporary variable for swap */
+   value pivot;
+   value t;     /* temporary variable for swap */
    if (end > begin) {
       long l = begin + 1;
       long r = end;
@@ -120,9 +123,8 @@ void QuickSorter<Sorter>::sort2(long begin, long end) {
 
 template<typename Sorter>
 void QuickSorter<Sorter>::sort2depth(long begin, long end, long depth) {
-   /*** Use of static here will reduce memory footprint, but will make it thread-unsafe ***/
-   static value pivot;
-   static value t;     /* temporary variable for swap */
+   value pivot;
+   value t;     /* temporary variable for swap */
    if (depth > maxdepth) 
      maxdepth = depth;
    if (end > begin) {
@@ -163,13 +165,13 @@ void QuickSorter<Sorter>::sortC()
 // array is: elems
 // length is: len
 {
-  unsigned long i,ir=len,j,k,l=1;
-  int jstack=0,*istack;
+  unsigned long i,ir=len,j,k,l=1,*istack;
+  int jstack=0;
   value a,temp;
   long ncmps;
   int maxstack=0;
   ncmps = 0;
-  istack=newarray_atomic(int, NSTACK);
+  istack=newarray_atomic(unsigned long, NSTACK);
   for (;;) {
     if (ir-l < THRESH) {
       for (j=l+1;j<=ir;j++) {
@@ -280,7 +282,6 @@ void QuickSorter<Sorter>::sortD()
 
 //////////////////////////////////////
 #include <ctime>
-extern "C" int gbTrace;
 
 template<typename Sorter>
 void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
@@ -307,11 +308,11 @@ void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
   }
 
     clock_t end_time = clock();
-    double nsecs = end_time - begin_time;
+    long double nsecs = end_time - begin_time;
     nsecs /= CLOCKS_PER_SEC;
     
-    if (gbTrace >= 4)
-      fprintf(stderr,"sort: len %ld depth %ld time %f\n", len0, S.maxdepth, nsecs);
+    if (M2_gbTrace >= 4)
+      fprintf(stderr,"sort: len %ld depth %ld time %Lf\n", len0, S.maxdepth, nsecs);
 }
 #endif
 

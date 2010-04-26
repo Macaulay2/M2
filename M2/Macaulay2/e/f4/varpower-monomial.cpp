@@ -9,9 +9,9 @@
 
 varpower_word varpower_monomials::simple_degree(const_varpower_monomial m)
 {
-  int i;
+  varpower_word i;
   varpower_word sum = 0;
-  int npairs = *m;
+  varpower_word npairs = *m;
   m += 2;
   for (i=npairs; i>0; i--, m += 2)
     sum += *m;
@@ -20,9 +20,9 @@ varpower_word varpower_monomials::simple_degree(const_varpower_monomial m)
 
 varpower_word varpower_monomials::weight(const_varpower_monomial m, M2_arrayint wts)
 {
-  int i;
+  varpower_word i;
   varpower_word sum = 0;
-  int npairs = *m;
+  varpower_word npairs = *m;
   m += 1;
   for (i=npairs; i>0; i--, m += 2)
     if (*m >= wts->len)
@@ -35,7 +35,7 @@ varpower_word varpower_monomials::weight(const_varpower_monomial m, M2_arrayint 
 int varpower_monomials::equal(const_varpower_monomial m1,
 			      const_varpower_monomial m2)
 {
-  int npairs = *m1++;
+  varpower_word npairs = *m1++;
   if (npairs != *m2++) return 0;
   npairs *= 2;
   for ( ; npairs > 0; npairs--)
@@ -55,9 +55,9 @@ int varpower_monomials::equal(const_varpower_monomial m1,
 int varpower_monomials::compare(const_varpower_monomial a, const_varpower_monomial b)
     // return EQ, LT, or GT for a == b, a < b, or a > b.
 {
-  int i;
-  int alen = 2*(*a++);
-  int blen = 2*(*b++);
+  varpower_word i;
+  varpower_word alen = 2*(*a++);
+  varpower_word blen = 2*(*b++);
   if (alen > blen)
     {
       for (i=0; i<blen; i++)
@@ -145,8 +145,8 @@ void varpower_monomials::mult(const_varpower_monomial m1,
   */
 
   varpower_word v1,v2,e1=0,e2=0;
-  int n1 = *m1++;
-  int n2 = *m2++;
+  varpower_word n1 = *m1++;
+  varpower_word n2 = *m2++;
 
   INCR(m1,n1,v1,e1);
   INCR(m2,n2,v2,e2);
@@ -194,8 +194,8 @@ void varpower_monomials::quotient(const_varpower_monomial m1,
   */
 
   varpower_word v1,v2,e1=0,e2=0;
-  int n1 = *m1++;
-  int n2 = *m2++;
+  varpower_word n1 = *m1++;
+  varpower_word n2 = *m2++;
 
   INCR(m1,n1,v1,e1);
   INCR(m2,n2,v2,e2);
@@ -241,8 +241,8 @@ int varpower_monomials::divides(const_varpower_monomial m1,
   */
 
   varpower_word v1,v2,e1=0,e2=0;
-  int n1 = *m1++;
-  int n2 = *m2++;
+  varpower_word n1 = *m1++;
+  varpower_word n2 = *m2++;
 
   INCR(m1,n1,v1,e1);
   INCR(m2,n2,v2,e2);
@@ -281,7 +281,7 @@ int varpower_monomials::divides(const_varpower_monomial m1,
 void varpower_monomials::elem_text_out(FILE *fil, const_varpower_monomial m)
 {
   varpower_word v,e;
-  int n = *m++;
+  varpower_word n = *m++;
 
   if (n == 0)
     {
@@ -292,10 +292,10 @@ void varpower_monomials::elem_text_out(FILE *fil, const_varpower_monomial m)
   while (n > 0) {
     INCR(m,n,v,e);
     if (v < 26) {
-      int c = 'a'+v;
+      int c = 'a'+static_cast<int>(v);
       fprintf(fil, "%c", c);
     } else if (v < 52) {
-      int c = 'A'+v;
+      int c = 'A'+static_cast<int>(v);
       fprintf(fil, "%c", c);
     } else fprintf(fil, "x[%ld]",v);
     if (e > 1)

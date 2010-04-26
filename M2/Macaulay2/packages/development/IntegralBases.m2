@@ -33,6 +33,127 @@ export {
      trager
      }
 
+--------------------------------------------
+-- Local basis, using van Hoeij algorithm --
+--------------------------------------------
+-- Assumptions and input:
+--  1. F(x,y) in R = kk[x,y], where x = R_0 is the indep variable, and y = R_1 is the extension variable
+--  2.  F is monic of degree n in y
+--  3.  x^2 divides discriminant(F,y), and also F is singular at some point above x=0.
+-- Output:
+--  V, a list encoding the (local) integral basis
+-- Step 1. Puisuex
+--   Compute Ps, the list of truncated Puiseux parametrizations, over x=0.
+--   These are truncated to the degrees mentioned in Mark vH paper (possibly can do better)
+-- Step 2.
+--   Initialize V
+--   Initialize W, a list of same size as V.
+--     W_i is a list of the truncated t-coeffs of V_i
+--   loop1:
+--     compute truncations of y*V_-1, append to V, W.
+--     concatenate W to make a matrix (over kk), find syzygy
+--     if no syzygies, loop1
+--     if there is a syzygy:
+--       mult syz by a row vector coming from elements in V
+--       change last entry in V by using this element
+--       recompute truncated t-coeffs of this element
+--
+-- begin
+--   V = {{0,1_R}}
+--   W = apply(V, v -> computeTruncationVector(Ps, v))
+--   nextstep = NextElement -- or ThisElement, or Done
+--   while true do (
+--     if nextstep === NextElement then (
+--       if #V === n then return V;
+--       v = y*V_-1;
+--       w = computeTruncationVector(Ps, v);
+--       z := findSyzygy W;
+--       nextstep = if z == 0 then NextElement else ThisElement;
+--       )
+--     else if done === ThisElement then (
+--       -- replace last element of V with v (but with one higher degree x)
+--       -- and recompute truncation
+--       ));
+--   V
+-- end.
+
+
+vecSpaceMap = (K,A) -> (
+     -- returns a function: f : A --> K^n, where A is isom to K^n
+     -- several cases here.
+     if K === A
+     then (a) -> {a}
+     else (
+	  if not isField A then error "expected a field";
+	  A1 = coefficientRing A;
+	  if coefficientRing A1 === K then (
+	       monoms := flatten entries basis A1; -- could give an error
+	       << "making map using " << monoms << endl;
+	       f := (a) -> (
+		    b := coefficient(1_A1, a);
+		    flatten entries lift(last coefficients(b, Monomials=>monoms), K));
+	       f
+	       )
+	  else (
+	       null
+	       )
+	  )
+     )
+
+tcoeffs = (p,R) -> (
+     -- returns a function (deg,v) --> list of t-coeffs of v/(x(t)^deg) evaluated at p
+     (xt, yt) := p;
+     d := first degree xt;
+     K := coefficientRing ring xt;
+     A := K(monoid [gens ring xt]); -- a regular poly ring
+     t := A_0;
+     toA := map(A,ring xt,{t});
+     (xt,yt) = (toA xt, toA yt);
+     monoms := for i from 0 to d-1 list t^i;
+     F := map(A, R, {toA p#0,toA p#1}); -- R should have two variables, first x, then y
+     f := vecSpaceMap(coefficientRing R, K);
+     --<< " monoms = " << monoms << endl;
+     --<< " F      = " << F << endl;
+     (deg,v) -> (
+	  v1 := (F v) % t^((deg+1)*d);
+	  if v1 % xt^deg != 0 then error "warning -- my logic is not right here";
+	  v2 := v1 // xt^deg;
+	  L := flatten entries sub(last coefficients(v2, Monomials=>monoms), K);
+	  flatten(L/f)
+     ))
+computeTruncation = (Ps,deg, v) -> flatten apply(Ps, p -> p(deg,v))
+appendToBasis = (Ps,V,W,deg,v) -> (
+     w := computeTruncation(Ps,deg,v);
+     (append(V,{deg,v}), append(W,w))
+     )
+nextElement = (Ps,V,W,y) -> appendToBasis(Ps,V,W,V#-1#0,y * V#-1#1)
+thisElement = (Ps,V,W,z) -> appendToBasis(Ps,drop(V,-1), drop(W,-1), V#-1#0 + 1, z)
+findSyzygy = (x) -> (V,W) -> (
+     z := syz transpose matrix W;
+     if z == 0 
+       then null 
+       else (
+	    topdeg := V#-1#0;
+	    Vx := matrix{apply(V, p -> x^(topdeg - p#0) * p#1)};
+	    (Vx * z)_(0,0)
+	    )
+     )
+localBasis = (Ps, n, x, y) -> (
+     R := ring x;
+     Ps = for p in Ps list tcoeffs(p,R);
+     local z;
+     V = {{0, 1_R}};
+     W = {computeTruncation(Ps, 0, 1_R)};
+     for i from 0 to n-1 do (
+	  while (z = (findSyzygy x)(V,W)) =!= null do
+	       (V,W) = thisElement(Ps,V,W,z);
+	  if i === n-1 then break;
+	  (V,W) = nextElement(Ps,V,W,y);
+	  );
+     V
+     )
+
+--------------------------------------------
 principalPart = (P, f, truncdegree) -> (
      -- returns the list of coefficients in t of f(x(t),y(t))/fdenom(x(t),y(t)) 
      -- up to, but not including deg_t x(t).
@@ -309,6 +430,11 @@ TEST ///
   F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
   H = findTruncations F
   displayTruncations H
+
+  netList(Ps = puiseuxTruncations F)
+  time Ps = apply(Ps, last)
+  time localBasis(Ps, degree_y F, x, y)
+  netList oo
   
   use R
   G = sub(F, {x=>y,y=>x})
@@ -322,6 +448,10 @@ TEST ///
   F = (x^2+y^2)^3 - 4*x^2*y^2
   H = findTruncations F
   displayTruncations H
+
+  time Ps = apply(puiseuxTruncations F, last)
+  netList time localBasis(Ps, degree_y F, x, y)
+  eliminate(ideal F + ideal jacobian ideal F, {y}) -- (x^6)
 ///
 
 TEST ///
@@ -330,6 +460,11 @@ TEST ///
   F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
   H = findTruncations F
   displayTruncations H 
+
+  time Ps = apply(puiseuxTruncations F, last)
+  netList time localBasis(Ps, degree_y F, x, y)
+  eliminate(ideal F + ideal jacobian ideal F, {y}) --
+
 ///
 
 TEST ///
@@ -338,11 +473,13 @@ TEST ///
   F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
   H = findTruncations F
   displayTruncations H 
-
-  -- n = 6
-  factor discriminant(F,y) -- x^27 * sqfree
+  degree_y F -- 6
+  factor discriminant(F,y)  -- x^27 * sqfree
   eliminate(ideal F + ideal jacobian ideal F, {y}) -- (x^9)
-  
+  Ps = puiseuxTruncations F
+  netList oo
+  time Ps = apply(Ps, last)
+  netList time localBasis(Ps, degree_y F, x, y)
 ///
 
 TEST ///
@@ -359,6 +496,20 @@ TEST ///
   G = sub(F, {x=>y,y=>x})
   H = findTruncations G
   displayTruncations H
+
+  degree_y F -- 10
+  factor discriminant(F,y)  -- x^8 * other stuff
+  -- 2*(ramif 3) + 4 * (ramif 1) places over (x).
+  -- 8 = 2*delta + 4, implies delta = 2
+  -- max floor(Int_i) = 1
+  -- so expect (0,...,0,1,1) (and get that)
+  eliminate(ideal F + ideal jacobian ideal F, {y}) -- (x) * other stuff
+    -- this tells us that sing locus contains x * (29x^2+3)^2
+    -- this is in the conductor
+  Ps = puiseuxTruncations F
+  netList oo
+  time Ps = apply(Ps, last)
+  netList time localBasis(Ps, degree_y F, x, y)
 //
 
 TEST ///
@@ -411,6 +562,18 @@ TEST ///
   G = sub(F, {x=>y,y=>x})
   H = findTruncations G
   displayTruncations H
+
+
+  degree_y F -- 5
+  factor discriminant(F,y)  -- x^8 * (x+1)^2 * (x^2-x+1)^2*sqfree
+  -- 8 = 2*n + (3-1) ==> n=3
+  -- max floor(Int_i) = 2
+  -- so expect (0,0,1,2) (and get that)
+  eliminate(ideal F + ideal jacobian ideal F, {y}) -- (x^6+x^3)
+  Ps = puiseuxTruncations F
+  netList oo
+  time Ps = apply(Ps, last)
+  netList time localBasis(Ps, degree_y F, x, y)
 //
 
 TEST ///

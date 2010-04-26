@@ -5,6 +5,7 @@
 
 class Z_mod;
 #include "ringelem.hpp"
+#include "ZZ.hpp"
 
 class CoefficientRingZZpLog
 {
@@ -107,13 +108,13 @@ public:
     elem ab = modulus_add(a,b,p1);
     subtract(result, result, ab);
     return;
-    if (result==0)
-      result = ab;
-    else
-      {
-	int n = modulus_sub(exp_table[result], exp_table[ab], p);
-	result = log_table[n];
-      }
+    // if (result==0)
+    //   result = ab;
+    // else
+    //   {
+    // 	int n = modulus_sub(exp_table[result], exp_table[ab], p);
+    // 	result = log_table[n];
+    //   }
   }
 
   void mult(elem &result, elem a, elem b) const
@@ -235,13 +236,13 @@ public:
     elem ab = modulus_add(a,b,p1);
     subtract(result, result, ab);
     return;
-    if (result==zero)
-      result = ab;
-    else
-      {
-	int n = modulus_sub(exp_table[result], exp_table[ab], p);
-	result = log_table[n];
-      }
+    // if (result==zero)
+    //   result = ab;
+    // else
+    //   {
+    // 	int n = modulus_sub(exp_table[result], exp_table[ab], p);
+    // 	result = log_table[n];
+    //   }
   }
 
   void mult(elem &result, elem a, elem b) const
@@ -400,7 +401,7 @@ class CoefficientRingCC : public our_new_delete
 {
 public:
   typedef CC ring_type;
-  typedef M2_CC_struct elem; // components are re, im
+  typedef gmp_CC_struct elem; // components are re, im
   typedef CoefficientRingRR::elem real_elem;
 
   CoefficientRingCC() {}
@@ -433,7 +434,7 @@ public:
 
   void from_ring_elem(elem &result, const ring_elem &a) const
   {
-    M2_CC b = reinterpret_cast<M2_CC>(a.poly_val);
+    gmp_CC b = reinterpret_cast<gmp_CC>(a.poly_val);
     result = *b;
   }
 
@@ -453,7 +454,7 @@ class CoefficientRingCCC : public our_new_delete
 {
 public:
   typedef CCC ring_type;
-  typedef M2_CCC_struct elem; // components are re, im
+  typedef gmp_CC_struct elem; // components are re, im
   typedef CoefficientRingRRR::elem real_elem;
 
   CCC *R;
@@ -497,7 +498,7 @@ public:
 
   void from_ring_elem(elem &result, const ring_elem &a) const
   {
-    M2_CCC b = reinterpret_cast<M2_CCC>(a.poly_val);
+    gmp_CC b = reinterpret_cast<gmp_CC>(a.poly_val);
     result = *b;
   }
 
@@ -575,73 +576,6 @@ public:
   }
 };
 
-#include "ZZ.hpp"
-#include "ntl-interface.hpp"
-
-class CoefficientRingZZ_NTL : public our_new_delete
-{
-public:
-  typedef RingZZ ring_type;
-  typedef ZZ elem;
-
-  CoefficientRingZZ_NTL(const RingZZ *R0) { }
-
-  void init_set(elem &result, const elem &a) const { result = a; }
-
-  void set_zero(elem &result) const { result = 0; }
-
-  void set(elem &result, const elem &a) const { result = a; }
-
-  bool is_zero(const elem &result) const { return result == 0; }
-
-  void invert(elem &result, const elem &a) const
-  {
-    if (a == 1 || a == -1)
-      result = a;
-    else
-      result = 0;
-  }
-
-  void subtract_multiple(elem &result, elem a, elem b) const;
-    // result -= a*b
-
-  void add(elem &result, const elem &a, const elem &b) const
-  {
-    result = a+b;
-  }
-
-  void subtract(elem &result, const elem &a, const elem &b) const
-  {
-    result = a-b;
-  }
-
-  void mult(elem &result, const elem &a, const elem &b) const
-  {
-    result = a*b;
-  }
-
-  void divide(elem &result, const elem &a, const elem &b) const
-  {
-    result = a/b;
-  }
-
-  void to_ring_elem(ring_elem &result, const elem &a) const
-  {
-    mpz_ptr r = globalZZ->new_elem();
-    ntl_ZZ_to_mpz(r, a);
-    result = r;
-  }
-
-  void from_ring_elem(elem &result, const ring_elem &a) const
-  {
-    result = ntl_ZZ_from_mpz(a.get_mpz());
-  }
-
-  void swap(elem &a, elem &b) const
-  {
-    ::swap(a,b);
-  }
-};
 
 #endif
 

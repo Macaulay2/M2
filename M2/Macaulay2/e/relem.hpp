@@ -72,10 +72,10 @@ public:
   // nvars is the number of variables in an outermost monoid
   // coeffR is the coefficient ring the result coefficients will be in
   int n_terms(int nvars) const;
-  RingElementOrNull *get_terms(int nvars, int lo, int hi) const;
-  RingElementOrNull *get_coeff(const Ring *coeffR, const Monomial *m) const;
-  RingElementOrNull *lead_coeff(const Ring *coeffR) const;
-  MonomialOrNull  *lead_monom(int nvars) const;
+  RingElement /* or null */ *get_terms(int nvars, int lo, int hi) const;
+  RingElement /* or null */ *get_coeff(const Ring *coeffR, const Monomial *m) const;
+  RingElement /* or null */ *lead_coeff(const Ring *coeffR) const;
+  Monomial /* or null */  *lead_monom(int nvars) const;
   ////////////////////////////////////
 
   bool       is_homogeneous() const;
@@ -86,9 +86,9 @@ public:
   //  intarray  degree() const;
 
   // See engine.h for the definition of 'content' here
-  const RingElementOrNull *content() const;
-  const RingElementOrNull *remove_content() const;
-  const RingElementOrNull *split_off_content(RingElementOrNull *&result) const;
+  const RingElement /* or null */ *content() const;
+  const RingElement /* or null */ *remove_content() const;
+  const RingElement /* or null */ *split_off_content(const RingElement /* or null */ *&result) const;
 
   // functions for fraction fields
 

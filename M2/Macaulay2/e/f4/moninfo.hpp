@@ -15,8 +15,7 @@
 #error integer type definitions not available
 #endif
 
-#include "../../d/M2types.h"
-
+struct MonomialOrdering;
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
 
@@ -31,12 +30,23 @@ typedef const monomial_word * const_packed_monomial;
   // packing info, hash values, weights are all
   // defined in: PackedMonomials
 
+
+// with weight vector values:
+// [hashvalue comp w1 w2 ... wr e1 e2 ... en]
+// or is it:
+// [hashvalue comp e1 e2 ... en -wr ... -w1]
+
 class MonomialInfo : public our_new_delete
 {
   int nvars;
   int nslots;
-  monomial_word *hashfcn;
+  monomial_word *hashfcn; // array 0..nvars-1 of hash values for each variable
   monomial_word mask;
+
+  int firstvar; // = 2, if no weight vector, otherwise 2 + nweights
+  int nweights; // number of weight vector values placed.  These should all be positve values?
+  M2_arrayint weight_vectors; // array 0..nweights of array 0..nvars-1 of longs
+
   // monomial format: [hashvalue, component, pack1, pack2, ..., packr]
   // other possible:
   //    [hashvalue, len, component, v1, v2, ..., vr] each vi is potentially packed too.
@@ -60,8 +70,7 @@ public:
   typedef const_packed_monomial const_monomial;
   typedef monomial value;
 
-  MonomialInfo(int nvars);
-  // Default monomial order is reverse lexicographic
+  MonomialInfo(int nvars, const MonomialOrdering *mo);
 
   virtual ~MonomialInfo();
 
@@ -94,11 +103,25 @@ public:
     ncalls_from_exponent_vector++;
     result[0] = 0;
     result[1] = comp;
+
     for (int i=0; i<nvars; i++)
       {
-	result[2+i] = e[i];
+	result[firstvar+i] = e[i];
 	if (e[i] > 0)
 	  result[0] += hashfcn[i] * e[i];
+      }
+
+    int *wt = weight_vectors->array;
+    for (int j=0; j<nweights; j++, wt += nvars)
+      {
+	long val = 0;
+	for (int i=0; i<nvars; i++)
+	  {
+	    long a = e[i];
+	    if (a > 0)
+	      val += a * wt[i];
+	  }
+	result[2+j] = val;
       }
     return true;
   }
@@ -108,8 +131,8 @@ public:
     // Hash value = 0. ??? Should the hash-function take component into account ???
     result[0] = 0;
     result[1] = comp;
-    for (int i=0; i<nvars; i++)
-	result[2+i] = 0;
+    for (int i=2; i<nslots; i++)
+      result[i] = 0;
     return true;
   }
 
@@ -117,9 +140,20 @@ public:
     // Unpack the monomial m.
     ncalls_to_exponent_vector++;
     result_comp = m[1];
-    m += 2;
+    m += 2 + nweights;
     for (int i=0; i<nvars; i++)
       *result++ = *m++;
+    return true;
+  }
+
+  bool to_intstar_vector(const_packed_monomial m, int * result, int &result_comp) const {
+    // Unpack the monomial m into result, which should already be allocated 0..nvars-1
+    // this is to connect with older 'int *' monomials.
+    ncalls_to_exponent_vector++;
+    result_comp = static_cast<int>(m[1]);
+    m += 2;
+    for (int i=0; i<nvars; i++)
+      *result++ = static_cast<int>(*m++);
     return true;
   }
 
@@ -127,7 +161,7 @@ public:
     // 'result' must have enough space allocated
     ncalls_to_varpower++;
     varpower_word *t = result+1;
-    const_packed_monomial m1 = m + 2 + nvars;
+    const_packed_monomial m1 = m + nslots;
     int len = 0;
     for (int i=nvars-1; i>=0; i--)
       {
@@ -146,19 +180,36 @@ public:
     ncalls_from_varpower++;
     result[0] = 0;
     result[1] = comp;
-    for (int i=0; i<nvars; i++)
+    for (int i=2; i<nslots; i++)
       {
-	result[2+i] = 0;
+	result[i] = 0;
       }
     for (index_varpower_monomial j = m; j.valid(); ++j)
       {
-	int v = j.var();
-	int e = j.exponent();
-	result[2 + v] = e;
+	varpower_word v = j.var();
+	varpower_word e = j.exponent();
+	result[firstvar + v] = e;
 	if (e == 1)
 	  result[0] += hashfcn[v];
 	else
 	  result[0] += e * hashfcn[v];
+      }
+
+    int *wt = weight_vectors->array;
+    for (int j=0; j<nweights; j++, wt += nvars)
+      {
+	long val = 0;
+	for (index_varpower_monomial i = m; i.valid(); ++i)
+	  {
+	    varpower_word v = i.var();
+	    varpower_word e = i.exponent();
+	    long w = wt[v];
+	    if (e == 1)
+	      val += w;
+	    else
+	      val += w * e;
+	    result[2+j] = val;
+	  }
       }
   }
 
@@ -202,7 +253,7 @@ public:
     const_packed_monomial m1 = m+nslots;
     const_packed_monomial n1 = n+nslots;
     for (int i=nslots-2; i>0; i--) {
-      int cmp = *--m1 - *--n1;
+      varpower_word cmp = *--m1 - *--n1;
       if (cmp < 0) return -1;
       if (cmp > 0) return 1;
     }
@@ -212,11 +263,50 @@ public:
     return 0;
   }
 
-  bool unnecessary(const_packed_monomial m, 
+  int compare_lex(const_packed_monomial m, const_packed_monomial n) const {
+    ncalls_compare++;
+    const_packed_monomial m1 = m+2;
+    const_packed_monomial n1 = n+2;
+    for (int i=nslots-2; i>0; i--) {
+      varpower_word cmp = *m1++ - *n1++;
+      if (cmp > 0) return -1;
+      if (cmp < 0) return 1;
+    }
+    monomial_word cmp = m[1]-n[1];
+    if (cmp < 0) return 1;
+    if (cmp > 0) return -1;
+    return 0;
+  }
+
+  int compare_weightvector(const_packed_monomial m, const_packed_monomial n) const {
+    ncalls_compare++;
+    const_packed_monomial m1 = m+2;
+    const_packed_monomial n1 = n+2;
+    for (int i=0; i<nweights; i++) {
+      varpower_word cmp = *m1++ - *n1++;
+      if (cmp > 0) return -1;
+      if (cmp < 0) return 1;
+    }
+    m1 = m+nslots;
+    n1 = n+nslots;
+    for (int i=nvars-1; i>0; i--) {
+      varpower_word cmp = *--m1 - *--n1;
+      if (cmp < 0) return -1;
+      if (cmp > 0) return 1;
+    }
+    monomial_word cmp = m[1]-n[1];
+    if (cmp < 0) return 1;
+    if (cmp > 0) return -1;
+    return 0;
+  }
+
+  int (MonomialInfo::*compare)(const_packed_monomial m, const_packed_monomial n) const;
+
+  bool unnecessary1(const_packed_monomial m, 
 		   const_packed_monomial p1,
 		   const_packed_monomial p2,
 		   const_packed_monomial lcm) const
-    // Returns true if the corresponding pair could be removed
+    // Returns true if the corresponding pair (p1,p2) could be removed
     // This is essentially the Buchberger-Moeller criterion
     // Assumptions: lcm(p1,p2) = lcm.
     // Here is the criterion:
@@ -228,13 +318,14 @@ public:
     //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
     //        if A and B then return true
   {
+    //TODO: MES: this maybe should check that lead components of m and p1 and p2 are the same...
     ncalls_unneccesary++;
     bool A=false;
     bool B=false;
-    m += 2;
-    p1 += 2;
-    p2 += 2;
-    lcm += 2;
+    m += firstvar;
+    p1 += firstvar;
+    p2 += firstvar;
+    lcm += firstvar;
     for (int i=0; i<nvars; i++)
       {
 	if (m[i] > lcm[i]) return false;
@@ -245,18 +336,75 @@ public:
     return (A && B);
   }
 
+  bool unnecessary(const_packed_monomial m, 
+		   const_packed_monomial p1,
+		   const_packed_monomial p2,
+		   const_packed_monomial lcm) const
+    // Returns true if the corresponding pair (p1,p2) could be removed
+    // This is essentially the Buchberger-Moeller criterion
+    // Assumptions: lcm(p1,p2) = lcm.
+    // Here is the criterion:
+    //   (a) if component(lcm) != component(m) return false
+    //   (b) if m does not divide lcm, return false
+    //   (c) need that (A) lcm(p1,m) != lcm and that (B) lcm(p2,m) != lcm
+    //       (in these two cases, we will have already removed one of the other
+    //        two pairs: (p1,m), (p2,m).  Note that in any case, 
+    //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
+    //        if A and B then return true
+
+  // Here is the criterion to remove a pair (i.e. return true)
+    //   (a) need: component(lcm) == component(m) (else return false)
+    //   (b) need: m divides lcm, (else return false)
+    //   (c) need: (A) and (B), where
+    //         (A) lcm(p1,m) != lcm
+    //         (B) lcm(p2,m) != lcm
+    //       
+    //       (in these two cases, we will have already removed one of the other
+    //        two pairs: (p1,m), (p2,m).  Note that in any case, 
+    //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
+    //        if A and B then return true
+
+  {
+    //TODO: MES: this maybe should check that lead components of m and p1 and p2 are the same...
+    ncalls_unneccesary++;
+    bool A=false;
+    m += firstvar;
+    p1 += firstvar;
+    p2 += firstvar;
+    lcm += firstvar;
+    for (int i=0; i<nvars; i++) 
+      if (m[i] > lcm[i]) return false;
+
+    for (int i=0; i<nvars; i++) {
+      varpower_word a = lcm[i];
+      if (p1[i] < a && m[i] < a) {
+	A = true; break;
+      }
+    }
+
+    if (!A) return false;
+    
+    // Now (b), (A) hold.  Check (B).
+    for (int i=0; i<nvars; i++)  {
+      varpower_word a = lcm[i];
+      if (p2[i] < a && m[i] < a) return true;
+    }
+    
+    return false;
+  }
+
   void quotient_as_vp(const_packed_monomial a,
 		      const_packed_monomial b,
 		      varpower_monomial result,
-		      int &deg, 
+		      int &deg_result, 
 		      bool &are_disjoint) const
   {
+    varpower_word deg = 0;
     // sets result, deg, are_disjoint
     ncalls_quotient_as_vp++;
-    deg = 0;
     are_disjoint = true;
-    a += 2;
-    b += 2;
+    a += firstvar;
+    b += firstvar;
     int len = 0;
     varpower_word *r = result+1;
     for (int i=nvars-1; i>=0; --i)
@@ -273,6 +421,7 @@ public:
 	  }
       }
     result[0] = len;
+    deg_result = static_cast<int>(deg);
   }
 
 };

@@ -19,7 +19,7 @@ class GBWeight : public our_new_delete
   int nvars_;
   GBRing *R_;
 
-  int *EXP_;
+  size_t exp_size; // length in bytes of temporary exponent vectors
   long *Fdegs_;
 public:
   GBWeight(const FreeModule *F, M2_arrayint wts);

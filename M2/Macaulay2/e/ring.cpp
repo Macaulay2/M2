@@ -4,11 +4,11 @@
 #include "monoid.hpp"
 #include "monideal.hpp"
 #include "res-a1-poly.hpp"
-#include "polyring.hpp"
+#include "poly.hpp"
 
 #include "freemod.hpp"
 
-const Monoid * Ring::degree_monoid() const { return degree_ring->Nmonoms(); }
+const Monoid * Ring::degree_monoid() const { return degree_ring->getMonoid(); }
 
 void Ring::initialize_ring(int P0,
 			   const PolynomialRing *DR,
@@ -232,13 +232,13 @@ int Ring::discrete_log(ring_elem) const
   return -1;
 }
 
-bool Ring::from_BigComplex(M2_CCC z, ring_elem &result) const
+bool Ring::from_BigComplex(gmp_CC z, ring_elem &result) const
 {
   result = from_int(0);
   return false;
 }
 
-bool Ring::from_BigReal(M2_RRR z, ring_elem &result) const
+bool Ring::from_BigReal(gmp_RR z, ring_elem &result) const
 {
   result = from_int(0);
   return false;
@@ -386,7 +386,7 @@ int Ring::index_of_var(const ring_elem a) const
 
 M2_arrayint Ring::support(const ring_elem a) const
 {
-  M2_arrayint result = makearrayint(0);
+  M2_arrayint result = M2_makearrayint(0);
   return result;
 }
 
@@ -396,12 +396,12 @@ unsigned long Ring::get_precision() const
 {
   return 0;
 }
-ring_elem Ring::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
+ring_elem Ring::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   // Default is to return f itself.
 {
   return f;
 }
-void Ring::increase_maxnorm(M2_RRR norm, const ring_elem f) const
+void Ring::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 {
   // Default for rings not over RRR or CCC is to do nothing.

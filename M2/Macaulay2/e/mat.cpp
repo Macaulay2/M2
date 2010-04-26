@@ -12,8 +12,8 @@
 #include "dmat-LU.hpp"
 
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
-						long nrows, 
-						long ncols, 
+						int nrows, 
+						int ncols, 
 						bool dense)
 {
   if (nrows < 0 | ncols < 0)
@@ -191,11 +191,11 @@ void MutableMatrix::text_out(buffer &o) const
 
 bool MutableMatrix::set_values(M2_arrayint rows,
 				  M2_arrayint cols,
-				  RingElement_array *values)
+				  engine_RawRingElementArray values)
 {
   if (rows->len != cols->len || rows->len != values->len)
     return false;
-  for (long i=rows->len-1; i>=0; i--)
+  for (int i=rows->len-1; i>=0; i--)
     {
       if (!set_entry(rows->array[i], cols->array[i], values->array[i]->get_value()))
 	return false;
@@ -431,7 +431,7 @@ bool MutableMat<CoeffRing,Mat>::nullspaceU(MutableMatrix *x) const
 }
 
 template<typename CoeffRing, typename Mat>
-M2_arrayint_OrNull MutableMat<CoeffRing,Mat>::LU(MutableMatrix *L,
+M2_arrayintOrNull MutableMat<CoeffRing,Mat>::LU(MutableMatrix *L,
 						 MutableMatrix *U) const
 {
   ERROR("LU decomposition currently not implemented for this ring and matrix type");
@@ -473,7 +473,7 @@ bool MutableMat<CoeffRing,Mat>::least_squares(const MutableMatrix *b,
   return false;
 }
 
-template <> M2_arrayint_OrNull MutableMat<CoefficientRingZZp,DMatZZp>::LU(MutableMatrix *L,
+template <> M2_arrayintOrNull MutableMat<CoefficientRingZZp,DMatZZp>::LU(MutableMatrix *L,
 							      MutableMatrix *U) const
 {
   const DMatZZp *A2 = get_DMatZZp();
@@ -487,7 +487,7 @@ template <> M2_arrayint_OrNull MutableMat<CoefficientRingZZp,DMatZZp>::LU(Mutabl
   return DMatLU<CoefficientRingZZp>::LU(A2,L2,U2);
 }
 
-template <> M2_arrayint_OrNull MutableMat<CoefficientRingRRR, DMatRR>::LU(MutableMatrix *L,
+template <> M2_arrayintOrNull MutableMat<CoefficientRingRRR, DMatRR>::LU(MutableMatrix *L,
 							     MutableMatrix *U) const
 {
   const DMatRR *A2 = get_DMatRR();
@@ -501,7 +501,7 @@ template <> M2_arrayint_OrNull MutableMat<CoefficientRingRRR, DMatRR>::LU(Mutabl
   return Lapack::LU(A2,L2,U2);
 }
 
-template <> M2_arrayint_OrNull MutableMat<CoefficientRingCCC, DMatCC>::LU(MutableMatrix *L,
+template <> M2_arrayintOrNull MutableMat<CoefficientRingCCC, DMatCC>::LU(MutableMatrix *L,
 							     MutableMatrix *U) const
 {
   const DMatCC *A2 = get_DMatCC();

@@ -37,7 +37,7 @@ extern "C" void dintarray(M2_arrayint a);
 
 extern "C" void dstash();
 
-extern "C" void dRRR(M2_RRR a);
+extern "C" void dRRR(gmp_RR a);
 
 extern "C" void pring(const Ring *R);
 

@@ -1,13 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-use C;
+use arithmetic;
 use system;
-
-import join(x:string,y:string):string;
-import substr(x:string,start:int,leng:int):string;
-import substr(x:string,start:int):string;
-import substrAlwaysCopy(x:string,start:int,leng:int):string;
-import enlarge(n:int,x:string):string;
 
 export concatenate(x:array(string)):string := (
      n := 0;
@@ -73,5 +67,5 @@ export index(s:string,offset:int,c:char,d:char):int := (
      -1);     
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d strings.o "
 -- End:

@@ -3,9 +3,9 @@
 
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
+#include "../d/debug.h"
 
 #include <gc/gc.h>
-#include "../d/debug.h"
 
 // these replace all uses of the construction "new T[n]" (unless constructors have to be run!):
 #define newarray(T,len) reinterpret_cast<T*>(getmem((len) * sizeof(T)))
@@ -42,51 +42,28 @@ struct our_new_delete {
   static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
   static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 
-  static inline void* operator new    ( size_t size, void *existing_memory ) { return existing_memory; }
-  static inline void* operator new [] ( size_t size, void *existing_memory ) { return existing_memory; }
-
   static inline void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
   static inline void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-
-#ifndef __GNUC__
-  virtual ~our_new_delete() = 0; // see Scott Meyers, Effective C++, item 14!  This avoids something really bad in the c++ standard.
-     // ... but it slows down destuctors in every class inheriting from this one
-     // gnu cc does it right, running all the destructors, so we don't bother with this.
-#endif
-
-};
-
-#ifndef __GNUC__
-inline our_new_delete::~our_new_delete() {}
-#endif
-
-struct our_new_delete_atomic {
-     // warning:
-     //   a class that inherits from this one and has pointers to areas of memory allocated with gc will cause premature collection of those areas
-     //   the compiler can't enforce this
-     // suggestion:
-     //   every class that inherits from this one should have "atomic" in its name
-  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
-  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 
   static inline void* operator new    ( size_t size, void *existing_memory ) { return existing_memory; }
   static inline void* operator new [] ( size_t size, void *existing_memory ) { return existing_memory; }
 
-  static inline void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-  static inline void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+  static inline void operator delete    ( void *obj, void *existing_memory ) { TRAPCHK(obj); }
+  static inline void operator delete [] ( void *obj, void *existing_memory ) { TRAPCHK(obj); }
 
-#ifndef __GNUC__
-  virtual ~our_new_delete() = 0; // see Scott Meyers, Effective C++, item 14!  This avoids something really bad in the c++ standard.
-     // ... but it slows down destuctors in every class inheriting from this one
-     // gnu cc does it right, running all the destructors, so we don't bother with this.
+#if !defined(__GNUC__) || defined(__INTEL_COMPILER)
+  // see Scott Meyers, Effective C++, item 14!  This avoids something really bad in the c++ standard.
+  // ... but it slows down destuctors in every class inheriting from this one
+  // gnu cc does it right, running all the destructors, so we don't bother with this.
+#if 0
+      // But this will put a pointer to the table of virtual methods at the start of every instance,
+      // and we don't want that, because we want to pass these pointers to C routines.
+      // So we can't have any virtual methods here.
+      virtual ~our_new_delete() {}
+#endif
 #endif
 
 };
-
-#ifndef __GNUC__
-inline our_new_delete::~our_new_delete() {}
-#endif
-
 
 #include <gc/gc_allocator.h>
 

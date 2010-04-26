@@ -1,20 +1,14 @@
 --		Copyright 1994 by Daniel R. Grayson
 --- here we define the recursive types involved in parsing
-
-use C;
-use system;
-use err;
-use stdio;
+use pthread0;
 use stdiop;
-use strings;
-use nets;
-use varnets;
 use gmp;
 use xml;
 use engine;
+use varnets;
 
-export debugLevel := 0;
-export engineDebugLevel := 0;
+export threadLocal debugLevel := 0;
+export threadLocal engineDebugLevel := 0;
 
 export parsefuns := {
      unary:function(Token,TokenFile,int,bool):ParseTree,
@@ -44,11 +38,13 @@ export Symbol := {		    -- symbol table entry for a symbol
      unary:unop,
      postfix:unop,
      binary:binop,
-     frameID:int,		    -- seqno of frame for dictionary containing it, 0 indicates the globalFrame
+     frameID:int,		    -- seqno of frame for dictionary containing it
+				    -- 0 for the globalFrame
      frameindex:int,		    -- index within the frame of its value
      lookupCount:int,		    -- number of times looked up
-     protected:bool,	            -- whether protected against assignment by the user
-     flagLookup:bool		    -- whether to warn when symbol is used
+     Protected:bool,	            -- whether protected against assignment by the user
+     flagLookup:bool,		    -- whether to warn when symbol is used
+     thread:bool		    -- whether to use threadFrame instead of globalFrame
      };
 export SymbolListCell := {word:Word, entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
@@ -60,14 +56,17 @@ export Dictionary := {
      hash:int,						    -- assigned sequentially
      symboltable:SymbolHashTable,
      outerDictionary:Dictionary,          -- next outer dictionary, or pointer to self if none
+     	       	    	        -- these pointers are munged by dictionaryPath, which is non-re-entrant!
      frameID:int,	        -- -1 for dummy, 0 for global, then 1,2,3,...
-     framesize:int,	        -- one for each symbol, even the erased ones; for transient frames only
+     framesize:int,	        -- one for each symbol; for transient frames only
+     				--    because all global dictionaries share globalFrame and threadFrame
      transient:bool,	        -- whether there can be multiple frames
-     	       	    	        -- for the global dictionary and file scopes : no
+     	       	    	        -- for the global or thread dictionary and for file scopes : no
 				-- for function closures : yes
-     protected:bool             -- whether symbols can be added; closing a package protects it
+     Protected:bool             -- whether symbols can be added; closing a package protects it
      };
-export Token := {		-- a word, as encountered in the input
+export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
+export Token := {+		-- a word, as encountered in the input
      word:Word,			--   the word
      filename:string, line:ushort, column:ushort, loadDepth:ushort, -- position:Position, --   the location where it was encountered
      dictionary:Dictionary,	--   the dictionary active at the time it was encountered
@@ -77,41 +76,42 @@ export Token := {		-- a word, as encountered in the input
 
 -- ParseTree
 
-export Adjacent := {lhs:ParseTree, rhs:ParseTree};
-export For := { forToken:Token, variable:ParseTree, inClause:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree, 
+export Adjacent := {+lhs:ParseTree, rhs:ParseTree};
+export For := {+ forToken:Token, variable:ParseTree, inClause:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree, 
      dictionary:Dictionary 					    -- filled in later
      };
-export WhileDo := { whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
-export WhileList := { whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
-export WhileListDo := { whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
-export TryElse := { tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
-export TryThenElse := { tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
-export Try := { tryToken:Token, primary:ParseTree};
-export Catch := { catchToken:Token, primary:ParseTree};
-export IfThen := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
-export IfThenElse := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
-export New := { newtoken:Token, newclass:ParseTree, newparent:ParseTree, newinitializer:ParseTree};
-export Arrow := {lhs:ParseTree, operator:Token, rhs:ParseTree, desc:functionDescription};
-export Quote := {operator:Token, rhs:Token};
-export GlobalQuote := {operator:Token, rhs:Token, global:void};
-export LocalQuote := {operator:Token, rhs:Token, local:void};
-export Binary := {lhs:ParseTree, operator:Token, rhs:ParseTree};
-export Unary  := {operator:Token, rhs:ParseTree};
-export Postfix:= {lhs:ParseTree, operator:Token};
+export WhileDo := {+ whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
+export WhileList := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
+export WhileListDo := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
+export TryElse := {+ tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
+export TryThenElse := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
+export Try := {+ tryToken:Token, primary:ParseTree};
+export Catch := {+ catchToken:Token, primary:ParseTree};
+export IfThen := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
+export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
+export New := {+ newtoken:Token, newclass:ParseTree, newparent:ParseTree, newinitializer:ParseTree};
+export Arrow := {+lhs:ParseTree, Operator:Token, rhs:ParseTree, desc:functionDescription};
+export Quote := {+Operator:Token, rhs:Token};
+export GlobalQuote := {+Operator:Token, rhs:Token, global:void};
+export ThreadQuote := {+Operator:Token, rhs:Token, thread:void};
+export LocalQuote := {+Operator:Token, rhs:Token, local:void};
+export Binary := {+lhs:ParseTree, Operator:Token, rhs:ParseTree};
+export Unary  := {+Operator:Token, rhs:ParseTree};
+export Postfix:= {+lhs:ParseTree, Operator:Token};
 export ArrayParseTree := array(ParseTree);
-export Parentheses := { left:Token, contents:ParseTree, right:Token };
-export EmptyParentheses := { left:Token, right:Token };
-export dummy := {position:Position};
-export StartDictionary := {dictionary:Dictionary, body:ParseTree};
+export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
+export EmptyParentheses := {+ left:Token, right:Token };
+export dummy := {+position:Position};
+export StartDictionary := {+dictionary:Dictionary, body:ParseTree};
 export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
      or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
-     or Quote or GlobalQuote or LocalQuote
+     or Quote or GlobalQuote or ThreadQuote or LocalQuote
      or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
 -- misc
 
-export TokenFile := {
+export TokenFile := {+
      posFile:PosFile,
      nexttoken:(null or Token)
      };
@@ -122,91 +122,101 @@ export fileError(f:TokenFile):bool := fileError(f.posFile);
 export clearFileError(f:TokenFile):void := clearFileError(f.posFile);
 export isatty(f:TokenFile):bool := isatty(f.posFile);
 
-export CompiledFunction := {fn:fun,hash:int};
-export CompiledFunctionClosure := {
+export CompiledFunction := {+fn:fun,hash:int};
+export CompiledFunctionClosure := {+
      fn:function(Expr,Sequence):Expr,
      hash:int,
      env:Sequence
      };
-export CompiledFunctionBody := {
+export CompiledFunctionBody := {+
      fn:function(Expr,Sequence):Expr			    -- it's hard to make hash codes for these things!
      };
 
 -- Code
 
-export localSymbolClosureCode := {
+export localSymbolClosureCode := {+
      nestingDepth:int,
      symbol:Symbol,
      position:Position
      };
-export globalSymbolClosureCode := {
+export globalSymbolClosureCode := {+
      symbol:Symbol,
      position:Position
      };
-export localMemoryReferenceCode := {
+export threadSymbolClosureCode := {+
+     symbol:Symbol,
+     position:Position,
+     x:void						    -- just to distinguish it
+     };
+export localMemoryReferenceCode := {+
      nestingDepth:int,
      frameindex:int,
      position:Position
      };
-export globalMemoryReferenceCode := {
+export globalMemoryReferenceCode := {+
      frameindex:int,
      position:Position
      };
-export localAssignmentCode := {
+export threadMemoryReferenceCode := {+
+     frameindex:int,
+     position:Position,
+     x:void						    -- just to distinguish it
+     };
+export localAssignmentCode := {+
      nestingDepth:int,
      frameindex:int,
      rhs:Code,
      position:Position
      };
-export globalAssignmentCode := {
+export globalAssignmentCode := {+
      lhs:Symbol,
      rhs:Code,
      position:Position
      };
-export ifCode := { predicate:Code, thenClause:Code, elseClause:Code, position:Position };
-export tryCode := { code:Code, thenClause:Code, elseClause:Code, position:Position };
-export catchCode := { code:Code, position:Position };
+export ifCode := {+ predicate:Code, thenClause:Code, elseClause:Code, position:Position };
+export tryCode := {+ code:Code, thenClause:Code, elseClause:Code, position:Position };
+export catchCode := {+ code:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
-export parallelAssignmentCode := {
-     nestingDepth:array(int), -- spots corresponding to local variables are filled with -1
+export parallelAssignmentCode := {+
+     nestingDepth:array(int), -- spots corresponding to global and thread variables are filled with -1
      frameindex:array(int),
      lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
      rhs:Code,
      position:Position};
 
-export nullCode := {};
-export realCode := {x:RR,position:Position};
-export integerCode := {x:ZZ,position:Position};
-export stringCode := {x:string};
-export unaryCode := {f:unop,rhs:Code,position:Position};
-export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
-export adjacentCode := {lhs:Code,rhs:Code,position:Position};
-export whileDoCode := {predicate:Code,doClause:Code,position:Position};
-export whileListCode := {predicate:Code,listClause:Code,position:Position};
-export whileListDoCode := {predicate:Code,listClause:Code,doClause:Code,position:Position};
+export nullCode := {+};
+export realCode := {+x:RR,position:Position};
+export integerCode := {+x:ZZ,position:Position};
+export stringCode := {+x:string};
+export unaryCode := {+f:unop,rhs:Code,position:Position};
+export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
+export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
+export whileDoCode := {+predicate:Code,doClause:Code,position:Position};
+export whileListCode := {+predicate:Code,listClause:Code,position:Position};
+export whileListDoCode := {+predicate:Code,listClause:Code,doClause:Code,position:Position};
 
-export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
+export ternaryCode := {+f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
 
-export newOfFromCode := {newClause:Code,ofClause:Code,fromClause:Code,position:Position};
-export newFromCode   := {newClause:Code,fromClause:Code,position:Position};
-export newOfCode     := {newClause:Code,ofClause:Code,position:Position};
-export newCode       := {newClause:Code,position:Position};
+export newOfFromCode := {+newClause:Code,ofClause:Code,fromClause:Code,position:Position};
+export newFromCode   := {+newClause:Code,fromClause:Code,position:Position};
+export newOfCode     := {+newClause:Code,ofClause:Code,position:Position};
+export newCode       := {+newClause:Code,position:Position};
 
-export CodeSequence := array(Code);
-export sequenceCode := {x:CodeSequence, position:Position};
-export listCode     := {y:CodeSequence, position:Position};
-export arrayCode    := {z:CodeSequence, position:Position};
-export semiCode     := {w:CodeSequence, position:Position};
-export multaryCode := {f:multop, args:CodeSequence, position:Position};
-export forCode := {inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
+export CodeSequence := tarray(Code);
+export sequenceCode := {+x:CodeSequence, position:Position};
+export listCode     := {+y:CodeSequence, position:Position};
+export arrayCode    := {+z:CodeSequence, position:Position};
+export semiCode     := {+w:CodeSequence, position:Position};
+export multaryCode := {+f:multop, args:CodeSequence, position:Position};
+export forCode := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export binopExpr := function(Expr,Expr):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
 
-export newLocalFrameCode := {
+export newLocalFrameCode := {+
      frameID:int,
      framesize:int,
      body:Code
@@ -218,15 +228,18 @@ export functionDescription := {
      restargs:bool		    -- whether last parm gets rest of args
      };
 export dummyDesc := functionDescription(-1,0,0,false);
-export functionCode := { 
+export functionCode := {+
      arrow:Token,			  -- just for display purposes
      body:Code, 
      desc:functionDescription,
      hash:int
      };
 export Code := (
-     nullCode or realCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
-     or localAssignmentCode or parallelAssignmentCode or globalSymbolClosureCode or localSymbolClosureCode
+     nullCode or realCode or stringCode or integerCode 
+     or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
+     or globalAssignmentCode or localAssignmentCode 
+     or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
+     or parallelAssignmentCode 
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
@@ -235,15 +248,17 @@ export Code := (
      or Error						    -- for tail recursion
      or newLocalFrameCode				    -- soon obsolete
      );
-export CodeClosure := { frame:Frame, code:Code };
+export CodeClosure := {+ frame:Frame, code:Code };
 
 -- Expr
 
-export Sequence := array(Expr);
+export Sequence := tarray(Expr);
 export Frame := {
      outerFrame:Frame, 
-     frameID:int,			  -- seqno of corresponding dictionary
-     valuesUsed:int,      -- sigh, we really need this only for static frames
+     frameID:int,	    -- seqno of corresponding dictionary
+			    -- 0 for the globalFrame, and 1 for the thread local threadFrame
+     valuesUsed:int,        -- sigh, we really need this only for static frames
+     	       	    	    -- we don't need it for the thread local threadFrame, but use it as a high water mark
      notrecyclable:bool,
      values:Sequence
      };
@@ -260,23 +275,26 @@ export FrameLocation := {
      frame:Frame,
      frameindex:int
      };
-export DictionaryClosure := {
-     frame:Frame,					    -- every symbol in the dictionary has the same frameID as this frame does
+export DictionaryClosure := {+
+     frame:Frame,      -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
      };
-export FunctionClosure := { frame:Frame, model:functionCode };
-export SymbolClosure := {
+export FunctionClosure := {+ frame:Frame, model:functionCode };
+export SymbolClosure := {+
      frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
      symbol:Symbol
      };
-export List := {
-     class:HashTable,
+export SymbolBody := {+
+     symbol:Symbol
+     };
+export List := {+
+     Class:HashTable,
      v:Sequence,
      hash:int,
-     mutable:bool
+     Mutable:bool
      };
 
-export Error := {
+export Error := {+
      position:Position,
      message:string,
      value:Expr,					    -- we put dummyExpr here for "break;", or put x here for "break x;"
@@ -284,32 +302,40 @@ export Error := {
      frame:Frame
      };
 export printErrorMessage(err:Error):void := printErrorMessage(err.position,err.message);
-export Database := {
+export Database := {+
      filename:string,
      hash:int,
      handle:int,
      isopen:bool,
-     mutable:bool
+     Mutable:bool
      };
-export SpecialExpr := {					    -- this allows specialization of arbitrary types, like functions
-     class:HashTable,	       	    	      	   	    -- the declared class of e, a specialization of the "real" class of e
+export SpecialExpr := {+					    -- this allows specialization of arbitrary types, like functions
+     Class:HashTable,	       	    	      	   	    -- the declared class of e, a specialization of the "real" class of e
      e:Expr
      };
-export Boolean := {v:bool};
-export Nothing := {nothing:void};
+export Boolean := {+v:bool};
+export Nothing := {+nothing:void};
 
-export MysqlConnection := {MysqlConnection:void};
-export MysqlConnectionWrapper := {mysql:MysqlConnection or null};
-export MysqlResult := {MysqlResult:void};
-export MysqlResultWrapper := {connection:MysqlConnectionWrapper, res:MysqlResult};
-export MysqlField  := {MysqlField:void};
-export MysqlFieldWrapper  := {res:MysqlResultWrapper, fld:MysqlField};
+export MysqlConnection := Pointer "struct st_mysql *";
+export MysqlConnectionWrapper := {+mysql:MysqlConnection or null};
+export MysqlResult := Pointer "struct st_mysql_res *";
+export MysqlResultWrapper := {+connection:MysqlConnectionWrapper, res:MysqlResult};
+export MysqlField  := Pointer "struct st_mysql_field *";
+export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 
-export pythonObject := {py:void};
+export pythonObject := Pointer "struct _object *";
+export pythonObjectCell := {+v:pythonObject};
+
+export ThreadCellBody := {+
+     thread:Thread, tid:int, done:bool, cancellationRequested:bool, resultRetrieved:bool,
+     fun:Expr, arg:Expr, returnValue:Expr,
+     exceptionFlagPointer:atomicFieldPointerOrNull, interruptedFlagPointer:atomicFieldPointerOrNull };
+export ThreadCell := {+ body:ThreadCellBody };
+export isInitialized(c:ThreadCell):bool := c.body.tid != 0; -- not a macro, in lieu of tid being declared volatile
 
 export Expr := (
-     CC or
-     RR or
+     CCcell or
+     RRcell or
      Boolean or
      CodeClosure or
      CompiledFunction or
@@ -321,35 +347,37 @@ export Expr := (
      functionCode or
      FunctionClosure or
      HashTable or
-     ZZ or
+     ZZcell or
      List or
      Net or
      NetFile or
      Nothing or
-     QQ or
-     RawComputation or
-     RawFreeModule or
-     RawMatrix or
-     RawMonoid or
-     RawMonomial or
-     RawMonomialIdeal or
-     RawMonomialOrdering or
-     RawMutableMatrix or
-     RawStraightLineProgram or
-     RawPathTracker or
-     RawRing or
-     RawRingElement or
-     RawRingMap or
+     QQcell or
+     RawComputationCell or
+     RawFreeModuleCell or
+     RawMatrixCell or
+     RawMonoidCell or
+     RawMonomialCell or
+     RawMonomialIdealCell or
+     RawMonomialOrderingCell or
+     RawMutableMatrixCell or
+     RawStraightLineProgramCell or
+     RawPathTrackerCell or
+     RawRingCell or
+     RawRingElementCell or
+     RawRingMapCell or
      MysqlConnectionWrapper or
      MysqlResultWrapper or
      MysqlFieldWrapper or
      Sequence or
      SpecialExpr or
      SymbolClosure or
+     SymbolBody or
      file or
-     string or
-     pythonObject or
-     xmlNode or xmlAttr
+     stringCell or
+     pythonObjectCell or
+     xmlNodeCell or xmlAttrCell or
+     ThreadCell
      );
 export fun := function(Expr):Expr;
 
@@ -376,39 +404,66 @@ export dummyFrame := Frame(self,
      Sequence());
 
 dummySymbolFrameIndex := 0;
+globalFrameID := 0;
 globalFramesize := dummySymbolFrameIndex+1;
 export globalFrame := Frame(self, 0, globalFramesize, true, 
      Sequence(
 	  nullE						    -- one value for dummySymbol
 	  ));
-export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
-export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
-
-export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false,false);
-
+export threadFrameID := 0;
+export threadFramesize := 0;
+export threadLocal threadFrame  := Frame(self, threadFrameID, 0, true, Sequence());
+export enlarge(f:Frame):int := (
+     n := f.valuesUsed;
+     f.valuesUsed = n + 1;
+     if f.valuesUsed > length(f.values) then (
+	  f.values = new Sequence len 2 * length(f.values) + 1 do (
+	       foreach value in f.values do provide value;
+	       while true do provide nullE));
+     n);
+export enlargeThreadFrame():Frame := (
+     if threadFramesize > length(threadFrame.values) then (
+	  threadFrame.values = new Sequence len 2 * threadFramesize + 1 do (
+	       foreach value in threadFrame.values do provide value;
+	       while true do provide nullE));
+     threadFrame);
+export setGlobalVariable(x:Symbol,y:Expr):void := (if x.thread then enlargeThreadFrame() else globalFrame).values.(x.frameindex) = y;
+export getGlobalVariable(x:Symbol):Expr := (if x.thread then enlargeThreadFrame() else globalFrame).values.(x.frameindex);
+export globalDictionary := 
+export Macaulay2Dictionary := Dictionary(nextHash(),
+     newSymbolHashTable(),self,globalFrameID,
+     globalFramesize,false,false);
+export completions(s:string):array(string) := (
+     n := length(s);
+     if n == 0 then return array(string)();		    -- don't complete the null string
+     v := newvarstringarray(6);
+     d := globalDictionary;
+     while (
+	  foreach bucket in d.symboltable.buckets do (
+	       b := bucket;
+	       while true do when b
+	       is null do break
+	       is q:SymbolListCell do (
+		    t := q.word.name;
+		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then v=append(v,t);
+		    b = q.next; ));
+	  d != d.outerDictionary) do d = d.outerDictionary;
+     extract(v));
 export DictionaryList := {
      dictionary:Dictionary,
      next:DictionaryList				    -- pointer to self indicates end
      };
-     
 allDictionaries := DictionaryList(Macaulay2Dictionary,self);
 record(d:Dictionary):Dictionary := (
      allDictionaries = DictionaryList(d,allDictionaries);
      d);     
-
 export newGlobalDictionary():Dictionary := record(Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false));
-
-export globalDictionary := Macaulay2Dictionary;
-
-numLocalDictionaries := 0;
-export localFrame := dummyFrame;
-
+numLocalDictionaries := threadFrameID;
+export threadLocal localFrame := dummyFrame;
 export dummySymbolHashTable := newSymbolHashTable();
-
 export dummyDictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true));
-
 export getLocalDictionary(frameID:int):Dictionary := (
      p := allDictionaries;
      while (
@@ -417,7 +472,6 @@ export getLocalDictionary(frameID:int):Dictionary := (
      error("internal error: local dictionary with frameID " + tostring(frameID) + " not found");
      dummyDictionary);
 export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(noRecycle(f),getLocalDictionary(f.frameID));
-
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      record(Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false)));
@@ -425,10 +479,10 @@ export newStaticLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      record(
 	  Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,
-	  0,			     -- 0 for the global frame containing the static symbols' values
-	  false,			  -- the first local dictionary is usually (?) non-transient
-	  false
-	  )));
+	       0,			     -- 0 for the global frame containing the static symbols' values
+	       false,			  -- the first local dictionary is usually (?) non-transient
+	       false
+	       )));
 export emptyLocalDictionary := newStaticLocalDictionary();
 
 export newLocalFrame(d:Dictionary):Frame := Frame(self, d.frameID, d.framesize, false, new Sequence len d.framesize do provide nullE);
@@ -448,13 +502,14 @@ emptyFrame.notrecyclable = true;
 -- hash tables for exprs
 
 export KeyValuePair := {key:Expr, hash:int, value:Expr, next:KeyValuePair};
-export HashTable := {
+export HashTable := {+
      table:array(KeyValuePair), -- length is always a power of 2, initially 2^0 == 1
-     class:HashTable,
+     Class:HashTable,
      parent:HashTable,
      numEntries:int,
      hash:int,
-     mutable:bool
+     Mutable:bool,
+     beingInitialized:bool -- if true, no need to lock a mutex while modifying it
      };
 
 -- more dummies
@@ -490,6 +545,7 @@ export dummySymbol := Symbol(
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
+     false,
      false
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
@@ -504,9 +560,6 @@ export dummyToken   := Token(
      dummyPosition.column,
      dummyPosition.loadDepth,
      Macaulay2Dictionary,dummySymbol,false);
-export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
-export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
-export printWarningMessage(t:Token,message:string):void := printWarningMessage(position(t),message);
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 
@@ -524,49 +577,57 @@ export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 export steppingMessage := "--stepping limit reached";
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
+export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
 export cwd():Expr := (
      r := getcwd();
      if r === "" then buildErrorPacket("can't get current working directory: " + syserrmsg())
-     else Expr(r));
+     else Expr(stringCell(r)));
 dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
 export handleInterrupts := true;
-export stopIfError := false;
+(threadLocal export stopIfError := true) = false;
 foreach s in argv do
   if s === "--stop" then stopIfError = true else
   if s === "--int" then (handleInterrupts = false; handleInterruptsSetup(handleInterrupts););
-export debuggingMode := true;
+(threadLocal export debuggingMode := false) = true;
+
+export printIfError(e:Expr):void := (
+     when e is err:Error do printErrorMessage(err.position,err.message) else nothing;
+     );
 export printError(err:Error):Error := (
      if !(err.printed && err.position.filename === "stdio")
      then printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
      err.printed = true;
      err);
+export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
+export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
+export printWarningMessage(t:Token,message:string):void := printWarningMessage(position(t),message);
 
 -----------------------------------------------------------------------------
-export newHashTable(class:HashTable,parent:HashTable):HashTable := (
-     HashCounter = HashCounter + 1;
+export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
      HashTable(
 	  array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
 	  -- we start with four empty buckets.  It is important for the 
-	  -- enlarge/shrink code in objects.d that the number of buckets
-	  -- here (four) is a power of two!
-	  class,parent,0,HashCounter,
-	  true				  -- mutable by default!
+	  -- enlarge/shrink code in hashtable.dd that the number of buckets
+	  -- (here four) is a power of two
+	  Class,parent,0,nextHash(),
+	  true,				  -- mutable by default; careful: other routines depend on this
+	  false
 	  ));
 export thingClass := HashTable(
      array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in objects.d that the number of buckets
-	  -- here (four) is a power of two!
-     self,self,0,(HashCounter = HashCounter + 1;HashCounter),
-     true);
+	  -- here (four) is a power of two
+     self,self,0,nextHash(),
+     true,false);
 export hashTableClass := newHashTable(thingClass,thingClass);
 export mutableHashTableClass := newHashTable(thingClass,hashTableClass);
 export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
-       thingClass.class = typeClass;
-       typeClass.class = typeClass;
-       mutableHashTableClass.class = typeClass;
-       hashTableClass.class = typeClass;
+       thingClass.Class = typeClass;
+       typeClass.Class = typeClass;
+       mutableHashTableClass.Class = typeClass;
+       hashTableClass.Class = typeClass;
        newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
        newbasictype():HashTable := newtypeof(thingClass);
 export cacheTableClass := newtypeof(mutableHashTableClass);
@@ -638,31 +699,50 @@ export rawPathTrackerClass := newtypeof(rawObjectClass);    -- RawStraightLinePr
 export pythonObjectClass := newbasictype();
 export xmlNodeClass := newbasictype();
 export xmlAttrClass := newbasictype();
--- all new types and classes go just above this line, if possible, so hash codes don't change gratuitously!
+export threadClass := newbasictype();
+export symbolBodyClass := newbasictype();
+-- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame
      );
+export (x:SymbolBody) === (y:SymbolBody) : bool := (
+     x == y || x.symbol == y.symbol
+     );
+export (x:SymbolClosure) === (y:SymbolBody) : bool := (
+     x.symbol == y.symbol
+     );
+export (x:SymbolBody) === (y:SymbolClosure) : bool := (
+     x.symbol == y.symbol
+     );
 export (x:Symbol) === (y:SymbolClosure) : bool := x == y.symbol;
+export (x:Symbol) === (y:SymbolBody   ) : bool := x == y.symbol;
 export (x:SymbolClosure) === (y:Symbol) : bool := x.symbol == y;
+export (x:SymbolBody   ) === (y:Symbol) : bool := x.symbol == y;
 export (x:SymbolClosure) === (y:Expr):bool := (
      x == y || (
 	  when y
 	  is z:SymbolClosure do x.symbol == z.symbol && x.frame == z.frame
+	  is z:SymbolBody    do x.symbol == z.symbol
 	  else false
 	  ));
 export (x:Expr) === (y:SymbolClosure):bool := (
      y == x || (
 	  when x
 	  is z:SymbolClosure do y.symbol == z.symbol && y.frame == z.frame
+	  is z:SymbolBody    do y.symbol == z.symbol
 	  else false
 	  ));
 export (x:Symbol) === (y:Expr):bool := (
-     when y is z:SymbolClosure do x == z.symbol else false
-     );
+     when y
+     is z:SymbolClosure do x == z.symbol
+     is z:SymbolBody    do x == z.symbol
+     else false);
 export (x:Expr) === (y:Symbol):bool := (
-     when x is z:SymbolClosure do y == z.symbol else false
-     );
+     when x 
+     is z:SymbolClosure do y == z.symbol     
+     is z:SymbolBody    do y == z.symbol
+     else false);
 
 -- operator names for the disassembler
 export dummyUnop(c:Code):Expr := nullE;
@@ -708,5 +788,5 @@ export getMultopName(f:multop):string := (
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d tokens.o "
 -- End:

@@ -2,8 +2,8 @@
 
 #include "spair.hpp"
 
-int compare_type = 0;  // gb2.cpp: changes this value sometimes, usually to 0.
-static int spair_heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
+// The following is constant
+static const int spair_heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
    65536, 262144, 1677721};
 
 s_pair_heap::s_pair_heap(const Monoid *MM)
@@ -60,6 +60,8 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
   int cmp = f->degree - g->degree;
   if (cmp < 0) return -1;
   if (cmp > 0) return 1;
+  int compare_type = 0; // MES: res-a2.cpp would change this globally, uugh.  Doesn't seem to 
+                        // be used at all, so I am just commenting this out.
   switch (compare_type) {
   case 0:
     cmp = M->compare(f->lcm, g->lcm);

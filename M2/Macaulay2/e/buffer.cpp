@@ -16,7 +16,7 @@ void buffer::expand(int newcap)
 
 M2_string buffer::to_string()
 {
-  return tostringn(_buf, _size);
+  return M2_tostringn(_buf, _size);
 }
 
 void buffer::put(char c)
@@ -25,12 +25,13 @@ void buffer::put(char c)
   _buf[_size++] = c;
 }
 
-void buffer::put(const char *s, int len)
+void buffer::put(const char *s, long len)
  {
-  if (_capacity <= _size + len + 1)
-    expand(_size + len + 1);
-  memcpy(_buf + _size, s, len);
-  _size += len;
+   int len0 = static_cast<int>(len);
+   if (_capacity <= _size + len0 + 1)
+     expand(_size + len0 + 1);
+   memcpy(_buf + _size, s, len0);
+   _size += len0;
 }
 
 void buffer::put(const char *s)

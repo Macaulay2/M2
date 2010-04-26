@@ -2,13 +2,10 @@
 
 -- nets are 2 dimensional strings of characters
 
-use C;
-use system;
-use strings;
 use varstrin;
 use ctype;
 
-export Net := {
+export Net := {+
      height:int,			  -- number of strings above the baseline
      width:int,				  -- width of body (strings may be shorter)
      body:array(string)			  -- one string for each row, read-only
@@ -148,7 +145,7 @@ export (x:Net) === (y:Net) : bool := (
 
 export NetList := {
      previous:NetList,
-     this:Net
+     item:Net
      };
 
 export HorizontalJoin(v:NetList):Net := (
@@ -159,7 +156,7 @@ export HorizontalJoin(v:NetList):Net := (
 	  p = p.previous;
 	  );
      p = v;
-     s := new array(Net) len i do ( provide p.this; p = p.previous; );
+     s := new array(Net) len i do ( provide p.item; p = p.previous; );
      for j from 0 to (i-1)/2 do (			    -- now reverse the list
 	  k := i-1-j;
 	  t := s.j;
@@ -396,5 +393,5 @@ export hash(n:Net):int := (
      h);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

@@ -4,14 +4,8 @@
 #include "monoid.hpp"
 #include "text-io.hpp"
 
-extern int gbTrace;
-
-static long nmonideals_alloc = 0;
-static long nmonideals_freed = 0;
-
 void MonomialIdeal::remove_MonomialIdeal()
 {
-  nmonideals_freed++;
   delete_mi_node(mi); 
   if ((count % 2) == 1) delete mi_stash;
 }
@@ -58,7 +52,6 @@ void MonomialIdeal::delete_mi_node(Nmi_node *p)
 MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0) 
   : R(RR), mi(0), count(0), mi_stash(mi_stash0)
 {
-  nmonideals_alloc++;
   if (mi_stash == 0)
     {
       count = 1;
@@ -69,7 +62,6 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0)
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, queue<Bag *> &rejects, stash *mi_stash0)
   : R(R0), mi(0), count(0), mi_stash(mi_stash0)
 {
-  nmonideals_alloc++;
   if (mi_stash == 0)
     {
       count = 1;
@@ -108,7 +100,6 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, queu
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, stash *mi_stash0)
   : R(R0), mi(0), count(0), mi_stash(mi_stash0)
 {
-  nmonideals_alloc++;
   if (mi_stash == 0)
     {
       count = 1;
@@ -550,14 +541,14 @@ void MonomialIdeal::text_out(buffer &o) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   assert(P != 0);
-  const Monoid *M = P->Nmonoms();
+  const Monoid *M = P->getMonoid();
   int *m = M->make_one();
   for (Index<MonomialIdeal> j = last(); j.valid(); j--)
     {
       const int *n = operator[](j)->monom().raw();
       M->from_varpower(n, m);
       M->elem_text_out(o, m);
-      if (gbTrace > 0)
+      if (M2_gbTrace > 0)
 	o << '(' << operator[](j)->basis_elem() << ")";
       o << ' ';
     }
@@ -716,10 +707,10 @@ static MonomialIdeal *varpower_monideal(const PolynomialRing *R, const M2_arrayi
     }
   return result;
 }
-const M2_arrayint MonomialIdeal::lcm() const
+M2_arrayint MonomialIdeal::lcm() const
   // Returns the lcm of all of the generators of this, as an array of ints
 {
-  M2_arrayint result = makearrayint(get_ring()->n_vars());
+  M2_arrayint result = M2_makearrayint(get_ring()->n_vars());
   for (int i=0; i<result->len; i++) result->array[i] = 0;
 
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)

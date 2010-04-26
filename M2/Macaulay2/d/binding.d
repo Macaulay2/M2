@@ -1,16 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use system;
-use stdio;
-use gmp;
-use nets;
 use tokens;
-use strings;
 use parser;
 use lex;
-use ctype;
-use err;
-use stdiop;
 
 -----------------------------------------------------------------------------
 -- first, the global symbol table and functions for making symbols
@@ -56,16 +47,8 @@ export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- 
      table.buckets.h = SymbolListCell(newname,entry,table.buckets.h);
      entry);
 
-enlarge(f:Frame):int := (
-     n := f.valuesUsed;
-     f.valuesUsed = n + 1;
-     if f.valuesUsed > length(f.values) then (
-	  f.values = new Sequence len 2 * length(f.values) + 1 do (
-	       foreach value in f.values do provide value;
-	       while true do provide nullE));
-     n);
-export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     while dictionary.protected do (
+export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
+     while dictionary.Protected do (
 	  if dictionary == dictionary.outerDictionary then (
 	       -- shouldn't occur
 	       -- "dictionaries" in actors5.d and "protect" in actors2.d enforce this!
@@ -76,18 +59,22 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	  );
      frameindex := 0;
      if dictionary.frameID == 0 then (
-	  -- this allows the global frame to grow
-	  frameindex = enlarge(globalFrame))
+	  if thread then (
+	       -- threadFrame grows whenever an assignment occurs, if needed, so we don't enlarge it now
+	       frameindex = threadFramesize;
+	       threadFramesize = threadFramesize + 1;
+	       )
+	  else (
+	       -- this allows the global frame to grow
+	       frameindex = enlarge(globalFrame)))
      else if dictionary.frameID == localFrame.frameID then (
-	  -- this should take care of scopes which span a file,
-	  -- or the dictionary for a break loop
-	  -- and have a single frame which ought to be allowed to grow
+	  -- This takes care of scopes that span a file or the dictionary for a break loop,
+	  -- with a single frame which ought to be allowed to grow.
 	  frameindex = enlarge(localFrame) )
      else (
 	  -- this is a dynamic frame, not allocated yet
 	  frameindex = dictionary.framesize;
-	  dictionary.framesize = dictionary.framesize + 1;
-	  );
+	  dictionary.framesize = dictionary.framesize + 1);
      insert(
 	  Symbol(
 	       word, 
@@ -98,24 +85,29 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	       frameindex,
 	       1,				-- first lookup is now
 	       false,				      -- not protected
-	       false
+	       false,
+	       thread
 	       ),
 	  dictionary.symboltable));
-export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     entry := makeEntry(word,position,dictionary);
-     if dictionary.frameID == 0 && isalnum(word.name)
+export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
+     makeEntry(word,position,dictionary,false));
+export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
+     entry := makeEntry(word,position,dictionary,thread);
+     if dictionary.frameID == 0 && isalnum(word.name) && !thread
      then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
      entry);
+export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
+     makeSymbol(word,position,dictionary,false));
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
      entry := makeSymbol(w,dummyPosition,globalDictionary);
-     entry.protected = true;
+     entry.Protected = true;
      when globalFrame.values.(entry.frameindex)
      is s:SymbolClosure do s
      else SymbolClosure(globalFrame,entry));
 makeKeyword(w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
      entry := makeEntry(w,dummyPosition,globalDictionary);
-     entry.protected = true;
+     entry.Protected = true;
      sc := SymbolClosure(globalFrame,entry);
      globalFrame.values.(entry.frameindex) = Expr(sc);
      sc);
@@ -316,6 +308,7 @@ bump();
 bump();
      special("symbol",unarysymbol,precSpace,prec);
      special("global",unaryglobal,precSpace,prec);
+     special("threadVariable",unarythread,precSpace,prec);
      special("local",unarylocal,precSpace,prec);
 -----------------------------------------------------------------------------
 export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");
@@ -347,9 +340,9 @@ export NewOfFromE := Expr(NewOfFromS);
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
 -----------------------------------------------------------------------------
-export makeSymbol(token:Token):Symbol := (
-     e := makeSymbol(token.word,position(token),token.dictionary);
-     token.entry = e;
+export makeSymbol(t:Token):Symbol := (
+     e := makeSymbol(t.word,position(t),t.dictionary);
+     t.entry = e;
      e);
 HadError := false;
 export makeErrorTree(e:ParseTree,message:string):void := (
@@ -366,9 +359,6 @@ makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
 	  token.dictionary = dictionary;
 	  makeSymbol(token);)
      else makeErrorTree(e,"expected single identifier"));
------------------------------------------------------------------------------
-cleanGlobalFrame():void := globalFrame.values = emptySequence;
-atend(cleanGlobalFrame);
 -----------------------------------------------------------------------------
 lookupCountIncrement := 1;
 export lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
@@ -399,32 +389,35 @@ export lookup(w:Word,d:Dictionary):(null or Symbol) := (
 	  when lookup(w,d.symboltable) is null do nothing is e:Symbol do return e;
 	  d != d.outerDictionary ) do d = d.outerDictionary;
      globalLookup(w));
-lookup(token:Token,forcedef:bool):void := (
-     n := length(token.word.name);
-     if n >= 1 && isdigit(token.word.name.0) 
-     || n >= 2 && token.word.name.0 == '.' && isdigit(token.word.name.1)
+lookup(t:Token,forcedef:bool,thread:bool):void := (
+     n := length(t.word.name);
+     if n >= 1 && isdigit(t.word.name.0) 
+     || n >= 2 && t.word.name.0 == '.' && isdigit(t.word.name.1)
      then nothing
      else (
-     	  when lookup(token.word,token.dictionary)
+     	  when lookup(t.word,t.dictionary)
      	  is entry:Symbol do (
-	       token.entry = entry;
+	       t.entry = entry;
 	       if entry.flagLookup then (
-		    printErrorMessage(token,"flagged symbol encountered");
+		    printErrorMessage(t,"flagged symbol encountered");
+		    HadError=true;
+		    );
+	       if thread && !entry.thread then (
+		    printErrorMessage(t,"symbol already present, but not thread local");
 		    HadError=true;
 		    );
 	       )
      	  else (
 	       if forcedef
 	       then (
-		    -- undefined variables are defined as global and static here
-	       	    token.dictionary = globalDictionary;
-	       	    makeSymbol(token);
+		    t.dictionary = globalDictionary; -- undefined variables are defined as global
+	       	    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread);
 		    )
 	       else (
-	       	    printErrorMessage(token,"undefined token " + token.word.name);
+	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
 	       	    HadError=true;))));
-lookup(token:Token):void := lookup(token,true);
-lookuponly(token:Token):void := lookup(token,false);
+lookup(t:Token):void := lookup(t,true,false);
+lookuponly(t:Token):void := lookup(t,false,false);
 -----------------------------------------------------------------------------
 export opsWithBinaryMethod := array(SymbolClosure)(
      LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, 
@@ -450,13 +443,16 @@ export fixedPrefixOperators := array(SymbolClosure)(commaS,SharpS);
 export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
 
 -----------------------------------------------------------------------------
-bind(token:Token,dictionary:Dictionary):void := (
-     token.dictionary = dictionary;
-     lookup(token););
-bindop(token:Token,dictionary:Dictionary):void := (
-     token.dictionary = dictionary;
-     lookuponly(token););
-export bind(e:ParseTree,dictionary:Dictionary):void;
+bind(t:Token,dictionary:Dictionary):void := (
+     t.dictionary = dictionary;
+     lookup(t););
+bindThread(t:Token,dictionary:Dictionary):void := (
+     t.dictionary = dictionary;
+     lookup(t,true,true););
+bindop(t:Token,dictionary:Dictionary):void := (
+     t.dictionary = dictionary;
+     lookuponly(t););
+bind(e:ParseTree,dictionary:Dictionary):void;
 bindFormalParm(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e
      is t:Token do (
@@ -468,10 +464,10 @@ bindFormalParm(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void 
 bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is binary:Binary do (
-	  if binary.operator.word == CommaW
+	  if binary.Operator.word == CommaW
 	  then (
 	       bindFormalParmList(binary.lhs,dictionary,desc);
-	       bindop(binary.operator,dictionary);
+	       bindop(binary.Operator,dictionary);
 	       bindFormalParm(binary.rhs,dictionary,desc);)
 	  else makeErrorTree(e,"syntax error: expected function parameter list"))
      else bindFormalParm(e,dictionary,desc));
@@ -505,21 +501,21 @@ opHasPostfixMethod(o:Symbol):bool := (
      foreach s in opsWithPostfixMethod do if s.symbol == o then return true;
      return false;
      );
-bindTokenLocally(token:Token,dictionary:Dictionary):void := (
+bindTokenLocally(t:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 0;
-     r := lookup(token.word,dictionary);
+     r := lookup(t.word,dictionary);
      lookupCountIncrement = 1;
      when r
      is entry:Symbol do (
 	  if dictionary.frameID == entry.frameID
-	  then printWarningMessage(token, "local declaration of " + token.word.name + " shields variable with same name" );
+	  then printWarningMessage(t, "local declaration of " + t.word.name + " shields variable with same name" );
 	  )
      else nothing;
-     token.dictionary = dictionary;
-     makeSymbol(token);
+     t.dictionary = dictionary;
+     makeSymbol(t);
      );
-bindToken(token:Token,dictionary:Dictionary,colon:bool):void := (
-     if colon then bindTokenLocally(token,dictionary) else bind(token,dictionary);
+bindToken(t:Token,dictionary:Dictionary,colon:bool):void := (
+     if colon then bindTokenLocally(t,dictionary) else bind(t,dictionary);
      );
 bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
@@ -531,17 +527,17 @@ bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void :=
 bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is binary:Binary do (
-	  if binary.operator.word == CommaW
+	  if binary.Operator.word == CommaW
 	  then (
 	       bindParallelAssignmentList(binary.lhs,dictionary,colon);
-	       bindop(binary.operator,dictionary);
+	       bindop(binary.Operator,dictionary);
 	       bindParallelAssignmentItem(binary.rhs,dictionary,colon);
 	       )
      	  else makeErrorTree(e,"syntax error: parallel assignment expected symbol list")
 	  )
      else bindParallelAssignmentItem(e,dictionary,colon));
 bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
-     bindop(assn.operator,dictionary);
+     bindop(assn.Operator,dictionary);
      body := assn.rhs;
      when assn.lhs
      is p:Parentheses do (
@@ -550,7 +546,7 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  )
      is token:Token do (
 	  if token.word.typecode != TCid then (
-	       makeErrorTree(assn.operator, "expected a symbol to left of '"+assn.operator.entry.word.name+"'");
+	       makeErrorTree(assn.Operator, "expected a symbol to left of '"+assn.Operator.entry.word.name+"'");
 	       return;
 	       );
 	  bindToken(token,dictionary,colon);
@@ -562,55 +558,55 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  bind(body,dictionary);
 	  )
      is unary:Unary do (
-	  bindop(unary.operator,dictionary);
+	  bindop(unary.Operator,dictionary);
 	  bind(unary.rhs,dictionary);
 	  bind(body,dictionary);
 	  if colon
 	  then (
-	       if ! opHasUnaryMethod(unary.operator.entry)
-	       then makeErrorTree(assn.operator, "can't assign a method for this unary operator");
+	       if ! opHasUnaryMethod(unary.Operator.entry)
+	       then makeErrorTree(assn.Operator, "can't assign a method for this unary operator");
 	       )
 	  else (
-	       if ! opHasUnaryMethod(unary.operator.entry)
-	       then makeErrorTree(assn.operator, "can't assign a value for this unary operator")
+	       if ! opHasUnaryMethod(unary.Operator.entry)
+	       then makeErrorTree(assn.Operator, "can't assign a value for this unary operator")
 	       )
 	  )
      is unary:Postfix do (
 	  bind(unary.lhs,dictionary);
-	  bindop(unary.operator,dictionary);
+	  bindop(unary.Operator,dictionary);
 	  bind(body,dictionary);
 	  if colon
 	  then (
-	       if ! opHasPostfixMethod(unary.operator.entry)
-	       then makeErrorTree(assn.operator, "can't assign a method for this postfix operator");
+	       if ! opHasPostfixMethod(unary.Operator.entry)
+	       then makeErrorTree(assn.Operator, "can't assign a method for this postfix operator");
 	       )
 	  else (
-	       if ! opHasPostfixMethod(unary.operator.entry)
-	       then makeErrorTree(assn.operator, "can't assign a value for this postfix operator")
+	       if ! opHasPostfixMethod(unary.Operator.entry)
+	       then makeErrorTree(assn.Operator, "can't assign a value for this postfix operator")
 	       )
 	  )
      is binary:Binary do (
 	  bind(binary.lhs,dictionary);
-	  bindop(binary.operator,dictionary);
-	  bind(binary.rhs, if binary.operator.word == DotS.symbol.word then globalDictionary else dictionary );
+	  bindop(binary.Operator,dictionary);
+	  bind(binary.rhs, if binary.Operator.word == DotS.symbol.word then globalDictionary else dictionary );
 	  bind(body,dictionary);
 	  if colon then (
-	       if ! opHasBinaryMethod(binary.operator.entry)
-	       then makeErrorTree( assn.operator, "can't assign a method for this binary operator");
+	       if ! opHasBinaryMethod(binary.Operator.entry)
+	       then makeErrorTree( assn.Operator, "can't assign a method for this binary operator");
 	       )
 	  else (
-	       if !(binary.operator.word == DotS.symbol.word
+	       if !(binary.Operator.word == DotS.symbol.word
 		    || 
-		    binary.operator.word == SharpS.symbol.word
+		    binary.Operator.word == SharpS.symbol.word
 		    ||
-		    opHasBinaryMethod(binary.operator.entry))
-	       then makeErrorTree( assn.operator, "can't assign a value for this binary operator");
-	       if binary.operator.word == DotS.symbol.word then (
+		    opHasBinaryMethod(binary.Operator.entry))
+	       then makeErrorTree( assn.Operator, "can't assign a value for this binary operator");
+	       if binary.Operator.word == DotS.symbol.word then (
 		    when binary.rhs is t:Token do (
 			 if t.word.typecode != TCid
-			 then makeErrorTree(assn.operator, "expected a symbol to right of '.'");
+			 then makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
 			 )
-		    else makeErrorTree(assn.operator, "expected a symbol to right of '.'");
+		    else makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
 		    );
 	       )
 	  )
@@ -620,9 +616,9 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	       bind(n.newparent,dictionary);
 	       bind(n.newinitializer,dictionary);
 	       bind(body,dictionary))
-	  else makeErrorTree(assn.operator, 
+	  else makeErrorTree(assn.Operator, 
 	       "left hand side of assignment inappropriate"))
-     else makeErrorTree(assn.operator, 
+     else makeErrorTree(assn.Operator, 
 	  "left hand side of assignment inappropriate"));
 bindnewdictionary(e:ParseTree,dictionary:Dictionary):ParseTree := (
      n := newLocalDictionary(dictionary);
@@ -650,42 +646,42 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(adjacent.lhs,dictionary); 
 	  bind(adjacent.rhs,dictionary))
      is binary:Binary do (
-	  if binary.operator.word == EqualW
+	  if binary.Operator.word == EqualW
 	  then bindassignment(binary,dictionary,false)
-	  else if binary.operator.word == ColonEqualW
+	  else if binary.Operator.word == ColonEqualW
 	  then bindassignment(binary,dictionary,true)
-	  else if binary.operator.word == DotS.symbol.word
+	  else if binary.Operator.word == DotS.symbol.word
 	  then (
 	       bind(binary.lhs,dictionary);
-	       bindop(binary.operator,dictionary);
+	       bindop(binary.Operator,dictionary);
 	       bind(binary.rhs,globalDictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
-		    then makeErrorTree(binary.operator, "expected a symbol to right of '.'" );
+		    then makeErrorTree(binary.Operator, "expected a symbol to right of '.'" );
 		    )
-	       else makeErrorTree(binary.operator, "expected a symbol to right of '.'" );
+	       else makeErrorTree(binary.Operator, "expected a symbol to right of '.'" );
 	       )
-	  else if binary.operator.word == DotQuestionS.symbol.word
+	  else if binary.Operator.word == DotQuestionS.symbol.word
 	  then (
 	       bind(binary.lhs,dictionary);
-	       bindop(binary.operator,dictionary);
+	       bindop(binary.Operator,dictionary);
 	       bind(binary.rhs,globalDictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
-		    then makeErrorTree(binary.operator, "expected a symbol to right of '.?'" );
+		    then makeErrorTree(binary.Operator, "expected a symbol to right of '.?'" );
 		    )
-	       else makeErrorTree(binary.operator, "expected a symbol to right of '.?'" );
+	       else makeErrorTree(binary.Operator, "expected a symbol to right of '.?'" );
 	       )
 	  else (
 	       bind(binary.lhs,dictionary);
-	       bindop(binary.operator,dictionary);
+	       bindop(binary.Operator,dictionary);
 	       bind(binary.rhs,dictionary);
 	       );
 	  )
      is q:LocalQuote do (
-	  bind(q.operator,dictionary);
+	  bind(q.Operator,dictionary);
 	  tok := q.rhs;
 	  tok.dictionary = dictionary;
 	  r := lookup(tok.word,dictionary.symboltable);
@@ -694,11 +690,15 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  else ( makeSymbol(tok); );
 	  )
      is q:GlobalQuote do (
-	  bind(q.operator,dictionary);
+	  bind(q.Operator,dictionary);
 	  bind(q.rhs,globalDictionary);
 	  )
+     is q:ThreadQuote do (
+	  bind(q.Operator,dictionary);
+	  bindThread(q.rhs,globalDictionary);
+	  )
      is q:Quote do (
-	  bind(q.operator,dictionary);
+	  bind(q.Operator,dictionary);
 	  bind(q.rhs,dictionary);
 	  )
      is a:Arrow do (
@@ -709,11 +709,11 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  a.desc.framesize = newdict.framesize;
 	  )
      is unary:Unary do (
-	  bindop(unary.operator,dictionary);
+	  bindop(unary.Operator,dictionary);
 	  bind(unary.rhs,dictionary);)
      is postfix:Postfix do (
 	  bind(postfix.lhs,dictionary);
-	  bindop(postfix.operator,dictionary);)
+	  bindop(postfix.Operator,dictionary);)
      is ee:Parentheses do bind(ee.contents,dictionary)
      is EmptyParentheses do nothing
      is dummy do nothing
@@ -771,5 +771,5 @@ export localBind(e:ParseTree,dictionary:Dictionary):bool := (
      );
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d binding.o "
 -- End:

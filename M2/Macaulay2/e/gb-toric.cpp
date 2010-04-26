@@ -7,8 +7,6 @@
 #include "matrix-con.hpp"
 
 #define monomial monomial0
-extern int gbTrace;
-
 
 /////////////////////////////
 // Monomials and binomials //
@@ -29,7 +27,7 @@ binomial_ring::binomial_ring(const PolynomialRing *RR,
   nslots = nvars + 1;
   degrees = newarray_atomic(int,nvars);
   for (i=0; i<nvars; i++) 
-    degrees[i] = - R->Nmonoms()->primary_degree_of_var(i);
+    degrees[i] = - R->getMonoid()->primary_degree_of_var(i);
 
   if (have_weights)
     {
@@ -433,10 +431,10 @@ void binomial_ring::monomial_out(buffer &o, const monomial m) const
   if (m == NULL) return;
   intarray vp;
   varpower::from_ntuple(nvars, m, vp);
-  int *n = R->Nmonoms()->make_one();
-  R->Nmonoms()->from_varpower(vp.raw(), n);
-  R->Nmonoms()->elem_text_out(o,n);
-  R->Nmonoms()->remove(n);
+  int *n = R->getMonoid()->make_one();
+  R->getMonoid()->from_varpower(vp.raw(), n);
+  R->getMonoid()->elem_text_out(o,n);
+  R->getMonoid()->remove(n);
 }
 
 void binomial_ring::elem_text_out(buffer &o, const binomial &f) const
@@ -873,21 +871,14 @@ void binomialGB::remove_monomial_list(monomial_list *mm) const
 // }
 #endif
 
-static int nfind = 0;
-static int loop1 = 0;
-static int loop2 = 0;
 binomial_gb_elem *binomialGB::find_divisor(monomial m) const
 {
-  nfind++;
   unsigned int mask = ~(R->mask(m));
   int d = R->degree(m);
   for (gbmin_elem *p = first; p != NULL; p = p->next)
     {
-      loop1++;
-      if (loop1 % 1000000 == 0) emit_wrapped("m");
       if (R->degree(p->elem->f.lead) > d) return NULL;
       if (mask & p->mask) continue;
-      loop2++;
       if (R->divides(p->elem->f.lead, m))
 	return p->elem;
     }
@@ -1140,7 +1131,7 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
 	    }
 	}
 
-      if (gbTrace >= 5)
+      if (M2_gbTrace >= 5)
 	{
 	  buffer o;
 	  o << "pair [";
@@ -1161,7 +1152,7 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
 
   if (Gmin->reduce(f))
     {
-      if (gbTrace >= 5)
+      if (M2_gbTrace >= 5)
 	{
 	  buffer o;
 	  o << "  reduced to ";
@@ -1201,7 +1192,7 @@ void binomialGB_comp::start_computation()
       ComputationStatusCode ret = gb_done();
       if (ret != COMP_COMPUTING) return;
       process_pair(s);		// consumes 's'.
-      if (system_interruptedFlag) 
+      if (test_Field(interrupts_interruptedFlag)) 
 	{
 	  set_status(COMP_INTERRUPTED);
 	  return;
@@ -1286,14 +1277,14 @@ const Matrix *binomialGB_comp::get_syzygies()
   return 0;
 }
 
-const MatrixOrNull *binomialGB_comp::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *binomialGB_comp::matrix_remainder(const Matrix *m)
   // likely not planned to be implemented
 {
   return 0;
 }
 M2_bool binomialGB_comp::matrix_lift(const Matrix *m,
-				  MatrixOrNull **result_remainder,
-				  MatrixOrNull **result_quotient
+				  const Matrix /* or null */ **result_remainder,
+				  const Matrix /* or null */ **result_quotient
 				  )
   //not planned to be implemented
 {
@@ -1318,12 +1309,10 @@ void binomialGB_comp::stats() const
   Pairs->stats();
 
   o.reset();
-  o << "nfind = " << nfind << newline << "loop1 = " << loop1 
-    << newline << "loop2 = " << loop2 << newline;
   o << Gmin->n_masks() << newline;
   emit(o.str());
 
-  if (gbTrace >= 3)
+  if (M2_gbTrace >= 3)
     Gmin->debug_display();
 }
 

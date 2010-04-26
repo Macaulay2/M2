@@ -1,0 +1,12 @@
+diff -ur --exclude=configure /Users/dan/src/M2/mike-branch/BUILD/dan/builds.tmp/mac64-icc.debug/libraries/gc/tmp/gc-7.2.2010.2.16/libatomic_ops/src/atomic_ops.h gc-7.2.2010.2.16/libatomic_ops/src/atomic_ops.h
+--- /Users/dan/src/M2/mike-branch/BUILD/dan/builds.tmp/mac64-icc.debug/libraries/gc/tmp/gc-7.2.2010.2.16/libatomic_ops/src/atomic_ops.h	2009-12-17 02:16:46.000000000 -0500
++++ gc-7.2.2010.2.16/libatomic_ops/src/atomic_ops.h	2010-04-22 08:48:21.000000000 -0400
+@@ -198,7 +198,7 @@
+ #endif /* AO_USE_PTHREAD_DEFS */
+ 
+ #if defined(__GNUC__) && !defined(AO_USE_PTHREAD_DEFS) \
+-    && !defined(__INTEL_COMPILER)
++    && !( defined(__INTEL_COMPILER) && defined(__ia64__) )
+ # if defined(__i386__)
+ #   include "atomic_ops/sysdeps/gcc/x86.h"
+ # endif /* __i386__ */

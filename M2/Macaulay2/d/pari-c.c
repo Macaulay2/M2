@@ -9,29 +9,18 @@
 #define FALSE 0
 #define TRUE 1
 
-const char *get_pari_version() {
-  /*
-    /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843
-    /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
-    It's disappointing that the version number of libpari.so is not available at run time.
-  */
-  static char buf[20];
-  sprintf(buf,"%d.%d.%d",
-	  0xff & (PARI_VERSION_CODE >> 16),
-	  0xff & (PARI_VERSION_CODE >> 8),
-	  0xff & (PARI_VERSION_CODE >> 0)
-	  );
-  return buf;
-}
-
 
 #ifdef HAVE_PYTHON
-/* but a related issue is that when linking with python and running sage, it will tend to initialize
-   the pari library itself, and we don't want to interfere with that */
+#if 0
+    /* when linking with python and running sage, sage will tend to initialize
+       the pari library itself, and we don't want to interfere with that */
 #define RETAIN_PARI_STATE FALSE
 #else
-/* for now, we must retain the state, because pari_close_opts will use the wrong gmp memory
-   allocation routines to free memory */
+    /* but for now, we must retain the state, because of a bug in pari 2.3.4 that causes pari_close_opts use a
+       garbage pointer to free memory; I've reported the bug */
+#define RETAIN_PARI_STATE TRUE
+#endif
+#else
 #define RETAIN_PARI_STATE TRUE
 #endif
 
@@ -40,8 +29,8 @@ const char *get_pari_version() {
 #define init_flags INIT_DFTm
 
 #if RETAIN_PARI_STATE
-void initpari() __attribute__ ((constructor));
-void closepari() __attribute__ ((destructor));
+static void initpari() __attribute__ ((constructor));
+static void closepari() __attribute__ ((destructor));
 #define INIT 
 #define CLOSE 
 #else
@@ -51,7 +40,7 @@ void closepari() __attribute__ ((destructor));
 
 static int self_initialized;
 
-void initpari() {
+static void initpari() {
   static int firsttime = TRUE;
   if (gen_0 == NULL /* && FALSE /-* groan */ ) {
     pari_init_opts( PARISIZE, MAXPRIME, init_flags);
@@ -64,7 +53,7 @@ void initpari() {
   enterM2();  /* pari_init sets the memory allocation routines for gmp, so we have to set them back */
 }
 
-void closepari() {
+static void closepari() {
   if (self_initialized) {
     pari_close_opts(INIT_DFTm);
     gen_0 = NULL;
@@ -146,7 +135,7 @@ bool pari_isprime(mpz_t x) {
   return f != 0;
 }
 
-bool pari_ispseudoprime(mpz_t x, long flags) {
+bool pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
   long f;
   {
     INIT;
@@ -167,12 +156,14 @@ bool pari_ispseudoprime(mpz_t x, long flags) {
 #define pari_examine(x) do { fputs(" " #x ": ", stdout); voir(x,-1); } while (0)
 #define pari_display(x) do { fputs(" " #x ": ", stdout); outbeaut(x); } while (0)
 #define abs(x) ((x)<0?-(x):(x))
+
 static void gmp_examine0(mpz_t z) {
   int i, n = max(z->_mp_alloc,abs(z->_mp_size));
   printf("alloc %d size %d %s {",z->_mp_alloc,z->_mp_size,z->_mp_size < 0 ? "-" : "+");
   for (i=0; i<n; i++) printf(" %lx",(unsigned long)z->_mp_d[i]);
   printf(" }\n");
 }
+
 #define gmp_examine(x) do { fputs(" " #x ": ", stdout); gmp_examine0(x); } while (0)
 
 static void gmp_display0(mpz_t x) {
@@ -181,7 +172,7 @@ static void gmp_display0(mpz_t x) {
 }
 #define gmp_display(x) do { fputs(" " #x ": ", stdout); gmp_display0(x); } while (0)
 
-static void testnum1(mpz_t x) {
+static void testnum1(mpz_t x) {		/* to be called from the debugger */
   mpz_init(x);
   mpz_set_si(x,1L);
   mpz_mul_si(x,x,3331333L);

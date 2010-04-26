@@ -35,9 +35,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define REPLACE_MALLOC 1
-#include "../d/factory_allocator.h"
-
 #if defined HAVE_LOCALE_H || defined _LIBC
 # include <locale.h>
 #endif

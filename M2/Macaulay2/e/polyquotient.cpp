@@ -193,7 +193,7 @@ GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
   mat.set_entry(0,0,g);
   Matrix *mg = mat.to_matrix(); // {g}
 
-  M2_arrayint weights = makearrayint(n_vars());
+  M2_arrayint weights = M2_makearrayint(n_vars());
   for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
   GBComputation *G = GBComputation::choose_gb(mg, 
 					      false, // collect syz
@@ -254,7 +254,7 @@ ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
 
   GBComputation *G = make_gb(g);
 
-  Matrix *mrem, *mquot;
+  const Matrix *mrem, *mquot;
   G->matrix_lift(mf, &mrem, &mquot);
   ring_elem result = mquot->elem(0,0);
 
@@ -280,7 +280,7 @@ ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_e
 
   GBComputation *G = make_gb(g);
 
-  Matrix *mrem, *mquot;
+  const Matrix *mrem, *mquot;
   G->matrix_lift(mf, &mrem, &mquot);
   quot = mquot->elem(0,0);
   ring_elem result = mrem->elem(0,0);
@@ -304,7 +304,7 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
 
   GBComputation *G = make_gb(b);
 
-  Matrix *mrem, *mquot;
+  const Matrix *mrem, *mquot;
   G->matrix_lift(ma, &mrem, &mquot);
   if (mquot->n_cols() == 0 || !mrem->is_zero())
     {
@@ -324,7 +324,7 @@ void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
   mat.set_entry(0,0,a);
   mat.set_entry(0,1,b);
   Matrix *m = mat.to_matrix(); // {a,b}
-  M2_arrayint weights = makearrayint(n_vars());
+  M2_arrayint weights = M2_makearrayint(n_vars());
   for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
   GBComputation *G = GBComputation::choose_gb(m, 
 					      true, // collect syz

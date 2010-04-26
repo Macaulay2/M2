@@ -81,7 +81,7 @@ void ReducedGB_Field::minimalize(const VECTOR(POLY) &polys0,
 
 	  R->gbvector_remove_content(h.f,h.fsyz);
 
-	  T->insert(e, f->comp, polys.size());
+	  T->insert(e, f->comp, INTSIZE(polys));
 	  polys.push_back(h);
 	}
       else
@@ -95,13 +95,13 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   POLY h = f;
-  exponents _EXP = R->exponents_make();
+  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while (!R->gbvector_is_zero(h.f))
     {
-      R->gbvector_get_lead_exponents(F, h.f, _EXP);
+      R->gbvector_get_lead_exponents(F, h.f, EXP);
       int x = h.f->comp;
       Bag *b;
-      if (Rideal != 0 && Rideal->search_expvector(_EXP,b))
+      if (Rideal != 0 && Rideal->search_expvector(EXP,b))
 	{
 	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  R->gbvector_reduce_lead_term(F, Fsyz,
@@ -113,7 +113,7 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
 	}
       else
 	{
-	  int w = T->find_divisor(_EXP,x);
+	  int w = T->find_divisor(EXP,x);
 	  if (w >= 0)
 	    {
 	      POLY g = polys[w];
@@ -137,7 +137,6 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
   f.f = h.f;
   originalR->get_quotient_info()->gbvector_normal_form(Fsyz, h.fsyz, use_denom, denom);
   f.fsyz = h.fsyz;
-  R->exponents_delete(_EXP);
 }
 
 void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
@@ -147,13 +146,13 @@ void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvector *frem = &head;
   frem->next = 0;
   gbvector * h = f;
-  exponents _EXP = R->exponents_make();
+  exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while (!R->gbvector_is_zero(h))
     {
-      R->gbvector_get_lead_exponents(F, h, _EXP);
+      R->gbvector_get_lead_exponents(F, h, EXP);
       int x = h->comp;
       Bag *b;
-      if (Rideal != 0 && Rideal->search_expvector(_EXP,b))
+      if (Rideal != 0 && Rideal->search_expvector(EXP,b))
 	{
 	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  R->gbvector_reduce_lead_term(F, Fsyz,
@@ -165,7 +164,7 @@ void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 	}
       else 
 	{
-	  int w = T->find_divisor(_EXP,x);
+	  int w = T->find_divisor(EXP,x);
 	  if (w < 0)
 	    {
 	      frem->next = h;
@@ -187,7 +186,6 @@ void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   h = head.next;
   // R->gbvector_remove_content(h, 0, use_denom, denom);
   f = h;
-  R->exponents_delete(_EXP);
 }
 
 

@@ -3,7 +3,7 @@
 #include <M2/config.h>
 #include "../comp-gb.hpp"
 #include "../ZZp.hpp"
-#include "../poly.hpp"
+#include "../polyring.hpp"
 #include "../coeffrings.hpp"
 #include "../matrix.hpp"
 #include "../matrix-con.hpp"
@@ -23,7 +23,8 @@ GBComputation *createF4GB(const Matrix *m,
 {
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
-  Gausser *KK = Gausser::newGausser(K);
+  F4Mem *Mem = new F4Mem;
+  Gausser *KK = Gausser::newGausser(K, Mem);
   if (KK == 0)
     {
       ERROR("cannot use Algorithm => LinearAlgebra with this type of coefficient ring");
@@ -32,6 +33,7 @@ GBComputation *createF4GB(const Matrix *m,
   
   GBComputation *G;
   G = new F4Computation(KK,
+			Mem,
 			m,
 			collect_syz,
 			n_rows_to_keep,
@@ -44,6 +46,7 @@ GBComputation *createF4GB(const Matrix *m,
 
 F4Computation::F4Computation(
 			     Gausser *K0,
+			     F4Mem *Mem0,
 			     const Matrix *m, 
 			     M2_bool collect_syz, 
 			     int n_rows_to_keep,
@@ -52,12 +55,15 @@ F4Computation::F4Computation(
 			     M2_bool use_max_degree,
 			     int max_degree)
 {
+  // Note: the F4Mem which K0 uses should be Mem.
   KK = K0;
   originalR = m->get_ring()->cast_to_PolynomialRing();
   F = m->rows();
-  MI = new MonomialInfo(originalR->n_vars());
+  MI = new MonomialInfo(originalR->n_vars(), originalR->getMonoid()->getMonomialOrdering());
+  Mem = Mem0;
 
   f4 = new F4GB(KK,
+		Mem0,
 		MI,
 		m->rows(),
 		collect_syz,
@@ -73,6 +79,7 @@ F4Computation::F4Computation(
 
 F4Computation::~F4Computation()
 {
+  delete Mem;
 }
 
 /*************************
@@ -84,13 +91,14 @@ void F4Computation::start_computation()
   f4->start_computation(stop_);
 }
 
-ComputationOrNull *
+Computation /* or null */ *
 F4Computation::set_hilbert_function(const RingElement *hf)
 {
-  return 0;
+  f4->set_hilbert_function(hf);
+  return this;
 }
 
-const MatrixOrNull *F4Computation::get_gb()
+const Matrix /* or null */ *F4Computation::get_gb()
 {
   const gb_array &gb = f4->get_gb();
   MatrixConstructor result(F,0);
@@ -102,7 +110,7 @@ const MatrixOrNull *F4Computation::get_gb()
   return result.to_matrix();
 }
 
-const MatrixOrNull *F4Computation::get_mingens()
+const Matrix /* or null */ *F4Computation::get_mingens()
 {
 #if 0
 //   MatrixConstructor mat(_F,0);
@@ -116,29 +124,29 @@ const MatrixOrNull *F4Computation::get_mingens()
   return 0;
 }
 
-const MatrixOrNull *F4Computation::get_change()
+const Matrix /* or null */ *F4Computation::get_change()
 {
   return 0;
 }
 
-const MatrixOrNull *F4Computation::get_syzygies()
+const Matrix /* or null */ *F4Computation::get_syzygies()
 {
   return 0;
 }
 
-const MatrixOrNull *F4Computation::get_initial(int nparts)
+const Matrix /* or null */ *F4Computation::get_initial(int nparts)
 {
   return 0;
 }
 
-const MatrixOrNull *F4Computation::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
   return 0;
 }
 
 M2_bool F4Computation::matrix_lift(const Matrix *m,
-		 MatrixOrNull **result_remainder,
-		 MatrixOrNull **result_quotient
+		 const Matrix /* or null */ **result_remainder,
+		 const Matrix /* or null */ **result_quotient
 		 )
 {
   *result_remainder = 0;
@@ -163,7 +171,7 @@ int F4Computation::complete_thru_degree() const
 
 void F4Computation::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
-     gbTrace value */
+     M2_gbTrace value */
 {
 }
 
@@ -173,7 +181,7 @@ void F4Computation::show() const // debug display
   stash::stats(o);
   emit(o.str());
 
-  F4Mem::show();
+  Mem->show();
   //f4->show();
 }
 

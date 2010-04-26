@@ -30,7 +30,7 @@ J1 = ideal random(R1^1, R1^{-5,-5,-5,-5});
 J1
 {*     
   gbTrace=1
-  time gb(J1, Algorithm=>LinearAlgebra); -- 42.1 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 42.1 sec, 3/11/10 MBP 2.4 GHz: 32.34 sec r11025
   time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- > 
   time gb(J1, MaxReductionCount=>3000);
 *}
@@ -100,7 +100,7 @@ J1 = ideal(
 J1
 {*
   gbTrace=1
-  time gb(J1, Algorithm=>LinearAlgebra); -- 58.6 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 58.6 sec, 3/11/10: 56.91 sec
   time gb(J1, MaxReductionCount=>3000); -- 18.3 sec
   time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 32.9 sec
 *}
@@ -125,7 +125,7 @@ J1 = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
 J1
 {*
   gbTrace=3
-  time gb(J1, Algorithm=>LinearAlgebra); -- 76.27 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 76.27 sec, 3/11/10: 74.49 sec
   time gb(J1, MaxReductionCount=>3000); -- 70.49 sec
   time gb(J1, Algorithm=>Homogeneous2); -- > 130 sec
   time gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- much much faster at the initial reduction, still > 140 sec
@@ -442,18 +442,19 @@ J1 = mayr(4,2,ZZ/101)
 -- problem: saturate with respect to the product of variables
 R = ZZ/5[a,c..t,b,MonomialSize=>8]
 I = ideal"bip-dfq,djm-ehn,-bim+cgn,-gmp+hkq,cnp-dkr,-bhk+cfl,anq-bks,-bhnr+cgms,-gnr+hls,-ior+jms,-bor+clt"
-time gb(I, Algorithm=>LinearAlgebra);
+time gb(I, Algorithm=>LinearAlgebra); -- 3/11/10 MBP r11025: 19.68 sec
 time gb I;
 ----------------------------------------------
 --chow-flag-7-7-over-h
 (m,n) = (7,7)
-R = QQ[a_1..a_m, b_1..b_n, h_1..h_(m+n), Degrees=>{1..m,1..n,1..m+n}]
+R = ZZ/32003[a_1..a_m, b_1..b_n, h_1..h_(m+n), Degrees=>{1..m,1..n,1..m+n}]
 S = R[x]
 fx = (d, a) -> x^d + sum(1..d, i -> a_i * x^(d-i))
 F = fx(m,a) * fx(n,b) - fx(m+n,h)
 --F = (x^m + sum(1..m, i -> a_i * x^(m-i))) * (x^n + sum(1..n, i -> b_i * x^(n-i))) - sum(1..m+n)
 I = sub(ideal last coefficients F, R)
 gbTrace=3
+time gb(I, Algorithm=>LinearAlgebra); -- 3/11/10 MBP r11025: 22.52 sec, over ZZ/32003
 time gens gb I;
 ----------------------------------------------
 --chow-flag-7-7

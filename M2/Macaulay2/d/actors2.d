@@ -1,27 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
-use C;
-use system; 
-use convertr;
-use binding;
 use evaluate;
-use common;
-use parser;
-use lex;
-use gmp;
-use nets;
-use tokens;
-use err;
-use stdiop;
-use ctype;
-use stdio;
-use varstrin;
-use strings;
-use C;
-use actors;
-use basic;
 use struct;
-use objects;
-use util;
+use sets;
 
 dbmfirst(e:Expr):Expr := (
      when e
@@ -31,7 +11,7 @@ setupfun("firstkey",dbmfirst);
 dbmnext(f:Database):Expr := (
      if !f.isopen then return buildErrorPacket("database closed");
      when dbmnext(f.handle)
-     is a:string do Expr(a)
+     is a:string do toExpr(a)
      else nullE);
 dbmnext(e:Expr):Expr := (
      when e
@@ -46,12 +26,12 @@ dbmreorganize(e:Expr):Expr := (
 setupfun("reorganize",dbmreorganize);
 dbmopenin(e:Expr):Expr := (
      when e
-     is a:string do dbmopenin(a)
+     is a:stringCell do dbmopenin(a.v)
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabase",dbmopenin);
 dbmopenout(e:Expr):Expr := (
      when e
-     is a:string do dbmopenout(a)
+     is a:stringCell do dbmopenout(a.v)
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabaseOut",dbmopenout);
 
@@ -64,14 +44,14 @@ keys(e:Expr):Expr := (
 setupfun("keys",keys);
 toList(e:Expr):Expr := (
      when e
-     is o:HashTable do if ancestor(o.class,Set) then keys(o) else WrongArg("list, sequence, or set")
+     is o:HashTable do if ancestor(o.Class,Set) then keys(o) else WrongArg("list, sequence, or set")
      -- is o:DictionaryClosure do keys(o.dictionary)
      is a:Sequence do list(a)
      is b:List do (
-	  if b.class == listClass then e
+	  if b.Class == listClass then e
 	  else Expr(
 	       sethash(
-	       	    List(listClass, if b.mutable then copy(b.v) else b.v,
+	       	    List(listClass, if b.Mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
      else WrongArg("list, sequence, or set"));
@@ -80,7 +60,6 @@ values(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
 	  o := oc.dictionary;
-	  f := oc.frame;
 	  Expr(list(
 		    new Sequence len o.symboltable.numEntries do
 		    foreach bucket in o.symboltable.buckets do (
@@ -88,7 +67,8 @@ values(e:Expr):Expr := (
 			 while true do (
 			      when p
 			      is q:SymbolListCell do (
-				   provide Expr(SymbolClosure(f,q.entry));
+				   sym := q.entry;
+				   provide Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym));
 				   p=q.next;)
 			      else break;
 			      )))))
@@ -106,7 +86,6 @@ pairs(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (
 	  o := oc.dictionary;
-	  f := oc.frame;
 	  Expr(list(
 		    new Sequence len o.symboltable.numEntries do (
 			 foreach bucket in o.symboltable.buckets do (
@@ -114,7 +93,10 @@ pairs(e:Expr):Expr := (
 			      while true do (
 				   when p
 				   is q:SymbolListCell do (
-					provide Expr(Sequence(Expr(q.word.name),Expr(SymbolClosure(f,q.entry))));
+					sym := q.entry;
+					provide Expr(Sequence(
+						  toExpr(q.word.name),
+						  Expr(SymbolClosure(if sym.thread then threadFrame else oc.frame,sym))));
 					p=q.next;)
 				   else break; ));
 			 ))))
@@ -149,26 +131,19 @@ newClassParent(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      is Error do e
      is o:HashTable do (
 	  if basicType == hashTableClass then (
-	       if o.class == class && o.parent == parent then e
-	       else (
-	       	    mutable := ancestor(class,mutableHashTableClass);
-		    x := HashTable( if mutable || o.mutable then copy(o.table) else o.table, class, parent, o.numEntries, 0, mutable);
-		    if mutable then (
-			 if class != cacheTableClass then x.hash = nextHash(); -- cache tables are mutable and have hash code 0
-			 )
-		    else x.hash = hash(x);
-		    Expr(x)))
+	       if o.Class == class && o.parent == parent then e
+	       else Expr(copy(o,class,parent,ancestor(class,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
      	  if basicType == basicListClass then (
 	       if parent != nothingClass
 	       then buildErrorPacket("expected Nothing as parent for list")
-	       else if o.class == class then e
+	       else if o.Class == class then e
 	       else if class == sequenceClass then Expr(o.v)
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
-		    Expr(sethash( List(class, if mutable || o.mutable then copy(o.v) else o.v, 0,false), mutable))))
+		    Expr(sethash( List(class, if mutable || o.Mutable then copy(o.v) else o.v, 0,false), mutable))))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
@@ -181,7 +156,7 @@ newClassParent(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is s:SpecialExpr do (
-	  if s.class == class && Parent(s.e) == parent then e else newClassParent(s.e,class,parent,returned)
+	  if s.Class == class && Parent(s.e) == parent then e else newClassParent(s.e,class,parent,returned)
 	  )
      else (
 	  c := Class(e);
@@ -197,31 +172,21 @@ newClass(e:Expr,class:HashTable,returned:bool):Expr := (
      is o:HashTable do (
 	  basicType := basictype(class);
 	  if basicType == hashTableClass then (
-	       if o.class == class then e
-	       else (
-		    mutable := ancestor(class,mutableHashTableClass);
-		    x := HashTable(
-			 if mutable || o.mutable then copy(o.table) else o.table,
-			 class, o.parent, o.numEntries, 0, mutable);
-		    if mutable then (
-			 if class != cacheTableClass then x.hash = nextHash();
-			 )
-		    else x.hash = hash(x);
-		    Expr(x))
-	       )
+	       if o.Class == class then e
+	       else Expr(copy(o,class,ancestor(class,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
 	  basicType := basictype(class);
 	  if basicType == basicListClass then (
-	       if o.class == class then e
+	       if o.Class == class then e
 	       else if class == sequenceClass then Expr(o.v)
 	       else (
 		    mutable := ancestor(class,mutableListClass);
 		    Expr(
 			 sethash(
 			      List(class,
-				   if mutable || o.mutable then copy(o.v) else o.v,
+				   if mutable || o.Mutable then copy(o.v) else o.v,
 				   0,false),
 			      mutable))))
 	  else if basicType == hashTableClass 
@@ -237,7 +202,7 @@ newClass(e:Expr,class:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
-     is s:SpecialExpr do if s.class == class then e else newClass(s.e,class,returned)
+     is s:SpecialExpr do if s.Class == class then e else newClass(s.e,class,returned)
      else (
 	  c := Class(e);
 	  if c == class then e
@@ -271,7 +236,7 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 	  p := class;
 	  while true do (
 	       if p == hashTableClass then (
-		    o.mutable = false;
+		    o.Mutable = false;
 		    o.hash = hash(o);
 		    break;
 		    );
@@ -290,10 +255,7 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 	  then buildErrorPacket("expected Nothing as parent for list")
 	  else if class == sequenceClass
 	  then Expr(emptySequence)
-	  else Expr(
-	       sethash(
-		    List(class,emptySequence,0,false),
-		    ancestor(class,mutableListClass))))
+	  else Expr(sethash( List(class,emptySequence,0,false), ancestor(class,mutableListClass))))
      else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
      else buildErrorPacket("basic type for 'new' method should have been BasicList or HashTable"));
 makenew(class:HashTable):Expr := makenew(class,nothingClass);
@@ -345,12 +307,12 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 		    when newInitExpr
 		    is s:Sequence do newClass(newInitExpr,class,false)
 		    is p:List do (
-			 if p.class == class
-			 then Expr(if p.mutable then copy(p) else p)
+			 if p.Class == class
+			 then Expr(if p.Mutable then copy(p) else p)
 			 else newClass(newInitExpr,class,false))
 		    is p:HashTable do (
-			 if p.class == class
-			 then Expr(if p.mutable then copy(p) else p)
+			 if p.Class == class
+			 then Expr(if p.Mutable then copy(p) else p)
 			 else newClass(newInitExpr,class,false))
 		    else newClass(newInitExpr,class,false))))
      else errt(newClassCode));
@@ -370,17 +332,17 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 	       else (
 		    method := lookupTernaryMethod(class,parent,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
 		    if method != nullE 
-		    then newClassParent(applyEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
+		    then newClassParent(applyEEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
 		    else (
 			 when newInitExpr
 			 is p:Sequence do newClassParent(newInitExpr,class,parent,false)
 			 is p:List do (
-			      if p.class == class && nothingClass == parent
-			      then Expr(if p.mutable then copy(p) else p)
+			      if p.Class == class && nothingClass == parent
+			      then Expr(if p.Mutable then copy(p) else p)
 			      else newClassParent(newInitExpr,class,parent,false))
 			 is p:HashTable do (
-			      if p.class == class && p.parent == parent
-			      then Expr(if p.mutable then copy(p) else p)
+			      if p.Class == class && p.parent == parent
+			      then Expr(if p.Mutable then copy(p) else p)
 			      else newClassParent(newInitExpr,class,parent,false))
 			 else newClassParent(newInitExpr,class,parent,false))))
 	  else errp(newParentCode))
@@ -389,7 +351,7 @@ NewOfFromFun = newoffromfun;
 -----------------------------------------------------------------------------
 
 export stdioS  := setupconst("stdio", Expr(stdIO));
-export stderrS := setupconst("stderr",Expr(stderr));
+export stderrS := setupconst("stderr",Expr(stdError));
 
 openfilesfun(e:Expr):Expr := (
      n := 0;
@@ -413,8 +375,8 @@ openIn(filename:Expr):Expr := (
 	  when openIn(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is f:string do (
-	  when openIn(f)
+     is f:stringCell do (
+	  when openIn(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
@@ -426,8 +388,8 @@ openOut(filename:Expr):Expr := (
 	  when openOut(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is f:string do (
-	  when openOut(f)
+     is f:stringCell do (
+	  when openOut(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
@@ -435,8 +397,8 @@ openOut(filename:Expr):Expr := (
 setupfun("openOut",openOut);
 openOutAppend(filename:Expr):Expr := (
      when filename
-     is f:string do (
-	  when openOutAppend(f)
+     is f:stringCell do (
+	  when openOutAppend(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
@@ -448,8 +410,8 @@ openInOut(filename:Expr):Expr := (
 	  when openInOut(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is f:string do (
-	  when openInOut(f)
+     is f:stringCell do (
+	  when openInOut(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
@@ -457,8 +419,8 @@ openInOut(filename:Expr):Expr := (
 setupfun("openInOut",openInOut);
 openListener(filename:Expr):Expr := (
      when filename
-     is f:string do (
-	  when openListener(f)
+     is f:stringCell do (
+	  when openListener(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
@@ -485,28 +447,38 @@ isListener(e:Expr):Expr := (
      is f:file do toExpr(f.listener)
      else False);
 setupfun("isListener",isListener);
+
+header "
+    #if USE_MYSQL
+      #include <mysql/mysql.h>
+    #endif
+    ";
 close(g:Expr):Expr := (
      when g
      is m:MysqlConnectionWrapper do (
 	  when m.mysql
 	  is null do nothing
 	  is n:MysqlConnection do (
-	       Ccode(void,"\n #if USE_MYSQL \n mysql_close((MYSQL*)",n,") \n #else \n 0 \n #endif \n ");
+	       Ccode(void,"
+		    #if USE_MYSQL
+		       mysql_close(",n,")
+		    #endif
+		    ");
 	       m.mysql = null();
 	       );
 	  g)
      is f:file do when close(f) is m:errmsg do buildErrorPacket(m.message) else g
      is x:Database do dbmclose(x)
      else buildErrorPacket("expected a file or database"));
-setupfun("close",close).protected = false;
+setupfun("close",close).Protected = false;
 closeIn(g:Expr):Expr := (
      when g is f:file do when closeIn(f) is m:errmsg do buildErrorPacket(m.message) else g
      else WrongArg("an input file"));
-setupfun("closeIn",closeIn).protected = false;
+setupfun("closeIn",closeIn).Protected = false;
 closeOut(g:Expr):Expr := (
      when g is f:file do when closeOut(f) is m:errmsg do buildErrorPacket(m.message) else g
      else WrongArg("an output file"));
-setupfun("closeOut",closeOut).protected = false;
+setupfun("closeOut",closeOut).Protected = false;
 flush(g:Expr):Expr := (
      when g
      is f:file do (
@@ -514,7 +486,7 @@ flush(g:Expr):Expr := (
 	  then (flush(f); g)
 	  else WrongArg("an output file"))
      else WrongArg("a file"));
-setupfun("flush",flush).protected = false;
+setupfun("flush",flush).Protected = false;
 protect(e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
@@ -522,14 +494,14 @@ protect(e:Expr):Expr := (
 	  okay := false;
 	  t := globalDictionary;
 	  while (
-	       if t != d && !t.protected then okay = true;
+	       if t != d && !t.Protected then okay = true;
 	       t != t.outerDictionary ) do t = t.outerDictionary;
 	  if !okay then buildErrorPacket("tried to protect last remaining visible dictionary")
 	  else (
-	       d.protected = true;
+	       d.Protected = true;
 	       e))
      is q:SymbolClosure do (
-	  q.symbol.protected = true; 
+	  q.symbol.Protected = true; 
 	  e)
      else WrongArg("a symbol or a dictionary"));
 setupfun("protect",protect);
@@ -544,14 +516,14 @@ setupfun("flagLookup",flagSymbol);
 export chars := new array(Expr) len 256 do (
      i := 0;
      while i<256 do (
-	  provide Expr(string(char(i)));
+	  provide Expr(stringCell(string(char(i))));
 	  i = i+1;
 	  ));
 getcfun(e:Expr):Expr := (
      when e
      is f:file do (
 	  i := getc(f);
-	  if i == -1 then Expr("") else chars.(i & 255))
+	  if i == -1 then emptyString else chars.(i & 255))
      is Error do e
      else buildErrorPacket("expected an input file"));
 setupfun("getc",getcfun);
@@ -561,22 +533,22 @@ leftshiftfun(e:Expr):Expr := (
      is a:Sequence do (
 	  if length(a) == 2 then (
 	       when a.0 
-	       is x:ZZ do (
-		    when a.1 is y:ZZ do (
+	       is x:ZZcell do (
+		    when a.1 is y:ZZcell do (
 			 if isInt(y) 
-			 then Expr(x << toInt(y))
+			 then toExpr(x.v << toInt(y))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
-	       is x:RR do (
-		    when a.1 is y:ZZ do (
-			 if isLong(y) 
-			 then Expr(x << toLong(y))
+	       is x:RRcell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v) 
+			 then toExpr(x.v << toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
-	       is x:CC do (
-		    when a.1 is y:ZZ do (
-			 if isLong(y) 
-			 then Expr(x << toLong(y))
+	       is x:CCcell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v) 
+			 then toExpr(x.v << toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
 	       else WrongArg(1,"an integral, real, or complex number"))
@@ -597,22 +569,22 @@ rightshiftfun(e:Expr):Expr := (
      is a:Sequence do (
 	  if length(a) == 2 then (
 	       when a.0 
-	       is x:ZZ do (
-		    when a.1 is y:ZZ do (
+	       is x:ZZcell do (
+		    when a.1 is y:ZZcell do (
 			 if isInt(y) 
-			 then Expr(x >> toInt(y))
+			 then toExpr(x.v >> toInt(y))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
-	       is x:RR do (
-		    when a.1 is y:ZZ do (
-			 if isLong(y) 
-			 then Expr(x >> toLong(y))
+	       is x:RRcell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v) 
+			 then toExpr(x.v >> toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
-	       is x:CC do (
-		    when a.1 is y:ZZ do (
-			 if isLong(y) 
-			 then Expr(x >> toLong(y))
+	       is x:CCcell do (
+		    when a.1 is y:ZZcell do (
+			 if isLong(y.v) 
+			 then toExpr(x.v >> toLong(y.v))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
 	       else  WrongArgZZ(1))
@@ -636,9 +608,9 @@ setupfun("unsequence",unSingleton);
 
 disassemble(e:Expr):Expr := (
      when e
-     is f:FunctionClosure do Expr(tostring(Code(f.model)))
-     is f:functionCode do Expr(tostring(Code(f)))
-     is c:CodeClosure do Expr(tostring(c.code))
+     is f:FunctionClosure do toExpr(tostring(Code(f.model)))
+     is f:functionCode do toExpr(tostring(Code(f)))
+     is c:CodeClosure do toExpr(tostring(c.code))
      is s:SpecialExpr do disassemble(s.e)
      else WrongArg("pseudocode or a function closure derived from Macaulay 2 code")
      );
@@ -654,50 +626,49 @@ setupfun("pseudocode", pseudocode);
 
 cpuTime(e:Expr):Expr := (
      when e
-     is s:Sequence do if length(s) == 0 then toExpr(etime())
+     is s:Sequence do if length(s) == 0 then toExpr(cpuTime())
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("cpuTime",cpuTime);
 
 timefun(a:Code):Expr := (
-     v := etime();
+     v := cpuTime();
      ret := eval(a);
-     x := etime();
+     x := cpuTime();
      when ret
      is Error do ret
      else list(timeClass,Sequence(toExpr(x-v),ret)));
 setupop(timingS,timefun);
 showtimefun(a:Code):Expr := (
-     v := etime();
+     v := cpuTime();
      ret := eval(a);
-     x := etime();
-     stdout << "     -- used " << x-v << " seconds" << endl;
+     x := cpuTime();
+     stdIO << "     -- used " << x-v << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
 
 exponent(e:Expr):Expr := (
      when e
-     is x:ZZ do toExpr(exponent(x))	      -- # typical value: size2, ZZ, ZZ
-     -- is x:QQ do toExpr(exponent(x))
-     is x:RR do toExpr(exponent(x))	      -- # typical value: size2, RR, ZZ
-     is z:CC do toExpr(exponent(z))	      -- # typical value: size2, CC, ZZ
+     is x:ZZcell do toExpr(exponent(x.v))	      -- # typical value: size2, ZZ, ZZ
+     is x:RRcell do toExpr(exponent(x.v))	      -- # typical value: size2, RR, ZZ
+     is z:CCcell do toExpr(exponent(z.v))	      -- # typical value: size2, CC, ZZ
      else WrongArg("a number"));
 setupfun("size2",exponent);
 
 realPart(e:Expr):Expr := (
      when e
-     is ZZ do e
-     is RR do e
-     is z:CC do Expr(realPart(z))
-     is QQ do e
+     is ZZcell do e
+     is RRcell do e
+     is z:CCcell do toExpr(realPart(z.v))
+     is QQcell do e
      else WrongArg("a number"));
 setupfun("realPart",realPart);
 imaginaryPart(e:Expr):Expr := (
      when e
-     is ZZ do Expr(toInteger(0))
-     is RR do toExpr(0)
-     is z:CC do Expr(imaginaryPart(z))
-     is QQ do toExpr(0)
+     is ZZcell do zeroE
+     is RRcell do zeroE
+     is z:CCcell do toExpr(imaginaryPart(z.v))
+     is QQcell do zeroE
      else WrongArg("a number"));
 setupfun("imaginaryPart",imaginaryPart);
 
@@ -709,15 +680,26 @@ finalizerCount := 0;
 registerFinalizer(e:Expr):Expr := (
      when e is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(2) else
- 	  when s.1 is msg:string do (
+ 	  when s.1 is msg0:stringCell do (
+	       msg := msg0.v;
 	       msg = "[" + tostring(finalizerCount) + "]: " + msg;
 	       finalizerCount = finalizerCount + 1;
-	       Ccode(void, "GC_register_finalizer((void *)",e,".ptr_,(GC_finalization_proc)",finalizer,",",msg,",0,0)");
+	       Ccode(void, "GC_REGISTER_FINALIZER((void *)",e,",(GC_finalization_proc)",finalizer,",",msg,",0,0)");
 	       toExpr(finalizerCount))
      	  else WrongArgString(2))
      else WrongNumArgs(2));
 setupfun("registerFinalizer",registerFinalizer);
 
+spin(e:Expr):Expr := (
+     when e is x:ZZcell do (
+	  if isInt(x.v) then (
+	       n := toInt(x.v);
+	       for i from 1 to n do for j from 1 to 290000 do nothing;
+	       nullE)
+	  else WrongArgSmallInteger())
+     else WrongArgZZ());
+setupfun("spin",spin);	 -- used for benchmarking when debugging, e.g., threads
+
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors2.o "
 -- End:

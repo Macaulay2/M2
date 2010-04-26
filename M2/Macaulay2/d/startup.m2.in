@@ -12,6 +12,8 @@ if gotarg "--stop" then stopIfError = true
 
 firstTime := class PackageDictionary === Symbol
 
+firstTime = true					    -- debugging
+
 if firstTime then (
      -- we do this bit *before* "debug Core", so that Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
      assert = x -> (
@@ -23,6 +25,7 @@ if firstTime then (
      PackageDictionary#("Package$Core") = getGlobalSymbol(PackageDictionary,"Core");
      ) 
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
+disassemble ( () -> debug Core )
 if not firstTime then debug Core -- we need access to the private symbols (we remove the Core private dictionary later.)
 
 toString := value getGlobalSymbol if firstTime then "simpleToString" else "toString"
@@ -299,6 +302,7 @@ initcurrentlayout := () -> (
 	  if issuffix(Layout#1#"bin",bindir) then Layout#1
 	  );
      prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
+     if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;
      if readlink exe =!= null then (
 	  exe2 := concatPath(realpath dir exe, readlink exe);
 	  bindir2 := dir exe2 | "/";
@@ -320,9 +324,11 @@ initcurrentlayout := () -> (
 	  if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
 	  else
 	  if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA));
+     if notify then stderr << "--topBuilddir = " << topBuilddir << endl;
      topSrcdir = if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
 	  sdir := first lines get(topBuilddir|"srcdir");
 	  minimizeFilename concatPath(topBuilddir,sdir));
+     if notify then stderr << "--topSrcdir = " << topSrcdir << endl;
      )
 
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
@@ -547,6 +553,7 @@ exe = minimizeFilename (
      else pathsearch commandLine#0)
 if not isAbsolutePath exe then exe = currentDirectory() | exe ;
 exe = concatenate(realpath dir exe, base exe)
+if notify then stderr << "--executable = " << exe << endl
 
 describePath := () -> (
      if #path == 0 then stderr << "--file search path empty" << endl

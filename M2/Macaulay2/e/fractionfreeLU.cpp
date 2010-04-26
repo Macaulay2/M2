@@ -2,9 +2,6 @@
 
 #include "fractionfreeLU.hpp"
 
-extern char system_interruptedFlag;
-extern int gbTrace;
-
 ////////////////////////////////////////
 // Fraction free gaussian elimination //
 ////////////////////////////////////////
@@ -88,7 +85,7 @@ bool FF_LUComputation::calc()
   int c1;
   while (choose_pivot_column(0,--pivot_col,c1))
     {
-      if (system_interruptedFlag)
+      if (test_Field(interrupts_interruptedFlag))
 	return false;
 
       if (pivot_col != c1)
@@ -114,13 +111,13 @@ bool FF_LUComputation::calc()
 M2_arrayint FF_LUComputation::get_column_permutation()
 {
   int ncols = M->n_cols();
-  M2_arrayint result = makearrayint(ncols);
+  M2_arrayint result = M2_makearrayint(ncols);
   for (int i=0; i<ncols; i++)
     result->array[i] = col_perm[i];
   return result;
 }
 
-M2_arrayint_OrNull FF_LUComputation::DO(MutableMatrix *M)
+M2_arrayintOrNull FF_LUComputation::DO(MutableMatrix *M)
 {
   FF_LUComputation F(M);
   if (!F.calc()) return NULL;

@@ -24,19 +24,19 @@ protected:
   const PolyRing *R;
   bool overZZ_; // really: base is basic, ZZ, or frac ring
 
-  int *MONOM1_;
-  int *EXP1_, *EXP2_;
+  size_t exp_size; // byte size of temp exponents
+  size_t monom_size; // and monomials, to be allocated on stack
 
   void appendQuotientElement(Nterm *f, gbvector *g);
   QRingInfo(const PolyRing *R);
 
 public:
-  QRingInfo() : R(0), overZZ_(false), MONOM1_(0), EXP1_(0), EXP2_(0) {}
+  QRingInfo() : R(0), overZZ_(false), exp_size(0), monom_size(0) {}
 
   virtual void destroy(GBRing *GR);
   virtual ~QRingInfo();
 
-  int n_quotients() const { return quotient_ideal.size(); }
+  int n_quotients() const { return INTSIZE(quotient_ideal); }
   Nterm * quotient_element(int i) const { return quotient_ideal[i]; }
   const gbvector * quotient_gbvector(int i) const { return quotient_gbvectors[i]; }
 

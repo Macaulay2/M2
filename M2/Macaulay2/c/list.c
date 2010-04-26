@@ -191,31 +191,30 @@ node reverse(node x){
 bool equal(node x, node y){
      if (ispos(x)) x = x->body.position.contents;
      if (ispos(y)) y = y->body.position.contents;
-     if (x==NULL || y==NULL) return x==y;
+     if (x == NULL) return y == NULL;
+     else if (y == NULL) return FALSE;
      if (x->tag != y->tag) return FALSE;
      switch(x->tag){
-	  case cons_tag: return equal(CAR(x),CAR(y)) && equal(CDR(x),CDR(y));
-	  case position_tag: assert(FALSE);
-	  case string_tag: return x==y;
-	  case symbol_tag: return x==y;
-	  case int_const_tag: {
-	       return 0 == strcmp(x->body.int_const.contents,
-		    y->body.int_const.contents);
-	       }
-	  case double_const_tag: {
-	       return 0 == strcmp(x->body.double_const.contents,
-		    y->body.double_const.contents);
-	       }
-	  case type_tag: {
-	       return typeforward(x)==typeforward(y);
-	       }
-	  case char_const_tag: {
+	  case cons_tag: 
+	       return equal(CAR(x),CAR(y)) && equal(CDR(x),CDR(y));
+	  case unique_string_tag:
+	       return x == y;
+	  case symbol_tag:
+	       return x == y;
+	  case type_tag:
+	       return typeforward(x) == typeforward(y);
+	  case char_const_tag:
 	       return x->body.char_const.contents == y->body.char_const.contents;
-	       }
-	  case string_const_tag: {
-	       return 0 == strcmp(x->body.string_const.contents,
-		    y->body.string_const.contents);
-	       }
+	  case string_tag:
+	       return EQUAL == strcmp(x->body.string_const.characters, y->body.string_const.characters);
+	  case int_const_tag:
+	       return EQUAL == strcmp(x->body.int_const.contents, y->body.int_const.contents);
+	  case double_const_tag:
+	       return EQUAL == strcmp(x->body.double_const.contents, y->body.double_const.contents);
+	  case string_const_tag:
+	       return EQUAL == strcmp(x->body.string_const.characters, y->body.string_const.characters);
+	  default: case position_tag:
+	       assert(FALSE);
 	  }
      return FALSE;
      }

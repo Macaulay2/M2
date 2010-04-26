@@ -1,4 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
+
+use arithmetic;
+
 export vararrayint := {
      ints:array(int),
      size:int
@@ -38,5 +41,5 @@ export takereversearrayint(v:vararrayint):array(int) := (
      s);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

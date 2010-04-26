@@ -8,7 +8,7 @@ CONFIGOPTIONS += --enable-debug --disable-pthreads
 DIRECTORY = ubuntu64.debug
 else
 default: arch-chk all install check
-INSTALLOPTIONS += prefix=$HOME/local/encap
+INSTALLOPTIONS += prefix=$(HOME)/local/encap
 CONFIGOPTIONS += --enable-deb
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = ubuntu64.production

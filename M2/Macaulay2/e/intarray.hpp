@@ -9,8 +9,8 @@ const int init_intarray_size = 16;
 class intarray
 {
   int *entries;
-  size_t  len;			// Allocated length
-  size_t  max;			// Current length
+  int  len;			// Allocated length
+  int  max;			// Current length
 public:
   intarray() : entries(NULL), len(0), max(0) {}
 
@@ -20,7 +20,7 @@ public:
       int n = init_intarray_size;
       if (i_size > n) n = i_size;
       entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*n));
-      len = doubles->allocated_size(entries)/sizeof(int);
+      len = static_cast<int>(doubles->allocated_size(entries)/sizeof(int));
     }
 
   intarray(const intarray &a) : max(a.max)
@@ -30,7 +30,7 @@ public:
       else
 	{
 	  entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*a.max));
-	  len = doubles->allocated_size(entries)/sizeof(int);
+	  len = static_cast<int>(doubles->allocated_size(entries)/sizeof(int));
 	  for (int i=0; i<max; i++) entries[i] = a.entries[i];
 	}
     }
@@ -41,17 +41,17 @@ public:
 
   void expand(int newtop);
 
-  size_t  length() const { return max; }
+  int  length() const { return max; }
 
-  void shrink(size_t newmax) { if (newmax < max) max = newmax; }
+  void shrink(int newmax) { if (newmax < max) max = newmax; }
 
-  int operator[](size_t i) const
+  int operator[](int i) const
     {
       assert(i < max);
       return entries[i];
     }
 
-  int &operator[](size_t i)
+  int &operator[](int i)
     {
       assert(i < max);
       return entries[i];
@@ -93,7 +93,7 @@ public:
       if (a.max > n) n = a.max;
       max = a.max;
       entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*n));
-      len = doubles->allocated_size(entries)/sizeof(int);
+      len = static_cast<int>(doubles->allocated_size(entries)/sizeof(int));
       for (int i=0; i<max; i++) entries[i] = a.entries[i];
       return *this;
     }

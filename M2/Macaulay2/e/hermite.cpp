@@ -314,7 +314,7 @@ void HermiteComputation::start_computation()
  ** Top level interface **
  *************************/
 
-const MatrixOrNull *HermiteComputation::get_gb()
+const Matrix /* or null */ *HermiteComputation::get_gb()
 {
   MatrixConstructor mat(gens->rows(), 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
@@ -322,13 +322,13 @@ const MatrixOrNull *HermiteComputation::get_gb()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *HermiteComputation::get_mingens()
+const Matrix /* or null */ *HermiteComputation::get_mingens()
 {
   // return the minimal generators (or as minimal as possible?)
   return get_gb();
 }
 
-const MatrixOrNull *HermiteComputation::get_change()
+const Matrix /* or null */ *HermiteComputation::get_change()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
@@ -336,7 +336,7 @@ const MatrixOrNull *HermiteComputation::get_change()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *HermiteComputation::get_syzygies()
+const Matrix /* or null */ *HermiteComputation::get_syzygies()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (int i=0; i<syz_list.size(); i++)
@@ -344,7 +344,7 @@ const MatrixOrNull *HermiteComputation::get_syzygies()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *HermiteComputation::get_initial(int nparts)
+const Matrix /* or null */ *HermiteComputation::get_initial(int nparts)
 {
   MatrixConstructor mat(gens->rows(), 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
@@ -357,7 +357,7 @@ const MatrixOrNull *HermiteComputation::get_initial(int nparts)
 
 void HermiteComputation::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
-     gbTrace value */
+     M2_gbTrace value */
 {
   for (int i=0; i<gens->n_rows(); i++)
     if (initial[i] != NULL)
@@ -457,7 +457,7 @@ void HermiteComputation::gb_reduce(vec &f, vec &fsyz) const
   f = head.next;
 }
 
-const MatrixOrNull *HermiteComputation::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *HermiteComputation::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != globalZZ)
     {
@@ -482,8 +482,8 @@ const MatrixOrNull *HermiteComputation::matrix_remainder(const Matrix *m)
 
 
 M2_bool HermiteComputation::matrix_lift(const Matrix *m,
-				     MatrixOrNull **result_remainder,
-				     MatrixOrNull **result_quotient)
+				     const Matrix /* or null */ **result_remainder,
+				     const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != globalZZ)
     {

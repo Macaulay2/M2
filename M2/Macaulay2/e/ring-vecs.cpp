@@ -6,6 +6,7 @@
 #include "matrix.hpp"
 #include "geovec.hpp"
 #include "ringmap.hpp"
+#include "poly.hpp"
 //  Notes: ring_elem's are treated as immutable objects: they are not changed, and 
 // the fact that one cannot change is used throughout.
 
@@ -287,7 +288,11 @@ vec Ring::tensor(const FreeModule *F, vec v,
   return H.value();
 }
 
-void Ring::vec_text_out(buffer &o, const vecterm * v) const
+void Ring::vec_text_out(buffer &o, 
+			const vecterm * v,
+			bool p_one, 
+			bool p_plus, 
+			bool p_parens) const
 {
   if (v == NULL)
     {
@@ -295,21 +300,13 @@ void Ring::vec_text_out(buffer &o, const vecterm * v) const
       return;
     }
 
-  int old_one = p_one;
-  int old_parens = p_parens;
-  int old_plus = p_plus;
-
-  p_one = 0;
+  p_one = false;
   for (const vecterm *t = v; t != NULL; t = t->next)
     {
-      this->elem_text_out(o,t->coeff);
+      this->elem_text_out(o,t->coeff,p_one,p_plus,p_parens);
       o << "<" << t->comp << ">";
-      p_plus = 1;
+      p_plus = true;
     }
-
-  p_one = old_one;
-  p_parens = old_parens;
-  p_plus = old_plus;
 }
 
 vec Ring::vec_eval(const RingMap *map, 
@@ -335,7 +332,7 @@ vec Ring::vec_eval(const RingMap *map,
   return head.next;
 }
 
-vec Ring::vec_zeroize_tiny(M2_RRR epsilon, const vec v) const
+vec Ring::vec_zeroize_tiny(gmp_RR epsilon, const vec v) const
 {
   vecterm head;
   vec result = &head;
@@ -355,7 +352,7 @@ vec Ring::vec_zeroize_tiny(M2_RRR epsilon, const vec v) const
   return head.next;
 }
 
-void Ring::vec_increase_maxnorm(M2_RRR norm, const vec v) const
+void Ring::vec_increase_maxnorm(gmp_RR norm, const vec v) const
 // If any real number appearing in f has larger absolute value than norm, replace norm.
   // Default for rings not over RRR or CCC is to do nothing.
 {

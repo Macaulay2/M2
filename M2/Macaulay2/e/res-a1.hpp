@@ -96,11 +96,11 @@ class res_comp : public ResolutionComputation
   int npairs;
   int nminimal;
 
-  // Internal variables.  Used locally in a single routine
-  int *REDUCE_exp;
-  int *REDUCE_mon;
-  int *PAIRS_mon;
-  int *MINIMAL_mon;
+  // byte sizes for allocating temp exp vectors and monomials on the stack
+  size_t exp_size;
+  size_t monom_size;
+
+  int compare_type;
 
   res_pair *elem(int lev, int n) const { return resn[lev]->elems[n]; }
 
@@ -196,9 +196,9 @@ public:
   Matrix *make(int i) const;
   Matrix *make_minimal(int i) const;
 
-  const MatrixOrNull *get_matrix(int level) { return make_minimal(level); }
+  const Matrix /* or null */ *get_matrix(int level) { return make_minimal(level); }
 
-  const FreeModuleOrNull *get_free(int level) { return minimal_free_of(level); }
+  const FreeModule /* or null */ *get_free(int level) { return minimal_free_of(level); }
 
 //////////////////////////////////////////////
 //  Betti routines and numbers associated ////

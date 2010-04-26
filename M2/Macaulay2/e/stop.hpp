@@ -3,8 +3,6 @@
 #ifndef _stop_hpp_
 #define _stop_hpp_
 
-#include "../d/M2types.h"
-
 struct StopConditions
 {
   bool always_stop;

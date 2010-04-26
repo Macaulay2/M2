@@ -22,7 +22,7 @@ void rawRandomInitialize()
   gmp_randinit_default(state);
 }
 
-void rawSetRandomSeed(M2_Integer newseed)
+void rawSetRandomSeed(gmp_ZZ newseed)
 {
   gmp_randseed(state, newseed);
 
@@ -33,7 +33,7 @@ void rawSetRandomSeed(M2_Integer newseed)
   RandomSeed = s ^ MASK;
 }
 
-void rawSetRandomMax(M2_Integer newHeight)
+void rawSetRandomMax(gmp_ZZ newHeight)
 {
   mpz_set(maxHeight, newHeight);
 }
@@ -49,14 +49,14 @@ int32_t rawRandomInt(int32_t max)
   return RandomSeed % max;
 }
 
-M2_Integer rawRandomInteger(M2_Integer maxN)
+gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
 /* if height is the null pointer, use the default height */
 {
-  M2_Integer result = (M2_Integer)getmem(sizeof(__mpz_struct));
+  gmp_ZZ result = getmemstructtype(gmp_ZZ);
   mpz_init(result);
   if (maxN == 0)
     mpz_urandomm(result, state, maxHeight);
-  else if (1 != mpz_sgn((__mpz_struct *)maxN)) {
+  else if (1 != mpz_sgn(maxN)) {
     mpz_set_si(result,0);
   }
   else
@@ -64,11 +64,11 @@ M2_Integer rawRandomInteger(M2_Integer maxN)
   return result;
 }
 
-M2_Rational rawRandomQQ(M2_Integer height)
+gmp_QQ rawRandomQQ(gmp_ZZ height)
   /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 /* if height is the null pointer, use the default height */
 {
-  M2_Rational result = (M2_Rational)getmem(sizeof(__mpq_struct));
+  gmp_QQ result = getmemstructtype(gmp_QQ);
   mpq_init(result);
   if (height == 0) height = maxHeight;
   mpz_urandomm(mpq_numref(result), state, height);
@@ -79,19 +79,19 @@ M2_Rational rawRandomQQ(M2_Integer height)
   return result;
 }
 
-M2_RRR rawRandomRR(unsigned long precision)
+gmp_RR rawRandomRR(unsigned long precision)
   /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
 {
-  M2_RRR result = (M2_RRR)getmem(sizeof(__mpfr_struct));
+  gmp_RR result = getmemstructtype(gmp_RR);
   mpfr_init2(result,precision);
   mpfr_urandomb(result, state);
   return result;
 }
 
-M2_CCC rawRandomCC(unsigned long precision)
+gmp_CC rawRandomCC(unsigned long precision)
   /* returns a uniformly distributed random complex in the box [0.0,0.0], [1.0,1.0] */
 {
-  M2_CCC result = (M2_CCC)getmem(sizeof(struct M2_CCC_struct));
+  gmp_CC result = getmemstructtype(gmp_CC);
   result->re = rawRandomRR(precision);
   result->im = rawRandomRR(precision);
   return result;

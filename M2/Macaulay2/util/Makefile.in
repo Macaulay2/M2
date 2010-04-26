@@ -3,7 +3,7 @@ include ../../include/config.Makefile
 vpath %.a  $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
 VPATH = @srcdir@
-EXES := echoout timestmp restart updat
+EXES := echoout timestmp
 CPPFLAGS :=  -I. -I../../include $(CPPFLAGS)
 
 ifeq (@OS@,Linux)
@@ -24,7 +24,6 @@ all: $(EXES)
 clean:
 	rm -f overlay.h overlay gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h gc_tested gc_test
 	rm -rf *.dSYM
-updat.o : restart.h
 ../bin/linkexec : linkexec ; cp -a $< $@
 ifeq "@OS@" "Windows-95-98-NT"
 all: ../setup.exe

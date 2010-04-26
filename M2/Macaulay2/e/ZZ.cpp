@@ -6,10 +6,9 @@
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
-#include "../d/M2mem.h"
 
 #include "coeffrings.hpp"
-
+#include "coeffrings-zz.hpp"
 #if 0
 // #include "gmp.h"
 // #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
@@ -39,7 +38,7 @@ void RingZZ::text_out(buffer &o) const
 
 mpz_ptr RingZZ::new_elem() const
 {
-  mpz_ptr result = reinterpret_cast<mpz_ptr>(getmem(_elem_size));
+  mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
   return result;
 }
@@ -49,13 +48,13 @@ void RingZZ::remove_elem(mpz_ptr f) const
 
 bool RingZZ::get_ui(unsigned int &result, mpz_t n)
 {
-  result = mpz_get_ui(n);
+  result = static_cast<unsigned int>(mpz_get_ui(n));
   return mpz_fits_ulong_p(n);
 }
 
 bool RingZZ::get_si(int &result, mpz_t n)
 {
-  result = mpz_get_si(n);
+  result = static_cast<int>(mpz_get_si(n));
   return mpz_fits_slong_p(n);
 }
 
@@ -63,14 +62,14 @@ unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
 {
   mpz_t ans;
   mpz_init(ans);
-  unsigned int exp = mpz_mod_ui(ans, n, p);
+  unsigned int exp = static_cast<unsigned int>(mpz_mod_ui(ans, n, p));
   mpz_clear(ans);
   return exp;
 }
 
 int RingZZ::coerce_to_int(ring_elem a) const
 { 
-  return mpz_get_si(a.get_mpz()); 
+  return static_cast<int>(mpz_get_si(a.get_mpz())); 
 }
 
 ring_elem RingZZ::random() const
@@ -78,17 +77,22 @@ ring_elem RingZZ::random() const
   return rawRandomInteger(0);
 }
 
-void RingZZ::elem_text_out(buffer &o, const ring_elem ap) const
+void RingZZ::elem_text_out(buffer &o, 
+			   const ring_elem ap, 
+			   bool p_one, 
+			   bool p_plus, 
+			   bool p_parens) const
 {
   mpz_ptr a = ap.get_mpz();
 
+#warning "possible overflow in large int situations"
   char s[1000];
   char *str;
 
   bool is_neg = (mask_mpz_cmp_si(a, 0) == -1);
   bool is_one = (mask_mpz_cmp_si(a, 1) == 0 || mask_mpz_cmp_si(a, -1) == 0);
 
-  int size = mpz_sizeinbase(a, 10) + 2;
+  int size = static_cast<int>(mpz_sizeinbase(a, 10)) + 2;
 
   char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
@@ -203,7 +207,7 @@ bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   // This sets f to either 0, 1 or -1.
   // if f is 0, do f=sign(g), else f=sign(f)
   // return whether f is zero
-  M2_Integer result = RingZZ::new_elem();
+  gmp_ZZ result = RingZZ::new_elem();
   mpz_ptr a = f.get_mpz();
   mpz_ptr b = g.get_mpz();
   int sa = mpz_sgn(a);
@@ -225,7 +229,7 @@ void RingZZ::lower_content(ring_elem &c, ring_elem g) const
       c = g;
       return;
     }
-  M2_Integer result = RingZZ::new_elem();
+  gmp_ZZ result = RingZZ::new_elem();
   mpz_ptr a = c.get_mpz();
   mpz_ptr b = g.get_mpz();
   mpz_gcd(result,a,b);

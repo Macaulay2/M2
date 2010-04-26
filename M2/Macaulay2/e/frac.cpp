@@ -5,7 +5,6 @@
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
-#include "../d/M2mem.h"
 #include "relem.hpp"
 #include "polyring.hpp"
 
@@ -16,7 +15,7 @@ Ring::CoefficientType FractionField::coefficient_type() const
 {
   const PolynomialRing *A = R_->cast_to_PolynomialRing();
   assert(A != 0);
-  const Ring *K = A->Ncoeffs();
+  const Ring *K = A->getCoefficientRing();
   if (K->coefficient_type() == COEFF_ZZ)
     return COEFF_QQ;
   return K->coefficient_type();
@@ -224,28 +223,24 @@ ring_elem FractionField::random() const
   return FRAC_RINGELEM(make_elem(a,b));
 }
 
-void FractionField::elem_text_out(buffer &o, const ring_elem a) const
+void FractionField::elem_text_out(buffer &o, 
+				  const ring_elem a,
+				  bool p_one, 
+				  bool p_plus, 
+				  bool p_parens) const
 {
-  int old_one = p_one;
-  int old_plus = p_plus;
-  int old_parens = p_parens;
-
   frac_elem *f = FRAC_VAL(a);
   int denom_one = R_->is_equal(f->denom, R_->one());
 
   p_one = p_one || !denom_one;
-  p_parens = old_parens || !denom_one;
-  R_->elem_text_out(o, f->numer);
+  p_parens = p_parens || !denom_one;
+  R_->elem_text_out(o, f->numer, p_one, p_plus, p_parens);
   if (!denom_one)
     {
       o << "/";
-      p_plus = 0;
-      R_->elem_text_out(o, f->denom);
+      p_plus = false;
+      R_->elem_text_out(o, f->denom, p_one, p_plus, p_parens);
     }
-
-  p_parens = old_parens;
-  p_one = old_one;
-  p_plus = old_plus;
 }
 
 ring_elem FractionField::from_int(int n) const
@@ -294,7 +289,7 @@ M2_arrayint FractionField::support(const ring_elem a) const
   const frac_elem *f = FRAC_VAL(a);
   M2_arrayint result1 = R_->support(f->numer);
   M2_arrayint result2 = R_->support(f->denom);
-  M2_arrayint result = makearrayint(result1->len + result2->len);
+  M2_arrayint result = M2_makearrayint(result1->len + result2->len);
   for (int i=0; i<result1->len; i++)
     result->array[i] = result1->array[i];
   for (int i=0; i<result2->len; i++)

@@ -3,10 +3,15 @@
 #ifndef _rand_h_
 #define _rand_h
 
-#include "../d/M2types.h"
-
 #include <M2/config.h>
 #include <stdio.h>
+#include <gmp.h>
+#include <mpfr.h>
+
+#if !defined(SAFEC_EXPORTS)
+#include <engine-exports.h>
+#endif
+
 #if HAVE_STDINT_H
 #include <stdint.h>
 #elif HAVE_INTTYPES_H
@@ -21,24 +26,24 @@ extern "C" {
 
   void rawRandomInitialize();
   
-  void rawSetRandomSeed(M2_Integer newseed);
+  void rawSetRandomSeed(gmp_ZZ newseed);
   
-  void rawSetRandomMax(M2_Integer newHeight);
+  void rawSetRandomMax(gmp_ZZ);
   
   int32_t rawRandomInt(int32_t max);
   /* generate a random number in the range 0..max-1 */
   
-  M2_Integer rawRandomInteger(M2_Integer maxN);
+  gmp_ZZ rawRandomInteger(gmp_ZZ maxN);
   /* if height is the null pointer, use the default height */
   
-  M2_Rational rawRandomQQ(M2_Integer height);
+  gmp_QQ rawRandomQQ(gmp_ZZ height);
   /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
   /* if height is the null pointer, use the default height */
   
-  M2_RRR rawRandomRR(unsigned long prec);
+  gmp_RR rawRandomRR(unsigned long prec);
   /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
   
-  M2_CCC rawRandomCC(unsigned long prec);
+  gmp_CC rawRandomCC(unsigned long prec);
 
 #if defined(__cplusplus)
 }

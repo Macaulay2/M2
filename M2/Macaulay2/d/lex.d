@@ -1,22 +1,15 @@
 --		Copyright 1994 by Daniel R. Grayson
 -- dictionary entries
-use C;
-use system;
 use ctype;
-use gmp;
-use nets;
 use tokens;
-use strings;
-use stdio;
-use stdiop;
 use varstrin;
-use err;
+use interrupts;
 
 export wordEOF := dummyWord; -- replaced later
 export wordEOC := dummyWord; -- replaced later
 export (o:file) << (w:Word) : file := o << w.name;
-export WordList := null or WordListCell;
 export WordListCell := { word:Word, next:WordList };
+export WordList := WordListCell or null;
 export hashTable := (
      new array(WordList) 
      len 7313			-- just a convenient prime number
@@ -43,7 +36,7 @@ export equal(t:ParseTree,w:Word):bool := (
      when t is u:Token do u.word == w else false
      );
 export (o:file) << (token:Token) : file := o << present(token.word.name);
-tokenbuf := newvarstring(100);
+threadLocal tokenbuf := newvarstring(100);
 export LexNode := { 
      ch:char,		     	  	-- the char
      word:(null or Word), 	   	-- the word, if ch can end it
@@ -63,7 +56,7 @@ export baseLexNode := LexNode( char(0), NULL, NULL, NULL );
      is null do o
      is next:LexNode do o << " " << next;
      o);
-export dumpNodes():void := stdout << "[" << baseLexNode << "]" << endl;
+export dumpNodes():void := stdIO << "[" << baseLexNode << "]" << endl;
 advance(node:LexNode,ch:int):(null or LexNode) := (
      if ch == EOF || ch == ERROR then return NULL;
      t := node.further;
@@ -124,7 +117,7 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      while true do (
 	  ch := getc(o);
 	  if ch == ERROR then (
-	       if !interruptedFlag
+	       if !test(interruptedFlag)
 	       then printErrorMessage(o.filename,line,column,"ERROR in string /// ... /// beginning here: " + o.file.errorMessage);
 	       empty(tokenbuf);
 	       return NULL;
@@ -176,7 +169,7 @@ getstring(o:PosFile):(null or Word) := (
      while true do (
 	  ch := getc(o);
 	  if ch == ERROR then (
-	       if !interruptedFlag
+	       if !test(interruptedFlag)
 	       then printErrorMessage(o.filename,line,column,"ERROR in string beginning here: " + o.file.errorMessage);
 	       empty(tokenbuf);
 	       return NULL;
@@ -403,5 +396,5 @@ export gettoken(file:PosFile,obeylines:bool):Token := (
 	  ));
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d lex.o "
 -- End:

@@ -36,7 +36,7 @@ int badBlock() {
 extern unsigned int GC_debug_header_size;
 extern void *GC_check_annotated_obj(void *); /* returns NULL or pointer to clobbered debug header location */
 void GC_check(void *p) {
-  void *q = p - GC_debug_header_size;
+  void *q = (char *)p - GC_debug_header_size;
   if (NULL != GC_check_annotated_obj(q)) trap();
 }
 void gmp_GC_check(void *p) {
@@ -48,6 +48,6 @@ void gmp_GC_check(void *p) {
 
 /*
  Local Variables:
- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
  End:
 */

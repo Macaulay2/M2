@@ -1,6 +1,6 @@
 // Copyright 1997  Michael E. Stillman
 
-#include "polyring.hpp"
+#include "poly.hpp"
 #include "sagbi.hpp"
 #include "matrix-con.hpp"
 
@@ -204,7 +204,7 @@ Matrix *sagbi::subduct(const Matrix *m,
 // //   // monomial order = elimination order (or product order?) eliminating variables of R.
 // //   // degrees of new variables: coming from 'degs'
 // //   // This routine should handle the case where R is a quotient poly ring, or R is just K.
-// //   const ring *K = R->Ncoeffs();
+// //   const ring *K = R->getCoefficientRing();
 // //   degree_monoid *D = R->degree_monoid();
 // //   monorder mo = 
 // //   mon_info mi = 
@@ -271,7 +271,7 @@ Matrix *sagbi::subduct(const Matrix *m,
 // // 	return COMP_DONE;
 // //       if (++nloops > maxnloops) return COMP_DONE_STEPS;
 // //       if (*deg && (_current_degree > *deg)) return COMP_DONE_DEGREE_LIMIT;
-// //       if (system_interruptedFlag) return COMP_INTERRUPTED;
+// //       if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
 // // 
 // //       // Determine S-pairs
 // //       ret = find_pairs();  // sets _new_pairs, uses _current_degree.

@@ -26,18 +26,18 @@ ifneq (@host_alias@,)
 CONFIGOPTIONS += --host=@host_alias@
 endif
 CONFIGOPTIONS += --cache-file=/dev/null
-COMPILEFLAGS  = \
-	CXXFLAGS="$(CXXFLAGS)" \
-	CFLAGS="$(CFLAGS)" \
-	FFLAGS="$(FCFLAGS)" \
+COMPILEFLAGS  =					\
+	CXXFLAGS="$(CXXFLAGS)"			\
+	CFLAGS="$(CFLAGS)"			\
+	FFLAGS="$(FCFLAGS)"			\
 	FCFLAGS="$(FCFLAGS)"
-CONFIGENV     = env \
-	$(COMPILEFLAGS) \
-	CPPFLAGS="$(CPPFLAGS)" \
-	CC="$(CC)" \
-	CXX="$(CXX)" \
-	LDFLAGS="$(LDFLAGS)" \
-	LOADLIBES="$(LOADLIBES)" \
+CONFIGENV     = env				\
+	$(COMPILEFLAGS)				\
+	CPPFLAGS="$(CPPFLAGS)"			\
+	CC="$(CC)"				\
+	CXX="$(CXX)"				\
+	LDFLAGS="$(LDFLAGS)"			\
+	LOADLIBES="$(LOADLIBES)"		\
 	LDLIBS="$(LDLIBS)"
 CONFIGURESCRIPT ?= configure
 CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
@@ -70,15 +70,16 @@ diffs: .untarred2-$(VERSION) always
 	D=`pwd`; cd $(UNTARDIR) && diff -ur --exclude=configure $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
-package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
+PACKAGE-DISTCLEAN-TARGET := distclean
+package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
 compile: .compiled-$(VERSION) config-chk
-configure: .configured-$(VERSION) config-chk
+configure: .configured-$(VERSION) config-chk 
 config-chk:
-.installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)  ) && touch $@
+.installed-$(VERSION)  : .compiled-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)  ) && touch $@
 .compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
-.configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+.configured-$(VERSION) : .patched-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 ifneq ($(PATCHFILE),)
 .patched-$(VERSION) : $(PATCHFILE)
 PATCHCMD = cd $(UNTARDIR) && patch -p0 $(PATCHOPTIONS) <$(PATCHFILE)
@@ -137,7 +138,7 @@ else
 	@ false
 endif
 distclean: package-distclean
-clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
+clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile
 
 SLIMIT ?= 8192
@@ -157,8 +158,13 @@ endif
 ifeq (@ULIMIT_S@,yes)
 LIMIT += ; ulimit -s $(SLIMIT)
 endif
-check:
+recheck:
+	rm -f .checked-$(VERSION)
+	$(MAKE) check
+check: .checked-$(VERSION)
+.checked-$(VERSION) : .compiled-$(VERSION)
 	$(LIMIT); time $(CHECKCMD)
+	touch $@
 
 ls:; ls -la . tarfiles
 help:;
@@ -168,13 +174,14 @@ help:;
 	@ echo "targets:"
 	@ echo ""
 	@ echo "  all                         build/compile all files [the default target]"
-	@ echo "  reconfigure		      remake configuration files for library"
-	@ echo "  diffs			      create diff file for changes to library sources"
-	@ echo "  clean			      remove most created files, except Makefiles and dowloaded tarfiles"
-	@ echo "  distclean		      remove all created files"
-	@ echo "  package-clean		      remove most created files in the package's directory tree, except Makefiles"
-	@ echo "  package-distclean	      remove all created files in the package's directory tree"
-	@ echo "  check			      check whether library compiled correctly"
+	@ echo "  reconfigure                 remake configuration files for library"
+	@ echo "  diffs                       create diff file for changes to library sources"
+	@ echo "  clean                       remove most created files, except Makefiles and dowloaded tarfiles"
+	@ echo "  distclean                   remove all created files"
+	@ echo "  package-clean               remove most created files in the package's directory tree, except Makefiles"
+	@ echo "  package-distclean           remove all created files in the package's directory tree"
+	@ echo "  check                       check whether library compiled correctly"
+	@ echo "  recheck                     check, even if we've checked before"
 	@ echo ""
 
 # Local Variables:

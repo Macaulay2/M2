@@ -17,6 +17,7 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 define(TO_UPPER,[translit($1, [a-z], [A-Z])])
+dnl we should be able to replace IS_DECLARED with AC_CHECK_DECLS:
 AC_DEFUN(IS_DECLARED,[
   AC_CACHE_CHECK([whether $2 is declared],[m2_cv_$2_is_declared],
   	[AC_LANG(C)]
@@ -30,7 +31,7 @@ AC_DEFUN(IS_DECLARED,[
 ])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS ISSUE DISTRIBUTION
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION
 do eval v=\$$x
    test "$v" && echo "   $x=$v"
 done
@@ -70,6 +71,7 @@ AC_CHECK_PROGS(MAKE,gmake make)
 AC_CHECK_PROGS(WGET,wget)
 AC_CHECK_PROGS(CURL,curl)
 AC_CHECK_PROGS(OBJDUMP,objdump)
+AC_CHECK_PROGS(OBJCOPY,objcopy)
 AC_CHECK_PROGS(ETAGS,etags :)
 AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
@@ -194,26 +196,41 @@ AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 AC_SUBST(M2_CPPFLAGS,)
 
-if test "$DEBUG" = yes
-then CPPFLAGS="$CPPFLAGS -DDEBUG"
-     M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
-     CFLAGS="$CFLAGS -g"
-     CXXFLAGS="$CXXFLAGS -g"
-     LDFLAGS="$LDFLAGS -g"
-else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
-     CPPFLAGS="$CPPFLAGS -DNDEBUG"
-fi
-
-if test "$OPTIMIZE" = yes
-then CFLAGS="$CFLAGS -O3"
-     CXXFLAGS="$CFLAGS -O3"
-fi
-
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
 AC_PROG_CXX()			# set CXXFLAGS before this
 AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 AC_PROG_YACC()
+
+if test "$DEBUG" = yes
+then CPPFLAGS="$CPPFLAGS -DDEBUG"
+     M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+     if test "$GCC" = yes
+     then CFLAGS="$CFLAGS -g3"
+	  CXXFLAGS="$CXXFLAGS -g3"
+	  LDFLAGS="$LDFLAGS -g3"
+     else CFLAGS="$CFLAGS -g"
+	  CXXFLAGS="$CXXFLAGS -g"
+	  LDFLAGS="$LDFLAGS -g"
+     fi
+else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
+     CPPFLAGS="$CPPFLAGS -DNDEBUG"
+fi
+
+[
+CFLAGS=` echo $CFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
+CXXFLAGS=` echo $CXXFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
+FFLAGS=` echo $FFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
+]
+
+if test "$OPTIMIZE" = yes
+then CFLAGS="$CFLAGS -O3"
+     CXXFLAGS="$CXXFLAGS -O3"
+     FFLAGS="$FFLAGS -O3"
+else CFLAGS="$CFLAGS -O0"
+     CXXFLAGS="$CXXFLAGS -O0"
+     FFLAGS="$FFLAGS -O0"
+fi
 
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
 dnl AC_PROG_MKDIR_P()
@@ -341,15 +358,20 @@ EOF
 
 AC_HEADER_TIME() # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
-AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h)
-AC_CHECK_HEADERS(sys/types.h)
+AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h stdlib.h syscall.h)
+AC_CHECK_HEADERS(sys/types.h execinfo.h)
+AC_SEARCH_LIBS(clock_gettime,rt)
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
-AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
+AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
+AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
 AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
+
+AC_SUBST(__INTEL_COMPILER,no)
+AC_CHECK_DECL(__INTEL_COMPILER,__INTEL_COMPILER=yes)
 
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
 dnl AC_TYPE_INT64_T()
@@ -365,11 +387,24 @@ AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 AC_DEFINE_UNQUOTED(HAVE_PERSONALITY,$HAVE_PERSONALITY,[whether personality() is found])
 
 AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
+
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
+
+AC_SUBST(USE_THREADS,yes) AC_ARG_ENABLE(threads, AS_HELP_STRING(--disable-threads,[disable thread local storage and thread creation]), USE_THREADS=$enableval)
+AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
+if [[ "$USE_THREADS" = yes ]]
+then AC_LANG(C)
+     AC_COMPILE_IFELSE([__thread int x;],
+     	 [AC_MSG_RESULT(yes)],
+	 USE_THREADS=no; [AC_MSG_RESULT([no, disabling threads])])
+fi
+if [[ "$USE_THREADS" = yes ]]
+then AC_DEFINE(USE_THREADS,1,[whether to use thread local storage])
+fi
 
 AC_SUBST(FROBBY,yes)
 AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[do not download, compile, and link with frobby library]), FROBBY=$enableval)
@@ -396,10 +431,15 @@ then AC_DEFINE(HAVE_SCSCP,1,[whether we are linking with the scscp library])
 fi
 
 AC_SUBST(PYTHON,no)
-AC_ARG_ENABLE(python, AS_HELP_STRING(--enable-python,[link with libpython]), PYTHON=$enableval)
+AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
 if test "$PYTHON" = yes
 then AC_DEFINE(HAVE_PYTHON,1,[whether we are linking with the python library])
 fi
+
+AC_SUBST(MYSQL,no)
+AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[link with mysql]), MYSQL=$withval)
+test "$MYSQL" = no; USE_MYSQL=$?
+AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether we are linking with the mysql library])
 
 LIBPYTHONORIG=-lpython2.5
 AC_SUBST(LIBPYTHON,$LIBPYTHONORIG)
@@ -711,7 +751,9 @@ AC_SUBST(BUILTLIBS,)
 #     initially, we offer no option for not compiling some of them
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
-#    factory needs ntl and gmp, libfac needs factory
+#    factory needs ntl and gmp
+#    libfac needs factory
+#    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
 #    mpir is a plug-in replacement for gmp
@@ -948,26 +990,30 @@ test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
 if test $BUILD_gc = no
 then AC_LANG(C)
-     AC_SEARCH_LIBS(GC_free,gc,,BUILD_gc=yes)
-     AC_CHECK_HEADER(gc/gc.h,,BUILD_gc=yes)
-     if test $BUILD_gc = no
-     then AC_MSG_CHECKING(whether libgc is recent enough)
-	  AC_RUN_IFELSE([ 
-		  #include <stdio.h>
-		  main () {
-		      extern unsigned GC_version;
-		      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
-		      unsigned major, minor, alpha;
-		      major = GC_version >> 16;
-		      minor = (GC_version >> 8) & 0xff;
-		      alpha = GC_version & 0xff;
-		      if (alpha == 0xff) fprintf(msg,"(version %d.%d found) ", major, minor);
-		      else fprintf(msg,"(version %d.%d alpha %d found) ", major, minor, alpha);
-		      return !( major >= 7 ); }],
-	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, version at least 7.0 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
-	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-     fi
+     AC_SEARCH_LIBS(GC_free,gc,
+     	[AC_CHECK_HEADER(gc/gc.h,
+		[AC_CHECK_HEADER(atomic_ops.h,
+			[
+			  AC_MSG_CHECKING(whether libgc is recent enough)
+			  AC_RUN_IFELSE([ 
+				  #include <stdio.h>
+				  main () {
+				      extern unsigned GC_version;
+				      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
+				      unsigned major, minor, alpha;
+				      major = GC_version >> 16;
+				      minor = (GC_version >> 8) & 0xff;
+				      alpha = GC_version & 0xff;
+				      if (alpha == 0xff) fprintf(msg,"(version %d.%d found) ", major, minor);
+				      else fprintf(msg,"(version %d.%d alpha %d found) ", major, minor, alpha);
+				      return !( major >= 7 ); }],
+			     [ AC_MSG_RESULT(yes) ],
+			     [ AC_MSG_RESULT([no, version at least 7.0 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
+			     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+			],
+			BUILD_gc=yes)],
+		BUILD_gc=yes)],
+	BUILD_gc=yes)
 fi
 AC_SUBST(GC_LIBS,-lgc)
 if test $BUILD_gc = yes
@@ -985,6 +1031,11 @@ then AC_LANG(C)
      AC_CHECK_HEADER(gdbm.h,,BUILD_gdbm=yes)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
+
+# we are using mpir
+# on all systems, if ntl is there, and sharable, then it depends on gmp instead of mpir
+# so, let's build ntl always
+BUILD_ntl=yes
 
 if test $BUILD_ntl = no
 then AC_LANG(C++)
@@ -1047,54 +1098,31 @@ test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
-AC_SUBST(MYSQL,no)
-AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[compile and link with mysql]), MYSQL=$withval)
-test "$MYSQL" = no; USE_MYSQL=$?
-AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether to link with the mysql library])
-
 AC_SUBST(LAPACK,yes)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$withval)
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-# we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
-SAVELIBS=$LIBS
-if ! test "$SINGULARLIBS"
-then if test "$DEBUG" = yes
-     then SINGULARLIBS="-lfac-g -lcf"
-     else SINGULARLIBS="-lfac -lcf"
-     fi
+if test "$DEBUG" = yes
+then SINGULARLIBS="-lfac -lcf -lcfmem"
+else SINGULARLIBS="-lfac -lcf -lcfmem"
 fi
-AC_SUBST(SINGULARLIBS) # no initial value
 while test $BUILD_factory = no -o $BUILD_libfac = no
 do AC_LANG(C++)
    AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
-   SLIBS="$SINGULARLIBS -lcfmem"
-   LIBS="$SLIBS $LIBS"
+   SAVELIBS=$LIBS
+   LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
+   dnl if -lntl is needed, it's been added to $LIBS above
    AC_LINK_IFELSE( [[ #undef NOSTREAMIO
 	              #include <factory.h>
 		      #include <templates/ftmpl_inst.cc>
-	              
-		      int main () { return 0 ; }
-	       ]],
+		      int main () { return 0 ; } ]],
        AC_MSG_RESULT(yes),
-       AC_MSG_RESULT(no)
-       SLIBS="$SLIBS -lntl"
-       LIBS="$SLIBS $SAVELIBS"
-       AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
-       AC_LINK_IFELSE( [[ #undef NOSTREAMIO
-		          #include <factory.h>
-			  #include <templates/ftmpl_inst.cc>
-	                  
-			  int main () { return 0 ; }
-		   ]],
-	   AC_MSG_RESULT(yes),
-	   AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes; break
-	   ))
+       AC_MSG_RESULT(no) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break )
    AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
-   AC_RUN_IFELSE( [[ /* this is line 1 */
+   AC_RUN_IFELSE( [[
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
@@ -1122,10 +1150,10 @@ do AC_LANG(C++)
 		}
 	   ]],
 	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
+	AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS)
    break
 done
-LIBS=$SAVELIBS
+test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
 
 # we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
 # one of them to $LIBS, making it impossible to check for the presence of C or
@@ -1173,6 +1201,16 @@ test "$FORTRANUSED" = no && FCLIBS=
 AC_SUBST(FCLIBS_DYNAMIC,)
 AC_SUBST(FCLIBS_STATIC,)
 AC_SUBST(FCLIBS_FLAGS,)
+    # Under Ubuntu 8.10 -lgfortranbegin & -lgfortran come from libgfortran3, but that package isn't in Ubuntu 8.4
+    # so we try to link it statically, because there are many Ubuntu users of 8.4.
+    # Linking statically with -llapack -lblas results in conflicts between symbols in the two packages under Ubuntu:
+    #     /usr/lib/gcc/x86_64-linux-gnu/4.3.2/../../../../lib/libblas.a(xerbla.o): In function `xerbla_':
+    #     (.text+0x0): multiple definition of `xerbla_'
+    #     /usr/lib/gcc/x86_64-linux-gnu/4.3.2/../../../../lib/liblapack.a(xerbla.o):(.text+0x0): first defined here
+    #     collect2: ld returned 1 exit status
+    # Note: static version is here:
+    #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortran.a
+    #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortranbegin.a
 for i in $FCLIBS
 do case $i in
 	-L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
@@ -1283,11 +1321,11 @@ then if test "$RPM" = yes
      fi
 fi
 
-# Here we split up LIBS into three parts, LIBS_STATIC, LIBS_STATIC_OR_DYNAMIC, and LIBS_DYNAMIC.
-# M2 will get linked against LIBS_STATIC, LIBS_STATIC_OR_DYNAMIC, and LIBS_DYNAMIC, in that order
-# Under --enable-static the libraries in LIBS_STATIC_OR_DYNAMIC will be linked statically.
+# Here we split up LIBS into three parts, LIBS_STATIC, LIBS_EITHER, and LIBS_DYNAMIC.
+# M2 will get linked against LIBS_STATIC, LIBS_EITHER, and LIBS_DYNAMIC, in that order
+# Under --enable-static the libraries in LIBS_EITHER will be linked statically.
 AC_SUBST(LIBS_STATIC,)
-AC_SUBST(LIBS_STATIC_OR_DYNAMIC,)
+AC_SUBST(LIBS_EITHER,)
 AC_SUBST(LIBS_DYNAMIC,)
 for i in $LIBS
 do case $i in 
@@ -1301,18 +1339,21 @@ do case $i in
 	# # we must link statically with some libraries:
 	# #   libpari: provides no version number at run time, and we must ensure it is configured based on gmp
 	# -lpari ) LIBS_STATIC="$LIBS_STATIC $i" ;;
-	*) LIBS_STATIC_OR_DYNAMIC="$LIBS_STATIC_OR_DYNAMIC $i" ;;
+	*) LIBS_EITHER="$LIBS_EITHER $i" ;;
    esac
 done
 
 AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST (libraries to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST (programs to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST (libraries and programs to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILTLIBS     = $BUILTLIBS])
-AC_MSG_NOTICE([using SINGULARLIBS  = $SINGULARLIBS])
-AC_MSG_NOTICE([using LIBS_STATIC   = $LIBS_STATIC])
-AC_MSG_NOTICE([using LIBS_STATIC_OR_DYNAMIC  = $LIBS_STATIC_OR_DYNAMIC])
-AC_MSG_NOTICE([using LIBS_DYNAMIC  = $LIBS_DYNAMIC])
+AC_MSG_NOTICE([link using:])
+dnl the order of this list should agree with that in Macaulay2/bin/Makefile.in
+AC_MSG_NOTICE([     BUILTLIBS      = $BUILTLIBS])
+AC_MSG_NOTICE([     LIBS_STATIC    = $LIBS_STATIC])
+AC_MSG_NOTICE([     LIBS_EITHER    = $LIBS_EITHER])
+AC_MSG_NOTICE([     LIBS_DYNAMIC   = $LIBS_DYNAMIC])
+AC_MSG_NOTICE([     FCLIBS_STATIC  = $FCLIBS_STATIC])
+AC_MSG_NOTICE([     FCLIBS_DYNAMIC = $FCLIBS_DYNAMIC])
 AC_MSG_NOTICE([using CC            = $CC])
 AC_MSG_NOTICE([using CPPFLAGS      = $CPPFLAGS])
 AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])

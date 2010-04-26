@@ -3,11 +3,6 @@
 #include "hilb.hpp"
 #include "relem.hpp"
 
-extern char system_interruptedFlag;
-extern int gbTrace;
-
-long n_bag_allocs = 0;
-
 int partition_table::representative(int x)
 {
   int i = x;
@@ -234,20 +229,17 @@ static void iquotient_and_sum(MonomialIdeal &I,
   array< queue<Bag *> *> bins;
   sum = new MonomialIdeal(I.get_ring(), mi_stash);
   quot = new MonomialIdeal(I.get_ring(), mi_stash);
-  n_bag_allocs++;
   Bag *bmin = new Bag();
   varpower::copy(m, bmin->monom());
   sum->insert_minimal(bmin);
   for (Index<MonomialIdeal> i = I.first(); i.valid(); i++)
     {
-      n_bag_allocs++;
       Bag *b = new Bag();
       varpower::quotient(I[i]->monom().raw(), m, b->monom());
       if (varpower::divides(m, I[i]->monom().raw()))
 	quot->insert_minimal(b);
       else
 	{
-	  n_bag_allocs++;
 	  sum->insert_minimal(new Bag(0,I[i]->monom()));
 	  int d = varpower::simple_degree(b->monom().raw());
 	  if (d >= bins.length())
@@ -305,7 +297,7 @@ void hilb_comp::reset()
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
 : S(m->get_ring()->cast_to_PolynomialRing()),
   R(RR),
-  M(S->Nmonoms()),
+  M(S->getMonoid()),
   D(S->degree_monoid()),
   mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
   input_mat(m),
@@ -314,9 +306,9 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
   current(NULL),
   part_table(S->n_vars(), mi_stash)
 {
-  assert(D == R->Nmonoms());
-  one = R->Ncoeffs()->from_int(1);
-  minus_one = R->Ncoeffs()->from_int(-1);
+  assert(D == R->getMonoid());
+  one = R->getCoefficientRing()->from_int(1);
+  minus_one = R->getCoefficientRing()->from_int(-1);
   LOCAL_deg1 = D->make_one();
 
   result_poincare = R->from_int(0);
@@ -333,7 +325,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
 hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
 : S(I->get_ring()->cast_to_PolynomialRing()),
   R(RR),
-  M(S->Nmonoms()),
+  M(S->getMonoid()),
   D(S->degree_monoid()),
   mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
   input_mat(0),
@@ -342,9 +334,9 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
   current(NULL),
   part_table(S->n_vars(),mi_stash)
 {
-  assert(D == R->Nmonoms());
-  one = R->Ncoeffs()->from_int(1);
-  minus_one = R->Ncoeffs()->from_int(-1);
+  assert(D == R->getMonoid());
+  one = R->getCoefficientRing()->from_int(1);
+  minus_one = R->getCoefficientRing()->from_int(-1);
   LOCAL_deg1 = D->make_one();
 
   result_poincare = R->from_int(0);
@@ -377,8 +369,8 @@ hilb_comp::~hilb_comp()
     }
 
   R->remove(result_poincare);
-  R->Ncoeffs()->remove(one);
-  R->Ncoeffs()->remove(minus_one);
+  R->getCoefficientRing()->remove(one);
+  R->getCoefficientRing()->remove(minus_one);
   D->remove(LOCAL_deg1);
   delete mi_stash;
 }
@@ -396,7 +388,7 @@ int hilb_comp::calc(int n_steps)
 	  int result = step();
 	  if (result == COMP_DONE)
 	    return COMP_DONE;
-	  if (system_interruptedFlag)
+	  if (test_Field(interrupts_interruptedFlag))
 	    return COMP_INTERRUPTED;
 	}
       return COMP_DONE_STEPS;
@@ -406,7 +398,7 @@ int hilb_comp::calc(int n_steps)
       int result = step();
       if (result == COMP_DONE)
 	return COMP_DONE;
-      if (system_interruptedFlag)
+      if (test_Field(interrupts_interruptedFlag))
 	return COMP_INTERRUPTED;
     }
 }
@@ -648,7 +640,7 @@ RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
   return result;
 }
 
-RingElementOrNull *hilb_comp::hilbertNumerator(const MonomialIdeal *I)
+RingElement /* or null */ *hilb_comp::hilbertNumerator(const MonomialIdeal *I)
 /* This routine computes the numerator of the Hilbert series
    for coker I.   NULL is returned if the ring is not appropriate for
    computing Hilbert series, or the computation was interrupted. */
@@ -674,7 +666,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   int result = 0;
   for (Nterm *f = h->get_value(); f!=NULL; f=f->next)
     {
-      P->Nmonoms()->to_expvector(f->monom, exp);
+      P->getMonoid()->to_expvector(f->monom, exp);
       if (exp[0] < deg) 
 	{
 	  ERROR("incorrect Hilbert function given");
@@ -684,7 +676,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
 	}
       else if (exp[0] == deg)
 	{
-	  int n = P->Ncoeffs()->coerce_to_int(f->coeff);
+	  int n = P->getCoefficientRing()->coerce_to_int(f->coeff);
 	  result += n;
 	}
 	

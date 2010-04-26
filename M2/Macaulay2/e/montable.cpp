@@ -209,9 +209,9 @@ void MonomialTable::insert(exponents exp, int comp, int id)
      in some order (lex order?).  No element is ever removed.
   */
 
-  if (comp >= static_cast<int>(_head.size()))
+  if (comp >= INTSIZE(_head))
     {
-      for (int i=_head.size(); i <= comp; i++)
+      for (int i=INTSIZE(_head); i <= comp; i++)
 	_head.push_back(make_list_head());
     }
 

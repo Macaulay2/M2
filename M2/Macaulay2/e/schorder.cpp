@@ -3,11 +3,12 @@
 #include "comb.hpp"
 #include "polyring.hpp"
 #include "Eschreyer.hpp"
+#include "finalize.hpp"
 
 SchreyerOrder *SchreyerOrder::create(const Monoid *M)
 {
   SchreyerOrder *S = new SchreyerOrder(M);
-  S->intern();
+  intern_SchreyerOrder(S);
   return S;
 }
 
@@ -67,7 +68,7 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
       result->append(ties[i], base);
     }
 
-  result->intern();
+  intern_SchreyerOrder(result);
   M->remove(base);
   deletearray(tiebreaks);
   deletearray(ties);
@@ -86,7 +87,7 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   const Monoid *M = P->getMonoid();
   SchreyerOrder *result = new SchreyerOrder(M);
-  int rk = m->elems.size();
+  int rk = INTSIZE(m->elems);
   if (rk == 0) return result;
 
   int *base = M->make_one();
@@ -121,7 +122,7 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
       result->append(ties[i], base);
     }
 
-  result->intern();
+  intern_SchreyerOrder(result);
   M->remove(base);
   deletearray(tiebreaks);
   deletearray(ties);
@@ -248,45 +249,63 @@ SchreyerOrder *SchreyerOrder::exterior(int p) const
   return result;
 }
 
-static SchreyerOrder *symm1_result = NULL;
-static int *symm1_base = NULL;
-static int symm1_next = 0;
+struct SchreyerOrder_symm {
+  const SchreyerOrder *S; // original one
+  int n;
+  const Monoid *M;
 
-void SchreyerOrder::symm1(int lastn,	     // can use lastn..rank()-1 in product
-			  int pow) const   // remaining power to take
-{
-  if (pow == 0)
-    symm1_result->append(symm1_next++, symm1_base);
-  else
-    {
-      for (int i=lastn; i<rank(); i++)
-	{
-	  // increase symm1_base with e_i
-	  M->mult(symm1_base, base_monom(i), symm1_base);
+  SchreyerOrder *symm1_result; // what is being computed
+  int *symm1_base; // used in recursion
+  int symm1_next; // used in recursion
 
-	  symm1(i, pow-1);
+  void symm1(int lastn,	     // can use lastn..rank()-1 in product
+	     int pow)       // remaining power to take
+  {
+    if (pow == 0)
+      symm1_result->append(symm1_next++, symm1_base);
+    else
+      {
+	for (int i=lastn; i<S->rank(); i++)
+	  {
+	    // increase symm1_base with e_i
+	    M->mult(symm1_base, S->base_monom(i), symm1_base);
+	    
+	    symm1(i, pow-1);
+	    
+	    // decrease symm1_base back
+	    M->divide(symm1_base, S->base_monom(i), symm1_base);
+	  }
+      }
+  }
 
-	  // decrease symm1_base back
-	  M->divide(symm1_base, base_monom(i), symm1_base);
-	}
-    }
-}
+  SchreyerOrder_symm(const SchreyerOrder *S0, int n0)
+    : S(S0), 
+      n(n0), 
+      M(S0->getMonoid()),
+      symm1_result(0),
+      symm1_base(0),
+      symm1_next(0) { }
+
+  SchreyerOrder *value() {
+    if (symm1_result == 0)
+      {
+	symm1_result = SchreyerOrder::create(M);
+	if (n >= 0)
+	  {
+	    symm1_base = M->make_one();
+	    symm1(0, n);
+	    M->remove(symm1_base);
+	  }
+      }
+    return symm1_result;
+  }
+};
 
 SchreyerOrder *SchreyerOrder::symm(int n) const
     // n th symmetric power
 {
-  symm1_result = new SchreyerOrder(M);
-  if (n >= 0)
-    {
-      symm1_base = M->make_one();
-      
-      symm1(0, n);
-      
-      M->remove(symm1_base);
-    }
-  SchreyerOrder *result = symm1_result;
-  symm1_result = NULL;
-  return result;
+  SchreyerOrder_symm S(this, n);
+  return S.value();
 }
 
 void SchreyerOrder::text_out(buffer &o) const
@@ -332,26 +351,6 @@ int SchreyerOrder::schreyer_compare_encoded(const int *m,
   return EQ;
 }
 
-extern int gbTrace;
-static int nfinalized_SchreyerOrder = 0;
-static int nremoved_SchreyerOrder = 0;
-
-extern "C" void remove_SchreyerOrder(void *p, void *cd)
-{
-  SchreyerOrder *G = static_cast<SchreyerOrder *>(p);
-  nremoved_SchreyerOrder++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\nremoving SchreyerOrder %d at %p\n",nremoved_SchreyerOrder, G);
-  G->remove();
-}
-
-void SchreyerOrder::intern()
-{
-  GC_REGISTER_FINALIZER(this,remove_SchreyerOrder,0,0,0);
-  nfinalized_SchreyerOrder++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering SchreyerOrder %d at %p\n", nfinalized_SchreyerOrder, (void *)this);
-}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

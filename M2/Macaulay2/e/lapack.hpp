@@ -284,7 +284,7 @@ class Lapack {
   // Input matrices are real /////
   ////////////////////////////////
 
-  static M2_arrayint_OrNull LU(const LMatrixRR *A,
+  static M2_arrayintOrNull LU(const LMatrixRR *A,
 			       LMatrixRR *L,
 			       LMatrixRR *U);
 
@@ -315,7 +315,7 @@ class Lapack {
   // Input matrices are complex //
   ////////////////////////////////
 
-  static M2_arrayint_OrNull LU(const LMatrixCC *A,
+  static M2_arrayintOrNull LU(const LMatrixCC *A,
 			       LMatrixCC *L,
 			       LMatrixCC *U
 			       );

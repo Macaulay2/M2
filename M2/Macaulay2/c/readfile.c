@@ -5,7 +5,6 @@
 struct CURRENT cur;
 
 int tabwidth = 8;
-bool do_setup = TRUE;
 
 void advance(){
      char c = *cur.text++;
@@ -25,7 +24,7 @@ void advance(){
 	  }
      }
 
-node DoubleN(char *s, unsigned int len) {
+static node DoubleN(char *s, unsigned int len) {
      node q = newnode(DOUBLE_CONST,double_const_tag);
      q->body.double_const.contents = strnperm(s,len);
      return q;
@@ -36,11 +35,11 @@ bool iswhite(int c) {
 	  || c == '\t' || c == '\r' || c == '\f');
      }
 
-bool istokenfirst(int c) {
+static bool istokenfirst(int c) {
      return isalpha(c) || c=='_';
      }
 
-bool istoken(int c) {
+static bool istoken(int c) {
      return isalnum(c) || c=='_';
      }
 
@@ -50,7 +49,7 @@ bool validtoken(char *s) {
      return TRUE;
      }
 
-bool alldigits(char *s, unsigned int n){
+static bool alldigits(char *s, unsigned int n){
      while (n > 0) {
 	  if (!isdigit((int)*s)) return FALSE;
 	  s++;
@@ -59,7 +58,7 @@ bool alldigits(char *s, unsigned int n){
      return TRUE;
      }
 
-bool allhexdigits(char *s, unsigned int n){
+static bool allhexdigits(char *s, unsigned int n){
      while (n > 0) {
 	  if (isdigit((int)*s) 
 	       || ('a' <= *s && *s <= 'f') 
@@ -73,7 +72,7 @@ bool allhexdigits(char *s, unsigned int n){
      return TRUE;
      }
 
-bool integerq(char *p, unsigned int n) {
+static bool integerq(char *p, unsigned int n) {
      if (n==0) return FALSE;
      if (p[0] == '0' && p[1] == 'x') {
 	  p+=2, n-=2;
@@ -87,7 +86,7 @@ bool integerq(char *p, unsigned int n) {
 	  }
      }
 
-bool doubleq(char *p, unsigned int n) {
+static bool doubleq(char *p, unsigned int n) {
      if (n == 0) return FALSE;
      if (*p == '-') p++, n--;
      /* if (!isdigit(*p)) return FALSE; */
@@ -107,7 +106,7 @@ bool doubleq(char *p, unsigned int n) {
 	  }
      }
 
-char escaped(char c){
+static char escaped(char c){
      switch(c){
      	  case 'b': return '\b';
      	  case 't': return '\t';
@@ -160,7 +159,7 @@ node gettoken(){
 	       advance();
 	       }
 	  token = newnode(STRING_CONST,string_const_tag);
-	  token->body.string.contents = strnperm(s,cur.text-s); /* observe that escaped character sequences such as \n are not simplified here */
+	  token->body.unique_string.characters = strnperm(s,cur.text-s); /* observe that escaped character sequences such as \n are not simplified here */
 	  advance();
 	  return token;
 	  }
@@ -187,241 +186,61 @@ node gettoken(){
      return UniqueStringN(p,cur.text-p);
      }
 
-node readfile1(struct POS *lppos) {
-     bool Tail = lppos != NULL;
-     node listhead = NULL, listtail = NULL;
-     top:
-     while (TRUE) {
-	  node element = NULL;
-	  while (cur.text < cur.eot) {
-	       char c = *cur.text;
-	       if (c=='\n' || c=='\t' || c=='\r' || c=='\f' || c==' ') {
-		    advance();
-		    }
-	       else break;
-	       }
-	  if (cur.text == cur.eot) {
-	       if (Tail) {
-		    if (listhead == NULL) listhead = enpos(listhead,lppos);
-		    fatalpos(listhead,"unmatched left parenthesis");
-		    }
-	       else {
-		    return listhead;
-		    }
-	       }
-     	  switch(*cur.text) {
-	       case ';' : {
-		    advance();
-		    while (*cur.text != '\n' && cur.text < cur.eot) advance();
-		    goto top;
-		    }
-	       case '(' : {
-		    struct POS newlppos;
-		    newlppos.filename = cur.filename;
-		    newlppos.lineno = cur.lineno;
-		    newlppos.column = cur.column;
-		    advance();
-		    element = readfile1(&newlppos);
-		    break;
-		    }
-	       case ')' : {
-		    if (Tail) {
-		    	 advance();
-			 if (listhead == NULL) {
-			      listhead = enpos(listhead,lppos);
-			      }
-		    	 return listhead;
-			 }
-		    else {
-		    	 fatal("unmatched right parenthesis");
-			 }
-		    break;
-		    }
-	       default: {
-		    element = positionof(NULL);
-		    element->body.position.contents = gettoken();
-		    break;
-		    }
-	       }
-	  if (listhead==NULL) {
-	       listtail = listhead = cons(element,NULL);
-	       setpos(listhead,lppos);
-	       }
-	  else {
-	       node t = cons(element,NULL);
-	       listtail->body.cons.cdr = t;
-	       listtail = t;
-	       }
-	  }
-     }
-
 /* keep the next lines together */
      char setup_filename[] = __FILE__;
      int  setup_lineno     = __LINE__;
      char *setup_text[]     = {"\n\
-! (x:bool):bool ::= Ccode(bool,\"(! \",x,\" )\");","\n\
-(x:bool) | (y:bool):bool ::= Ccode(bool,\"(\",x,\" | \",y,\")\");","\n\
-(x:bool) & (y:bool):bool ::= Ccode(bool,\"(\",x,\" & \",y,\")\");","\n\
-(x:bool) ^^ (y:bool):bool ::= Ccode(bool,\"(\",x,\" ^ \",y,\")\");","\n\
-(x:int) | (y:int):int ::= Ccode(int,\"(\",x,\" | \",y,\")\");","\n\
-(x:uint) | (y:uint):uint ::= Ccode(uint,\"(\",x,\" | \",y,\")\");","\n\
-(x:ushort) | (y:ushort):ushort ::= Ccode(ushort,\"(\",x,\" | \",y,\")\");","\n\
-(x:int) & (y:int):int ::= Ccode(int,\"(\",x,\" & \",y,\")\");","\n\
-(x:uint) & (y:int):uint ::= Ccode(uint,\"(\",x,\" & \",y,\")\");","\n\
-(x:int) & (y:uint):uint ::= Ccode(uint,\"(\",x,\" & \",y,\")\");","\n\
-(x:uint) & (y:uint):uint ::= Ccode(uint,\"(\",x,\" & \",y,\")\");","\n\
-(x:ushort) & (y:ushort):ushort ::= Ccode(ushort,\"(\",x,\" & \",y,\")\");","\n\
-(x:uint) ^^ (y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
-(x:ushort) ^^ (y:ushort):ushort ::= Ccode(ushort,\"(\",x,\" ^ \",y,\")\");","\n\
-xor(x:int, y:int):int ::= Ccode(int,\"(\",x,\" ^ \",y,\")\");","\n\
-xor(x:uint, y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
-(x:char) & (y:int):int ::= Ccode(char,\"(\",x,\" & \",y,\")\");","\n\
-(x:int) & (y:char):int ::= Ccode(char,\"(\",x,\" & \",y,\")\");","\n\
-(x:char) & (y:char):int ::= Ccode(char,\"(\",x,\" & \",y,\")\");","\n\
-~ (x:int):int ::= Ccode(int,\"(~ \",x,\")\");","\n\
-(x:uint) >> (y:int):uint ::= Ccode(uint,\"(\",x,\" >> \",y,\")\");","\n\
-(x:ushort) >> (y:int):ushort ::= Ccode(ushort,\"(\",x,\" >> \",y,\")\");","\n\
-(x:int) >> (y:int):int ::= Ccode(int,\"(\",x,\" >> \",y,\")\");","\n\
-(x:uint) << (y:int):uint ::= Ccode(uint,\"(\",x,\" << \",y,\")\");","\n\
-(x:ushort) << (y:int):ushort ::= Ccode(ushort,\"(unsigned short)(\",x,\" << \",y,\")\");","\n\
-(x:int) << (y:int):int ::= Ccode(int,\"(\",x,\" << \",y,\")\");","\n\
-(x:int) <  (y:int):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
-(x:int) <= (y:int):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
-(x:int) >  (y:int):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
-(x:int) >= (y:int):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
-(x:ushort) <  (y:ushort):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
-(x:ushort) <= (y:ushort):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
-(x:ushort) >  (y:ushort):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
-(x:ushort) >= (y:ushort):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
-(x:uint) <  (y:uint):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
-(x:uint) <= (y:uint):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
-(x:uint) >  (y:uint):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
-(x:uint) >= (y:uint):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
-(x:char) <  (y:char):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
-(x:char) <= (y:char):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
-(x:char) >  (y:char):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
-(x:char) >= (y:char):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
-(x:ulong) <  (y:ulong):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
-(x:ulong) <= (y:ulong):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
-(x:ulong) >  (y:ulong):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
-(x:ulong) >= (y:ulong):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
-(x:long) <  (y:long):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
-(x:long) <= (y:long):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
-(x:long) >  (y:long):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
-(x:long) >= (y:long):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
-(x:double) <  (y:double):bool ::= Ccode(bool,\"(\",x,\" <  \" ,y,\")\");","\n\
-(x:double) <= (y:double):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
-(x:double) >  (y:double):bool ::= Ccode(bool,\"(\",x,\" >  \" ,y,\")\");","\n\
-(x:double) >= (y:double):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
-(x:int) + (y:int):int ::= Ccode(int,\"(\",x,\" + \",y,\")\");","\n\
-(x:uint) + (y:uint):uint ::= Ccode(uint,\"(\",x,\" + \",y,\")\");","\n\
-(x:int) - (y:int):int ::= Ccode(int,\"(\",x,\" - \",y,\")\");","\n\
-(x:uint) - (y:uint):int ::= Ccode(uint,\"(\",x,\" - \",y,\")\");","\n\
-(x:int) * (y:int):int ::= Ccode(int,\"(\",x,\" * \",y,\")\");","\n\
-(x:uint) * (y:uint):int ::= Ccode(uint,\"(\",x,\" * \",y,\")\");","\n\
-(x:int) / (y:int):int ::= Ccode(int,\"(\",x,\" / \",y,\")\");","\n\
-(x:uint) / (y:uint):uint ::= Ccode(int,\"(\",x,\" / \",y,\")\");","\n\
-(x:ushort) / (y:ushort):ushort ::= Ccode(ushort,\"(\",x,\" / \",y,\")\");","\n\
-(x:int) % (y:int):int ::= Ccode(int,\"(\",x,\" % \",y,\")\");","\n\
-(x:uint) % (y:int):int ::= Ccode(uint,\"(\",x,\" % \",y,\")\");","\n\
-(x:int) % (y:uint):uint ::= Ccode(uint,\"(\",x,\" % \",y,\")\");","\n\
-(x:uint) % (y:uint):uint ::= Ccode(uint,\"(\",x,\" % \",y,\")\");","\n\
-(x:ushort) % (y:ushort):ushort ::= Ccode(ushort,\"(\",x,\" % \",y,\")\");","\n\
-(x:double) + (y:double):double ::= Ccode(double,\"(\",x,\" + \",y,\")\");","\n\
-(x:double) - (y:double):double ::= Ccode(double,\"(\",x,\" - \",y,\")\");","\n\
-(x:double) * (y:double):double ::= Ccode(double,\"(\",x,\" * \",y,\")\");","\n\
-(x:double) / (y:double):double ::= Ccode(double,\"(\",x,\" / \",y,\")\");","\n\
-(x:double) ^ (y:double):double ::= Ccode(double,\"pow(\",x,\",\",y,\")\");","\n\
-(x:float) + (y:float):float ::= Ccode(float,\"(\",x,\" + \",y,\")\");","\n\
-(x:float) - (y:float):float ::= Ccode(float,\"(\",x,\" - \",y,\")\");","\n\
-(x:float) * (y:float):float ::= Ccode(float,\"(\",x,\" * \",y,\")\");","\n\
-(x:float) / (y:float):float ::= Ccode(float,\"(\",x,\" / \",y,\")\");","\n\
-(x:char) + (y:int ):char ::= Ccode(char,\"(\",x,\" + \",y,\")\");","\n\
-(x:short) + (y:int ):short ::= Ccode(short,\"(\",x,\" + \",y,\")\");","\n\
-(x:long) + (y:int ):long ::= Ccode(long,\"(\",x,\" + \",y,\")\");","\n \
-(x:long) + (y:long):long ::= Ccode(long,\"(\",x,\" + \",y,\")\");","\n \
-(x:long) - (y:int ):long ::= Ccode(long,\"(\",x,\" - \",y,\")\");","\n \
-(x:long) % (y:int ):long ::= Ccode(long,\"(\",x,\" % \",y,\")\");","\n \
-(x:long) * (y:int ):long ::= Ccode(long,\"(\",x,\" * \",y,\")\");","\n \
-(x:long) / (y:int ):long ::= Ccode(long,\"(\",x,\" / \",y,\")\");","\n \
-(x:long) / (y:long ):long ::= Ccode(long,\"(\",x,\" / \",y,\")\");","\n \
-(x:int) + (y:long ):long ::= Ccode(long,\"(\",x,\" + \",y,\")\");","\n \
-(x:int) - (y:long ):long ::= Ccode(long,\"(\",x,\" - \",y,\")\");","\n \
-(x:int) % (y:long ):long ::= Ccode(long,\"(\",x,\" % \",y,\")\");","\n \
-(x:int) * (y:long ):long ::= Ccode(long,\"(\",x,\" * \",y,\")\");","\n \
-(x:int) / (y:long ):long ::= Ccode(long,\"(\",x,\" / \",y,\")\");","\n \
-(x:ulong) + (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" + \",y,\")\");","\n \
-(x:ulong) - (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" - \",y,\")\");","\n \
-(x:ulong) % (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" % \",y,\")\");","\n \
-(x:ulong) * (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" * \",y,\")\");","\n \
-(x:ulong) / (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" / \",y,\")\");","\n \
-(x:int) + (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" + \",y,\")\");","\n \
-(x:int) - (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" - \",y,\")\");","\n \
-(x:int) % (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" % \",y,\")\");","\n \
-(x:int) * (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" * \",y,\")\");","\n \
-(x:int) / (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" / \",y,\")\");","\n \
-(x:long) < (y:int ):bool ::= Ccode(bool,\"(\",x,\" < \",y,\")\");","\n \
-(x:long) <= (y:int ):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n \
-(x:long) > (y:int ):bool ::= Ccode(bool,\"(\",x,\" > \",y,\")\");","\n \
-(x:long) >= (y:int ):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n \
-(x:ulong) < (y:int ):bool ::= Ccode(bool,\"(\",x,\" < \",y,\")\");","\n \
-(x:ulong) <= (y:int ):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n \
-(x:ulong) > (y:int ):bool ::= Ccode(bool,\"(\",x,\" > \",y,\")\");","\n \
-(x:ulong) >= (y:int ):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n \
-(x:char) - (y:int ):char ::= Ccode(char,\"(\",x,\" - \",y,\")\");","\n\
-(x:int) + (y:char):char ::= Ccode(char,\"(\",x,\" + \",y,\")\");","\n\
-(x:int) + (y:short):short ::= Ccode(short,\"(\",x,\" + \",y,\")\");","\n\
-(x:int) - (y:char):char ::= Ccode(char,\"(\",x,\" - \",y,\")\");","\n\
-(x:char) - (y:char):int  ::= Ccode(int,\"(\",x,\" - \",y,\")\");","\n\
-(x:uchar) + (y:int ):uchar ::= Ccode(uchar,\"(unsigned char)(\",x,\" + \",y,\")\");","\n\
-(x:int) + (y:uchar):uchar ::= Ccode(uchar,\"(unsigned char)(\",x,\" + \",y,\")\");","\n\
-(x:uchar) - (y:int ):uchar ::= Ccode(uchar,\"(unsigned char)(\",x,\" - \",y,\")\");","\n\
-(x:int) - (y:uchar):uchar ::= Ccode(uchar,\"(unsigned char)(\",x,\" - \",y,\")\");","\n\
-(x:ushort) + (y:int):ushort ::= Ccode(ushort,\"(unsigned short)(\",x,\" + \",y,\")\");","\n\
-(x:int) + (y:ushort):ushort ::= Ccode(ushort,\"(unsigned short)(\",x,\" + \",y,\")\");","\n\
-(x:ushort) - (y:int):ushort ::= Ccode(ushort,\"(unsigned short)(\",x,\" - \",y,\")\");","\n\
-(x:int) - (y:ushort):ushort ::= Ccode(ushort,\"(unsigned short)(\",x,\" - \",y,\")\");","\n\
-- (x:int):int ::= Ccode(int,\"(- \",x,\")\");","\n\
-- (x:double):double ::= Ccode(double,\"(- \",x,\")\");","\n\
-- (x:float):float ::= Ccode(float,\"(- \",x,\")\");","\n\
-- (x:long):long ::= Ccode(long,\"(- \",x,\")\");","\n\
-- (x:short):short ::= Ccode(short,\"(- \",x,\")\");","\n\
-(x:int) + (y:double):double ::= Ccode(double,\"(\",x,\" + \",y,\")\");","\n\
-(x:double) + (y:int):double ::= Ccode(double,\"(\",x,\" + \",y,\")\");","\n\
-(x:int) - (y:double):double ::= Ccode(double,\"(\",x,\" - \",y,\")\");","\n\
-(x:double) - (y:int):double ::= Ccode(double,\"(\",x,\" - \",y,\")\");","\n\
-(x:int) * (y:double):double ::= Ccode(double,\"(\",x,\" * \",y,\")\");","\n\
-(x:double) * (y:int):double ::= Ccode(double,\"(\",x,\" * \",y,\")\");","\n\
-(x:long) * (y:double):double ::= Ccode(double,\"(\",x,\" * \",y,\")\");","\n\
-(x:double) * (y:long):double ::= Ccode(double,\"(\",x,\" * \",y,\")\");","\n\
-(x:int) / (y:double):double ::= Ccode(double,\"(\",x,\" / \",y,\")\");","\n\
-(x:ulong) / (y:double):double ::= Ccode(double,\"(\",x,\" / \",y,\")\");","\n\
-(x:double) / (y:int):double ::= Ccode(double,\"(\",x,\" / \",y,\")\");"
-	  };
+	leftOperator 3 \"^^\";      ","\n\
+	leftOperator 3 \"<<\";      ","\n\
+	leftOperator 3 \"|\";      ","\n\
+	rightOperator 3 \">>\";      ","\n\
+	leftOperator 4 \"&\";      ","\n\
+	leftOperator 5 \"<=\";      ","\n\
+	leftOperator 5 \"<\";      ","\n\
+	leftOperator 5 \"===\";      ","\n\
+	leftOperator 5 \"=>\";      ","\n\
+	leftOperator 5 \"=!=\";      ","\n\
+	leftOperator 5 \">=\";      ","\n\
+	leftOperator 5 \">\";      ","\n\
+	prefixOperator 5 \"~\";      ","\n\
+	leftOperator 6 \"+\";      ","\n\
+	leftOperator 7 \"//\";      ","\n\
+	leftOperator 7 \"/\";      ","\n\
+	leftOperator 7 \"*\";      ","\n\
+	leftOperator 7 \"%\";      ","\n\
+	leftOperator 8 \"^\";      ","\n\
+	leftOperator 10 \".\";      ","\n\
+	rightOperator 1 \"::=\";      ","\n\
+	rightOperator 1 \":=\";      ","\n\
+	leftOperator 2 \"=\";      ","\n\
+	prefixOperator 4 \"!\";      ","\n\
+	leftOperator 5 \"==\";      ","\n\
+	leftOperator 5 \"!=\";      ","\n\
+        " };
 
 void read_setup(){
      node e;
      unsigned int i;
      struct CURRENT save;
-     if (noinits) return;
+     if (nomacros) return;
      save = cur;
      cur.filename = setup_filename;
      cur.lineno = setup_lineno + 1;
      cur.column = 0;
-     if (do_setup) for (i=0; i<numberof(setup_text); i++) {
+     for (i=0; i<numberof(setup_text); i++) {
 	  int r;
 	  char *s = setup_text[i];
 	  cur.text = s;
 	  cur.eot = cur.text + strlen(s);
      	  r = yyparse();
 	  if (r == 1) fatal("terminating due to syntax errors");
-     	  e = chklist(parservalue,&global);
+     	  e = chklist(parservalue,global_scope);
      	  assertpos(e==NULL,e);
 	  }
      cur = save;
      }
 
-char *readfile2(int fd, int *plen) {
+static char *readfile2(int fd, int *plen) {
      int bufsize = 1024 * 16;
      int len = 0;
      char *txt = getmem(bufsize);
@@ -436,7 +255,7 @@ char *readfile2(int fd, int *plen) {
 	       }
 	  len += n;
 	  if (len == bufsize) {
-	       char *p = malloc(bufsize *= 2);
+	       char *p = GC_MALLOC(bufsize *= 2);
 	       memcpy(p,txt,len);
 	       txt = p;
 	       }
@@ -462,7 +281,7 @@ node readfile(char *filename) {
      return parservalue;
      }
 
-int pathopen(const char *path, const char *filename, char **pathopened){
+static int pathopen(const char *path, const char *filename, char **pathopened){
      /* pathlist is a colon separated list */
      const char *eop;
      int f;
@@ -517,9 +336,9 @@ bool sigreadfile(char *name, char **pathopened) {
      r = yyparse();
      if (r == 1) fatal("terminating due to syntax errors");
      cur = save;
-     sig = global.signature;
-     e = chklist(parservalue,&global);
-     global.signature = sig;
+     sig = global_scope->signature;
+     e = chklist(parservalue,global_scope);
+     global_scope->signature = sig;
      assertpos(e == NULL,e);
      return TRUE;
      }     

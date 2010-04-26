@@ -24,10 +24,16 @@ typedef const int * const_partial_sums;
 typedef const int * const_monomial;
 typedef const int * const_varpower;
 
+#define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents>(alloca(byte_len))
+#define EXPONENT_BYTE_SIZE(nvars) (sizeof(int) * (nvars))
+
+#define ALLOCATE_MONOMIAL(byte_len) static_cast<monomial>(alloca(byte_len))
+#define MONOMIAL_BYTE_SIZE(mon_size) (sizeof(int) * (mon_size))
+
 class Monoid : public mutable_object
 {
   int nvars_;
-  M2_stringarray varnames_;
+  M2_ArrayString varnames_;
   M2_arrayint degvals_;
   M2_arrayint heftvals_;
   array<const_monomial> degree_of_var_;	// [0]..[nvars-1] are the multi-degrees of the 
@@ -38,9 +44,11 @@ class Monoid : public mutable_object
   const PolynomialRing *degree_ring_;
   const Monoid *degree_monoid_;
 
-  MonomialOrdering *mo_;
+  const MonomialOrdering *mo_;
   MonomialOrder *monorder_; // Internal version, with encoding information
   enum overflow_type { OVER, OVER1, OVER2, OVER4 } *overflow;
+
+  size_t exp_size; // in bytes
 
   int monomial_size_;  // in ints
   int monomial_bound_;
@@ -60,30 +68,22 @@ class Monoid : public mutable_object
   void set_degrees();
   void set_overflow_flags();
 
-  exponents EXP1_, EXP2_, EXP3_;// allocated ntuples.
-				// A local routine may use these ONLY if
-				// they call no other monoid routine, except
-				// to/from expvector.
-
   static Monoid *trivial_monoid;
 
   Monoid();
 
-  Monoid(MonomialOrdering *mo,
-	 M2_stringarray names,
+  Monoid(const MonomialOrdering *mo,
+	 M2_ArrayString names,
 	 const PolynomialRing *DR, /* degree ring */
 	 M2_arrayint degs,
 	 M2_arrayint hefts);
   
 public:
-  static Monoid *create(MonomialOrdering *mo,
-			M2_stringarray names,
+  static Monoid *create(const MonomialOrdering *mo,
+			M2_ArrayString names,
 			const PolynomialRing *DR, /* degree ring */
 			M2_arrayint degs,
 			M2_arrayint hefts);
-
-  // dan : commenting this out because it seems to be unused
-  // static Monoid *tensor_product(const Monoid *M1, const Monoid *M2);
 
   ~Monoid();
 
@@ -99,7 +99,7 @@ public:
   const_monomial degree_of_var(int v) const { return degree_of_var_[v]; }
   int primary_degree_of_var(int v) const { return heft_degree_of_var_->array[v]; }
   M2_arrayint primary_degree_of_vars() const { return heft_degree_of_var_; }
-  const M2_arrayint get_heft_vector() const { return heftvals_; }
+  M2_arrayint get_heft_vector() const { return heftvals_; }
 
   bool primary_degrees_of_vars_positive() const;
 
@@ -175,7 +175,7 @@ public:
 	      monomial result_sm, 
 	      monomial result_sn) const;
 
-  void elem_text_out(buffer &o, const_monomial m) const;
+  void elem_text_out(buffer &o, const_monomial m, bool p_one=true) const;
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
@@ -207,7 +207,6 @@ inline void Monoid::divide(const_monomial m, const_monomial n, monomial result) 
       for (int i=monomial_size_; i>0; i--) 
 	*result++ = *m++ - *n++; 
     }
-
 
 #endif
 

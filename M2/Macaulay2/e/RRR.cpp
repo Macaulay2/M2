@@ -9,7 +9,6 @@
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
-#include "../d/M2mem.h"
 
 #if 0
 // #include "gmp.h"
@@ -47,21 +46,25 @@ void RRR::text_out(buffer &o) const
 
 mpfr_ptr RRR::new_elem() const
 {
-  mpfr_ptr result = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
+  mpfr_ptr result = getmemstructtype(mpfr_ptr);
   mpfr_init2(result,precision);
   return result;
 }
 
 ring_elem RRR::random() const
 {
-  M2_RRR result = rawRandomRR(precision);
+  gmp_RR result = rawRandomRR(precision);
   return MPF_RINGELEM(result);
 }
 
-void RRR::elem_text_out(buffer &o, const ring_elem ap) const
+void RRR::elem_text_out(buffer &o, 
+			const ring_elem ap, 
+			bool p_one, 
+			bool p_plus, 
+			bool p_parens) const
 {
   mpfr_ptr a = MPF_VAL(ap);
-  M2_string s = gmp_tostringRR(a);
+  M2_string s = (*gmp_tostringRRpointer)(a);
   bool prepend_plus = p_plus && (s->array[0] != '-');
   bool strip_last = !p_one && (
 			      (s->len == 1 && s->array[0] == '1')
@@ -105,7 +108,7 @@ ring_elem RRR::from_rational(mpq_ptr r) const
   return MPF_RINGELEM(result);
 }
 
-bool RRR::from_BigReal(M2_RRR r, ring_elem &result1) const
+bool RRR::from_BigReal(gmp_RR r, ring_elem &result1) const
 {
   mpfr_ptr result = new_elem();
   mpfr_set(result, r, GMP_RNDN);
@@ -130,7 +133,7 @@ bool RRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
     }
   if (Rf->is_RRR())
     {
-      M2_RRR g = new_elem();
+      gmp_RR g = new_elem();
       mpfr_set(g, MPF_VAL(f), GMP_RNDN);
       result = MPF_RINGELEM(g);
       return true;
@@ -307,14 +310,14 @@ ring_elem RRR::eval(const RingMap *map, const ring_elem f, int) const
   return result;
 }
 
-ring_elem RRR::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
+ring_elem RRR::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
 {
   mpfr_ptr f1 = MPF_VAL(f);
   if (mpfr_cmpabs(f1,epsilon) < 0)
     return zero();
   return f;
 }
-void RRR::increase_maxnorm(M2_RRR norm, const ring_elem f) const
+void RRR::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 {
   mpfr_ptr f1 = MPF_VAL(f);

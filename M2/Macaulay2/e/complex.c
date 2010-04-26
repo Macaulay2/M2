@@ -1,62 +1,60 @@
 // Copyright 2007  Michael E. Stillman
 
+#include <gc/gc.h>
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
-
-#include <gc/gc.h>
 #include "../d/debug.h"
 
-#include "../d/M2types.h"
 #include "complex.h"
 
-void mpfc_init_set(M2_CCC result, M2_CCC a)
+void mpfc_init_set(gmp_CC result, gmp_CC a)
 { 
-  result->re = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
-  result->im = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
+  result->re = getmemstructtype(gmp_RR);
+  result->im = getmemstructtype(gmp_RR);
   mpfr_init_set(result->re, a->re, GMP_RNDN);
   mpfr_init_set(result->im, a->im, GMP_RNDN);
 }
 
-void mpfc_init(M2_CCC result, long precision)
+void mpfc_init(gmp_CC result, long precision)
 { 
-  result->re = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
-  result->im = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
+  result->re = getmemstructtype(gmp_RR);
+  result->im = getmemstructtype(gmp_RR);
   mpfr_init2(result->re, precision);
   mpfr_init2(result->im, precision);
 }
-void mpfc_set(M2_CCC result, M2_CCC a)
+void mpfc_set(gmp_CC result, gmp_CC a)
 { 
   mpfr_set(result->re, a->re, GMP_RNDN);
   mpfr_set(result->im, a->im, GMP_RNDN);
 }
 
-void mpfc_clear(M2_CCC result)
+void mpfc_clear(gmp_CC result)
 {
   mpfr_clear(result->re);
   mpfr_clear(result->im);
   GC_FREE(result->re);
   GC_FREE(result->im);
 }
-void mpfc_set_si(M2_CCC result, long re)
+void mpfc_set_si(gmp_CC result, long re)
 { 
   mpfr_set_si(result->re, re, GMP_RNDN);
   mpfr_set_si(result->im, 0, GMP_RNDN);
 }
-int mpfc_is_zero(M2_CCC a)
+int mpfc_is_zero(gmp_CC a)
 { 
   return mpfr_cmp_si(a->re, 0) == 0 && mpfr_cmp_si(a->im, 0) == 0;
 }
-void mpfc_add(M2_CCC result, M2_CCC a, M2_CCC b)
+void mpfc_add(gmp_CC result, gmp_CC a, gmp_CC b)
 {
   mpfr_add(result->re, a->re, b->re, GMP_RNDN);
   mpfr_add(result->im, a->im, b->im, GMP_RNDN);
 }
-void mpfc_sub(M2_CCC result, M2_CCC a, M2_CCC b)
+void mpfc_sub(gmp_CC result, gmp_CC a, gmp_CC b)
 {
   mpfr_sub(result->re, a->re, b->re, GMP_RNDN);
   mpfr_sub(result->im, a->im, b->im, GMP_RNDN);
 }
-void mpfc_mul(M2_CCC result, M2_CCC a, M2_CCC b)
+void mpfc_mul(gmp_CC result, gmp_CC a, gmp_CC b)
 {
   mpfr_t tmp;
   mpfr_init2(tmp, mpfr_get_prec(a->re));
@@ -75,7 +73,7 @@ void mpfc_mul(M2_CCC result, M2_CCC a, M2_CCC b)
   
   mpfr_clear(tmp);
 }
-void mpfc_invert(M2_CCC result, M2_CCC v)
+void mpfc_invert(gmp_CC result, gmp_CC v)
 {
   mpfr_t p, denom;
   mpfr_init2(p, mpfr_get_prec(v->re));
@@ -113,7 +111,7 @@ void mpfc_invert(M2_CCC result, M2_CCC v)
   mpfr_clear(p);
   mpfr_clear(denom);
 }
-void mpfc_div(M2_CCC result, M2_CCC u, M2_CCC v)
+void mpfc_div(gmp_CC result, gmp_CC u, gmp_CC v)
 {
   mpfr_t p, denom;
   mpfr_init2(p, mpfr_get_prec(u->re));
@@ -187,7 +185,7 @@ void mpfc_div(M2_CCC result, M2_CCC u, M2_CCC v)
       }
 #endif
 }
-void mpfc_sub_mult(M2_CCC result, M2_CCC a, M2_CCC b)
+void mpfc_sub_mult(gmp_CC result, gmp_CC a, gmp_CC b)
   {
     // result->re -= a->re*b->re - a->im*b->im;
     // result->im -= a->re*b->im + a->im*b->re;
@@ -207,12 +205,12 @@ void mpfc_sub_mult(M2_CCC result, M2_CCC a, M2_CCC b)
 
     mpfr_clear(tmp);
   }
-void mpfc_conj(M2_CCC result, M2_CCC a)
+void mpfc_conj(gmp_CC result, gmp_CC a)
   {
     mpfr_set(result->re, a->re, GMP_RNDN);
     mpfr_neg(result->im, a->im, GMP_RNDN);
   }
-void mpfc_abs(M2_RRR result, M2_CCC c)
+void mpfc_abs(gmp_RR result, gmp_CC c)
 {
   mpfr_t a,b;
 
@@ -269,7 +267,7 @@ void mpfc_abs(M2_RRR result, M2_CCC c)
   }
 #endif
 }
-void mpfc_sqrt(M2_CCC result, M2_CCC a)
+void mpfc_sqrt(gmp_CC result, gmp_CC a)
 {
   // The idea is: write a = a1 + i * a2
   // first make it numerically more stable by dividing by the larger

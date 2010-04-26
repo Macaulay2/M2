@@ -1,0 +1,2 @@
+In this directory we link the object files compiled in the other directories to
+make the executable, "M2".

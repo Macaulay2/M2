@@ -12,16 +12,13 @@
 
 #include "imonorder.hpp"
 #include "overflow.hpp"
-#include "../d/M2mem.h"
+
 /* TODO:
    -- negative exponent versions need to be included (at least for MO_LEX)
    -- non-commutative blocks should be added in
 */
 
 static char mom[] = "monomial overflow";
-
-static int ntmpexp = 0;
-static int *tmpexp = 0; /* Set to an array 0..ntmpexp-1 of ints */
 
 static void mo_block_revlex(struct mo_block *b, int nvars)
 {
@@ -191,7 +188,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
   nblocks -= hascomponent;
 
   /* Now create the blocks, and fill them in. Also fill in the deg vector */
-  result = (MonomialOrder *) getmem(sizeof(MonomialOrder));
+  result = getmemstructtype(MonomialOrder *);
   result->nvars = nvars;
   result->nslots = 0;
   result->nblocks = nblocks;
@@ -333,12 +330,6 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 	  result->is_laurent[result->blocks[i].first_exp + j] = 1;
       }
 
-  /* Set tmpexp */
-  if (result->nvars >= ntmpexp)
-    {
-      ntmpexp = result->nvars+1;
-      tmpexp = (int *) getmem_atomic(ntmpexp *sizeof(int));
-    }
   return result;
 }
 
@@ -402,6 +393,7 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
      /* Given 'expon', compute the encoded partial sums value */
 {
   if (mo == 0) return;
+  int *tmpexp = static_cast<int *>(alloca((mo->nvars + 1)*sizeof(int)));
   int i,j,nvars,s;
   int *p1;
   deg_t *degs;
@@ -534,6 +526,7 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
 void monomialOrderDecodeToActualExponents(const MonomialOrder *mo, const_monomial psums, exponents expon)
 {
   if (mo == 0) return;
+  int *tmpexp = static_cast<int *>(alloca((mo->nvars + 1)*sizeof(int)));
   int i,j,nvars;
   deg_t *degs = mo->degs;
   deg_t *d;

@@ -58,8 +58,8 @@ public:
 		      int first_var,
 		      int nvars_in_source) const;
 
-  RingElementOrNull *eval(const RingElement *r) const;
-  MatrixOrNull *eval(const FreeModule *newrows, const Matrix *m) const;
+  RingElement /* or null */ *eval(const RingElement *r) const;
+  Matrix /* or null */ *eval(const FreeModule *newrows, const Matrix *m) const;
 
   void text_out(buffer &o) const;
 };

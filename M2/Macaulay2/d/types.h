@@ -109,12 +109,8 @@ extern char *libfac_version;
 #include <arpa/inet.h>	   	/* needed for inet_addr() */
 #endif
 
-#if HAVE_IO_H
+#ifdef HAVE_IO_H
 #include <io.h>
-#endif
-
-#ifdef includeX11
-#include <X11/Xlib.h>
 #endif
 
 #ifndef O_BINARY
@@ -136,9 +132,6 @@ void *sbrk();		/* not really ansi standard, sigh */
 #undef link
 #endif
 
-
-#include "M2types.h"
-#include "../e/engine.h"
 #include "compat.h"		/* same include files seen by *.c files produced from *.d files */
 
 #define STDIN 0
@@ -148,47 +141,26 @@ void *sbrk();		/* not really ansi standard, sigh */
 #undef ERROR
 #define ERROR (-1)      /* in Windows NT there is a file that sets ERROR to 0 */
 
-#define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
-
-extern unsigned GC_version;		/* in libgc.a */
-
-#if defined(__STDC__)
-extern void fatal(const char *s,...);
-#else
-extern void fatal( va_alist  );
-#endif
+#include <scc-core.h>
 #define FATAL(s) fatal("%s:%d: fatal error: %s",__FILE__,__LINE__,s)
-
-extern struct FINAL {
-     void (*final)();
-     struct FINAL *next;
-     } *final_list, *pre_final_list;
 
 extern char current_date[];
 extern char current_time[];
-extern char const *system_strerror();
 extern int system_errno();
 extern char *progname;
 
-#if HAVE_GNU_GET_LIBC_VERSION
+#ifdef HAVE_GNU_GET_LIBC_VERSION
 extern char *gnu_get_libc_version();
 #endif
 
 #include "../dumpdata/dumpdata.h"
 
-extern int libfac_interruptflag;
-extern M2_bool tokens_stopIfError;
-extern M2_bool tokens_handleInterrupts;
-
 extern sigjmp_buf interrupt_jump; /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
 extern bool interrupt_jump_set;
-
-extern M2_bool system_interruptedFlag;
-
 extern int reading_from_readline;
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+// compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
 // End:
 */

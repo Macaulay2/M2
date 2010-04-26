@@ -10,9 +10,9 @@ class CoefficientRingCC;
 class CC : public Ring
 // Elements of this ring are two real numbers: 'double's representing real and imaginary parts
 {
-  ring_elem from_M2_CC_struct(M2_CC_struct &a) const;
+  ring_elem from_gmp_CC_struct(gmp_CC_struct &a) const;
 
-  M2_CC new_elem() const;
+  gmp_CC new_elem() const;
 
   CoefficientRingCC *coeffR;
 
@@ -42,8 +42,8 @@ public:
   virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
   virtual ring_elem from_BigReal(mpfr_ptr a) const;
-  virtual ring_elem from_complex(M2_CC z) const;
-  virtual bool from_BigComplex(M2_CCC z, ring_elem &result) const;
+  virtual ring_elem from_complex(gmp_CC z) const;
+  virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
 
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
@@ -74,7 +74,12 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, 
+			     const ring_elem f,
+			     bool p_one, 
+			     bool p_plus,
+			     bool p_parens) const
+) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };
