@@ -132,8 +132,6 @@ void *sbrk();		/* not really ansi standard, sigh */
 #undef link
 #endif
 
-#include "compat.h"		/* same include files seen by *.c files produced from *.d files */
-
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
