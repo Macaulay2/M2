@@ -1,3 +1,12 @@
 ensure that we can compile gc with pthreads enabled and link and run
 
 implement primitive support for threads
+
+idea: could use openmp (supported by gcc pragmas) with libgc, if we do this:
+
+    You would have to explicitly register any OpenMP threads.  With the latest GC
+    versions, that's possible on some platforms with GC_register_my_thread. Having
+    the linker intercept the pthread_create call may be another option.  Either way
+    this definitely requires care.
+
+    Hans
