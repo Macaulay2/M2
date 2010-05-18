@@ -556,6 +556,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   FormalGroupLaws
   Graphics
   WeylGroups
+  HodgeIntegrals
 ")
 # pending packages: SRdeformations
 
