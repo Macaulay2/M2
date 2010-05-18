@@ -1,7 +1,21 @@
+-- -*- coding: utf-8 -*-
 newPackage(
    "HodgeIntegrals",
    Version => "1.2.1",
    Date => "29 April 2010",
+   Certification => {
+	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	"journal URI" => "http://j-sag.org/",
+	"article title" => "Intersection numbers on Mbar_{g,n}",
+	"acceptance date" => "2010-04-17",
+	"published article URI" => "http://j-sag.org/Volume2/jsag-1-2010.pdf",
+	"published code URI" => "http://j-sag.org/Volume2/HodgeIntegrals.m2",
+	"repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/HodgeIntegrals.m2",
+	"release at publication" => 11250,
+	"version at publication" => "1.2.1",
+	"volume number" => "2",
+	"volume URI" => "http://j-sag.org/Volume2/"
+	},
    Authors => {
 	 {  Name => "Stephanie Yang",
 	    Email => "stpyang@math.kth.se",
