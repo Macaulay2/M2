@@ -56,6 +56,29 @@ struct vecterm : public our_new_delete
   ring_elem coeff;
 };
 
+// #define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
+// #define MPZ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#define MPQ_VAL(f) (reinterpret_cast<gmp_QQ>((f).poly_val))
+#define MPQ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#define CCELEM_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
+#define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+#define CC_IM(f) ((CCELEM_VAL(f))->im)
+#define CC_RE(f) ((CCELEM_VAL(f))->re)
+#define CC_NORM(f) (sqrt(CC_RE(f)*CC_RE(f) + CC_IM(f)*CC_IM(f)))
+
+#define MPF_VAL(f) (reinterpret_cast<mpfr_ptr>((f).poly_val))
+#define MPF_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#define BIGCC_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
+#define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+#define BIGCC_RE(f) (BIGCC_VAL(f)->re)  // returns actual value, not copy
+#define BIGCC_IM(f) (BIGCC_VAL(f)->im)
+
+#define TOWER_VAL(f) (reinterpret_cast<poly>((f).poly_val))
+#define TOWER_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
 #endif
 
 // Local Variables:

@@ -15,6 +15,7 @@ class RRR;
 class CCC;
 class Z_mod;
 class GF;
+class Tower;
 class FractionField;
 class PolynomialRing;
 class PolyRing;
@@ -143,6 +144,9 @@ public:
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
   virtual const GF * cast_to_GF() const         { return 0; }
   virtual       GF * cast_to_GF()               { return 0; }
+  virtual const Tower * cast_to_Tower() const { return 0; }
+  virtual       Tower * cast_to_Tower() { return 0; }
+
   virtual const PolynomialRing * cast_to_PolynomialRing()  const      { return 0; }
   virtual       PolynomialRing * cast_to_PolynomialRing()             { return 0; }
 

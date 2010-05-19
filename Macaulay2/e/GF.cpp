@@ -6,7 +6,6 @@
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "poly.hpp"
-#include "gbring.hpp"
 
 bool GF::initialize_GF(const RingElement *prim)
 {
