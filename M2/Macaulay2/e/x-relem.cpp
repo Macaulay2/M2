@@ -23,6 +23,8 @@
 #include "exceptions.hpp"
 #include "finalize.hpp"
 
+#include "tower.hpp"
+
 unsigned long IM2_Ring_hash(const Ring *R)
 {
   return R->get_hash_value();
@@ -334,6 +336,58 @@ const Ring /* or null */ *IM2_Ring_schur(const Ring *R)
 	  return NULL;
      }
 }
+
+
+const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names)
+{
+  return Tower::create(charac, names);
+}
+
+const Ring /* or null */ *rawTowerRing2(Ring *R1, M2_ArrayString new_names)
+{
+  try {
+    const Tower *R = R1->cast_to_Tower();
+    if (R == 0)
+      {
+	ERROR("expected a tower coefficient ring");
+	return 0;
+      }
+    return Tower::create(R, new_names);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return 0;
+  }
+}
+
+const Ring /* or null */ *rawTowerRing3(Ring *R1, engine_RawRingElementArray eqns)
+{
+  try {
+    const Tower *R = R1->cast_to_Tower();
+    if (R == 0)
+      {
+	ERROR("expected a tower coefficient ring");
+	return 0;
+      }
+    VECTOR(ring_elem) extensions;
+    for (int i=0; i<eqns->len; i++)
+      {
+	const RingElement *f = eqns->array[i];
+	if (f->get_ring() != R1)
+	  {
+	    ERROR("extension element has incorrect base ring");
+	    return 0;
+	  }
+	extensions.push_back(f->get_value());
+      }
+    return Tower::create(R, extensions);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return 0;
+  }
+}
+
 
 M2_bool IM2_Ring_is_field(const Ring *K)
   /* Returns true if K is a field, or has been declared to be one.

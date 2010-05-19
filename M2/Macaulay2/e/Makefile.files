@@ -5,6 +5,8 @@
 ##################
 
 INTERFACE = \
+	dpoly \
+	tower \
 	interreduce \
 	gb-test1 \
 	finalize \
