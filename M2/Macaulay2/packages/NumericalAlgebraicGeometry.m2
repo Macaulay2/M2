@@ -867,7 +867,7 @@ totalDegreeStartSystem List := Sequence => T -> (
      S := apply(n, i->R_i^(first degree T_i) - (if isH then R_n^(first degree T_i) else 1) );
      s := apply(n, i->( 
 	  d := first degree T_i; 
-	  set apply(d, j->exp(ii*2*pi*j/d))
+	  set apply(d, j->sequence exp(ii*2*pi*j/d))
 	  ));
      solsS := first s;
      scan(drop(s,1), t->solsS=solsS**t);
@@ -1059,13 +1059,14 @@ solveSystem List := List => o -> F -> (
      v := flatten entries vars R;
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
 	  result = 
-	  if all(F, f -> first degree f <= 1)
-     	  then ( 
-	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
-	       b := matrix apply(F, f->{coefficient(1_R,f)});
-	       {{flatten entries solve(A,b)}}
-	       )
-	  else (
+	  --if all(F, f -> first degree f <= 1)
+     	  --then ( 
+	  --     A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
+	  --     b := matrix apply(F, f->{coefficient(1_R,f)});
+	  --     {{flatten entries solve(A,-b)}}
+	  --     )
+	  --else 
+	       (
 	       (S,solsS) := totalDegreeStartSystem F;
 	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii),o)
 	       )
@@ -2086,6 +2087,17 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
 NAGtrace = method()
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG=DBG; DBG=l; oldDBG);
 
+-- normalized condition number of F at x
+conditionNumber = method(Options=>{Variant=>OrthogonalProjection})
+conditionNumber (List,List) := o -> (F,x) -> (
+     nF := apply(F, f->f/sqrt(#F * BombieriWeylNormSquared f)); -- normalize F
+     x0 := normalize transpose matrix{x}; -- column unit vector
+     DMforPN := diagonalMatrix(nF/(f->1/sqrt first degree f) | if o.Variant===OrthogonalProjection then {1} else {});
+     J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
+     if o.Variant===OrthogonalProjection then J = J || matrix{ flatten entries x0 / conjugate};
+     1 / min first SVD(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
+     )
+
 beginDocumentation()
 load "./NumericalAlgebraicGeometry/doc.m2"
 
@@ -2097,7 +2109,7 @@ TEST ///
      load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2engine.tst.m2")
      load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
 ///
-       
+
 end
 
 -- Here place M2 code that you find useful while developing this
