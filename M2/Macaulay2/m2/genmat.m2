@@ -56,8 +56,10 @@ random(List,Ring) := RingElement => opts -> (deg,R) -> (
      if deg === {} then return random(R,opts);
      k := coefficientRing R;
      m := basis(deg, R);
-     n := matrix table(numgens source m,1, x -> promote(random(k,opts),R));
-     (m*n)_(0,0))
+     if m == 0 then 0_R
+     else (
+     	  n := matrix table(numgens source m,1, x -> promote(random(k,opts),R));
+     	  (m*n)_(0,0)))
 
 random(ZZ,Ring) := RingElement => opts -> (n,R) -> random({n},R,opts)
 
