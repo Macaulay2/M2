@@ -343,7 +343,7 @@ const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names)
   return Tower::create(charac, names);
 }
 
-const Ring /* or null */ *rawTowerRing2(Ring *R1, M2_ArrayString new_names)
+const Ring /* or null */ *rawTowerRing2(const Ring *R1, M2_ArrayString new_names)
 {
   try {
     const Tower *R = R1->cast_to_Tower();
@@ -360,7 +360,7 @@ const Ring /* or null */ *rawTowerRing2(Ring *R1, M2_ArrayString new_names)
   }
 }
 
-const Ring /* or null */ *rawTowerRing3(Ring *R1, engine_RawRingElementArray eqns)
+const Ring /* or null */ *rawTowerRing3(const Ring *R1, engine_RawRingElementArray eqns)
 {
   try {
     const Tower *R = R1->cast_to_Tower();

@@ -53,8 +53,8 @@ void DPoly::initialize(long p, int nvars0, const_poly *ext0)
   else
     for (int i=0; i<nlevels; i++)
       {
-	extensions[i] = copy(nlevels, ext0[i]);
-	down_level(i, nlevels, extensions[i]);
+	extensions[i] = copy(nlevels-1, ext0[i]);
+	down_level(i, nlevels-1, extensions[i]);
       }
 }
 DPoly::DPoly(long p, int nvars0, const_poly *ext0) 
@@ -74,7 +74,7 @@ int DPoly::degree_of_extension(int level)
 bool DPoly::down_level(int newlevel, int oldlevel, poly &f)
 {
   if (f == 0) return true;
-  for (int i=newlevel; i>oldlevel; i--)
+  for (int i=oldlevel; i>newlevel; i--)
     {
       if (f->deg > 0)
 	{
@@ -180,6 +180,18 @@ void DPoly::elem_text_out(buffer &o,
 	    firstterm = false;
 	  }
       if (needs_parens) o << ")";
+    }
+}
+
+void DPoly::extensions_text_out(buffer &o, M2_ArrayString names) const
+{
+  for (int i=0; i<nlevels; i++)
+    {
+      if (extensions[i] != 0)
+	{
+	  o << newline << "    ";
+	  elem_text_out(o, i, extensions[i], true, false, false, names);
+	}
     }
 }
 
@@ -1017,7 +1029,8 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
 
 void DPoly::remainder(int level, poly & f, const poly g)
 {
-  poly quot = division_in_place_monic(level, f, g);
+  poly quot;
+  division_in_place(level, f, g, quot);
   dealloc_poly(quot);
 }
 

@@ -53,7 +53,10 @@ Tower * Tower::create(const Tower *R, M2_ArrayString new_names)
 
 Tower * Tower::create(const Tower *R, VECTOR(ring_elem) &extensions)
 {
-  return 0;
+  Tower *result = new Tower;
+  if (!result->initialize(R->charac(), R->names, extensions))
+    return 0;
+  return result;
 }
 
 void Tower::text_out(buffer &o) const
@@ -64,6 +67,7 @@ void Tower::text_out(buffer &o) const
   if (nvars > 0)
     o << names->array[nvars-1];
   o << "]]";
+  D->extensions_text_out(o, names);
 }
 
 ring_elem Tower::from_int(int n) const
@@ -248,6 +252,68 @@ void Tower::syzygy(const ring_elem a, const ring_elem b,
 {
   //TODO: finish
 }
+
+ring_elem Tower::gcd(const ring_elem f, const ring_elem g) const
+{
+  poly h;
+  poly f1 = TOWER_VAL(f);
+  poly g1 = TOWER_VAL(g);
+  D->gcd(h, f1, g1);
+  return TOWER_RINGELEM(h);
+}
+
+ring_elem Tower::gcd_extended(const ring_elem f, const ring_elem g,
+			      ring_elem &u, ring_elem &v) const
+{
+  poly h, u1, v1;
+  poly f1 = TOWER_VAL(f);
+  poly g1 = TOWER_VAL(g);
+  D->gcd_coefficients(h, u1, v1, f1, g1);
+  u = TOWER_RINGELEM(u1);
+  v = TOWER_RINGELEM(v1);
+  return TOWER_RINGELEM(h);
+}
+
+
+//////////////////////////////////
+// top level tower gcd routines //
+//////////////////////////////////
+
+#include "relem.hpp"
+
+const RingElement *towerGCD(const RingElement *F, 
+			    const RingElement *G)
+{
+  const Tower *R = F->get_ring()->cast_to_Tower();
+  const Tower *S = G->get_ring()->cast_to_Tower();
+  if (R == 0 || R != S)
+    {
+      ERROR("encountered different rings");
+    }
+
+  ring_elem result = R->gcd(F->get_value(), G->get_value());
+  return RingElement::make_raw(R, result);
+}
+
+const RingElement *towerExtendedGCD(const RingElement *F, 
+				    const RingElement *G,
+				    const RingElement **A,
+				    const RingElement **B)
+{
+  const Tower *R = F->get_ring()->cast_to_Tower();
+  const Tower *S = G->get_ring()->cast_to_Tower();
+  if (R == 0 || R != S)
+    {
+      ERROR("encountered different rings");
+    }
+
+  ring_elem u, v;
+  ring_elem result = R->gcd_extended(F->get_value(), G->get_value(), u, v);
+  *A = RingElement::make_raw(R, u);
+  *B = RingElement::make_raw(R, v);
+  return RingElement::make_raw(R, result);
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

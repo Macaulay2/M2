@@ -71,7 +71,20 @@ public:
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
 		      ring_elem &x, ring_elem &y) const;
+
+  ring_elem gcd(const ring_elem f, const ring_elem g) const;
+  ring_elem gcd_extended(const ring_elem f, const ring_elem g,
+			 ring_elem &u, ring_elem &v) const;
 };
+
+class RingElement;
+
+extern const RingElement *towerGCD(const RingElement *F, 
+				   const RingElement *G);
+extern const RingElement *towerExtendedGCD(const RingElement *F, 
+					   const RingElement *G,
+					   const RingElement **A,
+					   const RingElement **B);
 
 #endif
 

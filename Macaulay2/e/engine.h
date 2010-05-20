@@ -251,8 +251,8 @@ extern "C" {
   const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names);
   /* Create a tower ring with the given variable names and characteristic */
 
-  const Ring /* or null */ *rawTowerRing2(Ring *R1, M2_ArrayString new_names);
-  const Ring /* or null */ *rawTowerRing3(Ring *R1, engine_RawRingElementArray eqns);
+  const Ring /* or null */ *rawTowerRing2(const Ring *R1, M2_ArrayString new_names);
+  const Ring /* or null */ *rawTowerRing3(const Ring *R1, engine_RawRingElementArray eqns);
 
 
   const Ring /* or null */ *IM2_Ring_schur(const Ring *R); /* drg: reconnected rawSchurRing */
@@ -732,7 +732,7 @@ extern "C" {
 				  int r, int c, 
 				  double fraction_non_zero, 
 				  int special_type, /* 0: general, 1:upper triangular, others? */
-				  int preference); /* connected to rawMatrixRandom, OK */
+				  int preference); /* connected to rawRandomConstantMatrix, OK */
 
   /**********************************************************************************/
 

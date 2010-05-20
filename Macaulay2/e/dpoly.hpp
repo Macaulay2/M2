@@ -116,6 +116,8 @@ public:
 		     bool p_parens,
 		     M2_ArrayString names) const;
 
+  void extensions_text_out(buffer &o, M2_ArrayString names) const;
+
   // DPoly management
   ~DPoly() {}
   DPoly(long p, int nvars0, const_poly *extensions=0);
@@ -245,6 +247,18 @@ public:
 		     bool p_plus, 
 		     bool p_parens,
 		     M2_ArrayString names) const;
+
+  void gcd(poly &result, const poly f, const poly g) { result = D.gcd(level,f,g); }
+
+  void gcd_coefficients(poly &result_gcd, 
+			poly &result_u, poly &result_v,
+			const poly f, const poly g)
+  {
+    result_gcd = D.gcd_coefficients(level, f, g, result_u, result_v);
+  }
+
+  void extensions_text_out(buffer &o, M2_ArrayString names) const { D.extensions_text_out(o, names); }
+
 };
 
 // Format for polynomials in a file:

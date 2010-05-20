@@ -12,6 +12,7 @@ header "
   #include <ZZp.hpp>
   #include <monomial.hpp>
   #include <exceptions.hpp>
+  #include <relem.hpp>
   ";
 
 -- debugging:
@@ -727,6 +728,40 @@ export rawTowerRing(e:Expr):Expr := (
      );
 setupfun("rawTowerRing", rawTowerRing);
 
+export rawTowerRingAdjoinVariables(e:Expr):Expr := (
+     -- e = (Ring, list of var names)
+     when e is a:Sequence do
+     if length(a) == 2 then
+       when a.0 is R:RawRingCell do (
+         	if isSequenceOfStrings(a.1) then (
+	   	     names := getSequenceOfStrings(a.1);
+	   	     toExpr(Ccode(RawRingOrNull, "rawTowerRing2(", R.p, ",", names, ")"))
+	   	     )
+      	 	else
+	   	  WrongArg(2, "a list of strings"))
+       else WrongArg(1, "a ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
+     );
+setupfun("rawTowerRingAdjoinVariables", rawTowerRingAdjoinVariables);
+
+export rawTowerQuotientRing(e:Expr):Expr := (
+     -- e = (R:Ring, Fs:RawRingElementArray)
+     when e is a:Sequence do
+     if (length(a) == 2) then
+       when a.0 is R:RawRingCell do (
+	    if isSequenceOfRingElements(a.1) then (
+		 f := getSequenceOfRingElements(a.1);
+		 toExpr(Ccode(RawRingOrNull, "rawTowerRing3(", R.p, ", ", f, ")"))
+		 )
+	    else WrongArg(2, "a sequence of ring elements")
+	    )
+       else WrongArg(1, "a ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
+     );
+setupfun("rawTowerQuotientRing", rawTowerQuotientRing);
+
 export rawAmbientRing(e:Expr):Expr := (
      when e is R:RawRingCell do toExpr( Ccode(RawRingOrNull,"rawAmbientRing(", R.p, ")"))
      else WrongArg("a raw ring"));
@@ -791,6 +826,16 @@ export rawFromNumber(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawFromNumber", rawFromNumber);
+
+rawRingElementInverse(f:RawRingElement):RawRingElementOrNull := Ccode(returns,"
+     try { return f->invert(); }
+     catch (exc::engine_error m) { ERROR(m.what()); return NULL; }");
+export rawInverse(e:Expr):Expr := (
+     when e
+     is x:RawRingElementCell do toExpr(rawRingElementInverse(x.p))
+     else WrongArg("a raw ring element")
+     );
+setupfun("rawInverse",rawInverse);
 
 export rawMultiDegree(e:Expr):Expr := (
      when e
