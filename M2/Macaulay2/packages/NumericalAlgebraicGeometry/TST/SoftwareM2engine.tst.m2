@@ -1,6 +1,10 @@
 loadPackage "NumericalAlgebraicGeometry"
 needs "./../benchmarks.m2"
 NAGtrace 1
+
+I = linearExample()
+assert areEqual(solveSystem I_*, {{{2,1}}})
+
 for predictor in {RungeKutta4,Tangent,Euler} do (
      (S,T,solsS) = smallExample();
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor);

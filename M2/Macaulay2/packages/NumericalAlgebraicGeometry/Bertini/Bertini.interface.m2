@@ -111,7 +111,7 @@ readSolutionsBertini String := f -> (
        l = lines get f;
        while #l>0 and #separate(" ", l#0) < 2 do l = drop(l,1);
        while #l>0 do (
-	    if DBG>=10 then << "------------------------------" << end;
+	    if DBG>=10 then << "------------------------------" << endl;
 	    coords = {};
 	    while #l>0 and #separate(" ", l#0) >= 2 do ( 
 	      	 coords = coords | {(
@@ -138,12 +138,14 @@ trackBertini (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
      if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
      result := readSolutionsBertini("raw_solutions");
      -- remove Bertini input/output files
-     for f in {"failed_paths", "nonsingular_solutions",
-	  "raw_data", "start", "input", "output", "raw_solutions",
-	  "main_data", "real_finite_solutions", "finite_solutions",
-	  "midpath_data", "singular_solutions", "real_solutions",
-	  "singular_solutions", "midpath_data"} do
-     if fileExists f then removeFile f;
+     if DBG<10 then (
+	  for f in {"failed_paths", "nonsingular_solutions",
+	       "raw_data", "start", "input", "output", "raw_solutions",
+	       "main_data", "real_finite_solutions", "finite_solutions",
+	       "midpath_data", "singular_solutions", "real_solutions",
+	       "singular_solutions", "midpath_data"} do
+     	  if fileExists f then removeFile f;
+	  );
      result
      )
      
