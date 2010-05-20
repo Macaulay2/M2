@@ -1,5 +1,10 @@
 loadPackage "ExampleIdeals"
 
+linearExample = () -> (
+     R := CC[x,y]; 
+     ideal {x+y-3,x-y-1}
+     )
+
 smallExample = () -> (
      R := CC[x,y];
      S := {x^2-1,y^2-1};
