@@ -89,6 +89,100 @@ bool DPoly::down_level(int newlevel, int oldlevel, poly &f)
   return true;
 }
 
+static int n_nonzero_terms(int level, const_poly f)
+{
+  if (f == 0) return 0;
+  int nterms = 0;
+  if (level == 0)
+    {
+      for (int i=0; i<=f->deg; i++)
+	if (f->arr.ints[i] != 0) nterms++;
+    }
+  else
+    {
+      for (int i=0; i<=f->deg; i++)
+	if (f->arr.polys[i] != 0) nterms++;
+    }
+  return nterms;
+}
+
+void DPoly::elem_text_out(buffer &o, 
+			  int level, 
+			  const poly f,
+			  bool p_one,
+			  bool p_plus, 
+			  bool p_parens,
+			  M2_ArrayString names) const
+{
+  //o << to_string(level, f);
+  if (f == 0)
+    {
+      o << "0";
+      return;
+    }
+
+  int nterms = n_nonzero_terms(level,f);
+  bool needs_parens = p_parens && (nterms >= 2);
+
+  if (needs_parens) 
+    {
+      if (p_plus) o << '+';
+      o << '(';
+      p_plus = false;
+    }
+
+  bool one = is_one(level, f);
+
+  if (one)
+    {
+      if (p_plus) o << "+";
+      if (p_one) o << "1";
+      return;
+    }
+
+  M2_string this_varname = names->array[level];
+
+  if (level == 0)
+    {
+
+      bool firstterm = true;
+      for (int i=f->deg; i>=0; i--)
+	if (f->arr.ints[i] != 0)
+	  {
+	    if (!firstterm || p_plus) o << "+";
+	    firstterm = false;
+	    if (i == 0 || f->arr.ints[i] != 1)
+	      o << f->arr.ints[i];
+	    if (i  > 0)
+	      o << this_varname;
+	    if (i > 1)
+	      o << i;
+	  }
+      if (needs_parens) o << ")";
+    }
+  else
+    {
+      bool firstterm = true;
+      for (int i=f->deg; i>=0; i--)
+	if (f->arr.polys[i] != 0)
+	  {
+	    bool this_p_parens = p_parens || (i > 0);
+
+	    if (i == 0 || !is_one(level-1,f->arr.polys[i]))
+	      elem_text_out(o, level-1,f->arr.polys[i], p_one, p_plus || !firstterm, this_p_parens, names);
+	    else if (p_plus || !firstterm)
+	      o << "+";
+	    if (i  > 0)
+	      o << this_varname;
+	    if (i > 1)
+	      o << i;
+
+	    firstterm = false;
+	  }
+      if (needs_parens) o << ")";
+    }
+}
+
 void DPoly::increase_size_0(int newdeg, poly &f)
 {
   assert(f != 0);
@@ -103,7 +197,7 @@ void DPoly::increase_size_0(int newdeg, poly &f)
       delete [] fp;
       f->arr.ints = newelems;
       f->len = newdeg+1;
-      f->deg = f->len;
+      f->deg = newdeg;
     }
 }
 
@@ -121,7 +215,7 @@ void DPoly::increase_size_n(int newdeg, poly &f)
       delete [] fp;
       f->arr.polys = newelems;
       f->len = newdeg+1;
-      f->deg = f->len;
+      f->deg = newdeg;
     }
 }
 
@@ -131,7 +225,7 @@ poly DPoly::alloc_poly_n(long deg, poly *elems)
   poly result = new poly_struct;
   result->arr.polys = new poly[deg+1];
   result->deg = deg;
-  result->len = deg;
+  result->len = deg+1;
   if (elems == 0)
     for (int i=0; i <= deg; i++)
       result->arr.polys[i] = 0;
@@ -146,7 +240,7 @@ poly DPoly::alloc_poly_0(long deg, long *elems)
   poly result = new poly_struct;
   result->arr.ints = new long[deg+1];
   result->deg = deg;
-  result->len = deg;
+  result->len = deg+1;
   if (elems == 0)
     for (int i=0; i <= deg; i++)
       result->arr.ints[i] = 0;
@@ -389,12 +483,12 @@ poly DPoly::var(int level, int v)
 // make the variable v (but at level 'level')
 {
   if (v > level) return 0;
-  int which = (level == v ? 1 : 0);
+  int which = (v == 0 ? 1 : 0);
   poly result = alloc_poly_0(which); // TODO: check that this initializes elements to 0
   result->arr.ints[which] = 1;
   for (int i=1; i<=level; i++)
     {
-      which = (level == v ? 1 : 0);
+      which = (i == v ? 1 : 0);
       poly a = result;
       result = alloc_poly_n(which);
       result->arr.polys[which] = a;
@@ -405,7 +499,7 @@ poly DPoly::var(int level, int v)
 
 poly DPoly::random_0(int deg)
 {
-  if (deg < 0) deg = 0; // Take a random element of degree 0.
+  if (deg < 0) deg = 3; // Take a random element of degree 0.
   poly f = alloc_poly_0(deg);
   for (int i=0; i<=deg; i++)
     ZZp_RANDOM(charac, f->arr.ints[i]);
@@ -414,7 +508,7 @@ poly DPoly::random_0(int deg)
 }
 poly DPoly::random_n(int level, int deg)
 {
-  if (deg < 0) deg = 0; // Take a random element of degree 0.
+  if (deg < 0) deg = 3; // Take a random element of degree 0.
   poly f = alloc_poly_n(deg);
   for (int i=0; i<=deg; i++)
     f->arr.polys[i] = random(level-1);
@@ -423,7 +517,7 @@ poly DPoly::random_n(int level, int deg)
 }
 poly DPoly::random(int level, int deg)
 {
-  if (deg < 0) deg = 0; // Take a random element of degree 0.
+  if (deg < 0) deg = 3; // Take a random element of degree 0.
   if (level == 0) return random_0(deg);
   return random_n(level, deg);
 }
@@ -1096,6 +1190,16 @@ bool DRing::set_from_rational(poly &result, mpq_ptr r)
   
   result = D.from_int(level, ctop);
   return true;
+}
+
+void DRing::elem_text_out(buffer &o, 
+			  const poly f,
+			  bool p_one,
+			  bool p_plus, 
+			  bool p_parens,
+			  M2_ArrayString names) const
+{
+  D.elem_text_out(o, level, f, p_one, p_plus, p_parens, names);
 }
 
 // Local Variables:

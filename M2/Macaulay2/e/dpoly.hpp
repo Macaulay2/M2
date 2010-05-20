@@ -108,6 +108,14 @@ public:
 
   void subtract_multiple_to(int level, poly &f, long a, int i, poly g);
 
+  void elem_text_out(buffer &o, 
+		     int level, 
+		     const poly f,
+		     bool p_one,
+		     bool p_plus, 
+		     bool p_parens,
+		     M2_ArrayString names) const;
+
   // DPoly management
   ~DPoly() {}
   DPoly(long p, int nvars0, const_poly *extensions=0);
@@ -235,7 +243,8 @@ public:
 		     const poly f,
 		     bool p_one,
 		     bool p_plus, 
-		     bool p_parens) const;
+		     bool p_parens,
+		     M2_ArrayString names) const;
 };
 
 // Format for polynomials in a file:
