@@ -248,6 +248,13 @@ extern "C" {
   /* if R is a polynomial ring of the form A[x], and B = A/I (where A is a poly ring)
      then form the quotient ring B[x]. */
 
+  const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names);
+  /* Create a tower ring with the given variable names and characteristic */
+
+  const Ring /* or null */ *rawTowerRing2(Ring *R1, M2_ArrayString new_names);
+  const Ring /* or null */ *rawTowerRing3(Ring *R1, engine_RawRingElementArray eqns);
+
+
   const Ring /* or null */ *IM2_Ring_schur(const Ring *R); /* drg: reconnected rawSchurRing */
 
   M2_bool IM2_Ring_is_field(const Ring *K); /* drg: connected rawIsField*/

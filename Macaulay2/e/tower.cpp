@@ -18,11 +18,18 @@ bool Tower::initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_ele
   level = nvars - 1;
 
   // Translate extensions to poly's
-  const_poly *exts = new const_poly[extensions.size()];
-  for (int i=0; i<extensions.size(); i++)
-    exts[i] = TOWER_VAL(extensions[i]);
-  D = DRing::create(charac0, nvars, exts);
-  delete [] exts;
+  if (extensions.size() == 0)
+    {
+      D = DRing::create(charac0, nvars, 0);
+    }
+  else
+    {
+      const_poly *exts = new const_poly[extensions.size()];
+      for (int i=0; i<extensions.size(); i++)
+	exts[i] = TOWER_VAL(extensions[i]);
+      D = DRing::create(charac0, nvars, exts);
+      delete [] exts;
+    }
 
   zeroV = from_int(0);
   oneV = from_int(1);
@@ -51,7 +58,12 @@ Tower * Tower::create(const Tower *R, VECTOR(ring_elem) &extensions)
 
 void Tower::text_out(buffer &o) const
 {
-  //TODO
+  o << "Tower[ZZ/" << charac() << "[";
+  for (int i=0; i<nvars-1; i++)
+    o << names->array[i] << ",";
+  if (nvars > 0)
+    o << names->array[nvars-1];
+  o << "]]";
 }
 
 ring_elem Tower::from_int(int n) const
@@ -200,9 +212,7 @@ void Tower::elem_text_out(buffer &o,
 		       bool p_plus, 
 		       bool p_parens) const
 {
-  poly f1 = TOWER_VAL(f);
-
-  //TODO: write this.
+  D->elem_text_out(o, TOWER_VAL(f), p_one, p_plus, p_parens, names);
 }
 
 ring_elem Tower::eval(const RingMap *map, const ring_elem f, int first_var) const
