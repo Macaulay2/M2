@@ -87,6 +87,8 @@ assert(F - F == 0)
 ------------------------------------
 -- Multiplication and powers -------
 ------------------------------------
+-- NOTE: 5/20/10: mult is much slower than in poly rings, at least
+--  for dense polynomials?
 debug Core
 R = rawTowerRing(17, ("a", "b", "c"))
 a = rawRingVar(R,0)
@@ -98,8 +100,103 @@ F*G == G*F
 a*a + a*c + a*b + b*c == F*G
 F^3
 F = a+b+c
+{*
 F = F^50;
 time(F*F);
+*}
+
+--------------------------------------
+-- Quotient rings --------------------
+--------------------------------------
+debug Core
+R = rawTowerRing(17, ("a","b"))
+a = rawRingVar(R,0)
+b = rawRingVar(R,1)
+F = a^3+a+1
+G = b^2+a
+A = rawTowerQuotientRing(R, (F, G))
+a = rawRingVar(A,0)
+b = rawRingVar(A,1)
+a^2
+a
+a*a
+16*a^3
+(b+1)*(b+1)
+b*b
+
+debug Core
+R = rawTowerRing(17, 1:"a")
+a = rawRingVar(R,0)
+F = a^3+a+1
+A = rawTowerQuotientRing(R, 1:F)
+a = rawRingVar(A,0)
+a^2
+a^3
+assert(a * rawInverse a == 1_A)
+
+1/a
+1_A/a
+
+debug Core
+R = rawTowerRing(17, 1:"a")
+a = rawRingVar(R,0)
+F = a^2+2*a+1
+A = rawTowerQuotientRing(R, 1:F)
+a = rawRingVar(A,0)
+rawInverse (a+1)
+a^2
+a^3
+assert(a * rawInverse a == 1_A)
+
+--------------------------------------
+-- gcd -------------------------------
+--------------------------------------
+testGCD = (F1,F2) -> (
+     G1 := rawGCD(F1,F2);
+     (G,U,V) := rawExtendedGCD(F1,F2);
+     assert(G == U*F1 + V*F2);
+     assert(G == G1);
+     (G,U,V)
+     )
+debug Core
+R = rawTowerRing(17, 1:"a")
+a = rawRingVar(R,0)
+F1 = (a+1)*(a+2)
+F2 = (a+1)*(2*a+3)
+(G,U,V) = testGCD(F1,F2)
+
+F1 = (a+1)*(a+2)^10
+F2 = (a+1)^10*(2*a+3)
+(G,U,V) = testGCD(F1,F2)
+
+F1 = (2*a^3+a+1)*(a+2)^10
+F2 = (2*a^3+a+1)^10*(2*a+3)
+(G,U,V) = testGCD(F1,F2)
+
+-- example: gcd over a quotient ring
+debug Core
+R = rawTowerRing(17, ("a","b"))
+a = rawRingVar(R,0)
+b = rawRingVar(R,1)
+F = a^3+a+1
+A = rawTowerQuotientRing(R, (F, 0_R))
+a = rawRingVar(A,0)
+b = rawRingVar(A,1)
+b^2-a-1
+F1 = (b-a-1)^3*(b^2-a-1)
+F2 = (b-a-1)*(b^2-a-2)^3
+(G,U,V) = rawExtendedGCD(F1,F2); -- incorrect at the moment
+G
+U
+V
+a^2
+a
+a*a
+16*a^3
+(b+1)*(b+1)
+b*b
+
+
 end
 load "~/src/M2/Macaulay2/packages/Macaulay2Doc/test/tower.m2"
 
@@ -107,3 +204,7 @@ S = ZZ/17[x,y,z]
 G = (x+y+z)^50;
 time(G*G);
 
+S = ZZ/17[symbol a]
+F1 = (2*a^3+a+1)*(a+2)^10
+F2 = (2*a^3+a+1)^10*(2*a+3)
+gcdCoefficients(F1,F2)

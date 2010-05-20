@@ -27,6 +27,8 @@ using std::endl;
 #include "text-io.hpp"
 #include "buffer.hpp"
 
+#include "tower.hpp" 
+
 using namespace NTL;
 
 
@@ -337,6 +339,9 @@ const RingElement /* or null */ *rawGCDRingElement(const RingElement *f, const R
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
   if (P == 0) {
+      if (f->get_ring()->cast_to_Tower() != 0)
+	return towerGCD(f,g);
+      // else we really do have an error:
       ERROR("expected polynomial ring");
       return 0;
     }
@@ -386,6 +391,9 @@ const RingElement /* or null */ *rawExtendedGCDRingElement(const RingElement *f,
   *B = NULL;
   if (P == 0)
     {
+      if (f->get_ring()->cast_to_Tower() != 0)
+	return towerExtendedGCD(f,g,A,B);
+      // else we really do have an error:
       ERROR("expected polynomial ring");
       return 0;
     }
