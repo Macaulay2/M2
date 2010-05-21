@@ -5,7 +5,7 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG Algebras",
-     Version => "0.3"
+     Version => "0.5"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
@@ -1043,7 +1043,7 @@ loadPackage "DGAlgebras"
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^4,a*x,a*y,b*x,b*y}
 apply((numgens R) + 1, i -> numgens prune HH_i(koszul vars R))
 A = koszulComplexDGA(R)
--- 3.1 seconds on mac mini
+-- 1.21 seconds on mbp
 time HA = homologyAlgebra(A)
 HA.cache.cycles
 socHAgens = (ann ideal vars HA)_*
@@ -1090,13 +1090,7 @@ time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
 -- 2.3 seconds on mbp, with graded differentials
 time HA = homologyAlgebra(A)
-socHA = ideal getBasis(4,HA)
-HA.cache.cycles
-tally degrees HA
 reduceHilbert hilbertSeries HA
-socHA = ideal getBasis(4,HA)
-ann ideal vars HA
-peek HA.cache
 
 -- connected sum example
 -- goal: get this example to run quickly
@@ -1109,9 +1103,8 @@ koszulR2 = koszul vars R2
 time apply(6,i -> numgens prune HH_i(koszulR2))
 -- ~48 seconds on mbp
 time HA2 = homologyAlgebra(A2)
-tally degrees HA2
--- this won't finish?
-reduceHilbert hilbertSeries HA2
+tally ((flatten entries basis HA2) / degree)
+tally (((flatten entries basis HA2) / degree) / first)
 
 -- connected sum example
 -- goal: get this example to finish.
