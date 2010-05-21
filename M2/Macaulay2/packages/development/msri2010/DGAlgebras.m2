@@ -424,18 +424,18 @@ makeHomologyRing := (A, cycleList, relList) -> (
      HA.cache#basisAlgebra = polyRing';
   )
   else (
-     myMap := map(polyRing, ring first relList, flatten entries vars polyRing);
-     relList = relList / myMap;
-     -- this command is getting slow
-     << "--- begin ideal relList ---" << endl;
-     time HA = polyRing/(ideal relList);
+     I := ideal relList;
+     myMap := map(polyRing, ring I, gens polyRing);
+     I = myMap(I);
+     forceGB gens I;
+     HA = polyRing/I;
      HA.cache = new CacheTable;
      --- set up the cached algebra for basis computations too
-     myMap' := map(polyRing', polyRing, flatten entries vars polyRing');
-     relList = relList / myMap';
-     --- this command is getting slow
-     time HA.cache#basisAlgebra = polyRing'/(ideal relList);  
-     << "--- end ideal relList   ---" << endl;
+     myMap' := map(polyRing', polyRing, gens polyRing');
+     I' = myMap'(I);
+     if myMap'(leadTerm(gens I)) - leadTerm gens I' != 0 then error "Monomial Order changed.";
+     forceGB gens I';
+     HA.cache#basisAlgebra = polyRing'/I';  
   );
   HA
 )
@@ -1081,7 +1081,7 @@ R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
--- 6.8 seconds on mbp, with graded differentials
+-- 5.3 seconds on mbp, with graded differentials
 time HA = homologyAlgebra(A)
 socHA = ideal getBasis(4,HA)
 HA.cache.cycles
