@@ -92,13 +92,15 @@ getBasis = method(Options => {Limit => -1})
 getBasis(ZZ,DGAlgebra) := opts -> (homDegree,A) -> getBasis(homDegree,A.natural, Limit => opts.Limit)
 
 getBasis(ZZ,Ring) := opts -> (homDegree,R) -> (
+   local retVal;
    myMap := map(R,R.cache.basisAlgebra);
    tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit)) / myMap;
-   if (tempList == {}) then map((R)^1,(R)^0, 0) else
+   if (tempList == {}) then retVal = map((R)^1,(R)^0, 0) else
    (
       degList := apply(tempList, m -> -degree m);
-      map(R^1, R^degList, matrix {tempList})
-   )
+      retVal = map(R^1, R^degList, matrix {tempList});
+   );
+   retVal
 )
 
 koszulComplexDGA = method()
@@ -435,7 +437,7 @@ makeHomologyRing := (A, cycleList, relList) -> (
      I' = myMap'(I);
      if myMap'(leadTerm(gens I)) - leadTerm gens I' != 0 then error "Monomial Order changed.";
      forceGB gens I';
-     HA.cache#basisAlgebra = polyRing'/I';  
+     HA.cache#basisAlgebra = polyRing'/I';
   );
   HA
 )
@@ -495,22 +497,21 @@ reduceHilbert hilbertSeries HAEasy
 reduceHilbert hilbertSeries (HAEasy.cache.basisAlgebra)
 ///
 
-getCycleProductMatrix = method(Options => {Compress => false})
-getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := opts -> (A,HA,cycleList,N) -> (
+getCycleProductMatrix = method()
+getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,N) -> (
   -- the input is the dga A, the homology algebra HA (so far), the list of cycle generators, and the degree.
   -- this version does use the knowledge of the homologyAlgebra so far to return the cycles products in a given degree.
   local retVal;
   local myMap;
   time monListHA := flatten entries getBasis(N,HA);
   time expListHA := flatten(monListHA / exponents);
-  time monListA := flatten entries getBasis(N,A);
+  monListA := flatten entries getBasis(N,A);
   -- slow here
   time cycleProductList := apply(expListHA, xs -> product apply(#xs, i -> (cycleList#i)^(xs#i)));
-  -- remove the zero entries if asked to do so
-  -- if (opts.Compress) then cycleProductList = select(cycleProductList, z -> z != 0);
   -- slow here
+  << "-- cycleProduct --" << endl;
   time cycleProductMatrix := flatten apply(cycleProductList, z -> entries transpose (coefficients(z, Monomials => monListA))#1);
-  -- currently over the wrong ring, so make it the correct ring.
+  -- make sure the degrees are correct...
   if (A.isHomogeneous) then
   (
      sourceDegreeList := apply((monListHA / degree), l -> -drop(l,1));
@@ -525,13 +526,13 @@ getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := opts -> (A,HA,cycleList,N) -> (
   (cycleProductMatrix,monListHA)
 )
 
-getCycleProductMatrix(DGAlgebra,List,ZZ) := opts -> (A,cycleList,N) -> (
+getCycleProductMatrix(DGAlgebra,List,ZZ) := (A,cycleList,N) -> (
   -- the input is the dga A, the list of cycle generators, and the degree.
   -- this function just assumes that HA is the free algebra on cycleList, and calls the method defined above
   -- the below function slowed down the computation significantly
   --HA := findEasyRelations(A,cycleList);
   HA := makeHomologyRing(A,cycleList,{});
-  getCycleProductMatrix(A,HA,cycleList,N, Compress=>opts.Compress)
+  getCycleProductMatrix(A,HA,cycleList,N)
 )
 
 findDegNGenerators := (A,oldCycleList,N) -> (
@@ -549,7 +550,7 @@ findDegNGenerators := (A,oldCycleList,N) -> (
      if (prune nthHomology != 0)
      then (
 	<< "---" << endl;
-	time (cycleProductMatrix,monListHA) := getCycleProductMatrix(A,oldCycleList,N,Compress=>true);
+	time (cycleProductMatrix,monListHA) := getCycleProductMatrix(A,oldCycleList,N);
         << "---" << endl;
 	if (monListHA != {}) then (
 	   -- TODO: Document the below block of code.
@@ -635,11 +636,13 @@ findDegNRelations := (A,HA,algGens,N) -> (
        else (
           (cycleProductMatrix,monListHA) = getCycleProductMatrix(A,HA,algGens,N);
           if (monListHA != {}) then (
-             -- TODO: Carefully document this block of code, saying what each line does.  There is a lot going on here.
+             -- TODO: Document this code.
              baseRing := coker vars (A.ring);
-	     multMap := map(coker relations nthHomology,baseRing^(rank source cycleProductMatrix),cycleProductMatrix);
-	     time kernelMultMap := prune ker multMap;
-             time kernelGens := entries transpose substitute(gens image kernelMultMap.cache.pruningMap, coefficientRing A.ring);
+	     multMap := map(coker relations nthHomology,(A.ring)^(rank source cycleProductMatrix),cycleProductMatrix);
+             kerMultMap := gens ker multMap;
+             coeffField := (A.ring)/ideal vars A.ring;
+	     kerMultMap = compress sub(kerMultMap,coeffField);
+	     kernelGens = entries transpose substitute(kerMultMap,coefficientRing A.ring);
 	     time retVal = apply(kernelGens, z -> sum apply(#z, i -> (monListHA#i)*(z#i)));
           );
        );
@@ -650,6 +653,10 @@ findDegNRelations := (A,HA,algGens,N) -> (
   );
   retVal
 )
+
+TEST ///
+degrees source multMap
+///
 
 getGreaterMonomials:= (R,N) -> (
   maxDegree := max (degrees R / first);
@@ -1081,10 +1088,11 @@ R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
--- 5.3 seconds on mbp, with graded differentials
+-- 2.3 seconds on mbp, with graded differentials
 time HA = homologyAlgebra(A)
 socHA = ideal getBasis(4,HA)
 HA.cache.cycles
+tally degrees HA
 reduceHilbert hilbertSeries HA
 socHA = ideal getBasis(4,HA)
 ann ideal vars HA
@@ -1099,8 +1107,8 @@ A2 = koszulComplexDGA(R2)
 time apply(6, i -> numgens prune homology2(i,A2))
 koszulR2 = koszul vars R2
 time apply(6,i -> numgens prune HH_i(koszulR2))
--- ~160 seconds on mbp
-HA2 = homologyAlgebra(A2)
+-- ~48 seconds on mbp
+time HA2 = homologyAlgebra(A2)
 tally degrees HA2
 -- this won't finish?
 reduceHilbert hilbertSeries HA2
