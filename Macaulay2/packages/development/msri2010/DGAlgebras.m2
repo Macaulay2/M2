@@ -431,33 +431,16 @@ makeHomologyRing := (A, cycleList, relList) -> (
      I = myMap(I);
      forceGB gens I;
      HA = polyRing/I;
-     HA.cache = new CacheTable;
      --- set up the cached algebra for basis computations too
      myMap' := map(polyRing', polyRing, gens polyRing');
      I' = myMap'(I);
-     if myMap'(leadTerm(gens I)) - leadTerm gens I' != 0 then error "Monomial Order changed.";
+     if myMap'(leadTerm(gens I)) - leadTerm gens I' != 0 then error "Monomial order error.";
      forceGB gens I';
+     HA.cache = new CacheTable;
      HA.cache#basisAlgebra = polyRing'/I';
   );
   HA
 )
-
-TEST ///
-I = ideal relList;
-numgens I
-Y = ring I;
-forceGB gens I
-time Y' = Y/I;
----
-I1 = ideal select(I_*,f -> size f == 1);
-forceGB gens I1
-I2 = ideal select(I_*,f -> size f > 1)
-numgens I1
-numgens I2
-Y1 = Y/I1;
-time Y2 = Y1/sub(I2,Y1)
----
-///
 
 -- This code finds the relations that exist in the homology algebra that come from simply the relations that exist
 -- in the ring, not including the ones that come because one must include the boundaries in determining the relations
@@ -503,20 +486,16 @@ getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,N) -> (
   -- this version does use the knowledge of the homologyAlgebra so far to return the cycles products in a given degree.
   local retVal;
   local myMap;
-  time monListHA := flatten entries getBasis(N,HA);
-  time expListHA := flatten(monListHA / exponents);
+  monListHA := flatten entries getBasis(N,HA);
   monListA := flatten entries getBasis(N,A);
-  -- slow here
-  time cycleProductList := apply(expListHA, xs -> product apply(#xs, i -> (cycleList#i)^(xs#i)));
-  -- slow here
-  << "-- cycleProduct --" << endl;
-  time cycleProductMatrix := flatten apply(cycleProductList, z -> entries transpose (coefficients(z, Monomials => monListA))#1);
-  -- make sure the degrees are correct...
+  myMap = map(A.natural,HA,cycleList);
+  (junk,cycleProductMatrix) := coefficients(myMap(matrix{monListHA}),Monomials=>monListA);
+  -- make sure the degrees are correct if the ring is homogeneous
   if (A.isHomogeneous) then
   (
      sourceDegreeList := apply((monListHA / degree), l -> -drop(l,1));
      targetDegreeList := apply((monListA / degree), l -> -drop(l,1));
-     time cycleProductMatrix = map((A.ring)^targetDegreeList, (A.ring)^sourceDegreeList, sub(transpose matrix cycleProductMatrix, A.ring));
+     cycleProductMatrix = map((A.ring)^targetDegreeList, (A.ring)^sourceDegreeList, sub(cycleProductMatrix, A.ring));
   )
   else
   (
@@ -549,9 +528,7 @@ findDegNGenerators := (A,oldCycleList,N) -> (
      nthHomology := homology2(N,A);
      if (prune nthHomology != 0)
      then (
-	<< "---" << endl;
-	time (cycleProductMatrix,monListHA) := getCycleProductMatrix(A,oldCycleList,N);
-        << "---" << endl;
+	(cycleProductMatrix,monListHA) := getCycleProductMatrix(A,oldCycleList,N);
 	if (monListHA != {}) then (
 	   -- TODO: Document the below block of code.
 	   newHomology := prune (nthHomology / (image cycleProductMatrix));
@@ -618,10 +595,7 @@ findDegNRelations := (A,HA,algGens,N) -> (
      nthHomology := homology2(N,A);
      pruneNthHomology := prune nthHomology;
      rankOfNthHomology := numgens pruneNthHomology;
-     << "-----------------" << endl;
-     << "--- Degree " << N << "  ---" << endl;
-     << "-----------------" << endl;
-     time rankOfAlgebraSoFar := #(flatten entries getBasis(N,HA));
+     rankOfAlgebraSoFar := #(flatten entries getBasis(N,HA));
      if (rankOfNthHomology != rankOfAlgebraSoFar) then
      (
        -- when in here, we know there is a relation in degree N.
@@ -643,7 +617,7 @@ findDegNRelations := (A,HA,algGens,N) -> (
              coeffField := (A.ring)/ideal vars A.ring;
 	     kerMultMap = compress sub(kerMultMap,coeffField);
 	     kernelGens = entries transpose substitute(kerMultMap,coefficientRing A.ring);
-	     time retVal = apply(kernelGens, z -> sum apply(#z, i -> (monListHA#i)*(z#i)));
+	     retVal = apply(kernelGens, z -> sum apply(#z, i -> (monListHA#i)*(z#i)));
           );
        );
      );
@@ -668,8 +642,8 @@ getGenerators(DGAlgebra,ZZ) := (A,genDegreeLimit) -> (
   n := 1;
   cycleList := {};
   while (n <= genDegreeLimit) do (
-     << "Computing generator degree " << n << endl;
-     newCycleList := findDegNGenerators(A,cycleList,n);
+     << "Computing generators in degree " << n << " : ";
+     time newCycleList := findDegNGenerators(A,cycleList,n);
      cycleList = cycleList | newCycleList;
      n = n + 1;
   );
@@ -681,8 +655,8 @@ getRelations(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
    relList := (ideal HA)_*;
    n := 2;
    while (n <= relDegreeLimit) do (
-      << "Computing relation degree " << n << endl;
-      newRelList := findDegNRelations(A,HA,cycleList,n);
+      << "Computing relations in degree " << n << "  : ";
+      time newRelList := findDegNRelations(A,HA,cycleList,n);
       if (relList == {}) then relList = newRelList
       else if (newRelList != {}) then (
          -- make sure newRelList and relList are in the same ring
@@ -706,7 +680,7 @@ homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
   n := 1;
   local HA;
   local myMap;
-  time cycleList = getGenerators(A,genDegreeLimit);
+  cycleList = getGenerators(A,genDegreeLimit);
 
   if (cycleList == {}) then (
      -- put the cycles that the variables represent in the cache.
@@ -716,8 +690,9 @@ homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
      A.cache#homologyAlgebra = HA;
   )
   else (
+     << "Finding easy relations           : ";
      time HA = findEasyRelations(A,cycleList);
-     time HA = getRelations(A,HA,cycleList,relDegreeLimit);
+     HA = getRelations(A,HA,cycleList,relDegreeLimit);
   );
   HA
 )
@@ -1101,22 +1076,26 @@ A2 = koszulComplexDGA(R2)
 time apply(6, i -> numgens prune homology2(i,A2))
 koszulR2 = koszul vars R2
 time apply(6,i -> numgens prune HH_i(koszulR2))
--- ~48 seconds on mbp
+-- 35.5 seconds on mbp
 time HA2 = homologyAlgebra(A2)
 tally ((flatten entries basis HA2) / degree)
 tally (((flatten entries basis HA2) / degree) / first)
 
 -- connected sum example
--- goal: get this example to finish.
+-- goal: get this example to run quicker?
+-- ~1430 seconds
 restart
 loadPackage "DGAlgebras"
+gbTrace = 2
 R2 = ZZ/32003[a,b,c,x,y,z]/ideal{a^3,b^3,c^3,x^3,y^3,z^3,a*x,a*y,a*z,b*x,b*y,b*z,c*x,c*y,c*z,a^2*b^2*c^2-x^2*y^2*z^2}
 A2 = koszulComplexDGA(R2)
 time apply(7, i -> numgens prune homology2(i,A2))
 koszulR2 = koszul vars R2
 time apply(7,i -> numgens prune HH_i(koszulR2))
-HA2 = homologyAlgebra(A2)
-reduceHilbert hilbertSeries HA2
+time HA2 = homologyAlgebra(A2)
+tally ((flatten entries basis HA2) / degree)
+tally (((flatten entries basis HA2) / degree) / first)
+-- 146 generators and 10662 relations!
 
 -- Tate resolution, toComplex
 restart
