@@ -5,7 +5,7 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG Algebras",
-     Version => "0.5"
+     Version => "0.51"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
@@ -554,7 +554,7 @@ koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
 time apply(5,i -> numgens prune homology2(i,A))
--- ~6.8 seconds on mbp, with graded differentials
+-- ~1.6 seconds on mbp, with graded differentials
 time HA = homologyAlgebra(A)
 reduceHilbert hilbertSeries HA
 -- same example, but not graded because of the degree change.  The homologyAlgebra function
