@@ -11,7 +11,7 @@ newPackage("DGAlgebras",
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
         toComplex, koszulComplexDGA, acyclicClosure,
 	killCycles, adjoinVariables, homology2,
-        homologyAlgebra, torAlgebra, polyDifferential}
+       homologyAlgebra, torAlgebra, polyDifferential}
 
 ------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
@@ -52,48 +52,18 @@ makeDGAlgebra(Ring,List) := (R,degList) -> (
      new DGAlgebra from A
 )
 
-TEST ///
-restart
-loadPackage "DGAlgebras"
-debug DGAlgebras
-R = ZZ/101[x,y,z]
-A = dgAlgebra(R,{1,1,1,3})
-A.natural
-setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-Add = toComplex(A)
-///
-
 setDiff = method()
 setDiff(DGAlgebra,List) := (A,diffList) -> (
    A.diff = map(A.natural,A.natural, substitute(matrix {diffList}, A.natural));
    A.diff
 )
 
-TEST ///
-restart
-loadPackage "DGAlgebras"
-debug DGAlgebras
-R = ZZ/101[x,y,z, Degrees => {2,2,3}]
-A = koszulComplexDGA(R)
-S1 = R/ideal (x^3-z^2)
-B = koszulComplexDGA(S1)
-use R
-S2 = R/ideal (x^5-z^2)
-C = koszulComplexDGA(S2)
-degrees C.natural
-test = getBasis(2,A, Limit => 2)
-test = getBasis(3,A, Limit => 2)
-test = getBasis(2,A)
-test = getBasis(4,A)
-degrees source test
-///
-
 getBasis = method(Options => {Limit => -1})
 getBasis(ZZ,DGAlgebra) := opts -> (homDegree,A) -> getBasis(homDegree,A.natural, Limit => opts.Limit)
 
 getBasis(ZZ,Ring) := opts -> (homDegree,R) -> (
    local retVal;
-   myMap := map(R,R.cache.basisAlgebra);
+   myMap := map(R, R.cache.basisAlgebra);
    tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit)) / myMap;
    if (tempList == {}) then retVal = map((R)^1,(R)^0, 0) else
    (
@@ -140,11 +110,12 @@ koszulComplexDGA(Ideal) := (I) -> (
 koszulComplexDGA(List) := (ringElts) -> koszulComplexDGA(ideal ringElts);
 
 TEST ///
-restart
-loadPackage "DGAlgebras"
+-- ask mike about ordering the basis using the specified term order in basis
+debug DGAlgebras
 R = ZZ/101[a,b,c]
 I = ideal{a^3,b^3,c^3,a^2*b^2*c^2}
 A = koszulComplexDGA(I)
+getBasis(2,A.natural)
 Add = toComplex(A)
 Add.dd
 (koszul gens I).dd
@@ -166,7 +137,17 @@ toComplex(DGAlgebra) := (A) -> (
 )
 
 TEST ///
--- Test toComplex here.
+debug DGAlgebras
+R = ZZ/101[x,y,z]
+A = dgAlgebra(R,{1,1,1,3})
+setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+Add = toComplex(A)
+prune HH(Add)
+-- add HH(DGA)
+-- prune HH(A)
+-- add maxDegree
+--assert(apply(maxDegree(A)+1, i -> prune HH_i(Add)) == {coker vars R,0,0,coker vars R,0,0,0})
+assert(apply(7, i -> prune HH_i(Add)) == {coker vars R,0,0,coker vars R,0,0,0})
 ///
 
 killCycles = method(Options => {StartDegree => 1, EndDegree => -1})
@@ -184,7 +165,7 @@ killCycles(DGAlgebra) := opts -> (A) -> (
   -- we now add variables in one degree higher to make these cycles boundaries.
   if (not foundHomology) then retVal = A else
   (  
-     homologyGenerators := entries transpose generators image (nthHomology.cache.pruningMap);
+     homologyGenerators := entries transpose gens image (nthHomology.cache.pruningMap);
      basisList := flatten entries getBasis(n,A);
      cycleList := apply(homologyGenerators, gen -> sum apply(#gen, i -> gen#i*basisList#i));
      retVal = adjoinVariables(A,cycleList);
@@ -192,14 +173,11 @@ killCycles(DGAlgebra) := opts -> (A) -> (
   retVal
 )
 
-TEST ///
--- Test killCycles here.
-///
-
 adjoinVariables = method()
 adjoinVariables(DGAlgebra, List) := (A,cycleList) -> (
   -- this function will add a new variable to make the elements of cycles boundaries in a new DG algebra (semifree over the input)
-  newDegreesList := A.Degrees | apply(cycleList, z -> (first degree z) + 1);
+  tempDegree := {1} | toList ((#(degree first cycleList)-1):0);
+  newDegreesList := A.Degrees | apply(cycleList, z -> degree z + tempDegree);
   B := makeDGAlgebra(A.ring,newDegreesList);
   newDiffList := apply(take(flatten entries matrix A.diff, numgens A.natural) | cycleList, f -> substitute(f, B.natural));
   setDiff(B,newDiffList);
@@ -246,23 +224,15 @@ polyDifferential(DGAlgebra,ZZ) := (A,n) -> (
   else (
      -- here, check to see if the ring A is graded with graded differential.  If so, then produce
      -- a graded map.  Otherwise, just treat things as ungraded (should be slower)
-     -- TODO: add graded differential.
-     local newDiffl;
      sourceList := getBasis(n,A);
-     sourceDegreeList := apply(degrees source sourceList, l -> drop(l,1));
+     sourceDegreeList := apply(degrees source sourceList, l -> -drop(l,1));
      sourceList = flatten entries sourceList;
      targetList := getBasis(n-1,A);
-     targetDegreeList := apply(degrees source targetList, l -> drop(l,1));
+     targetDegreeList := apply(degrees source targetList, l -> -drop(l,1));
      targetList = flatten entries targetList;
      diffList := matrix {apply(sourceList, m -> polyDiffMonomial(A,m))};
      coeffMatrix := substitute((coefficients(diffList, Monomials => targetList))#1, A.ring);
-     degreeRank = #(first sourceDegreeList);
-     if (degreeRank > 0) then (
-        sourceDegreeList = apply(sourceDegreeList, l -> -l);
-	targetDegreeList = apply(targetDegreeList, l -> -l);
-        newDiffl = map((A.ring)^(targetDegreeList), (A.ring)^(sourceDegreeList), coeffMatrix);
-     )
-     else newDiffl = map((A.ring)^(#targetDegreeList), (A.ring)^(#sourceDegreeList), coeffMatrix);        
+     newDiffl := map((A.ring)^(targetDegreeList), (A.ring)^(sourceDegreeList), coeffMatrix);
      A.cache.differentials#n = newDiffl;
      newDiffl
   )
@@ -270,8 +240,6 @@ polyDifferential(DGAlgebra,ZZ) := (A,n) -> (
 
 TEST ///
 -- test polyDifferential here.
-restart
-loadPackage "DGAlgebras"
 debug DGAlgebras
 R = ZZ/101[x,y,z, Degrees => {2,2,3}]
 kRes = res coker vars R
@@ -303,16 +271,6 @@ polyDifferential(DGAlgebra,RingElement) := (A,f) -> (
   sum apply(terms f, m -> polyDiffMonomial(A,m))
 )
 
-TEST ///
-restart
-loadPackage "DGAlgebras"
-R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-koszulR = koszul vars R
-A = koszulComplexDGA(R)
-A.diff
-polyDifferential(A,sub(T_1*T_2*T_3, A.natural))
-///
-
 polyHomology := (n,A) -> (
   dn := 0;
   dnplus1 := 0;
@@ -335,15 +293,15 @@ polyHomology := (n,A) -> (
 
 TEST ///
 --- test homology2
-restart
-loadPackage "DGAlgebras"
 debug DGAlgebras
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
-hh2 = HH_2(koszulR)
+hh2 = prune HH_2(koszulR)
 -- make an assertion here.
+hh2' = prune HH_2(toComplex(A))
+assert(hh2 == hh2')
 ///
 
 -- note that this does not work for some reason (Dan explained it to me at one point but I can't remember.  I think it has
@@ -467,17 +425,19 @@ findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
 
 TEST ///
 -- test findEasyRelations
-restart
-loadPackage "DGAlgebras"
 debug DGAlgebras
-R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-R = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-A = koszulComplexDGA(R)
-apply(5,i -> numgens prune homology2(i,A))
-time cycleList = getGenerators(A,4)
-time HAEasy = findEasyRelations(A,cycleList)
-reduceHilbert hilbertSeries HAEasy
-reduceHilbert hilbertSeries (HAEasy.cache.basisAlgebra)
+R1 = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
+R2 = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
+A1 = koszulComplexDGA(R1)
+A2 = koszulComplexDGA(R2)
+cycleList1 = getGenerators(A1,4)
+cycleList2 = getGenerators(A2,4)
+HAEasy1 = findEasyRelations(A1,cycleList1)
+HAEasy2 = findEasyRelations(A2,cycleList2)
+myList1 = {({4,8},1),({3,4},1),({3,5},1),({3,6},1),({3,7},1),({2,3},1),({2,4},1),({2,5},1),({2,6},1),({1,2},1),({1,3},1),({1,4},1),({0,0},1)}
+myList2 = {({0},1),({1},1),({2},1),({3},1),({4},1)}
+assert(pairs(tally (flatten entries basis HAEasy1) / degree) == myList1)
+assert(pairs(tally (flatten entries basis HAEasy2) / degree) == myList2)
 ///
 
 getCycleProductMatrix = method()
@@ -500,7 +460,7 @@ getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,N) -> (
   else
   (
      myMap = map(A.ring, A.natural);
-     cycleProductMatrix = map((A.ring)^(#monListA), (A.ring)^(#monListHA), sub(transpose matrix cycleProductMatrix, A.ring));
+     cycleProductMatrix = map((A.ring)^(#monListA), (A.ring)^(#monListHA), sub(cycleProductMatrix, A.ring));
   );
   (cycleProductMatrix,monListHA)
 )
@@ -546,8 +506,6 @@ findDegNGenerators := (A,oldCycleList,N) -> (
 
 TEST ///
 -- Homology algebra for the Koszul complex on a set of generators of the maximal ideal
-restart
-loadPackage "DGAlgebras"
 debug DGAlgebras
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
@@ -556,7 +514,9 @@ A = koszulComplexDGA(R)
 time apply(5,i -> numgens prune homology2(i,A))
 -- ~1.6 seconds on mbp, with graded differentials
 time HA = homologyAlgebra(A)
-reduceHilbert hilbertSeries HA
+assert(numgens HA == 34)
+assert(numgens ideal HA == 581)
+assert(#(support numerator reduceHilbert hilbertSeries HA) == 2)
 -- same example, but not graded because of the degree change.  The homologyAlgebra function
 -- will then only return a graded algebra
 R2 = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
@@ -564,23 +524,24 @@ koszulR2 = koszul vars R2
 time apply(5,i -> numgens prune HH_i(koszulR2))
 A2 = koszulComplexDGA(R2)
 time apply(5,i -> numgens prune homology2(i,A2))
--- 7.1 seconds on mbp, with ungraded differentials
--- TODO: Fix the inHomogeneous case.  There is a problem in preprocessing
+-- ~2.3 seconds on mbp, with ungraded differentials
 time HA2 = homologyAlgebra(A2)
+assert(numgens HA2 == 34)
+assert(numgens ideal HA2 == 581)
 -- should only be singly graded
-reduceHilbert hilbertSeries HA2
+assert(#(support numerator reduceHilbert hilbertSeries HA2) == 1)
 ///
 
 TEST ///
 --- Homology algebra for the Koszul complex on a set of generators of an ideal
 --- should try to get this to work.
-restart
-loadPackage "DGAlgebras"
-R = ZZ/32003[a,b,x,y]
-I = ideal{a^3,b^3,x^3,y^3}
-A = koszulComplexDGA(I)
+--restart
+--loadPackage "DGAlgebras"
+--R = ZZ/32003[a,b,x,y]
+--I = ideal{a^3,b^3,x^3,y^3}
+--A = koszulComplexDGA(I)
 -- incorrect at the moment
-homologyAlgebra(A)
+--homologyAlgebra(A)
 ///
 
 findDegNRelations := (A,HA,algGens,N) -> (
@@ -627,10 +588,6 @@ findDegNRelations := (A,HA,algGens,N) -> (
   );
   retVal
 )
-
-TEST ///
-degrees source multMap
-///
 
 getGreaterMonomials:= (R,N) -> (
   maxDegree := max (degrees R / first);
@@ -732,25 +689,6 @@ DGAlgebra ** Ring := (A,S) -> (
   B.diff = map(B.natural,B.natural, newDiff);
   B
 )
-
-TEST ///
-restart
-loadPackage "DGAlgebras"
-R = ZZ/32003[x,y,z]/ideal{x^3,y^4,z^5}
-B = koszulComplexDGA(R)
-HB = homologyAlgebra(B)
-reduceHilbert hilbertSeries HB
-<restart
-loadPackage "DGAlgebras"
-R = ZZ/32003[x,y,z,w]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
-B = koszulComplexDGA(R)
-HB = homologyAlgebra(B)
-reduceHilbert hilbertSeries HB
-HB = homologyAlgebra(B,5,15)
-reduceHilbert hilbertSeries HB
-numgens trim ideal HB
-prune HH(koszul vars R)
-///
 
 --------------------
 -- Documentation  --
@@ -931,7 +869,6 @@ end
 uninstallPackage "DGAlgebras"
 restart
 installPackage "DGAlgebras"
--- how to test a package
 check "DGAlgebras"
 viewHelp DGAlgebras
 
@@ -942,39 +879,30 @@ loadPackage "DGAlgebras"
 R1 = ZZ/32003[x,y,z]
 A1 = koszulComplexDGA(R1)
 apply(4,i -> polyDifferential(A1,i))
-HA1 = homologyAlgebra(A1)
-describe oo
+time HA1 = homologyAlgebra(A1)
+describe HA1
 peek HA1.cache
 R2 = R1/ideal{x^3,y^4,z^5}
 A2 = koszulComplexDGA(R2)
-HA2 = homologyAlgebra(A2)
-describe oo
-peek HA2.cache
+time HA2 = homologyAlgebra(A2)
+describe HA2
 reduceHilbert hilbertSeries HA2
-apply(4,i -> numgens prune HH_i(koszul vars R2))
 use R1
 R3 = R1/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 A3 = koszulComplexDGA(R3)
-HA3 = homologyAlgebra(A3)
-describe oo
-peek HA3.cache
+time HA3 = homologyAlgebra(A3)
+describe HA3
 reduceHilbert hilbertSeries HA3
-apply(4,i -> numgens prune HH_i(koszul vars R3))
 
 restart
 loadPackage "DGAlgebras"
 Q = ZZ/101[x,y,z]
 I = ideal{y^3,z*x^2,y*(z^2+y*x),z^3+2*x*y*z,x*(z^2+y*x),z*y^2,x^3,z*(z^2+2*x*y)}
 R = Q/I
-dim R
-ann ideal vars R
 A = koszulComplexDGA(R)
-HA = homologyAlgebra(A)
+time HA = homologyAlgebra(A)
 -- should check HA by hand since the homology algebra is still monomial.
 reduceHilbert hilbertSeries HA
-koszulR = koszul vars R
-apply(4,i -> numgens prune HH_i(koszulR))
-ann ideal vars HA
 
 -- more complicated example
 Q2 = ZZ/2[x,y,z]
@@ -987,12 +915,9 @@ I2 = ideal{f_1,f_2,f_3,f_4,f_5}
 R2 = Q2/I2
 ann ideal vars R2
 A2 = koszulComplexDGA(R2)
-HA2 = homologyAlgebra(A2)
+time HA2 = homologyAlgebra(A2)
 -- should check HA by hand since the homology algebra is still monomial.
 reduceHilbert hilbertSeries HA2
-koszulR2 = koszul vars R2
-apply(4,i -> numgens prune HH_i(koszulR2))
-ann ideal vars HA2
 
 -- need to check this one (somehow!) it seems the multiplication on HA is trivial
 Q = ZZ/32003[x,y,z]
@@ -1005,7 +930,7 @@ I = ideal{f_1,f_2,f_3,f_4,f_5}
 R = Q/I
 ann ideal vars R
 A = koszulComplexDGA(R)
-HA = homologyAlgebra(A)
+time HA = homologyAlgebra(A)
 -- should check HA by hand since the homology algebra is still monomial.
 reduceHilbert hilbertSeries HA
 ann ideal vars HA
@@ -1018,7 +943,7 @@ loadPackage "DGAlgebras"
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^4,a*x,a*y,b*x,b*y}
 apply((numgens R) + 1, i -> numgens prune HH_i(koszul vars R))
 A = koszulComplexDGA(R)
--- 1.21 seconds on mbp
+-- .86 seconds on mbp
 time HA = homologyAlgebra(A)
 HA.cache.cycles
 socHAgens = (ann ideal vars HA)_*
@@ -1039,14 +964,13 @@ reduceHilbert hilbertSeries HB
 peek HA.cache
 
 -- connected sum example
--- goal: get this example to run quickly
 restart
 loadPackage "DGAlgebras"
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^4,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^3}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
--- 8.3 seconds on mbp 
+-- 3.2 seconds on mbp 
 time HA = homologyAlgebra(A)
 socHA = ideal getBasis(4,HA)
 HA.cache.cycles
@@ -1056,14 +980,13 @@ ann ideal vars HA
 peek HA.cache
 
 -- connected sum example
--- goal: get this example to run quickly
 restart
 loadPackage "DGAlgebras"
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
--- 2.3 seconds on mbp, with graded differentials
+-- 1.68 seconds on mbp, with graded differentials
 time HA = homologyAlgebra(A)
 reduceHilbert hilbertSeries HA
 
@@ -1078,6 +1001,8 @@ koszulR2 = koszul vars R2
 time apply(6,i -> numgens prune HH_i(koszulR2))
 -- 35.5 seconds on mbp
 time HA2 = homologyAlgebra(A2)
+numgens HA2
+numgens ideal HA2
 tally ((flatten entries basis HA2) / degree)
 tally (((flatten entries basis HA2) / degree) / first)
 
@@ -1101,10 +1026,10 @@ tally (((flatten entries basis HA2) / degree) / first)
 restart
 loadPackage "DGAlgebras"
 debug DGAlgebras
-R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
-A3 = acyclicClosure(R3,1)
-time A3dd = toComplex(50,A3);
-time kRes = res(coker vars R3, LengthLimit => 50);
+R = QQ[x,y,z,w]/ideal{x^3,y^4,z^5}
+A = acyclicClosure(R,1)
+time Add = toComplex(20,A);
+time kRes = res(coker vars R, LengthLimit => 20)
 
 -- Homology
 restart
@@ -1119,13 +1044,14 @@ time apply(17, i -> time HH_i(kRes));
 restart
 loadPackage "DGAlgebras"
 R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
-TorR3 = torAlgebra(R3)
+time TorR3 = torAlgebra(R3)
 apply(16, i -> hilbertFunction(i,TorR3))
-res(coker vars R3, LengthLimit => 15)
+time res(coker vars R3, LengthLimit => 15)
 R4 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 TorR4 = torAlgebra(R4,8)
-apply(8, i -> hilbertFunction(i,TorR4))
+apply(10, i -> hilbertFunction(i,TorR4))
 res(coker vars R4, LengthLimit => 9)
+-- TODO:  Fix this.  Not sure what happened when I changed the homologyAlgebra code.
 TorR3R4 = torAlgebra(R3,R4,4,10)
 reduceHilbert hilbertSeries TorR3R4
 use R3
@@ -1139,11 +1065,8 @@ R3 = ZZ/32003[x,y]/ideal{x^3,y^4,x^2*y^3}
 A3 = acyclicClosure(R3,3)
 time apply(10, i -> time prune homology2(i,A3));
 -- need to speed up the prune somehow.  Use the grading of the underlying ring?
+-- TODO:  Fix this.  Not sure what happened when I changed the homologyAlgebra code.
 HA3 = homologyAlgebra(A3,5,15)
-
-R = ZZ/101[x,y,z]/ideal{x^2,y^3+z^3}
-S = R[a,b,c]
-flattenRing S
 
 --- George example (not correct on the homology algebra part)
 restart
