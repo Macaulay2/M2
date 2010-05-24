@@ -45,6 +45,8 @@ private:
   void make_monic_0(poly & f, long &result_multiplier);
   void make_monic_n(int level, poly & f, poly &result_multiplier);
 
+  bool make_monic3(int level, poly & u1, poly &u2, poly &u3);
+
   static poly read_poly_0(char * &str);
   static poly read_poly_n(char * &str, int level);
 

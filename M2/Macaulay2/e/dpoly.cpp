@@ -874,9 +874,37 @@ void DPoly::make_monic(int level, poly & f)
     }
 }
 
+bool DPoly::make_monic3(int level, poly & u1, poly &u2, poly &u3)
+  // let c be the inverse of the lead coefficient of u3.
+  // return false if this lead coeff is not invertible
+  // else return true
+  // replace u1, u2, u3 by c*u1, c*u2, c*u3
+{
+  if (u3 == 0) return true;
+
+  if (level == 0)
+    {
+      long c = 0;
+      make_monic_0(u3, c);
+      if (c == 0) return false;
+      mult_by_coeff_0(u1, c);
+      mult_by_coeff_0(u2, c);
+    }
+  else
+    {
+      poly c = 0;
+      make_monic_n(level, u3, c);
+      if (c == 0) return false;
+      mult_by_coeff_n(level, u1, c);
+      mult_by_coeff_n(level, u2, c);
+      dealloc_poly(c);
+    }
+  return true;
+}
+
 poly  DPoly::division_in_place_monic(int level, poly & f, const poly g)
 {
-  // ASSUMPTION: g is MONIC
+  // ASSUMPTION: g is MONIC, non-zero
   if (f == 0) return 0;
   if (f->deg < g->deg)
     {
@@ -900,18 +928,7 @@ poly  DPoly::division_in_place_monic(int level, poly & f, const poly g)
 		ZZp_APXY(charac, p[shift+j], a, q[j]);
 	    }
 	}
-      bool iszero = true;
-      for (int j=g->deg-1; j>=0; j--)
-	if (p[j] != 0)
-	  {
-	    f->deg = j;
-	    iszero = false;
-	    break;
-	  }
-      if (iszero)
-	{
-	  dealloc_poly(f);
-	}
+      reset_degree_0(f);
     }
   else
     {
@@ -923,15 +940,14 @@ poly  DPoly::division_in_place_monic(int level, poly & f, const poly g)
 	  if (a != 0)
 	    {
 	      quot->arr.polys[shift] = copy(level-1,a);
-	      // MES: negate a...  maybe a should be the copy?
 	      for (int j=0; j<=g->deg; j++) 
 		{
 		  poly b = mult(level-1,a,q[j],true);
-		  add_in_place(level-1,p[j+shift],b);
+		  subtract_in_place(level-1,p[j+shift],b);
 		}
 	    }
 	}
-      // Now set the degree MES
+      reset_degree_n(level, f);
     }
   return quot;
 }
@@ -949,6 +965,7 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
   
   if (level == 0)
     {
+      // TODO: this code seems completely wrong!??!!  too?
       long *p = f->arr.ints;
       long *q = g->arr.ints;
       long leadcoeff = q[g->deg];
@@ -969,22 +986,12 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
 		ZZp_APXY(charac, p[shift+j], a, q[j]);
 	    }
 	}
-      bool iszero = true;
-      for (int j=g->deg-1; j>=0; j--)
-	if (p[j] != 0)
-	  {
-	    f->deg = j;
-	    iszero = false;
-	    break;
-	  }
-      if (iszero)
-	{
-	  dealloc_poly(f);
-	}
+      reset_degree_0(f);
       return true;
     }
   else
     {
+      // TODO: this code seems completely wrong!??!!
       poly *p = f->arr.polys;
       poly *q = g->arr.polys;
       poly leadcoeff = q[g->deg];
@@ -1011,18 +1018,7 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
 		}
 	    }
 	}
-      bool iszero = true;
-      for (int j=g->deg-1; j>=0; j--)
-	if (p[j] != 0)
-	  {
-	    f->deg = j;
-	    iszero = false;
-	    break;
-	  }
-      if (iszero)
-	{
-	  dealloc_poly(f);
-	}
+      reset_degree_n(level,f);
       return true;
     }
 }
@@ -1075,7 +1071,7 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
   //  f and g are non-zero
   poly v1,v2,v3;
   poly u1,u2,u3;
-  poly q;
+  poly q = 0;
 
   v1 = 0;
   v2 = from_int(level,1);
@@ -1085,43 +1081,68 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
   u2 = 0;
   u3 = copy(level,f);
 
+  if (v3 == 0 || (u3 != 0 && v3->deg > u3->deg))
+    {
+      swap_poly(u1,v1);
+      swap_poly(u2,v2);
+      swap_poly(u3,v3);
+    }
+
   // At the end of the loop:
   // u1 * f + u2 * g == u3
   // v1 * f + v2 * g == v3
   // (and (v1,v2,v3) is close to the gcd
 
 #ifdef DEBUG
-  printf("u1 = %s\n", to_string(level,u1));
-  printf("u2 = %s\n", to_string(level,u2));
-  printf("u3 = %s\n", to_string(level,u3));
-
-  printf("v1 = %s\n", to_string(level,v1));
-  printf("v2 = %s\n", to_string(level,v2));
-  printf("v3 = %s\n", to_string(level,v3));
+  if (level == 1)
+    {
+      printf("u1 = %s\n", to_string(level,u1));
+      printf("u2 = %s\n", to_string(level,u2));
+      printf("u3 = %s\n", to_string(level,u3));
+      
+      printf("v1 = %s\n", to_string(level,v1));
+      printf("v2 = %s\n", to_string(level,v2));
+      printf("v3 = %s\n", to_string(level,v3));
+    }
 #endif
 
-  while (v3 != 0)  // MES: add in correct condition!!
+  while (v3 != 0)
     {
-      if (!division_in_place(level, u3, v3, q)) // u3 := u3 - q*v3, true returned if division possible
+      if (!make_monic3(level,v1,v2,v3))
 	{
+	  // deallocate some polynomials, then return 0.  No monic gcd
+	  dealloc_poly(q);
+	  dealloc_poly(u1);
+	  dealloc_poly(u2);
+	  dealloc_poly(u3);
+	  dealloc_poly(v1);
+	  dealloc_poly(v2);
+	  dealloc_poly(v3);
 	  return 0;
 	}
+      q = division_in_place_monic(level, u3, v3); // u3 := u3 - q*v3, as v3 is monic, this is always possible
 
 #ifdef DEBUG
-      printf("q = %s\n", to_string(level,q));
-      printf("u3 = %s\n", to_string(level,u3));
+      if (level == 1)
+	{
+	  printf("q = %s\n", to_string(level,q));
+	  printf("u3 = %s\n", to_string(level,u3));
+	}
 #endif
-      // this last line can fail, if lc(v3) is not monic.  In this case
-      // we need to return 0.
+
       negate_in_place(level,q);
       poly a = mult(level, q, v1, false);
       poly b = mult(level, q, v2, false);
       add_in_place(level,u1,a);
       add_in_place(level,u2,b);
+
 #ifdef DEBUG
-      printf("u1 = %s\n", to_string(level,u1));
-      printf("u2 = %s\n", to_string(level,u2));
-      printf("u3 = %s\n", to_string(level,u3));
+      if (level == 1)
+	{
+	  printf("u1 = %s\n", to_string(level,u1));
+	  printf("u2 = %s\n", to_string(level,u2));
+	  printf("u3 = %s\n", to_string(level,u3));
+	}
 #endif
       dealloc_poly(a); // MES: totally wipeout polys a, b here!
       dealloc_poly(b);
@@ -1131,27 +1152,19 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
     }
 
 #ifdef DEBUG
-  printf("u1 = %s\n", to_string(level,u1));
-  printf("u2 = %s\n", to_string(level,u2));
-  printf("u3 = %s\n", to_string(level,u3));
+  if (level == 1)
+    {
+      printf("u1 = %s\n", to_string(level,u1));
+      printf("u2 = %s\n", to_string(level,u2));
+      printf("u3 = %s\n", to_string(level,u3));
+    }
 #endif
 
-  // make monic
-  if (level == 0)
-    {
-      long c = 0;
-      make_monic_0(u3, c);
-      mult_by_coeff_0(u1, c);
-      mult_by_coeff_0(u2, c);
-    }
-  else
-    {
-      poly c = 0;
-      make_monic_n(level, u3, c);
-      mult_by_coeff_n(level, u1, c);
-      mult_by_coeff_n(level, u2, c);
-      dealloc_poly(c);
-    }
+  // At this point u3 is monic, and is the monic gcd
+
+  // v3 is already 0 here.
+  dealloc_poly(v1);
+  dealloc_poly(v2);
 
   result_u = u1 ;
   result_v = u2;
