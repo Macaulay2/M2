@@ -134,16 +134,13 @@ a^2
 a^3
 assert(a * rawInverse a == 1_A)
 
-1/a
-1_A/a
-
 debug Core
 R = rawTowerRing(17, 1:"a")
 a = rawRingVar(R,0)
 F = a^2+2*a+1
 A = rawTowerQuotientRing(R, 1:F)
 a = rawRingVar(A,0)
-rawInverse (a+1)
+rawInverse (a+1) -- error not considered?
 a^2
 a^3
 assert(a * rawInverse a == 1_A)
@@ -183,9 +180,25 @@ A = rawTowerQuotientRing(R, (F, 0_R))
 a = rawRingVar(A,0)
 b = rawRingVar(A,1)
 b^2-a-1
+
 F1 = (b-a-1)^3*(b^2-a-1)
 F2 = (b-a-1)*(b^2-a-2)^3
-(G,U,V) = rawExtendedGCD(F1,F2); -- incorrect at the moment
+(G,U,V) = testGCD(F1,F2)
+
+F1 = (b-a)*a
+F2 = (b-a)^2*b
+(G,U,V) = testGCD(F1,F2) -- ok
+
+F1 = b*(b+1)
+F2 = b^2*(b+2)
+(G,U,V) = testGCD(F1,F2) -- ok
+
+F1 = (b-a)*(b+a)
+F2 = (b-a)^2*b
+(G,U,V) = testGCD(F1,F2) -- ok
+
+
+U*F1 + V*F2
 G
 U
 V
