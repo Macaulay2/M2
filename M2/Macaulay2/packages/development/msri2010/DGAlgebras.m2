@@ -9,19 +9,38 @@ newPackage("DGAlgebras",
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
-        toComplex, koszulComplexDGA, acyclicClosure,
+        getBasis, toComplex, koszulComplexDGA, acyclicClosure,
 	killCycles, adjoinVariables, homology2,
-       homologyAlgebra, torAlgebra, polyDifferential}
+       homologyAlgebra, torAlgebra}
 
-------------------------------------------------
+-- Still to document:
+-- setDiff, setDiff(DGAlgebra,List), natural, cycles, getBasis(ZZ,DGAlgebra), getBasis(ZZ,Ring), toComplex, koszulComplexDGA(List)
+-- acyclicClosure(DGAlgebra,ZZ), acyclicClosure(Ring,ZZ), killCycles, killCycles(DGAlgebra, List), homology2, homologyAlgebra,
+-- homologyAlgebra(DGAlgebra), homologyAlgebra(DGAlgebra, ZZ, ZZ), torAlgebra, torAlgebra(Ring), torAlgebra(Ring, ZZ),
+-- torAlgebra(Ring,Ring,ZZ,ZZ), 
+
+-- Other things to do:
+-- Get HH_i(DGA) to work, as well as HH(DGA) return an algebra rather than a graded module
+-- maxDegree of a DGA
+-- taylorResolutionDGA
+-- ekResolutionDGA
+-- trivial Massey operations? strongGolod?
+-- deviations
+-- isHATrivial
+-- Document the code
+-- Help file entries (see above!)
+
+-----------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
-------------------------------------------------
+-----------------------------------------------------
 
 DGAlgebra = new Type of MutableHashTable
 
 -- this is the user friendly version of the DGAlgebra 'constructor'.  In the code below, we use makeDGAlgebra.
+-- may change this in the future if I can figure out how to determine if a given variable represents a list
+-- of integers or not
 dgAlgebra = method()
-dgAlgebra(Ring,List) := (R,degList) -> makeDGAlgebra(R, pack(degList,1))
+dgAlgebra(Ring,List) := (R,degList) -> makeDGAlgebra(R, degList)
 
 makeDGAlgebra = method()     
 makeDGAlgebra(Ring,List) := (R,degList) -> (
@@ -33,8 +52,9 @@ makeDGAlgebra(Ring,List) := (R,degList) -> (
      A#(symbol diff) = {};
      if (isHomogeneous R) then
      (
-        A#(symbol natural) = (A.ring)[varsList, Degrees => degList, Join => false, SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
-	A#(symbol isHomogeneous) = true;
+        -- make sure the degree list has the right form.
+	if #(first degList) != #(first degrees A.ring) + 1 then degList = apply(degList, i -> i | {0});
+	A#(symbol natural) = (A.ring)[varsList, Degrees => degList, Join => false, SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
      )
      else
      (
@@ -55,7 +75,16 @@ makeDGAlgebra(Ring,List) := (R,degList) -> (
 setDiff = method()
 setDiff(DGAlgebra,List) := (A,diffList) -> (
    A.diff = map(A.natural,A.natural, substitute(matrix {diffList}, A.natural));
+   A.isHomogeneous = isHomogeneous A.ring and checkIsHomogeneous(A);
    A.diff
+)
+
+checkIsHomogeneous = method()
+checkIsHomogeneous(DGAlgebra) := (A) -> (
+   gensList := gens A.natural;
+   diffList := apply(gensList, f -> A.diff(f));
+   homDegreeShift := {1} | (toList ((#(degree first gensList)-1):0));
+   fold(apply(#diffList, i -> degree gensList#i - homDegreeShift == degree diffList#i),  (i,j) -> i and j)
 )
 
 getBasis = method(Options => {Limit => -1})
@@ -137,9 +166,40 @@ toComplex(DGAlgebra) := (A) -> (
 )
 
 TEST ///
-debug DGAlgebras
+-- trying to fix the dgAlgebra definition problem
 R = ZZ/101[x,y,z]
-A = dgAlgebra(R,{1,1,1,3})
+-- test 1
+A1 = dgAlgebra(R,{{1},{1},{1},{3}})
+setDiff(A1,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+A1.isHomogeneous
+A1dd = toComplex(A1)
+A1dd.dd
+-- test 2
+A2 = dgAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
+setDiff(A2,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+A2.isHomogeneous
+A2dd = toComplex(A2)
+A2dd.dd
+-- test 3
+B1 = koszulComplexDGA(R)
+B1.isHomogeneous
+B1dd = toComplex(B1)
+B1dd.dd
+-- test 4
+R = ZZ/101[x,y,z]
+R2 = R/ideal {x^2-z^3}
+B2 = koszulComplexDGA(R2)
+B2.isHomogeneous
+B2dd = toComplex(B2)
+B2dd.dd
+-- end tests
+
+debug DGAlgebras
+R = QQ[x,y,z]
+B = koszulComplexDGA(R)
+toComplex(B)
+degrees B.natural
+A = dgAlgebra(R,{{1},{1},{1},{3}})
 setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
 Add = toComplex(A)
 prune HH(Add)
@@ -358,6 +418,19 @@ torAlgebra(Ring,Ring,ZZ,ZZ) := (R,S,genDegree,relDegree) -> (
 
 TEST ///
 -- Test torAlgebra here.
+restart
+loadPackage "DGAlgebras"
+debug DGAlgebras
+R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
+use R3
+M = coker matrix {{x^2*y^3*z^4}}
+Mres = res(M, LengthLimit => 7)
+R4 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
+time TorR3R4 = torAlgebra(R3,R4,7,21)
+-- or course, the multiplication is trivial, since the map R3 --> R4 is Golod
+numgens TorR3R4
+numgens ideal TorR3R4
+apply(21, i -> #(flatten entries getBasis(i,TorR3R4)))
 ///
 
 representativeCycles = method()
@@ -449,20 +522,26 @@ getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,N) -> (
   monListHA := flatten entries getBasis(N,HA);
   monListA := flatten entries getBasis(N,A);
   myMap = map(A.natural,HA,cycleList);
-  (junk,cycleProductMatrix) := coefficients(myMap(matrix{monListHA}),Monomials=>monListA);
-  -- make sure the degrees are correct if the ring is homogeneous
-  if (A.isHomogeneous) then
+  -- this is needed when there is nothing in HA in this degree so far.
+  if (monListHA != {}) then
   (
-     sourceDegreeList := apply((monListHA / degree), l -> -drop(l,1));
-     targetDegreeList := apply((monListA / degree), l -> -drop(l,1));
-     cycleProductMatrix = map((A.ring)^targetDegreeList, (A.ring)^sourceDegreeList, sub(cycleProductMatrix, A.ring));
+     (junk,cycleProductMatrix) := coefficients(myMap(matrix{monListHA}),Monomials=>monListA);
+     -- make sure the degrees are correct if the ring is homogeneous
+     if (A.isHomogeneous) then
+     (
+        sourceDegreeList := apply((monListHA / degree), l -> -drop(l,1));
+        targetDegreeList := apply((monListA / degree), l -> -drop(l,1));
+        cycleProductMatrix = map((A.ring)^targetDegreeList, (A.ring)^sourceDegreeList, sub(cycleProductMatrix, A.ring));
+     )
+     else
+     (
+        myMap = map(A.ring, A.natural);
+        cycleProductMatrix = map((A.ring)^(#monListA), (A.ring)^(#monListHA), sub(cycleProductMatrix, A.ring));
+     );
+     retVal = (cycleProductMatrix,monListHA);
   )
-  else
-  (
-     myMap = map(A.ring, A.natural);
-     cycleProductMatrix = map((A.ring)^(#monListA), (A.ring)^(#monListHA), sub(cycleProductMatrix, A.ring));
-  );
-  (cycleProductMatrix,monListHA)
+  else retVal = (map((A.ring)^(#monListA), (A.ring)^0,0), {});
+  retVal
 )
 
 getCycleProductMatrix(DGAlgebra,List,ZZ) := (A,cycleList,N) -> (
@@ -765,16 +844,28 @@ doc ///
       does not handle algebras A whose underlying algebra is not a polynomial ring.
     Example
       R = ZZ/101[x,y,z]
-      A = dgAlgebra(R,{1,1,1,3})
+      A = dgAlgebra(R,{{1},{1},{1},{3}})
       A.natural
       setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+    Text
+      The resulting DGA will not be graded since the differential given does not respect the grading due to the degrees assigned in the definition.
+    Example
+      A.isHomogeneous
       Add = toComplex(A)
+      B = dgAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
+      B.natural
+      setDiff(B,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+    Text
+      The result of the above declaration will be graded.
+    Example
+      B.isHomogeneous
+      Bdd = toComplex(B)
     Text  
       Note that the differential is not passed into the constructor.  The reason for this (at the moment)
       is that M2 does not know what ring the differentials are defined over until after the underlying
       algebra is constructed, so the differential is set later with setDiff.  Many DG Algebras that one
-      encounters in commutative algebra have been implemented, however.  For example, if one wants to work
-      with the Koszul complex as a DG Algebra, then one should see the command @ TO koszulComplexDGA @.
+      encounters in commutative algebra have been implemented, however, and do not need to be defined 'by hand'.
+      For example, if one wants to work with the Koszul complex as a DG Algebra, then one should see the command @ TO koszulComplexDGA @.
      
       There is currently a bug handling DG Algebras that have no monomials in some degree, but some monomials in a later degree;
       for example if one replaces the 3 in the above example with a 5.
@@ -868,6 +959,7 @@ end
 
 uninstallPackage "DGAlgebras"
 restart
+-- must pass this check and install without errors before checking in!
 installPackage "DGAlgebras"
 check "DGAlgebras"
 viewHelp DGAlgebras
@@ -1051,7 +1143,6 @@ R4 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 TorR4 = torAlgebra(R4,8)
 apply(10, i -> hilbertFunction(i,TorR4))
 res(coker vars R4, LengthLimit => 9)
--- TODO:  Fix this.  Not sure what happened when I changed the homologyAlgebra code.
 TorR3R4 = torAlgebra(R3,R4,4,10)
 reduceHilbert hilbertSeries TorR3R4
 use R3
@@ -1062,11 +1153,10 @@ res(R4mod, LengthLimit => 6)
 restart
 loadPackage "DGAlgebras"
 R3 = ZZ/32003[x,y]/ideal{x^3,y^4,x^2*y^3}
-A3 = acyclicClosure(R3,3)
-time apply(10, i -> time prune homology2(i,A3));
--- need to speed up the prune somehow.  Use the grading of the underlying ring?
--- TODO:  Fix this.  Not sure what happened when I changed the homologyAlgebra code.
-HA3 = homologyAlgebra(A3,5,15)
+time A3 = acyclicClosure(R3,5)
+time HA3 = homologyAlgebra(A3,6,12)
+time apply(12, i -> #(flatten entries getBasis(i,HA3)))
+-- need to check the mult structure from Lucho's book.
 
 --- George example (not correct on the homology algebra part)
 restart
