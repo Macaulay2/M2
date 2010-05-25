@@ -4,18 +4,17 @@ newPackage("DGAlgebras",
 	  {Name => "Frank Moore"}
 	  },
      DebuggingMode => true,
-     Headline => "Data type for DG Algebras",
-     Version => "0.51"
+     Headline => "Data type for DG algebras",
+     Version => "0.6"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
         getBasis, toComplex, koszulComplexDGA, acyclicClosure,
-	killCycles, adjoinVariables, homology2,
-       homologyAlgebra, torAlgebra}
+	killCycles, adjoinVariables, homology2, 
+        homologyAlgebra, torAlgebra, maxDegree, StartDegree, EndDegree}
 
 -- Still to document:
--- setDiff, setDiff(DGAlgebra,List), natural, cycles, getBasis(ZZ,DGAlgebra), getBasis(ZZ,Ring), toComplex, koszulComplexDGA(List)
--- acyclicClosure(DGAlgebra,ZZ), acyclicClosure(Ring,ZZ), killCycles, killCycles(DGAlgebra, List), homology2, homologyAlgebra,
+-- acyclicClosure(DGAlgebra,ZZ), acyclicClosure(Ring,ZZ), killCycles, killCycles(DGAlgebra, List), homologyAlgebra,
 -- homologyAlgebra(DGAlgebra), homologyAlgebra(DGAlgebra, ZZ, ZZ), torAlgebra, torAlgebra(Ring), torAlgebra(Ring, ZZ),
 -- torAlgebra(Ring,Ring,ZZ,ZZ), 
 
@@ -23,7 +22,7 @@ export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
 -- Get HH_i(DGA) to work, as well as HH(DGA) return an algebra rather than a graded module
 -- maxDegree of a DGA
 -- taylorResolutionDGA
--- ekResolutionDGA
+-- ekResolutionDGA - I don't think I can do this one yet since the underlying algebra is not a polynomial algebra
 -- trivial Massey operations? strongGolod?
 -- deviations
 -- isHATrivial
@@ -59,8 +58,8 @@ makeDGAlgebra(Ring,List) := (R,degList) -> (
      else
      (
 	A#(symbol natural) = (A.ring)[varsList, Degrees => degList, SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
-	A#(symbol isHomogeneous) = false;
      );
+     A#(symbol isHomogeneous) = false;
      A.natural.cache = new CacheTable;
      A.natural.cache#basisAlgebra = (A.ring)[varsList, Join => false, Degrees => apply(degList, i -> {first i}), SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
      use A.natural;
@@ -100,6 +99,14 @@ getBasis(ZZ,Ring) := opts -> (homDegree,R) -> (
       retVal = map(R^1, R^degList, matrix {tempList});
    );
    retVal
+)
+
+isHomogeneous(DGAlgebra) := (A) -> A.isHomogeneous
+
+maxDegree = method()
+maxDegree(DGAlgebra) := (A) -> (
+  degreesList := degrees A.natural / first;
+  if (any(degreesList, i -> even i)) then infinity else sum degreesList
 )
 
 koszulComplexDGA = method()
@@ -150,8 +157,8 @@ Add.dd
 (koszul gens I).dd
 ///
 
-taylorDGA = method()
-taylorDGA(MonomialIdeal) := (I) -> (
+taylorResolutionDGA = method()
+taylorResolutionDGA(MonomialIdeal) := (I) -> (
    -- not implemented yet.
    A
 )
@@ -167,8 +174,8 @@ toComplex(DGAlgebra) := (A) -> (
 
 TEST ///
 -- trying to fix the dgAlgebra definition problem
-R = ZZ/101[x,y,z]
 -- test 1
+R = ZZ/101[x,y,z]
 A1 = dgAlgebra(R,{{1},{1},{1},{3}})
 setDiff(A1,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
 A1.isHomogeneous
@@ -236,8 +243,12 @@ killCycles(DGAlgebra) := opts -> (A) -> (
 adjoinVariables = method()
 adjoinVariables(DGAlgebra, List) := (A,cycleList) -> (
   -- this function will add a new variable to make the elements of cycles boundaries in a new DG algebra (semifree over the input)
+  local newDegreesList;
   tempDegree := {1} | toList ((#(degree first cycleList)-1):0);
-  newDegreesList := A.Degrees | apply(cycleList, z -> degree z + tempDegree);
+  if isHomogeneous(A) then
+    newDegreesList = A.Degrees | apply(cycleList, z -> degree z + tempDegree)
+  else
+    newDegreesList = A.Degrees | apply(cycleList, z -> {first degree z + 1});
   B := makeDGAlgebra(A.ring,newDegreesList);
   newDiffList := apply(take(flatten entries matrix A.diff, numgens A.natural) | cycleList, f -> substitute(f, B.natural));
   setDiff(B,newDiffList);
@@ -247,7 +258,7 @@ adjoinVariables(DGAlgebra, List) := (A,cycleList) -> (
 acyclicClosure = method(Options => {StartDegree => 1})
 acyclicClosure(Ring,ZZ) := opts -> (R, homologicalDegreeLimit) -> (
   K := koszulComplexDGA(R);
-  acyclicClosure(K,homologicalDegreeLimit)
+  acyclicClosure(K,homologicalDegreeLimit, StartDegree=>opts.StartDegree)
 )
 
 acyclicClosure(DGAlgebra,ZZ) := opts -> (A, homologicalDegreeLimit) -> (
@@ -366,7 +377,7 @@ assert(hh2 == hh2')
 
 -- note that this does not work for some reason (Dan explained it to me at one point but I can't remember.  I think it has
 -- something to do with the fact that in the M2 scripting language, homology(sequence) hijacks all possible calls to homology.
-homology(ZZ,DGAlgebra) := (n,A) -> polyHomology(n,A)
+-- homology(ZZ,DGAlgebra) := (n,A) -> polyHomology(n,A)
 
 -- Temporary fix here for the moment
 homology2 = method();
@@ -447,7 +458,7 @@ makeHomologyRing := (A, cycleList, relList) -> (
   local HA;
   local degreesList;
   baseRing := coefficientRing A.ring;
-  if (A.isHomogeneous) then degreesList = (cycleList / degree) else degreesList = pack((cycleList / degree) / first, 1);
+  if (isHomogeneous A) then degreesList = (cycleList / degree) else degreesList = pack((cycleList / degree) / first, 1);
   varList := toList (X_1..X_(#cycleList));
   polyRing := baseRing[varList, Degrees => degreesList, SkewCommutative => select(toList(0..(#degreesList-1)), i -> odd first degreesList#i)];
   polyRing' := baseRing[varList, Degrees => (degreesList / first), SkewCommutative => select(toList(0..(#degreesList-1)), i -> odd first degreesList#i)];
@@ -485,7 +496,7 @@ findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
   skewList = skewList | apply(select(toList(0..#cycleList-1), i -> odd first degree cycleList#i), i -> i+#(gens A.ring) + #(gens A.natural));
   degList := apply(#(gens A.ring) + #(gens A.natural), i -> degree varsList#i);
   degList = degList | apply(cycleList, i -> degree i);
-  if (not A.isHomogeneous) then degList = pack(degList / first, 1);
+  if (not isHomogeneous A) then degList = pack(degList / first, 1);
   B := baseRing[varsList,MonomialOrder=>{#(gens A.ring)+#(gens A.natural),#cycleList},Degrees=>degList, SkewCommutative=>skewList];
   K := substitute(ideal A.ring, B) + ideal apply(#cycleList, i -> X_(i+1) - substitute(cycleList#i,B));
   assert(isHomogeneous K);
@@ -527,7 +538,7 @@ getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,N) -> (
   (
      (junk,cycleProductMatrix) := coefficients(myMap(matrix{monListHA}),Monomials=>monListA);
      -- make sure the degrees are correct if the ring is homogeneous
-     if (A.isHomogeneous) then
+     if (isHomogeneous A) then
      (
         sourceDegreeList := apply((monListHA / degree), l -> -drop(l,1));
         targetDegreeList := apply((monListA / degree), l -> -drop(l,1));
@@ -735,7 +746,7 @@ homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
 
 homologyAlgebra(DGAlgebra) := (A) -> (
   -- this is a routine that will compute the complete homology algebra
-  -- if the DG Algebra is known to be finite rank free module over the base ring.
+  -- if the DG algebra is known to be finite rank free module over the base ring.
   cycleList := {};
   relList := {};
   n := 1;
@@ -743,19 +754,15 @@ homologyAlgebra(DGAlgebra) := (A) -> (
   local myMap;
   
   -------------------------------------------
-  -- Find the degree bounds needed for the usual homologyAlgebra function call
-  degreesList := degrees A.natural / first;
-  if (any(degreesList, i -> even i))
-     then error "Must supply upper degree bound on generators and relations if there is a DG Algebra generator of even degree.";
-  -- otherwise, all are odd, and we can compute the entire homology algebra
-  maxDegree := sum degreesList;
+  mDegree := maxDegree(A);
+  if (mDegree == infinity) then error "Must supply upper degree bound on generators and relations if there is a DG algebra generator of even degree.";
   
-  n = maxDegree;
-  while (n <= maxDegree and prune homology2(n,A) == 0) do n = n - 1;
+  n = mDegree;
+  while (n <= mDegree and prune homology2(n,A) == 0) do n = n - 1;
   maxHomologyDegree := n;
   -------------------------------------------
   
-  HA = homologyAlgebra(A,maxDegree,maxHomologyDegree);
+  HA = homologyAlgebra(A,mDegree,maxHomologyDegree);
   relList = (ideal HA)_*;
   cycleList = HA.cache.cycles;
   
@@ -765,7 +772,7 @@ homologyAlgebra(DGAlgebra) := (A) -> (
 DGAlgebra ** Ring := (A,S) -> (
   B := makeDGAlgebra(S, A.Degrees);
   newDiff := apply(flatten entries matrix (A.diff), f -> substitute(f,B.natural));
-  B.diff = map(B.natural,B.natural, newDiff);
+  setDiff(B,newDiff);
   B
 )
 
@@ -782,7 +789,7 @@ doc ///
     Data types and basic functions on differential graded (DG) Algebras.
   Description
     Text
-      This package is used to define and manipulate DG Algebras.
+      This package is used to define and manipulate DG algebras.
 ///
 
 doc ///
@@ -809,10 +816,11 @@ doc ///
       * @ TO (killCycles, DGAlgebra) @
       * @ TO (adjoinVariables, DGAlgebra, List) @
       * @ TO (acyclicClosure, DGAlgebra, ZZ) @
+      * @ TO (symbol **, DGAlgebra, Ring) @
+
 ///
 
---* @ TO (**, DGAlgebra, Ring) @
---* @ TO (**, DGAlgebra, DGAlgebra) @
+--      * @ TO (symbol **, DGAlgebra, DGAlgebra) @
 
 doc ///
   Key
@@ -840,7 +848,7 @@ doc ///
   Description
     Text
       This function returns a @ TO DGAlgebra @ A whose underlying algebra is a graded commutative
-      polynomial ring in variables of the degrees input.  The current version of this package
+      polynomial ring in a number of variables equal to the number of the degrees input.  The current version of this package
       does not handle algebras A whose underlying algebra is not a polynomial ring.
     Example
       R = ZZ/101[x,y,z]
@@ -850,7 +858,7 @@ doc ///
     Text
       The resulting DGA will not be graded since the differential given does not respect the grading due to the degrees assigned in the definition.
     Example
-      A.isHomogeneous
+      isHomogeneous(A)
       Add = toComplex(A)
       B = dgAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
       B.natural
@@ -858,16 +866,16 @@ doc ///
     Text
       The result of the above declaration will be graded.
     Example
-      B.isHomogeneous
+      isHomogeneous(B)
       Bdd = toComplex(B)
     Text  
       Note that the differential is not passed into the constructor.  The reason for this (at the moment)
-      is that M2 does not know what ring the differentials are defined over until after the underlying
-      algebra is constructed, so the differential is set later with setDiff.  Many DG Algebras that one
+      is that Macaulay2 does not know what ring the differentials are defined over until after the underlying
+      algebra is constructed, so the differential is set later with setDiff.  Many DG algebras that one
       encounters in commutative algebra have been implemented, however, and do not need to be defined 'by hand'.
-      For example, if one wants to work with the Koszul complex as a DG Algebra, then one should see the command @ TO koszulComplexDGA @.
+      For example, if one wants to work with the Koszul complex as a DG algebra, then one should see the command @ TO koszulComplexDGA @.
      
-      There is currently a bug handling DG Algebras that have no monomials in some degree, but some monomials in a later degree;
+      There is currently a bug handling DG algebras that have no monomials in some degree, but some monomials in a later degree;
       for example if one replaces the 3 in the above example with a 5.
 ///
 
@@ -878,13 +886,6 @@ doc ///
     Returns the Koszul complex as a DGAlgebra
   Usage
     A = koszulComplexDGA(R) or A = koszulComplexDGA(I)
-  Inputs
-    R:Ring 
-      If just a ring is passed in, then it returns the Koszul complex on ideal vars R.
-    I:Ideal 
-      Returns the Koszul complex on gens R as a DGA.
-  Outputs
-    A:DGAlgebra
 ///
 
 doc ///
@@ -942,9 +943,32 @@ doc ///
 
 doc ///
   Key
+    (koszulComplexDGA,List)
+  Headline
+    Define the Koszul complex on a list of elements as a DGAlgebra
+  Usage
+    A = koszulComplexDGA(diffList)
+  Inputs
+    diffList:List
+      A List of RingElements.  The resulting DGAlgebra will be defined over the ring of these elements.
+  Outputs
+    A:DGAlgebra
+///
+
+doc ///
+  Key
+    homology2
+  Headline
+    Computes the homology of a DG algebra as a module.
+  Usage
+    H = homology2(n,A)
+///
+
+doc ///
+  Key
     (homology2,ZZ,DGAlgebra)
   Headline
-    Computes the homology of a DG Algebra
+    Computes the homology of a DG algebra as a module
   Usage
     H = homology2(n,A)
   Inputs
@@ -953,18 +977,578 @@ doc ///
   Outputs
     H:Module
       The nth homology of A.
+  Description
+    Example
+      R = ZZ/32003[x,y,z]
+      A = koszulComplexDGA(R)
+      apply(numgens R+1, i -> numgens prune homology2(i,A))
+///
+
+doc ///
+  Key
+    setDiff
+  Headline
+    Sets the differential of a DGAlgebra manually.
+  Usage
+    d = setDiff(A,diffList)
+///
+
+doc ///
+  Key
+    (setDiff,DGAlgebra,List)
+  Headline
+    Sets the differential of a DGAlgebra manually.
+  Usage
+    d = setDiff(A,diffList)
+  Inputs
+    A:DGAlgebra
+    A:List 
+  Outputs
+    d:RingMap
+      The differential of A.
+  Description
+    Example
+      R = ZZ/101[x,y,z]
+      A = dgAlgebra(R,{{1},{1},{1},{3}})
+      setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+      Add = toComplex(A)
+      Add.dd
+///
+
+doc ///
+  Key
+    (isHomogeneous, DGAlgebra)
+  Headline
+    Determine if the DGAlgebra respects the gradings of the ring it is defined over.
+  Usage
+    isHom = isHomogeneous(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    isHom:Boolean
+      Whether or not the DGA respects the grading
+  Description
+    Example
+      R = ZZ/101[x,y,z]
+      A = dgAlgebra(R,{{1},{1},{1},{3}})
+      setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+      isHomogeneous(A)
+      B = dgAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
+      setDiff(B,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+      isHomogeneous(B)
+///
+
+doc ///
+  Key
+    natural
+  Headline
+    The underlying algebra of a DG algebra.
+  Usage
+    Anat = A.natural
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]
+      A = koszulComplexDGA(R)
+      A.natural
+///
+
+doc ///
+  Key
+    cycles
+  Headline
+    Cycles chosen when computing the homology algebra of a DG algebra
+  Usage
+    A.cycles
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^4,c^5,d^6}
+      A = koszulComplexDGA(R)
+      apply(maxDegree A + 1, i -> numgens prune homology2(i,A))
+      HA = homologyAlgebra(A)
+      numgens HA
+      HA.cache.cycles
+    Text
+///
+
+doc ///
+  Key
+    getBasis
+  Headline
+    Get a basis for a particular homological degree of a DG algebra, or a multigraded ring.
+  Usage
+    getBasis(n,A) or getBasis(n,R)
+///
+
+doc ///
+  Key
+    (getBasis,ZZ,DGAlgebra)
+  Headline
+    Get a basis for a particular homological degree of a DG algebra.
+  Usage
+    M = getBasis(n,A)
+  Inputs
+    n:ZZ
+    A:DGAlgebra
+  Outputs
+    M:Matrix
+      The basis of the desired homological degree of the DG Algebra.
+  Description
+    Text
+      This function is to allow for the retrieval of a basis of a particular homological degree of a DG algebra
+      when the underlying algebra A.natural is multigraded.  In the code, the homological grading is always the first
+      integer in the degree tuple, and so this function returns a matrix consisting of all monomials in homological
+      degree n.  
+    Example
+      R = ZZ/101[a..d, Degrees=>{1,1,1,2}]
+      A =  koszulComplexDGA(R)
+      getBasis(3,A)
+///
+
+doc ///
+  Key
+    (getBasis,ZZ,Ring)
+  Headline
+    Get a basis for a degree of a ring.
+  Usage
+    M = getBasis(n,R)
+  Inputs
+    n:ZZ
+    R:Ring
+  Outputs
+    M:Matrix
+      The basis of the desired degree
+  Description
+    Text
+      This function was not meant for general use, but it fixes the first degree in the degree tuple
+      of the ring R, and finds a basis of that 'slice' of the ring.  It does this by using a cached
+      version of the ring that forgets all other degrees.  A Ring object in Macaulay2 will not have this
+      cached ring by default, but the rings used internally in the DGAlgebras package will.
+///
+
+doc ///
+  Key
+    toComplex
+  Headline
+    Converts a DG Algebra to a ChainComplex
+  Usage
+    C = toComplex(A)
+///
+
+doc ///
+  Key
+    (toComplex,DGAlgebra)
+  Headline
+    Converts a DGAlgebra to a ChainComplex
+  Usage
+    C = toComplex(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    C:ChainComplex
+      The DG algebra A as a ChainComplex
+  Description
+    Example
+      R = ZZ/101[x_1..x_10]
+      A = koszulComplexDGA(R)
+      C = toComplex(A)
+    Text
+      Warning:  The term order that the internal command koszul uses to order the monomials is not GRevLex, and so the differentials
+      used in koszul and koszulComplexDGA will not match up exactly.  Also, this command will only execute if all of the variables
+      of the DGAlgebra A are of odd homological degree.  Otherwise, you need to specify a homological upper bound, see
+      @ TO (toComplex, ZZ, DGAlgebra) @.
+///
+
+doc ///
+  Key
+    (toComplex,ZZ,DGAlgebra)
+  Headline
+    Converts a DGAlgebra to a ChainComplex, up to a specified homological degree.
+  Usage
+    C = toComplex(n,A)
+  Inputs
+    n:ZZ
+    A:DGAlgebra
+  Outputs
+    C:ChainComplex
+      The DGAlgebra A as a ChainComplex, up to homological degree n.
+  Description
+    Text
+      If your DGAlgebra has any generators in even homological degree, then one must
+      use this version of the function, rather than @ TO (toComplex,DGAlgebra) @
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
+      A = acyclicClosure(R,3)
+    Text
+      The above will be a resolution of the residue field over R, since R is a complete intersection.
+    Example
+      C = toComplex(10,A)
+      apply(10, i -> prune HH_i(C))
+///
+
+doc ///
+  Key
+    acyclicClosure
+  Headline
+    Compute the acyclic closure of a DGAlgebra.
+  Usage
+    B = acyclicClosure(A,n)
+///
+
+doc ///
+  Key
+    (acyclicClosure,DGAlgebra,ZZ)
+  Headline
+    Compute theae acyclic closure of a DGAlgebra.
+  Usage
+    B = acyclicClosure(A,n)
+  Inputs
+    A:DGAlgebra
+    n:ZZ
+  Outputs
+    B:DGAlgebra
+      The acyclic closure of the DG Algebra A up to homological degree n.
+  Description
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
+      A = koszulComplexDGA(R);
+      B = acyclicClosure(A,3)
+      toComplex(8,B)
+      B.diff
+///
+
+doc ///
+  Key
+    (acyclicClosure,Ring,ZZ)
+  Headline
+    Compute the acyclic closure of the residue field of a ring up to a certain degree
+  Usage
+    A = acyclicClosure(R,3)
+  Inputs
+    R:Ring
+    n:ZZ
+  Outputs
+    A:DGAlgebra
+  Description
+    Text
+      This package always chooses the Koszul complex on a generating set for the maximal ideal as a starting
+      point, and then computes from there, using the function @ TO (acyclicClosure,DGAlgebra,ZZ) @.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^4-d^3}
+      A = acyclicClosure(R,3)
+      A.diff
+///
+
+doc ///
+  Key
+    (symbol **, DGAlgebra, Ring)
+  Headline
+    Tensor product of a DGAlgebra and another ring.
+  Usage
+    B = A ** S
+  Inputs
+    A:DGAlgebra
+    R:Ring
+  Outputs
+    B:DGAlgebra
+  Description
+    Text
+      Tensor product of a DGAlgebra and another ring (typically a quotient of A.ring).
+    Example
+      R = ZZ/101[a,b,c,d]
+      A = koszulComplexDGA(R)
+      S = R/ideal{a^3,a*b*c}
+      B = A ** S
+      toComplex(B)
+///
+
+doc ///
+  Key
+    killCycles
+  Headline
+    Adjoins variables to make non-bounding cycles boundaries in the lowest positive degree with nontrivial homology.
+  Usage
+    B = killCycles(A)
+///
+
+doc ///
+  Key
+    (killCycles,DGAlgebra)
+  Headline
+    Adjoins variables to make non-bounding cycles boundaries in the lowest positive degree with nontrivial homology.
+  Usage
+    B = killCycles(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    B:DGAlgebra
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3-d^4}
+      A = koszulComplexDGA(R)
+      A.diff
+      B = killCycles(A)
+      B.diff
+///
+
+doc ///
+  Key
+    adjoinVariables
+  Headline
+    Adjoins variables to kill specified cycles.
+  Usage
+    B = adjoinVariables(A,cycleList)
+///
+
+doc ///
+  Key
+    (adjoinVariables,DGAlgebra,List)
+  Headline
+    Adjoins variables to make the specified cycles boundaries.
+  Usage
+    B = adjoinVariables(A,cycleList)
+  Inputs
+    A:DGAlgebra
+    cycleList:List
+  Outputs
+    B:DGAlgebra
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3-d^4}
+      A = koszulComplexDGA(R)
+      A.diff
+      prune homology2(1,A)
+      B = adjoinVariables(A,{a^2*T_1})
+      B.diff
+      prune homology2(1,B)
+///
+
+doc ///
+  Key
+    homologyAlgebra
+  Headline
+    Compute the homology algebra of a DGAlgebra.
+  Usage
+    HA = homologyAlgebra(A)
+///
+
+doc ///
+  Key
+    (homologyAlgebra,DGAlgebra)
+  Headline
+    Compute the homology algebra of a DGAlgebra.
+  Usage
+    HA = homologyAlgebra(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    HA:Ring
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+      A = koszulComplexDGA(R)
+      apply(maxDegree A + 1, i -> numgens prune homology2(i,A))
+      HA = homologyAlgebra(A)
+    Text
+      Note that HA is a graded commutative polynomial ring (i.e. an exterior algebra) since R is a complete intersection.
+    Example  
+      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4,a^3*b^3*c^3*d^3}
+      A = koszulComplexDGA(R)
+      apply(maxDegree A + 1, i -> numgens prune homology2(i,A))
+      HA = homologyAlgebra(A)
+      numgens HA
+      HA.cache.cycles
+    Example
+      Q = ZZ/101[x,y,z]
+      I = ideal{y^3,z*x^2,y*(z^2+y*x),z^3+2*x*y*z,x*(z^2+y*x),z*y^2,x^3,z*(z^2+2*x*y)}
+      R = Q/I
+      A = koszulComplexDGA(R)
+      apply(maxDegree A + 1, i -> numgens prune homology2(i,A))
+      HA = homologyAlgebra(A)
+    Text
+      One can check that HA has Poincare duality since R is Gorenstein.
+///
+
+doc ///
+  Key
+    (homologyAlgebra,DGAlgebra,ZZ,ZZ)
+  Headline
+    Compute the homology algebra of a DGAlgebra A up to certain generating degree and relation degree
+  Usage
+    HA = homologyAlgebra(A,genDegree,relDegree)
+  Inputs
+    A:DGAlgebra
+    genDegree:ZZ
+    relDegree:ZZ
+  Outputs
+    HA:Ring
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]
+      S = R/ideal{a^4,b^4,c^4,d^4}
+      A = acyclicClosure(R,3)
+      B = A ** S
+      HB = homologyAlgebra(B,7,14)
+///
+
+doc ///
+  Key
+    torAlgebra
+  Headline
+    Computes the Tor algebra of a surjection R --> S or of a ring R.
+  Usage
+    torAlgebra(R) or torAlgebra(R,S,7,14)
+///
+
+doc ///
+  Key
+    (torAlgebra,Ring)
+  Headline
+    Computes the Tor algebra of a ring
+  Usage
+    torR = torAlgebra(R)
+  Inputs
+    R:Ring
+  Outputs
+    torR:Ring
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]
+      TorR = torAlgebra(R)
+      S = R/ideal{a^3,b^3,c^3,d^5}
+      TorS = torAlgebra(S)
+///
+
+doc ///
+  Key
+    (torAlgebra,Ring,ZZ)
+  Headline
+    Compute the Tor algebra of a ring up to a specified degree
+  Usage
+    TorR = torAlgebra(R,n)
+  Inputs
+    R:Ring
+    n:ZZ
+  Outputs
+    TorR:Ring
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a^2*b^2*c^3*d^2}
+      TorR = torAlgebra(R,5)
+///
+
+doc ///
+  Key
+    (torAlgebra,Ring,Ring,ZZ,ZZ)
+  Headline
+    Computes Tor_R(S,k) up to a specified generating and relating degree.
+  Usage
+    TorRS = torAlgebra(R,S,genDegree,relDegree)
+  Inputs
+    R:Ring
+    S:Ring
+    genDegree:ZZ
+    relDegree:ZZ
+  Outputs
+    TorRS:Ring
+  Description
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+      M = coker matrix {{a^3*b^3*c^3*d^3}};
+      S = R/ideal{a^3*b^3*c^3*d^3}
+      HB = torAlgebra(R,S,4,8)
+      numgens HB
+      apply(5,i -> #(flatten entries getBasis(i,HB)))      
+      Mres = res(M, LengthLimit => 8)
+    Text
+      Note that the Tor algebra has trivial multiplication, since the map from R to S is a Golod homomorphism by a theorem of Levin and Avramov.
+///
+
+doc ///
+  Key
+    maxDegree
+  Headline
+    Computes the maximum homological degree of a DGAlgebra
+  Usage
+    maxDegree(A)
+///
+
+doc ///
+  Key
+    (maxDegree,DGAlgebra)
+  Headline
+    Computes the maximum homological degree of a DGAlgebra
+  Usage
+    mDegree = maxDegree(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    mDegree:ZZ
+      the maximum degree of the DGAlgebra A.
+  Description
+    Text
+      Note that if the DGAlgebra A has any generators of even degree, then maxDegree returns infinity.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
+      A = koszulComplexDGA(R)
+      B = acyclicClosure(A,3)
+      maxDegree(A)
+      maxDegree(B)
+///
+
+doc ///
+  Key
+    StartDegree
+  Headline
+    option to specify the degree to start computing the acyclic closure and killing cycles
+  Usage
+    acyclicClosure(...,StartDegree=>n) or killCycles(...,StartDegree=>n)
+///
+
+doc ///
+  Key
+    [acyclicClosure,StartDegree]
+  Headline
+    option to specify the degree to start computing the acyclic closure
+  Usage
+    acyclicClosure(...,StartDegree=>n)
+///
+
+doc ///
+  Key
+    [killCycles,StartDegree]
+  Headline
+    option to specify the degree to start looking for cycles
+  Usage
+    killCycles(...,StartDegree=>n)
+///
+
+doc ///
+  Key
+    [killCycles,EndDegree]
+  Headline
+    option to specify the degree to stop looking for cycles
+  Usage
+    killCycles(...,EndDegree=>n)
+///
+
+doc ///
+  Key
+    EndDegree
+  Headline
+    option to specify the degree to stop computing killing cycles
+  Usage
+    killCycles(...,StartDegree=>n)
 ///
 
 end
 
 uninstallPackage "DGAlgebras"
 restart
--- must pass this check and install without errors before checking in!
 installPackage "DGAlgebras"
 check "DGAlgebras"
 viewHelp DGAlgebras
 
---Tutorial
+--Tutorial (Include in a separate file?)
 -- Koszul Complex and homology algebras
 restart
 loadPackage "DGAlgebras"
