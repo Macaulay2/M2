@@ -176,9 +176,10 @@ rmfile(o:file):void := (
      while true do (
 	  when x is null do break
 	  is thiscell:FileCell do (
-	       if thiscell.file == o then 
-	       when prevcell is null do openfiles = thiscell.next
-	       is prevcell:FileCell do prevcell.next = thiscell.next
+	       if thiscell.file == o then (
+	       	    when prevcell is null do openfiles = thiscell.next
+	       	    is prevcell:FileCell do prevcell.next = thiscell.next
+		    )
 	       else prevcell = x;
 	       x = thiscell.next;
 	       )));
