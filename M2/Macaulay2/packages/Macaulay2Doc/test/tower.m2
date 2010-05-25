@@ -148,6 +148,7 @@ assert(a * rawInverse a == 1_A)
 --------------------------------------
 -- gcd -------------------------------
 --------------------------------------
+debug Core
 testGCD = (F1,F2) -> (
      G1 := rawGCD(F1,F2);
      (G,U,V) := rawExtendedGCD(F1,F2);
@@ -155,7 +156,7 @@ testGCD = (F1,F2) -> (
      assert(G == G1);
      (G,U,V)
      )
-debug Core
+
 R = rawTowerRing(17, 1:"a")
 a = rawRingVar(R,0)
 F1 = (a+1)*(a+2)
@@ -197,6 +198,9 @@ F1 = (b-a)*(b+a)
 F2 = (b-a)^2*b
 (G,U,V) = testGCD(F1,F2) -- ok
 
+F1 = (b^4-a*b-1)^100*(b-a-1);
+F2 = (b^4-a*b-1)*(b-a-1)^100;
+time (G,U,V) = testGCD(F1,F2)
 
 U*F1 + V*F2
 G
@@ -209,6 +213,22 @@ a*a
 (b+1)*(b+1)
 b*b
 
+-- example: gcd over a quotient ring which is a domain
+debug Core
+R = rawTowerRing(17, ("a","b"))
+a = rawRingVar(R,0)
+b = rawRingVar(R,1)
+F = a^3-a-2
+A = rawTowerQuotientRing(R, (F, 0_R))
+a = rawRingVar(A,0)
+b = rawRingVar(A,1)
+
+time F1 = (b^4-a*b-1)^100*(b-a-1);
+F2 = (b^4-a*b-1)*(b-a-1)^100;
+time (G,U,V) = rawExtendedGCD(F1,F2)
+time (G,U,V) = testGCD(F1,F2)
+F12 = (b^4-a*b-1)*(b-a-1)
+assert(G == F12)
 
 end
 load "~/src/M2/Macaulay2/packages/Macaulay2Doc/test/tower.m2"
