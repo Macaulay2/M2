@@ -5,7 +5,7 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG algebras",
-     Version => "0.6"
+     Version => "0.61"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
