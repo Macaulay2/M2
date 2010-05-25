@@ -1,9 +1,14 @@
 header "int main () { return 0; }";
 
-poly0 := tarray(int);
-polyN := tarray(poly);
-poly := polyN or poly0;
-x := poly(polyN(polyN(poly0(2,3,4),poly0(2,3)),polyN(poly0(2,3,4,5),poly0(2,3,7))));
+A := {+ x:int };
+B := {+ y:int };
+C := A or B;
+f(x:C):int := when x is A do 1 is B do 2 else 3;	    -- oops!  This needs to be fixed.
+
+-- poly0 := tarray(int);
+-- polyN := tarray(poly);
+-- poly := polyN or poly0;
+-- x := poly(polyN(polyN(poly0(2,3,4),poly0(2,3)),polyN(poly0(2,3,4,5),poly0(2,3,7))));
 
 -- fun (P : A -> B -> C) (Q : A -> B) (R : A) => P R (Q R)
 --      : (A -> B -> C) -> (A -> B) -> A -> C
