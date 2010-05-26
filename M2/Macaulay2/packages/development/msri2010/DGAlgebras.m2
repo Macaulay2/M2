@@ -5,29 +5,27 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG algebras",
-     Version => "0.61"
+     Version => "0.7"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
         getBasis, toComplex, koszulComplexDGA, acyclicClosure,
-	killCycles, adjoinVariables, homology2, 
-        homologyAlgebra, torAlgebra, maxDegree, StartDegree, EndDegree}
+	killCycles, getGenerators, adjoinVariables, homology2, deviations,
+        homologyAlgebra, torAlgebra, maxDegree, StartDegree, EndDegree,
+	isHomologyAlgebraTrivial}
 
 -- Still to document:
--- acyclicClosure(DGAlgebra,ZZ), acyclicClosure(Ring,ZZ), killCycles, killCycles(DGAlgebra, List), homologyAlgebra,
--- homologyAlgebra(DGAlgebra), homologyAlgebra(DGAlgebra, ZZ, ZZ), torAlgebra, torAlgebra(Ring), torAlgebra(Ring, ZZ),
--- torAlgebra(Ring,Ring,ZZ,ZZ), 
+-- All caught up!
 
 -- Other things to do:
--- Get HH_i(DGA) to work, as well as HH(DGA) return an algebra rather than a graded module
--- maxDegree of a DGA
--- taylorResolutionDGA
+-- ask mike about why basis returns the monomials in a different order than the specified monomial order
+-- make integer options on exported methods actual options rather than function parameters
+--   for example: toComplex, acyclicClosure, getGenerators, homologyAlgebra, torAlgebra
+-- Get HH_i(DGA) to work (talk to Dan?)
+-- taylorResolutionDGA - worth doing?
 -- ekResolutionDGA - I don't think I can do this one yet since the underlying algebra is not a polynomial algebra
 -- trivial Massey operations? strongGolod?
--- deviations
--- isHATrivial
 -- Document the code
--- Help file entries (see above!)
 
 -----------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
@@ -61,7 +59,7 @@ makeDGAlgebra(Ring,List) := (R,degList) -> (
      );
      A#(symbol isHomogeneous) = false;
      A.natural.cache = new CacheTable;
-     A.natural.cache#basisAlgebra = (A.ring)[varsList, Join => false, Degrees => apply(degList, i -> {first i}), SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
+     A.natural.cache#basisAlgebra = (A.ring)[varsList, Join => false, MonomialOrder => GRevLex, Degrees => apply(degList, i -> {first i}), SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
      use A.natural;
      A#(symbol Degrees) = degList;
      A#(symbol cache) = new CacheTable;
@@ -95,6 +93,7 @@ getBasis(ZZ,Ring) := opts -> (homDegree,R) -> (
    tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit)) / myMap;
    if (tempList == {}) then retVal = map((R)^1,(R)^0, 0) else
    (
+      tempList = reverse sort tempList;
       degList := apply(tempList, m -> -degree m);
       retVal = map(R^1, R^degList, matrix {tempList});
    );
@@ -146,15 +145,22 @@ koszulComplexDGA(Ideal) := (I) -> (
 koszulComplexDGA(List) := (ringElts) -> koszulComplexDGA(ideal ringElts);
 
 TEST ///
--- ask mike about ordering the basis using the specified term order in basis
+restart
+loadPackage "DGAlgebras"
 debug DGAlgebras
 R = ZZ/101[a,b,c]
 I = ideal{a^3,b^3,c^3,a^2*b^2*c^2}
 A = koszulComplexDGA(I)
 getBasis(2,A.natural)
 Add = toComplex(A)
-Add.dd
-(koszul gens I).dd
+Add.dd_2
+(koszul gens I).dd_2
+-- something up here...
+B = A.natural.cache.basisAlgebra
+use B
+-- why are these not the same?  I have code that will sort them, but there should be a way to fix this.
+flatten entries basis(2,B)
+reverse sort flatten entries basis(2,B)
 ///
 
 taylorResolutionDGA = method()
@@ -377,39 +383,69 @@ assert(hh2 == hh2')
 
 -- note that this does not work for some reason (Dan explained it to me at one point but I can't remember.  I think it has
 -- something to do with the fact that in the M2 scripting language, homology(sequence) hijacks all possible calls to homology.
--- homology(ZZ,DGAlgebra) := (n,A) -> polyHomology(n,A)
+--homology(ZZ,DGAlgebra) := (n,A) -> polyHomology(n,A)
+homology(DGAlgebra) := opts -> (A) -> homologyAlgebra(A)
 
 -- Temporary fix here for the moment
-homology2 = method();
+homology2 = method()
 homology2(ZZ,DGAlgebra) := (n,A) -> polyHomology(n,A)
+
+deviations = method()
+deviations(Ring,ZZ) := (R,n) -> tally degrees torAlgebra(R,n)
 
 torAlgebra = method()
 torAlgebra(Ring,ZZ) := (R,n) -> (
   -- since we are not yet implementing the Hopf structure, only the algebra structure, we need not
   -- actually use DGAlgebras to compute the Tor algebra.  We use the built in resolution function
   -- for the resolution of R/(ideal vars R) below since it is much faster.
-  -- TODO: make the below return a bigraded algebra if R is homogeneous.
   baseRing := coefficientRing R;
   kRes := res(coker vars R, LengthLimit => n);
-  bettiNums := apply((length kRes)+1, i -> rank source kRes.dd_i);
+  bettiNums := apply((length kRes)+1, i -> degrees source kRes.dd_i);
   local torSoFar;
+  local cacheTorSoFar;
+  local degreeList;
+  local skewList;
+  local numNewVars;
+  local dimInCurDegree;
+  local newDegreeList;
   if (length kRes == 0) then baseRing else (
      currentDegree := 1;
-     newVars := toList (X_1..X_(bettiNums#currentDegree));
-     degreeList := toList ((bettiNums#currentDegree):1);
-     skewList := toList (0..((bettiNums#currentDegree)-1));
+     newVars := toList (X_1..X_(#(bettiNums#currentDegree)));
+     if isHomogeneous R then degreeList = apply(bettiNums#currentDegree, i -> {currentDegree} | i) else degreeList = toList (#(bettiNums#currentDegree):{1});
+     skewList = toList (0..#(bettiNums#currentDegree)-1);
+     -- need to also define a cached version of the ring with only the homological grading in the homogeneous case
      torSoFar = baseRing[newVars,Degrees=>degreeList, SkewCommutative=>skewList];
+     if not isHomogeneous R then cacheTorSoFar = torSoFar else cacheTorSoFar = baseRing[newVars, Degrees => apply(degreeList, i -> {first i}), SkewCommutative => skewList];
+     torSoFar.cache = new CacheTable;
+     torSoFar.cache#basisAlgebra = cacheTorSoFar;
      currentDegree = currentDegree + 1;
-     while(currentDegree <= n) do (
-        dimInCurDegree := hilbertFunction(currentDegree,torSoFar);
-        numNewVars := bettiNums#currentDegree - dimInCurDegree;
-	-- the below check will only fail if R is a complete intersection, and currentDegree = 3.  The numNewVars are the
-	-- deviations of the ring R; these vanish rigidly by a theorem of Halperin.
+     while currentDegree <= n do (
+        -- this is the command that must change.  I think just doing a setminus from the basis list in the resln minus
+	-- the basis list of the algebra should do the trick.
+	if isHomogeneous R then (
+           -- below we use a Tally object to find the new basis degrees we need to add in the homogeneous case
+	   torSoFarTally := tally degrees source getBasis(currentDegree,torSoFar);
+	   allDegreesTally := tally apply(bettiNums#currentDegree, i -> flatten {currentDegree,i});
+	   newDegreeList = flatten apply(pairs (allDegreesTally - torSoFarTally), p -> toList (p#1:p#0));
+	   numNewVars = #newDegreeList;  
+	)
+        else
+	(
+	   dimInCurDegree = hilbertFunction(currentDegree,torSoFar);
+           numNewVars = #bettiNums#currentDegree - dimInCurDegree;
+	   newDegreeList = toList (numNewVars:currentDegree);
+	);
+	-- the below check will only fail if R is a complete intersection, and currentDegree = 3 (or earlier, if R is regular)
+	-- The numNewVars are the deviations of the ring R; these vanish rigidly by a theorem of Halperin.
+	-- They are returned with the deviations command
 	if (numNewVars != 0) then (	 
            newVars = newVars | toList (X_((numgens torSoFar)+1)..X_((numgens torSoFar) + numNewVars));
-           degreeList = degreeList | toList (numNewVars:currentDegree);
+           degreeList = degreeList | newDegreeList;
            if (odd currentDegree) then skewList = skewList | toList ((numgens torSoFar)..((numgens torSoFar) + numNewVars - 1));
            torSoFar = baseRing[newVars,Degrees=>degreeList, SkewCommutative=>skewList];
+           if not isHomogeneous R then cacheTorSoFar = torSoFar else cacheTorSoFar = baseRing[newVars, Degrees => apply(degreeList, i -> {first i}), SkewCommutative => skewList];
+	   torSoFar.cache = new CacheTable;
+	   torSoFar.cache#basisAlgebra = cacheTorSoFar;
            currentDegree = currentDegree + 1;
 	)
         else currentDegree = n+1;
@@ -432,12 +468,14 @@ TEST ///
 restart
 loadPackage "DGAlgebras"
 debug DGAlgebras
-R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
-use R3
+R1 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
+TorR1 = torAlgebra(R1,4)
+devR1 = deviations(R1,4)
+use R1
 M = coker matrix {{x^2*y^3*z^4}}
 Mres = res(M, LengthLimit => 7)
-R4 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
-time TorR3R4 = torAlgebra(R3,R4,7,21)
+R2 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
+time TorR1R2 = torAlgebra(R1,R2,7,21)
 -- or course, the multiplication is trivial, since the map R3 --> R4 is Golod
 numgens TorR3R4
 numgens ideal TorR3R4
@@ -603,7 +641,7 @@ time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
 time apply(5,i -> numgens prune homology2(i,A))
 -- ~1.6 seconds on mbp, with graded differentials
-time HA = homologyAlgebra(A)
+time HA = homology(A)
 assert(numgens HA == 34)
 assert(numgens ideal HA == 581)
 assert(#(support numerator reduceHilbert hilbertSeries HA) == 2)
@@ -697,6 +735,11 @@ getGenerators(DGAlgebra,ZZ) := (A,genDegreeLimit) -> (
   cycleList
 )
 
+getGenerators(DGAlgebra) := (A) -> (
+  mDegree := maxDegree(A);
+  if (mDegree == infinity) then error "Must specify maximum homological degree of generators." else getGenerators(A,mDegree)
+)
+
 getRelations = method()
 getRelations(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
    relList := (ideal HA)_*;
@@ -769,6 +812,28 @@ homologyAlgebra(DGAlgebra) := (A) -> (
   HA
 )
 
+isHomologyAlgebraTrivial = method()
+isHomologyAlgebraTrivial(DGAlgebra,ZZ,ZZ) := (A,genLimit,relLimit) -> (
+   HA := homologyAlgebra(A,genLimit,relLimit);
+   totalHomologyRank := sum(apply(genLimit + 1, i -> numgens prune homology2(i,A))) - 1;
+   totalHomologyRank == numgens HA
+)
+
+TEST ///
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+M = coker matrix {{a^3*b^3*c^3*d^3}};
+S = R/ideal{a^3*b^3*c^3*d^3}
+A = acyclicClosure(R,4)
+B = A ** S
+isHomologyAlgebraTrivial(B,4,8)
+-- returns true since R --> S is Golod
+R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+A = koszulComplexDGA(R)
+isHomologyAlgebraTrivial(A,4,8)
+-- false, since R is Gorenstein, and so HA has Poincare Duality
+///
+
 DGAlgebra ** Ring := (A,S) -> (
   B := makeDGAlgebra(S, A.Degrees);
   newDiff := apply(flatten entries matrix (A.diff), f -> substitute(f,B.natural));
@@ -808,6 +873,7 @@ doc ///
       
       Information about a DG algebra
       * @ TO (homology2,ZZ,DGAlgebra) @
+      * @ TO (homology,DGAlgebra) @
       * @ TO (homologyAlgebra,DGAlgebra) @
       * @ TO (homologyAlgebra,DGAlgebra,ZZ,ZZ) @
       
@@ -1370,6 +1436,21 @@ doc ///
 
 doc ///
   Key
+    (homology,DGAlgebra)
+  Headline
+    Compute the homology algebra of a DGAlgebra.
+  Usage
+    HA = homology(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    HA:Ring
+  SeeAlso
+    (homologyAlgebra,DGAlgebra)
+///
+
+doc ///
+  Key
     (homologyAlgebra,DGAlgebra,ZZ,ZZ)
   Headline
     Compute the homology algebra of a DGAlgebra A up to certain generating degree and relation degree
@@ -1497,6 +1578,137 @@ doc ///
 
 doc ///
   Key
+    isHomologyAlgebraTrivial
+  Headline
+    determines if the homology algebra of a DGAlgebra is trivial
+  Usage
+    isHomologyAlgebraTrivial(A,genLimit,relLimit) 
+///
+
+doc ///
+  Key
+    (isHomologyAlgebraTrivial,DGAlgebra,ZZ,ZZ)
+  Headline
+    determines if the homology algebra of a DGAlgebra is trivial
+  Usage
+    isTriv = isHomologyAlgebraTrivial(A,genLimit,relLimit) 
+  Inputs
+    A:DGAlgebra
+    genLimit:ZZ
+      maximum homological degree to look for generators of H(A)
+    relLimit:ZZ
+      maximum homological degree to look for relations of H(A)
+  Outputs
+    isTriv:Boolean
+  Description
+    Text
+      This function computes the homology algebra of the DGAlgebra A and determines if the multiplication on H(A) is trivial.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+      M = coker matrix {{a^3*b^3*c^3*d^3}};
+      S = R/ideal{a^3*b^3*c^3*d^3}
+      A = acyclicClosure(R,4)
+      B = A ** S
+      isHomologyAlgebraTrivial(B,4,8)
+    Text
+      The command returns true since R --> S is Golod.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+      A = koszulComplexDGA(R)
+      isHomologyAlgebraTrivial(A,4,8)
+    Text
+      The command returns false, since R is Gorenstein, and so HA has Poincare Duality, hence the multiplication
+      is far from trivial.
+///
+
+doc ///
+  Key
+    getGenerators
+  Headline
+    returns a list of cycles whose images generate HH(A) as an algebra
+  Usage
+    cycleList = getGenerators(A)
+///
+
+doc ///
+  Key
+    (getGenerators,DGAlgebra)
+  Headline
+    returns a list of cycles whose images generate HH(A) as an algebra
+  Usage
+    cycleList = getGenerators(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    cycleList:List
+  Description
+    Text
+      This version of the function should only be used if all algebra generators of A are in odd homological degree.
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3,a^2*b^2*c^2}
+      A = koszulComplexDGA(R)
+      netList getGenerators(A)
+///
+
+doc ///
+  Key
+    (getGenerators,DGAlgebra,ZZ)
+  Headline
+    returns a list of cycles whose images generate HH(A) as an algebra up to a certain homological degree
+  Usage
+    cycleList = getGenerators(A,n)
+  Inputs
+    A:DGAlgebra
+    n:ZZ
+  Outputs
+    cycleList:List
+  Description
+    Text
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3,a^2*b^2*c^2}
+      A = koszulComplexDGA(R)
+      netList getGenerators(A,2)
+      netList getGenerators(A)
+///
+
+doc ///
+  Key
+    deviations
+  Headline
+    computes the deviations of the input ring
+  Usage
+    devTally = deviations(R,n)
+///
+
+doc ///
+  Key
+    (deviations,Ring,ZZ)
+  Headline
+    computes the deviations of the input ring
+  Usage
+    devTally = deviations(R,n)
+  Inputs
+    R:Ring
+    n:ZZ
+  Outputs
+    devTally:Tally
+  Description
+    Text
+      This command computes the deviations of the ring R.  The deviations are the same as the degrees of the generators of
+      the acyclic closure of R, or the degrees of the generators of the Tor algebra of R.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal {a^3,b^3,c^3,d^3}
+      deviations(R,4)
+      S = R/ideal{a^2*b^2*c^2*d^2}
+      deviations(S,4)
+      T = ZZ/101[a,b]/ideal {a^2-b^3}
+      deviations(T,4)
+    Text
+      Note that the deviations of T are not graded, since T is not graded.
+///
+
+doc ///
+  Key
     StartDegree
   Headline
     option to specify the degree to start computing the acyclic closure and killing cycles
@@ -1538,6 +1750,15 @@ doc ///
     option to specify the degree to stop computing killing cycles
   Usage
     killCycles(...,StartDegree=>n)
+///
+
+doc ///
+  Key
+    [getBasis,Limit]
+  Headline
+    option to specify the maximum number of basis elements to return
+  Usage
+    getBasis(...,Limit=>n)
 ///
 
 end
