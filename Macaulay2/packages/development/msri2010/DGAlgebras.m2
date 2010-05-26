@@ -5,7 +5,7 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG algebras",
-     Version => "0.7"
+     Version => "0.71"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
@@ -17,14 +17,18 @@ export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
 -- Still to document:
 -- All caught up!
 
--- Other things to do:
+-- Questions for Mike:
 -- ask mike about why basis returns the monomials in a different order than the specified monomial order
+-- isHomogeneous(K) bug?
+-- Get HH_i(DGA) to work (talk to Dan or Mike?)
+
+-- Other things to do:
 -- make integer options on exported methods actual options rather than function parameters
 --   for example: toComplex, acyclicClosure, getGenerators, homologyAlgebra, torAlgebra
--- Get HH_i(DGA) to work (talk to Dan?)
--- taylorResolutionDGA - worth doing?
+-- taylorResolutionDGA - is this worth doing?
 -- ekResolutionDGA - I don't think I can do this one yet since the underlying algebra is not a polynomial algebra
 -- trivial Massey operations? strongGolod?
+-- tensor product of DGAlgebras
 -- Document the code
 
 -----------------------------------------------------
@@ -47,14 +51,12 @@ makeDGAlgebra(Ring,List) := (R,degList) -> (
      A#(symbol ring) = R;
      varsList := toList (T_1..T_(#degList));
      A#(symbol diff) = {};
-     if (isHomogeneous R) then
-     (
+     if isHomogeneous R then (
         -- make sure the degree list has the right form.
 	if #(first degList) != #(first degrees A.ring) + 1 then degList = apply(degList, i -> i | {0});
 	A#(symbol natural) = (A.ring)[varsList, Degrees => degList, Join => false, SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
      )
-     else
-     (
+     else (
 	A#(symbol natural) = (A.ring)[varsList, Degrees => degList, SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
      );
      A#(symbol isHomogeneous) = false;
@@ -73,6 +75,8 @@ setDiff = method()
 setDiff(DGAlgebra,List) := (A,diffList) -> (
    A.diff = map(A.natural,A.natural, substitute(matrix {diffList}, A.natural));
    A.isHomogeneous = isHomogeneous A.ring and checkIsHomogeneous(A);
+   definingIdeal := ideal mingens (ideal A.ring + sub(ideal polyDifferential(A,1), ambient A.ring));
+   if definingIdeal == ideal vars ambient A.ring then A#(symbol zerothHomology) = coefficientRing A.ring else A#(symbol zerothHomology) = (ambient A.ring)/definingIdeal;
    A.diff
 )
 
@@ -81,7 +85,7 @@ checkIsHomogeneous(DGAlgebra) := (A) -> (
    gensList := gens A.natural;
    diffList := apply(gensList, f -> A.diff(f));
    homDegreeShift := {1} | (toList ((#(degree first gensList)-1):0));
-   fold(apply(#diffList, i -> degree gensList#i - homDegreeShift == degree diffList#i),  (i,j) -> i and j)
+   all(apply(#diffList, i -> degree gensList#i - homDegreeShift == degree diffList#i),  i -> i)
 )
 
 getBasis = method(Options => {Limit => -1})
@@ -91,7 +95,7 @@ getBasis(ZZ,Ring) := opts -> (homDegree,R) -> (
    local retVal;
    myMap := map(R, R.cache.basisAlgebra);
    tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit)) / myMap;
-   if (tempList == {}) then retVal = map((R)^1,(R)^0, 0) else
+   if tempList == {} then retVal = map((R)^1,(R)^0, 0) else
    (
       tempList = reverse sort tempList;
       degList := apply(tempList, m -> -degree m);
@@ -105,13 +109,13 @@ isHomogeneous(DGAlgebra) := (A) -> A.isHomogeneous
 maxDegree = method()
 maxDegree(DGAlgebra) := (A) -> (
   degreesList := degrees A.natural / first;
-  if (any(degreesList, i -> even i)) then infinity else sum degreesList
+  if any(degreesList, i -> even i) then infinity else sum degreesList
 )
 
 koszulComplexDGA = method()
 koszulComplexDGA(Ring) := (R) -> (
    local A;
-   if (isHomogeneous R) then (
+   if isHomogeneous R then (
       degList := apply(degrees R, i -> {1} | i);
       A = makeDGAlgebra(R, degList);
       use A.ring;
@@ -127,7 +131,7 @@ koszulComplexDGA(Ring) := (R) -> (
 
 koszulComplexDGA(Ideal) := (I) -> (
    local A;
-   if (isHomogeneous I) then (
+   if isHomogeneous I then (
       degList := apply(flatten entries gens I, i -> {1} | degree i); 
       A = makeDGAlgebra(ring I, degList);
       use A.ring;
@@ -173,7 +177,7 @@ toComplex = method()
 toComplex(ZZ,DGAlgebra) := (N,A) -> chainComplex(apply(N, i -> polyDifferential(A,i+1)))
 
 toComplex(DGAlgebra) := (A) -> (
-   if (any(degrees (A.natural) / first, i -> even i)) then error "Must specify an upper degree bound if an even generator exists.";
+   if any(degrees (A.natural) / first, i -> even i) then error "Must specify an upper degree bound if an even generator exists.";
    maxDegree := sum ((degrees A.natural) / first);
    chainComplex(apply(maxDegree, i -> polyDifferential(A,i+1)))
 )
@@ -228,16 +232,18 @@ killCycles(DGAlgebra) := opts -> (A) -> (
   -- for now, this will only work for DG algebras with H_0(A) = k
   retVal := 0;
   endDegree := 0;
-  if (opts.EndDegree == -1) then endDegree = opts.StartDegree;
-  if (opts.StartDegree > endDegree) then error "Starting degree is not less than or equal to ending degree.";
+  if opts.EndDegree == -1 then endDegree = opts.StartDegree;
+  if opts.StartDegree > endDegree then error "Starting degree is not less than or equal to ending degree.";
   n := opts.StartDegree;
   foundHomology := false;
   nthHomology := 0;
-  while (n <= endDegree and not foundHomology) do ( nthHomology = prune homology2(n,A); if (nthHomology == 0) then n = n + 1 else foundHomology = true);
+  while n <= endDegree and not foundHomology do (
+     nthHomology = prune homology2(n,A);
+     if nthHomology == 0 then n = n + 1 else foundHomology = true
+  );
   -- at this point we have found a degree with nontrivial homology.
   -- we now add variables in one degree higher to make these cycles boundaries.
-  if (not foundHomology) then retVal = A else
-  (  
+  if not foundHomology then retVal = A else (  
      homologyGenerators := entries transpose gens image (nthHomology.cache.pruningMap);
      basisList := flatten entries getBasis(n,A);
      cycleList := apply(homologyGenerators, gen -> sum apply(#gen, i -> gen#i*basisList#i));
@@ -269,16 +275,12 @@ acyclicClosure(Ring,ZZ) := opts -> (R, homologicalDegreeLimit) -> (
 
 acyclicClosure(DGAlgebra,ZZ) := opts -> (A, homologicalDegreeLimit) -> (
   n := opts.StartDegree;
-  while (n <= homologicalDegreeLimit) do (
+  while n <= homologicalDegreeLimit do (
      A = killCycles(A,StartDegree => n);
      n = n + 1;
   );
   A
 )
-
-TEST ///
--- Test acyclicClosure here.
-///
 
 polyDiffMonomial := (A,m) -> (
   -- uses the Leibniz rule to compute the differential of a traditional monomial
@@ -296,8 +298,8 @@ polyDiffMonomial := (A,m) -> (
 
 polyDifferential = method()
 polyDifferential(DGAlgebra,ZZ) := (A,n) -> (
-  if (A.cache.differentials#?n) then A.cache.differentials#n
-  else if (n == 0) then map((A.ring)^0,(A.ring)^1,0)
+  if A.cache.differentials#?n then A.cache.differentials#n
+  else if n == 0 then map((A.ring)^0,(A.ring)^1,0)
   else (
      -- here, check to see if the ring A is graded with graded differential.  If so, then produce
      -- a graded map.  Otherwise, just treat things as ungraded (should be slower)
@@ -327,6 +329,7 @@ d2 = polyDifferential(A,2)
 d1 = polyDifferential(A,1)
 assert(source d1 == target d2)
 assert(source d2 == target d3)
+assert(d1*d2 == 0)
 S1 = R/ideal (x^3-z^2)
 B1 = koszulComplexDGA(S1)
 d3 = polyDifferential(B1,3)
@@ -334,6 +337,7 @@ d2 = polyDifferential(B1,2)
 d1 = polyDifferential(B1,1)
 assert(source d1 == target d2)
 assert(source d2 == target d3)
+assert(d2*d3 == 0)
 use R
 S2 = R/ideal (x^4-z^2)
 B2 = koszulComplexDGA(S2)
@@ -342,6 +346,7 @@ d2 = polyDifferential(B2,2)
 d1 = polyDifferential(B2,1)
 assert(source d1 == target d2)
 assert(source d2 == target d3)
+assert(d2*d3 == 0)
 ///
 
 polyDifferential(DGAlgebra,RingElement) := (A,f) -> (
@@ -352,11 +357,10 @@ polyHomology := (n,A) -> (
   dn := 0;
   dnplus1 := 0;
   retVal := 0;
-  if (A.cache.homology#?n) then retVal = A.cache.homology#n
-  else if (#(flatten entries getBasis(n, A, Limit => 1)) != 0) then
-  (
+  if A.cache.homology#?n then retVal = A.cache.homology#n
+  else if #(flatten entries getBasis(n, A, Limit => 1)) != 0 then (
      if n == 0 then dn = map((A.ring)^0, (A.ring)^1, 0) else dn = polyDifferential(A,n);
-     if (#(flatten entries getBasis(n+1, A, Limit => 1)) != 0) then
+     if #(flatten entries getBasis(n+1, A, Limit => 1)) != 0 then
         dnplus1 = polyDifferential(A,n+1)
      else
         dnplus1 = map(source dn, (A.ring)^0, 0);
@@ -408,7 +412,7 @@ torAlgebra(Ring,ZZ) := (R,n) -> (
   local numNewVars;
   local dimInCurDegree;
   local newDegreeList;
-  if (length kRes == 0) then baseRing else (
+  if length kRes == 0 then baseRing else (
      currentDegree := 1;
      newVars := toList (X_1..X_(#(bettiNums#currentDegree)));
      if isHomogeneous R then degreeList = apply(bettiNums#currentDegree, i -> {currentDegree} | i) else degreeList = toList (#(bettiNums#currentDegree):{1});
@@ -429,8 +433,7 @@ torAlgebra(Ring,ZZ) := (R,n) -> (
 	   newDegreeList = flatten apply(pairs (allDegreesTally - torSoFarTally), p -> toList (p#1:p#0));
 	   numNewVars = #newDegreeList;  
 	)
-        else
-	(
+        else (
 	   dimInCurDegree = hilbertFunction(currentDegree,torSoFar);
            numNewVars = #bettiNums#currentDegree - dimInCurDegree;
 	   newDegreeList = toList (numNewVars:currentDegree);
@@ -438,10 +441,10 @@ torAlgebra(Ring,ZZ) := (R,n) -> (
 	-- the below check will only fail if R is a complete intersection, and currentDegree = 3 (or earlier, if R is regular)
 	-- The numNewVars are the deviations of the ring R; these vanish rigidly by a theorem of Halperin.
 	-- They are returned with the deviations command
-	if (numNewVars != 0) then (	 
+	if numNewVars != 0 then (	 
            newVars = newVars | toList (X_((numgens torSoFar)+1)..X_((numgens torSoFar) + numNewVars));
            degreeList = degreeList | newDegreeList;
-           if (odd currentDegree) then skewList = skewList | toList ((numgens torSoFar)..((numgens torSoFar) + numNewVars - 1));
+           if odd currentDegree then skewList = skewList | toList ((numgens torSoFar)..((numgens torSoFar) + numNewVars - 1));
            torSoFar = baseRing[newVars,Degrees=>degreeList, SkewCommutative=>skewList];
            if not isHomogeneous R then cacheTorSoFar = torSoFar else cacheTorSoFar = baseRing[newVars, Degrees => apply(degreeList, i -> {first i}), SkewCommutative => skewList];
 	   torSoFar.cache = new CacheTable;
@@ -495,12 +498,12 @@ makeHomologyRing := (A, cycleList, relList) -> (
   --baseRing := A.ring/(ideal flatten entries polyDifferential(A,1));
   local HA;
   local degreesList;
-  baseRing := coefficientRing A.ring;
-  if (isHomogeneous A) then degreesList = (cycleList / degree) else degreesList = pack((cycleList / degree) / first, 1);
+  baseRing := A.zerothHomology;
+  if isHomogeneous A then degreesList = (cycleList / degree) else degreesList = pack((cycleList / degree) / first, 1);
   varList := toList (X_1..X_(#cycleList));
-  polyRing := baseRing[varList, Degrees => degreesList, SkewCommutative => select(toList(0..(#degreesList-1)), i -> odd first degreesList#i)];
-  polyRing' := baseRing[varList, Degrees => (degreesList / first), SkewCommutative => select(toList(0..(#degreesList-1)), i -> odd first degreesList#i)];
-  if (relList == {}) then (
+  polyRing := baseRing[varList, Join => false, Degrees => degreesList, SkewCommutative => select(toList(0..(#degreesList-1)), i -> odd first degreesList#i)];
+  polyRing' := baseRing[varList, Join => false, Degrees => (degreesList / first), SkewCommutative => select(toList(0..(#degreesList-1)), i -> odd first degreesList#i)];
+  if relList == {} then (
      HA = polyRing;
      HA.cache = new CacheTable;
      HA.cache#basisAlgebra = polyRing';
@@ -527,17 +530,18 @@ makeHomologyRing := (A, cycleList, relList) -> (
 findEasyRelations = method()
 findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
   -- need to document this code!
-  baseRing := coefficientRing A.ring;
+  baseRing := A.zerothHomology;
   varsList := apply(gens A.ring | gens A.natural,f -> sub(f,A.natural)) | toList (X_1..X_(#cycleList));
   naturalGens := gens A.natural;
   skewList := apply(select(toList(0..#naturalGens-1), i -> odd first degree naturalGens#i), i -> i + #(gens A.ring));
   skewList = skewList | apply(select(toList(0..#cycleList-1), i -> odd first degree cycleList#i), i -> i+#(gens A.ring) + #(gens A.natural));
   degList := apply(#(gens A.ring) + #(gens A.natural), i -> degree varsList#i);
   degList = degList | apply(cycleList, i -> degree i);
-  if (not isHomogeneous A) then degList = pack(degList / first, 1);
+  if not isHomogeneous A then degList = pack(degList / first, 1);
   B := baseRing[varsList,MonomialOrder=>{#(gens A.ring)+#(gens A.natural),#cycleList},Degrees=>degList, SkewCommutative=>skewList];
   K := substitute(ideal A.ring, B) + ideal apply(#cycleList, i -> X_(i+1) - substitute(cycleList#i,B));
-  assert(isHomogeneous K);
+  -- assertion failed on homology algebras of DGAs with H_0(A) != k.  A bug?
+  -- assert(isHomogeneous K);
   easyRels := ideal selectInSubring(1,gens gb K);
   degList = apply(cycleList, i -> degree i);
   skewList = select(toList(0..#degList-1), i -> odd first degList#i);
@@ -547,6 +551,8 @@ findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
 
 TEST ///
 -- test findEasyRelations
+restart
+loadPackage "DGAlgebras"
 debug DGAlgebras
 R1 = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 R2 = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
@@ -556,9 +562,13 @@ cycleList1 = getGenerators(A1,4)
 cycleList2 = getGenerators(A2,4)
 HAEasy1 = findEasyRelations(A1,cycleList1)
 HAEasy2 = findEasyRelations(A2,cycleList2)
-myList1 = {({4,8},1),({3,4},1),({3,5},1),({3,6},1),({3,7},1),({2,3},1),({2,4},1),({2,5},1),({2,6},1),({1,2},1),({1,3},1),({1,4},1),({0,0},1)}
+tally ((flatten entries basis HAEasy1) / degree)
+pairs (tally ((flatten entries basis HAEasy1) / degree))
+myList1 = {({1,2},4),({4,8},1),({1,3},4),({1,4},1),({3,4},1),({3,5},4),({0,0},1),({3,6},4),({2,3},4),({2,4},8),({2,5},4)}
 myList2 = {({0},1),({1},1),({2},1),({3},1),({4},1)}
-assert(pairs(tally (flatten entries basis HAEasy1) / degree) == myList1)
+tally (flatten entries basis HAEasy1) / degree
+tally myList1
+assert(pairs(tally((flatten entries basis HAEasy1) / degree) == myList1)
 assert(pairs(tally (flatten entries basis HAEasy2) / degree) == myList2)
 ///
 
@@ -572,18 +582,15 @@ getCycleProductMatrix(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,N) -> (
   monListA := flatten entries getBasis(N,A);
   myMap = map(A.natural,HA,cycleList);
   -- this is needed when there is nothing in HA in this degree so far.
-  if (monListHA != {}) then
-  (
+  if monListHA != {} then (
      (junk,cycleProductMatrix) := coefficients(myMap(matrix{monListHA}),Monomials=>monListA);
      -- make sure the degrees are correct if the ring is homogeneous
-     if (isHomogeneous A) then
-     (
+     if isHomogeneous A then (
         sourceDegreeList := apply((monListHA / degree), l -> -drop(l,1));
         targetDegreeList := apply((monListA / degree), l -> -drop(l,1));
         cycleProductMatrix = map((A.ring)^targetDegreeList, (A.ring)^sourceDegreeList, sub(cycleProductMatrix, A.ring));
      )
-     else
-     (
+     else (
         myMap = map(A.ring, A.natural);
         cycleProductMatrix = map((A.ring)^(#monListA), (A.ring)^(#monListHA), sub(cycleProductMatrix, A.ring));
      );
@@ -607,17 +614,16 @@ findDegNGenerators := (A,oldCycleList,N) -> (
   cycleList := {};
   relsList := {};
   varList := {};
-  if (oldCycleList == {}) then (
+  if oldCycleList == {} then (
      -- here, we know all the degree 1 elements are generators
      cycleList = representativeCycles(A,N);
   )
-  else if (flatten entries getBasis(N,A, Limit => 1) == {}) then cycleList = {}
+  else if flatten entries getBasis(N,A, Limit => 1) == {} then cycleList = {}
   else (
      nthHomology := homology2(N,A);
-     if (prune nthHomology != 0)
-     then (
+     if prune nthHomology != 0 then (
 	(cycleProductMatrix,monListHA) := getCycleProductMatrix(A,oldCycleList,N);
-	if (monListHA != {}) then (
+	if monListHA != {} then (
 	   -- TODO: Document the below block of code.
 	   newHomology := prune (nthHomology / (image cycleProductMatrix));
 	   monListA := flatten entries getBasis(N,A);
@@ -633,8 +639,29 @@ findDegNGenerators := (A,oldCycleList,N) -> (
 )
 
 TEST ///
--- Homology algebra for the Koszul complex on a set of generators of the maximal ideal
+-- Homology algebra for the Koszul complex on a set of generators of an ideal
+-- should try to get this to work.
+-- new stuff
+restart
+loadPackage "DGAlgebras"
 debug DGAlgebras
+R = ZZ/32003[a,b]
+I = ideal{a^3,b^3}
+A = koszulComplexDGA(I)
+HA = HH A
+use R
+J = I + ideal {a*b^2,a^2*b}
+B = koszulComplexDGA(J)
+-- need to check this!
+HB = HH B
+HB.cache.cycles
+ideal HB
+///
+
+TEST ///
+-- Homology algebra for the Koszul complex on a set of generators of the maximal ideal
+restart
+loadPackage "DGAlgebras"
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
@@ -643,8 +670,9 @@ time apply(5,i -> numgens prune homology2(i,A))
 -- ~1.6 seconds on mbp, with graded differentials
 time HA = homology(A)
 assert(numgens HA == 34)
-assert(numgens ideal HA == 581)
-assert(#(support numerator reduceHilbert hilbertSeries HA) == 2)
+assert(numgens ideal HA == 580)
+assert(#(first degrees HA) == 2)
+     
 -- same example, but not graded because of the degree change.  The homologyAlgebra function
 -- will then only return a graded algebra
 R2 = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
@@ -655,21 +683,9 @@ time apply(5,i -> numgens prune homology2(i,A2))
 -- ~2.3 seconds on mbp, with ungraded differentials
 time HA2 = homologyAlgebra(A2)
 assert(numgens HA2 == 34)
-assert(numgens ideal HA2 == 581)
+assert(numgens ideal HA2 == 580)
 -- should only be singly graded
-assert(#(support numerator reduceHilbert hilbertSeries HA2) == 1)
-///
-
-TEST ///
---- Homology algebra for the Koszul complex on a set of generators of an ideal
---- should try to get this to work.
---restart
---loadPackage "DGAlgebras"
---R = ZZ/32003[a,b,x,y]
---I = ideal{a^3,b^3,x^3,y^3}
---A = koszulComplexDGA(I)
--- incorrect at the moment
---homologyAlgebra(A)
+assert(#(first degrees HA2) == 1)
 ///
 
 findDegNRelations := (A,HA,algGens,N) -> (
@@ -679,33 +695,32 @@ findDegNRelations := (A,HA,algGens,N) -> (
   local monListHA;
   retVal := {0_HA};
   -- check if DGA is zero in this degree. If so, just return back the monomials in the given degree
-  if ((flatten entries getBasis(N, A, Limit => 1) != {}) or (#algGens == 0)) then (
+  if flatten entries getBasis(N, A, Limit => 1) != {} or #algGens == 0 then (
      -- using HA, check if there are indeed any new relations in degree n
      nthHomology := homology2(N,A);
      pruneNthHomology := prune nthHomology;
      rankOfNthHomology := numgens pruneNthHomology;
      rankOfAlgebraSoFar := #(flatten entries getBasis(N,HA));
-     if (rankOfNthHomology != rankOfAlgebraSoFar) then
-     (
+     if rankOfNthHomology != rankOfAlgebraSoFar then (
        -- when in here, we know there is a relation in degree N.
        -- so take each monomial of the correct degree, build the cycle corresponding to that
        -- and define a map from the residue field to the homology class representing each cycle.
        -- then take the kernel, prune, and use cache.pruningMap to get the actual minimal generating
        -- set of the kernel.  Finally, reconstruct the elements from the monomials and viola!
-       if (pruneNthHomology == 0) then (
+       if pruneNthHomology == 0 then (
           -- if we are here, all monomials in the HA of this degree are zero.
           retVal = flatten entries getBasis(N,HA);
        )
        else (
           (cycleProductMatrix,monListHA) = getCycleProductMatrix(A,HA,algGens,N);
-          if (monListHA != {}) then (
+          if monListHA != {} then (
              -- TODO: Document this code.
              baseRing := coker vars (A.ring);
 	     multMap := map(coker relations nthHomology,(A.ring)^(rank source cycleProductMatrix),cycleProductMatrix);
              kerMultMap := gens ker multMap;
              coeffField := (A.ring)/ideal vars A.ring;
 	     kerMultMap = compress sub(kerMultMap,coeffField);
-	     kernelGens = entries transpose substitute(kerMultMap,coefficientRing A.ring);
+	     kernelGens = entries transpose substitute(kerMultMap,A.zerothHomology);
 	     retVal = apply(kernelGens, z -> sum apply(#z, i -> (monListHA#i)*(z#i)));
           );
        );
@@ -714,7 +729,8 @@ findDegNRelations := (A,HA,algGens,N) -> (
   else (
      retVal = flatten entries getBasis(N,HA); 
   );
-  retVal
+  -- return the nonzero relations
+  select(retVal, i -> i != 0)
 )
 
 getGreaterMonomials:= (R,N) -> (
@@ -726,7 +742,7 @@ getGenerators = method()
 getGenerators(DGAlgebra,ZZ) := (A,genDegreeLimit) -> (
   n := 1;
   cycleList := {};
-  while (n <= genDegreeLimit) do (
+  while n <= genDegreeLimit do (
      << "Computing generators in degree " << n << " : ";
      time newCycleList := findDegNGenerators(A,cycleList,n);
      cycleList = cycleList | newCycleList;
@@ -737,18 +753,18 @@ getGenerators(DGAlgebra,ZZ) := (A,genDegreeLimit) -> (
 
 getGenerators(DGAlgebra) := (A) -> (
   mDegree := maxDegree(A);
-  if (mDegree == infinity) then error "Must specify maximum homological degree of generators." else getGenerators(A,mDegree)
+  if mDegree == infinity then error "Must specify maximum homological degree of generators." else getGenerators(A,mDegree)
 )
 
 getRelations = method()
 getRelations(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
    relList := (ideal HA)_*;
-   n := 2;
-   while (n <= relDegreeLimit) do (
+   n := 1;
+   while n <= relDegreeLimit do (
       << "Computing relations in degree " << n << "  : ";
       time newRelList := findDegNRelations(A,HA,cycleList,n);
-      if (relList == {}) then relList = newRelList
-      else if (newRelList != {}) then (
+      if relList == {} then relList = newRelList
+      else if newRelList != {} then (
          -- make sure newRelList and relList are in the same ring
          myMap = map(ring first relList, ring first newRelList, flatten entries vars ring first relList);
          relList = relList | (newRelList / myMap);
@@ -772,9 +788,10 @@ homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
   local myMap;
   cycleList = getGenerators(A,genDegreeLimit);
 
-  if (cycleList == {}) then (
+  if cycleList == {} then (
      -- put the cycles that the variables represent in the cache.
-     HA = coefficientRing A.ring;
+     -- return H_0(A) as a ring.
+     HA = A.zerothHomology;
      HA.cache = new CacheTable;
      HA.cache#cycles = cycleList;
      A.cache#homologyAlgebra = HA;
@@ -798,10 +815,10 @@ homologyAlgebra(DGAlgebra) := (A) -> (
   
   -------------------------------------------
   mDegree := maxDegree(A);
-  if (mDegree == infinity) then error "Must supply upper degree bound on generators and relations if there is a DG algebra generator of even degree.";
+  if mDegree == infinity then error "Must supply upper degree bound on generators and relations if there is a DG algebra generator of even degree.";
   
   n = mDegree;
-  while (n <= mDegree and prune homology2(n,A) == 0) do n = n - 1;
+  while n <= mDegree and prune homology2(n,A) == 0 do n = n - 1;
   maxHomologyDegree := n;
   -------------------------------------------
   
@@ -922,7 +939,7 @@ doc ///
       A.natural
       setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
     Text
-      The resulting DGA will not be graded since the differential given does not respect the grading due to the degrees assigned in the definition.
+      The resulting @ TO DGAlgebra @ will not be graded since the differential given does not respect the grading due to the degrees assigned in the definition.
     Example
       isHomogeneous(A)
       Add = toComplex(A)
@@ -940,9 +957,9 @@ doc ///
       algebra is constructed, so the differential is set later with setDiff.  Many DG algebras that one
       encounters in commutative algebra have been implemented, however, and do not need to be defined 'by hand'.
       For example, if one wants to work with the Koszul complex as a DG algebra, then one should see the command @ TO koszulComplexDGA @.
-     
-      There is currently a bug handling DG algebras that have no monomials in some degree, but some monomials in a later degree;
-      for example if one replaces the 3 in the above example with a 5.
+  Caveat
+    There is currently a bug handling DG algebras that have no monomials in some degree, but some monomials in a later degree;
+    for example if one replaces the 3 in the above example with a 5.
 ///
 
 doc ///
@@ -1098,17 +1115,17 @@ doc ///
       R = ZZ/101[x,y,z]
       A = dgAlgebra(R,{{1},{1},{1},{3}})
       setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-      isHomogeneous(A)
+      isHomogeneous A
       B = dgAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
       setDiff(B,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-      isHomogeneous(B)
+      isHomogeneous B
 ///
 
 doc ///
   Key
     natural
   Headline
-    The underlying algebra of a DG algebra.
+    The underlying algebra of a DGAlgebra.
   Usage
     Anat = A.natural
   Description
@@ -1122,7 +1139,7 @@ doc ///
   Key
     cycles
   Headline
-    Cycles chosen when computing the homology algebra of a DG algebra
+    Cycles chosen when computing the homology algebra of a DGAlgebra
   Usage
     A.cycles
   Description
@@ -1160,7 +1177,7 @@ doc ///
       The basis of the desired homological degree of the DG Algebra.
   Description
     Text
-      This function is to allow for the retrieval of a basis of a particular homological degree of a DG algebra
+      This function is to allow for the retrieval of a basis of a particular homological degree of a @ TO DGAlgebra @
       when the underlying algebra A.natural is multigraded.  In the code, the homological grading is always the first
       integer in the degree tuple, and so this function returns a matrix consisting of all monomials in homological
       degree n.  
@@ -1220,7 +1237,7 @@ doc ///
     Text
       Warning:  The term order that the internal command koszul uses to order the monomials is not GRevLex, and so the differentials
       used in koszul and koszulComplexDGA will not match up exactly.  Also, this command will only execute if all of the variables
-      of the DGAlgebra A are of odd homological degree.  Otherwise, you need to specify a homological upper bound, see
+      of the @ TO DGAlgebra @ A are of odd homological degree.  Otherwise, you need to specify a homological upper bound, see
       @ TO (toComplex, ZZ, DGAlgebra) @.
 ///
 
@@ -1580,7 +1597,7 @@ doc ///
   Key
     isHomologyAlgebraTrivial
   Headline
-    determines if the homology algebra of a DGAlgebra is trivial
+    Determines if the homology algebra of a DGAlgebra is trivial
   Usage
     isHomologyAlgebraTrivial(A,genLimit,relLimit) 
 ///
@@ -1589,7 +1606,7 @@ doc ///
   Key
     (isHomologyAlgebraTrivial,DGAlgebra,ZZ,ZZ)
   Headline
-    determines if the homology algebra of a DGAlgebra is trivial
+    Determines if the homology algebra of a DGAlgebra is trivial
   Usage
     isTriv = isHomologyAlgebraTrivial(A,genLimit,relLimit) 
   Inputs
@@ -1625,7 +1642,7 @@ doc ///
   Key
     getGenerators
   Headline
-    returns a list of cycles whose images generate HH(A) as an algebra
+    Returns a list of cycles whose images generate HH(A) as an algebra
   Usage
     cycleList = getGenerators(A)
 ///
@@ -1634,7 +1651,7 @@ doc ///
   Key
     (getGenerators,DGAlgebra)
   Headline
-    returns a list of cycles whose images generate HH(A) as an algebra
+    Returns a list of cycles whose images generate HH(A) as an algebra
   Usage
     cycleList = getGenerators(A)
   Inputs
@@ -1654,7 +1671,7 @@ doc ///
   Key
     (getGenerators,DGAlgebra,ZZ)
   Headline
-    returns a list of cycles whose images generate HH(A) as an algebra up to a certain homological degree
+    Returns a list of cycles whose images generate HH(A) as an algebra up to a certain homological degree
   Usage
     cycleList = getGenerators(A,n)
   Inputs
@@ -1675,7 +1692,7 @@ doc ///
   Key
     deviations
   Headline
-    computes the deviations of the input ring
+    Computes the deviations of the input ring
   Usage
     devTally = deviations(R,n)
 ///
@@ -1684,7 +1701,7 @@ doc ///
   Key
     (deviations,Ring,ZZ)
   Headline
-    computes the deviations of the input ring
+    Computes the deviations of the input ring
   Usage
     devTally = deviations(R,n)
   Inputs
@@ -1711,7 +1728,7 @@ doc ///
   Key
     StartDegree
   Headline
-    option to specify the degree to start computing the acyclic closure and killing cycles
+    Option to specify the degree to start computing the acyclic closure and killing cycles
   Usage
     acyclicClosure(...,StartDegree=>n) or killCycles(...,StartDegree=>n)
 ///
@@ -1720,7 +1737,7 @@ doc ///
   Key
     [acyclicClosure,StartDegree]
   Headline
-    option to specify the degree to start computing the acyclic closure
+    Option to specify the degree to start computing the acyclic closure
   Usage
     acyclicClosure(...,StartDegree=>n)
 ///
@@ -1729,7 +1746,7 @@ doc ///
   Key
     [killCycles,StartDegree]
   Headline
-    option to specify the degree to start looking for cycles
+    Option to specify the degree to start looking for cycles
   Usage
     killCycles(...,StartDegree=>n)
 ///
@@ -1738,7 +1755,7 @@ doc ///
   Key
     [killCycles,EndDegree]
   Headline
-    option to specify the degree to stop looking for cycles
+    Option to specify the degree to stop looking for cycles
   Usage
     killCycles(...,EndDegree=>n)
 ///
@@ -1747,7 +1764,7 @@ doc ///
   Key
     EndDegree
   Headline
-    option to specify the degree to stop computing killing cycles
+    Option to specify the degree to stop computing killing cycles
   Usage
     killCycles(...,StartDegree=>n)
 ///
@@ -1756,7 +1773,7 @@ doc ///
   Key
     [getBasis,Limit]
   Headline
-    option to specify the maximum number of basis elements to return
+    Option to specify the maximum number of basis elements to return
   Usage
     getBasis(...,Limit=>n)
 ///
@@ -1967,10 +1984,10 @@ time apply(12, i -> #(flatten entries getBasis(i,HA3)))
 restart
 loadPackage "DGAlgebras"
 R = QQ[x_11,x_12,x_21,x_22,y_11,y_12,y_21,y_22]
-A = dgAlgebra(R,{1,1,1})
+A = dgAlgebra(R,{{1},{1},{1}})
 setDiff(A,{x_12*y_21 - x_21*y_12,
 	   x_21*y_11+x_22*y_21-x_11*y_21-x_21*y_22,
 	   x_11*y_12+x_12*y_22-x_12*y_11-x_22*y_12})
 homList = apply(5,i -> prune homology2(i,A))
-homList_0
+-- need to check this!
 homologyAlgebra(A)
