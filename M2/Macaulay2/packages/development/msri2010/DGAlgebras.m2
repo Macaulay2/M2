@@ -5,22 +5,27 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG algebras",
-     Version => "0.71"
+     Version => "0.72"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
         getBasis, toComplex, koszulComplexDGA, acyclicClosure,
 	killCycles, getGenerators, adjoinVariables, homology2, deviations,
         homologyAlgebra, torAlgebra, maxDegree, StartDegree, EndDegree,
-	isHomologyAlgebraTrivial}
+	isHomologyAlgebraTrivial, findTrivialMasseyOperation}
+
+-- current bugs:
+-- Not finding relations coming from boundaries properly when H_0(A) is not the residue field
 
 -- Still to document:
--- All caught up!
+-- (isHomologyAlgebraTrivial,DGAlgebra)
+-- findTrivialMasseyOperation,
+-- (findTrivialMasseyOperation,DGAlgebra)
+-- (findTrivialMasseyOperation,DGAlgebra,ZZ)
 
 -- Questions for Mike:
--- ask mike about why basis returns the monomials in a different order than the specified monomial order
--- isHomogeneous(K) bug?
 -- Get HH_i(DGA) to work (talk to Dan or Mike?)
+-- use the hilbert polynomial to speed up the computation?
 
 -- Other things to do:
 -- make integer options on exported methods actual options rather than function parameters
@@ -97,7 +102,8 @@ getBasis(ZZ,Ring) := opts -> (homDegree,R) -> (
    tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit)) / myMap;
    if tempList == {} then retVal = map((R)^1,(R)^0, 0) else
    (
-      tempList = reverse sort tempList;
+      -- move this to an assert?
+      -- tempList = reverse sort tempList;
       degList := apply(tempList, m -> -degree m);
       retVal = map(R^1, R^degList, matrix {tempList});
    );
@@ -147,25 +153,6 @@ koszulComplexDGA(Ideal) := (I) -> (
 )
 
 koszulComplexDGA(List) := (ringElts) -> koszulComplexDGA(ideal ringElts);
-
-TEST ///
-restart
-loadPackage "DGAlgebras"
-debug DGAlgebras
-R = ZZ/101[a,b,c]
-I = ideal{a^3,b^3,c^3,a^2*b^2*c^2}
-A = koszulComplexDGA(I)
-getBasis(2,A.natural)
-Add = toComplex(A)
-Add.dd_2
-(koszul gens I).dd_2
--- something up here...
-B = A.natural.cache.basisAlgebra
-use B
--- why are these not the same?  I have code that will sort them, but there should be a way to fix this.
-flatten entries basis(2,B)
-reverse sort flatten entries basis(2,B)
-///
 
 taylorResolutionDGA = method()
 taylorResolutionDGA(MonomialIdeal) := (I) -> (
@@ -298,6 +285,7 @@ polyDiffMonomial := (A,m) -> (
 
 polyDifferential = method()
 polyDifferential(DGAlgebra,ZZ) := (A,n) -> (
+  local newDiffl;
   if A.cache.differentials#?n then A.cache.differentials#n
   else if n == 0 then map((A.ring)^0,(A.ring)^1,0)
   else (
@@ -309,10 +297,14 @@ polyDifferential(DGAlgebra,ZZ) := (A,n) -> (
      targetList := getBasis(n-1,A);
      targetDegreeList := apply(degrees source targetList, l -> -drop(l,1));
      targetList = flatten entries targetList;
-     diffList := matrix {apply(sourceList, m -> polyDiffMonomial(A,m))};
-     coeffMatrix := substitute((coefficients(diffList, Monomials => targetList))#1, A.ring);
-     newDiffl := map((A.ring)^(targetDegreeList), (A.ring)^(sourceDegreeList), coeffMatrix);
-     A.cache.differentials#n = newDiffl;
+     mDegree := maxDegree A;
+     if (n == mDegree + 1) then newDiffl = map((A.ring)^(targetDegreeList), (A.ring)^0, 0)
+     else if n > mDegree + 1 then newDiffl = map((A.ring)^0,(A.ring)^0,0) else (
+        diffList := matrix {apply(sourceList, m -> polyDiffMonomial(A,m))};
+        coeffMatrix := substitute((coefficients(diffList, Monomials => targetList))#1, A.ring);
+        newDiffl = map((A.ring)^(targetDegreeList), (A.ring)^(sourceDegreeList), coeffMatrix);
+        A.cache.differentials#n = newDiffl;
+     );
      newDiffl
   )
 )
@@ -374,7 +366,6 @@ polyHomology := (n,A) -> (
 
 TEST ///
 --- test homology2
-debug DGAlgebras
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
@@ -468,9 +459,6 @@ torAlgebra(Ring,Ring,ZZ,ZZ) := (R,S,genDegree,relDegree) -> (
 
 TEST ///
 -- Test torAlgebra here.
-restart
-loadPackage "DGAlgebras"
-debug DGAlgebras
 R1 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
 TorR1 = torAlgebra(R1,4)
 devR1 = deviations(R1,4)
@@ -478,11 +466,14 @@ use R1
 M = coker matrix {{x^2*y^3*z^4}}
 Mres = res(M, LengthLimit => 7)
 R2 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
-time TorR1R2 = torAlgebra(R1,R2,7,21)
--- or course, the multiplication is trivial, since the map R3 --> R4 is Golod
-numgens TorR3R4
-numgens ideal TorR3R4
-apply(21, i -> #(flatten entries getBasis(i,TorR3R4)))
+-- genDegree = 6 takes ~17 seconds
+-- genDegree = 7 takes ~103 seconds
+time TorR1R2 = torAlgebra(R1,R2,6,12)
+-- the multiplication is trivial, since the map R3 --> R4 is Golod
+numgens TorR1R2
+numgens ideal TorR1R2
+apply(21, i -> #(flatten entries getBasis(i,TorR1R2)))
+assert(sum oo - 1 == numgens TorR1R2)
 ///
 
 representativeCycles = method()
@@ -495,7 +486,6 @@ representativeCycles(DGAlgebra,ZZ) := (A,n) -> (
 )
 
 makeHomologyRing := (A, cycleList, relList) -> (
-  --baseRing := A.ring/(ideal flatten entries polyDifferential(A,1));
   local HA;
   local degreesList;
   baseRing := A.zerothHomology;
@@ -527,21 +517,22 @@ makeHomologyRing := (A, cycleList, relList) -> (
 
 -- This code finds the relations that exist in the homology algebra that come from simply the relations that exist
 -- in the ring, not including the ones that come because one must include the boundaries in determining the relations
-findEasyRelations = method()
-findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
+findEasyRelations = method(Options => {Hilbert => null})
+findEasyRelations(DGAlgebra,List) := opts -> (A, cycleList) -> (
   -- need to document this code!
-  baseRing := A.zerothHomology;
-  varsList := apply(gens A.ring | gens A.natural,f -> sub(f,A.natural)) | toList (X_1..X_(#cycleList));
+  -- this function should only be called (at this point) if H_0(A) is the residue field.  Not sure how to compute this
+  -- unless this is the case.
+  baseRing := coefficientRing A.ring;
+  varsList := apply(gens A.ring | gens A.natural, f -> sub(f,A.natural)) | toList (X_1..X_(#cycleList));
   naturalGens := gens A.natural;
-  skewList := apply(select(toList(0..#naturalGens-1), i -> odd first degree naturalGens#i), i -> i + #(gens A.ring));
-  skewList = skewList | apply(select(toList(0..#cycleList-1), i -> odd first degree cycleList#i), i -> i+#(gens A.ring) + #(gens A.natural));
-  degList := apply(#(gens A.ring) + #(gens A.natural), i -> degree varsList#i);
+  skewList := apply(select(toList(0..#naturalGens-1), i -> odd first degree naturalGens#i), i -> i + numgens A.ring);
+  skewList = skewList | apply(select(toList(0..#cycleList-1), i -> odd first degree cycleList#i), i -> i + numgens A.natural + numgens A.ring);
+  degList := apply(numgens A.natural + numgens A.ring, i -> degree varsList#i);
   degList = degList | apply(cycleList, i -> degree i);
-  if not isHomogeneous A then degList = pack(degList / first, 1);
-  B := baseRing[varsList,MonomialOrder=>{#(gens A.ring)+#(gens A.natural),#cycleList},Degrees=>degList, SkewCommutative=>skewList];
+  if (not isHomogeneous A) then degList = pack(degList / first, 1);
+  B := baseRing[varsList,MonomialOrder=>{numgens A.natural + numgens A.ring,#cycleList},Degrees=>degList, SkewCommutative=>skewList];
   K := substitute(ideal A.ring, B) + ideal apply(#cycleList, i -> X_(i+1) - substitute(cycleList#i,B));
-  -- assertion failed on homology algebras of DGAs with H_0(A) != k.  A bug?
-  -- assert(isHomogeneous K);
+  assert(isHomogeneous K);
   easyRels := ideal selectInSubring(1,gens gb K);
   degList = apply(cycleList, i -> degree i);
   skewList = select(toList(0..#degList-1), i -> odd first degList#i);
@@ -551,8 +542,6 @@ findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
 
 TEST ///
 -- test findEasyRelations
-restart
-loadPackage "DGAlgebras"
 debug DGAlgebras
 R1 = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 R2 = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
@@ -569,7 +558,7 @@ myList2 = {({0},1),({1},1),({2},1),({3},1),({4},1)}
 tally (flatten entries basis HAEasy1) / degree
 tally myList1
 assert(pairs(tally((flatten entries basis HAEasy1) / degree) == myList1)
-assert(pairs(tally (flatten entries basis HAEasy2) / degree) == myList2)
+assert(pairs(tally((flatten entries basis HAEasy2) / degree) == myList2)
 ///
 
 getCycleProductMatrix = method()
@@ -646,22 +635,21 @@ restart
 loadPackage "DGAlgebras"
 debug DGAlgebras
 R = ZZ/32003[a,b]
-I = ideal{a^3,b^3}
+I = ideal{a^6,b^6}
 A = koszulComplexDGA(I)
 HA = HH A
 use R
-J = I + ideal {a*b^2,a^2*b}
+J = I + ideal {a^4*b^5,a^5*b^4}
 B = koszulComplexDGA(J)
--- need to check this!
 HB = HH B
 HB.cache.cycles
+-- incorrect... need to talk to mike to fix the findEasyRelations code, as well as fix the code that searches for
+-- relations coming from boundaries, since that is clearly not working.
 ideal HB
 ///
 
 TEST ///
 -- Homology algebra for the Koszul complex on a set of generators of the maximal ideal
-restart
-loadPackage "DGAlgebras"
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
@@ -779,8 +767,8 @@ getRelations(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
    HA
 )
 
-homologyAlgebra = method()
-homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
+homologyAlgebra = method(Options => {Hilbert => null})
+homologyAlgebra(DGAlgebra,ZZ,ZZ) := opts -> (A,genDegreeLimit,relDegreeLimit) -> (
   cycleList := {};
   relList := {};
   n := 1;
@@ -798,13 +786,13 @@ homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
   )
   else (
      << "Finding easy relations           : ";
-     time HA = findEasyRelations(A,cycleList);
+     time HA = findEasyRelations(A,cycleList, Hilbert=>opts.Hilbert);
      HA = getRelations(A,HA,cycleList,relDegreeLimit);
   );
   HA
 )
 
-homologyAlgebra(DGAlgebra) := (A) -> (
+homologyAlgebra(DGAlgebra) := opts -> (A) -> (
   -- this is a routine that will compute the complete homology algebra
   -- if the DG algebra is known to be finite rank free module over the base ring.
   cycleList := {};
@@ -822,7 +810,7 @@ homologyAlgebra(DGAlgebra) := (A) -> (
   maxHomologyDegree := n;
   -------------------------------------------
   
-  HA = homologyAlgebra(A,mDegree,maxHomologyDegree);
+  HA = homologyAlgebra(A,mDegree,maxHomologyDegree,Hilbert=>opts.Hilbert);
   relList = (ideal HA)_*;
   cycleList = HA.cache.cycles;
   
@@ -830,24 +818,26 @@ homologyAlgebra(DGAlgebra) := (A) -> (
 )
 
 isHomologyAlgebraTrivial = method()
-isHomologyAlgebraTrivial(DGAlgebra,ZZ,ZZ) := (A,genLimit,relLimit) -> (
-   HA := homologyAlgebra(A,genLimit,relLimit);
-   totalHomologyRank := sum(apply(genLimit + 1, i -> numgens prune homology2(i,A))) - 1;
-   totalHomologyRank == numgens HA
+isHomologyAlgebraTrivial(DGAlgebra,ZZ) := (A,genLimit) -> (
+   --HA := homologyAlgebra(A,genLimit,relLimit);
+   --totalHomologyRank := sum(apply(genLimit + 1, i -> numgens prune homology2(i,A))) - 1;
+   --totalHomologyRank == numgens HA
+   findTrivialMasseyOperation(A,genLimit) =!= null
 )
 
+isHomologyAlgebraTrivial(DGAlgebra) := (A) -> isHomologyAlgebraTrivial(A,maxDegree A)
+
 TEST ///
-loadPackage "DGAlgebras"
 R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
 M = coker matrix {{a^3*b^3*c^3*d^3}};
 S = R/ideal{a^3*b^3*c^3*d^3}
-A = acyclicClosure(R,4)
+time A = acyclicClosure(R,6)
 B = A ** S
-isHomologyAlgebraTrivial(B,4,8)
+assert(isHomologyAlgebraTrivial(B,6))
 -- returns true since R --> S is Golod
 R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
 A = koszulComplexDGA(R)
-isHomologyAlgebraTrivial(A,4,8)
+assert(not isHomologyAlgebraTrivial(A))
 -- false, since R is Gorenstein, and so HA has Poincare Duality
 ///
 
@@ -857,6 +847,67 @@ DGAlgebra ** Ring := (A,S) -> (
   setDiff(B,newDiff);
   B
 )
+
+getBoundaryPreimage = method()
+getBoundaryPreimage(DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
+   dnplus1 := polyDifferential(A,homDegree+1);
+   Anbasis := getBasis(homDegree,A);
+   boundaryVec := (coefficients(matrix{boundaryList}, Monomials => flatten entries Anbasis))#1;
+   degreeList := apply(degrees target boundaryVec, l -> -drop(l,1));
+   boundaryVec = map((A.ring)^degreeList,(A.ring)^(rank source boundaryVec), sub(boundaryVec,A.ring));
+   retVal := boundaryVec // dnplus1;
+   -- if not all elements of the list are boundaries, then return null
+   if (dnplus1 * retVal != boundaryVec) then retVal = null else retVal
+)
+
+getBoundaryPreimage(DGAlgebra,RingElement) := (A,b) -> getBoundaryPreimage(A,{b})
+
+findTrivialMasseyOperation = method()
+findTrivialMasseyOperation(DGAlgebra,ZZ) := (A,genDegreeLimit) -> (
+   cycleList := getGenerators(A,genDegreeLimit);
+   --- just do 2-fold TMOs for now
+   prodList := apply(subsets(cycleList,2), l -> (first degree l#0 + first degree l#1,l#0*l#1));
+   n := min (prodList / first);
+   maxDegree := max (prodList / first);
+   retVal := {};
+   while n <= maxDegree do (
+      boundaryList := select(prodList, z -> z#0 == n) / last;
+      if boundaryList != {} then (
+         tempVar := getBoundaryPreimage(A,boundaryList,n);
+	 if (tempVar === null) then (
+	    -- if we are in here, then no trivial Massey operation exists
+            retVal = null;
+	    n = maxDegree;
+	 )
+	 else retVal = retVal | {tempVar};
+      )
+      else retVal = retVal | {matrix{{0_(A.ring)}}};
+      n = n + 1;
+   );
+   retVal
+)
+
+findTrivialMasseyOperation(DGAlgebra) := (A) -> findTrivialMasseyOperation(A,maxDegree A)
+
+TEST ///
+-- Test findTrivialMasseyOperation
+Q = ZZ/101[x_1..x_6]
+I = ideal (x_3*x_5,x_4*x_5,x_1*x_6,x_3*x_6,x_4*x_6)
+R = Q/I
+A = koszulComplexDGA(R)
+isHomologyAlgebraTrivial(A,3)
+cycleList = getGenerators(A)
+findTrivialMasseyOperation(A)
+
+Q = ZZ/101[x,y,z]
+I = ideal (x^3,y^3,z^3,x^2*y^2*z^2)
+R = Q/I
+A = koszulComplexDGA(R)
+isHomologyAlgebraTrivial(A,3)
+cycleList = getGenerators(A)
+prodList = apply(subsets(cycleList,2), l -> (first degree l#0 + first degree l#1,l#0*l#1));
+findTrivialMasseyOperation(A)
+///
 
 --------------------
 -- Documentation  --
@@ -1449,6 +1500,8 @@ doc ///
       HA = homologyAlgebra(A)
     Text
       One can check that HA has Poincare duality since R is Gorenstein.
+  Caveat
+    This function only works properly when H_0(A) is the residue field.
 ///
 
 doc ///
@@ -1486,6 +1539,8 @@ doc ///
       A = acyclicClosure(R,3)
       B = A ** S
       HB = homologyAlgebra(B,7,14)
+  Caveat
+    This function only works properly when H_0(A) is the residue field.
 ///
 
 doc ///
@@ -1604,7 +1659,7 @@ doc ///
 
 doc ///
   Key
-    (isHomologyAlgebraTrivial,DGAlgebra,ZZ,ZZ)
+    (isHomologyAlgebraTrivial,DGAlgebra,ZZ)
   Headline
     Determines if the homology algebra of a DGAlgebra is trivial
   Usage
@@ -1613,8 +1668,6 @@ doc ///
     A:DGAlgebra
     genLimit:ZZ
       maximum homological degree to look for generators of H(A)
-    relLimit:ZZ
-      maximum homological degree to look for relations of H(A)
   Outputs
     isTriv:Boolean
   Description
@@ -1624,15 +1677,15 @@ doc ///
       R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
       M = coker matrix {{a^3*b^3*c^3*d^3}};
       S = R/ideal{a^3*b^3*c^3*d^3}
-      A = acyclicClosure(R,4)
+      A = acyclicClosure(R,6)
       B = A ** S
-      isHomologyAlgebraTrivial(B,4,8)
+      isHomologyAlgebraTrivial(B,6)
     Text
       The command returns true since R --> S is Golod.
     Example
       R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
       A = koszulComplexDGA(R)
-      isHomologyAlgebraTrivial(A,4,8)
+      isHomologyAlgebraTrivial(A)
     Text
       The command returns false, since R is Gorenstein, and so HA has Poincare Duality, hence the multiplication
       is far from trivial.
@@ -1786,6 +1839,27 @@ installPackage "DGAlgebras"
 check "DGAlgebras"
 viewHelp DGAlgebras
 
+-- Use Hilbert series in computation?
+-- not sure yet.  ask mike.
+restart
+loadPackage "DGAlgebras"
+debug DGAlgebras
+R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
+koszulR = koszul vars R
+time apply(5,i -> numgens prune HH_i(koszulR))
+A = koszulComplexDGA(R)
+time apply(5,i -> numgens prune homology2(i,A))
+
+degreeRank = (#(first degrees R) + 1)
+P = degreesRing degreeRank
+use P
+hilbPoly =  sum apply(flatten apply(5,i -> apply(degrees source gens prune HH_i(koszulR), d -> {i} | d)), l -> product(apply(degreeRank, j -> T_j^(l#j))))
+-- ~1.6 seconds on mbp, with graded differentials
+time HA = homologyAlgebra(A)
+
+-- Start experimenting with trivial massey operations
+-- nontrivial relations Golod example
+
 --Tutorial (Include in a separate file?)
 -- Koszul Complex and homology algebras
 restart
@@ -1913,7 +1987,7 @@ A2 = koszulComplexDGA(R2)
 time apply(6, i -> numgens prune homology2(i,A2))
 koszulR2 = koszul vars R2
 time apply(6,i -> numgens prune HH_i(koszulR2))
--- 35.5 seconds on mbp
+-- 36 seconds on mbp
 time HA2 = homologyAlgebra(A2)
 numgens HA2
 numgens ideal HA2
