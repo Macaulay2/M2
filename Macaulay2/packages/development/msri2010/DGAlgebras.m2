@@ -5,7 +5,7 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG algebras",
-     Version => "0.73"
+     Version => "0.74"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
@@ -15,10 +15,9 @@ export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
 	isHomologyAlgebraTrivial, findTrivialMasseyOperation}
 
 -- current bugs:
--- Not finding generators or relations properly when H_0(A) is not the residue field
 
 -- Still to document:
--- All caught up
+-- add an example and tests for HH(A) for when H_0(A) is not the residue field.
 
 -- Questions for Mike:
 -- [user interface] Get the syntax HH_i(DGA) to work (talk to Dan or Mike?)
@@ -32,7 +31,7 @@ export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
 -- [functionality] ekResolutionDGA - I don't think I can do this one yet since the underlying algebra is not a polynomial algebra
 -- [functionality] Finish trivial Massey operations.  Test for strong Golod?
 -- [functionality] tensor product of DGAlgebras
--- [documentation] Document the code
+-- [functionality] present a degree of the homology algebra as a module using the monomial basis of HA as generators
 
 -----------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
@@ -41,8 +40,6 @@ export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
 DGAlgebra = new Type of MutableHashTable
 
 -- this is the user friendly version of the DGAlgebra 'constructor'.  In the code below, we use makeDGAlgebra.
--- may change this in the future if I can figure out how to determine if a given variable represents a list
--- of integers or not
 dgAlgebra = method()
 dgAlgebra(Ring,List) := (R,degList) -> makeDGAlgebra(R, degList)
 
@@ -168,33 +165,31 @@ toComplex(DGAlgebra) := (A) -> (
 )
 
 TEST ///
--- trying to fix the dgAlgebra definition problem
 -- test 1
 R = ZZ/101[x,y,z]
 A1 = dgAlgebra(R,{{1},{1},{1},{3}})
 setDiff(A1,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-A1.isHomogeneous
+assert(not A1.isHomogeneous)
 A1dd = toComplex(A1)
 A1dd.dd
 -- test 2
 A2 = dgAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
 setDiff(A2,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-A2.isHomogeneous
+assert(A2.isHomogeneous)
 A2dd = toComplex(A2)
 A2dd.dd
 -- test 3
 B1 = koszulComplexDGA(R)
-B1.isHomogeneous
+assert(B1.isHomogeneous)
 B1dd = toComplex(B1)
 B1dd.dd
 -- test 4
 R = ZZ/101[x,y,z]
 R2 = R/ideal {x^2-z^3}
 B2 = koszulComplexDGA(R2)
-B2.isHomogeneous
+assert(not B2.isHomogeneous)
 B2dd = toComplex(B2)
 B2dd.dd
--- end tests
 
 debug DGAlgebras
 R = QQ[x,y,z]
@@ -369,7 +364,6 @@ koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
 hh2 = prune HH_2(koszulR)
--- make an assertion here.
 hh2' = prune HH_2(toComplex(A))
 assert(hh2 == hh2')
 ///
@@ -466,7 +460,7 @@ Mres = res(M, LengthLimit => 7)
 R2 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 -- genDegree = 6 takes ~17 seconds
 -- genDegree = 7 takes ~103 seconds
-time TorR1R2 = torAlgebra(R1,R2,6,12)
+time TorR1R2 = torAlgebra(R1,R2,5,10)
 -- the multiplication is trivial, since the map R3 --> R4 is Golod
 numgens TorR1R2
 numgens ideal TorR1R2
@@ -483,7 +477,8 @@ representativeCycles(DGAlgebra,ZZ) := (A,n) -> (
   cycleList
 )
 
-makeHomologyRing := (A, cycleList, relList) -> (
+makeHomologyRing = method(Options => {ForceGB => true})
+makeHomologyRing(DGAlgebra,List,List) := opts -> (A, cycleList, relList) -> (
   local HA;
   local degreesList;
   baseRing := A.zerothHomology;
@@ -500,7 +495,7 @@ makeHomologyRing := (A, cycleList, relList) -> (
      I := ideal relList;
      myMap := map(polyRing, ring I, gens polyRing);
      I = myMap(I);
-     forceGB gens I;
+     if opts.ForceGB then forceGB gens I else I = ideal gens gb I;
      HA = polyRing/I;
      --- set up the cached algebra for basis computations too
      myMap' := map(polyRing', polyRing, gens polyRing');
@@ -531,7 +526,7 @@ findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
   degList = degList | apply(cycleList, i -> degree i);
   if (not isHomogeneous A) then degList = pack(degList / first, 1);
   B := baseRing[varsList,MonomialOrder=>{numgens A.natural + numgens A.ring,#cycleList},Degrees=>degList, SkewCommutative=>skewList];
-  K := substitute(ideal A.ring, B) + ideal apply(#cycleList, i -> X_(i+1) - substitute(cycleList#i,B));
+  K := substitute(ideal A.natural, B) + substitute(ideal A.ring, B) + ideal apply(#cycleList, i -> X_(i+1) - substitute(cycleList#i,B));
   assert(isHomogeneous K);
   easyRels := ideal selectInSubring(1,gens gb K);
   degList = apply(cycleList, i -> degree i);
@@ -633,32 +628,45 @@ TEST ///
 -- new stuff
 restart
 loadPackage "DGAlgebras"
-debug DGAlgebras
 R = ZZ/32003[a,b]
 I = ideal{a^6,b^6}
 A = koszulComplexDGA(I)
 HA = HH A
+describe HA
 use R
 J = I + ideal {a^4*b^5,a^5*b^4}
 B = koszulComplexDGA(J)
+getGenerators(B)
+apply(5, i -> numgens prune homology2(i,B))
+apply(5, i -> prune homology2(i,B))
 HB = HH B
 HB.cache.cycles
--- incorrect... need to talk to mike to fix the findEasyRelations code, as well as fix the code that searches for
--- relations coming from boundaries, since that is clearly not working.
 ideal HB
+-- correct!  compare the ideal HB with the prune result from above
+
+-- need to check this
+R = ZZ/32003[a,b,c]
+I = (ideal vars R)^2
+A = koszulComplexDGA(I)
+apply(10, i -> prune homology2(i,A))
+time HA = HH A
+tally ((ideal HA)_* / degree / first)
+select ((ideal HA)_*, f -> first degree f == 2)
 ///
 
 TEST ///
 -- Homology algebra for the Koszul complex on a set of generators of the maximal ideal
+restart
+loadPackage "DGAlgebras"
 R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
 koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
 time apply(5,i -> numgens prune homology2(i,A))
--- ~1.6 seconds on mbp, with graded differentials
+-- ~3.4 seconds on mbp, with graded differentials
 time HA = homology(A)
 assert(numgens HA == 34)
-assert(numgens ideal HA == 580)
+assert(numgens ideal HA == 576)
 assert(#(first degrees HA) == 2)
      
 -- same example, but not graded because of the degree change.  The homologyAlgebra function
@@ -668,10 +676,10 @@ koszulR2 = koszul vars R2
 time apply(5,i -> numgens prune HH_i(koszulR2))
 A2 = koszulComplexDGA(R2)
 time apply(5,i -> numgens prune homology2(i,A2))
--- ~2.3 seconds on mbp, with ungraded differentials
+-- ~4.1 seconds on mbp, with ungraded differentials
 time HA2 = homologyAlgebra(A2)
 assert(numgens HA2 == 34)
-assert(numgens ideal HA2 == 580)
+assert(numgens ideal HA2 == 576)
 -- should only be singly graded
 assert(#(first degrees HA2) == 1)
 ///
@@ -689,7 +697,7 @@ findDegNRelations := (A,HA,algGens,N) -> (
      pruneNthHomology := prune nthHomology;
      rankOfNthHomology := numgens pruneNthHomology;
      rankOfAlgebraSoFar := #(flatten entries getBasis(N,HA));
-     if rankOfNthHomology != rankOfAlgebraSoFar then (
+     if rankOfNthHomology != rankOfAlgebraSoFar or not isField A.zerothHomology then (
        -- when in here, we know there is a relation in degree N.
        -- so take each monomial of the correct degree, build the cycle corresponding to that
        -- and define a map from the residue field to the homology class representing each cycle.
@@ -697,18 +705,16 @@ findDegNRelations := (A,HA,algGens,N) -> (
        -- set of the kernel.  Finally, reconstruct the elements from the monomials and viola!
        if pruneNthHomology == 0 then (
           -- if we are here, all monomials in the HA of this degree are zero.
-          retVal = flatten entries getBasis(N,HA);
+	  retVal = flatten entries getBasis(N,HA);
        )
        else (
           (cycleProductMatrix,monListHA) = getCycleProductMatrix(A,HA,algGens,N);
           if monListHA != {} then (
              -- TODO: Document this code.
-             baseRing := coker vars (A.ring);
 	     multMap := map(coker relations nthHomology,(A.ring)^(rank source cycleProductMatrix),cycleProductMatrix);
              kerMultMap := gens ker multMap;
-             coeffField := (A.ring)/ideal vars A.ring;
-	     kerMultMap = compress sub(kerMultMap,coeffField);
-	     kernelGens = entries transpose substitute(kerMultMap,A.zerothHomology);
+	     kerMultMap = compress sub(kerMultMap,A.zerothHomology);
+	     kernelGens := entries transpose kerMultMap;
 	     retVal = apply(kernelGens, z -> sum apply(#z, i -> (monListHA#i)*(z#i)));
           );
        );
@@ -758,7 +764,7 @@ getRelations(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
          relList = relList | (newRelList / myMap);
       );
       -- now reset HA using relList for the next iteration.
-      HA = makeHomologyRing(A,cycleList,relList);
+      HA = makeHomologyRing(A,cycleList,relList,ForceGB=>false);
       n = n + 1;
    );
    -- put the cycles that the variables represent in the cache.
@@ -787,9 +793,12 @@ homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
      A.cache#homologyAlgebra = HA;
   )
   else (
-     << "Finding easy relations           : ";
-     --time HA = findEasyRelations(A,cycleList,Hilbert=>opts.Hilbert);
-     time HA = findEasyRelations(A,cycleList);
+     if (isField A.zerothHomology) then (
+        << "Finding easy relations           : ";
+        --time HA = findEasyRelations(A,cycleList,Hilbert=>opts.Hilbert);
+        time HA = findEasyRelations(A,cycleList);
+     )
+     else HA = makeHomologyRing(A,cycleList,{});
      HA = getRelations(A,HA,cycleList,relDegreeLimit);
   );
   HA
@@ -815,7 +824,7 @@ homologyAlgebra(DGAlgebra) := (A) -> (
   -------------------------------------------
   
   --HA = homologyAlgebra(A,mDegree,maxHomologyDegree,Hilbert=>opts.Hilbert);
-  HA = homologyAlgebra(A,mDegree,maxHomologyDegree);
+  HA = homologyAlgebra(A,maxHomologyDegree,mDegree);
   relList = (ideal HA)_*;
   cycleList = HA.cache.cycles;
   
