@@ -5,7 +5,7 @@ newPackage("DGAlgebras",
 	  },
      DebuggingMode => true,
      Headline => "Data type for DG algebras",
-     Version => "0.72"
+     Version => "0.73"
      )
 
 export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
@@ -15,26 +15,24 @@ export {DGAlgebra, dgAlgebra, setDiff, natural, cycles,
 	isHomologyAlgebraTrivial, findTrivialMasseyOperation}
 
 -- current bugs:
--- Not finding relations coming from boundaries properly when H_0(A) is not the residue field
+-- Not finding generators or relations properly when H_0(A) is not the residue field
 
 -- Still to document:
--- (isHomologyAlgebraTrivial,DGAlgebra)
--- findTrivialMasseyOperation,
--- (findTrivialMasseyOperation,DGAlgebra)
--- (findTrivialMasseyOperation,DGAlgebra,ZZ)
+-- All caught up
 
 -- Questions for Mike:
--- Get HH_i(DGA) to work (talk to Dan or Mike?)
--- use the hilbert polynomial to speed up the computation?
+-- [user interface] Get the syntax HH_i(DGA) to work (talk to Dan or Mike?)
+-- [performance] Use the Hilbert polynomial to speed up the main GB computation?
 
 -- Other things to do:
--- make integer options on exported methods actual options rather than function parameters
+-- [user interface] make integer parameters on exported methods options instead
 --   for example: toComplex, acyclicClosure, getGenerators, homologyAlgebra, torAlgebra
--- taylorResolutionDGA - is this worth doing?
--- ekResolutionDGA - I don't think I can do this one yet since the underlying algebra is not a polynomial algebra
--- trivial Massey operations? strongGolod?
--- tensor product of DGAlgebras
--- Document the code
+-- [functionality] taylorResolutionDGA - is this worth doing?
+-- [functionality] allow non-polynomial underlying algebras
+-- [functionality] ekResolutionDGA - I don't think I can do this one yet since the underlying algebra is not a polynomial algebra
+-- [functionality] Finish trivial Massey operations.  Test for strong Golod?
+-- [functionality] tensor product of DGAlgebras
+-- [documentation] Document the code
 
 -----------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
@@ -517,8 +515,10 @@ makeHomologyRing := (A, cycleList, relList) -> (
 
 -- This code finds the relations that exist in the homology algebra that come from simply the relations that exist
 -- in the ring, not including the ones that come because one must include the boundaries in determining the relations
-findEasyRelations = method(Options => {Hilbert => null})
-findEasyRelations(DGAlgebra,List) := opts -> (A, cycleList) -> (
+--findEasyRelations = method(Options => {Hilbert => null})
+--findEasyRelations(DGAlgebra,List) := opts -> (A, cycleList) -> (
+findEasyRelations = method()
+findEasyRelations(DGAlgebra,List) := (A, cycleList) -> (
   -- need to document this code!
   -- this function should only be called (at this point) if H_0(A) is the residue field.  Not sure how to compute this
   -- unless this is the case.
@@ -553,12 +553,12 @@ HAEasy1 = findEasyRelations(A1,cycleList1)
 HAEasy2 = findEasyRelations(A2,cycleList2)
 tally ((flatten entries basis HAEasy1) / degree)
 pairs (tally ((flatten entries basis HAEasy1) / degree))
-myList1 = {({1,2},4),({4,8},1),({1,3},4),({1,4},1),({3,4},1),({3,5},4),({0,0},1),({3,6},4),({2,3},4),({2,4},8),({2,5},4)}
-myList2 = {({0},1),({1},1),({2},1),({3},1),({4},1)}
+myList1 = {({4,8},1),({3,4},1),({3,5},6),({3,6},6),({3,7},4),({2,3},4),({2,4},11),({2,5},8),({2,6},4),({1,2},4),({1,3},4),({1,4},1),({0,0},1)}
+myList2 = {({0},1),({1},9),({2},27),({3},17),({4},1)}
 tally (flatten entries basis HAEasy1) / degree
 tally myList1
-assert(pairs(tally((flatten entries basis HAEasy1) / degree) == myList1)
-assert(pairs(tally((flatten entries basis HAEasy2) / degree) == myList2)
+assert(pairs tally((flatten entries basis HAEasy1) / degree) == myList1)
+assert(pairs tally((flatten entries basis HAEasy2) / degree) == myList2)
 ///
 
 getCycleProductMatrix = method()
@@ -767,8 +767,10 @@ getRelations(DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
    HA
 )
 
-homologyAlgebra = method(Options => {Hilbert => null})
-homologyAlgebra(DGAlgebra,ZZ,ZZ) := opts -> (A,genDegreeLimit,relDegreeLimit) -> (
+--homologyAlgebra = method(Options => {Hilbert => null})
+--homologyAlgebra(DGAlgebra,ZZ,ZZ) := opts -> (A,genDegreeLimit,relDegreeLimit) -> (
+homologyAlgebra = method()
+homologyAlgebra(DGAlgebra,ZZ,ZZ) := (A,genDegreeLimit,relDegreeLimit) -> (
   cycleList := {};
   relList := {};
   n := 1;
@@ -786,13 +788,15 @@ homologyAlgebra(DGAlgebra,ZZ,ZZ) := opts -> (A,genDegreeLimit,relDegreeLimit) ->
   )
   else (
      << "Finding easy relations           : ";
-     time HA = findEasyRelations(A,cycleList, Hilbert=>opts.Hilbert);
+     --time HA = findEasyRelations(A,cycleList,Hilbert=>opts.Hilbert);
+     time HA = findEasyRelations(A,cycleList);
      HA = getRelations(A,HA,cycleList,relDegreeLimit);
   );
   HA
 )
 
-homologyAlgebra(DGAlgebra) := opts -> (A) -> (
+--homologyAlgebra(DGAlgebra) := opts -> (A) -> (
+homologyAlgebra(DGAlgebra) := (A) -> (
   -- this is a routine that will compute the complete homology algebra
   -- if the DG algebra is known to be finite rank free module over the base ring.
   cycleList := {};
@@ -810,7 +814,8 @@ homologyAlgebra(DGAlgebra) := opts -> (A) -> (
   maxHomologyDegree := n;
   -------------------------------------------
   
-  HA = homologyAlgebra(A,mDegree,maxHomologyDegree,Hilbert=>opts.Hilbert);
+  --HA = homologyAlgebra(A,mDegree,maxHomologyDegree,Hilbert=>opts.Hilbert);
+  HA = homologyAlgebra(A,mDegree,maxHomologyDegree);
   relList = (ideal HA)_*;
   cycleList = HA.cache.cycles;
   
@@ -891,14 +896,18 @@ findTrivialMasseyOperation(DGAlgebra) := (A) -> findTrivialMasseyOperation(A,max
 
 TEST ///
 -- Test findTrivialMasseyOperation
+-- This is an example of a Golod ring, but the product of cycles are boundaries, not just zero.
+-- It is Golod since it is the SR ideal of a flag complex whose 1-skeleton is chordal
 Q = ZZ/101[x_1..x_6]
 I = ideal (x_3*x_5,x_4*x_5,x_1*x_6,x_3*x_6,x_4*x_6)
 R = Q/I
 A = koszulComplexDGA(R)
 isHomologyAlgebraTrivial(A,3)
 cycleList = getGenerators(A)
-findTrivialMasseyOperation(A)
+assert(findTrivialMasseyOperation(A) =!= null)
 
+-- this is a Teter ring, and the computation in Avramov and Levin's paper shows
+-- H(A) does not have trivial multiplication.
 Q = ZZ/101[x,y,z]
 I = ideal (x^3,y^3,z^3,x^2*y^2*z^2)
 R = Q/I
@@ -906,7 +915,7 @@ A = koszulComplexDGA(R)
 isHomologyAlgebraTrivial(A,3)
 cycleList = getGenerators(A)
 prodList = apply(subsets(cycleList,2), l -> (first degree l#0 + first degree l#1,l#0*l#1));
-findTrivialMasseyOperation(A)
+assert(findTrivialMasseyOperation(A) === null)
 ///
 
 --------------------
@@ -1663,11 +1672,43 @@ doc ///
   Headline
     Determines if the homology algebra of a DGAlgebra is trivial
   Usage
-    isTriv = isHomologyAlgebraTrivial(A,genLimit,relLimit) 
+    isTriv = isHomologyAlgebraTrivial(A,genLimit) 
   Inputs
     A:DGAlgebra
     genLimit:ZZ
       maximum homological degree to look for generators of H(A)
+  Outputs
+    isTriv:Boolean
+  Description
+    Text
+      This function computes the homology algebra of the DGAlgebra A and determines if the multiplication on H(A) is trivial.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+      M = coker matrix {{a^3*b^3*c^3*d^3}};
+      S = R/ideal{a^3*b^3*c^3*d^3}
+      A = acyclicClosure(R,6)
+      B = A ** S
+      isHomologyAlgebraTrivial(B,6)
+    Text
+      The command returns true since R --> S is Golod.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
+      A = koszulComplexDGA(R)
+      isHomologyAlgebraTrivial(A)
+    Text
+      The command returns false, since R is Gorenstein, and so HA has Poincare Duality, hence the multiplication
+      is far from trivial.
+///
+
+doc ///
+  Key
+    (isHomologyAlgebraTrivial,DGAlgebra)
+  Headline
+    Determines if the homology algebra of a DGAlgebra is trivial
+  Usage
+    isTriv = isHomologyAlgebraTrivial(A) 
+  Inputs
+    A:DGAlgebra
   Outputs
     isTriv:Boolean
   Description
@@ -1779,6 +1820,83 @@ doc ///
 
 doc ///
   Key
+    findTrivialMasseyOperation
+  Headline
+    Finds a trivial Massey operation on a set of generators of H(A)
+  Usage
+    tmo = findTrivialMasseyOperation(A) or tmo = findTrivialMasseyOperation(A,n)
+///
+
+doc ///
+  Key
+    (findTrivialMasseyOperation,DGAlgebra)
+  Headline
+    Finds a trivial Massey operation on a set of generators of H(A)
+  Usage
+    tmo = findTrivialMasseyOperation(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    tmo:List
+      List of matrices whose columns span the image of the multiplication map, one for each homological degree.
+  Description
+    Text
+      For an example, see @ TO (findTrivialMasseyOperation, DGAlgebra) @.
+  SeeAlso
+    (findTrivialMasseyOperation, DGAlgebra)
+///
+
+doc ///
+  Key
+    (findTrivialMasseyOperation,DGAlgebra,ZZ)
+  Headline
+    Finds a trivial Massey operation on a set of generators of H(A)
+  Usage
+    tmo = findTrivialMasseyOperation(A)
+  Inputs
+    A:DGAlgebra
+    n:ZZ
+      Upper bound for algebra generators of H(A).
+  Outputs
+    tmo:List
+      List of matrices whose columns span the image of the multiplication map, one for each homological degree.
+  Description
+    Text
+      This function currently just finds the elements whose boundary give the product of every pair of cycles
+      that are chosen as generators.  Eventually, all higher Massey operations will also be computed.
+    Text
+      Golod rings are defined by being those rings whose Koszul complex K^R has a trivial Massey operation.
+      Also, the existence of a trivial Massey operation on a DG algebra A forces the multiplication on H(A)
+      to be trivial.  An example of a ring R such that H(K^R) has trivial multiplication, yet K^R does not admit
+      a trivial Massey operation is unknown.  Such an example cannot be monomially defined, by a result of
+      Jollenbeck and Berglund. 
+    Text
+      This is an example of a Golod ring.  It is Golod since it is the Stanley-Reisner ideal of a flag complex
+      whose 1-skeleton is chordal [Jollenbeck-Berglund].
+    Example
+      Q = ZZ/101[x_1..x_6]
+      I = ideal (x_3*x_5,x_4*x_5,x_1*x_6,x_3*x_6,x_4*x_6)
+      R = Q/I
+      A = koszulComplexDGA(R)
+      isHomologyAlgebraTrivial(A,3)
+      cycleList = getGenerators(A)
+      tmo = findTrivialMasseyOperation(A)
+      assert(tmo =!= null)
+    Text
+      Below is an example of a Teter ring (Artinian Gorenstein ring modulo its socle), and the computation in Avramov and Levin's
+      paper shows that H(A) does not have trivial multiplication, hence no trivial Massey operation can exist.
+    Example
+      Q = ZZ/101[x,y,z]
+      I = ideal (x^3,y^3,z^3,x^2*y^2*z^2)
+      R = Q/I
+      A = koszulComplexDGA(R)
+      isHomologyAlgebraTrivial(A)
+      cycleList = getGenerators(A)
+      assert(findTrivialMasseyOperation(A) === null)
+///
+
+doc ///
+  Key
     StartDegree
   Headline
     Option to specify the degree to start computing the acyclic closure and killing cycles
@@ -1840,7 +1958,6 @@ check "DGAlgebras"
 viewHelp DGAlgebras
 
 -- Use Hilbert series in computation?
--- not sure yet.  ask mike.
 restart
 loadPackage "DGAlgebras"
 debug DGAlgebras
@@ -1849,16 +1966,12 @@ koszulR = koszul vars R
 time apply(5,i -> numgens prune HH_i(koszulR))
 A = koszulComplexDGA(R)
 time apply(5,i -> numgens prune homology2(i,A))
-
 degreeRank = (#(first degrees R) + 1)
 P = degreesRing degreeRank
 use P
 hilbPoly =  sum apply(flatten apply(5,i -> apply(degrees source gens prune HH_i(koszulR), d -> {i} | d)), l -> product(apply(degreeRank, j -> T_j^(l#j))))
 -- ~1.6 seconds on mbp, with graded differentials
 time HA = homologyAlgebra(A)
-
--- Start experimenting with trivial massey operations
--- nontrivial relations Golod example
 
 --Tutorial (Include in a separate file?)
 -- Koszul Complex and homology algebras
