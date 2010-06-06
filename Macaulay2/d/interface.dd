@@ -1347,6 +1347,80 @@ export rawNorm(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawNorm", rawNorm);
 
+
+-----------------------------------
+-- special routines for tower rings 
+export rawDegree(e:Expr):Expr := (
+     -- rawDegree(var,poly)
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+       if !isSmallInt(s.0) then WrongArgSmallInteger(1) else (
+	    when s.1 is f:RawRingElementCell do (
+		 toExpr(Ccode(int, 
+			   "rawDegree(", 
+			   getSmallInt(s.0), ", ", 
+			   f.p, ")"
+			))
+		 )
+	    else WrongArg(2, "a raw ring element"))
+       else WrongArgZZ(1)
+     );
+setupfun("rawDegree", rawDegree);
+
+export rawExtensionDegree(e:Expr):Expr := (
+     -- rawExtensionDegree(firstvar,TowerRing)
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+       if !isSmallInt(s.0) then WrongArgSmallInteger(1) else (
+	    when s.1 is R:RawRingCell do (
+		 toExpr(Ccode(int, 
+			   "rawExtensionDegree(", 
+			   getSmallInt(s.0), ", ", 
+			   R.p, ")"
+			))
+		 )
+	    else WrongArg(2, "a raw tower ring"))
+       else WrongArgZZ(1)
+     );
+setupfun("rawExtensionDegree", rawExtensionDegree);
+
+export rawDiff(e:Expr):Expr := (
+     -- rawDiff(varnum,f)
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+       if !isSmallInt(s.0) then WrongArgSmallInteger(1) else (
+	    when s.1 is f:RawRingElementCell do (
+		 toExpr(Ccode(RawRingElementOrNull, 
+			   "rawDiff(", 
+			   getSmallInt(s.0), ", ", 
+			   f.p, ")"
+			))
+		 )
+	    else WrongArg(2, "a raw ring element"))
+       else WrongArgZZ(1)
+     );
+setupfun("rawDiff",rawDiff);
+
+export rawLowerP(e:Expr):Expr := (
+     when e
+     is x:RawRingElementCell do toExpr( Ccode( RawRingElementOrNull, "rawLowerP(", x.p, ")" ))
+     else WrongArg("a raw ring element"));
+setupfun("rawLowerP", rawLowerP);
+
+export powerMod(f:RawRingElement, n:ZZ, g:RawRingElement) : RawRingElementOrNull :=
+  Ccode(returns, "rawPowerMod(f,n,g)");
+
+export rawPowerMod(e:Expr):Expr := (
+     -- rawPowerMod(f,n,g)
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+       when s.0 is f:RawRingElementCell do
+       when s.1 is n:ZZcell do
+       when s.2 is g:RawRingElementCell do
+         toExpr(powerMod(f.p,n.v,g.p))
+       else WrongArg(3, "a raw ring element")
+       else WrongArg(2, "an integer")
+       else WrongArg(1, "a raw ring element")
+       else WrongNumArgs(3)
+     );
+setupfun("rawPowerMod", rawPowerMod);
+
 -----------------------------------------------------------------------------
 -- free modules
 

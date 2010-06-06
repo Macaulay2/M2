@@ -3,6 +3,9 @@
 #include <cctype>
 #include <strstream>
 #include <cassert>
+#include "ZZ.hpp"
+
+#define DEBUGGCDno
 
 long gcd_extended(long a,
 		  long b,
@@ -954,8 +957,8 @@ poly  DPoly::division_in_place_monic(int level, poly & f, const poly g)
 bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_quot)
 // returns false if the lead coeff is not invertible
 {
-  if (f == 0) return 0;
-  if (f->deg < g->deg)
+  assert(g != 0);
+  if (f == 0 || f->deg < g->deg)
     {
       result_quot = 0;
       return true;
@@ -1025,7 +1028,8 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
 
 void DPoly::remainder(int level, poly & f, const poly g)
 {
-  poly quot;
+  if (g == 0) return;
+  poly quot = 0;
   division_in_place(level, f, g, quot);
   dealloc_poly(quot);
 }
@@ -1042,13 +1046,13 @@ poly  DPoly::gcd(int level, const poly f, const poly g)
   poly G = copy(level,g);
   for (;;)
     {
-#ifdef DEBUG
+#ifdef DEBUGGCD
       printf("G = %s\n", to_string(level,G));
 #endif
       make_monic(level,G);
       if (G == 0) return 0; // failed
 
-#ifdef DEBUG
+#ifdef DEBUGGCD
       printf("monic G = %s\n", to_string(level,G));
       printf("F       = %s\n", to_string(level,F));
 #endif
@@ -1056,7 +1060,7 @@ poly  DPoly::gcd(int level, const poly f, const poly g)
       remainder(level, F, G); // modifies F
       if (F == 0) return G;
 
-#ifdef DEBUG
+#ifdef DEBUGGCD
       printf("F mod G     = %s\n", to_string(level,F));
 #endif
 
@@ -1093,7 +1097,7 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
   // v1 * f + v2 * g == v3
   // (and (v1,v2,v3) is close to the gcd
 
-#ifdef DEBUG
+#ifdef DEBUGGCD
   if (level == 1)
     {
       printf("u1 = %s\n", to_string(level,u1));
@@ -1118,11 +1122,13 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
 	  dealloc_poly(v1);
 	  dealloc_poly(v2);
 	  dealloc_poly(v3);
+	  result_u = 0;
+	  result_v = 0;
 	  return 0;
 	}
       q = division_in_place_monic(level, u3, v3); // u3 := u3 - q*v3, as v3 is monic, this is always possible
 
-#ifdef DEBUG
+#ifdef DEBUGGCD
       if (level == 1)
 	{
 	  printf("q = %s\n", to_string(level,q));
@@ -1136,7 +1142,7 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
       add_in_place(level,u1,a);
       add_in_place(level,u2,b);
 
-#ifdef DEBUG
+#ifdef DEBUGGCD
       if (level == 1)
 	{
 	  printf("u1 = %s\n", to_string(level,u1));
@@ -1151,7 +1157,7 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
       swap_poly(u3,v3);
     }
 
-#ifdef DEBUG
+#ifdef DEBUGGCD
   if (level == 1)
     {
       printf("u1 = %s\n", to_string(level,u1));
@@ -1169,6 +1175,181 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
   result_u = u1 ;
   result_v = u2;
   return u3;
+}
+
+int DPoly::degree(int level, int whichvar, const poly f) const
+{
+  if (f == 0) return -1;
+  if (whichvar == 0) return f->deg;
+  // At this point, we need to find the max degree of the given var
+  int deg = -1;
+  for (int i=0; i<=f->deg; i++)
+    {
+      poly g = f->arr.polys[i];
+      if (g != 0)
+	{
+	  int d = degree(level-1,whichvar-1,g);
+	  if (d > deg) deg = d;
+	}
+    }
+  return deg;
+}
+
+poly DPoly::mult_by_int_0(long a, const poly f)
+{
+  poly result = alloc_poly_0(f->deg);
+  for (int i=0; i<=f->deg; i++)
+    {
+      long c = f->arr.ints[i];
+      if (c != 0)
+	{
+	  ZZp_MULT(charac, c, a);
+	  result->arr.ints[i] = c;
+	}
+    }
+  reset_degree_0(result);
+  return result;
+}
+poly DPoly::mult_by_int_n(int level, long a, const poly f)
+{
+  poly result = alloc_poly_n(f->deg);
+  for (int i=0; i<=f->deg; i++)
+    {
+      poly c = f->arr.polys[i];
+      if (c != 0)
+	result->arr.polys[i] = mult_by_int(level-1, a, c);
+    }
+  reset_degree_n(level,result);
+  return result;
+}
+
+poly DPoly::mult_by_int(int level, long a, const poly f)
+{
+  if (f == 0) return 0;
+  if (level == 0) return mult_by_int_0(a, f);
+  return mult_by_int_n(level, a, f);
+}
+
+poly DPoly::diff_0(const poly f)
+{
+  if (f == 0 || f->deg == 0) return 0;
+  poly result = alloc_poly_0(f->deg-1);
+  for (int i=1; i<=f->deg; i++)
+    {
+      long c = f->arr.ints[i];
+      if (c != 0)
+	{
+	  ZZp_MULT(charac, c, i);
+	  result->arr.ints[i-1] = c;
+	}
+    }
+  reset_degree_0(result);
+  return result;
+}
+
+poly DPoly::diff_n(int level, int whichvar, const poly f)
+{
+  poly result;
+  if (whichvar == 0)
+    {
+      result = alloc_poly_0(f->deg-1);
+      for (int i=1; i<=f->deg; i++)
+	{
+	  poly c = f->arr.polys[i];
+	  if (c != 0)
+	    result->arr.polys[i-1] = mult_by_int(level-1, i, c);
+	}
+    }
+  else
+    {
+      result = alloc_poly_0(f->deg);
+      for (int i=0; i<=f->deg; i++)
+	{
+	  poly c = f->arr.polys[i];
+	  if (c != 0)
+	    result->arr.polys[i] = diff(level-1, whichvar-1, c);
+	}
+
+    }
+  reset_degree_n(level, result);
+  return result;
+}
+
+poly DPoly::diff(int level, int whichvar, const poly f)
+{
+  if (f == 0) return 0;
+  if (level == 0) return diff_0(f);
+  return diff_n(level, whichvar, f);
+}
+
+poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
+  // f^m mod g
+{
+  // We assume that m > 0. THIS IS NOT CHECKED!!
+  mpz_t n;
+  mpz_init_set(n, m);
+  poly prod = from_int(level,1);
+  poly base = copy(level,f);
+  poly tmp;
+
+  for (;;)
+    {
+      if (RingZZ::mod_ui(n,2) == 1)
+	{
+	  tmp = mult(level, prod, base, false);
+	  remainder(level, tmp, g);
+	  //TODO: free prod
+	  prod = tmp;
+	}
+      mpz_tdiv_q_2exp(n, n, 1);
+      if (mpz_sgn(n) == 0)
+	{
+	  mpz_clear(n);
+	  return prod;
+	}
+      else
+	{
+	  tmp = mult(level,base, base, false);
+	  remainder(level, tmp, g);
+	  //TODO: free base
+	  base = tmp;
+	}
+    }
+}
+
+poly DPoly::lowerP(int level, const poly f)
+{
+  int i,j;
+  poly result;
+  if (f == 0) return 0;
+  int newdeg = f->deg / charac; // should be exact...
+  if (level == 0)
+    {
+      result = alloc_poly_0(newdeg);
+      // In this situation, we just need to grab every p*i coeff...
+      for (i=0, j=0; i<=newdeg; i++, j += charac)
+	result->arr.ints[i] = f->arr.ints[j];
+    }
+  else 
+    {
+      result = alloc_poly_n(newdeg);
+      mpz_t order;
+      mpz_init(order);
+      unsigned long extdeg = 1;
+      for (i=0; i<level; i++)
+	extdeg *= degree_of_extension(i);
+      mpz_ui_pow_ui(order, charac, extdeg-1);
+      for (i=0, j=0; i<=newdeg; i++, j += charac)
+	{
+	  // need p-th roots of the coefficients.  So we take p^(n-1)
+	  // power (if coefficients are in field of size p^n)
+	  poly a = f->arr.polys[j];
+	  poly b = power_mod(level-1, a, order, extensions[level-1]);
+	  result->arr.polys[i] = b;
+	}
+      mpz_clear(order);
+    }
+  return result;
 }
 
 DRing::DRing(long charac, int nvars, const_poly *exts)
@@ -1216,6 +1397,18 @@ bool DRing::set_from_rational(poly &result, mpq_ptr r)
   
   result = D.from_int(level, ctop);
   return true;
+}
+
+int DRing::extension_degree(int firstvar) // returns -1 if infinite
+{ 
+  int result = 1;
+  for (int i=0; i<=level-firstvar; i++)
+    {
+      int d = D.degree_of_extension(i);
+      if (d < 0) return -1;
+      result *= d;
+    }
+  return result;
 }
 
 void DRing::elem_text_out(buffer &o, 

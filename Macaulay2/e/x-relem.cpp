@@ -1000,6 +1000,67 @@ gmp_ZZorNull rawSchurDimension(const RingElement *f)
      }
 }
 
+/* Special routines for tower rings */
+
+int rawDegree(int v, const RingElement *f)
+  /* Returns -1 if 0 or not implemented for a given ring.  For now, valid only for tower rings */
+{
+  const Tower *R = f->get_ring()->cast_to_Tower();
+  if (R == 0) return -1;
+  return R->degree(v, f->get_value());
+}
+
+int rawExtensionDegree(int firstvar, const Ring *R1)
+  /* Currently only valid for tower rings.  Others return 0.  */
+{
+  const Tower *R = R1->cast_to_Tower();
+  if (R == 0) return 0;
+  if (firstvar < 0)
+    return R->charac();
+  return R->extension_degree(firstvar);
+}
+
+const RingElement /* or null */ *rawDiff(int v, const RingElement *f)
+{
+  const Tower *R = f->get_ring()->cast_to_Tower();
+  if (R == 0)
+    {
+      ERROR("not implemented for this ring");
+      return 0;
+    }
+  ring_elem result = f->get_value();
+  return RingElement::make_raw(R,  R->diff(v, f->get_value()));
+}
+
+const RingElement /* or null */ *rawLowerP(const RingElement *f)
+{
+  const Tower *R = f->get_ring()->cast_to_Tower();
+  if (R == 0)
+    {
+      ERROR("not implemented for this ring");
+      return 0;
+    }
+  ring_elem result = f->get_value();
+  return RingElement::make_raw(R,  R->lowerP(f->get_value()));
+}
+
+const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, const RingElement *g)
+{
+  const Tower *R = f->get_ring()->cast_to_Tower();
+  if (R == 0)
+    {
+      ERROR("not implemented for this ring");
+      return 0;
+    }
+  if (g->get_ring() != R)
+    {
+      ERROR("expected elements in the same ring");
+      return 0;
+    }
+  ring_elem result = f->get_value();
+  return RingElement::make_raw(R,  R->power_mod(f->get_value(), n, g->get_value()));
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-relem.o "
 // End:
