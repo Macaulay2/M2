@@ -504,6 +504,21 @@ extern "C" {
      are not represented as powers of a primitive element.
      Otherwise returns an integer in the range 0..q-1 */
 
+  int rawDegree(int v, const RingElement *f); /* connected to rawDegree */
+  /* Returns -1 if 0 or not implemented for a given ring.  For now, valid only for tower rings */
+
+  int rawExtensionDegree(int v, const Ring *R); /* connected to rawExtensionDegree */
+  /* Currently only valid for tower rings.  Others return 0.  */
+
+  const RingElement /* or null */ *rawDiff(int v, const RingElement *f);  /* connected */
+  /* Currently only valid for tower rings */
+
+  const RingElement /* or null */ *rawLowerP(const RingElement *f);  /* connected */
+  /* Currently only valid for tower rings */
+
+  const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, const RingElement *g);  /* connected */
+  /* Currently only valid for tower rings */
+
   /**************************************************/
   /**** FreeModule routines *************************/
   /**************************************************/

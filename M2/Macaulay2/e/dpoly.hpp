@@ -61,6 +61,13 @@ private:
 
   poly random_0(int deg);
   poly random_n(int level, int deg);
+
+  poly diff_0(const poly f);
+  poly diff_n(int level, int whichvar, const poly f);
+
+  poly mult_by_int_0(long c, const poly f);
+  poly mult_by_int_n(int level, long c, const poly f);
+
 public:
   int degree_of_extension(int level); // if negative, then that variable is transcendental over lower vars
   bool down_level(int newlevel, int oldlevel, poly &f);
@@ -96,6 +103,7 @@ public:
   void negate_in_place(int level, poly &f);
   void add_in_place(int level, poly &f, const poly g);
   void subtract_in_place(int level, poly &f, const poly g);
+  poly mult_by_int(int level, long c, const poly f);
   poly mult(int level, const poly f, const poly g, bool reduce_by_extension);
   void remainder(int level, poly &f, const poly g);
   poly division_in_place_monic(int level, poly & f, const poly g);
@@ -119,6 +127,11 @@ public:
 		     M2_ArrayString names) const;
 
   void extensions_text_out(buffer &o, M2_ArrayString names) const;
+
+  int degree(int level, int var, const poly f) const;
+  poly diff(int level, int var, const poly f);
+  poly power_mod(int level, const poly f, mpz_t n, const poly g);  // f^n mod g
+  poly lowerP(int level, const poly f);
 
   // DPoly management
   ~DPoly() {}
@@ -195,7 +208,10 @@ public:
       result = 0;
     else
       {
-	result = D.mult(level, a, b, true);
+	elem a1 = D.copy(level, a);
+	if (!D.division_in_place(level, a1, b, result))
+	  result = 0;
+	D.dealloc_poly(a1);
       }
   }
 
@@ -261,6 +277,11 @@ public:
 
   void extensions_text_out(buffer &o, M2_ArrayString names) const { D.extensions_text_out(o, names); }
 
+  int degree(int var, const poly f) const { return D.degree(level,var,f); }
+  void diff(int var, poly &result, const poly f) const { result = D.diff(level, var, f); }
+  int extension_degree(int firstvar); // returns -1 if infinite
+  void power_mod(poly &result, const poly f, mpz_t n, const poly g) const { result = D.power_mod(level, f, n, g); } // f^n mod g  
+  void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
 };
 
 // Format for polynomials in a file:

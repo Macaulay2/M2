@@ -48,6 +48,7 @@ Tower * Tower::create(int charac, M2_ArrayString names)
 
 Tower * Tower::create(const Tower *R, M2_ArrayString new_names)
 {
+  //TODO: write
   return 0;
 }
 
@@ -126,8 +127,6 @@ int Tower::compare_elems(const ring_elem f, const ring_elem g) const
   poly g1 = TOWER_VAL(g);
 
   return D->compare(f1, g1);
-  //TODO: finish
-  // call is_equal routine
 }
 
 ring_elem Tower::copy(const ring_elem f) const
@@ -274,6 +273,42 @@ ring_elem Tower::gcd_extended(const ring_elem f, const ring_elem g,
   return TOWER_RINGELEM(h);
 }
 
+int Tower::degree(int whichvar, const ring_elem f) const
+{
+  poly f1 = TOWER_VAL(f);
+  return D->degree(whichvar,f1);
+}
+
+ring_elem Tower::diff(int whichvar, const ring_elem f) const
+{
+  poly f1 = TOWER_VAL(f);
+  poly h = 0;
+  D->diff(whichvar,h,f1);
+  return TOWER_RINGELEM(h);
+}
+
+int Tower::extension_degree(int firstvar) const
+{
+  // returns -1 if infinite
+  return D->extension_degree(firstvar);
+}
+
+ring_elem Tower::power_mod(const ring_elem f, mpz_t n, const ring_elem g) const  // f^n mod g
+{
+  poly f1 = TOWER_VAL(f);
+  poly g1 = TOWER_VAL(g);
+  poly h = 0;
+  D->power_mod(h,f1,n,g1);
+  return TOWER_RINGELEM(h);
+}
+
+ring_elem Tower::lowerP(const ring_elem f) const
+{
+  poly f1 = TOWER_VAL(f);
+  poly h = 0;
+  D->lowerP(h,f1);
+  return TOWER_RINGELEM(h);
+}
 
 //////////////////////////////////
 // top level tower gcd routines //
