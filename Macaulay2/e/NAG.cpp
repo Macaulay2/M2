@@ -1172,18 +1172,71 @@ PathTracker::~PathTracker()
   deletearray(raw_solutions); 
 }
 
-// a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
+// creates a PathTracker object (case: is_projective), builds slps for predictor and corrector given start/target systems
+// input: two (1-row) matrices of polynomials 
+// out: PathTracker*
+PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, gmp_RR productST) 
+{
+  if (S->n_rows()!=1 || T->n_rows()!=1) { 
+    ERROR("1-row matrices expected");
+    return NULL;
+  };
+  PathTracker *p = new PathTracker;
+  const PolyRing* R = p->homotopy_R = S->get_ring()->cast_to_PolyRing();
+  if (R==NULL) {
+    ERROR("polynomial ring expected");
+    return NULL;
+  }
+  const Ring* K = R->getCoefficients();
+  if (K->is_CCC())
+    p->C = K->cast_to_CCC();
+  else {
+    ERROR("complex coefficients expected");
+    return NULL;
+  }
+  p->productST = productST;
+
+  p->S = S; 
+  p->slpS = NULL; 
+  for (int i=0; i<S->n_cols(); i++) {
+    StraightLineProgram* slp = StraightLineProgram::make(R, S->elem(0,i));
+    if (p->slpS == NULL) p->slpS = slp;
+    else {
+      StraightLineProgram* t = p->slpS->concatenate(slp);
+      delete slp;
+      delete p->slpS;
+      p->slpS = t;
+    }
+  }
+  p->slpSx = p->slpS->jacobian(false, p->slpHxH/*not used*/, true, p->slpSxS);
+
+  p->T = T; 
+  p->slpT = NULL; 
+  for (int i=0; i<T->n_cols(); i++) {
+    StraightLineProgram* slp = StraightLineProgram::make(R, T->elem(0,i));
+    if (p->slpT == NULL) p->slpT = slp;
+    else {
+      StraightLineProgram* t = p->slpT->concatenate(slp);
+      delete slp;
+      delete p->slpT;
+      p->slpT = t;
+    }
+  }
+  p->slpTx = p->slpT->jacobian(false, p->slpHxH/*not used*/, true, p->slpTxT);
+
+  return p;
+}
+
+// creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
 // input: a (1-row) matrix of polynomials 
-// out: the number of PathTracker
+// out: PathTracker*
 PathTracker /* or null */* PathTracker::make(const Matrix *HH) 
 {
-  /* 
   if (HH->n_rows()!=1) { 
     ERROR("1-row matrix expected");
     return NULL;
   };
-  */
-
+  
   PathTracker *p = new PathTracker;
   const PolyRing* R = p->homotopy_R = HH->get_ring()->cast_to_PolyRing();
   if (R==NULL) {
@@ -1337,6 +1390,10 @@ int PathTracker::track(const Matrix* start_sols)
   complex* Hxt = newarray_atomic(complex, n*(n+1));
   complex* HxtH = newarray_atomic(complex, n*(n+2));
   complex* HxH = newarray_atomic(complex, n*(n+1));
+  //complex* Sx = (is_projective)?newarray_atomic(complex, n*(n+1)):NULL;
+  //complex* SxS = (is_projective)?newarray_atomic(complex, n*(n+2)):NULL;
+  //complex* Tx = (is_projective)?newarray_atomic(complex, n*(n+1)):NULL;
+  //complex* TxT = (is_projective)?newarray_atomic(complex, n*(n+2)):NULL;
     complex *LHS, *RHS;
   complex one_half(0.5,0);
   complex* xt = newarray_atomic(complex,n+1);
@@ -1387,14 +1444,14 @@ int PathTracker::track(const Matrix* start_sols)
       //           out: dx
       switch(pred_type) {
       case TANGENT: {
-	slpHxt->evaluate(n+1,x0t0, Hxt);
+	evaluate_slpHxt(n,x0t0, Hxt); 
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	multiply_complex_array_scalar(n,RHS,-*dt);
         LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
       } break;
       case EULER: {
-	slpHxtH->evaluate(n+1,x0t0, HxtH); // for Euler "H" is attached
+	evaluate_slpHxtH(n,x0t0,HxtH); // for Euler "H" is attached
         LHS = HxtH;
         RHS = HxtH+n*(n+1); // H
 	complex* Ht = RHS-n; 
@@ -1407,7 +1464,7 @@ int PathTracker::track(const Matrix* start_sols)
 	copy_complex_array(n+1,x0t0,xt);
 	
 	// dx1
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1419,7 +1476,7 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,xt,dx1); // x0+.5dx1*dt
 	xt[n] += one_half*(*dt); // t0+.5dt
 	//
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1432,7 +1489,7 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,xt,dx2); // x0+.5dx2*dt
 	// xt[n] += one_half*(*dt); // t0+.5dt (SAME)
 	//
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1445,7 +1502,7 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,xt,dx3); // x0+dx3*dt
 	xt[n] += *dt; // t0+dt
 	//
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1475,7 +1532,7 @@ int PathTracker::track(const Matrix* start_sols)
       do {
 	n_corr_steps++;
 	//
-	slpHxH->evaluate(n+1,x1t1, HxH);
+	evaluate_slpHxH(n,x1t1,HxH); 
 	LHS = HxH; 	
 	RHS = HxH+n*n; // i.e., H
 	//
@@ -1603,9 +1660,9 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
   }
   
   // make the output matrix
-  FreeModule* S = C->make_FreeModule(n); 
-  FreeModule* T = C->make_FreeModule(n_sols);
-  MatrixConstructor mat(T,S);
+  FreeModule* SS = C->make_FreeModule(n); 
+  FreeModule* TT = C->make_FreeModule(n_sols);
+  MatrixConstructor mat(TT,SS);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
   c = s_sols;
@@ -1631,9 +1688,9 @@ Matrix /* or null */* PathTracker::getSolution(int solN)
 {
   if (solN<0 || solN>=n_sols) return NULL;
   // construct output 
-  FreeModule* S = C->make_FreeModule(n_coords); 
-  FreeModule* T = C->make_FreeModule(1);
-  MatrixConstructor mat(T,S);
+  FreeModule* SS = C->make_FreeModule(n_coords); 
+  FreeModule* TT = C->make_FreeModule(1);
+  MatrixConstructor mat(TT,SS);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
   Solution* s = raw_solutions+solN;
@@ -1651,9 +1708,9 @@ Matrix /* or null */* PathTracker::getSolution(int solN)
 Matrix /* or null */* PathTracker::getAllSolutions()
 {
   // construct output 
-  FreeModule* S = C->make_FreeModule(n_coords); 
-  FreeModule* T = C->make_FreeModule(n_sols);
-  MatrixConstructor mat(T,S);
+  FreeModule* SS = C->make_FreeModule(n_coords); 
+  FreeModule* TT = C->make_FreeModule(n_sols);
+  MatrixConstructor mat(TT,SS);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
   Solution* s = raw_solutions;

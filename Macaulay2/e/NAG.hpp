@@ -278,11 +278,27 @@ class PathTracker : public object
   int number; // trackers are enumerated
 
   Matrix *target;
-  const Matrix *H; // homotopy
-  StraightLineProgram *slpH, *slpHxt, *slpHxtH, *slpHxH; // slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H 
+  const Matrix *H, *S, *T; // homotopy, start, target
+  StraightLineProgram *slpH, *slpHxt, *slpHxtH, *slpHxH, // slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H 
+    *slpS, *slpSx, *slpSxS, *slpT, *slpTx, *slpTxT; // slps for S and T, needed if is_projective 
+  gmp_RR productST; // real part of the Bombieri-Weyl (hermitian) product <S,T>
+
+  // inline functions needed by track
+  void evaluate_slpHxt(int n, const complex* x0t0, complex* Hxt) {
+    if (is_projective) ERROR("not implemented");
+    else slpHxt->evaluate(n+1,x0t0, Hxt);
+  }
+  void evaluate_slpHxtH(int n, const complex* x0t0, complex* HxtH) {
+    if (is_projective) ERROR("not implemented");
+    else slpHxtH->evaluate(n+1,x0t0, HxtH);
+  }
+  void evaluate_slpHxH(int n, const complex* x0t0, complex* HxH) {
+    if (is_projective) ERROR("not implemented");
+    else slpHxH->evaluate(n+1,x0t0, HxH);
+  }
 
   const CCC *C; // coefficient field (complex numbers)
-  const PolyRing *homotopy_R; // polynomial ring where homotopy lives
+  const PolyRing *homotopy_R; // polynomial ring where homotopy lives (does not include t if is_projective)
   int n_coords;
   int n_sols;
   Solution* raw_solutions; // solutions + stats
@@ -304,6 +320,7 @@ class PathTracker : public object
   PathTracker();
 public:
   static PathTracker /* or null */ *make(const Matrix*); // from homotopy
+  static PathTracker /* or null */ *make(const Matrix *S, const Matrix *T, gmp_RR productST); // from start/target systems
   static PathTracker /* or null */ *make(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr); // precookedSLPs
   virtual ~PathTracker();
 
