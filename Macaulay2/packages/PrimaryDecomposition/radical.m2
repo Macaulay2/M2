@@ -1,6 +1,37 @@
 -- Computing the radical of an ideal
 -- Will be part of the PrimaryDecomposition package (most likely)
 
+flatt = (I, m) -> (
+     -- First create a new ring with correct order
+     local ones;
+     local mm;
+     local F;
+     R := ring I;
+     n := numgens R;
+     vars1 := support m;
+     d := #vars1;
+     vars2 := support ((product gens R)//m);
+     RU := (coefficientRing R) monoid([vars2,vars1,
+	  MonomialOrder=>ProductOrder{n-d,d},
+	  MonomialSize=>16]);
+     J := substitute(I,RU);
+     -- Collect lead coefficients of GB
+     JG = J;
+     leads := leadTerm(1,gens gb J);
+     --(mons,cs) = coefficients(toList(0..n-d-1),leads);
+     (mons,cs) = coefficients(leads, Variables => toList(0..n-d-1));
+     monsid = trim ideal select(flatten entries mons, f -> f != 1);
+     monsid = substitute(monsid,R);
+     --monset = set flatten entries gens monsid;
+     monset = new MutableHashTable;
+     scan(flatten entries gens monsid, m -> monset#m = {});
+     monslist = flatten entries substitute(mons,R);
+     p := positions(monslist, f -> monset#?f);
+     cs = transpose cs;
+     scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));
+     monset)
+
+
 needsPackage "Elimination"
 getMinimalPoly = method()
 getMinimalPoly(Ideal,RingElement,RingElement) := (I,u,x) -> (
@@ -105,6 +136,10 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
      )
 
 end
+
+
+
+
 restart
 loadPackage "PrimaryDecomposition"
 debug PrimaryDecomposition
@@ -228,3 +263,29 @@ netList oo
 netList oo
 rad1 == intersect decompose rad1
 rad2 == intersect decompose rad2
+
+---------------------------------------------------
+-- New tests as of 6/10/2010
+
+restart
+load "radical.m2"
+
+
+R = ZZ/32003[b,s,t,u,v,w,x,y,z]
+I = ideal(
+    b*v+s*u,
+    b*w+t*u,
+    s*w+t*v,
+    b*y+s*x,
+    b*z+t*x,
+    s*z+t*y,
+    u*y+v*x,
+    u*z+w*x,
+    v*z+w*y)
+codim I
+U = first independentSets I
+H = flatt(I,U)
+peek H
+F = (intersect values H)_0
+C1 = saturate(I,F)
+I : C1
