@@ -30,7 +30,7 @@ for predictor in {Tangent, RungeKutta4} do (
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor, Projectivize=>true, Normalize=>true);
      SM = sortSolutions M;
      print SM;
-     --assert( SM/(s->s/round)@@first == {{-1, 0}, {0, -1}, {0, 1}, {1, 0}} )                                                                  
+     assert( SM/(s->s/round)@@first == {{-1, 0}, {0, -1}, {0, 1}, {1, 0}} )                                                                  
      )
 end
 restart
