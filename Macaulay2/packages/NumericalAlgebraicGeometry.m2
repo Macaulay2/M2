@@ -214,8 +214,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=null"; 
      if o.Software===M2enginePrecookedSLPs and (o.Projectivize or o.SLP===null) 
      then error "M2enginePrecookedSLPs is implemented for Projectivize=>false and SLP != null";
-     if o.Software===M2engine and o.Projectivize 
-     then error "M2engine is not implemented for Projectivize=>true";
+     --if o.Software===M2engine and o.Projectivize 
+     --then error "M2engine is not implemented for Projectivize=>true";
      if o.Predictor===ProjectiveNewton and (o.Software=!=M2 or not o.Normalize or o.SLP=!=null)
      then error "ProjectiveNewton (experimental) requires Software=>M2, Normalize=>true and o.SLP=>null";
      
@@ -245,6 +245,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
      
      if o.Projectivize then (
+	  if isProjective then error "the problem is already projective";
 	  h := symbol h;
 	  R = K[gens R | {h}]; 
 	  n = numgens R;
@@ -450,10 +451,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      compStartTime = currentTime();      
      
      rawSols := if member(o.Software,{M2enginePrecookedSLPs, M2engine}) then (
-	  PT := if o.Software===M2engine then rawPathTracker(raw H) else rawPathTrackerPrecookedSLPs(slpHxt, slpHxH);
+	  PT := if o.Software===M2engine then (
+	       if isProjective then rawPathTrackerProjective( raw matrix {nS}, raw matrix {nT}, 
+		    realPart sum(#S, i->BombieriWeylScalarProduct(o.gamma*nS#i,nT#i)) ) -- pass normalized start/target and Re(B-W product)
+	       else rawPathTracker(raw H) 
+	       ) else rawPathTrackerPrecookedSLPs(slpHxt, slpHxH);
 	  lastPathTracker = PT;
 	  rawSetParametersPT(PT, 
-	       false,
+	       isProjective,
 	       o.tStep, o.tStepMin, 
 	       toRR o.stepIncreaseFactor, toRR stepDecreaseFactor, o.numberSuccessesBeforeIncrease,
 	       o.CorrectorTolerance, o.maxCorrSteps, o.EndZoneFactor, toRR o.InfinityThreshold,
@@ -463,7 +468,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else if o.Predictor === Euler then predEULER
 		    else error "no slp for the predictor")
 	       );
-	  rawLaunchPT(PT, raw matrix apply(solsS,s->first entries transpose s));
+	  solsM := matrix apply(solsS,s->first entries transpose s);
+	  --print solsM;
+	  rawLaunchPT(PT, raw solsM);
 	  if o.NoOutput then null else entries map(K,rawGetAllSolutionsPT(PT))
      	  )
      else if o.Software===M2 then (
@@ -611,7 +618,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 norm2'Ht := (max first SVD Ht0)^2;
 			 chi2 := sqrt(norm2'Ht + (norm2 solve(Hx0, Ht0))^2);
 			 chi1 := 1 / min first SVD(DMforPN*Hx0);
-			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2);
+			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT); -- divide by bigT since t is in [0,1]
 			 if dt<o.tStepMin then (
 			      if DBG > 2 then (
 				   << "chi1 = " << chi1 << endl;
@@ -709,8 +716,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      );
      if DBG>3 then print rawSols;
      ret := if o.NoOutput then null 
-          else if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then rawSols/(s->{s}) 
-          else (
+          else if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then (
+	       if o.Projectivize then apply(rawSols, s->(
+			 if norm(last s) < 1/o.InfinityThreshold then print "Warning: solution at infinity encountered";
+			 {apply(drop(s,-1),u->(1/last s)*u)}
+			 ))
+	       else rawSols/(s->{s}) 
+          ) else (
      	       if o.Projectivize then (
 	  	    rawSols = apply(rawSols, s->(
 		    	      s' = flatten entries first s;

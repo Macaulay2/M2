@@ -1708,6 +1708,7 @@ enum gbTraceValues
 
   PathTracker /* or null */ *rawPathTrackerPrecookedSLPs(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr);
   PathTracker /* or null */ *rawPathTracker(const Matrix *);
+  PathTracker /* or null */ *rawPathTrackerProjective(const Matrix *, const Matrix *, gmp_RR);
   M2_string rawPathTrackerToString(PathTracker *); /* connected */
   unsigned long rawPathTrackerHash(PathTracker *); /* connected */
   void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,

@@ -25,6 +25,13 @@ S = apply(#M,i->getSolution(i,SolutionAttributes=>SolutionStatus));
 assert( #select(S, s->s=="REGULAR") == 70
      and #select(S, s->s=="INFINITY (FAILURE)") + #select(S, s->s=="MIN STEP (FAILURE)") == 50 )
 
+for predictor in {Tangent, RungeKutta4} do (
+     (S,T,solsS) = smallExample();
+     M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor, Projectivize=>true, Normalize=>true);
+     SM = sortSolutions M;
+     print SM;
+     --assert( SM/(s->s/round)@@first == {{-1, 0}, {0, -1}, {0, 1}, {1, 0}} )                                                                  
+     )
 end
 restart
 load "SoftwareM2engine.tst.m2"
@@ -34,3 +41,5 @@ S = apply(#M,i->getSolution(i,SolutionAttributes=>SolutionStatus));
 #select(S, s->s=="REGULAR")
 S = apply(#M,i->getSolution(i,SolutionAttributes=>RCondition));
 #select(S, s->s>0.001)
+
+

@@ -24,7 +24,7 @@ public:
   complex operator *(complex);
   complex operator /(complex);
   complex& operator +=(const complex);
-  complex getconjugate();
+  complex getconjugate() const;
   complex getreciprocal();
   double getmodulus();
   double getreal();
@@ -119,7 +119,7 @@ inline complex complex::operator /(complex c)
   return tmp;
 }
  
-inline complex complex::getconjugate()
+inline complex complex::getconjugate() const
 {
   complex tmp;
   tmp.real=this->real;
@@ -281,20 +281,63 @@ class PathTracker : public object
   const Matrix *H, *S, *T; // homotopy, start, target
   StraightLineProgram *slpH, *slpHxt, *slpHxtH, *slpHxH, // slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H 
     *slpS, *slpSx, *slpSxS, *slpT, *slpTx, *slpTxT; // slps for S and T, needed if is_projective 
-  gmp_RR productST; // real part of the Bombieri-Weyl (hermitian) product <S,T>
-
+  double productST, // real part of the Bombieri-Weyl (hermitian) product <S,T>
+    bigT; // length of arc between S and T 
   // inline functions needed by track
   void evaluate_slpHxt(int n, const complex* x0t0, complex* Hxt) {
-    if (is_projective) ERROR("not implemented");
-    else slpHxt->evaluate(n+1,x0t0, Hxt);
+    if (is_projective) {
+      complex* SxS = newarray_atomic(complex, (n+1)*(n-1));
+      complex* TxT = newarray_atomic(complex, (n+1)*(n-1));
+      const complex *x0 = x0t0, *t0 = x0t0+n;
+      const double t = (*(double *)t0)*bigT; //t0 should be real 
+      slpSxS->evaluate(n,x0,SxS);
+      slpTxT->evaluate(n,x0,TxT);
+      double c = cos(t), s = sin(t), sqrt_one_minus_productST_2 = sqrt(1-productST*productST);
+      double mS = c - productST*s/sqrt_one_minus_productST_2;
+      double mT = s/sqrt_one_minus_productST_2;
+      int j,i;
+      for (j=0; j<n-1; j++) 
+	for (i=0; i<n; i++) 
+	  *(Hxt+i*n+j) = *(SxS+i*(n-1)+j) * mS + *(TxT+i*(n-1)+j) * mT;
+      j = n-1; // last column
+      for (i=0; i<n; i++)
+	*(Hxt+i*n+j) = (x0+i)->getconjugate();
+      i = n; // last row = H_t
+      mS = -s - productST*c/sqrt_one_minus_productST_2;
+      mT = c/sqrt_one_minus_productST_2;
+      for (j=0; j<n-1; j++) {
+	complex tt = *(SxS+i*(n-1)+j) * mS + *(TxT+i*(n-1)+j) * mT;
+	*(Hxt+i*n+j) = tt;
+      }
+      *(Hxt+n*n+n-1) = complex(0.); // last row and column
+      deletearray(SxS);
+      deletearray(TxT);
+    } else slpHxt->evaluate(n+1,x0t0, Hxt);
   }
   void evaluate_slpHxtH(int n, const complex* x0t0, complex* HxtH) {
     if (is_projective) ERROR("not implemented");
     else slpHxtH->evaluate(n+1,x0t0, HxtH);
   }
   void evaluate_slpHxH(int n, const complex* x0t0, complex* HxH) {
-    if (is_projective) ERROR("not implemented");
-    else slpHxH->evaluate(n+1,x0t0, HxH);
+    if (is_projective) {
+      complex* SxS = newarray_atomic(complex, (n+1)*(n-1));
+      complex* TxT = newarray_atomic(complex, (n+1)*(n-1));
+      const complex *x0 = x0t0, *t0 = x0t0+n;
+      const double t = (*(double *)t0)*bigT; //t0 should be real 
+      slpSxS->evaluate(n,x0,SxS);
+      slpTxT->evaluate(n,x0,TxT);
+      double c = cos(t), s = sin(t), sqrt_one_minus_productST_2 = sqrt(1-productST*productST);
+      double mS = c - productST*s/sqrt_one_minus_productST_2;
+      double mT = s/sqrt_one_minus_productST_2;
+      int j,i;
+      for (j=0; j<n-1; j++) 
+	for (i=0; i<=n; i++) 
+	  *(HxH+i*n+j) = *(SxS+i*(n-1)+j) * mS + *(TxT+i*(n-1)+j) * mT;
+      j = n-1; // last column
+      for (i=0; i<n; i++)
+	*(HxH+i*n+j) = (x0+i)->getconjugate();
+      *(HxH+n*n+n-1) = complex(0.); // last row and column
+    } else slpHxH->evaluate(n+1,x0t0, HxH);
   }
 
   const CCC *C; // coefficient field (complex numbers)

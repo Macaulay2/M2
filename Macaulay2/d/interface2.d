@@ -71,6 +71,26 @@ export rawPathTracker(e:Expr):Expr := (
      );
 setupfun("rawPathTracker",rawPathTracker);
 
+export rawPathTrackerProjective(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is S:RawMatrixCell do 
+     	  when s.1 is T:RawMatrixCell do 
+	  when s.2 is productST:RRcell do
+	       toExpr(Ccode(RawPathTrackerOrNull,
+			"rawPathTrackerProjective(",
+	       	   	S.p, ",",
+		   	T.p, ",",
+			productST.v,
+		   	")"
+		    ))
+          else WrongArgRR(3)
+     	  else WrongArgMatrix(2)
+     	  else WrongArgMatrix(1)
+     else WrongNumArgs(3)
+     );
+setupfun("rawPathTrackerProjective",rawPathTrackerProjective);
+
 export rawSetParametersPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 12 then WrongNumArgs(11)
