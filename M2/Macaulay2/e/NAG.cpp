@@ -1194,7 +1194,8 @@ PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, g
     ERROR("complex coefficients expected");
     return NULL;
   }
-  p->productST = productST;
+  p->productST = mpfr_get_d(productST,GMP_RNDN);
+  p->bigT = asin(sqrt(1-p->productST*p->productST));  
 
   p->S = S; 
   p->slpS = NULL; 
@@ -1387,13 +1388,9 @@ int PathTracker::track(const Matrix* start_sols)
   complex* dxdt = newarray(complex,n+1); 
     complex* dx =  dxdt;
     complex* dt = dxdt+n;
-  complex* Hxt = newarray_atomic(complex, n*(n+1));
-  complex* HxtH = newarray_atomic(complex, n*(n+2));
-  complex* HxH = newarray_atomic(complex, n*(n+1));
-  //complex* Sx = (is_projective)?newarray_atomic(complex, n*(n+1)):NULL;
-  //complex* SxS = (is_projective)?newarray_atomic(complex, n*(n+2)):NULL;
-  //complex* Tx = (is_projective)?newarray_atomic(complex, n*(n+1)):NULL;
-  //complex* TxT = (is_projective)?newarray_atomic(complex, n*(n+2)):NULL;
+  complex* Hxt = newarray_atomic(complex, (n+1)*n);
+  complex* HxtH = newarray_atomic(complex, (n+2)*n);
+  complex* HxH = newarray_atomic(complex, (n+1)*n);
     complex *LHS, *RHS;
   complex one_half(0.5,0);
   complex* xt = newarray_atomic(complex,n+1);
@@ -1569,7 +1566,7 @@ int PathTracker::track(const Matrix* start_sols)
     t_s->t = t0->getreal();
     if (t_s->status == PROCESSING)
       t_s->status = REGULAR;
-    slpHxH->evaluate(n+1,x0t0,HxH);
+    evaluate_slpHxH(n,x0t0,HxH);
     cond_number_via_svd(n, HxH/*Hx*/, t_s->rcond);
     t_s->num_steps = count;
     if (M2_gbTrace>0) {
@@ -1645,7 +1642,7 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
     do {
       n_corr_steps++;
       //
-      slpHxH->evaluate(n+1,x1t1, HxH);
+      evaluate_slpHxH(n,x1t1, HxH);
       LHS = HxH; 	
       RHS = HxH+n*n; // i.e., H
       //
