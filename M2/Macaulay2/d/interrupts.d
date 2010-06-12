@@ -32,15 +32,19 @@ header "#include <unistd.h>";
 alarm(x:uint) ::= Ccode(int,"alarm(",x,")");
 export clearAlarm():void := alarm(uint(0));
 export clearAllFlags():void := (
+     setinterruptflag(0);
      store(exceptionFlag, false);
+     compilerBarrier();
      store(interruptedFlag, false);
      steppingFlag = false;
-     setinterruptflag(0);
      alarmedFlag = false;
      interruptPending = false;
      );
 export setInterruptFlag():void := (
+     --note ordering here, interrupt flag, then exception flag, then libfac interrupt flag. 
      store(interruptedFlag, true);
+     --compiler barrier necessary to disable compiler reordering.  On architectures that do not enforce memory write ordering, emit a memory barrier
+     compilerBarrier();
      store(exceptionFlag, true);
      setinterruptflag(1);
      );
@@ -54,8 +58,10 @@ export setSteppingFlag():void := (
      store(exceptionFlag, true);
      );
 export clearInterruptFlag():void := (
+     --reverse previous order when undoing set.  
      setinterruptflag(0);
      store(interruptedFlag, false);
+     compilerBarrier();
      determineExceptionFlag();
      );
 export clearAlarmedFlag():void := (

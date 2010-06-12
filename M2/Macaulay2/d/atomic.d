@@ -35,6 +35,7 @@ export newLockField() ::= Ccode(LockField,"AO_TS_INITIALIZER");
 export acquire(t:LockField) ::= while testAndSet(t) == testSet() do nothing;
 export release(t:LockField) ::= Ccode(void,"AO_CLEAR(&",t,")");
 export increment(x:atomicInt) ::= Ccode(atomicInt,"AO_fetch_and_add1(&(",x,"))");
+export compilerBarrier() ::= Ccode(void,"AO_compiler_barrier()");
 
 -- here is the way to declare one of these:
 -- header "struct atomic_field x;";

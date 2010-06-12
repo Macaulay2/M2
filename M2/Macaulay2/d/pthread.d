@@ -2,8 +2,11 @@ use evaluate;
 
 threadCreate(tid:Thread,f:function(ThreadCellBody):null,tb:ThreadCellBody) ::=  Ccode(int,
      "pthread_create(&(",lvalue(tid),"),NULL,(void *(*)(void *))(",f,"),(void *)(",tb,"))");
+
 threadDetach(tid:Thread) ::=  Ccode(int,"pthread_detach(",tid,")");
+
 header "static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }";
+
 startup(tb:ThreadCellBody):null := (
      Ccode(void,"reverse_run(thread_prepare_list)"); -- re-initialize any thread local variables
      f := tb.fun; tb.fun = nullE;
@@ -24,6 +27,7 @@ startup(tb:ThreadCellBody):null := (
      -- we may need a barrier here
      tb.done = true;
      null());
+
 isFunction(e:Expr):bool := (
      when e
      is CompiledFunction do true
@@ -31,6 +35,7 @@ isFunction(e:Expr):bool := (
      is FunctionClosure do true
      is s:SpecialExpr do isFunction(s.e)
      else false);
+
 cancelThread(tb:ThreadCellBody):Expr := (
      if tb.resultRetrieved then return buildErrorPacket("thread reasult already retrieved");
      if tb.done then (
@@ -44,9 +49,11 @@ cancelThread(tb:ThreadCellBody):Expr := (
      else return buildErrorPacket("thread cancellation: exceptionFlagPointer is null");
      tb.cancellationRequested = true;
      nullE);
+
 cancelThread(e:Expr):Expr := when e is c:ThreadCell do cancelThread(c.body) else WrongArg("a thread");
 -- # typical value: cancelThread, Thread, Nothing
 setupfun("cancelThread",cancelThread);
+
 threadCellFinalizer(tc:ThreadCell,p:null):void := (
      -- It is not safe to call any routines that depend on initialization of global variables here,
      -- because this finalizer may be called early, before all initialization is done.
@@ -59,7 +66,9 @@ threadCellFinalizer(tc:ThreadCell,p:null):void := (
      else (
 	  if notify then stderr << "--cancelling inaccessible thread " << tc.body.tid << endl;
 	  when cancelThread(tc.body) is err:Error do (printError(err);) else nothing));
+
 header "#include <signal.h>";
+
 inThread2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
      if !USE_THREADS then return buildErrorPacket("threads disabled (by configuration option)");
@@ -73,6 +82,7 @@ inThread2(fun:Expr,arg:Expr):Expr := (
      if errno != 0 then return buildErrorPacketErrno("thread detaching failed",errno);
      Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",threadCellFinalizer,",0,0,0)");
      Expr(tc));
+
 inThread(e:Expr):Expr := (
      when e is args:Sequence do
      if length(args) == 2 then inThread2(args.0,args.1)
@@ -81,6 +91,7 @@ inThread(e:Expr):Expr := (
 -- # typical value: inThread, Function, Thread
 -- # typical value: inThread, Function, Thing, Thread
 setupfun("inThread",inThread);	   
+
 threadResult(e:Expr):Expr := (
      when e is c:ThreadCell do
      if c.body.resultRetrieved then buildErrorPacket("thread result already retrieved")
