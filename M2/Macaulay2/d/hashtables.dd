@@ -54,6 +54,9 @@ enlarge(o:HashTable):void := (
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;));
+     --Note that all operations are done on a new table
+     --So simply do a compiler barrier and then swapping the tables becomes atomic
+     compilerBarrier(); 
      o.table = newTable;
      );
 shrink(o:HashTable):void := (
@@ -68,6 +71,9 @@ shrink(o:HashTable):void := (
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;));
+     --Note that all operations are done on a new table
+     --So simply do a compiler barrier and then swapping the tables becomes atomic
+     compilerBarrier();
      o.table = newTable;
      );
 export remove(x:HashTable,key:Expr):Expr := (
@@ -86,9 +92,10 @@ export remove(x:HashTable,key:Expr):Expr := (
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
+	       --preserve ordering -- we change the numEntries last upon insertion so decrease it first when removing.
+	       x.numEntries = x.numEntries - 1;
 	       if prev == p then x.table.hmod = p.next
 	       else prev.next = p.next;
-	       x.numEntries = x.numEntries - 1;
 	       if 8 * x.numEntries == 3 * length(x.table) -- SEE BELOW
 	       && length(x.table) > 4
 	       -- 4 is the length of a new hash table, see tokens.d, newHashTable()
@@ -120,7 +127,6 @@ export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
 	  enlarge(x);
 	  hmod = int(h & (length(x.table)-1));
 	  );
-     x.numEntries = x.numEntries + 1;
      -- In the following statement, a new entry is adding by atomically replacing the pointer x.table.hmod.
      -- This will not confuse readers that don't lock the hash table, because once the load x.table.hmod, they
      -- will have a linked list that stays the same, is shortened, or has a value changed, and contains no
@@ -128,6 +134,11 @@ export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      -- cause a reader to encounter the same key twice, if the key is removed and added while the reader is
      -- traversing the list.
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
+     --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
+     --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering
+     compilerBarrier();
+     x.numEntries = x.numEntries + 1;
+     --Note: x.numEntries may be inconsistent with the number of entries in the table if accessed from another thread
      if lockit then unlock(hashTableMutexArray.i);
      value);
 export storeInHashTable(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTable(x,key,hash(key),value);
@@ -153,9 +164,12 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
 	  enlarge(x);
 	  hmod = int(h & (length(x.table)-1));
 	  );
-     x.numEntries = x.numEntries + 1;
      -- We add the the front of the linked list, for thread consistency, as explained above:
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
+     --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
+     --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering
+     compilerBarrier();
+     x.numEntries = x.numEntries + 1;
      if lockit then unlock(hashTableMutexArray.i);
      value);
 export storeInHashTableNoClobber(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTableNoClobber(x,key,hash(key),value);
@@ -207,8 +221,11 @@ export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,hand
 	  enlarge(x);
 	  hmod = int(h & (length(x.table)-1));
 	  );
-     x.numEntries = x.numEntries + 1;
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
+     --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
+     --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering
+     compilerBarrier();
+     x.numEntries = x.numEntries + 1;
      if lockit then unlock(hashTableMutexArray.i);
      value);
 toHashTableError(i:int):Expr := buildErrorPacket("expected element at position "+tostring(i)+" to be a pair");
@@ -716,7 +733,15 @@ export lookupfun(e:Expr):Expr := (
      else nullE);
 setupfun("lookup",lookupfun);	  
 
-export keys(o:HashTable):Expr := list(
+export keys(o:HashTable):Expr := (
+     -- This requires length and items.
+     -- Thus the hash table needs to not change, so lock it.
+     lockit := !o.beingInitialized;
+     i := 0;
+     if lockit then (
+          i = mutexIndex(o);
+          lock(hashTableMutexArray.i));
+     l:= list(
      new Sequence len o.numEntries do
      foreach bucket in o.table do (
 	  p := bucket;
@@ -726,6 +751,8 @@ export keys(o:HashTable):Expr := list(
 	       )
 	  )
      );
+     if lockit then unlock(hashTableMutexArray.i);
+     l);
 export keys(o:Dictionary):Expr := Expr(
      list(
 	  new Sequence len o.symboltable.numEntries do
