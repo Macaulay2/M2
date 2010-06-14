@@ -201,6 +201,16 @@ ring_elem Tower::divide(const ring_elem f, const ring_elem g) const
   return TOWER_RINGELEM(h);
 }
 
+ring_elem Tower::remainder(const ring_elem f, const ring_elem g) const
+{
+  poly f1 = TOWER_VAL(f);
+  poly g1 = TOWER_VAL(g);
+  poly h;
+  D->set_zero(h);
+  D->remainder(h, f1, g1);
+  return TOWER_RINGELEM(h);
+}
+
 ring_elem Tower::random() const
 {
   poly f;
