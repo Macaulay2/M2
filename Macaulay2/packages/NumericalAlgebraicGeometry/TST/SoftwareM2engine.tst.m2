@@ -9,7 +9,7 @@ for predictor in {RungeKutta4,Tangent,Euler} do (
      (S,T,solsS) = smallExample();
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor);
      SM = sortSolutions M;
-     assert( SM/(s->s/round)@@first == {{-1, 0}, {0, -1}, {0, 1}, {1, 0}} )
+     assert areEqual( SM, {{{-1, 0}}, {{0, -1}}, {{0, 1}}, {{1, 0}}} );
      )
 (S,T,solsS) = smallInfinityExample()
 M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine);
@@ -30,8 +30,8 @@ for predictor in {Tangent, RungeKutta4} do (
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor, Projectivize=>true, Normalize=>true);
      SM = sortSolutions M;
      print SM;
-     assert( SM/(s->s/round)@@first == {{-1, 0}, {0, -1}, {0, 1}, {1, 0}} )                                                                  
-     )
+     assert areEqual( SM, {{{-1, 0}}, {{0, -1}}, {{0, 1}}, {{1, 0}}} );
+     )		    
 end
 restart
 load "SoftwareM2engine.tst.m2"

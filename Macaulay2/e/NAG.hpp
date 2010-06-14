@@ -190,6 +190,7 @@ void multiply_complex_array_scalar(int n, complex* a, const complex b);
 #define RUNGE_KUTTA 1
 #define TANGENT 2
 #define EULER 3
+#define PROJECTIVE_NEWTON 4
 
 #define MAX_NUM_SLPs 100
 #define CONST_OFFSET 0x1000
@@ -283,6 +284,8 @@ class PathTracker : public object
     *slpS, *slpSx, *slpSxS, *slpT, *slpTx, *slpTxT; // slps for S and T, needed if is_projective 
   double productST, // real part of the Bombieri-Weyl (hermitian) product <S,T>
     bigT; // length of arc between S and T 
+  double* DMforPN; // multipliers used in ProjectiveNewton
+  double maxDegreeTo3halves; // max(degree of equation)^{3/2}
   // inline functions needed by track
   void evaluate_slpHxt(int n, const complex* x0t0, complex* Hxt) {
     if (is_projective) {

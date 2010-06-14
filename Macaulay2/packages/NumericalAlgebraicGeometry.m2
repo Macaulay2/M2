@@ -214,10 +214,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=null"; 
      if o.Software===M2enginePrecookedSLPs and (o.Projectivize or o.SLP===null) 
      then error "M2enginePrecookedSLPs is implemented for Projectivize=>false and SLP != null";
-     --if o.Software===M2engine and o.Projectivize 
-     --then error "M2engine is not implemented for Projectivize=>true";
-     if o.Predictor===ProjectiveNewton and (o.Software=!=M2 or not o.Normalize or o.SLP=!=null)
-     then error "ProjectiveNewton (experimental) requires Software=>M2, Normalize=>true and o.SLP=>null";
+--     if o.Predictor===ProjectiveNewton and (o.Software=!=M2 or o.SLP=!=null)
+--     then error "ProjectiveNewton (experimental) requires Software=>M2 and o.SLP=>null";
      
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCpack then return trackPHCpack(S,T,solsS,o)
@@ -231,19 +229,19 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
      
+     -- determine whether the problem is projective
      isProjective := false;
      if n != numgens R then (
 	  if numgens R == n+1 and all(S, isHomogeneous) and all(T, isHomogeneous) 
 	  then ( 
 	       isProjective = true; 
 	       n = n+1;
-	       if o.Projectivize then error "already projective"; 
 	       )  
 	  else error "expected a square system";
      	  );
+    
      K := CC_53; -- THE coefficient ring
      solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
-     
      if o.Projectivize then (
 	  if isProjective then error "the problem is already projective";
 	  h := symbol h;
@@ -254,11 +252,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      	  solsS = solsS / (s->s||matrix{{1_K}});
 	  isProjective = true;
 	  );
-
+     
      if o.Predictor===ProjectiveNewton and not isProjective 
 	  then "projective expected: either homogeneous system or Projectivize=>true";
-     
      if isProjective then (
+	  if member(o.Software,{M2engine,M2enginePrecookedSLPs}) and not o.Normalize
+	  then error "Normalize=>true expected for this choice of Software";
+     	  if o.Software === M2enginePrecookedSLPs 
+	  then error "Software=>M2enginePrecookedSLPs not implemented for projective case";	       
      	  -- affine patch functions 
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
 	  patchEquation := p -> p * transpose vars R - 1;
@@ -291,17 +292,15 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      (nS,nT) := if o.Normalize -- make Bomboeri-Weyl norm of the systems equal 1
      then (apply(S, s->s/sqrt(#S * BombieriWeylNormSquared s)), apply(T, s->s/sqrt(#T * BombieriWeylNormSquared s)))
      else (S,T);
-     if o.Predictor===ProjectiveNewton 
+     
+     if o.Predictor===ProjectiveNewton or (isProjective and o.Software===M2engine)
+     -- in both cases a linear homotopy on the unit sphere is performed
      then (
-	  H := {o.gamma*matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
-     	  -- old stuff: compute Bombieri-Weyl norm of the homotopy, define normalizing factor, supporting constants
-	  -- BW2 := sum(flatten entries sub(H,Kt[gens R]), BombieriWeylNormSquared); -- this is a polynomial in K[t]
-	  -- normalizer := t -> 1 / sqrt sub(BW2, matrix{{t}}); -- normalizing factor
-	  -- normalizer' := t -> - (1/2) * (normalizer t)^3 * sub(diff(Kt_0,BW2), matrix{{t}}); -- its derivative 	  
-	  -- end old stuff
+	  nS = (o.gamma/abs(o.gamma))*nS;
+	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
-	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(o.gamma*nS#i,nT#i));-- real Bombieri-Weyl scalar product
+	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(nS#i,nT#i));-- real Bombieri-Weyl scalar product
 	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
 	  bigT := asin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
 	  Hx := H/transpose@@jacobian; -- store jacobians (for evalHx)
@@ -453,7 +452,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      rawSols := if member(o.Software,{M2enginePrecookedSLPs, M2engine}) then (
 	  PT := if o.Software===M2engine then (
 	       if isProjective then rawPathTrackerProjective( raw matrix {nS}, raw matrix {nT}, 
-		    realPart sum(#S, i->BombieriWeylScalarProduct(o.gamma*nS#i,nT#i)) ) -- pass normalized start/target and Re(B-W product)
+		    reBW'ST ) -- pass normalized start/target and Re(B-W product)
 	       else rawPathTracker(raw H) 
 	       ) else rawPathTrackerPrecookedSLPs(slpHxt, slpHxH);
 	  lastPathTracker = PT;
@@ -466,7 +465,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    if o.Predictor === Tangent then predTANGENT
 		    else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
 		    else if o.Predictor === Euler then predEULER
-		    else error "no slp for the predictor")
+		    else if o.Predictor === ProjectiveNewton then predPROJECTIVENEWTON
+		    else error "engine: unknown predictor")
 	       );
 	  solsM := matrix apply(solsS,s->first entries transpose s);
 	  --print solsM;
@@ -615,8 +615,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else if o.Predictor == ProjectiveNewton then (
 			 Hx0 = evalHx(x0,t0);
 			 Ht0 = evalHt(x0,t0);
-			 norm2'Ht := (max first SVD Ht0)^2;
-			 chi2 := sqrt(norm2'Ht + (norm2 solve(Hx0, Ht0))^2);
+			 chi2 := sqrt((norm2 Ht0)^2 + (norm2 solve(Hx0, Ht0))^2);
 			 chi1 := 1 / min first SVD(DMforPN*Hx0);
 			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT); -- divide by bigT since t is in [0,1]
 			 if dt<o.tStepMin then (
@@ -1429,6 +1428,7 @@ slpPRODUCT = 3; --"PRODUCT";
 predRUNGEKUTTA = 1;
 predTANGENT = 2;
 predEULER = 3;
+predPROJECTIVENEWTON = 4;
 
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
