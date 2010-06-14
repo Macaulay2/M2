@@ -1163,6 +1163,7 @@ PathTracker::PathTracker()
 {
   raw_solutions = NULL;
   solutions = NULL;
+  DMforPN =NULL;
 }
 
 PathTracker::~PathTracker()
@@ -1170,6 +1171,7 @@ PathTracker::~PathTracker()
   for (int i=0; i<n_sols; i++)
     raw_solutions[i].release();
   deletearray(raw_solutions); 
+  deletearray(DMforPN);
 }
 
 // creates a PathTracker object (case: is_projective), builds slps for predictor and corrector given start/target systems
@@ -1197,9 +1199,18 @@ PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, g
   p->productST = mpfr_get_d(productST,GMP_RNDN);
   p->bigT = asin(sqrt(1-p->productST*p->productST));  
 
+  int n = S->n_cols()+1; // equals the number of variables
+  p->maxDegreeTo3halves = 0;
+  p->DMforPN = newarray(double,n);
+  p->DMforPN[n-1] = 1;
   p->S = S; 
   p->slpS = NULL; 
-  for (int i=0; i<S->n_cols(); i++) {
+  int d[1];
+  for (int i=0; i<n-1; i++) {
+    *d = 2;// R->degree(S->elem(0,i), d); // How do I get the degree?
+    if (*d > p->maxDegreeTo3halves)
+      p->maxDegreeTo3halves = *d;
+    p->DMforPN[i] = 1/sqrt(*d);
     StraightLineProgram* slp = StraightLineProgram::make(R, S->elem(0,i));
     if (p->slpS == NULL) p->slpS = slp;
     else {
@@ -1210,6 +1221,7 @@ PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, g
     }
   }
   p->slpSx = p->slpS->jacobian(false, p->slpHxH/*not used*/, true, p->slpSxS);
+  p->maxDegreeTo3halves = p->maxDegreeTo3halves*sqrt(p->maxDegreeTo3halves);
 
   p->T = T; 
   p->slpT = NULL; 
@@ -1446,6 +1458,9 @@ int PathTracker::track(const Matrix* start_sols)
 	RHS = Hxt+n*n; 
 	multiply_complex_array_scalar(n,RHS,-*dt);
         LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+	// make prediction
+	copy_complex_array(n+1,x0t0,x1t1);
+	add_to_complex_array(n+1,x1t1,dxdt);
       } break;
       case EULER: {
 	evaluate_slpHxtH(n,x0t0,HxtH); // for Euler "H" is attached
@@ -1456,6 +1471,9 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,RHS,Ht);
 	negate_complex_array(n,RHS);
 	LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+	// make prediction
+	copy_complex_array(n+1,x0t0,x1t1);
+	add_to_complex_array(n+1,x1t1,dxdt);
       } break;
       case RUNGE_KUTTA: {
 	copy_complex_array(n+1,x0t0,xt);
@@ -1516,12 +1534,29 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,dx4,dx3);
 	multiply_complex_array_scalar(n,dx4,1.0/6);
 	copy_complex_array(n,dx4,dx);
+	// make prediction
+	copy_complex_array(n+1,x0t0,x1t1);
+	add_to_complex_array(n+1,x1t1,dxdt);
+      } break;
+      case PROJECTIVE_NEWTON: {
+	evaluate_slpHxt(n,x0t0, Hxt); 
+	LHS = Hxt; 	
+	RHS = Hxt+n*n; 
+        LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+	double chi2 = sqrt(norm2_complex_array(n,RHS) +  norm2_complex_array(n,dx));
+	double chi1;
+	/* fix when it is clear how to get degree: write a special function for getting operator norm
+	   for (j=0; j<n; j++)
+	  for(i=0; i<n; i++)
+	  *(LHS+n*i+j) = *(LHS+n*i+j) * DMforPN[j]; // multiply j-th column by sqrt(degree) */
+	cond_number_via_svd(n, LHS, chi1); chi1 = 1/chi1;
+	*t0 += 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT);
+	// make prediction
+	copy_complex_array(n+1,x0t0,x1t1);
       } break;
       default: ERROR("unknown predictor"); 
       };
 
-      copy_complex_array(n+1,x0t0,x1t1);
-      add_to_complex_array(n+1,x1t1,dxdt);
 
       // CORRECTOR
       int n_corr_steps=0; 
