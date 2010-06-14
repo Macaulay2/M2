@@ -446,7 +446,7 @@ bool DPoly::is_equal(int level, const poly f, const poly g)
       if (g == 0) return true;
       return false;
     }
-  if (f->deg != g->deg) return false;
+  if (g == 0 || f->deg != g->deg) return false;
   if (level == 0)
     {
       long *fp = f->arr.ints;
@@ -532,7 +532,7 @@ poly DPoly::random_n(int level, int deg)
 }
 poly DPoly::random(int level, int deg)
 {
-  if (deg < 0) deg = 3; // Take a random element of degree 0.
+  if (deg < 0) deg = 0; // Take a random element of degree 0.
   if (level == 0) return random_0(deg);
   return random_n(level, deg);
 }
@@ -1034,6 +1034,22 @@ void DPoly::remainder(int level, poly & f, const poly g)
   dealloc_poly(quot);
 }
 
+void DPoly::pseudo_remainder(int level, poly & f, const poly g)
+{
+  if (g == 0) return;
+  //TODO: write
+}
+poly DPoly::pseudo_division(int level, poly & f, const poly g)
+{
+  if (g == 0) return 0;
+  //TODO: write
+  return 0;
+}
+poly DPoly::resultant(int level, poly f, poly g)
+{
+  //TODO: write
+  return 0;
+}
 static void swap_poly(poly &f, poly &g)
 {
   poly a = f;
@@ -1044,6 +1060,11 @@ poly  DPoly::gcd(int level, const poly f, const poly g)
 {
   poly F = copy(level,f);
   poly G = copy(level,g);
+  if (G == 0)
+    {
+      G = F;
+      F = 0;
+    }
   for (;;)
     {
 #ifdef DEBUGGCD
@@ -1294,6 +1315,11 @@ poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
 
   for (;;)
     {
+      //      fprintf(stdout, "prod = ");
+      //      dpoly(level,prod);
+      //      fprintf(stdout, "\nbase = ");
+      //      dpoly(level,base);
+      //      fprintf(stdout, "\n");
       if (RingZZ::mod_ui(n,2) == 1)
 	{
 	  tmp = mult(level, prod, base, false);
@@ -1305,6 +1331,12 @@ poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
       if (mpz_sgn(n) == 0)
 	{
 	  mpz_clear(n);
+	  //	  fprintf(stdout, "final prod = ");
+	  //	  dpoly(level,prod);
+	  //	  fprintf(stdout, "\nbase = ");
+	  //	  dpoly(level,base);
+	  //	  fprintf(stdout, "\n");
+	  //TODO: free base
 	  return prod;
 	}
       else
