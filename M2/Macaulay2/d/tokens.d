@@ -509,7 +509,8 @@ export HashTable := {+
      numEntries:int,
      hash:int,
      Mutable:bool,
-     beingInitialized:bool -- if true, no need to lock a mutex while modifying it
+     beingInitialized:bool,-- if true, no need to lock a mutex while modifying it
+     mutex:ThreadMutex
      };
 
 -- more dummies
@@ -605,22 +606,27 @@ export printWarningMessage(t:Token,message:string):void := printWarningMessage(p
 
 -----------------------------------------------------------------------------
 export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
-     HashTable(
+     ht:= HashTable(
 	  array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in hashtable.dd that the number of buckets
 	  -- (here four) is a power of two
 	  Class,parent,0,nextHash(),
 	  true,				  -- mutable by default; careful: other routines depend on this
-	  false
-	  ));
-export thingClass := HashTable(
-     array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
-	  -- we start with four empty buckets.  It is important for the 
+	  false,
+	  newMutex
+	  ); init(ht.mutex); ht);
+
+export thingClass := (
+     ht:= HashTable(
+          array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
+          -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in objects.d that the number of buckets
 	  -- here (four) is a power of two
-     self,self,0,nextHash(),
-     true,false);
+          self,self,0,nextHash(),
+          true,false, newMutex);
+	  init(ht.mutex); ht);
+
 export hashTableClass := newHashTable(thingClass,thingClass);
 export mutableHashTableClass := newHashTable(thingClass,hashTableClass);
 export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);

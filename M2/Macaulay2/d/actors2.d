@@ -72,13 +72,13 @@ values(e:Expr):Expr := (
 				   p=q.next;)
 			      else break;
 			      )))))
-     is o:HashTable do list(
+     is o:HashTable do (lock(o.mutex); l:= list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(p.value);
-		    p = p.next; )))
+		    p = p.next; ))); unlock(o.mutex); l)
      else WrongArg("a hash table or dictionary"));
 setupfun("values",values);
 
@@ -100,13 +100,13 @@ pairs(e:Expr):Expr := (
 					p=q.next;)
 				   else break; ));
 			 ))))
-     is o:HashTable do list(
+     is o:HashTable do (lock(o.mutex); l:=list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(Sequence(p.key,p.value));
-		    p = p.next; )))
+		    p = p.next; ))); unlock(o.mutex); l )
      else WrongArg("a hash table or a raw polynomial"));
 setupfun("pairs",pairs);
 
