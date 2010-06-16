@@ -183,6 +183,12 @@ AC_CONFIG_AUX_DIR(config)
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
+if test "$ARCH" = x86
+then AC_DEFINE(ARCH_X86,1,[If architecture is x86])
+fi
+if test "$ARCH" = x86_64
+then AC_DEFINE(ARCH_X86_64,1,[If architecture is x86_64])
+fi
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()

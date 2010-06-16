@@ -510,7 +510,7 @@ export HashTable := {+
      hash:int,
      Mutable:bool,
      beingInitialized:bool,-- if true, no need to lock a mutex while modifying it
-     mutex:ThreadMutex
+     mutex:SpinLock
      };
 
 -- more dummies
@@ -614,7 +614,7 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  Class,parent,0,nextHash(),
 	  true,				  -- mutable by default; careful: other routines depend on this
 	  false,
-	  newMutex
+	  uninitializedSpinLock
 	  ); init(ht.mutex); ht);
 
 export thingClass := (
@@ -624,7 +624,7 @@ export thingClass := (
 	  -- enlarge/shrink code in objects.d that the number of buckets
 	  -- here (four) is a power of two
           self,self,0,nextHash(),
-          true,false, newMutex);
+          true,false, uninitializedSpinLock);
 	  init(ht.mutex); ht);
 
 export hashTableClass := newHashTable(thingClass,thingClass);

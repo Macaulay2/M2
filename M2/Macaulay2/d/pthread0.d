@@ -10,6 +10,7 @@ declarations "
     #include <pthread.h>
     #define GC_THREADS
     #include <gc/gc.h>
+    #include <../e/mutex.h>
 
 ";
 export voidPointer := Pointer "void *";
@@ -33,10 +34,16 @@ export ThreadRWLockAttr := atomicType "pthread_rwlockattr_t";
 -- export ThreadSpinLock := atomicType "pthread_spinlock_t";
 -- export ThreadBarrier := atomicType "pthread_barrier_t";
 -- export ThreadBarrierAttr := atomicType "pthread_barrierattr_t";
+export SpinLock := atomicType "spinLock";
 export init(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_init(&(",lvalue(x),"),NULL)");
 export destroy(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_destroy(&(",lvalue(x),"))");
 export lock(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_lock(&(",lvalue(x),"))");
 export unlock(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_unlock(&(",lvalue(x),"))");
+
+import uninitializedSpinLock:SpinLock;
+export init(x:SpinLock) ::= Ccode(void, "initializeSpinLock(&(",lvalue(x),"))");
+export lock(x:SpinLock) ::= Ccode(void, "acquireSpinLock(&(",lvalue(x),"))");
+export unlock(x:SpinLock) ::= Ccode(void, "releaseSpinLock(&(",lvalue(x),"))");
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread0.o "

@@ -284,7 +284,7 @@ copy(table:array(KeyValuePair)):array(KeyValuePair) := (
 export copy(o:HashTable):HashTable := (
      lockit := o.Mutable && !o.beingInitialized;
      if lockit then lock(o.mutex);
-     x := HashTable( copy(o.table), o.Class, o.parent, o.numEntries, o.hash, o.Mutable, false, newMutex );
+     x := HashTable( copy(o.table), o.Class, o.parent, o.numEntries, o.hash, o.Mutable, false, uninitializedSpinLock );
      init(x.mutex);
      if lockit then unlock(o.mutex);
      x);
@@ -294,7 +294,7 @@ export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):
      x := HashTable(
 	  if newMutable || o.Mutable then copy(o.table) else o.table,
 	  newClass,
-	  newParent, o.numEntries, 0, newMutable, false, newMutex);
+	  newParent, o.numEntries, 0, newMutable, false, uninitializedSpinLock);
      init(x.mutex);
      if newMutable then (
 	  if newClass != cacheTableClass 
