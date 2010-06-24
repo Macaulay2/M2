@@ -168,6 +168,7 @@ inline void complex::sprint(char* s)
 }
 
 
+void zero_complex_array(int n, complex* a);
 void copy_complex_array(int n, const complex* a, complex* b);
 complex* make_copy_complex_array(int n, const complex* a);
 void multiply_complex_array_scalar(int n, complex* a, const complex b);
@@ -394,6 +395,10 @@ public:
 				    gmp_RR epsilon, int max_corr_steps,
 				    int pred_type);  
 };
+
+// ------------ service functions --------------------------------------------------
+int degree_ring_elem(const PolyRing* R, ring_elem re);
+void print_complex_matrix(int size, const double* A);
 
 #endif
 

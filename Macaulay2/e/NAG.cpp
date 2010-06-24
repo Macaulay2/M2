@@ -6,8 +6,9 @@
 #include <time.h>
 #include "lapack.hpp"
 #include "poly.hpp"
+#include "relem.hpp"
  
-// Straiight Line Program class
+// Straight Line Program class
 
 StraightLineProgram::StraightLineProgram()
 {
@@ -800,6 +801,12 @@ void StraightLineProgram::text_out(buffer& o) const
 // end StraightLineProgram
 
 
+void zero_complex_array(int n, complex* a)
+{
+  for (int i=0; i<n; i++,a++)
+    *a=0.;
+}
+
 void copy_complex_array(int n, const complex* a, complex* b)
 {
   for (int i=0; i<n; i++,a++,b++)
@@ -1016,6 +1023,8 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
   else
     {
       cond = sigma[size-1]/sigma[0];  
+      //print_complex_matrix(size,copyA);
+      //printf("(s_large=%lf, s_small=%lf)\n", sigma[0], sigma[size-1]);
     }
 
   deletearray(workspace);
@@ -1029,6 +1038,74 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
 #endif
 }
 
+// In: A, a square matrix of size "size"
+// Out: true if success, "norm" = operator norm of A^{-1}
+bool norm_of_inverse_via_svd(int size, complex* A, double& norm)
+{
+#if !LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
+  bool ret = true;
+  char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
+  int rows = size;
+  int cols = size;
+  int info;
+  int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
+  int max = (rows >= cols) ? rows : cols;
+  int wsize = 4*min+2*max;
+  double *workspace = newarray_atomic(double,2*wsize);
+  double *rwork = newarray_atomic(double,5*max);
+
+  double *copyA = (double*) A;
+  double *u = newarray_atomic(double,2*rows*rows);
+  double *vt = newarray_atomic(double,2*cols*cols);
+  double *sigma = newarray_atomic(double,2*min);
+  
+  zgesvd_(&doit, &doit, &rows, &cols, 
+	  copyA, &rows,
+	  sigma, 
+	  u, &rows,
+	  vt, &cols,
+	  workspace, &wsize, 
+	  rwork, &info);
+
+  if (info < 0)
+    {
+      ERROR("argument passed to zgesvd had an illegal value");
+      ret = false;
+    }
+  else if (info > 0) 
+    {
+      ERROR("zgesvd did not converge");
+      ret = false;
+    }
+  else
+    {
+      if (sigma[size-1] == 0) {
+	ERROR("invertible matrix expected");
+	ret = false;
+      }
+      norm = 1/sigma[size-1];  
+    }
+
+  deletearray(workspace);
+  deletearray(rwork);
+  //deletearray(copyA);
+  deletearray(u);
+  deletearray(vt);
+  deletearray(sigma);
+
+  return ret;
+#endif
+}
 
 // END lapack-based routines
 
@@ -1205,12 +1282,11 @@ PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, g
   p->DMforPN[n-1] = 1;
   p->S = S; 
   p->slpS = NULL; 
-  int d[1];
   for (int i=0; i<n-1; i++) {
-    *d = 2;// R->degree(S->elem(0,i), d); // How do I get the degree?
-    if (*d > p->maxDegreeTo3halves)
-      p->maxDegreeTo3halves = *d;
-    p->DMforPN[i] = 1/sqrt(*d);
+    int d = degree_ring_elem(R,S->elem(0,i)); 
+    if (d > p->maxDegreeTo3halves)
+      p->maxDegreeTo3halves = d;
+    p->DMforPN[i] = 1/sqrt(d);
     StraightLineProgram* slp = StraightLineProgram::make(R, S->elem(0,i));
     if (p->slpS == NULL) p->slpS = slp;
     else {
@@ -1448,7 +1524,10 @@ int PathTracker::track(const Matrix* start_sols)
 	}  
       
       bool LAPACK_success = false;
-         
+
+      if (is_projective) //normalize
+	multiply_complex_array_scalar(n,x0,1/sqrt(norm2_complex_array(n,x0)));
+
       // PREDICTOR in: x0t0,dt,pred_type
       //           out: dx
       switch(pred_type) {
@@ -1458,9 +1537,6 @@ int PathTracker::track(const Matrix* start_sols)
 	RHS = Hxt+n*n; 
 	multiply_complex_array_scalar(n,RHS,-*dt);
         LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
-	// make prediction
-	copy_complex_array(n+1,x0t0,x1t1);
-	add_to_complex_array(n+1,x1t1,dxdt);
       } break;
       case EULER: {
 	evaluate_slpHxtH(n,x0t0,HxtH); // for Euler "H" is attached
@@ -1471,9 +1547,6 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,RHS,Ht);
 	negate_complex_array(n,RHS);
 	LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
-	// make prediction
-	copy_complex_array(n+1,x0t0,x1t1);
-	add_to_complex_array(n+1,x1t1,dxdt);
       } break;
       case RUNGE_KUTTA: {
 	copy_complex_array(n+1,x0t0,xt);
@@ -1534,32 +1607,37 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,dx4,dx3);
 	multiply_complex_array_scalar(n,dx4,1.0/6);
 	copy_complex_array(n,dx4,dx);
-	// make prediction
-	copy_complex_array(n+1,x0t0,x1t1);
-	add_to_complex_array(n+1,x1t1,dxdt);
       } break;
       case PROJECTIVE_NEWTON: {
 	evaluate_slpHxt(n,x0t0, Hxt); 
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
-        LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+        LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx); // dx used as temp
 	double chi2 = sqrt(norm2_complex_array(n,RHS) +  norm2_complex_array(n,dx));
 	double chi1;
-	/* fix when it is clear how to get degree: write a special function for getting operator norm
-	   for (j=0; j<n; j++)
+
+	// evaluate again: LHS destroyed by solve_... !!!
+	evaluate_slpHxt(n,x0t0, Hxt); 
+	LHS = Hxt; 	
+
+	for (j=0; j<n; j++)
 	  for(i=0; i<n; i++)
-	  *(LHS+n*i+j) = *(LHS+n*i+j) * DMforPN[j]; // multiply j-th column by sqrt(degree) */
-	cond_number_via_svd(n, LHS, chi1); chi1 = 1/chi1;
-	*t0 += 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT);
-	// make prediction
-	copy_complex_array(n+1,x0t0,x1t1);
+	    *(LHS+n*i+j) = *(LHS+n*i+j) * DMforPN[j]; // multiply j-th column by sqrt(degree) 
+	//print_complex_matrix(n,(double*)LHS); //!!!
+	norm_of_inverse_via_svd(n, LHS, chi1); 
+	//printf("chi1=%lf\n", chi1);
+	*dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT);
+	zero_complex_array(n,dx); 
       } break;
       default: ERROR("unknown predictor"); 
       };
 
+      // make prediction
+      copy_complex_array(n+1,x0t0,x1t1);
+      add_to_complex_array(n+1,x1t1,dxdt);
 
       // CORRECTOR
-      int n_corr_steps=0; 
+      int n_corr_steps = 0; 
       bool is_successful;
       do {
 	n_corr_steps++;
@@ -1571,7 +1649,8 @@ int PathTracker::track(const Matrix* start_sols)
 	negate_complex_array(n,RHS);
 	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
 	add_to_complex_array(n,x1t1,dx);
-	is_successful = norm2_complex_array(n,dx) < tol2*norm2_complex_array(n,x1t1);
+	is_successful = (pred_type==PROJECTIVE_NEWTON) 
+	  || (norm2_complex_array(n,dx) < tol2*norm2_complex_array(n,x1t1));
 	//printf("c: |dx|^2 = %lf\n", norm2_complex_array(n,dx));
       } while (!is_successful and n_corr_steps<max_corr_steps);
     
@@ -1819,6 +1898,26 @@ void PathTracker::text_out(buffer& o) const
 
 }
 
+// ------------------------- service functions -------------------------
+int degree_ring_elem(const PolyRing* R, ring_elem re)
+{
+  RingElement* RE = RingElement::make_raw(R,re);
+  M2_arrayint d_array = RE->multi_degree();
+  delete RE;
+  return d_array->array[0];
+}
+
+void print_complex_matrix(int size, const double* A)
+{
+  static int c=5;
+  int i,j;
+  if (c-->0)  
+  for (i=0; i<size; i++) {
+    for (j=0; j<size; j++)
+      printf("(%lf %lf) ", *(A+2*(size*i+j)), *(A+2*(size*i+j)+1));
+    printf("\n");
+  }
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

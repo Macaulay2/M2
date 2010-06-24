@@ -617,6 +617,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 Ht0 = evalHt(x0,t0);
 			 chi2 := sqrt((norm2 Ht0)^2 + (norm2 solve(Hx0, Ht0))^2);
 			 chi1 := 1 / min first SVD(DMforPN*Hx0);
+			 << "chi1 = " << chi1 << endl; --!!!
+			 if count<=5 then print(DMforPN*Hx0); --!!!
 			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT); -- divide by bigT since t is in [0,1]
 			 if dt<o.tStepMin then (
 			      if DBG > 2 then (
