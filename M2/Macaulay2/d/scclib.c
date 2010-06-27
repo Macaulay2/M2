@@ -2,7 +2,7 @@
 
 #include <dirent.h>
 
-#include "tokens-exports.h"
+#include "expr-exports.h"
 #include "types.h"
 #include "M2mem.h"
 #include "../c/compat.c"
@@ -365,7 +365,7 @@ static char *M2_completion_generator(const char *text, int state) {
 #endif
     if (v != NULL) free(v);
     s = M2_tostring(text);
-    ret = tokens_completions(s);
+    ret = expr_completions(s);
     GC_FREE(s);
     v = M2_tocharstarstarmalloc(ret); /* readline will use free() to free these strings */
     GC_FREE(ret);

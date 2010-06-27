@@ -24,7 +24,7 @@ startup(tb:ThreadCellBody):null := (
      	  tb.returnValue = r;
      	  if notify then stderr << "--thread " << tb.tid << " ready, result available " << endl;
 	  );
-     -- we may need a barrier here
+     compilerBarrier();
      tb.done = true;
      null());
 

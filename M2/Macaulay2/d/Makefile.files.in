@@ -35,17 +35,22 @@ M2_DFILES += nets.d
 M2_DFILES += varnets.d
 M2_DFILES += interrupts.d
 M2_DFILES += pthread0.d
+M2_DFILES += stdiop0.d 
+M2_DFILES += gmp.d
+M2_DFILES += engine.dd
+ifeq (@XML@,yes)
+M2_DFILES += xml.d
+M2_DFILES += stdio0.d
+M2_DFILES += parse.d
+M2_DFILES += expr.d
 M2_DFILES += stdio.d
 M2_DFILES += stdiop.d
 M2_DFILES += err.d
-M2_DFILES += gmp.d
-ifeq (@XML@,yes)
-M2_DFILES += xml.d
 M2_LASTCFILES += xml-c.c
 else
 M2_SRCFILES += xml.d xml-c.c
 endif
-M2_DFILES += engine.dd
+M2_DFILES += gmp1.d
 M2_DFILES += tokens.d
 M2_DFILES += getline.d
 M2_DFILES += lex.d
@@ -75,6 +80,7 @@ M2_DFILES += actors2.d
 M2_DFILES += actors3.d
 M2_DFILES += actors4.d
 M2_DFILES += pthread.d
+M2_DFILES += tasks.d
 ifeq (@XML@,yes)
 M2_DFILES += xmlactors.d
 else
