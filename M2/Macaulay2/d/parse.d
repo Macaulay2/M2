@@ -1,3 +1,9 @@
+--This file contains declarations and functions for the parser
+--It also contains declarations for expressions that are strictly necessary for the parser
+--This is necessary because Expr must be declared in this file for functions that return Expr to be declared properly
+--Functions that merely operate on Exprs should go in expr.d
+--Functions in this file should not use stdio so that parse can be used by stdio.
+
 use nets;
 use gmp;
 use xml;

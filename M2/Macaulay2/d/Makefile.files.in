@@ -80,7 +80,7 @@ M2_DFILES += actors2.d
 M2_DFILES += actors3.d
 M2_DFILES += actors4.d
 M2_DFILES += pthread.d
-M2_DFILES += tasks.d
+# M2_DFILES += tasks.d
 ifeq (@XML@,yes)
 M2_DFILES += xmlactors.d
 else

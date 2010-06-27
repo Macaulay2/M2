@@ -7,9 +7,12 @@ declarations "
 
 header "#include \"gmp_aux.h\"";
 
+
+--This file contains gmp declarations and elementary functions.
+--Functions in this file should not need to make calls to stdio.
+
 use arithmetic;
 use stdiop0;
-
 
 export ZZstruct := Type "__mpz_struct";
 export ZZ := Pointer "__mpz_struct *";

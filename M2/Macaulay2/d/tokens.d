@@ -1,5 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
---- here we define the recursive types involved in parsing
+--- This file contains functions for parsing and expressions that need to use stdio.
+
 use pthread0;
 use stdiop;
 use gmp1;
@@ -7,12 +8,6 @@ use xml;
 use engine;
 use varnets;
 use expr;
-export threadLocal debugLevel := 0;
-export threadLocal engineDebugLevel := 0;
-
-
-
-export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
 
 -- misc
 

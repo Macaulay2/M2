@@ -1,5 +1,9 @@
-use pthread0;
+--This file contains functions that operate on Exprs.
+--It also contains misc dummy declarations.
+--Finally classes are declared at the end of this file.
+--Functions in this file should not use stdio so that expr can be used by stdio.
 
+use pthread0;
 use gmp;
 use xml;
 use engine;
@@ -8,6 +12,9 @@ use parse;
 use stdio0;
 --Note: scclib.c uses interrupts, so use it here so that it gets included in expr-exports.h
 use interrupts;
+
+export threadLocal debugLevel := 0;
+export threadLocal engineDebugLevel := 0;
 
 threadCounter := 0;
 threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + (threadCounter-1) * 10000 );
@@ -127,7 +134,7 @@ export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure :
 export emptyFrame := newLocalFrame(emptyLocalDictionary);
 emptyFrame.notrecyclable = true;
 
-
+export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
 
 
 -----------------------------------------------------------------------------

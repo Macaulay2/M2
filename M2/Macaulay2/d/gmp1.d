@@ -7,6 +7,9 @@ declarations "
 
 header "#include \"gmp_aux.h\"";
 
+--This file contains gmp related functions.
+--Functions in this file may make calls to stdio.
+
 use gmp;
 use stdio;
 use err;
