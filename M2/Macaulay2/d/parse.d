@@ -1,4 +1,4 @@
---This file contains declarations and functions for the parser
+--This file contains declarations for the parser
 --It also contains declarations for expressions that are strictly necessary for the parser
 --This is necessary because Expr must be declared in this file for functions that return Expr to be declared properly
 --Functions that merely operate on Exprs should go in expr.d
@@ -15,7 +15,7 @@ use atomic;
 use pthread0;
 
 
--- from tokens
+-- Typedefs for functions of various numbers of arguments
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export binopExpr := function(Expr,Expr):Expr;
@@ -73,6 +73,7 @@ export SymbolHashTable := {
      buckets:array(SymbolList),	 -- length always a power of 2
      numEntries:int
      };
+
 export Dictionary := {
      hash:int,						    -- assigned sequentially
      symboltable:SymbolHashTable,
@@ -385,17 +386,21 @@ export Expr := (
      );
 export fun := function(Expr):Expr;
 
+--Unique True expression
 export True := Expr(Boolean(true));	  -- don't make new ones!
+--Unique False Expression
 export False := Expr(Boolean(false));	  -- use toExpr instead
+--Conversion from C boolean value to Expression
 export toExpr(v:bool):Expr := if v then True else False;
 
+--Internal "null" expressions that should never be visible to user
 export nullE := Expr(Nothing());
-export notfoundE := Expr(Nothing());			    -- internal use only, not visible to user
+export notfoundE := Expr(Nothing());
 export dummyExpr := Expr(Nothing());
 
 
 
--- Expr Functions (Hate to put these here but necessary).
+-- Expr Functions 
 
 export noRecycle(f:Frame):Frame := (
      g := f;

@@ -16,6 +16,12 @@ use interrupts;
 export threadLocal debugLevel := 0;
 export threadLocal engineDebugLevel := 0;
 
+--Current function depth
+threadLocal export recursionDepth := 0;
+--Maximum function depth before triggering errors
+threadLocal export recursionLimit := 300;
+
+
 threadCounter := 0;
 threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + (threadCounter-1) * 10000 );
 export nextHash():int := (

@@ -123,9 +123,6 @@ cleanscreen():void := (
 	  )
      );
 
-threadLocal export recursionDepth := 0;
-threadLocal export recursionLimit := 300;
-
 printMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();

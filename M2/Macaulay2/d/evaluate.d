@@ -427,6 +427,8 @@ export evalSequence(v:CodeSequence):Sequence := (
 binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr;
 applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr;
 
+
+--Apply a function closure c to a sequence v
 export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
      previousFrame := c.frame;
      model := c.model;
@@ -544,6 +546,7 @@ wrongModel1(model:functionCode):Expr := printErrorMessageE(
      "expected " + tostring(model.desc.numparms) + " argument" + (if model.desc.numparms == 1 then "" else "s") + " but got 1"
      );
 
+--Apply a function closure to code
 export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
      if recursionDepth > recursionLimit then return RecursionLimit();
      previousFrame := fc.frame;
@@ -552,13 +555,18 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
      framesize := desc.framesize;
      when ec is cs:sequenceCode do applyFCCS(fc,cs.x)
      else (
+     	  --before evaluating the code increase recursion depth
 	  recursionDepth = recursionDepth + 1;
 	  e := eval(ec);
+	  --when done decrease depth again
 	  recursionDepth = recursionDepth - 1;
+	  --check for error on code execution
 	  when e is Error do return e 
+	  --???
 	  is v:Sequence do applyFCS(fc,v)
 	  else (
 	       -- this is the case where the argument is one Expr, not a Sequence
+	       -- Therefore do a safety check and verify that the function closure only takes one arg
 	       if desc.numparms != 1 then return wrongModel1(model);
 	       saveLocalFrame := localFrame;
 	       if framesize < length(recycleBin) then (
@@ -859,6 +867,8 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 	       )
 	  )
      );
+
+--Apply an Expr f to a Sequence v
 export applyES(f:Expr,v:Sequence):Expr := (
      when f
      is ff:CompiledFunction do ff.fn(Expr(v))
@@ -866,6 +876,9 @@ export applyES(f:Expr,v:Sequence):Expr := (
      is c:FunctionClosure do applyFCS(c,v)
      is s:SpecialExpr do applyES(s.e,v)
      else buildErrorPacket("expected a function"));
+
+
+--Apply an Expr f to Expr e
 export applyEE(f:Expr,e:Expr):Expr := (
      when f
      is ff:CompiledFunction do ff.fn(e)
