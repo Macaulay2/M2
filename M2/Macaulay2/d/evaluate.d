@@ -7,6 +7,8 @@ setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
 export evalSequenceHadError := false;
 export evalSequenceErrorMessage := nullE;
 threadLocal errorreturn := nullE;
+--The recycleBin provides essentially a linked list of frames up to size 20 for easy reuse.
+--Questions: Can this lead to excess memory leaks if you create a ton of frames of the same size?
 threadLocal recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 threadLocal export backtrace := true;

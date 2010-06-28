@@ -5,6 +5,7 @@ use lex;
 
 -----------------------------------------------------------------------------
 -- first, the global symbol table and functions for making symbols
+-- Thread safe because always called from enlarge and thus never has readers while appending
 append(buckets:array(SymbolList),word:Word, entry:Symbol):void := (
      h := word.hash & (length(buckets)-1);
      when buckets.h
@@ -16,6 +17,8 @@ append(buckets:array(SymbolList),word:Word, entry:Symbol):void := (
 	       is null do (
 		    e.next = SymbolListCell(word,entry,NULL);
 		    break))));
+
+--Thread safe because always called from inside lock
 enlarge(table:SymbolHashTable):void := (
      newbuckets := new array(SymbolList) len 2*length(table.buckets) do provide NULL;
      foreach e in table.buckets do (
@@ -32,19 +35,28 @@ enlarge(table:SymbolHashTable):void := (
      );
 
 -- warning: these routines have similar code
+-- Thread safe because it replaces bucket with new bucket so no double counting
 export insert(entry:Symbol,table:SymbolHashTable):Symbol := (
+     lock(table.mutex);
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := entry.word.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(entry.word,entry,table.buckets.h);
+     compilerBarrier();
+     unlock(table.mutex);
      entry);
+
+-- Thread safe because it replaces bucket with new bucket so no double counting
 export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- warning -- unsafe -- check that the dictionary of the symbol is the same as this dictionary
+     lock(table.mutex);
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := newname.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(newname,entry,table.buckets.h);
+     unlock(table.mutex);
+     compilerBarrier();
      entry);
 
 export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (

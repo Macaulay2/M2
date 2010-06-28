@@ -44,7 +44,7 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
      new array(SymbolList) 
      len 8						    -- must be a power of 2, for our hashing to work
      do provide NULL,
-     0);
+     0,uninitializedSpinLock);
 
 export dummyFrame := Frame(self,
      -1,						    -- negative frame id's are ignored and give warning messages

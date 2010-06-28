@@ -71,7 +71,8 @@ export SymbolListCell := {word:Word, entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
 export SymbolHashTable := { 
      buckets:array(SymbolList),	 -- length always a power of 2
-     numEntries:int
+     numEntries:int,
+     mutex:SpinLock -- Modification mutex: lock before changing
      };
 
 export Dictionary := {
@@ -271,7 +272,7 @@ export Frame := {
 			    -- 0 for the globalFrame, and 1 for the thread local threadFrame
      valuesUsed:int,        -- sigh, we really need this only for static frames
      	       	    	    -- we don't need it for the thread local threadFrame, but use it as a high water mark
-     notrecyclable:bool,
+     notrecyclable:bool,    -- if the frame should not be recycled back into the recyclebin in evaluate.d
      values:Sequence
      };
 
