@@ -84,8 +84,8 @@ export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
 	  foreach i in s do 
 	  when i 
 	  is a:ZZcell do provide toInt(a) 
-	  else abort("internal error: getSequenceOfSmallIntegers");
-	  abort("internal error: getSequenceOfSmallIntegers");
+	  else anywhereAbort("internal error: getSequenceOfSmallIntegers");
+	  anywhereAbort("internal error: getSequenceOfSmallIntegers");
 	  )
      );
 export getSequenceOfSmallIntegers(e:Expr) : array(int) := (
@@ -93,7 +93,7 @@ export getSequenceOfSmallIntegers(e:Expr) : array(int) := (
      is s:Sequence do getSequenceOfSmallIntegers(s)
      is l:List do getSequenceOfSmallIntegers(l.v)
      else (
-	  abort("internal error: getSequenceOfSmallIntegers.");
+	  anywhereAbort("internal error: getSequenceOfSmallIntegers.");
 	  array(int)()));
 export getNullOrSequenceOfSmallIntegers(e:Expr) : RawArrayIntOrNull := (
      if e == nullE then return(NULL);
@@ -101,7 +101,7 @@ export getNullOrSequenceOfSmallIntegers(e:Expr) : RawArrayIntOrNull := (
      is s:Sequence do getSequenceOfSmallIntegers(s)
      is l:List do getSequenceOfSmallIntegers(l.v)
      else (
-	  abort("internal error: getSequenceOfSmallIntegers.");
+	  anywhereAbort("internal error: getSequenceOfSmallIntegers.");
 	  array(int)()));
 
 export isSequenceOfStrings(e:Expr) : bool := (
@@ -126,7 +126,7 @@ export getSequenceOfMonomialOrderings(s:Sequence) : RawMonomialOrderingArray := 
 	  foreach i in s do 
 	  when i 
 	  is a:RawMonomialOrderingCell do provide a.p 
-	  else abort("internal error : getSequenceOfMonomialOrderings")));
+	  else anywhereAbort("internal error : getSequenceOfMonomialOrderings")));
 
 export isSequenceOfRingElements(e:Expr) : bool := (
      when e is s:Sequence do (
@@ -141,7 +141,7 @@ export getSequenceOfRingElements(e:Expr) : RawRingElementArray := (
 	       foreach i in s do 
 	       when i 
 	       is a:RawRingElementCell do provide a.p 
-	       else abort("internal error : getSequenceOfRingElements")))
+	       else anywhereAbort("internal error : getSequenceOfRingElements")))
      is a:RawRingElementCell do RawRingElementArray(a.p)
      else RawRingElementArray());
 
@@ -160,7 +160,7 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
 	       foreach i in s do 
 	       when i 
 	       is a:RawMatrixCell do provide a.p
-	       else abort("internal error : getSequenceOfMatrices")))
+	       else anywhereAbort("internal error : getSequenceOfMatrices")))
      is a:RawMatrixCell do RawMatrixArray(a.p)
      else RawMatrixArray());
 

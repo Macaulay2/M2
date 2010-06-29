@@ -4,16 +4,36 @@
 --Functions that merely operate on Exprs should go in expr.d
 --Functions in this file should not use stdio so that parse can be used by stdio.
 
+
+--Error function predeclaration
+declarations "
+#ifdef __cplusplus
+extern \"C\" {
+#endif
+struct M2_string_struct;
+extern void err_abort(struct M2_string_struct*);
+extern void err_fatal(struct M2_string_struct*);
+extern void err_error(struct M2_string_struct*);
+#ifdef __cplusplus
+};
+#endif
+";
+
+
 use nets;
 use gmp;
 use xml;
 use engine;
 use varnets;
+use strings1;
 use stdio0;
 use stdiop0;
 use atomic;
 use pthread0;
 
+
+export anywhereError(s:string) ::= Ccode(voidPointer,"err_error(",s,")");
+export anywhereAbort(s:string) ::= Ccode(exits,"err_abort(",s,")");
 
 -- Typedefs for functions of various numbers of arguments
 export unop := function(Code):Expr;
@@ -383,7 +403,8 @@ export Expr := (
      stringCell or
      pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
-     ThreadCell
+     ThreadCell or 
+     fileOutputSyncState
      );
 export fun := function(Expr):Expr;
 
@@ -428,4 +449,49 @@ export HashTable := {+
      beingInitialized:bool,-- if true, no need to lock a mutex while modifying it
      mutex:SpinLock
      };
+
+--This unfortunately needs to be here as it references Hash Tabe which needs expr.  
+export file := {+
+        -- general stuff
+     	hash:int,     	   	-- hash code
+	filename:string,	-- name of file
+	pid:int,	        -- pid if it's a pipe or pair of pipes to a child process, else 0
+        error:bool,             -- a system call returned ERROR
+	errorMessage:string,    -- the error message associated to the system call that returned ERROR
+	-- listener stuff
+        listener:bool,	   	-- is a listener
+	listenerfd:int,	    	-- file descriptor of listener, or -1
+	connection:int,	   	-- file descriptor of accepted connection, not made into file yet
+	numconns:int,	        -- count connections accepted
+     	-- input file stuff
+     	input:bool,	        -- is input file
+	infd:int,		-- file descriptor or -1
+        inisatty:bool,
+	inbuffer:string,        -- buffer
+	inindex:int,		-- inbuffer.inindex is the first available char
+        insize:int,		-- inbuffer.(insize-1) is the last char
+				-- we always have inindex <= insize
+	eof:bool,		-- last read got 0 characters (still might have some chars in inbuffer)
+        promptq:bool,           -- whether to prompt and to reward for input
+	prompt:function():string, -- function to call to get prompt string when input is required
+        reward:function():string, -- function to call to get reward string when input has been obtained
+	fulllines:bool,		-- whether to read at least up to the next newline each time input is required
+        bol:bool,     	   	-- at the beginning of a line, and a prompt is needed
+	echo:bool,     	   	-- whether to echo characters read to corresponding output file
+	echoindex:int,	        --   inbuffer.echoindex is the next character to echo
+        readline:bool,           -- input handled by readline()
+     	output:bool,	        -- is output file
+	outfd:int,		-- file descriptor or -1
+        outisatty:bool,
+	unsyncOutputState:fileOutputSyncState, -- default sync state to use for unsync output
+	threadOutputMode:int,		-- current thread output mode.  0 is unsync, 1 is sync, 2 is thread exclusive
+	threadInputMode:int, 		-- current thread input mode.  1 is unsync, 2 is thread exclusive
+	 -- Mutex for syncronization and for buffering 
+	 -- Lock before output in sync output mode
+	threadSyncMutex:ThreadMutex,
+	fossHashTable:HashTable 
+	
+	};
+
+export PosFile := {+ file:file, lastchar:int, filename:string, line:ushort, column:ushort };
 

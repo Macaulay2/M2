@@ -9,6 +9,7 @@ use engine;
 use varnets;
 use expr;
 
+
 -- misc
 
 export flush(f:TokenFile):void := (f.nexttoken=NULL; flush(f.posFile););
@@ -32,57 +33,6 @@ export getLocalDictionary(frameID:int):Dictionary := (
 export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(noRecycle(f),getLocalDictionary(f.frameID));
 
 
--- more dummies
-
-dummyunary(w:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     error("unary dummy used"); 
-     w);
-dummybinary(w:ParseTree,v:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     error("binary dummy used"); 
-     w);
-export nopr := -1;						    -- represents unused precedence
-export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
-export dummyWord    := Word("{*dummy word*}",TCnone,0,newParseinfo());
-
-export dummyTree    := ParseTree(dummy(dummyPosition));
-export emptySequence := Sequence();
-export dummyUnaryFun(c:Code):Expr := (
-     error("dummy unary function called");
-     nullE);
-export dummyPostfixFun(c:Code):Expr := (
-     error("dummy postfix function called");
-     nullE);
-export dummyBinaryFun(c:Code,d:Code):Expr := (
-     error("dummy binary function called");
-     nullE);
-export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
-     error("dummy ternary function called");
-     nullE);
-export emptySequenceE := Expr(emptySequence);
-
-export dummySymbol := Symbol(
-     Word("{*dummy symbol*}",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
-     dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-     Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
-     false,						    -- not protected, so we can use it in parallelAssignmentFun
-     false,
-     false
-     );
-dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
-globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
-export dummyCode := Code(nullCode());
-export NullCode := Code(nullCode());
-export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
-export dummyToken   := Token(
-     Word("{*dummy token*}",TCnone,0,newParseinfo()),
-     dummyPosition.filename,
-     dummyPosition.line,
-     dummyPosition.column,
-     dummyPosition.loadDepth,
-     Macaulay2Dictionary,dummySymbol,false);
-
-export parseWORD    := newParseinfo();			    -- parsing functions filled in later
-
 
 
 
@@ -99,8 +49,6 @@ export unwindMessage := "unhandled unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 export steppingMessage := "--stepping limit reached";
-export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
-export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
 export cwd():Expr := (
      r := getcwd();
      if r === "" then buildErrorPacket("can't get current working directory: " + syserrmsg())

@@ -28,6 +28,7 @@ M2_DFILES += M2.d
 M2_DFILES += system.d
 M2_DFILES += strings.d
 M2_DFILES += varstrin.d
+M2_DFILES += strings1.d
 M2_DFILES += errio.d
 M2_DFILES += vararray.d
 M2_DFILES += ctype.d
@@ -75,11 +76,11 @@ else
 M2_SRCFILES += mysql.d
 M2_DFILES += mysqldummy.d
 endif
+M2_DFILES += pthread.d
 M2_DFILES += actors.d
 M2_DFILES += actors2.d
 M2_DFILES += actors3.d
 M2_DFILES += actors4.d
-M2_DFILES += pthread.d
 # M2_DFILES += tasks.d
 ifeq (@XML@,yes)
 M2_DFILES += xmlactors.d

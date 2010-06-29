@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 use expr;
-use tokens;
+
 
 header "
   #include \"../e/engine.h\"
@@ -73,6 +73,7 @@ export hash(e:Expr):int := (
      is xmlNodeCell do int(123456)
      is xmlAttrCell do int(123457)
      is t:ThreadCell do t.body.tid
+     is foss:fileOutputSyncState do int(123458)
      );
 
 export hash(x:List):int := (

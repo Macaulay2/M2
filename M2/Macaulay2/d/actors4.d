@@ -5,6 +5,7 @@ use actors;
 use actors2;
 use version;
 use struct;
+use pthread;
 
 header "
 
@@ -47,16 +48,6 @@ getpidfun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("processID",getpidfun);
 
-gettidfun(e:Expr):Expr := (
-     when e
-     is t:ThreadCell do (
-	  while !isInitialized(t) do nothing;
-	  toExpr(t.body.tid))
-     is a:Sequence do (
-	  if length(a) == 0
-	  then toExpr(gettid())
-	  else WrongNumArgs(0,1))
-     else WrongNumArgs(0,1));
 setupfun("threadID",gettidfun);  -- # typical value: threadID, Thread, ZZ
 
 getpgrpfun(e:Expr):Expr := (
@@ -1013,7 +1004,9 @@ tostringfun(e:Expr):Expr := (
 		    else "running"
 		    )
 	       + ">>"
-	       )));
+	       ))
+    is x:fileOutputSyncState do toExpr("File Output Sync State")
+);
 setupfun("simpleToString",tostringfun);
 
 connectionCount(e:Expr):Expr := (

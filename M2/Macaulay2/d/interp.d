@@ -507,7 +507,7 @@ internalCapture(e:Expr):Expr := (
 	  oldstderr := stdError;
 	  stdError = stdIO;
 	  setGlobalVariable(stderrS,getGlobalVariable(stdioS));
-          foss := stdIO.unsyncOutputState;
+          foss := getFileFOSS(stdIO);
 	  stdIO.outfd = NOFD;
 	  oldbuf := foss.outbuffer;
 	  foss.outbuffer = tmpbuf;

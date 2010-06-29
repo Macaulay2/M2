@@ -6,6 +6,7 @@ use gmp;
 use expr;
 use stdio0;
 
+
 bufsize ::= 4 * 1024;
 
 export newFile(	
@@ -50,14 +51,25 @@ export newFile(
         bytesWritten:int,       -- bytes written so far
 	lastCharOut:int,        -- when outbuffer empty, last character written, or -1 if none
         readline:bool           -- input handled by readline()
+
 ):file := ( 
-foss := fileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut);
+foss := newFileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut);
 file(nextHash(), filename,pid,error,errorMessage,listener,listenerfd,connection,numconns,input,infd,inisatty,inbuffer,inindex,insize,eof,
-promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,0,1,newMutex)
+promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,0,1,newMutex,newHashTable(mutableHashTableClass,nothingClass))
 
 );
 
-
+export getFileFOSS(o:file):fileOutputSyncState := (
+     if (o.threadOutputMode==1) then return o.unsyncOutputState
+     else if (o.threadOutputMode==2) then 
+     (
+	  return o.unsyncOutputState
+     )
+     else 
+     (
+          return o.unsyncOutputState;
+     )
+);
 
 export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
 export fileErrorMessage(o:file,msg:string):string := (
@@ -91,37 +103,6 @@ threadLocal export stdIO  := newFile("stdio",  0,
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,noprompt,false,true,false,0,
      true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
-
-export tostring(i:int):string := (
-     if i==0 then return "0";
-     s := newvarstring(25);
-     signl := i<0;
-     if signl then i=-i;
-     while i>0 do (
-	  s << "0123456789".(i%10);
-	  i = i/10;
-	  );
-     if signl then s << '-';
-     toreversestring(s));
-export tostring(i:long):string := (
-     if i == long(0) then return "0";
-     s := newvarstring(25);
-     signl := i<0;
-     if signl then i=-i;
-     while i>0 do (
-	  s << "0123456789".(i%10);
-	  i = i/10;
-	  );
-     if signl then s << '-';
-     toreversestring(s));
-export tostring(i:ulong):string := (
-     if i == ulong(0) then return "0";
-     s := newvarstring(25);
-     while i>0 do (
-	  s << "0123456789".(i%10);
-	  i = i/10;
-	  );
-     toreversestring(s));
 
 export interpreterDepth := 0;
 export lineNumber := 0;
@@ -352,7 +333,7 @@ export flushinput(o:file):void := (
      );
 
 simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarge the buffer
-     foss := o.unsyncOutputState;
+     foss :=  getFileFOSS(o);
      foss.outbol = 0;
      if foss.outindex == 0 then return 0;
      if o.outfd != -1 then (
@@ -384,7 +365,7 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
 --      0);
 
 simpleout(o:file,x:string):int := (
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      i := 0;						    -- bytes of x transferred so far
      m := length(x);
      j := foss.outindex;
@@ -404,7 +385,7 @@ simpleout(o:file,x:string):int := (
      0);
 
 flushnets(o:file):int := (
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      if foss.hadNet then (
 	  n := HorizontalJoin(foss.nets);
 	  foss.hadNet = false;
@@ -420,7 +401,7 @@ flushnets(o:file):int := (
      0);
 
 export flush(o:file):int := (
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      if foss.hadNet then if ERROR == flushnets(o) then return ERROR;
      simpleflush(o));
 
@@ -505,7 +486,7 @@ closem():void := (
 atend(closem);
 
 export (o:file) << (n:Net) : file := (
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      if o.output then (
 	  if !foss.hadNet then (
 	       if foss.outindex != foss.outbol then (
@@ -525,7 +506,7 @@ export (o:file) << (n:Net) : file := (
 
 export (o:file) << (c:char) : file := (
      if test(interruptedFlag) then return o;
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      if o.output then (
 	  if foss.hadNet then (
      	       foss.hadNet = true;
@@ -542,7 +523,7 @@ export (o:file) << (c:char) : file := (
      );
 
 export (o:file) << (x:string) : file := (
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      if o.output then (
 	  if foss.hadNet then (
 	       o << toNet(x);
@@ -554,7 +535,7 @@ export (o:file) << (x:string) : file := (
      o );
 
 endlfun(o:file):int := (
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      if o.output then (
 	  if foss.hadNet then if ERROR == flushnets(o) then return ERROR;
 	  o << newline;
@@ -944,7 +925,7 @@ export fchmod(o:file,mode:int):int := (
      0);
 
 lastCharWritten(o:file):int := (
-     foss := o.unsyncOutputState;
+     foss := getFileFOSS(o);
      if foss.outindex > 0 then 
          int(foss.outbuffer.(foss.outindex-1))
      else 

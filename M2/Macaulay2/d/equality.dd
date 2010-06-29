@@ -1,5 +1,6 @@
 --		Copyright 1994,2010 by Daniel R. Grayson
 use util;
+use tokens;
 
 header "
   #include <engine.h>
@@ -220,6 +221,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is xmlNodeCell do False				    -- unimplemented
      is xmlAttrCell do False				    -- unimplemented
      is x:ThreadCell do False
+     is x:fileOutputSyncState do False
      );
 
 -- Local Variables:

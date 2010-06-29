@@ -1,4 +1,5 @@
 use evaluate;
+use expr;
 
 threadCreate(tid:Thread,f:function(ThreadCellBody):null,tb:ThreadCellBody) ::=  Ccode(int,
      "pthread_create(&(",lvalue(tid),"),NULL,(void *(*)(void *))(",f,"),(void *)(",tb,"))");
@@ -104,6 +105,20 @@ threadResult(e:Expr):Expr := (
      else WrongArg("a thread"));
 -- # typical value: threadResult, Thread, Thing
 setupfun("threadResult",threadResult);
+
+
+
+export gettidfun(e:Expr):Expr := (
+     when e
+     is t:ThreadCell do (
+	  while !isInitialized(t) do nothing;
+	  toExpr(t.body.tid))
+     is a:Sequence do (
+	  if length(a) == 0
+	  then toExpr(gettid())
+	  else WrongNumArgs(0,1))
+     else WrongNumArgs(0,1));
+
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "
