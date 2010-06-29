@@ -8,6 +8,57 @@ use stdio0;
 
 bufsize ::= 4 * 1024;
 
+export newFile(	
+        filename:string,	-- name of file
+	pid:int,	        -- pid if it's a pipe or pair of pipes to a child process, else 0
+        error:bool,             -- a system call returned ERROR
+	errorMessage:string,    -- the error message associated to the system call that returned ERROR
+	-- listener stuff
+        listener:bool,	   	-- is a listener
+	listenerfd:int,	    	-- file descriptor of listener, or -1
+	connection:int,	   	-- file descriptor of accepted connection, not made into file yet
+	numconns:int,	        -- count connections accepted
+     	-- input file stuff
+     	input:bool,	        -- is input file
+	infd:int,		-- file descriptor or -1
+        inisatty:bool,
+	inbuffer:string,        -- buffer
+	inindex:int,		-- inbuffer.inindex is the first available char
+        insize:int,		-- inbuffer.(insize-1) is the last char
+				-- we always have inindex <= insize
+	eof:bool,		-- last read got 0 characters (still might have some chars in inbuffer)
+        promptq:bool,           -- whether to prompt and to reward for input
+	prompt:function():string, -- function to call to get prompt string when input is required
+        reward:function():string, -- function to call to get reward string when input has been obtained
+	fulllines:bool,		-- whether to read at least up to the next newline each time input is required
+        bol:bool,     	   	-- at the beginning of a line, and a prompt is needed
+	echo:bool,     	   	-- whether to echo characters read to corresponding output file
+	echoindex:int,	        --   inbuffer.echoindex is the next character to echo
+     	-- output file stuff
+     	output:bool,	        -- is output file
+	outfd:int,		-- file descriptor or -1
+        outisatty:bool,
+	outbuffer:string,	-- buffer
+	                        -- outbuffer . 0 is the first char in the buffer
+	outindex:int,	        -- outbuffer.(outindex-1) is the last char
+	outbol:int,	        -- outbuffer.outbol = first char of the current line
+	     	       	        -- The text after this point may be combined with
+				-- subsequently printed nets.
+        hadNet:bool,		-- whether a Net is present, in which case the
+	     	       	        -- buffer will be empty
+	nets:NetList,	        -- list of nets, to be printed after the outbuffer
+        bytesWritten:int,       -- bytes written so far
+	lastCharOut:int,        -- when outbuffer empty, last character written, or -1 if none
+        readline:bool           -- input handled by readline()
+):file := ( 
+foss := fileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut);
+file(nextHash(), filename,pid,error,errorMessage,listener,listenerfd,connection,numconns,input,infd,inisatty,inbuffer,inindex,insize,eof,
+promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,0,1,newMutex)
+
+);
+
+
+
 export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
 export fileErrorMessage(o:file,msg:string):string := (
      o.error = true;
@@ -21,21 +72,21 @@ export clearFileError(o:file):void := (
 export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt():string := "";
 newbuffer():string := new string len bufsize do provide ' ';
-threadLocal export stdError := file(
+threadLocal export stdError := newFile(
      -- contrast with stderr, defined in errio.d
      -- intended just for top level use where nets might be printed
-     nextHash(), "stderr", 0, 
+     "stderr", 0, 
      false, "",
      false,NOFD,NOFD,0,
      false,NOFD  ,false,          "",        0,0,false,false,noprompt,noprompt,false,true,false,0,
      true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
 -- we give a way for other threads to know whether stder is there
-export dummyfile := file(nextHash(), "dummy",0, 
+export dummyfile := newFile("dummy",0, 
      false, "",
      false,NOFD,NOFD,0,
      false,NOFD,false,        "",          0,0,false,false,noprompt,noprompt,false,true,false,0,
      false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0,-1,false);
-threadLocal export stdIO  := file(nextHash(),  "stdio",  0, 
+threadLocal export stdIO  := newFile("stdio",  0, 
      false, "",
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,noprompt,false,true,false,0,
@@ -151,7 +202,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  sd = opensocket(host0,serv);
      	  if sd == ERROR then return (file or errmsg)(errmsg("can't open socket : "+syserrmsg()));
 	  );
-     (file or errmsg)(addfile(file(nextHash(), filename, 0,
+     (file or errmsg)(addfile(newFile(filename, 0,
 	  false, "",
 	  listener, so, NOFD, if listener then 0 else 1,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
@@ -172,13 +223,14 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  then return (file or errmsg)(errmsg(fileErrorMessage(f,"accepting connection")));
 	  );
      f.numconns = f.numconns + 1;
-     (file or errmsg)(addfile(file(nextHash(), f.filename, 0,
+     (file or errmsg)(addfile(newFile(f.filename, 0,
 	  false, "",
 	  false, NOFD,NOFD,f.numconns,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, false,noprompt,noprompt,false, true, false, 0,
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
 	  0, 0, false, dummyNetList,0,-1,false))));
+
 openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      toChild := array(int)(NOFD,NOFD);
      fromChild := array(int)(NOFD,NOFD);
@@ -218,7 +270,7 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
 	  );
      if input then close(fromChild.1);
      if output then close(toChild.0);
-     (file or errmsg)(addfile(file(nextHash(), filename, pid, 
+     (file or errmsg)(addfile(newFile(filename, pid, 
 	  false, "",
 	  listener, NOFD,NOFD,0,
 	  input, if input then fromChild.0 else NOFD, false, if input then newbuffer() else "", 
@@ -249,7 +301,7 @@ export openIn(filename:string):(file or errmsg) := (
      	  fd := openin(filename);
      	  if fd == ERROR
      	  then (file or errmsg)(errmsg(syscallErrorMessage("opening input file \""+filename+ "\"")))
-     	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
+     	  else (file or errmsg)(addfile(newFile(filename, 0, 
 	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, false,noprompt,noprompt,false,true,false,0,
@@ -266,7 +318,7 @@ export openOut(filename:string):(file or errmsg) := (
      	  fd := openout(filename);
      	  if fd == ERROR
      	  then (file or errmsg)(errmsg(syscallErrorMessage("opening output file \""+filename+"\"")))
-     	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
+     	  else (file or errmsg)(addfile(newFile(filename, 0, 
 	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
@@ -276,7 +328,7 @@ export openOutAppend(filename:string):(file or errmsg) := (
      fd := openoutappend(filename);
      if fd == ERROR
      then (file or errmsg)(errmsg(syscallErrorMessage("opening output (append) file \""+filename+"\"")))
-     else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
+     else (file or errmsg)(addfile(newFile(filename, 0, 
 	       false, "",
 	       false, NOFD,NOFD,0,
 	       false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
@@ -300,57 +352,63 @@ export flushinput(o:file):void := (
      );
 
 simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarge the buffer
-     o.outbol = 0;
-     if o.outindex == 0 then return 0;
+     foss := o.unsyncOutputState;
+     foss.outbol = 0;
+     if foss.outindex == 0 then return 0;
      if o.outfd != -1 then (
 	  off := 0;
 	  n := 0;
-	  while n >= 0 && off < o.outindex && !test(interruptedFlag) do (
-	       n = write(o.outfd,o.outbuffer,o.outindex-off,off);
+	  while n >= 0 && off < foss.outindex && !test(interruptedFlag) do (
+	       n = write(o.outfd,foss.outbuffer,foss.outindex-off,off);
 	       if n > 0 then (
 	       	    off = off + n;
-	       	    o.lastCharOut = int(o.outbuffer.(off-1));
-     	       	    o.bytesWritten = o.bytesWritten + n));
+	       	    foss.lastCharOut = int(foss.outbuffer.(off-1));
+     	       	    foss.bytesWritten = foss.bytesWritten + n));
 	  if 0 < off then (
-	       for k from off to o.outindex-1 do o.outbuffer.(k-off) = o.outbuffer.k;
-	       o.outindex = o.outindex - off);
+	       for k from off to foss.outindex-1 do foss.outbuffer.(k-off) = foss.outbuffer.k;
+	       foss.outindex = foss.outindex - off);
 	  if n == -1 then (
 	       fileErrorMessage(o,"writing");
 	       return -1);
 	  if test(interruptedFlag) then (
-	       o.outindex = 0;				    -- erase the output buffer after an interrupt
+	       foss.outindex = 0;				    -- erase the output buffer after an interrupt
 	       return ERROR))
-     else if o.outindex == length(o.outbuffer)
-     then o.outbuffer = enlarge(length(o.outbuffer),o.outbuffer);
+     else if foss.outindex == length(foss.outbuffer)
+     then foss.outbuffer = enlarge(length(foss.outbuffer),foss.outbuffer);
      0);
+
 -- simpleout(o:file,c:char):int := (
 --      if o.outindex == length(o.outbuffer) && simpleflush(o) == ERROR then return ERROR;
 --      o.outbuffer.(o.outindex) = c;
 --      o.outindex = o.outindex + 1;
 --      0);
+
 simpleout(o:file,x:string):int := (
+     foss := o.unsyncOutputState;
      i := 0;						    -- bytes of x transferred so far
      m := length(x);
-     j := o.outindex;
-     n := length(o.outbuffer);
+     j := foss.outindex;
+     n := length(foss.outbuffer);
      while i < m do (
 	  if j == n then (
 	       if simpleflush(o) == ERROR then return ERROR;
-	       j = o.outindex;
+	       j = foss.outindex;
 	       );
 	  b := m-i;					    -- number of bytes to transfer this time
 	  if b > n-j then b = n-j;
-	  for k from 0 to b-1 do o.outbuffer.(j+k) = x.(i+k);
+	  for k from 0 to b-1 do foss.outbuffer.(j+k) = x.(i+k);
 	  i = i + b;
 	  j = j + b;
-	  o.outindex = j;
+	  foss.outindex = j;
 	  );
      0);
+
 flushnets(o:file):int := (
-     if o.hadNet then (
-	  n := HorizontalJoin(o.nets);
-	  o.hadNet = false;
-	  o.nets = dummyNetList;
+     foss := o.unsyncOutputState;
+     if foss.hadNet then (
+	  n := HorizontalJoin(foss.nets);
+	  foss.hadNet = false;
+	  foss.nets = dummyNetList;
 	  lastone := length(n.body)-1;
 	  foreach s at i in n.body do (
 	       if ERROR == simpleout(o,s) then return ERROR;
@@ -360,14 +418,18 @@ flushnets(o:file):int := (
 	       ); 
 	  );
      0);
+
 export flush(o:file):int := (
-     if o.hadNet then if ERROR == flushnets(o) then return ERROR;
+     foss := o.unsyncOutputState;
+     if foss.hadNet then if ERROR == flushnets(o) then return ERROR;
      simpleflush(o));
+
 cleanUp(o:file):void := (
      if !o.listener && !o.input && !o.output then (
 	  rmfile(o);
 	  );
      );
+
 export closeListener(o:file):(errmsg or null) := (
      if o.listenerfd == NOFD then return errmsg("close: listener not open");
      haderror := close(o.listenerfd) == ERROR;
@@ -376,6 +438,7 @@ export closeListener(o:file):(errmsg or null) := (
      cleanUp(o); 
      if haderror then return errmsg("closing listener: " + syserrmsg());
      null());
+
 export closeIn(o:file):(errmsg or null) := (
      stat := 0;
      if o.infd == NOFD then return errmsg("close: file not open");
@@ -395,6 +458,7 @@ export closeIn(o:file):(errmsg or null) := (
 	  return errmsg("closing input file: " + syserrmsg());
 	  );
      null());
+
 export closeOut(o:file):(errmsg or null) := (
      stat := 0;
      if o.outfd == NOFD then return errmsg("close: file not open");
@@ -413,6 +477,7 @@ export closeOut(o:file):(errmsg or null) := (
 	  return errmsg("closing output file: " + syserrmsg());
 	  );
      null());
+
 export close(o:file):(errmsg or null) := (
      if !o.input && !o.output && !o.listener then return (errmsg or null)(errmsg("close: file not open"));
      stat := (errmsg or null)(null());
@@ -428,6 +493,7 @@ export close(o:file):(errmsg or null) := (
 	  when r is errmsg do when stat is null do stat = r else nothing else nothing;
 	  );
      stat);
+
 closem():void := (
      f := openfiles;
      while true do when f is null do break is fileCell:FileCell do (
@@ -435,44 +501,50 @@ closem():void := (
 	  f = fileCell.next;
 	  );
      );
+
 atend(closem);
+
 export (o:file) << (n:Net) : file := (
+     foss := o.unsyncOutputState;
      if o.output then (
-	  if !o.hadNet then (
-	       if o.outindex != o.outbol then (
-		    o.nets = NetList(o.nets,
+	  if !foss.hadNet then (
+	       if foss.outindex != foss.outbol then (
+		    foss.nets = NetList(foss.nets,
 			 toNet(
-			      new string len o.outindex - o.outbol do
-			      for i from o.outbol to o.outindex - 1 do
-			      provide o.outbuffer.i
+			      new string len foss.outindex - foss.outbol do
+			      for i from foss.outbol to foss.outindex - 1 do
+			      provide foss.outbuffer.i
 			      ));
-		    o.outindex = o.outbol;
+		    foss.outindex = foss.outbol;
 		    );
-     	       o.hadNet = true;
+     	       foss.hadNet = true;
 	       );
-     	  o.nets = NetList(o.nets,n);
+     	  foss.nets = NetList(foss.nets,n);
 	  );
      o);
+
 export (o:file) << (c:char) : file := (
      if test(interruptedFlag) then return o;
+     foss := o.unsyncOutputState;
      if o.output then (
-	  if o.hadNet then (
-     	       o.hadNet = true;
-     	       o.nets = NetList(o.nets,toNet(c));
+	  if foss.hadNet then (
+     	       foss.hadNet = true;
+     	       foss.nets = NetList(foss.nets,toNet(c));
 	       )
 	  else (
-	       if o.outindex == length(o.outbuffer)
+	       if foss.outindex == length(foss.outbuffer)
 	       && ERROR == flush(o) then return o;
-	       o.outbuffer.(o.outindex) = c;
-	       o.outindex = o.outindex + 1;
+	       foss.outbuffer.(foss.outindex) = c;
+	       foss.outindex = foss.outindex + 1;
 	       );
 	  );
      o
      );
 
 export (o:file) << (x:string) : file := (
+     foss := o.unsyncOutputState;
      if o.output then (
-	  if o.hadNet then (
+	  if foss.hadNet then (
 	       o << toNet(x);
 	       )
 	  else (
@@ -482,15 +554,16 @@ export (o:file) << (x:string) : file := (
      o );
 
 endlfun(o:file):int := (
+     foss := o.unsyncOutputState;
      if o.output then (
-	  if o.hadNet then if ERROR == flushnets(o) then return ERROR;
+	  if foss.hadNet then if ERROR == flushnets(o) then return ERROR;
 	  o << newline;
 	  if o.outisatty || o == stdError 
 	  then (
 	       if ERROR == simpleflush(o) then return ERROR;
 	       )
 	  else (
-	       o.outbol = o.outindex;
+	       foss.outbol = foss.outindex;
 	       );
 	  );
      0);
@@ -507,6 +580,7 @@ octal(c:char):string := (
      else if i < 64 then new string len 2 do (provide '0'+i/8; provide '0'+i%8)
      else new string len 3 do (provide '0'+i/64; provide '0'+(i/8)%8; provide '0'+i%8)
      );
+
 export present(c:char):string := (
      c = c & 0xff;
      if c == '\r' then "\\r" else
@@ -519,6 +593,7 @@ export present(c:char):string := (
      then '\\' + octal(c)
      else string(c)
      );
+
 export present(x:string):string := (
      fixesneeded := 0;
      foreach cc in x do (
@@ -539,6 +614,7 @@ export present(x:string):string := (
 		    )
 	       ))
      else x);
+
 export presentn(x:string):string := ( -- fix newlines, also
      fixesneeded := 0;
      foreach cc in x do (
@@ -639,6 +715,7 @@ export filbuf(o:file):int := (
 	       )));
 
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
+
 putneg(o:file,x:int):void := (
      if x<0 then (
 	  q := x/10;
@@ -646,6 +723,7 @@ putneg(o:file,x:int):void := (
 	  if r>0 then (r=r-10;q=q+1);
      	  putneg(o,q);
      	  putdigit(o,-r)));
+
 export (o:file) << (x:int) : file :=  (
    if x==0
    then putdigit(o,0)
@@ -658,11 +736,16 @@ export (o:file) << (x:int) : file :=  (
 	else putneg(o,-x);
 	);
    o);
+
 export (o:file) << (x:short) : file := o << int(x);
+
 export (o:file) << (x:ushort) : file := o << int(x);
+
 export (o:file) << (x:uchar) : file := o << int(x);
+
 export (o:file) << (b:bool) : file := (
      o << if b then "true" else "false");
+
 digits(o:varstring,x:double,a:int,b:int):void := (
      x = x + 0.5 * pow(10.,double(1-a-b));
      if x >= 10. then (x = x/10.; a = a+1; b = if b==0 then 0 else b-1);
@@ -680,10 +763,15 @@ digits(o:varstring,x:double,a:int,b:int):void := (
 	  lim = lim * 10.;
 	  b = b-1;
 	  ));
+
 export finite(x:double):bool := x==x && x-x == x-x;
+
 export isinf(x:double):bool := x==x && x-x != x-x;
+
 export isnan(x:double):bool := x!=x;
+
 export tostring(x:bool):string := if x then "true" else "false";
+
 export tostring5(
      x:double,						-- the number to format
      s:int,					-- number of significant digits
@@ -723,6 +811,7 @@ export tostring5(
      tostring(o));
 
 export tostringRR(x:double) : string := tostring5(x,6,5,5,"e");
+
 export (o:file) << (x:double) : file := o << tostringRR(x);
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
@@ -753,6 +842,7 @@ export getc(o:file):int := (
 	  );
      int(uchar(c)));
 export StringOrError := stringCell or errmsg;
+
 export read(o:file):StringOrError := (
      if o.inindex == o.insize then (
 	  r := filbuf(o);
@@ -767,6 +857,7 @@ export read(o:file):StringOrError := (
 	  flush(stdIO);
 	  );
      stringCell(s));
+
 export peek(o:file,offset:int):int := (
      if !o.input then return EOF;
      if offset >= bufsize then return ERROR;		    -- tried to peek too far
@@ -782,9 +873,13 @@ export peek(o:file,offset:int):int := (
 	       );
 	  );
      int(uchar(o.inbuffer.(o.inindex+offset))));
+
 export peek(o:file):int := peek(o,0);
+
 someblanks := new array(string) len 20 at n do provide new string len n do provide ' ';
+
 export blanks(n:int):string := if n < length(someblanks) then someblanks.n else new string len n do provide ' ';
+
 padto(s:string,n:int):string := (
      if n<0
      then (
@@ -799,11 +894,17 @@ padto(s:string,n:int):string := (
      	  else s + blanks(n-length(s))
 	  )
      );
+
 export (v:varstring) << (i:int) : varstring := v << tostring(i);
+
 export (o:file) << (s:string, n:int) : file := o << padto(s,n);
+
 export (o:file) << (i:int, n:int) : file := o << (tostring(i),n);
+
 export setprompt(o:file,prompt:function():string):void := ( o.promptq = true; o.prompt = prompt; o.reward=noprompt;);
+
 export unsetprompt(o:file):void := ( o.promptq = false; o.prompt = noprompt; o.reward=noprompt; );
+
 export clean(o:file):void := flush(o);
 
 export get(filename:string):StringOrError := (
@@ -822,23 +923,36 @@ export get(filename:string):StringOrError := (
 	       else StringOrError(stringCell(s)))));
 
 export Manipulator := {fun:function(file):int};
+
 export (o:file) << (m:Manipulator) : file := (
      m.fun(o);				  -- ignoring error here
      o
      );
+
 export endl := Manipulator(endlfun);
+
 export Flush := Manipulator(flush);
+
 export (o:BasicFile) << (m:Manipulator) : int := (
      if m == endl then o << basicEndl
      else if m == Flush then o << basicFlush
      else -1);
+
 export fchmod(o:file,mode:int):int := (
      if o.input && o.infd != -1 then if -1 == fchmod(o.infd,mode) then return -1;
      if o.output && o.outfd != -1 then if -1 == fchmod(o.outfd,mode) then return -1;
      0);
 
-lastCharWritten(o:file):int := if o.outindex > 0 then int(o.outbuffer.(o.outindex-1)) else o.lastCharOut;
+lastCharWritten(o:file):int := (
+     foss := o.unsyncOutputState;
+     if foss.outindex > 0 then 
+         int(foss.outbuffer.(foss.outindex-1))
+     else 
+         foss.lastCharOut
+);
+
 export atEndOfLine(o:file):bool := ( c := lastCharWritten(o); c == int('\n') || c == -1);
+
 export endLine(o:file):void := (
      if !atEndOfLine(o) || !atEndOfLine(stdIO) then o << '\n';
      -- usually o == stderr != stdIO
@@ -846,6 +960,7 @@ export endLine(o:file):void := (
      );
 
 export (o:file) << (x:long) : file :=  o << tostring(x);
+
 export (o:file) << (x:ulong) : file :=  o << tostring(x);
 
 

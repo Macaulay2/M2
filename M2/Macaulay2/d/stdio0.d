@@ -1,6 +1,6 @@
 use arithmetic;
 use nets;
-
+use pthread0;
 
 export ERROR ::= -1;
 export NOFD ::= -1;
@@ -11,6 +11,39 @@ export STDERR ::= 2;
 
 export iseof      (c:int ):bool := c == EOF;
 export iserror    (c:int ):bool := c == ERROR;
+
+export fileOutputSyncState :=
+{+
+     	-- output file stuff
+	outbuffer:string,	-- buffer
+	                        -- outbuffer . 0 is the first char in the buffer
+	outindex:int,	        -- outbuffer.(outindex-1) is the last char
+	outbol:int,	        -- outbuffer.outbol = first char of the current line
+	     	       	        -- The text after this point may be combined with
+				-- subsequently printed nets.
+        hadNet:bool,		-- whether a Net is present, in which case the
+	     	       	        -- buffer will be empty
+	nets:NetList,	        -- list of nets, to be printed after the outbuffer
+        bytesWritten:int,       -- bytes written so far
+	lastCharOut:int        -- when outbuffer empty, last character written, or -1 if none
+
+};
+
+export newFileOutputSyncState(
+ 	outbuffer:string,	-- buffer
+	                        -- outbuffer . 0 is the first char in the buffer
+	outindex:int,	        -- outbuffer.(outindex-1) is the last char
+	outbol:int,	        -- outbuffer.outbol = first char of the current line
+	     	       	        -- The text after this point may be combined with
+				-- subsequently printed nets.
+        hadNet:bool,		-- whether a Net is present, in which case the
+	     	       	        -- buffer will be empty
+	nets:NetList,	        -- list of nets, to be printed after the outbuffer
+        bytesWritten:int,       -- bytes written so far
+	lastCharOut:int         -- when outbuffer empty, last character written, or -1 if none
+):fileOutputSyncState := (
+fileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut)
+);
 
 export file := {+
         -- general stuff
@@ -40,22 +73,16 @@ export file := {+
         bol:bool,     	   	-- at the beginning of a line, and a prompt is needed
 	echo:bool,     	   	-- whether to echo characters read to corresponding output file
 	echoindex:int,	        --   inbuffer.echoindex is the next character to echo
-     	-- output file stuff
+        readline:bool,           -- input handled by readline()
      	output:bool,	        -- is output file
 	outfd:int,		-- file descriptor or -1
         outisatty:bool,
-	outbuffer:string,	-- buffer
-	                        -- outbuffer . 0 is the first char in the buffer
-	outindex:int,	        -- outbuffer.(outindex-1) is the last char
-	outbol:int,	        -- outbuffer.outbol = first char of the current line
-	     	       	        -- The text after this point may be combined with
-				-- subsequently printed nets.
-        hadNet:bool,		-- whether a Net is present, in which case the
-	     	       	        -- buffer will be empty
-	nets:NetList,	        -- list of nets, to be printed after the outbuffer
-        bytesWritten:int,       -- bytes written so far
-	lastCharOut:int,        -- when outbuffer empty, last character written, or -1 if none
-        readline:bool           -- input handled by readline()
+	unsyncOutputState:fileOutputSyncState, -- default sync state to use for unsync output
+	threadOutputMode:int,		-- current thread output mode.  0 is unsync, 1 is sync, 2 is thread exclusive
+	threadInputMode:int, 		-- current thread input mode.  1 is unsync, 2 is thread exclusive
+	threadSyncMutex:ThreadMutex -- Mutex for syncronization and for buffering
+	
 	};
 
 export PosFile := {+ file:file, lastchar:int, filename:string, line:ushort, column:ushort };
+

@@ -373,8 +373,7 @@ setupfun("simpleInput",input);
 stringTokenFile(name:string,contents:string):TokenFile := (
      TokenFile(
 	  makePosFile(
-	  file(nextHash(),     	    	  -- hash
-	       name,	 		  -- filename
+	  newFile(name,	 		  -- filename
 	       0,			  -- pid
 	       false,	       	    	  -- error
 	       "",     	    	      	  -- message
@@ -496,6 +495,7 @@ setupfun("value",value).Protected = false;
 
 tmpbuf := new string len 100 do provide ' ' ;
 
+--May need thread work?
 internalCapture(e:Expr):Expr := (
      when e
      is s:stringCell do (
@@ -507,9 +507,10 @@ internalCapture(e:Expr):Expr := (
 	  oldstderr := stdError;
 	  stdError = stdIO;
 	  setGlobalVariable(stderrS,getGlobalVariable(stdioS));
+          foss := stdIO.unsyncOutputState;
 	  stdIO.outfd = NOFD;
-	  oldbuf := stdIO.outbuffer;
-	  stdIO.outbuffer = tmpbuf;
+	  oldbuf := foss.outbuffer;
+	  foss.outbuffer = tmpbuf;
 	  stringFile := stringTokenFile("currentString", s.v+newline);
 	  stringFile.posFile.file.echo = true;
 	  oldLineNumber := lineNumber;
@@ -517,10 +518,10 @@ internalCapture(e:Expr):Expr := (
 	  setLineNumber(0);
 	  setprompt(stringFile,topLevelPrompt);
 	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
-	  out := substrAlwaysCopy(stdIO.outbuffer,0,stdIO.outindex);
+	  out := substrAlwaysCopy(foss.outbuffer,0,foss.outindex);
 	  stdIO.outfd = oldfd;
-	  stdIO.outbuffer = oldbuf;
-	  stdIO.outindex = 0;
+	  foss.outbuffer = oldbuf;
+	  foss.outindex = 0;
 	  setGlobalVariable(stderrS,oldStderrE);
 	  stdError = oldstderr;
 	  setLineNumber(oldLineNumber);
