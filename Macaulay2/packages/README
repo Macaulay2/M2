@@ -1,0 +1,42 @@
+Advice to authors of Macaulay2 packages:
+
+Since Macaulay2 is licensed under the GNU General Public License (GPL), and
+your package will be distributed as part of Macaulay2, your software must be
+licensed compatibly.  
+
+One possibility is for the your software to be put into the public domain.  In
+that case, you may adapt a brief license statement from the following model,
+and insert it as a comment in your file.
+
+   {*
+   Copyright 2010, 2011 Joe Smith.
+
+   This program is in the public domain.
+   *}
+
+Alternatively, you may consider licensing your software under the GPL.
+
+Macaulay2 is currently licensed under GPL version 2, and soon also under GPL
+version 3, so it is preferable for authors of Macaulay2 packages who wish not
+to put their code into the public domain, is to license it under GPL version 2
+or any later version.
+
+Information about the GNU General Public License can be obtained here:
+
+    http://www.gnu.org/licenses/gpl.html
+
+In particular, instructions for how to formulate your copyright notice and how
+to license your software under GPL can be obtained here:
+
+    http://www.gnu.org/licenses/gpl-howto.html
+
+Alternatively, you may adapt a brief license statement from the following
+model.
+
+   {*
+   Copyright 2009, 2010 Joe Smith and Jane Doe.
+
+   You may redistribute this program under the terms of the GNU General Public
+   License as published by the Free Software Foundation, either version 2 of
+   the License, or any later version.
+   *}
