@@ -1,4 +1,3 @@
-
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
@@ -56,27 +55,27 @@ globalSections
 
 -- the commands available to the user
 
-export {cokerElement,iszero,vectorToMonomial,preImage,FirstOrderDeformation,
-simplexRing,bigTorusDegree,numeratorMonomial,denominatorMonomial,grading,isNonzero,isTrivial,
-relationsCoefficients,gensSource,parameters,firstOrderDeformation,
-trivialDeformations,
-addCokerGrading,raysPPn,laurent,totalSpace,toHom,newEmptyComplex,
-Face,face,vert,simplexDim,ofComplex,dualFace,isSubface,faceToMonomial,Complex,isEquidimensional,
-noBoundary,complementComplex,dualComplex,polytopalFacets,embedded,
-eulerCharacteristic,complex,complexFromFacets,addFaceDataToComplex,addFacetDataToComplex,
-facets,coordinates,isPolytope,isSimplicial,variables,edim,fvector,fc,
-intersectFaces,embeddingComplex,
-simplex,computeFaces,verticesDualPolytope,dualGrading,
-boundaryCyclicPolytope,fullCyclicPolytope,
-dualize,
-boundaryOfPolytope,
-idealToComplex,minimalNonFaces,complexToIdeal,
-CoComplex,coComplex,idealToCoComplex,coComplexToIdeal,
-link,closedStar,
-possibleDenominators,deformationsFace,
-globalSections,joinVectors,
-convHull,deform,PT1,tropDef,mirrorSphere,file,saveDeformations,loadDeformations,
-hull}
+export {"cokerElement","iszero","vectorToMonomial","preImage","FirstOrderDeformation",
+"simplexRing","bigTorusDegree","numeratorMonomial","denominatorMonomial","grading","isNonzero","isTrivial",
+"relationsCoefficients","gensSource","parameters","firstOrderDeformation",
+"trivialDeformations",
+"addCokerGrading","raysPPn","laurent","totalSpace","toHom","newEmptyComplex",
+"Face","face","vert","simplexDim","ofComplex","dualFace","isSubface","faceToMonomial","Complex","isEquidimensional",
+"noBoundary","complementComplex","dualComplex","polytopalFacets","embedded",
+"eulerCharacteristic","complex","complexFromFacets","addFaceDataToComplex","addFacetDataToComplex",
+"facets","coordinates","isPolytope","variables","edim","fvector","fc",
+"intersectFaces","embeddingComplex",
+"simplex","computeFaces","verticesDualPolytope","dualGrading",
+"boundaryCyclicPolytope","fullCyclicPolytope",
+"dualize",
+"boundaryOfPolytope",
+"idealToComplex","minimalNonFaces","complexToIdeal",
+"CoComplex","coComplex","idealToCoComplex","coComplexToIdeal",
+"link","closedStar",
+"possibleDenominators","deformationsFace",
+"globalSections","joinVectors",
+"convHull","deform","PT1","tropDef","mirrorSphere","file","saveDeformations","loadDeformations",
+"hull"}
 
 ---------------------------------------------------------------------------------
 -- deformations of Stanley-Reisner rings
@@ -822,7 +821,7 @@ R:=(ofComplex F).simplexRing;
 -- functions dealing with lists of faces, used to create a complex
 
 
-isSimplicial=method()
+-- isSimplicial=method()
 isSimplicial(List):=(L)->(
 tst:=true;
 q:=0;
@@ -7027,35 +7026,34 @@ doc ///
      (dim,Complex)
 ///
 
-doc ///
-  Key
-    isSimplicial
-    (isSimplicial,Complex)
-    (isSimplicial,List)
-  Headline
-    Check whether a complex or co-complex is simplicial.
-  Usage
-    isSimplicial(C)
-  Inputs
-    C:Complex
-  Outputs
-    :ZZ
-      positive
-  Description
-   Text
-      Check whether a complex or co-complex is simplicial.
+-- doc ///
+--   Key
+--     (isSimplicial,Complex)
+--     (isSimplicial,List)
+--   Headline
+--     Check whether a complex or co-complex is simplicial.
+--   Usage
+--     isSimplicial(C)
+--   Inputs
+--     C:Complex
+--   Outputs
+--     :Boolean
+--       positive
+--   Description
+--    Text
+--       Check whether a complex or co-complex is simplicial.
       
-   Example
-     R=QQ[x_0..x_5]
-     C=boundaryCyclicPolytope(3,R)
-     isSimplicial C
-     R=QQ[x_0..x_5]
-     C1=fullCyclicPolytope(3,R)
-     isSimplicial C1     
-  SeeAlso
-     boundaryCyclicPolytope
-     fullCyclicPolytope
-///
+--    Example
+--      R=QQ[x_0..x_5]
+--      C=boundaryCyclicPolytope(3,R)
+--      isSimplicial C
+--      R=QQ[x_0..x_5]
+--      C1=fullCyclicPolytope(3,R)
+--      isSimplicial C1     
+--   SeeAlso
+--      boundaryCyclicPolytope
+--      fullCyclicPolytope
+-- ///
 
 doc ///
   Key
@@ -7178,7 +7176,6 @@ doc ///
     dim
     fvector
     fc
-    isSimplicial
     isEquidimensional
   Caveat
     If both facelist and facetlist are specified this function does not make any consistency check.
@@ -7225,7 +7222,6 @@ doc ///
     dim
     fvector
     facets
-    isSimplicial
     isEquidimensional
 ///
 
@@ -7267,7 +7263,6 @@ doc ///
     dim
     fvector
     facets
-    isSimplicial
     isEquidimensional
 ///
 
