@@ -1,7 +1,7 @@
 -- Computing the radical of an ideal
 -- Will be part of the PrimaryDecomposition package (most likely)
 
-flatt = (I, m) -> (
+flatt2 = (I, m) -> (
      -- First create a new ring with correct order
      local ones;
      local mm;
@@ -89,12 +89,12 @@ rad Ideal := (Iorig) -> (
 	  u = if #u === 0 then 1_R else first u;
 	  --<< " size(u) = " << # support u << endl;
 	  J := radical00(I,u);
-	  h := flatt(J,u);
+	  h := flatt2(J,u);
 	  h = (intersect values h)_0;
 	  radJ := saturate(J,h);
 	  radI = intersect(radI,radJ);
 	  if u === 1 then break;
-	  h = flatt(I,u);
+	  h = flatt2(I,u);
 	  h = (intersect values h)_0;
 	  if h != 1 then 
 	    h = product factors h;
@@ -120,12 +120,12 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
 	  u = if #u === 0 then 1_R else first u;
 	  --<< " size(u) = " << # support u << endl;
 	  J := radical00(I,u);
-	  h := flatt(J,u);
+	  h := flatt2(J,u);
 	  h = (intersect values h)_0;
 	  radJ := saturate(J,h);
 	  radI = intersect(radI,radJ);
 	  if u === 1 then break;
-	  h = flatt(I,u);
+	  h = flatt2(I,u);
 	  h = (intersect values h)_0;
 	  if h != 1 then 
 	    h = product factors h;
@@ -284,7 +284,7 @@ I = ideal(
     v*z+w*y)
 codim I
 U = first independentSets I
-H = flatt(I,U)
+H = flatt2(I,U)
 peek H
 F = (intersect values H)_0
 C1 = saturate(I,F)
