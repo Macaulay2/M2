@@ -265,17 +265,13 @@ export TooManyArgs(name:string,m:int):Expr := (
 threadLocal export errorDepth := ushort(0);
 export printErrorMessageE(c:Code,message:string):Expr := (
      p := codePosition(c);
-     if p.loadDepth >= errorDepth
-     then Expr(
-	  printError					    -- keep this in so "update" can emit error messages
-	  (Error(p,message,nullE,false,dummyFrame)))
-     else buildErrorPacket(message));
+     e := Error(p,message,nullE,false,dummyFrame);
+     if p.loadDepth >= errorDepth then printError(e);
+     Expr(e));
 export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when we have no code
-     if p.loadDepth >= errorDepth
-     then Expr(
-	  printError					    -- keep this in so "update" can emit error messages
-	  (Error(p,message,nullE,false,dummyFrame)))
-     else buildErrorPacket(message));
+     e := Error(p,message,nullE,false,dummyFrame);
+     if p.loadDepth >= errorDepth then printError(e);
+     Expr(e));
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
      printErrorMessageE(position(c),message));
 
