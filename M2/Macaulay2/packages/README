@@ -1,8 +1,14 @@
 Advice to authors of Macaulay2 packages:
 
-Since Macaulay2 is licensed under the GNU General Public License (GPL), and
-your package will be distributed as part of Macaulay2, your software must be
-licensed compatibly.  
+Macaulay2 is an aggregate, with the packages in this "packages" directory being
+separate components, each with its own set of authors, copyright, and license.
+Since your package will be distributed as part of Macaulay2, your software
+should be licensed in a way that allows us to do that.
+
+Macaulay2 is currently licensed under GNU General Public License (GPL) version
+2, and soon also under version 3.  Either of those licenses also allow those
+who receive Macaulay2 to modify it and to redistribute it, so your software
+should also be licensed in a way that allows them to do that.
 
 One possibility is for the your software to be put into the public domain.  In
 that case, you may adapt a brief license statement from the following model,
@@ -11,22 +17,16 @@ and insert it as a comment in your file.
    {*
    Copyright 2010, 2011 Joe Smith.
 
-   This program is in the public domain.
+   This file is in the public domain.
    *}
 
 Alternatively, you may consider licensing your software under the GPL.
-
-Macaulay2 is currently licensed under GPL version 2, and soon also under GPL
-version 3, so it is preferable for authors of Macaulay2 packages who wish not
-to put their code into the public domain, is to license it under GPL version 2
-or any later version.
-
-Information about the GNU General Public License can be obtained here:
+Information about the GPL can be obtained here:
 
     http://www.gnu.org/licenses/gpl.html
 
-In particular, instructions for how to formulate your copyright notice and how
-to license your software under GPL can be obtained here:
+Instructions for how to formulate your copyright notice and how to license your
+software under GPL can be obtained here:
 
     http://www.gnu.org/licenses/gpl-howto.html
 
@@ -36,7 +36,11 @@ model.
    {*
    Copyright 2009, 2010 Joe Smith and Jane Doe.
 
-   You may redistribute this program under the terms of the GNU General Public
+   You may redistribute this file under the terms of the GNU General Public
    License as published by the Free Software Foundation, either version 2 of
    the License, or any later version.
    *}
+
+As Macaulay2 is an aggregate, and the packages will not be linked with code
+licensed under GPL version 3, a package licensed just under version 2 would
+also be acceptable.
