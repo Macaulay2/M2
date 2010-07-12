@@ -1,4 +1,13 @@
 -- -*- coding: utf-8 -*-
+
+--------------------------------------------------------------------------------
+-- Copyright 2008, 2009  Steven V Sam
+--
+-- You may redistribute this program under the terms of the GNU General Public
+-- License as published by the Free Software Foundation, either version 3 of
+-- the License, or any later version.
+--------------------------------------------------------------------------------
+
 newPackage(
     	  "PieriMaps",
    	  Version => "1.0",
