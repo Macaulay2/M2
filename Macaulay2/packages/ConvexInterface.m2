@@ -1,7 +1,7 @@
 newPackage(
 	"ConvexInterface",
-    	Version =>"0.32", 
-    	Date =>"October 4, 2009",
+    	Version =>"0.33", 
+    	Date =>"December 1, 2010",
     	Authors =>{{Name =>"Janko Boehm", 
 		  Email =>"boehm@math.uni-sb.de", 
 		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
@@ -18,7 +18,7 @@ newPackage(
 
 needsPackage "MapleInterface"
 
-export({mConvexHullFaces,mConvexHullFacesAndDuals,mHomology,FinitelyGeneratedAbelianGroup,toFile,readConvexHullFaces,mLatticePoints,mPosHullFaces,mPosHullFacesAndDuals,readPosHullFaces,callConvex})
+export({"mConvexHullFaces","mConvexHullFacesAndDuals","mHomology","FinitelyGeneratedAbelianGroup","toFile","readConvexHullFaces","mLatticePoints","mPosHullFaces","mPosHullFacesAndDuals","readPosHullFaces","callConvex","mIsSubcone"})
 
 
 -- if you want to put the library convex.m in a non standard directory
@@ -39,6 +39,27 @@ libname:=libname0,placeholder2;
 with(convex):
 ///|convexprogram;
 callMaple("",pathconvex,mapleprogram,store=>opts.toFile))
+
+
+
+mIsSubcone=method(Options=>{toFile=>null})
+mIsSubcone(List,List):=opts->(L,Lb)->(
+L1:=toString {apply(L,entries),apply(Lb,entries)};
+---------------------------------------
+mapleprogram:=
+///
+libname0:=libname:
+libname:=libname0,placeholder2;
+with(convex):
+L:=placeholder1;
+P1:=poshull(op(L[1]));
+P2:=poshull(op(L[2]));
+returnvalue:=(P1&<=P2);
+///;
+---------------------------------------
+Lfc:=callMaple(L1,pathconvex,mapleprogram,store=>opts.toFile);
+Lfc
+)
 
 
 
@@ -341,6 +362,9 @@ doc ///
   Description
     Text
       {\bf What's new:}
+
+        {\it July 13, 2010:}
+        Added a function @TO mIsSubcone@ testing whether a cone is a subcone of another one.
 
         {\it October 4, 2009:}
         Added a generic function @TO callConvex@ taking a string with a program written in Convex syntax.
@@ -684,12 +708,42 @@ doc ///
 
 doc ///
   Key
+    mIsSubcone    
+    (mIsSubcone,List,List)
+  Headline
+    Test whether a cone is a subcone of another cone.
+  Usage
+    mIsSubcone(L1,L2)
+  Inputs
+    L1:List
+        of vectors generating the cone C1
+    L2:List
+        of vectors generating the cone C2
+  Outputs
+    :Boolean
+  Description
+   Text
+     Test whether C1 is a subcone of C2.
+
+   Example
+     L1={{1,0},{0,1}};
+     L1=apply(L1,vector)
+     L2={{1,2},{2,1}};
+     L2=apply(L2,vector)
+     mIsSubcone(L1,L2)
+     mIsSubcone(L2,L1)
+///
+
+
+doc ///
+  Key
     toFile
     [callConvex,toFile]
     [mConvexHullFaces,toFile]
     [mConvexHullFacesAndDuals,toFile]
     [mPosHullFaces,toFile]
     [mPosHullFacesAndDuals,toFile]
+    [mIsSubcone,toFile]
   Headline
     Store result in a file.
   Description
