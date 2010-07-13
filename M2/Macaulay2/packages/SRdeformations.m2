@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
-    	Version => "0.50", 
-    	Date => "Oct 27, 2009",
+    	Version => "0.51", 
+    	Date => "July 12, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
@@ -75,7 +75,7 @@ export {"cokerElement","iszero","vectorToMonomial","preImage","FirstOrderDeforma
 "possibleDenominators","deformationsFace",
 "globalSections","joinVectors",
 "convHull","deform","PT1","tropDef","mirrorSphere","file","saveDeformations","loadDeformations",
-"hull"}
+"hull","isSimp"}
 
 ---------------------------------------------------------------------------------
 -- deformations of Stanley-Reisner rings
@@ -821,8 +821,8 @@ R:=(ofComplex F).simplexRing;
 -- functions dealing with lists of faces, used to create a complex
 
 
--- isSimplicial=method()
-isSimplicial(List):=(L)->(
+isSimp=method()
+isSimp(List):=(L)->(
 tst:=true;
 q:=0;
 qq:=0;
@@ -835,7 +835,7 @@ q=q+1);
 tst)
 --v=(entries vars R)#0
 --L=toList apply(0..#v,j->subsets(v,j)) 
---isSimplicial L
+--isSimp L
 
 isPolytope=method()
 isPolytope(List):=(L)->(
@@ -957,7 +957,7 @@ Complex#{Standard,AfterPrint} = m -> (
  lineprint2:=emptySpaces(lineprint|" ");
  fvstr:="";
  if member(symbol fvector,keys m)==true then fvstr=", F-vector "|toString(m.fvector)|", Euler = "|toString(eulerCharacteristic(m.fvector));
- if m.isSimplicial==true then sp="simplicial";
+ if m.isSimp==true then sp="simplicial";
       << endl;
       << concatenate(interpreterDepth:"o") << lineNumber << " : "
       << "complex of dim "|m.dim|" embedded in dim "|m.edim|" (printing facets)"
@@ -1046,7 +1046,7 @@ newComplex(PolynomialRing,List,List,PolynomialRing) := (R,faceslist,facetlist,Rd
 --     symbol dualSimplexRing => Rdual,
      symbol grading => R.grading,
 --     symbol dualGrading => Rdual.grading,
-     symbol isSimplicial => isSimplicial(faceslist),
+     symbol isSimp => isSimp(faceslist),
      symbol edim => rank source R.grading,
      symbol dim => dim (faceslist),
      symbol fvector => fvector(faceslist),
@@ -1066,7 +1066,7 @@ newComplex(PolynomialRing,List,List) := (R,faceslist,facetlist)-> (
 --     symbol dualSimplexRing => false,
      symbol grading => R.grading,
 --     symbol dualGrading => false,
-     symbol isSimplicial => isSimplicial(facetlist),
+     symbol isSimp => isSimp(facetlist),
      symbol edim => rank source R.grading,
      symbol dim => dim (facetlist),
      symbol fvector => fvector(faceslist),
@@ -1083,7 +1083,7 @@ newComplexFromFacets(PolynomialRing,List,PolynomialRing):= (R,facetlist,Rdual)->
  L:={
      symbol simplexRing => R,
      symbol grading => R.grading,
-     symbol isSimplicial => isSimplicial(facetlist),
+     symbol isSimp => isSimp(facetlist),
      symbol edim => rank source R.grading,
      symbol dim => dim (facetlist),
      symbol facets => facetlist,
@@ -1100,7 +1100,7 @@ newComplexFromFacets(PolynomialRing,List):= (R,facetlist)-> (
  L:={
      symbol simplexRing => R,
      symbol grading => R.grading,
-     symbol isSimplicial => isSimplicial(facetlist),
+     symbol isSimp => isSimp(facetlist),
      symbol edim => rank source R.grading,
      symbol dim => dim (facetlist),
      symbol facets => facetlist,
@@ -1161,7 +1161,7 @@ complexFromFacets(R,faceslist,Rdual))
 addFaceDataToComplex=method()
 addFaceDataToComplex(Complex,List,List):=(C,faceslist,facetlist)->(
 fc:=new ScriptedFunctor from {subscript => i-> faceslist_(i+1)};
-C.isSimplicial=isSimplicial(facetlist);
+C.isSimp=isSimp(facetlist);
 C.dim=dim(facetlist);
 C.fvector = fvector(faceslist);
 C.facets = facetlist;
@@ -1175,7 +1175,7 @@ addFaceDataToComplex(C,faceslist,facets(faceslist)))
 
 addFacetDataToComplex=method()
 addFacetDataToComplex(Complex,List):=(C,facetlist)->(
-C.isSimplicial=isSimplicial(facetlist);
+C.isSimp=isSimp(facetlist);
 C.dim=dim(facetlist);
 C.facets = facetlist;
 C.isEquidimensional =isEquidimensional(facetlist);
@@ -1307,7 +1307,7 @@ isPolytope Complex:=(C)->(
 if member(symbol isPolytope,keys C)==true then return(C.isPolytope);
 numberOfFacets(C)==1)
 -- >> export
-isSimplicial Complex:=(C)->C.isSimplicial
+isSimp Complex:=(C)->C.isSimp
 -- >> document
 dim Complex:= (C)->(C.dim)
 -- >> export
@@ -1338,8 +1338,8 @@ facets(Complex):=(C)->(C.facets)
 fc=method()
 fc(Complex):=(C)->(
 if member(symbol fc,keys C)==true then return(toList apply(-1..edim(C),j->C.fc_j));
-if member(symbol isSimplicial,keys C)==true then (
- if C.isSimplicial==true then (
+if member(symbol isSimp,keys C)==true then (
+ if C.isSimp==true then (
 --  faceslist:=computeFacesOfSimplicialComplex(C);
 --  fc:=new ScriptedFunctor from {subscript => i-> faceslist_(i+1)};
   C.fc=computeFacesOfSimplicialComplex(C);
@@ -1758,7 +1758,7 @@ Cl.noBoundary=false;
 --S:=apply(0..#v-1,j->remove(v,j));
 S=subsets(v,#v-1);
 Cl.polytopalFacets=toList apply(0..#S-1,jj->face(S#jj,Cl,#v-2,jj));
-Cl.isSimplicial=true;
+Cl.isSimp=true;
 Cl.isPolytope=true;
 Rdual.grading=verticesDualPolytope(Cl);
 dCl:=newEmptyComplex(Rdual);
@@ -2020,7 +2020,7 @@ Rdual.grading=verticesDualPolytope(Cl);
 dCl:=newEmptyComplex(Rdual);
 dCl.dualComplex=Cl;
 dCl.isPolytope=true;
-dCl.isSimplicial=false;
+dCl.isSimp=false;
 dCl.dim=Cl.dim;
 Cl.dualComplex=dCl;
 Cl)
@@ -2048,7 +2048,7 @@ A:=matrix Lv;
 addCokerGrading(R,A);
 Cl:=newEmptyComplex(R);
 Cl.noBoundary=false;
-Cl.isSimplicial=false;
+Cl.isSimp=false;
 L:={{face({},Cl)}};
 S:={};
 S1:={};
@@ -2227,7 +2227,7 @@ if member(symbol fc,keys C)==false then (
      symbol simplexRing => C.simplexRing,
      symbol grading => R.grading,
      symbol isPolytope => false,
-     symbol isSimplicial => isSimplicial newfacets,
+     symbol isSimp => isSimp newfacets,
      symbol edim => C.edim,
      symbol dim => -1+C.dim,
      symbol facets => newfacets,
@@ -2244,7 +2244,7 @@ if member(symbol fc,keys C)==false then (
      symbol simplexRing => C.simplexRing,
      symbol grading => R.grading,
      symbol isPolytope => false,
-     symbol isSimplicial => isSimplicial newfacets,
+     symbol isSimp => isSimp newfacets,
      symbol edim => C.edim,
      symbol dim => -1+C.dim,
      symbol fvector => newfvector,
@@ -2528,7 +2528,7 @@ CoComplex#{Standard,AfterPrint} = m -> (
  if m.isEquidimensional==false then eq="non-equidimensional";
  lineprint:= lineNumber | " : ";
  lineprint2:=emptySpaces(lineprint|" ");
- if m.isSimplicial==true then sp="simplicial";
+ if m.isSimp==true then sp="simplicial";
       << endl;
       << concatenate(interpreterDepth:"o") << lineNumber << " : "
       << "co-complex of dim "|m.dim|" embedded in dim "|m.edim|" (printing facets)"
@@ -2752,7 +2752,7 @@ C0:=(F.ofComplex)#0;
 R:=C0.simplexRing;
 v:=(entries(vars R))#0;
 n:=#v;
-if C0.isSimplicial==false or n!=dim(C0)+1 then error("expected a subcomplex of a simplex");
+if C0.isSimp==false or n!=dim(C0)+1 then error("expected a subcomplex of a simplex");
 face(toList((set v)-(set vert F)),C0))
 
 {*
@@ -3369,7 +3369,8 @@ boundaryEquations(A)
 preImage=method()
 preImage(Matrix,Vector):=(A,b)->(
 n:=rank source A;
-kh:=gens ker(A|((toList(b))#0));
+--print(ring A,ring ((toList(b))#0));
+kh:=gens ker(A|sub((toList(b))#0,ring A));
 if kh==0 then return(false);
 --sub((kh_(n,0))^(-1)*sub(kh^(toList (0..n-1)),QQ),ZZ)
 v:=-(kh_(n,0))^(-1)*kh^(toList (0..n-1));
@@ -3783,7 +3784,7 @@ F<<"symbol simplexRing =>"<<toString(C.simplexRing)<<","<<endl;
 F<<"symbol dim=>"|toString(C.dim)<<","<<endl;
 F<<"symbol edim=>"|toString(C.edim)<<","<<endl;
 F<<"symbol isEquidimensional=>"|toString(C.isEquidimensional)<<","<<endl;
-F<<"symbol isSimplicial=>"|toString(C.isSimplicial)<<","<<endl;
+F<<"symbol isSimp=>"|toString(C.isSimp)<<","<<endl;
 F<<"symbol fvector=>"|toString(C.fvector)<<","<<endl;
 F<<"symbol grading=>"|toString(C.grading)<<"};"<<endl;
 close F;
@@ -3877,6 +3878,19 @@ doc ///
       and its tropical subcocomplex (see @TO tropDef@).
 
       {\bf What' new:}
+
+        {\it Jul 13, 2010 (Version 0.52)}
+        
+           Some changes to ensure compatibility with the current version of Polyhedra (1.1), in particular
+           the method isSimplicial has been renamed to @TO isSimp@, as Polyhedra is now using the name
+           name isSimplicial.
+
+
+        {\it Jan 28, 2010 (Version 0.51)}
+        
+           Minor changes to ensure compatibility with the previous M2 version 1.2. Note that you will nevertheless
+           need to install a more recent version of Polyhedra which also works with 1.2 (tested with 1.0.6).
+
 
         {\it Oct 24, 2009 (Version 0.50)}
 
@@ -6674,7 +6688,7 @@ doc ///
 
         {\it C.dim}, the dimension of the complex.
 
-        {\it C.isSimplicial}, a @TO Boolean@ indicating whether C is simplicial.
+        {\it C.isSimp}, a @TO Boolean@ indicating whether C is simplicial.
 
         {\it C.isEquidimensional}, a @TO Boolean@ indicating whether C is equidimensional.
 
@@ -6810,7 +6824,7 @@ doc ///
 
         {\it C.dim}, the dimension of C, i.e., the minimal dimension of the faces.
 
-        {\it C.isSimplicial}, a @TO Boolean@ indicating whether C is simplicial.
+        {\it C.isSimp}, a @TO Boolean@ indicating whether C is simplicial.
 
         {\it C.isEquidimensional}, a @TO Boolean@ indicating whether C is equidimensional.
 
@@ -7026,34 +7040,34 @@ doc ///
      (dim,Complex)
 ///
 
--- doc ///
---   Key
---     (isSimplicial,Complex)
---     (isSimplicial,List)
---   Headline
---     Check whether a complex or co-complex is simplicial.
---   Usage
---     isSimplicial(C)
---   Inputs
---     C:Complex
---   Outputs
---     :Boolean
---       positive
---   Description
---    Text
---       Check whether a complex or co-complex is simplicial.
-      
---    Example
---      R=QQ[x_0..x_5]
---      C=boundaryCyclicPolytope(3,R)
---      isSimplicial C
---      R=QQ[x_0..x_5]
---      C1=fullCyclicPolytope(3,R)
---      isSimplicial C1     
---   SeeAlso
---      boundaryCyclicPolytope
---      fullCyclicPolytope
--- ///
+doc ///
+   Key
+     isSimp
+     (isSimp,Complex)
+     (isSimp,List)
+   Headline
+     Check whether a complex or co-complex is simplicial.
+   Usage
+     isSimp(C)
+   Inputs
+     C:Complex
+   Outputs
+     :Boolean
+   Description
+    Text
+       Check whether a complex or co-complex is simplicial.
+    
+    Example
+      R=QQ[x_0..x_5]
+      C=boundaryCyclicPolytope(3,R)
+      isSimp C
+      R=QQ[x_0..x_5]
+      C1=fullCyclicPolytope(3,R)
+      isSimp C1     
+   SeeAlso
+      boundaryCyclicPolytope
+      fullCyclicPolytope
+///
 
 doc ///
   Key
@@ -7154,7 +7168,7 @@ doc ///
   Description
     Text
        Adds to a complex the face data and facet data (computed if not specified), i.e.,
-       C.fc, C.facets, C.dim, C.fvector, C.isEquidimensional, C.isSimplicial are updated.
+       C.fc, C.facets, C.dim, C.fvector, C.isEquidimensional, C.isSimp are updated.
 
        This allows us to add the face data later to a complex generated previously by 
        @TO newEmptyComplex@.
@@ -7176,6 +7190,7 @@ doc ///
     dim
     fvector
     fc
+    isSimp
     isEquidimensional
   Caveat
     If both facelist and facetlist are specified this function does not make any consistency check.
@@ -7199,7 +7214,7 @@ doc ///
   Description
     Text
        Adds to a complex the facet data, i.e.,
-       C.facets, C.dim, C.fvector, C.isEquidimensional, C.isSimplicial are updated.
+       C.facets, C.dim, C.fvector, C.isEquidimensional, C.isSimp are updated.
 
        This allows us to add the facet data later to a complex generated previously by 
        @TO newEmptyComplex@.
@@ -7222,6 +7237,7 @@ doc ///
     dim
     fvector
     facets
+    isSimp
     isEquidimensional
 ///
 
@@ -7263,6 +7279,7 @@ doc ///
     dim
     fvector
     facets
+    isSimp
     isEquidimensional
 ///
 
