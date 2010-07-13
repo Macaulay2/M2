@@ -1,13 +1,16 @@
+
 -- -*- coding: utf-8 -*-
 newPackage(
 	"AdjointIdeal",
-    	Version => "0.15", 
-    	Date => "Aug 15, 2009",
+    	Version => "0.5", 
+    	Date => "June 16, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
     	Headline => "Adjoint ideals of plane curves and related computations",
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	CacheExampleOutput => true,
+	AuxiliaryFiles => true
     	)
 
 -- For information see documentation key "AdjointIdeal" below.
@@ -21,6 +24,8 @@ export {"extractLeftLower"}
 export {"forwardSubstitution"}
 export {"backwardSubstitution"}
 export {"traceMatrix"}
+
+needsPackage "MapleInterface"
 
 -- numerator of a row matrix
 matnum=(ibmm)->(
@@ -52,7 +57,7 @@ ibl:={};
 while q<rank(source(ibm)) do (
    ibl=append(ibl,rsnum_(0,q)/den_(0,q));
 q=q+1);
---print(ibl);
+--print(ibm,ibl);
 matrix {ibl});
 
 -- the quotient of two one-row matrixes
@@ -82,8 +87,19 @@ matrix {ibl});
 
 vanishingOrder=(p)->(
 if p==0 then return(infinity);
+--print(p,degree p);
 if p!=0 then return((degree p)#0);
 )
+
+-- vanishingOrder=(p)->(
+-- -(degree numerator p)#0)
+{*
+vanishingOrder=(p)->(
+if p==0 then return(infinity);
+--print(p,degree p);
+if p!=0 then return((degree numerator p)#0);
+)
+*}
 
 pivot=method()
 pivot(ZZ,ZZ,Matrix,Function):=(spa,k,trmw,pivotfunction)->(
@@ -94,6 +110,8 @@ while qu<n do (
    del=append(del,pivotfunction(trmw_(qu,spa)));
 qu=qu+1);
 --print(del,k,k+maxPosition((-1)*del));
+--print trmw;
+--print(del,k,k+minPosition(del));
 k+minPosition(del))
 --J=adjointIdeal(I,ib,ver)
 
@@ -226,6 +244,26 @@ otp)
 
 -- geometric genus
 geometricGenus=method()
+
+geometricGenus(Ideal):=(I1)->(
+if dim I1 != 2 then error("Not a curve");
+if codim I1 != 1 or rank source vars ring I1 !=3 then error("Not a plane curve");
+R0:=ring I1;
+z:=(vars ring I1)_(0,-1+rank source vars ring I1);
+K:=coefficientRing R0;
+R:=K[R0_0,R0_1];
+I:=substitute(substitute(I1,z=>1),R);
+Iinf:=saturate substitute(substitute(I1+ideal jacobian I1,z=>0),R);
+if degree Iinf > 0 then error("The curve has singularities at infinity");
+d:=degree I;
+if contract((R_0)^d,I_(0))!=1 then error("Curve contains (1:0:0)");
+QR:=frac R;
+ib:=sub(integralBasis(I),QR);
+geometricGenus(I1,ib))
+
+
+
+
 geometricGenus(Ideal,Matrix):=(I1,ib)->(
 n:=(degree (gens I1)_(0,0))#0;
 gen:=(n-1)*(n-2)/2-sum(apply((entries matden(ib))#0,j->(degree j)#0));
@@ -250,7 +288,7 @@ gl:=substitute(ib,RE);
 n:=rank source ib;
 -- the coefficient matrix mR of the integral basis
 perm:=(entries(matrix({deepSplice({-(n-1)..0})})*-1))#0;
-mR:=(transpose(coefficients(gl,Variables=>{v}))#1)_perm;
+mR:=(transpose(coefficients(gl,Variables=>{R_0}))#1)_perm;
 mRI:=(substitute(mR,QRx))^-1;
 traceMatrix(ib,mRI,{A,R,RE,QRx}));
 --traceMatrix(I,ib)
@@ -367,6 +405,24 @@ transpose((matrix {rst})_(deepSplice {apply(0..(n-1),i->n-1-i)})));
 
 adjointIdeal=method()
 
+adjointIdeal(Ideal):=(I1)->(
+if dim I1 != 2 then error("Not a curve");
+if codim I1 != 1 or rank source vars ring I1 !=3 then error("Not a plane curve");
+R0:=ring I1;
+z:=(vars ring I1)_(0,-1+rank source vars ring I1);
+K:=coefficientRing R0;
+R:=K[R0_0,R0_1];
+I:=substitute(substitute(I1,z=>1),R);
+Iinf:=saturate substitute(substitute(I1+ideal jacobian I1,z=>0),R);
+if degree Iinf > 0 then error("The curve has singularities at infinity");
+d:=degree I;
+if contract((R_0)^d,I_(0))==0 then error("Curve contains (1:0:0)");
+QR:=frac R;
+ib:=sub(integralBasis(I),QR);
+--print(I1,ib);
+adjointIdeal(I1,ib,0));
+
+
 adjointIdeal(Ideal,Matrix):=(I1,ib)->(
 adjointIdeal(I1,ib,0));
 
@@ -381,10 +437,11 @@ n:=(degree I_0)#0;
 A:=R/I;
 -- compute the genus
 gen:=(n-1)*(n-2)/2-sum(apply((entries matden(ib))#0,j->(degree j)#0));
-if ver>0 then print("genus = "|toString gen);print(" ");
+if ver>0 then (print("genus = "|toString gen);print(" "));
 prmt:=0;
 --
 trmw:=traceMatrix(I1,ib);
+--return trmw;
 if ver>0 then (print("Trace matrix = ",trmw);print(" "););
 --
 -- differentation of f by the first variable of R
@@ -436,20 +493,77 @@ You should have received a copy of the GNU General Public License along with thi
 
 
 beginDocumentation()
-document { 
-	Key => "AdjointIdeal",
-	Headline => "Adjoint ideal of a plane curve and related computations",
-	EM "AdjointIdeal", " is a package to compute the adjoint ideal."
-	}
+
+
+
+doc ///
+  Key
+    "AdjointIdeal"
+  Headline
+    "Adjoint ideal of a plane curve and related computations"
+  Description
+   Text
+
+     {\bf Overview:}
+
+     AdjointIdeal is a package to compute the adjoint ideal and the geometric genus of plane curves.
+     
+     This is used in particular for genus 0 in the package {\it Parametrization}
+     to map any singular plane rational curve to a (smooth) rational normal curve.
+
+     Suppose the curve C is given by {f(x,y,z)=0} and C does not have singularities
+     at infinity (z=0) and the point (0:1:0) is not on C.
+     Note that these conditions can always be met by a projective automorphism.
+
+     Considering the affine curve in z!=0 we consider x as trancendental and y as algebraic
+     and compute an integral basis in CC(x)[y] of the integral closure of CC[x] in CC(x,y) using 
+     the algorithm from
+    
+     Mark van Hoeij: An algorithm for computing an integral basis in an algebraic function field,
+     @HREF"http://www.math.fsu.edu/~hoeij/papers/comments/jsc1994.html"@,
+     Journal of Symbolic Computation,
+     Volume 18 ,  Issue 4  (October 1994),
+     Pages: 353 - 363.
+
+     So far we call Maple using the MapleInterface package, but once the functionality will be
+     available natively in Macaulay2 this will no longer be necessary.
+
+     From this data the adjoint ideal can be obtained by linear algebra.
+
+     The package is work in progress, so there will be future improvements and more testing is necessary.
+
+
+     For more theoretical details see 
+     J. Boehm: Rational parametrization of rational curves,
+     @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+
+
+     {\bf Key user functions:}
+
+     @TO adjointIdeal@  --  compute the adjoint ideal
+
+     @TO geometricGenus@  -- compute the geometric genus of a plane curve
+
+    {\bf Setup:}
+
+    This package uses the package {\it MapleInterface}, so install this first.
+
+    Place the file AdjointIdeal.m2 somewhere into the M2 search path (type path to see it) and install the package by doing
+
+    installPackage("AdjointIdeal")
+///
+
 
 doc ///
   Key
     adjointIdeal
+    (adjointIdeal,Ideal)
     (adjointIdeal,Ideal,Matrix)
     (adjointIdeal,Ideal,Matrix,ZZ)
   Headline
     Compute the adjoint ideal of a plane curve
   Usage
+    adjointIdeal(I)
     adjointIdeal(I,ib)
   Inputs
     I:Ideal
@@ -467,14 +581,23 @@ doc ///
      We assume that I has the following properties:
 
      Denote the variables of R=ring(I) by v,u,z. 
-     All singularities of C have to lie in the chart z!=0 and the generator of I has to be monic in v.
+     All singularities of C have to lie in the chart z!=0 and the curve should not contain the point (1:0:0).
 
 
-     We assume that ib has the following properties:
+     If ib is specified we assume that it has the following properties:
      The entries are in K(u)[v] inside frac(R) where the i-th entry is of degree $i$ in v for i=0..n-1.
      Note that this always can be achieved.
 
      A rational curve with three double points:
+   Example
+     K=QQ
+     R=K[v,u,z]
+     I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+     J=adjointIdeal(I)
+   Text
+     
+     Same example but specifying the integral basis:
+
    Example
      K=QQ
      R=K[v,u,z]
@@ -487,6 +610,15 @@ doc ///
 
      The Cusp:
    Example
+     K=QQ
+     R=K[v,u,z]
+     I=ideal(v^3-u^2*z)
+     J=adjointIdeal(I)
+   Text
+     
+     Same example but specifying the integral basis:
+
+   Example
      K=QQ;
      R=K[v,u,z];
      I=ideal(v^3-u^2*z)
@@ -498,9 +630,18 @@ doc ///
 
      A curve of genus 4:
    Example
+     K=QQ
+     R=K[v,u,z]
+     I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3)
+     J=adjointIdeal(I)
+   Text
+     
+     Same example but specifying the integral basis:
+
+   Example
      K=QQ;
      R=K[v,u,z];
-     I=ideal(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u);
+     I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
      Rvu=K[v,u];
      QR=frac(Rvu);
      ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
@@ -517,7 +658,10 @@ doc ///
      J=adjointIdeal(I,ib)
      apply((entries gens J)#0,factor)
   Caveat
-     The interface will change after the integral basis algorithm is implemented - the argument ib will fall away and also the conditions on the coordinate system.
+     At some point the condition on the coordinate system will fall away, as the function will
+     take care of the coordinate change.
+
+     The function so far does not cache the integral basis computation.
   SeeAlso
      geometricGenus
      integralClosure
@@ -528,10 +672,12 @@ doc ///
 doc ///
   Key
     geometricGenus
+    (geometricGenus,Ideal)
     (geometricGenus,Ideal,Matrix)
   Headline
     Geometric genus of a plane curve
   Usage
+    geometricGenus(I)
     geometricGenus(I,ib)
   Inputs
     I:Ideal
@@ -546,16 +692,27 @@ doc ///
    Text
      Computes the geometric genus of a plane curve.
 
+     If the second argument ib is not supplied it is computed calling Maple via the MapleInterface package.
+
      We assume that I has the following properties:
 
      Denote the variables of R=ring(I) by v,u,z. 
-     All singularities of C have to lie in the chart z!=0 and the generator of I has to be monic in v.
+     All singularities of C have to lie in the chart z!=0 and the curve should not contain (1:0:0).
 
      We assume that ib has the following properties:
      The entries are in K(u)[v] inside frac(R) where the i-th entry is of degree $i$ in v for i=0..n-1.
      Note that this always can be achieved.
 
      A rational curve with three double points:
+   Example
+     K=QQ
+     R=K[v,u,z]
+     I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+     geometricGenus(I)
+   Text
+     
+     Same example but specifying the integral basis:
+
    Example
      K=QQ
      R=K[v,u,z]
@@ -571,6 +728,15 @@ doc ///
      K=QQ;
      R=K[v,u,z];
      I=ideal(v^3-u^2*z)
+     geometricGenus(I)
+   Text
+     
+     Same example but specifying the integral basis:
+
+   Example
+     K=QQ;
+     R=K[v,u,z];
+     I=ideal(v^3-u^2*z)
      Rvu=K[v,u];
      QR=frac(Rvu);
      ib=matrix({{1,v,v^2/u}});
@@ -581,14 +747,25 @@ doc ///
    Example
      K=QQ;
      R=K[v,u,z];
-     I=ideal(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u);
+     I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
+     geometricGenus(I)
+   Text
+     
+     Same example but specifying the integral basis:
+
+   Example
+     K=QQ;
+     R=K[v,u,z];
+     I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
      Rvu=K[v,u];
      QR=frac(Rvu);
      ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
      geometricGenus(I,ib)
   Caveat
-     The interface will change after the integral basis algorithm is implemented - the argument ib will fall away and also the conditions on the coordinate system.
-     Note that the function presently only uses the argument ib.
+     At some point the condition on the coordinate system will fall away, as the function will
+     take care of the coordinate change.
+
+     The function does so far not cache the integral basis computation.
   SeeAlso
      adjointIdeal
      integralClosure
@@ -803,7 +980,7 @@ doc ///
      We assume that I has the following properties:
 
      Denote the variables of R=ring(I) by v,u,z. 
-     All singularities of C have to lie in the chart z!=0 and the generator of I has to be monic in v.
+     All singularities of C have to lie in the chart z!=0 and the curve should not contain (1:0:0).
 
 
      We assume that ib has the following properties:
@@ -836,7 +1013,7 @@ doc ///
    Example
      K=QQ;
      R=K[v,u,z];
-     I=ideal(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u);
+     I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
      Rvu=K[v,u];
      QR=frac(Rvu);
      ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
