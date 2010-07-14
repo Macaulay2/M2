@@ -1,0 +1,34 @@
+-- -*- M2-comint -*- {* hash: 83085708 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : K=QQ;
+
+i2 : R=K[v,u,z];
+
+i3 : I=ideal(v^8-u^3*(z+u)^5);
+
+o3 : Ideal of R
+
+i4 : linsys=matrix {{u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6}};
+
+             1       7
+o4 : Matrix R  <--- R
+
+i5 : invertBirationalMap(I,linsys)
+
+                                                                             
+o5 = {| -t_5t_6       |, ideal (t t  - t t , t t  - t t , t t  - t t , t t  -
+      | -t_4t_6       |          4 5    3 6   3 5    2 6   1 5    0 6   3 4  
+      | -t_5^2+t_4t_6 |
+     ------------------------------------------------------------------------
+                                2   2                              2        
+     t t , t t  - t t , t t  - t , t  - t t , t t  - t t , t t  - t , t t  -
+      1 6   2 4    0 6   0 4    6   3    0 6   2 3    0 5   1 3    6   0 3  
+     ------------------------------------------------------------------------
+                                2   2                       2
+     t t , t t  - t t , t t  - t , t  - t t , t t  - t t , t  - t t )}
+      5 6   1 2    5 6   0 2    5   1    4 6   0 1    3 6   0    2 6
+
+o5 : List
+
+i6 : 

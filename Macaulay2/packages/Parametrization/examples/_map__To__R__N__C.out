@@ -1,0 +1,42 @@
+-- -*- M2-comint -*- {* hash: -2062425853 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : K=QQ;
+
+i2 : R=K[v,u,z];
+
+i3 : I=ideal(v^8-u^3*(z+u)^5);
+
+o3 : Ideal of R
+
+i4 : betti mapToRNC(I)
+
+            0  1
+o4 = total: 1 15
+         0: 1  .
+         1: . 15
+
+o4 : BettiTally
+
+i5 : K=QQ;
+
+i6 : R=K[v,u,z];
+
+i7 : I=ideal(v^8-u^3*(z+u)^5);
+
+o7 : Ideal of R
+
+i8 : J=ideal(u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6);
+
+o8 : Ideal of R
+
+i9 : betti mapToRNC(I,J)
+
+            0  1
+o9 = total: 1 15
+         0: 1  .
+         1: . 15
+
+o9 : BettiTally
+
+i10 : 

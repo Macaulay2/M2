@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- {* hash: 1883920410 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : K=QQ;
+
+i2 : R=K[y_0..y_2];
+
+i3 : I=ideal(y_0*y_2-y_1^2+y_2^2);
+
+o3 : Ideal of R
+
+i4 : rParametrizeConic(I)
+
+o4 = | t_0^2-t_1^2 |
+     | -t_0t_1     |
+     | -t_0^2      |
+
+                        3                  1
+o4 : Matrix (QQ[t , t ])  <--- (QQ[t , t ])
+                 0   1              0   1
+
+i5 : 
