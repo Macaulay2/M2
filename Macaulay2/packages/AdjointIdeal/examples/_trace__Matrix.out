@@ -1,0 +1,114 @@
+-- -*- M2-comint -*- {* hash: 1325148817 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : K=QQ
+
+o1 = QQ
+
+o1 : Ring
+
+i2 : R=K[v,u,z]
+
+o2 = R
+
+o2 : PolynomialRing
+
+i3 : I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+
+            4     3      2 2     2 2
+o3 = ideal(v  - 2u z - 2v z  + 3u z )
+
+o3 : Ideal of R
+
+i4 : Rvu=K[v,u];
+
+i5 : QR=frac(Rvu);
+
+i6 : ib=matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
+
+              1        4
+o6 : Matrix QR  <--- QR
+
+i7 : traceMatrix(I,ib)
+
+o7 = | 4 0    0    0    |
+     | 0 4    0    8u-4 |
+     | 0 0    8u+4 0    |
+     | 0 8u-4 0    16   |
+
+                        4                  4
+o7 : Matrix (frac QQ[u])  <--- (frac QQ[u])
+
+i8 : K=QQ;
+
+i9 : R=K[v,u,z];
+
+i10 : I=ideal(v^3-u^2*z)
+
+             3    2
+o10 = ideal(v  - u z)
+
+o10 : Ideal of R
+
+i11 : Rvu=K[v,u];
+
+i12 : QR=frac(Rvu);
+
+i13 : ib=matrix({{1,v,v^2/u}});
+
+               1        3
+o13 : Matrix QR  <--- QR
+
+i14 : traceMatrix(I,ib)
+
+o14 = | 3 0  0  |
+      | 0 0  3u |
+      | 0 3u 0  |
+
+                         3                  3
+o14 : Matrix (frac QQ[u])  <--- (frac QQ[u])
+
+i15 : K=QQ;
+
+i16 : R=K[v,u,z];
+
+i17 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
+
+o17 : Ideal of R
+
+i18 : Rvu=K[v,u];
+
+i19 : QR=frac(Rvu);
+
+i20 : ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
+
+               1        6
+o20 : Matrix QR  <--- QR
+
+i21 : traceMatrix(I,ib)
+
+o21 = | 6                0                  0                      
+      | 0                0                  0                      
+      | 0                0                  (-28u4-84u3-84u2-28u)/5
+      | 0                (-28u3-56u2-28u)/5 0                      
+      | (-28u2-56u-28)/5 0                  (-36u4-36u3)/5         
+      | 0                (-36u3-36u2)/5     0                      
+      -----------------------------------------------------------------------
+      0                            (-28u2-56u-28)/5                
+      (-28u3-56u2-28u)/5           0                               
+      0                            (-36u4-36u3)/5                  
+      -36u4/5                      0                               
+      0                            (196u4+784u3+1176u2+784u+196)/25
+      (196u4+980u3+1372u2+588u)/25 0                               
+      -----------------------------------------------------------------------
+      0                            |
+      (-36u3-36u2)/5               |
+      0                            |
+      (196u4+980u3+1372u2+588u)/25 |
+      0                            |
+      (420u4+1764u3+1260u2-84u)/25 |
+
+                         6                  6
+o21 : Matrix (frac QQ[u])  <--- (frac QQ[u])
+
+i22 : 
