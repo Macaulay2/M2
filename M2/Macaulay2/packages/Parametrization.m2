@@ -1245,7 +1245,7 @@ doc ///
    Text
     {\bf Overview:}
 
-    Parametrization is a package to compute rational parametrizations of a rational curves defined over QQ.
+    Parametrization is a package to compute rational parametrizations of rational curves defined over QQ.
 
     We use the package {\it AdjointIdeal} to compute the adjoint ideal of a rational plane curve C of degree n defined over QQ.
     The package exports also all functions available in {\it AdjointIdeal}, e.g., geometricGenus.
