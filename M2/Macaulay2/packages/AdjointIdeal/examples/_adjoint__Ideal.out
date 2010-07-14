@@ -1,0 +1,207 @@
+-- -*- M2-comint -*- {* hash: 1150189644 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : K=QQ
+
+o1 = QQ
+
+o1 : Ring
+
+i2 : R=K[v,u,z]
+
+o2 = R
+
+o2 : PolynomialRing
+
+i3 : I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+
+            4     3      2 2     2 2
+o3 = ideal(v  - 2u z - 2v z  + 3u z )
+
+o3 : Ideal of R
+
+i4 : J=adjointIdeal(I)
+
+             2                    2
+o4 = ideal (u  - u*z, v*u - v*z, v  - u*z)
+
+o4 : Ideal of R
+
+i5 : K=QQ
+
+o5 = QQ
+
+o5 : Ring
+
+i6 : R=K[v,u,z]
+
+o6 = R
+
+o6 : PolynomialRing
+
+i7 : I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+
+            4     3      2 2     2 2
+o7 = ideal(v  - 2u z - 2v z  + 3u z )
+
+o7 : Ideal of R
+
+i8 : Rvu=K[v,u];
+
+i9 : QR=frac(Rvu);
+
+i10 : ib=matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
+
+               1        4
+o10 : Matrix QR  <--- QR
+
+i11 : J=adjointIdeal(I,ib)
+
+              2                    2
+o11 = ideal (u  - u*z, v*u - v*z, v  - u*z)
+
+o11 : Ideal of R
+
+i12 : K=QQ
+
+o12 = QQ
+
+o12 : Ring
+
+i13 : R=K[v,u,z]
+
+o13 = R
+
+o13 : PolynomialRing
+
+i14 : I=ideal(v^3-u^2*z)
+
+             3    2
+o14 = ideal(v  - u z)
+
+o14 : Ideal of R
+
+i15 : J=adjointIdeal(I)
+
+o15 = ideal (u, v)
+
+o15 : Ideal of R
+
+i16 : K=QQ;
+
+i17 : R=K[v,u,z];
+
+i18 : I=ideal(v^3-u^2*z)
+
+             3    2
+o18 = ideal(v  - u z)
+
+o18 : Ideal of R
+
+i19 : Rvu=K[v,u];
+
+i20 : QR=frac(Rvu);
+
+i21 : ib=matrix({{1,v,v^2/u}});
+
+               1        3
+o21 : Matrix QR  <--- QR
+
+i22 : J=adjointIdeal(I,ib)
+
+o22 = ideal (u, v)
+
+o22 : Ideal of R
+
+i23 : K=QQ
+
+o23 = QQ
+
+o23 : Ring
+
+i24 : R=K[v,u,z]
+
+o24 = R
+
+o24 : PolynomialRing
+
+i25 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3)
+
+             6   7 2 4   6 6   21 2 3    12 5    21 2 2 2   6 4 2   7 2   3
+o25 = ideal(v  + -v u  + -u  + --v u z + --u z + --v u z  + -u z  + -v u*z )
+                 5       5      5         5       5         5       5
+
+o25 : Ideal of R
+
+i26 : J=adjointIdeal(I)
+
+              3    2      2           2     2    3
+o26 = ideal (u  + u z, v*u  + v*u*z, v u + v z, v )
+
+o26 : Ideal of R
+
+i27 : K=QQ;
+
+i28 : R=K[v,u,z];
+
+i29 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
+
+o29 : Ideal of R
+
+i30 : Rvu=K[v,u];
+
+i31 : QR=frac(Rvu);
+
+i32 : ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
+
+               1        6
+o32 : Matrix QR  <--- QR
+
+i33 : J=adjointIdeal(I,ib)
+
+              3    2      2           2     2    3
+o33 = ideal (u  + u z, v*u  + v*u*z, v u + v z, v )
+
+o33 : Ideal of R
+
+i34 : K=QQ;
+
+i35 : R=K[v,u,z];
+
+i36 : I=ideal(v^8-u^3*(z+u)^5);
+
+o36 : Ideal of R
+
+i37 : Ruv=K[v,u];
+
+i38 : QR=frac(Ruv);
+
+i39 : ib=matrix({{1,v,v^2/(1+u),v^3/u/(1+u),v^4/u/(1+u)^2,v^5/u/(1+u)^3,v^6/u^2/(1+u)^3,v^7/u^2/(1+u)^4}});
+
+               1        8
+o39 : Matrix QR  <--- QR
+
+i40 : J=adjointIdeal(I,ib)
+
+              6     5      4 2     3 3    2 4     5       4        3 2  
+o40 = ideal (u  + 4u z + 6u z  + 4u z  + u z , v*u  + 3v*u z + 3v*u z  +
+      -----------------------------------------------------------------------
+         2 3   2 4     2 3      2 2 2    2   3   3 3     3 2     3   2   4 2
+      v*u z , v u  + 3v u z + 3v u z  + v u*z , v u  + 2v u z + v u*z , v u 
+      -----------------------------------------------------------------------
+         4      5     5    6
+      + v u*z, v u + v z, v )
+
+o40 : Ideal of R
+
+i41 : apply((entries gens J)#0,factor)
+
+          2       4     2       3               3   2            2   3       
+o41 = {(u) (u + z) , (u) (u + z) (v), (u)(u + z) (v) , (u)(u + z) (v) , (u)(u
+      -----------------------------------------------------------------------
+             4            5     6
+      + z)(v) , (u + z)(v) , (v) }
+
+o41 : List
+
+i42 : 
