@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- {* hash: -1970432975 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : modularSquareRoot(626,1180943)
+
+o1 = 832737
+
+i2 : modularSquareRoot(3,13)
+
+o2 = 4
+
+i3 : modularSquareRoot(7,14)
+
+o3 = 7
+
+i4 : modularSquareRoot(3,14)
+
+o4 = FAIL
+
+o4 : Symbol
+
+i5 : 

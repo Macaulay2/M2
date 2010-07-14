@@ -1,0 +1,61 @@
+-- -*- M2-comint -*- {* hash: 1058705454 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : K=QQ;
+
+i2 : R=K[v,u,z];
+
+i3 : I=ideal(v^8-u^3*(z+u)^5);
+
+o3 : Ideal of R
+
+i4 : J=ideal(u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6);
+
+o4 : Ideal of R
+
+i5 : rParametrizePlaneCurve(I,J)
+
+o5 = | t_0^2t_1t_2  |
+     | -t_2^4       |
+     | -t_0^4+t_2^4 |
+
+            /QQ[t , t , t ]\       /QQ[t , t , t ]\
+            |    0   1   2 |3      |    0   1   2 |1
+o5 : Matrix |--------------|  <--- |--------------|
+            |    2         |       |    2         |
+            |   t  - t t   |       |   t  - t t   |
+            \    1    0 2  /       \    1    0 2  /
+
+i6 : rParametrizePlaneCurve(I,J,parametrizeConic=>true)
+
+o6 = | t_0^3t_1^5  |
+     | -t_0^8      |
+     | t_0^8-t_1^8 |
+
+                        3                  1
+o6 : Matrix (QQ[t , t ])  <--- (QQ[t , t ])
+                 0   1              0   1
+
+i7 : K=QQ;
+
+i8 : R=K[v,u,z];
+
+i9 : I=ideal(u^5+2*u^2*v*z^2+2*u^3*v*z+u*v^2*z^2-4*u*v^3*z+2*v^5);
+
+o9 : Ideal of R
+
+i10 : J=ideal(u^3+v*u*z,v*u^2+v^2*z,v^2*u-u^2*z,v^3-v*u*z);
+
+o10 : Ideal of R
+
+i11 : rParametrizePlaneCurve(I,J)
+
+o11 = | -2t_0^2t_1^3+t_0t_1^4 |
+      | 4t_0^4t_1-2t_0^3t_1^2 |
+      | -4t_0^5+t_1^5         |
+
+                         3                  1
+o11 : Matrix (QQ[t , t ])  <--- (QQ[t , t ])
+                  0   1              0   1
+
+i12 : 
