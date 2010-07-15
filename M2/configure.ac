@@ -557,8 +557,8 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   Graphics
   WeylGroups
   HodgeIntegrals
-  Binomials
   Cyclotomic
+  Binomials
 ")
 # pending packages: SRdeformations
 
