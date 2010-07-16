@@ -1,5 +1,13 @@
 -- -*- coding: utf-8 -*-
 
+--------------------------------------------------------------------------------
+-- Copyright 2008, 2009, 2010  Chris Francisco, Andrew Hoefel, and Adam Van Tuyl
+-- 
+-- You may redistribute this program under the terms of the GNU General Public
+-- License as published by the Free Software Foundation, either version 2 of the
+-- License, or any later version.
+--------------------------------------------------------------------------------
+
 needsPackage "SimplicialComplexes"
 
 newPackage("EdgeIdeals", 
