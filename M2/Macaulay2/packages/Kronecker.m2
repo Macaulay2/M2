@@ -4,7 +4,7 @@ newPackage(
      Date => "July 16, 2010",
      Authors => {{Name => "Edward Carter",
                Email => "edward.carter@gmail.com"}},
-     DebuggingMode => true
+     DebuggingMode => false
      )
     
 export {kroneckerNormalForm, kroneckerIndices, rationalNormalForm, 
