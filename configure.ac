@@ -559,6 +559,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   HodgeIntegrals
   Cyclotomic
   Binomials
+  Kronecker
 ")
 # pending packages: SRdeformations
 
