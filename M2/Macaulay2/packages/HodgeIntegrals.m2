@@ -10,7 +10,7 @@ newPackage(
 	"acceptance date" => "2010-04-17",
 	"published article URI" => "http://j-sag.org/Volume2/jsag-1-2010.pdf",
 	"published code URI" => "http://j-sag.org/Volume2/HodgeIntegrals.m2",
-	"repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/HodgeIntegrals.m2",
+	"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/HodgeIntegrals.m2",
 	"release at publication" => 11250,
 	"version at publication" => "1.2.1",
 	"volume number" => "2",
