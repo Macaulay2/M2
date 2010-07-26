@@ -42,7 +42,7 @@ writePolynomial = f -> (
 
 writeMonomial = (coeff, expList) -> (
 	coeffStr := toExternalString coeff;
-	if leadCoefficient coeff > 0 then (
+	if coeff > 0 then (
 		coeffStr = "+" | coeffStr
 	);
 	coeffStr | concatenate apply(#expList, i-> "*" | writeVariable(i, #expList) | "^" |expList_i)
