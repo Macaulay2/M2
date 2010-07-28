@@ -149,7 +149,7 @@ Ring / RingElement := QuotientRing => (R,f) -> (
      if ring f =!= R then error "expected element of the same ring or promotable to it";
      R / ideal f)
 
-Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / ideal matrix (R, {toList f})
+Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, R)
 
 presentation QuotientRing := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (

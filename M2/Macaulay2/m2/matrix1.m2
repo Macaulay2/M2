@@ -592,7 +592,13 @@ ideal Module := Ideal => (M) -> (
      if isSubmodule M and rank F === 1 then ideal generators M
      else error "expected a submodule of a free module of rank 1"
      )
-ideal List := ideal Sequence := Ideal => v -> ideal matrix {toList v}
+idealPrepare = method()
+idealPrepare RingElement := 
+idealPrepare Number := identity
+idealPrepare Matrix := m -> flatten entries m
+idealPrepare Ideal := I -> I_*
+idealPrepare Thing := x -> error "expected a list of numbers, matrices, ring elements or ideals"
+ideal List := ideal Sequence := Ideal => v -> ideal matrix {flatten apply(toList v,idealPrepare)}
 ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
