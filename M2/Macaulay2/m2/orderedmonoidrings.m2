@@ -154,7 +154,13 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  coeffOptions := options R;
 	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
 	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative =!= {};
-	  if Weyl or coeffWeyl then (
+	  coeffConstants := coeffOptions =!= null and coeffOptions.Constants;
+	  constants := false;
+	  if M.Options.Constants or coeffConstants then (
+	       constants = true;
+	       RM = new PolynomialRing from rawTowerRing(char R, flatmonoid.generatorSymbols / toString // toSequence);
+	       )
+	  else if Weyl or coeffWeyl then (
 	       if Weyl and R.?SkewCommutative then error "coefficient ring has skew commuting variables";
 	       if Weyl and skews =!= {} then error "skew commutative Weyl algebra requested";
 	       diffs := M.Options.WeylAlgebra;
@@ -237,7 +243,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
 	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
-	  expression RM := f -> (
+	  if constants
+	  then expression RM := f -> (
+	       -- later we'll put in something prettier, maybe
+	       toString raw f
+	       )
+	  else expression RM := f -> (
 	       (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0

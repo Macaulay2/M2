@@ -145,6 +145,7 @@ export {
 	symbol ComplexField,
 	symbol Configuration,
 	symbol Consequences,
+	symbol Constants,
 	symbol Constant,
 	symbol CurrentVersion,
 	symbol Database,
