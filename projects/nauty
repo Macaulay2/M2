@@ -13,7 +13,7 @@ package is available at http://cs.anu.edu.au/~bdm/nauty/.
 Proposed by: David Cook II <dcook@ms.uky.edu>
 Potential Advisor:
 Project assigned to: David Cook II <dcook@ms.uky.edu>, 14 April, 2010
-Current status: 
+Current status: done
 
 =============================================================================
 
@@ -30,3 +30,12 @@ April 21, 2010:
     It is fairly complete and has tests for every exported function but it
     is lacking documentation.
 
+July 29, 2010:
+
+    I have another release (0.5) of the Nauty package available  at
+
+      http://www.ms.uky.edu/~dcook/files/Nauty.m2
+
+    It has (hopefully!) complete documentation and tests for all exported
+    functions.  I have fixed a few minor glitches as well.  So, as far as
+    I know it is done.  I have yet to receive any bug reports.
