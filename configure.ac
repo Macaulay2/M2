@@ -560,6 +560,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   Cyclotomic
   Binomials
   Kronecker
+  Nauty
 ")
 # pending packages: SRdeformations
 
