@@ -1,4 +1,4 @@
-Is this right?
+Is the sign right?
 
 i10 : QQ[a, b, c, x]
 
@@ -17,3 +17,10 @@ i12 : ((a-b)*(a-c)*(b-c))^2 + discriminant((x-a)*(x-b)*(x-c),x)
 o12 = 0
 
 o12 : QQ[a, b, c, x]
+
+i22 : discriminant(x^2+b*x+c, x)
+
+         2
+o22 = - b  + 4c
+
+o22 : QQ[a, b, c, x]
