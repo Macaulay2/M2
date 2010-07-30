@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- {* hash: 284388156 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..f];
+
+i2 : G = graph flatten apply({a,c,e}, v->v*{b,d,f})
+
+o2 = Graph{edges => {{a, b}, {b, c}, {a, d}, {c, d}, {b, e}, {d, e}, {a, f}, {c, f}, {e, f}}}
+           ring => R
+           vertices => {a, b, c, d, e, f}
+
+o2 : Graph
+
+i3 : relabelBipartite G
+
+o3 = Graph{edges => {{a, d}, {b, d}, {c, d}, {a, e}, {b, e}, {c, e}, {a, f}, {b, f}, {c, f}}}
+           ring => R
+           vertices => {a, b, c, d, e, f}
+
+o3 : Graph
+
+i4 : 

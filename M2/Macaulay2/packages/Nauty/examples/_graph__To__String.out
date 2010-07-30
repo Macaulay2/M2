@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- {* hash: 291226029 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : graphToString({{0,1}, {1,2}, {2,3}, {3,4}, {0,4}}, 5)
+
+o1 = Dhc
+
+i2 : R = QQ[a..e];
+
+i3 : graphToString monomialIdeal (a*c, a*d, b*d, b*e, c*e)
+
+o3 = DUW
+
+i4 : graphToString cycle R
+
+o4 = Dhc
+
+i5 : graphToString "Dhc"
+
+o5 = Dhc
+
+i6 : 

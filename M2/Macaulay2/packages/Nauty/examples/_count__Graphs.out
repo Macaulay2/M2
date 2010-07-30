@@ -1,0 +1,12 @@
+-- -*- M2-comint -*- {* hash: 807965730 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..e];
+
+i2 : L = generateGraphs(R, Convert => false);
+
+i3 : countGraphs(L, hashTable {"Connectivity" => 0, "NegateConnectivity" => true}) -- the number of connected graphs on five vertices
+
+o3 = 21
+
+i4 : 
