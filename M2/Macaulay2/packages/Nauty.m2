@@ -8,8 +8,8 @@
 needsPackage "EdgeIdeals";
 newPackage (
     "Nauty",
-    Version => "0.5",
-    Date => "29. July 2010",
+    Version => "0.5.1",
+    Date => "30. July 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -94,14 +94,14 @@ addEdges String := List => opts -> S -> (
 );
 addEdges Graph := List => opts -> G -> (
     r := addEdges(graphToString G, opts);
-    if instance(r, List) then apply(r, l -> stringToGraph(l, ring G))
+    apply(r, l -> stringToGraph(l, ring G))
 );
 
 -- Determines if two graphs are isomorphic. 
 areIsomorphic = method();
 areIsomorphic (String, String) := Boolean => (G, H) -> (
     r := callNauty("shortg -q", {G, H});
-    if instance(r, List) then #r == 1
+    #r == 1
 );
 areIsomorphic (Graph, Graph) := Boolean => (G, H) -> areIsomorphic(graphToString G, graphToString H);
 
@@ -148,7 +148,7 @@ countGraphs (List, String) := List => (L, filter) -> (
     r := callNauty("countg -q " | filter, apply(L, graphToString));
     if not instance(r, List) or #r == 0 then return;
     p := regex("g", first r);
-    if not instance(p, Nothing) then value substring((0, first first regex("g", first r)), first r)
+    if not instance(p, Nothing) then value substring((0, first first regex("g", first r)), first r) else error("countGraphs: Invalid input; external call to Nauty failed.")
 );
 countGraphs (List, HashTable) := List => (L, fh) -> countGraphs(L, buildGraphFilter fh);
 
@@ -157,7 +157,6 @@ filterGraphs = method();
 filterGraphs (List, String) := List => (L, filter) -> (
     if #L == 0 or #filter == 0 then return L;
     r := callNauty("pickg -qV " | filter | " 2>&1 1>/dev/null", apply(L, graphToString));
-    if not instance(r, List) or #r == 0 then return;
     -- In Nauty 2.4r1, the index is the first number.
     for l in r list ( s := select("[[:digit:]]+", l); if #s == 0 then continue else L_(-1 + value first s) )
 );
@@ -181,13 +180,13 @@ generateBipartiteGraphs (ZZ, ZZ, ZZ, PolynomialRing) := List => opts -> (m, le, 
         (" " | toString(m) | " " | toString(n) | " " | toString(le) | ":" | toString(ue) | " 2>&1");
 
     r := callNauty(cmdStr, {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
+    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 );
 generateBipartiteGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (m, e, R) -> generateBipartiteGraphs(m, e, e, R, opts);
 generateBipartiteGraphs (ZZ, PolynomialRing) := List => opts -> (m, R) -> generateBipartiteGraphs(m, 0, m * (#gens R - m), R, opts);
 generateBipartiteGraphs (PolynomialRing) := List => opts -> (R) -> (
     r := unique flatten apply(toList (1..(#gens R - 1)), i -> generateBipartiteGraphs(i, R, opts ++ new OptionTable from {Convert => false}));
-    if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
+    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 );
 
 -- Generates all graphs of a given type.
@@ -208,7 +207,7 @@ generateGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (le, ue, R) -> (
         (" " | toString(n) | " " | toString(le) | ":" | toString(ue) | " 2>&1");
 
     r := callNauty(cmdStr, {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
+    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 );
 generateGraphs (ZZ, PolynomialRing) := List => opts -> (e, R) -> generateGraphs(e, e, R, opts);
 generateGraphs (PolynomialRing) := List => opts -> (R) -> generateGraphs(0, binomial(#gens R, 2), R, opts);
@@ -219,7 +218,7 @@ generateRandomGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (num, p, R) -> 
     if num < 1 then return {};
     if p < 1 then error("generateRandomGraphs: Probability must be positive.");
     r := callNauty("genrang -qg -P" | toString(p) | " "  | toString(#gens R) | " " | toString(num), {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
+    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 );
 generateRandomGraphs (ZZ, QQ, PolynomialRing) := List => opts -> (num, p, R) -> (
     if num < 1 then return {};
@@ -230,7 +229,7 @@ generateRandomGraphs (ZZ, QQ, PolynomialRing) := List => opts -> (num, p, R) -> 
 generateRandomGraphs (ZZ, PolynomialRing) := List => opts -> (num, R) -> (
     if num < 1 then return {};
     r := callNauty("genrang -qg " | toString(#gens R) | " " | toString(num), {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
+    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 );
 
 -- Generate random graphs in the Ring with given properties.
@@ -239,14 +238,14 @@ generateRandomRegularGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (num, re
     if num < 1 then return {};
     if reg < 1 or reg >= #gens R then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
     r := callNauty("genrang -q -r" | toString(reg) | " " | toString(#gens R) | " " | toString(num) | " 2>&1", {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
+    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 );
 
 -- Converts a Graph6 string to a Sparse6 string.
 graph6ToSparse6 = method();
 graph6ToSparse6 String := String => g6 -> (
     r := callNauty("copyg -qs", {g6});
-    if instance(r, List) and #r != 0 then first r
+    if #r != 0 then first r else error("graph6ToSparse6: Invalid String format.")
 );
 
 -- Complements a graph.
@@ -254,7 +253,7 @@ graphComplement = method(Options => {OnlyIfSmaller => false});
 graphComplement String := String => opts -> S -> (
     cmdStr := "complg -q" | (if instance(opts.OnlyIfSmaller, Boolean) and opts.OnlyIfSmaller then " -r" else "");
     r := callNauty(cmdStr, {S});
-    if instance(r, List) and #r != 0 then first r
+    if #r != 0 then first r else error("graphComplement: Invalid String format.")
 );
 graphComplement Graph := Graph => opts -> G -> (
     r := graphComplement(graphToString G, opts);
@@ -280,7 +279,7 @@ graphToString String := String => S -> S;
 isPlanar = method();
 isPlanar String := Boolean => G -> (
     r := callNauty("planarg -q", {G});
-    if instance(r, List) then #r != 0
+    #r != 0
 );
 isPlanar Graph := Boolean => G -> isPlanar(graphToString G);
 
@@ -289,7 +288,7 @@ neighborhoodComplements = method();
 neighborhoodComplements String := List => S -> callNauty("NRswitchg -q", {S});
 neighborhoodComplements Graph := List => G -> (
     r := neighborhoodComplements graphToString G;
-    if instance(r, List) then apply(r, l -> stringToGraph(l, ring G))
+    apply(r, l -> stringToGraph(l, ring G))
 );
     
 -- For each disjoint pair of edges (a,b), (c,d), replace the edges with 
@@ -300,18 +299,18 @@ newEdges String := List => S -> callNauty("newedgeg -q", {S});
 newEdges (Graph, PolynomialRing) := List => (G, S) -> (
     if #vertices G + 2 != #gens S then error("newEdges: The ring must have exactly two more variables than the graph has vertices.");
     r := newEdges graphToString G;
-    if instance(r, List) then apply(r, l -> stringToGraph(l, S))
+    apply(r, l -> stringToGraph(l, S))
 );
 
 -- Reorders a bipartite graph so all vertices of each color are continguous.
 relabelBipartite = method();
 relabelBipartite String := String => S -> (
     r := callNauty("biplabg -q", {S});
-    if instance(r, List) and #r != 0 then first r
+    if #r != 0 then first r else error("relabelBipartite: Invalid String format or input is not a bipartite graph.")
 );
 relabelBipartite Graph := Graph => G -> (
     r := relabelBipartite graphToString G;
-    if not instance(r, Nothing) then stringToGraph(r, ring G)
+    stringToGraph(r, ring G)
 );
 
 -- Relabels a graph using a canonical labeling.
@@ -320,12 +319,12 @@ relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> (
     if i > 15 or i < 1 then error("relabelGraph: The invariant selected is invalid.");
     if a < 0 then error("relabelGraph: The invariant argument must be nonnegative.");
     r := callNauty("labelg -qg -i" | toString i | " -K" | toString a, {S});
-    if instance(r, List) and #r != 0 then first r
+    if #r != 0 then first r else error("relabelGraph: Invalid String format.")
 );
 relabelGraph (String, ZZ) := String => (S, i) -> relabelGraph(S, i, 3);
 relabelGraph (Graph, ZZ, ZZ) := Graph => (G, i, a) -> (
     r := relabelGraph(graphToString G, i, a);
-    if not instance(r, Nothing) then stringToGraph(r, ring G)
+    stringToGraph(r, ring G)
 );
 relabelGraph (Graph, ZZ) := Graph => (G, i) -> relabelGraph(G, i, 3);
         
@@ -337,7 +336,7 @@ removeEdges String := List => opts -> S -> (
 );
 removeEdges Graph := List => opts -> G -> (
     r := removeEdges(graphToString G, opts);
-    if instance(r, List) then apply(r, l -> stringToGraph(l, ring G))
+    apply(r, l -> stringToGraph(l, ring G))
 );
 
 -- Removes all isomorphs from a list of graphs. 
@@ -345,7 +344,6 @@ removeIsomorphs = method();
 removeIsomorphs List := List => L -> (
     if #L == 0 then return {};
     r := callNauty("shortg -qv 2>&1 1>/dev/null", apply(L, graphToString));
-    if not instance(r, List) or #r == 0 then return;
     -- In Nauty 2.4r1, the index is the second number.
     for l in r list ( s := select("[[:digit:]]+", l); if #s < 2 then continue else L_(-1 + value (s_1)) )
 );
@@ -354,7 +352,7 @@ removeIsomorphs List := List => L -> (
 sparse6ToGraph6 = method();
 sparse6ToGraph6 String := String => (s6) -> (
     r := callNauty("copyg -qg", {s6});
-    if instance(r, List) and #r != 0 then first r
+    if #r != 0 then first r else error("sparse6ToGraph6: Invalid String format.")
 );
 
 -- Converts a graph given by a string in either Sparse6 or Graph6 format to an edge ideal in the given ring.
@@ -425,7 +423,7 @@ callNauty (String, List) := List => (cmdStr, dataList) -> (
         f << closeOut;
         r := lines get f;
         if instance(r, Nothing) then r = {};
-    ) then r else null
+    ) then r else error("callNauty: External call to Nauty has failed; ensure that Nauty is on the path and the input is valid.")
 );
 
 -------------------
@@ -1332,8 +1330,6 @@ undocumented {
 -- Tests
 -------------------
 
--- Notice: "INVALID" is an invalid graph.
-
 -- addEdges
 TEST ///
     R = ZZ[a..f];
@@ -1341,7 +1337,6 @@ TEST ///
     assert(#addEdges completeGraph R == 0);
     -- "E???" is the empty graph
     assert(#addEdges "E???" == binomial(6, 2));
-    assert(instance(addEdges "INVALID", Nothing));
 ///
 
 -- areIsomorphic
@@ -1350,7 +1345,6 @@ TEST ///
     assert(areIsomorphic(cycle R, graph {a*c, c*e, e*b, b*d, d*f, f*a}));
     assert(not areIsomorphic(cycle R, completeGraph R));
     assert(areIsomorphic(complementGraph completeGraph R, graph monomialIdeal (0_R)));
-    assert(instance(areIsomorphic("E???", "INVALID"), Nothing));
 ///
 
 -- buildGraphFilter
@@ -1375,7 +1369,6 @@ TEST ///
     assert(countGraphs(G, hashTable {"Bipartite" => true}) == 4);
     -- At least 4 edges?
     assert(countGraphs(G, hashTable {"NumEdges" => (4,)}) == 3);
-    assert(instance(countGraphs({"INVALID"}, "-c0"), Nothing));
 ///
 
 -- filterGraphs
@@ -1388,7 +1381,6 @@ TEST ///
     assert(filterGraphs(G, hashTable {"Bipartite" => true}) == G_{0, 2, 3, 4});
     -- At least 4 edges?
     assert(filterGraphs(G, hashTable {"NumEdges" => (4,)}) == G_{0, 1, 4});
-    assert(instance(filterGraphs({"INVALID"}, "-c0"), Nothing));
 ///
 
 -- generateBipartiteGraphs
@@ -1433,7 +1425,6 @@ TEST ///
 TEST ///
     assert(graph6ToSparse6 "Dhc" == ":DaY_~");
     assert(graph6ToSparse6 "M????????????????" == ":M");
-    assert(instance(graph6ToSparse6 "INVALID", Nothing));
 ///
 
 -- graphComplement
@@ -1443,7 +1434,6 @@ TEST ///
     G = graph {a*b, b*c, c*d, d*e};
     assert(graphComplement(G, OnlyIfSmaller => true) == G);
     assert(#edges graphComplement G == 6);
-    assert(instance(graphComplement "INVALID", Nothing));
 ///
 
 -- graphToString
@@ -1466,14 +1456,12 @@ TEST ///
     assert(isPlanar cycle R);
     assert(not isPlanar completeGraph R);
     assert(not isPlanar completeMultiPartite (R,2,3));
-    assert(instance(isPlanar "INVALID", Nothing));
 ///
 
 -- neighborhoodComplements
 TEST ///
     R = ZZ[a..f];
     assert(#neighborhoodComplements cycle R == #gens R);
-    assert(instance(neighborhoodComplements "INVALID", Nothing));
 ///
 
 -- newEdges
@@ -1484,7 +1472,6 @@ TEST ///
     assert(#newEdges(cycle R, S) == 9);
     -- There are 45 pairs of disjoint edges in K6.
     assert(#newEdges(completeGraph R, S) == 45);
-    assert(instance(newEdges "INVALID", Nothing));
 ///
 
 -- relabelBipartite
@@ -1492,8 +1479,6 @@ TEST ///
     R = ZZ[a..f];
     G = graph {a*d, d*b, b*e, e*c, c*f, f*a};
     assert(relabelBipartite cycle R == G);
-    assert(instance(relabelBipartite completeGraph R, Nothing));
-    assert(instance(relabelBipartite "INVALID", Nothing));
 ///
 
 -- relabelGraph
@@ -1501,7 +1486,6 @@ TEST ///
     R = ZZ[a..f];
     G = cycle R;
     assert(#apply(1..15, i -> relabelGraph(G, i)) == 15);
-    assert(instance(relabelGraph("INVALID", 1), Nothing));
 ///
 
 -- removeEdges
@@ -1509,7 +1493,6 @@ TEST ///
     R = ZZ[a..f];
     assert(#removeEdges cycle R == 6);
     assert(#removeEdges completeGraph R == binomial(6,2));
-    assert(instance(removeEdges "INVALID", Nothing));
 ///
 
 -- removeIsomorphs
@@ -1517,16 +1500,12 @@ TEST ///
     R = ZZ[a..f];
     G = {"EhEG", cycle R, completeGraph R, graph {a*d, d*b, b*e, e*c, c*f, f*a}};
     assert(#removeIsomorphs G == 2);
-    assert(instance(removeIsomorphs {"INVALID"}, Nothing));
 ///
 
 -- sparse6ToGraph6
 TEST ///
     assert(sparse6ToGraph6 ":DaY_~" == "Dhc");
     assert(sparse6ToGraph6 ":M" == "M????????????????");
-    -- The only way to get invalid sparse6 formats is to either
-    -- force a seg-fault or pass an invalid graph6 string.
-    assert(instance(sparse6ToGraph6 "INVALID", Nothing));
 ///
 
 -- stringToEdgeIdeal
@@ -1546,3 +1525,4 @@ TEST ///
 -------------------
 -- HappyHappyJoyJoy
 -------------------
+end
