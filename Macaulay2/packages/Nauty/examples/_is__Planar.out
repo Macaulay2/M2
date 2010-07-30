@@ -1,0 +1,14 @@
+-- -*- M2-comint -*- {* hash: 1454930635 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..e];
+
+i2 : isPlanar cycle R
+
+o2 = true
+
+i3 : isPlanar completeGraph R
+
+o3 = false
+
+i4 : 

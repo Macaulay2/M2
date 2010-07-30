@@ -1,0 +1,12 @@
+-- -*- M2-comint -*- {* hash: -762299528 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..e];
+
+i2 : stringToEdgeIdeal("Dhc", R)
+
+o2 = monomialIdeal (a*b, b*c, c*d, a*e, d*e)
+
+o2 : MonomialIdeal of R
+
+i3 : 

@@ -8,13 +8,15 @@
 needsPackage "EdgeIdeals";
 newPackage (
     "Nauty",
-    Version => "0.5.1",
+    Version => "0.5.2",
     Date => "30. July 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Interface to nauty",
     Configuration => {"path" => ""},
+    CacheExampleOutput => true,
+    AuxiliaryFiles => true,
     DebuggingMode => false
 );
 needsPackage "EdgeIdeals";
