@@ -1,0 +1,19 @@
+Is this right?
+
+i10 : QQ[a, b, c, x]
+
+o10 = QQ[a, b, c, x]
+
+o10 : PolynomialRing
+
+i11 : ((a-b))^2 + discriminant((x-a)*(x-b),x)
+
+o11 = 0
+
+o11 : QQ[a, b, c, x]
+
+i12 : ((a-b)*(a-c)*(b-c))^2 + discriminant((x-a)*(x-b)*(x-c),x)
+
+o12 = 0
+
+o12 : QQ[a, b, c, x]
