@@ -42,10 +42,11 @@ assert all(#M, i->getSolution(i,SolutionAttributes=>SolutionStatus)=="REGULAR")
 << "Large residual: " << select(toList(0..#M-2), i->norm sub(matrix {T}, matrix M#i)>0.001) << endl;
 
 -- try projective tracker
-(T = (katsuraBench 12)_*; -- #sols=1024, M2:4, H:7, B:15, P:37                                                                  
+(T = (katsuraBench 11)_*;
      (S,solsS) = totalDegreeStartSystem T;
      (T,S,solsS));
-predictor=Secant;    
+predictor=RungeKutta4;    
+predictor=Tangent;    
 S1 = track(S,T,solsS,gamma=>0.6+0.8*ii,Predictor=>predictor);
 sum(#S1,i->getSolution(i,SolutionAttributes=>NumberOfSteps))//#S1
 S2 = track(S,T,solsS,gamma=>0.6+0.8*ii,Projectivize=>true,Normalize=>true,Predictor=>predictor);
