@@ -1069,6 +1069,7 @@ solveSystem List := List => o -> F -> (
 --     	       m = list of corresponding multiplicities	 
      local result;
      R := ring F#0;
+     --if numgens R != #F then error "expected a square system";
      v := flatten entries vars R;
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
 	  result = 
@@ -1149,13 +1150,17 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   
 
 -----------------------------------------------------------------------
--- WITNESS SET
--- {equations, slice, points}
--- caveat: we assume that #equations = dim(slice)   
-
--- Equations, Slice, Points
+-- WITNESS SET = {
+--   Equations,            -- an ideal  
+--   Slice,                -- a list of linear equations OR a matrix (of their coefficients)
+--   Points	           -- a list of points (in the format of the output of solveSystem/track) 
+--   }
+-- caveat: we assume that #Equations = dim(Slice)   
 WitnessSet.synonym = "witness set"
-dim WitnessSet := W -> #W.Slice
+WitnessSet.Tolerance = 1e-6;
+dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
+     else if class W.Slice === Matrix then numrows W.Slice 
+     else error "ill-formed slice in WitnessSet" )
 codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
@@ -1163,6 +1168,7 @@ ideal WitnessSet := W -> W.Equations
 net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
 witnessSet = method()
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
+witnessSet (Ideal,Matrix,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P}
 witnessSet Ideal := I -> (
      n := numgens ring I;
      d := dim I;
@@ -1175,82 +1181,115 @@ witnessSet Ideal := I -> (
      PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
      witnessSet(I,S,PP/first)
      )
-points = method()
+points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, first)
+equations = method() -- returns list of equations
+equations WitnessSet := (W) -> (W.Equations)_*
+slice = method() -- returns linear equations for the slice (in both cases)   
+slice WitnessSet := (W) -> ( if class W.Slice === List then W.Slice
+     else if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
+     else error "ill-formed slice in WitnessSet" )
+see = method()
+see WitnessSet := (W) -> new HashTable from W
+isContained = method()
+isContained (List,WitnessSet) := (point,W) -> any(points W, p->areEqual(point,p,Tolerance=>WitnessSet.Tolerance))
+isContained (WitnessSet,WitnessSet) := (V,W) -> (
+     dim V <= dim W 
+     and all(points V, p->isContained(p,moveSlice(W,randomSlice(dim W, numgens ring W, p))))
+     )
+
 ///
 restart
 debug loadPackage "NumericalAlgebraicGeometry"
-CC[x,y]
+CC[x,y,z]
 I = ideal (x^2+y)
-S = ideal (y-1)
+S = ideal (x+y+2*z-1)
 P = {{ii_CC,1_CC},{ii_CC,1_CC}}
-R = CC[x,y,z]
 I = ideal {z-x*y, x^2-y, y^2-z*x}
 W = witnessSet(I,S,P)
 W = witnessSet I
-W.Points
+W = witnessSet(I, sub(transpose last coefficients gens S,CC), P)
+points W
+equations W
+slice W
 ///
 
 sliceEquations = method(TypicalValue=>List) 
-sliceEquations (Matrix, Ring) := (S,R) -> (
--- make slicing plane equations 
-     apply(numgens target S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
+sliceEquations (Matrix,Ring) := (S,R) -> (
+-- make slicing plane equations
+     apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
      )
 
-moveSlice = method(TypicalValue=>HashTable, Options =>{Software=>M2})
-moveSlice (HashTable, Matrix) := HashTable => o -> (W,S) -> (
+randomSlice = method()
+randomSlice (ZZ,ZZ) := (d,n) -> randomSlice(d,n,{})
+randomSlice (ZZ,ZZ,List) := (d,n,point) -> (
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
+     SM | (if #point==0
+	  then random(CC^d,CC^1)    
+	  else -SM * transpose matrix{point} -- slice goes thru point
+	  )
+     )
+
+movePointsToSlice = method(TypicalValue=>List, Options =>{Software=>M2})
+movePointsToSlice (WitnessSet, List) := WitnessSet => o -> (W,S) -> (
 -- IN:  W = witness set
---      S = matrix defining a new slicing plane (same dimensions as W#slice)
+--      S = equations of the new slice
+-- OUT: new witness points
+     if #S < dim W
+     then error "dimension of new slicing plane is too high";
+     R := ring W;
+     st := equations W | take(slice W,-#S); -- take last #S equations
+     ta := equations W | S;
+     newpoints := track(st,ta,points W,Software=>o.Software,gamma=>exp(random(0.,2*pi)*ii));
+     if #newpoints != #W#Points then error "number of points in the witness set changed";
+     newpoints
+     )
+
+moveSlice = method(TypicalValue=>WitnessSet, Options =>{Software=>M2})
+moveSlice (WitnessSet, Matrix) := WitnessSet => o -> (W,S) -> (
+-- IN:  W = witness set
+--      S = matrix defining a new slicing plane (same dimensions as W#Slice)
 -- OUT: new witness set that uses S
-     if numgens target S != numgens target W#slice 
-     or numgens source S != numgens source W#slice 
+     if numgens target S != numgens target W#Slice 
+     or numgens source S != numgens source W#Slice 
      then error "wrong dimension of new slicing plane";
-     R := ring first W#equations;
-     st := W#equations | sliceEquations(W#slice,R);
-     ta := W#equations | sliceEquations(S,R);
-     newpoints := track(st,ta,W#points,Software=>o.Software,gamma=>.6+.8*ii) / first;
-     if #newpoints != #W#points then error "number of points in the witness set changed";
-     new HashTable from {
-	  equations => W#equations, 
-	  slice => S,
-	  points => newpoints
-	  }              	  
+     witnessSet(W#Equations,S,movePointsToSlice(W,sliceEquations(S,ring W)))             	  
      )
 ///
 restart
-loadPackage ("NumericalAlgebraicGeometry", Configuration => { "PHCpack" => "./phc" }); debug NumericalAlgebraicGeometry;
+debug loadPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,z]
-W1 = new HashTable from {
-     equations=>{x^2+y^2+z^2-1},
-     slice=>sub(matrix "1,0,0,0;0,1,0,0",R),
-     points=>{(0,0,1),(0,0,-1)}
+W1 = new WitnessSet from {
+     Equations=>ideal {x^2+y^2+z^2-1},
+     Slice=>sub(matrix "1,0,0,0;0,1,0,0",R),
+     Points=>{(0,0,1),(0,0,-1)}
      } 
-sliceEquations (W1#slice,R)
+sliceEquations (W1#Slice,R)
 W2 = moveSlice(W1, sub(matrix "0,1,0,0;0,0,1,0",R)
      --, Software=>PHCpack
      )
 ///
 
 splitWitness = method(TypicalValue=>Sequence, Options =>{Software=>M2, Tolerance=>1e-6})
-splitWitness (HashTable,RingElement) := Sequence => o -> (w,f) -> (
+splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
 -- splits the witness set into two parts: one contained in {f=0}, the other not
 -- IN:  comp = a witness set
 --      f = a polynomial
 -- OUT: (w1,w2) = two witness sets   
      w1 := {}; w2 := {};
-     for x in w#points do 
-	 if norm evalPoly(f,x) < o.Tolerance 
+     for x in w#Points do 
+	 if norm evalPoly(f,first x) < o.Tolerance 
 	 then w1 = w1 | {x}
 	 else w2 = w2 | {x};   
      ( if #w1===0 then null 
-	  else new HashTable from {equations=>w#equations, slice=>w#slice, points=>w1}, 
+	  else witnessSet(w#Equations, w#Slice, w1), 
        if #w2===0 then null 
-          else new HashTable from {equations=>w#equations, slice=>w#slice, points=>w2} )
+          else witnessSet(w#Equations, w#Slice, w2) )
      )
 
 regeneration = method(TypicalValue=>List, Options =>{Software=>M2})
-regeneration List := HashTable => o -> F -> (
--- solves a system of polynomial equations by generation     
+regeneration List := List => o -> F -> (
+-- solves a system of polynomial Equations via regeneration     
 -- IN:  F = list of polynomials
 --      Software => {PHCpack, Bertini, hom4ps2}
 -- OUT: {s,m}, where 
@@ -1262,62 +1301,43 @@ regeneration List := HashTable => o -> F -> (
 	  d := first degree f;
 	  c2 := {}; -- new components
 	  for comp in c1 do (
-	       print (#comp#points);
+	       print (#comp#Points);
 	       (cIn,cOut) := splitWitness(comp,f); 
 	       if cIn =!= null 
-	       then c2 = c2 | { new HashTable from {
-			 equations => cIn#equations | {f}, 
-			 slice => cIn#slice,
-			 points => cIn#points  
-			 } }; 
+	       then c2 = c2 | { witnessSet(cIn#Equations 
+			 -- + ideal f -- should we store additional equations?
+			 , cIn#Slice, cIn#Points) }; 
      	       if cOut =!= null then (
 		    dWS = apply(d, i->(
-			      s := cOut#slice;
-			      newSlice := random(CC^1, CC^(numgens source s)) || submatrix'(s,{0},{}); 
+			      s := cOut#Slice;
+			      newSlice := random(CC^1, CC^(numcols s)) || submatrix'(s,{0},{}); -- replace the first row
 			      moveSlice(cOut,newSlice,Software=>o.Software)
 			      ));
-	       	    S := comp#equations 
-	       	    | { product flatten apply( dWS, w->sliceEquations(w#slice^{0},R) ) } -- product of linear factors
-	       	    | sliceEquations( submatrix'(comp#slice,{0},{}), R );
-	       	    T := comp#equations
-	       	    | {f}
-	       	    | sliceEquations( submatrix'(comp#slice,{0},{}), R );
-	       	    targetPoints := track(S,T,flatten apply(dWS,w->w#points), 
+	       	    S := ( equations comp
+	       	    	 | { product flatten apply( dWS, w->sliceEquations(w.Slice^{0},R) ) } -- product of linear factors
+	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
+	       	    T := ( equations comp
+	       	    	 | {f}
+	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
+	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
 			 gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software);
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if #targetPoints>0 
-		    then c2 = c2 | { new HashTable from {
-			      equations => cOut#equations | {f}, 
-			      slice => submatrix'(comp#slice,{0},{}),
-			      points => targetPoints/first  
-			      } };
+		    then c2 = c2 | { 
+			 witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), targetPoints)  
+			 };
 		    ); 
 	       );
 	  c1 = c2;
 	  if #c1 === 0 then ( -- if the first equation is being processed 
-	       rM := random(CC^(numgens R-1), CC^(numgens R + 1));
-     	       c1 = { new HashTable from { 
-	       		 equations => {f},
-	       		 slice => rM,
-	       		 points => solveSystem( {f} | sliceEquations(rM,R), Software=>o.Software ) / first 
-	       		 } }; 
+	       n := numgens R;
+	       S := randomSlice(n-1,n);
+     	       c1 = { witnessSet(ideal f, S, solveSystem( {f} | sliceEquations(S,R), Software=>o.Software )) }; 
 	       );
 	  );
      c1	  
      )
-///
-restart
-loadPackage ("NumericalAlgebraicGeometry", Configuration => { "PHCpack" => "./phc", "Bertini" => "./bertini" }); debug NumericalAlgebraicGeometry;
-R = CC[x,y,z]
-regeneration({x^2+y^2+z^2-1,x,y*z} 
-     ,Software=>PHCpack
-     --,Software=>Bertini
-     )
-regeneration({x^2+y^2+z^2-1,x*y,y*z} 
-     --,Software=>PHCpack
-     --,Software=>Bertini
-     )
-///
+
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 projectiveDistance = method()
