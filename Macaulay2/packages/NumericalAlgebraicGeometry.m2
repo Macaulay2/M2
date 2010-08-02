@@ -1192,12 +1192,22 @@ slice WitnessSet := (W) -> ( if class W.Slice === List then W.Slice
 see = method()
 see WitnessSet := (W) -> new HashTable from W
 isContained = method()
-isContained (List,WitnessSet) := (point,W) -> any(points W, p->areEqual(point,p,Tolerance=>WitnessSet.Tolerance))
-isContained (WitnessSet,WitnessSet) := (V,W) -> (
-     dim V <= dim W 
-     and all(points V, p->isContained(p,moveSlice(W,randomSlice(dim W, numgens ring W, p))))
+isContained (List,WitnessSet) := (point,W) -> (
+     pts := movePointsToSlice(W, sliceEquations(randomSlice(dim W, numgens ring W, point),ring W)) / first;
+     any(pts, p->areEqual(point,p,Tolerance=>WitnessSet.Tolerance))
      )
-
+isContained (WitnessSet,WitnessSet) := (V,W) -> (
+     coD := dim W - dim V;
+     coD >= 0
+     and all(points V, p->isContained(p,W))
+     )
+-- subtract = method()
+-- subtract (WitnessSet, WitnessSet) 
+WitnessSet - WitnessSet := (V,W) -> ( -- difference V/W, also used to remove junk points
+     coD := dim W - dim V;
+     if coD < 0 then V
+     else witnessSet(V.Equations, V.Slice, select(V.Points, p->not isContained(first p,W)))
+     ) 
 ///
 restart
 debug loadPackage "NumericalAlgebraicGeometry"
@@ -1230,8 +1240,8 @@ randomSlice (ZZ,ZZ,List) := (d,n,point) -> (
 	  )
      )
 
-movePointsToSlice = method(TypicalValue=>List, Options =>{Software=>M2})
-movePointsToSlice (WitnessSet, List) := WitnessSet => o -> (W,S) -> (
+movePointsToSlice = method(TypicalValue=>List, Options =>{Software=>M2engine})
+movePointsToSlice (WitnessSet, List) := List => o -> (W,S) -> (
 -- IN:  W = witness set
 --      S = equations of the new slice
 -- OUT: new witness points
@@ -1245,7 +1255,7 @@ movePointsToSlice (WitnessSet, List) := WitnessSet => o -> (W,S) -> (
      newpoints
      )
 
-moveSlice = method(TypicalValue=>WitnessSet, Options =>{Software=>M2})
+moveSlice = method(TypicalValue=>WitnessSet, Options =>{Software=>M2engine})
 moveSlice (WitnessSet, Matrix) := WitnessSet => o -> (W,S) -> (
 -- IN:  W = witness set
 --      S = matrix defining a new slicing plane (same dimensions as W#Slice)
@@ -1270,7 +1280,7 @@ W2 = moveSlice(W1, sub(matrix "0,1,0,0;0,0,1,0",R)
      )
 ///
 
-splitWitness = method(TypicalValue=>Sequence, Options =>{Software=>M2, Tolerance=>1e-6})
+splitWitness = method(TypicalValue=>Sequence, Options =>{Software=>M2engine, Tolerance=>1e-6})
 splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
 -- splits the witness set into two parts: one contained in {f=0}, the other not
 -- IN:  comp = a witness set
@@ -1287,7 +1297,14 @@ splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
           else witnessSet(w#Equations, w#Slice, w2) )
      )
 
-regeneration = method(TypicalValue=>List, Options =>{Software=>M2})
+insertComponent = method()
+insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
+     d := dim W;
+     if H#?d then H#d#(#H) = W 
+     else H#d = new MutableHashTable from {0=>W};
+     )
+
+regeneration = method(TypicalValue=>List, Options =>{Software=>M2engine, Output=>Regular})
 regeneration List := List => o -> F -> (
 -- solves a system of polynomial Equations via regeneration     
 -- IN:  F = list of polynomials
@@ -1299,18 +1316,23 @@ regeneration List := List => o -> F -> (
      c1 := {}; -- current solution components
      for f in F do (
 	  d := first degree f;
-	  c2 := {}; -- new components
+	  c2 := new MutableHashTable; -- new components
 	  for comp in c1 do (
 	       print (#comp#Points);
 	       (cIn,cOut) := splitWitness(comp,f); 
 	       if cIn =!= null 
-	       then c2 = c2 | { witnessSet(cIn#Equations 
+	       then insertComponent(witnessSet(cIn#Equations 
 			 -- + ideal f -- should we store additional equations?
-			 , cIn#Slice, cIn#Points) }; 
-     	       if cOut =!= null then (
-		    dWS = apply(d, i->(
-			      s := cOut#Slice;
-			      newSlice := random(CC^1, CC^(numcols s)) || submatrix'(s,{0},{}); -- replace the first row
+			 , cIn#Slice, cIn#Points), 
+		    c2); 
+     	       if cOut =!= null 
+	       and dim cOut > 0 -- 0-dimensional components outside V(f) discarded
+	       then (
+		    s := cOut#Slice;
+		    -- RM := (randomUnitaryMatrix numcols s)^(toList(0..d-2)); -- pick d-1 random orthogonal row-vectors (this is wrong!!! is there a good way to pick d-1 random hyperplanes???)
+     	       	    RM := random(CC^(d-1),CC^(numcols s));
+		    dWS = {cOut} | apply(d-1, i->(
+			      newSlice := RM^{i} || submatrix'(s,{0},{}); -- replace the first row
 			      moveSlice(cOut,newSlice,Software=>o.Software)
 			      ));
 	       	    S := ( equations comp
@@ -1322,20 +1344,26 @@ regeneration List := List => o -> F -> (
 	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
 			 gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software);
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
+		    if o.Output == Regular then 
+		    targetPoints = targetPoints_(toList select(0..#targetPoints-1, i->getSolution(i, SolutionAttributes=>SolutionStatus)=="REGULAR"));
+		    newW := witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), targetPoints);
 		    if #targetPoints>0 
-		    then c2 = c2 | { 
-			 witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), targetPoints)  
-			 };
+		    then insertComponent(newW,c2);
 		    ); 
 	       );
-	  c1 = c2;
+	  scan(rsort keys c2, d->scan(keys c2#d,i->(
+			 W := c2#d#i;
+			 scan(rsort keys c2,j->if j>d then (for k in keys c2#j do W = W - c2#j#k));
+			 c2#d#i = W;
+			 )));
+	  c1 = flatten apply(keys c2, i->apply(keys c2#i, j->c2#i#j));
 	  if #c1 === 0 then ( -- if the first equation is being processed 
 	       n := numgens R;
 	       S := randomSlice(n-1,n);
-     	       c1 = { witnessSet(ideal f, S, solveSystem( {f} | sliceEquations(S,R), Software=>o.Software )) }; 
+     	       c1 = {witnessSet(ideal f, S, solveSystem( {f} | sliceEquations(S,R), Software=>o.Software ))}; 
 	       );
 	  );
-     c1	  
+     c1
      )
 
 -----------------------------------------------------------------------
