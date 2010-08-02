@@ -19,3 +19,20 @@ lo_degree and hi_degree are in the wrong order when the heft is negative:
 
 		  1       2
     o13 : Matrix T  <--- T
+
+
+Also this:
+
+Index: modules2.m2
+===================================================================
+--- modules2.m2	(revision 11364)
++++ modules2.m2	(working copy)
+@@ -643,7 +643,7 @@
+      if hi === neginfinity then error "incongruous upper degree bound: -infinity";
+      if lo === neginfinity then lo = {};
+      if hi === infinity then hi = {};
+-     if #lo != 0 and #lo =!= degreeLength R or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
++     if #lo > degreeLength R or #hi > degreeLength R then error "expected degree lengths not to exceed that of ring";
+      if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
+      var := opts.Variables;
+      if var === null then var = 0 .. numgens R - 1
