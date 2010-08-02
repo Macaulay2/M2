@@ -561,6 +561,8 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   Binomials
   Kronecker
   Nauty
+  ToricVectorBundles
+  ModuleDeformations
 ")
 # pending packages: SRdeformations
 
