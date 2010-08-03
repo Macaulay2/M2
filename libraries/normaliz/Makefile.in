@@ -1,17 +1,20 @@
 # license for normaliz: GPL v3
 # http://www.mathematik.uni-osnabrueck.de/normaliz/
-VERSION = 2.2
+VERSION = 2.5
+PATCHFILE = @abs_srcdir@/patch-2.5
+# for version 2.5, the doc says: "Make sure you have GCC 4.5 installed on your Mac."
 # broken link on web site, Oct 15, 2009:
-#  URL = http://www.mathematik.uni-osnabrueck.de/normaliz
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.3
-TARFILE = Normaliz$(VERSION)Linux32.zip
-PATCHFILE = @abs_srcdir@/patch-2.2
-TARDIR = Normaliz$(VERSION)Linux/source
+URL = http://www.mathematik.uni-osnabrueck.de/normaliz
+# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.3
+# TARFILE = Normaliz$(VERSION)Linux32.zip
+TARFILE = Normaliz$(VERSION).zip
+# PATCHFILE = @abs_srcdir@/patch-2.2
+# TARDIR = Normaliz$(VERSION)Linux/source
+TARDIR = Normaliz$(VERSION)/source
 UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
 CONFIGURECMD = true
-BUILDOPTIONS = CXX="$(CXX)" CXXFLAGS=" $(CPPFLAGS) $(CXXFLAGS)" GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
+BUILDOPTIONS = CXX="$(CXX)" CXXFLAGS=" $(CPPFLAGS) $(CXXFLAGS) -Wall -Wno-sign-compare -O3 -funroll-loops -Wno-unknown-pragmas" GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/bin && \
-		@INSTALL@ -s norm32 $(LIBRARIESDIR)/bin/norm32 && \
 		@INSTALL@ -s norm64 $(LIBRARIESDIR)/bin/norm64 && \
 		@INSTALL@ -s normbig $(LIBRARIESDIR)/bin/normbig
 CHECKTARGET = .
