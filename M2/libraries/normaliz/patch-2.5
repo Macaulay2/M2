@@ -1,0 +1,52 @@
+diff -ur --exclude=configure /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/normaliz/tmp/Normaliz2.5/source/Makefile Normaliz2.5/source/Makefile
+--- /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/normaliz/tmp/Normaliz2.5/source/Makefile	2010-07-12 17:20:14.000000000 -0700
++++ Normaliz2.5/source/Makefile	2010-08-03 08:23:43.000000000 -0700
+@@ -5,12 +5,11 @@
+ CXXFLAGS += -Wall -Wno-sign-compare
+ CXXFLAGS += -O3 -funroll-loops -pipe
+ 
+-## comment out the following line to disable OpenMP and activate the line after that to supress warnings
+-CXXFLAGS += -fopenmp
+-#CXXFLAGS += -Wno-unknown-pragmas
++## supress warnings for not using openmp
++CXXFLAGS += -Wno-unknown-pragmas
+ 
+-N64FLAGS = -Dnorm64 -static
+-NBIGFLAGS = -Dnormbig -static
++N64FLAGS = -Dnorm64
++NBIGFLAGS = -Dnormbig
+ GMPFLAGS = -lgmpxx -lgmp
+ 
+ SOURCES = full_cone.cpp integer.cpp cone_dual_mode.cpp lineare_transformation.cpp list_operations.cpp matrix.cpp mode.cpp Normaliz.cpp output.cpp simplex.cpp sublattice_representation.cpp vector_operations.cpp
+diff -ur --exclude=configure /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/normaliz/tmp/Normaliz2.5/source/Normaliz.cpp Normaliz2.5/source/Normaliz.cpp
+--- /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/normaliz/tmp/Normaliz2.5/source/Normaliz.cpp	2010-07-21 14:48:48.000000000 -0700
++++ Normaliz2.5/source/Normaliz.cpp	2010-08-03 07:06:46.000000000 -0700
+@@ -58,7 +58,6 @@
+ 	cout << "  -c\tverbose (prints control data)"<<endl;
+ 	cout << "  -m\tsave memory (currently has no effect)"<<endl;
+ 	cout << "  -i\tobsolete option"<<endl;
+-	cout << "  -x=<T>\tlimit the number of threads to <T>"<<endl;
+ }
+ 
+ //---------------------------------------------------------------------------
+@@ -88,8 +87,7 @@
+ 					Threads.erase(0,3);
+ 					int nr_threads;
+ 					if ( (istringstream(Threads) >> nr_threads) && nr_threads > 0) {
+-						if (verbose) cout<<"using "<<nr_threads<<" threads"<<endl;
+-						omp_set_num_threads(nr_threads);
++						if (verbose) cerr<<"Warning: Option -x ignored";
+ 					} else {
+ 						cerr<<"Warning: Invalid option string "<<argv[i]<<endl;
+ 					}
+diff -ur --exclude=configure /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/normaliz/tmp/Normaliz2.5/source/Normaliz.h Normaliz2.5/source/Normaliz.h
+--- /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/normaliz/tmp/Normaliz2.5/source/Normaliz.h	2010-07-21 14:48:48.000000000 -0700
++++ Normaliz2.5/source/Normaliz.h	2010-08-03 07:06:46.000000000 -0700
+@@ -22,7 +22,6 @@
+ //---------------------------------------------------------------------------
+ 
+ #include <assert.h>
+-#include <omp.h>
+ 
+ #include "integer.h"
+ #include "vector_operations.h"
