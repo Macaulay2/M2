@@ -76,8 +76,8 @@ track(S,T,solsS) / first
 document {
 	Key => {
 	     (refine, List, List), refine, 
-	     [refine, Iterations], [refine, Bits], [refine,ErrorTolerance], [refine,ResidualTolerance],
-	     Iterations, Bits, ErrorTolerance, ResidualTolerance
+	     [refine, Iterations], [refine, Bits], [refine,ErrorTolerance], 
+	     Iterations, Bits, ErrorTolerance
 	     },
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
