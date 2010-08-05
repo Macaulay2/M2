@@ -2,7 +2,7 @@
 needsPackage "Polyhedra"
 
 -- Check version compatability of Polyhedra
-if (options Polyhedra)#Version < "1.1" then error("Expected at least version 1.1 of Polyhdra to be installed.");
+if (options Polyhedra)#Version < "1.1" then error("Expected at least version 1.1 of Polyhedra to be installed.");
 
 ---------------------------------------------------------------------------
 -- PURPOSE: Computations with vector bundles on toric varieties 
