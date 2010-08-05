@@ -87,7 +87,7 @@ document {
 	     Iterations => {"number of refining iterations of Newton's methods"}, 
 	     Bits => {"number of bits of precision"}, 
 	     ErrorTolerance => {"a bound on the desired estimated error"},
-	     ResidualTolerance => {"a bound on desired residual"}
+--	     ResidualTolerance => {"a bound on desired residual"}
 	     },
 	Outputs => {"solsR" => {"refined solutions" }},
 	"Uses Newton's method to correct the given solutions so that the resluting approximation 

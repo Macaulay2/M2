@@ -2298,5 +2298,5 @@ f3 = (y-x^2)*(z-x^3)*(x^2+y^2+z^2-1)*(z-0.5);
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=NumericalAlgebraicGeometry "
 -- End:
