@@ -132,7 +132,7 @@ setNmzExec=()->
     (
         nmzExec="norm64"; 
     );
-    return nmzExec;
+    return prefixDirectory | currentLayout#"programs" | nmzExec;
 );
 
 
@@ -500,7 +500,7 @@ runNormaliz(List):=opts>>o->(s)->
     dir:=select(".*/",nmzFile);
     if(dir!={}) then cmd="cd "|dir#0|";";
 
-    cmd = (cmd| "env PATH=\"$PATH:"|prefixDirectory | currentLayout#"programs"|"\" "| setNmzExec()|options|baseFilename(nmzFile));
+    cmd = (cmd|setNmzExec()|options|baseFilename(nmzFile));
     if debugLevel > 0 then << "--running command: " << cmd << endl;
     if 0 != run cmd then error ("command failed : ", cmd);
     if debugLevel > 0 then << "--command succeeded" << endl;
