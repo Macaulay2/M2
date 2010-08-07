@@ -451,6 +451,9 @@ export HashTable := {+
      };
 
 --This unfortunately needs to be here as it references Hash Tabe which needs expr.  
+
+export m2cfile := Pointer "struct M2File*";	
+
 export file := {+
         -- general stuff
      	hash:int,     	   	-- hash code
@@ -484,13 +487,11 @@ export file := {+
 	outfd:int,		-- file descriptor or -1
         outisatty:bool,
 	unsyncOutputState:fileOutputSyncState, -- default sync state to use for unsync output
-	threadOutputMode:int,		-- current thread output mode.  0 is unsync, 1 is sync, 2 is thread exclusive
-	threadInputMode:int, 		-- current thread input mode.  1 is unsync, 2 is thread exclusive
 	 -- Mutex for syncronization and for buffering 
 	 -- Lock before output in sync output mode
 	threadSyncMutex:ThreadMutex,
-	fossHashTable:HashTable 
-	
+	-- C structure for this file that provides for thread support
+	cfile:m2cfile
 	};
 
 export PosFile := {+ file:file, lastchar:int, filename:string, line:ushort, column:ushort };

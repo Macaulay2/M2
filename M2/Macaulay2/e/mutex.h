@@ -2,7 +2,9 @@
 #define _mutex_h_
 #include <pthread.h>
 #include <../include/M2/config.h>
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct spinlockStructure
 {
@@ -29,5 +31,9 @@ static inline void releaseSpinLock(struct spinlockStructure* sls)
 {
   sls->m_MutexInt = 0;
 }
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif

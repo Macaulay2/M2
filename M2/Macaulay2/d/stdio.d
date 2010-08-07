@@ -6,8 +6,11 @@ use gmp;
 use expr;
 use stdio0;
 
+header "#include \"../system/m2fileinterface.h\"";
 
 bufsize ::= 4 * 1024;
+
+export newm2cfile(foss:fileOutputSyncState) ::= Ccode(m2cfile,"M2File_New(",lvalue(foss),")");
 
 export newFile(	
         filename:string,	-- name of file
@@ -54,21 +57,17 @@ export newFile(
 
 ):file := ( 
 foss := newFileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut);
+--foss:= newDefaultFileOutputSyncState();
 file(nextHash(), filename,pid,error,errorMessage,listener,listenerfd,connection,numconns,input,infd,inisatty,inbuffer,inindex,insize,eof,
-promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,0,1,newMutex,newHashTable(mutableHashTableClass,nothingClass))
+promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,newMutex,newm2cfile(foss))
 
 );
 
 export getFileFOSS(o:file):fileOutputSyncState := (
-     if (o.threadOutputMode==1) then return o.unsyncOutputState
-     else if (o.threadOutputMode==2) then 
-     (
-	  return o.unsyncOutputState
-     )
-     else 
-     (
-          return o.unsyncOutputState;
-     )
+    return Ccode(fileOutputSyncState,"M2File_GetState(",lvalue(o.cfile),")");
+);
+export releaseFileFOSS(o:file):void := (
+    Ccode(void,"M2File_ReleaseState(",lvalue(o.cfile),")");
 );
 
 export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
@@ -335,7 +334,7 @@ export flushinput(o:file):void := (
 simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarge the buffer
      foss :=  getFileFOSS(o);
      foss.outbol = 0;
-     if foss.outindex == 0 then return 0;
+     if foss.outindex == 0 then ( releaseFileFOSS(o); return 0; );
      if o.outfd != -1 then (
 	  off := 0;
 	  n := 0;
@@ -350,12 +349,15 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
 	       foss.outindex = foss.outindex - off);
 	  if n == -1 then (
 	       fileErrorMessage(o,"writing");
+	       releaseFileFOSS(o);
 	       return -1);
 	  if test(interruptedFlag) then (
 	       foss.outindex = 0;				    -- erase the output buffer after an interrupt
+	       releaseFileFOSS(o);
 	       return ERROR))
      else if foss.outindex == length(foss.outbuffer)
      then foss.outbuffer = enlarge(length(foss.outbuffer),foss.outbuffer);
+     releaseFileFOSS(o);
      0);
 
 -- simpleout(o:file,c:char):int := (
@@ -372,7 +374,7 @@ simpleout(o:file,x:string):int := (
      n := length(foss.outbuffer);
      while i < m do (
 	  if j == n then (
-	       if simpleflush(o) == ERROR then return ERROR;
+	       if simpleflush(o) == ERROR then (releaseFileFOSS(o); return ERROR);
 	       j = foss.outindex;
 	       );
 	  b := m-i;					    -- number of bytes to transfer this time
@@ -382,6 +384,7 @@ simpleout(o:file,x:string):int := (
 	  j = j + b;
 	  foss.outindex = j;
 	  );
+     releaseFileFOSS(o);
      0);
 
 flushnets(o:file):int := (
@@ -392,17 +395,19 @@ flushnets(o:file):int := (
 	  foss.nets = dummyNetList;
 	  lastone := length(n.body)-1;
 	  foreach s at i in n.body do (
-	       if ERROR == simpleout(o,s) then return ERROR;
+	       if ERROR == simpleout(o,s) then (releaseFileFOSS(o); return ERROR);
 	       if i != lastone then (
-		    if ERROR == simpleout(o,newline) then return ERROR;
+		    if ERROR == simpleout(o,newline) then (releaseFileFOSS(o); return ERROR);
 		    );
 	       ); 
 	  );
+     releaseFileFOSS(o);
      0);
 
 export flush(o:file):int := (
      foss := getFileFOSS(o);
-     if foss.hadNet then if ERROR == flushnets(o) then return ERROR;
+     if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
+     releaseFileFOSS(o);
      simpleflush(o));
 
 cleanUp(o:file):void := (
@@ -502,6 +507,7 @@ export (o:file) << (n:Net) : file := (
 	       );
      	  foss.nets = NetList(foss.nets,n);
 	  );
+     releaseFileFOSS(o);
      o);
 
 export (o:file) << (c:char) : file := (
@@ -514,11 +520,12 @@ export (o:file) << (c:char) : file := (
 	       )
 	  else (
 	       if foss.outindex == length(foss.outbuffer)
-	       && ERROR == flush(o) then return o;
+	       && ERROR == flush(o) then (releaseFileFOSS(o); return o);
 	       foss.outbuffer.(foss.outindex) = c;
 	       foss.outindex = foss.outindex + 1;
 	       );
 	  );
+     releaseFileFOSS(o);
      o
      );
 
@@ -532,21 +539,23 @@ export (o:file) << (x:string) : file := (
      	       foreach c in x do o << c;
 	       );
 	  );
+     releaseFileFOSS(o);
      o );
 
 endlfun(o:file):int := (
      foss := getFileFOSS(o);
      if o.output then (
-	  if foss.hadNet then if ERROR == flushnets(o) then return ERROR;
+	  if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
 	  o << newline;
 	  if o.outisatty || o == stdError 
 	  then (
-	       if ERROR == simpleflush(o) then return ERROR;
+	       if ERROR == simpleflush(o) then (releaseFileFOSS(o); return ERROR);
 	       )
 	  else (
 	       foss.outbol = foss.outindex;
 	       );
 	  );
+     releaseFileFOSS(o);
      0);
 
 maybeprompt(o:file):void := (
@@ -927,9 +936,9 @@ export fchmod(o:file,mode:int):int := (
 lastCharWritten(o:file):int := (
      foss := getFileFOSS(o);
      if foss.outindex > 0 then 
-         int(foss.outbuffer.(foss.outindex-1))
+         (releaseFileFOSS(o); int(foss.outbuffer.(foss.outindex-1)))
      else 
-         foss.lastCharOut
+         (releaseFileFOSS(o); foss.lastCharOut)
 );
 
 export atEndOfLine(o:file):bool := ( c := lastCharWritten(o); c == int('\n') || c == -1);

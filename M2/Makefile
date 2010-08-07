@@ -89,6 +89,7 @@ count count-source-code-lines:
 	-name bugs -prune -false -o \
 	-name autoconf-\* -prune -false -o \
 	-name regex -prune -false -o \
+	-name system -prume -false -o \
 	-name examples -prune -false -o \
 	-name test -prune -false -o \
 	-name TST -prune -false -o \

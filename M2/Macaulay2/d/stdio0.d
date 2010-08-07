@@ -44,3 +44,7 @@ export newFileOutputSyncState(
 ):fileOutputSyncState := (
 fileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut)
 );
+
+bufsize ::= 4 * 1024;
+newbuffer():string := new string len bufsize do provide ' ';
+export newDefaultFileOutputSyncState():fileOutputSyncState := ( newFileOutputSyncState(newbuffer(),0,0,false,dummyNetList,0,-1) );

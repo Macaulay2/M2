@@ -508,6 +508,8 @@ internalCapture(e:Expr):Expr := (
 	  stdError = stdIO;
 	  setGlobalVariable(stderrS,getGlobalVariable(stdioS));
           foss := getFileFOSS(stdIO);
+	  --thread workaround -- unlock fileFOSS
+	  releaseFileFOSS(stdIO);
 	  stdIO.outfd = NOFD;
 	  oldbuf := foss.outbuffer;
 	  foss.outbuffer = tmpbuf;
