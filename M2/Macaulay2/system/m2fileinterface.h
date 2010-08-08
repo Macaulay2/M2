@@ -1,5 +1,6 @@
 
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15,6 +16,10 @@ extern "C" {
   stdio0_fileOutputSyncState M2File_UnsyncState(struct M2File* file);
   stdio0_fileOutputSyncState M2File_GetState(struct M2File* file);
   void M2File_ReleaseState(struct M2File* file);
+  void M2File_StartInput(struct M2File* file);
+  void M2File_EndInput(struct M2File* file);
+  void M2File_StartOutput(struct M2File* file);
+  void M2File_EndOutput(struct M2File* file);
 
 
 #ifdef __cplusplus
