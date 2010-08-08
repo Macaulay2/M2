@@ -90,7 +90,9 @@ pointsByIntersection = method(TypicalValue => List)
 pointsByIntersection (Matrix,Ring) := (M,R) -> (
      flatten entries gens gb intersect apply (
        entries transpose M, p -> ideal apply(#p, i -> R_i - p#i)))
-     
+
+-- Mike/Stein 2008? 
+-- Bugfix: All variables are now local, Samuel, Aug 2010.
 pointsMat = method()
 pointsMat(Matrix,Ring) := (M,R) -> (
      -- The columns of M form the points.  M should be a matrix of size
@@ -151,7 +153,8 @@ pointsMat(Matrix,Ring) := (M,R) -> (
      (A, stds)
      )
 
-
+-- Stein/Mike 2008?
+-- Bugfix: All variables are now local, Samuel, aug 2010.
 points = method()
 points (Matrix,Ring) := (M,R) -> (
      -- The columns of M form the points.  M should be a matrix of size
@@ -220,7 +223,7 @@ points (Matrix,Ring) := (M,R) -> (
 -- The separators of the points as linear combinations of the standard monomials
 -- stds are the standard monomials returned by pointsMat
 -- Ainv is the inverse of the matrix returned by pointsMat
--- Samuel Lundqvist jan 2010
+-- Samuel Lundqvist, jan 2010
 separators = method()
 separators (Matrix, Matrix) := (stds, Ainv) -> (
      transpose (Ainv) * (matrix entries stds)
@@ -240,7 +243,7 @@ nfPoints (RingElement, List, Matrix, Matrix) := (p, phi, stds, Ainv) -> (
      v := transpose matrix {apply (phi, r -> r p)};
      w := Ainv * v;
      --Fix the stds
-     stdsniceform = transpose (matrix (entries (stds)));
+     stdsniceform := transpose (matrix (entries (stds)));
      --return the normal form
      first (first entries (stdsniceform*w))
      )
@@ -248,10 +251,10 @@ nfPoints (RingElement, List, Matrix, Matrix) := (p, phi, stds, Ainv) -> (
 -- Samuel Lundqvist aug 2010
 stdmons = method()
 stdmons(PolynomialRing, GroebnerBasis) := (S,Gb) -> (
-     I = monomialIdeal(leadTerm (Gb));
-     basisSmodI = flatten (entries (basis (S/I)));
+     I := monomialIdeal(leadTerm (Gb));
+     basisSmodI := flatten (entries (basis (S/I)));
      -- we want the monomials to lie in S, not in S/I 
-     SmodItoS = map(S,S/I);
+     SmodItoS := map(S,S/I);
      apply(basisSmodI, i -> SmodItoS(i))
      )
 
@@ -504,6 +507,7 @@ document {
      EXAMPLE lines ///
      M = random(ZZ^12, ZZ^32);
      -- 32 points in QQ^12
+
      R = QQ[a..l]
      --Compute a Gröbner basis for I(M) with respect to DegRevLex using the BM-algorithm
      (Q,inG,Gd) = points(M,R);
@@ -512,7 +516,7 @@ document {
     --Convert the basis to a Lex-base using FGLM
      timing((S1,FGLMLexGb) = FGLM(DegLexGb, R, MonomialOrder => Lex);) 
      -- 2.44324 seconds
-     --Compute a Gröbner basis for I(M) with respect to Lex (in S) by
+     -- Compute a Gröbner basis for I(M) with respect to Lex (in S) by
      -- using the BM-algorithm
      S2 = newRing(R, MonomialOrder => Lex)  
      timing((Q2,inG2,PointsLexGb) = points(M,S2);)
@@ -592,8 +596,8 @@ assert(apply(phi, i->i first first entries separators(std,Ainv)) == {1,0,0,0,0})
 
 
 
-uninstallPackage "PointsNew"
-installPackage "PointsNew"
+--uninstallPackage "PointsNew"
+--installPackage "PointsNew"
 R = ZZ/32003[vars(0..4), MonomialOrder=>Lex]
 M = matrix(ZZ/32003,  {{0, -9, 4, -2, -4, -9, -10, 6, -8, 0}, 
             {1, 0, -10, 9, 3, -4, 1, 1, -10, -3}, 
