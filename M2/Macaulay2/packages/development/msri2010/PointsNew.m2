@@ -1,15 +1,15 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-	"PointsNew",
-    	Version => "1.1", 
-    	Date => "12 January 2010",
+	"Points and FGLM",
+    	Version => "1.0", 
+    	Date => "12 August 2010",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.uiuc.edu/Macaulay2/"},
      	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca"},
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
 	     {Name => "Samuel Lundqvist", Email => "samuel@math.su.se"}
 	     },
-    	Headline => "computing with sets of points",
+    	Headline => "computing with sets of points and functionals (i.e. FGLM conversion)",
     	DebuggingMode => true
     	)
 
@@ -21,8 +21,7 @@ export {
      nfPoints,
      separators,
      FGLM,
-     stdmons,
-     FGLMdummy
+     stdmons
      }
 
 
@@ -64,18 +63,13 @@ reduceColumn = (M,Mchange,H,c) -> (
      true
      )
 
-addNewMonomialFGLM = (M,col, f, monom, G, basisS) -> (
+addNewMonomialFGLM = (M,col, StoK, mon, G, basisS) -> (
      -- M is an s by s+1 matrix, s=#points
      -- monom is a monomial
-     -- replaces the 'col' column of M with the values of nf(monom)
-     --    at the s standard monomial of Gb.
-     
-      print(basisS);
-      print(G);
-      print(monom);
-     l = flatten entries (coefficients (monom % G, Monomials => basisS))_1;
-     print(describe l#0);
-     scan(#l, i -> M_(i,col) = f(l#i))
+     -- replaces the 'col' column of M with the vector (v_1,...,v_s), where
+     -- nf(mon) = v_1 m_1 + \cdots + v_s m_s.
+     l = flatten entries (coefficients (mon % G, Monomials => basisS))_1;
+     scan(#l, i -> M_(i,col) = StoK(l#i))
      )
 
 
@@ -296,7 +290,7 @@ FGLM (List,GroebnerBasis, PolynomialRing, Option) := (basisS,GS,S,monOrd) -> (
 	  L = L - monom;
 	  -- Now fix up the matrices P, PC
 	  use S;
-          addNewMonomialFGLM(P,thiscol,StoK,RtoS(monom),GS,basisS); --Evaluera monom och lägg i sista col
+          addNewMonomialFGLM(P,thiscol,StoK,RtoS(monom),GS,basisS);
 	  use R;
 	  rawMatrixColumnScale(raw PC, raw(0_K), thiscol, false);
 	  PC_(thiscol,thiscol) = 1_K;
@@ -489,7 +483,7 @@ document {
 	  "R" => PolynomialRing => "The polynomial ring",
 	  "mo2" => Option =>"The output monomial ordering"
 	  },
-     Outputs => { "S2" => PolynomialRing => "The polynomial ring where G2 lives"
+     Outputs => { "S2" => PolynomialRing => "The polynomial ring where G2 lives",
 	   	  "G2" => List => "The Groebner basis wrt to mo2"
 		  },
      EXAMPLE lines ///
