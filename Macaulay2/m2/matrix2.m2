@@ -283,11 +283,11 @@ quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     if instance(ring f, InexactField) and instance(ring g, InexactField)
+     if instance(ring target f, InexactField) and instance(ring target g, InexactField)
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
        then return solve(g,f);	   	     	       	    
-     if isQuotientOf(ZZ,ring f)
+     if isQuotientOf(ZZ,ring target f)
        and isFreeModule source g and isFreeModule source f
        then return solve(g,f);
      M := target f;
