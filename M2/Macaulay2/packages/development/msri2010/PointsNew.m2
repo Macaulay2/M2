@@ -12,7 +12,10 @@ newPackage(
     	Headline => "Computing with sets of affine points and functionals (i.e. FGLM conversion)",
     	DebuggingMode => true
     	)
-
+-- Current developers
+-- Past developers
+-- Contributors
+-- Acknowledgements
 export {
      pointsMat,
      points,
@@ -62,7 +65,7 @@ reduceColumn = (M,Mchange,H,c) -> (
 	  );
      true
      )
-
+     -- Samuel Lundqvist jan 2010
 addNewMonomialFGLM = (M,col, StoK, mon, G, basisS) -> (
      -- M is an s by s+1 matrix, s=#points
      -- monom is a monomial
@@ -217,6 +220,7 @@ points (Matrix,Ring) := (M,R) -> (
 -- The separators of the points as linear combinations of the standard monomials
 -- stds are the standard monomials returned by pointsMat
 -- Ainv is the inverse of the matrix returned by pointsMat
+-- Samuel Lundqvist jan 2010
 separators = method()
 separators (Matrix, Matrix) := (stds, Ainv) -> (
      transpose (Ainv) * (matrix entries stds)
@@ -228,6 +232,7 @@ separators (Matrix, Matrix) := (stds, Ainv) -> (
 -- phi are the ring maps returned from makeRingMaps 
 -- stds are the standard monomials returned by pointsMat
 -- Ainv is the inverse of the matrix returned by pointsMat
+-- Samuel Lundqvist jan 2010
 
 nfPoints = method()
 nfPoints (RingElement, List, Matrix, Matrix) := (p, phi, stds, Ainv) -> (
@@ -240,15 +245,17 @@ nfPoints (RingElement, List, Matrix, Matrix) := (p, phi, stds, Ainv) -> (
      first (first entries (stdsniceform*w))
      )
 
+-- Samuel Lundqvist aug 2010
 stdmons = method()
 stdmons(PolynomialRing, GroebnerBasis) := (S,Gb) -> (
-     I = monomialIdeal( leadTerm (DegLexGb));
+     I = monomialIdeal(leadTerm (Gb));
      basisSmodI = flatten (entries (basis (S/I)));
      -- we want the monomials to lie in S, not in S/I 
      SmodItoS = map(S,S/I);
      apply(basisSmodI, i -> SmodItoS(i))
      )
-     
+
+-- Samuel Lundqvist jan 2010
 --stdmons = method()
 --stdmons(PolynomialRing, Ideal) := (S,I) -> (
 --     basisSmodI = flatten (entries (basis (S/I)));
@@ -256,7 +263,7 @@ stdmons(PolynomialRing, GroebnerBasis) := (S,Gb) -> (
 --     apply(basisSmodI, i -> SmodItoS(i))
 --)
 
-
+-- Samuel Lundqvist jan 2010, copied from Points.
 FGLM = method() 
 FGLM (GroebnerBasis, PolynomialRing, Option) := (GS,S,monOrd) -> (   
      --Determine the standard monomials.
@@ -564,10 +571,11 @@ R = QQ[x,y,z,s,t]
 (A, std) = pointsMat(M, R)
 phi = makeRingMaps(M,R)
 Ainv = inverse A
-f = y^2 + x*z^9 + 2*z +3*s*t
-f1 = nfPoints(f, phi, std, Ainv)
-
-(Q,inG,G) = points(M,R)
+f = y^2 + x*z^9 + 2*z +3*s*t;
+f1 = nfPoints(f, phi, std, Ainv);
+f
+(Q,inG,G) = points(M,R);
+f
 Gb = forceGB (matrix {G})
 f2= f % Gb
 
@@ -584,22 +592,6 @@ toString C_1
 restart
 errorDepth = 0
 
-
-
-M = random(ZZ^5, ZZ^5)
- R = QQ[x,y,z,zz,zzz]
-(A, std) = pointsMat(M, R)
-phi = makeRingMaps(M,R)
-Ainv = inverse A
-f = y^2 + x*z^9 + z
-
-timing f1 = nfpoints(f, phi, std, Ainv)
-
-(Q,inG,G) = points(M,R)
-Gb = forceGB (matrix {G})
-timing f2= f % Gb
-
-assert(f1 == f2)
 
 
 uninstallPackage "PointsNew"
