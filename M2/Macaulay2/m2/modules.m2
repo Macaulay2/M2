@@ -17,9 +17,9 @@ raw Matrix := f -> f.RawMatrix
 ring Matrix := f -> (
      S := ring target f;
      R := ring source f;
-     if R === S then R
-     else error "expected module map with source and target over the same ring"
-     )
+     if R =!= S then error "expected module map with source and target over the same ring";
+     if f.?RingMap then error "expected module map with no ring map";
+     R)
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 

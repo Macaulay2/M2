@@ -24,6 +24,7 @@ pushOptions := new OptionTable from {
 	  }
 
 pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matrix of the pushforward module
+    -- written by Mike and David
     comp := PushforwardComputation{M,NonLinear};
     if not f.cache#?comp then (
 	-- create the computation

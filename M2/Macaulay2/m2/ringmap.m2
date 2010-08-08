@@ -448,7 +448,7 @@ RingMap ^ ZZ := BinaryPowerMethod
 map(Ring,Ring,RingMap) := RingMap => opts -> (R,S,f) -> map(R,S,matrix f,opts)
 
 -- module maps over ring maps:
-
+map(Module,Module,Nothing,RawMatrix) := opts -> (M,N,p,f) -> map(M,N,f)
 map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
      (R,S) := (ring M,ring N);
      (M',N') := (cover M,p cover N);
