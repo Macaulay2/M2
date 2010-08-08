@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-	"PointsFGLM",
+	"PointsNew",
     	Version => "1.0", 
     	Date => "12 August 2010",
     	Authors => {
@@ -79,7 +79,7 @@ addNewMonomial = (M,col,monom,maps) -> (
      -- maps is a list of s ring maps, which will give the values
      --  of the monom at the points
      -- replaces the 'col' column of M with the values of monom
-     --    at the s points.
+     --    at the s points.vi
      scan(#maps, i -> M_(i,col) = maps#i monom)
      )
 
@@ -240,18 +240,27 @@ nfPoints (RingElement, List, Matrix, Matrix) := (p, phi, stds, Ainv) -> (
      first (first entries (stdsniceform*w))
      )
 
-
-
 stdmons = method()
-stdmons(PolynomialRing, Ideal) := (S,I) -> (
+stdmons(PolynomialRing, GroebnerBasis) := (S,Gb) -> (
+     I = monomialIdeal( leadTerm (DegLexGb));
      basisSmodI = flatten (entries (basis (S/I)));
+     -- we want the monomials to lie in S, not in S/I 
      SmodItoS = map(S,S/I);
      apply(basisSmodI, i -> SmodItoS(i))
-)
+     )
+     
+--stdmons = method()
+--stdmons(PolynomialRing, Ideal) := (S,I) -> (
+--     basisSmodI = flatten (entries (basis (S/I)));
+--     SmodItoS = map(S,S/I);
+--     apply(basisSmodI, i -> SmodItoS(i))
+--)
 
 
 FGLM = method() 
-FGLM (List,GroebnerBasis, PolynomialRing, Option) := (basisS,GS,S,monOrd) -> (   
+FGLM (GroebnerBasis, PolynomialRing, Option) := (GS,S,monOrd) -> (   
+     --Determine the standard monomials.
+     basisS = stdmons (S,GS);
      s = length basisS;   
      --from now on, we will compute over the ring R.
      R := symbol R; 
@@ -494,9 +503,8 @@ document {
      (Q,inG,Gd) = points(M,R);
      (DegLexGb = forceGB matrix {Gd};
      IR = ideal gens DegLexGb;
-     stdd = stdmons(R,IR);
     --Convert the basis to a Lex-base using FGLM
-     timing((S1,FGLMLexGb) = FGLM(stdd, DegLexGb, R, MonomialOrder => Lex);) 
+     timing((S1,FGLMLexGb) = FGLM(DegLexGb, R, MonomialOrder => Lex);) 
      -- 2.44324 seconds
      --Compute a Gröbner basis for I(M) with respect to Lex (in S) by
      -- using the BM-algorithm
@@ -595,8 +603,8 @@ timing f2= f % Gb
 assert(f1 == f2)
 
 
-uninstallPackage "Points"
-installPackage "Points"
+uninstallPackage "PointsNew"
+installPackage "PointsNew"
 R = ZZ/32003[vars(0..4), MonomialOrder=>Lex]
 M = matrix(ZZ/32003,  {{0, -9, 4, -2, -4, -9, -10, 6, -8, 0}, 
             {1, 0, -10, 9, 3, -4, 1, 1, -10, -3}, 
