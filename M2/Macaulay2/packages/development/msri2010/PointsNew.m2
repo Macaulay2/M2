@@ -482,12 +482,11 @@ document {
      SeeAlso => {points},
      }
 document {
-     Key => {FGLM,  (FGLM, List, GroebnerBasis, PolynomialRing, Option)},
+     Key => {FGLM,  (FGLM, GroebnerBasis, PolynomialRing, Option)},
        Headline => "Uses the FGLM algorithm to change a Groebner basis for a zero-dimensional ideal wrt to a monomial ordering mo1 to another 
      Groebner basis with respect to a monomial ordering mo2.",
      Usage => "G2 = points(std,G1,R,mo2)",
      Inputs => {
-     	  "std" => List => "The set of standard monomials wviith respect to mo1",
 	  "G1" => GroebnerBasis => "A Groebner basis for the ideal wrt mo1", 
 	  "R" => PolynomialRing => "The polynomial ring",
 	  "mo2" => Option =>"The output monomial ordering"
