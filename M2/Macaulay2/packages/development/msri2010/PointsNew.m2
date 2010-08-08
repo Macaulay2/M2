@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-	"Points and FGLM",
+	"PointsFGLM",
     	Version => "1.0", 
     	Date => "12 August 2010",
     	Authors => {
@@ -9,7 +9,7 @@ newPackage(
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
 	     {Name => "Samuel Lundqvist", Email => "samuel@math.su.se"}
 	     },
-    	Headline => "computing with sets of points and functionals (i.e. FGLM conversion)",
+    	Headline => "Computing with sets of affine points and functionals (i.e. FGLM conversion)",
     	DebuggingMode => true
     	)
 
@@ -321,7 +321,7 @@ FGLM (List,GroebnerBasis, PolynomialRing, Option) := (basisS,GS,S,monOrd) -> (
 beginDocumentation()
 
 document {
-     Key => Points,
+     Key => PointsNew,
      "A package to compute with points in affine and projective spaces",
      {*
      Subnodes => {
@@ -478,8 +478,8 @@ document {
      Groebner basis with respect to a monomial ordering mo2.",
      Usage => "G2 = points(std,G1,R,mo2)",
      Inputs => {
-     	  "std" => List => "The set of standard monomials with respect to mo1",
-	  "G1" => GroebnerBasis => "A Groebner basis for the ideal", 
+     	  "std" => List => "The set of standard monomials wviith respect to mo1",
+	  "G1" => GroebnerBasis => "A Groebner basis for the ideal wrt mo1", 
 	  "R" => PolynomialRing => "The polynomial ring",
 	  "mo2" => Option =>"The output monomial ordering"
 	  },
@@ -487,10 +487,10 @@ document {
 	   	  "G2" => List => "The Groebner basis wrt to mo2"
 		  },
      EXAMPLE lines ///
-     --Check FGLM
      M = random(ZZ^12, ZZ^32);
+     -- 32 points in QQ^12
      R = QQ[a..l]
-     --Compute a Gröbner basis for I(M) with respect to DegRevLex
+     --Compute a Gröbner basis for I(M) with respect to DegRevLex using the BM-algorithm
      (Q,inG,Gd) = points(M,R);
      (DegLexGb = forceGB matrix {Gd};
      IR = ideal gens DegLexGb;
@@ -500,17 +500,17 @@ document {
      -- 2.44324 seconds
      --Compute a Gröbner basis for I(M) with respect to Lex (in S) by
      -- using the BM-algorithm
-     S2 = newRing(R, MonomialOrder => Lex)
-     S1toS2 = map(S2,S1)    
+     S2 = newRing(R, MonomialOrder => Lex)  
      timing((Q2,inG2,PointsLexGb) = points(M,S2);)
      --Map the result from FGLM (which is in S1) to S2
+     S1toS2 = map(S2,S1);  
      FGLMLexGb = apply(FGLMLexGb, p -> S1toS2(p));
     --Check that they are equal (sort is used since "==" does not
     --apply for GB:s)
      gens forceGB matrix  {sort FGLMLexGb} == gens forceGB matrix {sort PointsLexGb}
      -- true
-     -- Compute a Lex Gröbner basis from the generators of IR (from the
-     -- DegRevLex gbasis to be precise)
+     -- Now, to show that we gain speed, 
+     -- compute a Lex Gröbner basis from the generators of IR.
      -- First map I from R to S2
      RtoS2 = map(S2,R);
      IS2 = ideal RtoS2 gens IR;
