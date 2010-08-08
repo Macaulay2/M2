@@ -14,7 +14,7 @@ newPackage(
     	Headline => "computations of characteristic classes for varieties without equations"
     	)
 
-export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "ReturnType",
+export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "schubertCycle'", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveBundle'", "projectiveSpace", "projectiveSpace'", "PP", "PP'", "integral", "IntersectionRing",
@@ -745,6 +745,7 @@ schur(List, AbstractSheaf) := (p,E) -> (
      abstractSheaf(variety E, ChernCharacter => F J))
 
 schubertCycle = method(TypicalValue => RingElement)
+schubertCycle' = method(TypicalValue => RingElement)
 FlagBundle _ Sequence := FlagBundle _ List := RingElement => (F,s) -> schubertCycle(s,F)
 giambelli =  (r,E,b) -> (
      p := matrix for i from 0 to r-1 list for j from 0 to r-1 list chern(b#i-i+j,E); -- Giambelli's formula, also called Jacobi-Trudi
@@ -784,6 +785,35 @@ schubertCycle(List,FlagBundle) := (b,X) -> (
 	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
 	  );
      giambelli(r',E,dualpart(r',b)))
+schubertCycle'(Sequence,FlagBundle) := (a,X) -> (
+     if #X.BundleRanks != 2 then error "expected a Grassmannian";
+     n := X.Rank;
+     E := dual first X.Bundles;
+     r := rank E;
+     r' := n-r;
+     if r != #a then error("expected a sequence of length ", toString r);
+     for i from 0 to r-1 do (
+	  ai := a#i;
+	  if not instance(ai,ZZ) or ai < 0 then error "expected a sequence of non-negative integers";
+	  if i>0 and not (a#(i-1) < a#i) then error "expected a strictly increasing sequence of integers";
+	  if not (ai < n) then error("expected a sequence of integers less than ",toString n);
+	  );
+     giambelli(r',E,seqtolist(r',a)))
+schubertCycle'(List,FlagBundle) := (b,X) -> (
+     -- see page 271 of Fulton's Intersection Theory for this notation
+     if #X.BundleRanks != 2 then error "expected a Grassmannian";
+     E := dual first X.Bundles;
+     r := rank E;
+     n := X.Rank;
+     r' := n-r;
+     if r != #b then error("expected a list of length ", toString r);
+     for i from 0 to r-1 do (
+	  bi := b#i;
+	  if not instance(bi,ZZ) or bi < 0 then error "expected a list of non-negative integers";
+	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing list of integers";
+	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
+	  );
+     giambelli(r',E,b))
 
 sectionZeroLocus = method(TypicalValue => AbstractVariety)
 sectionZeroLocus AbstractSheaf := (F) -> (
