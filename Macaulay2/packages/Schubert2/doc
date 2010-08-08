@@ -352,7 +352,62 @@ Node
      dim P
      todd P
   SeeAlso
+     projectiveSpace'
      projectiveBundle
+     flagBundle
+     tangentBundle
+     todd
+     chi
+     base
+     (symbol _,OO,AbstractVariety)
+--------
+Node
+  Key
+    projectiveSpace'
+    (projectiveSpace',ZZ,AbstractVariety)
+    (projectiveSpace',ZZ)
+    [projectiveSpace',VariableName]
+  Headline
+    make a projective space
+  Usage
+    projectiveSpace' n
+    projectiveSpace'(n, S)
+    projectiveSpace'_n S
+  Inputs
+    n : ZZ
+    S : AbstractVariety
+      if omitted, then @ TO point @ is used for it
+    VariableName => Symbol
+      the symbol to use for the variable representing the first Chern class of the tautological line bundle on the resulting projective space
+  Outputs
+    :
+       the projective space of rank 1 quotient bundles of the trivial bundle of rank $n+1$ on
+       the base variety {\tt S}.
+  Description
+   Example
+     P = projectiveSpace' 3
+     tangentBundle P
+     chern tangentBundle P
+     todd P
+     chi OO_P(3)
+   Text
+     To compute the Hilbert polynomial of a sheaf on projective space, we work
+     over a base variety of dimension zero whose intersection ring contains a
+     {\em free} variable $n$, instead of working over @ TO point @:
+   Example
+     pt = base n
+     Q = projectiveSpace'_4 pt
+     chi OO_Q(n)
+   Text
+     The base variety may itself be a projective space:
+   Example
+     S = projectiveSpace'(4, VariableName => symbol h)
+     P = projectiveSpace'(3, S, VariableName => H)
+     dim P
+     todd P
+  SeeAlso
+     projectiveSpace
+     projectiveBundle'
      flagBundle
      tangentBundle
      todd
@@ -986,6 +1041,7 @@ Node
   Headline
    make a projective bundle from an abstract sheaf
   SeeAlso
+   projectiveBundle'
    projectiveSpace
    flagBundle
   Usage
@@ -1010,6 +1066,46 @@ Node
     Y = projectiveBundle F
     dim Y
     integral (chern_1 OO_Y(1))^(dim Y)
+    X.Bundles/rank
+  Caveat
+   Perhaps this should be merged with @ TO projectiveSpace @.  (The optional arguments are slightly different.)
+--------
+Node
+  Key
+    projectiveBundle'
+    (projectiveBundle',AbstractSheaf)
+    (projectiveBundle',ZZ)
+    (projectiveBundle',ZZ,AbstractVariety)
+    [projectiveBundle',VariableNames]
+  Headline
+   make a projective bundle from an abstract sheaf
+  SeeAlso
+   projectiveBundle
+   projectiveSpace
+   flagBundle
+  Usage
+    projectiveBundle' F
+    projectiveBundle'(n,X)
+    projectiveBundle' n
+  Inputs
+    F : AbstractSheaf
+    n : ZZ
+    X : AbstractVariety
+    VariableNames => Thing
+      see @ TO [flagBundle,VariableNames] @
+  Outputs
+    :
+       the projective bundle of rank 1 sub-bundles of the abstract sheaf $F$.
+       If $F$ is omitted, then a projective space of dimension $n$ over $X$ is produced.
+       If $X$ is omitted, then @ TO point @ is used as the base.
+  Description
+   Example
+    X = projectiveBundle' 4
+    F = OO_X(2) ++ OO_X(3) ++ OO_X(4)
+    Y = projectiveBundle' F
+    dim Y
+    integral (chern_1 OO_Y(1))^(dim Y)
+    X.Bundles/rank
   Caveat
    Perhaps this should be merged with @ TO projectiveSpace @.  (The optional arguments are slightly different.)
 --------
@@ -1030,6 +1126,34 @@ Node
     X = PP^4
     X.Base
     dim X
+   Text
+    The projective space produced adheres to modern notation, with a tautological quotient bundle of rank 1.  For the
+    opposite, old-fashoned notation, see @ TO PP' @.
+   Example
+    X.Bundles/rank
+--------
+Node
+  Key
+   PP'
+  Headline
+   make a projective space
+  Usage
+   PP'^n
+  Inputs
+   n:ZZ
+  Outputs
+   :FlagBundle
+    a projective space over @ TO point @ of dimension $n$
+  Description
+   Example
+    X = PP'^4
+    X.Base
+    dim X
+   Text
+    The projective space produced adheres to old-fashioned notation, with a tautological subbundle of rank 1.  For the
+    opposite, modern notation, see @ TO PP @.
+   Example
+    X.Bundles/rank
 --------
 Node
   Key
