@@ -95,6 +95,8 @@ class FunctionPair {
 };
 
 // generate list of index pairs for given intermediate basis
+// first insert all pairs with FPs, then insert pairs of all other polynomials
+// the list of indeces was ordered by increasingly
 Pairs makeList(const IntermediateBasis &F, int n) {
   Pairs B;
   Pairs::iterator position = B.begin();
@@ -548,6 +550,11 @@ void interreduction(IntermediateBasis &F) {
   //stats(F);
 }
 
+// A good (normal? Sugar?) selection strategy should be implemented here
+Pair bestPair(Pairs &B) {
+  return *(B.begin() );
+}
+
 // complete algorithm to compute a Groebner basis F  
 void gb( IntermediateBasis &F, int n) {
   int interreductionMod = 0;
@@ -558,7 +565,8 @@ void gb( IntermediateBasis &F, int n) {
   unsigned int countAddPoly = 0;
   unsigned int numSPoly= 0;
   while (!B.empty()) {
-    Pair pair = *(B.begin());
+    Pair pair = bestPair(B);
+    //Pair pair = *(B.begin());
     B.erase(B.begin());
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;
