@@ -17,7 +17,7 @@ newPackage(
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
-     "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "integral", "IntersectionRing",
+     "flagBundle", "projectiveBundle", "projectiveBundle'", "projectiveSpace", "projectiveSpace'", "PP", "PP'", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
      "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
@@ -507,11 +507,21 @@ projectiveBundle ZZ := opts -> n -> flagBundle({n,1},opts)
 projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
 projectiveBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 
+projectiveBundle' = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
+projectiveBundle' ZZ := opts -> n -> flagBundle({1,n},opts)
+projectiveBundle'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,opts)
+projectiveBundle' AbstractSheaf := opts -> E -> flagBundle({1, rank E - 1},E,opts)
+
 projectiveSpace = method(Options => { VariableName => global h }, TypicalValue => FlagBundle)
 projectiveSpace ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{opts.VariableName}})
 projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{opts.VariableName}})
 
-PP = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
+projectiveSpace' = method(Options => { VariableName => global h }, TypicalValue => FlagBundle)
+projectiveSpace' ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{opts.VariableName},})
+projectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{opts.VariableName},})
+
+PP  = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
+PP' = new ScriptedFunctor from { superscript => i -> projectiveSpace' i }
 
 reciprocal = method(TypicalValue => RingElement)
 reciprocal RingElement := (A) -> (
