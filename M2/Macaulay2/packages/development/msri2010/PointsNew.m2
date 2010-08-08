@@ -71,7 +71,7 @@ addNewMonomialFGLM = (M,col, StoK, mon, G, basisS) -> (
      -- monom is a monomial
      -- replaces the 'col' column of M with the vector (v_1,...,v_s), where
      -- nf(mon) = v_1 m_1 + \cdots + v_s m_s.
-     l = flatten entries (coefficients (mon % G, Monomials => basisS))_1;
+     l := flatten entries (coefficients (mon % G, Monomials => basisS))_1;
      scan(#l, i -> M_(i,col) = StoK(l#i))
      )
 
@@ -124,7 +124,7 @@ pointsMat(Matrix,Ring) := (M,R) -> (
 	  --if #Q === s then print "got a basis";
 	  --print("size of L = "| size(L));
 	  -- First step: get the monomial to consider
-	  monom = someTerms(L,-1,1);
+	  monom := someTerms(L,-1,1);
 	  L = L - monom;
 	  -- Now fix up the matrix P
           addNewMonomial(P,thiscol,monom,Fs);
@@ -137,7 +137,7 @@ pointsMat(Matrix,Ring) := (M,R) -> (
 	  else (
 	       -- we modify L, Lhash, thiscol, and also PC
 	       Q = append(Q, monom);
-	       f = sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+	       f := sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
 			 newmon := monom * R_i;
 			 Lhash#newmon = i;
 			 newmon));
@@ -185,7 +185,7 @@ points (Matrix,Ring) := (M,R) -> (
      while L != 0 do (
 	  -- First step: get the monomial to consider
 	  L = L % inGB;
-	  monom = someTerms(L,-1,1);
+	  monom := someTerms(L,-1,1);
 	  L = L - monom;
 	  -- Now fix up the matrices P, PC
           addNewMonomial(P,thiscol,monom,Fs);
@@ -196,13 +196,13 @@ points (Matrix,Ring) := (M,R) -> (
 	       -- we add to G, inG
 	       inG = inG + ideal(monom);
 	       inGB = forceGB gens inG;
-	       g = sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+	       g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
 	       G = append(G, PC_(thiscol,thiscol) * monom + g);
 	       )
 	  else (
 	       -- we modify L, Lhash, thiscol, and also PC
 	       Q = append(Q, monom);
-	       f = sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+	       f := sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
 			 newmon := monom * R_i;
 			 Lhash#newmon = i;
 			 newmon));
@@ -267,14 +267,14 @@ stdmons(PolynomialRing, GroebnerBasis) := (S,Gb) -> (
 FGLM = method() 
 FGLM (GroebnerBasis, PolynomialRing, Option) := (GS,S,monOrd) -> (   
      --Determine the standard monomials.
-     basisS = stdmons (S,GS);
-     s = length basisS;   
+     basisS := stdmons (S,GS);
+     s := length basisS;   
      --from now on, we will compute over the ring R.
-     R := symbol R; 
-     R = newRing(S, monOrd);
-     RtoS = map(S,R);
+     -- R := symbol R; 
+     R := newRing(S, monOrd);
+     RtoS := map(S,R);
      K := coefficientRing R;
-     StoK = map(K,S);
+     StoK := map(K,S);
      -- The local data structures:
      -- (P,PC) is the matrix which contains the elements to be reduced
      -- Fs is used to evaluate monomials at the points
@@ -315,13 +315,13 @@ FGLM (GroebnerBasis, PolynomialRing, Option) := (GS,S,monOrd) -> (
 	       -- we add to G, inG
 	       inG = inG + ideal(monom);
 	       inGB = forceGB gens inG;
-	       g = sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+	       g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
 	       G = append(G, PC_(thiscol,thiscol) * monom + g);
 	       )
 	  else (
 	       -- we modify L, Lhash, thiscol, and also PC
 	       Q = append(Q, monom);
-	       f = sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+	       f := sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
 			 newmon := monom * R_i;
 			 Lhash#newmon = i;
 			 newmon));
@@ -583,14 +583,12 @@ f2= f % Gb
 assert(f1 == f2)
 
 --Assert that the first separator, f_1, satisfies f_1(p_1) = 1 and f_1(p_j) = 0 for j>1 
-assert(apply(phi, i->i first first entries separators(std,Ainv)), {1,0,0,0,0})
+assert(apply(phi, i->i first first entries separators(std,Ainv)) == {1,0,0,0,0})
 
-
-///
-end
-toString C_1
-restart
-errorDepth = 0
+--///
+--end
+--restart
+--errorDepth = 0
 
 
 
