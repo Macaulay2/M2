@@ -422,9 +422,13 @@ static void cprintdefine(node t,bool definitions) {
 	  ) {
 	  put("static ");
 	  }
-#ifdef USE_THREADS
-     if (flags & threadLocal_F) put("__thread ");
-#endif
+     if (flags & threadLocal_F)
+	  {
+	       put("int ");
+	       cprint(t);
+	       put("_id;\n");
+//	       put("__thread ");
+          }
      if (flags & const_F) put("const ");
      if (isfunctiontype(typ)) {
 	  if (flags & macro_function_F) return;

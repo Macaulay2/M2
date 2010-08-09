@@ -3,9 +3,6 @@
 #define _system_m2file_h_
 
     /* gc doc tells us to include pthread.h before gc.h */
-    #ifdef GC_MALLOC
-      #error "gc.h already included"
-    #endif
     #ifndef _REENTRANT
       #define _REENTRANT
     #endif

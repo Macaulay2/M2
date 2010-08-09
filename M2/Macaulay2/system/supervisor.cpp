@@ -23,7 +23,7 @@ extern "C" {
     pthread_cond_signal(&threadSupervisor.m_TaskWaitingCondition);
     pthread_mutex_unlock(&threadSupervisor.m_Mutex);
   }
-  void addThreadBody(pthread_t thread, parse_ThreadCellBody body)
+  void addThreadBody(pthread_t thread, struct parse_ThreadCellBody_struct* body)
   {
     pthread_mutex_lock(&threadSupervisor.m_Mutex);
     std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor.m_ThreadMap.find(thread);
