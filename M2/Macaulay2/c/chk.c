@@ -1479,7 +1479,7 @@ static node chkimport(node e, scope v){
 
 static node chkdefinition(node e, scope v){
      node lhs, rhs, ltype;
-     bool rhs_in_function = FALSE;
+     bool lhs_thread_local = FALSE;
      if (length(e) != 3) return badnumargs(e,2);
      lhs = chklhs(cadr(e),v);
      if (lhs == bad__K) return bad__K;
@@ -1598,7 +1598,7 @@ static node chkdefinition(node e, scope v){
      	       internsymbol(lhs,v);
 	       }
 	  if (lhs->body.symbol.flags & threadLocal_F) {
-	       rhs_in_function = TRUE;
+	       lhs_thread_local = TRUE;
 	       enternewscope(&v);
 	       }
 	  rhsvalue = chk(rhs,v);
@@ -1640,7 +1640,7 @@ static node chkdefinition(node e, scope v){
 	       }
 	  else {
 	       assign(lhs,rhsvalue,v);
-	       if (rhs_in_function) {
+	       if (lhs_thread_local) {
 		    if (ltype != void_T  && !is_atomic_memory(ltype)) perform(list(9,Ccode_S,void_T, 
 				 String("GC_add_roots(&("),
 				 lhs,
