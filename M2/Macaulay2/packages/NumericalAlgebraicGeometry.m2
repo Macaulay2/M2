@@ -82,6 +82,7 @@ DEFAULT = new MutableHashTable from {
      Iterations => null,
      Bits => 300,
      -- general
+     Attempts => 10, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6
      }
 
@@ -882,6 +883,11 @@ getSolution ZZ := Thing => o -> i -> (
      if class p === Sequence then ret else first ret
      )
 
+isRegular = method()
+isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == "REGULAR"  
+isRegular List := (s) -> s#0#2 == "REGULAR"
+isRegular (List, ZZ) := (sols, s) -> if DEFAULT.Software === M2engine then isRegular s else isRegular sols#s
+
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
      R := ring first T;
@@ -1278,19 +1284,35 @@ randomSlice (ZZ,ZZ,List) := (d,n,point) -> (
 	  )
      )
 
+movePoints = method(Options=>{AllowSingular=>false})
+movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
+-- IN:  E = equations, 
+--      S = equations of the current slice,
+--      S' = equations of the new slice,
+--      w = points satisfying E and S (in the output format of track) 
+--      AllowSingular => false: S' is generic, several attempts are made to get regular points
+-- OUT: new witness points satisfying E and S'
+     attempts := DEFAULT.Attempts;
+     success := false;
+     while (not success and attempts > 0) do (
+	  attempts = attempts - 1;
+	  w' := track(E|S, E|S', w,gamma=>exp(random(0.,2*pi)*ii)); 
+	  success = o.AllowSingular or all(toList(0..#w'-1), i->isRegular(w'#i,i));
+	  );
+     if attempts == 0 and not success then error "paths are singular generically";  
+     w'
+     )
+
 movePointsToSlice = method(TypicalValue=>List)
-movePointsToSlice (WitnessSet, List) := List => (W,S) -> (
+movePointsToSlice (WitnessSet, List) := List => (W,S') -> (
 -- IN:  W = witness set
---      S = equations of the new slice
+--      S' = equations of the new slice
 -- OUT: new witness points
-     if #S < dim W
+     if #S' < dim W
      then error "dimension of new slicing plane is too high";
      R := ring W;
-     st := equations W | take(slice W,-#S); -- take last #S equations
-     ta := equations W | S;
-     newpoints := track(st,ta,points W,gamma=>exp(random(0.,2*pi)*ii));
-     if #newpoints != #W#Points then print "number of points in the witness set has changed";
-     newpoints
+     S := take(slice W,-#S'); -- take last #S equations
+     movePoints(equations W, S, S', points W, AllowSingular=>true)
      )
 
 moveSlice = method(TypicalValue=>WitnessSet)
@@ -1406,7 +1428,6 @@ regeneration List := List => o -> F -> (
 			 scan(rsort keys c2,j->if j>d then (for k in keys c2#j do W = W - c2#j#k));
 			 c2#d#i = W;
 			 )));
-	  --!!! scan(keys c2, i-><< i << print (apply(keys c2#i, j->c2#i#j)/see) << endl);
 	  c1 = flatten apply(keys c2, i->apply(keys c2#i, j->c2#i#j));
 	  if f == first F then ( -- if the first equation is being processed 
 	       n := numgens R;
@@ -1417,6 +1438,65 @@ regeneration List := List => o -> F -> (
      DEFAULT.Software = saveDEFAULTsoftware;
      c1
      )
+
+-----------------------------------------------------------------------
+-- DECOMPOSITION
+decompose WitnessSet := (W) -> (
+     R := ring W;
+     n := numgens R;
+     k := dim W;
+     eq := equations W;
+     which := new MutableHashTable from {}; 
+     cs := new MutableList from apply(degree W, i->(which#i = i; {i})); -- current components
+     i'cs:= new MutableHashTable from {}; -- certified irreducible components
+     --sorted'cs := MutableList toList(0..deg W - 1); -- list of numbers of components sorted by degree (small to large)
+     -- -1 indicates no component 
+     mergeComponents := (c,c') -> (
+	  cs#c = cs#c | cs#c';
+	  cs#c' = {};
+	  );	     	
+     findComponent := (pt) -> ( for i to #cs-1  do if any(cs#i, p->areEqual((points W)#p,pt)) then return i; return null );
+     done := false;
+     n'misses := 0;
+     while not done do (
+	  while (c := random(#cs); #cs#c == 0) do (); -- vvv
+	  p := cs#c#(random(#(cs#c))); -- pick a component/point (rewrite!!!)
+	  S := eq | slice W;	  
+	  while (T := sliceEquations(randomSlice(k,n),R); pt' := track(S,eq|T,{first (W.Points)#p}); not isRegular(pt',0)) do (); 
+	  pt := first movePoints(eq, T, slice W, pt'/first);
+	  if (c' :=  findComponent first pt) === null then error "point outside of any current component";
+	  if c' == c then n'misses = n'misses + 1
+	  else ( mergeComponents(c,c'); n'misses = 0 );
+	  done = n'misses > 10;
+	  );
+     apply(toList select(cs, c->#c>0), c->new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_c})
+     ) 
+
+linearTraceTest = method() -- check linearity of trace to see if component is irreducible
+linearTraceTest (WitnessSet, List) := (W,c) -> (
+-- IN: W = witness superset, 
+--     c = list of integers (witness points subset)
+-- OUT: do (points W)_c represent an irreducible component?
+     w := (points W)_c;
+     proj := random(CC^(numgens ring W), CC^1); 
+     three'samples := apply(3, i->(
+	       local r;
+	       w' := (
+		    if i == 0 then (
+     	       	    	 r = W.Slice_(dim W - 1, numgens ring W);
+			 w 
+		    	 )
+		    else (
+	       	    	 M := new MutableMatrix from W.Slice;
+		    	 M_(dim W - 1, numgens ring W) = r = random CC; -- replace last column
+		    	 movePoints(equations W, slice W, sliceEquations(matrix M,ring W), w) / first 
+	       	    	 ) );
+	       {1, r, sum flatten entries (matrix w' * proj)} 
+               ));
+     print matrix three'samples;
+     print det matrix three'samples;
+     abs det matrix three'samples < DEFAULT.Tolerance  -- points are (approximately) on a line
+     )  
 
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
@@ -1524,7 +1604,7 @@ groupClusters MutableHashTable := H -> (
      cs
      )
 
-singularSolutions = method() -- rewrite!!! works only from M2engine
+singularSolutions = method() -- decide on the tolerance!!!
 singularSolutions(List,List) := (T,sols) -> (
 -- find positions of singular solutions in sols
 -- IN: number of solutions 
@@ -1532,8 +1612,7 @@ singularSolutions(List,List) := (T,sols) -> (
 --      (i.e., nearly satisfies target system, but Status!=REGULAR)    
      select(0..#sols-1, i->(
 	       x := first sols#i;
-	       st := getSolution(i,SolutionAttributes=>SolutionStatus);
-	       st != "REGULAR" and all(T, f->(rs := evalPoly(f,x); abs(rs)/norm matrix{x} < 1000*DEFAULT.Tolerance))
+	       not isRegular(sols,i) and all(T, f->(rs := evalPoly(f,x); abs(rs)/norm matrix{x} < 1000*DEFAULT.Tolerance))
 	       ))
      )   
 
