@@ -95,6 +95,7 @@ ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userD
   m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true)
 {
   pthread_mutex_init(&m_Mutex,NULL);
+  pthread_cond_init(&m_FinishCondition,NULL);
 }
 ThreadTask::~ThreadTask()
 {
@@ -111,6 +112,7 @@ void* ThreadTask::waitOn()
 ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   m_TargetNumThreads(targetNumThreads)
 {
+  pthread_cond_init(&m_TaskWaitingCondition,NULL);
   pthread_mutex_init(&m_Mutex,NULL);
 }
 
@@ -183,7 +185,7 @@ void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
 struct ThreadTask* ThreadSupervisor::getTask()
 {
   pthread_mutex_lock(&m_Mutex);
-  if(m_ReadyTasks.empty())
+  while(m_ReadyTasks.empty())
     {
       pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex);
     }
