@@ -13,10 +13,10 @@ M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
 }
 M2File::~M2File()
 {
-  for(std::map<pthread_t,struct M2FileThreadState*>::iterator it = threadStates.begin(); it!=threadStates.end(); ++it)
+  /*  for(std::map<pthread_t,struct M2FileThreadState*>::iterator it = threadStates.begin(); it!=threadStates.end(); ++it)
     {
       delete it->second;
-    }
+      }*/
 }
 
 

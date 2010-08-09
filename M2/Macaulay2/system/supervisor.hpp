@@ -12,8 +12,6 @@
     #define GC_THREADS
     #include <gc/gc.h>
 
-
-#include <pthread.h>
 #include <set>
 #include <map> 
 #include <list>

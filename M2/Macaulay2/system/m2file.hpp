@@ -2,9 +2,19 @@
 #ifndef _system_m2file_h_
 #define _system_m2file_h_
 
+    /* gc doc tells us to include pthread.h before gc.h */
+    #ifdef GC_MALLOC
+      #error "gc.h already included"
+    #endif
+    #ifndef _REENTRANT
+      #define _REENTRANT
+    #endif
+    #include <pthread.h>
+    #define GC_THREADS
+    #include <gc/gc.h>
+
 #include <gc/gc_cpp.h>
 
-#include <pthread.h>
 #include <map>
 
 
@@ -16,7 +26,7 @@ struct M2FileThreadState
   //State of the file output for the given thread
   stdio0_fileOutputSyncState syncState;
 };
-struct M2File : public gc_cleanup
+struct M2File
 {
 public:
   M2File(stdio0_fileOutputSyncState fileUnsyncState);
