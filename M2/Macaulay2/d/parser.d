@@ -236,8 +236,8 @@ export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:
      e := parse(file,token2.word.parse.binaryStrength,obeylines);
      if e == errorTree then e else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
 MatchPair := {left:string, right:string, next:(null or MatchPair)};
---Matchlist for matching tokens being parsed.  Needs to be threadLocal because multiple parsing operations could be ongoing.
-threadLocal matchList := (null or MatchPair)(NULL);
+
+matchList := (null or MatchPair)(NULL);
 export addmatch(left:string, right:string):void := (
      matchList = MatchPair(left,right,matchList);
      );

@@ -43,6 +43,7 @@ extern long personality(unsigned long persona);
 
 #include "../system/supervisorinterface.h"
 
+
 static void ignore(int);
 
 static void putstderr(const char *m) {
@@ -502,7 +503,6 @@ struct saveargs
   char** argv;
   char** envp;
   int volatile envc;
-  void* reserve;
 };
 
 static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
@@ -516,26 +516,19 @@ void* interpFunc(void* vargs2)
   char** saveargv = args->argv;
   int argc = args->argc;
   int volatile envc = args->envc;
-  void* reserve = args->reserve;
+     reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
      init_readline_variables();
      arginits(argc,(const char **)saveargv);
 
-     void M2__prepare();
-     M2__prepare();
+     //     void M2__prepare();
+     ///     M2__prepare();
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      
      M2_envp = M2_tostrings(envc,(char **)saveenvp);
      M2_argv = M2_tostrings(argc,(char **)saveargv);
      M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
-#if 0
-     /* not needed, now that the *__prepare functions are all run as constructors */
-     interp__prepare();		/* run all the startup code in the *.d files */
-#endif
      interp_setupargv();
-     if (reserve == NULL) {
-	  reserve = GC_MALLOC_ATOMIC(102400);
-	  }
      sigsetjmp(abort_jump,TRUE);
      abort_jump_set = TRUE;
 
@@ -543,7 +536,6 @@ void* interpFunc(void* vargs2)
      signal(SIGSEGV, segv_handler);
 #endif
 
-     //     reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
      interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
 
      clean_up();
@@ -551,7 +543,6 @@ void* interpFunc(void* vargs2)
      fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
 	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
 #endif
-     free(vargs);
      exit(0);
      return NULL;
 }
@@ -574,7 +565,6 @@ char **argv;
 #define saveargv argv
 #endif
      void main_inits();
-     static void *reserve = NULL;
 
      char **x = our_environ; 
      while (*x) envc++, x++;
@@ -695,26 +685,23 @@ char **argv;
      signal(SIGPIPE,SIG_IGN);
      system_handleInterruptsSetup(TRUE);
      
-     vargs = malloc(sizeof(struct saveargs));
+     vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
      vargs->argv=saveargv;
      vargs->argc=argc;
      vargs->envp=saveenvp;
      vargs->envc = envc;
-     vargs->reserve = reserve;
-     //     initializeThreadSupervisor(1);
-     /*pushTask(createThreadTask("Test",testFunc,(void*)432,0,0));
+
+     initializeThreadSupervisor(1);
+     pushTask(createThreadTask("Test",testFunc,(void*)432,0,0));
      pushTask(createThreadTask("Test",testFunc,(void*)433,0,0));
      pushTask(createThreadTask("Test",testFunc,(void*)434,0,0));
      pushTask(createThreadTask("Test",testFunc,(void*)435,0,0));
      pushTask(createThreadTask("Test",testFunc,(void*)436,0,0));
      pushTask(createThreadTask("Test",testFunc,(void*)437,0,0));
      pushTask(createThreadTask("Test",testFunc,(void*)438,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)439,0,0));*/
-     //     pushTask(createThreadTask("Interp",interpFunc,vargs,0,0));
-     pthread_t thread;
-     pthread_create(&thread,NULL,interpFunc,vargs);
-     //interpFunc(vargs);
-     sleep(500);
+     pushTask(createThreadTask("Test",testFunc,(void*)439,0,0));
+     pushTask(createThreadTask("Interp",interpFunc,vargs,0,0));
+     while(1) ;
      return 0;
      }
 
