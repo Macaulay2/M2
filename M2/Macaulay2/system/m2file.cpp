@@ -6,7 +6,7 @@ extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
 };
 
 M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
-  currentThreadMode(0),unsyncState(fileUnsyncState),exclusiveOwner(-1),recurseCount(0)
+  currentThreadMode(0),unsyncState(fileUnsyncState),exclusiveOwner(0),recurseCount(0)
 {
   pthread_mutex_init(&mapMutex,NULL);
 
@@ -41,7 +41,7 @@ void M2File::waitExclusiveThreadAcquire(size_t recurseCounter)
   pthread_mutex_lock(&mapMutex);
   while(1)
     {
-      if(exclusiveOwner==-1)
+      if(exclusiveOwner==0)
 	{
 	  exclusiveOwner=pthread_self();
 	  recurseCount=recurseCounter;
@@ -77,7 +77,7 @@ void M2File::releaseExclusiveThreadCount(size_t recurseCounter)
   recurseCount-=recurseCounter;
   if(!recurseCount)
     {
-      exclusiveOwner=-1;
+      exclusiveOwner=0;
       pthread_cond_broadcast(&exclusiveChangeCondition);
     }
   pthread_mutex_unlock(&mapMutex);

@@ -19,7 +19,7 @@ startup(tb:ThreadCellBody):null := (
      tb.interruptedFlagPointer = address(interruptedFlag);
      if notify then stderr << "--thread " << tb.tid << " started" << endl;
      --add thread to supervisor
-     Ccode(void,"addThreadBody(",lvalue(tb.tid),",",lvalue(tb),")");
+     Ccode(void,"addThreadBody(",lvalue(tb.thread),",",lvalue(tb),")");
      r := applyEE(f,x);
      when r is err:Error do (
 	  printError(err);
@@ -64,7 +64,7 @@ threadCellFinalizer(tc:ThreadCell,p:null):void := (
      -- because this finalizer may be called early, before all initialization is done.
      -- It is safe to write to stderr, because we've made output to it not depend on global variables being
      -- initialized.
-     Ccode(void,"delThread(",lvalue(tc.body.tid),")");
+     Ccode(void,"delThread(",lvalue(tc.body.thread),")");
      if tc.body.done then return;
      if tc.body.cancellationRequested then (
 	  stderr << "--thread " << tc.body.tid << " inaccessible, cancelled but not ready yet" << endl;

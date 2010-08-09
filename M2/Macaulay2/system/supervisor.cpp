@@ -178,7 +178,7 @@ struct ThreadTask* ThreadSupervisor::getTask()
       std::cout << "waiting" << std::endl;
       pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex);
     }
-  std::cout << "pthread cond wait finsihed" << std::endl;
+  std::cout << "pthread cond wait finished" << std::endl;
   struct ThreadTask* task = m_ReadyTasks.front();
   m_ReadyTasks.pop_front();
   m_RunningTasks.push_back(task);
