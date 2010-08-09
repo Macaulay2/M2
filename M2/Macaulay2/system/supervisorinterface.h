@@ -1,6 +1,7 @@
 #ifndef _system_supervisorinterface_h_
 #define _system_supervisorinterface_h_
 
+typedef void* (*ThreadTaskFunctionPtr)(void*);
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,7 +16,9 @@ extern "C" {
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
   extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
+  extern void pushTask(struct ThreadTask* task);
   extern void initializeThreadSupervisor(int numThreads);
+  struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
 #ifdef __cplusplus
 }
 #endif

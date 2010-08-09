@@ -83,7 +83,7 @@ export clearFileError(o:file):void := (
 export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt():string := "";
 newbuffer():string := new string len bufsize do provide ' ';
-threadLocal export stdError := newFile(
+export stdError := newFile(
      -- contrast with stderr, defined in errio.d
      -- intended just for top level use where nets might be printed
      "stderr", 0, 
@@ -97,7 +97,7 @@ export dummyfile := newFile("dummy",0,
      false,NOFD,NOFD,0,
      false,NOFD,false,        "",          0,0,false,false,noprompt,noprompt,false,true,false,0,
      false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0,-1,false);
-threadLocal export stdIO  := newFile("stdio",  0, 
+export stdIO  := newFile("stdio",  0, 
      false, "",
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,noprompt,false,true,false,0,

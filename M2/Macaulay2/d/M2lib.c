@@ -490,6 +490,27 @@ static void call_shared_library() {
 #include <python2.5/Python.h>
 #endif
 
+void* testFunc(void* q )
+{
+  printf("testfunc %lu\n",(unsigned long)q);
+  return NULL;
+}
+static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
+
+void* interpFunc(void* x)
+{
+     reverse_run(thread_prepare_list); // re-initialize any thread local variables
+     interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
+
+     clean_up();
+#if 0
+     fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
+	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
+#endif
+     exit(0);
+     return NULL;
+}
+
 /* these get put into startup.c by Makefile.in */
 
 int Macaulay2_main(argc,argv)
@@ -497,7 +518,6 @@ int argc;
 char **argv;
 {
      char dummy;
-     int returncode = 0;
      int volatile envc = 0;
 #if DUMPDATA
      static int old_collections = 0;
@@ -654,16 +674,12 @@ char **argv;
 #if __GNUC__
      signal(SIGSEGV, segv_handler);
 #endif
-     initializeThreadSupervisor(2);
-     interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
+     initializeThreadSupervisor(1);
+     pushTask(createThreadTask("Test",testFunc,(void*)432,0,0));
+     pushTask(createThreadTask("Interp",interpFunc,NULL,0,0));
 
-     clean_up();
-#if 0
-     fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
-	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
-#endif
-     exit(returncode);
-     return returncode;
+     sleep(500);
+     return 0;
      }
 
 void clean_up(void) {

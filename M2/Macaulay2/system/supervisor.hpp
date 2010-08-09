@@ -1,9 +1,21 @@
 #ifndef _system_supervisor_h_
 #define _system_supervisor_h_
 
+    /* gc doc tells us to include pthread.h before gc.h */
+    #ifdef GC_MALLOC
+      #error "gc.h already included"
+    #endif
+    #ifndef _REENTRANT
+      #define _REENTRANT
+    #endif
+    #include <pthread.h>
+    #define GC_THREADS
+    #include <gc/gc.h>
+
+
 #include <pthread.h>
 #include <set>
-#include <map>
+#include <map> 
 #include <list>
 
 typedef struct parse_ThreadCellBody_struct * parse_ThreadCellBody;

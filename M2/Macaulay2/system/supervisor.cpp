@@ -9,6 +9,21 @@ extern "C" {
     threadSupervisor.m_TargetNumThreads=numThreads;
     threadSupervisor.initialize();
   }
+  void pushTask(struct ThreadTask* task)
+  {
+    pthread_mutex_lock(&threadSupervisor.m_Mutex);
+    if(task->m_Dependencies.empty())
+      {
+	std::cout << "adding to ready tasks" << std::endl;
+	threadSupervisor.m_ReadyTasks.push_back(task);
+      }
+    else
+      {
+	threadSupervisor.m_WaitingTasks.push_back(task);
+      }
+    pthread_cond_signal(&threadSupervisor.m_TaskWaitingCondition);
+    pthread_mutex_unlock(&threadSupervisor.m_Mutex);
+  }
   void addThreadBody(pthread_t thread, parse_ThreadCellBody body)
   {
     pthread_mutex_lock(&threadSupervisor.m_Mutex);
@@ -66,6 +81,10 @@ extern "C" {
     pthread_mutex_lock(&task->m_Mutex);
     task->m_CancelTasks.insert(dependency);
     pthread_mutex_unlock(&task->m_Mutex);
+  }
+  struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds)
+  {
+    return new ThreadTask(name,func,userData,(bool)timeLimitExists,timeLimitSeconds);
   }
 };
 
@@ -155,7 +174,11 @@ struct ThreadTask* ThreadSupervisor::getTask()
 {
   pthread_mutex_lock(&m_Mutex);
   if(m_ReadyTasks.empty())
-    pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex);
+    {
+      std::cout << "waiting" << std::endl;
+      pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex);
+    }
+  std::cout << "pthread cond wait finsihed" << std::endl;
   struct ThreadTask* task = m_ReadyTasks.front();
   m_ReadyTasks.pop_front();
   m_RunningTasks.push_back(task);
@@ -180,7 +203,7 @@ void ThreadTask::run()
   pthread_mutex_unlock(&m_Mutex);
 }
 
-SupervisorThread::SupervisorThread() 
+SupervisorThread::SupervisorThread():m_KeepRunning(true)
 {
 }
 void SupervisorThread::start()
@@ -193,6 +216,7 @@ void SupervisorThread::threadEntryPoint()
   while(m_KeepRunning)
     {
       struct ThreadTask* task = threadSupervisor.getTask();
+      std::cout << "task found" << std::endl;
       task->run();
     }
 }
