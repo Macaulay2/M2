@@ -79,8 +79,10 @@ ifneq ($(RELAX),yes)
 M2_BOTH = -pipe -Wall -Wshadow -Wcast-qual
 
 # use no GNU extensions
-CXXFLAGS += -std=c++98
-CFLAGS += -std=c99
+# CXXFLAGS += -std=c++98
+# using -std=c99 is a bad idea, because in ubuntu, this standard causes __USE_POSIX to be undefined, 
+#   hence sigjmp_buf to be undefined, which is needed by gc
+# CFLAGS += -std=c99
 
 ifeq "@__INTEL_COMPILER@" "yes"
 X = -diag-disable 981,869,383,2259,444
