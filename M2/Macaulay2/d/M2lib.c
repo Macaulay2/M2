@@ -692,16 +692,9 @@ char **argv;
      vargs->envc = envc;
 
      initializeThreadSupervisor(1);
-     pushTask(createThreadTask("Test",testFunc,(void*)432,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)433,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)434,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)435,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)436,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)437,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)438,0,0));
-     pushTask(createThreadTask("Test",testFunc,(void*)439,0,0));
-     pushTask(createThreadTask("Interp",interpFunc,vargs,0,0));
-     while(1) ;
+     struct ThreadTask* interpTask = createThreadTask("Interp",interpFunc,vargs,0,0);
+     pushTask(interpTask);
+     waitOnTask(interpTask);
      return 0;
      }
 
