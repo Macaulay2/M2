@@ -14,7 +14,6 @@ extern "C" {
     pthread_mutex_lock(&threadSupervisor.m_Mutex);
     if(task->m_Dependencies.empty())
       {
-	std::cout << "adding to ready tasks" << std::endl;
 	threadSupervisor.m_ReadyTasks.push_back(task);
       }
     else
@@ -86,6 +85,10 @@ extern "C" {
   {
     return new ThreadTask(name,func,userData,(bool)timeLimitExists,timeLimitSeconds);
   }
+  void* waitOnTask(struct ThreadTask* task)
+  {
+    return task->waitOn();
+  }
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds):
@@ -96,7 +99,15 @@ ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userD
 ThreadTask::~ThreadTask()
 {
 }
-
+void* ThreadTask::waitOn()
+{
+  pthread_mutex_lock(&m_Mutex);
+  if(!m_Done)
+    pthread_cond_wait(&m_FinishCondition,&m_Mutex);
+  void* ret = m_Result;
+  pthread_mutex_unlock(&m_Mutex);
+  return ret;
+}
 ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   m_TargetNumThreads(targetNumThreads)
 {
@@ -108,7 +119,6 @@ ThreadSupervisor::~ThreadSupervisor()
 }
 void ThreadSupervisor::initialize()
 {
-  std::cout << "Initializing thread supervisor" << std::endl;
   for(int i = 0; i < m_TargetNumThreads; ++i)
     {
       SupervisorThread* thread = new SupervisorThread();
@@ -175,10 +185,8 @@ struct ThreadTask* ThreadSupervisor::getTask()
   pthread_mutex_lock(&m_Mutex);
   if(m_ReadyTasks.empty())
     {
-      std::cout << "waiting" << std::endl;
       pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex);
     }
-  std::cout << "pthread cond wait finished" << std::endl;
   struct ThreadTask* task = m_ReadyTasks.front();
   m_ReadyTasks.pop_front();
   m_RunningTasks.push_back(task);
@@ -194,6 +202,7 @@ void ThreadTask::run()
   pthread_mutex_lock(&m_Mutex);
   threadSupervisor._i_finished(this);
   m_Done = true;
+  pthread_cond_broadcast(&m_FinishCondition);
   //cancel stuff
   for(std::set<ThreadTask*>::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
     threadSupervisor._i_cancelTask(*it);
@@ -212,11 +221,9 @@ void SupervisorThread::start()
 }
 void SupervisorThread::threadEntryPoint()
 {
-  std::cout << "Thread Entry Point" << std::endl;
   while(m_KeepRunning)
     {
       struct ThreadTask* task = threadSupervisor.getTask();
-      std::cout << "task found" << std::endl;
       task->run();
     }
 }

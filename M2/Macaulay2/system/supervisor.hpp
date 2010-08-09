@@ -55,7 +55,9 @@ struct ThreadTask
   pthread_mutex_t m_Mutex;
   ///run task
   void run();
-
+  ///Condition variable for task
+  pthread_cond_t m_FinishCondition;
+  void* waitOn();
 };
 
 

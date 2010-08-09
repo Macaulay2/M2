@@ -13,6 +13,7 @@ extern "C" {
   extern void addThreadBody(pthread_t thread, parse_ThreadCellBody body);
   extern void addThread(pthread_t thread);
   extern void delThread(pthread_t thread);
+  extern void* waitOnTask(struct ThreadTask* task);
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
   extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
