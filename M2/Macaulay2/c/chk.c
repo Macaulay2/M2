@@ -1649,6 +1649,12 @@ static node chkdefinition(node e, scope v){
 				 String(")+sizeof("),
 				 lhs,
 				 String("))")),v);
+		    if (ltype != void_T) perform(list(7,Ccode_S,void_T,
+						      String("TS_Add_ThreadLocal(&"),
+						      lhs,
+						      String(",\""),
+						      lhs,
+						      String("\")")),v);
 		    node funid = newsymbol(tmp__S, totype(list(3,function_S,NULL,void_T)),
 			 global_scope, intern_F|defined_F|literal_F|constant_F);
 		    node defn = join( 
