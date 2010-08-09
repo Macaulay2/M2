@@ -1,9 +1,14 @@
 #include "supervisor.hpp"
 
+#include <iostream>
 
 extern "C" {
-  struct ThreadSupervisor threadSupervisor;
-
+  struct ThreadSupervisor threadSupervisor(1);
+  void initializeThreadSupervisor(int numThreads)
+  {
+    threadSupervisor.m_TargetNumThreads=numThreads;
+    threadSupervisor.initialize();
+  }
   void addThreadBody(pthread_t thread, parse_ThreadCellBody body)
   {
     pthread_mutex_lock(&threadSupervisor.m_Mutex);
@@ -73,13 +78,24 @@ ThreadTask::~ThreadTask()
 {
 }
 
-ThreadSupervisor::ThreadSupervisor()
+ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
+  m_TargetNumThreads(targetNumThreads)
 {
   pthread_mutex_init(&m_Mutex,NULL);
 }
 
 ThreadSupervisor::~ThreadSupervisor()
 {
+}
+void ThreadSupervisor::initialize()
+{
+  std::cout << "Initializing thread supervisor" << std::endl;
+  for(int i = 0; i < m_TargetNumThreads; ++i)
+    {
+      SupervisorThread* thread = new SupervisorThread();
+      thread->start();
+      m_Threads.push_back(thread);
+    }
 }
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)
 {
@@ -173,6 +189,7 @@ void SupervisorThread::start()
 }
 void SupervisorThread::threadEntryPoint()
 {
+  std::cout << "Thread Entry Point" << std::endl;
   while(m_KeepRunning)
     {
       struct ThreadTask* task = threadSupervisor.getTask();

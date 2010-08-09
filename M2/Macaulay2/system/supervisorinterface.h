@@ -15,6 +15,7 @@ extern "C" {
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
   extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
+  extern void initializeThreadSupervisor(int numThreads);
 #ifdef __cplusplus
 }
 #endif

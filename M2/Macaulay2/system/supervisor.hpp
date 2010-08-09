@@ -60,10 +60,26 @@ struct ThreadSupervisorInformation
   struct ThreadTask* m_Task;
 };
 
+
+class SupervisorThread
+{
+public:
+  SupervisorThread();
+  pthread_t ThreadId() { return m_ThreadId; }
+  void start();
+  void shutdown() { m_KeepRunning = false; }
+  static void* threadEntryPoint(void* st) { ((SupervisorThread*)st)->threadEntryPoint(); }
+ protected:
+  void threadEntryPoint(); 
+  pthread_t m_ThreadId;
+  volatile bool m_KeepRunning;
+};
+
+
 //singleton -- not garbage collected
 struct ThreadSupervisor
 {
-  ThreadSupervisor();
+  ThreadSupervisor(int targetNumThreads);
   ~ThreadSupervisor();
   void _i_startTask(struct ThreadTask* task, struct ThreadTask* launcher);
   void _i_cancelTask(struct ThreadTask* task);
@@ -87,19 +103,10 @@ struct ThreadSupervisor
   pthread_mutex_t m_Mutex;
   ///new task waiting
   pthread_cond_t m_TaskWaitingCondition;
-};
-
-class SupervisorThread
-{
-  SupervisorThread();
-  pthread_t ThreadId() { return m_ThreadId; }
-  void start();
-  void shutdown() { m_KeepRunning = false; }
-  static void* threadEntryPoint(void* st) { ((SupervisorThread*)st)->threadEntryPoint(); }
- protected:
-  void threadEntryPoint(); 
-  pthread_t m_ThreadId;
-  volatile bool m_KeepRunning;
+  ///list of supervisor threads
+  std::list<SupervisorThread*> m_Threads;
+  ///initialize
+  void initialize();
 };
 
 #include "supervisorinterface.h"

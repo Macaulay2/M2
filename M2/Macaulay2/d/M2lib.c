@@ -41,6 +41,8 @@
 extern long personality(unsigned long persona);
 #endif
 
+#include "../system/supervisorinterface.h"
+
 static void ignore(int);
 
 static void putstderr(const char *m) {
@@ -652,7 +654,7 @@ char **argv;
 #if __GNUC__
      signal(SIGSEGV, segv_handler);
 #endif
-
+     initializeThreadSupervisor(2);
      interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
 
      clean_up();
