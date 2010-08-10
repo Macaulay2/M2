@@ -119,6 +119,9 @@ struct ThreadSupervisor
   std::list<SupervisorThread*> m_Threads;
   ///initialize
   void initialize();
+  ///thread local id's
+  int m_ThreadLocalIdCounter;
+  static const int s_MaxThreadLocalIdCounter = 1024;
 };
 
 #include "supervisorinterface.h"

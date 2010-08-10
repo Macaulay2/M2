@@ -15,10 +15,10 @@ header "
   #endif
   ";
 
-header "__thread struct atomic_field interrupts_interruptedFlag;";
+--header "__thread struct atomic_field interrupts_interruptedFlag;";
 import threadLocal interruptedFlag:atomicField;
 
-header "__thread struct atomic_field interrupts_exceptionFlag;";
+--header "__thread struct atomic_field interrupts_exceptionFlag;";
 import threadLocal exceptionFlag:atomicField; -- indicates interrupt, stepping, or alarm
 
 header "extern int libfac_interruptflag;"; -- declared in libfac/factor/version.cc, but not exported, with C++ linkage

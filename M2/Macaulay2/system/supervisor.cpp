@@ -1,67 +1,72 @@
 #include "supervisor.hpp"
 
 #include <iostream>
+#include <stdlib.h>
+
+const static int numThreads = 1;
 
 extern "C" {
-  struct ThreadSupervisor threadSupervisor(1);
+  struct ThreadSupervisor* threadSupervisor = 0;
   void initializeThreadSupervisor(int numThreads)
   {
-    threadSupervisor.m_TargetNumThreads=numThreads;
-    threadSupervisor.initialize();
+    if(NULL!=threadSupervisor)
+      threadSupervisor = new ThreadSupervisor(numThreads);
+    threadSupervisor->m_TargetNumThreads=numThreads;
+    threadSupervisor->initialize();
   }
   void pushTask(struct ThreadTask* task)
   {
-    pthread_mutex_lock(&threadSupervisor.m_Mutex);
+    pthread_mutex_lock(&threadSupervisor->m_Mutex);
     if(task->m_Dependencies.empty())
       {
-	threadSupervisor.m_ReadyTasks.push_back(task);
+	threadSupervisor->m_ReadyTasks.push_back(task);
       }
     else
       {
-	threadSupervisor.m_WaitingTasks.push_back(task);
+	threadSupervisor->m_WaitingTasks.push_back(task);
       }
-    pthread_cond_signal(&threadSupervisor.m_TaskWaitingCondition);
-    pthread_mutex_unlock(&threadSupervisor.m_Mutex);
+    pthread_cond_signal(&threadSupervisor->m_TaskWaitingCondition);
+    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
   }
   void addThreadBody(pthread_t thread, struct parse_ThreadCellBody_struct* body)
   {
-    pthread_mutex_lock(&threadSupervisor.m_Mutex);
-    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor.m_ThreadMap.find(thread);
-    if(it==threadSupervisor.m_ThreadMap.end())
+    pthread_mutex_lock(&threadSupervisor->m_Mutex);
+    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
+    if(it==threadSupervisor->m_ThreadMap.end())
       {
 	struct ThreadSupervisorInformation* tsi = new ThreadSupervisorInformation();
 	tsi->m_ThreadId = thread;
 	tsi->m_Body = body;
-	threadSupervisor.m_ThreadMap[thread]=tsi;
+	threadSupervisor->m_ThreadMap[thread]=tsi;
       }
     else
       {
 	it->second->m_Body=body;
       }
-    pthread_mutex_unlock(&threadSupervisor.m_Mutex);
+    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
   }
   void addThread(pthread_t thread)
   {
-    pthread_mutex_lock(&threadSupervisor.m_Mutex);
-    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor.m_ThreadMap.find(thread);
-    if(it==threadSupervisor.m_ThreadMap.end())
+    pthread_mutex_lock(&threadSupervisor->m_Mutex);
+    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
+    if(it==threadSupervisor->m_ThreadMap.end())
       {
 	struct ThreadSupervisorInformation* tsi = new ThreadSupervisorInformation();
 	tsi->m_ThreadId = thread;
 	tsi->m_Body = NULL;
-	threadSupervisor.m_ThreadMap[thread]=tsi;
+	threadSupervisor->m_ThreadMap[thread]=tsi;
       }
-    pthread_mutex_unlock(&threadSupervisor.m_Mutex);
+    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
   }
   void delThread(pthread_t thread)
   {
-    pthread_mutex_lock(&threadSupervisor.m_Mutex);
-    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor.m_ThreadMap.find(thread);
-    if(it!=threadSupervisor.m_ThreadMap.end())
+    pthread_mutex_lock(&threadSupervisor->m_Mutex);
+    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
+    if(it!=threadSupervisor->m_ThreadMap.end())
       {
-	threadSupervisor.m_ThreadMap.erase(it);
+	threadSupervisor->m_ThreadMap.erase(it);
       }
-    pthread_mutex_unlock(&threadSupervisor.m_Mutex);
+    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
   }
   void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel)
   {
@@ -89,6 +94,16 @@ extern "C" {
   {
     return task->waitOn();
   }
+  extern void TS_Add_ThreadLocal(int* refno, const char* name)
+  {
+    if(!threadSupervisor)
+      threadSupervisor = new ThreadSupervisor(numThreads);
+    int ref = threadSupervisor->m_ThreadLocalIdCounter++;
+    if(ref>threadSupervisor->s_MaxThreadLocalIdCounter)
+     abort();
+    *refno = ref;
+  }
+
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds):
@@ -110,7 +125,7 @@ void* ThreadTask::waitOn()
   return ret;
 }
 ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
-  m_TargetNumThreads(targetNumThreads)
+  m_TargetNumThreads(targetNumThreads),m_ThreadLocalIdCounter(0)
 {
   pthread_cond_init(&m_TaskWaitingCondition,NULL);
   pthread_mutex_init(&m_Mutex,NULL);
@@ -202,15 +217,15 @@ void ThreadTask::run()
   pthread_mutex_unlock(&m_Mutex);
   m_Result = m_Func(m_UserData);
   pthread_mutex_lock(&m_Mutex);
-  threadSupervisor._i_finished(this);
+  threadSupervisor->_i_finished(this);
   m_Done = true;
   pthread_cond_broadcast(&m_FinishCondition);
   //cancel stuff
   for(std::set<ThreadTask*>::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
-    threadSupervisor._i_cancelTask(*it);
+    threadSupervisor->_i_cancelTask(*it);
   //start stuff
   for(std::set<ThreadTask*>::iterator it = m_StartTasks.begin(); it!=m_StartTasks.end(); ++it)
-    threadSupervisor._i_startTask(*it,this);
+    threadSupervisor->_i_startTask(*it,this);
   pthread_mutex_unlock(&m_Mutex);
 }
 
@@ -225,7 +240,7 @@ void SupervisorThread::threadEntryPoint()
 {
   while(m_KeepRunning)
     {
-      struct ThreadTask* task = threadSupervisor.getTask();
+      struct ThreadTask* task = threadSupervisor->getTask();
       task->run();
     }
 }
