@@ -1,6 +1,7 @@
 // Copyright 1996 Michael E. Stillman.
 
 #include "pfaff.hpp"
+#include "../system/supervisorinterface.h"
 
 PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
   : R(M0->get_ring()),
@@ -59,7 +60,7 @@ int PfaffianComputation::calc(int nsteps)
 	return COMP_DONE;
       if (--nsteps == 0)
 	return COMP_DONE_STEPS;
-      if (test_Field(interrupts_interruptedFlag))
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 	return COMP_INTERRUPTED;
     }
 }

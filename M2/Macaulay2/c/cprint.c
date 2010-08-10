@@ -71,13 +71,13 @@ void printsymbol(node p){
 	  {
 	    //THIS IS AN INT EXAMPLE
 	    //	    *((int*)TS_Get_Local(M2_gbTrace_id)) = 0;
-    	    put("*((");
+    	    put("(*((");
 	    node ltype = type(p);
 	    cprint(ltype);
 	    put("*)");
 	    put("TS_Get_Local(");
 	    printsymbolbasic(p);
-	    put("_id))");
+	    put("_id)))");
 	  }
      else
 	  printsymbolbasic(p);

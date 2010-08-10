@@ -5,7 +5,7 @@
 #include "text-io.hpp"
 #include "matrix-con.hpp"
 #include "newdelete.hpp"
-
+#include "../system/supervisorinterface.h"
 extern RingZZ *globalZZ;
 
 int GaussElimComputation::complete_thru_degree() const
@@ -234,7 +234,7 @@ void GaussElimComputation::start_computation()
 	      emit_wrapped("r");
 	  insert(p);
 	  n_pairs++;
-	  if (test_Field(interrupts_interruptedFlag))
+	  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 	    {
 	      set_status(COMP_INTERRUPTED);
 	      return;

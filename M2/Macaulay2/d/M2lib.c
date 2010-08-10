@@ -291,7 +291,7 @@ static void interrupt_handler(int sig) {
 	  r = write(STDERR,"\n",1);
 	  }
      #endif
-     if (test_Field(interrupts_interruptedFlag) || interrupts_interruptPending) {
+     if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)) || THREADLOCAL(interrupts_interruptPending,bool)) {
 	  if (isatty(STDIN) && isatty(STDOUT)) 
 	       while (TRUE) {
 		    char buf[10];
@@ -347,9 +347,9 @@ static void interrupt_handler(int sig) {
 	       }
 	  }
      else {
-	  if (interrupts_interruptShield) interrupts_interruptPending = TRUE;
+       if (THREADLOCAL(interrupts_interruptShield,bool)) THREADLOCAL(interrupts_interruptPending,bool) = TRUE;
 	  else {
-	       if (tokens_stopIfError) {
+               if (THREADLOCAL(tokens_stopIfError,bool)) {
 		    int interruptExit = 2;	/* see also interp.d */
 		    fprintf(stderr,"interrupted, stopping\n");
 		    exit(interruptExit);

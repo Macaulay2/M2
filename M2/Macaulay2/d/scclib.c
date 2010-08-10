@@ -8,6 +8,8 @@
 #include "../c/compat.c"
 #include "debug.h"
 
+#include "../system/supervisorinterface.h"
+
 int reading_from_readline = FALSE;
 
 extern void stack_trace();
@@ -874,7 +876,7 @@ char const *system_strerror(void) {
 	  errno = 0;
 	  return msg;
      }
-     if (test_Field(interrupts_interruptedFlag)) return "interrupted";
+     if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return "interrupted";
      return "no system error indication found";
 }
 

@@ -10,6 +10,13 @@
 
 typedef void* (*ThreadTaskFunctionPtr)(void*);
 
+#define GETSPECIFICTHREADLOCAL
+#ifdef GETSPECIFICTHREADLOCAL
+#define THREADLOCAL(x,typ) (*((typ*)TS_Get_Local(x##_id)))
+#else
+#define THREADLOCAL(x,typ) x
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
