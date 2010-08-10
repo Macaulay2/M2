@@ -77,3 +77,7 @@ void invalidNullPointer(const char *file, int line, int column) {
  compile-command: "make -C $M2BUILDDIR/Macaulay2/c scc-core.o "
  End:
 */
+
+
+
+

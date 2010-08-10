@@ -348,3 +348,4 @@ bool sigreadfile(char *name, char **pathopened) {
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
 # End:
 */
+

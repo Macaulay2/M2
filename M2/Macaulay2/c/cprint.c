@@ -2,6 +2,12 @@
 
 #include "scc.h"
 
+
+//are we currently printing a declaration?
+//used only for when in pthread mode to tell symbols not to print workaround for symbol 
+int threadLocalDeclarationFlag=0;
+
+
 static void printstringconst(node p){
      char *s = tostring(p);
      putchar('"');
@@ -35,8 +41,7 @@ char *tostring(node e){
 	  default: assert(FALSE); return "<<unrecognized node type>>";
 	  }
      }
-
-void printsymbol(node p){
+static void printsymbolbasic(node p){
      assert(p != NULL);
      assert(p->tag == symbol_tag);
      if (p->body.symbol.cprintvalue) {
@@ -48,6 +53,30 @@ void printsymbol(node p){
      else {
           put(tostring(p));
 	  }
+     }
+
+char* getsymbolbasicname(node p){
+     assert(p != NULL);
+     assert(p->tag == symbol_tag);
+     if (p->body.symbol.Cname != NULL) {
+	  return (p->body.symbol.Cname);
+	  }
+     else {
+          return (tostring(p));
+	  }
+     }
+
+void printsymbol(node p){
+     if(pthreadThreadLocal && !threadLocalDeclarationFlag && p->body.symbol.flags & threadLocal_F)
+	  {
+	       put("*((");
+	       cprint(type(p));
+	       put("*)TS_Get_Local(");
+	       printsymbolbasic(p);
+	       put("_id))");
+	  }
+     else
+	  printsymbolbasic(p);
      }
 
 void pput(char *s){
@@ -425,7 +454,9 @@ static void cprintdefine(node t,bool definitions) {
      if (flags & threadLocal_F)
 	  {
 	       put("int ");
+	       threadLocalDeclarationFlag = 1;
 	       cprint(t);
+	       threadLocalDeclarationFlag = 0;	      
 	       put("_id;\n");
 //	       put("__thread ");
           }
@@ -444,7 +475,7 @@ static void cprintdefine(node t,bool definitions) {
 	       }
 	  cprintlist(functionargtypes(typ));
 	  }
-     else {
+     else if(!(flags & threadLocal_F)){
 	  cprint(typ);
 	  put(" ");
 	  cprint(t);
