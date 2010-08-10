@@ -8,9 +8,9 @@ declarations "
        const char dummy; /* to prevent assignment */
        };
 
-  #define load_Field(x) AO_load(&x.field)
+  #define load_Field(x) AO_load(&(x).field)
   #define test_Field(x) (load_Field(x) != 0)
-  #define store_Field(x,val) AO_store(&x.field,val)
+  #define store_Field(x,val) AO_store(&(x).field,val)
   #endif
   ";
 export LockValue := atomicType "AO_TS_VAL_t";
