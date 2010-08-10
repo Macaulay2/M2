@@ -1,0 +1,1 @@
+our use of __attribute__ ((constructor)) in C code produce from safeC is not ANSI standard
