@@ -1477,8 +1477,6 @@ static node chkimport(node e, scope v){
      return sym;
      }
 
-extern int threadLocalDeclarationFlag;
-
 static node chkdefinition(node e, scope v){
      node lhs, rhs, ltype;
      bool lhs_thread_local = FALSE;
@@ -1642,10 +1640,23 @@ static node chkdefinition(node e, scope v){
 	       }
 	  else {
 	       if (lhs_thread_local) {
-		    if(!ispointertype(type(lhs))) {
-			 errorpos(lhs, "thread local variable not pointer type");
+		 if(!ispointertype(ltype) && ltype!=int_T && !isortype(ltype) && ltype!=bool_T) {
+		   if(ltype->body.type.flags & integer_type_F) {
+		     if(EQUAL!=strcmp("unsigned int",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("char",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("unsigned char",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("short",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("unsigned short",ltype->body.type.Cname))
+		       {
+			 errorpos(lhs, "thread local variable not valid integer type");
 			 return bad__K;
-			 }
+		       }
+		   }
+		   else {
+		     errorpos(lhs, "thread local variable not pointer or integer type");
+		     return bad__K;
+		   }
+		 }
 		    if(compilerThreadLocal) {
 			 assign(lhs,rhsvalue,v);
 			 if (ltype != void_T  && !is_atomic_memory(ltype)) perform(list(9,Ccode_S,void_T, 

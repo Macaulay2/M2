@@ -29,10 +29,9 @@ extern "C" {
   extern void initializeThreadSupervisor(int numThreads);
   extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
   extern void TS_Add_ThreadLocal(int* refno, const char* name) { }
-     static inline void* TS_Get_Local(int refno) 
-     {
-	  return NULL;
-     }
+  static inline void** TS_Get_Local(int refno) {
+    return NULL;
+  }
      
      
      

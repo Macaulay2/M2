@@ -69,11 +69,15 @@ char* getsymbolbasicname(node p){
 void printsymbol(node p){
      if(pthreadThreadLocal && !threadLocalDeclarationFlag && p->body.symbol.flags & threadLocal_F)
 	  {
-	       put("*((");
-	       cprint(type(p));
-	       put("*)TS_Get_Local(");
-	       printsymbolbasic(p);
-	       put("_id))");
+	    //THIS IS AN INT EXAMPLE
+	    //	    *((int*)TS_Get_Local(M2_gbTrace_id)) = 0;
+    	    put("*((");
+	    node ltype = type(p);
+	    cprint(ltype);
+	    put("*)");
+	    put("TS_Get_Local(");
+	    printsymbolbasic(p);
+	    put("_id))");
 	  }
      else
 	  printsymbolbasic(p);
