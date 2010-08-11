@@ -193,7 +193,7 @@ Hom(Matrix,Matrix) := Matrix => (f,g) -> (
     -- So we need a map Hom(B,C) -> Hom(A,D).
     inducedMap(Hom(A,D),Hom(B,C),(transpose matrix f) ** matrix g))
 
-Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
+Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";

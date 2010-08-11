@@ -100,7 +100,7 @@ fittingIdeal(ZZ,Module) := Ideal => (i,M) -> (
      then ideal 1_(ring M)
      else trim minors(n-i,p))
 
-symmetricPower(ZZ,Module) := (d,M) -> coimage basis(d,symmetricAlgebra M,SourceRing => ring M);
+symmetricPower(ZZ,Module) := (d,M) -> coimage basis(d,symmetricAlgebra M,SourceRing => ring M)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

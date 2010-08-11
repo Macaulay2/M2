@@ -1,5 +1,9 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+ExtOptions = new OptionTable from {
+     Prune => true
+     }
+
 Ext = new ScriptedFunctor from {
      argument => (
 	  (M,N) -> (
@@ -9,17 +13,17 @@ Ext = new ScriptedFunctor from {
      superscript => (
 	  i -> new ScriptedFunctor from {
 	       argument => (X -> (
-	       	    	 (M,N) -> (
+	       	    	 ExtOptions >> opts -> (M,N) -> (
 		    	      f := lookup(Ext,class i,class M,class N);
 		    	      if f === null then noMethod(Ext,(i,M,N),{false,false,false});
-		    	      f(i,M,N))
+		    	      (f opts)(i,M,N))
 	       	    	 ) X
 	       	    )
 	       }
 	  )
      }
 	  
-Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
+Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
@@ -38,7 +42,7 @@ Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
 	       then kernel Hom(b_(i+1),N)
 	       else Hom(C_i,N))))
 
-Ext(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
+Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
@@ -52,7 +56,7 @@ Ext(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
 	  Et':= target Et.cache.pruningMap;
 	  Es.cache.pruningMap^-1 * inducedMap(Es',Et',Hom(g_i,N)) * Et.cache.pruningMap))
 
-Ext(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
+Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
@@ -66,14 +70,14 @@ Ext(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
 	  Et':= target Et.cache.pruningMap;
 	  Et.cache.pruningMap^-1 * inducedMap(Et',Es',Hom(C_i,f)) * Es.cache.pruningMap))
 
-Ext(ZZ, Ideal, Matrix) := (i,J,f) -> Ext^i(module J,f)
-Ext(ZZ, Matrix, Ring) := (i,f,R) -> Ext^i(f,R^1)
-Ext(ZZ, Matrix, Ideal) := (i,f,J) -> Ext^i(f,module J)
-Ext(ZZ, Module, Ring) := (i,M,R) -> Ext^i(M,R^1)
-Ext(ZZ, Module, Ideal) := (i,M,J) -> Ext^i(M,module J)
-Ext(ZZ, Ideal, Ring) := (i,I,R) -> Ext^i(module I,R^1)
-Ext(ZZ, Ideal, Ideal) := (i,I,J) -> Ext^i(module I,module J)
-Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
+Ext(ZZ, Ideal, Matrix) := opts -> (i,J,f) -> Ext^i(module J,f,opts)
+Ext(ZZ, Matrix, Ring) := opts -> (i,f,R) -> Ext^i(f,R^1,opts)
+Ext(ZZ, Matrix, Ideal) := opts -> (i,f,J) -> Ext^i(f,module J,opts)
+Ext(ZZ, Module, Ring) := opts -> (i,M,R) -> Ext^i(M,R^1,opts)
+Ext(ZZ, Module, Ideal) := opts -> (i,M,J) -> Ext^i(M,module J,opts)
+Ext(ZZ, Ideal, Ring) := opts -> (i,I,R) -> Ext^i(module I,R^1,opts)
+Ext(ZZ, Ideal, Ideal) := opts -> (i,I,J) -> Ext^i(module I,module J,opts)
+Ext(ZZ, Ideal, Module) := opts -> (i,I,N) -> Ext^i(module I,N,opts)
 
 -- total ext over complete intersections
 
@@ -172,7 +176,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   cacheModule.cache#cacheKey = tot;
   tot)
 
-Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
+Ext(Module, Ring) := (M,R) -> Ext(M,R^1,opts)
 Ext(Module, Ideal) := (M,J) -> Ext(M,module J)
 Ext(Ideal, Ring) := (I,R) -> Ext(module I,R^1)
 Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
