@@ -31,9 +31,7 @@ extern "C" {
   struct ThreadTask;
   extern struct ThreadSupervisor* threadSupervisor;
   struct parse_ThreadCellBody_struct;
-  extern void addThreadBody(pthread_t thread, struct parse_ThreadCellBody_struct* body);
   void createThreadGCMemory();
-  extern void addThread(pthread_t thread);
   extern void delThread(pthread_t thread);
   extern void* waitOnTask(struct ThreadTask* task);
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);

@@ -34,42 +34,6 @@ extern "C" {
     pthread_cond_signal(&threadSupervisor->m_TaskWaitingCondition);
     pthread_mutex_unlock(&threadSupervisor->m_Mutex);
   }
-  void addThreadBody(pthread_t thread, struct parse_ThreadCellBody_struct* body)
-  {
-  #ifdef GETSPECIFICTHREADLOCAL
-    pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter]);
-  #endif
-    pthread_mutex_lock(&threadSupervisor->m_Mutex);
-    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
-    if(it==threadSupervisor->m_ThreadMap.end())
-      {
-	struct ThreadSupervisorInformation* tsi = new ThreadSupervisorInformation();
-	tsi->m_ThreadId = thread;
-	tsi->m_Body = body;
-	threadSupervisor->m_ThreadMap[thread]=tsi;
-      }
-    else
-      {
-	it->second->m_Body=body;
-      }
-    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
-  }
-  void addThread(pthread_t thread)
-  {
-#ifdef GETSPECIFICTHREADLOCAL
-    pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter]);
-#endif
-    pthread_mutex_lock(&threadSupervisor->m_Mutex);
-    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
-    if(it==threadSupervisor->m_ThreadMap.end())
-      {
-	struct ThreadSupervisorInformation* tsi = new ThreadSupervisorInformation();
-	tsi->m_ThreadId = thread;
-	tsi->m_Body = NULL;
-	threadSupervisor->m_ThreadMap[thread]=tsi;
-      }
-    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
-  }
   void delThread(pthread_t thread)
   {
     pthread_mutex_lock(&threadSupervisor->m_Mutex);
@@ -299,7 +263,7 @@ void SupervisorThread::threadEntryPoint()
   reverse_run(thread_prepare_list);// re-initialize any thread local variables
   while(m_KeepRunning)
     {
-      //AO_store(&m_Interrupt->field,false);
+      AO_store(&m_Interrupt->field,false);
       struct ThreadTask* task = threadSupervisor->getTask();
       task->run(this);
     }
