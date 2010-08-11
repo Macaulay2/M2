@@ -632,6 +632,7 @@ basis = method(
 	  Truncate => false,
 	  Limit => -1,
 	  Variables => null,
+	  Degree => null,
 	  SourceRing => null -- defaults to ring of the module, but accepts the coefficient ring
      	  })
 basis(InfiniteNumber,InfiniteNumber,Module) := 
@@ -672,24 +673,19 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
      f := value log;
      S := opts.SourceRing;
-     if S === null or S === R then map(M,,f)
+     off := splice opts.Degree;
+     d := degreeLength R;
+     if off === null then off = toList( d:0 );
+     if S === null or S === R then map(M,,f,Degree => off)
      else (
      	  p := map(R,S);
-	  d := degreeLength R;
 	  N := S ^ (
-	       if d === 0 
-	       then rank source f
+	       if d === 0 then rank source f
 	       else (
 		    lifter := p.cache.DegreeLift;
 		    if not instance(lifter, Function) then error "basis: no degree lift function provided";
-		    apply(pack(d,degrees source f), deg -> 
-			 -- try
-			 - lifter deg
-			 -- else toList (degreeLength S:0)
-			 )
-		    )
-	       );
- 	  map(M,N,p,f)))
+		    apply(pack(d,degrees source f), deg -> - lifter (deg-off))));
+ 	  map(M,N,p,f,Degree => off)))
 
 basis(List,Module) := opts -> (deg,M) -> basis(deg,deg,M,opts)
 basis(ZZ,Module) := opts -> (deg,M) -> basis({deg},M,opts)

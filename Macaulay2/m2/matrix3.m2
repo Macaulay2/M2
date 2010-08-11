@@ -40,7 +40,8 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
 	xvars := map(ring JJ, ring M, submatrix(vars ring JJ, toList(0..n1-1)));
 	m1 := xvars m;
 	m1 = presentation ((cokernel m1) ** (cokernel JJ));
-	mapback := map(S, ring JJ, map(S^1, S^n1, 0) | vars S);
+	deglen := degreeLength S;
+	mapback := map(S, ring JJ, map(S^1, S^n1, 0) | vars S, DegreeMap => d -> take(d,-deglen));
 
 	if opts.UseHilbertFunction === true 
            and isHomogeneous m1 and isHomogeneous f and isHomogeneous m then (
