@@ -165,6 +165,7 @@ public:
 	      m++, n++;
 	    }
      }
+  int partial_compare(int num, const_monomial m, const_monomial n) const;
   int compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const;
   bool divides(const_monomial m, const_monomial n) const;
   void divide(const_monomial m, const_monomial n, monomial result) const;

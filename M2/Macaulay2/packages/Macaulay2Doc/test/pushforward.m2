@@ -22,6 +22,17 @@ assert( isHomogeneous r )
 m' = map(R^1,f)
 assert( m === m' )
 
+errorDepth = 0
+isHomogeneous (p|p)
+isHomogeneous (q|q)
+isHomogeneous (p||p)
+isHomogeneous (q||q)
+
+end
+
+isHomogeneous matrix {{p},{p}}
+isHomogeneous matrix {{p,p}}
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test pushforward.out"
 -- End:
