@@ -26,11 +26,15 @@ private:
   bool do_truncation;
   int limit; // if >= 0, then stop after that number.
 
+  const bool partial; // if true, then compare just the first few exponent vector components
   const int * lo_degree; // if non-null, the lowest degree to collect
+  const int lo_len;	 // the length of the vector at lo_degree, equal to nvars_ if partial is false
   const int * hi_degree; // if non-null, the highest degree to collect
+  const int hi_len;	 // the length of the vector at hi_degree, equal to nvars_ if partial is false
   // In the singly graded case: collect every monomial whose weight lies >= weight of
   // lo_degree (kb_target_lo_weight), and <= weight of hi_degree (kb_target_hi_weight).
-  // (resp -infty, infty, if lo_degree resp hi_degree is null).
+  // (resp -infty, infty, if lo_degree resp hi_degree is null).  (NO: that's not right (!), because ordering of the weights might 
+  // be the reverse of the ordering of the degrees, if the heft vector is negative.)
   //
   // in multi-graded case, we can only collect one degree, or the entire module.
   // so: lo_degree and hi_degree must be the same (null, or same degree vector).
@@ -55,12 +59,16 @@ private:
 
   int weight_of_monomial(const int *deg) const; // deg is an encoded degree monomials
   int weight(const int *exp) const; // exp is an exponent vector
+  int weight(const int len,const int *exp) const; // exp is an exponent vector of length "len", at most the degree length
   void insert();
   void k_basis0(int firstvar);
 
   KBasis(const Matrix *bottom, 
+	 bool partial,
 	 const int * lo_degree,
+	 int lo_len,
 	 const int * hi_degree,
+	 int hi_len,
 	 M2_arrayint wt, 
 	 M2_arrayint vars,
 	 bool do_truncation,
@@ -82,8 +90,11 @@ public:
 };
 
 KBasis::KBasis(const Matrix *bottom, 
+	       bool partial0,
 	       const int * lo_degree0,
+	       int lo_len0,
 	       const int * hi_degree0,
+	       int hi_len0,
 	       M2_arrayint wt, 
 	       M2_arrayint vars0,
 	       bool do_truncation0,
@@ -93,8 +104,11 @@ KBasis::KBasis(const Matrix *bottom,
     vars(vars0),
     do_truncation(do_truncation0),
     limit(limit0),
+    partial(partial0),
     lo_degree(lo_degree0),
+    lo_len(lo_len0),
     hi_degree(hi_degree0),
+    hi_len(hi_len0),
     kb_error(false)
 {
   P = bottom->get_ring()->cast_to_PolynomialRing();
@@ -113,14 +127,20 @@ KBasis::KBasis(const Matrix *bottom,
   kb_exp = newarray_atomic_clear(int, P->n_vars());
   kb_exp_weight = 0;
 
-  if (lo_degree != 0) kb_target_lo_weight = weight(lo_degree);
-  if (hi_degree != 0) kb_target_hi_weight = weight(hi_degree);
+  if (lo_degree != NULL) kb_target_lo_weight = weight(lo_len,lo_degree);
+  if (hi_degree != NULL) kb_target_hi_weight = weight(hi_len,hi_degree);
+
+  if (kb_target_lo_weight > kb_target_hi_weight) {
+    int t = kb_target_lo_weight;
+    kb_target_lo_weight = kb_target_hi_weight;
+    kb_target_hi_weight = t;
+  }
 
   kb_mon = M->make_one();
 
   mat = MatrixConstructor(bottom->rows(), 0);
 
-  if (D->n_vars() > 1 && lo_degree)
+  if (D->n_vars() > 1 && lo_degree != NULL && !partial)
     {
       kb_target_multidegree = D->make_one();
       D->from_expvector(lo_degree, kb_target_multidegree);
@@ -147,6 +167,11 @@ int KBasis::weight(const int *exp) const
   return ntuple::weight(wt_vector->len, exp, wt_vector);
 }
 
+int KBasis::weight(const int len, const int *exp) const
+{
+  return ntuple::weight(len, exp, wt_vector);
+}
+
 void KBasis::insert()
 {
   // We have a new basis element
@@ -162,11 +187,14 @@ void KBasis::k_basis0(int firstvar)
     // Recursively add to the result matrix all monomials in the
     // variables 0..topvar having degree 'deg' which are not in 'mi'.
 {
+
+  if (test_Field(interrupts_interruptedFlag)) return;
+
   bool do_insert = false;
   bool do_recurse;
   Bag *b;
 
-  if (hi_degree && kb_exp_weight >= kb_target_hi_weight)
+  if (hi_degree != NULL && kb_exp_weight >= kb_target_hi_weight)
     {
       if (kb_exp_weight > kb_target_hi_weight)
 	{
@@ -190,12 +218,17 @@ void KBasis::k_basis0(int firstvar)
 	{
 	  // We have the same weight.  The case when kb_exp_weight > kb_target_lo_weight
 	  // should not get to this point.
-	  do_insert = (D->compare(kb_target_multidegree, kb_exp_multidegree) == EQ);
+	  if (partial)
+	    {
+	      
+	    }
+	  else
+	    do_insert = (D->compare(kb_target_multidegree, kb_exp_multidegree) == EQ);
 	}
     }
   else
     {
-      if (!lo_degree || kb_exp_weight >= kb_target_lo_weight)
+      if (lo_degree == NULL || kb_exp_weight >= kb_target_lo_weight)
 	do_insert = true;
     }
 
@@ -248,6 +281,7 @@ void KBasis::compute()
   if (limit == 0) return;
   for (int i=0; i<bottom_matrix->n_rows(); i++)
     {
+      if (test_Field(interrupts_interruptedFlag)) return;
       kb_comp = i;
 
       // Make the monomial ideal: this should contain only
@@ -256,7 +290,7 @@ void KBasis::compute()
         // the true means: over ZZ, don't consider monomials with non-unit lead coeffs
 
       if (kb_monideal->is_one()) continue;
-      if (hi_degree == 0)
+      if (hi_degree == NULL)
 	{
 	  // check here that kb_monideal is 0-dimensional...!
 	  if (kb_monideal->n_pure_powers() < M->n_vars())
@@ -300,35 +334,43 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
   //   (3) both are given
   //       if multidegree: they must be the same, truncation must be false.
   // 
-  const int *lo = (lo_degree->len > 0 ? lo_degree->array : 0);
-  const int *hi = (hi_degree->len > 0 ? hi_degree->array : 0);
+  const int *lo = lo_degree->len > 0 ? lo_degree->array : 0;
+  const int *hi = hi_degree->len > 0 ? hi_degree->array : 0;
+  const bool partial = lo && lo_degree->len < D->n_vars() || hi && hi_degree->len < D->n_vars();
 
-  if ((lo != 0 && lo_degree->len != D->n_vars())
-      || (hi != 0 && hi_degree->len != D->n_vars()))
+  if (lo_degree->len > D->n_vars() || hi_degree->len > D->n_vars())
     {
-      ERROR("expected degrees of length %d", D->n_vars());
+      ERROR("expected degrees of length at most %d", D->n_vars());
+      return 0;
     }
 
-  if (D->n_vars() > 1 && (lo != 0 || hi != 0))
+  if (lo_degree->len > 0 && hi_degree->len > 0 && lo_degree->len != hi_degree->len)
     {
-      if (lo == 0 || hi == 0)
+      ERROR("expected degree bounds of equal length");
+      return 0;
+    }
+
+  if (lo_degree->len > 1)
+    for (int i = 0; i<lo_degree->len; i++) 
+      if (lo_degree->array[i] != hi_degree->array[i])
 	{
-	  ERROR("expected low and high degrees to be specified");
+	  ERROR("expected degree bounds to be equal");
 	  return 0;
 	}
-      for (int i=0; i<D->n_vars(); i++)
-	if (lo[i] != hi[i])
-	  {
-	    ERROR("expected low and high degrees to be the same");
-	    return 0;
-	  }
-      if (do_truncation)
-	{
-	  ERROR("cannot do truncation for multigraded rings");
-	}
+
+  if (lo_degree->len != hi_degree->len && partial)
+    {
+      ERROR("expected degrees of equal or zero length when doing partial comparisons");
+      return 0;
     }
 
-  KBasis KB(bottom,lo,hi,wt,vars,do_truncation,limit);
+  if (D->n_vars() > 1 && do_truncation)
+    {
+      ERROR("cannot do truncation for multigraded rings");
+      return 0;
+    }
+
+  KBasis KB(bottom,partial,lo,lo_degree->len,hi,hi_degree->len,wt,vars,do_truncation,limit);
 
   for (int i=0; i<vars->len; i++)
     if (KB.var_wts[i] <= 0)
@@ -336,7 +378,9 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
 	ERROR("basis: computation requires a heft form positive on all degrees");
 	return 0;
       }
+  if (lo != NULL && hi != NULL && lo[0] > hi[0]) return KB.value();
   KB.compute();
+  if (test_Field(interrupts_interruptedFlag)) return 0;
   return KB.value();
 }
 
@@ -351,5 +395,5 @@ const Matrix *Matrix::basis(M2_arrayint lo_degree,
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e matrix-kbasis.o "
 // End:

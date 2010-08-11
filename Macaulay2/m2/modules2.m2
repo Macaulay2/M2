@@ -643,7 +643,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if hi === neginfinity then error "incongruous upper degree bound: -infinity";
      if lo === neginfinity then lo = {};
      if hi === infinity then hi = {};
-     if #lo != 0 and #lo =!= degreeLength R or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
+     if #lo != 0 and #lo > degreeLength R or #hi != 0 and #hi > degreeLength R then error "expected length of degree bound not to exceed that of ring";
      if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
      var := opts.Variables;
      if var === null then var = 0 .. numgens R - 1
