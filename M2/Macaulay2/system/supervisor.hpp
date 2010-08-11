@@ -85,6 +85,8 @@ public:
   void threadEntryPoint(); 
   pthread_t m_ThreadId;
   volatile bool m_KeepRunning;
+  //to prevent GC
+  void** m_ThreadLocal; 
 };
 
 #define GETSPECIFICTHREADLOCAL
@@ -92,8 +94,8 @@ public:
 struct ThreadSupervisor
 {
   #ifdef GETSPECIFICTHREADLOCAL
+  pthread_key_t m_ThreadSpecificKey;
   static const int s_MaxThreadLocalIdCounter = 1024;
-  void** m_ThreadLocalMemory;
   #endif
   ThreadSupervisor(int targetNumThreads);
   ~ThreadSupervisor();

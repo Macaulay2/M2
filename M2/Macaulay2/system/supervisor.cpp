@@ -35,6 +35,9 @@ extern "C" {
   }
   void addThreadBody(pthread_t thread, struct parse_ThreadCellBody_struct* body)
   {
+  #ifdef GETSPECIFICTHREADLOCAL
+    pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter]);
+  #endif
     pthread_mutex_lock(&threadSupervisor->m_Mutex);
     std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
     if(it==threadSupervisor->m_ThreadMap.end())
@@ -52,6 +55,9 @@ extern "C" {
   }
   void addThread(pthread_t thread)
   {
+#ifdef GETSPECIFICTHREADLOCAL
+    pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter]);
+#endif
     pthread_mutex_lock(&threadSupervisor->m_Mutex);
     std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
     if(it==threadSupervisor->m_ThreadMap.end())
@@ -143,7 +149,9 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
 {
   threadSupervisor=this;
   #ifdef GETSPECIFICTHREADLOCAL
-  m_ThreadLocalMemory = new void*[s_MaxThreadLocalIdCounter];
+  if(pthread_key_create(&m_ThreadSpecificKey,NULL))
+    abort();
+  pthread_setspecific(m_ThreadSpecificKey,new void*[s_MaxThreadLocalIdCounter]);
   #endif
   staticThreadLocalInit();
   pthread_cond_init(&m_TaskWaitingCondition,NULL);
@@ -250,6 +258,7 @@ void ThreadTask::run()
 
 SupervisorThread::SupervisorThread():m_KeepRunning(true)
 {
+  m_ThreadLocal = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
 }
 void SupervisorThread::start()
 {
@@ -257,6 +266,9 @@ void SupervisorThread::start()
 }
 void SupervisorThread::threadEntryPoint()
 {
+  #ifdef GETSPECIFICTHREADLOCAL
+  pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_ThreadLocal);
+  #endif
   while(m_KeepRunning)
     {
       struct ThreadTask* task = threadSupervisor->getTask();
