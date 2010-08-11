@@ -176,7 +176,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   cacheModule.cache#cacheKey = tot;
   tot)
 
-Ext(Module, Ring) := (M,R) -> Ext(M,R^1,opts)
+Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
 Ext(Module, Ideal) := (M,J) -> Ext(M,module J)
 Ext(Ideal, Ring) := (I,R) -> Ext(module I,R^1)
 Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
