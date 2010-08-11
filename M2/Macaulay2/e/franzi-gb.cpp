@@ -197,7 +197,7 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
     }
   }
   
-  cout << "added" << endl;
+  cout << " good pair ";
   return true;
 }
 
@@ -577,8 +577,8 @@ void interreduction(IntermediateBasis &F) {
 }
 
 // A good (normal? Sugar?) selection strategy should be implemented here
-Pair bestPair(Pairs &B) {
-  return *(B.begin() );
+Pairs::iterator bestPair(Pairs &B) {
+  return (B.begin() );
 }
 
 // complete algorithm to compute a Groebner basis F  
@@ -591,9 +591,10 @@ void gb( IntermediateBasis &F, int n) {
   unsigned int countAddPoly = 0;
   unsigned int numSPoly= 0;
   while (!B.empty()) {
-    Pair pair = bestPair(B);
+    Pairs::iterator it = bestPair(B);
+    Pair pair = *it;
     //Pair pair = *(B.begin());
-    B.erase(B.begin());
+    B.erase(it);
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;
       BRP S = sPolynomial(pair,F,n);
@@ -607,11 +608,11 @@ void gb( IntermediateBasis &F, int n) {
         interreductionMod++;
         if ( true || interreductionMod % 2 == 0 ) {
           interreductionWithBuckets(F);
-          B = makeList(F, n);
+          //B = makeList(F, n);
         }
         nextIndex++;
         //rearrangeBasis(F, nextIndex);
-        //cout << F.size() << " ";
+        cout << F.size() << " " << endl;
         //cout << S.LT() << endl;
       }
     }
