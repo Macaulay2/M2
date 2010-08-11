@@ -944,6 +944,7 @@ export {
 	symbol promote,
 	symbol protect,
 	symbol prune,
+	symbol Prune,
 	symbol pruningMap,
 	symbol pseudoRemainder,
 	symbol pseudocode,
