@@ -205,20 +205,14 @@ isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
 ggConcatCols := (tar,src,mats) -> (
-     f := map(tar,src,rawConcatColumns (raw\mats));
-     if same(degree \ mats) and degree f != degree mats#0
-     then f = map(target f, source f, f, Degree => degree mats#0);
-     f)
+     map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatColumns (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
+     )
 
 ggConcatRows := (tar,src,mats) -> (
-     rawmats := raw \ mats;
-     f := map(tar,src,rawConcatRows (raw\mats));
-     if same(degree \ mats)
-     and degree f != degree mats#0
-     then f = map(target f, source f, f, Degree => degree mats#0);
-     f)
+     map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatRows (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
+     )
 
-ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
+ggConcatBlocks = (tar,src,mats) -> (
      f := map(tar,src,rawConcatBlocks mats);
      if same(degree \ flatten mats)
      and degree f != degree mats#0#0
@@ -226,9 +220,11 @@ ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
      f)
 
 sameringMatrices = mats -> (
-     if sameresult(ring,mats) then mats else (
-     	  mats = apply(mats, m -> promote(m,try ring sum apply(toList mats, m -> 0_(ring m)) else error "expected matrices over compatible rings"));
-     	  mats))
+     if sameresult(m -> (if m.?RingMap then m.RingMap,ring target m, ring source m), mats)
+     then mats
+     else (
+	  R := try ring sum apply(toList mats, m -> 0_(ring target m)) else error "expected matrices over compatible rings";
+	  apply(mats, m -> promote(m,R))))
 
 directSum Matrix := f -> Matrix.directSum (1 : f)
 Matrix.directSum = args -> (
