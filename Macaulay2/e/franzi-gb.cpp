@@ -8,11 +8,11 @@
 // pair of indeces 
 // negative index -i for field polynomial x_i^2+x_i
 class Pair {
-  // order with respect to lcm in lex ordering
+  // order with respect to lcm in gRevLex ordering
   friend bool operator< (const Pair &pair1, const Pair &pair2) {
-    if (pair1.lcm < pair2.lcm) {
+    if (funccompGRL( pair2.lcm, pair1.lcm)) {
       return true;
-    } else if (pair1.lcm > pair2.lcm) {
+    } else if (funccompGRL(pair1.lcm, pair2.lcm)) {
       return false;
     } else {
       if(pair1.j < pair2.j) {
@@ -24,6 +24,22 @@ class Pair {
       } 
     }
   }
+//  // order with respect to lcm in lex ordering
+//  friend bool operator< (const Pair &pair1, const Pair &pair2) {
+//    if (pair1.lcm < pair2.lcm) {
+//      return true;
+//    } else if (pair1.lcm > pair2.lcm) {
+//      return false;
+//    } else {
+//      if(pair1.j < pair2.j) {
+//        return true;
+//      } else if(pair1.j > pair2.j) {
+//        return false;
+//      } else { 
+//        return pair1.i < pair2.i;
+//      } 
+//    }
+//  }
 
   public:
   int i;
@@ -52,7 +68,7 @@ class Pair {
       } else {
         unsigned int a = F.find(i) ->second.LT();
         unsigned int b = F.find(j) ->second.LT();
-        lcm = a|b;
+        lcm = a | b;
         //lcm = F.find(i) ->second.LT() | F.find(j) ->second.LT();
         good = !BRP::isRelativelyPrime( a,b );
       }
@@ -157,11 +173,13 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
   if( BRP::isRelativelyPrime(g,f) ) {
+    cout << "rp ";
     return false;
   }
   
   // both polynomials are monomials, so their S polynomial reduces to 0
   if ( fp.g->size() == 1 && fp.f->size() == 1 ) {
+    cout << "m ";
     //cout << "Throwing out S-pair from 2 monomials" << endl;
     return false;
   }
@@ -174,10 +192,12 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
     const BRP *K = &(it->second);
 
     if(( k != i && k != j && BRP::isDivisibleBy(lcm, K->LT() ) && !inList(i,k,B,F) && !inList(j,k,B,F))) {
+      cout << "l ";
       return false;
     }
   }
   
+  cout << "added" << endl;
   return true;
 }
 
@@ -276,8 +296,8 @@ void rearrangeBasis(IntermediateBasis &F, int nextIndex) {
   for( IntermediateBasis::iterator j = F.begin(); j != F.end(); ++j ) {
     if (j->first != nextIndex ) {
       for( IntermediateBasis::iterator i = F.begin(); i->first < j->first; ++i) {
-        //if ( funccompGRL(i->second.LT(), j->second.LT() )) {
-        if ( i->second.LT() > j->second.LT() ) {
+        if ( funccompGRL(i->second.LT(), j->second.LT() )) {
+        //if ( i->second.LT() > j->second.LT() ) {
           BRP tmp = i->second;
           i->second = j->second;
           j->second = tmp;
