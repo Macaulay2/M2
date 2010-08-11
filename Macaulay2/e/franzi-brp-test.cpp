@@ -223,6 +223,7 @@ void testDivide() {
 
 void testLT() {
   monomials foo;
+  // w, yz
   foo.push_back(8);
   foo.push_back(3);
   BRP bar = BRP(foo);
@@ -240,6 +241,14 @@ void testLT() {
   if ( BRP(bar1.LT()) != bar1 ) {
     cout << "Testing LT(): " << (bar.LT() == 8 ? "is good" : "is bad") << endl;
   }
+
+  //  xy + wz
+  BRP inGRL = BRP(9) + BRP(6);
+  if( inGRL.LT() == 9 ) {
+    cout << inGRL.LT() << endl;
+    cout << "ERROR for leading term, we're in grevlex order" << endl;
+  }
+
 }
  
 
@@ -271,6 +280,7 @@ void testRemainder() { //f = ax+g
   }
 }
 
+// the number of bits in an integer is the same as the total degree of a monomial
 void testNumberOfBits() {
   if ( Bits::numberOfBits(0) != 0 ) {
     cout << "Error, 1 should have 0 bits" << endl;
@@ -286,28 +296,53 @@ void testNumberOfBits() {
   }
 };
 
+// assume a,b have the same degree
+// true if a >= b
 void testReverseLex() {
+  // yz, xy
+  // yz < xy
   if ( Bits::reverseLex(3, 6) ) {
     cout << "Error, yz in revLex < xy" << endl;
   }
+
+  // yz, xz
+  // yz < xz
   if ( Bits::reverseLex(3, 5) ) {
     cout << "Error, yz in revLex < xz" << endl;
   }
-  if ( !Bits::reverseLex(3, 3) ) {
+
+  // yz, yz
+  // yz >= yz
+  if ( Bits::reverseLex(3, 3) ) {
     cout << "Error, yz in revLex = yz" << endl;
   }
+
+  // xy, yz
+  // xy > yz
   if ( !Bits::reverseLex(6, 3) ) {
     cout << "Error, xy in revLex > yz" << endl;
   }
+
+  // xy, xz
+  // xy > xz
   if ( !Bits::reverseLex(6, 5) ) {
     cout << "Error, xy in revLex > xz" << endl;
   }
-  if (! Bits::reverseLex(6, 6) ) {
+
+  if ( Bits::reverseLex(6, 6) ) {
     cout << "Error, xy in revLex = xy" << endl;
   }
+
+  // w,x,y,z
+  // xy, wy
+  // xy < wy
   if ( Bits::reverseLex(6, 10) ) {
     cout << "Error, xy in revLex < wy" << endl;
   }
+
+  // xy, wz
+  // xy > wz 
+  // This is different in Lex
   if ( !Bits::reverseLex(6, 9) ) {
     cout << "Error, xy in revLex > wz" << endl;
   }
@@ -378,5 +413,7 @@ int main() {
   testReverseLex();
   testNumberOfBits();
   testGRevLexSorting();
+
+  cout << "All tests passed" << endl;
 }
 
