@@ -13,10 +13,12 @@ typedef void* (*ThreadTaskFunctionPtr)(void*);
 #define GETSPECIFICTHREADLOCAL
 #ifdef GETSPECIFICTHREADLOCAL
 #define THREADLOCAL(x,typ) (*((typ*)TS_Get_Local(x##_id)))
-#define THREADLOCALDECL(typ,x) int x##_id;
-#define THREADLOCALINIT(x) TS_Add_ThreadLocal(&x,"x");
+#define THREADLOCALDECL(typ,x) int x##_id
+#define THREADLOCALINIT(x) TS_Add_ThreadLocal(&x##_id,#x)
 #else
 #define THREADLOCAL(x,typ) x
+#define THREADLOCALDECL(typ,x) typ x
+#define THREADLOCALINIT(x) x
 #endif
 
 
@@ -38,10 +40,11 @@ extern "C" {
   extern void pushTask(struct ThreadTask* task);
   extern void initializeThreadSupervisor(int numThreads);
   extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
+#ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);
-  static inline void** TS_Get_Local(int refno) { return NULL; }
-     
-     
+  static void** TS_Get_Local(int refno) { return (void**)&((void**)threadSupervisor)[refno]; }
+#endif
+  
      
 #ifdef __cplusplus
 }

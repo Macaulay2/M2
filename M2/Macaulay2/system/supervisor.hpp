@@ -87,10 +87,14 @@ public:
   volatile bool m_KeepRunning;
 };
 
-
+#define GETSPECIFICTHREADLOCAL
 //singleton -- not garbage collected
 struct ThreadSupervisor
 {
+  #ifdef GETSPECIFICTHREADLOCAL
+  static const int s_MaxThreadLocalIdCounter = 1024;
+  void* m_ThreadLocalMemory[s_MaxThreadLocalIdCounter];
+  #endif
   ThreadSupervisor(int targetNumThreads);
   ~ThreadSupervisor();
   void _i_startTask(struct ThreadTask* task, struct ThreadTask* launcher);
@@ -121,7 +125,6 @@ struct ThreadSupervisor
   void initialize();
   ///thread local id's
   int m_ThreadLocalIdCounter;
-  static const int s_MaxThreadLocalIdCounter = 1024;
 };
 
 #include "supervisorinterface.h"

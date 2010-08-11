@@ -1643,6 +1643,8 @@ static node chkdefinition(node e, scope v){
 		 if(!ispointertype(ltype) && ltype!=int_T && !isortype(ltype) && ltype!=bool_T) {
 		   if(ltype->body.type.flags & integer_type_F) {
 		     if(EQUAL!=strcmp("unsigned int",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("volatile int",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("volatile bool",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("unsigned char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("short",ltype->body.type.Cname) &&

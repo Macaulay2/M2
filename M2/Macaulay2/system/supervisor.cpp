@@ -2,15 +2,20 @@
 
 #include <iostream>
 #include <stdlib.h>
-
+#include <assert.h>
 const static int numThreads = 1;
 
+
+
 extern "C" {
-  struct ThreadSupervisor* threadSupervisor = 0;
+  THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
+  THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);
+  struct ThreadSupervisor* threadSupervisor = 0 ;
   void initializeThreadSupervisor(int numThreads)
   {
-    if(NULL!=threadSupervisor)
+    if(NULL==threadSupervisor)
       threadSupervisor = new ThreadSupervisor(numThreads);
+    assert(threadSupervisor);
     threadSupervisor->m_TargetNumThreads=numThreads;
     threadSupervisor->initialize();
   }
@@ -96,8 +101,9 @@ extern "C" {
   }
   extern void TS_Add_ThreadLocal(int* refno, const char* name)
   {
-    if(!threadSupervisor)
+    if(NULL == threadSupervisor)
       threadSupervisor = new ThreadSupervisor(numThreads);
+    assert(threadSupervisor);
     int ref = threadSupervisor->m_ThreadLocalIdCounter++;
     if(ref>threadSupervisor->s_MaxThreadLocalIdCounter)
      abort();
@@ -124,9 +130,19 @@ void* ThreadTask::waitOn()
   pthread_mutex_unlock(&m_Mutex);
   return ret;
 }
+
+void staticThreadLocalInit()
+{
+  THREADLOCALINIT(interrupts_exceptionFlag);
+  THREADLOCALINIT(interrupts_interruptedFlag);
+}
+
+
 ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   m_TargetNumThreads(targetNumThreads),m_ThreadLocalIdCounter(0)
 {
+  threadSupervisor=this;
+  staticThreadLocalInit();
   pthread_cond_init(&m_TaskWaitingCondition,NULL);
   pthread_mutex_init(&m_Mutex,NULL);
 }
