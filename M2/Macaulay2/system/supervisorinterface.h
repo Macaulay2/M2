@@ -32,6 +32,7 @@ extern "C" {
   extern struct ThreadSupervisor* threadSupervisor;
   struct parse_ThreadCellBody_struct;
   extern void addThreadBody(pthread_t thread, struct parse_ThreadCellBody_struct* body);
+  void createThreadGCMemory();
   extern void addThread(pthread_t thread);
   extern void delThread(pthread_t thread);
   extern void* waitOnTask(struct ThreadTask* task);
@@ -41,6 +42,10 @@ extern "C" {
   extern void pushTask(struct ThreadTask* task);
   extern void initializeThreadSupervisor();
   extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
+  static inline void runM2Task(ThreadTaskFunctionPtr fptr, void* userData) {
+    struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0);
+    pushTask(task);
+  }
 #ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);
   static void** TS_Get_LocalArray() {  return (void**)pthread_getspecific(*(pthread_key_t*)threadSupervisor); }

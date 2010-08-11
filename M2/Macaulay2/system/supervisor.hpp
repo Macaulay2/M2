@@ -136,6 +136,8 @@ struct ThreadSupervisor
   pthread_cond_t m_TaskWaitingCondition;
   ///list of supervisor threads
   std::list<SupervisorThread*> m_Threads;
+  ///set of initialized pointers
+  std::set<int*> m_ThreadLocalIdPtrSet;
   ///initialize
   void initialize();
   ///thread local id's

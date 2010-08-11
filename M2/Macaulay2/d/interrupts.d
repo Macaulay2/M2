@@ -8,13 +8,6 @@ export threadLocal interruptPending := false;
 export threadLocal alarmedFlag := false;
 export threadLocal steppingFlag := false;
 
-header "
-  #include <M2/config.h>
-  #ifndef USE_THREADS
-    #define __thread
-  #endif
-  ";
-
 
 import threadLocal interruptedFlag:atomicField;
 

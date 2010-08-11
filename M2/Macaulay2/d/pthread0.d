@@ -39,6 +39,7 @@ export init(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_init(&(",lvalue(x),"),N
 export destroy(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_destroy(&(",lvalue(x),"))");
 export lock(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_lock(&(",lvalue(x),"))");
 export unlock(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_unlock(&(",lvalue(x),"))");
+export getthreadself() ::= Ccode(Thread, "pthread_self()");
 
 header "spinLock pthread0_uninitializedSpinLock;";
 import uninitializedSpinLock:SpinLock;

@@ -3,8 +3,9 @@ use expr;
 
 header "#include \"../system/supervisorinterface.h\"";
 
-threadCreate(tid:Thread,f:function(ThreadCellBody):null,tb:ThreadCellBody) ::=  Ccode(int,
-     "pthread_create(&(",lvalue(tid),"),NULL,(void *(*)(void *))(",f,"),(void *)(",tb,"))");
+threadCreate(f:function(ThreadCellBody):null,tb:ThreadCellBody) ::=  Ccode(void,
+     "runM2Task((void *(*)(void *))(",f,"),(void *)(",tb,"))");
+
 
 threadDetach(tid:Thread) ::=  Ccode(int,"pthread_detach(",tid,")");
 
@@ -14,6 +15,7 @@ startup(tb:ThreadCellBody):null := (
      Ccode(void,"reverse_run(thread_prepare_list)"); -- re-initialize any thread local variables
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
+     tb.thread = getthreadself();
      tb.tid = gettid();
      tb.exceptionFlagPointer = address(exceptionFlag);
      tb.interruptedFlagPointer = address(interruptedFlag);
@@ -80,11 +82,8 @@ inThread2(fun:Expr,arg:Expr):Expr := (
      tc := ThreadCell(ThreadCellBody(nullThread(), 0, false, false, false, fun, arg, nullE, null(), null()));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
-     errno := threadCreate(tc.body.thread,startup,tc.body);
+     threadCreate(startup,tc.body);
      Ccode(void, "sigprocmask(SIG_SETMASK,&old,NULL); }");
-     if errno != 0 then return buildErrorPacketErrno("thread creation failed",errno);
-     errno = threadDetach(tc.body.thread);
-     if errno != 0 then return buildErrorPacketErrno("thread detaching failed",errno);
      Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",threadCellFinalizer,",0,0,0)");
      Expr(tc));
 

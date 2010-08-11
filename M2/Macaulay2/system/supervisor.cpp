@@ -113,6 +113,15 @@ extern "C" {
     if(NULL == threadSupervisor)
       threadSupervisor = new ThreadSupervisor(numThreads);
     assert(threadSupervisor);
+    pthread_mutex_lock(&threadSupervisor->m_Mutex);
+    if(threadSupervisor->m_ThreadLocalIdPtrSet.find(refno)!=threadSupervisor->m_ThreadLocalIdPtrSet.end())
+      {
+	pthread_mutex_unlock(&threadSupervisor->m_Mutex);
+	return;
+      }
+    threadSupervisor->m_ThreadLocalIdPtrSet.insert(refno);
+    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
+
     int ref = threadSupervisor->m_ThreadLocalIdCounter++;
     if(ref>threadSupervisor->s_MaxThreadLocalIdCounter)
      abort();
@@ -148,13 +157,14 @@ void staticThreadLocalInit()
 
 
 ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
-  m_TargetNumThreads(targetNumThreads),m_ThreadLocalIdCounter(0)
+  m_TargetNumThreads(targetNumThreads),m_ThreadLocalIdCounter(1)
 {
   threadSupervisor=this;
   #ifdef GETSPECIFICTHREADLOCAL
   if(pthread_key_create(&m_ThreadSpecificKey,NULL))
     abort();
-  pthread_setspecific(m_ThreadSpecificKey,new void*[s_MaxThreadLocalIdCounter]);
+
+
   #endif
   staticThreadLocalInit();
   pthread_cond_init(&m_TaskWaitingCondition,NULL);
@@ -224,17 +234,12 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 }
 void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
 {
-  std::cout << "canceling" << std::endl;
   pthread_mutex_lock(&m_Mutex);
   pthread_mutex_lock(&task->m_Mutex);
   AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
   task->m_KeepRunning=false;
-  std::cout << "ICT: " << task->m_CurrentThread->m_Interrupt << std::endl;
-  std::cout << AO_load(&task->m_CurrentThread->m_Interrupt->field) << std::endl;
-  std::cout << "set" << std::endl;
   pthread_mutex_unlock(&task->m_Mutex);
   pthread_mutex_unlock(&m_Mutex);
-  std::cout << "out" << std::endl;
 }
 struct ThreadTask* ThreadSupervisor::getTask()
 {
@@ -256,6 +261,7 @@ void ThreadTask::run(SupervisorThread* thread)
     {
       threadSupervisor->_i_finished(this);
       pthread_mutex_unlock(&m_Mutex);
+      return;
     }
   m_CurrentThread=thread;
   m_Started = true;
@@ -266,7 +272,7 @@ void ThreadTask::run(SupervisorThread* thread)
   m_Done = true;
   m_CurrentThread=NULL;
   pthread_cond_broadcast(&m_FinishCondition);
-  //cancel stuff
+  //cancel stuff_
   for(std::set<ThreadTask*>::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
     threadSupervisor->_i_cancelTask(*it);
   //start stuff
@@ -278,7 +284,6 @@ void ThreadTask::run(SupervisorThread* thread)
 SupervisorThread::SupervisorThread():m_KeepRunning(true)
 {
   m_ThreadLocal = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
-  m_Interrupt=&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field);
 }
 void SupervisorThread::start()
 {
@@ -289,6 +294,7 @@ void SupervisorThread::threadEntryPoint()
   #ifdef GETSPECIFICTHREADLOCAL
   pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_ThreadLocal);
   #endif
+  m_Interrupt=&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field);
   while(m_KeepRunning)
     {
       //AO_store(&m_Interrupt->field,false);
