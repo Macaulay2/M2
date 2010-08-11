@@ -5,9 +5,10 @@ S = symmetricAlgebra M;
 compactMatrixForm = false
 transpose presentation S
 basis_2 S
-basis(2,S,SourceRing=>R)
-symmetricPower(ZZ,Module) := (d,M) -> coimage basis(d,symmetricAlgebra M,SourceRing => ring M);
-symmetricPower_2 M
+f = basis(2,S,SourceRing=>R)
+N = coimage f
+N' = symmetricPower_2 M
+assert( N === N' )
 symmetricPower_3 M
 symmetricPower_11 M
 
