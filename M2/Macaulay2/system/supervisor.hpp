@@ -93,7 +93,7 @@ struct ThreadSupervisor
 {
   #ifdef GETSPECIFICTHREADLOCAL
   static const int s_MaxThreadLocalIdCounter = 1024;
-  void* m_ThreadLocalMemory[s_MaxThreadLocalIdCounter];
+  void** m_ThreadLocalMemory;
   #endif
   ThreadSupervisor(int targetNumThreads);
   ~ThreadSupervisor();

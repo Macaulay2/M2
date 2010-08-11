@@ -42,7 +42,8 @@ extern "C" {
   extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
 #ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);
-  static void** TS_Get_Local(int refno) { return (void**)&((void**)threadSupervisor)[refno]; }
+  static void** TS_Get_LocalArray() {  return *(void***)threadSupervisor; }
+  static void** TS_Get_Local(int refno) { return &TS_Get_LocalArray()[refno]; }
 #endif
   
      

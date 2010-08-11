@@ -142,6 +142,9 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   m_TargetNumThreads(targetNumThreads),m_ThreadLocalIdCounter(0)
 {
   threadSupervisor=this;
+  #ifdef GETSPECIFICTHREADLOCAL
+  m_ThreadLocalMemory = new void*[s_MaxThreadLocalIdCounter];
+  #endif
   staticThreadLocalInit();
   pthread_cond_init(&m_TaskWaitingCondition,NULL);
   pthread_mutex_init(&m_Mutex,NULL);
