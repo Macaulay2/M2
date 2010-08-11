@@ -4,7 +4,7 @@
 ## Source code ###
 ##################
 C_FILES = 
-CC_FILES = m2file supervisor
+CC_FILES = m2file supervisor tests
 D_FILES = 
 DD_FILES = 
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <assert.h>
-const static int numThreads = 1;
+const static int numThreads = 2;
 
 
 
@@ -11,7 +11,7 @@ extern "C" {
   THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
   THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);
   struct ThreadSupervisor* threadSupervisor = 0 ;
-  void initializeThreadSupervisor(int numThreads)
+  void initializeThreadSupervisor()
   {
     if(NULL==threadSupervisor)
       threadSupervisor = new ThreadSupervisor(numThreads);
@@ -93,8 +93,11 @@ extern "C" {
   }
   void addDependency(struct ThreadTask* task, struct ThreadTask* dependency)
   {
+    pthread_mutex_lock(&dependency->m_Mutex);
+    dependency->m_StartTasks.insert(task);
+    pthread_mutex_unlock(&dependency->m_Mutex);
     pthread_mutex_lock(&task->m_Mutex);
-    task->m_CancelTasks.insert(dependency);
+    task->m_Dependencies.insert(dependency);
     pthread_mutex_unlock(&task->m_Mutex);
   }
   struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds)
@@ -160,6 +163,7 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
 
 ThreadSupervisor::~ThreadSupervisor()
 {
+  pthread_key_delete(m_ThreadSpecificKey);
 }
 void ThreadSupervisor::initialize()
 {
@@ -169,6 +173,8 @@ void ThreadSupervisor::initialize()
       thread->start();
       m_Threads.push_back(thread);
     }
+  extern int TS_Test();
+  TS_Test();
 }
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)
 {
@@ -182,18 +188,18 @@ void ThreadSupervisor::_i_finished(struct ThreadTask* task)
     {
       m_CanceledTasks.push_back(task);
     }
-    
+  
   pthread_mutex_unlock(&m_Mutex);
 }
 void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* launcher)
 {
   pthread_mutex_lock(&m_Mutex);
-  pthread_mutex_lock(&task->m_Mutex);
+  //  pthread_mutex_lock(&task->m_Mutex);
   if(!task->m_Dependencies.empty())
     {
       if(!launcher)
 	{
-	  pthread_mutex_unlock(&task->m_Mutex);
+	  //	  pthread_mutex_unlock(&task->m_Mutex);
 	  pthread_mutex_unlock(&m_Mutex);
 	  return;
 	}
@@ -205,23 +211,23 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 	}
       if(!task->m_Dependencies.empty())
 	{
-	  pthread_mutex_unlock(&task->m_Mutex);
+	  //	  pthread_mutex_unlock(&task->m_Mutex);
 	  pthread_mutex_unlock(&m_Mutex);
 	  return;
 	}
     }
-  m_ReadyTasks.push_back(task);
   m_WaitingTasks.remove(task);
+  m_ReadyTasks.push_back(task);
   pthread_cond_signal(&m_TaskWaitingCondition);
-  pthread_mutex_unlock(&task->m_Mutex);
+  //  pthread_mutex_unlock(&task->m_Mutex);
   pthread_mutex_unlock(&m_Mutex);
 }
 void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
 {
   pthread_mutex_lock(&m_Mutex);
-  pthread_mutex_lock(&task->m_Mutex);
+  //  pthread_mutex_lock(&task->m_Mutex);
   task->m_KeepRunning = false;
-  pthread_mutex_unlock(&task->m_Mutex);
+  //  pthread_mutex_unlock(&task->m_Mutex);
   pthread_mutex_unlock(&m_Mutex);
 }
 struct ThreadTask* ThreadSupervisor::getTask()

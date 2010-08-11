@@ -38,7 +38,7 @@ extern "C" {
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
   extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
   extern void pushTask(struct ThreadTask* task);
-  extern void initializeThreadSupervisor(int numThreads);
+  extern void initializeThreadSupervisor();
   extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
 #ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);
