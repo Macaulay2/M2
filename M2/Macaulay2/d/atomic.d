@@ -5,7 +5,6 @@ declarations "
   #define atomic_field_decl
   struct atomic_field {
        AO_t field;
-       const char dummy; /* to prevent assignment */
        };
 
   #define load_Field(x) AO_load(&(x).field)

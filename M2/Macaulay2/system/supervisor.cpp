@@ -122,7 +122,7 @@ extern "C" {
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds):
-  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true)
+  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL)
 {
   pthread_mutex_init(&m_Mutex,NULL);
   pthread_cond_init(&m_FinishCondition,NULL);
@@ -226,7 +226,8 @@ void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
 {
   pthread_mutex_lock(&m_Mutex);
   //  pthread_mutex_lock(&task->m_Mutex);
-  task->m_KeepRunning = false;
+  AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
+  task->m_KeepRunning=false;
   //  pthread_mutex_unlock(&task->m_Mutex);
   pthread_mutex_unlock(&m_Mutex);
 }
@@ -243,15 +244,17 @@ struct ThreadTask* ThreadSupervisor::getTask()
   pthread_mutex_unlock(&m_Mutex);
   return task;
 }
-void ThreadTask::run()
+void ThreadTask::run(SupervisorThread* thread)
 {
   pthread_mutex_lock(&m_Mutex);
+  m_CurrentThread=thread;
   m_Started = true;
   pthread_mutex_unlock(&m_Mutex);
   m_Result = m_Func(m_UserData);
   pthread_mutex_lock(&m_Mutex);
   threadSupervisor->_i_finished(this);
   m_Done = true;
+  m_CurrentThread=NULL;
   pthread_cond_broadcast(&m_FinishCondition);
   //cancel stuff
   for(std::set<ThreadTask*>::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
@@ -265,6 +268,7 @@ void ThreadTask::run()
 SupervisorThread::SupervisorThread():m_KeepRunning(true)
 {
   m_ThreadLocal = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
+  m_Interrupt=&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field);
 }
 void SupervisorThread::start()
 {
@@ -278,6 +282,6 @@ void SupervisorThread::threadEntryPoint()
   while(m_KeepRunning)
     {
       struct ThreadTask* task = threadSupervisor->getTask();
-      task->run();
+      task->run(this);
     }
 }

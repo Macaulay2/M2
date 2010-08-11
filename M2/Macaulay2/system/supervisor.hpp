@@ -1,6 +1,16 @@
 #ifndef _system_supervisor_h_
 #define _system_supervisor_h_
+  #include <atomic_ops.h>
+#ifndef atomic_field_decl
+#define atomic_field_decl
+  struct atomic_field {
+       AO_t field;
+       };
 
+  #define load_Field(x) AO_load(&(x).field)
+  #define test_Field(x) (load_Field(x) != 0)
+  #define store_Field(x,val) AO_store(&(x).field,val)
+#endif
     /* gc doc tells us to include pthread.h before gc.h */
     #ifdef GC_MALLOC
       #error "gc.h already included"
@@ -19,7 +29,7 @@
 typedef struct parse_ThreadCellBody_struct * parse_ThreadCellBody;
 
 typedef void* (*ThreadTaskFunctionPtr)(void*);
-
+class SupervisorThread;
 //not garbage collected
 struct ThreadTask
 {
@@ -54,9 +64,11 @@ struct ThreadTask
   ///Mutex for accessing task
   pthread_mutex_t m_Mutex;
   ///run task
-  void run();
+  void run(SupervisorThread* thread);
   ///Condition variable for task
   pthread_cond_t m_FinishCondition;
+  ///Current thread running on
+  SupervisorThread* m_CurrentThread;
   void* waitOn();
 };
 
@@ -81,6 +93,7 @@ public:
   void start();
   void shutdown() { m_KeepRunning = false; }
   static void* threadEntryPoint(void* st) { ((SupervisorThread*)st)->threadEntryPoint(); }
+  struct atomic_field* m_Interrupt;
  protected:
   void threadEntryPoint(); 
   pthread_t m_ThreadId;
