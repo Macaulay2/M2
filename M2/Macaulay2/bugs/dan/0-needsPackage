@@ -13,5 +13,5 @@ run this
 
     	loadPackage "A"
 
-the symbol x ends up in the private dictionary of A instead of B
+the symbol x ends up in the public dictionary of A instead of B
 because that dictionary is mutable still.  Mark it immutable?
