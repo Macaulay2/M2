@@ -153,10 +153,16 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   
   int i = pair.i;
   int j = pair.j;
-
+  
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
   if( BRP::isRelativelyPrime(g,f) ) {
+    return false;
+  }
+  
+  // both polynomials are monomials, so their S polynomial reduces to 0
+  if ( fp.g->size() == 1 && fp.f->size() == 1 ) {
+    //cout << "Throwing out S-pair from 2 monomials" << endl;
     return false;
   }
 
