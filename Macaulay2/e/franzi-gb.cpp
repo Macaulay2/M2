@@ -184,8 +184,8 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
     return false;
   }
 
-  brMonomial lcm = pair.lcm;
-  //brMonomial lcm = g | f;
+  //brMonomial lcm = pair.lcm;
+  brMonomial lcm = g | f;
   IntermediateBasis::const_iterator end = F.end();
   for(IntermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
     int k = it->first;
@@ -598,6 +598,7 @@ void gb( IntermediateBasis &F, int n) {
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;
       BRP S = sPolynomial(pair,F,n);
+      cout << "Size of list of pairs: "  << (int) B.size() << endl;
       reduce(S,F);
       if ( ! S.isZero() ) {
         countAddPoly++;
@@ -606,10 +607,14 @@ void gb( IntermediateBasis &F, int n) {
         B.insert(newList.begin(), newList.end());
         //interreduction(F);
         interreductionMod++;
-        if ( true || interreductionMod % 2 == 0 ) {
-          interreductionWithBuckets(F);
-          //B = makeList(F, n);
+        if ( interreductionMod  == 5 ) {
+          interreductionMod = 0;
+          interreduction(F);
+          B = Pairs (B);
         }
+//          interreductionWithBuckets(F);
+//          //B = makeList(F, n);
+//        }
         nextIndex++;
         //rearrangeBasis(F, nextIndex);
         cout << F.size() << " " << endl;
@@ -617,7 +622,8 @@ void gb( IntermediateBasis &F, int n) {
       }
     }
   }
-//  interreductionWithBuckets(F);
+  cout << "interreduction with buckets" << endl;
+  interreductionWithBuckets(F);
   cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
 
