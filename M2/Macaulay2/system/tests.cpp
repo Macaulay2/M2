@@ -44,7 +44,41 @@ static int TS_Test1()
   waitOnTask(tasks[20-1][20-1]);
 }
 
+static bool canceled = false;
+
+static void* TS_Test2_Func1(void* vtup)
+{
+  std::cout <<"A" <<  std::endl;
+  std::cout << "TS: " << &THREADLOCAL(interrupts_interruptedFlag,struct atomic_field) << std::endl;
+  while(!AO_load(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field))
+    {
+      std::cout << AO_load(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field) << std::endl;
+    sleep(1);
+    }
+  std::cout << "DONE" << std::endl;
+  canceled = true;
+}
+static void* TS_Test2_Func2(void* vtup)
+{
+  std::cout << "B" << std::endl;
+}
+
+int TS_Test2()
+{
+  std::cout << "test 2" << std::endl;
+  ThreadTask* task1 = createThreadTask("Task1",TS_Test2_Func1,NULL,0,0);
+  ThreadTask* task2 = createThreadTask("Task2",TS_Test2_Func2,NULL,0,0);
+  addCancelTask(task2,task1);
+  pushTask(task1);
+  pushTask(task2);
+  waitOnTask(task1);
+  assert(canceled);
+}
+
 int TS_Test()
 {
+  std::cout << "Starting Testing" << std::endl;
   TS_Test1();
+  //    TS_Test2();
 }
+

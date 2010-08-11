@@ -194,12 +194,12 @@ void ThreadSupervisor::_i_finished(struct ThreadTask* task)
 void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* launcher)
 {
   pthread_mutex_lock(&m_Mutex);
-  //  pthread_mutex_lock(&task->m_Mutex);
+  pthread_mutex_lock(&task->m_Mutex);
   if(!task->m_Dependencies.empty())
     {
       if(!launcher)
 	{
-	  //	  pthread_mutex_unlock(&task->m_Mutex);
+	  pthread_mutex_unlock(&task->m_Mutex);
 	  pthread_mutex_unlock(&m_Mutex);
 	  return;
 	}
@@ -211,7 +211,7 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 	}
       if(!task->m_Dependencies.empty())
 	{
-	  //	  pthread_mutex_unlock(&task->m_Mutex);
+	  pthread_mutex_unlock(&task->m_Mutex);
 	  pthread_mutex_unlock(&m_Mutex);
 	  return;
 	}
@@ -219,17 +219,22 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
   m_WaitingTasks.remove(task);
   m_ReadyTasks.push_back(task);
   pthread_cond_signal(&m_TaskWaitingCondition);
-  //  pthread_mutex_unlock(&task->m_Mutex);
+  pthread_mutex_unlock(&task->m_Mutex);
   pthread_mutex_unlock(&m_Mutex);
 }
 void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
 {
+  std::cout << "canceling" << std::endl;
   pthread_mutex_lock(&m_Mutex);
-  //  pthread_mutex_lock(&task->m_Mutex);
+  pthread_mutex_lock(&task->m_Mutex);
   AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
   task->m_KeepRunning=false;
-  //  pthread_mutex_unlock(&task->m_Mutex);
+  std::cout << "ICT: " << task->m_CurrentThread->m_Interrupt << std::endl;
+  std::cout << AO_load(&task->m_CurrentThread->m_Interrupt->field) << std::endl;
+  std::cout << "set" << std::endl;
+  pthread_mutex_unlock(&task->m_Mutex);
   pthread_mutex_unlock(&m_Mutex);
+  std::cout << "out" << std::endl;
 }
 struct ThreadTask* ThreadSupervisor::getTask()
 {
@@ -247,6 +252,11 @@ struct ThreadTask* ThreadSupervisor::getTask()
 void ThreadTask::run(SupervisorThread* thread)
 {
   pthread_mutex_lock(&m_Mutex);
+  if(!m_KeepRunning)
+    {
+      threadSupervisor->_i_finished(this);
+      pthread_mutex_unlock(&m_Mutex);
+    }
   m_CurrentThread=thread;
   m_Started = true;
   pthread_mutex_unlock(&m_Mutex);
@@ -281,6 +291,7 @@ void SupervisorThread::threadEntryPoint()
   #endif
   while(m_KeepRunning)
     {
+      //AO_store(&m_Interrupt->field,false);
       struct ThreadTask* task = threadSupervisor->getTask();
       task->run(this);
     }

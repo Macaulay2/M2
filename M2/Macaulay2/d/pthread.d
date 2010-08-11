@@ -77,7 +77,6 @@ header "#include <signal.h>";
 
 inThread2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
-     if !USE_THREADS then return buildErrorPacket("threads disabled (by configuration option)");
      tc := ThreadCell(ThreadCellBody(nullThread(), 0, false, false, false, fun, arg, nullE, null(), null()));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:

@@ -25,7 +25,8 @@ typedef void* (*ThreadTaskFunctionPtr)(void*);
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  extern THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
+  extern THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);
   struct ThreadSupervisor;
   struct ThreadTask;
   extern struct ThreadSupervisor* threadSupervisor;
