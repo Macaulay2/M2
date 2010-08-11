@@ -993,7 +993,7 @@ tostringfun(e:Expr):Expr := (
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")
      is x:ThreadCell do (
-	  while !isInitialized(x) do nothing;
+--	  while !isInitialized(x) do nothing;
 	  toExpr(
 	       "<<thread " + tostring(x.body.tid)
 	       + ", "
