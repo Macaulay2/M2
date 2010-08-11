@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- {* hash: -1172415535 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..e];
+
+i2 : addEdges cycle R
+
+o2 = {Graph{edges => {{a, b}, {a, c}, {b, c}, {c, d}, {a, e}, {d, e}}},
+            ring => R                                                  
+            vertices => {a, b, c, d, e}                                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {a, d}, {c, d}, {a, e}, {d, e}}},
+           ring => R                                                  
+           vertices => {a, b, c, d, e}                                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {b, d}, {c, d}, {a, e}, {d, e}}},
+           ring => R                                                  
+           vertices => {a, b, c, d, e}                                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {c, d}, {a, e}, {b, e}, {d, e}}},
+           ring => R                                                  
+           vertices => {a, b, c, d, e}                                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {c, d}, {a, e}, {c, e}, {d, e}}}}
+           ring => R
+           vertices => {a, b, c, d, e}
+
+o2 : List
+
+i3 : 

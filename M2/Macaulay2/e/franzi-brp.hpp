@@ -20,6 +20,8 @@ class Bits
   static bool reverseLex(brMonomial a, brMonomial b);
 };
 
+// lhs > rhs
+// should return like funccomp rhs < lhs
 inline bool funccompGRL(const brMonomial &lhs, const brMonomial &rhs) {
   if (Bits::numberOfBits(lhs) > Bits::numberOfBits(rhs) ) {
     return true;
@@ -30,10 +32,15 @@ inline bool funccompGRL(const brMonomial &lhs, const brMonomial &rhs) {
   }
 }
 
-
+// return true if lhs > rhs
 struct gRevLex {
   bool operator() (const brMonomial& lhs, const brMonomial& rhs) const {
+//    cout << "comparing by gRevLex" << endl;
+//    cout << "Bits::numberOfBits(lhs): " << Bits::numberOfBits(lhs) << endl;
+//    cout << "Bits::numberOfBits(rhs): " << Bits::numberOfBits(rhs) << endl;
+
     if (Bits::numberOfBits(lhs) > Bits::numberOfBits(rhs) ) {
+      //cout << "in gRevLex: " << lhs << " " << rhs << endl;
       return true;
     } else if (Bits::numberOfBits(lhs) < Bits::numberOfBits(rhs) ) {
       return false;
@@ -43,6 +50,7 @@ struct gRevLex {
   }
 };
 
+
 struct lex {
   bool operator() (const brMonomial& lhs, const brMonomial& rhs) const {
     return lhs>rhs;
@@ -50,7 +58,8 @@ struct lex {
 };
 
 typedef list<brMonomial> monomials;
-typedef set<brMonomial,lex> monomials_set;
+typedef set<brMonomial,gRevLex> monomials_set;
+//typedef set<brMonomial,lex> monomials_set;
 
 class BRP
 {

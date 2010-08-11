@@ -1,4 +1,13 @@
 -- -*- coding: utf-8 -*-
+
+--------------------------------------------------------------------------------
+-- Copyright 2008, 2009  Steven V Sam
+--
+-- You may redistribute this program under the terms of the GNU General Public
+-- License as published by the Free Software Foundation, either version 3 of
+-- the License, or any later version.
+--------------------------------------------------------------------------------
+
 newPackage(
     	  "PieriMaps",
    	  Version => "1.0",
@@ -10,7 +19,7 @@ newPackage(
 	       "acceptance date" => "2009-06-27",
 	       "published article URI" => "http://j-sag.org/Volume1/jsag-2-2009.pdf",
 	       "published code URI" => "http://j-sag.org/Volume1/PieriMaps.m2",
-	       "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/PieriMaps.m2",
+	       "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/PieriMaps.m2",
 	       "release at publication" => 9343,
 	       "version at publication" => "1.0",
 	       "volume number" => "1",

@@ -32,7 +32,7 @@ export {
      "Tolerance",
      "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     "Bits", "Iterations", "ResidualTolerance", "ErrorTolerance",
+     "Bits", "Iterations", "ErrorTolerance",
      --"points", 
      "NAGtrace"
      }
@@ -51,6 +51,41 @@ DBG = 0; -- debug level (10=keep temp files)
 SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker = null; -- path tracker object used last
 
+DEFAULT = new MutableHashTable from {
+     Software=>M2engine, NoOutput=>false, 
+     gamma=>1, 
+     tDegree=>1,
+     -- step control
+     tStep => 0.05, -- initial
+     tStepMin => 1e-6,
+     stepIncreaseFactor => 2_QQ,
+     numberSuccessesBeforeIncrease => 4,
+     -- predictor 
+     Predictor=>RungeKutta4, 
+     SLPpredictor=>false, --temp!!!
+     MultistepDegree => 3, -- used only for Predictor=>Multistep
+     -- corrector 
+     SLPcorrector=>false, --temp!!!
+     maxCorrSteps => 3,
+     CorrectorTolerance => 1e-6, -- tracking tolerance
+     -- end of path
+     EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+     InfinityThreshold => 100000, -- used to tell if the path is diverging
+     -- projectivize and normalize
+     Normalize => false, -- normalize in the Bombieri-Weyl norm
+     Projectivize => false, 
+     AffinePatches => DynamicPatch,
+     -- slp's 
+     SLP => null, -- possible values: null, HornerForm, CompiledHornerForm 	  
+     -- refine options 
+     ErrorTolerance => 1e-10,
+     Iterations => null,
+     Bits => 300,
+     -- general
+     Attempts => 10, -- max number of attempts (e.g., to find a regular path)
+     Tolerance => 1e-6
+     }
+
 WitnessSet = new Type of MutableHashTable 
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
@@ -61,8 +96,8 @@ needs "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2"
 
 -- Polynomial systems are represented as lists of polynomials.
 
--- Solutions are pairs (s, h) where s is list of coordinates (in CC)
--- and h is a hashtable collecting all extra information.
+-- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
+-- and a,b,c,... contain extra information, e.g, STATUS=>"REGULAR" indicates the solution is regular.
  
 -- M2 tracker ----------------------------------------
 integratePoly = method(TypicalValue => RingElement)
@@ -169,29 +204,29 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
-	  Software=>M2engine, NoOutput=>false, 
-	  gamma=>1, 
-	  tDegree=>1,
+	  Software=>null, NoOutput=>null, 
+	  gamma=>null, 
+	  tDegree=>null,
      	  -- step control
-	  tStep => 0.05, -- initial
-          tStepMin => 1e-6,
-	  stepIncreaseFactor => 2_QQ,
-	  numberSuccessesBeforeIncrease => 4,
+	  tStep => null, -- initial
+          tStepMin => null,
+	  stepIncreaseFactor => null,
+	  numberSuccessesBeforeIncrease => null,
 	  -- predictor 
-	  Predictor=>RungeKutta4, 
-	  SLPpredictor=>false, --temp!!!
-	  MultistepDegree => 3, -- used only for Predictor=>Multistep
+	  Predictor=>null, 
+	  SLPpredictor=>null, --temp!!!
+	  MultistepDegree => null, -- used only for Predictor=>Multistep
 	  -- corrector 
-	  SLPcorrector=>false, --temp!!!
-	  maxCorrSteps => 3,
-     	  CorrectorTolerance => 1e-6, -- tracking tolerance
+	  SLPcorrector=>null, --temp!!!
+	  maxCorrSteps => null,
+     	  CorrectorTolerance => null, -- tracking tolerance
 	  -- end of path
-	  EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
-	  InfinityThreshold => 100000, -- used to tell if the path is diverging
+	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+	  InfinityThreshold => null, -- used to tell if the path is diverging
 	  -- projectivize and normalize
-	  Normalize => false, -- normalize in the Bombieri-Weyl norm
-	  Projectivize => false, 
-	  AffinePatches => DynamicPatch,
+	  Normalize => null, -- normalize in the Bombieri-Weyl norm
+	  Projectivize => null, 
+	  AffinePatches => null,
 	  -- slp's 
 	  SLP => null -- possible values: null, HornerForm, CompiledHornerForm 	  
 	  } )
@@ -202,6 +237,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 --      solsS = list of solutions to S
 -- 	gamma => nonzero complex number
 -- OUT: solsT = list of target solutions corresponding to solsS
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
      n := #T; 
      if n > 0 then R := ring first T else error "expected nonempty target system";
@@ -214,10 +251,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=null"; 
      if o.Software===M2enginePrecookedSLPs and (o.Projectivize or o.SLP===null) 
      then error "M2enginePrecookedSLPs is implemented for Projectivize=>false and SLP != null";
-     if o.Software===M2engine and o.Projectivize 
-     then error "M2engine is not implemented for Projectivize=>true";
-     if o.Predictor===ProjectiveNewton and (o.Software=!=M2 or not o.Normalize or o.SLP=!=null)
-     then error "ProjectiveNewton (experimental) requires Software=>M2, Normalize=>true and o.SLP=>null";
+--     if o.Predictor===ProjectiveNewton and (o.Software=!=M2 or o.SLP=!=null)
+--     then error "ProjectiveNewton (experimental) requires Software=>M2 and o.SLP=>null";
      
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCpack then return trackPHCpack(S,T,solsS,o)
@@ -231,20 +266,21 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
      
+     -- determine whether the problem is projective
      isProjective := false;
      if n != numgens R then (
 	  if numgens R == n+1 and all(S, isHomogeneous) and all(T, isHomogeneous) 
 	  then ( 
 	       isProjective = true; 
 	       n = n+1;
-	       if o.Projectivize then error "already projective"; 
 	       )  
 	  else error "expected a square system";
      	  );
+    
      K := CC_53; -- THE coefficient ring
      solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
-     
      if o.Projectivize then (
+	  if isProjective then error "the problem is already projective";
 	  h := symbol h;
 	  R = K[gens R | {h}]; 
 	  n = numgens R;
@@ -253,11 +289,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      	  solsS = solsS / (s->s||matrix{{1_K}});
 	  isProjective = true;
 	  );
-
+     
      if o.Predictor===ProjectiveNewton and not isProjective 
 	  then "projective expected: either homogeneous system or Projectivize=>true";
-     
      if isProjective then (
+	  if member(o.Software,{M2engine,M2enginePrecookedSLPs}) and not o.Normalize
+	  then error "Normalize=>true expected for this choice of Software";
+     	  if o.Software === M2enginePrecookedSLPs 
+	  then error "Software=>M2enginePrecookedSLPs not implemented for projective case";	       
      	  -- affine patch functions 
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
 	  patchEquation := p -> p * transpose vars R - 1;
@@ -290,17 +329,15 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      (nS,nT) := if o.Normalize -- make Bomboeri-Weyl norm of the systems equal 1
      then (apply(S, s->s/sqrt(#S * BombieriWeylNormSquared s)), apply(T, s->s/sqrt(#T * BombieriWeylNormSquared s)))
      else (S,T);
-     if o.Predictor===ProjectiveNewton 
+     
+     if o.Predictor===ProjectiveNewton or (isProjective and o.Software===M2engine)
+     -- in both cases a linear homotopy on the unit sphere is performed
      then (
-	  H := {o.gamma*matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
-     	  -- old stuff: compute Bombieri-Weyl norm of the homotopy, define normalizing factor, supporting constants
-	  -- BW2 := sum(flatten entries sub(H,Kt[gens R]), BombieriWeylNormSquared); -- this is a polynomial in K[t]
-	  -- normalizer := t -> 1 / sqrt sub(BW2, matrix{{t}}); -- normalizing factor
-	  -- normalizer' := t -> - (1/2) * (normalizer t)^3 * sub(diff(Kt_0,BW2), matrix{{t}}); -- its derivative 	  
-	  -- end old stuff
+	  nS = (o.gamma/abs(o.gamma))*nS;
+	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
-	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(o.gamma*nS#i,nT#i));-- real Bombieri-Weyl scalar product
+	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(nS#i,nT#i));-- real Bombieri-Weyl scalar product
 	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
 	  bigT := asin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
 	  Hx := H/transpose@@jacobian; -- store jacobians (for evalHx)
@@ -450,10 +487,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      compStartTime = currentTime();      
      
      rawSols := if member(o.Software,{M2enginePrecookedSLPs, M2engine}) then (
-	  PT := if o.Software===M2engine then rawPathTracker(raw H) else rawPathTrackerPrecookedSLPs(slpHxt, slpHxH);
+	  PT := if o.Software===M2engine then (
+	       if isProjective then rawPathTrackerProjective( raw matrix {nS}, raw matrix {nT}, 
+		    reBW'ST ) -- pass normalized start/target and Re(B-W product)
+	       else rawPathTracker(raw H) 
+	       ) else rawPathTrackerPrecookedSLPs(slpHxt, slpHxH);
 	  lastPathTracker = PT;
 	  rawSetParametersPT(PT, 
-	       false,
+	       isProjective,
 	       o.tStep, o.tStepMin, 
 	       toRR o.stepIncreaseFactor, toRR stepDecreaseFactor, o.numberSuccessesBeforeIncrease,
 	       o.CorrectorTolerance, o.maxCorrSteps, o.EndZoneFactor, toRR o.InfinityThreshold,
@@ -461,9 +502,12 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    if o.Predictor === Tangent then predTANGENT
 		    else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
 		    else if o.Predictor === Euler then predEULER
-		    else error "no slp for the predictor")
+		    else if o.Predictor === ProjectiveNewton then predPROJECTIVENEWTON
+		    else error "engine: unknown predictor")
 	       );
-	  rawLaunchPT(PT, raw matrix apply(solsS,s->first entries transpose s));
+	  solsM := matrix apply(solsS,s->first entries transpose s);
+	  --print solsM;
+	  rawLaunchPT(PT, raw solsM);
 	  if o.NoOutput then null else entries map(K,rawGetAllSolutionsPT(PT))
      	  )
      else if o.Software===M2 then (
@@ -608,10 +652,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else if o.Predictor == ProjectiveNewton then (
 			 Hx0 = evalHx(x0,t0);
 			 Ht0 = evalHt(x0,t0);
-			 norm2'Ht := (max first SVD Ht0)^2;
-			 chi2 := sqrt(norm2'Ht + (norm2 solve(Hx0, Ht0))^2);
+			 chi2 := sqrt((norm2 Ht0)^2 + (norm2 solve(Hx0, Ht0))^2);
 			 chi1 := 1 / min first SVD(DMforPN*Hx0);
-			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2);
+			 << "chi1 = " << chi1 << endl; --!!!
+			 if count<=5 then print(DMforPN*Hx0); --!!!
+			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT); -- divide by bigT since t is in [0,1]
 			 if dt<o.tStepMin then (
 			      if DBG > 2 then (
 				   << "chi1 = " << chi1 << endl;
@@ -709,8 +754,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      );
      if DBG>3 then print rawSols;
      ret := if o.NoOutput then null 
-          else if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then rawSols/(s->{s}) 
-          else (
+          else if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then (
+	       if o.Projectivize then apply(rawSols, s->(
+			 if norm(last s) < 1/o.InfinityThreshold then print "Warning: solution at infinity encountered";
+			 {apply(drop(s,-1),u->(1/last s)*u)}
+			 ))
+	       else rawSols/(s->{s}) 
+          ) else (
      	       if o.Projectivize then (
 	  	    rawSols = apply(rawSols, s->(
 		    	      s' = flatten entries first s;
@@ -741,11 +791,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      )
 
 refine = method(TypicalValue => List, Options =>{
-	  Software=>M2engine, 
-      	  ResidualTolerance => 0, 
-	  ErrorTolerance => 1e-10,
+	  Software=>null, 
+	  ErrorTolerance =>null,
 	  Iterations => null,
-	  Bits => 300
+	  Bits => null
 	  })
 refine (List,List) := List => o -> (T,solsT) -> (
 -- tracks solutions from start system to target system
@@ -833,6 +882,11 @@ getSolution ZZ := Thing => o -> i -> (
 	  );
      if class p === Sequence then ret else first ret
      )
+
+isRegular = method()
+isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == "REGULAR"  
+isRegular List := (s) -> s#0#2 == "REGULAR"
+isRegular (List, ZZ) := (sols, s) -> if DEFAULT.Software === M2engine then isRegular s else isRegular sols#s
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
@@ -1046,7 +1100,7 @@ randomInitialPair List := T -> (
      )     
 
 -- INTERFACE part ------------------------------------
-solveSystem = method(TypicalValue => List, Options =>{Software=>M2engine})
+solveSystem = method(TypicalValue => List, Options =>{Software=>null})
 solveSystem List := List => o -> F -> (
 -- solves a system of polynomial equations
 -- IN:  F = list of polynomials
@@ -1054,8 +1108,11 @@ solveSystem List := List => o -> F -> (
 -- OUT: {s,m}, where 
 --             s = list of solutions 
 --     	       m = list of corresponding multiplicities	 
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      local result;
      R := ring F#0;
+     --if numgens R != #F then error "expected a square system";
      v := flatten entries vars R;
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
 	  result = 
@@ -1136,13 +1193,17 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   
 
 -----------------------------------------------------------------------
--- WITNESS SET
--- {equations, slice, points}
--- caveat: we assume that #equations = dim(slice)   
-
--- Equations, Slice, Points
+-- WITNESS SET = {
+--   Equations,            -- an ideal  
+--   Slice,                -- a list of linear equations OR a matrix (of their coefficients)
+--   Points	           -- a list of points (in the format of the output of solveSystem/track) 
+--   }
+-- caveat: we assume that #Equations = dim(Slice)   
 WitnessSet.synonym = "witness set"
-dim WitnessSet := W -> #W.Slice
+WitnessSet.Tolerance = 1e-6;
+dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
+     else if class W.Slice === Matrix then numrows W.Slice 
+     else error "ill-formed slice in WitnessSet" )
 codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
@@ -1150,6 +1211,7 @@ ideal WitnessSet := W -> W.Equations
 net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
 witnessSet = method()
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
+witnessSet (Ideal,Matrix,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P}
 witnessSet Ideal := I -> (
      n := numgens ring I;
      d := dim I;
@@ -1162,149 +1224,280 @@ witnessSet Ideal := I -> (
      PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
      witnessSet(I,S,PP/first)
      )
-points = method()
+points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, first)
+equations = method() -- returns list of equations
+equations WitnessSet := (W) -> (W.Equations)_*
+slice = method() -- returns linear equations for the slice (in both cases)   
+slice WitnessSet := (W) -> ( if class W.Slice === List then W.Slice
+     else if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
+     else error "ill-formed slice in WitnessSet" )
+check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
+see = method()
+see WitnessSet := (W) -> new HashTable from W
+isContained = method()
+isContained (List,WitnessSet) := (point,W) -> (
+     pts := movePointsToSlice(W, sliceEquations(randomSlice(dim W, numgens ring W, point),ring W)) / first;
+     any(pts, p->areEqual(point,p,Tolerance=>WitnessSet.Tolerance))
+     )
+isContained (WitnessSet,WitnessSet) := (V,W) -> (
+     coD := dim W - dim V;
+     coD >= 0
+     and all(points V, p->isContained(p,W))
+     )
+-- subtract = method()
+-- subtract (WitnessSet, WitnessSet) 
+WitnessSet - WitnessSet := (V,W) -> ( -- difference V/W, also used to remove junk points
+     coD := dim W - dim V;
+     if coD < 0 then V
+     else witnessSet(V.Equations, V.Slice, select(V.Points, p->not isContained(first p,W)))
+     ) 
 ///
 restart
 debug loadPackage "NumericalAlgebraicGeometry"
-CC[x,y]
+CC[x,y,z]
 I = ideal (x^2+y)
-S = ideal (y-1)
+S = ideal (x+y+2*z-1)
 P = {{ii_CC,1_CC},{ii_CC,1_CC}}
-R = CC[x,y,z]
 I = ideal {z-x*y, x^2-y, y^2-z*x}
 W = witnessSet(I,S,P)
 W = witnessSet I
-W.Points
+W = witnessSet(I, sub(transpose last coefficients gens S,CC), P)
+points W
+equations W
+slice W
 ///
 
 sliceEquations = method(TypicalValue=>List) 
-sliceEquations (Matrix, Ring) := (S,R) -> (
--- make slicing plane equations 
-     apply(numgens target S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
+sliceEquations (Matrix,Ring) := (S,R) -> (
+-- make slicing plane equations
+     apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
      )
 
-moveSlice = method(TypicalValue=>HashTable, Options =>{Software=>M2})
-moveSlice (HashTable, Matrix) := HashTable => o -> (W,S) -> (
+randomSlice = method()
+randomSlice (ZZ,ZZ) := (d,n) -> randomSlice(d,n,{})
+randomSlice (ZZ,ZZ,List) := (d,n,point) -> (
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
+     SM | (if #point==0
+	  then random(CC^d,CC^1)    
+	  else -SM * transpose matrix{point} -- slice goes thru point
+	  )
+     )
+
+movePoints = method(Options=>{AllowSingular=>false})
+movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
+-- IN:  E = equations, 
+--      S = equations of the current slice,
+--      S' = equations of the new slice,
+--      w = points satisfying E and S (in the output format of track) 
+--      AllowSingular => false: S' is generic, several attempts are made to get regular points
+-- OUT: new witness points satisfying E and S'
+     attempts := DEFAULT.Attempts;
+     success := false;
+     while (not success and attempts > 0) do (
+	  attempts = attempts - 1;
+	  w' := track(E|S, E|S', w,gamma=>exp(random(0.,2*pi)*ii)); 
+	  success = o.AllowSingular or all(toList(0..#w'-1), i->isRegular(w'#i,i));
+	  );
+     if attempts == 0 and not success then error "paths are singular generically";  
+     w'
+     )
+
+movePointsToSlice = method(TypicalValue=>List)
+movePointsToSlice (WitnessSet, List) := List => (W,S') -> (
 -- IN:  W = witness set
---      S = matrix defining a new slicing plane (same dimensions as W#slice)
+--      S' = equations of the new slice
+-- OUT: new witness points
+     if #S' < dim W
+     then error "dimension of new slicing plane is too high";
+     R := ring W;
+     S := take(slice W,-#S'); -- take last #S equations
+     movePoints(equations W, S, S', points W, AllowSingular=>true)
+     )
+
+moveSlice = method(TypicalValue=>WitnessSet)
+moveSlice (WitnessSet, Matrix) := WitnessSet => (W,S) -> (
+-- IN:  W = witness set
+--      S = matrix defining a new slicing plane (same dimensions as W#Slice)
 -- OUT: new witness set that uses S
-     if numgens target S != numgens target W#slice 
-     or numgens source S != numgens source W#slice 
+     if numgens target S != numgens target W#Slice 
+     or numgens source S != numgens source W#Slice 
      then error "wrong dimension of new slicing plane";
-     R := ring first W#equations;
-     st := W#equations | sliceEquations(W#slice,R);
-     ta := W#equations | sliceEquations(S,R);
-     newpoints := track(st,ta,W#points,Software=>o.Software,gamma=>.6+.8*ii) / first;
-     if #newpoints != #W#points then error "number of points in the witness set changed";
-     new HashTable from {
-	  equations => W#equations, 
-	  slice => S,
-	  points => newpoints
-	  }              	  
+     witnessSet(W#Equations,S,movePointsToSlice(W,sliceEquations(S,ring W)))             	  
      )
 ///
 restart
-loadPackage ("NumericalAlgebraicGeometry", Configuration => { "PHCpack" => "./phc" }); debug NumericalAlgebraicGeometry;
+debug loadPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,z]
-W1 = new HashTable from {
-     equations=>{x^2+y^2+z^2-1},
-     slice=>sub(matrix "1,0,0,0;0,1,0,0",R),
-     points=>{(0,0,1),(0,0,-1)}
+W1 = new WitnessSet from {
+     Equations=>ideal {x^2+y^2+z^2-1},
+     Slice=>sub(matrix "1,0,0,0;0,1,0,0",R),
+     Points=>{(0,0,1),(0,0,-1)}
      } 
-sliceEquations (W1#slice,R)
+sliceEquations (W1#Slice,R)
 W2 = moveSlice(W1, sub(matrix "0,1,0,0;0,0,1,0",R)
-     --, Software=>PHCpack
      )
 ///
 
-splitWitness = method(TypicalValue=>Sequence, Options =>{Software=>M2, Tolerance=>1e-6})
-splitWitness (HashTable,RingElement) := Sequence => o -> (w,f) -> (
+splitWitness = method(TypicalValue=>Sequence, Options =>{Tolerance=>null})
+splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
 -- splits the witness set into two parts: one contained in {f=0}, the other not
 -- IN:  comp = a witness set
 --      f = a polynomial
 -- OUT: (w1,w2) = two witness sets   
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      w1 := {}; w2 := {};
-     for x in w#points do 
-	 if norm evalPoly(f,x) < o.Tolerance 
+     for x in w#Points do 
+	 if norm evalPoly(f,first x) < o.Tolerance 
 	 then w1 = w1 | {x}
 	 else w2 = w2 | {x};   
      ( if #w1===0 then null 
-	  else new HashTable from {equations=>w#equations, slice=>w#slice, points=>w1}, 
+	  else witnessSet(w#Equations, w#Slice, w1), 
        if #w2===0 then null 
-          else new HashTable from {equations=>w#equations, slice=>w#slice, points=>w2} )
+          else witnessSet(w#Equations, w#Slice, w2) )
      )
 
-regeneration = method(TypicalValue=>List, Options =>{Software=>M2})
-regeneration List := HashTable => o -> F -> (
--- solves a system of polynomial equations by generation     
+insertComponent = method()
+insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
+     d := dim W;
+     if H#?d then H#d#(#H) = W 
+     else H#d = new MutableHashTable from {0=>W};
+     )
+
+regeneration = method(TypicalValue=>List, Options =>{Software=>null, Output=>AllButInfinity})
+regeneration List := List => o -> F -> (
+-- solves a system of polynomial Equations via regeneration     
 -- IN:  F = list of polynomials
 --      Software => {PHCpack, Bertini, hom4ps2}
 -- OUT: {s,m}, where 
 --             s = list of solutions 
 --     	       m = list of corresponding multiplicities	 
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     saveDEFAULTsoftware := DEFAULT.Software;     
+     DEFAULT.Software = o#Software;
      R := ring F#0;
      c1 := {}; -- current solution components
      for f in F do (
 	  d := first degree f;
-	  c2 := {}; -- new components
+	  c2 := new MutableHashTable; -- new components
 	  for comp in c1 do (
-	       print (#comp#points);
+	       << "*** proccesing component " << see comp << endl;
 	       (cIn,cOut) := splitWitness(comp,f); 
 	       if cIn =!= null 
-	       then c2 = c2 | { new HashTable from {
-			 equations => cIn#equations | {f}, 
-			 slice => cIn#slice,
-			 points => cIn#points  
-			 } }; 
-     	       if cOut =!= null then (
-		    dWS = apply(d, i->(
-			      s := cOut#slice;
-			      newSlice := random(CC^1, CC^(numgens source s)) || submatrix'(s,{0},{}); 
-			      moveSlice(cOut,newSlice,Software=>o.Software)
+	       then insertComponent(witnessSet(cIn#Equations 
+			 -- + ideal f -- should we store additional equations?
+			 , cIn#Slice, cIn#Points), 
+		    c2); 
+     	       if cOut =!= null 
+	       and dim cOut > 0 -- 0-dimensional components outside V(f) discarded
+	       then (
+		    s := cOut#Slice;
+		    -- RM := (randomUnitaryMatrix numcols s)^(toList(0..d-2)); -- pick d-1 random orthogonal row-vectors (this is wrong!!! is there a good way to pick d-1 random hyperplanes???)
+     	       	    RM := random(CC^(d-1),CC^(numcols s));
+		    dWS = {cOut} | apply(d-1, i->(
+			      newSlice := RM^{i} || submatrix'(s,{0},{}); -- replace the first row
+			      moveSlice(cOut,newSlice)
 			      ));
-	       	    S := comp#equations 
-	       	    | { product flatten apply( dWS, w->sliceEquations(w#slice^{0},R) ) } -- product of linear factors
-	       	    | sliceEquations( submatrix'(comp#slice,{0},{}), R );
-	       	    T := comp#equations
-	       	    | {f}
-	       	    | sliceEquations( submatrix'(comp#slice,{0},{}), R );
-	       	    targetPoints := track(S,T,flatten apply(dWS,w->w#points), 
-			 gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software);
+	       	    S := ( equations comp
+	       	    	 | { product flatten apply( dWS, w->sliceEquations(w.Slice^{0},R) ) } -- product of linear factors
+	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
+	       	    T := ( equations comp
+	       	    	 | {f}
+	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
+	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
+			 gamma=>exp(random(0.,2*pi)*ii));
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
+		    if o.Software == M2engine then (
+			 sing := toList singularSolutions(T,targetPoints);
+			 reg := toList select(0..#targetPoints-1, i->getSolution(i, SolutionAttributes=>SolutionStatus)=="REGULAR");
+			 print (sing,reg);
+		    	 if o.Output == Regular then targetPoints = targetPoints_reg 
+		    	 else targetPoints = targetPoints_reg | targetPoints_sing;
+			 );
+		    newW := witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), targetPoints);
+		    check newW;
+		    << "   new component " << see newW << endl;
 		    if #targetPoints>0 
-		    then c2 = c2 | { new HashTable from {
-			      equations => cOut#equations | {f}, 
-			      slice => submatrix'(comp#slice,{0},{}),
-			      points => targetPoints/first  
-			      } };
+		    then insertComponent(newW,c2);
 		    ); 
 	       );
-	  c1 = c2;
-	  if #c1 === 0 then ( -- if the first equation is being processed 
-	       rM := random(CC^(numgens R-1), CC^(numgens R + 1));
-     	       c1 = { new HashTable from { 
-	       		 equations => {f},
-	       		 slice => rM,
-	       		 points => solveSystem( {f} | sliceEquations(rM,R), Software=>o.Software ) / first 
-	       		 } }; 
+	  scan(rsort keys c2, d->scan(keys c2#d,i->(
+			 W := c2#d#i;
+			 scan(rsort keys c2,j->if j>d then (for k in keys c2#j do W = W - c2#j#k));
+			 c2#d#i = W;
+			 )));
+	  c1 = flatten apply(keys c2, i->apply(keys c2#i, j->c2#i#j));
+	  if f == first F then ( -- if the first equation is being processed 
+	       n := numgens R;
+	       S := randomSlice(n-1,n);
+     	       c1 = {witnessSet(ideal f, S, solveSystem( {f} | sliceEquations(S,R)))}; 
 	       );
 	  );
-     c1	  
+     DEFAULT.Software = saveDEFAULTsoftware;
+     c1
      )
-///
-restart
-loadPackage ("NumericalAlgebraicGeometry", Configuration => { "PHCpack" => "./phc", "Bertini" => "./bertini" }); debug NumericalAlgebraicGeometry;
-R = CC[x,y,z]
-regeneration({x^2+y^2+z^2-1,x,y*z} 
-     ,Software=>PHCpack
-     --,Software=>Bertini
-     )
-regeneration({x^2+y^2+z^2-1,x*y,y*z} 
-     --,Software=>PHCpack
-     --,Software=>Bertini
-     )
-///
+
+-----------------------------------------------------------------------
+-- DECOMPOSITION
+decompose WitnessSet := (W) -> (
+     R := ring W;
+     n := numgens R;
+     k := dim W;
+     eq := equations W;
+     which := new MutableHashTable from {}; 
+     cs := new MutableList from apply(degree W, i->(which#i = i; {i})); -- current components
+     i'cs:= new MutableHashTable from {}; -- certified irreducible components
+     --sorted'cs := MutableList toList(0..deg W - 1); -- list of numbers of components sorted by degree (small to large)
+     -- -1 indicates no component 
+     mergeComponents := (c,c') -> (
+	  cs#c = cs#c | cs#c';
+	  cs#c' = {};
+	  );	     	
+     findComponent := (pt) -> ( for i to #cs-1  do if any(cs#i, p->areEqual((points W)#p,pt)) then return i; return null );
+     done := false;
+     n'misses := 0;
+     while not done do (
+	  while (c := random(#cs); #cs#c == 0) do (); -- vvv
+	  p := cs#c#(random(#(cs#c))); -- pick a component/point (rewrite!!!)
+	  S := eq | slice W;	  
+	  while (T := sliceEquations(randomSlice(k,n),R); pt' := track(S,eq|T,{first (W.Points)#p}); not isRegular(pt',0)) do (); 
+	  pt := first movePoints(eq, T, slice W, pt'/first);
+	  if (c' :=  findComponent first pt) === null then error "point outside of any current component";
+	  if c' == c then n'misses = n'misses + 1
+	  else ( mergeComponents(c,c'); n'misses = 0 );
+	  done = n'misses > 10;
+	  );
+     apply(toList select(cs, c->#c>0), c->new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_c})
+     ) 
+
+linearTraceTest = method() -- check linearity of trace to see if component is irreducible
+linearTraceTest (WitnessSet, List) := (W,c) -> (
+-- IN: W = witness superset, 
+--     c = list of integers (witness points subset)
+-- OUT: do (points W)_c represent an irreducible component?
+     w := (points W)_c;
+     proj := random(CC^(numgens ring W), CC^1); 
+     three'samples := apply(3, i->(
+	       local r;
+	       w' := (
+		    if i == 0 then (
+     	       	    	 r = W.Slice_(dim W - 1, numgens ring W);
+			 w 
+		    	 )
+		    else (
+	       	    	 M := new MutableMatrix from W.Slice;
+		    	 M_(dim W - 1, numgens ring W) = r = random CC; -- replace last column
+		    	 movePoints(equations W, slice W, sliceEquations(matrix M,ring W), w) / first 
+	       	    	 ) );
+	       {1, r, sum flatten entries (matrix w' * proj)} 
+               ));
+     print matrix three'samples;
+     print det matrix three'samples;
+     abs det matrix three'samples < DEFAULT.Tolerance  -- points are (approximately) on a line
+     )  
+
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 projectiveDistance = method()
@@ -1370,6 +1563,59 @@ sortSolutions List := o -> sols -> (
      apply(sorted, i->sols#i)
      )
 
+solutionDuplicates = method(TypicalValue=>MutableHashTable)
+solutionDuplicates List := sols -> ( 
+-- find positions of duplicate solutions
+-- IN: list of solutions
+-- OUT: H = MutableHashTable with entries of the form i=>j (sols#i is a duplicate for sols#j);
+--      connected components (which are cycles) in the graph stored in H correspond to clusters of "duplicates" 
+--      i=>i indicates a nonduplicate
+     H := new MutableHashTable;
+     for j from 0 to #sols-1 do (
+	  H#j = j;
+	  i = j-1;
+	  while i>=0 do
+	  if areEqual(sols#i,sols#j) then (
+	       H#j = H#i;
+	       H#i = j;
+	       i = -1
+	       ) 
+	  else i = i - 1;
+	  );
+     H
+     )
+
+groupClusters = method()
+groupClusters MutableHashTable := H -> (
+-- processes the output of solutionDuplicates to get a list of clusters of solutions
+     cs := {};
+     apply(keys H, a->if H#a=!=null then (
+	       c := {a};
+	       b := H#a; 
+	       H#a = null;
+	       while b != a do (
+	       	    c = c | {b};
+	       	    bb := H#b;
+		    H#b = null;
+		    b = bb;
+	       	    );
+	       cs = cs | {c};
+	       ));
+     cs
+     )
+
+singularSolutions = method() -- decide on the tolerance!!!
+singularSolutions(List,List) := (T,sols) -> (
+-- find positions of singular solutions in sols
+-- IN: number of solutions 
+-- OUT: list of numbers of solutions considered to be singular 
+--      (i.e., nearly satisfies target system, but Status!=REGULAR)    
+     select(0..#sols-1, i->(
+	       x := first sols#i;
+	       not isRegular(sols,i) and all(T, f->(rs := evalPoly(f,x); abs(rs)/norm matrix{x} < 1000*DEFAULT.Tolerance))
+	       ))
+     )   
+
 evalPoly = method(TypicalValue=>CC)
 evalPoly (RingElement, List) := (f,x) -> (
      sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
@@ -1417,6 +1663,7 @@ slpPRODUCT = 3; --"PRODUCT";
 predRUNGEKUTTA = 1;
 predTANGENT = 2;
 predEULER = 3;
+predPROJECTIVENEWTON = 4;
 
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
@@ -2130,5 +2377,5 @@ f3 = (y-x^2)*(z-x^3)*(x^2+y^2+z^2-1)*(z-0.5);
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=NumericalAlgebraicGeometry "
 -- End:

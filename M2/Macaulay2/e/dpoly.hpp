@@ -108,9 +108,15 @@ public:
   void remainder(int level, poly &f, const poly g);
   poly division_in_place_monic(int level, poly & f, const poly g);
   bool division_in_place(int level, poly & f, const poly g, poly &result_quot);
+
+  void pseudo_remainder(int level, poly & f, const poly g);
+  poly pseudo_division(int level, poly & f, const poly g);
+
   poly gcd(int level, const poly f, const poly g);
   poly gcd_coefficients(int level, const poly f, const poly g, 
 			       poly &result_u, poly &result_v);
+  poly resultant(int level, poly f, poly g);
+
   void make_monic(int level, poly  &f);
   poly invert(int level, const poly a);
 
@@ -212,6 +218,17 @@ public:
 	if (!D.division_in_place(level, a1, b, result))
 	  result = 0;
 	D.dealloc_poly(a1);
+      }
+  }
+
+  void remainder(elem &result, elem a, elem b) const
+  {
+    if (a == 0 || b == 0) 
+      result = 0;
+    else
+      {
+	result = D.copy(level, a);
+	D.remainder(level, result, b);
       }
   }
 

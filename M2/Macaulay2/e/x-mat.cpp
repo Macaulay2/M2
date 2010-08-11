@@ -744,6 +744,11 @@ PathTracker /* or null */ *rawPathTracker(const Matrix *HH)
   return PathTracker::make(HH);
 }
 
+PathTracker /* or null */ *rawPathTrackerProjective(const Matrix *S, const Matrix *T, gmp_RR productST)
+{
+  return PathTracker::make(S,T,productST);
+}
+
 M2_string rawPathTrackerToString(PathTracker *p) {
   buffer o;
   p->text_out(o);

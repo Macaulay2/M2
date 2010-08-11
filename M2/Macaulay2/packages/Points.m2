@@ -119,11 +119,10 @@ pointsMat(Matrix,Ring) := (M,R) -> (
 	  else (
 	       -- we modify L, Lhash, thiscol, and also PC
 	       Q = append(Q, monom);
-	       f = sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+	       L = L + sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
 			 newmon := monom * R_i;
 			 Lhash#newmon = i;
 			 newmon));
-	       L = L + f;
 	       thiscol = thiscol + 1;
 	       )
 	  );
@@ -183,7 +182,7 @@ points (Matrix,Ring) := (M,R) -> (
 	  else (
 	       -- we modify L, Lhash, thiscol, and also PC
 	       Q = append(Q, monom);
-	       f = sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+	       f := sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
 			 newmon := monom * R_i;
 			 Lhash#newmon = i;
 			 newmon));

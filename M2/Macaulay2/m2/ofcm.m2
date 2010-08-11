@@ -123,7 +123,8 @@ monoidDefaults = (
 	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
 	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
       	  DegreeMap => null {* identity *},		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
-     	  DegreeLift => null				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
+     	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
+	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
 	  }
      )
 

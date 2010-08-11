@@ -1,5 +1,13 @@
 -- -*- coding: utf-8 -*-
 
+--------------------------------------------------------------------------------
+-- Copyright 2008, 2009, 2010  Chris Francisco, Andrew Hoefel, and Adam Van Tuyl
+-- 
+-- You may redistribute this program under the terms of the GNU General Public
+-- License as published by the Free Software Foundation, either version 2 of the
+-- License, or any later version.
+--------------------------------------------------------------------------------
+
 needsPackage "SimplicialComplexes"
 
 newPackage("EdgeIdeals", 
@@ -12,7 +20,7 @@ newPackage("EdgeIdeals",
 		"acceptance date" => "2009-06-27",
 		"published article URI" => "http://j-sag.org/Volume1/jsag-1-2009.pdf",
 		"published code URI" => "http://j-sag.org/Volume1/EdgeIdeals.m2",
-     	        "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/EdgeIdeals.m2",
+     	        "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/EdgeIdeals.m2",
 		"release at publication" => 9342,
 		"version at publication" => "1.0.0",
 		"volume number" => "1",

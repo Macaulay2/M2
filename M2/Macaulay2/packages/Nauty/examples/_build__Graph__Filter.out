@@ -1,0 +1,80 @@
+-- -*- M2-comint -*- {* hash: 1208512627 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..f];
+
+i2 : L = {graph {a*b}, graph {a*b, b*c}, graph {a*b, b*c, c*d}, graph {a*b, b*c, c*d, d*e}};
+
+i3 : s = buildGraphFilter hashTable {"NumEdges" => 3}
+
+o3 = -e3 
+
+i4 : filterGraphs(L, s)
+
+o4 = {Graph{edges => {{a, b}, {b, c}, {c, d}}}}
+            ring => R
+            vertices => {a, b, c, d, e, f}
+
+o4 : List
+
+i5 : s = buildGraphFilter hashTable {"NumEdges" => (2,3)}
+
+o5 = -e2:3 
+
+i6 : filterGraphs(L, s)
+
+o6 = {Graph{edges => {{a, b}, {b, c}}     }, Graph{edges => {{a, b}, {b,
+            ring => R                              ring => R
+            vertices => {a, b, c, d, e, f}         vertices => {a, b, c,
+     ------------------------------------------------------------------------
+     c}, {c, d}}}}
+
+     d, e, f}
+
+o6 : List
+
+i7 : s = buildGraphFilter hashTable {"NumEdges" => (,3)}
+
+o7 = -e:3 
+
+i8 : filterGraphs(L, s)
+
+o8 = {Graph{edges => {{a, b}}             }, Graph{edges => {{a, b}, {b,
+            ring => R                              ring => R            
+            vertices => {a, b, c, d, e, f}         vertices => {a, b, c,
+     ------------------------------------------------------------------------
+     c}}     }, Graph{edges => {{a, b}, {b, c}, {c, d}}}}
+                      ring => R
+     d, e, f}         vertices => {a, b, c, d, e, f}
+
+o8 : List
+
+i9 : s = buildGraphFilter hashTable {"NumEdges" => (2,)}
+
+o9 = -e2: 
+
+i10 : filterGraphs(L, s)
+
+o10 = {Graph{edges => {{a, b}, {b, c}}     }, Graph{edges => {{a, b}, {b,
+             ring => R                              ring => R            
+             vertices => {a, b, c, d, e, f}         vertices => {a, b, c,
+      -----------------------------------------------------------------------
+      c}, {c, d}}}, Graph{edges => {{a, b}, {b, c}, {c, d}, {d, e}}}}
+                          ring => R
+      d, e, f}            vertices => {a, b, c, d, e, f}
+
+o10 : List
+
+i11 : s = buildGraphFilter hashTable {"NumEdges" => (2,), "NegateNumEdges" => true}
+
+o11 = -~e2: 
+
+i12 : filterGraphs(L, s)
+
+o12 = {Graph{edges => {{a, b}}             }}
+             ring => R
+             vertices => {a, b, c, d, e, f}
+
+o12 : List
+
+i13 : 

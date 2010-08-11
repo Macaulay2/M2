@@ -1,0 +1,12 @@
+-- -*- M2-comint -*- {* hash: -1973619198 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : sparse6ToGraph6 ":DaY_~"
+
+o1 = Dhc
+
+i2 : sparse6ToGraph6 ":M"
+
+o2 = M????????????????
+
+i3 : 

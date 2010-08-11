@@ -1,22 +1,28 @@
+needsPackage "AdjointIdeal"
+
 -- -*- coding: utf-8 -*-
 newPackage(
 	"Parametrization",
-    	Version => "0.15", 
-    	Date => "Aug 15, 2009",
+    	Version => "0.5", 
+    	Date => "June 15, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
     	Headline => "Rational parametrization of rational plane curves and related computations",
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	CacheExampleOutput => true,
+	AuxiliaryFiles => true
     	)
 
 -- For information see documentation key "Parametrization" below.
 
 
-export {parametrize,mapToRNC,isomorphicProjectionOfRNC,rParametrizeRNC,rParametrizePlaneCurve,rationalPointOnConic,
-rParametrizeConic,invertBirationalMap,modularSquareRoot,legendreSymbol,chineseRemainder,modularPower,modularInverse,
-testParametrization,parametrizeConic}
+export {"parametrize","mapToRNC","isomorphicProjectionOfRNC","rParametrizeRNC","rParametrizePlaneCurve","rationalPointOnConic",
+"rParametrizeConic","invertBirationalMap","modularSquareRoot","legendreSymbol","chineseRemainder","modularPower","modularInverse",
+"testParametrization","parametrizeConic","vb"}
 
+needsPackage "MapleInterface"
+needsPackage "AdjointIdeal"
 
 -- parametrization of rational curves
 -- use 
@@ -145,6 +151,11 @@ testParametrization,parametrizeConic}
 -- 2nd argument: adjoint ideal of C
 --
 mapToRNC=method()
+
+mapToRNC(Ideal):=(I0)->(
+J:=adjointIdeal I0;
+mapToRNC(I0,J));
+
 mapToRNC(Ideal,Ideal):=(I0,J)->(
 Rx:=ring I0;
 K:=coefficientRing Rx;
@@ -584,8 +595,8 @@ R:=ring f;
 K:=coefficientRing R;
 sub(contract(m,f),K))
 
-rationalPointOnConic=method()
-rationalPointOnConic(Ideal):=(I)->(
+rationalPointOnConic=method(Options=>{vb=>0})
+rationalPointOnConic(Ideal):=opt->(I)->(
 ueber:=(gens I)_(0,0);
 L:=(entries vars ring I)#0;
 L1:=(entries mingens (ideal vars ring I)^2)#0;
@@ -694,7 +705,7 @@ if c!=0 then (
  cc=-jj;
 );
 if sign(aa)==sign(bb) and sign(bb)==sign(cc) then return(sub(matrix{{0,0,0}},QQ));
-pkt:=rtpt(sub(bb,ZZ),sub(cc,ZZ));
+pkt:=rtpt(sub(bb,ZZ),sub(cc,ZZ),opt);
 if pkt==sub(matrix {{0,0,0}},QQ) then return(pkt);
 tpkt:=sub(rtrans,{L#0=>pkt_(0,0),L#1=>pkt_(0,1),L#2=>pkt_(0,2)});
 tst=sub(ueber,{L#0=>tpkt_(0,0),L#1=>tpkt_(0,1),L#2=>tpkt_(0,2)});
@@ -719,8 +730,9 @@ nrm(tpkt));
 -- does the same as rationalPointOnConic but for the conic y_0^2 + bb*y_1^2 + cc*y_2^2
 -- with bb and cc non-zero of different sign
 
-rtpt=method()
-rtpt(ZZ,ZZ):=(bb,cc)->(
+rtpt=method(Options=>{vb=>0})
+rtpt(ZZ,ZZ):=opt->(bb,cc)->(
+if opt.vb>0 then print("Input: "|bb,","|cc);
 y:=symbol y;
 R:=QQ[y_0,y_1,y_2];
 tst:=1;
@@ -735,6 +747,7 @@ sqfpc:=sub(cc/ccsq^2,ZZ);
 gt:=gcd(sqfpb,sqfpc);
 rslt:=0;
 aaa:=gt;bbb:=sub(sqfpb/gt,ZZ);ccc:=sub(sqfpc/gt,ZZ);
+if opt.vb>0 then print("(a,b,c) = ("|aaa|","|bbb|","|ccc|")");
 ueberq3:=1/gt*sub(ueberq2,{y_0=>y_0*gt});
 rtrans=matrix {{rtrans_(0,0),rtrans_(0,1)/gt,rtrans_(0,2)/gt}};
 bk:=0;
@@ -753,9 +766,11 @@ while Jval(abs(aaa*bbb),abs(aaa*ccc),abs(bbb*ccc))>1 do (
    rtrans=sub(rtrans,{y_1=>y_2,y_2=>y_1});
   );
  );
+if opt.vb>0 then print("(a,b,c) = ("|aaa|","|bbb|","|ccc|")");
 R1:=modularSquareRoot(-aaa*bbb,abs(ccc));
 R2:=modularSquareRoot(-aaa*ccc,abs(bbb));
 R3:=modularSquareRoot(-bbb*ccc,abs(aaa));
+if opt.vb>0 then print("(R1,R2,R2) = ("|R1|","|R2|","|R3|")");
 if (R1==-1 or R2==-1 or R3==-1) then return(sub(matrix({{0,0,0}}),QQ));
 r1:=modularQuotient(R1/aaa,ccc);
 if r1>0 and abs(2*r1)>abs(ccc) then (
@@ -785,6 +800,7 @@ C:=squarefreepart(sub(Q/A,ZZ));
 gammaa:=rootofsquarepart(sub(Q/A,ZZ));
 rtrans=sub(rtrans,{y_0=>A*alpha*y_0-beta*y_1,y_1=>y_0+aaa*alpha*y_1,y_2=>C*gammaa*y_2});
 ueberq4:=A*y_0^2+B*y_1^2+C*y_2^2;
+if opt.vb>0 then print("(alpha,beta,gamma) = ("|alpha|","|beta|","|gammaa|")");
 aaa=A;bbb=B;ccc=C;
 );
 rtt:=0;
@@ -890,6 +906,7 @@ m);
 --
 rootofsquarepart=method()
 rootofsquarepart(ZZ):=(n)->(
+--print("---",n);
 L:=toList factor abs n;
 L1:={};
 q:=0;
@@ -898,6 +915,7 @@ while q<#L do (
  L1=toList(L#q);
  m=m*(L1#0)^(sub((L1#1-(sub(mod(L1#1,2),ZZ)))/2,ZZ));
 q=q+1);
+--print m;
 m);
 --rootofsquarepart(-1234*5^2)
 
@@ -1027,6 +1045,10 @@ while true do (
 
 modularSquareRoot=method()
 modularSquareRoot(ZZ,ZZ):=(a,n)->(
+r:=msqrt(a,n);
+--print(r);
+return(r);
+--print("Input",a,n);
 if n==1 then (
   return(0)
 );
@@ -1037,6 +1059,7 @@ L2:={};
 t:=0;
 while q<#F do (
   t=pmodularSquareRoot(a,(toList F#q)#0);
+  --print t;
   if t==-1 then return(-1);
   L1=append(L1,t);
   L2=append(L2,(toList F#q)#0);
@@ -1044,6 +1067,7 @@ q=q+1);
 s:=chineseRemainder(L1,L2);
 if s<0 then s=-1*s;
 if abs(s)>n/2 then s=abs(n-s);
+--print("Result ",s);
 s);
 --modularSquareRoot(3,13)
 
@@ -1175,7 +1199,11 @@ if (rank source vars ring I)==(1+degree I) then (
    par2:=sub(par#0,{v#0=>conicpar_(0,0),v#1=>conicpar_(1,0),v#2=>conicpar_(2,0)});
    return(par2);
 );
-"not yet implemented")
+if (rank source vars ring I)==3 then (
+   adj:=adjointIdeal I;
+   return(parametrize(I,adj,opts));
+);
+"not yet implemented---")
 
 parametrize0=method()
 parametrize0(Ideal):=(I)->(
@@ -1186,7 +1214,11 @@ if (rank source vars ring I)==(1+degree I) then (
    pI:=substitute(par#0,S);
    return(pI);
 );
-"not yet implemented")
+if (rank source vars ring I)==3 then (
+   adj:=adjointIdeal I;
+   return(parametrize(I,adj));
+);
+"not yet implemented____")
 
 ---------------------------------------------------------------------------------------------
 
@@ -1203,11 +1235,58 @@ You should have received a copy of the GNU General Public License along with thi
 
 
 beginDocumentation()
-document { 
-	Key => "Parametrization",
-	Headline => "Rational parametrization of rational curves and related computations",
-	EM "Parametrization", " is a package to compute a rational parametrization of a rational curves defined over QQ."
-	}
+
+doc ///
+  Key
+    "Parametrization"
+  Headline
+    Rational parametrization of rational curves and related computations
+  Description
+   Text
+    {\bf Overview:}
+
+    Parametrization is a package to compute rational parametrizations of rational curves defined over QQ.
+
+    We use the package {\it AdjointIdeal} to compute the adjoint ideal of a rational plane curve C of degree n defined over QQ.
+    The package exports also all functions available in {\it AdjointIdeal}, e.g., geometricGenus.
+    
+    The corresponding linear system maps the curve birationally to a rational normal curve in PP^{n-2}.
+
+    Iterating the anticanonical map we give an isomorphism of the rational normal curve to PP^1 for n odd
+    or a conic C2 in PP^2 for n even.
+
+    In the n even case we test for existence of a rational point on the conic and if so give a rational parametrization of the conic.
+
+    By inverting the birational map of C to PP^1 or the conic, we obtain a rational parametrization of C,
+    if n is odd or C2 has a rational point over PP^1 otherwise over C2.
+
+    The package is work in progress, so there will be future improvements and more testing is necessary.
+
+    For more theoretical details see 
+    J. Boehm: Rational parametrization of rational curves,
+    @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+
+
+    {\bf Key user functions:}
+
+    @TO parametrize@  --  This is the universal rational parametrization function, it works for plane rational curves, 
+                     in particular conics, and rational normal curves.
+
+    @TO testParametrization@  --  Test a parametrization
+
+    @TO rationalPointOnConic@  -- Test for a rational point on a conic and find it if it exists 
+
+    @TO mapToRNC@  --  Map a plane rational curve to a rational normal curve.
+
+
+    {\bf Setup:}
+
+    This package uses the package {\it AdjointIdeal}, so install this first.
+
+    Place the file Parametrization.m2 somewhere into the M2 seach path and install the package by doing
+
+    installPackage("Parametrization")
+///
 
 
 doc ///
@@ -1232,11 +1311,45 @@ doc ///
    Text
         Computes a rational parametrization pI of C.  
 
-        If the degree of C odd, pI is over P^1.
+        If the degree of C odd, pI is over PP^1.
 
         If the degree of C even, pI is over a conic. So to get the conic apply "ideal ring" to the parametrization pI.
         If the @TO Option@ parametizeConic=>true is given and C has a rational point then the conic is parametrized
-        so pI is over P^1.
+        so pI is over PP^1.
+
+        If the second argument J is not specified and degree of C is bigger than 2 then J is being computed via the package AdjointIdeal.
+        In this case we (i.e., the package AdjointIdeal) assume that I has the following properties:
+
+        Denote the variables of R=ring(I) by v,u,z. 
+        All singularities of C have to lie in the chart z!=0 and the curve should not contain (1:0:0).
+
+        These conditions can always be met by a suitable change of coordinates.
+        At some point the function will take care of the change of coordinate on its own.
+
+   Example
+     K=QQ;
+     R=K[v,u,z];
+     I=ideal(v^8-u^3*(z+u)^5);
+     p=parametrize(I)
+     parametrize(I,parametrizeConic=>true)
+     Irnc=mapToRNC(I);
+     parametrize(Irnc)
+     parametrize(Irnc,parametrizeConic=>true)
+     Iconic=ideal ring p
+     parametrize(Iconic)
+
+   Text
+
+   Example
+     K=QQ;
+     R=K[v,u,z];
+     I=ideal(u^5+2*u^2*v*z^2+2*u^3*v*z+u*v^2*z^2-4*u*v^3*z+2*v^5);
+     parametrize(I)
+     Irnc=mapToRNC(I);
+     parametrize(Irnc)
+   Text
+
+     Specifying J:
 
    Example
      K=QQ;
@@ -1262,7 +1375,6 @@ doc ///
      parametrize(Irnc)
   Caveat
      So far only implemented for plane curves and rational normal curves.
-     When the integral basis is implemented, the parameter J will be dropped.
   SeeAlso
      rParametrizePlaneCurve
      rParametrizeRNC
@@ -1355,6 +1467,8 @@ doc ///
      modularSquareRoot(3,14)
   Caveat
     This should be extended slightly to non squarefree n.
+    We use this function as we have to handle very large numbers.
+    This function is no longer used, as we call Maple to compute the modular square root.
   SeeAlso
     legendreSymbol
     modularPower
@@ -1434,7 +1548,7 @@ doc ///
     I:Ideal
        defining a rational curve C
     phi:Matrix
-       with a parametization of C, defined over P^1 or in the coordinate ring of a conic.
+       with a parametization of C, defined over PP^1 or in the coordinate ring of a conic.
   Outputs
     :Boolean
        true if phi is a parametization or false if not.
@@ -1540,7 +1654,7 @@ doc ///
         over the ring if I containing the linear system.
   Description
    Text
-     Compute the parametrizing linear system of a rational normal curve over P^1 if the degree is odd or a conic if the degree even.
+     Compute the parametrizing linear system of a rational normal curve over PP^1 if the degree is odd or a conic if the degree even.
 
    Example
      K=QQ;
@@ -1602,7 +1716,7 @@ doc ///
         Compute a rational parametrization of a rational normal curve C defined by I. 
         
         phi contains the rational parametrization of C
-        over P^1 if the degree of C is odd or over a conic if the degree of C is even.
+        over PP^1 if the degree of C is odd or over a conic if the degree of C is even.
         
         Ic is the 0-ideal for odd degree or the ideal of the conic for even degree.
 
@@ -1621,11 +1735,13 @@ doc ///
 doc ///
   Key
     mapToRNC
+    (mapToRNC,Ideal)
     (mapToRNC,Ideal,Ideal)
     (mapToRNC,Ideal,Matrix)
   Headline
     Map plane rational curve to rational normal curve.
   Usage
+    mapToRNC(I)
     mapToRNC(I,J)
   Inputs
     I:Ideal
@@ -1639,6 +1755,15 @@ doc ///
    Text
      Maps a plane rational curve birationally to a rational normal curve by the adjoints of degree=degree(C)-2
      Applied to a curve of genus >1 it uses the adjoints of degree=degree(C)-3.
+
+     If the second argument J is not specified and degree of C is bigger than 2 then J is being computed via the package AdjointIdeal.
+
+   Example
+     K=QQ;
+     R=K[v,u,z];
+     I=ideal(v^8-u^3*(z+u)^5);
+     betti mapToRNC(I)
+   Text
 
    Example
      K=QQ;
@@ -1673,7 +1798,26 @@ doc ///
      rParametrizeConic
   Caveat
      If rParametrizeConic is changed such that it passes to a degree 2 field extension if the degree of C is even and the conic does not have a rational point,
-     then the result will have entries in the homogeneous coordinate ring of P^1 over this extension.
+     then the result will have entries in the homogeneous coordinate ring of PP^1 over this extension.
+///
+
+doc ///
+  Key
+    vb
+    [rationalPointOnConic,vb]
+  Headline
+    Option whether to print intermediate results.
+  Description
+   Text
+       If this option is set an ZZ bigger than 1
+       the function will print intermediate results.
+        
+   Example
+    R=QQ[y_0..y_2];
+    I=ideal(y_0^2 + 3*3*43*y_1^2 -2*2*2*2*11*41*y_2^2)
+    p=rationalPointOnConic(I,vb=>1)
+  SeeAlso
+     rationalPointOnConic
 ///
 
 
@@ -1699,14 +1843,14 @@ doc ///
 
         If the degree of C odd:
 
-        pI is over P^1.
+        pI is over PP^1.
 
         If the degree of C even:
 
         pI is over a conic. So to get the conic apply "ideal ring" to the parametrization pI.
 
         If the @TO Option@ parametrizeConic=>true is given and C has a rational point then the conic is parametrized
-        so pI is over P^1.
+        so pI is over PP^1.
 
    Example
      K=QQ;
@@ -1725,7 +1869,7 @@ doc ///
      rParametrizePlaneCurve(I,J)
   Caveat
      If rParametrizeConic is changed such that it passes to a degree 2 field extension if the degree of C is even and the conic does not have a rational point,
-     then pI will have entries in the homogeneous coordinate ring of P^1 over this extension.
+     then pI will have entries in the homogeneous coordinate ring of PP^1 over this extension.
   SeeAlso
      mapToRNC
      isomorphicProjectionOfRNC

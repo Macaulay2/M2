@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- {* hash: 292568675 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..d];
+
+i2 : G = graph {a*b, c*d};
+
+i3 : S = QQ[a..f];
+
+i4 : newEdges(G, S)
+
+o4 = {Graph{edges => {{a, e}, {b, e}, {c, f}, {d, f}, {e, f}}}}
+            ring => S
+            vertices => {a, b, c, d, e, f}
+
+o4 : List
+
+i5 : 

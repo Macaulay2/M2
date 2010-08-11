@@ -1,0 +1,17 @@
+in this circumstance:
+
+A.m2
+	newPackage "A"
+	needsPackage "B"
+
+B.m2
+	newPackage "B"
+	needsPackage "A"
+	x=1
+
+run this
+
+    	loadPackage "A"
+
+the symbol x ends up in the public dictionary of A instead of B
+because that dictionary is mutable still.  Mark it immutable?

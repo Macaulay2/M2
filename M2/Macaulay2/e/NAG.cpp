@@ -6,8 +6,9 @@
 #include <time.h>
 #include "lapack.hpp"
 #include "poly.hpp"
+#include "relem.hpp"
  
-// Straiight Line Program class
+// Straight Line Program class
 
 StraightLineProgram::StraightLineProgram()
 {
@@ -800,6 +801,12 @@ void StraightLineProgram::text_out(buffer& o) const
 // end StraightLineProgram
 
 
+void zero_complex_array(int n, complex* a)
+{
+  for (int i=0; i<n; i++,a++)
+    *a=0.;
+}
+
 void copy_complex_array(int n, const complex* a, complex* b)
 {
   for (int i=0; i<n; i++,a++,b++)
@@ -1016,6 +1023,8 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
   else
     {
       cond = sigma[size-1]/sigma[0];  
+      //print_complex_matrix(size,copyA);
+      //printf("(s_large=%lf, s_small=%lf)\n", sigma[0], sigma[size-1]);
     }
 
   deletearray(workspace);
@@ -1029,6 +1038,74 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
 #endif
 }
 
+// In: A, a square matrix of size "size"
+// Out: true if success, "norm" = operator norm of A^{-1}
+bool norm_of_inverse_via_svd(int size, complex* A, double& norm)
+{
+#if !LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
+  bool ret = true;
+  char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
+  int rows = size;
+  int cols = size;
+  int info;
+  int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
+  int max = (rows >= cols) ? rows : cols;
+  int wsize = 4*min+2*max;
+  double *workspace = newarray_atomic(double,2*wsize);
+  double *rwork = newarray_atomic(double,5*max);
+
+  double *copyA = (double*) A;
+  double *u = newarray_atomic(double,2*rows*rows);
+  double *vt = newarray_atomic(double,2*cols*cols);
+  double *sigma = newarray_atomic(double,2*min);
+  
+  zgesvd_(&doit, &doit, &rows, &cols, 
+	  copyA, &rows,
+	  sigma, 
+	  u, &rows,
+	  vt, &cols,
+	  workspace, &wsize, 
+	  rwork, &info);
+
+  if (info < 0)
+    {
+      ERROR("argument passed to zgesvd had an illegal value");
+      ret = false;
+    }
+  else if (info > 0) 
+    {
+      ERROR("zgesvd did not converge");
+      ret = false;
+    }
+  else
+    {
+      if (sigma[size-1] == 0) {
+	ERROR("invertible matrix expected");
+	ret = false;
+      }
+      norm = 1/sigma[size-1];  
+    }
+
+  deletearray(workspace);
+  deletearray(rwork);
+  //deletearray(copyA);
+  deletearray(u);
+  deletearray(vt);
+  deletearray(sigma);
+
+  return ret;
+#endif
+}
 
 // END lapack-based routines
 
@@ -1163,6 +1240,7 @@ PathTracker::PathTracker()
 {
   raw_solutions = NULL;
   solutions = NULL;
+  DMforPN =NULL;
 }
 
 PathTracker::~PathTracker()
@@ -1170,20 +1248,84 @@ PathTracker::~PathTracker()
   for (int i=0; i<n_sols; i++)
     raw_solutions[i].release();
   deletearray(raw_solutions); 
+  deletearray(DMforPN);
 }
 
-// a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
+// creates a PathTracker object (case: is_projective), builds slps for predictor and corrector given start/target systems
+// input: two (1-row) matrices of polynomials 
+// out: PathTracker*
+PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, gmp_RR productST) 
+{
+  if (S->n_rows()!=1 || T->n_rows()!=1) { 
+    ERROR("1-row matrices expected");
+    return NULL;
+  };
+  PathTracker *p = new PathTracker;
+  const PolyRing* R = p->homotopy_R = S->get_ring()->cast_to_PolyRing();
+  if (R==NULL) {
+    ERROR("polynomial ring expected");
+    return NULL;
+  }
+  const Ring* K = R->getCoefficients();
+  if (K->is_CCC())
+    p->C = K->cast_to_CCC();
+  else {
+    ERROR("complex coefficients expected");
+    return NULL;
+  }
+  p->productST = mpfr_get_d(productST,GMP_RNDN);
+  p->bigT = asin(sqrt(1-p->productST*p->productST));  
+
+  int n = S->n_cols()+1; // equals the number of variables
+  p->maxDegreeTo3halves = 0;
+  p->DMforPN = newarray(double,n);
+  p->DMforPN[n-1] = 1;
+  p->S = S; 
+  p->slpS = NULL; 
+  for (int i=0; i<n-1; i++) {
+    int d = degree_ring_elem(R,S->elem(0,i)); 
+    if (d > p->maxDegreeTo3halves)
+      p->maxDegreeTo3halves = d;
+    p->DMforPN[i] = 1/sqrt(d);
+    StraightLineProgram* slp = StraightLineProgram::make(R, S->elem(0,i));
+    if (p->slpS == NULL) p->slpS = slp;
+    else {
+      StraightLineProgram* t = p->slpS->concatenate(slp);
+      delete slp;
+      delete p->slpS;
+      p->slpS = t;
+    }
+  }
+  p->slpSx = p->slpS->jacobian(false, p->slpHxH/*not used*/, true, p->slpSxS);
+  p->maxDegreeTo3halves = p->maxDegreeTo3halves*sqrt(p->maxDegreeTo3halves);
+
+  p->T = T; 
+  p->slpT = NULL; 
+  for (int i=0; i<T->n_cols(); i++) {
+    StraightLineProgram* slp = StraightLineProgram::make(R, T->elem(0,i));
+    if (p->slpT == NULL) p->slpT = slp;
+    else {
+      StraightLineProgram* t = p->slpT->concatenate(slp);
+      delete slp;
+      delete p->slpT;
+      p->slpT = t;
+    }
+  }
+  p->slpTx = p->slpT->jacobian(false, p->slpHxH/*not used*/, true, p->slpTxT);
+
+  return p;
+}
+
+// creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
 // input: a (1-row) matrix of polynomials 
-// out: the number of PathTracker
+// out: PathTracker*
 PathTracker /* or null */* PathTracker::make(const Matrix *HH) 
 {
-  /* 
   if (HH->n_rows()!=1) { 
     ERROR("1-row matrix expected");
     return NULL;
   };
-  */
-
+  
   PathTracker *p = new PathTracker;
   const PolyRing* R = p->homotopy_R = HH->get_ring()->cast_to_PolyRing();
   if (R==NULL) {
@@ -1334,9 +1476,9 @@ int PathTracker::track(const Matrix* start_sols)
   complex* dxdt = newarray(complex,n+1); 
     complex* dx =  dxdt;
     complex* dt = dxdt+n;
-  complex* Hxt = newarray_atomic(complex, n*(n+1));
-  complex* HxtH = newarray_atomic(complex, n*(n+2));
-  complex* HxH = newarray_atomic(complex, n*(n+1));
+  complex* Hxt = newarray_atomic(complex, (n+1)*n);
+  complex* HxtH = newarray_atomic(complex, (n+2)*n);
+  complex* HxH = newarray_atomic(complex, (n+1)*n);
     complex *LHS, *RHS;
   complex one_half(0.5,0);
   complex* xt = newarray_atomic(complex,n+1);
@@ -1382,19 +1524,22 @@ int PathTracker::track(const Matrix* start_sols)
 	}  
       
       bool LAPACK_success = false;
-         
+
+      if (is_projective) //normalize
+	multiply_complex_array_scalar(n,x0,1/sqrt(norm2_complex_array(n,x0)));
+
       // PREDICTOR in: x0t0,dt,pred_type
       //           out: dx
       switch(pred_type) {
       case TANGENT: {
-	slpHxt->evaluate(n+1,x0t0, Hxt);
+	evaluate_slpHxt(n,x0t0, Hxt); 
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	multiply_complex_array_scalar(n,RHS,-*dt);
         LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
       } break;
       case EULER: {
-	slpHxtH->evaluate(n+1,x0t0, HxtH); // for Euler "H" is attached
+	evaluate_slpHxtH(n,x0t0,HxtH); // for Euler "H" is attached
         LHS = HxtH;
         RHS = HxtH+n*(n+1); // H
 	complex* Ht = RHS-n; 
@@ -1407,7 +1552,7 @@ int PathTracker::track(const Matrix* start_sols)
 	copy_complex_array(n+1,x0t0,xt);
 	
 	// dx1
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1419,7 +1564,7 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,xt,dx1); // x0+.5dx1*dt
 	xt[n] += one_half*(*dt); // t0+.5dt
 	//
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1432,7 +1577,7 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,xt,dx2); // x0+.5dx2*dt
 	// xt[n] += one_half*(*dt); // t0+.5dt (SAME)
 	//
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1445,7 +1590,7 @@ int PathTracker::track(const Matrix* start_sols)
 	add_to_complex_array(n,xt,dx3); // x0+dx3*dt
 	xt[n] += *dt; // t0+dt
 	//
-	slpHxt->evaluate(n+1,xt, Hxt);
+	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -1463,26 +1608,49 @@ int PathTracker::track(const Matrix* start_sols)
 	multiply_complex_array_scalar(n,dx4,1.0/6);
 	copy_complex_array(n,dx4,dx);
       } break;
+      case PROJECTIVE_NEWTON: {
+	evaluate_slpHxt(n,x0t0, Hxt); 
+	LHS = Hxt; 	
+	RHS = Hxt+n*n; 
+        LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx); // dx used as temp
+	double chi2 = sqrt(norm2_complex_array(n,RHS) +  norm2_complex_array(n,dx));
+	double chi1;
+
+	// evaluate again: LHS destroyed by solve_... !!!
+	evaluate_slpHxt(n,x0t0, Hxt); 
+	LHS = Hxt; 	
+
+	for (j=0; j<n; j++)
+	  for(i=0; i<n; i++)
+	    *(LHS+n*i+j) = *(LHS+n*i+j) * DMforPN[j]; // multiply j-th column by sqrt(degree) 
+	//print_complex_matrix(n,(double*)LHS); //!!!
+	norm_of_inverse_via_svd(n, LHS, chi1); 
+	//printf("chi1=%lf\n", chi1);
+	*dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT);
+	zero_complex_array(n,dx); 
+      } break;
       default: ERROR("unknown predictor"); 
       };
 
+      // make prediction
       copy_complex_array(n+1,x0t0,x1t1);
       add_to_complex_array(n+1,x1t1,dxdt);
 
       // CORRECTOR
-      int n_corr_steps=0; 
+      int n_corr_steps = 0; 
       bool is_successful;
       do {
 	n_corr_steps++;
 	//
-	slpHxH->evaluate(n+1,x1t1, HxH);
+	evaluate_slpHxH(n,x1t1,HxH); 
 	LHS = HxH; 	
 	RHS = HxH+n*n; // i.e., H
 	//
 	negate_complex_array(n,RHS);
 	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
 	add_to_complex_array(n,x1t1,dx);
-	is_successful = norm2_complex_array(n,dx) < tol2*norm2_complex_array(n,x1t1);
+	is_successful = (pred_type==PROJECTIVE_NEWTON) 
+	  || (norm2_complex_array(n,dx) < tol2*norm2_complex_array(n,x1t1));
 	//printf("c: |dx|^2 = %lf\n", norm2_complex_array(n,dx));
       } while (!is_successful and n_corr_steps<max_corr_steps);
     
@@ -1512,7 +1680,7 @@ int PathTracker::track(const Matrix* start_sols)
     t_s->t = t0->getreal();
     if (t_s->status == PROCESSING)
       t_s->status = REGULAR;
-    slpHxH->evaluate(n+1,x0t0,HxH);
+    evaluate_slpHxH(n,x0t0,HxH);
     cond_number_via_svd(n, HxH/*Hx*/, t_s->rcond);
     t_s->num_steps = count;
     if (M2_gbTrace>0) {
@@ -1588,7 +1756,7 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
     do {
       n_corr_steps++;
       //
-      slpHxH->evaluate(n+1,x1t1, HxH);
+      evaluate_slpHxH(n,x1t1, HxH);
       LHS = HxH; 	
       RHS = HxH+n*n; // i.e., H
       //
@@ -1603,9 +1771,9 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
   }
   
   // make the output matrix
-  FreeModule* S = C->make_FreeModule(n); 
-  FreeModule* T = C->make_FreeModule(n_sols);
-  MatrixConstructor mat(T,S);
+  FreeModule* SS = C->make_FreeModule(n); 
+  FreeModule* TT = C->make_FreeModule(n_sols);
+  MatrixConstructor mat(TT,SS);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
   c = s_sols;
@@ -1631,9 +1799,9 @@ Matrix /* or null */* PathTracker::getSolution(int solN)
 {
   if (solN<0 || solN>=n_sols) return NULL;
   // construct output 
-  FreeModule* S = C->make_FreeModule(n_coords); 
-  FreeModule* T = C->make_FreeModule(1);
-  MatrixConstructor mat(T,S);
+  FreeModule* SS = C->make_FreeModule(n_coords); 
+  FreeModule* TT = C->make_FreeModule(1);
+  MatrixConstructor mat(TT,SS);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
   Solution* s = raw_solutions+solN;
@@ -1651,9 +1819,9 @@ Matrix /* or null */* PathTracker::getSolution(int solN)
 Matrix /* or null */* PathTracker::getAllSolutions()
 {
   // construct output 
-  FreeModule* S = C->make_FreeModule(n_coords); 
-  FreeModule* T = C->make_FreeModule(n_sols);
-  MatrixConstructor mat(T,S);
+  FreeModule* SS = C->make_FreeModule(n_coords); 
+  FreeModule* TT = C->make_FreeModule(n_sols);
+  MatrixConstructor mat(TT,SS);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
   Solution* s = raw_solutions;
@@ -1730,6 +1898,26 @@ void PathTracker::text_out(buffer& o) const
 
 }
 
+// ------------------------- service functions -------------------------
+int degree_ring_elem(const PolyRing* R, ring_elem re)
+{
+  RingElement* RE = RingElement::make_raw(R,re);
+  M2_arrayint d_array = RE->multi_degree();
+  delete RE;
+  return d_array->array[0];
+}
+
+void print_complex_matrix(int size, const double* A)
+{
+  static int c=5;
+  int i,j;
+  if (c-->0)  
+  for (i=0; i<size; i++) {
+    for (j=0; j<size; j++)
+      printf("(%lf %lf) ", *(A+2*(size*i+j)), *(A+2*(size*i+j)+1));
+    printf("\n");
+  }
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

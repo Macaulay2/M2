@@ -1,0 +1,20 @@
+-- -*- M2-comint -*- {* hash: 562050643 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..f];
+
+i2 : G = {"EhEG", cycle R, completeGraph R, graph {a*d, d*b, b*e, e*c, c*f, f*a}};
+
+i3 : removeIsomorphs G
+
+o3 = {EhEG, Graph{edges => {{a, b}, {a, c}, {a, d}, {a, e}, {a, f}, {b, c},
+                  ring => R
+                  vertices => {a, b, c, d, e, f}
+     ------------------------------------------------------------------------
+     {b, d}, {b, e}, {b, f}, {c, d}, {c, e}, {c, f}, {d, e}, {d, f}, {e,
+     ------------------------------------------------------------------------
+     f}}}}
+
+o3 : List
+
+i4 : 

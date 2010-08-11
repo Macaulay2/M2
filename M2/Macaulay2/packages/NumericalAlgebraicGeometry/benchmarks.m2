@@ -5,6 +5,14 @@ linearExample = () -> (
      ideal {x+y-3,x-y-1}
      )
 
+tinyExample = () -> (
+     R := CC[x,y];
+     S := {x^2-1,y-1};
+     T := {x^2+y^2-1, x};
+     solsS := {(1,1),(-1,1)};
+     (S,T,solsS)
+     )
+
 smallExample = () -> (
      R := CC[x,y];
      S := {x^2-1,y^2-1};

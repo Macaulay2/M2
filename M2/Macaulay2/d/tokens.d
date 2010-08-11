@@ -21,7 +21,10 @@ export isatty(f:TokenFile):bool := isatty(f.posFile);
 
 -- Expr Functions
 
-export printErrorMessage(err:Error):void := printErrorMessage(err.position,err.message);
+export printErrorMessage(err:Error):void := (
+     printErrorMessage(err.position,err.message);
+     err.printed = true;
+     );
 
 export getLocalDictionary(frameID:int):Dictionary := (
      p := allDictionaries;
@@ -49,6 +52,9 @@ export unwindMessage := "unhandled unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 export steppingMessage := "--stepping limit reached";
+--export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
+--export buildErrorPacket(pos:Position,message:string):Expr := Expr(Error(pos,message,nullE,false,dummyFrame));
+--export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
 export cwd():Expr := (
      r := getcwd();
      if r === "" then buildErrorPacket("can't get current working directory: " + syserrmsg())
@@ -63,7 +69,11 @@ foreach s in argv do
 (threadLocal export debuggingMode := false) = true;
 
 export printIfError(e:Expr):void := (
-     when e is err:Error do printErrorMessage(err.position,err.message) else nothing;
+     when e is err:Error do (
+	  printErrorMessage(err.position,err.message);
+	  err.printed = true;
+	  )
+     else nothing;
      );
 export printError(err:Error):Error := (
      if !(err.printed && err.position.filename === "stdio")

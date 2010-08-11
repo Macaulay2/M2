@@ -17,6 +17,7 @@ TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
 TEST /// input "Dmodules/TST/stafford.tst.m2" ///
 TEST /// input "Dmodules/TST/CC.tst.m2" ///
 TEST /// input "Dmodules/TST/localBFunction.tst.m2" ///
+TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
 
 document {
      Key => "Dmodules",

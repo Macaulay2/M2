@@ -126,18 +126,26 @@ Matrix * Matrix := Matrix => (m,n) -> (
      if source m === target n then (
 	  M := target m;
 	  N := source n;
-	  if m.?RingMap then n = m.RingMap matrix n;
-	  q := reduce(M,m.RawMatrix * n.RawMatrix);
-	  if m.?RingMap or n.?RingMap then (
-	       phi := (
-		    if m.?RingMap then
-		    if n.?RingMap then m.RingMap @@ n.RingMap else m.RingMap
-		    else n.RingMap);
-	       map(M,N,phi,q))
-	  else map(M,N,q))
+	  nraw := (
+	       if m.?RingMap
+	       then nraw = rawRingMapEval(raw m.RingMap, raw m.RingMap cover target n, n.RawMatrix)
+	       else n.RawMatrix
+	       );
+	  q := reduce(M,m.RawMatrix * nraw);
+	  map(
+	       M,
+	       N,
+	       if m.?RingMap then (
+		    if n.?RingMap then m.RingMap * n.RingMap else m.RingMap
+		    )
+	       else (
+		    if n.?RingMap then n.RingMap
+		    ),
+	       q,
+	       Degree => degree m + if m.?RingMap then m.RingMap.cache.DegreeMap degree n else degree n))
      else (
      	  R := ring m;
-	  S := ring n;
+	  S := ring target n;
 	  if R =!= S then (
 	       try m = m ** S else
 	       try n = n ** R else
@@ -157,7 +165,10 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       );
 	  f := m.RawMatrix * n.RawMatrix;
 	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, 0);
-	  map(M,N,reduce(M,f))))
+	  f = reduce(M,f);
+	  if n.?RingMap 
+	  then map(M,N,n.RingMap,f)
+	  else map(M,N,f)))
 
 Matrix ^ ZZ := Matrix => (f,n) -> (
      if n === 0 then id_(target f)
@@ -194,20 +205,14 @@ isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
 ggConcatCols := (tar,src,mats) -> (
-     f := map(tar,src,rawConcatColumns (raw\mats));
-     if same(degree \ mats) and degree f != degree mats#0
-     then f = map(target f, source f, f, Degree => degree mats#0);
-     f)
+     map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatColumns (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
+     )
 
 ggConcatRows := (tar,src,mats) -> (
-     rawmats := raw \ mats;
-     f := map(tar,src,rawConcatRows (raw\mats));
-     if same(degree \ mats)
-     and degree f != degree mats#0
-     then f = map(target f, source f, f, Degree => degree mats#0);
-     f)
+     map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatRows (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
+     )
 
-ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
+ggConcatBlocks = (tar,src,mats) -> (
      f := map(tar,src,rawConcatBlocks mats);
      if same(degree \ flatten mats)
      and degree f != degree mats#0#0
@@ -215,9 +220,11 @@ ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
      f)
 
 sameringMatrices = mats -> (
-     if sameresult(ring,mats) then mats else (
-     	  mats = apply(mats, m -> promote(m,try ring sum apply(toList mats, m -> 0_(ring m)) else error "expected matrices over compatible rings"));
-     	  mats))
+     if sameresult(m -> (if m.?RingMap then m.RingMap,ring target m, ring source m), mats)
+     then mats
+     else (
+	  R := try ring sum apply(toList mats, m -> 0_(ring target m)) else error "expected matrices over compatible rings";
+	  apply(mats, m -> promote(m,R))))
 
 directSum Matrix := f -> Matrix.directSum (1 : f)
 Matrix.directSum = args -> (

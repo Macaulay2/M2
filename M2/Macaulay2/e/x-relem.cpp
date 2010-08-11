@@ -1028,7 +1028,6 @@ const RingElement /* or null */ *rawDiff(int v, const RingElement *f)
       ERROR("not implemented for this ring");
       return 0;
     }
-  ring_elem result = f->get_value();
   return RingElement::make_raw(R,  R->diff(v, f->get_value()));
 }
 
@@ -1040,7 +1039,6 @@ const RingElement /* or null */ *rawLowerP(const RingElement *f)
       ERROR("not implemented for this ring");
       return 0;
     }
-  ring_elem result = f->get_value();
   return RingElement::make_raw(R,  R->lowerP(f->get_value()));
 }
 
@@ -1057,7 +1055,6 @@ const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, co
       ERROR("expected elements in the same ring");
       return 0;
     }
-  ring_elem result = f->get_value();
   return RingElement::make_raw(R,  R->power_mod(f->get_value(), n, g->get_value()));
 }
 

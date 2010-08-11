@@ -21,3 +21,8 @@ Greg Smith is working on some code for doing this.
 
 Progress log:
 
+A package ToricCohomology was written, but its functionality is now subsumed by
+the package NormalToricVarieties, currently available as
+
+   trunk/Macaulay2/packages/development/msri2010/NormalToricVarieties.m2
+

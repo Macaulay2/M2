@@ -23,10 +23,12 @@
 
 newPackage(
 	"Binomials",
-    	Version => "0.5.3", 
-    	Date => "September 2009",
-    	Authors => {
-	     {Name => "Thomas Kahle", Email => "kahle@mis.mpg.de", HomePage => "http://personal-homepages.mis.mpg.de/kahle/bpd"}},
+	Version => "0.5.4",
+	Date => "December 2009",
+	Authors => {{
+		  Name => "Thomas Kahle",
+		  Email => "kahle@mis.mpg.de",
+		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/bpd"}},
     	Headline => "Spezialized routines for binomial Ideals",
 	Configuration => { },
     	DebuggingMode => true
@@ -61,6 +63,7 @@ export {
      -- auxillary functions:
      partialCharacter,
      randomBinomialIdeal,
+     removeRedundant,
      -- Not in the interface:
 --     axisSaturate,
 --     cellVars,
@@ -73,8 +76,6 @@ export {
 --     minimalPrimaryComponent,
 --     binomialQuasiPower,
 --     binomialQuotient,
---     removeRedundant,
-
      -- Removed as of M2 v1.2
      -- Uncomment this if you are using <= 1.1
      -- lcm
@@ -357,14 +358,17 @@ nonCellstdm = {cellVariables=>null} >> o -> I -> (
 	  cv2 = cellVars I;
 	  )
      else (
-	  cv2 = baseName \ o#cellVariables;
+	  cv2 = o#cellVariables;
 	  -- if the cell variables changed their identities by field extension:
 	  );
      
      -- Extracts the monomials in the non-Cell variables.
      cv := set cv2; 
      -- Here go the non-cell variables
-     ncv := toList (set (baseName \ (gens R)) - cv);
+     -- This use of baseName is intended to fix a problem where the variables in cv 
+     -- are actual variables of a ring over a field extension. TODO Item: Understand this
+     ncv := value \ toList (set (baseName \ (gens R)) - baseName \ cv);
+     
      -- We map I to the subring: k[ncv]
      CoeffR := coefficientRing R;
      S := CoeffR[ncv];
@@ -780,7 +784,12 @@ removeEmbedded = l -> (
 cellularBinomialAssociatedPrimes = method (Options => {cellVariables => null, verbose=>true}) 
 cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> ( 
      -- Computes the associated primes of cellular binomial ideal
+     -- It returns them in a polynomial ring with the same variables as ring I,
+     -- but potentially extended coefficient ring !
+
      -- TODO: It could be faster by rearringing things in the m in ml
+
+     -- Innovation: Use memoize to speed up determination of the associated primes:
      
      R := ring I;
      scan (gens R, (v -> v = local v));
@@ -802,13 +811,18 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
 	  if #ml == 1 then << "1 monomial to consider for this cellular component " << endl
      	  else <<  #ml << " monomials to consider for this cellular component" << endl;
 	  );
-     
+
+     seenpc := new MutableHashTable;
+
      -- A dummy ideal and partial Characters:
      Im := ideal;
      pC := {}; sat = {};
      for m in ml do (
 	  Im = I:m;
 	  pC = partialCharacter(Im, cellVariables=>cv);
+	  -- Skip if we already had this character
+	  if seenpc#?pC then continue
+	  else seenpc#pC = true;
 	  if pC#1 == 0 then (
 	       primes = primes | {ideal(0_R)}; 
 	       continue;
@@ -818,33 +832,49 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
 	       )
 	  else (
 	       sat = satIdeals pC;
-	       if coefficientRing ring sat#0 === QQ then (
+	       -- If the coefficientRing is QQ, we map back to R
+	       F := coefficientRing ring sat#0;
+	       if F === QQ then (
 		    sat = sat / ((p) -> sub(p,R));
+		    )
+	       else (
+		    -- otherwise to the extended ring
+		    -- this is necessary since satIdeals does not know about the non-cell variables
+		    ge := gens R;
+		    S := F[ge];
+		    sat = sat / ((p) -> sub(p,S));
 		    );
 	       );
 	  primes = primes | sat;
 	  );
      -- We need to remove duplicate elements and join all associated primes in an apropriate new ring that contains all
      -- their coefficients.
-
-     primes = joinCyclotomic(primes);
+     primes = joinCyclotomic primes;
      M := sub (ideal ncv, ring primes#0);
      primes = primes / (I -> I + M);
 
      use R;
-     return toList set primes;
+     -- Computation of mingens is necessary as unique or toList + set combi won't do without
+     return unique (ideal \ mingens \ primes);
      )
 
 binomialAssociatedPrimes = I -> (
-     -- TODO: This function is stupid. Can it be done better ? 
-     -- TODO: Even the stupid algorithm can be improved by carrying on the cell Variables!
-     print "OOPS, Not yet implemented";
-     print "I will compute a primary decomposition and take radicals!";
      if not isBinomial I then error "Input not binomial";
-     bpd := BPD I;
-     print "Primary Decomposition found, taking radicals now:"; 
-     return binomialRadical \ bpd;
+     -- TODO: Even the stupid algorithm can be improved by carrying on the cell Variables!
+     cv := isCellular (I,returnCellVars=>true);
+     -- This is no real check. If CellVariables are given we dont check for speed reasons
+     if cv === false then (
+	  print "Not yet implemented";
+	  print "I will compute a primary decomposition and take radicals!";
+	  bpd := BPD I;
+	  print "Primary Decomposition found, taking radicals now:";
+	  return binomialRadical \ bpd;
+	  )
+     else (
+	  return cellularBinomialAssociatedPrimes (I, cellVariables=>cv);
+	  );
      )
+
 
 cellularAssociatedLattices = I -> (
      -- Computes the associated lattices of a cellular binomial ideal
@@ -906,11 +936,13 @@ minimalPrimaryComponent = method (Options => {cellVariables => null})
 minimalPrimaryComponent Ideal := Ideal => o -> I -> (
      -- Input a cellular binomial ideal whose radical is prime.
      -- Ouptut, generators for Hull(I)
-
+     
      cv := null;
      if o#cellVariables === null then (
 	  -- No cell variables are given -> compute them
-	  cv = cellVars(I);
+	  cv = isCellular (I,returnCellVars=>true);
+	  -- This is no real check. If CellVariables are given we dont check for speed reasons
+	  if cv === false then error "Input to minimalPrimaryComponent was not cellular!"
 	  )
      else cv = o#cellVariables;
 
@@ -967,7 +999,6 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
 		      imc := image transpose matrix {c};
 		      if rank intersect {imc , L} < 1 then (
 			   -- We have winner 
-			   m := c;
 			   break;
 			   );
 		      -- Lets try the next vector.
@@ -1081,12 +1112,12 @@ binomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
      if not isBinomial I then error "Input was not binomial !";
      vbopt := o#verbose;
      
-     print "Running cellular decomposition:";
+     if vbopt then print "Running cellular decomposition:";
      cd := binomialCellularDecomposition (I, returnCellVars => true, verbose=>vbopt);
      counter := 1;
      cdc := #cd;
      bpd := {};
-     print "Decomposing cellular components:";
+     if vbopt then print "Decomposing cellular components:";
      scan (cd , ( (i) -> (
 		    if vbopt then (
 	   	    	 print ("Decomposing cellular component: " | toString counter | " of " | toString cdc);
@@ -1100,7 +1131,7 @@ binomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
     	  );
       
      bpd = joinCyclotomic bpd;
-     print "Removing redundant components...";
+     if vbopt then print "Removing redundant components...";
      return removeRedundant (bpd, verbose=>vbopt );
      )
 
@@ -1117,11 +1148,14 @@ cellularBinomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
      ncv := toList (set gens ring I - cv);
      ap = cellularBinomialAssociatedPrimes (I, cellVariables => cv,verbose=>vbopt);
      -- Projecting down the assoc. primes, removing monomials
-     proj := (I) -> eliminate (ncv,I); 
+     proj := (II) -> eliminate (ncv,II); 
      pap := ap / proj ;
      R := ring ap#0; -- All associated primes live in a common ring
      J := sub (I,R); -- get I over there to compute sums
-     return pap / ( (P) -> minimalPrimaryComponent (J + P, cellVariables=>cv));
+     -- Here, contrary to what is stated in ES'96, we can not assume that J+P is cellular.
+     -- However, since Hull only wants the minimal primary component we can cellularize!
+     -- TODO: Can this be skipped in some cases to be predetermined?
+     return pap / ( (P) -> minimalPrimaryComponent ( saturate (P + J , sub (ideal product cv, R)), cellVariables=>cv));
      )
 
 removeRedundant = method (Options => {verbose => true})
@@ -1146,7 +1180,7 @@ removeRedundant List := List => o -> l -> (
 	       else f
      	  );
           -- inserting p, but flagged
-     	  result = insert (0,(p#0,true),result);
+     	  result = append (result,(p#0,true));
 	  -- Updating the todolist
 	  flist = for i in result list if i#1===false then i else continue;
 	  );
@@ -1771,6 +1805,24 @@ document {
      Caveat => "Minimal generators are produced. These can be less than n and of higher degree. They also need not be homogeneous"
      }    
 
+document {
+     Key => {removeRedundant,
+	  (removeRedundant,List),	  
+	  [removeRedundant,verbose]},
+     Headline => "Remove redundant ideals from a decomposition",
+     Usage => "removeRedundant L",
+     Inputs => {
+          "L" => { "A list of ideals"} },
+     Outputs => {
+          "l" => {"A list with some redundant ideals removed"} },
+     EXAMPLE {
+	  "R = QQ[a,b]",
+	  "L = {ideal(a^4),ideal(a^3),ideal(a^5),ideal(b^2*a) }",
+	  "removeRedundant L",
+          },
+     "This function is mostly for internal purposes.",
+     Caveat => "The resulting list is NOT irredundant, because I_1 \\subset I_2 \\cap I_3 is not checked."
+     }
 
 document {
      Key => cellVariables,

@@ -163,6 +163,12 @@ F1 = (a+1)*(a+2)
 F2 = (a+1)*(2*a+3)
 (G,U,V) = testGCD(F1,F2)
 
+rawGCD(0_R,F1)
+rawGCD(F1,0_R) -- should be F1!! WRONG!!
+rawGCD(0_R,F2) -- good: this is the monic-ification of F2
+rawGCD(F2,0_R) 
+assert(rawGCD(0_R,0_R) == 0)
+
 F1 = (a+1)*(a+2)^10
 F2 = (a+1)^10*(2*a+3)
 (G,U,V) = testGCD(F1,F2)
@@ -182,10 +188,19 @@ a = rawRingVar(A,0)
 b = rawRingVar(A,1)
 b^2-a-1
 
-F1 = (b-a-1)^3*(b^2-a-1)
-F2 = (b-a-1)*(b^2-a-2)^3
+F1 = a*(b-a-1)^3*(b^2-a-1)
+F2 = (a^2+a+1)*(b-a-1)*(b^2-a-2)^3
 (G,U,V) = testGCD(F1,F2)
+assert(rawGCD(0_A,F1) == (b-a-1)^3*(b^2-a-1))
+assert(rawGCD(F1,0_A) == (b-a-1)^3*(b^2-a-1))
 
+testGCD(0_A,F1)
+testGCD(F1,0_A)
+rawGCD(F1,0_A)
+(G,U,V) = rawExtendedGCD(F1,0_A)
+U * F1 + V * 0_A
+
+U 
 F1 = (b-a)*a
 F2 = (b-a)^2*b
 (G,U,V) = testGCD(F1,F2) -- ok
@@ -200,7 +215,8 @@ F2 = (b-a)^2*b
 
 F1 = (b^4-a*b-1)^100*(b-a-1);
 F2 = (b^4-a*b-1)*(b-a-1)^100;
-time (G,U,V) = testGCD(F1,F2)
+time (G,U,V) = testGCD(F1,F2) -- G is 0
+assert(G == 0) -- the monic gcd alg can't find a monic gcd
 
 U*F1 + V*F2
 G

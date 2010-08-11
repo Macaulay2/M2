@@ -95,6 +95,8 @@ class FunctionPair {
 };
 
 // generate list of index pairs for given intermediate basis
+// first insert all pairs with FPs, then insert pairs of all other polynomials
+// the list of indeces was ordered by increasingly
 Pairs makeList(const IntermediateBasis &F, int n) {
   Pairs B;
   Pairs::iterator position = B.begin();
@@ -151,10 +153,16 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   
   int i = pair.i;
   int j = pair.j;
-
+  
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
   if( BRP::isRelativelyPrime(g,f) ) {
+    return false;
+  }
+  
+  // both polynomials are monomials, so their S polynomial reduces to 0
+  if ( fp.g->size() == 1 && fp.f->size() == 1 ) {
+    //cout << "Throwing out S-pair from 2 monomials" << endl;
     return false;
   }
 
@@ -548,6 +556,11 @@ void interreduction(IntermediateBasis &F) {
   //stats(F);
 }
 
+// A good (normal? Sugar?) selection strategy should be implemented here
+Pair bestPair(Pairs &B) {
+  return *(B.begin() );
+}
+
 // complete algorithm to compute a Groebner basis F  
 void gb( IntermediateBasis &F, int n) {
   int interreductionMod = 0;
@@ -558,7 +571,8 @@ void gb( IntermediateBasis &F, int n) {
   unsigned int countAddPoly = 0;
   unsigned int numSPoly= 0;
   while (!B.empty()) {
-    Pair pair = *(B.begin());
+    Pair pair = bestPair(B);
+    //Pair pair = *(B.begin());
     B.erase(B.begin());
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;

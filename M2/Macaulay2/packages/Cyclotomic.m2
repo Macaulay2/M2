@@ -23,11 +23,11 @@
 
 newPackage(
 	"Cyclotomic",
-    	Version => "0.3.1", 
-    	Date => "July 2009",
+	Version => "0.5.4",
+	Date => "December 2009",
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "kahle@mis.mpg.de", 
-		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/"}},
+		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/bpd"}},
     	Headline => "routines for cyclotomic fields",
     	DebuggingMode => true
     	)
@@ -67,8 +67,8 @@ cyclotomicField = memoize cf
 -- We apply this to join cyclotomic fields
 
 joinCyclotomic = li -> (
-     -- This function joins a list of ideals in a polynomial ring over a smallest common cf.
-     -- Input should consist of ideals in polynomial rings over the same variables, but with possible different cyclotomic coefficient field
+     -- This function joins a list of ideals in a polynomial ring over a smallest common cf.  Input should consist of
+     -- ideals in polynomial rings over the same variables, but with possible different cyclotomic coefficient field
 
      -- Find root powers:
      lc := for l in li list findRootPower ring l;
@@ -78,20 +78,24 @@ joinCyclotomic = li -> (
      if leastcm < 3 then return li;
      
      --Check for nothing to do
-     if delete (leastcm, lc) == {} then return li;
+     -- As of M2 1.3 this check does not work anymore.
+     -- Joining has to be run in any case.
+     -- if delete (leastcm, lc) == {} then return li;
      
      F := cyclotomicField leastcm;
      -- Here we use the assumptions that all rings have the same generators
+     -- This should contain the variables of polynomials
      ge := gens ring li#0;    
-     
+
      S := F[ge];
      li2 := {}; ww:=F_0; local f;
      for i in 0..#li-1 do (
-	  -- rational coefficients:
 	  if lc#i == 2 then (
+	       -- rational coefficients: just map
 	       li2 = li2 | {sub (li#i,S)};
 	       )
 	  else (
+	       -- Was cyclotomic: need to find image of ww in new ring!
 	       f = map (S, ring li#i , (gens S) |{ww^(leastcm/lc#i)});
 	       li2 = li2 | { f li#i };
 	       );
@@ -105,13 +109,12 @@ cyclotomicPoly = (i,v) -> (
      v = value v;
      if i <= 0 then error "the input should be > 0.";
      if i==1 then return v-1 ;
-     min := v^i -1;
+     mini := v^i -1;
      -- dividing out the first cylcotomic polynomial
      -- (with result a polynomial)
-     min = (flatten entries syz matrix {{min ,(v-1)}})#1; 
-
+     mini = (flatten entries syz matrix {{mini ,(v-1)}})#1;
      -- i is prime:
-     if isPrime i then return min / (leadCoefficient min);
+     if isPrime i then return mini / (leadCoefficient mini);
      
      -- i is not prime:
      -- find the divisors:
@@ -121,13 +124,14 @@ cyclotomicPoly = (i,v) -> (
 	       fac := cyclotomicPoly (f,v);
 	       -- print fac;
 	       -- division with result in polynomial ring:
-	       min = (flatten entries syz matrix {{min,fac}})#1;
+	       mini = (flatten entries syz matrix {{mini,fac}})#1;
 	       )
 	  );
      --make sure the leading coefficient is one.
-     min=min / leadCoefficient(min);            
-     return(min);                        
-)
+     mini=mini / leadCoefficient(mini);
+     return mini;
+     
+     )
 
 findRootPower = R -> (
      -- Finds the power of the adjoined root of unity in the
@@ -135,7 +139,8 @@ findRootPower = R -> (
      -- Returns '2' if the input was a polynomial ring over QQ
      r := 0;
      F := coefficientRing R;
-     g := gens F;
+     fieldgens := (K,F) -> if K === F then {} else for x in gens last F.baseRings list promote(x,F);
+     g := fieldgens (QQ,F);
      if #g == 0 then return 2;
      if #g > 1 then error "The coefficient field has more than one generator";
      g = value (g#0);

@@ -1,7 +1,7 @@
 newPackage(
 	"MapleInterface",
-    	Version => "0.27", 
-    	Date => "October 4, 2009",
+    	Version => "0.3", 
+    	Date => "June 14, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
@@ -15,7 +15,7 @@ newPackage(
 
 -- For information see documentation key "MapleInterface" below.
 
-export({callMaple,store,readMaple})
+export({"callMaple","store","readMaple","msqrt","integralBasis"})
 
 getFilename = () -> (
      filename := temporaryFileName();
@@ -46,6 +46,7 @@ quit;
 mapleprogram=replace("placeholder2",inputdata2,mapleprogram);
 mapleprogram=replace("placeholder1",L1,mapleprogram);
 mapleprogram=replace("placeholder3",rootPath|filename3,mapleprogram);
+--print mapleprogram;
 F := openOut(filename|".txt");
 F<<mapleprogram<<endl;
 close F;
@@ -80,6 +81,27 @@ F= openIn(fn);
 Lfc:=changeBrackets2(get(F));
 value Lfc)
 
+msqrt=method()
+msqrt(ZZ,ZZ):=(a,b)->(
+inputdata1=toString {a,b};
+inputdata2="msqrt";
+mapleprogram="with(numtheory,placeholder2):returnvalue:=placeholder2(op(placeholder1));";
+L=callMaple(inputdata1,inputdata2,mapleprogram);
+L)
+
+
+integralBasis=method()
+integralBasis(Ideal):=(I)->(
+v:=gens ring I;
+if rank source gens I>1 then error("expected a hypersurface");
+f:=I_0;
+if #v>2 then error("expected an ideal in a ring with 2 variables");
+inputdata1=(toString(f))|","|toString(v#1)|","|toString(v#0),
+inputdata2="integral_basis";
+mapleprogram="with(algcurves,placeholder2):returnvalue:=placeholder2(placeholder1);";
+L=callMaple(inputdata1,inputdata2,mapleprogram);
+matrix {L})
+
 ----------------------------------------------------------------------
 
 {*
@@ -103,6 +125,11 @@ doc ///
   Description
     Text
       {\bf What's new:}
+
+        {\it December 1, 2009:}
+        Added functions @TO msqrt@ computing the modular square root
+        (for large numbers) and @TO integralBasis@ computing an integral basis of 
+        an algebraic function field.
 
         {\it October 4, 2009:}
         Added method @TO (callMaple,String)@.
@@ -280,6 +307,61 @@ doc ///
 
      callMaple( ... )
 ///
+
+doc ///
+  Key
+    msqrt    
+    (msqrt,ZZ,ZZ)
+  Headline
+    Compute modular square root.
+  Usage
+    msqrt(m,n)
+  Inputs
+    m:ZZ
+    n:ZZ
+  Outputs
+    :Thing
+        an element of ZZ or the @TO Boolean@ false.
+  Description
+   Text
+     Computes a modular square root solving x^2 = m mod n.
+     This is useful in the case of very large numbers, in which
+     case the M2 native routines will not work.
+   Example
+     msqrt(3,12347)
+///
+
+
+doc ///
+  Key
+    integralBasis    
+    (integralBasis,Ideal)
+  Headline
+    Compute an integral basis of an algebraic function field.
+  Usage
+    integralBasis(I)
+  Inputs
+    I:Ideal
+       in a @TO PolynomialRing@ R of two variables over QQ, say x,y.
+       defining an affine plane curve which has no singularities at infinity
+       and its projective closure does not contain the point (x:y:z)=(0:1:0).
+  Outputs
+    :Matrix
+        over @TO frac@(R)
+  Description
+   Text
+     Computes an integral basis in CC(x)[y] of the integral closure of CC[x] in CC(x,y).
+     We consider x as transcendental and y as algebraic. The i-th element of the
+     integral basis has degree i as a polynomial in y.
+     Note that the integral basis will have coefficients in QQ.
+
+   Example
+     R=QQ[x,y]
+     I=ideal(y^8-x^3*(1+x)^5)
+     integralBasis(I)
+///
+
+
 
 {*
 uninstallPackage("MapleInterface")

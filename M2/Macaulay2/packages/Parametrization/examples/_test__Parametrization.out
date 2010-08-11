@@ -1,0 +1,31 @@
+-- -*- M2-comint -*- {* hash: -679957413 *}
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : K=QQ;
+
+i2 : R=K[v,u,z];
+
+i3 : I=ideal(v^8-u^3*(z+u)^5);
+
+o3 : Ideal of R
+
+i4 : T=K[t_0,t_1]
+
+o4 = T
+
+o4 : PolynomialRing
+
+i5 : phi=matrix {{t_0^3*t_1^5}, {-t_0^8}, {t_0^8-t_1^8}}
+
+o5 = | t_0^3t_1^5  |
+     | -t_0^8      |
+     | t_0^8-t_1^8 |
+
+             3       1
+o5 : Matrix T  <--- T
+
+i6 : testParametrization(I,phi)
+
+o6 = true
+
+i7 : 

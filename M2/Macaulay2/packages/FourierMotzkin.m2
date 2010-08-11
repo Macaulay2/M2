@@ -1,3 +1,12 @@
+-- -*- coding: utf-8 -*-
+--------------------------------------------------------------------------------
+-- Copyright 1998, 1999, 2000, 2006, 2008, 2010  Gregory G. Smith
+-- 
+-- You may redistribute this program under the terms of the GNU General Public
+-- License as published by the Free Software Foundation, either version 2 of the
+-- License, or any later version.
+--------------------------------------------------------------------------------
+
 ---------------------------------------------------------------------------
 -- PURPOSE: compute the polar dual of a rational convex polyhedral cone 
 --          using Fourier-Motzkin elimination

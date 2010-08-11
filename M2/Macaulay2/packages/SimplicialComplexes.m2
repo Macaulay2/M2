@@ -1,5 +1,14 @@
 -- -*- coding: utf-8 -*-
 -- Code for Simplicial Complexes
+
+--------------------------------------------------------------------------------
+-- Copyright 2006, 2010  Sorin Popescu, Gregory G. Smith, and Mike Stillman
+-- 
+-- You may redistribute this program under the terms of the GNU General Public
+-- License as published by the Free Software Foundation, either version 2 of the
+-- License, or any later version.
+--------------------------------------------------------------------------------
+
 newPackage(
 	"SimplicialComplexes",
     	Version => "1.1", 

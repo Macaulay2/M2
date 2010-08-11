@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- {* hash: -467899719 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..e];
+
+i2 : generateRandomRegularGraphs(3, 2, R)
+
+o2 = {Graph{edges => {{a, b}, {a, c}, {c, d}, {b, e}, {d, e}}},
+            ring => R                                          
+            vertices => {a, b, c, d, e}                        
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, c}, {b, c}, {a, d}, {b, e}, {d, e}}},
+           ring => R                                          
+           vertices => {a, b, c, d, e}                        
+     ------------------------------------------------------------------------
+     Graph{edges => {{b, c}, {a, d}, {c, d}, {a, e}, {b, e}}}}
+           ring => R
+           vertices => {a, b, c, d, e}
+
+o2 : List
+
+i3 : 

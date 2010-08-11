@@ -1,4 +1,4 @@
---		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
+--		Copyright 1995-2002,2010 by Daniel R. Grayson and Michael Stillman
 
 symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m))
 
@@ -100,6 +100,7 @@ fittingIdeal(ZZ,Module) := Ideal => (i,M) -> (
      then ideal 1_(ring M)
      else trim minors(n-i,p))
 
+symmetricPower(ZZ,Module) := (d,M) -> coimage basis(d,symmetricAlgebra M,SourceRing => ring M)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

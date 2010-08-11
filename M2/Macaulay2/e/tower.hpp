@@ -61,6 +61,8 @@ public:
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
+  virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
+
   virtual ring_elem random() const;
 
   virtual void elem_text_out(buffer &o, 

@@ -1,0 +1,1 @@
+added new syntax for making ideals: R/(I,x); ideal(I,x), now document it

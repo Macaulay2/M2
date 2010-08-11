@@ -1115,7 +1115,11 @@ localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- fram
      newvalue);
 
 globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
-     if t.Protected then return buildErrorPacket("assignment to protected global variable '" + t.word.name + "'");
+     if t.Protected then return (
+	  if t.position != dummyPosition
+	  then buildErrorPacket("assignment to protected global variable '" + t.word.name + "', originally defined at " + tostring(t.position))
+	  else buildErrorPacket("assignment to protected built-in global variable '" + t.word.name + "'")
+	  );
      vals := (if t.thread then enlargeThreadFrame() else globalFrame).values;
      r := globalAssignmentHook(t,vals.frameindex,newvalue);
      when r is Error do return r else nothing;
@@ -1229,7 +1233,9 @@ handleError(c:Code,e:Expr):Expr := (
 			 printError(err);
 			 e))
 	       else e)
-	  else e)
+	  else (
+	       if p != dummyPosition then err.position = p;
+	       e))
      else e);
 export eval(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:

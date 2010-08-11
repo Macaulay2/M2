@@ -361,6 +361,14 @@ bool Monoid::in_subring(int nslots, const_monomial m) const
   return true;
 }
 
+int Monoid::partial_compare(int num, const_exponents m, const_monomial n0) const {
+  if (num == 0) return EQ;
+  int n[this->nvars_];
+  to_expvector(n0,n);
+  for (int i=0; i<num; i++) if (m[i] != n[i]) return m[i] < n[i] ? LT : GT;
+  return EQ;
+}
+
 int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const
 {
   int i = n_before_component_;
@@ -602,5 +610,5 @@ void Monoid::to_varpower(const_monomial m, intarray &result_vp) const
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e monoid.o "
 // End:

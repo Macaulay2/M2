@@ -193,7 +193,7 @@ Hom(Matrix,Matrix) := Matrix => (f,g) -> (
     -- So we need a map Hom(B,C) -> Hom(A,D).
     inducedMap(Hom(A,D),Hom(B,C),(transpose matrix f) ** matrix g))
 
-Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
+Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
@@ -219,7 +219,7 @@ Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
 
 -- Computes the map of Tor modules Tor_i(f,N)
 -- Returns the map (Matrix) Tor_i(source f,N) --> Tor_i(target f,N)
-Tor(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
+Tor(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
 	if ring source f != ring N then error "expected the same ring";
 	R := ring N;
 	if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings";
@@ -239,7 +239,7 @@ Tor(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
 
 -- Computes the map of Tor modules Tor_i(N,f)
 -- Returns the map (Matrix) Tor_i(N, source f) --> Tor_i(N, target f)
-Tor(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
+Tor(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
 	if ring source f != ring N then error "expected the same ring";
 	R := ring N;
 	if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings";

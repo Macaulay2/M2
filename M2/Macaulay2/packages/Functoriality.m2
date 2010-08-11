@@ -34,7 +34,7 @@ export{coneProjectTarget,coneProjectSource,coneInjectTarget,coneInjectSource,Tor
 -- Computes the map of Tor modules Tor_i(f,N)
 -- Returns the map (Matrix) Tor_i(source f,N) --> Tor_i(target f,N)
 
-Tor(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
+Tor(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
 	if ring source f != ring N then error "expected the same ring";
 	R := ring N;
 	if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings";
@@ -54,7 +54,7 @@ Tor(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
 -- Computes the map of Tor modules Tor_i(N,f)
 -- Returns the map (Matrix) Tor_i(N, source f) --> Tor_i(N, target f)
 
-Tor(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
+Tor(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
 	if ring source f != ring N then error "expected the same ring";
 	R := ring N;
 	if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings";
@@ -74,12 +74,12 @@ Tor(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
 -- Computes the map of Hom modules Hom_i(f,N)
 -- Returns the map (Matrix) Hom_i(source f,N) --> Hom_i(target f,N)
 
-Ext(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
+Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
 	if ring source f != ring N then error "expected the same ring";
 	R := ring N;
 	if not isCommutative R then error "'Hom' not implemented yet for noncommutative rings";
 	if i < 0 then map(R^0,R^0,0)
-	else if i === 0 then  f ** N
+	else if i === 0 then Hom(f,N)
 	else (
 	     F := resolution(f,LengthLimit=>i+1);
 	     C := source F;
@@ -94,7 +94,7 @@ Ext(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
 -- Computes the map of Hom modules Hom_i(N,f)
 -- Returns the map (Matrix) Hom_i(N, source f) --> Hom_i(N, target f)
 
-Ext(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
+Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
 	if ring source f != ring N then error "expected the same ring";
 	R := ring N;
 	if not isCommutative R then error "'Hom' not implemented yet for noncommutative rings";

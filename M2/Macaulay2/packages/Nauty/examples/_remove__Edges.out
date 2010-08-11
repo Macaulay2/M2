@@ -1,0 +1,54 @@
+-- -*- M2-comint -*- {* hash: -397059110 *}
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+
+i1 : R = QQ[a..e];
+
+i2 : removeEdges cycle R
+
+o2 = {Graph{edges => {{b, c}, {c, d}, {a, e}, {d, e}}},
+            ring => R                                  
+            vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {c, d}, {d, e}}},
+           ring => R                                  
+           vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {c, d}, {a, e}, {d, e}}},
+           ring => R                                  
+           vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {a, e}, {d, e}}},
+           ring => R                                  
+           vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {c, d}, {a, e}}}}
+           ring => R
+           vertices => {a, b, c, d, e}
+
+o2 : List
+
+i3 : removeEdges graph {a*b, a*c, b*c, c*d, d*e}
+
+o3 = {Graph{edges => {{a, c}, {b, c}, {c, d}, {d, e}}},
+            ring => R                                  
+            vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {b, c}, {c, d}, {d, e}}},
+           ring => R                                  
+           vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {a, c}, {c, d}, {d, e}}},
+           ring => R                                  
+           vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {a, c}, {b, c}, {d, e}}},
+           ring => R                                  
+           vertices => {a, b, c, d, e}                
+     ------------------------------------------------------------------------
+     Graph{edges => {{a, b}, {a, c}, {b, c}, {c, d}}}}
+           ring => R
+           vertices => {a, b, c, d, e}
+
+o3 : List
+
+i4 : 

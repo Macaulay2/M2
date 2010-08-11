@@ -370,7 +370,7 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -- 29 (2000) 729-746.
 -----------------------------------------------------------------------------
 
-Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => (m,F,G') -> (
+Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
      G := G'#0;
      e := G'#1#0;
      if variety G =!= variety F
@@ -391,25 +391,25 @@ Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => (m,F,G') -> (
           l := min(dim N, m);
 	  P := resolution(cokernel lift(presentation N,S) ** cokernel f);
 	  p := length P;
-	  if p < n-l then E = Ext^m(M, N)
+	  if p < n-l then E = Ext^m(M, N, opts)
 	  else (
 	       a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
 	       r := a-e-m+1;
-	       E = Ext^m(truncate(r,M), N)));
+	       E = Ext^m(truncate(r,M), N, opts)));
      if (min degrees E) === infinity then E
      else if (min degrees E)#0 > e then minimalPresentation E
      else minimalPresentation truncate(e,E))
 
-Ext(ZZ,SheafOfRings,SumOfTwists) := Module => (m,O,G') -> Ext^m(O^1,G')
+Ext(ZZ,SheafOfRings,SumOfTwists) := Module => opts -> (m,O,G') -> Ext^m(O^1,G',opts)
 
-Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => (n,F,G) -> (
-     E := Ext^n(F,G(>=0));
+Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => opts -> (n,F,G) -> (
+     E := Ext^n(F,G(>=0),opts);
      k := coefficientRing ring E;
      k^(rank source basis(0,E)))
 
-Ext(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> Ext^n(O^1,G)
-Ext(ZZ,CoherentSheaf,SheafOfRings) := Module => (n,F,O) -> Ext^n(F,O^1)
-Ext(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> Ext^n(O^1,R^1)
+Ext(ZZ,SheafOfRings,CoherentSheaf) := Module => opts -> (n,O,G) -> Ext^n(O^1,G,opts)
+Ext(ZZ,CoherentSheaf,SheafOfRings) := Module => opts -> (n,F,O) -> Ext^n(F,O^1,opts)
+Ext(ZZ,SheafOfRings,SheafOfRings) := Module => opts -> (n,O,R) -> Ext^n(O^1,R^1,opts)
 
 -----------------------------------------------------------------------------
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>

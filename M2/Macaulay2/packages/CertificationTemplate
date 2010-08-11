@@ -5,11 +5,11 @@
 		"journal URI" => "http://j-sag.org/",
 		"article title" => "...",
 		"acceptance date" => "...",
-		"published article URI" => "http://j-sag.org/Volume1/....pdf",
-		"published code URI" => "http://j-sag.org/Volume1/....m2",
-     	        "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/....m2",
+		"published article URI" => "http://j-sag.org/Volume.../....pdf",
+		"published code URI" => "http://j-sag.org/Volume.../....m2",
+     	        "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/....m2",
 		"release at publication" => ...,	    -- as an integer
 		"version at publication" => "...",
-		"volume number" => "1",
-		"volume URI" => "http://j-sag.org/Volume1/"
+		"volume number" => "...",
+		"volume URI" => "http://j-sag.org/Volume.../"
 		},
