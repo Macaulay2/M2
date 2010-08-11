@@ -12,9 +12,6 @@
   #define store_Field(x,val) AO_store(&(x).field,val)
 #endif
     /* gc doc tells us to include pthread.h before gc.h */
-    #ifdef GC_MALLOC
-      #error "gc.h already included"
-    #endif
     #ifndef _REENTRANT
       #define _REENTRANT
     #endif
@@ -142,6 +139,7 @@ struct ThreadSupervisor
   void initialize();
   ///thread local id's
   int m_ThreadLocalIdCounter;
+  void* m_LocalThreadMemory;
 };
 
 #include "supervisorinterface.h"

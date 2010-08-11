@@ -3,7 +3,7 @@ VPATH = @srcdir@
 
 all: supervisor.o m2file.o tests.o
 include ../../include/config.Makefile
-CPPFLAGS := -I@srcdir@ $(CPPFLAGS) -I@srcdir@/../d -I@srcdir@/../c
+CPPFLAGS := -I@srcdir@ -I../d -I@srcdir@/../e $(CPPFLAGS) -I@srcdir@/../d -I@srcdir@/../c
 .PHONY: tags
 scCMD = $(COMPILE.c) -S $(OUTPUT_OPTION) $<
 %.s : %.c

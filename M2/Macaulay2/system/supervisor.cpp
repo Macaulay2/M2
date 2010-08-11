@@ -1,3 +1,4 @@
+#include "pthread-exports.h"
 #include "supervisor.hpp"
 
 #include <iostream>
@@ -5,7 +6,7 @@
 #include <assert.h>
 const static int numThreads = 2;
 
-
+static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
 
 extern "C" {
   THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
@@ -163,8 +164,8 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   #ifdef GETSPECIFICTHREADLOCAL
   if(pthread_key_create(&m_ThreadSpecificKey,NULL))
     abort();
-
-
+  m_LocalThreadMemory = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
+  pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_LocalThreadMemory);
   #endif
   staticThreadLocalInit();
   pthread_cond_init(&m_TaskWaitingCondition,NULL);
@@ -295,6 +296,7 @@ void SupervisorThread::threadEntryPoint()
   pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_ThreadLocal);
   #endif
   m_Interrupt=&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field);
+  reverse_run(thread_prepare_list);// re-initialize any thread local variables
   while(m_KeepRunning)
     {
       //AO_store(&m_Interrupt->field,false);

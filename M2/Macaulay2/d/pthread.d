@@ -9,10 +9,9 @@ threadCreate(f:function(ThreadCellBody):null,tb:ThreadCellBody) ::=  Ccode(void,
 
 threadDetach(tid:Thread) ::=  Ccode(int,"pthread_detach(",tid,")");
 
-header "static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }";
+
 
 startup(tb:ThreadCellBody):null := (
-     Ccode(void,"reverse_run(thread_prepare_list)"); -- re-initialize any thread local variables
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
      tb.thread = getthreadself();
