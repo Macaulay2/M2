@@ -3,9 +3,9 @@
 VERSION = 2.5
 PATCHFILE = @abs_srcdir@/patch-2.5
 # for version 2.5, the doc says: "Make sure you have GCC 4.5 installed on your Mac."
-# broken link on web site, Oct 15, 2009:
-URL = http://www.mathematik.uni-osnabrueck.de/normaliz
-# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.3
+# file changed on their web site, probably:
+# URL = http://www.mathematik.uni-osnabrueck.de/normaliz
+URL = http://www.math.uiuc.edu/Macaulay2/Extra
 # TARFILE = Normaliz$(VERSION)Linux32.zip
 TARFILE = Normaliz$(VERSION).zip
 # PATCHFILE = @abs_srcdir@/patch-2.2
