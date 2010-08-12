@@ -154,14 +154,14 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   
   // both polynomials are monomials, so their S polynomial reduces to 0
   if ( fp.g->size() == 1 && fp.f->size() == 1 ) {
-    cout << "m ";
+    //cout << "m ";
     return false;
   }
   
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
   if( BRP::isRelativelyPrime(g,f) ) {
-    cout << "r ";
+    //cout << "r ";
     return false;
   }
 
@@ -176,12 +176,12 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
     const BRP *K = &(it->second);
 
     if(( k != i && k != j && BRP::isDivisibleBy(lcm, K->LT() ) && !inList(i,k,B,F) && !inList(j,k,B,F))) {
-      cout << "l ";
+      //cout << "l ";
       return false;
     }
   }
   
-  cout << "good pair ";
+  //cout << "good pair ";
   return true;
 }
 
