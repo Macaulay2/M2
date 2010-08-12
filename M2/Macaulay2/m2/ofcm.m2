@@ -480,14 +480,11 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      if instance(opts.Degrees,List) then opts.Degrees = spliceInside opts.Degrees;
+     if opts.Join === null then opts.Join = Mopts.Join;
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
-	  if (
-	       if opts.Join =!= null then opts.Join	    -- option to tensor overrides option to monoid
-	       else Mopts.Join =!= false		    -- the default is true, and null means it was unspecified
-	       )
-	  then (
+	  if opts.Join === null or opts.Join === true then (
 	       opts.DegreeRank = Mopts.DegreeRank + Nopts.DegreeRank;
 	       opts.Degrees = join( apply(Mopts.Degrees, d -> join(d,N0)), apply(Nopts.Degrees, e -> join(M0,e)) );
 	       if opts.Heft === null and Nopts.Heft =!= null and Mopts.Heft =!= null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
@@ -496,7 +493,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 		    for i to #M0-1 do if d#i =!= 0 then degreeNoLift();
 		    drop(d,#M0));
 	       )
-	  else (
+	  else if opts.Join === false then (
 	       opts.DegreeRank = Mopts.DegreeRank;
 	       dm := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
 	       opts.DegreeMap = d -> degreePad(opts.DegreeRank,dm d);
@@ -511,7 +508,8 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 		    else lm);
 	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
-	       ))
+	       )
+	  else error "tensor: expected Join option to be true, false, or null")
      else (
      	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);
 	  opts.Degrees = degs;
