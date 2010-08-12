@@ -55,7 +55,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  else if degreeLength R === degreeLength S then identity
 	  else if degreeLength S === 0 or degreeLength R === 0 then degmap0 degreeLength R
 	  else (
-	       -- error "map(Ring,Ring,Matrix): nonzero degree monoids differ, promotion not available, DegreeMap needed";
+	       error "map(Ring,Ring,Matrix): nonzero degree monoids differ, promotion not available, DegreeMap needed";
 	       stderr << "map(Ring,Ring,Matrix): nonzero degree monoids differ, promotion not available, DegreeMap needed" << endl;
 	       degmap0 degreeLength R));
      dR := ZZ^(degreeLength R);
