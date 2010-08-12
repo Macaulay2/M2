@@ -256,7 +256,7 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
      I' := (
 	  (map(T, Q, vars T)) J
 	  + 
-	  (map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => M.Options.DegreeMap)) I
+	  (map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => d -> first promote({d},S,R))) I
 	  );
      (p,q) = (map(T,R, vars T), map(R,T, vars R | promote(matrix q,R)));
      r := flatCoerce(R, resultTemplate,(I',p,q))))
