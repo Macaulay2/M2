@@ -8,7 +8,6 @@ extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
 M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
   currentThreadMode(0),unsyncState(fileUnsyncState),exclusiveOwner(0),recurseCount(0)
 {
-  pthread_mutex_init(&mapMutex,NULL);
 
 }
 M2File::~M2File()
@@ -22,65 +21,65 @@ M2File::~M2File()
 
 void M2File::waitExclusiveThread(size_t recurseCounter)
 {
-  pthread_mutex_lock(&mapMutex);
+  m_MapMutex.lock();
   while(1)
     {
       if(exclusiveOwner==pthread_self())
 	{
 	  recurseCounter+=recurseCounter;
-	  pthread_mutex_unlock(&mapMutex);
+	  m_MapMutex.unlock();
 	  return;
 	}
-      pthread_cond_wait(&exclusiveChangeCondition,&mapMutex);     
+      pthread_cond_wait(&exclusiveChangeCondition,&m_MapMutex.m_Mutex);     
     }
-  pthread_mutex_unlock(&mapMutex);
+  m_MapMutex.unlock();
 }
 
 void M2File::waitExclusiveThreadAcquire(size_t recurseCounter)
 {
-  pthread_mutex_lock(&mapMutex);
+  m_MapMutex.lock();
   while(1)
     {
       if(exclusiveOwner==0)
 	{
 	  exclusiveOwner=pthread_self();
 	  recurseCount=recurseCounter;
-	  pthread_mutex_unlock(&mapMutex);
+	  m_MapMutex.unlock();
 	  pthread_cond_broadcast(&exclusiveChangeCondition);
 	  return;
 	}
       if(exclusiveOwner==pthread_self())
 	{
 	  recurseCount+=recurseCounter;
-	  pthread_mutex_unlock(&mapMutex);
+	  m_MapMutex.unlock();
 	  return;
 	}
-      pthread_cond_wait(&exclusiveChangeCondition,&mapMutex);
+      pthread_cond_wait(&exclusiveChangeCondition,&m_MapMutex.m_Mutex);
       
     }
-  pthread_mutex_unlock(&mapMutex);
+  m_MapMutex.unlock();
 
 }
 
 void M2File::setExclusiveOwner(pthread_t newExclusiveOwner, size_t recurseCounter)
 {
-  pthread_mutex_lock(&mapMutex);
+  m_MapMutex.lock();
   recurseCount=recurseCounter;
   exclusiveOwner = newExclusiveOwner;
   pthread_cond_broadcast(&exclusiveChangeCondition);
-  pthread_mutex_unlock(&mapMutex);
+  m_MapMutex.unlock();
 }
 
 void M2File::releaseExclusiveThreadCount(size_t recurseCounter)
 {
-  pthread_mutex_lock(&mapMutex);
+  m_MapMutex.lock();
   recurseCount-=recurseCounter;
   if(!recurseCount)
     {
       exclusiveOwner=0;
       pthread_cond_broadcast(&exclusiveChangeCondition);
     }
-  pthread_mutex_unlock(&mapMutex);
+  m_MapMutex.unlock();
 }
 
 extern "C"
@@ -109,7 +108,7 @@ extern "C"
       {
 	//get thread id
 	pthread_t localId = pthread_self();
-	pthread_mutex_lock(&file->mapMutex);
+	file->m_MapMutex.lock();
 	//try to find thread id in thread states map
 	std::map<pthread_t, struct M2FileThreadState*>::iterator it = file->threadStates.find(localId);
 	stdio0_fileOutputSyncState foss = NULL;
@@ -127,7 +126,7 @@ extern "C"
 	    state->syncState = foss;
 	    file->threadStates[localId]=state;
 	  }
-	pthread_mutex_unlock(&file->mapMutex);
+	file->m_MapMutex.unlock();
 	return foss;
       }
   }
@@ -144,7 +143,7 @@ extern "C"
       {
 	//get thread id
 	pthread_t localId = pthread_self();
-	pthread_mutex_lock(&file->mapMutex);
+	file->m_MapMutex.lock();
 	//try to find thread id in thread states map
 	std::map<pthread_t, struct M2FileThreadState*>::iterator it = file->threadStates.find(localId);
 	if(it!=file->threadStates.end())
@@ -155,7 +154,7 @@ extern "C"
 	  {
 	    //this shouldn't happen, but we can safely ignore it if it does.  
 	  }
-	pthread_mutex_unlock(&file->mapMutex);
+	file->m_MapMutex.unlock();
 
 
       }

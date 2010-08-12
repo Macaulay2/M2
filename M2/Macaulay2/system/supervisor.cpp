@@ -22,7 +22,7 @@ extern "C" {
   }
   void pushTask(struct ThreadTask* task)
   {
-    pthread_mutex_lock(&threadSupervisor->m_Mutex);
+    threadSupervisor->m_Mutex.lock();
     if(task->m_Dependencies.empty())
       {
 	threadSupervisor->m_ReadyTasks.push_back(task);
@@ -32,38 +32,38 @@ extern "C" {
 	threadSupervisor->m_WaitingTasks.push_back(task);
       }
     pthread_cond_signal(&threadSupervisor->m_TaskWaitingCondition);
-    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
+    threadSupervisor->m_Mutex.unlock();
   }
   void delThread(pthread_t thread)
   {
-    pthread_mutex_lock(&threadSupervisor->m_Mutex);
+    threadSupervisor->m_Mutex.lock();
     std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
     if(it!=threadSupervisor->m_ThreadMap.end())
       {
 	threadSupervisor->m_ThreadMap.erase(it);
       }
-    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
+    threadSupervisor->m_Mutex.unlock();
   }
   void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel)
   {
-    pthread_mutex_lock(&task->m_Mutex);
+    task->m_Mutex.lock();
     task->m_CancelTasks.insert(cancel);
-    pthread_mutex_unlock(&task->m_Mutex);
+    task->m_Mutex.unlock();
   }
   void addStartTask(struct ThreadTask* task, struct ThreadTask* start)
   {
-    pthread_mutex_lock(&task->m_Mutex);
+    task->m_Mutex.lock();
     task->m_StartTasks.insert(start);
-    pthread_mutex_unlock(&task->m_Mutex);
+    task->m_Mutex.unlock();
   }
   void addDependency(struct ThreadTask* task, struct ThreadTask* dependency)
   {
-    pthread_mutex_lock(&dependency->m_Mutex);
+    dependency->m_Mutex.lock();
     dependency->m_StartTasks.insert(task);
-    pthread_mutex_unlock(&dependency->m_Mutex);
-    pthread_mutex_lock(&task->m_Mutex);
+    dependency->m_Mutex.unlock(); 
+    task->m_Mutex.lock();
     task->m_Dependencies.insert(dependency);
-    pthread_mutex_unlock(&task->m_Mutex);
+    task->m_Mutex.unlock();
   }
   struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds)
   {
@@ -78,19 +78,18 @@ extern "C" {
     if(NULL == threadSupervisor)
       threadSupervisor = new ThreadSupervisor(numThreads);
     assert(threadSupervisor);
-    pthread_mutex_lock(&threadSupervisor->m_Mutex);
+    threadSupervisor->m_Mutex.lock();
     if(threadSupervisor->m_ThreadLocalIdPtrSet.find(refno)!=threadSupervisor->m_ThreadLocalIdPtrSet.end())
       {
-	pthread_mutex_unlock(&threadSupervisor->m_Mutex);
+	threadSupervisor->m_Mutex.unlock();
 	return;
       }
     threadSupervisor->m_ThreadLocalIdPtrSet.insert(refno);
-    pthread_mutex_unlock(&threadSupervisor->m_Mutex);
-
     int ref = threadSupervisor->m_ThreadLocalIdCounter++;
     if(ref>threadSupervisor->s_MaxThreadLocalIdCounter)
      abort();
     *refno = ref;
+    threadSupervisor->m_Mutex.unlock();
   }
 
 };
@@ -98,19 +97,22 @@ extern "C" {
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds):
   m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL)
 {
-  pthread_mutex_init(&m_Mutex,NULL);
-  pthread_cond_init(&m_FinishCondition,NULL);
+   if(pthread_cond_init(&m_FinishCondition,NULL))
+    abort();
 }
 ThreadTask::~ThreadTask()
 {
 }
 void* ThreadTask::waitOn()
 {
-  pthread_mutex_lock(&m_Mutex);
-  if(!m_Done)
-    pthread_cond_wait(&m_FinishCondition,&m_Mutex);
+  m_Mutex.lock();
+  while(!m_Done && m_KeepRunning)
+    {
+      if(pthread_cond_wait(&m_FinishCondition,&m_Mutex.m_Mutex))
+	continue;
+    }
   void* ret = m_Result;
-  pthread_mutex_unlock(&m_Mutex);
+  m_Mutex.unlock();
   return ret;
 }
 
@@ -129,16 +131,19 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   if(pthread_key_create(&m_ThreadSpecificKey,NULL))
     abort();
   m_LocalThreadMemory = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
-  pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_LocalThreadMemory);
+  if(pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_LocalThreadMemory))
+    abort();
   #endif
+  if(pthread_cond_init(&m_TaskWaitingCondition,NULL))
+    abort();
+  //once everything is done initialize statics
   staticThreadLocalInit();
-  pthread_cond_init(&m_TaskWaitingCondition,NULL);
-  pthread_mutex_init(&m_Mutex,NULL);
 }
 
 ThreadSupervisor::~ThreadSupervisor()
 {
-  pthread_key_delete(m_ThreadSpecificKey);
+  if(pthread_key_delete(m_ThreadSpecificKey))
+    abort();
 }
 void ThreadSupervisor::initialize()
 {
@@ -153,7 +158,7 @@ void ThreadSupervisor::initialize()
 }
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)
 {
-  pthread_mutex_lock(&m_Mutex);
+  m_Mutex.lock();
   m_RunningTasks.remove(task);
   if(task->m_KeepRunning)
     {
@@ -163,19 +168,20 @@ void ThreadSupervisor::_i_finished(struct ThreadTask* task)
     {
       m_CanceledTasks.push_back(task);
     }
-  
-  pthread_mutex_unlock(&m_Mutex);
+  if(pthread_cond_broadcast(&task->m_FinishCondition))
+    abort();  
+  m_Mutex.unlock();
 }
 void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* launcher)
 {
-  pthread_mutex_lock(&m_Mutex);
-  pthread_mutex_lock(&task->m_Mutex);
+  m_Mutex.lock();
+  task->m_Mutex.lock();
   if(!task->m_Dependencies.empty())
     {
       if(!launcher)
 	{
-	  pthread_mutex_unlock(&task->m_Mutex);
-	  pthread_mutex_unlock(&m_Mutex);
+	  task->m_Mutex.unlock();
+	  m_Mutex.unlock();
 	  return;
 	}
       std::set<struct ThreadTask*>::iterator it = task->m_Dependencies.find(launcher);
@@ -186,64 +192,69 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 	}
       if(!task->m_Dependencies.empty())
 	{
-	  pthread_mutex_unlock(&task->m_Mutex);
-	  pthread_mutex_unlock(&m_Mutex);
+	  task->m_Mutex.unlock();
+	  m_Mutex.unlock();
 	  return;
 	}
     }
   m_WaitingTasks.remove(task);
   m_ReadyTasks.push_back(task);
-  pthread_cond_signal(&m_TaskWaitingCondition);
-  pthread_mutex_unlock(&task->m_Mutex);
-  pthread_mutex_unlock(&m_Mutex);
+  if(pthread_cond_signal(&m_TaskWaitingCondition))
+    abort();
+  task->m_Mutex.unlock();
+  m_Mutex.unlock();
 }
 void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
 {
-  pthread_mutex_lock(&m_Mutex);
-  pthread_mutex_lock(&task->m_Mutex);
-  AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
+  m_Mutex.lock();
+  task->m_Mutex.lock();
+  if(task->m_CurrentThread)
+    AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
   task->m_KeepRunning=false;
-  pthread_mutex_unlock(&task->m_Mutex);
-  pthread_mutex_unlock(&m_Mutex);
+  task->m_Mutex.unlock();
+  m_Mutex.unlock();
 }
 struct ThreadTask* ThreadSupervisor::getTask()
 {
-  pthread_mutex_lock(&m_Mutex);
+  m_Mutex.lock();
   while(m_ReadyTasks.empty())
     {
-      pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex);
+    RESTART:
+      if(pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex.m_Mutex))
+	goto RESTART;
     }
+  if(m_ReadyTasks.empty())
+    goto RESTART;
   struct ThreadTask* task = m_ReadyTasks.front();
   m_ReadyTasks.pop_front();
   m_RunningTasks.push_back(task);
-  pthread_mutex_unlock(&m_Mutex);
+  m_Mutex.unlock();
   return task;
 }
 void ThreadTask::run(SupervisorThread* thread)
 {
-  pthread_mutex_lock(&m_Mutex);
+  m_Mutex.lock();
   if(!m_KeepRunning)
     {
       threadSupervisor->_i_finished(this);
-      pthread_mutex_unlock(&m_Mutex);
+      m_Mutex.unlock();
       return;
     }
   m_CurrentThread=thread;
   m_Started = true;
-  pthread_mutex_unlock(&m_Mutex);
+  m_Mutex.unlock();
   m_Result = m_Func(m_UserData);
-  pthread_mutex_lock(&m_Mutex);
-  threadSupervisor->_i_finished(this);
+  m_Mutex.lock();
   m_Done = true;
   m_CurrentThread=NULL;
-  pthread_cond_broadcast(&m_FinishCondition);
+  threadSupervisor->_i_finished(this);
   //cancel stuff_
   for(std::set<ThreadTask*>::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
     threadSupervisor->_i_cancelTask(*it);
   //start stuff
   for(std::set<ThreadTask*>::iterator it = m_StartTasks.begin(); it!=m_StartTasks.end(); ++it)
     threadSupervisor->_i_startTask(*it,this);
-  pthread_mutex_unlock(&m_Mutex);
+  m_Mutex.unlock();
 }
 
 SupervisorThread::SupervisorThread():m_KeepRunning(true)
@@ -252,12 +263,14 @@ SupervisorThread::SupervisorThread():m_KeepRunning(true)
 }
 void SupervisorThread::start()
 {
-  pthread_create(&m_ThreadId,NULL,SupervisorThread::threadEntryPoint,this);
+  if(pthread_create(&m_ThreadId,NULL,SupervisorThread::threadEntryPoint,this))
+    abort();
 }
 void SupervisorThread::threadEntryPoint()
 {
   #ifdef GETSPECIFICTHREADLOCAL
-  pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_ThreadLocal);
+  if(pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_ThreadLocal))
+    abort();
   #endif
   m_Interrupt=&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field);
   reverse_run(thread_prepare_list);// re-initialize any thread local variables

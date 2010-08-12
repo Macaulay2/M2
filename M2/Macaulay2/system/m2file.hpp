@@ -2,6 +2,8 @@
 #ifndef _system_m2file_h_
 #define _system_m2file_h_
 
+#include "mutexclass.hpp"
+
     /* gc doc tells us to include pthread.h before gc.h */
     #ifndef _REENTRANT
       #define _REENTRANT
@@ -35,7 +37,7 @@ public:
   //sync state for unsync or sync mode
   stdio0_fileOutputSyncState unsyncState;
   //Mutex for guarding map & internals of file
-  pthread_mutex_t mapMutex;
+  pthreadMutex m_MapMutex;
   //For exclusive mode, the thread that currently owns io
   //For sync mode, the thread that currently owns the mutex
   pthread_t exclusiveOwner;

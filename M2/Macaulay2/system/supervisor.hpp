@@ -11,6 +11,7 @@
   #define test_Field(x) (load_Field(x) != 0)
   #define store_Field(x,val) AO_store(&(x).field,val)
 #endif
+#include "mutexclass.hpp"
     /* gc doc tells us to include pthread.h before gc.h */
     #ifndef _REENTRANT
       #define _REENTRANT
@@ -59,7 +60,7 @@ struct ThreadTask
   ///Dependencies that have been finished
   std::set<ThreadTask*> m_FinishedDependencies;
   ///Mutex for accessing task
-  pthread_mutex_t m_Mutex;
+  pthreadMutex m_Mutex;
   ///run task
   void run(SupervisorThread* thread);
   ///Condition variable for task
@@ -128,7 +129,7 @@ struct ThreadSupervisor
   ///list of canceled
   std::list<ThreadTask*> m_CanceledTasks;
   ///mutex for accessing lists
-  pthread_mutex_t m_Mutex;
+  pthreadMutex m_Mutex;
   ///new task waiting
   pthread_cond_t m_TaskWaitingCondition;
   ///list of supervisor threads
