@@ -25,6 +25,16 @@ typedef void* (*ThreadTaskFunctionPtr)(void*);
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+  //Public interface functions
+  extern void* waitOnTask(struct ThreadTask* task);
+  extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
+  extern void pushTask(struct ThreadTask* task);
+  extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
+  extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
+  extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
+
+  //Private interface functions
   extern THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
   extern THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);
   struct ThreadSupervisor;
@@ -33,13 +43,7 @@ extern "C" {
   struct parse_ThreadCellBody_struct;
   void createThreadGCMemory();
   extern void delThread(pthread_t thread);
-  extern void* waitOnTask(struct ThreadTask* task);
-  extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
-  extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
-  extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
-  extern void pushTask(struct ThreadTask* task);
   extern void initializeThreadSupervisor();
-  extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
   static inline void runM2Task(ThreadTaskFunctionPtr fptr, void* userData) {
     struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0);
     pushTask(task);
