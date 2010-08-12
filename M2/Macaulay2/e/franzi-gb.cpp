@@ -8,11 +8,11 @@
 // pair of indeces 
 // negative index -i for field polynomial x_i^2+x_i
 class Pair {
-  // order with respect to lcm in gRevLex ordering
+  // order with respect to lcm in lex ordering
   friend bool operator< (const Pair &pair1, const Pair &pair2) {
-    if (funccompGRL( pair2.lcm, pair1.lcm)) {
+    if (pair1.lcm < pair2.lcm) {
       return true;
-    } else if (funccompGRL(pair1.lcm, pair2.lcm)) {
+    } else if (pair1.lcm > pair2.lcm) {
       return false;
     } else {
       if(pair1.j < pair2.j) {
@@ -24,22 +24,6 @@ class Pair {
       } 
     }
   }
-//  // order with respect to lcm in lex ordering
-//  friend bool operator< (const Pair &pair1, const Pair &pair2) {
-//    if (pair1.lcm < pair2.lcm) {
-//      return true;
-//    } else if (pair1.lcm > pair2.lcm) {
-//      return false;
-//    } else {
-//      if(pair1.j < pair2.j) {
-//        return true;
-//      } else if(pair1.j > pair2.j) {
-//        return false;
-//      } else { 
-//        return pair1.i < pair2.i;
-//      } 
-//    }
-//  }
 
   public:
   int i;
@@ -68,7 +52,7 @@ class Pair {
       } else {
         unsigned int a = F.find(i) ->second.LT();
         unsigned int b = F.find(j) ->second.LT();
-        lcm = a | b;
+        lcm = a|b;
         //lcm = F.find(i) ->second.LT() | F.find(j) ->second.LT();
         good = !BRP::isRelativelyPrime( a,b );
       }
@@ -169,35 +153,25 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   
   int i = pair.i;
   int j = pair.j;
-  
+
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
   if( BRP::isRelativelyPrime(g,f) ) {
-    cout << "rp ";
-    return false;
-  }
-  
-  // both polynomials are monomials, so their S polynomial reduces to 0
-  if ( fp.g->size() == 1 && fp.f->size() == 1 ) {
-    cout << "m ";
-    //cout << "Throwing out S-pair from 2 monomials" << endl;
     return false;
   }
 
-  //brMonomial lcm = pair.lcm;
-  brMonomial lcm = g | f;
+  brMonomial lcm = pair.lcm;
+  //brMonomial lcm = g | f;
   IntermediateBasis::const_iterator end = F.end();
   for(IntermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
     int k = it->first;
     const BRP *K = &(it->second);
 
     if(( k != i && k != j && BRP::isDivisibleBy(lcm, K->LT() ) && !inList(i,k,B,F) && !inList(j,k,B,F))) {
-      cout << "l ";
       return false;
     }
   }
   
-  cout << " good pair ";
   return true;
 }
 
@@ -296,8 +270,8 @@ void rearrangeBasis(IntermediateBasis &F, int nextIndex) {
   for( IntermediateBasis::iterator j = F.begin(); j != F.end(); ++j ) {
     if (j->first != nextIndex ) {
       for( IntermediateBasis::iterator i = F.begin(); i->first < j->first; ++i) {
-        if ( funccompGRL(i->second.LT(), j->second.LT() )) {
-        //if ( i->second.LT() > j->second.LT() ) {
+        //if ( funccompGRL(i->second.LT(), j->second.LT() )) {
+        if ( i->second.LT() > j->second.LT() ) {
           BRP tmp = i->second;
           i->second = j->second;
           j->second = tmp;
@@ -577,8 +551,8 @@ void interreduction(IntermediateBasis &F) {
 }
 
 // A good (normal? Sugar?) selection strategy should be implemented here
-Pairs::iterator bestPair(Pairs &B) {
-  return (B.begin() );
+Pair bestPair(Pairs &B) {
+  return *(B.begin() );
 }
 
 // complete algorithm to compute a Groebner basis F  
@@ -591,14 +565,12 @@ void gb( IntermediateBasis &F, int n) {
   unsigned int countAddPoly = 0;
   unsigned int numSPoly= 0;
   while (!B.empty()) {
-    Pairs::iterator it = bestPair(B);
-    Pair pair = *it;
+    Pair pair = bestPair(B);
     //Pair pair = *(B.begin());
-    B.erase(it);
+    B.erase(B.begin());
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;
       BRP S = sPolynomial(pair,F,n);
-      cout << "Size of list of pairs: "  << (int) B.size() << endl;
       reduce(S,F);
       if ( ! S.isZero() ) {
         countAddPoly++;
@@ -607,23 +579,21 @@ void gb( IntermediateBasis &F, int n) {
         B.insert(newList.begin(), newList.end());
         //interreduction(F);
         interreductionMod++;
-        if ( interreductionMod  == 5 ) {
-          interreductionMod = 0;
-          interreduction(F);
-          B = Pairs (B);
+        if ( true || interreductionMod % 2 == 0 ) {
+          interreductionWithBuckets(F);
+          B = makeList(F, n);
         }
-//          interreductionWithBuckets(F);
-//          //B = makeList(F, n);
+        interreductionWithBuckets(F);
+        B = makeList(F, n);
 //        }
         nextIndex++;
         //rearrangeBasis(F, nextIndex);
-        cout << F.size() << " " << endl;
+        //cout << F.size() << " ";
         //cout << S.LT() << endl;
       }
     }
   }
-  cout << "interreduction with buckets" << endl;
-  interreductionWithBuckets(F);
+//  interreductionWithBuckets(F);
   cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
 

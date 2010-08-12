@@ -25,8 +25,8 @@ void BRP::addition(const BRP &other, monomials::iterator pos) {
   monomials::iterator pos_end = m.end();
   monomials::const_iterator other_end = other.m.end();
   while (it != other_end && pos != pos_end) {
-    if ( funccompGRL(*it, *pos) ) {
-    //if ( *it > *pos ) {
+    //if ( funccompGRL(*it, *pos) ) {
+    if ( *it > *pos ) {
       m.insert(pos, *it);
       ++it;
     } else if ( *it == *pos ) {
@@ -58,8 +58,6 @@ BRP BRP::operator*(const BRP &other) const {
   }
 }
 
-// b < a 
-// a > b
 inline bool funccomp(const brMonomial &a, const brMonomial &b) {
   return b < a;
 }
@@ -78,8 +76,8 @@ BRP BRP::operator*(const brMonomial &other) const {
       last = mono;
     }
   }
-  tmp.m.sort(funccompGRL);
-  //tmp.m.sort(funccomp);
+  //tmp.m.sort(funccompGRL);
+  tmp.m.sort(funccomp);
   monomials::iterator it = tmp.m.begin();
   monomials::iterator lastIt = tmp.m.begin();
   monomials::iterator tmpEnd = tmp.m.end();
@@ -166,7 +164,7 @@ unsigned int Bits::numberOfBits(brMonomial v) {
 }
 
 // for a and b with same degree
-// true if a > b
+// true if a >= b
 bool Bits::reverseLex(brMonomial a, brMonomial b) {
   for (; a; a>>=1, b>>=1) {
     int lastBitA = a & 1;
@@ -177,8 +175,7 @@ bool Bits::reverseLex(brMonomial a, brMonomial b) {
       return false;
     } 
   }
-  // equal
-  return false;
+  return true;
 }
 
 // Local Variables:
