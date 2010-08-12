@@ -108,7 +108,6 @@ newSchur := (R,M,p) -> (
      	  (cc,mm) := rawPairs(raw R, raw f);
      	  toList apply(cc, mm, (c,m) -> (rawmonom2schur m, new R from c)));
      SR.generators = apply(M.generators, m -> SR#(toString m) = SR#0 + m);
-     scan(keys R,k -> if class k === String then SR#k = promote(R#k,SR));
      SR.use = x -> (
 	  M + M := (m,n) -> R#1 * m + R#1 * n;
 	  M - M := (m,n) -> R#1 * m - R#1 * n;
