@@ -47,7 +47,6 @@ class Pair {
         unsigned int a = F.find(i) ->second.LT();
         unsigned int b = F.find(j) ->second.LT();
         lcm = a | b;
-        //lcm = F.find(i) ->second.LT() | F.find(j) ->second.LT();
         good = !BRP::isRelativelyPrime( a,b );
       }
     }
@@ -520,7 +519,7 @@ void gb( IntermediateBasis &F, int n) {
       BRP S = sPolynomial(pair,F,n);
       reduce(S,F);
       if ( ! S.isZero() ) {
-        cout << "Number of pairs currently in list: " << (int) B.size() << endl;
+ //       cout << "Number of pairs currently in list: " << (int) B.size() << endl;
         countAddPoly++;
         Pairs newList = makeNewPairs(nextIndex, F, n);
         F[nextIndex] = S;
