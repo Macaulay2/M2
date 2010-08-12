@@ -99,6 +99,16 @@ M2_DFILES += texmacs.d
 # this one is last, because it contains the top level interpreter
 M2_DFILES += interp.d
 
+# should automate these dependencies
+actors5.o basic.o : \
+	@srcdir@/../e/engine.h \
+	@srcdir@/../e/rand.h \
+	@srcdir@/../e/newdelete.hpp \
+	@srcdir@/../d/M2mem.h \
+	@srcdir@/../d/debug.h \
+	../e-includes/statuscodes.h \
+	../../include/M2/config.h
+
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))
 M2_OBJECTS += $(M2_CFILES:.c=.o)
