@@ -3,7 +3,7 @@
 
 newPackage "Text"
 
-export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary"#s) \ {
+exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DIV1", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
      "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
      "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD",
