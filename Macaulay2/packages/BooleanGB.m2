@@ -11,7 +11,7 @@ newPackage(
     DebuggingMode => true
     )
 
-export {}
+exportFrom_Core {"gbBoolean"}
 
 -- Code here
 

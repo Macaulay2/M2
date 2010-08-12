@@ -9,7 +9,7 @@ newPackage("XML",
 export {"XMLnode", "tag", "children","parse", "toXMLnode", "Trim","toLibxmlNode"}
 scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
-	  export {v}))
+	  export v))
 
 XMLnode = new Type of MutableHashTable
 net XMLnode := n -> (

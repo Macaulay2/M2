@@ -257,6 +257,9 @@ newPackage(String) := opts -> (title) -> (
      loadDepth = if title === "Core" then 1 else if not debuggingMode then 2 else 3;
      newpkg)
 
+exportFrom = method()
+exportFrom(Package,List) := (P,x) -> export \\ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x
+
 export = method(Dispatch => Thing)
 export Symbol := x -> export {x}
 export String := x -> export {x}
