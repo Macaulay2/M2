@@ -15,6 +15,7 @@ exportFrom_Core {"gbBoolean"}
 
 -- Code here
 
+
 beginDocumentation()
 
 doc ///
@@ -48,6 +49,7 @@ SeeAlso
 doc ///
 Key
   (gbBoolean, Ideal)
+  gbBoolean
 Headline
   Compute Groebner Basis 
 Usage
@@ -84,4 +86,10 @@ TEST ///
 -- test code and assertions here
 -- may have as many TEST sections as needed
 ///
+end
 
+uninstallPackage "BooleanGB"
+
+
+installPackage "BooleanGB"
+viewHelp gbBool
