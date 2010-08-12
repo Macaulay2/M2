@@ -635,15 +635,15 @@ longTest = false
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   L = {a*b*c*d*e,
     a+b*c+d*e+a+b+c+d , 
-    j*h+i+f, 
-    g+f +m*n+o,
+    j*h+i+f +a*b+c*d+e*f+g*h*i+i*j+a*t+s*r, 
+    g+f +m*n+o + o*p + r*s*t+a*l+h*i*q*s + k*c,
     j+i+d*c, 
     r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
     m*n+o*p, 
-    b*s+q+p*n*m+i, 
+    b*s+q+p*n*m+i + i*j*h*a*c*t, 
     b*s+q*n*m+i+b*l*o*r*s*c, 
-    b*k+q+l*n*m,
-    i*q*a*c*e+f*g+o*q*d*m, 
+    b*k+q+l*n*m +n,
+    i*q*a*c*e+f*g+o*q*d*m +b+d, 
     b*s+q*n*m+i+j*s*t+s, 
     b*k+r*q+l*m+i*j+n, 
     b*k+d*n*m+i, 
@@ -652,6 +652,9 @@ longTest = false
     q*r+c+q+l*n*m+i
   };
   J = ideal L;
+  time M = apply(flatten entries gens gb J, i-> lift(i,R));
+  length M
+
 if longTest then
   time M = apply(flatten entries gens gb J, i-> lift(i,R))
   F = getPolysFromList L
@@ -819,19 +822,38 @@ time gens gb ideal L;
 
 restart
 installPackage "BuchbergerForBrp"
+S=ZZ/2[a..p, MonomialOrder => GRevLex]
+--S=ZZ/2[a..p, MonomialOrder => Lex]
+QS = S/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p);
+load "tmp.m2"
+F = getPolysFromList(L)
+"~/Documents/Research/BooleanGroebner/tmpTest5.m2" << peek F << endl << close
+time M = apply(flatten entries gens gb ideal L, i-> i);
+  F = getPolysFromList M;
+"~/Documents/Research/BooleanGroebner/tmpTest5Solution.m2" << peek F << endl << close
+length M
+
+restart
+installPackage "BuchbergerForBrp"
 S=ZZ/2[a..p, MonomialOrder => Lex]
 QS = S/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p);
 load "tmp3.m2"
 F = getPolysFromList(L)
---"tmp3-list.m2" << peek F << endl << close
-"~/Documents/Research/BooleanGroebner/tmp3.m2" << peek F << endl << close
+"~/Documents/Research/BooleanGroebner/tmpTest1.m2" << peek F << endl << close
 time M = apply(flatten entries gens gb ideal L, i-> i);
+  F = getPolysFromList M;
+"~/Documents/Research/BooleanGroebner/tmpTest1Solution.m2" << peek F << endl << close
 length M
 
+f = a*c*e*f*g*n + d*f*g*m*o*q + f*g
+convert(a*c*e*f*g*n)
+convert(d*f*g*m*o*q)
+convert(f*g)
 
 restart
 installPackage "BuchbergerForBrp"
   R = ZZ/2[a..t, MonomialOrder=>Lex]
+  R = ZZ/2[a..t, MonomialOrder=>GRevLex]
   QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
   L = {
     b*c,
@@ -841,11 +863,14 @@ installPackage "BuchbergerForBrp"
     i + l*m*n + q*r + q
   };
   F = getPolysFromList L;
-  gbBrp( F, numgens R);
-  N = sort apply (values F, poly -> convert(poly,R) );
-  time M = apply(flatten entries gens gb ideal L, i-> lift(i,R))
-  assert (N == M)
-"~/Documents/Research/BooleanGroebner/tmp7-solution.m2" << peek getPolysFromList M << endl << close
+"~/Documents/Research/BooleanGroebner/tmpTest2.m2" << peek F << endl << close
+  time M = apply(flatten entries gens gb ideal L, i-> lift(i,R));
+  J = gens gb ideal L;
+  f % J
+
+  F = getPolysFromList M;
+"~/Documents/Research/BooleanGroebner/tmpTest2Solution.m2" << peek F << endl << close
+length M
   
 restart
 installPackage "BuchbergerForBrp"
@@ -859,39 +884,48 @@ installPackage "BuchbergerForBrp"
     i + l*m*n + q*r + q
   };
   F = getPolysFromList L;
-"~/Documents/Research/BooleanGroebner/tmp8.m2" << peek F << endl << close
+"~/Documents/Research/BooleanGroebner/tmpTest3.m2" << peek F << endl << close
   time M = apply(flatten entries gens gb ideal L, i-> lift(i,R));
-"~/Documents/Research/BooleanGroebner/tmp8-solution.m2" << peek getPolysFromList M << endl << close
-
+  F = getPolysFromList M;
+"~/Documents/Research/BooleanGroebner/tmpTest3Solution.m2" << peek F << endl << close
+length M
+  
 restart
 installPackage "BuchbergerForBrp"
-  R = ZZ/2[a..t, MonomialOrder=>GRevLex]
-  QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
-  L = {
-    b*c + c + d + e*f,
-    a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
-    b*c*l*o*r*s + b*s + i + m*n*q, 
-    a*c*e*i*q + d*m*o*q + f*g, 
-    i + l*m*n + q*r + q
-  };
-  F = getPolysFromList L;
-"~/Documents/Research/BooleanGroebner/tmpGRevLex.m2" << peek F << endl << close
-  time M = apply(flatten entries gens gb ideal L, i-> lift(i,R));
-"~/Documents/Research/BooleanGroebner/tmpGRevLexSolution.m2" << peek getPolysFromList M << endl << close
+R = ZZ/2[a..t, MonomialOrder=>GRevLex]
+QR = R/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+L = {a*b*c*d*e,
+  a+b*c+d*e+a+b+c+d , 
+  j*h+i+f +a*b+c*d+e*f+g*h*i+i*j+a*t+s*r, 
+  g+f +m*n+o + o*p + r*s*t+a*l+h*i*q*s + k*c,
+  j+i+d*c, 
+  r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
+  m*n+o*p, 
+  b*s+q+p*n*m+i + i*j*h*a*c*t, 
+  b*s+q*n*m+i+b*l*o*r*s*c, 
+  b*k+q+l*n*m +n,
+  i*q*a*c*e+f*g+o*q*d*m +b+d, 
+  b*s+q*n*m+i+j*s*t+s, 
+  b*k+r*q+l*m+i*j+n, 
+  b*k+d*n*m+i, 
+  b+q+l*n*m+i*d, 
+  a*k+c*l*n*f, 
+  q*r+c+q+l*n*m+i
+};
+F = getPolysFromList L;
+"~/Documents/Research/BooleanGroebner/tmpTest4.m2" << peek F << endl << close
+time M = apply(flatten entries gens gb ideal L, i->convert(i) );
+S = ZZ/2[a..t, MonomialOrder=>Lex]
+QS = S/(a^2+a, b^2+b, c^2+c, d^2+d, e^2+e, f^2+f, g^2+g, h^2+h, i^2+i, j^2+j, k^2+k, l^2+l, m^2+m, n^2+n, o^2+o, p^2+p, q^2+q, r^2+r, s^2+s, t^2+t);
+N = apply(M, i-> convert(i,QS))
+lexBasis = gens gb ideal N
+F = getPolysFromList flatten entries lexBasis;
+"~/Documents/Research/BooleanGroebner/tmpTest4Solution.m2" << peek F << endl << close
 
-restart
-installPackage "BuchbergerForBrp"
-  R = ZZ/2[a..t, MonomialOrder=>Lex]
-  L = {
-    b*c + c + d + e*f,
-    a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
-    b*c*l*o*r*s + b*s + i + m*n*q, 
-    a*c*e*i*q + d*m*o*q + f*g, 
-    i + l*m*n + q*r + q
-  };
-  F = getPolysFromList L;
-"tmpSOMENAME.m2" << peek F << endl << close
 
-
-
-
+time M = apply(flatten entries gens gb ideal L, i-> lift(i,R));
+F = getPolysFromList M;
+"~/Documents/Research/BooleanGroebner/tmpTest4Solution.m2" << peek F << endl << close
+length M
+  
+  
