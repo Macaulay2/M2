@@ -27,6 +27,8 @@ extern "C" {
 #endif
 
   //Public interface functions
+  struct ThreadSupervisor;
+  struct ThreadTask;
   extern void* waitOnTask(struct ThreadTask* task);
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
   extern void pushTask(struct ThreadTask* task);
@@ -37,8 +39,6 @@ extern "C" {
   //Private interface functions
   extern THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
   extern THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);
-  struct ThreadSupervisor;
-  struct ThreadTask;
   extern struct ThreadSupervisor* threadSupervisor;
   struct parse_ThreadCellBody_struct;
   void createThreadGCMemory();
