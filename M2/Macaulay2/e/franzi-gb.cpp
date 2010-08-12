@@ -588,17 +588,17 @@ void gb( IntermediateBasis &F, int n) {
         Pairs newList = makeNewPairs(nextIndex, F, n);
         F[nextIndex] = S;
         B.insert(newList.begin(), newList.end());
-        interreductionWithBuckets(F);
-        B = makeList(F, n);
-//        }
+        //interreductionWithBuckets(F);
+        //B = makeList(F, n);
         nextIndex++;
-        //rearrangeBasis(F, nextIndex);
-        //cout << F.size() << " ";
-        //cout << S.LT() << endl;
+        cout << F.size() << " ";
       }
     }
   }
-//  interreductionWithBuckets(F);
+  cout << "final interreduction" << endl;
+  cout << flush;
+  interreduction(F);
+  //interreductionWithBuckets(F);
   cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
 
