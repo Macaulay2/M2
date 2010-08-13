@@ -507,7 +507,7 @@ Pair bestPair(Pairs &B) {
   return *(B.begin() );
 }
 
-// complete algorithm to compute a Groebner basis F  
+// compute a reduced Groebner basis F  
 void gb( IntermediateBasis &F, int n) {
   int interreductionMod = 0;
   int nextIndex = F.size(); 
