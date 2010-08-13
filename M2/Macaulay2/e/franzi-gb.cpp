@@ -152,10 +152,10 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
-  if( BRP::isRelativelyPrime(g,f) ) {
-    //cout << "r ";
-    return false;
-  }
+//  if( BRP::isRelativelyPrime(g,f) ) {
+//    //cout << "r ";
+//    return false;
+//  }
 
   int i = pair.i;
   int j = pair.j;
@@ -219,6 +219,11 @@ IntermediateBasis::const_iterator findDivisor( const BRP &f, const IntermediateB
 // Reduce the leading term of f one step with the first polynomial g_i in the
 // intermediate basis that satisfies isLeadingReducibleBy(f,g_i)
 bool reduceLt(BRP &f, const IntermediateBasis &F, const IntermediateBasis::const_iterator itF) {
+  if (f.isZero() ) {
+  //    cout << "this shouldn't be called" << endl;
+      return false;
+        }
+
   bool ret = false; // true if anything was reduced
   IntermediateBasis::const_iterator it;
   IntermediateBasis::const_iterator end = F.end();
