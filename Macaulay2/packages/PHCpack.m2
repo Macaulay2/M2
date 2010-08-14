@@ -28,6 +28,7 @@
 --     	    
 --------------------------------------------------------------
 --------------------------------------------------------------
+needsPackage "NAGtypes"
 
 newPackage(
 	"PHCpack",
@@ -60,7 +61,7 @@ export {
      }
 -- convertToPoly: this function could be useful, so export???
 
-needsPackage "NumericalAlgebraicGeometry"
+needsPackage "NAGtypes"
 
 -- GLOBAL VARIABLES ----------------------------------
 DBG = 0; -- debug level (10=keep temp files)
@@ -431,45 +432,6 @@ refineSolutions (List,List) := List => o -> (T,sols) -> (
      parseSolutions(solsTfile, R, Bits => o.Bits)
      )
 
-generalEquations = method()
-generalEquations WitnessSet := (W) -> (
-     -- change the equations to be general change of vars, if not a CI
-     -- the output is a new witness set, with the same points and slice.
-     R := ring W;
-     n := numgens R;
-     d := dim W;
-     ngens := numgens ideal W;
-     if ngens === n-d then W
-     else (
-	  -- take random combinations of the equations
-	  neweqns := (generators ideal W) * random(R^ngens, R^(n-d));
-	  witnessSet(ideal neweqns, ideal W.Slice, W.Points))
-     )
-
-addSlackVariables = method()
-addSlackVariables WitnessSet := (W) -> (
-     -- creates a new system of polynomials, in variables:
-     -- old set of variables, and zz1, ..., zzd, where
-     -- d is the dimension of W.
-     R := ring W;
-     n := numgens R;
-     d := dim W; -- this will be the number of slack variables to add
-     W1 := generalEquations W;
-     -- Add in new variables zz1, ..., zzd,
-     --  this changes the equations, the slice, and the points
-     slackvars := apply(d, i->getSymbol("zz"|toString (i+1)));
-     newR := (coefficientRing R)[gens R, slackvars];
-     newvars := (vars newR)_{n..n+d-1};
-     -- new slice:
-     newSlice := apply(d, i -> sub(W1.Slice#i,newR) + newR_(n + i));
-     -- add a linear matrix 
-     A := random(newR^(d),newR^(n-d));
-     AZ := transpose newvars * A;
-     newEqns := (sub(gens ideal W1, newR) + AZ) | newvars;
-     -- new points
-     zeros := toList apply(d, i -> 0_(coefficientRing R));
-     newPoints := apply(W1.Points, pt -> join(pt,zeros));
-     witnessSet(ideal newEqns, ideal newSlice, newPoints))
 
 monodromyBreakupPHC = method(Options => {})
 monodromyBreakupPHC WitnessSet := o -> (W) -> (
@@ -613,8 +575,8 @@ peek oo
 -----------------------------------
 ----- Documenting main package ----
 -----------------------------------
-if end =!= beginDocumentation()
-then (
+beginDocumentation()
+
 doc ///
      Key 
           PHCpack 
@@ -920,13 +882,7 @@ TEST///
 -- Testing nameOfFunction....INSERT meaningful tests for *each* function in the package!
 -----------------------------------
 
-)
 
-
-----------------------------------------------------------------------
-----------------------------------------------------------------------
-endPackage "PHCpack" 
-needsPackage "NumericalAlgebraicGeometry"
 end   	   --********************************************************
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
