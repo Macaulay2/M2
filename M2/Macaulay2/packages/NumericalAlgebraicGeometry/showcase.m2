@@ -1,6 +1,6 @@
 needsPackage "NumericalAlgebraicGeometry"
 NAGtrace 2
-load "benchmarks.m2"
+load (currentFileDirectory|"benchmarks.m2")
 
 -- BENCHMARK SYSTEMS: ---------------------------------------------------------
 systems = {
