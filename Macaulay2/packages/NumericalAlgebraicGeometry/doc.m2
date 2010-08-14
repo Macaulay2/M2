@@ -87,7 +87,7 @@ document {
 	     Iterations => {"number of refining iterations of Newton's methods"}, 
 	     Bits => {"number of bits of precision"}, 
 	     ErrorTolerance => {"a bound on the desired estimated error"},
---	     ResidualTolerance => {"a bound on desired residual"}
+	     ResidualTolerance => {"a bound on desired residual"}
 	     },
 	Outputs => {"solsR" => {"refined solutions" }},
 	"Uses Newton's method to correct the given solutions so that the resluting approximation 
@@ -146,19 +146,13 @@ document {
      "Available at ", TT "http://www.nd.edu/~sommese/bertini/"
      }
 document {
-     Key => PHCpack,
-     Headline => "use PHCpack for homotopy continuation",
-     "Available at ", TT "http://www.math.uic.edu/~jan/download.html"
-     }
-document {
      Key => HOM4PS2,
      Headline => "use HOM4PS for homotopy continuation",
      "Available at ", TT "http://hom4ps.math.msu.edu/HOM4PS_soft.htm"
      }
 			      		    								 
 document {
-	Key => {(getSolution, ZZ), getSolution, SolutionAttributes, [getSolution,SolutionAttributes], 
-	     Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps},
+	Key => {(getSolution, ZZ), getSolution, SolutionAttributes, [getSolution,SolutionAttributes]},
 	Headline => "get various attributes of the specified solution",
 	Usage => "s = getSolution i, s = getSolution(i,SolutionAttributes=>...)",
 	Inputs => { 
