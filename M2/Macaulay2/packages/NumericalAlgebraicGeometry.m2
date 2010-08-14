@@ -1,5 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
+needsPackage "NAGtypes"
 newPackage(
      "NumericalAlgebraicGeometry",
      Version => "1.3.0.2",
@@ -10,7 +11,7 @@ newPackage(
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
-     Configuration => { "PHCpack" => "phc",  "Bertini" => "bertini", "HOM4PS2" => "hom4ps2" },	
+     Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => true 
@@ -21,7 +22,7 @@ newPackage(
 export {
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
      "areEqual", "sortSolutions", -- "multistepPredictor", "multistepPredictorLooseEnd",
-     "Software","PHCpack","Bertini","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
+     "Software","BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","ProjectiveNewton",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
@@ -30,23 +31,22 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "Tolerance",
-     "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
-     "Regular", "Singular", "Infinity", "MinStepFailure",      
+     "getSolution", "SolutionAttributes",       
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
-     "WitnessSet", "witnessSet", "equations", "slice", "points", "Equations", "Slice", "Points", 
-     "Point", "point", "coordinates",
      "NAGtrace"
      }
 exportMutable {
      }
 
+needsPackage "NAGtypes"
+
 -- DEBUG CORE ----------------------------------------
 debug Core; -- to enable engine routines
 
 -- GLOBAL VARIABLES ----------------------------------
---PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCpack";
-BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"Bertini";
+--PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCPACK";
+BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"BERTINI";
 HOM4PS2exe = NumericalAlgebraicGeometry#Options#Configuration#"HOM4PS2";
 
 DBG := 0; -- debug level (10=keep temp files)
@@ -89,11 +89,9 @@ DEFAULT = new MutableHashTable from {
      Tolerance => 1e-6
      }
 
-Point = new Type of MutableHashTable 
-WitnessSet = new Type of MutableHashTable 
-
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
-needs "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
+if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
+then needs "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
 needs "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
 
 -- CONVENTIONS ---------------------------------------
@@ -259,8 +257,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 --     then error "ProjectiveNewton (experimental) requires Software=>M2 and o.SLP=>null";
      
      -- PHCpack -------------------------------------------------------
-     if o.Software == PHCpack then return trackPHCpack(S,T,solsS,o)
-     else if o.Software == Bertini then return trackBertini(S,T,solsS,o)
+     if o.Software == PHCPACK then return trackPHCpack(S,T,solsS,o)
+     else if o.Software == BERTINI then return trackBertini(S,T,solsS,o)
      else if not member(o.Software,{M2,M2engine,M2enginePrecookedSLPs}) 
      then error "wrong Software option or implementation is not available";
      
@@ -662,8 +660,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 Ht0 = evalHt(x0,t0);
 			 chi2 := sqrt((norm2 Ht0)^2 + (norm2 solve(Hx0, Ht0))^2);
 			 chi1 := 1 / min first SVD(DMforPN*Hx0);
-			 << "chi1 = " << chi1 << endl; --!!!
-			 if count<=5 then print(DMforPN*Hx0); --!!!
+			 if DBG > 2 then (
+			      << "chi1 = " << chi1 << endl;
+			      if count<=5 then print(DMforPN*Hx0);
+			      );
 			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT); -- divide by bigT since t is in [0,1]
 			 if dt<o.tStepMin then (
 			      if DBG > 2 then (
@@ -834,7 +834,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       then error "path tracker is not set up"
 	       else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.ErrorTolerance, 
 		    	 if o.Iteration===null then 30 else o.Iteration));
-     	       ) else if o.Software === PHCpack then (
+     	       ) else if o.Software === PHCPACK then (
 	       return refinePHCpack(T,solsT,o)
 	       );
 	  );
@@ -1117,7 +1117,7 @@ solveSystem = method(TypicalValue => List, Options =>{Software=>null})
 solveSystem List := List => o -> F -> (
 -- solves a system of polynomial equations
 -- IN:  F = list of polynomials
---      Software => {PHCpack, Bertini, hom4ps2}
+--      Software => {PHCPACK, BERTINI, hom4ps2}
 -- OUT: {s,m}, where 
 --             s = list of solutions 
 --     	       m = list of corresponding multiplicities	 
@@ -1141,8 +1141,8 @@ solveSystem List := List => o -> F -> (
 	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii),o)
 	       )
 	  )
-     else if o.Software == PHCpack then result = solvePHCpack(F,o)
-     else if o.Software == Bertini then result = solveBertini(F,o)
+     else if o.Software == PHCPACK then result = solvePHCpack(F,o)
+     else if o.Software == BERTINI then result = solveBertini(F,o)
      else if o.Software == HOM4PS2 then (
 	  -- newR := coefficientRing R[xx_1..xx_(numgens R)];
 	  (name, p) := makeHom4psInput(R, F);
@@ -1203,69 +1203,9 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
        );
   s
   )
-  
------------------------------------------------------------------------
--- POINT = {
---   Coordinates => List of CC,
---   NumberOfSteps => ZZ, -- number of steps made while tracking the path
---   SolutionStatus => {RegularSolution, SingularSolution, Infinity, MinStepFailure}
---   LastT => RR in [0,1]
---   RCondition => reverse condition number of the Jacobian
---   }
-Point.synonym = "point"
-point = method()
-point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
-net Point := p -> (
-     if not p.?SolutionStatus or p.SolutionStatus === Regular then net p.Coordinates 
-     else if p.SolutionStatus === Singular then net "[S,t=" | net p.LastT | net "]"
-     else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
-     else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
-     else error "the point is corrupted"
-     ) 
-coordinates = method()
-coordinates Point := p -> p.Coordinates
-status Point := o -> p -> p.SolutionStatus
-matrix Point := o -> p -> matrix {coordinates p}
------------------------------------------------------------------------
--- WITNESS SET = {
---   Equations,            -- an ideal  
---   Slice,                -- a list of linear equations OR a matrix (of their coefficients)
---   Points	           -- a list of points (in the format of the output of solveSystem/track) 
---   }
--- caveat: we assume that #Equations = dim(Slice)   
-WitnessSet.synonym = "witness set"
-WitnessSet.Tolerance = 1e-6;
-dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
-     else if class W.Slice === Matrix then numrows W.Slice 
-     else error "ill-formed slice in WitnessSet" )
-codim WitnessSet := W -> numgens ring W - dim W
-ring WitnessSet := W -> ring W.Equations
-degree WitnessSet := W -> #W.Points
-ideal WitnessSet := W -> W.Equations
-net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
-witnessSet = method()
-witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
-witnessSet (Ideal,Matrix,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P}
-witnessSet Ideal := I -> (
-     n := numgens ring I;
-     d := dim I;
-     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
-     SM = promote(SM,ring I);
-     S := ideal(SM * transpose vars ring I + random(CC^d,CC^1));
-     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
-     RM = promote(RM,ring I);
-     P := solveSystem(flatten entries (RM * transpose gens I) | S_*);
-     PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
-     witnessSet(I,S,PP/first)
-     )
-points = method() -- strips all info except coordinates, returns a doubly-nested list
-points WitnessSet := (W) -> apply(W.Points, coordinates)
-equations = method() -- returns list of equations
-equations WitnessSet := (W) -> (W.Equations)_*
-slice = method() -- returns linear equations for the slice (in both cases)   
-slice WitnessSet := (W) -> ( if class W.Slice === List then W.Slice
-     else if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
-     else error "ill-formed slice in WitnessSet" )
+
+------------------------------------------------------------------------------------------
+-- NAG witness set extra functions  
 check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
 isContained = method()
 isContained (List,WitnessSet) := (point,W) -> (
@@ -1403,7 +1343,7 @@ regeneration = method(TypicalValue=>List, Options =>{Software=>null, Output=>Reg
 regeneration List := List => o -> F -> (
 -- solves a system of polynomial Equations via regeneration     
 -- IN:  F = list of polynomials
---      Software => {PHCpack, Bertini, hom4ps2}
+--      Software => {PHCPACK, BERTINI, hom4ps2}
 -- OUT: {s,m}, where 
 --             s = list of solutions 
 --     	       m = list of corresponding multiplicities	 
@@ -2397,22 +2337,20 @@ conditionNumber (List,List) := o -> (F,x) -> (
      1 / min first SVD(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
      )
 
-if end =!= beginDocumentation()
-then (
-     load "./NumericalAlgebraicGeometry/doc.m2";
+beginDocumentation()
 
-     TEST ///
-	  --assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
-	  --assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
-	  --assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
-	  load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")
-	  load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2engine.tst.m2")
-	  load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
-     ///
-     )
+load "./NumericalAlgebraicGeometry/doc.m2";
 
-endPackage "NumericalAlgebraicGeometry" 
-needsPackage "PHCpackInterface"
+TEST ///
+--assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
+--assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
+--assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2engine.tst.m2")
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
+///
+
+
 end
 
 -- Here place M2 code that you find useful while developing this
