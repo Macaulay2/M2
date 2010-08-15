@@ -42,7 +42,7 @@ newPackage(
     	Headline => "Interface to PHCpack",
 	Configuration => { 
 	     "path" => "",
-	     "PHCexe"=>"./phc", 
+	     "PHCexe"=>"phc", 
 	     "keep files" => true
 	      },
     	DebuggingMode => true, 	-- DebuggingMode should be true while developing a package,  but false after it is done
@@ -67,8 +67,8 @@ needsPackage "NAGtypes"
 DBG = 0; -- debug level (10=keep temp files)
 path'PHC = (options PHCpack).Configuration#"path";
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file for PHCpack inside Library -> Application Support -> Macaulay2 ->.
-if path'PHC == "" then path'PHC =  prefixDirectory | currentLayout#"programs"
-PHCexe=path'PHC|"./phc"; --is the executable string we need to make sure that calls to PHCpack actually run:
+-- if path'PHC == "" then path'PHC =  prefixDirectory | currentLayout#"programs"
+PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"; --is the executable string we need to make sure that calls to PHCpack actually run:
 --PHCexe="../../../.././phc";
 --PHCexe="/Users/petrovic/PHCpack/./phc";   
 --PHCexe="/Users/petrovic/./phc"; 
@@ -114,6 +114,16 @@ systemToFile (List,String) := (F,name) -> (
      close file;
      ) 
 
+----------------------------------
+--- conversion to Point        ---
+----------------------------------
+outputToPoint = method()
+outputToPoint HashTable := (H)->{
+     SolutionStatus => if H#"mult" == 1 then Regular else Singular, 
+     RCondition => H#"rco", 
+     LastT => H#"time"
+     }
+
 parseSolutions = method(TypicalValue => Sequence, Options => {Bits => 53})
 parseSolutions (String,Ring) := o -> (s,R) -> (
      -- parses solutions in PHCpack format 
@@ -128,13 +138,14 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
      L = replace("E\\+","e",L);
      L = replace("E", "e", L);
      L = replace("time", "\"time\"", L);
+     L = replace("rco", "\"rco\"", L);
      L = replace("multiplicity", "\"mult\"", L);
      L = replace("res", "\"residual\"", L);
      L = replace("resolution", "\"residual\"", L);--because M2 automatically thinks "res"=resolution
      use R; 	  
      sols := toList apply(value L, x->new HashTable from toList x);
      defaultPrecision = oldprec;
-     sols/(x->{apply(gens R, v->x#v), x})
+     apply(sols, x->point( {apply(gens R, v->x#v)} | outputToPoint x ))
      )
 
 -- copied from PHCpack.interface.m2 -- check if correct!!!
@@ -273,10 +284,15 @@ mixedVolume  List := ZZ => system -> (
      F := get outfile; 
      --search lines of outfile for:  " mixed volume : "
      --once found, extract just the number and return its value:
-     scanLines(  line ->  
-	  if  substring(0,14,line) == "mixed volume :"  then 
-	  { result := value replace("mixed volume : ","",line); break true} , outfile);      
-     result
+     local result;
+     scanLines(line ->  
+	  if  substring(0,14,line) == "mixed volume :" 
+	  then (
+	       result = value replace("mixed volume : ","",line);
+	       break
+	       ), 
+	  outfile);
+     result      
      )
 
 
@@ -389,7 +405,7 @@ refineSolutions = method(TypicalValue => List, Options => {
 	  }
 	  )
 refineSolutions (List,List) := List => o -> (T,sols) -> (
-     -- T is a list of polynomials over CC
+     -- T, a target system, is a list of polynomials over CC
      -- sols is a list of solutions
      --  each solution is a list {point, other stuff after that}
      R := ring first T;
@@ -433,8 +449,8 @@ refineSolutions (List,List) := List => o -> (T,sols) -> (
      )
 
 
-monodromyBreakupPHC = method(Options => {})
-monodromyBreakupPHC WitnessSet := o -> (W) -> (
+monodromyBreakup = method(Options => {})
+monodromyBreakup WitnessSet := o -> (W) -> (
      -- Input: a witness set (i.e. numerical equidimensional set)
      -- Output: a list of witness sets, probably the irreducible
      --  decomposition of W.
@@ -475,8 +491,8 @@ monodromyBreakupPHC WitnessSet := o -> (W) -> (
 	  )
      )
 
-cascadePHC = method()
-cascadePHC Ideal := (I) -> (
+cascade = method()
+cascade Ideal := (I) -> (
      -- returns a list of WitnessSet's -- or at it will...
      infile := temporaryFileName() | 
      "PHCmonodromy";
@@ -525,7 +541,7 @@ cascadePHC Ideal := (I) -> (
 ///
 -- WitnessSet and monodromyBreakupPHC
 restart
-debug loadPackage "NumericalAlgebraicGeometry"
+debug loadPackage "PHCpack"
 
 R = QQ[x,y,z]
 I = ideal"x+y-2,y-z+3"
@@ -547,7 +563,7 @@ peek oo
 ///
 -- cascade interface
 restart
-debug loadPackage "NumericalAlgebraicGeometry"
+debug loadPackage "PHCpack"
 
 R = QQ[x,y,z,w]
 I = ideal"x+y-2,y2-z+3"
