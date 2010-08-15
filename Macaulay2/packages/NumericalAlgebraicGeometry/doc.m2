@@ -17,7 +17,7 @@ document {
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
-solveSystem F / first 			 	     
+solveSystem F / coordinates 			 	     
      	///,
 	Caveat => {"The system is assumed to be square (#equations = #variables) and have finitely many solutions."}	
 	}
@@ -69,7 +69,7 @@ R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
-track(S,T,solsS) / first 
+track(S,T,solsS) / coordinates 
      	///
 	}
 
@@ -135,13 +135,13 @@ document {
 	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
 	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine"},
 	  {"M2enginePrecookedSLPs", " -- (obsolete)"},
-	  TO "PHCpack",
-	  TO "Bertini",
+	  TO "PHCPACK",
+	  TO "BERTINI",
 	  TO "HOM4PS2"
 	  }
      }
 document {
-     Key => Bertini,
+     Key => BERTINI,
      Headline => "use Bertini for homotopy continuation",
      "Available at ", TT "http://www.nd.edu/~sommese/bertini/"
      }
@@ -245,7 +245,7 @@ document {
         EXAMPLE lines ///
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
-areEqual(sortSolutions s, {{{-1, 0}}, {{0, -1}}, {{0, 1}}, {{1, 0}}})
+areEqual(sortSolutions s / coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}})
      	///
 	}
 
