@@ -1,3 +1,5 @@
+-- check out
+svn co -q svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages
 -- update in packages directory
 svn up
 -- check in 
