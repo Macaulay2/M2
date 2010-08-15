@@ -12,3 +12,14 @@ assert( oo == 14520000 )
 end
 -- Mike starting to look at this
 time apply(0 .. 20, i -> time chi exteriorPower_i E)
+
+-- Here is the next case, which we can't do yet:
+
+loadPackage "Schubert2"
+G = flagBundle {13,7}
+(S,Q) = G.Bundles
+(S,Q) = (dual Q, dual S)
+E = exteriorPower_4 S
+for i from 1 to 35 do (
+    << i << " : " << chi exteriorPower_i E << endl << flush
+)
