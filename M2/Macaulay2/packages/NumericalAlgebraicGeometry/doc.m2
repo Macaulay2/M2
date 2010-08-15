@@ -135,7 +135,8 @@ document {
 	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
 	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine"},
 	  {"M2enginePrecookedSLPs", " -- (obsolete)"},
-	  TO "PHCPACK",
+	  --TO
+	  "PHCPACK",
 	  TO "BERTINI",
 	  TO "HOM4PS2"
 	  }
