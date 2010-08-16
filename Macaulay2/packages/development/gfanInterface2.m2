@@ -16,7 +16,7 @@ newPackage(
 		"keepfiles" => false, 
 		"verbose" => false
 	},
-	DebuggingMode => false
+	DebuggingMode => true
 )
 
 export {
@@ -1285,7 +1285,7 @@ gfanToPolyhedralFan List := opts -> (L) -> (
 	input := gfanMPLToRingToString(first L) 
 		| gfanSymmetriesToString(opts#"symmetry") 
 		| gfanLMPLToString(L);
-	gfanParsePolyhedralFan runGfanCommand("gfan_topolyhedralfan", opts, input) --- PARSE AS POLYHEDRAL DATA
+	gfanParsePolyhedralFan runGfanCommand("gfan_topolyhedralfan", opts, input) 
 )
 
 --------------------------------------------------------
@@ -1312,7 +1312,7 @@ gfanTropicalBruteForce = method( Options => {} )
 
 gfanTropicalBruteForce List := opts -> (L) -> (
 	input := gfanMPLToRingToString(L) | gfanMPLToString(L);
-	runGfanCommand("gfan_tropicalbruteforce", opts, input) ---- PARSE AS POLYHEDRAL DATA
+	gfanParsePolyhedralFan runGfanCommand("gfan_tropicalbruteforce", opts, input) ---- PARSE AS POLYHEDRAL DATA
 )
 
 
@@ -1322,8 +1322,11 @@ gfanTropicalBruteForce List := opts -> (L) -> (
 
 gfanTropicalEvaluation = method( Options => {} )
 
-gfanTropicalEvaluation List := opts -> (L) -> (
-	--v0.4 -- note that the arguments are probably wrong.
+gfanTropicalEvaluation (RingElement, List) := opts -> (f,L) -> (
+	--v0.4 
+	input := gfanRingToString(ring f) | gfanPolynomialListToString({f}) | gfanSymmetriesToString(L);
+	value runGfanCommand("gfan_tropicalevaluation", opts, input) 
+	-- Make/find a parsing function for the above
 )
 
 
@@ -1333,8 +1336,10 @@ gfanTropicalEvaluation List := opts -> (L) -> (
 
 gfanTropicalFunction = method( Options => {} )
 
-gfanTropicalFunction Ideal := opts -> (I) -> (
-	--v0.4 -- note that the arguments are probably wrong.
+gfanTropicalFunction RingElement := opts -> (f) -> (
+	--v0.4 
+	input := gfanRingToString(ring f) | gfanPolynomialListToString{f};
+	gfanParsePolyhedralFan runGfanCommand("gfan_tropicalfunction", opts, input) 
 )
 
 
@@ -1436,7 +1441,7 @@ gfanTropicalStartingCone (List) := opts -> (L) -> (
 --------------------------------------------------------
 
 gfanTropicalTraverse = method( Options => {
-	"symmetry"=>false,
+	"symmetry"=>null,
 	"symsigns"=>false,
 	"noincidence"=>false
 	}
@@ -1446,8 +1451,8 @@ gfanTropicalTraverse (List) := opts -> (L) -> (
 	input := gfanMPLToRingToString(first L) 
 		| gfanMPLToString(first L) 
 		| gfanMPLToString(last L)
-		| gfanSymmetriesToString(S);
-	runGfanCommand("gfan_tropicaltraverse", opts, input) --- PARSE POLYHEDRAL DATA
+		| gfanSymmetriesToString(opts#"symmetry");
+	gfanParsePolyhedralFan runGfanCommand("gfan_tropicaltraverse", opts, input) 
 )
 
 
@@ -2584,6 +2589,13 @@ doc ///
 			polymake data describing the tropical variety of the ideal of {\tt L}
 	Description
 		Text
+			The following example is taken from the gfan documentation (v0.4 p.20).
+
+		Example
+			QQ[a,b,c,d,e,f,g,h,i,j]
+			gfanTropicalBruteForce gfanBuchberger ideal "bf-ah-ce, bg-ai-de, cg-aj-df, ci-bj-dh, fi-ej-gh"
+
+		Text
 			@STRONG "gfan Documentation"@
 			@gfanHelp "gfan_tropicalbruteforce"@
 ///
@@ -2591,6 +2603,7 @@ doc ///
 doc ///
 	Key
 		gfanTropicalEvaluation
+		(gfanTropicalEvaluation, RingElement, List)
 	Headline
 		placeholder
 	Usage
@@ -2599,6 +2612,11 @@ doc ///
 	Outputs
 	Description
 		Text
+			
+		Example
+			QQ[x,y,z]
+			gfanTropicalEvaluation(x*y+z^2, {{1,0,0}, {0,1,0}, {1,1,0} })
+		Text
 			@STRONG "gfan Documentation"@
 			@gfanHelp "gfan_tropicalevaluation"@
 ///
@@ -2606,6 +2624,7 @@ doc ///
 doc ///
 	Key
 		gfanTropicalFunction
+		(gfanTropicalFunction, RingElement)
 	Headline
 		placeholder
 	Usage
@@ -2613,6 +2632,9 @@ doc ///
 	Inputs
 	Outputs
 	Description
+		Example
+			QQ[x,y,z]
+			gfanTropicalFunction(x*y+z^2)
 		Text
 			@STRONG "gfan Documentation"@
 			@gfanHelp "gfan_tropicalfunction"@
