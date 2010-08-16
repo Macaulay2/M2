@@ -67,6 +67,8 @@ export {
 }
 
 gfanPath = gfanInterface2#Options#Configuration#"path"
+if gfanPath == "" then gfanPath = prefixDirectory | currentLayout#"programs"
+
 fig2devPath = gfanInterface2#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface2#Options#Configuration#"verbose"
 gfanKeepFiles = gfanInterface2#Options#Configuration#"keepfiles"

@@ -24,8 +24,29 @@ export {
      }
 
 smallerMonomials = method()
-smallerMonomials(Ideal) := M ->
-    ( error "not implemented yet")
+smallerMonomials(Ideal,RingElement) := (M,f) -> (
+     -- input: a polynomial in a poly ring R
+     -- output: an ordered list of monomials of R less than f, but of the same
+     --   degree as (the leadterm of) f.
+     R := ring M;
+     d := degree f;
+     m := flatten entries basis(d,coker gens M);
+     m = f + sum m;
+     b := apply(listForm m, t -> R_(first t));
+     x := position(b, g -> g == f);
+     drop(b,x+1))
+
+smallerMonomials(Ideal) := (M) -> (
+     Mlist := flatten entries gens M;
+     apply(Mlist, m -> smallerMonomials(M,m)))
+
+smallerMonomials(List) := (L) -> (
+     M := ideal L;
+     apply(L, m -> smallerMonomials(M,m)))
+
+--smallerMonomials = method()
+--smallerMonomials(Ideal) := M ->
+--    ( error "not implemented yet")
 
 standardMonomials = method()
 standardMonomials(ZZ,Ideal) :=
