@@ -252,7 +252,7 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-     if title =!= "SimpleDoc" and title =!= "Core" then needsPackage "SimpleDoc";
+     if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
      newpkg.loadDepth = loadDepth;
      loadDepth = if title === "Core" then 1 else if not debuggingMode then 2 else 3;
      newpkg)
@@ -421,7 +421,8 @@ use Package := pkg -> (
      if b and not a then error("use: package ",toString pkg," does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
      if not a and not b then (
      	  loadedPackages = prepend(pkg,loadedPackages);
-     	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
+	  if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
+	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
 	  );
      if pkg.?use then pkg.use pkg;
      )
