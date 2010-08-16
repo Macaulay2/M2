@@ -2920,3 +2920,24 @@ gfanToPolyhedralFan({transpose{{x*y, x*y+ z}, {z,z}}, transpose{{x*y, x*y},{z,z}
 gfanToPolyhedralFan(gfan(ideal(x^2*y -z, y^2*z - x, z^2*x - y), {{0,1,2}, {1,2,0}}, "symmetry"=>true), {{0,1,2}, {1,2,0}}, "symmetry"=>true)
 gfanTropicalBruteForce(transpose{{x*y,x*y + z}, {z,z}})
 
+-------- examples from the gfan manual ----------
+R = QQ[a..j]
+I = ideal"bf-ah-ce, bg-ai-de, cg-aj-df, ci-bj-dh, fi-ej-gh"
+gfan I
+first oo
+last ooo
+o10/first/monomialIdeal
+
+-- Andrew, try this. You might need to update your M2, and rebuild, which gives you a bug-fixed gfan (0.4plus).
+-- I want to discuss with you at some point what the actual fields in the polymake object should be called, and what the types of their values should be.
+-- e.g. MULTIPLICITIES, and MULTIPLICITIES_COMPRESSED seem to have different types.
+-- (other comments:
+--  MY_EULER is Anders' private info, so let's remove it
+--  _COMPRESSED should be called _ORBITS (Anders said so: he made a mistake)
+--  SIMPLICIAL: should be a boolean
+--  we should probably make the type: PolymakeFan
+R = QQ[a..o] 
+I = ideal"bg-aj-cf, bh-ak-df, bi-al-ef, ck-bm-dj, ch-am-dg, cl-ej-bn, ci-eg-an, dn-co-em, dl-bo-ek, di-ao-eh, gk-fm-jh, gl-fn-ij, hl-fo-ik, kn-jo-lm, hn-im-go"
+C = gfanTropicalStartingCone I_*;
+D = gfanTropicalTraverse(C, "symmetry" => {{0,8,7,6,5,4,3,2,1,14,13,11,12,10,9}, {5,6,7,8,0,9,10,11,1,12,13,2,14,3,4}})
+
