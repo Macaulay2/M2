@@ -421,7 +421,7 @@ use Package := pkg -> (
      if b and not a then error("use: package ",toString pkg," does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
      if not a and not b then (
      	  loadedPackages = prepend(pkg,loadedPackages);
-	  if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
+	  -- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
 	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
 	  );
      if pkg.?use then pkg.use pkg;
@@ -435,8 +435,10 @@ beginDocumentation = () -> (
 	  return end;
 	  );
      if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
-     needsPackage "Text";
-     needsPackage "SimpleDoc";
+     if currentPackage#"title" != "Text" and  currentPackage#"title" != "SimpleDoc" then (
+     	  needsPackage "Text";
+     	  needsPackage "SimpleDoc";
+	  );
      )
 
 debug = method()
