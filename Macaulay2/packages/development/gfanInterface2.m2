@@ -1367,8 +1367,10 @@ gfanTropicalFunction RingElement := opts -> (f) -> (
 
 gfanTropicalHyperSurface = method( Options => {} )
 
-gfanTropicalHyperSurface Ideal := opts -> (I) -> (
+gfanTropicalHyperSurface RingElement := opts -> (f) -> (
 	--v0.4 -- note that the arguments are probably wrong.
+	input := gfanRingToString(ring f) | gfanPolynomialListToString{f};
+	gfanParsePolyhedralFan runGfanCommand("gfan_tropicalhypersurface", opts, input) 
 )
 
 
