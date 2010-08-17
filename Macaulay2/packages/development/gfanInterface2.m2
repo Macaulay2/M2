@@ -122,7 +122,7 @@ PolymakeTypes = {
 	},
 	{	symbol sym => symbol MULTIPLICITIES,
 		symbol str => "MULTIPLICITIES",
-		symbol type => symbol matrix
+		symbol type => symbol columnVector
 	},
 	{	symbol sym => symbol RAYVALUES,
 		symbol str => "RAY_VALUES",
@@ -142,7 +142,7 @@ PolymakeTypes = {
 	},
 	{	symbol sym => symbol MULTIPLICITIESCOMPRESSED,
 		symbol str => "MULTIPLICITIES_COMPRESSED",
-		symbol type => symbol matrix
+		symbol type => symbol columnVector
 	},
 	{	symbol sym => symbol DIM,
 		symbol str => "DIM",
@@ -192,7 +192,7 @@ PolymakeCone.synonym = "Polymake Cone";
 
 net PolymakeObject := P -> (
 	goodkeys := select(keys P, k -> not member(k, {"rawstring", "rawblocks", "header"}));
-	stack({P#"header"}| apply(goodkeys, k -> (net k) | " => " | (net P#k)))
+	stack apply(goodkeys, k -> (net k) | " => " | (net P#k))
 )
 
 markedPolynomialList = method();
@@ -446,6 +446,9 @@ gfanParsePolymakeType (Symbol, List) := (T, L) -> (
 	)
 	else if T == symbol vector then (
 		select(separateRegexp(" +", first L) / value, x -> x =!= null)
+	)
+	else if T == symbol columnVector then (
+		flatten apply(L, l -> select(separateRegexp(" +", l) / value, x -> x =!= null))
 	)
 )
 
