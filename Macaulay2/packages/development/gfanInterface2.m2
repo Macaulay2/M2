@@ -23,6 +23,8 @@ export {
 	MarkedPolynomialList,
 	markedPolynomialList,
 	PolymakeObject,
+	PolymakeCone,
+	PolymakeFan,
 	gfan, -- done!
 	gfanBuchberger, -- done!
 	gfanDoesIdealContain, -- done!
@@ -140,7 +142,7 @@ PolymakeTypes = {
 	},
 	{	symbol sym => symbol MULTIPLICITIESCOMPRESSED,
 		symbol str => "MULTIPLICITIES_COMPRESSED",
-		symbol type => symbol incidenceMatrix
+		symbol type => symbol matrix
 	},
 	{	symbol sym => symbol DIM,
 		symbol str => "DIM",
@@ -158,13 +160,13 @@ PolymakeTypes = {
 		symbol str => "RELATIVE_INTERIOR_POINT",
 		symbol type => symbol vector
 	},
-	{	symbol sym => symbol MYEULER, -- undocumented by gfan
-		symbol str => "MY_EULER",
-		symbol type => symbol cardinal
-	},
+	--{	symbol sym => symbol MYEULER, -- undocumented by gfan
+	--	symbol str => "MY_EULER",
+	--	symbol type => symbol cardinal
+	--},
 	{	symbol sym => symbol SIMPLICIAL, -- undocumented by gfan
 		symbol str => "SIMPLICIAL",
-		symbol type => symbol cardinal
+		symbol type => symbol boolean
 	}
 } / hashTable
 
@@ -181,6 +183,12 @@ MarkedPolynomialList.synonym = "marked polynomial list";
 
 PolymakeObject = new Type of HashTable;
 PolymakeObject.synonym = "Polymake Object";
+
+PolymakeFan = new Type of PolymakeObject;
+PolymakeFan.synonym = "Polymake Fan";
+
+PolymakeCone = new Type of PolymakeObject;
+PolymakeCone.synonym = "Polymake Cone";
 
 net PolymakeObject := P -> (
 	goodkeys := select(keys P, k -> not member(k, {"rawstring", "rawblocks", "header"}));
@@ -386,15 +394,11 @@ gfanParsePolyhedralFan = method()
 gfanParsePolyhedralFan String := (s) -> (
 	B := select(sublists(lines s, l -> #l =!= 0, toList, l -> null), l -> l =!= null);
 	header := first B; --first list of lines
-	B = drop(B,1);
-	-- blocks contains maps from string to their list of lines
-	blocks := apply(B, L -> (
-		P := gfanParsePolymakeBlock L;
-		first P => {L, last P}
-	));
-	rawBlocks := hashTable apply(blocks, P -> first P => first last P);
-	parsedBlocks := apply(blocks, P -> first P => last last P);
-	new PolymakeObject from hashTable({ 
+	-- blocks are lists of the form {typeString, list of lines, parsed value}
+	blocks := apply(drop(B,1), L -> gfanParsePolymakeBlock L);
+	rawBlocks := hashTable apply(blocks, P -> first P => P#1);
+	parsedBlocks := apply(select(blocks, Q -> last Q =!= null), P -> first P => last P);
+	new gfanParsePolymakeHeader(header) from hashTable({ 
 		"header" => stack header, 
 		"rawstring" => s, 
 		"rawblocks" => rawBlocks
@@ -402,15 +406,27 @@ gfanParsePolyhedralFan String := (s) -> (
 	)
 )
 
+gfanParsePolymakeHeader = method()
+gfanParsePolymakeHeader List := (L) -> (
+	typePosition := position(L, l -> "_type" == first separate(" ", l));
+	typeLine := L#typePosition;
+	typeWords := separate(" ", typeLine);
+	if #typeWords === 2 and typeWords#1 == "PolyhedralCone" then 
+		PolymakeCone
+	else if #typeWords === 2 and typeWords#1 == "PolyhedralFan" then
+		PolymakeFan
+	else
+		PolymakeObject
+)
+
 gfanParsePolymakeBlock = method()
 gfanParsePolymakeBlock List := (L) -> (
 	typeString := first L;
-	L = drop(L,1);
+	data := drop(L,1);
 	typePosition := position(PolymakeTypes, T -> T.str == typeString);
-	if typePosition === null then 
-		error ("Unrecognised Polymake Type: " | typeString);
-	typeTuple = PolymakeTypes#typePosition;
-	return typeTuple.str => gfanParsePolymakeType(typeTuple.type, L);
+	if typePosition === null then return typeString => null;  -- Unrecognized type
+	typeTuple := PolymakeTypes#typePosition;
+	return {typeString, L, gfanParsePolymakeType(typeTuple.type, data)};
 )
 
 gfanParsePolymakeType = method()
@@ -426,7 +442,7 @@ gfanParsePolymakeType (Symbol, List) := (T, L) -> (
 		apply(L, l -> value replace("[[:space:]]+", ",", l))
 	)
 	else if T == symbol boolean then (
-		value first L
+		1 === value first L
 	)
 	else if T == symbol vector then (
 		select(separateRegexp(" +", first L) / value, x -> x =!= null)
@@ -2930,12 +2946,12 @@ o10/first/monomialIdeal
 
 -- Andrew, try this. You might need to update your M2, and rebuild, which gives you a bug-fixed gfan (0.4plus).
 -- I want to discuss with you at some point what the actual fields in the polymake object should be called, and what the types of their values should be.
--- e.g. MULTIPLICITIES, and MULTIPLICITIES_COMPRESSED seem to have different types.
+-- e.g. MULTIPLICITIES, and MULTIPLICITIES_COMPRESSED seem to have different types. **FIXED
 -- (other comments:
---  MY_EULER is Anders' private info, so let's remove it
---  _COMPRESSED should be called _ORBITS (Anders said so: he made a mistake)
---  SIMPLICIAL: should be a boolean
---  we should probably make the type: PolymakeFan
+--  MY_EULER is Anders' private info, so let's remove it **FIXED (errors are no longer produced on unrecognised blocks)
+--  _COMPRESSED should be called _ORBITS (Anders said so: he made a mistake) **NOT FIXED 
+--  SIMPLICIAL: should be a boolean **FIXED (I updated the type and converted 1 into true)
+--  we should probably make the type: PolymakeFan **FIXED (now I'm parsing the type in the header)
 R = QQ[a..o] 
 I = ideal"bg-aj-cf, bh-ak-df, bi-al-ef, ck-bm-dj, ch-am-dg, cl-ej-bn, ci-eg-an, dn-co-em, dl-bo-ek, di-ao-eh, gk-fm-jh, gl-fn-ij, hl-fo-ik, kn-jo-lm, hn-im-go"
 C = gfanTropicalStartingCone I_*;
