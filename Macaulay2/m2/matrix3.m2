@@ -114,7 +114,7 @@ kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((m) -> (
 	  if m.?RingMap then (
 	       f := m.RingMap;
 	       n := map(target m,f source m,raw m);
-	       p := (pushNonLinear pushOptions)(f,image n);
+	       p := (pushNonLinear pushOptions)(f,coimage n);
 	       image p)
 	  else (
 	       m = matrix m;
