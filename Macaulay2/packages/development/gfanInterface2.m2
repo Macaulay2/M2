@@ -1,5 +1,7 @@
 -- -*- coding: utf-8 -*-
+
 --needsPackage "Polymake"
+needsPackage "Polyhedra"
 
 newPackage(
 	"gfanInterface2",
@@ -19,12 +21,17 @@ newPackage(
 	DebuggingMode => true
 )
 
+--needsPackage "Polymake"
+needsPackage "Polyhedra"
+
 export {
 	MarkedPolynomialList,
 	markedPolynomialList,
 	PolymakeObject,
 	PolymakeCone,
 	PolymakeFan,
+	polymakeFanToFan,
+	polymakeConeToCone,
 	gfan, -- done!
 	gfanBuchberger, -- done!
 	gfanDoesIdealContain, -- done!
@@ -169,8 +176,6 @@ PolymakeTypes = {
 		symbol type => symbol boolean
 	}
 } / hashTable
-
---needsPackage "Polymake"
 
 MarkedPolynomialList = new Type of List
 MarkedPolynomialList.synonym = "marked polynomial list";
@@ -451,6 +456,21 @@ gfanParsePolymakeType (Symbol, List) := (T, L) -> (
 		flatten apply(L, l -> select(separateRegexp(" +", l) / value, x -> x =!= null))
 	)
 )
+
+polymakeFanToFan = method()
+
+polymakeFanToFan PolymakeFan := (F) -> (
+	linealitySpace := posHull transpose matrix(F#"LINEALITY_SPACE" | - F#"LINEALITY_SPACE");
+	fan apply(F#"MAXIMAL_CONES", L -> posHull(posHull transpose matrix apply(L, i -> F#"RAYS"#i), linealitySpace))
+)
+
+polymakeConeToCone = method()
+
+polymakeConeToCone PolymakeCone := (C) -> (
+	linealitySpace := posHull transpose matrix(C#"LINEALITY_SPACE" | - C#"LINEALITY_SPACE");
+	posHull(posHull transpose matrix C#"FACETS", linealitySpace)
+)
+
 
 ------------------------------------------
 -- gfan toString functions
@@ -1709,6 +1729,66 @@ doc ///
 		Text
 			Many optional arguments to {\tt gfan} require no addition input. In this case,
 			we set the optional argument in Macaulay 2 to be {\tt true}.
+///
+
+doc ///
+	Key
+		polymakeConeToCone
+		(polymakeConeToCone, PolymakeCone)
+	Headline
+		converts a PolymakeCone into a Cone from the Polyhedra package
+	Usage
+		G = polymakeConeToCone F
+	Inputs
+		F:PolymakeCone
+	Outputs 
+		G:Cone
+	Description
+		Text
+			This method converts a @TO PolymakeCone@, as output by gfan, into a @TO Cone@ from the
+			@TO Polyhedra@ package.
+
+		Example
+			R = QQ[x,y,z,w]; 
+			C = gfanGroebnerCone markedPolynomialList {{x*y*z}, { x*y*z + z*w^2*x + y^2*w*x}}
+			G = polymakeConeToCone C
+			rays G
+			linSpace G
+
+	SeeAlso
+		polymakeFanToFan
+		PolymakeFan
+		PolymakeCone
+///
+
+doc ///
+	Key
+		polymakeFanToFan
+		(polymakeFanToFan, PolymakeFan)
+	Headline
+		converts a PolymakeFan into a Fan from the Polyhedra package
+	Usage
+		G = polymakeFanToFan F
+	Inputs
+		F:PolymakeFan
+	Outputs 
+		G:Fan
+	Description
+		Text
+			This method converts a @TO PolymakeFan@, as output by gfan, into a @TO Fan@ from the
+			@TO Polyhedra@ package.
+
+		Example
+			R = QQ[x,y,z,w]; 
+			F = gfanToPolyhedralFan gfan { x*y -z,  z*w - x}
+			G = polymakeFanToFan F
+			rays G
+			linSpace G
+
+	SeeAlso
+		polymakeConeToCone
+		PolymakeFan
+		PolymakeCone
 ///
 
 doc ///
