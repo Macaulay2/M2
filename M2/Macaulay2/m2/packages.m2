@@ -126,6 +126,7 @@ newPackage(String) := opts -> (title) -> (
      scan({(Headline,String),(HomePage,String),(Date,String)},
 	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      originalTitle := title;
+     if PackageDictionary#?title then stderr << "warning: package " << title << " being reloaded" << endl;
      dismiss title;
      saveD := dictionaryPath;
      saveP := loadedPackages;
@@ -242,13 +243,14 @@ newPackage(String) := opts -> (title) -> (
      if instance(value pkgsym,Package) then closePackage value pkgsym;
      pkgsym <- newpkg;
      loadedPackages = {Core};
-     dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
+     dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
      if Core#?"base packages" then (
 	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
 	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
 	       )
 	  else scan(reverse Core#"base packages", needsPackage)
 	  );
+     dictionaryPath = prepend(newpkg#"private dictionary", dictionaryPath);
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
@@ -408,6 +410,9 @@ package Thing := x -> (
      if d =!= null then package d)
 package Symbol := s -> (
      n := toString s;
+     r := scan(values PackageDictionary, 
+	  p -> if (value p).?Dictionary and (value p).Dictionary#?n and (value p).Dictionary#n === s then break value p);
+     if r =!= null then return r;
      scan(dictionaryPath, d -> if d#?n and d#n === s then (
 	       if d === PackageDictionary and class value s === Package then break value s
 	       else if package d =!= null then break package d)));
@@ -421,7 +426,7 @@ use Package := pkg -> (
      if b and not a then error("use: package ",toString pkg," does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
      if not a and not b then (
      	  loadedPackages = prepend(pkg,loadedPackages);
-	  -- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
+	  --- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
 	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
 	  );
      if pkg.?use then pkg.use pkg;
