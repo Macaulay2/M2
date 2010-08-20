@@ -21,7 +21,6 @@ newPackage(
      Headline => "make a 3-generator ideal with an \"any\" resolution",
      DebuggingMode => true
      )
-loadPackage "SimpleDoc"
 
 export{bruns, 
        brunsIdeal,
