@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 291226029 *}
---loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
 
 i1 : graphToString({{0,1}, {1,2}, {2,3}, {3,4}, {0,4}}, 5)
 

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: -762299528 *}
---loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
 
 i1 : R = QQ[a..e];
 
