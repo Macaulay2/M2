@@ -1,7 +1,9 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2008 by Daniel R. Grayson
 
-newPackage "Text"
+newPackage("Text",
+     Headline => "documentation and hypertext"
+     )
 
 exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DIV1", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
