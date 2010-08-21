@@ -683,8 +683,11 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 	       if d === 0 then rank source f
 	       else (
 		    lifter := p.cache.DegreeLift;
-		    if not instance(lifter, Function) then error "basis: no degree lift function provided";
-		    apply(pack(d,degrees source f), deg -> - lifter (deg-off))));
+		    if not instance(lifter, Function)
+		    then rank source f
+		    else apply(pack(d,degrees source f), (
+			      zeroDegree := toList( degreeLength S : 0 );
+			      deg -> try - lifter (deg-off) else zeroDegree))));
  	  map(M,N,p,f,Degree => off)))
 
 basis(List,Module) := opts -> (deg,M) -> basis(deg,deg,M,opts)
