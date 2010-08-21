@@ -969,6 +969,7 @@ export {
 	symbol registerFinalizer,
 	symbol regularity,
 	symbol relations,
+	symbol Reload,
 	symbol relativizeFilename,
 	symbol remainder',
 	symbol remainder,
