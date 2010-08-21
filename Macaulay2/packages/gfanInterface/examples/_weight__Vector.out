@@ -44,7 +44,7 @@ o6 : Ideal of R
 
 i7 : time (inLs,Ls) = gfan I
 LP algorithm being used: "cddgmp".
-     -- used 0.002521 seconds
+     -- used 0.022681 seconds
 
            2          2   2      3          2   2      3          2   2  
 o7 = ({{b*d , a*d, a*c , a c}, {c , a*d, a*c , a c}, {c , b*c, a*c , a c,
