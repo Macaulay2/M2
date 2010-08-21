@@ -564,6 +564,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   ToricVectorBundles
   ModuleDeformations
   PHCpack
+  SimplicialDecomposability
 ")
 # pending packages: SRdeformations
 
