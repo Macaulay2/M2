@@ -130,6 +130,7 @@ mdt := makeDocumentTag Thing := opts -> key -> (
 	  else if opts#Package =!= null then opts#Package 
 	  else packageKey(key, fkey)
 	  );
+     if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
      new DocumentTag from {nkey,fkey, {* pkg *} ,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      if match("^ |  +| $", key)
