@@ -377,6 +377,7 @@ usage := arg -> (
      << "    --no-backtrace     print no backtrace after error" << newline
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
+     << "    --debug n          debug warning message n by signalling an error" << newline
      << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
@@ -492,6 +493,7 @@ action2 := hashTable {
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value arg,
+     "--debug" => arg -> debugWarningHashcode = value arg,
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
@@ -681,5 +683,5 @@ stopIfError = true
 stderr << "error: can't interpret return value as an exit code" << endl
 exit 1
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all && make -C $M2BUILDDIR/Macaulay2/bin all "
 -- End:
