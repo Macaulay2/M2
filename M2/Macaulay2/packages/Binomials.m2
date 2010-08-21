@@ -29,7 +29,7 @@ newPackage(
 		  Name => "Thomas Kahle",
 		  Email => "kahle@mis.mpg.de",
 		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/bpd"}},
-    	Headline => "Spezialized routines for binomial Ideals",
+    	Headline => "Specialized routines for binomial Ideals",
 	Configuration => { },
     	DebuggingMode => true
     	)
