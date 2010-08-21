@@ -1,8 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-olderror := error
-error = args -> olderror (
-     -- this is the body of the "error" function, which prints out error messages
+processArgs := args -> concatenate (
      args = sequence args;
      apply(args, x -> 
 	  if class x === String then x
@@ -11,7 +9,22 @@ error = args -> olderror (
 	  ),
      apply(args, x -> if class x === Symbol then ("\n", symbolLocation x, ": here is the first use of '",toString x, "'") else "")
      )
+olderror := error
+error = args -> (
+     -- this is the body of the "error" function, which prints out error messages
+     olderror processArgs args)
 protect symbol error
+
+warningMessage = args -> (
+     args = processArgs args;
+     h := hash args % 10000;
+     if debugWarningHashcode === h
+     then error args
+     else (
+	  stderr << "warning: " << args << endl
+     	  << "       : debug with expression debug " << h << " or with command line option --debug " << h << endl
+	  );
+     )
 
 callCount := new MutableHashTable
 

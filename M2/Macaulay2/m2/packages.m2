@@ -85,8 +85,11 @@ newPackage = method(
 	  Authors => {}, -- e.g., Authors => { {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"} }
 	  HomePage => null,
 	  Date => null,
-	  Configuration => {}
+	  Configuration => {},
+	  Reload => null
 	  })
+
+protect Reload
 
 configFileString =
 ///--Configuration file for package "PKG", automatically generated
@@ -126,7 +129,10 @@ newPackage(String) := opts -> (title) -> (
      scan({(Headline,String),(HomePage,String),(Date,String)},
 	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      originalTitle := title;
-     if PackageDictionary#?title then stderr << "warning: package " << title << " being reloaded" << endl;
+     if PackageDictionary#?title then (
+	  if opts.Reload === null then warningMessage("package ", title, " being reloaded")
+	  else if opts.Reload === false then error("package ", title, " being reloaded")
+	  );
      dismiss title;
      saveD := dictionaryPath;
      saveP := loadedPackages;
@@ -308,14 +314,13 @@ exportMutable List := v -> (
 
 addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
 
-saveCurrentPackage := currentPackage
-
 newPackage("Core", 
      Authors => {
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}, 
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      DebuggingMode => debuggingMode,
+     Reload => true,
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION", 
      Headline => "A computer algebra system designed to support algebraic geometry")
@@ -447,6 +452,7 @@ beginDocumentation = () -> (
      )
 
 debug = method()
+debug ZZ := i -> debugWarningHashcode = i
 debug Package := pkg -> (
      d := pkg#"private dictionary";
      if not member(d,dictionaryPath) then (
