@@ -96,6 +96,7 @@ select(String,String) := List => select
 select(String,String,String) := List => select
 select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select
+select(ZZ,Function) := List => select
 select(ZZ,BasicList,Function) := BasicList => select
 select(ZZ,HashTable,Function) := HashTable => select
 set VisibleList := Set => set
