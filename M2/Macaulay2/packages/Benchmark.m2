@@ -131,8 +131,8 @@ runBenchmark = n -> (
      ti := benchmarks#n#1();
      << "-- " << n << ": " << benchmarks#n#0 << ": " <<  toString ti << " seconds" << endl;
      )
-
 runBenchmarks0 = method()
+runBenchmarks0 String := x -> runBenchmarks0 {x}
 runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
@@ -140,15 +140,40 @@ runBenchmarks0 List := x -> (
      << ", compiled with " << version#"compiler";
      << endl;
      scan(x,runBenchmark))
-
-installMethod(runBenchmarks0, () -> runBenchmarks {"res39","resG25","gbB148"})
-
+installMethod(runBenchmarks0, () -> runBenchmarks0 {"res39","resG25","gbB148"})
 runBenchmarks = Command runBenchmarks0
 
-<< "Benchmark: type \"runBenchmarks\" to run the three standard benchmarks" << endl
-<< "Benchmark: type \"runBenchmarks {m,n,...}\" to run benchmarks m,n,..." << endl
-<< "Benchmarks available:" << endl
-scan(pairs benchmarks, (n,x) -> << "       " << toExternalString n << ": " << x#0 << endl)
+beginDocumentation()
+multidoc ///
+Node
+ Key
+  Benchmark
+ Description
+  Text
+   This package provides some standard benchmarks for gauging the speed of
+   algorithms and machines.
+Node
+ Key
+  runBenchmarks
+ Usage
+  runBenchmarks
+  runBenchmarks x
+ Inputs
+  x:
+   a string or list of strings
+ Consequences
+  Item
+   the benchmarks whose names occur in @ TT "x" @ are run.  The output is in a standard
+   format that can be inserted into a Macaulay2 source file as a comment.
+   If @ TT "x" @ is omitted, then the "res39", "resG25", and "gbB148" are run.
+ Description
+  Text
+   The tests available are: @
+   UL apply(sort pairs benchmarks, (n,x) -> LI { toExternalString n, " -- ", x#0})
+   @
+  Example
+   runBenchmarks "res39"
+///
 
 end
 
@@ -527,5 +552,5 @@ Here is another possible benchmark, but it doesn't work for us yet:
 --      	22.04 seconds
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Benchmark pre-install"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages  PACKAGES=Benchmark RemakePackages=true RerunExamples=true IgnoreExampleErrors=false RemakeAllDocumentation=true"
 -- End:
