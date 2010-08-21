@@ -1,3 +1,9 @@
 document these packages:
 	 XML
 	 Benchmark
+
+document new option Reload to newPackage
+
+document new command line option --debug
+
+consider exporting function warningMessage and documenting it
