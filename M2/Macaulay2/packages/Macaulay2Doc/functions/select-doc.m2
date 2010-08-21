@@ -118,3 +118,20 @@ document {
 	  },
      SeeAlso => {(select,ZZ,BasicList,Function), partition, positions}
      }
+
+
+document { 
+     Key => (select,ZZ,Function),
+     Headline => "select integers",
+     Usage => "select(n,f)",
+     Inputs => { "n", "f" => {"returning either ", TO "true", " or ", TO "false"} },
+     Outputs => {
+	  {"a list of those natural numbers ", TT "i", " less than ", TT "n", " that yield
+	       ", TT "true", " when the function ", TT "f", " is applied"}
+	  },
+     EXAMPLE {
+	  "select(20, odd)",
+	  "select(20, even)",
+	  },
+     SeeAlso => {(select,ZZ,BasicList,Function), partition, positions}
+     }
