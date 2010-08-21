@@ -25,7 +25,7 @@ addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
      	       dismiss "User";
-	       newPackage("User", DebuggingMode => true);
+	       newPackage("User", DebuggingMode => true, Reload => true);
 	       );
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
