@@ -7,6 +7,7 @@
 interpreterDepth = loadDepth = errorDepth = 0
 debuggingMode = true
 stopIfError = false
+debugWarningHashcode = null
 gotarg := arg -> any(commandLine, s -> s == arg)
 if gotarg "--stop" then stopIfError = true
 
