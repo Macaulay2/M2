@@ -1,7 +1,8 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
-vector = (v) -> (
+vector = method()
+vector List := v -> (
      m := matrix apply(v, i -> {i});
      new target m from {m})
 
