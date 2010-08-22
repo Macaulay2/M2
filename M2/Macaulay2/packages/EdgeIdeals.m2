@@ -11,8 +11,8 @@
 needsPackage "SimplicialComplexes"
 
 newPackage("EdgeIdeals", 
-           Version => "1.0.0",
-           Date => "July 13, 2009",
+           Version => "1.0.1",
+           Date => "August 22, 2010",
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 		"journal URI" => "http://j-sag.org/",
@@ -740,10 +740,9 @@ inducedHyperGraph (HyperGraph,List) := opts -> (H,S) -> (
      if (isSubset(set S, set H#"vertices") =!= true) then error "Second argument must be a subset of the vertices";
      ie := select(H#"edges",e -> isSubset(set e,set S));
      if not opts#OriginalRing then (
-	  R := (coefficientRing H#"ring")[S];
+	  R := (coefficientRing H#"ring")(monoid [S]);
 	  F := map(R,H#"ring");
      	  ienew := apply(ie,e->apply(e,v->F(v)));
-	  use H#"ring";
 	  return(hyperGraph(R,ienew));
 	  );
      hyperGraph(ring H,ie)
@@ -4835,6 +4834,15 @@ assert(inducedHyperGraph(G,{a,d,e},OriginalRing=>true)==graph(monomialIdeal(d*e,
 H = inducedHyperGraph(G,{a,d,e})
 use ring H
 assert(H == hyperGraph(monomialIdeal(d*e,a*e)))
+///
+
+TEST///
+R = QQ[a,b,c]
+G = graph {a*b,b*c}
+H = inducedHyperGraph(G,{b,c})
+f = map(ring H, ring G)
+I = inducedHyperGraph(H, {f(c)})
+assert(ring a === ring b)
 ///
 
 -----------------------------
