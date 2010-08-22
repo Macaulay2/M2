@@ -19,7 +19,9 @@ assert(0 == permutationMatrix P * matrix L * matrix U - matrix M)
 *}
 
 -- over QQ.  Not available currently!
+{*
 kk = QQ
 M = random(kk^20, kk^30)
 (P,L,U) = LUdecomposition M
 assert(0 == permutationMatrix P * matrix L * matrix U - matrix M)
+*}
