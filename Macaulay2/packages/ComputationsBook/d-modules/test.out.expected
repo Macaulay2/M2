@@ -22,7 +22,8 @@ o4 : D
 
 i5 : options D
 
-o5 = OptionTable{DegreeLift => null                              }
+o5 = OptionTable{Constants => false                              }
+                 DegreeLift => null
                  DegreeMap => null
                  DegreeRank => 1
                  Degrees => {{1}, {1}, {1}, {1}, {1}, {1}}
