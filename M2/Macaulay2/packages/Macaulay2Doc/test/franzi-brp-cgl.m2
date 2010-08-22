@@ -1,3 +1,5 @@
+end -- test file disabled by Dan; these tests should be moved to the package BooleanGB
+
 -- Example: 16 node Conway game of life, on a torus
 --  load "~/2010March/Macaulay2/packages/Macaulay2Doc/test/franzi-brp-cgl.m2"
 R = ZZ/2[vars(0..15), MonomialOrder=>Lex]

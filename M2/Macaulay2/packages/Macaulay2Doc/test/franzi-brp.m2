@@ -1,3 +1,5 @@
+end -- test file disabled by Dan; these tests should be moved to the package BooleanGB
+
 -- load "franzi-brp.m2" 
 R = ZZ/2[x,y,z, MonomialOrder=>Lex];
 l = apply(gens R, x-> x^2+x);
