@@ -518,12 +518,16 @@ document {
       	  "subtable({1,3,4},toList(2..4), m)"
 	  }}
 document {
-     Key => vector,
+     Key => {(vector,List)},
      Headline => "make a vector",
      TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",
      PARA{},
      "The elements a,b,c,... must be elements of the same ring, or be
      convertible to elements of the same ring."}
+document {
+     Key => vector,
+     Headline => "make a vector"
+     }
 document {
      Key => {relations,(relations, Module)},
      Headline => "the defining relations",
