@@ -206,6 +206,7 @@ export {
 	symbol GRevLex,
 	symbol GaloisField,
 	symbol GeneralOrderedMonoid,
+	symbol GenerateAssertions,
 	symbol Generic,
 	symbol Global,
 	symbol GlobalAssignHook,
