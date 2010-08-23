@@ -4215,7 +4215,9 @@ M = matrix {{1,0},{0,1},{1,0},{0,1/1}}
 T1 = coker(T,M)
 assert(T1#"ring" === QQ)
 assert(T1#"filtrationMatricesTable" === hashTable {matrix{{-1},{2}} => matrix{{-2,-1}}, matrix{{0},{-1}} => matrix{{-2,-1}}, matrix{{0},{1}} => matrix{{-2,-1}}, matrix{{1},{0}} => matrix{{-2,-1}}})
-assert(T1#"baseTable" === hashTable {matrix{{-1},{2}} => matrix{{-1/2,1},{1,0}}, matrix{{0},{-1}} => matrix{{0,1_QQ},{1,0}}, matrix{{0},{1}} => matrix{{0,1_QQ},{1,0}}, matrix{{1},{0}} => matrix{{1_QQ,0},{0,1}}})
+assert(T1#"baseTable" === new HashTable from {map(ZZ^2,ZZ^1,{{0}, {-1}}) => map(QQ^2,QQ^2,{{0, 1}, {1, 0}}), map(ZZ^2,ZZ^1,{{1}, {0}}) => map(QQ^2,QQ^2,{{1,
+      0}, {0, 1}}), map(ZZ^2,ZZ^1,{{-1}, {2}}) => map(QQ^2,QQ^2,{{-1/2, 1/2}, {1, 0}}), map(ZZ^2,ZZ^1,{{0}, {1}}) => map(QQ^2,QQ^2,{{0,
+      1}, {1, 0}})})
 assert(rank T1 == 2)
 assert(T1#"dimension of the variety" == 2)
 ///
@@ -4229,7 +4231,9 @@ M = matrix {{1,-1,1,-1},{0,-1,0,1/1}}
 T1 = image(T,M)
 assert(T1#"ring" === QQ)
 assert(T1#"filtrationMatricesTable" === hashTable {matrix{{-1},{2}} => matrix{{-2,-1}}, matrix{{0},{-1}} => matrix{{-2,-1}}, matrix{{0},{1}} => matrix{{-2,-1}}, matrix{{1},{0}} => matrix{{-2,-1}}})
-assert(T1#"baseTable" === hashTable {matrix{{-1},{2}} => matrix{{-3/2,1},{1,0}}, matrix{{0},{-1}} => matrix{{-2,2_QQ},{1,0}}, matrix{{0},{1}} => matrix{{-2,2_QQ},{1,0}}, matrix{{1},{0}} => matrix{{1_QQ,0},{0,1}}})
+assert(T1#"baseTable" === new HashTable from {map(ZZ^2,ZZ^1,{{0}, {-1}}) => map(QQ^2,QQ^2,{{-1, 1}, {1, 0}}), map(ZZ^2,ZZ^1,{{1}, {0}}) => map(QQ^2,QQ^2,{{1,
+     0}, {0, 1}}), map(ZZ^2,ZZ^1,{{-1}, {2}}) => map(QQ^2,QQ^2,{{-1/2, 1/2}, {1, 0}}), map(ZZ^2,ZZ^1,{{0}, {1}}) => map(QQ^2,QQ^2,{{-1,
+     1}, {1, 0}})})
 assert(rank T1 == 2)
 assert(T1#"dimension of the variety" == 2)
 ///
@@ -4243,7 +4247,9 @@ M = matrix {{1,0,1,0},{0,1,0,1/1}}
 T1 = ker(T,M)
 assert(T1#"ring" === QQ)
 assert(T1#"filtrationMatricesTable" === hashTable {matrix{{-1},{2}} => matrix{{-1,0}}, matrix{{0},{-1}} => matrix{{-1,0}}, matrix{{0},{1}} => matrix{{-1,0}}, matrix{{1},{0}} => matrix{{-1,0}}})
-assert(T1#"baseTable" === hashTable {matrix{{-1},{2}} => matrix{{-1/2,1},{1,0}}, matrix{{0},{-1}} => matrix{{0,1_QQ},{1,0}}, matrix{{0},{1}} => matrix{{0,1_QQ},{1,0}}, matrix{{1},{0}} => matrix{{1_QQ,0},{0,1}}})
+assert(T1#"baseTable" === new HashTable from {map(ZZ^2,ZZ^1,{{0}, {-1}}) => map(QQ^2,QQ^2,{{0, 1}, {1, 0}}), map(ZZ^2,ZZ^1,{{1}, {0}}) => map(QQ^2,QQ^2,{{1,
+      0}, {0, 1}}), map(ZZ^2,ZZ^1,{{-1}, {2}}) => map(QQ^2,QQ^2,{{-1/2, 1/2}, {1, 0}}), map(ZZ^2,ZZ^1,{{0}, {1}}) => map(QQ^2,QQ^2,{{0,
+      1}, {1, 0}})})
 assert(rank T1 == 2)
 assert(T1#"dimension of the variety" == 2)
 ///
