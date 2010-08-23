@@ -52,7 +52,19 @@ void emit(const char *s)
 
 void emit_line(const char *s)
 {
-  fprintf(stdout, "%s%s%s", s, "\n", wrapping_prefix);
+  while (true) {
+    char *p = index(s,'\n');
+    if (p) {
+      *p = 0;
+      fprintf(stdout, "%s%s%s", s, "\n", wrapping_prefix);
+      *p = '\n';
+      s = p+1;
+    }
+    else {
+      if (*s) fprintf(stdout, "%s%s%s", s, "\n", wrapping_prefix);
+      return;
+    }
+  }
   fflush(stdout);
 }
 

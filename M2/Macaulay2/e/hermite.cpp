@@ -359,6 +359,7 @@ void HermiteComputation::text_out(buffer &o) const
   /* This displays statistical information, and depends on the
      M2_gbTrace value */
 {
+  o << newline;
   for (int i=0; i<gens->n_rows(); i++)
     if (initial[i] != NULL)
       {
