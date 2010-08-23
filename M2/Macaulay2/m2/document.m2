@@ -1183,7 +1183,7 @@ documentationValue(Symbol,Thing) := (s,x) -> ()
 authorDefaults := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
 documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
      e := toSequence pkg#"exported symbols";
-     a := select(e,x -> instance(value x,Function));	    -- functions
+     a := select(e,x -> instance(value x,Function) or instance(value x,Command)); -- functions and commands
      b := select(e,x -> instance(value x,Type));	    -- types
      m := unique flatten for T in b list for i in keys value T list (-- methods
 	  if (
@@ -1223,7 +1223,10 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	       if not all(cert,x -> instance(x,Option) and #x==2) then error(toString pkg, ": Certification option: expected a list of options");
 	       cert = new HashTable from cert;
 	       DIV1 { 
-		    SUBSECTION "Certification",
+		    SUBSECTION {
+			 "Certification ",
+			 IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"}
+			 },
 		    PARA {
 			 "Version ",BOLD cert#"version at publication"," of this package was accepted for
 			 publication in ",HREF{cert#"volume URI","volume " | cert#"volume number"}," of the 
@@ -1269,7 +1272,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	       	    "class" => "exports",
 		    fixup UL {
 			 if #b > 0 then DIV1 {"Types", smenu b},
-			 if #a > 0 then DIV1 {"Functions", smenu a},
+			 if #a > 0 then DIV1 {"Functions and commands", smenu a},
 			 if #m > 0 then DIV1 {"Methods", smenu m},
 			 if #c > 0 then DIV1 {"Symbols", smenu c},
 			 if #d > 0 then DIV1 {"Other things", smenuCLASS d}}}}))
