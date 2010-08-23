@@ -311,6 +311,7 @@ const Matrix *GaussElimComputation::get_syzygies()
 
 void GaussElimComputation::text_out(buffer &o) const
 {
+  o << newline;
   for (int i=0; i<gens->n_rows(); i++) {
     if (gb_list[i] != NULL)
       {
