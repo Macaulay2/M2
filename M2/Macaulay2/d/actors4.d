@@ -1461,6 +1461,10 @@ locate(e:Expr):Expr := (
 	  locate(c.code);
 	  locate2(c.code))
      is s:SpecialExpr do locate(s.e)
+     is f:functionCode do (
+	  locate0();
+	  locate(f.body);
+	  locate2(f.body))
      is f:FunctionClosure do (
 	  locate0();
 	  locate(f.model.arrow);
