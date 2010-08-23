@@ -82,7 +82,7 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
 
 degreesRing Ring := R -> error "no degreesRing for this ring"
 
-degreesMonoid PolynomialRing := PolynomialRing => R -> (
+degreesMonoid PolynomialRing := GeneralOrderedMonoid => R -> (
      if R.?degreesMonoid then R.degreesMonoid
      else error "no degreesMonoid for this ring")
 
