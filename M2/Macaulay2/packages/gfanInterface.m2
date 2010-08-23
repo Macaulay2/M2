@@ -27,6 +27,20 @@ export {
 
 gfan'path = gfanInterface#Options#Configuration#"path"
 if gfan'path == "" then gfan'path = prefixDirectory | currentLayout#"programs"
+if instance(gfan'path, String) then gfan'path = {gfan'path}
+if not instance(gfan'path,List) then error "expected configuration option gfan'path to be a list of strings or a string"
+gfan'path = join(
+     gfan'path,
+     separate(":",getenv "PATH"),
+     {
+	  "/usr/libexec/gfan/" -- Fedora has gfan as a separate package; the programs gfan_* are here, but gfan is in /usr/bin
+	  }
+     )
+findProgram = pgmname -> (
+     r := searchPath(gfan'path, pgmname);
+     if length r == 0 then error("program ",pgmname," not found on path ",gfan'path);
+     if debugLevel == 101 then stderr << "--" << pgmname << " found in: " << stack r << endl;
+     r#0 | "/" | pgmname)
 
 fig2dev'path = gfanInterface#Options#Configuration#"fig2devpath"
 
@@ -108,7 +122,7 @@ render(String, Ideal) := opts-> (F, I) -> (
 	then error "Symmetries value should be a list of permutations (list of lists of integers)";
 	ex = ex|" --symmetry";
 	);
-	ex = gfan'path| "gfan " | ex | "  <" | f | " | "|gfan'path|"gfan_render > " | F;
+	ex = findProgram "gfan" | " " | ex | "  <" | f | " | "|findProgram "gfan_render"|" > " | F;
 	writeGfanIdeal(f, I, opts.Symmetries);
 	runchk ex;
 	removeFile f;
@@ -148,7 +162,7 @@ renderStaircase(String,ZZ,ZZ,List) := (F,d,w,L) -> (
 	f := temporaryFileName();
 	-- << "using temporary file " << f << endl;
 
-	ex = gfan'path| "gfan_renderstaircase -m -d "| d | " -w " | w ;
+	ex = findProgram "gfan_renderstaircase"| " -m -d "| d | " -w " | w ;
 	ex = ex | " < " | f |" >" | F;
 
 	writeGfanIdealList(f, L);
@@ -291,10 +305,10 @@ gfan Ideal := opts -> (I) -> (
 	  then error "Symmetries value should be a list of permutations (list of lists of integers)";
 	  ex = ex|" --symmetry";
 	  );
-     ex = gfan'path| "gfan " | ex | "  <" | f | " >" | f | ".out";
+     ex = findProgram "gfan"| " " | ex | "  <" | f | " >" | f | ".out";
      writeGfanIdeal(f, I, opts.Symmetries);
      runchk ex;
-     ex2 := gfan'path| "gfan_leadingterms -m <" | f | ".out >" | f | ".lt";
+     ex2 := findProgram "gfan_leadingterms"| " -m <" | f | ".out >" | f | ".lt";
      runchk ex2;
      L := readGfanIdeals(f | ".out", R);
      M := readGfanIdeals(f | ".lt", R);
@@ -327,7 +341,7 @@ groebnerFan Ideal := opts -> (I) -> (
 	  then error "Symmetries value should be a list of permutations (list of lists of integers)";
 	  ex = ex|" --symmetry";
 	  );
-     ex = gfan'path| "gfan " | ex | "  <" | f | "| " | gfan'path | "gfan_topolyhedralfan" | ex | " >" | f | ".out";
+     ex = findProgram "gfan"| " " | ex | "  <" | f | "| " | findProgram "gfan_topolyhedralfan" | " " | ex | " >" | f | ".out";
      writeGfanIdeal(f, I, opts.Symmetries);
      runchk ex;
      ret := readGroebnerfan(f | ".out");
