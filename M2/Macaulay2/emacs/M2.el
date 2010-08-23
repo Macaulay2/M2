@@ -265,23 +265,31 @@ can be executed with \\[M2-send-to-program]."
      (re-search-backward "<<<")
      (match-end 0))))
 
+(defun M2-send-match-to-program (filename linenum colnum)
+  (cond
+   ((equal filename "stdio") (message "source code was from standard input"))
+   ((not (file-exists-p filename)) (message "file not found: %s" filename))
+   (t
+    (find-file-other-window filename)
+    (goto-line linenum)
+    (move-to-column (- colnum 1)))))
+
 (defun M2-send-to-program-or-jump-to-source-code()
   "If line the cursor is on is recognized as a Macaulay2 error message, jump to the
   location specified in the corresponding file.  Otherwise, send the input to the command
   interpreter using \\[comint-send-input]."
   (interactive)
-  (if (save-excursion (beginning-of-line) (looking-at "^ *\\(o+[1-9][0-9]* = \\|| \\)?\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)[:-]\\|-[0-9]+:\\|: \\)"))
-      (let ((filename (buffer-substring (match-beginning 2) (match-end 2)))
-	    (linenum (string-to-number (buffer-substring (match-beginning 3) (match-end 3))))
-	    (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1)))
-	(cond
-	 ((equal filename "stdio") (message "source code was from standard input"))
-	 ((not (file-exists-p filename)) (message "file not found: %s" filename))
-	 (t
-	  (find-file-other-window filename)
-	  (goto-line linenum)
-	  (move-to-column (- colnum 1)))))
-    (comint-send-input)))
+  (cond ((save-excursion (search-backward-regexp "\\({\\*\\|^\\)") (looking-at "{\\*Function\\[\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)[:-]\\|-[0-9]+:\\|: \\)"))
+	 (let ((filename (buffer-substring (match-beginning 1) (match-end 1)))
+	       (linenum (string-to-number (buffer-substring (match-beginning 2) (match-end 2))))
+	       (colnum (if (match-beginning 4) (string-to-number (buffer-substring (match-beginning 4) (match-end 4))) 1)))
+	   (M2-send-match-to-program filename linenum colnum)))
+	((save-excursion (beginning-of-line) (looking-at "^ *\\(o+[1-9][0-9]* = \\|| \\)?\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)[:-]\\|-[0-9]+:\\|: \\)"))
+	 (let ((filename (buffer-substring (match-beginning 2) (match-end 2)))
+	       (linenum (string-to-number (buffer-substring (match-beginning 3) (match-end 3))))
+	       (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1)))
+	   (M2-send-match-to-program filename linenum colnum)))
+	(t (comint-send-input))))
 
 (defun M2-send-to-program (send-to-buffer)
      "Send the current line except for a possible prompt, or the region, if the
