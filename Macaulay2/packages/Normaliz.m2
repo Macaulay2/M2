@@ -13,7 +13,7 @@ newPackage(
            Version=>"2.0",
            Date=>"August 9, 2010",
            Authors=>{{Name=> "Gesa Kaempf",
-                    Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
+                    Email=>"gkaempf@uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
            DebuggingMode => false,
 	   Certification => {
