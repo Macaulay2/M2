@@ -15,7 +15,14 @@ class Pair {
     } else if (pair1.lcm > pair2.lcm) {
       return false;
     } else {
-      return true;
+      if(pair1.j < pair2.j) {
+        return true;
+      } else if(pair1.j > pair2.j) {
+        return false;
+      } else { 
+        return pair1.i < pair2.i;
+      } 
+//      return true;
     }
   }
 
@@ -518,7 +525,7 @@ void gb( IntermediateBasis &F, int n) {
   unsigned int numSPoly= 0;
   while (!B.empty()) {
     Pair pair = bestPair(B);
-    B.erase(B.begin());
+    B.erase(B.begin()); // is this where it breaks?
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;
       BRP S = sPolynomial(pair,F,n);
@@ -533,7 +540,9 @@ void gb( IntermediateBasis &F, int n) {
       }
     }
   }
+  cout << "size before interreduction" << F.size() << endl;
   interreduction(F);
+  cout << "size after interreduction" << F.size() << endl;
   cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
 
