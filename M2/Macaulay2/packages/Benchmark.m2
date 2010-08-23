@@ -187,6 +187,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
 
 -- Results:
 
+---- Intel(R) Xeon(R) CPU X5550  @ 2.67GHz
+  -- beginning computation Mon Aug 23 16:04:22 CDT 2010
+  -- Linux euler.math.illinois.edu 2.6.33.5-112.fc13.i686.PAE #1 SMP Thu May 27 02:56:20 UTC 2010 i686 i686 i386 GNU/Linux
+  -- Macaulay2 1.3.1, compiled with gcc 4.4.3
+  -- res39: res of a generic 3 by 9 matrix over ZZ/101: .148977 seconds
+  -- resG25: res of the coordinate ring of Grassmannian(2,5): 1.86072 seconds
+  -- gbB148: gb of Bayesian graph ideal #148: 14.2298 seconds
+
 ---- an Intel Core 2 Quad with 8 GB of RAM in Las Vegas
   -- beginning computation Wed Mar 25 17:53:19 PDT 2009
   -- Linux ubuntu 2.6.24-23-server #1 SMP Thu Nov 27 18:45:02 UTC 2008 x86_64 GNU/Linux
