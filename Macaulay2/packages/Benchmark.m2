@@ -136,6 +136,8 @@ runBenchmarks0 String := x -> runBenchmarks0 {x}
 runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
+     if fileExists "/proc/cpuinfo" and match("^model name",get "/proc/cpuinfo")
+     then << "-- " << first select("^model name.*$",get "/proc/cpuinfo") << endl;
      << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
