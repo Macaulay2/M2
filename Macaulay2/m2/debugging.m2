@@ -22,15 +22,20 @@ warningMessage = args -> (
      then error args
      else (
 	  stderr << "warning: " << args << endl
-     	  << "       : debug with expression debug " << h << " or with command line option --debug " << h << endl
+     	  << "       : debug with expression   debug " << h << "   or with command line option   --debug " << h << endl
 	  );
      )
 
 callCount := new MutableHashTable
 
-on = { CallLimit => 100000, Name => null } >> opts -> f -> (
+onprint = n -> (
+     n = horizontalJoin apply(nonnull deepSplice n,net);
+     << (stack( height n + depth n : "-- " ))^(height n - 1) | n << endl;
+     )
+
+on = { CallLimit => 100000, Name => null, GenerateAssertions => false } >> opts -> f -> (
      fb := functionBody f;
-     depth := 0;
+     calldepth := 0;
      totaltime := 0.;
      if not callCount#?fb then callCount#fb = 0;
      limit := opts.CallLimit;
@@ -38,25 +43,32 @@ on = { CallLimit => 100000, Name => null } >> opts -> f -> (
      fn := if opts.Name =!= null then opts.Name else try toString f else "{*function*}";
      x -> (
 	  saveCallCount := callCount#fb = callCount#fb+1;
-     	  << fn << " (" << saveCallCount << ")";
-	  if depth > 0 then << " [" << depth << "]";
-	  << " called with ";
-	  try << class x << " ";
-	  try << x else "SOMETHING";
-	  << endl;
+	  onprint(fn, " (", saveCallCount, ")",
+ 	       if calldepth > 0 then (" [", calldepth, "]"),
+	       " called with ",
+	       try (net class x, ": "),
+	       try net x else "SOMETHING");
 	  if callCount#fb > limit then error "call limit exceeded";
-	  depth = depth + 1;
+	  calldepth = calldepth + 1;
      	  r := timing f x;
 	  timeused := r#0;
-	  value := r#1;
-	  depth = depth - 1;
-	  if depth === 0 then totaltime = totaltime + timeused;
-     	  << fn << " (" << saveCallCount << ")";
-	  if depth > 0 then << " [" << depth << "]";
-	  if timeused > 1. then << " used " << timeused << " seconds";
-	  if totaltime > 1. and depth === 0 then << " (total " << totaltime << " seconds)";
-	  << " returned " << class value << " " << value << endl;
-     	  value)
+	  val := r#1;
+	  calldepth = calldepth - 1;
+	  if calldepth === 0 then totaltime = totaltime + timeused;
+	  onprint(fn, " (", saveCallCount, ")",
+	       if calldepth > 0 then (" [", calldepth, "]"),
+	       if timeused > 1. then (" used ", timeused, " seconds"),
+	       if totaltime > 1. and calldepth === 0 then (" (total ", totaltime, " seconds)"),
+	       " returned ", try (class val, ": "), try net val else "SOMETHING");
+	  if opts.GenerateAssertions then (
+	       try printx := toExternalString x then
+	       try printval := toExternalString val then
+	       << "assert( " << fn << "(" << printx << ") === (" << printval << "))" << endl
+	       else null
+	       else null
+	       );
+	  if instance(val,Function) then val = on(val,opts);
+     	  val)
      )
 
 notImplemented = x -> error "not implemented yet"
