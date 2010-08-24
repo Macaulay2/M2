@@ -2,12 +2,16 @@
 # license for glpk: GPL v3, versions 4.26 and later; GPL v2, version 4.14 (which we use)
 # VERSION = 4.39
 
-VERSION = 4.14
-PATCHFILE = @abs_srcdir@/patch-4.14
+# VERSION = 4.14
+# PATCHFILE = @abs_srcdir@/patch-4.14
+# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.3
+
+VERSION = 4.44
+URL = http://www.math.uiuc.edu/Macaulay2/Extra
 
 # see http://www.gnu.org/software/glpk/
 # URL = ftp://ftp.gnu.org/gnu/glpk
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.3
+
 CONFIGOPTIONS = --disable-shared
 BUILDOPTIONS = SUBDIRS="include src"
 INSTALLOPTIONS = SUBDIRS="include src"
