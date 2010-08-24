@@ -202,6 +202,18 @@ AC_PROG_CXX()			# set CXXFLAGS before this
 AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 AC_PROG_YACC()
 
+
+AC_SUBST(INSTALL_INFO,"install-info")
+AC_ARG_WITH(install-info,
+	AS_HELP_STRING([--with-install-info=...,a path to GNU "install-info" (install-info)]),
+	INSTALL_INFO=$withval)
+AC_MSG_CHECKING([whether $INSTALL_INFO is GNU install-info])
+if ! ("$INSTALL_INFO" --version 2>&1 | grep "GNU texinfo" >/dev/null 2>&1 )
+then AC_MSG_RESULT(no)
+     AC_MSG_ERROR([$INSTALL_INFO is not GNU install-info, use --with-install-info=...])
+else AC_MSG_RESULT(yes)
+fi
+
 if test "$DEBUG" = yes
 then CPPFLAGS="$CPPFLAGS -DDEBUG"
      M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
