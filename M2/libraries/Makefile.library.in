@@ -44,7 +44,7 @@ CONFIGENV     = env				\
 CONFIGURESCRIPT ?= configure
 CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
-BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
+BUILDCMD      ?= $(MAKE) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 STRIPFILES    ?= 
@@ -82,31 +82,26 @@ compile: .compiled-$(VERSION) config-chk
 configure: .configured-$(VERSION) config-chk 
 config-chk:
 
-.installed-$(VERSION)  : .compiled-$(VERSION) install-programs install-license-files
-	@ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)  ) && touch $@
+PROGRAMS ?=
+LICENSEFILES ?=
+.installed-$(VERSION)  : .compiled-$(VERSION)
+	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
+ifneq ($(PROGRAMS),)
+	$(MKDIR_P) $(BIN_DIR)
+	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s $$p $(BIN_DIR)) ; done
+endif
+ifeq ($(LICENSEFILES),)
+	@ echo warning: no license files to be installed
+else
+	$(MKDIR_P) $(LICENSE_DIR)
+	cd $(BUILDDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
+endif
+	touch $@
+
 .compiled-$(VERSION)   : .configured-$(VERSION)
 	@ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)
 	@ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
-
-LICENSEFILES ?=
-ifeq ($(LICENSEFILES),)
-install-license-files  :
-	@ echo warning: no license files to be installed
-else
-install-license-files  :
-	$(MKDIR_P) $(LICENSE_DIR)
-	cd $(BUILDDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
-endif
-
-PROGRAMS ?=
-ifeq ($(PROGRAMS),)
-install-programs:
-else
-install-programs:
-	$(MKDIR_P) $(BIN_DIR)
-	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s $$p $(BIN_DIR)) ; done
-endif
 
 ifneq ($(PATCHFILE),)
 .patched-$(VERSION) : $(PATCHFILE)
