@@ -7,7 +7,7 @@ newPackage(
     HomePage => "http://www.math.vt.edu/people/fhinkel/"}, 
     {Name => "Mike Stillman"},
     {Name => "Elizabeth Arnold"}},
-    Headline => "",
+    Headline => "Groebner bases in a Boolean ring",
     DebuggingMode => true
     )
 
