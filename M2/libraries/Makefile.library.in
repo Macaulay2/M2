@@ -16,6 +16,8 @@ CHECKTARGET ?= check
 CHECKOPTIONS ?= 
 CHECKCMD ?= $(MAKE) -C $(BUILDDIR) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
+BIN_DIR := $(LIBRARIESDIR)/bin
+LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
 PRECONFIGURE  ?= :
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
@@ -74,6 +76,8 @@ PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
+license-dir: $(LICENSE_DIR)
+$(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
 compile: .compiled-$(VERSION) config-chk
 configure: .configured-$(VERSION) config-chk 
 config-chk:
