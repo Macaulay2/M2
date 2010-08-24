@@ -1,3 +1,4 @@
+--*-M2-*-
 -- Conversions from one type to another in a uniform way
 -- The first suggestions for these came from our 2010 workshop at Colorado College
 -- We need new syntax to support this.
@@ -17,3 +18,26 @@ List from BasicList := (List, L) -> toList L
 String from Thing := (String,x) -> toString x
 Net from Thing := (String,x) -> net x
 Expression from Thing := (Expression,x) -> expression x
+
+{*
+
+an idea from Charley Crissman:
+
+ Extend syntax to allow expressions like:
+ new Matrix of S from X
+ which will make a matrix of elements of S from X by applying the coercion "new S from e"
+ for each entry e of X (while also dealing correctly with gradings)
+
+code:
+ new Matrix of RingElement from Matrix := (Matrix, R, m) -> (
+     try promote(m,R) else try lift(m,R) else error("conversion to type ",toString R," not possible.")
+
+ Example of where this would be nice:
+ R = ZZ/32003
+ M = matrix(R,{{1,2},{3,4}})
+ new Matrix of ZZ from X
+
+ This syntax would also give a suitable replacement for the current nasty coercion behaviour of
+ sub over QQ, which causes sub((1/2)*x, {x=>2}) to return 2, not 1
+
+*}
