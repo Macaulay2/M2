@@ -46,9 +46,9 @@ BUILDOPTIONS =  CXX="$(CXX)" \
 		NBIGFLAGS="$(NBIGFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
-INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/bin && \
-		@INSTALL@ -s norm64 $(LIBRARIESDIR)/bin/norm64 && \
-		@INSTALL@ -s normbig $(LIBRARIESDIR)/bin/normbig
+PROGRAMS = norm64 normbig
+LICENSEFILES = COPYING
+INSTALLCMD = :
 CHECKTARGET = .
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/normaliz/Makefile

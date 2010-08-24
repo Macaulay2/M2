@@ -5,7 +5,8 @@ TARDIR = nauty$(VERSION)
 PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
 	   directg dreadnaut dretog genbg geng genrang gentourng labelg listg \
 	   multig newedgeg pickg planarg shortg showg
-INSTALLCMD = $(MKDIR_P) $(BIN_DIR) && $(MKDIR_P) $(LICENSE_DIR) && cp $(PROGRAMS) $(BIN_DIR)/. && cp nauty.h $(LICENSE_DIR)/.
+LICENSEFILES = nauty.h
+INSTALLCMD = :
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/nauty/Makefile
 # Local Variables:
