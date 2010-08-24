@@ -704,21 +704,8 @@ document {
 		"abs(1+ii)"
 		},
      }
-
 document {
-     Key => (exp,RingElement),
-     Usage => "exp x",
-     Inputs => { "x" },
-     Outputs => { { "the exponential of ", TT "x", ", provided ", TT "x", " is nilpotent,
-	       and the denominators required have reciprocals in the ring of ", TT "x", "." } } ,
-     EXAMPLE lines ///
-     R = ZZ/11[x]/x^9
-     exp x
-     ///
-     }
-
-document {
-     Key => {exp,(exp,RR),(exp,CC),(exp,ZZ),(exp,QQ),(exp,Constant)},
+     Key => {exp,(exp,RR),(exp,CC),(exp,ZZ),(exp,QQ)},
      Headline => "exponential function",
      Usage => "exp x",
      Inputs => { "x" => RR },

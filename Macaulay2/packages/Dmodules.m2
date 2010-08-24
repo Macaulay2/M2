@@ -6,7 +6,7 @@ newPackage("Dmodules",
      HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
+	  {Name => "Anton Leykin", Email => "leykin@gatech.math.edu"},
 	  {Name => "Harrison Tsai"}
 	  },
      DebuggingMode => true
