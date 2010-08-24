@@ -10,6 +10,8 @@ newPackage (
      Version => "1.0"
      )
 
+needsPackage "XML"
+
 -- we should remove the dependence of this on the unix "date" command!
 
 export {runBenchmarks}
@@ -138,6 +140,17 @@ runBenchmarks0 List := x -> (
      << "-- " << first lines get "!uname -a" << endl;
      if fileExists "/proc/cpuinfo" and match("^model name",get "/proc/cpuinfo")
      then << "-- " << first select("^model name.*$",get "/proc/cpuinfo") << endl;
+     if fileExists "/usr/sbin/system_profiler"
+     then (
+	  r := get "!/usr/sbin/system_profiler SPHardwareDataType";
+	  << "-- "
+	  << first select("Model Name: (.*)","\\1, ",r)
+	  << first select("Processor Name: (.*)","\\1, ",r)
+	  << first select("(Processor Speed: .*)","\\1, ",r)
+	  << first select("(Cores: .*)","\\1, ",r)
+	  << first select("(Bus Speed: .*)","\\1",r)
+	  << endl;
+	  );
      << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
