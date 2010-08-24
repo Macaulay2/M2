@@ -26,14 +26,9 @@ trimwhite = s -> (
      s = replace("^[[:space:]]+","",s);
      s = replace("[[:space:]]+$","",s);
      if s =!= "" then s)
-trimopt := identity
+trimopt := identity					    -- not re-entrant!
 settrim = opts -> trimopt = if opts.Trim then trimwhite else identity
 toXMLnode0 = node -> (
-     --  result:
-     --    each node is a hash table of type XMLnode
-     --    some keys are strings, representing attributes
-     --    a special non-string key (symbol children) will provide the list of children (hashtables) and content pieces (strings), if there are any
-     --    a special non-string key (symbol name) for the name of the node
      if xmlIsElement node then (
 	  attr := xmlAttributes node;
 	  child := xmlGetChildren node;
@@ -52,6 +47,8 @@ toXMLnode LibxmlNode := opts -> node -> (
      settrim opts;
      toXMLnode0 node)
 
+net LibxmlNode := x -> net toString x
+
 toLibxmlNode = method()
 populate = (d,x) -> (
      scan(pairs x, (k,v) -> if instance(k,String) then xmlNewProp(d,k,v));
@@ -68,9 +65,38 @@ parse String := xmlNode => opts -> s -> (
 
 beginDocumentation()
 
-end
+multidoc ///
+Node
+  Key
+    XML
+  Description
+    Text
+      This package provides an interface to {\em libxml2}, which is a parser for
+      XML files.  The package offers two ways of representing the result: as
+      an object of class @ TO LibxmlNode @, which is a pointer to the structure
+      created and accessed by the library; or as an object of class @ TO XMLnode @,
+      which is a hashtable containing pointers to similar objects and to strings.
+      
+      Conceptually, no matter which representation is used, each XML node has: a tag
+      (which is a string); a list of children (which are XML nodes) and
+      content pieces (which are strings); and a set of attribute names (which are strings)
+      together with corresponding values (which are strings).
+Node
+  Key
+    XMLnode
+  Description
+    Text
+      An object of class @ TO XMLnode @ is a hashtable.
 
-doc ///
+     --  result:
+     --    each node is a hash table of type XMLnode
+     --    some keys are strings, representing attributes
+     --    a special non-string key (symbol children) will provide the list of children (hashtables) and content pieces (strings), if there are any
+     --    a special non-string key (symbol name) for the name of the node
+
+
+
+Node
   Key
     (parse,String)
   Headline
@@ -82,12 +108,19 @@ doc ///
   Outputs
     :
       the tree resulting from parsing {\tt s}
+  Description
+    Text
+      Things to do: make @ TO hash @ return sensible values for objects of class LibxmlNode;
+      consider making objects of class XMLnode immutable, so they can have hash codes, too.
+Node
+  Key
+    LibxmlNode
 ///
 
 end
 
 {*
-this parser is a failure because Parsing doesn't provide lookahead at all!
+this parser is a failure because Parsing doesn't provide lookahead at all!:
 
 needsPackage "Parsing"
 returns = t -> s -> t
@@ -112,7 +145,42 @@ print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
 *}
 
 restart
-p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>///
-x = toXMLnode p
-q = toLibxmlNode x
+This demo
 
+    loadPackage "XML"
+    p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>///
+    x = toXMLnode p
+    q = toLibxmlNode x
+
+gives
+
+    i1 : loadPackage "XML"
+
+    o1 = XML
+
+    o1 : Package
+
+    i2 : p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>///
+
+    o2 = <foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>
+
+    o2 : LibxmlNode
+
+    i3 : x = toXMLnode p
+
+    o3 = <foo
+	   "aabc"
+	   <bar id="foo" name="too"
+	     "asdf"
+	   <coo
+	   <coo "hi"
+	   <coo a="b"
+	     "hi"
+
+    o3 : XMLnode
+
+    i4 : q = toLibxmlNode x
+
+    o4 = <foo>aabc<bar id="foo" name="too">asdf</bar><coo/><coo>hi</coo><coo a="b">hi</coo></foo>
+
+    o4 : LibxmlNode

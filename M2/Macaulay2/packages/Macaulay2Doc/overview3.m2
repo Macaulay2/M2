@@ -94,7 +94,8 @@ document {
 	  and associated transcendental functions.  It is available at ", HREF "http://www.mpfr.org/", ".  The
 	  library is remarkable for the care taken to return correctly rounded
 	  results.  It is hoped that this will form a good base for experimentation
-	  with algebraic algorithms that mix symbolic and numeric techniques."
+	  with algebraic algorithms that mix symbolic and numeric techniques.
+	  It is licensed under the GNU Lesser General Public License, version 3 or later."
 	  }
      }
 
@@ -197,7 +198,7 @@ document {
      "The MPIR library, version ", version#"mpir version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
-     It's available at ", HREF "http://www.mpir.org/", "."
+     It is available at ", HREF "http://www.mpir.org/", "."
      }
 
 
