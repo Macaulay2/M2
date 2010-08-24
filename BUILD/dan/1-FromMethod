@@ -1,0 +1,19 @@
+-- Conversions from one type to another in a uniform way
+-- The first suggestions for these came from our 2010 workshop at Colorado College
+-- We need new syntax to support this.
+-- See svn://svn.macaulay2.com/Macaulay2/workshops/Colorado-2010/conversions.m2 for the latest suggestions.
+
+List from Matrix := (List,m) -> entries m
+List from Set := (List,x) -> elements x
+List from Tally := (List, x) -> splice apply(pairs x,(k,v) -> v:k)
+String from Number := (String,x) -> toString x
+RingElement from Number := (R,x) -> try promote(x,R) else error("conversion to type ",toString R," not possible")
+Number from Number :=
+ RingElement from RingElement := (R,x) -> try promote(x,R) else try lift(x,R) else error("conversion to type ",toString R," not possible")
+Number from RingElement := (R,x) -> try lift(x,R) else error("conversion to type ",toString R," not possible")
+Matrix from Number :=
+ Matrix from RingElement := (Matrix, x) -> matrix {{x}}
+List from BasicList := (List, L) -> toList L
+String from Thing := (String,x) -> toString x
+Net from Thing := (String,x) -> net x
+Expression from Thing := (Expression,x) -> expression x
