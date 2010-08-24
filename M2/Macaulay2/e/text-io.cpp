@@ -50,7 +50,7 @@ void emit(const char *s)
   fflush(stdout);
 }
 
-void emit_line(const char *s)
+void emit_line(char *s)
 {
   while (true) {
     char *p = index(s,'\n');
