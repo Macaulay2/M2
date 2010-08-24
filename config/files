@@ -43,6 +43,7 @@ libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/4ti2/Makefile
 libraries/gfan/Makefile
+libraries/nauty/Makefile
 libraries/cddlib/Makefile
 libraries/glpk/Makefile
 libraries/polymake/Makefile
