@@ -1,4 +1,4 @@
-HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
+HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/
 
 # license for gc: "Permission is hereby granted to use or copy this program for any purpose ... " 
 #  for details, see if file README.QUICK
