@@ -52,27 +52,81 @@ document {
 	  }
      }
 
+star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
 document {
      Key => "changes, 1.4",
      UL {
 	  LI { "major improvements and additions:",
-	       UL {
-		    LI { "The ", TO "Schubert2::Schubert2", " package has been well documented and slightly improved." }
-		    }
+	       -- UL {
+	       -- 	    }
 	       },
-	  LI { "functionality added or improved:",
+	  LI { "new packages:",
 	       UL {
+		    -- LI { TO "BooleanGB::BooleanGB", " has been added." },
+		    LI { TO "FormalGroupLaws::FormalGroupLaws", " has been added." },
+		    LI { TO "Graphics::Graphics", " has been added." },
+		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", " has been added and certified." },
+		    LI { TO "Kronecker::Kronecker", " has been added." },
+		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", " has been added and certified." },
+		    LI { TO "NAGtypes::NAGtypes", " has been added." },
+		    LI { TO "Nauty::Nauty", " has been added." },
+		    LI { star, " ", TO "Normaliz::Normaliz", " has been certified." },
+		    LI { TO "PHCpack::PHCpack", " has been added." },
+		    LI { star, " ", TO "SimplicialDecomposability::SimplicialDecomposability", " has been added and certified." }
+		    LI { star, " ", TO "ToricVectorBundles::ToricVectorBundles", " has been added and certified." },
+		    LI { TO "WeylGroups::WeylGroups", " has been added." },
+		    },
+	  LI { "improved packages:",
+	       UL {
+		    LI { TO "Polyhedra::Polyhedra", ", a package for computations with
+			  convex polyhedra, has been improved: matrices that are returned from polyhedral objects
+			  are over ", TO "ZZ", " now, except for vertices of a polyhedron; 
+			  ", TO "FourierMotzkin::fourierMotzkin", " is now called only once, to
+			  increase the speed in higher dimensions."
+			  },
+		    LI { TO "Schubert2::Schubert2", " has been well documented (finally) and slightly improved." },
 		    LI {
 			 "The ", TO "SimpleDoc::SimpleDoc", " package has a new function, ", TO "multidoc", ",
 			 that allows multiple documentation nodes per string.  The format of the ", BOLD "Consequences", "
 			 section has changed.  There is a new keyword, ", BOLD "Pre", ", that allows preformatted
 			 text to be easily inserted."
 			 }
+	       	    }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+	       	    LI {
+			 "The debugging function ", TO "on", " has been improved."
+			 },
+		    LI {
+			 "Groebner bases over fields are now autoreduced, so the answer is mathematically
+			 well-defined.  Resulting changes in coefficients of polynomials in matrices returned by such
+			 functions as ", TO "syz", " and ", TO "complement", " may be observed."
+			 },
+		    LI {
+			 TT "TEX", " mode can now handle ", TT "$\\mapsto$", "."
+			 },
+		    LI {
+			 "Addition of ideals with an expression such as ", TT "I+J", " has been extended to
+			 work in the case where ", TT "I", " and ", TT "J", " are ideals in different, but compatible, rings.
+			 Here compatibility means the one is an predecessor of the other, as would be the coefficient
+			 ring of a polynomial ring or the ambient ring of a quotient ring."
+			 },
+		    LI {
+			 "Added a new method, ", TO "(matrix,RingElement)", ", that makes a one by one matrix
+			 from a ring element."
+			 },
+		    LI {
+			 "Added a new method ", TO "(exp,RingElement)", " for the exponential function applied
+			 to a nilpotent ring element."
+			 }
 		    }
 	       },
 	  LI { "functionality changed:",
-	       -- UL {
-	       -- 	    }
+	       UL {
+		    LI { "Elements of sets are now sorted before printing." }
+	       	    }
 	       },
 	  LI { "new constants and operators:",
 	       -- UL {
@@ -133,7 +187,8 @@ document {
 			 "A new option ", TO "Certification", " for ", TO "newPackage", ", provides information about packages that have been
 			 accepted for publication in a refereed journal.  The information is displayed in the top documentation node of
 			 the package.  The first three packages so certified
-			 are ", TO "EdgeIdeals::EdgeIdeals", ", ", TO "PieriMaps::PieriMaps", ", and ", TO "Polyhedra::Polyhedra", "."
+			 are ", TO "EdgeIdeals::EdgeIdeals", " ", star, ", ", TO "PieriMaps::PieriMaps", " ", star, ", 
+			 and ", TO "Polyhedra::Polyhedra", " ", star, "."
 			 },
 		    LI { "New packages ", TO "OpenMath::OpenMath", " and ", TO "SCSCP::SCSCP", " for communicating via SCSCP with OpenMath to 
 			 programs such as GAP and Maple have been developed, 
