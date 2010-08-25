@@ -12,6 +12,7 @@ LICENSEFILES = lrslib.html COPYING
 CONFIGURECMD = :
 BUILDTARGET = all
 INSTALLCMD = :
+CHECKCMD = :
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lrslib/Makefile
 # Local Variables:

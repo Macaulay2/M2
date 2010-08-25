@@ -5,6 +5,8 @@ TARDIR = nauty$(VERSION)
 PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
 	   directg dreadnaut dretog genbg geng genrang gentourng labelg listg \
 	   multig newedgeg pickg planarg shortg showg
+CHECKERS = dreadtest dreadtestS dreadtestS1 dreadtest4K dreadtest1 dreadtestW1 dreadtestL1 dreadtestL
+CHECKCMD = set -e ; $(MAKE) -C $(BUILDDIR) checks && for i in $(CHECKERS) ; do set -x ; $(BUILDDIR)/$$i ; done
 LICENSEFILES = nauty.h
 INSTALLCMD = :
 include ../Makefile.library
