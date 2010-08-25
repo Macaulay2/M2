@@ -18,6 +18,8 @@ debug Core
     ReverseDictionary' = ReverseDictionary
 dictionaryPath = delete(Core#"private dictionary",dictionaryPath)
 
+s := x -> concatenate apply(deepSplice flatten deepSplice x, i -> if instance(i,ZZ) then ("o#",toString i) else i)
+
 serialize = x -> (
      k := new MutableHashTable;				    -- serial numbers of objects
      k':= new MutableHashTable;				    -- inverse function of k
@@ -26,10 +28,10 @@ serialize = x -> (
      newk := f -> x -> (
 	  if k#?x then return k#x;
 	  i := #k;
-	  k #x = i;
+	  r := k#x = "o#" | toString i;
 	  k'#i = x;
-	  f(x,i);
-	  i);
+	  f(x,r);
+	  r);
      p := method(Dispatch => Thing);
      -- remember to remove these methods later, to prevent a memory leak:
      p Thing := newk ( (x,i) -> (
@@ -61,8 +63,7 @@ serialize = x -> (
 		    )
 	       ));
      p BasicList := newk ( (x,i) -> (
-	       p class x;
-	       scan(x,p);
+	       code1#i = s("newClass(",p class x,",{",between_"," apply(toList x,p),"})");
 	       ));
      p HashTable := newk ( (x,i) -> (
 	       p class x;
