@@ -1149,7 +1149,7 @@ document {
 	  (symbol //, CC, RR),
 	  (symbol //, CC, ZZ),
 	  (symbol //, InfiniteNumber, ZZ),
-	  (symbol //, Matrix, ZZ),
+	  (symbol //, Matrix, Number),
 	  (symbol //, QQ, QQ),
 	  (symbol //, Number, RingElement),
 	  (symbol //, QQ, ZZ),
@@ -1158,7 +1158,7 @@ document {
 	  (symbol //, RR, RR),
 	  (symbol //, RR, ZZ),
 	  (symbol //, ZZ, InfiniteNumber),
-	  (symbol //, ZZ, Matrix),
+	  (symbol //, Number, Matrix),
 	  (symbol //, ZZ, MonomialIdeal)
 	  },
      Headline => "a binary operator, usually used for quotient",
