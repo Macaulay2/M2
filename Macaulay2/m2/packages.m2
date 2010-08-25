@@ -24,6 +24,7 @@ Package.GlobalAssignHook = (X,x) -> if not hasAttribute(x,ReverseDictionary) the
 Package.GlobalReleaseHook = globalReleaseFunction
 
 dismiss Package := pkg -> (
+     if pkg#"title" === "Core" then error "Core package cannot be dismissed";
      loadedPackages = delete(pkg,loadedPackages);
      dictionaryPath = delete(pkg.Dictionary,dictionaryPath);
      dictionaryPath = delete(pkg#"private dictionary",dictionaryPath);
