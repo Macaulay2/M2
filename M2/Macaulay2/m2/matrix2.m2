@@ -278,6 +278,7 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      ))
 
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
+Matrix \\ Matrix := (g,f) -> f // g
 quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
@@ -303,12 +304,17 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
 	  Degree => degree f - degree g  -- do this in the engine instead
 	  ))
 
-RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
-ZZ           // Matrix := (r,f) -> promote(r,ring f) // f
+RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
+Matrix      \\ RingElement := (f,r) -> r // f
 
-Matrix // RingElement := (f,r) -> f // (r * id_(target f))
+Number // Matrix := (r,f) -> promote(r,ring f) // f
+Matrix \\ Number := (f,r) -> r // f
 
-Matrix // ZZ           := (f,r) -> f // promote(r,ring f)
+Matrix      // RingElement := (f,r) -> f // (r * id_(target f))
+RingElement \\ Matrix      := (r,f) -> f // r
+
+Matrix // Number := (f,r) -> f // promote(r,ring f)
+Number \\ Matrix := (r,f) -> f // r
 
 remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g
