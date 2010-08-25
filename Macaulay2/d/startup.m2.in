@@ -274,6 +274,7 @@ if firstTime then (
 	       "docdir" => "@docdir@/",
 	       "libraries" => "@librariesdir@/",
 	       "programs" => "@programsdir@/",
+	       "program licenses" => "@licensesdir@/",
 	       "package" => "@packagesdir@/PKG/",
 	       "packagedoc" => "@docdir@/PKG/",
 	       "packageimages" => "@docdir@/PKG/images/",
