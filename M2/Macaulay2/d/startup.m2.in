@@ -675,15 +675,19 @@ if class Core =!= Symbol and not core "noinitfile" then (
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      );
 
-(loadDepth = 3; processCommandLineOptions 4; loadDepth = 0)
-n := 0
-(errorDepth = loadDepth = 3; n = interpreter(); loadDepth = 0)
-if class n === ZZ and 0 <= n and n < 128 then exit n
-if n === null then exit 0
-debuggingMode = false
-stopIfError = true
-stderr << "error: can't interpret return value as an exit code" << endl
-exit 1
+(
+     loadDepth = 3;
+     processCommandLineOptions 4;
+     n := 0;
+     errorDepth = loadDepth = 3;
+     n = interpreter();
+     if class n === ZZ and 0 <= n and n < 128 then exit n;
+     if n === null then exit 0;
+     debuggingMode = false;
+     stopIfError = true;
+     stderr << "error: can't interpret return value as an exit code" << endl;
+     exit 1;
+     )
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all && make -C $M2BUILDDIR/Macaulay2/bin all "
 -- End:
