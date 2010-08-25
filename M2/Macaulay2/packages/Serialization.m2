@@ -19,7 +19,7 @@ debug Core
     ReverseDictionary' = ReverseDictionary
 dictionaryPath = delete(Core#"private dictionary",dictionaryPath)
 
-serializable = set toList (a .. Z)
+serializable = set toList (symbol a .. symbol Z)
 
 serialize = x -> (
      h := new MutableHashTable;	    -- objects in progress
@@ -63,9 +63,9 @@ serialize = x -> (
 	       else error "serialize: encountered a recent function; functions cannot be serialized yet"
 	       ));
      p Symbol := pp (x -> (
-	       if value x =!= x and hash x > waterMark' then p value x;
+	       if value x =!= x and (hash x > waterMark' or serializable#?x) then p value x;
 	       "global " | toString x));
-     q Symbol := qq (x -> if value x =!= x and hash x > waterMark' then "global " | toString x | " <- " | p value x);
+     q Symbol := qq (x -> if value x =!= x and (hash x > waterMark' or serializable#?x) then "global " | toString x | " <- " | p value x);
      p BasicList := pp(x -> (
 	       if class x === List
 	       then concatenate("{",between_"," apply(toList x,p),"}")
@@ -128,12 +128,11 @@ aa
 peek x
 peek y
 loadPackage "Serialization"
-toSequence userSymbols() | symbol a .. symbol z
+userSymbols()
 serialize oo
 "/tmp/y" << oo << close;
 restart
-value get "/tmp/y";
+value get "/tmp/y"
 aa
 peek x
 peek y
-get "/tmp/y"
