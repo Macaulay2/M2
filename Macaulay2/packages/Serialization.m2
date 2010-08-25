@@ -19,7 +19,7 @@ debug Core
     ReverseDictionary' = ReverseDictionary
 dictionaryPath = delete(Core#"private dictionary",dictionaryPath)
 
-s := x -> concatenate apply(deepSplice flatten deepSplice x, i -> if instance(i,ZZ) then ("o#",toString i) else i)
+serializable = set toList (a .. Z)
 
 serialize = x -> (
      h := new MutableHashTable;	    -- objects in progress
@@ -29,7 +29,7 @@ serialize = x -> (
      code2 := new MutableHashTable;			    -- finalization code for mutable objects, by index
      p := method(Dispatch => Thing);
      pp := f -> x -> (
-	  if k#?x then return "o#" | toString k#x;
+	  if k#?x then return "s" | toString k#x;
 	  if h#?x then return "(error \"internal error\")";
      	  h#x = true;
 	  t := f x;
@@ -37,8 +37,8 @@ serialize = x -> (
 	  i := #k';
 	  k'#i = x;
 	  k#x = i;
-	  r := "o#" | toString i;
-	  if instance(t,String) then code1#i = r | "=" | t;
+	  r := "s" | toString i;
+	  if instance(t,String) then code1#i = r | ":=" | t;
 	  r);
      q := method(Dispatch => Thing);
      qq := f -> x -> (
@@ -63,24 +63,21 @@ serialize = x -> (
 	       else error "serialize: encountered a recent function; functions cannot be serialized yet"
 	       ));
      p Symbol := pp (x -> (
-	       if hash x < waterMark'
-	       then "symbol " | toString x
-	       else if value x =!= x
-	       then "(symbol " | toString x | " <- " | p value x | ";" | "symbol " | toString x | ")"
-	       else "symbol " | toString x
-	       ));
+	       if value x =!= x and hash x > waterMark' then p value x;
+	       "global " | toString x));
+     q Symbol := qq (x -> if value x =!= x and hash x > waterMark' then "global " | toString x | " <- " | p value x);
      p BasicList := pp(x -> (
 	       if class x === List
-	       then s("{",between_"," apply(toList x,p),"}")
+	       then concatenate("{",between_"," apply(toList x,p),"}")
 	       else if class x === Array
-	       then s("[",between_"," apply(toList x,p),"]")
-	       else s("newClass(",p class x,",{",between_"," apply(toList x,p),"})")));
+	       then concatenate("[",between_"," apply(toList x,p),"]")
+	       else concatenate("newClass(",p class x,",{",between_"," apply(toList x,p),"})")));
      p HashTable := pp(x -> (
 	       if parent x =!= Nothing
-	       then s("newClass(", p class x,",", p parent x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
+	       then concatenate("newClass(", p class x,",", p parent x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
 	       else if class x =!= HashTable
-	       then s("newClass(", p class x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
-	       else s("hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"}" )));
+	       then concatenate("newClass(", p class x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
+	       else concatenate("hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"}" )));
      p MutableList := pp (x -> (
 	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else ( scan(x,p); "newClass(" | p class x | ",{})")));
@@ -120,21 +117,23 @@ serialize = x -> (
 	  {"code by index (code1)",code1},
 	  {"code by index (code2)",code2}
 	  };
-     concatenate between_"\n" flatten {"o:=new MutableHashTable", values code1, last \ sort pairs code2,p x})
+     concatenate between_"\n" flatten {values code1, last \ sort pairs code2,p x})
 
 end
 reload
 restart
-aa = "1234"; xx = new MutableList; yy = new MutableHashTable; xx#0 = yy; xx#1 = xx; xx#2 = 14;
-yy#xx = {4,["5",[6]]}; yy#4 = xx; yy#yy = hashTable{symbol aa=>4,b=>44};
+aa = "1234"; x = new MutableList; y = new MutableHashTable; x#0 = y; x#1 = x; x#2 = 14;
+y#x = {4,["5",[6]]}; y#4 = x; y#y = hashTable{symbol aa=>4,b=>44};
 aa
-peek xx
-peek yy
+peek x
+peek y
 loadPackage "Serialization"
-"/tmp/yy" << serialize userSymbols() << close;
+toSequence userSymbols() | symbol a .. symbol z
+serialize oo
+"/tmp/y" << oo << close;
 restart
-value get "/tmp/yy";
+value get "/tmp/y";
 aa
-peek xx
-peek yy
-
+peek x
+peek y
+get "/tmp/y"
