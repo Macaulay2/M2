@@ -1042,10 +1042,8 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
-# we are using mpir
-# on all systems, if ntl is there, and sharable, then it depends on gmp instead of mpir
-# so, let's build ntl always
-BUILD_ntl=yes
+# We are using mpir.  If ntl is present, and sharable, then it depends
+# explicitly on gmp instead of mpir, which can cause a conflict.
 
 if test $BUILD_ntl = no
 then AC_LANG(C++)
@@ -1123,7 +1121,7 @@ do AC_LANG(C++)
    AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
-   AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
+   AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
    dnl if -lntl is needed, it's been added to $LIBS above
    AC_LINK_IFELSE( [[ #undef NOSTREAMIO
 	              #include <factory.h>
