@@ -1,4 +1,4 @@
---*- coding: utf-8 -*-
+--*- coding: utf-8 -*- 
 needsPackage "Polyhedra"
 
 -- Check version compatability of Polyhedra
