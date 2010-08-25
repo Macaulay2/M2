@@ -33,7 +33,7 @@ COMPILEFLAGS  =					\
 	CFLAGS="$(CFLAGS)"			\
 	FFLAGS="$(FCFLAGS)"			\
 	FCFLAGS="$(FCFLAGS)"
-CONFIGENV     = env				\
+ALLFLAGS = \
 	$(COMPILEFLAGS)				\
 	CPPFLAGS="$(CPPFLAGS)"			\
 	CC="$(CC)"				\
@@ -41,6 +41,7 @@ CONFIGENV     = env				\
 	LDFLAGS="$(LDFLAGS)"			\
 	LOADLIBES="$(LOADLIBES)"		\
 	LDLIBS="$(LDLIBS)"
+CONFIGENV     = env $(ALLFLAGS)
 CONFIGURESCRIPT ?= configure
 CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
@@ -65,6 +66,8 @@ show-flags:; $(CONFIGENV) :
 install: .installed-$(VERSION) config-chk
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure: unconfigure configure
+uncompile:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+recompile: uncompile compile
 uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
