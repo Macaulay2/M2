@@ -123,7 +123,7 @@ end
 reload
 restart
 aa = "1234"; x = new MutableList; y = new MutableHashTable; x#0 = y; x#1 = x; x#2 = 14;
-y#x = {4,["5",[6]]}; y#4 = x; y#y = hashTable{symbol aa=>4,b=>44};
+y#x = {44!,["5",[6]]}; y#4 = x; y#y = hashTable{symbol aa=>4,b=>44!};
 aa
 peek x
 peek y
