@@ -19,64 +19,96 @@ debug Core
 dictionaryPath = delete(Core#"private dictionary",dictionaryPath)
 
 serialize = x -> (
-     h := new MutableHashTable;				    -- expressions for atoms
-     k := new MutableHashTable;				    -- serial numbers for composite mutable objects, to be remade in parallel
-     m := new MutableHashTable; 			    -- serial numbers for composite immutable objects, to be remade in serial
+     k := new MutableHashTable;				    -- serial numbers of objects
+     k':= new MutableHashTable;				    -- inverse function of k
+     code1 := new MutableHashTable;			    -- initialization code for everything, by index
+     code2 := new MutableHashTable;			    -- finalization code for mutable objects, by index
+     newk := f -> x -> (
+	  if k#?x then return k#x;
+	  i := #k;
+	  k #x = i;
+	  k'#i = x;
+	  f(x,i);
+	  i);
      p := method(Dispatch => Thing);
-     p Thing := x -> (					    -- remember to remove these methods later, to prevent a memory leak
-	  if h#?x then return;
-	  if mutable x then (
-	       if hash x < waterMark then (
-	  	    if hasAttribute'(x,ReverseDictionary')
-	  	    then h#x = toString getAttribute'(x,ReverseDictionary')
-	  	    else error "serialize: encountered an older mutable object not assigned to a global variable";
-	  	    )
-	       else (
-		    error "serialize: encountered a recent mutable object with no known serialization method";
+     -- remember to remove these methods later, to prevent a memory leak:
+     p Thing := newk ( (x,i) -> (
+	       if mutable x then (
+		    if hash x < waterMark then (
+			 if hasAttribute'(x,ReverseDictionary')
+			 then (
+			      code1#i = toString getAttribute'(x,ReverseDictionary');
+			      )
+			 else error "serialize: encountered an older mutable object not assigned to a global variable";
+			 )
+		    else (
+			 error "serialize: encountered a recent mutable object with no known serialization method";
+			 )
 		    )
-	       )
-	  else (
-	       h#x = toExternalString x;
-	       )
-	  );
-     p Function := x -> (
-	  if h#?x then return;
-	  if hash x < waterMark then (
-	       if hasAttribute'(x,ReverseDictionary')
-	       then h#x = toString getAttribute'(x,ReverseDictionary')
-	       else error "serialize: encountered an older function not assigned to a global variable";
-	       )
-	  else (
-	       error "serialize: encountered a recent function; functions cannot be serialized yet";
-	       )
-	  );
-     p BasicList := x -> (
-	  if m#?x then return;
-	  m#x = #m;
-	  scan(x,p);
-	  );
-     p HashTable := x -> (
-	  if m#?x then return;
-	  m#x = #m;
-	  scanPairs(x,(k,v) -> (p k; p v));
-	  );
-     p MutableList := x -> (
-	  if k#?x then return;
-	  k#x = #k;
-	  scan(x,p);
-	  );
-     p MutableHashTable := x -> (
-	  if k#?x then return;
-	  k#x = #k;
-	  scan(pairs x,(k,v) -> (p k; p v));
-	  );
+	       else (
+		    code1#i = toExternalString x;
+		    )));
+     p Function := newk ( (x,i) -> (
+	       if hash x < waterMark then (
+		    if hasAttribute'(x,ReverseDictionary')
+		    then (
+			 code1#i = toString getAttribute'(x,ReverseDictionary');
+			 )
+		    else error "serialize: encountered an older function not assigned to a global variable";
+		    )
+	       else (
+		    error "serialize: encountered a recent function; functions cannot be serialized yet";
+		    )
+	       ));
+     p BasicList := newk ( (x,i) -> (
+	       p class x;
+	       scan(x,p);
+	       ));
+     p HashTable := newk ( (x,i) -> (
+	       p class x;
+	       p parent x;
+	       scanPairs(x,(k,v) -> (p k; p v));
+	       ));
+     p MutableList := newk ( (x,i) -> (
+	       if mutable x and hash x < waterMark and hasAttribute'(x,ReverseDictionary') then (
+		    code1#i = toString getAttribute'(x,ReverseDictionary');
+		    )
+	       else (
+		    p class x;
+		    scan(x,p);
+		    )));
+     p MutableHashTable := newk ( (x,i) -> (
+	       if mutable x and hash x < waterMark and hasAttribute'(x,ReverseDictionary') then (
+		    code1#i = toString getAttribute'(x,ReverseDictionary');
+		    )
+	       else (
+		    p class x;
+		    p parent x;
+		    scan(pairs x,(k,v) -> (p k; p v));
+		    )));
+     p GlobalDictionary := newk ( (x,i) -> (
+	       if hash x < waterMark and hasAttribute'(x,ReverseDictionary') then (
+		    code1#i = toString getAttribute'(x,ReverseDictionary');
+		    )
+	       else (
+		    scan(pairs x,(k,v) -> (p k; p v));
+		    )));
      p x;
      assert Thing#?p; remove(Thing,p);
-     ( newClass(HashTable,h), newClass(HashTable,k), newClass(HashTable,m) )
+     k = newClass(HashTable,k);
+     k' = newClass(HashTable,k');
+     code1 = newClass(HashTable,code1);
+     code2 = newClass(HashTable,code2);
+     netList {
+	  {"objects by index  (k)",k},
+	  {"indices by object (k')",k'},
+	  {"code by index (code1)",code1},
+	  {"code by index (code2)",code2}
+	  }
      )
 
 end
 loadPackage "Serialization"
 reload
-x = new MutableList; y = new MutableHashTable; x#0 = y; y#x = {4,5,6}; y#4 = x; y#y = y;
+x = new MutableList; y = new MutableHashTable; x#0 = y; y#x = {4,[5,[6]]}; y#4 = x; y#y = y;
 serialize y
