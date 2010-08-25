@@ -18,13 +18,20 @@ $(foreach d,@LIBLIST@ @PROGLIST@,				\
 		$(eval .PHONY: $t $t-in-$d)))
 
 uninstall:; rm -rf */.installed* final
-all:install-programs
+all:install-programs install-licenses
 install-programs:
 	: installing programs in @pre_programsdir@
-	if [ -d final/bin ] ; \
+	if [ -d final/bin/. ] ; \
 	then rm -rf @pre_programsdir@ ; \
 	     @INSTALL@ -d @pre_programsdir@ ; \
-	     @TAR@ cf - -C final/bin . | @TAR@ xf - -C @pre_programsdir@ ; \
+	     @TAR@ cf - -C final/bin/. . | @TAR@ xfv - -C @pre_programsdir@ ; \
+	fi
+install-licenses:
+	: installing program licenses in @pre_licensesdir@
+	if [ -d final/licenses/. ] ; \
+	then rm -rf @pre_licensesdir@ ; \
+	     @INSTALL@ -d @pre_licensesdir@ ; \
+	     @TAR@ cf - -C final/licenses/. . | @TAR@ xfv - -C @pre_licensesdir@ ; \
 	fi
 
 ifeq (@SHARED@,yes)
