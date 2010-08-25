@@ -36,13 +36,18 @@ loadPackage = method(
 	  FileName => null,
 	  DebuggingMode => null,
 	  LoadDocumentation => false,
-	  Configuration => {}
+	  Configuration => {},
+	  Reload => null
 	  } )
 packageLoadingOptions := new MutableHashTable
 checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",format title)
 
 loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;
+     if opts.Reload === true then (
+	  dismiss pkgtitle;
+	  PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
+	  );
      filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
@@ -130,7 +135,7 @@ newPackage(String) := opts -> (title) -> (
      scan({(Headline,String),(HomePage,String),(Date,String)},
 	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      originalTitle := title;
-     if PackageDictionary#?title then (
+     if PackageDictionary#?title and instance(PackageDictionary#title,Package) then (
 	  if opts.Reload === null then warningMessage("package ", title, " being reloaded")
 	  else if opts.Reload === false then error("package ", title, " being reloaded")
 	  );
