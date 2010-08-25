@@ -114,7 +114,7 @@ serialize = x -> (
      scanKeys(k,q);
      code2 = newClass(HashTable,code2);
      assert Thing#?p; remove(Thing,p);
-     print netList {
+     if debugLevel == 101 then print netList {
 	  {"objects by index  (k)",k},
 	  {"indices by object (k')",k'},
 	  {"code by index (code1)",code1},
@@ -123,11 +123,18 @@ serialize = x -> (
      concatenate between_"\n" flatten {"o:=new MutableHashTable", values code1, last \ sort pairs code2,p x})
 
 end
-loadPackage "Serialization"
 reload
-aa = "1234"; x = new MutableList; y = new MutableHashTable; x#0 = y; x#1 = x; x#2 = 14; y#x = {4,["5",[6]]}; y#4 = x; y#y = hashTable{symbol aa=>4,b=>44};
-peek y
-serialize y
-value oo
-peek oo
+restart
+aa = "1234"; xx = new MutableList; yy = new MutableHashTable; xx#0 = yy; xx#1 = xx; xx#2 = 14;
+yy#xx = {4,["5",[6]]}; yy#4 = xx; yy#yy = hashTable{symbol aa=>4,b=>44};
+aa
+peek xx
+peek yy
+loadPackage "Serialization"
+"/tmp/yy" << serialize userSymbols() << close;
+restart
+value get "/tmp/yy";
+aa
+peek xx
+peek yy
 
