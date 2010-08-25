@@ -307,8 +307,8 @@ doc := new HashTable from {
      "packagelib" => "architecture dependent files for the Macaulay2 package PKG",
      "packages" => "source files for Macaulay2 packages; this directory appears on the path",
      "packagetests" => "test files for the Macaulay2 package PKG",
-     "programs" => "programs to be run by Macaulay2"
-     
+     "programs" => "programs to be run by Macaulay2",
+     "program licenses" => "licenses for programs to be run by Macaulay2"
      }
 assert( set keys Layout#1 === set keys Layout#2 )
 assert( set keys Layout#1 === set keys doc )
