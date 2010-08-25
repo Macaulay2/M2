@@ -1,0 +1,21 @@
+# replace FOO by the name of the library or package
+# install this file as FOO/Makefile.in
+# add libraries/FOO/Makefile to ../config/files
+# run make -C ../..
+# reconfigure in the build directory
+HOMEPAGE = 
+URL = 
+VERSION = 
+TARFILE = 
+# TARDIR = 
+PROGRAMS = 
+LICENSEFILES = 
+# CONFIGURECMD = 
+# BUILDOPTIONS = 
+# INSTALLCMD = 
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/FOO/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/FOO "
+# End:
