@@ -82,24 +82,31 @@ serialize = x -> (
 	       then s("newClass(", p class x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
 	       else s("hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"}" )));
      p MutableList := pp (x -> (
-	       if mutable x and hash x < waterMark' and hasAttribute'(x,ReverseDictionary') 
-	       then toString getAttribute'(x,ReverseDictionary')
+	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else ( scan(x,p); "newClass(" | p class x | ",{})")));
-     q MutableList := qq (x -> concatenate between_"\n" for i from 1 to #x list ( j := #x-i; px := p x ; px | "#" | toString j | "=" | p x#j ));
+     q MutableList := qq (x -> (
+	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then return;
+	       concatenate between_"\n" for i from 1 to #x list ( j := #x-i; px := p x ; px | "#" | toString j | "=" | p x#j )));
      p MutableHashTable := pp (x -> (
-	       if mutable x and hash x < waterMark' and hasAttribute'(x,ReverseDictionary') 
-	       then toString getAttribute'(x,ReverseDictionary')
+	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else (
 		    scan(pairs x,(k,v) -> (p k; p v));
 		    if parent x =!= Nothing
 		    then "newClass(" | p class x | "," | p parent x | ",hashTable{})"
 		    else "newClass(" | p class x | ",hashTable{})")));
+     q MutableHashTable := qq (x -> (
+	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then return;
+	       concatenate between_"\n" apply(pairs x,(k,v) -> (p x, "#(", p k, ")=", p v))
+	       ));
      p GlobalDictionary := pp (x -> (
-	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary')
-	       then toString getAttribute'(x,ReverseDictionary')
+	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else (
-		    scan(pairs x,(k,v) -> (p k; p v));
+		    scan(pairs x,(k,v) -> (p k; p v; p value v));
 		    "new Dictionary")));
+     q GlobalDictionary := qq (x -> (
+	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then return;
+	       concatenate between_"\n" apply(pairs x,(nam,sym) -> (p x, "#", format nam, "=", p sym))
+	       ));
      p x;
      k = newClass(HashTable,k);
      k' = newClass(HashTable,k');
@@ -118,5 +125,5 @@ serialize = x -> (
 end
 loadPackage "Serialization"
 reload
-aa = 1234; x = new MutableList; y = new MutableHashTable; x#0 = y; x#1 = x; x#2 = 14; y#x = {4,[5,[6]]}; y#4 = x; y#y = hashTable{symbol aa=>4,b=>44};
+aa = "1234"; x = new MutableList; y = new MutableHashTable; x#0 = y; x#1 = x; x#2 = 14; y#x = {4,["5",[6]]}; y#4 = x; y#y = hashTable{symbol aa=>4,b=>44};
 serialize y
