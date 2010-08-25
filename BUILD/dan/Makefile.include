@@ -37,7 +37,7 @@ install-info:
 	for i in builds.tmp/*/libraries/final/info/* builds.tmp/*/libraries/final/share/info/* ; do cp $$i ~/local/share/info ; done
 	cd ~/local/share/info ; for i in *.info ; do install-info --infodir=. $$i ; done
 pre-install post-install:
-rebuild-world: arch-chk distclean configure everything install check
+rebuild-world: arch-chk update distclean configure all install check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
 ../../configure :; $(MAKE) -C ../..
