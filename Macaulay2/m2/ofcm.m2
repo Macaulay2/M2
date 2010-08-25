@@ -63,6 +63,12 @@ net GeneralOrderedMonoid := M -> (
      net expression M)
 describe GeneralOrderedMonoid := M -> net expression M
 
+degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
+degreesMonoid PolynomialRing := R -> (
+     if R.?degreesMonoid then R.degreesMonoid
+     else error "no degreesMonoid for this ring")
+degreesMonoid Ring := R -> error "no degreesMonoid for this ring"
+
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
 
