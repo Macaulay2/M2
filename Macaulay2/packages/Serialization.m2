@@ -41,7 +41,10 @@ serialize = x -> (
 		    stderr << "-- pp " << X << " ( " << f << " , " << x << ")" << endl;
 		    );
 	       if k#?x then return "s" | toString k#x;
-	       if h#?x then return "(error \"internal error\")";
+	       if h#?x then return concatenate(
+		    "(error \"internal error: object ",
+		    try toString x else ("of type ",try toString class x else ""),
+		    " not created yet\")");
 	       h#x = true;
 	       t := f x;
 	       assert( t =!= "" );
@@ -57,9 +60,15 @@ serialize = x -> (
 		    );
 	       if instance(t,String) then (
 		    if debugLevel > 0 then try t = t | " -- " | toString x;
+		    if debugLevel > 0 then (
+			 stderr << "-- pp " << X << " ( " << f << " , " << x << ") code1#" << i << " " << t << endl;
+			 );
 		    code1#i = r | ":=" | t;
 		    );
 	       if hash x > waterMark' and hasAttribute'(x,ReverseDictionary') then p getAttribute'(x,ReverseDictionary');
+	       if debugLevel > 0 then (
+		    stderr << "-- pp " << X << " ( " << f << " , " << x << ") returning " << r << endl;
+		    );
 	       r));
      qq := (X,f) -> (
 	  q X := x -> (     -- remember to remove these methods later, to prevent a memory leak:
@@ -88,8 +97,8 @@ serialize = x -> (
 	       else error "serialize: encountered a function not assigned to a global variable"));
      pp(Symbol, x -> (
 	       if value x =!= x and (hash x > waterMark' or serializable#?x) then p value x;
-	       "global " | toString x));
-     qq(Symbol, x -> if value x =!= x and (hash x > waterMark' or serializable#?x) then p x | "<-" | p value x);
+	       ));
+     qq(Symbol, x -> if value x =!= x and (hash x > waterMark' or serializable#?x) then toString x | "=" | p value x);
      pp(BasicList, x -> (
 	       if class x === List
 	       then concatenate("{",between_"," apply(toList x,p),"}")
@@ -134,10 +143,7 @@ serialize = x -> (
      pp(Monoid, x -> toExternalString x);
      pp(PolynomialRing, x -> p coefficientRing x | " " | p monoid x);
      pp(QuotientRing, x -> p ambient x | "/" | p ideal x);
-     pp(Ring, x -> (
-	       if x#?generatorSymbols'
-	       then (toExternalString x, () -> scan(x#generatorSymbols',p))
-	       else toExternalString x));
+     pp(Ring, x -> toExternalString x);
      pp(Ideal, x -> (p ring x; toExternalString x));
      pp(Module, x -> (p ring x; toExternalString x));
      pp(RingElement, x -> (p ring x; toExternalString x));
@@ -165,18 +171,11 @@ serialize = x -> (
 end
 reload
 restart
-aa = "1234"; X = new Type of MutableList; x = new X; y = new MutableHashTable; x#0 = y; x#1 = x; x#2 = 14;
-y#x = {44444,["5",[6]]}; y#4 = x; y#y = hashTable{symbol aa=>4,b=>44444};
-aa
-peek x
-peek y
 loadPackage "Serialization"
+R = QQ[x,y]
 userSymbols()
 serialize oo
 "/tmp/y" << oo << close;
 restart
 value get "/tmp/y"
-aa
-peek x
-peek y
-X
+
