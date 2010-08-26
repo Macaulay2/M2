@@ -59,7 +59,7 @@ serialize = x -> (
 		    f();
 		    );
 	       if instance(t,String) then (
-		    if debugLevel > 0 then try t = t | " -- " | toString x;
+		    try t = t | " -- " | toString class x | " : " | toString x;
 		    if debugLevel > 0 then (
 			 stderr << "-- pp " << X << " ( " << f << " , " << x << ") code1#" << i << " " << t << endl;
 			 );
@@ -144,10 +144,40 @@ serialize = x -> (
      pp(PolynomialRing, x -> p coefficientRing x | " " | p monoid x);
      pp(QuotientRing, x -> p ambient x | "/" | p ideal x);
      pp(Ring, x -> toExternalString x);
-     pp(Ideal, x -> (p ring x; toExternalString x));
-     pp(Module, x -> (p ring x; toExternalString x));
-     pp(RingElement, x -> (p ring x; toExternalString x));
-     pp(Matrix, x -> concatenate("map(", p target x, ",", p source x, ",", toString entries x, ")"));
+     pp(Ideal, x -> (p ring x; concatenate("ideal(",between_"," apply(x_*,p), ")")));
+     pp(Module, x -> (
+		if x.?relations then 
+		if x.?generators
+		then "subquotient(" | p x.generators | "," | p x.relations | ")"
+		else "cokernel " | p x.relations
+		else if x.?generators
+		then "image " | p x.generators
+		else if all(degrees x, deg -> all(deg, zero)) 
+		then p ring x | "^" | numgens x
+		else p ring x | "^" | toString runLengthEncode (- degrees x)));
+     pp(RingElement, x -> (
+	       R := p ring x;
+	       if x == 0
+	       then "0_"|R
+	       else if x == 1
+	       then "1_"|R
+	       else if size x === 1 then concatenate between_"+" apply(listForm x,
+		    (exps,coef) -> (
+			 if coef == 1
+			 then (R,"_",toString exps)
+			 else (p coef,"*",R,"_",toString exps)))
+	       else (
+		    (monoms,coeffs) := coefficients x;
+		    coeffs = flatten entries lift(coeffs,coefficientRing ring x);
+		    monoms = flatten entries monoms;
+		    concatenate between_"+" apply(coeffs,monoms,(c,m) -> p c | "*" | p m))));
+     pp(Matrix, x -> concatenate(
+	       "map(",
+	       p target x, ",",
+	       p source x, ",", 
+	       "{",
+	       between_"," apply(entries x, row -> ("{", between_"," apply(row, p), "}")),
+	       "})"));
      p x;
      k = newClass(HashTable,k);
      k' = newClass(HashTable,k');
@@ -172,9 +202,11 @@ end
 reload
 restart
 loadPackage "Serialization"
-R = QQ[x,y]
-userSymbols()
-serialize oo
+M = monoid [x,y]
+R = QQ M
+S = R / (x^5+y^6, x^11)
+f = gens ideal S
+serialize userSymbols()
 "/tmp/y" << oo << close;
 restart
 value get "/tmp/y"
