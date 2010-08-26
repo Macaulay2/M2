@@ -566,6 +566,8 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   PHCpack
   SimplicialDecomposability
   BooleanGB
+  AdjointIdeal
+  Parametrization
 ")
 # pending packages: SRdeformations
 
