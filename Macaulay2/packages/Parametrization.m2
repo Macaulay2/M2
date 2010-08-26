@@ -3,8 +3,8 @@ needsPackage "AdjointIdeal"
 -- -*- coding: utf-8 -*-
 newPackage(
 	"Parametrization",
-    	Version => "0.5", 
-    	Date => "June 15, 2010",
+    	Version => "0.6", 
+    	Date => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
@@ -24,122 +24,9 @@ export {"parametrize","mapToRNC","isomorphicProjectionOfRNC","rParametrizeRNC","
 needsPackage "MapleInterface"
 needsPackage "AdjointIdeal"
 
--- parametrization of rational curves
--- use 
--- key functions:
-
--- rParametrizePlaneCurve(Ideal,Matrix)
---
--- parametrize plane rational curve C
--- 1st argument: ideal of C
--- 2nd argument: row matrix over ring C with the adjoint linear system
--- Output: Parametrization of C in a 3x1 row matrix
---         with entries in the homogeneous coordinate ring of PP^1 or a conic
---         depending on the degree of C
---         (to get the conic apply "ideal ring" to the parametrization)
-
--- rParametrizePlaneCurve(Ideal,Matrix,Boolean)
---
--- parametrize plane rational curve C
--- 1st argument: ideal of C
--- 2nd argument: row matrix over ring C with the adjoint linear system
--- 3rd argument: if false returns rParametrizePlaneCurve(Ideal,Matrix)
---               if true returns:
--- Output: Parametrization of C in a 3x1 row matrix
---         with entries in the homogeneous coordinate ring of PP^1 or
---         of a conic if C does not have a rational point
---         (so to get the conic apply "ideal ring" to the parametrization)
-
-
--- testParametrization(Ideal,Matrix)
--- test parametrization of curve C
--- 1st argument: Ideal of C
--- 2nd argument: Parametrization of C given as column matrix
--- Output: true/false
-
-
--- mapToRNC(Ideal,Ideal)
---
--- computes the rational normal curve associated to the rational plane curve C
--- via adjoint linear system of C degree degree(C)-2
--- 1st argument: ideal of C
--- 2nd argument: adjoint ideal
-
-
--- isomorphicProjectionOfRNC(Ideal)
---
--- parametrizing linear system of a rational normal curve
--- over PP^1 or a conic
--- 1st argument: Ideal of a rational normal curve
--- Output: row matrix with the linear system
-
--- rParametrizeRNC(Ideal)
---
--- parametrize rational normal curve C
--- 1st argument: Ideal of C
--- Output: List of
--- birational map to C from PP^1 or from conic given as a column matrix
--- 0-ideal or ideal of conic 
 
 
 
--- modularSquareRoot(ZZ,ZZ)
--- 1st argument integer a
--- 2nd argument squarefree p
--- computes a modular square root of a mod p
--- if not exist returns false
---
-
-
--- igcdx(ZZ,ZZ)
--- 1st argument integer a
--- 2nd argument integer b
---
--- Extended Euclidean algorithm
--- computes x,y with x*a+y*b=gcd(a,b)
-
-
--- chineseRemainder(List,List)
--- 1st argument list of integers L
--- 2nd argument list M of relatively prime integers
---
--- chinese remainder theorem
--- solves x=L#i mod M#i
--- for x 
---
-
--- modularPower(ZZ,ZZ,ZZ)
--- compute the modular power a^b mod p
--- 1st argument a an integer
--- 2st argument b a positive integer
--- 3rd argument p a prime
-
-
--- modularQuotient(QQ,ZZ)
--- 1st argument q a rational number
--- 2st argument p an integer
--- compute the modular quotient q mod p
--- (false if not exists)
-
-
--- legendreSymbol(ZZ,ZZ)
--- compute the legendreSymbol
--- 1st argument a an integer
--- 2nd argument p an odd prime
-
-
--- rationalPointOnConic(Ideal)
---
--- deciding whether a conic has a rational point and if so computing one
--- Argument: ideal of an irreducible conic defined over QQ
--- Output: row matrix with a rational point on the conic
---         or 0 if there is none
-
-
--- rParametrizeConic(Ideal)
---
--- computes a rational parametrization of a conic
--- if the conic has a rational point or 0 otherwise
 
 
 -------------------------------------------------------------
@@ -151,10 +38,6 @@ needsPackage "AdjointIdeal"
 -- 2nd argument: adjoint ideal of C
 --
 mapToRNC=method()
-
-mapToRNC(Ideal):=(I0)->(
-J:=adjointIdeal I0;
-mapToRNC(I0,J));
 
 mapToRNC(Ideal,Ideal):=(I0,J)->(
 Rx:=ring I0;
@@ -173,6 +56,11 @@ Rrnc:=K[x_0..x_m];
 phi:=map(KR,Rrnc,linsysC);
 ideal mingens ker phi)
 
+mapToRNC(Ideal):=(I0)->(
+J:=adjointIdeal I0;
+mapToRNC(I0,J));
+
+
 mapToRNC(Ideal,Matrix):=(I0,linsys)->(
 Rx:=ring I0;
 m:=-1+rank source linsys;
@@ -186,7 +74,7 @@ ideal mingens ker phi)
 
 
 -- computes from a rational normal curve in PP^n; n>=3
--- an isomorphisms
+-- an isomorphism
 --
 --          f
 -- PP^n < C -> C' < PP^(n-2)
@@ -1203,7 +1091,7 @@ if (rank source vars ring I)==3 then (
    adj:=adjointIdeal I;
    return(parametrize(I,adj,opts));
 );
-"not yet implemented---")
+"not yet implemented")
 
 parametrize0=method()
 parametrize0(Ideal):=(I)->(
@@ -1218,7 +1106,7 @@ if (rank source vars ring I)==3 then (
    adj:=adjointIdeal I;
    return(parametrize(I,adj));
 );
-"not yet implemented____")
+"not yet implemented")
 
 ---------------------------------------------------------------------------------------------
 
@@ -1245,20 +1133,22 @@ doc ///
    Text
     {\bf Overview:}
 
-    Parametrization is a package to compute rational parametrizations of rational curves defined over QQ.
+    {\it Parametrization} is a package to compute rational parametrizations of rational curves defined over \mathbb{Q}.
 
-    We use the package {\it AdjointIdeal} to compute the adjoint ideal of a rational plane curve C of degree n defined over QQ.
-    The package exports also all functions available in {\it AdjointIdeal}, e.g., geometricGenus.
+    Suppose C is a rational plane curve C of degree n defined over \mathbb{Q}.
+
+    We use the package {\it AdjointIdeal} to compute the adjoint ideal of C.
+    (The package exports also all functions available in {\it AdjointIdeal}, e.g., geometricGenus.)
     
-    The corresponding linear system maps the curve birationally to a rational normal curve in PP^{n-2}.
+    The corresponding linear system maps the curve birationally to a rational normal curve in \mathbb{P}^{n-2}.
 
-    Iterating the anticanonical map we give an isomorphism of the rational normal curve to PP^1 for n odd
-    or a conic C2 in PP^2 for n even.
+    Iterating the anticanonical map we give a projection of the rational normal curve to \mathbb{P}^{1} for n odd
+    or to a conic C_2 in \mathbb{P}^{2} for n even.
 
-    In the n even case we test for existence of a rational point on the conic and if so give a rational parametrization of the conic.
+    In the case that n is even we test for the existence of a rational point on the conic and if so give a rational parametrization of the conic.
 
-    By inverting the birational map of C to PP^1 or the conic, we obtain a rational parametrization of C,
-    if n is odd or C2 has a rational point over PP^1 otherwise over C2.
+    By inverting the birational map of C to \mathbb{P}^{1} or the conic we obtain a rational parametrization of C.
+    If n is odd or C_2 has a rational point C is parametrized by \mathbb{P}^{1} otherwise by C_2.
 
     The package is work in progress, so there will be future improvements and more testing is necessary.
 
@@ -1272,9 +1162,9 @@ doc ///
     @TO parametrize@  --  This is the universal rational parametrization function, it works for plane rational curves, 
                      in particular conics, and rational normal curves.
 
-    @TO testParametrization@  --  Test a parametrization
+    @TO testParametrization@  --  Test a parametrization.
 
-    @TO rationalPointOnConic@  -- Test for a rational point on a conic and find it if it exists 
+    @TO rationalPointOnConic@  -- Test for a rational point on a conic and find it if it exists.
 
     @TO mapToRNC@  --  Map a plane rational curve to a rational normal curve.
 
@@ -1283,7 +1173,7 @@ doc ///
 
     This package uses the package {\it AdjointIdeal}, so install this first.
 
-    Place the file Parametrization.m2 somewhere into the M2 seach path and install the package by doing
+    Place the file Parametrization.m2 somewhere into the M2 search path and install the package by doing
 
     installPackage("Parametrization")
 ///
@@ -1301,9 +1191,9 @@ doc ///
     parametrize(I,J)
   Inputs
     I:Ideal
-        defining a rational C
+        defining a rational plane curve C or rational normal curve
     J:Ideal 
-        the adjoint ideal of C.
+        the adjoint ideal of the plane curve C.
   Outputs
     pI:Matrix
         a column matrix with the rational parametrization of C.
@@ -1311,20 +1201,17 @@ doc ///
    Text
         Computes a rational parametrization pI of C.  
 
-        If the degree of C odd, pI is over PP^1.
+        If the degree of C odd, pI is over \mathbb{P}^{1}.
 
-        If the degree of C even, pI is over a conic. So to get the conic apply "ideal ring" to the parametrization pI.
+        If the degree of C even, pI is over a conic. So to get the conic apply @TO ideal@ @TO ring@ to the parametrization pI.
         If the @TO Option@ parametizeConic=>true is given and C has a rational point then the conic is parametrized
-        so pI is over PP^1.
+        hence pI is over \mathbb{P}^{1}.
 
         If the second argument J is not specified and degree of C is bigger than 2 then J is being computed via the package AdjointIdeal.
-        In this case we (i.e., the package AdjointIdeal) assume that I has the following properties:
 
-        Denote the variables of R=ring(I) by v,u,z. 
-        All singularities of C have to lie in the chart z!=0 and the curve should not contain (1:0:0).
+        If the function is applied to a rational normal curve it calls @TO rParametrizeRNC@.
 
-        These conditions can always be met by a suitable change of coordinates.
-        At some point the function will take care of the change of coordinate on its own.
+        If it is applied to a plane conic it calls @TO rParametrizeConic@.
 
    Example
      K=QQ;
@@ -1373,8 +1260,6 @@ doc ///
      parametrize(I,J)
      Irnc=mapToRNC(I,J);
      parametrize(Irnc)
-  Caveat
-     So far only implemented for plane curves and rational normal curves.
   SeeAlso
      rParametrizePlaneCurve
      rParametrizeRNC
@@ -1548,10 +1433,10 @@ doc ///
     I:Ideal
        defining a rational curve C
     phi:Matrix
-       with a parametization of C, defined over PP^1 or in the coordinate ring of a conic.
+       with a parametrization of C, defined over \mathbb{P}^{1} or in the coordinate ring of a conic.
   Outputs
     :Boolean
-       true if phi is a parametization or false if not.
+       true if phi is a parametrization or false if not.
   Description
    Text
      Test whether phi is a parametrization of C.
@@ -1611,7 +1496,7 @@ doc ///
         the ideal of an irreducible conic.
   Outputs
     :Matrix
-        a row matrix over QQ with homogeneous integer coordinates of a rational point on 
+        a row matrix over \mathbb{Q} with homogeneous integer coordinates of a rational point on 
         the conic or 0-matrix if there is none.
   Description
    Text
@@ -1654,7 +1539,7 @@ doc ///
         over the ring if I containing the linear system.
   Description
    Text
-     Compute the parametrizing linear system of a rational normal curve over PP^1 if the degree is odd or a conic if the degree even.
+     Compute the parametrizing linear system of a rational normal curve over \mathbb{P}^{1} if the degree is odd or a conic if the degree even.
 
    Example
      K=QQ;
@@ -1716,7 +1601,7 @@ doc ///
         Compute a rational parametrization of a rational normal curve C defined by I. 
         
         phi contains the rational parametrization of C
-        over PP^1 if the degree of C is odd or over a conic if the degree of C is even.
+        over \mathbb{P}^{1} if the degree of C is odd or over a conic if the degree of C is even.
         
         Ic is the 0-ideal for odd degree or the ideal of the conic for even degree.
 
@@ -1783,8 +1668,8 @@ doc ///
   Description
    Text
        If this option is set true, the computation of @TO rParametrizePlaneCurve@ or @TO parametrize@
-       leads to a conic (even degree case) and this conic has a rational point then this conic is also parametrized.
-       So the final result will be a parametrization over PP^1.
+       leads to a conic (even degree case) and if this conic has a rational point then this conic is also parametrized.
+       So the final result will be a parametrization over \mathbb{P}^{1}.
         
    Example
      K=QQ;
@@ -1798,7 +1683,7 @@ doc ///
      rParametrizeConic
   Caveat
      If rParametrizeConic is changed such that it passes to a degree 2 field extension if the degree of C is even and the conic does not have a rational point,
-     then the result will have entries in the homogeneous coordinate ring of PP^1 over this extension.
+     then the result will have entries in the homogeneous coordinate ring of \mathbb{P}^{1} over this extension.
 ///
 
 doc ///
@@ -1843,14 +1728,14 @@ doc ///
 
         If the degree of C odd:
 
-        pI is over PP^1.
+        pI is over \mathbb{P}^{1}.
 
         If the degree of C even:
 
         pI is over a conic. So to get the conic apply "ideal ring" to the parametrization pI.
 
         If the @TO Option@ parametrizeConic=>true is given and C has a rational point then the conic is parametrized
-        so pI is over PP^1.
+        so pI is over \mathbb{P}^{1}.
 
    Example
      K=QQ;
@@ -1869,7 +1754,7 @@ doc ///
      rParametrizePlaneCurve(I,J)
   Caveat
      If rParametrizeConic is changed such that it passes to a degree 2 field extension if the degree of C is even and the conic does not have a rational point,
-     then pI will have entries in the homogeneous coordinate ring of PP^1 over this extension.
+     then pI will have entries in the homogeneous coordinate ring of \mathbb{P}^{1} over this extension.
   SeeAlso
      mapToRNC
      isomorphicProjectionOfRNC
@@ -1901,7 +1786,7 @@ K=QQ;
 R=K[y_0..y_2];
 I=ideal(y_0*y_2-y_1^2+y_2^2);
 par=rParametrizeConic(I);
-assert(testParametrization(par)==true);
+assert(testParametrization(I,par)==true);
 ///
 
 
@@ -1917,7 +1802,7 @@ TEST ///
 R=QQ[y_0..y_2];
 I=ideal(7*y_0^2+11*y_2^2+13*y_0*y_2+17*y_1^2+19*y_1*y_2);
 p=rationalPointOnConic I;
-assert(p==matrix {{1139, 497, -1190}});
+assert(sub(I,{y_0=>p_(0,0),y_1=>p_(0,1),y_2=>p_(0,2)})==0);
 ///
 
 
@@ -1937,10 +1822,14 @@ assert(testParametrization(I,pI)==true);
 ///
 
 TEST ///
-assert(modularSquareRoot(626,1180943)==348206);
-assert(modularSquareRoot(3,13)==4);
-assert(modularSquareRoot(7,14)==7);
-assert(modularSquareRoot(3,14)==-1);
+a=modularSquareRoot(626,1180943);
+assert(a==348206 or a==832737);
+a=modularSquareRoot(3,13);
+assert(a==4 or a==9);
+a=modularSquareRoot(7,14);
+assert(a==7);
+a=modularSquareRoot(3,14);
+assert(a==FAIL);
 ///
 
 TEST ///
