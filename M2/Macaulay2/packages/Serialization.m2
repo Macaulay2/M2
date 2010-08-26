@@ -10,6 +10,7 @@ export { "serialize", "reload" }
 reload = Command ( x -> loadPackage ("Serialization",Reload => true) )
 
 debug Core
+    generatorSymbols' = generatorSymbols
     waterMark' = waterMark
     waterMarkSymbol = symbol waterMark
     Attributes' = Attributes
@@ -32,34 +33,47 @@ serialize = x -> (
      code1 := new MutableHashTable;			    -- initialization code for everything, by index
      code2 := new MutableHashTable;			    -- finalization code for mutable objects, by index
      p := method(Dispatch => Thing);
-     pp := f -> x -> (
-	  if k#?x then return "s" | toString k#x;
-	  if h#?x then return "(error \"internal error\")";
-     	  h#x = true;
-	  t := f x;
-	  assert( t =!= "" );
-     	  remove(h,x);
-	  i := #k';
-	  k'#i = x;
-	  k#x = i;
-	  r := "s" | toString i;
-	  if instance(t,String) then (
-	       if debugLevel > 0 then try t = t | " -- " | toString x;
-	       code1#i = r | ":=" | t;
-	       );
-	  if hash x > waterMark' and hasAttribute'(x,ReverseDictionary') then p getAttribute'(x,ReverseDictionary');
-	  r);
      q := method(Dispatch => Thing);
-     qq := f -> x -> (
-	  t := f x;
- 	  if hash x > waterMark' and hasAttribute'(x,ReverseDictionary') then (
-	       u := "globalAssignFunction(" | p getAttribute'(x,ReverseDictionary') | "," | p x | ")";
-	       if t === null then t = u else t = t | "\n" | u;
-	       );
-	  if t =!= null then code2#(k#x) = t;
-	  );
-     -- remember to remove these methods later, to prevent a memory leak:
-     p Thing := pp (x -> (
+     pp := (X,f) -> (
+	  if not X#?q then q X := x -> null;
+	  p X := x -> (     -- remember to remove these methods later, to prevent a memory leak:
+	       if debugLevel > 0 then (
+		    stderr << "-- pp " << X << " ( " << f << " , " << x << ")" << endl;
+		    );
+	       if k#?x then return "s" | toString k#x;
+	       if h#?x then return "(error \"internal error\")";
+	       h#x = true;
+	       t := f x;
+	       assert( t =!= "" );
+	       remove(h,x);
+	       i := #k';
+	       k'#i = x;
+	       k#x = i;
+	       r := "s" | toString i;
+	       if instance(t,Sequence) then (
+		    local f;
+		    (t,f) = t;
+		    f();
+		    );
+	       if instance(t,String) then (
+		    if debugLevel > 0 then try t = t | " -- " | toString x;
+		    code1#i = r | ":=" | t;
+		    );
+	       if hash x > waterMark' and hasAttribute'(x,ReverseDictionary') then p getAttribute'(x,ReverseDictionary');
+	       r));
+     qq := (X,f) -> (
+	  q X := x -> (     -- remember to remove these methods later, to prevent a memory leak:
+	       if debugLevel > 0 then (
+		    stderr << "-- qq " << X << " ( " << f << " , " << x << ")" << endl;
+		    );
+	       t := f x;
+	       if hash x > waterMark' and hasAttribute'(x,ReverseDictionary') then (
+		    u := "globalAssignFunction(" | p getAttribute'(x,ReverseDictionary') | "," | p x | ")";
+		    if t === null then t = u else t = t | "\n" | u;
+		    );
+	       if t =!= null then code2#(k#x) = t;
+	       ));
+     pp(Thing, x -> (
 	       if mutable x then 
 	       if hash x < waterMark' then 
 	       if hasAttribute'(x,ReverseDictionary')
@@ -67,56 +81,67 @@ serialize = x -> (
 	       else error "serialize: encountered an older mutable object not assigned to a global variable"
 	       else error "serialize: encountered a recent mutable object with no known serialization method"
 	       else toExternalString x));
-     q Thing := qq(x -> null); 
-     p Function := pp (x -> (
-	       if hash x < waterMark' then
+     qq(Thing, x -> null); 
+     pp(Function, x -> (
 	       if hasAttribute'(x,ReverseDictionary')
 	       then toString getAttribute'(x,ReverseDictionary')
-	       else error "serialize: encountered an older function not assigned to a global variable"
-	       else error "serialize: encountered a recent function; functions cannot be serialized yet"
-	       ));
-     p Symbol := pp (x -> (
+	       else error "serialize: encountered a function not assigned to a global variable"));
+     pp(Symbol, x -> (
 	       if value x =!= x and (hash x > waterMark' or serializable#?x) then p value x;
 	       "global " | toString x));
-     q Symbol := qq (x -> if value x =!= x and (hash x > waterMark' or serializable#?x) then p x | "<-" | p value x);
-     p BasicList := pp(x -> (
+     qq(Symbol, x -> if value x =!= x and (hash x > waterMark' or serializable#?x) then p x | "<-" | p value x);
+     pp(BasicList, x -> (
 	       if class x === List
 	       then concatenate("{",between_"," apply(toList x,p),"}")
 	       else if class x === Array
 	       then concatenate("[",between_"," apply(toList x,p),"]")
 	       else concatenate("newClass(",p class x,",{",between_"," apply(toList x,p),"})")));
-     p HashTable := pp(x -> (
+     pp(Sequence, x -> (
+	       if #x === 1 then "1:" | p x#0
+	       else concatenate("(",between_"," apply(toList x,p),")")));
+     pp(HashTable, x -> (
 	       if parent x =!= Nothing
 	       then concatenate("newClass(", p class x,",", p parent x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
 	       else if class x =!= HashTable
 	       then concatenate("newClass(", p class x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
 	       else concatenate("hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"}" )));
-     p MutableList := pp (x -> (
+     pp(MutableList, x -> (
 	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else ( scan(x,p); "newClass(" | p class x | ",{})")));
-     q MutableList := qq (x -> (
+     qq(MutableList, x -> (
 	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then return;
 	       concatenate between_"\n" w for i from 1 to #x list ( j := #x-i; px := p x ; px | "#" | toString j | "=" | p x#j )));
-     p MutableHashTable := pp (x -> (
+     pp(MutableHashTable, x -> (
 	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else (
 		    scan(pairs x,(k,v) -> (p k; p v));
 		    if parent x =!= Nothing
 		    then "newClass(" | p class x | "," | p parent x | ",hashTable{})"
 		    else "newClass(" | p class x | ",hashTable{})")));
-     q MutableHashTable := qq (x -> (
+     qq(MutableHashTable, x -> (
 	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then return;
 	       concatenate between_"\n" w apply(pairs x,(k,v) -> (p x, "#", p k, "=", p v))
 	       ));
-     p GlobalDictionary := pp (x -> (
+     pp(GlobalDictionary, x -> (
 	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else (
 		    scan(pairs x,(k,v) -> (p k; p v; p value v));
 		    "new Dictionary")));
-     q GlobalDictionary := qq (x -> (
+     qq(GlobalDictionary, x -> (
 	       if hash x < waterMark' and hasAttribute'(x,ReverseDictionary') then return;
 	       concatenate between_"\n" w apply(pairs x,(nam,sym) -> (p x, "#", format nam, "=", p sym))
 	       ));
+     pp(Monoid, x -> toExternalString x);
+     pp(PolynomialRing, x -> p coefficientRing x | " " | p monoid x);
+     pp(QuotientRing, x -> p ambient x | "/" | p ideal x);
+     pp(Ring, x -> (
+	       if x#?generatorSymbols'
+	       then (toExternalString x, () -> scan(x#generatorSymbols',p))
+	       else toExternalString x));
+     pp(Ideal, x -> (p ring x; toExternalString x));
+     pp(Module, x -> (p ring x; toExternalString x));
+     pp(RingElement, x -> (p ring x; toExternalString x));
+     pp(Matrix, x -> concatenate("map(", p target x, ",", p source x, ",", toString entries x, ")"));
      p x;
      k = newClass(HashTable,k);
      k' = newClass(HashTable,k');
