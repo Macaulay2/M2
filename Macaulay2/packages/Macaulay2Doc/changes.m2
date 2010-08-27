@@ -81,7 +81,7 @@ document {
 		    LI { TO "PHCpack::PHCpack", ", an interface package to the program ", TT "PHCpack", ", 
 			 which uses homotopy continuation methods to solve systems of polynomial equations numerically, has been added." },
 		    LI { star, " ", TO "SimplicialDecomposability::SimplicialDecomposability", ", a package
-			 containing various decomposability routines for simplicial complexes, has been added and certified." }
+			 containing various decomposability routines for simplicial complexes, has been added and certified." },
 		    LI { star, " ", TO "ToricVectorBundles::ToricVectorBundles", ", a package for vector bundles
 			 on toric varieties, has been added and certified." },
 		    LI { TO "WeylGroups::WeylGroups", ", a package for root systems and Weyl groups, has been added." },
