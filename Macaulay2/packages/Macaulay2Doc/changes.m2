@@ -85,7 +85,8 @@ document {
 		    LI { star, " ", TO "ToricVectorBundles::ToricVectorBundles", ", a package for vector bundles
 			 on toric varieties, has been added and certified." },
 		    LI { TO "WeylGroups::WeylGroups", ", a package for root systems and Weyl groups, has been added." },
-		    },
+		    }
+	       },
 	  LI { "improved packages:",
 	       UL {
 		    LI { TO "Polyhedra::Polyhedra", ", a package for computations with
