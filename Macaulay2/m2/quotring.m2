@@ -180,7 +180,10 @@ presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
 dim QuotientRing := (R) -> (
      if isField R then 0
      else if R.?SkewCommutative then notImplemented()
-     else dim ultimate(ambient,R) - codim R
+     else (
+	  I := flattenRing(R, Result => Ideal);
+	  dim ring I - codim I
+	  )
      )
 
 monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
