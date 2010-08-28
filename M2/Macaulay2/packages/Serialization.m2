@@ -58,6 +58,7 @@ serialize = x -> (
 		    (t,f) = t;
 		    f();
 		    );
+	       assert instance(t,String);
 	       if instance(t,String) then (
 		    try t = t | " -- " | toString class x | " : " | toString x;
 		    if debugLevel > 0 then (
@@ -97,8 +98,15 @@ serialize = x -> (
 	       else error "serialize: encountered a function not assigned to a global variable"));
      pp(Symbol, x -> (
 	       if value x =!= x and (hash x > waterMark' or serializable#?x) then p value x;
-	       ));
-     qq(Symbol, x -> if value x =!= x and (hash x > waterMark' or serializable#?x) then toString x | "=" | p value x);
+	       "global " | toString x));
+     qq(Symbol, x -> (
+	       if value x =!= x and (hash x > waterMark' or serializable#?x)
+	       then (
+		    t := p x | "<-" | p value x;
+		    if hasAttribute'(x,ReverseDictionary')
+		    and getAttribute'(x,ReverseDictionary') === value x
+		    then t = t | "\n" | "setAttribute("|p x|",ReverseDictionary,"|p value x|")";
+		    t)));
      pp(BasicList, x -> (
 	       if class x === List
 	       then concatenate("{",between_"," apply(toList x,p),"}")
@@ -157,6 +165,7 @@ serialize = x -> (
 		else p ring x | "^" | toString runLengthEncode (- degrees x)));
      pp(RingElement, x -> (
 	       R := p ring x;
+	       k := coefficientRing ring x;
 	       if x == 0
 	       then "0_"|R
 	       else if x == 1
@@ -168,9 +177,9 @@ serialize = x -> (
 			 else (p coef,"*",R,"_",toString exps)))
 	       else (
 		    (monoms,coeffs) := coefficients x;
-		    coeffs = flatten entries lift(coeffs,coefficientRing ring x);
+		    coeffs = flatten entries lift(coeffs,k);
 		    monoms = flatten entries monoms;
-		    concatenate between_"+" apply(coeffs,monoms,(c,m) -> p c | "*" | p m))));
+		    concatenate between_"+" apply(coeffs,monoms,(c,m) -> if c == 1 then p m else p c | "*" | p m))));
      pp(Matrix, x -> concatenate(
 	       "map(",
 	       p target x, ",",
@@ -192,7 +201,8 @@ serialize = x -> (
 	  {"code by index (code2)",code2}
 	  };
      concatenate between_"\n" w flatten {
-	  ///a:=value Core#"private dictionary"#"Attributes"///,
+	  "-- -*- mode: M2; coding: utf-8 -*-",
+	  -- ///a:=value Core#"private dictionary"#"Attributes"///,
 	  values code1,
 	  last \ sort pairs code2,
 	  p x
@@ -204,10 +214,10 @@ restart
 loadPackage "Serialization"
 M = monoid [x,y]
 R = QQ M
-S = R / (x^5+y^6, x^11)
+S = R / (x^5-y^6, x^11-123456)
 f = gens ideal S
-serialize userSymbols()
-"/tmp/y" << oo << close;
+"/tmp/y" << serialize userSymbols() << close;
 restart
 value get "/tmp/y"
-
+f
+describe S
