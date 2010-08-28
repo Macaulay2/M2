@@ -778,7 +778,7 @@ AC_SUBST(BUILTLIBS,)
 #	it writes a file into the user's home directory called ".polymake"
 #	it asks questions
 #    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cdd+ lrslib")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
 AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk    cddlib ")
 dnl I think we don't use this:
 dnl AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp  libglpk ")
