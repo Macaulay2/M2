@@ -203,7 +203,7 @@ xml_node *xml_NewDoc(M2_string version, M2_string name) {
   return r;
 }
 
-xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
+xml_attr *xml_AddAttribute(xml_node *n, M2_string name, M2_string value){
   xml_attr *r = (xml_attr *)getmem(sizeof(*r));
   char *nam = M2_tocharstar(name), *val = M2_tocharstar(value);
   r->doc = n->doc;
@@ -212,20 +212,7 @@ xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
   return r;
 }
 
-/* void xml_AddChild(xml_node *parent, xml_node *cur){ */
-/*   xmlAddChild(parent->node,cur->node); */
-/* } */
-
-/* xml_node *xml_NewNode(xml_node n,M2_string name){ /\* n is any node in the document to which we will attach the new node *\/ */
-/*   char *nam = tocharstar(name); */
-/*   xml_node *r = (xml_node *)getmem(sizeof(*r)); */
-/*   r->doc = n->doc; */
-/*   r->node = xmlNewNode(NULL,(unsigned const char*)nam); */
-/*   GC_FREE(nam); */
-/*   return r; */
-/* } */
-
-xml_node *xml_NewChild(xml_node *parent, M2_string name){
+xml_node *xml_AddElement(xml_node *parent, M2_string name){
   char *nam = M2_tocharstar(name);
   xml_node *r = (xml_node *)getmem(sizeof(*r));
   r->doc = parent->doc;
@@ -234,7 +221,7 @@ xml_node *xml_NewChild(xml_node *parent, M2_string name){
   return r;
 }
 
-xml_node *xml_NewText(xml_node *parent, M2_string content){
+xml_node *xml_AddText(xml_node *parent, M2_string content){
   char *cont = M2_tocharstar(content);
   xml_node *r = (xml_node *)getmem(sizeof(*r));
   r->doc = parent->doc;

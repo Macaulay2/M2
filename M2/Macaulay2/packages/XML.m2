@@ -11,13 +11,13 @@ scan(pairs Core#"private dictionary", (k,v) -> if match("^(Lib)?xml[A-Z]",k) the
 	  XML#"private dictionary"#k = v;
 	  export v))
 
-getChildren = method(TypicalValue => List)
-getChildren LibxmlNode := node -> (
-     c := xmlGetChildren node;
+getChildren = method(TypicalValue => VerticalList)
+getChildren LibxmlNode := node -> VerticalList (
+     c := xmlFirstChild node;
      while c =!= null list first (c, c = xmlGetNext c))
-getAttributes = method(TypicalValue => List)
-getAttributes LibxmlNode := node -> (
-     a := xmlAttributes node;
+getAttributes = method(TypicalValue => VerticalList)
+getAttributes LibxmlNode := node -> VerticalList (
+     a := xmlFirstAttribute node;
      while a =!= null list first (a, a = xmlGetNext a))
 
 XMLnode = new Type of MutableHashTable
@@ -39,13 +39,13 @@ trimopt := identity					    -- not re-entrant!
 settrim = opts -> trimopt = if opts.Trim then trimwhite else identity
 toXMLnode0 = node -> (
      if xmlIsElement node then (
-	  attr := xmlAttributes node;
-	  child := xmlGetChildren node;
+	  attr := xmlFirstAttribute node;
+	  child := xmlFirstChild node;
 	  new XMLnode from splice nonnull {
 	       symbol tag => xmlGetName node,
 	       if attr =!= null then toSequence (
 		    while attr =!= null list first(
-		    	 xmlGetName attr => ( c := xmlGetChildren attr; concatenate while null =!= c list first( xmlGetContent c, c = xmlGetNext c)),
+		    	 xmlGetName attr => ( c := xmlFirstChild attr; concatenate while null =!= c list first( xmlGetContent c, c = xmlGetNext c)),
 		    	 attr = xmlGetNext attr)),
 	       if child =!= null then symbol children => nonnull while child =!= null list first(toXMLnode child, child = xmlGetNext child)
 	       }
@@ -56,19 +56,28 @@ toXMLnode LibxmlNode := opts -> node -> (
      settrim opts;
      toXMLnode0 node)
 
-net LibxmlAttribute := x -> xmlGetName x | " = " | net xmlGetChildren x
+net LibxmlAttribute := x -> xmlGetName x | " = " | net xmlFirstChild x
 
 net LibxmlNode := x -> (
      if xmlIsText x 
      then net format toString x
      else net toString x)
 
+LibxmlNode#{Standard,AfterPrint} = x -> (
+     << endl;				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber;
+     << " : " << class x;
+     if xmlIsText x then << " (text)";
+     if xmlIsElement x then << " (element)";
+     << endl;
+     )
+
 toLibxmlNode = method(TypicalValue => LibxmlNode)
 populate = (d,x) -> (
-     scan(pairs x, (k,v) -> if instance(k,String) then xmlNewProp(d,k,v));
+     scan(pairs x, (k,v) -> if instance(k,String) then xmlAddAttribute(d,k,v));
      if x.?children then scan(x.children, child -> (
-	       if instance(child,String) then xmlNewText(d,child)
-	       else if instance(child,XMLnode) then populate(xmlNewChild(d,child.tag),child)
+	       if instance(child,String) then xmlAddText(d,child)
+	       else if instance(child,XMLnode) then populate(xmlAddElement(d,child.tag),child)
 	       else error "unrecognized child type"));
      d)
 toLibxmlNode XMLnode := x -> populate(xmlNewDoc x.tag,x)
@@ -136,15 +145,67 @@ Node
  Description
   Text
    Each XML node created by {\tt libxml2} has:
-   if it's an {\em element} (as determined by @ TO xmlIsElement @), an optional element {\em name}, which is a string and obtained with @ TO xmlGetName @;
-   if it's {\em text} (as determined by @ TO xmlIsText @), an optional {\em content} string, obtained with @ TO xmlGetContent @;
+   if it is an {\em element} (as determined by @ TO xmlIsElement @), an optional element {\em name}, which is a string and is obtained with @ TO xmlGetName @;
+   if it is {\em text} (as determined by @ TO xmlIsText @), an optional {\em content} string, obtained with @ TO xmlGetContent @;
    a linked list of {\em attributes} of type @ TO LibxmlAttribute @;
-   a linked list of {\em children} (which are XML nodes), obtained with @ TO xmlGetChildren @;
+   a linked list of {\em children} (which are XML nodes), obtained with @ TO xmlFirstChild @;
    and a pointer its next {\em sibling}, obtained with @ TO xmlGetNext @.
    
    XML nodes are mutable.
 
+   Let's use @ TO xmlParse @ to make an XML node.
+  Example
+   n = xmlParse ////<foo> aabc <bar id="foo" name="too"> asdf </bar><coo/><coo>hi</coo><coo a="b">hi</coo></foo>////
+   xmlIsElement n, xmlIsText n
+  Text
+   Since it is an element, we may use @ TO xmlGetName @ to get its name.
+  Example
+   xmlGetName n
+  Text
+   We use @ TO xmlFirstChild @ to get the first node in the linked list of children, which happens to be text:
+  Example
+   c = xmlFirstChild n
+   xmlIsElement c, xmlIsText c
+  Text
+   We may follow the linked list of children of @ TT "n" @.
+  Example
+   c
+   bar = xmlGetNext oo
+   xmlGetNext oo
+   xmlGetNext oo
+   xmlGetNext oo
+   xmlGetNext oo
+  Text
+   Let's examine the attributes of @ TT "bar" @.
+  Example
+   xmlFirstAttribute bar
+   a = xmlGetNext oo
+   xmlGetNext oo
+  Text
+   We may disassemble an attribute as follows.
+  Example
+   xmlGetName a
+   b = xmlFirstChild a
+   xmlGetNext oo
+   xmlIsText b
+   toString b
+  Text
+   Higher level functions than those above can be used.
+  Example
+   getChildren n
+   class \ oo
+   getAttributes bar
+   class \ oo
  SeeAlso
+  xmlParse
+  xmlFirstAttribute
+  xmlFirstChild
+  xmlGetName
+  xmlGetNext
+  xmlIsElement
+  xmlIsText
+  getChildren
+  getAttributes
   XMLnode
 Node
  Key
@@ -185,73 +246,61 @@ Node
  Outputs
   :LibxmlNode
  Description
-  Text
-   Let's make an XML node.
   Example
-   n = xmlParse ////<foo> aabc <bar id="foo" name="too"> asdf </bar><coo/><coo>hi</coo><coo a="b">hi</coo></foo>////
-   xmlIsElement n, xmlIsText n
-  Text
-   Since it is an element, we may get its name.
-  Example
-   xmlGetName n
-  Text
-   We get the first node in the linked list of children, which happens to be text:
-  Example
-   c = xmlGetChildren n
-   xmlIsElement c, xmlIsText c
-  Text
-   We may follow the linked list of children of @ TT "n" @.
-  Example
-   c
-   bar = xmlGetNext oo
-   xmlGetNext oo
-   xmlGetNext oo
-   xmlGetNext oo
-   xmlGetNext oo
-  Text
-   Let's examine the attributes of @ TT "bar" @.
-  Example
-   xmlAttributes bar
-   a = xmlGetNext oo
-   xmlGetNext oo
-  Text
-   We may disassemble an attribute as follows.
-  Example
-   xmlGetName a
-   b = xmlGetChildren a
-   xmlGetNext oo
-   xmlIsText b
-   toString b
-  Text
-   Higher level functions than those above can be used.
-  Example
-   netList getChildren n
-   netList getAttributes bar
- SeeAlso
-  xmlAttributes
-  xmlGetChildren
-  xmlGetName
-  xmlGetNext
-  xmlIsElement
-  xmlIsText
-  getChildren
-  getAttributes
+   xmlParse ////<foo>aabc<bar id="foo" name="too">asdf</bar></foo>////
 Node
  Key
   (getChildren,LibxmlNode)
   getChildren
+ Description
+  Example
+   xmlParse ////<foo>aabc<bar id="foo" name="too">asdf</bar></foo>////
+   c = getChildren oo
+   class \ c
+   xmlIsText \ c
+   xmlIsElement \ c
 Node
  Key
   (getAttributes,LibxmlNode)
   getAttributes
+ Description
+  Example
+   xmlParse ////<bar id="foo" name="too">asdf</bar>////
+   a = getAttributes oo
+   class \ a
 Node
  Key
-  (xmlNewProp,LibxmlNode,String,String)
-  xmlNewProp
+  (xmlAddAttribute,LibxmlNode,String,String)
+  xmlAddAttribute
+ Description
+  Example
+   n = xmlParse ////<bar id="foo" name="too">asdf</bar>////
+   xmlAddAttribute(n,"P","val")
+   n
 Node
  Key
-  (xmlNewText,LibxmlNode,String)
-  xmlNewText
+  (xmlAddText,LibxmlNode,String)
+  xmlAddText
+ Usage
+  m = xmlAddText(n,s)
+ Inputs
+  n:
+  s:
+ Outputs
+  m:LibxmlNode
+   A new text XML node containing the string {\tt s}.
+ Consequences
+  Item
+   The new node {\tt m} is attached as the last child of {\tt n}.
+ Caveat
+  The list of children should not contain two adjacent text nodes.
+ Description
+  Text
+  Example
+   n = xmlParse ////<bar id="foo" name="too"></bar>////
+   xmlAddText(n,"hi there")
+   xmlIsText oo
+   n
 Node
  Key
   xmlGetName
@@ -264,25 +313,25 @@ Node
   (xmlGetNext,LibxmlNode)
 Node
  Key
-  (xmlAttributes,LibxmlNode)
-  xmlAttributes
+  (xmlFirstAttribute,LibxmlNode)
+  xmlFirstAttribute
 Node
  Key
   (xmlGetContent,LibxmlNode)
   xmlGetContent
 Node
  Key
-  (xmlNewChild,LibxmlNode,String)
-  xmlNewChild
+  (xmlAddElement,LibxmlNode,String)
+  xmlAddElement
 Node
  Key
   (xmlNewDoc,String)
   xmlNewDoc
 Node
  Key
-  xmlGetChildren
-  (xmlGetChildren,LibxmlAttribute)
-  (xmlGetChildren,LibxmlNode)
+  xmlFirstChild
+  (xmlFirstChild,LibxmlAttribute)
+  (xmlFirstChild,LibxmlNode)
 Node
  Key
   LibxmlAttribute
