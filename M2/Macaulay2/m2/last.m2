@@ -86,6 +86,7 @@ Function.GlobalReleaseHook = (X,x) -> (
      stderr << "--warning: function " << toString X << " redefined" << endl;
      if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
      )
+waterMark = hash symbol waterMark
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
 flagLookup \ vars (0 .. 51)
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
