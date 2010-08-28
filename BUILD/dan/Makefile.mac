@@ -38,8 +38,6 @@ DIRECTORY := mac32
 CONFIGOPTIONS += CC="gcc -m32" CXX="g++ -m32" --build=i386-apple-darwin
 endif
 
-CONFIGOPTIONS += --with-install-info=/usr/bin/install-info
-
 default: all
 
 # gc crashes if we enable pthreads, in testgc and in html-check-links
