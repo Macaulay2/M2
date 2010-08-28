@@ -653,6 +653,9 @@ installPackage Package := opts -> pkg -> (
      setupNames(opts,pkg);
      initInstallDirectory opts;
      
+     if (options pkg).Headline === null then error ("no Headline option provided to newPackage for ",pkg#"title");
+     if (options pkg).Headline === ""   then error ("empty string given as Headline option to newPackage for ",pkg#"title");
+
      if verbose then stderr << "--installing package " << pkg << " in " << buildPrefix << endl;
      
      currentSourceDir := pkg#"source directory";
