@@ -1143,8 +1143,6 @@ export {
 	symbol width,
 	symbol wrap,
 	symbol Certification,
-	symbol LibxmlNode,
-	symbol LibxmlAttribute,
 	symbol xor,
 	symbol youngest,
 	symbol zero,
