@@ -1,3 +1,4 @@
+LIBNAME = cdd+
 HOMEPAGE = http://www.ifor.math.ethz.ch/~fukuda/cdd_home/
 URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd/
 VERSION = 077a
