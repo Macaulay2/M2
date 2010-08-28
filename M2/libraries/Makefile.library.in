@@ -7,7 +7,7 @@ TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
-LIBNAME = $(shell basename `pwd`)
+LIBNAME ?= $(shell basename `pwd`)
 UNTARDIR = build
 OLDUNTARDIR = build-old
 TARDIR ?= $(LIBNAME)-$(VERSION)

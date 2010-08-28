@@ -44,7 +44,7 @@ libraries/mpir/Makefile
 libraries/4ti2/Makefile
 libraries/gfan/Makefile
 libraries/nauty/Makefile
-libraries/cdd+/Makefile
+libraries/cddplus/Makefile
 libraries/lrslib/Makefile
 libraries/cddlib/Makefile
 libraries/glpk/Makefile
