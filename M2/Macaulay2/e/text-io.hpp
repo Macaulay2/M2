@@ -20,7 +20,7 @@ inline void emit_wrapped(int prlevel, const char *s) {
 }
 
 void emit(const char *s); // print onto stderr, or cerr.
-void emit_line(char *s); // print onto stderr, or cerr.
+void emit_line(const char *s); // print onto stderr, or cerr.
 #endif
 
 // Local Variables:

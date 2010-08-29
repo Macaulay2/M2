@@ -50,21 +50,13 @@ void emit(const char *s)
   fflush(stdout);
 }
 
-void emit_line(char *s)
+void emit_line(const char *s)
 {
-  while (true) {
-    char *p = index(s,'\n');
-    if (p) {
-      *p = 0;
-      fprintf(stdout, "%s%s%s", s, "\n", wrapping_prefix);
-      *p = '\n';
-      s = p+1;
+  while (*s != 0) {
+    while (*s != '\n' && *s != 0) putchar(*s++);
+    putchar('\n');
+    fputs(wrapping_prefix,stdout);
     }
-    else {
-      if (*s) fprintf(stdout, "%s%s%s", s, "\n", wrapping_prefix);
-      return;
-    }
-  }
   fflush(stdout);
 }
 
