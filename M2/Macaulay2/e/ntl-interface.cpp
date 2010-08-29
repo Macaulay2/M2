@@ -52,6 +52,10 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
   return B;
 }
 
+#ifdef GS  //Unfortunate Solaris macro
+  #undef GS
+#endif
+
 static const int useNTL = 2;
 static const int GS = 0;
 static const int Givens = 4;
