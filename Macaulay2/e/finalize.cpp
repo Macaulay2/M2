@@ -75,8 +75,10 @@ void intern_GB(GBComputation *G)
   AO_t nfinalized = AO_fetch_and_add1(&gbs_nfinalized);
   if (M2_gbTrace>=3)
     {
-      int tid = static_cast<int>(syscall(SYS_gettid));
-      fprintf(stderr, "\n   -- thread %d registering gb %zd at %p\n", tid, nfinalized, (void *)G);
+      // -- there is no gettid under Solaris
+      // int tid = static_cast<int>(syscall(SYS_gettid));
+      // fprintf(stderr, "\n   -- thread %d registering gb %zd at %p\n", tid, nfinalized, (void *)G);
+      fprintf(stderr, "\n   -- registering gb %zd at %p\n", nfinalized, (void *)G);
     }
 }
 //////////////////////////////////////////////////////
@@ -110,8 +112,10 @@ void intern_computation(EngineComputation *G)
   AO_t nfinalized = AO_fetch_and_add1(&comp_nfinalized);
   if (M2_gbTrace>=3)
     {
-      int tid = static_cast<int>(syscall(SYS_gettid));
-      fprintf(stderr, "\n   -- thread %d registering gb %zd at %p\n", tid, nfinalized, (void *)G);
+      // -- there is no gettid under Solaris
+      // int tid = static_cast<int>(syscall(SYS_gettid));
+      // fprintf(stderr, "\n   -- thread %d registering gb %zd at %p\n", tid, nfinalized, (void *)G);
+      fprintf(stderr, "\n   -- registering gb %zd at %p\n", nfinalized, (void *)G);
     }
 }
 //////////////////////////////////////////////////////
