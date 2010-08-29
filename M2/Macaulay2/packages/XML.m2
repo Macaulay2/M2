@@ -100,9 +100,9 @@ Node
       structure created and accessed by the library; or as an object of class @ TO XMLnode @, which is a hashtable
       containing pointers to similar objects and to strings.
       
-      Conceptually, no matter which representation is used, each XML node has: a tag (which is a string that serves as a
-      label or name for the node); a list of children (which are XML nodes) and content pieces (which are strings); and a
-      set of attribute names (which are strings) together with corresponding values (which are strings).
+      -- Conceptually, no matter which representation is used, each XML node has: a tag (which is a string that serves as a
+      -- label or name for the node); a list of children (which are XML nodes) and content pieces (which are strings); and a
+      -- set of attribute names (which are strings) together with corresponding values (which are strings).
 
 Node
   Key
@@ -133,10 +133,6 @@ Node
   Outputs
     :
       the tree resulting from parsing {\tt s}
-  Description
-    Text
-      Things to do: make @ TO hash @ return sensible values for objects of class LibxmlNode;
-      consider making objects of class XMLnode immutable, so they can have hash codes, too.
 Node
  Key
   LibxmlNode
@@ -190,7 +186,7 @@ Node
    xmlIsText b
    toString b
   Text
-   Higher level functions than those above can be used.
+   There are other functions that retrieve the entire list of attributes or children.
   Example
    getChildren n
    class \ oo
@@ -229,10 +225,43 @@ Node
  Key
   (xmlIsElement,LibxmlNode)
   xmlIsElement
+ Headline
+  whether an XML node is an element
+ Usage
+  xmlIsElement n
+ Inputs
+  n:
+ Outputs
+  :Boolean
+   whether {\tt n} is an element
+ Description
+  Example
+   xmlParse ////<bar/>////
+   xmlIsElement oo
+ SeeAlso
+  xmlIsElement
+  xmlGetContent
 Node
  Key
   (xmlIsText,LibxmlNode)
   xmlIsText
+ Headline
+  whether an XML node is text
+ Usage
+  xmlIsText n
+ Inputs
+  n:
+ Outputs
+  :Boolean
+   whether {\tt n} is a text node
+ Description
+  Example
+   n = xmlParse ////<bar>hi there</bar>////
+   c = xmlFirstChild n
+   xmlIsText c
+ SeeAlso
+  xmlIsElement
+  xmlGetContent
 Node
  Key
   (xmlParse,String)
@@ -252,6 +281,8 @@ Node
  Key
   (getChildren,LibxmlNode)
   getChildren
+ Headline
+  get the list of children of an XML node
  Description
   Example
    xmlParse ////<foo>aabc<bar id="foo" name="too">asdf</bar></foo>////
@@ -263,6 +294,8 @@ Node
  Key
   (getAttributes,LibxmlNode)
   getAttributes
+ Headline
+  get the list of attributes of an XML node
  Description
   Example
    xmlParse ////<bar id="foo" name="too">asdf</bar>////
@@ -272,15 +305,32 @@ Node
  Key
   (xmlAddAttribute,LibxmlNode,String,String)
   xmlAddAttribute
+ Headline
+  add an attribute to an XML node
+ Usage
+  p = xmlAddAttribute(n,a,x)
+ Inputs
+  n:
+  a:
+  x:
+ Outputs
+  p:LibxmlAttribute
+   a new attribute with name given by {\tt a} and content given by {\tt x}
+ Consequences
+  Item
+   {\tt p} is added to the list of attributes of {\tt n}
  Description
   Example
-   n = xmlParse ////<bar id="foo" name="too">asdf</bar>////
-   xmlAddAttribute(n,"P","val")
+   n = xmlParse ////<bar>asdf</bar>////
+   a = xmlAddAttribute(n,"foo","the value")
+   xmlGetName a
    n
 Node
  Key
   (xmlAddText,LibxmlNode,String)
   xmlAddText
+ Headline
+  add text to an XML node
  Usage
   m = xmlAddText(n,s)
  Inputs
@@ -288,14 +338,13 @@ Node
   s:
  Outputs
   m:LibxmlNode
-   A new text XML node containing the string {\tt s}.
+   a new text node containing the string {\tt s}.
  Consequences
   Item
    The new node {\tt m} is attached as the last child of {\tt n}.
  Caveat
   The list of children should not contain two adjacent text nodes.
  Description
-  Text
   Example
    n = xmlParse ////<bar id="foo" name="too"></bar>////
    xmlAddText(n,"hi there")
@@ -306,35 +355,154 @@ Node
   xmlGetName
   (xmlGetName,LibxmlAttribute)
   (xmlGetName,LibxmlNode)
+ Usage
+  xmlGetName n
+ Headline
+  get the name of an XML node or attribute
+ Inputs
+  n:
+   @ ofClass{LibxmlNode,LibxmlAttribute} @
+ Outputs
+  :String
+   the name of the node
+ Description
+  Example
+   n = xmlParse ////<bar id="foo" name="too"></bar>////
+   xmlGetName n
+   xmlFirstAttribute n
+   xmlGetName oo
 Node
  Key
   xmlGetNext
   (xmlGetNext,LibxmlAttribute)
   (xmlGetNext,LibxmlNode)
+ Usage
+  xmlGetNext n
+ Headline
+  get the next XML node or attribute
+ Inputs
+  n:
+ Outputs
+  :
+   the next node in the linked list, or @ TO null @, if there is none
+ Description
+  Example
+   xmlParse ////<bar><a/><b/></bar>////
+   xmlFirstChild oo
+   xmlGetNext oo
+   xmlGetNext oo
+   xmlParse ////<bar id="foo" name="too"/>////
+   xmlFirstAttribute oo
+   xmlGetNext oo
+   xmlGetNext oo
 Node
  Key
   (xmlFirstAttribute,LibxmlNode)
   xmlFirstAttribute
+ Usage
+  xmlFirstAttribute n
+ Headline
+  get the first attribute of an XML node
+ Inputs
+  n:
+ Outputs
+  :LibxmlAttribute
+   The first attribute in the list of attributes of {\tt n}.
+ Description
+  Example
+   xmlParse ////<bar id="foo" name="too"/>////
+   xmlFirstAttribute oo
+ SeeAlso
+  xmlGetNext   
 Node
  Key
   (xmlGetContent,LibxmlNode)
   xmlGetContent
+ Headline
+  get the string content of an XML text node
+ Usage
+  xmlGetContent n
+ Inputs
+  n:
+   a text node, as determined by @ TO xmlIsText @
+ Outputs
+  :String
+   the content string contained in {\tt n}
+ Description
+  Example
+   xmlParse ////<bar>hi there</bar>////
+   xmlFirstChild oo
+   xmlGetContent oo
+   class oo
 Node
  Key
   (xmlAddElement,LibxmlNode,String)
   xmlAddElement
+ Usage
+  m = xmlAddElement(n,s)
+ Headline
+  add an element to an XML node
+ Inputs
+  n:
+  s:
+ Outputs
+  m:LibxmlNode
+   a new node named {\tt s}
+ Consequences
+  Item
+   The new node {\tt m} is attached as the last child of {\tt n}.
+ Description
+  Example
+   n = xmlParse ////<bar></bar>////
+   xmlAddElement(n,"a")
+   xmlAddElement(n,"b")
+   xmlAddElement(oo,"b1")
+   n
 Node
  Key
   (xmlNewDoc,String)
   xmlNewDoc
+ Headline
+  create the first node of an XML document
+ Usage
+  xmlNewDoc v
+ Inputs
+  v:
+ Outputs
+  :LibxmlNode
+   a new XML document
+ Description
+  Text
+   The argument is the XML version number.
+  Example
+   xmlNewDoc "1.0"
 Node
  Key
   xmlFirstChild
   (xmlFirstChild,LibxmlAttribute)
   (xmlFirstChild,LibxmlNode)
+ Headline
+  get the first child of an XML node or attribute
+ Usage
+  xmlFirstChild n
+ Inputs
+  n:
+   @ ofClass{LibxmlNode,LibxmlAttribute} @
+ Outputs
+  :LibxmlNode
+ Description
+  Example
+   n = xmlParse ////<bar a="123"><foo/></bar>////  
+   xmlFirstChild n
+   xmlFirstAttribute n
+   xmlFirstChild oo
+ SeeAlso
+  xmlGetNext
 Node
  Key
   LibxmlAttribute
+ Headline
+  the class of all XML attributes created by the library libxml
 ///
 
 undocumented {
