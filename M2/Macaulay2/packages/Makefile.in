@@ -13,6 +13,7 @@ CheckDocumentation ?= true
 Verbose ?= false
 RerunExamples ?= false
 debugLevel ?= 0
+errorDepth ?= 3
 
 ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	IgnoreExampleErrors => $(IgnoreExampleErrors), \
@@ -54,7 +55,7 @@ all: info-dir @pre_libm2dir@/$1/.installed
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2@EXE@ $(M2DIRS) \
 	    -q $(STOP) \
-	    -e errorDepth=3 \
+	    -e errorDepth=$(errorDepth) \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
 	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
