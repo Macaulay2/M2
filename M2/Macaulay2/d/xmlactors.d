@@ -69,7 +69,7 @@ xmlNewDoc(e:Expr):Expr := (
 setupfun("xmlNewDoc",xmlNewDoc);
 
 xmlAddAttribute(e:Expr):Expr := (
-     -- # typical value: xmlAddAttribute, LibxmlNode, String, String, LibxmlNode
+     -- # typical value: xmlAddAttribute, LibxmlNode, String, String, LibxmlAttribute
      when e is args:Sequence do if length(args) != 3 then WrongNumArgs(3) else
      when args.0 is parent:xmlNodeCell do
      when args.1 is name:stringCell do
