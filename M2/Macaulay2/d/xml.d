@@ -22,7 +22,7 @@ import isElement(node:xmlNode):bool;
 import isText(node:xmlNode):bool;
 -- import parse(s:string):void;
 import NewDoc(version:string,name:string):xmlNode;
-import AddAttribute(parent:xmlNode,name:string,value:string):xmlNode;
+import AddAttribute(parent:xmlNode,name:string,value:string):xmlAttr;
 import AddElement(parent:xmlNode,name:string):xmlNode;
 import AddText(parent:xmlNode,content:string):xmlNode;
 import toString(n:xmlNode):string;
