@@ -28,8 +28,10 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
 default: arch-chk all
 default: check-links
 distclean: distclean1 distclean2
-distclean1:; $(MAKE) -C builds.tmp/$(DIRECTORY) distclean
-distclean2:; find builds.tmp/$(DIRECTORY) -type f | sed 's/^/=== /'
+distclean1:
+	if [ -e builds.tmp/$(DIRECTORY)/. ] ; then $(MAKE) -C builds.tmp/$(DIRECTORY) distclean ; fi
+distclean2:
+	find builds.tmp/$(DIRECTORY) -type f | sed 's/^/=== /'
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 install-info:
