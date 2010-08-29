@@ -8,7 +8,6 @@ startup(tb:ThreadCellBody):null := (
      Ccode(void,"reverse_run(thread_prepare_list)"); -- re-initialize any thread local variables
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
-     tb.tid = gettid();
      tb.exceptionFlagPointer = address(exceptionFlag);
      tb.interruptedFlagPointer = address(interruptedFlag);
      if notify then stderr << "--thread " << tb.tid << " started" << endl;
@@ -60,10 +59,12 @@ threadCellFinalizer(tc:ThreadCell,p:null):void := (
 	  if notify then stderr << "--cancelling inaccessible thread " << tc.body.tid << endl;
 	  when cancelThread(tc.body) is err:Error do (printError(err);) else nothing));
 header "#include <signal.h>";
+threadcounter := 0;
 inThread2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
      if !USE_THREADS then return buildErrorPacket("threads disabled (by configuration option)");
-     tc := ThreadCell(ThreadCellBody(nullThread(), 0, false, false, false, fun, arg, nullE, null(), null()));
+     threadcounter = threadcounter + 1;
+     tc := ThreadCell(ThreadCellBody(nullThread(), threadcounter, false, false, false, fun, arg, nullE, null(), null()));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      errno := threadCreate(tc.body.thread,startup,tc.body);

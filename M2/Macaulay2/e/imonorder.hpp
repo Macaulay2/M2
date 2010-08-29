@@ -6,6 +6,7 @@
 /* This is the internal form of the monomial ordering */
 /* Used in monomial encoding/decoding/comparison */
 
+#include <alloca.h>
 #include "engine.h"
 #include "monordering.h"
 
