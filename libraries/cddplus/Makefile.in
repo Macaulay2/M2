@@ -9,11 +9,12 @@ LICENSEFILES = README.cdd+ COPYING
 CONFIGURECMD = :
 BUILDOPTIONS = $(ALLFLAGS) CFLAGS="$(CPPFLAGS) $(CXXFLAGS)"
 INSTALLCMD = :
+CHECKCMD = :
 include ../Makefile.library
 CPPFLAGS := -I. $(CPPFLAGS)
-Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cdd+/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cddplus/Makefile
 
 # Local Variables:
 # mode: makefile-gmake
-# compile-command: "make -C $M2BUILDDIR/libraries/cdd+ "
+# compile-command: "make -C $M2BUILDDIR/libraries/cddplus "
 # End:
