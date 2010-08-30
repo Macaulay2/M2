@@ -133,7 +133,7 @@ gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 all: .gdb-directories
 clean::; rm -f .gdb-directories
-.gdb-directories:
+.gdb-directories: ../../libraries/*
 	echo 'echo -- loading .gdb-directories\n' >$@
 	for i in \
 		../../libraries/*/build/*/. \
