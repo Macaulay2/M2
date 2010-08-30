@@ -113,7 +113,7 @@ static void show(xmlDocPtr doc,xmlNodePtr t) {
 /* } */
 
 void xml_examine(xmlNode *n) {
-  xmlElemDump(stdout,n->doc,n);
+  xmlElemDump(stdout,NULL,n);
 }
 
 xmlNode *xml_Parse(M2_string p) {
@@ -158,7 +158,7 @@ xmlNode *xml_AddText(xmlNode *parent, M2_string content){
 M2_string xml_toString(xmlNode *n) {
   M2_string s;
   xmlBuffer *buf = xmlBufferCreate();
-  int len = xmlNodeDump(buf,n->doc,n,2,TRUE);
+  int len = xmlNodeDump(buf,NULL,n,2,TRUE);
   s = M2_tostringn((char*)buf->content,len);
   xmlBufferFree(buf);
   return s;
