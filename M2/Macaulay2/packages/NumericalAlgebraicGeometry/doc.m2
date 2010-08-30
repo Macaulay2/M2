@@ -6,6 +6,21 @@ document {
      to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties.", BR{},
      "The current version focuses on solving square systems with finite number of solutions." 
      }
+
+document {
+	Key => {getDefault, setDefault},
+	Headline => "set/get the default parameters of continuation algorithms",
+	Usage => "setDefault(p1=>v1, p2=>v2, ...); v = getDefault p",
+	Inputs => { {TT "p, p1, p2", ", the name(s) of parameter(s)"} },
+	Outputs => { {TT "v, v1, v2", ", value(s) of the parameter(s)"} },
+	"Set/get value(s) of (a) parameter(s) in the functions ", 
+	TO "track", ", ", TO "solveSystem", ", ", TO "refine", " as well as higher-level functions.", 
+	EXAMPLE lines ///
+	getDefault Predictor
+     	setDefault(Predictor=>Euler, CorrectorTolerance=>1e-10)
+	getDefault Predictor  
+     	///
+	}
 					
 document {
 	Key => {(solveSystem, List),solveSystem},
@@ -28,7 +43,7 @@ document {
 	     [track,stepIncreaseFactor], [track, numberSuccessesBeforeIncrease], 
 	     stepIncreaseFactor, numberSuccessesBeforeIncrease, 
 	     Predictor, [track,Predictor], RungeKutta4, Multistep, Tangent, Euler, Secant,
-	     MultistepDegree, [track,MultistepDegree], ProjectiveNewton,
+	     MultistepDegree, [track,MultistepDegree], Certified,
      	     [track,EndZoneFactor], [track,maxCorrSteps], [track,InfinityThreshold],
      	     EndZoneFactor, maxCorrSteps, InfinityThreshold,
      	     Projectivize, [track,Projectivize], AffinePatches, [track,AffinePatches], DynamicPatch, 
@@ -51,9 +66,9 @@ document {
 	     numberSuccessesBeforeIncrease => {"determine how step size is adjusted"},
 	     Predictor => {"a method to predict the next point on the homotopy path: 
 		  choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
-		  TO "Euler", ", ", TO "Secant", ", ", TO "ProjectiveNewton", ". The latter provides certified tracking."},
+		  TO "Euler", ", ", TO "Secant", ", ", TO "Certified", ". The latter provides certified tracking."},
 	     maxCorrSteps => {"max number of steps corrector takes before a failure is declared"}, 
-	     CorrectorTolerance => {"corrector succeeds if the relative error does not esceed this tolerance"},
+	     CorrectorTolerance => {"corrector succeeds if the relative error does not exceed this tolerance"},
      	     EndZoneFactor => {"size of `end zone'"},  
 	     InfinityThreshold => {"paths are truncated if the norm of the approximation exceeds the threshold"},
      	     Projectivize => {"if true then the system is homogenized and projective tracker is executed"},
@@ -63,7 +78,7 @@ document {
 	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
 	of the target system given a start system.", BR{},
-	Caveat => {"Predictor=>ProjectiveNewton works only with Software=>M2 and Normalize=>true"},
+	Caveat => {"Predictor=>Certified works only with Software=>[M2,M2engine] and Normalize=>true"},
 	EXAMPLE lines ///
 R = CC[x,y];
 S = {x^2-1,y^2-1};
@@ -84,13 +99,13 @@ document {
 	Inputs => { 
 	     "T" => {"polynomials of the system"},
 	     "sols" => {"solutions (lists of coordinates)"},
-	     Iterations => {"number of refining iterations of Newton's methods"}, 
+	     Iterations => {"number of refining iterations of Newton's method"}, 
 	     Bits => {"number of bits of precision"}, 
 	     ErrorTolerance => {"a bound on the desired estimated error"},
 	     ResidualTolerance => {"a bound on desired residual"}
 	     },
 	Outputs => {"solsR" => {"refined solutions" }},
-	"Uses Newton's method to correct the given solutions so that the resluting approximation 
+	"Uses Newton's method to correct the given solutions so that the resulting approximation 
 	has its estimated relative error bound by ", TT "Tolerance", 
 	"; the number of iterations is at most ", TT "maxCorrSteps", ".",
 	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
@@ -168,7 +183,7 @@ document {
 	  {"SolutionStatus", " -- REGULAR, SINGULAR, FAILED, etc."},
 	  {"NumberOfSteps", " -- number of steps taken on the corresponding homotopy path"},
 	  {"LastT", " -- the last value of the continuation parameter"},
-	  {"RCondintion", "-- the reverse condition number at the last step of Newton's method"}
+	  {"RCondition", "-- the reverse condition number at the last step of Newton's method"}
 	  },
   	Caveat => {"Requires a preceding run of " , TO "track", " or ", TO "solveSystem", 
 	     " with the (default) option ", TT "Software=>M2engine"},	
@@ -295,7 +310,7 @@ document {
 	     },
 	Outputs => {{ TT "S", ", list of polynomials"},
 	     { TT "sol", ", a list containing (one) solution of S"}},
-	"Generates a start system S that has and equal chance of reaching any of the solutions of 
+	"Generates a start system S that has an equal chance of reaching any of the solutions of 
        	the target system T. ",
         EXAMPLE lines ///
 T = randomSd {2,3};
