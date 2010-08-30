@@ -1,6 +1,7 @@
 -- Copyright 2009 by Daniel R. Grayson
 use M2;
 
+-- TO DO: declare these types in this file and have xml-c.c include xml-exports.h, for better type checking:
 export xmlNode := { xmlNode:void };
 export xmlAttr := { xmlAttr:void };
 export xmlNodeCell := {+ v:xmlNode };
@@ -21,7 +22,7 @@ import getNodeChildren(node:xmlNode):xmlNodeOrNull;
 import isElement(node:xmlNode):bool;
 import isText(node:xmlNode):bool;
 -- import parse(s:string):void;
-import NewDoc(version:string,name:string):xmlNode;
+import NewRoot(version:string,name:string):xmlNode;
 import AddAttribute(parent:xmlNode,name:string,value:string):xmlAttr;
 import AddElement(parent:xmlNode,name:string):xmlNode;
 import AddText(parent:xmlNode,content:string):xmlNode;

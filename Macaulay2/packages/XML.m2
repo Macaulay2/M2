@@ -6,13 +6,15 @@ newPackage("XML",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => false)
-export {"XMLnode", "tag", "children", "parse", "toXMLnode", "Trim", "toLibxmlNode", "getChildren", "getAttributes"}
+export {"XMLnode", "tag", "children", "parse", "toXMLnode", "Trim", "toLibxmlNode", "getChildren", "getAttributes","xmlTypeTable"}
 scan(pairs Core#"private dictionary", (k,v) -> if match("^(Lib)?xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
 	  export v))
 
+xmlTypeTable = new HashTable from xmlTypes()
+
 getChildren = method(TypicalValue => VerticalList)
-getChildren LibxmlNode := node -> VerticalList (
+getChildren LibxmlNode := getChildren LibxmlAttribute := node -> VerticalList (
      c := xmlFirstChild node;
      while c =!= null list first (c, c = xmlGetNext c))
 getAttributes = method(TypicalValue => VerticalList)
@@ -67,8 +69,8 @@ LibxmlNode#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber;
      << " : " << class x;
-     if xmlIsText x then << " (text)";
-     if xmlIsElement x then << " (element)";
+     t := xmlType x;
+     if xmlTypeTable#?t then << " (" << xmlTypeTable#t << ")";
      << endl;
      )
 
@@ -80,7 +82,7 @@ populate = (d,x) -> (
 	       else if instance(child,XMLnode) then populate(xmlAddElement(d,child.tag),child)
 	       else error "unrecognized child type"));
      d)
-toLibxmlNode XMLnode := x -> populate(xmlNewDoc x.tag,x)
+toLibxmlNode XMLnode := x -> populate(xmlNewRoot x.tag,x)
 parse = method(Options => { Trim => true }, TypicalValue => XMLnode)
 parse String := opts -> s -> (
      settrim opts;
@@ -140,14 +142,16 @@ Node
   the class of all XML nodes created by libxml2
  Description
   Text
-   Each XML node created by {\tt libxml2} has:
-   if it is an {\em element} (as determined by @ TO xmlIsElement @), an optional element {\em name}, which is a string and is obtained with @ TO xmlGetName @;
-   if it is {\em text} (as determined by @ TO xmlIsText @), an optional {\em content} string, obtained with @ TO xmlGetContent @;
-   a linked list of {\em attributes} of type @ TO LibxmlAttribute @;
-   a linked list of {\em children} (which are XML nodes), obtained with @ TO xmlFirstChild @;
-   and a pointer its next {\em sibling}, obtained with @ TO xmlGetNext @.
+
+   Each XML node created by {\tt libxml2} has: if it is an {\em element} (as determined by @ TO xmlIsElement @), an
+   optional element {\em name}, which is a string and is obtained with @ TO xmlGetName @; if it is {\em text} (as
+   determined by @ TO xmlIsText @), an optional {\em content} string, obtained with @ TO xmlGetContent @; a linked list of
+   {\em attributes} of type @ TO LibxmlAttribute @; a linked list of {\em children} (which are XML nodes), obtained with @
+   TO xmlFirstChild @; and a pointer its next {\em sibling}, obtained with @ TO xmlGetNext @.
    
    XML nodes are mutable.
+
+   Internally, a pointer to the XML document containing the node accompanies the node.
 
    Let's use @ TO xmlParse @ to make an XML node.
   Example
@@ -460,22 +464,22 @@ Node
    n
 Node
  Key
-  (xmlNewDoc,String)
-  xmlNewDoc
+  (xmlNewRoot,String)
+  xmlNewRoot
  Headline
-  create the first node of an XML document
+  create the root node of an XML document
  Usage
-  xmlNewDoc v
+  xmlNewRoot v
  Inputs
   v:
  Outputs
   :LibxmlNode
-   a new XML document
+   the new root node of a new XML document
  Description
   Text
    The argument is the XML version number.
   Example
-   xmlNewDoc "1.0"
+   xmlNewRoot "1.0"
 Node
  Key
   xmlFirstChild
