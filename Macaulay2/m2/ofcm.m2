@@ -396,10 +396,10 @@ makeMonoid := (opts) -> (
 
      if not member(opts.Join,{null,true,false}) then error "expected Join option to be true, false, or null";
 
-     if opts.Join =!= false then (
-	  if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
-	  if opts.DegreeLift =!= null then error "DegreeLift option provided without Join=>false";
-	  );
+     -- if opts.Join =!= false then (
+     -- 	  if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
+     -- 	  if opts.DegreeLift =!= null then error "DegreeLift option provided without Join=>false";
+     -- 	  );
 
      if class opts.Inverses =!= Boolean then error "expected true or false in option";
      
