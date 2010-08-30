@@ -2,8 +2,12 @@
 use M2;
 
 -- TO DO: declare these types in this file and have xml-c.c include xml-exports.h, for better type checking:
-export xmlNode := { xmlNode:void };
-export xmlAttr := { xmlAttr:void };
+declarations "
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+";
+export xmlNode := Pointer "xmlNode *";
+export xmlAttr := Pointer "xmlAttr *";
 export xmlNodeCell := {+ v:xmlNode };
 export xmlAttrCell := {+ v:xmlAttr };
 export xmlNodeOrNull := xmlNode or null;
@@ -19,8 +23,6 @@ import getContent(node:xmlNode):(string or null);
 import getNextAttr(attr:xmlAttr):xmlAttrOrNull;
 import getNextNode(node:xmlNode):xmlNodeOrNull;
 import getNodeChildren(node:xmlNode):xmlNodeOrNull;
-import isElement(node:xmlNode):bool;
-import isText(node:xmlNode):bool;
 -- import parse(s:string):void;
 import NewRoot(version:string,name:string):xmlNode;
 import AddAttribute(parent:xmlNode,name:string,value:string):xmlAttr;
