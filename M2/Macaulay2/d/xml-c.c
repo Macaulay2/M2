@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "M2mem.h"
-#include "M2-exports.h"
-#include "xml-c.h"
 #define TRUE 1
 #define FALSE 0
+#include "xml-exports.h"
+#include <xml-c.h>
 
 static char *copystring(const char *s) {
   char *p = (char *)getmem(strlen(s)+1);
@@ -120,43 +120,6 @@ xmlNode *xml_Parse(M2_string p) {
   xmlDoc *d = xmlReadMemory(p->array,p->len,"a string", NULL, 0);
   if (d == NULL) return NULL;
   return xmlDocGetRootElement(d);
-}
-
-xmlAttr *xml_Attributes(xmlNode *n) {
-  xmlAttr *r;
-  if (n->type != XML_ELEMENT_NODE || n->properties == NULL) return NULL;
-  return n->properties;
-}
-
-M2_string xml_getElementName(xmlNode *n){
-  if (n->name == NULL) return NULL;
-  return M2_tostring((char const *)n->name);
-}
-
-M2_string xml_getAttrName(xmlAttr *a){
-  if (a->name == NULL) return NULL;
-  return M2_tostring((char const *)a->name);
-}
-
-M2_string xml_getContent(xmlNode *n){
-  if (n->content == NULL) return NULL;
-  return M2_tostring((char const *)n->content);
-}
-
-xmlNode *xml_getNextNode(xmlNode *n){
-  return n->next;
-}
-
-xmlAttr *xml_getNextAttr(xmlAttr *a){
-  return a->next;
-}
-
-xmlNode *xml_getNodeChildren(xmlNode *n){
-  return n->children;
-}
-
-xmlNode *xml_getAttrChildren(xmlAttr *a){
-  return a->children;
 }
 
 xmlNode *xml_NewRoot(M2_string version, M2_string name) {

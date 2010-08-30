@@ -13,13 +13,23 @@ header "
 --      );
 -- setupfun("XML$parse",xmlparse);
 
-
-isElement(n:xmlNode):bool := Ccode(bool, "(", n, ")->type == XML_ELEMENT_NODE");
-isText   (n:xmlNode):bool := Ccode(bool, "(", n, ")->type == XML_TEXT_NODE   ");
+type(n:xmlNode) ::= Ccode(int, "((", n, ")->type)");
+ElementNode() ::= Ccode(int,"XML_ELEMENT_NODE");
+TextNode() ::= Ccode(int,"XML_TEXT_NODE");
+isElement(n:xmlNode) ::= type(n) == ElementNode();
+isText(n:xmlNode) ::= type(n) == TextNode();
+Properties(n:xmlNode) ::= xmlAttrOrNull( Ccode(xmlAttr,"((",n,")->properties)") );
+Children(n:xmlNode) ::= xmlNodeOrNull( Ccode(xmlNode,"((",n,")->children)") );
+Children(n:xmlAttr) ::= xmlNodeOrNull( Ccode(xmlNode,"((",n,")->children)") );
+Next(n:xmlNode) ::= xmlNodeOrNull( Ccode(xmlNode,"((",n,")->next)") );
+Next(n:xmlAttr) ::= xmlAttrOrNull( Ccode(xmlAttr,"((",n,")->next)") );
+Name(n:xmlNode) ::= Ccode(constucharstarOrNull,"((",n,")->name)");
+Name(n:xmlAttr) ::= Ccode(constucharstarOrNull,"((",n,")->name)");
+Content(n:xmlNode) ::= Ccode(constucharstarOrNull,"((",n,")->content)");
 
 xmlFirstAttribute(e:Expr):Expr := (
      -- # typical value: xmlFirstAttribute, LibxmlNode, LibxmlAttribute
-     when e is node:xmlNodeCell do when Attributes(node.v) is attr:xmlAttr do toExpr(attr) else nullE
+     when e is node:xmlNodeCell do when Properties(node.v) is attr:xmlAttr do toExpr(attr) else nullE
      else WrongArg("an XML node"));
 setupfun("xmlFirstAttribute",xmlFirstAttribute);
 xmlParse(e:Expr):Expr := (
@@ -32,30 +42,30 @@ xmlFirstChild(e:Expr):Expr := (
      -- # typical value: xmlFirstChild, LibxmlNode, LibxmlNode
      -- # typical value: xmlFirstChild, LibxmlAttribute, LibxmlNode
      when e
-     is node:xmlNodeCell do when getNodeChildren(node.v) is child:xmlNode do toExpr(child) else nullE
-     is attr:xmlAttrCell do when getAttrChildren(attr.v) is child:xmlNode do toExpr(child) else nullE
+     is node:xmlNodeCell do when Children(node.v) is child:xmlNode do toExpr(child) else nullE
+     is attr:xmlAttrCell do when Children(attr.v) is child:xmlNode do toExpr(child) else nullE
      else WrongArg("an XML node or attribute"));
 setupfun("xmlFirstChild",xmlFirstChild);
 xmlGetName(e:Expr):Expr := (
      -- # typical value: xmlGetName, LibxmlNode, String
      -- # typical value: xmlGetName, LibxmlAttribute, String
      when e
-     is node:xmlNodeCell do if isElement(node.v) then when getElementName(node.v) is s:string do toExpr(s) else nullE else nullE
-     is attr:xmlAttrCell do when getAttrName(attr.v) is s:string do toExpr(s) else nullE
+     is node:xmlNodeCell do toExpr(Name(node.v))
+     is attr:xmlAttrCell do toExpr(Name(attr.v))
      else WrongArg("an XML node"));
 setupfun("xmlGetName",xmlGetName);
 xmlGetContent(e:Expr):Expr := (
      -- # typical value: xmlGetContent, LibxmlNode, String
      when e
-     is node:xmlNodeCell do if isText(node.v) then when getContent(node.v) is s:string do toExpr(s) else nullE else nullE
+     is node:xmlNodeCell do toExpr(Content(node.v))
      else WrongArg("an XML node"));
 setupfun("xmlGetContent",xmlGetContent);
 xmlGetNext(e:Expr):Expr := (
      -- # typical value: xmlGetNext, LibxmlNode, LibxmlNode
      -- # typical value: xmlGetNext, LibxmlAttribute, LibxmlAttribute
      when e
-     is node:xmlNodeCell do when getNextNode(node.v) is next:xmlNode do toExpr(next) else nullE
-     is attr:xmlAttrCell do when getNextAttr(attr.v) is next:xmlAttr do toExpr(next) else nullE
+     is node:xmlNodeCell do when Next(node.v) is next:xmlNode do toExpr(next) else nullE
+     is attr:xmlAttrCell do when Next(attr.v) is next:xmlAttr do toExpr(next) else nullE
      else WrongArg("an XML node or attribute"));
 setupfun("xmlGetNext",xmlGetNext);
 xmlIsElement(e:Expr):Expr := (

@@ -240,6 +240,13 @@ export toExpr(x:RawArrayPairOrNull):Expr := (
 export toExpr(x:xmlNode):Expr := Expr(xmlNodeCell(x));
 export toExpr(x:xmlAttr):Expr := Expr(xmlAttrCell(x));
 export toExpr(x:constcharstar) ::= toExpr(tostring(x));
+export toExpr(x:constcharstarOrNull):Expr := (
+     when x
+     is null do nullE
+     is s:constcharstar do toExpr(s)
+     );
+export toExpr(x:constucharstar) ::= toExpr(Ccode(constcharstar,"((const char *)",x,")"));
+export toExpr(x:constucharstarOrNull) ::= toExpr(Ccode(constcharstarOrNull,"((const char *)",x,")"));
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d util.o "

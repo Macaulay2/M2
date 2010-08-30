@@ -13,17 +13,8 @@ export xmlAttrCell := {+ v:xmlAttr };
 export xmlNodeOrNull := xmlNode or null;
 export xmlAttrOrNull := xmlAttr or null;
 -- these routines are implemented in xml-c.c
-import Attributes(node:xmlNode):xmlAttrOrNull;
 import Parse(text:string):xmlNodeOrNull;
 import examine(x:xmlNode):void;
-import getAttrChildren(node:xmlAttr):xmlNodeOrNull;
-import getElementName(node:xmlNode):(string or null);
-import getAttrName(attr:xmlAttr):(string or null);
-import getContent(node:xmlNode):(string or null);
-import getNextAttr(attr:xmlAttr):xmlAttrOrNull;
-import getNextNode(node:xmlNode):xmlNodeOrNull;
-import getNodeChildren(node:xmlNode):xmlNodeOrNull;
--- import parse(s:string):void;
 import NewRoot(version:string,name:string):xmlNode;
 import AddAttribute(parent:xmlNode,name:string,value:string):xmlAttr;
 import AddElement(parent:xmlNode,name:string):xmlNode;
