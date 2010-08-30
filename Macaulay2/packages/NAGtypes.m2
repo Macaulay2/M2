@@ -18,7 +18,8 @@ export {
      -- software 	  
      "PHCPACK",
      -- witness set
-     "WitnessSet", "witnessSet", "equations", "slice", "points", "Equations", "Slice", "Points", 
+     "WitnessSet", "witnessSet", "equations", "slice", "points", 
+     "Equations", "Slice", "Points", "sliceEquations",
      -- point (solution)
      "Point", "point", "coordinates",
      "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
@@ -70,18 +71,6 @@ net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")"
 witnessSet = method()
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
 witnessSet (Ideal,Matrix,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P}
-witnessSet Ideal := I -> (
-     n := numgens ring I;
-     d := dim I;
-     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
-     SM = promote(SM,ring I);
-     S := ideal(SM * transpose vars ring I + random(CC^d,CC^1));
-     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
-     RM = promote(RM,ring I);
-     P := solveSystem(flatten entries (RM * transpose gens I) | S_*);
-     PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
-     witnessSet(I,S,PP/first)
-     )
 points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, coordinates)
 equations = method() -- returns list of equations
@@ -90,6 +79,11 @@ slice = method() -- returns linear equations for the slice (in both cases)
 slice WitnessSet := (W) -> ( if class W.Slice === List then W.Slice
      else if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
      else error "ill-formed slice in WitnessSet" )
+sliceEquations = method(TypicalValue=>List) 
+sliceEquations (Matrix,Ring) := (S,R) -> (
+-- make slicing plane equations
+     apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
+     )
 
 -- extra functions
 
@@ -137,6 +131,13 @@ addSlackVariables WitnessSet := (W) -> (
 beginDocumentation()
 
 document {
+     Key => NAGtypes,
+     Headline => "Common types used in Numerical Algebraic Geometry",
+     "The package defines types used by the package ", TO "NumericalAlgebraicGeometry", 
+     " as well as other numerical algebraic geometry packages: e.g., an interface package ", 
+     TO "PHCpack", "."
+     }
+document {
      Key => PHCPACK,
      Headline => "use PHCpack for homotopy continuation",
      "Available at ", TT "http://www.math.uic.edu/~jan/download.html"
@@ -145,4 +146,110 @@ document {
      Key => {Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps},
      Headline => "various attributes of a Point"
      }
+document {
+     Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), 
+	  Regular, Singular, Infinity, MinStepFailure, (net, Point)},
+     Headline => "a type used to store a point in complex space",
+     "This type is used to store a solution to a polynomial system obtained by such fuctions as ", 
+     TO "solveSystem", ", ", TO "track",". The following methods can be used to access a ", 
+     TO "Point", ":",
+     UL{
+	  {"coordinates", " -- get the coordinates (returns a list)"},
+	  {"status", " -- get the type of solution (e.g., Regular)"},
+	  {"matrix", " -- get the coordinates (returns a matrix)"}
+	  },
+     "Possible types of Points (accessed by ", TO "status", "): ",
+     UL { {"Regular", " -- the jacobian of the polynomial system is regular at the point"}, 
+	  {"Singular", " -- the jacobian of the polynomial system is (near)singular at the point"}, 
+	  {"Infinity", " -- the solution path has been deemed divergent"},
+	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"}
+	  },
+     "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
+     TO "peek", "."
+     }
+document {
+	Key => {(point,List), point},
+	Headline => "construct a Point",
+	Usage => "p = point c",
+	Inputs => { 
+	     {TT "c", ", the list of {{coordinates in CC}, other data}"}
+	     },
+	Outputs => {{TT "p"}},
+	"Used to construct a Point from the old format of output.",
+        EXAMPLE lines ///
+p = point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, RCondition=>0.01}
+peek p 
+     	///
+	}
+document {
+     Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
+	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,
+     	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet) 
+     	  },
+Headline => "a witness set",
+     "This type stores a witness set of an equidimensional solution component.", 
+     "The following methods can be used to access a ", 
+     TO "WitnessSet", ":",
+     UL{
+     	  {"ideal", " -- get the defining ideal of the algebraic superset"},
+	  {"equations", " -- get the list of defining polynomials of the algebraic superset"},
+	  {"slice", " -- get linear functions defining the slicing plane"},
+	  {"points", " -- get the list of witness points (which are zeroes of all above)"}
+	  },
+     "Also one may determine",
+     UL {
+	  {"dim", " -- the dimension"},
+	  {"codim", " -- the codimension"},
+	  {"deg", " -- the degree (the number of witness points)"},
+	  {"ring", " -- the ring of the defining polynomials"}
+	  }, 
+     "Only dimension and degree are displayed (by ", TO "net", "); to see the rest use ", 
+     TO "peek", "."
+     }
+document {
+	Key => {witnessSet,(witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List)},
+	Headline => "construct a WitnessSet",
+	Usage => "w = witnessSet(E,S,P)",
+	Inputs => { 
+	     {TT "E", ", an ideal defining the algebraic superset"},
+	     {TT "S", ", either an ideal generated by linear functions 
+		  or a matrix of their coefficients"},
+	     {TT "P", ", a list of witness point (of type ", TO "Point", ")"}
+	     },
+	Outputs => {{TT "w", ", a WitnessSet"}},
+        EXAMPLE lines ///
+R = CC[x,y]	
+w = witnessSet( ideal(x^2+y^2+2), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
+peek w
+     	///
+	}
+
+document {
+	Key => {sliceEquations,(sliceEquations,Matrix,Ring)},
+	Headline => "slicing linear functions",
+	Usage => "S = sliceEquations(M,R)",
+	Inputs => { 
+	     {TT "M", ", matrix of coefficients of the slicing functions"},
+	     {TT "R", ", the ring in which they live"}
+	     },
+	Outputs => {{TT "S"}},
+        EXAMPLE lines ///
+R = CC[x,y]	
+sliceEquations(matrix{{1,2,3},{4,5,6*ii}}, R)
+     	///
+	}
+
 endPackage "NAGtypes" 
+
+end
+
+restart
+loadPackage "NAGtypes"
+uninstallPackage "NAGtypes"
+installPackage "NAGtypes"
+-- install docs with no absolute links
+uninstallPackage "Style"
+installPackage("Style", AbsoluteLinks=>false)
+installPackage("NAGtypes", AbsoluteLinks=>false)
+
+installPackage ("NAGtypes", MakeDocumentation=>false)

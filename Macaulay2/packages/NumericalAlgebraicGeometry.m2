@@ -20,11 +20,12 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
+     "setDefault", "getDefault",
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
      "areEqual", "sortSolutions", -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software","BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
-     "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","ProjectiveNewton",
+     "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
      "Normalize", "Projectivize",
      "AffinePatches", "DynamicPatch",
@@ -78,16 +79,56 @@ DEFAULT = new MutableHashTable from {
      Projectivize => false, 
      AffinePatches => DynamicPatch,
      -- slp's 
-     SLP => null, -- possible values: null, HornerForm, CompiledHornerForm 	  
+     SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-10,
      ResidualTolerance => 1e-10,
-     Iterations => null,
+     Iterations => 100, 
      Bits => 300,
      -- general
      Attempts => 10, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6
      }
+
+setDefault = method(Options => {
+     Software=>null, 
+     NoOutput=>null, 
+     gamma=>null, 
+     tDegree=>null,
+     -- step control
+     tStep=>null, -- initial
+     tStepMin=>null,
+     stepIncreaseFactor=>null,
+     numberSuccessesBeforeIncrease=>null,
+     -- predictor 
+     Predictor=>null, 
+     SLPpredictor=>null, --temp!!!
+     MultistepDegree => null, -- used only for Predictor=>Multistep
+     -- corrector 
+     SLPcorrector=>null, --temp!!!
+     maxCorrSteps => null,
+     CorrectorTolerance => null, -- tracking tolerance
+     -- end of path
+     EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+     InfinityThreshold => null, -- used to tell if the path is diverging
+     -- projectivize and normalize
+     Normalize => null, -- normalize in the Bombieri-Weyl norm
+     Projectivize => null, 
+     AffinePatches => null,
+     -- slp's 
+     SLP => null, -- possible values: null, HornerForm, CompiledHornerForm 	  
+     -- refine options 
+     ErrorTolerance => null,
+     ResidualTolerance => null,
+     Iterations => null,
+     Bits => null,
+     -- general
+     Attempts => null, -- max number of attempts (e.g., to find a regular path)
+     Tolerance => null
+     })
+installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
+getDefault = method()
+getDefault Symbol := (s)->DEFAULT#s
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
@@ -230,7 +271,7 @@ track = method(TypicalValue => List, Options =>{
 	  Projectivize => null, 
 	  AffinePatches => null,
 	  -- slp's 
-	  SLP => null -- possible values: null, HornerForm, CompiledHornerForm 	  
+	  SLP => null -- possible values: false, HornerForm, CompiledHornerForm 	  
 	  } )
 track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
@@ -249,12 +290,12 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if any(S, f->ring f =!= R) or any(T, f->ring f =!= R)
      then error "expected all polynomials in the same ring";
      if o.tStep <= 0 then error "expected positive tStep";  
-     if (o.Projectivize or o.SLP===null) and (o.SLPpredictor or o.SLPcorrector) 
-     then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=null"; 
+     if (o.Projectivize or o.SLP===false) and (o.SLPpredictor or o.SLPcorrector) 
+     then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=false"; 
      if o.Software===M2enginePrecookedSLPs and (o.Projectivize or o.SLP===null) 
-     then error "M2enginePrecookedSLPs is implemented for Projectivize=>false and SLP != null";
---     if o.Predictor===ProjectiveNewton and (o.Software=!=M2 or o.SLP=!=null)
---     then error "ProjectiveNewton (experimental) requires Software=>M2 and o.SLP=>null";
+     then error "M2enginePrecookedSLPs is implemented for Projectivize=>false and SLP != false";
+--     if o.Predictor===Certified and (o.Software=!=M2 or o.SLP=!=false)
+--     then error "Certified (experimental) requires Software=>M2 and o.SLP=>false";
      
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCPACK then return trackPHCpack(S,T,solsS,o)
@@ -292,7 +333,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  isProjective = true;
 	  );
      
-     if o.Predictor===ProjectiveNewton and not isProjective 
+     if o.Predictor===Certified and not isProjective 
 	  then "projective expected: either homogeneous system or Projectivize=>true";
      if isProjective then (
 	  if member(o.Software,{M2engine,M2enginePrecookedSLPs}) and not o.Normalize
@@ -303,7 +344,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
 	  patchEquation := p -> p * transpose vars R - 1;
 
- 	  if o.Predictor === ProjectiveNewton or o.AffinePatches === DynamicPatch then (
+ 	  if o.Predictor === Certified or o.AffinePatches === DynamicPatch then (
 	       solsS = solsS/normalize;
 	       dPatch := true; -- not null        
 	       )
@@ -332,7 +373,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then (apply(S, s->s/sqrt(#S * BombieriWeylNormSquared s)), apply(T, s->s/sqrt(#T * BombieriWeylNormSquared s)))
      else (S,T);
      
-     if o.Predictor===ProjectiveNewton or (isProjective and o.Software===M2engine)
+     if o.Predictor===Certified or (isProjective and o.Software===M2engine)
      -- in both cases a linear homotopy on the unit sphere is performed
      then (
 	  nS = (o.gamma/abs(o.gamma))*nS;
@@ -356,7 +397,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      etHx := 0; 
      etHt := 0;
      -- evaluation functions using SLP
-     if o.SLP =!= null and o.Software =!= M2engine then (
+     if o.SLP =!= false and o.Software =!= M2engine then (
 	  toSLP := pre -> (
 	       (constMAT, prog) = (if o.SLP === HornerForm 
 		    then preSLPinterpretedSLP 
@@ -391,15 +432,15 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      -- evaluation functions	
      evalH := (x0,t0)-> (
 	  tr := timing (
-	       r := if o.Predictor === ProjectiveNewton 
+	       r := if o.Predictor === Certified 
 	       then (
 		    sine := sin(t0*bigT); cosine := cos(t0*bigT);
 		    transpose( lift(sub(H#0,transpose x0),K)*(cosine-(reBW'ST/sqrt'one'minus'reBW'ST'2)*sine) 
 	       	    	 + lift(sub(H#1,transpose x0),K)*(sine/sqrt'one'minus'reBW'ST'2) )
 		    )
-	       else if o.SLP =!= null then transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+	       else if o.SLP =!= false then transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
      	       else lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
-	       --(old) if o.Predictor === ProjectiveNewton then ((normalizer t0)*r) || matrix{{0_K}} else 
+	       --(old) if o.Predictor === Certified then ((normalizer t0)*r) || matrix{{0_K}} else 
 	       if dPatch === null then r
 	       else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
 	       );
@@ -408,7 +449,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  );
      evalHNoPatchNoNormalizer := (x0,t0)-> (
 	  tr := timing (
-	       if o.SLP =!= null then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+	       if o.SLP =!= false then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
      	       else r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
 	       r
 	       );
@@ -416,14 +457,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  tr#1
 	  );
      evalHxNoPatch := (x0,t0)-> (
-	  r := if o.Predictor === ProjectiveNewton then (
+	  r := if o.Predictor === Certified then (
 	       sine := sin(t0*bigT); cosine := cos(t0*bigT);
 	       lift(sub(Hx#0,transpose x0),K)*(cosine-(reBW'ST/sqrt'one'minus'reBW'ST'2)*sine) 
 	       + lift(sub(Hx#1,transpose x0),K)*(sine/sqrt'one'minus'reBW'ST'2)   
 	       )
-	  else if o.SLP =!= null then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+	  else if o.SLP =!= false then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
      	  else lift(sub(Hx, transpose x0 | matrix {{t0}}), K);
-	  --(old) if o.Predictor === ProjectiveNewton then r = r * normalizer t0;
+	  --(old) if o.Predictor === Certified then r = r * normalizer t0;
 	  r
 	  );  
      evalHx := (x0,t0)->( 
@@ -437,14 +478,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  );  
      evalHt := (x0,t0)->(
 	  tr := timing (
-	       r := if o.Predictor === ProjectiveNewton then (
+	       r := if o.Predictor === Certified then (
 		    sine := sin(t0*bigT); cosine := cos(t0*bigT);
 		    transpose( lift(sub(H#0,transpose x0),K)*(-sine-(reBW'ST/sqrt'one'minus'reBW'ST'2)*cosine)
 		    + lift(sub(H#1,transpose x0),K)*(cosine/sqrt'one'minus'reBW'ST'2) )
 		    )
-	       else if o.SLP =!= null then fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+	       else if o.SLP =!= false then fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
      	       else lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
-	       --(old) if o.Predictor === ProjectiveNewton then r = r * (normalizer t0) + evalHNoPatchNoNormalizer(x0,t0) * (normalizer' t0);
+	       --(old) if o.Predictor === Certified then r = r * (normalizer t0) + evalHNoPatchNoNormalizer(x0,t0) * (normalizer' t0);
 	       if dPatch === null then r
 	       else r || matrix {{0_K}}
 	       );
@@ -504,7 +545,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    if o.Predictor === Tangent then predTANGENT
 		    else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
 		    else if o.Predictor === Euler then predEULER
-		    else if o.Predictor === ProjectiveNewton then predPROJECTIVENEWTON
+		    else if o.Predictor === Certified then predPROJECTIVENEWTON
 		    else error "engine: unknown predictor")
 	       );
 	  solsM := matrix apply(solsS,s->first entries transpose s);
@@ -549,11 +590,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    -- predictor step
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
-		    -- default dt; ProjectiveNewton and Multistep modify dt
+		    -- default dt; Certified and Multistep modify dt
 		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-o.EndZoneFactor-t0);
 
      	       	    -- projective stuff
-		    if o.Predictor == ProjectiveNewton then (
+		    if o.Predictor == Certified then (
 			 dPatch = matrix{ flatten entries x0 / conjugate};
 			 )
 		    else if dPatch =!= null then ( -- generate dynamic patch
@@ -566,7 +607,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 );   
 		    
 		    if o.Predictor == Tangent then (
-			 if o.SLP =!= null and o.SLPpredictor then (
+			 if o.SLP =!= false and o.SLPpredictor then (
 			      dxFromSLP := rawEvaluateSLP(slpPred, raw (transpose x0 | matrix {{t0,dt}}));
 			      dx = lift(map(K,dxFromSLP),K);
 			      )
@@ -599,7 +640,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 --k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
 			 --k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
 			 --dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
-			 if o.SLP =!= null and o.SLPpredictor then (
+			 if o.SLP =!= false and o.SLPpredictor then (
 			      dxFromSLP = rawEvaluateSLP(slpPred, raw (transpose x0 | matrix {{t0,dt}}));
 			      dx = lift(map(K,dxFromSLP),K);
 			      )
@@ -655,7 +696,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 dx = delta*sum(nPoints, i->MScoeffs#i*history#(count-nPoints+1+i)#"rhsODE");
 			 if DBG > 3 then << "delta = " << delta << "   MScoeffs = " << MScoeffs << endl;
 			 )
-		    else if o.Predictor == ProjectiveNewton then (
+		    else if o.Predictor == Certified then (
 			 Hx0 = evalHx(x0,t0);
 			 Ht0 = evalHt(x0,t0);
 			 chi2 := sqrt((norm2 Ht0)^2 + (norm2 solve(Hx0, Ht0))^2);
@@ -688,7 +729,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    -- corrector step
 		    if DBG>9 then << ">>> corrector" << endl;
 		    nCorrSteps := 0;
-		    if o.Predictor === ProjectiveNewton then (
+		    if o.Predictor === Certified then (
 			 nCorrSteps = 1;
 			 dx = solve(evalHx(x1,t1), -evalH(x1,t1));
 			 x1 = x1 + dx;
@@ -716,7 +757,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      );
 			 );
 		    if DBG>9 then << ">>> step adjusting" << endl;
-		    if o.Predictor =!= ProjectiveNewton and dt > o.tStepMin 
+		    if o.Predictor =!= Certified and dt > o.tStepMin 
 		    and norm dx > CorrectorTolerance() * norm x1 then ( -- predictor failure 
 			 predictorSuccesses = 0;
 			 stepAdj = stepAdj - 1;
@@ -785,7 +826,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  if o.Software==M2 then (
 	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
      	       if DBG>1 then (
-	       	    if o.SLP =!= null 
+	       	    if o.SLP =!= false 
 	       	    then << "Hx SLP: " << slpHx << endl << "Ht SLP: " << slpHt << endl << "H SLP: " << slpH << endl
 	       	    else << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
 		    )
@@ -839,7 +880,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       );
 	  );
      -- M2 part 
-     n'iterations := if o.Iterations =!= null then o.Iterations else 100; -- infinity
+     n'iterations := o.Iterations; 
      T = matrix {T};
      J = transpose jacobian T; 
      evalT := x0 -> (
@@ -864,6 +905,8 @@ refine (List,List) := List => o -> (T,solsT) -> (
 		    if isProjective then x1 = normalize x1;
 		    nCorrSteps = nCorrSteps + 1;
 		    );
+	       if norm dx > o.ErrorTolerance * norm x1 
+	       then print "warning: Newton's method did not converge within given error bound in the given number of steps";
 	       x1
 	       ));
      apply(#solsT, i-> flatten entries solsR#i)      
@@ -1239,12 +1282,6 @@ points W
 equations W
 slice W
 ///
-
-sliceEquations = method(TypicalValue=>List) 
-sliceEquations (Matrix,Ring) := (S,R) -> (
--- make slicing plane equations
-     apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
-     )
 
 randomSlice = method()
 randomSlice (ZZ,ZZ) := (d,n) -> randomSlice(d,n,{})
@@ -1625,6 +1662,58 @@ diffSolutions (List,List) := o -> (A,B) -> (
      else (a = append(a,i); i = i+1);	  
      (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
      )
+
+
+-------------------------------------------------------
+-- DEFLATION ------------------------------------------
+-------------------------------------------------------
+
+dMatrix = method()
+dMatrix (List,ZZ) := (F,d) -> dMatrix(ideal F, d)
+dMatrix (Ideal,ZZ) := (I, d) -> (
+-- deflation matrix of order d     
+     R := ring I;
+     v := flatten entries vars R;
+     n := #v;
+     ind := toList((n:0)..(n:d)) / toList;
+     ind = select(ind, i->sum(i)<=d and sum(i)>0);
+     A := transpose diff(matrix apply(ind, j->{R_j}), gens I);
+     scan(select(ind, i->sum(i)<d and sum(i)>0), i->(
+	       A = A || transpose diff(matrix apply(ind, j->{R_j}), R_i*gens I);
+	       ));
+     A
+     )
+dIdeal = method()
+dIdeal (Ideal, ZZ) := (I, d) -> (
+-- deflation ideal of order d     
+     R := ring I;
+     v := gens R;
+     n := #v;
+     ind := toList((n:0)..(n:d)) / toList;
+     ind = select(ind, i->sum(i)<=d and sum(i)>0);
+     A := dMatrix(I,d);
+     newvars := apply(ind, i->getSymbol("x"|concatenate(i/toString)));
+     S := (coefficientRing R)[newvars,v]; 
+     sub(I,S) + ideal(sub(A,S) * transpose (vars S)_{0..#ind-1})
+     )	   
+deflatedSystem = method(Options=>{Order=>1})
+deflatedSystem(Ideal, Matrix, ZZ) := o -> (I, M, r) -> (
+-- In: gens I = the original system    
+--     M = deflation matrix
+--     r = numerical rank of M (at some point)
+-- Out: square system of min(n,r) equations
+     n := numgens R;
+     R := ring I;
+     SM := (randomUnitaryMatrix numcols M)_(toList(0..r-1));
+     newvars := apply(r, i->getSymbol("d"|(toString i)));
+     S := (coefficientRing R)[gens R | newvars];
+     DF := sub(M,S)*sub(SM,S)*transpose (vars S)_{n..n+r-1}; -- new equations
+     n'equations := numgens I + numrows DF;
+     if n'equations > r 
+     then SM = (randomUnitaryMatrix numcols M)_(toList(0..r-1)); --square up
+     flatten entries( (randomUnitaryMatrix n'equations)^(toList(0..r-1))*(transpose gens I || DF) )   
+     )
+
 
 
 ------------ preSLPs ------------------------------------------------------------------------
@@ -2335,6 +2424,20 @@ conditionNumber (List,List) := o -> (F,x) -> (
      J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
      if o.Variant===OrthogonalProjection then J = J || matrix{ flatten entries x0 / conjugate};
      1 / min first SVD(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
+     )
+
+-- a constructor for witnessSet that depends on NAG
+witnessSet Ideal := I -> (
+     n := numgens ring I;
+     d := dim I;
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
+     SM = promote(SM,ring I);
+     S := ideal(SM * transpose vars ring I + random(CC^d,CC^1));
+     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
+     RM = promote(RM,ring I);
+     P := solveSystem(flatten entries (RM * transpose gens I) | S_*);
+     PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
+     witnessSet(I,S,PP/first)
      )
 
 beginDocumentation()
