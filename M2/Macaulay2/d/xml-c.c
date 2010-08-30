@@ -237,9 +237,18 @@ M2_string xml_toString(xml_node *n) {
   M2_string s;
   xmlBuffer *buf = xmlBufferCreate();
   int len = xmlNodeDump(buf,n->doc,n->node,2,TRUE);
-  if (len == 0) return NULL;
   s = M2_tostringn((char*)buf->content,len);
   xmlBufferFree(buf);
+  return s;
+}
+
+M2_string xml_DocDump(xml_node *n) {
+  xmlChar *mem = 0;
+  int size = 0;
+  /* xmlDocDumpFormatMemory(n->doc,&mem,&size,TRUE); */
+  xmlDocDumpMemoryEnc(n->doc,&mem,&size,"UTF-8");
+  M2_string s = M2_tostringn((char*)mem,size);
+  xmlFree(mem);
   return s;
 }
 

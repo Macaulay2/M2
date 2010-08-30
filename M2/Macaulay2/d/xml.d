@@ -27,6 +27,7 @@ import AddAttribute(parent:xmlNode,name:string,value:string):xmlAttr;
 import AddElement(parent:xmlNode,name:string):xmlNode;
 import AddText(parent:xmlNode,content:string):xmlNode;
 import toString(n:xmlNode):string;
+import DocDump(n:xmlNode):string;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d xml.o "
