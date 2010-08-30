@@ -71,7 +71,7 @@ setupfun("xmlIsText",xmlIsText);
 
 xmlNewRoot0(e:Expr):Expr := (
      -- # typical value: xmlNewRoot, String, LibxmlNode
-     when e is s:stringCell do toExpr(NewRoot("1.0",s.v))
+     when e is name:stringCell do toExpr(NewRoot("1.0",name.v))
      else WrongArgString());
 setupfun("xmlNewRoot",xmlNewRoot0);
 
@@ -154,6 +154,12 @@ xmlTypes(e:Expr):Expr := (
 	  else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("xmlTypes", xmlTypes);
+
+xmlDocDump0(e:Expr):Expr := (
+     when e
+     is node:xmlNodeCell do toExpr(DocDump(node.v))
+     else WrongArg("an XML node"));
+setupfun("xmlDocDump",xmlDocDump0);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d xmlactors.o "

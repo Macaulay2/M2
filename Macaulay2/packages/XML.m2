@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 
 newPackage("XML",
-    	Version => "1.0", 
-    	Date => "July 13, 2009",
+    	Version => "1.1", 
+    	Date => "September 1, 2010",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => false)
@@ -97,11 +97,13 @@ Node
   Description
     Text
 
-      This package provides an interface to the library {\em libxml2}, which is a parser for XML files.  The package
+      This experimental and tentative package provides an interface to the library {\em libxml2}, which is a parser for XML files.  The package
       offers two ways of representing the result: as an object of class @ TO LibxmlNode @, which is a pointer to the
       structure created and accessed by the library; or as an object of class @ TO XMLnode @, which is a hashtable
       containing pointers to similar objects and to strings.
       
+      This package was written to support the packages @ TO "OpenMath::OpenMath" @ and @ TO "SCSCP::SCSCP" @.
+
       -- Conceptually, no matter which representation is used, each XML node has: a tag (which is a string that serves as a
       -- label or name for the node); a list of children (which are XML nodes) and content pieces (which are strings); and a
       -- set of attribute names (which are strings) together with corresponding values (which are strings).
@@ -283,10 +285,19 @@ Node
    xmlParse ////<foo>aabc<bar id="foo" name="too">asdf</bar></foo>////
 Node
  Key
-  (getChildren,LibxmlNode)
   getChildren
+  (getChildren,LibxmlAttribute)
+  (getChildren,LibxmlNode)
  Headline
   get the list of children of an XML node
+ Usage
+  getChildren n
+ Inputs
+  n:
+   @ ofClass{LibxmlNode,LibxmlAttribute} @
+ Outputs
+  :
+   the list of children of {\tt n}
  Description
   Example
    xmlParse ////<foo>aabc<bar id="foo" name="too">asdf</bar></foo>////
@@ -474,12 +485,13 @@ Node
   v:
  Outputs
   :LibxmlNode
-   the new root node of a new XML document
+   the new root node of a new XML document, with name given by {\tt v}
  Description
-  Text
-   The argument is the XML version number.
   Example
-   xmlNewRoot "1.0"
+   xmlNewRoot "foo"
+   xmlDocDump oo
+ SeeAlso
+  xmlDocDump
 Node
  Key
   xmlFirstChild
@@ -507,6 +519,39 @@ Node
   LibxmlAttribute
  Headline
   the class of all XML attributes created by the library libxml
+Node
+ Key
+  symbol xmlTypeTable
+ Headline
+  a hash table of descriptions for XML node type codes
+Node
+ Key
+  xmlDocDump
+ Headline
+  dump a document
+ Description
+  Example
+   n = xmlNewRoot "foo"
+   xmlAddElement(n,"bar")
+   xmlAddText(oo,"hi there")
+   xmlAddElement(n,"key")
+   xmlAddText(oo,"frobble 你好")
+   n
+   xmlDocDump n   
+ SeeAlso
+  xmlNewRoot
+Node
+ Key
+  xmlTypes
+  (xmlTypes,Sequence)
+ Headline
+  a hash table of descriptions for XML node type codes
+Node
+ Key
+  (xmlType,LibxmlNode)
+  xmlType
+ Headline
+  the type code for an XML node
 ///
 
 undocumented {
