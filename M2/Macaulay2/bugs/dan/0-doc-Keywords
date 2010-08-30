@@ -16,3 +16,6 @@ Probably what's needed is to support
 as done by Latex MakeIndex.  Then we could have construct a master index, and
 have it searchable, and make it easily mergeable with packages that are
 obtained from elsewhere by the user.
+
+See
+	 http://www.tex.ac.uk/tex-archive/indexing/makeindex/doc/makeindex.pdf
