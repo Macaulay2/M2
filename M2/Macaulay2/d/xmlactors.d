@@ -2,6 +2,13 @@
 use common;
 use util;
 
+header "
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+typedef struct xml_node { xmlDoc *doc; xmlNode *node; } xml_node;
+typedef struct xml_attr { xmlDoc *doc; xmlAttr *attr; } xml_attr;
+";
+
 -- xmlparse(e:Expr):Expr := (
 --      when e is s:string do (parse(s); nullE)
 --      else WrongArgString()
@@ -62,11 +69,11 @@ xmlIsText(e:Expr):Expr := (
      else WrongArg("an XML node"));
 setupfun("xmlIsText",xmlIsText);
 
-xmlNewDoc(e:Expr):Expr := (
-     -- # typical value: xmlNewDoc, String, LibxmlNode
-     when e is s:stringCell do toExpr(NewDoc("1.0",s.v))
+xmlNewRoot0(e:Expr):Expr := (
+     -- # typical value: xmlNewRoot, String, LibxmlNode
+     when e is s:stringCell do toExpr(NewRoot("1.0",s.v))
      else WrongArgString());
-setupfun("xmlNewDoc",xmlNewDoc);
+setupfun("xmlNewRoot",xmlNewRoot0);
 
 xmlAddAttribute(e:Expr):Expr := (
      -- # typical value: xmlAddAttribute, LibxmlNode, String, String, LibxmlAttribute
@@ -102,6 +109,51 @@ xmlAddText(e:Expr):Expr := (
      else WrongArg(1,"an xml node")
      else WrongNumArgs(2));
 setupfun("xmlAddText",xmlAddText);
+
+xmlType(e:Expr):Expr := (
+     -- # typical value: xmlType, LibxmlNode, ZZ
+     when e
+     is node:xmlNodeCell do toExpr(Ccode(int,"((xml_node*)",node.v,")->node->type"))
+     else WrongArg("an XML node"));
+setupfun("xmlType",xmlType);
+
+xmlTypes(e:Expr):Expr := (
+     -- # typical value: xmlTypes, Sequence, List
+     when e
+     is s:Sequence do
+     if length(s) == 0 then (
+	  Expr(list(
+		    new Sequence
+		    len 20
+		    do (
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_ELEMENT_NODE")),toExpr("element node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_ATTRIBUTE_NODE")),toExpr("attribute node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_TEXT_NODE")),toExpr("text node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_CDATA_SECTION_NODE")),toExpr("cdata section node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_ENTITY_REF_NODE")),toExpr("entity ref node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_ENTITY_NODE")),toExpr("entity node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_PI_NODE")),toExpr("pi node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_COMMENT_NODE")),toExpr("comment node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_DOCUMENT_NODE")),toExpr("document node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_DOCUMENT_TYPE_NODE")),toExpr("document type node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_DOCUMENT_FRAG_NODE")),toExpr("document frag node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_NOTATION_NODE")),toExpr("notation node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_HTML_DOCUMENT_NODE")),toExpr("html document node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_DTD_NODE")),toExpr("dtd node")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_ELEMENT_DECL")),toExpr("element decl")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_ATTRIBUTE_DECL")),toExpr("attribute decl")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_ENTITY_DECL")),toExpr("entity decl")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_NAMESPACE_DECL")),toExpr("namespace decl")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_XINCLUDE_START")),toExpr("xinclude start")));
+			 provide Expr(Sequence(toExpr(Ccode(int,"XML_XINCLUDE_END")),toExpr("xinclude end")));
+			   -- we omit this one, for now
+			   -- #ifdef LIBXML_DOCB_ENABLED
+			   --    ,XML_DOCB_DOCUMENT_NODE=	21
+			   -- #endif
+			 ))))
+	  else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("xmlTypes", xmlTypes);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d xmlactors.o "

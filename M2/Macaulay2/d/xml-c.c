@@ -193,13 +193,15 @@ xml_node *xml_getAttrChildren(xml_attr *a){
   return r;
 }
 
-xml_node *xml_NewDoc(M2_string version, M2_string name) {
+xml_node *xml_NewRoot(M2_string version, M2_string name) {
   xml_node *r = (xml_node *)getmem(sizeof(*r));
   char *s = M2_tocharstar(name);
-  r->doc = xmlNewDoc((unsigned const char*)"1.0");
+  char *v = M2_tocharstar(version);
+  r->doc = xmlNewDoc((unsigned const char*)v);
   r->node = xmlNewNode(NULL,(unsigned const char*)s);
   xmlDocSetRootElement(r->doc, r->node);
   freemem(s);
+  freemem(v);
   return r;
 }
 
