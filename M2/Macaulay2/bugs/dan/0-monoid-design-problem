@@ -26,3 +26,27 @@ N.  But in general, M is not known in advance, so N ** M can't work, in
 general!
 
 What is the solution?
+
+Recall what we did recently with Join => false to assure associativity.  We
+arranged that the result of
+
+	 monoid { Join => false, ... } ** monoid { ... }
+
+has the form 
+
+    	 monoid { Join => false, ... }
+
+That ensures that associativity holds here:
+
+	 monoid { Join => false, ... } ** monoid { ... } ** monoid { ... }
+
+, in that the resulting degree length is always the same as the degree length
+of the left most monoid.
+
+But it doesn't ensure associativity in this case:
+
+	 monoid { ... } ** monoid { Join => false, ... } ** monoid { ... }
+
+!  So that is a problem, too.
+
+This whole thing needs to be reworked.
