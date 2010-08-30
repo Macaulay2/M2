@@ -5,8 +5,6 @@ use util;
 header "
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-typedef struct xml_node { xmlDoc *doc; xmlNode *node; } xml_node;
-typedef struct xml_attr { xmlDoc *doc; xmlAttr *attr; } xml_attr;
 ";
 
 -- xmlparse(e:Expr):Expr := (
@@ -14,6 +12,10 @@ typedef struct xml_attr { xmlDoc *doc; xmlAttr *attr; } xml_attr;
 --      else WrongArgString()
 --      );
 -- setupfun("XML$parse",xmlparse);
+
+
+isElement(n:xmlNode):bool := Ccode(bool, "(", n, ")->type == XML_ELEMENT_NODE");
+isText   (n:xmlNode):bool := Ccode(bool, "(", n, ")->type == XML_TEXT_NODE   ");
 
 xmlFirstAttribute(e:Expr):Expr := (
      -- # typical value: xmlFirstAttribute, LibxmlNode, LibxmlAttribute
@@ -113,7 +115,7 @@ setupfun("xmlAddText",xmlAddText);
 xmlType(e:Expr):Expr := (
      -- # typical value: xmlType, LibxmlNode, ZZ
      when e
-     is node:xmlNodeCell do toExpr(Ccode(int,"((xml_node*)",node.v,")->node->type"))
+     is node:xmlNodeCell do toExpr(Ccode(int,"((xmlNode*)",node.v,")->type"))
      else WrongArg("an XML node"));
 setupfun("xmlType",xmlType);
 

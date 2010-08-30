@@ -6,12 +6,16 @@ newPackage("XML",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => false)
-export {"XMLnode", "tag", "children", "parse", "toXMLnode", "Trim", "toLibxmlNode", "getChildren", "getAttributes","xmlTypeTable"}
+export {
+     "XMLnode", "tag", "children", "parse", "toXMLnode", "Trim", "toLibxmlNode",
+     "getChildren", "getAttributes","xmlTypeTable","xmlTypeDescription", "xmlTypeIndex"
+     }
 scan(pairs Core#"private dictionary", (k,v) -> if match("^(Lib)?xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
 	  export v))
 
 xmlTypeTable = new HashTable from xmlTypes()
+xmlTypeIndex = new HashTable from apply(xmlTypes(),(a,b) -> (b,a))
 
 getChildren = method(TypicalValue => VerticalList)
 getChildren LibxmlNode := getChildren LibxmlAttribute := node -> VerticalList (
@@ -65,12 +69,13 @@ net LibxmlNode := x -> (
      then net format toString x
      else net toString x)
 
+xmlTypeDescription = method()
+xmlTypeDescription LibxmlNode := t -> if xmlTypeTable#?(xmlType t) then xmlTypeTable#(xmlType t) else "unknown type"
+
 LibxmlNode#{Standard,AfterPrint} = x -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber;
-     << " : " << class x;
-     t := xmlType x;
-     if xmlTypeTable#?t then << " (" << xmlTypeTable#t << ")";
+     << endl				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber
+     << " : " << class x << " (" << xmlTypeDescription << ")"
      << endl;
      )
 
@@ -522,8 +527,15 @@ Node
 Node
  Key
   symbol xmlTypeTable
+ Usage
+  xmlTypeTable
  Headline
   a hash table of descriptions for XML node type codes
+ SeeAlso
+  symbol xmlTypeIndex
+ Description
+  Example
+   xmlTypeTable
 Node
  Key
   xmlDocDump
@@ -552,6 +564,36 @@ Node
   xmlType
  Headline
   the type code for an XML node
+Node
+ Key
+  (xmlTypeDescription,LibxmlNode)
+  xmlTypeDescription
+ Headline
+  the type description for an XML node
+ Usage
+  xmlTypeDescription n
+ Inputs
+  n:
+ Outputs
+  :String
+   the description of the type of {\tt n}
+ Description
+  Example
+   xmlParse "<foo>the cat<bar/><!-- a comment--></foo>"
+   getChildren oo
+   xmlTypeDescription \ oo
+Node
+ Key
+  symbol xmlTypeIndex
+ Headline
+  get XML type code from its description
+ Usage
+  xmlTypeIndex
+ Description
+  Example
+   xmlTypeIndex
+ SeeAlso
+  symbol xmlTypeTable
 ///
 
 undocumented {
@@ -559,74 +601,6 @@ undocumented {
   (net,LibxmlNode),
   (net,XMLnode)
   }
-
-end
-
-{*
-this parser is a failure because Parsing doesn't provide lookahead at all!:
-
-needsPackage "Parsing"
-returns = t -> s -> t
-second = s -> s#1
-idP = concatenate % +letterParser
-ampP = returns "&" % constParser "amp"
-ltP = returns "<" % constParser "lt"
-gtP = returns ">" % constParser "gt"
-aposP = returns "'" % constParser "apos"
-whitespace = * orP(" ","\t","\n","\r")
-quotP = returns "\"" % constParser "quot"
-entityP = second % andP("&",orP(ampP,ltP,gtP,aposP,quotP),";")
-nonquoteP = new Parser from (c -> if c =!= "\"" and c =!= null then new Parser from (b -> if b === null then c))
-stringP = concatenate % * orP(entityP, nonquoteP)
-quotedstringP = (s -> s#1) % andP("\"",stringP,"\"")
-pairP = (s -> s#0 => s#2) % andP(idP,"=",quotedstringP)
-pairsP = * (first % andP(pairP,whitespace))
-tagstartP = (s -> prepend(s#1,s#3)) % andP("<",(s -> symbol tag => s) % idP,whitespace,pairsP)
-tagP = (s -> s) % andP(tagstartP, orP("/>",* futureParser tagP, "</", idP, ">"))
-xmlParse = tagP : charAnalyzer
-print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
-*}
-
-restart
-This demo
-
-    loadPackage "XML"
-    p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>///
-    x = toXMLnode p
-    q = toLibxmlNode x
-
-gives
-
-    i1 : loadPackage "XML"
-
-    o1 = XML
-
-    o1 : Package
-
-    i2 : p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>///
-
-    o2 = <foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>
-
-    o2 : LibxmlNode
-
-    i3 : x = toXMLnode p
-
-    o3 = <foo
-	   "aabc"
-	   <bar id="foo" name="too"
-	     "asdf"
-	   <coo
-	   <coo "hi"
-	   <coo a="b"
-	     "hi"
-
-    o3 : XMLnode
-
-    i4 : q = toLibxmlNode x
-
-    o4 = <foo>aabc<bar id="foo" name="too">asdf</bar><coo/><coo>hi</coo><coo a="b">hi</coo></foo>
-
-    o4 : LibxmlNode
 
 -- Local Variables:
 -- fill-column: 122

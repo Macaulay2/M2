@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "M2mem.h"
@@ -111,138 +112,96 @@ static void show(xmlDocPtr doc,xmlNodePtr t) {
 /*   } */
 /* } */
 
-void xml_examine(xml_node *n) {
-  xmlElemDump(stdout,n->doc,n->node);
+void xml_examine(xmlNode *n) {
+  xmlElemDump(stdout,n->doc,n);
 }
 
-xml_node *xml_Parse(M2_string p) {
+xmlNode *xml_Parse(M2_string p) {
   xmlDoc *d = xmlReadMemory(p->array,p->len,"a string", NULL, 0);
-  xml_node *r;
   if (d == NULL) return NULL;
-  r = (xml_node *)getmem(sizeof(*r));
-  r->doc = d;
-  r->node = xmlDocGetRootElement(r->doc);
-  return r;
+  return xmlDocGetRootElement(d);
 }
 
-xml_attr *xml_Attributes(xml_node *n) {
-  xml_attr *r;
-  if (n->node->type != XML_ELEMENT_NODE || n->node->properties == NULL) return NULL;
-  r = (xml_attr *)getmem(sizeof(*r));
-  r->doc = n->doc;
-  r->attr = n->node->properties;
-  return r;
+xmlAttr *xml_Attributes(xmlNode *n) {
+  xmlAttr *r;
+  if (n->type != XML_ELEMENT_NODE || n->properties == NULL) return NULL;
+  return n->properties;
 }
 
-int xml_isElement(xml_node *n){
-  return n->node->type == XML_ELEMENT_NODE;
+M2_string xml_getElementName(xmlNode *n){
+  if (n->name == NULL) return NULL;
+  return M2_tostring((char const *)n->name);
 }
 
-int xml_isText(xml_node *n){
-  return n->node->type == XML_TEXT_NODE;
+M2_string xml_getAttrName(xmlAttr *a){
+  if (a->name == NULL) return NULL;
+  return M2_tostring((char const *)a->name);
 }
 
-M2_string xml_getElementName(xml_node *n){
-  if (n->node->name == NULL) return NULL;
-  return M2_tostring((char const *)n->node->name);
+M2_string xml_getContent(xmlNode *n){
+  if (n->content == NULL) return NULL;
+  return M2_tostring((char const *)n->content);
 }
 
-M2_string xml_getAttrName(xml_attr *a){
-  if (a->attr->name == NULL) return NULL;
-  return M2_tostring((char const *)a->attr->name);
+xmlNode *xml_getNextNode(xmlNode *n){
+  return n->next;
 }
 
-M2_string xml_getContent(xml_node *n){
-  if (n->node->content == NULL) return NULL;
-  return M2_tostring((char const *)n->node->content);
+xmlAttr *xml_getNextAttr(xmlAttr *a){
+  return a->next;
 }
 
-xml_node *xml_getNextNode(xml_node *n){
-  xml_node *r;
-  if (n->node->next == NULL) return NULL;
-  r = (xml_node *)getmem(sizeof(*r));
-  r->doc = n->doc;
-  r->node = n->node->next;
-  return r;
+xmlNode *xml_getNodeChildren(xmlNode *n){
+  return n->children;
 }
 
-xml_attr *xml_getNextAttr(xml_attr *a){
-  xml_attr *r;
-  if (a->attr->next == NULL) return NULL;
-  r = (xml_attr *)getmem(sizeof(*r));
-  r->doc = a->doc;
-  r->attr = a->attr->next;
-  return r;
+xmlNode *xml_getAttrChildren(xmlAttr *a){
+  return a->children;
 }
 
-xml_node *xml_getNodeChildren(xml_node *n){
-  xml_node *r;
-  if (n->node->children == NULL) return NULL;
-  r = (xml_node *)getmem(sizeof(*r));
-  r->doc = n->doc;
-  r->node = n->node->children;
-  return r;
-}
-
-xml_node *xml_getAttrChildren(xml_attr *a){
-  xml_node *r;
-  if (a->attr->children == NULL) return NULL;
-  r = (xml_node *)getmem(sizeof(*r));
-  r->doc = a->doc;
-  r->node = a->attr->children;
-  return r;
-}
-
-xml_node *xml_NewRoot(M2_string version, M2_string name) {
-  xml_node *r = (xml_node *)getmem(sizeof(*r));
+xmlNode *xml_NewRoot(M2_string version, M2_string name) {
   char *s = M2_tocharstar(name);
   char *v = M2_tocharstar(version);
-  r->doc = xmlNewDoc((unsigned const char*)v);
-  r->node = xmlNewNode(NULL,(unsigned const char*)s);
-  xmlDocSetRootElement(r->doc, r->node);
+  xmlDocPtr doc = xmlNewDoc((unsigned const char*)v);
+  xmlNode *n = xmlNewNode(NULL,(unsigned const char*)s);
+  xmlDocSetRootElement(doc, n);
   freemem(s);
   freemem(v);
-  return r;
+  return n;
 }
 
-xml_attr *xml_AddAttribute(xml_node *n, M2_string name, M2_string value){
-  xml_attr *r = (xml_attr *)getmem(sizeof(*r));
+xmlAttr *xml_AddAttribute(xmlNode *n, M2_string name, M2_string value){
   char *nam = M2_tocharstar(name), *val = M2_tocharstar(value);
-  r->doc = n->doc;
-  r->attr = xmlNewProp(n->node,(unsigned const char*)nam,(unsigned const char*)val);
+  xmlAttr *a = xmlNewProp(n,(unsigned const char*)nam,(unsigned const char*)val);
   freemem(nam), freemem(val);
-  return r;
+  return a;
 }
 
-xml_node *xml_AddElement(xml_node *parent, M2_string name){
+xmlNode *xml_AddElement(xmlNode *parent, M2_string name){
   char *nam = M2_tocharstar(name);
-  xml_node *r = (xml_node *)getmem(sizeof(*r));
-  r->doc = parent->doc;
-  r->node = xmlNewChild(parent->node,NULL,(unsigned const char*)nam,NULL);
+  xmlNode *r = xmlNewChild(parent,NULL,(unsigned const char*)nam,NULL);
   freemem(nam);
   return r;
 }
 
-xml_node *xml_AddText(xml_node *parent, M2_string content){
+xmlNode *xml_AddText(xmlNode *parent, M2_string content){
   char *cont = M2_tocharstar(content);
-  xml_node *r = (xml_node *)getmem(sizeof(*r));
-  r->doc = parent->doc;
-  r->node = xmlNewText((unsigned const char*)cont);
-  xmlAddChild(parent->node,r->node);
+  xmlNode *r = xmlNewText((unsigned const char*)cont);
+  xmlAddChild(parent,r);
   freemem(cont);
   return r;
 }
 
-M2_string xml_toString(xml_node *n) {
+M2_string xml_toString(xmlNode *n) {
   M2_string s;
   xmlBuffer *buf = xmlBufferCreate();
-  int len = xmlNodeDump(buf,n->doc,n->node,2,TRUE);
+  int len = xmlNodeDump(buf,n->doc,n,2,TRUE);
   s = M2_tostringn((char*)buf->content,len);
   xmlBufferFree(buf);
   return s;
 }
 
-M2_string xml_DocDump(xml_node *n) {
+M2_string xml_DocDump(xmlNode *n) {
   xmlChar *mem = 0;
   int size = 0;
   /* xmlDocDumpFormatMemory(n->doc,&mem,&size,TRUE); */

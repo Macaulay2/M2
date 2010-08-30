@@ -73,7 +73,6 @@ LIBFILES += gmp_aux.o arithmetic.o atomic.o M2.o system.o strings.o varstrin.o e
 libd.a: $(LIBFILES) ; ar -r $@ $?
 rm-libd.a:; rm libd.a
 
-
 clean:: ; rm -f $(M2_MADECFILES)
 xml-c.o: xml-c.h
 M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
