@@ -30,7 +30,7 @@ What is the solution?
 Recall what we did recently with Join => false to assure associativity.  We
 arranged that the result of
 
-	 monoid { Join => false, ... } ** monoid { ... }
+	 monoid { ... } ** monoid { Join => false, ... }
 
 has the form 
 
@@ -38,15 +38,7 @@ has the form
 
 That ensures that associativity holds here:
 
-	 monoid { Join => false, ... } ** monoid { ... } ** monoid { ... }
-
-, in that the resulting degree length is always the same as the degree length
-of the left most monoid.
-
-But it doesn't ensure associativity in this case:
-
 	 monoid { ... } ** monoid { Join => false, ... } ** monoid { ... }
 
-!  So that is a problem, too.
-
-This whole thing needs to be reworked.
+in that the degree monoid of the right most argument never contributes its
+length to that of the result.
