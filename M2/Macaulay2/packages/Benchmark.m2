@@ -143,12 +143,15 @@ runBenchmarks0 List := x -> (
      if fileExists "/usr/sbin/system_profiler"
      then (
 	  r := get "!/usr/sbin/system_profiler SPHardwareDataType";
-	  << "-- "
-	  << first select("Model Name: (.*)","\\1, ",r)
-	  << first select("Processor Name: (.*)","\\1, ",r)
-	  << first select("(Processor Speed: .*)","\\1, ",r)
-	  << first select("(Cores: .*)","\\1, ",r)
-	  << first select("(Bus Speed: .*)","\\1",r)
+	  << "-- ";
+	  scan({
+		    "Model Name: (.*)",
+		    "Processor Name: (.*)",
+		    "(Processor Speed: .*)",
+		    "(Cores: .*)",
+		    "(Bus Speed: .*)"
+		    },
+	       s -> ( t := select(s,"\\1, ",r); if #t > 0 then << t#0));
 	  << endl;
 	  );
      << "-- Macaulay2 " << version#"VERSION";
