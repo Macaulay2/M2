@@ -18,7 +18,6 @@ M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_OBJECTS += ../regex/regex.o
 M2_CCFILES := gmp_init.cc
 M2_OBJECTS += $(M2_CCFILES:.cc=.o)
-M2_CFILES += M2types.c
 M2_HFILES := getpagesize.h types.h M2inits.h M2mem.h debug.h
 
 M2_DFILES :=
