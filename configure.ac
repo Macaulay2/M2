@@ -569,6 +569,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   AdjointIdeal
   Parametrization
   Serialization
+  NAGtypes
 ")
 # pending packages: SRdeformations
 
