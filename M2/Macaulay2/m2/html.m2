@@ -96,7 +96,7 @@ toURL := pth -> (
 	  if p =!= null
 	  then concatenate(rootURI, realpath p)
 	  else (
-	       error("needed file not found on prefixPath (install package or use option AbsoluteLinks=>false): ",pth);
+	       error("needed file not found on prefixPath: ",format pth,".\n    Try: (1) add a scheme, such as http://, to make an absolute URL;\n         (2) install the package that provides the file;\n         (3) use option AbsoluteLinks=>false");
 	       -- relativizeFilename(htmlDirectory, pth)
 	       ))
      else (
