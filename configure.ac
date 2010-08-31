@@ -1223,12 +1223,12 @@ AC_SUBST(FCLIBS_FLAGS,)
     # Note: static version is here:
     #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortran.a
     #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortranbegin.a
+    # Note: see discussion in emacs info about -static-libgcc and -shared-libgcc; -lgcc_s should be dynamically linked
 for i in $FCLIBS
 do case $i in
 	-L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
-	-lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; # see discussion in emacs info about -static-libgcc and -shared-libgcc
-	-ldl | -lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
-	*) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+	-lgfortranbegin | -lgfortran) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+	*) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
    esac
 done
 
