@@ -12,6 +12,7 @@ threadDetach(tid:Thread) ::=  Ccode(int,"pthread_detach(",tid,")");
 
 
 startup(tb:ThreadCellBody):null := (
+     --warning wrong return type
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
      tb.thread = getthreadself();

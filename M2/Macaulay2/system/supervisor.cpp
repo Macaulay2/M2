@@ -127,32 +127,47 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   m_TargetNumThreads(targetNumThreads),m_ThreadLocalIdCounter(1)
 {
   threadSupervisor=this;
+  //if using get specific, create the thread specific key for the thread local memory block
   #ifdef GETSPECIFICTHREADLOCAL
+  //create key, abort on error
   if(pthread_key_create(&m_ThreadSpecificKey,NULL))
     abort();
+  //create new thread local memory block
   m_LocalThreadMemory = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
+  //set memory block location for main thread.  Main thread doesn't do anything, so not really used.
+  //however, there are plenty of initializations in it anyway.
   if(pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_LocalThreadMemory))
     abort();
   #endif
+  //if not using get specific no initialization is necessary
+  //initialize task waiting condition
   if(pthread_cond_init(&m_TaskWaitingCondition,NULL))
     abort();
+  //force everything to get done just in case there is some weird GC issue.
+  AO_compiler_barrier();
   //once everything is done initialize statics
   staticThreadLocalInit();
 }
 
 ThreadSupervisor::~ThreadSupervisor()
 {
+#ifdef GETSPECIFICTHREADLOCAL
+  //if using get specific delete key that was used for thread specific memory
   if(pthread_key_delete(m_ThreadSpecificKey))
     abort();
+#endif
 }
 void ThreadSupervisor::initialize()
 {
+  //initialize premade threads
   for(int i = 0; i < m_TargetNumThreads; ++i)
     {
       SupervisorThread* thread = new SupervisorThread();
-      thread->start();
+      //critical -- we MUST push back before we start.
       m_Threads.push_back(thread);
+      thread->start();
     }
+  //run tests
   extern int TS_Test();
   TS_Test();
 }
@@ -219,6 +234,7 @@ struct ThreadTask* ThreadSupervisor::getTask()
   m_Mutex.lock();
   while(m_ReadyTasks.empty())
     {
+      //This exists in case pthread cond wait returns due to a signal/etc
     RESTART:
       if(pthread_cond_wait(&m_TaskWaitingCondition,&m_Mutex.m_Mutex))
 	goto RESTART;
@@ -236,6 +252,7 @@ void ThreadTask::run(SupervisorThread* thread)
   m_Mutex.lock();
   if(!m_KeepRunning)
     {
+      //if this is set it means the task was requested to terminate.
       threadSupervisor->_i_finished(this);
       m_Mutex.unlock();
       return;
@@ -260,6 +277,7 @@ void ThreadTask::run(SupervisorThread* thread)
 SupervisorThread::SupervisorThread():m_KeepRunning(true)
 {
   m_ThreadLocal = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
+  AO_compiler_barrier();
 }
 void SupervisorThread::start()
 {
