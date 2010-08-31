@@ -463,7 +463,7 @@ document { Key => {isANumber, (isANumber,Number)},
      Inputs => { "x" => Number },
      Outputs => { Boolean => {"whether ", TT "x", " is not ", EM "not a number", "."} },
      PARA {
-	  "For a discussion of the notion of not-a-number in floating point arithmetic, see ", TO "http://en.wikipedia.org/wiki/NaN", "."
+	  "For a discussion of the notion of not-a-number in floating point arithmetic, see ", HREF "http://en.wikipedia.org/wiki/NaN", "."
 	  },
      EXAMPLE lines ///
      isANumber 3.
