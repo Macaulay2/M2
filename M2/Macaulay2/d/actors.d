@@ -1059,6 +1059,7 @@ subvalueQ(lhs:Code,rhs:Code):Expr := (
 setup(SharpQuestionS,subvalueQ);
 
 isFinite(e:Expr):Expr := (
+     -- # typical value: isFinite, Number, Boolean
      when e
      is x:ZZcell do True
      is x:QQcell do True
@@ -1069,6 +1070,7 @@ isFinite(e:Expr):Expr := (
 setupfun("isFinite",isFinite);
 
 isANumber(e:Expr):Expr := (
+     -- # typical value: isANumber, Number, Boolean
      when e
      is x:ZZcell do True
      is x:QQcell do True
@@ -1079,6 +1081,7 @@ isANumber(e:Expr):Expr := (
 setupfun("isANumber",isANumber);
 
 isInfinite(e:Expr):Expr := (
+     -- # typical value: isInfinite, Number, Boolean
      when e
      is x:ZZcell do False
      is x:QQcell do False

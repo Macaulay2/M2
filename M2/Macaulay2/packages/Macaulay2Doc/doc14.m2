@@ -28,11 +28,10 @@ document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ)},
      ///
      }
 
-
-document { Key => isFinite,
+document { Key => {isFinite, (isFinite,Number)},
      Usage => "isFinite x",
      Headline => "whether a number is finite",
-     Inputs => { "x" },
+     Inputs => { "x" => Number },
      Outputs => { Boolean => {"whether ", TT "x", " is finite, i.e., is not an infinite real number, nor
 	       ", EM "not a number", "."} },
      EXAMPLE lines ///
@@ -42,7 +41,8 @@ document { Key => isFinite,
      isFinite oo
      i-i
      isFinite oo
-     ///
+     ///,
+     SeeAlso => {isANumber, isInfinite}
      }
 
 document { Key => {commonRing, (commonRing,List)},
@@ -457,24 +457,28 @@ document { Key => "defaultPrecision",
      ///
      }
 
-document { Key => isANumber,
+document { Key => {isANumber, (isANumber,Number)},
      Usage => "isANumber x",
-     Headline => "whether a number is a  number",
-     Inputs => { "x" },
-     Outputs => { Boolean => {"whether ", TT "x", " is a number, i.e., is not ", EM "not a number", "."} },
+     Headline => "whether a number is not not-a-number",
+     Inputs => { "x" => Number },
+     Outputs => { Boolean => {"whether ", TT "x", " is not ", EM "not a number", "."} },
+     PARA {
+	  "For a discussion of the notion of not-a-number in floating point arithmetic, see ", TO "http://en.wikipedia.org/wiki/NaN", "."
+	  },
      EXAMPLE lines ///
      isANumber 3.
      inf = 1/0.
      isANumber inf
      nan = inf - inf
      isANumber nan
-     ///
+     ///,
+     SeeAlso => {isFinite, isInfinite}
      }
 
-document { Key => isInfinite,
+document { Key => {isInfinite, (isInfinite,Number)},
      Usage => "isInfinite x",
      Headline => "whether a number is infinite",
-     Inputs => { "x" },
+     Inputs => { "x" => Number },
      Outputs => { Boolean => {"whether ", TT "x", " is an infinite number"} },
      EXAMPLE lines ///
      isInfinite 3.
@@ -482,7 +486,8 @@ document { Key => isInfinite,
      isInfinite inf
      nan = inf - inf
      isInfinite nan
-     ///
+     ///,
+     SeeAlso => {isFinite, isANumber}
      }
 
 document {
