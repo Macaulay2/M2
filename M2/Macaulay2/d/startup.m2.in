@@ -675,8 +675,8 @@ if class Core =!= Symbol and not core "noinitfile" then (
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      );
 
-(
-     loadDepth = 3;
+loadDepth = 0;
+( loadDepth = 3;
      processCommandLineOptions 4;
      n := 0;
      errorDepth = loadDepth = 3;
