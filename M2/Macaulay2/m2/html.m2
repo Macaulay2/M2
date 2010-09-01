@@ -588,7 +588,7 @@ installPackage = method(Options => {
 	  AbsoluteLinks => true,
 	  MakeLinks => true,
 	  Verbose => true,
-	  DebuggingMode => false
+	  DebuggingMode => null
 	  })
 uninstallPackage = method(Options => { 
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
