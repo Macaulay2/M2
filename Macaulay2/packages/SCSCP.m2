@@ -23,7 +23,7 @@ newPackage(
 		{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
 	},
 	Headline => "SCSCP for Macaulay2",
-	DebuggingMode => true,
+	DebuggingMode => false,
 	AuxiliaryFiles => true
 )
 
