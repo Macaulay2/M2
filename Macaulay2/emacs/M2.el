@@ -265,18 +265,19 @@ can be executed with \\[M2-send-to-program]."
      (re-search-backward "<<<")
      (match-end 0))))
 
-(defun M2-find-source-code (filename linenum colnum &optional linenum2 colnum2)
-  (message "linenum %s colnum %s linenum2 %s colnum2 %s" linenum colnum linenum2 colnum2)
+(defun M2-jump-to-source-code (filename linenum colnum &optional linenum2 colnum2)
+  ; it's a mystery why this doesn't always highlight the entire region, when the file is first visited
   (cond
    ((equal filename "stdio") (error "Source code was from standard input"))
-   ((not (file-exists-p filename)) (message "file not found: %s" filename))
+   ((not (file-exists-p filename)) (error "File not found: %s" filename))
    (t
     (find-file-other-window filename)
     (if linenum2
 	(progn 
 	  (goto-line linenum2)
-	  (if colnum2 (move-to-column (- colnum2 1))) 
-	  (push-mark nil nil t)
+	  (if colnum2 (move-to-column (- colnum2 1)))
+	  (transient-mark-mode 1)
+	  (push-mark (point) nil t)
 	  ))
     (goto-line linenum)
     (move-to-column (- colnum 1)))))
@@ -297,7 +298,7 @@ can be executed with \\[M2-send-to-program]."
 	       (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1))
 	       (linenum2 (if (match-beginning 6) (string-to-number (buffer-substring (match-beginning 6) (match-end 6)))))
 	       (colnum2 (if (match-beginning 7) (string-to-number (buffer-substring (match-beginning 7) (match-end 7))) 1)))
-	   (M2-find-source-code filename linenum colnum linenum2 colnum2)))
+	   (M2-jump-to-source-code filename linenum colnum linenum2 colnum2)))
 	((save-excursion
 	   (beginning-of-line)
 	   ;; example:      ../../m2/res.m2:210:45-214:6: --source code:
@@ -308,7 +309,7 @@ can be executed with \\[M2-send-to-program]."
 	       (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1))
 	       (linenum2 (if (match-beginning 6) (string-to-number (buffer-substring (match-beginning 6) (match-end 6)))))
 	       (colnum2 (if (match-beginning 7) (string-to-number (buffer-substring (match-beginning 7) (match-end 7))) 1)))
-	   (M2-find-source-code filename linenum colnum linenum2 colnum2)))
+	   (M2-jump-to-source-code filename linenum colnum linenum2 colnum2)))
 	(t (comint-send-input))))
 
 (defun M2-send-to-program (send-to-buffer)
