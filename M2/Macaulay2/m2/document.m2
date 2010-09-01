@@ -91,7 +91,7 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
      fn := s#0;
      opt := s#1;
      if not instance(fn, Function) and not instance(fn, Sequence)
-     then error "expected first element of document key for optional argument to be a function or sequence";
+     then error("expected first element of document key for optional argument to be a function or sequence: ", silentRobustString(40,1,s));
      if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
 
 -----------------------------------------------------------------------------
