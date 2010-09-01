@@ -102,32 +102,19 @@ Node
   Description
     Text
 
-      This experimental and tentative package provides an interface to the library {\em libxml2}, which is a parser for XML files.  The package
-      offers two ways of representing the result: as an object of class @ TO LibxmlNode @, which is a pointer to the
-      structure created and accessed by the library; or as an object of class @ TO XMLnode @, which is a hashtable
-      containing pointers to similar objects and to strings.
+      This experimental and tentative package provides an interface to the library {\em libxml2} (see @ HREF
+      "http://www.xmlsoft.org/" @), which is a parser for XML files (see
+      @ HREF "http://en.wikipedia.org/wiki/XML" @).  The package offers two ways of representing the
+      result: as an object of class @ TO LibxmlNode @, which is a pointer to the internal structure created and accessed by the
+      library; or as an hashtable of class @ TO XMLnode @ (which currently represents only elements, attributes, and nodes).
       
       This package was written to support the packages @ TO "OpenMath::OpenMath" @ and @ TO "SCSCP::SCSCP" @.
-
-      -- Conceptually, no matter which representation is used, each XML node has: a tag (which is a string that serves as a
-      -- label or name for the node); a list of children (which are XML nodes) and content pieces (which are strings); and a
-      -- set of attribute names (which are strings) together with corresponding values (which are strings).
-
 Node
   Key
     XMLnode
   Description
     Text
-      An object of class @ TO XMLnode @ is a hashtable.
-
-    --  result:
-    --    each node is a hash table of type XMLnode
-    --    some keys are strings, representing attributes
-    --    a special non-string key (symbol children) will provide the list of children (hashtables) and content pieces (strings), if there are any
-    --    a special non-string key (symbol name) for the name of the node
-
-
-
+      An object of class @ TO XMLnode @ is a hashtable used to contain a representation of a node in an XML tree.
 Node
   Key
     (parse,String)
@@ -140,8 +127,22 @@ Node
   Inputs
     s:
   Outputs
-    :
-      the tree resulting from parsing {\tt s}
+    :XMLnode
+      a tree of hash tables resulting from parsing the contents of {\tt s} as XML
+  Description
+   Text
+    This function parses XML into a tree of hash tables of type @ TO XMLnode @.  Each such hashtable represents a node of
+    the tree, in which: the keys that are strings provide the values of attributes; the symbol {\bf children} provides the
+    list of children, each of which is @ ofClass{String,XMLnode} @; and the symbol {\bf tag} provides the name of the element.
+
+    Currently, only element nodes and text nodes are handled.
+   Example
+    x = parse ////<foo a="hi there">ho there<bar/></foo>////
+    peek'_3 x
+    x#"a"
+    x.children
+    class \ oo
+    x.tag
 Node
  Key
   LibxmlNode
@@ -217,14 +218,53 @@ Node
 Node
  Key
   tag
+ Description
+  Text
+   This symbol is used as a key in hash tables of type @ TO XMLnode @.
+ SeeAlso
+   XMLnode
+   parse
+   toXMLnode
 Node
  Key
   children
+ Description
+  Text
+   This symbol is used as a key in hash tables of type @ TO XMLnode @.
+ SeeAlso
+   XMLnode
+   parse
+   toXMLnode
 Node
  Key
   (toXMLnode,LibxmlNode)
   toXMLnode
   [toXMLnode,Trim]
+ Usage
+  toXMLnode n
+ Inputs
+  n:
+ Outputs
+  :XMLnode
+   a representation of the XML tree represented by {\tt n}
+ Description
+  Text
+   This function translates an XML tree created by the libxml library into a tree of hash tables of type
+   @ TO XMLnode @.  Each such hashtable represents a node of the tree, in which: the keys that are
+   strings provide the values of attributes; the symbol {\bf children} provides the list of children, each of which is @ ofClass{String,XMLnode} @;
+   and the symbol {\bf tag} provides the name of the element.
+   
+   Currently, only element nodes and text nodes are handled.
+  Example
+   xmlParse ////<foo a="hi there">ho there<bar/></foo>////
+   x = toXMLnode oo
+   peek'_3 x
+   x#"a"
+   x.children
+   class \ oo
+   x.tag
+ SeeAlso
+  xmlParse
 Node
  Key
   Trim
@@ -602,7 +642,31 @@ undocumented {
   (net,XMLnode)
   }
 
+{*
+generateAssertions ///
+x = parse ////<foo a="hi there">ho there<bar/></foo>////
+#x
+x.tag
+x.children#0
+x#"a"
+y = x.children#1;
+#y
+y.tag
+///
+*}
+
+TEST ///
+     x = parse ////<foo a="hi there">ho there<bar/></foo>////
+     assert( (#x) === 3 )
+     assert( (x.tag) === "foo" )
+     assert( (x.children#0) === "ho there" )
+     assert( (x#"a") === "hi there" )
+     y = x.children#1;
+     assert( (#y) === 1 )
+     assert( (y.tag) === "bar" )
+///
+
 -- Local Variables:
 -- fill-column: 122
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages  PACKAGES=XML RemakePackages=true RerunExamples=true IgnoreExampleErrors=false RemakeAllDocumentation=true errorDepth=1"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakePackages=true RerunExamples=true IgnoreExampleErrors=false RemakeAllDocumentation=true errorDepth=1 all-XML check-XML "
 -- End:
