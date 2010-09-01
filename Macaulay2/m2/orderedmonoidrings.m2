@@ -35,7 +35,7 @@ expression PolynomialRing := R -> (
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
-     net ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
+     net ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expressionMonoid monoid R)))
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))

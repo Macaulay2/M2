@@ -51,11 +51,11 @@ monoidParts = (M) -> (
 	  MonomialOrder => rle o.MonomialOrder,
 	  ( DegreeRank, MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Global ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 
-expression GeneralOrderedMonoid := M -> (
+expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
-     new Parenthesize from {
-	  new FunctionApplication from {monoid, new T from apply(monoidParts M,expression)}
-	  })
+     new T from apply(monoidParts M,expression))
+expression GeneralOrderedMonoid := M -> new Parenthesize from { new FunctionApplication from {monoid, expressionMonoid M} }
+
 toExternalString GeneralOrderedMonoid := M -> toString expression M
 toString GeneralOrderedMonoid := M -> (
      if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
