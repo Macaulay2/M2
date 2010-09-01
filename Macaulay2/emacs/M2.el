@@ -265,12 +265,19 @@ can be executed with \\[M2-send-to-program]."
      (re-search-backward "<<<")
      (match-end 0))))
 
-(defun M2-send-match-to-program (filename linenum colnum)
+(defun M2-find-source-code (filename linenum colnum &optional linenum2 colnum2)
+  (message "linenum %s colnum %s linenum2 %s colnum2 %s" linenum colnum linenum2 colnum2)
   (cond
-   ((equal filename "stdio") (message "source code was from standard input"))
+   ((equal filename "stdio") (error "Source code was from standard input"))
    ((not (file-exists-p filename)) (message "file not found: %s" filename))
    (t
     (find-file-other-window filename)
+    (if linenum2
+	(progn 
+	  (goto-line linenum2)
+	  (if colnum2 (move-to-column (- colnum2 1))) 
+	  (push-mark nil nil t)
+	  ))
     (goto-line linenum)
     (move-to-column (- colnum 1)))))
 
@@ -279,16 +286,29 @@ can be executed with \\[M2-send-to-program]."
   location specified in the corresponding file.  Otherwise, send the input to the command
   interpreter using \\[comint-send-input]."
   (interactive)
-  (cond ((save-excursion (search-backward-regexp "\\({\\*\\|^\\)") (looking-at "{\\*Function\\(Body\\)?\\[\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)[:-]\\|-[0-9]+:\\|: \\)"))
+  (cond ((save-excursion 
+	   (search-backward-regexp "\\({\\*\\|^\\)")
+	   ;; example: {*FunctionBody[../../d/startup.m2.in:123:19-123:21]*}
+	   ;; example: {*Function[../../m2/res.m2:191:40-202:36]*}
+	   ;;                         (1    1)      (2       2)   (3      3)  (4  (5      5)   (6      6)   (7      7)      4)
+	   (looking-at "{\\*Function\\(Body\\)?\\[\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)-\\([0-9]+\\):\\([0-9]+\\)\\|: \\)"))
 	 (let ((filename (buffer-substring (match-beginning 2) (match-end 2)))
 	       (linenum (string-to-number (buffer-substring (match-beginning 3) (match-end 3))))
-	       (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1)))
-	   (M2-send-match-to-program filename linenum colnum)))
-	((save-excursion (beginning-of-line) (looking-at "^ *\\(o+[1-9][0-9]* = \\|| \\)?\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)[:-]\\|-[0-9]+:\\|: \\)"))
+	       (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1))
+	       (linenum2 (if (match-beginning 6) (string-to-number (buffer-substring (match-beginning 6) (match-end 6)))))
+	       (colnum2 (if (match-beginning 7) (string-to-number (buffer-substring (match-beginning 7) (match-end 7))) 1)))
+	   (M2-find-source-code filename linenum colnum linenum2 colnum2)))
+	((save-excursion
+	   (beginning-of-line)
+	   ;; example:      ../../m2/res.m2:210:45-214:6: --source code:
+	   ;;                (1                     1)   (2       2)   (3      3)  (4  (5      5)   (6      6)   (7      7)      4)
+	   (looking-at "^ *\\(o+[1-9][0-9]* = \\|| \\)?\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)-\\([0-9]+\\):\\([0-9]+\\)\\|: \\)"))
 	 (let ((filename (buffer-substring (match-beginning 2) (match-end 2)))
 	       (linenum (string-to-number (buffer-substring (match-beginning 3) (match-end 3))))
-	       (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1)))
-	   (M2-send-match-to-program filename linenum colnum)))
+	       (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1))
+	       (linenum2 (if (match-beginning 6) (string-to-number (buffer-substring (match-beginning 6) (match-end 6)))))
+	       (colnum2 (if (match-beginning 7) (string-to-number (buffer-substring (match-beginning 7) (match-end 7))) 1)))
+	   (M2-find-source-code filename linenum colnum linenum2 colnum2)))
 	(t (comint-send-input))))
 
 (defun M2-send-to-program (send-to-buffer)
