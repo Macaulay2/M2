@@ -263,7 +263,7 @@ document {
 		    LI {
 			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
 			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).
-			 This impacted functions which use ", TO "trim", ", epsecially ", TO "decompose", "."
+			 This impacted functions which use ", TO "trim", ", especially ", TO "decompose", "."
 			 },
 		    LI {
 			 "The function ", TO "eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
