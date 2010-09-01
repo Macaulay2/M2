@@ -53,7 +53,7 @@ toXMLnode0 = node -> (
 		    while attr =!= null list first(
 		    	 xmlGetName attr => ( c := xmlFirstChild attr; concatenate while null =!= c list first( xmlGetContent c, c = xmlGetNext c)),
 		    	 attr = xmlGetNext attr)),
-	       if child =!= null then symbol children => nonnull while child =!= null list first(toXMLnode child, child = xmlGetNext child)
+	       if child =!= null then symbol children => nonnull while child =!= null list first(toXMLnode0 child, child = xmlGetNext child)
 	       }
 	  )
      else if xmlIsText node then trimopt xmlGetContent node)
@@ -89,9 +89,7 @@ populate = (d,x) -> (
      d)
 toLibxmlNode XMLnode := x -> populate(xmlNewRoot x.tag,x)
 parse = method(Options => { Trim => true }, TypicalValue => XMLnode)
-parse String := opts -> s -> (
-     settrim opts;
-     toXMLnode xmlParse s)
+parse String := opts -> s -> toXMLnode(xmlParse s,opts)
 
 beginDocumentation()
 
@@ -112,9 +110,27 @@ Node
 Node
   Key
     XMLnode
+  Headline
+   the class of all XML trees created by the library libxml2
   Description
     Text
       An object of class @ TO XMLnode @ is a hashtable used to contain a representation of a node in an XML tree.
+
+      Each such hashtable represents a node of the tree, in which: the keys that are strings provide the values of
+      attributes; the symbol {\bf children} provides the list of children, each of which is @ ofClass{String,XMLnode} @;
+      and the symbol {\bf tag} provides the name of the element.
+
+      Currently, only element nodes and text nodes are implemented.
+
+    Example
+       new XMLnode from {
+	    tag => "foo",
+	    children => {
+		 new XMLnode from {
+		      tag => "bar",
+		      children => { " chicken coop " } },
+		 " hi there ",
+		 new XMLnode from { tag => "bar" } } }
 Node
   Key
     (parse,String)
@@ -131,11 +147,7 @@ Node
       a tree of hash tables resulting from parsing the contents of {\tt s} as XML
   Description
    Text
-    This function parses XML into a tree of hash tables of type @ TO XMLnode @.  Each such hashtable represents a node of
-    the tree, in which: the keys that are strings provide the values of attributes; the symbol {\bf children} provides the
-    list of children, each of which is @ ofClass{String,XMLnode} @; and the symbol {\bf tag} provides the name of the element.
-
-    Currently, only element nodes and text nodes are handled.
+    This function parses XML into a tree of hash tables of type @ TO XMLnode @.
    Example
     x = parse ////<foo a="hi there">ho there<bar/></foo>////
     peek'_3 x
@@ -204,17 +216,6 @@ Node
    class \ oo
    getAttributes bar
    class \ oo
- SeeAlso
-  xmlParse
-  xmlFirstAttribute
-  xmlFirstChild
-  xmlGetName
-  xmlGetNext
-  xmlIsElement
-  xmlIsText
-  getChildren
-  getAttributes
-  XMLnode
 Node
  Key
   tag
@@ -240,6 +241,8 @@ Node
   (toXMLnode,LibxmlNode)
   toXMLnode
   [toXMLnode,Trim]
+ Headline
+  convert an object of type LibxmlNode to a hashtable of type XMLnode
  Usage
   toXMLnode n
  Inputs
@@ -247,22 +250,21 @@ Node
  Outputs
   :XMLnode
    a representation of the XML tree represented by {\tt n}
+  Trim => Boolean
+   whether to trim leading and trailing spaces from the lines in text nodes
  Description
   Text
    This function translates an XML tree created by the libxml library into a tree of hash tables of type
-   @ TO XMLnode @.  Each such hashtable represents a node of the tree, in which: the keys that are
-   strings provide the values of attributes; the symbol {\bf children} provides the list of children, each of which is @ ofClass{String,XMLnode} @;
-   and the symbol {\bf tag} provides the name of the element.
-   
-   Currently, only element nodes and text nodes are handled.
+   @ TO XMLnode @.
   Example
-   xmlParse ////<foo a="hi there">ho there<bar/></foo>////
-   x = toXMLnode oo
+   n = xmlParse ////<foo a="hi there">  ho there  <bar/></foo>////
+   x = toXMLnode n
    peek'_3 x
    x#"a"
    x.children
    class \ oo
    x.tag
+   x = toXMLnode(n,Trim=>false)
  SeeAlso
   xmlParse
 Node
@@ -272,6 +274,25 @@ Node
  Key
   (toLibxmlNode,XMLnode)
   toLibxmlNode
+ Headline
+  convert a hashtable of type XMLnode to an object of type LibxmlNode
+ Usage
+  toLibxmlNode x
+ Inputs
+  x:
+ Outputs
+  :
+ Description
+  Example
+   new XMLnode from {
+	tag => "foo",
+	children => {
+	     new XMLnode from {
+	     	  tag => "bar",
+	     	  children => { " chicken coop " } },
+	     " hi there ",
+	     new XMLnode from { tag => "bar" } } }
+   toLibxmlNode oo
 Node
  Key
   (xmlIsElement,LibxmlNode)
