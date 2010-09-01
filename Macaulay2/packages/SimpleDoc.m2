@@ -134,7 +134,7 @@ applySplit = (fcns, textlines) ->
 	       if not fcns#?key then error splice(
 		    "unrecognized keyword, line ",toString getLinenum textlines#i,
 		    " of string: ",format key,
-		    "; valid keyword(s): ", toSequence between(" ",sort keys fcns)
+		    "; expected: ", toSequence between(" ",sort keys fcns)
 		    );
 	       fcns#key(textlines_{i+1..j}, getLinenum textlines#i)))
 
