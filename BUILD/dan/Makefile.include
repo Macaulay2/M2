@@ -27,11 +27,15 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
 	    echo "make: Leaving directory \`$$D/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all
 default: check-links
-distclean: distclean1 distclean2
+distclean: distclean1
 distclean1:
-	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; then $(MAKE) -C builds.tmp/$(DIRECTORY) distclean -o config.status ; fi
-distclean2:
-	! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/=== /' | grep .
+	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
+	then $(MAKE) -C builds.tmp/$(DIRECTORY) distclean -o config.status ; \
+	fi
+	-! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | grep . || echo "========== files left after make distclean ========" >&2
+	if [ -e builds.tmp/$(DIRECTORY)/. ] ; \
+	then rm -rf builds.tmp/$(DIRECTORY) ; \
+	fi
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 install-info:
