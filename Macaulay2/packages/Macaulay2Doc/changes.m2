@@ -102,6 +102,9 @@ document {
 			 that allows multiple documentation nodes per string.  The format of the ", BOLD "Consequences", "
 			 section has changed.  There is a new keyword, ", BOLD "Pre", ", that allows preformatted
 			 text to be easily inserted."
+			 },
+		    LI {
+			 "The package ", TO "XML::XML", " has been documented."
 			 }
 	       	    }
 	       },
