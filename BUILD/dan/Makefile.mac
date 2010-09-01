@@ -71,5 +71,5 @@ endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 # Local Variables:
-# compile-command: "time make -f Makefile.mac PRODUCTION=yes DEBUG=no all install check "
+# compile-command: "time make -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
 # End:
