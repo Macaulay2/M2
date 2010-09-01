@@ -106,7 +106,7 @@ Node
       "http://www.xmlsoft.org/" @), which is a parser for XML files (see
       @ HREF "http://en.wikipedia.org/wiki/XML" @).  The package offers two ways of representing the
       result: as an object of class @ TO LibxmlNode @, which is a pointer to the internal structure created and accessed by the
-      library; or as an hashtable of class @ TO XMLnode @ (which currently represents only elements, attributes, and nodes).
+      library; or as a hashtable of class @ TO XMLnode @ (which currently represents only elements, attributes, and nodes).
       
       This package was written to support the packages @ TO "OpenMath::OpenMath" @ and @ TO "SCSCP::SCSCP" @.
 Node
