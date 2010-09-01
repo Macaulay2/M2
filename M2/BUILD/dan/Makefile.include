@@ -29,7 +29,7 @@ default: arch-chk all
 default: check-links
 distclean: distclean1 distclean2
 distclean1:
-	if [ -e builds.tmp/$(DIRECTORY)/. ] ; then $(MAKE) -C builds.tmp/$(DIRECTORY) distclean -o config.status ; fi
+	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; then $(MAKE) -C builds.tmp/$(DIRECTORY) distclean -o config.status ; fi
 distclean2:
 	! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/=== /' | grep .
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
