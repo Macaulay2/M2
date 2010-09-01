@@ -220,7 +220,12 @@ generateAssertions List := y -> (
 	       concatenate if t === local oops
 	       then ("assert( (try ", lin, " else oops) === oops )")
 	       else if good t
-	       then ("assert( ("    , lin,            ") ",eq t," ", toExternalString t, " )")
+	       then (
+		    ts := try toExternalString t;
+		    if ts === null
+		    then (lin, " -- toExternalString fails")
+		    else ("assert( ("    , lin,            ") ",eq t," ", toExternalString t, " )")
+		    )
 	       else lin
 	       )))^-1
 
