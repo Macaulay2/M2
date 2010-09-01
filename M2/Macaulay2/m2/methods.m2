@@ -378,7 +378,7 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      else M#Name#1
      )
 
-exitMethod := method(Dispatch => Thing)
+exitMethod = method(Dispatch => Thing)
 exitMethod ZZ := i -> exit i
 exitMethod Sequence := x -> exit 0
 quit = Command (() -> exit 0)
