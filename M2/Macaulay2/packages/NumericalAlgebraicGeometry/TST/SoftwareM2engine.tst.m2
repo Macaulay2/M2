@@ -26,7 +26,7 @@ S = apply(#M,i->getSolution(i,SolutionAttributes=>SolutionStatus));
 assert( #select(S, s->s==Regular) == 70
      and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
 
-for predictor in {RungeKutta4,Tangent,ProjectiveNewton} do (
+for predictor in {RungeKutta4,Tangent,Certified} do (
      (S,T,solsS) = smallExample();
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor, Projectivize=>true, Normalize=>true);
      SM = sortSolutions M;
