@@ -16,7 +16,7 @@ SM = sortSolutions M;
 assert all({0,3}, i->status SM#i===Infinity) 
 assert all({1,2}, i->status SM#i===Regular) 
 
-for predictor in {RungeKutta4,ProjectiveNewton} do (
+for predictor in {RungeKutta4,Certified} do (
      (S,T,solsS) = smallExample();
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2, Predictor=>predictor, Projectivize=>true, Normalize=>true);
      SM = sortSolutions M;
