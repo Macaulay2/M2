@@ -339,7 +339,7 @@ readMultipleNmzData String:=nmzSuffix->
     );
 
     inf:=get(nmzFile|"."|nmzSuffix);
-    s=lines(inf);
+    s:=lines(inf);
 
     L:={};
     t:="";
