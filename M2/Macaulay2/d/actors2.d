@@ -509,7 +509,7 @@ flagSymbol(e:Expr):Expr := (
      when e
      is q:SymbolClosure do (
 	  q.symbol.flagLookup = !q.symbol.flagLookup;
-	  Expr(Boolean(q.symbol.flagLookup)))
+	  toExpr(q.symbol.flagLookup))
      else WrongArg("a symbol"));
 setupfun("flagLookup",flagSymbol);
 
