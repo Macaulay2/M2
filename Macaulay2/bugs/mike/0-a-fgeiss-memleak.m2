@@ -521,17 +521,17 @@ cmatrix = () -> map(R^{{0},{0},{0},{0},{0},{0},{0},{0},{1},{0},{0},{0},{0},{0},{
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x_2^2, x_1*x_2, x_0*x_2, x_1^2, x_0*x_1, x_0^2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-counter = 1
+LEAKS = (f,g) -> quotient(f,g)  -- g a GroebnerBasis, f a Matrix
 
-LEAKS = (f,g) -> quotient(f,g)  -- g a GroebnerrrBasis, f a Matrix
+kk=ZZ/3;
+R=kk[x_0..x_2];
+f = Mrelns();
+g = cmatrix();
+gbg = gb(g, ChangeMatrix => true);
+
+while true do LEAKS(f,gbg) -- leaks very fast!
 
 end
 restart
 load"0-a-fgeiss-memleak.m2";
-kk=ZZ/3;
-R=kk[x_0..x_2];
 
-f = Mrelns();
-g = cmatrix();
-gbg = gb(g, ChangeMatrix => true);
-while true do LEAKS(f,gbg) -- leaks very fast!
