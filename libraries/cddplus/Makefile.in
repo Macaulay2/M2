@@ -7,10 +7,10 @@ PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PROGRAMS = cddr+ cddf+
 BUILDTARGET = all
 LICENSEFILES = README.cdd+ COPYING
-CONFIGURECMD = :
+CONFIGURECMD = true
 BUILDOPTIONS = $(ALLFLAGS) CFLAGS="$(CPPFLAGS) $(CXXFLAGS)"
-INSTALLCMD = :
-CHECKCMD = :
+INSTALLCMD = true
+CHECKCMD = true
 include ../Makefile.library
 CPPFLAGS := -I. $(CPPFLAGS)
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cddplus/Makefile

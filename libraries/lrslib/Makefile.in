@@ -9,10 +9,10 @@ VERSION = 042c
 TARFILE = lrslib-$(VERSION).tar.gz
 PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash
 LICENSEFILES = lrslib.html COPYING
-CONFIGURECMD = :
+CONFIGURECMD = true
 BUILDTARGET = all
-INSTALLCMD = :
-CHECKCMD = :
+INSTALLCMD = true
+CHECKCMD = true
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lrslib/Makefile
 # Local Variables:
