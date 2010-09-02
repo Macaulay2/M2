@@ -297,7 +297,7 @@ readNmzData(String):=(nmzSuffix)->
 
     if(nmzSuffix=="sup") -- for backward compatibility, should only appear if nmzUserCalled
     then(
-          L=readMultipleNmzData "cst";
+          L:=readMultipleNmzData "cst";
           return L#0;);
 
     if(nmzFilename!="" and nmzUserCalled) then nmzFile=setNmzFile();
@@ -398,6 +398,7 @@ getNumInvs=()->
 
        if(match("^integer", s#i))
        then(
+	    local j;
             (key,j)=getKeyword(s#i,8);
              inv=value (getNumber(substring(j+3,s#i)))#0;
        )
