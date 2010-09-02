@@ -308,7 +308,7 @@ readNmzData(String):=(nmzSuffix)->
     );
 
     inf:=get(nmzFile|"."|nmzSuffix);
-    s=lines(inf);
+    s:=lines(inf);
     nmzGen:={};
     i:=2;
     t:="";
