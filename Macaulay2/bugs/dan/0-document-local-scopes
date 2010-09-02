@@ -1,0 +1,9 @@
+emphasize that "for" loops have a scope, in the documentation
+
+i1 : for i in 0 .. 0 do f := 1
+
+i2 : f
+
+o2 = f
+
+o2 : Symbol
