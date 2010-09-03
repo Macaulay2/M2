@@ -77,7 +77,7 @@ replace("[]]","}",replace("[[]","{",S)))
 
 readMaple=method()
 readMaple(String):=(fn)->(
-F= openIn(fn);
+F:= openIn(fn);
 Lfc:=changeBrackets2(get(F));
 value Lfc)
 
@@ -86,7 +86,7 @@ msqrt(ZZ,ZZ):=(a,b)->(
 inputdata1=toString {a,b};
 inputdata2="msqrt";
 mapleprogram="with(numtheory,placeholder2):returnvalue:=placeholder2(op(placeholder1));";
-L=callMaple(inputdata1,inputdata2,mapleprogram);
+L:=callMaple(inputdata1,inputdata2,mapleprogram);
 L)
 
 
@@ -99,7 +99,7 @@ if #v>2 then error("expected an ideal in a ring with 2 variables");
 inputdata1=(toString(f))|","|toString(v#1)|","|toString(v#0),
 inputdata2="integral_basis";
 mapleprogram="with(algcurves,placeholder2):returnvalue:=placeholder2(placeholder1);";
-L=callMaple(inputdata1,inputdata2,mapleprogram);
+L:=callMaple(inputdata1,inputdata2,mapleprogram);
 matrix {L})
 
 ----------------------------------------------------------------------

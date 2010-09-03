@@ -18,14 +18,14 @@ export {runBenchmarks}
 
 benchmarks = new HashTable from {
      "res39" => "res of a generic 3 by 9 matrix over ZZ/101" => () -> (
-	  rr := ZZ/101[Variables => 52, MonomialSize => 16];
+	  rr := (ZZ/101)(monoid [Variables => 52, MonomialSize => 16]);
 	  (ti,re) := toSequence timing res coker genericMatrix(rr,3,9);
 	  vv := apply(8,i->rank re_i);
 	  assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} );
 	  ti),
      "resG25" => "res of the coordinate ring of Grassmannian(2,5)" => () -> (
-	  SS := ZZ/101[Variables => 20, MonomialSize => 16];
-	  MM := SS^1/Grassmannian(2,5,SS);
+	  SS := (ZZ/101)(monoid [Variables => 20, MonomialSize => 16]);
+	  MM := SS^1/Grassmannian(2,5,SS,Variable => local T);
 	  (ti,re) := toSequence timing res MM;
 	  vv := apply(11,i->rank re_i);
 	  assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} );
@@ -81,17 +81,24 @@ benchmarks = new HashTable from {
 	  (ti,re) := toSequence timing gens gb (J,MaxReductionCount => 3000);
 	  assert ( rank source re == 3626 );
 	  ti),
-     "gb3445" => "gb of a random ideal with elements of degree 3,4,4,5 in 8 variables" => ()  -> (
-	  R := ZZ/101[a..h,MonomialSize=>8];
+     "gb3445" => "gb of an ideal with elements of degree 3,4,4,5 in 8 variables" => ()  -> (
+	  R := ZZ/101[local a, local b, local c, local d, local e, local f, local g, local h,MonomialSize=>8];
+	  setRandomSeed();
 	  I := ideal random(R^1, R^{-3,-4,-4,-5});
-	  J := ideal "a3,b4,c4,d5";
+	  J := ideal (R_0^3,R_1^4,R_2^4,R_3^5);
 	  installHilbertFunction(I, poincare J);
 	  (ti,re) := toSequence timing gens gb(I);
 	  assert( tally degrees source re === new Tally from { {12} => 3, {13} => 1, {3} => 1, {4} => 2, {5} => 3, {6} => 5, {7} => 6, {8} => 8, {9} => 10, {10} => 9, {11} => 6} );
 	  ti),
      "gb4by4comm" => "gb of the ideal of generic commuting 4 by 4 matrices over ZZ/101" => () -> (
-	  R = ZZ/101[vars(0..31),MonomialOrder=>ProductOrder{8,12,12},MonomialSize=>8];
-	  I = ideal( -j*o+i*p-v*A+u*B-x*C+w*D, -a*p+b*o+c*p-d*o+k*B-l*A+m*D-n*C, -a*B+b*A+e*B-f*A+p*q-o*r-z*C+y*D, -a*D+b*C+g*D-h*C+p*s-o*t+B*E-A*F,
+	  R := ZZ/101[
+	       local a, local b, local c, local d, local e, local f, local g,
+	       local h, local i, local j, local k, local l, local m, local n,
+	       local o, local p, local q, local r, local s, local t, local u,
+	       local v, local w, local x, local y, local z, local A, local B,
+	       local C, local D, local E, local F,
+	       MonomialOrder=>ProductOrder{8,12,12},MonomialSize=>8];
+	  I := ideal( -j*o+i*p-v*A+u*B-x*C+w*D, -a*p+b*o+c*p-d*o+k*B-l*A+m*D-n*C, -a*B+b*A+e*B-f*A+p*q-o*r-z*C+y*D, -a*D+b*C+g*D-h*C+p*s-o*t+B*E-A*F,
 	       a*j-b*i-c*j+d*i-q*v+r*u-s*x+t*w, j*o-i*p-l*q+k*r-n*s+m*t, -c*r+d*q+e*r-f*q-i*B+j*A-s*z+t*y, -c*t+d*s+g*t-h*s-i*D+j*C-q*F+r*E,
 	       a*v-b*u-e*v+f*u-j*k+i*l-x*E+w*F, c*l-d*k-e*l+f*k+m*F-n*E+o*v-p*u, l*q-k*r+v*A-u*B-z*E+y*F, -e*F+f*E+g*F-h*E+l*s-k*t+v*C-u*D,
 	       a*x-b*w-g*x+h*w-j*m+i*n-v*y+u*z, c*n-d*m-g*n+h*m+k*z-l*y+o*x-p*w, e*z-f*y-g*z+h*y+n*q-m*r+x*A-w*B, n*s-m*t+x*C-w*D+z*E-y*F);
@@ -99,41 +106,105 @@ benchmarks = new HashTable from {
 	  assert( tally degrees source re === new Tally from {{2} => 15, {3} => 23, {4} => 22, {5} => 67, {6} => 72, {7} => 85, {8} => 10} );
 	  ti),
      "deg2generic" => "gb of a generic ideal of codimension 2 and degree 2" => () -> (
-	  R1 = ZZ/32003[vars(0..39),MonomialSize=>8];
-          I1 = ideal"b2de+bd2f+a2dg+abdh+ad2i+b2cj+bc2k+bcdl+a2cm+abcn+ac2o+acdp,
-	       b2dq+bd2r+a2ds+abdt+ad2u+b2cv+bc2w+bcdx+a2cy+abcz+ac2A+acdB,
-	       b2dC+bd2D+a2dE+abdF+ad2G+b2cH+bc2I+bcdJ+a2cK+abcL+ac2M+acdN";
+	  R1 := ZZ/32003[
+	       local a, local b, local c, local d, local e, local f, local g,
+	       local h, local i, local j, local k, local l, local m, local n,
+	       local o, local p, local q, local r, local s, local t, local u,
+	       local v, local w, local x, local y, local z, local A, local B,
+	       local C, local D, local E, local F, local G, local H, local I,
+	       local J, local K, local L, local M, local N,
+	       MonomialSize=>8];
+          I1 := ideal(
+	       b^2*d*e+b*d^2*f+a^2*d*g+a*b*d*h+a*d^2*i+b^2*c*j+b*c^2*k+b*c*d*l+a^2*c*m+a*b*c*n+a*c^2*o+a*c*d*p,
+	       b^2*d*q+b*d^2*r+a^2*d*s+a*b*d*t+a*d^2*u+b^2*c*v+b*c^2*w+b*c*d*x+a^2*c*y+a*b*c*z+a*c^2*A+a*c*d*B,
+	       b^2*d*C+b*d^2*D+a^2*d*E+a*b*d*F+a*d^2*G+b^2*c*H+b*c^2*I+b*c*d*J+a^2*c*K+a*b*c*L+a*c^2*M+a*c*d*N
+     	       );
 	  (ti,re) := toSequence timing gens gb(I1, MaxReductionCount=>3000);
 	  --(ti,re) := toSequence timing gens gb(I1, Algorithm=>LinearAlgebra);
 	  assert(44 === numgens source gens gb I1);
 	  ti),
      "yang-subring" => "an example of Yang-Hui He" => () -> (
-     	  kk = ZZ/101;
-	  R=kk[vars(0..12)];
-	  fterms = ideal"4ef2-4dfg+10ah+3bh+3ch+3aj+5bj+5cj+7al+4bl+3cl+7f,2e2f-2deg-13ghi+18fi2-7gij-15ghk+24fik-11gjk+20fk2-11gil-12gkl-12ghm+16fim-8gjm+26fkm-19glm+8fm2+7e,3eh-3di+5ej-5dk+4el-4dm,18g2h-12fgi+13g2j-15fgk+13g2l-5fgm+10ae+3be+3ce,3eh-3di+5ej-5dk+3el-3dm,9g2h-5fgi+2g2j-4fgk+14g2l-17fgm+3ae+5be+5ce,8g2h-17fgi+8g2j-16fgk+18g2l-13fgm+7ae+4be+3ce,10eh-10di+3ej-3dk+7el-7dm,-16efg+16dg2-10ai-3bi-3ci-3ak-5bk-5ck-7am-4bm-3cm-7g,-6def+6d2g+16gh2-19fhi+28ghj-12fij+16gj2-5fhk-2fjk+10ghl-10fil+24gjl-10fkl+18gl2-7fhm-13fjm-10flm-7d,-12fgh+6f2i-10fgj+8f2k-10fgl+11f2m-10ad-3bd-3cd,-13fgh+11f2i-12fgj+10f2k-13fgl+14f2m-3ad-5bd-5cd,-20fgh+13f2i-13fgj+16f2k-3fgl+16f2m-7ad-4bd-3cd";
-	  dterms = matrix"gh-fi,gj-fk,gl-fm,ef-dg,aij-ahk,bij-bhk,cij-chk,ail-ahm,bil-bhm,cil-chm,akl-ajm,bkl-bjm,ckl-cjm,aeh-adi,beh-bdi,ceh-cdi,aej-adk,bej-bdk,cej-cdk,ael-adm,bel-bdm,cel-cdm";
-	  y = symbol y;
-	  S=kk[y_1..y_22, Degrees=>degrees source dterms];
-	  A = R/fterms;
-	  F = map(A,S,sub(dterms,A));
+     	  kk := ZZ/101;
+	  R := kk[local a, local b, local c, local d, local e, local f, local g, local h, local i, local j, local k, local l, local m];
+	  fterms = ideal(4*e*f^2-4*d*f*g+10*a*h+3*b*h+3*c*h+3*a*j+5*b*j+5*c*j+7*a*l+4*b*l+3*c*l+7*f,2*e^2*f-2*d*e*g-13*g*h*i+18*f*i^2-7*g*i*j-15*g*h*k+24*f*i*k-11*g*j*k+20*f*k^2-11*g*i*l-12*g*k*l-12*g*h*m+16*f*i*m-8*g*j*m+26*f*k*m-19*g*l*m+8*f*m^2+7*e,3*e*h-3*d*i+5*e*j-5*d*k+4*e*l-4*d*m,18*g^2*h-12*f*g*i+13*g^2*j-15*f*g*k+13*g^2*l-5*f*g*m+10*a*e+3*b*e+3*c*e,3*e*h-3*d*i+5*e*j-5*d*k+3*e*l-3*d*m,9*g^2*h-5*f*g*i+2*g^2*j-4*f*g*k+14*g^2*l-17*f*g*m+3*a*e+5*b*e+5*c*e,8*g^2*h-17*f*g*i+8*g^2*j-16*f*g*k+18*g^2*l-13*f*g*m+7*a*e+4*b*e+3*c*e,10*e*h-10*d*i+3*e*j-3*d*k+7*e*l-7*d*m,-16*e*f*g+16*d*g^2-10*a*i-3*b*i-3*c*i-3*a*k-5*b*k-5*c*k-7*a*m-4*b*m-3*c*m-7*g,-6*d*e*f+6*d^2*g+16*g*h^2-19*f*h*i+28*g*h*j-12*f*i*j+16*g*j^2-5*f*h*k-2*f*j*k+10*g*h*l-10*f*i*l+24*g*j*l-10*f*k*l+18*g*l^2-7*f*h*m-13*f*j*m-10*f*l*m-7*d,-12*f*g*h+6*f^2*i-10*f*g*j+8*f^2*k-10*f*g*l+11*f^2*m-10*a*d-3*b*d-3*c*d,-13*f*g*h+11*f^2*i-12*f*g*j+10*f^2*k-13*f*g*l+14*f^2*m-3*a*d-5*b*d-5*c*d,-20*f*g*h+13*f^2*i-13*f*g*j+16*f^2*k-3*f*g*l+16*f^2*m-7*a*d-4*b*d-3*c*d);
+	  dterms = matrix {{g*h-f*i, g*j-f*k, g*l-f*m, e*f-d*g, a*i*j-a*h*k, b*i*j-b*h*k, c*i*j-c*h*k, a*i*l-a*h*m, b*i*l-b*h*m, c*i*l-c*h*m, a*k*l-a*j*m, b*k*l-b*j*m, c*k*l-c*j*m, a*e*h-a*d*i, b*e*h-b*d*i, c*e*h-c*d*i, a*e*j-a*d*k, b*e*j-b*d*k, c*e*j-c*d*k, a*e*l-a*d*m, b*e*l-b*d*m, c*e*l-c*d*m}};
+	  y := symbol y;
+	  S := kk[y_1..y_22, Degrees=>degrees source dterms];
+	  A := R/fterms;
+	  F := map(A,S,sub(dterms,A));
 	  (ti,re) := toSequence timing ker F;
 	  assert(tally degrees source gens re === new Tally from {{2} => 1, {3} => 12, {5} => 3, {6} => 16, {7} => 27});
 	  ti),
      "yang-gb1" => "an example of Yang-Hui He arising in string theory" => () -> (
 	  -- see also bugs/mike/1-yang-gbexamples.m2
-	  kk = QQ;
-	  R1=kk[vars(0..47), MonomialSize=>8];
-	  J1 = ideal"dgjm-chjm-dfkm+bhkm+cflm-bglm-dgin+chin+dekn-ahkn-celn+agln+dfio-bhio-dejo+ahjo+belo-aflo-cfip+bgip+cejp-agjp-bekp+afkp,dgjq-chjq-dfkq+bhkq+cflq-bglq-dgir+chir+dekr-ahkr-celr+aglr+dfis-bhis-dejs+ahjs+bels-afls-cfit+bgit+cejt-agjt-bekt+afkt,dgnq-chnq-dfoq+bhoq+cfpq-bgpq-dgmr+chmr+deor-ahor-cepr+agpr+dfms-bhms-dens+ahns+beps-afps-cfmt+bgmt+cent-agnt-beot+afot,dknq-clnq-djoq+bloq+cjpq-bkpq-dkmr+clmr+dior-alor-cipr+akpr+djms-blms-dins+alns+bips-ajps-cjmt+bkmt+cint-aknt-biot+ajot,hknq-glnq-hjoq+floq+gjpq-fkpq-hkmr+glmr+hior-elor-gipr+ekpr+hjms-flms-hins+elns+fips-ejps-gjmt+fkmt+gint-eknt-fiot+ejot,dgju-chju-dfku+bhku+cflu-bglu-dgiv+chiv+dekv-ahkv-celv+aglv+dfiw-bhiw-dejw+ahjw+belw-aflw-cfix+bgix+cejx-agjx-bekx+afkx,dgnu-chnu-dfou+bhou+cfpu-bgpu-dgmv+chmv+deov-ahov-cepv+agpv+dfmw-bhmw-denw+ahnw+bepw-afpw-cfmx+bgmx+cenx-agnx-beox+afox,dknu-clnu-djou+blou+cjpu-bkpu-dkmv+clmv+diov-alov-cipv+akpv+djmw-blmw-dinw+alnw+bipw-ajpw-cjmx+bkmx+cinx-aknx-biox+ajox,hknu-glnu-hjou+flou+gjpu-fkpu-hkmv+glmv+hiov-elov-gipv+ekpv+hjmw-flmw-hinw+elnw+fipw-ejpw-gjmx+fkmx+ginx-eknx-fiox+ejox,dgru-chru-dfsu+bhsu+cftu-bgtu-dgqv+chqv+desv-ahsv-cetv+agtv+dfqw-bhqw-derw+ahrw+betw-aftw-cfqx+bgqx+cerx-agrx-besx+afsx,dkru-clru-djsu+blsu+cjtu-bktu-dkqv+clqv+disv-alsv-citv+aktv+djqw-blqw-dirw+alrw+bitw-ajtw-cjqx+bkqx+cirx-akrx-bisx+ajsx,hkru-glru-hjsu+flsu+gjtu-fktu-hkqv+glqv+hisv-elsv-gitv+ektv+hjqw-flqw-hirw+elrw+fitw-ejtw-gjqx+fkqx+girx-ekrx-fisx+ejsx,doru-cpru-dnsu+bpsu+cntu-botu-doqv+cpqv+dmsv-apsv-cmtv+aotv+dnqw-bpqw-dmrw+aprw+bmtw-antw-cnqx+boqx+cmrx-aorx-bmsx+ansx,horu-gpru-hnsu+fpsu+gntu-fotu-hoqv+gpqv+hmsv-epsv-gmtv+eotv+hnqw-fpqw-hmrw+eprw+fmtw-entw-gnqx+foqx+gmrx-eorx-fmsx+ensx,loru-kpru-lnsu+jpsu+kntu-jotu-loqv+kpqv+lmsv-ipsv-kmtv+iotv+lnqw-jpqw-lmrw+iprw+jmtw-intw-knqx+joqx+kmrx-iorx-jmsx+insx,ay+bz+cA+dB,ey+fz+gA+hB,iy+jz+kA+lB,my+nz+oA+pB,qy+rz+sA+tB,uy+vz+wA+xB,aC+bD+cE+dF,eC+fD+gE+hF,iC+jD+kE+lF,mC+nD+oE+pF,qC+rD+sE+tF,uC+vD+wE+xF,aG+bH+cI+dJ,eG+fH+gI+hJ,iG+jH+kI+lJ,mG+nH+oI+pJ,qG+rH+sI+tJ,uG+vH+wI+xJ,aK+bL+cM+dN,eK+fL+gM+hN,iK+jL+kM+lN,mK+nL+oM+pN,qK+rL+sM+tN,uK+vL+wM+xN,BEHK-AFHK-BDIK+zFIK+ADJK-zEJK-BEGL+AFGL+BCIL-yFIL-ACJL+yEJL+BDGM-zFGM-BCHM+yFHM+zCJM-yDJM-ADGN+zEGN+ACHN-yEHN-zCIN+yDIN,aO+bP+cQ+dR,eO+fP+gQ+hR,iO+jP+kQ+lR,mO+nP+oQ+pR,qO+rP+sQ+tR,uO+vP+wQ+xR,BEHO-AFHO-BDIO+zFIO+ADJO-zEJO-BEGP+AFGP+BCIP-yFIP-ACJP+yEJP+BDGQ-zFGQ-BCHQ+yFHQ+zCJQ-yDJQ-ADGR+zEGR+ACHR-yEHR-zCIR+yDIR,BELO-AFLO-BDMO+zFMO+ADNO-zENO-BEKP+AFKP+BCMP-yFMP-ACNP+yENP+BDKQ-zFKQ-BCLQ+yFLQ+zCNQ-yDNQ-ADKR+zEKR+ACLR-yELR-zCMR+yDMR,BILO-AJLO-BHMO+zJMO+AHNO-zINO-BIKP+AJKP+BGMP-yJMP-AGNP+yINP+BHKQ-zJKQ-BGLQ+yJLQ+zGNQ-yHNQ-AHKR+zIKR+AGLR-yILR-zGMR+yHMR,FILO-EJLO-FHMO+DJMO+EHNO-DINO-FIKP+EJKP+FGMP-CJMP-EGNP+CINP+FHKQ-DJKQ-FGLQ+CJLQ+DGNQ-CHNQ-EHKR+DIKR+EGLR-CILR-DGMR+CHMR,aS+bT+cU+dV,eS+fT+gU+hV,iS+jT+kU+lV,mS+nT+oU+pV,qS+rT+sU+tV,uS+vT+wU+xV,BEHS-AFHS-BDIS+zFIS+ADJS-zEJS-BEGT+AFGT+BCIT-yFIT-ACJT+yEJT+BDGU-zFGU-BCHU+yFHU+zCJU-yDJU-ADGV+zEGV+ACHV-yEHV-zCIV+yDIV,BELS-AFLS-BDMS+zFMS+ADNS-zENS-BEKT+AFKT+BCMT-yFMT-ACNT+yENT+BDKU-zFKU-BCLU+yFLU+zCNU-yDNU-ADKV+zEKV+ACLV-yELV-zCMV+yDMV,BILS-AJLS-BHMS+zJMS+AHNS-zINS-BIKT+AJKT+BGMT-yJMT-AGNT+yINT+BHKU-zJKU-BGLU+yJLU+zGNU-yHNU-AHKV+zIKV+AGLV-yILV-zGMV+yHMV,FILS-EJLS-FHMS+DJMS+EHNS-DINS-FIKT+EJKT+FGMT-CJMT-EGNT+CINT+FHKU-DJKU-FGLU+CJLU+DGNU-CHNU-EHKV+DIKV+EGLV-CILV-DGMV+CHMV,BEPS-AFPS-BDQS+zFQS+ADRS-zERS-BEOT+AFOT+BCQT-yFQT-ACRT+yERT+BDOU-zFOU-BCPU+yFPU+zCRU-yDRU-ADOV+zEOV+ACPV-yEPV-zCQV+yDQV,BIPS-AJPS-BHQS+zJQS+AHRS-zIRS-BIOT+AJOT+BGQT-yJQT-AGRT+yIRT+BHOU-zJOU-BGPU+yJPU+zGRU-yHRU-AHOV+zIOV+AGPV-yIPV-zGQV+yHQV,FIPS-EJPS-FHQS+DJQS+EHRS-DIRS-FIOT+EJOT+FGQT-CJQT-EGRT+CIRT+FHOU-DJOU-FGPU+CJPU+DGRU-CHRU-EHOV+DIOV+EGPV-CIPV-DGQV+CHQV,BMPS-ANPS-BLQS+zNQS+ALRS-zMRS-BMOT+ANOT+BKQT-yNQT-AKRT+yMRT+BLOU-zNOU-BKPU+yNPU+zKRU-yLRU-ALOV+zMOV+AKPV-yMPV-zKQV+yLQV,FMPS-ENPS-FLQS+DNQS+ELRS-DMRS-FMOT+ENOT+FKQT-CNQT-EKRT+CMRT+FLOU-DNOU-FKPU+CNPU+DKRU-CLRU-ELOV+DMOV+EKPV-CMPV-DKQV+CLQV,JMPS-INPS-JLQS+HNQS+ILRS-HMRS-JMOT+INOT+JKQT-GNQT-IKRT+GMRT+JLOU-HNOU-JKPU+GNPU+HKRU-GLRU-ILOV+HMOV+IKPV-GMPV-HKQV+GLQV";
+	  kk := QQ;
+	  R1 := kk[
+	       local a, local b, local c, local d, local e, local f, local g,
+	       local h, local i, local j, local k, local l, local m, local n,
+	       local o, local p, local q, local r, local s, local t, local u,
+	       local v, local w, local x, local y, local z, local A, local B,
+	       local C, local D, local E, local F, local G, local H, local I,
+	       local J, local K, local L, local M, local N, local O, local P,
+	       local Q, local R, local S, local T, local U, local V,
+	       MonomialSize=>8];
+	  J1 := ideal(d*g*j*m-c*h*j*m-d*f*k*m+b*h*k*m+c*f*l*m-b*g*l*m-d*g*i*n+c*h*i*n+d*e*k*n-a*h*k*n-c*e*l*n+a*g*l*n+d*f*i*o-b*h*i*o-d*e*j*o+a*h*j*o+b*e*l*o-a*f*l*o-
+		c*f*i*p+b*g*i*p+c*e*j*p-a*g*j*p-b*e*k*p+a*f*k*p,d*g*j*q-c*h*j*q-d*f*k*q+b*h*k*q+c*f*l*q-b*g*l*q-d*g*i*r+c*h*i*r+d*e*k*r-a*h*k*r-c*e*l*r+a*g*l*r+d*f*i*
+		s-b*h*i*s-d*e*j*s+a*h*j*s+b*e*l*s-a*f*l*s-c*f*i*t+b*g*i*t+c*e*j*t-a*g*j*t-b*e*k*t+a*f*k*t,d*g*n*q-c*h*n*q-d*f*o*q+b*h*o*q+c*f*p*q-b*g*p*q-d*g*m*r+c*h*
+		m*r+d*e*o*r-a*h*o*r-c*e*p*r+a*g*p*r+d*f*m*s-b*h*m*s-d*e*n*s+a*h*n*s+b*e*p*s-a*f*p*s-c*f*m*t+b*g*m*t+c*e*n*t-a*g*n*t-b*e*o*t+a*f*o*t,d*k*n*q-c*l*n*q-d*
+		j*o*q+b*l*o*q+c*j*p*q-b*k*p*q-d*k*m*r+c*l*m*r+d*i*o*r-a*l*o*r-c*i*p*r+a*k*p*r+d*j*m*s-b*l*m*s-d*i*n*s+a*l*n*s+b*i*p*s-a*j*p*s-c*j*m*t+b*k*m*t+c*i*n*t-
+		a*k*n*t-b*i*o*t+a*j*o*t,h*k*n*q-g*l*n*q-h*j*o*q+f*l*o*q+g*j*p*q-f*k*p*q-h*k*m*r+g*l*m*r+h*i*o*r-e*l*o*r-g*i*p*r+e*k*p*r+h*j*m*s-f*l*m*s-h*i*n*s+e*l*n*
+		s+f*i*p*s-e*j*p*s-g*j*m*t+f*k*m*t+g*i*n*t-e*k*n*t-f*i*o*t+e*j*o*t,d*g*j*u-c*h*j*u-d*f*k*u+b*h*k*u+c*f*l*u-b*g*l*u-d*g*i*v+c*h*i*v+d*e*k*v-a*h*k*v-c*e*
+		l*v+a*g*l*v+d*f*i*w-b*h*i*w-d*e*j*w+a*h*j*w+b*e*l*w-a*f*l*w-c*f*i*x+b*g*i*x+c*e*j*x-a*g*j*x-b*e*k*x+a*f*k*x,d*g*n*u-c*h*n*u-d*f*o*u+b*h*o*u+c*f*p*u-b*
+		g*p*u-d*g*m*v+c*h*m*v+d*e*o*v-a*h*o*v-c*e*p*v+a*g*p*v+d*f*m*w-b*h*m*w-d*e*n*w+a*h*n*w+b*e*p*w-a*f*p*w-c*f*m*x+b*g*m*x+c*e*n*x-a*g*n*x-b*e*o*x+a*f*o*x,
+		d*k*n*u-c*l*n*u-d*j*o*u+b*l*o*u+c*j*p*u-b*k*p*u-d*k*m*v+c*l*m*v+d*i*o*v-a*l*o*v-c*i*p*v+a*k*p*v+d*j*m*w-b*l*m*w-d*i*n*w+a*l*n*w+b*i*p*w-a*j*p*w-c*j*m*
+		x+b*k*m*x+c*i*n*x-a*k*n*x-b*i*o*x+a*j*o*x,h*k*n*u-g*l*n*u-h*j*o*u+f*l*o*u+g*j*p*u-f*k*p*u-h*k*m*v+g*l*m*v+h*i*o*v-e*l*o*v-g*i*p*v+e*k*p*v+h*j*m*w-f*l*
+		m*w-h*i*n*w+e*l*n*w+f*i*p*w-e*j*p*w-g*j*m*x+f*k*m*x+g*i*n*x-e*k*n*x-f*i*o*x+e*j*o*x,d*g*r*u-c*h*r*u-d*f*s*u+b*h*s*u+c*f*t*u-b*g*t*u-d*g*q*v+c*h*q*v+d*
+		e*s*v-a*h*s*v-c*e*t*v+a*g*t*v+d*f*q*w-b*h*q*w-d*e*r*w+a*h*r*w+b*e*t*w-a*f*t*w-c*f*q*x+b*g*q*x+c*e*r*x-a*g*r*x-b*e*s*x+a*f*s*x,d*k*r*u-c*l*r*u-d*j*s*u+
+		b*l*s*u+c*j*t*u-b*k*t*u-d*k*q*v+c*l*q*v+d*i*s*v-a*l*s*v-c*i*t*v+a*k*t*v+d*j*q*w-b*l*q*w-d*i*r*w+a*l*r*w+b*i*t*w-a*j*t*w-c*j*q*x+b*k*q*x+c*i*r*x-a*k*r*
+		x-b*i*s*x+a*j*s*x,h*k*r*u-g*l*r*u-h*j*s*u+f*l*s*u+g*j*t*u-f*k*t*u-h*k*q*v+g*l*q*v+h*i*s*v-e*l*s*v-g*i*t*v+e*k*t*v+h*j*q*w-f*l*q*w-h*i*r*w+e*l*r*w+f*i*
+		t*w-e*j*t*w-g*j*q*x+f*k*q*x+g*i*r*x-e*k*r*x-f*i*s*x+e*j*s*x,d*o*r*u-c*p*r*u-d*n*s*u+b*p*s*u+c*n*t*u-b*o*t*u-d*o*q*v+c*p*q*v+d*m*s*v-a*p*s*v-c*m*t*v+a*
+		o*t*v+d*n*q*w-b*p*q*w-d*m*r*w+a*p*r*w+b*m*t*w-a*n*t*w-c*n*q*x+b*o*q*x+c*m*r*x-a*o*r*x-b*m*s*x+a*n*s*x,h*o*r*u-g*p*r*u-h*n*s*u+f*p*s*u+g*n*t*u-f*o*t*u-
+		h*o*q*v+g*p*q*v+h*m*s*v-e*p*s*v-g*m*t*v+e*o*t*v+h*n*q*w-f*p*q*w-h*m*r*w+e*p*r*w+f*m*t*w-e*n*t*w-g*n*q*x+f*o*q*x+g*m*r*x-e*o*r*x-f*m*s*x+e*n*s*x,l*o*r*
+		u-k*p*r*u-l*n*s*u+j*p*s*u+k*n*t*u-j*o*t*u-l*o*q*v+k*p*q*v+l*m*s*v-i*p*s*v-k*m*t*v+i*o*t*v+l*n*q*w-j*p*q*w-l*m*r*w+i*p*r*w+j*m*t*w-i*n*t*w-k*n*q*x+j*o*
+		q*x+k*m*r*x-i*o*r*x-j*m*s*x+i*n*s*x,a*y+b*z+c*A+d*B,e*y+f*z+g*A+h*B,i*y+j*z+k*A+l*B,m*y+n*z+o*A+p*B,q*y+r*z+s*A+t*B,u*y+v*z+w*A+x*B,a*C+b*D+c*E+d*F,e*
+		C+f*D+g*E+h*F,i*C+j*D+k*E+l*F,m*C+n*D+o*E+p*F,q*C+r*D+s*E+t*F,u*C+v*D+w*E+x*F,a*G+b*H+c*I+d*J,e*G+f*H+g*I+h*J,i*G+j*H+k*I+l*J,m*G+n*H+o*I+p*J,q*G+r*H+
+		s*I+t*J,u*G+v*H+w*I+x*J,a*K+b*L+c*M+d*N,e*K+f*L+g*M+h*N,i*K+j*L+k*M+l*N,m*K+n*L+o*M+p*N,q*K+r*L+s*M+t*N,u*K+v*L+w*M+x*N,B*E*H*K-A*F*H*K-B*D*I*K+z*F*I*
+		K+A*D*J*K-z*E*J*K-B*E*G*L+A*F*G*L+B*C*I*L-y*F*I*L-A*C*J*L+y*E*J*L+B*D*G*M-z*F*G*M-B*C*H*M+y*F*H*M+z*C*J*M-y*D*J*M-A*D*G*N+z*E*G*N+A*C*H*N-y*E*H*N-z*C*
+		I*N+y*D*I*N,a*O+b*P+c*Q+d*R,e*O+f*P+g*Q+h*R,i*O+j*P+k*Q+l*R,m*O+n*P+o*Q+p*R,q*O+r*P+s*Q+t*R,u*O+v*P+w*Q+x*R,B*E*H*O-A*F*H*O-B*D*I*O+z*F*I*O+A*D*J*O-z*
+		E*J*O-B*E*G*P+A*F*G*P+B*C*I*P-y*F*I*P-A*C*J*P+y*E*J*P+B*D*G*Q-z*F*G*Q-B*C*H*Q+y*F*H*Q+z*C*J*Q-y*D*J*Q-A*D*G*R+z*E*G*R+A*C*H*R-y*E*H*R-z*C*I*R+y*D*I*R,
+		B*E*L*O-A*F*L*O-B*D*M*O+z*F*M*O+A*D*N*O-z*E*N*O-B*E*K*P+A*F*K*P+B*C*M*P-y*F*M*P-A*C*N*P+y*E*N*P+B*D*K*Q-z*F*K*Q-B*C*L*Q+y*F*L*Q+z*C*N*Q-y*D*N*Q-A*D*K*
+		R+z*E*K*R+A*C*L*R-y*E*L*R-z*C*M*R+y*D*M*R,B*I*L*O-A*J*L*O-B*H*M*O+z*J*M*O+A*H*N*O-z*I*N*O-B*I*K*P+A*J*K*P+B*G*M*P-y*J*M*P-A*G*N*P+y*I*N*P+B*H*K*Q-z*J*
+		K*Q-B*G*L*Q+y*J*L*Q+z*G*N*Q-y*H*N*Q-A*H*K*R+z*I*K*R+A*G*L*R-y*I*L*R-z*G*M*R+y*H*M*R,F*I*L*O-E*J*L*O-F*H*M*O+D*J*M*O+E*H*N*O-D*I*N*O-F*I*K*P+E*J*K*P+F*
+		G*M*P-C*J*M*P-E*G*N*P+C*I*N*P+F*H*K*Q-D*J*K*Q-F*G*L*Q+C*J*L*Q+D*G*N*Q-C*H*N*Q-E*H*K*R+D*I*K*R+E*G*L*R-C*I*L*R-D*G*M*R+C*H*M*R,a*S+b*T+c*U+d*V,e*S+f*T+
+		g*U+h*V,i*S+j*T+k*U+l*V,m*S+n*T+o*U+p*V,q*S+r*T+s*U+t*V,u*S+v*T+w*U+x*V,B*E*H*S-A*F*H*S-B*D*I*S+z*F*I*S+A*D*J*S-z*E*J*S-B*E*G*T+A*F*G*T+B*C*I*T-y*F*I*
+		T-A*C*J*T+y*E*J*T+B*D*G*U-z*F*G*U-B*C*H*U+y*F*H*U+z*C*J*U-y*D*J*U-A*D*G*V+z*E*G*V+A*C*H*V-y*E*H*V-z*C*I*V+y*D*I*V,B*E*L*S-A*F*L*S-B*D*M*S+z*F*M*S+A*D*
+		N*S-z*E*N*S-B*E*K*T+A*F*K*T+B*C*M*T-y*F*M*T-A*C*N*T+y*E*N*T+B*D*K*U-z*F*K*U-B*C*L*U+y*F*L*U+z*C*N*U-y*D*N*U-A*D*K*V+z*E*K*V+A*C*L*V-y*E*L*V-z*C*M*V+y*
+		D*M*V,B*I*L*S-A*J*L*S-B*H*M*S+z*J*M*S+A*H*N*S-z*I*N*S-B*I*K*T+A*J*K*T+B*G*M*T-y*J*M*T-A*G*N*T+y*I*N*T+B*H*K*U-z*J*K*U-B*G*L*U+y*J*L*U+z*G*N*U-y*H*N*U-
+		A*H*K*V+z*I*K*V+A*G*L*V-y*I*L*V-z*G*M*V+y*H*M*V,F*I*L*S-E*J*L*S-F*H*M*S+D*J*M*S+E*H*N*S-D*I*N*S-F*I*K*T+E*J*K*T+F*G*M*T-C*J*M*T-E*G*N*T+C*I*N*T+F*H*K*
+		U-D*J*K*U-F*G*L*U+C*J*L*U+D*G*N*U-C*H*N*U-E*H*K*V+D*I*K*V+E*G*L*V-C*I*L*V-D*G*M*V+C*H*M*V,B*E*P*S-A*F*P*S-B*D*Q*S+z*F*Q*S+A*D*R*S-z*E*R*S-B*E*O*T+A*F*
+		O*T+B*C*Q*T-y*F*Q*T-A*C*R*T+y*E*R*T+B*D*O*U-z*F*O*U-B*C*P*U+y*F*P*U+z*C*R*U-y*D*R*U-A*D*O*V+z*E*O*V+A*C*P*V-y*E*P*V-z*C*Q*V+y*D*Q*V,B*I*P*S-A*J*P*S-B*
+		H*Q*S+z*J*Q*S+A*H*R*S-z*I*R*S-B*I*O*T+A*J*O*T+B*G*Q*T-y*J*Q*T-A*G*R*T+y*I*R*T+B*H*O*U-z*J*O*U-B*G*P*U+y*J*P*U+z*G*R*U-y*H*R*U-A*H*O*V+z*I*O*V+A*G*P*V-
+		y*I*P*V-z*G*Q*V+y*H*Q*V,F*I*P*S-E*J*P*S-F*H*Q*S+D*J*Q*S+E*H*R*S-D*I*R*S-F*I*O*T+E*J*O*T+F*G*Q*T-C*J*Q*T-E*G*R*T+C*I*R*T+F*H*O*U-D*J*O*U-F*G*P*U+C*J*P*
+		U+D*G*R*U-C*H*R*U-E*H*O*V+D*I*O*V+E*G*P*V-C*I*P*V-D*G*Q*V+C*H*Q*V,B*M*P*S-A*N*P*S-B*L*Q*S+z*N*Q*S+A*L*R*S-z*M*R*S-B*M*O*T+A*N*O*T+B*K*Q*T-y*N*Q*T-A*K*
+		R*T+y*M*R*T+B*L*O*U-z*N*O*U-B*K*P*U+y*N*P*U+z*K*R*U-y*L*R*U-A*L*O*V+z*M*O*V+A*K*P*V-y*M*P*V-z*K*Q*V+y*L*Q*V,F*M*P*S-E*N*P*S-F*L*Q*S+D*N*Q*S+E*L*R*S-D*
+		M*R*S-F*M*O*T+E*N*O*T+F*K*Q*T-C*N*Q*T-E*K*R*T+C*M*R*T+F*L*O*U-D*N*O*U-F*K*P*U+C*N*P*U+D*K*R*U-C*L*R*U-E*L*O*V+D*M*O*V+E*K*P*V-C*M*P*V-D*K*Q*V+C*L*Q*V,
+		J*M*P*S-I*N*P*S-J*L*Q*S+H*N*Q*S+I*L*R*S-H*M*R*S-J*M*O*T+I*N*O*T+J*K*Q*T-G*N*Q*T-I*K*R*T+G*M*R*T+J*L*O*U-H*N*O*U-J*K*P*U+G*N*P*U+H*K*R*U-G*L*R*U-I*L*O*
+		V+H*M*O*V+I*K*P*V-G*M*P*V-H*K*Q*V+G*L*Q*V);
 	  --(ti,re) := toSequence timing gb(J1, Algorithm=>LinearAlgebra);
 	  (ti,re) := toSequence timing gb(J1);
 	  ti)
      }
 
 runBenchmark = n -> (
+     << "-- " << n << ": " << flush;
      ti := benchmarks#n#1();
-     << "-- " << n << ": " << benchmarks#n#0 << ": " <<  toString ti << " seconds" << endl;
+     << benchmarks#n#0 << ": " <<  toString ti << " seconds" << endl;
      )
 runBenchmarks0 = method()
+runBenchmarks0 Function := x -> (
+     if x === all then runBenchmarks sort keys benchmarks
+     else error("expected 'all', but got: ", toString x);
+     )
 runBenchmarks0 String := x -> runBenchmarks0 {x}
 runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
@@ -162,6 +233,9 @@ installMethod(runBenchmarks0, () -> runBenchmarks0 {"res39","resG25","gbB148"})
 runBenchmarks = Command runBenchmarks0
 
 beginDocumentation()
+
+scan(keys benchmarks, b -> TEST ("runBenchmarks "|format b))
+
 multidoc ///
 Node
  Key
@@ -176,6 +250,7 @@ Node
  Usage
   runBenchmarks
   runBenchmarks x
+  runBenchmarks all
  Inputs
   x:
    a string or list of strings
@@ -184,6 +259,7 @@ Node
    the benchmarks whose names occur in @ TT "x" @ are run.  The output is in a standard
    format that can be inserted into a Macaulay2 source file as a comment.
    If @ TT "x" @ is omitted, then the "res39", "resG25", and "gbB148" are run.
+   If @ TT "x" @ is @ TT "all" @, then all the benchmarks are run.
  Description
   Text
    The tests available are: @

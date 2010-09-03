@@ -954,6 +954,7 @@ isSCM HyperGraph := opts -> H -> (
 lineGraph = method();
 
 lineGraph HyperGraph := H -> (
+    x := local x;
     R := QQ[x_0..x_(#edges(H)-1)];
     E := apply(H#"edges", set);
     L := select(subsets(numgens R, 2), e -> #(E#(e#0) * E#(e#1)) > 0);

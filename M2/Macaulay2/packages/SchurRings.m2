@@ -265,7 +265,7 @@ toS = (f) -> (
      -- f is a homogeneous polynomial in 'symmRing n', of degree d
      d := first degree f;
      R := ring f;
-     (E,C,P) = etos(d,R);
+     (E,C,P) := etos(d,R);
      C = substitute(C, coefficientRing R);
      P = transpose matrix {apply(P, p -> s_p)};
      Ef = contract(E, matrix{{f}});

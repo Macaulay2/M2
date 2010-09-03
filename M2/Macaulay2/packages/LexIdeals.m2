@@ -88,7 +88,7 @@ hilbertFunct(Ideal) := opts -> I -> (
      h := poincare I;
      t := (ring h)_0;
      h = h // (1-t)^(dimR-dimen); --difference instead of codim to
-     R := ZZ[u];     	          --make it work in quotient rings
+     R := ZZ[local u];     	          --make it work in quotient rings
      h = substitute(h, {t=>u});
      optDeg:=opts.MaxDegree;
      if dimen==0 then (

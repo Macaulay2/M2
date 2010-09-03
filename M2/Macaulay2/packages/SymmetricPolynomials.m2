@@ -24,7 +24,7 @@ symring= R->(
      n := #X;
      w := (for i to n-1 list (1))|toList(1..n);
      e := global e;
-     S = (coefficientRing R)[X,e_1..e_n,MonomialOrder=>{Weights => w,Lex}];
+     S := (coefficientRing R)[X,e_1..e_n,MonomialOrder=>{Weights => w,Lex}];
      return S
       )
  
@@ -40,7 +40,7 @@ buildSymmetricGB (PolynomialRing) := R -> (
  	svars =apply(svars,i->(map(A,S))(i));
 	xvars =apply(xvars,i->(map(A,S))(i));
 	g :=x^n+sum for i to n-1 list svars_i*x^(n-i-1);
-	l= {};
+	l := {};
 	for i to n-1 do (
 	     f :=sub(g,x=>-xvars_(n-i-1));
 	     l = append(l,f);
@@ -59,8 +59,8 @@ elementarySymmetric (RingElement):=  f -> (
      R := ring f;
      n := # flatten entries vars R; 
      if n<2 then return f;
-     l=buildSymmetricGB(R);
-     I=ideal l;
+     l := buildSymmetricGB(R);
+     I := ideal l;
      S := ring I;
      forceGB matrix {l};
      F := map(S,R);

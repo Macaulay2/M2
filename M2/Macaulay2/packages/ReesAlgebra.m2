@@ -328,9 +328,9 @@ isReduction(Ideal,Ideal):= o->(I,J)->(
      Sfib:= specialFiber(I, Variable=>o.Variable);
      Ifib:=ideal presentation Sfib;
      kk := coefficientRing Sfib;
-     M = sub(gens J // gens I, kk);
+     M := sub(gens J // gens I, kk);
      M = promote(M, Sfib);
-     L =(vars Sfib)*M; 
+     L :=(vars Sfib)*M; 
      0===dim ideal L)
 
 isReduction(Module,Module,RingElement):= 
@@ -338,9 +338,9 @@ isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
      Sfib :=specialFiber(I, a, Variable=>o.Variable); 
      Ifib:= ideal presentation Sfib;
      kk := coefficientRing Sfib;
-     M = sub(gens J // gens I, kk);
+     M := sub(gens J // gens I, kk);
      M = promote(M, Sfib);
-     L =(vars Sfib)*M; 
+     L :=(vars Sfib)*M; 
      0===dim ideal L)
 
 
@@ -416,7 +416,7 @@ distinguished = method(Options => {Variable => w})
 distinguished(Ideal) := List => o -> i -> (
      R:=ring i;
      reesAi := reesAlgebra (i,Variable=>o.Variable);
-     A = map(reesAi,R);
+     A := map(reesAi,R);
      (T,B) := flattenRing reesAi;
      L:=decompose substitute(i,T);
      apply(L, p->kernel(map(T/p, T)*B*A))
@@ -425,7 +425,7 @@ distinguished(Ideal) := List => o -> i -> (
 distinguished(Ideal,RingElement) := List => o -> (i,a) -> (
      R:=ring i;
      reesAi := reesAlgebra (i,a,Variable=>o.Variable);
-     A = map(reesAi,R);
+     A := map(reesAi,R);
      (T,B) := flattenRing reesAi;
      L:=decompose substitute(i,T);
      apply(L, p->kernel(map(T/p, T)*B*A))

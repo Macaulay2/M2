@@ -882,7 +882,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
      -- M2 part 
      n'iterations := o.Iterations; 
      T = matrix {T};
-     J = transpose jacobian T; 
+     J := transpose jacobian T; 
      evalT := x0 -> (
 	  ret := lift(sub(transpose T, transpose x0), CC); 
 	  if isProjective then ret || matrix{{0_CC}} else ret
@@ -1602,7 +1602,7 @@ solutionDuplicates List := sols -> (
      H := new MutableHashTable;
      for j from 0 to #sols-1 do (
 	  H#j = j;
-	  i = j-1;
+	  i := j-1;
 	  while i>=0 do
 	  if areEqual(sols#i,sols#j) then (
 	       H#j = H#i;
@@ -1655,7 +1655,7 @@ diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- out: (a,b), where a and b are lists of indices where A and B differ
 diffSolutions (List,List) := o -> (A,B) -> (
      i := 0; j := 0;
-     a := {}; b = {};
+     a := {}; b := {};
      while i<#A and j<#B do 
      if areEqual(A#i,B#j) then (i = i+1; j = j+1)
      else if isGEQ(A#i,B#j) then (b = append(b,j); j = j+1)
@@ -1702,8 +1702,8 @@ deflatedSystem(Ideal, Matrix, ZZ) := o -> (I, M, r) -> (
 --     M = deflation matrix
 --     r = numerical rank of M (at some point)
 -- Out: square system of min(n,r) equations
-     n := numgens R;
      R := ring I;
+     n := numgens R;
      SM := (randomUnitaryMatrix numcols M)_(toList(0..r-1));
      newvars := apply(r, i->getSymbol("d"|(toString i)));
      S := (coefficientRing R)[gens R | newvars];
@@ -2354,7 +2354,7 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      o := S#2;
      SLPcounter = SLPcounter + 1;
      curNode = #consts+nIns;
-     p = {};
+     p := {};
      scan(slp, n->(
 	   k := first n;
 	   if k === slpCOPY then (
@@ -2396,7 +2396,7 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      fname := SLPcounter; SLPcounter = SLPcounter + 1; -- this gives libraries distinct names 
                                                        -- the name of the function stays the same, should it change?
      curNode = #consts+nIns;
-     p = {#consts,nIns,numgens target out, numgens source out} | {slpCOMPILED}
+     p := {#consts,nIns,numgens target out, numgens source out} | {slpCOMPILED}
           | { fname }; -- "lib_name" 
      cppName := libPREFIX | toString fname | if o.Language === LanguageCPP then ".cpp" else ".c";
      libName := libPREFIX | toString fname | if o.System === Linux then ".so" else  ".dylib";

@@ -338,7 +338,7 @@ decompose BettiTally := B-> (
 	  X:=decompose1(new BettiTally from B1);
 	  B1=new MutableHashTable from X_2;
 	  --change the type of the values in X_0 to ZZ
-	  Y=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
+	  Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
 	  Components = append(Components, hold(X_1) * Y));
      sum Components)
 
@@ -412,6 +412,7 @@ pureCohomologyTable(List, ZZ, ZZ, Symbol) := (zeros, lo, hi, old) -> (
 	  ));
 *}
 pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
+     z := local z;
      R := QQ (monoid [z]);
      hp = product(zeros, a -> (R_0 - a));
      n := #zeros;  -- in PP^n
@@ -570,7 +571,7 @@ upperEquation F
 *}
 
 middleComplex=(d,e)->(
-     n=#d-1;
+     n:=#d-1;
      t:=1;
      L:=apply(n+1,i->(t=t*if d_i==e_i then 1 else -1 ));
      apply(n+1,c->if L_c==1 then e_c else d_c))
@@ -710,8 +711,8 @@ supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
      minF = min degreesF;
      maxF = max degreesF;
      HHE=HH E;
-     L=for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
-     A=transpose L_0;
+     L:=for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
+     A:=transpose L_0;
      for i from 1 to length L -1 do A = A|(transpose L_i);
      AA=map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
      	  sum(0..min(q,length E), 
@@ -768,8 +769,8 @@ pureTwoInvariant = method()
 pureTwoInvariant List := (L) -> (
 --gives beta_0 for the pure complex described in Eisenbud-Weyman-Floeystad for two modules
    n:=#L-1;
-   T={};
-     E=for i from 1 to #L-1 list (L_i-L_(i-1));
+   T:={};
+     E:=for i from 1 to #L-1 list (L_i-L_(i-1));
      for i from 1 to #E do
      for j from 1 to E_(n-i)-1 do (T= T| {n-i});
      T=T |  {0};
@@ -848,7 +849,7 @@ randomModule(List,ZZ) := opts -> (L, m) -> (
      kk := opts.CoefficientRing;
      R:=kk[vars(0..c-1)];
      B:=pureBetti L;
-     coker (M=random(R^{m*B_0:-L_0}, R^{m*B_1:-L_1})))
+     coker (M:=random(R^{m*B_0:-L_0}, R^{m*B_1:-L_1})))
 
 TEST ///
 setRandomSeed()
@@ -928,7 +929,7 @@ bott(List, ZZ):=(L,u)->(
      -- or a list of three elements: A weakly decreasing list of n+1 integers M;
      -- a number i such that H^i(E)=S_M(V); and 
      -- the rank of this module.
-     M=new MutableList from join(L,{u});
+     M:=new MutableList from join(L,{u});
      i:=0;
      j:=#M-1;
      while j>0 do(

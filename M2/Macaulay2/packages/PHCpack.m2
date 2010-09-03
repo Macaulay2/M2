@@ -187,8 +187,8 @@ convertToPoly = method(TypicalValue => List)
 convertToPoly   List := List => system -> (
      -- IN: system (or a poly) which is rational (i.e. lives in some field of fractions of a polynomial ring)
      -- OUT: same system converted to a laurent polynomial system, where denominators are replaced with new variables.
-     R=ring ideal system;
-     P=R.baseRings_(#R.baseRings-1); --this is the polynomial ring whose field of fractions the system is living in.
+     R:=ring ideal system;
+     P:=R.baseRings_(#R.baseRings-1); --this is the polynomial ring whose field of fractions the system is living in.
      counter=0;
      scan(system, f-> (
 	       if 	  instance(class f, FractionField) --if f is already polynomial, don't do anything!

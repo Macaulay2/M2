@@ -84,7 +84,7 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 		return constructProcComplCookie(evld, retopts);
 
 	-- try to convert back to OpenMath otherwise
-	e = toOpenMath(evld);
+	e := toOpenMath(evld);
 
 	-- If the result is wrong...
 	if (class(e) === XMLnode) and (e.tag == "OME") then 
