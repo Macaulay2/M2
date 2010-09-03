@@ -37,7 +37,7 @@ OMSEvaluators#"finfield1"#"primitive_element" = (args, attrs) -> (
 	if (#args =!= 1) then
 		(theOMerror = concatenate("finfield1.primitive_element only supported with one argument; ", toString #args, " given."); error("whoops"));
 		
-	a = fromOpenMath args#0;
+	a := fromOpenMath args#0;
 	if (class a =!= ZZ) then
 		(theOMerror = "finfield1.primitive_element only supported with one integer argument."; error("whoops"));
 		

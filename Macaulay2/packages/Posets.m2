@@ -197,7 +197,7 @@ coveringRelations:=(P) -> (
 --output:  A new poset P with the minimal relations
 
 coveringRelationsPoset:=(P) -> (
-     L=poset(P.GroundSet,coveringRelations(P))
+     L:=poset(P.GroundSet,coveringRelations(P))
      )
 
 --------------------------------------------------
@@ -350,7 +350,7 @@ lcmLattice(Ideal) := Poset => (I) -> (
 	   Ground := unique flatten apply (subsetsL, r-> lcm(r));
 	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s%r == 0 then (r,s)));
 	   RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
-	   P = poset (Ground, Rels, RelsMatrix);
+	   P := poset (Ground, Rels, RelsMatrix);
 	   P)
 
 lcmLattice(MonomialIdeal) := Poset => (M) -> (
@@ -359,7 +359,7 @@ lcmLattice(MonomialIdeal) := Poset => (M) -> (
 	   Ground := unique flatten apply (subsetsL, r-> lcm(r));
 	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s%r == 0 then (r,s)));
 	   RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
-	   P = poset (Ground, Rels, RelsMatrix);
+	   P := poset (Ground, Rels, RelsMatrix);
 	   P)
 ----------------------------------
 -- DOCUMENTATION

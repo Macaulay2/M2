@@ -210,7 +210,7 @@ dynkinType(BasicList) := (L) ->
 	mylist={};
 	for i from 0 to #L-1 do 
 	  (
-	  H=L#i#0;
+	  H:=L#i#0;
 	  if H == "A" then mylist=append(mylist,{"A", L#i#1})
 	  else if H == "B" then (if L#i#1==1 then mylist=append(mylist,{"A", 1}) else mylist=append(mylist,{"B", L#i#1}))
 	  else if H == "C" then (if L#i#1==1 then mylist=append(mylist,{"A", 1}) else if L#i#1==2 then mylist=append(mylist,{"B", 2}) else mylist=append(mylist,{"C", L#i#1}))

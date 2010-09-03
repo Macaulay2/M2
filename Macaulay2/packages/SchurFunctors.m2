@@ -271,9 +271,10 @@ maxFilling({5,3,3,2}, 6)
 character = method()
 character (List, ZZ) := (L,d)->(
      L = reverse L;
-     m=#L;
-     R=QQ[x_0..x_(d-1)];
-     M=map(R^d,R^d,matrix(apply(d,j->(apply(d,s->(if j==s then x_j else 0))))));
+     m:=#L;
+     x := local x;
+     R:=QQ[x_0..x_(d-1)];
+     M:=map(R^d,R^d,matrix(apply(d,j->(apply(d,s->(if j==s then x_j else 0))))));
      apply(m,j->M=schur(L_j,M));
      return trace M
      )
@@ -295,7 +296,7 @@ Transvection=(param1,param2,d)->(
      )
 
 Transvections=(d)->(
-     L=flatten apply(d,j->(apply(d,s->if j>s then Transvection(s,j,d))));
+     L:=flatten apply(d,j->(apply(d,s->if j>s then Transvection(s,j,d))));
      select(L,a->if a=!=null then true)
      )
      

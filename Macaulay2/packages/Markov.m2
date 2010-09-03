@@ -182,7 +182,7 @@ under = (d) -> (
 		    {set{d01_0 - set x, d01_1 - set y}, set x + set y + d_1})));
      z2 := flatten apply(e0, x -> apply(e1, y -> (
 		    {set{d01_0 - set x, d01_1 - set y}, d_1})));
-     z = join(z1,z2);
+     z := join(z1,z2);
      z = select(z, z0 -> not member(set{}, z0_0));
      set z
      )

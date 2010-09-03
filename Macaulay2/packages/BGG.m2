@@ -69,7 +69,7 @@ beilinson1=(e,dege,i,S)->(
      r := i - dege;
      mr := if r < 0 or r >= numgens E then map(E^1, E^0, 0)
            else sortedBasis(r+1,E);
-     s = numgens source mr;
+     s := numgens source mr;
      if i === 0 and r === 0 then
           substitute(map(E^1,E^1,{{e}}),S)
      else if i>0 and r === i then substitute(e*id_(E^s),S)
