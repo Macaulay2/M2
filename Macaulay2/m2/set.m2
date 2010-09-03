@@ -41,6 +41,13 @@ Tally ? Tally := (x,y) -> (
      else if all(w,i -> i>0) then symbol >
      else if all(w,i -> i<0) then symbol <
      else incomparable)
+
+zeroTally = tally{}
+toTally := i -> if i === 0 then zeroTally else error "comparison of a tally with a nonzero integer"
+Tally == ZZ := (x,i) -> x === toTally i
+ZZ == Tally := (i,x) -> toTally i === x
+Tally ? ZZ := (x,i) -> x ? toTally i
+ZZ ? Tally := (i,x) -> toTally i ? x
      
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
