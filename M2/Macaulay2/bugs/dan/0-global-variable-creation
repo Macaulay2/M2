@@ -1,0 +1,44 @@
+It turns out to be a common error causing many problems to write something like this:
+
+f = () -> (
+	...
+	foo = 1;
+	...
+	)
+
+instead of
+
+f = () -> (
+	...
+	foo := 1;
+	...
+	)
+
+I have an idea.  What if the parser would keep the predefined one-letter symbols out of the way, and also flag an error if a global variable is created by being first referred to inside the scope of a function or "for" loop?
+
+In other words,
+
+
+f = () -> (
+	...
+	foo = 1;
+	...
+	)
+
+
+would be illegal, but
+
+foo = 1
+
+and
+
+foo
+f = () -> (
+	...
+	foo = 1;
+	...
+	)
+
+would be legal.
+
+
