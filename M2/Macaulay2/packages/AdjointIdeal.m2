@@ -223,7 +223,7 @@ tra)
 -- function doing Gauss step in k-th column on the matrix trmw
 -- used by the LR decomposition
 gaussStep=method()
-gaussStep(List,ZZ,Matrix):=(lij,k,trmw)->(
+gaussStep(ZZ,Matrix):=(k,trmw)->(
 n:=rank source trmw;
 matrix(table(n,n,(i,j)->gaussStepEntry({i,j},k,trmw))))
 
@@ -384,7 +384,7 @@ while k<(n-1) do (
         perm1:=join(0..(min({kl,rl})-1),(max {kl,rl})..(max {kl,rl}),(min({kl,rl})+1)..(max({kl,rl})-1),(min {kl,rl})..(min {kl,rl}),(max({kl,rl})+1)..(n-1));
         prmt=prmt_(deepSplice({perm1}))
     );
-   trmw=gaussStep({i,j},k,trmw);
+   trmw=gaussStep(k,trmw);
 k=k+1);
 prmt=(entries prmt)#0;
 (prmt,trmw))
