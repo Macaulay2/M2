@@ -18,3 +18,4 @@ o = new OptionTable from {gamma=>1+ii} -- NAG's "solve" and "track" pass more op
 solsT = solveBertini(T,o)
 solsT = trackBertini(S,T,solsS,o);
 
+

@@ -15,8 +15,6 @@ newPackage(
      )
 
 export {
-     -- software 	  
-     "PHCPACK",
      -- witness set
      "WitnessSet", "witnessSet", "equations", "slice", "points", 
      "Equations", "Slice", "Points", "sliceEquations",
@@ -136,11 +134,6 @@ document {
      "The package defines types used by the package ", TO "NumericalAlgebraicGeometry", 
      " as well as other numerical algebraic geometry packages: e.g., an interface package ", 
      TO "PHCpack", "."
-     }
-document {
-     Key => PHCPACK,
-     Headline => "use PHCpack for homotopy continuation",
-     "Available at ", TT "http://www.math.uic.edu/~jan/download.html"
      }
 document {
      Key => {Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps},
