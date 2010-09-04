@@ -1198,6 +1198,8 @@ testH4 = () -> (
      counter = counter + 1;
      (0,0))
 
+
+----------------------------------------------
 -- this one leaks good:
 testH4 = () -> (
      f := Mrelns();
@@ -1206,16 +1208,65 @@ testH4 = () -> (
      f1 := f // gbg;
      if counter % 10 === 0 then << "." << flush;
      counter = counter + 1;
-     (0,0))
+     )
 
--- this one takes longer to leak, but it uses quite a bit of memory
-testH5 = (gbg) -> (
-     --f := Mrelns();
-     f1 := f // gbg;
-     if counter % 100 === 0 then << "." << flush;
+runTestH4 = () -> (
+     kk := ZZ/3;
+     R = kk[x_0..x_2]; -- needs to be global
+     while true do testH4();
+     )
+
+----------------------------------------------
+-- working on this one right now
+testH4a = () -> (
+     --collectGarbage();  -- with this line in, it stablizes at 56.7 MB real, w/o it runs up to large memory (> 4.5 GB)
+     g := cmatrix();
+     gbg := gb(g, ChangeMatrix => true);
+     h := gens gbg;
+     --if counter % 10 === 0 then collectGarbage(); -- stabilizes at 468.4 M
+     if counter % 10 === 0 then << "." << flush;
      counter = counter + 1;
-     (0,0))
+     )
 
+runTestH4a = () -> (
+     kk := ZZ/3;
+     R = kk[x_0..x_2]; -- needs to be global
+     while true do testH4a();
+     )
+
+runTestH4aa = (gcstep) -> (
+     kk := ZZ/3;
+     R = kk[x_0..x_2]; -- needs to be global
+     if gcstep <= 0 then gcstep = 10000;
+     for counter from 1 to 100 do (
+     	  --collectGarbage();  -- with this line in, it stablizes at 56.7 MB real, w/o it runs up to large memory (> 4.5 GB)
+     	  g := cmatrix();
+     	  gbg := gb(g, ChangeMatrix => true);
+     	  h := gens gbg;
+     	  if counter % gcstep === 0 then collectGarbage(); -- stabilizes at 468.4 M
+     	  if counter % 10 === 0 then << "." << flush;
+	  );
+     )
+
+--run ("ps u " | toString processID ())
+--last lines get ("!ps u " | toString processID ())
+
+----------------------------------------------
+-- testH5 is now fixed (4 Sep 2010)
+testH5 = (f,gbg) -> (
+     f1 := f // gbg;
+     if counter % 10000 === 0 then << "." << flush;
+     counter = counter + 1;
+     )
+runTestH5 = () -> (
+     kk := ZZ/3;
+     R = kk[x_0..x_2]; -- needs to be global
+     f := Mrelns();
+     g := cmatrix();
+     gbg := gb(g, ChangeMatrix => true);
+     while true do testH5(f,gbg)
+     )
+----------------------------------------------
 end
 
 restart
@@ -1235,12 +1286,26 @@ while((r=testH3())==(0,0)) do();
 h3 = makeh3();
 while((r=testH3b())==(0,0)) do();
 
-while((r=testH4())==(0,0)) do();
+runTestH4a()
+runTestH4()
+runTestH5()  -- stabilizes at 81.3 real memory
 
-f = Mrelns();
-g = cmatrix();
-gbg = gb(g, ChangeMatrix => true);
-while true do testH5(gbg)
+--------------------------------------------------
+-- Dan, try these lines out:
+restart
+load"0-fgeiss-memleak.m2";
+time runTestH4aa 0
+run ("ps u " | toString processID ())
+restart
+load"0-fgeiss-memleak.m2";
+time runTestH4aa 1
+run ("ps u " | toString processID ())
+restart
+load"0-fgeiss-memleak.m2";
+time runTestH4aa 10
+run ("ps u " | toString processID ())
+--------------------------------------------------
+
 {* -- email from 9/1/10 sent to M2 google group
 Hi
 
