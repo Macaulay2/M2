@@ -1,0 +1,16 @@
+frame							    -- not defined later, bug
+menu(Function,Thing) := (x,back) -> (
+     << x << endl;
+     items := {
+	  ("BACK",back),
+	  ("class=>" | toString class x,(class x,(x,back))),
+	  ("parent=>" | toString parent x,(parent x,(x,back))),
+	  ("METHODS", (METHODS {x}, (x,back)))
+	  };
+     try (
+	  if (locate x)#0 === "stdio" then error "";
+	  items = join(items,{
+		    ("CODE",(RUNME{()->(<< code x << endl;read "press return: ";)},(x,back))),
+	  	    ("EDIT",(RUNME{()->edit x},(x,back)))});
+	  );
+     items = join(items, apply(#(frame x), i -> (
