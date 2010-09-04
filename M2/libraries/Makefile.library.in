@@ -7,7 +7,7 @@ TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
-LIBNAME = $(shell basename `pwd`)
+LIBNAME ?= $(shell basename `pwd`)
 UNTARDIR = build
 OLDUNTARDIR = build-old
 TARDIR ?= $(LIBNAME)-$(VERSION)
@@ -16,6 +16,8 @@ CHECKTARGET ?= check
 CHECKOPTIONS ?= 
 CHECKCMD ?= $(MAKE) -C $(BUILDDIR) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
+BIN_DIR := $(LIBRARIESDIR)/bin
+LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
 PRECONFIGURE  ?= :
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
@@ -31,7 +33,7 @@ COMPILEFLAGS  =					\
 	CFLAGS="$(CFLAGS)"			\
 	FFLAGS="$(FCFLAGS)"			\
 	FCFLAGS="$(FCFLAGS)"
-CONFIGENV     = env				\
+ALLFLAGS = \
 	$(COMPILEFLAGS)				\
 	CPPFLAGS="$(CPPFLAGS)"			\
 	CC="$(CC)"				\
@@ -39,10 +41,11 @@ CONFIGENV     = env				\
 	LDFLAGS="$(LDFLAGS)"			\
 	LOADLIBES="$(LOADLIBES)"		\
 	LDLIBS="$(LDLIBS)"
+CONFIGENV     = env $(ALLFLAGS)
 CONFIGURESCRIPT ?= configure
 CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
-BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
+BUILDCMD      ?= $(MAKE) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 STRIPFILES    ?= 
@@ -63,6 +66,8 @@ show-flags:; $(CONFIGENV) :
 install: .installed-$(VERSION) config-chk
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure: unconfigure configure
+uncompile:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+recompile: uncompile compile
 uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
@@ -74,12 +79,33 @@ PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
+license-dir: $(LICENSE_DIR)
+$(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
 compile: .compiled-$(VERSION) config-chk
 configure: .configured-$(VERSION) config-chk 
 config-chk:
-.installed-$(VERSION)  : .compiled-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)  ) && touch $@
-.compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
-.configured-$(VERSION) : .patched-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+
+PROGRAMS ?=
+LICENSEFILES ?=
+.installed-$(VERSION)  : .compiled-$(VERSION)
+	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
+ifneq ($(PROGRAMS),)
+	$(MKDIR_P) $(BIN_DIR)
+	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s $$p $(BIN_DIR)) ; done
+endif
+ifeq ($(LICENSEFILES),)
+	@ echo warning: no license files to be installed
+else
+	$(MKDIR_P) $(LICENSE_DIR)
+	cd $(BUILDDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
+endif
+	touch $@
+
+.compiled-$(VERSION)   : .configured-$(VERSION)
+	@ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
+.configured-$(VERSION) : .patched-$(VERSION)
+	@ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+
 ifneq ($(PATCHFILE),)
 .patched-$(VERSION) : $(PATCHFILE)
 PATCHCMD = cd $(UNTARDIR) && patch -p0 $(PATCHOPTIONS) <$(PATCHFILE)

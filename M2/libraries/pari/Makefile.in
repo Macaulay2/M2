@@ -9,8 +9,8 @@
 # http://pari.math.u-bordeaux.fr/
 VPATH = @srcdir@
 
-VERSION = 2.3.4
-PATCHFILE = @abs_srcdir@/patch-2.3.4
+VERSION = 2.3.5
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 

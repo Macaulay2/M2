@@ -18,7 +18,6 @@ M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_OBJECTS += ../regex/regex.o
 M2_CCFILES := gmp_init.cc
 M2_OBJECTS += $(M2_CCFILES:.cc=.o)
-M2_CFILES += M2types.c
 M2_HFILES := getpagesize.h types.h M2inits.h M2mem.h debug.h
 
 M2_DFILES :=
@@ -106,6 +105,16 @@ M2_DFILES += interface.dd interface2.d
 M2_DFILES += texmacs.d
 # this one is last, because it contains the top level interpreter
 M2_DFILES += interp.d
+
+# should automate these dependencies
+actors5.o basic.o : \
+	@srcdir@/../e/engine.h \
+	@srcdir@/../e/rand.h \
+	@srcdir@/../e/newdelete.hpp \
+	@srcdir@/../d/M2mem.h \
+	@srcdir@/../d/debug.h \
+	../e-includes/statuscodes.h \
+	../../include/M2/config.h
 
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))

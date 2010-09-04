@@ -1,0 +1,180 @@
+--*-M2-*-
+-- Conversions from one type to another in a uniform way
+-- The first suggestions for these came from our 2010 workshop at Colorado College
+-- We need new syntax to support this.
+-- See svn://svn.macaulay2.com/Macaulay2/workshops/Colorado-2010/conversions.m2 for the latest suggestions.
+
+List from Matrix := (List,m) -> entries m
+List from Set := (List,x) -> elements x
+List from Tally := (List, x) -> splice apply(pairs x,(k,v) -> v:k)
+String from Number := (String,x) -> toString x
+RingElement from Number := (R,x) -> try promote(x,R) else error("conversion to type ",toString R," not possible")
+Number from Number :=
+ RingElement from RingElement := (R,x) -> try promote(x,R) else try lift(x,R) else error("conversion to type ",toString R," not possible")
+Number from RingElement := (R,x) -> try lift(x,R) else error("conversion to type ",toString R," not possible")
+Matrix from Number :=
+ Matrix from RingElement := (Matrix, x) -> matrix {{x}}
+List from BasicList := (List, L) -> toList L
+String from Thing := (String,x) -> toString x
+Net from Thing := (String,x) -> net x
+Expression from Thing := (Expression,x) -> expression x
+
+{*
+
+an idea from Charley Crissman:
+
+     Extend syntax to allow expressions like:
+
+          new Matrix of S from X
+
+     which will make a matrix of elements of S from X by applying the coercion "new S from e"
+     for each entry e of X (while also dealing correctly with gradings)
+
+    code:
+
+         new Matrix of RingElement from Matrix := (Matrix, R, m) -> (
+	     try promote(m,R) else try lift(m,R) else error("conversion to type ",toString R," not possible.")
+
+     Example of where this would be nice:
+
+	 R = ZZ/32003
+	 M = matrix(R,{{1,2},{3,4}})
+	 new Matrix of ZZ from M
+
+     This syntax would also give a suitable replacement for the current nasty coercion behaviour of
+     sub over QQ, which causes sub((1/2)*x, {x=>2}) to return 2, not 1
+
+To handle this, we might want to omit "new", as above.  Then it would just be
+
+     Matrix of S from X
+     
+Then we might want
+
+     Matrix of S
+
+to have an independent meaning, so that "from" and "of" both become binary
+operators.  That's the simplest way to parse such things, anyway.  See the file
+./1-list-of-ideals-of-R for similar ideas about that.  This syntax would be a
+better foundation for those ideas.
+
+
+Note that
+
+     new X of Y from Z
+
+is a ternary operator, and should not (?) be parsed as
+
+     new (X of Y) from Z
+
+
+We could also have "over" as a keyword:
+
+     Scheme over S
+     PolynomialRing over k
+
+*}
+
+
+-----------------------------------------------------------------------------
+-- Here are the current parsing precedences, version 1.3.1.1, which we probably
+-- want to preserve:
+
+i10 : seeParsing ()
+
+o10 = parsing     binary    unary                                                                                      
+      precedence  binding   binding                                       operators
+                  strength  strength
+
+           2          2                                                {*end of file*}                                 
+
+           4          4                                                {*end of cell*}                                 
+
+           6                                                               )  ]  }                                     
+
+           8          7                                                       ;                                        
+
+          10         10        10                                             ,                                        
+
+          12                   12                                    do  else  list  then                              
+
+          14         13                                             ->  :=  <-  =  =>  >>                              
+
+          16                   16                                   from  in  of  to  when                             
+
+          18         18        18                                             <<                                       
+
+          20         19        20                                             |-                                       
+
+          22         21                                                      ===>                                      
+
+          22         21        22                                            <===                                      
+
+          24         23                                                      <==>                                      
+
+          26         25                                                      ==>                                       
+
+          26         25        26                                            <==                                       
+
+          28         27                                                       or                                       
+
+          30         29                                                      and                                       
+
+          32                   32                                            not                                       
+
+          34         33                                                !=  =!=  ==  ===                                
+
+          34         33        34                                      <  <=  >  >=  ?                                 
+
+          36         36                                                       ||                                       
+
+          38         37                                                       :                                        
+
+          40         40                                                       |                                        
+
+          42         42                                                       ^^                                       
+
+          44         44                                                       &                                        
+
+          46         46                                                    ..  ..<                                     
+
+          48         48                                                       ++                                       
+
+          48         48        48                                            +  -                                      
+
+          50         50                                                       **                                       
+
+          52                    6                                             [                                        
+
+          54         53                                                     \  \\                                      
+
+          54         54                                                    %  /  //                                    
+
+          54         54        54                                             *                                        
+
+          56         55                                                       @                                        
+
+          58                                                          {*...symbols...*}                                
+
+          58                    6                                            (  {                                      
+
+          58                   12     break  catch  continue  if  return  shield  step  throw  time  timing  try  while
+
+          58                   16                                          for  new                                    
+
+          58                   70                           global  local  symbol  threadVariable                      
+
+          58         57                                                     SPACE                                      
+
+          60                                                                 (*)                                       
+
+          62         62                                                       @@                                       
+
+          64                                                              ^*  _*  ~                                    
+
+          66         66                                              #?  .  .?  ^  ^**  _                              
+
+          66         66        57                                             #                                        
+
+          68                                                                  !                                        
+
+o10 : Expression of class Table

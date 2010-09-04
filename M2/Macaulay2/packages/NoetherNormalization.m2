@@ -1,5 +1,8 @@
 --=========================================================================--
-
+{*
+Copyright 2010, 2011 Bart Snapp, Nathaniel Stapleton.
+This file is in the public domain.
+*} 
 newPackage(
      "NoetherNormalization",
      Version => "0.9.2", 
@@ -166,7 +169,7 @@ noetherNormalization(Ideal) := opts -> I -> (
      ff := map(R,flatA,gens R)*fAtoFlatA; --these maps merely change the order of the ring
      ffinverse := fFlatAtoA*map(flatA, R, gens flatA); --these maps merely change the order of the ring
      I = ff(I);
-     G = gb I;
+     G := gb I;
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,I);
@@ -228,7 +231,7 @@ homNoetherNormalization = (I,R,k,X) -> (
      U := apply(algind,i->f i);
      V := apply(X-set algind,i->f i);
      while d > 0 do (
-	  g = map(R,R,V|randomSum(U,V,k,rr));
+	  g := map(R,R,V|randomSum(U,V,k,rr));
      	  J := g f I;
 	  d = dim(J+ideal(apply(algind,i->f i)));
 	  );

@@ -162,7 +162,7 @@ setupMethods((), {
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
-	  determinant, presentation, dismiss, degreesMonoid, precision, 
+	  determinant, presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose
 	  })
 
@@ -378,7 +378,7 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      else M#Name#1
      )
 
-exitMethod := method(Dispatch => Thing)
+exitMethod = method(Dispatch => Thing)
 exitMethod ZZ := i -> exit i
 exitMethod Sequence := x -> exit 0
 quit = Command (() -> exit 0)

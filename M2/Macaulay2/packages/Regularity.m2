@@ -48,7 +48,7 @@ upTRT2 = (k,X,m) -> (
      Trans := {};
      D := {};
      for j to m-1 do (
-	  U = {X_(#X-1-j)}|apply(X_{0..#X-2-j},i -> random(k)*i);
+	  U := {X_(#X-1-j)}|apply(X_{0..#X-2-j},i -> random(k)*i);
 	  D = {sum(U)}|D  
     	  );
      return D;
@@ -142,10 +142,10 @@ regMonNested = (I,d,dp) -> (
      X :=  flatten entries vars R;
      n := # X-1;
      p := n-dp;
-     B = for q from p+1 to n list 0 ;
+     B := for q from p+1 to n list 0 ;
      u := map(R,R,X_{0..p}|B);
-     T= u I; 
-     l=for i from n-d+1 to p list (
+     T := u I; 
+     l := for i from n-d+1 to p list (
 	  B = for q from i+1 to n list 0;
 	  J := (map(R,R,X_{0..(i-1)}|{1}|B)) I; 
 	  satMon(J,X_{0..(i-1)})
@@ -198,7 +198,7 @@ mRegularity (Ideal):= opts -> I -> (
 	  );
      if opts.MonCurve == true then return regMonCurve(I,d);
      f := id_R;
-     while not isNested(J = monomialIdeal leadTerm f I, d) do (
+     while not isNested(J := monomialIdeal leadTerm f I, d) do (
 	  f = map(R,R,X_{0..n-d}|upTRT2(k,X,d));
 	  	  );
      dp := depthHomogMon J;
@@ -221,7 +221,7 @@ findHyperplane = (I,n) -> (
      i := 1;
      while (not i>n) do (
 	  subs = apply(subsets(d,i), s->apply(s, t->R_t));   
-	  l = select(1,subs, s-> not any(as, t-> isSubset(s,t)));
+	  l := select(1,subs, s-> not any(as, t-> isSubset(s,t)));
 	  if l != {} then return sum l#0 else i = i+1;	
      	  );
     return null
@@ -244,7 +244,7 @@ fastReg (Ideal):= opts -> I -> (
      while true do (
 	  alarm(2);
 	  try return regularity I else (
-	       h =findHyperplane(I,3);
+	       h :=findHyperplane(I,3);
 	       I = (slice h) (I);
 	       )
 	  )

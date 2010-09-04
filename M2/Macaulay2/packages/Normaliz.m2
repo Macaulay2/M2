@@ -1,12 +1,34 @@
 -- -*- coding: utf-8 -*-
+
+{*
+Copyright 2009, 2010 Winfried Bruns and Gesa Kaempf.
+
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2 of
+the License, or any later version.
+*}
+
 newPackage(
            "Normaliz",
            Version=>"2.0",
-           Date=>"July 8, 2010",
+           Date=>"August 9, 2010",
            Authors=>{{Name=> "Gesa Kaempf",
-                    Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
+                    Email=>"gkaempf@uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
-           DebuggingMode => false
+           DebuggingMode => false,
+	   Certification => {
+		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+		"journal URI" => "http://j-sag.org/",
+		"article title" => "A Macaulay2 interface for Normaliz",
+		"acceptance date" => "2010-08-08",
+		"published article URI" => "http://www.j-sag.org/Volume2/jsag-4-2010.pdf",
+		"published code URI" => "http://www.j-sag.org/Volume2/Normaliz.m2",
+     	        "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Normaliz.m2",
+		"release at publication" => 11859,	    -- as an integer
+		"version at publication" => "2.0",
+		"volume number" => "2",
+		"volume URI" => "http://www.j-sag.org/volume2.html"
+		}
            )
 
 export{rmNmzFiles,
@@ -15,7 +37,7 @@ export{rmNmzFiles,
        normalToricRing, intclToricRing, ehrhartRing, intclMonIdeal,
        torusInvariants, finiteDiagInvariants, diagInvariants, RationalCone, allComputations,
        intersectionValRings, intersectionValRingIdeals,
-       MonomialSubalgebra,  createMonomialSubalgebra, 
+       MonomialSubalgebra,  createMonomialSubalgebra,
        getNumInvs
       }
 
@@ -46,15 +68,15 @@ MonomialSubalgebra#{Standard,Print} = S -> (
      )
 
 createMonomialSubalgebra =method()
-createMonomialSubalgebra List :=(L) -> 
+createMonomialSubalgebra List :=(L) ->
 (
   if(not uniform(ring \ L))
   then error("createMonomialSubalgebra: monomials must be elements of the same ring")
-  else( if(#L==0) 
+  else( if(#L==0)
        then error("createMonomialSubalgebra: empty MonomialSubalgebra has no default coefficient ring")
   );
   return new MonomialSubalgebra from { symbol ring =>ring L#0, symbol generators =>L,symbol cache => new CacheTable}
-) 
+)
 
 createEmptyMonomialSubalgebra =method()
 createEmptyMonomialSubalgebra Ring := K ->(
@@ -77,7 +99,8 @@ nmzFilename="";
 nmzNumberThreads=1;
 nmzUserCalled=true;  -- wether the user calls a method
 nmzFile="";
-nmzVersion=""; 
+nmzVersion="";     -- norm64 or normbig
+nmzExecVersion=""; -- needs to be at last "2.5"
 nmzGen=true;      -- indicates whether ".gen" is generated
 -- component 1 is name of option
 -- 2 is default value
@@ -104,7 +127,7 @@ nmzOptions= new MutableList from {
 
 -- sets the file for the exchange of data
 setNmzFile=()->
-( 
+(
     if(nmzFilename!="")
     then(
         nmzFile=nmzDataPath|nmzFilename;
@@ -126,12 +149,13 @@ setNmzExec=()->
         if(nmzVersion!="norm64" and nmzVersion !="normbig") then <<error("nmzVersion must be one of the following: norm64, normbig")
         else(
         nmzExec=nmzVersion;
-        ); 
+        );
     )
     else
     (
-        nmzExec="norm64"; 
+        nmzExec="norm64";
     );
+--    return nmzExec;
     return prefixDirectory | currentLayout#"programs" | nmzExec;
 );
 
@@ -142,8 +166,8 @@ rmNmzFiles=()->
     suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","ht1","ext","cst","tgn"};
     if(nmzFilename=="" and nmzUserCalled) then error("rmNmzFiles: no filename specified");
     if(nmzFilename!="") then nmzFile=setNmzFile();
-    for i from 0 to #suffixes-1 
-    do( 
+    for i from 0 to #suffixes-1
+    do(
       if(fileExists( nmzFile|"."|suffixes#i))
       then removeFile(nmzFile|"."|suffixes#i);
     );
@@ -157,7 +181,7 @@ rmNmzFiles=()->
 
 ---------------------------------------------------------
 
--- returns the next number in the string s, and the remaining string 
+-- returns the next number in the string s, and the remaining string
 getNumber=method(TypicalValue=>(String,String))
 getNumber String :=s->
 (
@@ -172,9 +196,9 @@ getNumber String :=s->
 getKeyword=(s,j)->
 (
    l:=regex("[[:alnum:]_-]+",j,s);
-   if( instance(l,Nothing)) then error("getKeyword: no word found in the string."); 
+   if( instance(l,Nothing)) then error("getKeyword: no word found in the string.");
    if(l#0#0!=j) then << "warning: getKeyword: no word at the beginning of the string.";
-   return(replace("_"," ",substring(l#0,s)),l#0#0+l#0#1); 
+   return(replace("_"," ",substring(l#0,s)),l#0#0+l#0#1);
 );
 
 
@@ -189,7 +213,7 @@ elimWhitespaces=s->
        tmp=tmp|substring(0,pos,s);
        if(pos+1<#s)
        then tmp=tmp|toUpper(s#(pos+1));
-       s=substring(pos+2,s); 
+       s=substring(pos+2,s);
    );
    tmp=tmp|s;
    return tmp;
@@ -221,12 +245,12 @@ doWriteNmzData(Matrix, ZZ, ZZ):=(sgr, numCols, nMode)->
 --writes several matrices in a normaliz input file
 doWriteNmzData(List):=(matrices)->
 (
-  if(nmzFilename=="" and nmzUserCalled)  
-  then error("doWriteNmzData: no filename specified"); 
+  if(nmzFilename=="" and nmzUserCalled)
+  then error("doWriteNmzData: no filename specified");
 
   if(nmzUserCalled) then nmzFile=setNmzFile();
 
-  outf:=nmzFile|".in" << ""; 
+  outf:=nmzFile|".in" << "";
 
   for p in matrices
   do(
@@ -235,13 +259,13 @@ doWriteNmzData(List):=(matrices)->
      outf << numRows sgr << endl;
      outf << numColumns sgr << endl;
 
-     for i from 0 to numRows(sgr)-1 
+     for i from 0 to numRows(sgr)-1
      do(
         s:="";
-        for j from 0 to numColumns(sgr)-1 
+        for j from 0 to numColumns(sgr)-1
         do(
            s=s|sgr_(i,j)|" ";
-        ); 
+        );
         outf << s << endl;
      );
     outf << nmzMode << endl
@@ -262,34 +286,34 @@ writeNmzData(List):= matrices->
 );
 
 -- reads the Normaliz output file with the specified suffix
--- suffix should not be inv, in or out 
+-- suffix should not be inv, in or out
 readNmzData=method(TypicalValue=>Matrix)
 readNmzData(String):=(nmzSuffix)->
 (
-    if(any({"inv", "in", "out", "cst"},x->x==nmzSuffix)) 
+    if(any({"inv", "in", "out", "cst"},x->x==nmzSuffix))
     then error("readNmzData: To read .inv use getNumInvs(), to read .cst use readMultipleNmzData, to read .out or .in there is no function provided");
 
     if(nmzFilename=="" and nmzUserCalled) then error("readNmzData: no filename specified");
 
     if(nmzSuffix=="sup") -- for backward compatibility, should only appear if nmzUserCalled
-    then( 
-          L=readMultipleNmzData "cst";
+    then(
+          L:=readMultipleNmzData "cst";
           return L#0;);
 
     if(nmzFilename!="" and nmzUserCalled) then nmzFile=setNmzFile();
 
     if(not fileExists(nmzFile|"."|nmzSuffix))
-    then( 
+    then(
         error("readNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
     );
 
     inf:=get(nmzFile|"."|nmzSuffix);
-    s=lines(inf);
+    s:=lines(inf);
     nmzGen:={};
     i:=2;
     t:="";
     while(i<#s)
-    do( 
+    do(
        t = select("[0-9-]+",s#i);
        gen:=apply(t,value);
        nmzGen=append(nmzGen,gen);
@@ -300,23 +324,23 @@ readNmzData(String):=(nmzSuffix)->
     else return;   -- should not appear unless the user calls it
 );
 
--- reads several matrices from one output file and returns them as list 
--- at the moment (!) necessary only for the suffix "cst" 
+-- reads several matrices from one output file and returns them as list
+-- at the moment (!) necessary only for the suffix "cst"
 readMultipleNmzData=method()
 readMultipleNmzData String:=nmzSuffix->
-( 
+(
      if(nmzFilename=="" and nmzUserCalled) then error("readNmzData: no filename specified");
 
     if(nmzFilename!="" and nmzUserCalled) then nmzFile=setNmzFile();
 
     if(not fileExists(nmzFile|"."|nmzSuffix))
-    then( 
+    then(
         error("readMultipleNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
     );
 
     inf:=get(nmzFile|"."|nmzSuffix);
-    s=lines(inf);
-    
+    s:=lines(inf);
+
     L:={};
     t:="";
     b:=0;
@@ -324,24 +348,24 @@ readMultipleNmzData String:=nmzSuffix->
     while(b<#s)
     do(
     nmzGen:={};
-    numRows:=value s#b; 
+    numRows:=value s#b;
     numCols:=value s#(b+1);
-    if(numRows==0) 
+    if(numRows==0)
     then L=append(L,matrix(for j from 0 to numCols-1 list {}))
     else(
     for i from b+2 to b+1+numRows
-    do( 
+    do(
        t = select("[0-9-]+",s#i);
        gen:=apply(t,value);
        nmzGen=append(nmzGen,gen);
-    ); 
-  
+    );
+
     -- function matrix expects nonempty list
     if(nmzGen!={})
     then  L=append(L,matrix(nmzGen));
     --else  L=append(L,{{}});  -- better {{},{},...,{}};
     );
-    b=b+numRows+3; 
+    b=b+numRows+3;
    );
    return L;
 );
@@ -365,16 +389,17 @@ getNumInvs=()->
     if(not fileExists(nmzFile|".inv"))
     then error("getNumInvs: No file "|nmzFile|".inv"|" found.");
 
-    inf:=get(nmzFile|".inv");  
+    inf:=get(nmzFile|".inv");
     s:=lines(inf);
-   
+
     for i from 0 to #s-1   -- for each line in the file
     do(
        key="";
-       
+
        if(match("^integer", s#i))
-       then( 
-            (key,j)=getKeyword(s#i,8); 
+       then(
+	    local j;
+            (key,j)=getKeyword(s#i,8);
              inv=value (getNumber(substring(j+3,s#i)))#0;
        )
       else( if(match("^boolean",s#i))
@@ -386,9 +411,9 @@ getNumInvs=()->
             )
             else (if(match("^vector",s#i))
                   then(
-                       (len,str):=getNumber(substring(7,s#i)); 
+                       (len,str):=getNumber(substring(7,s#i));
                        (key,j)=getKeyword(str,1);
-                       inv={}; 
+                       inv={};
                     --   en:="";
                        --str=substring(j+10+#len,s#i);
                         t:= replace(".* = ","",s#i);
@@ -421,8 +446,8 @@ setNmzOption (String,Boolean):=(s, onoff)->
   )
   else(
        nmzOptions#i#1=onoff;
-       if(s=="threads") 
-       then( 
+       if(s=="threads")
+       then(
             nmzOptions#i#2="-x="|nmzNumberThreads;
        );
        return(true);
@@ -452,16 +477,26 @@ showNmzOptions=()->
   << collectNmzOptions();
 )
 
+checkNmzExecVersion=()->
+(
+  if (nmzExecVersion=="") then (
+    cmd = "! " | setNmzExec() | " 2>&1 </dev/null || true";
+    nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", get (cmd));
+  );
+  if (nmzExecVersion < "2.5") then
+    error("normaliz: Normaliz executable to old (" | nmzExecVersion | "), at least verison 2.5 needed!");
+)
+
 
 normaliz=method(Options=>true)
 opts={allComputations=>false}
 normaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
-( 
+(
   return runNormaliz(allComputations=>o.allComputations,{(sgr,nmzMode)});
 );
 
 normaliz(List):=opts>>o->(s)->
-( 
+(
   return runNormaliz(allComputations=>o.allComputations,s);
 );
 
@@ -483,22 +518,24 @@ runNormaliz(List):=opts>>o->(s)->
 (
     nmzFile=setNmzFile();
     nmzUserCalled=false;
-   
+
+    checkNmzExecVersion();
+
     if(#s>1) -- check whether modes ok
-    then( 
-         for p in s 
+    then(
+         for p in s
          do(
-            if(p#1!=4 and p#1!=5 and p#1!=6) 
+            if(p#1!=4 and p#1!=5 and p#1!=6)
             then error("normaliz: multiple input matrices are only allowed in modes 4,5 or 6");
          );
     );
-   
+
     doWriteNmzData(s);
     options:=collectNmzOptions();
- 
+
     cmd:="";
     dir:=select(".*/",nmzFile);
-    if(dir!={}) then cmd="cd "|dir#0|";";
+    if(dir!={}) then cmd="cd "|dir#0|"; ";
 
     cmd = (cmd|setNmzExec()|options|baseFilename(nmzFile));
     if debugLevel > 0 then << "--running command: " << cmd << endl;
@@ -507,25 +544,26 @@ runNormaliz(List):=opts>>o->(s)->
 
     if(not nmzGen)  -- return nothing if .gen is not
     then(            -- generated
-         if(nmzFilename=="") 
-         then( 
-             rmNmzFiles(); 
+         if(nmzFilename=="")
+         then(
+             rmNmzFiles();
          );
          nmzUserCalled=true;  -- back to default
-         return; 
+         return;
        );
-    
-    if(not o.allComputations) 
+
+    if(not o.allComputations)
     then(
      nmzData:=readNmzData "gen";
      rc:=new RationalCone from {"gen"=> nmzData, "inv" =>getNumInvs()};
      if(nmzFilename=="") then rmNmzFiles();
-     return rc;);
-    
+     return rc;
+     );
+
     -- read all files written
     files:={ "inv"=>getNumInvs()};
     suffixes:={"gen","egn","esp","tri","typ","ht1","ext","tgn"};
-    for s in suffixes 
+    for s in suffixes
     do(
        if(fileExists(nmzFile|"."|s))
          then( files=append(files,s=>readNmzData(s));)
@@ -535,7 +573,7 @@ runNormaliz(List):=opts>>o->(s)->
     files=append(files,"sup"=>L#0);
     files=append(files,"equ"=>L#1);
     files=append(files,"cgr"=>L#2);
-  
+
 
     cone:= new RationalCone from files;
 
@@ -555,19 +593,20 @@ mons2intmat=method()
 mons2intmat Ideal :=I->
 (
     return(matrix(flatten\exponents\I));
+
 );
 
 -- takes not column c
 mons2intmat(Ideal,ZZ):=(I,c)->
-(   
-    if(c>= numgens ring I) 
-    then( 
-         << "mons2intmat: Warning! "|c|" exceeds the maximal index of a variable"; 
+(
+    if(c>= numgens ring I)
+    then(
+         << "mons2intmat: Warning! "|c|" exceeds the maximal index of a variable";
          return mons2intmat(I););
    mat=flatten\exponents\I;
    mat=apply(mat,(v)->(return drop(v,{c,c});));
    return(matrix(mat));
-   
+
 );
 
 
@@ -582,12 +621,12 @@ intmat2mons(Matrix,Ring):=(expoVecs, r)->
    then(
         error("intmat2mons: not enough variables in the basering");
    );
-   l:={}; 
+   l:={};
 
    for i from 0 to numRows(expoVecs)-1
    do(
       l=append(l,r_((entries expoVecs)#i));
-   ); 
+   );
    return l;
 );
 
@@ -602,12 +641,12 @@ intmat2mons(Matrix,Ring,ZZ,ZZ):=(expoVecs,r,d,c)->
    v:=gens r;  -- the variables of the basering
    l:={};
    rows:=entries expoVecs;
-   rows=select(rows, (row)->(row#c==d)); --only those rows with entry d in column c 
+   rows=select(rows, (row)->(row#c==d)); --only those rows with entry d in column c
 
-   for i from 0 to #rows-1 
+   for i from 0 to #rows-1
    do(
              m:=1;
-             for j from 0 to numColumns(expoVecs)-1 
+             for j from 0 to numColumns(expoVecs)-1
              do(
                  if(not j==c) then
                  (m=m*(v#j)^(rows#i#j);)
@@ -635,41 +674,41 @@ runIntclToricRing(Ideal,ZZ):=opts>>o->(I,nmzMode)->
      else(
           S:=createMonomialSubalgebra  intmat2mons(res#"gen",ring I);
           S.cache#"cone"=res;
-          return S; 
+          return S;
      );
 );
 
 intclToricRing=method(Options=>true)
 opts={allComputations=>false}
 intclToricRing List :=opts>>o->L->
-( 
+(
   if(not uniform(ring \ L))
   then error("intclToricRing: monomials must be elements of the same ring")
-  else( if(#L==0) 
+  else( if(#L==0)
        then error("intclToricRing: empty list");
     return runIntclToricRing(allComputations=>o.allComputations,ideal L,0);
    );
 );
 
 intclToricRing MonomialSubalgebra :=opts>>o->S->
-( 
+(
   return intclToricRing(allComputations=>o.allComputations, gens S);
 );
 
 normalToricRing=method(Options=>true);
 opts={allComputations=>false}
 normalToricRing List :=opts>>o->L->
-( 
+(
   if(not uniform(ring \ L))
   then error("normalToricRing: monomials must be elements of the same ring")
-  else( if(#L==0) 
+  else( if(#L==0)
        then error("normalToricRing: empty list");
     return runIntclToricRing(allComputations=>o.allComputations,ideal L,1);
   );
 );
 
 normalToricRing MonomialSubalgebra :=opts>>o->S->
-( 
+(
   return normalToricRing(allComputations=>o.allComputations, gens S);
 );
 
@@ -680,19 +719,19 @@ normalToricRing (Ideal,Thing) :=opts>>o->(I,t)->(
    b:=0;
    M:={};
    g:= flatten entries gens I;
-  for g in flatten entries gens I 
+  for g in flatten entries gens I
   do(
      if #(exponents g)!=2 then error("normalToricRing: ideal is not generated by binomials.");
      a=(exponents g)#0;
      b=(exponents g)#1;
-     if(coefficient(R_a,g)==1 and coefficient(R_b,g)==-1) 
+     if(coefficient(R_a,g)==1 and coefficient(R_b,g)==-1)
      then M=append(M,entries(vector(a)-vector(b)))
      else (
-            if(coefficient(R_a,g)==-1 and coefficient(R_b,g)==1) 
+            if(coefficient(R_a,g)==-1 and coefficient(R_b,g)==1)
             then M=append(M,entries(vector(b)-vector(a)))
-            else error("normalToricRing: ideal is not generated by binomials.");     
-     ); 
-   );  
+            else error("normalToricRing: ideal is not generated by binomials.");
+     );
+   );
    M=matrix M;
    nmzData:=(normaliz(allComputations=>o.allComputations,M,10))#"gen";
    r:=rank nmzData;
@@ -706,7 +745,7 @@ opts={allComputations=>false}
 runIntclMonIdeal(Ideal,ZZ):=opts>>o->(I,nmzMode)->
 (
    -- new variable  for Rees algebra
-    alph:="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
+    alph:="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     ovars:=gens ring I;
     i:=0; use ring I;
 
@@ -718,7 +757,7 @@ runIntclMonIdeal(Ideal,ZZ):=opts>>o->(I,nmzMode)->
     S:=coefficientRing ring I[nvars];
     images:=delete(last gens S, gens S);
     f:=map(S,ring I,images);
-    I= f(I); 
+    I= f(I);
     return runIntclMonIdeal(allComputations=>o.allComputations,I,nmzMode,last gens S);
 );
 
@@ -727,11 +766,11 @@ runIntclMonIdeal(Ideal,ZZ,Thing):=opts>>o->(I,nmzMode,t)->
 (
     if(not member(t,gens ring I))
     then error("runIntclMonIdeal: second argument must be a variable of the ring of the ideal.");
-   
+
     numInvs:={};
     c:= index t;
     expoVecs:=mons2intmat(I,c);
-    res:=runNormaliz(allComputations=>o.allComputations,expoVecs,nmzMode); 
+    res:=runNormaliz(allComputations=>o.allComputations,expoVecs,nmzMode);
 
     if(not nmzGen) then return;
 
@@ -751,7 +790,7 @@ ehrhartRing List :=opts>>o->L->
 (
   if(not uniform(ring \ L))
   then error("ehrhartRing: monomials must be elements of the same ring")
-  else( if(#L==0) 
+  else( if(#L==0)
        then error("ehrhartRing: empty list");
   );
   return  runIntclMonIdeal(allComputations=>o.allComputations,ideal L,2);
@@ -767,7 +806,7 @@ ehrhartRing (List,Thing):=opts>>o->(L,t)->
 (
     if(not uniform(ring \ L))
   then error("ehrhartRing: monomials must be elements of the same ring")
-  else( if(#L==0) 
+  else( if(#L==0)
        then error("ehrhartRing: empty list");
   );
    I:=ideal L;
@@ -794,7 +833,7 @@ intclMonIdeal Ideal :=opts>>o->I->
 -- if there is a free variable in the ring, it can be given as second argument
 -- Achtung: in Doku  sicherstellen dass man im richtigen Ring arbeitet und dass es ne freie Variable sein muss TODO
 intclMonIdeal (Ideal,Thing) :=opts>>o->(I,t)->
-(  
+(
     if(not member(t, gens ring I))
     then error("intclMonIdeal: second argument must be a variable of the ring of the ideal.");
 
@@ -825,9 +864,9 @@ torusInvariants (Matrix, Ring) :=(T,R)->
 finiteDiagInvariants=method();
 finiteDiagInvariants(Matrix,Ring) := (M,R) ->
 (
-  if(numgens R != numColumns M-1) 
+  if(numgens R != numColumns M-1)
   then error("finiteDiagInvariants: wrong number of columns in matrix");
-  
+
   rt:= (normaliz(M,6))#"gen";
 
   if(instance(rt,Nothing,rt)) then return createEmptyMonomialSubalgebra R;
@@ -838,7 +877,7 @@ finiteDiagInvariants(Matrix,Ring) := (M,R) ->
 diagInvariants=method();
 diagInvariants(Matrix,Matrix,Ring) := (T,F,R) ->
 (
-  if(numgens R != numColumns T or numgens R != numColumns F -1) 
+  if(numgens R != numColumns T or numgens R != numColumns F -1)
   then error("diagInvariants: wrong number of columns in matrix");
 
   rt:=(normaliz({(T,5),(F,6)}))#"gen";
@@ -860,10 +899,10 @@ intersectionValRings (Matrix,Ring) :=(V,R)->
     V1:=I||V;
 
     M:=runNormaliz(V1,4);
- 
+
 
     if(not nmzGen) then return; -- M=null
-    
+
     vr:=createMonomialSubalgebra intmat2mons(M#"gen",R);
     return vr;
 )
@@ -882,7 +921,7 @@ intersectionValRingIdeals(Matrix,Ring):=(V,R)->
     I:=id_(ZZ^nc); -- identity matrix
     V1:=I||V;
     V1=mutableMatrix(V1);
-    
+
     for i from 0 to numRows(V)-1
     do(
        V1_(i+nc,nc-1)=-V1_(i+nc,nc-1);
@@ -892,11 +931,11 @@ intersectionValRingIdeals(Matrix,Ring):=(V,R)->
     M:=runNormaliz(V1,4);
     if(not nmzGen) then return; -- M=null
     M=M#"gen";
-   
+
     R1:=createMonomialSubalgebra intmat2mons(M,R,0,numColumns M-1);
     R2:=intmat2mons(M,R,1,numColumns M-1);
 
-    return new HashTable from {"subalgebra"=>R1, "module generators"=>R2}; 
+    return new HashTable from {"subalgebra"=>R1, "module generators"=>R2};
 )
 
 ----------------------------------------------------------
@@ -908,7 +947,7 @@ document {
      "The package ", EM "Normaliz"," provides an interface for the use of ", TT "Normaliz 2.5"," within Macaulay 2.",
 
 PARA{}, "The program ", TT "Normaliz 2.5", " (referred to as ", TT "Normaliz", " in the following) is mainly a tool for computing the Hilbert basis of a rational cone or, in other terms, for solving linear systems of inequalities.  Several additional data can be computed.
-It is included in the Macaulay 2 distribution. For more details on the program, see ", HREF "http://www.math.uos.de/normaliz/", ". 
+It is included in the Macaulay 2 distribution. For more details on the program, see ", HREF "http://www.math.uos.de/normaliz/", ".
 For the theory of affine semigroups and the notions of commutative algebra we refer to W. Bruns and J. Gubeladze, ", EM "Polytopes, rings and K-theory.", " Springer 2009. For algorithms see  W. Bruns and R. Koch, ", EM "Computing the integral closure of an affine semigroup. ", "Uni. Iaggelonicae Acta Math. 39, (2001), 59-70 and ",   "W. Bruns and B. Ichim ", EM "Normaliz: Algorithms for affine monoids and rational cones,"," J. Algebra
 (2010)", ", available at ", HREF "http://dx.doi.org/10.1016/j.jalgebra.2010.01.031",
 
@@ -949,7 +988,7 @@ document {
      Key => "The Hilbert basis and the support hyperplanes of a rational cone.",
 
 "We want to calculate the Hilbert basis of a rational cone.  The cone may be given by ",
-UL{ 
+UL{
    "a system of generators;",
    "a linear system of inequations;",
    " a linear system of equations."
@@ -970,14 +1009,14 @@ PARA{},"in dimension 7. We compute its integral closure  in the ambient lattice 
 PARA{},"One can convert the vectors to monomials in the following way:",
 EXAMPLE {
   "R=ZZ/37[x_1..x_7];",
-  "l={{1, 0, 0, 0, 0, 0, 0}, 
-   {0, 1, 0, 0, 0, 0, 0},            
-   {0, 0, 1, 0, 0, 0, 0},            
-   {0, 0, 0, 1, 0, 0, 0},            
-   {0, 0, 0, 0, 1, 0, 0},            
-   {0, 0, 0, 0, 0, 1, 0},            
-   {1, 1, 1, 0, 0, 0, 1},            
-   {1, 1, 0, 1, 0, 0, 1},            
+  "l={{1, 0, 0, 0, 0, 0, 0},
+   {0, 1, 0, 0, 0, 0, 0},
+   {0, 0, 1, 0, 0, 0, 0},
+   {0, 0, 0, 1, 0, 0, 0},
+   {0, 0, 0, 0, 1, 0, 0},
+   {0, 0, 0, 0, 0, 1, 0},
+   {1, 1, 1, 0, 0, 0, 1},
+   {1, 1, 0, 1, 0, 0, 1},
    {1, 0, 1, 0, 1, 0, 1},
    {1, 0, 0, 1, 0, 1, 1},
    {1, 0, 0, 0, 1, 1, 1},
@@ -989,7 +1028,7 @@ EXAMPLE {
   "L=for i in l list R_i",
   "S=intclToricRing L"
 },
-PARA{},"The function ", TO intclToricRing, " returns a ", TO MonomialSubalgebra, ". The Hilbert basis of the cone consists of the exponent vectors of the generators of the subalgebra. The generators can be extracted with ", TO gens, ".", 
+PARA{},"The function ", TO intclToricRing, " returns a ", TO MonomialSubalgebra, ". The Hilbert basis of the cone consists of the exponent vectors of the generators of the subalgebra. The generators can be extracted with ", TO gens, ".",
 EXAMPLE lines ///
 hb = flatten \ exponents \  gens S
 ///,
@@ -1003,13 +1042,14 @@ set entries d===set hb
 PARA{}, "The result is an object of type ", TO RationalCone, " from which you obtain the Hilbert basis via the key \"gen\".",
 PARA{}, "The support hyperplanes are stored in the ", TT "Normaliz", " file <filename>.sup. To inspect these, one has to assure that the computations by ", TT "Normaliz", " are kept. This can be done by specifying a filename, that is, assigning a non-empty string to the global variable ", TO "nmzFilename", ", see also ", TO "Keeping results of the computation by Normaliz", ". Then use ", TO readNmzData, " to read the .sup file.",
 
+
 EXAMPLE lines ///
  nmzFilename="rproj2";
  intclToricRing L;
 hypes=readNmzData("sup")
 ///,
 
-PARA{}, "This means there are 24 support hyperplanes in ", TEX "\\ZZ^7",". So in contrast to the convention of M2 Normaliz writes vectors as rows. If you don't want to keep the results of the computations any longer, use ", TO rmNmzFiles, " to delete the files created by ", TT "Normaliz", ".", 
+PARA{}, "This means there are 24 support hyperplanes in ", TEX "\\ZZ^7",". So in contrast to the convention of M2 Normaliz writes vectors as rows. If you don't want to keep the results of the computations any longer, use ", TO rmNmzFiles, " to delete the files created by ", TT "Normaliz", ".",
 
 EXAMPLE lines ///
  rmNmzFiles();
@@ -1042,7 +1082,7 @@ normaliz(eq,5)
 "Again the rows of this matrix are the elements of the Hilbert basis.",
 }
 
-document {       
+document {
      Key => "The lattice points and the support hyperplanes of an integral polytope.",
 
 "The lattice points of the integral polytope with the 4 vertices",
@@ -1084,7 +1124,7 @@ EXAMPLE lines ///
   (intcl,rees)=intclMonIdeal(I,x_8);
   intcl
   rees
-///, 
+///,
 }
 
 
@@ -1100,7 +1140,7 @@ ring S
 gens S
 ///,
 SeeAlso => createMonomialSubalgebra,
-} 
+}
 
 document {
    Key => {createMonomialSubalgebra, (createMonomialSubalgebra,List)},
@@ -1108,7 +1148,7 @@ document {
    Usage => "createMonomialSubalgebra L",
    Inputs => {List => "list of monomials that are the generators of the subalgebra"},
    Outputs => { MonomialSubalgebra => " the subalgebra of the polynomial ring of the monomials that has the given monomials as generators"},
-PARA{}, 
+PARA{},
 EXAMPLE lines ///
 R=ZZ/37[x,y,z];
 S=createMonomialSubalgebra {x^2*y, x*z, z^3}
@@ -1193,9 +1233,9 @@ assert (ring createMonomialSubalgebra {x^2*y, x*z, z^3}===R)
 document {
   Key => RationalCone,
   Headline => "class of rational cones",
-PARA{}, "The method ", TO normaliz, " returns an object of type RationalCone. By default, that cone contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed and the content of the output file .inv, which contains some additional data. Note that Normaliz writes the generators as rows, in contrast to the convention used in M2.", 
+PARA{}, "The method ", TO normaliz, " returns an object of type RationalCone. By default, that cone contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed and the content of the output file .inv, which contains some additional data. Note that Normaliz writes the generators as rows, in contrast to the convention used in M2.",
 EXAMPLE lines ///
-setNmzOption("allf",true); 
+setNmzOption("allf",true);
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
 rc=normaliz(eq,5);
 rc#"gen"
@@ -1269,7 +1309,7 @@ nmzVersion
 document  {
    Key => "nmzDataPath",
    Headline => "global variable, the path where Normaliz stores its files",
-PARA{}, "This global variable stores the file path where ", TT "Normaliz", " stores the files written. By default it is the emtpy string which means that the files are stored in the current directory. If no filename is specified, this variable is not used. There is no check whether the assigned directory exists. If it does not exist, ", TT  "Normaliz"," will issue an error message. Use e.g. ", TO makeDirectory," to create an directory within Macaulay 2.", 
+PARA{}, "This global variable stores the file path where ", TT "Normaliz", " stores the files written. By default it is the emtpy string which means that the files are stored in the current directory. If no filename is specified, this variable is not used. There is no check whether the assigned directory exists. If it does not exist, ", TT  "Normaliz"," will issue an error message. Use e.g. ", TO makeDirectory," to create an directory within Macaulay 2.",
  EXAMPLE lines ///
  nmzDataPath
  nmzDataPath="d:/Normaliz2.5Windows/example";
@@ -1324,18 +1364,18 @@ document {
      TEST ///
      nmzFilename="VeryInteresting";
           R=ZZ/37[x,y,z];
-          
+
           normalToricRing {x^2*y, y^3};
           rmNmzFiles();
           assert( nmzFilename=="");
-	  assert ( fileExists("VeryInteresting.gen")==false)
+      assert ( fileExists("VeryInteresting.gen")==false)
      ///,
      }
 
 document {
      Key => {writeNmzData, },
      Headline => "creates an input file for Normaliz",
-     PARA{},"This function creates an input file for ", TT "Normaliz", " containing one or several matrices, whose rows   are considered  according to the type: ", 
+     PARA{},"This function creates an input file for ", TT "Normaliz", " containing one or several matrices, whose rows   are considered  according to the type: ",
      UL {
          "type 0,1: generators of a rational cone",
          "type 2:   lattice points spanning a polytope",
@@ -1355,8 +1395,8 @@ document {
                 Matrix => "whose rows are interpreted according to the type",
                 ZZ => "the type"
       },
-      Consequences => {"an input file filename.in is written, using the last filename created"}, 
-     PARA{},"This function creates an input file for ", TT "Normaliz", ". The rows of ", TT "mat", " are considered  according to the type: ", 
+      Consequences => {"an input file filename.in is written, using the last filename created"},
+     PARA{},"This function creates an input file for ", TT "Normaliz", ". The rows of ", TT "mat", " are considered  according to the type: ",
      UL {
          "type 0,1: generators of a rational cone",
          "type 2:   lattice points spanning a polytope",
@@ -1377,10 +1417,10 @@ document {
           ///,
      SeeAlso => readNmzData,
      TEST ///
-      nmzFilename="example"; 
+      nmzFilename="example";
           sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
           writeNmzData(sgr,1)
-          assert (lines get (setNmzFile()|".in")=={"3","3","1 2 3 ","4 5 6 ","7 8 10 ","1"})
+          assert (lines get (nmzDataPath|nmzFilename|".in")=={"3","3","1 2 3 ","4 5 6 ","7 8 10 ","1"})
      ///,
      }
 
@@ -1408,7 +1448,7 @@ document {
      Headline => "reads an output file of Normaliz containing one matrix",
      Usage => "readNmzData s",
      Inputs => {
-                String => "the suffix of the file to be read" 
+                String => "the suffix of the file to be read"
      },
      Outputs => {
                  Matrix => " the content of the file"
@@ -1423,7 +1463,7 @@ document {
           ///,
      SeeAlso => {writeNmzData, normaliz, allComputations, "Keeping results of the computation by Normaliz","output files written by Normaliz" },
      TEST ///
-          nmzFilename="example"; 
+          nmzFilename="example";
           sgr=matrix({{1,1,1,-1,-1,-1,0,0,0},
 {1, 1, 1,  0,  0,  0, -1, -1, -1},
 {0, 1, 1, -1,  0,  0, -1,  0,  0},
@@ -1432,7 +1472,7 @@ document {
 {0, 1, 1,  0, -1,  0,  0,  0, -1},
 {1, 1, 0,  0, -1,  0, -1,  0,  0}}); --3x3magic
           normaliz(sgr,5);
-          assert ( readNmzData "gen"==matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
+          assert ( sort transpose readNmzData "gen"==sort transpose matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
 {0, 2, 1, 2, 1, 0, 1, 0, 2},
 {1, 1, 1, 1, 1, 1, 1, 1, 1},
 {2, 0, 1, 0, 1, 2, 1, 2, 0},
@@ -1446,7 +1486,7 @@ document {
      Headline => "reads an output file of Normaliz containing several matrices",
      Usage => "readNmzData s",
      Inputs => {
-                String => "the suffix of the file to be read" 
+                String => "the suffix of the file to be read"
      },
      Outputs => {
                  List => " the content of the file"
@@ -1474,12 +1514,12 @@ document {
         {"type 4: Computes the Hilbert basis of the rational cone in ", TEX "\\RR^m", " given by the system of homogeneous inequalities ", TT "mat ", TEX "x\\ \\geq\\ 0", ";"},
         {"type 5: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the homogeneous system ", TT "mat ", TEX "x\\ =\\ 0", "."},
         {"type 6: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the system of congruences defined by the rows as follows: Each row (",TEX "x_{i_1},\\dots,x_{i_n},c",") represents a congruence ",TEX "x_{i_1}z_1+\\dots+x_{i_n}z_n \\equiv \\ 0 \\mod c","."},
-        {"type 10: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."}, 
+        {"type 10: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."},
      },
 PARA{},"It is possible to combine the types 4,5 and 6, see ", TO (normaliz,List),".",
- PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line, and the content of the output file .inv, under the key \"inv\".", 
+ PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line, and the content of the output file .inv, under the key \"inv\".",
 EXAMPLE lines ///
-setNmzOption("allf",true); 
+setNmzOption("allf",true);
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
 rc=normaliz(eq,5)
 ///,
@@ -1492,7 +1532,7 @@ arc#"inv"
 ///,
 SeeAlso => {RationalCone, readNmzData,"Keeping results of the computation by Normaliz", "output files written by Normaliz"},
 TEST ///
-          nmzFilename="example"; 
+          nmzFilename="example";
           mat=matrix({{1,1,1,-1,-1,-1,0,0,0},
 {1, 1, 1,  0,  0,  0, -1, -1, -1},
 {0, 1, 1, -1,  0,  0, -1,  0,  0},
@@ -1501,7 +1541,7 @@ TEST ///
 {0, 1, 1,  0, -1,  0,  0,  0, -1},
 {1, 1, 0,  0, -1,  0, -1,  0,  0}}); --3x3magic
           normaliz(mat,5);
-          assert ( readNmzData "gen"==matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
+          assert ( sort transpose readNmzData "gen"==sort transpose matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
 {0, 2, 1, 2, 1, 0, 1, 0, 2},
 {1, 1, 1, 1, 1, 1, 1, 1, 1},
 {2, 0, 1, 0, 1, 2, 1, 2, 0},
@@ -1530,9 +1570,9 @@ document {
         {"type 6: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the system of congruences defined by the rows as follows: Each row (",TEX "x_{i_1},\\dots,x_{i_n},c",") represents a congruence ",TEX "x_{i_1}z_1+\\dots+x_{i_n}z_n \\equiv \\ 0 \\mod c","."},
         {"type 10: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."},
      },
- PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line, and the content of the output file .inv, under the key \"inv\".", 
+ PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line, and the content of the output file .inv, under the key \"inv\".",
 EXAMPLE lines ///
-setNmzOption("allf",true); 
+setNmzOption("allf",true);
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
 rc=normaliz(eq,5);
 rc#"gen"
@@ -1546,7 +1586,7 @@ arc#"inv"
 ///,
 SeeAlso => {RationalCone, readNmzData,"Keeping results of the computation by Normaliz", "output files written by Normaliz"},
 TEST ///
-          nmzFilename="example"; 
+          nmzFilename="example";
           mat=matrix({{1,1,1,-1,-1,-1,0,0,0},
 {1, 1, 1,  0,  0,  0, -1, -1, -1},
 {0, 1, 1, -1,  0,  0, -1,  0,  0},
@@ -1555,7 +1595,7 @@ TEST ///
 {0, 1, 1,  0, -1,  0,  0,  0, -1},
 {1, 1, 0,  0, -1,  0, -1,  0,  0}}); --3x3magic
           normaliz(mat,5);
-          assert ( readNmzData "gen"==matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
+          assert ( sort transpose readNmzData "gen"==sort transpose matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
 {0, 2, 1, 2, 1, 0, 1, 0, 2},
 {1, 1, 1, 1, 1, 1, 1, 1, 1},
 {2, 0, 1, 0, 1, 2, 1, 2, 0},
@@ -1573,9 +1613,9 @@ document{
      Outputs => {RationalCone => {"generators of the integral closure and optional output from ", TT "Normaliz"}},
 
      PARA{}, "This function applies ", TT "Normaliz", " to all ", TT "mat", " each in the type set by the second parameter ", TT "nmzType", ". The function returns an object of type ", TO RationalCone, " defined by the file with suffix ", TT "gen", " , if computed, and possibly some additional information. At the moment only choices of the types 4, 5 and 6 are possible.  The type determines how the rows of the matrix are interpreted, see also ", TO writeNmzData, ", and decides what the program will do. Let L be the sublattice of ", TEX "\\ZZ^n", " that consists of the solutions of the system of congruences defined by the input matrix of type 6 (", TEX "L=\\ZZ^n"," if there is no matrix of type 6). Let A be the matrix of type 4 and B be the matrix of type 5. Then the cone specified by this input data is the cone ", TEX "C=\\{x\\in \\RR n: Ax=0, Bx \\geq 0\\}"," and the Hilbert basis of ", TEX "C\\cap L", " is computed. If there is no matrix of type 5, then the system of equations is empty, satisfied by all vectors of ", TEX "\\RR^n",". Note that there is always a matrix of type 4, either explicitly, if it is in the input, or implicitly, namely the ", TEX "n \\times n"," unit matrix, if there is no matrix of type 4 in the input (but one of type 5 or 6). It is possibly to give several matrices of the same type. All matrices of one type are then appended to one matrix by ", TT "Normaliz",".",
- PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line and the content of the output file .inv, under the key \"inv\".", 
+ PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line and the content of the output file .inv, under the key \"inv\".",
 EXAMPLE lines ///
-hy=matrix {{-1,0,-1,0,3,0,0,0,0},{-1,0,1,0,1,0,0,0,0},{1,0,1,0,-1,0,0,0,0},{1,0,-1,0,1,0,0,0,0}}; 
+hy=matrix {{-1,0,-1,0,3,0,0,0,0},{-1,0,1,0,1,0,0,0,0},{1,0,1,0,-1,0,0,0,0},{1,0,-1,0,1,0,0,0,0}};
 eq=matrix {{1,1,1,-1,-1,-1,0,0,0},{1,1,1,0,0,0,-1,-1,-1},{0,1,1,-1,0, 0,-1,0,0},{1,0,1,0,-1,0,0,-1,0},{1,1,0,0,0,-1,0,0,-1},{0,1,1,0,-1,0,0,0,-1},{1,1,0,0,-1,0,-1,0,0}};
 cg=matrix {{1,0,0,0,0,0,0,0,0,2},{0,0,1,0,0,0,0,0,0,2},{0,0,0,0,0,0,1,0,0,2},{0,0,0,0,0,0,0,0,1,2}};
 rc=normaliz({(hy,4),(eq,5),(cg,6)});
@@ -1594,7 +1634,7 @@ SeeAlso => {RationalCone, readNmzData,"Keeping results of the computation by Nor
 
 
 
-document { 
+document {
      Key => allComputations,
 PARA{}, "allComputations is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ". Its default value is false. If it is set to true, the cone in the Cachetable of the monomial subalgebra returned contains not only the generators, but all the data that have been computed by ", TT "Normaliz", " (what this includes depends on the type and the options set, see ", TO "output files written by Normaliz",").",
 EXAMPLE lines ///
@@ -1622,17 +1662,14 @@ document {
           rmNmzFiles();
           ///,
 TEST ///
-          nmzFilename="example"; 
-          sgr=matrix({{1,1,1,-1,-1,-1,0,0,0},
-{1, 1, 1,  0,  0,  0, -1, -1, -1},
-{0, 1, 1, -1,  0,  0, -1,  0,  0},
-{1, 0, 1,  0, -1,  0,  0, -1,  0},
-{1, 1, 0,  0,  0, -1,  0,  0, -1},
-{0, 1, 1,  0, -1,  0,  0,  0, -1},
-{1, 1, 0,  0, -1,  0, -1,  0,  0}}); --3x3magic
-          normaliz(sgr,5);
+          nmzFilename="example";
+          sgr=matrix({{2, 0, 0, 1},
+{0, 3, 0, 1},
+{0, 0, 5, 1},
+{0, 0, 0, 1}});
+          normaliz(sgr,0);
           n=getNumInvs();
-          assert ( n#"hilbert basis elements"==5 and n#"number extreme rays"==4 and n#"rank"==3 and n#"index"==2 and n#"number support hyperplanes"==4 and n#"homogeneous"==true and n#"height 1 elements"==5 and n#"homogeneous weights"==(1,0,-1,1,0,0,0,0,0) and n#"multiplicity"==4 )
+          assert ( n#"hilbert basis elements"==19 and n#"number extreme rays"==4 and n#"rank"==4 and n#"index"==30 and n#"number support hyperplanes"==4 and n#"homogeneous"==true and n#"height 1 elements"==18 and n#"homogeneous weights"==(0,0,0,1) and n#"multiplicity"==30 )
     rmNmzFiles();
      ///,
      }
@@ -1654,11 +1691,11 @@ document {
        {TT "-n",  ":   normal, computes the support hyperplanes, the triangulation, the multiplicity and the Hilbert basis."},
        {TT "-h",  ":   hilb, computes the support hyperplanes, the triangulation, the multiplicity, the Hilbert basis, the h-vector and the Hilbert polynomial ."},
        {TT "-d",  ":   dual, computes the Hilbert basis using Pottier's algorithm, cf. L. Pottier, ", EM "The Euclide algorithm in dimension n.", " Research report, ISSAC 96, ACM Press 1996. It is available only in type 4 and 5."}
-     }, 
+     },
      "Further options:",
      UL{
-        {TT "-c", ":   control, gives you some access to 'control' data during the computation. When switched on, data will be printed on the screen."}, 
-        {TT "-a", ":   allf, all files are written",}, 
+        {TT "-c", ":   control, gives you some access to 'control' data during the computation. When switched on, data will be printed on the screen."},
+        {TT "-a", ":   allf, all files are written",},
         {TT "-e", ":   errorcheck, when switched on the arithmetic tests will be performed, in order to assure that no arithmetic errors do occur. This may slow down the computations. For ", TT "normbig", "(see ", TO "nmzVersion", "), this option is set to false, since in this case no arithmetic errors can occur."},
         {TT "-x=<N>", ": threads, there ",TT "<N>"," stands for a positive integer limiting the number of threads that ", TT "Normaliz"," can access on your system. The default value is ", TT "<N>=",TEX"\\infty",". If you want to run ", TT "Normaliz"," in a strictly serial mode, choose ", TT "<N>=1",". If this option is enabled,",TT "<N>"," is taken as the value stored in the global variable ", TO "nmzNumberThreads","."}
      },
@@ -1811,7 +1848,7 @@ document {
      Usage => "intclToricRing L",
      Inputs => {
                 List => "generators of the toric ring"},
-     Outputs => { 
+     Outputs => {
                  MonomialSubalgebra => "the integral closure of the toric ring"},
     PARA{},"The toric ring S is the subalgebra of the basering generated by the monomials in the list L. The function computes the integral closure T of S in the surrounding polynomial ring.",
      EXAMPLE lines ///
@@ -1855,7 +1892,7 @@ L=for i in l list R_i; -- rproj2
 { 1, 1, 0, 1, 0, 0, 1},
 { 1, 1, 1, 0, 0, 0, 1},
 { 1, 1, 1, 1, 1, 1, 2}})
-     ///  
+     ///
      }
 
 document {
@@ -1864,7 +1901,7 @@ document {
      Usage => "intclToricRing L",
      Inputs => {
                 List => "generators of the toric ring"},
-     Outputs => { 
+     Outputs => {
                  MonomialSubalgebra => "the integral closure of the toric ring"},
     PARA{},"The toric ring S is the subalgebra of the basering generated by the monomials in the list L. The function computes the integral closure T of S in the surrounding polynomial ring. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.",
      EXAMPLE lines ///
@@ -1881,7 +1918,7 @@ document {
      Usage => "intclToricRing S",
      Inputs => {
                 MonomialSubalgebra => "the toric ring"},
-     Outputs => { 
+     Outputs => {
                  MonomialSubalgebra => "the integral closure of the toric ring"},
     PARA{},"The toric ring S is the monomial subalgebra given. The function computes the integral closure T of S in the surrounding polynomial ring.",
      EXAMPLE lines ///
@@ -1897,7 +1934,7 @@ document {
      Usage => "intclToricRing S",
      Inputs => {
                 MonomialSubalgebra => "the toric ring"},
-     Outputs => { 
+     Outputs => {
                  MonomialSubalgebra => "the integral closure of the toric ring"},
     PARA{},"The toric ring S is the monomial subalgebra given. The function computes the integral closure T of S in the surrounding polynomial ring. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.",
      EXAMPLE lines ///
@@ -1911,7 +1948,7 @@ document {
 document {
      Key => {ehrhartRing},
      Headline => "Ehrhart ring",
-     "The input of this function is considered as vertices of a lattice polytope P. The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function computes the lattice points of the polytope and its Ehrhart ring.", 
+     "The input of this function is considered as vertices of a lattice polytope P. The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function computes the lattice points of the polytope and its Ehrhart ring.",
 }
 
 document {
@@ -1919,9 +1956,9 @@ document {
      Headline => "Ehrhart ring",
      Usage => "ehrhartRing L",
      Inputs => {List => "the monomials corresponding to the vertices of a lattice polytope"},
-     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}}, 
+     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}},
      PARA{},"The exponent vectors of the given monomials are considered as vertices of a lattice polytope P.
-     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. Since these are defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable.", 
+     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. Since these are defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable.",
      EXAMPLE lines ///
           R=ZZ/37[x,y];
           L={x^3, x^2*y, y^3, x*y^2};
@@ -1979,9 +2016,9 @@ document {
      Headline => "Ehrhart ring",
      Usage => "ehrhartRing L",
      Inputs => {List => "the monomials corresponding to the vertices of a lattice polytope"},
-     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}}, 
+     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}},
     PARA{}, "The exponent vectors of the given monomials are considered as vertices of a lattice polytope P.
-     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. Since these are defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebras returned (it is the same cone for both subalgebras).", 
+     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. Since these are defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebras returned (it is the same cone for both subalgebras).",
      EXAMPLE lines ///
           R=ZZ/37[x,y];
           L={x^3, x^2*y, y^3, x*y^2};
@@ -1996,9 +2033,9 @@ document {
      Headline => "Ehrhart ring",
      Usage => "ehrhartRing(L,t)",
      Inputs => {List => "the monomials corresponding to the vertices of a lattice polytope", Thing => " the free variable that should be used for the computation"},
-     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}}, 
+     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}},
     PARA{}, "The exponent vectors of the given monomials are considered as vertices of a lattice polytope P.
-     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. If there is already a free variable in the original ring (i.e. a variable that does not appear in any of the monomials in L), give the function that variable as second input. The function then uses it instead of creating a new one. ", 
+     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. If there is already a free variable in the original ring (i.e. a variable that does not appear in any of the monomials in L), give the function that variable as second input. The function then uses it instead of creating a new one. ",
     EXAMPLE  lines ///
     R=ZZ/37[x,y,t];
     L={x^3, x^2*y, y^3, x*y^2};
@@ -2013,9 +2050,9 @@ document {
      Headline => "Ehrhart ring",
      Usage => "ehrhartRing(L,t)",
      Inputs => {List => "the monomials corresponding to the vertices of a lattice polytope", Thing => " the free variable that should be used for the computation"},
-     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}}, 
+     Outputs => {Sequence => {" a sequence containing two ", TO MonomialSubalgebra,"s"}},
      PARA{},"The exponent vectors of the given monomials are considered as vertices of a lattice polytope P.
-     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. If there is already a free variable in the original ring (i.e. a variable that does not appear in any of the monomials in L), you can give the function that variable as second input. The function then uses it instead of creating a new one.  If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebras returned (it is the same cone for both subalgebras). ", 
+     The Ehrhart ring of a (lattice) polytope P is the monoid algebra defined by the monoid of lattice points in the cone over the polytope P; see Bruns and Gubeladze, Polytopes, Rings, and K-theory, Springer 2009, pp. 228, 229. The function returns two monomial subalgebras, the first has as generators the monomials representing the lattice points of the polytope, the second is the Ehrhart ring. If there is already a free variable in the original ring (i.e. a variable that does not appear in any of the monomials in L), you can give the function that variable as second input. The function then uses it instead of creating a new one.  If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebras returned (it is the same cone for both subalgebras). ",
     EXAMPLE  lines ///
     R=ZZ/37[x,y,t];
     L={x^3, x^2*y, y^3, x*y^2};
@@ -2029,7 +2066,7 @@ document {
 document {
      Key => {intclMonIdeal},
      Headline => "normalization of Rees algebra",
-     "This function computes the integral closure of a monomial ideal ", TEX "I=(f_1,\\ldots,f_m)\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. The normalization of the Rees algebra is the integral closure of ", TEX "R[f_1t,\\ldots,f_mt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. ", 
+     "This function computes the integral closure of a monomial ideal ", TEX "I=(f_1,\\ldots,f_m)\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. The normalization of the Rees algebra is the integral closure of ", TEX "R[f_1t,\\ldots,f_mt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. ",
      }
 
 document {
@@ -2038,13 +2075,13 @@ document {
      Usage => "intclMonIdeal I",
      Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal"},
      Outputs => {Sequence => {" containing an ideal and a ", TO MonomialSubalgebra, ", which are the integral closure and the normalization of the Rees algebra of I" }},
-     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns a sequence containing the integral closure of the ideal I and the normalization of its Rees algebra. Since the Rees algebra is defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable.", 
+     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns a sequence containing the integral closure of the ideal I and the normalization of its Rees algebra. Since the Rees algebra is defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable.",
      EXAMPLE lines ///
           R=ZZ/37[x,y];
           I=ideal(x^3, x^2*y, y^3, x*y^2);
           (intCl,normRees)=intclMonIdeal I;
           intCl
-	  normRees
+      normRees
      ///,
    TEST ///
    R=ZZ/37[x_1..x_6,t];
@@ -2090,7 +2127,7 @@ document {
  {0, 1, 0, 1, 1, 0, 1},
  {0, 0, 1, 1, 1, 0, 1},
  {1, 1, 1, 1, 1, 1, 2}})
-  
+
    ///
      }
 
@@ -2098,7 +2135,7 @@ document {
      Key => {(intclMonIdeal,Ideal,Thing),},
      Headline => "normalization of Rees algebra",
      Usage => "intclMonIdeal I,  intclMonIdeal(I,t)",
-     Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal", 
+     Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal",
      Thing => " the free variable that should be used for the computation (optional)"},
      Outputs => {Sequence => {" containing an ideal and a ", TO MonomialSubalgebra, ", which are the integral closure and the normalization of the Rees algebra of I" }},
      PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns a sequence containing the integral closure of the ideal I and the normalization of its Rees algebra. If there is a free variable in the original ring (i.e. a variable that does not appear in any of the generators of I), you can give the function that variable as second input. The function then uses it instead of creating a new one. Note that in this case the input ideal is considered as ideal in the smaller polynomial ring.",
@@ -2117,7 +2154,7 @@ document {
      Usage => "intclMonIdeal I",
      Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal",},
      Outputs => {Sequence => {" containing an ideal and a ", TO MonomialSubalgebra, ", which are the integral closure and the normalization of the Rees algebra of I" }},
-     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns a sequence containing the integral closure of the ideal I and the normalization of its Rees algebra. Since the Rees algebra is defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.", 
+     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns a sequence containing the integral closure of the ideal I and the normalization of its Rees algebra. Since the Rees algebra is defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.",
      EXAMPLE lines ///
           R=ZZ/37[x,y];
           I=ideal(x^3, x^2*y, y^3, x*y^2);
@@ -2130,10 +2167,10 @@ document {
      Key => {[(intclMonIdeal,Ideal,Thing),allComputations]},
      Headline => "normalization of Rees algebra",
      Usage => "intclMonIdeal(I,t)",
-     Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal", 
+     Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal",
      Thing => " the free variable that should be used for the computation"},
      Outputs => {Sequence => {" containing an ideal and a ", TO MonomialSubalgebra, ", which are the integral closure and the normalization of the Rees algebra of I" }},
-     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns a sequence containing the integral closure of the ideal I and the normalization of its Rees algebra. If there is a free variable in the original ring (i.e. a variable that does not appear in any of the generators of I), you can give the function that variable as second input. The function then uses it instead of creating a new one. Note that in this case the input ideal is considered as ideal in the smaller polynomial ring. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.", 
+     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns a sequence containing the integral closure of the ideal I and the normalization of its Rees algebra. If there is a free variable in the original ring (i.e. a variable that does not appear in any of the generators of I), you can give the function that variable as second input. The function then uses it instead of creating a new one. Note that in this case the input ideal is considered as ideal in the smaller polynomial ring. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.",
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3, x^2*y, y^3, x*y^2);
@@ -2148,7 +2185,7 @@ document {
      Usage => "torusInvariants(T,R)",
      Inputs => {
                 Matrix=> {"matrix ", TEX "(a_{ij})", " of the action"},
-                Ring => " the ring on which the action takes place" 
+                Ring => " the ring on which the action takes place"
      },
      Outputs => {
                  MonomialSubalgebra => {"the ring of invariants ",TEX "R^T"}
@@ -2169,15 +2206,15 @@ document {
      Inputs => {
                 Matrix =>"whose rows are the values of the indeterminates under the torus action",
                 Matrix=> "whose rows are the values of the indeterminates under action of the finite group",
-                Ring => " the basering" 
+                Ring => " the basering"
 },
-     Outputs => { 
+     Outputs => {
                  MonomialSubalgebra => {"the ring of invariants"}},
      PARA{}, "This function computes the ring of invariants of a diagonalizable group ", TEX "D = T\\times G", " where T is a torus and G is a finite abelian group, both acting diagonally on the polynomial ring ", TEX "K[X_1,\\ldots,X_n]",". The group actions are specified by the input matrices M and N. The first matrix specifies the torus action, the second the action of the finite group. See ", TO torusInvariants, " or ", TO finiteDiagInvariants, " for more detail. The output is the monomial subalgebra of invariants.",
      EXAMPLE lines ///
           R=QQ[x,y,z,w];
           T=matrix({{-1,-1,2,0},{1,1,-2,-1}});
-          U=matrix{{1,1,1,1,5},{1,0,2,0,7}}  
+          U=matrix{{1,1,1,1,5},{1,0,2,0,7}}
           diagInvariants(T,U,R)
     ///,
     SeeAlso => {torusInvariants, finiteDiagInvariants}
@@ -2189,18 +2226,18 @@ document {
      Usage => "finiteDiagInvariants(U,R)",
      Inputs => {
                 Matrix=> "whose rows are the values of the indeterminates under the action of a finite group",
-                Ring => " the basering" 
+                Ring => " the basering"
 },
-     Outputs => { 
+     Outputs => {
                  MonomialSubalgebra => {"the ring of invariants"}},
      PARA{}, "This function computes the ring of invariants of a finite abelian group G acting diagonally on the surrounding polynomial ring ", TEX "K[X_1,\\ldots,X_n]",". The group is the direct product of cyclic groups generated by finitely many elements ", TEX "g_1,\\ldots,g_w",". The element ", TEX "g_i", " acts on the indeterminate ", TEX "X_j", " by ", TEX "g_i(X_j)= \\lambda_i^{u_{ij}}X_j", "where ", TEX "\\lambda_i", " is a primitive root of unity of order equal to ord(",TEX "g_i","). The ring of invariants is generated by all monomials satisfying the system ",
-TEX "u_{i1}a_1+...+u_{in} a_n \\equiv \\ 0 mod ord(g_i),  i=1,\\ldots,w", ". 
-The input to the function is the ", TEX "w\\times (n+1)", " matrix U with rows ", TEX "u_{i1} \\ldots u_{in} ord(g_i), i=1,\\ldots,w", ". 
+TEX "u_{i1}a_1+...+u_{in} a_n \\equiv \\ 0 mod ord(g_i),  i=1,\\ldots,w", ".
+The input to the function is the ", TEX "w\\times (n+1)", " matrix U with rows ", TEX "u_{i1} \\ldots u_{in} ord(g_i), i=1,\\ldots,w", ".
 The output is the monomial subalgebra of invariants ", TEX "R^G=\\{f\\in R : g_i f= f ", " for all ", TEX "i=1,\\ldots,w\\}",".",
 EXAMPLE lines ///
  R=QQ[x,y,z,w];
-        
-         U=matrix{{1,1,1,1,5},{1,0,2,0,7}}  
+
+         U=matrix{{1,1,1,1,5},{1,0,2,0,7}}
           finiteDiagInvariants(U,R)
 ///,
 SeeAlso => {diagInvariants, torusInvariants}
@@ -2212,9 +2249,9 @@ document {
      Usage => "intersectionValRings(v,r)",
      Inputs => {
                 Matrix=> "rows are the values of the indeterminates",
-                Ring => " the basering" 
+                Ring => " the basering"
 },
-     Outputs => { 
+     Outputs => {
                  MonomialSubalgebra => {"the subalgebra consisting of the elements with valuation ",TEX "\\geq 0", " for all given valuations"}},
      PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function computes the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,r\\}"," that is the intersection of the valuation rings of the given valuations ", TEX "v_1, \\ldots,v_r", ", i.e. it consists of all elements of R that have a nonnegative value for all r valuations. It takes as input the matrix ", TEX "V=(v_i(X_j))"," whose rows correspond to the values of the indeterminates."},
      EXAMPLE lines ///
@@ -2231,12 +2268,12 @@ document {
      Usage => "intersectionValRingIdeals(v,r)",
      Inputs => {
                 Matrix=> {"values of the indeterminates, the last column contains the lower bounds ", TT "w_i"},
-                Ring => " the basering" 
+                Ring => " the basering"
      },
      Outputs => {HashTable => "the subalgebra and the generators of the module over it"},
      PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function takes as input the matrix ", TEX "V=(v_i(X_j))", ", whose rows correspond to the values of the indeterminates for for r valuations ", TEX "v_1, \\ldots,v_r",", with an additional column holding lower bounds ", TEX "w_1,\\ldots,w_r \\in \\ZZ",". It returns the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,n\\}",", the intersection of the valuation rings of the r valuations, and a system of generators of the S-submodule ", TEX "M=\\{f\\in R: v_i(f)\\geq w_i, i=1,\\ldots,n\\}"," over R, which consists of the elements whose i-th valuation is greater or equal to the i-th bound ", TEX "w_i",". If ", TEX "w_i>=0", " for all i, then M is an ideal in S."},
      EXAMPLE lines ///
-           R=QQ[x,y,z,w]; 
+           R=QQ[x,y,z,w];
            V=matrix({{0,1,2,3,4},{-1,1,2,1,3}});
            intersectionValRingIdeals(V,R)
      ///,

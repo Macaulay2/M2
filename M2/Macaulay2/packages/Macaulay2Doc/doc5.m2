@@ -117,13 +117,18 @@ document {
      }
 
 document {
-     Key => {on,[on,CallLimit],[on,Name],CallLimit},
+     Key => {on,[on,CallLimit],[on,Name],[on,GenerateAssertions],GenerateAssertions,CallLimit},
      Headline => "trace a function each time it's run",
      Usage => "on f",
      Inputs => { 
 	  "f" => Function,
 	  CallLimit => ZZ => "the maximum number of times to permit the function f to be called",
-	  Name => String => "the name to use for the function, in case ", TT "f", " is an anonymous function (not assigned to a global variable)"
+	  Name => String => "the name to use for the function, in case ", TT "f", " is an anonymous function (not assigned to a global variable)",
+     	  GenerateAssertions => Boolean => {
+	       "whether to print assertion statements that can be used as input to Macaulay2 to
+	       check the behavior of the function remains the same.  Arguments and values are prepared
+	       with ", TO "toExternalString", ", failure of which is sliently ignored."
+	       }
 	  },
      Outputs => { Function => {"a new function that returns the same values that ", TT "f", " would have returned, but has a few side effects
 	       useful for debugging: upon entry, it prints its arguments, and upon exit it prints its return values.  The display includes the name of ", TT "f", ",
@@ -132,8 +137,15 @@ document {
 	       }},
      PARA{
      	  "Ideally, this function would replace ", TT "f", ", i.e., we would write ", TT "f = on f", ".  Unfortunately, all the pre-installed system functions
-	  are write-protected."
-	  }
+	  are write-protected; fortunately, their methods are not, and can be replaced."
+	  },
+     EXAMPLE lines ///
+     ker Matrix := on(lookup(ker,Matrix),GenerateAssertions=>true,Name=>"ker");
+     f = x -> kernel (x|x);
+     R = QQ[a..c];
+     f vars R
+     ///,
+     SeeAlso => {"lookup"}
      }
 
 document {

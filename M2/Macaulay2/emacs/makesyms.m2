@@ -11,7 +11,10 @@ symbols := sort join(
      	  pkgnam -> (
 	       pkg := needsPackage pkgnam;
 	       select(pairs pkg.Dictionary,okay))))
-assert all(symbols, okay)
+bad := select(symbols, (nam,sym) -> not okay (nam,sym))
+if #bad > 0 then (
+     error("symbol(s) encountered that are not alphanumeric, or are of length 0 or 1: ", concatenate between_", " (first \ bad))
+     )
 
 Function and Function := (f,g) -> s -> f s and g s
 

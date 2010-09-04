@@ -1,6 +1,7 @@
 # license for gfan: GPL v2
-VERSION = 0.4
-PATCHFILE = @abs_srcdir@/patch-0.4
+# VERSION = 0.4
+# PATCHFILE = @abs_srcdir@/patch-0.4
+VERSION = 0.4plus
 URL = http://www.math.tu-berlin.de/~jensen/software/gfan
 TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
@@ -9,6 +10,7 @@ BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CCC="$(CXX) $(CPPFLAGS)" CLINKER="$(CC) $(
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = .
 STRIPFILES = gfan@EXEEXT@
+LICENSEFILES = LICENSE COPYING
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gfan/Makefile
 # Local Variables:

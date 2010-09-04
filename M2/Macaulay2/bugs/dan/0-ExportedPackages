@@ -39,3 +39,7 @@ internally.  If so, we might have something like this:
         )
 
 (Would those be good names for the options?)
+
+-- addendum: Be careful about packages that need each other.  Perhaps there
+   should be a header section so that at least some symbols can be created and
+   some values can be assigned before the needed packages are loaded.

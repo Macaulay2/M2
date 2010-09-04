@@ -1,0 +1,46 @@
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/Integer.h cdd+-077a/Integer.h
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/Integer.h	2007-10-20 15:50:58.000000000 -0400
++++ cdd+-077a/Integer.h	2010-08-29 14:36:19.000000000 -0400
+@@ -23,6 +23,7 @@
+ #include <gmp_init.h>
+ #include <cctype>
+ #include <limits>
++#include <limits.h>
+ 
+ class Integer; class Rational;
+ 
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/cddtype.h cdd+-077a/cddtype.h
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/cddtype.h	2003-08-15 17:23:46.000000000 -0400
++++ cdd+-077a/cddtype.h	2010-08-29 14:36:19.000000000 -0400
+@@ -10,7 +10,7 @@
+    the manual cddman.tex for detail.
+ */
+ 
+-
++#include <limits.h>
+ #ifdef	GMP
+ // using GMP wrapper of Polymake (polymake@math.tu-berlin.de)
+ #include <Rational.h>
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/gmp_init.h cdd+-077a/gmp_init.h
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/gmp_init.h	2007-10-21 04:36:42.000000000 -0400
++++ cdd+-077a/gmp_init.h	2010-08-29 14:36:19.000000000 -0400
+@@ -13,6 +13,7 @@
+    GNU General Public License for more details.
+ */
+ 
++#include <string.h>
+ #ifndef _POLYMAKE_GMP_INIT_H
+ #define _POLYMAKE_GMP_INIT_H "$Project: polymake $$Id: gmp_init.h 7556 2007-01-12 17:36:36Z gawrilow $"
+ 
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/makefile cdd+-077a/makefile
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/makefile	2007-10-20 15:53:05.000000000 -0400
++++ cdd+-077a/makefile	2010-08-29 14:36:19.000000000 -0400
+@@ -1,7 +1,7 @@
+ # Makefile for cdd+ compilation with gcc-3.*.
+ 
+ # You must have GMP installed and use GNU g++ compiler of version 3.* .
+-CC = g++
++CC = g++ -fpermissive
+ #CC = /usr/local/bin/gcc
+ #CC = /bin/cc
+ 

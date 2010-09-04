@@ -1,0 +1,17 @@
+URL = http://cs.anu.edu.au/~bdm/nauty
+VERSION = 24r2
+TARFILE = nauty$(VERSION).tar.gz
+TARDIR = nauty$(VERSION)
+PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
+	   directg dreadnaut dretog genbg geng genrang gentourng labelg listg \
+	   multig newedgeg pickg planarg shortg showg
+CHECKERS = dreadtest dreadtestS dreadtestS1 dreadtest4K dreadtest1 dreadtestW1 dreadtestL1 dreadtestL
+CHECKTARGET = checks
+LICENSEFILES = nauty.h
+INSTALLCMD = true
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/nauty/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/nauty "
+# End:

@@ -1,7 +1,7 @@
 -- Copyright 2008 by Daniel R. Grayson
 
 newPackage "Mysql"
-export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary"#s) \ {
+exportFrom_Core {
      "MysqlConnection", "mysqlDebug", "mysqlNextResult",
      "mysqlFetchRow", "mysqlFetchField", "mysqlListFields",
      "mysqlGetServerInfo",

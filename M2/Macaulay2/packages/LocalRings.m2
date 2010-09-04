@@ -82,9 +82,9 @@ localModulo(Matrix,Matrix) := Matrix => (m,n) -> (
 
 localPrune = method()
 localPrune Module := (M) -> (
-     p = presentation M;
-     p1 = localComplement p;
-     p2 = localModulo(p1,p);
+     p := presentation M;
+     p1 := localComplement p;
+     p2 := localModulo(p1,p);
      N := coker(p2);
      N.cache.pruningMap = map(M,N,p1);
      N

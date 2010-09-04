@@ -96,7 +96,7 @@ toURL := pth -> (
 	  if p =!= null
 	  then concatenate(rootURI, realpath p)
 	  else (
-	       error("needed file not found on prefixPath (install package or use option AbsoluteLinks=>false): ",pth);
+	       error("needed file not found on prefixPath: ",format pth,".\n    Try: (1) add a scheme, such as http://, to make an absolute URL;\n         (2) install the package that provides the file;\n         (3) use option AbsoluteLinks=>false");
 	       -- relativizeFilename(htmlDirectory, pth)
 	       ))
      else (
@@ -588,7 +588,7 @@ installPackage = method(Options => {
 	  AbsoluteLinks => true,
 	  MakeLinks => true,
 	  Verbose => true,
-	  DebuggingMode => false
+	  DebuggingMode => null
 	  })
 uninstallPackage = method(Options => { 
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
@@ -653,6 +653,9 @@ installPackage Package := opts -> pkg -> (
      setupNames(opts,pkg);
      initInstallDirectory opts;
      
+     if (options pkg).Headline === null then error ("no Headline option provided to newPackage for ",pkg#"title");
+     if (options pkg).Headline === ""   then error ("empty string given as Headline option to newPackage for ",pkg#"title");
+
      if verbose then stderr << "--installing package " << pkg << " in " << buildPrefix << endl;
      
      currentSourceDir := pkg#"source directory";

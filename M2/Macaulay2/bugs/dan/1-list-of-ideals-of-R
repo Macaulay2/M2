@@ -1,4 +1,6 @@
-develop this a bit further and install:
+--*-M2-*-
+
+-- develop this a bit further and install:
 
 TypedList = new Type of List;
 intersect TypedList := x -> (

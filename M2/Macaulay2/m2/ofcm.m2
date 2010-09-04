@@ -51,9 +51,11 @@ monoidParts = (M) -> (
 	  MonomialOrder => rle o.MonomialOrder,
 	  ( DegreeRank, MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Global ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 
-expression GeneralOrderedMonoid := M -> (
+expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
+expression GeneralOrderedMonoid := M -> new Parenthesize from { new FunctionApplication from {monoid, expressionMonoid M} }
+
 toExternalString GeneralOrderedMonoid := M -> toString expression M
 toString GeneralOrderedMonoid := M -> (
      if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
@@ -62,6 +64,12 @@ net GeneralOrderedMonoid := M -> (
      if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
      net expression M)
 describe GeneralOrderedMonoid := M -> net expression M
+
+degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
+degreesMonoid PolynomialRing := R -> (
+     if R.?degreesMonoid then R.degreesMonoid
+     else error "no degreesMonoid for this ring")
+degreesMonoid Ring := R -> error "no degreesMonoid for this ring"
 
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
@@ -141,8 +149,8 @@ options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := opts -> M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
-degreesMonoid GeneralOrderedMonoid := Monoid => M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
-degreesRing GeneralOrderedMonoid := Monoid => M -> if M.?degreesRing then M.degreesRing else error "no degrees ring present"
+degreesMonoid GeneralOrderedMonoid := GeneralOrderedMonoid => M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
+degreesRing GeneralOrderedMonoid := PolynomialRing => M -> if M.?degreesRing then M.degreesRing else error "no degrees ring present"
 
 GeneralOrderedMonoid_* := M -> generators M
 
@@ -386,6 +394,13 @@ makeMonoid := (opts) -> (
 
      if opts.Local === true then opts.Global = false;
 
+     if not member(opts.Join,{null,true,false}) then error "expected Join option to be true, false, or null";
+
+     -- if opts.Join =!= false then (
+     -- 	  if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
+     -- 	  if opts.DegreeLift =!= null then error "DegreeLift option provided without Join=>false";
+     -- 	  );
+
      if class opts.Inverses =!= Boolean then error "expected true or false in option";
      
      if opts.SkewCommutative =!= {} and opts.Inverses then error "skew commutative ring with inverses requested";
@@ -480,14 +495,11 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      if instance(opts.Degrees,List) then opts.Degrees = spliceInside opts.Degrees;
+     if opts.Join === null then opts.Join = Mopts.Join;
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
-	  if (
-	       if opts.Join =!= null then opts.Join	    -- option to tensor overrides option to monoid
-	       else Mopts.Join =!= false		    -- the default is true, and null means it was unspecified
-	       )
-	  then (
+	  if opts.Join === null or opts.Join === true then (
 	       opts.DegreeRank = Mopts.DegreeRank + Nopts.DegreeRank;
 	       opts.Degrees = join( apply(Mopts.Degrees, d -> join(d,N0)), apply(Nopts.Degrees, e -> join(M0,e)) );
 	       if opts.Heft === null and Nopts.Heft =!= null and Mopts.Heft =!= null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
@@ -496,7 +508,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 		    for i to #M0-1 do if d#i =!= 0 then degreeNoLift();
 		    drop(d,#M0));
 	       )
-	  else (
+	  else if opts.Join === false then (
 	       opts.DegreeRank = Mopts.DegreeRank;
 	       dm := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
 	       opts.DegreeMap = d -> degreePad(opts.DegreeRank,dm d);
@@ -511,7 +523,8 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 		    else lm);
 	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
-	       ))
+	       )
+	  else error "tensor: expected Join option to be true, false, or null")
      else (
      	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);
 	  opts.Degrees = degs;

@@ -169,8 +169,8 @@ static void usage() {
   printf("    --help        display this usage message\n");
   printf("    -cxx          generate a C++ file foo.cc instead of foo.c\n");
   printf("    -v            show version\n");
-  printf("    -dep          stop after creating foo.dep.tmp and foo.sig.tmp\n");
   printf("    -pthreadlocal use get/set specific instead of __thread\n");
+  printf("    -dep          stop after creating foo.dep.tmp and foo.sig.tmp\n");
   printf("    -noline       insert no source code line numbers\n");
   printf("    -sig          stop after creating signature file foo.sig.tmp\n");
   printf("    -typecodes    print typecodes (from typecode.db), then stop\n");

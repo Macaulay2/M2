@@ -2,8 +2,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"AdjointIdeal",
-    	Version => "0.5", 
-    	Date => "June 16, 2010",
+    	Version => "0.6", 
+    	Date => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
@@ -245,6 +245,9 @@ otp)
 -- geometric genus
 geometricGenus=method()
 
+{*
+--old code without the coordinate change
+
 geometricGenus(Ideal):=(I1)->(
 if dim I1 != 2 then error("Not a curve");
 if codim I1 != 1 or rank source vars ring I1 !=3 then error("Not a plane curve");
@@ -252,15 +255,55 @@ R0:=ring I1;
 z:=(vars ring I1)_(0,-1+rank source vars ring I1);
 K:=coefficientRing R0;
 R:=K[R0_0,R0_1];
-I:=substitute(substitute(I1,z=>1),R);
-Iinf:=saturate substitute(substitute(I1+ideal jacobian I1,z=>0),R);
+I:=substitute(substitute(I1,R0_2=>1),R);
+Iinf:=saturate substitute(substitute(I1+ideal jacobian I1,R0_2=>0),R);
 if degree Iinf > 0 then error("The curve has singularities at infinity");
 d:=degree I;
 if contract((R_0)^d,I_(0))!=1 then error("Curve contains (1:0:0)");
 QR:=frac R;
 ib:=sub(integralBasis(I),QR);
 geometricGenus(I1,ib))
+*}
 
+geometricGenus(Ideal):=(I1)->(
+if dim I1 != 2 then error("Not a curve");
+if codim I1 != 1 or rank source vars ring I1 !=3 then error("Not a plane curve");
+R0:=ring I1;
+x:=R0_0;
+y:=R0_1;
+z:=R0_2;
+d:=degree I1;
+tstmonic:=true;
+switchvars:=false;
+f:=I1_(0);
+if contract(x^d,f)==0 then (
+   if contract(y^d,f)==0 then (
+     tstmonic=false;
+     I:=sub(I1,{y=>x+y});     
+   ) else (
+     switchvars=true;
+     I=sub(I1,{y=>x,x=>y});
+   ); 
+) else (
+   I=I1;
+);
+K:=coefficientRing R0;
+R1:=K[x,y];
+Ia:=substitute(substitute(I,z=>1),R1);
+Iinf:=saturate substitute(substitute(I+ideal jacobian I,z=>0),R1);
+tstinf:=false;
+if degree Iinf > 0 then (
+  use R0;
+  --error("The curve has singularities at infinity");
+  cs:=findCoordinateChange(I);
+  I=sub(I,cs#0);
+  Ia=substitute(substitute(I,z=>1),R1);
+  tstinf=true;
+);
+QR:=frac R1;
+--print Ia;
+ib:=sub(integralBasis(Ia),QR);
+geometricGenus(I1,ib))
 
 
 
@@ -278,7 +321,8 @@ traceMatrix=method()
 
 traceMatrix(Ideal,Matrix):=(I1,ib)->(
 R:=ring numerator 1_(ring ib);
-I:=substitute(substitute(I1,z=>1),R);
+R0:=ring I1;
+I:=substitute(substitute(I1,R0_2=>1),R);
 A:=R/I;
 K:=coefficientRing R;
 Ru:=K[R_1];
@@ -409,19 +453,102 @@ adjointIdeal(Ideal):=(I1)->(
 if dim I1 != 2 then error("Not a curve");
 if codim I1 != 1 or rank source vars ring I1 !=3 then error("Not a plane curve");
 R0:=ring I1;
-z:=(vars ring I1)_(0,-1+rank source vars ring I1);
+x:=R0_0;
+y:=R0_1;
+z:=R0_2;
+d:=degree I1;
+tstmonic:=true;
+switchvars:=false;
+f:=I1_(0);
+if contract(x^d,f)==0 then (
+   if contract(y^d,f)==0 then (
+     tstmonic=false;
+     I:=sub(I1,{y=>x+y});     
+   ) else (
+     switchvars=true;
+     I=sub(I1,{y=>x,x=>y});
+   ); 
+) else (
+   I=I1;
+);
 K:=coefficientRing R0;
-R:=K[R0_0,R0_1];
-I:=substitute(substitute(I1,z=>1),R);
-Iinf:=saturate substitute(substitute(I1+ideal jacobian I1,z=>0),R);
-if degree Iinf > 0 then error("The curve has singularities at infinity");
-d:=degree I;
-if contract((R_0)^d,I_(0))==0 then error("Curve contains (1:0:0)");
-QR:=frac R;
-ib:=sub(integralBasis(I),QR);
---print(I1,ib);
-adjointIdeal(I1,ib,0));
+R1:=K[x,y];
+Ia:=substitute(substitute(I,z=>1),R1);
+--print integralBasis(Ia);
+Iinf:=saturate substitute(substitute(I+ideal jacobian I,z=>0),R1);
+tstinf:=false;
+if degree Iinf > 0 then (
+  use R0;
+  --error("The curve has singularities at infinity");
+  cs:=findCoordinateChange(I);
+  I=sub(I,cs#0);
+  Ia=substitute(substitute(I,z=>1),R1);
+  tstinf=true;
+);
+QR:=frac R1;
+--cf:=contract(x^d,I_(0));
+--I=ideal(sub(1/cf,ring I)*I_(0));
+--Ia=ideal(sub(1/cf,ring Ia)*Ia_(0));
+ib:=sub(integralBasis(Ia),QR);
+adj:=adjointIdeal(I,ib,0);
+if tstinf==true then (
+   adj=sub(adj,cs#1);
+);
+if tstmonic==false then (
+   adj=sub(adj,{y=>-x+y});
+);
+if switchvars==true then (
+   adj=sub(adj,{y=>x,x=>y});
+);
+use R0;
+adj);
 
+findCoordinateChange=method()
+findCoordinateChange(Ideal):=(I)->(
+R:=ring I;
+x:=R_0;
+y:=R_1;
+z:=R_2;
+h:=1;
+d:=degree I;
+tst:=false;
+J:=ideal jacobian I;
+while tst==false do (
+   c:=1;
+   while c<=h and tst==false do (
+     b:=0;
+     while b<=h-c and tst==false do (
+       a:=h-b-c;
+       l:=a*x+b*y+c*z;
+       if saturate(ideal(l)+J)==ideal(1_R) then (
+         slist:={z=>z-a/c*x-b/c*y};
+         slistback:={z=>z+a/c*x+b/c*y};
+         f:=sub(I_(0),slist);--print f;
+         if contract(x^d,f)!=0 then tst=true;
+       );
+       --print l;
+     b=b+1);
+   c=c+1);
+   h=h+1;
+   if d>1000 then error("Did not find appropriate coordinate change, please take care that the curve does not have singularities at infinity");
+);
+{slist,slistback})
+--findCoordinateChange I
+
+{*
+
+     installPackage "AdjointIdeal"
+     K=QQ
+     R=K[v,u,z]
+     I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+     J=adjointIdeal(I)
+
+
+     K=QQ
+     R=K[v,u,z]
+     I=ideal(z^3-v^2*u)
+     J=adjointIdeal(I)
+*}
 
 adjointIdeal(Ideal,Matrix):=(I1,ib)->(
 adjointIdeal(I1,ib,0));
@@ -432,7 +559,7 @@ R0:=ring I1;
 z:=(vars ring I1)_(0,-1+rank source vars ring I1);
 K:=coefficientRing R0;
 R:=K[R0_0,R0_1];
-I:=substitute(substitute(I1,z=>1),R);
+I:=substitute(substitute(I1,R0_2=>1),R);
 n:=(degree I_0)#0;
 A:=R/I;
 -- compute the genus
@@ -506,17 +633,18 @@ doc ///
 
      {\bf Overview:}
 
-     AdjointIdeal is a package to compute the adjoint ideal and the geometric genus of plane curves.
+     {\it AdjointIdeal} is a package to compute the adjoint ideal and the geometric genus of projective plane curves.
      
-     This is used in particular for genus 0 in the package {\it Parametrization}
+     This is used in particular in the case of genus 0 in the package {\it Parametrization}
      to map any singular plane rational curve to a (smooth) rational normal curve.
 
-     Suppose the curve C is given by {f(x,y,z)=0} and C does not have singularities
-     at infinity (z=0) and the point (0:1:0) is not on C.
+     Suppose (note, that the implementation in @TO adjointIdeal@ does not require this) the curve C is given 
+     by {f(x,y,z) = 0} and C does not have singularities
+     at infinity {z = 0} and the point (1:0:0) is not on C.
      Note that these conditions can always be met by a projective automorphism.
 
-     Considering the affine curve in z!=0 we consider x as trancendental and y as algebraic
-     and compute an integral basis in CC(x)[y] of the integral closure of CC[x] in CC(x,y) using 
+     Considering the affine curve in z!=0 we take y as trancendental and x as algebraic
+     and compute an integral basis in CC(y)[x] of the integral closure of CC[y] in CC(x,y) using 
      the algorithm from
     
      Mark van Hoeij: An algorithm for computing an integral basis in an algebraic function field,
@@ -576,19 +704,26 @@ doc ///
         the adjoint ideal in the ring I
   Description
    Text
-     Computes the adjoint ideal of a plane curve.
+     Computes the adjoint ideal of an irreducible plane curve.
 
-     We assume that I has the following properties:
+
+     If ib is specified (and only then) we assume that I has the following properties:
 
      Denote the variables of R=ring(I) by v,u,z. 
      All singularities of C have to lie in the chart z!=0 and the curve should not contain the point (1:0:0).
 
-
-     If ib is specified we assume that it has the following properties:
+     Furthermore we assume that ib has the following properties:
      The entries are in K(u)[v] inside frac(R) where the i-th entry is of degree $i$ in v for i=0..n-1.
      Note that this always can be achieved.
 
+     If ib is not specified the function takes care of these conditions
+     by applying an appropriate projective automorphism before doing the
+     computation and afterwards applying its inverse. The algorithm will try to choose
+     an automorphism as simple as possible, however note that this process may
+     destroy sparseness and harm the performance.
+
      A rational curve with three double points:
+
    Example
      K=QQ
      R=K[v,u,z]
@@ -658,9 +793,6 @@ doc ///
      J=adjointIdeal(I,ib)
      apply((entries gens J)#0,factor)
   Caveat
-     At some point the condition on the coordinate system will fall away, as the function will
-     take care of the coordinate change.
-
      The function so far does not cache the integral basis computation.
   SeeAlso
      geometricGenus
@@ -692,18 +824,24 @@ doc ///
    Text
      Computes the geometric genus of a plane curve.
 
-     If the second argument ib is not supplied it is computed calling Maple via the MapleInterface package.
 
-     We assume that I has the following properties:
+     If ib is specified (and only then) we assume that I has the following properties:
 
      Denote the variables of R=ring(I) by v,u,z. 
-     All singularities of C have to lie in the chart z!=0 and the curve should not contain (1:0:0).
+     All singularities of C have to lie in the chart z!=0 and the curve should not contain the point (1:0:0).
 
-     We assume that ib has the following properties:
+     Furthermore we assume that ib has the following properties:
      The entries are in K(u)[v] inside frac(R) where the i-th entry is of degree $i$ in v for i=0..n-1.
      Note that this always can be achieved.
 
+     If ib is not specified the function takes care of these conditions
+     by applying an appropriate projective automorphism before doing the
+     computation and afterwards applying its inverse. The algorithm will try to choose
+     an automorphism as simple as possible, however note that this process may
+     destroy sparseness and harm the performance.
+
      A rational curve with three double points:
+
    Example
      K=QQ
      R=K[v,u,z]
@@ -762,10 +900,7 @@ doc ///
      ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
      geometricGenus(I,ib)
   Caveat
-     At some point the condition on the coordinate system will fall away, as the function will
-     take care of the coordinate change.
-
-     The function does so far not cache the integral basis computation.
+     The function so far does not cache the integral basis computation.
   SeeAlso
      adjointIdeal
      integralClosure
@@ -1018,8 +1153,6 @@ doc ///
      QR=frac(Rvu);
      ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
      traceMatrix(I,ib)
-  Caveat
-     The interface will change after the integral basis algorithm is implemented - the argument ib will fall away and also the conditions on the coordinate system.
   SeeAlso
      geometricGenus
      adjointIdeal

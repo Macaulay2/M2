@@ -241,7 +241,7 @@ lowMemIterate = (thelist, numels) -> (
      if thelist#0 == numels then (
 	  thelist#0 = 0;
 	  flag = 1;
-	  i = 1;
+	  i := 1;
 	  while flag == 1 do (
 	       thelist#i = thelist#i+1;
 	       if thelist#i == numels then thelist#i = 0 else flag = 0;

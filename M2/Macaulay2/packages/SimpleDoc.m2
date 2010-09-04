@@ -134,7 +134,7 @@ applySplit = (fcns, textlines) ->
 	       if not fcns#?key then error splice(
 		    "unrecognized keyword, line ",toString getLinenum textlines#i,
 		    " of string: ",format key,
-		    "; valid keyword(s): ", toSequence between(" ",sort keys fcns)
+		    "; expected: ", toSequence between(" ",sort keys fcns)
 		    );
 	       fcns#key(textlines_{i+1..j}, getLinenum textlines#i)))
 
@@ -173,7 +173,7 @@ NodeFunctions = new HashTable from {
 toDoc = (funtab,text) -> (
      text = lines text;
      text = apply(text,1 .. #text,identity);		    -- append line numbers
-     text = select(text, (l,n) -> not match("^--",l));
+     text = select(text, (l,n) -> not match("^[[:space:]]*--",l));
      linenums := apply(text,last);
      text = apply(text,first);
      t := apply(text, indentationLevel);

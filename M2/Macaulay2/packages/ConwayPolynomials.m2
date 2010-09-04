@@ -8,7 +8,7 @@ newPackage(
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~dan/",
-    	Headline => "an optional database of Conway polynomials"
+    	Headline => "a database of Conway polynomials"
     	)
 -- the data comes from http://www.math.rwth-aachen.de:8001/~Frank.Luebeck/data/ConwayPol/
 -- the data file is http://www.math.rwth-aachen.de:8001/~Frank.Luebeck/data/ConwayPol/CPimport.txt
@@ -58,8 +58,14 @@ document { Key => ConwayPolynomials,
 	  fields presented by Conway polynomials, provided they are in the table.  Moreover,
 	  ", TO "map", " can be used to produce the canonical maps between Conway Galois fields."
 	  },
+     PARA {
+	  "The package is loaded by default when Macaulay2 starts up.  The database is loaded
+	  the first time ", TO "conwayPolynomial", " is called, resulting in a brief pause."
+	  },
+     PARA {
+	  "In this example, we show how ", TO "GF", " and ", TO "map", " behave when the package is present."
+	  },
      EXAMPLE lines ///
-     conwayPolynomial 125
      GF 125
      ambient oo
      map(GF 125^2, GF 125)
@@ -95,3 +101,7 @@ document {
 	  ///
 	  )
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages  PACKAGES=ConwayPolynomials RemakePackages=true RerunExamples=true IgnoreExampleErrors=false RemakeAllDocumentation=true"
+-- End:

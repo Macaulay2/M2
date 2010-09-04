@@ -128,8 +128,9 @@ printMessage(position:Position,message:string):void := (
      	  cleanscreen();
      	  stderr << position;
 	  if recursionDepth > 0 then stderr << "[" << recursionDepth << "]:";
-	  tid := gettid();
-	  if tid != -1 && tid != getpid() then stderr << "<" << gettid() << ">:";
+     	  -- gettid() is not there in Solaris
+	  -- tid := gettid();
+	  -- if tid != -1 && tid != getpid() then stderr << "<" << gettid() << ">:";
 	  stderr << " " << message << endl;
 	  );
      );

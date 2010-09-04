@@ -21,7 +21,6 @@ newPackage(
      Headline => "make a 3-generator ideal with an \"any\" resolution",
      DebuggingMode => true
      )
-loadPackage "SimpleDoc"
 
 export{bruns, 
        brunsIdeal,
@@ -75,8 +74,8 @@ brunsIdeal = method();
 brunsIdeal Ideal := I->(
      --given ideal I, compute its 3rd syzygy module and brusify it!
     --S = ring I;
-    F = res I;
-    M = image F.dd_3;
+    F := res I;
+    M := image F.dd_3;
     -- f=F.dd_3;
     bruns M
     )
@@ -170,7 +169,7 @@ isSyzygy(Module,ZZ) := (M,d)->(
      --in fact they SLOW things a little, at least in the example below.
      --     F:=res (coker transpose f, LengthLimit => d+1);
      --     G:=res (coker transpose F.dd_(d+1), LengthLimit=>d+1);
-     f = presentation M;
+     f := presentation M;
      F:=res coker transpose f;
      G:=res coker transpose F.dd_(d+1);
      value:=true;

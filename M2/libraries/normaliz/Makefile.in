@@ -1,22 +1,54 @@
 # license for normaliz: GPL v3
 # http://www.mathematik.uni-osnabrueck.de/normaliz/
 VERSION = 2.5
-PATCHFILE = @abs_srcdir@/patch-2.5
 # for version 2.5, the doc says: "Make sure you have GCC 4.5 installed on your Mac."
 # file changed on their web site, probably:
+
 # URL = http://www.mathematik.uni-osnabrueck.de/normaliz
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
+
 # TARFILE = Normaliz$(VERSION)Linux32.zip
-TARFILE = Normaliz$(VERSION).zip
-# PATCHFILE = @abs_srcdir@/patch-2.2
 # TARDIR = Normaliz$(VERSION)Linux/source
-TARDIR = Normaliz$(VERSION)/source
+
+# 2.5
+# TARFILE = Normaliz$(VERSION).zip
+# TARDIR = Normaliz$(VERSION)/source
+# PATCHFILE = @abs_srcdir@/patch-2.5
+
+# 2.5, changed, just the source
+TARFILE = normaliz$(VERSION)Source.zip
+TARDIR = source
+
+# PATCHFILE = @abs_srcdir@/patch-2.2
+
+# Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
+# I have filed a bug report, Bug ID# 8338749:
+OPENMP = no
+
+#### from their Makefile:
+ifeq ($(OPENMP),no)
+ CXXFLAGS0 = -Wno-unknown-pragmas -DNO_OPENMP
+else
+ CXXFLAGS0 = -fopenmp
+endif
+# -static doesn't work in Mac OS X
+# N64FLAGS = -Dnorm64 -static
+N64FLAGS = -Dnorm64
+# NBIGFLAGS = -Dnormbig -static
+NBIGFLAGS = -Dnormbig
+####
+
+CXXFLAGS1 = $(CPPFLAGS) -Wall -Wno-sign-compare -O3 -funroll-loops -Wno-unknown-pragmas $(CXXFLAGS0)
 UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
 CONFIGURECMD = true
-BUILDOPTIONS = CXX="$(CXX)" CXXFLAGS=" $(CPPFLAGS) $(CXXFLAGS) -Wall -Wno-sign-compare -O3 -funroll-loops -Wno-unknown-pragmas" GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
-INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/bin && \
-		@INSTALL@ -s norm64 $(LIBRARIESDIR)/bin/norm64 && \
-		@INSTALL@ -s normbig $(LIBRARIESDIR)/bin/normbig
+BUILDOPTIONS =  CXX="$(CXX)" \
+		N64FLAGS="$(N64FLAGS)" \
+		NBIGFLAGS="$(NBIGFLAGS)" \
+		CXXFLAGS="$(CXXFLAGS1)" \
+		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
+PROGRAMS = norm64 normbig
+LICENSEFILES = COPYING
+INSTALLCMD = true
 CHECKTARGET = .
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/normaliz/Makefile

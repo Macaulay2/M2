@@ -6,6 +6,7 @@ header "
    #include <sys/stat.h>
    #include <time.h>
    #include <assert.h>
+   #include <pthread.h>
 ";
 
 declarations "
@@ -25,9 +26,8 @@ export pow(x:double,y:double) ::= Ccode(double, "pow(", x, ",", y, ")" );
 export abort() ::= Ccode(exits,"abort()");
 export sleep(t:int):int := Ccode(int,"sleep(t)");
 export getpid():int := Ccode(int, "syscall(SYS_getpid)");	-- do it this way because glibc caches the result in memory, and that can interfere with dumpdata
-export gettid():int := Ccode(int, "syscall(SYS_gettid)");
-export getpgrp():int := Ccode(int, "syscall(SYS_getpgrp)");
-export setpgid(pid:int,pgid:int):int := Ccode(int, "syscall(SYS_setpgid,",pid,",",pgid,")");
+export getpgrp():int := Ccode(int, "getpgrp()");
+export setpgid(pid:int,pgid:int):int := Ccode(int, "setpgid(", pid, ",", pgid,")"); 
 export exit(x:int):exits := Ccode( exits, "
      extern void clean_up();
      clean_up();

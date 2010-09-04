@@ -16,7 +16,8 @@ char *Csymbols[] = {
      "do", "double", "else", "enum", "extern", "float", "for", "goto", "if", "mkdir", "stat",
      "union", "unsigned", "volatile", "wait", "remove", "expm1", "log1p", "erfc", "erf",
      "dummy", "acos", "asin", "atan", "atan2", "cos", "cosh", "exp",
-     "floor", "lgamma", "log", "sin", "sinh", "sqrt", "tan", "tanh", "cot"
+     "floor", "lgamma", "log", "sin", "sinh", "sqrt", "tan", "tanh", "cot",
+     "characters"
      };
 
 char *CXXkeywords[] = {

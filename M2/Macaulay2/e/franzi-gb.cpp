@@ -8,11 +8,11 @@
 // pair of indeces 
 // negative index -i for field polynomial x_i^2+x_i
 class Pair {
-  // order with respect to lcm in gRevLex ordering
+  // order with respect to lcm in lex ordering
   friend bool operator< (const Pair &pair1, const Pair &pair2) {
-    if (funccompGRL( pair2.lcm, pair1.lcm)) {
+    if (pair1.lcm < pair2.lcm) {
       return true;
-    } else if (funccompGRL(pair1.lcm, pair2.lcm)) {
+    } else if (pair1.lcm > pair2.lcm) {
       return false;
     } else {
       if(pair1.j < pair2.j) {
@@ -22,24 +22,9 @@ class Pair {
       } else { 
         return pair1.i < pair2.i;
       } 
+//      return true;
     }
   }
-//  // order with respect to lcm in lex ordering
-//  friend bool operator< (const Pair &pair1, const Pair &pair2) {
-//    if (pair1.lcm < pair2.lcm) {
-//      return true;
-//    } else if (pair1.lcm > pair2.lcm) {
-//      return false;
-//    } else {
-//      if(pair1.j < pair2.j) {
-//        return true;
-//      } else if(pair1.j > pair2.j) {
-//        return false;
-//      } else { 
-//        return pair1.i < pair2.i;
-//      } 
-//    }
-//  }
 
   public:
   int i;
@@ -69,7 +54,6 @@ class Pair {
         unsigned int a = F.find(i) ->second.LT();
         unsigned int b = F.find(j) ->second.LT();
         lcm = a | b;
-        //lcm = F.find(i) ->second.LT() | F.find(j) ->second.LT();
         good = !BRP::isRelativelyPrime( a,b );
       }
     }
@@ -78,6 +62,7 @@ class Pair {
 }; 
 
 // set of index pairs
+// always ordered
 typedef set<Pair> Pairs;
 
 // functions f and g, corresponding to index pair j and i, respectively
@@ -138,14 +123,12 @@ Pairs makeNewPairs(int newIndex, const IntermediateBasis &F, int n) {
   Pairs B;
   Pairs::iterator position = B.begin();
   for(int i=-n; i<0; i++) {
-//    cout << "make pair with (" << i << "," << newIndex << ")" << endl; 
     Pair pair = Pair(i, newIndex, F);
     position = B.insert(position, pair);
   }
   IntermediateBasis::const_iterator end = F.end();
   for(IntermediateBasis::const_iterator iter = F.begin(); iter != end; ++iter) {
     int j = iter->first;
-//    cout << "make pair with (" << j << "," << newIndex << ")" << endl; 
     Pair pair = Pair(newIndex, j, F);
     if (pair.good) {
       position = B.insert(position, pair);
@@ -167,37 +150,37 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
     return false;
   }
   
-  int i = pair.i;
-  int j = pair.j;
-  
-  brMonomial g = fp.g->LT();
-  brMonomial f = fp.f->LT();
-  if( BRP::isRelativelyPrime(g,f) ) {
-    cout << "rp ";
-    return false;
-  }
   
   // both polynomials are monomials, so their S polynomial reduces to 0
   if ( fp.g->size() == 1 && fp.f->size() == 1 ) {
-    cout << "m ";
-    //cout << "Throwing out S-pair from 2 monomials" << endl;
+    //cout << "m ";
     return false;
   }
+  
+  brMonomial g = fp.g->LT();
+  brMonomial f = fp.f->LT();
+//  if( BRP::isRelativelyPrime(g,f) ) {
+//    //cout << "r ";
+//    return false;
+//  }
 
-  brMonomial lcm = pair.lcm;
-  //brMonomial lcm = g | f;
+  int i = pair.i;
+  int j = pair.j;
+
+  //brMonomial lcm = pair.lcm;
+  brMonomial lcm = g | f;
   IntermediateBasis::const_iterator end = F.end();
   for(IntermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
     int k = it->first;
     const BRP *K = &(it->second);
 
     if(( k != i && k != j && BRP::isDivisibleBy(lcm, K->LT() ) && !inList(i,k,B,F) && !inList(j,k,B,F))) {
-      cout << "l ";
+      //cout << "l ";
       return false;
     }
   }
   
-  cout << "added" << endl;
+  //cout << "good pair ";
   return true;
 }
 
@@ -244,9 +227,10 @@ IntermediateBasis::const_iterator findDivisor( const BRP &f, const IntermediateB
 // intermediate basis that satisfies isLeadingReducibleBy(f,g_i)
 bool reduceLt(BRP &f, const IntermediateBasis &F, const IntermediateBasis::const_iterator itF) {
   if (f.isZero() ) {
-//    cout << "this shouldn't be called" << endl;
-    return false;
-  }
+  //    cout << "this shouldn't be called" << endl;
+      return false;
+        }
+
   bool ret = false; // true if anything was reduced
   IntermediateBasis::const_iterator it;
   IntermediateBasis::const_iterator end = F.end();
@@ -276,9 +260,9 @@ bool reduceTail(BRP &f, const IntermediateBasis &F, const IntermediateBasis::con
 // first reduce the leading term completely, then the lower terms
 bool reduce(BRP &f, const IntermediateBasis &F, const IntermediateBasis::const_iterator itF) {
   bool ret = false;
-  ret = reduceLt(f,F,itF);
+  ret = reduceLt(f, F, itF);
   if (!f.isZero() ) {
-    if ( reduceTail(f, F,itF) ) { 
+    if ( reduceTail(f, F, itF) ) { 
       ret = true;
     }
   }
@@ -296,8 +280,8 @@ void rearrangeBasis(IntermediateBasis &F, int nextIndex) {
   for( IntermediateBasis::iterator j = F.begin(); j != F.end(); ++j ) {
     if (j->first != nextIndex ) {
       for( IntermediateBasis::iterator i = F.begin(); i->first < j->first; ++i) {
-        if ( funccompGRL(i->second.LT(), j->second.LT() )) {
-        //if ( i->second.LT() > j->second.LT() ) {
+        //if ( funccompGRL(i->second.LT(), j->second.LT() )) {
+        if ( i->second.LT() > j->second.LT() ) {
           BRP tmp = i->second;
           i->second = j->second;
           j->second = tmp;
@@ -497,57 +481,6 @@ void interreductionWithBuckets(IntermediateBasis &F) {
       }
     }
   }
-#ifdef DEBBBB  
-//  int finalBasisSize = F.size();
-//  cout << "reduced basis of size " << initialBasisSize << " to size " << finalBasisSize << endl;
-//  cout << "   " << LtChanged.size() << " polynomials changed the leading term" << endl;
-//  cout << "   " << TailChanged.size() << " polynomials changed their tail" << endl;
-//
-//  // only tail changed
-//  int onlyTailChanged = 0;
-//  for ( map<int,int>::iterator it = TailChanged.begin(); it != TailChanged.end(); ++it ) {
-//    if (LtChanged.find(it->first) == LtChanged.end() ) {
-//      onlyTailChanged += 1;
-//    }
-//  }
-//  cout << "   " << onlyTailChanged << " polynomials changed only their tail, not their leading term" << endl;
-#endif              
-
-
-//    for(IntermediateBasis::iterator it = F.begin(); it != end; ) {
-//      if (reduceLt(it->second, F, it)) { 
-//        numChanged++;
-//        if (it->second != 0) { // canceled leading term
-//          reduceTail(it->second, F, it);
-//
-//          // change buckets case 3
-//          newLeadUpdateBuckets(it->first,B,F);
-//          newTailUpdateBuckets(it->first,B,F);
-//          //cout << "Updated Buckets case 3" << endl;
-//
-//          changesHappened = true;
-//          ++it;
-//        } else {
-//          // change buckets case 1
-//          B[it->first].clear();
-//          F.erase(it++);
-//        }
-//      } else if (reduceTail(it->second, F, it) ) { // only changed tail
-//        // change buckets case 4
-//        newTailUpdateBuckets(it->first,B,F);
-//        //cout << "Updated Buckets case 4" << endl;
-//
-//        numChanged++;
-//        changesHappened = true;
-//        ++it;
-//      } else {
-//        ++it; // don't change buckets case 2
-//      }
-//    }
-//  }
-  //printBucket(B);
-  //cout << "Number of reductions: " << numChanged << ", F.size(): " << F.size() << ". Stats: ";
-  //stats(F);
 }
 
 // interreduction
@@ -581,7 +514,7 @@ Pair bestPair(Pairs &B) {
   return *(B.begin() );
 }
 
-// complete algorithm to compute a Groebner basis F  
+// compute a reduced Groebner basis F  
 void gb( IntermediateBasis &F, int n) {
   int interreductionMod = 0;
   int nextIndex = F.size(); 
@@ -592,31 +525,24 @@ void gb( IntermediateBasis &F, int n) {
   unsigned int numSPoly= 0;
   while (!B.empty()) {
     Pair pair = bestPair(B);
-    //Pair pair = *(B.begin());
-    B.erase(B.begin());
+    B.erase(B.begin()); // is this where it breaks?
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;
       BRP S = sPolynomial(pair,F,n);
       reduce(S,F);
       if ( ! S.isZero() ) {
+ //       cout << "Number of pairs currently in list: " << (int) B.size() << endl;
         countAddPoly++;
         Pairs newList = makeNewPairs(nextIndex, F, n);
         F[nextIndex] = S;
         B.insert(newList.begin(), newList.end());
-        //interreduction(F);
-        interreductionMod++;
-        if ( true || interreductionMod % 2 == 0 ) {
-          interreductionWithBuckets(F);
-          B = makeList(F, n);
-        }
         nextIndex++;
-        //rearrangeBasis(F, nextIndex);
-        //cout << F.size() << " ";
-        //cout << S.LT() << endl;
       }
     }
   }
-//  interreductionWithBuckets(F);
+  cout << "size before interreduction" << F.size() << endl;
+  interreduction(F);
+  cout << "size after interreduction" << F.size() << endl;
   cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
 

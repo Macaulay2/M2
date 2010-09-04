@@ -121,7 +121,7 @@ void segv_handler2(int sig) {
 void stack_trace() {
      void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
      unblock(SIGSEGV);
-     fprintf(stderr,"-- stack trace, pid %ld, tid %ld:\n", (long)syscall(SYS_getpid), (long)syscall(SYS_gettid));
+     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)syscall(SYS_getpid));
      if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
 #	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
 #	  define i 0

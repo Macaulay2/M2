@@ -319,16 +319,17 @@ document {
      }
 
 document { 
-     Key => {(symbol //, Matrix, Matrix),
+     Key => {(symbol //, Matrix, Matrix),(symbol \\, Matrix, Matrix),
        (symbol //, RingElement, MonomialIdeal),
        (symbol //, RingElement, GroebnerBasis),
        (symbol //, RingElement, RingElement),
        (symbol //, Matrix, MonomialIdeal),
        (symbol //, Matrix, GroebnerBasis),
-       (symbol //, Matrix, RingElement),
-       (symbol //, RingElement, Matrix)},
+       (symbol //, Matrix, RingElement),(symbol \\, Matrix, RingElement),
+       (symbol //, RingElement, Matrix),(symbol \\, RingElement, Matrix)
+       },
      Headline => "factor a map through another",
-     Usage => "f//g",
+     Usage => "f//g\ng\\\\f",
      Inputs => {
 	  "f" => {"between free modules F --> H, or ",
 	     ofClass RingElement},
@@ -340,47 +341,41 @@ document {
      Outputs => {
 	  Matrix => "a matrix h : F --> G"
 	  },
-     "If f is a matrix, and g is a matrix or Gröbner basis, then quotient(f,g) is an alternate 
-     notation for f//g.",
+     "If ", TT "f", " is a matrix, and ", TT "g", " is a matrix or Gröbner basis, then ", TT "quotient(f,g)", " is an alternate 
+     notation for ", TT "f//g", ".",
      PARA{},
-     "If either f or g is a ring element, then it is taken to be the identity matrix on H.  If both are ring elements,
-     then the result is also a ring element.  If g is a
-     MonomialIdeal, then it is taken to be the matrix of generators of g.  Finally, if g is a GroebnerBasis
+     "If either ", TT "f", " or ", TT "g", " is a ring element, then it is taken to be a scalar matrix acting on ", TT "H", ".  If both are ring elements,
+     then the result is also a ring element.  If ", TT "g", " is a
+     ", TO "MonomialIdeal", ", then it is taken to be the matrix of generators of ", TT "g", ".  Finally, if the identityg is a ", TO "GroebnerBasis", "
      object, then the Gröbner basis as so far computed is used.  In these latter two cases, no Gröbner bases 
      will be computed.",
      PARA{},
-     "The resulting matrix h is such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Gröbner basis 
+     "The resulting matrix ", TT "h", " is such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Gröbner basis 
      for the image of ", TT "g", ".",
      PARA{},
-     "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
-     satisfies the equation ", TT "f = g * (f//g)", ".",
+     "If the remainder ", TT "f - g*h", " is zero,
+     then the quotient ", TT "f//g", " satisfies the equation ", TT "f === g * (f//g)", "
+     and the quotient ", TT "g\\\\f", " satisfies the equation ", TT "f === g * (g\\\\f)", ".",
      PARA{},
-     "One common use is the following.  If an ideal contains 1, then write 1 in terms
-     of the generators of the ideal.",
+     "One common use is the following.  If an ideal contains 1, then we may write 1 in terms
+     of the generators of the ideal.  First we make an ideal.",
      EXAMPLE lines ///
-     	  A = ZZ/101[x,y,z]
-	  F = x^4 - y*z*(1-x)^2 - z - y^3
-	  I = ideal(F,diff(x,F),diff(y,F),diff(z,F))
-	  1 % I
+     A = ZZ/101[x,y,z]
+     F = x^4 - y*z*(1-x)^2 - z - y^3
+     I = ideal(F,diff(x,F),diff(y,F),diff(z,F))
      ///,
-     "So we see that 1 is in the ideal.  Now let us find the representation of 1 in terms
-     of the four generators of ", TT "I", ".",
+     "Transposing the (row) matrix of generators of the ideal puts the generators on separate lines and shows the degrees.",
      EXAMPLE lines ///
-	  g = gens I
-	  f = matrix{{1_A}}
-	  h = f // g
-	  g * (f//g)
+     transpose gens I
      ///,
-     "We may also find h directly.",
-     EXAMPLE "1 // (gens I)",
-     PARA{},
-     "One may also use ", TT "//", " to compute the inverse of an invertible matrix.",
+     "Next we test whether 1 is in the ideal.",
      EXAMPLE lines ///
-     	  M = matrix{{1,x,y},{x,0,y},{1,2,3}}
-	  M = substitute(M, frac A)
-	  det M
-	  Minv = id_(target M) // M
-	  M * Minv
+     1 % I
+     ///,
+     "We see that 1 is in the ideal.  Now we represent 1 in terms of the generators of ", TT "I", ".",
+     EXAMPLE lines ///
+     h = 1 // gens I
+     gens I * h
      ///,
      SeeAlso => {(symbol %, Matrix, Matrix), generators, diff, substitute, quotient, remainder, quotientRemainder }
      }

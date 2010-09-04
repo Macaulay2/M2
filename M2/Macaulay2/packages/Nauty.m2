@@ -15,8 +15,6 @@ newPackage (
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Interface to nauty",
     Configuration => {"path" => ""},
-    CacheExampleOutput => true,
-    AuxiliaryFiles => true,
     DebuggingMode => false
 );
 needsPackage "EdgeIdeals";
@@ -1528,3 +1526,7 @@ TEST ///
 -- HappyHappyJoyJoy
 -------------------
 end
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Nauty RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=false"
+-- End:

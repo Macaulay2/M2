@@ -1,6 +1,6 @@
 newPackage "Python"
 
-export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary"#s) \ {
+exportFrom_Core {
      "runSimpleString", "PythonObject", "runString", "sysGetObject", "objectType", "initspam"
      }
 

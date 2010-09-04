@@ -1771,6 +1771,9 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
   }
   
   // make the output matrix
+  #ifdef SS  // Unfortunate Solaris macro
+    #undef SS
+  #endif
   FreeModule* SS = C->make_FreeModule(n); 
   FreeModule* TT = C->make_FreeModule(n_sols);
   MatrixConstructor mat(TT,SS);

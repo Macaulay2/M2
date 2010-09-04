@@ -247,7 +247,7 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
      n2 := numgens M;
      if opts.CoefficientRing === A or opts.CoefficientRing === null and (isField A or A.?isBasic)
      then return flatCoerce(R, resultTemplate,triv R);
-     (I,p,q) := flattenRing(coefficientRing R, opts, Result => (Ideal,,));
+     (I,p,q) := flattenRing(A, opts, Result => (Ideal,,));
      S := ring I;
      (n1,T) := (
      	  if instance(S,PolynomialRing)
@@ -256,7 +256,7 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
      I' := (
 	  (map(T, Q, vars T)) J
 	  + 
-	  (map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => M.Options.DegreeMap)) I
+	  (map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)))) I
 	  );
      (p,q) = (map(T,R, vars T), map(R,T, vars R | promote(matrix q,R)));
      r := flatCoerce(R, resultTemplate,(I',p,q))))

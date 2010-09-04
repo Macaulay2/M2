@@ -24,6 +24,7 @@ Package.GlobalAssignHook = (X,x) -> if not hasAttribute(x,ReverseDictionary) the
 Package.GlobalReleaseHook = globalReleaseFunction
 
 dismiss Package := pkg -> (
+     if pkg#"title" === "Core" then error "Core package cannot be dismissed";
      loadedPackages = delete(pkg,loadedPackages);
      dictionaryPath = delete(pkg.Dictionary,dictionaryPath);
      dictionaryPath = delete(pkg#"private dictionary",dictionaryPath);
@@ -35,13 +36,18 @@ loadPackage = method(
 	  FileName => null,
 	  DebuggingMode => null,
 	  LoadDocumentation => false,
-	  Configuration => {}
+	  Configuration => {},
+	  Reload => null
 	  } )
 packageLoadingOptions := new MutableHashTable
 checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",format title)
 
 loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;
+     if opts.Reload === true then (
+	  dismiss pkgtitle;
+	  PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
+	  );
      filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
@@ -85,8 +91,11 @@ newPackage = method(
 	  Authors => {}, -- e.g., Authors => { {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"} }
 	  HomePage => null,
 	  Date => null,
-	  Configuration => {}
+	  Configuration => {},
+	  Reload => null
 	  })
+
+protect Reload
 
 configFileString =
 ///--Configuration file for package "PKG", automatically generated
@@ -126,6 +135,10 @@ newPackage(String) := opts -> (title) -> (
      scan({(Headline,String),(HomePage,String),(Date,String)},
 	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      originalTitle := title;
+     if PackageDictionary#?title and instance(PackageDictionary#title,Package) then (
+	  if opts.Reload === null then warningMessage("package ", title, " being reloaded")
+	  else if opts.Reload === false then error("package ", title, " being reloaded")
+	  );
      dismiss title;
      saveD := dictionaryPath;
      saveP := loadedPackages;
@@ -242,20 +255,24 @@ newPackage(String) := opts -> (title) -> (
      if instance(value pkgsym,Package) then closePackage value pkgsym;
      pkgsym <- newpkg;
      loadedPackages = {Core};
-     dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
+     dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
      if Core#?"base packages" then (
 	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
 	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
 	       )
 	  else scan(reverse Core#"base packages", needsPackage)
 	  );
+     dictionaryPath = prepend(newpkg#"private dictionary", dictionaryPath);
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-     if title =!= "SimpleDoc" and title =!= "Core" then needsPackage "SimpleDoc";
+     if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
      newpkg.loadDepth = loadDepth;
      loadDepth = if title === "Core" then 1 else if not debuggingMode then 2 else 3;
      newpkg)
+
+exportFrom = method()
+exportFrom(Package,List) := (P,x) -> export \\ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x
 
 export = method(Dispatch => Thing)
 export Symbol := x -> export {x}
@@ -303,14 +320,13 @@ exportMutable List := v -> (
 
 addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
 
-saveCurrentPackage := currentPackage
-
 newPackage("Core", 
      Authors => {
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}, 
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      DebuggingMode => debuggingMode,
+     Reload => true,
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION", 
      Headline => "A computer algebra system designed to support algebraic geometry")
@@ -405,6 +421,9 @@ package Thing := x -> (
      if d =!= null then package d)
 package Symbol := s -> (
      n := toString s;
+     r := scan(values PackageDictionary, 
+	  p -> if (value p).?Dictionary and (value p).Dictionary#?n and (value p).Dictionary#n === s then break value p);
+     if r =!= null then return r;
      scan(dictionaryPath, d -> if d#?n and d#n === s then (
 	       if d === PackageDictionary and class value s === Package then break value s
 	       else if package d =!= null then break package d)));
@@ -418,7 +437,8 @@ use Package := pkg -> (
      if b and not a then error("use: package ",toString pkg," does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
      if not a and not b then (
      	  loadedPackages = prepend(pkg,loadedPackages);
-     	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
+	  --- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
+	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
 	  );
      if pkg.?use then pkg.use pkg;
      )
@@ -431,11 +451,14 @@ beginDocumentation = () -> (
 	  return end;
 	  );
      if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
-     needsPackage "Text";
-     needsPackage "SimpleDoc";
+     if currentPackage#"title" != "Text" and  currentPackage#"title" != "SimpleDoc" then (
+     	  needsPackage "Text";
+     	  needsPackage "SimpleDoc";
+	  );
      )
 
 debug = method()
+debug ZZ := i -> debugWarningHashcode = i
 debug Package := pkg -> (
      d := pkg#"private dictionary";
      if not member(d,dictionaryPath) then (

@@ -176,7 +176,7 @@ points (Matrix,Ring) := (M,R) -> (
 	       -- we add to G, inG
 	       inG = inG + ideal(monom);
 	       inGB = forceGB gens inG;
-	       g = sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+	       g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
 	       G = append(G, PC_(thiscol,thiscol) * monom + g);
 	       )
 	  else (

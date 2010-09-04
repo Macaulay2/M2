@@ -1,7 +1,8 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
-vector = (v) -> (
+vector = method()
+vector List := v -> (
      m := matrix apply(v, i -> {i});
      new target m from {m})
 
@@ -131,8 +132,8 @@ new Module from Sequence := (Module,x) -> (
      	       symbol numgens => rawRank rM
      	       })) x
 
-degreesMonoid Module := M -> degreesMonoid ring M
-degreesRing Module := M -> degreesRing ring M
+degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
+degreesRing Module := PolynomialRing => M -> degreesRing ring M
 degreeLength Module := M -> degreeLength ring M
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring

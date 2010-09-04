@@ -75,7 +75,6 @@ endif
 mapfile.demangled: mapfile ; demangle <$< >$@
 clean::; rm -f mapfile.demangled
 
-
 ############################## macros
 
 TOSTATIC =
@@ -166,6 +165,7 @@ endif
 
 clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
+
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
@@ -190,6 +190,9 @@ endif
 endif
 	mv "$@".tmp "$@"
 	ln -sf $(EXEFILE) @abs_top_builddir@
+
+clean::; rm -f M2.debug-info
+
 all:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 	: Macaulay2 executable location:

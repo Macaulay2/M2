@@ -360,6 +360,12 @@ Constants
 	1234					int
 	12.34					double
 
+Insertions
+
+	declarations "...";			the contents of the string are inserted into the file *-exports.h, which is included in the file *-tmp.c
+
+	header "...";				the contents of the string are inserted into the output file *-tmp.c
+
 Caveats
 
 	a.1					a syntax error

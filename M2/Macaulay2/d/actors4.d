@@ -48,7 +48,6 @@ getpidfun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("processID",getpidfun);
 
-setupfun("threadID",gettidfun);  -- # typical value: threadID, Thread, ZZ
 
 getpgrpfun(e:Expr):Expr := (
      when e
@@ -103,6 +102,19 @@ select(a:Sequence,f:Expr):Expr := (
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
 foo := array(string)();
+select(n:int,f:Expr):Expr := (
+     b := new array(bool) len n do provide false;
+     found := 0;
+     for i from 0 to n-1 do (
+	  y := applyEE(f,toExpr(i));
+	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
+	  if y == True then (
+	       b.i = true;
+	       found = found + 1;
+	       )
+	  else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
+	  );
+     Expr(list(new Sequence len found do foreach p at i in b do if p then provide toExpr(i))));
 select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := (
      r := regexselect(pat,rep,subj,foo,ignorecase);
      if r == foo then return buildErrorPacket("select: "+regexmatchErrorMessage);
@@ -137,6 +149,11 @@ select(e:Expr,f:Expr,ignorecase:bool):Expr := (
 	  is Error do c
 	  is v:Sequence do list(b.Class,v)
 	  else e			  -- shouldn't happen
+	  )
+     is n:ZZcell do (
+	  if isInt(n)
+	  then select(toInt(n),f)
+	  else WrongArgSmallInteger(1)
 	  )
      else WrongArg(0+1,"a list or a string"));
 select(n:int,a:Sequence,f:Expr):Expr := (
@@ -1436,6 +1453,10 @@ locate(e:Expr):Expr := (
 	  locate(c.code);
 	  locate2(c.code))
      is s:SpecialExpr do locate(s.e)
+     is f:functionCode do (
+	  locate0();
+	  locate(f.body);
+	  locate2(f.body))
      is f:FunctionClosure do (
 	  locate0();
 	  locate(f.model.arrow);

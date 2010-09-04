@@ -3,7 +3,21 @@
 # http://www.opt.tu-darmstadt.de/polymake/
 # Gawrilow is the one to ask about porting issues
 # Joswig seems to be involved, too.
-VERSION = 2.9.7
+
+#    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
+#	it uses a dynamic readline library that can only be provided by fink and probably will not be copied into the install location
+#       it offers no way to provide a directory tree containing a readline library we've compiled
+#	it writes a file into the user's home directory called ".polymake"
+#	it asks questions
+
+# and then there's this, with 2.9.8:
+
+#   Can't locate object method "new" via package "Term::ReadLine::Gnu" at /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.debug/libraries/polymake/build/polymake-2.9.8/apps/common/rules/configure.rules line 26.
+#   make[1]: *** [configure] Error 2
+#   make[1]: Leaving directory `/Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.debug/libraries/polymake/build/polymake-2.9.8'
+
+# VERSION = 2.9.7
+VERSION = 2.9.8
 TAROPTIONS = --bzip2
 TARFILE = polymake-$(VERSION).tar.bz2
 URL = http://www.opt.tu-darmstadt.de/polymake/lib/exe/fetch.php/download

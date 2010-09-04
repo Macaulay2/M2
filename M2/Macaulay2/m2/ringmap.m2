@@ -53,7 +53,10 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	       )
 	  else if workable (() -> promote({},S,R)) then (d -> first promote({d},S,R))
 	  else if degreeLength R === degreeLength S then identity
-	  else degmap0 degreeLength R);
+	  else if degreeLength S === 0 or degreeLength R === 0 then degmap0 degreeLength R
+	  else (
+	       -- error "map(Ring,Ring,Matrix): nonzero degree monoids differ, promotion not available, DegreeMap needed";
+	       degmap0 degreeLength R));
      dR := ZZ^(degreeLength R);
      dS := ZZ^(degreeLength S);
      degmapmatrix := map(dR,dS,transpose apply(entries id_dS,degmap));

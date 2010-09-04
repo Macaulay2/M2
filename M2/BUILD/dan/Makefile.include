@@ -15,6 +15,7 @@ all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
 clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
 everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+update:; svn update ../..
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
 big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
@@ -26,9 +27,15 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
 	    echo "make: Leaving directory \`$$D/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all
 default: check-links
-distclean: distclean1 distclean2
-distclean1:; $(MAKE) -C builds.tmp/$(DIRECTORY) distclean
-distclean2:; find builds.tmp/$(DIRECTORY) -type f | sed 's/^/=== /'
+distclean: distclean1
+distclean1:
+	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
+	then $(MAKE) -C builds.tmp/$(DIRECTORY) distclean -o config.status ; \
+	fi
+	-! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | grep . || echo "========== files left after make distclean ========" >&2
+	if [ -e builds.tmp/$(DIRECTORY)/. ] ; \
+	then rm -rf builds.tmp/$(DIRECTORY) ; \
+	fi
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 install-info:
@@ -36,7 +43,10 @@ install-info:
 	for i in builds.tmp/*/libraries/final/info/* builds.tmp/*/libraries/final/share/info/* ; do cp $$i ~/local/share/info ; done
 	cd ~/local/share/info ; for i in *.info ; do install-info --infodir=. $$i ; done
 pre-install post-install:
-rebuild-world: arch-chk distclean configure everything install check
+rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
+rebuild-world1: arch-chk update distclean
+rebuild-world2:; $(MAKE) -C ../..
+rebuild-world3: configure all install check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
 ../../configure :; $(MAKE) -C ../..

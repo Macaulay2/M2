@@ -216,10 +216,10 @@ doLLL = (C,count) -> (
 	  if k > C.kmax 
 	  then (
 	       --<< "k larger than kmax" << newline;
-	       j = 1;
+	       j := 1;
 	       while j <= k do (
-		    u = dot(A,k-1,j-1);
-		    i = 1;
+		    u := dot(A,k-1,j-1);
+		    i := 1;
 		    while i <= j-1 do (
 			 u = (D#i * u - lambda#(k,i)*lambda#(j,i))//(D#(i-1));
 			 i = i+1;

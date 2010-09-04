@@ -29,7 +29,7 @@ newPackage(
 		  Name => "Thomas Kahle",
 		  Email => "kahle@mis.mpg.de",
 		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/bpd"}},
-    	Headline => "Spezialized routines for binomial Ideals",
+    	Headline => "Specialized routines for binomial Ideals",
 	Configuration => { },
     	DebuggingMode => true
     	)
@@ -972,11 +972,12 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
 	       
 	       -- Compute a binomial in J2 which is not in J1.
 	       -- i.e. find a generator on which pc1 and pc2 take different values.
+	       local b;
 	       for i in 0..#(pc2#2)-1 do (
 	       	    if pc1#2#i == pc2#2#i then continue
 	       	    else (
 		    	 -- Character differs. Form binomial:
-		    	 b := makeBinomial (QQ[pc2#0], (entries transpose pc2#1)#i, pc2#2#i );
+		    	 b = makeBinomial (QQ[pc2#0], (entries transpose pc2#1)#i, pc2#2#i );
 		    	 break;
 		    	 );
 	       	    );
@@ -1005,7 +1006,7 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
 		      i = i+1;
 		      );
      	         -- now i has the suitable index !
-		 b := makeBinomial(QQ[pc2#0], L2cols#i, pc2#2#i);		    
+		 b = makeBinomial(QQ[pc2#0], L2cols#i, pc2#2#i);		    
 	    	 -- Take the quotient of I with respect to b, such that the result is binomial
 	    	 return minimalPrimaryComponent (binomialQuotient (I,b, cellVariables=>cv), cellVariables=>cv);
 	    	 );

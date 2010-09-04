@@ -91,7 +91,7 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
      fn := s#0;
      opt := s#1;
      if not instance(fn, Function) and not instance(fn, Sequence)
-     then error "expected first element of document key for optional argument to be a function or sequence";
+     then error("expected first element of document key for optional argument to be a function or sequence: ", silentRobustString(40,1,s));
      if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
 
 -----------------------------------------------------------------------------
@@ -130,6 +130,7 @@ mdt := makeDocumentTag Thing := opts -> key -> (
 	  else if opts#Package =!= null then opts#Package 
 	  else packageKey(key, fkey)
 	  );
+     if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
      new DocumentTag from {nkey,fkey, {* pkg *} ,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      if match("^ |  +| $", key)
@@ -908,6 +909,8 @@ processInputOutputItems := (key,fn) -> x -> (
      default := if optsymb =!= null and text =!= null and #text > 0 then (
 	  if fn === null or fn === ()
 	  then error ("default value for option ",toString optsymb, " not accessible, base function not specified (with BaseFunction => ...)");
+	  if not (options fn)#?optsymb
+	  then error("symbol ",optsymb," is not the name of an optional argument for function '",fn,"'");
 	  t := toString (options fn)#optsymb;
 	  if not match("^\\{\\*Function",t) then SPAN{"default value " ,t});
      r := SPAN splice between_", " nonnull nonempty { 
@@ -1182,7 +1185,7 @@ documentationValue(Symbol,Thing) := (s,x) -> ()
 authorDefaults := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
 documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
      e := toSequence pkg#"exported symbols";
-     a := select(e,x -> instance(value x,Function));	    -- functions
+     a := select(e,x -> instance(value x,Function) or instance(value x,Command)); -- functions and commands
      b := select(e,x -> instance(value x,Type));	    -- types
      m := unique flatten for T in b list for i in keys value T list (-- methods
 	  if (
@@ -1222,7 +1225,10 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	       if not all(cert,x -> instance(x,Option) and #x==2) then error(toString pkg, ": Certification option: expected a list of options");
 	       cert = new HashTable from cert;
 	       DIV1 { 
-		    SUBSECTION "Certification",
+		    SUBSECTION {
+			 "Certification ",
+			 IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"}
+			 },
 		    PARA {
 			 "Version ",BOLD cert#"version at publication"," of this package was accepted for
 			 publication in ",HREF{cert#"volume URI","volume " | cert#"volume number"}," of the 
@@ -1268,7 +1274,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	       	    "class" => "exports",
 		    fixup UL {
 			 if #b > 0 then DIV1 {"Types", smenu b},
-			 if #a > 0 then DIV1 {"Functions", smenu a},
+			 if #a > 0 then DIV1 {"Functions and commands", smenu a},
 			 if #m > 0 then DIV1 {"Methods", smenu m},
 			 if #c > 0 then DIV1 {"Symbols", smenu c},
 			 if #d > 0 then DIV1 {"Other things", smenuCLASS d}}}}))

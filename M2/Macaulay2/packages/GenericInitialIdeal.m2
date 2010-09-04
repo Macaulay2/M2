@@ -24,7 +24,7 @@ export{gin,lexgin,AttemptCount,Modular } -- if the new routines which you are ad
 -- OUTPUT: Thing
 
 mode = L -> (
-     w = hashTable apply(pairs tally L, (k,v) -> (v,k));
+     w := hashTable apply(pairs tally L, (k,v) -> (v,k));
      return w#(max keys w)
      )
 
@@ -45,7 +45,7 @@ gin(Ideal) := opts -> (I) -> (
      -- attempts is a list of initial ideals out of which we choose the most frequent as the gin 
      S:= ring I;
      c := 0; 
-     l={32003, 32009, 32027, 32029, 32051, 32057, 32059, 32063, 32069, 32077, 32083, 32089, 32099, 32117, 32119, 32141, 32143, 32159, 32173, 32183, 32189, 32191}; -- l is a list of large primes; we use a random element of this list if the modular option is set to true
+     l := {32003, 32009, 32027, 32029, 32051, 32057, 32059, 32063, 32069, 32077, 32083, 32089, 32099, 32117, 32119, 32141, 32143, 32159, 32173, 32183, 32189, 32191}; -- l is a list of large primes; we use a random element of this list if the modular option is set to true
      if opts.Modular then (
 	  p:=random(0,#l-1);
 	  p=l_p;

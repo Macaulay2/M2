@@ -1772,8 +1772,8 @@ minFace (Matrix,Polyhedron) := (v,P) -> (
 minFace (Matrix,Cone) := (v,C) -> (
      -- Checking for input errors
      if numColumns v =!= 1 or numRows v =!= C#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
-     R = rays C;
-     LS = linSpace C;
+     R := rays C;
+     LS := linSpace C;
      C = dualCone C;
      -- The weight must lie in the dual of the cone, otherwise there is 
      -- no minimum and the result is the empty polyhedron

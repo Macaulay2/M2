@@ -7,6 +7,7 @@
 interpreterDepth = loadDepth = errorDepth = 0
 debuggingMode = true
 stopIfError = false
+debugWarningHashcode = null
 gotarg := arg -> any(commandLine, s -> s == arg)
 if gotarg "--stop" then stopIfError = true
 
@@ -147,7 +148,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "--Copyright 2009 D. R. Grayson and M. E. Stillman" | newline
+	  | "--Copyright 2010 D. R. Grayson and M. E. Stillman" | newline
 	  | "--GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
 	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
@@ -273,6 +274,7 @@ if firstTime then (
 	       "docdir" => "@docdir@/",
 	       "libraries" => "@librariesdir@/",
 	       "programs" => "@programsdir@/",
+	       "program licenses" => "@licensesdir@/",
 	       "package" => "@packagesdir@/PKG/",
 	       "packagedoc" => "@docdir@/PKG/",
 	       "packageimages" => "@docdir@/PKG/images/",
@@ -377,6 +379,7 @@ usage := arg -> (
      << "    --no-backtrace     print no backtrace after error" << newline
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
+     << "    --debug n          debug warning message n by signalling an error" << newline
      << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
@@ -492,6 +495,7 @@ action2 := hashTable {
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value arg,
+     "--debug" => arg -> debugWarningHashcode = value arg,
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
@@ -671,15 +675,19 @@ if class Core =!= Symbol and not core "noinitfile" then (
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      );
 
-(loadDepth = 3; processCommandLineOptions 4; loadDepth = 0)
-n := 0
-(errorDepth = loadDepth = 3; n = interpreter(); loadDepth = 0)
-if class n === ZZ and 0 <= n and n < 128 then exit n
-if n === null then exit 0
-debuggingMode = false
-stopIfError = true
-stderr << "error: can't interpret return value as an exit code" << endl
-exit 1
+loadDepth = 0;
+( loadDepth = 3;
+     processCommandLineOptions 4;
+     n := 0;
+     errorDepth = loadDepth = 3;
+     n = interpreter();
+     if class n === ZZ and 0 <= n and n < 128 then exit n;
+     if n === null then exit 0;
+     debuggingMode = false;
+     stopIfError = true;
+     stderr << "error: can't interpret return value as an exit code" << endl;
+     exit 1;
+     )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all && make -C $M2BUILDDIR/Macaulay2/bin all "
 -- End:

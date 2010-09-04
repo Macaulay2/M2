@@ -365,11 +365,11 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
       return 0;
     }
 
-  if (D->n_vars() > 1 && do_truncation)
-    {
-      ERROR("cannot do truncation for multigraded rings");
-      return 0;
-    }
+  // if (D->n_vars() > 1 && do_truncation)
+  //   {
+  //     ERROR("cannot do truncation for multigraded rings");
+  //     return 0;
+  //   }
 
   KBasis KB(bottom,partial,lo,lo_degree->len,hi,hi_degree->len,wt,vars,do_truncation,limit);
 

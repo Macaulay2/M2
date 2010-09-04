@@ -28,11 +28,16 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
-     if opts.Degree =!= null then error "internal error: Degree option set but raw matrix provided";
      R := ring tar;
-     if raw cover tar =!= target f
-     or opts.Degree =!= null and rawMultiDegree f =!= (deg := degreeCheck(opts.Degree,R))
-     then f = rawMatrixRemake2(raw cover tar, rawSource f, if deg =!= null then deg else rawMultiDegree f, f, 0);
+     olddeg := rawMultiDegree f;
+     newdeg := if opts.Degree =!= null then degreeCheck(opts.Degree,R);
+     if raw cover tar =!= target f 
+     or newdeg =!= null and newdeg =!= olddeg
+     then f = rawMatrixRemake2(
+	  raw cover tar, 
+	  if newdeg =!= null then rawSource f ** (raw R)^{toList newdeg-olddeg} else rawSource f,
+	  if newdeg =!= null then newdeg else olddeg,
+	  f, 0);
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => tar,

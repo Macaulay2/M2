@@ -1,0 +1,21 @@
+# replace lrslib by the name of the library or package
+# install this file as lrslib/Makefile.in
+# add libraries/lrslib/Makefile to ../config/files
+# run make -C ../..
+# reconfigure in the build directory
+HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
+URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib
+VERSION = 042c
+TARFILE = lrslib-$(VERSION).tar.gz
+PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash
+LICENSEFILES = lrslib.html COPYING
+CONFIGURECMD = true
+BUILDTARGET = all
+INSTALLCMD = true
+CHECKCMD = true
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lrslib/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/lrslib "
+# End:

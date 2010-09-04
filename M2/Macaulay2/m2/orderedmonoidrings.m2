@@ -35,7 +35,7 @@ expression PolynomialRing := R -> (
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
-     net ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
+     net ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expressionMonoid monoid R)))
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
@@ -81,12 +81,6 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
      else error "no degreesRing for this ring")
 
 degreesRing Ring := R -> error "no degreesRing for this ring"
-
-degreesMonoid PolynomialRing := PolynomialRing => R -> (
-     if R.?degreesMonoid then R.degreesMonoid
-     else error "no degreesMonoid for this ring")
-
-degreesMonoid Ring := R -> error "no degreesMonoid for this ring"
 
 generators PolynomialRing := opts -> R -> (
      if opts.CoefficientRing === null then R.generators

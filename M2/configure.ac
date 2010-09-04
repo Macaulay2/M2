@@ -370,6 +370,7 @@ AC_SEARCH_LIBS(clock_gettime,rt)
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
+AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
@@ -569,6 +570,13 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   Nauty
   ToricVectorBundles
   ModuleDeformations
+  PHCpack
+  SimplicialDecomposability
+  BooleanGB
+  AdjointIdeal
+  Parametrization
+  Serialization
+  NAGtypes
 ")
 # pending packages: SRdeformations
 
@@ -778,7 +786,7 @@ AC_SUBST(BUILTLIBS,)
 #	it writes a file into the user's home directory called ".polymake"
 #	it asks questions
 #    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
 AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk    cddlib ")
 dnl I think we don't use this:
 dnl AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp  libglpk ")
@@ -1045,10 +1053,8 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
-# we are using mpir
-# on all systems, if ntl is there, and sharable, then it depends on gmp instead of mpir
-# so, let's build ntl always
-BUILD_ntl=yes
+# We are using mpir.  If ntl is present, and sharable, then it depends
+# explicitly on gmp instead of mpir, which can cause a conflict.
 
 if test $BUILD_ntl = no
 then AC_LANG(C++)
@@ -1126,7 +1132,7 @@ do AC_LANG(C++)
    AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
-   AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
+   AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
    dnl if -lntl is needed, it's been added to $LIBS above
    AC_LINK_IFELSE( [[ #undef NOSTREAMIO
 	              #include <factory.h>
@@ -1224,12 +1230,12 @@ AC_SUBST(FCLIBS_FLAGS,)
     # Note: static version is here:
     #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortran.a
     #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortranbegin.a
+    # Note: see discussion in emacs info about -static-libgcc and -shared-libgcc; -lgcc_s should be dynamically linked
 for i in $FCLIBS
 do case $i in
 	-L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
-	-lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; # see discussion in emacs info about -static-libgcc and -shared-libgcc
-	-ldl | -lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
-	*) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+	-lgfortranbegin | -lgfortran) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+	*) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
    esac
 done
 
@@ -1512,6 +1518,7 @@ AC_SUBST(libm2dir,$libdir/Macaulay2/$MACHINE)
 AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
 AC_SUBST(librariesdir,$libm2dir/lib)
 AC_SUBST(programsdir,$libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
 AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
@@ -1519,6 +1526,7 @@ AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2/$MACHINE)
 AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
 AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
 AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
@@ -1526,6 +1534,7 @@ AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2/$MACHINE)
 AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
 AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)
 AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/cache)
 
 AC_OUTPUT()

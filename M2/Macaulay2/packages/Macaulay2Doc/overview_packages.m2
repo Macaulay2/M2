@@ -1,18 +1,24 @@
 
+star := IMG {
+     "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png",
+     "alt" => "a gold star"
+     }
+
 document { Key => "packages provided with Macaulay2",
      PARA{
-     	  "The packages that are distributed with Macaulay2 are:"
+     	  "Here is a list of the packages that are distributed with Macaulay2.  The ones that have been
+	  refereed are marked with a star."
 	  },
-     UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2"), pkg -> LI TO (pkg|"::"|pkg)),
-     PARA {
-	  "Use ",
-	  TO loadPackage, ", or ", 
-	  TO needsPackage, " to load a package.  Use ", 
-	  TO installPackage, " to install the documentation for a package.
-	  Some of these packages are automatically loaded, use ",
-	  TO "loadedPackages", " to see which have been loaded."
-	  },
-     SeeAlso => Package
+     UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2"), 
+	  pkg -> (
+	       local p;
+	       (dictionaryPath,loadedPackages,p) = (dictionaryPath,loadedPackages,needsPackage(pkg,DebuggingMode => true));
+	       LI {
+		    if (options p).Certification =!= null then (star," "),
+		    TO (pkg|"::"|pkg),
+		    if (options p).Headline =!= null then (" -- ", (options p).Headline)
+		    }
+	       ))
      }
 
 document { Key => "packages",
@@ -169,5 +175,5 @@ document {
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakeAllDocumentation=true "
 -- End:

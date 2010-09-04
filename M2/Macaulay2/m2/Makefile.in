@@ -4,6 +4,8 @@ include ../../include/config.Makefile
 VPATH = @srcdir@ @srcdir@/../d
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 
+USER ?= unknown-user
+
 all: initialize
 Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 ##############################
@@ -133,7 +135,7 @@ gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 all: .gdb-directories
 clean::; rm -f .gdb-directories
-.gdb-directories:
+.gdb-directories: ../../libraries/*
 	echo 'echo -- loading .gdb-directories\n' >$@
 	for i in \
 		../../libraries/*/build/*/. \
@@ -146,6 +148,7 @@ clean::; rm -f .gdb-directories
 	   fi ;\
 	done
 .gdbinit.$(USER):; touch $@
+clean::; rm -f .gdbinit.$(USER)
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
