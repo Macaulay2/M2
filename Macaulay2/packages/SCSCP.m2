@@ -20,7 +20,7 @@ newPackage(
 	Version => "0.2", 
 	Date => "October 15, 2009",
 	Authors => {
-		{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
+		{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/users/danr"}
 	},
 	Headline => "SCSCP for Macaulay2",
 	DebuggingMode => false,
