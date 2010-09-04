@@ -28,14 +28,19 @@ AOVERSION =
 # bit it works under 32 bit ubuntu.  Perhaps it was darwin?
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-VERSION = 7.2.2010.2.16
+# VERSION = 7.2.2010.2.16
+# AOVERSION = 
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# URL = http://www.math.uiuc.edu/Macaulay2/Extra
+
+VERSION = 7.2alpha5-2010-09-03
+TARDIR = gc-7.2alpha5
 AOVERSION = 
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 
 #################################
 
-TARDIR = gc-$(VERSION)
 PRECONFIGURE = (cd libatomic_ops$(AOVERSION) && autoconf)
 VPATH = @srcdir@
 ifeq (@PTHREADS@,yes)
