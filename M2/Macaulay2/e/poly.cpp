@@ -2486,7 +2486,9 @@ vec PolyRing::translate_gbvector_to_vec_denom(const FreeModule *F,
   GBRing *GR = get_gb_ring();
   const ring_elem c = K_->invert(denom);
   gbvector *w = GR->gbvector_mult_by_coeff(v, c);
-  return translate_gbvector_to_vec(F,w);
+  vec result = translate_gbvector_to_vec(F,w);
+  GR->gbvector_remove(w);
+  return result;
 }
 
 // Local Variables:
