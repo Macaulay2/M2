@@ -14,7 +14,7 @@ newPackage(
      Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true 
+     DebuggingMode => false
      )
 
 -- Any symbols or functions that the user is to have access to
@@ -23,7 +23,7 @@ export {
      "setDefault", "getDefault",
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
      "areEqual", "sortSolutions", -- "multistepPredictor", "multistepPredictorLooseEnd",
-     "Software","BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
+     "Software", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
@@ -132,8 +132,8 @@ getDefault Symbol := (s)->DEFAULT#s
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
-then needs "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
-needs "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
+then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
+load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
 
 -- CONVENTIONS ---------------------------------------
 
@@ -144,7 +144,7 @@ needs "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2"
  
 -- M2 tracker ----------------------------------------
 integratePoly = method(TypicalValue => RingElement)
-integratePoly (RingElement,Thing,Thing) := RingElement => (f,a,b) -> (
+integratePoly (RingElement,Number,Number) := RingElement => (f,a,b) -> (
      -- integral of a polynomial f from a to b
      R := ring f; 
      if numgens R != 1 then error "expected a univariate polynomial";
@@ -366,7 +366,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      
      -- create homotopy
      t := symbol t;
-     Rt := K(monoid[gens R, t]); -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
+     Rt := K(monoid[gens R, t]); 
      t = last gens Rt; 
      Kt := K(monoid[t]);
      (nS,nT) := if o.Normalize -- make Bomboeri-Weyl norm of the systems equal 1
@@ -2463,6 +2463,7 @@ end
 restart
 loadPackage "NumericalAlgebraicGeometry"
 uninstallPackage "NumericalAlgebraicGeometry"
+installPackage "NumericalAlgebraicGeometry"
 -- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
 
 -- install docs with no absolute links

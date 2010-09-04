@@ -1,9 +1,10 @@
 document {
      Key => NumericalAlgebraicGeometry,
      Headline => "Numerical Algebraic Geometry",
-     "The package ", EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", 
+     "The package ", TO "NumericalAlgebraicGeometry", ", also known as ", 
+     EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", 
      " implements methods of polynomial homotopy continuation                                                                                                  
-     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties.", BR{},
+     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties.", 
      "The current version focuses on solving square systems with finite number of solutions." 
      }
 
@@ -34,7 +35,8 @@ R = CC[x,y];
 F = {x^2+y^2-1, x*y};
 solveSystem F / coordinates 			 	     
      	///,
-	Caveat => {"The system is assumed to be square (#equations = #variables) and have finitely many solutions."}	
+	Caveat => {"The system is assumed to be square (#equations = #variables) 
+	     and to have finitely many solutions."}	
 	}
 document {
 	Key => { (track, List, List, List), track, 
@@ -66,7 +68,8 @@ document {
 	     numberSuccessesBeforeIncrease => {"determine how step size is adjusted"},
 	     Predictor => {"a method to predict the next point on the homotopy path: 
 		  choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
-		  TO "Euler", ", ", TO "Secant", ", ", TO "Certified", ". The latter provides certified tracking."},
+		  TO "Euler", ", ", TO "Secant", ", ", TO "Certified", ". The option ", TO "Certified", 
+		  " provides certified tracking."},
 	     maxCorrSteps => {"max number of steps corrector takes before a failure is declared"}, 
 	     CorrectorTolerance => {"corrector succeeds if the relative error does not exceed this tolerance"},
      	     EndZoneFactor => {"size of `end zone'"},  
@@ -106,8 +109,8 @@ document {
 	     },
 	Outputs => {"solsR" => {"refined solutions" }},
 	"Uses Newton's method to correct the given solutions so that the resulting approximation 
-	has its estimated relative error bound by ", TT "Tolerance", 
-	"; the number of iterations is at most ", TT "maxCorrSteps", ".",
+	has its estimated relative error bound by ", TO "ErrorTolerance", 
+	"; the number of iterations is at most ", TO "Iterations", ".",
 	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
 	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
 	     took place with the same option and was given the same target system. 
@@ -145,13 +148,18 @@ totalDegreeStartSystem T
 document {
      Key => {[solveSystem,Software],[track,Software],[refine, Software], "Software",
 	  "M2","M2engine","M2enginePrecookedSLPs"},
-     Headline => "specify software for the solver",
+     Headline => "specify internal or external software",
+     "One may specify which software is used in homotopy continuation. 
+     Possible values for internal software are:",  
      UL{
 	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
 	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine"},
 	  {"M2enginePrecookedSLPs", " -- (obsolete)"},
-	  --TO
-	  "PHCPACK",
+	  },
+     "An external program may be used to replace a part of functionality of the package
+     provide the corresponding software is installed:",
+     UL{
+	  TO "PHCPACK",
 	  TO "BERTINI",
 	  TO "HOM4PS2"
 	  }
@@ -159,14 +167,21 @@ document {
 document {
      Key => BERTINI,
      Headline => "use Bertini for homotopy continuation",
-     "Available at ", TT "http://www.nd.edu/~sommese/bertini/"
+     "Available at ", TT "http://www.nd.edu/~sommese/bertini/",
+     SeeAlso => Software
      }
 document {
      Key => HOM4PS2,
      Headline => "use HOM4PS for homotopy continuation",
-     "Available at ", TT "http://hom4ps.math.msu.edu/HOM4PS_soft.htm"
+     "Available at ", TT "http://hom4ps.math.msu.edu/HOM4PS_soft.htm",
+     SeeAlso => Software
      }
-			      		    								 
+document {
+     Key => PHCPACK,
+     Headline => "use PHCpack for homotopy continuation",
+     "Available at ", TT "http://www.math.uic.edu/~jan/download.html",
+     SeeAlso => Software
+     }
 document {
 	Key => {(getSolution, ZZ), getSolution, SolutionAttributes, [getSolution,SolutionAttributes]},
 	Headline => "get various attributes of the specified solution",
@@ -175,12 +190,13 @@ document {
 	     {"i", ", the number of the solution"}
 	     },
 	Outputs => {{ TT "s", ", (an) attributes of the solution"}},
-	"Returns attribute(s) of the ", TT "i", "-th solution specified in the option", TO "SolutionAttributes", 
-	", which could be either a sequence or a single attribute.", BR{}, 
+	"Returns attribute(s) of the ", TT "i", "-th solution specified in the option", 
+	TO "SolutionAttributes", 
+	", which could be either a sequence or a single attribute. ", 
 	"SolutionAttributes include:",
 	UL{
 	  {"Coordinates", " -- the list of coordinates"},
-	  {"SolutionStatus", " -- REGULAR, SINGULAR, FAILED, etc."},
+	  {"SolutionStatus", " -- Regular, Singular, Infinity, MinStepFailure"},
 	  {"NumberOfSteps", " -- number of steps taken on the corresponding homotopy path"},
 	  {"LastT", " -- the last value of the continuation parameter"},
 	  {"RCondition", "-- the reverse condition number at the last step of Newton's method"}
@@ -239,7 +255,8 @@ document {
 	Outputs => {{ TT "t", ", sorted list"}},
 	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
 	"The output format of ", TO track, " and ", TO solveSystem, " is respected.", BR{}, 
-	"The parts of coordinates are considered equal if within ", TO Tolerance, 
+	"For the corresponding coordinates a and b (of two real 2n-vectors) a < b if b-a is larger than ", 
+	TO Tolerance, ". ", 
         EXAMPLE lines ///
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
@@ -256,7 +273,7 @@ document {
 	     "y" => "a solution or list of solutions",
 	     Projective=>{"if true, then solutions are considered as representatives of points in the projective space"}
 	     },
-	Outputs => {"b"=>{"true, if approximately equal"}},
+	Outputs => {"b"=>{"a Boolean value: whether x and y are approximately equal"}},
 	"The function returns false if Riemannian distance exceeds ", TO Tolerance, " and true, otherwise.",
         EXAMPLE lines ///
 R = CC[x,y];
@@ -274,7 +291,7 @@ document {
 	     },
 	Outputs => {{ TT "T", ", list of polynomials"}},
 	"Generates a system of homogeneous polynomials T_i such that deg T_i = d_i. 
-	The system is normalized, so that it is on a unit sphere in the Bombieri-Weyl norm.",
+	The system is normalized, so that it is on the unit sphere in the Bombieri-Weyl norm.",
         EXAMPLE lines ///
 T = randomSd {2,3}
 (S,solsS) = goodInitialPair T;
@@ -284,7 +301,7 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 
 document {
 	Key => {goodInitialPair, (goodInitialPair, List), [goodInitialPair,GeneralPosition], GeneralPosition},
-	Headline => "a good (conjectured by Shub and Smale) initial pair",
+	Headline => "make an intial pair conjectured to be good by Shub and Smale",
 	Usage => "(S,sol) = goodInitialPair T",
 	Inputs => { 
 	     "T" => {"a list of polynomials"},
