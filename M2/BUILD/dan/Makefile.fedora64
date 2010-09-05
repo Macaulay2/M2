@@ -8,7 +8,7 @@ DEBUG = no
 
 ifeq ($(DEBUG),yes)
 DIRECTORY = fedora64.debug
-CONFIGOPTIONS += --enable-debug --disable-pthreads
+CONFIGOPTIONS += --enable-debug
 INSTALLOPTIONS += prefix=/none
 else
 DIRECTORY = fedora64
@@ -44,5 +44,5 @@ default: install check
 #   Port 2225
 
 # Local Variables:
-# compile-command: "time make -f Makefile.fedora64 "
+# compile-command: "time make -f Makefile.fedora64 DEBUG=no "
 # End:
