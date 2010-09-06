@@ -108,9 +108,9 @@ void* ThreadTask::waitOn()
   m_Mutex.lock();
   while(!m_Done && m_KeepRunning)
     {
-      if(pthread_cond_wait(&m_FinishCondition,&m_Mutex.m_Mutex))
-	continue;
+      pthread_cond_wait(&m_FinishCondition,&m_Mutex.m_Mutex);
     }
+  assert(m_Done || !m_KeepRunning);
   void* ret = m_Result;
   m_Mutex.unlock();
   return ret;

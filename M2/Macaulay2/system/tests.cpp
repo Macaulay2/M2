@@ -45,12 +45,14 @@ static int TS_Test1()
 }
 
 static volatile bool canceled = false;
+static volatile bool started=false;
 
 static void* TS_Test2_Func1(void* vtup)
 {
+  started=true;
   while(!AO_load(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field))
     {
-     sleep(1);
+     sleep(0);
      }
    canceled = true;
  }
@@ -60,13 +62,18 @@ static void* TS_Test2_Func1(void* vtup)
 
  int TS_Test2()
  {
-   ThreadTask* task1 = createThreadTask("Task1",TS_Test2_Func1,NULL,0,0);
-   ThreadTask* task2 = createThreadTask("Task2",TS_Test2_Func2,NULL,0,0);
-   addCancelTask(task2,task1);
-   pushTask(task1);
-   pushTask(task2);
-   waitOnTask(task1);
-   assert(canceled);
+   for(int i = 0; i < 1; ++i)
+     {
+       canceled=false;
+       started=false;
+       ThreadTask* task1 = createThreadTask("Task1",TS_Test2_Func1,NULL,0,0);
+       ThreadTask* task2 = createThreadTask("Task2",TS_Test2_Func2,NULL,0,0);
+       addCancelTask(task2,task1);
+       pushTask(task1);
+       pushTask(task2);
+       waitOnTask(task1);
+       assert(canceled || !started);
+     }
  }
 
  int TS_Test()
