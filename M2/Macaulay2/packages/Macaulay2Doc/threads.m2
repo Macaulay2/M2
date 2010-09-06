@@ -6,8 +6,6 @@ Node
   "programming with threads"
  Subnodes
   Thread
-  schedule
-  threadID
   "threadVariable"
   (isReady,Thread)
   taskResult
@@ -55,22 +53,6 @@ Node
   Thread
  Headline
   the class of all threads
-Node
- Key
---  (threadID,Thread)
-  threadID
- Headline
-  get the id of a thread
- Usage
-  threadID t
- Inputs
-  t:
- Outputs
-  :
-   the ID of the thread
- Description
-  Text
-   Each thread is uniquely identified by a small integer called its "id", and this function returns that.
 Node
  Key
   (taskResult,Thread)

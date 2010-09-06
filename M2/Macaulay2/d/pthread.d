@@ -15,20 +15,17 @@ startup(tb:TaskCellBody):null := (
      --warning wrong return type
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
-     tb.thread = getthreadself();
-     tb.exceptionFlagPointer = address(exceptionFlag);
-     tb.interruptedFlagPointer = address(interruptedFlag);
-     if notify then stderr << "--thread " << tb.tid << " started" << endl;
+     if notify then stderr << "--thread " << " started" << endl;
      --add thread to supervisor
 
      r := applyEE(f,x);
      when r is err:Error do (
 	  printError(err);
-	  if notify then stderr << "--thread " << tb.tid << " ended, after an error" << endl;
+	  if notify then stderr << "--thread " << " ended, after an error" << endl;
 	  )
      else (
      	  tb.returnValue = r;
-     	  if notify then stderr << "--thread " << tb.tid << " ready, result available " << endl;
+     	  if notify then stderr << "--thread " << " ready, result available " << endl;
 	  );
      compilerBarrier();
      tb.done = true;
@@ -45,14 +42,12 @@ isFunction(e:Expr):bool := (
 cancelTask(tb:TaskCellBody):Expr := (
      if tb.resultRetrieved then return buildErrorPacket("thread reasult already retrieved");
      if tb.done then (
-	  if notify then stderr << "--thread " << tb.tid << " done, cancellation not needed" << endl;
+	  if notify then stderr << "--thread " << " done, cancellation not needed" << endl;
 	  return nullE;
 	  );
-     if tb.cancellationRequested then return buildErrorPacket("thread cancellation already requested");
-     when tb.interruptedFlagPointer is p:atomicFieldPointer do store(p,true)
-     else return buildErrorPacket("thread cancellation: interruptedFlagPointer is null");
-     when tb.exceptionFlagPointer is p:atomicFieldPointer do store(p,true)
-     else return buildErrorPacket("thread cancellation: exceptionFlagPointer is null");
+
+--TODO: FIX 
+
      tb.cancellationRequested = true;
      nullE);
 
@@ -67,18 +62,17 @@ threadCellFinalizer(tc:TaskCell,p:null):void := (
      -- initialized.
      if tc.body.done then return;
      if tc.body.cancellationRequested then (
-	  stderr << "--thread " << tc.body.tid << " inaccessible, cancelled but not ready yet" << endl;
+	  stderr << "--thread " << " inaccessible, cancelled but not ready yet" << endl;
 	  )
      else (
-	  if notify then stderr << "--cancelling inaccessible thread " << tc.body.tid << endl;
+	  if notify then stderr << "--cancelling inaccessible thread " << endl;
 	  when cancelTask(tc.body) is err:Error do (printError(err);) else nothing));
 
 header "#include <signal.h>";
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
      -- FIX ME
-     threadcounter := 0;
-     tc := TaskCell(TaskCellBody(nullThread(), threadcounter, false, false, false, fun, arg, nullE, null(), null()));
+     tc := TaskCell(TaskCellBody(Ccode(taskPointer,"((void *)0)"), false, false, false, fun, arg, nullE ));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      threadCreate(startup,tc.body);

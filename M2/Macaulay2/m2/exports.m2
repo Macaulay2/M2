@@ -937,7 +937,6 @@ export {
 	symbol printString,
 	symbol printingTimeLimit,
 	symbol processID,
-	symbol threadID,
 	symbol product,
 	symbol profile,
 	symbol profileSummary,

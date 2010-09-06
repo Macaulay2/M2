@@ -1012,7 +1012,7 @@ tostringfun(e:Expr):Expr := (
      is x:TaskCell do (
 --	  while !isInitialized(x) do nothing;
 	  toExpr(
-	       "<<thread " + tostring(x.body.tid)
+	       "<<thread " 
 	       + ", "
 	       + (
 		    if x.body.resultRetrieved then "result delivered, thread terminated"

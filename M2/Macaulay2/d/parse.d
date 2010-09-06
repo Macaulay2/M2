@@ -353,9 +353,8 @@ export pythonObject := Pointer "struct _object *";
 export pythonObjectCell := {+v:pythonObject};
 
 export TaskCellBody := {+
-     thread:Thread, tid:int, done:bool, cancellationRequested:bool, resultRetrieved:bool,
-     fun:Expr, arg:Expr, returnValue:Expr,
-     exceptionFlagPointer:atomicFieldPointerOrNull, interruptedFlagPointer:atomicFieldPointerOrNull };
+     task:taskPointer, done:bool, cancellationRequested:bool, resultRetrieved:bool,
+     fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };
 
 
@@ -432,7 +431,6 @@ export noRecycle(f:Frame):Frame := (
 	  ) do g = g.outerFrame;
      f);
 
-export isInitialized(c:TaskCell):bool := c.body.tid != 0; -- not a macro, in lieu of tid being declared volatile
 
 
 
