@@ -17,7 +17,7 @@ newPackage("Polyhedra",
 	 "acceptance date" => "2009-09-07",
 	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
 	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
-	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
+	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
  	 "release at publication" => 9344,
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
@@ -30,24 +30,120 @@ newPackage("Polyhedra",
     DebuggingMode => false
     )
 
-export {PolyhedralObject, 
-        Polyhedron, 
-	Cone, 
-	Fan, 
-	PolyhedralComplex, 
-	convexHull, posHull, intersection, fan, addCone, polyhedralComplex, addPolyhedron, 
-        ambDim, cones, maxCones, maxPolyhedra, halfspaces, hyperplanes, linSpace, polyhedra, rays, vertices,
-        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isLatticePolytope, isPointed, isPolytopal, 
-	isPure, isSimplicial, isSmooth, isVeryAmple,
-	boundaryMap, dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, 
-	latticePoints, maxFace, minFace, objectiveVector,
-	minkSummandCone, mixedVolume, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
-	volume, vertexEdgeMatrix, vertexFacetMatrix, 
-	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
-	dualCone, faceFan, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
-	crossPolytope, cellDecompose, cyclicPolytope, ehrhart, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, 
-	secondaryPolytope, statePolytope, stdSimplex,
-	saveSession}
+---------------------------------------------------------------------------
+-- COPYRIGHT NOTICE:
+--
+-- Copyright 2010 René Birkner
+--
+--
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
+---------------------------------------------------------------------------
+
+export {"PolyhedralObject", 
+        "Polyhedron", 
+	"Cone", 
+	"Fan", 
+	"PolyhedralComplex", 
+	"convexHull", 
+	"posHull", 
+	"intersection", 
+	"fan", 
+	"addCone", 
+	"polyhedralComplex", 
+	"addPolyhedron", 
+        "ambDim", 
+	"cones", 
+	"maxCones", 
+	"maxPolyhedra", 
+	"halfspaces", 
+	"hyperplanes", 
+	"linSpace", 
+	"polyhedra", 
+	"rays", 
+	"vertices",
+        "areCompatible", 
+	"commonFace", 
+	"contains", 
+	"isCompact", 
+	"isComplete", 
+	"isEmpty", 
+	"isFace", 
+	"isLatticePolytope", 
+	"isPointed", 
+	"isPolytopal", 
+	"isPure", 
+	"isSimplicial", 
+	"isSmooth", 
+	"isVeryAmple",
+	"boundaryMap", 
+	"dualFaceLattice", 
+	"faceLattice", 
+	"faces", 
+	"fVector", 
+	"hilbertBasis", 
+	"incompCones", 
+	"inInterior", 
+	"interiorPoint", 
+	"interiorVector",
+	"interiorLatticePoints", 
+	"latticePoints", 
+	"maxFace", 
+	"minFace", 
+	"objectiveVector",
+	"minkSummandCone", 
+	"mixedVolume", 
+	"polytope", 
+	"proximum", 
+	"skeleton", 
+	"smallestFace", 
+	"smoothSubfan", 
+	"stellarSubdivision", 
+	"tailCone", 
+	"triangulate", 
+	"volume", 
+	"vertexEdgeMatrix", 
+	"vertexFacetMatrix", 
+	"affineHull", 
+	"affineImage", 
+	"affinePreimage", 
+	"bipyramid", 
+	"ccRefinement", 
+	"coneToPolyhedron", 
+	"directProduct", 
+	"dualCone", 
+	"faceFan", 
+	"imageFan", 
+	"minkowskiSum", 
+	"normalFan", 
+	"polar", 
+	"pyramid", 
+	"sublatticeBasis", 
+	"toSublattice",
+	"crossPolytope", 
+	"cellDecompose", 
+	"cyclicPolytope", 
+	"ehrhart", 
+	"emptyPolyhedron", 
+	"hirzebruch", 
+	"hypercube", 
+	"newtonPolytope", 
+	"posOrthant", 
+	"secondaryPolytope", 
+	"statePolytope", 
+	"stdSimplex",
+	"saveSession"}
 
 needsPackage "FourierMotzkin"
 
@@ -122,8 +218,6 @@ net PolyhedralComplex := F -> ( horizontalJoin flatten (
 			                      "top dimension of the polyhedra",
 					      "number of generating polyhedra"}, key -> (net key, " => ", net F#key))),
 	  "}" ))
-
-
 
 
 -- PURPOSE : Computing the Convex Hull of a given set of points and rays
@@ -930,7 +1024,7 @@ rays Fan := F -> toList F#"rays"
 -- PURPOSE : Giving the vertices
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a Matrix, containing the vertices of P as column vectors
-vertices = method(TypicalValue => Matrix)
+vertices = method()
 vertices Polyhedron := P -> P#"vertices"
 
 vertices PolyhedralComplex := PC -> toList PC#"vertices"
@@ -1497,7 +1591,9 @@ faces(ZZ,Polyhedron) := (k,P) -> (
 	       V := matrix transpose apply(l#0, e -> flatten entries e);
 	       R := if l#1 != {} then matrix transpose apply(l#1, e -> flatten entries e) else map(target V,QQ^1,0);
 	       if LS != 0 then R = R | LS | -LS;
-	       convexHull(V,R))))
+	       Pnew := convexHull(V,R);
+	       Pnew.cache.faceOf = P;
+	       Pnew)))
 
 
 --   INPUT : 'k'  an integer between 0 and the dimension of
@@ -1507,7 +1603,10 @@ faces(ZZ,Cone) := (k,C) -> (
      L := faceBuilderCone(k,C);
      LS := linSpace C;
      -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-     apply(L, l -> posHull(matrix transpose apply(toList l, e -> flatten entries e),LS)))
+     apply(L, l -> (
+	       Cnew := posHull(matrix transpose apply(toList l, e -> flatten entries e),LS);
+	       Cnew.cache.faceOf = C;
+	       Cnew)))
 
 
      
@@ -1613,12 +1712,22 @@ inInterior = method(TypicalValue => Boolean)
 
 --   INPUT : '(p,P)',  where 'p' is a point given by a matrix and 'P' is a Polyhedron
 --  OUTPUT : 'true' or 'false'
-inInterior (Matrix,Polyhedron) := (p,P) -> smallestFace(p,P) === P
+inInterior (Matrix,Polyhedron) := (p,P) -> (
+     HP := hyperplanes P;
+     HP = (HP#0 * p)-HP#1;
+     all(flatten entries HP, e -> e == 0) and (
+	  HS := halfspaces P;
+	  HS = (HS#0 * p)-HS#1;
+	  all(flatten entries HS, e -> e < 0)))
 
 
 --   INPUT : '(p,C)',  where 'p' is a point given by a matrix and 'C' is a Cone
 --  OUTPUT : 'true' or 'false'
-inInterior (Matrix,Cone) := (p,C) -> smallestFace(p,C) === C
+inInterior (Matrix,Cone) := (p,C) -> (
+     HP := hyperplanes C;
+     all(flatten entries(HP*p), e -> e == 0) and (
+	  HS := halfspaces C;
+	  all(flatten entries(HS*p), e -> e > 0)))
 
 
 -- PURPOSE : Computing a point in the relative interior of a cone or Polyhedron 
@@ -1652,6 +1761,14 @@ interiorVector Cone := C -> (
 --	  if M != 0 then lift(transpose matrix apply(entries transpose M, w -> (g := gcd w; apply(w, e -> e//g))),ZZ) else lift(M,ZZ);
 --	  d := abs gcd flatten entries iv;
 --	  (1/d)*iv))
+
+-- PURPOSE : Computing the interior lattice points of a compact Polyhedron
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : 'L',  a list containing the interior lattice points
+interiorLatticePoints = method(TypicalValue => List)
+interiorLatticePoints Polyhedron := (cacheValue symbol interiorLatticePoints)(P -> (
+     L := latticePoints P;
+     select(L,e -> inInterior(e,P))))
 
 
 -- PURPOSE : Computing the lattice points of a compact Polyhedron 
@@ -1772,8 +1889,8 @@ minFace (Matrix,Polyhedron) := (v,P) -> (
 minFace (Matrix,Cone) := (v,C) -> (
      -- Checking for input errors
      if numColumns v =!= 1 or numRows v =!= C#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
-     R := rays C;
-     LS := linSpace C;
+     R = rays C;
+     LS = linSpace C;
      C = dualCone C;
      -- The weight must lie in the dual of the cone, otherwise there is 
      -- no minimum and the result is the empty polyhedron
@@ -1782,7 +1899,7 @@ minFace (Matrix,Cone) := (v,C) -> (
 	  Rind := flatten entries ((transpose v)*R);
 	  Rind = positions(Rind, e -> e == 0);
 	  posHull(R_Rind,LS))
-     else emptyPolyhedron ambDim P)   
+     else emptyPolyhedron ambDim C)   
 
 
 
@@ -2094,7 +2211,7 @@ skeleton(ZZ,Fan) := (n,F) -> (
 
 skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
      -- Checking for input errors
-     if n < 0 or dim F < n then error("The integer must be between 0 and dim F");
+     if n < 0 or dim PC < n then error("The integer must be between 0 and dim F");
      GP := polyhedra(n,PC);
      verticesList := unique flatten apply(GP, P -> (Vm := vertices P; apply(numColumns Vm, i -> Vm_{i})));
      new PolyhedralComplex from {
