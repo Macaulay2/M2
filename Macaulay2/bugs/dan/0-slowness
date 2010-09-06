@@ -1,0 +1,3 @@
+this is slow, because Attributes has 1600 entries:
+
+	  scan(values Attributes, tab ...
