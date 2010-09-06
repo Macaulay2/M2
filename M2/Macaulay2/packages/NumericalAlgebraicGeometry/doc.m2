@@ -9,10 +9,13 @@ document {
      }
 
 document {
-	Key => {getDefault, setDefault},
-	Headline => "set/get the default parameters of continuation algorithms",
+	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], getDefault, (getDefault,Symbol)},
+	Headline => "set/get the default parameters for continuation algorithms",
 	Usage => "setDefault(p1=>v1, p2=>v2, ...); v = getDefault p",
-	Inputs => { {TT "p, p1, p2", ", the name(s) of parameter(s)"} },
+	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
+	     	  Attempts => {" -- the maximal number of attempts (e.g., to make a random regular homotopy); 
+		  so far used only in the functions under development."}
+		  },
 	Outputs => { {TT "v, v1, v2", ", value(s) of the parameter(s)"} },
 	"Set/get value(s) of (a) parameter(s) in the functions ", 
 	TO "track", ", ", TO "solveSystem", ", ", TO "refine", " as well as higher-level functions.", 
@@ -20,7 +23,8 @@ document {
 	getDefault Predictor
      	setDefault(Predictor=>Euler, CorrectorTolerance=>1e-10)
 	getDefault Predictor  
-     	///
+     	///,
+	SeeAlso => {track, solveSystem, refine, areEqual}
 	}
 					
 document {
@@ -40,18 +44,24 @@ solveSystem F / coordinates
 	}
 document {
 	Key => { (track, List, List, List), track, 
-	     [track,gamma], [track,tDegree], [track,tStep], [track,tStepMin], 
+	     [track,gamma], [setDefault,gamma], [track,tDegree], [setDefault,tDegree], 
+	     [track,tStep], [setDefault,tStep], [track,tStepMin], [setDefault,tStepMin],
 	     gamma, tDegree, tStep, tStepMin, 
-	     [track,stepIncreaseFactor], [track, numberSuccessesBeforeIncrease], 
+	     [track,stepIncreaseFactor], [setDefault,stepIncreaseFactor], 
+	     [track, numberSuccessesBeforeIncrease], [setDefault,numberSuccessesBeforeIncrease],
 	     stepIncreaseFactor, numberSuccessesBeforeIncrease, 
-	     Predictor, [track,Predictor], RungeKutta4, Multistep, Tangent, Euler, Secant,
-	     MultistepDegree, [track,MultistepDegree], Certified,
-     	     [track,EndZoneFactor], [track,maxCorrSteps], [track,InfinityThreshold],
+	     Predictor, [track,Predictor], [setDefault,Predictor], RungeKutta4, Multistep, Tangent, Euler, Secant,
+	     MultistepDegree, [track,MultistepDegree], [setDefault,MultistepDegree], Certified,
+     	     [track,EndZoneFactor], [setDefault,EndZoneFactor], [track,maxCorrSteps], [setDefault,maxCorrSteps],
+	     [track,InfinityThreshold], [setDefault,InfinityThreshold],
      	     EndZoneFactor, maxCorrSteps, InfinityThreshold,
-     	     Projectivize, [track,Projectivize], AffinePatches, [track,AffinePatches], DynamicPatch, 
-	     SLP, [track,SLP], HornerForm, CompiledHornerForm, 
-	     CorrectorTolerance, [track,CorrectorTolerance], 
-     	     [track,SLPcorrector], [track,SLPpredictor], [track,NoOutput], [track,Normalize], 
+     	     Projectivize, [track,Projectivize], [setDefault,Projectivize], 
+	     AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
+	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
+	     CorrectorTolerance, [track,CorrectorTolerance], [setDefault,CorrectorTolerance],
+     	     [track,SLPcorrector], [setDefault,SLPcorrector], [track,SLPpredictor], [setDefault,SLPpredictor], 
+	     [track,NoOutput], [setDefault,NoOutput], 
+	     [track,Normalize], [setDefault,Normalize],
 	     SLPcorrector, SLPpredictor, NoOutput, Normalize
 	     },
 	Headline => "track a user homotopy",
@@ -80,7 +90,8 @@ document {
 	     },
 	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
-	of the target system given a start system.", BR{},
+	of the target system given a start system.",
+	SeeAlso => {solveSystem, setDefault},
 	Caveat => {"Predictor=>Certified works only with Software=>[M2,M2engine] and Normalize=>true"},
 	EXAMPLE lines ///
 R = CC[x,y];
@@ -94,8 +105,10 @@ track(S,T,solsS) / coordinates
 document {
 	Key => {
 	     (refine, List, List), refine, 
-	     [refine, Iterations], [refine, Bits], [refine,ErrorTolerance], 
-	     Iterations, Bits, ErrorTolerance
+	     [refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
+	     [refine,ErrorTolerance], [setDefault,ErrorTolerance], 
+	     [refine, ResidualTolerance], [setDefault,ResidualTolerance],
+	     Iterations, Bits, ErrorTolerance, ResidualTolerance
 	     },
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
@@ -117,14 +130,13 @@ document {
 	     Any other value of this option would launch an M2-language procedure."},
 	EXAMPLE lines ///
 R = CC[x,y];
-S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, {-0.1,1.2} };
 refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
      	///
 	}
 
-document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance]},
+document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance], [setDefault,Tolerance]},
      Headline => "specifies the tolerance of a numerical computation" 
      }
 
@@ -146,7 +158,7 @@ totalDegreeStartSystem T
 	}
 
 document {
-     Key => {[solveSystem,Software],[track,Software],[refine, Software], "Software",
+     Key => {[solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],Software,
 	  "M2","M2engine","M2enginePrecookedSLPs"},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
@@ -182,6 +194,7 @@ document {
      "Available at ", TT "http://www.math.uic.edu/~jan/download.html",
      SeeAlso => Software
      }
+///--getSolution and SolutionAttributes are not exported anymore
 document {
 	Key => {(getSolution, ZZ), getSolution, SolutionAttributes, [getSolution,SolutionAttributes]},
 	Headline => "get various attributes of the specified solution",
@@ -203,7 +216,7 @@ document {
 	  },
   	Caveat => {"Requires a preceding run of " , TO "track", " or ", TO "solveSystem", 
 	     " with the (default) option ", TT "Software=>M2engine"},	
-        EXAMPLE lines ///
+        EXAMPLE lines "
 R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
@@ -211,9 +224,9 @@ track(S,T,{(1,1),(1,-1)})
 getSolution 0
 getSolution(0, SolutionAttributes=>LastT)
 getSolution(1, SolutionAttributes=>(Coordinates, SolutionStatus, RCondition))
-     	///
+     	"
 	}
-
+///
 document {
 	Key => {(NAGtrace, ZZ), NAGtrace},
 	Headline => "set the trace level in NumericalAlgebraicGeometry package",
@@ -265,7 +278,8 @@ sortSolutions s
 	}
 
 document {
-	Key => {areEqual, (areEqual,CC,CC), (areEqual,List,List), (areEqual,Matrix,Matrix), [areEqual,Projective]},
+	Key => {areEqual, (areEqual,CC,CC), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	     [areEqual,Projective]},
 	Headline => "determine if solutions are equal",
 	Usage => "b = areEqual(x,y)",
 	Inputs => {
@@ -336,6 +350,3 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
      	///
 	}
 								
-					 
-													 
-							   
