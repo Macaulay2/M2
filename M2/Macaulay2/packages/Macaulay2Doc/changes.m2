@@ -58,8 +58,17 @@ document {
      Key => "changes, 1.4",
      UL {
 	  LI { "major improvements and additions:",
-	       -- UL {
-	       -- 	    }
+	       UL {
+		    LI {
+			 "In preparation for running Macaulay2 in parallel using threads, the Safe C language, in which the
+			 interpreter is written, has been reworked.  The chief advantage is that now, references to 
+			 top level objects now consist of a single address pointer, and thus assignment can happen
+			 atomically.  Formerly, a small integer (for identifying the type of object pointed to) accompanied
+			 the pointer, but now it is stored with the rest of the object.  Also, new keywords have been
+			 added to allow the definition of new types, support has been added for translation to C++,
+			 and support for atomic operations and thread local variables has been added."
+			 }
+	       	    }
 	       },
 	  LI { "new packages:",
 	       UL {
