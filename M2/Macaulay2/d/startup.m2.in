@@ -26,7 +26,6 @@ if firstTime then (
      PackageDictionary#("Package$Core") = getGlobalSymbol(PackageDictionary,"Core");
      ) 
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
-debug							    -- defined later
 disassemble ( () -> debug Core )
 if not firstTime then debug Core -- we need access to the private symbols (we remove the Core private dictionary later.)
 
@@ -50,8 +49,7 @@ if firstTime then (
      restarting = false;
      restarted = false;
      srcdirs = {};
-     toAbsolutePath;							    -- defined later
-     currentPrompts;							    -- defined later
+
      markLoaded = (fullfilename,origfilename,notify,filetime) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
 	  filesLoaded#origfilename = (fullfilename,filetime); 
@@ -252,7 +250,7 @@ if firstTime then (
 	  );
 
      dumpdataFile = null;
-     Layout;							    -- defined later
+
      initlayout := () -> (
 	  if regex(".*/","/aa/bb") =!= {(0, 4)}
 	  or regex("a|b","a") =!= {(0,1)}
@@ -298,8 +296,6 @@ if firstTime then (
 
 dir  := s -> ( m := regex(".*/",s); if m === null or 0 === #m then "./" else substring(m#0#0,m#0#1-1,s))
 base := s -> ( m := regex(".*/",s); if m === null or 0 === #m then s    else substring(m#0#1,      s))
-currentLayout							    -- defined later
-prefixDirectory							    -- defined later
 initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
      bindir := dir exe | "/";
@@ -463,11 +459,11 @@ action := hashTable {
      "--restarted" => arg -> restarted = true,
      "--texmacs" => arg -> (
 	  if phase == 1 then (
-	       topLevelMode = global TeXmacs;
+	       topLevelMode = TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 3 then (
-	       topLevelMode = global TeXmacs;
+	       topLevelMode = TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 4 then (
@@ -521,7 +517,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       if not commandLine#?2 then error "script file name missing";
 	       arg := commandLine#2;
 	       scriptCommandLine = drop(commandLine,2);
-	       if instance(value global load, Function) then load arg else simpleLoad arg;
+	       if instance(load, Function) then load arg else simpleLoad arg;
 	       exit 0))
      else (
 	  if notify then stderr << "--phase " << phase << endl;
@@ -563,7 +559,6 @@ if not isAbsolutePath exe then exe = currentDirectory() | exe ;
 exe = concatenate(realpath dir exe, base exe)
 if notify then stderr << "--executable = " << exe << endl
 
-path							    -- defined later
 describePath := () -> (
      if #path == 0 then stderr << "--file search path empty" << endl
      else (
@@ -584,8 +579,6 @@ loadSetup := () -> (
      error "can't load setup.m2"
      )
 
-moveFile							    -- defined later
-Verbose							    -- defined later
 dump = () -> (
      if not version#"dumpdata" then (
 	  error "not configured for dumping data with this version of Macaulay2";
