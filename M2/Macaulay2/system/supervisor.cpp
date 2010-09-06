@@ -120,6 +120,10 @@ void staticThreadLocalInit()
 {
   THREADLOCALINIT(interrupts_exceptionFlag);
   THREADLOCALINIT(interrupts_interruptedFlag);
+  //Make ABSOLUTELY sure that the exception and interrupt flags are not set.
+  //This memory should be initialized to zero, but doesn't seem to be on all systems.
+  AO_store(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field,0);
+  AO_store(&THREADLOCAL(interrupts_exceptionFlag,struct atomic_field).field,0);
 }
 
 
@@ -134,6 +138,8 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
     abort();
   //create new thread local memory block
   m_LocalThreadMemory = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
+  //make really really sure it is zero
+  memset(m_LocalThreadMemory,0,sizeof(void*)*ThreadSupervisor::s_MaxThreadLocalIdCounter);
   //set memory block location for main thread.  Main thread doesn't do anything, so not really used.
   //however, there are plenty of initializations in it anyway.
   if(pthread_setspecific(threadSupervisor->m_ThreadSpecificKey,m_LocalThreadMemory))
