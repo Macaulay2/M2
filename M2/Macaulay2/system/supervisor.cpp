@@ -173,9 +173,6 @@ void ThreadSupervisor::initialize()
       m_Threads.push_back(thread);
       thread->start();
     }
-  //run tests
-  extern int TS_Test();
-  TS_Test();
 }
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)
 {
