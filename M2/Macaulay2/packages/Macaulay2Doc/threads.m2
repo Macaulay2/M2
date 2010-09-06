@@ -57,7 +57,7 @@ Node
   the class of all threads
 Node
  Key
-  (threadID,Thread)
+--  (threadID,Thread)
   threadID
  Headline
   get the id of a thread
