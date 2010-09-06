@@ -681,7 +681,7 @@ readpromptfun():string := readprompt;
 isReadyFun(e:Expr):Expr := (
      when e
      -- # typical value: isReady, Thread, Boolean
-     is tc:ThreadCell do toExpr(tc.body.done && !tc.body.resultRetrieved)
+     is tc:TaskCell do toExpr(tc.body.done && !tc.body.resultRetrieved)
      -- # typical value: isReady, File, Boolean
      is f:file do toExpr ( 
 	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) 
@@ -1009,7 +1009,7 @@ tostringfun(e:Expr):Expr := (
 	  r)
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")
-     is x:ThreadCell do (
+     is x:TaskCell do (
 --	  while !isInitialized(x) do nothing;
 	  toExpr(
 	       "<<thread " + tostring(x.body.tid)

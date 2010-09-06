@@ -3,7 +3,7 @@ use expr;
 
 header "#include \"../system/supervisorinterface.h\"";
 
-threadCreate(f:function(ThreadCellBody):null,tb:ThreadCellBody) ::=  Ccode(void,
+threadCreate(f:function(TaskCellBody):null,tb:TaskCellBody) ::=  Ccode(void,
      "runM2Task((void *(*)(void *))(",f,"),(void *)(",tb,"))");
 
 
@@ -11,7 +11,7 @@ threadDetach(tid:Thread) ::=  Ccode(int,"pthread_detach(",tid,")");
 
 
 
-startup(tb:ThreadCellBody):null := (
+startup(tb:TaskCellBody):null := (
      --warning wrong return type
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
@@ -42,7 +42,7 @@ isFunction(e:Expr):bool := (
      is s:SpecialExpr do isFunction(s.e)
      else false);
 
-cancelThread(tb:ThreadCellBody):Expr := (
+cancelTask(tb:TaskCellBody):Expr := (
      if tb.resultRetrieved then return buildErrorPacket("thread reasult already retrieved");
      if tb.done then (
 	  if notify then stderr << "--thread " << tb.tid << " done, cancellation not needed" << endl;
@@ -56,11 +56,11 @@ cancelThread(tb:ThreadCellBody):Expr := (
      tb.cancellationRequested = true;
      nullE);
 
-cancelThread(e:Expr):Expr := when e is c:ThreadCell do cancelThread(c.body) else WrongArg("a thread");
--- # typical value: cancelThread, Thread, Nothing
-setupfun("cancelThread",cancelThread);
+cancelTask(e:Expr):Expr := when e is c:TaskCell do cancelTask(c.body) else WrongArg("a thread");
+-- # typical value: cancelTask, Thread, Nothing
+setupfun("cancelTask",cancelTask);
 
-threadCellFinalizer(tc:ThreadCell,p:null):void := (
+threadCellFinalizer(tc:TaskCell,p:null):void := (
      -- It is not safe to call any routines that depend on initialization of global variables here,
      -- because this finalizer may be called early, before all initialization is done.
      -- It is safe to write to stderr, because we've made output to it not depend on global variables being
@@ -71,14 +71,14 @@ threadCellFinalizer(tc:ThreadCell,p:null):void := (
 	  )
      else (
 	  if notify then stderr << "--cancelling inaccessible thread " << tc.body.tid << endl;
-	  when cancelThread(tc.body) is err:Error do (printError(err);) else nothing));
+	  when cancelTask(tc.body) is err:Error do (printError(err);) else nothing));
 
 header "#include <signal.h>";
-inThread2(fun:Expr,arg:Expr):Expr := (
+schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
      -- FIX ME
      threadcounter := 0;
-     tc := ThreadCell(ThreadCellBody(nullThread(), threadcounter, false, false, false, fun, arg, nullE, null(), null()));
+     tc := TaskCell(TaskCellBody(nullThread(), threadcounter, false, false, false, fun, arg, nullE, null(), null()));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      threadCreate(startup,tc.body);
@@ -86,17 +86,17 @@ inThread2(fun:Expr,arg:Expr):Expr := (
      Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",threadCellFinalizer,",0,0,0)");
      Expr(tc));
 
-inThread(e:Expr):Expr := (
+schedule(e:Expr):Expr := (
      when e is args:Sequence do
-     if length(args) == 2 then inThread2(args.0,args.1)
+     if length(args) == 2 then schedule2(args.0,args.1)
      else WrongNumArgs(1,2)
-     else inThread2(e,emptySequenceE));
--- # typical value: inThread, Function, Thread
--- # typical value: inThread, Function, Thing, Thread
-setupfun("inThread",inThread);	   
+     else schedule2(e,emptySequenceE));
+-- # typical value: schedule, Function, Thread
+-- # typical value: schedule, Function, Thing, Thread
+setupfun("schedule",schedule);	   
 
-threadResult(e:Expr):Expr := (
-     when e is c:ThreadCell do
+taskResult(e:Expr):Expr := (
+     when e is c:TaskCell do
      if c.body.resultRetrieved then buildErrorPacket("thread result already retrieved")
      else if !c.body.done then buildErrorPacket("thread not done yet")
      else (
@@ -105,8 +105,8 @@ threadResult(e:Expr):Expr := (
 	  c.body.resultRetrieved = true;
 	  r)
      else WrongArg("a thread"));
--- # typical value: threadResult, Thread, Thing
-setupfun("threadResult",threadResult);
+-- # typical value: taskResult, Thread, Thing
+setupfun("taskResult",taskResult);
 
 
 -- Local Variables:

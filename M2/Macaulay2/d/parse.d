@@ -352,11 +352,11 @@ export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 export pythonObject := Pointer "struct _object *";
 export pythonObjectCell := {+v:pythonObject};
 
-export ThreadCellBody := {+
+export TaskCellBody := {+
      thread:Thread, tid:int, done:bool, cancellationRequested:bool, resultRetrieved:bool,
      fun:Expr, arg:Expr, returnValue:Expr,
      exceptionFlagPointer:atomicFieldPointerOrNull, interruptedFlagPointer:atomicFieldPointerOrNull };
-export ThreadCell := {+ body:ThreadCellBody };
+export TaskCell := {+ body:TaskCellBody };
 
 
 export Expr := (
@@ -403,7 +403,7 @@ export Expr := (
      stringCell or
      pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
-     ThreadCell or 
+     TaskCell or 
      fileOutputSyncState
      );
 export fun := function(Expr):Expr;
@@ -432,7 +432,7 @@ export noRecycle(f:Frame):Frame := (
 	  ) do g = g.outerFrame;
      f);
 
-export isInitialized(c:ThreadCell):bool := c.body.tid != 0; -- not a macro, in lieu of tid being declared volatile
+export isInitialized(c:TaskCell):bool := c.body.tid != 0; -- not a macro, in lieu of tid being declared volatile
 
 
 

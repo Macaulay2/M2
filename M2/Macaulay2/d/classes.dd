@@ -111,7 +111,7 @@ export Class(e:Expr):HashTable := (
      is CodeClosure do codeClass
      is pythonObjectCell do pythonObjectClass
      is xmlNodeCell do xmlNodeClass
-     is ThreadCell do threadClass
+     is TaskCell do threadClass
      is xmlAttrCell do xmlAttrClass
      is MysqlConnectionWrapper do mysqlConnectionClass
      is MysqlResultWrapper do mysqlResultClass
