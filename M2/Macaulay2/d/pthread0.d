@@ -10,7 +10,7 @@ declarations "
     #include <pthread.h>
     #define GC_THREADS
     #include <gc/gc.h>
-    #include <../e/mutex.h>
+    #include <../system/mutex.h>
 
 ";
 export voidPointer := Pointer "void *";
