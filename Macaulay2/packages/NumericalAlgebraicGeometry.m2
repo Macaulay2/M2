@@ -32,15 +32,19 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "Tolerance",
-     "getSolution", "SolutionAttributes",       
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
+     "Attempts",
      "NAGtrace"
      }
 exportMutable {
      }
+-- local functions/symbols
+local getSolution, SolutionAttributes       
 
 needsPackage "NAGtypes"
+
+
 
 -- DEBUG CORE ----------------------------------------
 debug Core; -- to enable engine routines
@@ -159,15 +163,13 @@ integratePoly (RingElement,Number,Number) := RingElement => (f,a,b) -> (
      )
 		       
 
-multistepHash = new MutableHashTable;
 multistepPredictor = method(TypicalValue => List)
-multistepPredictor (QQ,List) := List => (c,s) -> (
+multistepPredictor (QQ,List) := List => memoize((c,s) -> (
 -- coefficients for a multistep predictor
 -- IN:  c = step adjustment coefficient (in QQ)
 --      s = list of step adjustments (from the stepsize h = t_1-t_0)
 --          s#i =  1 => t_(i+2)-t_(i+1) = c^(s#j)*(t_(i+1)-t_i)
 -- OUT: b = coefficients in Adams-Bashforth-like method (list of rational numbers)
-     if multistepHash#?(c,s) then return multistepHash#(c,s);
      t := symbol t;
      n := #s + 1; -- t_n is the one for which prediction is being made
      R := QQ; -- frac(QQ[h]);        
@@ -178,7 +180,7 @@ multistepPredictor (QQ,List) := List => (c,s) -> (
 	       if DBG>3 then << "t_("<< j+1 <<") = " << t_(j+1) << endl;
 	       if j<n-1 then stp = c^(s#j)*stp;
 	       ));
-     multistepHash#(c,s) = apply(n, i->(
+     apply(n, i->(
 	       -- lagrange poly
 	       T := symbol T;
 	       RT := R[T];
@@ -187,7 +189,7 @@ multistepPredictor (QQ,List) := List => (c,s) -> (
 	       -- << "i = " << i << "  L = " << L << endl;
 	       integratePoly(L,t_(n-1),t_n)
 	       ))
-     )
+     ))
 
 multistepHashLooseEnd = new MutableHashTable;
 multistepPredictorLooseEnd = method(TypicalValue => List)
@@ -528,9 +530,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      ); ----------------- end ----------- M2 section -------------------------------------          
 
      compStartTime := currentTime();      
-     
+
+     PT := null;     
      rawSols := if member(o.Software,{M2enginePrecookedSLPs, M2engine}) then (
-	  PT := if o.Software===M2engine then (
+	  PT = if o.Software===M2engine then (
 	       if isProjective then rawPathTrackerProjective( raw matrix {nS}, raw matrix {nT}, 
 		    reBW'ST ) -- pass normalized start/target and Re(B-W product)
 	       else rawPathTracker(raw H) 
@@ -554,7 +557,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  if o.NoOutput then null else 
 	  --entries map(K,rawGetAllSolutionsPT(PT)
 	  apply(#solsS,i->apply({Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps}, 
-		    toList getSolution i, 
+		    toList getSolution(PT,i), 
 		    (attr,val)->if attr===Coordinates then val else attr=>val))
 	  )
      else if o.Software===M2 then (
@@ -837,9 +840,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  << "Setup time: " << compStartTime - setupStartTime << endl;
 	  << "Computing time:" << currentTime() - compStartTime << endl; 
 	  );
-     apply(ret, s->point (
-	       if HISTORY then drop(toList s, -1)
-	       else toList s
+     apply(ret, s->(
+	       p := point (
+	       	    if HISTORY then drop(toList s, -1)
+	       	    else toList s
+	       	    );
+	       if PT=!=null then p.Tracker=PT;
+	       p
 	       ))
      )
 
@@ -868,12 +875,17 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       )  
 	  else error "expected a square system";
      	  );
-
+     if #solsT == 0 then error "expected a nonempty set of solutions";
+     PT := null;
+     if class first solsT === Point 
+     then ( 
+	  if (first solsT).?Tracker then PT = (first solsT).Tracker;
+	  solsT = solsT/coordinates;
+     	  );
+     
      if not isProjective then (
      	  if o.Software === M2engine then (
-	       if lastPathTracker === null 
-	       then error "path tracker is not set up"
-	       else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.ErrorTolerance, 
+	       if PT=!=null then return entries map(CC_53, rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, 
 		    	 if o.Iteration===null then 30 else o.Iteration));
      	       ) else if o.Software === PHCPACK then (
 	       return refinePHCpack(T,solsT,o)
@@ -916,13 +928,13 @@ refine (List,List) := List => o -> (T,solsT) -> (
 solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
 
 getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps)})
-getSolution ZZ := Thing => o -> i -> (
--- gets specified solution from the engine
--- IN:  the number of solution
+getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
+-- gets specified solution from the engine (not exported anymore)
+-- IN:  (rawPathTracker, solution's number)
 --      SolutionAttributes=> ... specifies various data attached to a solution ...
 -- OUT: whatever is requested by SolutionAttributes (either as a sequence of as a single element)
-     if lastPathTracker === null 
-     then error "path tracker is not set up";
+     --if lastPathTracker === null 
+     --then error "path tracker is not set up";
      p := o.SolutionAttributes; 
      possible := set{Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps};
      if not isSubset(set{p}, possible) and 
@@ -930,19 +942,19 @@ getSolution ZZ := Thing => o -> i -> (
      then error "wrong SolutionAttributes option";
      pp := if class p === Sequence then p else {p};
      ret := apply(pp, r->
-	  if r===Coordinates then flatten entries map(CC_53, rawGetSolutionPT(lastPathTracker, i))
-	  else if r===SolutionStatus then solutionStatusLIST#(rawGetSolutionStatusPT(lastPathTracker, i))
-	  else if r===LastT then rawGetSolutionLastTvaluePT(lastPathTracker, i)
-	  else if r===RCondition then rawGetSolutionRcondPT(lastPathTracker, i)
-	  else if r===NumberOfSteps then rawGetSolutionStepsPT(lastPathTracker, i)
+	  if r===Coordinates then flatten entries map(CC_53, rawGetSolutionPT(PT, i))
+	  else if r===SolutionStatus then solutionStatusLIST#(rawGetSolutionStatusPT(PT, i))
+	  else if r===LastT then rawGetSolutionLastTvaluePT(PT, i)
+	  else if r===RCondition then rawGetSolutionRcondPT(PT, i)
+	  else if r===NumberOfSteps then rawGetSolutionStepsPT(PT, i)
 	  );
      if class p === Sequence then ret else first ret
      )
 
 isRegular = method()
-isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
+-- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
 isRegular Point := (s) ->  s.SolutionStatus === Regular
-isRegular (List, ZZ) := (sols, s) -> if DEFAULT.Software === M2engine then isRegular s else isRegular sols#s
+isRegular (List, ZZ) := (sols, s) -> isRegular sols#s
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
@@ -1422,7 +1434,7 @@ regeneration List := List => o -> F -> (
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if o.Software == M2engine then (
 			 sing := toList singularSolutions(T,targetPoints);
-			 reg := toList select(0..#targetPoints-1, i->getSolution(i, SolutionAttributes=>SolutionStatus)==Regular);
+			 reg := select(targetPoints, p->p.SolutionStatus==Regular);
 			 --print (sing,reg);
 		    	 if o.Output == Regular then targetPoints = targetPoints_reg 
 		    	 else targetPoints = targetPoints_reg | targetPoints_sing;
@@ -1475,7 +1487,10 @@ decompose WitnessSet := (W) -> (
 	  while (c := random(#cs); #cs#c == 0) do (); -- vvv
 	  p := cs#c#(random(#(cs#c))); -- pick a component/point (rewrite!!!)
 	  S := eq | slice W;	  
-	  while (T := sliceEquations(randomSlice(k,n),R); pt' := track(S,eq|T,{coordinates (W.Points)#p}); not isRegular(pt',0)) do (); 
+	  while (T := sliceEquations(randomSlice(k,n),R); 
+	       pt' := track(S,eq|T,{coordinates (W.Points)#p}); 
+	       not isRegular(pt',0)) 
+	  do (); 
 	  pt := first movePoints(eq, T, slice W, pt'/coordinates);
 	  if (c' :=  findComponent coordinates pt) === null then error "point outside of any current component";
 	  if c' == c then n'misses = n'misses + 1
@@ -2461,7 +2476,6 @@ end
 -- because loading stops when the symbol "end" is encountered.
 
 restart
-loadPackage "NumericalAlgebraicGeometry"
 uninstallPackage "NumericalAlgebraicGeometry"
 installPackage "NumericalAlgebraicGeometry"
 -- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
