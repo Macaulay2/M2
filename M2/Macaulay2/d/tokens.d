@@ -65,6 +65,10 @@ export Dictionary := {
 				-- for function closures : yes
      Protected:bool             -- whether symbols can be added; closing a package protects it
      };
+export dictionaryDepth(d:Dictionary):int := (
+     i := 0;
+     while d.outerDictionary != d do (i = i+1; d = d.outerDictionary);
+     i);
 export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
 export Token := {+		-- a word, as encountered in the input
      word:Word,			--   the word

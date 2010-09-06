@@ -410,8 +410,13 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  else (
 	       if forcedef
 	       then (
+		    if t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0 then (
+			 printErrorMessage(t,"creation of implicitly global symbol in a local scope: " + t.word.name);
+			 HadError = true;
+			 -- make it anyway, so we don't get two error messages for the same variable
+			 );
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
-	       	    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread);
+		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread);
 		    )
 	       else (
 	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
