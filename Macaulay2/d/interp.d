@@ -161,8 +161,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
 			      )
 			 else (
-			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
-			      then (		  
+			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
+			      then (
 				   -- result of BeforeEval is ignored unless error:
 				   -- BeforeEval method is independent of mode
 				   f := convert(parsed); -- convert to runnable code
@@ -240,15 +240,14 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     )
 					)
 				   )
-			      else if isatty(file) 
-			      then flush(file)
-			      else return (
-				   if lasterrmsg != dummyError
-				   then Expr(lasterrmsg)
-				   else (
-					er := Error(dummyPosition,"dummy printed error message",nullE,false,dummyFrame);
-					er.printed = true;
-					Expr(er)))))))));
+			      else (
+				   -- an error occurred in localBind
+				   if isatty(file) 
+				   then flush(file)
+				   else return (
+					if lasterrmsg != dummyError
+					then Expr(lasterrmsg)
+					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
 incrementInterpreterDepth():void := (
