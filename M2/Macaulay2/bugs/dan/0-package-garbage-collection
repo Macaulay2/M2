@@ -1,0 +1,19 @@
+--*-M2-*-
+
+reloading a package can lead to a memory leak:
+
+set a memory limit for this test:
+
+ulimit -v 500000					    -- but this doesn't work on Mac OS X
+M2
+
+while true do value ///
+   newPackage ("foo",Reload=>true)
+   XX = new Type of BasicList
+   globalAssignment XX
+   xx = new XX from {Bag {10000000 : 0}} -- about 40 MB
+   << "." << flush;
+   ///
+
+debug Core
+peek Attributes						    -- shows them stashed there
