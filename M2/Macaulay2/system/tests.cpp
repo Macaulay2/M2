@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-static bool finished[2000][2000];
+static volatile bool finished[2000][2000];
 
 struct tuple
 {
@@ -44,7 +44,7 @@ static int TS_Test1()
   waitOnTask(tasks[20-1][20-1]);
 }
 
-static bool canceled = false;
+static volatile bool canceled = false;
 
 static void* TS_Test2_Func1(void* vtup)
 {
