@@ -1,4 +1,4 @@
---*- coding: utf-8 -*- 
+--*- coding: utf-8 -*-
 needsPackage "Polyhedra"
 
 -- Check version compatability of Polyhedra
@@ -74,7 +74,7 @@ export {"ToricVectorBundle",
      "charts",
      "cocycleCheck", 
      "cotangentBundle",
-     "deltaE", 
+     "deltaE",
      "details",  
      "eulerChi", 
      "existsDecomposition", 
@@ -616,48 +616,62 @@ deltaE = method()
 
 --   INPUT : 'tvb',  a ToricVectorBundle
 --  OUTPUT : a Polyhedron
-deltaE ToricVectorBundle := (cacheValue symbol deltaE)( tvb -> (
-     	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
-     	  n := tvb#"dimension of the variety";
+deltaE ToricVectorBundle := (cacheValue symbol deltaE)( T -> (
+	  if not isComplete T#"ToricVariety" then error("The toric variety needs to be complete.");
+     	  n := T#"dimension of the variety";
 	  if instance(tvb,ToricVectorBundleKaneyama) then (
-	       -- Extracting neccesary data
-     	       raylist := rays tvb;
-     	       rl := #raylist;
-     	       k := tvb#"rank of the vector bundle";
-     	       tCT := sort keys tvb#"topConeTable";
-     	       dT := tvb#"degreeTable";
-     	       -- Creating an index table, for each ray the first top cone containing it
-     	       raytCTindex := hashTable apply(#raylist, r -> r => position(tCT, C -> contains(C,raylist#r)));
-     	       raylist = transpose matrix {raylist};
-     	       -- Get the subsets of 'n' elements in 'rl'
-     	       sset := subsets(rl,n);
-     	       jList := {{}};
-     	       -- Get all different combinations of choices of variety dimension many degree vectors
-     	       for i from 0 to n-1 do jList = flatten apply(jList, l -> apply(k, j -> l|{j}));
-     	       M := map(QQ^1,QQ^n,0);
-     	       v := map(QQ^1,QQ^1,0);
-     	       -- For every 'n' in 'l' subset and any combination in jList get the intersection of the dual cones
-     	       -- of the corresponding rays. If this is a non-empty compact polytope then add the vertices to the
-     	       -- list L
-     	       L := unique flatten apply(sset, s -> (
-	       	    	 unique for j in jList list (
-		    	      N := matrix apply(n, i -> {raylist^{s#i},raylist^{s#i} * ((dT#(tCT#(raytCTindex#(s#i))))_{j#i})});
-		    	      w := N_{n};
-		    	      N = submatrix'(N,{n});
-		    	      P := intersection(M,v,N,w);
-		    	      if isCompact P and (not isEmpty P) then vertices P else continue)));
-     	       -- Make a matrix of all the vertices in L
-     	       M = matrix {L};
-     	       convexHull M)
+	       dT := values T#"degreeTable";
+	       dT = matrix {dT};
+	       convexHull dT)
 	  else (
-	       -- Extracting neccesary data
-	       rayTable := tvb#"rayTable";
-	       l := #rayTable;
-	       fMT := hashTable apply(pairs tvb#"filtrationMatricesTable", (i,j) -> (j = flatten entries j; i => matrix{{-(min j),max j}}));
-	  		      sset1 := select(subsets(rays tvb,n), s -> rank matrix {s} == n);
-	  		      convexHull matrix {apply(sset1, s -> (
-			 		     M := transpose matrix {apply(s, r -> (-r | r) || (fMT#r))};
-			 		     vertices intersection(M_{0..n-1},M_{n})))})))
+	       W := findWeights T;
+	       W = apply(W,first);
+	       W = matrix {W};
+	       convexHull W)))
+
+--oldDeltaE = method()
+--oldDeltaE ToricVectorBundle := (cacheValue symbol oldDeltaE)( tvb -> (
+--     	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
+--     	  n := tvb#"dimension of the variety";
+--	  if instance(tvb,ToricVectorBundleKaneyama) then (
+--	       -- Extracting neccesary data
+--     	       raylist := rays tvb;
+--     	       rl := #raylist;
+--     	       k := tvb#"rank of the vector bundle";
+--     	       tCT := sort keys tvb#"topConeTable";
+--     	       dT := tvb#"degreeTable";
+--     	       -- Creating an index table, for each ray the first top cone containing it
+--     	       raytCTindex := hashTable apply(#raylist, r -> r => position(tCT, C -> contains(C,raylist#r)));
+--     	       raylist = transpose matrix {raylist};
+--     	       -- Get the subsets of 'n' elements in 'rl'
+--     	       sset := subsets(rl,n);
+--     	       jList := {{}};
+--     	       -- Get all different combinations of choices of variety dimension many degree vectors
+--     	       for i from 0 to n-1 do jList = flatten apply(jList, l -> apply(k, j -> l|{j}));
+--     	       M := map(QQ^1,QQ^n,0);
+--     	       v := map(QQ^1,QQ^1,0);
+--     	       -- For every 'n' in 'l' subset and any combination in jList get the intersection of the dual cones
+--     	       -- of the corresponding rays. If this is a non-empty compact polytope then add the vertices to the
+--     	       -- list L
+--     	       L := unique flatten apply(sset, s -> (
+--	       	    	 unique for j in jList list (
+--		    	      N := matrix apply(n, i -> {raylist^{s#i},raylist^{s#i} * ((dT#(tCT#(raytCTindex#(s#i))))_{j#i})});
+--		    	      w := N_{n};
+--		    	      N = submatrix'(N,{n});
+--		    	      P := intersection(M,v,N,w);
+--		    	      if isCompact P and (not isEmpty P) then vertices P else continue)));
+--     	       -- Make a matrix of all the vertices in L
+--     	       M = matrix {L};
+--     	       convexHull M)
+--	  else (
+--	       -- Extracting neccesary data
+--	       rayTable := tvb#"rayTable";
+--	       l := #rayTable;
+--	       fMT := hashTable apply(pairs tvb#"filtrationMatricesTable", (i,j) -> (j = flatten entries j; i => matrix{{-(min j),max j}}));
+--	  		      sset1 := select(subsets(rays tvb,n), s -> rank matrix {s} == n);
+--	  		      convexHull matrix {apply(sset1, s -> (
+--			 		     M := transpose matrix {apply(s, r -> (-r | r) || (fMT#r))};
+--			 		     vertices intersection(M_{0..n-1},M_{n})))})))
 
 
 --   INPUT : '(tvb1,tvb2)',  two ToricVectorBundle over the same Fan
