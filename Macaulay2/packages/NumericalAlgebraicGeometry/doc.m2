@@ -78,8 +78,9 @@ document {
 	     numberSuccessesBeforeIncrease => {"determine how step size is adjusted"},
 	     Predictor => {"a method to predict the next point on the homotopy path: 
 		  choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
-		  TO "Euler", ", ", TO "Secant", ", ", TO "Certified", ". The option ", TO "Certified", 
-		  " provides certified tracking."},
+		  TO "Euler", ", ", TO "Secant", ", ", TO "Multistep", ", ", TO "Certified", 
+		  ". The option ", TO "Certified", " provides certified tracking."},
+	     MultistepDegree => {"degree of the Multistep predictor"},
 	     maxCorrSteps => {"max number of steps corrector takes before a failure is declared"}, 
 	     CorrectorTolerance => {"corrector succeeds if the relative error does not exceed this tolerance"},
      	     EndZoneFactor => {"size of `end zone'"},  
