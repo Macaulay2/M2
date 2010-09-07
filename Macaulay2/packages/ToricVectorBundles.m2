@@ -619,7 +619,7 @@ deltaE = method()
 deltaE ToricVectorBundle := (cacheValue symbol deltaE)( T -> (
 	  if not isComplete T#"ToricVariety" then error("The toric variety needs to be complete.");
      	  n := T#"dimension of the variety";
-	  if instance(tvb,ToricVectorBundleKaneyama) then (
+	  if instance(T,ToricVectorBundleKaneyama) then (
 	       dT := values T#"degreeTable";
 	       dT = matrix {dT};
 	       convexHull dT)
@@ -3954,9 +3954,9 @@ TEST ///
 T = toricVectorBundle(3,projectiveSpaceFan 2,"Type" => "Kaneyama")
 assert(deltaE T == convexHull matrix{{0},{0}})
 T = tangentBundle(projectiveSpaceFan 2,"Type" => "Kaneyama")
-assert(deltaE T == convexHull matrix {{-1,2,-1},{-1,-1,2}})
+assert(deltaE T == convexHull matrix {{-1,1,0,1,0,-1},{0,0,-1,-1,1,1}})
 T = cotangentBundle(pp1ProductFan 3,"Type" => "Kaneyama")
-assert(deltaE T == convexHull matrix {{-1,-1,-1,-1,1,1,1,1},{-1,-1,1,1,-1,-1,1,1},{-1,1,-1,1,-1,1,-1,1}})
+assert(deltaE T == convexHull matrix {{-1,1,0,0,0,0},{0,0,-1,1,0,0},{0,0,0,0,-1,1}})
 ///
 
 -- Test 10
@@ -3965,9 +3965,9 @@ TEST ///
 T = toricVectorBundle(3,projectiveSpaceFan 2)
 assert(deltaE T == convexHull matrix{{0},{0}})
 T = tangentBundle projectiveSpaceFan 2
-assert(deltaE T == convexHull matrix {{-1,2,-1},{-1,-1,2}})
+assert(deltaE T == convexHull matrix {{-1, 1, 0, 1, 0, -1}, {0, 0, -1, -1, 1, 1}})
 T = cotangentBundle pp1ProductFan 3
-assert(deltaE T == convexHull matrix {{-1,-1,-1,-1,1,1,1,1},{-1,-1,1,1,-1,-1,1,1},{-1,1,-1,1,-1,1,-1,1}})
+assert(deltaE T == convexHull matrix {{-1,1,0,0,0,0},{0,0,-1,1,0,0},{0,0,0,0,-1,1}})
 ///
 
 -- Test 11
