@@ -9,20 +9,18 @@ for predictor in {RungeKutta4,Tangent,Euler} do (
      (S,T,solsS) = smallExample();
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor);
      SM = sortSolutions M;
-     print apply(#SM, i-> getSolution(i, SolutionAttributes=>NumberOfSteps));
      assert areEqual(SM/coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}} );
      )
 (S,T,solsS) = smallInfinityExample()
 M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine);
-assert all({0,2}, i->getSolution(i,SolutionAttributes=>SolutionStatus)==Infinity) 
-assert all({1,3}, i->getSolution(i,SolutionAttributes=>SolutionStatus)==Regular) 
+assert all({0,2}, i->M#i#SolutionStatus==Infinity) 
+assert all({1,3}, i->M#i#SolutionStatus==Regular) 
 
-(t,rcond,ns) = getSolution(3, SolutionAttributes=>(LastT,RCondition,NumberOfSteps))
-assert(t>0.99999 and rcond>0.1 and ns < 20)
+assert(M#3#LastT>0.99999 and M#3#RCondition>0.1 and M#3#NumberOfSteps < 20)
 
 T = cyclic(5,CC) 
 M = solveSystem(T_*, Software=>M2engine);
-S = apply(#M,i->getSolution(i,SolutionAttributes=>SolutionStatus));
+S = apply(#M,i->M#i#SolutionStatus);
 assert( #select(S, s->s==Regular) == 70
      and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
 
@@ -30,7 +28,6 @@ for predictor in {RungeKutta4,Tangent,Certified} do (
      (S,T,solsS) = smallExample();
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor, Projectivize=>true, Normalize=>true);
      SM = sortSolutions M;
-     print apply(#SM, i-> getSolution(i, SolutionAttributes=>NumberOfSteps));
      assert areEqual( SM/coordinates, {{ -1, 0}, {0, -1}, {0, 1}, {1, 0}}, Tolerance=>0.03);
      )		    
 end
@@ -38,9 +35,9 @@ restart
 load "SoftwareM2engine.tst.m2"
 T = cyclic(6,CC) 
 M = solveSystem(T_*, Software=>M2engine);
-S = apply(#M,i->getSolution(i,SolutionAttributes=>SolutionStatus));
+S = apply(#M,i->M#i#SolutionStatus);
 #select(S, s->s==Regular)
-S = apply(#M,i->getSolution(i,SolutionAttributes=>RCondition));
+S = M/(s->s.RCondition);
 #select(S, s->s>0.001)
 
 

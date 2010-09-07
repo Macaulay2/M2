@@ -191,14 +191,12 @@ multistepPredictor (QQ,List) := List => memoize((c,s) -> (
 	       ))
      ))
 
-multistepHashLooseEnd = new MutableHashTable;
 multistepPredictorLooseEnd = method(TypicalValue => List)
-multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
+multistepPredictorLooseEnd (QQ,List) := List => memoize((c,s) -> (
 -- coefficients for a multistep predictor with intederminate last step
 -- IN:  c = step adjustment coefficient (in QQ)
 --      s = list of step adjustments (from the initial stepsize h = t_1-t_0)
 -- OUT: b = list of polinomials in QQ[a], where a=(last step size)/(next to last stepsize)   
-     if multistepHashLooseEnd#?(c,s) then return multistepHashLooseEnd#(c,s);
      t := symbol t;
      n := #s + 2; -- t_n is the one for which prediction is being made
      a := symbol a;
@@ -211,7 +209,7 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
 	       stp = if j<n-2 then c^(s#j)*stp 
 	       else if j==n-2 then a*stp;
 	       ));
-     multistepHashLooseEnd#(c,s) = apply(n, i->(
+     apply(n, i->(
 	       -- lagrange poly
 	       T := symbol T;
 	       RT := R[T];
@@ -220,20 +218,25 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
 	       -- << "i = " << i << "  L = " << L << endl;
 	       integratePoly(L,t_(n-1),t_n)
 	       ))
+     ))
+
+inverseMatrix = method() -- since inverse(Matrix) does not work for matrices with CC entries. 
+inverseMatrix Matrix := M -> (
+     n := numRows M;
+     if n!=numColumns M then error "square matrix expected";
+     solve(M, map CC^n) 
      )
-------------------------------------------------------
--- 2-norm of a vector with CC entries
-norm2 = method(TypicalValue=>RR)
+
+norm2 = method(TypicalValue=>RR) -- 2-norm of a vector with CC entries
 norm2 List := v -> sqrt(sum(v, x->x*conjugate x));
-norm2 Matrix := v -> norm2 flatten entries v;
--- Frobenius norm of a matrix
-normF = method(TypicalValue=>RR)
+norm2 Matrix := v -> norm2 flatten entries v
+
+normF = method(TypicalValue=>RR) -- Frobenius norm of a matrix
 normF Matrix := M -> max first SVD M;
      
 
-normalize = method(TypicalValue => Matrix)
--- normalizes a column vector with CC entries
-normalize Matrix := v -> (1/norm2 v)*v;
+normalize = method(TypicalValue => Matrix) -- normalizes a column vector with CC entries
+normalize Matrix := v -> (1/norm2 v)*v
 
 BombieriWeylScalarProduct = method(TypicalValue=>CC)
 BombieriWeylScalarProduct (RingElement,RingElement) := CC => (f,g) -> sum(listForm f, a->(
@@ -494,7 +497,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  etHt = etHt + tr#0;
 	  tr#1
 	  );
-     evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
+     evalMinusInverseHxHt := (x0,t0)-> -(inverseMatrix evalHx(x0,t0))*evalHt(x0,t0);
      solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
      
      if o.SLPpredictor then (
@@ -656,6 +659,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      )
 			 )
 		    else if o.Predictor == Multistep then (
+			 if DBG>3 then << ">>> entering Multistep predictor: x0=" << x0 << ", t0=" << t0 << endl;
      	       	    	 history#count#"rhsODE" = evalMinusInverseHxHt(x0,t0);
 			 nPoints := min(count, o.MultistepDegree);
 			 -- think: t_0, ..., t_{nPoints-1}
@@ -685,7 +689,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      delta = ( history#(count-nPoints+2)#"t" - history#(count-nPoints+1)#"t" );
 			      apply(nPoints-2, i->history#(count-nPoints+3+i)#"stepAdj") | {stepAdj}
 			      );
-			 
+			 if DBG>3 then << "stepAdjSequence = " << stepAdjSequence << endl;
+			 			 
 			 MScoeffs := 
 			 if tStep>1-t0 and nPoints > 1 then (
 			      aMScoeffs := multistepPredictorLooseEnd(o.stepIncreaseFactor,drop(stepAdjSequence,-1));
