@@ -204,8 +204,8 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       );
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then(
-	       ffinal = ffinverse*f*ff;
-	       ffinalInverse = ffinverse*finverse*ff;	     	  
+	       ffinal := ffinverse*f*ff;
+	       ffinalInverse := ffinverse*finverse*ff;	     	  
 	       ffinal.cache.inverse = ffinalInverse;
                ffinalInverse.cache.inverse = ffinal;
 	       X = apply(X, i -> ffinverse i);   	       
