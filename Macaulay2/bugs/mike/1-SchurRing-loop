@@ -1,5 +1,9 @@
 -*- mode: M2 -*-
 
+S = schurRing (s,4)
+s_{44}
+oo^6
+
 a computation that can't be interrupted quickly enough:
 
     i1 : S = schurRing (s,4)

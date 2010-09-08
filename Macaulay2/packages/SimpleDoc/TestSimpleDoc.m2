@@ -324,6 +324,32 @@ Node
     g14
 ///
 ------------------------------------------
+str15 =  ///
+Node
+  Key
+    "test15"
+  Headline
+    boo15
+  Description
+    Text
+      Valid keywords include:
+    Code
+      UL {
+	   {TEX "\\bf Key"},
+	   TEX "\\bf Headline",
+	   TEX "\\bf Usage",
+	   TEX "\\bf Inputs",
+	   TEX "\\bf Outputs",
+	   TEX "\\bf Consequences",
+	   TEX "\\bf Description",
+	   TEX "\\bf SeeAlso",
+	   TEX "\\bf Subnodes",
+	   TEX "\\bf Caveat"
+	   }
+  Caveat
+  SeeAlso
+///
+------------------------------------------
 
 beginDocumentation()
 
@@ -341,6 +367,7 @@ multidoc str11
 multidoc str12
 multidoc str13
 -- multidoc str14 -- gives bad error message
+multidoc str15
 
 -- document \ doc1
 -- document \ doc2
