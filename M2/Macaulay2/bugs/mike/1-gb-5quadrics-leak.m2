@@ -16,12 +16,12 @@ setRandomSeed seed
 
 H = () -> (
      J := trim randomSparseIdeal(B,2,5);
---     g := gens gb J;
---     c := codim J;
---     b := res J;
+     g := gens gb J;
+     c := codim J;
+     b := res J;
      )
 
-H = () -> (
+Ha = () -> (
      J := ideal (l^2,a*k+f*l,g*i,b*c-2*e*f,a*b+g*k);
      --c := codim J;
      b := res J;

@@ -42,7 +42,7 @@ I = Grassmannian(1, 6, R);
 RZ = R/I;
 IC1 = ideal(p_{0,1}, p_{0,2}, p_{0,3}, p_{1,2}, p_{1,3}, p_{2,3});
 IC2 = ideal(p_{3,4}, p_{3,5}, p_{3,6}, p_{4,5}, p_{4,6}, p_{5,6});
-gbTrace 1;
+gbTrace = 1;
 time E2 = Ext^2(IC1, IC2);
 Gr = Proj RZ;
 SE2 = sheaf(E2);

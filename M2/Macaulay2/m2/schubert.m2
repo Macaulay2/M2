@@ -69,8 +69,8 @@ Schubert(ZZ, ZZ, VisibleList) := o -> (k,n,sigma) -> (
 	       if sgn2 == 0 then continue;
 	       sgn := sgn1 * sgn2 * signOfShuffle(s1,s2);
 	       sgn * vr#c * vr#d));
-     g := generators forceGB matrix(R,{(G|higher)});
-     forceGB g;
+     time g := generators forceGB matrix(R,{(G|higher)});
+     time forceGB g;
      ideal g)
 
 -- Local Variables:

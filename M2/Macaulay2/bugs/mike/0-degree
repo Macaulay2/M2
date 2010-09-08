@@ -1,3 +1,8 @@
+ZZ[x, MonomialOrder=>Lex, Inverses=>true]
+degree x
+degree (x^-1)
+
+end
 i11 : ZZ[x, MonomialOrder=>Lex, Inverses=>true]
 
 o11 = ZZ[x]
@@ -5,6 +10,8 @@ o11 = ZZ[x]
 o11 : PolynomialRing
 
 i12 : degree x
+
+
 
 o12 = {1}
 

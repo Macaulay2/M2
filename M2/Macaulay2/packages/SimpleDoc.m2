@@ -55,7 +55,9 @@ indentationLevel = (s) -> (
      )
 
 singleString = (key, textlines, keylinenum) -> (
-     if #textlines =!= 1 then 
+     if #textlines === 0 then
+       error("line ",toString keylinenum," of string: expected single indented line after "|toString key)
+     else if #textlines > 1 then 
        error("line ",toString getLinenum textlines#1," of string: expected single indented line after "|toString key);
      key => getText textlines#0)
 
