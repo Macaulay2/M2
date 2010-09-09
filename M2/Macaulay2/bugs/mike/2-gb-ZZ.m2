@@ -1,5 +1,8 @@
-gens gb matrix {{-1}}
-gens gb matrix {{1}}
+-- This file involves gb over ZZ and QQ, ZZ[]
+-- Currently (8 Sep 2010) I (MES) do not see any bug here anymore
+
+assert(gens gb matrix {{-1}} == matrix"1")
+assert(gens gb matrix {{1}} ==  matrix"1")
 
 gens gb random(ZZ^3, ZZ^4)
 
