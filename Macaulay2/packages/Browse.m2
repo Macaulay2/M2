@@ -12,6 +12,10 @@ newPackage ( "Browse",
 
 export {browse}
 
+dictionaryPath = prepend(Core#"private dictionary",dictionaryPath)
+frame' = frame
+dictionaryPath = delete (Core#"private dictionary",dictionaryPath)
+
 menu = method()
 
 RUNME = new SelfInitializingType of BasicList
@@ -76,11 +80,11 @@ menu(Function,Thing) := (x,back) -> (
 		    ("CODE",(RUNME{()->(<< code x << endl;read "press return: ";)},(x,back))),
 	  	    ("EDIT",(RUNME{()->edit x},(x,back)))});
 	  );
-     items = join(items, apply(#(frame x), i -> (
-		    "frame#" | toString i | "[" | toString class (frame x)#i | "]",
-		    ((frame x)#i, (x,back))
+     items = join(items, apply(#(frame' x), i -> (
+		    "frame#" | toString i | "[" | toString class (frame' x)#i | "]",
+		    ((frame' x)#i, (x,back))
 		    )));
-     if help x =!= null
+     if (try help x) =!= null
      then items = append(items,("DOC",(RUNME{()-><< help x << endl},(x,back))));
      showit(items, (x,back), 0))
 
