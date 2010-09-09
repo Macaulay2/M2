@@ -374,12 +374,6 @@ endPackage = method()
 endPackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
-     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> mutable s and value s === s);
-     if #b > 0 then (
-	  PackageDictionary#title <- PackageDictionary#title;
-	  b = last \ sort apply(b, s -> (hash s,s));
-	  error splice ("mutable unexported unset symbol(s) in package ",title,": ", toSequence between_", " b);
-	  );
      ws := set pkg#"exported mutable symbols";
      exportDict := pkg.Dictionary;
      scan(sortByHash values exportDict, s -> if not ws#?s then (
@@ -411,6 +405,12 @@ endPackage String := title -> (
      if pkg.?loadDepth then (
 	  loadDepth = pkg.loadDepth;
 	  remove(pkg,loadDepth);
+	  );
+     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> mutable s and value s === s);
+     if #b > 0 then (
+	  PackageDictionary#title <- PackageDictionary#title;
+	  b = last \ sort apply(b, s -> (hash s,s));
+	  error splice ("mutable unexported unset symbol(s) in package ",title,": ", toSequence between_", " b);
 	  );
      pkg)
 
