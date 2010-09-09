@@ -24,14 +24,14 @@ install-programs:
 	if [ -d final/bin/. ] ; \
 	then rm -rf @pre_programsdir@ ; \
 	     @INSTALL@ -d @pre_programsdir@ ; \
-	     @TAR@ cf - -C final/bin/. . | @TAR@ xfv - -C @pre_programsdir@ ; \
+	     @TAR@ cf - -C final/bin/. . | @TAR@ xf - -C @pre_programsdir@ ; \
 	fi
 install-licenses:
 	: installing program licenses in @pre_licensesdir@
 	if [ -d final/licenses/. ] ; \
 	then rm -rf @pre_licensesdir@ ; \
 	     @INSTALL@ -d @pre_licensesdir@ ; \
-	     @TAR@ cf - -C final/licenses/. . | @TAR@ xfv - -C @pre_licensesdir@ ; \
+	     @TAR@ cf - -C final/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
 	fi
 
 ifeq (@SHARED@,yes)
