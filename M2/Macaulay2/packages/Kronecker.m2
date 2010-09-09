@@ -566,6 +566,8 @@ pencilFromMatrixPair(Matrix,Matrix) := (f,g) -> (
 			      );
 			 gg(r)
 			 )));
+	  X0 := local X0;
+	  X1 := local X1;
      	  S := R[X0,X1];
      	  use S;
      	  N := S^n;

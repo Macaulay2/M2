@@ -8,6 +8,9 @@ net ScriptedFunctor := lookup(net,Type)
 toString ScriptedFunctor := lookup(toString,Type)
 methodOptions ScriptedFunctor := H -> null
 
+protect argument
+protect subscript
+protect superscript
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i
@@ -23,9 +26,6 @@ ScriptedFunctor Thing := (G,X) -> (
      then G#argument X
      else error("no method for ", toString G, " ", toString X)
      )
-protect argument
-protect subscript
-protect superscript
 
 args := method()
 args(Thing,Sequence) := (i,args) -> prepend(i,args)

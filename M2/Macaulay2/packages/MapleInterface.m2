@@ -83,9 +83,9 @@ value Lfc)
 
 msqrt=method()
 msqrt(ZZ,ZZ):=(a,b)->(
-inputdata1=toString {a,b};
-inputdata2="msqrt";
-mapleprogram="with(numtheory,placeholder2):returnvalue:=placeholder2(op(placeholder1));";
+inputdata1:=toString {a,b};
+inputdata2:="msqrt";
+mapleprogram:="with(numtheory,placeholder2):returnvalue:=placeholder2(op(placeholder1));";
 L:=callMaple(inputdata1,inputdata2,mapleprogram);
 L)
 
@@ -96,9 +96,9 @@ v:=gens ring I;
 if rank source gens I>1 then error("expected a hypersurface");
 f:=I_0;
 if #v>2 then error("expected an ideal in a ring with 2 variables");
-inputdata1=(toString(f))|","|toString(v#1)|","|toString(v#0),
-inputdata2="integral_basis";
-mapleprogram="with(algcurves,placeholder2):returnvalue:=placeholder2(placeholder1);";
+inputdata1:=(toString(f))|","|toString(v#1)|","|toString(v#0),
+inputdata2:="integral_basis";
+mapleprogram:="with(algcurves,placeholder2):returnvalue:=placeholder2(placeholder1);";
 L:=callMaple(inputdata1,inputdata2,mapleprogram);
 matrix {L})
 

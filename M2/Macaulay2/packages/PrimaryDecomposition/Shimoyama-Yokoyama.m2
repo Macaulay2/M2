@@ -397,6 +397,8 @@ REMAIN := symbol REMAIN
 if primdecComputation === symbol primdecComputation then
 primdecComputation = new Type of MutableHashTable
 
+protect thisNode
+
 PDinitialize = (I) -> (
      if I.cache#?"PDC" then I.cache#"PDC"
      else (

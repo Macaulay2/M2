@@ -121,7 +121,6 @@ satMon = (I,X)-> (
 -- INPUT: I = a Cohen-Macaulay ideal in a polynomial ring
 -- OUTPUT: the Castelnupovo Mumford regularity of I
 
-
 regCM = (I,d) -> (
    R :=ring I;
    I = (normalize (I,d))I; -- attention! this normalization only guarantees that you get an ideal in NN position wrt the last d variables that ACTUALLY appear in I
@@ -170,13 +169,12 @@ regMonCurve = (I,d) -> (
     return (max apply((entries gens gb (I:m))_0,degree))_0
     )
 
-
-
+protect CM
+protect MonCurve
 
 -- mRegularity
 -- INPUT: I a homogeneous ideal
 -- OUTPUT: the Castelnuovo-Mumford regularity of I
-
 mRegularity = method (TypicalValue=>ZZ,Options =>{CM => false, MonCurve => false, Verbose => false})
 mRegularity (Ideal):= opts -> I -> (
      if not isHomogeneous I then (
@@ -220,7 +218,7 @@ findHyperplane = (I,n) -> (
      as := apply(ass inI - set {monomialIdeal gens R}, t-> flatten entries gens t); -- returns a list of lists containing gens of the Ass(in I) 
      i := 1;
      while (not i>n) do (
-	  subs = apply(subsets(d,i), s->apply(s, t->R_t));   
+	  subs := apply(subsets(d,i), s->apply(s, t->R_t));   
 	  l := select(1,subs, s-> not any(as, t-> isSubset(s,t)));
 	  if l != {} then return sum l#0 else i = i+1;	
      	  );
@@ -238,8 +236,9 @@ slice = h -> (
      return g*f
      )    
      
-     
-fastReg = method (TypicalValue=>ZZ,Options =>{Alarm => 5,Lenght=>3})     
+protect Length
+protect Alarm     
+fastReg = method (TypicalValue=>ZZ,Options =>{Alarm => 5,Length=>3})     
 fastReg (Ideal):= opts -> I -> (     
      while true do (
 	  alarm(2);

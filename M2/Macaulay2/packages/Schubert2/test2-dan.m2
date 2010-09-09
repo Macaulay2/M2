@@ -101,6 +101,7 @@ clearAll
 
 compactMatrixForm = false
 cyclic = n -> (
+     x := local x;
      g := gens QQ(monoid [x_1 .. x_n, MonomialOrder => Lex]);
      ideal append(apply(1 .. n-1, i -> sum(1 .. n, j -> product(j-i .. j-1, k -> g_k))), product g - 1))
 I = cyclic 6

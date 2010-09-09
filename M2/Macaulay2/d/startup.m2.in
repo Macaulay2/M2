@@ -459,11 +459,11 @@ action := hashTable {
      "--restarted" => arg -> restarted = true,
      "--texmacs" => arg -> (
 	  if phase == 1 then (
-	       topLevelMode = TeXmacs;
+	       topLevelMode = global TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 3 then (
-	       topLevelMode = TeXmacs;
+	       topLevelMode = global TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 4 then (
@@ -517,7 +517,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       if not commandLine#?2 then error "script file name missing";
 	       arg := commandLine#2;
 	       scriptCommandLine = drop(commandLine,2);
-	       if instance(load, Function) then load arg else simpleLoad arg;
+	       if instance(value global load, Function) then load arg else simpleLoad arg;
 	       exit 0))
      else (
 	  if notify then stderr << "--phase " << phase << endl;

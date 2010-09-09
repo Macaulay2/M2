@@ -106,7 +106,7 @@ toricMarkov Matrix := Matrix => o -> (A) -> (
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"markov -q " |rootPath |filename;
+     execstr := path'4ti2|"markov -q " |rootPath |filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: markov";
      getMatrix(filename|".mar")
@@ -121,10 +121,10 @@ toricGroebner Matrix := o -> (A) -> (
      putMatrix(F,A);
      close F;
      if o.Weights =!= null then (
-	  cost = concatenate apply(o.Weights, x -> (x|" "));
+	  cost := concatenate apply(o.Weights, x -> (x|" "));
 	  (filename|".cost") << "1 " << #o.Weights << endl << cost << endl  << close;
 	  );
-     execstr = path'4ti2|"groebner -q "|rootPath|filename;
+     execstr := path'4ti2|"groebner -q "|rootPath|filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: groebner";
      getMatrix(filename|".gro")
@@ -138,7 +138,7 @@ toricCircuits Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"circuits -q " | rootPath | filename;
+     execstr := path'4ti2|"circuits -q " | rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: circuits";
      getMatrix(filename|".cir")
@@ -151,7 +151,7 @@ toricGraver Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"graver -q " | rootPath | filename;
+     execstr := path'4ti2|"graver -q " | rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: graver";
      getMatrix(filename|".gra")
@@ -168,7 +168,7 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"hilbert -q " |rootPath | filename;
+     execstr := path'4ti2|"hilbert -q " |rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: hilbert";
      getMatrix(filename|".hil")
@@ -182,7 +182,7 @@ rays Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"rays -q " |rootPath | filename;
+     execstr := path'4ti2|"rays -q " |rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: rays";
      getMatrix(filename|".ray")
@@ -200,7 +200,7 @@ toricGraverDegrees Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"graver -q " | rootPath | filename;
+     execstr := path'4ti2|"graver -q " | rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: graver"; -- getMatrix(filename|".gra")
      execstr = path'4ti2|"output --degrees " | rootPath | filename|".gra";
@@ -597,7 +597,7 @@ doc ///
 
 
 TEST/// 
-  loadPackage "FourTiTwo"    --testing toricMarkov w/ matrix inputt
+  needsPackage "FourTiTwo"    --testing toricMarkov w/ matrix inputt
   A = matrix "1,1,1,1; 1,2,3,4"
   M = toricMarkov(A)
   R = QQ[x_0,x_1,x_2,x_3]
@@ -606,7 +606,7 @@ TEST///
   assert(I==Irnc3)
 ///
 TEST ///   
-  loadPackage "FourTiTwo"   --testing toricMarkov w/ lattice input
+  needsPackage "FourTiTwo"   --testing toricMarkov w/ lattice input
   B = matrix "1,-2,1,0; 0,1,-2,1"
   M = toricMarkov(B, InputType => "lattice")
   R = QQ[x_0,x_1,x_2,x_3]
@@ -615,7 +615,7 @@ TEST ///
   assert(I== Irnc3)  
 ///
 TEST ///     
-  loadPackage "FourTiTwo"   --testing circuits
+  needsPackage "FourTiTwo"   --testing circuits
   R=CC[x_0,x_1,x_2,x_3]
   A = matrix "1,1,1,1; 1,2,3,4"
   C = toricCircuits(A)  --circuits returned by 4ti2
@@ -630,7 +630,7 @@ TEST ///
   assert(source C == source Ctrue)
 ///
 TEST ///     
-  loadPackage "FourTiTwo"   --testing rays and hilbert
+  needsPackage "FourTiTwo"   --testing rays and hilbert
   B = matrix "1,-2,1,0; 0,1,-2,1"  
   R = QQ[a..d]
   I = toBinomial(B,R)
@@ -645,7 +645,7 @@ TEST ///
   assert(numcols M1 == 4)
 ///
 TEST///
-  loadPackage "FourTiTwo"   --testing toricGroebner
+  needsPackage "FourTiTwo"   --testing toricGroebner
   A = matrix "1,0,1,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0;0,1,1,0,0,0,0,0,0,1,0,1,1,0,1,0,0,0;0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,1;0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,1,1;0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0;1,0,1,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0;0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,0,1,1;0,0,0,0,0,0,1,0,1,0,0,0,1,0,1,1,0,1;0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1"
   M = toricGroebner(A); --note this matrix is the design matrix for the p1 statistical model on 4 nodes using a constant rho. (see fienberg/rinaldo/petrovic; in prep-missing reference).
   assert(numrows M == 137)
@@ -672,7 +672,7 @@ TEST///
   apply(0..#Gtrue-1, j-> assert(isSubset({Gtrue_j},G)) ) --checking 4ti2's gb against M2's gb
 ///
 TEST///
-  loadPackage "FourTiTwo"   --testing graver  
+  needsPackage "FourTiTwo"   --testing graver  
   A1 = matrix "3,2,1,0;0,1,2,3"
   R=QQ[x_0..x_3]
   G = toricGraver(A1)

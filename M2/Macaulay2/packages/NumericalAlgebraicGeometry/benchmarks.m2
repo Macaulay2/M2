@@ -1,5 +1,5 @@
 path = path| {"../", "../../"}
-loadPackage "ExampleIdeals"
+needsPackage "ExampleIdeals"
 
 linearExample = () -> (
      R := CC[x,y]; 

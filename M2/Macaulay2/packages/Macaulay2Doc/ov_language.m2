@@ -277,6 +277,7 @@ document {
      loaded subsequently.  We illustrate this below with the variable ", TT "j", ".",
      PARA{},
      EXAMPLE {
+	  "j",
 	  "h = () -> j",
 	  "h()",
 	  "j = 444",
@@ -594,15 +595,15 @@ document {
      	  ", TO "null", " as the value of the function currently being evaluated, except, in the case of 
 	  a ", TO "for", " loop or a ", TO "while", " loop with a list clause, the list accumulated so far is returned as the value."
 	  },
-     EXAMPLE "for i from 1 to 10 do if i == 7 then break hi",
+     EXAMPLE "for i from 1 to 10 do if i == 7 then break 12345",
      PARA {
      	  "Warning: trying to break from a loop controlled by ", TO "table", " will probably not do what you
 	  expect, since ", TO "table", " is implemented by two nested
      	  loops controlled by ", TO "apply", ", and only the inner one will stop, as in the following example."
 	  },
      EXAMPLE lines ///
-     table(3,3,(i,j) -> if i == 1 then break 3 else hi)
-     table(3,3,(i,j) -> if j == 1 then break 3 else hi)
+     table(3,3,(i,j) -> if i == 1 then break 3 else "hi")
+     table(3,3,(i,j) -> if j == 1 then break 3 else "hi")
      ///,
      PARA {
 	  "Here is an example as a debugger command."
@@ -651,7 +652,7 @@ document {
      	  and iteration of the loop continues."
 	  },
      EXAMPLE lines ///
-         i = 0 ; while i < 10 list (i = i+1; if odd i then continue x; i^2)
+         i = 0 ; while i < 10 list (i = i+1; if odd i then continue 1234; i^2)
      ///,
      PARA { "  If ", TT "break v", " is executed by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value." },
      EXAMPLE lines ///
@@ -678,6 +679,11 @@ document { Key => "for",
 	       ", TT "z", " is evaluated and its value is discarded.  Then ", TT "i", " is incremented by 1, and the loop repeats.  When the value of ", TT "p", " is false,
 	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
 	       }},
+     Caveat => {
+     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
+	  and ", TT "y", " in the body of the loop; moreover, new local variables defined inside the body of the loop will not
+	  be visible outside it.  The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word."
+	  },
      Outputs => {{"the list of values of the clause ", TT "x", ", as desribed above"}},
      SYNOPSIS (
 	  Usage => "for i in v when p list x do z",
@@ -723,7 +729,7 @@ document { Key => "for",
      	  and iteration of the loop continues."
 	  },
      EXAMPLE lines ///
-         for i from 0 when i < 10 list (if odd i then continue x; i^2)
+         for i from 0 when i < 10 list (if odd i then continue 4567; i^2)
      ///,
      PARA { "  If ", TT "break v", " is executed by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value." },
      EXAMPLE lines ///
@@ -733,12 +739,6 @@ document { Key => "for",
      EXAMPLE lines ///
          for i from 0 when i < 10 list (if i== 5 then break; i^2)
      ///,
-     Caveat => {
-	  },
-     PARA{
-     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
-	  and ", TT "y", ".  The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word."
-	  },
      EXAMPLE lines ///
           for i in 0..3 list i^2
      ///

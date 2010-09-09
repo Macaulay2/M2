@@ -43,6 +43,8 @@ coefficientRing SchurRing := Ring => R -> last R.baseRings
 
 ck := i -> if i < 0 then error "expected decreasing row lengths" else i
 
+protect M; stderr << "-- warning: undeclared variable M in package SchurRings" << endl
+
 schur2monom = (a,Mgens) -> (
      if # a === 0 then 1_M
      else product(# a, i -> (Mgens#i) ^ (
@@ -159,15 +161,20 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
 -- workaround:
 varlist = (i,j,R) -> apply(i..j, p -> R_p)
 
+protect plethysmMaps
+protect mapToE
+protect Schur
+protect mapToP
+
 symmRings := new MutableHashTable;
 symmRing = (n) -> (
      if not symmRings#?n then (
-     	  e := global e;
-     	  h := global h;
-     	  p := global p;
+     	  e := getSymbol "e";
+     	  h := getSymbol "h";
+     	  p := getSymbol "p";
      	  R := QQ[e_1..e_n,p_1..p_n,
 	       Degrees => toList(1..n,1..n)];
-     	  S := schurRing(symbol s, n);
+     	  S := schurRing(getSymbol "s", n);
      	  R.Schur = S;
      	  R.dim = n;
      	  R.mapToE = map(R,R,flatten splice {varlist(0,n-1,R),apply(n, i -> PtoE(i+1,R))});
@@ -177,14 +184,18 @@ symmRing = (n) -> (
 	  );
      symmRings#n)
 
+
+protect R; stderr << "-- warning: undeclared variable R in package SchurRings" << endl
+protect S; stderr << "-- warning: undeclared variable S in package SchurRings" << endl
+
 symmRing0 = (n) -> (
      if not symmRings#?n then (
-     	  e := global e;
-     	  h := global h;
-     	  p := global p;
+     	  e := getSymbol "e";
+     	  h := getSymbol "h";
+     	  p := getSymbol "p";
 	  Se := QQ[e_1..e_n,Degrees=>toList(1..n)];
 	  Sp := QQ[p_1..p_n,Degrees=>toList(1..n)];
-     	  Ss := schurRing(symbol s, n);
+     	  Ss := schurRing(getSymbol "s", n);
      	  R.Schur = S;
      	  R.dim = n;
      	  R.mapToE = map(Se,Sp,flatten splice {apply(n, i -> PtoE(i+1,R))});
@@ -228,6 +239,8 @@ parts := (d, n) -> (
      x := partitions(d);
      select(x, xi -> #xi <= n))     
 
+protect toSchur
+
 etos = (d,R) -> (
      -- d is an integer >= 0
      -- R is a 'symmRing n'
@@ -267,15 +280,18 @@ toS = (f) -> (
      R := ring f;
      (E,C,P) := etos(d,R);
      C = substitute(C, coefficientRing R);
+     s := value getSymbol "s";
      P = transpose matrix {apply(P, p -> s_p)};
-     Ef = contract(E, matrix{{f}});
-     Xf = transpose substitute(Ef,coefficientRing R);
-     XfC = substitute(Xf*C,ring P);
+     Ef := contract(E, matrix{{f}});
+     Xf := transpose substitute(Ef,coefficientRing R);
+     XfC := substitute(Xf*C,ring P);
      (XfC * P)_(0,0)
      )
 
 toE = (f) -> (ring f).mapToE f
 toP = (f) -> (ring f).mapToP f
+
+protect PtoETable
 
 PtoE = (m,R) -> (
      -- R is a symmring n
@@ -295,6 +311,8 @@ PtoE = (m,R) -> (
 	  );
      P#m
      )
+
+protect EtoPTable
 
 EtoP = (m,R) -> (
      -- R is a symmring n

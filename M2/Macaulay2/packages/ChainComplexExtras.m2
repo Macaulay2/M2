@@ -149,7 +149,7 @@ koszulComplex(Ideal):= o -> (I)->(
 myLcm = method()
 myLcm(List):=(ringList)->(
    --- just a short method computing the lcm of the list of elements
-   myList = apply(ringList, i -> ideal(i));
+   myList := apply(ringList, i -> ideal(i));
    (intersect myList)_0
 )
 

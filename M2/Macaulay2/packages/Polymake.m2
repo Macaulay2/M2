@@ -60,8 +60,8 @@ getPropertyNames = method()
 getPropertyNames(List) := (F) -> (
       -- F is a list of lines, as from a polymake file
       -- returns a list of strings, names of known properties
-      FF = removeComments(F);
-      PP = select(FF, s-> match("^[[:space:]]*[[:alpha:]]", s));
+      FF := removeComments(F);
+      PP := select(FF, s-> match("^[[:space:]]*[[:alpha:]]", s));
       apply(PP, s -> toString s)
       )     
  
@@ -128,7 +128,7 @@ polymakeObject(String, List) := (filename, properties) -> (
      )
 polymakeObject(String) := (filename) -> (    
      F := removeComments lines get filename;
-     properties = getPropertyNames(F);
+     properties := getPropertyNames(F);
      new PolymakeObject from apply(properties, p -> p => getMatrixProperty(F,p))
      )
 
@@ -142,6 +142,7 @@ toPolymakeFormat(String, Matrix) := (propertyname, M) -> (
      	  S
      )
 )
+
 toPolymakeFormat(String,Vector) := (propertyname,V) -> (
      if V === null then ""
      else(
@@ -157,7 +158,7 @@ toPolymakeFormat(PolymakeObject) := (P) -> (
 
 runPolymake = method()
 runPolymake(String,String) := (filename, propertyname)->(
-     ex = "polymake "|filename|" "|propertyname;
+     ex := "polymake "|filename|" "|propertyname;
      run ex
      )
 runPolymake(PolymakeObject, String) := (P, propertyname) -> (

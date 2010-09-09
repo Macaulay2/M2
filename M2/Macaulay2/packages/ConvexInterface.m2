@@ -270,6 +270,8 @@ FinitelyGeneratedAbelianGroup#{Standard,AfterPrint} = m -> (
       << "finitely generated abelian group"
       << endl;)
 
+protect torsion
+
 net FinitelyGeneratedAbelianGroup := (G) -> (
 NG:="";
 if G.rank>1 then NG=NG|net(G.rank)|" "|net(ZZ);

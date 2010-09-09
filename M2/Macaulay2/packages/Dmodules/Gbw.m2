@@ -16,6 +16,10 @@ inw (Ideal, List) := (I, w) -> (
      ideal inw(gens I, w)
      )
 
+protect WAtoHWA								    -- used as a key
+protect HWAtoWA
+protect HomWeylAlgebra
+
 inw (Matrix, List) := (m, w) -> (
      -- preprocessing
      W := ring m;

@@ -57,6 +57,7 @@ matrix Point := o -> p -> matrix {coordinates p}
 --   }
 -- caveat: we assume that #Equations = dim(Slice)   
 WitnessSet.synonym = "witness set"
+protect Tolerance
 WitnessSet.Tolerance = 1e-6;
 dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
      else if class W.Slice === Matrix then numrows W.Slice 

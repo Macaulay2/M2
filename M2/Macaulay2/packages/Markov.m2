@@ -9,7 +9,6 @@ newPackage("Markov",
      Version => "1.2"
      )
 
-
 ------------------------------------------
 -- markov ideals in Macaulay2
 -- Authors: Luis Garcia and Mike Stillman
@@ -360,14 +359,15 @@ globalMarkovStmts Graph := (G) -> (
 -------------------
 -- Markov rings ---
 -------------------
+protect markov
 markovRingList = new MutableHashTable;
 markovRing = d -> (
      -- d should be a sequence of integers di >= 1
      if any(d, di -> not instance(di,ZZ) or di <= 0)
      then error "useMarkovRing expected positive integers";
-     p = value "symbol p";
      if not markovRingList#?d then (
      	  start := (#d):1;
+	  p := getSymbol "p";
      	  markovRingList#d = QQ[p_start .. p_d];
 	  markovRingList#d.markov = d;
 	  );
@@ -387,7 +387,8 @@ marginMap(ZZ,Ring) := (v,R) -> (
      -- R should be a Markov ring
      v = v-1;
      d := R.markov;
-     use R;
+     use R;						    -- this should set p
+     p := value getSymbol "p";
      F := toList apply(((#d):1) .. d, i -> (
 	       if i#v > 1 then p_i
 	       else (
@@ -407,7 +408,8 @@ hideMap(ZZ,Ring) := (v,A) -> (
      e := drop(d, {v,v});
      S := markovRing e;
      dv := d#v;
-     use A;
+     use A;						    -- this should set p
+     p := value getSymbol "p";
      F := toList apply(((#e):1) .. e, i -> (
 	       sum(apply(toList(1..dv), j -> (
 			      newi := join(take(i,v), {j}, take(i,v-#d+1));
@@ -435,6 +437,7 @@ possibleValues := (d,A) ->
 	       else {0}))
 
 prob = (d,s) -> (
+     p := value getSymbol "p";			    -- ?? has "use" been applied to the ring yet?
      L := cartesian toList apply (#d, i -> 
 	   if s#i === 0 
 	   then toList(1..d#i) 
@@ -463,9 +466,10 @@ markovIdeal(Ring,List) := (R,Stmts) -> (
      sum apply(M, m -> minors(2,m))
      )
 
-gaussRing = method(Options=>{CoefficientRing=>QQ, Variable=>symbol s})
+gaussRing = method(Options=>{CoefficientRing=>QQ, Variable=>"s"})
 gaussRing ZZ := opts -> (n) -> (
      x := opts.Variable;
+     if instance(x,String) then x = getSymbol x;
      kk := opts.CoefficientRing;
      v := flatten apply(1..n, i -> apply(i..n, j -> x_(i,j)));
      R := kk[v, MonomialSize=>16];
@@ -480,14 +484,14 @@ gaussMinors(Matrix,List) := (M,D) -> (
      rows = rows/(i -> i-1);
      cols := join(D#1, D#2);
      cols = cols/(i -> i-1);
-     M1 = submatrix(M,rows,cols);
+     M1 := submatrix(M,rows,cols);
      minors(#D#2 + 1, M1)
      )
 gaussIdeal = method()
 gaussIdeal(Ring, List) := (R,Stmts) -> (
      -- for each statement, we take a set of minors
      if not R#?gaussRing then error "expected a ring created with gaussRing";
-     M = genericSymmetricMatrix(R, R#gaussRing);
+     M := genericSymmetricMatrix(R, R#gaussRing);
      sum apply(Stmts, D -> gaussMinors(M,D))     
      )
 gaussIdeal(Ring,Graph) := (R,G) -> gaussIdeal(R,globalMarkovStmts G)
@@ -501,6 +505,7 @@ gaussTrekIdeal(Ring, Graph) := (R,G) -> (
      S := (coefficientRing R)[generators R, t_1 .. t_nv];
      newvars := toList apply(1..nv, i -> t_i);
      I := trim ideal(0_S);
+     s := value getSymbol "s";			    -- is this right?
      sp := (i,j) -> if i > j then s_(j,i) else s_(i,j);
      for i from 1 to n-1 do (
 	  J := ideal apply(1..i, j -> s_(j,i+1) 

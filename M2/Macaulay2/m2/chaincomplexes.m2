@@ -421,8 +421,8 @@ poincare ChainComplex := C -> (
      f)
 
 poincareN ChainComplex := (C) -> (
-     s := getGlobalSymbol "S";
-     t := getGlobalSymbol "T";
+     s := getSymbol "S";
+     t := getSymbol "T";
      -- this stuff has to be redone as in Poincare itself, DRG
      R := ZZ[s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true, MonomialOrder => RevLex, Global => false];
      f := 0_R;
@@ -756,7 +756,7 @@ hilbertPolynomial(ZZ,BettiTally) := o -> (nvars,B) -> (
      if f == 0 then return (
 	  if o.Projective
 	  then new ProjectiveHilbertPolynomial from {}
-	  else 0_hilbertFunctionRing
+	  else 0_(hilbertFunctionRing())
 	  );
      T := (ring f)_0;
      p := pairs standardForm f;

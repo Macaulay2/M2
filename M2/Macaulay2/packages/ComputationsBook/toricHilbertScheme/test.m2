@@ -2,7 +2,7 @@ A = {{1,1,1,1,1},{0,1,2,7,8}};
 R = QQ[a..e,Degrees=>transpose A]; 
 describe R 
 B = transpose syz matrix A 
-load "LLL.m2"; 
+needsPackage "LLLBases"; 
 LLL syz matrix A 
 B = transpose LLL syz matrix A 
 toBinomial = (b,R) -> (

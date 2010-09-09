@@ -16,16 +16,16 @@ flatt2 = (I, m) -> (
 	  MonomialSize=>16]);
      J := substitute(I,RU);
      -- Collect lead coefficients of GB
-     JG = J;
+     JG := J;
      leads := leadTerm(1,gens gb J);
      --(mons,cs) = coefficients(toList(0..n-d-1),leads);
-     (mons,cs) = coefficients(leads, Variables => toList(0..n-d-1));
-     monsid = trim ideal select(flatten entries mons, f -> f != 1);
+     (mons,cs) := coefficients(leads, Variables => toList(0..n-d-1));
+     monsid := trim ideal select(flatten entries mons, f -> f != 1);
      monsid = substitute(monsid,R);
      --monset = set flatten entries gens monsid;
-     monset = new MutableHashTable;
+     monset := new MutableHashTable;
      scan(flatten entries gens monsid, m -> monset#m = {});
-     monslist = flatten entries substitute(mons,R);
+     monslist := flatten entries substitute(mons,R);
      p := positions(monslist, f -> monset#?f);
      cs = transpose cs;
      scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));

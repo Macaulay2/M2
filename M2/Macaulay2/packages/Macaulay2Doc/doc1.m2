@@ -1011,7 +1011,7 @@ document {
 	       "We use the class ", TT "M", " introduced above, and install a method for ", TT "new M", ", and we use it in the next subsection."
  	       },
  	  EXAMPLE lines ///
-	       new M := (M') -> {a,b,c}
+	       new M := (M') -> {"a","b","c"}
  	       ///
 	  ),
      SYNOPSIS (

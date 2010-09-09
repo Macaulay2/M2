@@ -67,5 +67,5 @@ CxPic = (g,d) -> (
 BrillNoetherBundle = (g,r,d) -> (
      pic := Picard g;
      e := g+1;						 -- minimize this later
-     rankA = d+1-g+e;
+     rankA := d+1-g+e;
      kernelBundle(rankA -(r+1), OO_pic^e, abstractSheaf(pic, Rank => rankA, ChernClass => exp(-theta))))

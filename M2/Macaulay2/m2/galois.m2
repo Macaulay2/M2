@@ -25,8 +25,6 @@ ambient GaloisField := Ring => R -> last R.baseRings
 ---- a Galois field hides that info
 -- coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
 
-expression GaloisField := F -> new FunctionApplication from { GF, F.order }
-
 GF = method (
      Options => { 
 	  PrimitiveElement => FindOne,
@@ -34,6 +32,8 @@ GF = method (
 	  SizeLimit => 10000
 	  }
      )
+
+expression GaloisField := F -> new FunctionApplication from { GF, F.order }
 
 lastp := 2
 
@@ -75,7 +75,7 @@ GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if n === 1 then ZZ/p
      else (
 	  x := opts.Variable;
-	  x = if x === null then getGlobalSymbol "a" else baseName x;
+	  x = if x === null then getSymbol "a" else baseName x;
 	  R := (ZZ/p) (monoid [x]);
 	  t := R_0;
 	  f := runHooks(GaloisField,FindOne,(p,n,t));

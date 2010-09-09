@@ -1,8 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-undocumented toList (symbol a .. symbol Z)
-
 document {
      Key => "length",
      Headline => "length"

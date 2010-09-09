@@ -514,6 +514,8 @@ DHom(Module, Module) := options -> (M, N) -> (
      DHom(M, N, w, options)
      )
      
+protect diagonal
+
 DHom(Module, Module, List) := options -> (M, N, w) -> (
      pInfo (1, "ENTERING DHom ...");
      W := ring M;

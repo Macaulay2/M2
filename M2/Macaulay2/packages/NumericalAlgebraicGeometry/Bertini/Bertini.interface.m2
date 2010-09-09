@@ -125,7 +125,7 @@ trackBertini (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
      -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
      -- mkdir tempdir; 	  
      dir := makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
-     compStartTime = currentTime();      
+     compStartTime := currentTime();      
      run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
      if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
      readSolutionsBertini(dir, "raw_solutions")

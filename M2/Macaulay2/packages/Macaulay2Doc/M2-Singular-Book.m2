@@ -520,7 +520,6 @@ document {
      Headline => "elimination of variables",
      "There are several methods to eliminate variables in Macaulay2.",
      EXAMPLE {
-	  ///loadPackage "Elimination";///,
 	  "A = QQ[t,x,y,z];",
 	  ///I = ideal"t2+x2+y2+z2,t2+2x2-xy-z2,t+y3-z3";///,
 	  "eliminate(I,t)"
@@ -555,7 +554,6 @@ document {
      "We compute an implicit equation for the surface defined parametrically by the map ", 
      TEX "$f : A^2 \\rightarrow{} A^3, (u,v) \\mapsto{} (uv,uv^2,u^2)$", ".",
      EXAMPLE {
-	  ///loadPackage "Elimination";///,
 	  ///A = QQ[u,v,x,y,z];///,
 	  ///I = ideal "x-uv,y-uv2,z-u2"///,
           ///eliminate(I,{u,v})///
@@ -618,7 +616,6 @@ document {
 	  "I1 = substitute(I1,B);",
 	  "I2 = substitute(I2,B);",
 	  "J = t*I1 + (1-t)*I2",
-          ///loadPackage "Elimination";///,
           "eliminate(J,t)"
 	  },
      SeeAlso => {}

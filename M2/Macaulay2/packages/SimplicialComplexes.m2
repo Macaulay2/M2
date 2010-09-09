@@ -29,8 +29,8 @@ export {SimplicialComplex,
      simplicialChainComplex,
      buchbergerComplex,
      lyubeznikComplex,
-     superficialComplex}
-
+     superficialComplex,
+     faceIdeal}
 
 complement := local complement
 complement = (m) -> (
@@ -130,6 +130,8 @@ faces (ZZ, SimplicialComplex) := (r,D) -> (
      	  D.cache.faces#r
      ))
 
+protect labels
+protect ones
 boundary = method()
 boundary (ZZ,SimplicialComplex) := (r,D) -> (
      R := ring D;
@@ -145,8 +147,8 @@ boundary (ZZ,SimplicialComplex) := (r,D) -> (
 	  bd
 	  )
      else (
-     	  b1 = faces(r,D);
-     	  b2 = faces(r-1,D);
+     	  b1 := faces(r,D);
+     	  b2 := faces(r-1,D);
      	  ones = map(coefficientRing R,R, toList(numgens R:1));
      	  ones map(R, rawKoszulMonomials(numgens R,raw b2,raw b1))
      	  )
@@ -175,6 +177,8 @@ makeLabels = (D,L,i) -> (
 	       		 lcmM L_s
 			 ))}
      )
+
+L=null						    -- used as a key below
 
 label = method()
 label(SimplicialComplex, List) := (D,L) -> (
@@ -209,10 +213,10 @@ homology(ZZ,SimplicialComplex,Ring) := Module => opts -> (i,Delta,R) -> (
 homology(ZZ,SimplicialComplex) := Module => opts -> (i,Delta) -> (
      homology(i, chainComplex Delta))
 homology(Nothing,SimplicialComplex,Ring) :=
-homology(SimplicialComplex,Ring) := Chaincomplex => opts -> (Delta,R) -> (
+homology(SimplicialComplex,Ring) := ChainComplex => opts -> (Delta,R) -> (
      homology(chainComplex Delta ** R))
 homology(Nothing,SimplicialComplex) :=
-homology(SimplicialComplex) := Chaincomplex => opts -> Delta -> (
+homology(SimplicialComplex) := ChainComplex => opts -> Delta -> (
      homology(chainComplex Delta))
 
 fVector = method(TypicalValue => List)
@@ -268,7 +272,7 @@ buchbergerComplex(List,Ring) := (L,R) -> (
      P := ideal apply(gens R, x -> x^2);
      nonfaces := {};
      d := 1;
-     while (L1 = flatten entries basis(d,coker gens P); #L1 > 0) do (
+     while (L1 := flatten entries basis(d,coker gens P); #L1 > 0) do (
 	  L1 = select(L1, m -> not faceBuchberger(m,L));
 	  << "new nonfaces in degree " << d << ": " << L1 << endl;	  
 	  nonfaces = join(nonfaces,L1);
@@ -308,7 +312,7 @@ lyubeznikComplex(List,Ring) := (L,R) -> (
      P := ideal apply(gens R, x -> x^2);
      nonfaces := {};
      d := 1;
-     while (L1 = flatten entries basis(d,coker gens P); #L1 > 0) do (
+     while (L1 := flatten entries basis(d,coker gens P); #L1 > 0) do (
 	  L1 = select(L1, m -> not faceLyubeznik(m,L));
 	  << "new nonfaces in degree " << d << ": " << L1 << endl;	  
 	  nonfaces = join(nonfaces,L1);
@@ -340,7 +344,7 @@ superficialComplex(List, Ring) := (L,R) -> (
      P := ideal apply(gens R, x -> x^2);
      nonfaces := {};
      d := 1;
-     while (L1 = flatten entries basis(d,coker gens P); #L1 > 0) do (
+     while (L1 := flatten entries basis(d,coker gens P); #L1 > 0) do (
 	  L1 = select(L1, m -> not faceSuperficial(m,L));
 	  << "new nonfaces in degree " << d << ": " << L1 << endl;	  
 	  nonfaces = join(nonfaces,L1);
@@ -424,9 +428,6 @@ document {
      Inputs => {"D"
 	  },
      Outputs => {ZZ => "the maximum number of vertices in a face minus one"
-	  },
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
 	  },
      "The following simplicial complex consists of a tetrahedron,
      with two triangles attached, two more edges and an isolated
@@ -556,9 +557,6 @@ document {
      ", TT "D", ", and the rows are indexed by the ", TT "(i-1)", "-faces, in the order
      given by ", TO faces, ".  ", TT "M", " is defined over the ", 
      TO2((coefficientRing,SimplicialComplex),"coefficient ring"), " of ", TT "D", ".",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
-	  },
      "The boundary maps for the standard 3-simplex, defined over ", TT "ZZ", ".",
      EXAMPLE {
 	  "R = ZZ[a..d];",
@@ -598,9 +596,6 @@ document {
 	   i.e. the subcomplex of ", TT "D", 
 	   " consisting of all nonmaximal faces of ", TT "D"},
           },
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
-	  },
      "The boundary of the standard 3-simplex is the 2-sphere.",
      EXAMPLE {
           "R = ZZ[a..d];",
@@ -690,9 +685,6 @@ document {
 	  " of dimension ", TT "i", ", 
 	  where ", TT "-1 <= i <= dim D"}
           },
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
-	  },
      "The pentagonal bipyramid has 7 vertices, 15 edges
      and 10 triangles.",
      EXAMPLE {
@@ -746,9 +738,6 @@ document {
 	       and ", TO false, " otherwise"}
           },
      EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
-	  },
-     EXAMPLE {
           "R = ZZ[a..f];",
 	  "D = simplicialComplex {a*b*c, a*b*d, d*e*f} ",
 	  "isPure D"
@@ -770,9 +759,6 @@ document {
           },
      "The vertices of every simplicial complex are variables in the polynomial ring ", TT "R", ",
      and subsets of vertices, such as faces, are represented as squarefree monomials in ", TT "R", ".",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
-	  },
      EXAMPLE {
           "R = QQ[a..d];",
 	  "D = simplicialComplex monomialIdeal(a*b*c*d);",
@@ -802,9 +788,6 @@ document {
 	       TO2((ring,SimplicialComplex),"polynomial ring"),
 	       " of ", TT "D"}
           },
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///
-	  },
      EXAMPLE {
           "R = QQ[a..d];",
 	  "D = simplicialComplex monomialIdeal(a*b*c*d);",
@@ -983,11 +966,10 @@ document {
      "In Macaulay2, every ", TO2(SimplicialComplex, "simplicial complex"),
      " is equipped with a polynomial ring, and the matrix of i-faces
      is defined over this ring.",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///,
-          },
-     "This triangulation of the real projective plane has 6
-     vertices, 15 edges and 10 triangles.",
+     PARA {
+     	  "This triangulation of the real projective plane has 6
+     	  vertices, 15 edges and 10 triangles."
+	  },
      EXAMPLE {
 	  "R = ZZ[a..f]",
 	  "D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,
@@ -1025,11 +1007,10 @@ document {
      "In Macaulay2, every ", TO2(SimplicialComplex, "simplicial complex"),
      " is equipped with a polynomial ring, and the Stanley-Reisner ideal
      is contained in this ring.",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///,
-          },
-     "The 3-dimensional sphere has a unique minimal nonface
-     which corresponds to the interior.",
+     PARA {
+     	  "The 3-dimensional sphere has a unique minimal nonface
+     	  which corresponds to the interior."
+	  },
      EXAMPLE {
 	  "R = ZZ[a..e];",
 	  "sphere = simplicialComplex {b*c*d*e,a*c*d*e,a*b*d*e,a*b*c*e,a*b*c*d}",
@@ -1071,11 +1052,10 @@ document {
      "In Macaulay2, every ", TO2(SimplicialComplex, "simplicial complex"),
      " is equipped with a polynomial ring, and the Stanley-Reisner ideal
      is contained in this ring.",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///,
-          },
-     "The 3-dimensional sphere has a unique minimal nonface
-     which corresponds to the interior.",
+     PARA {
+     	  "The 3-dimensional sphere has a unique minimal nonface
+     	  which corresponds to the interior."
+	  },
      EXAMPLE {
 	  "R = ZZ[a..e];",
 	  "sphere = simplicialComplex {b*c*d*e,a*c*d*e,a*b*d*e,a*b*c*e,a*b*c*d}",
@@ -1118,11 +1098,10 @@ document {
      "In Macaulay2, every ", TO2(SimplicialComplex, "simplicial complex"),
      " is equipped with a polynomial ring, and the resulting matrix of facets
      is defined over this ring.",
-     EXAMPLE {
-	  ///loadPackage "SimplicialComplexes";///,
-          },
-     "The 3-dimensional sphere has a unique minimal nonface
-     which corresponds to the interior.",
+     PARA {
+     	  "The 3-dimensional sphere has a unique minimal nonface
+     	  which corresponds to the interior."
+	  },
      EXAMPLE {
 	  "R = ZZ[a..e];",
 	  "sphere = simplicialComplex monomialIdeal(a*b*c*d*e)",
@@ -1279,7 +1258,7 @@ fVector boundary D
 TEST ///
 kk = QQ
 abelian = (n) -> (
-     R := kk[symbol x_0..symbol x_(n-1)];
+     R := kk[local x_0..local x_(n-1)];
      L1 = toList apply(0..n-1, i -> x_i * x_((i+3)%n) * x_((i+4)%n));
      L2 = toList apply(0..n-1, i -> x_i * x_((i+1)%n) * x_((i+4)%n));
     join(L1,L2))

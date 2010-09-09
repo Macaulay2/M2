@@ -160,14 +160,16 @@ examplesBayes = () -> readExampleFile "bayes5.m2"
 -- This is a list of examples from several sources
 
 egPermanents = (kk,m,n,size) -> (
-     R = kk[vars(0..m*n-1)];
-     I = permanents(size,genericMatrix(R,m,n))
+     R := kk[vars(0..m*n-1)];
+     I := permanents(size,genericMatrix(R,m,n))
      )
 
 egHaas = (kk) -> (
      -- From Hashemi, Efficient algorithms for computing Noether normalization
-     R = kk[t,x,y,z];
-     I = ideal"x8+zy4-y,y8+tx4-x,64x7y7-16x3y3zt+4y3z+4x3t-1"
+     (t,x,y,z) := ("t","x","y","z")/getSymbol;
+     R := kk[t,x,y,z];
+     (t,x,y,z) = (t,x,y,z)/value;
+     I := ideal"x8+zy4-y,y8+tx4-x,64x7y7-16x3y3zt+4y3z+4x3t-1"
      )
 
 --katsura = method()
@@ -177,33 +179,33 @@ katsura = (n,kk) -> (
      -- This is written to match the Singular version, which seems to differ
      -- from the POSSO version
      n = n-1;
-     R = kk[vars(0..n)];
+     R := kk[vars(0..n)];
      L := gens R;
      u := (i) -> (
 	  if i < 0 then i = -i;
 	  if i <= n then L_i else 0_R);
      f1 := -1 + sum for i from -n to n list u i;
-     I = ideal prepend(f1,
+     I := ideal prepend(f1,
 	  apply(0..n-1, i -> (
 	       - u i + sum(-n..n, j -> (u j) * (u (i-j)))
 	       )))
      )
 
 cyclicRoots = (n,kk) -> (
-     R = kk[vars(0..n-1)];
+     R := kk[vars(0..n-1)];
      ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
        + ideal(product gens R - 1))
 
 cyclicRootsHomogeneous = (n,kk) -> (
-     R = kk[vars(0..n)];
+     R := kk[vars(0..n)];
      ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
        + ideal(product(n, i -> R_i) - R_n^n))
 
 commuting4by4 = (kk) -> (
-  R = kk[vars(0..31),
+  R := kk[vars(0..31),
          MonomialOrder=>{8, 12, 12}, 
 	 MonomialSize=>8];
-  I = ideal"
+  I := ideal"
           -jo+ip-vA+uB-xC+wD, 
 	  -ap+bo+cp-do+kB-lA+mD-nC, 
 	  -aB+bA+eB-fA+pq-or-zC+yD, 
@@ -222,9 +224,9 @@ commuting4by4 = (kk) -> (
 	  ns-mt+xC-wD+zE-yF")
 
 commuting4by4grevlex = (kk) -> (
-  R = kk[vars(0..31),
+  R := kk[vars(0..31),
 	 MonomialSize=>8];
-  I = ideal"
+  I := ideal"
           -jo+ip-vA+uB-xC+wD, 
 	  -ap+bo+cp-do+kB-lA+mD-nC, 
 	  -aB+bA+eB-fA+pq-or-zC+yD, 
@@ -251,12 +253,13 @@ commuting4by4grevlex = (kk) -> (
 -- Siebert.
 --
 
-singF = (a,b,c,t) -> x^a + y^b + z^(3*c) + x^(c+2) * y^(c-1) + 
-   x^(c-1) * y^(c-1) * z^3 + x^(c-2) * y^c * (y^2 + t * x)^2
-singH = (a) -> x^a + y^a + z^a + x * y * z * (x + y + z)^2 + (x+y+z)^3
-singG = (a,b,c,d,e,t) -> x^a + y^b + z^c + x^d * y^(e-5) + 
-   x^(d-2) * y^(e-3) + x^(d-3) * y^(e-4) * z^2 + 
-   x^(d-4) * y^(e-4) * (y^2 + t * x)^2
+-- these functions aren't used or exported
+-- singF = (a,b,c,t) -> x^a + y^b + z^(3*c) + x^(c+2) * y^(c-1) + 
+--    x^(c-1) * y^(c-1) * z^3 + x^(c-2) * y^c * (y^2 + t * x)^2
+-- singH = (a) -> x^a + y^a + z^a + x * y * z * (x + y + z)^2 + (x+y+z)^3
+-- singG = (a,b,c,d,e,t) -> x^a + y^b + z^c + x^d * y^(e-5) + 
+--    x^(d-2) * y^(e-3) + x^(d-3) * y^(e-4) * z^2 + 
+--    x^(d-4) * y^(e-4) * (y^2 + t * x)^2
 
 PJ = (R,m) -> (
     PJf := (a,b) -> R_(a-1) * R_(b-1) - R_(a-2) * R_(b+1);
@@ -274,13 +277,13 @@ PJ = (R,m) -> (
                                                                 R_(m-2)^2 - R_(m-3) * R_(m-5)))
 
 PellikaanJaworski = (kk,m) -> (
-    R = kk[vars(0..m-1)];
+    R := kk[vars(0..m-1)];
     PJ(R,m))
 
 bayes = (Glist,d) -> (
-     R = markovRing d;
-     G = makeGraph Glist;
-     S = globalMarkovStmts G;
+     R := markovRing d;
+     G := makeGraph Glist;
+     S := globalMarkovStmts G;
      J := markovIdeal(R,S);
      F := marginMap(1,R);
      J = F J;
@@ -288,7 +291,9 @@ bayes = (Glist,d) -> (
      )
 
 Fabrice24 = (kk) -> (
-  R = kk[x1, x2, x3, y1, y2, y3, z1, z2, z3];
+  (x1, x2, x3, y1, y2, y3, z1, z2, z3) := ("x1", "x2", "x3", "y1", "y2", "y3", "z1", "z2", "z3")/getSymbol;
+  R := kk[x1, x2, x3, y1, y2, y3, z1, z2, z3];
+  (x1, x2, x3, y1, y2, y3, z1, z2, z3) = (x1, x2, x3, y1, y2, y3, z1, z2, z3)/value;
   ideal(62500*x1^2 + 62500*y1^2 + 62500*z1^2 -74529,
        625*x2^2 + 625*y2^2 + 625*z2^2 -1250*x2 -2624,
        12500*x3^2 + 12500*y3^2 + 12500*z3^2 + 2500*x3 -44975*y3 -10982,
@@ -301,7 +306,9 @@ Fabrice24 = (kk) -> (
   )
 
 Lichtblau = (kk) -> (
-     R = kk[t,x,y,MonomialOrder=>Eliminate 1];
+     (t,x,y) := (t,x,y)/getSymbol;
+     R := kk[t,x,y,MonomialOrder=>Eliminate 1];
+     (t,x,y) = (t,x,y)/value;
      ideal"x-110t2+495t3-1320t4+2772t5-5082t6+7590t7-8085t8+5555t9-2189t10+374t11,
            y-22t+110t2-330t3+1848t5-3696t6+3300t7-1650t8+550t9-88t10-22t11"
      )
@@ -310,14 +317,14 @@ Lichtblau = (kk) -> (
 
 examplesSingular1 = new MutableHashTable;
 examplesSingular1#1 = (R) -> (
-     if R === null then R = QQ{t,x,y,z};
+     if R === null then R = QQ{"t","x","y","z"};
      use R;
      ideal"5t3x2z+2t2y3x5,7y+4x2y+y2x+2zt,3tz+3yz2+2yz4"
      )
 
 toClassic = method()
 toClassic Ideal := (I) -> (
-     g = concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
+     g := concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
      "ideal\"" | g | "\""
      )
 
@@ -331,7 +338,7 @@ toClassic Ideal := (I) -> (
 --   
 toSingular = method()
 toSingular Ideal := (I) -> (
-     g = concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
+     g := concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
      "ideal i = " | g | ";\n"
      )
 toSingular Ring := (R) -> (
@@ -468,10 +475,11 @@ doc ///
 
       For example, an @TO ExampleTable@ can be read into Macaulay2, and/or computations
       based on them can be executed.
-   Example
-      E = getM2ExampleFile("bayes", CoefficientRing => ZZ/32003);
-      keys E
-      E
+   -- comment out non-working example:
+   -- Example
+   --    E = getM2ExampleFile("bayes", CoefficientRing => ZZ/32003);
+   --    keys E
+   --    E
 ///
 
 doc ///
@@ -521,7 +529,7 @@ doc ///
      for some of the examples at
      symbolicdata.org, which doesn't appear to exist anymore)
    Example
-     H = readExampleFile "ExampleIdeals/bayes5.m2";
+     H = readExampleFile "bayes5.m2";
      keys H
      H#200#0
      H#200#1

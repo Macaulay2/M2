@@ -61,6 +61,10 @@ export {
      }
 -- convertToPoly: this function could be useful, so export???
 
+protect ErrorTolerance, protect addSlackVariables, protect Iterations,
+protect generalEquations, protect tDegree, protect Bits, protect gamma, 
+protect ResidualTolerance, protect Append
+
 needsPackage "NAGtypes"
 
 -- GLOBAL VARIABLES ----------------------------------
@@ -189,7 +193,8 @@ convertToPoly   List := List => system -> (
      -- OUT: same system converted to a laurent polynomial system, where denominators are replaced with new variables.
      R:=ring ideal system;
      P:=R.baseRings_(#R.baseRings-1); --this is the polynomial ring whose field of fractions the system is living in.
-     counter=0;
+     counter:=0;
+     var := local var;
      scan(system, f-> (
 	       if 	  instance(class f, FractionField) --if f is already polynomial, don't do anything!
 	       then if liftable(f,P) --if it can be lifted to P, then do so and update the system
@@ -278,7 +283,7 @@ mixedVolume  List := ZZ => system -> (
      -- writing data to the corresponding files                                                                                                                                                                           
      systemToFile(system,infile);
      -- launching blackbox solver:
-     execstr = PHCexe|" -m -b "|infile|" "|outfile;
+     execstr := PHCexe|" -m -b "|infile|" "|outfile;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing PHCpack command: phc -m -b";
      F := get outfile; 
@@ -447,7 +452,6 @@ refineSolutions (List,List) := List => o -> (T,sols) -> (
      -- parse and output the solutions                                                                                                                                                                                    
      parseSolutions(solsTfile, R, Bits => o.Bits)
      )
-
 
 monodromyBreakup = method(Options => {})
 monodromyBreakup WitnessSet := o -> (W) -> (

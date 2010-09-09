@@ -95,6 +95,17 @@ export {"ToricVectorBundle",
 needsPackage "Polyhedra"
 
 
+protect allRaysTable
+protect isoMatrix
+protect gradedRing
+protect cech
+protect isVB
+protect cocyle
+protect degreesList
+protect cocycle
+protect weights
+protect isomorphic
+
 ---------------------------------------------------------------------------
 -- DEFINING NEW TYPES
 ---------------------------------------------------------------------------
@@ -1671,7 +1682,7 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
      dT := tvb#"degreeTable";
      if not tvb.cache.cech#?(k,u) then (
      	  if k == 0 then (
-	       M20 = hashTable apply(subsets(l,k+1), cl -> (
+	       M20 := hashTable apply(subsets(l,k+1), cl -> (
 		    	 C := intersection apply(cl, i -> tCT#i);
 		    	 degs := dT#(tCT#(cl#0));
 		    	 L := select(toList(0..rk-1), i -> contains(dualCone C,u - degs_{i}));
@@ -1692,7 +1703,7 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
 	       tvb.cache.cech#(k,u) = (M2,d2);
 	       tvb.cache.cech#(k+1,u) = M3))
      else if not instance(tvb.cache.cech#(k,u),Sequence) then (
-	  M21 = tvb.cache.cech#(k,u);
+	  M21 := tvb.cache.cech#(k,u);
 	  (d21,M31) := makeNewDiffAndTarget(M21,rk,l,tCT,bCT,dT);
 	  tvb.cache.cech#(k,u) = (M21,d21);
 	  tvb.cache.cech#(k+1,u) = M31);

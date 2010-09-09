@@ -131,7 +131,9 @@ mdt := makeDocumentTag Thing := opts -> key -> (
 	  else packageKey(key, fkey)
 	  );
      if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
-     new DocumentTag from {nkey,fkey, {* pkg *} ,pkgTitle pkg})
+     new DocumentTag from {
+	  if instance(nkey,Symbol) then toString nkey else nkey,
+	  fkey, {* pkg *} ,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      if match("^ |  +| $", key)
      then (
@@ -243,7 +245,7 @@ fetchRawDocumentation FinalDocumentTag := tag -> (
 getPrimary = tag -> (
      while (
      	  d := fetchRawDocumentation tag;
-     	  d =!= null and d#?PrimaryTag
+     	  d =!= null and d#?global PrimaryTag
 	  )
      do tag = d#PrimaryTag;
      tag)

@@ -14,7 +14,7 @@ newConnection (String, String) := (host, port) -> (
 
 	ans := ""; buf := "";
 	while #ans === 0 or ans#-1 =!= "\n" do (
-		buff = read s#"fd";
+		buff := read s#"fd";
 		buf = buff|"";
 		if atEndOfFile s#"fd" then ( 
 			dbgout(0) << "[Client]  atEndOFFile" << endl; 
@@ -110,8 +110,8 @@ compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
 	ans := "";
 	waitfor := "(.*)<\\?scscp end \\?>\n$";
 	while not match(waitfor, ans) do (
-		buff = read s#"fd";
-		buf = buff|"";
+		buff := read s#"fd";
+		buf := buff|"";
 		if atEndOfFile s#"fd" then ( dbgout(0) << "[Client]  atEndOFFile" << endl; return null; );
 
 		ans = ans|buf;

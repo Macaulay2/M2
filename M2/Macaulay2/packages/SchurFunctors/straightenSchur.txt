@@ -11,7 +11,7 @@
     M: Module
       A Schur module of the form S_{mu}(E) for some partition mu.
   Outputs
-    T2: filling
+    T2: 
   Description
     Text
        A linear combination of semistandard tableaux representing  T in M.

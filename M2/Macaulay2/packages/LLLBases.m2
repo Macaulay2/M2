@@ -8,26 +8,33 @@ newPackage("LLLBases",
      )
 
 export{
-     LLL,
-     isLLL, 
-     kernelLLL,
-     hermite,
-     gcdLLL,
-     gramm,
-     Threshold,
-     NTL,
-     CohenEngine,
-     CohenTopLevel,
-     Givens,
-     BKZ,
-     RealFP,
-     RealQP1,
-     RealQP,
-     RealXD,
-     RealRR
+     "Hermite",
+     "LLL",
+     "isLLL", 
+     "kernelLLL",
+     "hermite",
+     "gcdLLL",
+     "gramm",
+     "Threshold",
+     "NTL",
+     "CohenEngine",
+     "CohenTopLevel",
+     "Givens",
+     "BKZ",
+     "RealFP",
+     "RealQP1",
+     "RealQP",
+     "RealXD",
+     "RealRR"
      }
 
 debug Core
+
+-- these are used as keys, formerly borrowed from Core.Dictionary, now private symbols
+protect A
+protect D
+protect F
+protect k
 
 ---------------------------------------------------
 dot = (m,i,j) -> (
@@ -82,6 +89,8 @@ processLLLstrategy := (strat) -> (
      if LLLstrategies#?strat then LLLstrategies#strat
      else error("unknown Strategy option: "|strat))
 
+protect threshold
+
 setLLLthreshold := (result,alpha) -> (
      if class alpha =!= QQ then (
          if class alpha === ZZ then
@@ -99,6 +108,8 @@ LLL = method (
      	  Limit => infinity,
      	  Strategy => NTL
      	  })
+
+protect changeOfBasis					    -- used as a key
 
 LLL MutableMatrix :=
 LLL Matrix := options -> (M) -> (
@@ -147,6 +158,9 @@ LLL Matrix := options -> (M) -> (
 if LLLComputation === symbol LLLComputation
 then LLLComputation = new Type of MutableHashTable
 
+protect kmax
+protect lambda
+
 newLLLComputation = (m, mchange,threshold) -> (
      -- struct {
      --   SparseMutableMatrix A;
@@ -172,6 +186,7 @@ newLLLComputation = (m, mchange,threshold) -> (
      result.D#1 = dot(result.A,0,0);
      result)
 
+protect isDone
 
 doLLL = (C,count) -> (
      A := C.A;
@@ -247,7 +262,7 @@ doLLL = (C,count) -> (
 		    )
 	       else (
 		    --<< "Lovasz condition OK" << newline;
-		    ell = k-2;
+		    ell := k-2;
 		    while ell >= 1 do (
 			 REDI(k,ell);
 			 ell = ell-1;
@@ -279,6 +294,9 @@ gramm Matrix := (m) -> (
 	  );
      (b,mu)
      )
+
+protect setEntry; stderr << "-- warning: undefined function setEntry in package LLLBases" << endl
+protect sparseMutableMatrix; stderr << "-- warning: undefined function sparseMutableMatrix in package LLLBases" << endl
 
 gramMultipliers = (B) -> (
      -- B is a matrix with n columns.
@@ -485,6 +503,8 @@ kernelLLL Matrix := options -> (M) -> (
 if LLLHermiteComputation === symbol LLLHermiteComputation
 then LLLHermiteComputation = new Type of MutableHashTable
 
+protect nrows						    -- used as a key
+
 newLLLHermiteComputation = (m, threshold, hasChangeOfBasis) -> (
      -- struct {
      --   SparseMutableMatrix A;
@@ -520,8 +540,8 @@ doHermiteLLL = (C,count) -> (
      alphaTop := numerator C.threshold;
      alphaBottom := denominator C.threshold;
      n := C.nrows;
-     row1 = 0;
-     row2 = 0;
+     row1 := 0;
+     row2 := 0;
      scan(2..m, i -> scan(1..i-1, j-> lambda#(i,j) = 0));
      -- subroutines
      leadRow0 := (a,i) -> (
@@ -722,6 +742,7 @@ agcdLLL = (s,thresh) -> (
 --     	  m := matrix{s};
 --     	  gcdLLL(m,options))
 --     )
+
 
 gcdLLL List := options -> (s) -> (
      if options.Strategy === Hermite
@@ -1311,8 +1332,8 @@ TEST ///
 	 apply(sn, j -> prepend(indices#i, j)))))
     Sn = SymmetricGroup toList(0..nn-1)
     M = map(ZZ^NN, nn^2, (i,j) -> (
-	  j1 = j % nn;
-	  j2 = j // nn;
+	  j1 := j % nn;
+	  j2 := j // nn;
 	  if Sn#i#j1 == j2 then 1 else 0))
     M = transpose M
     time m = syz M    -- time: 0.03 seconds

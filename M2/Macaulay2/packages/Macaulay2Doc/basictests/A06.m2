@@ -1,6 +1,4 @@
 -- test flatten
-File << Thing := (x,y) -> printString(x,string y)
-File << String := (x,y) -> printString(x,y)
 assert := x -> if not x then error "assertion failed "
 
 

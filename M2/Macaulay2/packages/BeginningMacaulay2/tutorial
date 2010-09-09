@@ -517,7 +517,7 @@ Description
      Example
 	  record = length Collatz 1
 	  L = for n from 2 to 1000 list (
-		  l = length Collatz n;
+		  l := length Collatz n;
 		  if l > record 
 		    then (record = l; (n,l))
 		    else continue)

@@ -40,7 +40,15 @@ export {
 exportMutable {
      }
 -- local functions/symbols
-local getSolution, SolutionAttributes       
+
+protect SolutionAttributes
+protect LanguageCPP, protect StartSystem, protect Output, protect Processing,
+protect trackPHCpack, protect MacOsX,
+protect System, protect prog, protect AllowSingular, protect Variant,
+protect Attempts, protect Language, protect Tracker,
+protect Iteration, protect solvePHCpack, protect constMAT,
+protect OrthogonalProjection, protect LanguageC, protect Linux,
+protect refinePHCpack, protect Undetermined, protect STATUS, protect StartSolutions
 
 needsPackage "NAGtypes"
 
@@ -54,7 +62,7 @@ debug Core; -- to enable engine routines
 BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"BERTINI";
 HOM4PS2exe = NumericalAlgebraicGeometry#Options#Configuration#"HOM4PS2";
 
-DBG := 0; -- debug level (10=keep temp files)
+DBG = 0; -- debug level (10=keep temp files)
 SLPcounter := 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker := null; -- path tracker object used last
 
@@ -1206,11 +1214,11 @@ solveSystem List := List => o -> F -> (
      else if o.Software == HOM4PS2 then (
 	  -- newR := coefficientRing R[xx_1..xx_(numgens R)];
 	  (name, p) := makeHom4psInput(R, F);
-	  targetfile = name; --(map(newR, R, gens newR)\F);
-	  tarsolfile = temporaryFileName() | 
+	  targetfile := name; --(map(newR, R, gens newR)\F);
+	  tarsolfile := temporaryFileName() | 
 	                "tasols";
  	  run(HOM4PS2exe|" "|targetfile|" "|tarsolfile);
-	  sols = readSolutionsHom4ps(tarsolfile, p);
+	  sols := readSolutionsHom4ps(tarsolfile, p);
 	  result = sols;
 	  if DBG<10 then (
 	       removeFile targetfile;
@@ -2373,7 +2381,7 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      slp := S#1;   
      o := S#2;
      SLPcounter = SLPcounter + 1;
-     curNode = #consts+nIns;
+     curNode := #consts+nIns;
      p := {};
      scan(slp, n->(
 	   k := first n;
@@ -2415,7 +2423,7 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      out := S#2;
      fname := SLPcounter; SLPcounter = SLPcounter + 1; -- this gives libraries distinct names 
                                                        -- the name of the function stays the same, should it change?
-     curNode = #consts+nIns;
+     curNode := #consts+nIns;
      p := {#consts,nIns,numgens target out, numgens source out} | {slpCOMPILED}
           | { fname }; -- "lib_name" 
      cppName := libPREFIX | toString fname | if o.Language === LanguageCPP then ".cpp" else ".c";

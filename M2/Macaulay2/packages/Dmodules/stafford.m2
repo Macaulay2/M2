@@ -125,6 +125,7 @@ findGoodF = (p) -> (
      return f+g;     
      )
 
+protect alphaDeF
 --findG (Ring, ZZ, Matrix, Matrix, RingElement, RingElement, List, RingElement):=
 --      (R,    k,  Mmat,   Mmat',  t,           alpha,       de,   f) -> (
 findG = (p) -> (
@@ -151,7 +152,7 @@ findG = (p) -> (
 	  alphaDeG := makeSigma(alpha,de,g);
 	  Smat := alphaDeF | Mmat | alphaDeG;
 	  S := (syz(Smat))^{0}; -- syzygies are columns, take the first row  
-	  Mmat'' = Mmat | matrix{apply(flatten entries S, s->s*alphaDeF)};
+	  Mmat'' := Mmat | matrix{apply(flatten entries S, s->s*alphaDeF)};
 	  return findG {R,k,Mmat,Mmat'',t,alpha,de,f};
 	  ); 
      )
@@ -562,7 +563,7 @@ reduceNK = method()
 reduceNK (Matrix,Matrix,ZZ) := (f, M, nk) -> (
      while f!=0 do (
        	  divI := select(1, toList(0..numgens source M - 1), i->isDivisibleNK(leadTerm f, leadTerm M_{i}, nk));
-       	  if #divI > 0 then g = M_{divI#0}
+       	  if #divI > 0 then g := M_{divI#0}
 	  else return f;  
 	  pInfo(999, "f = "|toString f|" g = "|toString g); 	    
      	  S := syz( matrix{{leadTerm f, leadTerm g}}--, SyzygyLimit=>1
@@ -572,7 +573,7 @@ reduceNK (Matrix,Matrix,ZZ) := (f, M, nk) -> (
 	  minI := first select(1, inds, i->first degree S_(0,i)==minDeg);
 	  f = S_(0,minI)*f+S_(1,minI)*g;
 	  -- reduce the coefficients in x's 
-	  R = ring f;
+	  R := ring f;
 	  n := numgens R // 2;
 	  C := null;
 	  scan(numgens target f, i->(

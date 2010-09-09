@@ -402,7 +402,8 @@ document {
 	  Inputs => { "x" => Symbol => " (unevaluated)", "e" => Thing},
 	  Outputs => {Thing => { "the value of the expression is ", TT "e" }},
 	  Consequences => {
-	       { "a new local variable ", TT "x", " is created.  The scope of ", TT "x", " is the current function body, or if there is none, the current file" },
+	       { "a new local variable ", TT "x", " is created.  The scope of ", TT "x", " is the innermost 
+		    current function body or ", TO "for", " loop, or the current file." },
 	       { TT "e", " is assigned to ", TT "x", ", so future references to the value of ", TT "x", " yield ", TT "e" },
 	       { "a warning message is issued if a local variable with the same name has already been created" }
 	       },
@@ -418,6 +419,15 @@ document {
 	       g = () -> ( p := 444; p )
 	       g()
 	       p
+	  ///,
+	  PARA {
+	       "In this example, we see that the scope of the local variable ", TT "p", " is limited to the body of a ", TO "for", " loop."
+	       },
+	  EXAMPLE lines ///
+	       i="a b c";
+	       for i to 3 list j := i+1
+     	       i
+	       j
 	  ///,
 	  PARA {
 	       "In this example, we see that a function returned by another function retains access to the values of local variables in its scope."
