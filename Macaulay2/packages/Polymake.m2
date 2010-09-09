@@ -146,6 +146,7 @@ toPolymakeFormat(String, Matrix) := (propertyname, M) -> (
 toPolymakeFormat(String,Vector) := (propertyname,V) -> (
      if V === null then ""
      else(
+          L := entries V;
      	  S := propertyname|"\n";
      	  if length L > 0 then
               S = S|replace("\\|", "", toString net matrix{L});     
