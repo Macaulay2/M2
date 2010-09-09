@@ -8,5 +8,12 @@ v*invv
 toField K
 1/v  -- actual crash.
 
+-- added 9 Sep 2010:
+
+v^-1  -- crashes!
+
+1//v -- this one works
+
+
 -- bug: it should be checked that a fraction field isn't over another fraction field
 -- or better, get it to work!
