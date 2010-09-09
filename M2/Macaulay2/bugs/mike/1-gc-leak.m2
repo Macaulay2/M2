@@ -1,3 +1,5 @@
+-- 8 Sep 2010: this seems to no longer be a problem
+
 -- This problem seems to be a GC problem
 -- run this program with collect=true  to see memory kept under control by gc
 -- run this program with collect=false to see memory balloon (watch it with ps or top)
