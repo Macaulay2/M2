@@ -1,6 +1,8 @@
+-- Fixed some time ago (8 Sep 2010)
 debug Core
 QQ[x]
-rawPairs(raw ZZ, raw x)
+rawPairs(raw ZZ, raw x) -- now gives an error message
+rawPairs(raw QQ, raw x) -- gives a correct, if somewhat strange answer.  But listForm cleans it up
 
 
 Macaulay 2, version 0.9.96
