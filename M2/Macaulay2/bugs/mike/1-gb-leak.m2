@@ -1,3 +1,5 @@
+-- This one was fixed previous to (8 Sep 2010)
+
 gbTrace = 3
 R = QQ [x, y, MonomialOrder => Position => Up]
 scan(1000, i -> (
