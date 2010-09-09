@@ -137,7 +137,7 @@ newPackage(String) := opts -> (title) -> (
      originalTitle := title;
      if PackageDictionary#?title and instance(value PackageDictionary#title,Package) then (
 	  if opts.Reload === null then warningMessage("package ", title, " being reloaded")
-	  else if opts.Reload === false then error("package ", title, " being reloaded")
+	  else if opts.Reload === false then error("package ", title, " not reloaded")
 	  );
      dismiss title;
      save := (saveD := dictionaryPath, saveP := loadedPackages, debuggingMode, loadDepth);
