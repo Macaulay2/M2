@@ -22,6 +22,12 @@ export {
      symbol test					    -- remove later
      }
 
+exportMutable {
+     symbol b,
+     symbol c,
+     symbol modPeriods
+     }
+
 see := (label,x) -> (stderr << "--" << label << " = " << x << endl; x)
 
 EllipticCurve = new Type of ProjectiveVariety
@@ -31,6 +37,7 @@ EllipticCurve.MethodFunction#log = E -> z -> E.log z
 EllipticCurve.MethodFunction#exp = E -> z -> E.exp z
 toString EllipticCurve := toString @@ expression
 net EllipticCurve := net @@ expression
+ellset					    -- function defined later
 new EllipticCurve from List := (EllipticCurve,v) -> ellset toSequence v
 precision EllipticCurve := E -> precision E.Period
 isReal EllipticCurve := E -> isReal E.b and isReal E.c
@@ -165,7 +172,7 @@ ellset = (b,c) -> (
 	  if b =!= 0 then z = z - b * period';
 	  z);
      k := ring (b+c);
-     R := k (monoid [global x, global y, global z]);
+     R := k (monoid [getSymbol "x", getSymbol "y", getSymbol "z"]);
      (x,y,z) := (R_0,R_1,R_2);
      S := R / (y^2 * z - (x^3 + b * x^2 * z + c * x * z^2));
      E := Proj S;
@@ -177,8 +184,8 @@ ellset = (b,c) -> (
 	  global PointClass => Epointclass,
 	  global modPeriods => normalize,
 	  global Equation => (() -> (
-		    x := hold global x;
-		    y := hold global y;
+		    x := hold getSymbol "x";
+		    y := hold getSymbol "y";
 		    y^2 == x^3 + b * x^2 + c * x)) (),
 	  global b => b,
 	  global c => c,
@@ -215,8 +222,8 @@ ellset = (b,c) -> (
 	       if not instance(P, Epointclass) then error "expected a point on the curve";
 	       (x,y,z) := toSequence P;
 	       if z == 0 then return z;
-	       prec' = min(precision x,precision y,precision z,prec);
-	       prec'' = prec' + extra;
+	       prec' := min(precision x,precision y,precision z,prec);
+	       prec'' := prec' + extra;
 	       (x,y,z) = (numeric_prec'' x,numeric_prec'' y,numeric_prec'' z);
 	       realP := isReal P;
 	       scan(chain, (R,S) -> (
@@ -276,6 +283,8 @@ ellset = (b,c) -> (
      scan(prs, pr -> E#(pr#0) = pr#1);
      E)
 
+{*
+
 eqns = () -> (
      -- run this function to generate the equations need to create the formulas in this algorithm
      eqns0 := uv -> (
@@ -296,6 +305,8 @@ eqns = () -> (
      eqns0 (u,v);
      eqns0 (v,u);
      )     
+
+*}
 
 TEST ///
 defaultPrecision = 200;

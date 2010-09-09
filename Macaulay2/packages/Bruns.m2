@@ -45,7 +45,7 @@ bruns Matrix := f->(
      --the row degrees of g are in the reverse order for bruns 1, so reverse them
      Lsource := flatten degrees source g;
      Ltar := flatten degrees target g;
-     grev=map((ring g)^(-reverse Ltar), (ring g)^(-Lsource), g^(reverse splice {0..#Ltar-1}));
+     grev:=map((ring g)^(-reverse Ltar), (ring g)^(-Lsource), g^(reverse splice {0..#Ltar-1}));
      h:=evansGriffith(grev,1);
      KK:=res coker transpose h;
      ideal transpose KK.dd_2)
@@ -104,7 +104,7 @@ elementary(Matrix, ZZ, ZZ) := (f,k,m)->(
      L3 :=L_{b-1-k..b-2};
      m11 := map(S^L1,S^L1,(i,j)-> if i==j then 1_S else 0_(ring f));
      m12 := map(S^L2,S^L0,(i,j)->0_(ring f));
-     Sk=(coefficientRing S)[S_0..S_(m-1)];
+     Sk:=(coefficientRing S)[S_0..S_(m-1)];
      m22k:=random(Sk^L3, Sk^L0);
      m22:=substitute(m22k, S);
      --     g:=transpose gens ideal (vars S)_{0..m-1};
@@ -139,10 +139,10 @@ evansGriffith(Matrix, ZZ) := (f,n)->(
      if not isSyzygy(coker f1,n) then error("cokernel of input matrix is not an appropriate syzygy");
      r:=rank f1;
      b:=rank target f1;
-     loopcount=0;
+     loopcount:=0;
      while r+n<b do(
 	  j:=0;
-	  ftemp=elementary(f1,j,n+1);
+	  ftemp:=elementary(f1,j,n+1);
 	  while (rank ftemp =!= r or not isSyzygy(coker ftemp,n)) do(
 	       if j<b-1 then j=j+1 
 	            else (loopcount=loopcount+1; 
@@ -461,7 +461,6 @@ Description
 
 
 TEST/// 
-  loadPackage "Bruns"
   kk=ZZ/32003
   S=kk[a..d]
   F=res (ideal vars S)^2
@@ -469,7 +468,6 @@ TEST///
   assert(isSyzygy(coker F.dd_4,3)==true)
 ///
 TEST /// 
-   loadPackage "Bruns"
    kk=ZZ/32003
    S=kk[a..d]
    i=ideal(a^2,b^3,c^4, d^5)
@@ -479,7 +477,6 @@ TEST ///
    assert(isSyzygy(coker EG,2)==true)
 ///
 TEST/// 
-    loadPackage "Bruns"
     kk=ZZ/32003
     S=kk[a..d]
     M=matrix{{a,0,0,0},{0,b,0,0},{0,0,c,0},{0,0,0,d}}
@@ -487,7 +484,6 @@ TEST///
     assert(rank M -1 == rank E)
 ///
 TEST///
-    loadPackage "Bruns"
     kk=ZZ/32003
     S=kk[a..d]
     i=ideal(a^2,b^2,c^2, d^2)
@@ -498,7 +494,6 @@ TEST///
     assert((#flatten entries gens g) == 3)
 ///
 TEST///
-    loadPackage "Bruns"
     kk=ZZ/32003
     S=kk[a..d]
     i=ideal(a^2,b^2,c^2, d^2)

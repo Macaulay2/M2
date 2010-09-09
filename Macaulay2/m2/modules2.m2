@@ -242,17 +242,19 @@ projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
 	  then apply(min(-d+1,n+1), j -> n-j => (-1)^j * binomial(-d,j))
      	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
 
-hilbertFunctionRing <- QQ(monoid [getGlobalSymbol "i"])
-i := hilbertFunctionRing_0
-
+hilbertFunctionRing = memoize(() -> QQ(monoid [getSymbol "i"]))
 hilbertFunctionQ = method()
 hilbertFunctionQ(ZZ) := (n) -> (
-     if n === 0 then 1_hilbertFunctionRing
-     else (1/n) * (n+i) * hilbertFunctionQ(n-1))
+     if n === 0 then 1_(hilbertFunctionRing())
+     else (
+	  i := (hilbertFunctionRing())_0;
+	  (1/n) * (n+i) * hilbertFunctionQ(n-1)))
 hilbertFunctionQ(ZZ,ZZ) := memoize(
      (n,d) -> (
      	  if d === 0 then hilbertFunctionQ(n)
-     	  else substitute(hilbertFunctionQ(n), {i => i+d})))
+     	  else (
+	       i := (hilbertFunctionRing())_0;
+	       substitute(hilbertFunctionQ(n), {i => i+d}))))
 
 hilbertPolynomial Module := ProjectiveHilbertPolynomial => o -> (M) -> (
     if not isHomogeneous M then error "expected a homogeneous module";
@@ -274,7 +276,7 @@ hilbertPolynomial Module := ProjectiveHilbertPolynomial => o -> (M) -> (
 	      	   c * projectiveHilbertPolynomial(n,-d))))
     else (
 	 if #p===0
-	 then 0_hilbertFunctionRing
+	 then 0_(hilbertFunctionRing())
 	 else sum(p, (d,c) -> (
 	      	   if #d === 0 then d = 0 else d = d#0;
 	      	   c * hilbertFunctionQ(n,-d)))))
@@ -317,11 +319,16 @@ degree Ring := R -> degree R^1
 degree Module := (
      () -> (
      	  -- constants:
-	  ZZ1 := degreesRing 1;
-	  T := ZZ1_0;
-	  h := 1 - T;
+	  local ZZ1;
+	  local T;
+	  local h;
 	  local ev;
 	  M -> (
+	       if ZZ1 === null then (
+		    ZZ1 = degreesRing 1;
+		    T = ZZ1_0;
+		    h = 1 - T;
+		    );
 	       hft := heft M;
 	       if hft === null then error "degree: no heft vector defined";
 	       hs := hilbertSeries M;

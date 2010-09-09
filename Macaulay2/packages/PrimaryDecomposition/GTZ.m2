@@ -5,6 +5,8 @@
 -- saturation
 -- 
 
+protect AnswerToDate					    -- unexported ??
+
 primaryDecompositionGTZ = method()
 primaryDecompositionGTZ Ideal := (I) -> (
      -- if homogeneous, find the Hilbert function
@@ -24,6 +26,8 @@ primaryDecompositionGTZ Ideal := (I) -> (
      --    for each (P,Q), 
      --     intersect back with the polynomial ring
      )
+
+protect ans							    -- see below, this can't be right
 
 PD = method(Options=>{AnswerToDate => null})
 PD Ideal := opt -> (I) -> (
@@ -54,7 +58,7 @@ gbdim0 = (I,u) -> (
      -- compute a gb of IK[x\u], but with no fractions
      K := frac ring I;
      IK := toFractionField(I,u);
-     gbIK = ideal apply(flatten entries substitute(gens gb IK, K), numerator);
+     gbIK := ideal apply(flatten entries substitute(gens gb IK, K), numerator);
      substitute(gbIK,ring IK)
      )
 
@@ -105,16 +109,16 @@ flatt = (I, m) -> (
 	  MonomialSize=>16]);
      J := substitute(I,RU);
      -- Collect lead coefficients of GB
-     JG = J;
+     JG := J;
      leads := leadTerm(1,gens gb J);
      --(mons,cs) = coefficients(toList(0..n-d-1),leads);
-     (mons,cs) = coefficients(leads, Variables => toList(0..n-d-1));
-     monsid = trim ideal select(flatten entries mons, f -> f != 1);
+     (mons,cs) := coefficients(leads, Variables => toList(0..n-d-1));
+     monsid := trim ideal select(flatten entries mons, f -> f != 1);
      monsid = substitute(monsid,R);
      --monset = set flatten entries gens monsid;
-     monset = new MutableHashTable;
+     monset := new MutableHashTable;
      scan(flatten entries gens monsid, m -> monset#m = {});
-     monslist = flatten entries substitute(mons,R);
+     monslist := flatten entries substitute(mons,R);
      p := positions(monslist, f -> monset#?f);
      cs = transpose cs;
      scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));

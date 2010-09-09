@@ -113,7 +113,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   M' := cokernel ( pM | p ** id_(target pM) );
   N' := cokernel ( pN | p ** id_(target pN) );
   C := complete resolution M';
-  X := getGlobalSymbol "X";
+  X := getSymbol "X";
   K := coefficientRing A;
   S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
     Degrees => {

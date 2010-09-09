@@ -46,7 +46,7 @@ loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;
      if opts.Reload === true then (
 	  dismiss pkgtitle;
-	  PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
+	  if PackageDictionary#?pkgtitle then PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
 	  );
      filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
@@ -92,7 +92,7 @@ newPackage = method(
 	  HomePage => null,
 	  Date => null,
 	  Configuration => {},
-	  Reload => null
+	  Reload => false
 	  })
 
 protect Reload
@@ -135,19 +135,18 @@ newPackage(String) := opts -> (title) -> (
      scan({(Headline,String),(HomePage,String),(Date,String)},
 	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      originalTitle := title;
-     if PackageDictionary#?title and instance(PackageDictionary#title,Package) then (
+     if PackageDictionary#?title and instance(value PackageDictionary#title,Package) then (
 	  if opts.Reload === null then warningMessage("package ", title, " being reloaded")
 	  else if opts.Reload === false then error("package ", title, " being reloaded")
 	  );
      dismiss title;
-     saveD := dictionaryPath;
-     saveP := loadedPackages;
+     save := (saveD := dictionaryPath, saveP := loadedPackages, debuggingMode, loadDepth);
      local hook;
      if title =!= "Core" then (
-     	  hook = (
-	       haderror -> if haderror then (
-	       	    dictionaryPath = saveD;
-	       	    loadedPackages = saveP;
+     	  hook = haderror -> (
+	       if haderror then (
+	       	    (dictionaryPath, loadedPackages, debuggingMode, loadDepth) = save;
+		    PackageDictionary#title <- PackageDictionary#title;
 		    )
 	       else endPackage title
 	       );
@@ -271,10 +270,9 @@ newPackage(String) := opts -> (title) -> (
      loadDepth = if title === "Core" then 1 else if not debuggingMode then 2 else 3;
      newpkg)
 
+export = method(Dispatch => Thing)
 exportFrom = method()
 exportFrom(Package,List) := (P,x) -> export \\ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x
-
-export = method(Dispatch => Thing)
 export Symbol := x -> export {x}
 export String := x -> export {x}
 export List := v -> (
@@ -376,6 +374,12 @@ endPackage = method()
 endPackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
+     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> mutable s and value s === s);
+     if #b > 0 then (
+	  PackageDictionary#title <- PackageDictionary#title;
+	  b = last \ sort apply(b, s -> (hash s,s));
+	  error splice ("mutable unexported unset symbol(s) in package ",title,": ", toSequence between_", " b);
+	  );
      ws := set pkg#"exported mutable symbols";
      exportDict := pkg.Dictionary;
      scan(sortByHash values exportDict, s -> if not ws#?s then (

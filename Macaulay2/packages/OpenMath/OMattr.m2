@@ -1,4 +1,7 @@
 --- Manipulation of "attributes" of XMLnode's ---
+
+protect OMattributes
+
 setOMAttr = method()
 setOMAttr (XMLnode, XMLnode, XMLnode) := (x,k,v) -> (
 	if k.tag =!= "OMS" then error "setOMAttr: keys must be OMSymbols";

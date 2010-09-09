@@ -26,7 +26,7 @@ w := x -> (scan(x,i -> assert (i =!= "")); x)
 mark = () -> waterMarkSymbol <- hash new MutableHashTable
 currentWaterMark = () -> value waterMarkSymbol
 
-serializable = set toList vars ( 0 ..< 52 )
+serializable = set {}
 
 serialize = x -> (
      h := new MutableHashTable;	    -- objects in progress

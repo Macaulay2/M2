@@ -31,6 +31,7 @@ OMSEvaluators#"polygb1"#"groebner" = (args, attrs) -> (
 	pols := fromOpenMath(args#0);
 	gb(ideal(pols))
 )
+
 OMSEvaluators#"polygb1"#"reduce" = (args, attrs) -> (
 	if #args === 4 then
 		--The proper variant

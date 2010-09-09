@@ -34,13 +34,17 @@ signOfShuffle := (a,b) -> (
      	  if a#i < b#j then i = i+1
      	  else (ct = ct + m-i; j = j+1));
      (-1)^ct);
+
+fixupw = w -> if instance(w,String) then getSymbol w else w
      
 Grassmannian = method(
      TypicalValue => Ideal, 
      Options => { 
 	  CoefficientRing => ZZ, 
-	  Variable => monoidDefaults.VariableBaseName
+	  Variable => monoidDefaults.VariableBaseName	    -- this is a string, so use fixupw
 	  });
+Schubert = method(TypicalValue => Ideal, Options => options Grassmannian);
+
 Grassmannian(ZZ,ZZ):= o -> (k,n) -> Schubert(k,n,n-k..n,o)
 Grassmannian(ZZ,ZZ,PolynomialRing) := o -> (k,n,R) -> (
      I := Grassmannian(k,n,o);
@@ -49,10 +53,9 @@ Grassmannian(ZZ,ZZ,PolynomialRing) := o -> (k,n,R) -> (
      f := map(R,S,apply(numgens S, i -> R_i));
      f I)
 
-Schubert = method(TypicalValue => Ideal, Options => options Grassmannian);
 Schubert(ZZ, ZZ, VisibleList) := o -> (k,n,sigma) -> (
      L := toSequence \ subsets(n+1,k+1);
-     R := o.CoefficientRing (monoid [apply(L, i -> new IndexedVariable from {baseName o.Variable,unsequence i})]);
+     R := o.CoefficientRing (monoid [apply(L, i -> new IndexedVariable from {baseName fixupw o.Variable,unsequence i})]);
      vr := new HashTable from apply(#L, i -> L#i => R_i);
      higher := apply( select( L, s -> any(s, sigma, (a,b) -> a>b)), s -> vr#s );
      G := flatten for i from 0 to #L-1 list for j from i+1 to #L-1 list (

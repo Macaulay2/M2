@@ -1154,8 +1154,6 @@ export {
 	symbol ~
 }
 
-exportMutable toList vars (0 .. 51)
-
 exportMutable {
 	symbol applicationDirectorySuffix,
 	symbol backtrace,

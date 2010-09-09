@@ -194,18 +194,14 @@ generators = method(
 	  }
      )
 
-(o -> (
-	  minimalPresentation = method(o);
-	  prune = method(o);
-	  )) (
+minimalPresentation = method(
      Options => {
 	  Exclude => {}
-	  -- as far as I can tell these options are unused (now)
-	  -- Variable => null, 
-	  -- Strategy => null
-	  }
-     )
-
+	  })
+prune = method(
+     Options => {
+	  Exclude => {}
+	  })
 status = method (
      Options => new OptionTable from {
      	  TotalPairs => true,
@@ -355,6 +351,8 @@ options Sequence := s -> (
      m := lookup s;
      if m === null then error "method not found";
      options m)
+
+notImplemented = x -> error "not implemented yet"
 
 oftab := hashTable {
      functionBody (method(Options => {})) => f -> notImplemented(),

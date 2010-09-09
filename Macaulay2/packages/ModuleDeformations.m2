@@ -280,8 +280,10 @@ deformMCMModule(Module,RingMap) := o -> (M0,phi) -> (
      pIdeal = substitute(pIdeal, OYxSAmbient);
 
      for i from 2 to o.DegreeLimit do
-       ((A,B,obstruction,done) = ExtendDeformation (OYxSAmbient, pIdeal, i, A, B, d, length Ext1, Ext2BasisVect, obstruction);
-        if done then break);
+            (
+		 local done;
+		 (A,B,obstruction,done) = ExtendDeformation (OYxSAmbient, pIdeal, i, A, B, d, length Ext1, Ext2BasisVect, obstruction);
+        	 if done then break);
 
      OYAmbientxSAmbient := ambient OYxSAmbient;
      OYAmbientxS := (OYAmbientxSAmbient) / ideal (obstruction / (f -> substitute (f, ambient OYAmbientxSAmbient)));
@@ -530,7 +532,7 @@ document {
      }
 
 TEST ///
---loadPackage "ModuleDeformations"
+--needsPackage "ModuleDeformations"
 R=QQ[x,y,Degrees=>{2,3}]/(x^3-y^2);
 (S,M)=deformMCMModule(module ideal (x,y));
 RS=ring M
@@ -543,7 +545,7 @@ assert (I == ideal det presentation M)
 ///
 
 TEST ///
-loadPackage "ModuleDeformations"
+needsPackage "ModuleDeformations"
 OSigma=QQ[x,Degrees=>{2}]
 OY=QQ[y,z,x,Degrees=>{2,3,2}]/(z^2-(y-x)*y^2)
 phi=map(OY,OSigma,matrix({{x}}))
@@ -558,7 +560,7 @@ assert (I == ideal det presentation M)
 ///
 
 TEST ///
-loadPackage "ModuleDeformations"
+needsPackage "ModuleDeformations"
 R=QQ[x,y,Degrees=>{3,4}]/(x^4-y^3);
 (S,M)=deformMCMModule(module ideal (x^2,y));
 assert (isHomogeneous S)
@@ -576,7 +578,7 @@ uninstallPackage "ModuleDeformations"
 installPackage "ModuleDeformations"
 check "ModuleDeformations"
 
-loadPackage "ModuleDeformations"
+needsPackage "ModuleDeformations"
 R = QQ[x,y,Degrees=>{3,4}]/(x^4-y^3)
 deformMCMModule(module ideal(x^2,y))
 x
@@ -593,7 +595,7 @@ N0 = module ideal (x^2,y^2)
 
 
 restart
-loadPackage "ModuleDeformations";
+needsPackage "ModuleDeformations";
 R = QQ[x,y, Degrees => {3,4}] / (x^4-y^3);
 deformMCMModule(module ideal(x^2,y));
 xi
@@ -604,7 +606,7 @@ xi
 xi_1
 
 restart
-loadPackage "ModuleDeformations";
+needsPackage "ModuleDeformations";
 R = QQ[x,y, Degrees => {3,4}] / (x^4-y^3);
 (S,M) = deformMCMModule(module ideal(x^2,y));
 xi
@@ -616,7 +618,7 @@ x
 
 --------------------------------------------------------------------------------
 restart
-loadPackage "ModuleDeformations";
+needsPackage "ModuleDeformations";
 R = QQ[x,y, Degrees => {3,4}] / (x^4-y^3);
 (OS,M) = deformMCMModule module ideal (x,y);
 describe OS

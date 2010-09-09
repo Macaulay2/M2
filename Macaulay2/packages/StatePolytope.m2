@@ -161,7 +161,7 @@ st := get polymakesession;
      str = replace("VERTICES",barycenterstring,str);
      openOut "augmentedtemporarypolymakefile.txt";
      "augmentedtemporarypolymakefile.txt" << "_application polytope\n" << str << closeOut;
-     polymakesession2 = "!polymake augmentedtemporarypolymakefile.txt VERTICES";
+     polymakesession2 := "!polymake augmentedtemporarypolymakefile.txt VERTICES";
      polymakesession2 << closeOut;
      augmentedstatepolytope := get polymakesession2;
      if set polymakeToM2(st) === set polymakeToM2(augmentedstatepolytope)   then true else false

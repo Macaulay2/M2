@@ -187,6 +187,8 @@ testcover=(P,A,B) -> (
 --input: A poset with any type of relation C (minimal, maximal, etc.)
 --output: The minimal relations defining our poset
 
+protect CRelations
+
 coveringRelations:=(P) -> (
      C=set{};
      apply(#P.CRelations,i->testcover(P,P.CRelations#i#0,P.CRelations#i#1));

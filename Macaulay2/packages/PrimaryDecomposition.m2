@@ -28,6 +28,8 @@ export {
 --     radicalContainment
      }
 
+-- private symbols used as keys:
+protect H, protect U, protect W
 
 --     EHVprimaryDecomposition,			    -- cryptic
 --     HprimaryDecomposition,
@@ -243,7 +245,8 @@ TEST ///
 	       );
 	  )
           
-     
+     w,x,y,z     
+
      scan({QQ, ZZ/3, ZZ/2, ZZ/101, ZZ/32003}, k -> (
 	       Q := k[w,x,y,z];
 	       scan({ideal(x*y,y^2), ideal(x^4*y^5), ideal(w*x, y*z, w*y+x*z),

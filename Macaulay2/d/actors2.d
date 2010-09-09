@@ -505,6 +505,13 @@ protect(e:Expr):Expr := (
 	  e)
      else WrongArg("a symbol or a dictionary"));
 setupfun("protect",protect);
+allowLocalCreation(e:Expr):Expr := (
+     when e
+     is dc:DictionaryClosure do (
+	  dc.dictionary.LocalCreationAllowed = true;
+	  e)
+     else WrongArg("a dictionary"));
+setupfun("allowLocalCreation",allowLocalCreation);
 flagSymbol(e:Expr):Expr := (
      when e
      is q:SymbolClosure do (

@@ -4,6 +4,8 @@
 
 recursionLimit = 300
 
+degreesRing 0;
+
 addStartFunction(() -> setRandomSeed((currentTime() << 16) + processID()))
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
@@ -26,13 +28,16 @@ addStartFunction(
 	  if class value getGlobalSymbol "User" =!= Package then (
      	       dismiss "User";
 	       newPackage("User", DebuggingMode => true, Reload => true);
+	       -- debug:
+	       -- protect User#"private dictionary";
+	       allowLocalCreation User#"private dictionary";
 	       );
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
 	       hd := "with packages: ";
 	       stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(select(loadedPackages,mentionQ),toString)) << endl;
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
-	       )
+	       );
 	  )
      )
 
@@ -76,19 +81,16 @@ addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile the
 	  scan(sort newfiles, fn -> stderr << "--         " << fn << endl)))
 addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
-scan(values Core#"private dictionary" - set values Core.Dictionary,
-     s -> if mutable s and value s === s then error("mutable unexported unset symbol in Core: ", s))
 noinitfile' := noinitfile
 load "installedpackages.m2"
 Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
 path = packagepath
 Function.GlobalReleaseHook = (X,x) -> (
-     stderr << "--warning: function " << toString X << " redefined" << endl;
+     warningMessage(X," redefined");
      if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
      )
 waterMark = hash symbol waterMark
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
-assert( all(flagLookup \ vars (0 .. 51), i -> not i ) )
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
      needsPackage)
 Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages")

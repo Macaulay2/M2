@@ -781,13 +781,13 @@ document {
 document {
         Key => {basisElements,(basisElements,InvolutiveBasis),(basisElements,FactorModuleBasis)},
         Headline => "extract the matrix of generators from an involutive basis or factor module basis",
-        Usage => "B = basisElements J or B = basisElements F",
+        Usage => "B = basisElements J\nB = basisElements F",
         Inputs => {
 	     "J" => InvolutiveBasis,
 	     "F" => FactorModuleBasis
 	     },
         Outputs => {
-	   B => Matrix
+	   "B" => Matrix
 	   },
 	PARA{
 	     TEX "If the argument of basisElements is ", ofClass InvolutiveBasis, ", then the columns of B are generators for the module spanned by the involutive basis. These columns form a Gr\\\"obner basis for this module."

@@ -223,6 +223,7 @@ nPosition = (I,X) -> (
      return d;
      );
 
+protect rr							    -- probably a bug to use it below
 
 homNoetherNormalization = (I,R,k,X) -> (
      d := nPosition(I,X);

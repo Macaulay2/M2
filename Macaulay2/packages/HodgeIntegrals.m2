@@ -120,7 +120,7 @@ liuXuCoeff = memoize (
    	  else (
 	       d := position(drop(a, 1), x -> x>0) + 1;
 	       a' := (a|{0}) - ee(d, k + 1);
-               tempCoeff = (
+               tempCoeff := (
 		    (2*d + 3)/12 *
 	       	    wittenTau(g - 1, 4*ee(0, k + 1) + ee(d + 1, k + 1) + a') -
 	       	    (2*g + n - 1)/6 *
@@ -210,7 +210,7 @@ dimCheck = memoize (
 
 lambdaToCh = memoize (
      (n, R) -> (
-  	  tempChRing := QQ[tempCh_1..tempCh_n, Degrees=>{1..n}];
+  	  tempChRing := QQ[local tempCh_1..local tempCh_n, Degrees=>{1..n}];
   	  I := ideal basis(n + 1, 2 * n - 1, tempChRing);
   	  tempChRing = tempChRing/I;
   	  x := sum((n + 1)//2, i -> (2 * i)! * tempCh_(2 * i + 1));

@@ -1131,14 +1131,17 @@ Thing#{Standard,AfterPrint} = x -> (
      << o() << lineNumber;
      y := class x;
      << " : " << y;
-     {*
-     while parent y =!= Thing do (
-	  y = parent y;
-	  << " < " << y;
-	  );
-     *}
      << endl;
      )
+
+-- Type#{Standard,AfterPrint} = x -> (
+--      << endl;				  -- double space
+--      << o() << lineNumber;
+--      y := class x;
+--      << " : " << y << ", with ancestors:";
+--      while ( y = parent y; << " " << y; y =!= Thing ) do ();
+--      << endl;
+--      )
 
 Function#{Standard,AfterPrint} = x -> (
      Thing#{Standard,AfterPrint} x;

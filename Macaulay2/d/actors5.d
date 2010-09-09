@@ -475,6 +475,7 @@ examine(e:Expr):Expr := (
 	  << " framesize : " << d.framesize << endl
 	  << " transient : " << d.transient << endl
 	  << " protected : " << d.Protected << endl
+	  << " local creation allowed : " << d.LocalCreationAllowed << endl
 	  << " symboltable size : " << d.symboltable.numEntries << endl;
      	  showFrames(f);
           if d.frameID != f.frameID then stdIO << " -- warning: incorrect frameID on first frame" << endl;

@@ -22,12 +22,6 @@ precision InexactNumber := precision0
 precision Number := x -> infinity
 precision Ring := R -> precision 0_R
 
-lngamma = method()
-lngamma ZZ := lngamma QQ := lngamma RR := x -> (
-     (y,s) := lgamma x;
-     if s == -1 then y + ii * numeric_(precision y) pi else y
-     )
-
 -- new types
 
 InexactField = new Type of EngineRing
@@ -212,6 +206,12 @@ char InexactField := R -> 0
 pi = new Constant from { symbol pi, pi0 }
 EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
 ii = new Constant from { symbol ii, ConstantII }
+
+lngamma = method()
+lngamma ZZ := lngamma QQ := lngamma RR := x -> (
+     (y,s) := lgamma x;
+     if s == -1 then y + ii * numeric_(precision y) pi else y
+     )
 
 expression Constant := c -> expression c#0
 toString Constant := net Constant := c -> toString c#0

@@ -2,6 +2,7 @@
 ----------------------------------
 ---------- SERVER CODE -----------
 ----------------------------------
+
 serverSocket = null;
 startServer = method();
 startServer (String, String) := (host, port) -> (
@@ -92,7 +93,7 @@ handleIncomingConnection = sock -> (
 	ans := ""; buf := ""; mtch := null;
 	waitfor := "<\\?scscp version=\"(.*)\" \\?>"; 
 	while (mtch = regex(waitfor, ans)) === null do (
-		buff = read sock;
+		buff := read sock;
 		buf = buff|"";
 
 		--Handle EOF

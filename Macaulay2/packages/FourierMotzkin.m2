@@ -181,7 +181,7 @@ fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
      L := rotateMatrix leadTerm A;
      A = rotateMatrix A;
      -- find pivots
-     numRow = rank target A;     -- numRow <= d
+     numRow := rank target A;     -- numRow <= d
      i := 0;
      pivotCol := {};
      while (i < numRow) do (

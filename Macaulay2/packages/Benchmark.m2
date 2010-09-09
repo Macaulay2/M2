@@ -32,7 +32,7 @@ benchmarks = new HashTable from {
 	  ti),
      "gbB148" => "gb of Bayesian graph ideal #148" => () -> (
 	  p := local p;
-	  R := ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
+	  R := ZZ/32003[reverse(apply((1,1,1,1,1)..(2,2,2,2,2),s -> p_s)), MonomialSize=>8];
 	  J := ideal(
 	      -p_(1,1,2,1,1)*p_(2,1,1,1,1)+p_(1,1,1,1,1)*p_(2,1,2,1,1),
 	      -p_(1,1,2,1,2)*p_(2,1,1,1,2)+p_(1,1,1,1,2)*p_(2,1,2,1,2),
@@ -126,10 +126,10 @@ benchmarks = new HashTable from {
      "yang-subring" => "an example of Yang-Hui He" => () -> (
      	  kk := ZZ/101;
 	  R := kk[local a, local b, local c, local d, local e, local f, local g, local h, local i, local j, local k, local l, local m];
-	  fterms = ideal(4*e*f^2-4*d*f*g+10*a*h+3*b*h+3*c*h+3*a*j+5*b*j+5*c*j+7*a*l+4*b*l+3*c*l+7*f,2*e^2*f-2*d*e*g-13*g*h*i+18*f*i^2-7*g*i*j-15*g*h*k+24*f*i*k-11*g*j*k+20*f*k^2-11*g*i*l-12*g*k*l-12*g*h*m+16*f*i*m-8*g*j*m+26*f*k*m-19*g*l*m+8*f*m^2+7*e,3*e*h-3*d*i+5*e*j-5*d*k+4*e*l-4*d*m,18*g^2*h-12*f*g*i+13*g^2*j-15*f*g*k+13*g^2*l-5*f*g*m+10*a*e+3*b*e+3*c*e,3*e*h-3*d*i+5*e*j-5*d*k+3*e*l-3*d*m,9*g^2*h-5*f*g*i+2*g^2*j-4*f*g*k+14*g^2*l-17*f*g*m+3*a*e+5*b*e+5*c*e,8*g^2*h-17*f*g*i+8*g^2*j-16*f*g*k+18*g^2*l-13*f*g*m+7*a*e+4*b*e+3*c*e,10*e*h-10*d*i+3*e*j-3*d*k+7*e*l-7*d*m,-16*e*f*g+16*d*g^2-10*a*i-3*b*i-3*c*i-3*a*k-5*b*k-5*c*k-7*a*m-4*b*m-3*c*m-7*g,-6*d*e*f+6*d^2*g+16*g*h^2-19*f*h*i+28*g*h*j-12*f*i*j+16*g*j^2-5*f*h*k-2*f*j*k+10*g*h*l-10*f*i*l+24*g*j*l-10*f*k*l+18*g*l^2-7*f*h*m-13*f*j*m-10*f*l*m-7*d,-12*f*g*h+6*f^2*i-10*f*g*j+8*f^2*k-10*f*g*l+11*f^2*m-10*a*d-3*b*d-3*c*d,-13*f*g*h+11*f^2*i-12*f*g*j+10*f^2*k-13*f*g*l+14*f^2*m-3*a*d-5*b*d-5*c*d,-20*f*g*h+13*f^2*i-13*f*g*j+16*f^2*k-3*f*g*l+16*f^2*m-7*a*d-4*b*d-3*c*d);
-	  dterms = matrix {{g*h-f*i, g*j-f*k, g*l-f*m, e*f-d*g, a*i*j-a*h*k, b*i*j-b*h*k, c*i*j-c*h*k, a*i*l-a*h*m, b*i*l-b*h*m, c*i*l-c*h*m, a*k*l-a*j*m, b*k*l-b*j*m, c*k*l-c*j*m, a*e*h-a*d*i, b*e*h-b*d*i, c*e*h-c*d*i, a*e*j-a*d*k, b*e*j-b*d*k, c*e*j-c*d*k, a*e*l-a*d*m, b*e*l-b*d*m, c*e*l-c*d*m}};
+	  fterms := ideal(4*e*f^2-4*d*f*g+10*a*h+3*b*h+3*c*h+3*a*j+5*b*j+5*c*j+7*a*l+4*b*l+3*c*l+7*f,2*e^2*f-2*d*e*g-13*g*h*i+18*f*i^2-7*g*i*j-15*g*h*k+24*f*i*k-11*g*j*k+20*f*k^2-11*g*i*l-12*g*k*l-12*g*h*m+16*f*i*m-8*g*j*m+26*f*k*m-19*g*l*m+8*f*m^2+7*e,3*e*h-3*d*i+5*e*j-5*d*k+4*e*l-4*d*m,18*g^2*h-12*f*g*i+13*g^2*j-15*f*g*k+13*g^2*l-5*f*g*m+10*a*e+3*b*e+3*c*e,3*e*h-3*d*i+5*e*j-5*d*k+3*e*l-3*d*m,9*g^2*h-5*f*g*i+2*g^2*j-4*f*g*k+14*g^2*l-17*f*g*m+3*a*e+5*b*e+5*c*e,8*g^2*h-17*f*g*i+8*g^2*j-16*f*g*k+18*g^2*l-13*f*g*m+7*a*e+4*b*e+3*c*e,10*e*h-10*d*i+3*e*j-3*d*k+7*e*l-7*d*m,-16*e*f*g+16*d*g^2-10*a*i-3*b*i-3*c*i-3*a*k-5*b*k-5*c*k-7*a*m-4*b*m-3*c*m-7*g,-6*d*e*f+6*d^2*g+16*g*h^2-19*f*h*i+28*g*h*j-12*f*i*j+16*g*j^2-5*f*h*k-2*f*j*k+10*g*h*l-10*f*i*l+24*g*j*l-10*f*k*l+18*g*l^2-7*f*h*m-13*f*j*m-10*f*l*m-7*d,-12*f*g*h+6*f^2*i-10*f*g*j+8*f^2*k-10*f*g*l+11*f^2*m-10*a*d-3*b*d-3*c*d,-13*f*g*h+11*f^2*i-12*f*g*j+10*f^2*k-13*f*g*l+14*f^2*m-3*a*d-5*b*d-5*c*d,-20*f*g*h+13*f^2*i-13*f*g*j+16*f^2*k-3*f*g*l+16*f^2*m-7*a*d-4*b*d-3*c*d);
+	  dterms := matrix {{g*h-f*i, g*j-f*k, g*l-f*m, e*f-d*g, a*i*j-a*h*k, b*i*j-b*h*k, c*i*j-c*h*k, a*i*l-a*h*m, b*i*l-b*h*m, c*i*l-c*h*m, a*k*l-a*j*m, b*k*l-b*j*m, c*k*l-c*j*m, a*e*h-a*d*i, b*e*h-b*d*i, c*e*h-c*d*i, a*e*j-a*d*k, b*e*j-b*d*k, c*e*j-c*d*k, a*e*l-a*d*m, b*e*l-b*d*m, c*e*l-c*d*m}};
 	  y := symbol y;
-	  S := kk[y_1..y_22, Degrees=>degrees source dterms];
+	  S := kk[apply(1..22,i -> y_i), Degrees=>degrees source dterms];
 	  A := R/fterms;
 	  F := map(A,S,sub(dterms,A));
 	  (ti,re) := toSequence timing ker F;

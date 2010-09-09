@@ -1,9 +1,9 @@
 --		Copyright 2006 by Daniel R. Grayson
 
 pretty = method(Dispatch => Thing)
+pretty2 = method(Dispatch => Thing)
 pretty Thing := x -> stack pretty2 x
 
-pretty2 = method(Dispatch => Thing)
 pr := ou -> x -> (
      r := ou x;
      if width r <= printWidth then return 1:r;

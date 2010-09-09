@@ -117,7 +117,7 @@ autoCreateIDCheck = f -> x -> (
 -- This function will ensure that, when an object occurs more than once inside
 -- an OpenMath object, only one actual instance remains, and the rest be changed to
 -- references.
-replaceMultipleIDs = x -> ( found = new MutableHashTable; replaceMultipleIDsRec(found, x) )
+replaceMultipleIDs = x -> ( found := new MutableHashTable; replaceMultipleIDsRec(found, x) )
 replaceMultipleIDsRec = (found, x) -> (
 	if x#?"id" and x#"id" =!= null then (
 		if not found#?(x#"id") then (

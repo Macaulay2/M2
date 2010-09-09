@@ -6,8 +6,8 @@ getMinorsStrategy := (R,options) -> (
      bareiss := 0;  -- WARNING: these must match the engine!!
      cofactor := 1;
      strat := if options.?Strategy then options.Strategy else null;
-     if strat === symbol Bareiss then bareiss
-     else if strat === symbol Cofactor then cofactor
+     if strat === global Bareiss then bareiss
+     else if strat === global Cofactor then cofactor
      else if strat =!= null then (
 	  error "'Strategy' keyword must be 'Cofactor' or 'Bareiss'";
 	  )
@@ -100,7 +100,7 @@ fittingIdeal(ZZ,Module) := Ideal => (i,M) -> (
      then ideal 1_(ring M)
      else trim minors(n-i,p))
 
-symmetricPower(ZZ,Module) := (d,M) -> coimage basis(d,symmetricAlgebra M,SourceRing => ring M,Degree => {d,degreeLength M:0})
+symmetricPower(ZZ,Module) := (d,M) -> coimage basis(d,symmetricAlgebra M,global SourceRing => ring M,Degree => {d,degreeLength M:0})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

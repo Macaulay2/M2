@@ -88,7 +88,7 @@ ideal mingens ker phi)
 rncmap=method()
 rncmap(Ideal):=(i1)->(
 n:=(rank source vars ring i1)-1;
-cc=res coker gens i1;
+cc:=res coker gens i1;
 j:=length cc;
 m:=cc.dd_j;
 Ra:=ring i1;
@@ -216,7 +216,7 @@ t:=symbol t;
 m:=(rank source linsys)-1;
 T:=K[t_0..t_m];
 RT:=R**T;
-vT=sub(vars T,RT);
+vT:=sub(vars T,RT);
 sl:=sub(linsys,RT);
 Igr:=sub(I,RT)+minors(2,vT||sl);
 Igr=saturate(Igr,ideal sl);
@@ -554,7 +554,7 @@ if (e^2==4*f*c) then (
  );
  if f!=0 then (
   as:=4*f*a-d^2;
-  bs=4*f*b-2*d*e;
+  bs:=4*f*b-2*d*e;
   rtrans=matrix {{bs,-as,-bs*d/2/f+e/2/f*as}};
   tst=sub(ueber,{L#0=>rtrans_(0,0),L#1=>rtrans_(0,1),L#2=>rtrans_(0,2)});
   if tst!=0 then print("ERROR "|toString tst);

@@ -34,20 +34,6 @@ sortBy = f -> v -> last @@ last \ sort \\ (i -> (f i, new Bag from {i})) \ v
 sortByName = x -> (sortBy toString) x
 sortByHash = sortBy hash
 
--- let's get these reserved variables defined all in the same spot
-
-flagLookup a; flagLookup b; flagLookup c; flagLookup d; flagLookup e;
-flagLookup f; flagLookup g; flagLookup h; flagLookup i; flagLookup j;
-flagLookup k; flagLookup l; flagLookup m; flagLookup n; flagLookup o;
-flagLookup p; flagLookup q; flagLookup r; flagLookup s; flagLookup t;
-flagLookup u; flagLookup v; flagLookup w; flagLookup x; flagLookup y;
-flagLookup z; flagLookup A; flagLookup B; flagLookup C; flagLookup D;
-flagLookup E; flagLookup F; flagLookup G; flagLookup H; flagLookup I;
-flagLookup J; flagLookup K; flagLookup L; flagLookup M; flagLookup N;
-flagLookup O; flagLookup P; flagLookup Q; flagLookup R; flagLookup S;
-flagLookup T; flagLookup U; flagLookup V; flagLookup W; flagLookup X;
-flagLookup Y; flagLookup Z
-
 centerString = (wid,s) -> (
      n := width s;
      if n === wid then s
@@ -65,11 +51,16 @@ dictionaryPath = append(dictionaryPath,OutputDictionary)
 -- references to the symbol 'User' occur before the corresponding package has been created...
 getGlobalSymbol(PackageDictionary,"User")
 
-getSymbol = nm -> (
-     if isGlobalSymbol nm then return getGlobalSymbol nm;
-     for d in dictionaryPath do if mutable d then return getGlobalSymbol(d,nm);
-     error "no mutable dictionary on path";
-     )
+-- the former behavior
+-- getSymbol = nm -> (
+--      if isGlobalSymbol nm then return getGlobalSymbol nm;
+--      for d in dictionaryPath do if mutable d then return getGlobalSymbol(d,nm);
+--      error "no mutable dictionary on path";
+--      )
+
+getSymbol = s -> (
+     if instance(User,Symbol) then error "getSymbol used before package User created";
+     getGlobalSymbol(User#"private dictionary", s))
 
 if notify then stderr << "--loading " << minimizeFilename currentFileName << endl
 

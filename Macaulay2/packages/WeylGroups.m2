@@ -53,6 +53,9 @@ RootSystem = new Type of MutableHashTable
 --Cartan matrix of a root system
 cartanMatrix = method()
 
+protect CartanMatrixTr
+protect RootSystemRank
+
 cartanMatrix(RootSystem) := (R) -> transpose R.CartanMatrixTr
 
 --rank of a root system
@@ -60,6 +63,13 @@ rank(RootSystem) := (R) -> R.RootSystemRank
 
 --Defining equality of root systems (maybe we should also test the lengths of the roots?)
 RootSystem == RootSystem := (R1, R2) -> R1.CartanMatrixTr == R2.CartanMatrixTr
+
+protect ReducedDecompositions
+protect WeylGroupList
+protect Reflections
+protect PositiveRoots
+protect RootNorms
+protect CartanMatrixTrInv
 
 --Defining the direct sum of two root systems
 RootSystem ++ RootSystem := (R1, R2) ->
@@ -207,7 +217,7 @@ dynkinType(RootSystem) := (R) -> dynkinType(dynkinDiagram(R))
 dynkinType(BasicList) := (L) ->
 	(
 	for i from 0 to #L-1 do if instance(L#i#1,ZZ)==false or L#i#1<1 then error "Second elements must be positive integers.";
-	mylist={};
+	mylist:={};
 	for i from 0 to #L-1 do 
 	  (
 	  H:=L#i#0;
@@ -1502,7 +1512,7 @@ storeHasseGraph(HasseGraph,String) := (H,filename) ->
 loadHasseGraph=method()
 loadHasseGraph(String):=(filename)->
 	(
-	mylist=value get filename;
+	mylist:=value get filename;
 	new HasseGraph from
 	for i from 0 to #mylist-1 list
 	apply(mylist#i,x->{if x#0===null then "" else toString(x#0),apply(x#1,y->{toString(y#0),y#1})})

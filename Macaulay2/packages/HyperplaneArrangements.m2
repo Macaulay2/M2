@@ -47,6 +47,7 @@ debug Core
 net Arrangement := A -> if hasAttribute(A,ReverseDictionary) then toString getAttribute(A,ReverseDictionary) else net expression A
 dictionaryPath = delete(Core#"private dictionary", dictionaryPath)
 
+protect hyperplanes
 net Arrangement := A -> net expression A
 expression Arrangement := A -> new RowExpression from { A.hyperplanes }
 describe Arrangement := A -> net A.hyperplanes
@@ -145,6 +146,9 @@ normal := h -> (
 
 -- reduce an arrangement with possibly repeated hyperplanes to a 
 -- simple arrangement.  Cache the simple arrangement and multipliticies.
+
+protect m
+protect simple
 
 trim Arrangement := Arrangement => options -> A ->  (
      if A.cache.?simple then return(A.cache.simple);
@@ -489,10 +493,10 @@ Arrangement ** Arrangement := Arrangement => arrangementSum
 isDecomposable = method(TypicalValue => Boolean)
 
 isDecomposable (Arrangement,Ring) := Boolean => (A,k) -> (
-     I = orlikSolomon (A,k);
-     b = betti res(coker vars ((ring I)/I), LengthLimit=>3);
-     phi3 = 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
-     multiplicities = apply(flats(2,A),i->length tolist i);
+     I := orlikSolomon (A,k);
+     b := betti res(coker vars ((ring I)/I), LengthLimit=>3);
+     phi3 := 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
+     multiplicities := apply(flats(2,A),i->length tolist i);
      sum(multiplicities,m->m*(2-3*m+m^2)) == phi3);
 
 isDecomposable (Arrangement) := Boolean => A -> (
@@ -524,6 +528,7 @@ EPY (Ideal,PolynomialRing) := Module => (j, R) -> (
 EPY (Ideal) := Module => (j) -> (
      n := numgens ring j;
      f := symbol f;
+     X := getSymbol "X";
      R := coefficientRing(ring j)[X_1..X_n];
      EPY(j, R));
 
@@ -578,6 +583,8 @@ multIdeal = method(TypicalValue => Ideal)
 -- whose keys are the lists of exponents on each ideal, and whose
 -- values are the intersection.
 
+protect multipliers
+protect irreds
 multIdeal (RR,Arrangement,List) := Ideal => (s,A,m) -> (
      if (#tolist A != #m) then error "expected one weight for each hyperplane";
      R := ring A;

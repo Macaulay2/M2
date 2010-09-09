@@ -359,7 +359,7 @@ while sy<n do (
   liy=append(liy,lix);
 sy=sy+1);
 -- symmetrize
-trmw=matrix(liy);
+trmw:=matrix(liy);
 trmw=trmw+transpose(trmw);
 trmw);
 
@@ -420,7 +420,7 @@ i:=n-2;
 rstt:=0;
 while i>-1 do (
   rstt=ze_(0,i);
-  j=i+1;
+  j:=i+1;
   while j<n do (
      rstt=rstt-trmw_(i,j)*rst#(n-1-j);
   j=j+1);

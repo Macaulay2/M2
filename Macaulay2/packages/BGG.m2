@@ -86,11 +86,11 @@ beilinson = method()
 beilinson(Matrix,PolynomialRing) := Matrix => (o,S) -> (
      coldegs := degrees source o;
      rowdegs := degrees target o;
-     mats = table(numgens target o, numgens source o,
+     mats := table(numgens target o, numgens source o,
               (r,c) -> (
-                   rdeg = first rowdegs#r;
-                   cdeg = first coldegs#c;
-                   overS = beilinson1(o_(r,c),cdeg-rdeg,cdeg,S);
+                   rdeg := first rowdegs#r;
+                   cdeg := first coldegs#c;
+                   overS := beilinson1(o_(r,c),cdeg-rdeg,cdeg,S);
                    -- overS = substitute(overE,S);
                    map(UU(rdeg,S),UU(cdeg,S),overS)));
      if #mats === 0 then matrix(S,{{}})

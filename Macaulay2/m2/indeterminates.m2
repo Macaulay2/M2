@@ -2,35 +2,34 @@
 
 indeterminates =  new MutableHashTable
 
-indices := new MutableHashTable
+varIndices := new MutableHashTable
+
+varName := i -> (
+     if 0 <= i and i < 26 then ascii(97 + i)
+     else if 26 <= i and i < 52 then ascii(65 + i - 26)
+     else if i < 0
+     then "X" | toString(-i)
+     else "x" | toString(i-52))
 
 vars ZZ := i -> (
      if indeterminates#?i then indeterminates#i else (
-	  x := (
-	       if 0 <= i and i < 26 then getGlobalSymbol ascii(97 + i)
-	       else if 26 <= i and i < 52 then getGlobalSymbol ascii(65 + i - 26)
-	       else 
-	       value (
-		    if i < 0 then "global X" | toString(-i)
-	       	    else "global x" | toString(i-52)
-		    )
-	       );
+	  x := getSymbol varName i;
 	  indeterminates#i = x;
-	  indices#x = i;
+	  varIndices#x = i;
 	  x))
 
 vars List := vars Sequence := args -> apply(flatten splice args, j -> vars j)
 
+isUserSymbol := (s,a) -> User#"private dictionary"#?s and User#"private dictionary"#s === a
+
 reverseVars := a -> (
-     if indices#?a 
-     then indices#a
+     if varIndices#?a then varIndices#a
      else (
 	  s := toString a;
-	  if #s === 1 and s =!= "'" then (
-	       i := first ascii s;
-	       if i < 97 then i - 65 + 26 else i - 97
+	  if isUserSymbol(s,a) and match("^[a-zA-Z]$",s) then (
+	       first ascii s + if match("^[A-Z]$",s) then 26 - first ascii "A" else - first ascii "a"
 	       )
-     	  else error(s, " is not one of the symbols known to 'vars'")
+     	  else error(a, " is not one of the symbols known to 'vars'")
      	  )
      )
 
@@ -38,10 +37,12 @@ Symbol .. Symbol := (a,z) -> if a === z then 1:a else vars( reverseVars a .. rev
 Symbol ..< Symbol := (a,z) -> if a === z then () else vars( reverseVars a ..< reverseVars z )
 
 succS = new MutableHashTable;
-for i from 0 to 50 do succS#(vars i) = vars(i+1)
+for i from 0 to 50 do succS#(varName i) = varName(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
-succ(Symbol,Symbol) := (x,y) -> succS#?x and succS#x === y
+succ(Symbol,Symbol) := (x,y) -> (
+     (s,t) := (toString x, toString y);
+     isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
 succ(IndexedVariable,IndexedVariable) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
 succ(Thing,Thing) := x -> false
 runLengthEncode = method(Dispatch => Thing)

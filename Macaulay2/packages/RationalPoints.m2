@@ -122,9 +122,9 @@ shuffleSet = (place, a, z) -> (
 sortGens = (Igens, A) -> (
      s := {};
      s = sort apply(gens A, i -> {sum apply(Igens, j -> if isSubset({i}, support j) then 1 else 0),i});
-     perm = apply(s, i -> i#1);
+     perm := apply(s, i -> i#1);
      f := map(A,A,perm);
-     Igensperm = apply(Igens, i -> f i);
+     Igensperm := apply(Igens, i -> f i);
      l := apply(perm, i -> index i);    
      return (Igensperm, l);
      )
@@ -176,6 +176,8 @@ superCombine = (theinfosubi, zips, els) -> (
      return flatten apply(newstuff, k -> apply(zips, l -> apply(scheme, (i,j) -> {k,l}#i#j))); 
      );
 
+newvar := symbol newvar
+
 --zeroesByFactoring takes in a polynomioal and an evaluationspace that does not include one of the variables in the
 --polynomial so that the evaluation homomorphism takes values in single variable polynomials which are then factored.
 zeroesByFactoring = (thepoly, evaluationspace, A, k, els, numdeadvars) -> (
@@ -221,10 +223,10 @@ findPoints = (Igens, theinfo, els, A, k, m) -> (
      zips = zeroesByFactoring(Igens_0, evaluationspace, A, k, els, theinfo_0_2);
      temporaryzips := {};
      for i from 1 to #Igens - 1 do (     
-     	  thepoly = Igens_i;
-	  case = (theinfo_i)_1;
+     	  thepoly := Igens_i;
+	  case := (theinfo_i)_1;
 	  dif = index max support Igens_(i-1) - index max support thepoly - 2;
-	  extra = apply(toList (0..dif), i -> 0);
+	  extra := apply(toList (0..dif), i -> 0);
 	  zips = apply(zips, j -> extra|j);
 	  evaluationspace = superCombine(theinfo_i, zips, els);
 	  if max support thepoly == max support Igens_(i-1) then ( --shouldn't this use case == 0 or 1 or something
@@ -240,7 +242,7 @@ lowMemIterate = (thelist, numels) -> (
      thelist#0 = thelist#0+1;
      if thelist#0 == numels then (
 	  thelist#0 = 0;
-	  flag = 1;
+	  flag := 1;
 	  i := 1;
 	  while flag == 1 do (
 	       thelist#i = thelist#i+1;

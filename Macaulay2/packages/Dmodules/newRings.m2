@@ -15,6 +15,8 @@ createHomWeylAlgebra(PolynomialRing) := (W) -> (
 
 -- this function associates to a polynomial ring R
 -- the ring R[s], where s is used for intersecting purposes
+protect RtoIR
+protect IRtoR
 createIntRing = method()
 createIntRing(PolynomialRing) := (R) -> (
      s := symbol s;
@@ -29,6 +31,9 @@ createIntRing(PolynomialRing) := (R) -> (
 -- this function associates to a Weyl algebra W
 -- the associated commutative ring W.CommRing in the same number of variables
 -- and constructs two maps: WAtoCR and CRtoWA 
+protect CRtoWA
+protect CommRing
+protect WAtoCR
 createAssCommRing = method()
 createAssCommRing(PolynomialRing) := (W) -> (
      if (W.monoid.Options.WeylAlgebra === {}) then
@@ -65,6 +70,9 @@ createAssCommRing(PolynomialRing) := (W) -> (
 --
 -- WtoT(f) returns the generator in ThetaRing that corresponds to f in W.
 -- ( isGeneric(f) == true should hold. )
+protect isGeneric
+protect WtoT
+protect ThetaRing
 createThetaRing = method()
 createThetaRing(PolynomialRing) := W -> (
      createDpairs (W);

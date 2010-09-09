@@ -17,7 +17,7 @@ newPackage("Polyhedra",
 	 "acceptance date" => "2009-09-07",
 	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
 	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
-	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
+	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
  	 "release at publication" => 9344,
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
@@ -1278,6 +1278,8 @@ isFace(Cone,Cone) := (C1,C2) -> (
 isLatticePolytope = method()
 isLatticePolytope Polyhedron := Boolean => P -> isCompact P and liftable(vertices P,ZZ)
 
+protect normal
+
 -- PURPOSE : Checks if the polytope is normal
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
@@ -1537,7 +1539,6 @@ dualFaceLattice(ZZ,Cone) := (k,C) -> (
      HS = apply(numRows HS, i -> HS^{i});
      apply(L, l -> positions(HS, hs -> all(toList l, v -> hs*v == 0))))
 
-
 dualFaceLattice(ZZ,Polyhedron) := (k,P) -> (
      L := faceBuilder(dim P - k,P);
      HS := halfspaces P;
@@ -1575,7 +1576,7 @@ faceLattice Polyhedron := P -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
 
 faceLattice Cone := C -> apply(dim C + 1, k -> faceLattice(dim C - k,C))
      	  
-
+protect faceOf						    -- used as a key
 
 -- PURPOSE : Computing the faces of codimension 'k' of 'P'
 --   INPUT : 'k'  an integer between 0 and the dimension of
@@ -1620,7 +1621,6 @@ fVector Polyhedron := P -> apply(P#"dimension of polyhedron" + 1, d -> #faces(di
 --   INPUT : 'C'  a Cone
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
 fVector Cone := C -> apply(C#"dimension of the cone" + 1, d -> #faces(dim C - d,C))
-
 
 -- PURPOSE : Computing the Hilbert basis of a Cone 
 --   INPUT : 'C',  a Cone
@@ -1889,8 +1889,8 @@ minFace (Matrix,Polyhedron) := (v,P) -> (
 minFace (Matrix,Cone) := (v,C) -> (
      -- Checking for input errors
      if numColumns v =!= 1 or numRows v =!= C#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
-     R = rays C;
-     LS = linSpace C;
+     R := rays C;
+     LS := linSpace C;
      C = dualCone C;
      -- The weight must lie in the dual of the cone, otherwise there is 
      -- no minimum and the result is the empty polyhedron
@@ -1900,8 +1900,6 @@ minFace (Matrix,Cone) := (v,C) -> (
 	  Rind = positions(Rind, e -> e == 0);
 	  posHull(R_Rind,LS))
      else emptyPolyhedron ambDim C)   
-
-
 
 -- PURPOSE : Computing the Cone of the Minkowskisummands of a Polyhedron 'P', the minimal 
 --           Minkowskisummands, and minimal decompositions
@@ -1917,7 +1915,7 @@ minkSummandCone Polyhedron := P -> (
 	  M = toList M; 
 	  v := (M#0)-(M#1);
 	  normrec := w -> if (entries w)#0#0 > 0 then 0 else if (entries w)#0#0 < 0 then 1 else (w = w^{1..(numRows w)-1}; normrec w);
-          i = normrec v;
+          i := normrec v;
 	  if i == 1 then M = {M#1,M#0};
 	  M);
      -- If the polyhedron is 0 or 1 dimensional itself is its only summand
@@ -1940,7 +1938,7 @@ minkSummandCone Polyhedron := P -> (
 	       L = intersectionWithFacets(L,F);
 	       i = i+1);
 	  -- Collect the compact edges
-	  L1 = select(L, l -> l#1 === set{});
+	  L1 := select(L, l -> l#1 === set{});
 	  -- if the polyhedron is 2 dimensional and not compact then every compact edge with the tailcone is a summand
 	  if dim P == 2 and (not isCompact P) then (
 	       L1 = intersectionWithFacets(L,F);
@@ -2050,7 +2048,7 @@ minkSummandCone Polyhedron := P -> (
 mixedVolume = method()
 mixedVolume List := L -> (
      n := #L;
-     Elist = apply(L, P -> apply(faces(dim P -1,P),vertices));
+     Elist := apply(L, P -> apply(faces(dim P -1,P),vertices));
      liftings := apply(n, i -> map(ZZ^n,ZZ^n,1)||matrix{apply(n, j -> random 25)});
      Qlist := apply(n, i -> affineImage(liftings#i,L#i));
      local Qsum;
@@ -2184,7 +2182,7 @@ proximum (Matrix,Polyhedron) := (p,P) -> (
 						  bCheck := first flatten entries (v*p);
 						  if bCheck < b then flatten entries v
 						  else flatten entries(-v))));
-				   Q = intersection(F,convexHull(p,transpose vL));
+				   Q := intersection(F,convexHull(p,transpose vL));
 				   if not isEmpty Q then (
 					prox = vertices Q;
 					true)
@@ -3109,7 +3107,8 @@ ehrhart Polyhedron := P -> (
 	v := matrix apply(n,k -> {-1+#latticePoints( (k+1)*P)});
 	M := promote(matrix apply(n,i -> reverse apply(n, j -> (i+1)^(j+1))),QQ);
 	M = flatten entries ((inverse M)*v);
-	R := QQ[x];
+	R := QQ[getSymbol "x"];
+	x := R_"x";
 	1+sum apply(n,i -> M#i * x^(n-i)))
 
 
@@ -3366,7 +3365,6 @@ stdSimplex ZZ := d -> (
      -- Generating the standard basis
      convexHull map(QQ^(d+1),QQ^(d+1),1))
 
-
 -- PURPOSE : Saving the actual Session of Polyhedra (and PPDivisor)
 --   INPUT : 'F',  a String, the filename
 --  OUTPUT : The file F
@@ -3398,7 +3396,7 @@ saveSession String := F -> (
 	       L := value s;
 	       while L =!= flatten L do L = flatten L;
 	       if all(L, l -> (
-			 if instance(l,Sequence) then all(l, e -> instance(l,PolyhedalObject) or instance(l,Matrix)) 
+			 if instance(l,Sequence) then all(l, e -> instance(l,PolyhedralObject) or instance(l,Matrix)) 
 			 else instance(l,PolyhedralObject) or instance(l,Matrix))) then F << s << " = " << toExternalString value s << endl)))
      
 

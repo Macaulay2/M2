@@ -85,11 +85,12 @@ export{
 
 --- Assumes we have a homogeneous (multi) map
 
-w := global w;
-symmetricKernel = method(Options=>{Variable => global w})
+symmetricKernel = method(Options=>{Variable => "w"})
 symmetricKernel(Matrix) := Ideal => o -> (f) -> (
      if rank source f == 0 then return trim ideal(0_(ring f));
-     S := symmetricAlgebra(source f, VariableBaseName=>o.Variable);
+     w := o.Variable;
+     if instance(w,String) then w = getSymbol w;
+     S := symmetricAlgebra(source f, VariableBaseName => w);
      T := symmetricAlgebra target f;
      trim ker symmetricAlgebra(T,S,f))
 
@@ -130,16 +131,18 @@ universalEmbedding(Module) := Matrix => (M) -> (
 --           streamlined, skipping the unneccessary versal computation as in that 
 --           case the inclusion map is a versal map.
 
-reesIdeal = method(Options => {Variable => w})
+reesIdeal = method(Options => {Variable => "w"})
+
+fixupw = w -> if instance(w,String) then getSymbol w else w
 
 reesIdeal(Module) := Ideal => o -> M -> (
      P := presentation M;
      UE := transpose syz transpose P;
-     symmetricKernel(UE,Variable => o.Variable)
+     symmetricKernel(UE,Variable => fixupw o.Variable)
      )
 
 reesIdeal(Ideal) := Ideal => o-> (J) -> (
-     symmetricKernel(gens J, Variable => o.Variable)
+     symmetricKernel(gens J, Variable => fixupw o.Variable)
      )
 
 ---- needs user-provided non-zerodivisor. 
@@ -150,14 +153,14 @@ reesIdeal (Module, RingElement) := Ideal => o -> (M,a) -> (
      if R =!= ring a 
        then error("Expected Module and Element over the same ring");   
      P := presentation M;
-     S := symmetricAlgebra(target P, VariableBaseName => o.Variable);
+     S := symmetricAlgebra(target P, VariableBaseName => fixupw o.Variable);
      I := ideal(vars S * promote(P,S));
      saturate(I,promote(a,S)))
 reesIdeal(Ideal, RingElement) := Ideal => o -> (I,a) -> (
      reesIdeal(module I, a)
      )
 
-reesAlgebra = method (TypicalValue=>Ring,Options=>{Variable => w})
+reesAlgebra = method (TypicalValue=>Ring,Options=>{Variable => "w"})
 -- accepts a Module, Ideal, or pair (depending on the method) and
 -- returns the quotient ring isomorphic to the Rees Algebra rather
 -- than just the defining ideal as in reesIdeal. 
@@ -202,7 +205,7 @@ isLinearType(Module, RingElement):= (M,a)->(
      J := ideal((vars S) * P);
      ((gens I) % J) == 0)
 
-normalCone = method(TypicalValue => Ring, Options => {Variable => w})
+normalCone = method(TypicalValue => Ring, Options => {Variable => "w"})
 normalCone(Ideal) := o -> I -> (
      RI := reesAlgebra(I);
      RI/promote(I,RI)
@@ -212,7 +215,7 @@ normalCone(Ideal, RingElement) := o -> (I,a) -> (
      RI/promote(I,RI)     
      )
      
-associatedGradedRing= method(TypicalValue => Ring, Options => {Variable => w})
+associatedGradedRing= method(TypicalValue => Ring, Options => {Variable => "w"})
 associatedGradedRing (Ideal) := o -> I -> normalCone(I)
 associatedGradedRing (Ideal, RingElement) := o -> (I,a) -> normalCone(I,a)
      
@@ -278,28 +281,28 @@ degree(S^1/I)
 --closed point! ***put this into the documentation!*** to get the closed
 --fiber, flatten the base ring first. 
 
-specialFiberIdeal=method(TypicalValue=>Ideal, Options=>{Variable=>w})
+specialFiberIdeal=method(TypicalValue=>Ideal, Options=>{Variable=>"w"})
 
 specialFiberIdeal(Ideal):= 
 specialFiberIdeal(Module):= o->i->(
-     Reesi:= reesIdeal(i, Variable=>o.Variable);
+     Reesi:= reesIdeal(i, Variable=>fixupw o.Variable);
      trim(Reesi + promote(ideal vars ring i, ring Reesi))
      )
  
 specialFiberIdeal(Ideal, RingElement):=
 specialFiberIdeal(Module,RingElement):= o->(i,a)->(
-     Reesi:= reesIdeal(i, a, Variable=>o.Variable);
+     Reesi:= reesIdeal(i, a, Variable=>fixupw o.Variable);
      trim(Reesi + promote(ideal vars ring i, ring Reesi))     
      )
 
 ---------The following returns a ring with just the new vars.
 --The order of the generators is supposed to be the same as the order
 --of the given generators of I.
-specialFiber=method(TypicalValue=>Ring, Options=>{Variable=>w})
+specialFiber=method(TypicalValue=>Ring, Options=>{Variable=>"w"})
 
 specialFiber(Ideal):= 
 specialFiber(Module):= o->i->(
-     Reesi:= reesIdeal(i, Variable=>o.Variable);
+     Reesi:= reesIdeal(i, Variable=>fixupw o.Variable);
      S := ring Reesi;
      --is the coefficient ring of Reesi automatically flattened? NO
      kk := ultimate(coefficientRing, S);
@@ -310,7 +313,7 @@ specialFiber(Module):= o->i->(
  
 specialFiber(Ideal, RingElement):=
 specialFiber(Module,RingElement):= o->(i,a)->(
-     Reesi:= reesIdeal(i, a, Variable=>o.Variable);
+     Reesi:= reesIdeal(i, a, Variable=>fixupw o.Variable);
      S := ring Reesi;
      --is the coefficient ring of Reesi automatically flattened? NO
      kk := ultimate(coefficientRing, S);
@@ -319,13 +322,13 @@ specialFiber(Module,RingElement):= o->(i,a)->(
      T/(minimalpres Reesi)
      )
 
-isReduction=method(TypicalValue=>Boolean, Options=>{Variable=>w})
+isReduction=method(TypicalValue=>Boolean, Options=>{Variable=>"w"})
 
 --tests whether the SECOND arg is a reduction of the FIRST arg
 
 isReduction(Module,Module):= 
 isReduction(Ideal,Ideal):= o->(I,J)->(
-     Sfib:= specialFiber(I, Variable=>o.Variable);
+     Sfib:= specialFiber(I, Variable=>fixupw o.Variable);
      Ifib:=ideal presentation Sfib;
      kk := coefficientRing Sfib;
      M := sub(gens J // gens I, kk);
@@ -335,7 +338,7 @@ isReduction(Ideal,Ideal):= o->(I,J)->(
 
 isReduction(Module,Module,RingElement):= 
 isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
-     Sfib :=specialFiber(I, a, Variable=>o.Variable); 
+     Sfib :=specialFiber(I, a, Variable=>fixupw o.Variable); 
      Ifib:= ideal presentation Sfib;
      kk := coefficientRing Sfib;
      M := sub(gens J // gens I, kk);
@@ -412,10 +415,10 @@ analyticSpread(Module,RingElement) := ZZ => (M,a) -> dim specialFiberIdeal(M,a)
 --           time decompose required this.  But I think it is not necessary 
 --           now. 
 
-distinguished = method(Options => {Variable => w})
+distinguished = method(Options => {Variable => "w"})
 distinguished(Ideal) := List => o -> i -> (
      R:=ring i;
-     reesAi := reesAlgebra (i,Variable=>o.Variable);
+     reesAi := reesAlgebra (i,Variable=>fixupw o.Variable);
      A := map(reesAi,R);
      (T,B) := flattenRing reesAi;
      L:=decompose substitute(i,T);
@@ -424,7 +427,7 @@ distinguished(Ideal) := List => o -> i -> (
 
 distinguished(Ideal,RingElement) := List => o -> (i,a) -> (
      R:=ring i;
-     reesAi := reesAlgebra (i,a,Variable=>o.Variable);
+     reesAi := reesAlgebra (i,a,Variable=>fixupw o.Variable);
      A := map(reesAi,R);
      (T,B) := flattenRing reesAi;
      L:=decompose substitute(i,T);
@@ -474,10 +477,10 @@ viewHelp top
 
 ///
 
-distinguishedAndMult = method(Options => {Variable => w})
+distinguishedAndMult = method(Options => {Variable => "w"})
 distinguishedAndMult(Ideal) := List => o -> i -> (
     R:=ring i;
-    ReesI := reesIdeal( i, Variable => o.Variable);
+    ReesI := reesIdeal( i, Variable => fixupw o.Variable);
     (S,toFlatS) := flattenRing ring ReesI;
      I:=(toFlatS ReesI)+substitute(i,S);
      L:=decompose I;
@@ -488,7 +491,7 @@ distinguishedAndMult(Ideal) := List => o -> i -> (
 
 distinguishedAndMult(Ideal,RingElement) := List => o -> (i,a) -> (
     R:=ring i;
-    ReesI := reesIdeal( i,a, Variable => o.Variable);
+    ReesI := reesIdeal( i,a, Variable => fixupw o.Variable);
     (S,toFlatS) := flattenRing ring ReesI;
      I:=(toFlatS ReesI)+substitute(i,S);
      L:=decompose I;
@@ -497,6 +500,7 @@ distinguishedAndMult(Ideal,RingElement) := List => o -> (i,a) -> (
 	       --computed as (degree Pcomponent)/(degree P)
        	  {(degree Pcomponent)/(degree P), kernel(map(S/P, R))})))
  
+
 
 minimalReduction = method(Options=>{Tries => 20})
 minimalReduction Ideal := Ideal => o -> i -> (
@@ -518,7 +522,8 @@ minimalReduction Ideal := Ideal => o -> i -> (
 --	  if b>1 then print b; 
 	  return J));
 
-     << bound <<" iterations were not enough to randomly find a minimal reduction"; endl;
+     {* << bound *} -- incorrect code commented out
+     <<" iterations were not enough to randomly find a minimal reduction"; endl;
      error("not random enough")
           )
 
@@ -1459,7 +1464,7 @@ doc ///
       on which i is integrally dependent.
     Example
       f = gens i
-      for a from 0 to 3 do(jhom=ideal (f*random(source f, S^{3-a:-2,a:-3})); print(i^6 == (i^5)*jhom))
+      for a from 0 to 3 do(jhom:=ideal (f*random(source f, S^{3-a:-2,a:-3})); print(i^6 == (i^5)*jhom))
   Caveat
      It is possible that the ideal returned is not a minimal reduction,
      due to the probabilistic nature of the routine.  This will be addressed in a future version

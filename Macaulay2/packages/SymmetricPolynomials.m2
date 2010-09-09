@@ -16,18 +16,16 @@ mons = (X,i)-> (
     )
 
 
-x:= local x;
-
-
 symring= R->(
      X:= flatten entries vars R;
      n := #X;
      w := (for i to n-1 list (1))|toList(1..n);
-     e := global e;
+     e := getSymbol "e";
      S := (coefficientRing R)[X,e_1..e_n,MonomialOrder=>{Weights => w,Lex}];
      return S
       )
  
+protect elementarySymmetricRing
 elementarySymmetricPolynomialRing =(cacheValue symbol  elementarySymmetricRing)symring
  
 buildSymmetricGB =method();
@@ -36,6 +34,7 @@ buildSymmetricGB (PolynomialRing) := R -> (
 	S := elementarySymmetricPolynomialRing R;
      	xvars := select(n,gens S,i->true);
 	svars :=select(2*n,gens S,i->true)-set xvars;
+	x := local x;
 	A :=coefficientRing(R)[svars,xvars][x];
  	svars =apply(svars,i->(map(A,S))(i));
 	xvars =apply(xvars,i->(map(A,S))(i));

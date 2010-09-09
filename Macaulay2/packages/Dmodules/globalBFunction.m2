@@ -204,7 +204,7 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      d := 0;
      while true do (
 	  powers = powers | matrix {{P^d*gg % I1}};
-	  Cpowers = coefficients powers;
+	  Cpowers := coefficients powers;
 	  KerC := ker lift(Cpowers#1, K); -- kernel of the coefficients matrix
 	  if KerC != 0 then (
 	       Sring := K(monoid[s]);
@@ -268,7 +268,7 @@ generalBideal (List, RingElement) := RingElement => o->(F,g) -> (
      g' := SDYtoSX sub(g,SDY);
      I3 := I2 : g';
      I4 := eliminate(drop(gens SXring,r), I3);
-     Sring = K(monoid [take(gens SXring,r)]);
+     Sring := K(monoid [take(gens SXring,r)]);
      sub(I4, Sring)
      )
 

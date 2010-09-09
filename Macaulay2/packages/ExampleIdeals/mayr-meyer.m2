@@ -1,32 +1,32 @@
 -- Mayr-Meyer ideals
 -- these have double exponential regularity in number of variables
 
-mayr0 = (deg) -> (
-    zdeg := z^deg;
-    matrix {{S_0 * e_0 * zdeg - F_0 * e_0 * (a_0)^deg,
-             S_0 * f_0 * zdeg - F_0 * f_0 * (b_0)^deg,
-             S_0 * g_0 * zdeg - F_0 * g_0 * (c_0)^deg,
-             S_0 * h_0 * zdeg - F_0 * h_0 * (d_0)^deg}})
-
-mayri = (i) -> 
-    matrix {{S_i * z - S_(i-1) * e_(i-1),
-             F_(i-1) * e_(i-1) - S_(i-1) * f_(i-1),
-             F_(i-1) * f_(i-1) * a_(i-1) - F_(i-1) * g_(i-1) * d_(i-1),
-             S_(i-1) * h_(i-1) - F_i * z,
-             S_(i-1) * g_(i-1) - F_(i-1) * h_(i-1),
-             S_(i-1) * g_(i-1) - S_(i-1) * f_(i-1),
-             F_(i-1) * f_(i-1) * e_i * (a_(i-1) * z - a_i * c_(i-1)),
-             F_(i-1) * f_(i-1) * f_i * (a_(i-1) * z - b_i * c_(i-1)),
-	     F_(i-1) * f_(i-1) * g_i * (a_(i-1) * z - c_i * c_(i-1)),
-             F_(i-1) * f_(i-1) * h_i * (a_(i-1) * z - d_i * c_(i-1))}}
-
 mayr = method()
 mayr(ZZ,ZZ,Ring) := (n,deg,kk) -> (
-     R = kk[S_0 .. S_n, F_0 .. F_n,
+     (S,F,a,b,c,d,e,f,g,h,z) := ("S","F","a","b","c","d","e","f","g","h","z")/getSymbol;
+     R := kk[S_0 .. S_n, F_0 .. F_n,
 	       a_0 .. a_n, b_0 .. b_n, c_0 .. c_n, d_0 .. d_n,
 	       e_0 .. e_n, f_0 .. f_n, g_0 .. g_n, h_0 .. h_n,
                z, MonomialSize=>8];
-     mats = apply(n, i -> mayri (i+1));
+     (S,F,a,b,c,d,e,f,g,h,z) = (S,F,a,b,c,d,e,f,g,h,z)/value;
+     mayr0 := (deg) -> (
+	 zdeg := z^deg;
+	 matrix {{S_0 * e_0 * zdeg - F_0 * e_0 * (a_0)^deg,
+		  S_0 * f_0 * zdeg - F_0 * f_0 * (b_0)^deg,
+		  S_0 * g_0 * zdeg - F_0 * g_0 * (c_0)^deg,
+		  S_0 * h_0 * zdeg - F_0 * h_0 * (d_0)^deg}});
+     mayri := (i) -> 
+	 matrix {{S_i * z - S_(i-1) * e_(i-1),
+		  F_(i-1) * e_(i-1) - S_(i-1) * f_(i-1),
+		  F_(i-1) * f_(i-1) * a_(i-1) - F_(i-1) * g_(i-1) * d_(i-1),
+		  S_(i-1) * h_(i-1) - F_i * z,
+		  S_(i-1) * g_(i-1) - F_(i-1) * h_(i-1),
+		  S_(i-1) * g_(i-1) - S_(i-1) * f_(i-1),
+		  F_(i-1) * f_(i-1) * e_i * (a_(i-1) * z - a_i * c_(i-1)),
+		  F_(i-1) * f_(i-1) * f_i * (a_(i-1) * z - b_i * c_(i-1)),
+		  F_(i-1) * f_(i-1) * g_i * (a_(i-1) * z - c_i * c_(i-1)),
+		  F_(i-1) * f_(i-1) * h_i * (a_(i-1) * z - d_i * c_(i-1))}};
+     mats := apply(n, i -> mayri (i+1));
      mats = prepend(mayr0 deg, mats);
      ideal matrix {mats})
 
@@ -37,20 +37,22 @@ mayr(ZZ,ZZ,Ring) := (n,deg,kk) -> (
 -- n >= 1
 mayrMeyer = (F,n,d) -> (
  if (n < 1) then n = 1;
- R = F[s,f,c_(0,1)..c_(n-1,4),b_(0,1)..b_(n-1,4),MonomialSize=>8];
+ (s,f,c,b) := ("s","f","c","b")/getSymbol;
+ R := F[s,f,c_(0,1)..c_(n-1,4),b_(0,1)..b_(n-1,4),MonomialSize=>8];
+ (s,f,c,b) = (s,f,c,b)/value;
  -- level 0
- l0 = ideal apply(4, i -> (s - f*b_(0,i+1)^d)*c_(0,i+1));
+ l0 := ideal apply(4, i -> (s - f*b_(0,i+1)^d)*c_(0,i+1));
  -- level 1
- l11 = ideal(f*c_(0,1)-s*c_(0,2),
+ l11 := ideal(f*c_(0,1)-s*c_(0,2),
        f*c_(0,4)-s*c_(0,3),
        s*(c_(0,2)-c_(0,3)),
        f*(c_(0,2)*b_(0,1)-c_(0,3)*b_(0,4)));
  if (n < 2) then
        return (l0 + l11 + ideal(f*c_(0,2)*(b_(0,2)-b_(0,3))));
- l12 = ideal apply(4, i ->
+ l12 := ideal apply(4, i ->
 	f*c_(0,2)*c_(1,i+1)*(b_(0,2)-b_(1,i+1)*b_(0,3)));
  -- first four of levels 2 .. n:
- ff = sum apply(n-1, i -> s*(product apply(i, j -> c_(j,1)) *
+ ff := sum apply(n-1, i -> s*(product apply(i, j -> c_(j,1)) *
        ideal(c_(i,4)*c_(i+1,1)-c_(i,1)*c_(i+1,2),
              c_(i,4)*c_(i+1,4)-c_(i,1)*c_(i+1,3),
              c_(i,1)*(c_(i+1,3)-c_(i+1,2)),
@@ -58,7 +60,7 @@ mayrMeyer = (F,n,d) -> (
  -- last four of levels 2 .. n-1:
  -- the if below due to M2 outputting the 0 ideal in ZZ rather than in R
  if (n == 2) then (
-   lf = ideal(0_R);
+   lf := ideal(0_R);
  ) else (
    lf = sum apply(n-2, i -> (product apply(i, j -> c_(j,1))) *
        s * c_(i,4)*c_(i+1,2) *
@@ -66,7 +68,7 @@ mayrMeyer = (F,n,d) -> (
 	c_(i+2,j+1)*(b_(i+1,2)-b_(i+2,j+1)*b_(i+1,3))));
  );
  -- last level n generator:
- ln = (product apply(n-2, j -> c_(j,1))) *
+ ln := (product apply(n-2, j -> c_(j,1))) *
        ideal(s * c_(n-2,4)*c_(n-1,2)*(b_(n-1,2)-b_(n-1,3)));
  l0 + l11 + l12 + ff + lf + ln
 )
