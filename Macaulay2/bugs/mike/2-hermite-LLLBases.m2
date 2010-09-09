@@ -1,3 +1,5 @@
+-- This was fixed sometime earlier (8 Sep 2010 MES)
+
 This result is not in Hermite normal form, because the off-diagonal element
 -160 is not between 0 and 150-1.
 
