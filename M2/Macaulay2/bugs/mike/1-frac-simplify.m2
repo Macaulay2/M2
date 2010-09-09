@@ -1,5 +1,5 @@
 -- Is now working (10/26/08)
--- Both of these are wrong...!
+-- Both of these were wrong...!
 
 R = QQ[x]
 u = 1_R/(-1) -- this is wrong
