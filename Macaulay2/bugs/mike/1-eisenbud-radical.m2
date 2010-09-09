@@ -1,3 +1,5 @@
+-- This code appears to no longer be a bug (Sep 2010)
+
 -- Use of "presentation Ring" in m2:
 --  codim R -- this is doing too much work?  Or is the GB already computed for it?
 --    same with hilbertSeries, char, 
@@ -63,22 +65,23 @@ load "1-eisenbud-radical.m2"
 
 kk = ZZ/101
 S=kk[vars(0..2*5)]
-j = ideal (-b*e+a*f,-d*e+c*f,-d*g+c*h,-b*i+a*j)
-j = ideal"-be+af,-de+cf,-dg+ch,-bi+aj"
-unmixedradical j
+J1 = ideal"-be+af,-de+cf,-dg+ch,-bi+aj"
+unmixedradical J1
 
-radical j
+radical J1
 
-removeLowestDimension j
-unmixedradical j
+removeLowestDimension J1
+unmixedradical J1
 
-j = ideal (-d*e+c*f,-b*g+a*h,-f*g+e*h,-b*i+a*j,-d*i+c*j)
-j = ideal"-de+cf,-bg+ah,-fg+eh,-bi+aj,-di+cj"
-unmixedradical j
-radical1 j
+J = ideal"-de+cf,-bg+ah,-fg+eh,-bi+aj,-di+cj"
+unmixedradical J
+radical1 J
 use S
-j = ideal (d*i-c*j,b*i-a*j,f*g-e*h,b*g-a*h,d*e-c*f,b*h*j,a*h*j,a*g*j,d*f*j,c*f*j,c*e*j,b*d*j,a*d*j,a*c*j,a*g*i,c*e*i,a*c*i,d*f*h,c*f*h,b*f*h,a*f*h,c*e*h,a*e*h,c*e*g,a*e*g)
-radical1 j
+J = ideal (d*i-c*j,b*i-a*j,f*g-e*h,b*g-a*h,d*e-c*f,b*h*j,a*h*j,a*g*j,d*f*j,c*f*j,c*e*j,b*d*j,a*d*j,a*c*j,a*g*i,c*e*i,a*c*i,d*f*h,c*f*h,b*f*h,a*f*h,c*e*h,a*e*h,c*e*g,a*e*g)
+radical1 J
+time ans = radical J
+ans'radj = ideal"di-cj,bi-aj,fg-eh,bg-ah,de-cf,bhj,ahj,agj,dfj,cfj,cej,bdj,adj,acj,agi,cei,aci,dfh,cfh,bfh,afh,ceh,aeh,ceg,aeg"
+assert (ans == ans'radj)
 
 <ring 12 a-z r
 <ideal j -be+af -de+cf -dg+ch -bi+aj
