@@ -1,3 +1,16 @@
+gbTrace = 3;errorDepth=0;
+R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>Eliminate 2]
+p=a*x^2+b*x*y+c*y^2+d*x+e*y+f
+q=g*x^2+h*x*y+i*y^2+j*x+k*y+l
+M=matrix{{diff(x,p),diff(y,p)},{diff(x,q),diff(y,q)}}
+D=determinant M
+I=ideal(p,q,D)
+time G = gb I;
+time S = gens G;
+time S = gens G;
+
+end
+
 Mike:
 
       1) make rawGBGetMatrix interruptable
