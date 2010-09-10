@@ -1485,11 +1485,6 @@ TEST ///
 			 ))));
 ///
 
-TEST ///
-    M = random(ZZ^5, ZZ^3)
-    B = (transpose M) * M
-    gramMultipliers M
-///
 end
 
 document { 
