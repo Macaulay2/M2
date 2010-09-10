@@ -137,11 +137,11 @@ document {
 			 ring of a polynomial ring or the ambient ring of a quotient ring."
 			 },
 		    LI {
-			 "Added a new method, ", TO "(matrix,RingElement)", ", that makes a one by one matrix
+			 "Added a new method, ", TO (matrix,RingElement), ", that makes a one by one matrix
 			 from a ring element."
 			 },
 		    LI {
-			 "Added a new method ", TO "(exp,RingElement)", " for the exponential function applied
+			 "Added a new method ", TO (exp,RingElement), " for the exponential function applied
 			 to a nilpotent ring element."
 			 }
 		    }
