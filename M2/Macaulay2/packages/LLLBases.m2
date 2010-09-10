@@ -295,23 +295,26 @@ gramm Matrix := (m) -> (
      (b,mu)
      )
 
-protect setEntry; stderr << "-- warning: undefined function setEntry in package LLLBases" << endl
-protect sparseMutableMatrix; stderr << "-- warning: undefined function sparseMutableMatrix in package LLLBases" << endl
-
-gramMultipliers = (B) -> (
+-- This next function needs to be tested, or removed (9 Sep 2010 MES)
+-- I don't think we really need it, except maybe to avoid using gramm above
+gramMultipliers = method()
+gramMultipliers Matrix := (M) -> matrix gramMultipliers mutableMatrix M
+gramMultipliers MutableMatrix := (B) -> (
      -- B is a matrix with n columns.
      -- Returned: the lower triangular matrix of lambda's and D's.
      -- These are the integral values, see Cohen, pg 92.
-     n := numgens source B;
-     B = sparseMutableMatrix B;
-     A = sparseMutableMatrix(ZZ,n,n);
-     scan(0..n-1, i -> scan(0..i, j -> (
+     R := ring B;
+     n := numColumns B;
+     A := mutableIdentity(ZZ,n);
+     for i from 0 to n-1 do
+       for j from 0 to i do (
 	  u := dot(B,i,j);
-	  scan(0..j-1, k -> (
-	       d := if k === 0 then 1 else getEntry(A,k-1,k-1);
-	       u = (getEntry(A,k,k) * u - getEntry(A,i,k) * getEntry(A,j,k)) // d));
-	  setEntry(A,i,j,u))));
-     matrix A
+	  for k from 0 to j-1 do (
+	       d := if k === 0 then 1_R else A_(k-1,k-1);
+	       u = A_(k,k) * u - A_(i,k) * A_(j,k) // d;
+	       );
+	  A_(i,j) = u);
+     A
      )
 
 isLLL = method(Options => {Threshold => 3/4})
@@ -1482,6 +1485,11 @@ TEST ///
 			 ))));
 ///
 
+TEST ///
+    M = random(ZZ^5, ZZ^3)
+    B = (transpose M) * M
+    gramMultipliers M
+///
 end
 
 document { 
