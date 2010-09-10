@@ -12,7 +12,10 @@ document { Key => "packages provided with Macaulay2",
      UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2"), 
 	  pkg -> (
 	       local p;
-	       (dictionaryPath,loadedPackages,p) = (dictionaryPath,loadedPackages,needsPackage(pkg,DebuggingMode => true));
+	       (dictionaryPath,loadedPackages,p) = (dictionaryPath,loadedPackages,
+		    try needsPackage(pkg,DebuggingMode => true)
+		    else first ( newPackage pkg, endPackage pkg )
+		    );
 	       LI {
 		    if (options p).Certification =!= null then (star," "),
 		    TO (pkg|"::"|pkg),
