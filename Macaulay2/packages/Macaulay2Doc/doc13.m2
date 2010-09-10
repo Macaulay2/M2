@@ -702,10 +702,22 @@ document { Key => "prefixDirectory",
      }
 document { Key => getGlobalSymbol,
      Headline => "create a global symbol in a global dictionary",
-     Usage => "getGlobalSymbol(dict,nam)",
-     Inputs => { "dict" => GlobalDictionary, "nam" => String },
-     Outputs => { { "a new global symbol whose name is the string ", TT "nam" }},
-     Consequences => {{ "the new symbol is stored under the name ", TT "nam", " in the dictionary ", TT "dict" }},
+     Usage => "getGlobalSymbol(dict,nam)\ngetGlobalSymbol nam",
+     Inputs => { 
+	  "dict" => GlobalDictionary,
+	  "nam" => String
+	  },
+     Outputs => {
+	  { "a global symbol in the dictionary ", TT "dict", " whose name is the string ", TT "nam", ", which will be created, if necessary" }
+	  },
+     Consequences => {
+	  { "if a new symbol is created, it is stored under the name ", TT "nam", " in the dictionary ", TT "dict" }
+	  },
+     PARA {
+	  "If ", TT "dict", " is omitted, then the first symbol found in the dictionaries listed in ", TO "dictionaryPath", " will be returned.
+	  If none is found, one will be created in the first dictionary listed in ", TO "dictionaryPath", ", unless it is not mutable, in 
+	  which case an error will be signalled; perhaps that behavior should be changed."
+	  },
      EXAMPLE lines ///
      	  d = new Dictionary
 	  sym = getGlobalSymbol(d,"foo")
