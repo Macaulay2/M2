@@ -3,6 +3,16 @@
 ----------------------------------
 net SCSCPConnection := x -> x#"nicedesc";
 
+closeConnection := s -> (
+	s#"nicedesc" = "Closed SCSCP connection";
+	try close s#"fd";
+)
+
+Manipulator SCSCPConnection := (m, s) -> (
+	if m === close then closeConnection s
+	else error concatenate("Cannot apply Manipulator ", toString m, " to SCSCPConnection");
+)
+
 newConnection = method();
 newConnection (String, String) := (host, port) -> (
 	hostport := host|":"|port;
@@ -72,15 +82,6 @@ newConnection (String) := s -> (
 		newConnection(substring(s, mtch#1#0, mtch#1#1),substring(s, mtch#2#0, mtch#2#1))
 )
 
-closeConnection := s -> (
-	s#"nicedesc" = "Closed SCSCP connection";
-	try close s#"fd";
-)
-
-Manipulator SCSCPConnection := (m, s) -> (
-	if m === close then closeConnection s
-	else error concatenate("Cannot apply Manipulator ", toString m, " to SCSCPConnection");
-)
 
 compute := method()
 compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
