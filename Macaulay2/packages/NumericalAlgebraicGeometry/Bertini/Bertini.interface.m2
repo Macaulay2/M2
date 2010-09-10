@@ -8,6 +8,7 @@ solveBertini (List,HashTable) := List => (F,o) -> (
 	  readSolutionsBertini(dir,"finite_solutions")
 	  )
 
+protect StartSolutions, protect StartSystem
 makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii})
 makeBertiniInput List := o -> T -> (
 -- IN:
