@@ -7,7 +7,7 @@ scan((
 	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
-	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,
+	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,Reload,
 	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
 	  Join,CacheExampleOutput,Reduce,Result,SeparateExec),
      s -> if s =!= null then document {
