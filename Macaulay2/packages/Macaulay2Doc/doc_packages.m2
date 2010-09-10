@@ -48,7 +48,7 @@ document {
 
 document {
      Key => {loadPackage,(loadPackage,String),
-	  [loadPackage,FileName],[loadPackage,DebuggingMode],[loadPackage,Configuration],[loadPackage,LoadDocumentation]},
+	  [loadPackage,FileName],[loadPackage,DebuggingMode],[loadPackage,Reload],[loadPackage,Configuration],[loadPackage,LoadDocumentation]},
      Headline => "load a package",     
      Usage => "loadPackage \"PACKAGENAME\"",
      Inputs => { 
@@ -61,7 +61,8 @@ document {
 	       },
 	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
 	       the source code of the package and the (possibly updated) values in the file in the user's application
-	       directory."}
+	       directory."},
+	  Reload => Boolean => {"whether to reload the package, if it has been loaded before"}
 	  },
      Outputs => { Package => "the package just loaded." },
      Consequences => { {"Loads the package PACKAGENAME that is in the file PACKAGENAME.m2"} },
@@ -78,7 +79,7 @@ document {
      }
 document {
      Key => {needsPackage,(needsPackage,String),
-	  [needsPackage, LoadDocumentation],[needsPackage,Configuration],[needsPackage,DebuggingMode],[needsPackage,FileName]},
+	  [needsPackage, LoadDocumentation],[needsPackage,Reload],[needsPackage,Configuration],[needsPackage,DebuggingMode],[needsPackage,FileName]},
      Headline => "load a package if not already loaded",
      Usage => "needsPackage \"PACKAGENAME\"",
      Inputs => { 
@@ -91,7 +92,8 @@ document {
 	       },
 	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
 	       the source code of the package and the (possibly updated) values in the file in the user's application
-	       directory."}
+	       directory."},
+	  Reload => Boolean => {"whether to reload the package, if it has been loaded before"}
 	  },
      Outputs => { { "either the ", TO Package, " just loaded, or ", TO null, " if the package has already been loaded."} },
      Consequences => { {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"} },
@@ -190,7 +192,7 @@ document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
 	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput],
-	  [newPackage,Certification]
+	  [newPackage,Certification], [newPackage,Reload]
 	  }, 
      Headline => "package item: start a new package",
      Usage => "newPackage ( title )",
@@ -229,6 +231,7 @@ document {
 	       with different configuration options is loaded, but a backup will be made and the user's settings for the surviving options will be retained.
 	       "
 	       },
+	  Reload => Boolean => {"whether to reload the package, if it has been loaded before"}
 	  },
      Consequences => {"a package is created"},
      PARA {
