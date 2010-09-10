@@ -39,16 +39,16 @@ export {
      }
 exportMutable {
      }
--- local functions/symbols
 
-protect SolutionAttributes
-protect LanguageCPP, protect StartSystem, protect Output, protect Processing,
-protect trackPHCpack, protect MacOsX,
-protect System, protect prog, protect AllowSingular, protect Variant,
-protect Attempts, protect Language, protect Tracker,
-protect Iteration, protect solvePHCpack, protect constMAT,
-protect OrthogonalProjection, protect LanguageC, protect Linux,
-protect refinePHCpack, protect Undetermined, protect STATUS, protect StartSolutions
+-- local functions/symbols
+protect Processing, protect Undetermined -- possible values of SolutionStatus
+protect SolutionAttributes -- option of getSolution 
+protect Tracker -- an internal key in Point 
+-- experimental
+protect OrthogonalProjection, protect Variant, -- in conditionNumber
+protect AllowSingular, protect Output -- in movePoints, regeneration
+protect LanguageCPP, protect MacOsX, protect System, 
+protect LanguageC, protect Linux, protect Language
 
 needsPackage "NAGtypes"
 
@@ -144,15 +144,20 @@ getDefault Symbol := (s)->DEFAULT#s
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
-then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
+then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" else ( 
+     --solveBlackBox = null; trackPaths = null; refineSolutions = null 
+     ) 
 load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
 
 -- CONVENTIONS ---------------------------------------
 
 -- Polynomial systems are represented as lists of polynomials.
 
+-- OLD FORMAT:
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
--- and a,b,c,... contain extra information, e.g, STATUS=>Regular indicates the solution is regular.
+-- and a,b,c,... contain extra information, e.g, SolutionStatus=>Regular indicates the solution is regular.
+-- NEW FORMAT:
+-- Solutions are of type Point (defined in NAGtypes).
  
 -- M2 tracker ----------------------------------------
 integratePoly = method(TypicalValue => RingElement)
@@ -412,7 +417,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      -- evaluation functions using SLP
      if o.SLP =!= false and o.Software =!= M2engine then (
 	  toSLP := pre -> (
-	       (constMAT, prog) = (if o.SLP === HornerForm 
+	       (constMAT, prog) := (if o.SLP === HornerForm 
 		    then preSLPinterpretedSLP 
 		    else preSLPcompiledSLP) (n+1, pre);
 	       rawSLP(raw constMAT, prog)
@@ -832,7 +837,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    	      s' := flatten entries first s;
 		    	      s'status := s#2#1;
 		    	      if norm(last s') < 1/o.InfinityThreshold then s'status = Infinity;
-		    	      {matrix {apply(drop(s',-1),u->(1/last s')*u)}} | {s#1} | {STATUS => s'status} | drop(toList s, 3) 
+		    	      {matrix {apply(drop(s',-1),u->(1/last s')*u)}} | {s#1} | {SolutionStatus => s'status} | drop(toList s, 3) 
 	       	    	      ))
 	  	    );
 	       rawSols --, s->s#2#1===Regular or s#2===Singular} )
@@ -899,7 +904,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
      if not isProjective then (
      	  if o.Software === M2engine then (
 	       if PT=!=null then return entries map(CC_53, rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, 
-		    	 if o.Iteration===null then 30 else o.Iteration));
+		    	 if o.Iterations===null then 30 else o.Iterations));
      	       ) else if o.Software === PHCPACK then (
 	       return refinePHCpack(T,solsT,o)
 	       );
@@ -1274,6 +1279,7 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
 
 ------------------------------------------------------------------------------------------
 -- NAG witness set extra functions  
+WitnessSet.Tolerance = 1e-6;
 check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
 isContained = method()
 isContained (List,WitnessSet) := (point,W) -> (
@@ -1696,6 +1702,14 @@ diffSolutions (List,List) := o -> (A,B) -> (
 -- DEFLATION ------------------------------------------
 -------------------------------------------------------
 
+numericalCorank = method()
+numericalCorank Matrix := M -> (
+     if not member(class ring M, {RealField,ComplexField}) 
+     then error "matrix with real or complex entries expected";
+     S := first SVD M;
+     #select(S, s->abs s < 10000*DEFAULT.Tolerance) 
+     )  
+
 dMatrix = method()
 dMatrix (List,ZZ) := (F,d) -> dMatrix(ideal F, d)
 dMatrix (Ideal,ZZ) := (I, d) -> (
@@ -1724,22 +1738,22 @@ dIdeal (Ideal, ZZ) := (I, d) -> (
      S := (coefficientRing R)[newvars,v]; 
      sub(I,S) + ideal(sub(A,S) * transpose (vars S)_{0..#ind-1})
      )	   
-deflatedSystem = method(Options=>{Order=>1})
-deflatedSystem(Ideal, Matrix, ZZ) := o -> (I, M, r) -> (
--- In: gens I = the original system    
+deflatedSystem = method()
+deflatedSystem(Ideal, Matrix, ZZ) := (I, M, cr) -> (
+-- In: gens I = the original (square) system   
 --     M = deflation matrix
---     r = numerical rank of M (at some point)
--- Out: square system of min(n,r) equations
+--     cr = numerical corank of M (at some point)
+-- Out: square system of min(n+cr) equations
      R := ring I;
      n := numgens R;
-     SM := (randomUnitaryMatrix numcols M)_(toList(0..r-1));
-     newvars := apply(r, i->getSymbol("d"|(toString i)));
+     SM := (randomUnitaryMatrix numcols M)_(toList(0..cr));
+     newvars := apply(cr, i->getSymbol("d"|(toString i)));
      S := (coefficientRing R)[gens R | newvars];
-     DF := sub(M,S)*sub(SM,S)*transpose (vars S)_{n..n+r-1}; -- new equations
+     DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+cr-1}|matrix{{1_S}}); -- new equations
      n'equations := numgens I + numrows DF;
-     if n'equations > r 
-     then SM = (randomUnitaryMatrix numcols M)_(toList(0..r-1)); --square up
-     flatten entries( (randomUnitaryMatrix n'equations)^(toList(0..r-1))*(transpose gens I || DF) )   
+     if n'equations > n+cr 
+     then SM = (randomUnitaryMatrix numcols M)_(toList(0..cr-1)); --square up
+     flatten entries( sub((randomUnitaryMatrix n'equations)^(toList(0..n+cr-1)),S)*(sub(transpose gens I,S) || DF) )   
      )
 
 
