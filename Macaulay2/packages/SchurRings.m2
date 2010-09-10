@@ -43,9 +43,8 @@ coefficientRing SchurRing := Ring => R -> last R.baseRings
 
 ck := i -> if i < 0 then error "expected decreasing row lengths" else i
 
-protect M; stderr << "-- warning: undeclared variable M in package SchurRings" << endl
-
-schur2monom = (a,Mgens) -> (
+schur2monom = (a,M) -> (
+     Mgens := M.generators;
      if # a === 0 then 1_M
      else product(# a, i -> (Mgens#i) ^ (
 	       ck if i+1 < # a 
@@ -149,10 +148,9 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      -- toString M := net M := x -> first lines toString x;
      S := newSchur(R,M,p);
      dim S := s -> rawSchurDimension raw s;
-     Mgens := M.generators;
      t := new SchurRingIndexedVariableTable from p;
      t.SchurRing = S;
-     t#symbol _ = a -> ( m := schur2monom(a,Mgens); new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
+     t#symbol _ = a -> ( m := schur2monom(a,M); new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
      S.use = S -> (globalAssign(p,t); S);
      S.use S;
      S)
@@ -184,26 +182,6 @@ symmRing = (n) -> (
 	  );
      symmRings#n)
 
-
-protect R; stderr << "-- warning: undeclared variable R in package SchurRings" << endl
-protect S; stderr << "-- warning: undeclared variable S in package SchurRings" << endl
-
-symmRing0 = (n) -> (
-     if not symmRings#?n then (
-     	  e := getSymbol "e";
-     	  h := getSymbol "h";
-     	  p := getSymbol "p";
-	  Se := QQ[e_1..e_n,Degrees=>toList(1..n)];
-	  Sp := QQ[p_1..p_n,Degrees=>toList(1..n)];
-     	  Ss := schurRing(getSymbol "s", n);
-     	  R.Schur = S;
-     	  R.dim = n;
-     	  R.mapToE = map(Se,Sp,flatten splice {apply(n, i -> PtoE(i+1,R))});
-     	  R.mapToP = map(Sp,Se,flatten splice {apply(n, i -> EtoP(i+1,R))});
-     	  R.plethysmMaps = new MutableHashTable;
-	  symmRings#n = R;
-	  );
-     symmRings#n)
 
 plethysmMap = (d,R) -> (
      -- d is an integer
