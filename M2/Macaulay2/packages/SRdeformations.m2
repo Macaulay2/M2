@@ -15,9 +15,9 @@ newPackage(
 -- For information see documentation key "SRdeformations" below.
 
 
-if ((options SRdeformations).Configuration)#"UseConvex"==true then (
+--if ((options SRdeformations).Configuration)#"UseConvex"==true then (
   needsPackage "ConvexInterface"
-);
+--);
 needsPackage "Polyhedra"
 
 
@@ -3380,7 +3380,7 @@ A*v
 hull=method(Options=>{file=>null})
 hull(List):=opts->(L)->(
 -- use "Convex" if available
-if class(mPosHullFacesAndDuals)===MethodFunctionWithOptions then return(hullConvex(L,opts));
+if ((options SRdeformations).Configuration)#"UseConvex"==true then return(hullConvex(L,opts));
 vA:=joinVectors(L);
 P:=posHull vA;
 d:=P#"dimension of the cone";
@@ -3474,7 +3474,7 @@ Cl)
 convHull=method(Options=>{file=>null})
 convHull(List):=opts->(L)->(
 -- use "Convex" if available
-if class(mConvexHullFacesAndDuals)===MethodFunctionWithOptions then return(convHullConvex(L,opts));
+if ((options SRdeformations).Configuration)#"UseConvex"==true then return(convHullConvex(L,opts));
 vA:=joinVectors(L);
 P:=convexHull vA;
 d:=P#"dimension of polyhedron";
@@ -3808,6 +3808,7 @@ F = dumpdata("daten.txt");
 -- homology of a complex
 
 homology(Complex):=opts->(C)->(
+if ((options SRdeformations).Configuration)#"UseConvex"==false then error("Only available via ConvexInterface and MapleInterface");
 Lc:=apply(fc C,j->apply(j,coordinates));
 mHomology Lc)
 
