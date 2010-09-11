@@ -1,5 +1,7 @@
 // Copyright 2008 Anton Leykin and Mike Stillman
 
+// Anton Leykin's code in this file is in the public domain.
+
 #ifndef _nag_
 #define _nag_
 
