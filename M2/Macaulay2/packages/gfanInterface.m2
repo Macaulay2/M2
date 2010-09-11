@@ -260,8 +260,8 @@ readGfanIdeals (String, PolynomialRing) := (f, R) -> (
 	G = drop(G,1);  -- drop the old first entry
 	G = prepend(tempStr, G); -- and then add the first entry minus the ring
 	H := apply(G, t -> replace(///[\{\}]*///,"",t));
-	g := local g;
-	S := (coefficientRing R)[(symbol g)_0..(symbol g)_(numgens R - 1)];
+	g := getSymbol "g";
+	S := (coefficientRing R)[g_0..g_(numgens R - 1)];
 	rsMap := map(R,S, gens R);
 	apply(H, s -> apply(value("{"|s|"}"), p -> rsMap(p)))
 )
