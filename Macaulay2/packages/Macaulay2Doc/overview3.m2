@@ -101,22 +101,38 @@ document {
 
 document {
      Key => "GC garbage collector",
-     "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
-     written by Hans-J. Boehm and Alan J. Demers and generously licensed
-     to the public.  It is available at
-     ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", ".",
-     PARA{},
-     SeeAlso => {"collectGarbage", "GC error messages" }
-     }
-
-document {
-     Key => "GC error messages",
      PARA {
-     	  "The ", TT "GC garbage collector", " is used by Macaulay2 for its memory management.  It is reponsible
-     	  for getting more memory from the operating system when needed for storage of data, and for recovering areas of memory no longer needed."
+	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
+	  written by Hans-J. Boehm and Alan J. Demers and generously licensed
+	  to the public.  It is available at
+	  ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", "."
+	  },
+     PARA{
+	  "Some environment variables can be set by the user to tune garbage collector performance:"
+	  },
+     UL {
+	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes" },
+	  LI { "GC_MAXIMUM_HEAP_SIZE -- maximum collected heap size" },
+	  LI { "GC_FREE_SPACE_DIVISOR -- if set to a number D, then
+                         we try to make sure that we allocate at least N/D bytes between collections, where N is twice the
+                         number of traced bytes, plus the number of untraced bytes, plus a rough estimate of the root set
+                         size.  Increasing its value will use less space but more collection time.  Decreasing it will
+                         appreciably decrease collection time at the expense of space.
+			 Macaulay2 sets the initial default value to 12." },
+	  LI { "GC_PRINT_STATS -- whether to turn on logging" },
+	  LI { "GC_PRINT_VERBOSE_STATS -- whether to turn on even more logging" },
+	  LI { "GC_DUMP_REGULARLY -- whether to generate a debugging dump on startup and during every collection; very verbose" },
+	  LI { "GC_NPROCS -- the number of processors to use (for Linux only)" },
+	  LI { "GC_MARKERS -- the number
+                of marker threads.  This is normally set to the number of
+                processors.  It is safer to adjust GC_MARKERS than GC_NPROCS,
+                since GC_MARKERS has no impact on the lock implementation" }
+	  },
+     PARA{
+	  "The full list is found in the source code for gc in the file ", TT "doc/README.environment", "."
 	  },
      PARA {
-	  "Here is a list of error messages you may see from it when it aborts the program, due to lack of memory or related problems.
+	  "Here are some error messages you may see from it when it aborts the program, due to lack of memory or related problems.
 	  Typically, the only recourse for the user is to increase the memory available to the program."
 	  },
      UL {
@@ -124,9 +140,21 @@ document {
 	  "No space for lwp data structures",
 	  "Out of memory",
 	  "Too many exclusions",
+	  "Too many heap sections",
 	  "Too many heap sections: Increase MAXHINCR or MAX_HEAP_SECTS",
 	  "Too many root sets"
-	  }
+	  },
+     SeeAlso => { collectGarbage }
+     }
+
+document {
+     Key => collectGarbage,
+     Headline => "collect the garbage in memory",
+     Usage => "collectGarbage()",
+     Consequences => {
+	  {"garbage is collected"}
+	  },
+     SeeAlso => "GC garbage collector"
      }
 
 document {
