@@ -212,7 +212,6 @@ generateAssertions List := y -> (
 	  and
 	  all(nogens, X -> not instance(t,X))
 	  );
-     eq := t -> "===";
      stack apply(y, 
 	  lin -> ( 
 	       t := try value lin else local oops;
@@ -222,8 +221,13 @@ generateAssertions List := y -> (
 	       then (
 		    ts := try toExternalString t;
 		    if ts === null
-		    then (lin, " -- toExternalString fails")
-		    else ("assert( ("    , lin,            ") ",eq t," ", toExternalString t, " )")
+		    then (
+			 tn := try net t;
+			 if tn === null
+			 then (lin, " -- toExternalString and net fail")
+			 else ("assert( net ("    , lin,            ") === ", toExternalString tn, " ) -- toExternalString fails")
+			 )
+		    else ("assert( ("    , lin,            ") === ", ts, " )")
 		    )
 	       else lin
 	       )))^-1
