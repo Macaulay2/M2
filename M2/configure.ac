@@ -927,15 +927,6 @@ then AC_LANG(C)
      AC_CHECK_HEADER(python2.5/Python.h,,AC_MSG_ERROR(include file python2.5/Python.h not found))
 fi
 
-AC_CHECK_HEADER(libxml/parser.h,,
-   [
-      CPPFLAGS="-I/usr/include/libxml2 $CPPFLAGS"
-      unset ac_cv_header_libxml_parser_h
-      AC_CHECK_HEADER(libxml/parser.h,,
-          [AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS or install libxml2 development files])]
- 	  )
-   ])
-
 if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
      then AC_LANG(C++)
@@ -1234,6 +1225,19 @@ do case $i in
 	*) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
    esac
 done
+
+AC_LANG(C)
+AC_CHECK_HEADER(libxml/parser.h,,
+   [
+      CPPFLAGS="-I/usr/include/libxml2 $CPPFLAGS"
+      unset ac_cv_header_libxml_parser_h
+      AC_CHECK_HEADER(libxml/parser.h,,
+          [AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS or install libxml2 development files])]
+ 	  )
+   ])
+AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
+AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
+AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(libxml2 not found or not linkable))
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
