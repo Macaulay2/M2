@@ -62,7 +62,10 @@ header "
    ";
 gcversion():constcharstar := Ccode(returns,"
      static char buf[40];
-     unsigned major = GC_version >> 16, minor = (GC_version >> 8) & 0xff, alpha = GC_version & 0xff;
+     unsigned x = GC_get_version();
+     unsigned major = x >> 16;
+     unsigned minor = (x >> 8) & 0xff;
+     unsigned alpha = x & 0xff;
      if (alpha == 0xff) sprintf(buf,\"%d.%d\", major, minor);
      else sprintf(buf,\"%d.%d alpha %d\", major, minor, alpha);
      return buf;

@@ -26,21 +26,10 @@ void arginits(int argc, char **argv) { progname = argv[0]; }
 static void dummy_GC_warn_proc(char *x, GC_word y) {}
 #endif
 
-
 static void init_gc(void) {
      GC_all_interior_pointers = TRUE;
+     GC_set_free_space_divisor(12);
      GC_INIT();
-     if (getenv("GC_free_space_divisor")) {
-	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
-	  if (GC_free_space_divisor <= 0) {
-	       fprintf(stderr, "%s: non-positive GC_free_space_divisor value, %lu\n", 
-		    progname, GC_free_space_divisor);
-	       exit (1);
-	       }
-	  }
-     if (getenv("GC_expand_hp")) {
-	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
-	  }
 #ifdef NDEBUG
      GC_set_warn_proc(dummy_GC_warn_proc);
 #endif

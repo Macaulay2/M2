@@ -591,7 +591,6 @@ char **argv;
 	  struct GC_stack_base sb;
 	  GC_get_stack_base(&sb);
 	  GC_stackbottom = (char *)sb.mem_base;	/* the stack may have moved (since we may have reloaded all the static data) */
-     	  GC_free_space_divisor = 4;
 	  old_collections = GC_gc_no;
           {
 	       char **environ0;
@@ -656,10 +655,6 @@ char **argv;
      interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
 
      clean_up();
-#if 0
-     fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
-	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
-#endif
      exit(returncode);
      return returncode;
      }
