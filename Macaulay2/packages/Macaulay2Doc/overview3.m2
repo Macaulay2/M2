@@ -3,14 +3,24 @@
 
 
 document {
-     Key => "COPYING",
-     Headline => "the Macaulay2 license agreement",
-     "This is the text of the license agreement under which Macaulay2 is distributed.",
-     PARA{},
-     if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | currentLayout#"docdir" | "COPYING"))
+     Key => "COPYING-GPL-2",
+     Headline => "GNU General Public License, version 2",
+     if prefixDirectory =!= null
+     then PRE get(prefixDirectory | currentLayout#"docdir" | "COPYING-GPL-2")
      else (
-	  stderr << "warning: can't locate file \"COPYING\"" << endl;
-	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at ", HREF "http://www.gnu.org/licenses/gpl.txt", "."}
+	  stderr << "warning: can't locate file \"COPYING-GPL-2\"" << endl;
+	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at ", HREF "http://www.gnu.org/licenses/gpl-2.0.txt", "."}
+	  )
+     }
+
+document {
+     Key => "COPYING-GPL-3",
+     Headline => "GNU General Public License, version 3",
+     if prefixDirectory =!= null
+     then PRE get(prefixDirectory | currentLayout#"docdir" | "COPYING-GPL-3")
+     else (
+	  stderr << "warning: can't locate file \"COPYING-GPL-3\"" << endl;
+	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007, available at ", HREF "http://www.gnu.org/licenses/gpl-3.0.txt", "."}
 	  )
      }
 
@@ -19,8 +29,16 @@ document {
      PARA {
 	  "Macaulay2, its object code and source code, and its documentation,
 	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
-	  you to use it under the terms of the GNU General Public License, version
-	  2, as published by the Free Software Foundation, and as contained in the file ", TO "COPYING", " accompanying the program."
+	  you to use it either:
+	  under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation, and as
+	  contained in the file ", TO "COPYING-GPL-2", " accompanying the program;
+	  or:
+	  under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation, and as
+	  contained in the file ", TO "COPYING-GPL-3", " accompanying the program."
+	  },
+     PARA {
+	  "Various packages are included with Macaulay2 and come with their own copyright notices and licenses, see
+	  ", TO "packages provided with Macaulay2", "."
 	  },
      PARA {
       	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
@@ -41,24 +59,69 @@ document {
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
-	  TO "normaliz"
+	  TO "normaliz",
+	  TO "nauty",
+	  TO "cdd+",
+	  TO "lrslib"
      	  }
+     }
+
+document {
+     Key => "lrslib",
+     PARA {
+     	  "The program ", TT "lrslib", ", written by David Avis,
+	  provides the reverse search algorithm for  vertex enumeration and convex hull problems.
+	  It is available at ", HREF "http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html", ",
+	  under the terms of the GNU General Public License, version 2."
+	  }
+     }
+
+document {
+     Key => "cdd+",
+     PARA {
+     	  "The program ", TT "cdd+", TEX ", written by Komei Fukuda,
+	  is a C++ implementation of the double description 
+	  method of Motzkin, et al., for generating all vertices
+	  and extreme rays of a general convex polyhedron in $\\RR^d$ given by a system 
+	  of linear inequalities.  It is available at ", HREF "http://www.ifor.math.ethz.ch/~fukuda/cdd_home/", ",
+	  under the terms of the GNU General Public License, version 2."
+	  }
+     }
+
+document {
+     Key => "nauty",
+     PARA {
+     	  "The collection of programs called ", TT "nauty", ", written by Brendan McKay,
+	  computes automorphism groups of graphs and digraphs.
+	  It is available at ", HREF "http://cs.anu.edu.au/~bdm/nauty", ".  The package ", TO "Nauty::Nauty", " is
+	  an interface to it."
+	  },
+     PARA {
+	  "It is distributed with the following copyright notice: 
+	  Copyright (1984-2010) Brendan McKay.  All rights reserved.  Permission is hereby given for use and/or distribution
+	  with the exception of sale for profit or application with nontrivial military significance.  You must not remove
+	  this copyright notice, and you must document any changes that you make to this program.  This software is subject
+	  to this copyright only, irrespective of any copyright attached to any package of which this is a part.
+	  Absolutely no guarantees or warranties are made concerning the suitability, correctness, or any other aspect of
+	  this program.  Any use is at your own risk."
+	  }
      }
 
 document {
      Key => "normaliz",
      PARA {
-     	  "The program ", TT "normaliz", ", written by Winfried Bruns and Bogdan Ichim,
+     	  "The program ", TT "normaliz", ", written by Winfried Bruns, Bogdan Ichim, and Christof Soeger,
 	  provides computations in affine monoids, vector configurations, lattice polytopes, 
      	  and rational cones.  It is available at ", HREF "http://www.mathematik.uni-osnabrueck.de/normaliz/", ".  The package
-     	  ", TO "Normaliz::Normaliz", " runs it."
+     	  ", TO "Normaliz::Normaliz", " is an interface to it.  It is licensed under the terms of
+	  the GNU General Public License, version 3."
 	  }
      }
 
 document {
      Key => "gfan",
-     "The program ", TT "gfan", " computes Groebner fans.
-     It is available at ", HREF "http://www.math.tu-berlin.de/~jensen/software/gfan/", ".
+     "The program ", TT "gfan", ", written by Anders Jensen, computes Groebner fans.
+     It is available at ", HREF "http://www.math.tu-berlin.de/~jensen/software/gfan/gfan0.4plus.tar.gz", ".
      The packages ", TO "StatePolytope::StatePolytope", " and ", TO "gfanInterface::gfanInterface", "
      run it."
      }
@@ -164,7 +227,7 @@ document {
 	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
 	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
 	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), ".
-	  It is distributed under the terms of the GNU General Public License, version 2, see ", TO "COPYING", "."
+	  It is distributed under the terms of the GNU General Public License, version 2, see ", TO "COPYING-GPL-2", "."
 	  }
      }
 
@@ -175,7 +238,7 @@ document {
 	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ", a method used internally
 	       by many routines), written
 	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", ".
-	  It is distributed under the terms of the GNU General Public License, version 2 (or later), see ", TO "COPYING", "."
+	  It is distributed under the terms of the GNU General Public License, version 2 (or later), see ", TO "COPYING-GPL-2", "."
 	  }
      }
 
@@ -186,7 +249,8 @@ document {
      University of Kaiserslautern, Macaulay2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
      that provides for factorization of polynomials.  It is distributed under the
-     terms of the GNU General Public License (version 2 (see ", TO "COPYING", ") or version 3) and is available at 
+     terms of the GNU General Public License (version 2 (see ", TO "COPYING-GPL-2", ")
+	  or version 3 (see ", TO "COPYING-GPL-3", ")) and is available at 
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
@@ -207,7 +271,7 @@ document {
      a free library of routines, depending on ", TO "Singular-Factory", ", that provides
      factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
      of ideals via characteristic sets.  It is distributed under the terms of the
-     GNU General Public License (version 2 (see ", TO "COPYING", ") or version 3), and is available at 
+     GNU General Public License (version 2 (see ", TO "COPYING-GPL-2", ") or version 3 (see ", TO "COPYING-GPL-3", ")), and is available at 
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
