@@ -18,3 +18,5 @@ It's not a method function!
 
     o5 = ../../../d/startup.m2.in:122:16-122:21: --source code:
 	      first = x -> x#0;
+
+Actually, this will interfere with all the code in typicalvalues.m2!
