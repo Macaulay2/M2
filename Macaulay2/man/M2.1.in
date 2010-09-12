@@ -24,6 +24,9 @@ display full copyright messasge
 \fB\-\-no\-debug\fR
 do not enter debugger upon error
 .TP
+\fB\-\-debug n\fR
+debug warning message n by signalling an error
+.TP
 \fB\-\-dumpdata\fR
 read source code, dump data if so configured, exit (no init.m2)
 .TP
@@ -109,11 +112,10 @@ are grateful.
 
 .SH "COPYRIGHT"
 
-\fIMacaulay2\fP is copyright 1993-2009 by Daniel R. Grayson and Michael
-E. Stillman.  We permit you to use it under the terms of the GNU
-General Public License, version 2, as published by the Free Software
-Foundation.  This is free software.  There is no warranty; not even
-for merchantability or fitness for a particular purpose.
+\fIMacaulay2\fP is copyright 2010 by Daniel R. Grayson and Michael E. Stillman.  We permit you to
+use it under the terms of the GNU General Public License, version 2 or version 3, as published by
+the Free Software Foundation.  This is free software.  There is no warranty; not even for
+merchantability or fitness for a particular purpose.
 
 .\" -- Local Variables:
 .\" -- mode: nroff
