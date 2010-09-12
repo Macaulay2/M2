@@ -6,7 +6,14 @@
 #include <gmp.h>
 
 #include <M2/config.h>
+
+#ifdef NDEBUG
+#define GC_IGNORE_WARN
+#endif
+#define GC_FREE_SPACE_DIVISOR 12
+#define GC_INITIAL_HEAP_SIZE 70000000
 #include <gc/gc.h>
+
 #include <string.h>
 #include "M2inits.h"
 #include "M2mem.h"
@@ -21,18 +28,9 @@
 char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
-
-#ifdef NDEBUG
-static void dummy_GC_warn_proc(char *x, GC_word y) {}
-#endif
-
 static void init_gc(void) {
      GC_all_interior_pointers = TRUE;
-     GC_set_free_space_divisor(12);
      GC_INIT();
-#ifdef NDEBUG
-     GC_set_warn_proc(dummy_GC_warn_proc);
-#endif
      }
 
 void *malloc_function (size_t new) {
