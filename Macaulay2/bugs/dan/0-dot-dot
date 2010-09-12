@@ -1,5 +1,0 @@
-strange behavior
-
-    i5 : local a .. local h === global a .. global h
-
-    o5 = true
