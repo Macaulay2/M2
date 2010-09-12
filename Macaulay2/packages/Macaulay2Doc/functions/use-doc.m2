@@ -72,6 +72,7 @@ document {
 	 use ring hf
 	 T
 	 ///,
-     Caveat => {"Any values stored in the variables that have been assigned to are lost."},
+     Caveat => {"Any values stored in the variables that have been assigned to are lost,
+	  hence this operation should not be used by code in a package."},
      SeeAlso => {GlobalAssignHook}
      }
