@@ -335,6 +335,19 @@ Here is another possible benchmark, but it doesn't work for us yet:
   -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.1402 seconds
   -- gbB148: gb of Bayesian graph ideal #148: 23.6535 seconds
 
+  -- MacBook, Intel Core 2 Duo, Processor Speed: 2 GHz, Cores: 2, Bus Speed: 1.07 GHz, 
+  -- Darwin thallium.local 10.4.0 Darwin Kernel Version 10.4.0: Fri Apr 23 18:28:53 PDT 2010; root:xnu-1504.7.4~1/RELEASE_I386 i386 i386 MacBook5,1 Darwin
+  -- Macaulay2 1.3.1, compiled with gcc 4.2.1
+    -- beginning computation Sat Sep 11 20:24:27 CDT 2010
+    -- res39: res of a generic 3 by 9 matrix over ZZ/101: .232967 seconds
+    -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.0506 seconds
+    -- gbB148: gb of Bayesian graph ideal #148: 23.7603 seconds
+  -- Macaulay2 1.3.9, compiled with gcc 4.2.1
+    -- beginning computation Sat Sep 11 20:24:27 CDT 2010
+    -- res39: res of a generic 3 by 9 matrix over ZZ/101: .270459 seconds
+    -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.36741 seconds
+    -- gbB148: gb of Bayesian graph ideal #148: 24.0283 seconds
+
 -- Lenovo/IBM Thinkpad R61i with Core 2 Duo at 1.5 Ghz
   -- Linux gallium 2.6.22-14-generic #1 SMP Sun Oct 14 23:05:12 GMT 2007 i686 GNU/Linux
     -- beginning computation Wed Nov 14 18:58:46 CET 2007
