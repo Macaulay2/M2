@@ -14,7 +14,10 @@ document { Key => "packages provided with Macaulay2",
 	       local p;
 	       (dictionaryPath,loadedPackages,p) = (dictionaryPath,loadedPackages,
 		    try needsPackage(pkg,DebuggingMode => true)
-		    else first ( newPackage pkg, endPackage pkg )
+		    else 
+		    if PackageDictionary#?pkg and instance(value PackageDictionary#pkg,Package)
+		    then value PackageDictionary#pkg
+		    else first ( newPackage pkg, endPackage pkg ) -- just fake it
 		    );
 	       LI {
 		    if (options p).Certification =!= null then (star," "),
