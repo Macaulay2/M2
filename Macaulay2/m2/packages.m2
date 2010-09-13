@@ -62,7 +62,7 @@ loadPackage String := opts -> pkgtitle -> (
 
 needsPackage = method(Options => options loadPackage)
 needsPackage String := opts -> pkg -> (
-     if PackageDictionary#?pkg then (
+     if PackageDictionary#?pkg and instance(value PackageDictionary#pkg, Package) then (
 	  pkg = value PackageDictionary#pkg;
 	  use pkg;
 	  pkg)
