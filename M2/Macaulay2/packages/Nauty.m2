@@ -16,8 +16,6 @@ newPackage (
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Interface to nauty",
     Configuration => {"path" => ""},
-    CacheExampleOutput => true,
-    AuxiliaryFiles => true,
     DebuggingMode => false
 )
 needsPackage "EdgeIdeals"
