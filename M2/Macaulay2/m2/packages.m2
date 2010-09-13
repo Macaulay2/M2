@@ -408,7 +408,6 @@ endPackage String := title -> (
 	  );
      b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> mutable s and value s === s);
      if #b > 0 then (
-	  PackageDictionary#title <- PackageDictionary#title;
 	  b = last \ sort apply(b, s -> (hash s,s));
 	  error splice ("mutable unexported unset symbol(s) in package ",title,": ", toSequence between_", " b);
 	  );
