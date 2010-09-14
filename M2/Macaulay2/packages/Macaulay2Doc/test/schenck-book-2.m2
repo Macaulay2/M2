@@ -1,3 +1,4 @@
+needsPackage "Polyhedra"
 assert( (M= matrix{{1,0,0},{0,1,0},{1,0,1},{0,1,1}}) === map(ZZ^4,ZZ^3,{{1, 0, 0}, {0, 1, 0}, {1, 0, 1}, {0, 1, 1}}) )
 assert( net (C=posHull transpose M) === "{ambient dimension => 3           }
  dimension of lineality space => 0
