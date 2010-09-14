@@ -22,7 +22,7 @@ debug Core
 B = schurRing(s, 7)
 f = s_{3,3,2,1,0}
 s1 = rawmonom2schur rawLeadMonomialR f
-m1 = schur2monom(s1, generators monoid B)
+m1 = schur2monom(s1, monoid B)
 assert(f == 1_ZZ * m1)
 g = f^3
 expression g
