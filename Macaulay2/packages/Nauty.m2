@@ -9,7 +9,7 @@
 needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
-    Version => "0.6",
+    Version => "1.0",
     Date => "13. September 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
