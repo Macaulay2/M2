@@ -356,12 +356,23 @@ monoidIndices = (M,varlist) -> (				    -- also used in orderedmonoidrings.m2, b
 
 chkHeft = (degs,heft) -> all(degs, d -> sum apply(d,heft,times) > 0)
 
-findHeft = (degrk,degs) -> (
+findHeft = method(Options => { DegreeRank => null } )
+findHeft List := opts -> (degs) -> (
      -- this function is adapted from one written by Greg Smith; it appears in the FourierMotzkin package documentation
      -- we return null if no heft vector exists
-     if degrk === 0 then return {};
-     if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
+     degrk := opts.DegreeRank;
+     if not isListOfListsOfIntegers degs then error "expected a list of degrees (lists of integers)";
+     if degrk === null then (
+	  if #degs === 0 then error "empty list requires DegreeRank to be made explicit";
+	  degrk = #degs#0;
+	  )
+     else (
+     	  if not instance(degrk,ZZ) then error "expected DegreeRank option to be an integer";
+	  );
+     if not all(degs, d -> #d === degrk) then error ("expected all degrees to be of length ", toString degrk);
      if #degs === 0 then return toList(degrk : 1);
+     if degrk === 0 then return null;
+     if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
      if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
      A := transpose matrix degs;
@@ -378,7 +389,7 @@ findHeft = (degrk,degs) -> (
 
 processHeft = (degrk,degs,heft,inverses) -> (
      if inverses then return null;
-     if heft === null then heft = findHeft(degrk,degs)
+     if heft === null then heft = findHeft(DegreeRank => degrk, degs)
      else (
 	  if not instance(heft,List) or (
 	       heft = deepSplice heft;
@@ -386,7 +397,7 @@ processHeft = (degrk,degs,heft,inverses) -> (
 	       ) then error "expected Heft option to be a list of integers";
 	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
-	  if not chkHeft(degs,heft) then heft = findHeft(degrk,degs);
+	  if not chkHeft(degs,heft) then heft = findHeft(DegreeRank => degrk, degs);
 	  );
      heft)
 
