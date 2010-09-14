@@ -32,3 +32,11 @@ u = method(Options => true, Dispatch => Type)
 u Number := identity
 assert( u ZZ === ZZ )
 assert( u(ZZ,FOO=>BAR) === (new OptionTable from {FOO => BAR},ZZ) )
+
+-- chainComplex is now an example, because it is defined by chainComplex = method(Options => true, Dispatch => Thing, TypicalValue => ChainComplex)
+X = new Type of BasicList
+chainComplex X := { FOO => BAR } >> o -> x -> (o,x);
+assert ( chainComplex (new X, FOO => 123 ) === (new OptionTable from {FOO => 123},new X from {}) )
+assert ( chainComplex (new X) === (new OptionTable from {FOO => BAR},new X from {}) )
+chainComplex X := identity
+assert( chainComplex (new X) === new X )
