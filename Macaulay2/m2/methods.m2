@@ -75,15 +75,31 @@ chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if cla
 
 SingleArgWithOptions := (opts,outputs) -> (
      -- chkopts opts;
-     if instance(opts, OptionTable) then opts = new OptionTable from opts;
-     methodFunction := opts >> 
-     o ->
-         arg -> (
-	  -- Common code for every method with options, single argument
-	  f := lookup(methodFunction, class arg);
-	  if f === null then noMethodSingle(methodFunction,arg,outputs) else (f o) arg
-	  );
-     methodFunction)
+     local methodFunction;
+     class' := if outputs then identity else class;
+     if opts === true then (
+	  methodFunction = opts >> 
+	  o ->
+	      arg -> (
+	       -- Common code for every method with options, single argument, with Options => true
+	       f := lookup(methodFunction, class' arg);
+	       if f === null then noMethodSingle(methodFunction,arg,outputs) else 
+	       if #o === 0 then f arg else f(o,arg)
+	       );
+	  methodFunction
+	  )
+     else (
+	  if instance(opts, List) then opts = new OptionTable from opts;
+	  methodFunction = opts >> 
+	  o ->
+	      arg -> (
+	       -- Common code for every method with options, single argument, not Options => true
+	       f := lookup(methodFunction, class' arg);
+	       if f === null then noMethodSingle(methodFunction,arg,outputs) else (f o) arg
+	       );
+	  methodFunction
+	  )
+     )
 
 BinaryWithOptions := (opts,outputs) -> (
      -- chkopts opts;
