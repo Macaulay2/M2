@@ -1281,21 +1281,41 @@ document {
 	  }
      }
 
-document {
-     Key => symmetricPower,
-     Headline => "symmetric power" }
-document {
-     Key => (symmetricPower,ZZ,Matrix),
-     Usage => "symmetricPower(i,f)",
-     Inputs => {
-	  "i",
-	  "f",
-	  },
-     Outputs => {
-	  { "the ", TT "i", "-th symmetric power of ", TT "f"}
-	  },
-     PARA { "Note: in the current implementation, ", TT "f", " should have just one row." }
-     }
+doc ///
+   Key
+     symmetricPower
+     (symmetricPower,ZZ,Matrix)
+     (symmetricPower,ZZ,Module)
+   Headline
+     symmetric power
+   Usage
+     symmetricPower(i,f)
+   Inputs
+     i:ZZ
+     M:Matrix
+       or @ofClass Module@
+   Outputs
+     :Matrix
+       or @ofClass Module@, the $i$-th symmetric power of the matrix or module $f$
+   Description
+    Text
+      There is currently one restriction: if $f$ is a matrix, then it must have only one row,
+      and be a map of free modules, as in this example.
+    Example
+      R = ZZ/101[a..d]
+      symmetricPower(2,vars R)
+    Text
+      If G --> F --> M --> 0 is a presentation for the module M = coker(f:G-->F), 
+      then symmetricPower(i,f) is the cokernel of the map 
+      symmetricPower(i-1,F) ** G --> symmetricPower(i,F).  
+    Example
+      R = ZZ/101[a,b]
+      symmetricPower(2,image vars R)
+   SeeAlso
+     exteriorPower
+     basis
+///
+
 document {
      Key => (exteriorPower,ZZ,Matrix),
      Headline => "exterior power of a matrix",
