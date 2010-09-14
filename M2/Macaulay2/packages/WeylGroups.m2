@@ -4,7 +4,7 @@ needsPackage "Graphics"
 
 newPackage(
 	"WeylGroups",
-	Version => "0.3",
+	Version => "0.4",
 	Date => "February 26, 2010",
 	Authors => {
 		{Name => "Baptiste Calmès",
@@ -25,7 +25,7 @@ rootSystem, rootSystemA, rootSystemB, rootSystemC, rootSystemD, rootSystemE, roo
 Weight, 
 weight, 
 Root, 
-isPositiveRoot, isRoot,
+isPositiveRoot, isRoot, addRoots,
 halfSumOfRoots, reflect, simpleRoot, rootCoefficients, 
 WeylGroupElement, 
 reduce, reducedDecomposition, isReduced, coxeterLength, longestWeylGroupElement, positiveRoots, reflection, scalarProduct, eval, isReflection, whoseReflection, 
@@ -411,7 +411,7 @@ numberOfPositiveRoots(DynkinType) := (T) ->
 	sum toList apply(T,x->
 		(
 		if x#0==="A" then (x#1)*((x#1)+1)//2 else
-		if x#0==="B" or L==="C" then (x#1)*(x#1) else
+		if x#0==="B" or x#0==="C" then (x#1)*(x#1) else
 		if x#0==="D" then (x#1)*((x#1)-1) else
 		if x#0==="E" then (if x#1===6 then 36 else if x#1===7 then 63 else 120) else
 		if x#0==="F" then 24 else 6
@@ -486,8 +486,11 @@ reflect(RootSystem,BasicList,Weight) := (R,L,p) ->
 Root = new Type of Weight
 
 --Sum of roots: gives a root if it is a root, or a weight if not.
-Root+Root := (r,q) -> 
-	(s:=(new Weight from r) + (new Weight from q);
+addRoots = method()
+
+addRoots(RootSystem,Root,Root) := (R,r,q) -> 
+	(
+	s:=(new Weight from r) + (new Weight from q);
 	if isRoot(R,s) then new Root from s else s
 	)
 
@@ -1219,7 +1222,7 @@ intervalBruhat(WeylGroupLeftCoset,WeylGroupLeftCoset):= (u,v) ->
 	  rowindex := 0;
 	  while lendiff>rowindex do
 	    (
-	    myinterval#(rowindex+1)=select(underBruhat(apply(myinterval#rowindex,x->x#0)),y->(isLtBruhat(u#1,y#0) and isMinimalRepresentative(y#0,P)));
+	    myinterval#(rowindex+1)=select(underBruhat(apply(myinterval#rowindex,x->x#0)),y->(isLtBruhat(u#1,y#0) and isMinimalRepresentative(y#0,u#0)));
 	    rowindex=rowindex+1;
 	    );
 	  new HasseDiagram from reverseLinks(myinterval)
@@ -1295,7 +1298,7 @@ intervalBruhat(WeylGroupRightCoset,WeylGroupRightCoset):= (u,v) ->
 	  rowindex := 0;
 	  while lendiff>rowindex do
 	    (
-	    myinterval#(rowindex+1)=select(underBruhat(apply(myinterval#rowindex,x->x#0)),y->(isLtBruhat(u#1,y#0) and isMinimalRepresentative(P,y#0)));
+	    myinterval#(rowindex+1)=select(underBruhat(apply(myinterval#rowindex,x->x#0)),y->(isLtBruhat(u#1,y#0) and isMinimalRepresentative(u#0,y#0)));
 	    rowindex=rowindex+1;
 	    );
 	  new HasseDiagram from reverseLinks(myinterval)
@@ -1982,12 +1985,20 @@ doc ///
 
 doc ///
 	Key
-		(symbol +, Root, Root)
+		addRoots
+	Headline
+		adding roots
+///
+
+doc ///
+	Key
+		(addRoots, RootSystem, Root, Root)
 	Headline
 		the sum of two roots 
 	Usage
 		r1 + r2
 	Inputs
+		R: RootSystem
 		r1: Root 
 		r2: Root 
 	Outputs
@@ -1998,17 +2009,16 @@ doc ///
 			R=rootSystemA(2)
 			r1=simpleRoot(R,1)
 			r2=simpleRoot(R,2)
-			r=r1+r2
-			r1+r
+			r=addRoots(R,r1,r2)
+			addRoots(R,r1,r)
 ///
 
 TEST ///
 	R=rootSystemA(2);
         r1=simpleRoot(R,1);
         r2=simpleRoot(R,2);
-        r=r1+r2;
-	assert(r1+r1==weight(R,{4,-2}));
-	assert(isRoot(R,r1+r2)==true)
+	assert(addRoots(R,r1,r1)==weight(R,{4,-2}));
+	assert(isRoot(R,addRoots(R,r1,r2))==true)
 ///
 
 doc ///
@@ -3124,14 +3134,14 @@ doc ///
 	Description
 		Example
 			R=rootSystemE(8)
-			r=simpleRoot(R,1)+simpleRoot(R,3)
+			r=addRoots(R,simpleRoot(R,1),simpleRoot(R,3))
 			reflection(R,r)
 	
 ///
 
 TEST ///
 	R=rootSystemE(8);
-	r=simpleRoot(R,1)+simpleRoot(R,3);
+	r=addRoots(R,simpleRoot(R,1),simpleRoot(R,3));
 	assert(reducedDecomposition(reflection(R,r))=={1,3,1})
 ///
 
