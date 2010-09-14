@@ -11,13 +11,17 @@ kernel f
 assert isHomogeneous oo
 N = coimage f
 assert isHomogeneous oo
-N' = symmetricPower_2 M
+M2 = symmetricPower_2 M
 assert isHomogeneous oo
-assert( N === N' )
-symmetricPower_3 M
-assert isHomogeneous oo
-symmetricPower_11 M
-assert isHomogeneous oo
+assert( N === M2 )
+M3 = symmetricPower_3 M
+assert( M3 === cokernel matrix {{a, 0, 0}, {b, a, 0}, {0, b, a}, {0, 0, b}})
+assert isHomogeneous M3
+M11 = symmetricPower_11 M
+assert isHomogeneous M11
+assert( M11 === cokernel matrix {{a, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {b, a, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, b, a, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, b, a, 0, 0, 0, 0, 0,
+      0, 0}, {0, 0, 0, b, a, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, b, a, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, b, a, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, b, a, 0, 0, 0}, {0,
+      0, 0, 0, 0, 0, 0, b, a, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, b, a, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, b, a}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, b}})
 
 R = QQ[a,b][x]
 errorDepth = 0
