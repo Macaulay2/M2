@@ -508,7 +508,7 @@ homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
      scan(spots f, i -> g#i = homology(i,f));
      g)
 
-chainComplex = method(Dispatch => Thing, TypicalValue => ChainComplex)
+chainComplex = method(Options => true, Dispatch => Thing, TypicalValue => ChainComplex)
 
 chainComplex Ring := R -> (
      C := new ChainComplex;
