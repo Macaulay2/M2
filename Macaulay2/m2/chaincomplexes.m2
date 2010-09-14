@@ -510,15 +510,15 @@ homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
 
 chainComplex = method(Options => true, Dispatch => Thing, TypicalValue => ChainComplex)
 
-chainComplex Ring := R -> (
+chainComplex Ring := {} >> R -> (
      C := new ChainComplex;
      C.ring = R;
      C)
 
-chainComplex Matrix := f -> chainComplex {f}
+chainComplex Matrix := {} >> f -> chainComplex {f}
 
 chainComplex Sequence := 
-chainComplex List := maps -> (
+chainComplex List := {} >> maps -> (
      if #maps === 0 then error "expected at least one differential map";
      C := new ChainComplex;
      R := C.ring = ring target maps#0;
@@ -794,7 +794,7 @@ syzygyScheme = (C,i,v) -> (
      g := extend(resolution cokernel transpose (C.dd_i * v), dual C[i], transpose v);
      minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
 -----------------------------------------------------------------------------
-chainComplex GradedModule := ChainComplex => (M) -> (
+chainComplex GradedModule := ChainComplex => {} >> (M) -> (
      C := new ChainComplex from M;
      b := C.dd = new ChainComplexMap;
      b.cache = new CacheTable;
