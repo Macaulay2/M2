@@ -810,6 +810,30 @@ document {
      ///
      }
 
+multidoc ///
+Node
+ Key
+  findHeft
+  (findHeft,List)
+ Headline
+  find a heft vector for a list of degrees
+ Usage
+  findHeft( x, DegreeRank => ... )
+ Inputs
+  x:List
+   a list of multi-degrees, each of which is a list of integers of length {\tt r}
+  DegreeRank=>ZZ
+   an integer, r, say
+ Outputs
+  :
+   a list of integers of length {\tt r} whose dot product with each member of x is greater than zero,
+   or @ TO null @, if there is none
+ Description
+  Example
+   findHeft ( {{-1,0}, {2,1}}, DegreeRank => 2 )
+   findHeft ( {}, DegreeRank => 0 )
+///
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
