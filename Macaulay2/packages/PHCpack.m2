@@ -124,7 +124,7 @@ systemToFile (List,String) := (F,name) -> (
 outputToPoint = method()
 outputToPoint HashTable := (H)->{
      SolutionStatus => if H#"mult" == 1 then Regular else Singular, 
-     RCondition => H#"rco", 
+     ConditionNumber => (H#"rco")^(-1), 
      LastT => H#"time"
      }
 

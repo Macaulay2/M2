@@ -16,7 +16,7 @@ M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine);
 assert all({0,2}, i->M#i#SolutionStatus==Infinity) 
 assert all({1,3}, i->M#i#SolutionStatus==Regular) 
 
-assert(M#3#LastT>0.99999 and M#3#RCondition>0.1 and M#3#NumberOfSteps < 20)
+assert(M#3#LastT>0.99999 and M#3#NumberOfSteps < 20)
 
 T = cyclic(5,CC) 
 M = solveSystem(T_*, Software=>M2engine);
