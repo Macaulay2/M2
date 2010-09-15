@@ -26,6 +26,7 @@ promote(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
+installMethod(gcd, () -> 0)
 gcd(ZZ,ZZ) := ZZ => gcd0
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
