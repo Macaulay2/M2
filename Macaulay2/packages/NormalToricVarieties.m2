@@ -889,6 +889,13 @@ cohomology (ZZ,NormalToricVariety,CoherentSheaf):= Module => opts -> (i,X,F) -> 
 cohomology (ZZ,NormalToricVariety,SheafOfRings) := Module => opts -> (
   (i,X,O) -> HH^i(X,O^1))
 
+euler CoherentSheaf := F -> (
+  X := variety F;
+  if class variety F === NormalToricVariety then 
+  return sum(1 + dim X, i -> (-1)^i*(rank HH^i(X,F)))
+  else if class variety F === ProjectiveVariety then
+  return euler module F
+  else error "expected a sheaf on a ProjectiveVariety or NormalToricVariety")
 
 
 --------------------------------------------------------------------------------
@@ -1540,10 +1547,10 @@ document {
   Inputs => {"X", "Y" => NormalToricVariety },
   Outputs => {{"the product of ", TT "X", " and ", TT "Y"}},     
   "The cartesian product of two varieties ", TEX ///$X$///, " and ", 
-  TEX ///$Y$///, ", both defined the same ground field ", TEX ///$k$///, ", is
-  the fiber product ", TEX ///$X \times_k Y$///, ".  For normal toric varieties,
-  the fan of the product is given by the cartesian product of each pair of cones
-  in the fans of the factors.",
+  TEX ///$Y$///, ", both defined over the same ground field ", TEX ///$k$///, ",
+  is the fiber product ", TEX ///$X \times_k Y$///, ".  For normal toric
+  varieties, the fan of the product is given by the cartesian product of each
+  pair of cones in the fans of the factors.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     FF2 = hirzebruchSurface 2;
@@ -3968,7 +3975,7 @@ document {
   Key => {blowup, 
     (blowup,List,NormalToricVariety),
     (blowup,List,NormalToricVariety,List)},
-  Headline => "makes the blowup a normal toric variety along a torus orbit
+  Headline => "makes the blowup of a normal toric variety along a torus orbit
               closure",
   Usage => "blowup(s,X,w)",
   Inputs => {
@@ -4438,4 +4445,26 @@ check "NormalToricVarieties"
 needsPackage "NormalToricVarieties";
 debug NormalToricVarieties
 needsPackage "FourierMotzkin";
+
+
+X = smoothFanoToricVariety(2,4);
+
+embedding = D -> (
+  X := variety D;
+  L := OO D;
+  m := rank HH^0(X, L);
+  S := ring X;
+  R = QQ[y_0..y_(m-1)];
+  phi := map(S, R, basis(- first degrees L, S));
+  kernel phi);
+
+D =  -toricDivisor X
+euler OO D
+I = embedding D;
+netList I_*
+
+hilbertPolynomial(I, Projective => false)
+
+
+X = smooth
 
