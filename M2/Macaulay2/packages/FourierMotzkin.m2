@@ -420,7 +420,7 @@ document {
      representing a positive linear functional.",
      
      EXAMPLE {
-          "findHeft = vectorConfig -> (
+          "findHeft := vectorConfig -> (
      A := transpose matrix vectorConfig;
      B := (fourierMotzkin A)#0;
      r := rank source B;
