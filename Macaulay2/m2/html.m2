@@ -405,7 +405,7 @@ capture String := s -> (
 makeMasterIndex := (keylist,verbose) -> (
      numAnchorsMade = 0;
      fn := buildPrefix | htmlDirectory | indexFileName;
-     title := "Symbol Index";
+     title := DocumentTag.FormattedKey topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
 	  HEAD splice { TITLE title, links() },
@@ -1004,7 +1004,7 @@ installPackage Package := opts -> pkg -> (
 	       << endl << close));
 
 	  -- make master.html with master index of all the html files
-	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag and instance(DocumentTag.Key tag,Symbol)), verbose);
+	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag {* and instance(DocumentTag.Key tag,Symbol) *} ), verbose);
 
 	  -- make table of contents
 	  maketableOfContents verbose;
