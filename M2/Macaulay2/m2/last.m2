@@ -86,7 +86,7 @@ load "installedpackages.m2"
 Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
 path = packagepath
 Function.GlobalReleaseHook = (X,x) -> (
-     warningMessage(X," redefined");
+     if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
      if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
      )
 waterMark = hash symbol waterMark
