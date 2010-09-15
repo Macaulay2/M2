@@ -277,7 +277,7 @@ TEST ///
       basis(2, SM)
       == matrix {{p_0^2, p_0*p_1, p_1^2}})
  assert(
-      B = basis(2, SM, SourceRing=>R, Degree=>{2,0,0})
+      (B = basis(2, SM, SourceRing=>R, Degree=>{2,0,0}))
       == map(SM^1,R^3,map(SM,R,{a, b, c, d}),{{p_0^2, p_0*p_1, p_1^2}},Degree=>{2, 0, 0})
       )
  assert isHomogeneous B
