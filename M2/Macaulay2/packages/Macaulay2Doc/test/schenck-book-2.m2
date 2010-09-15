@@ -14,82 +14,82 @@ assert( net (Cv = dualCone C) === "{ambient dimension => 3           }
  number of rays => 4"^0 ) -- toExternalString fails
 assert( (rays Cv) === map(ZZ^3,ZZ^4,{{1, 0, 1, 0}, {0, 1, 1, 0}, {0, 0, -1, 1}}) )
 assert( (hilbertBasis C) === {map(ZZ^3,ZZ^1,{{1}, {0}, {0}}),map(ZZ^3,ZZ^1,{{0}, {1}, {0}}),map(ZZ^3,ZZ^1,{{1}, {0}, {1}}),map(ZZ^3,ZZ^1,{{0}, {1}, {1}})} )
-assert( net (C1 = posHull transpose matrix {{0,-1,0},{0,0,1},{ -1,0,0}};) === "{ambient dimension => 3           }
+assert( net (C1 = posHull transpose matrix {{0,-1,0},{0,0,1},{ -1,0,0}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (C2 = posHull transpose matrix {{0,-1,0},{0,0,-1},{ -1,0,0}};) === "{ambient dimension => 3           }
+assert( net (C2 = posHull transpose matrix {{0,-1,0},{0,0,-1},{ -1,0,0}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (C3 = posHull transpose matrix {{0,-1,0},{0,0,1},{1,0,0}};) === "{ambient dimension => 3           }
+assert( net (C3 = posHull transpose matrix {{0,-1,0},{0,0,1},{1,0,0}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (C4 = posHull transpose matrix {{0,-1,0},{0,0,-1},{1,0,0}};) === "{ambient dimension => 3           }
+assert( net (C4 = posHull transpose matrix {{0,-1,0},{0,0,-1},{1,0,0}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (C5 = posHull transpose matrix {{0,1,0},{0,0,1},{ -1,0,0}};) === "{ambient dimension => 3           }
+assert( net (C5 = posHull transpose matrix {{0,1,0},{0,0,1},{ -1,0,0}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (C6 = posHull transpose matrix {{0,1,0},{0,0,-1},{ -1,0,0}};) === "{ambient dimension => 3           }
+assert( net (C6 = posHull transpose matrix {{0,1,0},{0,0,-1},{ -1,0,0}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (C7 = posHull transpose matrix {{0,1,0},{0,0,-1},{1,0,0}};) === "{ambient dimension => 3           }
+assert( net (C7 = posHull transpose matrix {{0,1,0},{0,0,-1},{1,0,0}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B1 = posHull transpose matrix {{1,0,0},{0,0,1},{1,1,2}};) === "{ambient dimension => 3           }
+assert( net (B1 = posHull transpose matrix {{1,0,0},{0,0,1},{1,1,2}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B2 = posHull transpose matrix {{1,0,0},{0,1,0},{2,1,1}};) === "{ambient dimension => 3           }
+assert( net (B2 = posHull transpose matrix {{1,0,0},{0,1,0},{2,1,1}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B3 = posHull transpose matrix {{0,0,1},{0,1,0},{1,2,1}};) === "{ambient dimension => 3           }
+assert( net (B3 = posHull transpose matrix {{0,0,1},{0,1,0},{1,2,1}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B4 = posHull transpose matrix {{0,0,1},{1,1,2},{1,2,1}};) === "{ambient dimension => 3           }
+assert( net (B4 = posHull transpose matrix {{0,0,1},{1,1,2},{1,2,1}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B5 = posHull transpose matrix {{0,1,0},{2,1,1},{1,2,1}};) === "{ambient dimension => 3           }
+assert( net (B5 = posHull transpose matrix {{0,1,0},{2,1,1},{1,2,1}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B6 = posHull transpose matrix {{1,0,0},{2,1,1},{1,1,2}};) === "{ambient dimension => 3           }
+assert( net (B6 = posHull transpose matrix {{1,0,0},{2,1,1},{1,1,2}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B7 = posHull transpose matrix {{1,1,1},{2,1,1},{1,2,1}};) === "{ambient dimension => 3           }
+assert( net (B7 = posHull transpose matrix {{1,1,1},{2,1,1},{1,2,1}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B8 = posHull transpose matrix {{1,1,1},{1,1,2},{1,2,1}};) === "{ambient dimension => 3           }
+assert( net (B8 = posHull transpose matrix {{1,1,1},{1,1,2},{1,2,1}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
  number of rays => 3"^0 ) -- toExternalString fails
-assert( net (B9 = posHull transpose matrix {{1,1,1},{1,1,2},{2,1,1}};) === "{ambient dimension => 3           }
+assert( net (B9 = posHull transpose matrix {{1,1,1},{1,1,2},{2,1,1}}) === "{ambient dimension => 3           }
  dimension of lineality space => 0
  dimension of the cone => 3
  number of facets => 3
