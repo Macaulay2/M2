@@ -1024,7 +1024,7 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
     }
   else
     {
-      cond = sigma[size-1]/sigma[0];  
+      cond = sigma[0]/sigma[size-1];  
       //print_complex_matrix(size,copyA);
       //printf("(s_large=%lf, s_small=%lf)\n", sigma[0], sigma[size-1]);
     }
@@ -1683,7 +1683,7 @@ int PathTracker::track(const Matrix* start_sols)
     if (t_s->status == PROCESSING)
       t_s->status = REGULAR;
     evaluate_slpHxH(n,x0t0,HxH);
-    cond_number_via_svd(n, HxH/*Hx*/, t_s->rcond);
+    cond_number_via_svd(n, HxH/*Hx*/, t_s->cond);
     t_s->num_steps = count;
     if (M2_gbTrace>0) {
       if (sol_n%50==0) printf("\n");
@@ -1870,14 +1870,15 @@ gmp_RRorNull PathTracker::getSolutionRcond(int solN)
   if (solN<0 || solN>=n_sols) return NULL;
   gmp_RR result = getmemstructtype(gmp_RR);
   mpfr_init2(result, C->get_precision());
-  mpfr_set_d(result, raw_solutions[solN].rcond, GMP_RNDN);  
+  mpfr_set_d(result, raw_solutions[solN].cond, GMP_RNDN);  
   return result;
 }
 
 void PathTracker::text_out(buffer& o) const
 {
-  slpHxt->stats_out(o);
-  slpHxH->stats_out(o);
+  o << "path tracker #" << number;
+  //slpHxt->stats_out(o);
+  //slpHxH->stats_out(o);
 
   /* int n = slpHxH->num_inputs;
   char buf[1000];

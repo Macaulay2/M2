@@ -1009,7 +1009,10 @@ refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
 				   if not s.?DeflationSequence then s.DeflationSequence = {};
 			      	   s.DeflationSequence = s.DeflationSequence|{dOrder}; 
 			      	   )
-			      else s.DeflationRank = s.DeflationRank + 1; -- perhaps, rank>numericalRank 
+			      else (
+				   error "numerical rank problem";
+				   s.DeflationRank = s.DeflationRank + 1; -- perhaps, rank>numericalRank 
+				   )
 			      )
 			 )); 
 	       r = r + 1;

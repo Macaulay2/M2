@@ -263,7 +263,7 @@ struct Solution
   complex* x; // array of n coordinates
   double t; // last value of parameter t used
   complex* start_x; // start of the path that produced x 
-  double rcond; // reverse condition number of Hx
+  double cond; // reverse condition number of Hx
   SolutionStatus status;
   int num_steps; // number of steps taken along the path
   
