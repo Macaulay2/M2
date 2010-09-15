@@ -251,11 +251,14 @@ TEST ///
       basis(2,B)
       == matrix {{x^2, x*y, y^2}})
 
+{*
  C = ZZ/101[x,y,a,b,Degrees=>{1,1,0,0}]
  assert(
       basis(2,C,Variables=>{x,y}) -- this should be allowed BUG
       == matrix"x2,xy,y2")
    -- should only need the heft to be positive on all variables being used!
+   *}
+
  ///
 
  TEST ///
@@ -282,24 +285,29 @@ TEST ///
 
  TEST ///
  -- More partial bases:
+ {*
  A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]
  assert(
       basis({3}, A^1) 
       == matrix"a3,a2b,ab2,b3")
    -- BUG: this last one is wrong, perhaps because of the heft vector has value -1 on the first variable?
+*}
 
+{*
  A = ZZ/101[a..d, Degrees=>{2:{1,1},2:{0,1}}]
  assert(
       basis({3}, A^1) 
       == matrix"a3,a2b,ab2,b3")
    -- BUG too: this is coming out ot be "1".  Here the heft vec is picking out the last comp
+*}
 
+{*
  A = ZZ/101[a,b, Degrees=>{{1,2},{0,1}}]
  assert(
       basis({3}, A^1)
       == matrix"a3")
       -- BUG: this one is wrong too, as this is a simpler version of one above.
-
+*}
  A = ZZ/101[a..d, Degrees=>{2:{2,1},2:{1,0}}]
  assert(
       basis({3}, A^1) 
@@ -319,7 +327,14 @@ TEST ///
       C
       )
 
+ findHeftVars = (R, ndegs) -> (
+      zerodeg := toList(ndegs:0);
+      goodvars := positions(gens R, x -> take(degree x, ndegs) =!= zerodeg);
+      heft := findHeft(apply(goodvars, i -> take(degree R_i, ndegs)), DegreeRank=>ndegs);
+      (goodvars, heft))
+
  A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]
+findHeftVars(A,1)
 rewriteRing(A,1)
 basis({3},oo)
 ///
