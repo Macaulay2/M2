@@ -9,12 +9,16 @@ document {
      }
 
 document {
-	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], getDefault, (getDefault,Symbol)},
+	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], 
+	     SingularConditionNumber, [setDefault, SingularConditionNumber],
+	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
 	Usage => "setDefault(p1=>v1, p2=>v2, ...); v = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
 	     	  Attempts => {" -- the maximal number of attempts (e.g., to make a random regular homotopy); 
-		  so far used only in the functions under development."}
+		  so far used only in the functions under development."},
+		  SingularConditionNumber => {" -- a matrix is considered to be singular 
+		       if its condition number is greater than this value"}
 		  },
 	Outputs => { {TT "v, v1, v2", ", value(s) of the parameter(s)"} },
 	"Set/get value(s) of (a) parameter(s) in the functions ", 
@@ -213,7 +217,7 @@ document {
 	  {"SolutionStatus", " -- Regular, Singular, Infinity, MinStepFailure"},
 	  {"NumberOfSteps", " -- number of steps taken on the corresponding homotopy path"},
 	  {"LastT", " -- the last value of the continuation parameter"},
-	  {"RCondition", "-- the reverse condition number at the last step of Newton's method"}
+	  {"ConditionNumber", "-- the condition number at the last step of Newton's method"}
 	  },
   	Caveat => {"Requires a preceding run of " , TO "track", " or ", TO "solveSystem", 
 	     " with the (default) option ", TT "Software=>M2engine"},	
@@ -224,7 +228,7 @@ T = {x^2+y^2-1, x*y};
 track(S,T,{(1,1),(1,-1)})
 getSolution 0
 getSolution(0, SolutionAttributes=>LastT)
-getSolution(1, SolutionAttributes=>(Coordinates, SolutionStatus, RCondition))
+getSolution(1, SolutionAttributes=>(Coordinates, SolutionStatus, ConditionNumber))
      	"
 	}
 ///
@@ -351,3 +355,20 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
      	///
 	}
 								
+document {
+	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold]},
+	Headline => "numerical rank of a matrix",
+	Usage => "r = numericalRank M",
+	Inputs => { 
+	     {TT "M", ", a matrix with real or complex entries"}
+	     },
+	Outputs => {{ TT "r"}},
+	"Find an approximate rank of the matrix ", TT "M", " by finding the first large 'gap' between two consecutive 
+	singular values. The gap between sigma_i and sigma_{i+1} is large if ", TT "sigma_i/sigma_{i+1} > Threshold",
+	".",
+	Caveat => {"sigma_0=1 is assumed"},
+        EXAMPLE lines ///
+numericalRank matrix {{2,1},{0,0.001}}
+     	///,
+     	SeeAlso => {SVD}	
+	}

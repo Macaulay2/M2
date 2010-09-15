@@ -20,7 +20,8 @@ export {
      "Equations", "Slice", "Points", "sliceEquations",
      -- point (solution)
      "Point", "point", "coordinates",
-     "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
+     "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", 
+     "NumberOfSteps", "ErrorBoundEstimate",
      "Regular", "Singular", "Infinity", "MinStepFailure"
      }
 
@@ -33,14 +34,15 @@ WitnessSet = new Type of MutableHashTable
 --   NumberOfSteps => ZZ, -- number of steps made while tracking the path
 --   SolutionStatus => {RegularSolution, SingularSolution, Infinity, MinStepFailure}
 --   LastT => RR in [0,1]
---   RCondition => reverse condition number of the Jacobian
+--   ConditionNumber => condition number of the Jacobian
+--   ErrorBoundEstimate => absolute error bound estimate (from Newton's method)
 --   }
 Point.synonym = "point"
 point = method()
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 net Point := p -> (
      if not p.?SolutionStatus or p.SolutionStatus === Regular then net p.Coordinates 
-     else if p.SolutionStatus === Singular then net "[S,t=" | net p.LastT | net "]"
+     else if p.SolutionStatus === Singular then net toSequence p.Coordinates
      else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
      else error "the point is corrupted"
@@ -136,7 +138,7 @@ document {
      TO "PHCpack", "."
      }
 document {
-     Key => {Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps},
+     Key => {Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate},
      Headline => "various attributes of a Point"
      }
 document {
@@ -170,7 +172,7 @@ document {
 	Outputs => {{TT "p"}},
 	"Used to construct a Point from the old format of output.",
         EXAMPLE lines ///
-p = point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, RCondition=>0.01}
+p = point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, ConditionNumber=>2.3}
 peek p 
      	///
 	}

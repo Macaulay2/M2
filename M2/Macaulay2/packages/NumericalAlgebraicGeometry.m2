@@ -14,7 +14,7 @@ newPackage(
      Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false
+     DebuggingMode => true --false
      )
 
 -- Any symbols or functions that the user is to have access to
@@ -34,7 +34,8 @@ export {
      "Tolerance",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
-     "Attempts",
+     "Attempts", "SingularConditionNumber",
+     "numericalRank", 
      "NAGtrace"
      }
 exportMutable {
@@ -49,6 +50,7 @@ protect OrthogonalProjection, protect Variant, -- in conditionNumber
 protect AllowSingular, protect Output -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
+protect DeflationRank, protect DeflationSequence
 
 needsPackage "NAGtypes"
 
@@ -93,13 +95,14 @@ DEFAULT = new MutableHashTable from {
      -- slp's 
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
-     ErrorTolerance => 1e-10,
-     ResidualTolerance => 1e-10,
-     Iterations => 100, 
+     ErrorTolerance => 1e-8,
+     ResidualTolerance => 1e-8,
+     Iterations => 30, 
      Bits => 300,
      -- general
-     Attempts => 10, -- max number of attempts (e.g., to find a regular path)
-     Tolerance => 1e-6
+     Attempts => 5, -- max number of attempts (e.g., to find a regular path)
+     Tolerance => 1e-6,
+     SingularConditionNumber => 1e4
      }
 
 setDefault = method(Options => {
@@ -136,7 +139,8 @@ setDefault = method(Options => {
      Bits => null,
      -- general
      Attempts => null, -- max number of attempts (e.g., to find a regular path)
-     Tolerance => null
+     Tolerance => null,
+     SingularConditionNumber => null
      })
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
@@ -568,11 +572,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else error "engine: unknown predictor")
 	       );
 	  solsM := matrix apply(solsS,s->first entries transpose s);
-	  --print solsM;
 	  rawLaunchPT(PT, raw solsM);
 	  if o.NoOutput then null else 
-	  --entries map(K,rawGetAllSolutionsPT(PT)
-	  apply(#solsS,i->apply({Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps}, 
+	  apply(#solsS,i->apply({Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps}, 
 		    toList getSolution(PT,i), 
 		    (attr,val)->if attr===Coordinates then val else attr=>val))
 	  )
@@ -816,7 +818,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    NumberOfSteps => count-1, -- number of points - 1 
 		    SolutionStatus => s'status, 
 		    LastT => t0, 
-		    RCondition => (svd := sort first SVD evalHx(x0,t0); first svd / last svd )
+		    ConditionNumber => conditionNumber evalHx(x0,t0)
 		    ) | ( if HISTORY
 		    then sequence new HashTable from history 
 		    else sequence ())
@@ -873,17 +875,18 @@ refine = method(TypicalValue => List, Options =>{
 	  ErrorTolerance =>null,
 	  ResidualTolerance =>null,
 	  Iterations => null,
-	  Bits => null
+	  Bits => null,
+	  SingularConditionNumber=>null
 	  })
 refine (List,List) := List => o -> (T,solsT) -> (
 -- tracks solutions from start system to target system
 -- IN:  T = list of polynomials in target system
 --      solsT = list of solutions to T
 -- OUT: solsR = list of refined solutions 
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      n := #T; 
-     if n > 0 then R := ring first T else error "expected nonempty target system";
-     if any(T, f->ring f =!= R)
-     then error "expected all polynomials in the same ring";
+     if n > 0 then R := ring ideal T else error "expected nonempty target system";
      isProjective := false;
      if n != numgens R then (
 	  if numgens R == n+1 and all(T, isHomogeneous) 
@@ -901,51 +904,128 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	  solsT = solsT/coordinates;
      	  );
      
+     ref'sols := null;
      if not isProjective then (
-     	  if o.Software === M2engine then (
-	       if PT=!=null then return entries map(CC_53, rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, 
-		    	 if o.Iterations===null then 30 else o.Iterations));
-     	       ) else if o.Software === PHCPACK then (
-	       return refinePHCpack(T,solsT,o)
+     	  if o.Software === M2engine then ( -- engine refiner is primitive
+--	        if PT=!=null then (
+-- 		    ref'sols = apply(entries map(CC_53, 
+-- 		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
+-- 		    	      ), s->{s}); -- old format
+--		    )
+     	       ) 
+	  else if o.Software === PHCPACK then (
+	       ref'sols = refinePHCpack(T,solsT,o)
 	       );
 	  );
      -- M2 part 
-     n'iterations := o.Iterations; 
-     T = matrix {T};
-     J := transpose jacobian T; 
-     evalT := x0 -> (
-	  ret := lift(sub(transpose T, transpose x0), CC); 
-	  if isProjective then ret || matrix{{0_CC}} else ret
-	  );
-     evalJ := x0 -> (
-	  ret := lift(sub(J, transpose x0), CC);
-	  if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
-	  );
-     
-     solsR := apply(solsT, s->(
+     if ref'sols === null then (
+     	  n'iterations := o.Iterations; 
+     	  T = matrix {T};
+     	  J := transpose jacobian T; 
+     	  evalT := x0 -> (
+	       ret := lift(sub(transpose T, transpose x0), CC); 
+	       if isProjective then ret || matrix{{0_CC}} else ret
+	       );
+	  evalJ := x0 -> (
+	       ret := lift(sub(J, transpose x0), CC);
+	       if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
+	       );
+	  ref'sols = apply(solsT, s->(
 	       x1 := sub(transpose matrix {s}, CC); -- convert to vector 
 	       if isProjective then x1 = normalize x1;
 	       -- corrector step
-	       dx := 1; -- dx = + infinity
+	       norm'dx := infinity; -- dx = + infinity
+	       norm'residual := infinity;
 	       nCorrSteps := 0;
-	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < n'iterations do ( 
-		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
-		    dx = solve(evalJ(x1), -evalT(x1));
+	       while norm'residual > o.ResidualTolerance 
+	       and norm'dx > o.ErrorTolerance * norm x1 
+	       and nCorrSteps < n'iterations 
+	       --and cond < o.SingularConditionNumber 
+	       do ( 
+		    residual := evalT(x1);
+		    norm'residual = norm residual;
+		    J := evalJ(x1);
+		    --cond = conditionNumber J;
+		    dx := solve(J, -residual);
+		    norm'dx = norm dx;
+		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  residual << " dx=" << dx << endl;
 		    x1 = x1 + dx;
 		    if isProjective then x1 = normalize x1;
 		    nCorrSteps = nCorrSteps + 1;
 		    );
-	       if norm dx > o.ErrorTolerance * norm x1 
-	       then print "warning: Newton's method did not converge within given error bound in the given number of steps";
-	       x1
+	       if DBG>0 then (
+		    if norm'residual > o.ResidualTolerance
+		    then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
+		    if norm'dx > o.ErrorTolerance * norm x1 
+		    then print "warning: Newton's method did not converge within given error bound in the given number of steps";
+		    --if cond > o.SingularConditionNumber  
+		    --then print "warning: condition number larger then SingularConditionNumber";
+		    );
+	       cond := conditionNumber evalJ(x1);
+	       st := if cond > o.SingularConditionNumber then Singular else Regular;
+	       {flatten entries x1, 
+		    SolutionStatus=>st, 
+		    ConditionNumber=>if cond===null then conditionNumber evalJ(x1) else cond, 
+		    LastT=>1.} | (if norm'dx===infinity then {} else {ErrorBoundEstimate=>norm'dx}) 
 	       ));
-     apply(#solsT, i-> flatten entries solsR#i)      
-     )     
+     	   );
+      	   ref'sols/point
+      )     
+
+refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.01})
+refineViaDeflation(List, List) := o->(T,solsT) -> refineViaDeflation(transpose matrix{T},solsT,o)
+refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
+     n := numgens ring T;
+     ref'solsT := refine(flatten entries T,solsT);     
+     ss := select(ref'solsT, s->s.SolutionStatus =!= Regular);
+     dOrder := 1;
+     while #ss > 0 and dOrder <= o.Order do (
+	  M := dMatrix(ideal T, dOrder);
+	  minRank := infinity;
+	  scan(ss, s->if (s.DeflationRank = numericalRank sub(M, matrix s)) < minRank 
+	       then minRank = s.DeflationRank);
+	  r := minRank;
+	  while r < numcols M do(
+	       s'r := select(ss, s->s.DeflationRank==r);
+	       dT := deflatedSystem(ideal T,M,r);
+	       scan(s'r, s->(
+			 attempt := 0;
+			 local ls;
+	       		 while attempt < DEFAULT.Attempts and (ls = liftSolution(s,dT))===null
+	       		 do (
+			      dT = deflatedSystem(ideal T,M,r);
+			      attempt = attempt + 1;
+			      );
+			 if attempt == DEFAULT.Attempts 
+			 then s.DeflationRank = s.DeflationRank + 1 -- perhaps, rank>numericalRank 
+			 else (
+			      rs := first refine(dT,{ls});
+			      --print(rs,coordinates s,s.ErrorBoundEstimate,norm matrix s);
+			      solsAreClose := (norm matrix{take(coordinates rs, n) - coordinates s} 
+			      	   < o.Tolerance * norm matrix s); -- new approximation is not too far
+			      if rs.SolutionStatus===Regular and solsAreClose
+			      then (
+			      	   s.Coordinates = take(coordinates rs, n); -- refine the approximation
+				   if not s.?DeflationSequence then s.DeflationSequence = {};
+			      	   s.DeflationSequence = s.DeflationSequence|{dOrder}; 
+			      	   )
+			      else s.DeflationRank = s.DeflationRank + 1; -- perhaps, rank>numericalRank 
+			      )
+			 )); 
+	       r = r + 1;
+	       );
+	  ss = select(ss, s->s.DeflationRank == numcols M);
+	  scan(ss, s->s.DeflationRank = infinity); -- mark as not deflated successfully
+	  dOrder = dOrder + 1;
+	  );
+     --return (#ss == 0) -- success if everything deflated successfully
+     ref'solsT
+     )
 
 -- possible solution statuses returned by engine
 solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
 
-getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps)})
+getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps)})
 getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
 -- gets specified solution from the engine (not exported anymore)
 -- IN:  (rawPathTracker, solution's number)
@@ -954,7 +1034,7 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
      --if lastPathTracker === null 
      --then error "path tracker is not set up";
      p := o.SolutionAttributes; 
-     possible := set{Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps};
+     possible := set{Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps};
      if not isSubset(set{p}, possible) and 
      not (class p === Sequence and isSubset(set p, possible))
      then error "wrong SolutionAttributes option";
@@ -963,7 +1043,7 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
 	  if r===Coordinates then flatten entries map(CC_53, rawGetSolutionPT(PT, i))
 	  else if r===SolutionStatus then solutionStatusLIST#(rawGetSolutionStatusPT(PT, i))
 	  else if r===LastT then rawGetSolutionLastTvaluePT(PT, i)
-	  else if r===RCondition then rawGetSolutionRcondPT(PT, i)
+	  else if r===ConditionNumber then rawGetSolutionRcondPT(PT, i)
 	  else if r===NumberOfSteps then rawGetSolutionStepsPT(PT, i)
 	  );
      if class p === Sequence then ret else first ret
@@ -1077,6 +1157,23 @@ randomUnitary ZZ := n -> (
 	       xi := if i!=0 then 0 else random(2*pi);
 	       E(i,j,(phi,psi,xi))
 	       ))
+     )
+
+randomOrthonormalRows = method() -- return a random n-by-r matrix with orthonormal columns
+randomOrthonormalRows(ZZ,ZZ) := (n,r) -> 
+if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)^(toList(0..r-1))
+
+randomOrthonormalCols = method() -- return a random r-by-n matrix with orthonormal rows
+randomOrthonormalCols(ZZ,ZZ) := (n,r) -> 
+if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)_(toList(0..r-1))
+
+squareUpSystem = method() -- squares up a polynomial system (presented as a one-column matrix)
+squareUpSystem Matrix := M -> (
+     if numcols M != 1 then error "one-column matrix expected";
+     n := numgens ring M;
+     m := numrows M;
+     if m<=n then "overdetermined system expected";
+     sub(randomOrthonormalRows(m,n),ring M)*M
      )
 
 -- IN: R, polynomial ring in n+1 vars
@@ -1202,13 +1299,13 @@ solveSystem List := List => o -> F -> (
      v := flatten entries vars R;
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
 	  result = 
-	  --if all(F, f -> first degree f <= 1)
-     	  --then ( 
-	  --     A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
-	  --     b := matrix apply(F, f->{coefficient(1_R,f)});
-	  --     {{flatten entries solve(A,-b)}}
-	  --     )
-	  --else 
+-- 	  if all(F, f -> first degree f <= 1)
+--      	  then ( 
+-- 	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
+-- 	       b := matrix apply(F, f->{coefficient(1_R,f)});
+-- 	       {{flatten entries solve(A,-b)}}
+-- 	       )
+--	  else 
 	       (
 	       (S,solsS) := totalDegreeStartSystem F;
 	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii),o)
@@ -1702,12 +1799,20 @@ diffSolutions (List,List) := o -> (A,B) -> (
 -- DEFLATION ------------------------------------------
 -------------------------------------------------------
 
-numericalCorank = method()
-numericalCorank Matrix := M -> (
+numericalRank = method(Options=>{Threshold=>1e2}) -- looks for a gap between singular values 
+numericalRank Matrix := o -> M -> (
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      if not member(class ring M, {RealField,ComplexField}) 
      then error "matrix with real or complex entries expected";
      S := first SVD M;
-     #select(S, s->abs s < 10000*DEFAULT.Tolerance) 
+     r := 0; last's := 1;
+     for i to #S do (
+	  if o.Threshold*S#i < last's 
+	  then break
+	  else (r = r + 1; last's = S#i)
+	  );
+     r 
      )  
 
 dMatrix = method()
@@ -1739,23 +1844,36 @@ dIdeal (Ideal, ZZ) := (I, d) -> (
      sub(I,S) + ideal(sub(A,S) * transpose (vars S)_{0..#ind-1})
      )	   
 deflatedSystem = method()
-deflatedSystem(Ideal, Matrix, ZZ) := (I, M, cr) -> (
+deflatedSystem(Ideal, Matrix, ZZ) := (I, M, r) -> (
 -- In: gens I = the original (square) system   
 --     M = deflation matrix
---     cr = numerical corank of M (at some point)
--- Out: square system of min(n+cr) equations
+--     r = numerical rank of M (at some point)
+-- Out: square system of n+r equations
      R := ring I;
      n := numgens R;
-     SM := (randomUnitaryMatrix numcols M)_(toList(0..cr));
-     newvars := apply(cr, i->getSymbol("d"|(toString i)));
-     S := (coefficientRing R)[gens R | newvars];
-     DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+cr-1}|matrix{{1_S}}); -- new equations
-     n'equations := numgens I + numrows DF;
-     if n'equations > n+cr 
-     then SM = (randomUnitaryMatrix numcols M)_(toList(0..cr-1)); --square up
-     flatten entries( sub((randomUnitaryMatrix n'equations)^(toList(0..n+cr-1)),S)*(sub(transpose gens I,S) || DF) )   
+     SM := randomOrthonormalCols(numcols M, r+1);
+     newvars := apply(r, i->getSymbol("d"|(toString i)));
+     S := (coefficientRing R)(monoid[gens R | newvars]);
+     DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+r-1}|matrix{{1_S}}); -- new equations
+     print DF;     
+     flatten entries squareUpSystem ( sub(transpose gens I,S) || DF )
      )
 
+liftSolution = method(Options=>{ResidualTolerance=>0.01}) -- lifts a solution s to a solution of a deflated system dT (returns null if unsuccessful)
+liftSolution(Point, List) := o->(s,dT)->liftSolution(s, transpose matrix{dT},o)
+liftSolution(Point, Matrix) := o->(s,dT)->(
+     R := ring dT;
+     c := coordinates s;
+     n := #c;
+     N := numgens R;
+     if N<=n then error "the number of variables in the deflated system is expected to be smaller"; 
+     newVars := (vars R)_{n..N-1};
+     dT0 := sub(sub(dT, matrix{c}|newVars), (coefficientRing R)(monoid[flatten entries newVars]));
+     ls := first solveSystem flatten entries squareUpSystem dT0;     
+     ret := c | coordinates ls;
+     --if norm sub(dT, matrix{ret}) < o.ResidualTolerance * norm matrix{c} then ret else null
+     ret
+     ) 
 
 
 ------------ preSLPs ------------------------------------------------------------------------
@@ -2459,13 +2577,14 @@ NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
 -- normalized condition number of F at x
 conditionNumber = method(Options=>{Variant=>OrthogonalProjection})
+conditionNumber Matrix := o-> M -> (s := first SVD M; max s / min s)
 conditionNumber (List,List) := o -> (F,x) -> (
      nF := apply(F, f->f/sqrt(#F * BombieriWeylNormSquared f)); -- normalize F
      x0 := normalize transpose matrix{x}; -- column unit vector
      DMforPN := diagonalMatrix(nF/(f->1/sqrt first degree f) | if o.Variant===OrthogonalProjection then {1} else {});
      J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
      if o.Variant===OrthogonalProjection then J = J || matrix{ flatten entries x0 / conjugate};
-     1 / min first SVD(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
+     conditionNumber(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
      )
 
 -- a constructor for witnessSet that depends on NAG
