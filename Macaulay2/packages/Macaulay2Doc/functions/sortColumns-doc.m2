@@ -47,8 +47,6 @@ document {
 	  {"After the degree order has been considered, sort the columns of
 	  the matrix in Ascending or Descending monomial order"}
 	  },     
-     EXAMPLE {
-	  },
      Caveat => {"This option only works for sorting columns of a matrix, not
 	  the elements of a list"},
      SeeAlso => {}

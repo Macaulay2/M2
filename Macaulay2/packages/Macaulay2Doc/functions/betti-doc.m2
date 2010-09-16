@@ -76,10 +76,7 @@ document {
      Inputs => { "M" => Module => " graded." },
      Outputs => {{ "a diagram showing the degrees of the generators and the relations in the module ", TT "M" }
 	  },
-     Consequences => {
-	  },     
-	"The diagram lists the zeroth and first graded and total Betti numbers of
-	the module.",
+     "The diagram lists the zeroth and first graded and total Betti numbers of the module.",
      EXAMPLE {
 		"S = ZZ/10007[x,y];",
 		"betti coker matrix{{x^3,x*y^2},{y*x^2,y^3}}",

@@ -43,8 +43,9 @@ document {
 		"f" => Matrix
 	  },
      Outputs => {
+	  Matrix => { "the transpose of ", TT "f" }	       
 	  },
-	"Here is an example.",
+     "Here is an example.",
      EXAMPLE {
 		"S = ZZ/10007[x,y,z];",
 		"f = matrix{{x^3,x*y^2},{y*x^2,y^3}}",
@@ -70,6 +71,7 @@ document {
 		"f" => ChainComplexMap
 	  },
      Outputs => {
+	  ChainComplexMap => { "the transpose of ", TT "f" }	       
 	  },
 	"The output of ", TT "transpose", " is a map from the duals of the
 	original source and target free modules. See the degree of the target

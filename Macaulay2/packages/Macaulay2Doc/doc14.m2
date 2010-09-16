@@ -281,7 +281,6 @@ document {
      Key => ii,
      Headline => "the square root of -1",
      Usage => "ii",
-     Inputs => { },
      Outputs => { CC => { "the square root of -1, converted to a numeric value of the correct precision, when necessary." }},
      EXAMPLE lines ///
      	  ii
@@ -309,7 +308,6 @@ document { Key => pi,
 document { Key => {EulerConstant},
      Usage => "EulerConstant",
      Headline => "the Euler-Mascheroni constant",
-     Inputs => { },
      Outputs => { RR => { "the Euler-Mascheroni constant, converted to a numeric value of the correct precision, when necessary." }},
      EXAMPLE lines ///
      	  EulerConstant

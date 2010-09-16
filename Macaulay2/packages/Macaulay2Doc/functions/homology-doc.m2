@@ -72,22 +72,6 @@ assert ( 0 == HH_3 res M )
 assert ( 0 == HH_4 res M )
 "
 document { 
-     Key => (homology,ZZ,Sequence),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (homology,Matrix,Matrix),
      Headline => "homology of a pair of maps",
      Usage => "M = homology(f,g)",
