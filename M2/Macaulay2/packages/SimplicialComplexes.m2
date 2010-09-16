@@ -620,16 +620,16 @@ document {
      Key => {buchbergerComplex, (buchbergerComplex,List,Ring), (buchbergerComplex,MonomialIdeal)},
      Headline => "Buchberger complex of a monomial ideal",
      Usage => "buchbergerComplex(L,R)\nbuchbergerComplex I",
-     Inputs => {
-          },
-     Outputs => {
-          },
-     Consequences => {
-          },     
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
+     -- Inputs => {
+     --      },
+     -- Outputs => {
+     --      },
+     -- Consequences => {
+     --      },     
+     -- "description",
+     -- EXAMPLE {
+     --      },
+     -- Caveat => {},
  
      SeeAlso => {SimplicialComplexes}
      }
@@ -639,16 +639,16 @@ document {
      Key => {lyubeznikComplex, (lyubeznikComplex,List,Ring), (lyubeznikComplex,MonomialIdeal)},
      Headline => "Simplicial complex supporting the Lyubeznik resolution of a  monomial ideal",
      Usage => "lyubeznikComplex(L,R)\nlyubeznikComplex I",
-     Inputs => {
-          },
-     Outputs => {
-          },
-     Consequences => {
-          },     
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
+     -- Inputs => {
+     --      },
+     -- Outputs => {
+     --      },
+     -- Consequences => {
+     --      },     
+     -- "description",
+     -- EXAMPLE {
+     --      },
+     -- Caveat => {},
 
      SeeAlso => {SimplicialComplexes}
      }
@@ -657,16 +657,16 @@ document {
      Key => {superficialComplex, (superficialComplex,List,Ring), (superficialComplex,MonomialIdeal)},
      Headline => "Simplicial complex supporting a superficial resolution of a monomial ideal",
      Usage => "superficialComplex(L,R)\nsuperficialComplex I",
-     Inputs => {
-          },
-     Outputs => {
-          },
-     Consequences => {
-          },     
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
+     -- Inputs => {
+     --      },
+     -- Outputs => {
+     --      },
+     -- Consequences => {
+     --      },     
+     -- "description",
+     -- EXAMPLE {
+     --      },
+     -- Caveat => {},
 
      SeeAlso => {SimplicialComplexes}
      }
@@ -812,18 +812,18 @@ document {
 document { 
      Key => {label, (label,SimplicialComplex,List)},
      Headline => "labels with monomials the faces of simplicial complex",
-     Usage => "",
-     Inputs => {
-          },
-     Outputs => {
-          },
-     Consequences => {
-          },     
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+     -- Usage => "",
+     -- Inputs => {
+     --      },
+     -- Outputs => {
+     --      },
+     -- Consequences => {
+     --      },     
+     -- "description",
+     -- EXAMPLE {
+     --      },
+     -- Caveat => {},
+     -- SeeAlso => {}
      }
 document { 
      Key => {link,(link,SimplicialComplex,RingElement)},
