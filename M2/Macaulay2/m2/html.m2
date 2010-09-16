@@ -310,9 +310,9 @@ makeTree := x -> (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
 	       if chkdoc then (
-	       	    stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
-		    warning();
-		    -- error("missing reference to documentation as subnode: ", toString x);
+	       	    -- stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
+		    -- warning();
+		    error("missing reference to documentation as subnode: ", toString x);
 		    );
 	       );
 	  new TreeNode from { x , new ForestNode}

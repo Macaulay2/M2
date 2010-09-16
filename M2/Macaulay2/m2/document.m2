@@ -594,12 +594,22 @@ fixupTable := new HashTable from {
      Usage => val -> (
 	  if not instance(val,String) then error "Usage: expected a string";
 	  val = nonempty separate val;
+	  val = apply(val, i -> replace("^[[:space:]]*(.*)[[:space:]]*$","\\1",i));
 	  if #val === 0 then error "Usage: expected content";
 	  DL flatten { "class" => "element", DT "Usage:", DD \ TT \ val } ),
      BaseFunction => val -> (if val =!= null and not instance(val,Function) then error "expected BaseFunction option value to be a function"; val),
-     Inputs => val -> fixupList(val,Inputs),
-     Outputs => val -> fixupList(val,Outputs),
-     Consequences => val -> fixupList(val,Consequences),
+     Inputs => val -> (
+	  val = fixupList(val,Inputs);
+	  if #val === 0 then error "Inputs: expected at least one item";
+	  val),
+     Outputs => val -> (
+	  val = fixupList(val,Outputs);
+	  if #val === 0 then error "Outputs: expected at least one item";
+	  val),
+     Consequences => val -> (
+	  val = fixupList(val,Consequences);
+	  -- if #val === 0 then error "Consequences: expected at least one item";
+	  val),
      Headline => chkIsStringFixup Headline,
      Heading => chkIsString Heading,
      Description => val -> extractExamples fixup val,
@@ -1039,7 +1049,7 @@ SYNOPSIS = method(
      )
 SYNOPSIS List := o -> x -> SYNOPSIS splice (o, toSequence x)
 SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
-     o = applyPairs(o, (k,v) -> (k,fixupTable#k v));
+     o = applyPairs(o, (k,v) -> (k,if v =!= {} then fixupTable#k v else v));
      fn := o#BaseFunction;
      proc := processInputOutputItems(,fn);
      fixup DIV nonnull {
@@ -1048,7 +1058,7 @@ SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
 	       LI o.Usage,
 	       if # o.Inputs > 0 then LI { "Inputs:", UL ( proc \ o.Inputs ) },
 	       if # o.Outputs > 0 then LI { "Outputs:", UL ( proc \ o.Outputs ) },
-	       if # o.Consequences > 0 and #o.Consequences > 0 then LI { "Consequences:", UL o.Consequences }
+	       if # o.Consequences > 0 then LI { "Consequences:", UL o.Consequences }
 	       },
 	  x
 	  })
