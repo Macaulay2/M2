@@ -752,8 +752,8 @@ document {
 	  {"the ", TO2(Ring, "ring"), " that contains the defining
 	  equations of ", TT "A"} 
 	  },
-     "description",
-     Caveat => {},
+     -- "description",
+     -- Caveat => {},
      SeeAlso => {Arrangement,arrangement}
      }
 document { 
@@ -782,11 +782,11 @@ document {
      Outputs => {
 	  Matrix
           },
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+     -- "description",
+     -- EXAMPLE {
+     --      },
+     -- Caveat => {},
+     -- SeeAlso => {}
      }
 document { 
      Key => (rank,Arrangement),
@@ -812,11 +812,11 @@ document {
      Outputs => {
 	  Arrangement
           },
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+     -- "description",
+     -- EXAMPLE {
+     --      },
+     -- Caveat => {},
+     -- SeeAlso => {}
      }
 document { 
      Key => (compress,Arrangement),
@@ -828,12 +828,12 @@ document {
      Outputs => {
 	  Arrangement
           },
-     Consequences => {
-          },     
-     "description",
-     EXAMPLE {
-          },
-     SeeAlso => {}
+     -- Consequences => {
+     --      },     
+     -- "description",
+     -- EXAMPLE {
+     --      },
+     -- SeeAlso => {}
      }
 
 document { 
@@ -846,15 +846,15 @@ document {
      Outputs => {
 	  Arrangement
           },
-     Consequences => {
-          },     
+     -- Consequences => {
+     --      },     
      "The Gale transform of a rank ", TT "l", "arrangement of ", TT "n",
      " hyperplanes is an arrangement of ", TT "n", " hyperplanes of rank ",
      TT "n-l", ".  Here it is computed as the arrangement given by the 
      rows of the matrix presenting the kernel of the cofficients of ", TT "A", ".",
-     EXAMPLE {
-          },
-     SeeAlso => {}
+     -- EXAMPLE {
+     --      },
+     -- SeeAlso => {}
      }
 
 document {
