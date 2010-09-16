@@ -143,8 +143,6 @@ document {
      Outputs => {
 	  Ideal => {"same ideal as input"}
 	  },
-     Consequences => {
-	  },     
      "The function adds new structure to the ring which specifies a maximal ideal which allows the user to employ local ring methods.",
      EXAMPLE lines ///
 	  R = ZZ/32003[x,y,z,w,SkewCommutative=>true]
@@ -164,8 +162,6 @@ document {
      Outputs => {
 	  Matrix => {"the complement of the image of the homomorphism represented by m"}
 	  },
-     Consequences => {
-	  },   
      "The function finds a splitting of the target of m as a direct sum of the image of m and the image of the output.",
      EXAMPLE lines ///
 	  R = ZZ/32003[x,y]
@@ -187,8 +183,6 @@ document {
      Outputs => {
 	  Matrix => {"giving minimal generators of the syzygies taking into account the local structure"}
 	  },
-     Consequences => {
-	  },     
      EXAMPLE lines ///
 	  R = ZZ/32003[x,y,z,w,SkewCommutative=>true]
 	  m = matrix{{x,y*z},{z*w,x}}
@@ -210,8 +204,6 @@ document {
      Outputs => {
 	  Matrix => {"the matrix of minimal generators"}
 	  },
-     Consequences => {
-	  },     
      "We get a minimal set for the homogeneous case, but not necessarily otherwise.",
      EXAMPLE lines ///
 	  R=QQ[a,b]
@@ -234,8 +226,6 @@ document {
      Outputs => {
 	  Matrix => {"whose image is the pre-image (pullback) of the image of n under m"}
 	  },
-     Consequences => {
-	  },     
      "The maps m and n must have the same target, and their sources and targets must be free. If m is null, then it is taken to be the identity. If n is null, it is taken to be zero.",
      EXAMPLE lines ///
 	  R = QQ[x,y,z]
@@ -259,8 +249,6 @@ document {
      Outputs => {
 	  Module
 	  },
-     Consequences => {
-	  },     
      "The output is a minimal presentation of the input.",
      EXAMPLE lines ///
 	  R=QQ[a,b]
@@ -284,8 +272,6 @@ document {
      Outputs => {
 	  ChainComplex
 	  },
-     Consequences => {
-	  },     
      PARA "This function iterates ", TO localsyz, " to obtain a resolution over the local ring.",
      EXAMPLE lines ///
 	  R = ZZ/32003[x,y,z,w,SkewCommutative=>true]
