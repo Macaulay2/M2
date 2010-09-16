@@ -149,7 +149,7 @@ getDefault Symbol := (s)->DEFAULT#s
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
 then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" else ( 
-     --solveBlackBox = null; trackPaths = null; refineSolutions = null 
+     solveBlackBox = null; trackPaths = null; refineSolutions = null 
      ) 
 load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
 
@@ -1010,14 +1010,15 @@ refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
 			      	   s.DeflationSequence = s.DeflationSequence|{dOrder}; 
 			      	   )
 			      else (
-				   error "numerical rank problem";
-				   s.DeflationRank = s.DeflationRank + 1; -- perhaps, rank>numericalRank 
+				   --error "numerical rank problem";
+				   --s.DeflationRank = s.DeflationRank + 1; -- perhaps, rank>numericalRank 
+				   s.DeflationRank = infinity 
 				   )
 			      )
 			 )); 
 	       r = r + 1;
 	       );
-	  ss = select(ss, s->s.DeflationRank == numcols M);
+	  ss = select(ss, s->s.DeflationRank >= numcols M); 
 	  scan(ss, s->s.DeflationRank = infinity); -- mark as not deflated successfully
 	  dOrder = dOrder + 1;
 	  );
