@@ -3230,6 +3230,7 @@ ehrhart Polyhedron := P -> (
 	M := promote(matrix apply(n,i -> reverse apply(n, j -> (i+1)^(j+1))),QQ);
 	M = flatten entries ((inverse M)*v);
 	R := QQ[getSymbol "x"];
+	x := R_"x";
 	1+sum apply(n,i -> M#i * x^(n-i)))
 
 
