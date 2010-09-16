@@ -149,7 +149,8 @@ getDefault Symbol := (s)->DEFAULT#s
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
 then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" else ( 
-     solveBlackBox = null; trackPaths = null; refineSolutions = null 
+     trackPHCpack = null; refinePHCpack = null; solvePHCpack = null;
+     --solveBlackBox = null; trackPaths = null; refineSolutions = null 
      ) 
 load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
 

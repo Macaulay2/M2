@@ -10,7 +10,7 @@ document {
 
 document {
 	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], 
-	     SingularConditionNumber, [setDefault, SingularConditionNumber],
+	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
 	Usage => "setDefault(p1=>v1, p2=>v2, ...); v = getDefault p",
