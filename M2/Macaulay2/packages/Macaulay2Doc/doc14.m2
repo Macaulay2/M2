@@ -813,6 +813,7 @@ Node
  Key
   findHeft
   (findHeft,List)
+  [findHeft,DegreeRank]
  Headline
   find a heft vector for a list of degrees
  Usage
