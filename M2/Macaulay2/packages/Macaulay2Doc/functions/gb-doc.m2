@@ -66,8 +66,6 @@ document {
      Outputs => {
 	  GroebnerBasis => "a Gröbner basis computation object"
 	  },
-     Consequences => {
-	  },
      "See ", TO "Gröbner bases", " for more 
      information and examples.",
      PARA{},

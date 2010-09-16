@@ -44,7 +44,7 @@ document {
 	  TO (map,Ring,Ring,List),
 	  TO (map,Ring,Ring,Matrix),
 	  "Creating a map between chain complexes",
-	  TO (map,ChainComplex,ChainComplex,ChainComplexMap),
+	  -- TO (map,ChainComplex,ChainComplex,ChainComplexMap),
 	  TO (map,ChainComplex,ChainComplex,Function)
 	  }
      }
@@ -447,21 +447,6 @@ document {
      SeeAlso => {"substitution and maps between rings", (map,Ring,Ring,Matrix)}
      }
 
-document { 
-     Key => (map,ChainComplex,ChainComplex,ChainComplexMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
 document { 
      Key => (map,Module),
      Headline => "identity map",

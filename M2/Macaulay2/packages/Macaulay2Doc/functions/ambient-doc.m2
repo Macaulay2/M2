@@ -88,55 +88,6 @@ document {
 	       (generators,Module), 
 	       (relations,Module)}
      }
-
-document { 
-     Key => (ambient,GradedModule),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (ambient,AffineVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (ambient,ProjectiveVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
 document { 
      Key => (ambient,Matrix),
      Headline => "",
@@ -160,20 +111,4 @@ document {
 	  (cover,Module),
 	  (cover,Matrix),
 	  (matrix,Matrix)}
-     }
-document { 
-     Key => (ambient,CoherentSheaf),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
      }

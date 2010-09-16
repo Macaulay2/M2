@@ -664,7 +664,6 @@ document {
      Key => {truncateOutput,(truncateOutput, ZZ),(truncateOutput, InfiniteNumber)},
      Usage => "truncateOutput w",
      Inputs => {"w" => ZZ },
-     Outputs => {},
      Consequences => {{
 	  "The maximum output line width is set to ", TT "w", ", which should be an integer or ", TO "infinity", ".  
 	  This function works by assigning a value to ", TT "Thing#{Standard,BeforePrint}", ", which 
