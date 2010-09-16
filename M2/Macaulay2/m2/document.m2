@@ -592,18 +592,10 @@ fixupTable := new HashTable from {
      Key => identity,					    -- this item was processed earlier!
      symbol DocumentTag => identity,
      Usage => val -> (
-	  if not instance(val,String) then error("expected Usage option to be a string");
-	  -- use CSS tables
-	  DIV { "class" => "list",
-	       DL { "class" => "element",
-		    DT { "class" => "heading", "Usage: " },
-		    DD { "class" => "value", DIV between_(BR{}) (TT \ nonempty separate val) }
-		    }}
---	  TABLE TR {
---	       TD { "valign" => "top" , "Usage:" },
---	       TD between_(BR{}) (TT \ nonempty separate val)
---	       }
-	  ),
+	  if not instance(val,String) then error "Usage: expected a string";
+	  val = nonempty separate val;
+	  if #val === 0 then error "Usage: expected content";
+	  DL flatten { "class" => "element", DT "Usage:", DD \ TT \ val } ),
      BaseFunction => val -> (if val =!= null and not instance(val,Function) then error "expected BaseFunction option value to be a function"; val),
      Inputs => val -> fixupList(val,Inputs),
      Outputs => val -> fixupList(val,Outputs),

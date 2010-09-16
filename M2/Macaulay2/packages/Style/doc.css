@@ -74,36 +74,8 @@ div.exports {
      line-height: 110%;
 }
 
-/* css tables */
-
-div.list {
-     /* display: table; */
-}
-
 dl.element {
-  display: table-row;
-}
-
-dt.heading {
-  display: table-caption;
-  vertical-align: top;
-  margin-left: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-right: 1em;
-}
-
-/*
-
-dt.heading:after {
-  content: ":";
-}
-
-*/
-
-dd.value {
-  display: table-cell;
-  vertical-align: top;
+  margin: 0px;
 }
 
 /*
