@@ -1557,7 +1557,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   int *mon = M->make_one();
   int *exp = newarray_atomic(int,M->n_vars());
   ring_elem one = K->from_int(1);
-  exponent_table *E = exponent_table_new(50000, vars->len);
+  exponent_table *E = exponent_table_new(50000, vars->len+1); // the +1 is for the coefficient
 
   for (int c=0; c<n_cols(); c++)
     {
@@ -1566,17 +1566,18 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
 	{
 	  for (Nterm *t = v->coeff; t != 0; t = t->next)
 	    {
-	      int *exp1 = newarray_atomic(int,vars->len);
+	      int *exp1 = newarray_atomic(int,vars->len+1);
 	      M->to_expvector(t->monom, exp);
 	      for (unsigned int i=0; i<vars->len; i++)
 		exp1[i] = exp[vars->array[i]];
+	      exp1[vars->len] = v->comp;
 	      exponent_table_put(E, exp1, 1);
 	    }
 	}
     }
 
   // Take all of these monomials and make an array_ out of them
-  MatrixConstructor mat(get_ring()->make_FreeModule(1),0);
+  MatrixConstructor mat(rows(),0);
   const void ** monoms = exponent_table_to_array(E);
   for (int i=0; i<nvars; i++) exp[i] = 0;
   for (int i=0; monoms[i] != 0; i += 2)
@@ -1584,9 +1585,10 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
       const int * exp1 = reinterpret_cast<const int *>(monoms[i]);
       for (unsigned int j=0; j<vars->len; j++)
 	exp[vars->array[j]] = exp1[j];
+      int x = exp1[vars->len]; // component
       M->from_expvector(exp, mon);
       ring_elem a = P->make_flat_term(one, mon);
-      mat.append(P->make_vec(0,a));
+      mat.append(P->make_vec(x,a));
     }
   
   // Remove the garbage memory

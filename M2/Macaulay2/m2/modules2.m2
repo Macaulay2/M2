@@ -633,6 +633,23 @@ Module _ List := Matrix => (M,v) -> (
      f := id_N_v;
      map(M, source f, f))
 -----------------------------------------------------------------------------
+findHeftandVars = (R, varlist, ndegs) -> (
+     -- returns (varlist, heftval)
+     -- such that each returned varlist is a subset of the original
+     --  consisting of those vars whose degree is not 0 on the firat ndegs slots
+     -- and heft is an integre vector of length ndegs s.t. heft.deg(x) > 0 for each variable x in varlist
+     if #varlist == 0 then (varlist, {})
+     else (
+       if degreeLength R == ndegs and #varlist == numgens R then return (varlist, heft R);
+       zerodeg := toList(ndegs:0);
+       varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
+       degs := apply(varlist', x -> take(degree R_x, ndegs));
+       heft := findHeft degs;
+       if heft === null then 
+         error "heft vector required which is positive on the degrees of the variables " | toString varlist';
+       (varlist', heft)
+       ))
+
 basis = method(
      TypicalValue => Matrix,
      Options => new OptionTable from {
@@ -653,13 +670,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if hi === infinity then hi = {};
      if #lo != 0 and #lo > degreeLength R or #hi != 0 and #hi > degreeLength R then error "expected length of degree bound not to exceed that of ring";
      if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
-     var := opts.Variables;
-     if var === null then var = 0 .. numgens R - 1
-     else if class var === List then (
-	  var = apply(var, v -> if instance(v,R) then index v 
-				else if instance(v,ZZ) then v
-				else error "expected list of ring variables or integers"))
-     else error "expected list of ring variables or integers";
+
      A := ultimate(ambient,R);
      if not (
 	  isAffineRing A 
@@ -670,14 +681,20 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 	  or
 	  ZZ === A
 	  ) then error "'basis' can't handle this type of ring";
-     k := coefficientRing A;
+     var := opts.Variables;
+     if var === null then var = toList(0 .. numgens R - 1)
+     else if class var === List then (
+	  var = apply(var, v -> if instance(v,R) then index v 
+				else if instance(v,ZZ) then v
+				else error "expected list of ring variables or integers"))
+     else error "expected list of ring variables or integers";
+     (varlist, heftvec) := if #lo == 0 and #hi == 0
+                        then (var, () ) 
+			else findHeftandVars(R, var, #lo);
+
      pres := generators gb presentation M;
-     heft := (
-     	  optR := options R;
-	  if optR =!= null then optR.Heft
-	  );
-     if heft === null then heft = () else heft = toSequence heft;
-     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
+
+     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heftvec, varlist, opts.Truncate, opts.Limit) };
      f := value log;
      S := opts.SourceRing;
      off := splice opts.Degree;

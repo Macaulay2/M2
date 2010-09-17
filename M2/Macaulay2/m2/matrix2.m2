@@ -469,7 +469,7 @@ coefficients = method(Options => {Variables => null, Monomials => null})
 coefficients(RingElement) := o -> (f) -> coefficients(matrix{{f}},o)
 coefficients(Matrix) := o -> (f) -> (
      if not isFreeModule target f then error "expected target to be a free module";
-     if numgens target f =!= 1 then error "expected target to be a free module of rank 1";
+     --if numgens target f =!= 1 then error "expected target to be a free module of rank 1";
      m := raw f;
      vrs := listOfVars(ring f,o.Variables);
      rawmonoms := if o.Monomials === null then
@@ -479,7 +479,8 @@ coefficients(Matrix) := o -> (f) -> (
 	       else if class o.Monomials === List then raw matrix{o.Monomials}
 	       else if class o.Monomials === Sequence then raw matrix{toList o.Monomials}
 	       else error "expected 'Monomials=>' argument to be a list, sequence, or matrix";
-     monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawmonoms));
+     --monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawmonoms));
+     monoms := map(target f,,rawmonoms);
      (monoms,map(source monoms,source f,rawCoefficients(vrs,rawmonoms,m)))
      )
 
