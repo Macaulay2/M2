@@ -123,6 +123,11 @@ document { Key => {basis,
      }
 
 TEST ///
+ basis (QQ^6)
+ basis (ZZ^7)
+///
+
+TEST ///
   R = ZZ/101[a..d]
   I = ideal(a*d, b^2, c*d)
   assert(
@@ -177,6 +182,14 @@ TEST ///
 ///
 
 TEST ///
+  -- multigraded rings
+  R = ZZ/101[a..d,Degrees=>{{1,2,3},{1,-1,0},{1,1,1},{2,1,-3}}]
+  degree (a*b*c*d)
+  assert(basis({5,3,1},R) == matrix"abcd")
+  assert(basis({1,2,3},R) == matrix"a")
+///
+
+TEST ///
 -- over ZZ
   R = ZZ[a..c]
   M = coker matrix"3a,4b,5c,a3,b3,c3"
@@ -221,8 +234,6 @@ TEST ///
       assert( kernel g === image map(QQ^6,0,0) )
  ///
 
-
- -- Tests added MES, Sep 2010
  TEST ///
  -- A simple use of basis: all elements of a given degree in a ring
  -- sometimes just ones involving a set of the variables
@@ -251,15 +262,23 @@ TEST ///
       basis(2,B)
       == matrix {{x^2, x*y, y^2}})
 
-{*
  C = ZZ/101[x,y,a,b,Degrees=>{1,1,0,0}]
  assert(
-      basis(2,C,Variables=>{x,y}) -- this should be allowed BUG
+      basis(2,C,Variables=>{x,y})
       == matrix"x2,xy,y2")
    -- should only need the heft to be positive on all variables being used!
-   *}
 
  ///
+
+TEST ///
+-- test of whether finiteness is checked correctly, if we only use some variables:
+R = ZZ/101[a..d]
+A = R/(a^3, b^4)
+assert(
+  sort basis(A, Variables=>{a,b})
+  == matrix {{1, b, a, b^2, a*b, a^2, b^3, a*b^2, a^2*b, a*b^3, a^2*b^2, a^2*b^3}})
+assert try (basis(A, Variables=>{a,c});false) else true
+///
 
  TEST ///
  -- basis of {d,*,*,...,*}
@@ -285,29 +304,22 @@ TEST ///
 
  TEST ///
  -- More partial bases:
- {*
+
  A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]
  assert(
       basis({3}, A^1) 
       == matrix"a3,a2b,ab2,b3")
-   -- BUG: this last one is wrong, perhaps because of the heft vector has value -1 on the first variable?
-*}
 
-{*
  A = ZZ/101[a..d, Degrees=>{2:{1,1},2:{0,1}}]
  assert(
       basis({3}, A^1) 
       == matrix"a3,a2b,ab2,b3")
-   -- BUG too: this is coming out ot be "1".  Here the heft vec is picking out the last comp
-*}
 
-{*
  A = ZZ/101[a,b, Degrees=>{{1,2},{0,1}}]
  assert(
       basis({3}, A^1)
       == matrix"a3")
-      -- BUG: this one is wrong too, as this is a simpler version of one above.
-*}
+
  A = ZZ/101[a..d, Degrees=>{2:{2,1},2:{1,0}}]
  assert(
       basis({3}, A^1) 
@@ -316,7 +328,7 @@ TEST ///
  A = ZZ/101[a..d, Degrees=>{2:{2,1,0},2:{1,0,0}}]
  assert(
       basis({3,1}, A^1) 
-      == matrix"ac,ad,bc,bd,c3,c2d,cd2,d3")
+      == matrix"ac,ad,bc,bd")
 
  rewriteRing = (R, ndegs) -> (
       zerodeg := toList(ndegs:0);
