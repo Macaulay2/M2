@@ -1,9 +1,12 @@
 -- this file is licenced for use under the GNU General Public Licence version 2
 
+needsPackage "SimplicialComplexes"
+needsPackage "Graphs"
+
 newPackage(
 	"Posets",
-    	Version => "0.1", 
-    	Date => "July 16, 2008",
+    	Version => "0.2", 
+    	Date => "September 17, 2010",
     	Authors => {
 	     {Name => "Sonja Mapes", Email => "mapes@math.columbia.edu", HomePage => "http://www.math.columbia.edu/~mapes/"},
 	     {Name => "Gwyn Whieldon", Email => "whieldon@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Grads/whieldon.html"},
@@ -14,99 +17,70 @@ newPackage(
     	)
  
 export {
-     Poset,
-     poset,
-     DirectedGraph,
-     directedGraph,
-     adjacencyMatrix,
-     allPairsShortestPath,
-     transitiveClosure,
+	Poset,
+	poset,
+	transitiveClosure,
 --     FullRelationMatrix,
-     RelationMatrix,
-     compare,
-     orderIdeal,
-     filter,
-     Relations,
-     GroundSet,
-     Vertices,
-     DirectedEdges,
-     posetMeet, 
-     meetExists, -- do tests for
-     posetJoin,
-     joinExists,
-     isLattice,
-     --lcm,
-     lcmLattice
-     }
+	RelationMatrix,
+	compare,
+	orderIdeal,
+	filter,
+	Relations,
+	GroundSet,
+	posetMeet, 
+	meetExists, -- do tests for
+	posetJoin,
+	joinExists,
+	isLattice,
+	--lcm,
+	lcmLattice,
+	divisorPoset, 
+	coveringRelations,
+	maximalElements,
+	minimalElements,
+	dropElements,
+	maximalChains,
+	orderComplex,
+	VariableName,
+	hasseDiagram,
+	subPoset,
+	atoms,
+	closedInterval,
+	openInterval,
+	moebiusFunction,
+	isAntichain,
+	meetIrreducibles,
+	booleanLattice
+       }
 
-
+needsPackage "SimplicialComplexes"
+needsPackage "Graphs"
 
 Poset = new Type of HashTable
 
 poset = method()
-poset(List,List) := (I,C) ->
-     new Poset from {
-	 symbol GroundSet => I,
-	 symbol Relations => C,
-     	 symbol RelationMatrix => transitiveClosure(I,C),
-	 symbol cache => CacheTable
-	 }
-    
--- in case you actually have M to begin with    
+poset(List,List) := (I,C) ->( 
+    if (rank(transitiveClosure(I,C)) == #I) then
+         (new Poset from {
+	      symbol GroundSet => I,
+	      symbol Relations => C,
+     	      symbol RelationMatrix => transitiveClosure(I,C),
+	      symbol cache => new CacheTable
+	      })
+    else error "antisymmetry fails"
+    )
+
+-- in case you actually have M to begin with 
+--used in LCMLattices   
 poset(List,List,Matrix) := (I,C,M) ->
      new Poset from {
 	  symbol GroundSet => I,
 	  symbol Relations => C,
 	  symbol RelationMatrix => M,
-	  symbol cache => CacheTable
+	  symbol cache => new CacheTable
 	  }
      
-DirectedGraph = new Type of HashTable
- 
-directedGraph = method()
-directedGraph(List, List) := (V,E) ->
-     new DirectedGraph from {
-     	  symbol Vertices => V,
-     	  symbol DirectedEdges => E,
-	  symbol cache => CacheTable
-     }
-
---------------
-
---inputs: (I,C), I is a List (ground set or vertex set) and C is a List of pairs of elements in I
---     	     OR DirectedGraph OR Poset
---output: a matrix whose rows and columns are indexed by I, 
---     	    where (i,j) entry is infinity (i.e. 1/0.) if (i,j) is not in C
---     	    and 1 otherwise (i.e. tropicalization of the "usual" adjacency matrix)
---caveat: diagonal entries are 0
--- uses:  transitive closure 
-
-adjacencyMatrix = method()
-adjacencyMatrix(List,List) := Matrix => (I, C) -> (
-     M := mutableMatrix table(#I, #I, (i,j)->1/0.);
-     ind := hashTable( apply(I, i-> i=> position(I,j-> j==i) )  ); --indices 
-     scan(C, e -> M_(ind#(e#0), ind#(e#1))= 1);
-     scan(numrows M, i-> M_(i,i) = 0);
-     matrix M      
-     )
-adjacencyMatrix(DirectedGraph) := Matrix => (G) -> adjacencyMatrix(G.Vertices,G.DirectedEdges)
-adjacencyMatrix(Poset) := Matrix => (P) -> adjacencyMatrix(P.GroundSet,P.Relations)
-
---input: adjacency matrix of a directed graph
---output: a matrix whose (i,j) entry is the length of the shortest path from i to j
---algorithm: Floyd–Warshall algorithm for all pairs shortest path
-allPairsShortestPath = method()
-allPairsShortestPath(Matrix) := Matrix => (A) -> (
-     D := mutableMatrix(A);
-     n := numrows D;
-     scan(n, k->
-	       table(n,n,(i,j)-> D_(i,j) = min(D_(i,j), D_(i,k)+D_(k,j)))
-	  );
-     matrix D
-     )
-allPairsShortestPath(DirectedGraph) := Matrix => (G)-> allPairsShortestPath(adjacencyMatrix(G))
-
-
+-- DirectedGraph, adjacencyMatrix and allPairsShortestPath were moved to Graphs.m2
 
 -- input: a poset, and an element A from I
 -- output:  the index of A in the ground set of P
@@ -130,18 +104,11 @@ nonnull :=(L) -> (
 --uses: poset
 
 transitiveClosure = method()
-transitiveClosure(List,List) := List => (I,C)-> (
-     A := adjacencyMatrix(I,C);
-     D := mutableMatrix allPairsShortestPath(A);
-     scan(numrows D, i-> D_(i,i) = 0);
-     table(numrows D, numrows D, (i,j)->(
-	  if D_(i,j) ==1/0. then D_(i,j) = 0 else D_(i,j) = 1;	  
-	  )
-	  );
-     matrix D
+transitiveClosure(List,List) := (I,C) -> (
+     G := digraph hashTable apply(I,v->v=>set apply(select(C,e->e_0==v),e->e_1));
+     H := floydWarshall G;
+     matrix apply(I,u->apply(I,v->if H#(u,v)<1/0. then 1 else 0))
      )
-
-
 
 --input: A poset with any type of relation C (not necessarily minimal, maximal, etc.)
 --output:  The transitive closure of relations in C in our poset
@@ -171,63 +138,209 @@ compare(Poset, Thing, Thing) := Boolean => (P,A,B) -> (
 
 
 --------------------------------------------------
---Covering Relations
+--Covering Relations and Hasse Diagrams
 --------------------------------------------------
-
-testcover=(P,A,B) -> (
-     L:=poset(P.GroundSet,fullPosetRelation(P));
-     k:=#L.GroundSet-2; 
-         
-     if sum(nonnull(apply(k, i-> if compare(L,A,(toList(set(L.GroundSet)-{A,B}))_i)==true and
-	       compare(L,(toList(set(L.GroundSet)-{A,B}))_i,B)==true
-	       then 1)))=!=0 then C=C+set{(A,B)};
-     C
-)		
-
 --input: A poset with any type of relation C (minimal, maximal, etc.)
 --output: The minimal relations defining our poset
 
-protect CRelations
+coveringRelations = method();
+coveringRelations (Poset) := (P) -> (
+	if P.cache.?coveringRelations then (
+		return P.cache.coveringRelations;
+	);
+	nonCovers := sum apply(P.Relations, 
+		R -> set apply(select(P.Relations, S -> (first S == last R and first R != last R and first S != last S)), S -> (first R, last S) ));
+	P.cache.coveringRelations = P.Relations - (nonCovers + set apply(P.GroundSet, x -> (x,x)))
+)
 
-coveringRelations:=(P) -> (
-     C=set{};
-     apply(#P.CRelations,i->testcover(P,P.CRelations#i#0,P.CRelations#i#1));
-     toList(set(P.CRelations)-C)
-     )
+--input:  A poset P
+--output:  A digraph which represents the Hasse Diagram of P
+hasseDiagram = method();
+hasseDiagram(Poset) := P -> (
+  if P.cache.?coveringRelations then cr = P.cache.coveringRelations else cr = coveringRelations P;
+  digraph hashTable apply(P.GroundSet,v->v=>set apply(select(cr,e->e_0==v),e->e_1))
+)
 
---input: A poset with any type of relation C (minimal, maximal, etc.)
---output:  A new poset P with the minimal relations
+--G = digraph(apply(P.GroundSet, elt-> {elt, apply(select(P.cache.coveringRelations, rel -> rel#1 == elt), goodrel-> goodrel#0)})) 
 
-coveringRelationsPoset:=(P) -> (
-     L:=poset(P.GroundSet,coveringRelations(P))
-     )
 
 --------------------------------------------------
---Minimal Element Construction
+--Minimal/Maximal Elements, and atoms 
+--------------------------------------------------
+-- input:  poset
+-- output:  list of minimal elements
+minimalElements = method()
+minimalElements (Poset) := (P) -> (
+	if P.cache.?minimalElements then (
+		return P.cache.minimalElements;
+	);
+	M := P.RelationMatrix;
+	n := #P.GroundSet;
+	L := apply(n, i -> if all(n, j -> M_(j,i) == 0 or i == j) then P.GroundSet#i);
+	P.cache.minimalElements = select(L, x -> x =!= null) 
+)
+
+
+-- input: poset
+-- output:  list of maximal elements
+maximalElements = method()
+maximalElements (Poset) := (P) -> (
+	if P.cache.?maximalElements then (
+		return P.cache.maximalElements;
+	);
+	M := P.RelationMatrix;
+	n := #P.GroundSet;
+	L := apply(n, i -> if all(n, j -> M_(i,j) == 0 or i == j) then P.GroundSet#i);
+	P.cache.maximalElements = select(L, x -> x =!= null) 
+)
+
+
+--input:  poset
+--output:  list of elements covering minimal elements
+
+atoms = method();
+atoms (Poset) := List => (P) -> (
+  if P.cache.?coveringRelations == false then coveringRelations P;
+  unique apply(select(P.cache.coveringRelations, R -> any(minimalElements P, elt -> (elt == R#0))), rels-> rels_1)    
+  )
+
+-- input:  poset
+-- output:  meet irreducibles of poset
+meetIrreducibles = method()
+meetIrreducibles(Poset) := P -> (
+     -- want to compute meets only for non-comparable elements
+     if (isLattice P) == true
+     then (
+     nonComparablePairs := select(subsets(P.GroundSet,2), posspair-> 
+	  compare(P, posspair#0,posspair#1) == false and compare(P,posspair#1,posspair#0)== false);
+     meets :=  nonnull unique flatten apply(nonComparablePairs, posspair -> if meetExists(P, posspair#0, posspair#1) == true 
+	  then posetMeet(P,posspair#0, posspair#1)); 
+     meetIrred := toList (set P.GroundSet - set meets))
+     else error "P is not a lattice"
+     )
+
+
+--------------------------------------------------
+-- dropElements/induced poset
+--------------------------------------------------
+-- only intended for input where M = P.RelationMatrix 
+allRelations := (P,M) -> (
+     rows := entries M;
+     rels := nonnull flatten apply(#rows, i -> flatten apply((#(rows_i), j -> if (rows_i)_j == 1 then (P.GroundSet#i, P.GroundSet#j))))  
+     )
+
+-- dropElements
+-- inputs:  poset P and a list L of elements to drop
+-- outputs: P without L
+dropElements = method()
+
+dropElements (Poset, List) := (P, L) -> (
+	keptIndices := select(toList(0..#P.GroundSet-1), i-> not member(P.GroundSet#i,L));
+	newGroundSet := apply(keptIndices, i-> P.GroundSet#i);
+	newRelationMatrix := P.RelationMatrix_keptIndices^keptIndices;
+	newRelations := select(allRelations(P,P.RelationMatrix), r -> not member(first r, L) and not member(last r, L));
+	poset(newGroundSet, newRelations, newRelationMatrix)
+)
+
+dropElements (Poset, Function) := (P, f) -> (
+	keptIndices := select(toList(0..#P.GroundSet-1), i-> not f(P.GroundSet#i));
+	newGroundSet := apply(keptIndices, i-> P.GroundSet#i);
+	newRelationMatrix := P.RelationMatrix_keptIndices^keptIndices;
+	newRelations := select(allRelations(P,P.RelationMatrix), r -> not f(first r) and not f(last r));
+	poset(newGroundSet, newRelations, newRelationMatrix)
+)
+
+-- inducedPoset
+-- inputs:  a poset P and a list L of elements from P to "keep"
+-- outputs:  induced poset the list L
+subPoset = method();
+subPoset (Poset, List) := Poset => (P, L) -> (
+  dropElements(P, toList(set P.GroundSet - set L))
+  )
+
+
+-- closedInterval
+-- input:  poset, and two elements
+-- output:  the induced poset with minimal element and maximal element corresponding to the 2 given elements
+closedInterval = method()
+closedInterval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
+     if (compare(P,elt1,elt2) == true or compare(P,elt2,elt1) == true) == false then return error "these elments are uncomparable";
+     -- find elements between a and b
+     if compare(P,elt1,elt2) === true 
+          then return subPoset(P,select(P.GroundSet, elt -> compare(P,elt1,elt) == true and compare(P,elt,elt2) == true));
+     if compare(P,elt2,elt1) === true 	  
+          then return subPoset(P, select(P.GroundSet, elt -> compare(P,elt2,elt) == true and compare(P,elt,elt1) == true));
+      )
+
+--openInterval
+--input: poset and two elements
+-- output: the induced poset coming from the poset with minimal element and maximal element corresponding to the 2 given elements
+     --with these 2 elements removed 
+openInterval = method()
+openInterval(Poset, Thing, Thing) := (P, elt1, elt2) ->(
+     dropElements(closedInterval(P, elt1, elt2), {elt1, elt2})
+)
+
+
+--------------------------------------------------
+-- maximalChains 
 --------------------------------------------------
 
-minimalElementIndex:=(P)-> (
-     M:=P.RelationMatrix;
-     nonnull(apply(numcols(M), k-> if (apply(numcols(M), j-> (sum((apply(numrows(M),i-> (transpose(M))_i))))_j))#k==1 then k))
-     )
+maximalChains = method()
+maximalChains (Poset) := (P) -> (
+	if P.cache.?maximalChains then (
+		return P.cache.maximalChains;
+	);
+	nonMaximalChains := apply(minimalElements(P), x -> {x});
+	maxChains := {};
+	n := #P.GroundSet;
+	i := 0;
+	while #nonMaximalChains =!= 0 and i <= n do (
+		nonMaximalChains = flatten apply(nonMaximalChains, c -> (
+			nexts := select(coveringRelations P, r -> first r == last c);
+			if #nexts == 0 then maxChains = append(maxChains, c);
+			apply(nexts, r -> c | {last r})
+			)
+		)
+	);
+	P.cache.maximalChains = maxChains
+)
 
-minimalElements:=(P) -> (
-     L:=minimalElementIndex(P);
-     apply(#L,i-> P.GroundSet#(L#i))
-     )
+--input:  P a poset
+--output:  length of maximal chain in P
 
-PosetMinusMins:=(P)-> (
-     L:=minimalElements(P);
-     K:=fullPoset(P);
-     N:=set{};
-     S:=apply(#L, j-> apply(#K.CRelations,i->(K.CRelations#i)#0===L#j));
-     E:=sum set nonnull(apply(#K.CRelations,l->if member(true,set apply(#L,k->S#k#l)) then N=N+set{K.CRelations#l}));
-     C:=toList (set(K.CRelations)-N);
-     I:=toList (set(K.GroundSet)-set(L));
-     poset(I,C)
-     )
+height (Poset) := Poset => (P) -> (
+     max apply (maximalChains P, s-> #s))
 
 
+
+-------------------------------------------------
+--Anti-Chains
+-------------------------------------------------
+-- isAntichain
+--input: P a poset and L a list of elements of the poset
+--output T/F whether L is an antichain in P
+
+
+isAntichain = method()
+
+isAntichain(Poset, List) := (P, L) ->(
+     Q := subPoset(P, L);
+     if  minimalElements(Q) == maximalElements(Q) then true
+          else false)
+     
+     
+--------------------------------------------------
+-- Order-Complex 
+--------------------------------------------------
+
+orderComplex = method(Options => { symbol VariableName => symbol v, symbol CoefficientRing => QQ } )
+orderComplex (Poset) := opts -> (P) -> (
+	s := opts.VariableName;
+	R := (opts.CoefficientRing)[s_0..s_(#P.GroundSet -1)];
+	variableMap := hashTable apply(#P.GroundSet, i -> P.GroundSet#i => R_i);
+	simplicialComplex apply(maximalChains P, c -> product apply(c, x -> variableMap#x))
+)
 
 --------------------------------------------------
 --Order and Filter Ideals
@@ -237,21 +350,20 @@ PosetMinusMins:=(P)-> (
 -- output: the order ideal of a, i.e. all elements in the poset that are >= a
 -- usage:
 
-orderIdeal= method()
-orderIdeal(Poset, Thing) := (P, a) -> (
-     M:=P.RelationMatrix;
-     aindex := indexElement (P,a);
-     GreaterThana:= entries((transpose(M))_aindex);
-     nonnull(apply(#GreaterThana, i-> if GreaterThana_i == 1 then P.GroundSet#i)) 
-     )	
-	   
+filter= method()
+filter(Poset, Thing) := (P, a) -> (
+	M:=P.RelationMatrix;
+	aindex := indexElement (P,a);
+	GreaterThana:= entries((transpose(M))_aindex);
+	nonnull(apply(#GreaterThana, i-> if GreaterThana_i == 1 then P.GroundSet#i)) 
+	)
 
 
 -- input: a poset, and an element from I
 -- output:  the filter of a, i.e. all elements in the poset that are <= a
 -- usage:
-filter = method()
-filter(Poset, Thing) := (P,a) -> (
+orderIdeal = method()
+orderIdeal(Poset, Thing) := (P,a) -> (
      M:=P.RelationMatrix;
      aindex := indexElement (P,a);
      LessThana:= entries M_aindex;
@@ -269,8 +381,8 @@ filter(Poset, Thing) := (P,a) -> (
 
 posetJoin = method()     
 posetJoin(Poset,Thing,Thing) := (P,a,b)  -> (
-     OIa := orderIdeal(P,a);     
-     OIb := orderIdeal(P,b);
+     OIa := filter(P,a);     
+     OIb := filter(P,b);
      upperBounds := toList (set(OIa)*set(OIb));
      if upperBounds == {} then (error "your elements do not share any upper bounds") else (M := P.RelationMatrix;
      	  heightUpperBounds := flatten apply(upperBounds, element-> sum entries M_{indexElement(P,element)});
@@ -281,8 +393,8 @@ posetJoin(Poset,Thing,Thing) := (P,a,b)  -> (
 
 joinExists = method()
 joinExists(Poset,Thing,Thing) := (P,a,b) -> (
-     OIa := orderIdeal(P,a);     
-     OIb := orderIdeal(P,b);
+     OIa := filter(P,a);     
+     OIb := filter(P,b);
      upperBounds := toList (set(OIa)*set(OIb));
      if upperBounds == {} then false else (M := P.RelationMatrix;
      	  heightUpperBounds := flatten apply(upperBounds, element-> sum entries M_{indexElement(P,element)});
@@ -296,8 +408,8 @@ joinExists(Poset,Thing,Thing) := (P,a,b) -> (
 -- usage:  MeetExits used in isLattice
 posetMeet = method()
 posetMeet(Poset,Thing,Thing) := (P,a,b) ->(
-     Fa:= filter(P,a);
-     Fb:= filter(P,b);
+     Fa:= orderIdeal(P,a);
+     Fb:= orderIdeal(P,b);
      lowerBounds:= toList (set(Fa)*set(Fb));
      if lowerBounds == {} then (error "your elements do not share any lower bounds") else (
 	  M := P.RelationMatrix;
@@ -308,8 +420,8 @@ posetMeet(Poset,Thing,Thing) := (P,a,b) ->(
 
 meetExists = method()
 meetExists(Poset, Thing, Thing) := (P,a,b) -> (
-     Fa:= filter(P,a);
-     Fb:= filter(P,b);
+     Fa:= orderIdeal(P,a);
+     Fb:= orderIdeal(P,b);
      lowerBounds:= toList (set(Fa)*set(Fb));
      if lowerBounds == {} then false else (
 	  M := P.RelationMatrix;
@@ -328,7 +440,7 @@ isLattice(Poset) := (P) -> (
 	                apply (P.GroundSet, elt2-> joinExists(P,elt, elt2)));
     checkMeets :=  unique flatten flatten apply(P.GroundSet, elt -> 
 	                apply (P.GroundSet, elt2-> meetExists(P,elt, elt2) ));
-    if member(false, set (flatten{checkJoins,checkMeets})) === true then false else true 
+    if member(false, set (flatten{checkJoins,checkMeets})) === true then P.cache.isLattice = false else P.cache.isLattice = true 
      )
 
 
@@ -342,27 +454,184 @@ isLattice(Poset) := (P) -> (
 --    )
 
 -- input:  generators of a monomial ideal
--- output: lcm lattice of that monomial ideal, without the minimal element
+-- output: lcm lattice of that monomial ideal
 -- potential problem:  subsets dies when a set is too big (> 18)
 
-lcmLattice = method()     
-lcmLattice(Ideal) := Poset => (I) -> (
-	   L := flatten entries gens I;
-	   subsetsL := flatten apply(#L, i-> subsets (L,i+1));
-	   Ground := unique flatten apply (subsetsL, r-> lcm(r));
-	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s%r == 0 then (r,s)));
-	   RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
-	   P := poset (Ground, Rels, RelsMatrix);
-	   P)
+lcmLattice = method( Options => { Strategy => 1 })     
+lcmLattice(Ideal) := Poset => opts -> (I) -> (
+	   lcmLattice(monomialIdeal I, opts)
+	   )
 
-lcmLattice(MonomialIdeal) := Poset => (M) -> (
-     	   L := flatten entries gens M;
-	   subsetsL := flatten apply(#L, i-> subsets (L,i+1));
-	   Ground := unique flatten apply (subsetsL, r-> lcm(r));
-	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s%r == 0 then (r,s)));
+lcmLattice(MonomialIdeal) := Poset => opts -> (M) -> (
+	   L := flatten entries gens M;
+	   Ground := null;
+	   if opts.Strategy === 0 then (
+		subsetsL := flatten apply(#L, i-> subsets (L,i+1));
+		Ground = unique flatten apply (subsetsL, r-> lcm(r));
+		Ground = prepend(1_(ring M), Ground);
+		) else (
+		Ground = lcmLatticeProduceGroundSet L;
+		Ground = apply(Ground, D -> product apply(numgens ring M, i-> (ring M)_i^(D#i)));
+		);
+	   Rels := nonnull unique flatten apply (Ground, r-> apply(Ground, s-> if s % r == 0 then (r,s)));
 	   RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
-	   P := poset (Ground, Rels, RelsMatrix);
-	   P)
+	   poset (Ground, Rels, RelsMatrix)
+	   )
+
+
+--Subroutine of lcmLatticeProduceGroundSet
+--Makes a pair storing a multi-degree and 
+--a list of multi-degrees which are to be 
+--joined with this degree.
+degreeNextPair = (D, nextDegrees) -> 
+	hashTable { 
+		symbol degree => D, 
+		symbol next => nextDegrees
+		};
+
+--Subroutine of lcmLatticeProduceGroundSet
+--Takes the lcm of two degrees and determines which 
+--of the lowerNexts can later be joined to newDegree
+--and change its multidegree. Note that the lower nexts are not
+--all multi-degrees. They have already been chosen so that they 
+--would not change the degrees of the first i variables where
+--i appears in the for loop of lcmLatticeProduceGroundSet.
+joinDegrees = (A,B, lowerNexts) ->  (
+	C := lcmDegree {A.degree, B};
+	nexts := select(lowerNexts, D -> not dividesDegree(D, C));
+	degreeNextPair( C, nexts )
+)
+
+--Subroutine of lcmLatticeProduceGroundSet (used in joinDegrees)
+--Checks if D divides E as multidegrees
+dividesDegree = (D,E) -> all(E-D, i-> i >= 0);
+
+--Subroutine of lcmLatticeProduceGroundSet (used in joinDegrees)
+--Takes the lcm of two multidegrees
+lcmDegree = L -> apply(transpose L, l -> max l);
+
+--Subroutine of lcmLatticeProduceGroundSet (used in determineLCMsForVariable)
+--Take a list of degreeNextPairs and drop duplicate degrees
+uniqueMultiDegrees = L -> (
+	P := partition(D -> (D.degree) , L);
+	apply(keys P, d -> first P#d)
+)
+
+
+--Subroutine of lcmLatticeProduceGroundSet 
+--Builds the possible multidegrees by changes in variable i.
+determineLCMsForVariable = (lcmDegrees, i) -> (
+	VERBOSE := false;
+	newLCMDegrees := flatten apply(lcmDegrees, D -> (
+		if VERBOSE then << "Working on " << D.degree << endl << D.next << endl;
+		-- Take D's nexts are partition them by the exponent 
+		-- of the i-th variable. Store in P.
+		P := partition(E -> E#i, D.next);
+		-- Partition the possible degrees of the i-th variable
+		-- into those that change multi-degree D in the i-th coordinate
+		-- and those that don't. Store in Q.
+		Q := partition(d -> d > (D.degree)#i, keys P);
+		--Restrict P to only those which change the degree the i-th variable of D.
+		upperPartition := hashTable apply(if Q#?true then Q#true else {}, d -> d => P#d);
+		if VERBOSE then << "Upper Partition" << endl << upperPartition << endl;
+		-- The lowerNexts are those multi degrees that can change D in
+		-- the indices larger than i, but not in i itself.
+		lowerNexts := flatten apply(if Q#?false then Q#false else {},  d -> P#d);
+		newD := degreeNextPair( D.degree, lowerNexts ); -- D with fewer nexts
+		newMultiDegrees := flatten apply(keys upperPartition, d -> (
+			lowerNexts = lowerNexts | upperPartition#d; -- build these as we go
+			apply(upperPartition#d, E -> joinDegrees(D,E,lowerNexts))
+			)
+		);
+		{newD } | newMultiDegrees 
+		)
+	);
+	newLCMDegrees = select(newLCMDegrees, D -> D =!= null);
+	uniqueMultiDegrees newLCMDegrees
+)
+
+lcmLatticeProduceGroundSet = G -> (
+	VERBOSE := false;
+	initialExps := flatten apply(G, m -> exponents m);
+	n := if #initialExps === 0 then 0 else #(first initialExps);
+	lcmDegrees := { degreeNextPair(apply(n, i -> 0), initialExps) };
+	for i from 0 to n-1 do (
+		if VERBOSE then << "Variable " << i << endl;
+		if VERBOSE then printDegreeList L;
+		-- lcmDegrees contains all possible multi-degrees restricted
+		-- to the first i varibles. For each of these multi-degrees
+		-- we have a list of "nexts" which are atoms which could
+		-- affect degrees of variables after i without changing 
+		-- the degrees of variables before i.
+		lcmDegrees = determineLCMsForVariable(lcmDegrees, i);
+	);
+	sort apply(lcmDegrees, D -> D.degree)
+)
+
+
+-----------------------------------------------
+-- divisorPoset
+-----------------------------------------------
+-- input:  a monomial m (and an ideal I)
+-- output: lattice of all monomials dividing m (and contained in I)
+
+divisorPoset = method()
+divisorPoset (RingElement) := Poset => (m) -> (
+	d := flatten exponents m;
+	Ground := apply(allMultiDegreesLessThan d, e -> makeMonomialFromDegree(ring m, e));
+	Rels :=  unique flatten apply (Ground, r-> apply(Ground, s-> if s % r == 0 then (r,s)));
+	Rels = select(Rels, r -> r =!= null);
+	RelsMatrix :=  matrix apply (Ground, r-> apply(Ground, s-> if s%r == 0 then 1 else 0));
+	poset (Ground, Rels, RelsMatrix)
+	)
+
+makeMonomialFromDegree = (R, d) -> (
+	product apply(numgens R, i-> R_i^(d#i))
+)
+
+allMultiDegreesLessThan = (d) -> (
+	L := {{}};
+	for i from 0 to (#d) -1 do (
+		maxDegree := d#i;
+		L = flatten apply(L, H -> apply(maxDegree+1, i -> H | {i}));
+	);
+	L
+)
+
+
+
+
+---------------------------------
+-- MOEBIUS FUNCTION
+---------------------------------
+moebiusFunction = method();
+
+moebiusFunction (Poset) := Poset => (P) -> ( 
+     if #minimalElements P > 1 then error "this poset has more than one minimal element - specify an interval";
+     M := (P.RelationMatrix)^(-1);
+     k := position(P.GroundSet,v->v==(minimalElements P)_0);
+     hashTable apply(#P.GroundSet,i->{P.GroundSet_i,M_(k,i)})
+     )
+
+
+moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
+     moebiusFunction (closedInterval(P,elt1,elt2)))
+
+-----------------------------------
+--Boolean Lattices
+-----------------------------------
+booleanLattice = method ()
+
+booleanLattice (ZZ) := n ->(
+     if n>0 then (	       
+          baseRing := ZZ[x_1 .. x_n];
+          I := ideal(x_1 .. x_n);
+          lcmLattice(I))
+     else error "no such lattice"
+     )
+ 
+
+
 ----------------------------------
 -- DOCUMENTATION
 ----------------------------------
@@ -384,7 +653,7 @@ doc ///
 	       routines which use or produce posets.   A poset or a partially ordered set is a set together with a binary relation satisfying reflexivity, antisymmetry, and transitivity.
 ///
 	 
-----------
+---------
 -- types
 ----------	       
 doc ///
@@ -409,30 +678,6 @@ doc ///
 	  RelationMatrix	   
 ///     
 
-
-doc ///
-     Key
-     	  DirectedGraph
-     Headline 
-     	  a class for directed graphs
-     Description
-     	  Text
-	       This class is a type of HashTable which represents directed graphs.  It consists of a vertex 
-	       set and a set of sequences (a,b) representing a directed edge from a to b. 
-	  Example
-	       V = {a,b,c,d,e}; -- the vertex set
-	       E = {(a,b),(b,c),(a,c),(a,d),(d,e)}; -- directed edges; (a,b) means a directed edge from a to b.
-	       G = directedGraph(V,E)
-	       allPairsShortestPath(G)
-     SeeAlso
-     	  directedGraph
-	  Vertices
-	  DirectedEdges
-	  adjacencyMatrix
-	  allPairsShortestPath
-/// 
-
-
 -------------
 -- constructors
 -------------
@@ -456,18 +701,24 @@ doc ///
 	       with entries ij equal to one when the jth element in G is less than or equal to the ith element in G
      Outputs
      	  P : Poset
-	       a poset consisting of the elements in G, with the order relations determined by R and or M
+	       a poset consisting of the elements in G, with the order relations determined by R 
+	       and or M
      Description
       	   Text
 	   	This function allows one to create a poset by defining the set and giving the order relations between the elements in the set.
+		The function assumes that each element in the defining list given is distinct, and operates by taking the transitive and reflexive 
+		closure of the relations that it is given.  The function returns an error
+		if the input relations are incompatible with creating a poset.
 	   Example
 	   	G = {a,b,c,d};
 		R = {(a,b), (a,c), (c,d)};
-		P = poset (G,R)
+		P = poset (G,R)	
 	   Text
 	   	Sometimes in finding "enough" relations one inadverdently finds all of the relations in the poset.  In this case, the user
 		can bypass having the function poset calculate the transitive closure of the relations by entering the matrix encoding the
-		relations in when calling the poset function.
+		relations in when calling the poset function.  In this scenario, the function does not check that the resulting object is 
+		actually a poset because in order to do this, the function needs to compute the transitive closure of the relations and check
+		that this matches the matrix given.  The purpose of entering a matrix is to bypass that computation.
 	   Example
 	   	S = QQ[x,y,z];
 		G = {x^2, x*y, z^2, x^2*y*z, x*y*z^3, x^2*y^2*z^3};
@@ -481,113 +732,10 @@ doc ///
 	  Relations
 	  RelationMatrix
 ///
- 
-doc ///
-     Key
-     	  directedGraph
-	  (directedGraph, List, List)
-     Headline
-     	  creating a directed graph
-     Usage
-     	  G = directedGraph(V,E)
-     Inputs
-     	  V : List 
-	       elements in the vertices of G
-	  E : List 
-	       sequences (a,b) which represents a directed edge from a to b
-     Outputs
-     	  G : DirectedGraph 
-	       a directed graph on vertex set V with directed edges E
-     Description
-      	   Text
-	   	This function allows one to create a directed graph by defining the vertices and directed edges between them.
-	   Example
-	   	V = {a,b,c,d};
-		E = {(a,b), (a,c), (c,d)};
-		G = directedGraph (V,E)	
-     SeeAlso
-     	  DirectedGraph
-	  Vertices
-	  DirectedEdges
-     	  adjacencyMatrix     
-/// 
- 
+  
 -----------
 -- finding relations
 -----------
-
-doc ///
-     Key 
-     	  adjacencyMatrix
-	  (adjacencyMatrix, DirectedGraph)
-	  (adjacencyMatrix, Poset)
-	  (adjacencyMatrix, List, List)
-     Headline
-	  returns adjacency matrix of a directed graph
-     Usage
-	  M = adjacencyMatrix(G)
-	  M = adjacencyMatrix(P)
-	  M = adjacencyMatrix(I,C)
-     Inputs
-	  G : DirectedGraph
-	  P : Poset
-       	  I : List
-	  C : List
-     Outputs
-      	  M : Matrix 
-	       whose rows and columns are indexed by G.Vertices 
-	       or P.GroundSet or I. The (i,j) entry of M  is 1 if (i,j) is 
-	       in G.DirectedEdges or P.Relations or C, 
-	       and infinity otherwise.  Diagonal entries are 0. 
-     Description
-	  Example
-     	       I = {a,b,c,d,e};
-	       C = {(a,b),(b,c),(a,c),(a,d),(d,e)};
-	       G = directedGraph(I,C);
-	       P = poset(I,C);
-	       adjacencyMatrix(G)
-	       adjacencyMatrix(P)
-	       adjacencyMatrix(I,C)	       	       
-     Caveat
-     	  Diagonal entries are 0.  Output matrix is over RR.
-     SeeAlso
-     	  DirectedGraph
-     	  allPairsShortestPath    
-/// 
- 
-doc ///
-     Key 
-     	  allPairsShortestPath
-	  (allPairsShortestPath, DirectedGraph)
-	  (allPairsShortestPath, Matrix)
-     Headline
-     	  computes lengths of shortest paths between all pairs in a directed graph
-     Usage
-     	  D = allPairsShortestPath(G)
-	  D = allPairsShortestPath(A)
-     Inputs
-     	  G : DirectedGraph 
-	  A : Matrix
-	      adjacency matrix of a directed graph, whose (i,j) entry is the length of the directed edge from i to j and is infinity (1/0.) if there is no such directed edge.
-     Outputs
-     	  D : Matrix 
-	       whose (i,j) entry is the length of the shortest path from i to j and is infinity if there is no directed path from i to j.
-     Description
-      	   Text
-	   	This function uses the Floyd-Warshall algorithm to compute the lengths of shortest paths between all pairs of vertices in a directed graph.
-	   Example
-	       G = directedGraph( {a,b,c,d,e}, {(a,b),(b,c),(a,c),(a,d),(d,e)});
-	       allPairsShortestPath(G)
-	       allPairsShortestPath(adjacencyMatrix(G))
-	       A = matrix({{0,1,3,5},{1/0.,0,1,3},{1/0.,1/0.,0,1},{2,1/0.,1/0.,0}})
-	       allPairsShortestPath(A)
-     Caveat
-     	  Assume there is no negative cycles.  Output matrix is over RR.
-     SeeAlso
-     	  DirectedGraph
-     	  adjacencyMatrix   
-/// 
-  
 
 doc ///
      Key
@@ -607,7 +755,7 @@ doc ///
 	       whose (i,j) entry is 1 if (i,j) is a relation and 0 otherwise.
      Description
       	   Text
-	   	This function uses allPairsShortestPath method is used by the poset constructor to compute RelationMatrix from Relations in a Poset.
+	   	This function uses the floydWarshall method from the Graphs package and is used by the poset constructor to compute RelationMatrix from Relations in a Poset.
 	   Example
 	       I = {a,b,c,d,e}; -- the ground set
 	       R = {(a,b),(b,c),(a,c),(a,d),(d,e)}; -- relations
@@ -619,7 +767,6 @@ doc ///
 	  poset
 	  Relations
 	  RelationMatrix
-     	  allPairsShortestPath
 /// 
  
  
@@ -675,7 +822,7 @@ doc ///
 	       a is an element of P
      Outputs
      	  F : List
-	       a list of all elements in P that are less than or equal to a
+	       a list of all elements in P that are greater than or equal to a
      Description
      	  Example
 	       G = {a,b,c,d};
@@ -700,13 +847,13 @@ doc ///
 	       a is an element of P
      Outputs
      	  O : List
-	       a list of all elements in P that are greater than or equal to a
+	       a list of all elements in P that are less than or equal to a
      Description
      	  Example
 	       G = {a,b,c,d};
 	       R = {(a,b), (a,c), (c,d)};
 	       P = poset (G,R);
-	       O = filter (P,c)
+	       O = orderIdeal (P,c)
      SeeAlso
      	  filter    
 /// 
@@ -909,6 +1056,489 @@ doc ///
 	  fixed by the next release of this package.	 
 /// 
 
+     
+-----------------
+-- divisorPoset
+-----------------
+
+doc ///
+	Key
+		divisorPoset
+		(divisorPoset,RingElement)
+	Headline
+		returns the poset of all divisors of a given monomial
+	Usage
+		P = divisorPoset (M)
+	Inputs 
+		M : RingElement
+	Outputs
+		P : Poset
+	Description
+		Text
+			This command computes the poset of all divisors of a given monomial. For two monomials,
+			u and v with u strictly dividing v, we have u < v in this poset.
+		Example
+			S = QQ[a,b,c,d];
+			P = divisorPoset(a*b^2*d^3)
+/// 
+
+     
+
+-----------------
+-- coveringRelations
+-----------------
+
+doc ///
+	Key
+		coveringRelations
+		(coveringRelations,Poset)
+	Headline
+		returns a list of all relations (a < b) with no intermediates
+	Usage
+		C = coveringRelations (P)
+	Inputs 
+		P : Poset
+	Outputs
+		C : List
+			all pairs (a,b) of elements of P where a < b and there is no c with a < c < b
+	Description
+		Text
+			This command computes the list of all covering relations of a poset P. 
+			A relation (a,b) is said to be a covering relation if a < b and there
+			is no element c with a < c < b. The result of this method is cached.
+		Example
+			S = QQ[a,b,c,d];
+			P = divisorPoset(a*b^2*d);
+			P.GroundSet
+			P.Relations
+			C = coveringRelations P
+/// 
+
+-----------------
+-- dropElements
+-----------------
+
+doc ///
+	Key
+		dropElements
+		(dropElements,Poset,List)
+		(dropElements,Poset,Function)
+	Headline
+		returns the poset obtained by removing a list of elements 
+	Usage
+		Q = dropElements (P, L)
+		Q = dropElements (P, f)
+	Inputs 
+		P : Poset
+		L : List
+			elements of P
+		f : Function
+			boolean valued giving true on those elements to be removed
+	Outputs
+		Q : Poset
+			on elements of P that are not in L (or for which f is false) and all induced relations
+	Description
+		Text
+			This command take a poset P and returns a new poset that
+			contains all elements in P that are not in L.
+			The relations on the remaining elements are all relations that held in P.
+
+			Alternately, if a boolean function is given as input instead of a list, all 
+			elements for which the function returns true are removed from P.
+
+		Example
+			S = QQ[a,b];
+			P = divisorPoset(a*b^2);
+			P.GroundSet
+			Q = dropElements(P, {a,a*b^2})
+			R = dropElements(P, m -> first degree m === 2)
+/// 
+
+-----------------
+-- maximalChains
+-----------------
+
+doc ///
+	Key
+		maximalChains
+		(maximalChains,Poset)
+	Headline
+		returns all maximal chains of a poset
+	Usage
+		C = maximalChains (P)
+	Inputs 
+		P : Poset
+	Outputs
+		C : List
+			of maximal chains of P
+	Description
+		Text
+			The maximal chains of P are totally orders subsets of P which are not properly contained
+			in any other totally ordered subsets.
+
+			This method returns a list of all maximal chains. The maximal chains are themselves
+			lists of elements in P ordered from smallest to largest.
+
+			The results of this method are cached.
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b^2*c);
+			C = maximalChains P
+/// 
+
+-----------------
+-- minimalElements
+-----------------
+
+doc ///
+	Key
+		minimalElements
+		(minimalElements,Poset)
+	Headline
+		returns all minimal elements of a poset
+	Usage
+		L = minimalElements (P)
+	Inputs 
+		P : Poset
+	Outputs
+		L : List
+			of all minimal elements of P
+	Description
+		Text
+			This method returns a list of all minimal elements of P.
+			The results of this method are cached.
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b^2*c);
+			minimalElements P
+			Q = dropElements(P, minimalElements(P));
+			minimalElements Q
+/// 
+
+-----------------
+-- maximalElements
+-----------------
+
+doc ///
+	Key
+		maximalElements
+		(maximalElements,Poset)
+	Headline
+		returns all maximal elements of a poset
+	Usage
+		L = maximalElements (P)
+	Inputs 
+		P : Poset
+	Outputs
+		L : List
+			of all maximal elements of P
+	Description
+		Text
+			This method returns a list of all maximal elements of P.
+			The results of this method are cached.
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b^2*c);
+			maximalElements P
+			Q = dropElements(P, maximalElements(P));
+			maximalElements Q
+/// 
+
+-----------------
+-- orderComplex
+-----------------
+
+doc ///
+	Key
+		orderComplex
+		(orderComplex,Poset)
+	Headline
+		returns the simplicial complex with faces given by chains
+	Usage
+		D = orderComplex (P)
+	Inputs 
+		P : Poset
+	Outputs
+		D : SimplicialComplex
+			the order complex of P
+	Description
+		Text
+			This method returns the order complex of a poset P. The order
+			complex is the simplicial complex whose faces are chains of P
+			(and whose facets are maximal chains of P).
+
+		Example
+			S = QQ[a,b,c];
+			P = divisorPoset(a*b*c);
+			C = maximalChains P
+			D = orderComplex P
+/// 
+
+
+-----------------
+-- closedInterval
+-----------------
+doc ///
+	Key
+		closedInterval
+		(closedInterval,Poset, Thing, Thing)
+	Headline
+		returns the closed interval in the poset between two elements
+	Usage
+		I = closedInterval(P,a,b)
+	Inputs 
+		P : Poset
+		a : Thing
+     	    	     an element of P 
+		b : Thing
+     	    	     an element of P 
+	Outputs
+		I : Poset
+			the closed interval between a and b 
+	Description
+		Text
+		     This routine returns the interval between the elements a and b in P, 
+                     including a and b,
+		     and an error message if the two elements are not comparable in P.
+
+		Example
+		     P = poset({a,b,c,d},{(a,b),(b,c),(b,d)});
+		     closedInterval(P,a,d)	  
+/// 
+
+----------------
+--openInterval
+----------------
+doc///
+     Key
+     	  openInterval
+	  (openInterval,Poset,Thing,Thing)
+     Headline
+     	  returns the open interval in the poset between two elements
+     Usage
+     	  I = openInterval(P,a,b)
+     Inputs
+     	  P : Poset
+	  a : Thing
+	       an element of P
+	  b : Thing
+	       an element of P
+     Outputs
+     	  I : Poset
+	       the open interval between a and b
+     Description
+     	  Text
+	       This routine returns the intreval between the elements a and b in P, not including a and b,
+	       and an error message if the two elements are not comparable in P.
+	  
+	  Example
+     	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       openInterval(P,a,g)
+///
+
+-----------------
+-- hasseDiagram
+-----------------
+doc///
+     Key
+     	  hasseDiagram
+	  (hasseDiagram,Poset)
+     Headline
+     	  returns Hasse diagram for the poset
+     Usage
+     	  G = hasseDiagram(P)
+     Inputs
+     	  P : Poset
+     Outputs
+	  G : Digraph
+	       Directed graph whose edges correspond to covering relations in P
+     Description
+     	  Text 
+	       This routine returns the Hasse diagram which is a directed graph (defined in the Graphs package)
+	       whose edges correspond to the covering relations in P.  Specifically, the vertices in the graph 
+	       correspond to the elements in the ground set of P, and two vertices a and b have a directed edge 
+	       from a to b if a > b.
+	  Example
+	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
+	       G = hasseDiagram(P)	
+     SeeAlso
+     	 displayGraph
+///
+
+
+-----------------
+-- moebiusFunction
+-----------------
+doc///
+     Key
+     	  moebiusFunction
+     Headline
+     	  returns Moebius function values
+     Usage
+     	  M = moebiusFunction(P) or moebiusFunction(P,a,b)	  
+     Inputs
+     	  P : Poset
+	  a : Thing
+	       an element of P
+	  b: Thing
+	       an element of P
+     Outputs
+     	  M : HashTable
+	       Moebius function values on the poset P or on the closed interval from a to b
+     Description
+     	  Text
+	       This routine returns values of the Moebius function for the minimal element of the poset P to each element in P, or the minimal elemnt 
+	       of the interval between a and b to each element of the closed interval between a and b.
+     SeeAlso
+     	  (moebiusFunction,Poset)
+	  (moebiusFunction,Poset,Thing,Thing)	 
+///
+doc///
+     Key
+     	  moebiusFunction
+	  (moebiusFunction,Poset)
+     Headline
+     	  returns the Moebius function values for the unique minimal element to each element of the poset
+     Usage
+     	  M = moebiusFunction(P)
+     Inputs
+     	  P : Poset
+     Outputs
+	  M : HashTable
+	       Moebius function values for the minimal element of the poset to each element of the poset
+     Description
+     	  Text 
+	       This routine returns the Moebius function values for the unique minimal element to each element of the poset.
+	       In this example, $a$ is the minimal element of $P$; $M$ lists the Moebius function values from $a$ to each element of $P$.
+	  Example
+	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
+	       M = moebiusFunction(P)	
+	  Text
+	       In the following example, the poset $Q$ has two distinct minimal elements and the routine returns an error. 
+	  Example
+	       Q = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
+	       moebiusFunction(Q)	          
+     SeeAlso
+     	  (moebiusFunction,Poset,Thing,Thing)
+	  Poset
+///
+
+doc///
+     Key
+     	  moebiusFunction
+	  (moebiusFunction,Poset,Thing,Thing)
+     Headline
+     	  returns the Moebius function values for the minimal element of a closed interval to each element of the interval
+     Usage
+     	  M = moebiusFunction(P,a,b)
+     Inputs
+     	  P : Poset
+	  a : Thing
+	       a is an element of P
+	  b : Thing
+	       b is an element of P
+     Outputs
+     	  M : HashTable
+	       Moebius function values for the lesser of a and b to each element of the interval between a and b	       
+     Description
+     	  Text
+	       For elements a and b of a poset P, this routine returns the Mobius function values for the minimal element in the closed 
+	       interval between elements a and b to each element of the interval between a and b. The routine handles both of the cases a<b and b<a.
+	  Example
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       moebiusFunction(P,b,g)
+	       moebiusFunction(P,g,b)	       
+     SeeAlso
+     	  (moebiusFunction,Poset)
+	  Poset
+///	  
+
+-----------------
+-- subPoset
+-----------------
+doc///
+     Key
+     	  subPoset
+	  (subPoset,Poset,List)
+     Headline
+     	  returns the subposet supported on elements in a given list
+     Usage
+     	  Q = subPoset(P,L)
+     Inputs
+     	  P : Poset
+	  L : List
+	       L consists of element in P
+     Outputs
+     	  Q : Poset
+	       subposet of P supported on elements in L	       
+     Description
+     	  Text
+	       	This command take a poset P and returns a new poset that
+	        contains all elements in P that are in L.
+		The relations on the remaining elements are all relations that held in P.
+	  Example
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       subPoset(P, {a,e,g})	       
+     SeeAlso
+     	 dropElements
+///
+
+-----------------
+-- atoms
+-----------------
+doc///
+     Key
+     	  atoms
+	  (atoms,Poset)
+     Headline
+     	  returns the atoms of a poset
+     Usage
+     	  A = atoms(P)
+     Inputs
+     	  P : Poset
+     Outputs
+     	  A : List
+	      subset of the ground set of P consisting of elements covering minimal elements	       
+     Description
+     	  Text
+	       	This routine returns a list of elements which cover any minimal elements in P, these are known
+		as the atoms of P.
+	  Example
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       atoms(P)	       
+///	
+
+
+--------------
+-- meetIrreducibles
+--------------
+doc///
+     Key
+     	  meetIrreducibles
+	  (meetIrreducibles,Poset)
+     Headline
+     	  returns the meet-irreducibles of a poset
+     Usage
+     	  L = meetIrreducibles(P)
+     Inputs
+     	  P : Poset
+     Outputs
+     	  L : List
+	      subset of the ground set of P consisting of meet-irreducible elements	       
+     Description
+     	  Text
+	       	An element a of a poset P is meet irreducible if it is not the meet of any set of elements (not containing a).  
+		This routine returns a list of all such elements in the poset P.  
+	  Example
+	       P = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       meetIrreducibles(P)	       
+///
+
+
+
 doc ///
      Key 
      	  GroundSet
@@ -995,60 +1625,62 @@ doc ///
 	  Poset
 ///
 
-doc ///
-     Key 
-     	  Vertices
+doc///
+     Key
+     	  isAntichain
+	  (isAntichain, Poset, List)
      Headline
-     	  the set of vertices a directed graph
+     	  checks whether a subposet is an anti-chain
      Usage
-     	  V = G.Vertices
+     	  isAntichain(P, L)
      Inputs
-     	  G : DirectedGraph
+     	 P : Poset
+	 L : List
+	      a list of elements of P 
      Outputs
-     	  V : List
-	       list of vertices of the directed graph G
+     	 true : Boolean
+               if L is an antichain in P
+	 false : Boolean
+	       otherwise
      Description
      	  Text
-     	       Since any DirectedGraph is in fact a HashTable this symbol denotes the data in the HashTable consisting of the vertices of the directed graph.
+	       This function determines whether a list of elements of a poset is an anti-chain.
+          
 	  Example
-	       G = directedGraph({a,b,c,d,e},  {(a,b),(b,c),(a,c),(a,d),(d,e)});
-	       V = G.Vertices -- the vertex set
-     SeeAlso
-     	  DirectedGraph
-	  directedGraph
-	  DirectedEdges
-///
+	       P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+	       isAntichain(P2, {a,b})     
+	       isAntichain(P2, {b,c,d}) 
+///     
 
 doc ///
-     Key 
-     	  DirectedEdges
+     Key     
+     	  booleanLattice
+	  (booleanLattice, ZZ)
      Headline
-     	  the set of directed edges of a directed graph
+     	  computes a Boolean lattice
      Usage
-     	  E = G.DirectedEdges
+     	  B = booleanLattice(n)
      Inputs
-     	  G : DirectedGraph
+     	  n : ZZ
+	       a positive integer
      Outputs
-     	  E : List
-	       list of directed edges of the directed graph G
+     	  B : Poset
+	       a Boolean lattice on n atoms
      Description
      	  Text
-     	       Since any DirectedGraph is in fact a HashTable this symbol denotes the data in the HashTable consisting of the directed edges of the directed graph.
+	       This function returns a Boolean lattice on the specified number of atoms, in the form of an lcm-lattice computed from the
+	       irrelevant maximal ideal in the polynomial ring over the integers with the specified number of variables.
 	  Example
-	       G = directedGraph({a,b,c,d,e},  {(a,b),(b,c),(a,c),(a,d),(d,e)});
-	       E = G.DirectedEdges -- the vertex set
+	       booleanLattice(3)
      SeeAlso
-     	  DirectedGraph
-	  directedGraph
-	  Vertices
+     	  lcmLattice
 ///
- 
- 
- 
+
 ---------------------------------
 --Tests
 ---------------------------------
 
+-- TEST 0
 -- a lattice, B_3
 TEST ///
 I ={a,b,c,d,e,f,g,h};
@@ -1063,41 +1695,34 @@ M = matrix {{1,1,1,1,1,1,1,1},
 	    {0,0,0,0,0,0,1,1},
 	    {0,0,0,0,0,0,0,1}};
 assert (entries P.RelationMatrix == entries M)
---G=directedGraph(I,C)
---A=adjacencyMatrix(I,C) -- not exported
---allPairsShortestPath(A) -- not exported
---adjacencyMatrix(G) -- not exported
---adjacencyMatrix(P) -- not exported
---transitiveClosure(I,C) 
 assert (posetJoin(P,a,b) == {b})
 assert (posetJoin(P,b,d) == {f})
 assert (posetMeet(P,a,b) == {a})
 assert (posetMeet(P,f,g) == {d})
-assert (orderIdeal(P,a) == {a,b,c,d,e,f,g,h})
-assert (orderIdeal(P,b) == {b,e,f,h})
-assert (filter(P,a) == {a})
-assert (filter(P,g) == {a,c,d,g})
+assert (filter(P,a) == {a,b,c,d,e,f,g,h})
+assert (filter(P,b) == {b,e,f,h})
+assert (orderIdeal(P,a) == {a})
+assert (orderIdeal(P,g) == {a,c,d,g})
 assert (isLattice(P))
 ///
 
 
+-- TEST 1
 -- two equivllaent non lattices with different initial data
 TEST ///
 I1={a,b,c,d,e,f};
 C1={(a,c),(a,d),(b,c),(b,d),(c,e),(d,e),(e,f)};
 P1=poset(I1,C1);
---G1 = directedGraph(I1,C1)
 
 --Poset P1 with additional relations (a,e) and (a,f) added
 I2={a,b,c,d,e,f};
 C2={(a,c),(a,d),(b,c),(b,d),(c,e),(d,e),(a,e),(a,f),(e,f)};
 P2=poset(I2,C2);
---G2=directedGraph(I2,C2) -- adds the non minimal edges
 
 assert (P1.RelationMatrix == P2.RelationMatrix)    
-assert (filter(P1,b) == {b})
-assert (filter(P1,c) == {a,b,c})
-assert (orderIdeal (P1,b) == {b,c,d,e,f})
+assert (orderIdeal(P1,b) == {b})
+assert (orderIdeal(P1,c) == {a,b,c})
+assert (filter (P1,b) == {b,c,d,e,f})
 assert (isLattice (P1) == false)
 -- do joins and meets
 ///
@@ -1105,20 +1730,208 @@ assert (isLattice (P1) == false)
 -- do an LCM lattice
 -- do order ideal
 
+-- TEST 2
 TEST ///
 V = {a,b,c,d,e};
 E = {(a,b),(a,d),(b,c),(b,e),(c,e),(d,e)};
-G = directedGraph(V,E);
+G = poset (V,E);
 A = adjacencyMatrix(G);
-D = allPairsShortestPath(G);
+D = allPairsShortestPath(A);
 T = transitiveClosure(V,E);
 
 assert(A_(0,1)==1 and A_(0,3)==1 and A_(1,2)==1 and A_(1,4)==1 and A_(2,4)==1 and A_(3,4)==1)
 assert(D_(0,4)==2 and D_(4,0)==1/0. and D_(3,3)==0)
-assert(T== promote(matrix {{1, 1, 1, 1, 1}, {0, 1, 1, 0, 1}, {0, 0, 1, 0, 1}, {0, 0, 0, 1, 1}, {0, 0, 0, 0, 1}}, RR))
+--assert(T== promote(matrix {{1, 1, 1, 1, 1}, {0, 1, 1, 0, 1}, {0, 0, 1, 0, 1}, {0, 0, 0, 1, 1}, {0, 0, 0, 0, 1}}, RR))
 
 D1 =allPairsShortestPath(matrix({{0,1,1/0.,4},{1/0.,0,1/0.,2},{1,1/0.,0,1/0.},{1/0.,1/0.,1,0}})); -- digraph with a cycle
 assert(D1 ==  promote(matrix {{0, 1, 4, 3}, {4, 0, 3, 2}, {1, 2, 0, 4}, {2, 3, 1, 0}}, RR))
 
 ///
 
+-- TEST 3
+TEST ///
+P1 = poset ({a,b,c,d},{(a,b), (b,c), (b,d)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, x*y, y^3, y*z);
+L = lcmLattice I;
+M = new HashTable from {x^2*y^3*z => 0, y^3*z => 1, x^2*y*z => 0, y^3 => -1, x*y^3*z => -1, y*z => -1, x^2 => -1,
+      x*y => -1, x*y^3 => 1, x^2*y^3 => 0, 1 => 1, x^2*y => 1, x*y*z => 1}; 
+
+assert ((moebiusFunction L)#(x^2*y^3) === M#(x^2*y^3)) 
+assert ((moebiusFunction L)#(x*y*z) === M#(x*y*z)) 
+assert( (moebiusFunction(P2, b,g)) === new HashTable from {e => -1, b => 1, g => 0} )
+assert( (moebiusFunction(P1)) === new HashTable from {a => 1, b => -1, c => 0, d => 0} )
+///
+
+-- TEST 4
+TEST ///
+R = QQ[x,y,z];
+L = lcmLattice ideal (x^2, y^2, z^2);
+L2 = divisorPoset(x^2*y^3);
+
+--testing divisorPoset and LCM lattices
+assert( (L.GroundSet) == {1,z^2,y^2,y^2*z^2,x^2,x^2*z^2,x^2*y^2,x^2*y^2*z^2} )
+assert( (L.Relations) == {(1,1),(1,z^2),(1,y^2),(1,y^2*z^2),(1,x^2),(1,x^2*z^2),(1,x^2*y^2),(1,x^2*y^2*z^2),(z^2,z^2),(z^2,y^2*z^2),(z^2,x^2*z^2),(z^2,x^2*y^2*z^2),(y^2,y^2),(y^2,y^2*z^2),(y^2,x^2*y^2),(y^2,x^2*y^2*z^2),(y^2*z^2,y^2*z^2),(y^2*z^2,x^2*y^2*z^2),(x^2,x^2),(x^2,x^2*z^2),(x^2,x^2*y^2),(x^2,x^2*y^2*z^2),(x^2*z^2,x^2*z^2),(x^2*z^2,x^2*y^2*z^2),(x^2*y^2,x^2*y^2),(x^2*y^2,x^2*y^2*z^2),(x^2*y^2*z^2,x^2*y^2*z^2)} )
+assert( (L.RelationMatrix) === map(ZZ^8,ZZ^8,{{1, 1, 1, 1, 1, 1, 1, 1}, {0, 1, 0, 1, 0, 1, 0, 1}, {0, 0, 1, 1, 0, 0, 1, 1}, {0, 0, 0, 1, 0, 0, 0, 1}, {0, 0, 0, 0, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 1, 0, 1}, {0, 0, 0, 0, 0, 0, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 1}}) )
+assert( (L2.GroundSet) == {1,y,y^2,y^3,x,x*y,x*y^2,x*y^3,x^2,x^2*y,x^2*y^2,x^2*y^3} )
+assert( (L2.Relations) == {(1,1),(1,y),(1,y^2),(1,y^3),(1,x),(1,x*y),(1,x*y^2),(1,x*y^3),(1,x^2),(1,x^2*y),(1,x^2*y^2),(1,x^2*y^3),(y,y),(y,y^2),(y,y^3),(y,x*y),(y,x*y^2),(y,x*y^3),(y,x^2*y),(y,x^2*y^2),(y,x^2*y^3),(y^2,y^2),(y^2,y^3),(y^2,x*y^2),(y^2,x*y^3),(y^2,x^2*y^2),(y^2,x^2*y^3),(y^3,y^3),(y^3,x*y^3),(y^3,x^2*y^3),(x,x),(x,x*y),(x,x*y^2),(x,x*y^3),(x,x^2),(x,x^2*y),(x,x^2*y^2),(x,x^2*y^3),(x*y,x*y),(x*y,x*y^2),(x*y,x*y^3),(x*y,x^2*y),(x*y,x^2*y^2),(x*y,x^2*y^3),(x*y^2,x*y^2),(x*y^2,x*y^3),(x*y^2,x^2*y^2),(x*y^2,x^2*y^3),(x*y^3,x*y^3),(x*y^3,x^2*y^3),(x^2,x^2),(x^2,x^2*y),(x^2,x^2*y^2),(x^2,x^2*y^3),(x^2*y,x^2*y),(x^2*y,x^2*y^2),(x^2*y,x^2*y^3),(x^2*y^2,x^2*y^2),(x^2*y^2,x^2*y^3),(x^2*y^3,x^2*y^3)} )
+assert( (L2.RelationMatrix) === map(ZZ^12,ZZ^12,{{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1}, {0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1}, {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1}, {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}}) )
+///
+
+
+-- TEST 5
+TEST ///
+P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
+R = QQ[x,y,z];
+L = lcmLattice ideal (x^2, y^2, z^2);
+
+-- testing hasseDiagram
+assert((hasseDiagram P1)#a === set {})
+assert((hasseDiagram P1)#b === set {})
+assert((hasseDiagram P1)#c === set {a,b})
+assert((hasseDiagram P1)#d === set {a,b})
+assert((hasseDiagram P1)#e === set {c,d})
+assert( toString sort pairs (hasseDiagram L) === toString sort pairs new Digraph from {x^2*y^2*z^2 => new Set from {x^2*y^2, x^2*z^2, y^2*z^2}, x^2*y^2 => new Set from {x^2, y^2}, x^2*z^2 => new Set from {x^2, z^2}, x^2 => new Set from {1}, y^2*z^2 => new Set from {y^2, z^2}, 1 => new Set from {}, z^2 => new Set from {1}, y^2 => new Set from {1}} )
+
+///
+
+-- TEST 6
+TEST ///
+P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
+R = QQ[x,y,z];
+L = lcmLattice ideal (x^2, y^2, z^2);
+--testing max/min elts
+assert( (maximalElements P1) === {e} )
+assert( (maximalElements L) === {x^2*y^2*z^2} )
+assert( (minimalElements P1) === {a,b} )
+assert( (minimalElements L) == {1} )
+
+--testing atoms
+assert( (atoms(P1) ) === {c,d} )
+assert( (atoms(L)) === {z^2,y^2,x^2} )
+///
+
+-- TEST 7
+TEST /// 
+P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
+P2 = poset({a,b,c,d,e,f,g,h},{(h,a),(h,b),(h,c),(h,d),(a,e),(b,e),(e,f),(c,f),(f,g),(d,g)});
+R = QQ[x,y,z];
+L = lcmLattice ideal (x^2, y^2, z^2);
+L2 = divisorPoset(x^2*y^3);
+
+--testing subPoset
+assert( ((subPoset(P1, {a,b,e})).GroundSet) === {a,b,e} )
+assert( ((subPoset(P1, {a,b,e})).Relations) === {(a,a),(a,e),(b,b),(b,e),(e,e)} )
+assert( ((subPoset(P1, {a,b,e})).RelationMatrix) === map(ZZ^3,ZZ^3,{{1, 0, 1}, {0, 1, 1}, {0, 0, 1}}) )
+assert( ((subPoset(P2, {a,e,f,d})).GroundSet) === {a,d,e,f} )
+assert( ((subPoset(P2, {a,e,f,d})).Relations) === {(a,a),(a,e),(a,f),(d,d),(e,e),(e,f),(f,f)} )
+assert( ((subPoset(P2, {a,e,f,d})).RelationMatrix) === map(ZZ^4,ZZ^4,{{1, 0, 1, 1}, {0, 1, 0, 0}, {0, 0, 1, 1}, {0, 0, 0, 1}}) )
+assert( ((subPoset(L, {x^2,y^2,x^2*y^2})).GroundSet) === {y^2,x^2,x^2*y^2} )
+assert( ((subPoset(L, {x^2,y^2,x^2*y^2})).Relations) === {(y^2,y^2),(y^2,x^2*y^2),(x^2,x^2),(x^2,x^2*y^2),(x^2*y^2,x^2*y^2)} )
+assert( ((subPoset(L, {x^2,y^2,x^2*y^2})).RelationMatrix) === map(ZZ^3,ZZ^3,{{1, 0, 1}, {0, 1, 1}, {0, 0, 1}}) )
+
+-- testing dropElements
+assert( ((dropElements(P1, {a,c})).GroundSet) === {b,d,e} )
+assert( ((dropElements(P1, {a,c})).Relations) === {(b,b),(b,d),(b,e),(d,d),(d,e),(e,e)} )
+assert( ((dropElements(P1, {a,c})).RelationMatrix          ) === map(ZZ^3,ZZ^3,{{1, 1, 1}, {0, 1, 1}, {0, 0, 1}}) )
+assert( ((dropElements(L2, m-> first degree m > 2)).GroundSet) == {1,y,y^2,x,x*y,x^2} )
+assert( ((dropElements(L2, m-> first degree m > 2)).Relations) == {(1,1),(1,y),(1,y^2),(1,x),(1,x*y),(1,x^2),(y,y),(y,y^2),(y,x*y),(y^2,y^2),(x,x),(x,x*y),(x,x^2),(x*y,x*y),(x^2,x^2)} )
+assert( ((dropElements(L2, m-> first degree m > 2)).RelationMatrix) === map(ZZ^6,ZZ^6,{{1, 1, 1, 1, 1, 1}, {0, 1, 1, 0, 1, 0}, {0, 0, 1, 0, 0, 0}, {0, 0, 0, 1, 1, 1}, {0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 1}}) )
+
+///
+
+
+-- TEST 8
+TEST ///
+P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
+R = QQ[x,y,z];
+L = lcmLattice ideal (x^2, y^2, z^2);
+
+S = QQ[v_0..v_4]
+T = QQ[v_0..v_7]
+assert( toString ((orderComplex P1).facets) === toString (use S; map(S^1,S^{{-3},{-3},{-3},{-3}},{{v_1*v_3*v_4, v_0*v_3*v_4, v_1*v_2*v_4, v_0*v_2*v_4}})) )
+assert( toString ((orderComplex L).facets) === toString (use T; map(T^1,T^{{-4},{-4},{-4},{-4},{-4},{-4}},{{v_0*v_4*v_6*v_7, v_0*v_2*v_6*v_7, v_0*v_4*v_5*v_7, v_0*v_1*v_5*v_7, v_0*v_2*v_3*v_7, v_0*v_1*v_3*v_7}})) )
+///
+
+-- TEST 9
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)})
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)})
+R = QQ[x,y,z,w]
+I = ideal(x^2, x*y, y^3, y*z)
+L = lcmLattice I
+assert( (isAntichain(P1, {j, k})) === true )
+assert( (isAntichain(P1, {j, k, h})) === false )
+assert( (isAntichain(P2, {a, b, g})) === false )
+assert( (isAntichain(P2, {b, c, d})) === true )
+assert( (isAntichain(L, {y*z, y^3, x*y})) === true )
+assert( (isAntichain(L, {y*z, x^2*y, x*y*x})) === true )
+///
+
+
+-- TEST 10
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, x*y, y^3, y*z);
+L = lcmLattice I;
+
+assert( (maximalChains(P1)) === {{h,i,j},{h,i,k}} )
+assert( (maximalChains(P2)) === {{a,b,e,g},{a,c,e,g},{a,c,f,g},{a,d,f,g}})
+assert( (maximalChains(L)) == {{1,y*z,y^3*z,x*y^3*z,x^2*y^3*z},{1,y*z,x*y*z,x*y^3*z,x^2*y^3*z},{1,y*z,x
+      *y*z,x^2*y*z,x^2*y^3*z},{1,y^3,y^3*z,x*y^3*z,x^2*y^3*z},{1,y^3,x*y^3,x*y^
+      3*z,x^2*y^3*z},{1,y^3,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x*y*z,x*y^3*z,x^2*y
+      ^3*z},{1,x*y,x*y*z,x^2*y*z,x^2*y^3*z},{1,x*y,x*y^3,x*y^3*z,x^2*y^3*z},{1,
+      x*y,x*y^3,x^2*y^3,x^2*y^3*z},{1,x*y,x^2*y,x^2*y*z,x^2*y^3*z},{1,x*y,x^2*y
+      ,x^2*y^3,x^2*y^3*z},{1,x^2,x^2*y,x^2*y*z,x^2*y^3*z},{1,x^2,x^2*y,x^2*y^3,
+      x^2*y^3*z}} )
+///
+
+-- TEST 11
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, x*y, y^3, y*z);
+L = lcmLattice I;
+
+
+meetIrreducibles L
+assert( (try meetIrreducibles P1  else oops) === oops )
+assert( (meetIrreducibles P2) == {e,f,g,b,d} )
+assert( (set meetIrreducibles L) === set {x^2, y^3*z, x*y^3*z, x^2*y*z, x^2*y^3, x^2*y^3*z} )
+///
+
+-- TEST 12
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+R = QQ[x,y,z,w];
+I = ideal(x^2, y^2, z^2);
+L = lcmLattice I;
+assert( (coveringRelations P1) === {(h,i),(i,j),(i,k)} )
+assert( (coveringRelations P2) === {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+assert( (coveringRelations L) == {(1,z^2),(1,y^2),(1,x^2),(z^2,y^2*z^2),(z^2,x^2*z^2),(y^2,y^2*z^2),(y^2,x^2*y^2),(y^2*z^2,x^2*y^2*z^2),(x^2,x^2*z^2),(x^2,x^2*y^2),(x^2*z^2,x^2*y^2*z^2),(x^2*y^2,x^2*y^2*z^2)} )
+///
+
+-- TEST 13
+TEST ///
+P1 = poset ({h,i,j,k},{(h,i), (i,j), (i,k)});
+P2 = poset({a,b,c,d,e,f,g}, {(a,b), (a,c), (a,d), (b,e), (c,e), (c,f), (d,f), (e,g), (f,g)});
+
+assert( ((openInterval(P1,h,j)).Relations) === {(i,i)} )
+assert( ((closedInterval(P1,i,k)).Relations) === {(i,i),(i,k),(k,k)} )
+assert( ((openInterval(P2,a,e)).Relations) === {(b,b),(c,c)} )
+assert( ((closedInterval(P2,c,g)).Relations) === {(c,c),(c,e),(c,f),(c,g),(e,e),(e,g),(f,f),(f,g),(g,g)} )
+
+///
+
+-- TEST 14
+TEST ///
+B = booleanLattice(2)   
+assert( toString (B.GroundSet) === toString {1,x_2,x_1,x_1*x_2} )
+assert( (B.RelationMatrix) === map(ZZ^4,ZZ^4,{{1, 1, 1, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}, {0, 0, 0, 1}}) )
+assert( toString (B.Relations) === toString {(1,1),(1,x_2),(1,x_1),(1,x_1*x_2),(x_2,x_2),(x_2,x_1*x_2),(x_1,x_1),(x_1, x_1*x_2),(x_1*x_2,x_1*x_2)} )
+///
