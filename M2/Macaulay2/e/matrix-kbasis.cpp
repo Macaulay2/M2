@@ -123,7 +123,7 @@ KBasis::KBasis(const Matrix *bottom,
       typ_str = "multi";
     }
     
-  fprintf(stderr, "computation type is %s\n", typ_str);
+  //  fprintf(stderr, "computation type is %s\n", typ_str);
   // Compute the (positive) weights of each of the variables in 'vars'.
 
   var_wts = newarray_atomic(int, vars->len);

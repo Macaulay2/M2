@@ -350,3 +350,26 @@ findHeftVars(A,1)
 rewriteRing(A,1)
 basis({3},oo)
 ///
+
+TEST ///
+  -- basis as functor
+  R = ZZ/101[a..d]
+  M = matrix"a,b;c,d"
+  basis(1,M)  
+  
+  -- A second example
+  -- I need to check to see if this is correct.
+  R = ZZ/101[a..e]
+  I = ideal"ab,bc,cd,de,ea"
+  S = reesAlgebra I
+  T = ambient S
+  L = ideal S
+  describe S
+  C = res L
+  f = C.dd_2
+  basis(1,f)  
+  basis(2,f)  
+  basis(3,f)
+  g = C.dd_3
+  basis(2,g)
+///

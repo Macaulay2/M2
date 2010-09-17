@@ -750,6 +750,24 @@ basis(List,Ring) := opts -> (deg,R) -> basis(deg, module R, opts)
 basis Module := opts -> (M) -> basis(-infinity,infinity,M,opts)
 basis Ring := opts -> R -> basis(R^1,opts)
 basis Ideal := opts -> I -> basis(module I,opts)
+
+basis(InfiniteNumber,InfiniteNumber,Matrix) := 
+basis(List,InfiniteNumber,Matrix) := 
+basis(InfiniteNumber,List,Matrix) := 
+basis(List,List,Matrix) := opts -> (lo,hi,M) -> (
+     F := target M;
+     G := source M;
+     monsF := basis(lo,hi,F,opts);
+     monsG := basis(lo,hi,G,opts);
+     basM := last coefficients((matrix M) * monsG, Monomials => monsF);
+     basM)
+
+basis(List,Matrix) := opts -> (deg,M) -> basis(deg,deg,M,opts)
+basis(ZZ,Matrix) := opts -> (deg,M) -> basis({deg},M,opts)
+basis(InfiniteNumber,ZZ,Matrix) := opts -> (lo,hi,M) -> basis(lo,{hi},M,opts)
+basis(ZZ,InfiniteNumber,Matrix) := opts -> (lo,hi,M) -> basis({lo},hi,M,opts)
+basis(ZZ,ZZ,Matrix) := opts -> (lo,hi,M) -> basis({lo},{hi},M,opts)
+
 -----------------------------------------------------------------------------
 truncate = method()
 truncate(List,Module) := Module => (deg,M) -> (
