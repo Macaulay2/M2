@@ -1,12 +1,12 @@
 --=========================================================================--
 {*
-Copyright 2010, 2011 Bart Snapp, Nathaniel Stapleton.
+Copyright 2010 Bart Snapp, Nathaniel Stapleton.
 This file is in the public domain.
 *} 
 newPackage(
      "NoetherNormalization",
-     Version => "0.9.2", 
-     Date => "Jan 18, 2007",
+     Version => "0.9.3", 
+     Date => "Sept, 2010",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"},
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
@@ -119,15 +119,6 @@ inverseSequence = (U,X) -> (
 
 -----------------------------------------------------------------------------
 
-randomSum1 = (U,V,k,rr) -> (
-     for j to #V - 1 do (
-	  if rr == 0 then rand:= random(k) else rand=random(-rr,rr);
-	  U=for i to #U-1 list ( if not i<j then U_i+rand*V_j else U_i)
-	  );
-     return U;
-     );
-
-
 randomSum = (U,V,k,rr) -> (
      for j to #V - 1 do (
 	  if rr == 0 then 
@@ -215,29 +206,6 @@ noetherNormalization(Ideal) := opts -> I -> (
 	  counter = counter + 1;
      	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
      );  
-
-nPosition = (I,X) -> (
-     dimI := dim I - 1;
-     algind := support (independentSets(I,Limit => 1))_0;
-     d := dim(I + ideal(X_{((#X-1)-dimI)..(#X-1)}));
-     return d;
-     );
-
-protect rr							    -- probably a bug to use it below
-
-homNoetherNormalization = (I,R,k,X) -> (
-     d := nPosition(I,X);
-     algind := support (independentSets(I,Limit => 1))_0;
-     f := map(R,R,reverse inverseSequence(X-set algind|algind,X));
-     U := apply(algind,i->f i);
-     V := apply(X-set algind,i->f i);
-     while d > 0 do (
-	  g := map(R,R,V|randomSum(U,V,k,rr));
-     	  J := g f I;
-	  d = dim(J+ideal(apply(algind,i->f i)));
-	  );
-     return g*f;
-     );
 
 -----------------------------------------------------------------------------
 
