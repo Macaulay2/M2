@@ -1,4 +1,4 @@
--- this file is licenced for use under the GNU General Public Licence version 2
+-- this file is licensed for use under the GNU General Public Licence version 2
 
 needsPackage "SimplicialComplexes"
 needsPackage "Graphs"
@@ -49,8 +49,7 @@ export {
 	openInterval,
 	moebiusFunction,
 	isAntichain,
-	meetIrreducibles,
-	booleanLattice
+	meetIrreducibles
        }
 
 needsPackage "SimplicialComplexes"
@@ -334,10 +333,10 @@ isAntichain(Poset, List) := (P, L) ->(
 -- Order-Complex 
 --------------------------------------------------
 
-orderComplex = method(Options => { symbol VariableName => symbol v, symbol CoefficientRing => QQ } )
+orderComplex = method(Options => { symbol VariableName => getSymbol "v", symbol CoefficientRing => QQ } )
 orderComplex (Poset) := opts -> (P) -> (
 	s := opts.VariableName;
-	R := (opts.CoefficientRing)[s_0..s_(#P.GroundSet -1)];
+	R := (opts.CoefficientRing)(monoid [s_0..s_(#P.GroundSet -1)]);
 	variableMap := hashTable apply(#P.GroundSet, i -> P.GroundSet#i => R_i);
 	simplicialComplex apply(maximalChains P, c -> product apply(c, x -> variableMap#x))
 )
@@ -620,15 +619,15 @@ moebiusFunction (Poset, Thing, Thing) := (P, elt1, elt2) ->(
 -----------------------------------
 --Boolean Lattices
 -----------------------------------
-booleanLattice = method ()
+--booleanLattice = method ()
 
-booleanLattice (ZZ) := n ->(
-     if n>0 then (	       
-          baseRing := ZZ[x_1 .. x_n];
-          I := ideal(x_1 .. x_n);
-          lcmLattice(I))
-     else error "no such lattice"
-     )
+--booleanLattice (ZZ) := n ->(
+--     if n>0 then (	       
+--          baseRing := ZZ[x_1 .. x_n];
+--          I := ideal(x_1 .. x_n);
+--          lcmLattice(I))
+--     else error "no such lattice"
+--     )
  
 
 
@@ -1652,29 +1651,29 @@ doc///
 	       isAntichain(P2, {b,c,d}) 
 ///     
 
-doc ///
-     Key     
-     	  booleanLattice
-	  (booleanLattice, ZZ)
-     Headline
-     	  computes a Boolean lattice
-     Usage
-     	  B = booleanLattice(n)
-     Inputs
-     	  n : ZZ
-	       a positive integer
-     Outputs
-     	  B : Poset
-	       a Boolean lattice on n atoms
-     Description
-     	  Text
-	       This function returns a Boolean lattice on the specified number of atoms, in the form of an lcm-lattice computed from the
-	       irrelevant maximal ideal in the polynomial ring over the integers with the specified number of variables.
-	  Example
-	       booleanLattice(3)
-     SeeAlso
-     	  lcmLattice
-///
+--doc ///
+--     Key     
+--     	  booleanLattice
+--	  (booleanLattice, ZZ)
+--     Headline
+--     	  computes a Boolean lattice
+--     Usage
+--     	  B = booleanLattice(n)
+--     Inputs
+--     	  n : ZZ
+--	       a positive integer
+--     Outputs
+--     	  B : Poset
+--	       a Boolean lattice on n atoms
+--     Description
+--     	  Text
+--	       This function returns a Boolean lattice on the specified number of atoms, in the form of an lcm-lattice computed from the
+--	       irrelevant maximal ideal in the polynomial ring over the integers with the specified number of variables.
+--	  Example
+--	       booleanLattice(3)
+--     SeeAlso
+--     	  lcmLattice
+--///
 
 ---------------------------------
 --Tests
@@ -1929,9 +1928,9 @@ assert( ((closedInterval(P2,c,g)).Relations) === {(c,c),(c,e),(c,f),(c,g),(e,e),
 ///
 
 -- TEST 14
-TEST ///
-B = booleanLattice(2)   
-assert( toString (B.GroundSet) === toString {1,x_2,x_1,x_1*x_2} )
-assert( (B.RelationMatrix) === map(ZZ^4,ZZ^4,{{1, 1, 1, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}, {0, 0, 0, 1}}) )
-assert( toString (B.Relations) === toString {(1,1),(1,x_2),(1,x_1),(1,x_1*x_2),(x_2,x_2),(x_2,x_1*x_2),(x_1,x_1),(x_1, x_1*x_2),(x_1*x_2,x_1*x_2)} )
-///
+--TEST ///
+--B = booleanLattice(2)   
+--assert( toString (B.GroundSet) === toString {1,x_2,x_1,x_1*x_2} )
+--assert( (B.RelationMatrix) === map(ZZ^4,ZZ^4,{{1, 1, 1, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}, {0, 0, 0, 1}}) )
+--assert( toString (B.Relations) === toString {(1,1),(1,x_2),(1,x_1),(1,x_1*x_2),(x_2,x_2),(x_2,x_1*x_2),(x_1,x_1),(x_1, x_1*x_2),(x_1*x_2,x_1*x_2)} )
+--///
