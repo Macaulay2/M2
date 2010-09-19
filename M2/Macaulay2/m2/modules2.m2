@@ -644,7 +644,7 @@ findHeftandVars = (R, varlist, ndegs) -> (
        zerodeg := toList(ndegs:0);
        varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
        degs := apply(varlist', x -> take(degree R_x, ndegs));
-       heft := findHeft degs;
+       heft := findHeft(degs, DegreeRank=>ndegs);
        if heft === null then 
          error "heft vector required which is positive on the degrees of the variables " | toString varlist';
        (varlist', heft)
@@ -690,7 +690,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      else error "expected list of ring variables or integers";
      (varlist, heftvec) := if #lo == 0 and #hi == 0
                         then (var, () ) 
-			else findHeftandVars(R, var, #lo);
+			else findHeftandVars(R, var, max(#hi,#lo));
 
      pres := generators gb presentation M;
 

@@ -1,4 +1,41 @@
-document { Key => {basis,
+{* 
+-- Commented out to check code in.  Will be worked on soon.
+doc ///
+   Key
+     basis
+   Headline
+     basis of all or part of a module, ring or ideal
+   Description
+    Text
+      This function has several variants, so here we introduce the most common uses
+      of the bunction.  See the specific links below to see the documentation for each
+      variant.
+      
+      The most basis use is to find all of the monomials in a polynomial ring of a given degree:
+    Example
+      R = QQ[x,y,z]
+      basis(2,R)
+    Text
+      We can also find a generating set (over the base ring QQ) of an ideal of module.  The returned value is
+      a matrix from a free module to the ideal or module.
+    Example
+      I = ideal"x2,y3"
+      phi = basis(3,I)
+    Text
+      To get the actual elements of I, form the image of this map
+    Example
+      image phi
+   Caveat
+   SeeAlso
+     truncate
+     coefficients
+     monomials
+     
+///
+*}
+
+document { Key => {
+	  basis,
 	  (basis,InfiniteNumber,InfiniteNumber,Ring), (basis,List,List,Module), (basis,Ring), (basis,InfiniteNumber,ZZ,Module), (basis,ZZ,InfiniteNumber,Module),
 	  (basis,List,InfiniteNumber,Ideal), (basis,InfiniteNumber,List,Ideal), (basis,InfiniteNumber,List,Ring), (basis,List,InfiniteNumber,Ring), (basis,List,List,Ideal),
 	  (basis,InfiniteNumber,ZZ,Ideal), (basis,ZZ,InfiniteNumber,Ideal), (basis,List,List,Ring), (basis,ZZ,InfiniteNumber,Ring), (basis,InfiniteNumber,ZZ,Ring), (basis,ZZ,ZZ,Module),
@@ -372,4 +409,13 @@ TEST ///
   basis(3,f)
   g = C.dd_3
   basis(2,g)
+///
+
+TEST ///
+R = QQ[x,y,z]/(x^3,y^2,z^5);                                                                           
+basis(-infinity,4,R)                                                                                   
+basis(5,infinity,R)                                                                                   
+
+R = QQ[x,y,z,DegreeRank=>0]/(x^2, x*y, y^3, z^3)
+basis(1,infinity, R)
 ///
