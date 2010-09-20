@@ -657,7 +657,7 @@ documentOptions := new OptionTable from {
      Caveat => null,
      Subnodes => null
      }
-reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
+reservedNodeNames := set {"Top", "Table of Contents", "Symbol Index"}
 
 storeRawDocumentation := (tag,opts) -> (
      fkey := DocumentTag.FormattedKey tag;
@@ -974,7 +974,7 @@ document List := opts -> args -> (
 	  if h =!= null then o.Headline = h;
 	  );
      currentNodeName = DocumentTag.FormattedKey tag;
-     if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
+     if reservedNodeNames#?currentNodeName then error("'document' encountered a reserved node name '",currentNodeName,"'");
      o.Description = toList args;
      exampleOutputFilename = makeExampleOutputFileName(currentNodeName,currentPackage);
      scan(keys o, key -> o#key = fixupTable#key o#key);
