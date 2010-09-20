@@ -550,11 +550,6 @@ check(ZZ,Package) := opts -> (seqno,pkg) -> (
      )
 check(ZZ,String) := opts -> (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
 check Package := opts -> pkg -> (
-     b := select(values pkg#"private dictionary" - set values pkg.Dictionary, s -> mutable s and value s === s);
-     if #b > 0 then (
-	  b = last \ sort apply(b, s -> (hash s,s));
-	  error splice ("mutable unexported unset symbol(s) in package ",pkg#"title",": ", toSequence between_", " b);
-	  );
      pkg = prep pkg;
      scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,if opts.UserMode === null then not noinitfile else opts.UserMode));
      if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
