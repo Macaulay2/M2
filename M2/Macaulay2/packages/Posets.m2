@@ -9,8 +9,7 @@ newPackage(
     	Date => "September 17, 2010",
     	Authors => {
 	     {Name => "Sonja Mapes", Email => "mapes@math.columbia.edu", HomePage => "http://www.math.columbia.edu/~mapes/"},
-	     {Name => "Gwyn Whieldon", Email => "whieldon@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Grads/whieldon.html"},
-	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu", HomePage => "http://www-math.mit.edu/~jyu/"}
+	     {Name => "Gwyn Whieldon", Email => "whieldon@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Grads/whieldon.html"}
 	     },
     	Headline => "Package for processing posets and order complexes",
     	DebuggingMode => true
@@ -641,16 +640,38 @@ beginDocumentation()
 ---------
 -- front page
 ---------
-doc ///
-     Key
-     	  Posets
-     Headline
-          A package for working with posets. 
-     Description
-          Text
-	       {\em Posets} package defines Poset as a new data type and provides 
-	       routines which use or produce posets.   A poset or a partially ordered set is a set together with a binary relation satisfying reflexivity, antisymmetry, and transitivity.
-///
+document { 
+  Key => Posets,
+  Headline => "a package for working with posets",
+  PARA{},
+  "The ", EM "Posets", " package defines Poset as a new data type and provides 
+   routines which use or produce posets.  A poset or a partially ordered set 
+   is a set together with a binary relation satisfying reflexivity, antisymmetry, and transitivity.",
+  SUBSECTION "Contributors",
+  "The following people have generously contributed code or worked on our code.",
+  UL {
+    {HREF("http://people.math.gatech.edu/~jyu67/Josephine_Yu/Main.html","Josephine Yu")},
+    {HREF("http://www.math.purdue.edu/~nkummini/","Manoj Kumminni")},
+    {HREF("http://www.math.cornell.edu/People/Grads/fisher.html","Kristine Fisher")},
+    {HREF("http://www.mathstat.dal.ca/~handrew/","Andrew Hoefel")}
+    },
+  }
+
+
+--doc ///
+--     Key
+--     	  Posets
+--     Headline
+--          A package for working with posets. 
+--     Description
+--          Text
+--	       {\em Posets} package defines Poset as a new data type and provides 
+--	       routines which use or produce posets.   A poset or a partially ordered set is a set together with a binary relation satisfying reflexivity, antisymmetry, and transitivity.
+--	       Contributors
+--	       The following people have contributed code or have worked on this package.
+--	       {HREF("http://people.math.gatech.edu/~jyu67/Josephine_Yu/Main.html","Josephine Yu"")},     
+	       
+--///
 	 
 ---------
 -- types
