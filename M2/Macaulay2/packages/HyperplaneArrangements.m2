@@ -509,10 +509,10 @@ Arrangement ** Arrangement := Arrangement => arrangementSum
 isDecomposable = method(TypicalValue => Boolean)
 
 isDecomposable (Arrangement,Ring) := Boolean => (A,k) -> (
-     I = orlikSolomon (A,k);
-     b = betti res(coker vars ((ring I)/I), LengthLimit=>3);
-     phi3 = 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
-     multiplicities = apply(flats(2,A),i->length tolist i);
+     I := orlikSolomon (A,k);
+     b := betti res(coker vars ((ring I)/I), LengthLimit=>3);
+     phi3 := 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
+     multiplicities := apply(flats(2,A),i->length tolist i);
      sum(multiplicities,m->m*(2-3*m+m^2)) == phi3);
 
 isDecomposable (Arrangement) := Boolean => A -> (
