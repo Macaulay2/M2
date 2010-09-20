@@ -13,12 +13,14 @@ document { Key => "packages provided with Macaulay2",
 	  pkg -> (
 	       local p;
 	       (dictionaryPath,loadedPackages,p) = (dictionaryPath,loadedPackages,
-		    -- try 
+		    try 
 		    needsPackage(pkg,DebuggingMode => true)
-		    -- else 
-		    -- if PackageDictionary#?pkg and instance(value PackageDictionary#pkg,Package)
-		    -- then value PackageDictionary#pkg
-		    -- else first ( newPackage pkg, endPackage pkg ) -- just fake it
+		    else (
+			 stderr << "--warning: *** package " << pkg << " failed to load while generating list of packages provided with Macaulay2" << endl;
+			 if PackageDictionary#?pkg and instance(value PackageDictionary#pkg,Package)
+			 then value PackageDictionary#pkg
+			 else first ( newPackage pkg, endPackage pkg ) -- just fake it
+			 )
 		    );
 	       LI {
 		    if (options p).Certification =!= null then (star," "),
