@@ -3,7 +3,18 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:reconfigure-libs reconfigure-all configure-help report-M2-location help scripts
-all:check-make configured check-for-undefined-configure-variables srcdir protect-configs configfiles check-machine all-in-subdirs report-M2-location
+all install: \
+	check-make configured check-for-undefined-configure-variables\
+	srcdir protect-configs configfiles check-machine \
+	all-in-subdirs report-M2-location
+
+define package
+all install-$1: all-$1
+install: install-$1
+install-$1 all-$1:; $(MAKE) -C Macaulay2/packages $@
+endef
+$(foreach i, $(PACKAGES), $(eval $(call package,$i)))
+
 configfiles:; $(MAKE) -f Makefile.configfiles
 check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
 configured:include/configuration
@@ -23,7 +34,7 @@ clean:
 	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
 	rm -f pre-install.sh post-install.sh normal-install.sh
-install:configured normal all; $(MAKE) -C distributions $@
+install: configured normal; $(MAKE) -C distributions $@
 normal:;$(NORMAL_INSTALL) 
 scripts: pre-install.sh post-install.sh
 MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
