@@ -968,7 +968,6 @@ Node
 Node
   Key
     (chi,AbstractSheaf)
-    chi
   Headline
     compute the Euler characteristic of an abstract sheaf
   Usage
