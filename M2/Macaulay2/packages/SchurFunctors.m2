@@ -14,9 +14,11 @@ newPackage(
 	  AuxiliaryFiles=>true
      	  )
      
-export{ schur, schurModule, Schur, Filling, 
+export{ schur, schurModule, Filling, 
      straighten, printSchurModuleElement, schurModulesMap, augmentFilling, 
      character, splitCharacter, characterRep, decomposeRep}
+
+protect Schur
 
 exteriorPower(List, Module) := opts -> (L,M) -> (
      if #L == 0 then exteriorPower(0,M)

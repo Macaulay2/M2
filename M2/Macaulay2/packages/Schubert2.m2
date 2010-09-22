@@ -16,7 +16,7 @@ newPackage(
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "schubertCycle'", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
-     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
+     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveBundle'", "projectiveSpace", "projectiveSpace'", "PP", "PP'", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
@@ -592,7 +592,7 @@ todd' = (r) -> (
      -- step 3.  exp
      expp sum for i from 0 to d list i! * td#i * part(i,r))
 
-chi = method(TypicalValue => RingElement)
+--chi = method(TypicalValue => RingElement)
 chi AbstractSheaf := F -> integral(todd variety F * ch F)
 
 segre = method(TypicalValue => RingElement)
