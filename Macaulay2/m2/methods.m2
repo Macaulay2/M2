@@ -179,7 +179,8 @@ setupMethods((), {
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  determinant, presentation, dismiss, precision, 
-	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose
+	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
+	  chi
 	  })
 
 use = method()
