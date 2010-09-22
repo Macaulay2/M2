@@ -23,20 +23,24 @@ export {
      toH, 
      plethysm, 
      jacobiTrudi, 
-     Partitions,   -- ??
-     zee,          -- rename
-     symToChar,    -- ??
-     charToSym,    -- ??
-     scalarProd,   -- ??
-     intProd,      -- ??
-     cauchy,       -- need products of Schur rings
-     wedge,        -- ??
+--     Partitions,   -- ??
+--     zee,          -- rename
+--     symToChar,    -- ??
+--     charToSym,    -- ??
+--     scalarProd,   -- ??
+--     intProd,      -- ??
+
+--     cauchy,       -- need products of Schur rings
+--     wedge,        -- ??
+
      Stillman,     -- REMOVE!!
      Stembridge,   -- ??
      Schur,        -- what is this?
      Memoize,      -- ??
      EorH,         -- ??
+
      SchurRingIndexedVariableTable}
+
 -- Improve the names/interface of the following:
 --, symmRing, plethysmMap, jacobiTrudi, plethysm, cauchy, bott}
 
@@ -223,15 +227,18 @@ protect e
 << "WARNING or ERROR: change the names S,e,h to something else here!" << endl
 
 symmRings := new MutableHashTable;
-symmRing = (n) -> (
-     if not symmRings#?n then (
-     	  e := getSymbol "e";
-     	  h := getSymbol "h";
-     	  p := getSymbol "p";
-     	  R := QQ[e_1..e_n,p_1..p_n,h_1..h_n,
+symmRing = method(Options => {CoefficientRing => QQ,
+	  Variables => {"e", "h", "p", "s"}})
+
+symmRing ZZ := opts -> (n) -> (
+     key := {n,opts.CoefficientRing,opts.Variables};
+     if not symmRings#?key then symmRings#key = (
+	  (e, h, p, s) := apply(toSequence opts.Variables, getSymbol);
+     	  R := (opts.CoefficientRing)[e_1..e_n,p_1..p_n,h_1..h_n,
 	       Degrees => toList(1..n,1..n,1..n)];
-     	  S := schurRing(getSymbol "s", n, CoefficientRing => QQ);
+     	  S := schurRing(s, n, CoefficientRing => opts.CoefficientRing);
      	  R.Schur = S;
+	  S.symmRing = R;
      	  R.dim = n;
 	  
 	  degsEHP := toList(1..n);
@@ -266,9 +273,9 @@ symmRing = (n) -> (
 --     	  R.mapSymToP = map(R,R,flatten splice {apply(n, i -> EtoP(i+1,R)), varlist(n,2*n-1,R), apply(n, i -> HtoP(i+1,R))});
 --     	  R.mapSymToH = map(R,R,flatten splice {apply(n, i -> EtoH(i+1,R)), apply(n, i -> PtoH(i+1,R)), varlist(2*n,3*n-1,R)});
      	  R.plethysmMaps = new MutableHashTable;
-	  symmRings#n = R;
+	  R
 	  );
-     symmRings#n)
+     symmRings#key)
 
 ---------------------------------------------------------------
 --------------Jacobi-Trudi-------------------------------------
@@ -700,286 +707,8 @@ PtoH = (m,R) -> (
 --------------End transition-----------------------------------
 ---------------------------------------------------------------
 
----------------------------------------------------------------
---------------Characters of Symmetric Group--------------------
----------------------------------------------------------------
-
-seqToMults = method()
-seqToMults(List) := (lambda) ->
-(
-     lam := new Partition from lambda;
-     aux := toList(conjugate lam)|{0};
-     rez := {};
-     for j from 0 to #aux-2 do
-     (
-     	  dif := aux#j-aux#(j+1);
-       	  rez = rez | {dif};
-	  );
-     rez 
-     )
-
-multsToSeq = method()
-multsToSeq(List) := (mults) ->
-(
-     n := #mults;
-     par := {};
-     for i from 0 to n-1 do
-         par = par | splice{mults#i:(i+1)};
-     reverse par
-     )
-
-zee = method()
-zee(List) := lambda ->
-(
-     product for i from 0 to #lambda-1 list((i+1)^(lambda#i)*(lambda#i)!)
-     )
-
-symToChar = method()
-symToChar(RingElement) := (f)->
-(
-     R := local R;
-     pf := local pf;
-     Rf := ring f;
-     if class Rf === SchurRing then
-     (
-     	  R = symmRing degSchurPol(f);
-	  pf = toP(f,R);
-	  )
-     else
-     (
-	  R = Rf;
-     	  pf = toP f;
-	  );
-     n := R.dim;
-     (mon,coe) := apply(coefficients pf,i->flatten entries i);
---     exps := apply(exponents pf,i->i_{n..(2*n-1)});
-     ch := new MutableHashTable;
-     for j from 0 to #mon-1 do
-     (
-     	  degs := (flatten exponents mon#j)_{(n)..(2*n-1)};
-     	  par := multsToSeq(degs);
-	  ch#par = lift(coe#j,coefficientRing R) * zee(degs);
-	  );
-     new HashTable from ch
-     )
-
-charToSym = method()
-charToSym(HashTable,Ring) := (ch,R)->
-(
-     rez := 0_R;
-     n := R.dim;
-     for lam in keys ch do
-     	  rez = rez + ch#lam * (product for i from 0 to #lam-1 list R_(n-1+lam#i)) / zee(seqToMults lam);
-     rez
-     )
-
-scalarProd = method()
-scalarProd(HashTable,HashTable) := (ch1,ch2)->
-(
-     scProd := 0;
-     chProd := intProd(ch1,ch2);
-     for i in keys(chProd) do
-     	  scProd = scProd + chProd#i / zee(seqToMults i);
-     scProd
-     )
-
-scalarProd(RingElement,RingElement) := (f1,f2)->
-(
-     ch1 := symToChar f1;
-     ch2 := symToChar f2;
-     scalarProd(ch1,ch2)
-     )
-
-intProd = method()
-intProd(HashTable,HashTable) := (ch1,ch2)->
-(
-     iProd := new MutableHashTable;
-     l1 := sum((keys ch1)#0);
-     l2 := sum((keys ch2)#0);
-     if l1 != l2 then error("The symmetric functions/characters must have the same degree");
-     for i in keys(ch1) do
-     	  if ch2#?i then iProd#i = ch1#i * ch2#i;
-     new HashTable from iProd
-     )
-
-intProd(RingElement,RingElement) := (f1,f2)->
-(
-     R2 := ring f2;
-     R := local R;
-     issy := false;
-     if (class R2 =!= SchurRing) then (R = R2; issy = true;)
-     else R = symmRing degSchurPol(f2);
-     ch1 := symToChar f1;
-     ch2 := symToChar f2;
-     rez := charToSym(intProd(ch1,ch2),R);
-     if issy then rez else
-     toS(rez,R2)
-     )
-
-chi(BasicList,BasicList) := (lambda, rho) ->
-(
-     la := toList lambda;
-     rh := toList rho;
-     ll := sum la;
-     if ll != sum(rh) then error"Partitions must have the same size.";
-     R := symmRing ll;
-     sl := jacobiTrudi(la,R);
-     pr := 1_R;
-     for i from 0 to #rh-1 do pr = pr * R_(ll-1+rh#i);
-     scalarProd(sl,pr)
-     )
-
----------------------------------------------------------------
---------------End characters-----------------------------------
----------------------------------------------------------------
-
----------------------------------------------------------------
------------Partitions-related functions------------------------
----------------------------------------------------------------
-parts := (d, n) -> (
-     -- d is an integer >= 0
-     -- n is an integer >= 1
-     -- returns a list of all of the partitions of d
-     --    having <= n parts.
-     x := partitions(d);
-     select(x, xi -> #xi <= n))     
-
--------Generate all the partitions of a set
--------with a given shape
-locS = local locS;
-locL = local locL;
-locLengthL = local locLengthL;
-locParts = local locParts;
-locPartitions = local locPartitions;
-genPartitions = local genPartitions;
-
-genPartitions = method()
-genPartitions(ZZ) := (k)->
-(
-     if k==length locS then (locPartitions = locPartitions | {set toList locParts}) else
-     (
-     for i from 0 to locLengthL-1 do
-     	  if (i==0 and #locParts#0 < locL#0) or (((locL#(i-1)>locL#i) or (#locParts#(i-1)>0)) and (#locParts#i<locL#i)) then
-	  (
-	       locParts#i = locParts#i + set{locS#k};
-	       genPartitions(k+1);
-	       locParts#i = locParts#i - set{locS#k};
-	       );
-     )
-);
-
-Partitions = method()
-Partitions(Set,BasicList) := (S,L)->
-(
-     locS = toList S;
-     locL = L;
-     locLengthL = #L;
-     locParts = new MutableList;
-     for i from 0 to locLengthL-1 do locParts#i = set{};
-     locPartitions = {};
-     genPartitions(0);
-     locPartitions
-     )
-
---------end generate partitions
-
----------------------------------------------------------------
---------End partitions-related functions-----------------------
----------------------------------------------------------------
-
-
----------------------------------------------------------------
---------Old stuff----------------------------------------------
----------------------------------------------------------------
-{*
-restart
-loadPackage"SchurRings"
-----wedge powers over GL(V) x GL(W)
-S = schurRing(a,5)
-T = schurRing(b,5)
-cauchy(3,a_{1},b_{1})
-wedge(2,{(a_{1},b_{1}),(a_{3}+a_{2,1},b_{2,2})})
-wedge(2,{(a_{1},b_{1}),(a_{1},b_{1})})
-
-r = 3
-L = {(a_{1},b_{1}), (a_{3}+a_{2,1},b_{2,2})}
-
-----end wedge powers
-*}
-
-cauchy = (i,f,g) -> (
-     -- f and g are elements of Schur rings (possibly different)
-     -- compute the i th exterior power of the representation f ** g
-     P := partitions i;
-     result := apply(P, lambda -> (
-	       (
-		   a := plethysm(lambda,f);
-		   if a == 0 then null
-		   else (
-			b := plethysm(conjugate lambda, g);
-			if b == 0 then null else (a,b)
-		    ))));
-     select(result, x -> x =!= null)
-     )
-
-compositions1 = (r,n) -> (
-     -- return a list of all of the n-compositions of r.
-     -- i.e. ways to write r as a sum of n nonnegative integers
-     if n === 1 then {{r}}
-     else if r === 0 then {toList(n:0)}
-     else (
-	  flatten for i from 0 to r list (
-	       w := compositions1(r-i,n-1);
-	       apply(w, w1 -> prepend(i,w1)))))
-
-
-pairProduct = L -> (
-     -- L is a list of lists of (f,g), f,g both in Schur/symmetric rings.
-     -- result: a list of pairs (f,g).
-     if #L === 1 then first L
-     else (
-	  L' := drop(L,1);
-	  P' := pairProduct L';
-	  flatten apply(L#0, fg -> (
-	       (f,g) := fg;
-	       apply(P', pq -> (
-		    (p,q) := pq;
-		    (f*p, g*q)))))
-     ))
-----e.g. L = {{(h_2,e_3)},{(h_1,e_3),(p_2,e_2)}}
-----pairProduct L = {(h_1*h_2,e_3^2), (p_2*h_2,e_2*e_3)}
-
-wedge = method()		    
-wedge(List,List) := (C,L) -> (
-     -- C is a composition of 0..n-1, n == #L
-     -- form the product of the exterior powers of the corresponding representations.
-     result := {}; -- each entry will be of the form (f,g)
-     C0 := positions(C, x -> x =!= 0);
-     wedgeL := apply(C0, i -> cauchy(C#i,L#i#0,L#i#1));
-     pairProduct wedgeL
-     )
-
-wedge(ZZ,List) := (r,L) -> (
-     -- r is an integer >= 1
-     -- L is a list of pairs (f,g), f,g are in (possibly different) Schur rings.
-     -- returns wedge(r)(L), as a sum of representations of GL(m) x GL(n)
-     n := #L;
-     p := compositions1(r,n);
-     flatten apply(p, x -> wedge(x,L))
-     )
---this computes the r-th wedge power of the direct sum of
---V_i\tensor W_i where V_i, W_i are GL(V) and GL(W) (virtual) modules
---corresponding to pairs of (virtual) characters (f_i,g_i)
-
-
----------------------------------------------------------------
---------End old stuff----------------------------------------------
----------------------------------------------------------------
 
 beginDocumentation()
-
-undocumented (wedge,List,List)
-undocumented {EorH, Schur}
 
 document {
      Key => "SchurRings",
@@ -1026,7 +755,7 @@ document {
      SeeAlso => {"SchurRing", "symmRing"}}
 
 document {
-     Key => {SchurRing, (degreeLength,SchurRing), (coefficientRing, SchurRing), (monoid, SchurRing)},
+     Key => {SchurRing, (degreeLength,SchurRing), (coefficientRing, SchurRing), (monoid, SchurRing), (symbol _, SchurRing, List)},
      Headline => "the class of all Schur rings",
      "A Schur ring is the representation ring for the general linear group of 
      n by n matrices, and one can be constructed with ", TO schurRing, ".",
@@ -1034,6 +763,8 @@ document {
      "The element corresponding to the Young diagram ", TT "{3,2,1}", " is
      obtained as follows.",
      EXAMPLE "s_{3,2,1}",
+     "or by indexing the Schur ring itself.",
+     EXAMPLE "R_{3,2,1}",
      "The dimension of the underlying virtual representation can be obtained
      with ", TO "dim", ".",
      EXAMPLE "dim s_{3,2,1}",
@@ -1653,6 +1384,468 @@ Description
     plethysm({2,1,1},q_{1,1}) 
 ///
 
+
+doc ///
+  Key
+    Memoize
+  Headline
+    Record values of the jacobiTrudi function
+  Description
+    Text
+    
+      This is an optional argument for the @TO jacobiTrudi@
+      and @TO toS@ methods, allowing one to store the values
+      of the @TO jacobiTrudi@ function in order to speed up
+      computations.
+///
+
+doc ///
+  Key
+    Stillman
+  Headline
+    Strategy for finding the s-basis representation of a symmetric function
+  Description
+    Text
+      This is one of the two strategies implemented for the 
+      @TO toS@ method that computes a representation of
+      a symmetric function in the basis of Schur functions. 
+  SeeAlso
+    Stembridge
+///
+
+doc ///
+  Key
+    Stembridge
+  Headline
+    Strategy for finding the s-basis representation of a symmetric function
+  Description
+    Text
+      This is one of the two strategies implemented for the 
+      @TO toS@ method that computes a representation of
+      a symmetric function in the basis of Schur functions. 
+  SeeAlso
+    Stillman
+///
+
+
+--------------------
+-- test Jacobi-Trudi
+--------------------
+TEST ///
+E = symmRing 5
+f = jacobiTrudi({4,1},E)
+assert (toS f == s_{4,1})
+///
+
+TEST ///
+E = symmRing 5
+f = jacobiTrudi({2,1},E)
+assert (toS f == s_{2,1})
+///
+
+TEST ///
+E = symmRing 13
+f = jacobiTrudi({7,4,2},E)
+assert (toS f == s_{7,4,2})
+///
+
+TEST ///
+P = symmRing 6
+f = toS plethysm(jacobiTrudi({2},P), jacobiTrudi({2},P))
+assert(f == s_{4}+s_{2,2})
+///
+
+TEST ///
+Q = symmRing 6
+S = schurRing(q,4)
+f = toS(plethysm(jacobiTrudi({3},Q), jacobiTrudi({2},Q)),S)
+assert(dim f == 220)
+///
+------------------------
+-- end test Jacobi-Trudi
+------------------------
+
+------------------------
+-- test of plethysm, toS
+------------------------
+TEST ///
+R = symmRing 5
+pl = plethysm({1,1},jacobiTrudi({2},R))
+assert(toS pl == s_{3,1})
+///
+
+TEST ///
+R = symmRing 12
+pl = plethysm({1,1,1},jacobiTrudi({4},R))
+assert(#terms(toS pl) == 7)
+///
+
+TEST ///
+R = symmRing 9
+S = schurRing(q,3)
+pl = plethysm(h_3,q_{2,1})
+assert (dim pl == 120)
+///
+
+TEST ///
+R = symmRing 10
+S = schurRing(s,3)
+assert(toS(plethysm(h_3,e_3),S) == s_{3,3,3})
+///
+
+TEST ///
+S = schurRing(q,4)
+assert(plethysm(q_{2,1},q_{1,1,1}) == q_{3,3,2,1})
+///
+
+TEST ///
+R = symmRing 12
+f = e_4
+lambda = new Partition from {3}
+plethysm(lambda,f) == plethysm(h_3,e_4)
+///
+
+TEST ///
+schurRing(s,2,CoefficientRing => QQ)
+assert(dim(plethysm(s_{2,1}+s_{3},s_{3})) == 40)
+///
+
+TEST ///
+R = symmRing 20
+assert(#terms(toS(plethysm(h_5,h_4),Memoize=>true)) == 95)
+///
+
+TEST ///
+R = symmRing 10
+S = schurRing(o,5,CoefficientRing => QQ)
+sch = toS(plethysm({2,1},h_3),S,Strategy => Stillman,Memoize => false)
+assert(dim sch == 14770)
+///
+----------------------------
+-- end test of plethysm, toS
+----------------------------
+
+---------------------------
+--- test toS, toP, toE, toH
+---------------------------
+TEST ///
+R = symmRing 6
+assert(toE(toS(e_1*e_2*e_3),R) == e_1*e_2*e_3)
+///
+
+TEST ///
+R = symmRing 5
+S = schurRing(q,3)
+assert(toE(q_{2},R) + e_2 == e_1^2)
+///
+
+TEST///
+R = symmRing 4
+assert(toP toE toH toE toH toP toE toE toP toH (p_1+p_2+p_3) == p_1+p_2+p_3)
+///
+
+TEST ///
+R = symmRing 6
+S = schurRing(o,2)
+toSf = map(S, R, apply(gens R, x -> toS(x,S)))
+assert(toSf(e_1*e_2*e_3) == 0)
+assert(toSf(h_1*h_2*h_3) == o_{1}*o_{2}*o_{3})
+///
+
+TEST ///
+R = symmRing 7
+toH toP toE (toS (jacobiTrudi({2,1},R))^2,R) == (h_1*h_2-h_3)^2
+///
+-------------------------------
+--- end test toS, toP, toE, toH
+-------------------------------
+
+end
+
+--------------------------------------------------
+-- END END END END END ---------------------------
+--------------------------------------------------
+
+---------------------------------------------------------------
+--------------Characters of Symmetric Group--------------------
+---------------------------------------------------------------
+
+seqToMults = method()
+seqToMults(List) := (lambda) ->
+(
+     lam := new Partition from lambda;
+     aux := toList(conjugate lam)|{0};
+     rez := {};
+     for j from 0 to #aux-2 do
+     (
+     	  dif := aux#j-aux#(j+1);
+       	  rez = rez | {dif};
+	  );
+     rez 
+     )
+
+multsToSeq = method()
+multsToSeq(List) := (mults) ->
+(
+     n := #mults;
+     par := {};
+     for i from 0 to n-1 do
+         par = par | splice{mults#i:(i+1)};
+     reverse par
+     )
+
+zee = method()
+zee(List) := lambda ->
+(
+     product for i from 0 to #lambda-1 list((i+1)^(lambda#i)*(lambda#i)!)
+     )
+
+symToChar = method()
+symToChar(RingElement) := (f)->
+(
+     R := local R;
+     pf := local pf;
+     Rf := ring f;
+     if class Rf === SchurRing then
+     (
+     	  R = symmRing degSchurPol(f);
+	  pf = toP(f,R);
+	  )
+     else
+     (
+	  R = Rf;
+     	  pf = toP f;
+	  );
+     n := R.dim;
+     (mon,coe) := apply(coefficients pf,i->flatten entries i);
+--     exps := apply(exponents pf,i->i_{n..(2*n-1)});
+     ch := new MutableHashTable;
+     for j from 0 to #mon-1 do
+     (
+     	  degs := (flatten exponents mon#j)_{(n)..(2*n-1)};
+     	  par := multsToSeq(degs);
+	  ch#par = lift(coe#j,coefficientRing R) * zee(degs);
+	  );
+     new HashTable from ch
+     )
+
+charToSym = method()
+charToSym(HashTable,Ring) := (ch,R)->
+(
+     rez := 0_R;
+     n := R.dim;
+     for lam in keys ch do
+     	  rez = rez + ch#lam * (product for i from 0 to #lam-1 list R_(n-1+lam#i)) / zee(seqToMults lam);
+     rez
+     )
+
+scalarProd = method()
+scalarProd(HashTable,HashTable) := (ch1,ch2)->
+(
+     scProd := 0;
+     chProd := intProd(ch1,ch2);
+     for i in keys(chProd) do
+     	  scProd = scProd + chProd#i / zee(seqToMults i);
+     scProd
+     )
+
+scalarProd(RingElement,RingElement) := (f1,f2)->
+(
+     ch1 := symToChar f1;
+     ch2 := symToChar f2;
+     scalarProd(ch1,ch2)
+     )
+
+intProd = method()
+intProd(HashTable,HashTable) := (ch1,ch2)->
+(
+     iProd := new MutableHashTable;
+     l1 := sum((keys ch1)#0);
+     l2 := sum((keys ch2)#0);
+     if l1 != l2 then error("The symmetric functions/characters must have the same degree");
+     for i in keys(ch1) do
+     	  if ch2#?i then iProd#i = ch1#i * ch2#i;
+     new HashTable from iProd
+     )
+
+intProd(RingElement,RingElement) := (f1,f2)->
+(
+     R2 := ring f2;
+     R := local R;
+     issy := false;
+     if (class R2 =!= SchurRing) then (R = R2; issy = true;)
+     else R = symmRing degSchurPol(f2);
+     ch1 := symToChar f1;
+     ch2 := symToChar f2;
+     rez := charToSym(intProd(ch1,ch2),R);
+     if issy then rez else
+     toS(rez,R2)
+     )
+
+chi(BasicList,BasicList) := (lambda, rho) ->
+(
+     la := toList lambda;
+     rh := toList rho;
+     ll := sum la;
+     if ll != sum(rh) then error"Partitions must have the same size.";
+     R := symmRing ll;
+     sl := jacobiTrudi(la,R);
+     pr := 1_R;
+     for i from 0 to #rh-1 do pr = pr * R_(ll-1+rh#i);
+     scalarProd(sl,pr)
+     )
+
+---------------------------------------------------------------
+--------------End characters-----------------------------------
+---------------------------------------------------------------
+
+---------------------------------------------------------------
+-----------Partitions-related functions------------------------
+---------------------------------------------------------------
+parts := (d, n) -> (
+     -- d is an integer >= 0
+     -- n is an integer >= 1
+     -- returns a list of all of the partitions of d
+     --    having <= n parts.
+     x := partitions(d);
+     select(x, xi -> #xi <= n))     
+
+-------Generate all the partitions of a set
+-------with a given shape
+locS = local locS;
+locL = local locL;
+locLengthL = local locLengthL;
+locParts = local locParts;
+locPartitions = local locPartitions;
+genPartitions = local genPartitions;
+
+genPartitions = method()
+genPartitions(ZZ) := (k)->
+(
+     if k==length locS then (locPartitions = locPartitions | {set toList locParts}) else
+     (
+     for i from 0 to locLengthL-1 do
+     	  if (i==0 and #locParts#0 < locL#0) or (((locL#(i-1)>locL#i) or (#locParts#(i-1)>0)) and (#locParts#i<locL#i)) then
+	  (
+	       locParts#i = locParts#i + set{locS#k};
+	       genPartitions(k+1);
+	       locParts#i = locParts#i - set{locS#k};
+	       );
+     )
+);
+
+Partitions = method()
+Partitions(Set,BasicList) := (S,L)->
+(
+     locS = toList S;
+     locL = L;
+     locLengthL = #L;
+     locParts = new MutableList;
+     for i from 0 to locLengthL-1 do locParts#i = set{};
+     locPartitions = {};
+     genPartitions(0);
+     locPartitions
+     )
+
+--------end generate partitions
+
+---------------------------------------------------------------
+--------End partitions-related functions-----------------------
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+--------Old stuff----------------------------------------------
+---------------------------------------------------------------
+
+-- cauchy and wedge have been commented out.  Are they needed?
+
+{*
+restart
+loadPackage"SchurRings"
+----wedge powers over GL(V) x GL(W)
+S = schurRing(a,5)
+T = schurRing(b,5)
+cauchy(3,a_{1},b_{1})
+wedge(2,{(a_{1},b_{1}),(a_{3}+a_{2,1},b_{2,2})})
+wedge(2,{(a_{1},b_{1}),(a_{1},b_{1})})
+
+r = 3
+L = {(a_{1},b_{1}), (a_{3}+a_{2,1},b_{2,2})}
+
+----end wedge powers
+
+
+cauchy = (i,f,g) -> (
+     -- f and g are elements of Schur rings (possibly different)
+     -- compute the i th exterior power of the representation f ** g
+     P := partitions i;
+     result := apply(P, lambda -> (
+	       (
+		   a := plethysm(lambda,f);
+		   if a == 0 then null
+		   else (
+			b := plethysm(conjugate lambda, g);
+			if b == 0 then null else (a,b)
+		    ))));
+     select(result, x -> x =!= null)
+     )
+
+compositions1 = (r,n) -> (
+     -- return a list of all of the n-compositions of r.
+     -- i.e. ways to write r as a sum of n nonnegative integers
+     if n === 1 then {{r}}
+     else if r === 0 then {toList(n:0)}
+     else (
+	  flatten for i from 0 to r list (
+	       w := compositions1(r-i,n-1);
+	       apply(w, w1 -> prepend(i,w1)))))
+
+
+pairProduct = L -> (
+     -- L is a list of lists of (f,g), f,g both in Schur/symmetric rings.
+     -- result: a list of pairs (f,g).
+     if #L === 1 then first L
+     else (
+	  L' := drop(L,1);
+	  P' := pairProduct L';
+	  flatten apply(L#0, fg -> (
+	       (f,g) := fg;
+	       apply(P', pq -> (
+		    (p,q) := pq;
+		    (f*p, g*q)))))
+     ))
+----e.g. L = {{(h_2,e_3)},{(h_1,e_3),(p_2,e_2)}}
+----pairProduct L = {(h_1*h_2,e_3^2), (p_2*h_2,e_2*e_3)}
+
+wedge = method()		    
+wedge(List,List) := (C,L) -> (
+     -- C is a composition of 0..n-1, n == #L
+     -- form the product of the exterior powers of the corresponding representations.
+     result := {}; -- each entry will be of the form (f,g)
+     C0 := positions(C, x -> x =!= 0);
+     wedgeL := apply(C0, i -> cauchy(C#i,L#i#0,L#i#1));
+     pairProduct wedgeL
+     )
+
+wedge(ZZ,List) := (r,L) -> (
+     -- r is an integer >= 1
+     -- L is a list of pairs (f,g), f,g are in (possibly different) Schur rings.
+     -- returns wedge(r)(L), as a sum of representations of GL(m) x GL(n)
+     n := #L;
+     p := compositions1(r,n);
+     flatten apply(p, x -> wedge(x,L))
+     )
+--this computes the r-th wedge power of the direct sum of
+--V_i\tensor W_i where V_i, W_i are GL(V) and GL(W) (virtual) modules
+--corresponding to pairs of (virtual) characters (f_i,g_i)
+*}
+
+---------------------------------------------------------------
+--------End old stuff----------------------------------------------
+---------------------------------------------------------------
+
+
 doc ///
   Key
     Partitions
@@ -1991,48 +2184,6 @@ Description
 ///
 
 doc ///
-  Key
-    Memoize
-  Headline
-    Record values of the jacobiTrudi function
-  Description
-    Text
-    
-      This is an optional argument for the @TO jacobiTrudi@
-      and @TO toS@ methods, allowing one to store the values
-      of the @TO jacobiTrudi@ function in order to speed up
-      computations.
-///
-
-doc ///
-  Key
-    Stillman
-  Headline
-    Strategy for finding the s-basis representation of a symmetric function
-  Description
-    Text
-      This is one of the two strategies implemented for the 
-      @TO toS@ method that computes a representation of
-      a symmetric function in the basis of Schur functions. 
-  SeeAlso
-    Stembridge
-///
-
-doc ///
-  Key
-    Stembridge
-  Headline
-    Strategy for finding the s-basis representation of a symmetric function
-  Description
-    Text
-      This is one of the two strategies implemented for the 
-      @TO toS@ method that computes a representation of
-      a symmetric function in the basis of Schur functions. 
-  SeeAlso
-    Stillman
-///
-
-doc ///
 Key
   cauchy
 Headline
@@ -2118,103 +2269,6 @@ SeeAlso
   cauchy
 ///
 
---------------------
--- test Jacobi-Trudi
---------------------
-TEST ///
-E = symmRing 5
-f = jacobiTrudi({4,1},E)
-assert (toS f == s_{4,1})
-///
-
-TEST ///
-E = symmRing 5
-f = jacobiTrudi({2,1},E)
-assert (toS f == s_{2,1})
-///
-
-TEST ///
-E = symmRing 13
-f = jacobiTrudi({7,4,2},E)
-assert (toS f == s_{7,4,2})
-///
-
-TEST ///
-P = symmRing 6
-f = toS plethysm(jacobiTrudi({2},P), jacobiTrudi({2},P))
-assert(f == s_{4}+s_{2,2})
-///
-
-TEST ///
-Q = symmRing 6
-S = schurRing(q,4)
-f = toS(plethysm(jacobiTrudi({3},Q), jacobiTrudi({2},Q)),S)
-assert(dim f == 220)
-///
-------------------------
--- end test Jacobi-Trudi
-------------------------
-
-------------------------
--- test of plethysm, toS
-------------------------
-TEST ///
-R = symmRing 5
-pl = plethysm({1,1},jacobiTrudi({2},R))
-assert(toS pl == s_{3,1})
-///
-
-TEST ///
-R = symmRing 12
-pl = plethysm({1,1,1},jacobiTrudi({4},R))
-assert(#terms(toS pl) == 7)
-///
-
-TEST ///
-R = symmRing 9
-S = schurRing(q,3)
-pl = plethysm(h_3,q_{2,1})
-assert (dim pl == 120)
-///
-
-TEST ///
-R = symmRing 10
-S = schurRing(s,3)
-assert(toS(plethysm(h_3,e_3),S) == s_{3,3,3})
-///
-
-TEST ///
-S = schurRing(q,4)
-assert(plethysm(q_{2,1},q_{1,1,1}) == q_{3,3,2,1})
-///
-
-TEST ///
-R = symmRing 12
-f = e_4
-lambda = new Partition from {3}
-plethysm(lambda,f) == plethysm(h_3,e_4)
-///
-
-TEST ///
-schurRing(s,2,CoefficientRing => QQ)
-assert(dim(plethysm(s_{2,1}+s_{3},s_{3})) == 40)
-///
-
-TEST ///
-R = symmRing 20
-assert(#terms(toS(plethysm(h_5,h_4),Memoize=>true)) == 95)
-///
-
-TEST ///
-R = symmRing 10
-S = schurRing(o,5,CoefficientRing => QQ)
-sch = toS(plethysm({2,1},h_3),S,Strategy => Stillman,Memoize => false)
-assert(dim sch == 14770)
-///
-----------------------------
--- end test of plethysm, toS
-----------------------------
-
 --------------------------------------------------------------
 ----- test characters of symmetric groups, scalarProd, intProd
 --------------------------------------------------------------
@@ -2263,40 +2317,6 @@ intProd(f,g) == 0
 --- end test characters of symmetric groups, scalarProd, intProd
 ----------------------------------------------------------------
 
----------------------------
---- test toS, toP, toE, toH
----------------------------
-TEST ///
-R = symmRing 6
-assert(toE(toS(e_1*e_2*e_3),R) == e_1*e_2*e_3)
-///
-
-TEST ///
-R = symmRing 5
-S = schurRing(q,3)
-assert(toE(q_{2},R) + e_2 == e_1^2)
-///
-
-TEST///
-R = symmRing 4
-assert(toP toE toH toE toH toP toE toE toP toH (p_1+p_2+p_3) == p_1+p_2+p_3)
-///
-
-TEST ///
-R = symmRing 6
-S = schurRing(o,2)
-toSf = map(S, R, apply(gens R, x -> toS(x,S)))
-assert(toSf(e_1*e_2*e_3) == 0)
-assert(toSf(h_1*h_2*h_3) == o_{1}*o_{2}*o_{3})
-///
-
-TEST ///
-R = symmRing 7
-toH toP toE (toS (jacobiTrudi({2,1},R))^2,R) == (h_1*h_2-h_3)^2
-///
--------------------------------
---- end test toS, toP, toE, toH
--------------------------------
 
 ---------------------------
 -- test of cauchy, wedge --
@@ -2325,7 +2345,6 @@ assert(#(set(wedge(2,L)) - (set cauchy(2,a_{2},b_{1}) + set{(a_{2}*a_{1,1},b_{1}
 -------------------------------
 -- end test of cauchy, wedge --
 -------------------------------
-end
 
 -----------------------------------------------------------------------------
 -- the rest of this file used to be schur.m2
