@@ -61,13 +61,18 @@ tiger32 : always
 
 darwin32 : always
 	mkdir -p darwin32
-	cd darwin32; LDFLAGS=-shared-libgcc ../../../configure \
-		--build=i386-apple-darwin9 \
+	cd darwin32;  ../../../configure \
+		CC="gcc -m32" CXX="g++ -m32" \
+		--build=i386-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--enable-dmg \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+#		--build=i386-apple-darwin9 \
 #		--enable-python
+# LDFLAGS=-shared-libgcc
+
+
 
 debug32 : always
 	mkdir -p debug32
