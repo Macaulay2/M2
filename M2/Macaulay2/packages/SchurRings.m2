@@ -224,7 +224,7 @@ protect mapSymToH
 protect S
 protect h
 protect e
-<< "WARNING or ERROR: change the names S,e,h to something else here!" << endl
+-- << "WARNING or ERROR: change the names S,e,h to something else here!" << endl
 
 symmRings := new MutableHashTable;
 symmRing = method(Options => {CoefficientRing => QQ,
