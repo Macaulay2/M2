@@ -155,7 +155,7 @@ coveringRelations (Poset) := (P) -> (
 --output:  A digraph which represents the Hasse Diagram of P
 hasseDiagram = method();
 hasseDiagram(Poset) := P -> (
-  if P.cache.?coveringRelations then cr = P.cache.coveringRelations else cr = coveringRelations P;
+  if P.cache.?coveringRelations then cr := P.cache.coveringRelations else cr = coveringRelations P;
   digraph hashTable apply(P.GroundSet,v->v=>set apply(select(cr,e->e_0==v),e->e_1))
 )
 
@@ -476,7 +476,7 @@ lcmLattice(MonomialIdeal) := Poset => opts -> (M) -> (
 	   poset (Ground, Rels, RelsMatrix)
 	   )
 
-
+protect next
 --Subroutine of lcmLatticeProduceGroundSet
 --Makes a pair storing a multi-degree and 
 --a list of multi-degrees which are to be 
@@ -555,7 +555,7 @@ lcmLatticeProduceGroundSet = G -> (
 	lcmDegrees := { degreeNextPair(apply(n, i -> 0), initialExps) };
 	for i from 0 to n-1 do (
 		if VERBOSE then << "Variable " << i << endl;
-		if VERBOSE then printDegreeList L;
+--		if VERBOSE then printDegreeList L;
 		-- lcmDegrees contains all possible multi-degrees restricted
 		-- to the first i varibles. For each of these multi-degrees
 		-- we have a list of "nexts" which are atoms which could
