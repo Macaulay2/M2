@@ -263,7 +263,7 @@ document {
 			      TO "ConvexInterface::ConvexInterface",
 			      TO "MapleInterface::MapleInterface",
 			      TO "OpenMath::OpenMath",
-			      TO "Posets::Posets",
+			      --TO "Posets::Posets",
 			      TO "RationalPoints::RationalPoints",
 			      TO "SCSCP::SCSCP",
 			      TO "SRdeformations::SRdeformations",

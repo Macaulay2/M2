@@ -491,7 +491,8 @@ toH (RingElement,Ring) := (ps,R) ->
      toH toSymm(ps,R)
      )
 
-toS = method(Options => {Strategy => Stembridge, Memoize => true})
+--toS = method(Options => {Strategy => Stembridge, Memoize => true})
+toS = method(Options => {Strategy => Stillman, Memoize => true})
 toS(RingElement,SchurRing) := opts -> (f,S) -> (
      -- f is a polynomial in 'symmRing n', of degree d<=n
      -- S is a SchurRing
@@ -500,7 +501,7 @@ toS(RingElement,SchurRing) := opts -> (f,S) -> (
      R := ring f;
      n := R.dim;
      d := first degree f;
-     if d>n then error"need symmetric ring of higher dimension";
+     --if d>n then error"need symmetric ring of higher dimension";
      rez := 0_S;
      s := S.Symbol;
      ngS := numgens S;
@@ -1555,6 +1556,12 @@ assert(toSf(h_1*h_2*h_3) == o_{1}*o_{2}*o_{3})
 TEST ///
 R = symmRing 7
 toH toP toE (toS (jacobiTrudi({2,1},R))^2,R) == (h_1*h_2-h_3)^2
+///
+
+TEST ///
+R = symmRing 4
+F = e_2^3+e_1^3*e_3-4*e_1*e_2*e_3+2*e_3^2
+assert(toS(F, Strategy=>Stillman) == s_(4,1,1)+s_(3,3))
 ///
 -------------------------------
 --- end test toS, toP, toE, toH
