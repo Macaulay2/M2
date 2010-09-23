@@ -362,7 +362,7 @@ export keys(f:Database):Expr := (
      while continue do (
 	  when k
 	  is key:string do (
-	       append(x,key);
+	       x = append(x,key);
 	       k = dbmnext(f.handle);
 	       )
 	  else continue = false;
