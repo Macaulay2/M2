@@ -335,7 +335,7 @@ can be executed with \\[M2-send-to-program]."
 	   (beginning-of-line)
 	   ;; example:      ./packages/Posets.m2:1358: warning: documentation already provided for 'Posets :: moebiusFunction'
 	   ;;                (1                     1)   (2       2)   (3      3)
-	   (looking-at "^ *\\(o+[1-9][0-9]* = \\|| \\)?\\([^:\n]+\\):\\([0-9]+\\): "))
+	   (looking-at "^ *\\(o+[1-9][0-9]* = \\|| \\)?\\([^:\n]+\\):\\([0-9]+\\): warning: "))
 	 (let ((filename (buffer-substring (match-beginning 2) (match-end 2)))
 	       (linenum (string-to-number (buffer-substring (match-beginning 3) (match-end 3)))))
 	   (M2-jump-to-source-code filename linenum 1)))
