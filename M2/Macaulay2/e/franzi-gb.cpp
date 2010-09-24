@@ -1,5 +1,3 @@
-/* This code written by Franziska Hinkelmann is in the public domain */
-
 #include "franzi-brp.hpp"
 #include <sys/time.h>
 #include <set>
@@ -24,7 +22,6 @@ class Pair {
       } else { 
         return pair1.i < pair2.i;
       } 
-//      return true;
     }
   }
 
@@ -161,23 +158,21 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
-//  if( BRP::isRelativelyPrime(g,f) ) {
-//    //cout << "r ";
-//    return false;
-//  }
+  if( BRP::isRelativelyPrime(g,f) ) {
+    return false;
+  }
 
   int i = pair.i;
   int j = pair.j;
 
-  //brMonomial lcm = pair.lcm;
-  brMonomial lcm = g | f;
+  brMonomial lcm = pair.lcm;
+  //brMonomial lcm = g | f;
   IntermediateBasis::const_iterator end = F.end();
   for(IntermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
     int k = it->first;
     const BRP *K = &(it->second);
 
     if(( k != i && k != j && BRP::isDivisibleBy(lcm, K->LT() ) && !inList(i,k,B,F) && !inList(j,k,B,F))) {
-      //cout << "l ";
       return false;
     }
   }
@@ -228,11 +223,6 @@ IntermediateBasis::const_iterator findDivisor( const BRP &f, const IntermediateB
 // Reduce the leading term of f one step with the first polynomial g_i in the
 // intermediate basis that satisfies isLeadingReducibleBy(f,g_i)
 bool reduceLt(BRP &f, const IntermediateBasis &F, const IntermediateBasis::const_iterator itF) {
-  if (f.isZero() ) {
-  //    cout << "this shouldn't be called" << endl;
-      return false;
-        }
-
   bool ret = false; // true if anything was reduced
   IntermediateBasis::const_iterator it;
   IntermediateBasis::const_iterator end = F.end();
@@ -511,12 +501,8 @@ void interreduction(IntermediateBasis &F) {
   //stats(F);
 }
 
-// A good (normal? Sugar?) selection strategy should be implemented here
-Pair bestPair(Pairs &B) {
-  return *(B.begin() );
-}
 
-// compute a reduced Groebner basis F  
+// complete algorithm to compute a Groebner basis F  
 void gb( IntermediateBasis &F, int n) {
   int interreductionMod = 0;
   int nextIndex = F.size(); 
@@ -526,25 +512,24 @@ void gb( IntermediateBasis &F, int n) {
   unsigned int countAddPoly = 0;
   unsigned int numSPoly= 0;
   while (!B.empty()) {
-    Pair pair = bestPair(B);
-    B.erase(B.begin()); // is this where it breaks?
+    Pair pair = *(B.begin());
+    B.erase(B.begin());
     if (isGoodPair(pair,F,B,n)) {
       numSPoly++;
       BRP S = sPolynomial(pair,F,n);
       reduce(S,F);
       if ( ! S.isZero() ) {
- //       cout << "Number of pairs currently in list: " << (int) B.size() << endl;
         countAddPoly++;
-        Pairs newList = makeNewPairs(nextIndex, F, n);
+        //Pairs newList = makeNewPairs(nextIndex, F, n);
         F[nextIndex] = S;
-        B.insert(newList.begin(), newList.end());
+        //B.insert(newList.begin(), newList.end());
+        interreduction(F);
+        B = makeList(F, n);
         nextIndex++;
       }
     }
   }
-  cout << "size before interreduction" << F.size() << endl;
-  interreduction(F);
-  cout << "size after interreduction" << F.size() << endl;
+  //interreduction(F);
   cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
 
