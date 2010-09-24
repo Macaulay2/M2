@@ -9,7 +9,7 @@ This file is in the public domain.
 newPackage(
      "Depth",
      Version => "0.5.3", 
-     Date => "May 2009",
+     Date => "September 2010",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"}
 	  },
