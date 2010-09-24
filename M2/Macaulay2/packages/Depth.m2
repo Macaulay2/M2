@@ -8,7 +8,7 @@ This file is in the public domain.
 *} 
 newPackage(
      "Depth",
-     Version => "0.5.2", 
+     Version => "0.5.3", 
      Date => "May 2009",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"}
@@ -46,7 +46,7 @@ depth(Ideal,Ring) := ZZ => (I,A) -> (
 
 depth(Ideal,QuotientRing) := ZZ => (I,A) -> (
      R := ambient A;
-     if isField coefficientRing A and isPolynomialRing R and I == ideal gens A then (
+     if isField coefficientRing A and isPolynomialRing R and I == ideal gens A and isHomogeneous ideal A then (
 	  d := dim R;
 	  d - length res(ideal A, LengthLimit => d)) else 
      depth(I,module A)
