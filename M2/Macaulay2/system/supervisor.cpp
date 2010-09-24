@@ -65,6 +65,27 @@ extern "C" {
     task->m_Dependencies.insert(dependency);
     task->m_Mutex.unlock();
   }
+  int taskDone(struct ThreadTask* task)
+  {
+    return task->m_Done;
+  }
+  int taskStarted(struct ThreadTask* task)
+  {
+    return task->m_Started;
+  }
+  void* taskResult(struct ThreadTask* task)
+  {
+    return task->m_Result;
+  }
+  int taskKeepRunning(struct ThreadTask* task)
+  {
+    return task->m_KeepRunning;
+  }
+  void taskInterrupt(struct ThreadTask* task)
+  {
+    threadSupervisor->_i_cancelTask(task);
+  }
+
   struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds)
   {
     return new ThreadTask(name,func,userData,(bool)timeLimitExists,timeLimitSeconds);
@@ -73,7 +94,7 @@ extern "C" {
   {
     return task->waitOn();
   }
-  extern void TS_Add_ThreadLocal(int* refno, const char* name)
+  void TS_Add_ThreadLocal(int* refno, const char* name)
   {
     if(NULL == threadSupervisor)
       threadSupervisor = new ThreadSupervisor(numThreads);
@@ -227,7 +248,10 @@ void ThreadSupervisor::_i_cancelTask(struct ThreadTask* task)
   m_Mutex.lock();
   task->m_Mutex.lock();
   if(task->m_CurrentThread)
-    AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
+    {
+      AO_store(&task->m_CurrentThread->m_Interrupt->field,true);
+      AO_store(&task->m_CurrentThread->m_Exception->field,true);
+    }
   task->m_KeepRunning=false;
   task->m_Mutex.unlock();
   m_Mutex.unlock();
@@ -294,6 +318,7 @@ void SupervisorThread::threadEntryPoint()
     abort();
   #endif
   m_Interrupt=&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field);
+  m_Exception=&THREADLOCAL(interrupts_exceptionFlag,struct atomic_field);
   reverse_run(thread_prepare_list);// re-initialize any thread local variables
   while(m_KeepRunning)
     {

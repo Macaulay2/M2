@@ -92,6 +92,7 @@ public:
   void shutdown() { m_KeepRunning = false; }
   static void* threadEntryPoint(void* st) { ((SupervisorThread*)st)->threadEntryPoint(); }
   struct atomic_field* m_Interrupt;
+  struct atomic_field* m_Exception;
  protected:
   void threadEntryPoint(); 
   pthread_t m_ThreadId;

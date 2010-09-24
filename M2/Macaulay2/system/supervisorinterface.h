@@ -34,6 +34,27 @@ extern "C" {
   extern void pushTask(struct ThreadTask* task);
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
   extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
+  /** 
+      Returns 1 if the task is finished, 0 otherwise
+  **/
+  extern int taskDone(struct ThreadTask* task);
+  /**
+     Returns 1 if the task has been started, 0 otherwise
+  **/
+  extern int taskStarted(struct ThreadTask* task);
+  /**
+     Returns the taskResult if finished, NULL otherwise
+  **/
+  extern void* taskResult(struct ThreadTask* task);
+  /**
+     Returns 1 if the task should keep running, 0 otherwise
+  **/
+  extern int taskKeepRunning(struct ThreadTask* task);
+  /**
+     Interrupt the task
+   **/
+  extern void taskInterrupt(struct ThreadTask* task);
+
   extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
 
   //Private interface functions
@@ -44,9 +65,10 @@ extern "C" {
   void createThreadGCMemory();
   extern void delThread(pthread_t thread);
   extern void initializeThreadSupervisor();
-  static inline void runM2Task(ThreadTaskFunctionPtr fptr, void* userData) {
+  static inline struct ThreadTask* runM2Task(ThreadTaskFunctionPtr fptr, void* userData) {
     struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0);
     pushTask(task);
+    return task;
   }
 #ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);

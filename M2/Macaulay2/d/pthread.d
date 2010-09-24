@@ -3,12 +3,14 @@ use expr;
 
 header "#include \"../system/supervisorinterface.h\"";
 
-threadCreate(f:function(TaskCellBody):null,tb:TaskCellBody) ::=  Ccode(void,
+taskCreate(f:function(TaskCellBody):null,tb:TaskCellBody) ::=  Ccode(taskPointer,
      "runM2Task((void *(*)(void *))(",f,"),(void *)(",tb,"))");
 
-
-threadDetach(tid:Thread) ::=  Ccode(int,"pthread_detach(",tid,")");
-
+export taskDone(tp:taskPointer) ::= Ccode(int, "taskDone(",tp,")")==1;
+taskStarted(tp:taskPointer) ::=Ccode(int, "taskStarted(",tp,")")==1;
+taskResult(tp:taskPointer) ::=Ccode(voidPointer, "taskResult(",tp,")");
+export taskKeepRunning(tp:taskPointer) ::= Ccode(int, "taskKeepRunning(",tp,")")==1;
+taskInterrupt(tp:taskPointer) ::= Ccode(void, "taskInterrupt(",tp,")");
 
 
 startup(tb:TaskCellBody):null := (
@@ -28,7 +30,6 @@ startup(tb:TaskCellBody):null := (
      	  if notify then stderr << "--thread " << " ready, result available " << endl;
 	  );
      compilerBarrier();
-     tb.done = true;
      null());
 
 isFunction(e:Expr):bool := (
@@ -40,44 +41,36 @@ isFunction(e:Expr):bool := (
      else false);
 
 cancelTask(tb:TaskCellBody):Expr := (
-     if tb.resultRetrieved then return buildErrorPacket("thread reasult already retrieved");
-     if tb.done then (
-	  if notify then stderr << "--thread " << " done, cancellation not needed" << endl;
+     if tb.resultRetrieved then return buildErrorPacket("thread result already retrieved");
+     if taskDone(tb.task) then (
+	  if notify then stderr << "task done, cancellation not needed" << endl;
 	  return nullE;
 	  );
-
---TODO: FIX 
-
-     tb.cancellationRequested = true;
+     taskInterrupt(tb.task);
      nullE);
 
 cancelTask(e:Expr):Expr := when e is c:TaskCell do cancelTask(c.body) else WrongArg("a thread");
 -- # typical value: cancelTask, Thread, Nothing
 setupfun("cancelTask",cancelTask);
 
-threadCellFinalizer(tc:TaskCell,p:null):void := (
+taskCellFinalizer(tc:TaskCell,p:null):void := (
      -- It is not safe to call any routines that depend on initialization of global variables here,
      -- because this finalizer may be called early, before all initialization is done.
      -- It is safe to write to stderr, because we've made output to it not depend on global variables being
      -- initialized.
-     if tc.body.done then return;
-     if tc.body.cancellationRequested then (
-	  stderr << "--thread " << " inaccessible, cancelled but not ready yet" << endl;
-	  )
-     else (
-	  if notify then stderr << "--cancelling inaccessible thread " << endl;
-	  when cancelTask(tc.body) is err:Error do (printError(err);) else nothing));
+     if taskDone(tc.body.task) then return;
+     if notify then stderr << "--cancelling inaccessible thread " << endl;
+     when cancelTask(tc.body) is err:Error do (printError(err);) else nothing);
 
 header "#include <signal.h>";
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
-     -- FIX ME
-     tc := TaskCell(TaskCellBody(Ccode(taskPointer,"((void *)0)"), false, false, false, fun, arg, nullE ));
+     tc := TaskCell(TaskCellBody(Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
-     threadCreate(startup,tc.body);
+     tc.body.task=taskCreate(startup,tc.body);
      Ccode(void, "sigprocmask(SIG_SETMASK,&old,NULL); }");
-     Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",threadCellFinalizer,",0,0,0)");
+     Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",taskCellFinalizer,",0,0,0)");
      Expr(tc));
 
 schedule(e:Expr):Expr := (
@@ -92,13 +85,14 @@ setupfun("schedule",schedule);
 taskResult(e:Expr):Expr := (
      when e is c:TaskCell do
      if c.body.resultRetrieved then buildErrorPacket("thread result already retrieved")
-     else if !c.body.done then buildErrorPacket("thread not done yet")
+     else if !taskDone(c.body.task) then buildErrorPacket("thread not done yet")
      else (
 	  r := c.body.returnValue;
 	  c.body.returnValue = nullE;
 	  c.body.resultRetrieved = true;
+	  c.body.task = nullTaskPointer();
 	  r)
-     else WrongArg("a thread"));
+     else WrongArg("a task"));
 -- # typical value: taskResult, Thread, Thing
 setupfun("taskResult",taskResult);
 

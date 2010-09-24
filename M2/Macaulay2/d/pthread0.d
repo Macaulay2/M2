@@ -17,6 +17,7 @@ export voidPointer := Pointer "void *";
 export nullPointer() ::= Ccode(voidPointer,"((void *)0)");
 export threadFunction := function(voidPointer):voidPointer;
 export taskPointer := Pointer "struct ThreadTask *";
+export nullTaskPointer() ::= Ccode(taskPointer,"((struct ThreadTask *)0)");
 export Thread := arithmeticType "pthread_t";	 -- we may have to change arithmeticType to Type
 export nullThread() ::= Thread(0);		 -- this may not always compile
 export (x:Thread) === (y:Thread) ::= Ccode(bool, "(0 != pthread_equal(,",x,",",y,"))");

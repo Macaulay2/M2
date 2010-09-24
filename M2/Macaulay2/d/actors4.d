@@ -681,7 +681,7 @@ readpromptfun():string := readprompt;
 isReadyFun(e:Expr):Expr := (
      when e
      -- # typical value: isReady, Thread, Boolean
-     is tc:TaskCell do toExpr(tc.body.done && !tc.body.resultRetrieved)
+     is tc:TaskCell do toExpr(taskDone(tc.body.task) && !tc.body.resultRetrieved)
      -- # typical value: isReady, File, Boolean
      is f:file do toExpr ( 
 	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) 
@@ -1012,12 +1012,11 @@ tostringfun(e:Expr):Expr := (
      is x:TaskCell do (
 --	  while !isInitialized(x) do nothing;
 	  toExpr(
-	       "<<thread " 
-	       + ", "
+	       "<<task, " 
 	       + (
 		    if x.body.resultRetrieved then "result delivered, thread terminated"
-		    else if x.body.done then "result available, thread done"
-		    else if x.body.cancellationRequested then "running, cancellation requested"
+		    else if taskDone(x.body.task) then "result available, thread done"
+		    else if !taskKeepRunning(x.body.task) then "running, cancellation requested"
 		    else "running"
 		    )
 	       + ">>"
