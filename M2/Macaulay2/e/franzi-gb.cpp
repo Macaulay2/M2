@@ -126,6 +126,7 @@ Pairs makeNewPairs(int newIndex, const IntermediateBasis &F, int n) {
     position = B.insert(position, pair);
   }
   IntermediateBasis::const_iterator end = F.end();
+  end--;
   for(IntermediateBasis::const_iterator iter = F.begin(); iter != end; ++iter) {
     int j = iter->first;
     Pair pair = Pair(newIndex, j, F);
@@ -162,11 +163,11 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
     return false;
   }
 
+
   int i = pair.i;
   int j = pair.j;
 
   brMonomial lcm = pair.lcm;
-  //brMonomial lcm = g | f;
   IntermediateBasis::const_iterator end = F.end();
   for(IntermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
     int k = it->first;
@@ -284,197 +285,6 @@ void rearrangeBasis(IntermediateBasis &F, int nextIndex) {
 }
 
 
-void stats(const IntermediateBasis &F) {
-    unsigned int min = 1<<30; 
-    unsigned int max = 0; 
-    double avg = 0;
-    for(IntermediateBasis::const_iterator it = F.begin(); it != F.end(); ++it ) {
-      unsigned int s = it->second.size();
-        if ( s < min ) {
-          min = s;
-        }
-        if ( s > max) {
-          max = s;
-        }
-        avg += s;
-    }
-    avg /= F.size();
-    cout << min << " " << max << " " << avg << endl;
-}
-
-// Bi = { j: fj is possibly reducible by LT(fi) }
-// "possibly reducible" means we do not already know that fj is not reducible by LT(fi)
-//
-// f = F[i]
-// g = F[j]
-//
-//reduce f with leading term of g, possible outcome: 
-//  1)   f -> 0
-//  2)   f -> f (no change)
-//  3)   f -> f' with new leadTerm (and maybe changes in tail)
-//  4)   f -> f' same leadTerm, changes in tail
-// the buckets have to be updated as follows: 
-//  1) Bi = {}
-//     remove i from all Bj's
-//  2) remove i from Bj 
-//  3) Bj += i for all i != j
-//     Bi = {1..n \i}
-//  4) Bj += i for all i != j
-
-typedef set<int> Bucket; // list of indeces
-typedef vector<Bucket> ReduceBuckets;
-
-// initialize buckets assuming that the elements in F have already been fully
-// interreduced, the last element in F has been reduced, but the other 
-// elements in F are possibly reducible by the last element
-void initializeBuckets(ReduceBuckets &B, const IntermediateBasis &F) {
-  B.clear();
-  int n = F.rbegin()->first;
-  B.resize(n +1); // index n means up to n+1 functions
-  IntermediateBasis::const_iterator last = F.end();
-  for(IntermediateBasis::const_iterator it = F.begin(); it != last; ++it) {
-    if ( n != it->first) {
-      B[n].insert(it->first);
-    }
-  }
-}
-
-// fi has new tail, all LT(fj)'s possibly reduce fi
-// add i to all Bj's
-void newTailUpdateBuckets(const int i, ReduceBuckets &B, const IntermediateBasis &F) {
-  IntermediateBasis::const_iterator end = F.end();
-  for(IntermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
-    if (it->first != i ) {
-      B[it->first].insert(i);
-    }
-  }
-}
-
-// fi has new leadTerm, LT(fi) possibly reduces all fj's
-void newLeadUpdateBuckets(const int i, ReduceBuckets &B, const IntermediateBasis &F) {
-  IntermediateBasis::const_iterator end = F.end();
-  for(IntermediateBasis::const_iterator it = F.begin(); it != end; ++it) {
-    if (it->first != i ) {
-      B[i].insert(it->first);
-    }
-  }
-}
-
-// F[i] reduced to 0 case 1
-// remove Bi and remove i from all Bj
-void reduceToZeroUpdateBucket(int i, ReduceBuckets &B) {
-  B[i].clear();
-  for( int j = 0; j < B.size(); j++) {
-    B[j].erase(i);
-  }
-}
-
-// just print all elements in B
-void printBucket(const ReduceBuckets &B) {
-  for (int i = 0; i < B.size(); i++ ) {
-    if (! B[i].empty()) {
-      cout << "B" << i << ": ";
-      for (Bucket::const_iterator it = B[i].begin(); it != B[i].end(); ++it) {
-        cout << *it << ", ";
-      }
-      cout << endl;
-    }
-  }
-}
-
-// interreduction
-// assume the first n-1 elements of F have been fully interreduced, fn is reduced, 
-// but f1..f(n-1) are possibly reducible by LT(fn)
-// nextIndex is the index of the last element in F
-void interreductionWithBuckets(IntermediateBasis &F) {
-  int initialBasisSize = F.size();
-
-#ifdef DEBBBB  
-  map<int,int> LtChanged;
-  map<int,int> TailChanged;
-#endif
-
-  ReduceBuckets B;
-  initializeBuckets(B, F);
-  bool changesHappened = true;
-  IntermediateBasis::iterator end = F.end();
-  unsigned long numChanged = 0;
-  while (changesHappened) {
-    changesHappened = false;
-    //printBucket(B);
-    for (int i = 0; i < B.size(); i++) {
-      if ( !B[i].empty() ) {
-        for (Bucket::iterator j = B[i].begin(); j != B[i].end(); ) {
-          //cout << "B[" << i << "], " << *j << "\t\t";
-//          if (i == *j) { // don't reduce fi with fi
-//            throw "this shouldn't happen";
-//            B[i].erase(j++);
-//          } else {
-            //try to reduce fj by fi
-            if ( F[*j].isLeadingReducibleBy(F[i]) ) {
-              cancelLeadTerm(F[*j], F[i]);
-#ifdef DEBBBB  
-              LtChanged[*j] += 1;
-#endif              
-
-              while ( !F[*j].isZero()  && F[*j].isLeadingReducibleBy(F[i]) ) { 
-                cancelLeadTerm(F[*j], F[i]);
-#ifdef DEBBBB  
-              LtChanged[*j] += 1;
-#endif              
-              }
-              // canceled leading term
-              numChanged++;
-              if (!F[*j].isZero()) { 
-                if (F[*j].reduceTail( F[i] ) ) {
-#ifdef DEBBBB  
-                  TailChanged[*j] += 1;
-#endif              
-                }
-//                if (F[*j] == 0 ) { 
-//                  throw "reduceTail generated a 0 polynomial";
-//                }
-
-                // change buckets case 3
-                newLeadUpdateBuckets(*j,B,F);
-                newTailUpdateBuckets(*j,B,F);
-     //           cout << "Updated Buckets case 3, B[" << i << "], " << *j << endl;
-
-                changesHappened = true;
-                ++j;
-              } else {
-                // change buckets case 1
-                //cout << "Updated Buckets case 1, B[" << i << "], " << *j << endl;
-                F.erase(*j);
-                reduceToZeroUpdateBucket(*j++,B);
-              }
-            } else if ( F.find(*j) == F.end() ) { 
-              cout << *j << " is in B[" << i << "], but not in F" << endl;
-            } else if (F[*j].reduceTail(F[i]) ) { // only changed tail
-#ifdef DEBBBB  
-                  TailChanged[*j] += 1;
-#endif              
-              // change buckets case 4
-              newTailUpdateBuckets(*j,B,F);
-              //cout << "Updated Buckets case 4, B[" << i << "], " << *j << endl;
-              numChanged++;
-              changesHappened = true;
-              ++j;
-            } else {
-               // change buckets case 2
-               //cout << " case 2 " << endl;
-               // fj not reducible by fi
-               // remove j from Bi
-               // cout << "B[" << i << "], " << *j << endl;
-               B[i].erase(j++); // case 2
-            }
-//          }
-        }
-      }
-    }
-  }
-}
-
 // interreduction
 void interreduction(IntermediateBasis &F) {
   bool changesHappened = true;
@@ -497,39 +307,42 @@ void interreduction(IntermediateBasis &F) {
       }
     }
   }
-  //cout << "Number of reductions: " << numChanged << ", F.size(): " << F.size() << ". Stats: ";
-  //stats(F);
 }
 
 
 // complete algorithm to compute a Groebner basis F  
 void gb( IntermediateBasis &F, int n) {
-  int interreductionMod = 0;
   int nextIndex = F.size(); 
   rearrangeBasis(F, -1);
   interreduction(F);
   Pairs B = makeList(F, n);
-  unsigned int countAddPoly = 0;
-  unsigned int numSPoly= 0;
+  //unsigned int countAddPoly = 0;
+  //unsigned int numSPoly= 0;
+  int interreductionCounter = 0;
   while (!B.empty()) {
     Pair pair = *(B.begin());
     B.erase(B.begin());
     if (isGoodPair(pair,F,B,n)) {
-      numSPoly++;
+      //numSPoly++;
       BRP S = sPolynomial(pair,F,n);
       reduce(S,F);
       if ( ! S.isZero() ) {
-        countAddPoly++;
-        //Pairs newList = makeNewPairs(nextIndex, F, n);
+        //countAddPoly++;
         F[nextIndex] = S;
-        //B.insert(newList.begin(), newList.end());
-        interreduction(F);
-        B = makeList(F, n);
+        if(interreductionCounter == 5) {
+          interreductionCounter = 0;
+          interreduction(F);
+          B = makeList(F, n);
+        } else {
+          interreductionCounter++;
+          Pairs newList = makeNewPairs(nextIndex, F, n);
+          B.insert(newList.begin(), newList.end());
+        }
         nextIndex++;
       }
     }
   }
-  //interreduction(F);
-  cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
+  interreduction(F);
+  //cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
 
