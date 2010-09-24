@@ -596,7 +596,7 @@ todd' = (r) -> (
 chi AbstractSheaf := F -> integral(todd variety F * ch F)
 
 segre = method(TypicalValue => RingElement)
-segre AbstractSheaf := E -> reciprocal chern dual E
+segre AbstractSheaf := E -> reciprocal chern E
 segre(ZZ, AbstractSheaf) := (p,F) -> part(p,segre F)
 -- we don't need this one:
 -- segre(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> (s := segre F; toList apply(p..q, i -> part(i,s)))
