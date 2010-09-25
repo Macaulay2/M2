@@ -311,6 +311,7 @@ geometricGenus(Ideal,Matrix):=(I1,ib)->(
 n:=(degree (gens I1)_(0,0))#0;
 gen:=(n-1)*(n-2)/2-sum(apply((entries matden(ib))#0,j->(degree j)#0));
 if denominator(gen)!=1 then print("ERROR");
+use ring I1;
 numerator(gen));
 --geomgenus(I,ib)
 
