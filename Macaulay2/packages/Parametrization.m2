@@ -1019,6 +1019,7 @@ if gcd(a,p)!=1 then return(false);
 L:=igcdx(a,p);
 ia:=L#0;
 if ia<0 then ia=ia+p;
+if p<0 then return(-ia);
 ia);
 
 --apply(1..100,q->modularInverse(q,51335)),
@@ -1174,7 +1175,7 @@ doc ///
 
     {\bf Setup:}
 
-    This package uses the package {\it AdjointIdeal}, so install this first.
+    This package uses the package {\it AdjointIdeal}, so set up this first.
 
     Place the file Parametrization.m2 somewhere into the M2 search path and install the package by doing
 
