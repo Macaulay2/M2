@@ -1,3 +1,5 @@
+/* This code written by Franziska Hinkelmann is in the public domain */
+
 #include "franzi-brp.hpp"
 #include <sys/time.h>
 #include <set>
