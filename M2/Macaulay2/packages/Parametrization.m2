@@ -310,6 +310,7 @@ R:=ring par;
 Ic:=ideal R;
 if degree Ic==1 then return(par);
 conicpar:=rParametrizeConic(Ic);
+if conicpar==0 then (print("No rational point on conic");return(par));
 v:=(entries vars R)#0;
 par2:=sub(par,{v#0=>conicpar_(0,0),v#1=>conicpar_(1,0),v#2=>conicpar_(2,0)});
 par2)
@@ -1150,11 +1151,13 @@ doc ///
     By inverting the birational map of C to \mathbb{P}^{1} or the conic we obtain a rational parametrization of C.
     If n is odd or C_2 has a rational point C is parametrized by \mathbb{P}^{1} otherwise by C_2.
 
-    The package is work in progress, so there will be future improvements and more testing is necessary.
+    The main focus of the algorithm is to avoid unnecessary choices to obtain a parametrization of small height.
 
     For more theoretical details see 
     J. Boehm: Rational parametrization of rational curves,
     @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+
+    The package is work in progress, so there will be future improvements and more testing is necessary.
 
 
     {\bf Key user functions:}
@@ -1667,9 +1670,10 @@ doc ///
     Option whether to rationally parametrize conics.
   Description
    Text
-       If this option is set true, the computation of @TO rParametrizePlaneCurve@ or @TO parametrize@
-       leads to a conic (even degree case) and if this conic has a rational point then this conic is also parametrized.
-       So the final result will be a parametrization over \mathbb{P}^{1}.
+       If this option is set true and the computation of @TO rParametrizePlaneCurve@ or @TO parametrize@
+       leads to a conic (even degree case) and this conic has a rational point then this conic is also parametrized.
+       So the final result will be a parametrization over \mathbb{P}^{1}. If the conic does not have a rational point
+       a warning is displayed and the parametrization over the conic is returned. 
         
    Example
      K=QQ;
