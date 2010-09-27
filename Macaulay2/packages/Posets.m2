@@ -1977,7 +1977,7 @@ L = lcmLattice I;
 
 meetIrreducibles L
 assert( (try meetIrreducibles P1  else oops) === oops )
-assert( (meetIrreducibles P2) == {e,f,g,b,d} )
+assert( set meetIrreducibles P2 === set {e,f,g,b,d} )
 assert( (set meetIrreducibles L) === set {x^2, y^3*z, x*y^3*z, x^2*y*z, x^2*y^3, x^2*y^3*z} )
 ///
 
