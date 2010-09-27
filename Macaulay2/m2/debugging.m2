@@ -200,11 +200,7 @@ listUserSymbols = Command ( type -> listSymbols userSymbols type )
 clearOutput = Command (() -> scan(join({global oo, global ooo, global oooo}, values OutputDictionary), s -> s <- s ))
 clearAll = Command (() -> ( 
 	  clearOutput(); 
-	  scan(values User#"private dictionary", X -> (
-		    x := value X;
-		    if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === X then removeAttribute(x,ReverseDictionary);
-		    X <- X;
-		    ));
+	  scan(values User#"private dictionary", X -> globalAssign(X,X));
 	  ))
 
 generateAssertions = method(TypicalValue => Net)
