@@ -1490,15 +1490,17 @@ doc///
      Description
      	  Text 
 	       This routine returns the Moebius function values for the unique minimal element to each element of the poset.
+	       If {\tt P} has more than one minimal element, an error will be signalled.
 	       In this example, $a$ is the minimal element of $P$; $M$ lists the Moebius function values from $a$ to each element of $P$.
 	  Example
 	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
 	       M = moebiusFunction(P)	
-	  Text
-	       In the following example, the poset $Q$ has two distinct minimal elements and the routine returns an error. 
-	  Example
-	       Q = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
-	       moebiusFunction(Q)	          
+     	  -- example code can't include errors!
+	  -- Text
+	  --      In the following example, the poset $Q$ has two distinct minimal elements and the routine returns an error. 
+	  -- Example
+	  --      Q = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
+	  --      moebiusFunction(Q)	          
      SeeAlso
      	  (moebiusFunction,Poset,Thing,Thing)
 	  Poset
