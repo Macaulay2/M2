@@ -20,6 +20,7 @@
 --     	    	      	   added tests for solveBlackBox() and mixedVol()
 --     	    TO DO list:
 --     	    	 - decide the name for solveBlackBox(). I don't think we can use "solve". How about numSolve, or something? or phcSolve? or solvePHC?
+-- decision: phcSolve
 --     	    	 - optional input: precision --for a script example, see "toricMarkov" code from FourTiTwo.m2 --and documentation
 --     	    	 - refineSoln() --draft is there
 --     	    	 - "phc -f" to filter solutions close to zero
@@ -32,8 +33,8 @@ needsPackage "NAGtypes"
 
 newPackage(
 	"PHCpack",
-    	Version => "0.1", 
-    	Date => "19 April 2010",
+    	Version => "0.2", 
+    	Date => "30 September 2010",
     	Authors => {
 	     {Name => "Elizabeth Gross", Email => "lizgross@math.uic.edu",  HomePage => "http://www.math.uic.edu/~lizgross"},
 	     {Name => "Sonja Petrovic", Email => "petrovic@math.uic.edu", HomePage => "http://www.math.uic.edu/~petrovic"},
@@ -153,6 +154,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
      )
 
 -- copied from PHCpack.interface.m2 -- check if correct!!!
+-- JV 30 Sep 2010 : inserted "Coordinates" between S#i and v in S#i#v
 solutionsToFile = method(TypicalValue => Nothing,
      Options => {Append => false})
 solutionsToFile (List,Ring,String) := o -> (S,R,name) -> (
@@ -168,8 +170,8 @@ solutionsToFile (List,Ring,String) := o -> (S,R,name) -> (
 	       "the solution for t :" << endl;
 	       scan(numgens R, v->(
       	       		 L := " "|toString R_v|" :  "|
-			 format(0,-1,9,9,realPart toCC S#i#v)|"  "|
-			 format(0,-1,9,9,imaginaryPart toCC S#i#v);
+			 format(0,-1,9,9,realPart toCC S#i#Coordinates#v)|"  "|
+			 format(0,-1,9,9,imaginaryPart toCC S#i#Coordinates#v);
 			 file << L << endl; 
 			 ));
 	       file <<  "== err :  0 = rco :  1 = res :  0 ==" << endl;
@@ -304,12 +306,50 @@ mixedVolume  List := ZZ => system -> (
 -----------------------------------
 -------- REFINING SOLNS -----------
 -----------------------------------
-refineSoln = method(TypicalValue => List)  
-refineSoln  List := List => soln -> (
-     -- IN: 
-     -- OUT:
-     << "this function still remains to be written" << endl;
-     )
+-- JV 30 Sep 2010 begin modifications
+-- IMPORTANT : I had to erase the documentation below to make this work...
+refineSoln = method()
+refineSoln (List,List,ZZ) := (f,sols,dp) -> (
+   stdio << "making temporary files ..." << endl;
+   PHCinputFile = temporaryFileName() | "PHCinput";
+   PHCoutputFile = temporaryFileName() | "PHCoutput";
+   PHCbatchFile = temporaryFileName() | "PHCbatch";
+   PHCsessionFile = temporaryFileName() | "PHCsession";
+   PHCsolutions = temporaryFileName() | "PHCsolutions";
+   stdio << "writing input system to " << PHCinputFile << endl;
+   systemToFile(f,PHCinputFile);
+   stdio << "appending solutions to " << PHCinputFile << endl;
+   R := ring first f;
+   solutionsToFile(sols,R,PHCinputFile,Append=>true);
+   stdio << "preparing input data for phc -v in "
+         << PHCbatchFile << endl;
+   s := concatenate("3\n",PHCinputFile);
+   s = concatenate(s,"\n");
+   s = concatenate(s,PHCoutputFile);
+   s = concatenate(s,"\n3\n1.0E-");
+   s = concatenate(s,toString(dp-8));  -- tolerance for correction term
+   s = concatenate(s,"\n4\n1.0E");
+   s = concatenate(s,toString(dp+8));  -- tolerance for residual
+   s = concatenate(s,"\n6\n");
+   s = concatenate(s,toString(dp/10)); -- number of Newton iterations
+   s = concatenate(s,"\n7\n");
+   s = concatenate(s,toString(dp));    -- decimal places in working precision
+   s = concatenate(s,"\n0\n");
+   bat := openOut PHCbatchFile;
+   bat << s;
+   close bat;
+   stdio << "running phc -v, writing output to " << PHCsessionFile << endl;
+   run("phc -v < " | PHCbatchFile | " > " | PHCsessionFile);
+   stdio << "for refined solutions, see file " << PHCoutputFile << endl;
+   stdio << "running phc -z on " << PHCoutputFile << endl;
+   stdio << "solutions in Maple format in " << PHCsolutions << endl;
+   run("phc  -z " | PHCoutputFile | " " | PHCsolutions);
+   stdio << "parsing file " << PHCsolutions << " for solutions" << endl;
+   result := parseSolutions(PHCsolutions,R,Bits=>212);
+   result
+)
+
+-- JV 30 Sep 2010 end modifications
 
 --here is a sample method from FirstPackage.m2:
 -- firstFunction = method(TypicalValue => String)
@@ -404,7 +444,7 @@ trackPaths (List,List,List) := List => o -> (S,T,solsS) -> (
 
 refineSolutions = method(TypicalValue => List, Options => {
 	  ResidualTolerance => 0, 
-	  ErrorTolerance => 1e-10,
+          ErrorTolerance => 1e-10,
 	  Iterations => null,
 	  Bits => 300
 	  }
@@ -773,28 +813,6 @@ doc ///
 -----------------------------------
 ----- Documenting refineSoln ------
 -----------------------------------
-doc ///
-     Key
-     	  refineSoln
-          (refineSoln, List)
-     Headline
-     	  refines the solutions of a system; invokes "phc -????" from PHCpack
-     Usage
-     	  refineSoln(solutions)
-     Inputs
-      	  solutions:List
-	       whose entries are the solutions .........
-     Outputs
-     	  s:List 
-	       refined solutions of the system....... 
-     Description
-     	  Text
-	       Describe what is going on; and insert an example below.......
-	  Example
-	       R=QQ[x,y,z]
-	       S={y-x^2,z-x^3,x+y+z-1}--this is not a good example; insert the one we were playing with @office last month.     
-///;
-
 -----------------------------------
 ----- Documenting convertToPoly ------
 -----------------------------------
