@@ -1,6 +1,5 @@
+-- -*- coding: utf-8 -*- this has to be on the first line
 needsPackage "AdjointIdeal"
-
--- -*- coding: utf-8 -*-
 newPackage(
 	"Parametrization",
     	Version => "0.6", 
@@ -310,6 +309,7 @@ R:=ring par;
 Ic:=ideal R;
 if degree Ic==1 then return(par);
 conicpar:=rParametrizeConic(Ic);
+if conicpar==0 then (print("No rational point on conic");return(par));
 v:=(entries vars R)#0;
 par2:=sub(par,{v#0=>conicpar_(0,0),v#1=>conicpar_(1,0),v#2=>conicpar_(2,0)});
 par2)
@@ -1018,6 +1018,7 @@ if gcd(a,p)!=1 then return(false);
 L:=igcdx(a,p);
 ia:=L#0;
 if ia<0 then ia=ia+p;
+if p<0 then return(-ia);
 ia);
 
 --apply(1..100,q->modularInverse(q,51335)),
@@ -1150,11 +1151,13 @@ doc ///
     By inverting the birational map of C to \mathbb{P}^{1} or the conic we obtain a rational parametrization of C.
     If n is odd or C_2 has a rational point C is parametrized by \mathbb{P}^{1} otherwise by C_2.
 
-    The package is work in progress, so there will be future improvements and more testing is necessary.
+    The main focus of the algorithm is to avoid unnecessary choices to obtain a parametrization of small height.
 
     For more theoretical details see 
     J. Boehm: Rational parametrization of rational curves,
     @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+
+    The package is work in progress, so there will be future improvements and more testing is necessary.
 
 
     {\bf Key user functions:}
@@ -1171,7 +1174,7 @@ doc ///
 
     {\bf Setup:}
 
-    This package uses the package {\it AdjointIdeal}, so install this first.
+    This package uses the package {\it AdjointIdeal}, so set up this first.
 
     Place the file Parametrization.m2 somewhere into the M2 search path and install the package by doing
 
@@ -1667,9 +1670,10 @@ doc ///
     Option whether to rationally parametrize conics.
   Description
    Text
-       If this option is set true, the computation of @TO rParametrizePlaneCurve@ or @TO parametrize@
-       leads to a conic (even degree case) and if this conic has a rational point then this conic is also parametrized.
-       So the final result will be a parametrization over \mathbb{P}^{1}.
+       If this option is set true and the computation of @TO rParametrizePlaneCurve@ or @TO parametrize@
+       leads to a conic (even degree case) and this conic has a rational point then this conic is also parametrized.
+       So the final result will be a parametrization over \mathbb{P}^{1}. If the conic does not have a rational point
+       a warning is displayed and the parametrization over the conic is returned. 
         
    Example
      K=QQ;
@@ -1797,13 +1801,13 @@ assert(legendreSymbol(14,7)==0);
 ///
 
 
-
-TEST ///
-R=QQ[y_0..y_2];
-I=ideal(7*y_0^2+11*y_2^2+13*y_0*y_2+17*y_1^2+19*y_1*y_2);
-p=rationalPointOnConic I;
-assert(sub(I,{y_0=>p_(0,0),y_1=>p_(0,1),y_2=>p_(0,2)})==0);
-///
+-- this test commented out because it requires the presence of maple
+-- TEST ///
+-- R=QQ[y_0..y_2];
+-- I=ideal(7*y_0^2+11*y_2^2+13*y_0*y_2+17*y_1^2+19*y_1*y_2);
+-- p=rationalPointOnConic I;
+-- assert(sub(I,{y_0=>p_(0,0),y_1=>p_(0,1),y_2=>p_(0,2)})==0);
+-- ///
 
 
 TEST ///
@@ -1821,16 +1825,17 @@ pI=rParametrizePlaneCurve(I,J,parametrizeConic=>true);
 assert(testParametrization(I,pI)==true);
 ///
 
-TEST ///
-a=modularSquareRoot(626,1180943);
-assert(a==348206 or a==832737);
-a=modularSquareRoot(3,13);
-assert(a==4 or a==9);
-a=modularSquareRoot(7,14);
-assert(a==7);
-a=modularSquareRoot(3,14);
-assert(a==FAIL);
-///
+-- this test commented out because it requires the presence of maple
+-- TEST ///
+-- a=modularSquareRoot(626,1180943);
+-- assert(a==348206 or a==832737);
+-- a=modularSquareRoot(3,13);
+-- assert(a==4 or a==9);
+-- a=modularSquareRoot(7,14);
+-- assert(a==7);
+-- a=modularSquareRoot(3,14);
+-- assert(a==FAIL);
+-- ///
 
 TEST ///
 assert(chineseRemainder({1,2,3},{3,5,7})==52);
