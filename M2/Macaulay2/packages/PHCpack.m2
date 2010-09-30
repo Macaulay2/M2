@@ -327,11 +327,12 @@ refineSoln (List,List,ZZ) := (f,sols,dp) -> (
    s = concatenate(s,"\n");
    s = concatenate(s,PHCoutputFile);
    s = concatenate(s,"\n3\n1.0E-");
-   s = concatenate(s,toString(dp-8));  -- tolerance for correction term
-   s = concatenate(s,"\n4\n1.0E");
-   s = concatenate(s,toString(dp+8));  -- tolerance for residual
+   s = concatenate(s,toString(dp-4));  -- tolerance for correction term
+   s = concatenate(s,"\n4\n1.0E-");
+   s = concatenate(s,toString(dp+16));  -- tolerance for residual
    s = concatenate(s,"\n6\n");
-   s = concatenate(s,toString(dp/10)); -- number of Newton iterations
+   nit := ceiling(dp/10.0);
+   s = concatenate(s,toString(nit));   -- number of Newton iterations
    s = concatenate(s,"\n7\n");
    s = concatenate(s,toString(dp));    -- decimal places in working precision
    s = concatenate(s,"\n0\n");
@@ -345,7 +346,8 @@ refineSoln (List,List,ZZ) := (f,sols,dp) -> (
    stdio << "solutions in Maple format in " << PHCsolutions << endl;
    run("phc  -z " | PHCoutputFile | " " | PHCsolutions);
    stdio << "parsing file " << PHCsolutions << " for solutions" << endl;
-   result := parseSolutions(PHCsolutions,R,Bits=>212);
+   b := ceiling(log_2(10^dp));
+   result := parseSolutions(PHCsolutions,R,Bits=>b);
    result
 )
 
