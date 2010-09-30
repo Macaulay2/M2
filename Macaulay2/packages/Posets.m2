@@ -8,7 +8,7 @@ newPackage(
     	Version => "0.1.5", 
     	Date => "September 17, 2010",
     	Authors => {
-	     {Name => "Sonja Mapes", Email => "mapes@math.columbia.edu", HomePage => "http://www.math.columbia.edu/~mapes/"},
+	     {Name => "Sonja Mapes", Email => "smapes@math.duke.edu", HomePage => "http://www.math.duke.edu/~smapes/"},
 	     {Name => "Gwyn Whieldon", Email => "whieldon@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Grads/whieldon.html"}
 	     },
     	Headline => "Package for processing posets and order complexes",
