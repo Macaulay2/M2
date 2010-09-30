@@ -18,7 +18,7 @@ Gc = flagBundle({3,3}, pt, VariableNames => {,c})
 -- B:=Symm(3,Qc):
 B = symmetricPower_3 Qc
 -- Proj(X,dual(B),z):
-X = projectiveBundle(dual B, VariableNames => {,{z}})
+X = projectiveBundle'(dual B, VariableNames => {,{z}})
 -- A:=Symm(6,Qc)-Symm(3,Qc)&@o(-z):
 A = symmetricPower_6 Qc - symmetricPower_3 Qc ** OO(-z)
 -- c18:=chern(rank(A),A):
@@ -38,7 +38,7 @@ assert( oo == 2734099200 )
 Gc = flagBundle({2,3}, pt, VariableNames => {,c})
 (Sc,Qc) = Gc.Bundles
 B = symmetricPower_7 Qc
-X = projectiveBundle(dual B, VariableNames => {,{z}})
+X = projectiveBundle'(dual B, VariableNames => {,{z}})
 A = symmetricPower_15 Qc - symmetricPower_3 Qc ** OO(-z)
 integral chern A
 assert( 99992296084705144978200 == oo)

@@ -2,26 +2,30 @@
 newPackage(
 	"Schubert2",
 	AuxiliaryFiles => true,
-    	Version => "0.3",
-    	Date => "December, 2009",
+    	Version => "0.4",
+    	Date => "September 30, 2010",
 	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no", HomePage => "http://stromme.uib.no/home/" },
-	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"}
+	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
+	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
     	Headline => "computations of characteristic classes for varieties without equations"
     	)
 
-export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "schubertCycle'", "ReturnType",
+export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle'", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "FlagBundle",
-     "flagBundle", "projectiveBundle", "projectiveBundle'", "projectiveSpace", "projectiveSpace'", "PP", "PP'", "integral", "IntersectionRing",
+     "flagBundle", "projectiveBundle'", "projectiveBundle", "projectiveSpace'", "projectiveSpace", "PP'", "PP", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
-     "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle","Pullback",
-     "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
+     "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
+     "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base", 
+     "toSchubertBasis", "Correspondence", "IncidenceCorrespondence", "intermediates",
+     "incidenceCorrespondence","SchubertRing",
+     "tautologicalLineBundle", "bundles", "schubertRing"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
 
@@ -30,6 +34,14 @@ protect ChernClass
 protect IntersectionRing
 protect TangentBundle
 protect ToddClass
+protect SourceToTarget
+protect TargetToSource
+protect Intermediate
+protect IntermediateToSource
+protect IntermediateToTarget
+protect htoschubert
+protect schuberttoh
+protect SchubertRing
 
 fixvar = s -> if instance(s,String) then getSymbol s else s
 
@@ -90,13 +102,21 @@ AbstractVarietyMap * AbstractVarietyMap := AbstractVarietyMap => (f,g) -> new Ab
 
 map(FlagBundle,AbstractVarietyMap,List) := AbstractVarietyMap => x -> notImplemented()
 map(FlagBundle,AbstractVariety,List) := AbstractVarietyMap => x -> notImplemented()
-AbstractVariety#id = (X) -> new AbstractVarietyMap from {
+AbstractVariety#id = (X) -> (
+     R := intersectionRing X;
+     idmap := id_R;
+     pullback := method();
+     pullback ZZ := pullback QQ := pullback R := z -> idmap z;
+     pullback AbstractSheaf := E -> (
+	  if variety E =!= X then error "pullback: variety mismatch";
+	  E);
+     new AbstractVarietyMap from {
      symbol source => X,
      symbol target => X,
-     Pullback => id_(intersectionRing X),
+     PullBack => pullback,
      PushForward => identity,
      SectionClass => 1_(intersectionRing X)
-     }
+     })
 AbstractVariety / AbstractVariety := AbstractVarietyMap => (X,S) -> (
      maps := while X =!= S and X.?StructureMap list (f := X.StructureMap; X = target f; f);
      if #maps == 0 then id_X
@@ -104,6 +124,58 @@ AbstractVariety / AbstractVariety := AbstractVarietyMap => (X,S) -> (
 
 sectionClass = method(TypicalValue => RingElement)
 sectionClass AbstractVarietyMap := f -> f.SectionClass
+
+Correspondence = new Type of MutableHashTable
+IncidenceCorrespondence = new Type of Correspondence
+IncidenceCorrespondence.synonym = "incidence correspondence"
+--SimpleCorrespondence = new Type of Correspondence
+--SimpleCorrespondence.synonym = "simple correspondence"
+globalAssignment Correspondence
+toString Correspondence := net Correspondence := X -> (
+     if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
+     else "a correspondence")
+Correspondence#{Standard,AfterPrint} = X -> (
+     << endl;				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber << " : "
+     << "a correspondence from " << X.source << " to " << X.target << endl;
+     )
+toString IncidenceCorrespondence := net IncidenceCorrespondence := X -> (
+     if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
+     else "an incidence correspondence")
+IncidenceCorrespondence#{Standard,AfterPrint} = X -> (
+     << endl;				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber << " : "
+     << "an incidence correspondence from " << X.source << " to " << X.target << endl;
+     )
+
+Correspondence _* := Function => c -> c.SourceToTarget
+Correspondence ^* := Function => c -> c.TargetToSource
+source Correspondence := AbstractVariety => c -> c.source
+target Correspondence := AbstractVariety => c -> c.target
+transpose Correspondence := Correspondence => c -> (
+     new Correspondence from {
+	  global source => target c,
+	  global target => source c,
+	  SourceToTarget => c.TargetToSource,
+	  TargetToSource => c.SourceToTarget})
+transpose IncidenceCorrespondence := IncidenceCorrespondence => c -> (
+     new IncidenceCorrespondence from {
+	  global source => target c,
+	  global target => source c,
+	  SourceToTarget => c.TargetToSource,
+	  TargetToSource => c.SourceToTarget,
+	  Intermediate => c.Intermediate,
+	  IntermediateToSource => c.IntermediateToTarget,
+	  IntermediateToTarget => c.IntermediateToSource})
+intermediates = method()
+intermediates IncidenceCorrespondence := AbstractVariety => c -> (
+     c.Intermediate, c.IntermediateToSource, c.IntermediateToTarget)
+Correspondence * Correspondence := Correspondence => (X,Y) -> (
+     new Correspondence from {
+	  global source => source Y,
+	  global target => target X,
+	  SourceToTarget => X.SourceToTarget @@ Y.SourceToTarget,
+	  TargetToSource => Y.TargetToSource @@ X.TargetToSource})
 
 AbstractSheaf = new Type of HashTable
 AbstractSheaf.synonym = "abstract sheaf"
@@ -136,6 +208,7 @@ abstractSheaf AbstractVariety := opts -> X -> (
 	  )
      else if opts.Rank =!= null then (
 	  ch = rk = promote(opts.Rank,A);
+	  --precomputing the Chern character is greatly slowing down some computations
 	  if opts.ChernClass =!= null then ch = ch + logg promote(opts.ChernClass,A);
 	  )
      else error "expected Rank or ChernCharacter option";
@@ -197,13 +270,9 @@ euler AbstractVariety := X -> integral ctop tangentBundle X
 AbstractSheaf QQ := AbstractSheaf ZZ := AbstractSheaf => (F,n) -> (
      if n == 0 then return F;
      X := variety F;
-     if not X.?TautologicalLineBundle then error "expected a variety with a tautological line bundle";
-     L := (
-	  if n == 1
-	  then X.TautologicalLineBundle
-	  else abstractSheaf(X, Rank => 1, ChernClass => 1 + n * chern_1 X.TautologicalLineBundle)
-	  );
-     F ** L)
+     O1 := tautologicalLineBundle X;
+     F **((O1)^**n)
+     )
 AbstractSheaf RingElement := AbstractSheaf => (F,n) -> (
      if n == 0 then return F;
      X := variety F;
@@ -213,9 +282,8 @@ AbstractSheaf RingElement := AbstractSheaf => (F,n) -> (
      if not isHomogeneous n then error "expected homogeneous element of degree 0 or 1";
      d := first degree n;
      if d == 0 then (
-     	  if X.?TautologicalLineBundle 
-	  then F ** abstractSheaf(X, Rank => 1, ChernClass => n * chern_1 X.TautologicalLineBundle)
-     	  else error "expected a variety with an ample line bundle"
+     	  O1 := tautologicalLineBundle X; 
+	  F ** ((O1)^**n)
 	  )
      else if d == 1 then (
 	  F ** abstractSheaf(X, Rank => 1, ChernClass => 1 + n)
@@ -375,6 +443,7 @@ geometricSeries = (t,n,dim) -> (			    -- computes (1+t)^n assuming t^(dim+1) ==
      r)
 
 AbstractSheaf ^** ZZ := AbstractSheaf => (E,n) -> (
+     if n == 1 then return E;
      if n < 0 then (
 	  if rank E =!= 1 then error "negative tensor power of sheaf of rank not equal to 1 requested";
 	  E = dual E;
@@ -468,7 +537,8 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	       bdl));
      FV.SubBundles = (() -> ( t := OO_FV^0; for i from 0 to n list if i == 0 then t else t = t + bundles#(i-1)))();
      FV.QuotientBundles = (() -> ( t := OO_FV^0; for i from 0 to n list if i == 0 then t else t = t + bundles#(n-i)))();
-     FV.TautologicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
+     --next line is taking a long time to run because computation of Chern character is slow
+     --FV.TautologicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
      pullback := method();
      pushforward := method();
      pullback ZZ := pullback QQ := r -> promote(r,C);
@@ -505,26 +575,356 @@ use AbstractVariety := AbstractVariety => X -> (
 
 installMethod(symbol SPACE, OO, RingElement, AbstractSheaf => (OO,h) -> OO_(variety ring h) (h))
 
-projectiveBundle = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
-projectiveBundle ZZ := opts -> n -> flagBundle({n,1},opts)
-projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
-projectiveBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
-
 projectiveBundle' = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
-projectiveBundle' ZZ := opts -> n -> flagBundle({1,n},opts)
-projectiveBundle'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,opts)
-projectiveBundle' AbstractSheaf := opts -> E -> flagBundle({1, rank E - 1},E,opts)
+projectiveBundle' ZZ := opts -> n -> flagBundle({n,1},opts)
+projectiveBundle'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
+projectiveBundle' AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 
-projectiveSpace = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
-projectiveSpace ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{fixvar opts.VariableName}})
-projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{fixvar opts.VariableName}})
+projectiveBundle = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
+projectiveBundle ZZ := opts -> n -> flagBundle({1,n},opts)
+projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,opts)
+projectiveBundle AbstractSheaf := opts -> E -> flagBundle({1, rank E - 1},E,opts)
 
 projectiveSpace' = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
-projectiveSpace' ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{fixvar opts.VariableName},})
-projectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{fixvar opts.VariableName},})
+projectiveSpace' ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{fixvar opts.VariableName}})
+projectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{fixvar opts.VariableName}})
 
-PP  = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
-PP' = new ScriptedFunctor from { superscript => i -> projectiveSpace' i }
+projectiveSpace = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
+projectiveSpace ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{fixvar opts.VariableName},})
+projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{fixvar opts.VariableName},})
+
+PP'  = new ScriptedFunctor from { superscript => i -> projectiveSpace' i }
+PP = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
+
+bundles = method()
+bundles FlagBundle := X -> X.Bundles
+tautologicalLineBundle = method()
+tautologicalLineBundle AbstractVariety := X -> (
+     if X.?TautologicalLineBundle then X.TautologicalLineBundle else
+     error "variety does not have a tautological line bundle")
+tautologicalLineBundle FlagBundle := X -> (
+     if X.?TautologicalLineBundle then X.TautologicalLineBundle else (
+	  B := bundles X;
+	  X.TautologicalLineBundle = OO_X(sum(1 .. #B - 1, i -> i * chern(1,B#i)));
+	  X.TautologicalLineBundle))
+
+--given L a basepoint-free line bundle on an AbstractVariety X over some other variety B,
+--and P the projectivization of a bundle E on B, mapstope(X,P,L) builds the map
+--from X to P such that the pullback of O_P(1) is L.  Note that while specifying such a map
+--requires a surjection from (the pullback of E to X) onto L, the intersection theory does
+--not depend on the choice of surjection
+--
+--warning: Schubert2 does not check that the line bundle provided is basepoint-free
+--
+--warning 2: default is Fulton notation, currently no way to access Grothendieck-style if
+--target projective space has dimension 1
+map(FlagBundle,AbstractVariety,AbstractSheaf) := opts -> (P,X,L) -> (
+     --by Charley Crissman
+     B := P.Base;
+     try f := X / B else error "expected first variety to have same base as projective bundle";
+     if not #P.Bundles == 2 then error "expected a projective bundle";
+     if not (P.BundleRanks#0 == 1 or P.BundleRanks#1 == 1) then error "expected a projective bundle";
+     if not (rank L == 1) then error "expected a line bundle";
+     fulton := (P.BundleRanks#0 == 1); --Fulton-style notation?
+     RB := intersectionRing B;
+     RX := intersectionRing X;
+     RP := intersectionRing P;
+     (S,Q) := P.Bundles;
+     n := P.Rank - 1;
+     p := P.StructureMap;
+     cE := lift(chern(S + Q),RB);
+     E := abstractSheaf(B, Rank => n+1, ChernClass=>cE);
+     sE := if fulton then reciprocal chern E else reciprocal chern dual E;
+     H := if fulton then -chern(1,S) else chern(1,Q);
+     cL := chern(1,L);
+     local aclasses;
+     local nextclass;
+     pfmap := a -> (
+	 aclasses = {}; --eventual pushforward of a will be sum_{i=0}^n a_i*H^(n-i)
+	 for i from 0 to n do (
+	      nextclass = sum for j from 0 to i-1 list (
+	           aclasses#j * part(i-j,sE));
+	      nextclass = f_*(a*((cL)^i)) - nextclass;
+	      aclasses = append(aclasses,nextclass));
+	 sum for i from 0 to n list (H^(n-i))*(p^*(aclasses#i)));
+     pushforward := method();
+     pushforward RX := a -> pfmap a;
+     M := if fulton then (matrix {{-cL} | for i from 1 to n list (
+          chern(i, (f^* E) + L))})
+     else (matrix {(for i from 1 to n list (
+	  chern(i, (f^* E) - L))) | {cL}});
+     pbmap := map(RX,RP,M);
+     pullback := method();
+     pullback RP := a -> pbmap a;
+     pullback AbstractSheaf := F -> (
+	  if variety F =!= P then error "pullback: variety mismatch";
+	  abstractSheaf(X,Rank => rank F,ChernClass => pullback chern F));
+     ourmap := new AbstractVarietyMap from {
+          global target => P,
+          global source => X,
+          PushForward => pushforward,
+          PullBack => pullback};
+     if X.?TangentBundle then (--can't build pushforward of sheaves without relative tangent bundle
+          pushforward AbstractSheaf := F -> (
+   	  if variety F =!= X then error "pushforward: variety mismatch";
+	       abstractSheaf(P,ChernCharacter => pushforward (ch F * todd ourmap))))
+     --can we compute relative tangent bundle to this map without tangent bundle of X?
+     else pushforward AbstractSheaf := F -> (
+          error "cannot push forward sheaves along map with no relative tangent bundle");
+     ourmap)
+ 
+--Given a base variety X, bundles E_1,..,E_n on X, and a list of lists of integers
+--L = {{a_(1,1),..,a_(1,k_1)}, ... , {a_(n,1),..,a_(n,k_n)}},
+--let F_1 = flagBundle({a_(1,1),..,a_(1,k_1)},E_1), let p_1 be the structure map from F1 to X,
+--and recursively let F_i = flagBundle({a_(i,1),..,a_(i,k_i)},p_(i-1)^* E_i)
+--and p_i be the composition of p_(i-1) and the structure map of F_(i-1).
+--then multiFlag(L,{E_1,..,E_n}) is F_n, but is constructed in a single step
+--rather than iteratively.
+--
+--Equivalently, this is the fiber product over X of the varieties
+--flagBundle({a_(i,1),..,a_(i,k_i)}) for all i.
+--
+--This method is not exported and not meant to be user accessed; it is used in building forgetful
+--maps of flag varieties.
+multiFlag = method()
+multiFlag(List,List) := (bundleRanks, bundles) -> (
+     --by Charley Crissman
+     K := local K;
+     if not #bundleRanks == #bundles then error "expected same number of bundles as lists of ranks";
+     if not all(bundleRanks, l -> all(l, r -> instance(r,ZZ) and r>=0)) then error "expected bundles ranks to be positive integers";
+     X := variety bundles#0;
+     if not all(bundles, b -> (variety b) === X) then error "expected all bundles over same base";
+     n := #bundleRanks;
+     for i from 0 to n-1 do (
+	  if not sum(bundleRanks#i) == rank bundles#i then error "expected rank of bundle to equal sum of bundle ranks");
+     varNames := apply(0 .. n-1, i -> apply(1 .. #(bundleRanks#i), bundleRanks#i, (j,r) ->(
+		    apply(toList(1..r), k -> new IndexedVariable from {K,(i+1,j,k)}))));
+     --i -> base bundle, j -> bundle in flag from base bundle, k -> chern class
+     Ord := GRevLex;
+     dgs := splice flatten apply(bundleRanks, l -> apply(l, r-> 1 .. r));
+     S := intersectionRing X;
+     mo := flatten apply(bundleRanks, l -> apply(l, r -> Ord => r));
+     hft := {1};
+     U := S(monoid [flatten flatten varNames, Degrees => dgs, MonomialOrder => mo, Join => false, Heft => hft, DegreeRank => 1]);
+     A := U; F := identity;
+     chclasses := apply(varNames, l->apply(l, x -> F (1_U + sum(x, v-> U_v))));
+     rlns := apply(chclasses, bundles, (c,b) -> product c - F promote(chern b, U));
+     rlns = flatten apply(rlns, r -> sum @@ last \ sort pairs partition(degree,terms(QQ,r)));
+     rlns = ideal matrix(U,{rlns});
+     HR := degreesRing hft;
+     T := HR_0;
+     hilbertSeriesHint := product for i from 0 to n-1 list (
+	  k := sum (bundleRanks#i);
+	  product for j from 1 to k list 1 - T^j);
+     if heft S =!= null and degreesRing S === HR then (
+         gb(rlns, Hilbert => hilbertSeriesHint * numerator hilbertSeries S));
+     B := A/rlns;
+     C := B; H := identity;
+     d := dim X + sum(bundleRanks, l-> (
+	       sum(0 .. #l-1, i-> sum(0 .. i-1, j-> l#i * l#j))));
+     MF := C.Variety = abstractVariety(d,C);
+     MF.Base = X;
+     MF.Bundles = apply(0 .. n-1, l -> (
+	         	       apply(0 .. #(bundleRanks#l)-1, i -> (
+			 bdl := abstractSheaf(MF, Rank => bundleRanks#l#i, ChernClass => H promote(chclasses#l#i,B));
+			 bdl))));
+     pullback := method();
+     pushforward := method();
+     pullback ZZ := pullback QQ := r -> promote(r,C);
+     pullback S := r -> promote(r, B);
+     --pullback S := r -> promote(promote(r,U), B);
+     --probably take out the if n == 0 part
+     sec := if n === 0 then 1_C else (
+	  product(0 .. n-1, l-> (
+		    if #(bundleRanks#l) === 0 then 1_C else (
+		         product(1 .. #(bundleRanks#l)-1, i -> promote((ctop MF.Bundles#l#i)^(sum(i, j -> bundleRanks#l#j)),B))))));
+     pushforward C := r -> coefficient(sec,r);
+     pullback AbstractSheaf := E -> (
+	  if variety E =!= X then error "pullback-variety mismatch";
+	  abstractSheaf(MF,Rank => rank E, ChernClass => pullback chern E));
+     p := new AbstractVarietyMap from {
+	  global target => X,
+	  global source => MF,
+	  SectionClass => sec,
+	  PushForward => pushforward,
+	  PullBack => pullback
+	  };
+     MF.StructureMap = p;
+     tangentBundles := toList apply(MF.Bundles, L -> (
+	  if #L > 1
+	  then sum(1..#L-1, i -> sum(i,j -> Hom(L#j,L#i)))
+	  else OO_MF^0));
+     MF.StructureMap.TangentBundle = sum tangentBundles;
+     pushforward AbstractSheaf := E -> (
+	  if variety E =!= MF then error "pushforward: variety mismatch";
+	  abstractSheaf(X,ChernCharacter => pushforward(ch E * todd p)));
+     integral C := r -> integral p_* r;
+     --computing the tangent bundle of MF is very slow and likely unnecessary
+     --if X.?TangentBundle then MF.TangentBundle = MF.StructureMap.TangentBundle + p^* X.TangentBundle;
+     MF
+     )
+
+--map(X,Y) is the "forgetful map" from Y to X
+--this method depends heavily on knowing the generators and monomial order of the
+--intersection ring of a flag variety and will break if those are ever changed
+map(FlagBundle,FlagBundle) := opts -> (B,A) -> (
+     --by Charley Crissman
+     if not A.Base === B.Base then error "expected flag bundles over same base";
+     S := intersectionRing B.Base;
+     Arks := A.BundleRanks;
+     Brks := B.BundleRanks;
+     if not sum(Arks) == sum(Brks) then error "expected flag bundles of same rank";
+     if not lift(chern(sum(toList A.Bundles)),S) == lift(chern(sum(toList B.Bundles)),S) then error "expected flag bundles of same bundle";
+     reached := 0;
+     Apart := for i from 0 to #Brks - 1 list (
+	  startpoint := reached;
+	  currentsum := 0;
+	  while currentsum < Brks#i and reached < #Arks do (
+	       (currentsum, reached) = (currentsum + Arks#reached, reached+1));
+	  if not currentsum == Brks #i then error "rank sequences incommensurable" else (take(Arks,{startpoint,reached-1}),reached-1));
+     --first elt of Apart#i is the list of A-ranks used to make Brks#i,
+     --second element is the index of the last A-rank used to make Brks#i
+     --so, for example, if Arks = {1,2,2,1,3}, Brks = {3,3,3}, then
+     --Apart = {({1,2},1),({2,1},3),({3},4)} 
+     MF := multiFlag(first \ Apart,toList B.Bundles);
+     RA := intersectionRing A;
+     RB := intersectionRing B;
+     RMF := intersectionRing MF;
+     (RMF',k1) := flattenRing(RMF,CoefficientRing=>RB);
+     Bimages := flatten for l in Apart list (
+	  rks := l#0;
+	  lastbund := l#1;
+	  total := sum for i from 0 to #rks - 1 list A.Bundles#(lastbund-i);
+	  for r from 1 to rank total list chern(r,total));
+     M1 := matrix {gens RA | Bimages};
+     f1 := map(RA,RMF',M1);
+     mftoA := method();
+     mftoA ZZ := mftoA QQ := r -> promote(r,RA);
+     mftoA RMF := c -> f1(k1 c);
+     mftoA AbstractSheaf := E -> (
+	  abstractSheaf(A, Rank => rank E, ChernClass => mftoA chern E));
+     Atomf := method();
+     Atomf ZZ := Atomf QQ := r -> promote(r,RMF);
+     Atomf RA := c -> ((map(RMF,RA,gens RMF)) c);
+     Atomf AbstractSheaf := E -> (
+	  abstractSheaf(MF, Rank => rank E, ChernClass => Atomf chern E));
+     iso := new AbstractVarietyMap from {
+	  global source => A,
+	  global target => MF,
+	  SectionClass => 1_RA,
+	  PushForward => Atomf,
+	  PullBack => mftoA};
+     mftoB := MF / B;
+     mftoB * iso
+     )
+
+incidenceCorrespondence = method(TypicalValue => IncidenceCorrespondence)
+incidenceCorrespondence(List) := L -> (
+     if not #L == 3 then error "expected a list of length 3";
+     if not all(L, i-> instance(i,ZZ) and i > 0) then "expected a list of positive integers";
+     if not L#0 < L#2 and L#1 < L#2 then "expected last list element to be largest";
+     G1 := flagBundle({L#0,L#2 - L#0});
+     G2 := flagBundle({L#1,L#2 - L#1});
+     incidenceCorrespondence(G2,G1))
+incidenceCorrespondence(List,AbstractSheaf) := (L,B) -> (
+     if not #L == 2 then error "expected a list of length 2";
+     if not all(L, i-> instance(i,ZZ) and i > 0) then "expected a list of positive integers";
+     n := rank B;
+     if not all(L, i-> n > i) then "expected a list of integers smaller than rank of bundle";
+     G1 := flagBundle({L#0,n - L#0},B);
+     G2 := flagBundle({L#1,n - L#1},B);
+     incidenceCorrespondence(G2,G1))
+--is more efficient than using two forgetful maps because it creates one less intermediate object
+--currently only accepts Grassmannians but could be easily extended now that we have forgetful maps of flag varieties
+incidenceCorrespondence(FlagBundle,FlagBundle) := (G2,G1) -> (
+     --by Charley Crissman
+     if G1.Base =!= G2.Base then error "expected FlagBundles over same base";
+     B := intersectionRing G1.Base;
+     if not (#G1.Bundles == 2 and #G2.Bundles == 2) then error "expected two Grassmannians";
+     n := sum G1.BundleRanks;
+     if not n == (sum G2.BundleRanks) then error "expected Grassmannians of same bundle";
+     (s1,q1) := G1.Bundles;
+     (s2,q2) := G2.Bundles;
+     a := rank s1;
+     b := rank s2;
+     if a > b then transpose incidenceCorrespondence(G1,G2) else (
+	 if not lift(chern(s1+q1),B) == lift(chern(s2+q2),B) then error "expected Grassmannians of same bundle";
+	 I1 := flagBundle({b-a, n-b},q1);
+	 I2 := flagBundle({a, b-a},s2);
+	 f := I1/G1;
+	 g := I2/G2;
+	 Q1 := f^* q1; --rank n-a
+	 S1 := f^* s1; --rank a
+	 Q2 := g^* q2; --rank n-b
+	 SQ1 := I1.Bundles#0; --rank b-a
+	 QQ1 := I1.Bundles#1; --rank n-b
+	 QS2 := I2.Bundles#1; --rank b-a
+	 SS2 := I2.Bundles#0; --rank a
+	 Qa2 := Q2 + QS2; -- corresponds to quotients of rank n-a in I2
+	 Sb1 := SQ1 + S1; -- corresponds to subbundles of rank b in I1
+	 R1 := intersectionRing I1;
+	 R2 := intersectionRing I2;
+	 (R1', k1) := flattenRing(R1,CoefficientRing => B);
+	 (R2', k2) := flattenRing(R2,CoefficientRing => B);
+	 --next line depends heavily on knowing the monomial basis of the
+	 --intersectionRing of G(k,n)
+	 --gens of R1' should be, in order:
+	 --chern classes of subbundle on I1 (rank b-a, -> QS2)
+	 m11 := for i from 1 to b-a list chern(i,QS2);
+	 --chern classes of quotient bundle on I1 (rank n-b -> Q2)
+	 m12 := for i from 1 to n-b list chern(i,Q2);
+	 --chern classes of subbundle on G1 (rank a -> SS2)
+	 m13 := for i from 1 to a list chern(i,SS2);
+	 --chern classes of quotient bundle on G1 (rank n-a -> Qa2)
+	 m14 := for i from 1 to n-a list chern(i,Qa2);
+	 M1 := matrix {m11|m12|m13|m14};
+	 pfmap := (map(R2,R1',M1)) * k1;
+	 pushforward := method();
+	 pushforward ZZ := pushforward QQ := r -> promote(r,R2);
+	 pushforward R1 := c -> pfmap c;
+	 pushforward AbstractSheaf := E -> (
+	      abstractSheaf(I2,Rank => rank E, ChernClass => pushforward chern E));
+         --gens of R2' should be, in order:
+	 --chern classes of subbundle on I2 (rank a -> S1)
+	 m21 := for i from 1 to a list chern(i,S1);
+	 --chern classes of quotient bundle on I2 (rank b-a -> SQ1)
+	 m22 := for i from 1 to b-a list chern(i,SQ1);
+	 --chern classes of subbundle on G2 (rank b -> Sb1)
+	 m23 := for i from 1 to b list chern(i,Sb1);
+	 --chern classes of quotient bundle on G2 (rank n-b -> QQ1)
+	 m24 := for i from 1 to n-b list chern(i,QQ1);
+	 M2 := matrix {m21|m22|m23|m24};	 
+	 pbmap := (map(R1,R2',M2)) * k2;
+	 pullback := method();
+	 pullback ZZ := pullback QQ := r -> promote(r,R1);
+	 pullback R2 := c -> pbmap c;
+	 pullback AbstractSheaf := E -> (
+	      abstractSheaf(I1,Rank => rank E, ChernClass => pullback chern E));
+	 iso := new AbstractVarietyMap from {
+	      global source => I1,
+	      global target => I2,
+	      SectionClass => 1_R1,
+	      PushForward => pushforward,
+	      PullBack => pullback};
+	 A1 := intersectionRing G1;
+	 A2 := intersectionRing G2;
+	 sourcetotarget := method();
+	 sourcetotarget ZZ := sourcetotarget QQ :=
+	 sourcetotarget A1 := sourcetotarget AbstractSheaf := c -> (
+	      g_* (iso_* (f^* c)));
+	 targettosource := method();
+	 targettosource ZZ := targettosource QQ :=
+	 targettosource A2 := targettosource AbstractSheaf := c -> (
+	      f_* (iso^* (g^* c)));
+	 rez := new IncidenceCorrespondence from {
+	      global source => G1,
+	      global target => G2,
+	      Intermediate => I1,
+	      IntermediateToSource => f,
+	      IntermediateToTarget => g * iso,
+	      SourceToTarget => sourcetotarget,
+	      TargetToSource => targettosource};
+	 rez))
 
 reciprocal = method(TypicalValue => RingElement)
 reciprocal RingElement := (A) -> (
@@ -714,7 +1114,7 @@ symmetricPower(RingElement, AbstractSheaf) := AbstractSheaf => (n,F) -> (
      -- This uses Grothendieck-Riemann-Roch, together with the fact that
      -- f_!(OO_PF(n)) = f_*(symm(n,F)), since the higher direct images are 0.
      h := local h;
-     PF := projectiveBundle(F, VariableNames => h);
+     PF := projectiveBundle'(F, VariableNames => h);
      f := PF.StructureMap;
      abstractSheaf(X, f_*(part(0,dim PF,ch OO_PF(n) * todd f))))
 
@@ -747,9 +1147,9 @@ schur(List, AbstractSheaf) := (p,E) -> (
 	                         apply(splice{n..2*n-1}, i -> R_i => 0)));
      abstractSheaf(variety E, ChernCharacter => F J))
 
-schubertCycle = method(TypicalValue => RingElement)
 schubertCycle' = method(TypicalValue => RingElement)
-FlagBundle _ Sequence := FlagBundle _ List := RingElement => (F,s) -> schubertCycle(s,F)
+schubertCycle = method(TypicalValue => RingElement)
+FlagBundle _ Sequence := FlagBundle _ List := RingElement => (F,s) -> schubertCycle'(s,F)
 giambelli =  (r,E,b) -> (
      p := matrix for i from 0 to r-1 list for j from 0 to r-1 list chern(b#i-i+j,E); -- Giambelli's formula, also called Jacobi-Trudi
      if debugLevel > 15 then stderr << "giambelli : " << p << endl;
@@ -759,64 +1159,128 @@ listtoseq = (r,b) -> toSequence apply(#b, i -> r + i - b#i)
 seqtolist = (r,b) ->            apply(#b, i -> r + i - b#i)
 dualpart  = (r,b) -> splice for i from 0 to #b list ((if i === #b then r else b#(-i-1)) - (if i === 0 then 0 else b#-i)) : #b - i
 
-schubertCycle(Sequence,FlagBundle) := (a,X) -> (
+schubertCycle'(Sequence,FlagBundle) := (a,X) -> (
+     -- this is dual to the notation of Fulton's Intersection Theory page 271
      if #X.BundleRanks != 2 then error "expected a Grassmannian";
      n := X.Rank;
-     E := last X.Bundles;
-     r := rank E;
-     r' := n-r;
-     if r != #a then error("expected a sequence of length ", toString r);
-     for i from 0 to r-1 do (
+     E := dual first X.Bundles;
+     s := rank E;
+     q := n-s;
+     if q != #a then error("expected a sequence of length ", toString q);
+     for i from 0 to q-1 do (
 	  ai := a#i;
 	  if not instance(ai,ZZ) or ai < 0 then error "expected a sequence of non-negative integers";
 	  if i>0 and not (a#(i-1) < a#i) then error "expected a strictly increasing sequence of integers";
 	  if not (ai < n) then error("expected a sequence of integers less than ",toString n);
 	  );
-     giambelli(r',E,dualpart(r',seqtolist(r',a))))
+     giambelli(q,E,seqtolist(s,a)))
+schubertCycle'(List,FlagBundle) := (b,X) -> (
+     -- this is dual to the notation of Fulton's Intersection Theory page 271
+     if #X.BundleRanks != 2 then error "expected a Grassmannian";
+     E := dual first bundles X;
+     s := rank E;
+     n := X.Rank;
+     q := n-s;
+     if q != #b then error("expected a list of length ", toString q);
+     for i from 0 to q-1 do (
+	  bi := b#i;
+	  if not instance(bi,ZZ) or bi < 0 then error "expected a list of non-negative integers";
+	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing list of integers";
+	  if not (bi <= s) then error("expected a list of integers bounded by ",toString(s));
+	  );
+     giambelli(q,E,b))
+schubertCycle(Sequence,FlagBundle) := (a,X) -> (
+     -- see page 271 of Fulton's Intersection Theory for this notation
+     if #X.BundleRanks != 2 then error "expected a Grassmannian";
+     n := X.Rank;
+     E := last X.Bundles;
+     q := rank E;
+     s := n-q;
+     if s != #a then error("expected a sequence of length ", toString s);
+     for i from 0 to s-1 do (
+	  ai := a#i;
+	  if not instance(ai,ZZ) or ai < 0 then error "expected a sequence of non-negative integers";
+	  if i>0 and not (a#(i-1) < a#i) then error "expected a strictly increasing sequence of integers";
+	  if not (ai < n) then error("expected a sequence of integers less than ", toString n);
+	  );
+     giambelli(s,E,seqtolist(q,a)))
 schubertCycle(List,FlagBundle) := (b,X) -> (
      -- see page 271 of Fulton's Intersection Theory for this notation
      if #X.BundleRanks != 2 then error "expected a Grassmannian";
      E := last X.Bundles;
-     r := rank E;
+     q := rank E;
      n := X.Rank;
-     r' := n-r;
-     if r != #b then error("expected a list of length ", toString r);
-     for i from 0 to r-1 do (
+     s := n-q;
+     if s != #b then error("expected a list of length ", toString s);
+     for i from 0 to s-1 do (
 	  bi := b#i;
 	  if not instance(bi,ZZ) or bi < 0 then error "expected a list of non-negative integers";
 	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing list of integers";
-	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
+	  if not (bi <= q) then error("expected a list of integers bounded by ",toString(q));
 	  );
-     giambelli(r',E,dualpart(r',b)))
-schubertCycle'(Sequence,FlagBundle) := (a,X) -> (
-     if #X.BundleRanks != 2 then error "expected a Grassmannian";
-     n := X.Rank;
-     E := dual first X.Bundles;
-     r := rank E;
-     r' := n-r;
-     if r != #a then error("expected a sequence of length ", toString r);
-     for i from 0 to r-1 do (
-	  ai := a#i;
-	  if not instance(ai,ZZ) or ai < 0 then error "expected a sequence of non-negative integers";
-	  if i>0 and not (a#(i-1) < a#i) then error "expected a strictly increasing sequence of integers";
-	  if not (ai < n) then error("expected a sequence of integers less than ",toString n);
-	  );
-     giambelli(r',E,seqtolist(r',a)))
-schubertCycle'(List,FlagBundle) := (b,X) -> (
-     -- see page 271 of Fulton's Intersection Theory for this notation
-     if #X.BundleRanks != 2 then error "expected a Grassmannian";
-     E := dual first X.Bundles;
-     r := rank E;
-     n := X.Rank;
-     r' := n-r;
-     if r != #b then error("expected a list of length ", toString r);
-     for i from 0 to r-1 do (
-	  bi := b#i;
-	  if not instance(bi,ZZ) or bi < 0 then error "expected a list of non-negative integers";
-	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing list of integers";
-	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
-	  );
-     giambelli(r',E,b))
+     giambelli(s,E,b))
+
+diagrams = method()
+diagrams(ZZ,ZZ) := (k,n) -> ( --diagrams {k>=a_1>=...>=a_n>=0}
+     if n==1 then apply(k+1, i->{i})
+     else flatten apply(k+1, i -> apply(diagrams(i,n-1), l -> flatten {i,l})))     
+diagrams(ZZ,ZZ,ZZ) := (k,n,d) -> (--partitions of d of above form
+     select(diagrams(k,n), i -> (sum(i) == d)))
+
+toSchubertBasis = method()
+toSchubertBasis(RingElement) := c -> (
+     --by Charley Crissman
+     try G := variety c else error "expected an element of an intersection ring"; 
+     (S,T,U) := schubertRing(G);
+     T c
+     )
+
+--returns a triple (S,T,U) where S is the Schubert basis ring of the given Grassmannian G,
+--T is the map from the intersection ring of G to S
+--U is the map in the reverse direction
+schubertRing = method()
+schubertRing(FlagBundle) := G -> (
+     --by Charley Crissman
+     if not (instance(G,FlagBundle) and #G.BundleRanks == 2) then error "expected a Grassmannian";
+     if not G.?cache then G.cache = new CacheTable;
+     if G.cache.?SchubertRing then (
+	  (G.cache.SchubertRing,G.cache.htoschubert,G.cache.schuberttoh))
+     else (
+          R := intersectionRing G;
+          B := intersectionRing (G.Base);
+          (k,q) := toSequence(G.BundleRanks);
+          P := diagrams(q,k);
+          M := apply(P, i-> schubertCycle(i,G));
+          E := flatten entries basis(R);
+          local T';
+	  T := transpose matrix apply (M, i -> apply(E, j-> coefficient(j,i))); --matrix converting from schu-basis 
+                                                                 --to h-basis
+	  T' = T^-1; --matrix converting from h-basis to s-basis
+          local S;
+	  s := local s;
+	  S = B[apply(P, i-> s_i)]; --poly ring with generators <=> schubert basis elts
+	  S.cache = new CacheTable;
+	  S#{Standard,AfterPrint} = X -> (
+	       << endl;
+	       << concatenate(interpreterDepth:"o") << lineNumber << " : "
+	       << "Schubert Basis of G(" << k << "," << k+q << ") over " << G.Base << endl;);
+	  G.cache.schuberttoh = map(R,S,M);
+	  htoschubert := method();
+	  htoschubert R := c -> ( 
+	       c2 :=T'*(transpose matrix {apply (E, i-> coefficient(i,c))});
+	       rez := (vars S)*(lift(c2,B));
+	       rez_(0,0)); --c in the s-basis
+	  G.cache.htoschubert = htoschubert;
+     	  S * S := (f,g) -> (
+	       f1 := G.cache.schuberttoh(f);
+	       g1 := G.cache.schuberttoh(g);
+	       G.cache.htoschubert(f1*g1)
+	       );
+	  S ^ ZZ := (f,n) -> (
+	       f2 := G.cache.schuberttoh(f);
+	       toSchubertBasis((f2)^n));
+	  G.cache.SchubertRing = S;
+	  (S,G.cache.htoschubert,G.cache.schuberttoh)))
 
 sectionZeroLocus = method(TypicalValue => AbstractVariety)
 sectionZeroLocus AbstractSheaf := (F) -> (
@@ -886,6 +1350,8 @@ undocumented {
      (net,AbstractVarietyMap),
      (net,ChernClassVariable),
      (net,FlagBundle),
+     (net,Correspondence),
+     (net,IncidenceCorrespondence),
      (baseName,ChernClassVariable),
      (expression,ChernClassVariable),
      (baseName,AbstractSheaf),
@@ -894,8 +1360,11 @@ undocumented {
      (toString,AbstractVariety),
      (toString,AbstractVarietyMap),
      (toString,ChernClassVariable),
-     (toString,FlagBundle)
+     (toString,FlagBundle),
+     (toString,Correspondence),
+     (toString,IncidenceCorrespondence)
      }
+load (Schubert2#"source directory"|"Schubert2/test-charley.m2")
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo2.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo3.m2") ///
