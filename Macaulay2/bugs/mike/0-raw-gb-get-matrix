@@ -9,6 +9,8 @@ time G = gb I;
 time S = gens G;
 time S = gens G;
 
+I=ideal(p,q,D)
+time G = gb(I, Algorithm=>Test)
 end
 
 Mike:
