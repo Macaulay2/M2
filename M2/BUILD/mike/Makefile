@@ -63,7 +63,7 @@ darwin32 : always
 	mkdir -p darwin32
 	cd darwin32;  ../../../configure \
 		CC="gcc -m32" CXX="g++ -m32" \
-		--build=i386-apple-darwin \
+		--build=i586-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--enable-dmg \
 		--enable-download \
