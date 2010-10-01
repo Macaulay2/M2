@@ -958,6 +958,12 @@ installPackage Package := opts -> pkg -> (
 	  setupButtons();
 	  makeDirectory (buildPrefix|htmlDirectory);
 	  if verbose then stderr << "--making empty html pages in " << buildPrefix|htmlDirectory << endl;
+	  if pkg.Options.Headline =!= null then (
+	       buildPrefix|htmlDirectory|".Headline" << pkg.Options.Headline << close;
+	       );
+	  if pkg.Options.Certification =!= null then (
+	       buildPrefix|htmlDirectory|".Certification" << toExternalString pkg.Options.Certification << close;
+	       );
 	  scan(nodes, tag -> if not isUndocumented tag then (
 		    fkey := DocumentTag.FormattedKey tag;
 		    fn := buildPrefix | htmlFilename tag;
@@ -1159,6 +1165,10 @@ makePackageIndex List := path -> (
      initInstallDirectory options installPackage;
      absoluteLinks = true;
      key := "Macaulay2";
+     star := IMG {
+	  "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png",
+	  "alt" => "a gold star"
+	  };
      htmlDirectory = applicationDirectory();
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
@@ -1202,13 +1212,19 @@ makePackageIndex List := path -> (
 					if debugLevel > 10 then stderr << "--checking documentation directory " << p << endl;
 					r := readDirectory p;
 					r = select(r, fn -> fn != "." and fn != ".." );
-					r = select(r, pkg -> fileExists (prefixDirectory | replace("PKG",pkg,layout#"packagehtml") | "index.html"));
+					pkghtmldir := pkg -> prefixDirectory | replace("PKG",pkg,layout#"packagehtml");
+					r = select(r, pkg -> fileExists (pkghtmldir pkg | "index.html"));
 					r = sort r;
 					DIV {
 					     HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
-					     if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | replace("PKG",pkg,layout#"packagehtml") | "index.html", pkg }) 
-					     }
-					)
+					     if #r > 0 then UL apply(r, pkg -> LI splice {
+						       if fileExists (pkghtmldir pkg | ".Certification") then (
+							    star, " "
+							    ),
+						       HREF { pkghtmldir pkg | "index.html", pkg },
+						       if fileExists (pkghtmldir pkg | ".Headline") then (
+							    " -- ", get (pkghtmldir pkg | ".Headline")
+							    )})})
 				   else (
 					if debugLevel > 10 then stderr << "--documentation directory does not exist: " << p << endl;
 					)))))
