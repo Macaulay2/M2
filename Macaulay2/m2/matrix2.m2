@@ -115,8 +115,11 @@ complement Matrix := Matrix => (f) -> (
 	  rows' := first \ piv;
 	  submatrix'(id_(ZZ^m),rows') // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
-     else if isAffineRing R then map(target f,,R ** complement (map(coefficientRing R, R)) f)
-     else if instance(R,PolynomialRing) then map(target f,,R ** complement (map(coefficientRing R, R)) f)
+     else if isAffineRing R then (
+	  (R',F) := flattenRing R; -- we flatten because otherwise we might get the degree map wrong, spoiling homoeneity
+	  f' := F f;
+	  map(target f,,R ** complement (map(coefficientRing R', R')) f')
+	  )
      else if instance(R,QuotientRing) then map(target f,,R ** complement lift(f,ambient R))
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
