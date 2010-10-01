@@ -1,5 +1,5 @@
 
-i1 : load "D-modules.m2"
+i1 : needsPackage "Dmodules"
 
 i2 : D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 
