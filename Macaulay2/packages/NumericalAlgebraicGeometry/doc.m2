@@ -41,8 +41,11 @@ document {
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
-solveSystem F / coordinates 			 	     
+solveSystem F 
      	///,
+	"The output contains all ", TO Point, "s obtained at the end of homotopy paths when tracking a total-degree homotopy. ",
+	"In particular, this means that solving the system that has fewer than Bezout bound many solutions will produce 
+	points that are not marked as regular. See ", TO track, " for detailed examples. ", 
 	Caveat => {"The system is assumed to be square (#equations = #variables) 
 	     and to have finitely many solutions."}	
 	}
@@ -93,18 +96,52 @@ document {
 	     Normalize => {"normalize the start and target systems w.r.t. Bombieri-Weyl norm"},
 	     NoOutput => {"if true, no output is produced (useful in combination with ", TO "getSolution", ")"} 	     
 	     },
-	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
+	Outputs => {{ TT "solsT", " is a list of ", TO "Point", "s that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
-	of the target system given a start system.",
-	SeeAlso => {solveSystem, setDefault},
-	Caveat => {"Predictor=>Certified works only with Software=>[M2,M2engine] and Normalize=>true"},
+	of the target system given a start system. Most commonly the following homotopy is considered:", BR{}, 
+	TT "    H(t) = gamma t^d T + (1-t)^d S", BR{}, "where ", TT "t", " is in the interval ", TT "[0,1]", " and ",
+	TT "d = ", TO "tDegree",   
+	". Here is an example with regular solutions at the ends of all homotopy paths:",   
+        EXAMPLE lines ///
+	R = CC[x,y];
+	S = {x^2-1,y^2-1};
+	T = {x^2+y^2-1, x*y};
+	solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
+	track(S,T,solsS)  
+     	///,
+	"Another outcome of tracking a path is divergence (established heuristically). 
+	In that case the divergent paths are marked with ", TT "I", " for infinity:",
+        EXAMPLE lines ///
+     	R = CC[x,y];
+     	S = {x^2-1,y^2-1};
+     	T = {x^2+y^2-1, x-y};
+     	solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
+     	track(S,T,solsS,gamma=>0.6+0.8*ii) 
+     	///,
+	"Some divergent paths as well as most of the paths ending in singular (solutions with multiplicity>1) 
+	or near-singular (clustered solutions) are indicated by ", TT "M", " for \"minimal step\" failure:",
 	EXAMPLE lines ///
-R = CC[x,y];
-S = {x^2-1,y^2-1};
-T = {x^2+y^2-1, x*y};
-solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
-track(S,T,solsS) / coordinates 
-     	///
+     	R = CC[x,y];
+     	S = {x^2-1,y^2-1};
+     	T = {x^2+y^2-1, (x-y)^2};
+     	solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
+     	track(S,T,solsS) 
+     	///,
+	"Tracking in the projective space uses the homotopy corresponding to an arc of a great circle 
+	on  a unit sphere in the space of homogeneous polynomial systems of a fixed degree. 
+	In particular, this is done for certified homotopy tracking (see ", 
+	     EM "Beltran, Leykin \"Certified numerical homotopy tracking\"","):",
+	EXAMPLE lines ///
+	R = CC[x,y,z];
+	S = {x^2-z^2,y^2-z^2};
+	T = {x^2+y^2-z^2, x*y};
+	solsS = {(1,-1,1),(1,1,1),(-1,1,1),(-1,-1,1)};
+	track(S,T,solsS,Predictor=>Certified,Normalize=>true)
+	///,
+	"Note that projective tracker is invoked either if the target system is a homogenous system or if ", TO "Projectivize", TT"=>true",
+	" is specified. ",
+	SeeAlso => {solveSystem, setDefault, Point},
+	Caveat => {"Predictor=>Certified works only with Software=>[M2,M2engine] and Normalize=>true"}
 	}
 
 document {
@@ -119,7 +156,7 @@ document {
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
 	     "T" => {"polynomials of the system"},
-	     "sols" => {"solutions (lists of coordinates)"},
+	     "sols" => {"solutions (lists of coordinates or ", TO "Point", "s)"},
 	     Iterations => {"number of refining iterations of Newton's method"}, 
 	     Bits => {"number of bits of precision"}, 
 	     ErrorTolerance => {"a bound on the desired estimated error"},
@@ -129,15 +166,28 @@ document {
 	"Uses Newton's method to correct the given solutions so that the resulting approximation 
 	has its estimated relative error bound by ", TO "ErrorTolerance", 
 	"; the number of iterations is at most ", TO "Iterations", ".",
-	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
-	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
-	     took place with the same option and was given the same target system. 
-	     Any other value of this option would launch an M2-language procedure."},
+-- 	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
+-- 	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
+-- 	     took place with the same option and was given the same target system. 
+-- 	     Any other value of this option would launch an M2-language procedure."},
 	EXAMPLE lines ///
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, {-0.1,1.2} };
 refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
+     	///,
+	"In case of a singular (multiplicity>1) solution, while ", TO solveSystem, " and ", TO track, 
+	" return the end of the homotopy paths marked as a 'failure', it is possible to improve the quality of approximation with ", 
+	TO refine, ". The resulting point will be marked as singular:", 
+	EXAMPLE lines ///
+     	R = CC[x,y];
+     	S = {x^2-1,y^2-1};
+     	T = {x^2+y^2-1, (x-y)^2};
+     	solsS = {(1,1),(-1,-1)};
+     	solsT = track(S,T,solsS)
+	solsT / coordinates
+	refSols = refine(T, solsT)
+	refSols / status
      	///
 	}
 

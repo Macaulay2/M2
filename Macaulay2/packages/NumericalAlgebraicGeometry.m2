@@ -2614,8 +2614,26 @@ TEST ///
 --assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
 --assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
 --assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
+
+-- numerical rank
+assert (numericalRank matrix {{2,1},{0,0.001}} == 1)
+
+-- random and good initial pairs
+setRandomSeed 0
+T = randomSd {2,3};
+(S,solsS) = goodInitialPair T
+M = track(S,T,solsS,Normalize=>true)
+RM = refine(T,M)
+debug NumericalAlgebraicGeometry
+assert areEqual(norm2 matrix first RM, 1_CC)
+///
+TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")
+///
+TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2engine.tst.m2")
+///
+TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
 ///
 
