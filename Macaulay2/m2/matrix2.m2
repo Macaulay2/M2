@@ -99,8 +99,15 @@ smithNormalForm Matrix := o -> (f) -> (
      Q := if schg then map(source f, source D,lift(schange,R));
      unsequence nonnull ( D, P, Q ))
 
-complement = method()
+complementOkay = method()     -- modeled after isAffineRing, but allows ZZ, too
+complementOkay Ring := R -> isField R or R === ZZ
+complementOkay PolynomialRing := R -> (
+     -- complement works over skew-commutative rings, so we don't insist on commutativity
+     (options R).WeylAlgebra === {} and not (options R).Inverses and complementOkay coefficientRing R
+     )
+complementOkay QuotientRing := R -> isField R or complementOkay ambient R
 
+complement = method()
 complement Matrix := Matrix => (f) -> (
      if not isHomogeneous f then error "complement: expected homogeneous matrix";
      if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
@@ -115,7 +122,7 @@ complement Matrix := Matrix => (f) -> (
 	  rows' := first \ piv;
 	  submatrix'(id_(ZZ^m),rows') // ch				    -- would be faster if gb provided inverse change matrices!!!
 	  )
-     else if isAffineRing R then (
+     else if complementOkay R then (
 	  (R',F) := flattenRing R; -- we flatten because otherwise we might get the degree map wrong, spoiling homoeneity
 	  f' := F f;
 	  map(target f,,R ** complement (map(coefficientRing R', R')) f')
