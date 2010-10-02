@@ -31,7 +31,7 @@ class SupervisorThread;
 //not garbage collected
 struct ThreadTask
 {
-  ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds);
+  ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task);
   ~ThreadTask();
   ///Name of task -- NULL for not used.
   const char* m_Name;
@@ -41,6 +41,8 @@ struct ThreadTask
   void* m_UserData;
   ///result of task
   void* m_Result;
+  ///Is this a task from the M2 interperter
+  bool m_IsM2Task;
   ///is the task done
   bool m_Done;
   ///has the task started

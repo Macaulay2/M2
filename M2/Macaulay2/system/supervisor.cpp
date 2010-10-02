@@ -86,9 +86,9 @@ extern "C" {
     threadSupervisor->_i_cancelTask(task);
   }
 
-  struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds)
+  struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds, int isM2Task)
   {
-    return new ThreadTask(name,func,userData,(bool)timeLimitExists,timeLimitSeconds);
+    return new ThreadTask(name,func,userData,(bool)timeLimitExists,timeLimitSeconds,isM2Task);
   }
   void* waitOnTask(struct ThreadTask* task)
   {
@@ -115,8 +115,8 @@ extern "C" {
 
 };
 
-ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds):
-  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL)
+ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task):
+  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL),m_IsM2Task(isM2Task)
 {
    if(pthread_cond_init(&m_FinishCondition,NULL))
     abort();

@@ -55,7 +55,7 @@ extern "C" {
    **/
   extern void taskInterrupt(struct ThreadTask* task);
 
-  extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds);
+  extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds, int isM2Task);
 
   //Private interface functions
   extern THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
@@ -66,7 +66,7 @@ extern "C" {
   extern void delThread(pthread_t thread);
   extern void initializeThreadSupervisor();
   static inline struct ThreadTask* runM2Task(ThreadTaskFunctionPtr fptr, void* userData) {
-    struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0);
+    struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0,1);
     pushTask(task);
     return task;
   }
