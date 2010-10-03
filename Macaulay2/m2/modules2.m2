@@ -634,19 +634,19 @@ Module _ List := Matrix => (M,v) -> (
      map(M, source f, f))
 -----------------------------------------------------------------------------
 findHeftandVars = (R, varlist, ndegs) -> (
-     -- returns (varlist, heftval)
-     -- such that each returned varlist is a subset of the original
-     --  consisting of those vars whose degree is not 0 on the firat ndegs slots
-     -- and heft is an integre vector of length ndegs s.t. heft.deg(x) > 0 for each variable x in varlist
+     -- returns (varlist', heftval)
+     -- such that varlist' is a subset of varlist
+     --  consisting of those vars whose degree is not 0 on the first ndegs slots
+     -- and heft is an integer vector of length ndegs s.t. heft.deg(x) > 0 for each variable x in varlist
      if #varlist == 0 then (varlist, {})
      else (
-       if degreeLength R == ndegs and #varlist == numgens R then return (varlist, heft R);
+       if degreeLength R == ndegs and #varlist == numgens R and # heft R == ndegs then return (varlist, heft R);
        zerodeg := toList(ndegs:0);
        varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
        degs := apply(varlist', x -> take(degree R_x, ndegs));
        heft := findHeft(degs, DegreeRank=>ndegs);
        if heft === null then 
-         error "heft vector required which is positive on the degrees of the variables " | toString varlist';
+         error ("heft vector required which is positive on the degrees of the variables " | toString varlist');
        (varlist', heft)
        ))
 
@@ -759,8 +759,8 @@ basis(List,List,Matrix) := opts -> (lo,hi,M) -> (
      G := source M;
      monsF := basis(lo,hi,F,opts);
      monsG := basis(lo,hi,G,opts);
-     basM := last coefficients((matrix M) * monsG, Monomials => monsF);
-     basM)
+     basM := last coefficients(matrix (M * monsG), Monomials => monsF);
+     map(image monsF, image monsG, basM))
 
 basis(List,Matrix) := opts -> (deg,M) -> basis(deg,deg,M,opts)
 basis(ZZ,Matrix) := opts -> (deg,M) -> basis({deg},M,opts)

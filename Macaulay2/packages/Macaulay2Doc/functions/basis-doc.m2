@@ -1,9 +1,3 @@
-undocumented {
-     (basis, InfiniteNumber, InfiniteNumber, Ideal),
-     (basis, InfiniteNumber, InfiniteNumber, Module),
-     (basis, InfiniteNumber, InfiniteNumber, Ring)
-     }
-
 doc ///
    Key
      basis
@@ -181,15 +175,19 @@ doc ///
       {\bf Functoriality}
           
       {\tt basis} is functorial, meaning that if $M : A \rightarrow B$ is a matrix between two modules,
-      then the result is the induced matrix on the source free modules of basis applied to A and B:
+      then the result is the induced matrix on the images of the result of basis applied to A and B.
     Example
       R = ZZ/101[a..d]
       M = koszul(2,vars R)
-      basis(2, source M)
-      basis(2, target M)
-      basis(2,M)
+      f1 = basis(2, source M)
+      f2 = basis(2, target M)
+      f = basis(2,M)
+      source f == image f1
+      target f == image f2
     Text
-      
+      Obtain the map of free modules using @TO matrix@:
+    Example
+      matrix f
    Caveat
      If the base ring is not a field, then the result is only a generating set.  If the optional argument
      Variables is provided, then even this might not be correct.
