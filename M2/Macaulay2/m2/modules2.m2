@@ -640,7 +640,8 @@ findHeftandVars = (R, varlist, ndegs) -> (
      -- and heft is an integer vector of length ndegs s.t. heft.deg(x) > 0 for each variable x in varlist
      if #varlist == 0 then (varlist, {})
      else (
-       if degreeLength R == ndegs and #varlist == numgens R and # heft R == ndegs then return (varlist, heft R);
+       heftR := heft R;
+       if heftR =!= null and degreeLength R == ndegs and #varlist == numgens R and # heft R == ndegs then return (varlist, heft R);
        zerodeg := toList(ndegs:0);
        varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
        degs := apply(varlist', x -> take(degree R_x, ndegs));
