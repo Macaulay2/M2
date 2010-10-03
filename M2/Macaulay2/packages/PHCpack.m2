@@ -810,17 +810,8 @@ doc ///
 	       it simply updates the system using the following:
 	  Example
 	       lift(f,P)
-     	  Text	       
-	  
+     	  Text	       	  
 	       This method is called by @TO phcSolve @.
-     	  
-	  Text
-	  
-	       {\bf ERASE ME later: } this might be useful to know: <<<---- NOTE FOR THE DEVELOPERS
-	  Example
-	       QQ[x,y,z]
-      	       denominator(x^2+y/z+z/x^3) --returns the common denominator, of course.
-
 ///;
 
 
