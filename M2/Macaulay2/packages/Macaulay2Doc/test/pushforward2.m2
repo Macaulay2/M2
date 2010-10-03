@@ -24,13 +24,13 @@ assert( (toString rawBasis(raw pres, {2,0}, {2,0}, {1,1}, {0,1,2}, false, -1)) =
 " )
 assert( (toString rawBasis(raw pres, {3,0}, {3,0}, {1,1}, {0,1,2}, false, -1)) === "y3 y2z yz2 z3 
 " )
-assert( (toString rawBasis(raw pres, {0}, {0}, {1,1}, {0,1,2}, false, -1)) === "1 
+assert( (toString rawBasis(raw pres, {0}, {0}, {1}, {0,1,2}, false, -1)) === "1 
 " )
-assert( (toString rawBasis(raw pres, {1}, {1}, {1,1}, {0,1,2}, false, -1)) === "y z 
+assert( (toString rawBasis(raw pres, {1}, {1}, {1}, {0,1,2}, false, -1)) === "y z 
 " )
-assert( (toString rawBasis(raw pres, {2}, {2}, {1,1}, {0,1,2}, false, -1)) === "y2 yz z2 
+assert( (toString rawBasis(raw pres, {2}, {2}, {1}, {0,1,2}, false, -1)) === "y2 yz z2 
 " )
-assert( (toString rawBasis(raw pres, {3}, {3}, {1,1}, {0,1,2}, false, -1)) === "y3 y2z yz2 z3 
+assert( (toString rawBasis(raw pres, {3}, {3}, {1}, {0,1,2}, false, -1)) === "y3 y2z yz2 z3 
 " )
 assert( (basis_0 S) === map(S^1,S^1,{{1}}) )
 assert( (basis_1 S) === map(S^1,S^{{-1,0},{-1,0}},{{y, z}}) )
