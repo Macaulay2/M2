@@ -1,18 +1,54 @@
--- Commented out to check code in.  Will be worked on soon.
-
-undocumented {
-     (basis, InfiniteNumber, InfiniteNumber, Ideal),
-     (basis, InfiniteNumber, InfiniteNumber, Module),
-     (basis, InfiniteNumber, InfiniteNumber, Ring),
-     [ basis, Truncate ]
-     }
-
 doc ///
    Key
      basis
      [basis,Limit]
      [basis,Variables]
      [basis,SourceRing]
+     [basis,Degree]
+     [basis,Truncate]
+     (basis, Ideal)
+     (basis, InfiniteNumber, InfiniteNumber, Ideal)
+     (basis, InfiniteNumber, InfiniteNumber, Matrix)
+     (basis, InfiniteNumber, InfiniteNumber, Module)
+     (basis, InfiniteNumber, InfiniteNumber, Ring)
+     (basis, InfiniteNumber, List, Ideal)
+     (basis, InfiniteNumber, List, Matrix)
+     (basis, InfiniteNumber, List, Module)
+     (basis, InfiniteNumber, List, Ring)
+     (basis, InfiniteNumber, ZZ, Ideal)
+     (basis, InfiniteNumber, ZZ, Matrix)
+     (basis, InfiniteNumber, ZZ, Module)
+     (basis, InfiniteNumber, ZZ, Ring)
+     (basis, List, Ideal)
+     (basis, List, InfiniteNumber, Ideal)
+     (basis, List, InfiniteNumber, Matrix)
+     (basis, List, InfiniteNumber, Module)
+     (basis, List, InfiniteNumber, Ring)
+     (basis, List, List, Ideal)
+     (basis, List, List, Matrix)
+     (basis, List, List, Module)
+     (basis, List, List, Ring)
+     (basis, List, Matrix)
+     (basis, List, Module)
+     (basis, List, Ring)
+     (basis, List, ZZ, Ideal)
+     (basis, List, ZZ, Ring)
+     (basis, Module)
+     (basis, Ring)
+     (basis, ZZ, Ideal)
+     (basis, ZZ, InfiniteNumber, Ideal)
+     (basis, ZZ, InfiniteNumber, Matrix)
+     (basis, ZZ, InfiniteNumber, Module)
+     (basis, ZZ, InfiniteNumber, Ring)
+     (basis, ZZ, List, Ideal)
+     (basis, ZZ, List, Ring)
+     (basis, ZZ, Matrix)
+     (basis, ZZ, Module)
+     (basis, ZZ, Ring)
+     (basis, ZZ, ZZ, Ideal)
+     (basis, ZZ, ZZ, Matrix)
+     (basis, ZZ, ZZ, Module)
+     (basis, ZZ, ZZ, Ring)
    Headline
      basis or generating set of all or part of a ring, ideal or module
    Usage
@@ -20,25 +56,48 @@ doc ///
      f = basis(deg,M)
      f = basis(lo,hi,M)
    Inputs
-     M:Ring
-       @ofClass{Ideal,Module,Matrix}@
+     M:Module
+       @ofClass{Ring,Ideal,Matrix}@
      deg:ZZ
        @ofClass{List}@, a degree or degree vector
      lo:ZZ
        or {\tt -infinity}, the low degree
      hi:ZZ
        or @TO infinity@, the high degree
+     Limit=>ZZ
+       an upper bound on the number of basis elements to collect
+     Variables=>List
+       a list of variables, or variable indices (defaults to the generators of the ring of M)
+     SourceRing=>Ring
+       if not the ring (of) M, then returns a module map whose target and source have different rings
+     Degree=>List
+       or @ofClass ZZ@.  Sets the degree of the resulting matrix.  Default is 0.  Seldom Used
+     Truncate=>Boolean
+       internal use only.  Used to implement @TO truncate@
    Outputs
      f:Matrix
+       a map from a free module over the ring of {\tt M} (or by the ring specified with the {\tt SourceRing} option, if given),
+	       to {\tt M} which sends the
+	       basis elements of the free module to a basis (over the coefficient field) of the 
+	       specified part of {\tt M}
        A matrix from a free module to $M$, whose columns generate
        the desired part of the module, over the base ring.
    Description
     Text
-      There are many ways to use {\tt basis}.  For further examples,
-      see the links below.
+      The function {\tt basis} finds a basis or generating set of a module over a coefficient ring,
+      either for the full module, or for a degree range, or for a specific (multi-)degree.
+      A ring or ideal may also be provided instead of a module.  Partial multi-degrees may also be given, see below
+      for the usage and meaning.
+      
+      if $M$ is a matrix, then the matrix between the corresponding 
+      bases of the source and target of $M$ is returned.  This feature should be considered experimental.
+
+      The following examples show the varied uses of this function.
+
+      {\bf Basis of the whole ring}
       
       If no degree or degree range is given, then
-      a full basis is given.  The 12 entries generate $R$ over the base ring ${\mathbb Q}$.
+      a full basis is given.  In the example below, the 12 entries generate $R$ over the base ring ${\mathbb Q}$.
       If the object is not finite, then an error is given.
     Example
       R = QQ[a,b,c]/(a^2, b^3, a*c, c^3);
@@ -46,6 +105,8 @@ doc ///
       sort basis R
     Text
 
+      {\bf Basis in a degree or range of degrees}
+      
       If a single degree or degree range is given, give a basis (or generating set) of
       that particular degree (or degree range) of $M$.
     Example
@@ -55,38 +116,87 @@ doc ///
       phi = basis(3,I)
       super phi
     Text
-    
+      Notice that {\tt phi} is a matrix whose source is a free module, and whose target is the ideal.  @TO super@ is
+      used to get the actual elements of $I$.
+
+      {\bf Basis ina specific multi-degree}
+            
       If a multidegree is given, then a range cannot be given.
       In this example, the dimension over QQ of this multigraded piece of R is 2.
     Example
       R = QQ[a..c,Degrees=>{{1,0},{1,-1},{1,-2}}]
       basis({4,-5},R)
     Text
-      
+      {\bf Partially described multidegrees}
+            
       A partial multidegree can be given.  The given columns generate (form a basis in this case)
-      the degree {2,*} part of R, over the subring QQ[d] generated by the variables which are degree {0,*}
+      the degree \{2,*\} part of R, over the subring QQ[d] generated by the variables which have degree \{0,*\}.
     Example
       R = QQ[a..d,Degrees=>{{1,0},{1,-1},{1,-2},{0,1}}]
       basis(2,R)
+    Text    
+      The base ring does not need to be a field.  In these cases, the given image vectors might only
+      generate over the base ring, not be a basis.
+      For instance, in 
+      the following example, $B$ is generated over $A$ by 4 elements, but $B$ is not a free module.
+    Example
+      A = ZZ/101[a..d];
+      B = A[x,y]/(a*x, x^2, y^2);
+      basis B
     Text
-    
-      This function is functorial, meaning that if $M : A \rightarrow B$ is a matrix between two modules,
-      then the result is the induced matrix on the source free modules of basis applied to A and B:
+      If $M$ is an ideal or module, the resulting map looks somewhat strange, since maps between modules
+      are given from generators, in terms of the generators of the target module.  Use @TO super@ or @TO cover@
+      to recover the actual elements.
+    Example
+      R = QQ[a,b,c]/(a^2, b^3, a*c, c^3);
+      I = ideal(a,b^2,c)
+      F = basis I
+      super F
+    Example
+      C = B[u,v]/(u^2,u*v,v^2)
+      basis(C, Variables=>{u,v,x_C,y_C}, SourceRing => A)
+    Text
+      If {\tt Variables} is given as an optional argument, only monomial multiples of the generators 
+      which involve these variables will be considered.  In this case, the resulting elements might not
+      form a generating set over the coefficient ring.  They do generate over the subring generated by the other
+      variables.
+    Example
+      D = QQ[a..d]/(a^2, b^2)
+      basis(D, Variables => {a,b})
+    Text
+      If the base ring has a local term order, then the generating set or basis will be over this ring.
+    Example
+      E = QQ{a..d}
+      I = ideal(a+d^3-d^4, b^2 + d^3, c^2 + d^4, d^5)
+      f = basis (E^1/I)
+      cover f
+    Text
+
+      {\bf Functoriality}
+          
+      {\tt basis} is functorial, meaning that if $M : A \rightarrow B$ is a matrix between two modules,
+      then the result is the induced matrix on the images of the result of basis applied to A and B.
     Example
       R = ZZ/101[a..d]
       M = koszul(2,vars R)
-      basis(2, source M)
-      basis(2, target M)
-      basis(2,M)
+      f1 = basis(2, source M)
+      f2 = basis(2, target M)
+      f = basis(2,M)
+      source f == image f1
+      target f == image f2
+    Text
+      Obtain the map of free modules using @TO matrix@:
+    Example
+      matrix f
    Caveat
      If the base ring is not a field, then the result is only a generating set.  If the optional argument
      Variables is provided, then even this might not be correct.
    SeeAlso
-     "basis examples: full basis"
-     "basis examples: basis of a degree or degree range"
-     "basis examples: basis of a multidegree"
-     "basis examples: basis as a functor"
      truncate
+     (sort, Matrix)
+     comodule
+     super
+     cover
 ///
 
 {*
@@ -122,7 +232,6 @@ doc ///
      monomials
      
 ///
-*}
 
 doc ///
    Key
@@ -200,49 +309,6 @@ doc ///
      super
      cover
 ///
-
-{*
-(basis, InfiniteNumber, InfiniteNumber, Matrix)
-
-(basis, InfiniteNumber, List, Ideal)
-(basis, InfiniteNumber, List, Matrix)
-(basis, InfiniteNumber, List, Module)
-(basis, InfiniteNumber, List, Ring)
-(basis, InfiniteNumber, ZZ, Ideal)
-(basis, InfiniteNumber, ZZ, Matrix)
-(basis, InfiniteNumber, ZZ, Module)
-(basis, InfiniteNumber, ZZ, Ring)
-(basis, List, InfiniteNumber, Ideal)
-(basis, List, InfiniteNumber, Matrix)
-(basis, List, InfiniteNumber, Module)
-(basis, List, InfiniteNumber, Ring)
-(basis, ZZ, InfiniteNumber, Ideal)
-(basis, ZZ, InfiniteNumber, Matrix)
-(basis, ZZ, InfiniteNumber, Module)
-(basis, ZZ, InfiniteNumber, Ring)
-
-
-(basis, List, Ideal)
-(basis, List, List, Ideal)
-(basis, List, List, Matrix)
-(basis, List, List, Module)
-(basis, List, List, Ring)
-(basis, List, Matrix)
-(basis, List, Module)
-(basis, List, Ring)
-(basis, List, ZZ, Ideal)
-(basis, List, ZZ, Ring)
-(basis, ZZ, Ideal)
-(basis, ZZ, List, Ideal)
-(basis, ZZ, List, Ring)
-(basis, ZZ, Matrix)
-(basis, ZZ, Module)
-(basis, ZZ, Ring)
-(basis, ZZ, ZZ, Ideal)
-(basis, ZZ, ZZ, Matrix)
-(basis, ZZ, ZZ, Module)
-(basis, ZZ, ZZ, Ring)
-
 
 document { Key => {
      	  "previous basis documentation",
