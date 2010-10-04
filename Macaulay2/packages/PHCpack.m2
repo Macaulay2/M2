@@ -1,39 +1,10 @@
---------------------------------------------------------------
---------------------------------------------------------------
--- authors: Elizabeth Gross, Sonja Petrovic, Jan Verschelde --
---
--- UPDATE AND CHANGE LOG:
---     	    20 April 2010. ~SP: draft of package.
---     	    5 May 2010 - SP: 
---     	    	      	   finished w/ mixed volume; black box; incld. slack variables. 
---     	    	      	   did not do documentation.
---     	    16 May 2010 -EG: 
---     	    	      	   documentation of mixed volume and black box.  
---     	    	      	   Need to include slack variables info and tests.
---     	    9 June 2010 ~SP: 
---     	    	      	   some housekeeping and clean-up of mixed volume and black box solver;
---     	    	      	   added a few things to documentation, mostly about dimension of the system and slack vars; 
---     	    	      	   	many draft-like things still there. Please keep for now (at least as comments) for future reference.
---     	    	      	   rational input allowed for the black-box solver;
---     	    	      	   added "convertToPoly": a function that takes a rational system and turns it into laurent (natural environment to M2, acceptable for PHC) .
---     	    24 June 2010 -EG:
---     	    	      	   added tests for solveBlackBox() and mixedVol()
---     	    TO DO list:
---     	    	 - decide the name for solveBlackBox(). I don't think we can use "solve". How about numSolve, or something? or phcSolve? or solvePHC?
---     	    	 - optional input: precision --for a script example, see "toricMarkov" code from FourTiTwo.m2 --and documentation
---     	    	 - refineSoln() --draft is there
---     	    	 - "phc -f" to filter solutions close to zero
---     	    	 - tests!
---     	    	 - some more references in documentation; update documentation for the main package page - write a short story with an example. :)
---     	    
---------------------------------------------------------------
---------------------------------------------------------------
+
 needsPackage "NAGtypes"
 
 newPackage(
 	"PHCpack",
-    	Version => "0.1", 
-    	Date => "19 April 2010",
+    	Version => "0.2", 
+    	Date => "30 September 2010",
     	Authors => {
 	     {Name => "Elizabeth Gross", Email => "lizgross@math.uic.edu",  HomePage => "http://www.math.uic.edu/~lizgross"},
 	     {Name => "Sonja Petrovic", Email => "petrovic@math.uic.edu", HomePage => "http://www.math.uic.edu/~petrovic"},
@@ -49,10 +20,44 @@ newPackage(
 	AuxiliaryFiles=>true,
 	CacheExampleOutput => true
 	)
+------########################
+--  Contributors: Anton Leykin
+------########################
 
--- Any symbols or functions that the user is to have access to must be placed in the following  list:
+
+--------------------------------------------------------------
+--------------------------------------------------------------
+-- authors: Elizabeth Gross, Sonja Petrovic, Jan Verschelde --
+--
+-- UPDATE AND CHANGE LOG:
+--     	    20 April 2010. ~SP: draft of package.
+--     	    5 May 2010 - SP: 
+--     	    	      	   finished w/ mixed volume; black box; incld. slack variables. 
+--     	    16 May 2010 -EG: 
+--     	    	      	   documentation of mixed volume and black box.  
+--     	    	      	   Need to include slack variables info and tests.
+--     	    9 June 2010 ~SP: 
+--     	    	      	   some housekeeping and clean-up of mixed volume and black box solver;
+--     	    	      	   added a few things to documentation, mostly about dimension of the system and slack vars; 
+--     	    	      	   	many draft-like things still there. Please keep for now (at least as comments) for future reference.
+--     	    	      	   rational input allowed for the black-box solver;
+--     	    	      	   added "convertToPoly": a function that takes a rational system and turns it into laurent (natural environment to M2, acceptable for PHC) .
+--     	    24 June 2010 -EG:
+--     	    	      	   added tests for phcSolve() and mixedVol()
+--     	    ? August 2010 ~Anton visited UIC and transfered over a few functions; we made a decision on what should be done next.
+--     	    3 Oct 2010 -SP:
+--     	    	      	   after Jan has added the new functions on 30 Sep 2010, I have cleaned up some of the comments in the file. No time for further changes. 
+--     	    TO DO list:
+--     	    	 - optional input: precision --for a script example, see "toricMarkov" code from FourTiTwo.m2 --and documentation
+--     	    	 - "phc -f" to filter solutions close to zero
+--     	    	 - check that all works with Anton's NAG package!
+--     	    	 - finish the documentation!
+--     	    
+--------------------------------------------------------------
+--------------------------------------------------------------
+
 export { 
-     solveBlackBox,
+     phcSolve,
      mixedVolume,
      convertToPoly, 
      refineSolutions,
@@ -70,19 +75,10 @@ needsPackage "NAGtypes"
 -- GLOBAL VARIABLES ----------------------------------
 DBG = 0; -- debug level (10=keep temp files)
 path'PHC = (options PHCpack).Configuration#"path";
--- NOTE: the absolute path should be put into the init-PHCpack.m2 file for PHCpack inside Library -> Application Support -> Macaulay2 ->.
--- if path'PHC == "" then path'PHC =  prefixDirectory | currentLayout#"programs"
 PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"; --is the executable string we need to make sure that calls to PHCpack actually run:
---PHCexe="../../../.././phc";
---PHCexe="/Users/petrovic/PHCpack/./phc";   
---PHCexe="/Users/petrovic/./phc"; 
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file for PHCpack inside Library -> Application Support -> Macaulay2 ->.
 
-----------------------------------------------------------------------
---QUESTION:
---should i concatenate  rootPath to the beginning of each filename??
-----------------------------------------------------------------------
-
+-- QUESTION: do we need to prepend "rootPath" to all the file names to resolve issues with cygwin??
 
 
 needsPackage "SimpleDoc"
@@ -152,7 +148,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
      apply(sols, x->point( {apply(gens R, v->x#v)} | outputToPoint x ))
      )
 
--- copied from PHCpack.interface.m2 -- check if correct!!!
+-- JV 30 Sep 2010 : inserted "Coordinates" between S#i and v in S#i#v
 solutionsToFile = method(TypicalValue => Nothing,
      Options => {Append => false})
 solutionsToFile (List,Ring,String) := o -> (S,R,name) -> (
@@ -168,8 +164,8 @@ solutionsToFile (List,Ring,String) := o -> (S,R,name) -> (
 	       "the solution for t :" << endl;
 	       scan(numgens R, v->(
       	       		 L := " "|toString R_v|" :  "|
-			 format(0,-1,9,9,realPart toCC S#i#v)|"  "|
-			 format(0,-1,9,9,imaginaryPart toCC S#i#v);
+			 format(0,-1,9,9,realPart toCC S#i#Coordinates#v)|"  "|
+			 format(0,-1,9,9,imaginaryPart toCC S#i#Coordinates#v);
 			 file << L << endl; 
 			 ));
 	       file <<  "== err :  0 = rco :  1 = res :  0 ==" << endl;
@@ -184,9 +180,6 @@ solutionsToFile (List,Ring,String) := o -> (S,R,name) -> (
 -----------------------------------
 ------ POLY SYSTEM CONVERTER ------
 -----------------------------------
---****--
---**** THIS PROBABLY NEEDS A NAME CHANGE?? I AM NOT CREATIVE ENOUGH (or, I'm too creative). FEEL FREE TO CHANGE, AS LONG AS THERE IS NO CONFLICT WITH CURRENT M2 FUNCTION NAMES.
---****--
 convertToPoly = method(TypicalValue => List)
 convertToPoly   List := List => system -> (
      -- IN: system (or a poly) which is rational (i.e. lives in some field of fractions of a polynomial ring)
@@ -218,13 +211,10 @@ convertToPoly   List := List => system -> (
 -----------------------------------
 ------ THE BLACK-BOX SOLVER -------
 -----------------------------------
-solveBlackBox = method(TypicalValue => List)
-solveBlackBox  List := List => system -> (
+phcSolve = method(TypicalValue => List)
+phcSolve  List := List => system -> (
      -- IN:  system = list of polynomials in the system 
      -- OUT: solutions to the system = a list (?sequence?) of hashtables with keys being the solutions, and entries info on those solns (such as multiplicity, etc.)
-     -- !!! problem with temporaryFileName: cygwin's /tmp is different from Windows' /tmp  ~~anton
-     -- check the "path" discussion in FourTiTwo.m2 !! ~~sonja
-     -- -----I THINK this will fix CYGWIN PROBLEMS: prepending "rootPath" to filenames SHOULD fix this interface on cygwin!
      filename:=getFilename();
      << "using temporary file name " << filename|"PHCinput" << endl;
      infile := filename|"PHCinput";
@@ -246,9 +236,7 @@ solveBlackBox  List := List => system -> (
      -- writing data to the corresponding files:    
      systemToFile(system,infile);
      -- launching blackbox solver:
-     execstr := PHCexe|" -b "|infile|" "|outfile;
-     --	    execstr = path'PHC|"phc -b" |infile|" "|rootPath |outfile; 
-     --     execstr = PHCexe|" -b" |rootPath |infile|" "|rootPath |outfile;
+     execstr := PHCexe|" -b " |infile|" "|outfile;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing PHCpack command: phc -b";
      execstr = PHCexe|" -z "|infile|" " |solnsfile;
@@ -305,12 +293,52 @@ mixedVolume  List := ZZ => system -> (
 -----------------------------------
 -------- REFINING SOLNS -----------
 -----------------------------------
-refineSoln = method(TypicalValue => List)  
-refineSoln  List := List => soln -> (
-     -- IN: 
-     -- OUT:
-     << "this function still remains to be written" << endl;
+-- JV 30 Sep 2010 begin modifications
+-- IMPORTANT : I had to erase the documentation below to make this work...
+refineSoln = method()
+refineSoln (List,List,ZZ) := (f,sols,dp) -> (
+     stdio << "making temporary files ..." << endl;
+     PHCinputFile := temporaryFileName() | "PHCinput";
+     PHCoutputFile := temporaryFileName() | "PHCoutput";
+     PHCbatchFile := temporaryFileName() | "PHCbatch";
+     PHCsessionFile := temporaryFileName() | "PHCsession";
+     PHCsolutions := temporaryFileName() | "PHCsolutions";
+     stdio << "writing input system to " << PHCinputFile << endl;
+     systemToFile(f,PHCinputFile);
+     stdio << "appending solutions to " << PHCinputFile << endl;
+     R := ring first f;
+     solutionsToFile(sols,R,PHCinputFile,Append=>true);
+     stdio << "preparing input data for phc -v in "
+     << PHCbatchFile << endl;
+     s := concatenate("3\n",PHCinputFile);
+     s = concatenate(s,"\n");
+     s = concatenate(s,PHCoutputFile);
+     s = concatenate(s,"\n3\n1.0E-");
+     s = concatenate(s,toString(dp-4));  -- tolerance for correction term
+     s = concatenate(s,"\n4\n1.0E-");
+     s = concatenate(s,toString(dp+16));  -- tolerance for residual
+     s = concatenate(s,"\n6\n");
+     nit := ceiling(dp/10.0);
+     s = concatenate(s,toString(nit));   -- number of Newton iterations
+     s = concatenate(s,"\n7\n");
+     s = concatenate(s,toString(dp));    -- decimal places in working precision
+     s = concatenate(s,"\n0\n");
+     bat := openOut PHCbatchFile;
+     bat << s;
+     close bat;
+     stdio << "running phc -v, writing output to " << PHCsessionFile << endl;
+     run("phc -v < " | PHCbatchFile | " > " | PHCsessionFile);
+     stdio << "for refined solutions, see file " << PHCoutputFile << endl;
+     stdio << "running phc -z on " << PHCoutputFile << endl;
+     stdio << "solutions in Maple format in " << PHCsolutions << endl;
+     run("phc  -z " | PHCoutputFile | " " | PHCsolutions);
+     stdio << "parsing file " << PHCsolutions << " for solutions" << endl;
+     b := ceiling(log_2(10^dp));
+     result := parseSolutions(PHCsolutions,R,Bits=>b);
+     result
      )
+
+-- JV 30 Sep 2010 end modifications
 
 --here is a sample method from FirstPackage.m2:
 -- firstFunction = method(TypicalValue => String)
@@ -321,6 +349,7 @@ refineSoln  List := List => soln -> (
 ----------------------------------------------------------------------
 -- Functions moved from NumericalAlgebraicGEometry/PHCpack.interface.m2
 -- trackPaths and refineSolution have been "wrapped" already 
+-- refineSoluntion is Anton's old code and is left alone in case his package uses it!
 ----------------------------------------------------------------------
 
 trackPaths = method(TypicalValue => List, Options=>{gamma=>1, tDegree=>2})
@@ -405,7 +434,7 @@ trackPaths (List,List,List) := List => o -> (S,T,solsS) -> (
 
 refineSolutions = method(TypicalValue => List, Options => {
 	  ResidualTolerance => 0, 
-	  ErrorTolerance => 1e-10,
+          ErrorTolerance => 1e-10,
 	  Iterations => null,
 	  Bits => 300
 	  }
@@ -543,52 +572,6 @@ cascade Ideal := (I) -> (
      )
 
 
-///
--- WitnessSet and monodromyBreakupPHC
-restart
-debug loadPackage "PHCpack"
-
-R = QQ[x,y,z]
-I = ideal"x+y-2,y-z+3"
-J = ideal"x2+y2+z2-1,xy-z2"
-L = trim intersect(I,J)
-RC = CC[gens R]
-L = sub(L,RC)
-W = witnessSet L
---W1 = generalEquations W
---W2 = addSlackVariables W1
-W3s = monodromyBreakupPHC W
-apply(W3s, points)
-W3s/degree
-peek W2
-netList (ideal W2)_*
-peek oo
-///
-
-///
--- cascade interface
-restart
-debug loadPackage "PHCpack"
-
-R = QQ[x,y,z,w]
-I = ideal"x+y-2,y2-z+3"
-J = ideal"x2+y2+z2-1,xy-z2,x2+w2"
-L = trim intersect(I,J)
-RC = CC[gens R]
-L = sub(L,RC)
-cascadePHC L
-
-W = witnessSet L
---W1 = generalEquations W
---W2 = addSlackVariables W1
-W3s = monodromyBreakupPHC W
-apply(W3s, points)
-W3s/degree
-peek W2
-see ideal W2
-peek oo
-///
-
 ----------------------------------------------------------------------
 --**************************  DOCUMENTATION ************************--
 ----------------------------------------------------------------------
@@ -616,7 +599,7 @@ doc ///
 	  Example     
 	       R=QQ[x,y,z]      --R=CC[x,y,z]
 	       system={y-x^2,z-x^3,x+y+z-1}
-      	       solns =solveBlackBox(system);
+      	       solns =phcSolve(system);
 	       numSolns = #solns
 	       solns/print
 	  Text
@@ -651,16 +634,16 @@ doc ///
 ///;
 
 -----------------------------------
----- Documenting solveBlackBox ----
+---- Documenting phcSolve ----
 -----------------------------------
 doc ///
      Key
-     	  solveBlackBox
-          (solveBlackBox, List)
+     	  phcSolve
+          (phcSolve, List)
      Headline
      	  a black-box solver, which returns approximations to all complex isolated roots of a polynomial system; invokes "phc -b" from PHCpack
      Usage
-     	  solveBlackBox(S)
+     	  phcSolve(S)
      Inputs
       	  S:List
 	       whose entries are the polynomials of a 0-dimensional system	       
@@ -678,46 +661,32 @@ doc ///
 	       We call PHCpack's blackbox solver.
 	  Example
 	       printWidth = 300 -- want output to fit on one line
-	       L=solveBlackBox(S)
+	       L=phcSolve(S)
 	  Text
 	       Notice that in addition to the values of the three variables, the hashtable for each solution contains the following keys for 
 	       diagnostics: err, the magnitude of the last correction term used in Newton's method; mult, the multiplicity of the solution;
 	       rco, estimate for the inverse condition of the root; residual, the maginitude of the system when evaluated at the given solution; and time,
 	       the end value of the continuation parameter, if t=1 then the solver reached the end of the path properly.
 	  Text
-	       {\bf Ok, here comes some more text that is not completely done, and may be redundant:     }
-
-	       {\bf DISCUSSION ON DIMENSION:  }
-	       
-	       THE FOLLOWING 2 I'M NOT EXECUTING SINCE THEY RETURN AN ERROR;
-	       BUT I DO WANT THEM DOCUMENTED! :
-	       --solveBlackBox(flatten entries mingens I)
+     	       A brief discussion on the dimension of the system is in place.
+     	       If we try to run:
+	       --phcSolve(flatten entries mingens I)
 	       --break
-	       this is because our code does not check for dimension, it checks for number of equations instead. 
-	       the dimension computation can take forever (as Liz already noted!)  and should not be used. 
+	       we get an error. This is because the code does not check for dimension of the system; it checks for number of equations instead. 
+	       The dimension computation is extremely expensive. 
 	       
-	       THE PROBLEM IS if the dimension check is not there, the code will *freak out* 
-	       (gives prompt for phc inside m2!!!) ---try it, using the 2 commands above!
-	       
-	       SOLUTION: this will really only happen if some equations are redundant;
-	       one way to solve this is tell the user to make the system and use only minimal generators
-	       of the ideal :-)
-	        QUESTION: do we do this inside the package, OR  do we let the user know how to do it
-	        inside the documentaton??
-	        I vote for the latter because I don't want the package 
-	        to perform "mingens" or "trim" if it doesn't have to!!
-	       
+	       One way to solve problems to make the system and then use only minimal generators of the ideal by using "mingens".	       
 	       Here is a second system which is square, but has a free variable anyway (x) :
 	  Example
 	       I=ideal(y-x^2,z-x^3,x^2-y)
 	       dim I 
-	  Text
+     	  Text
 	       the system is not zero-dimensional (there is a free variable!!); but the code does not know that;
 	       since we have the system is ``square''...
 	  Example
 	       system = flatten entries gens I
 	       vol = mixedVolume(system) --this returns zero, but that's not informative!
-	       solveBlackBox(system) 
+	       phcSolve(system) 
 	  Text
 	       however, i get a different error message when i prune the generators:
 	  Example
@@ -728,7 +697,7 @@ doc ///
 	       Thus, if you are not sure if you have a *truly* square (or overdetermined system), that is, 
 	       if you want to make sure the system is not positive dimensional (underdetermined),
 	       you can check this by getting rid of the non-minimal generators of the ideal
-	       (note: i use "mingens" which returns a matrix; I could have used "trim" which returns an ideal)
+	       (note: here we use "mingens" which returns a matrix; we could have used "trim" which returns an ideal)
 	       
 	       In case we need slack variables: 
 	  Example
@@ -738,7 +707,7 @@ doc ///
 	  Example
 	       system={y-x^2, z-x^3,x+y+z-1,x+y+ x^3 -1}
 	       #system > numcols vars R --overdetermined system
-	       solns =solveBlackBox(system); --but code still works (slack vars)
+	       solns =phcSolve(system); --but code still works (slack vars)
 	       numSolns = #solns
 ///;
 
@@ -775,25 +744,27 @@ doc ///
 ----- Documenting refineSoln ------
 -----------------------------------
 doc ///
-     Key
+     Key 
      	  refineSoln
-          (refineSoln, List)
+	  (refineSoln,List,List,ZZ)
      Headline
-     	  refines the solutions of a system; invokes "phc -????" from PHCpack
+     	  refines a solution of a system by increasing number of decimal places
      Usage
-     	  refineSoln(solutions)
+     	  newSols = refileSoln(f,sols,dp)
      Inputs
-      	  solutions:List
-	       whose entries are the solutions .........
+     	  f:List
+	       of polynomials in the given system
+	  sols:List
+	       of solutions of the system from previous calculation
+	  dp:ZZ
+	       number of decimal places in working precision
      Outputs
-     	  s:List 
-	       refined solutions of the system....... 
+     	  newSols:List
+	       of solutions of f with increased precision
      Description
      	  Text
-	       Describe what is going on; and insert an example below.......
-	  Example
-	       R=QQ[x,y,z]
-	       S={y-x^2,z-x^3,x+y+z-1}--this is not a good example; insert the one we were playing with @office last month.     
+	       The user can specify the number of decimal places desired to refile solutions.
+	       A simple example: want to decide if some of the solutions are really close to zero.
 ///;
 
 -----------------------------------
@@ -840,18 +811,15 @@ doc ///
 	       it simply updates the system using the following:
 	  Example
 	       lift(f,P)
-     	  Text	       
-	  
-	       This method is called by @TO solveBlackBox @.
-     	  
-	  Text
-	  
-	       {\bf ERASE ME later: } this might be useful to know: <<<---- NOTE FOR THE DEVELOPERS
-	  Example
-	       QQ[x,y,z]
-      	       denominator(x^2+y/z+z/x^3) --returns the common denominator, of course.
-
+     	  Text	       	  
+	       This method is called by @TO phcSolve @.
 ///;
+
+
+--###############################################################################
+end   
+--###############################################################################
+
 
 
 ---------------------------------------------------------------------------------------
@@ -882,7 +850,7 @@ TEST///
 TEST/// 
      R=QQ[x,y,z]
      S={x^2-y*z-3,y^2-x*z-4,z^2-x*y-5}
-     L=solveBlackBox(S)
+     L=phcSolve(S)
      n=# L
      assert(n==2) --testing phc output against by-hand calculation
      sol1={11/6.,-1/6.,-13/6.}
@@ -906,6 +874,52 @@ end   	   --********************************************************
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+
+///
+-- WitnessSet and monodromyBreakupPHC
+restart
+debug loadPackage "PHCpack"
+
+R = QQ[x,y,z]
+I = ideal"x+y-2,y-z+3"
+J = ideal"x2+y2+z2-1,xy-z2"
+L = trim intersect(I,J)
+RC = CC[gens R]
+L = sub(L,RC)
+W = witnessSet L
+--W1 = generalEquations W
+--W2 = addSlackVariables W1
+W3s = monodromyBreakupPHC W
+apply(W3s, points)
+W3s/degree
+peek W2
+netList (ideal W2)_*
+peek oo
+///
+
+///
+-- cascade interface
+restart
+debug loadPackage "PHCpack"
+
+R = QQ[x,y,z,w]
+I = ideal"x+y-2,y2-z+3"
+J = ideal"x2+y2+z2-1,xy-z2,x2+w2"
+L = trim intersect(I,J)
+RC = CC[gens R]
+L = sub(L,RC)
+cascadePHC L
+
+W = witnessSet L
+--W1 = generalEquations W
+--W2 = addSlackVariables W1
+W3s = monodromyBreakupPHC W
+apply(W3s, points)
+W3s/degree
+peek W2
+see ideal W2
+peek oo
+///
 
 
 restart
