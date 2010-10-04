@@ -16,7 +16,7 @@ newPackage(
 	     "PHCexe"=>"phc", 
 	     "keep files" => true
 	      },
-    	DebuggingMode => true, 	-- DebuggingMode should be true while developing a package,  but false after it is done
+    	DebuggingMode => false, 	-- DebuggingMode should be true while developing a package,  but false after it is done
 	AuxiliaryFiles=>true,
 	CacheExampleOutput => true
 	)
@@ -195,8 +195,9 @@ convertToPoly   List := List => system -> (
 	       (    --add one new variable "var_counter", and define the appropriate Laurent polynomial ring: 
 		    P = newRing(P, Variables=>flatten entries vars P | {var_counter},Inverses=>true,MonomialOrder=>RevLex);
      	       	    --add the new laurent polynomial to replace the rational equation:
-		    system = system - set{f} | {sub(numerator(f),P)*var_counter^(-1)};
-		    system = system | {var_counter - sub(denominator(f),P)}; 
+		    newvar := P_(numgens P - 1);
+		    system = system - set{f} | {sub(numerator(f),P)*newvar^(-1)};
+		    system = system | {newvar - sub(denominator(f),P)}; 
 		    counter=counter+1; 
 	       )    -- "sub" is there to make sure everyone is living in the same ring. 
 	  )
@@ -297,11 +298,11 @@ mixedVolume  List := ZZ => system -> (
 refineSoln = method()
 refineSoln (List,List,ZZ) := (f,sols,dp) -> (
      stdio << "making temporary files ..." << endl;
-     PHCinputFile = temporaryFileName() | "PHCinput";
-     PHCoutputFile = temporaryFileName() | "PHCoutput";
-     PHCbatchFile = temporaryFileName() | "PHCbatch";
-     PHCsessionFile = temporaryFileName() | "PHCsession";
-     PHCsolutions = temporaryFileName() | "PHCsolutions";
+     PHCinputFile := temporaryFileName() | "PHCinput";
+     PHCoutputFile := temporaryFileName() | "PHCoutput";
+     PHCbatchFile := temporaryFileName() | "PHCbatch";
+     PHCsessionFile := temporaryFileName() | "PHCsession";
+     PHCsolutions := temporaryFileName() | "PHCsolutions";
      stdio << "writing input system to " << PHCinputFile << endl;
      systemToFile(f,PHCinputFile);
      stdio << "appending solutions to " << PHCinputFile << endl;
@@ -829,7 +830,6 @@ end
 -- Testing mixedVolume
 -----------------------------------
 TEST/// 
-     loadPackage "PHCpack"    
      R=QQ[x,y,z] --- the example needs to be meaningful; tested against by-hand output
      S={y-x^2,z-x^3,x+y+z-1}
      m=mixedVolume(S) --value returned by the function we are testing
@@ -848,7 +848,6 @@ TEST///
 -- Testing blackBox
 -----------------------------------
 TEST/// 
-     loadPackage "PHCpack"    
      R=QQ[x,y,z]
      S={x^2-y*z-3,y^2-x*z-4,z^2-x*y-5}
      L=phcSolve(S)
