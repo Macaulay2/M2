@@ -1149,7 +1149,8 @@ cellularBinomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
      ncv := toList (set gens ring I - cv);
      ap = cellularBinomialAssociatedPrimes (I, cellVariables => cv,verbose=>vbopt);
      -- Projecting down the assoc. primes, removing monomials
-     proj := (II) -> eliminate (ncv,II); 
+     sub2apring := (v) -> (sub (v, ring ap#0));
+     proj := (II) -> eliminate (sub2apring \ ncv,II); 
      pap := ap / proj ;
      R := ring ap#0; -- All associated primes live in a common ring
      J := sub (I,R); -- get I over there to compute sums
