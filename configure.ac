@@ -334,7 +334,7 @@ EOF
 	$CXX -c conf_test2.cc
 	$CXX -c conf_test3.cc
 	$CXX -c conf_test4.cc
-	if test $CXX = cl
+	if test "$CXX" = cl
 	then lib conf_test2.$OBJEXT
 	     lib conf_test4.$OBJEXT
 	     $CXX conf_main.cc conf_test1.$OBJEXT conf_test2.lib conf_test3.$OBJEXT conf_test4.lib -o conf_main
