@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 2050947182 *}
---loading configuration for package "PHCpack" from file /home/aleykin3/.Macaulay2/init-PHCpack.m2
 
 i1 : R=QQ[x,y,z]
 
@@ -15,7 +14,7 @@ o2 = {- x  + y, - x  + z, x + y + z - 1}
 o2 : List
 
 i3 : m=mixedVolume(S)
-using temporary file name /tmp/M2-9596-1PHCinput
+using temporary file name /tmp/M2-7482-1PHCinput
 
 o3 = 3
 

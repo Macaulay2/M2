@@ -18,7 +18,7 @@ i3 : printWidth = 300 -- want output to fit on one line
 o3 = 300
 
 i4 : L=phcSolve(S)
-using temporary file name /tmp/M2-69391-1PHCinput
+using temporary file name /tmp/M2-7473-1PHCinput
 
 o4 = {{1+ii, 1-ii, -1}, {1-ii, 1+ii, -1}}
 
@@ -43,14 +43,14 @@ o7 = {- x  + y, - x  + z, x  - y}
 o7 : List
 
 i8 : vol = mixedVolume(system) --this returns zero, but that's not informative!
-using temporary file name /tmp/M2-69391-2PHCinput
+using temporary file name /tmp/M2-7473-2PHCinput
 
 o8 = 0
 
 i9 : phcSolve(system)
-using temporary file name /tmp/M2-69391-3PHCinput
+using temporary file name /tmp/M2-7473-3PHCinput
 
-o9 = {(-4.45338e-16+3.18282e-16*ii, -3.2821e-31-1.22655e-30*ii, 3.42073e-31+4.1963e-31*ii)}
+o9 = {(2.11183e-16-9.35296e-16*ii, -8.92359e-31-4.8099e-32*ii, 6.62326e-30-6.32352e-30*ii)}
 
 o9 : List
 
@@ -82,7 +82,7 @@ i15 : #system > numcols vars R --overdetermined system
 o15 = true
 
 i16 : solns =phcSolve(system); --but code still works (slack vars)
-using temporary file name /tmp/M2-69391-4PHCinput
+using temporary file name /tmp/M2-7473-4PHCinput
 
 i17 : numSolns = #solns
 
