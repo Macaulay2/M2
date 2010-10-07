@@ -339,7 +339,9 @@ EOF
 	     lib conf_test4.$OBJEXT
 	     $CXX conf_main.cc conf_test1.$OBJEXT conf_test2.lib conf_test3.$OBJEXT conf_test4.lib -o conf_main
 	else ar ru libconf_test2.a conf_test2.$OBJEXT
+	     $RANLIB libconf_test2.a
 	     ar ru libconf_test4.a conf_test4.$OBJEXT
+	     $RANLIB libconf_test4.a
 	     $CXX conf_main.cc -L. conf_test1.$OBJEXT -lconf_test2 conf_test3.$OBJEXT -lconf_test4 -o conf_main
 	fi
 	./conf_main
