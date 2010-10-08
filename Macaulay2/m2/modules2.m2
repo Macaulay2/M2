@@ -642,8 +642,7 @@ findHeftandVars = (R, varlist, ndegs) -> (
      else (
        if degreeLength R == ndegs and #varlist == numgens R then (
 	    h := heft R;
-	    if h === null then error "heft vector required that is positive on the degrees of the variables";
-	    return (varlist, h);
+	    if h =!= null then return (varlist, h);
 	    );
        zerodeg := toList(ndegs:0);
        varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
