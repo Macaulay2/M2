@@ -24,9 +24,9 @@ endif
 #   emacs-X11
 #   emacs-el
 #   flex
-#   gcc
-#   gdbm
-#   lapack
+#   gcc4-core gcc4-g++ gdb gcc4-fortran libstdc++6-devel
+#   libgdbm libgdbm3?
+#   liblapack
 
 #   libgdbm-devel
 #   make
@@ -50,7 +50,7 @@ INSTALLOPTIONS += prefix=/usr/local/encap
 include Makefile.include
 default:install check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:; [ `uname -s` = CYGWIN_NT-5.0 ] && [ `uname -m` = i686 ]
+arch-chk:; [ `uname -s` = CYGWIN_NT-6.1-WOW64 ] && [ `uname -m` = i686 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.cygwin "
 # End:
