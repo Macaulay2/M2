@@ -370,6 +370,8 @@ saturate(Module,Ideal) := Module => opts -> (M,I) -> (
     M)
 saturate(Module,RingElement) := Module => opts -> (M,f) -> saturate(M,ideal(f),opts)
 saturate(Module) := Module => opts -> (M) -> saturate(M,ideal vars ring M, opts)
+saturate(Vector,Ideal) := Module => opts -> (v,I) -> saturate(image matrix {v}, I, opts)
+saturate(Vector,RingElement) := Module => opts -> (v,f) -> saturate(image matrix {v}, f, opts)
 saturate(Vector) := Module => opts -> (v) -> saturate(image matrix {v}, opts)
 
 
