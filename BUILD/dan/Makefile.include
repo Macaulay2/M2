@@ -23,7 +23,7 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
 	mkdir -p builds.tmp/$(DIRECTORY)
 	D=`pwd`;\
 	    echo "make: Entering directory \`$$D/builds.tmp/$(DIRECTORY)'" ;\
-	    cd builds.tmp/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS) ;\
+	    cd builds.tmp/$(DIRECTORY) && argsrun $$D/../../configure $(CONFIGOPTIONS) ;\
 	    echo "make: Leaving directory \`$$D/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all
 default: check-links
