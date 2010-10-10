@@ -17,12 +17,17 @@ else
 DIRECTORY = cygwin
 endif
 
-# packages to install:
-#   autoconf
-#   bison
-#   emacs
+# packages to install for cygwin 1.7:
+
 #   emacs-X11
 #   emacs-el
+#   xinit
+#   xorg-server
+#   xconsole
+#   xkill
+
+#   autoconf
+#   bison
 #   flex
 #   gcc4-core gcc4-g++ gdb gcc4-fortran libstdc++6-devel
 #   libgdbm libgdbm3?
@@ -33,14 +38,9 @@ endif
 #   patchutils
 #   readline
 #   subversion
-#   vim
+#   vim gvim
 #   wget
-
-#   libxml2-devel
-#   xconsole
-#   xinit
-#   xkill
-#   xsetroot
+#   libxml2-devel libxml2-doc
 
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin

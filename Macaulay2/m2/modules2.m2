@@ -96,6 +96,8 @@ recipN = (n,wts,f) -> (
 
 heft = method()
 heft Ring := R -> ( o := options R; if o =!= null and o.?Heft then o.Heft )
+heft PolynomialRing := R -> (options R.FlatMonoid).Heft
+heft QuotientRing := R -> heft ambient R
 heft Module := M -> heft ring M
 
 exactKey := "exact hilbertSeries"
