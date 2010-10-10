@@ -21,7 +21,7 @@ PROFILE=no
 M64=yes
 FIX_UNWIND=no
 
-CONFIGOPTIONS += --disable-strip
+# CONFIGOPTIONS += --disable-strip
 
 ifeq ($(FIX_UNWIND),yes)
 # try this one if configuration fails because of an undefined symbol Unwind_Resume
