@@ -1,4 +1,13 @@
 -- -*- coding: utf-8 -*-
+
+   {*
+   Copyright 2010 Amelia Taylor and Augustine O'Keefe.
+
+   You may redistribute this file under the terms of the GNU General Public
+   License as published by the Free Software Foundation, either version 2 of
+   the License, or any later version.
+   *}
+
 newPackage("Graphs",
      Authors => {
 	  {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
