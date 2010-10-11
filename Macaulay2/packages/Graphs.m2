@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage("Graphs",
      Authors => {
-	  {Name => "Amelia Taylor"},
-	  {Name => "Augustine O'Keefe"}
+	  {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
+	  {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"}
 	  },
      ---- Also Doug Torrance.  --- clearly a current author.  Current role of Amelia and Tina?
      ---- Shaowei Lin and Alex Diaz contributed mixedGraph
