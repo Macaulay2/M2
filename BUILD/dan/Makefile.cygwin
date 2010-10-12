@@ -25,6 +25,7 @@ endif
 #   xorg-server
 #   xconsole
 #   xkill
+#   psmisc (to get killall, pstree, fuser)
 
 #   autoconf
 #   bison
