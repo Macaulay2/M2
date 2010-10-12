@@ -1,14 +1,14 @@
 -- this file is licensed for use under the GNU General Public Licence version 2
 
 needsPackage "SimplicialComplexes"
--- needsPackage "Graphs"
+needsPackage "Graphs"
 
 newPackage(
 	"Posets",
-    	Version => "0.1.5", 
+    	Version => "0.2", 
     	Date => "September 17, 2010",
     	Authors => {
-	     {Name => "Sonja Mapes", Email => "smapes@math.duke.edu", HomePage => "http://www.math.duke.edu/~smapes/"},
+	     {Name => "Sonja Mapes", Email => "mapes@math.columbia.edu", HomePage => "http://www.math.columbia.edu/~mapes/"},
 	     {Name => "Gwyn Whieldon", Email => "whieldon@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Grads/whieldon.html"}
 	     },
     	Headline => "Package for processing posets and order complexes",
@@ -41,22 +41,18 @@ export {
 	maximalChains,
 	orderComplex,
 	VariableName,
---	hasseDiagram,
+	hasseDiagram,
 	subPoset,
 	atoms,
 	closedInterval,
 	openInterval,
 	moebiusFunction,
 	isAntichain,
-	meetIrreducibles,
-	DirectedGraph,
-	directedGraph,
-	adjacencyMatrix,
-	allPairsShortestPath
+	meetIrreducibles
        }
 
 needsPackage "SimplicialComplexes"
---needsPackage "Graphs"
+needsPackage "Graphs"
 
 Poset = new Type of HashTable
 
@@ -82,56 +78,7 @@ poset(List,List,Matrix) := (I,C,M) ->
 	  symbol cache => new CacheTable
 	  }
      
--- DirectedGraph, adjacencyMatrix and allPairsShortestPath are moved back
-DirectedGraph = new Type of HashTable
-
-protect Vertices
-protect DirectedEdges
- 
-directedGraph = method()
-directedGraph(List, List) := (V,E) ->
-     new DirectedGraph from {
-     	  symbol Vertices => V,
-     	  symbol DirectedEdges => E,
-	  symbol cache => new CacheTable
-     }
-
-
---inputs: (I,C), I is a List (ground set or vertex set) and C is a List of pairs of elements in I
---     	     OR DirectedGraph OR Poset
---output: a matrix whose rows and columns are indexed by I, 
---     	    where (i,j) entry is infinity (i.e. 1/0.) if (i,j) is not in C
---     	    and 1 otherwise (i.e. tropicalization of the "usual" adjacency matrix)
---caveat: diagonal entries are 0
--- uses:  transitive closure 
-
-adjacencyMatrix = method()
-adjacencyMatrix(List,List) := Matrix => (I, C) -> (
-     M := mutableMatrix table(#I, #I, (i,j)->1/0.);
-     ind := hashTable( apply(I, i-> i=> position(I,j-> j==i) )  ); --indices 
-     scan(C, e -> M_(ind#(e#0), ind#(e#1))= 1);
-     scan(numrows M, i-> M_(i,i) = 0);
-     matrix M      
-     )
-adjacencyMatrix(DirectedGraph) := Matrix => (G) -> adjacencyMatrix(G.Vertices,G.DirectedEdges)
-adjacencyMatrix(Poset) := Matrix => (P) -> adjacencyMatrix(P.GroundSet,P.Relations)
-
---input: adjacency matrix of a directed graph
---output: a matrix whose (i,j) entry is the length of the shortest path from i to j
---algorithm: Floyd–Warshall algorithm for all pairs shortest path
-allPairsShortestPath = method()
-allPairsShortestPath(Matrix) := Matrix => (A) -> (
-     D := mutableMatrix(A);
-     n := numrows D;
-     scan(n, k->
-	       table(n,n,(i,j)-> D_(i,j) = min(D_(i,j), D_(i,k)+D_(k,j)))
-	  );
-     matrix D
-     )
-allPairsShortestPath(DirectedGraph) := Matrix => (G)-> allPairsShortestPath(adjacencyMatrix(G))
-
-
-------------------------------------------------
+-- DirectedGraph, adjacencyMatrix and allPairsShortestPath were moved to Graphs.m2
 
 -- input: a poset, and an element A from I
 -- output:  the index of A in the ground set of P
@@ -154,17 +101,11 @@ nonnull :=(L) -> (
 --output: matrix where 1 in (i,j) position where i <= j, 0 otherwise
 --uses: poset
 
--- this is the "old transitive closure" before the compatiability with graphs in v.2
 transitiveClosure = method()
-transitiveClosure(List,List) := List => (I,C)-> (
-     A := adjacencyMatrix(I,C);
-     D := mutableMatrix allPairsShortestPath(A);
-     scan(numrows D, i-> D_(i,i) = 0);
-     table(numrows D, numrows D, (i,j)->(
-	  if D_(i,j) ==1/0. then D_(i,j) = 0 else D_(i,j) = 1;	  
-	  )
-	  );
-     matrix applyTable (entries D, i -> lift(i, ZZ))
+transitiveClosure(List,List) := (I,C) -> (
+     G := digraph hashTable apply(I,v->v=>set apply(select(C,e->e_0==v),e->e_1));
+     H := floydWarshall G;
+     matrix apply(I,u->apply(I,v->if H#(u,v)<1/0. then 1 else 0))
      )
 
 --input: A poset with any type of relation C (not necessarily minimal, maximal, etc.)
@@ -212,11 +153,11 @@ coveringRelations (Poset) := (P) -> (
 
 --input:  A poset P
 --output:  A digraph which represents the Hasse Diagram of P
---hasseDiagram = method();
---hasseDiagram(Poset) := P -> (
---  if P.cache.?coveringRelations then cr := P.cache.coveringRelations else cr = coveringRelations P;
---  digraph hashTable apply(P.GroundSet,v->v=>set apply(select(cr,e->e_0==v),e->e_1))
---)
+hasseDiagram = method();
+hasseDiagram(Poset) := P -> (
+  if P.cache.?coveringRelations then cr := P.cache.coveringRelations else cr = coveringRelations P;
+  digraph hashTable apply(P.GroundSet,v->v=>set apply(select(cr,e->e_0==v),e->e_1))
+)
 
 --G = digraph(apply(P.GroundSet, elt-> {elt, apply(select(P.cache.coveringRelations, rel -> rel#1 == elt), goodrel-> goodrel#0)})) 
 
@@ -1421,31 +1362,31 @@ doc///
 -----------------
 -- hasseDiagram
 -----------------
---doc///
---     Key
---     	  hasseDiagram
---	  (hasseDiagram,Poset)
---     Headline
---     	  returns Hasse diagram for the poset
---     Usage
---     	  G = hasseDiagram(P)
---     Inputs
---     	  P : Poset
---     Outputs
---	  G : Digraph
---	       Directed graph whose edges correspond to covering relations in P
---     Description
---     	  Text 
---	       This routine returns the Hasse diagram which is a directed graph (defined in the Graphs package)
---	       whose edges correspond to the covering relations in P.  Specifically, the vertices in the graph 
---	       correspond to the elements in the ground set of P, and two vertices a and b have a directed edge 
---	       from a to b if a > b.
---	  Example
---	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
---	       G = hasseDiagram(P)	
---     SeeAlso
---     	 displayGraph
---///
+doc///
+     Key
+     	  hasseDiagram
+	  (hasseDiagram,Poset)
+     Headline
+     	  returns Hasse diagram for the poset
+     Usage
+     	  G = hasseDiagram(P)
+     Inputs
+     	  P : Poset
+     Outputs
+	  G : Digraph
+	       Directed graph whose edges correspond to covering relations in P
+     Description
+     	  Text 
+	       This routine returns the Hasse diagram which is a directed graph (defined in the Graphs package)
+	       whose edges correspond to the covering relations in P.  Specifically, the vertices in the graph 
+	       correspond to the elements in the ground set of P, and two vertices a and b have a directed edge 
+	       from a to b if a > b.
+	  Example
+	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
+	       G = hasseDiagram(P)	
+     SeeAlso
+     	 displayGraph
+///
 
 
 -----------------
@@ -1477,6 +1418,7 @@ doc///
 ///
 doc///
      Key
+     	  moebiusFunction
 	  (moebiusFunction,Poset)
      Headline
      	  returns the Moebius function values for the unique minimal element to each element of the poset
@@ -1485,22 +1427,20 @@ doc///
      Inputs
      	  P : Poset
      Outputs
-	  M :
+	  M : HashTable
 	       Moebius function values for the minimal element of the poset to each element of the poset
      Description
      	  Text 
 	       This routine returns the Moebius function values for the unique minimal element to each element of the poset.
-	       If {\tt P} has more than one minimal element, an error will be signalled.
 	       In this example, $a$ is the minimal element of $P$; $M$ lists the Moebius function values from $a$ to each element of $P$.
 	  Example
 	       P = poset ({a,b,c,d},{(a,b), (b,c), (b,d)})
 	       M = moebiusFunction(P)	
-     	  -- example code can't include errors!
-	  -- Text
-	  --      In the following example, the poset $Q$ has two distinct minimal elements and the routine returns an error. 
-	  -- Example
-	  --      Q = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
-	  --      moebiusFunction(Q)	          
+	  Text
+	       In the following example, the poset $Q$ has two distinct minimal elements and the routine returns an error. 
+	  Example
+	       Q = poset({a,b,c,d}, {(a,c), (c,d), (b,c)})
+	       moebiusFunction(Q)	          
      SeeAlso
      	  (moebiusFunction,Poset,Thing,Thing)
 	  Poset
@@ -1508,6 +1448,7 @@ doc///
 
 doc///
      Key
+     	  moebiusFunction
 	  (moebiusFunction,Poset,Thing,Thing)
      Headline
      	  returns the Moebius function values for the minimal element of a closed interval to each element of the interval
@@ -1860,20 +1801,20 @@ assert( (L2.RelationMatrix) === map(ZZ^12,ZZ^12,{{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 
 
 -- TEST 5
---TEST ///
---P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
---R = QQ[x,y,z];
---L = lcmLattice ideal (x^2, y^2, z^2);
+TEST ///
+P1 = poset({a,b,c,d,e},{(a,c),(a,d),(b,c),(b,d),(c,e),(d,e)});
+R = QQ[x,y,z];
+L = lcmLattice ideal (x^2, y^2, z^2);
 
 -- testing hasseDiagram
---assert((hasseDiagram P1)#a === set {})
---assert((hasseDiagram P1)#b === set {})
---assert((hasseDiagram P1)#c === set {a,b})
---assert((hasseDiagram P1)#d === set {a,b})
---assert((hasseDiagram P1)#e === set {c,d})
---assert( toString sort pairs (hasseDiagram L) === toString sort pairs new Digraph from {x^2*y^2*z^2 => new Set from {x^2*y^2, x^2*z^2, y^2*z^2}, x^2*y^2 => new Set from {x^2, y^2}, x^2*z^2 => new Set from {x^2, z^2}, x^2 => new Set from {1}, y^2*z^2 => new Set from {y^2, z^2}, 1 => new Set from {}, z^2 => new Set from {1}, y^2 => new Set from {1}} )
+assert((hasseDiagram P1)#a === set {})
+assert((hasseDiagram P1)#b === set {})
+assert((hasseDiagram P1)#c === set {a,b})
+assert((hasseDiagram P1)#d === set {a,b})
+assert((hasseDiagram P1)#e === set {c,d})
+assert( toString sort pairs (hasseDiagram L) === toString sort pairs new Digraph from {x^2*y^2*z^2 => new Set from {x^2*y^2, x^2*z^2, y^2*z^2}, x^2*y^2 => new Set from {x^2, y^2}, x^2*z^2 => new Set from {x^2, z^2}, x^2 => new Set from {1}, y^2*z^2 => new Set from {y^2, z^2}, 1 => new Set from {}, z^2 => new Set from {1}, y^2 => new Set from {1}} )
 
---///
+///
 
 -- TEST 6
 TEST ///
@@ -1979,7 +1920,7 @@ L = lcmLattice I;
 
 meetIrreducibles L
 assert( (try meetIrreducibles P1  else oops) === oops )
-assert( set meetIrreducibles P2 === set {e,f,g,b,d} )
+assert( (meetIrreducibles P2) == {e,f,g,b,d} )
 assert( (set meetIrreducibles L) === set {x^2, y^3*z, x*y^3*z, x^2*y*z, x^2*y^3, x^2*y^3*z} )
 ///
 
