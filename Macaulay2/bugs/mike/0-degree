@@ -1,3 +1,5 @@
+-- fixed 10/3/2010.  For some reason, degree was ignoring variables whose exp was < 0.
+
 ZZ[x, MonomialOrder=>Lex, Inverses=>true]
 degree x
 degree (x^-1)

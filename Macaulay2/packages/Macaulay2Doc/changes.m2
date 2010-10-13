@@ -74,8 +74,12 @@ document {
 	       UL {
 		    LI { TO "AdjointIdeal::AdjointIdeal", ", a package for adjoint ideals of plane curves, has been added." },
 		    LI { TO "BooleanGB::BooleanGB", ", a package for Groebner bases in Boolean rings, has been added." },
+		    LI { TO "DGAlgebras::DGAlgebras", ", a package for handling differential graded algebras, has been added." },
 		    LI { TO "FormalGroupLaws::FormalGroupLaws", ", a package for commutative formal group laws, has been added." },
+		    LI { TO "GraphicalModels::GraphicalModels", ", a package for discrete and Gaussian statistical graphical models,
+			 has been added." },
 		    LI { TO "Graphics::Graphics", ", a package for creating graphics, has been added." },
+		    LI { TO "Graphs::Graphs", ", a package providing data types, visualization, and basic functions for graphs, has been added." },
 		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", ", a pakcage for Hodge integrals on the moduli space of curves, has been added and certified." },
 		    LI { TO "Kronecker::Kronecker", ", a package for Kronecker and rational normal forms, has been added." },
 		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", ", a package for
@@ -86,9 +90,12 @@ document {
 			 computes automorphism groups of graphs and digraphs, has been added." },
 		    LI { star, " ", TO "Normaliz::Normaliz", ", an interface package to the program ", TT "normaliz", ",
 			 which computes the Hilbert basis of a rational cone, has been certified." },
+		    LI { TO "NormalToricVarieties::NormalToricVarieties", ", a package designed to manipulate normal toric
+  			 varieties and related geometric objects, has been added." },
 		    LI { TO "Parametrization::Parametrization", ", a package for rational parametrization of rational plane curves, has been added." },
 		    LI { TO "PHCpack::PHCpack", ", an interface package to the program ", TT "PHCpack", ", 
 			 which uses homotopy continuation methods to solve systems of polynomial equations numerically, has been added." },
+		    LI { TO "Serialization::Serialization", ", a preliminary package for saving Macaulay2 objects in files, has been added." },
 		    LI { star, " ", TO "SimplicialDecomposability::SimplicialDecomposability", ", a package
 			 containing various decomposability routines for simplicial complexes, has been added and certified." },
 		    LI { star, " ", TO "ToricVectorBundles::ToricVectorBundles", ", a package for vector bundles

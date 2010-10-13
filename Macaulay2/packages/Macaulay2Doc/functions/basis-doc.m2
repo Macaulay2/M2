@@ -640,6 +640,13 @@ assert try (basis(A, Variables=>{a,c});false) else true
  assert isHomogeneous B
  ///
 
+TEST ///
+  -- had been in bugs/mike/0-basis r12446
+  T = QQ[x,Degrees => {-1}]
+  assert(basis(-3,-2, T) == matrix"x2,x3")
+  assert(basis(-2,-3, T) == 0)
+///
+
  TEST ///
  -- More partial bases:
 

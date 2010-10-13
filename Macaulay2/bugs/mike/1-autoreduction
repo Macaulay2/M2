@@ -1,4 +1,9 @@
 --*-M2-*-
+-- problem here: f % g line
+--  f % ideal(g) works.
+--  trouble is that the powerseries
+--    Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const
+--    routine is being used here, but it is not designed for such division.
 
 S = QQ[a,b,c,d,MonomialOrder => {Weights => {0,1,10,-7}},Global => false];
 f = c - a*b;
