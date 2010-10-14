@@ -209,8 +209,21 @@ runBenchmarks0 String := x -> runBenchmarks0 {x}
 runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
-     if fileExists "/proc/cpuinfo" and match("^model name",get "/proc/cpuinfo")
-     then << "-- " << first select("^model name.*$",get "/proc/cpuinfo") << endl;
+     if fileExists "/proc/cpuinfo"
+     then (
+	  cpuinfo := get "/proc/cpuinfo";
+	  << "-- ";
+	  scan({
+		    ("model name[[:space:]]*: (.*)","\\1"),
+		    ("vendor_id[[:space:]]*: (.*)","\\1"),
+		    ("(cpu MHz)[[:space:]]*: (.*)","\\1 \\2")
+		    },
+	       (pattern,repl) -> ( 
+		    t := select(pattern,repl,cpuinfo);
+		    if #t > 0 then << replace("[[:space:]]+"," ",t#0) << "  ";
+		    ));
+	  << endl;
+	  );
      if fileExists "/usr/sbin/system_profiler"
      then (
 	  r := get "!/usr/sbin/system_profiler SPHardwareDataType";
@@ -223,18 +236,6 @@ runBenchmarks0 List := x -> (
 		    "(Bus Speed: .*)"
 		    },
 	       s -> ( t := select(s,"\\1, ",r); if #t > 0 then << t#0));
-	  << endl;
-	  );
-     if fileExists "/proc/cpuinfo"
-     then (
-	  cpuinfo := get "/proc/cpuinfo";
-	  << "-- ";
-	  scan({
-		    ("model name[[:space:]]*: (.*)","\\1"),
-		    ("vendor_id[[:space:]]*: (.*)","\\1"),
-		    ("(cpu MHz)[[:space:]]*: (.*)","\\1 \\2")
-		    },
-	       (pattern,repl) -> ( t := select(pattern,repl,cpuinfo); if #t > 0 then << t#0 << ", "));
 	  << endl;
 	  );
      << "-- Macaulay2 " << version#"VERSION";
