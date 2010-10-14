@@ -41,9 +41,10 @@ endif
 #   subversion
 #   vim gvim
 #   wget
+#   unzip
 #   libxml2-devel libxml2-doc
 
-CONFIGOPTIONS += --disable-pthreads
+# CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
 # BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true

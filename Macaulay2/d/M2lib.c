@@ -118,7 +118,13 @@ void segv_handler2(int sig) {
 void stack_trace() {
      void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
      unblock(SIGSEGV);
-     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)syscall(SYS_getpid));
+     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)
+	  #ifdef HAVE_SYSCALL_H
+	     syscall(SYS_getpid)
+	  #else
+	     getpid()
+	  #endif
+	  );
      if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
 #	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
 #	  define i 0
@@ -393,7 +399,25 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 	static __thread double startTime;
 	double system_cpuTime(void) {
 	     struct timespec t;
-	     int err = clock_gettime(CLOCK_THREAD_CPUTIME_ID,&t);
+	     int err = clock_gettime(
+		  #ifdef PTHREADS
+		      #ifdef CLOCK_THREAD_CPUTIME_ID
+			CLOCK_THREAD_CPUTIME_ID
+		      #else
+			CLOCK_THREAD_CPUTIME
+		      #endif
+		  #else
+		      #ifdef CLOCK_PROCESS_CPUTIME_ID
+			CLOCK_PROCESS_CPUTIME_ID
+		      #else
+			#ifdef CLOCK_PROCESS_CPUTIME
+			  CLOCK_PROCESS_CPUTIME
+			#else
+			  CLOCK_REALTIME /* aarrrrgh */
+			#endif
+		      #endif
+		  #endif
+		  ,&t);
 	     if (err) return 0;		/* silent about error */
 	     double u = t.tv_sec + t.tv_nsec * 1e-9;
 	     return u - startTime;

@@ -724,7 +724,7 @@ int system_acceptBlocking(int so) {
   struct sockaddr_in addr;
   unsigned int addrlen = sizeof addr;
   fcntl(so,F_SETFL,0);
-  return accept(so,(struct sockaddr*)&addr,&addrlen);
+  return accept(so,(struct sockaddr*)&addr,(void *)&addrlen);
 #else
   return ERROR;
 #endif
@@ -736,7 +736,7 @@ int system_acceptNonblocking(int so) {
   unsigned int addrlen = sizeof addr;
   int sd;
   fcntl(so,F_SETFL,O_NONBLOCK);
-  sd = accept(so,(struct sockaddr*)&addr,&addrlen);
+  sd = accept(so,(struct sockaddr*)&addr,(void *)&addrlen);
   return sd;
 #else
   return ERROR;
