@@ -19,3 +19,14 @@ in the same directory.  Perhaps better would be a function that makes a new
 temporary directory and returns the name of it.
 
 I've seen another collision.
+
+And another:
+
+    -- -*- M2-comint -*- {* hash: 1728606371 *}
+
+    i1 : fn = temporaryFileName()
+
+    o1 = /tmp/M2-2376-1
+
+    i2 : symlinkFile("qwert", fn)
+    stdio:2:1:(3): error: failed to symbolically link file qwert to /tmp/M2-2376-1 : File exists
