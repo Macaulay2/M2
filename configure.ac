@@ -373,7 +373,10 @@ AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket backtrace cloc
 AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
-AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[#include <errno.h>])
+AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
+	#include <stdio.h>
+	#include <errno.h>
+	])
 AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
 
 AC_SUBST(__INTEL_COMPILER,no)
