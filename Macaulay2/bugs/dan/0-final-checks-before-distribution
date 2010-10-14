@@ -5,9 +5,13 @@ things to do manually before release
 		i1 : while true do 1
 		  C-c C-cstdio:1:15:(3): error: interrupted
 
-		i2 : run "sleep 10"
+		i12 : run "sleep 10"
 		  C-c C-c
-		o2 = 0
+		o12 = 2				<-- right answer
+
+		i2 : run "sleep 10"
+		  C-c C-c			<-- too much delay -->
+		o2 = 0				<-- wrong answer
 
         see 0-final-check-interactive-input-behaviour if changes have been made to top level user interaction
 
