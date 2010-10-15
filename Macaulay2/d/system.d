@@ -14,7 +14,9 @@ declarations "
     #define _GNU_SOURCE
     #endif
     #include <unistd.h>
-/*    #include <sys/syscall.h> */
+    #ifdef HAVE_SYSCALL_H
+      #include <sys/syscall.h>
+    #endif
     #include <math.h>
 ";
 
