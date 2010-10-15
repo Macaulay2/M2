@@ -48,7 +48,8 @@ endif
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
 # BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true
-INSTALLOPTIONS += prefix=/usr/local/encap
+# INSTALLOPTIONS += prefix=/usr/local/encap
+INSTALLOPTIONS += prefix=/usr
 include Makefile.include
 default:install check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
