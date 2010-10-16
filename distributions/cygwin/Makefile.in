@@ -1,6 +1,11 @@
 # @configure_input@
 # see http://cygwin.com/setup.html for info on making cygwin packages
 
+# here is a good way to copy the server to the Macaulay2 web site:
+#   scp -r server/* u00:to/Macaulay2/Repositories/cygwin-beta/.
+#	but the Makefile is read-only, so that only works the first time, so the second time:
+#   scp -r server/setup.ini server/Macaulay2 u00:to/Macaulay2/Repositories/cygwin-beta/.
+
 include ../../include/config.Makefile
 VPATH = @srcdir@
 
@@ -64,7 +69,7 @@ libraries-used: .prepared
 
 packages-used: libraries-used
 	cat $< \
-	| while read x ; do cygcheck -f $$x ; done \
+	| ( while read x ; do cygcheck -f $$x ; done ; echo xorg-server ; echo emacs-X11 ; echo xinit ) \
 	| sort | uniq \
 	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
 	| tee $@
