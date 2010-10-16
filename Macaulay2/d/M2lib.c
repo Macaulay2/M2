@@ -86,9 +86,10 @@ int system_run(M2_string command){
      strncpy(c,command->array,command->len);
      c[command->len] = 0;
      int pid = fork();
+     if (pid == ERROR) return -1;
      if (pid == 0) {
 	  static char arg0[10], arg1[10];
-	  strcpy(arg0,"/bin/sh");
+	  strcpy(arg0,"/bin/sh"); /* only for unix-like systems */
 	  strcpy(arg1,"-c");
 	  char *args[4];
 	  args[0] = arg0;
@@ -96,20 +97,15 @@ int system_run(M2_string command){
 	  args[2] = c;
 	  args[3] = 0;
 	  execv(args[0],args);
-	  exit(127);		/* /bin/sh not found */
+	  exit(255);		/* /bin/sh not found */
 	  }
      else {
-	  int status = 0;
 	  while (TRUE) {
-	       int ret = waitpid(pid,&status,0);
-	       if (ret == ERROR) {
-		    if (errno == EINTR) continue;
-		    fprintf(stderr, "waitpid: %s\n", strerror(errno)); /* debugging only */
-		    return -1;
-		    }
+	       int status = 0;
+	       if (waitpid(pid,&status,0) == ERROR) return -1;
 	       if (WIFSIGNALED(status)) return 1000 + WTERMSIG(status);
 	       if (WIFEXITED(status)) return WEXITSTATUS(status);
-	       fprintf(stderr, "waitpid: pid %d status: 0x%08x\n", pid, status); /* debugging only */
+	       /* loop if the process was stopped */
 	       }
 	  }
      }
