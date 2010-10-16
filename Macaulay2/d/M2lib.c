@@ -80,6 +80,40 @@ static void unblock(int sig) {
   sigprocmask(SIG_UNBLOCK,&s,NULL);
 }
 
+int system_run(M2_string command){
+     /* we used to call "system()", but under cygwin interrupts in the child are blocked */
+     char *c = alloca(command->len + 1);
+     strncpy(c,command->array,command->len);
+     c[command->len] = 0;
+     int pid = fork();
+     if (pid == 0) {
+	  static char arg0[10], arg1[10];
+	  strcpy(arg0,"/bin/sh");
+	  strcpy(arg1,"-c");
+	  char *args[4];
+	  args[0] = arg0;
+	  args[1] = arg1;
+	  args[2] = c;
+	  args[3] = 0;
+	  execv(args[0],args);
+	  exit(127);		/* /bin/sh not found */
+	  }
+     else {
+	  int status = 0;
+	  while (TRUE) {
+	       int ret = waitpid(pid,&status,0);
+	       if (ret == ERROR) {
+		    if (errno == EINTR) continue;
+		    fprintf(stderr, "waitpid: %s\n", strerror(errno)); /* debugging only */
+		    return -1;
+		    }
+	       if (WIFSIGNALED(status)) return 1000 + WTERMSIG(status);
+	       if (WIFEXITED(status)) return WEXITSTATUS(status);
+	       fprintf(stderr, "waitpid: pid %d status: 0x%08x\n", pid, status); /* debugging only */
+	       }
+	  }
+     }
+
 static void alarm_handler(int sig) {
      interrupts_setAlarmedFlag();
      oursignal(SIGALRM,alarm_handler);

@@ -247,7 +247,7 @@ M2_arrayint system_waitNoHang(M2_arrayint pids)
 	  z->len = n;
 	  for (i=0; i<n; i++) {
 	       int ret = wait4(pid[i],&status[i],WNOHANG,NULL);
-	       z->array[i] = ret == ERROR ? -1 : WIFEXITED(status[i]) ? status[i] >> 8 : -2;
+	       z->array[i] = ret == ERROR ? -1 : !WIFEXITED(status[i]) ? -2 : WIFSIGNALED(status[i]) ? 1000 + WTERMSIG(status[i]) : WEXITSTATUS(status[i]);
 	  }
 	  return z;
      }
@@ -882,13 +882,6 @@ M2_string system_syserrmsg()
 {
      return M2_tostring(system_strerror());
 }
-
-int system_run(M2_string command){
-     char *c = M2_tocharstar(command);
-     int r = system(c);
-     GC_FREE(c);
-     return r;
-     }
 
 struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
 
