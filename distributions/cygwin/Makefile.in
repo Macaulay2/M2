@@ -16,7 +16,11 @@ DISTFILES := server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 \
 	     server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2/setup.hint
 
-all: chk-opts server/Macaulay2 $(DISTFILES) server/setup.ini maybe-tidy announce
+all: chk-opts start-menu server/Macaulay2 $(DISTFILES) server/setup.ini maybe-tidy announce
+start-menu:
+	[ -d @pre_programsdir@/StartMenu ] || mkdir @pre_programsdir@/StartMenu
+	[ -d @pre_programsdir@/StartMenu/Macaulay2 ] || mkdir @pre_programsdir@/StartMenu/Macaulay2
+	@INSTALL_DATA@ @srcdir@/Macaulay2/*.txt  @srcdir@/Macaulay2/*.lnk @pre_programsdir@/StartMenu/Macaulay2/.
 chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
 # don't check, we want to distribute binaries with symbols for bug report purposes
 # chk-opts: check-strip-enabled
