@@ -102,7 +102,10 @@ int system_run(M2_string command){
      else {
 	  while (TRUE) {
 	       int status = 0;
-	       if (waitpid(pid,&status,0) == ERROR) return -1;
+	       if (waitpid(pid,&status,0) == ERROR) {
+		    if (errno == EINTR) continue;
+		    return -1;
+		    }
 	       if (WIFSIGNALED(status)) return 1000 + WTERMSIG(status);
 	       if (WIFEXITED(status)) return WEXITSTATUS(status);
 	       /* loop if the process was stopped */
