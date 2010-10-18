@@ -425,6 +425,7 @@ document {
      modules should be essentially Schur functors corresponding to the
      following partitions.",
      EXAMPLE lines ///
+     needsPackage "SchurRings"
      schurRing(s,3)
      dim s_{2,2}
      dim s_{4,2}

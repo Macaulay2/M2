@@ -15,6 +15,8 @@ newPackage(
     	Headline => "computations of characteristic classes for varieties without equations"
     	)
 
+needsPackage "SchurRings"
+
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle'", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "FlagBundle",
