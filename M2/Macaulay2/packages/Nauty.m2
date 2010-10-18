@@ -10,7 +10,7 @@ needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
     Version => "1.0",
-    Date => "13. September 2010",
+    Date => "17. October 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -74,7 +74,8 @@ export {
     "OnlyBipartite",
     "OnlyConnected",
     "OnlyIfSmaller",
-    "OnlyTriangleFree"
+    "OnlyTriangleFree",
+    "RandomSeed"
 }
 
 -------------------
@@ -214,31 +215,35 @@ generateGraphs (ZZ, PolynomialRing) := List => opts -> (e, R) -> generateGraphs(
 generateGraphs PolynomialRing := List => opts -> R -> generateGraphs(0, binomial(#gens R, 2), R, opts)
 
 -- Generate random graphs in the Ring with given properties.
-generateRandomGraphs = method(Options => {Convert => true})
+generateRandomGraphs = method(Options => {Convert => true, RandomSeed => 0})
 generateRandomGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (num, p, R) -> (
     if num < 1 then return {};
     if p < 1 then error("generateRandomGraphs: Probability must be positive.");
-    r := callNauty("genrang -qg -P" | toString(p) | " "  | toString(#gens R) | " " | toString(num), {});
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    r := callNauty("genrang -qg -P" | toString(p) | " "  | toString(#gens R) | " " | toString(num) | rndSeed, {});
     if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 )
 generateRandomGraphs (ZZ, QQ, PolynomialRing) := List => opts -> (num, p, R) -> (
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
-    r := callNauty("genrang -qg -P" | toString(p) | " "  | toString(#gens R) | " " | toString(num), {});
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    r := callNauty("genrang -qg -P" | toString(p) | " "  | toString(#gens R) | " " | toString(num) | rndSeed, {});
     if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
 )
 generateRandomGraphs (ZZ, PolynomialRing) := List => opts -> (num, R) -> (
     if num < 1 then return {};
-    r := callNauty("genrang -qg " | toString(#gens R) | " " | toString(num), {});
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    r := callNauty("genrang -qg " | toString(#gens R) | " " | toString(num) | rndSeed, {});
     if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 )
 
 -- Generate random regular graphs in the Ring with given properties.
-generateRandomRegularGraphs = method(Options => {Convert => true})
+generateRandomRegularGraphs = method(Options => {Convert => true, RandomSeed => 0})
 generateRandomRegularGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (num, reg, R) -> (
     if num < 1 then return {};
     if reg < 1 or reg >= #gens R then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
-    r := callNauty("genrang -q -r" | toString(reg) | " " | toString(#gens R) | " " | toString(num) | " 2>&1", {});
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    r := callNauty("genrang -q -r" | toString(reg) | " " | toString(#gens R) | " " | toString(num) | rndSeed | " 2>&1", {});
     if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
 )
 
@@ -317,17 +322,19 @@ relabelBipartite Graph := Graph => G -> (
 -- Relabels a graph using a canonical labeling.
 relabelGraph = method()
 relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> (
-    if i > 15 or i < 1 then error("relabelGraph: The invariant selected is invalid.");
+    if i > 15 or i < 0 then error("relabelGraph: The invariant selected is invalid.");
     if a < 0 then error("relabelGraph: The invariant argument must be nonnegative.");
     r := callNauty("labelg -qg -i" | toString i | " -K" | toString a, {S});
     if #r != 0 then first r else error("relabelGraph: Invalid String format.")
 )
 relabelGraph (String, ZZ) := String => (S, i) -> relabelGraph(S, i, 3)
+relabelGraph String := String => S -> relabelGraph(S, 0, 3)
 relabelGraph (Graph, ZZ, ZZ) := Graph => (G, i, a) -> (
     r := relabelGraph(graphToString G, i, a);
     stringToGraph(r, ring G)
 )
 relabelGraph (Graph, ZZ) := Graph => (G, i) -> relabelGraph(G, i, 3)
+relabelGraph Graph := Graph => G -> relabelGraph(G, 0, 3)
         
 -- Finds all graphs defined by G with one edge removed.
 removeEdges = method(Options => {MinDegree => 0})
@@ -765,7 +772,8 @@ document {
         (generateRandomGraphs, ZZ, PolynomialRing),
         (generateRandomGraphs, ZZ, QQ, PolynomialRing),
         (generateRandomGraphs, ZZ, ZZ, PolynomialRing),
-        [generateRandomGraphs, Convert]
+        [generateRandomGraphs, Convert],
+        [generateRandomGraphs, RandomSeed]
     },
     Headline => "generates random graphs in a given polynomial ring",
     Usage => "G = generateRandomGraphs(num, R)\nG = generateRandomGraphs(num, pq, R)\nG = generateRandomGraphs(num, pz, R)",
@@ -774,7 +782,8 @@ document {
         "num" => ZZ => "the number of random graphs to generate",
         "pq" => QQ => "the probability of a given edge being included (between 0 and 1)",
         "pz" => ZZ => "the probability of a given edge being included (positive)",
-        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"}
+        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"},
+        RandomSeed => ZZ => {"if nonzero, then the specified random seed is passed to nauty"}
     },
     Outputs => {"G" => List => TEX ///the randomly generated graphs in $R$///},
     PARA TEX ///This method generates a specified number of random graphs in the
@@ -786,7 +795,9 @@ document {
             $1/pz$.///,
     EXAMPLE lines ///
             R = QQ[a..e];
+            generateRandomGraphs(5, R, RandomSeed => 314159)
             generateRandomGraphs(5, R)
+            generateRandomGraphs(5, R, RandomSeed => 314159)
     ///,
     SeeAlso => {
         "generateRandomRegularGraphs"
@@ -797,7 +808,8 @@ document {
     Key => {
         generateRandomRegularGraphs,
         (generateRandomRegularGraphs, ZZ, ZZ, PolynomialRing),
-        [generateRandomRegularGraphs, Convert]
+        [generateRandomRegularGraphs, Convert],
+        [generateRandomRegularGraphs, RandomSeed]
     },
     Headline => "generates random regular graphs in a given polynomial ring",
     Usage => "G = generateRandomRegularGraphs(num, reg, R)",
@@ -805,7 +817,8 @@ document {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
         "num" => ZZ => "the number of random graphs to generate",
         "reg" => ZZ => "the regularity of the generated graphs",
-        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"}
+        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"},
+        RandomSeed => ZZ => {"if nonzero, then the specified random seed is passed to nauty"}
     },
     Outputs => { "G" => List => TEX ///the randomly generated regular graphs in $R$///},
     PARA TEX ///This method generates a specified number of random graphs in
@@ -1072,21 +1085,25 @@ doc ///
         relabelGraph
         (relabelGraph, String, ZZ, ZZ)
         (relabelGraph, String, ZZ)
+        (relabelGraph, String)
         (relabelGraph, Graph, ZZ, ZZ)
         (relabelGraph, Graph, ZZ)
+        (relabelGraph, Graph)
     Headline
         applies a canonical labeling to a graph
     Usage
         T = relabelGraph(S, i, a)
         T = relabelGraph(S, i)
+        T = relabelGraph S
         H = relabelGraph(G, i, a)
         H = relabelGraph(G, i)
+        H = relabelGraph G
     Inputs
         S:String
             a graph encoded in either Sparse6 or Graph6 format
         G:Graph
         i:ZZ
-            a choice of invariant to order by ($1 \leq i \leq 15$)
+            a choice of invariant to order by ($0 \leq i \leq 15$)
         a:ZZ
             a non-negative argument passed to @TT "nauty"@, (default is three)
     Outputs
@@ -1096,11 +1113,12 @@ doc ///
             a graph isomorphic to $G$
     Description
         Text
-            This method applies one of fifteen canonical labelings to a graph.  See
+            This method applies one of sixteen canonical labelings to a graph.  See
             the @TT "nauty"@ documentation for a more complete description of each
             and how the argument $a$ is used.
 
             The fifteen canonical labelins are:
+            $i = 0$: none,
             $i = 1$: twopaths,
             $i = 2$: adjtriang(K),
             $i = 3$: triples,
@@ -1117,11 +1135,12 @@ doc ///
             $i = 14$: cellfano, and
             $i = 15$: cellfano2.
         Example
-            R = QQ[a..m];
-            G = randomGraph(R, 20)
-            unique apply(1..15, i -> relabelGraph(G, i))
+            R = QQ[a..e];
+            G = cycle R;
+            H = graph {a*e, e*c, c*b, b*d, d*a};
+            relabelGraph G == relabelGraph H
         Text
-            Note that on most small graphs, all fifteen orderings produce the same result.
+            Note that on most small graphs, all sixteen orderings produce the same result.
     SeeAlso
         relabelBipartite
 ///
@@ -1278,6 +1297,8 @@ doc ///
         stringToEdgeIdeal
 ///
 
+-- Each of these are documented within the documentation for the
+-- methods which use them.
 undocumented { 
     "Class2Degree2",
     "Class2DistinctNeighborhoods",
@@ -1295,7 +1316,8 @@ undocumented {
     "OnlyBipartite",
     "OnlyConnected",
     "OnlyIfSmaller",
-    "OnlyTriangleFree"
+    "OnlyTriangleFree",
+    "RandomSeed"
 };
 
 -------------------
@@ -1457,7 +1479,7 @@ TEST ///
 TEST ///
     R = ZZ[a..f];
     G = cycle R;
-    assert(#apply(1..15, i -> relabelGraph(G, i)) == 15);
+    assert(#apply(0..15, i -> relabelGraph(G, i)) == 16);
 ///
 
 -- removeEdges
@@ -1498,3 +1520,9 @@ TEST ///
 -- HappyHappyJoyJoy
 -------------------
 end
+
+restart
+uninstallPackage "Nauty"
+installPackage "Nauty"
+check "Nauty"
+
