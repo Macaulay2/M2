@@ -18,31 +18,37 @@ DIRECTORY = cygwin
 endif
 
 # packages to install for cygwin 1.7:
-
-#   emacs-X11
-#   emacs-el
-#   xinit
-#   xorg-server
-#   xconsole
-#   xkill
-#   psmisc (to get killall, pstree, fuser)
-
 #   autoconf
+#   automake
 #   bison
+#   emacs-X11
+#   file
 #   flex
-#   gcc4-core gcc4-g++ gdb gcc4-fortran libstdc++6-devel
-#   libgdbm libgdbm3?
-#   liblapack
-
+#   gcc4-core
+#   gcc4-fortran
+#   gcc4-g++
+#   gdb
+#   gvim
 #   libgdbm-devel
+#   liblapack-devel
+#   libstdc++6-devel
+#   libxml2-devel 
 #   make
 #   patchutils
 #   readline
 #   subversion
-#   vim gvim
-#   wget
 #   unzip
-#   libxml2-devel libxml2-doc
+#   vim
+#   wget
+#   xinit
+#   xorg-server
+# optional:
+#   emacs-el
+#   xconsole
+#   xkill
+#   psmisc (to get killall, pstree, fuser)
+#   libxml2-doc
+#   openssh
 
 # CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
