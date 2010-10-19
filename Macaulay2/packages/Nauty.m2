@@ -9,8 +9,8 @@
 needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
-    Version => "1.0",
-    Date => "13. September 2010",
+    Version => "1.2",
+    Date => "18. October 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -61,7 +61,6 @@ export {
     "Class2Degree2",
     "Class2DistinctNeighborhoods",
     "Class2MaxCommonNeighbors",
-    "Convert",
     "MaxDegree",
     "MinDegree",
     "NoNew3Cycles",
@@ -74,7 +73,8 @@ export {
     "OnlyBipartite",
     "OnlyConnected",
     "OnlyIfSmaller",
-    "OnlyTriangleFree"
+    "OnlyTriangleFree",
+    "RandomSeed"
 }
 
 -------------------
@@ -93,17 +93,11 @@ addEdges String := List => opts -> S -> (
         (if instance(opts.NoNewSmallCycles, ZZ) and opts.NoNewSmallCycles > 0 then " -z" | toString(opts.NoNewSmallCycles) else "");
     callNauty(cmdStr, {S})
 )
-addEdges Graph := List => opts -> G -> (
-    r := addEdges(graphToString G, opts);
-    apply(r, l -> stringToGraph(l, ring G))
-)
+addEdges Graph := List => opts -> G -> apply(addEdges(graphToString G, opts), l -> stringToGraph(l, ring G))
 
 -- Determines if two graphs are isomorphic. 
 areIsomorphic = method()
-areIsomorphic (String, String) := Boolean => (G, H) -> (
-    r := callNauty("shortg -q", {G, H});
-    #r == 1
-)
+areIsomorphic (String, String) := Boolean => (G, H) -> (#callNauty("shortg -q", {G, H})) == 1
 areIsomorphic (Graph, Graph) := Boolean => (G, H) -> areIsomorphic(graphToString G, graphToString H)
 
 -- Builds a filter string for countGraphs and filterGraphs.
@@ -164,12 +158,11 @@ filterGraphs (List, String) := List => (L, filter) -> (
 filterGraphs (List, HashTable) := List => (L, fh) -> filterGraphs(L, buildGraphFilter fh)
 
 -- Generates all bipartite graphs of a given type.
-generateBipartiteGraphs = method(Options => {OnlyConnected => false, Class2DistinctNeighborhoods => false, Class2Degree2 => false, Class2MaxCommonNeighbors => 0, MaxDegree => 0, MinDegree => 0, Convert => true})
-generateBipartiteGraphs (ZZ, ZZ, ZZ, PolynomialRing) := List => opts -> (m, le, ue, R) -> (
-    if m >= #gens R then error("generateBipartiteGraphs: The first class has too many vertices.");
+generateBipartiteGraphs = method(Options => {OnlyConnected => false, Class2DistinctNeighborhoods => false, Class2Degree2 => false, Class2MaxCommonNeighbors => 0, MaxDegree => 0, MinDegree => 0})
+generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
+    if n < 1 then error("generateBipartiteGraphs: The graph must have vertices!.");
     if m < 1 then error("generateBipartiteGraphs: The first class has too few vertices.");
-    n := #gens R - m;
-    if (m<0) or (n<0) or (le > ue) or (le > m*n) or (ue < 0) then return;
+    if (le > ue) or (le > m*(n-m)) or (ue < 0) then return;
 
     cmdStr := "genbg -q" | 
         (if instance(opts.OnlyConnected, Boolean) and opts.OnlyConnected then " -c" else "") |
@@ -178,23 +171,23 @@ generateBipartiteGraphs (ZZ, ZZ, ZZ, PolynomialRing) := List => opts -> (m, le, 
         (if instance(opts.Class2MaxCommonNeighbors, ZZ) and opts.Class2MaxCommonNeighbors > 0 then " -Z" | toString(opts.Class2MaxCommonNeighbors) else "") |
         (if instance(opts.MinDegree, ZZ) and opts.MinDegree > 0 then " -d" | toString(opts.MinDegree) else "") |
         (if instance(opts.MaxDegree, ZZ) and opts.MaxDegree > 0 then " -D" | toString(opts.MaxDegree) else "") |
-        (" " | toString(m) | " " | toString(n) | " " | toString(le) | ":" | toString(ue) | " 2>&1");
+        (" " | toString(m) | " " | toString(n-m) | " " | toString(le) | ":" | toString(ue) | " 2>&1");
 
-    r := callNauty(cmdStr, {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
+    callNauty(cmdStr, {})
 )
-generateBipartiteGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (m, e, R) -> generateBipartiteGraphs(m, e, e, R, opts)
-generateBipartiteGraphs (ZZ, PolynomialRing) := List => opts -> (m, R) -> generateBipartiteGraphs(m, 0, m * (#gens R - m), R, opts)
-generateBipartiteGraphs PolynomialRing := List => opts -> R -> (
-    r := unique flatten apply(toList (1..(#gens R - 1)), i -> generateBipartiteGraphs(i, R, opts ++ new OptionTable from {Convert => false}));
-    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
-)
+generateBipartiteGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, m, e) -> generateBipartiteGraphs(n, m, e, e, opts)
+generateBipartiteGraphs (ZZ, ZZ) := List => opts -> (n, m) -> generateBipartiteGraphs(n, m, 0, m * (n-m), opts)
+generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..(n - 1)), i -> generateBipartiteGraphs(n, i, opts))
+generateBipartiteGraphs (PolynomialRing, ZZ, ZZ, ZZ) := List => opts -> (R, m, le, ue) -> apply(generateBipartiteGraphs(#gens R, m, le, ue, opts), g -> stringToGraph(g, R))
+generateBipartiteGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, m, e) -> apply(generateBipartiteGraphs(#gens R, m, e, opts), g -> stringToGraph(g, R))
+generateBipartiteGraphs (PolynomialRing, ZZ) := List => opts -> (R, m) -> apply(generateBipartiteGraphs(#gens R, m, opts), g -> stringToGraph(g, R))
+generateBipartiteGraphs PolynomialRing := List => opts -> R -> apply(generateBipartiteGraphs(#gens R, opts), g -> stringToGraph(g, R))
 
 -- Generates all graphs of a given type.
-generateGraphs = method(Options => {OnlyConnected => false, OnlyBiconnected => false, OnlyTriangleFree => false, Only4CycleFree => false, OnlyBipartite => false, MinDegree => 0, MaxDegree => 0, Convert => true})
-generateGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (le, ue, R) -> (
-    n := #gens R;
-    if (n < 0) or (le > ue) or (le > binomial(n,2)) or (ue < 0) then return;
+generateGraphs = method(Options => {OnlyConnected => false, OnlyBiconnected => false, OnlyTriangleFree => false, Only4CycleFree => false, OnlyBipartite => false, MinDegree => 0, MaxDegree => 0})
+generateGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, le, ue) -> (
+    if n < 0 then error("generateGraphs: A graph must have vertices!");
+    if (le > ue) or (le > binomial(n,2)) or (ue < 0) then return;
     le = max(le, 0);
 
     cmdStr := "geng -q" |
@@ -206,41 +199,51 @@ generateGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (le, ue, R) -> (
         (if instance(opts.MinDegree, ZZ) and opts.MinDegree > 0 then " -d" | toString(opts.MinDegree) else "") |
         (if instance(opts.MaxDegree, ZZ) and opts.MaxDegree > 0 then " -D" | toString(opts.MaxDegree) else "") |
         (" " | toString(n) | " " | toString(le) | ":" | toString(ue) | " 2>&1");
-
-    r := callNauty(cmdStr, {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
+    
+    callNauty(cmdStr, {})
 )
-generateGraphs (ZZ, PolynomialRing) := List => opts -> (e, R) -> generateGraphs(e, e, R, opts)
-generateGraphs PolynomialRing := List => opts -> R -> generateGraphs(0, binomial(#gens R, 2), R, opts)
+generateGraphs (ZZ, ZZ) := List => opts -> (n, e) -> generateGraphs(n, e, e, opts)
+generateGraphs ZZ := List => opts -> n -> generateGraphs(n, 0, binomial(n, 2), opts)
+generateGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, le, ue) -> apply(generateGraphs(#gens R, le, ue, opts), g -> stringToGraph(g, R))
+generateGraphs (PolynomialRing, ZZ) := List => opts -> (R, e) -> apply(generateGraphs(#gens R, e, opts), g -> stringToGraph(g, R))
+generateGraphs PolynomialRing := List => opts -> R -> apply(generateGraphs(#gens R, opts), g -> stringToGraph(g, R))
 
--- Generate random graphs in the Ring with given properties.
-generateRandomGraphs = method(Options => {Convert => true})
-generateRandomGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (num, p, R) -> (
+-- Generate random graphs with given properties.
+generateRandomGraphs = method(Options => {RandomSeed => 0})
+generateRandomGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, p) -> (
+    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if p < 1 then error("generateRandomGraphs: Probability must be positive.");
-    r := callNauty("genrang -qg -P" | toString(p) | " "  | toString(#gens R) | " " | toString(num), {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
-generateRandomGraphs (ZZ, QQ, PolynomialRing) := List => opts -> (num, p, R) -> (
+generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
+    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
-    r := callNauty("genrang -qg -P" | toString(p) | " "  | toString(#gens R) | " " | toString(num), {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) and instance(r, List) then apply(r, l -> stringToGraph(l, R)) else r
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
-generateRandomGraphs (ZZ, PolynomialRing) := List => opts -> (num, R) -> (
+generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
+    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
-    r := callNauty("genrang -qg " | toString(#gens R) | " " | toString(num), {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    callNauty("genrang -qg " | toString(n) | " " | toString(num) | rndSeed, {})
 )
+generateRandomGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
+generateRandomGraphs (PolynomialRing, ZZ, QQ) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
+generateRandomGraphs (PolynomialRing, ZZ) := List => opts -> (R, num) -> apply(generateRandomGraphs(#gens R, num, opts), g -> stringToGraph(g, R))
 
 -- Generate random regular graphs in the Ring with given properties.
-generateRandomRegularGraphs = method(Options => {Convert => true})
-generateRandomRegularGraphs (ZZ, ZZ, PolynomialRing) := List => opts -> (num, reg, R) -> (
+generateRandomRegularGraphs = method(Options => {RandomSeed => 0})
+generateRandomRegularGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, reg) -> (
+    if n < 0 then error("generateRandomRegularGraphs: A graph must have vertices!");
     if num < 1 then return {};
-    if reg < 1 or reg >= #gens R then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
-    r := callNauty("genrang -q -r" | toString(reg) | " " | toString(#gens R) | " " | toString(num) | " 2>&1", {});
-    if (not instance(opts.Convert, Boolean) or opts.Convert) then apply(r, l -> stringToGraph(l, R)) else r
+    if reg < 1 or reg >= n then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
+    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
+    callNauty("genrang -qg -r" | toString(reg) | " " | toString(n) | " " | toString(num) | rndSeed | " 2>&1", {})
 )
+generateRandomRegularGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, num, reg) -> apply(generateRandomRegularGraphs(#gens R, num, reg, opts), g -> stringToGraph(g, R))
 
 -- Converts a Graph6 string to a Sparse6 string.
 graph6ToSparse6 = method()
@@ -278,19 +281,13 @@ graphToString String := String => S -> S
 
 -- Tests the planarity of a graph
 isPlanar = method()
-isPlanar String := Boolean => G -> (
-    r := callNauty("planarg -q", {G});
-    #r != 0
-)
+isPlanar String := Boolean => G -> (#callNauty("planarg -q", {G})) != 0
 isPlanar Graph := Boolean => G -> isPlanar(graphToString G)
 
 -- For each vertex, switch the edges between its neighborhood and its neighborhood's complement.
 neighborhoodComplements = method()
 neighborhoodComplements String := List => S -> callNauty("NRswitchg -q", {S})
-neighborhoodComplements Graph := List => G -> (
-    r := neighborhoodComplements graphToString G;
-    apply(r, l -> stringToGraph(l, ring G))
-)
+neighborhoodComplements Graph := List => G -> apply(neighborhoodComplements graphToString G, l -> stringToGraph(l, ring G))
 
 -- For each disjoint pair of edges (a,b), (c,d), replace the edges with 
 -- (a,e), (e,b), (c,f), (f,d), and add the edge (e,f), where {e,f} are
@@ -299,8 +296,7 @@ newEdges = method()
 newEdges String := List => S -> callNauty("newedgeg -q", {S})
 newEdges (Graph, PolynomialRing) := List => (G, S) -> (
     if #vertices G + 2 != #gens S then error("newEdges: The ring must have exactly two more variables than the graph has vertices.");
-    r := newEdges graphToString G;
-    apply(r, l -> stringToGraph(l, S))
+    apply(newEdges graphToString G, l -> stringToGraph(l, S))
 )
 
 -- Reorders a bipartite graph so all vertices of each color are continguous.
@@ -309,25 +305,21 @@ relabelBipartite String := String => S -> (
     r := callNauty("biplabg -q", {S});
     if #r != 0 then first r else error("relabelBipartite: Invalid String format or input is not a bipartite graph.")
 )
-relabelBipartite Graph := Graph => G -> (
-    r := relabelBipartite graphToString G;
-    stringToGraph(r, ring G)
-)
+relabelBipartite Graph := Graph => G -> stringToGraph(relabelBipartite graphToString G, ring G)
 
 -- Relabels a graph using a canonical labeling.
 relabelGraph = method()
 relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> (
-    if i > 15 or i < 1 then error("relabelGraph: The invariant selected is invalid.");
+    if i > 15 or i < 0 then error("relabelGraph: The invariant selected is invalid.");
     if a < 0 then error("relabelGraph: The invariant argument must be nonnegative.");
     r := callNauty("labelg -qg -i" | toString i | " -K" | toString a, {S});
     if #r != 0 then first r else error("relabelGraph: Invalid String format.")
 )
 relabelGraph (String, ZZ) := String => (S, i) -> relabelGraph(S, i, 3)
-relabelGraph (Graph, ZZ, ZZ) := Graph => (G, i, a) -> (
-    r := relabelGraph(graphToString G, i, a);
-    stringToGraph(r, ring G)
-)
+relabelGraph String := String => S -> relabelGraph(S, 0, 3)
+relabelGraph (Graph, ZZ, ZZ) := Graph => (G, i, a) -> stringToGraph(relabelGraph(graphToString G, i, a), ring G)
 relabelGraph (Graph, ZZ) := Graph => (G, i) -> relabelGraph(G, i, 3)
+relabelGraph Graph := Graph => G -> relabelGraph(G, 0, 3)
         
 -- Finds all graphs defined by G with one edge removed.
 removeEdges = method(Options => {MinDegree => 0})
@@ -335,10 +327,7 @@ removeEdges String := List => opts -> S -> (
     cmdStr := "deledgeg -q" | (if instance(opts.MinDegree, ZZ) and opts.MinDegree > 0 then " -d" | toString(opts.MinDegree) else "");
     callNauty(cmdStr, {S})
 )
-removeEdges Graph := List => opts -> G -> (
-    r := removeEdges(graphToString G, opts);
-    apply(r, l -> stringToGraph(l, ring G))
-)
+removeEdges Graph := List => opts -> G -> apply(removeEdges(graphToString G, opts), l -> stringToGraph(l, ring G))
 
 -- Removes all isomorphs from a list of graphs. 
 removeIsomorphs = method()
@@ -407,9 +396,7 @@ stringToEdgeIdeal (String, PolynomialRing) := MonomialIdeal => (str, R) -> (
 
 -- Converts a graph given by a string in either Sparse6 or Graph6 format to a graph in the given ring.
 stringToGraph = method()
-stringToGraph (String, PolynomialRing) := Graph => (str, R) -> (
-    graph stringToEdgeIdeal(str, R)
-)
+stringToGraph (String, PolynomialRing) := Graph => (str, R) -> graph stringToEdgeIdeal(str, R)
 
 -------------------
 -- Local-Only Code
@@ -430,9 +417,9 @@ callNauty (String, List) := List => (cmdStr, dataList) -> (
 -------------------
 -- Documentation
 -------------------
--- Nota Bene: Some document nodes are in a differnet format than the rest.  This is to take advantage
+-- Nota Bene: Some document nodes are in a different format than the rest.  This is to take advantage
 -- in the differences in the two formats.  Primarily, those nodes dealing with optional inputs are 
--- in the older documet{...} format instead of the newer doc ///.../// format.
+-- in the older document{...} format instead of the newer doc ///.../// format.
 beginDocumentation()
 
 doc ///
@@ -495,8 +482,10 @@ document {
         "Lg" => List => TEX ///the list of Graphs obtained from $G$///,
         "Ls" => List => TEX ///the list of Strings (in Graph6 format) obtained from $S$///
     },
-    PARA TEX /// Simply creates a list, in the same format as the input, of all possible graphs
-                 obtained by adding one new edge to the input graph. ///,
+    PARA TEX ///
+            Simply creates a list, in the same format as the input, of all possible graphs
+            obtained by adding one new edge to the input graph.
+        ///,
     EXAMPLE lines ///
         R = QQ[a..e];
         addEdges cycle R
@@ -628,8 +617,7 @@ doc ///
             the filter (see @TO "buildGraphFilter"@).  Notice that the input list can be graphs in
             both @TO "Graph"@ format and @TO "String"@ format.
         Example
-            R = QQ[a..e];
-            L = generateGraphs(R, Convert => false);
+            L = generateGraphs 5;
             countGraphs(L, hashTable {"Connectivity" => 0, "NegateConnectivity" => true}) -- the number of connected graphs on five vertices
     SeeAlso
         buildGraphFilter
@@ -662,8 +650,7 @@ doc ///
             the filter (see @TO "buildGraphFilter"@).  Notice that the input list can be graphs in
             both @TO "Graph"@ format and @TO "String"@ format.
         Example
-            R = QQ[a..e];
-            L = generateGraphs(R, Convert => false);
+            L = generateGraphs 5;
             filterGraphs(L, hashTable {"Connectivity" => 0, "NegateConnectivity" => true}) -- the connected graphs on five vertices
     SeeAlso
         buildGraphFilter
@@ -673,42 +660,52 @@ doc ///
 document {
     Key => {
         generateBipartiteGraphs,
+        (generateBipartiteGraphs, ZZ),
+        (generateBipartiteGraphs, ZZ, ZZ),
+        (generateBipartiteGraphs, ZZ, ZZ, ZZ),
+        (generateBipartiteGraphs, ZZ, ZZ, ZZ, ZZ),
         (generateBipartiteGraphs, PolynomialRing),
-        (generateBipartiteGraphs, ZZ, PolynomialRing),
-        (generateBipartiteGraphs, ZZ, ZZ, PolynomialRing),
-        (generateBipartiteGraphs, ZZ, ZZ, ZZ, PolynomialRing),
+        (generateBipartiteGraphs, PolynomialRing, ZZ),
+        (generateBipartiteGraphs, PolynomialRing, ZZ, ZZ),
+        (generateBipartiteGraphs, PolynomialRing, ZZ, ZZ, ZZ),
         [generateBipartiteGraphs, Class2Degree2],
         [generateBipartiteGraphs, Class2DistinctNeighborhoods],
         [generateBipartiteGraphs, Class2MaxCommonNeighbors],
-        [generateBipartiteGraphs, Convert],
         [generateBipartiteGraphs, MaxDegree],
         [generateBipartiteGraphs, MinDegree],
         [generateBipartiteGraphs, OnlyConnected]
     },
     Headline => "generates the bipartite graphs with a given bipartition",
-    Usage => "G = generateBipartiteGraphs R\nG = generateBipartiteGraphs(m, R)\nG = generateBipartiteGraphs(m, e, R)\nG = generateBipartiteGraphs(m, le, ue, R)",
-    Outputs => {"G" => List => TEX ///the bipartite graphs in $R$ satisfying the input conditions///},
+    Usage => "G = generateBipartiteGraphs n\nG = generateBipartiteGraphs(n, m)\nG = generateBipartiteGraphs(n, m, e)\nG = generateBipartiteGraphs(n, m, le, ue)\nG = generateBipartiteGraphs R\nG = generateBipartiteGraphs(R, m)\nG = generateBipartiteGraphs(R, m, e)\nG = generateBipartiteGraphs(R, m, le, ue)",
+    Outputs => {"G" => List => TEX ///the bipartite graphs satisfying the input conditions///},
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "m" => ZZ => "the number of vertices in one part of the bipartition",
+        "n" => ZZ => "the number of vertices of the graphs",
+        "m" => ZZ => "the number of vertices in the first part of the bipartition",
         "e" => ZZ => "the number of edges in the graphs", 
         "le" => ZZ => "a lower bound on the number of edges in the graphs",
         "ue" => ZZ => "an upper bound on the number of edges in the graphs",
         Class2Degree2 => Boolean => "whether the vertices in the second class must have at least two neighbors of degree at least 2",
         Class2DistinctNeighborhoods => Boolean => "whether all vertices in the second class must have distinct neighborhoods",
         Class2MaxCommonNeighbors => ZZ => "an upper bound on the number of common neighbors of vertices in the second class (ignored if zero)",
-        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"},
         MaxDegree => ZZ => "an upper bound on the degrees of the vertices (ignored if zero)",
         MinDegree => ZZ => "a lower bound on the degrees of the vertices",
         OnlyConnected => Boolean => "whether to only allow connected graphs"
     },
-    PARA TEX ///This method generates all bipartite graphs in the polynomial ring $R$
-            with a given bipartition.  The size of the bipartition is specified
-            by giving the size of one part; the other part is determined
-            automatically from the number of generators of $R$.///,
+    PARA TEX ///
+            This method generates all bipartite graphs on $n$ vertices.  The 
+            The size of the bipartition is specified by giving the size of
+            one part; the other part is determined automatically from the
+            number of vertices.
+        ///,
+    PARA TEX ///
+            If a PolynomialRing $R$ is supplied instead, then the number of
+            vertices is the number of generators.  Moreover, the Strings are
+            automatically converted to graphs in $R$.
+        ///,
     EXAMPLE lines ///
             R = QQ[a..e];
-            generateBipartiteGraphs(2, R)
+            generateBipartiteGraphs(R, 2)
         ///,
     SeeAlso => {
         "generateGraphs"
@@ -718,10 +715,12 @@ document {
 document {
     Key => {
         generateGraphs,
-        (generateGraphs, ZZ, ZZ, PolynomialRing),
-        (generateGraphs, ZZ, PolynomialRing),
         (generateGraphs, PolynomialRing),
-        [generateGraphs, Convert],
+        (generateGraphs, PolynomialRing, ZZ),
+        (generateGraphs, PolynomialRing, ZZ, ZZ),
+        (generateGraphs, ZZ),
+        (generateGraphs, ZZ, ZZ),
+        (generateGraphs, ZZ, ZZ, ZZ),
         [generateGraphs, MaxDegree],
         [generateGraphs, MinDegree],
         [generateGraphs, Only4CycleFree],
@@ -730,14 +729,14 @@ document {
         [generateGraphs, OnlyConnected],
         [generateGraphs, OnlyTriangleFree]
     },
-    Headline => "generates the graphs in a given polynomial ring",
-    Usage => "G = generateGraphs R\nG = generateGraphs(e, R)\nG = generateGraphs(le, ue, R)",
+    Headline => "generates the graphs on a given number of vertices",
+    Usage => "G = generateGraphs n\nG = generateGraphs(n, e)\nG = generateGraphs(n, le, ue)\nG = generateGraphs R\nG = generateGraphs(R, e)\nG = generateGraphs(R, le, ue)",
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
+        "n" => ZZ => "the number of vertices of the graphs",
         "e" => ZZ => "the number of edges in the graphs",
         "le" => ZZ => "a lower bound on the number of edges in the graphs",
         "ue" => ZZ => "an upper bound on the number of edges in the graphs",
-        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"},
         MaxDegree => ZZ => "an upper bound on the degrees of the vertices (ignored if zero)",
         MinDegree => ZZ => "a lower bound on the degrees of the vertices",
         Only4CycleFree => Boolean => "whether to only allow graphs without four cycles",
@@ -746,13 +745,20 @@ document {
         OnlyConnected => Boolean => "whether to only allow connected graphs",
         OnlyTriangleFree => Boolean => "whether to only allow graphs without triangles (three cycles)"
     },
-    Outputs => {"G" => List => TEX ///the graphs in $R$ satisfying the input conditions///},
-    PARA TEX /// This method generates all graphs in the polynomial ring $R$ 
-            subject to the constraints on the number of edges.  It further
-            uses numerous options to allow further constraining of the output. ///,
+    Outputs => {"G" => List => TEX ///the graphs satisfying the input conditions///},
+    PARA TEX ///
+            This method generates all graphs on $n$ vertices subject to the 
+            constraints on the number of edges.  It further uses numerous options
+            to allow further constraining of the output.
+        ///,
+    PARA TEX ///
+            If a PolynomialRing $R$ is supplied instead, then the number of
+            vertices is the number of generators.  Moreover, the Strings are
+            automatically converted to graphs in $R$.
+        ///,
     EXAMPLE lines ///
             R = QQ[a..e];
-            generateGraphs(4, 6, R, OnlyConnected => true)
+            generateGraphs(R, 4, 6, OnlyConnected => true)
     ///,
     SeeAlso => {
         "generateBipartiteGraphs"
@@ -762,31 +768,44 @@ document {
 document {
     Key => {
         generateRandomGraphs,
-        (generateRandomGraphs, ZZ, PolynomialRing),
-        (generateRandomGraphs, ZZ, QQ, PolynomialRing),
-        (generateRandomGraphs, ZZ, ZZ, PolynomialRing),
-        [generateRandomGraphs, Convert]
+        (generateRandomGraphs, ZZ, ZZ),
+        (generateRandomGraphs, ZZ, ZZ, ZZ),
+        (generateRandomGraphs, ZZ, ZZ, QQ),
+        (generateRandomGraphs, PolynomialRing, ZZ),
+        (generateRandomGraphs, PolynomialRing, ZZ, ZZ),
+        (generateRandomGraphs, PolynomialRing, ZZ, QQ),
+        [generateRandomGraphs, RandomSeed]
     },
-    Headline => "generates random graphs in a given polynomial ring",
-    Usage => "G = generateRandomGraphs(num, R)\nG = generateRandomGraphs(num, pq, R)\nG = generateRandomGraphs(num, pz, R)",
+    Headline => "generates random graphs on a given number of vertices",
+    Usage => "G = generateRandomGraphs(n, num)\nG = generateRandomGraphs(n, num, pq)\nG = generateRandomGraphs(n, num, pz)\nG = generateRandomGraphs(R, num)\nG = generateRandomGraphs(R, num, pq)\nG = generateRandomGraphs(R, num, pz)",
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
+        "n" => ZZ => "the number of vertices of the graphs",
         "num" => ZZ => "the number of random graphs to generate",
         "pq" => QQ => "the probability of a given edge being included (between 0 and 1)",
         "pz" => ZZ => "the probability of a given edge being included (positive)",
-        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"}
+        RandomSeed => ZZ => {"if nonzero, then the specified random seed is passed to nauty"}
     },
-    Outputs => {"G" => List => TEX ///the randomly generated graphs in $R$///},
-    PARA TEX ///This method generates a specified number of random graphs in the
-            polynomial ring $R$.  Note that some graphs may be isomorphic.///,
-
-    PARA TEX ///If the input $pq$ is included, then the edges are chosen to be
+    Outputs => {"G" => List => TEX ///the randomly generated graphs///},
+    PARA TEX ///
+            This method generates a specified number of random graphs with a given
+            number of vertices.  Note that some graphs may be isomorphic.
+        ///,
+    PARA TEX ///
+            If a PolynomialRing $R$ is supplied instead, then the number of
+            vertices is the number of generators.  Moreover, the Strings are
+            automatically converted to graphs in $R$.
+        ///,
+    PARA TEX ///
+            If the input $pq$ is included, then the edges are chosen to be
             included with probability $pq$.  If the input $pz$ is included
             and is positive, then the edges are chose to be included with probability
-            $1/pz$.///,
+            $1/pz$.
+        ///,
     EXAMPLE lines ///
-            R = QQ[a..e];
-            generateRandomGraphs(5, R)
+            generateRandomGraphs(5, 5, RandomSeed => 314159)
+            generateRandomGraphs(5, 5)
+            generateRandomGraphs(5, 5, RandomSeed => 314159)
     ///,
     SeeAlso => {
         "generateRandomRegularGraphs"
@@ -796,24 +815,33 @@ document {
 document {
     Key => {
         generateRandomRegularGraphs,
-        (generateRandomRegularGraphs, ZZ, ZZ, PolynomialRing),
-        [generateRandomRegularGraphs, Convert]
+        (generateRandomRegularGraphs, ZZ, ZZ, ZZ),
+        (generateRandomRegularGraphs, PolynomialRing, ZZ, ZZ),
+        [generateRandomRegularGraphs, RandomSeed]
     },
-    Headline => "generates random regular graphs in a given polynomial ring",
-    Usage => "G = generateRandomRegularGraphs(num, reg, R)",
+    Headline => "generates random regular graphs on a given number of vertices",
+    Usage => "G = generateRandomRegularGraphs(n, num, reg)\nG = generateRandomRegularGraphs(R, num, reg)",
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
+        "n" => ZZ => "the number of vertices of the graphs",
         "num" => ZZ => "the number of random graphs to generate",
         "reg" => ZZ => "the regularity of the generated graphs",
-        Convert => Boolean => {"whether to convert the output from a ", TO "String", " to a ", TO "Graph"}
+        RandomSeed => ZZ => {"if nonzero, then the specified random seed is passed to nauty"}
     },
-    Outputs => { "G" => List => TEX ///the randomly generated regular graphs in $R$///},
-    PARA TEX ///This method generates a specified number of random graphs in
-            the polynomial ring $R$ with a given regularity.
-            Note that some graphs may be isomorphic. ///,
+    Outputs => { "G" => List => TEX ///the randomly generated regular graphs///},
+    PARA TEX ///
+            This method generates a specified number of random graphs on
+            a given number of vertices with a given regularity.
+            Note that some graphs may be isomorphic.
+        ///,
+    PARA TEX ///
+            If a PolynomialRing $R$ is supplied instead, then the number of
+            vertices is the number of generators.  Moreover, the Strings are
+            automatically converted to graphs in $R$.
+        ///,
     EXAMPLE lines ///
             R = QQ[a..e];
-            generateRandomRegularGraphs(3, 2, R)
+            generateRandomRegularGraphs(R, 3, 2)
     ///,
     SeeAlso => {
         "generateRandomGraphs"
@@ -1072,21 +1100,25 @@ doc ///
         relabelGraph
         (relabelGraph, String, ZZ, ZZ)
         (relabelGraph, String, ZZ)
+        (relabelGraph, String)
         (relabelGraph, Graph, ZZ, ZZ)
         (relabelGraph, Graph, ZZ)
+        (relabelGraph, Graph)
     Headline
         applies a canonical labeling to a graph
     Usage
         T = relabelGraph(S, i, a)
         T = relabelGraph(S, i)
+        T = relabelGraph S
         H = relabelGraph(G, i, a)
         H = relabelGraph(G, i)
+        H = relabelGraph G
     Inputs
         S:String
             a graph encoded in either Sparse6 or Graph6 format
         G:Graph
         i:ZZ
-            a choice of invariant to order by ($1 \leq i \leq 15$)
+            a choice of invariant to order by ($0 \leq i \leq 15$)
         a:ZZ
             a non-negative argument passed to @TT "nauty"@, (default is three)
     Outputs
@@ -1096,11 +1128,12 @@ doc ///
             a graph isomorphic to $G$
     Description
         Text
-            This method applies one of fifteen canonical labelings to a graph.  See
+            This method applies one of sixteen canonical labelings to a graph.  See
             the @TT "nauty"@ documentation for a more complete description of each
             and how the argument $a$ is used.
 
             The fifteen canonical labelins are:
+            $i = 0$: none,
             $i = 1$: twopaths,
             $i = 2$: adjtriang(K),
             $i = 3$: triples,
@@ -1117,11 +1150,12 @@ doc ///
             $i = 14$: cellfano, and
             $i = 15$: cellfano2.
         Example
-            R = QQ[a..m];
-            G = randomGraph(R, 20)
-            unique apply(1..15, i -> relabelGraph(G, i))
+            R = QQ[a..e];
+            G = cycle R;
+            H = graph {a*e, e*c, c*b, b*d, d*a};
+            relabelGraph G == relabelGraph H
         Text
-            Note that on most small graphs, all fifteen orderings produce the same result.
+            Note that on most small graphs, all sixteen orderings produce the same result.
     SeeAlso
         relabelBipartite
 ///
@@ -1278,11 +1312,12 @@ doc ///
         stringToEdgeIdeal
 ///
 
+-- Each of these are documented within the documentation for the
+-- methods which use them.
 undocumented { 
     "Class2Degree2",
     "Class2DistinctNeighborhoods",
     "Class2MaxCommonNeighbors",
-    "Convert",
     "MaxDegree",
     "MinDegree",
     "NoNew3Cycles",
@@ -1295,7 +1330,8 @@ undocumented {
     "OnlyBipartite",
     "OnlyConnected",
     "OnlyIfSmaller",
-    "OnlyTriangleFree"
+    "OnlyTriangleFree",
+    "RandomSeed"
 };
 
 -------------------
@@ -1357,40 +1393,36 @@ TEST ///
 
 -- generateBipartiteGraphs
 TEST ///
-    R = ZZ[a..f];
     -- All bipartite graphs in R.
-    assert(#generateBipartiteGraphs(R, Convert => false) == 57);
+    assert(#generateBipartiteGraphs(6) == 57);
     -- All bipartite graphs in R with Class1 of size 3.
-    assert(#generateBipartiteGraphs(3, R, Convert => false) == 36);
+    assert(#generateBipartiteGraphs(6, 3) == 36);
     -- All bipartite graphs in R with Class1 of size 3 and 2 edges.
-    assert(#generateBipartiteGraphs(3, 2, R, Convert => false) == 3);
+    assert(#generateBipartiteGraphs(6, 3, 2) == 3);
     -- All bipartite graphs in R with Class1 of size 3 and 1-2 edges.
-    assert(#generateBipartiteGraphs(3, 1, 2, R) == 4);
+    assert(#generateBipartiteGraphs(6, 3, 1, 2) == 4);
 ///
 
 -- generateGraphs
 TEST ///
-    R = ZZ[a..f];
-    assert(#generateGraphs(R, Convert => false) == 156);
-    assert(#generateGraphs(R, Convert => false, OnlyConnected => true) == 112);
-    assert(#generateGraphs(7, R) == 24);
-    assert(#generateGraphs(7, 8, R, OnlyConnected => true) == 19+22);
+    assert(#generateGraphs(6) == 156);
+    assert(#generateGraphs(6, OnlyConnected => true) == 112);
+    assert(#generateGraphs(6, 7) == 24);
+    assert(#generateGraphs(6, 7, 8, OnlyConnected => true) == 19+22);
 ///
 
 -- generateRandomGraphs
 TEST ///
-    R = ZZ[a..f];
-    assert(#generateRandomGraphs(10, R) == 10);
-    assert(#generateRandomGraphs(17, 1/4, R, Convert => false) == 17);
-    assert(#generateRandomGraphs(42, 4, R, Convert => false) == 42);
+    assert(#generateRandomGraphs(6, 10) == 10);
+    assert(#generateRandomGraphs(6, 17, 1/4) == 17);
+    assert(#generateRandomGraphs(6, 42, 4) == 42);
 ///
 
 -- generateRandomRegularGraphs
 TEST ///
-    R = ZZ[a..f];
-    assert(#generateRandomRegularGraphs(10, 3, R, Convert => false) == 10);
+    assert(#generateRandomRegularGraphs(6, 10, 3) == 10);
     -- There is only one regular graph on 6 vertices with regularity degree 5--K6.
-    assert(#unique generateRandomRegularGraphs(10, 5, R, Convert => false) == 1);
+    assert(#unique generateRandomRegularGraphs(6, 10, 5) == 1);
 ///
 
 -- graph6ToSparse6
@@ -1457,7 +1489,7 @@ TEST ///
 TEST ///
     R = ZZ[a..f];
     G = cycle R;
-    assert(#apply(1..15, i -> relabelGraph(G, i)) == 15);
+    assert(#apply(0..15, i -> relabelGraph(G, i)) == 16);
 ///
 
 -- removeEdges
@@ -1498,3 +1530,8 @@ TEST ///
 -- HappyHappyJoyJoy
 -------------------
 end
+
+restart
+uninstallPackage "Nauty"
+installPackage "Nauty"
+check "Nauty"
