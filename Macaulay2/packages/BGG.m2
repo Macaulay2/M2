@@ -113,7 +113,8 @@ cohomologyTable = method()
 cohomologyTable(CoherentSheaf, ZZ, ZZ) := CohomologyTally => (F,lo,hi) -> (
      M := module F;
      S := ring M;
-     E := (coefficientRing S)[Variables=>numgens S, SkewCommutative=>true];
+     e := local e;
+     E := (coefficientRing S)[e_0..e_(numgens S-1), SkewCommutative=>true];
      T := tateResolution(presentation M, E, lo, hi);
      tateToCohomTable T
      )
@@ -181,7 +182,8 @@ symmetricToExteriorOverA(Matrix,Matrix,Matrix):= (m,e,x) -> (
 --    P=ker (Hom_A(E,(coker m)_0) -> Hom_A(E,(coker m)_1))
 --over the  exterior algebra A<e>.
 --                                 Berkeley, 19/12/2004, Frank Schreyer.
-     S:= ring x; E:=ring e;
+     S:= ring x; 
+     E:=ring e;
      a:=rank source m;
      La:=degrees source m;
      co:=toList select(0..a-1,i->  (La_i)_0==0);
@@ -209,8 +211,9 @@ symmetricToExteriorOverA(Module) := M -> (
      xvars := vars S;
      A := coefficientRing S;
      if not S.?Exterior then(
+	  e := local e;
 	  --S.Exterior = exterior alg over A on dual vars to the vars of S (new vars have deg = {-1,0})
-	  S.Exterior = A[Variables => numgens S, SkewCommutative => true, Degrees=>{numgens S:-1}]
+	  S.Exterior = A[e_0 .. e_(numgens S - 1), SkewCommutative => true, Degrees=>{numgens S:-1}]
 	  );
      E := S.Exterior;
      symmetricToExteriorOverA(presentation M, vars E, vars S)
@@ -282,6 +285,82 @@ directImageComplex Matrix := opts -> (f) -> (
 --     error("debug");
      EtoA fMN0
      )
+
+
+directImageComplex ChainComplex := opts -> F -> (
+     --The idea is to take the Tate resolutions of th modules
+     --in F at a point where they're all linear (beyond all the
+     --regularities) and form one map of the double complex
+     --there. Then resolve backward and take the degree zero part
+     --as usual.
+
+     --at the moment we don't handle the user-supplied regularity
+     --option.
+
+     S := ring F;
+     A := coefficientRing S;
+     StoA := map(A,S,DegreeMap => i -> drop(i,1));
+
+     minF := min F; --lowest index i such that F_i is defined
+     maxF := max F; --highest index i such that F_i is defined     
+
+     len := max F-min F; -- number of maps given in F
+
+     modules := apply(toList(minF..maxF), i-> F_i);
+     --note: modules_i = F_(minF+i)
+     maps := apply(toList(minF+1..maxF), i->F.dd_i);
+     --note: maps_i = is the map with TARGET F_(minF+i)
+
+     regF := if opts.Regularity === null 
+              then (max apply(modules, 
+			M -> regularityMultiGraded M))
+	      else opts.Regularity;
+     if regF < 0 then regF = 0;
+
+     --at the moment we don't handle the user-supplied regularity
+     --option.
+     
+     --truncate len+1 steps beyond regF. This can be refined a bit.
+     truncMaps := apply(len, i -> basis(regF+len+1,maps_i)); -- the maps are now numbered by the module they go TO.
+     truncModules := prepend(target truncMaps_0, apply(truncMaps, d->source d));
+     mapsA := apply(truncMaps, d->StoA matrix d);
+     
+     xm := (1+len+regF) * degree(S_0);
+     Ediffs := apply(truncModules, M -> 
+	  symmetricToExteriorOverA(M ** S^{xm}));
+     --note: the sources of Ediffs seem to  be free modules over E
+     --generated in degree zero.
+
+     E := ring Ediffs_0;
+     EtoA := map(A,E,DegreeMap=> i -> drop(i,1));     
+
+     Ereslen := apply(len+1, i -> complete res( image Ediffs_i, LengthLimit => len+1));
+     mapsE := apply(len, i -> map((Ereslen_i)_0, Ereslen_(i+1)_0, mapsA_i ** E));
+     FE := apply(len, i -> extend(Ereslen_i, Ereslen_(i+1), mapsE_i));
+
+     Ereslen = apply(Ereslen, EE -> E^{-xm} ** EE[regF+len+1]);     	 
+     FE = apply(FE, FEi -> E^{-xm} ** FEi[regF+len+1]);     	 
+
+     E1 := directSum apply(len+1, i-> (Ereslen_i)_(-regF-i));
+     CE1 := components E1;
+
+     E0 := directSum apply(len+1, i-> (Ereslen_i)_(-regF-i-1));     
+     CE0 := components E0;
+          
+     D :=  apply(len+1, i-> apply(len+1, j->
+	       if j == i   then -((Ereslen_i).dd_(-regF-i)) else 
+	       if j == i+1 then ((FE_i)_(-regF-j)) else 
+	       map(CE0_i, CE1_j, 0)));
+     Dmat := matrix D;
+     Eres := complete res(coker Dmat, LengthLimit => max(1,1+regF+len));
+     (EtoA degreeD(0,Eres))[regF+1-minF]
+     )
+
+
+
+
+
+
 
 {* -- we will probably remove this soon (9/30/2010 DE+MES)
 truncateMultiGraded = method()
@@ -632,11 +711,24 @@ document {
      	  ///,
      SeeAlso => {symExt}
      }
+
+doc ///
+   Key
+     directImageComplex
+     [directImageComplex, Regularity]
+   Headline
+     direct image complex
+   Usage
+     directImageComplex F
+   Description
+    Text
+      Forms a minimal free complex representing the direct image complex of $F$ in the
+      derived category, where $F$ is a module, chain complex or map of modules.
+///
+
 doc ///
    Key 
-     directImageComplex
      (directImageComplex, Module)
-     [directImageComplex, Regularity]
    Headline
      Complex representing the direct image 
    Usage
@@ -799,6 +891,50 @@ doc ///
 ///
 
 doc ///
+   Key
+     (directImageComplex, ChainComplex)
+   Headline
+     direct image of a chain complex
+   Usage
+     piC = directImageComplex C
+   Inputs
+     C:ChainComplex
+       over a bigraded ring $S = A[y_0..y_n]$, where $A$ is singly graded
+   Outputs
+     piC:ChainComplex
+       a minimal free complex representing the direct image complex in the derived category
+   Description
+    Text
+     The method is an elaboration of the exterior algebra method for computing cohomology
+     discovered by Eisenbud, Floeystad, Schreyer: Sheaf cohomology and free resolutions over
+     exterior algebras. Trans. Amer. Math. Soc. (2003).
+
+     We give an application of this function to create generalized Eagon-Northcott complexes,
+     discovered by Buchsbaum, Eisenbud, and Kirby, and described in 
+     Eisenbud, Commutative Algebra, 1995, section A2.6.  This method can be generalized 
+     to produce pure resolutions of any degree sequence.
+
+     These are the complexes associated to a generic 2 by 5 matrix.
+    Example
+      (p,q) = (2,5) -- number of rows and columns
+      A=ZZ/101[a_(0,0)..a_(p-1,q-1)];
+      S = A [x_0..x_(p-1)];
+      M = sub(map(A^p, A^{q:-1},transpose genericMatrix(A,a_(0,0),q,p)), S)
+      Y = map(S^1, S^{q:{-1,-1}}, (vars S)*M)
+      F = koszul Y
+      L = for i from -1 to q-p+1 list directImageComplex(F**S^{{i,0}});
+      L/betti
+   Caveat
+     This function is not yet functorial, i.e., there is no method to take a map of
+     chain complexes and produce the induced map on direct image complexes.
+     Additionally, the input ring must be a tower ring with exactly two gradings, and the
+     variables must have degree $\{0,1\}$ and $\{1,0\}$
+     A later version will remove these restrictions
+   SeeAlso
+     directImageComplex
+///
+
+doc ///
    Key 
      universalExtension
    Headline
@@ -922,6 +1058,22 @@ TEST ///
   C3 = directImageComplex(id_M3)
   assert isChainComplexMap C3
   assert(C3_0 == 0)
+///
+
+///
+  (p,q) = (2,5)
+  kk = ZZ/101
+  A=kk[a_(0,0)..a_(p-1,q-1)]
+  S = A [x_0..x_(p-1)]
+  M = sub(map(A^p, A^{q:-1},transpose genericMatrix(A,a_(0,0),q,p)), S)
+
+  Y = map(S^1, S^{q:{-1,-1}}, (vars S)*M)
+  F = koszul Y
+  L = directImageComplex(F**S^{{2,0}})
+  ans = new BettiTally from {(0,{0},0) => 3, (3,{4},4) => 5, 
+       (1,{1},1) => 10, (4,{5},5) => 2,
+       (2,{2},2) => 10};
+  assert(betti L == ans)
 ///
 
 end
