@@ -59,7 +59,7 @@ INSTALLOPTIONS += prefix=/usr
 include Makefile.include
 default:install check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:; [ `uname -s` = CYGWIN_NT-6.1-WOW64 ] && [ `uname -m` = i686 ]
+arch-chk:; [ `uname -o` = Cygwin  ] && [ `uname -m` = i686 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.cygwin "
 # End:
