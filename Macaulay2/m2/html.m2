@@ -472,11 +472,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      stderr << cmd << endl;
      makeDirectory rundir;
      r := chkrun cmd;
-     if r == 512 then (
-	  stderr << newline;
-	  error("run: M2 subprocess interrupted, returns exit code 2");
-	  )
-     else if r == 0 then (
+     if r == 0 then (
 	  scan(reverse findFiles rundir, f -> if isDirectory f then (
 		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
 		    try removeDirectory f
@@ -494,9 +490,9 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
-     stderr << tmpf << ":0:1: (output file) error: program exited with return code: (" << r//256 << "," << r%256 << ")" << endl;
+     stderr << tmpf << ":0:1: (output file) error: Macaulay2 exited with return code " << r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
-     stderr << inf  << ":0:1: (input file) error: ..." << endl;
+     stderr << inf  << ":0:1: (input file)" << endl;
      scan(statusLines get inf, x -> stderr << x << endl);
      if # findFiles rundir == 1
      then removeDirectory rundir
