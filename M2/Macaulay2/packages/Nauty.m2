@@ -268,10 +268,12 @@ graphComplement Graph := Graph => opts -> G -> (
 graphToString = method()
 graphToString (List, ZZ) := String => (E, n) -> (
     if n > 68719476735 then error("graphToString: Too many vertices.");
+    if any(E, e -> #e != 2) or any(E, e -> first e == last e) or max(flatten E) >= n then error("graphToString: Edges are malformed.");
     N := take(reverse apply(6, i -> (n // 2^(6*i)) % 2^6), if n < 63 then -1 else if n < 258047 then -3 else -6);
 
     B := new MutableList from toList(6*ceiling(binomial(n,2)/6):0);
-    for e in E do B#(binomial(last e, 2) + first e) = 1;
+    -- the edges must be in {min, max} order, so sort them
+    for e in apply(E, sort) do B#(binomial(last e, 2) + first e) = 1;
     ascii apply(N | apply(pack(6, toList B), b -> fold((i,j) -> i*2+j, b)), l -> l + 63)
 )
 graphToString MonomialIdeal := String => I -> graphToString(apply(first entries generators I, indices), #gens ring I)
@@ -1535,3 +1537,4 @@ restart
 uninstallPackage "Nauty"
 installPackage "Nauty"
 check "Nauty"
+
