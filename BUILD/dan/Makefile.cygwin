@@ -28,27 +28,31 @@ endif
 #   gcc4-fortran
 #   gcc4-g++
 #   gdb
-#   gvim
+#   libgc-devel
 #   libgdbm-devel
+#   libglpk-devel
 #   liblapack-devel
 #   libstdc++6-devel
 #   libxml2-devel 
 #   make
+#   mpfr-devel
 #   patchutils
 #   readline
 #   subversion
-#   unzip
-#   vim
+#   time
 #   wget
 #   xinit
 #   xorg-server
 # optional:
 #   emacs-el
-#   xconsole
-#   xkill
-#   psmisc (to get killall, pstree, fuser)
+#   gvim
 #   libxml2-doc
 #   openssh
+#   psmisc (to get killall, pstree, fuser)
+#   unzip
+#   vim
+#   xconsole
+#   xkill
 
 # CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
@@ -57,7 +61,7 @@ CONFIGOPTIONS += --build=i486-pc-cygwin
 # INSTALLOPTIONS += prefix=/usr/local/encap
 INSTALLOPTIONS += prefix=/usr
 include Makefile.include
-default:install check
+default: check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; [ `uname -o` = Cygwin  ] && [ `uname -m` = i686 ]
 # Local Variables:
