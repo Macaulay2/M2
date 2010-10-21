@@ -143,7 +143,7 @@ assert( sort gens B - sort gens C == 0 )
 ///
 
 TEST ///
-R=ZZ/2[vars(0..63), MonomialOrder=>Lex]
+R=ZZ/2[vars(0..31), MonomialOrder=>Lex]
 l =  apply( gens R, x -> x^2+x);
 RQ = R/l
 I = ideal(a);
@@ -185,7 +185,7 @@ assert( sort gens B - sort gens C == 0 )
 ///
 
 TEST ///
-R=ZZ/2[vars(0..32), MonomialOrder=>Lex]
+R=ZZ/2[vars(0..31), MonomialOrder=>Lex]
 l =  apply( gens R, x -> x^2+x);
 RQ = R/l
 I = ideal(a,b, a*c+d);
