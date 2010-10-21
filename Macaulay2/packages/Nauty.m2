@@ -9,8 +9,8 @@
 needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
-    Version => "1.2",
-    Date => "18. October 2010",
+    Version => "1.2.1",
+    Date => "20. October 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -162,6 +162,7 @@ generateBipartiteGraphs = method(Options => {OnlyConnected => false, Class2Disti
 generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
     if n < 1 then error("generateBipartiteGraphs: The graph must have vertices!.");
     if m < 1 then error("generateBipartiteGraphs: The first class has too few vertices.");
+    if m > n then error("generateBipartiteGraphs: The first class has too many vertices.");
     if (le > ue) or (le > m*(n-m)) or (ue < 0) then return;
 
     cmdStr := "genbg -q" | 
@@ -177,7 +178,7 @@ generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
 )
 generateBipartiteGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, m, e) -> generateBipartiteGraphs(n, m, e, e, opts)
 generateBipartiteGraphs (ZZ, ZZ) := List => opts -> (n, m) -> generateBipartiteGraphs(n, m, 0, m * (n-m), opts)
-generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..(n - 1)), i -> generateBipartiteGraphs(n, i, opts))
+generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..n), i -> generateBipartiteGraphs(n, i, opts))
 generateBipartiteGraphs (PolynomialRing, ZZ, ZZ, ZZ) := List => opts -> (R, m, le, ue) -> apply(generateBipartiteGraphs(#gens R, m, le, ue, opts), g -> stringToGraph(g, R))
 generateBipartiteGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, m, e) -> apply(generateBipartiteGraphs(#gens R, m, e, opts), g -> stringToGraph(g, R))
 generateBipartiteGraphs (PolynomialRing, ZZ) := List => opts -> (R, m) -> apply(generateBipartiteGraphs(#gens R, m, opts), g -> stringToGraph(g, R))
@@ -336,8 +337,14 @@ removeIsomorphs = method()
 removeIsomorphs List := List => L -> (
     if #L == 0 then return {};
     r := callNauty("shortg -qv 2>&1 1>/dev/null", apply(L, graphToString));
-    -- In Nauty 2.4r2, the index is the second number.
-    for l in r list ( s := select("[[:digit:]]+", l); if #s < 2 then continue else L_(-1 + value (s_1)) )
+    -- for each line, check if it has a colon, if so, take the first graph
+    for l in r list ( 
+        s := separate(":", l);
+        if #s < 2 then continue else ( 
+            t := select("[[:digit:]]+", s_1);
+            if #t == 0 then continue else L_(-1 + value first t)
+        )
+    )
 )
 
 -- Converts a Sparse6 string to a Graph6 string.
@@ -1403,6 +1410,7 @@ TEST ///
     assert(#generateBipartiteGraphs(6, 3, 2) == 3);
     -- All bipartite graphs in R with Class1 of size 3 and 1-2 edges.
     assert(#generateBipartiteGraphs(6, 3, 1, 2) == 4);
+    assert(apply(toList(1..8), n -> #removeIsomorphs generateBipartiteGraphs n) == {1, 2, 3, 7, 13, 35, 88, 303}); --A033995
 ///
 
 -- generateGraphs
@@ -1411,6 +1419,7 @@ TEST ///
     assert(#generateGraphs(6, OnlyConnected => true) == 112);
     assert(#generateGraphs(6, 7) == 24);
     assert(#generateGraphs(6, 7, 8, OnlyConnected => true) == 19+22);
+    assert(apply(toList(1..8), n -> #generateGraphs n) == {1, 2, 4, 11, 34, 156, 1044, 12346}); -- A000088
 ///
 
 -- generateRandomGraphs
@@ -1506,6 +1515,7 @@ TEST ///
     R = ZZ[a..f];
     G = {"EhEG", cycle R, completeGraph R, graph {a*d, d*b, b*e, e*c, c*f, f*a}};
     assert(#removeIsomorphs G == 2);
+    assert(#removeIsomorphs apply(permutations gens R, P -> graphToString graph apply(5, i-> {P_i, P_((i+1)%5)})) == 1);
 ///
 
 -- sparse6ToGraph6
