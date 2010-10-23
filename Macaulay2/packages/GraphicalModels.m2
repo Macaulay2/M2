@@ -123,7 +123,7 @@ pairMarkov Digraph := List => (G) -> (
      -- where A,B,C are disjoint sets, and for every vertex v
      -- and non-descendent w of v,
      -- {v, w, nondescendents(G,v) - w}
-     removeRedundants flatten apply(vertices G, v -> (
+     removeRedundants flatten apply(sort vertices G, v -> (
 	       ND := nondescendents(G,v);
 	       W := ND - parents(G,v);
 	       apply(toList W, w -> {set {v}, set{w}, ND - set{w}}))))
@@ -137,7 +137,7 @@ localMarkov Digraph := List =>  (G) -> (
      -- Given a digraph G, return a list of triples {A,B,C}
      -- of the form {v, nondescendents - parents, parents}
      result := {};
-     scan(vertices G, v -> (
+     scan(sort vertices G, v -> (
 	       ND := nondescendents(G,v);
 	       P := parents(G,v);
 	       if #(ND - P) > 0 then
@@ -154,7 +154,7 @@ globalMarkov Digraph := List => (G) -> (
      -- so that A and B are d-separated by C (in the graph G).
      -- If G is large, this should maybe be rewritten so that
      -- one huge list of subsets is not made all at once
-     V := vertices G;
+     V := sort vertices G;
      result := {};
      AX := subsets V;
      AX = drop(AX,1); -- drop the empty set
@@ -190,7 +190,7 @@ bayesBall = (A,C,G) -> (
      -- as implemented by Luis Garcia-Puente, after
      -- the paper of Ross D. Shachter.
      --
-     V := vertices G;
+     V := sort vertices G;
      -- DEVELOPMENT NOTES: 
      -- 
      visited := new MutableHashTable from apply(V, k-> k=>false);
@@ -414,8 +414,8 @@ hiddenMap(ZZ,Ring) := RingMap => (v,A) -> (
 pos = (h, x) -> position(h, i->i===x)
 -- the following function retrieves the position of the vertices 
 -- in the graph G for all vertices contained in the list S
--- vertices G returns a SORTED list of the vertices 
-getPositionOfVertices := (G,S) -> apply(S, w -> pos(vertices G, w))
+-- vertices G does not return a sorted list of the vertices 
+getPositionOfVertices := (G,S) -> apply(S, w -> pos(sort vertices G, w))
 
 --------------------
 -- markovMatrices --
@@ -523,7 +523,7 @@ gaussianRing Digraph :=  Ring => opts -> (G) -> (
      -- This is done to avoid any ordering confusion. 
      s := if instance(opts.VariableName,Symbol) then opts.VariableName else opts.VariableName#0;
      kk := opts.Coefficients;
-     vv := vertices G; 
+     vv := sort vertices G; 
      w := delete(null, flatten apply(vv, i -> apply(vv, j -> if pos(vv,i)>pos(vv,j) then null else (i,j))));
      v := apply (w, ij -> s_ij);
      R := kk(monoid [v, MonomialSize=>16]);
@@ -621,7 +621,7 @@ gaussianMatrices(Ring,Digraph) := List =>  (R,G) -> gaussianMatrices(R,G,globalM
 --for a Digraph, the method is faster--so we just need to overload it for a DAG. 
 trekIdeal = method()
 trekIdeal(Ring, Digraph) := Ideal => (R,G) -> (
-     vv := vertices G;
+     vv := sort vertices G;
      n := #vv;
      v := (topSort G)#map;
      v = hashTable apply(keys v, i->v#i=>i);
@@ -672,7 +672,7 @@ gaussianRing MixedGraph := Ring => opts -> (g) -> (
      G := graph collateVertices g;
      dd := graph G#Digraph;
      bb := graph G#Bigraph;
-     vv := vertices g;
+     vv := sort vertices g;
      s := opts.VariableName#0;
      l := opts.VariableName#1;
      p := opts.VariableName#2;
@@ -690,7 +690,7 @@ gaussianRing MixedGraph := Ring => opts -> (g) -> (
 ------------------------
 
 covarianceMatrix (Ring,MixedGraph) := (R,g) -> (
-     vv := vertices g;
+     vv := sort vertices g;
      n := R#gaussianRing#0;
      s := value R#gaussianRing#1;
      SM := mutableMatrix(R,n,n);
@@ -705,7 +705,7 @@ directedEdgesMatrix = method()
 directedEdgesMatrix (Ring,MixedGraph) := Matrix =>  (R,g) -> (
      G := graph collateVertices g;
      dd := graph G#Digraph;
-     vv := vertices g;
+     vv := sort vertices g;
      n := R#gaussianRing#0;
      l := value R#gaussianRing#2;
      LM := mutableMatrix(R,n,n);
@@ -720,7 +720,7 @@ bidirectedEdgesMatrix = method()
 bidirectedEdgesMatrix (Ring,MixedGraph) := Matrix =>  (R,g) -> (
      G := graph collateVertices g;
      bb := graph G#Bigraph;
-     vv := vertices g;
+     vv := sort vertices g;
      n := R#gaussianRing#0;
      p := value R#gaussianRing#3;
      PM := mutableMatrix(R,n,n);
@@ -773,7 +773,7 @@ trekSeparation MixedGraph := List => (g) -> (
     G := graph collateVertices g;
     dd := graph G#Digraph;
     bb := graph G#Bigraph; 
-    vv := vertices g;
+    vv := sort vertices g;
 
     -- Construct canonical double DAG cdG associated to mixed graph G
     cdG:= digraph join(
@@ -837,7 +837,7 @@ trekSeparation MixedGraph := List => (g) -> (
 -----------------
 
 trekIdeal (Ring,MixedGraph,List) := Ideal => (R,g,Stmts) -> (
-     vv := vertices g;
+     vv := sort vertices g;
      SM := covarianceMatrix(R,g);	
      sum apply(Stmts,s->minors(#s#2+#s#3+1, submatrix(SM,apply(s#0,x->pos(vv,x)),apply(s#1,x->pos(vv,x))))))
 
