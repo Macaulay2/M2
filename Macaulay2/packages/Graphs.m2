@@ -496,13 +496,13 @@ vertices = method()
 vertices(Digraph) := G -> (
      if G#cache#?vertices then G#cache#vertices else(
      	  G1 := graph G;
-     	  V := sort keys G1;
+     	  V := keys G1;
      	  G#cache#vertices = V;
      	  V))   
 vertices(MixedGraph) := G -> (
      if G#cache#?vertices then G#cache#vertices else(
 	  G1 := graph G;
-	  V := sort toList sum(apply(keys(G1),i->set keys(graph G1#i)));
+	  V := toList sum(apply(keys(G1),i->set keys(graph G1#i)));
 	  G#cache#vertices = V;
 	  V))
 
