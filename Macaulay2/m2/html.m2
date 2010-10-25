@@ -1246,6 +1246,7 @@ chk := ret -> if ret != 0 then (
 browserMethods := hashTable {
      "firefox" => url -> {"firefox", url},
      "open" => url -> {"open", url},
+     "cygstart" => url -> {"cygstart", url},
      "netscape" => url -> {"netscape", "-remote",  "openURL(" | url | ")" },
      "windows firefox" => url -> { "/cygdrive/c/Program Files/Mozilla Firefox/firefox", "-remote", "openURL(" | url | ")" }
      }
@@ -1254,8 +1255,9 @@ new URL from String := (URL,str) -> new URL from {str}
 show URL := x -> (
      url := x#0;
      browser := getenv "WWWBROWSER";
-     if version#"operating system" === "MacOS" and runnable "open" then browser = "open"; -- should ignore WWWBROWSER, according to Mike
-     if version#"operating system" === "MicrosoftWindows" then browser = "windows firefox";
+     if version#"operating system" === "MacOS" and runnable "open" then browser = "open" -- should ignore WWWBROWSER, according to Mike
+     else
+     if version#"issue" === "Cygwin" then browser = "cygstart";
      if browser === "" then (
 	  if runnable "firefox" then browser = "firefox"
 	  else if runnable "netscape" then browser = "netscape"
@@ -1264,7 +1266,7 @@ show URL := x -> (
      cmd := if browserMethods#?browser then browserMethods#browser url else { browser, url };
      if fork() == 0 then (
 	  setGroupID(0,0);
-     	  exec cmd;
+     	  try exec cmd;
      	  stderr << "exec failed: " << toExternalString cmd << endl;
 	  exit 1
 	  )
