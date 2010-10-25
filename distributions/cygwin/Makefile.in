@@ -83,7 +83,7 @@ libraries-used: .prepared
 
 packages-used: libraries-used
 	cat $< \
-	| ( while read x ; do cygcheck -f $$x ; done ; echo xorg-server ; echo emacs-X11 ; echo xinit ) \
+	| ( while read x ; do cygcheck -f $$x ; done ; echo xorg-server ; echo cygutils ; echo emacs-X11 ; echo xinit ) \
 	| sort | uniq \
 	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
 	| tee $@
