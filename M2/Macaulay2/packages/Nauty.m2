@@ -187,7 +187,7 @@ generateBipartiteGraphs PolynomialRing := List => opts -> R -> apply(generateBip
 -- Generates all graphs of a given type.
 generateGraphs = method(Options => {OnlyConnected => false, OnlyBiconnected => false, OnlyTriangleFree => false, Only4CycleFree => false, OnlyBipartite => false, MinDegree => 0, MaxDegree => 0})
 generateGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, le, ue) -> (
-    if n < 0 then error("generateGraphs: A graph must have vertices!");
+    if n < 1 then error("generateGraphs: A graph must have vertices!");
     if (le > ue) or (le > binomial(n,2)) or (ue < 0) then return;
     le = max(le, 0);
 
@@ -212,21 +212,21 @@ generateGraphs PolynomialRing := List => opts -> R -> apply(generateGraphs(#gens
 -- Generate random graphs with given properties.
 generateRandomGraphs = method(Options => {RandomSeed => 0})
 generateRandomGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, p) -> (
-    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if p < 1 then error("generateRandomGraphs: Probability must be positive.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
 generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
-    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
 generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
-    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg " | toString(n) | " " | toString(num) | rndSeed, {})
@@ -238,7 +238,7 @@ generateRandomGraphs (PolynomialRing, ZZ) := List => opts -> (R, num) -> apply(g
 -- Generate random regular graphs in the Ring with given properties.
 generateRandomRegularGraphs = method(Options => {RandomSeed => 0})
 generateRandomRegularGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, reg) -> (
-    if n < 0 then error("generateRandomRegularGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomRegularGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if reg < 1 or reg >= n then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
@@ -595,6 +595,9 @@ doc ///
             @TT "Connectivity"@ only works for the values $0, 1, 2$ and is strict, that is, @TT "{\"Connectivity\" => 1}"@
             yields only those graphs with exactly 1-connectivity.  In order to filter for connected graphs, one must use
             @TT "{\"Connectivity\" => 0, \"NegateConnectivity\" => true}"@.
+
+            @TT "NumCycles"@ can only be used with graphs on at most $n$ vertices, where $n$ is the number of bits for which
+            nauty was compiled.
     SeeAlso
         countGraphs
         filterGraphs
