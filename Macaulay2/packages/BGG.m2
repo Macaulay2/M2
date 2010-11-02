@@ -17,11 +17,14 @@ newPackage(
 needsPackage "BoijSoederberg"
 
 export {
-     symExt, bgg, tateResolution, 
-     beilinson, cohomologyTable, 
-     directImageComplex, universalExtension, Regularity, 
-     Exterior,
-     pureResolution
+     "symExt", "bgg", "tateResolution", 
+     "beilinson", "cohomologyTable", 
+     "directImageComplex", 
+     "pureResolution",
+     "Regularity", 
+     "Exterior",
+     "universalExtension",
+     "projectiveProduct"
      }
 
 symExt = method()
@@ -204,6 +207,7 @@ symmetricToExteriorOverA(Matrix,Matrix,Matrix):= (m,e,x) -> (
      phi:=map(M1,M0,transpose G)
      )
 
+
 symmetricToExteriorOverA(Module) := M -> (
      --M is a module over S = A[x0...].  must be gen in x-degree 0,
      --related in x-degree 1
@@ -218,6 +222,7 @@ symmetricToExteriorOverA(Module) := M -> (
      E := S.Exterior;
      symmetricToExteriorOverA(presentation M, vars E, vars S)
      )
+
 
 directImageComplex = method(Options => {Regularity=>null})
 directImageComplex Module := opts -> (M) -> (
@@ -286,6 +291,7 @@ directImageComplex Matrix := opts -> (f) -> (
      EtoA fMN0
      )
 
+--New 10/2010 -- David Eisenbud
 
 directImageComplex ChainComplex := opts -> F -> (
      --The idea is to take the Tate resolutions of th modules
@@ -353,33 +359,14 @@ directImageComplex ChainComplex := opts -> F -> (
 	       map(CE0_i, CE1_j, 0)));
      Dmat := matrix D;
      Eres := complete res(coker Dmat, LengthLimit => max(1,1+regF+len));
-     (EtoA degreeD(0,Eres))[regF+1-minF]
+     dirIm := (EtoA degreeD(0,Eres))[regF+1-minF];
+     --now truncate aware the parts below zero and above 
+     nonzero := positions(apply(min dirIm..max dirIm, i -> rank dirIm_i != 0), t -> t);
+     minDirIm := min nonzero + min dirIm;
+     maxDirIm := max nonzero + min dirIm;
+     chainComplex(apply(minDirIm..maxDirIm, i-> dirIm.dd_i))[-minDirIm+1]
      )
 
-
-
-
-
-
-
-{* -- we will probably remove this soon (9/30/2010 DE+MES)
-truncateMultiGraded = method()
-truncateMultiGraded (ZZ, Module) := (d,M) -> (
-     --Assumes that M is a module over a polynomial ring S=A[x0..xn]
-     --where the x_i have first-degree 1.
-     --forms the submodule generated in x-degrees >= d.
-     S := ring M;
-     kk := ultimate (coefficientRing, S);
-     S0 := kk[Variables => numgens S];
-     f := map(S,S0, vars S);
-     L := (degrees M)/first;
-     Md := image M_{};
-     scan(#L, i-> 
-	  if L#i >= d then Md = Md + image M_{i} 
-	  else Md = Md+((ideal f(basis(d-L#i, S0^1)))*(image M_{i})));
-     Md
-     )
-*}
 
 regularityMultiGraded = method()
 regularityMultiGraded (Module) := (M) -> (
@@ -390,6 +377,11 @@ regularityMultiGraded (Module) := (M) -> (
      regularity (coker f presentation M, Weights=>w)
      )
 
+--FIX -- put in whatever you need on the command line.
+     --assumes the existence of
+--     kk := ZZ/101;
+--     A := kk[x_0..x_(2*d-2)];
+--     S := A[y_0,y_1];
 universalExtension = method()
 universalExtension(List,List) := (La,Lb) -> (
      --Let Fi be the direct sum of line bundles on P1
@@ -400,10 +392,6 @@ universalExtension(List,List) := (La,Lb) -> (
      --The answer is defined over A[y_0,y_1] representing 
      -- P^1 x Ext(Sheaf F2,Sheaf F1).
      -- The matrix obtained has relations in total degree {c,-1}
-     --assumes the existence of
---     kk := ZZ/101;
---     A := kk[x_0..x_(2*d-2)];
---     S := A[y_0,y_1];
      kk := ZZ/101;
      la :=#La;
      lb :=#Lb;
@@ -418,6 +406,7 @@ universalExtension(List,List) := (La,Lb) -> (
      n := ablock(La, Lb, S);
      coker (n||m)
    )
+
 bblock = method()
 bblock(ZZ,ZZ, Ring) := (b,c,S) -> map(S^{(b-c):{c+1,-1}}, S^{(b-c-1):{c,-1}}, 
 	             (i,j)->
@@ -428,12 +417,6 @@ bblock(ZZ,ZZ, Ring) := (b,c,S) -> map(S^{(b-c):{c+1,-1}}, S^{(b-c-1):{c,-1}},
 bblock(List, ZZ,Ring) := (Lb, c, S) ->directSum apply(#Lb, i->bblock(Lb#i, c, S))
 
 ablock = method()
-{*ablock(ZZ,ZZ,ZZ,ZZ,Ring) := (a,b,c,offset, S) -> 
-     	  A:=coefficientRing S;
-           map(S^{{a,1}}, S^{(b-c-1):{c,0}},
-		(i,j) -> if j==0 then *S_1^(a-c) else 0_S)
-*}
-
 ablock(List, List, Ring) := (La,Lb,S) ->(
      --works over a tower ring S = A[S_0,S_1], where a
      --has at least #La*#Lb variables
@@ -448,8 +431,12 @@ ablock(List, List, Ring) := (La,Lb,S) ->(
      		 ))
      )
 
+--files to produce pure resolutions as direct images of 
+--twised Koszul complexes. Both the sparse sop and arbitrary
+--multilinear sop's are implemented.
 
-pars = (k, mm) -> (
+
+partitions(ZZ, List) := (k, mm) -> (
      --list of ways of writing k as a sum of #mm
      --non-negative numbers of which the i-th is <=mm_i
      ell := #mm;
@@ -460,53 +447,219 @@ pars = (k, mm) -> (
      P := {};
      for i from 0 to min(k,mm_0) do
          P = P | apply(
-	      pars(k-i,drop(mm,1)), 
+	      partitions(k-i,drop(mm,1)), 
 	               s->prepend(i,s)
 		       );
     select(P,p->#p == #mm))
 
+projectiveProduct = method()
+projectiveProduct(Ring, List) := (A,D) -> (
+     --Takes a list of dimensions D = d_1..d_r
+     --and makes the  product 
+     --P_A^{d_1}x..xP_A^{d_r} 
+     --of projective spaces over the base A, as a tower ring.
+     --Returns the tower ring
+     --together with a system of multilinear parameters
+     --(degree = {1,..,1})
+     --for the whole product.
+     --The length of the sop is 
+     --numgens A + sum D, 1 more than 
+     --the projective dimension of the whole product.
+     --The sop is formed from the symmetric functions
+     --using the functions "partitions" above. (It could
+     --also be done putting an appropriate matrix
+     --in the next routine.)
+     S := A;
+     x := local x;
+     SList := apply (#D, i->S = S[x_(i,0)..x_(i,D_i)]);
+     SList = prepend(A,SList);
+     SS := last SList;
+     dimList := prepend(numgens A-1, D);
+        --now make the parameters
+     params := matrix{
+	  for k from 0 to sum dimList list(
+     P := partitions(k,dimList);
+     sum(P, p -> product(#dimList, i->sub(SList_i_(p_i), SS))
+	  )
+                                           ) 
+                     };
+     (SS,params)
+     )
+///
+restart
+path = prepend( "/Users/david/src/Colorado-2010/PushForward",path)
+notify=true
+loadPackage("BGG", Reload =>true)
+--load "examples2.m2"
+dL = {1,1}
+dLPlus = dL +splice {#dL:1}
+A = kk[vars (0..product(dLPlus)-1)]
+L = projectiveProduct (A,dL,Sparse =>false)
+betti L_1
+transpose L_1
+
+dimList = {1,1}
+dimList = {2}
+dimList = {0,1}
+A = kk[a,b]
+L = projectiveProduct (A,dimList)
+betti L_1
+///
+
+projectiveProduct(Matrix, List) := (M,D) -> (
+     --Takes a list D of dimensions
+     --and makes the appropriate product of 
+     --projective spaces over a base ring A = ring M, as a tower ring.
+     --Returns the tower ring
+     --together with a system of q linear combinations of
+     --the 1...1 forms specified by M, which must
+     --have product(D_0+1, .. ,D_r+1) rows (and q columns),
+     A := ring M;
+     S := A;
+     x := local x;
+     SList := apply (#D, i->S = S[x_(i,0)..x_(i,D_i)]);
+     SList = prepend(A,SList);
+     SS := last SList;
+   --now make the parameters
+     if numrows M != product(D, d->1+d) then
+	       error("M has the wrong number of rows");
+     N := gens trim product apply(#D, i->
+	  promote(ideal vars SList_(i+1), SS));
+     params := map(SS^1, 
+	  SS^(splice{numcols M:splice{1+#D:-1}}), N*M);
+     (SS,params)
+     )
+///
+restart
+path = prepend( "/Users/david/src/Colorado-2010/PushForward",path)
+notify=true
+loadPackage("BGG", Reload =>true)
+load "examples2.m2"
+dL = {1,1}
+q = 3
+
+t = product(dL, i->1+i)
+A = kk[vars(0..q*t-1)]
+
+M = genericMatrix(A,A_0,t,q)
+L = projectiveProduct (M,dL)
+betti L_1
+numcols M
+///
+
+--Now given a degree list degList, form the corresponding
+--product of projective spaces and the Koszul complex over
+--it, and take the direct image to get a pure resolution.
 
 pureResolution = method()
-pureResolution(Ring,List,List) := (A,p,e) -> (
-     --n = number of variables = length of resolution
-     --p = {p0,p1} where to make the two non linear steps
-     -- with 0 < p0 < p1 < n
-     --e = {e_0,e_1} jumps in the degrees at p0 and p1
-     --(so F_(p_0) is gen in deg p_0+e_0, and
-     --F_(p_1) is gen in deg p_0+e_0+e_1,
-     --and the maps are of degrees e_0+1 and e_1+1
-     n := numgens A;
-     if #p!= 2 then error("second arg  must be a list of length 2");
-     if #e!= 2 then error("third arg  must be a list of length 2");   
-     if p_0<0 or p_1<0 or p_1< p_0 or p_1>= n or p_0>=n then 
-         print("need 0<p_0<=p_1<numgens A to get a pure resolution");
-     if e_0<0 or e_1 < 0 then error("e_i must be positive");
-     kk := coefficientRing A;
-     x := local x;
-     S := A[x_(1,0)..x_(1,e_0)];
-     B := kk[x_(0,0)..x_(0,n-1),x_(1,0)..x_(1,e_0)];
-     use S;
-     gotoS := map(S,B, sub((vars A),S)|matrix{{x_(1,0)..x_(1,e_0)}});
-     T := B[x_(2,0)..x_(2,e_1)];
+pureResolution(Ring, List) := (A, degListOrig) -> (
+     n := #degListOrig - 1;
+     --normalize the degList to make the first entry zero:
+     degList := apply(n+1, i-> degListOrig_i - degListOrig_0);
+          
+     --check the conditions for a pure resolution:
+     if numgens A < n then 
+        error("number of vars should be >= (length of list)-1");
+     for i from 1 to n do (
+	  if degList_i <= degList_(i-1) then 
+	      error("list must be strictly increasing")
+	      );
 
-     M := n-1+e_0+e_1; 
-     ell := 3;  -- number of sets of vars
-     params := matrix{for k from 0 to M list(
-	  P := pars(k,{n-1,e_0,e_1});
-	  sum(P, p -> product(ell, i->sub(x_(i, p_i), T))
-	  ))};
-     len := n+e_0+e_1;
-     kn := T^{{p_1+e_0-1,0}}**koszul(len,params);
+     --get ready to form the product of projective spaces
+     dimList1 := apply(#degList-1, i->degList_(i+1)-degList_i-1);
+     --dimList1 = {m_1..m_n} in the notation of our paper.
+     degList1 := degList_{0..n-1};
+     --degList1 = {0,d_1,..,d_(n-1)} in the notation of our paper.
+     
+     --Now drop the terms where m_i = 0
+     jumpList := positions(dimList1, i-> i>0);
+     dimList := dimList1_jumpList;
+     
+     twists := {0}|degList1_jumpList;
+     --the leading zero corresponds to the base ring A.
+     --Note that degList1 already begins with a zero corresponding
+     --to the normalized degreeList_0.
 
-     D := directImageComplex kn;
-     DS := gotoS(D_(-e_1));
-     pi1kn := map(S^{(rank target DS):{-len+1, -len+1}},
-	  S^{(rank source DS):{-len, -len}}, DS);
-     twistedpi1kn := pi1kn**S^{{p_0-1,0}};
+     (S,params) := projectiveProduct(A, dimList);
+     K := S^{reverse twists}**koszul(params);
+     while ring K =!= A do (
+	  K = directImageComplex K;
+	  S = ring K);
+     
+     --now restore the zero-th twist of degListOrig
+     A^{-degListOrig_0} ** K
+     )
 
-     D2 := directImageComplex twistedpi1kn;
+pureResolution(Matrix, List) := (M, degListOrig) -> (
+     A := ring M;
+     n := #degListOrig - 1;
+     --normalize the degList to make the first entry zero:
+     degList := apply(n+1, i-> degListOrig_i - degListOrig_0);
+          
+     for i from 1 to n do (
+	  if degList_i <= degList_(i-1) then 
+	      error("list must be strictly increasing")
+	      );
 
-     (dual res coker dual D2_(-e_0))[-n]
+     --get ready to form the product of projective spaces
+     dimList1 := apply(#degList-1, i->degList_(i+1)-degList_i-1);
+     --dimList1 = {m_1..m_n} in the notation of our paper.
+     degList1 := degList_{0..n-1};
+     --degList1 = {0,d_1,..,d_(n-1)} in the notation of our paper.
+     
+     --Now drop the terms where m_i = 0
+     jumpList := positions(dimList1, i-> i>0);
+     dimList := dimList1_jumpList;
+     --check for input errors
+     if numrows M != product(dimList, d->d+1) then
+     	  error("M has the wrong number of rows");
+     
+     twists := {0}|degList1_jumpList;
+     --the leading zero corresponds to the base ring A.
+     --Note that degList1 already begins with a zero corresponding
+     --to the normalized degreeList_0.
+
+     --now set up the direct image computation
+     (S,params) := projectiveProduct(M, dimList);
+     K := S^{reverse twists}**koszul(params);
+     while ring K =!= A do (
+	  K = directImageComplex K;
+	  S = ring K);
+     
+     --now restore the zero-th twist of degListOrig
+     A^{-degListOrig_0} ** K
+     )
+
+pureResolution(ZZ, List) := (p, degList) -> (
+--a version with the sparse system of parameters, giving
+--just the characteristic and letting the program supply the
+--ground ring.(Produces module of finite length with the given
+--pure resolution type.)
+     a := local a;
+     kk := if p == 0 then QQ else ZZ/p;
+     A := kk[a_0..a_(#degList-2)];
+     pureResolution(A, degList)
+     )
+
+
+pureResolution(ZZ,ZZ,List):= (p, q, degList) -> (
+     --A version with a generic system of q parameters.     
+     --p will be the characteristic, q the number of parameters
+     --(the codimension of support, 
+     --at least when q is large enough.)
+     
+     --first compute the number of variables needed:
+     dimList1 := apply(#degList-1, i->degList_(i+1)-degList_i-1);
+     --dimList1 = {m_1..m_n} in the notation of our paper.
+     --Now drop the terms where m_i = 0
+     jumpList := positions(dimList1, i-> i>0);
+     dL := dimList1_jumpList;
+     t := product(dL, i->1+i);
+     a := local a;
+     kk := if p == 0 then QQ else ZZ/p;
+     A := kk[a_0..a_(q*t-1)];
+     M := genericMatrix(A,A_0,t,q);
+     pureResolution(M, degList)
      )
 
 
@@ -807,8 +960,6 @@ doc ///
 doc ///
    Key
      (directImageComplex, Matrix)
-     pureResolution
-     (pureResolution, Ring, List, List)
    Headline
      map of direct image complexes
    Usage
@@ -822,7 +973,9 @@ doc ///
        the induced map on chain complexes {\tt piF : directImageComplex M --> directImageComplex N}
    Description
     Text
-     We give an application of this function to create pure free resolutions.
+     We give an application of this function to create 
+     pure free resolutions. A much more general tool for doing
+     this is in the script pureResolution.
      
      A "pure free resolution of type (d_0,d_1,..,d_n)" is a resolution of a graded Cohen-Macaulay
      module M over a polynomial ring such that for each 
@@ -861,32 +1014,9 @@ doc ///
      m = transpose D_(-1)
      betti res coker m
      (dual oo)[-3]
-    Text
-     If we twist the map kn a little before taking the direct image
-     we get the last map in a different complex:
-    Example
-     D1 = directImageComplex (T^{{1,0}}**kn)
-     betti res coker transpose (D1_(-1))
-    Text
-     For more complex examples, we make a script, {\tt pureResolution}, which
-     we have included in this package. In the following
-     we specify a ground ring A, and two places p={p_0,p_1} at
-     which we want to control the degree of the maps in our
-     resolution (0<p_0<p_1<numgens A). We also specify
-     e = {e_0,e_1}, where we want 1+e_i to be the degree of the
-     p_i-th map in the resolution.
-    Example
-     A = kk[a,b,c,d]
-     betti (P=pureResolution(A,{1,3},{2,1}))
-     betti (Q=pureResolution(A,{1,1},{3,0}))
-   Caveat
-     Currently, the direct image complexes of the source and target are recomputed, not stashed anywhere.
-     The script pureResolution should be extended to provide all pure
-     resolutions. For this one would need the direct image of a complex;
-     and this can be computed with the same tools as directImageComplex Module
-     uses. This should be added in a later version.
    SeeAlso
      directImageComplex
+     pureResolution
      universalExtension
 ///
 
@@ -971,22 +1101,161 @@ doc ///
     directImageComplex
 ///
 
+doc ///
+   Key
+     pureResolution
+     (pureResolution, Ring, List)
+     (pureResolution, Matrix, List)     
+     (pureResolution, ZZ, List)
+     (pureResolution, ZZ, ZZ, List)     
+   Headline
+     creates a pure resolution as an iterated direct image
+   Usage
+     F = pureResolution(A, D)
+     F = pureResolution(M, D)
+     F = pureResolution(p, D)
+     F = pureResolution(p,q,D)
+   Inputs
+     A:Ring
+     D:List
+     M:Matrix 
+       D is a strictly increasing list of integers, the degree sequence
+       A is a ring with at least #D-1 variables, the base ring.
+       The pure resolution created is the sparse one defined in the
+       paper of Eisenbud-Schreyer.
+       If M, a matrix over A, is given, then M is used instead
+       to construct the resolution (see below).
+       If one integer p is given, the program constructs a base ring with the right number of
+       variables for the sparse example. If two integers p,q are given, the program
+       constructs a base ring of characteristic p and makes a generic system of parameters
+       with q elements by taking a generic matrix for M.
+   Outputs
+     F:ChainComplex
+       F will be a pure resolution over A of a module of finite length
+       over A, with the desired degree sequence.
+       If there are more than #D-1 variables, then a longer resolution
+       will be produced, padding the degree sequence at the end
+       with consecutive integers.
+   Description
+    Text
+     A "pure free resolution of type (d_0,d_1,..,d_n)" 
+     is a resolution of a graded Cohen-Macaulay
+     module M over a polynomial ring such that for each 
+     i = 1,..,n, the module of i-th syzygies of M is generated by
+     syzygies of degree d_i. Eisenbud and Schreyer constructed
+     such free resolutions in all characteristics and for all
+     degree sequences $d_0 < d_1 < \cdots < d_n$ by pushing forward
+     appropriate twists of a Koszul complex. (The construction
+     was known for the Eagon-Northcott complex since work of Kempf).
+
+     The script allows several variations including a sparse version 
+     and a generic version.
+     
+     Here is a simple example, where we produce
+     one of the complexes in the family that included the
+     Eagon-Northcott complex (see for example the appendix in
+     "Commutative Algebra with a View toward Algebraic Geometry"
+     by D. Eisenbud.) This way of producing the Eagon-Northcott 
+     complex was certainly known to George Kempf, who may have invented it.
+    Example
+     kk = ZZ/101
+     A = kk[u,v,w]
+     T = A[x,y]
+     params = matrix"ux,uy+vx,vy+wx,wy"
+     kn = koszul(params)
+     directImageComplex kn
+    Text
+     If we twist the map kn a little before taking the direct image
+     we get other complexes in a family that also includes
+     the Buchsbaum-Rim complex (see Eisenbud, loc. cit.)
+    Example
+     for d from -1 to 3 do 
+       (print betti directImageComplex (T^{{d,0}}**kn);print())
+    Text
+     For more complex examples, we use the function 
+     {\tt pureResolution}, which creates a Koszul complex over a product of
+     projective spaces over a ground ring A and (iteratively) forms the direct image over A.
+     In the following
+     we specify a ground ring A and a degree sequence.
+    Example
+     A = kk[a,b,c]
+     betti (pureResolution(A,{1,3,4,6}))
+    Text
+     If one doesn't want to bother creating the ring, it suffices to give the characteristic.
+    Example
+     betti (F = pureResolution(11,{0,2,4}))
+     describe ring F
+    Text
+     With the form {\tt pureResolution(M,D)}
+     It is possible to specify a matrix M of linear forms in the ground ring A that
+     defines the parameters used in the Koszul complex whose direct image is taken.
+     The matrix M in pureResolution(M,D) 
+     should have size product(m_i+1) x q, where
+     the m_i+1 are the successive differences of the entries of D that happen to be >1, and
+     q >= #D-1+sum(m_i).(The m_i are the dimensions of the projective spaces from whose product
+     we are projecting.)
+    Example
+     A = kk[a,b]
+     M = random(A^4, A^{4:-1})
+     time betti (F = pureResolution(M,{0,2,4}))
+    Text
+     With the form {\tt pureResolution(p,q,D)}
+     we can directly create the situation of {\tt pureResolution(M,D)} where M is
+     generic 
+     product(m_i+1) x #D-1+sum(m_i) 
+     matrix of linear forms defined over a ring with product(m_i+1) * #D-1+sum(m_i) 
+     variables of characteristic p, created by the script. For a given number of
+     variables in A this runs much faster than taking a random matrix M.
+    Example
+     time betti (F = pureResolution(11,4,{0,2,4}))
+     ring F
+   SeeAlso
+     directImageComplex
+     universalExtension
+///
 
 
-TEST ///
+
+doc ///
+   Key 
+     projectiveProduct
+     (projectiveProduct, Ring, List)
+     (projectiveProduct, Matrix, List)
+   Headline
+     Makes a product of projective spaces and a system of paramters
+   Usage
+     (S, params) = projectiveProduct(A,dimList)
+   Inputs 
+     A: Ring
+     dimList: List
+       A the desired base ring. dimList a list of dimensions {d1..dn}
+   Outputs
+     S: Ring
+     params: Matrix
+       S is the iterated tower ring A[x_(0,0)..x_(0,d1)]..[..x_(n,dn)] reprsenting the product
+       P_A^{d1} x ..x P_A^{dn}, where the products are relative to A, and params is a system
+       of multilinear forms in S. They are sparse if M is not present, or determined by M
+       if it is.
+   SeeAlso 
+     pureResolution
+///
+
+
+TEST///
           S = ZZ/32003[x_0..x_2]; 
 	  E = ZZ/32003[e_0..e_2, SkewCommutative=>true];
 	  M = coker matrix {{x_0^2, x_1^2}};
 	  m = presentation truncate(regularity M,M);
 	  assert(symExt(m,E)==map(E^{4:1},E^4,{{e_2,e_1,e_0,0},{0,e_2,0,e_0},{0,0,e_2,e_1},{3:0,e_2}}))
 ///
-TEST ///
+
+TEST///
           S = ZZ/32003[x_0..x_2]; 
 	  E = ZZ/32003[e_0..e_2, SkewCommutative=>true];
 	  M = coker matrix {{x_0^2, x_1^2, x_2^2}};
 	  assert(bgg(1,M,E)==map(E^{3:2},,{{e_1, e_0, 0}, {e_2, 0, e_0}, {0, e_2, e_1}}))
 ///
-TEST ///	  
+TEST///	  
 	  S = ZZ/32003[x_0..x_2]; 
 	  E = ZZ/32003[e_0..e_2, SkewCommutative=>true];
 	  m = matrix{{x_0,x_1}};
@@ -1060,7 +1329,7 @@ TEST ///
   assert(C3_0 == 0)
 ///
 
-///
+TEST///
   (p,q) = (2,5)
   kk = ZZ/101
   A=kk[a_(0,0)..a_(p-1,q-1)]
@@ -1076,94 +1345,20 @@ TEST ///
   assert(betti L == ans)
 ///
 
-end
-uninstallPackage "BGG"
-restart
-path = append(path, homeDirectory | "Snowbird/")
-installPackage("BGG", UserMode => true) 
-
-restart
-loadPackage "BGG0"
-loadPackage "BoijSoderberg"
-loadPackage "SchurFunctors"
-
-kk = ZZ/32003
-S = kk[x_0..x_2]
-E = kk[e_0..e_2, SkewCommutative=>true]
-
-M = ker vars S
-N = coker schur({2,1},syz vars S);
-betti res N
-poincare N
-apply(-10..10, d -> hilbertFunction(d,N))
-res N
-betti oo
-tateResolution(presentation N, E, -5, 5)
-betti oo
-F = sheaf N
-cohomologyTable(F, -5, 5)
-
-HH^0(F)
-HH^0(F(1))
-HH^0(F(2))
-HH^0(F(3))
-HH^0(F(4))
-
-HH^1(F)
-HH^1(F(1))
-HH^1(F(2))
-HH^1(F(3))
-HH^1(F(4))
-
-HH^2(F(-2))
-HH^2(F(-1))
-HH^2(F)
-HH^2(F(1))
-HH^2(F(2))
-HH^2(F(3))
-HH^2(F(4))
-
-
-hilbertPolynomial(F, Projective=>false)
-factor oo
-3 * pureCohomologyTable({2,0},-5,5)
-
-cohomologyTable(CoherentSheaf, ZZ, ZZ) := (F,lo,hi) -> (
-     -- this is the stoopid version
-     n := numgens ring F - 1;
-     new CohomologyTally from flatten (
-     for i from 0 to n list
-       for d from lo-i to hi-i list ((i,d) => rank HH^i(F(d)))
-     ))
-
-tateToCohomTable = (T) -> (
-     C := betti T;
-     n := max apply(keys C, (i,d,d1) -> i-d1);
-     new CohomologyTally from apply(keys C, (i,d,d1) -> (
-	       (n-(i-d1), -d1)
-	       ))
-     )
-time cohomologyTable(F,-5,5)
-
-betti tateResolution(presentation N, E, -5, 5)
-peek oo
-
-restart
-path = prepend( "/Users/david/src/Colorado-2010/PushForward",path)
-uninstallPackage "BGG"
-installPackage "BGG"
-check BGG
-viewHelp BGG
-
-{*    
-    Example
-      A = ZZ/101[a,b]
-      B = A[c,d]
-      C = first flattenRing B
-      F = random(C^{{-2,1},{1,1}}, C^{{-3,0},{-3,0}})
-      F = sub(F, B)
-      isHomogeneous F
-      C1 = directImageComplex source F
-      C2 = directImageComplex target F
-      piF = directImageComplex F
+{*
+--I don't see why the following doesn't work. The output of the left side sure LOOKS like that on the right
+TEST///
+A = ZZ/11[a,b]
+(projectiveProduct(A,{1,1}))_0 === A[x_(0,0), x_(0,1)][x_(1,0), x_(1,1)]
+///
 *}
+
+TEST///
+A = QQ[a,b]
+betti pureResolution(A,{0,2,4}) == new BettiTally from {(0,{0},0) => 3, (1,{2},2) => 6, (2,{4},4) => 3}
+betti pureResolution(11,{0,2,4})== new BettiTally from {(0,{0},0) => 3, (1,{2},2) => 6, (2,{4},4) => 3}
+betti pureResolution(2,{1,2,4})==new BettiTally from {(0,{1},1) => 2, (1,{2},2) => 3, (2,{4},4) => 1}
+betti pureResolution(2,3,{1,2,4})
+///
+end
+
