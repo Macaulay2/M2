@@ -30,9 +30,3 @@ Command Line Options:
                                         virus software packages during
                                         execution.
 Ending cygwin install
-AddAccessAllowedAce(, owner) failed: 1337
-AddAccessAllowedAce(, group) failed: 1337
-AddAccessAllowedAce(, everyone) failed: 1337
-AddAccessAllowedAce(, owner) failed: 1337
-AddAccessAllowedAce(, group) failed: 1337
-AddAccessAllowedAce(, everyone) failed: 1337
