@@ -65,5 +65,5 @@ default: check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; [ `uname -o` = Cygwin  ] && [ `uname -m` = i686 ]
 # Local Variables:
-# compile-command: "time make -f Makefile.cygwin "
+# compile-command: "time make -f Makefile.cygwin DISTRIBUTION=1 "
 # End:
