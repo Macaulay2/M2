@@ -42,6 +42,7 @@ install-info:
 	[ -d ~/local/share/info ]
 	for i in builds.tmp/*/libraries/final/info/* builds.tmp/*/libraries/final/share/info/* ; do cp $$i ~/local/share/info ; done
 	cd ~/local/share/info ; for i in *.info ; do install-info --infodir=. $$i ; done
+cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/server signature
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
 rebuild-world1: arch-chk update distclean
