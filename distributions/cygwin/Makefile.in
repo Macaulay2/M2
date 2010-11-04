@@ -32,10 +32,16 @@ Macaulay2-files: \
 	     server/Macaulay2/Macaulay2-@PACKAGE_VERSION@-$(DISTRIBUTION).tar.bz2 \
 	     server/Macaulay2/Macaulay2-@PACKAGE_VERSION@-$(DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2/setup.hint
+clean::; rm -f server/Macaulay2/*.tar.bz2
+clean::; rm -f server/Macaulay2/setup.hint
 Macaulay2-icon-files: \
 	     server/Macaulay2-icons/Macaulay2-icons-$(ICONS_VERSION)-$(ICONS_DISTRIBUTION).tar.bz2 \
 	     server/Macaulay2-icons/Macaulay2-icons-$(ICONS_VERSION)-$(ICONS_DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2-icons/setup.hint
+server/Macaulay2-icons/setup.hint: @srcdir@/server/Macaulay2-icons/setup.hint.in
+	cd ../..; ./config.status distributions/cygwin/server/Macaulay2-icons/setup.hint
+clean::; rm -f server/Macaulay2-icons/*.tar.bz2
+distclean::; rm -f server/Macaulay2-icons/setup.hint
 server/setup.ini : Macaulay2-icon-files Macaulay2-files
 	PATH=@abs_srcdir@:$$PATH $(MAKE) -C server setup.ini
 server/Macaulay2 : ; $(MKDIR_P) $@
@@ -81,6 +87,8 @@ libraries-used: .prepared
 	| sed -e 's=.*/lib/=/lib/=' -e 's=.*/bin/=/bin/=' \
 	| sort | uniq \
 	| tee $@
+	rm $@.tmp
+clean::; rm -f libraries-used libraries-used.tmp
 
 packages-used: libraries-used
 	cat $< \
@@ -88,6 +96,7 @@ packages-used: libraries-used
 	| sort | uniq \
 	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
 	| tee $@
+clean::; rm -f packages-used
 
 setup.hint: setup.hint-base packages-used
 	( set -e ; \
@@ -108,7 +117,7 @@ gcmem.exe gcmem: LDLIBS = -lgc
 mem: LDLIBS =
 
 clean::; rm -rf files src-files
-distclean: clean
+distclean:: clean
 	rm -f Makefile Macaulay2.README setup.hint
 	$(MAKE) -C server $@
 clean::; $(MAKE) -C server $@
@@ -118,8 +127,6 @@ postinstall.sh: postinstall.sh.in; cd ../..; ./config.status distributions/cygwi
 preremove.sh: preremove.sh.in; cd ../..; ./config.status distributions/cygwin/preremove.sh
 setup.hint-base: setup.hint-base.in; cd ../..; ./config.status distributions/cygwin/setup.hint-base
 Macaulay2.README: Macaulay2.README.in; cd ../..; ./config.status distributions/cygwin/Macaulay2.README
-server/Macaulay2-icons/setup.hint: @srcdir@/server/Macaulay2-icons/setup.hint.in
-	cd ../..; ./config.status distributions/cygwin/server/Macaulay2-icons/setup.hint
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/cygwin TIDY=no "
