@@ -15,7 +15,7 @@ DISTRIBUTION = @DISTRIBUTION@
 ICONS_VERSION = 1.0
 ICONS_DISTRIBUTION = 1
 
-all: chk-opts server/Macaulay2 server/setup.ini maybe-tidy announce
+all: chk-opts server/Makefile server/Macaulay2 server/setup.ini maybe-tidy announce
 chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
 # don't check, we want to distribute binaries with symbols for bug report purposes
 # chk-opts: check-strip-enabled
@@ -26,6 +26,7 @@ check-strip-enabled:; [ @STRIP@ = yes ]
 announce: 
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
+	@ echo "one more step: 'make signature'"
 	@ echo "============================================================================="
 Macaulay2-files: \
 	     server/Macaulay2/Macaulay2-@PACKAGE_VERSION@-$(DISTRIBUTION).tar.bz2 \
