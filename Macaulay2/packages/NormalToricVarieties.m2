@@ -2,9 +2,18 @@
 --------------------------------------------------------------------------------
 -- Copyright 2009, 2010  Gregory G. Smith
 --
--- You may redistribute this program under the terms of the GNU General Public
--- License as published by the Free Software Foundation, either version 2 of the
--- License, or any later version.
+-- This program is free software: you can redistribute it and/or modify it under
+-- the terms of the GNU General Public License as published by the Free Software
+-- Foundation, either version 3 of the License, or (at your option) any later
+-- version.
+--
+-- This program is distributed in the hope that it will be useful, but WITHOUT
+-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+-- details.
+--
+-- You should have received a copy of the GNU General Public License along with
+-- this program.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------
 needsPackage "Polyhedra"
 newPackage(
@@ -174,6 +183,7 @@ projectiveSpace ZZ := NormalToricVariety => d -> (
 
 weightedProjectiveSpace = method()
 weightedProjectiveSpace List := NormalToricVariety => q -> (
+  if #q < 2 then error "-- expected a list with at least two elements";
   if not all(q, i -> i > 0) then error "-- expected positive integers";
   d := #q-1;
   if not all(subsets(q,d), s -> gcd s === 1) then (
@@ -224,8 +234,14 @@ kleinschmidt (ZZ,List) := NormalToricVariety => (d,a) -> (
 --
 -- By reading an auxiliary file, this function creates a HashTable with the
 -- defining data for the low dimensional smooth Fano toric varieties.
-ff := currentFileDirectory | "NormalToricVarieties/smoothFanoToricVarieties.txt"
-getFano := memoize( () -> (
+f4 := currentFileDirectory | "NormalToricVarieties/smoothFanoToricVarieties.txt"
+f5 := currentFileDirectory | "NormalToricVarieties/smoothFanoToricVarieties5.txt"
+f6 := currentFileDirectory | "NormalToricVarieties/smoothFanoToricVarieties6.txt"
+getFano := memoize( d -> (
+    local ff;
+    if d === 4 then ff = f4
+    else if d === 5 then ff = f5
+    else if d === 6 then ff = f6;
     if notify then stderr << "--loading file " << ff << endl;
     hashTable apply( lines get ff, x -> (
 	x = value x;
@@ -233,6 +249,8 @@ getFano := memoize( () -> (
 
 smoothFanoToricVariety = method()
 smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
+  local s;
+  local X;
   if d < 1 or i < 0 then (
     error "-- expected positive dimension or nonnegative index")
   else if d === 1 and i > 0 then (
@@ -243,12 +261,24 @@ smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
     error "-- there are only 18 smooth Fano toric 3-folds")
   else if d === 4 and i > 123 then (
     error "-- there are only 124 smooth Fano toric 4-folds")
-  else if d > 4 then (
-    error "-- database doesn't include varieties with dimension > 4")
+  else if d === 5 and i > 865 then (
+    error "-- there are only 866 smooth Fano toric 5-folds")
+  else if d === 6 and i > 7621 then (
+    error "-- there are only 7622 smooth Fano toric 6-folds")  
+  else if d > 6 then (
+    error "-- database doesn't include varieties with dimension > 6")
   else if i === 0 then return projectiveSpace d
+  else if d === 5 then (
+    s = (getFano(d))#(d,i);
+    X = normalToricVariety(s#0,s#1);
+    return X) 
+  else if d === 6 then (
+    s = (getFano(d))#(d,i);
+    X = normalToricVariety(s#0,s#1);
+    return X)    
   else (
-    s := (getFano())#(d,i);
-    X := normalToricVariety(s#0,s#1, WeilToClass => transpose matrix s#2);
+    s = (getFano(4))#(d,i);
+    X = normalToricVariety(s#0,s#1, WeilToClass => transpose matrix s#2);
     return X))
 
 -- this function interfaces with the Polyhedra package
@@ -1096,6 +1126,8 @@ document {
   The fan is encoded by the minimal nonzero lattice points on its rays and the
   set of rays defining the maximal cones (a maximal cone is not properly
   contained in another cone in the fan).",
+  Caveat => {"By assumption, all normal toric varieties in this package have
+             positive dimension."},
   SeeAlso => {
     "Making normal toric varieties",
     normalToricVariety,
@@ -1608,23 +1640,26 @@ document {
 document { 
   Key => {smoothFanoToricVariety, 
     (smoothFanoToricVariety,ZZ,ZZ)},
-  Headline => "get a smooth Fano toric varieties from database",
+  Headline => "get a smooth Fano toric variety from database",
   Usage => "smoothFanoToricVariety(d,i)",
   Inputs => {
     "d" => ZZ => " dimension of toric variety",
     "i" => ZZ => " index of toric variety in database",},
   Outputs => {NormalToricVariety => " a smooth Fano toric variety"},
   "This function accesses a database of all smooth Fano toric varieties of
-  dimension at most 4.  The enumeration of the toric varieties follows ",
+  dimension at most 6.  The enumeration of the toric varieties follows ",
   HREF("http://www.mathematik.uni-tuebingen.de/~batyrev/batyrev.html.en",
        "Victor V. Batyrev's"),	
-  " classification; see ", 
+  " classification (see ", 
   HREF("http://arxiv.org/abs/math/9801107", TT "arXiv:math/9801107v2"), 
   " and ",
   HREF("http://arxiv.org/abs/math/9911022", TT "arXiv:math/9011022"),   
-  ".  There is a unique smooth Fano toric curve, five smooth Fano toric
-  surfaces, eighteen smooth Fano toric threefolds, and ", TEX ///$124$///, "
-  smooth Fano toric fourfolds.",
+  ") for dimension at most 4 and Mikkel Øbro's classification (see ",
+  HREF("http://arxiv.org/abs/0704.0049", TT "arXiv:math/0704.0049v1"), ")
+  for dimensions 5 and 6.  There is a unique smooth Fano toric curve, five
+  smooth Fano toric surfaces, eighteen smooth Fano toric threefolds, ", 
+  TEX ///$124$///, " smooth Fano toric fourfolds, ", TEX ///$866$///, " smooth
+  Fano toric fivefolds, and ", TEX ///$7622$///, " smooth Fano toric sixfolds.",
   PARA{},
   "For all ", TEX ///$d$///, ", ", TT "smoothFanoToricVariety(d,0)", " yields
   projective ", TEX ///$d$///, "-space.",
@@ -1642,6 +1677,13 @@ document {
     rays W
     max W
     ///,
+  SUBSECTION "Acknowledgements",
+  "We thank ", HREF("http://www-staff.lboro.ac.uk/~magdb/", "Gavin Brown"), "
+  and ",
+  HREF("http://magma.maths.usyd.edu.au/users/kasprzyk/index.html","Alexander
+  Kasprzyk"), " for their help extracting the data for the smooth Fano toric
+  five and sixfolds from their ", HREF("http://grdb.lboro.ac.uk/", "Graded Rings
+  Database"), ".",
   SeeAlso => {
     "Making normal toric varieties",
     normalToricVariety,
@@ -3066,7 +3108,7 @@ document {
     "D" => ToricDivisor,
     "E" => ToricDivisor},
   Outputs => {ToricDivisor},
-  "The set of torus-invariant Weil divisors form an abelian group under
+  "The set of torus-invariant Weil divisors forms an abelian group under
   addition.  The basic operations arising from this structure, including
   addition, substraction, negation, and scalar multplication by integers, are
   available.",
@@ -4345,6 +4387,19 @@ assert(HH^1(X,OO_X(-2,1,1,-2)) == QQ^2)
 
 -- test 7
 TEST ///
+for i to 43 do (
+  j := random(20);
+  X := smoothFanoToricVariety(5,10*i+j);
+  assert(isSmooth X and isFano X))
+for i to 37 do (
+  j := random(200);
+  X := smoothFanoToricVariety(6,100*i+j);
+  << 100*i +j << endl;
+  assert(isSmooth X and isFano X))
+///
+
+-- test 8
+TEST ///
 Rho = {{1,0,0},{0,1,0},{0,0,1},{0,-1,-1},{-1,0,-1},{-2,-1,0}};
 Sigma = {{0,1,2},{0,1,3},{1,3,4},{1,2,4},{2,4,5},{0,2,5},{0,3,5},{3,4,5}};
 X = normalToricVariety(Rho,Sigma);
@@ -4368,7 +4423,7 @@ assert(isWellDefined Y === true)
 assert(isSmooth Y === true)
 ///
 
--- test 8
+-- test 9
 TEST ///
 X = normalToricVariety(id_(ZZ^3) | -id_(ZZ^3));
 assert(isWellDefined X === true)
@@ -4400,7 +4455,7 @@ assert(isWellDefined Z === true)
 assert(isSmooth Z === true)
 ///
 
--- test 9
+-- test 10
 TEST ///
 X = normalToricVariety({{1,0,0,0},{0,1,0,0},{0,0,1,0},{1,-1,1,0},{1,0,-2,0}},
   {{0,1,2,3},{0,4}});
@@ -4441,30 +4496,8 @@ installPackage "NormalToricVarieties"
 check "NormalToricVarieties"
 
 
-
 needsPackage "NormalToricVarieties";
 debug NormalToricVarieties
 needsPackage "FourierMotzkin";
 
-
-X = smoothFanoToricVariety(2,4);
-
-embedding = D -> (
-  X := variety D;
-  L := OO D;
-  m := rank HH^0(X, L);
-  S := ring X;
-  R = QQ[y_0..y_(m-1)];
-  phi := map(S, R, basis(- first degrees L, S));
-  kernel phi);
-
-D =  -toricDivisor X
-euler OO D
-I = embedding D;
-netList I_*
-
-hilbertPolynomial(I, Projective => false)
-
-
-X = smooth
 
