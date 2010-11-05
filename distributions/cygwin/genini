@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 
-# this is release 1.7 of genini, downloaded from http://cygwin.com/cgi-bin/cvsweb.cgi/~checkout~/genini/genini?rev=1.7&content-type=text/plain&cvsroot=cygwin-apps
+# this is release 1.13 of genini, downloaded from http://cygwin.com/cgi-bin/cvsweb.cgi/genini/genini?cvsroot=cygwin-apps
 # its use is documented on http://sourceware.org/cygwin-apps/package-server.html
 
 # Copyright (C) 2005, 2006, 2007 Christopher Faylor
-#
+
 # This software is a copyrighted work licensed under the terms of the
 # GNU General Public License.  See http://www.gnu.org/copyleft/gpl.html
 # for details.
@@ -19,8 +19,10 @@ sub mywarn(@);
 sub myerror(@);
 sub usage();
 
-my @okmissing;
+my @okmissing = qw'message ldesc';
 my ($outfile, $help, $recursive);
+my @cmp_fmts = qw(gz bz2 lzma xz);
+
 GetOptions('okmissing=s'=>\@okmissing, 'output=s'=>\$outfile, 'help'=>\$help, 'recursive'=>\$recursive) or usage;
 $help and usage;
 
@@ -47,13 +49,14 @@ print <<'EOF';
 #
 EOF
 
-print "$main::setup_timestamp\n" if $main::setup_timestamp;
+my $ts = time();
+print "setup-timestamp: $ts\n";
 print "$main::setup_version\n" if $main::setup_version;
 
 undef $main::curfile;
 for my $p (sort keys %pkg) {
     print "\n@ $p\n";
-    for my $key ('sdesc', 'ldesc', 'category', 'requires') {
+    for my $key ('sdesc', 'ldesc', 'category', 'requires', 'message') {
 	my $val = $pkg{$p}{''}{$key};
 	if (!defined($val) && $pkg{$p}{''}{'install'} !~ /_obsolete/o) {
 	    mywarn "package $p is missing a $key field"
@@ -70,7 +73,7 @@ for my $p (sort keys %pkg) {
 		      unless $main::categories{lc $c};
 		}
 	    }
-	    print "$key: ", $val, "\n" if $val;
+	    print "$key: ", $val, "\n" if defined($val) and $val ne "";
 	}
     }
     for my $what ('', "[prev]\n", "[test]\n") {
@@ -85,11 +88,15 @@ for my $p (sort keys %pkg) {
 
 sub get {
     my $FH = shift;
-    my $key = shift;
+    my $keyhint = shift;
     my $val = shift;
 
-    if (substr($val, 0, 1) ne '"') {
-	$val = '"'. $val . '"' if $key eq 'ldesc' || $key eq 'sdesc';
+    if ($keyhint eq 'message') {
+	my ($kw, $rest) = $val =~ /^([^"'\s]+)\s+(.*)$/;
+	return undef unless defined($kw) && defined($rest);
+	return $kw . ' ' . get($FH, 'ldesc', $rest);
+    } elsif (substr($val, 0, 1) ne '"') {
+	$val = '"'. $val . '"' if $keyhint eq 'ldesc' || $keyhint eq 'sdesc';
     } else {
 	while (length($val) == 1 || $val !~ /"$/os) {
 	    $_ = <$FH>;
@@ -133,7 +140,8 @@ sub parse {
 	    my $key = $1;
 	    my $val = $2;
 	    if ($key !~ /^(?:prev|curr|test)/) {
-		$pkg{$pname}{$what}{$key} = get(\*F, $key, $val);
+		$val = get(\*F, $key, $val);
+		$pkg{$pname}{$what}{$key} = $val;
 	    } else {
 		if ($key eq 'curr') {
 		    $key = '';
@@ -142,7 +150,7 @@ sub parse {
 		}
 		$pkg{$pname}{$key}{'version'} = $val;
 	    }
-	    next;
+	    next if defined $val;
 	};
 	/^\[[^\]]+\]/ and do {
 	    $what = $_ . "\n";
@@ -174,7 +182,9 @@ sub parsedir {
     }
 
     return if $explicit;
-    my @files = sort grep{!/-src\.tar.bz2/} glob("$d/*.tar.bz2");
+    my $cmp_fmts_grep = join('|', @cmp_fmts);
+    my $cmp_fmts_glob = join(',', @cmp_fmts);
+    my @files = sort grep{!/-src\.tar\.($cmp_fmts_grep)/} glob("$d/*.tar.{$cmp_fmts_glob}");
     if (!@files) {
 	myerror "not enough package files in $d";
 	return;
@@ -193,8 +203,7 @@ sub addfiles {
     my $pname = shift;
     my $x = shift;
     my $d = shift;
-
-    my $install = "$d/" . tarball($pname, $x->{'version'});
+    my $install = tarball($d, $pname, $x->{'version'});
     filer($x, 'install', $install);
 
     if ($pkg{$pname}{''}{'external-source'}) {
@@ -202,7 +211,7 @@ sub addfiles {
 	$d = finddir($d, $pname) or return;
     }
 
-    my $source  = "$d/" . tarball($pname, $x->{'version'}, 'src');
+    my $source  = tarball($d, $pname, $x->{'version'}, 'src');
     filer($x, 'source', $source);
 }
 
@@ -226,7 +235,16 @@ sub filer {
 }
 
 sub tarball {
-    return join('-', @_) . '.tar.bz2';
+    my $d = shift;
+    my $b = join('-', @_) . '.tar.';
+    for my $e (@cmp_fmts) {
+      my $f = "$d/" . "$b" . "$e";
+      if (-e "$f") {
+        return "$f";
+      }
+    }
+    # default to .bz2 (even though we know it is missing)
+    return "$d/" . "$b" . "bz2";
 }
 
 sub fnln {
@@ -253,12 +271,20 @@ sub finddir {
 
 sub usage() {
     print STDERR <<'EOF';
-Usage: genini [--okmissing=key ...] [--output=file] [--help] [setup.ini] [dir ...]
+Usage: genini [--okmissing=key ...] [--recursive] [--output=file] [--help] [setup.ini] [dir ...]
 Create cygwin setup.ini from setup.ini, setup.hint and tar ball information.
 
     --okmissing=key    don't warn if key is missing from setup.ini or setup.hint
+                       or if some expected `source' or `install' tarballs are
+                       missing. Option may be repeated. --okmissing=install is
+                       useful if hint files contain `prev' or `test' entries for
+                       missing tarballs. --okmissing=source is useful for
+                       LOCAL-ONLY[*] srcless install media.
+    --recursive        recurse all subdirectories of specified dirs
     --output=file      output setup.ini info to file
     --help             display this message
+
+[*] You wouldn't want to violate the GPL, now would you?
 
 Report bugs to cygwin mailing list.
 EOF
