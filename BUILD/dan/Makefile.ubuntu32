@@ -18,7 +18,7 @@ CONFIGOPTIONS += --disable-tarfile
 else
 default: arch-chk all install check
 INSTALLOPTIONS += prefix=$(HOME)/local/encap
-# CONFIGOPTIONS += --enable-deb
+CONFIGOPTIONS += --enable-deb
 CONFIGOPTIONS += --disable-strip
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = ubuntu32.production
