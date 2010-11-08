@@ -12,3 +12,5 @@ Nov 8, 2010: Michael Joswig reports they've addressed those problems by reworkin
 
 work around the problem of leaving stuff in the home directory by setting
 POLYMAKE_USER_DIR to ".", or to a subdirectory of the build/source directory
+
+the version in fink is out of date, get the tarball and use that
