@@ -9,3 +9,6 @@ if these problems with it are solved, we could include it:
     it asks questions
 
 Nov 8, 2010: Michael Joswig reports they've addressed those problems by reworking the build process
+
+work around the problem of leaving stuff in the home directory by setting
+POLYMAKE_USER_DIR to ".", or to a subdirectory of the build/source directory
