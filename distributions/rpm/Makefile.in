@@ -20,22 +20,23 @@ DEPENDS = yes
 PKG_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).@ARCH@-@OS@-@ISSUE@.rpm
 PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 
-# commands for testing the rpm file:
-#    rpm -i -v --nodeps *.rpm
-#  remove:
-#	Version: 0.9.95
-#	Release: 2
-#    rpm -e -v --noscripts Macaulay2-0.9.95-2
+############################## main targets
+all: chk-opts check-id ../../$(PKG_COM_RPM) ../../$(PKG_RPM) maybe-tidy
 
-# command for find what package a file is in:
+# targets for testing the rpm files:
+test-install:
+	sudo rpm -i -v ../../$(PKG_COM_RPM)
+	sudo rpm -i -v ../../$(PKG_RPM)
+test-remove:
+	-sudo rpm -e -v Macaulay2-@PACKAGE_VERSION@
+	sudo rpm -e -v Macaulay2-common-@PACKAGE_VERSION@
+# command for finding what package a file is in:
 #   $ rpm --query -f /usr/lib/libmpfr.so
 #   mpfr-devel-2.3.0-1.fc8
 #   $ rpm --query -f /usr/lib/libmpfr.so.1.1.0 
 #   mpfr-2.3.0-1.fc8
 
-############################## main targets
-all: chk-opts check-id ../../$(PKG_COM_RPM) ../../$(PKG_RPM) maybe-tidy
-chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled check-strip-enabled
+chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled
 check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
@@ -107,13 +108,6 @@ packages-used: libraries-used
 	| while read x ; \
 	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ;\
 	done | fgrep -v 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
-
-test-install:
-	sudo rpm -i -v ../../$(PKG_COM_RPM)
-	sudo rpm -i -v ../../$(PKG_RPM)
-test-remove:
-	sudo rpm -e -v Macaulay2-@PACKAGE_VERSION@
-	sudo rpm -e -v Macaulay2-common-@PACKAGE_VERSION@
 
 ifneq (@RPMLINT@,)
 check:; @RPMLINT@ -i ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
