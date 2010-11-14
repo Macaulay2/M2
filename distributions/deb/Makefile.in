@@ -120,7 +120,12 @@ libraries-used-directly: .prepared tmp@bindir@/M2@EXE@
 	objdump -x tmp@bindir@/M2@EXE@ | grep NEEDED | sed 's/ *NEEDED *//' | sort >$@
 clean::; rm -f libraries-used-directly
 libraries-used: .prepared tmp@bindir@/M2@EXE@
-	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
+	for i in tmp@bindir@/M2@EXE@ tmp@programsdir@/* ;\
+	do if [ -f $$i ] ; then ( set -x ; ldd $$i ) ; fi ; \
+	done \
+	| sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' \
+	| egrep '^/' \
+	> $@ || true
 clean::; rm -f libraries-used
 libraries-really-used: libraries-used libraries-used-directly
 	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
