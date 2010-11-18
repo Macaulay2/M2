@@ -125,6 +125,7 @@ libraries-used: .prepared tmp@bindir@/M2@EXE@
 	done \
 	| sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' \
 	| egrep '^/' \
+	| sort | uniq \
 	> $@ || true
 clean::; rm -f libraries-used
 libraries-really-used: libraries-used libraries-used-directly
