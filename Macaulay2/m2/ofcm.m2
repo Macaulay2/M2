@@ -147,7 +147,7 @@ tensorDefaults = merge(monoidDefaults,
 
 monoid = method(Dispatch => Thing, Options => monoidDefaults, TypicalValue => GeneralOrderedMonoid)
 monoid PolynomialRing := o -> R -> R.monoid
-options PolynomialRing := R -> options R.FlatMonoid
+options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := opts -> M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
