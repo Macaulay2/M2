@@ -4387,6 +4387,7 @@ assert(HH^1(X,OO_X(-2,1,1,-2)) == QQ^2)
 
 -- test 7
 TEST ///
+setRandomSeed 12345
 for i to 43 do (
   j := random(20);
   X := smoothFanoToricVariety(5,10*i+j);
