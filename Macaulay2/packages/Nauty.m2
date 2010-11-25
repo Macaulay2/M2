@@ -9,8 +9,8 @@
 needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
-    Version => "1.2",
-    Date => "18. October 2010",
+    Version => "1.2.1",
+    Date => "20. October 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -162,6 +162,7 @@ generateBipartiteGraphs = method(Options => {OnlyConnected => false, Class2Disti
 generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
     if n < 1 then error("generateBipartiteGraphs: The graph must have vertices!.");
     if m < 1 then error("generateBipartiteGraphs: The first class has too few vertices.");
+    if m > n then error("generateBipartiteGraphs: The first class has too many vertices.");
     if (le > ue) or (le > m*(n-m)) or (ue < 0) then return;
 
     cmdStr := "genbg -q" | 
@@ -177,7 +178,7 @@ generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
 )
 generateBipartiteGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, m, e) -> generateBipartiteGraphs(n, m, e, e, opts)
 generateBipartiteGraphs (ZZ, ZZ) := List => opts -> (n, m) -> generateBipartiteGraphs(n, m, 0, m * (n-m), opts)
-generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..(n - 1)), i -> generateBipartiteGraphs(n, i, opts))
+generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..n), i -> generateBipartiteGraphs(n, i, opts))
 generateBipartiteGraphs (PolynomialRing, ZZ, ZZ, ZZ) := List => opts -> (R, m, le, ue) -> apply(generateBipartiteGraphs(#gens R, m, le, ue, opts), g -> stringToGraph(g, R))
 generateBipartiteGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, m, e) -> apply(generateBipartiteGraphs(#gens R, m, e, opts), g -> stringToGraph(g, R))
 generateBipartiteGraphs (PolynomialRing, ZZ) := List => opts -> (R, m) -> apply(generateBipartiteGraphs(#gens R, m, opts), g -> stringToGraph(g, R))
@@ -186,7 +187,7 @@ generateBipartiteGraphs PolynomialRing := List => opts -> R -> apply(generateBip
 -- Generates all graphs of a given type.
 generateGraphs = method(Options => {OnlyConnected => false, OnlyBiconnected => false, OnlyTriangleFree => false, Only4CycleFree => false, OnlyBipartite => false, MinDegree => 0, MaxDegree => 0})
 generateGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, le, ue) -> (
-    if n < 0 then error("generateGraphs: A graph must have vertices!");
+    if n < 1 then error("generateGraphs: A graph must have vertices!");
     if (le > ue) or (le > binomial(n,2)) or (ue < 0) then return;
     le = max(le, 0);
 
@@ -211,21 +212,21 @@ generateGraphs PolynomialRing := List => opts -> R -> apply(generateGraphs(#gens
 -- Generate random graphs with given properties.
 generateRandomGraphs = method(Options => {RandomSeed => 0})
 generateRandomGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, p) -> (
-    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if p < 1 then error("generateRandomGraphs: Probability must be positive.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
 generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
-    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
 generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
-    if n < 0 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg " | toString(n) | " " | toString(num) | rndSeed, {})
@@ -237,7 +238,7 @@ generateRandomGraphs (PolynomialRing, ZZ) := List => opts -> (R, num) -> apply(g
 -- Generate random regular graphs in the Ring with given properties.
 generateRandomRegularGraphs = method(Options => {RandomSeed => 0})
 generateRandomRegularGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, reg) -> (
-    if n < 0 then error("generateRandomRegularGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomRegularGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if reg < 1 or reg >= n then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
@@ -268,10 +269,12 @@ graphComplement Graph := Graph => opts -> G -> (
 graphToString = method()
 graphToString (List, ZZ) := String => (E, n) -> (
     if n > 68719476735 then error("graphToString: Too many vertices.");
+    if any(E, e -> #e != 2) or any(E, e -> first e == last e) or max(flatten E) >= n then error("graphToString: Edges are malformed.");
     N := take(reverse apply(6, i -> (n // 2^(6*i)) % 2^6), if n < 63 then -1 else if n < 258047 then -3 else -6);
 
     B := new MutableList from toList(6*ceiling(binomial(n,2)/6):0);
-    for e in E do B#(binomial(last e, 2) + first e) = 1;
+    -- the edges must be in {min, max} order, so sort them
+    for e in apply(E, sort) do B#(binomial(last e, 2) + first e) = 1;
     ascii apply(N | apply(pack(6, toList B), b -> fold((i,j) -> i*2+j, b)), l -> l + 63)
 )
 graphToString MonomialIdeal := String => I -> graphToString(apply(first entries generators I, indices), #gens ring I)
@@ -334,8 +337,14 @@ removeIsomorphs = method()
 removeIsomorphs List := List => L -> (
     if #L == 0 then return {};
     r := callNauty("shortg -qv 2>&1 1>/dev/null", apply(L, graphToString));
-    -- In Nauty 2.4r2, the index is the second number.
-    for l in r list ( s := select("[[:digit:]]+", l); if #s < 2 then continue else L_(-1 + value (s_1)) )
+    -- for each line, check if it has a colon, if so, take the first graph
+    for l in r list ( 
+        s := separate(":", l);
+        if #s < 2 then continue else ( 
+            t := select("[[:digit:]]+", s_1);
+            if #t == 0 then continue else L_(-1 + value first t)
+        )
+    )
 )
 
 -- Converts a Sparse6 string to a Graph6 string.
@@ -586,6 +595,9 @@ doc ///
             @TT "Connectivity"@ only works for the values $0, 1, 2$ and is strict, that is, @TT "{\"Connectivity\" => 1}"@
             yields only those graphs with exactly 1-connectivity.  In order to filter for connected graphs, one must use
             @TT "{\"Connectivity\" => 0, \"NegateConnectivity\" => true}"@.
+
+            @TT "NumCycles"@ can only be used with graphs on at most $n$ vertices, where $n$ is the number of bits for which
+            nauty was compiled.
     SeeAlso
         countGraphs
         filterGraphs
@@ -1401,6 +1413,7 @@ TEST ///
     assert(#generateBipartiteGraphs(6, 3, 2) == 3);
     -- All bipartite graphs in R with Class1 of size 3 and 1-2 edges.
     assert(#generateBipartiteGraphs(6, 3, 1, 2) == 4);
+    assert(apply(toList(1..8), n -> #removeIsomorphs generateBipartiteGraphs n) == {1, 2, 3, 7, 13, 35, 88, 303}); --A033995
 ///
 
 -- generateGraphs
@@ -1409,6 +1422,7 @@ TEST ///
     assert(#generateGraphs(6, OnlyConnected => true) == 112);
     assert(#generateGraphs(6, 7) == 24);
     assert(#generateGraphs(6, 7, 8, OnlyConnected => true) == 19+22);
+    assert(apply(toList(1..8), n -> #generateGraphs n) == {1, 2, 4, 11, 34, 156, 1044, 12346}); -- A000088
 ///
 
 -- generateRandomGraphs
@@ -1504,6 +1518,7 @@ TEST ///
     R = ZZ[a..f];
     G = {"EhEG", cycle R, completeGraph R, graph {a*d, d*b, b*e, e*c, c*f, f*a}};
     assert(#removeIsomorphs G == 2);
+    assert(#removeIsomorphs apply(permutations gens R, P -> graphToString graph apply(5, i-> {P_i, P_((i+1)%5)})) == 1);
 ///
 
 -- sparse6ToGraph6
@@ -1535,3 +1550,4 @@ restart
 uninstallPackage "Nauty"
 installPackage "Nauty"
 check "Nauty"
+
