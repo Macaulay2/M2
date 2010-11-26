@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <assert.h>
-const static int numThreads = 3;
+const static int numThreads = 4;
 
 static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
 

@@ -1,5 +1,6 @@
 // (c) 1995  Michael E. Stillman
 
+#include <iostream>
 #include "style.hpp"
 #include "mem.hpp"
 #include "text-io.hpp"
@@ -7,16 +8,11 @@
 static int allocated_amount = 0;
 static int deleted_amount = 0;
 
+
+
 const int trace_bad_deletes = 0;
 
 int slab::n_slabs = 0;
-
-//TODO: MAKE THREADSAFE -- For statistics purposes only
-//stash *stash::stash_list = NULL;
-//TODO: MAKE THREADSAFE -- For statistics purposes only
-slab *stash::slab_freelist = NULL;
-//TODO: MAKE THREADSAFE -- For statistics purposes only
-long stash::n_new_slabs = 0;
 
 //Array of stashes of 2^n powers. 
 //This looks thread unsafe, but is actually thread safe because it is only initialized once when the engine is setup.
@@ -35,13 +31,6 @@ stash::stash(const char *s, size_t len)
   //  this->next = stash_list;
   //  stash_list = this;
 
-  //  if (n_new_slabs == 0)
-  //    for ( ; n_new_slabs < 855; n_new_slabs++)
-  //      {
-  //	slab *p = new slab;
-  //	p->next = slab_freelist;
-  //	slab_freelist = p;
-  //      }
   initializeSpinLock(&list_spinlock);
 }
 
@@ -52,14 +41,7 @@ stash::~stash()
     {
       slab *p = slabs;
       slabs = slabs->next;
-#if 1
       GC_FREE(p);		// this dramatically improves our memory usage
-#else
-      bzero(p,sizeof(*p));      // we clear the slab because it's free, and it may contain words that look like pointers to gc
-      // ... but I don't know why this doesn't work as well!  See bugs/mike/1-gc-leak.m2
-      p->next = slab_freelist;
-      slab_freelist = p;
-#endif
       //printf("removed %p\n", p);
     }
   /*  assert(stash_list != NULL);
@@ -85,21 +67,13 @@ void stash::chop_slab()
   // onto the free list.
 
   slab *new_slab;
-  if (slab_freelist == NULL)
     {
-      n_new_slabs++;
       new_slab = new slab;
       //      printf("new %p\n", new_slab);
       //new_slab = new slab;
       //printf("new %p\n", new_slab);
       //new_slab = new slab;
       //printf("new %p\n", new_slab);
-    }
-  else
-    {
-      new_slab = slab_freelist;
-      slab_freelist = new_slab->next;
-      //printf("reused %p\n", new_slab);
     }
   
   new_slab->next = slabs;
@@ -139,11 +113,6 @@ size_t engine_allocated = 0;
 //TODO: MAKE THREADSAFE -- For statistics purposes only
 size_t engine_highwater = 0;
 
-int stash::num_slab_freelist() {
-     int i=0;
-     for (slab *p = stash::slab_freelist; p != NULL; p=p->next) i++;
-     return i;
-}
 
 void stash::stats(buffer &o)
 {
@@ -151,13 +120,9 @@ void stash::stats(buffer &o)
 //  o << "number of global delete's  = " << engine_dealloc << endl;
   int n = (slab::n_slabs*slab_size)/1024 + 
     (allocated_amount - deleted_amount)/1024;
-  o << "number of slabs = " << n_new_slabs << newline;
   o << "size of each slabs = " << sizeof(slab) << newline;
-  o << "total allocated = " << n_new_slabs * sizeof(slab) << newline;
   o << "total engine space allocated = " 
     << n << "k" << newline;
-  int m = num_slab_freelist();
-  o << "number of free slabs = " << m << " containing " << m*slab_size << " bytes" << newline;
 
   char s[200];
   sprintf(s, "%16s %10s %10s %10s %10s %10s %10s %10s%s",

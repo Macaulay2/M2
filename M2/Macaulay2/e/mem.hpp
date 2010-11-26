@@ -79,11 +79,6 @@ private:
   size_t highwater;
   size_t n_frees;
 
-  static stash *stash_list;
-  static slab *slab_freelist;
-  static int num_slab_freelist();
-  static long n_new_slabs;
-
   // private routines
   void chop_slab();
   

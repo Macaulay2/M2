@@ -14,7 +14,7 @@ typedef struct spinlockStructure spinLock;
   static const spinLock uninitializedSpinLock = {0};
 static inline void initializeSpinLock(struct spinlockStructure* sls)
 {
-  sls->m_MutexInt = 0;
+  __sync_lock_release(&sls->m_MutexInt);
 }
 static inline void acquireSpinLock(struct spinlockStructure* sls)
 {
@@ -29,7 +29,7 @@ static inline void acquireSpinLock(struct spinlockStructure* sls)
 }
 static inline void releaseSpinLock(struct spinlockStructure* sls)
 {
-  sls->m_MutexInt = 0;
+  __sync_lock_release(&sls->m_MutexInt);
 }
 
 #ifdef __cplusplus
