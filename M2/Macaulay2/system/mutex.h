@@ -11,7 +11,7 @@ struct spinlockStructure
   volatile int m_MutexInt;
 };
 typedef struct spinlockStructure spinLock;
-static spinLock uninitializedSpinLock;
+  static const spinLock uninitializedSpinLock = {0};
 static inline void initializeSpinLock(struct spinlockStructure* sls)
 {
   sls->m_MutexInt = 0;

@@ -11,10 +11,15 @@ const int trace_bad_deletes = 0;
 
 int slab::n_slabs = 0;
 
+//TODO: MAKE THREADSAFE -- For statistics purposes only
 stash *stash::stash_list = NULL;
+//TODO: MAKE THREADSAFE -- For statistics purposes only
 slab *stash::slab_freelist = NULL;
+//TODO: MAKE THREADSAFE -- For statistics purposes only
 long stash::n_new_slabs = 0;
 
+//Array of stashes of 2^n powers. 
+//This looks thread unsafe, but is actually thread safe because it is only initialized once when the engine is setup.
 doubling_stash *doubles = NULL;
 
 stash::stash(const char *s, size_t len)
@@ -24,7 +29,9 @@ stash::stash(const char *s, size_t len)
   // Make sure element_size is a multiple of the word size.
   if (len <= 0) len = word_size;
   element_size = word_size * ((len + word_size - 1) / word_size);
+  // number of elements per slab is the slab size divided by the element size rounded down.  
   n_per_slab = static_cast<int>((slab_size - sizeof(void *)) / element_size);
+  //This is for debugging purposes only -- NOT THREADSAFE
   this->next = stash_list;
   stash_list = this;
 
@@ -35,10 +42,12 @@ stash::stash(const char *s, size_t len)
   //	p->next = slab_freelist;
   //	slab_freelist = p;
   //      }
+  initializeSpinLock(&list_spinlock);
 }
 
 stash::~stash()
 {
+  acquireSpinLock(&list_spinlock);
   while (slabs != NULL)
     {
       slab *p = slabs;
@@ -125,8 +134,9 @@ void stash::text_out(buffer &o) const
 	  newline);
   o << s;
 }
-
+//TODO: MAKE THREADSAFE -- For statistics purposes only
 size_t engine_allocated = 0;
+//TODO: MAKE THREADSAFE -- For statistics purposes only
 size_t engine_highwater = 0;
 
 int stash::num_slab_freelist() {
