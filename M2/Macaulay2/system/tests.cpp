@@ -29,7 +29,7 @@ static int TS_Test1()
 	  struct tuple* tup = new tuple();
 	  tup->x = i;
 	  tup->y = j;
-	  tasks[i][j] = createThreadTask("Test",TS_Test1_Func,tup,0,0);
+	  tasks[i][j] = createThreadTask("Test",TS_Test1_Func,tup,0,0,0);
 	}
     }
   for(int i = 20-1; i>=0; --i)
@@ -66,8 +66,8 @@ static void* TS_Test2_Func1(void* vtup)
      {
        canceled=false;
        started=false;
-       ThreadTask* task1 = createThreadTask("Task1",TS_Test2_Func1,NULL,0,0);
-       ThreadTask* task2 = createThreadTask("Task2",TS_Test2_Func2,NULL,0,0);
+       ThreadTask* task1 = createThreadTask("Task1",TS_Test2_Func1,NULL,0,0,0);
+       ThreadTask* task2 = createThreadTask("Task2",TS_Test2_Func2,NULL,0,0,0);
        addCancelTask(task2,task1);
        pushTask(task1);
        pushTask(task2);

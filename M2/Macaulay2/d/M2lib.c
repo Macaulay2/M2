@@ -692,7 +692,7 @@ char **argv;
      vargs->envc = envc;
 
      initializeThreadSupervisor(1);
-     struct ThreadTask* interpTask = createThreadTask("Interp",interpFunc,vargs,0,0);
+     struct ThreadTask* interpTask = createThreadTask("Interp",interpFunc,vargs,0,0,0);
      pushTask(interpTask);
      waitOnTask(interpTask);
      return 0;
