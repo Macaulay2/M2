@@ -12,7 +12,7 @@ const int trace_bad_deletes = 0;
 int slab::n_slabs = 0;
 
 //TODO: MAKE THREADSAFE -- For statistics purposes only
-stash *stash::stash_list = NULL;
+//stash *stash::stash_list = NULL;
 //TODO: MAKE THREADSAFE -- For statistics purposes only
 slab *stash::slab_freelist = NULL;
 //TODO: MAKE THREADSAFE -- For statistics purposes only
@@ -32,8 +32,8 @@ stash::stash(const char *s, size_t len)
   // number of elements per slab is the slab size divided by the element size rounded down.  
   n_per_slab = static_cast<int>((slab_size - sizeof(void *)) / element_size);
   //This is for debugging purposes only -- NOT THREADSAFE
-  this->next = stash_list;
-  stash_list = this;
+  //  this->next = stash_list;
+  //  stash_list = this;
 
   //  if (n_new_slabs == 0)
   //    for ( ; n_new_slabs < 855; n_new_slabs++)
@@ -62,7 +62,7 @@ stash::~stash()
 #endif
       //printf("removed %p\n", p);
     }
-  assert(stash_list != NULL);
+  /*  assert(stash_list != NULL);
   if (stash_list == this)
     stash_list = next;
   else 
@@ -75,7 +75,7 @@ stash::~stash()
 	    return;
 	  }
       assert(0);
-    }
+      }*/
 }
 
 
@@ -172,10 +172,10 @@ void stash::stats(buffer &o)
 	  newline);
   o << s;
 
-  for (stash *p = stash_list; p != NULL; p = p->next)
+  /*  for (stash *p = stash_list; p != NULL; p = p->next)
     //    if (p->n_allocs > 0)
       p->text_out(o);
-
+  */
 }
 
 //--------- Doubling Stashes -----------------------------------------
