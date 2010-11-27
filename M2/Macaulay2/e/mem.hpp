@@ -89,6 +89,7 @@ private:
 inline void *stash::new_elem()
      // Allocate space for an object from this stash.
 {
+  return newarray_clear(char,element_size);
   acquireSpinLock(&list_spinlock);
   n_allocs++;
   n_inuse++;
@@ -97,7 +98,7 @@ inline void *stash::new_elem()
     {
       if (n_per_slab == 0) 
 	{
-	  void *result = newarray(char,element_size);
+	  void *result = newarray_clear(char,element_size);
 	  //allocated_amount += element_size;
 	  releaseSpinLock(&list_spinlock);
 	  return result;
@@ -115,6 +116,8 @@ inline void stash::delete_elem(void *p)
      // Delete the object 'p', placing it on the free list for this stash.
 {
   if (p == NULL) return;
+  deletearray(p);
+  return;
   //  if (trace_bad_deletes)
   //    {
   //      for (void *q = free_list; q != NULL; q = *(reinterpret_cast<void **>(q)))

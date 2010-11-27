@@ -27,6 +27,7 @@ stash::stash(const char *s, size_t len)
   element_size = word_size * ((len + word_size - 1) / word_size);
   // number of elements per slab is the slab size divided by the element size rounded down.  
   n_per_slab = static_cast<int>((slab_size - sizeof(void *)) / element_size);
+  n_per_slab=0;
   //This is for debugging purposes only -- NOT THREADSAFE
   //  this->next = stash_list;
   //  stash_list = this;
