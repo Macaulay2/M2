@@ -692,7 +692,7 @@ isReadyFun(e:Expr):Expr := (
 	       ( sd := acceptNonblocking(f.listenerfd); f.connection = sd; sd != -1 )
 	       )
 	  )
-     else WrongArg("a file or a thread"));
+     else WrongArg("a file or a task"));
 setupfun("isReady",isReadyFun);
 
 atEOFfun(e:Expr):Expr := (
@@ -1014,8 +1014,8 @@ tostringfun(e:Expr):Expr := (
 	  toExpr(
 	       "<<task, " 
 	       + (
-		    if x.body.resultRetrieved then "result delivered, thread terminated"
-		    else if taskDone(x.body.task) then "result available, thread done"
+		    if x.body.resultRetrieved then "result delivered, task terminated"
+		    else if taskDone(x.body.task) then "result available, task done"
 		    else if !taskKeepRunning(x.body.task) then "running, cancellation requested"
 		    else "running"
 		    )
