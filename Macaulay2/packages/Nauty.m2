@@ -9,8 +9,8 @@
 needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
-    Version => "1.2.1",
-    Date => "20. October 2010",
+    Version => "1.3",
+    Date => "29. November 2010",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -215,6 +215,7 @@ generateRandomGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, p) -> (
     if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if p < 1 then error("generateRandomGraphs: Probability must be positive.");
+    if p > 100000000 then error("generateRandomGraphs: Probability must be at least 1/100000000.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
@@ -223,7 +224,9 @@ generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
-    callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
+    -- nauty acts weird with numerators and denominators which are too big -- limit to a hundred-millionth for precision
+    q := round(100000000 * p) / 100000000;
+    callNauty("genrang -qg -P" | toString(q) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
 )
 generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
     if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
@@ -241,6 +244,7 @@ generateRandomRegularGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, reg) -> (
     if n < 1 then error("generateRandomRegularGraphs: A graph must have vertices!");
     if num < 1 then return {};
     if reg < 1 or reg >= n then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
+    if odd n and odd reg then error("generateRandomRegularGraphs: There are no graphs with odd regularity on an odd number of vertices.");
     rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
     callNauty("genrang -qg -r" | toString(reg) | " " | toString(n) | " " | toString(num) | rndSeed | " 2>&1", {})
 )
@@ -310,7 +314,7 @@ relabelBipartite String := String => S -> (
 )
 relabelBipartite Graph := Graph => G -> stringToGraph(relabelBipartite graphToString G, ring G)
 
--- Relabels a graph using a canonical labeling.
+-- Relabels a graph using a canonical labelling.
 relabelGraph = method()
 relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> (
     if i > 15 or i < 0 then error("relabelGraph: The invariant selected is invalid.");
@@ -447,20 +451,17 @@ doc ///
             Most methods can handle graphs in either the Macaulay2 @TO "Graph"@ type as provided by
             the @TO "EdgeIdeals"@ package or as Graph6 and Sparse6 @TO "String"@s as used by @TT "nauty"@.
             The purpose of this is that graphs stored as @TO "String"@s are greatly more efficient than
-            graphs stored as @TO "Graph"@s.  It is recommended to work with @TO "String"@s while using
-            @TT "nauty"@ provided methods and then converting to @TO "Graph"@s for further work (e.g.,
-            computing the chromatic number).
+            graphs stored as @TO "Graph"@s.  (See @TO "Comparison of Graph6 and Sparse6 formats"@.)
+            
+            It is recommended to work with @TO "String"@s while using @TT "nauty"@ provided methods
+            and then converting to @TO "Graph"@s for further work (e.g., computing the chromatic number).
 
             The theoretical underpinnings of @TT "nauty"@ are in the paper:
             B. D. McKay, "Practical graph isomorphism," Congr. Numer. 30 (1981), 45--87.
-    Caveat
-        This package was designed for use with @TT "nauty"@ version 2.4r2.  It may or may not work
-        with future versions.
-
-        The @TT "nauty"@ software must be installed locally and the path should be known to @TT "Macaulay2"@,
-        either by passing it as an argument when loading the package (e.g., 
-        @TT "loadPackage(\"Nauty\", Configuration=>{\"path\"=>\"/usr/local/bin/\"})"@
-        ) or by editing the configuration file (@TT "~/.Macaulay2/init-Nauty.m2"@) to automatically include the path.
+    SeeAlso
+        "Comparison of Graph6 and Sparse6 formats"
+        "Example: Checking for isomorphic graphs"
+        "Example: Generating and filtering graphs"
 ///
 
 document {
@@ -530,6 +531,7 @@ doc ///
             areIsomorphic(cycle R, graph {a*c, c*e, e*b, b*d, d*a})
             areIsomorphic("Dhc", "D~{") -- "Dhc" = cycle R, "D~{" = completeGraph R
     SeeAlso
+        "Example: Checking for isomorphic graphs"
         removeIsomorphs
 ///
 
@@ -550,7 +552,7 @@ doc ///
     Description
         Text
             The @TO "filterGraphs"@ and @TO "countGraphs"@ methods both can use a tremendous number of constraints
-            which are described be a rather tersely encoded string.  This method builds that string given information
+            which are described by a rather tersely encoded string.  This method builds that string given information
             in the @TO "HashTable"@ $h$.  Any keys which do not exist are simply ignored and any values which are not valid
             (e.g., exactly $-3$ vertices) are also ignored.
             
@@ -600,7 +602,40 @@ doc ///
             nauty was compiled.
     SeeAlso
         countGraphs
+        "Example: Generating and filtering graphs"
         filterGraphs
+///
+
+doc ///
+    Key
+        "Comparison of Graph6 and Sparse6 formats"
+    Description
+        Text
+            @TT "nauty"@ uses two string-based formats for storing graphs:  Graph6 and Sparse6 format.
+            Each format has benefits and drawbacks.  
+
+            In particular, Graph6 is a consistent length, which is dependent only on the number of vertices.
+            However, this also means that graphs with few edges take as much space as graphs with many edges.
+            On the other hand, Sparse6 is a variable length format which can use dramatically less space for
+            sparse graphs but can have a much larger storage size for dense graphs.
+
+            Consider the 26-cycle, a rather sparse graph.  Notice how Sparse6 format takes half the space
+            of the Graph6 format.
+        Example
+            R = QQ[a..z];
+            g6 = graphToString cycle R; #g6
+            s6 = graph6ToSparse6 g6; #s6
+        Text
+            However, the complete graph, which is as dense as possible, on 26 vertices is the opposite: 
+            the Sparse6 format takes nearly six times the space of the Graph6 format.
+        Example
+            g6 = graphToString completeGraph R; #g6
+            s6 = graph6ToSparse6 g6; #s6
+    SeeAlso
+        graph6ToSparse6
+        graphToString
+        sparse6ToGraph6
+        stringToGraph
 ///
 
 doc ///
@@ -638,6 +673,72 @@ doc ///
 
 doc ///
     Key
+        "Example: Checking for isomorphic graphs"
+    Description
+        Text
+            The main use of @TT "nauty"@ is to determine if two graphs are isomorphic.  This
+            can be checked with the method @TO "areIsomorphic"@.  
+        Example
+            R = QQ[a..e];
+            G = graph {{a, c}, {c, e}, {e, b}, {b, d}, {d, a}};
+            areIsomorphic(cycle R, G)
+        Text
+            Further, a list of graphs can be reduced to only graphs which are non-isomorphic
+            with the method @TO "removeIsomorphs"@.  Here we create a list of 120 different
+            labellings of the five cycle and use @TT "nauty"@ to verify they are indeed all
+            the same.
+        Example
+            L = apply(permutations gens R, P -> graphToString graph apply(5, i-> {P_i, P_((i+1)%5)}));
+            N = removeIsomorphs L
+            stringToGraph(first N, R)
+    SeeAlso
+        areIsomorphic
+        removeIsomorphs
+///
+
+doc ///
+    Key
+        "Example: Generating and filtering graphs"
+    Description
+        Text
+            The method @TO "generateGraphs"@ can generate all graphs with a given property.
+            For example, we can verify the number of graphs on a given number of vertices.
+            Compare these results to the Online Encyclopedia of Integer Sequences (@HREF "http://oeis.org/"@)
+            where the sequence name is also it's OEIS identifier.
+        Example
+            A000088 = apply(9, n -> #generateGraphs (n+1))
+            B = apply(12, n -> generateGraphs(n + 1, OnlyBipartite => true));
+        Text
+            Further, we can use @TO "filterGraphs"@ to refine the set of generate graphs
+            for deeper properties.
+
+            Here we filter for forests then for trees only,
+        Example
+            forestsOnly = buildGraphFilter hashTable {"NumCycles" => 0};
+            A005195 = apply(12, n -> #filterGraphs(B_n, forestsOnly))
+            treesOnly = buildGraphFilter hashTable {"NumCycles" => 0, "Connectivity" => 0, "NegateConnectivity" => true};
+            A000055 = apply(12, n -> #filterGraphs(B_n, treesOnly))
+        Text
+            Moreover, we can generate random graphs using the @TO "generateRandomGraphs"@ method.  Here
+            we verify a result of Erdos and R\'enyi (see @HREF "http://www.ams.org/mathscinet-getitem?mr=120167"@)
+            which says that a random graph on $n$ vertices with edge probability $(1+\epsilon)$log$(n)/n$ is almost
+            always connected while a graph with edge probability $(1-\epsilon)$log$(n)/n$ is almost never connected,
+            at least as $n$ tends to infinity.
+        Example
+            connected = buildGraphFilter hashTable {"Connectivity" => 0, "NegateConnectivity" => true};
+            prob = n -> promote(log(n)/n, QQ);
+            apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, 2*(prob n)), connected))
+            apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, (prob n)/2), connected))
+    SeeAlso
+        buildGraphFilter
+        filterGraphs
+        generateGraphs
+        generateRandomGraphs
+///
+            
+
+doc ///
+    Key
         filterGraphs
         (filterGraphs, List, String)
         (filterGraphs, List, HashTable)
@@ -667,6 +768,7 @@ doc ///
     SeeAlso
         buildGraphFilter
         countGraphs
+        "Example: Generating and filtering graphs"
 ///
 
 document {
@@ -693,7 +795,7 @@ document {
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
         "n" => ZZ => "the number of vertices of the graphs",
-        "m" => ZZ => "the number of vertices in the first part of the bipartition",
+        "m" => ZZ => "the number of vertices in the first class of the bipartition; must be positive",
         "e" => ZZ => "the number of edges in the graphs", 
         "le" => ZZ => "a lower bound on the number of edges in the graphs",
         "ue" => ZZ => "an upper bound on the number of edges in the graphs",
@@ -705,10 +807,15 @@ document {
         OnlyConnected => Boolean => "whether to only allow connected graphs"
     },
     PARA TEX ///
-            This method generates all bipartite graphs on $n$ vertices.  The 
+            This method generates all bipartite graphs on $n$ vertices.  
             The size of the bipartition is specified by giving the size of
-            one part; the other part is determined automatically from the
+            one class; the other class is determined automatically from the
             number of vertices.
+        ///,
+    PARA TEX ///
+            If only one integer argument is given, then the method generates
+            all bipartite graphs on that number of vertices with first class
+            of sizes $1$ to $n$.
         ///,
     PARA TEX ///
             If a PolynomialRing $R$ is supplied instead, then the number of
@@ -719,6 +826,14 @@ document {
             R = QQ[a..e];
             generateBipartiteGraphs(R, 2)
         ///,
+    Caveat => {
+        TEX ///
+            The input $m$ is the size of the first class of the bipartition and must
+            be positive (as forced by {\tt nauty}).  We continue this so that the second
+            class (of size $n-m$) can be from $0$ to $n$.  In particular, this is important
+            as the options {\tt Class2Degree2, Class2DistinctNeighborhoods,} and 
+            {\tt Class2MaxCommonNeighbors} only effect the second class.
+        ///},
     SeeAlso => {
         "generateGraphs"
     }
@@ -760,7 +875,7 @@ document {
     Outputs => {"G" => List => TEX ///the graphs satisfying the input conditions///},
     PARA TEX ///
             This method generates all graphs on $n$ vertices subject to the 
-            constraints on the number of edges.  It further uses numerous options
+            constraints on the number of edges.  It uses numerous options
             to allow further constraining of the output.
         ///,
     PARA TEX ///
@@ -773,6 +888,7 @@ document {
             generateGraphs(R, 4, 6, OnlyConnected => true)
     ///,
     SeeAlso => {
+        "Example: Generating and filtering graphs",
         "generateBipartiteGraphs"
     }
 }
@@ -819,7 +935,15 @@ document {
             generateRandomGraphs(5, 5)
             generateRandomGraphs(5, 5, RandomSeed => 314159)
     ///,
+    Caveat => {
+        TEX ///
+            If $pq$ is included, then it is rounded to a precision of one hundred millionth.
+            Similarly, if $pz$ is greater than one hundred million, then an error is given. 
+            This is because {\bf nauty} responds inconsistently when greater precision is 
+            attempted.
+        ///},
     SeeAlso => {
+        "Example: Generating and filtering graphs",
         "generateRandomRegularGraphs"
     }
 }
@@ -885,6 +1009,7 @@ doc ///
             graph6ToSparse6 "Dhc"
             graph6ToSparse6 "M????????????????"
     SeeAlso
+        "Comparison of Graph6 and Sparse6 formats"
         graphToString
         stringToEdgeIdeal
         stringToGraph
@@ -911,8 +1036,8 @@ document {
     },
     PARA "This method computes the graph complement of the input graph
             and returns the result in the same format.",
-    PARA {"For graphs as defined in the ", ///TO "EdgeIdeals"///, " package, one can use the",
-            ///TO "complementGraph"///, " method to achieve the same effect; however,
+    PARA {"For graphs as defined in the ", TO "EdgeIdeals", " package, one can use the ",
+            TO "complementGraph", " method to achieve the same effect; however,
             this method provides the option of not taking the complement if the
             complement has more edges than the graph itself."},
     EXAMPLE lines ///
@@ -939,7 +1064,7 @@ doc ///
         S = graphToString(E, n)
         S = graphToString I
         S = graphToString G
-        S = graphToString T
+        T = graphToString T
     Inputs
         E:List
             a list of edge pairs
@@ -967,11 +1092,15 @@ doc ///
             graphToString monomialIdeal (a*c, a*d, b*d, b*e, c*e)
             graphToString cycle R
             graphToString "Dhc"
+        Text
+            We note that if the input is a string, then the output is simply that string returned,
+            regardless of format.
     Caveat
         Notice that if using a @TO "List"@ and number of vertices input to create
         the @TO "String"@, then the @TO "List"@ must have vertices labeled $0$ to
-        $n-1$ and should be preferably in sorted order.
+        $n-1$.
     SeeAlso
+        "Comparison of Graph6 and Sparse6 formats"
         graph6ToSparse6
         sparse6ToGraph6
         stringToGraph
@@ -1066,7 +1195,7 @@ doc ///
             Let $ab$ and $cd$ be disjoint edges of $G$.  Then the
             associated "new edge" graph $H$ is $G$ with the edges
             $ab$ and $cd$ removed, the vertices $e$ and $f$ added,
-            and the new edges $ae, eb, cf,$ and $fd$ added.
+            and the new edges $ae, be, cf, df,$ and $ef$ added.
         Example
             R = QQ[a..d];
             G = graph {a*b, c*d};
@@ -1117,7 +1246,7 @@ doc ///
         (relabelGraph, Graph, ZZ)
         (relabelGraph, Graph)
     Headline
-        applies a canonical labeling to a graph
+        applies a vertex invariant based refinement to a graph
     Usage
         T = relabelGraph(S, i, a)
         T = relabelGraph(S, i)
@@ -1140,27 +1269,29 @@ doc ///
             a graph isomorphic to $G$
     Description
         Text
-            This method applies one of sixteen canonical labelings to a graph.  See
-            the @TT "nauty"@ documentation for a more complete description of each
-            and how the argument $a$ is used.
+            This method applies one of sixteen vertex invariant based refinements to a 
+            graph.  See the @TT "nauty"@ documentation for a more complete description
+            of each and how the argument $a$ is used.
 
-            The fifteen canonical labelins are:
-            $i = 0$: none,
-            $i = 1$: twopaths,
-            $i = 2$: adjtriang(K),
-            $i = 3$: triples,
-            $i = 4$: quadruples,
-            $i = 5$: celltrips,
-            $i = 6$: cellquads,
-            $i = 7$: cellquins,
-            $i = 8$: distances(K),
-            $i = 9$: indsets(K),
-            $i = 10$: cliques(K),
-            $i = 11$: cellcliq(K),
-            $i = 12$: cellind(K),
-            $i = 13$: adjacencies,
-            $i = 14$: cellfano, and
-            $i = 15$: cellfano2.
+            The sixteen vertex invariants are:
+            @UL ({
+                "$i = 0$: none,",
+                "$i = 1$: twopaths,",
+                "$i = 2$: adjtriang(K),",
+                "$i = 3$: triples,",
+                "$i = 4$: quadruples,",
+                "$i = 5$: celltrips,",
+                "$i = 6$: cellquads,",
+                "$i = 7$: cellquins,",
+                "$i = 8$: distances(K),",
+                "$i = 9$: indsets(K),",
+                "$i = 10$: cliques(K),",
+                "$i = 11$: cellcliq(K),",
+                "$i = 12$: cellind(K),",
+                "$i = 13$: adjacencies,",
+                "$i = 14$: cellfano, and",
+                "$i = 15$: cellfano2."
+            } / TEX) @
         Example
             R = QQ[a..e];
             G = cycle R;
@@ -1210,7 +1341,7 @@ doc ///
         M = removeIsomorphs L
     Inputs
         L:List
-            a list of graphs in either Graph or sparse6/Graph6 String format
+            a list of graphs in either Graph or Sparse6/Graph6 String format
     Outputs
         M:List
             the sub-list of non-isomorphic graphs of the input list, retaining format
@@ -1225,6 +1356,7 @@ doc ///
             removeIsomorphs G
     SeeAlso
         areIsomorphic
+        "Example: Checking for isomorphic graphs"
 ///
 
 doc ///
@@ -1251,6 +1383,7 @@ doc ///
             sparse6ToGraph6 ":DaY_~"
             sparse6ToGraph6 ":M"
     SeeAlso
+        "Comparison of Graph6 and Sparse6 formats"
         graph6ToSparse6
         graphToString
         stringToEdgeIdeal
