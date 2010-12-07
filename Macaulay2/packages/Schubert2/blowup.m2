@@ -15,7 +15,7 @@ blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) :=
      N :=  TY - tangentBundle X;
      x := local x;
      d := rank N;
-     PN := projectiveBundle(dual N, VariableNames => {,{x}});
+     PN := projectiveBundle'(dual N, VariableNames => {,{x}});
      F := first PN.Bundles;
      C := intersectionRing PN;
      (BasAModule, bas, iLowerMod) := pushFwd iupper;

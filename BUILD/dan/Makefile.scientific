@@ -1,6 +1,10 @@
 #-*- Makefile -*-
 DIRECTORY = scientific
-CONFIGOPTIONS += --build=i386-pc-linux-gnu
+
+CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
+CONFIGOPTIONS += --with-mpir-config-options="ABI=64"
+# CONFIGOPTIONS += --build=i386-pc-linux-gnu
+
 CONFIGOPTIONS += --enable-rpm
 include Makefile.include
 default: check
@@ -12,7 +16,9 @@ default: check
 #	yum provides /usr/include/gc/gc.h
 
 # install these:
-#	lapack.i386
+#	sudo yum install -y emacs subversion lapack gcc-c++ gcc-gfortran flex bison autoconf autoconf flex bison ncurses-devel libxml2-devel zlib-devel gdbm-devel gmp-devel readline-devel rpm-build strace
+
+# install fakeroot manually
 
 # get fakeroot:
 #     wget http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz

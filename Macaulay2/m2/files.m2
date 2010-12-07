@@ -356,7 +356,7 @@ bashtempl := ///
 ## add "/PREFIX/DIR" to the environment variable VAR
 case "$VAR" in 
      "/PREFIX/DIR"|"/PREFIX/DIR:"*|*":/PREFIX/DIR"|*":/PREFIX/DIR:"*) ;;
-     "") VAR="/PREFIX/DIR" ; export VAR ;;
+     "") VAR="/PREFIX/DIR:REST" ; export VAR ;;
      *) VAR="/PREFIX/DIR:$VAR" ; export VAR ;;
 esac
 ///
@@ -370,7 +370,7 @@ if ( $?VAR == 1 ) then
     case "*:/PREFIX/DIR:*":
        breaksw
     case "":
-       setenv VAR "/PREFIX/DIR"
+       setenv VAR "/PREFIX/DIR:REST"
        breaksw
     default:
        setenv VAR "/PREFIX/DIR:$VAR"
@@ -382,17 +382,17 @@ endif
 ///
 
 shellfixes := {
-     ("PATH", currentLayout#"bin"),
-     ("MANPATH", currentLayout#"man"),
-     ("INFOPATH", currentLayout#"info"),
-     ("LD_LIBRARY_PATH", currentLayout#"lib")}
+     ("PATH", currentLayout#"bin",""),
+     ("MANPATH", currentLayout#"man",":"),
+     ("INFOPATH", currentLayout#"info",""),
+     ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
      ("load-path", currentLayout#"emacs"),
      ("exec-path", currentLayout#"bin"),
      ("Info-default-directory-list", currentLayout#"info")}
 
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
-fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
+fix := (var,dir,rest,templ) -> replace_(":REST",rest) replace_("VAR",var) replace_("DIR",stripdir dir) templ
 
 startToken := "## Macaulay 2 start"
 endToken := "## Macaulay 2 end"
@@ -418,7 +418,7 @@ local dotemacsFix
 setupEmacs = method()
 setup = method()
 mungeEmacs = () -> (
-     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,emacstempl)), dotemacsFix0);
+     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,"",emacstempl)), dotemacsFix0);
      supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
      mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
@@ -434,8 +434,8 @@ installMethod(setup, () -> (
      --     `~/.bash_login', and `~/.profile', in that order, and reads and
      --     executes commands from the first one that exists and is readable.
      prelim();
-     dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir) -> fix(var,dir,bashtempl)));
-     dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir) -> fix(var,dir,cshtempl)));
+     dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,bashtempl)));
+     dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,cshtempl)));
      supplantStringFile(dotprofileFix,"~/"|M2profile,false);
      supplantStringFile(dotloginFix,"~/"|M2login,false);
      fileExists("~/"|".bash_profile") and mungeFile("~/"|".bash_profile",startToken,endToken,M2profileRead) or

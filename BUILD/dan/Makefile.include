@@ -15,7 +15,6 @@ all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
 clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
 everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
-update:; svn update ../..
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
 big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
@@ -42,11 +41,12 @@ install-info:
 	[ -d ~/local/share/info ]
 	for i in builds.tmp/*/libraries/final/info/* builds.tmp/*/libraries/final/share/info/* ; do cp $$i ~/local/share/info ; done
 	cd ~/local/share/info ; for i in *.info ; do install-info --infodir=. $$i ; done
+cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/server signature
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
-rebuild-world1: arch-chk update distclean
+rebuild-world1: arch-chk distclean
 rebuild-world2:; $(MAKE) -C ../..
-rebuild-world3: configure all install check check-links
+rebuild-world3: configure all check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
 ../../configure :; $(MAKE) -C ../..

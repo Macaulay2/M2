@@ -753,6 +753,7 @@ rkSchur(6,{2}) -- symmetric power
 rkSchur(3,{3,2,0})
 rkSchur(3,{4,3,1}) -- the previous tensored with the top exterior power
 
+needsPackage "SchurRings"
 R = schurRing(s,6)
 assert(dim s_{1,1,1,1} == rkSchur(6,{1,1,1,1})) -- exterior power
 assert(dim s_{2} == rkSchur(6,{2})) -- symmetric power

@@ -165,8 +165,9 @@ M2.o : ../../include/M2/config.h
 
 all: M2inits1.o
 all: libM2inits2.a
-libM2inits2.a: M2inits2.o ; ar ru $@ $^
-
+libM2inits2.a: M2inits2.o
+	ar ru $@ $^
+	@RANLIB@ $@ 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 BSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1"/'

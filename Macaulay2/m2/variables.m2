@@ -15,7 +15,7 @@ new IndexedVariableTable from Symbol := (IndexedVariableTable,X) -> (
 checkValue = x -> if x#?symbol$ then (
      X := x#symbol$;
      if value X =!= x then (
-     	  if value X =!= X then stderr << "--warning: clearing value of symbol " << X << " to allow access to subscripted variables based on it" << endl << flush;
+     	  if value X =!= X then warningMessage("clearing value of symbol ", toString X, " to allow access to subscripted variables based on it");
      	  X <- x;
 	  )
      )

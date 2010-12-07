@@ -1,6 +1,8 @@
 # -*- makefile -*-
-DIR = $(shell pwd)
-MACHINE = $(notdir $(DIR))
+CMD = case `uname -s` in CYGWIN*) cygpath -w `pwd` ;; *) pwd ;; esac
+DIR := "$(shell $(CMD))"
+MACHINE := $(notdir $(shell pwd))
+export HOME = C:/Users/dan
 all: $(ISO) disk.vdi $(MACHINE) settings 
 sha1sum md5sum:; $@ $(ISO)
 start:; VBoxManage --nologo startvm $(MACHINE) --type vrdp
@@ -15,9 +17,9 @@ $(MACHINE):
 	rm -f machine.xml
 	VBoxManage createvm --name $(MACHINE) --settingsfile $(DIR)/machine.xml
 	VBoxManage registervm $(DIR)/machine.xml
-	VBoxManage storagectl scientific64 --name 'IDE Controller' --add ide
-	VBoxManage storageattach scientific64 --storagectl 'IDE Controller' --port 0 --device 0 --type hdd --medium $(DIR)/disk.vdi
-	VBoxManage storageattach scientific64 --storagectl 'IDE Controller' --port 1 --device 0 --type dvddrive --medium $(DIR)/$(ISO)
+	VBoxManage storagectl $(MACHINE) --name 'IDE Controller' --add ide
+	VBoxManage storageattach $(MACHINE) --storagectl 'IDE Controller' --port 0 --device 0 --type hdd --medium $(DIR)/disk.vdi
+	VBoxManage storageattach $(MACHINE) --storagectl 'IDE Controller' --port 1 --device 0 --type dvddrive --medium $(DIR)/$(ISO)
 
 always:
 mount-cd:; VBoxManage modifyvm $(MACHINE) -dvd $(DIR)/$(ISO)
@@ -37,7 +39,8 @@ settings: always
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  $(SSHPORT)
 clean:
-	VBoxManage modifyvm scientific64 --hda none
+	VBoxManage modifyvm $(MACHINE) --hda none
+	VBoxManage modifyvm $(MACHINE) --dvd none
 	VBoxManage unregistervm $(MACHINE)
 	rm -rfv machine.xml {*}
 veryclean:clean; rm -rf disk.vdi

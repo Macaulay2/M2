@@ -28,6 +28,7 @@ $(foreach t,clean distclean,				\
 @pre_docdir@:; $(MKDIR_P) "$@"
 @pre_docdir@/% : % | @pre_docdir@ ; @INSTALL_DATA@ $< "$@"
 Makefile: Makefile.in; cd ..; ./config.status Macaulay2/Makefile
+unmark-packages:; $(MAKE) -C packages $@
 clean:; rm -f gmon.out
 distclean:; rm -f Makefile
 # Local Variables:

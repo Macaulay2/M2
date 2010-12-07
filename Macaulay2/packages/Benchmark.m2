@@ -209,8 +209,21 @@ runBenchmarks0 String := x -> runBenchmarks0 {x}
 runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
-     if fileExists "/proc/cpuinfo" and match("^model name",get "/proc/cpuinfo")
-     then << "-- " << first select("^model name.*$",get "/proc/cpuinfo") << endl;
+     if fileExists "/proc/cpuinfo"
+     then (
+	  cpuinfo := get "/proc/cpuinfo";
+	  << "-- ";
+	  scan({
+		    ("model name[[:space:]]*: (.*)","\\1"),
+		    ("vendor_id[[:space:]]*: (.*)","\\1"),
+		    ("(cpu MHz)[[:space:]]*: (.*)","\\1 \\2")
+		    },
+	       (pattern,repl) -> ( 
+		    t := select(pattern,repl,cpuinfo);
+		    if #t > 0 then << replace("[[:space:]]+"," ",t#0) << "  ";
+		    ));
+	  << endl;
+	  );
      if fileExists "/usr/sbin/system_profiler"
      then (
 	  r := get "!/usr/sbin/system_profiler SPHardwareDataType";
@@ -297,6 +310,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
   -- resG25: res of the coordinate ring of Grassmannian(2,5): 1.69 seconds
   -- gbB148: gb of Bayesian graph ideal #148: 15.79 seconds
   -- running four copies at once, the results were just a bit slower - the slowest for each test was .18/1.85/16.38.
+
+-- a Core i5-650
+  -- beginning computation Fri Oct  8 09:38:53 CDT 2010
+  -- CYGWIN_NT-6.1-WOW64 freedom 1.7.7(0.230/5/3) 2010-08-31 09:58 i686 Cygwin
+  -- Macaulay2 1.3.1, compiled with gcc 3.4.4
+  -- res39: res of a generic 3 by 9 matrix over ZZ/101: .266 seconds
+  -- resG25: res of the coordinate ring of Grassmannian(2,5): 4.01 seconds
+  -- gbB148: gb of Bayesian graph ideal #148: 17.207 seconds
 
 ---- a MacBook Pro (core 2 duo 2.4 GHZ, 4 GB ram):
   --- Mac OS X side:

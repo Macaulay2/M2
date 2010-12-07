@@ -79,7 +79,7 @@ assert( degree x == {1} )
 assert( degree x_R == {0} )
 assert( degree y_R == {1} )
 (options R).Heft
-assert( (options R).Heft =!= null )
+assert( (options R).Heft === {1} )
 
 R = QQ[x,Degrees => {{0,1}}]
 (options R).Heft

@@ -83,7 +83,7 @@ clearAll
 
 -- from arxiv:9906119 by Tjotta
 V = OO_point^7
-P = projectiveBundle( exteriorPower_2 V, VariableNames => {,{p}} )
+P = projectiveBundle'( exteriorPower_2 V, VariableNames => {,{p}} )
 PG = flagBundle( {4,3}, (P/point)^* V, VariableNames => {beta,gamma} )
 (U,Q) = PG.Bundles
 A = exteriorPower_2 ( (PG/point)^* V  )  *  OO(p) - exteriorPower_2 U * OO(p)

@@ -1,42 +1,26 @@
 # -*- Makefile -*-
 CONFIGOPTIONS += --build=i386-pc-linux-gnu
 CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i486-pc-linux-gnu"
-INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-deb
 DIRECTORY = debian32
 include Makefile.include
 default: check
-pre-install:; rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:; [ `hostname` = debian32 -o `hostname` = debian ]
+arch-chk:
+	grep Debian /etc/issue
+	[ `uname -m` = i686 ]
 
 # using a 33MB iso image: debian-40r6-i386-businesscard.iso (etch)
 #        157MB iso image: debian-502-i386-netinst.iso (lenny)
 #     apt-get update
 #     apt-get -y install packagename ... :
+
 #  list of packages available:
 #        locally: /var/lib/apt/lists
 #	remotely: ftp://ftp.us.debian.org/debian/dists/lenny/main/binary-i386/Packages.bz2
-#  install these packages:
-#     openssh-server (sshd, with X11forwarding already on)
-#     xbase-clients (xauth)
-#     emacs
-#     subversion
-#     make
-#     autoconf
-#     gcc
-#     libc6-dev (crt1.o)
-#     g++
-#     gfortran
-#     flex
-#     bison
-#     liblapack-dev (replaced older lapack3-dev with debian version >= 5.0)
-#     libgdbm-dev
-#     libgc-dev
-#     libgmp3-dev (4.2.1)
-#     libmpfr-dev (too old, 2.2.0 instead of 2.3.2)
-#     libpari-dev
-#     libreadline5-dev
-#     
+
+# sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libgmp3-dev libmpfr-dev libpari-dev 
+# sudo apt-get install -y autoconf bison emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev make openssh-server subversion xbase-clients libxml2-dev curl libz-dev
+
 # VirtualBox settings:
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22

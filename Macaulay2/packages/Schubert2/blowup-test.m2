@@ -1,31 +1,31 @@
-load "Schubert2/blowup.m2"
+load "./blowup.m2"
 
 -- blow up of P5 along the Veronese
-A = QQ[H]/H^6
-P = H^5
+A = QQ[z]/z^6
+P = z^5
 B = QQ[h]/h^3
 P5 = abstractVariety(5, A)
 integral A := coefficient_P
 P2 = abstractVariety(2, B)
 p = h^2
 integral B := coefficient_p
-P5.TangentBundle = abstractSheaf(P5, Rank=>5, ChernClass=>(1+H)^6)
+P5.TangentBundle = abstractSheaf(P5, Rank=>5, ChernClass=>(1+z)^6)
 P2.TangentBundle = abstractSheaf(P2, Rank=>2, ChernClass=>(1+h)^3)
 iupper = map(B,A,{2*h})
-ilower = map(A^1, A^1/(H^3), {{4*H^3}})
+ilower = map(A^1, A^1/(z^3), {{4*z^3}})
 (Ytilde,Xtilde,jlower) = blowup(P2,P5,iupper,ilower)
 ctop tangentBundle Ytilde
 assert( oo == 12 * P )
 
 -- blow up a point on P^2
-A = QQ[H]/H^3
+A = QQ[z]/z^3
 B = QQ[h]/(h)
 P2 = abstractVariety(2, A)
 pt = abstractVariety(0, B)
-P2.TangentBundle = abstractSheaf(P2, Rank=>5, ChernClass=>(1+H)^3)
+P2.TangentBundle = abstractSheaf(P2, Rank=>5, ChernClass=>(1+z)^3)
 pt.TangentBundle = abstractSheaf(pt, Rank=>0, ChernClass=>1_B)
 iupper = map(B,A)
-ilower = map(A^1, A^1/(H), {{H^2}})
+ilower = map(A^1, A^1/(z), {{z^2}})
 (Ytilde,Xtilde,jlower) = blowup(pt,P2,iupper,ilower)
 tangentBundle Ytilde
 ctop tangentBundle Ytilde
@@ -33,10 +33,10 @@ assert ( oo == 0)
 
 end
 
-load "Schubert2/blowup.m2"
+load "./blowup.m2"
 -- blowup of P5 along the Veronese
-P5 = projectiveSpace(5, VariableName => symbol k)
-P2 = projectiveSpace(2, VariableName => symbol h)
+P5 = projectiveSpace'(5, VariableName => symbol k)
+P2 = projectiveSpace'(2, VariableName => symbol h)
 use P5
 chern tangentBundle P5
 A = intersectionRing P5

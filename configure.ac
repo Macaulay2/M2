@@ -1,6 +1,6 @@
 dnl This is the only place where the Macaulay2 version number appears:
 
-    AC_INIT(Macaulay 2, 1.3.9, Macaulay2@math.uiuc.edu, Macaulay2)
+    AC_INIT(Macaulay 2, 1.4, Macaulay2@math.uiuc.edu, Macaulay2)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a relatively major release, such as occurs every six months
@@ -334,12 +334,14 @@ EOF
 	$CXX -c conf_test2.cc
 	$CXX -c conf_test3.cc
 	$CXX -c conf_test4.cc
-	if test $CXX = cl
+	if test "$CXX" = cl
 	then lib conf_test2.$OBJEXT
 	     lib conf_test4.$OBJEXT
 	     $CXX conf_main.cc conf_test1.$OBJEXT conf_test2.lib conf_test3.$OBJEXT conf_test4.lib -o conf_main
 	else ar ru libconf_test2.a conf_test2.$OBJEXT
+	     $RANLIB libconf_test2.a
 	     ar ru libconf_test4.a conf_test4.$OBJEXT
+	     $RANLIB libconf_test4.a
 	     $CXX conf_main.cc -L. conf_test1.$OBJEXT -lconf_test2 conf_test3.$OBJEXT -lconf_test4 -o conf_main
 	fi
 	./conf_main
@@ -370,7 +372,11 @@ AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
-AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
+AC_CHECK_DECLS([gnu_get_libc_version])
+AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
+	#include <stdio.h>
+	#include <errno.h>
+	])
 AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
 
 AC_SUBST(__INTEL_COMPILER,no)
@@ -391,7 +397,7 @@ AC_DEFINE_UNQUOTED(HAVE_PERSONALITY,$HAVE_PERSONALITY,[whether personality() is 
 
 AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
+AC_SUBST(STRIP,no)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
@@ -575,6 +581,8 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   NAGtypes
   NormalToricVarieties
   DGAlgebras
+  Graphs
+  GraphicalModels
 ")
 
 # convert the newlines in the list above to spaces

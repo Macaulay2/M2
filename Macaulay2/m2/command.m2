@@ -2,7 +2,7 @@
 
 chkrun = cmd -> (
      r := run cmd;
-     if r == 2 then (
+     if r == 1002 then (
 	  stderr << newline;
 	  error("run: subprocess interrupted");
 	  );

@@ -4,8 +4,8 @@ URL: http://www.math.uiuc.edu/Macaulay2/
 Version: @PACKAGE_VERSION@
 Release: @DISTRIBUTION@
 BuildArch: noarch
-Summary: Macaulay 2 is a software system for algebraic geometry research
-License: GPLv2
+Summary: Macaulay2 is a software system for algebraic geometry research
+License: various
 Group: Applications/Engineering
 Buildroot: @abs_builddir@/files-common
 Prefix: @prefix@
@@ -29,7 +29,7 @@ for p in @PACKAGES@
 do install-info --remove --quiet --info-dir=. $p.info
 done
 %description
-Macaulay 2 is a software system for algebraic geometry research, written by
+Macaulay2 is a software system for algebraic geometry research, written by
 Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it
 provides algorithms for computing homological invariants of rings and
 modules.
