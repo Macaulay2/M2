@@ -1,6 +1,5 @@
+-- -*- coding: utf-8 -*- this has to be on the first line
 needsPackage "AdjointIdeal"
-
--- -*- coding: utf-8 -*-
 newPackage(
 	"Parametrization",
     	Version => "0.6", 
@@ -1802,13 +1801,13 @@ assert(legendreSymbol(14,7)==0);
 ///
 
 
-
-TEST ///
-R=QQ[y_0..y_2];
-I=ideal(7*y_0^2+11*y_2^2+13*y_0*y_2+17*y_1^2+19*y_1*y_2);
-p=rationalPointOnConic I;
-assert(sub(I,{y_0=>p_(0,0),y_1=>p_(0,1),y_2=>p_(0,2)})==0);
-///
+-- this test commented out because it requires the presence of maple
+-- TEST ///
+-- R=QQ[y_0..y_2];
+-- I=ideal(7*y_0^2+11*y_2^2+13*y_0*y_2+17*y_1^2+19*y_1*y_2);
+-- p=rationalPointOnConic I;
+-- assert(sub(I,{y_0=>p_(0,0),y_1=>p_(0,1),y_2=>p_(0,2)})==0);
+-- ///
 
 
 TEST ///
@@ -1826,16 +1825,17 @@ pI=rParametrizePlaneCurve(I,J,parametrizeConic=>true);
 assert(testParametrization(I,pI)==true);
 ///
 
-TEST ///
-a=modularSquareRoot(626,1180943);
-assert(a==348206 or a==832737);
-a=modularSquareRoot(3,13);
-assert(a==4 or a==9);
-a=modularSquareRoot(7,14);
-assert(a==7);
-a=modularSquareRoot(3,14);
-assert(a==FAIL);
-///
+-- this test commented out because it requires the presence of maple
+-- TEST ///
+-- a=modularSquareRoot(626,1180943);
+-- assert(a==348206 or a==832737);
+-- a=modularSquareRoot(3,13);
+-- assert(a==4 or a==9);
+-- a=modularSquareRoot(7,14);
+-- assert(a==7);
+-- a=modularSquareRoot(3,14);
+-- assert(a==FAIL);
+-- ///
 
 TEST ///
 assert(chineseRemainder({1,2,3},{3,5,7})==52);

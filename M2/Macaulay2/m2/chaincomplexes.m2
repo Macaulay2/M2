@@ -316,6 +316,8 @@ RingMap ChainComplex := ChainComplex => (f,C) -> (
      scan(spots C.dd, i -> D.dd#i = map(D_(i-1),D_i, f C.dd#i));
      D)
 
+RingMap ChainComplexMap := ChainComplexMap => (f,phi) -> map(f target phi, f source phi, i -> f phi_i)
+
 ChainComplexMap * ChainComplexMap := ChainComplexMap => (g,f) -> (
      if target f != source g then error "expected composable maps of chain complexes";
      h := new ChainComplexMap;

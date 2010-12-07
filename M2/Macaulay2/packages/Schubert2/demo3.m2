@@ -5,7 +5,7 @@ path = prepend("../", path)
 needsPackage "Schubert2"
 F = flagBundle ( {4,2}, VariableNames => {,c} )
 AF = intersectionRing F
-schubertCycle((0,1),F)
+schubertCycle'((0,1),F)
 F_(0,1)
 integral oo
 assert( oo == 1 )

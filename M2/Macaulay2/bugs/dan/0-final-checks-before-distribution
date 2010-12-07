@@ -1,5 +1,18 @@
 things to do manually before release
 
+        see whether C-c works in emacs and in a terminal, both for M2 and its subjobs:
+
+		i1 : while true do 1
+		  C-c C-cstdio:1:15:(3): error: interrupted
+
+		i12 : run "sleep 10"
+		  C-c C-c
+		o12 = 2				<-- right answer
+
+		i2 : run "sleep 10"
+		  C-c C-c			<-- too much delay -->
+		o2 = 0				<-- wrong answer
+
         see 0-final-check-interactive-input-behaviour if changes have been made to top level user interaction
 
 	see whether you can interrupt the printing out the following commands, e.g., in emacs with CTRL-C CTRL-C:

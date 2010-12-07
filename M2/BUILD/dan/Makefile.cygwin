@@ -17,40 +17,53 @@ else
 DIRECTORY = cygwin
 endif
 
-# packages to install:
+# packages to install for cygwin 1.7:
 #   autoconf
+#   automake
 #   bison
-#   emacs
 #   emacs-X11
-#   emacs-el
+#   file
 #   flex
-#   gcc
-#   gdbm
-#   lapack
-
+#   gcc4-core
+#   gcc4-fortran
+#   gcc4-g++
+#   gdb
+#   libgc-devel
 #   libgdbm-devel
+#   libglpk-devel
+#   liblapack-devel
+#   libstdc++6-devel
+#   libxml2-devel 
 #   make
+#   mpfr-devel
 #   patchutils
 #   readline
 #   subversion
-#   vim
+#   time
 #   wget
-
-#   libxml2-devel
-#   xconsole
 #   xinit
+#   xorg-server
+# optional:
+#   emacs-el
+#   gvim
+#   libxml2-doc
+#   openssh
+#   psmisc (to get killall, pstree, fuser)
+#   unzip
+#   vim
+#   xconsole
 #   xkill
-#   xsetroot
 
-CONFIGOPTIONS += --disable-pthreads
+# CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
 # BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true
-INSTALLOPTIONS += prefix=/usr/local/encap
+# INSTALLOPTIONS += prefix=/usr/local/encap
+INSTALLOPTIONS += prefix=/usr
 include Makefile.include
-default:install check
+default: check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:; [ `uname -s` = CYGWIN_NT-5.0 ] && [ `uname -m` = i686 ]
+arch-chk:; [ `uname -o` = Cygwin  ] && [ `uname -m` = i686 ]
 # Local Variables:
-# compile-command: "time make -f Makefile.cygwin "
+# compile-command: "time make -f Makefile.cygwin DISTRIBUTION=3 rebuild-world cygwin-signature "
 # End:

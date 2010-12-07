@@ -80,6 +80,39 @@ static void unblock(int sig) {
   sigprocmask(SIG_UNBLOCK,&s,NULL);
 }
 
+int system_run(M2_string command){
+     /* we used to call "system()", but under cygwin interrupts in the child are blocked */
+     char *c = alloca(command->len + 1);
+     strncpy(c,command->array,command->len);
+     c[command->len] = 0;
+     int pid = fork();
+     if (pid == ERROR) return -1;
+     if (pid == 0) {
+	  static char arg0[10], arg1[10];
+	  strcpy(arg0,"/bin/sh"); /* only for unix-like systems */
+	  strcpy(arg1,"-c");
+	  char *args[4];
+	  args[0] = arg0;
+	  args[1] = arg1;
+	  args[2] = c;
+	  args[3] = 0;
+	  execv(args[0],args);
+	  exit(255);		/* /bin/sh not found */
+	  }
+     else {
+	  while (TRUE) {
+	       int status = 0;
+	       if (waitpid(pid,&status,0) == ERROR) {
+		    if (errno == EINTR) continue;
+		    return -1;
+		    }
+	       if (WIFSIGNALED(status)) return 1000 + WTERMSIG(status);
+	       if (WIFEXITED(status)) return WEXITSTATUS(status);
+	       /* loop if the process was stopped */
+	       }
+	  }
+     }
+
 static void alarm_handler(int sig) {
      interrupts_setAlarmedFlag();
      oursignal(SIGALRM,alarm_handler);
@@ -118,7 +151,13 @@ void segv_handler2(int sig) {
 void stack_trace() {
      void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
      unblock(SIGSEGV);
-     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)syscall(SYS_getpid));
+     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)
+	  #ifdef HAVE_SYSCALL_H
+	     syscall(SYS_getpid)
+	  #else
+	     getpid()
+	  #endif
+	  );
      if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
 #	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
 #	  define i 0
@@ -378,7 +417,7 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
      return 0;
      }
 
-#ifdef HAVE_CLOCK_GETTIME
+#if defined(HAVE_CLOCK_GETTIME) && ( defined(CLOCK_THREAD_CPUTIME_ID) || defined(CLOCK_THREAD_CPUTIME) || defined(CLOCK_PROCESS_CPUTIME_ID) || defined(CLOCK_PROCESS_CPUTIME) )
 
 	#ifdef HAVE_SYS_TYPES_H
 	#include <sys/types.h>
@@ -393,7 +432,19 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 	static __thread double startTime;
 	double system_cpuTime(void) {
 	     struct timespec t;
-	     int err = clock_gettime(CLOCK_THREAD_CPUTIME_ID,&t);
+	     int err = clock_gettime(
+		  #if defined(CLOCK_THREAD_CPUTIME_ID)
+		  CLOCK_THREAD_CPUTIME_ID
+		  #elif defined(CLOCK_THREAD_CPUTIME)
+		  CLOCK_THREAD_CPUTIME
+		  #elif defined(CLOCK_PROCESS_CPUTIME_ID)
+		  CLOCK_PROCESS_CPUTIME_ID
+		  #elif defined(CLOCK_PROCESS_CPUTIME)
+		  CLOCK_PROCESS_CPUTIME
+		  #else
+		  #error "clock_gettime: no suitable argument for getting CPU time"
+		  #endif
+		  ,&t);
 	     if (err) return 0;		/* silent about error */
 	     double u = t.tv_sec + t.tv_nsec * 1e-9;
 	     return u - startTime;

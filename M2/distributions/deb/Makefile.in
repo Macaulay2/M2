@@ -19,7 +19,9 @@ PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
 
 all: chk-opts macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
-chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled check-strip-enabled
+chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
+# Debian prefers stripped binaries, but we don't:
+# chk-opts: check-strip-enabled
 check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
@@ -118,7 +120,13 @@ libraries-used-directly: .prepared tmp@bindir@/M2@EXE@
 	objdump -x tmp@bindir@/M2@EXE@ | grep NEEDED | sed 's/ *NEEDED *//' | sort >$@
 clean::; rm -f libraries-used-directly
 libraries-used: .prepared tmp@bindir@/M2@EXE@
-	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
+	for i in tmp@bindir@/M2@EXE@ tmp@programsdir@/* ;\
+	do if [ -f $$i ] ; then ( set -x ; ldd $$i ) ; fi ; \
+	done \
+	| sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' \
+	| egrep '^/' \
+	| sort | uniq \
+	> $@ || true
 clean::; rm -f libraries-used
 libraries-really-used: libraries-used libraries-used-directly
 	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@

@@ -1,5 +1,4 @@
-
--- -*- coding: utf-8 -*-
+-- -*- coding: utf-8 -*- this has to be on the first line
 newPackage(
 	"AdjointIdeal",
     	Version => "0.6", 

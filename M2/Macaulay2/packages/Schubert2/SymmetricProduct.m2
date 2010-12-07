@@ -1,5 +1,5 @@
 needsPackage "Schubert2"
-load "Schubert2/BrillNoether.m2"
+load "./BrillNoether.m2"
 
 
 CxCd = (g,d) -> (

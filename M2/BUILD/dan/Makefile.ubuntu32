@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-# sudo apt-get install -y openssh-server xbase-clients subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev
+# sudo apt-get install -y openssh-server xbase-clients subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev libz-dev
 
 export CC =
 export CXX = 
@@ -16,9 +16,8 @@ CONFIGOPTIONS += --with-python
 DIRECTORY = ubuntu32.debug
 CONFIGOPTIONS += --disable-tarfile
 else
-default: arch-chk all install check
-INSTALLOPTIONS += prefix=$(HOME)/local/encap
-# CONFIGOPTIONS += --enable-deb
+default: arch-chk all check
+CONFIGOPTIONS += --enable-deb
 CONFIGOPTIONS += --disable-strip
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = ubuntu32.production
