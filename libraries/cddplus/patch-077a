@@ -1,6 +1,6 @@
-diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/Integer.h cdd+-077a/Integer.h
---- /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/Integer.h	2007-10-20 14:50:58.000000000 -0500
-+++ cdd+-077a/Integer.h	2010-11-10 18:47:46.000000000 -0600
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/Integer.h cdd+-077a/Integer.h
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/Integer.h	2007-10-20 15:50:58.000000000 -0400
++++ cdd+-077a/Integer.h	2010-08-29 14:36:19.000000000 -0400
 @@ -23,6 +23,7 @@
  #include <gmp_init.h>
  #include <cctype>
@@ -9,134 +9,9 @@ diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/librari
  
  class Integer; class Rational;
  
-diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/Rational.h cdd+-077a/Rational.h
---- /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/Rational.h	2007-10-20 14:50:58.000000000 -0500
-+++ cdd+-077a/Rational.h	2010-11-10 19:13:19.000000000 -0600
-@@ -41,8 +41,11 @@
-     See the GMP Home Pages at `http://www.swox.com/gmp/'.
-     @index main
- */
-+
-+
-+
- class Rational {
--private:
-+public:
-    /// GMP's representation
-    mpq_t rep;
- 
-@@ -269,7 +272,6 @@
- 
-    ~Rational() { mpq_clear(rep); }
- 
--protected:
-    enum proxy_kind { num, den };
- 
-    template <proxy_kind kind, bool _canonicalize=true>
-@@ -379,31 +381,12 @@
-    };
- 
- public:
--   friend const proxy<num>& numerator(const Rational& a)
--   {
--      return *reinterpret_cast<const proxy<num>*>(mpq_numref(a.rep));
--   }
- 
-    friend proxy<num>& numerator(Rational& a)
-    {
-       return *reinterpret_cast<proxy<num>*>(mpq_numref(a.rep));
-    }
- 
--   friend const proxy<den>& denominator(const Rational& a)
--   {
--      return *reinterpret_cast<const proxy<den>*>(mpq_denref(a.rep));
--   }
--
--   friend proxy<den>& denominator(Rational& a)
--   {
--      return *reinterpret_cast<proxy<den>*>(mpq_denref(a.rep));
--   }
--
--   friend proxy<num,false>& numerator_nocanon(Rational& a)
--   {
--      return *reinterpret_cast<proxy<num,false>*>(mpq_numref(a.rep));
--   }
--
-    void set(const Integer& num, const Integer& den)
-    {
-       set(num.rep, den.rep);
-@@ -860,6 +843,7 @@
-    {
-       if (!b) zero_division();
-       if (!a) return Rational();
-+      extern const proxy<num>& numerator(const Rational&);
-       const Integer g=gcd(numerator(a),b);
-       if (g==1)
- 	 return Rational(mpq_numref(a.rep), mpz_mul, mpq_denref(a.rep), b.get_rep());
-@@ -872,6 +856,7 @@
-    {
-       if (!b) zero_division();
-       if (!a) return Rational();
-+      extern const proxy<num>& numerator(const Rational&);
-       const Integer g=gcd(a,numerator(b));
-       if (g==1)
- 	 return Rational(mpz_mul, mpq_denref(b.rep), a.get_rep(), mpq_numref(b.rep));
-@@ -928,12 +913,16 @@
- 
-    int compare(long b) const
-    {
-+      extern const proxy<den>& denominator(const Rational&);
-+      extern const proxy<num>& numerator(const Rational&);
-       return mpz_cmp_ui(mpq_denref(rep),1) ? numerator(*this).compare(b*denominator(*this))
- 	                                   : numerator(*this).compare(b);
-    }
- 
-    int compare(const Integer& b) const
-    {
-+      extern const proxy<den>& denominator(const Rational&);
-+      extern const proxy<num>& numerator(const Rational&);
-       return mpz_cmp_ui(mpq_denref(rep),1) ? numerator(*this).compare(b*denominator(*this))
- 	                                   : numerator(*this).compare(b);
-    }
-@@ -988,6 +977,8 @@
-    template <typename Traits>
-    void read (std::basic_istream<char, Traits>& is)
-    {
-+      extern proxy<num,false>& numerator_nocanon(Rational&);
-+      extern proxy<den>& denominator(Rational&);
-       numerator_nocanon(*this).read(is);
-       if (!is.eof() && is.peek() == '/') {
- 	 is.ignore();
-@@ -999,6 +990,26 @@
-    }
- };
- 
-+inline const Rational::proxy<Rational::num>& numerator(const Rational& a)
-+   {
-+      return *reinterpret_cast<const Rational::proxy<Rational::num>*>(mpq_numref(a.rep));
-+   }
-+
-+inline const Rational::proxy<Rational::den>& denominator(const Rational& a)
-+   {
-+      return *reinterpret_cast<const Rational::proxy<Rational::den>*>(mpq_denref(a.rep));
-+   }
-+
-+inline Rational::proxy<Rational::den>& denominator(Rational& a)
-+   {
-+     return *reinterpret_cast<Rational::proxy<Rational::den>*>(mpq_denref(a.rep));
-+   }
-+
-+inline Rational::proxy<Rational::num,false>& numerator_nocanon(Rational& a)
-+   {
-+      return *reinterpret_cast<Rational::proxy<Rational::num,false>*>(mpq_numref(a.rep));
-+   }
-+
- inline Rational operator+ (const Rational& a) { return a; }
- 
- inline bool operator!= (const Rational& a, const Rational& b) { return !(a==b); }
-diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/cddtype.h cdd+-077a/cddtype.h
---- /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/cddtype.h	2003-08-15 16:23:46.000000000 -0500
-+++ cdd+-077a/cddtype.h	2010-11-10 18:47:46.000000000 -0600
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/cddtype.h cdd+-077a/cddtype.h
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/cddtype.h	2003-08-15 17:23:46.000000000 -0400
++++ cdd+-077a/cddtype.h	2010-08-29 14:36:19.000000000 -0400
 @@ -10,7 +10,7 @@
     the manual cddman.tex for detail.
  */
@@ -146,9 +21,9 @@ diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/librari
  #ifdef	GMP
  // using GMP wrapper of Polymake (polymake@math.tu-berlin.de)
  #include <Rational.h>
-diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/gmp_init.h cdd+-077a/gmp_init.h
---- /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/gmp_init.h	2007-10-21 03:36:42.000000000 -0500
-+++ cdd+-077a/gmp_init.h	2010-11-10 18:47:46.000000000 -0600
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/gmp_init.h cdd+-077a/gmp_init.h
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/gmp_init.h	2007-10-21 04:36:42.000000000 -0400
++++ cdd+-077a/gmp_init.h	2010-08-29 14:36:19.000000000 -0400
 @@ -13,6 +13,7 @@
     GNU General Public License for more details.
  */
@@ -157,9 +32,9 @@ diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/librari
  #ifndef _POLYMAKE_GMP_INIT_H
  #define _POLYMAKE_GMP_INIT_H "$Project: polymake $$Id: gmp_init.h 7556 2007-01-12 17:36:36Z gawrilow $"
  
-diff -ur --exclude=configure /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/makefile cdd+-077a/makefile
---- /o/dan/M2/1.4/BUILD/dan/builds.tmp/debian64/libraries/cddplus/tmp/cdd+-077a/makefile	2007-10-20 14:53:05.000000000 -0500
-+++ cdd+-077a/makefile	2010-11-10 18:47:46.000000000 -0600
+diff -ur --exclude=configure /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/makefile cdd+-077a/makefile
+--- /Users/dan/src/M2/trunk-clean/BUILD/dan/builds.tmp/mac64.production/libraries/cddplus/tmp/cdd+-077a/makefile	2007-10-20 15:53:05.000000000 -0400
++++ cdd+-077a/makefile	2010-08-29 14:36:19.000000000 -0400
 @@ -1,7 +1,7 @@
  # Makefile for cdd+ compilation with gcc-3.*.
  
