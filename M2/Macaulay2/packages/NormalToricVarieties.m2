@@ -155,7 +155,8 @@ isWellDefined NormalToricVariety := Boolean => X -> (
       if debugLevel > 0 then (
 	<< "-- the rays are not the primitive generators" << endl);
       flag = false; 
-      break));     
+      break);
+    if flag === false then break);     
   -- check whether the intersection of each pair of maximal cones is a cone
   if flag === true then for i to m-2 do (
     for j from i+1 to m-1 do (
@@ -165,7 +166,8 @@ isWellDefined NormalToricVariety := Boolean => X -> (
 	if debugLevel > 0 then (
 	  << "-- intersection of cones is not a cone" << endl);
 	flag = false; 
-	break)));
+	break));
+    if flag === false then break);
   return flag)
 
 affineSpace = method()
@@ -407,10 +409,10 @@ orbits NormalToricVariety := HashTable => (cacheValue symbol orbits)(X -> (
     else for s in max X do H = merge(H,facesOfCone(R_s,s), (p,q) -> p);
     O := new MutableHashTable from apply(d, i -> {i,{}});
     for k in keys H do O#(H#k) = O#(H#k) | {k};
-    return new HashTable from apply(keys O, k -> {k, sort O#k})))
+    return new HashTable from apply(keys O, k -> {k, sort O#k}) | {{d,{}}} ))
 orbits (NormalToricVariety, ZZ) := List => (X,i) -> (
-  if i < 0 or i >= dim X then (
-    error "-- expected a nonnegative integer that is less than the dimension");
+  if i < 0 or i > dim X then (
+    error "-- expected a nonnegative integer that is at most the dimension");
   O := orbits X;
   O#i)
 
@@ -946,17 +948,23 @@ euler CoherentSheaf := F -> (
 regularSubdivision = method()
 regularSubdivision (NormalToricVariety, List, List) := NormalToricVariety => (
   (X,s,w) -> (
-    V := (transpose matrix rays X)_s;
-    C := V || matrix {w};
-    H := fourierMotzkin C;
-    H = matrix select(entries transpose H#0, r -> last r < 0);
-    inc := H * C;
-    F' := apply(apply(numRows inc, i -> select(numColumns inc, 
-	  j -> inc_(i,j) === 0)), f -> s_f);
     F := max X;
-    k := position(F, t -> t === s);
-    F = drop(F, {k,k});
-    return normalToricVariety(rays X, F | F')))
+    R := rays X;
+    V := transpose matrix R;
+    wtg := i -> if member(i,s) then w#(position(s, j -> i === j)) else 0;
+    for f in F do (
+      if #f === rank V_f then continue;
+      w' := f / wtg;
+      if all(w', i -> i === 0) then continue;
+      C := V_f || matrix{w'};
+      H := fourierMotzkin C;
+      H = matrix select(entries transpose H#0, r -> last r < 0);
+      inc := H * C;
+      F' := apply(apply(numRows inc, i -> select(numColumns inc,
+	    j -> inc_(i,j) === 0)), t -> f_t);
+      k := position(F, t -> t === f);
+      F = drop(F,{k,k}) | F');
+    return normalToricVariety(R, F)))    
 
 makeSimplicial = method()
 makeSimplicial NormalToricVariety := NormalToricVariety => X -> (
@@ -4387,13 +4395,11 @@ assert(HH^1(X,OO_X(-2,1,1,-2)) == QQ^2)
 
 -- test 7
 TEST ///
-setRandomSeed 123456
-for i to 20 do (
+for i to 43 do (
   j := random(20);
   X := smoothFanoToricVariety(5,10*i+j);
   assert(isSmooth X and isFano X))
-setRandomSeed 123456
-for i to 20 do (
+for i to 37 do (
   j := random(200);
   X := smoothFanoToricVariety(6,100*i+j);
   << 100*i +j << endl;
@@ -4484,6 +4490,43 @@ assert(isSmooth Y === false)
 Z = makeSmooth X;
 assert(isWellDefined Z === true)
 assert(isSmooth Z === true)
+///
+
+-- test 11
+TEST ///
+Rho = {{1,0,0,0,0,0},{0,1,0,0,0,0},{0,0,1,0,0,0},{0,0,0,1,0,0},{0,0,0,0,1,0},
+  {0,0,0,0,0,1},{-1,-1,-1,-1,-1,-1},{1,1,1,0,0,0},{1,0,0,1,1,0},
+  {0,-1,-1,-1,-1,0},{0,1,0,1,0,1},{0,0,1,0,1,1},{-1,-1,0,0,-1,-1},
+  {-1,0,-1,-1,0,-1}};
+Sigma = {{0,1,3,6,8,9,10,13},{0,1,3,6,8,12,13},{0,1,3,6,9,10,12},{0,1,3,7,8,10},
+  {0,1,3,7,8,12},{0,1,3,7,10,12},{0,1,4,5,8,11},{0,1,4,5,8,13},{0,1,4,5,11,13},
+  {0,1,4,7,8,11},{0,1,4,7,8,13},{0,1,4,7,11,13},{0,1,5,7,8,10,11},
+  {0,1,5,7,9,11,13},{0,1,5,7,9,12},{0,1,5,7,10,12},{0,1,5,8,9,10,13},
+  {0,1,5,9,10,12},{0,1,6,7,9,12},{0,1,6,7,9,13},{0,1,6,7,12,13},{0,1,7,8,12,13},
+  {0,2,3,5,7,8,10,11},{0,2,3,5,7,10,12},{0,2,3,5,8,11,12},{0,2,3,7,8,12},
+  {0,2,4,7,8,11},{0,2,4,7,8,12,13},{0,2,4,7,11,13},{0,2,4,8,11,12},
+  {0,2,4,11,12,13},{0,2,5,7,9,11},{0,2,5,7,9,12},{0,2,5,9,11,12},{0,2,6,7,9,11,13},
+  {0,2,6,7,9,12},{0,2,6,7,12,13},{0,2,6,9,11,12},{0,2,6,11,12,13},
+  {0,3,5,8,9,10},{0,3,5,8,9,12},{0,3,5,9,10,12},{0,3,6,8,9,12},{0,4,5,8,9,11},
+  {0,4,5,8,9,13},{0,4,5,9,11,13},{0,4,6,8,9,11,12},{0,4,6,8,9,13},
+  {0,4,6,8,12,13},{0,4,6,9,11,13},{0,4,6,11,12,13},{0,5,8,9,11,12},
+  {1,2,3,7,8,10,11},{1,2,3,7,8,12},{1,2,3,7,10,12},{1,2,3,8,11,12},
+  {1,2,3,10,11,12},{1,2,4,7,8,11},{1,2,4,7,8,12,13},{1,2,4,7,11,13},
+  {1,2,4,8,11,12},{1,2,4,11,12,13},{1,2,5,6,7,9,11,13},{1,2,5,6,7,9,12},
+  {1,2,5,6,11,12,13},{1,2,5,7,10,11},{1,2,5,7,10,12},{1,2,5,10,11,12},
+  {1,2,6,7,12,13},{1,3,4,8,10,11},{1,3,4,8,10,13},{1,3,4,8,11,12},
+  {1,3,4,8,12,13},{1,3,4,10,11,12,13},{1,3,6,10,12,13},{1,4,5,8,10,11},
+  {1,4,5,8,10,13},{1,4,5,10,11,13},{1,5,6,9,10,12},{1,5,6,9,10,13},
+  {1,5,6,10,12,13},{1,5,10,11,12,13},{2,3,5,10,11,12},{2,5,6,9,11,12},
+  {3,4,5,8,10,11},{3,4,5,8,10,13},{3,4,5,8,11,12},{3,4,5,8,12,13},
+  {3,4,5,10,11,12,13},{3,5,6,8,9,10,13},{3,5,6,8,9,12},{3,5,6,8,12,13},
+  {3,5,6,9,10,12},{3,5,6,10,12,13},{4,5,6,8,9,11,12},{4,5,6,8,9,13},
+  {4,5,6,8,12,13},{4,5,6,9,11,13},{4,5,6,11,12,13}};
+X = normalToricVariety(Rho,Sigma);
+Y = makeSimplicial X;
+debugLevel = 2;
+assert(isWellDefined Y === true)
+assert(isSimplicial Y === true)
 ///
 
 end     
