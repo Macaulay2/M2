@@ -62,6 +62,8 @@ export {
   "emsBound",
   "rawHHOO",
   "makeSimplicial",
+  "Regular",
+  "Push",
   "blowup",
   "makeSmooth"
   }
@@ -951,11 +953,11 @@ regularSubdivision (NormalToricVariety, List, List) := NormalToricVariety => (
     F := max X;
     R := rays X;
     V := transpose matrix R;
-    wtg := i -> if member(i,s) then w#(position(s, j -> i === j)) else 0;
+    wtg := i -> if member(i,s) then w#(position(s, j -> i === j)) else 1;    
     for f in F do (
       if #f === rank V_f then continue;
       w' := f / wtg;
-      if all(w', i -> i === 0) then continue;
+      if all(w', i -> i === 1) then continue;
       C := V_f || matrix{w'};
       H := fourierMotzkin C;
       H = matrix select(entries transpose H#0, r -> last r < 0);
@@ -964,21 +966,42 @@ regularSubdivision (NormalToricVariety, List, List) := NormalToricVariety => (
 	    j -> inc_(i,j) === 0)), t -> f_t);
       k := position(F, t -> t === f);
       F = drop(F,{k,k}) | F');
-    return normalToricVariety(R, F)))    
+    Y := normalToricVariety(R,F);
+    Y.cache.Weights = apply(#R, i -> wtg i);
+    return Y))    
 
-makeSimplicial = method()
-makeSimplicial NormalToricVariety := NormalToricVariety => X -> (
+makeSimplicial = method(
+  TypicalValue => NormalToricVariety,
+  Options => {Strategy => Regular})
+makeSimplicial NormalToricVariety := opts -> X -> (
   Y := X;
-  while true do (
-    F := max Y;
-    V := transpose matrix rays Y;
-    k := position(F, t -> #t =!= rank V_t);
+  local F;
+  local V;
+  local k;
+  local s;
+  if opts.Strategy === Push then (
+    while true do (
+      F = max Y;
+      V = transpose matrix rays Y;
+      k = position(F, t -> #t =!= rank V_t);
+      if k === null then break
+      else (
+      	s = F#k;
+      	c := 1 + dim Y - rank V_s;
+      	i := 0;
+      	edges := select(orbits(Y,c), r -> all(r, j -> member(j,s)));
+      	while #select(edges, r -> not member(s#i,r)) === 1 do i = i+1;
+      	Y = blowup({s#i},Y))))
+  else while true do (
+    F = max Y;
+    V = transpose matrix rays Y;
+    k = position(F, t -> #t =!= rank V_t);
     if k === null then break
     else (
-      s := F#k;
+      s = F#k;
       n := #s;
       m := (n // 10) + 1;
-      w := apply(n, i -> random(1,100*m));
+      w := apply(n, i -> random(2,100*m));
       Y = regularSubdivision(Y,s,w)));
   return Y)
 
@@ -997,14 +1020,25 @@ blowup (List, NormalToricVariety, List) := NormalToricVariety => (s,X,v) -> (
   starIndex := positions(F, t -> all(s, i -> member(i,t)));
   star := F_starIndex;
   V := transpose matrix rays X;
-  c := 1+dim X - rank V_s;
-  clStar := select(orbits(X,c), t -> any(star, s -> all(t, j -> member(j,s))));
+  d := dim X;
+  clStar := {};
+  for t in star do (
+    c := 1 + d - rank V_t;
+    clStar = clStar | select(orbits(X,c), r -> all(r, j -> member(j,t))));
+  clStar = unique clStar;
   n := #rays X;
-  F' := for t in clStar list (
-    if all(s, i -> member(i,t)) then continue
-    else t | {n});
   F = F_(select(#F, i -> not member(i, starIndex)));
-  return normalToricVariety(rays X | {v}, F | F'));
+  local F';
+  if #s === 1 then (
+    F' = for t in clStar list (
+      if member(s#0,t) then continue
+      else sort(t | s));
+    return normalToricVariety(rays X, F | F'))
+  else (
+    F' = for t in clStar list (
+      if all(s, i -> member(i,t)) then continue
+      else t | {n});
+  return normalToricVariety(rays X | {v}, F | F')))
 
 blowup (List, NormalToricVariety) := NormalToricVariety => (s,X) -> (
   v := makePrimitive sum ((rays X)_s);
@@ -3977,10 +4011,13 @@ document {
 
 document { 
   Key => {makeSimplicial, 
-    (makeSimplicial,NormalToricVariety)},
+    (makeSimplicial,NormalToricVariety), 
+    [makeSimplicial,Strategy]},
   Headline => "make a simplicial toric variety ",
   Usage => "makeSimplical X",
-  Inputs => {"X" => NormalToricVariety},
+  Inputs => {
+    "X" => NormalToricVariety,
+    Strategy => {"either ", TT "Regular", " or ", TT "Push"}},
   Outputs => {NormalToricVariety => " which is simplicial"},
   "A normal toric variety is simplical if every cone in its fan is simplicial
   and a cone is simplicial if its minimal generators are linearly independent
@@ -3996,17 +4033,23 @@ document {
     {TEX ///$X$///, " has only finite quotient singularities."}},
   PARA{},
   "Given a normal toric variety, this method makes a simplicial toric variety
-  with the same rays by triangulating the non-simplicial maximal cones.  The
-  triangulation is constructed by repeated regular subdivisions using random
-  integral weight vectors.",
+  with the same rays by triangulating the non-simplicial maximal cones.  For 
+  the ", TT "Regular", " strategy, the triangulation is constructed by repeated 
+  regular subdivisions using random integral weight vectors.  For the ",
+  TT "Push", " strategy, the triangulation is constructed by repeated pushing
+  subdivisions (i.e. blowups at a given ray).",
   EXAMPLE lines ///
     X = normalToricVariety(id_(ZZ^3) | - id_(ZZ^3));
     isSimplicial X
-    Y = makeSimplicial X;
-    isSimplicial Y
-    rays Y === rays X
-    max Y
+    Y1 = makeSimplicial X;
+    isSimplicial Y1
+    rays Y1 === rays X
+    max Y1
     max X
+    Y2 = makeSimplicial(X, Strategy => Push);
+    isSimplicial Y2
+    rays Y2 === rays X
+    max Y2
     ///,    
   "If the initial toric variety is simplicial, then this method simply returns
   it.",
@@ -4071,6 +4114,10 @@ document {
     Bl3 = blowup({0,1,2,3},C,{5,3,4});
     rays Bl3
     max Bl3
+    Bl4 = blowup({0},C);
+    isSimplicial Bl4
+    rays Bl4
+    max Bl4
     ///,  
   "The third collection of examples illustrate some blowups of a non-simplicial
   projective toric variety.",
@@ -4079,24 +4126,27 @@ document {
     rays X
     max X
     isSimplicial X
+    isProjective X
     orbits(X,1)
-    Bl4 = blowup({0,2},X);
-    rays Bl4
-    max Bl4
-    Bl5 = blowup({6,7},Bl4);
-    rays Bl5    
-    max Bl5    
-    Bl6 = blowup({1,5},Bl5);
-    rays Bl6
-    max Bl6
-    isSimplicial Bl6
+    Bl5 = blowup({0,2},X);
+    Bl6 = blowup({6,7},Bl5);
+    Bl7 = blowup({1,5},Bl6);
+    rays Bl7
+    max Bl7
+    isSimplicial Bl7
+    isProjective Bl7
+    Bl8 = blowup({0},X);
+    Bl9 = blowup({7},Bl8);
+    rays Bl9 === rays X
+    isSimplicial Bl9
+    isProjective Bl9
     ///,  
   Caveat => {"The method assumes that the list ", TT "v", " corresponds to a
   primitive vector.  In other words, the greatest common divisor of its entries
   is one.  The method also assumes that ", TT "v", " lies in the relative
   interior of the cone corresponding to ", TT "s", ".  If either of these
-  conditions fail, then the output will not be a well-defined normal toric
-  variety."},
+  conditions fail, then the output will not necessarily be a well-defined 
+  normal toric variety."},
   SeeAlso => {
     "Resolution of singularities",
     (orbits,NormalToricVariety),
@@ -4458,6 +4508,10 @@ Y = makeSimplicial X;
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isSmooth Y === false)
+Y = makeSimplicial(X, Strategy => Push);
+assert(isWellDefined Y === true)
+assert(isSimplicial Y === true)
+assert(isSmooth Y === false)
 Z = makeSmooth X;
 assert(isWellDefined Z === true)
 assert(isSmooth Z === true)
@@ -4484,6 +4538,10 @@ assert(fromWDivToCl X * fromCDivToWDiv X == fromPicToCl X * fromCDivToPic X)
 assert(isEffective X_0 === true)
 assert(isCartier X_0 === false)
 Y = makeSimplicial X;
+assert(isWellDefined Y === true)
+assert(isSimplicial Y === true)
+assert(isSmooth Y === false)
+Y = makeSimplicial(X, Strategy => Push);
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isSmooth Y === false)
@@ -4527,6 +4585,43 @@ Y = makeSimplicial X;
 debugLevel = 2;
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
+assert(isProjective Y === true)
+Y = makeSimplicial(X, Strategy => Push);
+assert(isWellDefined Y === true)
+assert(isSimplicial Y === true)
+assert(isProjective Y === true)
+
+///
+
+-- test 12
+TEST ///
+C = normalToricVariety({{1,0,0},{1,1,0},{1,0,1},{1,1,1}},{{0,1,2,3}});
+Bl1 = blowup({0,1,2,3},C);
+assert(rays Bl1 === {{1,0,0},{1,1,0},{1,0,1},{1,1,1},{2,1,1}})
+assert(max Bl1 === {{0,1,4},{0,2,4},{1,3,4},{2,3,4}})
+Bl2 = blowup({0,1},C);
+assert(rays Bl2 === {{1,0,0},{1,1,0},{1,0,1},{1,1,1},{2,1,0}})
+assert(max Bl2 === {{0,2,4},{1,3,4},{2,3,4}})
+Bl3 = blowup({0,1,2,3},C,{5,3,4});
+assert(rays Bl3 === {{1,0,0},{1,1,0},{1,0,1},{1,1,1},{5,3,4}})
+assert(max Bl3 === {{0,1,4},{0,2,4},{1,3,4},{2,3,4}})
+Bl4 = blowup({0},C);
+assert(isSimplicial Bl4 === true)
+assert(rays Bl4 === {{1,0,0},{1,1,0},{1,0,1},{1,1,1}})
+assert(max Bl4 === {{0,1,3},{0,2,3}})
+X = normalToricVariety (id_(ZZ^3) | (-id_(ZZ^3)));
+Bl5 = blowup({0,2},X);
+assert(rays Bl5 === rays X | {{1,0,1}})
+assert(isProjective Bl5 === true)
+assert(isWellDefined Bl5 === true)
+Bl6 = blowup({0},X);
+assert(rays Bl6 === rays X)
+assert(isProjective Bl6 === true)
+Bl7 = blowup({7},Bl6);
+assert(rays Bl7 === rays X)
+assert(isSimplicial Bl7 === true)
+assert(isProjective Bl7 === true)
+assert(isWellDefined Bl7 === true)
 ///
 
 end     
