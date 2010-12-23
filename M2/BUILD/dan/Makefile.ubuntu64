@@ -12,7 +12,7 @@ CONFIGOPTIONS += --enable-debug --disable-pthreads
 DIRECTORY = ubuntu64.debug
 
 else
-default: arch-chk all install check
+default: arch-chk all check
 
 ifeq ($(PRODUCTION),yes)
     CONFIGOPTIONS += --enable-deb
