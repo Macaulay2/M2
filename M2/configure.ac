@@ -791,6 +791,11 @@ AC_SUBST(BUILTLIBS,)
 #	it writes a file into the user's home directory called ".polymake"
 #	it asks questions
 #    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
+#    Greg Smith requested cddplus and lrslib for future use
+#    nauty is used by the package Nauty
+#    normaliz is used by the package Normaliz
+#    gfan is used by the packages gfanInterface and StatePolytope
+#    4ti2 is used by the package FourTiTwo
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
 AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk    cddlib ")
 dnl I think we don't use this:
