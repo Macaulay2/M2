@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 --  Binomials.m2
 --
---  Copyright (C) 2009, 2010 Thomas Kahle <kahle@mis.mpg.de>
+--  Copyright (C) 2009,2010,2011 Thomas Kahle <kahle@mis.mpg.de>
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
@@ -31,7 +31,8 @@ newPackage(
 		  HomePage => "http://www.thomas-kahle.de/bpd"}},
     	Headline => "Specialized routines for binomial Ideals",
 	Configuration => { },
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	Reload=>true
     	)
    
 export {
@@ -1547,7 +1548,7 @@ document {
      EXAMPLE {
           "R = QQ[x,y,z]",
           "I = ideal (x^2, x*y, y^2, x*(z^3-1), y*(z^2-1))",
-          "bud = binomialPrimaryDecomposition I",
+          "bud = binomialUnmixedDecomposition I",
 	  "intersect bud == I"
           },
      "A synonym for this function is 'BUD'.",
@@ -1884,8 +1885,8 @@ document {
 	  "R = QQ[x,y]",
 	  "I = ideal(x*(y^3-1),x^2)",
 	  "cv = isCellular (I,returnCellVars=>true)",
-	  "ud = cellularBinomialUmixedDecomposition (I,cellVariables=>cv)"
-          }
+	  "ud = cellularBinomialUnmixedDecomposition (I,cellVariables=>cv)"
+          },
      SeeAlso => binomialUnmixedDecomposition
      }    
 
