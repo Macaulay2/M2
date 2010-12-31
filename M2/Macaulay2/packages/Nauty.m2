@@ -418,13 +418,12 @@ stringToGraph (String, PolynomialRing) := Graph => (str, R) -> graph stringToEdg
 -- Sends a command and retrieves the results into a list of lines.
 callNauty = method()
 callNauty (String, List) := List => (cmdStr, dataList) -> (
-    try (
-        f := openInOut ("!" | nauty'path | cmdStr);
-        apply(dataList, d -> f << d << endl);
-        f << closeOut;
-        r := lines get f;
-        if instance(r, Nothing) then r = {};
-    ) then r else error("callNauty: External call to Nauty has failed; ensure that Nauty is on the path and the input is valid.")
+    infn := temporaryFileName();
+    o := openOut infn;
+    scan(dataList, d -> o << d << endl);
+    close o;
+    lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn)
+    else error("callNauty: External call to nauty has failed; ensure that nauty is on the path and the input is valid.")
 )
 
 -------------------
