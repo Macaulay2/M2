@@ -1,3 +1,5 @@
+# -*- makefile-gmake -*-
+
 # @configure_input@
 
 # get rid of some unused implicit rules to make debugging simpler

@@ -1,4 +1,5 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
+
 # CONFIGOPTIONS += --with-python
 CONFIGOPTIONS += CC=icc CXX=icpc
 DIRECTORY = ubuntu64-icc

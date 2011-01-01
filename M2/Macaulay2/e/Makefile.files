@@ -1,4 +1,4 @@
-# -*- Makefile -*-
+# -*- makefile-gmake -*-
 
 ##################
 ## Source code ###

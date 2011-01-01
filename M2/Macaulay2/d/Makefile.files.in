@@ -1,3 +1,5 @@
+# -*- makefile-gmake -*-
+
 M2_OBJECTS :=
 M2_CFILES :=
 M2_LASTCFILES :=

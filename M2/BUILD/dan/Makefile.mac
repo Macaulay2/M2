@@ -1,4 +1,5 @@
-# -*- Makefile -*-
+# -*- makefile-gmake -*-
+
 #############################################################################
 # gdb crashes if I compile for 64 bit:
 # -- loading .gdbinit

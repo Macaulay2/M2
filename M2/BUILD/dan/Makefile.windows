@@ -1,4 +1,4 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
 
 PATH := "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/IDE:$(PATH)"
 PATH := "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/VC/bin:$(PATH)"

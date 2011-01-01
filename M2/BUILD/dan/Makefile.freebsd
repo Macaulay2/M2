@@ -1,4 +1,4 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
 
 # to do: record an origin in the package for package deletion time:
 #     pkg_add: package Macaulay2-1.1.99 has no origin recorded

@@ -1,4 +1,5 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
+
 CONFIGOPTIONS += --enable-debug --disable-optimize
 # CONFIGOPTIONS += --with-python
 DIRECTORY = ubuntu64-debug

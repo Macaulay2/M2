@@ -1,4 +1,4 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
 
 CONFIGOPTIONS += --build=x86_64-pc-linux-gnu
 # Here is the reason to give a --build option: gmp and mpir have a bug in the core2 version of mpn/lshift.as that

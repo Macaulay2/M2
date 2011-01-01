@@ -1,4 +1,5 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
+
 export CC =
 export CXX = 
 

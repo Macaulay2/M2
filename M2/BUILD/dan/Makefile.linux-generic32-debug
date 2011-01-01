@@ -1,4 +1,5 @@
-# -*- Makefile -*-
+# -*- makefile-gmake -*-
+
 DIRECTORY ?= linux32.debug
 CONFIGOPTIONS += --enable-debug
 include Makefile.linux-generic32

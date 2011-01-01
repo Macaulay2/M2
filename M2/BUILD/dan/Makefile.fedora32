@@ -1,4 +1,5 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
+
 DIRECTORY = fedora32
 CONFIGOPTIONS += --build=i386-pc-linux-gnu
 CONFIGOPTIONS += --enable-rpm
