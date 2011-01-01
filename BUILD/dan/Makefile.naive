@@ -1,4 +1,5 @@
-# -*- Makefile -*-
+# -*- makefile-gmake -*-
+
 # here we try to compile with no special options, to see if we have a smart configure script
 export PERL5LIB =
 export MANPATH =

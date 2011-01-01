@@ -1,3 +1,5 @@
+# -*- Makefile -*-
+
 # @configure_input@
 VPATH = @srcdir@
 NORULES = yes

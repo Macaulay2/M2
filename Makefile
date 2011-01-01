@@ -1,3 +1,5 @@
+# -*- makefile-gmake -*-
+
 .PHONY : all monitor
 
 VERBOSE = yes

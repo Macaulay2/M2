@@ -1,4 +1,5 @@
-# -*- Makefile -*-
+# -*- makefile-gmake -*-
+
 DIRECTORY = ubuntu32-debug
 CONFIGOPTIONS += --enable-build-libraries="mpfr"
 CONFIGOPTIONS += --enable-debug --disable-pthreads

@@ -1,4 +1,4 @@
-#-*- Makefile -*-
+# -*- makefile-gmake -*-
 
 # things to install with cygwin setup:
 #   unzip

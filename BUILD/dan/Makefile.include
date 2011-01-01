@@ -1,4 +1,5 @@
-# -*- Makefile -*-
+# -*- makefile-gmake -*-
+
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
 .PHONY : $(TARGETS)
 $(TARGETS): banner
