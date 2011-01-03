@@ -420,10 +420,16 @@ callNauty = method()
 callNauty (String, List) := List => (cmdStr, dataList) -> (
     infn := temporaryFileName();
     o := openOut infn;
+    cleanup := () -> removeFile infn;
     scan(dataList, d -> o << d << endl);
     close o;
-    lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn)
-    else error("callNauty: External call to nauty has failed; ensure that nauty is on the path and the input is valid.")
+    r := lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn)
+    else (
+	 cleanup();
+	 error("callNauty: External call to nauty has failed; ensure that nauty is on the path and the input is valid.");
+	 );
+    cleanup();
+    r
 )
 
 -------------------
