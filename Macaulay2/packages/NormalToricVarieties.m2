@@ -4445,11 +4445,13 @@ assert(HH^1(X,OO_X(-2,1,1,-2)) == QQ^2)
 
 -- test 7
 TEST ///
-for i to 43 do (
+setRandomSeed 123456
+for i to 20 do (
   j := random(20);
   X := smoothFanoToricVariety(5,10*i+j);
   assert(isSmooth X and isFano X))
-for i to 37 do (
+setRandomSeed 123456
+for i to 20 do (
   j := random(200);
   X := smoothFanoToricVariety(6,100*i+j);
   << 100*i +j << endl;
