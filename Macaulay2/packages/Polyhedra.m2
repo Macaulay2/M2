@@ -17,7 +17,7 @@ newPackage("Polyhedra",
 	 "acceptance date" => "2009-09-07",
 	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
 	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
-	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
+	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
  	 "release at publication" => 9344,
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
@@ -27,7 +27,7 @@ newPackage("Polyhedra",
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
 	  Email => "rbirkner@mi.fu-berlin.de"}},
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 ---------------------------------------------------------------------------
@@ -3242,8 +3242,8 @@ ehrhart Polyhedron := P -> (
 	v := matrix apply(n,k -> {-1+#latticePoints( (k+1)*P)});
 	M := promote(matrix apply(n,i -> reverse apply(n, j -> (i+1)^(j+1))),QQ);
 	M = flatten entries ((inverse M)*v);
-	x := symbol x;
-	R := QQ[x];
+	R := QQ[getSymbol "x"];
+	x := R_"x";
 	1+sum apply(n,i -> M#i * x^(n-i)))
 
 
