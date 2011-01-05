@@ -1,17 +1,23 @@
 -- -*- coding: utf-8 -*-
 -----------------------------------------------------------------------
--- Copyright 2008,2009,2010 Graham Denham, Gregory G. Smith
+-- Copyright 2008,2009,2010,2011 Graham Denham, Gregory G. Smith
 --
 -- You may redistribute this program under the terms of the GNU General
 -- Public License as published by the Free Software Foundation, either
 -- version 2 or the License, or any later version.
 -----------------------------------------------------------------------
 
--- July 12 2010: hyperplane arrangements package;
+-- Jan 5 2011: hyperplane arrangements package;
 -- Graham Denham and Greg Smith, with
 -- thanks to Sorin Popescu for the Orlik-Solomon code
 --
--- release 0.7: additional bug fixes, more arrangements
+-- release 0.8-: 
+-- corrects a bug that affected multiplier ideals, added log-canonical
+-- threshold
+-- to do: known bug: EPY treats non-central arrangements incorrectly.
+--
+-- release 0.7:
+-- more canned arrangements
 -- 
 -- new in release 0.6: multiplier ideals; bug fixes (in particular
 -- involving empty arrangements); some caching; a "circuits" method;
@@ -39,7 +45,7 @@ export {Arrangement, arrangement, arrangementLibrary, -- compress, trim, coeffic
      typeD, graphic, 
      Flat, flat, flats, circuits, tolist, closure, meet, vee, subArrangement, 
      changeRing, restriction, arrangementSum, EPY, der, crit, omega, HS, dlogPhi,
-     freeDlogPhi, isDecomposable, multIdeal, randomArrangement}
+     freeDlogPhi, isDecomposable, multIdeal, lct, randomArrangement}
 
 Arrangement = new Type of HashTable
 Arrangement.synonym = "hyperplane arrangement"
@@ -470,7 +476,7 @@ flats (ZZ,Arrangement) := List => (j,A) -> (
      unique(L/indices/(S->closure(A,S))));
 
 flats (Arrangement) := List => A -> (
-     apply(rank A,j->flats(j,A)));
+     apply(1+rank A,j->flats(j,A)));
 
 -- return list of indices of hyperplanes in minimal dependent sets
 
@@ -638,6 +644,7 @@ weight := (F,m) -> (
 
 protect multipliers
 protect irreds
+
 multIdeal = method(TypicalValue => Ideal)
 -- it's expensive to recompute the list of irreducible flats, 
 -- as well as intersections of ideals.  So we cache a hash table
@@ -652,7 +659,7 @@ multIdeal (RR,Arrangement,List) := Ideal => (s,A,m) -> (
      exps := A.cache.irreds/(F->max(0,floor(s*weight(F,m))-rank(F)+1));
      if not A.cache.?multipliers then A.cache.multipliers = new MutableHashTable;
      if not A.cache.multipliers#?exps then (
-	  ideals := A.cache.irreds/(F-> ideal tolist (A_F));
+	  ideals := A.cache.irreds/(F-> trim ideal tolist (A_F));
 	  A.cache.multipliers#exps = intersect apply(#exps, i->(ideals_i)^(exps_i)))
      else
      	  A.cache.multipliers#exps);
@@ -664,6 +671,20 @@ multIdeal (RR,Arrangement) := Ideal => (s,A) -> (
 -- numeric argument might be in a subring of RR:
 multIdeal (Number,Arrangement) := Ideal => (s,A) -> multIdeal(numeric(s), A);
 multIdeal (Number,Arrangement,List) := Ideal => (s,A,m) -> multIdeal(numeric(s), A, m);
+
+-- log-canonical threshold:
+-- use the observation that the jumping numbers must be rationals with
+-- denominators that divide the weight of one or more flats.
+
+lct = method(TypicalValue => QQ);
+
+lct Arrangement := QQ => A -> (
+     I0 := multIdeal(0,A);  -- cache the irreducibles, make A a multiarrangement
+     irreds := A.cache.simple.cache.irreds;
+     N := lcm(irreds/(F->weight(F,A.cache.m)));
+     s := 1;
+     while I0 == multIdeal(s/N,A) do s = s+1;
+     s/N);     
 
 -- critical set ideal: internal use only.
 
@@ -1477,23 +1498,51 @@ document {
      multiplicities ", TT "m", ".  This uses the
      explicit formula of M. Mustata [TAMS 358 (2006), no 11, 5015--5023], as 
      simplified by Z. Teitler [PAMS 136 (2008), no 5, 1902--1913].",
-     PARA {}, "One can compute directly:",
+     PARA {}, "Let's consider Example 6.3 of Berkesch and Leykin from 
+     arXiv:1002.1475v2:",
      EXAMPLE lines ///
-          A = typeA(3);
-	  hilbertSeries multIdeal(3,A)
+          R := QQ[x,y,z];
+	  f := toList factor((x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z) / first;
+	  A := arrangement f
+
+	  multIdeal(3/7,A)
      ///,
-     "Since the multiplier ideal is a locally constant function of its
-     real parameter, one test to see at what values it changes:",
-     -- using "lines" in the next example gives incorrect html:
+     "Since the multiplier ideal is a step function of its
+     real parameter, one tests to see at what values it changes:",
      EXAMPLE {
 	  "H = new MutableHashTable",
-	  "scan(40,i -> (
-	  	    s := i/20.;
+	  "scan(39,i -> (
+	  	    s := i/21;
 	  	    I := multIdeal(s,A);
 	  	    if not H#?I then H#I = {s} else H#I = H#I|{s}));",
 	  "netList sort values H -- values of s giving same multiplier ideal"
-	  }
+	  },
+     SeeAlso => lct
 }
+
+document {
+     Key => {lct, (lct,Arrangement)},
+     Headline => "Compute the log-canonical threshold of an arrangement",
+     Usage => "lct(A)",
+     Inputs => {
+	  "A" => Arrangement => "an arrangement of n hyperplanes"},
+     Outputs => {
+	  QQ => {"The log-canonical threshold of ", TT "A", "."}},
+     "The log-canonical threshold of ", TT "A", " defined by a polynomial ",
+     TT "f", " is the least number ", TT "c", " for which the multiplier ideal ",
+     TT "J(f^c)", " is nontrivial.",
+     PARA {}, "Let's consider Example 6.3 of Berkesch and Leykin from 
+     arXiv:1002.1475v2:",
+     EXAMPLE lines ///
+          R := QQ[x,y,z];
+	  f := toList factor((x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z) / first;
+	  A := arrangement f
+	  lct A
+     ///,
+     "note that ", TT "A", " is allowed to be a multiarrangement.",
+     SeeAlso => multIdeal
+}
+	  
 
 document {
      Key => {EPY, (EPY,Arrangement), (EPY,Ideal), 
