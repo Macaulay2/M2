@@ -472,11 +472,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      stderr << cmd << endl;
      makeDirectory rundir;
      r := chkrun cmd;
-     if r == 512 then (
-	  stderr << newline;
-	  error("run: M2 subprocess interrupted, returns exit code 2");
-	  )
-     else if r == 0 then (
+     if r == 0 then (
 	  scan(reverse findFiles rundir, f -> if isDirectory f then (
 		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
 		    try removeDirectory f
@@ -494,9 +490,9 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
-     stderr << tmpf << ":0:1: (output file) error: program exited with return code: (" << r//256 << "," << r%256 << ")" << endl;
+     stderr << tmpf << ":0:1: (output file) error: Macaulay2 exited with return code " << r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
-     stderr << inf  << ":0:1: (input file) error: ..." << endl;
+     stderr << inf  << ":0:1: (input file)" << endl;
      scan(statusLines get inf, x -> stderr << x << endl);
      if # findFiles rundir == 1
      then removeDirectory rundir
@@ -958,6 +954,12 @@ installPackage Package := opts -> pkg -> (
 	  setupButtons();
 	  makeDirectory (buildPrefix|htmlDirectory);
 	  if verbose then stderr << "--making empty html pages in " << buildPrefix|htmlDirectory << endl;
+	  if pkg.Options.Headline =!= null then (
+	       buildPrefix|htmlDirectory|".Headline" << pkg.Options.Headline << close;
+	       );
+	  if pkg.Options.Certification =!= null then (
+	       buildPrefix|htmlDirectory|".Certification" << toExternalString pkg.Options.Certification << close;
+	       );
 	  scan(nodes, tag -> if not isUndocumented tag then (
 		    fkey := DocumentTag.FormattedKey tag;
 		    fn := buildPrefix | htmlFilename tag;
@@ -1159,6 +1161,10 @@ makePackageIndex List := path -> (
      initInstallDirectory options installPackage;
      absoluteLinks = true;
      key := "Macaulay2";
+     star := IMG {
+	  "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png",
+	  "alt" => "a gold star"
+	  };
      htmlDirectory = applicationDirectory();
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
@@ -1202,13 +1208,19 @@ makePackageIndex List := path -> (
 					if debugLevel > 10 then stderr << "--checking documentation directory " << p << endl;
 					r := readDirectory p;
 					r = select(r, fn -> fn != "." and fn != ".." );
-					r = select(r, pkg -> fileExists (prefixDirectory | replace("PKG",pkg,layout#"packagehtml") | "index.html"));
+					pkghtmldir := pkg -> prefixDirectory | replace("PKG",pkg,layout#"packagehtml");
+					r = select(r, pkg -> fileExists (pkghtmldir pkg | "index.html"));
 					r = sort r;
 					DIV {
 					     HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
-					     if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | replace("PKG",pkg,layout#"packagehtml") | "index.html", pkg }) 
-					     }
-					)
+					     if #r > 0 then UL apply(r, pkg -> LI splice {
+						       if fileExists (pkghtmldir pkg | ".Certification") then (
+							    star, " "
+							    ),
+						       HREF { pkghtmldir pkg | "index.html", pkg },
+						       if fileExists (pkghtmldir pkg | ".Headline") then (
+							    " -- ", get (pkghtmldir pkg | ".Headline")
+							    )})})
 				   else (
 					if debugLevel > 10 then stderr << "--documentation directory does not exist: " << p << endl;
 					)))))
@@ -1234,6 +1246,7 @@ chk := ret -> if ret != 0 then (
 browserMethods := hashTable {
      "firefox" => url -> {"firefox", url},
      "open" => url -> {"open", url},
+     "cygstart" => url -> {"cygstart", url},
      "netscape" => url -> {"netscape", "-remote",  "openURL(" | url | ")" },
      "windows firefox" => url -> { "/cygdrive/c/Program Files/Mozilla Firefox/firefox", "-remote", "openURL(" | url | ")" }
      }
@@ -1242,8 +1255,9 @@ new URL from String := (URL,str) -> new URL from {str}
 show URL := x -> (
      url := x#0;
      browser := getenv "WWWBROWSER";
-     if version#"operating system" === "MacOS" and runnable "open" then browser = "open"; -- should ignore WWWBROWSER, according to Mike
-     if version#"operating system" === "MicrosoftWindows" then browser = "windows firefox";
+     if version#"operating system" === "MacOS" and runnable "open" then browser = "open" -- should ignore WWWBROWSER, according to Mike
+     else
+     if version#"issue" === "Cygwin" then browser = "cygstart";
      if browser === "" then (
 	  if runnable "firefox" then browser = "firefox"
 	  else if runnable "netscape" then browser = "netscape"
@@ -1252,7 +1266,7 @@ show URL := x -> (
      cmd := if browserMethods#?browser then browserMethods#browser url else { browser, url };
      if fork() == 0 then (
 	  setGroupID(0,0);
-     	  exec cmd;
+     	  try exec cmd;
      	  stderr << "exec failed: " << toExternalString cmd << endl;
 	  exit 1
 	  )

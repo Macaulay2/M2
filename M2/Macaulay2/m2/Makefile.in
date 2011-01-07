@@ -1,3 +1,5 @@
+# -*- makefile-gmake -*-
+
 # @configure_input@
 all: initialize phase1
 include ../../include/config.Makefile
