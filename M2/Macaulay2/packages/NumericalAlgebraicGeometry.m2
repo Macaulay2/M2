@@ -1673,7 +1673,7 @@ areEqual (List,List) := o -> (a,b) -> (
 	  #a == #b and all(#a, i->areEqual(a#i,b#i,o))
 	  ) else (
      	  #a == #b and ( if o.Projective 
-	       then projectiveDistance(a,b) < o.Tolerance
+	       then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm2 a) * (norm2 b)) < o.Tolerance  -- projective distance is too rough in practice
 	       else norm2 (a-b) < o.Tolerance * norm2 a
 	       )
 	  )
