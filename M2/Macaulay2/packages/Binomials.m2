@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 --  Binomials.m2
 --
---  Copyright (C) 2009 Thomas Kahle <kahle@mis.mpg.de>
+--  Copyright (C) 2009,2010,2011 Thomas Kahle <kahle@mis.mpg.de>
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
@@ -23,21 +23,23 @@
 
 newPackage(
 	"Binomials",
-	Version => "0.5.4",
-	Date => "December 2009",
+	Version => "0.6",
+	Date => "December 2010",
 	Authors => {{
 		  Name => "Thomas Kahle",
 		  Email => "kahle@mis.mpg.de",
-		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/bpd"}},
+		  HomePage => "http://www.thomas-kahle.de/bpd"}},
     	Headline => "Specialized routines for binomial Ideals",
 	Configuration => { },
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	Reload=>true
     	)
    
 export {
      -- 'Official' functions
      binomialPrimaryDecomposition,
      binomialCellularDecomposition,
+     binomialUnmixedDecomposition,
      binomialRadical,
      binomialMinimalPrimes,
      binomialAssociatedPrimes,
@@ -53,12 +55,14 @@ export {
      latticeBasisIdeal,
      -- cellular stuff:
      cellularBinomialAssociatedPrimes,
+     cellularBinomialUnmixedDecomposition,
      -- cellularAssociatedLattices,
      cellularBinomialPrimaryDecomposition,
      cellularBinomialRadical,
      -- simple wrappers:
      BPD,
      BCD,
+     BUD,
 --     BCDisPrimary,
      -- auxillary functions:
      partialCharacter,
@@ -186,6 +190,19 @@ isCellular Ideal := Ideal => o -> I -> (
      else return false;
      )
 
+cellVars = method (Options => {cellVariables => null})
+cellVars Ideal := Ideal => o -> I -> (
+     -- This function compotes the cell variables for a cellular ideal.
+     -- If a list of cellVars is given it maps them to the ring of I
+     -- to ensure uniformity when changing rings.
+     if o#cellVariables === null then (
+	  cv := {};
+	  for i in gens ring I do if saturate (I,i) != substitute(ideal(1), ring I) then cv=cv|{i};
+	  return cv;
+	  )
+     else return ((i) -> sub(i, ring I)) \ o#cellVariables;
+     )
+
 partialCharacter = method (Options => {cellVariables => null})
 partialCharacter Ideal := Ideal => o -> I -> (
      -- Will compute the partial character associated to a cellular binomial Ideal.
@@ -201,12 +218,7 @@ partialCharacter Ideal := Ideal => o -> I -> (
      II := ideal;
      
      -- The input should be a cellular ideal 
-     cv := null; -- Getting a local name
-     if o#cellVariables === null then (
-	  -- No cell variables are given -> compute them
-	  cv = cellVars I;
-	  )
-     else cv = o#cellVariables;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
      ncv := toList (set gens R - cv);
      
      -- If there are no cellular variables, 
@@ -341,27 +353,14 @@ isPureDifference = I -> (
 	  );
      return true;
      )
-     
-cellVars = I -> (
-     cv := {};
-     for i in gens ring I do if saturate (I,i) != substitute(ideal(1), ring I) then cv=cv|{i};
-     return cv;
-     )
 
+     
 nonCellstdm = {cellVariables=>null} >> o -> I -> (
      R := ring I;
      scan (gens R, (v -> v = local v));     
 
-     cv2 := {};
-     if o#cellVariables === null then (
-	  print "CellVariables not given, Please consider precomputing them";
-	  cv2 = cellVars I;
-	  )
-     else (
-	  cv2 = o#cellVariables;
-	  -- if the cell variables changed their identities by field extension:
-	  );
-     
+     cv2 := cellVars(I, cellVariables=>o#cellVariables);
+
      -- Extracts the monomials in the non-Cell variables.
      cv := set cv2; 
      -- Here go the non-cell variables
@@ -381,12 +380,7 @@ nonCellstdm = {cellVariables=>null} >> o -> I -> (
 
 maxNonCellstdm = {cellVariables=>null} >> o -> I -> (
      -- Extracts the maximal elements in the set of monomials 
-     cv := {};
-     if o#cellVariables === null then (
-	  print "CellVariables not given, Please consider precomputing them";
-	  cv = cellVars I;
-	  )
-     else cv = o#cellVariables;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
 
      nm := nonCellstdm (I,cellVariables=>cv);
      -- print nm;
@@ -409,8 +403,8 @@ makeBinomial = (R,m,c) -> (
      -- constructs the binomial associated to 
      -- exponent vector m and coefficient c in R
      var := gens R;
-     posmon :=1;
-     negmon :=1;
+     posmon :=1_R;
+     negmon :=1_R;
      for i in 0..#m-1 do (
      	  if m#i > 0 then (
 		    posmon = posmon * var#i^(m#i)
@@ -418,7 +412,7 @@ makeBinomial = (R,m,c) -> (
 	       else (
 		    negmon = negmon * var#i^(-m#i)
 		    );
-	       );	  
+	       );
      return posmon - c*negmon;
      )
 
@@ -487,7 +481,7 @@ saturatePChar = (va, A, c) -> (
      K := A // S;
      
      -- print K;
-     -- Now we find the (binomal) equations for the saturated character:
+     -- Now we find the (binomial) equations for the saturated character:
      numvars := numrows K;
      varlist := for i in 0..numvars-1 list value ("m"|i);
      scan (varlist, (v -> v = local v));
@@ -529,12 +523,7 @@ binomialRadical = I -> (
 
 cellularBinomialRadical = method (Options => {cellVariables => null}) 
 cellularBinomialRadical Ideal := Ideal => o -> I -> (
-     cv := {};
-     if o#cellVariables === null then (
-	  print "CellVariables not given, Please consider precomputing them";
-	  cv = cellVars I;
-	  )
-     else cv = o#cellVariables;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
      
      -- Computes the radical of a cellular binomial ideal
      R := ring I;
@@ -563,18 +552,14 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
      -- of the primes instead. 
      -- If both are true then it will return characters.
      
-     cv := {};
-     if o#cellVariables === null then (
-	  print "CellVariables not given, Please consider precomputing them";
-	  cv = cellVars I;
-	  )
-     else cv = o#cellVariables;
      R := ring I;
      scan (gens R, (v -> v = local v));
-     
      -- Only proper ideals are considered primary
      if I == ideal(1_R) then return false;      
      
+     -- Handling of cell variables
+     cv := cellVars(I, cellVariables=>o#cellVariables);
+
      -- Get the partial character of I
      pc := partialCharacter(I, cellVariables=>cv);
      noncellvars := toList(set gens R - cv);
@@ -633,14 +618,14 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
 		    ap2 := idealFromCharacter (S,satqchar#1,satqchar#2#0);
 		    use R;
 		    return {rad, ap2 + M};
-     	       	    )  
+     	       	    )
 	       else return false;
 	       );
 	  );
      use R;
      if o#returnPChars then return {pc};
      if o#returnPrimes then return {rad};
-     return true;	  
+     return true;
      )
 
 binomialIsPrime = method (Options => {cellVariables=>null})
@@ -651,14 +636,8 @@ binomialIsPrime Ideal := Ideal => o -> I -> (
 
      -- Input: A Binomial Ideal and the cell variables if the ideal is cellular.
      -- Output: true if the ideal is a prime ideal, false otherwise
-     cv := {};
-     if o#cellVariables === null then (
-	  cv = isCellular (I, returnCellVars=>true);
-	  -- if not cellular then not prime
-	  if cv === false then return false;
-	  )
-     -- if cell variables are given we believe that I is cellular:
-     else cv = o#cellVariables;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
+
      R := ring I;
      if I == ideal (1_R) then return false;
      pc := partialCharacter (I,cellVariables=>cv);
@@ -794,13 +773,8 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
      R := ring I;
      scan (gens R, (v -> v = local v));
      
-     cv := null;
-     if o#cellVariables === null then (
-	  -- No cell variables are given -> compute them
-	  cv = cellVars(I);
-	  )
-     else cv = o#cellVariables;
-     
+     cv := cellVars(I, cellVariables=>o#cellVariables);
+          
      primes := {}; -- This will hold the list of primes
      ncv := toList(set (gens R) - cv); -- non-cell variables x \notin E
      ml := nonCellstdm(I,cellVariables=>cv); -- List of std monomials in ncv
@@ -868,6 +842,8 @@ binomialAssociatedPrimes = I -> (
 	  print "I will compute a primary decomposition and take radicals!";
 	  bpd := BPD I;
 	  print "Primary Decomposition found, taking radicals now:";
+	  -- TODO: Since binomialRadical tries to preserve the input ring this step 
+	  -- will actually change from ring I to 'ring bpd' on the user visible level.
 	  return binomialRadical \ bpd;
 	  )
      else (
@@ -875,15 +851,17 @@ binomialAssociatedPrimes = I -> (
 	  );
      )
 
-
-cellularAssociatedLattices = I -> (
-     -- Computes the associated lattices of a cellular binomial ideal
+cellularAssociatedLattices = method (Options => {cellVariables => null})
+cellularAssociatedLattices Ideal := Ideal => o -> I -> (
+     -- Computes the some associated lattices of a cellular binomial ideal
+     -- WARNING: The definition might differ from that in the paper with Ezra Miller
      -- Todo: Can we get the multiplicities too ?
      
      R := ring I;
      scan (gens R, (v -> v = local v));
-     cv := cellVars I; -- cell variables E
+     cv := cellVars(I, cellVariables=>o#cellVariables);
      lats := {}; -- This will hold the list of lattices
+     coeffs := {}; -- This will hold the values of the characters
      ncv := toList(set (gens R) - cv); -- non-cell variables x \notin E
      -- print "Noncellvars"; print ncv;
      ml := nonCellstdm(I,cellVariables=>cv); -- List of std monomials in ncv
@@ -901,6 +879,7 @@ cellularAssociatedLattices = I -> (
 	  pc = partialCharacter(Im, cellVariables=>cv);
 	  if #lats == 0 then (
 	       lats = {pc#1};
+	       coeffs = {pc#2};
 	       continue;
 	       )
 	  else (
@@ -910,9 +889,10 @@ cellularAssociatedLattices = I -> (
 	  if redundant then continue
 	  else (
 	       lats = lats | {pc#1};
+	       coeffs = coeffs | {pc#2};
 	       );
       	  ); -- for m in ml	    
-     return {cv, lats};
+     return {cv, lats, coeffs};
      ) -- CellularAssociatedLattices
 
 BCDisPrimary = I -> (
@@ -937,19 +917,14 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
      -- Input a cellular binomial ideal whose radical is prime.
      -- Ouptut, generators for Hull(I)
      
-     cv := null;
-     if o#cellVariables === null then (
-	  -- No cell variables are given -> compute them
-	  cv = isCellular (I,returnCellVars=>true);
-	  -- This is no real check. If CellVariables are given we dont check for speed reasons
-	  if cv === false then error "Input to minimalPrimaryComponent was not cellular!"
-	  )
-     else cv = o#cellVariables;
-
+     cv := cellVars(I, cellVariables=>o#cellVariables);
+     if cv === false then error "Input to minimalPrimaryComponent was not cellular!";
+     
      apc := binomialIsPrimary (I, returnPChars=>true, cellVariables => cv);
      if #apc == 1 then return I -- radical is only associated prime!
      else (
 	  R := ring I;
+	  CoeffR := coefficientRing R;
 	  -- A trick to not clobber the global variables
 	  scan (gens R, (v -> v = local v));
 	  
@@ -977,7 +952,7 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
 	       	    if pc1#2#i == pc2#2#i then continue
 	       	    else (
 		    	 -- Character differs. Form binomial:
-		    	 b = makeBinomial (QQ[pc2#0], (entries transpose pc2#1)#i, pc2#2#i );
+		    	 b = makeBinomial (CoeffR[pc2#0], (entries transpose pc2#1)#i, pc2#2#i );
 		    	 break;
 		    	 );
 	       	    );
@@ -1006,10 +981,11 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
 		      i = i+1;
 		      );
      	         -- now i has the suitable index !
-		 b = makeBinomial(QQ[pc2#0], L2cols#i, pc2#2#i);		    
+		 b = makeBinomial(CoeffR[pc2#0], L2cols#i, pc2#2#i);
 	    	 -- Take the quotient of I with respect to b, such that the result is binomial
 	    	 return minimalPrimaryComponent (binomialQuotient (I,b, cellVariables=>cv), cellVariables=>cv);
 	    	 );
+       	    use R;
 	    ) -- else path of if not binomialIsPrimary
      ) -- minimalPrimaryComponent
 
@@ -1028,12 +1004,7 @@ binomialQuotient = {cellVariables => null} >> o -> (I,b) -> (
      if isBinomial quot then return quot;
      
      scan (gens R, (v -> v = local v));
-     cv := null;
-     if o#cellVariables === null then (
-	  -- No cell variables are given -> compute them
-	  cv = cellVars(I);
-	  )
-     else cv = o#cellVariables;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
      ncv := toList(set (gens R) - cv); -- non-cell variables x \notin E
  
      --Transporting the standardmonomials to R:
@@ -1058,7 +1029,7 @@ binomialQuotient = {cellVariables => null} >> o -> (I,b) -> (
 	  quotlist = quotlist | {(m,quot)};
 	  -- taking character
 	  pc = partialCharacter (quot, cellVariables=>cv);
-	  
+	  	  
 	  --determine whether the exponents of b are in the saturated lattice
 	  if isSubset (bexpim, image Lsat pc#1) then (
      	       U' = U' | {m};
@@ -1102,6 +1073,33 @@ binomialQuasiPower = (b,e) -> (
 
 BCD = I -> binomialCellularDecomposition I 
 BPD = I -> binomialPrimaryDecomposition I
+BUD = I -> binomialUnmixedDecomposition I
+
+binomialUnmixedDecomposition = method (Options => {verbose=>true})
+binomialUnmixedDecomposition Ideal := Ideal => o -> I -> (
+     if not isBinomial I then error "Input was not binomial !";
+     vbopt := o#verbose;
+
+     if vbopt then print "Running cellular decomposition:";
+     cd := binomialCellularDecomposition (I, returnCellVars => true, verbose=>vbopt);
+     counter := 1;
+     cdc := #cd;
+     bud := {};
+     if vbopt then print "Decomposing cellular components:";
+     scan (cd , ( (i) -> (
+		    if vbopt then (
+	   	    	 print ("Decomposing cellular component: " | toString counter | " of " | toString cdc);
+		    	 counter = counter +1;);
+		    bud = bud | cellularBinomialUnmixedDecomposition (i#0, cellVariables => i#1,verbose=>vbopt);
+		    if vbopt then (
+			 print "done";
+			 );
+		    ) -- right hand side of lambda term
+	       ) -- lambda term
+    	  ); -- scan
+     if vbopt then print "Removing redundant components...";
+     return removeRedundant (bud, verbose=>vbopt );
+     )
 
 binomialPrimaryDecomposition = method (Options => {verbose=>true})
 binomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
@@ -1127,13 +1125,94 @@ binomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
 		    if vbopt then (
 			 print "done";
 			 );
-		    )
-	       )
-    	  );
+		    ) -- right hand side of lambda term
+	       ) -- lambda term
+    	  ); -- scan
       
      bpd = joinCyclotomic bpd;
      if vbopt then print "Removing redundant components...";
+     use ring I;
      return removeRedundant (bpd, verbose=>vbopt );
+     )
+
+cellularBinomialUnmixedDecomposition = method (Options => {cellVariables => null, verbose=>true}) 
+cellularBinomialUnmixedDecomposition Ideal := Ideal => o -> I -> ( 
+     -- computes the unmixed decomposition of a cellular ideal
+     -- I needs to be cellular. Cell variables can be given to speed up
+     -- Implements algorithm 9.7 in ES96, respectively A5 in OS97
+     cv := null;
+     vbopt := o#verbose;
+     if o#cellVariables === null then cv = cellVars I
+     else cv = o#cellVariables;
+     ncv := toList (set gens ring I - cv);
+     
+     -- Get the associated lattices (or better characters)
+     aldata := cellularAssociatedLattices (I, cellVariables=>cv);
+
+     -- We generate a list of pairs representing characters for the lattices:
+     al := for i in 0..#(aldata#1)-1 list (aldata#1#i, aldata#2#i);
+     
+     -- 1 Lattice: Unmixed
+     if #al == 1 then return {I};
+
+     R := ring I;
+     CoeffR := coefficientRing R;
+          
+     -- Now find a chain among the associated lattices
+     -- but finite index containment is not sufficient.
+     -- We only need to check pairwise containments.
+     
+     pair := null;
+     for l1 in al do (
+	  for l2 in delete(l1,al) do (
+     	       if (isSubset (image l1#0, image l2#0)) and (rank image l1#0 < rank image l2#0) then (
+		    -- found a comparable pair and thus embedded primes:
+		    pair = (l1,l2);
+		    break;
+		    )
+	       )
+	  );
+     -- If no pair was found I is unmixed an we are done
+     if pair === null then return {I};
+     
+     l1 := pair#0;
+     l2 := pair#1;
+     -- Identify a lattice vector in l2, but not l1
+     L2cols := entries transpose l2#0;
+     i := 0; -- Counter to identify a generator
+     for col in L2cols do (
+	  imc := image transpose matrix {col};
+	  if rank intersect {imc, image l1#0} < 1 then (
+	       -- found a vector
+	       break;
+	       );
+	  -- Else keep going.
+	  i = i+1;
+	  );
+     -- now i contains a suitable index
+     b := sub(makeBinomial(CoeffR[cv], L2cols#i, l2#1#i), R);
+     
+     -- We can't follow Section 4.1 of Ojeda/Sanchez because there is no 
+     -- effictive criterion to decide that mb^[e] will never lie in I, no
+     -- matter how divisible e is.
+    
+     -- We take the approach of computing e_b by actually coloning.
+     -- Stop condition: Find a binomial b^[e] such that I:b^[e] = I:b^[e]^\infty
+     -- and is binomial.
+     
+     e :=1;
+     Itest := I:b;
+     while not ((isBinomial Itest) and ( Itest: binomialQuasiPower(b,e) == Itest)) do(
+	  e = e + 1;
+	  Itest = I:binomialQuasiPower (b,e);
+	  );
+     
+     -- Now we have the right quotient and the right quasi power.
+     -- So we start the recursion:
+     return flatten { 
+	  cellularBinomialUnmixedDecomposition (Itest, cellVariables=>cv),
+	  cellularBinomialUnmixedDecomposition (I+ ideal binomialQuasiPower (b,e), cellVariables=>cv)
+	  };
      )
 
 cellularBinomialPrimaryDecomposition = method (Options => {cellVariables => null, verbose=>true}) 
@@ -1157,6 +1236,7 @@ cellularBinomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
      -- Here, contrary to what is stated in ES'96, we can not assume that J+P is cellular.
      -- However, since Hull only wants the minimal primary component we can cellularize!
      -- TODO: Can this be skipped in some cases to be predetermined?
+     use ring I;
      return pap / ( (P) -> minimalPrimaryComponent ( saturate (P + J , sub (ideal product cv, R)), cellVariables=>cv));
      )
 
@@ -1455,10 +1535,38 @@ document {
      }
 
 document {
+     Key => {binomialUnmixedDecomposition,
+	  (binomialUnmixedDecomposition, Ideal),
+	  [binomialUnmixedDecomposition, verbose] },
+     Headline => "Binomial Unmixed Decomposition",
+     Usage => "binomialUnmixedDecomposition I",
+     Inputs => {
+          "I" => { "a binomial ideal"} },
+     Outputs => {
+          "l" => {"a list of unmixed components of I"} },
+     "This routine returns an unmixed decomposition of a binomial ideal into binomial ideals.",
+     EXAMPLE {
+          "R = QQ[x,y,z]",
+          "I = ideal (x^2, x*y, y^2, x*(z^3-1), y*(z^2-1))",
+          "bud = binomialUnmixedDecomposition I",
+	  "intersect bud == I"
+          },
+     "A synonym for this function is 'BUD'.",
+     SeeAlso => BUD
+     }
+
+document {
      Key => BPD,
      Headline => "Binomial Primary Decomposition",
      "BPD is a synonym for binomialPrimaryDecomposition."
      }
+
+document {
+     Key => BUD,
+     Headline => "Binomial Unmixed Decomposition",
+     "BUD is a synonym for binomialUnmixedDecomposition."
+     }
+
 
 document {
      Key => {binomialCellularDecomposition,
@@ -1572,8 +1680,6 @@ document {
      SeeAlso => {binomialMinimalPrimes,cellularBinomialAssociatedPrimes}
      }    
 
---     -- tests
-
 document {
      Key => {binomialIsPrime,
 	  (binomialIsPrime,Ideal),
@@ -1584,7 +1690,7 @@ document {
           "I" => { "a binomial ideal"} },
      Outputs => {
           "f" => {"true or false, depending on whether I is a binomial prime ideal"} },
-     "A binomial ideal is prime only if it is cellular. If the cellular variables",
+     "A binomial ideal is prime only if it is cellular. If the cellular variables ",
      "are known they can be given via the ", TO cellVariables, " option.",
      EXAMPLE {
 	  "R = QQ[x,y]",
@@ -1606,8 +1712,8 @@ document {
           "I" => { "a binomial ideal"} },
      Outputs => {
           "f" => {"true or false, depending on whether I is a binomial primary ideal"} },
-     "A binomial ideal is primary only if it is cellular. If the cellular variables",
-     "are known they can be given via the ", TO cellVariables, " option.", "If the ideal is not primary, ",
+     "A binomial ideal is primary only if it is cellular. If the cellular variables ",
+     "are known they can be given via the ", TO cellVariables, " option. ", "If the ideal is not primary, ",
      "either 'false' or two distinct associated primes can be returned. The behaviour can be changed using the options ",
      TO returnPrimes, " and ", TO returnPChars, ".",
      EXAMPLE {
@@ -1765,6 +1871,26 @@ document {
      }    
 
 document {
+     Key => {cellularBinomialUnmixedDecomposition,
+	  (cellularBinomialUnmixedDecomposition,Ideal),
+	  [cellularBinomialUnmixedDecomposition,cellVariables]},
+     Headline => "Unmixed decomposition of a cellular binomial ideal",
+     Usage => "cellularBinomialUnmixedDecomposition I",
+     Inputs => {
+          "I" => { "a cellular binomial ideal"} },
+     Outputs => {
+          "l" => {"an unmixed decomposition of I"} },
+     "If the cell variables are known, they can be given via the option ", TO cellVariables, " otherwise they are computed.",
+     EXAMPLE {
+	  "R = QQ[x,y]",
+	  "I = ideal(x*(y^3-1),x^2)",
+	  "cv = isCellular (I,returnCellVars=>true)",
+	  "ud = cellularBinomialUnmixedDecomposition (I,cellVariables=>cv)"
+          },
+     SeeAlso => binomialUnmixedDecomposition
+     }    
+
+document {
      Key => {partialCharacter,
 	  (partialCharacter,Ideal),
 	  [partialCharacter,cellVariables]},
@@ -1881,6 +2007,9 @@ document {
      Headline => "generate informative output",
      "If this option is set, functions will generate additional output. Defaults to true"
      }
+
+
+--     -- tests
 
 TEST ///
 R = QQ[a..f]

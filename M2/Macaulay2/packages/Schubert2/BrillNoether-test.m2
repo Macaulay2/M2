@@ -1,4 +1,4 @@
-load "Schubert2/BrillNoether.m2"
+load "./BrillNoether.m2"
 
 E = BrillNoetherBundle(5,1,4)
 Wrd = variety E

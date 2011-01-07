@@ -27,7 +27,7 @@ document {
 	       }
 	  },
      Outputs => {
-	  "S" => {ofClass{Ring,Ideal}, "a ring isomorphic to the original ring,
+	  "S" => {ofClass{Ring,Ideal}, ", a ring isomorphic to the original ring,
 	       flattened in the sense that it is a quotient ring of a polyonial ring over the
 	       bottom-most coefficient ring; or in case an ideal was provided, the 
 	       corresponding ideal"},

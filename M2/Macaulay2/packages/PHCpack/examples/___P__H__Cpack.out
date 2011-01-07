@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: -183643791 *}
---loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- {* hash: 617827165 *}
 
 i1 : R=QQ[x,y,z]      --R=CC[x,y,z]
 
@@ -15,7 +14,7 @@ o2 = {- x  + y, - x  + z, x + y + z - 1}
 o2 : List
 
 i3 : solns =phcSolve(system);
-using temporary file name /tmp/M2-98734-1PHCinput
+using temporary file name /tmp/M2-7468-1PHCinput
 
 i4 : numSolns = #solns
 
@@ -31,7 +30,7 @@ o5 = {, , }
 o5 : List
 
 i6 : vol = mixedVolume(system)
-using temporary file name /tmp/M2-98734-2PHCinput
+using temporary file name /tmp/M2-7468-2PHCinput
 
 o6 = 3
 
@@ -40,3 +39,4 @@ i7 : vol == 3 --in this case the mixed volume bound is sharp
 o7 = true
 
 i8 : 
+     

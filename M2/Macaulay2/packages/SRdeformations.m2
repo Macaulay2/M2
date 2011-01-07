@@ -535,17 +535,6 @@ numerator(fm0))
 mapByLaurent(FirstOrderDeformation):=(f)->(
 apply(f.generators,j->mapByLaurent(f,j)))
 
--- only for manifolds
-totalSpace0=method()
-totalSpace0(FirstOrderDeformation,PolynomialRing):=(f,T)->(
-I:=ideal source f;
-if dim f>1 then error("Not implemented for higher-dimensional graded pieces");
-R:=ring I;
-S:=T**R;
-if dim f==0 then return(sub(I,S));
-L:=(entries gens I)#0;
-ideal apply(L,m->sub(m,S)+sub(t,S)*sub(mapByLaurent(f,m),S)))
---totalSpace0(f,QQ[t])
 
 -- general
 -- >> export

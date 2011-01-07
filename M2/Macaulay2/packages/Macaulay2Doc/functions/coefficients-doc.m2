@@ -73,7 +73,7 @@ TEST ///
      FG = matrix"F;G"
      mons1 = monomials FG
      (M,C) = coefficients FG -- error at the moment BUG
-     mons = matrix"x2,xy,y2,0,0,0;0,0,0,x2,xy,y2"
+     mons = matrix"0,0,0,x2,xy,y2;x2,xy,y2,0,0,0"
      assert(M == mons)
      assert(
 	  last coefficients(FG, Monomials=>mons1)

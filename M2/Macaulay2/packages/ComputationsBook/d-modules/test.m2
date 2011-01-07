@@ -1,4 +1,4 @@
-load "D-modules.m2"
+needsPackage "Dmodules";
 D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 Delta = ideal(Dx,Dy,Dz)
 (Dx * x)^2

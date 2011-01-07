@@ -723,7 +723,4 @@ TEST ///
 R = QQ[x,y,z]/(x^3,y^2,z^5);                                                                           
 basis(-infinity,4,R)                                                                                   
 basis(5,infinity,R)                                                                                   
-
-R = QQ[x,y,z,DegreeRank=>0]/(x^2, x*y, y^3, z^3)
-basis(1,infinity, R)
 ///
