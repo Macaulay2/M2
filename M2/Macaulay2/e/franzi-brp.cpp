@@ -1,3 +1,5 @@
+/* This code written by Franziska Hinkelmann is in the public domain */
+
 #include "franzi-brp.hpp"
 
 BRP::BRP(const monomials_set &other) {
@@ -76,7 +78,6 @@ BRP BRP::operator*(const brMonomial &other) const {
       last = mono;
     }
   }
-  //tmp.m.sort(funccompGRL);
   tmp.m.sort(funccomp);
   monomials::iterator it = tmp.m.begin();
   monomials::iterator lastIt = tmp.m.begin();
@@ -154,29 +155,6 @@ bool BRP::reduceTail(const BRP &g) {
   return ret;
 }
   
-unsigned int Bits::numberOfBits(brMonomial v) {
-  unsigned int c;
-  for (c = 0; v; v >>= 1)
-  {
-    c += v & 1;
-  }
-  return c;
-}
-
-// for a and b with same degree
-// true if a >= b
-bool Bits::reverseLex(brMonomial a, brMonomial b) {
-  for (; a; a>>=1, b>>=1) {
-    int lastBitA = a & 1;
-    int lastBitB = b & 1;
-    if (lastBitA - lastBitB < 0 ) {
-      return true;
-    } else if (lastBitA - lastBitB > 0) {
-      return false;
-    } 
-  }
-  return true;
-}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

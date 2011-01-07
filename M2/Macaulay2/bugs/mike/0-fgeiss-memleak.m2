@@ -1100,6 +1100,21 @@ testRandomModule=()->(
 	  << "." << flush;
 	  if hilbertFunction(0,homs)!=0 then (M1,M2) else (0,0))
 
+runTestA = (gcstep) -> (
+     kk := ZZ/3;
+     R = kk[x_0..x_2]; -- needs to be global
+     if gcstep <= 0 then gcstep = 10000;
+     for counter from 1 to 1000 do (
+     	  M1:=coker transpose((res coker random(R^{8:{6}},R^{11:{5},1:
+			      {4},4:{2}})).dd_3);
+	  M2:=coker random(R^{10:{0}},R^{13:{-1}});
+	  homs:=Hom(M2,M1);
+	  if hilbertFunction(0,homs)!=0 then << (M1,M2) << endl;
+     	  if counter % gcstep === 0 then collectGarbage(); 
+     	  if counter % 10 === 0 then << "." << flush;
+	  );
+     )
+
 -- leaks:
 testRandomModule2=()->(
      	  M1:=coker transpose((res coker random(R^{8:{6}},R^{11:{5},1:
@@ -1305,6 +1320,30 @@ load"0-fgeiss-memleak.m2";
 time runTestH4aa 10
 run ("ps u " | toString processID ())
 --------------------------------------------------
+restart
+load"0-fgeiss-memleak.m2";
+setRandomSeed "jhasgdjashgdahjsdga"
+time runTestA 1
+run ("ps u " | toString processID ())
+
+restart
+load"0-fgeiss-memleak.m2";
+setRandomSeed "jhasgdjashgdahjsdga"
+time runTestA 0
+run ("ps u " | toString processID ())
+
+restart
+load"0-fgeiss-memleak.m2";
+setRandomSeed "jhasgdjashgdahjsdga"
+time runTestA 10
+run ("ps u " | toString processID ())
+
+restart
+load"0-fgeiss-memleak.m2";
+setRandomSeed "jhasgdjashgdahjsdga"
+time runTestA 5
+run ("ps u " | toString processID ())
+
 
 {* -- email from 9/1/10 sent to M2 google group
 Hi
@@ -1325,3 +1364,7 @@ Thanks for any help!
 Best
 Florian
 *}
+
+
+GC_PRINT_STATS=1 GC_MAXIMUM_HEAP_SIZE=2000000000 GC_INITIAL_HEAP_SIZE=1000000000 GC_FREE_SPACE_DIVISOR=12 M2 --no-readline --print-width 123 
+GC_PRINT_STATS=1 GC_MAXIMUM_HEAP_SIZE=2000000000  M2 --no-readline --print-width 123 

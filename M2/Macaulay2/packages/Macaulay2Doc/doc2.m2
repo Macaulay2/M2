@@ -535,21 +535,6 @@ document {
      Key => symbol :,
      Headline => "a binary operator, uses include repetition; ideal quotients",
      }
-
-document {
-     Key => "comparison operators",
-     Usage => "",
-     UL {
-	  "x == y",
-	  "x != y",
-	  "x < y",
-	  "x <= y",
-	  "x > y",
-	  "x >= y",
-	  "x ? y",
-	  },
-     SeeAlso => {sort, sortColumns, "operators"}
-     }
 document {
      Key => symbol <,
      Headline => "less than",

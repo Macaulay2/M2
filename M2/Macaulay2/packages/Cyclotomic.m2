@@ -37,6 +37,8 @@ export {cyclotomicField,
 	findRootPower,
 	joinCyclotomic
        }
+
+ww := local ww
   
 -- We use memoize to get physically the same cyclotomic field again and again!
 cf = (i) -> (

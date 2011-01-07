@@ -120,7 +120,7 @@ liuXuCoeff = memoize (
    	  else (
 	       d := position(drop(a, 1), x -> x>0) + 1;
 	       a' := (a|{0}) - ee(d, k + 1);
-               tempCoeff = (
+               tempCoeff := (
 		    (2*d + 3)/12 *
 	       	    wittenTau(g - 1, 4*ee(0, k + 1) + ee(d + 1, k + 1) + a') -
 	       	    (2*g + n - 1)/6 *
@@ -210,7 +210,7 @@ dimCheck = memoize (
 
 lambdaToCh = memoize (
      (n, R) -> (
-  	  tempChRing := QQ[tempCh_1..tempCh_n, Degrees=>{1..n}];
+  	  tempChRing := QQ[local tempCh_1..local tempCh_n, Degrees=>{1..n}];
   	  I := ideal basis(n + 1, 2 * n - 1, tempChRing);
   	  tempChRing = tempChRing/I;
   	  x := sum((n + 1)//2, i -> (2 * i)! * tempCh_(2 * i + 1));
@@ -683,8 +683,8 @@ document {
      Key => {ch},
      Headline => "Chern character of the Hodge bundle",
      Usage => "ch_a",
-     Inputs => {},
-     Outputs => {},
+     Inputs => { "a" => ZZ },
+     Outputs => { RingElement },
      "This is an element in the ring created by ",
      TT "hodgeRing",
      ". ",
@@ -709,8 +709,8 @@ document {
      Key => {kappa},
      Headline => "Miller-Morita-Mumford classes",
      Usage => "kappa_a",
-     Inputs => {},
-     Outputs => {},
+     Inputs => { "a" => ZZ },
+     Outputs => { RingElement },
      "This is an element in the ring created by ",
      TT "hodgeRing",
      ". It is the Miller-Morita-Mumford class discussed in [AC].",
@@ -738,8 +738,8 @@ document {
      Key => {lambda},
      Headline => "Chern class of the Hodge bundle",
      Usage => "lambda_a",
-     Inputs => {},
-     Outputs => {},
+     Inputs => { "a" => ZZ },
+     Outputs => { RingElement },
      "This is an element in the ring created by ",
      TT "hodgeRing",
      ".",
@@ -763,8 +763,8 @@ document {
      Key => {psi},
      Headline => "cotangent line class",
      Usage => "psi_i",
-     Inputs => {},
-     Outputs => {},
+     Inputs => { "i" => ZZ },
+     Outputs => { RingElement },
      "This is an element in the ring created by ",
      TT "hodgeRing",
      ".",

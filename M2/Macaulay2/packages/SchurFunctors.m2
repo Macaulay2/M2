@@ -14,7 +14,7 @@ newPackage(
 	  AuxiliaryFiles=>true
      	  )
      
-export{ schur, schurModule, Schur, Filling, 
+export{ schur, schurModule, Filling, 
      straighten, printSchurModuleElement, schurModulesMap, augmentFilling, 
      character, splitCharacter, characterRep, decomposeRep}
 
@@ -196,7 +196,7 @@ schurModule(List,Module) := (lambda,E) -> (
 			));
 	 )));
      f := map(M, exteriorE, matrix m);
-     M.cache.Schur = {f, finv, AT, ST};
+     M.cache#"Schur" = {f, finv, AT, ST};
      M)
      
 schur = method()
@@ -207,11 +207,11 @@ schur(List,Matrix) := (lambda,f) -> (
      SN := schurModule(lambda,N);
      mu := toList conjugate new Partition from lambda;
      F := exteriorPower(mu,f);
-     gM := SM.cache.Schur_1;
-     gN := SN.cache.Schur_0;
+     gM := SM.cache#"Schur"_1;
+     gN := SN.cache#"Schur"_0;
      schurNM := gN * F * gM;
-     (source schurNM).cache.Schur = SM.cache.Schur;
-     (target schurNM).cache.Schur = SN.cache.Schur;
+     (source schurNM).cache#"Schur" = SM.cache#"Schur";
+     (target schurNM).cache#"Schur" = SN.cache#"Schur";
      schurNM
      )
 
@@ -229,10 +229,10 @@ straighten (Filling, Module) := (T, M) -> (
      (c, S) := normalize T;
      if c == 0 then 0_M
      else (
-	  if not M.cache.Schur#2#?S then error "tableau and Schur module incompatible"
+	  if not M.cache#"Schur"#2#?S then error "tableau and Schur module incompatible"
 	  else (
-	       i := M.cache.Schur#2#S;
-	       f := M.cache.Schur#0;
+	       i := M.cache#"Schur"#2#S;
+	       f := M.cache#"Schur"#0;
 	       c*f*(source f)_i
 	       ) 
 	  ) 
@@ -240,7 +240,7 @@ straighten (Filling, Module) := (T, M) -> (
 
 printSchurModuleElement = method()
 printSchurModuleElement (Vector, Module) := (v,M) -> (
-     l := applyPairs(M.cache.Schur#3, (T,i)->(i,T));
+     l := applyPairs(M.cache#"Schur"#3, (T,i)->(i,T));
      scanKeys(l, i->  
 	  if v_i != 0 then 
 	  << v_i << "*" << l#i << " " );
@@ -249,7 +249,7 @@ printSchurModuleElement (Vector, Module) := (v,M) -> (
 
 schurModulesMap = method() 
 schurModulesMap (Module, Module, Function) := (N,M,F) -> (
-     l := applyPairs(M.cache.Schur#3, (T,i)->(i,T));
+     l := applyPairs(M.cache#"Schur"#3, (T,i)->(i,T));
      matrix apply(#l, j->sum(F(l#j), a->a#0*straighten(a#1,N)))      
      )
 
@@ -396,7 +396,7 @@ doc get (currentFileDirectory | "SchurFunctors/splitCharacter.txt")
 TEST ///
       M = schurModule({2,2,2}, QQ^4)
       assert(rank M == 10)
-      (f, finv, AT, ST) = toSequence M.cache.Schur;
+      (f, finv, AT, ST) = toSequence M.cache#"Schur";
       assert(f*finv == map(QQ^10))
       -- straighten 
       M = schurModule({1,1,1}, QQ^4);

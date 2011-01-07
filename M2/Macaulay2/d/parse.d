@@ -106,7 +106,8 @@ export Dictionary := {
      transient:bool,	        -- whether there can be multiple frames
      	       	    	        -- for the global or thread dictionary and for file scopes : no
 				-- for function closures : yes
-     Protected:bool             -- whether symbols can be added; closing a package protects it
+     Protected:bool,             -- whether symbols can be added; closing a package protects it
+     LocalCreationAllowed:bool	-- whether symbols can be added by code encountered in a local scope
      };
 
 export Token := {+		-- a word, as encountered in the input

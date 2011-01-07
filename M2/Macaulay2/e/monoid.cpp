@@ -528,7 +528,7 @@ void Monoid::multi_degree(const_monomial m, monomial result) const
   to_expvector(m, EXP1);
 
   for (int i=0; i<nvars_; i++)
-    if (EXP1[i] > 0)
+    if (EXP1[i] != 0)
       {
 	degree_monoid()->power(degree_of_var(i), EXP1[i], mon1);
 	degree_monoid()->mult(result, mon1, result);

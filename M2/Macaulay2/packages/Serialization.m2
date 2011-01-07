@@ -1,13 +1,15 @@
 newPackage (
      "Serialization",
      DebuggingMode => true,
+     Authors => {
+	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}
+	  },
+     Version => "0.1",
      Headline => "reversible conversion of all Macaulay2 objects to strings")
 
 -- this code is re-entrant
 
-export { "serialize", "reload", "mark" }
-
-reload = Command ( x -> loadPackage ("Serialization",Reload => true) )
+export { "serialize", "mark" }
 
 debug Core
     generatorSymbols' = generatorSymbols
@@ -23,10 +25,12 @@ dictionaryPath = delete(Core#"private dictionary",dictionaryPath)
 
 w := x -> (scan(x,i -> assert (i =!= "")); x)
 
-mark = () -> waterMarkSymbol <- hash new MutableHashTable
+mark = () -> (
+     waterMarkSymbol <- hash new MutableHashTable;
+     )
 currentWaterMark = () -> value waterMarkSymbol
 
-serializable = set toList vars ( 0 ..< 52 )
+serializable = set {}
 
 serialize = x -> (
      h := new MutableHashTable;	    -- objects in progress
@@ -81,7 +85,8 @@ serialize = x -> (
 	       t := f x;
 	       if hash x > currentWaterMark() and hasAttribute'(x,ReverseDictionary') then (
 		    u := "globalAssignFunction(" | p getAttribute'(x,ReverseDictionary') | "," | p x | ")";
-		    if t === null then t = u else t = t | "\n" | u;
+		    if t === null then t = "";
+		    t = t | u;
 		    );
 	       if t =!= null then code2#(k#x) = t;
 	       ));
@@ -209,6 +214,77 @@ serialize = x -> (
 	  last \ sort pairs code2,
 	  p x
 	  })
+
+beginDocumentation()
+
+multidoc ///
+Node
+ Key
+  Serialization
+ Headline
+  reversible conversion of all Macaulay2 objects to strings
+ Description
+  Text
+   This package provides the user with the capability of saving Macaulay2 objects in a file and
+   recovering them later, in another Macaulay2 session.
+   
+   The implementation is still experimental and preliminary.  Not all types of objects are
+   handled.
+Node
+ Key
+  serialize
+ Headline
+  reversible conversion of all Macaulay2 objects to strings
+ Usage
+  serialize x
+ Inputs
+  x:Thing
+ Outputs
+  :String
+   which when evaluated, will recreate the object {\tt x}.  The string can be written to a file,
+   and @ TO load @ can be used to evaluate it later in another Macaulay2 session.  Symbols
+   encountered will have their values restored.
+ Description
+  Text
+   A convenient thing to serialize is the list of all user symbols provided by @ TO userSymbols @,
+   as in the following example.
+  Example
+   R = QQ[x,y]
+   I = ideal (x^2+y^3-1)
+   S = R/I
+   X = new Type of List
+   g = new MutableList
+   h = new MutableList
+   g#0 = h
+   h#0 = g
+   save := serialize userSymbols()
+   clearAll
+   I
+   value save
+   I
+   g
+   g#0 === h
+Node
+ Key
+  mark
+ Headline
+  mark mutable objects and symbols as not needing serialization
+ Usage
+  mark()
+ Consequences
+  Item
+   The function @ TO serialize @ will assume that mutable objects currently in existence need not be
+   serialized.
+ Description
+  Example
+   X = new Type of List
+   y = 4
+   mark()
+   x = new X from {1,2,3}
+   serialize (symbol x, symbol y)
+ SeeAlso
+  serialize
+///
 
 end
 reload

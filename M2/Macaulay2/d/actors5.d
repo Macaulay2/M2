@@ -475,6 +475,7 @@ examine(e:Expr):Expr := (
 	  << " framesize : " << d.framesize << endl
 	  << " transient : " << d.transient << endl
 	  << " protected : " << d.Protected << endl
+	  << " local creation allowed : " << d.LocalCreationAllowed << endl
 	  << " symboltable size : " << d.symboltable.numEntries << endl;
      	  showFrames(f);
           if d.frameID != f.frameID then stdIO << " -- warning: incorrect frameID on first frame" << endl;
@@ -1932,6 +1933,54 @@ toExternalString(e:Expr):Expr := (
      else WrongArg("a real or complex number")
      );
 setupfun("toExternalString0",toExternalString);
+
+GCstats(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) == 0 then Expr(toHashTable(Sequence(
+		    "heap size" => toExpr(Ccode(int,"GC_get_heap_size()")),
+		    "free space divisor" => toExpr(Ccode(int,"GC_free_space_divisor")),
+		    "number of collections" => toExpr(Ccode(int,"GC_get_gc_no()")),
+		    "parallel" => toExpr(Ccode(bool,"!!GC_get_parallel()")),
+		    "all interior pointers" => toExpr(Ccode(bool,"GC_get_all_interior_pointers()")),
+		    "finalize on demand" => toExpr(Ccode(bool,"!!GC_get_finalize_on_demand()")),
+		    "java finalization" => toExpr(Ccode(bool,"GC_get_java_finalization()")),
+		    "don't expand" => toExpr(Ccode(bool,"GC_get_dont_expand()")),
+		    "use entire heap" => toExpr(Ccode(bool,"GC_use_entire_heap")),
+		    "full freq" => toExpr(Ccode(int,"GC_get_full_freq()")),
+		    "max retries" => toExpr(Ccode(int,"GC_get_max_retries()")),
+		    "time limit" => toExpr(Ccode(ulong,"GC_get_time_limit()")),
+		    "GC_INITIAL_HEAP_SIZE" => toExpr(getenv("GC_INITIAL_HEAP_SIZE")),
+		    "GC_MAXIMUM_HEAP_SIZE" => toExpr(getenv("GC_MAXIMUM_HEAP_SIZE")),
+		    "GC_LOOP_ON_ABORT" => toExpr(getenv("GC_LOOP_ON_ABORT")),
+		    "GC_PRINT_STATS" => toExpr(getenv("GC_PRINT_STATS")),
+		    "GC_LOG_FILE" => toExpr(getenv("GC_LOG_FILE")),
+		    "GC_PRINT_VERBOSE_STATS" => toExpr(getenv("GC_PRINT_VERBOSE_STATS")),
+		    "GC_DUMP_REGULARLY" => toExpr(getenv("GC_DUMP_REGULARLY")),
+		    "GC_BACKTRACES" => toExpr(getenv("GC_BACKTRACES")),
+		    "GC_PRINT_ADDRESS_MAP" => toExpr(getenv("GC_PRINT_ADDRESS_MAP")),
+		    "GC_NPROCS" => toExpr(getenv("GC_NPROCS")),
+		    "GC_MARKERS" => toExpr(getenv("GC_MARKERS")),
+		    "GC_NO_BLACKLIST_WARNING" => toExpr(getenv("GC_NO_BLACKLIST_WARNING")),
+		    "GC_LARGE_ALLOC_WARN_INTERVAL" => toExpr(getenv("GC_LARGE_ALLOC_WARN_INTERVAL")),
+		    "GC_IGNORE_GCJ_INFO" => toExpr(getenv("GC_IGNORE_GCJ_INFO")),
+		    "GC_PRINT_BACK_HEIGHT" => toExpr(getenv("GC_PRINT_BACK_HEIGHT")),
+		    "GC_RETRY_SIGNALS," => toExpr(getenv("GC_RETRY_SIGNALS,")),
+		    "GC_USE_GETWRITEWATCH" => toExpr(getenv("GC_USE_GETWRITEWATCH")),
+		    "GC_DISABLE_INCREMENTAL" => toExpr(getenv("GC_DISABLE_INCREMENTAL")),
+		    "GC_ENABLE_INCREMENTAL" => toExpr(getenv("GC_ENABLE_INCREMENTAL")),
+		    "GC_PAUSE_TIME_TARGET" => toExpr(getenv("GC_PAUSE_TIME_TARGET")),
+		    "GC_FULL_FREQUENCY" => toExpr(getenv("GC_FULL_FREQUENCY")),
+		    "GC_FREE_SPACE_DIVISOR" => toExpr(getenv("GC_FREE_SPACE_DIVISOR")),
+		    "GC_UNMAP_THRESHOLD" => toExpr(getenv("GC_UNMAP_THRESHOLD")),
+		    "GC_FORCE_UNMAP_ON_GCOLLECT" => toExpr(getenv("GC_FORCE_UNMAP_ON_GCOLLECT")),
+		    "GC_FIND_LEAK" => toExpr(getenv("GC_FIND_LEAK")),
+		    "GC_ALL_INTERIOR_POINTERS" => toExpr(getenv("GC_ALL_INTERIOR_POINTERS")),
+		    "GC_DONT_GC" => toExpr(getenv("GC_DONT_GC")),
+		    "GC_TRACE" => toExpr(getenv("GC_TRACE"))
+		    )))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("GCstats",GCstats);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors5.o "

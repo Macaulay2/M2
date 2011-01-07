@@ -1,7 +1,7 @@
 newPackage(
     "BooleanGB",
-    Version => "0.9", 
-    Date => "June 18, 2010",
+    Version => "1.0", 
+    Date => "September 27, 2010",
     Authors => {{Name => "Franziska Hinkelmann", 
     Email => "fhinkel@vt.edu", 
     HomePage => "http://www.math.vt.edu/people/fhinkel/"}, 
@@ -85,6 +85,115 @@ SeeAlso
 
 -- These tests check the generators for equivalence
 
+--TEST ///
+--R = ZZ/2[a..t, MonomialOrder=>GRevLex]
+--l = apply(gens R, x-> x^2+x);
+--QR = R/l;
+--I = ideal {a*b*c*d*e,
+--  a+b*c+d*e+a+b+c+d , 
+--  j*h+i+f +a*b+c*d+e*f+g*h*i+i*j+a*t+s*r, 
+--  g+f +m*n+o + o*p + r*s*t+a*l+h*i*q*s + k*c,
+--  j+i+d*c, 
+--  r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
+--  m*n+o*p, 
+--  b*s+q+p*n*m+i + i*j*h*a*c*t, 
+--  b*s+q*n*m+i+b*l*o*r*s*c, 
+--  b*k+q+l*n*m +n,
+--  i*q*a*c*e+f*g+o*q*d*m +b+d, 
+--  b*s+q*n*m+i+j*s*t+s, 
+--  b*k+r*q+l*m+i*j+n, 
+--  b*k+d*n*m+i, 
+--  b+q+l*n*m+i*d, 
+--  a*k+c*l*n*f, 
+--  q*r+c+q+l*n*m+i
+--};
+--C = gens gb I;
+--R = ZZ/2[a..t, MonomialOrder=>Lex]
+--l = apply(gens R, x-> x^2+x);
+--QR = R/l;
+--C = sub(C, QR)
+--C = gb C;
+--I = sub(I,QR)
+--B = gbBoolean I;
+--assert( sort gens B - sort gens C == 0 )
+--///
+
+TEST ///
+R = ZZ/2[vars(0..14), MonomialOrder=>Lex]
+l = apply(gens R, x-> x^2+x);
+QR = R/l;
+I = ideal(b*k+a+o+1,a*k+b,a*c*i+c*d*i+a*i*o+c*d+1,h*i*j*l+c*h*j+i*l+d+l,b*c*d*f*n+c*d*f+b*d*n+b*c+b*f+d*f+b*n+b+c+d+e,f,a*b*g*j*n+b*g*n+a*b+b*g+b+g,e*i*m*o+e*h*i+e*i*o,d*f*g+c*f*o+f+i,f*g*j+h*m+h+j,b*d*i+d*f*j+f*i*j+k,e*o+o,d*i*k+d*i+m,d*e*k*o+d*e*k+d*g*o+e*g*o+e*k*o+d*e+e*g+g*o+n+1,a*d*e+a*e*j+a*d*m+a*e*m+d*j*m+a*m+j+o+1)
+C = gb I;
+B = gbBoolean I;
+assert( sort gens B - sort gens C == 0 ) 
+///
+
+TEST ///
+R = ZZ/2[a..t, MonomialOrder=>Lex]
+l = apply(gens R, x-> x^2+x);
+QR = R/l;
+I = ideal {
+  b*c+1,
+  a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
+  a*c*e*i*q + d*m*o*q + f*g
+};
+C = gb I;
+B = gbBoolean I;
+assert( sort gens B - sort gens C == 0 ) 
+///
+
+TEST ///
+R=ZZ/2[vars(0..63), MonomialOrder=>Lex]
+l =  apply( gens R, x -> x^2+x);
+RQ = R/l
+I = ideal(a);
+C = gb I;
+B = gbBoolean I;
+assert( sort gens B - sort gens C == 0 )
+///
+
+TEST ///
+R = ZZ/2[a..t, MonomialOrder=>Lex]
+l = apply(gens R, x-> x^2+x);
+QR = R/l;
+I = ideal {
+  b*c+1,
+  a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
+  b*c*l*o*r*s + b*s + i + m*n*q, 
+  a*c*e*i*q + d*m*o*q + f*g, 
+  i + l*m*n + q*r + q +1
+};
+C = gb I;
+B = gbBoolean I;
+assert( sort gens B - sort gens C == 0 ) 
+///
+
+TEST ///
+R = ZZ/2[a..t, MonomialOrder=>Lex]
+l = apply(gens R, x-> x^2+x);
+QR = R/l;
+I = ideal {
+  b*c,
+  a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
+  b*c*l*o*r*s + b*s + i + m*n*q, 
+  a*c*e*i*q + d*m*o*q + f*g, 
+  i + l*m*n + q*r + q
+};
+C = gb I;
+B = gbBoolean I;
+assert( sort gens B - sort gens C == 0 ) 
+///
+
+TEST ///
+R=ZZ/2[vars(0..32), MonomialOrder=>Lex]
+l =  apply( gens R, x -> x^2+x);
+RQ = R/l
+I = ideal(a,b, a*c+d);
+C = gb I;
+B = gbBoolean I;
+assert( sort gens B - sort gens C == 0 )
+///
+
 TEST ///
   R = ZZ/2[x,y,z, MonomialOrder=>Lex]
   QR = R / ideal apply(gens R, x -> x^2 + x)
@@ -103,42 +212,52 @@ TEST ///
   assert(correct === G ) 
 ///
 
+--TEST ///
+--R = ZZ/2[vars(0..17), MonomialOrder=>Lex]
+--l = apply(gens R, x-> x^2+x);
+--QR = R/l;
+--I = ideal(0,0,0,0,b*f*i*k+h*i*j+f*j*k+h*j*k+b*k*l+f*i+f*j+a,d*g*m*o+h*m*o+h*o*r+g*h+d*o+i*r+m*r+b,a*d*j*l+c,b*c*k*l*q+b*c*g*l+c*k*l*n+c*l*n*q+k*l*n*q+b*g*l+g*k*l+b*c*q+l*n*q+b*n+d,b*h*j*l+d*h*l*p+b*d*h+b*j*l+j*l*p+e*p+e,i*m*p*r+j*m*p*r+f,c*f*g*i*n+g,c*f*j*l*o*r+j*q*r+h,a*f*h*p+h*m*o*r+a*m*p+a*o*p+h*o*p+f*m*r+h*m*r+o*r+i,0,e*f*g*h*m*q+e*f*g*h+b*f*g+e*m*q+f*m*q+k,a*e*f*r+e*f*g+c*g*r+c*p+g*p+f*r+e+l,d*e*h*i*k*m+d*e*f*h*m+d*e*i*m+e*i*m+d*k*m+m,a*c*e*j*n*q+c*e*m*n+n,a*f*n*o+o,a*j*k*l*n+p,b*c*e*n*q+q,d*e*i+r);
+--C = gb(I, Algorithm=>Sugarless);
+--B = gbBoolean I;
+--assert( sort gens B - sort gens C == 0 ) 
+--///
 
--- TEST ///
---   R = ZZ/2[ vars(1..20), MonomialOrder=>Lex]
---   QR = R / ideal apply(gens R, x -> x^2 + x)
---   II3 = ideal (c*k*r + 1, b*d*h*i*n + b*h*i*n + b*d*h + b*d*i + b*i*n + d*n + b, g*h*l*o*r + g*o, j*l*m + d*m*t + l*m*t + l*t, e*k*t*u + g*k*t*u + e*g*k + e*g*u + g*k + u, m*n*q*r + k*n + n*q + m*r + 1, b*e*g*o + e*g*o*s + b*g*o + e*g*o + b*o*s + e*o*s + e*g, e*g*k*q + g*k*q*t + g*k*q + g*t + k*t, j*m*t*u + f*j*t, o*q*t*u + o*t*u, p*s*u + q*r + r*s + q + u, b*s, b*f*n*s + f*n*s + n*s*t + f*n + f, d*p + d*t, g*l*q*t + q*t, c*d*e*p*q, d*q*r*t + o*q*r + d*q + o*r + r*t + o, d*h*m*n*p + h*m*n*p, f*k*o*s*t + f*k*o*s + f*o*s*t + k*o*s*t + f*k*o + f*k*s + f*k*t + f*k + o*t + f, k*q*t + h*q + h + 1)
---   correctSolution = sort flatten entries gens gb( II3, Algorithm=>Sugarless)
---   G = sort flatten entries gens gbBoolean II3
---   assert( G == correctSolution )
--- ///
+
+ TEST ///
+   R = ZZ/2[ vars(1..20), MonomialOrder=>Lex]
+   QR = R / ideal apply(gens R, x -> x^2 + x)
+   II3 = ideal (c*k*r + 1, b*d*h*i*n + b*h*i*n + b*d*h + b*d*i + b*i*n + d*n + b, g*h*l*o*r + g*o, j*l*m + d*m*t + l*m*t + l*t, e*k*t*u + g*k*t*u + e*g*k + e*g*u + g*k + u, m*n*q*r + k*n + n*q + m*r + 1, b*e*g*o + e*g*o*s + b*g*o + e*g*o + b*o*s + e*o*s + e*g, e*g*k*q + g*k*q*t + g*k*q + g*t + k*t, j*m*t*u + f*j*t, o*q*t*u + o*t*u, p*s*u + q*r + r*s + q + u, b*s, b*f*n*s + f*n*s + n*s*t + f*n + f, d*p + d*t, g*l*q*t + q*t, c*d*e*p*q, d*q*r*t + o*q*r + d*q + o*r + r*t + o, d*h*m*n*p + h*m*n*p, f*k*o*s*t + f*k*o*s + f*o*s*t + k*o*s*t + f*k*o + f*k*s + f*k*t + f*k + o*t + f, k*q*t + h*q + h + 1)
+   correctSolution = sort flatten entries gens gb( II3, Algorithm=>Sugarless)
+   G = sort flatten entries gens gbBoolean II3
+   assert( G == correctSolution )
+ ///
 
 
--- TEST ///
---   R = ZZ/2[ vars(1..20)]
---   QR = R / ideal apply(gens R, x -> x^2 + x)
---   II5 = ideal(l,c*g*h*k*q+c*h*k*q+c*k*q+h*k*q+g*k+h*q+k+1,b*f*k*q*t+b*f*k*t+b*t+q,c*d*j*k+c*d*j*t+c*d*k*t+d*j*k+j*k*t+d*j+j*k+j,e*j*p*q*u+e*j*q*u+e*j+e*q+p*q+q,c*k*m*s*u+c*k*m*u+c*k*m+k*m*s+k*m*u+k*u+m*u+m,b*f*g*r+e*f*g*r+e*f*r+f*g+e*r,f*k*l*u+i*k*l*u+f*l*u+k*l*u+i*k+i*l+k*l+k,f*l*o+f*n+l*o+n*o+l*u,d*e*g*n+d*n+g,d*j*m*o+d*e*o+d*o+m*o+1,f*g*h*i+f*g*h+f*g*i+f*g*q+h*i+1,d*p*r*s+d*p*s+f*r+f*s+f,b*j*k*q*r+b*j*k*q+j*k*q*r+b*q,d*f*g*n+d*f*p+f*n*p+g*n*p+d*g+g*p+1,k*p*q,h*l*o+h*n*r+h*o*r+l*o*r+n*o*r+l+o,f*p*u+c*f+p*u+1,d*h+d,b*g*h+h)
---   correct = sort flatten entries gens gb II5      -- used 0.0001 seconds
---   G = sort flatten entries gens gbBoolean II5
---   assert( correct == G ) 
--- ///
+ TEST ///
+   R = ZZ/2[ vars(1..20)]
+   QR = R / ideal apply(gens R, x -> x^2 + x)
+   II5 = ideal(l,c*g*h*k*q+c*h*k*q+c*k*q+h*k*q+g*k+h*q+k+1,b*f*k*q*t+b*f*k*t+b*t+q,c*d*j*k+c*d*j*t+c*d*k*t+d*j*k+j*k*t+d*j+j*k+j,e*j*p*q*u+e*j*q*u+e*j+e*q+p*q+q,c*k*m*s*u+c*k*m*u+c*k*m+k*m*s+k*m*u+k*u+m*u+m,b*f*g*r+e*f*g*r+e*f*r+f*g+e*r,f*k*l*u+i*k*l*u+f*l*u+k*l*u+i*k+i*l+k*l+k,f*l*o+f*n+l*o+n*o+l*u,d*e*g*n+d*n+g,d*j*m*o+d*e*o+d*o+m*o+1,f*g*h*i+f*g*h+f*g*i+f*g*q+h*i+1,d*p*r*s+d*p*s+f*r+f*s+f,b*j*k*q*r+b*j*k*q+j*k*q*r+b*q,d*f*g*n+d*f*p+f*n*p+g*n*p+d*g+g*p+1,k*p*q,h*l*o+h*n*r+h*o*r+l*o*r+n*o*r+l+o,f*p*u+c*f+p*u+1,d*h+d,b*g*h+h)
+   correct = sort flatten entries gens gb II5      -- used 0.0001 seconds
+   G = sort flatten entries gens gbBoolean II5
+   assert( correct == G ) 
+ ///
 
--- TEST ///
---   R = ZZ/2[ vars(1..20), MonomialOrder=>Lex]
---   QR = R / ideal apply(gens R, x -> x^2 + x)
---   II6 = ideal(b*c*e*j+b*c*j*n+b*e*j*n+c*e+c*n+c,g*k+g,d*e*f*o+d*f*o*r+d*f*o+e*f*o+d*e*r+e+1,f*s+n*s,d*e*j*o+d*e*j*q+d*j*o*q+e*j*o+d*j*q+e*o+d+o,f*i*n+f*n,f*j*l*p+f*j+j*l,e*k*n*s+e*g*s+e*n*s+g*s+g,c*p*s*t+c*j*t+s,c*k+f,b*e*f+b*e*o+b*o*t+e*o*t+b*o+f*o,b*g+f*q+q,i*m+b*t+k,e*i*l+e*i*m+h*i+h*m+e+1,r*t+1,d*m,d*f*p+e*p*q+f*p*q+d*f+d*p,e*i*m+e*i*p+i*m*p+e*m+f*p+f+i+p,e*g*h*i*u+g*h*i*u+g*h+h*i,c*q+i*q)
---   G = sort flatten entries gens gbBoolean II6
---   correctSolution = sort flatten entries gens gb (II6, Algorithm=>Sugarless)
---   assert(G == correctSolution )
--- ///
+ TEST ///
+   R = ZZ/2[ vars(1..20), MonomialOrder=>Lex]
+   QR = R / ideal apply(gens R, x -> x^2 + x)
+   II6 = ideal(b*c*e*j+b*c*j*n+b*e*j*n+c*e+c*n+c,g*k+g,d*e*f*o+d*f*o*r+d*f*o+e*f*o+d*e*r+e+1,f*s+n*s,d*e*j*o+d*e*j*q+d*j*o*q+e*j*o+d*j*q+e*o+d+o,f*i*n+f*n,f*j*l*p+f*j+j*l,e*k*n*s+e*g*s+e*n*s+g*s+g,c*p*s*t+c*j*t+s,c*k+f,b*e*f+b*e*o+b*o*t+e*o*t+b*o+f*o,b*g+f*q+q,i*m+b*t+k,e*i*l+e*i*m+h*i+h*m+e+1,r*t+1,d*m,d*f*p+e*p*q+f*p*q+d*f+d*p,e*i*m+e*i*p+i*m*p+e*m+f*p+f+i+p,e*g*h*i*u+g*h*i*u+g*h+h*i,c*q+i*q)
+   G = sort flatten entries gens gbBoolean II6
+   correctSolution = sort flatten entries gens gb (II6, Algorithm=>Sugarless)
+   assert(G == correctSolution )
+ ///
 
--- TEST ///
---   R = ZZ/2[ vars(1..20)]
---   QR = R / ideal apply(gens R, x -> x^2 + x)
---   II4 = ideal (d*h*j + h*j*o + d*k*o + j*k*o + d*k + d + h, e*f*o*q + e*g*o + f*g*o + e*g + f*q + g*q + g + 1, h*l*n + j*n*r, q*u + f + q + 1, b*j + h*n, l*m*o + l*q, f*h*o*q + f*h*o + f*o*t + h*q*t + h + 1, g*h*p*r + g*h*r + g*p*r + h*p*r + g*r + h*r + p*r + h + m, d*k + d*r + f*r + k, b*j*o*p*s + b*j*p*s + b*j*p + b*o + b + p + 1, g*r, e*j*r*s + o*r*s + o*r + r*s + e + j + s, m*u + n*u, i*j*p*q + h*i + h*p + j + q, e*l*t*u + d*e*l + e*l*t + d*l*u + e*l*u + d, e*l*m*r + e*l*m*s + l*m*r + l*r*s + m*r*s + l*m, j*m*q*r*t + j*m*q + j*m*t, b*d*r*u + d*p*r*u + d*p*u + b*p + d*p + b*r + p, c*e*m*s, d*e*q*u + e*u + q*u + q)
---   GG = sort flatten entries gens gbBoolean II4
---   assert( GG == {1})
--- ///
+ TEST ///
+   R = ZZ/2[ vars(1..20)]
+   QR = R / ideal apply(gens R, x -> x^2 + x)
+   II4 = ideal (d*h*j + h*j*o + d*k*o + j*k*o + d*k + d + h, e*f*o*q + e*g*o + f*g*o + e*g + f*q + g*q + g + 1, h*l*n + j*n*r, q*u + f + q + 1, b*j + h*n, l*m*o + l*q, f*h*o*q + f*h*o + f*o*t + h*q*t + h + 1, g*h*p*r + g*h*r + g*p*r + h*p*r + g*r + h*r + p*r + h + m, d*k + d*r + f*r + k, b*j*o*p*s + b*j*p*s + b*j*p + b*o + b + p + 1, g*r, e*j*r*s + o*r*s + o*r + r*s + e + j + s, m*u + n*u, i*j*p*q + h*i + h*p + j + q, e*l*t*u + d*e*l + e*l*t + d*l*u + e*l*u + d, e*l*m*r + e*l*m*s + l*m*r + l*r*s + m*r*s + l*m, j*m*q*r*t + j*m*q + j*m*t, b*d*r*u + d*p*r*u + d*p*u + b*p + d*p + b*r + p, c*e*m*s, d*e*q*u + e*u + q*u + q)
+   GG = sort flatten entries gens gbBoolean II4
+   assert( GG == {1})
+ ///
 
 --------- here is the big end ----------
 ---------------------------------------
@@ -166,9 +285,6 @@ installPackage "BooleanGB"
 check "BooleanGB"
 
 
--- here are more tests that I wrote with Mike a long time ago, they should
-better work ... 
-
 
 end -- test file disabled by Dan; these tests should be moved to the package BooleanGB
 
@@ -186,23 +302,6 @@ end
 --B
 --assert( sort gens B - sort C == 0 )
 
-R=ZZ/2[vars(0..63), MonomialOrder=>Lex]
-l =  apply( gens R, x -> x^2+x);
-RQ = R/l
-I = ideal(a);
-time C = gens gb I;
-time B = gbBoolean I;
-B
-assert( sort gens B - sort C == 0 )
-
-R=ZZ/2[vars(0..32), MonomialOrder=>Lex]
-l =  apply( gens R, x -> x^2+x);
-RQ = R/l
-I = ideal(a,b, a*c+d);
-time C = gens gb I;
-time B = gbBoolean I;
-gens B
-assert( sort gens B - sort C == 0 )
 
 end -- test file disabled by Dan; these tests should be moved to the package BooleanGB
 
@@ -652,20 +751,22 @@ assert( sort gens B - sort C == 0 )
 end -- test file disabled by Dan; these tests should be moved to the package BooleanGB
 
 restart
-R=ZZ/2[a1,a2,a3,a4,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4,e1,e2,e3,e4,f1,f2,f3,f4,g1,g2,g3,g4,h1,h2,h3,h4,i1,i2,i3,i4,j1,j2,j3,j4,k1,k2,k3,k4,l1,l2,l3,l4,m1,m2,m3,m4,n1,n2,n3,n4,o1,o2,o3,o4,p1,p2,p3,p4, MonomialOrder=>Lex];
+R=ZZ/2[a1,a2,a3,a4,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4,e1,e2,e3,e4,f1,f2,f3,f4,g1,g2,g3,g4,h1,h2,h3,h4,i1,i2,i3,i4,j1,j2,j3,j4,k1,k2,k3,k4,l1,l2,l3,l4,m1,m2,m3,m4,n1,n2,n3,n4,o1,o2,o3,o4,p1,p2,p3,p4];
 FP =  apply( gens R, i -> i*(i-1));
 --FP are the field polynomials
 RQ = R/ideal FP
 I= ideal {a1+a2+a3+a4-1, b1+b2+b3+b4-1, c1+c2+c3+c4-1, d1+d2+d3+d4-1, e1+e2+e3+e4-1, f1+f2+f3+f4-1, g1+g2+g3+g4-1, h1+h2+h3+h4-1, i1+i2+i3+i4-1, j1+j2+j3+j4-1, k1+k2+k3+k4-1, l1+l2+l3+l4-1, m1+m2+m3+m4-1, n1+n2+n3+n4-1, o1+o2+o3+o4-1, p1+p2+p3+p4-1, a1*b1+a2*b2+a3*b3+a4*b4, a1*c1+a2*c2+a3*c3+a4*c4, a1*d1+a2*d2+a3*d3+a4*d4, a1*e1+a2*e2+a3*e3+a4*e4, a1*f1+a2*f2+a3*f3+a4*f4, a1*i1+a2*i2+a3*i3+a4*i4, a1*m1+a2*m2+a3*m3+a4*m4, b1*c1+b2*c2+b3*c3+b4*c4, b1*d1+b2*d2+b3*d3+b4*d4, b1*e1+b2*e2+b3*e3+b4*e4, b1*f1+b2*f2+b3*f3+b4*f4, b1*j1+b2*j2+b3*j3+b4*j4, b1*n1+b2*n2+b3*n3+b4*n4, c1*d1+c2*d2+c3*d3+c4*d4, c1*g1+c2*g2+c3*g3+c4*g4, c1*h1+c2*h2+c3*h3+c4*h4, c1*k1+c2*k2+c3*k3+c4*k4, c1*o1+c2*o2+c3*o3+c4*o4, d1*g1+d2*g2+d3*g3+d4*g4, d1*h1+d2*h2+d3*h3+d4*h4, d1*l1+d2*l2+d3*l3+d4*l4, d1*p1+d2*p2+d3*p3+d4*p4, e1*f1+e2*f2+e3*f3+e4*f4, e1*g1+e2*g2+e3*g3+e4*g4, e1*h1+e2*h2+e3*h3+e4*h4, e1*i1+e2*i2+e3*i3+e4*i4, e1*m1+e2*m2+e3*m3+e4*m4, f1*g1+f2*g2+f3*g3+f4*g4, f1*h1+f2*h2+f3*h3+f4*h4, f1*j1+f2*j2+f3*j3+f4*j4, f1*n1+f2*n2+f3*n3+f4*n4, g1*h1+g2*h2+g3*h3+g4*h4, g1*k1+g2*k2+g3*k3+g4*k4, g1*o1+g2*o2+g3*o3+g4*o4, h1*l1+h2*l2+h3*l3+h4*l4, h1*p1+h2*p2+h3*p3+h4*p4, i1*j1+i2*j2+i3*j3+i4*j4, i1*k1+i2*k2+i3*k3+i4*k4, i1*l1+i2*l2+i3*l3+i4*l4, i1*m1+i2*m2+i3*m3+i4*m4, i1*n1+i2*n2+i3*n3+i4*n4, j1*k1+j2*k2+j3*k3+j4*k4, j1*l1+j2*l2+j3*l3+j4*l4, j1*m1+j2*m2+j3*m3+j4*m4, j1*n1+j2*n2+j3*n3+j4*n4, k1*l1+k2*l2+k3*l3+k4*l4, k1*o1+k2*o2+k3*o3+k4*o4, k1*p1+k2*p2+k3*p3+k4*p4, l1*o1+l2*o2+l3*o3+l4*o4, l1*p1+l2*p2+l3*p3+l4*p4, m1*n1+m2*n2+m3*n3+m4*n4, m1*o1+m2*o2+m3*o3+m4*o4, m1*p1+m2*p2+m3*p3+m4*p4, n1*o1+n2*o2+n3*o3+n4*o4, n1*p1+n2*p2+n3*p3+n4*p4, o1*p1+o2*p2+o3*p3+o4*p4}
 --K1 is the set of Shidoku Polynomials (not quite right for Shidoku, but gives the right answer most of the time! I still need to modify it for ZZ/2 computations.)
-K2 = ideal {d1, d2, d3, d4-1, e1, e2, e3, e4-1, g1, g2-1, g3, g4, j1, j2, j3-1, j4, l1-1, l2, l3, l4, m1-1, m2, m3, m4}
+--K2 = ideal {d1, d2, d3, d4-1, e1, e2, e3, e4-1, g1, g2-1, g3, g4, j1, j2, j3-1, j4, l1-1, l2, l3, l4, m1-1, m2, m3, m4}
 --K2 = ideal {d1, d2-1, d3, d4, e1, e2, e3, e4-1, j1, j2, j3-1, j4, m1-1, m2, m3, m4}
 --K2 is the set of initial clues.  This should be a fast computation
-time gens gb (K1+K2) -- used 0.024064 seconds
-time gens gb (K1) -- used seconds
-time C = gens gb I;
+--time gens gb (K1+K2) -- used 0.024064 seconds
+--time gens gb (K1) -- used seconds
+--time C = gens gb I; -- 
+gbTrace = 3
+time C = gb (I, Algorithm=>Sugarless); -- 
 time B = gbBoolean I;
-assert( gens B - C == 0 )
+assert( sort gens B - sort gens C == 0 )
 
 
 end -- test file disabled by Dan; these tests should be moved to the package BooleanGB
@@ -687,101 +788,19 @@ time C = gens gb I;
 time B = gbBoolean I;
 assert( gens B - C == 0 )
 
-R = ZZ/2[a..t, MonomialOrder=>Lex]
-l = apply(gens R, x-> x^2+x);
-QR = R/l;
-I = ideal {
-  b*c+1,
-  a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
-  a*c*e*i*q + d*m*o*q + f*g
-};
-time C = gens gb I;
+
+restart
+R=ZZ/2[a1,a2,a3,a4,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4,e1,e2,e3,e4,f1,f2,f3,f4,g1,g2,g3,g4,h1,h2,h3,h4,i1,i2,i3,i4,j1,j2,j3,j4,k1,k2,k3,k4,l1,l2,l3,l4,m1,m2,m3,m4,n1,n2,n3,n4,o1,o2,o3,o4,p1,p2,p3,p4];
+FP =  apply( gens R, i -> i*(i-1));
+--FP are the field polynomials
+RQ = R/ideal FP
+I= ideal {a1+a2+a3+a4-1, b1+b2+b3+b4-1, c1+c2+c3+c4-1, d1+d2+d3+d4-1, e1+e2+e3+e4-1, f1+f2+f3+f4-1, g1+g2+g3+g4-1, h1+h2+h3+h4-1, i1+i2+i3+i4-1, j1+j2+j3+j4-1, k1+k2+k3+k4-1, l1+l2+l3+l4-1, m1+m2+m3+m4-1, n1+n2+n3+n4-1, o1+o2+o3+o4-1, p1+p2+p3+p4-1, a1*b1+a2*b2+a3*b3+a4*b4, a1*c1+a2*c2+a3*c3+a4*c4, a1*d1+a2*d2+a3*d3+a4*d4, a1*e1+a2*e2+a3*e3+a4*e4, a1*f1+a2*f2+a3*f3+a4*f4, a1*i1+a2*i2+a3*i3+a4*i4, a1*m1+a2*m2+a3*m3+a4*m4, b1*c1+b2*c2+b3*c3+b4*c4, b1*d1+b2*d2+b3*d3+b4*d4, b1*e1+b2*e2+b3*e3+b4*e4, b1*f1+b2*f2+b3*f3+b4*f4, b1*j1+b2*j2+b3*j3+b4*j4, b1*n1+b2*n2+b3*n3+b4*n4, c1*d1+c2*d2+c3*d3+c4*d4, c1*g1+c2*g2+c3*g3+c4*g4, c1*h1+c2*h2+c3*h3+c4*h4, c1*k1+c2*k2+c3*k3+c4*k4, c1*o1+c2*o2+c3*o3+c4*o4, d1*g1+d2*g2+d3*g3+d4*g4, d1*h1+d2*h2+d3*h3+d4*h4, d1*l1+d2*l2+d3*l3+d4*l4, d1*p1+d2*p2+d3*p3+d4*p4, e1*f1+e2*f2+e3*f3+e4*f4, e1*g1+e2*g2+e3*g3+e4*g4, e1*h1+e2*h2+e3*h3+e4*h4, e1*i1+e2*i2+e3*i3+e4*i4, e1*m1+e2*m2+e3*m3+e4*m4, f1*g1+f2*g2+f3*g3+f4*g4, f1*h1+f2*h2+f3*h3+f4*h4, f1*j1+f2*j2+f3*j3+f4*j4, f1*n1+f2*n2+f3*n3+f4*n4, g1*h1+g2*h2+g3*h3+g4*h4, g1*k1+g2*k2+g3*k3+g4*k4, g1*o1+g2*o2+g3*o3+g4*o4, h1*l1+h2*l2+h3*l3+h4*l4, h1*p1+h2*p2+h3*p3+h4*p4, i1*j1+i2*j2+i3*j3+i4*j4, i1*k1+i2*k2+i3*k3+i4*k4, i1*l1+i2*l2+i3*l3+i4*l4, i1*m1+i2*m2+i3*m3+i4*m4, i1*n1+i2*n2+i3*n3+i4*n4, j1*k1+j2*k2+j3*k3+j4*k4, j1*l1+j2*l2+j3*l3+j4*l4, j1*m1+j2*m2+j3*m3+j4*m4, j1*n1+j2*n2+j3*n3+j4*n4, k1*l1+k2*l2+k3*l3+k4*l4, k1*o1+k2*o2+k3*o3+k4*o4, k1*p1+k2*p2+k3*p3+k4*p4, l1*o1+l2*o2+l3*o3+l4*o4, l1*p1+l2*p2+l3*p3+l4*p4, m1*n1+m2*n2+m3*n3+m4*n4, m1*o1+m2*o2+m3*o3+m4*o4, m1*p1+m2*p2+m3*p3+m4*p4, n1*o1+n2*o2+n3*o3+n4*o4, n1*p1+n2*p2+n3*p3+n4*p4, o1*p1+o2*p2+o3*p3+o4*p4}
+gbTrace = 3
+time C = gb (I, Algorithm=>Sugarless); -- 
 time B = gbBoolean I;
-assert( sort gens B - sort C == 0 ) 
--- we computed 10279 S Polynomials and added 73 of them to the intermediate basis.
-     -- used 0.082521 seconds, Revision: 10970
-
-R = ZZ/2[a..t, MonomialOrder=>Lex]
-l = apply(gens R, x-> x^2+x);
-QR = R/l;
-I = ideal {
-  b*c+1,
-  a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
-  b*c*l*o*r*s + b*s + i + m*n*q, 
-  a*c*e*i*q + d*m*o*q + f*g, 
-  i + l*m*n + q*r + q +1
-};
-time C = gens gb I;
-time B = gbBoolean I;
-assert( sort gens B - sort C == 0 ) 
--- we computed 44332 S Polynomials and added 157 of them to the intermediate basis.
-     -- used 0.626917 seconds, Revision: 10970 
+assert( sort gens B - sort gens C == 0 )
 
 
-R = ZZ/2[a..t, MonomialOrder=>Lex]
-l = apply(gens R, x-> x^2+x);
-QR = R/l;
-I = ideal {
-  b*c,
-  a*b*c*d*f*g*h*t + i*o*p*q*r*s*t + r + s, 
-  b*c*l*o*r*s + b*s + i + m*n*q, 
-  a*c*e*i*q + d*m*o*q + f*g, 
-  i + l*m*n + q*r + q
-};
-time C = gens gb I;
-time B = gbBoolean I;
-assert( sort gens B - sort C == 0 ) -- we computed 9791 S Polynomials and added 61 of them to the intermediate basis.
-     -- used 0.063325 seconds, Revision: 10970 
-
-
-R = ZZ/2[a..t, MonomialOrder=>GRevLex]
-l = apply(gens R, x-> x^2+x);
-QR = R/l;
-I = ideal {a*b*c*d*e,
-  a+b*c+d*e+a+b+c+d , 
-  j*h+i+f +a*b+c*d+e*f+g*h*i+i*j+a*t+s*r, 
-  g+f +m*n+o + o*p + r*s*t+a*l+h*i*q*s + k*c,
-  j+i+d*c, 
-  r+s+t*a*b*c*d*f*g*h+i*o*p*q*r*s*t, 
-  m*n+o*p, 
-  b*s+q+p*n*m+i + i*j*h*a*c*t, 
-  b*s+q*n*m+i+b*l*o*r*s*c, 
-  b*k+q+l*n*m +n,
-  i*q*a*c*e+f*g+o*q*d*m +b+d, 
-  b*s+q*n*m+i+j*s*t+s, 
-  b*k+r*q+l*m+i*j+n, 
-  b*k+d*n*m+i, 
-  b+q+l*n*m+i*d, 
-  a*k+c*l*n*f, 
-  q*r+c+q+l*n*m+i
-};
-time C = gens gb I;
-R = ZZ/2[a..t, MonomialOrder=>Lex]
-l = apply(gens R, x-> x^2+x);
-QR = R/l;
-C = sub(C, QR)
-time C = gens gb C;
-I = sub(I,QR)
-time B = gbBoolean I; -- used 3.48974 seconds at Revision: 10960 -- used 1.43021 seconds Revision: 10961
-assert( sort gens B - sort C == 0 )
--- we computed 102631 S Polynomials and added 301 of them to the intermediate basis.
-     -- used 2.14443 seconds, Revision: 10970
-
-
-R = ZZ/2[vars(0..14), MonomialOrder=>Lex]
-l = apply(gens R, x-> x^2+x);
-QR = R/l;
-I = ideal(b*k+a+o+1,a*k+b,a*c*i+c*d*i+a*i*o+c*d+1,h*i*j*l+c*h*j+i*l+d+l,b*c*d*f*n+c*d*f+b*d*n+b*c+b*f+d*f+b*n+b+c+d+e,f,a*b*g*j*n+b*g*n+a*b+b*g+b+g,e*i*m*o+e*h*i+e*i*o,d*f*g+c*f*o+f+i,f*g*j+h*m+h+j,b*d*i+d*f*j+f*i*j+k,e*o+o,d*i*k+d*i+m,d*e*k*o+d*e*k+d*g*o+e*g*o+e*k*o+d*e+e*g+g*o+n+1,a*d*e+a*e*j+a*d*m+a*e*m+d*j*m+a*m+j+o+1)
-time C = gens gb I;
-time B = gbBoolean I;
-assert( sort gens B - sort C == 0 ) 
-
-R = ZZ/2[vars(0..17), MonomialOrder=>Lex]
-l = apply(gens R, x-> x^2+x);
-QR = R/l;
-I = ideal(0,0,0,0,b*f*i*k+h*i*j+f*j*k+h*j*k+b*k*l+f*i+f*j+a,d*g*m*o+h*m*o+h*o*r+g*h+d*o+i*r+m*r+b,a*d*j*l+c,b*c*k*l*q+b*c*g*l+c*k*l*n+c*l*n*q+k*l*n*q+b*g*l+g*k*l+b*c*q+l*n*q+b*n+d,b*h*j*l+d*h*l*p+b*d*h+b*j*l+j*l*p+e*p+e,i*m*p*r+j*m*p*r+f,c*f*g*i*n+g,c*f*j*l*o*r+j*q*r+h,a*f*h*p+h*m*o*r+a*m*p+a*o*p+h*o*p+f*m*r+h*m*r+o*r+i,0,e*f*g*h*m*q+e*f*g*h+b*f*g+e*m*q+f*m*q+k,a*e*f*r+e*f*g+c*g*r+c*p+g*p+f*r+e+l,d*e*h*i*k*m+d*e*f*h*m+d*e*i*m+e*i*m+d*k*m+m,a*c*e*j*n*q+c*e*m*n+n,a*f*n*o+o,a*j*k*l*n+p,b*c*e*n*q+q,d*e*i+r);
-time C = gens gb(I, Algorithm=>Sugarless);
-time B = gbBoolean I;
-assert( sort gens B - sort C == 0 ) 
-
-
+restart
+installPackage "BooleanGB"
+check "BooleanGB"

@@ -2538,12 +2538,12 @@ document {
      Outputs => {
 	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"} 
 	  },
-     "description",
-     EXAMPLE lines ///
-       	  XXXXXXXXXXXXXXX  
-	  ///,
-     Caveat => {},
-     SeeAlso => {}
+     -- "description",
+     -- EXAMPLE lines ///
+     --   	  XXXXXXXXXXXXXXX  
+     -- 	  ///,
+     -- Caveat => {},
+     -- SeeAlso => {}
      }
 document {
      Key => [Dprune,optGB],

@@ -132,7 +132,7 @@ Thing#{Standard,Print} = x -> (
      save := printWidth;
      if printWidth != 0 then printWidth = printWidth - #oprompt;
      z := robustNet x;
-     wrapper := lookup(symbol Wrap,class x);
+     wrapper := lookup(global Wrap,class x);
      if wrapper =!= null then (
 	  fun := () -> z = wrapper z;
 	  try timelimit(printingTimeLimit, fun)

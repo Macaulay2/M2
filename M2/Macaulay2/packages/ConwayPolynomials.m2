@@ -22,7 +22,7 @@ getCP := memoize(
 	       x -> (
 	       	    x = value x;
 	       	    ((x#0,x#1),drop(x,2))))))
-Ap := memoize(p -> (ZZ/p)(monoid [global a]))
+Ap := memoize(p -> (ZZ/p)(monoid [getSymbol "a"]))
 fix := (p,n,co,a) -> a^n + sum(#co, i -> co#i * a^i)
 conwayPolynomial = method()
 conwayPolynomial(ZZ,ZZ) := (p,n) -> if (getCP())#?(p,n) then fix(p,n,(getCP())#(p,n),(Ap p)_0)

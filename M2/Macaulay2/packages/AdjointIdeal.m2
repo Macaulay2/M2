@@ -311,6 +311,7 @@ geometricGenus(Ideal,Matrix):=(I1,ib)->(
 n:=(degree (gens I1)_(0,0))#0;
 gen:=(n-1)*(n-2)/2-sum(apply((entries matden(ib))#0,j->(degree j)#0));
 if denominator(gen)!=1 then print("ERROR");
+use ring I1;
 numerator(gen));
 --geomgenus(I,ib)
 
@@ -359,7 +360,7 @@ while sy<n do (
   liy=append(liy,lix);
 sy=sy+1);
 -- symmetrize
-trmw=matrix(liy);
+trmw:=matrix(liy);
 trmw=trmw+transpose(trmw);
 trmw);
 
@@ -420,7 +421,7 @@ i:=n-2;
 rstt:=0;
 while i>-1 do (
   rstt=ze_(0,i);
-  j=i+1;
+  j:=i+1;
   while j<n do (
      rstt=rstt-trmw_(i,j)*rst#(n-1-j);
   j=j+1);

@@ -82,7 +82,7 @@ export getGlobalVariable(x:Symbol):Expr := (if x.thread then enlargeThreadFrame(
 export globalDictionary := 
 export Macaulay2Dictionary := Dictionary(nextHash(),
      newSymbolHashTable(),self,globalFrameID,
-     globalFramesize,false,false);
+     globalFramesize,false,false,false);
 export completions(s:string):array(string) := (
      n := length(s);
      if n == 0 then return array(string)();		    -- don't complete the null string
@@ -107,22 +107,23 @@ export allDictionaries := DictionaryList(Macaulay2Dictionary,self);
 record(d:Dictionary):Dictionary := (
      allDictionaries = DictionaryList(d,allDictionaries);
      d);     
-export newGlobalDictionary():Dictionary := record(Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false));
+export newGlobalDictionary():Dictionary := record(Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false,false));
 numLocalDictionaries := threadFrameID;
 export threadLocal localFrame := dummyFrame;
 export dummySymbolHashTable := newSymbolHashTable();
 export dummyDictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true));
+     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true,false));
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     record(Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false)));
+     record(Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false,false)));
 export newStaticLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      record(
 	  Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,
 	       0,			     -- 0 for the global frame containing the static symbols' values
 	       false,			  -- the first local dictionary is usually (?) non-transient
+	       false,
 	       false
 	       )));
 export emptyLocalDictionary := newStaticLocalDictionary();
@@ -141,6 +142,10 @@ export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure :
 export emptyFrame := newLocalFrame(emptyLocalDictionary);
 emptyFrame.notrecyclable = true;
 
+export dictionaryDepth(d:Dictionary):int := (
+     i := 0;
+     while d.outerDictionary != d do (i = i+1; d = d.outerDictionary);
+     i);
 export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
 
 

@@ -181,6 +181,8 @@ DrestrictionComplex = method( Options => {Strategy => Schreyer} )
 DrestrictionComplex(Ideal,List) := options -> (I,w) -> (
      DrestrictionComplex ((ring I)^1/I, w, options)     )
 
+protect RestrictComplex
+
 DrestrictionComplex(Module, List) := options -> (M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -545,6 +547,8 @@ DintegrationAll(Module, List) := options -> (M,w) -> (
 --
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+protect ResToOrigRing
 
 computeRestriction = (M,wt,n0,n1,output,options) -> (
 

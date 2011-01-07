@@ -8,6 +8,8 @@ eliminateWA (Ideal, List) := Ideal => (I,v) -> (
      sub(ideal select(G, f->all(listForm f, m->sum(numgens W, i->m#0#i*w#i) ==0)),R)
      ) 
 
+protect s						    -- is this right?  should s be visible to the user?
+
 computeJf = method()
 computeJf RingElement := Ideal => f -> (
      if #(options (ring f).monoid)#WeylAlgebra > 0 -- isWA
@@ -15,7 +17,7 @@ computeJf RingElement := Ideal => f -> (
 	  D := ring f;
 	  )
      else ( 
-     	  R = ring f;
+     	  R := ring f;
 	  D = makeWeylAlgebra(R,SetVariables=>false);
      	  f = sub(f,D);
 	  );
@@ -37,7 +39,7 @@ computeJf RingElement := Ideal => f -> (
 	       if d>0 then t^d*g
 	       else dt^(-d)*g
 	       ));
-     Rtdts := K (monoid [x,t,dt,symbol s, WeylAlgebra=>{t=>dt}]); 
+     Rtdts := K (monoid [x,t,dt,global s, WeylAlgebra=>{t=>dt}]); 
      s := Rtdts_(n+2);
      Rs := K (monoid [s,x,Degrees=>{1}|toList(n:0),MonomialOrder=>Eliminate 1]);
      I3a := eliminateWA(
@@ -74,6 +76,8 @@ exceptionalLocusB (RingElement,RingElement) := RingElement => o -> (f,b) -> (
      I3 := computeJf f;
      exceptionalLocusB(R,I3,b,o)
      )
+
+protect ColonIdeal
 
 -- this version performs the computation given (ring f, I3, b)
 exceptionalLocusB (Ring,Ideal,RingElement) := RingElement => o -> (R,I3,b) -> (
@@ -176,10 +180,10 @@ localBFunction (RingElement,Ideal) := RingElement => (f,P) -> (
 
      -- compute global b-function and its roots    
      gB := globalBFunction f;
-     S := ring gB; s = S_0;
+     S := ring gB; s := S_0;
      roots := bFunctionRoots gB;
 
-     b = gB;
+     b := gB;
      for r in roots do (
      	  while b%(s-r) == 0 do (
 	       b' := b//(s-r);

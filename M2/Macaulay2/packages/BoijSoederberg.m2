@@ -414,7 +414,7 @@ pureCohomologyTable(List, ZZ, ZZ, Symbol) := (zeros, lo, hi, old) -> (
 pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
      z := local z;
      R := QQ (monoid [z]);
-     hp = product(zeros, a -> (R_0 - a));
+     hp := product(zeros, a -> (R_0 - a));
      n := #zeros;  -- in PP^n
      b := gcd apply(n+1, i -> sub(hp, R_0=>i_QQ));
      hp = hp//b;
@@ -651,12 +651,12 @@ dotProduct(BettiTally, BettiTally):=(A,B) ->
 
 dotProduct(Matrix, ZZ, BettiTally):=(A,lowest, B)->(
      --lowest is an integer specifying what degree the first row of A is supposed to have.
-     nr=rank target A;
-     highest=nr+lowest-1;
-     nc=rank source A;
-     d0=min((keys B)/last);
-     regB=max(((keys B)/last)-(keys B)/first);
-     lengthB=max((keys B)/first);
+     nr:=rank target A;
+     highest:=nr+lowest-1;
+     nc:=rank source A;
+     d0:=min((keys B)/last);
+     regB:=max(((keys B)/last)-(keys B)/first);
+     lengthB:=max((keys B)/first);
      if d0<lowest then error "matrix A begins in too high a degree";
      if regB>highest then error "matrix A stops in too low a degree";
      if nc < 1+lengthB then error "matrix A has too few columns";
@@ -707,14 +707,14 @@ supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
      --\langle E, \beta\rangle = \sum_{j\leq i}(-1)^{i-j}\sum_k\beta_{i,k}h_{-k}(H^j(E)),
      --
      lengthF := length F;
-     degreesF=flatten (for i from 0 to lengthF list flatten degrees F_i);
-     minF = min degreesF;
-     maxF = max degreesF;
-     HHE=HH E;
+     degreesF:=flatten (for i from 0 to lengthF list flatten degrees F_i);
+     minF := min degreesF;
+     maxF := max degreesF;
+     HHE:=HH E;
      L:=for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
      A:=transpose L_0;
      for i from 1 to length L -1 do A = A|(transpose L_i);
-     AA=map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
+     AA:=map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
      	  sum(0..min(q,length E), 
 	       j->if HHE#?(-j) then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)#(-j)) else 0));
      dotProduct(AA, minF, betti F)
@@ -783,7 +783,7 @@ pureWeyman List := (L) -> (
      E0:=for i from 1 to #D-1 list  D_(i)-D_(i-1)-1;
      E:={D_0-1}|E0;
      Eplus1:=E+toList(#D:1);
-     lambda = for i from 1 to #D list sum E_{i..#D-1};
+     lambda := for i from 1 to #D list sum E_{i..#D-1};
      rkSchur(#D,lambda)
      )
 

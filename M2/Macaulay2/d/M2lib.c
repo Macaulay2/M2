@@ -648,7 +648,6 @@ char **argv;
 	  struct GC_stack_base sb;
 	  GC_get_stack_base(&sb);
 	  GC_stackbottom = (char *)sb.mem_base;	/* the stack may have moved (since we may have reloaded all the static data) */
-     	  GC_free_space_divisor = 4;
 	  old_collections = GC_gc_no;
           {
 	       char **environ0;
@@ -690,6 +689,7 @@ char **argv;
      vargs->argc=argc;
      vargs->envp=saveenvp;
      vargs->envc = envc;
+
 
      initializeThreadSupervisor(1);
      struct ThreadTask* interpTask = createThreadTask("Interp",interpFunc,vargs,0,0,0);

@@ -1,11 +1,13 @@
 dnl This is the only place where the Macaulay2 version number appears:
 
-    AC_INIT(Macaulay 2, 1.3.1.1, Macaulay2@math.uiuc.edu, Macaulay2)
+    AC_INIT(Macaulay 2, 1.3.9, Macaulay2@math.uiuc.edu, Macaulay2)
 
 dnl The convention for version numbers of Macaulay2 is this:
-dnl   1.3 .   : a relatively major release, such as occurs every six months
+dnl   1.3     : a relatively major release, such as occurs every six months
 dnl   1.3.1   : a minor update, such as might occur a week after a major release
 dnl   1.3.1.1 : a development version, with no binary distributions
+dnl   1.3.9   : almost ready for a major release
+dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the numbe
 
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
@@ -577,8 +579,9 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   Parametrization
   Serialization
   NAGtypes
+  NormalToricVarieties
+  DGAlgebras
 ")
-# pending packages: SRdeformations
 
 # convert the newlines in the list above to spaces
 PACKAGES=`echo $PACKAGES`
@@ -931,15 +934,6 @@ then AC_LANG(C)
      AC_CHECK_HEADER(python2.5/Python.h,,AC_MSG_ERROR(include file python2.5/Python.h not found))
 fi
 
-AC_CHECK_HEADER(libxml/parser.h,,
-   [
-      CPPFLAGS="-I/usr/include/libxml2 $CPPFLAGS"
-      unset ac_cv_header_libxml_parser_h
-      AC_CHECK_HEADER(libxml/parser.h,,
-          [AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS or install libxml2 development files])]
- 	  )
-   ])
-
 if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
      then AC_LANG(C++)
@@ -1238,6 +1232,19 @@ do case $i in
 	*) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
    esac
 done
+
+AC_LANG(C)
+AC_CHECK_HEADER(libxml/parser.h,,
+   [
+      CPPFLAGS="-I/usr/include/libxml2 $CPPFLAGS"
+      unset ac_cv_header_libxml_parser_h
+      AC_CHECK_HEADER(libxml/parser.h,,
+          [AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS or install libxml2 development files])]
+ 	  )
+   ])
+AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
+AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
+AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(libxml2 not found or not linkable))
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS

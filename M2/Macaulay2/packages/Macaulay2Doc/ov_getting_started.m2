@@ -4,6 +4,10 @@
 document {
      Key => "getting started",
      PARA {
+	  "To get a good idea of what you will be able to do with Macaulay2, see
+	  the package ", TO2{ "BeginningMacaulay2::BeginningMacaulay2", "BeginningMacaulay2" }, "."
+	  },
+     PARA {
 	  "Macaulay2 is available from our web page ", 
 	  HREF "http://www.math.uiuc.edu/Macaulay2/",
 	  ".  There you will find online documentation, 

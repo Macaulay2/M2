@@ -1,7 +1,0 @@
-This sort of syntax would be nice to have:
-
-    i26 : global foo = 1
-    stdio:26:12:(3): error: left hand side of assignment inappropriate
-
-    i27 : local foo = 1
-    stdio:27:11:(3): error: left hand side of assignment inappropriate

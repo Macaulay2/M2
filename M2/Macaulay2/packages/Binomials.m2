@@ -148,13 +148,13 @@ binomialCellularDecomposition Ideal := Ideal => o -> I -> (
 		   if IntersectAnswer == I then ToDo = {})
 	      else ( -- So, there are remaining variables #(L#1) is not zero
 	           i := L#1#0; -- i is a variable under consideration
-		   newL1 = drop(L#1,1); -- gets removed from the list
-	           result = axisSaturate(L#2, i); -- compute saturation wrt i
+		   newL1 := drop(L#1,1); -- gets removed from the list
+	           result := axisSaturate(L#2, i); -- compute saturation wrt i
 		   J := result#1; -- Ideal
 		   k := result#0; -- Saturation Exponent
 		   if k > 0 then ( -- If a division was needed:
      	       	    	-- We add the monomial i^k to ideal under consideration		      	   	
-			J2 = L#2 + ideal(R_i^k); 
+			J2 := L#2 + ideal(R_i^k); 
      	       	    	-- And remove L#0 components from variables that we already
 			-- considered before
 			J2 = saturate(J2, product L#0);
@@ -374,7 +374,7 @@ nonCellstdm = {cellVariables=>null} >> o -> I -> (
      S := CoeffR[ncv];
      J := kernel map (R/I,S); -- image of I in the subring S
      Q := S/J; 
-     slist = flatten entries flatten basis Q;
+     slist := flatten entries flatten basis Q;
      use R;
      return slist;
      )
@@ -494,7 +494,7 @@ saturatePChar = (va, A, c) -> (
      Q := QQ[varlist];
      eqs := idealFromCharacter(Q,K,c);
      
-     result = binomialSolve eqs;
+     result := binomialSolve eqs;
      return (va, S, result);
      )
 
@@ -508,7 +508,7 @@ satIdeals = (va, A, d) -> (
      F := ring satpc#2#0#0;
      if F === ZZ then F = QQ;
      Q := F[satpc#0];
-     satideals = apply (satpc#2 , (c) -> (
+     satideals := apply (satpc#2 , (c) -> (
 	       -- print {Q, satpc#1, c};
 	       idealFromCharacter(Q,satpc#1,c)));
      return satideals;
@@ -705,12 +705,12 @@ binomialMinimalPrimes Ideal := Ideal => o -> I -> (
 		   if IntersectAnswer == I then ToDo = {})
 	      else ( -- So, there are remaining variables #(L#1) is not zero
 	           i := L#1#0; -- i is a variable under consideration
-		   newL1 = drop(L#1,1); -- gets removed from the list
-	           result = axisSaturate(L#2, i); -- compute saturation wrt i
+		   newL1 := drop(L#1,1); -- gets removed from the list
+	           result := axisSaturate(L#2, i); -- compute saturation wrt i
 		   J := result#1; -- Ideal
 		   k := result#0; -- Saturation Exponent
 		   if k > 0 then ( -- If a division was needed:
-			J2 = L#2 + ideal(R_i); 
+			J2 := L#2 + ideal(R_i); 
 			J2 = saturate(J2, product L#0);
 			if J2 != ideal(1_R) then
 			    ToDo = prepend({L#0, newL1, J2},ToDo));
@@ -727,7 +727,7 @@ binomialMinimalPrimes Ideal := Ideal => o -> I -> (
      ncv := {};
      i := 0;
      j := #Answer;
-     ME :=ideal; pc = {}; si := ideal; mp := {}; F := null; S:= null;
+     ME :=ideal; {* pc = {}; *} si := ideal; mp := {}; F := null; S:= null;
      for a in Answer do (
 	  i = i+1;
 	  print ("Finding minimal primes of cellular component: " | toString i | " of " | toString j);
@@ -816,7 +816,7 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
 
      -- A dummy ideal and partial Characters:
      Im := ideal;
-     pC := {}; sat = {};
+     pC := {}; sat := {};
      for m in ml do (
 	  Im = I:m;
 	  pC = partialCharacter(Im, cellVariables=>cv);
@@ -1051,7 +1051,7 @@ binomialQuotient = {cellVariables => null} >> o -> (I,b) -> (
      bexpim := image transpose matrix {bexp};
      pc := {}; -- Will hold partial characters;
      -- Will hold the quotients compututed on the way:
-     quotlist = {};
+     quotlist := {};
               
      for m in ncvm do(
 	  quot = I:m;
@@ -1149,7 +1149,8 @@ cellularBinomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
      ncv := toList (set gens ring I - cv);
      ap = cellularBinomialAssociatedPrimes (I, cellVariables => cv,verbose=>vbopt);
      -- Projecting down the assoc. primes, removing monomials
-     proj := (II) -> eliminate (ncv,II); 
+     sub2apring := (v) -> (sub (v, ring ap#0));
+     proj := (II) -> eliminate (sub2apring \ ncv,II); 
      pap := ap / proj ;
      R := ring ap#0; -- All associated primes live in a common ring
      J := sub (I,R); -- get I over there to compute sums
@@ -1168,8 +1169,8 @@ removeRedundant List := List => o -> l -> (
      -- Algorithm: For each ideal in the list, remove all ideals above it.
      if #l == 0 then error "empty list given !";
      
-     result = for i in l list {i,false};
-     flist = for i in result list if i#1===false then i else continue;
+     result := for i in l list {i,false};
+     flist := for i in result list if i#1===false then i else continue;
      
      p:= Ideal;
      -- While we have not considered elements:	  
@@ -1380,7 +1381,7 @@ cellularBinomialExponentSolve = (I,cv) -> (
      -- We alse check how often we have to duplicate each solution in the
      -- end to account for monomials of higher order 
      dupnum := 1;     
-     psols = {};
+     psols := {};
      for v in varlist do(
 	  if isSubset (set {v},set cv) then(
 	       -- Put side effects here:

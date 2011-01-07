@@ -40,6 +40,31 @@ rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
+fixbasename = s -> if instance(s,String) then getSymbol s else s
+
+monoidDefaults = (
+     new OptionTable from {
+	  Variables => null,
+	  VariableBaseName => "p",     	    	 	    -- would be overridden by Variables => {...}
+	  Weights => {},				    -- default weight is 1, unless Local=>true
+	  Global => true,				    -- means that all variables are > 1
+     	  Local => false, 				    -- means that all variables are < 1, default weight = -1, and implies Global => false
+	  Degrees => null,
+	  Inverses => false,
+	  MonomialOrder => {GRevLex, Position => Up},
+	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
+	  SkewCommutative => {},
+	  -- VariableOrder => null,		  -- not implemented yet
+	  WeylAlgebra => {},
+     	  Heft => null {* find one *},
+	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
+	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
+      	  DegreeMap => null {* identity *},		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
+     	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
+	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
+	  }
+     )
+
 monoidParts = (M) -> (
      O := monoidDefaults;
      o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
@@ -92,7 +117,7 @@ indices := (M,vars) -> apply(vars, x -> (
 
 degreesMonoid ZZ := memoize(
      n -> (
-	  T := getGlobalSymbol "T";
+	  T := getSymbol "T";
 	  monoid [
 	       if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => {n : {}}, 
@@ -105,36 +130,13 @@ degreesMonoid List := memoize(
 	  hft = deepSplice hft;
 	  if not all(hft, i -> instance(i,ZZ)) then error "degreesMonoid: expected a list of integers";
 	  n := # hft;
-	  T := getGlobalSymbol "T";
+	  T := getSymbol "T";
 	  monoid [
 	       if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => hft,
 	       MonomialOrder => {Weights => -hft, GroupLex => n},
 	       Global => false,
 	       Inverses => true]))
-
-monoidDefaults = (
-     new OptionTable from {
-	  Variables => null,
-	  VariableBaseName => getGlobalSymbol "p",	    -- would be overridden by Variables => {...}
-	  Weights => {},				    -- default weight is 1, unless Local=>true
-	  Global => true,				    -- means that all variables are > 1
-     	  Local => false, 				    -- means that all variables are < 1, default weight = -1, and implies Global => false
-	  Degrees => null,
-	  Inverses => false,
-	  MonomialOrder => {GRevLex, Position => Up},
-	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
-	  SkewCommutative => {},
-	  -- VariableOrder => null,		  -- not implemented yet
-	  WeylAlgebra => {},
-     	  Heft => null {* find one *},
-	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
-	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
-      	  DegreeMap => null {* identity *},		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
-     	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
-	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
-	  }
-     )
 
 tensorDefaults = merge(monoidDefaults, 
      new OptionTable from {
@@ -354,12 +356,23 @@ monoidIndices = (M,varlist) -> (				    -- also used in orderedmonoidrings.m2, b
 
 chkHeft = (degs,heft) -> all(degs, d -> sum apply(d,heft,times) > 0)
 
-findHeft = (degrk,degs) -> (
+findHeft = method(Options => { DegreeRank => null }, TypicalValue => List )
+findHeft List := opts -> (degs) -> (
      -- this function is adapted from one written by Greg Smith; it appears in the FourierMotzkin package documentation
      -- we return null if no heft vector exists
-     if degrk === 0 then return {};
+     degrk := opts.DegreeRank;
+     if not isListOfListsOfIntegers degs then error "expected a list of degrees (lists of integers)";
+     if degrk === null then (
+	  if #degs === 0 then error "empty list requires DegreeRank to be made explicit";
+	  degrk = #degs#0;
+	  )
+     else (
+     	  if not instance(degrk,ZZ) then error "expected DegreeRank option to be an integer";
+	  );
+     if not all(degs, d -> #d === degrk) then error ("expected all degrees to be of length ", toString degrk);
+     if #degs === 0 then return toList(degrk : 0);
+     if degrk === 0 then return null;
      if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
-     if #degs === 0 then return toList(degrk : 1);
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
      if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
      A := transpose matrix degs;
@@ -376,7 +389,7 @@ findHeft = (degrk,degs) -> (
 
 processHeft = (degrk,degs,heft,inverses) -> (
      if inverses then return null;
-     if heft === null then heft = findHeft(degrk,degs)
+     if heft === null then heft = findHeft(DegreeRank => degrk, degs)
      else (
 	  if not instance(heft,List) or (
 	       heft = deepSplice heft;
@@ -384,7 +397,7 @@ processHeft = (degrk,degs,heft,inverses) -> (
 	       ) then error "expected Heft option to be a list of integers";
 	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
-	  if not chkHeft(degs,heft) then heft = findHeft(degrk,degs);
+	  if not chkHeft(degs,heft) then heft = findHeft(DegreeRank => degrk, degs);
 	  );
      heft)
 
@@ -408,13 +421,14 @@ makeMonoid := (opts) -> (
      -- First check the variable names
      if class opts.Variables === ZZ 
      then (
-	  x := baseName opts.VariableBaseName;
+	  x := baseName fixbasename opts.VariableBaseName;
           opts.Variables = toList (x_0 .. x_(opts.Variables - 1)))
      else (
 	  v := flatten toList apply(opts.Variables, x->if class x === MutableList then toList x else x);
           opts.Variables = apply(#v, 
 	       i -> (
 		    try baseName v#i
+		    else if instance(v#i,String) and match("[[:alnum:]$]+",v#i) then getSymbol v#i
 		    else (
 			 msg := concatenate("encountered object not usable as variable at position ",toString i," in list:");
 			 preX := "        ";
@@ -489,7 +503,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      then opts.Variables = join(Mopts.Variables, Nopts.Variables)
      else opts.Variables = spliceInside opts.Variables;
      if opts.VariableBaseName =!= null then (
-	  x := opts.VariableBaseName;
+	  x := fixbasename opts.VariableBaseName;
 	  opts.Variables = apply(#opts.Variables, i -> x_i);
 	  );
      if opts.MonomialOrder === null 

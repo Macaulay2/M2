@@ -71,5 +71,5 @@ endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 # Local Variables:
-# compile-command: "time make -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
+# compile-command: "time make -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world IgnoreExampleErrors=true RemakePackages=false RemakeAllDocumentation=false RerunExamples=false PACKAGES=\"Style Macaulay2Doc FirstPackage Parsing Classic Browse Benchmark Text SimpleDoc PackageTemplate PrimaryDecomposition FourierMotzkin Dmodules Depth Elimination GenericInitialIdeal IntegralClosure HyperplaneArrangements LexIdeals Markov NoetherNormalization Points ReesAlgebra SchurRings SymmetricPolynomials SchurFunctors SimplicialComplexes LLLBases TangentCone ChainComplexExtras Schubert2 LocalRings BoijSoederberg BGG Bruns InvolutiveBases ConwayPolynomials EdgeIdeals FourTiTwo StatePolytope Polyhedra Polymake gfanInterface PieriMaps Normaliz XML OpenMath SCSCP RationalPoints MapleInterface ConvexInterface SRdeformations BeginningMacaulay2 FormalGroupLaws Graphics HodgeIntegrals Cyclotomic Binomials Kronecker Nauty ToricVectorBundles ModuleDeformations PHCpack SimplicialDecomposability BooleanGB AdjointIdeal Parametrization Serialization NAGtypes\""
 # End:

@@ -215,24 +215,6 @@ document {
      SeeAlso => {(degree,Module)}
      }
 document { 
-     Key => {(degree,Matrix),
-	  (degree,ChainComplexMap),
-	  (degree,GradedModuleMap)},
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => {(degree,RingElement),(degree,Vector)},
      Usage => "degree f",
      Inputs => {
@@ -304,26 +286,3 @@ degree I
 
 ///
 
-
-end
-
-
-document { 
-     Key => (degree,CoherentSheaf),
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     "I suggest that we remove this function.",
-     "The degree of the underlying module.",
-     EXAMPLE {
-	  R = QQ[a..d]
-	  I = comodule ideal(a^2,b^2,c^2,d^2)
-	  F = sheaf I
-	  degree F
-	  degree HH^0(F(>=0))
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }

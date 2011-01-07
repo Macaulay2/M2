@@ -59,7 +59,11 @@ export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- 
      compilerBarrier();
      entry);
 
-export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
+--Error flag for parsing; should be thread local because may have multiple threads parsing at once
+threadLocal HadError := false;
+
+
+export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
      while dictionary.Protected do (
 	  if dictionary == dictionary.outerDictionary then (
 	       -- shouldn't occur
@@ -71,6 +75,13 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):
 	  );
      frameindex := 0;
      if dictionary.frameID == 0 then (
+
+	  -- if locallyCreated && !dictionary.LocalCreationAllowed then (
+	  --      printErrorMessage(position,"creation of implicitly global symbol in a local scope: " + word.name);
+	  --      HadError = true;
+	  --      -- make it anyway, so we don't get two error messages for the same variable
+	  --      );
+
 	  if thread then (
 	       -- threadFrame grows whenever an assignment occurs, if needed, so we don't enlarge it now
 	       frameindex = threadFramesize;
@@ -78,15 +89,22 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):
 	       )
 	  else (
 	       -- this allows the global frame to grow
-	       frameindex = enlarge(globalFrame)))
-     else if dictionary.frameID == localFrame.frameID then (
-	  -- This takes care of scopes that span a file or the dictionary for a break loop,
-	  -- with a single frame which ought to be allowed to grow.
-	  frameindex = enlarge(localFrame) )
+	       frameindex = enlarge(globalFrame);
+	       );
+	  
+	  )
      else (
-	  -- this is a dynamic frame, not allocated yet
-	  frameindex = dictionary.framesize;
-	  dictionary.framesize = dictionary.framesize + 1);
+
+	  if dictionary.frameID == localFrame.frameID then (
+	       -- This takes care of scopes that span a file or the dictionary for a break loop,
+	       -- with a single frame which ought to be allowed to grow.
+	       frameindex = enlarge(localFrame) )
+	  else (
+	       -- this is a dynamic frame, not allocated yet
+	       frameindex = dictionary.framesize;
+	       dictionary.framesize = dictionary.framesize + 1);
+
+	  );
      insert(
 	  Symbol(
 	       word, 
@@ -102,12 +120,14 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool):
 	       ),
 	  dictionary.symboltable));
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     makeEntry(word,position,dictionary,false));
-export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
-     entry := makeEntry(word,position,dictionary,thread);
+     makeEntry(word,position,dictionary,false,false));
+export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
+     entry := makeEntry(word,position,dictionary,thread,locallyCreated);
      if dictionary.frameID == 0 && isalnum(word.name) && !thread
      then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
      entry);
+export makeSymbol(word:Word,position:Position,dictionary:Dictionary,thread:bool):Symbol := (
+     makeSymbol(word,position,dictionary,thread,false));
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      makeSymbol(word,position,dictionary,false));
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
@@ -359,8 +379,6 @@ export makeSymbol(t:Token):Symbol := (
      e := makeSymbol(t.word,position(t),t.dictionary);
      t.entry = e;
      e);
---Error flag for parsing; should be thread local because may have multiple threads parsing at once
-threadLocal HadError := false;
 export makeErrorTree(e:ParseTree,message:string):void := (
      HadError = true;
      printErrorMessage(treePosition(e),message);
@@ -427,8 +445,16 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  else (
 	       if forcedef
 	       then (
+
+		    -- if t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0 then (
+		    -- 	 printErrorMessage(t,"creation of implicitly global symbol in a local scope: " + t.word.name);
+		    -- 	 HadError = true;
+		    -- 	 -- make it anyway, so we don't get two error messages for the same variable
+		    -- 	 );
+
+		    locallyCreated := t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0;
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
-	       	    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread);
+		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread,locallyCreated);
 		    )
 	       else (
 	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
@@ -740,11 +766,11 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(w.doClause,dictionary);
 	  )
      is w:For do (
-	  newdict := newLocalDictionary(dictionary);
-	  bindSingleParm(w.variable,newdict);
 	  bind(w.inClause,dictionary);
 	  bind(w.fromClause,dictionary);
 	  bind(w.toClause,dictionary);
+	  newdict := newLocalDictionary(dictionary);
+	  bindSingleParm(w.variable,newdict);
 	  bind(w.whenClause,newdict);
 	  bind(w.listClause,newdict);
 	  bind(w.doClause,newdict);

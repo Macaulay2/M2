@@ -273,6 +273,8 @@ adjacencyMatrix Graph := G -> (
 -- NOTE: This function is slow.
 -----------------------------------------------------------
 
+newVar := local newVar
+
 allEvenHoles = method();
 allEvenHoles Graph := G -> (
      R := G#"ring";
@@ -1215,7 +1217,7 @@ doc ///
 
 			An edge ideal is a square-free monomial ideal where the generators of the monomial ideal correspond to the edges
 			of the (hyper)graph.  An edge ideal complements the Stanley-Reisner correspondence 
-			(see @TO SimplicialComplexes @) by providing an alternative combinatorial interpretation of the 
+			(see @TO "SimplicialComplexes::SimplicialComplexes" @) by providing an alternative combinatorial interpretation of the 
 			monomial generators.  
 
 			This package exploits the correspondence between square-free monomial ideals and the combinatorial
@@ -2823,7 +2825,7 @@ doc ///
 			This function produces a simplicial complex from a (hyper)graph.
 			The facets of the simplicial complex are given by the edge set of the (hyper)graph.
 			This function is the inverse of @TO simplicialComplexToHyperGraph @ and enables users
-			to make use of functions in the package @TO SimplicialComplexes @.
+			to make use of functions in the package @TO "SimplicialComplexes::SimplicialComplexes" @.
 		Example
 			R = QQ[x_1..x_6];
 			G = graph({x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_5,x_1*x_5,x_1*x_6,x_5*x_6}) --5-cycle and a triangle

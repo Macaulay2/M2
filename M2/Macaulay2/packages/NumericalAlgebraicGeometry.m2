@@ -14,7 +14,7 @@ newPackage(
      Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true 
+     DebuggingMode => true --false
      )
 
 -- Any symbols or functions that the user is to have access to
@@ -23,7 +23,7 @@ export {
      "setDefault", "getDefault",
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
      "areEqual", "sortSolutions", -- "multistepPredictor", "multistepPredictorLooseEnd",
-     "Software","BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
+     "Software", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
@@ -32,15 +32,29 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "Tolerance",
-     "getSolution", "SolutionAttributes",       
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
+     "Attempts", "SingularConditionNumber",
+     "numericalRank", 
      "NAGtrace"
      }
 exportMutable {
      }
 
+-- local functions/symbols
+protect Processing, protect Undetermined -- possible values of SolutionStatus
+protect SolutionAttributes -- option of getSolution 
+protect Tracker -- an internal key in Point 
+-- experimental
+protect OrthogonalProjection, protect Variant, -- in conditionNumber
+protect AllowSingular, protect Output -- in movePoints, regeneration
+protect LanguageCPP, protect MacOsX, protect System, 
+protect LanguageC, protect Linux, protect Language
+protect DeflationRank, protect DeflationSequence
+
 needsPackage "NAGtypes"
+
+
 
 -- DEBUG CORE ----------------------------------------
 debug Core; -- to enable engine routines
@@ -50,7 +64,7 @@ debug Core; -- to enable engine routines
 BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"BERTINI";
 HOM4PS2exe = NumericalAlgebraicGeometry#Options#Configuration#"HOM4PS2";
 
-DBG := 0; -- debug level (10=keep temp files)
+DBG = 0; -- debug level (10=keep temp files)
 SLPcounter := 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker := null; -- path tracker object used last
 
@@ -81,13 +95,14 @@ DEFAULT = new MutableHashTable from {
      -- slp's 
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
-     ErrorTolerance => 1e-10,
-     ResidualTolerance => 1e-10,
-     Iterations => 100, 
+     ErrorTolerance => 1e-8,
+     ResidualTolerance => 1e-8,
+     Iterations => 30, 
      Bits => 300,
      -- general
-     Attempts => 10, -- max number of attempts (e.g., to find a regular path)
-     Tolerance => 1e-6
+     Attempts => 5, -- max number of attempts (e.g., to find a regular path)
+     Tolerance => 1e-6,
+     SingularConditionNumber => 1e4
      }
 
 setDefault = method(Options => {
@@ -124,7 +139,8 @@ setDefault = method(Options => {
      Bits => null,
      -- general
      Attempts => null, -- max number of attempts (e.g., to find a regular path)
-     Tolerance => null
+     Tolerance => null,
+     SingularConditionNumber => null
      })
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
@@ -132,19 +148,25 @@ getDefault Symbol := (s)->DEFAULT#s
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
-then needs "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
-needs "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
+then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" else ( 
+     trackPHCpack = null; refinePHCpack = null; solvePHCpack = null;
+     --solveBlackBox = null; trackPaths = null; refineSolutions = null 
+     ) 
+load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
 
 -- CONVENTIONS ---------------------------------------
 
 -- Polynomial systems are represented as lists of polynomials.
 
+-- OLD FORMAT:
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
--- and a,b,c,... contain extra information, e.g, STATUS=>Regular indicates the solution is regular.
+-- and a,b,c,... contain extra information, e.g, SolutionStatus=>Regular indicates the solution is regular.
+-- NEW FORMAT:
+-- Solutions are of type Point (defined in NAGtypes).
  
 -- M2 tracker ----------------------------------------
 integratePoly = method(TypicalValue => RingElement)
-integratePoly (RingElement,Thing,Thing) := RingElement => (f,a,b) -> (
+integratePoly (RingElement,Number,Number) := RingElement => (f,a,b) -> (
      -- integral of a polynomial f from a to b
      R := ring f; 
      if numgens R != 1 then error "expected a univariate polynomial";
@@ -159,15 +181,13 @@ integratePoly (RingElement,Thing,Thing) := RingElement => (f,a,b) -> (
      )
 		       
 
-multistepHash = new MutableHashTable;
 multistepPredictor = method(TypicalValue => List)
-multistepPredictor (QQ,List) := List => (c,s) -> (
+multistepPredictor (QQ,List) := List => memoize((c,s) -> (
 -- coefficients for a multistep predictor
 -- IN:  c = step adjustment coefficient (in QQ)
 --      s = list of step adjustments (from the stepsize h = t_1-t_0)
 --          s#i =  1 => t_(i+2)-t_(i+1) = c^(s#j)*(t_(i+1)-t_i)
 -- OUT: b = coefficients in Adams-Bashforth-like method (list of rational numbers)
-     if multistepHash#?(c,s) then return multistepHash#(c,s);
      t := symbol t;
      n := #s + 1; -- t_n is the one for which prediction is being made
      R := QQ; -- frac(QQ[h]);        
@@ -178,7 +198,7 @@ multistepPredictor (QQ,List) := List => (c,s) -> (
 	       if DBG>3 then << "t_("<< j+1 <<") = " << t_(j+1) << endl;
 	       if j<n-1 then stp = c^(s#j)*stp;
 	       ));
-     multistepHash#(c,s) = apply(n, i->(
+     apply(n, i->(
 	       -- lagrange poly
 	       T := symbol T;
 	       RT := R[T];
@@ -187,16 +207,14 @@ multistepPredictor (QQ,List) := List => (c,s) -> (
 	       -- << "i = " << i << "  L = " << L << endl;
 	       integratePoly(L,t_(n-1),t_n)
 	       ))
-     )
+     ))
 
-multistepHashLooseEnd = new MutableHashTable;
 multistepPredictorLooseEnd = method(TypicalValue => List)
-multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
+multistepPredictorLooseEnd (QQ,List) := List => memoize((c,s) -> (
 -- coefficients for a multistep predictor with intederminate last step
 -- IN:  c = step adjustment coefficient (in QQ)
 --      s = list of step adjustments (from the initial stepsize h = t_1-t_0)
 -- OUT: b = list of polinomials in QQ[a], where a=(last step size)/(next to last stepsize)   
-     if multistepHashLooseEnd#?(c,s) then return multistepHashLooseEnd#(c,s);
      t := symbol t;
      n := #s + 2; -- t_n is the one for which prediction is being made
      a := symbol a;
@@ -209,7 +227,7 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
 	       stp = if j<n-2 then c^(s#j)*stp 
 	       else if j==n-2 then a*stp;
 	       ));
-     multistepHashLooseEnd#(c,s) = apply(n, i->(
+     apply(n, i->(
 	       -- lagrange poly
 	       T := symbol T;
 	       RT := R[T];
@@ -218,20 +236,25 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
 	       -- << "i = " << i << "  L = " << L << endl;
 	       integratePoly(L,t_(n-1),t_n)
 	       ))
+     ))
+
+inverseMatrix = method() -- since inverse(Matrix) does not work for matrices with CC entries. 
+inverseMatrix Matrix := M -> (
+     n := numRows M;
+     if n!=numColumns M then error "square matrix expected";
+     solve(M, map CC^n) 
      )
-------------------------------------------------------
--- 2-norm of a vector with CC entries
-norm2 = method(TypicalValue=>RR)
+
+norm2 = method(TypicalValue=>RR) -- 2-norm of a vector with CC entries
 norm2 List := v -> sqrt(sum(v, x->x*conjugate x));
-norm2 Matrix := v -> norm2 flatten entries v;
--- Frobenius norm of a matrix
-normF = method(TypicalValue=>RR)
+norm2 Matrix := v -> norm2 flatten entries v
+
+normF = method(TypicalValue=>RR) -- Frobenius norm of a matrix
 normF Matrix := M -> max first SVD M;
      
 
-normalize = method(TypicalValue => Matrix)
--- normalizes a column vector with CC entries
-normalize Matrix := v -> (1/norm2 v)*v;
+normalize = method(TypicalValue => Matrix) -- normalizes a column vector with CC entries
+normalize Matrix := v -> (1/norm2 v)*v
 
 BombieriWeylScalarProduct = method(TypicalValue=>CC)
 BombieriWeylScalarProduct (RingElement,RingElement) := CC => (f,g) -> sum(listForm f, a->(
@@ -366,7 +389,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      
      -- create homotopy
      t := symbol t;
-     Rt := K(monoid[gens R, t]); -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
+     Rt := K(monoid[gens R, t]); 
      t = last gens Rt; 
      Kt := K(monoid[t]);
      (nS,nT) := if o.Normalize -- make Bomboeri-Weyl norm of the systems equal 1
@@ -399,7 +422,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      -- evaluation functions using SLP
      if o.SLP =!= false and o.Software =!= M2engine then (
 	  toSLP := pre -> (
-	       (constMAT, prog) = (if o.SLP === HornerForm 
+	       (constMAT, prog) := (if o.SLP === HornerForm 
 		    then preSLPinterpretedSLP 
 		    else preSLPcompiledSLP) (n+1, pre);
 	       rawSLP(raw constMAT, prog)
@@ -492,7 +515,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  etHt = etHt + tr#0;
 	  tr#1
 	  );
-     evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
+     evalMinusInverseHxHt := (x0,t0)-> -(inverseMatrix evalHx(x0,t0))*evalHt(x0,t0);
      solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
      
      if o.SLPpredictor then (
@@ -528,9 +551,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      ); ----------------- end ----------- M2 section -------------------------------------          
 
      compStartTime := currentTime();      
-     
+
+     PT := null;     
      rawSols := if member(o.Software,{M2enginePrecookedSLPs, M2engine}) then (
-	  PT := if o.Software===M2engine then (
+	  PT = if o.Software===M2engine then (
 	       if isProjective then rawPathTrackerProjective( raw matrix {nS}, raw matrix {nT}, 
 		    reBW'ST ) -- pass normalized start/target and Re(B-W product)
 	       else rawPathTracker(raw H) 
@@ -549,12 +573,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else error "engine: unknown predictor")
 	       );
 	  solsM := matrix apply(solsS,s->first entries transpose s);
-	  --print solsM;
 	  rawLaunchPT(PT, raw solsM);
 	  if o.NoOutput then null else 
-	  --entries map(K,rawGetAllSolutionsPT(PT)
-	  apply(#solsS,i->apply({Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps}, 
-		    toList getSolution i, 
+	  apply(#solsS,i->apply({Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps}, 
+		    toList getSolution(PT,i), 
 		    (attr,val)->if attr===Coordinates then val else attr=>val))
 	  )
      else if o.Software===M2 then (
@@ -653,6 +675,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      )
 			 )
 		    else if o.Predictor == Multistep then (
+			 if DBG>3 then << ">>> entering Multistep predictor: x0=" << x0 << ", t0=" << t0 << endl;
      	       	    	 history#count#"rhsODE" = evalMinusInverseHxHt(x0,t0);
 			 nPoints := min(count, o.MultistepDegree);
 			 -- think: t_0, ..., t_{nPoints-1}
@@ -682,7 +705,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      delta = ( history#(count-nPoints+2)#"t" - history#(count-nPoints+1)#"t" );
 			      apply(nPoints-2, i->history#(count-nPoints+3+i)#"stepAdj") | {stepAdj}
 			      );
-			 
+			 if DBG>3 then << "stepAdjSequence = " << stepAdjSequence << endl;
+			 			 
 			 MScoeffs := 
 			 if tStep>1-t0 and nPoints > 1 then (
 			      aMScoeffs := multistepPredictorLooseEnd(o.stepIncreaseFactor,drop(stepAdjSequence,-1));
@@ -795,7 +819,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    NumberOfSteps => count-1, -- number of points - 1 
 		    SolutionStatus => s'status, 
 		    LastT => t0, 
-		    RCondition => (svd := sort first SVD evalHx(x0,t0); first svd / last svd )
+		    ConditionNumber => conditionNumber evalHx(x0,t0)
 		    ) | ( if HISTORY
 		    then sequence new HashTable from history 
 		    else sequence ())
@@ -816,7 +840,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    	      s' := flatten entries first s;
 		    	      s'status := s#2#1;
 		    	      if norm(last s') < 1/o.InfinityThreshold then s'status = Infinity;
-		    	      {matrix {apply(drop(s',-1),u->(1/last s')*u)}} | {s#1} | {STATUS => s'status} | drop(toList s, 3) 
+		    	      {matrix {apply(drop(s',-1),u->(1/last s')*u)}} | {s#1} | {SolutionStatus => s'status} | drop(toList s, 3) 
 	       	    	      ))
 	  	    );
 	       rawSols --, s->s#2#1===Regular or s#2===Singular} )
@@ -837,9 +861,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  << "Setup time: " << compStartTime - setupStartTime << endl;
 	  << "Computing time:" << currentTime() - compStartTime << endl; 
 	  );
-     apply(ret, s->point (
-	       if HISTORY then drop(toList s, -1)
-	       else toList s
+     apply(ret, s->(
+	       p := point (
+	       	    if HISTORY then drop(toList s, -1)
+	       	    else toList s
+	       	    );
+	       if PT=!=null then p.Tracker=PT;
+	       p
 	       ))
      )
 
@@ -848,17 +876,18 @@ refine = method(TypicalValue => List, Options =>{
 	  ErrorTolerance =>null,
 	  ResidualTolerance =>null,
 	  Iterations => null,
-	  Bits => null
+	  Bits => null,
+	  SingularConditionNumber=>null
 	  })
 refine (List,List) := List => o -> (T,solsT) -> (
 -- tracks solutions from start system to target system
 -- IN:  T = list of polynomials in target system
 --      solsT = list of solutions to T
 -- OUT: solsR = list of refined solutions 
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      n := #T; 
-     if n > 0 then R := ring first T else error "expected nonempty target system";
-     if any(T, f->ring f =!= R)
-     then error "expected all polynomials in the same ring";
+     if n > 0 then R := ring ideal T else error "expected nonempty target system";
      isProjective := false;
      if n != numgens R then (
 	  if numgens R == n+1 and all(T, isHomogeneous) 
@@ -868,81 +897,167 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       )  
 	  else error "expected a square system";
      	  );
-
+     if #solsT == 0 then error "expected a nonempty set of solutions";
+     PT := null;
+     if class first solsT === Point 
+     then ( 
+	  if (first solsT).?Tracker then PT = (first solsT).Tracker;
+	  solsT = solsT/coordinates;
+     	  );
+     
+     ref'sols := null;
      if not isProjective then (
-     	  if o.Software === M2engine then (
-	       if lastPathTracker === null 
-	       then error "path tracker is not set up"
-	       else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.ErrorTolerance, 
-		    	 if o.Iteration===null then 30 else o.Iteration));
-     	       ) else if o.Software === PHCPACK then (
-	       return refinePHCpack(T,solsT,o)
+     	  if o.Software === M2engine then ( -- engine refiner is primitive
+--	        if PT=!=null then (
+-- 		    ref'sols = apply(entries map(CC_53, 
+-- 		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
+-- 		    	      ), s->{s}); -- old format
+--		    )
+     	       ) 
+	  else if o.Software === PHCPACK then (
+	       ref'sols = refinePHCpack(T,solsT,o)
 	       );
 	  );
      -- M2 part 
-     n'iterations := o.Iterations; 
-     T = matrix {T};
-     J := transpose jacobian T; 
-     evalT := x0 -> (
-	  ret := lift(sub(transpose T, transpose x0), CC); 
-	  if isProjective then ret || matrix{{0_CC}} else ret
-	  );
-     evalJ := x0 -> (
-	  ret := lift(sub(J, transpose x0), CC);
-	  if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
-	  );
-     
-     solsR := apply(solsT, s->(
+     if ref'sols === null then (
+     	  n'iterations := o.Iterations; 
+     	  T = matrix {T};
+     	  J := transpose jacobian T; 
+     	  evalT := x0 -> (
+	       ret := lift(sub(transpose T, transpose x0), CC); 
+	       if isProjective then ret || matrix{{0_CC}} else ret
+	       );
+	  evalJ := x0 -> (
+	       ret := lift(sub(J, transpose x0), CC);
+	       if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
+	       );
+	  ref'sols = apply(solsT, s->(
 	       x1 := sub(transpose matrix {s}, CC); -- convert to vector 
 	       if isProjective then x1 = normalize x1;
 	       -- corrector step
-	       dx := 1; -- dx = + infinity
+	       norm'dx := infinity; -- dx = + infinity
+	       norm'residual := infinity;
 	       nCorrSteps := 0;
-	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < n'iterations do ( 
-		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
-		    dx = solve(evalJ(x1), -evalT(x1));
+	       while norm'residual > o.ResidualTolerance 
+	       and norm'dx > o.ErrorTolerance * norm x1 
+	       and nCorrSteps < n'iterations 
+	       --and cond < o.SingularConditionNumber 
+	       do ( 
+		    residual := evalT(x1);
+		    norm'residual = norm residual;
+		    J := evalJ(x1);
+		    --cond = conditionNumber J;
+		    dx := solve(J, -residual);
+		    norm'dx = norm dx;
+		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  residual << " dx=" << dx << endl;
 		    x1 = x1 + dx;
 		    if isProjective then x1 = normalize x1;
 		    nCorrSteps = nCorrSteps + 1;
 		    );
-	       if norm dx > o.ErrorTolerance * norm x1 
-	       then print "warning: Newton's method did not converge within given error bound in the given number of steps";
-	       x1
+	       if DBG>0 then (
+		    if norm'residual > o.ResidualTolerance
+		    then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
+		    if norm'dx > o.ErrorTolerance * norm x1 
+		    then print "warning: Newton's method did not converge within given error bound in the given number of steps";
+		    --if cond > o.SingularConditionNumber  
+		    --then print "warning: condition number larger then SingularConditionNumber";
+		    );
+	       cond := conditionNumber evalJ(x1);
+	       st := if cond > o.SingularConditionNumber then Singular else Regular;
+	       {flatten entries x1, 
+		    SolutionStatus=>st, 
+		    ConditionNumber=>if cond===null then conditionNumber evalJ(x1) else cond, 
+		    LastT=>1.} | (if norm'dx===infinity then {} else {ErrorBoundEstimate=>norm'dx}) 
 	       ));
-     apply(#solsT, i-> flatten entries solsR#i)      
-     )     
+     	   );
+      	   ref'sols/point
+      )     
+
+refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.01})
+refineViaDeflation(List, List) := o->(T,solsT) -> refineViaDeflation(transpose matrix{T},solsT,o)
+refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
+     n := numgens ring T;
+     ref'solsT := refine(flatten entries T,solsT);     
+     ss := select(ref'solsT, s->s.SolutionStatus =!= Regular);
+     dOrder := 1;
+     while #ss > 0 and dOrder <= o.Order do (
+	  M := dMatrix(ideal T, dOrder);
+	  minRank := infinity;
+	  scan(ss, s->if (s.DeflationRank = numericalRank sub(M, matrix s)) < minRank 
+	       then minRank = s.DeflationRank);
+	  r := minRank;
+	  while r < numcols M do(
+	       s'r := select(ss, s->s.DeflationRank==r);
+	       dT := deflatedSystem(ideal T,M,r);
+	       scan(s'r, s->(
+			 attempt := 0;
+			 local ls;
+	       		 while attempt < DEFAULT.Attempts and (ls = liftSolution(s,dT))===null
+	       		 do (
+			      dT = deflatedSystem(ideal T,M,r);
+			      attempt = attempt + 1;
+			      );
+			 if attempt == DEFAULT.Attempts 
+			 then s.DeflationRank = s.DeflationRank + 1 -- perhaps, rank>numericalRank 
+			 else (
+			      rs := first refine(dT,{ls});
+			      --print(rs,coordinates s,s.ErrorBoundEstimate,norm matrix s);
+			      solsAreClose := (norm matrix{take(coordinates rs, n) - coordinates s} 
+			      	   < o.Tolerance * norm matrix s); -- new approximation is not too far
+			      if rs.SolutionStatus===Regular and solsAreClose
+			      then (
+			      	   s.Coordinates = take(coordinates rs, n); -- refine the approximation
+				   if not s.?DeflationSequence then s.DeflationSequence = {};
+			      	   s.DeflationSequence = s.DeflationSequence|{dOrder}; 
+			      	   )
+			      else (
+				   --error "numerical rank problem";
+				   --s.DeflationRank = s.DeflationRank + 1; -- perhaps, rank>numericalRank 
+				   s.DeflationRank = infinity 
+				   )
+			      )
+			 )); 
+	       r = r + 1;
+	       );
+	  ss = select(ss, s->s.DeflationRank >= numcols M); 
+	  scan(ss, s->s.DeflationRank = infinity); -- mark as not deflated successfully
+	  dOrder = dOrder + 1;
+	  );
+     --return (#ss == 0) -- success if everything deflated successfully
+     ref'solsT
+     )
 
 -- possible solution statuses returned by engine
 solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
 
-getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps)})
-getSolution ZZ := Thing => o -> i -> (
--- gets specified solution from the engine
--- IN:  the number of solution
+getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps)})
+getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
+-- gets specified solution from the engine (not exported anymore)
+-- IN:  (rawPathTracker, solution's number)
 --      SolutionAttributes=> ... specifies various data attached to a solution ...
 -- OUT: whatever is requested by SolutionAttributes (either as a sequence of as a single element)
-     if lastPathTracker === null 
-     then error "path tracker is not set up";
+     --if lastPathTracker === null 
+     --then error "path tracker is not set up";
      p := o.SolutionAttributes; 
-     possible := set{Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps};
+     possible := set{Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps};
      if not isSubset(set{p}, possible) and 
      not (class p === Sequence and isSubset(set p, possible))
      then error "wrong SolutionAttributes option";
      pp := if class p === Sequence then p else {p};
      ret := apply(pp, r->
-	  if r===Coordinates then flatten entries map(CC_53, rawGetSolutionPT(lastPathTracker, i))
-	  else if r===SolutionStatus then solutionStatusLIST#(rawGetSolutionStatusPT(lastPathTracker, i))
-	  else if r===LastT then rawGetSolutionLastTvaluePT(lastPathTracker, i)
-	  else if r===RCondition then rawGetSolutionRcondPT(lastPathTracker, i)
-	  else if r===NumberOfSteps then rawGetSolutionStepsPT(lastPathTracker, i)
+	  if r===Coordinates then flatten entries map(CC_53, rawGetSolutionPT(PT, i))
+	  else if r===SolutionStatus then solutionStatusLIST#(rawGetSolutionStatusPT(PT, i))
+	  else if r===LastT then rawGetSolutionLastTvaluePT(PT, i)
+	  else if r===ConditionNumber then rawGetSolutionRcondPT(PT, i)
+	  else if r===NumberOfSteps then rawGetSolutionStepsPT(PT, i)
 	  );
      if class p === Sequence then ret else first ret
      )
 
 isRegular = method()
-isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
+-- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
 isRegular Point := (s) ->  s.SolutionStatus === Regular
-isRegular (List, ZZ) := (sols, s) -> if DEFAULT.Software === M2engine then isRegular s else isRegular sols#s
+isRegular (List, ZZ) := (sols, s) -> isRegular sols#s
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
@@ -1047,6 +1162,23 @@ randomUnitary ZZ := n -> (
 	       xi := if i!=0 then 0 else random(2*pi);
 	       E(i,j,(phi,psi,xi))
 	       ))
+     )
+
+randomOrthonormalRows = method() -- return a random n-by-r matrix with orthonormal columns
+randomOrthonormalRows(ZZ,ZZ) := (n,r) -> 
+if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)^(toList(0..r-1))
+
+randomOrthonormalCols = method() -- return a random r-by-n matrix with orthonormal rows
+randomOrthonormalCols(ZZ,ZZ) := (n,r) -> 
+if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)_(toList(0..r-1))
+
+squareUpSystem = method() -- squares up a polynomial system (presented as a one-column matrix)
+squareUpSystem Matrix := M -> (
+     if numcols M != 1 then error "one-column matrix expected";
+     n := numgens ring M;
+     m := numrows M;
+     if m<=n then "overdetermined system expected";
+     sub(randomOrthonormalRows(m,n),ring M)*M
      )
 
 -- IN: R, polynomial ring in n+1 vars
@@ -1172,13 +1304,13 @@ solveSystem List := List => o -> F -> (
      v := flatten entries vars R;
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
 	  result = 
-	  --if all(F, f -> first degree f <= 1)
-     	  --then ( 
-	  --     A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
-	  --     b := matrix apply(F, f->{coefficient(1_R,f)});
-	  --     {{flatten entries solve(A,-b)}}
-	  --     )
-	  --else 
+-- 	  if all(F, f -> first degree f <= 1)
+--      	  then ( 
+-- 	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
+-- 	       b := matrix apply(F, f->{coefficient(1_R,f)});
+-- 	       {{flatten entries solve(A,-b)}}
+-- 	       )
+--	  else 
 	       (
 	       (S,solsS) := totalDegreeStartSystem F;
 	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii),o)
@@ -1189,11 +1321,11 @@ solveSystem List := List => o -> F -> (
      else if o.Software == HOM4PS2 then (
 	  -- newR := coefficientRing R[xx_1..xx_(numgens R)];
 	  (name, p) := makeHom4psInput(R, F);
-	  targetfile = name; --(map(newR, R, gens newR)\F);
-	  tarsolfile = temporaryFileName() | 
+	  targetfile := name; --(map(newR, R, gens newR)\F);
+	  tarsolfile := temporaryFileName() | 
 	                "tasols";
  	  run(HOM4PS2exe|" "|targetfile|" "|tarsolfile);
-	  sols = readSolutionsHom4ps(tarsolfile, p);
+	  sols := readSolutionsHom4ps(tarsolfile, p);
 	  result = sols;
 	  if DBG<10 then (
 	       removeFile targetfile;
@@ -1249,6 +1381,7 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
 
 ------------------------------------------------------------------------------------------
 -- NAG witness set extra functions  
+WitnessSet.Tolerance = 1e-6;
 check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
 isContained = method()
 isContained (List,WitnessSet) := (point,W) -> (
@@ -1422,7 +1555,7 @@ regeneration List := List => o -> F -> (
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if o.Software == M2engine then (
 			 sing := toList singularSolutions(T,targetPoints);
-			 reg := toList select(0..#targetPoints-1, i->getSolution(i, SolutionAttributes=>SolutionStatus)==Regular);
+			 reg := select(targetPoints, p->p.SolutionStatus==Regular);
 			 --print (sing,reg);
 		    	 if o.Output == Regular then targetPoints = targetPoints_reg 
 		    	 else targetPoints = targetPoints_reg | targetPoints_sing;
@@ -1475,7 +1608,10 @@ decompose WitnessSet := (W) -> (
 	  while (c := random(#cs); #cs#c == 0) do (); -- vvv
 	  p := cs#c#(random(#(cs#c))); -- pick a component/point (rewrite!!!)
 	  S := eq | slice W;	  
-	  while (T := sliceEquations(randomSlice(k,n),R); pt' := track(S,eq|T,{coordinates (W.Points)#p}); not isRegular(pt',0)) do (); 
+	  while (T := sliceEquations(randomSlice(k,n),R); 
+	       pt' := track(S,eq|T,{coordinates (W.Points)#p}); 
+	       not isRegular(pt',0)) 
+	  do (); 
 	  pt := first movePoints(eq, T, slice W, pt'/coordinates);
 	  if (c' :=  findComponent coordinates pt) === null then error "point outside of any current component";
 	  if c' == c then n'misses = n'misses + 1
@@ -1668,6 +1804,22 @@ diffSolutions (List,List) := o -> (A,B) -> (
 -- DEFLATION ------------------------------------------
 -------------------------------------------------------
 
+numericalRank = method(Options=>{Threshold=>1e2}) -- looks for a gap between singular values 
+numericalRank Matrix := o -> M -> (
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     if not member(class ring M, {RealField,ComplexField}) 
+     then error "matrix with real or complex entries expected";
+     S := first SVD M;
+     r := 0; last's := 1;
+     for i to #S do (
+	  if o.Threshold*S#i < last's 
+	  then break
+	  else (r = r + 1; last's = S#i)
+	  );
+     r 
+     )  
+
 dMatrix = method()
 dMatrix (List,ZZ) := (F,d) -> dMatrix(ideal F, d)
 dMatrix (Ideal,ZZ) := (I, d) -> (
@@ -1696,24 +1848,37 @@ dIdeal (Ideal, ZZ) := (I, d) -> (
      S := (coefficientRing R)[newvars,v]; 
      sub(I,S) + ideal(sub(A,S) * transpose (vars S)_{0..#ind-1})
      )	   
-deflatedSystem = method(Options=>{Order=>1})
-deflatedSystem(Ideal, Matrix, ZZ) := o -> (I, M, r) -> (
--- In: gens I = the original system    
+deflatedSystem = method()
+deflatedSystem(Ideal, Matrix, ZZ) := (I, M, r) -> (
+-- In: gens I = the original (square) system   
 --     M = deflation matrix
 --     r = numerical rank of M (at some point)
--- Out: square system of min(n,r) equations
+-- Out: square system of n+r equations
      R := ring I;
      n := numgens R;
-     SM := (randomUnitaryMatrix numcols M)_(toList(0..r-1));
+     SM := randomOrthonormalCols(numcols M, r+1);
      newvars := apply(r, i->getSymbol("d"|(toString i)));
-     S := (coefficientRing R)[gens R | newvars];
-     DF := sub(M,S)*sub(SM,S)*transpose (vars S)_{n..n+r-1}; -- new equations
-     n'equations := numgens I + numrows DF;
-     if n'equations > r 
-     then SM = (randomUnitaryMatrix numcols M)_(toList(0..r-1)); --square up
-     flatten entries( (randomUnitaryMatrix n'equations)^(toList(0..r-1))*(transpose gens I || DF) )   
+     S := (coefficientRing R)(monoid[gens R | newvars]);
+     DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+r-1}|matrix{{1_S}}); -- new equations
+     print DF;     
+     flatten entries squareUpSystem ( sub(transpose gens I,S) || DF )
      )
 
+liftSolution = method(Options=>{ResidualTolerance=>0.01}) -- lifts a solution s to a solution of a deflated system dT (returns null if unsuccessful)
+liftSolution(Point, List) := o->(s,dT)->liftSolution(s, transpose matrix{dT},o)
+liftSolution(Point, Matrix) := o->(s,dT)->(
+     R := ring dT;
+     c := coordinates s;
+     n := #c;
+     N := numgens R;
+     if N<=n then error "the number of variables in the deflated system is expected to be smaller"; 
+     newVars := (vars R)_{n..N-1};
+     dT0 := sub(sub(dT, matrix{c}|newVars), (coefficientRing R)(monoid[flatten entries newVars]));
+     ls := first solveSystem flatten entries squareUpSystem dT0;     
+     ret := c | coordinates ls;
+     --if norm sub(dT, matrix{ret}) < o.ResidualTolerance * norm matrix{c} then ret else null
+     ret
+     ) 
 
 
 ------------ preSLPs ------------------------------------------------------------------------
@@ -2353,7 +2518,7 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      slp := S#1;   
      o := S#2;
      SLPcounter = SLPcounter + 1;
-     curNode = #consts+nIns;
+     curNode := #consts+nIns;
      p := {};
      scan(slp, n->(
 	   k := first n;
@@ -2395,7 +2560,7 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      out := S#2;
      fname := SLPcounter; SLPcounter = SLPcounter + 1; -- this gives libraries distinct names 
                                                        -- the name of the function stays the same, should it change?
-     curNode = #consts+nIns;
+     curNode := #consts+nIns;
      p := {#consts,nIns,numgens target out, numgens source out} | {slpCOMPILED}
           | { fname }; -- "lib_name" 
      cppName := libPREFIX | toString fname | if o.Language === LanguageCPP then ".cpp" else ".c";
@@ -2417,13 +2582,14 @@ NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
 -- normalized condition number of F at x
 conditionNumber = method(Options=>{Variant=>OrthogonalProjection})
+conditionNumber Matrix := o-> M -> (s := first SVD M; max s / min s)
 conditionNumber (List,List) := o -> (F,x) -> (
      nF := apply(F, f->f/sqrt(#F * BombieriWeylNormSquared f)); -- normalize F
      x0 := normalize transpose matrix{x}; -- column unit vector
      DMforPN := diagonalMatrix(nF/(f->1/sqrt first degree f) | if o.Variant===OrthogonalProjection then {1} else {});
      J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
      if o.Variant===OrthogonalProjection then J = J || matrix{ flatten entries x0 / conjugate};
-     1 / min first SVD(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
+     conditionNumber(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
      )
 
 -- a constructor for witnessSet that depends on NAG
@@ -2448,8 +2614,26 @@ TEST ///
 --assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
 --assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
 --assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
+
+-- numerical rank
+assert (numericalRank matrix {{2,1},{0,0.001}} == 1)
+
+-- random and good initial pairs
+setRandomSeed 0
+T = randomSd {2,3};
+(S,solsS) = goodInitialPair T
+M = track(S,T,solsS,Normalize=>true)
+RM = refine(T,M)
+debug NumericalAlgebraicGeometry
+assert areEqual(norm2 matrix first RM, 1_CC)
+///
+TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")
+///
+TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2engine.tst.m2")
+///
+TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
 ///
 
@@ -2461,8 +2645,8 @@ end
 -- because loading stops when the symbol "end" is encountered.
 
 restart
-loadPackage "NumericalAlgebraicGeometry"
 uninstallPackage "NumericalAlgebraicGeometry"
+installPackage "NumericalAlgebraicGeometry"
 -- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
 
 -- install docs with no absolute links

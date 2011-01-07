@@ -10,6 +10,9 @@
 --  * info_memory, 
 --  * option_debuglevel, option_max_memory, option_min_memory, option_runtime,
 
+protect callid
+protect tstart
+
 doAttrs := (e, retopts) -> (
 	setOMAttr(e, OMS("scscp1", "call_id"), retopts.callid);
 	if (retopts.?tstart) then
@@ -73,7 +76,7 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 
 	-- Try to evaluate: value will always exit, albeit sometimes with an OME
 	recentOMProblem = null;
-	evld = value(args#0);
+	evld := value(args#0);
 	if (class(evld) === XMLnode) and (evld.tag == "OME") then 
 		return constructProcTerm(evld, retopts);
 		

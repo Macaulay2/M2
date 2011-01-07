@@ -1,22 +1,30 @@
 -- -*- coding: utf-8 -*-
--- October 8 2008: hyperplane arrangements package;
+-----------------------------------------------------------------------
+-- Copyright 2008,2009,2010 Graham Denham, Gregory G. Smith
+--
+-- You may redistribute this program under the terms of the GNU General
+-- Public License as published by the Free Software Foundation, either
+-- version 2 or the License, or any later version.
+-----------------------------------------------------------------------
+
+-- July 12 2010: hyperplane arrangements package;
 -- Graham Denham and Greg Smith, with
 -- thanks to Sorin Popescu for the Orlik-Solomon code
 --
--- new in this release: multiplier ideals; bug fixes (in particular
+-- release 0.7: additional bug fixes, more arrangements
+-- 
+-- new in release 0.6: multiplier ideals; bug fixes (in particular
 -- involving empty arrangements); some caching; a "circuits" method;
 -- test for (Lie algebra) decomposability; a random arrangement;
 -- a hash table full of popular "canned" arrangements.
 -- 
--- next time: think about making coefficient and coordinate rings
--- into options.
---
 -- 6 Jan 09: fixed bug in changeRing and errors in TEST section
+-- 1 Jun 09: fixed inconsistency in multIdeal 
 
 newPackage(
      "HyperplaneArrangements",
-     Version => "0.5",
-     Date => "8 October 2008",
+     Version => "0.7",
+     Date => "12 July 2010",
      Authors => {
 	  {Name => "Graham Denham", HomePage => "http://www.math.uwo.ca/~gdenham/"},
 	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
@@ -27,7 +35,8 @@ newPackage(
 
 export {Arrangement, arrangement, arrangementLibrary, -- compress, trim, coefficients,
 --     euler, poincare, cone, rank, ring, matrix,
-     deletion, orlikSolomon, HypAtInfinity, typeA, typeB, typeD, graphic, 
+     deletion, orlikSolomon, orlikTerao, HypAtInfinity, NaiveAlgorithm, typeA, typeB, 
+     typeD, graphic, 
      Flat, flat, flats, circuits, tolist, closure, meet, vee, subArrangement, 
      changeRing, restriction, arrangementSum, EPY, der, crit, omega, HS, dlogPhi,
      freeDlogPhi, isDecomposable, multIdeal, randomArrangement}
@@ -47,6 +56,7 @@ debug Core
 net Arrangement := A -> if hasAttribute(A,ReverseDictionary) then toString getAttribute(A,ReverseDictionary) else net expression A
 dictionaryPath = delete(Core#"private dictionary", dictionaryPath)
 
+protect hyperplanes
 net Arrangement := A -> net expression A
 expression Arrangement := A -> new RowExpression from { A.hyperplanes }
 describe Arrangement := A -> net A.hyperplanes
@@ -114,15 +124,19 @@ arrangementLibrary = hashTable({
      "Hessian" => (ZZ/31627)**transpose matrix{{1,0,0},{0,1,0},{0,0,1},
 	  {1,1,1},{1,1,6419},{1,1,25207},{1,6419,1},{1,6419,6419},{1,6419,25207},
 	  {1,25207,1},{1,25207,6419},{1,25207,25207}},
-     "Ziegler1" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,-1,0},{0,1,-1},
-	  {1,0,-1},{1,0,-2},{1,0,-3},{1,0,-4},{1,0,-5},{1,-1,-1},{1,-1,-2},{1,-1,-4}},
-     "Ziegler2" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,-1,0},{0,1,-1},
-	  {1,0,-1},{1,0,-2},{1,0,-3},{1,0,-4},{1,0,-5},{1,-1,-1},{1,-1,-3},{1,-1,-4}},
+     "Ziegler1" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,1,1},{2,1,1},
+	  {2,3,1},{2,3,4},{3,0,5},{3,4,5}},
+     "Ziegler2" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,1,1},{2,1,1},{2,3,1}
+	  ,{2,3,4},{1,0,3},{1,2,3}},
      "prism" => transpose matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{1,1,0,1},
 	  {1,0,1,1}},
      "notTame" => transpose matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},
 	  {1,1,0,0},{1,0,1,0},{1,0,0,1},{0,1,1,0},{0,1,0,1},{0,0,1,1},
-          {1,1,1,0},{1,1,0,1},{1,0,1,1},{0,1,1,1},{1,1,1,1}}
+          {1,1,1,0},{1,1,0,1},{1,0,1,1},{0,1,1,1},{1,1,1,1}},
+     "bracelet" => matrix {{1,0,0,1,0,0,1,1,0}, {0,1,0,0,1,0,1,0,1}, 
+     	  {0,0,1,0,0,1,0,1,1}, {0,0,0,1,1,1,1,1,1}},
+     "Desargues" => transpose matrix {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 1, 1}, {2, 0, -3}, {2, 1, -3}, 
+	  {-3, -2, 2}, {1, 2, 1}, {3, 2, 1}, {2, 1, 0}}
      })
 
 ring Arrangement := Ring => A -> A.ring
@@ -145,6 +159,9 @@ normal := h -> (
 
 -- reduce an arrangement with possibly repeated hyperplanes to a 
 -- simple arrangement.  Cache the simple arrangement and multipliticies.
+
+protect m
+protect simple
 
 trim Arrangement := Arrangement => options -> A ->  (
      if A.cache.?simple then return(A.cache.simple);
@@ -255,6 +272,7 @@ orlikSolomon (Arrangement,Symbol) := Ideal => o -> (A,e) -> (
      orlikSolomon(A,E,o));
 
 -- one can just specify a coefficient ring
+-- note that this affects the arrangement: is this the desired behavior?
 
 orlikSolomon (Arrangement,Ring) := Ideal => o -> (A,k) -> (
      e := symbol e;
@@ -485,14 +503,16 @@ Arrangement ** Ring := Arrangement => changeRing
 Arrangement ** Arrangement := Arrangement => arrangementSum
 
 -- check if arrangement is decomposable in the sense of Papadima-Suciu
+-- we need to distinguish between the coefficients in A and
+-- the coefficients for I
 
 isDecomposable = method(TypicalValue => Boolean)
 
 isDecomposable (Arrangement,Ring) := Boolean => (A,k) -> (
-     I = orlikSolomon (A,k);
-     b = betti res(coker vars ((ring I)/I), LengthLimit=>3);
-     phi3 = 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
-     multiplicities = apply(flats(2,A),i->length tolist i);
+     I := orlikSolomon (A,k);
+     b := betti res(coker vars ((ring I)/I), LengthLimit=>3);
+     phi3 := 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
+     multiplicities := apply(flats(2,A),i->length tolist i);
      sum(multiplicities,m->m*(2-3*m+m^2)) == phi3);
 
 isDecomposable (Arrangement) := Boolean => A -> (
@@ -524,11 +544,55 @@ EPY (Ideal,PolynomialRing) := Module => (j, R) -> (
 EPY (Ideal) := Module => (j) -> (
      n := numgens ring j;
      f := symbol f;
+     X := getSymbol "X";
      R := coefficientRing(ring j)[X_1..X_n];
      EPY(j, R));
 
 EPY (Arrangement) := Module => A -> EPY orlikSolomon A;
 EPY (Arrangement,PolynomialRing) := Module => (A,R) -> EPY(orlikSolomon A, R);
+
+-- the Orlik-Terao algebra
+
+orlikTeraoV1 := (A,S) -> (     
+     n := #tolist A; R := ring A;
+     if n == 0 then return ideal(0_S);
+     if (numgens S != n) then error "the given ring has a wrong number of variables";
+     hyps := tolist A;
+     Q := product hyps;
+     quotients := hyps/(h->Q//h);
+     trim ker map(R,S, quotients));
+
+-- construct the relation associated with a circuit
+
+OTreln := (c, M, S) -> (  -- circuit, coeffs, ring of definition
+     v := gens ker M_c;
+     f := map(S, ring v);
+     P := product(c/(i->S_i));  -- monomial
+     (matrix {c/(i->P//S_i)} * f v)_(0,0));
+
+-- this older version builds the ideal "manually": definitely slower, so kept
+-- only to add a test.
+     
+orlikTeraoV2 := (A,S) -> (     
+     n := #tolist A;
+     if n == 0 then return ideal(0_S);
+     if (numgens S != n) then error "the given ring has a wrong number of variables";
+     vlist := flatten entries vars S;
+     M := coefficients A;
+     trim ideal(circuits A/(c -> OTreln(c,M,S))));
+     
+orlikTerao = method(TypicalValue => Ideal, Options => {NaiveAlgorithm => false});
+orlikTerao (Arrangement,PolynomialRing) := Ideal => o -> (A,S) -> (
+     if o.NaiveAlgorithm then orlikTeraoV2(A,S) else orlikTeraoV1(A,S));
+     
+orlikTerao (Arrangement,Symbol) := Ideal => o -> (A,y) -> (
+     n := #A.hyperplanes;
+     S := coefficientRing(ring A)[y_1..y_n];
+     orlikTerao(A,S,o));
+
+orlikTerao (Arrangement) := Ideal => o -> A -> (          
+     y := symbol y; 
+     orlikTerao(A,y,o));
 
 -- add exceptionals, complex refl groups?
 
@@ -572,6 +636,8 @@ der2 = (A,m) -> (
 weight := (F,m) -> (
      sum((tolist F)/(i->m_i)));
 
+protect multipliers
+protect irreds
 multIdeal = method(TypicalValue => Ideal)
 -- it's expensive to recompute the list of irreducible flats, 
 -- as well as intersections of ideals.  So we cache a hash table
@@ -583,7 +649,7 @@ multIdeal (RR,Arrangement,List) := Ideal => (s,A,m) -> (
      R := ring A;
      if not A.cache.?irreds then
 	  A.cache.irreds = select(flatten drop(flats(A),1), F->(0 != euler F));
-     exps := A.cache.irreds/(F->floor(s*weight(F,m))-rank(F)+1);
+     exps := A.cache.irreds/(F->max(0,floor(s*weight(F,m))-rank(F)+1));
      if not A.cache.?multipliers then A.cache.multipliers = new MutableHashTable;
      if not A.cache.multipliers#?exps then (
 	  ideals := A.cache.irreds/(F-> ideal tolist (A_F));
@@ -667,7 +733,7 @@ document {
 	  "L" => {"a list of linear equations in the ring ", TT "R"},
 	  "R" => {"a polynomial ring or linear quotient of a
 	       polynomial ring"},	  
-	  "M" => {"a matrix whose rows represent linear forms defining
+	  "M" => {"a matrix whose columns represent linear forms defining
 	       hyperplanes"},
           },
      Outputs => {
@@ -745,8 +811,6 @@ document {
 	  {"the ", TO2(Ring, "ring"), " that contains the defining
 	  equations of ", TT "A"} 
 	  },
-     "description",
-     Caveat => {},
      SeeAlso => {Arrangement,arrangement}
      }
 document { 
@@ -760,8 +824,6 @@ document {
 	  {"the ", TO2(Matrix, "matrix"), " constructed from the list
 	  of defining equations of ", TT "A"}     	  
           },
-     EXAMPLE {
-          },
      SeeAlso => {Arrangement,arrangement,coefficients}
      }
 document { 
@@ -774,12 +836,7 @@ document {
           },
      Outputs => {
 	  Matrix
-          },
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+          }
      }
 document { 
      Key => (rank,Arrangement),
@@ -790,10 +847,7 @@ document {
           },
      Outputs => {
 	  {"the rank of ", TT "A"}
-          },
-     EXAMPLE {
-          },
-     SeeAlso => {}
+          }
      }
 document { 
      Key => (trim,Arrangement),
@@ -804,12 +858,7 @@ document {
           },
      Outputs => {
 	  Arrangement
-          },
-     "description",
-     EXAMPLE {
-          },
-     Caveat => {},
-     SeeAlso => {}
+          }
      }
 document { 
      Key => (compress,Arrangement),
@@ -822,11 +871,7 @@ document {
 	  Arrangement
           },
      Consequences => {
-          },     
-     "description",
-     EXAMPLE {
-          },
-     SeeAlso => {}
+          }
      }
 
 document { 
@@ -839,15 +884,10 @@ document {
      Outputs => {
 	  Arrangement
           },
-     Consequences => {
-          },     
      "The Gale transform of a rank ", TT "l", "arrangement of ", TT "n",
      " hyperplanes is an arrangement of ", TT "n", " hyperplanes of rank ",
      TT "n-l", ".  Here it is computed as the arrangement given by the 
-     rows of the matrix presenting the kernel of the cofficients of ", TT "A", ".",
-     EXAMPLE {
-          },
-     SeeAlso => {}
+     rows of the matrix presenting the kernel of the cofficients of ", TT "A", "."
      }
 
 document {
@@ -1024,6 +1064,42 @@ document {
      for the complement is chosen by making the hyperplane numbered ", 
      TT "n", " the hyperplane at infinity.  By default, ", TT "n=0",
      "; otherwise, use the option ", TT "HypAtInfinity => n", "."
+     }
+
+document {
+     Key => {orlikTerao,(orlikTerao,Arrangement),
+	     (orlikTerao,Arrangement,PolynomialRing),
+	     (orlikTerao,Arrangement,Symbol)},
+     Headline => "defining ideal for the Orlik-Terao algebra",
+     Usage => "orlikTerao(A) or orlikTerao(A,S) or orlikTerao(A,y)",
+     Inputs => {
+	  "A" => Arrangement,
+	  "S" => Ring => "a commutative polynomial ring
+	   with one variable for each hyperplane",
+	  "y" => Symbol => "a name for an indexed variable"
+	  },
+     Outputs => {
+	  Ideal => {"the defining ideal of the Orlik-Terao algebra of ", 
+	            TT "A"}
+	  },
+     "The Orlik-Terao algebra of an arrangement is the subalgebra of
+      rational functions ", TT "k[1/f_1,1/f_2,...,1/f_n]", " where
+      the ", TT "f_i", "'s are the defining forms for the hyperplanes.
+      This method produces the kernel of the obvious surjection from a polynomial
+      ring in ", TT "n", " variables onto the Orlik-Terao algebra.",
+     EXAMPLE lines ///
+     	  R := QQ[x,y,z];
+	  orlikTerao arrangement {x,y,z,x+y+z}
+     ///,
+     " The defining ideal above has one generator given by the single relation ", 
+     TT "x+y+z-(x+y+z)=0", ".  The rank-3 braid arrangement has four triple points: ",
+     EXAMPLE lines ///
+	  I := orlikTerao arrangement "braid"
+	  betti res I
+	  OT := comodule I;
+	  apply(1+dim OT, i -> 0 == Ext^i(OT, ring OT))	  
+     ///,
+     " The Orlik-Terao algebra is always Cohen-Macaulay (Proudfoot-Speyer, 2006)."
      }
 
 document {
@@ -1474,7 +1550,8 @@ document {
      "An arrangement is said to be decomposable if the derived subalgebra of
      its holonomy Lie algebra is a direct sum of the derived subalgebras of
      free Lie algebras, indexed by the rank-2 ", TO2{Flat,"flats"}, 
-     " of the arrangement.",
+     " of the arrangement.  At the time of writing, it is not known if
+     the answer depends on the characteristic of the coefficient ring.",
      EXAMPLE lines ///
 	  X3 = arrangement "X3"
 	  isDecomposable X3
@@ -1509,6 +1586,9 @@ assert(not isDecomposable A3)
 X3 = arrangement "X3"
 assert(isDecomposable X3)
 assert(multIdeal(2,X3) == multIdeal(2.2,X3))
+time I1 := orlikTerao(X3);
+time I2 := orlikTerao(X3,ring I1,NaiveAlgorithm=>true);
+assert(I1==I2)
 
 M = arrangement "MacLane"
 P = poincare M
@@ -1565,4 +1645,3 @@ end
 path = append(path, homeDirectory | "exp/hyppack/")
 installPackage("HyperplaneArrangements",RemakeAllDocumentation=>true,DebuggingMode => true)
 loadPackage "HyperplaneArrangements"
-

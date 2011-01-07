@@ -91,7 +91,7 @@ hTriangle = method(TypicalValue => Tally)
 hTriangle SimplicialComplex := S -> (
    fT := fTriangle S;
    new Tally from new HashTable from flatten for i from 0 to dim S + 1 list for j from 0 to i list (
-       si = sum(j+1, k -> (-1)^(j-k)*binomial(i-k,j-k)*(if fT#?(i,k) then fT#(i,k) else 0));
+       si := sum(j+1, k -> (-1)^(j-k)*binomial(i-k,j-k)*(if fT#?(i,k) then fT#(i,k) else 0));
        if si != 0 then (i,j) => si else continue
    )
 )
@@ -103,6 +103,8 @@ hVector SimplicialComplex := S -> (
    t := first gens ring N;
    apply(dim S + 2, i -> coefficient(t^i,N))
 )
+
+protect isVD
 
 -- Determines whether or not a simplicial complex is k-decomposable, as
 -- in Definition 3.6 in [Wo].

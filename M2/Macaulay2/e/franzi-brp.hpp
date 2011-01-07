@@ -1,3 +1,5 @@
+/* This code written by Franziska Hinkelmann is in the public domain */
+
 #include <set>
 #include <vector>
 #include <iostream>
@@ -11,37 +13,6 @@
 
 using namespace std;
 typedef unsigned long brMonomial;
-
-// only used for graded reverse lex order
-class Bits
-{
-  public:
-  static unsigned int numberOfBits(brMonomial a);
-  static bool reverseLex(brMonomial a, brMonomial b);
-};
-
-inline bool funccompGRL(const brMonomial &lhs, const brMonomial &rhs) {
-  if (Bits::numberOfBits(lhs) > Bits::numberOfBits(rhs) ) {
-    return true;
-  } else if (Bits::numberOfBits(lhs) < Bits::numberOfBits(rhs) ) {
-    return false;
-  } else {
-    return Bits::reverseLex(lhs,rhs);
-  }
-}
-
-
-struct gRevLex {
-  bool operator() (const brMonomial& lhs, const brMonomial& rhs) const {
-    if (Bits::numberOfBits(lhs) > Bits::numberOfBits(rhs) ) {
-      return true;
-    } else if (Bits::numberOfBits(lhs) < Bits::numberOfBits(rhs) ) {
-      return false;
-    } else {
-      return Bits::reverseLex(lhs,rhs);
-    }
-  }
-};
 
 struct lex {
   bool operator() (const brMonomial& lhs, const brMonomial& rhs) const {

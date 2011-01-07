@@ -80,7 +80,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      	  d := 0;
      	  while b'f1'm === null do (
 	       powers = powers | matrix {{sigma^d % G2}};
-	       Cpowers = coefficients powers;
+	       Cpowers := coefficients powers;
 	       KerC := ker lift(Cpowers#1, K); -- kernel of the coefficients matrix
 	       if KerC != 0 then (
 	       	    S = K(monoid[s]);
@@ -119,7 +119,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
 				   )
 			      );
 			 if not new'monoms then break;
-	  	    	 C = coefficients f'b'sigma;
+	  	    	 C := coefficients f'b'sigma;
 	  	    	 KerC := ker lift(C#1, K); -- kernel of the coefficients matrix
 	  	    	 if KerC != 0 then (
 			      ret = ideal apply(numcols gens KerC, j->sum(#monoms, i->(gens KerC)_(i,j)*monoms#i));
@@ -133,7 +133,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
 	       else if o.Strategy == ViaElimination then
 	       exceptionalLocusB(R,I2,b) -- ring I2 has to eliminate s 
 	       else if o.Strategy == ViaColonIdeal then (
-	  	    I2'' = I2' : ( (map(SDY, ring b, {sigma})) b ); 
+	  	    I2'' := I2' : ( (map(SDY, ring b, {sigma})) b ); 
 		    notX := {SDY_0}|notSX;
      	       	    SDYtoSX eliminateWA(I2'', notX)
 		    )
@@ -228,7 +228,7 @@ isFsLocallyIntegrable (RingElement, QQ) := Boolean => (f,s) -> (
 	       if norm x > next'nbhd then ave = ave + abs(sub(F,x))^s;
 	       );
      	  << "s = " << s << ", ave = " << (
-	       d'integral=ave*(2*nbhd)^n/num'samples
+	       d'integral:=ave*(2*nbhd)^n/num'samples
 	       ) << endl; 
 	  if d'integral < integral * epsilon then return true;
 	  nbhd = next'nbhd;
@@ -239,7 +239,7 @@ isFsLocallyIntegrable (RingElement, QQ) := Boolean => (f,s) -> (
  
 -- real log canonical threshold 
 rlct = method()
-rlct RingElement := RingElement => I -> (
+rlct RingElement := RingElement => f -> (
 -- IN:  f,  polynomial in QQ[x_1,...,x_n]
 -- OUT: rlct(f), an element of QQ
      roots := reverse sort bFunctionRoots globalBFunction f;

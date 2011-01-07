@@ -1445,7 +1445,7 @@ locate(e:Expr):Expr := (
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)-1),
+		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)),
 		    toExpr(int(p.line)),toExpr(int(p.column))
 		    )))
      is c:CodeClosure do (

@@ -143,6 +143,8 @@ deRhamAll RingElement := options -> f -> (
 -- load "trans.m2"
 -- use S; f=x*y*(x-y);  logCohomology(f);
 
+protect Input						    -- not exported?
+
 iAllt = method( Options => {Strategy => Schreyer})
 iAllt Module:= options -> I -> (
      pInfo(2, "iAllt (integrationAllWithTransfer) in trans.m2");
@@ -190,7 +192,7 @@ iAllt Module:= options -> I -> (
            j := 0;
            pInfo(2,{i,j,pull});
            pInfo(2, "\t Degree " | i | "...");
-           tInfo = toString first timing (
+           tInfo := toString first timing (
                 while j < n-i do (
                      vertMap := zeroize dbl#(n-i-1)^[(j,-j+n-i-1)]*
                      (dbl.dd#(n-i))*(dbl#(n-i)_[(j,-j+n-i)]);
@@ -286,7 +288,7 @@ getTransfer (HashTable,ZZ) := (cohom,k) -> (
 -- use S; f=(x^3+y^4+x*y^3)*(x^2+y^2); cc=logCohomology f; getReducedTransfer(cc,1);
 getReducedTransfer=method();
 getReducedTransfer (HashTable,ZZ) := (cohom,k) -> (
-  tmp=cohom;
+  tmp:=cohom;
   tk:=getTransfer(cohom,k);
   -- cf. Dbasic.m2, Drank
   W := ring(cohom#VResolution);
@@ -309,19 +311,21 @@ getReducedTransfer (HashTable,ZZ) := (cohom,k) -> (
   tkreduced := apply(tktemp,i->apply(i,j-> (j % ggg)))
 )
 
+end -- the stuff after this point sets global variables and appears to be unused
+
 makeTauInputTest=method();
 makeTauInputTest ZZ:= dummy ->(
   S=QQ[x,y];
   -- ff=x*y*(x-y);
   -- mysyzz={{-3,x,y},{2*x-y,-x^2+x*y,0}};
   -- logco = logCohomology(ff);
-  ff = (x^3+y^4+x*y^3)*(x^2+y^2);
-  mysyzz={{9*y-5/2*x-43/6*y^2+115/6*y*x-6*y^3, -2*y*x+1/2*x^2+x*y^2-23/6*y*x^2-5/6*y^3+x*y^3, 
+  ff := (x^3+y^4+x*y^3)*(x^2+y^2);
+  mysyzz:={{9*y-5/2*x-43/6*y^2+115/6*y*x-6*y^3, -2*y*x+1/2*x^2+x*y^2-23/6*y*x^2-5/6*y^3+x*y^3, 
            -3/2*y^2+1/2*y*x+4/3*y^3+1/2*x^2-3*x*y^2+y^4+1/3*y*x^2}, 
           {12/5*y^2+22/75*y*x+46/15*x^2-24/25*x*y^2, -8/15*x*y^2-2/25*y*x^2-46/75*x^3+4/25*y^2*x^2, 
            -2/5*y^3-2/75*x*y^2-12/25*y*x^2+4/25*x*y^3+4/75*x^3}};
-  logco = logCohomology(ff);
-  ans = makeTauInput({ff,mysyzz},logco,1);
+  logco := logCohomology(ff);
+  ans := makeTauInput({ff,mysyzz},logco,1);
   "t.txt" << toString ans << endl << close ;
   ans  
 )
@@ -329,14 +333,14 @@ makeTauInputTest ZZ:= dummy ->(
 makeTauInput=method();
 makeTauInput (List,HashTable,ZZ) := (fmysyz,cohom,k) -> (
   f:=fmysyz#0;
-  mysyz=fmysyz#1;
-  tkreduced = getReducedTransfer(cohom,k);
+  mysyz:=fmysyz#1;
+  tkreduced := getReducedTransfer(cohom,k);
 
   -- check if the syzygy is OK.
-  iii = (((cohom#VResolution).dd)#1 );
-  ggg = gb iii;
-  ggg2 = entries gens ggg; ggg2 = ggg2#0;
-  W = ring(ggg2#0);
+  iii := (((cohom#VResolution).dd)#1 );
+  ggg := gb iii;
+  ggg2 := entries gens ggg; ggg2 = ggg2#0;
+  W := ring(ggg2#0);
   vw := generators(W);
   i:=0; j:=0; ell:=0; t:=0;
   op:={};
@@ -353,7 +357,7 @@ makeTauInput (List,HashTable,ZZ) := (fmysyz,cohom,k) -> (
     op = join(op,{ell});
     i = i+1;
   );
-  gggell = gb ideal op;
+  gggell := gb ideal op;
   -- check if op % ggg == 0, ggg2 % op == 0
   apply(op,ell-> (if ((ell % ggg) != 0) then (print(ell,ggg); ell2=ell; error "syzygy error by ggg")));
   apply(ggg2,ell-> (if ((ell % gggell) != 0) then (print(ell,gggell); ell2=ell; error "syzygy error by gggell")));

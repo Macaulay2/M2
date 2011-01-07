@@ -148,7 +148,7 @@ setNmzExec=()->
     then(
         if(nmzVersion!="norm64" and nmzVersion !="normbig") then <<error("nmzVersion must be one of the following: norm64, normbig")
         else(
-        nmzExec=nmzVersion;
+        nmzExec:=nmzVersion;
         );
     )
     else
@@ -480,7 +480,7 @@ showNmzOptions=()->
 checkNmzExecVersion=()->
 (
   if (nmzExecVersion=="") then (
-    cmd = "! " | setNmzExec() | " 2>&1 </dev/null || true";
+    cmd := "! " | setNmzExec() | " 2>&1 </dev/null || true";
     nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", get (cmd));
   );
   if (nmzExecVersion < "2.5") then
@@ -603,7 +603,7 @@ mons2intmat(Ideal,ZZ):=(I,c)->
     then(
          << "mons2intmat: Warning! "|c|" exceeds the maximal index of a variable";
          return mons2intmat(I););
-   mat=flatten\exponents\I;
+   mat:=flatten\exponents\I;
    mat=apply(mat,(v)->(return drop(v,{c,c});));
    return(matrix(mat));
 
@@ -774,7 +774,7 @@ runIntclMonIdeal(Ideal,ZZ,Thing):=opts>>o->(I,nmzMode,t)->
 
     if(not nmzGen) then return;
 
-    nmzData=changeColumns(res#"gen",c,-1);
+    nmzData:=changeColumns(res#"gen",c,-1);
 
     S1:=createMonomialSubalgebra intmat2mons(nmzData,ring(I),1,c);
     S1.cache#"cone"=res;

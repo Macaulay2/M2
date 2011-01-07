@@ -55,3 +55,63 @@ document {
      ///,
      SeeAlso => {monomials}
      }
+
+TEST ///
+     R = QQ[a,b,c,d,e,f][x,y];
+     F = a*x^2+b*x*y+c*y^2
+     (M,C) = coefficients F
+     assert(
+	  last coefficients(F, Monomials=>M)
+	  == C)
+     coefficients(F, Variables=>{x,y,R_2})
+///
+
+TEST ///
+     R = QQ[a,b,c,d,e,f][x,y];
+     F = a*x^2+b*x*y+c*y^2    
+     G = d*x^2+e*x*y+f*y^2
+     FG = matrix"F;G"
+     mons1 = monomials FG
+     (M,C) = coefficients FG -- error at the moment BUG
+     mons = matrix"x2,xy,y2,0,0,0;0,0,0,x2,xy,y2"
+     assert(M == mons)
+     assert(
+	  last coefficients(FG, Monomials=>mons1)
+	  == C)
+     coefficients(F, Variables=>{x,y,R_2})
+///
+
+TEST ///
+  -- Using this for basis(d, f), where f is a map of modules
+  R = ZZ/101[a..d]
+  M = matrix"a,b;c,d"
+  -- let's compute basis(1,M):
+  G = source M
+  F = target M
+  monsF = basis(1,F)
+  monsG = basis(1,G)
+  last coefficients(M * monsG, Monomials=>monsF) -- this is it!
+  
+  -- Another example
+  R = ZZ/101[a..e]
+  I = ideal"ab,bc,cd,de,ea"
+  S = reesAlgebra I
+  T = ambient S
+  L = ideal S
+  describe S
+  C = res L
+  f = C.dd_2
+  f1 = basis(1,target f)
+  f2 = basis(1,source f)
+  last coefficients(f * f2, Monomials=>f1)
+  f * f2
+  f
+  f2
+
+  f = C.dd_1
+  f1 = basis(2,target f)
+  f2 = basis(2,source f)
+  last coefficients(f * f2, Monomials=>f1)
+  f * f2
+
+///

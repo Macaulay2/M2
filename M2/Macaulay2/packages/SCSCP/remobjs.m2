@@ -1,6 +1,8 @@
 RemoteObject = new Type of XMLnode
 RemoteObject.synonym = "remote object"
 
+protect connection
+
 getGlobalSymbol(SCSCP#"private dictionary", "connection")
 net RemoteObject := x -> (
 	if x.?connection and x.connection#?"service_name" then 

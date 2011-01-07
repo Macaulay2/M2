@@ -310,9 +310,9 @@ makeTree := x -> (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
 	       if chkdoc then (
-	       	    stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
-		    warning();
-		    -- error("missing reference to documentation as subnode: ", toString x);
+	       	    -- stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
+		    -- warning();
+		    error("missing reference to documentation as subnode: ", toString x);
 		    );
 	       );
 	  new TreeNode from { x , new ForestNode}
@@ -405,16 +405,16 @@ capture String := s -> (
 makeMasterIndex := (keylist,verbose) -> (
      numAnchorsMade = 0;
      fn := buildPrefix | htmlDirectory | indexFileName;
-     title := "Symbol Index";
+     title := DocumentTag.FormattedKey topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
 	  HEAD splice { TITLE title, links() },
-	  BODY {
+	  BODY nonnull {
 	       DIV { topNodeButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
-	       UL apply(sort keylist, (tag) -> (
+	       if #keylist > 0 then UL apply(sort keylist, (tag) -> (
 			 checkIsTag tag;
 			 anch := anchorsUpTo tag;
 			 if anch === null then LI TOH tag else LI {anch, TOH tag})),
@@ -459,7 +459,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'loadPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
+     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'loadPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | src | ldpkg;
      cmdname := commandLine#0;
@@ -494,9 +494,9 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
-     stderr << tmpf << ":0: (output file) error: program exited with return code: (" << r//256 << "," << r%256 << ")" << endl;
+     stderr << tmpf << ":0:1: (output file) error: program exited with return code: (" << r//256 << "," << r%256 << ")" << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
-     stderr << inf  << ":0: (input file) error: ..." << endl;
+     stderr << inf  << ":0:1: (input file) error: ..." << endl;
      scan(statusLines get inf, x -> stderr << x << endl);
      if # findFiles rundir == 1
      then removeDirectory rundir
@@ -533,7 +533,7 @@ check = method(Options => {
 	  })
 prep := pkg -> (
      use pkg;
-     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"title", LoadDocumentation => true);
+     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"title", LoadDocumentation => true, Reload => true);
      hadExampleError = false;
      numExampleErrors = 0;
      pkg)
@@ -622,7 +622,7 @@ installPackage String := opts -> pkg -> (
      -- we load the package even if it's already been loaded, because even if it was loaded with
      -- its documentation the first time, it might have been loaded at a time when the core documentation
      -- in the "Macaulay2Doc" package was not yet loaded
-     pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName);
+     pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName, Reload => true);
      installPackage(pkg, opts);
      )
 
@@ -999,7 +999,7 @@ installPackage Package := opts -> pkg -> (
 	       << endl << close));
 
 	  -- make master.html with master index of all the html files
-	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag and instance(DocumentTag.Key tag,Symbol)), verbose);
+	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag {* and instance(DocumentTag.Key tag,Symbol) *} ), verbose);
 
 	  -- make table of contents
 	  maketableOfContents verbose;

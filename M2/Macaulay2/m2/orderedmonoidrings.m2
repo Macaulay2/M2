@@ -130,6 +130,7 @@ protect generatorSymbols
 protect generatorExpressions
 protect indexSymbols
 
+InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";

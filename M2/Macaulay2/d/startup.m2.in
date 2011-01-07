@@ -148,33 +148,36 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "--Copyright 2010 D. R. Grayson and M. E. Stillman" | newline
-	  | "--GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
-	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
-	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
+	  | "Copyright 2010 Daniel R. Grayson and Michael E. Stillman," | newline
+     	  | "  licensed under the GNU General Public License version 2 or 3." | newline
+	  | "For Macaulay2 packages, see their source code for licensing terms." | newline
+     	  | "Compiled with the following libraries:" | newline
+	  | "  GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
+	  | "  Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
+	  | "  Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
 	  |    ( 
 	       if version#"frobby version" =!= "not present" 
-	       then ("--frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
+	       then ("  frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
 	       else ""
 	       )
 	  |    ( 
 	       if version#"pari version" =!= "not present" 
-	       then ("--pari " | version#"pari version" | ", the PARI Group, Bordeaux" | newline)
+	       then ("  pari " | version#"pari version" | ", the PARI Group, Bordeaux" | newline)
 	       else ""
 	       )
-	  | "--NTL " | version#"ntl version" | ", by V. Shoup" | newline
+	  | "  NTL " | version#"ntl version" | ", by V. Shoup" | newline
 	  |    (
 	       if version#"gmp version" =!= "not present"
-	       then "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
+	       then "  GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
 	       else ""
 	       )
      	  |    (
 	       if version#"mpir version" =!= "not present"
-	       then "--MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
+	       then "  MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
 	       else ""
 	       )
-     	  | "--MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
-	  | "--BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
+     	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
+	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );
 
      scan(
@@ -459,11 +462,11 @@ action := hashTable {
      "--restarted" => arg -> restarted = true,
      "--texmacs" => arg -> (
 	  if phase == 1 then (
-	       topLevelMode = TeXmacs;
+	       topLevelMode = global TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 3 then (
-	       topLevelMode = TeXmacs;
+	       topLevelMode = global TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 4 then (
@@ -517,7 +520,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       if not commandLine#?2 then error "script file name missing";
 	       arg := commandLine#2;
 	       scriptCommandLine = drop(commandLine,2);
-	       if instance(load, Function) then load arg else simpleLoad arg;
+	       if instance(value global load, Function) then load arg else simpleLoad arg;
 	       exit 0))
      else (
 	  if notify then stderr << "--phase " << phase << endl;

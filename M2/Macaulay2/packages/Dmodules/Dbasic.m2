@@ -84,6 +84,9 @@ createDpairs PolynomialRing := W -> (
 
 -- This routine attaches to a Weyl algebra W the key "CommAlgebra"
 -- which holds a commutative ring with the same variables
+protect CommAlgebra
+protect CAtoWA
+protect WAtoCA
 createCommAlgebra = method()
 createCommAlgebra PolynomialRing := W -> (
      if W.monoid.Options.WeylAlgebra === {} then

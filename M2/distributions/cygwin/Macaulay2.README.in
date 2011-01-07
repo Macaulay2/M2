@@ -1,14 +1,14 @@
 
-			   Macaulay 2
+			   Macaulay2
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
 
 	available from http://www.math.uiuc.edu/Macaulay2/
 
-We thank the United States National Science Foundation for generous funding
-to develop Macaulay 2.
+We thank the United States National Science Foundation for generous funding to
+develop Macaulay2.
 
-Macaulay 2 is copyright 1993-2008 by Daniel R. Grayson and Michael
-E. Stillman.  We permit you to use it under the terms of the GNU General
-Public License, version 2, as published by the Free Software Foundation; see
-the file Macaulay2/COPYING.
+Macaulay2 is copyright 2010 by Daniel R. Grayson and Michael E. Stillman.  We
+permit you to use it under the terms of the GNU General Public License, version
+2 or version 3, as published by the Free Software Foundation; see the files
+Macaulay2/COPYING-GPL-2 and Macaulay2/COPYING-GPL-3.

@@ -281,7 +281,6 @@ document {
      Key => ii,
      Headline => "the square root of -1",
      Usage => "ii",
-     Inputs => { },
      Outputs => { CC => { "the square root of -1, converted to a numeric value of the correct precision, when necessary." }},
      EXAMPLE lines ///
      	  ii
@@ -309,7 +308,6 @@ document { Key => pi,
 document { Key => {EulerConstant},
      Usage => "EulerConstant",
      Headline => "the Euler-Mascheroni constant",
-     Inputs => { },
      Outputs => { RR => { "the Euler-Mascheroni constant, converted to a numeric value of the correct precision, when necessary." }},
      EXAMPLE lines ///
      	  EulerConstant
@@ -809,6 +807,31 @@ document {
      transpose groebnerBasis random(R^1,R^{4:-2})
      ///
      }
+
+multidoc ///
+Node
+ Key
+  findHeft
+  (findHeft,List)
+  [findHeft,DegreeRank]
+ Headline
+  find a heft vector for a list of degrees
+ Usage
+  findHeft( x, DegreeRank => ... )
+ Inputs
+  x:List
+   a list of multi-degrees, each of which is a list of integers of length {\tt r}
+  DegreeRank=>ZZ
+   an integer, r, say
+ Outputs
+  :
+   a list of integers of length {\tt r} whose dot product with each member of x is greater than zero,
+   or @ TO null @, if there is none
+ Description
+  Example
+   findHeft ( {{-1,0}, {2,1}}, DegreeRank => 2 )
+   findHeft ( {}, DegreeRank => 0 )
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -181,7 +181,7 @@ fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
      L := rotateMatrix leadTerm A;
      A = rotateMatrix A;
      -- find pivots
-     numRow = rank target A;     -- numRow <= d
+     numRow := rank target A;     -- numRow <= d
      i := 0;
      pivotCol := {};
      while (i < numRow) do (
@@ -420,7 +420,7 @@ document {
      representing a positive linear functional.",
      
      EXAMPLE {
-          "findHeft = vectorConfig -> (
+          "findHeft := vectorConfig -> (
      A := transpose matrix vectorConfig;
      B := (fourierMotzkin A)#0;
      r := rank source B;

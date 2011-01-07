@@ -1,5 +1,10 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+symbolLocation = s -> (
+     t := locate s;
+     if t =!= null then t#0 | ":" | toString t#1| ":" | toString (t#2+1) | "-" | toString t#3| ":" | toString (t#4+1)
+     else "")
+
 processArgs := args -> concatenate (
      args = sequence args;
      apply(args, x -> 
@@ -15,16 +20,18 @@ error = args -> (
      olderror processArgs args)
 protect symbol error
 
-warningMessage = args -> (
+warningMessage0 = (args,deb) -> (
      args = processArgs args;
      h := hash args % 10000;
      if debugWarningHashcode === h
      then error args
      else (
-	  stderr << "warning: " << args << endl
-     	  << "       : debug with expression   debug " << h << "   or with command line option   --debug " << h << endl
+	  stderr << "warning: " << args << endl;
+     	  if deb then stderr << "       : debug with expression   debug " << h << "   or with command line option   --debug " << h << endl;
 	  );
      )
+warningMessageNoDebug = args -> warningMessage0(args,false)
+warningMessage = args -> warningMessage0(args,true)
 
 callCount := new MutableHashTable
 
@@ -70,8 +77,6 @@ on = { CallLimit => 100000, Name => null, GenerateAssertions => false } >> opts 
 	  if instance(val,Function) then val = on(val,opts);
      	  val)
      )
-
-notImplemented = x -> error "not implemented yet"
 
 benchmark = (s) -> (
      n := 1;
@@ -145,14 +150,9 @@ ancestors = X -> while true list (local Z; if Z === Thing then break ; Z = X; X 
 
 typicalValues#frame = MutableList
 
-symbolLocation = s -> (
-     t := locate s;
-     if t =!= null then t#0 | ":" | toString t#1| ":" | toString (t#2+1) | "-" | toString t#3| ":" | toString (t#4+1)
-     else "")
-
 select2 := (type,syms) -> apply(
      sort apply(
-	  select(syms, sym -> mutable sym and instance(value sym,type)),
+	  select(syms, sym -> mutable sym and instance(value sym,type) and value sym =!= sym),
 	  symb -> (hash symb, symb)
 	  ),
      (h,s) -> s)
@@ -193,15 +193,14 @@ listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
 userSymbols = type -> (
      if type === () then type = Thing;
-     select2(type,join(values User#"private dictionary",toList select(vars (0 .. 51), s -> value s =!= s))))
+     select2(type,values User#"private dictionary"))
 
 listUserSymbols = Command ( type -> listSymbols userSymbols type )
 
 clearOutput = Command (() -> scan(join({global oo, global ooo, global oooo}, values OutputDictionary), s -> s <- s ))
 clearAll = Command (() -> ( 
 	  clearOutput(); 
-	  scan(getGlobalSymbol "a" .. getGlobalSymbol "Z", i -> i <- i);
-	  scan(values User#"private dictionary", i -> erase(i <- i));
+	  scan(values User#"private dictionary", i -> i <- i);
 	  ))
 
 generateAssertions = method(TypicalValue => Net)
@@ -213,7 +212,6 @@ generateAssertions List := y -> (
 	  and
 	  all(nogens, X -> not instance(t,X))
 	  );
-     eq := t -> "===";
      stack apply(y, 
 	  lin -> ( 
 	       t := try value lin else local oops;
@@ -223,8 +221,13 @@ generateAssertions List := y -> (
 	       then (
 		    ts := try toExternalString t;
 		    if ts === null
-		    then (lin, " -- toExternalString fails")
-		    else ("assert( ("    , lin,            ") ",eq t," ", toExternalString t, " )")
+		    then (
+			 tn := try net t;
+			 if tn === null
+			 then (lin, " -- toExternalString and net fail")
+			 else ("assert( net ("    , lin,            ") === ", toExternalString tn, " ) -- toExternalString fails")
+			 )
+		    else ("assert( ("    , lin,            ") === ", ts, " )")
 		    )
 	       else lin
 	       )))^-1

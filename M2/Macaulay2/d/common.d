@@ -205,6 +205,11 @@ export setupconst(name:string,value:Expr):Symbol := (
 setup(commaS,dummyBinaryFun);
 
 threadLocal export errorDepth := ushort(0);
+export printErrorMessage0(c:Code,message:string):Error := (
+     p := codePosition(c);
+     e := Error(p,message,nullE,false,dummyFrame);
+     if p.loadDepth >= errorDepth then printError(e);
+     e);
 export printErrorMessageE(c:Code,message:string):Expr := (
      p := codePosition(c);
      e := Error(p,message,nullE,false,dummyFrame);

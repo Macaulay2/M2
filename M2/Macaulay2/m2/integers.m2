@@ -26,6 +26,7 @@ promote(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
+installMethod(gcd, () -> 0)
 gcd(ZZ,ZZ) := ZZ => gcd0
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
@@ -39,6 +40,10 @@ lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
 lcm(ZZ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
 lcm(QQ,ZZ) := (f,g) -> abs f * (abs g / gcd(f,g))
 lcm(QQ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
+
+odd  = x -> 1 === x%2
+even = x -> 0 === x%2
+zero = x -> x == 0					    -- we use == so this can apply to all types of things
 
 smallprimes := {2,3,5,7,11,13,17,23,29,31,37,41,43,47}
 
@@ -82,10 +87,6 @@ ceiling = x -> - floor(-x)
 isUnit ZZ := x -> x == 1 or x == -1
 
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
-
-odd  = x -> 1 === x%2
-even = x -> 0 === x%2
-zero = x -> x == 0					    -- we use == so this can apply to all types of things
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

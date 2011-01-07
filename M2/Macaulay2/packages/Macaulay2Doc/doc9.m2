@@ -130,27 +130,28 @@ document {
 
 document {
      Key => getSymbol,
-     Headline => "make a global symbol from a string",
+     Headline => "make a global user symbol from a string",
      Usage => "getSymbol s",
      Inputs => {
-	  "s" => String => "the name of the global symbol"
+	  "s" => String
 	  },
      Outputs => {
-	  Symbol => {"a previously existing global symbol whose name is contained in the string ", TT "s", ", if
-	       one exists and is visible in one of the dictionaries in ", TO "dictionaryPath", ", or, a new
-	       global symbol with that name, created in the first mutable dictionary in ", TO "dictionaryPath", "."
+	  Symbol => {"a global symbol whose name is provided by the string ", TT "s", "
+	       in the private dictionary for the package ", TO "User", "."
 	       }
-	  },
-     PARA {
-	  "This function mimics what the interpreter does when it encounters and parses the name of a global
-	  symbol, and can be used when the name of the symbol is not known at the time the code is written."
 	  },
      EXAMPLE lines ///
      	  x = "aaaa"
-     	  getSymbol x
-	  dictionary oo
-	  ooo === getSymbol x
+     	  s = getSymbol x
+	  dictionary s
+	  s === getSymbol x
+	  keys User#"private dictionary"
      ///,
+     Caveat => {
+	  "The old behavior, up to version 1.3.1, was to provide a previously existing global symbol, if
+	  one exists and is visible in one of the dictionaries in ", TO "dictionaryPath", ", or, if not, to create a new
+	  global symbol in the first mutable dictionary listed in ", TO "dictionaryPath", "."
+	  },
      SeeAlso => { getGlobalSymbol }
      }
 

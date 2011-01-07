@@ -7,7 +7,7 @@ scan((
 	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
-	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,
+	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,Reload,
 	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
 	  Join,CacheExampleOutput,Reduce,Result,SeparateExec),
      s -> if s =!= null then document {
@@ -1011,7 +1011,7 @@ document {
 	       "We use the class ", TT "M", " introduced above, and install a method for ", TT "new M", ", and we use it in the next subsection."
  	       },
  	  EXAMPLE lines ///
-	       new M := (M') -> {a,b,c}
+	       new M := (M') -> {"a","b","c"}
  	       ///
 	  ),
      SYNOPSIS (

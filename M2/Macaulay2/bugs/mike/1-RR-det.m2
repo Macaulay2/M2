@@ -8,7 +8,7 @@ N = matrix table(125,125,x->random 10.);
 time det N -- 0.0
 
 M1 = mutableMatrix M;
-time LU M1;
+time LUdecomposition M1;
 methods LU
 
 M = matrix table(125,125,x->random 10.);
@@ -22,7 +22,7 @@ for i from 0 to numColumns U - 1 list U_(i,i)
 determinantRR = (M) -> (
      -- only up to sign!
      M1 := mutableMatrix M;
-     (P,L,U) = LU M1;
+     (P,L,U) = LUdecomposition M1;
      d := 1.0; for i from 0 to numColumns U - 1 do d = d * U_(i,i);
      d)
 

@@ -88,7 +88,7 @@ ideal mingens ker phi)
 rncmap=method()
 rncmap(Ideal):=(i1)->(
 n:=(rank source vars ring i1)-1;
-cc=res coker gens i1;
+cc:=res coker gens i1;
 j:=length cc;
 m:=cc.dd_j;
 Ra:=ring i1;
@@ -216,7 +216,7 @@ t:=symbol t;
 m:=(rank source linsys)-1;
 T:=K[t_0..t_m];
 RT:=R**T;
-vT=sub(vars T,RT);
+vT:=sub(vars T,RT);
 sl:=sub(linsys,RT);
 Igr:=sub(I,RT)+minors(2,vT||sl);
 Igr=saturate(Igr,ideal sl);
@@ -310,6 +310,7 @@ R:=ring par;
 Ic:=ideal R;
 if degree Ic==1 then return(par);
 conicpar:=rParametrizeConic(Ic);
+if conicpar==0 then (print("No rational point on conic");return(par));
 v:=(entries vars R)#0;
 par2:=sub(par,{v#0=>conicpar_(0,0),v#1=>conicpar_(1,0),v#2=>conicpar_(2,0)});
 par2)
@@ -554,7 +555,7 @@ if (e^2==4*f*c) then (
  );
  if f!=0 then (
   as:=4*f*a-d^2;
-  bs=4*f*b-2*d*e;
+  bs:=4*f*b-2*d*e;
   rtrans=matrix {{bs,-as,-bs*d/2/f+e/2/f*as}};
   tst=sub(ueber,{L#0=>rtrans_(0,0),L#1=>rtrans_(0,1),L#2=>rtrans_(0,2)});
   if tst!=0 then print("ERROR "|toString tst);
@@ -1018,6 +1019,7 @@ if gcd(a,p)!=1 then return(false);
 L:=igcdx(a,p);
 ia:=L#0;
 if ia<0 then ia=ia+p;
+if p<0 then return(-ia);
 ia);
 
 --apply(1..100,q->modularInverse(q,51335)),
@@ -1150,11 +1152,13 @@ doc ///
     By inverting the birational map of C to \mathbb{P}^{1} or the conic we obtain a rational parametrization of C.
     If n is odd or C_2 has a rational point C is parametrized by \mathbb{P}^{1} otherwise by C_2.
 
-    The package is work in progress, so there will be future improvements and more testing is necessary.
+    The main focus of the algorithm is to avoid unnecessary choices to obtain a parametrization of small height.
 
     For more theoretical details see 
     J. Boehm: Rational parametrization of rational curves,
     @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+
+    The package is work in progress, so there will be future improvements and more testing is necessary.
 
 
     {\bf Key user functions:}
@@ -1171,7 +1175,7 @@ doc ///
 
     {\bf Setup:}
 
-    This package uses the package {\it AdjointIdeal}, so install this first.
+    This package uses the package {\it AdjointIdeal}, so set up this first.
 
     Place the file Parametrization.m2 somewhere into the M2 search path and install the package by doing
 
@@ -1667,9 +1671,10 @@ doc ///
     Option whether to rationally parametrize conics.
   Description
    Text
-       If this option is set true, the computation of @TO rParametrizePlaneCurve@ or @TO parametrize@
-       leads to a conic (even degree case) and if this conic has a rational point then this conic is also parametrized.
-       So the final result will be a parametrization over \mathbb{P}^{1}.
+       If this option is set true and the computation of @TO rParametrizePlaneCurve@ or @TO parametrize@
+       leads to a conic (even degree case) and this conic has a rational point then this conic is also parametrized.
+       So the final result will be a parametrization over \mathbb{P}^{1}. If the conic does not have a rational point
+       a warning is displayed and the parametrization over the conic is returned. 
         
    Example
      K=QQ;

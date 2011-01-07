@@ -326,14 +326,6 @@ document {
      SeeAlso => "Net"
      }
 
-document {
-     Key => collectGarbage,
-     Headline => "collect the garbage in memory",
-     TT "collectGarbage()", " -- attempt a garbage collection.",
-     PARA{},
-     SeeAlso => "GC garbage collector"
-     }
-
 --document { gcDump,
 --     Headline => "the status of the memory allocator",
 --     TT "gcDump()", " -- produces a dump of the status of the garbage collector.",

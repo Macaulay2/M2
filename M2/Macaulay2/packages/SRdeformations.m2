@@ -15,9 +15,9 @@ newPackage(
 -- For information see documentation key "SRdeformations" below.
 
 
-if ((options SRdeformations).Configuration)#"UseConvex"==true then (
+--if ((options SRdeformations).Configuration)#"UseConvex"==true then (
   needsPackage "ConvexInterface"
-);
+--);
 needsPackage "Polyhedra"
 
 
@@ -211,6 +211,7 @@ extendParameters=method()
 extendParameters(List,ZZ,Matrix):=(rmgidx,n,par)->(
 zr:=matrix {toList apply(0..-1+rank source par,j->0)};
 c:=0;
+local parx;
 for j from 0 to n-1 do (
   if member(j,rmgidx)==true then (
      if j==0 then (
@@ -232,6 +233,7 @@ parx)
 
 --extendParameters({2,4},5,par)
 
+protect relevantGens
 
 newFirstOrderDeformation(Matrix,Vector) := (mg,m)-> (
   A:=grading ring mg;
@@ -347,7 +349,7 @@ q:=0;
 r:=rank source M;
 Lm:=laurent(m,ring M);
 while q<r do (
-  mtst=M_(0,q)*Lm;
+  mtst:=M_(0,q)*Lm;
   --print(mtst,numerator mtst);
   if ideal(numerator mtst)+I!=I then (
       L=append(L,M_(0,q));
@@ -363,7 +365,6 @@ relationsCoefficientsSyzygies(rmg,v)
 *}
 -------------------------------------------------------------------
 -- find the deformations in the m-graded part of deformation space
-
 -- relations coming from denominator not dividing the monomial
 relationsCoefficientsDivisible=method()
 relationsCoefficientsDivisible(Matrix,Vector):=(M,m)->(
@@ -1335,6 +1336,7 @@ facets(Complex):=(C)->(C.facets)
 --faces=method()
 --faces(Complex):=(C)->(C.fc)
 -- >> export
+
 fc=method()
 fc(Complex):=(C)->(
 if member(symbol fc,keys C)==true then return(toList apply(-1..edim(C),j->C.fc_j));
@@ -1375,7 +1377,7 @@ q:=1;
 qq:=0;
 anznew:=0;
 while tst==false do (
-  L1=apply(subsets(fc,q),intersectFaces);
+  L1:=apply(subsets(fc,q),intersectFaces);
   anznew=0;
   qq=0;
   while qq<#L1 do (
@@ -1732,7 +1734,7 @@ L:=apply(apply(apply(apply(rels,j->T*j),ker),gens),transpose);
 L1:={};
 q:=0;
 for q from 0 to #L-1 do (
-  rv=(L#q*(transpose(rels#q)))_(0,0);
+  rv:=(L#q*(transpose(rels#q)))_(0,0);
   L1=append(L1,(entries((-1/rv)*sub(L#q,QQ)))#0)
 );
 matrix L1)
@@ -1756,7 +1758,7 @@ q=q+1);
 facetlist=append(facetlist,{face(v,Cl,#v-1,0)});
 Cl.noBoundary=false;
 --S:=apply(0..#v-1,j->remove(v,j));
-S=subsets(v,#v-1);
+S:=subsets(v,#v-1);
 Cl.polytopalFacets=toList apply(0..#S-1,jj->face(S#jj,Cl,#v-2,jj));
 Cl.isSimp=true;
 Cl.isPolytope=true;
@@ -1767,7 +1769,7 @@ dCl.noBoundary=false;
 dCl.isPolytope=true;
 --
 dv:=(entries vars Rdual)#0;
-dS=subsets(dv,#dv-1);
+dS:=subsets(dv,#dv-1);
 dCl.polytopalFacets=toList apply(0..#dS-1,jj->face(dS#jj,Cl,#dv-2,jj));
 dfacetlist:={};
 q=0;
@@ -2239,7 +2241,7 @@ if member(symbol fc,keys C)==false then (
 );
  newfaces:=replaceDim(fc(C),dim(C)+1,{});
  fc0:=new ScriptedFunctor from {subscript => i-> (newfaces)_(i+1)};
- newfvector=replaceDim(C.fvector,dim(C)+1,0);
+ newfvector:=replaceDim(C.fvector,dim(C)+1,0);
  L={
      symbol simplexRing => C.simplexRing,
      symbol grading => R.grading,
@@ -2582,7 +2584,7 @@ idealToCoComplex(MonomialIdeal,Complex):=(I,D)->(
 if isSquareFree(I)==false then error("Expected squarefree monomial ideal");
 if not(set((entries vars ring I)#0)== set((entries vars simplexRing D)#0) ) then error("Expected ideal and complex over rings with same variables");
 tst:=false;
-completecomplex=false;
+completecomplex:=false;
 n:=edim(D);
 gI:=gens I;
 L:={};
@@ -3389,7 +3391,7 @@ A*v
 hull=method(Options=>{file=>null})
 hull(List):=opts->(L)->(
 -- use "Convex" if available
-if class(mPosHullFacesAndDuals)===MethodFunctionWithOptions then return(hullConvex(L,opts));
+if ((options SRdeformations).Configuration)#"UseConvex"==true then return(hullConvex(L,opts));
 vA:=joinVectors(L);
 P:=posHull vA;
 d:=P#"dimension of the cone";
@@ -3399,8 +3401,10 @@ A:=sub(transpose rays(P),ZZ);
 Adual:=-sub(transpose rays dualCone P,ZZ);
 n:=rank target A;
 dn:=rank target Adual;
+y := getSymbol "y";
 R:=QQ[y_0..y_(n-1)];
 R.grading=A;
+v := getSymbol "v";
 Rdual:=QQ[v_0..v_(dn-1)];
 Rdual.grading=-Adual;
 Cl:=newEmptyComplex(R);
@@ -3436,6 +3440,7 @@ hull(String):=opts->(fn)->(
 {A,Adual,fcL}:=toSequence readPosHullFaces(fn);
 makeHull(A,Adual,fcL))
 
+protect toFile
 
 hullConvex=method(Options=>{file=>null})
 hullConvex(List):=opts->(L)->(
@@ -3475,14 +3480,12 @@ Cl.edim=Cl.edim-1;
 dCl.edim=dCl.edim-1;
 Cl)
 
-
-
 ----------------------------------------------------------------------------------------
 
 convHull=method(Options=>{file=>null})
 convHull(List):=opts->(L)->(
 -- use "Convex" if available
-if class(mConvexHullFacesAndDuals)===MethodFunctionWithOptions then return(convHullConvex(L,opts));
+if ((options SRdeformations).Configuration)#"UseConvex"==true then return(convHullConvex(L,opts));
 vA:=joinVectors(L);
 P:=convexHull vA;
 d:=P#"dimension of polyhedron";
@@ -3491,6 +3494,7 @@ if embdim!=d or P#"dimension of lineality space">0 then error("expected polytope
 -- put QQ-ZZ test here !!!!!!!!!!!!
 A:=sub(transpose vertices(P),ZZ);
 n:=rank target A;
+y := getSymbol "y";
 R:=QQ[y_0..y_(n-1)];
 R.grading=A;
 Cl:=newEmptyComplex(R);
@@ -3520,6 +3524,7 @@ Cl.isPolytope=true;
 --print(Adual);
 Adual:=matrix AdualL;
 dn:=rank target Adual;
+v := getSymbol "v";
 Rdual:=QQ[v_0..v_(dn-1)];
 Rdual.grading=Adual;
 dCl:=newEmptyComplex(Rdual);
@@ -3810,11 +3815,11 @@ F = dumpdata("daten.txt");
 
 *}
 
-
 ------------------------------------------------------------
 -- homology of a complex
 
 homology(Complex):=opts->(C)->(
+if ((options SRdeformations).Configuration)#"UseConvex"==false then error("Only available via ConvexInterface and MapleInterface");
 Lc:=apply(fc C,j->apply(j,coordinates));
 mHomology Lc)
 

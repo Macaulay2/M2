@@ -46,9 +46,6 @@ document {
 	  },
      "The command provides the map on the ", TT "i", "-th cohomology module
      induced by a map ", TT "f", " of chain complexes.",
-     PARA{},
-     EXAMPLE {
-	  },
      SeeAlso => {"cohomology", "HH", "ChainComplex"}
      }
 document { 
@@ -302,19 +299,4 @@ document {
           },
      Caveat => {"There is no check made if the projective variety X is smooth or not."},
      SeeAlso => {(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,SheafOfRings),(euler,ProjectiveVariety)}
-     }
-
-
-document { 
-     Key => [cohomology, Degree],
-     Usage => "cohomology(d,F, Degree =>d)",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
      }

@@ -7,6 +7,8 @@ use texmacs;
 use actors5;
 import dirname(s:string):string;
 
+dummyError := Error(dummyPosition,"dummy error message",nullE,false,dummyFrame);
+
 export setupargv():void := (
      setupconst("commandLine",toExpr(argv));
      setupconst("environment",toExpr(envp));
@@ -16,10 +18,10 @@ fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
 currentFileName := setupvar("currentFileName", nullE);
 currentPosFile  := dummyPosFile;
 currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
-update(err:Error,prefix:string,f:Code):Expr := (
-     if err.position == dummyPosition
-     then printErrorMessageE(f,prefix + ": " + err.message)
-     else printErrorMessageE(f,prefix + ": --backtrace update-- ")
+update(err:Error,prefix:string,f:Code):Error := (
+     if !err.printed
+     then printErrorMessage0(f,prefix + ": " + err.message)
+     else printErrorMessage0(f,prefix + ": --backtrace update-- ")
      );
 previousLineNumber := -1;
 
@@ -59,6 +61,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
      bumpLineNumber := true;
      promptWanted := false;
      issuePrompt := false;
+     lasterrmsg := dummyError;
      while true do (
 	  if debugLevel == 123 then stderr <<  "------------ top of loop" << endl;
 	  if bumpLineNumber then (
@@ -158,13 +161,18 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
 			      )
 			 else (
-			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
-			      then (		  
+			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
+			      then (
 				   -- result of BeforeEval is ignored unless error:
 				   -- BeforeEval method is independent of mode
 				   f := convert(parsed); -- convert to runnable code
 				   be := runmethod(BeforeEval,nullE);
-				   when be is err:Error do ( be = update(err,"before eval",f); if stopIfError || returnIfError then return be; ) else nothing;
+				   when be is err:Error do (
+					err = update(err,"before eval",f);
+					if stopIfError || returnIfError then return Expr(err);
+					lasterrmsg = err;
+					)
+				   else nothing;
 				   lastvalue = evalexcept(f);	  -- run it
 				   if lastvalue == endInput then return nullE;
 				   when lastvalue is err:Error do (
@@ -181,6 +189,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     if !err.printed then printErrorMessage(err);
 					     if stopIfError || returnIfError then return lastvalue;
 					     );
+					lasterrmsg = err;
 					)
 				   else (
 					if printout then (
@@ -196,29 +205,49 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     g := runmethod(AfterEval,lastvalue);
 					     when g is err:Error
 					     do (
-						  g = update(err,"after eval",f); 
-						  if stopIfError || returnIfError then return g;
+						  err = update(err,"after eval",f); 
+						  if stopIfError || returnIfError then return err;
 						  lastvalue = nullE;
+						  lasterrmsg = err;
 						  ) 
 					     else lastvalue = g;
 					     -- result of BeforePrint is printed instead unless error:
 					     printvalue := nullE;
 					     g = runmethod(modeBeforePrint,lastvalue);
 					     when g is err:Error
-					     do ( g = update(err,"before print",f); if stopIfError || returnIfError then return g; )
+					     do (
+						  err = update(err,"before print",f);
+						  if stopIfError || returnIfError then return err;
+						  lasterrmsg = err;
+						  )
 					     else printvalue = g;
 					     -- result of Print is ignored:
 					     g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue);
-					     when g is err:Error do ( g = update(err,"at print",f); if stopIfError || returnIfError then return g; ) else nothing;
+					     when g is err:Error do (
+						  err = update(err,"at print",f);
+						  if stopIfError || returnIfError then return err;
+						  lasterrmsg = err;
+						  )
+					     else nothing;
 					     -- result of AfterPrint is ignored:
 					     g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue);
-					     when g is err:Error do ( g = update(err,"after print",f); if stopIfError || returnIfError then return g; ) else nothing;
+					     when g is err:Error do (
+						  err = update(err,"after print",f);
+						  if stopIfError || returnIfError then return err;
+						  lasterrmsg = err;
+						  )
+					     else nothing;
 					     )
 					)
 				   )
-			      else if isatty(file) 
-			      then flush(file)
-			      else return buildErrorPacket("error while loading file")))))));
+			      else (
+				   -- an error occurred in localBind
+				   if isatty(file) 
+				   then flush(file)
+				   else return (
+					if lasterrmsg != dummyError
+					then Expr(lasterrmsg)
+					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
 incrementInterpreterDepth():void := (
@@ -250,18 +279,18 @@ readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      printout := false; mode := nullE;
      ret := readeval3(file,printout,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false,returnIfError);
      haderror := when ret is Error do True else False;
-     hadexiterror := false;
+     lastexiterror := dummyError;
      hook := getGlobalVariable(fileExitHooks);
      when hook is x:List do foreach f in x.v do (
 	  r := applyEE(f,haderror);
 	  when r is err:Error do (
-	       if err.position == dummyPosition then stderr << "error in file exit hook: " << err.message << endl;
-	       hadexiterror = true;
+	       if lastexiterror != dummyError && !lastexiterror.printed then printErrorMessage(lastexiterror); -- or else it gets bumped
+	       lastexiterror = err;
 	       ) else nothing
 	  )
      else nothing;
      setGlobalVariable(fileExitHooks,savefe);
-     if hadexiterror then buildErrorPacket("error in file exit hook") else ret);
+     if lastexiterror != dummyError then Expr(lastexiterror) else ret);
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");

@@ -34,13 +34,9 @@ document {
      Key => [eigenvalues, Hermitian],
      Headline => "Hermitian=>true means assume the matrix is symmetric or Hermitian",
      Usage => "eigenvalues(M, Hermitian=>true)",
-     Inputs => {
-	  },
      Consequences => {
 	  "The resulting matrix of eigenvalues is defined over RR, not CC."
 	  },     
-     EXAMPLE {
-	  },
      Caveat => {"The internal routine uses a different algorithm, only considering the
 	  upper triangular elements.  So if the matrix is not symmetric or Hermitian,
 	  the routine will give incorrect results."},

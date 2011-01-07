@@ -58,8 +58,17 @@ document {
      Key => "changes, 1.4",
      UL {
 	  LI { "major improvements and additions:",
-	       -- UL {
-	       -- 	    }
+	       UL {
+		    LI {
+			 "In preparation for running Macaulay2 in parallel using threads, the Safe C language, in which the
+			 interpreter is written, has been reworked.  The chief advantage is that now, references to 
+			 top level objects now consist of a single address pointer, and thus assignment can happen
+			 atomically.  Formerly, a small integer (for identifying the type of object pointed to) accompanied
+			 the pointer, but now it is stored with the rest of the object.  Also, new keywords have been
+			 added to allow the definition of new types, support has been added for translation to C++,
+			 and support for atomic operations and thread local variables has been added."
+			 }
+	       	    }
 	       },
 	  LI { "new packages:",
 	       UL {
@@ -71,7 +80,7 @@ document {
 		    LI { TO "Kronecker::Kronecker", ", a package for Kronecker and rational normal forms, has been added." },
 		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", ", a package for
 			 computating versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
-		    LI { TO "NAGtypes::NAGtypes", ", package containing declarations of types needed by two 
+		    LI { TO "NAGtypes::NAGtypes", ", a package containing declarations of types needed by two 
 			 other packages, has been added." },
 		    LI { TO "Nauty::Nauty", ", an interface package for the program ", TT "nauty", ", which
 			 computes automorphism groups of graphs and digraphs, has been added." },
@@ -128,24 +137,57 @@ document {
 			 ring of a polynomial ring or the ambient ring of a quotient ring."
 			 },
 		    LI {
-			 "Added a new method, ", TO "(matrix,RingElement)", ", that makes a one by one matrix
+			 "Added a new method, ", TO (matrix,RingElement), ", that makes a one by one matrix
 			 from a ring element."
 			 },
 		    LI {
-			 "Added a new method ", TO "(exp,RingElement)", " for the exponential function applied
+			 "Added a new method ", TO (exp,RingElement), " for the exponential function applied
 			 to a nilpotent ring element."
 			 }
 		    }
 	       },
 	  LI { "functionality changed:",
 	       UL {
-		    LI { "Elements of sets are now sorted before printing." }
+		    LI { "Elements of sets are now sorted before printing." },
+		    LI {
+			 "Loading a package twice now gives an error unless you use the ", TO "Reload", " option.
+			 Reloading a package can lead to subtle errors.  For example, if the package creates a new type,
+			 then it will do that each time the package is loaded, and objects of that type that
+			 were created before reloading will not work after reloading.  Also, reloading a
+			 package may cause a memory leak."
+			 },
+		    LI {
+			 "The function ", TO "getSymbol", " now always creates a symbol in the user dictionary, whereas formerly,
+			 it provided an existing symbol, or created one in the first mutable dictionary listed by ", TO "dictionaryPath", ".
+			 The reason is that the main application in a package is to create symbols to server as variables in polynomial
+			 rings to be handed to the user, and the user will need those symbols to be visible."
+			 },
+		    LI {
+			 "The one-letter symbols, which are treated specially by ", TO "vars", ", are now no longer
+			 pre-defined.  Now they are created when needed.  Packages can create them with ", TO "getSymbol", ".
+			 This change is intended to prevent the kind of bug where a package unintentionally refers to or modifies a one-letter global
+			 variable."
+			 },
+		    LI {
+			 "Packages containing unset mutable private global symbols will now be flagged with an error message,
+			 and the locations of the offending symbols will be given.  This is intended to be an aid in detecting
+			 bugs, because one common way for such symbols to arise is by misspelling the name of a function parameter
+			 or the name of a local variable.  Another way they arise is by forgetting to declare that a variable used just
+			 inside the body of a function is a local variable."
+			 },
+		    LI {
+			 "A new way to create a polynomial ring in a package whose variables are based on symbols in the user dictionary
+			 is to put the names in quotation marks, like this: ", TT ///QQ["x","y"]///, ".  Now that the one-letter symbols
+			 are no longer predefined in the Core dictionary, something like this will be necessary, as ", TT ///QQ[x,y]///, " will
+			 not work, because ", TT "x", " and ", TT "y", " will refer to private global symbols of the package, and will
+			 most likely now get flagged as errors."
+			 }
 	       	    }
-	       },
-	  LI { "new constants and operators:",
-	       -- UL {
-	       -- 	    }
 	       }
+	  -- LI { "new constants and operators:",
+	  --      -- UL {
+	  --      -- 	    }
+	  --      }
 	  }
      }
 

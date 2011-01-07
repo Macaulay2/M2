@@ -96,6 +96,8 @@ recipN = (n,wts,f) -> (
 
 heft = method()
 heft Ring := R -> ( o := options R; if o =!= null and o.?Heft then o.Heft )
+heft PolynomialRing := R -> (options R.FlatMonoid).Heft
+heft QuotientRing := R -> heft ambient R
 heft Module := M -> heft ring M
 
 exactKey := "exact hilbertSeries"
@@ -242,17 +244,19 @@ projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
 	  then apply(min(-d+1,n+1), j -> n-j => (-1)^j * binomial(-d,j))
      	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
 
-hilbertFunctionRing <- QQ(monoid [getGlobalSymbol "i"])
-i := hilbertFunctionRing_0
-
+hilbertFunctionRing = memoize(() -> QQ(monoid [getSymbol "i"]))
 hilbertFunctionQ = method()
 hilbertFunctionQ(ZZ) := (n) -> (
-     if n === 0 then 1_hilbertFunctionRing
-     else (1/n) * (n+i) * hilbertFunctionQ(n-1))
+     if n === 0 then 1_(hilbertFunctionRing())
+     else (
+	  i := (hilbertFunctionRing())_0;
+	  (1/n) * (n+i) * hilbertFunctionQ(n-1)))
 hilbertFunctionQ(ZZ,ZZ) := memoize(
      (n,d) -> (
      	  if d === 0 then hilbertFunctionQ(n)
-     	  else substitute(hilbertFunctionQ(n), {i => i+d})))
+     	  else (
+	       i := (hilbertFunctionRing())_0;
+	       substitute(hilbertFunctionQ(n), {i => i+d}))))
 
 hilbertPolynomial Module := ProjectiveHilbertPolynomial => o -> (M) -> (
     if not isHomogeneous M then error "expected a homogeneous module";
@@ -274,7 +278,7 @@ hilbertPolynomial Module := ProjectiveHilbertPolynomial => o -> (M) -> (
 	      	   c * projectiveHilbertPolynomial(n,-d))))
     else (
 	 if #p===0
-	 then 0_hilbertFunctionRing
+	 then 0_(hilbertFunctionRing())
 	 else sum(p, (d,c) -> (
 	      	   if #d === 0 then d = 0 else d = d#0;
 	      	   c * hilbertFunctionQ(n,-d)))))
@@ -317,11 +321,16 @@ degree Ring := R -> degree R^1
 degree Module := (
      () -> (
      	  -- constants:
-	  ZZ1 := degreesRing 1;
-	  T := ZZ1_0;
-	  h := 1 - T;
+	  local ZZ1;
+	  local T;
+	  local h;
 	  local ev;
 	  M -> (
+	       if ZZ1 === null then (
+		    ZZ1 = degreesRing 1;
+		    T = ZZ1_0;
+		    h = 1 - T;
+		    );
 	       hft := heft M;
 	       if hft === null then error "degree: no heft vector defined";
 	       hs := hilbertSeries M;
@@ -626,6 +635,24 @@ Module _ List := Matrix => (M,v) -> (
      f := id_N_v;
      map(M, source f, f))
 -----------------------------------------------------------------------------
+findHeftandVars = (R, varlist, ndegs) -> (
+     -- returns (varlist', heftval)
+     -- such that varlist' is a subset of varlist
+     --  consisting of those vars whose degree is not 0 on the first ndegs slots
+     -- and heft is an integer vector of length ndegs s.t. heft.deg(x) > 0 for each variable x in varlist
+     if #varlist == 0 then (varlist, {})
+     else (
+       heftR := heft R;
+       if heftR =!= null and degreeLength R == ndegs and #varlist == numgens R and # heft R == ndegs then return (varlist, heft R);
+       zerodeg := toList(ndegs:0);
+       varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
+       degs := apply(varlist', x -> take(degree R_x, ndegs));
+       heft := findHeft(degs, DegreeRank=>ndegs);
+       if heft === null then 
+         error ("heft vector required which is positive on the degrees of the variables " | toString varlist');
+       (varlist', heft)
+       ))
+
 basis = method(
      TypicalValue => Matrix,
      Options => new OptionTable from {
@@ -646,13 +673,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if hi === infinity then hi = {};
      if #lo != 0 and #lo > degreeLength R or #hi != 0 and #hi > degreeLength R then error "expected length of degree bound not to exceed that of ring";
      if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
-     var := opts.Variables;
-     if var === null then var = 0 .. numgens R - 1
-     else if class var === List then (
-	  var = apply(var, v -> if instance(v,R) then index v 
-				else if instance(v,ZZ) then v
-				else error "expected list of ring variables or integers"))
-     else error "expected list of ring variables or integers";
+
      A := ultimate(ambient,R);
      if not (
 	  isAffineRing A 
@@ -663,14 +684,20 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 	  or
 	  ZZ === A
 	  ) then error "'basis' can't handle this type of ring";
-     k := coefficientRing A;
+     var := opts.Variables;
+     if var === null then var = toList(0 .. numgens R - 1)
+     else if class var === List then (
+	  var = apply(var, v -> if instance(v,R) then index v 
+				else if instance(v,ZZ) then v
+				else error "expected list of ring variables or integers"))
+     else error "expected list of ring variables or integers";
+     (varlist, heftvec) := if #lo == 0 and #hi == 0
+                        then (var, () ) 
+			else findHeftandVars(R, var, max(#hi,#lo));
+
      pres := generators gb presentation M;
-     heft := (
-     	  optR := options R;
-	  if optR =!= null then optR.Heft
-	  );
-     if heft === null then heft = () else heft = toSequence heft;
-     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
+
+     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heftvec, varlist, opts.Truncate, opts.Limit) };
      f := value log;
      S := opts.SourceRing;
      off := splice opts.Degree;
@@ -726,6 +753,24 @@ basis(List,Ring) := opts -> (deg,R) -> basis(deg, module R, opts)
 basis Module := opts -> (M) -> basis(-infinity,infinity,M,opts)
 basis Ring := opts -> R -> basis(R^1,opts)
 basis Ideal := opts -> I -> basis(module I,opts)
+
+basis(InfiniteNumber,InfiniteNumber,Matrix) := 
+basis(List,InfiniteNumber,Matrix) := 
+basis(InfiniteNumber,List,Matrix) := 
+basis(List,List,Matrix) := opts -> (lo,hi,M) -> (
+     F := target M;
+     G := source M;
+     monsF := basis(lo,hi,F,opts);
+     monsG := basis(lo,hi,G,opts);
+     basM := last coefficients(matrix (M * monsG), Monomials => monsF);
+     map(image monsF, image monsG, basM))
+
+basis(List,Matrix) := opts -> (deg,M) -> basis(deg,deg,M,opts)
+basis(ZZ,Matrix) := opts -> (deg,M) -> basis({deg},M,opts)
+basis(InfiniteNumber,ZZ,Matrix) := opts -> (lo,hi,M) -> basis(lo,{hi},M,opts)
+basis(ZZ,InfiniteNumber,Matrix) := opts -> (lo,hi,M) -> basis({lo},hi,M,opts)
+basis(ZZ,ZZ,Matrix) := opts -> (lo,hi,M) -> basis({lo},{hi},M,opts)
+
 -----------------------------------------------------------------------------
 truncate = method()
 truncate(List,Module) := Module => (deg,M) -> (

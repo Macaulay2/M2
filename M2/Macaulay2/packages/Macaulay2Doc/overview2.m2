@@ -1220,11 +1220,11 @@ document {
      be applied to evaluate the expression ", TT "y+z", ", and see
      what happens.",
      EXAMPLE {
-	  "Y + X := (a,b) -> YX;",
-	  "X + Z := (a,b) -> XZ;",
+	  "Y + X := (a,b) -> \"Y + X\";",
+	  "X + Z := (a,b) -> \"X + Z\";",
 	  "y + z"
 	  },
-     "The result is the symbol ", TT "YX", ".  The reason is that
+     "The result is the string ", TT "Y + X", ".  The reason is that
      after finding that no method applies directly for adding
      an instance of ", TT "Y", " to an instance of ", TT "Z", ", the 
      search continues: ", TT "Z", " is replaced by its parent ", TT "X", ", 

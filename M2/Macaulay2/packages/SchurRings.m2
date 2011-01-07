@@ -17,6 +17,7 @@ export {schurRing, SchurRing, symmRing, toS, toE, toP, jacobiTrudi, SchurRingInd
 -- Improve the names/interface of the following:
 --, symmRing, plethysmMap, jacobiTrudi, plethysm, cauchy, bott}
 
+
 debug Core
 
 SchurRing = new Type of EngineRing
@@ -43,7 +44,8 @@ coefficientRing SchurRing := Ring => R -> last R.baseRings
 
 ck := i -> if i < 0 then error "expected decreasing row lengths" else i
 
-schur2monom = (a,Mgens) -> (
+schur2monom = (a,M) -> (
+     Mgens := M.generators;
      if # a === 0 then 1_M
      else product(# a, i -> (Mgens#i) ^ (
 	       ck if i+1 < # a 
@@ -147,10 +149,9 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
      -- toString M := net M := x -> first lines toString x;
      S := newSchur(R,M,p);
      dim S := s -> rawSchurDimension raw s;
-     Mgens := M.generators;
      t := new SchurRingIndexedVariableTable from p;
      t.SchurRing = S;
-     t#symbol _ = a -> ( m := schur2monom(a,Mgens); new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
+     t#symbol _ = a -> ( m := schur2monom(a,M); new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
      S.use = S -> (globalAssign(p,t); S);
      S.use S;
      S)
@@ -159,15 +160,20 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
 -- workaround:
 varlist = (i,j,R) -> apply(i..j, p -> R_p)
 
+protect plethysmMaps
+protect mapToE
+protect Schur
+protect mapToP
+
 symmRings := new MutableHashTable;
 symmRing = (n) -> (
      if not symmRings#?n then (
-     	  e := global e;
-     	  h := global h;
-     	  p := global p;
+     	  e := getSymbol "e";
+     	  h := getSymbol "h";
+     	  p := getSymbol "p";
      	  R := QQ[e_1..e_n,p_1..p_n,
 	       Degrees => toList(1..n,1..n)];
-     	  S := schurRing(symbol s, n);
+     	  S := schurRing(getSymbol "s", n);
      	  R.Schur = S;
      	  R.dim = n;
      	  R.mapToE = map(R,R,flatten splice {varlist(0,n-1,R),apply(n, i -> PtoE(i+1,R))});
@@ -177,22 +183,6 @@ symmRing = (n) -> (
 	  );
      symmRings#n)
 
-symmRing0 = (n) -> (
-     if not symmRings#?n then (
-     	  e := global e;
-     	  h := global h;
-     	  p := global p;
-	  Se := QQ[e_1..e_n,Degrees=>toList(1..n)];
-	  Sp := QQ[p_1..p_n,Degrees=>toList(1..n)];
-     	  Ss := schurRing(symbol s, n);
-     	  R.Schur = S;
-     	  R.dim = n;
-     	  R.mapToE = map(Se,Sp,flatten splice {apply(n, i -> PtoE(i+1,R))});
-     	  R.mapToP = map(Sp,Se,flatten splice {apply(n, i -> EtoP(i+1,R))});
-     	  R.plethysmMaps = new MutableHashTable;
-	  symmRings#n = R;
-	  );
-     symmRings#n)
 
 plethysmMap = (d,R) -> (
      -- d is an integer
@@ -227,6 +217,8 @@ parts := (d, n) -> (
      --    having <= n parts.
      x := partitions(d);
      select(x, xi -> #xi <= n))     
+
+protect toSchur
 
 etos = (d,R) -> (
      -- d is an integer >= 0
@@ -267,15 +259,18 @@ toS = (f) -> (
      R := ring f;
      (E,C,P) := etos(d,R);
      C = substitute(C, coefficientRing R);
+     s := value getSymbol "s";
      P = transpose matrix {apply(P, p -> s_p)};
-     Ef = contract(E, matrix{{f}});
-     Xf = transpose substitute(Ef,coefficientRing R);
-     XfC = substitute(Xf*C,ring P);
+     Ef := contract(E, matrix{{f}});
+     Xf := transpose substitute(Ef,coefficientRing R);
+     XfC := substitute(Xf*C,ring P);
      (XfC * P)_(0,0)
      )
 
 toE = (f) -> (ring f).mapToE f
 toP = (f) -> (ring f).mapToP f
+
+protect PtoETable
 
 PtoE = (m,R) -> (
      -- R is a symmring n
@@ -295,6 +290,8 @@ PtoE = (m,R) -> (
 	  );
      P#m
      )
+
+protect EtoPTable
 
 EtoP = (m,R) -> (
      -- R is a symmring n

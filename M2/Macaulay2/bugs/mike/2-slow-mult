@@ -1,5 +1,22 @@
 -*- M2 -*-
 
+a = 7; b = 3; c = 7
+R = ZZ/5[x,y,MonomialOrder => {Position => Down}]
+inc = random(R^a,R^b,MaximalRank=>true);
+prj = random(R^b, R^c, MaximalRank=>true);
+f = inc * prj;
+time (g,s,t) = smithNormalForm(f,KeepZeroes => false);
+	 -- used 0.212014 seconds
+
+time g - s*f*t == 0
+	 -- used 14.2089 seconds
+g;
+s;
+t;
+
+
+end
+
 This might be slow matrix multiplication.
 
     Macaulay 2, version 0.9.20

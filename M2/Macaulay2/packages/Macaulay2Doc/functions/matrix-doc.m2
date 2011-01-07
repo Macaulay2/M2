@@ -161,6 +161,17 @@ document {
      SeeAlso => {mutableMatrix, mutableIdentity, MutableMatrix}
      }
 
+document {
+     Key => (matrix, RingElement),
+     Headline => "make a matrix from a ring element",
+     Usage => "matrix r",
+     Inputs => { "r" },
+     Outputs => { Matrix => {"the one by one matrix with ", TT "r", " as its single entry"} },
+     EXAMPLE lines ///
+     matrix 48
+     ///
+     }
+
 TEST ///
 R = ZZ/32003[a..d,x_1..x_4,y_(1,1)..y_(2,2)];
 F = time poly"a5+5a4b+10a3b2+10a2b3+5ab4+b5+5a4x[1]+20a3bx[1]

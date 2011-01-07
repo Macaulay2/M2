@@ -421,8 +421,8 @@ poincare ChainComplex := C -> (
      f)
 
 poincareN ChainComplex := (C) -> (
-     s := getGlobalSymbol "S";
-     t := getGlobalSymbol "T";
+     s := getSymbol "S";
+     t := getSymbol "T";
      -- this stuff has to be redone as in Poincare itself, DRG
      R := ZZ[s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true, MonomialOrder => RevLex, Global => false];
      f := 0_R;
@@ -508,17 +508,17 @@ homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
      scan(spots f, i -> g#i = homology(i,f));
      g)
 
-chainComplex = method(Dispatch => Thing, TypicalValue => ChainComplex)
+chainComplex = method(Options => true, Dispatch => Thing, TypicalValue => ChainComplex)
 
-chainComplex Ring := R -> (
+chainComplex Ring := {} >> opts -> R -> (
      C := new ChainComplex;
      C.ring = R;
      C)
 
-chainComplex Matrix := f -> chainComplex {f}
+chainComplex Matrix := {} >> opts -> f -> chainComplex {f}
 
 chainComplex Sequence := 
-chainComplex List := maps -> (
+chainComplex List := {} >> opts -> maps -> (
      if #maps === 0 then error "expected at least one differential map";
      C := new ChainComplex;
      R := C.ring = ring target maps#0;
@@ -756,7 +756,7 @@ hilbertPolynomial(ZZ,BettiTally) := o -> (nvars,B) -> (
      if f == 0 then return (
 	  if o.Projective
 	  then new ProjectiveHilbertPolynomial from {}
-	  else 0_hilbertFunctionRing
+	  else 0_(hilbertFunctionRing())
 	  );
      T := (ring f)_0;
      p := pairs standardForm f;
@@ -794,7 +794,7 @@ syzygyScheme = (C,i,v) -> (
      g := extend(resolution cokernel transpose (C.dd_i * v), dual C[i], transpose v);
      minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
 -----------------------------------------------------------------------------
-chainComplex GradedModule := ChainComplex => (M) -> (
+chainComplex GradedModule := ChainComplex => {} >> opts -> (M) -> (
      C := new ChainComplex from M;
      b := C.dd = new ChainComplexMap;
      b.cache = new CacheTable;

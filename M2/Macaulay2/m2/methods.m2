@@ -75,15 +75,31 @@ chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if cla
 
 SingleArgWithOptions := (opts,outputs) -> (
      -- chkopts opts;
-     if instance(opts, OptionTable) then opts = new OptionTable from opts;
-     methodFunction := opts >> 
-     o ->
-         arg -> (
-	  -- Common code for every method with options, single argument
-	  f := lookup(methodFunction, class arg);
-	  if f === null then noMethodSingle(methodFunction,arg,outputs) else (f o) arg
-	  );
-     methodFunction)
+     local methodFunction;
+     class' := if outputs then identity else class;
+     if opts === true then (
+	  methodFunction = opts >> 
+	  o ->
+	      arg -> (
+	       -- Common code for every method with options, single argument, with Options => true
+	       f := lookup(methodFunction, class' arg);
+	       if f === null then noMethodSingle(methodFunction,arg,outputs) else 
+	       if #o === 0 then f arg else f(o,arg)
+	       );
+	  methodFunction
+	  )
+     else (
+	  if instance(opts, List) then opts = new OptionTable from opts;
+	  methodFunction = opts >> 
+	  o ->
+	      arg -> (
+	       -- Common code for every method with options, single argument, not Options => true
+	       f := lookup(methodFunction, class' arg);
+	       if f === null then noMethodSingle(methodFunction,arg,outputs) else (f o) arg
+	       );
+	  methodFunction
+	  )
+     )
 
 BinaryWithOptions := (opts,outputs) -> (
      -- chkopts opts;
@@ -163,7 +179,8 @@ setupMethods((), {
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  determinant, presentation, dismiss, precision, 
-	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose
+	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
+	  chi
 	  })
 
 use = method()
@@ -194,18 +211,14 @@ generators = method(
 	  }
      )
 
-(o -> (
-	  minimalPresentation = method(o);
-	  prune = method(o);
-	  )) (
+minimalPresentation = method(
      Options => {
 	  Exclude => {}
-	  -- as far as I can tell these options are unused (now)
-	  -- Variable => null, 
-	  -- Strategy => null
-	  }
-     )
-
+	  })
+prune = method(
+     Options => {
+	  Exclude => {}
+	  })
 status = method (
      Options => new OptionTable from {
      	  TotalPairs => true,
@@ -355,6 +368,8 @@ options Sequence := s -> (
      m := lookup s;
      if m === null then error "method not found";
      options m)
+
+notImplemented = x -> error "not implemented yet"
 
 oftab := hashTable {
      functionBody (method(Options => {})) => f -> notImplemented(),

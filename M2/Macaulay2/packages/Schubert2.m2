@@ -16,11 +16,11 @@ newPackage(
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "schubertCycle'", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
-     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
+     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveBundle'", "projectiveSpace", "projectiveSpace'", "PP", "PP'", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
-     "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
+     "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle","Pullback",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
@@ -30,6 +30,8 @@ protect ChernClass
 protect IntersectionRing
 protect TangentBundle
 protect ToddClass
+
+fixvar = s -> if instance(s,String) then getSymbol s else s
 
 hasAttribute = value Core#"private dictionary"#"hasAttribute"
 getAttribute = value Core#"private dictionary"#"getAttribute"
@@ -224,7 +226,7 @@ AbstractSheaf RingElement := AbstractSheaf => (F,n) -> (
 integral = method(TypicalValue => RingElement)
 
 protect Bundle
-
+protect args
 base = method(Dispatch => Thing, TypicalValue => AbstractVariety)
 base Thing := s -> base (1:s)
 base Sequence := args -> (
@@ -296,7 +298,6 @@ point = base()
 integral intersectionRing point := r -> if liftable(r,ZZ) then lift(r,ZZ) else lift(r,QQ)
 
 dim AbstractVariety := X -> X.dim
-
 chern = method(TypicalValue => RingElement)
 chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
@@ -309,6 +310,7 @@ ch = method(TypicalValue => RingElement)
 ch AbstractSheaf := (F) -> F.ChernCharacter
 ch(ZZ,AbstractSheaf) := (n,F) -> part_n ch F
 
+protect symbol$
 ChernClassVariableTable = new Type of MutableHashTable
 net ChernClassVariableTable := Etable -> net Etable # symbol$
 baseName ChernClassVariableTable := Etable -> Etable # symbol$
@@ -391,14 +393,14 @@ variety RingElement := AbstractVariety => r -> variety ring r
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
-assignable = s -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
+assignable = v -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
 
 offset := 1
 flagBundle = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
-     h$ := global H;
+     h$ := getSymbol "H";
      varNames := opts.VariableNames;
      bundleRanks = splice bundleRanks;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
@@ -417,6 +419,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
      varNames = (
 	  if varNames === null then varNames = h$;
+	  varNames = fixvar varNames;
 	  if instance(varNames,Symbol)
 	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> apply(toList(1 .. r), j -> new IndexedVariable from {varNames,(i+offset,j)}))
 	  else if instance(varNames,List)
@@ -512,13 +515,13 @@ projectiveBundle' ZZ := opts -> n -> flagBundle({1,n},opts)
 projectiveBundle'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,opts)
 projectiveBundle' AbstractSheaf := opts -> E -> flagBundle({1, rank E - 1},E,opts)
 
-projectiveSpace = method(Options => { VariableName => global h }, TypicalValue => FlagBundle)
-projectiveSpace ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{opts.VariableName}})
-projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{opts.VariableName}})
+projectiveSpace = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
+projectiveSpace ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{fixvar opts.VariableName}})
+projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{fixvar opts.VariableName}})
 
-projectiveSpace' = method(Options => { VariableName => global h }, TypicalValue => FlagBundle)
-projectiveSpace' ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{opts.VariableName},})
-projectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{opts.VariableName},})
+projectiveSpace' = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
+projectiveSpace' ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{fixvar opts.VariableName},})
+projectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{fixvar opts.VariableName},})
 
 PP  = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
 PP' = new ScriptedFunctor from { superscript => i -> projectiveSpace' i }
@@ -582,14 +585,14 @@ todd' = (r) -> (
      for n from 1 to d do 
        invdenom#n = - sum for i from 1 to n list denom#i * invdenom#(n-i);
      -- step 2.  logg.  This is more complicated than desired.
-     R := QQ (monoid[t]);
+     R := QQ (monoid[getSymbol "t"]);
      R.VarietyDimension = d;
      td := logg sum for i from 0 to d list invdenom#i * R_0^i;
      td = for i from 0 to d list coefficient(R_0^i,td);
      -- step 3.  exp
      expp sum for i from 0 to d list i! * td#i * part(i,r))
 
-chi = method(TypicalValue => RingElement)
+--chi = method(TypicalValue => RingElement)
 chi AbstractSheaf := F -> integral(todd variety F * ch F)
 
 segre = method(TypicalValue => RingElement)
@@ -872,7 +875,7 @@ kernelBundle(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
      K)
 
 beginDocumentation()
-multidoc get (currentFileDirectory | "Schubert2/doc")
+multidoc get (currentFileDirectory | "Schubert2/doc.m2")
 undocumented {
      (tangentBundle,FlagBundle),
      (symmetricPower,QQ,AbstractSheaf),

@@ -18,11 +18,12 @@ setGF = (q, F) -> (
 
 --- From OpenMath ---
 -- Symbols to try and remember how elements of a particular field are represented.
-PowerOfPrimitiveElement = symbol PowerOfPrimitiveElement;
-FieldByPolyVector = symbol FieldByPolyVector;
-OpenMathPrefEltRepr = symbol OpenMathPrefEltRepr;
+protect PowerOfPrimitiveElement
+protect FieldByPolyVector
+protect OpenMathPrefEltRepr
 
 --- To OpenMath ---
+protect PowerOfPrimElt
 toOpenMathFFelt = idCheck(t -> (
 	F := class t;
 	if (F#?OpenMathPrefEltRepr and F#OpenMathPrefEltRepr == PowerOfPrimitiveElement) then (

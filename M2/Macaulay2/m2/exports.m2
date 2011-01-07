@@ -1,6 +1,7 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
+        symbol chi,
 --	symbol setAttribute,				    -- experimental
 --	symbol hasAnAttribute,				    -- experimental
 --	symbol hasAttribute,				    -- experimental
@@ -636,6 +637,7 @@ export {
 	symbol fileTime,
         symbol fillMatrix,
 	symbol findFiles,
+	symbol findHeft,
 	symbol findSynonyms,
 	symbol first,
 	symbol firstkey,
@@ -1156,8 +1158,6 @@ export {
 	symbol },
 	symbol ~
 }
-
-exportMutable toList vars (0 .. 51)
 
 exportMutable {
 	symbol applicationDirectorySuffix,

@@ -1,4 +1,5 @@
--- This is now working.  Make it into a slow/ test...
+-- This is now working.  Maybe make it into a slow/ test...
+-- However, it shows that computing basis instead of hilbertFunction can be much better...
 
 -- hilbertFunction is producing incorrect values, and is taking a huge amount
 -- of time too.  HirzOmegaTable is the original.  HirzOmegaTable2 changes hilbertFunction
@@ -48,9 +49,10 @@ HirzOmegaTable2 = (a,b)->(
                    print " "))
 
 end
+restart
 load "1-hal-negative-hf.m2"
 -- This one produces negative values for the hilbert function of H^1 !!
-HirzOmegaTable(2,2)
+time HirzOmegaTable(2,2)
 H^0
 0 0 0 0 0
 0 0 0 0 4
@@ -61,7 +63,7 @@ H^1
 0 0 -58 -59 -62
 
 -- This one seems fine, and time wise is sort of OK.
-HirzOmegaTable2(2,2)
+time HirzOmegaTable2(2,2)
 
 {* -- output
 H^0

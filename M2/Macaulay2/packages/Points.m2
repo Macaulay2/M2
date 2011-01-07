@@ -106,7 +106,7 @@ pointsMat(Matrix,Ring) := (M,R) -> (
 	  --if #Q === s then print "got a basis";
 	  --print("size of L = "| size(L));
 	  -- First step: get the monomial to consider
-	  monom = someTerms(L,-1,1);
+	  monom := someTerms(L,-1,1);
 	  L = L - monom;
 	  -- Now fix up the matrix P
           addNewMonomial(P,thiscol,monom,Fs);
@@ -165,7 +165,7 @@ points (Matrix,Ring) := (M,R) -> (
      while L != 0 do (
 	  -- First step: get the monomial to consider
 	  L = L % inGB;
-	  monom = someTerms(L,-1,1);
+	  monom := someTerms(L,-1,1);
 	  L = L - monom;
 	  -- Now fix up the matrices P, PC
           addNewMonomial(P,thiscol,monom,Fs);

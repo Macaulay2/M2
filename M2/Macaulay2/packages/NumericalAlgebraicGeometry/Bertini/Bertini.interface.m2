@@ -3,29 +3,21 @@
 
 solveBertini = method(TypicalValue => List)
 solveBertini (List,HashTable) := List => (F,o) -> (
-	  -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
-	  -- mkdir tempdir; 	  
-  	  makeBertiniInput F;
-  	  run(BERTINIexe|" >bertini_session.log");
-	  sols := readSolutionsBertini("finite_solutions");
-	  result = sols;
-	  -- remove Bertini input/output files
-    	  for f in {"failed_paths", "nonsingular_solutions",
-               "raw_data", "start", "input", "output", "raw_solutions",
-               "main_data", "real_finite_solutions", "finite_solutions",
-               "midpath_data", "singular_solutions", "real_solutions",
-               "singular_solutions", "midpath_data"} do
-          if fileExists f then removeFile f;
-	  result
+  	  dir := makeBertiniInput F; 
+  	  run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
+	  readSolutionsBertini(dir,"finite_solutions")
 	  )
 
+protect StartSolutions, protect StartSystem
 makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii})
 makeBertiniInput List := o -> T -> (
 -- IN:
 --	T = polynomials of target system
 --      o.StartSystem = start system
   v := gens ring T#0; -- variables
-  f := openOut "input"; -- THE name for Bertini's input file 
+  dir := temporaryFileName(); 
+  makeDirectory dir;
+  f := openOut (dir|"/input"); -- THE name for Bertini's input file 
   f << "CONFIG" << endl;
   --f << "MPTYPE: 2;" << endl; -- multiprecision
   f << "MPTYPE: 0;" << endl; -- double precision (default?)
@@ -67,7 +59,7 @@ makeBertiniInput List := o -> T -> (
   close f;
   
   if #o.StartSolutions > 0 then (
-       f = openOut "start"; -- THE name for Bertini's start solutions file 
+       f = openOut (dir|"/start"); -- THE name for Bertini's start solutions file 
        f << #o.StartSolutions << endl << endl;
        scan(o.StartSolutions, s->(
 		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
@@ -75,6 +67,7 @@ makeBertiniInput List := o -> T -> (
 		 ));
        close f;
        );
+  dir
   )
 
 cleanupOutput = method(TypicalValue=>String)
@@ -86,11 +79,11 @@ cleanupOutput String := s -> (
   )
 
 readSolutionsBertini = method(TypicalValue=>List)
-readSolutionsBertini String := f -> (
+readSolutionsBertini (String,String) := (dir,f) -> (
   s := {};
   if f == "finite_solutions" then (
        print "implementation unstable: Bertini output format uncertain";
-       l := lines get f;
+       l := lines get (dir|"/"|f);
        nsols := value first separate(" ", l#0);
        l = drop(l,2);
        while #s < nsols do (	 
@@ -108,7 +101,7 @@ readSolutionsBertini String := f -> (
 	    );	
        ) 
   else if f == "raw_solutions" then (
-       l = lines get f;
+       l = lines get (dir|"/"|f);
        while #l>0 and #separate(" ", l#0) < 2 do l = drop(l,1);
        while #l>0 do (
 	    if DBG>=10 then << "------------------------------" << endl;
@@ -124,7 +117,7 @@ readSolutionsBertini String := f -> (
             if DBG>=10 then << coords << endl;
 	    s = s | {{coords}};
 	    );     
-    ) else error "unknow output file";
+    ) else error "unknown output file";
   s
   )
 
@@ -132,20 +125,10 @@ trackBertini = method(TypicalValue => List)
 trackBertini (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
      -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
      -- mkdir tempdir; 	  
-     makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
-     compStartTime = currentTime();      
-     run(BERTINIexe|" >bertini_session.log");
+     dir := makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
+     compStartTime := currentTime();      
+     run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
      if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
-     result := readSolutionsBertini("raw_solutions");
-     -- remove Bertini input/output files
-     if DBG<10 then (
-	  for f in {"failed_paths", "nonsingular_solutions",
-	       "raw_data", "start", "input", "output", "raw_solutions",
-	       "main_data", "real_finite_solutions", "finite_solutions",
-	       "midpath_data", "singular_solutions", "real_solutions",
-	       "singular_solutions", "midpath_data"} do
-     	  if fileExists f then removeFile f;
-	  );
-     result
+     readSolutionsBertini(dir, "raw_solutions")
      )
      

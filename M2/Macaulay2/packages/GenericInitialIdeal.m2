@@ -65,10 +65,10 @@ gin(Ideal) := opts -> (I) -> (
 	  if isHomogeneous I then monomialIdeal leadTerm gb(genericI, Hilbert => hf)
 	  else monomialIdeal leadTerm genericI
      	  );-- make a list of initial ideals
-     genericI = mode attempts; -- take the most frequent element of the list
+     genericI := mode attempts; -- take the most frequent element of the list
      good := isBorel genericI; 
      f = map(S,R,gens S);
-     generic= f genericI; -- map the generic initial ideal back into the original ring
+     generic := f genericI; -- map the generic initial ideal back into the original ring
      if not good then stderr << "--warning: potential generic initial ideal is not strongly stable" << endl;
      if opts.Verbose then (
 	  << "--potential generic ideal showed up "<< (tally attempts)#(genericI)<< " out of " << opts.AttemptCount << " times." << endl;
@@ -123,7 +123,6 @@ document {
 	  ///,
      PARA{"The Stanley-Reisner ideal of RP^2"},
      EXAMPLE lines ///
-     loadPackage "GenericInitialIdeal"
      R = QQ[x0,x1,x2,x3,x4,x5]
      M = matrix {{x1*x3*x4, x0*x3*x4, x1*x2*x4, x0*x2*x3, x0*x1*x2, x2*x4*x5, x0*x4*x5, x2*x3*x5, x1*x3*x5, x0*x1*x5}} --Stanley-Reisner ideal of RP^2
      I=ideal flatten entries M
@@ -157,7 +156,6 @@ document { Key => {(lexgin,QuotientRing)} }
 
 
 TEST ///
-loadPackage "GenericInitialIdeal"
 R = QQ[x0,x1,x2,x3,x4,x5]
 M = matrix {{x1*x3*x4, x0*x3*x4, x1*x2*x4, x0*x2*x3, x0*x1*x2, x2*x4*x5, x0*x4*x5, x2*x3*x5, x1*x3*x5, x0*x1*x5}} --Stanley-Reisner ideal of RP^2
 I=ideal flatten entries M

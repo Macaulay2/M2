@@ -74,7 +74,7 @@ isNested = (I,d) -> (
      for i to d-1 do (
     	  f := map(R,R,X_{0..n-(i+2)}|{1}|X_{n-(i)..n-1});
 	  S = S|{monomialIdeal f I};
-     	  if i > 0 and S_i:S_(i-1) != ideal 1_R then return false;
+      	  if i > 0 and S_i:S_(i-1) != ideal 1_R then return false;
 	  );
      g := for i to #(flatten entries mingens I)-1 list support (flatten entries mingens I)_i;
      for j to n-d-1 do (
@@ -116,22 +116,6 @@ satMon = (I,X)-> (
 
 -- REGULARITY
 
--- regCM
-
--- INPUT: I = a Cohen-Macaulay ideal in a polynomial ring
--- OUTPUT: the Castelnupovo Mumford regularity of I
-
-
-regCM = (I,d) -> (
-   R :=ring I;
-   I = (normalize (I,d))I; -- attention! this normalization only guarantees that you get an ideal in NN position wrt the last d variables that ACTUALLY appear in I
-   X := flatten entries vars R;
-   n := #X-1;
-   m := ideal (X_{0..n-d});
-   inI := monomialIdeal leadTerm (I);
-   return (max apply((entries gens gb (inI:m))_0,degree))_0 +1
-   )
-
 --regMonNested
 -- INPUT: I= a monomial ideal in nested position
 -- OUTPUT: the Castelnuovo-Mumford regularity of I
@@ -170,13 +154,14 @@ regMonCurve = (I,d) -> (
     return (max apply((entries gens gb (I:m))_0,degree))_0
     )
 
+protect CM
+protect MonCurve
 
-
-
+delta = I -> min(flatten apply(flatten entries mingens I,degree))
+     
 -- mRegularity
 -- INPUT: I a homogeneous ideal
 -- OUTPUT: the Castelnuovo-Mumford regularity of I
-
 mRegularity = method (TypicalValue=>ZZ,Options =>{CM => false, MonCurve => false, Verbose => false})
 mRegularity (Ideal):= opts -> I -> (
      if not isHomogeneous I then (
@@ -208,52 +193,6 @@ mRegularity (Ideal):= opts -> I -> (
      );
 
 
---=====================================================================
--- functions for Giulio Caviglia's idea (computing regularity by slicing with hyperplanes)
-
--- finding a hperplae that is not contained in any of the associated primes of Ass(inI)
-
-findHyperplane = (I,n) -> (
-     R := ring I;
-     d := # gens R;
-     inI := monomialIdeal apply(flatten entries gens gb I,leadTerm);
-     as := apply(ass inI - set {monomialIdeal gens R}, t-> flatten entries gens t); -- returns a list of lists containing gens of the Ass(in I) 
-     i := 1;
-     while (not i>n) do (
-	  subs = apply(subsets(d,i), s->apply(s, t->R_t));   
-	  l := select(1,subs, s-> not any(as, t-> isSubset(s,t)));
-	  if l != {} then return sum l#0 else i = i+1;	
-     	  );
-    return null
-          )	    	      
-
-slice = h -> (
-     R := ring h;
-     X := gens R;
-     d := #X;
-     z := index max support h;
-     S := R/h;
-     f := map(R, R, (for j to z-1 list X_j) |{X_(z)-h}|(for j from z+1 to d-1 list X_j));
-     g := map(coefficientRing R[X-set{X_z}],R);
-     return g*f
-     )    
-     
-     
-fastReg = method (TypicalValue=>ZZ,Options =>{Alarm => 5,Lenght=>3})     
-fastReg (Ideal):= opts -> I -> (     
-     while true do (
-	  alarm(2);
-	  try return regularity I else (
-	       h :=findHyperplane(I,3);
-	       I = (slice h) (I);
-	       )
-	  )
-     )      
-     
-     
---  h =findHyperplane(I,3)
---  I = (slice h) (I);
---  regularity I        
      
      
      
@@ -345,6 +284,7 @@ benchmark "mRegularity I1" --> 1.5321 sec; Singular's similar method 9 seconds
 time regularity I1 -- => 190.936 sec; Singular's regularity by computing the resolution 2668.46 sec
 res I1
 
+
 --       1      6      26      53      58      32      6
 -- R  <-- R  <-- R   <-- R   <-- R   <-- R   <-- R  <-- 0
 
@@ -402,3 +342,71 @@ time res I4           -- => 0.64
 --                                               
 --   0      1      2       3       4       5      6
 
+
+
+--=====================================================================
+-- functions for Giulio Caviglia's idea (computing regularity by slicing with hyperplanes)
+
+-- finding a hperplae that is not contained in any of the associated primes of Ass(inI)
+
+findHyperplane = (I,n) -> (
+     R := ring I;
+     d := # gens R;
+     inI := monomialIdeal apply(flatten entries gens gb I,leadTerm);
+     as := apply(ass inI - set {monomialIdeal gens R}, t-> flatten entries gens t); -- returns a list of lists containing gens of the Ass(in I) 
+     i := 1;
+     while (not i>n) do (
+	  subs := apply(subsets(d,i), s->apply(s, t->R_t));   
+	  l := select(1,subs, s-> not any(as, t-> isSubset(s,t)));
+	  if l != {} then return sum l#0 else i = i+1;	
+     	  );
+    return null
+          )	    	      
+
+slice = h -> (
+     R := ring h;
+     X := gens R;
+     d := #X;
+     z := index max support h;
+     S := R/h;
+     f := map(R, R, (for j to z-1 list X_j) |{X_(z)-h}|(for j from z+1 to d-1 list X_j));
+     g := map(coefficientRing R[X-set{X_z}],R);
+     return g*f
+     )    
+     
+protect Length
+protect Alarm     
+fastReg = method (TypicalValue=>ZZ,Options =>{Alarm => 5,Length=>3})     
+fastReg (Ideal):= opts -> I -> (     
+     while true do (
+	  alarm(2);
+	  try return regularity I else (
+	       h :=findHyperplane(I,3);
+	       I = (slice h) (I);
+	       )
+	  )
+     )      
+     
+     
+--  h =findHyperplane(I,3)
+--  I = (slice h) (I);
+--  regularity I        
+
+
+
+--===================================================================================
+
+-- regCM
+
+-- INPUT: I = a Cohen-Macaulay ideal in a polynomial ring
+-- OUTPUT: the Castelnupovo Mumford regularity of I
+
+regCM = (I,d) -> (
+   R :=ring I;
+   I = (normalize (I,d))I; -- attention! this normalization only guarantees that you get an ideal in NN position wrt the last d variables that ACTUALLY appear in I
+   X := flatten entries vars R;
+   n := #X-1;
+   m := ideal (X_{0..n-d});
+   inI := monomialIdeal leadTerm (I);
+   return (max apply((entries gens gb (inI:m))_0,degree))_0 +1
+   )

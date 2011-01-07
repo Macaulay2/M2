@@ -1079,7 +1079,7 @@ document { Key => "continue",
 	       the loop, if any.  The value ", TT "x", " is added to the list being accumulated.
 	       If ", TT "x", " is omitted, then no value is added to the list, and the statement may be used in a ", TT "do", "-clause."
 	       },
-	  {"Alternatively, as a deubgger command, causes execution to be resumed, starting with the current expression."}
+	  {"Alternatively, as a debugger command, causes execution to be resumed, starting with the current expression."}
 	  },
      EXAMPLE lines ///
           for i from 1 to 4 list (continue 4; print ho) do print hi

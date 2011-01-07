@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: 2068686618 *}
---loading configuration for package "PHCpack" from file /home/aleykin3/.Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- {* hash: -1123727317 *}
 
 i1 : QQ[x,y,z];
 
@@ -19,7 +18,8 @@ o6 = {y-x^2, z-x^3, -var_0^(-1)+z*var_0^(-1)+y*var_0^(-1)+x*var_0^(-1), var_0-x}
 
 i7 : ring ideal convertedSys
 
-o7 = P
+o7 = QQ[x, y, z, var ]
+                    0
 
 o7 : PolynomialRing
 
@@ -49,17 +49,4 @@ o12 = z  + x
 
 o12 : P
 
-i13 : QQ[x,y,z]
-
-o13 = QQ[x, y, z]
-
-o13 : PolynomialRing
-
-i14 : denominator(x^2+y/z+z/x^3) --returns the common denominator, of course.
-
-       3
-o14 = x z
-
-o14 : QQ[x, y, z]
-
-i15 : 
+i13 : 

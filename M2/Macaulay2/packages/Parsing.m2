@@ -9,6 +9,8 @@ newPackage ( "Parsing",
      DebuggingMode => false
      )
 
+export constParser 
+
 export Parser
 Parser = new SelfInitializingType of FunctionClosure
 Parser.synonym = "parser"
@@ -142,7 +144,6 @@ Parser @ Parser := (p,q) -> new Parser from (
 
 -- some simple parsers that accept one character at time
 
-export constParser 
 constParser = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
 
 export NNParser

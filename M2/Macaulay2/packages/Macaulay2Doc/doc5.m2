@@ -52,7 +52,10 @@ document {
      SYNOPSIS {
      	  Usage => "listUserSymbols",
      	  Outputs => {
-	       {"a display of the variables defined by the user, along with their types and values, in abbreviated form"}
+	       {"a display of the symbols defined and given values by the user, along with their types and values, in abbreviated form"}
+	       },
+	  PARA {
+	       "A symbol is considered to have been give a value, if it's current value is not equal to itself."
 	       },
 	  EXAMPLE lines ///
 	  t=3;
@@ -66,7 +69,8 @@ document {
 	       "X" => Type
 	       },
      	  Outputs => {
-	       {"a display of the variables of type ", TT "X", " defined by the user, along with their types and values, in abbreviated form"}
+	       {"a display of the symbols of type ", TT "X", " defined and given values by the user,
+		    along with their types and values, in abbreviated form"}
 	       },
 	  EXAMPLE lines ///
 	  listUserSymbols ZZ
@@ -660,7 +664,6 @@ document {
      Key => {truncateOutput,(truncateOutput, ZZ),(truncateOutput, InfiniteNumber)},
      Usage => "truncateOutput w",
      Inputs => {"w" => ZZ },
-     Outputs => {},
      Consequences => {{
 	  "The maximum output line width is set to ", TT "w", ", which should be an integer or ", TO "infinity", ".  
 	  This function works by assigning a value to ", TT "Thing#{Standard,BeforePrint}", ", which 
