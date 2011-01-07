@@ -84,7 +84,6 @@ export tocharstarmalloc(s:string):charstar := Ccode(returns, "
   char *p = getmem_malloc(s->len + 1);
   memcpy(p,s->array,s->len);
   p[s->len] = 0;
-  GC_CHECK_CLOBBER(p);
   return p; ");
 export tocharstarstarmalloc(p:ArrayString):charstarstar := Ccode(returns, "
   int n = p->len;
@@ -92,7 +91,6 @@ export tocharstarstarmalloc(p:ArrayString):charstarstar := Ccode(returns, "
   unsigned int i;
   for (i=0; i<n; i++) s[i] = M2_tocharstarmalloc(p->array[i]);
   s[n] = NULL;
-  GC_CHECK_CLOBBER(s);
   return s;");
 export tostrings(n:int,s:charstarstar):ArrayString := Ccode(returns, "
   int i;
