@@ -1017,6 +1017,7 @@ tostringfun(e:Expr):Expr := (
 		    if x.body.resultRetrieved then "result delivered, task terminated"
 		    else if taskDone(x.body.task) then "result available, task done"
 		    else if !taskKeepRunning(x.body.task) then "running, cancellation requested"
+		    else if !taskStarted(x.body.task) then "created"
 		    else "running"
 		    )
 	       + ">>"

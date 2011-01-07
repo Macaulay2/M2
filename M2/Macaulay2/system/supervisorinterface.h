@@ -70,6 +70,13 @@ extern "C" {
     pushTask(task);
     return task;
   }
+  /**
+     Create an M2 task without queueing it
+  **/
+  static inline struct ThreadTask* createM2Task(ThreadTaskFunctionPtr fptr, void* userData) {
+    struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0,1);
+    return task;
+  }
 #ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);
   static void** TS_Get_LocalArray() {  return (void**)pthread_getspecific(*(pthread_key_t*)threadSupervisor); }

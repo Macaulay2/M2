@@ -12,10 +12,10 @@ M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
 }
 M2File::~M2File()
 {
-  /*  for(std::map<pthread_t,struct M2FileThreadState*>::iterator it = threadStates.begin(); it!=threadStates.end(); ++it)
+    for(std::map<pthread_t,struct M2FileThreadState*>::iterator it = threadStates.begin(); it!=threadStates.end(); ++it)
     {
       delete it->second;
-      }*/
+    }
 }
 
 
@@ -152,7 +152,8 @@ extern "C"
 	  }
 	else
 	  {
-	    //this shouldn't happen, but we can safely ignore it if it does.  
+	    //this shouldn't happen, and if it does it is *clearly* an error and will lead to deadlock or memory corruption at some point
+	    abort();
 	  }
 	file->m_MapMutex.unlock();
 
@@ -161,14 +162,14 @@ extern "C"
   }
   void M2File_StartInput(struct M2File* file)
   {
-    //for any mode besides thread excllusive we may ignore this function call
+    //for any mode besides thread exclusive we may ignore this function call
     if(file->currentThreadMode!=2)
       return;
     file->waitExclusiveThread(1);
   }
   void M2File_EndInput(struct M2File* file)
   {
-    //for any mode besides thread excllusive we may ignore this function call
+    //for any mode besides thread exclusive we may ignore this function call
     if(file->currentThreadMode!=2)
       return;
     file->waitExclusiveThread(-1);
@@ -182,10 +183,10 @@ extern "C"
   }
   void M2File_EndOutput(struct M2File* file)
   {
-    //for any mode besides thread excllusive we may ignore this function call  
+    //for any mode besides thread exclusive we may ignore this function call  
     if(file->currentThreadMode!=2)
       return;
-    file->waitExclusiveThread(1);
+    file->waitExclusiveThread(-1);
   }
 
 };

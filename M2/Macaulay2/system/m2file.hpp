@@ -20,6 +20,11 @@
 
 
 typedef struct stdio0_fileOutputSyncState_struct * stdio0_fileOutputSyncState;
+/*
+This is a structure that holds the thread specific state for a given file in toplevel M2.
+The basic idea is to encapsulate all state for things like Nets and 2D stdio in this thread state.
+Then threads can use stdio without running all over each other.  This is especially critical for 2D IO
+*/
 struct M2FileThreadState
 {
   //State of the file output for the given thread
