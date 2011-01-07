@@ -1,0 +1,12 @@
+diff -ur --exclude=configure /home/dan/src/M2/trunk/BUILD/dan/builds.tmp/fedora64.debug/libraries/gfan/tmp/gfan0.4plus/linalg.cpp gfan0.4plus/linalg.cpp
+--- /home/dan/src/M2/trunk/BUILD/dan/builds.tmp/fedora64.debug/libraries/gfan/tmp/gfan0.4plus/linalg.cpp	2009-10-21 18:25:58.000000000 -0500
++++ gfan0.4plus/linalg.cpp	2011-01-07 10:14:04.000000000 -0600
+@@ -525,7 +525,7 @@
+ }
+ 
+ 
+-FieldMatrix::FieldMatrix FieldMatrix::solver()const
++FieldMatrix FieldMatrix::solver()const
+ {
+   FieldMatrix ret=combineOnTop(*this,theField.zHomomorphism(-1)*identity(theField,getWidth())).transposed();
+ 
