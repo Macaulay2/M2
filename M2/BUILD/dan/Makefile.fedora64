@@ -8,7 +8,7 @@ DEBUG = no
 
 ifeq ($(DEBUG),yes)
 DIRECTORY = fedora64.debug
-CONFIGOPTIONS += --enable-debug --disable-pthreads
+CONFIGOPTIONS += --enable-debug
 INSTALLOPTIONS += prefix=/none
 else
 DIRECTORY = fedora64
