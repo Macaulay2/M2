@@ -1748,6 +1748,7 @@ threadLocal resetvars := (
      setGlobalVariable(engineDebugLevelS,toExpr(engineDebugLevel));
      setGlobalVariable(stopIfErrorS,toExpr(stopIfError));
      setGlobalVariable(loadDepthS,toExpr(loadDepth));
+     0
      );
 msg := "internal assignment hook encountered unknown symbol/value combination";
 store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
@@ -1889,6 +1890,7 @@ recursionDepthFun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("recursionDepth",recursionDepthFun);
 
+--does this make sense in the world of threaded files?  How do you define the output length in thread exclusive mode?  
 fileLength(e:Expr):Expr := (
      when e
      is f:file do (
@@ -1897,7 +1899,7 @@ fileLength(e:Expr):Expr := (
 	       if ret == ERROR
 	       then Expr(buildErrorPacket(syscallErrorMessage("getting the length of a file")))
 	       else toExpr(ret))
-	  else if f.output then toExpr(f.bytesWritten + f.outindex)
+	  else if f.output then toExpr(getFileFOSS(f).bytesWritten + getFileFOSS(f).outindex)
      	  else buildErrorPacket("file not open"))
      is f:stringCell do (
 	  filename := f.v;

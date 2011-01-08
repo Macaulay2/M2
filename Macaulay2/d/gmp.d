@@ -1,6 +1,3 @@
--- this file is small, so the exported definitions can be imported into the engine
-use stdio;
-use err;
 
 declarations "
     #include <math.h>
@@ -9,6 +6,13 @@ declarations "
 ";
 
 header "#include \"gmp_aux.h\"";
+
+
+--This file contains gmp declarations and elementary functions.
+--Functions in this file should not need to make calls to stdio.
+
+use arithmetic;
+use stdiop0;
 
 export ZZstruct := Type "__mpz_struct";
 export ZZ := Pointer "__mpz_struct *";
@@ -43,7 +47,7 @@ export max(x:long,y:long):long := if x<y then y else x;
 export min(x:ulong,y:ulong):ulong := if x<y then x else y;
 export max(x:ulong,y:ulong):ulong := if x<y then y else x;
 
-export (o:file) << (s:charstarOrNull) : file := o << if s == null() then "(null)" else tostring(s);
+
 
 isPositive0(x:ZZ) ::=  1 == Ccode(int, "mpz_sgn(", x, ")");
 isZero0    (x:ZZ) ::=  0 == Ccode(int, "mpz_sgn(", x, ")");
@@ -187,22 +191,7 @@ export (x:ZZ) ^ (n:ulong) : ZZ := (
      y := newZZ();
      pow(y,x,n);
      y);
-export (x:ZZ) ^ (n:int) : ZZ := (
-     if n < 0 then fatal("internal error: negative exponent for integer power"); -- what else can we do???
-     if isZero0(x) then return x;
-     y := newZZ();
-     pow(y,x,ulong(n));
-     y);
-export (x:ZZ) ^ (n:ZZ) : ZZ := (
-     if isNegative0(n) then fatal("internal error: negative exponent for integer power"); -- what else can we do???
-     if !isULong(n) then fatal("integer exponent too large");
-     x^toULong(n));
 
-export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
-     -- z = x^y mod n
-     z := newZZ();
-     Ccode( void, "mpz_powm(",  z, ",",  x, ",",  y, ",",  n, ")" );
-     z);
 
 cdiv(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_q(", x, ",", y, ",", z, ")" );
 fdiv(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_q(", x, ",", y, ",", z, ")" );
@@ -316,7 +305,6 @@ export (x:ZZ) * (y:ulong) : ZZ := x * toInteger(y);
 
 export (x:int) ^ (y:ulong) : ZZ := toInteger(x) ^ y;
 
-export (o:file) << (x:ZZ) : file := o << tostring(x);
 
 
 -- Integers and doubles
@@ -405,10 +393,10 @@ export denominator(x:QQ):ZZ := (
      );
      z);
 
-numeratorRef  (x:QQ) ::= Ccode( ZZ,
+export numeratorRef  (x:QQ) ::= Ccode( ZZ,
      "(gmp_ZZ) mpq_numref(",  x, ")"
      );
-denominatorRef(x:QQ) ::= Ccode( ZZ, 
+export denominatorRef(x:QQ) ::= Ccode( ZZ, 
      "(gmp_ZZ) mpq_denref(",  x, ")"
      );
 
@@ -552,18 +540,9 @@ export (x:QQ) / (y:int     ) : QQ := x / toRational(y);
 export (x:ZZ ) / (y:QQ) : QQ := toRational(x) / y;
 export (x:int     ) / (y:QQ) : QQ := toRational(x) / y;
 
-export (x:QQ) ^ (nn:ZZ) : QQ := (
-     if !isLong(nn) then fatal("integer exponent too large");
-     n := toLong(nn);
-     if n == long(0) then return toRational(1);
-     if n < 0 then (
-	  x = inv(x);
-	  n = -n);
-     newRationalCanonical(numeratorRef(x)^ulong(n), denominatorRef(x)^ulong(n))
-     );
 
 export tostring(x:QQ):string := tostring(numeratorRef(x)) + '/' + tostring(denominatorRef(x));
-export (o:file) << (x:QQ) : file := o << numeratorRef(x) << '/' << denominatorRef(x);
+
 
 export (x:QQ) === (y:ZZ) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
 export (x:QQ) === (y:int) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
@@ -1391,185 +1370,12 @@ export yn(n:long,x:RR):RR := (
      Ccode( void, "mpfr_yn(", z, ",",n,",", x, ", GMP_RNDN)" );
      z);
 
--- printing
 
-log2ten := log(10.) / log(2.);
-getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= tostring(
-     Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
-	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));
+
 export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");
-floor(x:double) ::= Ccode(double, "floor(", x, ")" );
-export format(
-     s:int,			  -- number of significant digits (0 means all)
-     ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
-     l:int,					   -- max number leading zeroes
-     t:int,				    -- max number extra trailing digits
-     sep:string,		     -- separator between mantissa and exponent
-     x:RR						-- the number to format
-     ) : array(string) := (	   -- return: ("-","132.456") or ("","123.456")
-     ng := sign0(x);
-     if isinf0(x) then return array(string)(if ng then "-" else "","infinity");
-     if isnan0(x) then return array(string)(if ng then "-" else "","NotANumber");
-     meaningful := int(floor(precision0(x) / log2ten));
-     if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
-     sgn := "";
-     if ng then (
-	  sgn = "-";
-	  x = -x;
-	  );
-     if x === 0 then return array(string)(if ng then "-" else "","0");
-     ex := long(0);
-     mantissa := getstr(ex, base, s, x);
-     nt := 0;
-     for i from length(mantissa)-1 to 0 by -1 do (
-	  if mantissa.i != '0' then break;
-	  nt = nt + 1;
-	  );
-     s = length(mantissa) - nt;
-     mantissa = substr(mantissa,0,s);
-     pt := 0;
-     if ex < 0 then (
-	  t = 0;
-	  if -ex <= l then (
-	       l = int(-ex);
-	       ex = long(0);
-	       )
-	  else l = 0)
-     else (
-	  l = 0;
-	  if ex <= s then (
-	       pt = int(ex);
-	       ex = long(0);
-	       t = 0;
-	       )
-	  else if ex <= s+t then (
-	       pt = int(ex);
-	       t = int(ex)-s;
-	       ex = long(0);
-	       )
-	  else t = 0);
-     if pt == 0 && l == 0 && ex != long(0) then (
-	  pt = 1;
-	  ex = ex - 1;
-	  );
-     manlen := length(mantissa);
-     maxmanlen := ac-l+pt+ex;
-     if ac != -1 && long(manlen) > maxmanlen then (
-	  if maxmanlen < 0 then return array(string)("","0");
-	  manlen = int(ac-l+pt+ex);
-	  if mantissa.manlen >= '5' then (		    -- round, at least in base 10
-	       while manlen > 0 do (
-		    if mantissa.(manlen-1) == '9'
-		    then manlen = manlen - 1 
-		    else (
-		    	 mantissa.(manlen-1) = mantissa.(manlen-1) + 1;
-		    	 break;
-			 ));
-	       if manlen == 0 then (
-		    mantissa = "1";
-		    manlen = 1;
-		    if l > 0 then l = l-1 else ex = ex + 1 ) ) );
-     if manlen == 0 then return array(string)("","0");
-     array(string)(
-	  sgn,
-	  concatenate(
-	       array(string)(
-		    if pt == 0 then "." else "",
-		    if l == 0 then "" else new string len l do provide '0',
-		    substr(mantissa,0,pt),
-		    if pt > 0 && pt < manlen then "." else "",
-		    substr(mantissa,pt,manlen-pt),
-		    new string len t do provide '0',
-		    if ex != long(0) then sep else "",
-		    if ex != long(0) then tostring(ex) else ""
-		    ))));
 
-export printingPrecision := 6;				    -- 0 indicates all
-export printingAccuracy := -1;				    -- -1 indicates all
-export printingLeadLimit := 5;
-export printingTrailLimit := 5;
-export printingSeparator := "e";			    -- was "*10^"
 
--- this can be used by the engine for printing matrices to a uniform precision
-export tostringRR(x:RR):string := concatenate(format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x));
-tostringRRpointer = tostringRR;
 
-export toExternalString(x:RR):string := (
-     if isinf0(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan0(x) then return if sign0(x) then "-NotANumber" else "NotANumber";
-     ng := sign0(x);
-     if ng then x = -x;
-     ex := long(0);
-     s := getstr(ex, base, 0, x);
-     nt := 0;
-     for i from length(s)-1 to 0 by -1 do (
-	  if s.i != '0' then break;
-	  nt = nt + 1;
-	  );
-     newlen := max(1,length(s) - nt);
-     concatenate(array(string)(
-	       if ng then "-" else "",
-	       ".",
-	       substr(s,0,newlen),
-	       "p",
-	       tostring(precision0(x)),
-	       if ex != long(0) then "e" else "",
-	       if ex != long(0) then tostring(ex) else ""
-	       )));
-
-export format(
-     s:int,			  -- number of significant digits (0 means all)
-     ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
-     l:int,					   -- max number leading zeroes
-     t:int,				    -- max number extra trailing digits
-     sep:string,		     -- separator between mantissa and exponent
-     abb:bool,				  -- whether to abbreviate "*ii" to "i"
-     paren:bool,    -- whether to parenthesize a sum and prepend a possible '-'
-     z:CC						-- the number to format
-     ) : string := (
-     if isnan0(z.re) || isnan0(z.im) then return "NotANumber";
-     if isinf0(z.re) || isinf0(z.im) then return "infinity";
-     if s != 0 && ac == -1 && !isZero0(z.re) && !isZero0(z.im) then ac = s - int(floor(double(exponent(z))/log2ten));
-     star := if abb then ""  else "*" ;
-     i  := if abb then "i" else "ii";
-     x := format(s,ac,l,t,sep,z.re);
-     y := format(s,ac,l,t,sep,z.im);
-     if y.1 === "0" then return if x.1 === "0" then "0" else concatenate(x);
-     if y.1 === "1" then (y.1 = ""; star = "");
-     if x.1 === "0" then return concatenate(array(string)(y.0,y.1,star,i));
-     if y.0 === "" then y.0 = "+";
-     lp := "";
-     rp := "";
-     if paren then (
-	  if x.0 === "-" 
-	  then (
-	       x.0 = "";
-	       lp = "-("; 
-	       if y.0 .0 == '-' then y.0 = "+" else y.0 = "-")
-	  else lp = "(";
-	  rp = ")"; 
-	  );
-     concatenate(array(string)(lp,x.0,x.1,y.0,y.1,star,i,rp)));
-
-export tostringCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,false,z)
-     );
-export tonetCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,false,z)
-     );
-tonetCCpointer = tonetCC;
-export tonetCCparen(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,true,z)
-     );
-tonetCCparenpointer = tonetCCparen;
-
-export toExternalString(z:CC):string := concatenate(array(string)(
-     	  "toCC(",
-	  toExternalString(realPart(z)),
-	  ",",
-	  toExternalString(imaginaryPart(z)),
-	  ")"
-	  ));
 
 -- complex transcendental functions
 

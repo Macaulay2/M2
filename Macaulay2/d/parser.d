@@ -116,6 +116,7 @@ export openTokenFile(filename:string):(TokenFile or errmsg) := (
      );
 export setprompt(file:TokenFile,prompt:function():string):void := setprompt(file.posFile,prompt);
 export unsetprompt(file:TokenFile):void := unsetprompt(file.posFile);
+--Get next token in the file and advance to next token
 export gettoken(file:TokenFile,obeylines:bool):Token := (
      when file.nexttoken
      is null do gettoken(file.posFile,obeylines)
@@ -124,6 +125,7 @@ export gettoken(file:TokenFile,obeylines:bool):Token := (
      	  w
 	  )
      );
+--Peek at the next token in file without advancing in the file
 export peektoken(file:TokenFile,obeylines:bool):Token := (
      when file.nexttoken
      is null do (
@@ -133,7 +135,9 @@ export peektoken(file:TokenFile,obeylines:bool):Token := (
 	  )
      is w:Token do w
      );
+--What is this?   It doesn't appear to be used anywhere
 level := 0;
+--Empty Parsetree to reresent error
 export errorTree := ParseTree(dummy(dummyPosition));
 skip(file:TokenFile,prec:int):void := (
      while peektoken(file,false).word.parse.precedence > prec 
@@ -232,6 +236,7 @@ export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:
      e := parse(file,token2.word.parse.binaryStrength,obeylines);
      if e == errorTree then e else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
 MatchPair := {left:string, right:string, next:(null or MatchPair)};
+
 matchList := (null or MatchPair)(NULL);
 export addmatch(left:string, right:string):void := (
      matchList = MatchPair(left,right,matchList);
@@ -323,6 +328,7 @@ export unarywhile(whileToken:Token,file:TokenFile,prec:int,obeylines:bool):Parse
 	  printErrorMessage(whileToken," ... to match this 'while'");
 	  errorTree));
 
+--Handle parsing a file following a for token
 export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      var := parse(file,forToken.word.parse.unaryStrength,false);
      if var == errorTree then return errorTree;
@@ -332,14 +338,21 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
      whenClause := dummyTree;
      listClause := dummyTree;
      doClause := dummyTree;
+     --get the next token
      token2 := gettoken(file,false);
+     --if there is an error, return
      if token2 == errorToken then return errorTree;
+     --if it is an "in" token
      if token2.word == inW then (
+          --parse the part following the in token to become the in clause
 	  inClause = parse(file,inW.parse.unaryStrength,false);
+	  --on error return
 	  if inClause == errorTree then return errorTree;
+	  --otherwise get the next token
 	  token2 = gettoken(file,false);
 	  )
      else (
+          --otherwise check to see if we have a from/to case
 	  if token2.word == fromW then (
 	       fromClause = parse(file,fromW.parse.unaryStrength,false);
 	       if fromClause == errorTree then return errorTree;
@@ -351,11 +364,13 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       token2 = gettoken(file,false);
 	       );
 	  );
+     --handle when clause
      if token2.word == whenW then (
 	  whenClause = parse(file,whenW.parse.unaryStrength,false);
 	  if whenClause == errorTree then return errorTree;
      	  token2 = gettoken(file,false);
 	  );
+     --this part should be followed by either a do clause or a list and then a do clause
      if token2.word == doW then (
 	  doClause = parse(file,doW.parse.unaryStrength,obeylines);
 	  if doClause == errorTree then return errorTree;
@@ -371,6 +386,7 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       );
 	  r := ParseTree(For(forToken, var, inClause, fromClause, toClause,whenClause, listClause, doClause, dummyDictionary));
 	  accumulate(r,file,prec,obeylines))
+     --if there is no do clause then it is an error
      else (
 	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");
 	  printErrorMessage(forToken," ... to match this 'for'");

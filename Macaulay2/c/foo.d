@@ -5,6 +5,8 @@ B := {+ y:int };
 C := A or B;
 f(x:C):int := when x is A do 1 is B do 2 else 3;	    -- oops!  This needs to be fixed.
 
+threadLocal t := A(123);
+
 -- poly0 := tarray(int);
 -- polyN := tarray(poly);
 -- poly := polyN or poly0;

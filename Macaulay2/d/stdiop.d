@@ -6,9 +6,8 @@
 -- Also, these are *text* files, so we translate all three flavors of line termination
 -- into a single \n.
 use stdio;
-export Position := {filename:string, line:ushort, column:ushort, loadDepth:ushort};
-export (s:Position) === (t:Position) : bool := s == t || s.filename === t.filename && s.line == t.line && s.column == t.column;
-export dummyPosition := Position("{*dummy file name*}",ushort(0),ushort(0),loadDepth);
+use expr;
+
 shorten(s:string):string := (				    -- purely textual
      -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"
      while true do (
@@ -124,9 +123,6 @@ cleanscreen():void := (
 	  )
      );
 
-threadLocal export recursionDepth := 0;
-threadLocal export recursionLimit := 300;
-
 printMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();
@@ -148,7 +144,6 @@ export printErrorMessage(filename:string,line:ushort,column:ushort,message:strin
 export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Position do o << w;
 export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
 export copy(p:Position):Position := Position(p.filename, p.line, p.column, loadDepth);
-export PosFile := {+ file:file, lastchar:int, filename:string, line:ushort, column:ushort };
 export position(file:PosFile):Position := Position(file.filename,file.line,file.column,loadDepth);
 export dummyPosFile := PosFile(dummyfile,0,"{*dummy file name*}",ushort(0),ushort(0));
 export fileError(f:PosFile):bool := fileError(f.file);

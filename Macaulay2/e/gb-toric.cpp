@@ -5,6 +5,7 @@
 #include "text-io.hpp"
 
 #include "matrix-con.hpp"
+#include "../system/supervisorinterface.h"
 
 #define monomial monomial0
 
@@ -1192,7 +1193,7 @@ void binomialGB_comp::start_computation()
       ComputationStatusCode ret = gb_done();
       if (ret != COMP_COMPUTING) return;
       process_pair(s);		// consumes 's'.
-      if (test_Field(interrupts_interruptedFlag)) 
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) 
 	{
 	  set_status(COMP_INTERRUPTED);
 	  return;

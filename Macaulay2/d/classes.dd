@@ -69,6 +69,7 @@ setupconst("Array",Expr(arrayClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
 setupconst("Thread",Expr(threadClass));
+setupconst("FileOutputSyncState",Expr(fileOutputSyncStateClass));
 
 export ancestor(o:HashTable,p:HashTable):bool := (
      while true do (
@@ -110,7 +111,7 @@ export Class(e:Expr):HashTable := (
      is CodeClosure do codeClass
      is pythonObjectCell do pythonObjectClass
      is xmlNodeCell do xmlNodeClass
-     is ThreadCell do threadClass
+     is TaskCell do threadClass
      is xmlAttrCell do xmlAttrClass
      is MysqlConnectionWrapper do mysqlConnectionClass
      is MysqlResultWrapper do mysqlResultClass
@@ -149,6 +150,7 @@ export Class(e:Expr):HashTable := (
      is RawMutableMatrixCell do rawMutableMatrixClass
      is RawStraightLineProgramCell do rawStraightLineProgramClass
      is RawPathTrackerCell do rawPathTrackerClass
+     is fileOutputSyncState do fileOutputSyncStateClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);

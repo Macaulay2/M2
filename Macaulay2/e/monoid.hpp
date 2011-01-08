@@ -130,15 +130,13 @@ public:
   bool in_subring(int nslots, const_monomial m) const;
   inline int compare(int nslots, const_monomial m, const_monomial n) const
      {
-	int i = nslots;
-	if (i == 0) return EQ;
-	while (1)
+	for(int i = nslots; i!=0; --i)
 	  {
 	    if (*m > *n) return GT;
 	    if (*m < *n) return LT;
-	    if (--i == 0) return EQ;
-	    m++, n++;
+	    m++; n++;
 	  }
+	return EQ;
       }
 
   monomial make_new(const_monomial d) const;

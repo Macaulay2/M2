@@ -36,3 +36,17 @@ extern node void_T, exits_T, returns_T, bad_or_undefined_T, null_T, deferred__T;
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
 # End:
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+

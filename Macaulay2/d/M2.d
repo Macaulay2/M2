@@ -143,7 +143,7 @@ export newline := tostring(Ccode(constcharstarOrNull,"newline"));
 export envp := array(string)();
 export argv := array(string)();
 export args := array(string)();
-threadLocal export gbTrace := 0;
+export gbTrace := 0;
 export notify := false;
 
 declarations "#include <M2/config.h>";

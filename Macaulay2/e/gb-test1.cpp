@@ -1,3 +1,4 @@
+
 /* Copyright 2003-2009, Michael E. Stillman */
 
 #include "gb-test1.hpp"
@@ -16,6 +17,8 @@
 #include "reducedgb.hpp"
 
 #include "f4/monsort.hpp"
+
+#include "../system/supervisorinterface.h"
 
 #define PrintingDegree 0x0001
 
@@ -1596,7 +1599,7 @@ void gbB::do_computation()
 	// np_i is initialized at the beginning, and also here.
 	    while (np_i < n_gb)
 	      {
-		if (test_Field(interrupts_interruptedFlag))
+		if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 		  {
 		    set_status(COMP_INTERRUPTED);
 		    return;
@@ -1676,7 +1679,7 @@ void gbB::do_computation()
 		    return;
 		  }
 		
-		if (test_Field(interrupts_interruptedFlag))
+		if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 		  {
 		    set_status(COMP_INTERRUPTED);
 		    return;
@@ -1692,7 +1695,7 @@ void gbB::do_computation()
 	      {
 		while (ar_j < n_gb)
 		  {
-		    if (test_Field(interrupts_interruptedFlag))
+		    if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 		      {
 			set_status(COMP_INTERRUPTED);
 			return;

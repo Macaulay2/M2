@@ -5,6 +5,7 @@ use actors;
 use actors2;
 use version;
 use struct;
+use pthread;
 
 header "
 
@@ -47,11 +48,6 @@ getpidfun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("processID",getpidfun);
 
-gettidfun(e:Expr):Expr := (
-     when e
-     is t:ThreadCell do toExpr(t.body.tid)
-     else WrongArg("a thread"));
-setupfun("threadID",gettidfun);  -- # typical value: threadID, Thread, ZZ
 
 getpgrpfun(e:Expr):Expr := (
      when e
@@ -685,7 +681,7 @@ readpromptfun():string := readprompt;
 isReadyFun(e:Expr):Expr := (
      when e
      -- # typical value: isReady, Thread, Boolean
-     is tc:ThreadCell do toExpr(tc.body.done && !tc.body.resultRetrieved)
+     is tc:TaskCell do toExpr(taskDone(tc.body.task) && !tc.body.resultRetrieved)
      -- # typical value: isReady, File, Boolean
      is f:file do toExpr ( 
 	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) 
@@ -696,7 +692,7 @@ isReadyFun(e:Expr):Expr := (
 	       ( sd := acceptNonblocking(f.listenerfd); f.connection = sd; sd != -1 )
 	       )
 	  )
-     else WrongArg("a file or a thread"));
+     else WrongArg("a file or a task"));
 setupfun("isReady",isReadyFun);
 
 atEOFfun(e:Expr):Expr := (
@@ -1013,19 +1009,21 @@ tostringfun(e:Expr):Expr := (
 	  r)
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")
-     is x:ThreadCell do (
-	  while !isInitialized(x) do nothing;
+     is x:TaskCell do (
+--	  while !isInitialized(x) do nothing;
 	  toExpr(
-	       "<<thread " + tostring(x.body.tid)
-	       + ", "
+	       "<<task, " 
 	       + (
-		    if x.body.resultRetrieved then "result delivered, thread terminated"
-		    else if x.body.done then "result available, thread done"
-		    else if x.body.cancellationRequested then "running, cancellation requested"
+		    if x.body.resultRetrieved then "result delivered, task terminated"
+		    else if taskDone(x.body.task) then "result available, task done"
+		    else if !taskKeepRunning(x.body.task) then "running, cancellation requested"
+		    else if !taskStarted(x.body.task) then "created"
 		    else "running"
 		    )
 	       + ">>"
-	       )));
+	       ))
+    is x:fileOutputSyncState do toExpr("File Output Sync State")
+);
 setupfun("simpleToString",tostringfun);
 
 connectionCount(e:Expr):Expr := (

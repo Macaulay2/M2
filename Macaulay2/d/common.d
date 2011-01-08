@@ -204,64 +204,6 @@ export setupconst(name:string,value:Expr):Symbol := (
      s);
 setup(commaS,dummyBinaryFun);
 
-export quoteit(name:string):string := "'" + name + "'";
-export NotYet(desc:string):Expr := buildErrorPacket(desc + " not implemented yet");
-export WrongArg(desc:string):Expr := buildErrorPacket("expected " + desc);
-export WrongArg(n:int,desc:string):Expr := (
-     buildErrorPacket("expected argument " + tostring(n) + " to be " + desc));
-export WrongArgZZ():Expr := WrongArg("an integer");
-export WrongArgZZ(n:int):Expr := WrongArg(n,"an integer");
-export WrongArgRR():Expr := WrongArg("a real number");
-export WrongArgRR(n:int):Expr := WrongArg(n,"a real number");
-export WrongArgSmallInteger():Expr := WrongArg("a small integer");
-export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
-export WrongArgSmallUInteger():Expr := WrongArg("a small non-negative integer");
-export WrongArgSmallUInteger(n:int):Expr := WrongArg(n,"a small non-negative integer");
-export WrongArgString():Expr := WrongArg("a string");
-export WrongArgString(n:int):Expr := WrongArg(n,"a string");
-export WrongArgBoolean():Expr := WrongArg("true or false");
-export WrongArgBoolean(n:int):Expr := WrongArg(n,"true or false");
-export WrongArgMutableMatrix(n:int):Expr := WrongArg(n,"a raw mutable matrix");
-export WrongArgMutableMatrix():Expr := WrongArg("a raw mutable matrix");
-export WrongArgMatrix(n:int):Expr := WrongArg(n,"a raw matrix");
-export WrongArgMatrix():Expr := WrongArg("a raw matrix");
-export ArgChanged(name:string,n:int):Expr := (
-     buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)
-	  + " not to change its type during execution"));
-export WrongNumArgs(name:string,n:int):Expr := (
-     if n == 0
-     then buildErrorPacket(quoteit(name) + " expected no arguments")
-     else if n == 1
-     then buildErrorPacket(quoteit(name) + " expected " + tostring(n) + " argument")
-     else buildErrorPacket(quoteit(name) + " expected " + tostring(n) + " arguments")
-     );
-export WrongNumArgs(n:int):Expr := buildErrorPacket(
-     if n == 0 then "expected no arguments"
-     else if n == 1 then "expected " + tostring(n) + " argument"
-     else "expected " + tostring(n) + " arguments"
-     );
-export WrongNumArgs(name:string,m:int,n:int):Expr := (
-     if n == m+1
-     then buildErrorPacket(quoteit(name) + " expected " 
-	  + tostring(m) + " or "
-	  + tostring(n) + " arguments")
-     else buildErrorPacket(quoteit(name) + " expected " 
-	  + tostring(m) + " to "
-	  + tostring(n) + " arguments"));
-export WrongNumArgs(m:int,n:int):Expr := (
-     if n == m+1
-     then buildErrorPacket("expected " + tostring(m) + " or " + tostring(n) + " arguments")
-     else buildErrorPacket("expected " + tostring(m) + " to " + tostring(n) + " arguments"));
-export TooFewArgs(name:string,m:int):Expr := (
-     if m == 1
-     then buildErrorPacket(quoteit(name) + " expected at least 1 argument")
-     else buildErrorPacket(quoteit(name) + " expected at least " 
-	  + tostring(m) + " arguments"));
-export TooManyArgs(name:string,m:int):Expr := (
-     if m == 1
-     then buildErrorPacket(quoteit(name) + " expected at most 1 argument")
-     else buildErrorPacket(quoteit(name) + " expected at most " 
-	  + tostring(m) + " arguments"));
 threadLocal export errorDepth := ushort(0);
 export printErrorMessage0(c:Code,message:string):Error := (
      p := codePosition(c);
@@ -291,19 +233,6 @@ export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
      printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
 	  + tostring(got)));
-
-export MissingMethod(name:string,method:string):Expr := buildErrorPacket(quoteit(name) + " expected item to have a method for " + method);
-export MissingMethod(method:SymbolClosure):Expr := buildErrorPacket("expected a method for "+quoteit(method.symbol.word.name));
-export MissingMethodPair(method:string):Expr := buildErrorPacket("expected pair to have a method for "+quoteit(method));
-export MissingMethodPair(method:SymbolClosure):Expr := buildErrorPacket("expected pair to have a method for " + quoteit(method.symbol.word.name));
-export MissingMethodPair(method:SymbolClosure,left:Expr,right:Expr):Expr := buildErrorPacket( "expected pair to have a method for " + quoteit(method.symbol.word.name) );
-export MissingMethodPair(methodname:string,left:Expr,right:Expr):Expr := buildErrorPacket( "expected pair to have a method for " + quoteit(methodname) );
-export MissingAssignmentMethod(method:Expr,left:Expr):Expr := (
-     when method is sc:SymbolClosure do buildErrorPacket("expected object to have an assignment method for " + quoteit(sc.symbol.word.name))
-     else buildErrorPacket("expected object to have an assignment method"));
-export MissingAssignmentMethodPair(method:Expr,left:Expr,right:Expr):Expr := (
-     when method is sc:SymbolClosure do buildErrorPacket("expected pair to have an assignment method for " + quoteit(sc.symbol.word.name))
-     else buildErrorPacket("expected pair to have an assignment method"));
 
 -----------------------------------------------------------------------------
 
@@ -362,7 +291,7 @@ export keys(f:Database):Expr := (
      while continue do (
 	  when k
 	  is key:string do (
-	       x = append(x,key);
+	       append(x,key);
 	       k = dbmnext(f.handle);
 	       )
 	  else continue = false;

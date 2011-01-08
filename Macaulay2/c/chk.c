@@ -1479,7 +1479,7 @@ static node chkimport(node e, scope v){
 
 static node chkdefinition(node e, scope v){
      node lhs, rhs, ltype;
-     bool rhs_in_function = FALSE;
+     bool lhs_thread_local = FALSE;
      if (length(e) != 3) return badnumargs(e,2);
      lhs = chklhs(cadr(e),v);
      if (lhs == bad__K) return bad__K;
@@ -1598,7 +1598,7 @@ static node chkdefinition(node e, scope v){
      	       internsymbol(lhs,v);
 	       }
 	  if (lhs->body.symbol.flags & threadLocal_F) {
-	       rhs_in_function = TRUE;
+	       lhs_thread_local = TRUE;
 	       enternewscope(&v);
 	       }
 	  rhsvalue = chk(rhs,v);
@@ -1639,9 +1639,29 @@ static node chkdefinition(node e, scope v){
 		    }
 	       }
 	  else {
-	       assign(lhs,rhsvalue,v);
-	       if (rhs_in_function) {
-		    if (ltype != void_T  && !is_atomic_memory(ltype)) perform(list(9,Ccode_S,void_T, 
+	       if (lhs_thread_local) {
+		 if(!ispointertype(ltype) && ltype!=int_T && !isortype(ltype) && ltype!=bool_T) {
+		   if(ltype->body.type.flags & integer_type_F) {
+		     if(EQUAL!=strcmp("unsigned int",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("volatile int",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("volatile bool",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("char",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("unsigned char",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("short",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("unsigned short",ltype->body.type.Cname))
+		       {
+			 errorpos(lhs, "thread local variable not valid integer type");
+			 return bad__K;
+		       }
+		   }
+		   else {
+		     errorpos(lhs, "thread local variable not pointer or integer type");
+		     return bad__K;
+		   }
+		 }
+		    if(compilerThreadLocal) {
+			 assign(lhs,rhsvalue,v);
+			 if (ltype != void_T  && !is_atomic_memory(ltype)) perform(list(9,Ccode_S,void_T, 
 				 String("GC_add_roots(&("),
 				 lhs,
 				 String("),(char *)&("),
@@ -1649,6 +1669,19 @@ static node chkdefinition(node e, scope v){
 				 String(")+sizeof("),
 				 lhs,
 				 String("))")),v);
+		    }
+		    if(pthreadThreadLocal) {
+			 char* getsymbolbasicname(node);
+			 char* name = getsymbolbasicname(lhs);			
+			 if (ltype != void_T) perform(list(7,Ccode_S,void_T,
+							   String("TS_Add_ThreadLocal(&"),
+							   String(name),
+							   String("_id,\""),
+							   String(name),
+							   String("\")")),v);		  
+			 //perform(list(6,Ccode_S,void_T,lhs,String("= TS_ThreadLocal("),lhs,String("_id)")),v);			
+			 assign(lhs,rhsvalue,v);
+		    }
 		    node funid = newsymbol(tmp__S, totype(list(3,function_S,NULL,void_T)),
 			 global_scope, intern_F|defined_F|literal_F|constant_F);
 		    node defn = join( 
@@ -1661,6 +1694,8 @@ static node chkdefinition(node e, scope v){
 		    perform(callit,v);
 		    push(global_scope->thread_inits, callit);
 		    }
+	       else
+		    assign(lhs,rhsvalue,v);
 	       if (ltype != void_T) {
 		    node package = NULL;
 		    if (v != NULL && v->previous != NULL) {

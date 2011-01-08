@@ -1,5 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
-use tokens;
+use expr;
+
 
 header "
   #include \"../e/engine.h\"
@@ -71,7 +72,8 @@ export hash(e:Expr):int := (
      is po:pythonObjectCell do int(Ccode(long, "PyObject_Hash(",po.v,")"))
      is xmlNodeCell do int(123456)
      is xmlAttrCell do int(123457)
-     is t:ThreadCell do t.body.tid
+     is t:TaskCell do int(123459)
+     is foss:fileOutputSyncState do int(123458)
      );
 
 export hash(x:List):int := (

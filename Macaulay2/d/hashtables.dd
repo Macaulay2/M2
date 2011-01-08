@@ -39,9 +39,6 @@ mutablefun(e:Expr):Expr := Expr(toExpr(
 setupfun("mutable",mutablefun);
 
 MutexArray := array(ThreadMutex,49);
-hashTableMutexArray := new MutexArray do provide newMutex;
-foreach mutex in hashTableMutexArray do init(mutex);
-mutexIndex(o:HashTable) ::= int(Ccode(uint,"(unsigned int)(((unsigned long)(",o,")) % (",length(hashTableMutexArray),"))"));
 enlarge(o:HashTable):void := (
      oldTable := o.table;
      newlen := 2*length(oldTable);
@@ -54,6 +51,9 @@ enlarge(o:HashTable):void := (
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;));
+     --Note that all operations are done on a new table
+     --So simply do a compiler barrier and then swapping the tables becomes atomic
+     compilerBarrier(); 
      o.table = newTable;
      );
 shrink(o:HashTable):void := (
@@ -68,6 +68,9 @@ shrink(o:HashTable):void := (
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;));
+     --Note that all operations are done on a new table
+     --So simply do a compiler barrier and then swapping the tables becomes atomic
+     compilerBarrier();
      o.table = newTable;
      );
 export remove(x:HashTable,key:Expr):Expr := (
@@ -75,44 +78,37 @@ export remove(x:HashTable,key:Expr):Expr := (
 	  return buildErrorPacket("attempted to modify an immutable hash table");
 	  );
      h := hash(key);
-     lockit := !x.beingInitialized;
-     i := 0;
-     if lockit then (
-          i = mutexIndex(x);
-          lock(hashTableMutexArray.i));
+     if !x.beingInitialized then lock(x.mutex);
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      prev := p;
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
+	       --preserve ordering -- we change the numEntries last upon insertion so decrease it first when removing.
+	       x.numEntries = x.numEntries - 1;
 	       if prev == p then x.table.hmod = p.next
 	       else prev.next = p.next;
-	       x.numEntries = x.numEntries - 1;
 	       if 8 * x.numEntries == 3 * length(x.table) -- SEE BELOW
 	       && length(x.table) > 4
 	       -- 4 is the length of a new hash table, see tokens.d, newHashTable()
 	       then shrink(x);
-	       if lockit then unlock(hashTableMutexArray.i);
+	       if !x.beingInitialized then unlock(x.mutex);
 	       return Expr(x));
 	  prev = p;
 	  p = p.next);
-     if lockit then unlock(hashTableMutexArray.i);
+     if !x.beingInitialized then unlock(x.mutex);
      Expr(x));
 export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
-     lockit := !x.beingInitialized;
-     i := 0;
-     if lockit then (
-          i = mutexIndex(x);
-          lock(hashTableMutexArray.i));
+     if !x.beingInitialized then lock(x.mutex);
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
 	       p.value = value;
-     	       if lockit then unlock(hashTableMutexArray.i);
+	       if !x.beingInitialized then unlock(x.mutex);
 	       return value);
 	  p = p.next);
      if 4 * x.numEntries == 3 * length(x.table) -- SEE ABOVE
@@ -120,7 +116,6 @@ export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
 	  enlarge(x);
 	  hmod = int(h & (length(x.table)-1));
 	  );
-     x.numEntries = x.numEntries + 1;
      -- In the following statement, a new entry is adding by atomically replacing the pointer x.table.hmod.
      -- This will not confuse readers that don't lock the hash table, because once the load x.table.hmod, they
      -- will have a linked list that stays the same, is shortened, or has a value changed, and contains no
@@ -128,23 +123,24 @@ export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      -- cause a reader to encounter the same key twice, if the key is removed and added while the reader is
      -- traversing the list.
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
-     if lockit then unlock(hashTableMutexArray.i);
+     --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
+     --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering
+     compilerBarrier();
+     x.numEntries = x.numEntries + 1;
+     --Note: x.numEntries may be inconsistent with the number of entries in the table if accessed from another thread
+     if !x.beingInitialized then unlock(x.mutex);
      value);
 export storeInHashTable(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTable(x,key,hash(key),value);
 export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      -- derived from storeInHashTable above!
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
-     lockit := !x.beingInitialized;
-     i := 0;
-     if lockit then (
-          i = mutexIndex(x);
-          lock(hashTableMutexArray.i));
+     if !x.beingInitialized then lock(x.mutex);
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
-     	       if lockit then unlock(hashTableMutexArray.i);
+	       if !x.beingInitialized then unlock(x.mutex);
 	       return buildErrorPacket("collision of keys in hash table");
 	       );
 	  p = p.next);
@@ -153,29 +149,28 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
 	  enlarge(x);
 	  hmod = int(h & (length(x.table)-1));
 	  );
-     x.numEntries = x.numEntries + 1;
      -- We add the the front of the linked list, for thread consistency, as explained above:
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
-     if lockit then unlock(hashTableMutexArray.i);
+     --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
+     --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering
+     compilerBarrier();
+     x.numEntries = x.numEntries + 1;
+     if !x.beingInitialized then unlock(x.mutex);
      value);
 export storeInHashTableNoClobber(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTableNoClobber(x,key,hash(key),value);
 export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
-     lockit := !x.beingInitialized;
-     i := 0;
-     if lockit then (
-          i = mutexIndex(x);
-          lock(hashTableMutexArray.i));
+     if !x.beingInitialized then lock(x.mutex);
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
 	       p.value = value; 
-     	       if lockit then unlock(hashTableMutexArray.i);
+     	       if !x.beingInitialized then unlock(x.mutex);
 	       return value);
 	  p = p.next);
-     if lockit then unlock(hashTableMutexArray.i);
+     if !x.beingInitialized then unlock(x.mutex);
      buildErrorPacket("encountered an unknown key or option" +
 	  when key 
 	  is s:SymbolClosure do ": " + s.symbol.word.name 
@@ -187,11 +182,7 @@ export storeInHashTableMustClobber(x:HashTable,key:Expr,value:Expr):Expr := (
 export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,handler:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      h := hash(key);
-     lockit := !x.beingInitialized;
-     i := 0;
-     if lockit then (
-          i = mutexIndex(x);
-          lock(hashTableMutexArray.i));
+     if !x.beingInitialized then lock(x.mutex);
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != p.next do (
@@ -199,7 +190,7 @@ export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,hand
 	  then (
 	       ret := applyEEEpointer(handler,p.value,value);
 	       when ret is Error do nothing else p.value = ret;
-     	       if lockit then unlock(hashTableMutexArray.i);
+     	       if !x.beingInitialized then unlock(x.mutex);
 	       return ret);
 	  p = p.next);
      if 4 * x.numEntries == 3 * length(x.table) -- SEE ABOVE
@@ -207,9 +198,12 @@ export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,hand
 	  enlarge(x);
 	  hmod = int(h & (length(x.table)-1));
 	  );
-     x.numEntries = x.numEntries + 1;
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
-     if lockit then unlock(hashTableMutexArray.i);
+     --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
+     --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering
+     compilerBarrier();
+     x.numEntries = x.numEntries + 1;
+     if !x.beingInitialized then unlock(x.mutex);
      value);
 toHashTableError(i:int):Expr := buildErrorPacket("expected element at position "+tostring(i)+" to be a pair");
 toHashTableWithCollisionHandler(v:Sequence,handler:Expr):Expr := (
@@ -289,29 +283,25 @@ copy(table:array(KeyValuePair)):array(KeyValuePair) := (
 			      newbucket))))));
 export copy(o:HashTable):HashTable := (
      lockit := o.Mutable && !o.beingInitialized;
-     i := 0;
-     if lockit then (
-          i = mutexIndex(o);
-          lock(hashTableMutexArray.i));
-     x := HashTable( copy(o.table), o.Class, o.parent, o.numEntries, o.hash, o.Mutable, false );
-     if lockit then unlock(hashTableMutexArray.i);
+     if lockit then lock(o.mutex);
+     x := HashTable( copy(o.table), o.Class, o.parent, o.numEntries, o.hash, o.Mutable, false, uninitializedSpinLock );
+     init(x.mutex);
+     if lockit then unlock(o.mutex);
      x);
 export copy(o:HashTable,newClass:HashTable,newParent:HashTable,newMutable:bool):HashTable := (
      lockit := o.Mutable && !o.beingInitialized;
-     i := 0;
-     if lockit then (
-          i = mutexIndex(o);
-          lock(hashTableMutexArray.i));
+     if lockit then lock(o.mutex);
      x := HashTable(
 	  if newMutable || o.Mutable then copy(o.table) else o.table,
 	  newClass,
-	  newParent, o.numEntries, 0, newMutable, false);
+	  newParent, o.numEntries, 0, newMutable, false, uninitializedSpinLock);
+     init(x.mutex);
      if newMutable then (
 	  if newClass != cacheTableClass 
 	  then x.hash = nextHash(); -- cache tables are mutable and have hash code 0
 	  )
      else x.hash = hash(x);
-     unlock(hashTableMutexArray.i);
+     if lockit then unlock(o.mutex);
      x);
 export copy(o:HashTable,newClass:HashTable,newMutable:bool):HashTable := copy(o,newClass,o.parent,newMutable);
 -----------------------------------------------------------------------------
@@ -716,7 +706,11 @@ export lookupfun(e:Expr):Expr := (
      else nullE);
 setupfun("lookup",lookupfun);	  
 
-export keys(o:HashTable):Expr := list(
+export keys(o:HashTable):Expr := (
+     -- This requires length and items.
+     -- Thus the hash table needs to not change, so lock it.
+     if !o.beingInitialized then lock(o.mutex);
+     l:= list(
      new Sequence len o.numEntries do
      foreach bucket in o.table do (
 	  p := bucket;
@@ -726,6 +720,8 @@ export keys(o:HashTable):Expr := list(
 	       )
 	  )
      );
+     if !o.beingInitialized then unlock(o.mutex);
+     l);
 export keys(o:Dictionary):Expr := Expr(
      list(
 	  new Sequence len o.symboltable.numEntries do

@@ -6,37 +6,35 @@ Node
   "programming with threads"
  Subnodes
   Thread
-  inThread
-  threadID
   "threadVariable"
   (isReady,Thread)
-  threadResult
-  cancelThread
+  taskResult
+  cancelTask
 Node
  Key
-  (cancelThread,Thread)
-  cancelThread
+  (cancelTask,Thread)
+  cancelTask
  Headline
   stop a thread
  Usage
-  cancelThread t
+  cancelTask t
  Inputs
   t:
  Consequences
   Item
    The thread {\tt t} is interrupted by setting a flag.  Eventually it will stop,
-   as can be detected with @ TO (isReady,Thread) @.  Then @ TO (threadResult,Thread) @
+   as can be detected with @ TO (isReady,Thread) @.  Then @ TO (taskResult,Thread) @
    can be used to retrieve the final value, which is always @ TO null @.
 Node
  Key
-  inThread
-  (inThread,Function)
-  (inThread,Function,Thing)
+  schedule
+  (schedule,Function)
+  (schedule,Function,Thing)
  Headline
   start a new thread
  Usage
-  inThread(f,x)
-  inThread f
+  schedule(f,x)
+  schedule f
  Inputs
   f:Function
   x:Thing
@@ -47,7 +45,7 @@ Node
   Text
    The computation proceeds in the background, in the new thread.  The status of the thread can be observed
    by printing {\tt t}.  When the computation is finished, as can be detected with @ TO (isReady,Thread) @,
-   the final value can be retrieved with @ TO (threadResult,Thread) @.
+   the final value can be retrieved with @ TO (taskResult,Thread) @.
    
    If @ TO "notify" @ is set to @ TO true @, then useful messages are printed when the thread changes state.
 Node
@@ -57,33 +55,17 @@ Node
   the class of all threads
 Node
  Key
-  (threadID,Thread)
-  threadID
- Headline
-  get the id of a thread
- Usage
-  threadID t
- Inputs
-  t:
- Outputs
-  :
-   the ID of the thread
- Description
-  Text
-   Each thread is uniquely identified by a small integer called its "id", and this function returns that.
-Node
- Key
-  (threadResult,Thread)
-  threadResult
+  (taskResult,Thread)
+  taskResult
  Headline
   retrieve the value returned by a thread
  Usage
-  threadResult t
+  taskResult t
  Inputs
   t:
  Outputs
   :
-   the value returned by the function provided to @ TO (inThread,Function) @ when the thread was started,
+   the value returned by the function provided to @ TO (schedule,Function) @ when the thread was started,
    provided it is ready (done), as determined by @ TO (isReady, Thread) @.
  Consequences
   Item
@@ -115,5 +97,5 @@ Node
    whether the thread {\tt t} has finished executing and a return value is available
  Description
   Text
-   The return value can be retrieved with @ TO (threadResult, Thread )@.
+   The return value can be retrieved with @ TO (taskResult, Thread )@.
 ///

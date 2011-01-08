@@ -7,6 +7,7 @@ include ../../include/config.Makefile
 include ../d/Makefile.files
 include @srcdir@/../e/Makefile.files
 include @srcdir@/../e/f4/Makefile.files
+include @srcdir@/../system/Makefile.files
 
 %.o : %.c
 %.o : %-tmp.cc
@@ -19,6 +20,7 @@ M2_OBJECTS := $(M2_OBJECTS:%=../d/%)
 M2_OBJECTS += $(patsubst %, ../d/%.o, $(M2_DNAMES))
 M2_OBJECTS += $(ENGINE_OFILES:%=../e/%)
 M2_OBJECTS += $(F4_OBJECT_FILES:%=../e/f4/%) 
+M2_OBJECTS += $(SYSTEM_OFILES:%=../system/%) 
 
 EXEFILE = @pre_bindir@/M2@EXE@
 
