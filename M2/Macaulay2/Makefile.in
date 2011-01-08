@@ -1,97 +1,35 @@
-# -*- makefile-gmake -*-
-
 # @configure_input@
-include ../../include/config.Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
-PACKAGES = @PACKAGES@
-
-# packages under development that should be checked but not installed:
-DEVEL = EllipticIntegrals
-
-RemakeAllDocumentation ?= false
-IgnoreExampleErrors ?= false
-CheckDocumentation ?= true
-Verbose ?= false
-RerunExamples ?= false
-debugLevel ?= 0
-errorDepth ?= 3
-
-ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
-	IgnoreExampleErrors => $(IgnoreExampleErrors), \
-	RerunExamples => $(RerunExamples), \
-	CheckDocumentation => $(CheckDocumentation), \
-	AbsoluteLinks => false, UserMode => false, Verbose => $(Verbose), \
-	InstallPrefix => \"@LOCALSTAGINGAREA@/\", \
-	SeparateExec => true, \
-	DebuggingMode => true
-
-# so the user can override arguments to installPackage:
-ifneq "$(IARGS)" ""
-ARGS := $(ARGS), $(IARGS)
+include ../include/config.Makefile
+all: initialize-in-subdirs @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/README @pre_docdir@/LAYOUT
+$(foreach d,d e,							\
+	$(eval initialize-in-$d:; $$(MAKE) -C $d initialize DEPENDS=no)	\
+	$(eval .PHONY initialize-in-subdirs:initialize-in-$d)		\
+	$(eval .PHONY: initialize-in-subdirs))
+SUBDIRS = compat util probe regex c
+ifeq "@DUMPDATA@" "yes"
+SUBDIRS += dumpdata
 endif
+SUBDIRS += e-includes d system e bin packages/Macaulay2Doc/basictests m2 emacs man packages html-check-links tests
+SUBDIRS += book
+SUBDIRS += packages/Macaulay2Doc/test
 
-STOP = --stop --silent
-$(foreach i,\
-	$(sort $(PACKAGES) $(DEVEL)),\
-	$(eval check::check-$i)\
-	$(eval check-$i:; \
-		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
-		fi ))
-info-dir: @pre_infodir@ @pre_infodir@/dir
-@pre_infodir@:; $(MKDIR_P) $@
-@pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
-define bld
-all install-$1: all-$1
-install: install-$1
-clean-packages: clean-package-$1
-clean-package-$1:
-	rm -rf @pre_libm2dir@/$1
-	rm -rf @pre_infodir@/$1.info @pre_infodir@/$1.info.errors
-	rm -rf @pre_packagesdir@/$1
-	rm -rf @pre_docdir@/$1
-all-$1: info-dir @pre_libm2dir@/$1/.installed
-unmark-packages: unmark-$1
-unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
-@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*)
-	: installing package $1
-	$(MKDIR_P) $1-temporary
-	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
-	cd $1-temporary && @pre_bindir@/M2@EXE@ $(M2DIRS) \
-	    -q $(STOP) \
-	    -e errorDepth=$(errorDepth) \
-	    -e debugLevel=$(debugLevel) \
-	    $(EARGS) \
-	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
-	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
-	ls -l $1-temporary
-	rm -rf $1-temporary
-	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
-	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
-check-info::@pre_infodir@/$1.info.errors
-@pre_infodir@/$1.info.errors: @pre_infodir@/$1.info
-	emacs --batch --eval '(progn (find-file "$$<") (Info-validate) (switch-to-buffer " *problems in info file*") (write-file "$$@") (kill-emacs))'
-	cat $$@
-	@ [ ! -s $$@ ] || (echo error: stopping, info validation errors (above) >&2; false)
+define do-in-subdirs
+$(foreach d,$(SUBDIRS),
+	$(eval .PHONY: $1-in-subdirs)
+	$(eval .PHONY $1 $1-in-subdirs:$1-in-$d)
+	$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
 endef
-$(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
-
-# the Info-validate function doesn't work well enough to be useful:
-# check::check-info
-
-clean::; rm -rf tmp
-clean::; $(MAKE) -C ComputationsBook $@
-big-check:
-check::; $(MAKE) -C ComputationsBook check
-Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
-distclean:clean
-	$(MAKE) -C ComputationsBook $@
-	rm -f Makefile
-
-## here is the list of other files to install along with Macaulay2
-@pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+$(foreach t,all check,				\
+	$(eval $(call do-in-subdirs,$t)))
+$(foreach t,clean distclean,				\
+	$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
+@pre_docdir@:; $(MKDIR_P) "$@"
+@pre_docdir@/% : % | @pre_docdir@ ; @INSTALL_DATA@ $< "$@"
+Makefile: Makefile.in; cd ..; ./config.status Macaulay2/Makefile
+clean:; rm -f gmon.out
+distclean:; rm -f Makefile
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakeAllDocumentation=false IgnoreExampleErrors=false Verbose=false debugLevel=0"
+# compile-command: "make -C $M2BUILDDIR/Macaulay2 "
 # End:
-
