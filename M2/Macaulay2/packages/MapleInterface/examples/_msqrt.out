@@ -1,8 +1,0 @@
--- -*- M2-comint -*- {* hash: 1009217792 *}
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
-
-i1 : msqrt(3,12347)
-
-o1 = 10378
-
-i2 : 

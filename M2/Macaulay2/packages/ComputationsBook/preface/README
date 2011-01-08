@@ -1,7 +1,0 @@
-The file chapter.m2 in this directory contains the original code from the
-chapter, whereas the file test.m2 contains code slightly updated to run
-properly with the latest version of Macaulay 2.
-
-The file chapter.out.expected contains the original output from the program,
-and the file test.out.expected contains the current output from the program,
-used to verify that the program continues to give the same output.
