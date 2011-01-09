@@ -724,7 +724,7 @@ char *name;
 int system_acceptBlocking(int so) {
 #if HAVE_SOCKET
   struct sockaddr_in addr;
-  unsigned int addrlen = sizeof addr;
+  size_t addrlen = sizeof addr;
   fcntl(so,F_SETFL,0);
   return accept(so,(struct sockaddr*)&addr,&addrlen);
 #else
