@@ -381,19 +381,34 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
      return 0;
      }
 
-#ifdef HAVE_CLOCK_GETTIME
+#if defined(HAVE_CLOCK_GETTIME) && ( defined(CLOCK_THREAD_CPUTIME_ID) || defined(CLOCK_THREAD_CPUTIME) || defined(CLOCK_PROCESS_CPUTIME_ID) || defined(CLOCK_PROCESS_CPUTIME) )
 
 	#ifdef HAVE_SYS_TYPES_H
 	#include <sys/types.h>
 	#endif
 	#include <stdlib.h>
+	#ifdef HAVE_SYSCALL_H
+	#include <syscall.h>
+	#endif
 	#include <time.h>
 	#include <stdio.h>
 	#include <unistd.h> // for sysconf
 	static __thread double startTime;
 	double system_cpuTime(void) {
 	     struct timespec t;
-	     int err = clock_gettime(CLOCK_THREAD_CPUTIME_ID,&t);
+	     int err = clock_gettime(
+		  #if defined(CLOCK_THREAD_CPUTIME_ID)
+		  CLOCK_THREAD_CPUTIME_ID
+		  #elif defined(CLOCK_THREAD_CPUTIME)
+		  CLOCK_THREAD_CPUTIME
+		  #elif defined(CLOCK_PROCESS_CPUTIME_ID)
+		  CLOCK_PROCESS_CPUTIME_ID
+		  #elif defined(CLOCK_PROCESS_CPUTIME)
+		  CLOCK_PROCESS_CPUTIME
+		  #else
+		  #error "clock_gettime: no suitable argument for getting CPU time"
+		  #endif
+		  ,&t);
 	     if (err) return 0;		/* silent about error */
 	     double u = t.tv_sec + t.tv_nsec * 1e-9;
 	     return u - startTime;
