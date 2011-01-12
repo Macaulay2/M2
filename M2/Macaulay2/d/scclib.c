@@ -2,11 +2,13 @@
 
 #include <dirent.h>
 
-#include "tokens-exports.h"
+#include "expr-exports.h"
 #include "types.h"
 #include "M2mem.h"
 #include "../c/compat.c"
 #include "debug.h"
+
+#include "../system/supervisorinterface.h"
 
 int reading_from_readline = FALSE;
 
@@ -247,7 +249,7 @@ M2_arrayint system_waitNoHang(M2_arrayint pids)
 	  z->len = n;
 	  for (i=0; i<n; i++) {
 	       int ret = wait4(pid[i],&status[i],WNOHANG,NULL);
-	       z->array[i] = ret == ERROR ? -1 : !WIFEXITED(status[i]) ? -2 : WIFSIGNALED(status[i]) ? 1000 + WTERMSIG(status[i]) : WEXITSTATUS(status[i]);
+	       z->array[i] = ret == ERROR ? -1 : WIFEXITED(status[i]) ? status[i] >> 8 : -2;
 	  }
 	  return z;
      }
@@ -365,7 +367,7 @@ static char *M2_completion_generator(const char *text, int state) {
 #endif
     if (v != NULL) free(v);
     s = M2_tostring(text);
-    ret = tokens_completions(s);
+    ret = expr_completions(s);
     GC_FREE(s);
     v = M2_tocharstarstarmalloc(ret); /* readline will use free() to free these strings */
     GC_FREE(ret);
@@ -722,9 +724,9 @@ char *name;
 int system_acceptBlocking(int so) {
 #if HAVE_SOCKET
   struct sockaddr_in addr;
-  unsigned int addrlen = sizeof addr;
+  socklen_t addrlen = sizeof addr;
   fcntl(so,F_SETFL,0);
-  return accept(so,(struct sockaddr*)&addr,(void *)&addrlen);
+  return accept(so,(struct sockaddr*)&addr,&addrlen);
 #else
   return ERROR;
 #endif
@@ -733,10 +735,10 @@ int system_acceptBlocking(int so) {
 int system_acceptNonblocking(int so) {
 #if HAVE_SOCKET
   struct sockaddr_in addr;
-  unsigned int addrlen = sizeof addr;
+  socklen_t addrlen = sizeof addr;
   int sd;
   fcntl(so,F_SETFL,O_NONBLOCK);
-  sd = accept(so,(struct sockaddr*)&addr,(void *)&addrlen);
+  sd = accept(so,(struct sockaddr*)&addr,&addrlen);
   return sd;
 #else
   return ERROR;
@@ -874,7 +876,7 @@ char const *system_strerror(void) {
 	  errno = 0;
 	  return msg;
      }
-     if (test_Field(interrupts_interruptedFlag)) return "interrupted";
+     if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return "interrupted";
      return "no system error indication found";
 }
 
@@ -882,6 +884,13 @@ M2_string system_syserrmsg()
 {
      return M2_tostring(system_strerror());
 }
+
+int system_run(M2_string command){
+     char *c = M2_tocharstar(command);
+     int r = system(c);
+     GC_FREE(c);
+     return r;
+     }
 
 struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
 

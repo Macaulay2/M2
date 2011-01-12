@@ -104,6 +104,7 @@ Macaulay2/packages/Makefile
 Macaulay2/probe/Makefile
 Macaulay2/regex/Makefile
 Macaulay2/srcdir
+Macaulay2/system/Makefile
 Macaulay2/packages/Macaulay2Doc/test/Makefile
 Macaulay2/packages/Macaulay2Doc/test/Makefile.test
 Macaulay2/packages/Macaulay2Doc/test/engine/Makefile

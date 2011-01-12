@@ -1,5 +1,3 @@
-# -*- makefile-gmake -*-
-
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@

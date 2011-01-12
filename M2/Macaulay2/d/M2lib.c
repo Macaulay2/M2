@@ -41,6 +41,9 @@
 extern long personality(unsigned long persona);
 #endif
 
+#include "../system/supervisorinterface.h"
+
+
 static void ignore(int);
 
 static void putstderr(const char *m) {
@@ -80,39 +83,6 @@ static void unblock(int sig) {
   sigprocmask(SIG_UNBLOCK,&s,NULL);
 }
 
-int system_run(M2_string command){
-     /* we used to call "system()", but under cygwin interrupts in the child are blocked */
-     char *c = alloca(command->len + 1);
-     strncpy(c,command->array,command->len);
-     c[command->len] = 0;
-     int pid = fork();
-     if (pid == ERROR) return -1;
-     if (pid == 0) {
-	  static char arg0[10], arg1[10];
-	  strcpy(arg0,"/bin/sh"); /* only for unix-like systems */
-	  strcpy(arg1,"-c");
-	  char *args[4];
-	  args[0] = arg0;
-	  args[1] = arg1;
-	  args[2] = c;
-	  args[3] = 0;
-	  execv(args[0],args);
-	  exit(255);		/* /bin/sh not found */
-	  }
-     else {
-	  while (TRUE) {
-	       int status = 0;
-	       if (waitpid(pid,&status,0) == ERROR) {
-		    if (errno == EINTR) continue;
-		    return -1;
-		    }
-	       if (WIFSIGNALED(status)) return 1000 + WTERMSIG(status);
-	       if (WIFEXITED(status)) return WEXITSTATUS(status);
-	       /* loop if the process was stopped */
-	       }
-	  }
-     }
-
 static void alarm_handler(int sig) {
      interrupts_setAlarmedFlag();
      oursignal(SIGALRM,alarm_handler);
@@ -151,13 +121,7 @@ void segv_handler2(int sig) {
 void stack_trace() {
      void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
      unblock(SIGSEGV);
-     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)
-	  #ifdef HAVE_SYSCALL_H
-	     syscall(SYS_getpid)
-	  #else
-	     getpid()
-	  #endif
-	  );
+     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)getpid());
      if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
 #	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
 #	  define i 0
@@ -327,7 +291,7 @@ static void interrupt_handler(int sig) {
 	  r = write(STDERR,"\n",1);
 	  }
      #endif
-     if (test_Field(interrupts_interruptedFlag) || interrupts_interruptPending) {
+     if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)) || THREADLOCAL(interrupts_interruptPending,bool)) {
 	  if (isatty(STDIN) && isatty(STDOUT)) 
 	       while (TRUE) {
 		    char buf[10];
@@ -383,9 +347,9 @@ static void interrupt_handler(int sig) {
 	       }
 	  }
      else {
-	  if (interrupts_interruptShield) interrupts_interruptPending = TRUE;
+       if (THREADLOCAL(interrupts_interruptShield,bool)) THREADLOCAL(interrupts_interruptPending,bool) = TRUE;
 	  else {
-	       if (tokens_stopIfError) {
+               if (THREADLOCAL(tokens_stopIfError,bool)) {
 		    int interruptExit = 2;	/* see also interp.d */
 		    fprintf(stderr,"interrupted, stopping\n");
 		    exit(interruptExit);
@@ -539,14 +503,69 @@ static void call_shared_library() {
 #include <python2.5/Python.h>
 #endif
 
+void* testFunc(void* q )
+{
+  printf("testfunc %lu\n",(unsigned long)q);
+  return NULL;
+}
+
+struct saveargs
+{
+  int argc;
+  char** argv;
+  char** envp;
+  int volatile envc;
+};
+
+static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
+
+static char dummy;
+static struct saveargs* vargs;
+void* interpFunc(void* vargs2)
+{
+  struct saveargs* args = (struct saveargs*) vargs;
+  char** saveenvp = args->envp;
+  char** saveargv = args->argv;
+  int argc = args->argc;
+  int volatile envc = args->envc;
+     reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
+     init_readline_variables();
+     arginits(argc,(const char **)saveargv);
+
+     //     void M2__prepare();
+     ///     M2__prepare();
+
+     if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
+     
+     M2_envp = M2_tostrings(envc,(char **)saveenvp);
+     M2_argv = M2_tostrings(argc,(char **)saveargv);
+     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
+     interp_setupargv();
+     sigsetjmp(abort_jump,TRUE);
+     abort_jump_set = TRUE;
+
+#if __GNUC__
+     signal(SIGSEGV, segv_handler);
+#endif
+
+     interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
+
+     clean_up();
+#if 0
+     fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
+	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
+#endif
+     exit(0);
+     return NULL;
+}
+
 /* these get put into startup.c by Makefile.in */
 
 int Macaulay2_main(argc,argv)
 int argc; 
 char **argv;
 {
-     char dummy;
-     int returncode = 0;
+
      int volatile envc = 0;
 #if DUMPDATA
      static int old_collections = 0;
@@ -558,7 +577,6 @@ char **argv;
 #define saveargv argv
 #endif
      void main_inits();
-     static void *reserve = NULL;
 
      char **x = our_environ; 
      while (*x) envc++, x++;
@@ -677,37 +695,19 @@ char **argv;
 
      signal(SIGPIPE,SIG_IGN);
      system_handleInterruptsSetup(TRUE);
-     init_readline_variables();
-     arginits(argc,(const char **)saveargv);
-
-     void M2__prepare();
-     M2__prepare();
-
-     if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      
-     M2_envp = M2_tostrings(envc,(char **)saveenvp);
-     M2_argv = M2_tostrings(argc,(char **)saveargv);
-     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
-#if 0
-     /* not needed, now that the *__prepare functions are all run as constructors */
-     interp__prepare();		/* run all the startup code in the *.d files */
-#endif
-     interp_setupargv();
-     if (reserve == NULL) {
-	  reserve = GC_MALLOC_ATOMIC(102400);
-	  }
-     sigsetjmp(abort_jump,TRUE);
-     abort_jump_set = TRUE;
+     vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
+     vargs->argv=saveargv;
+     vargs->argc=argc;
+     vargs->envp=saveenvp;
+     vargs->envc = envc;
 
-#if __GNUC__
-     signal(SIGSEGV, segv_handler);
-#endif
 
-     interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
-
-     clean_up();
-     exit(returncode);
-     return returncode;
+     initializeThreadSupervisor(1);
+     struct ThreadTask* interpTask = createThreadTask("Interp",interpFunc,vargs,0,0,0);
+     pushTask(interpTask);
+     waitOnTask(interpTask);
+     return 0;
      }
 
 void clean_up(void) {

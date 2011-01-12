@@ -1,0 +1,25 @@
+# -*- Makefile -*-
+
+##################
+## Source code ###
+##################
+C_FILES = 
+CC_FILES = m2file supervisor tests
+D_FILES = 
+DD_FILES = 
+
+
+FILES := $(CC_FILES) $(C_FILES)
+LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
+SYSTEM_CCFILES := $(addsuffix .cpp,$(CC_FILES))
+SYSTEM_CFILES := $(addsuffix .c,$(C_FILES))
+SYSTEM_DDFILES := $(addsuffix .dd,$(DD_FILES))
+SYSTEM_DFILES := $(addsuffix .d,$(D_FILES))
+SYSTEM_SRCFILES := $(SYSTEM_CCFILES) $(SYSTEM_CFILES) $(SYSTEM_DDFILES) $(SYSTEM_DFILES)
+SYSTEM_OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES) $(D_FILES) $(DD_FILES))
+
+ifeq "$(SHARED)" "yes"
+SYSTEM_OBJFILES := $(LOFILES)
+else
+SYSTEM_OBJFILES := $(SYSTEM_OFILES)
+endif

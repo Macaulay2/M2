@@ -66,6 +66,7 @@ export index(s:string,offset:int,c:char,d:char):int := (
      while i+1 < length(s) do if c == s.i && d==s.(i+1) then return i else i=i+1;
      -1);     
 
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d strings.o "
 -- End:

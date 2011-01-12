@@ -1,6 +1,7 @@
 // Copyright 2004 Michael E. Stillman
 
 #include "fractionfreeLU.hpp"
+#include "../system/supervisorinterface.h"
 
 ////////////////////////////////////////
 // Fraction free gaussian elimination //
@@ -85,7 +86,7 @@ bool FF_LUComputation::calc()
   int c1;
   while (choose_pivot_column(0,--pivot_col,c1))
     {
-      if (test_Field(interrupts_interruptedFlag))
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 	return false;
 
       if (pivot_col != c1)

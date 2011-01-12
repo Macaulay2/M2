@@ -1,15 +1,16 @@
 use arithmetic;
 declarations "
   #include <atomic_ops.h>
+  #ifndef atomic_field_decl
+  #define atomic_field_decl
   struct atomic_field {
        AO_t field;
-       const char dummy; /* to prevent assignment */
        };
 
-  #define load_Field(x) AO_load(&x.field)
+  #define load_Field(x) AO_load(&(x).field)
   #define test_Field(x) (load_Field(x) != 0)
-  #define store_Field(x,val) AO_store(&x.field,val)
-
+  #define store_Field(x,val) AO_store(&(x).field,val)
+  #endif
   ";
 export LockValue := atomicType "AO_TS_VAL_t";
 export LockField := atomicType "AO_TS_t";
@@ -35,6 +36,7 @@ export newLockField() ::= Ccode(LockField,"AO_TS_INITIALIZER");
 export acquire(t:LockField) ::= while testAndSet(t) == testSet() do nothing;
 export release(t:LockField) ::= Ccode(void,"AO_CLEAR(&",t,")");
 export increment(x:atomicInt) ::= Ccode(atomicInt,"AO_fetch_and_add1(&(",x,"))");
+export compilerBarrier() ::= Ccode(void,"AO_compiler_barrier()");
 
 -- here is the way to declare one of these:
 -- header "struct atomic_field x;";

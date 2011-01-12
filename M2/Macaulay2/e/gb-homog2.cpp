@@ -19,6 +19,7 @@
 #include "hilb.hpp"
 #include "text-io.hpp"
 #include "matrix-con.hpp"
+#include "../system/supervisorinterface.h"
 
 //////////////////////////////
 // Creation, initialization //
@@ -789,7 +790,7 @@ void GB_comp::start_computation()
       if (is_done != COMP_COMPUTING) break;
       is_done = computation_is_complete();
       if (is_done != COMP_COMPUTING) break;
-      if (test_Field(interrupts_interruptedFlag)) 
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;

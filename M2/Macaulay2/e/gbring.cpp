@@ -610,9 +610,9 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
   gbvector head;
   gbvector *result = &head;
   while (1)
-    switch (gbvector_compare(F, f, g))
-      {
-      case LT:
+    {
+      int compare_result = gbvector_compare(F, f, g);
+      if(compare_result==LT) {
 	result->next = g;
 	result = result->next;
 	g = g->next;
@@ -622,8 +622,8 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
 	    f = head.next;
 	    return;
 	  }
-	break;
-      case GT:
+      }
+      else if(compare_result==GT) {
 	result->next = f;
 	result = result->next;
 	f = f->next;
@@ -634,8 +634,8 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
 	    g = NULL;
 	    return;
 	  }
-	break;
-      case EQ:
+      }
+      else {
 	gbvector *tmf = f;
 	gbvector *tmg = g;
 	f = f->next;
@@ -664,8 +664,8 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
 	    g = NULL;
 	    return;
 	  }
-	break;
       }
+    }
 }
 
 void GBRing::gbvector_add_to(const FreeModule *F,

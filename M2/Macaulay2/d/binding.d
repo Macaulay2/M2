@@ -5,6 +5,7 @@ use lex;
 
 -----------------------------------------------------------------------------
 -- first, the global symbol table and functions for making symbols
+-- Thread safe because always called from enlarge and thus never has readers while appending
 append(buckets:array(SymbolList),word:Word, entry:Symbol):void := (
      h := word.hash & (length(buckets)-1);
      when buckets.h
@@ -16,6 +17,8 @@ append(buckets:array(SymbolList),word:Word, entry:Symbol):void := (
 	       is null do (
 		    e.next = SymbolListCell(word,entry,NULL);
 		    break))));
+
+--Thread safe because always called from inside lock
 enlarge(table:SymbolHashTable):void := (
      newbuckets := new array(SymbolList) len 2*length(table.buckets) do provide NULL;
      foreach e in table.buckets do (
@@ -32,22 +35,33 @@ enlarge(table:SymbolHashTable):void := (
      );
 
 -- warning: these routines have similar code
+-- Thread safe because it replaces bucket with new bucket so no double counting
 export insert(entry:Symbol,table:SymbolHashTable):Symbol := (
+     lock(table.mutex);
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := entry.word.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(entry.word,entry,table.buckets.h);
+     compilerBarrier();
+     unlock(table.mutex);
      entry);
+
+-- Thread safe because it replaces bucket with new bucket so no double counting
 export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- warning -- unsafe -- check that the dictionary of the symbol is the same as this dictionary
+     lock(table.mutex);
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := newname.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(newname,entry,table.buckets.h);
+     unlock(table.mutex);
+     compilerBarrier();
      entry);
 
-HadError := false;
+--Error flag for parsing; should be thread local because may have multiple threads parsing at once
+threadLocal HadError := false;
+
 
 export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
      while dictionary.Protected do (
@@ -132,8 +146,10 @@ makeKeyword(w:Word):SymbolClosure := (
 export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
 makeKeyword(s:string):SymbolClosure := makeKeyword(makeUniqueWord(s,parseWORD));
 -----------------------------------------------------------------------------
+--Counter used for initializing precedence of different things in the parser
 prec := 0;
-bump():void := prec = prec + 2;
+--Function used to increment precedence.  +2 so that subtracting one will give a precedence level above the previous but still less than the current.
+bumpPrecedence():void := prec = prec + 2;
 
 -- helper functions for setting up words with various methods for parsing them
 parseWORD.funs                 = parsefuns(defaultunary, defaultbinary);
@@ -188,60 +204,60 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:
 --     	    "a unary and binary operator"
 --     	    "a unary postfix operator"
 
-bump();
+bumpPrecedence();
      wordEOF = nleftword("{*end of file*}");
      makeKeyword(wordEOF);
-bump();
+bumpPrecedence();
      wordEOC = nleftword("{*end of cell*}");
      makeKeyword(wordEOC);
-bump();
+bumpPrecedence();
      precRightParen := prec;
-bump();
+bumpPrecedence();
      export SemicolonW := nright(";");
      export SemicolonS := makeKeyword(SemicolonW);
      NewlineW = nleftword("{*newline*}");
-bump();
+bumpPrecedence();
      export CommaW := nunarybinaryleft(","); export commaS := makeKeyword(CommaW);
-bump();
+bumpPrecedence();
      wide := prec;
      elseW = token("else"); makeKeyword(elseW);
      thenW = token("then"); makeKeyword(thenW);
      doW = token("do"); makeKeyword(doW);
      listW = token("list"); makeKeyword(listW);
-bump();
+bumpPrecedence();
      export ColonEqualW := binaryright(":="); export ColonEqualS := makeKeyword(ColonEqualW);
      export EqualW := binaryright("="); export EqualS := makeKeyword(EqualW);
      export LeftArrowW := binaryright("<-"); export LeftArrowS := makeKeyword(LeftArrowW);
      export RightArrowW := binaryright("->",arrowop); export RightArrowS := makeKeyword(RightArrowW);
      export DoubleArrowS := makeKeyword(binaryright("=>"));
      export GreaterGreaterS := makeKeyword(binaryright(">>"));
-bump();
+bumpPrecedence();
      whenW = token("when"); makeKeyword(whenW);
      ofW = token("of"); makeKeyword(ofW);
      inW = token("in"); makeKeyword(inW);
      fromW = token("from"); makeKeyword(fromW);
      toW = token("to"); makeKeyword(toW);
      narrow := prec;
-bump();
+bumpPrecedence();
      export LessLessS := makeKeyword(unarybinaryleft("<<"));	    -- also binary
-bump();
+bumpPrecedence();
      export DeductionS := makeKeyword(unarybinaryright("|-"));	    -- also binary
-bump();
+bumpPrecedence();
      export LongLongDoubleRightArrowS := makeKeyword(binaryright("===>"));
      export LongLongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==="));
-bump();
+bumpPrecedence();
      export LongBiDoubleArrowS := makeKeyword(binaryright("<==>"));
-bump();
+bumpPrecedence();
      export LongDoubleRightArrowS := makeKeyword(binaryright("==>"));
      export LongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==")); -- also binary
-bump();
+bumpPrecedence();
      export orS := makeKeyword(binaryrightword("or"));
-bump();
+bumpPrecedence();
      export andS := makeKeyword(binaryrightword("and"));
-bump();
+bumpPrecedence();
      export notS := makeKeyword(unaryword("not"));
 -- binary predicates on terms:
-bump();
+bumpPrecedence();
      export incomparableS := makeProtectedSymbolClosure("incomparable");
      export LessS := makeKeyword(unarybinaryright("<"));
      export GreaterS := makeKeyword(unarybinaryright(">"));
@@ -253,38 +269,38 @@ bump();
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
 -- operations on terms that yield terms:
-bump();
+bumpPrecedence();
      export BarBarS := makeKeyword(binaryleft("||"));
-bump();
+bumpPrecedence();
      export ColonS := makeKeyword(binaryright(":"));
-bump();
+bumpPrecedence();
      export BarS := makeKeyword(binaryleft("|"));
-bump();
+bumpPrecedence();
      export HatHatS := makeKeyword(binaryleft("^^"));
-bump();
+bumpPrecedence();
      export AmpersandS := makeKeyword(binaryleft("&"));
-bump();
+bumpPrecedence();
      export DotDotS := makeKeyword(binaryleft(".."));
      export DotDotLessS := makeKeyword(binaryleft("..<"));
-bump();
+bumpPrecedence();
      export MinusS := makeKeyword(unarybinaryleft("-"));	    -- also binary
      export PlusS := makeKeyword(unarybinaryleft("+"));	    -- also binary
      export PlusPlusS := makeKeyword(binaryleft("++"));
-bump();
+bumpPrecedence();
      export StarStarS := makeKeyword(binaryleft("**"));
-bump();
+bumpPrecedence();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
-bump();
+bumpPrecedence();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
      export StarS := makeKeyword(unarybinaryleft("*"));	    -- also binary
      export DivideS := makeKeyword(binaryleft("/"));
      export LeftDivideS := makeKeyword(binaryright("\\"));
      export PercentS := makeKeyword(binaryleft("%"));
      export SlashSlashS := makeKeyword(binaryleft("//"));
-bump();
+bumpPrecedence();
      export AtS := makeKeyword(binaryright("@"));
-bump();
+bumpPrecedence();
      precSpace = prec;
      export AdjacentS:=makeKeyword(binaryright("SPACE"));
      export leftparen   := parens("(",")",precSpace, precRightParen, precRightParen);
@@ -305,15 +321,15 @@ bump();
      special("if",unaryif,precSpace,wide);
      special("try",unarytry,precSpace,wide);
      special("catch",unarycatch,precSpace,wide);
-bump();
+bumpPrecedence();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
-bump();
+bumpPrecedence();
      export AtAtS := makeKeyword(binaryleft("@@"));
-bump();
+bumpPrecedence();
      export TildeS := makeKeyword(postfix("~"));
      export UnderscoreStarS := makeKeyword(postfix("_*"));
      export PowerStarS := makeKeyword(postfix("^*"));
-bump();
+bumpPrecedence();
      export PowerS := makeKeyword(binaryleft("^"));
      export PowerStarStarS := makeKeyword(binaryleft("^**"));
      export UnderscoreS := makeKeyword(binaryleft("_"));
@@ -321,9 +337,10 @@ bump();
      export SharpQuestionS := makeKeyword(binaryleft("#?"));
      export DotS := makeKeyword(binaryleft("."));
      export DotQuestionS := makeKeyword(binaryleft(".?"));
-bump();
+bumpPrecedence();
      export ExclamationS := makeKeyword(postfix("!"));
-bump();
+bumpPrecedence();
+     --why are these using precSpace and not prec?
      special("symbol",unarysymbol,precSpace,prec);
      special("global",unaryglobal,precSpace,prec);
      special("threadVariable",unarythread,precSpace,prec);
@@ -377,7 +394,8 @@ makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
 	  makeSymbol(token);)
      else makeErrorTree(e,"expected single identifier"));
 -----------------------------------------------------------------------------
-lookupCountIncrement := 1;
+--No idea what this does but it should be thread local
+threadLocal lookupCountIncrement := 1;
 export lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
      if table == dummySymbolHashTable then error("dummy symbol table used");
      entryList := table.buckets.(

@@ -8,6 +8,8 @@ extern bool noline;
 extern bool arraychks;
 extern bool casechks;
 extern bool nomacros;
+extern bool compilerThreadLocal;
+extern bool pthreadThreadLocal;
 extern char *getmem(unsigned);
 extern char *strnperm(const char *, unsigned);
 extern char *strperm(const char *);

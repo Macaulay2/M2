@@ -4,7 +4,7 @@
 #include "hilb.hpp"
 #include "text-io.hpp"
 #include "matrix-con.hpp"
-
+#include "../system/supervisorinterface.h"
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
 
 gb_emitter::gb_emitter(const Matrix *m)
@@ -38,7 +38,7 @@ enum ComputationStatusCode gb_emitter::calc_gb(int degree)
     }
   for (;;)
     {
-      if (test_Field(interrupts_interruptedFlag))
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
 	return COMP_INTERRUPTED;
       if (n_i >= n_gens) return COMP_DONE;
       if (g != NULL)

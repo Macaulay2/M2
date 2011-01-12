@@ -6,6 +6,7 @@
 #include "f4.hpp"
 #include "monsort.hpp"
 #include "../freemod.hpp"
+#include "../../system/supervisorinterface.h"
 
 F4GB::F4GB(const Gausser *KK0,
 	   F4Mem *Mem0,
@@ -857,7 +858,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
   for (;;)
     {
-      if (test_Field(interrupts_interruptedFlag)) 
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) 
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;

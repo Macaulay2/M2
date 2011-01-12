@@ -14,9 +14,6 @@ declarations "
     #define _GNU_SOURCE
     #endif
     #include <unistd.h>
-    #ifdef HAVE_SYSCALL_H
-      #include <sys/syscall.h>
-    #endif
     #include <math.h>
 ";
 
@@ -27,8 +24,7 @@ export dup2(fd:int,fd2:int) ::= Ccode(int, "dup2(", fd, ",", fd2, ")" );
 export pow(x:double,y:double) ::= Ccode(double, "pow(", x, ",", y, ")" );
 export abort() ::= Ccode(exits,"abort()");
 export sleep(t:int):int := Ccode(int,"sleep(t)");
--- export getpid():int := Ccode(int, "syscall(SYS_getpid)");	-- do it this way because glibc caches the result in memory, and that can interfere with dumpdata
-export getpid():int := Ccode(int, "getpid()");
+export getpid():int := Ccode(int, "getpid()");	-- do it this way because glibc caches the result in memory, and that can interfere with dumpdata
 export getpgrp():int := Ccode(int, "getpgrp()");
 export setpgid(pid:int,pgid:int):int := Ccode(int, "setpgid(", pid, ",", pgid,")"); 
 export exit(x:int):exits := Ccode( exits, "

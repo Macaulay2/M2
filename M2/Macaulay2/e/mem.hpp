@@ -4,8 +4,10 @@
 
 #include "style.hpp"
 #include "newdelete.hpp"
+#include "../system/mutex.h"
 #include <strings.h>
 
+//2*2^NDOUBLES = Largest stash size.  
 const int NDOUBLES = 25;
 //const int slab_size = 2040;
 const int slab_size = 2032;
@@ -56,13 +58,20 @@ private:
 
   const char *name;
   size_t element_size;		// In bytes
-  int n_per_slab;		// If 0, elements are new'ed directly.
+  //n_per_slab provides the number of elements of element_size in each slab.  If 0, elements are new'ed directly.
+  int n_per_slab;
 
-  slab *slabs;			// This will be 0 if n_per_slab is 0.
-
-  void *free_list;		// Free list for this stash.
-				// Currently: if n_per_slab is 0, then
-				// elements are 'delete'd directly.
+  //List of slabs 
+  //Uses slab::next to indicate next element in list
+  // This will be 0 if n_per_slab is 0.
+  slab *slabs;			
+ 
+  //Free list for this stash.
+  //Currently: if n_per_slab is 0, then elements are deleted'd directly.
+  //Note that this essentially a list of the elements from various slabs.
+  //a pointer to the next element in the list is in the first sizeof(void*) bytes.
+  void *free_list;
+                                   
 
   // statistics
   size_t n_allocs;
@@ -70,18 +79,18 @@ private:
   size_t highwater;
   size_t n_frees;
 
-  static stash *stash_list;
-  static slab *slab_freelist;
-  static int num_slab_freelist();
-  static long n_new_slabs;
-
   // private routines
   void chop_slab();
+  
+  //spinlock for modifying member lists
+  spinLock list_spinlock;
 };
 
 inline void *stash::new_elem()
      // Allocate space for an object from this stash.
 {
+  return newarray_clear(char,element_size);
+  acquireSpinLock(&list_spinlock);
   n_allocs++;
   n_inuse++;
   if (n_inuse > highwater) highwater = n_inuse;
@@ -89,8 +98,9 @@ inline void *stash::new_elem()
     {
       if (n_per_slab == 0) 
 	{
-	  void *result = newarray(char,element_size);
+	  void *result = newarray_clear(char,element_size);
 	  //allocated_amount += element_size;
+	  releaseSpinLock(&list_spinlock);
 	  return result;
 	}
       chop_slab();
@@ -98,6 +108,7 @@ inline void *stash::new_elem()
   assert(free_list != NULL);	// chop_slab should not let this happen.
   void *result = free_list;
   free_list = *(reinterpret_cast<void **>(free_list));
+  releaseSpinLock(&list_spinlock);
   return result;
 }
 
@@ -105,6 +116,8 @@ inline void stash::delete_elem(void *p)
      // Delete the object 'p', placing it on the free list for this stash.
 {
   if (p == NULL) return;
+  deletearray(p);
+  return;
   //  if (trace_bad_deletes)
   //    {
   //      for (void *q = free_list; q != NULL; q = *(reinterpret_cast<void **>(q)))
@@ -121,10 +134,17 @@ inline void stash::delete_elem(void *p)
       deletearray(q);
       return;
     }
+  acquireSpinLock(&list_spinlock);
   bzero(p,element_size);	// we clear this element because it's free, and it may contain words that look like pointers to gc
   *(reinterpret_cast<void **>(p)) = free_list;
   free_list = p;
+  releaseSpinLock(&list_spinlock);
 }
+
+/**
+The doubling stash essentially is a list of stashes of different sizes.
+The sizes start at 2 and run to 2*2^NDOUBLES
+**/
 
 class doubling_stash : public our_new_delete
 {
@@ -133,9 +153,11 @@ class doubling_stash : public our_new_delete
 public:
   doubling_stash();
   ~doubling_stash();
-
+  //Get a new element of given size.  Essentially this just dispatches to the correct stash
   void *new_elem(size_t size);
+  //Delete an element of a given size.  Essentially this just deletes an element 
   void delete_elem(void *p);
+  //return the allocated size.
   size_t allocated_size(void *p);
 private:
   stash *doubles[NDOUBLES];
