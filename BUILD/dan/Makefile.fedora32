@@ -25,7 +25,7 @@ default: install check
 
 # install these packages:
 #    yum -y install emacs gcc-c++ bison flex autoconf subversion patch ncurses-devel ncurses-devel gdbm-devel glpk-devel cddlib-devel libxml2-devel rpm-build kernel-devel
-#    yum -y install fakeroot pari-devel gc-devel ntl-devel lapack-devel gmp-devel mpfr-devel 
+#    yum -y install fakeroot pari-devel gc-devel ntl-devel lapack-devel gmp-devel mpfr-devel rpmdevtools
 #	don't bother installing factory-devel and libfac-devel, as they seem to have a factoring bug, so we should compile them ourselves
 
 # install this debugging info, if debugging:
