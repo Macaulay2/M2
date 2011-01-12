@@ -16,10 +16,33 @@ A-discriminants, etc)
 
 Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
 Potential Advisor: Mike Stillman
-Project assigned to: 
-Current status:
+Project assigned to: Daniel Giaimo <dgiaimo@gmail.com>
+Current status: just started (12 Jan 2011)
 
 =============================================================================
 
 Progress log:
 
+Comments to Dan Giaimo from Mike, 12 Jan 2011:
+
+	 I did write some engine code to help with construction of these matrices, but
+	 did not go further than that, but we should use that code when rewriting
+	 Laurent Buse's code.
+
+	 I see several things to do:
+
+	 0. make a package, design an interface that we will like to use
+
+	 1. get Laurent's code working on a modern M2, in this package
+	  (I think this includes Macaulay, and Bezoutian forms).
+
+	  2. we need examples for testing!
+
+	  3. possibly add in the sparse (toric) resultant.
+
+	  4. possibly add in the "other" forms for resultants (e.g. from
+	  Eisenbud-Schreyer, or GKZ discriminants book, see also recent papers of
+	  D'Andrea and co-authors).
+
+	  5. the determinant of a complex (possibly this should be its own package.  This
+	  would be very useful).
