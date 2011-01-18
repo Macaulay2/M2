@@ -22,7 +22,8 @@ include/configuration: config.status; ./config.status
 check:configured check-in-Macaulay2
 check:; : +++ all Macaulay2 tests succeeded +++
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
-distclean:clean distclean-in-subdirs
+distclean:clean distclean-in-subdirs distclean-this-dir
+distclean-this-dir:
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status config.args
 	rm -f include/M2/synchronization.h
 $(foreach t,all check clean distclean,					\
