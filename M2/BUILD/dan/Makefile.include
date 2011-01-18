@@ -30,7 +30,7 @@ default: check-links
 distclean: distclean1
 distclean1:
 	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
-	then $(MAKE) -C builds.tmp/$(DIRECTORY) distclean -o config.status ; \
+	then $(MAKE) -k -C builds.tmp/$(DIRECTORY) distclean -o config.status ; \
 	fi
 	-! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | grep . || echo "========== files left after make distclean ========" >&2
 	if [ -e builds.tmp/$(DIRECTORY)/. ] ; \
