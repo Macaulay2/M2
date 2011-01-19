@@ -4,47 +4,113 @@ DerLog = f -> image syz transpose (jacobian ideal f || matrix {{f}})
 isFree = f -> (
      DL := DerLog f;
      n := numgens ring f;  
-     all(n, i->fittingIdeal(i,DL)==0) and fittingIdeal(n,DL)==1
-     -- no need for fitting ideals, just check if there #mingens==n   
+     if isHomogeneous DL then -- no need for fitting ideals
+     rank source mingens DL == n
+     else all(n, i->fittingIdeal(i,DL)==0) and fittingIdeal(n,DL)==1
      )
 isSuffFree = f -> (
      --??? what is sufficiently free?
      DL := DerLog f;
      n := numgens ring f;  
-     #select(1, (minors(n,mingens DL))_*, m -> m != 0 and m%f == 0 and first degree m//f == 0) > 0
+     any((minors(n,mingens DL))_*, m-> m%f == 0 and (print (m//f); first degree (m//f)) == 0)
      )
 isFreeAtOrigin = f -> (
      DL := DerLog f;
      n := numgens ring f;  
-     #select(1, (minors(n,mingens DL))_*, m -> m != 0 and m%f == 0 and (m//f)%ideal gens ring f != 0) > 0
+     any((minors(n,mingens DL))_*, m -> m%f == 0 and (m//f)%ideal gens ring f != 0)
      )
+path = {".."}|path
 needsPackage "Dmodules"
-Ann1 = f -> (
+
+diffRatFun = method()
+diffRatFun (List, RingElement) := RingElement => (m,f) -> (
+     if isPolynomialRing (Q:=ring f) then diff(Q_m,f)
+     else if isField Q and isPolynomialRing (R:=last Q.baseRings) then (
+	  assert isPolynomialRing R;    
+	  a := position(m,i->i>0);
+	  if a === null then f
+	  else (
+	       g := numerator f;
+	       h := denominator f;
+	       diffRatFun(replace(a,m#a-1,m), (diff(R_a,g)*h-g*diff(R_a,h))/h^2) 
+	       )	  
+	  )
+     else error "polynomial or rational function function expected"   
+     )
+
+kOrderAnnF1 = method()
+kOrderAnnF1(ZZ,RingElement) := Ideal => (k,f) -> (
      R := ring f;
      n := numgens R;
+     d'indices := flatten({{toList(n:0)}} | apply(k, d->compositions (n,d+1)));
+     M := matrix {apply(d'indices, c->sub(f^(k+1)*diffRatFun(c,1/f),R))};
+     syzygies := entries transpose syz M;     
      D := makeWA R;
-     f = sub(f,D);
-     DL := DerLog f;
-     prune ideal apply(entries transpose gens DL, a->(
-	       delta := sum(n, i->a#i*D_(n+i));
-	       delta + (delta*f - f*delta)//f -- delta + delta(f)/f 
-	       ))
+     zeros := toList(n:0);
+     prune ideal ({0_D}|apply(syzygies, s->sum(#d'indices, i->sub(s#i,D)*D_(zeros|d'indices#i))))
      )
+
+-- Paco's kappa 
+minOrderForAnnF1 = method(Options=>{OrderLimit=>infinity})
+minOrderForAnnF1 RingElement := ZZ => o -> f -> (
+     R := ring f;
+     assert isPolynomialRing R;
+     As := AnnFs sub(f,makeWA R); -- Annihilator way
+     A := sub(As, {last gens ring As => -1});
+     k := 0;
+     while k<=o.OrderLimit do(
+     	  if sub(kOrderAnnF1(k,f), ring A) == A then return k;
+	  k = k+1;	  
+	  );
+     return infinity -- if OrderLimit is reached    
+     )
+
+tests = {
+     (
+     	  R = QQ[x_1,x_2]; f = x_1*x_2*(x_1+x_2)
+     	  ),
+     (
+	  n = 3; R = QQ[x_1..x_n]; f = sum(n, i->x_(i+1))*(x_1 + x_2)*(x_1 + x_3)*(x_2 + x_3)*product(n, i->x_(i+1))
+	  ),
+     (
+	  n = 2; R = QQ[x_1..x_n]; f=x_1^4+x_2^5+x_1*x_2^4
+	  ),
+     (
+	  n = 2; R = QQ[x_{1,1}..x_{n,n}]; M = map(R^n,R^n,(i,j)->x_{i+1,j+1}); f = (det M)^2; assert not isFree f; f 
+	  ),
+     (
+	  n = 5; R = QQ[x_1..x_n]; 
+	  f = sum(n, i->x_(i+1))*product(n, i->x_(i+1)); --assert (not isSuffFree f and not isFreeAtOrigin f); 
+	  f
+	  )
+     } 
+
 end
+TEST ///
+R = QQ[x_1,x_2]; f = x_1*x_2*(x_1+x_2)
+assert(
+     diffRatFun({1,0},f)
+     ==2*x_1*x_2+x_2^2)
+assert(
+     diffRatFun({2,1},1/f) 
+     == (-6*x_1^3-24*x_1^2*x_2-16*x_1*x_2^2-4*x_2^3)/(x_1^7*x_2^2+4*x_1^6*x_2^3+6*x_1^5*x_2^4+4*x_1^4*x_2^5+x_1^3*x_2^6)
+     )
+///
+
 restart
 load "h-arr.m2"
-R = QQ[x,y]; f = x*y*(x+y)
-n = 3; R = QQ[x_1..x_n]; f = sum(n, i->x_(i+1))*(x_1 + x_2)*(x_1 + x_3)*(x_2 + x_3)*product(n, i->x_(i+1))
-n = 2; R = QQ[x_1..x_n]; f=x_1^4+x_2^5+x_1*x_2^4;
-n = 2; R = QQ[x_{1,1}..x_{n,n}]; M = map(R^n,R^n,(i,j)->x_{i+1,j+1}); assert not isFree f;  f = (det M)^2
-n = 5; R = QQ[x_1..x_n]; f = sum(n, i->x_(i+1))*product(n, i->x_(i+1)); assert (not isSuffFree f and not isFreeAtOrigin f) 
 
 isFree f
-A1 = Ann1 f -- Paco's way
+k = 2
+Ak = kOrderAnnF1(k,f) -- Paco's way
 -- A = RatAnn sub(f,makeWA R) -- RatAnn calls b-function
 As = AnnFs sub(f,makeWA R); -- Annihilator way
 A = sub(As, {last gens ring As => -1})
-sub(A1,ring A) == A
+As1 = sub(A,ring Ak);
+As1 == Ak
 
+-- Reiffen curve: Ann^{(2)}=Ann
+f = tests#2
+minOrderForAnnF1 f
 
 
