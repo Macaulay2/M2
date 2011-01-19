@@ -1441,7 +1441,7 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
 	  w' := track(E|S, E|S', w,gamma=>exp(random(0.,2*pi)*ii)); 
 	  success = o.AllowSingular or all(toList(0..#w'-1), p->isRegular(w',p));
 	  );
-     if attempts == 0 and not success then error "paths are singular generically";  
+     if attempts == 0 and not success then error "some path is singular generically";  
      w'
      )
 
@@ -2593,17 +2593,18 @@ conditionNumber (List,List) := o -> (F,x) -> (
      )
 
 -- a constructor for witnessSet that depends on NAG
-witnessSet Ideal := I -> (
+witnessSet Ideal := I -> witnessSet(I,dim I) -- caveat: uses GB driven dim
+witnessSet (Ideal,ZZ) := (I,d) -> (
      n := numgens ring I;
-     d := dim I;
-     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
-     SM = promote(SM,ring I);
-     S := ideal(SM * transpose vars ring I + random(CC^d,CC^1));
+     R := ring I;
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1))|random(CC^d,CC^1);
+     S := ideal(promote(SM,R) * ((transpose vars R)||matrix{{1_R}}));
      RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
      RM = promote(RM,ring I);
-     P := solveSystem(flatten entries (RM * transpose gens I) | S_*);
-     PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
-     witnessSet(I,S,PP/first)
+     rand'I := flatten entries (RM * transpose gens I);
+     P := solveSystem(rand'I | S_*);
+     PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
+     witnessSet(ideal rand'I,SM,PP)
      )
 
 beginDocumentation()
