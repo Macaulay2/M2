@@ -22,34 +22,6 @@ isFreeAtOrigin = f -> (
 path = {".."}|path
 needsPackage "Dmodules"
 
-diffRatFun = method()
-diffRatFun (List, RingElement) := RingElement => (m,f) -> (
-     if isPolynomialRing (Q:=ring f) then diff(Q_m,f)
-     else if isField Q and isPolynomialRing (R:=last Q.baseRings) then (
-	  assert isPolynomialRing R;    
-	  a := position(m,i->i>0);
-	  if a === null then f
-	  else (
-	       g := numerator f;
-	       h := denominator f;
-	       diffRatFun(replace(a,m#a-1,m), (diff(R_a,g)*h-g*diff(R_a,h))/h^2) 
-	       )	  
-	  )
-     else error "polynomial or rational function function expected"   
-     )
-
-kOrderAnnF1 = method()
-kOrderAnnF1(ZZ,RingElement) := Ideal => (k,f) -> (
-     R := ring f;
-     n := numgens R;
-     d'indices := flatten({{toList(n:0)}} | apply(k, d->compositions (n,d+1)));
-     M := matrix {apply(d'indices, c->sub(f^(k+1)*diffRatFun(c,1/f),R))};
-     syzygies := entries transpose syz M;     
-     D := makeWA R;
-     zeros := toList(n:0);
-     prune ideal ({0_D}|apply(syzygies, s->sum(#d'indices, i->sub(s#i,D)*D_(zeros|d'indices#i))))
-     )
-
 -- Paco's kappa 
 minOrderForAnnF1 = method(Options=>{OrderLimit=>infinity})
 minOrderForAnnF1 RingElement := ZZ => o -> f -> (
