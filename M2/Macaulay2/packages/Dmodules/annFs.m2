@@ -138,7 +138,7 @@ kOrderAnnF1(ZZ,RingElement) := Ideal => (k,f) -> (
      M := matrix {apply(d'indices, c->sub(f^(k+1)*diffRatFun(c,1/f),R))};
      syzygies := entries transpose syz M;     
      pInfo(3, syzygies);
-     D := makeWA R;
+     D := makeWeylAlgebra R;
      zeros := toList(n:0);
      prune ideal ({0_D}|apply(syzygies, s->sum(#d'indices, i->sub(s#i,D)*D_(zeros|d'indices#i))))
      )
