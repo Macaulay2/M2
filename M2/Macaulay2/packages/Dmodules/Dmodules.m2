@@ -1,4 +1,4 @@
-export { 
+export { kOrderAnnFa,
      localBFunction, multiplierIdeal, ViaElimination, ViaColonIdeal, ViaLinearAlgebra,
      isInMultiplierIdeal, generalizedBFunction, mGeneralizedBFunction,
      jumpingCoefficients, hasRationalSing,

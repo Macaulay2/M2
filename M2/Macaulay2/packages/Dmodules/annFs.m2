@@ -130,21 +130,17 @@ diffRatFun (List, RingElement) := RingElement => (m,f) -> (
      else error "polynomial or rational function function expected"   
      )
 
-kOrderAnnF1 = method()
-kOrderAnnF1(ZZ,RingElement) := Ideal => (k,f) -> (
+kOrderAnnFa = method()
+kOrderAnnFa(ZZ,RingElement,ZZ) := Ideal => (k,f,a) -> (
      R := ring f;
+     fa := if a>=0 then f^a else 1/f^(-a);
      n := numgens R;
-     d'indices := flatten({{toList(n:0)}} | apply(k, d->compositions (n,d+1)));
-     M := matrix {apply(d'indices, c->sub(f^(k+1)*diffRatFun(c,1/f),R))};
-     syzygies := entries transpose syz M;     
-     pInfo(3, syzygies);
+     d'indices := reverse flatten({{toList(n:0)}} | apply(k, d->compositions (n,d+1)));
+     M := matrix {apply(d'indices, c->sub(f^(k+1)*diffRatFun(c,fa),R))};
+     syzygies := entries transpose gens gb syz M;     
+     pInfo(3, {"syz="}|syzygies);
      D := makeWeylAlgebra R;
      zeros := toList(n:0);
      prune ideal ({0_D}|apply(syzygies, s->sum(#d'indices, i->sub(s#i,D)*D_(zeros|d'indices#i))))
      )
-
-
-
-
-
 
