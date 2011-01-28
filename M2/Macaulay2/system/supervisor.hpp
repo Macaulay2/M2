@@ -88,17 +88,25 @@ struct ThreadSupervisorInformation
 class SupervisorThread
 {
 public:
-  SupervisorThread();
+  SupervisorThread(int localThreadId);
   pthread_t ThreadId() { return m_ThreadId; }
   void start();
   void shutdown() { m_KeepRunning = false; }
   static void* threadEntryPoint(void* st) { ((SupervisorThread*)st)->threadEntryPoint(); }
+  ///Pointer to the interrupt field that is the exception flag
   struct atomic_field* m_Interrupt;
+  ///Pointer to the atomic field that is the exception flag
   struct atomic_field* m_Exception;
+  ///Accessor for m_LocalThreadId
+  int localThreadId() { return m_LocalThreadId; }
  protected:
   void threadEntryPoint(); 
+  ///The POSIX thread Id for this thread.
   pthread_t m_ThreadId;
+  ///Should the thread keep running
   volatile bool m_KeepRunning;
+  ///Sequential ID of the supervisor thread assigned by supervisor during creation.
+  const int m_LocalThreadId;
   //to prevent GC
   void** m_ThreadLocal; 
 };

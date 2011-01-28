@@ -73,6 +73,22 @@ export getFileFOSS(o:file):fileOutputSyncState := (
 export releaseFileFOSS(o:file):void := (
     Ccode(void,"M2File_ReleaseState(",lvalue(o.cfile),")");
 );
+export startFileInput(o:file):void := (
+    Ccode(void,"M2File_StartInput(",lvalue(o.cfile),")");
+);
+export endFileInput(o:file):void := (
+    Ccode(void,"M2File_EndInput(",lvalue(o.cfile),")");
+);
+export startFileOutput(o:file):void := (
+    Ccode(void,"M2File_StartOutput(",lvalue(o.cfile),")");
+);
+export endFileOutput(o:file):void := (
+    Ccode(void,"M2File_EndOutput(",lvalue(o.cfile),")");
+);
+export setFileThreadState(o:file, state:int):void :=
+(
+	Ccode(void,"M2File_SetThreadMode(",lvalue(o.cfile),",state)")
+);
 
 export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
 export fileErrorMessage(o:file,msg:string):string := (
@@ -336,6 +352,7 @@ export flushinput(o:file):void := (
      );
 
 simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarge the buffer
+     startFileOutput(o);
      foss :=  getFileFOSS(o);
      foss.outbol = 0;
      if foss.outindex == 0 then ( releaseFileFOSS(o); return 0; );
@@ -354,14 +371,17 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
 	  if n == -1 then (
 	       fileErrorMessage(o,"writing");
 	       releaseFileFOSS(o);
+               endFileOutput(o);
 	       return -1);
 	  if test(interruptedFlag) then (
 	       foss.outindex = 0;				    -- erase the output buffer after an interrupt
 	       releaseFileFOSS(o);
+               endFileOutput(o);
 	       return ERROR))
      else if foss.outindex == length(foss.outbuffer)
      then foss.outbuffer = enlarge(length(foss.outbuffer),foss.outbuffer);
      releaseFileFOSS(o);
+     endFileOutput(o);
      0);
 
 -- simpleout(o:file,c:char):int := (
@@ -663,7 +683,9 @@ export filbuf(o:file):int := (
 	  if o.readline then (
 	       flush(stdIO);
 	       if test(interruptedFlag) then return ERROR;
+	       startFileInput(o);
 	       r = readline(o.inbuffer,n,o.insize,o.prompt());
+	       endFileInput(o);
 	       if test(interruptedFlag) then (
 		    -- ignore interrupt flags set by our handler during calls to readline
 		    -- because readline uses interrupts for its own purposes
@@ -811,11 +833,12 @@ export (o:file) << (x:double) : file := o << tostringRR(x);
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 
 export getc(o:file):int := (
-     if !o.input then return EOF;
+     startFileInput(o);
+     if !o.input then (endFileInput(o); return EOF;);
      if o.inindex == o.insize then (
 	  r := filbuf(o);
-	  if r == 0 then return EOF
-	  else if r == ERROR then return ERROR;
+	  if r == 0 then (endFileInput(o); return EOF;)
+	  else if r == ERROR then (endFileInput(o); return ERROR;);
 	  )
      else if o.bol && !o.readline then maybeprompt(o);
      c := o.inbuffer.(o.inindex);
@@ -834,13 +857,17 @@ export getc(o:file):int := (
 	  o.bol = true;
 	  if o.echo then flush(stdIO);
 	  );
-     int(uchar(c)));
+     x:=int(uchar(c));
+     endFileInput(o);
+     x
+);
 export StringOrError := stringCell or errmsg;
 
 export read(o:file):StringOrError := (
+     startFileInput(o);
      if o.inindex == o.insize then (
 	  r := filbuf(o);
-	  if r == ERROR then return StringOrError(errmsg(fileErrorMessage(o)));
+	  if r == ERROR then (endFileInput(o); return StringOrError(errmsg(fileErrorMessage(o))));
 	  )
      else if o.bol && !o.readline then maybeprompt(o);
      s := substrAlwaysCopy(o.inbuffer,o.inindex,o.insize);
@@ -850,23 +877,30 @@ export read(o:file):StringOrError := (
 	  stdIO << s;
 	  flush(stdIO);
 	  );
-     stringCell(s));
+     sc:=stringCell(s);
+     endFileInput(o);
+     sc
+);
 
 export peek(o:file,offset:int):int := (
-     if !o.input then return EOF;
-     if offset >= bufsize then return ERROR;		    -- tried to peek too far
+     startFileInput(o);
+     if !o.input then (endFileInput(o); return EOF;);
+     if offset >= bufsize then (endFileInput(o); return ERROR;);		    -- tried to peek too far
      if o.inindex+offset >= o.insize then (
-	  if o.eof then return EOF;
+	  if o.eof then (endFileInput(o); return EOF;);
      	  while (
 	       r := filbuf(o);
-	       if r == ERROR then return ERROR;
+	       if r == ERROR then (endFileInput(o); return ERROR;);
 	       o.inindex+offset >= o.insize
 	       )
 	  do (
-	       if o.eof then return EOF;
+	       if o.eof then (endFileInput(o); return EOF);
 	       );
 	  );
-     int(uchar(o.inbuffer.(o.inindex+offset))));
+     x := int(uchar(o.inbuffer.(o.inindex+offset)));
+     endFileInput(o);
+     x
+);
 
 export peek(o:file):int := peek(o,0);
 
@@ -957,7 +991,32 @@ export (o:file) << (x:long) : file :=  o << tostring(x);
 
 export (o:file) << (x:ulong) : file :=  o << tostring(x);
 
+export setIOSyncronized(e:Expr):Expr :=(
+     when e
+     is a:Sequence do (
+	  if length(a) == 0
+	  then (setFileThreadState(stdIO,1); setFileThreadState(stdError,1); nullE)
+	  else WrongNumArgs(0))
+     else WrongNumArgs(0)
+);
 
+export setIOExclusive(e:Expr):Expr :=(
+     when e
+     is a:Sequence do (
+	  if length(a) == 0
+	  then (setFileThreadState(stdIO,2); setFileThreadState(stdError,2); nullE)
+	  else WrongNumArgs(0))
+     else WrongNumArgs(0)
+);
+
+export setIOUnSyncronized(e:Expr):Expr :=(
+     when e
+     is a:Sequence do (
+	  if length(a) == 0
+	  then (setFileThreadState(stdIO,0); setFileThreadState(stdError,0); nullE)
+	  else WrongNumArgs(0))
+     else WrongNumArgs(0)
+);
 
 
 -- Local Variables:

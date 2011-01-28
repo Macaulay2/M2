@@ -4,7 +4,9 @@
 #include <iostream>
 #include <stdlib.h>
 #include <assert.h>
-const static int numThreads = 8;
+const static int maxNumThreads = 16;
+
+static int currentAllowedThreads = 2;
 
 static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
 
@@ -15,9 +17,9 @@ extern "C" {
   void initializeThreadSupervisor()
   {
     if(NULL==threadSupervisor)
-      threadSupervisor = new ThreadSupervisor(numThreads);
+      threadSupervisor = new ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);
-    threadSupervisor->m_TargetNumThreads=numThreads;
+    threadSupervisor->m_TargetNumThreads=maxNumThreads;
     threadSupervisor->initialize();
   }
   void pushTask(struct ThreadTask* task)
@@ -97,7 +99,7 @@ extern "C" {
   void TS_Add_ThreadLocal(int* refno, const char* name)
   {
     if(NULL == threadSupervisor)
-      threadSupervisor = new ThreadSupervisor(numThreads);
+      threadSupervisor = new ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);
     threadSupervisor->m_Mutex.lock();
     if(threadSupervisor->m_ThreadLocalIdPtrSet.find(refno)!=threadSupervisor->m_ThreadLocalIdPtrSet.end())
@@ -112,7 +114,18 @@ extern "C" {
     *refno = ref;
     threadSupervisor->m_Mutex.unlock();
   }
-
+  int getAllowableThreads()
+  {
+    return currentAllowedThreads;
+  }
+  int getMaxAllowableThreads()
+  {
+    return maxNumThreads;
+  }
+  void setAllowableThreads(int numThreads)
+  {
+    currentAllowedThreads=numThreads;
+  }
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task):
@@ -189,7 +202,7 @@ void ThreadSupervisor::initialize()
   //initialize premade threads
   for(int i = 0; i < m_TargetNumThreads; ++i)
     {
-      SupervisorThread* thread = new SupervisorThread();
+      SupervisorThread* thread = new SupervisorThread(i);
       //critical -- we MUST push back before we start.
       m_Threads.push_back(thread);
       thread->start();
@@ -301,7 +314,7 @@ void ThreadTask::run(SupervisorThread* thread)
   m_Mutex.unlock();
 }
 
-SupervisorThread::SupervisorThread():m_KeepRunning(true)
+SupervisorThread::SupervisorThread(int localThreadId):m_KeepRunning(true),m_LocalThreadId(localThreadId)
 {
   m_ThreadLocal = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
   AO_compiler_barrier();
@@ -322,6 +335,11 @@ void SupervisorThread::threadEntryPoint()
   reverse_run(thread_prepare_list);// re-initialize any thread local variables
   while(m_KeepRunning)
     {
+      if(currentAllowedThreads<=m_LocalThreadId)
+	{
+	  sleep(1);
+	  continue;
+	}
       AO_store(&m_Interrupt->field,false);
       struct ThreadTask* task = threadSupervisor->getTask();
       task->run(this);

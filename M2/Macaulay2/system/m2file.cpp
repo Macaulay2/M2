@@ -99,7 +99,12 @@ extern "C"
 
   int M2File_GetThreadMode(M2File* file) { return file->currentThreadMode; }
 
-  void M2File_SetThreadMode(M2File* file, int threadMode) { file->currentThreadMode = threadMode; }
+  void M2File_SetThreadMode(M2File* file, int threadMode)
+  {
+    file->currentThreadMode = threadMode; 
+    if(threadMode==2)
+      file->setExclusiveOwner(pthread_self(),0);
+  }
 
   struct M2File* M2File_New(stdio0_fileOutputSyncState fileUnsyncState) { return new M2File(fileUnsyncState); } 
   stdio0_fileOutputSyncState M2File_UnsyncState(M2File* file) { return file->unsyncState; } 

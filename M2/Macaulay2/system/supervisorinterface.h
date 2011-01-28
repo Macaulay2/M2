@@ -65,6 +65,18 @@ extern "C" {
   void createThreadGCMemory();
   extern void delThread(pthread_t thread);
   extern void initializeThreadSupervisor();
+  /**
+     Set the maximum number of allowable threads
+  **/
+  extern void setAllowableThreads(int numThreads);
+  /**
+     Return the number of threads that are allowed to run tasks at once
+  **/
+  extern int getAllowableThreads();
+  /**
+     Return the maximum number of task threads
+  **/
+  extern int getMaxAllowableThreads();
   static inline struct ThreadTask* runM2Task(ThreadTaskFunctionPtr fptr, void* userData) {
     struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0,1);
     pushTask(task);
