@@ -1,5 +1,5 @@
 #include "m2file.hpp"
-
+#include <iostream>
 extern "C"
 {
 extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
@@ -12,6 +12,8 @@ M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
 }
 M2File::~M2File()
 {
+  //for good practice, explicitly delete the filethreadstate if the file is deleted
+  //this should be taken care of by GC though.
     for(std::map<pthread_t,struct M2FileThreadState*>::iterator it = threadStates.begin(); it!=threadStates.end(); ++it)
     {
       delete it->second;
@@ -21,15 +23,19 @@ M2File::~M2File()
 
 void M2File::waitExclusiveThread(size_t recurseCounter)
 {
+  //acquire a lock on the thread map
   m_MapMutex.lock();
   while(1)
     {
+      //recursive mutex part -- if the current owner is self, return. 
+      //Note that there is always a current owner in exclusive mode so this works
       if(exclusiveOwner==pthread_self())
 	{
 	  recurseCounter+=recurseCounter;
 	  m_MapMutex.unlock();
 	  return;
 	}
+      //otherwise wait for the exclusive thread to be changed
       pthread_cond_wait(&exclusiveChangeCondition,&m_MapMutex.m_Mutex);     
     }
   m_MapMutex.unlock();
@@ -63,6 +69,9 @@ void M2File::waitExclusiveThreadAcquire(size_t recurseCounter)
 
 void M2File::setExclusiveOwner(pthread_t newExclusiveOwner, size_t recurseCounter)
 {
+  //change the current owner of the thread.
+  //note this does no sanity checking.
+  //TODO: should it?
   m_MapMutex.lock();
   recurseCount=recurseCounter;
   exclusiveOwner = newExclusiveOwner;
@@ -78,6 +87,9 @@ void M2File::releaseExclusiveThreadCount(size_t recurseCounter)
     {
       exclusiveOwner=0;
       pthread_cond_broadcast(&exclusiveChangeCondition);
+    }
+  else
+    {
     }
   m_MapMutex.unlock();
 }
@@ -132,9 +144,11 @@ extern "C"
   }
   void M2File_ReleaseState(struct M2File* file)
   {
+    //in unsync mode there is nothing to release
     if(file->currentThreadMode==0)
       {
       }
+    //in sync mode, release the recursive mutex
     else if(file->currentThreadMode==1)
       {
 	file->releaseExclusiveThreadCount(1);

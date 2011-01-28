@@ -33,6 +33,9 @@ struct M2FileThreadState
 struct M2File
 {
 public:
+  /**
+     Constructor for a M2file for a given unsyncronized state.
+  **/
   M2File(stdio0_fileOutputSyncState fileUnsyncState);
   ~M2File();
   //current thread output mode.  0 is unsync, 1 is sync, 2 is thread exclusive

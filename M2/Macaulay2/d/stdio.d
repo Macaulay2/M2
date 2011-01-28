@@ -7,11 +7,13 @@ use expr;
 use stdio0;
 
 header "#include \"../system/m2fileinterface.h\"";
-
+--provide a constant representation of default buffer size for a file
+--this must be set the same as the bufsize in stdio0.d
 bufsize ::= 4 * 1024;
 
 export newm2cfile(foss:fileOutputSyncState) ::= Ccode(m2cfile,"M2File_New(",lvalue(foss),")");
 
+--provide a default constructor for files
 export newFile(	
         filename:string,	-- name of file
 	pid:int,	        -- pid if it's a pipe or pair of pipes to a child process, else 0
@@ -53,13 +55,15 @@ export newFile(
 	nets:NetList,	        -- list of nets, to be printed after the outbuffer
         bytesWritten:int,       -- bytes written so far
 	lastCharOut:int,        -- when outbuffer empty, last character written, or -1 if none
-        readline:bool           -- input handled by readline()
-
+        readline:bool,          -- input handled by readline()
+	fileThreadState:int     -- state of thread handling 
 ):file := ( 
 foss := newFileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut);
 --foss:= newDefaultFileOutputSyncState();
+m2f := newm2cfile(foss);
+Ccode(void,"M2File_SetThreadMode(",lvalue(m2f),",",fileThreadState,")");
 file(nextHash(), filename,pid,error,errorMessage,listener,listenerfd,connection,numconns,input,infd,inisatty,inbuffer,inindex,insize,eof,
-promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,newMutex,newm2cfile(foss))
+promptq,prompt,reward,fulllines,bol,echo,echoindex,readline,output,outfd,outisatty,foss,newMutex,m2f)
 
 );
 
@@ -90,18 +94,18 @@ export stdError := newFile(
      false, "",
      false,NOFD,NOFD,0,
      false,NOFD  ,false,          "",        0,0,false,false,noprompt,noprompt,false,true,false,0,
-     true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
+     true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false,1);
 -- we give a way for other threads to know whether stder is there
 export dummyfile := newFile("dummy",0, 
      false, "",
      false,NOFD,NOFD,0,
      false,NOFD,false,        "",          0,0,false,false,noprompt,noprompt,false,true,false,0,
-     false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0,-1,false);
+     false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0,-1,false,0);
 export stdIO  := newFile("stdio",  0, 
      false, "",
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,noprompt,false,true,false,0,
-     true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
+     true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1,false,1);
 
 export interpreterDepth := 0;
 export lineNumber := 0;
@@ -188,7 +192,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, false,noprompt,noprompt,false, true, false,0,
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
-	  0, 0, false, dummyNetList,0,-1,false))));
+	  0, 0, false, dummyNetList,0,-1,false,0))));
 accept(f:file,input:bool,output:bool):(file or errmsg) := (
      if !f.listener then return (file or errmsg)(errmsg("expected a listener"));
      sd := NOFD;
@@ -209,7 +213,7 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, false,noprompt,noprompt,false, true, false, 0,
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
-	  0, 0, false, dummyNetList,0,-1,false))));
+	  0, 0, false, dummyNetList,0,-1,false,0))));
 
 openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      toChild := array(int)(NOFD,NOFD);
@@ -256,7 +260,7 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
 	  input, if input then fromChild.0 else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, false,noprompt,noprompt,false, true, false, 0,
 	  output, if output then toChild.1 else NOFD, false, if output then newbuffer() else "",
-	  0, 0, false, dummyNetList,0,-1,false))));
+	  0, 0, false, dummyNetList,0,-1,false,0))));
 export openIn(f:file):(file or errmsg) := accept(f,true,false);
 export openOut(f:file):(file or errmsg) := accept(f,false,true);
 export openInOut(f:file):(file or errmsg) := accept(f,true,true);
@@ -285,7 +289,7 @@ export openIn(filename:string):(file or errmsg) := (
 	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, false,noprompt,noprompt,false,true,false,0,
-		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0,-1,false)))));
+		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0,-1,false,0)))));
 export openOut(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdIO)
@@ -302,7 +306,7 @@ export openOut(filename:string):(file or errmsg) := (
 	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
-		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false)))));
+		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false,0)))));
 export openOutAppend(filename:string):(file or errmsg) := (
      filename = expandFileName(filename);
      fd := openoutappend(filename);
@@ -312,7 +316,7 @@ export openOutAppend(filename:string):(file or errmsg) := (
 	       false, "",
 	       false, NOFD,NOFD,0,
 	       false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
-	       true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false))));
+	       true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false,0))));
 export openInOut(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdIO)

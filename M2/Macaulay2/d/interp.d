@@ -434,7 +434,8 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       dummyNetList,   	      	  -- nets
 	       0,		          -- bytesWritten
 	       -1,		          -- lastCharOut
-	       false                      -- readline
+	       false,                     -- readline
+	       0                          -- threadState
 	       )),
 	  NULL));
 

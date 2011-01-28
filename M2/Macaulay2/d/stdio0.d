@@ -11,7 +11,7 @@ export STDERR ::= 2;
 
 export iseof      (c:int ):bool := c == EOF;
 export iserror    (c:int ):bool := c == ERROR;
-
+--fileOutputSyncStates are essentially the per thread data needed for performing syncronization functionality for a given top level file
 export fileOutputSyncState :=
 {+
      	-- output file stuff
@@ -28,7 +28,7 @@ export fileOutputSyncState :=
 	lastCharOut:int        -- when outbuffer empty, last character written, or -1 if none
 
 };
-
+--provide a constructor for fileOutputSyncStates
 export newFileOutputSyncState(
  	outbuffer:string,	-- buffer
 	                        -- outbuffer . 0 is the first char in the buffer
@@ -44,7 +44,10 @@ export newFileOutputSyncState(
 ):fileOutputSyncState := (
 fileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut)
 );
-
+--provide a constant representation of default buffer size for a file
 bufsize ::= 4 * 1024;
+--create a new buffer of size bufsize and initialize it to ' '
 newbuffer():string := new string len bufsize do provide ' ';
+--provide a default 'constructor' for fileOutputSyncStates. 
+--this is used by m2file.cpp to create new sync states on the fly for new threads in thread exclusive mode
 export newDefaultFileOutputSyncState():fileOutputSyncState := ( newFileOutputSyncState(newbuffer(),0,0,false,dummyNetList,0,-1) );
