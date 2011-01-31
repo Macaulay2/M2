@@ -200,3 +200,13 @@ RatAnn(RingElement, RingElement) := (g,f) -> (
 	  F := map(W^1/Ia, W^1, matrix{{g*f^compensate}});
 	  ideal mingens kernel F)
      )
+
+-- reiffen curves
+reiffen = method()
+reiffen(ZZ,ZZ) := (p,q) -> (
+     assert(p>=4 and q>=p+1);
+     n := 2; 
+     x := symbol x;
+     R := QQ[x_1..x_n]; 
+     x_1^p+x_2^q+x_1*x_2^(q-1) 
+     )

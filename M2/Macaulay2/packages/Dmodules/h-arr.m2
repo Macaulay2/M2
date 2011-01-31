@@ -31,19 +31,11 @@ minOrderForAnnF1 RingElement := ZZ => o -> f -> (
      A := sub(As, {last gens ring As => -1});
      k := 0;
      while k<=o.OrderLimit do(
-     	  if sub(kOrderAnnF1(k,f), ring A) == A then return k;
+     	  if sub(kOrderAnnFa(k,f,-1), ring A) == A then return k;
 	  k = k+1;	  
 	  );
      return infinity -- if OrderLimit is reached    
      )
-
-reiffen = (p,q)->(
-     assert(p>=4 and q>=p+1);
-     n := 2; 
-     R := QQ[x_1..x_n]; 
-     x_1^p+x_2^q+x_1*x_2^(q-1) 
-     )
-     
 
 tests = {
      (
@@ -79,6 +71,7 @@ assert(
 
 restart
 load "h-arr.m2"
+scan(4..10, p-><<"kappa(reiffen("<<p<<","<<p+1<<")) = "<<minOrderForAnnF1 reiffen(p,p+1)<<endl)
 
 isFree f
 k = 2
@@ -95,26 +88,39 @@ minOrderForAnnF1 f
 
 -- Reiffen curve experiment:
 a = -1
-f = reiffen(4,5)
-f = reiffen(7,10)
-Dtrace 3
-A1 = kOrderAnnFa(1,f,a)
-A2 = kOrderAnnFa(2,f,a);
-A3 = kOrderAnnFa(3,f,a);
-A4 = kOrderAnnFa(4,f,a);
-A5 = kOrderAnnFa(5,f,a);
-degree charIdeal A1
-degree charIdeal A2
-degree charIdeal A3
-degree charIdeal A4
-degree charIdeal A5
-degree (ideal jacobian ideal f + ideal f) -- Tjurina #
-Dd = newRing(ring A1, Weights=>{0,0,1,1})
-(sub(A1,Dd))_*/leadMonomial
-(sub(A2,Dd))_*/leadMonomial
-(sub(A3,Dd))_*/leadMonomial
+f = reiffen(5,6)
+f = reiffen(6,7)
+f = reiffen(7,9)
+f = reiffen(8,9) -- p-3 conjecture is not true
+f = reiffen(8,10)
+ord = 5 -- highest order
+A = apply(ord,i->kOrderAnnFa(i+1,f,a));
+degA = A/degree@@charIdeal
+kappa = position(1..ord-1,i->degA#i==degA#(i-1))+1 
 
-flatten entries sub(gens gb sub(A3,Dd),Dd)/leadMonomial
+-- check
+As = AnnFs sub(f,makeWA ring f); -- Annihilator way
+A1 = sub(As, {last gens ring As => -1});
+assert(sub(A1,ring A#(kappa-1))==A#(kappa-1))
+	   
+degree (ideal jacobian ideal f + ideal f) -- Tjurina #
+D = ring first A;
+A = apply(A,A->sub(A,D));
+Dd = newRing(D, Weights=>{0,0,1,1})
+gbA = apply(A, A->flatten entries sub(gens gb A,Dd));
+VerticalList apply(gbA, a->toString(a/leadMonomial))
+R = (coefficientRing Dd)[take(gens Dd, numgens Dd//2)] 
+m = ideal vars R;
+fD = D^1/A#0
+annA = VerticalList apply(ord-1, i->gens gb annihilator(A#(i+1)*(D^1/A#i)))
+quotient(A#0,A#2)
+gens gb annihilator(
+     A#2*(D^1/A#0)
+     )
+gens gb annihilator(
+     (ideal gens gb A#2)*(D^1/A#0)
+     )
+flatten entries sub(gens gb sub(A#2,Dd),Dd)/leadMonomial
 
 -- build automorphisms
 restart
