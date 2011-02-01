@@ -355,7 +355,7 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
      startFileOutput(o);
      foss :=  getFileFOSS(o);
      foss.outbol = 0;
-     if foss.outindex == 0 then ( releaseFileFOSS(o); return 0; );
+     if foss.outindex == 0 then ( releaseFileFOSS(o); endFileOutput(o); return 0; );
      if o.outfd != -1 then (
 	  off := 0;
 	  n := 0;

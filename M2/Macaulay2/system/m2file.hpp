@@ -53,6 +53,8 @@ public:
   pthread_cond_t exclusiveChangeCondition;
   //number of times exclusiveOwner acquired
   size_t  recurseCount;
+  //exclusive recurse count
+  size_t exclusiveRecurseCount;
   //Function to wait for exclusiveOwner to be current thread.
   void waitExclusiveThread(size_t recurseCounter);
   //Function to wait for exclusiveOwner to be released and then acquire it
