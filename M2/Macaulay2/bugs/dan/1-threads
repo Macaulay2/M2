@@ -1,12 +1,20 @@
-ensure that we can compile gc with pthreads enabled and link and run
+Jan 31, 2011: state of the thread system, report, from Bill Furnish
 
-implement primitive support for threads
+    I was unable to get exclusive mode working -- however synchronized IO
+    mode does work correctly.  This guarantees that flushing a net is
+    atomic.  It does not guarantee that flushing a net followed by a
+    separate endline is atomic.  In particular this should fix the weird
+    line corruption issues when printing in other threads on cygwin.
+    Exclusive mode was going to be the lockout writing from other threads
+    mode.  It "sort of" works.  It locks out input from all but the main
+    thread, but unfortunately the input from the other threads is lost
+    into the ether.  This could probably be fixed with a way to pick which
+    thread should be the exclusive owner (low level C functionality
+    exists) plus a significant amount of extra io code.  But the framework
+    is in m2file.cpp and its commented well enough that other people can
+    work on it.
 
-idea: could use openmp (supported by gcc pragmas) with libgc, if we do this:
-
-    You would have to explicitly register any OpenMP threads.  With the latest GC
-    versions, that's possible on some platforms with GC_register_my_thread. Having
-    the linker intercept the pthread_create call may be another option.  Either way
-    this definitely requires care.
-
-    Hans
+    I've made a wiki tutorial on using the framework at
+    http://wiki.macaulay2.com/Macaulay2/index.php?title=Parallelization so
+    that people will be able to easily get up to speed on using the
+    framework.
