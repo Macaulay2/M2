@@ -7,14 +7,20 @@
 -- version 2 or the License, or any later version.
 -----------------------------------------------------------------------
 
--- Jan 5 2011: hyperplane arrangements package;
+-- Jan 27 2011: hyperplane arrangements package;
 -- Graham Denham and Greg Smith, with
 -- thanks to Sorin Popescu for the Orlik-Solomon code
+--
+-- release 0.8:
+-- * previously, all arrangements were assumed to be central:
+--   some code also worked for affine arrangements, and some
+--   broke.  Now we allow affine arrangements where possible,
+--   by making central arrangements a new type.
+-- * removed some undocumented functions.
 --
 -- release 0.8-: 
 -- corrects a bug that affected multiplier ideals, added log-canonical
 -- threshold
--- to do: known bug: EPY treats non-central arrangements incorrectly.
 --
 -- release 0.7:
 -- more canned arrangements
@@ -29,8 +35,8 @@
 
 newPackage(
      "HyperplaneArrangements",
-     Version => "0.7",
-     Date => "12 July 2010",
+     Version => "0.9",
+     Date => "29 January 2011",
      Authors => {
 	  {Name => "Graham Denham", HomePage => "http://www.math.uwo.ca/~gdenham/"},
 	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
@@ -39,13 +45,15 @@ newPackage(
      DebuggingMode => true
      )
 
-export {Arrangement, arrangement, arrangementLibrary, -- compress, trim, coefficients,
---     euler, poincare, cone, rank, ring, matrix,
-     deletion, orlikSolomon, orlikTerao, HypAtInfinity, NaiveAlgorithm, typeA, typeB, 
-     typeD, graphic, 
-     Flat, flat, flats, circuits, tolist, closure, meet, vee, subArrangement, 
-     changeRing, restriction, arrangementSum, EPY, der, crit, omega, HS, dlogPhi,
-     freeDlogPhi, isDecomposable, multIdeal, lct, randomArrangement}
+export {Arrangement, arrangement, arrangementLibrary, CentralArrangement,
+     deCone, deletion, orlikSolomon, orlikTerao, HypAtInfinity,
+     NaiveAlgorithm, typeA, typeB, typeD, graphic, Flat, flat, flats,
+     circuits, tolist, closure, meet, vee, subArrangement, changeRing,
+     restriction, arrangementSum, EPY, der, HS, isDecomposable, isCentral, 
+     multIdeal, lct, randomArrangement}
+
+-- these are already defined: compress, trim, coefficients,
+-- euler, poincare, cone, rank, ring, matrix
 
 Arrangement = new Type of HashTable
 Arrangement.synonym = "hyperplane arrangement"
@@ -56,6 +64,11 @@ Arrangement#{Standard,AfterPrint} = A -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : Hyperplane Arrangement "
      << endl;
      )
+
+CentralArrangement = new Type of Arrangement
+CentralArrangement.synonym = "central hyperplane arrangement"
+CentralArrangement.GlobalAssignHook = globalAssignFunction
+CentralArrangement.GlobalReleaseHook = globalReleaseFunction
 
 debug Core
 -- we'll have a better way to do this later
@@ -73,11 +86,17 @@ arrangement (List,Ring) := Arrangement => (L,R) -> (
 	  f := map(R, ring L#0);
 	  A := L / f)
      else A = L;
-     new Arrangement from {
+     central := true;
+     if #L > 0 then central = fold( (p,q) -> p and q, isHomogeneous\L);
+     central = central and isHomogeneous R;
+     data := {
 	  symbol ring => R,
 	  symbol hyperplanes => A,
 	  symbol cache => new CacheTable
-	  })
+	  };
+     if central then 
+          new CentralArrangement from data else
+     	  new Arrangement from data)
 
 arrangement List := Arrangement => L -> (
      if #L == 0 then error "Empty arrangement has no default ring"
@@ -157,11 +176,30 @@ coefficients Arrangement := Matrix => options -> A -> (
 
 rank Arrangement := A -> 
      if (tolist A == {}) then 0 else (
-	  k := coefficientRing ring A;
-	  rank lift(coefficients A, k));
+	  Ap := prune A;
+	  k := coefficientRing ring Ap;
+	  rank lift(coefficients Ap, k));
 
 normal := h -> (
      h/leadCoefficient h);  -- representative of functional, mod scalars
+
+-- arrangements may usually be taken to be central without loss of generality:
+-- however, sometimes noncentral arrangements are convenient
+
+isCentral = method(TypicalValue => Boolean);
+isCentral Arrangement := Boolean => A -> instance(A, CentralArrangement)
+
+-- arrangements may sensibly be defined over quotients of polynomial
+-- rings by affine-linear ideals.  However, sometimes this is a pain,
+-- so we provide
+
+prune Arrangement := Arrangement => options -> A -> (
+     R := ring A;
+     if not instance(R,PolynomialRing) then (
+	  S := prune R;
+	  f := R.minimalPresentationMap;
+	  arrangement(f \ tolist A, S)) 
+     else A);
 
 -- reduce an arrangement with possibly repeated hyperplanes to a 
 -- simple arrangement.  Cache the simple arrangement and multipliticies.
@@ -184,12 +222,14 @@ trim Arrangement := Arrangement => options -> A ->  (
  	  A.cache.m = m; 
 	  A.cache.simple = A'));
 
+-- remove degenerate hyperplanes arising in restriction
+
 compress Arrangement := Arrangement => A -> 
      if (A.hyperplanes == {}) then A else (
-	  L := select(A.hyperplanes, h -> h != 0);
+	  L := select(A.hyperplanes, h -> first degree(h) == 1);
 	  arrangement(L, ring A))
 
-dual Arrangement := Arrangement => A -> (
+dual CentralArrangement := CentralArrangement => A -> (
      if (tolist A == {}) then error "dual expects a nonempty arrangement";
      C := transpose gens kernel coefficients A; 
      R := ring A;
@@ -209,15 +249,27 @@ deletion = method(TypicalValue => Arrangement)
 deletion (Arrangement,RingElement) := Arrangement => (A,h) -> (
      arrangement(select(A.hyperplanes,i->(i != h)), ring A))
 
-cone (Arrangement,RingElement) := Arrangement => (A,h) -> (
-     arrangement ((apply(A.hyperplanes,i->homogenize(i,h))) | {h}));
+-- a non-central arrangement may be defined over an inhomogeneous 
+-- quotient of a polynomial ring, so we need to prune it
 
-cone (Arrangement,Symbol) := Arrangement => (A,h) -> (
+cone (Arrangement,RingElement) := CentralArrangement => (A,h) -> (
+     prune arrangement ((apply(A.hyperplanes,i->homogenize(i,h))) | {h}));
+
+cone (Arrangement,Symbol) := CentralArrangement => (A,h) -> (
      R := ring A;
      S := (coefficientRing R)[h];
      T := tensor(R,S,Degrees=>toList ((numgens(R)+numgens(S)):1));
      f := map(T,S);
      cone (arrangement(A,T),f S_0));
+
+deCone = method(TypicalValue => Arrangement)
+deCone (CentralArrangement,RingElement) := Arrangement => (A,h) -> (
+     A' := deletion(A,h);
+     arrangement(A', (ring A')/ideal(h-1)));
+
+deCone (CentralArrangement,ZZ) := Arrangement => (A,i) -> (
+     h := (tolist A)_i;
+     deCone(A,h));
 
 partial := m -> (
      E := ring m;
@@ -232,13 +284,16 @@ monomialSubIdeal := I -> (  -- note: add options (See SP's code)
 	  K = intersect(I,J));
      ideal mingens K);
 
--- the orlikSolomon method expects a central arrangement.  
---
--- It returns an ideal I with OS = E/I, where E is the ring of I
+
+-- If orlikSolomon is given a central arrangement, 
+-- it returns an ideal I with OS = E/I, where E is the ring of I
 -- and OS is the (central) Orlik-Solomon algebra.
+-- 
+-- If the input is not central, we cone (homogenize) and then
+-- dehomogenize.
 --
--- the same ideal defines the cohomology ring of the projective 
--- complement, but in a subalgebra of E.
+-- in the central case, the same ideal defines the cohomology 
+-- ring of the projective complement, but in a subalgebra of E.
 --
 -- Since we can't construct this in M2, the option Projective 
 -- returns a larger ideal I' so that E/I' is the cohomology ring
@@ -253,7 +308,7 @@ monomialSubIdeal := I -> (  -- note: add options (See SP's code)
 orlikSolomon = method(TypicalValue => Ideal, 
                       Options => {Projective => false, HypAtInfinity => 0});
 
-orlikSolomon (Arrangement,PolynomialRing) := Ideal => o -> (A,E) -> (
+orlikSolomon (CentralArrangement,PolynomialRing) := Ideal => o -> (A,E) -> (
      n := #A.hyperplanes;
      if n == 0 then (
 	  if o.Projective then error "Empty projective arrangement is not allowed."
@@ -270,7 +325,16 @@ orlikSolomon (Arrangement,PolynomialRing) := Ideal => o -> (A,E) -> (
      I := ideal append( apply(A.cache.circuits#k_1/f, r -> partial r),0_E);
      if o.Projective then trim I+ideal(E_(o.HypAtInfinity)) else trim I);
 
--- remark, above, characteristic of E does not need to match A.
+-- if the arrangement is not central, cone first, then project back
+
+orlikSolomon (Arrangement, PolynomialRing) := Ideal => o -> (A,E) -> (
+     h := symbol h;
+     e := symbol e;
+     cA := cone(A,h);
+     k := coefficientRing E;
+     cE := E**k[e,SkewCommutative=>true];
+     proj := map(E,cE);
+     proj orlikSolomon (cA, cE));
 
 orlikSolomon (Arrangement,Symbol) := Ideal => o -> (A,e) -> (
      n := #A.hyperplanes;
@@ -455,6 +519,9 @@ restriction (Arrangement,Flat) := Arrangement => (A,F) -> (
      if (A =!= arrangement F) then error "not a flat of the arrangement";
      restriction F);
 
+restriction (Arrangement,ZZ) := Arrangement => (A,i) -> (
+     restriction(A, flat(A, {i})));
+
 Arrangement ^ Flat := Arrangement => restriction
 
 -- in the sense of matroid contraction
@@ -514,14 +581,14 @@ Arrangement ** Arrangement := Arrangement => arrangementSum
 
 isDecomposable = method(TypicalValue => Boolean)
 
-isDecomposable (Arrangement,Ring) := Boolean => (A,k) -> (
+isDecomposable (CentralArrangement,Ring) := Boolean => (A,k) -> (
      I := orlikSolomon (A,k);
      b := betti res(coker vars ((ring I)/I), LengthLimit=>3);
      phi3 := 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
      multiplicities := apply(flats(2,A),i->length tolist i);
      sum(multiplicities,m->m*(2-3*m+m^2)) == phi3);
 
-isDecomposable (Arrangement) := Boolean => A -> (
+isDecomposable (CentralArrangement) := Boolean => A -> (
      k := coefficientRing(ring A);
      isDecomposable(A,k));
 
@@ -588,15 +655,15 @@ orlikTeraoV2 := (A,S) -> (
      trim ideal(circuits A/(c -> OTreln(c,M,S))));
      
 orlikTerao = method(TypicalValue => Ideal, Options => {NaiveAlgorithm => false});
-orlikTerao (Arrangement,PolynomialRing) := Ideal => o -> (A,S) -> (
+orlikTerao (CentralArrangement,PolynomialRing) := Ideal => o -> (A,S) -> (
      if o.NaiveAlgorithm then orlikTeraoV2(A,S) else orlikTeraoV1(A,S));
      
-orlikTerao (Arrangement,Symbol) := Ideal => o -> (A,y) -> (
+orlikTerao (CentralArrangement,Symbol) := Ideal => o -> (A,y) -> (
      n := #A.hyperplanes;
      S := coefficientRing(ring A)[y_1..y_n];
      orlikTerao(A,S,o));
 
-orlikTerao (Arrangement) := Ideal => o -> A -> (          
+orlikTerao (CentralArrangement) := Ideal => o -> A -> (          
      y := symbol y; 
      orlikTerao(A,y,o));
 
@@ -606,16 +673,16 @@ orlikTerao (Arrangement) := Ideal => o -> A -> (
 -- returns module of derivations
 
 der = method(TypicalValue => Matrix, Options => {Strategy => null});
-der (Arrangement) := Matrix => o -> A -> (
-     if o.Strategy === Classic then der1(A) else (
-	  if not A.cache.?simple then trim(A);
-     	  der2(A.cache.simple, A.cache.m)));
+der (CentralArrangement) := Matrix => o -> A -> (
+     Ap := prune A;  -- ring of A needs to be polynomial
+     if o.Strategy === Classic then der1(Ap) else (
+	  if not Ap.cache.?simple then trim(Ap);
+     	  der2(Ap.cache.simple, Ap.cache.m)));
 
-der (Arrangement,List) := Matrix => o -> (A,m) -> (
-     der2(A,m));   -- it's a multiarrangement if multiplicities supplied
+der (CentralArrangement,List) := Matrix => o -> (A,m) -> (
+     der2(prune A,m));   -- it's a multiarrangement if multiplicities supplied
 
--- Caveat: this strategy requires A be defined over a polynomial ring.
--- No removal of degree 0 part.
+-- Note: no removal of degree 0 part.
      
 der1 = A -> (
      Q := product tolist A;   -- defining polynomial
@@ -651,7 +718,7 @@ multIdeal = method(TypicalValue => Ideal)
 -- whose keys are the lists of exponents on each ideal, and whose
 -- values are the intersection.
 
-multIdeal (RR,Arrangement,List) := Ideal => (s,A,m) -> (
+multIdeal (RR,CentralArrangement,List) := Ideal => (s,A,m) -> (
      if (#tolist A != #m) then error "expected one weight for each hyperplane";
      R := ring A;
      if not A.cache.?irreds then
@@ -664,13 +731,13 @@ multIdeal (RR,Arrangement,List) := Ideal => (s,A,m) -> (
      else
      	  A.cache.multipliers#exps);
 
-multIdeal (RR,Arrangement) := Ideal => (s,A) -> (
+multIdeal (RR,CentralArrangement) := Ideal => (s,A) -> (
      if not A.cache.?simple then trim A;
      multIdeal(s,A.cache.simple,A.cache.m));
 
 -- numeric argument might be in a subring of RR:
-multIdeal (Number,Arrangement) := Ideal => (s,A) -> multIdeal(numeric(s), A);
-multIdeal (Number,Arrangement,List) := Ideal => (s,A,m) -> multIdeal(numeric(s), A, m);
+multIdeal (Number,CentralArrangement) := Ideal => (s,A) -> multIdeal(numeric(s), A);
+multIdeal (Number,CentralArrangement,List) := Ideal => (s,A,m) -> multIdeal(numeric(s), A, m);
 
 -- log-canonical threshold:
 -- use the observation that the jumping numbers must be rationals with
@@ -678,7 +745,7 @@ multIdeal (Number,Arrangement,List) := Ideal => (s,A,m) -> multIdeal(numeric(s),
 
 lct = method(TypicalValue => QQ);
 
-lct Arrangement := QQ => A -> (
+lct CentralArrangement := QQ => A -> (
      I0 := multIdeal(0,A);  -- cache the irreducibles, make A a multiarrangement
      irreds := A.cache.simple.cache.irreds;
      N := lcm(irreds/(F->weight(F,A.cache.m)));
@@ -688,43 +755,11 @@ lct Arrangement := QQ => A -> (
 
 -- critical set ideal: internal use only.
 
-crit = method(TypicalValue => Ideal);
-crit (Arrangement) := Ideal => A -> (
-     R := ring A; Q := product tolist A;
-     m := #(tolist A);
-     a := symbol a;
-     S := R[a_1..a_m];
-     v := transpose(matrix{apply(m,i->S_i*Q//(tolist A)_i)});
-     I := ideal flatten entries ((coefficients A)*v);
-     f := map(S,R);
-     I:(f Q));
-
-omega = method(TypicalValue => Matrix);  -- basis for dual to free Der
-omega (Arrangement) := Matrix => A -> (
-     P := image der A;
-     R := ring P;
-     F := frac R;
-     transpose inverse(map(F,R))(P));
-
-dlogPhi = method(TypicalValue => Matrix);
-dlogPhi (Arrangement,List) := Matrix => (A,a) -> (
-     R := ring A;
-     F := frac R;
-     n := #(tolist A);
-     v := transpose matrix {apply(n,i->a_i/(tolist A)_i)};
-     (coefficients A)*v);
-
-freeDlogPhi = method(TypicalValue => Matrix);
-freeDlogPhi (Arrangement,List) := Matrix => (A,a) -> (
-     M := (mingens image der A)*dlogPhi(A,a);
-     R := ring numerator M_(0,0);
-     (map(R,ring M))(M));
-
-HS = i-> reduceHilbert hilbertSeries i;
+HS = i -> reduceHilbert hilbertSeries i;
 
 beginDocumentation()
 
-undocumented {HS,omega,crit,dlogPhi,freeDlogPhi}
+undocumented {HS}
 
 document { 
      Key => HyperplaneArrangements,
@@ -742,16 +777,23 @@ document {
 document {  Key => Arrangement,
      Headline => "class of hyperplane arrangements",
      PARA{},
-     "A hyperplane is a linear subspace of codimension one.  An
+     "A hyperplane is an affine-linear subspace of codimension one.  An
      arrangement is a finite set of hyperplanes.",
      }
+
+document {  Key => CentralArrangement,
+     Headline => "class of central hyperplane arrangements",
+     PARA{},
+     "A central arrangement is a finite set of linear hyperplanes."
+     }
+
 document { 
      Key => {arrangement, (arrangement,List), (arrangement,List,Ring),
      	  (arrangement,Arrangement,Ring), (arrangement,Matrix), (arrangement,Matrix,Ring)},
      Headline => "create a hyperplane arrangement",
      Usage => "arrangement(L,R) or arrangement(M) or arrangement(M,R)",
      Inputs => {
-	  "L" => {"a list of linear equations in the ring ", TT "R"},
+	  "L" => {"a list of affine-linear equations in the ring ", TT "R"},
 	  "R" => {"a polynomial ring or linear quotient of a
 	       polynomial ring"},	  
 	  "M" => {"a matrix whose columns represent linear forms defining
@@ -761,8 +803,10 @@ document {
 	  Arrangement => {"the hyperplane arrangement determined by ",
 	       TT "L", " and ", TT "R"},
           },
-     "A hyperplane is a linear subspace of codimension one.  An
-     arrangement is a finite set of hyperplanes.",     
+     "A hyperplane is an affine-linear subspace of codimension one.  An
+     arrangement is a finite set of hyperplanes.  If each hyperplane
+     contains the origin, the arrangement is a ", 
+     TO2(CentralArrangement, "central arrangement"),".",
      PARA{},
      "Probably the best-known hyperplane arrangement is the braid
      arrangement consisting of all the diagonal hyperplanes.  In
@@ -896,14 +940,14 @@ document {
      }
 
 document { 
-     Key => (dual,Arrangement),
+     Key => (dual,CentralArrangement),
      Headline => "the Gale dual of A",
      Usage => "dual A",
      Inputs => {
-	  "A" => Arrangement
+	  "A" => CentralArrangement
           },
      Outputs => {
-	  Arrangement
+	  CentralArrangement
           },
      "The Gale transform of a rank ", TT "l", "arrangement of ", TT "n",
      " hyperplanes is an arrangement of ", TT "n", " hyperplanes of rank ",
@@ -1041,7 +1085,7 @@ document {
      Headline => "defining ideal for the Orlik-Solomon algebra",
      Usage => "orlikSolomon(A) or orlikSolomon(A,E) or orlikSolomon(A,e)",
      Inputs => {
-	  "A" => Arrangement => "an arrangement",
+	  "A" => Arrangement,
 	  "E" => Ring => "a skew-commutative polynomial ring
 	   with one variable for each hyperplane",
 	  "e" => Symbol => "a name for an indexed variable"
@@ -1088,13 +1132,13 @@ document {
      }
 
 document {
-     Key => {orlikTerao,(orlikTerao,Arrangement),
-	     (orlikTerao,Arrangement,PolynomialRing),
-	     (orlikTerao,Arrangement,Symbol)},
+     Key => {orlikTerao,(orlikTerao,CentralArrangement),
+	     (orlikTerao,CentralArrangement,PolynomialRing),
+	     (orlikTerao,CentralArrangement,Symbol)},
      Headline => "defining ideal for the Orlik-Terao algebra",
      Usage => "orlikTerao(A) or orlikTerao(A,S) or orlikTerao(A,y)",
      Inputs => {
-	  "A" => Arrangement,
+	  "A" => CentralArrangement => "a central hyperplane arrangement",
 	  "S" => Ring => "a commutative polynomial ring
 	   with one variable for each hyperplane",
 	  "y" => Symbol => "a name for an indexed variable"
@@ -1341,6 +1385,55 @@ document {
      }
 
 document {
+     Key => {(cone,Arrangement,RingElement)},
+-- can't write  {(cone,Arrangement,RingElement),(cone,Arrangement,Symbol)} ??
+     Headline => "Cone of an arrangement",
+     Usage => "cone(A,h) or cone(A,x)",
+     Inputs => {
+ 	  "A" => Arrangement,
+--	  "h" => Symbol,
+	  "x" => RingElement => {"a variable in the ring of ", TT "A"}},
+     Outputs => {
+	  CentralArrangement => {"the cone over ", TT "A", "."}},
+     "The cone of an affine arrangement is obtained from an arrangement
+     by adding a linear hyperplane and homogenizing the remaining hyperplane
+     equations with respect to it.",
+     EXAMPLE lines ///
+     	  R := QQ[x,y];
+	  dA := arrangement {x,y,x-y,x-1,y-1}
+	  A := cone(dA,symbol z)
+     	  {dA,A} / isCentral
+     ///,
+          Caveat => {"If ", TT "x", " is a ring element, no checking is done to
+	  verify it is a variable from outside the span of the hyperplanes of ",
+	  TT "A","."},
+     SeeAlso => (deCone,CentralArrangement,RingElement)
+     }
+
+document {
+     Key => {deCone,(deCone,CentralArrangement,RingElement),(deCone,CentralArrangement,ZZ)},
+     Headline => "produce an affine arrangement from a central one",
+     Usage => "deCone(A,x) or deCone(A,i)",
+     Inputs => {
+ 	  "A" => CentralArrangement,
+	  "x" => RingElement => {"a hyperplane of ", TT "A"},
+	  "i" => ZZ => {"the index of a hyperplane of ", TT "A"}},
+     Outputs => { 
+	  Arrangement => {"the dehomogenization of ", TT "A", " over ", TT "x"}},
+     "The decone of a ", TO2(CentralArrangement, "central arrangement"), 
+     " at a hyperplane ", TT "H=H_i", " or ", TT "H=ker x", " is 
+     the affine arrangement obtained by choosing a chart in projective space 
+     with ", TT "H", " as the hyperplane at infinity.",
+     EXAMPLE lines ///
+     	  A := arrangement "X3"
+	  dA := deCone(A,2)
+	  factor poincare A
+	  poincare dA
+     ///,
+     SeeAlso => (cone,Arrangement,RingElement)
+     }
+
+document {
      Key => {subArrangement,(subArrangement,Arrangement,Flat),
 	  (subArrangement,Flat)},
      Headline => "Subarrangement containing a fixed flat",
@@ -1416,11 +1509,11 @@ document {
 	  }
      
 document {
-     Key => {der, (der,Arrangement), (der,Arrangement,List)},
+     Key => {der, (der,CentralArrangement), (der,CentralArrangement,List)},
      Headline => "Module of logarithmic derivations",
      Usage => "der(A) or der(A,m)",
      Inputs => {
-	  "A" => Arrangement => "an arrangement, possibly with repeated hyperplanes",
+	  "A" => CentralArrangement => "a central arrangement, possibly with repeated hyperplanes",
 	  "m" => List => "optional list of multiplicities, one for each hyperplane"
      },
      Outputs => {
@@ -1478,13 +1571,14 @@ document {
      }     
 
 document {
-     Key => {multIdeal, (multIdeal,RR,Arrangement), 
-	  (multIdeal,RR,Arrangement,List), (multIdeal,Number,Arrangement),
-	  (multIdeal,Number,Arrangement,List)},
+     Key => {multIdeal, (multIdeal,RR,CentralArrangement), 
+	  (multIdeal,RR,CentralArrangement,List), 
+	  (multIdeal,Number,CentralArrangement),
+	  (multIdeal,Number,CentralArrangement,List)},
      Headline => "compute a multiplier ideal",
      Usage => "multIdeal(s,A) or multIdeal(s,A,m)",
      Inputs => {
-	  "A" => Arrangement => "a hyperplane arrangement",
+	  "A" => CentralArrangement => "a central hyperplane arrangement",
 	  "s" => RR => "a real number",
 	  "m" => List => "optional list of positive integer multiplicities",
      },
@@ -1504,7 +1598,6 @@ document {
           R := QQ[x,y,z];
 	  f := toList factor((x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z) / first;
 	  A := arrangement f
-
 	  multIdeal(3/7,A)
      ///,
      "Since the multiplier ideal is a step function of its
@@ -1521,11 +1614,11 @@ document {
 }
 
 document {
-     Key => {lct, (lct,Arrangement)},
+     Key => {lct, (lct,CentralArrangement)},
      Headline => "Compute the log-canonical threshold of an arrangement",
      Usage => "lct(A)",
      Inputs => {
-	  "A" => Arrangement => "an arrangement of n hyperplanes"},
+	  "A" => CentralArrangement => "a central hyperplane arrangement"},
      Outputs => {
 	  QQ => {"The log-canonical threshold of ", TT "A", "."}},
      "The log-canonical threshold of ", TT "A", " defined by a polynomial ",
@@ -1583,12 +1676,12 @@ document {
 }
 
 document {
-     Key => {isDecomposable, (isDecomposable,Arrangement), 
-	     (isDecomposable,Arrangement,Ring)},
+     Key => {isDecomposable, (isDecomposable,CentralArrangement), 
+	     (isDecomposable,CentralArrangement,Ring)},
      Headline => "test if an arrangement is decomposable",
      Usage => "isDecomposable(A) or isDecomposable(A,k)",
      Inputs => {
-	  "A" => Arrangement => "a hyperplane arrangement",
+	  "A" => CentralArrangement => "a hyperplane arrangement",
 	  "k" => Ring => "an optional coefficient ring, by default the
 	       coefficient ring of the arrangement",
      },
@@ -1674,7 +1767,6 @@ document {
      Headline => "the class of all arrangements",
      TT "Arrangement", " -- the class of hyperplane arrangements"
 }
-
 
 document (
      Key => arrangement,
