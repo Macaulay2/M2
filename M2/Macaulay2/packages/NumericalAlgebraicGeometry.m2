@@ -391,7 +391,6 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      t := symbol t;
      Rt := K(monoid[gens R, t]); 
      t = last gens Rt; 
-     Kt := K(monoid[t]);
      (nS,nT) := if o.Normalize -- make Bomboeri-Weyl norm of the systems equal 1
      then (apply(S, s->s/sqrt(#S * BombieriWeylNormSquared s)), apply(T, s->s/sqrt(#T * BombieriWeylNormSquared s)))
      else (S,T);
@@ -843,8 +842,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    	      {matrix {apply(drop(s',-1),u->(1/last s')*u)}} | {s#1} | {SolutionStatus => s'status} | drop(toList s, 3) 
 	       	    	      ))
 	  	    );
-	       rawSols --, s->s#2#1===Regular or s#2===Singular} )
-	       /(s->{flatten entries first s} | drop(toList s,1))
+	       rawSols/(s->{flatten entries first s} | drop(toList s,1))
 	       );
      if DBG>0 then (
 	  if o.Software==M2 then (
