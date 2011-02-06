@@ -1,3 +1,4 @@
+needsPackage "NumericalAlgebraicGeometry"  
 DBG = 5;
 trackProjectiveCertified = method()
 trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
@@ -17,6 +18,9 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  -- and all(T, isHomogeneous) and all(S, isHomogeneous) -- bug in isHomogeneous!!!
 	  ) 
      then error "expected n equations in in n+1 variables";
+     deg := T/first@@degree;
+     if S/first@@degree != deg then error "degrees of start and target systems do not match";
+     
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
      -- threshholds and other tuning parameters (should include most of them as options)
@@ -24,7 +28,9 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      
      I := symbol I;
      K := QQ[I]/ideal(I^2+1); -- THE coefficient ring
-     R = K[gens R];
+     R = K[gens R]; 
+     S = apply(S,f->sub(f,R));
+     T = apply(T,f->sub(f,R));
      solsS = solsS / (s->sub(transpose matrix {toList s}, K)); -- convert to vectors
      	  -- affine patch functions ???
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
@@ -38,6 +44,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      JH := transpose jacobian H; 
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
+
+     norm2T := BombieriWeylNormSquaredQI T; -- norm^2 of the target
+     c'over'P := 1/40;
+     max'deg := max deg;      
      -- in both cases a linear homotopy on the unit sphere is performed ???
      -- then (
 -- 	  nS = (o.gamma/abs(o.gamma))*nS;
@@ -53,6 +63,8 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      etH := 0;
      etHx := 0; 
      etHt := 0;
+     specH := t0 -> flatten entries sub(H, vars R | matrix {{t0}});
+
      -- evaluation functions	
      evalH := (x0,t0)-> (
 	  tr := timing (
@@ -103,47 +115,49 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	       s'status := Processing;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
 	       x0 := s; 
-	       t0 := 0_K; 
+	       t0 := 0; 
 	       count := 1; -- number of computed points
 	       if HISTORY then history := new MutableHashTable from{ count => new MutableHashTable from {
 			 "t"=>t0,"x"=>x0
 			 } };
 	       while s'status === Processing do (
-		    if DBG > 4 then << "--- current t = " << t0 << endl;
+		    if DBG > 4 then << "--- current t = " << toRR t0 << endl;
      		    
-		    dPatch = matrix{ flatten entries x0 / conjugateQI};
-	     				    
-		    Hx0 = evalHx(x0,t0);
-		    Ht0 = evalHt(x0,t0);
--- 		     	 chi2 := sqrt((norm2 Ht0)^2 + (norm2 solve(Hx0, Ht0))^2);
--- 			 chi1 := 1 / min first SVD(DMforPN*Hx0);
--- 			      if DBG > 2 then (
--- 			      << "chi1 = " << chi1 << endl;
--- 			      if count<=5 then print(DMforPN*Hx0);
--- 			      );
--- 			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT); -- divide by bigT since t is in [0,1]
--- 			 if dt<o.tStepMin then (
--- 			      if DBG > 2 then (
--- 				   << "chi1 = " << chi1 << endl;
--- 			      	   << "chi2 = " << chi2 << endl;
--- 				   );
--- 			      s'status = MinStepFailure; 
--- 			      --error "too small step";
--- 			      );
--- 			 if dt > 1-t0 then dt = 1-t0;
-                    dt = 1/10; -- test!!!
-		    dx = 0; -- 0-th order predictor
+		    dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
+	     			
+		    H't0 := specH t0;	
+		    H0 := evalH(x0,t0);
+		    norm2H := BombieriWeylNormSquaredQI H't0;	
+     	       	    invM := inverse evalHx(x0,t0);
+		    cols'invM := entries transpose invM; 					   
+		    norm2x0 := normSquareQI x0; 
+		    phiTildeSquare1 := sum(#deg, i->(normSquareQI cols'invM#i)*(deg#i)*norm2H*norm2x0^(deg#i-1)) 
+		    + (normSquareQI last cols'invM)*norm2x0;
+		    ReScalarProductTandH't0 := BombieriWeylScalarProductQI(T,H't0);
+		    phiTildeSquare2 := 1 + normSquareQI(invM*(norm2H*evalH(x0,1) - ReScalarProductTandH't0*H0)) 
+			 / (norm2T*norm2H - ReScalarProductTandH't0^2); 
+		    phiTildeSquare := Re(phiTildeSquare1*phiTildeSquare2);
+		    c2'over'P2d3phi2 := c'over'P^2/(max'deg^2*phiTildeSquare);
+		    L := 1 - c2'over'P2d3phi2/2 + c2'over'P2d3phi2^2/24;
+		    U := 1 - c2'over'P2d3phi2/4; -- here R^2=2
+		    if DBG>5 then << "L = " << toRR L << "; U = " << toRR U << endl;
+     	       	    dt := pick'dt((norm2H,
+	   		 Re BombieriWeylScalarProductQI(H't0,T-S),--Re <H't0,T-S>,
+			 BombieriWeylNormSquaredQI(T-S) --||T-S||^2
+ 			 ),L,U);
+		    
+                    dx = 0; -- 0-th order predictor
 
-		    if DBG > 3 then << "  dt = " << dt << "  dx = " << toString dx << endl;
+		    if DBG > 5 then << "  dt = " << dt << "  dx = " << toString dx << endl;
 		    if HISTORY then history#count#"dx" = dx;
 
-    	 	    t1 := t0 + dt;
+    	 	    t1 := min(t0 + dt, 1);
 		    x1 := x0 + dx;
 		    
 		    nCorrSteps = 1;
 		    dx = -inverse(evalHx(x1,t1))*evalH(x1,t1);
 		    x1 = x1 + dx;
-		    roundQI x1;
+		    x1 = roundQI(5,x1); -- round to 5 digits!!!
 		    
 		    x0 = normalizeQI x1; -- approximate normalization 
 		    t0 = t1;
@@ -190,21 +204,32 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 conjugateQI = method() 
 conjugateQI RingElement := RingElement => x -> sub(sub(x, matrix{{ -I }}),ring x)
 
+Re = method() 
+Re RingElement := RingElement => x -> sub((x + conjugateQI x)/2,QQ)
+Im = method() 
+Im RingElement := RingElement => x -> sub((x - conjugateQI x)/2,QQ)
+     
 normSquareQI = method(TypicalValue=>RingElement) -- 2-norm of a vector                           
 normSquareQI List := v -> sub(sum(v, x->x*conjugateQI x),QQ);
-normSquareQI Matrix := v -> normSquareQI flatten entries v
+normSquareQI Matrix := v -> normSquareQI flatten entries v -- this is Frobenius norm for a matrix
 
 normalizeQI = method(TypicalValue => Matrix) -- normalizes a column vector
 normalizeQI Matrix := v -> (1/approxSqrt(normSquareQI v,1/100000))*v
 
-roundQI = method(TypicalValue=>RingElement) 
-roundQI (ZZ, RingElement) := (n,x) -> (
-     cs := coefficients (10^n * x);
-     apply(last cs, c->round c)
+roundQI = method() 
+roundQI (ZZ, RingElement) := RingElement => (n,x) -> (
+     if x==0 then x else (
+     	  cs := coefficients (10^n * x);
+     	  ((first cs)*transpose matrix{apply(flatten entries last cs, c->10^(-n)*round sub(c,QQ))})_(0,0)
+     	  )
      )
-roundQI (ZZ, Matrix) := (n,M) -> matrix apply(entries N, r->apply(r, e->roundQI(n,e)))
+roundQI (ZZ, Matrix) := Matrix => (n,M) -> matrix apply(entries M, r->apply(r, e->roundQI(n,e)))
 
-
+QItoCC = method()
+QItoCC RingElement := CC => x -> toRR Re x + ii*(toRR Im x)
+QItoCC List := List => L -> L/QItoCC
+QItoCC Matrix := Matrix => M -> matrix(M/QItoCC)
+	     
 approxSqrt = method()
 approxSqrt(QQ,QQ) := (t,e) -> (
      t0 := t;
@@ -216,3 +241,31 @@ approxSqrt(QQ,QQ) := (t,e) -> (
 	  );
      t'
      )
+
+BombieriWeylScalarProductQI = method()
+BombieriWeylScalarProductQI (RingElement,RingElement) := RingElement => (f,g) -> sum(listForm f, a->(
+	  imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
+	  bc := coefficient((ring f)_(first a),g); -- coeff of corresponding monomial in g
+	  imc*a#1*conjugateQI bc
+	  ))
+BombieriWeylScalarProductQI (List,List) := QQ => (F,G) -> sum(#F, i->BombieriWeylScalarProductQI(F#i,G#i)) 
+
+BombieriWeylNormSquaredQI = method()
+BombieriWeylNormSquaredQI RingElement := QQ => f -> Re sum(listForm f, a->(
+	  imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
+	  imc*a#1*conjugateQI a#1 
+	  ))
+BombieriWeylNormSquaredQI List := QQ => F -> sum(F, f->BombieriWeylNormSquaredQI f) 
+
+pick'dt = (abc,L,U) -> (
+     (a,b,c) := abc;
+     -- solve: (b^2-acU^2)t^2+2ab(1-U^2)+a^2(1-U^2)=0 and the same for L
+     A := toRR(b^2-a*c*U^2);
+     B := toRR(2*a*b*(1-U^2));
+     C := toRR(a^2*(1-U^2));
+     assert(A<0 and B^2-4*A*C>=0);
+     t := (-B-sqrt(B^2-4*A*C))/(2*A);
+     <<"pick'dt: dt = " << t << endl;
+     s := 10^(-round log_10 t + 3);
+     round(s*t) / s  
+     ) 

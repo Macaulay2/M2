@@ -35,7 +35,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber",
-     "numericalRank", 
+     "numericalRank", "toAffineChart",
      "NAGtrace"
      }
 exportMutable {
@@ -1653,6 +1653,13 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
+toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
+toAffineChart (ZZ,List) := List => (k,x) -> (
+     if k<0 or k>#x then error "chart number is out of range ";
+     y := apply(x, c->c/x#k);
+     take(y,k) | drop(y,k+1)
+     ) 
+
 projectiveDistance = method()
 projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)));
 
