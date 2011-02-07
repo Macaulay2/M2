@@ -2394,6 +2394,14 @@ void gbA::start_computation()
       if (M2_gbTrace >= 3)
 	{
 	  buffer o;
+	  emit_line(o.str());
+	  o.reset();
+	  o << "#reduction steps = " << stats_nreductions;
+	  emit_line(o.str());
+	  o.reset();
+	  o << "#spairs done = " << stats_npairs;
+	  emit_line(o.str());
+	  o.reset();
 	  o << "ncalls = " << ncalls;
 	  emit_line(o.str());
 	  o.reset();

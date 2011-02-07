@@ -122,25 +122,38 @@ public:
   typedef int value;
 private:
   const MonomialInfo *M;
-  const coefficient_matrix *mat;
-  const coefficient_matrix::column_array col;
-  long ncmps;
-  int (MonomialInfo::*compareFcn)(const monomial_word *, const monomial_word *) const;
+  //  const coefficient_matrix *mat;
+  const coefficient_matrix::column_array &cols;
+
+  static long ncmps;
+  static long ncmps0;
+  //  int (MonomialInfo::*compareFcn)(const monomial_word *, const monomial_word *) const;
 public:
   int compare(value a, value b)
   {
-    ncmps ++;
-    return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom);
+    //    ncmps ++;
+    return M->compare_grevlex(cols[a].monom,cols[b].monom);
+    // return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom);
+
     //    return (M->*compareFcn)(col[a].monom,col[b].monom);
     //    return (M->*compareFcn)(mat->columns[a].monom,mat->columns[b].monom);
     //    return M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
   }
 
+  bool operator()(value a, value b)
+  {
+    //ncmps0 ++;
+    return (M->compare_grevlex(cols[a].monom,cols[b].monom) == LT);
+    //    return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom) == LT;
+  }
+
   ColumnsSorter(const MonomialInfo *M0, const coefficient_matrix *mat0)
-    : M(M0), mat(mat0), col(mat0->columns), ncmps(0), compareFcn(&MonomialInfo::compare_grevlex) {}
+    : M(M0), /* mat(mat0), */ cols(mat0->columns) /* , compareFcn(&MonomialInfo::compare_grevlex) */ {}
 
   long ncomparisons() const { return ncmps; }
-  
+  long ncomparisons0() const { return ncmps0; }
+  void reset_ncomparisons() { ncmps0 = 0; ncmps = 0; }
+
   ~ColumnsSorter() {} 
 };
 
@@ -149,7 +162,7 @@ class PreSPairSorter
 public:
   typedef pre_spair * value;
 private:
-  long ncmps;
+  static long ncmps;
 public:
   int compare(value a, value b)
   {
@@ -157,9 +170,15 @@ public:
     return varpower_monomials::compare(a->quot, b->quot);
   }
 
-  PreSPairSorter()
-    : ncmps(0) {}
+  bool operator()(value a, value b)
+  {
+    ncmps ++;
+    return varpower_monomials::compare(a->quot, b->quot) == LT;
+  }
 
+  PreSPairSorter() {}
+
+  void reset_ncomparisons() { ncmps = 0; } 
   long ncomparisons() const { return ncmps; }
   
   ~PreSPairSorter() {} 

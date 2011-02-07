@@ -94,6 +94,7 @@ class F4GB : public our_new_delete
   bool using_syz;
   long n_lcmdups;
   long n_pairs_computed;
+  long n_reduction_steps;
   int n_gens_left;
   int n_subring;
   int complete_thru_this_degree;

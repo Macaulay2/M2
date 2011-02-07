@@ -8,6 +8,8 @@
 #include "../freemod.hpp"
 #include "../../system/supervisorinterface.h"
 
+#include <tr1/unordered_map>
+
 F4GB::F4GB(const Gausser *KK0,
 	   F4Mem *Mem0,
 	   const MonomialInfo *M0,
@@ -24,6 +26,7 @@ F4GB::F4GB(const Gausser *KK0,
     weights(weights0),
     component_degrees(0), // need to put this in
     n_pairs_computed(0),
+    n_reduction_steps(0),
     n_gens_left(0),
     n_subring(0),
     complete_thru_this_degree(-1), // need to reset this in the body
@@ -280,6 +283,9 @@ void F4GB::process_s_pair(spair *p)
 
 template class QuickSorter<ColumnsSorter>;
 
+long ColumnsSorter::ncmps0 = 0;
+long ColumnsSorter::ncmps = 0;
+
 void F4GB::reorder_columns()
 {
   // Set up to sort the columns.
@@ -295,6 +301,12 @@ void F4GB::reorder_columns()
   int *column_order = Mem->components.allocate(ncols);
   int *ord = Mem->components.allocate(ncols);
 
+  ColumnsSorter C(M, mat);
+
+  // Actual sort of columns /////////////////
+
+  C.reset_ncomparisons();
+
   clock_t begin_time = clock();
   for (int i=0; i<ncols; i++)
     {
@@ -304,7 +316,6 @@ void F4GB::reorder_columns()
   if (M2_gbTrace >= 2)
     fprintf(stderr, "ncomparisons = ");
 
-  ColumnsSorter C(M, mat);
   QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
 
   clock_t end_time = clock();
@@ -314,6 +325,31 @@ void F4GB::reorder_columns()
   clock_sort_columns += nsecs;
   if (M2_gbTrace >= 2)
     fprintf(stderr, " time = %f\n", nsecs);
+ 
+  // STL version ///////////////
+
+  C.reset_ncomparisons();
+
+  clock_t begin_time0 = clock();
+  for (int i=0; i<ncols; i++)
+    {
+      column_order[i] = i;
+    }
+
+  if (M2_gbTrace >= 2)
+    fprintf(stderr, "ncomparisons = ");
+
+  std::sort(column_order, column_order+ncols, C);
+
+  clock_t end_time0 = clock();
+  if (M2_gbTrace >= 2)
+    fprintf(stderr, "%ld, ", C.ncomparisons0());
+  double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  clock_sort_columns += nsecs0;
+  if (M2_gbTrace >= 2)
+    fprintf(stderr, " time = %f\n", nsecs0);
+
+  ////////////////////////////
 
   for (int i=0; i<ncols; i++)
     {
@@ -511,6 +547,7 @@ void F4GB::gauss_reduce(bool diagonalize)
       if (pivotrow == i) continue; // this is a pivot row, so leave it alone
 
       F4CoefficientArray rcoeffs = get_coeffs_array(r);
+      n_pairs_computed++;
       KK->dense_row_fill_from_sparse(gauss_row, r.len, rcoeffs, r.comps); 
       syz_dense_row_fill_from_sparse(i); // fill syz_row from row[i]
     
@@ -525,6 +562,7 @@ void F4GB::gauss_reduce(bool diagonalize)
 	    F4CoefficientArray pivot_coeffs = get_coeffs_array(pivot_rowelem);
 	    syzygy_row_record_reduction(pivotrow, 
 					  KK->lead_coeff(rcoeffs), KK->lead_coeff(pivot_coeffs));    
+	    n_reduction_steps++;
 	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_coeffs, pivot_rowelem.comps);
 	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
 	    if (last1 > last) last = last1;
@@ -911,6 +949,8 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 	fprintf(stderr, "total time for sorting syz columns: %f\n", syz_clock_sort_columns);
       fprintf(stderr, "total time for making matrix (includes sort): %f\n", ((double)clock_make_matrix)/CLOCKS_PER_SEC);
       fprintf(stderr, "total time for gauss: %f\n", ((double)clock_gauss)/CLOCKS_PER_SEC);
+      fprintf(stderr, "number of spairs computed           : %ld\n", n_pairs_computed);
+      fprintf(stderr, "number of reduction steps           : %ld\n", n_reduction_steps);
     }
 
   fprintf(stderr, "number of spairs removed by criterion = %ld\n", S->n_unneeded_pairs());

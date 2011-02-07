@@ -5,6 +5,7 @@
 ##################
 
 INTERFACE = \
+	spair-heap \
 	dpoly \
 	tower \
 	interreduce \

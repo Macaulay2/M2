@@ -253,6 +253,8 @@ void insert_pre_spair(VECTOR(VECTOR(pre_spair *) ) &bins, pre_spair *p)
 
 template class QuickSorter<PreSPairSorter>;
 
+long PreSPairSorter::ncmps = 0;
+
 int F4SPairSet::construct_pairs(bool remove_disjoints)
 {
   if (gb.size() == 0) return 0;
@@ -287,6 +289,8 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
       if (bins[i].size() == 0) continue;
       // First sort the monomials of this degree
       QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0], bins[i].size());
+
+      std::sort(bins[i].begin(), bins[i].end(), C);
 
       // Loop through each degree and potentially insert...
       spairs::iterator first = bins[i].begin();
