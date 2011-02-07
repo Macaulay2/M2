@@ -778,6 +778,23 @@ export rawSchurRing(e:Expr):Expr := (
      else WrongArg("a raw ring"));
 setupfun("rawSchurRing",rawSchurRing);
 
+export rawSchurRing1(e:Expr):Expr := (
+     when e
+     is R:RawRingCell do toExpr(Ccode(RawRingOrNull, "rawSchurRing1(", R.p, ")" ) )
+     is a:Sequence do (
+       if length(a) == 2 then (
+         when a.0 is A:RawRingCell do
+	 when a.1 is p:ZZcell do 
+           if !isInt(p)
+       	     then WrongArgSmallInteger(2)
+	     else toExpr(Ccode(RawRingOrNull, "rawSchurRing2(", A.p, ",", toInt(p), ")" ))
+	 else WrongArg(2,"an integer")
+	 else WrongArg(1, "a raw ring")
+         )
+       else WrongNumArgs(2)
+     ) else WrongArg("a raw ring"));
+setupfun("rawSchurRing1",rawSchurRing1);
+
 export rawIsField(e:Expr):Expr := (
      when e is K:RawRingCell do toExpr(Ccode(bool, "IM2_Ring_is_field(", K.p, ")" ))
      else WrongArg("a raw ring"));
