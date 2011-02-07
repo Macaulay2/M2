@@ -337,6 +337,31 @@ const Ring /* or null */ *IM2_Ring_schur(const Ring *R)
      }
 }
 
+const Ring *rawSchurRing1(const Ring *A)
+{
+  try {
+    SchurRing *result = SchurRing::createInfinite(A);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+
+const Ring *rawSchurRing2(const Ring *A, int n)
+{
+  try {
+    SchurRing *result = SchurRing::create(A,n);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 
 const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names)
 {

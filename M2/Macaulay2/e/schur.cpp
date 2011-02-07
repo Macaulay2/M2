@@ -97,6 +97,18 @@ SchurRing * SchurRing::create(const PolynomialRing *R)
   return result;
 }
 
+SchurRing *SchurRing::create(const Ring *A, int n)
+{
+  ERROR("not implemented yet");
+  return 0;
+}
+
+SchurRing *SchurRing::createInfinite(const Ring *A)
+{
+  ERROR("not implemented yet");
+  return 0;
+}
+
 void SchurRing::text_out(buffer &o) const
 {
   o << "Schur(";

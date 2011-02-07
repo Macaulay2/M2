@@ -257,6 +257,11 @@ extern "C" {
 
   const Ring /* or null */ *IM2_Ring_schur(const Ring *R); /* drg: reconnected rawSchurRing */
 
+  const Ring *rawSchurRing2(const Ring *A, int n);
+
+  const Ring *rawSchurRing1(const Ring *A);
+
+
   M2_bool IM2_Ring_is_field(const Ring *K); /* drg: connected rawIsField*/
     /* Returns true if K is a field, or has been declared to be one.
        In the latter case, if an operation shows that K cannot be a field,

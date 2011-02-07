@@ -60,6 +60,11 @@ protected:
 public:
   static SchurRing *create(const PolynomialRing *R);
 
+  static SchurRing *create(const Ring *A, int n);
+
+  static SchurRing *createInfinite(const Ring *A);
+
+
   virtual const SchurRing * cast_to_SchurRing() const { return this; }
   virtual       SchurRing * cast_to_SchurRing()       { return this; }
 
