@@ -261,7 +261,6 @@ extern "C" {
 
   const Ring *rawSchurRing1(const Ring *A);
 
-
   M2_bool IM2_Ring_is_field(const Ring *K); /* drg: connected rawIsField*/
     /* Returns true if K is a field, or has been declared to be one.
        In the latter case, if an operation shows that K cannot be a field,
@@ -503,6 +502,9 @@ extern "C" {
   /* f should be a polynomial whose base ring was created using rawSchurRing
      (otherwise NULL is returned).  If so, the dimension of the corresponding
      (virtual) GL(n) representation is returned. */
+
+  const RingElement /* or null */ *rawSchurFromPartition(const Ring *R, M2_arrayint part);
+  /* if R is a SchurRing2, then return the element corresponding to the given partition */
 
   int rawDiscreteLog(const RingElement *h); /* drg: connected */
   /* returns -1 if h is 0, or if elements of the ring of h

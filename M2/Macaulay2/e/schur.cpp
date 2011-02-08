@@ -75,6 +75,225 @@ void tableau::display() const
     }
 }
 
+//////////////////////////////////////////
+bool operator==(const schur_poly::iterator &a, const schur_poly::iterator &b)
+{
+  return a.ic == b.ic;
+}
+bool operator!=(const schur_poly::iterator &a, const schur_poly::iterator &b)
+{
+  return a.ic != b.ic;
+}
+
+SchurRing2 *SchurRing2::create(const Ring *A, int n)
+{
+  SchurRing2 *R = new SchurRing2(A,n);
+  return R;
+}
+
+SchurRing2 *SchurRing2::createInfinite(const Ring *A)
+{
+  SchurRing2 *R = new SchurRing2(A);
+  return R;
+}
+
+SchurRing2::SchurRing2(const Ring *A, int n)
+  : coefficientRing(A),
+    nvars(n)
+{
+}
+
+bool SchurRing2::initialize_SchurRing2()
+{
+  initialize_ring(coefficientRing->charac());
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
+  return true;
+}
+
+bool SchurRing2::is_valid_partition(M2_arrayint part, bool set_error) const
+{
+  if (nvars >= 0 && part->len > nvars)
+    {
+      if (set_error)
+	ERROR("expected a partition of size at most %d\n", nvars);
+      return false;
+    }
+  for (int i=1; i<part->len; i++)
+    if (part->array[i-1] < part->array[i])
+      {
+	if (set_error)
+	  ERROR("expected a non-increasing sequence of integers");
+	return false;
+      }
+  if (part->len > 0 && part->array[part->len-1] <= 0)
+    {
+      if (set_error)
+	ERROR("expected positive integers only");
+      return false;
+    }
+  return true;
+}
+
+ring_elem SchurRing2::from_partition(M2_arrayint part) const
+{
+  ring_elem result;
+  schur_poly *f = new schur_poly;
+  f->coeffs.push_back(coefficientRing->one());
+  f->monoms.push_back(part->len + 1);
+  for (int i=0; i<part->len; i++)
+    f->monoms.push_back(part->array[i]);
+  result.schur_poly_val = f;
+  return result;
+}
+
+void SchurRing2::text_out(buffer &o) const
+{
+  o << "SchurRing(";
+  if (nvars >= 0)
+    o << nvars << ",";
+  coefficientRing->text_out(o);
+  o << ")";
+}
+
+void SchurRing2::elem_text_out(buffer &o, 
+			       const ring_elem f, 
+			       bool p_one, 
+			       bool p_plus, 
+			       bool p_parens) const
+{
+  const schur_poly *g = f.schur_poly_val;
+  int n = g->size();
+
+  bool needs_parens = p_parens && (n > 1);
+  if (needs_parens) 
+    {
+      if (p_plus) o << '+';
+      o << '(';
+      p_plus = false;
+    }
+
+  p_one = false;
+  for (schur_poly::iterator i = g->begin(); i != g->end(); ++i)
+    {
+      const_schur_partition part = i.getMonomial();
+      int len = *part++;
+      int isone = (len == 1);  // the empty partition
+      p_parens = !isone;
+      coefficientRing->elem_text_out(o,i.getCoefficient(), p_one,p_plus,p_parens);
+      o << "{";
+      for (int j=0; j < len-1; j++)
+	{
+	  if (j > 0) o << ",";
+	  o << part[j];
+	}
+      o << "}";
+      p_plus = true;
+    }
+  if (needs_parens) o << ')';
+}
+
+bool SchurRing2::is_unit(const ring_elem f) const
+{
+  const schur_poly *g = f.schur_poly_val;
+  if (g->size() != 1) return false;
+  return (g->monoms.size() == 1) && (coefficientRing->is_unit(g->coeffs[0]));
+}
+
+bool SchurRing2::is_zero(const ring_elem f) const
+{
+  const schur_poly *g = f.schur_poly_val;
+  return g->size() == 0;
+}
+
+bool SchurRing2::is_equal(const ring_elem f, const ring_elem g) const
+{
+  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *g1 = g.schur_poly_val;
+  if (f1->size() != g1->size())
+    return false;
+  if (f1->monoms.size() != g1->monoms.size())
+    return false;
+
+  VECTOR(unsigned int)::const_iterator m_f = f1->monoms.begin();
+  VECTOR(unsigned int)::const_iterator m_g = g1->monoms.begin();
+  for ( ; m_f != f1->monoms.end(); ++m_f, ++m_g)
+    if (*m_f != *m_g) return false;
+
+  VECTOR(ring_elem)::const_iterator c_f = f1->coeffs.begin();
+  VECTOR(ring_elem)::const_iterator c_g = g1->coeffs.begin();
+  for ( ; c_f != f1->coeffs.end(); ++c_f, ++c_g)
+    if (!coefficientRing->is_equal(*c_f, *c_g)) return false;
+
+  return true;
+}
+
+ring_elem SchurRing2::from_coeff(ring_elem a) const
+{
+  ring_elem result;
+  schur_poly *f = new schur_poly;
+  f->coeffs.push_back(a);
+  f->monoms.push_back(1);
+  result.schur_poly_val = f;
+  return result;
+}
+ring_elem SchurRing2::from_int(int n) const
+{
+  ring_elem a = coefficientRing->from_int(n);
+  return from_coeff(a);
+}
+ring_elem SchurRing2::from_int(mpz_ptr n) const
+{
+  ring_elem a = coefficientRing->from_int(n);
+  return from_coeff(a);
+}
+ring_elem SchurRing2::from_rational(mpq_ptr q) const
+{
+  ring_elem a = coefficientRing->from_rational(q);
+  return from_coeff(a);
+}
+
+ring_elem SchurRing2::copy(const ring_elem f) const
+{
+  const schur_poly *f1 = f.schur_poly_val;
+
+  ring_elem result;
+  schur_poly *g = new schur_poly;
+  result.schur_poly_val = g;
+
+  VECTOR(ring_elem)::iterator c_result;
+  for (VECTOR(ring_elem)::const_iterator c_f = f1->coeffs.begin(); c_f != f1->coeffs.end(); ++c_f)
+    g->coeffs.push_back(coefficientRing->negate(*c_f));
+
+  g->monoms.insert(g->monoms.end(), f1->monoms.begin(), f1->monoms.end());
+
+  return result;
+}
+
+ring_elem SchurRing2::invert(const ring_elem f) const
+{
+  // return 0
+  return zero();
+}
+
+ring_elem SchurRing2::divide(const ring_elem f, const ring_elem g) const
+{
+  return zero();
+}
+
+void SchurRing2::syzygy(const ring_elem a, const ring_elem b,
+	    ring_elem &x, ring_elem &y) const
+{
+  x = zero();
+  y = zero();
+}
+
+
+//////////////////////////////////////////
+
 bool SchurRing::initialize_schur()
 {
   _SMtab.initialize(n_vars());
@@ -108,6 +327,7 @@ SchurRing *SchurRing::createInfinite(const Ring *A)
   ERROR("not implemented yet");
   return 0;
 }
+
 
 void SchurRing::text_out(buffer &o) const
 {

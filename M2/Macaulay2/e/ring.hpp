@@ -23,6 +23,7 @@ class PolyRingFlat;
 class PolyQQ;
 class SkewPolynomialRing;
 class SchurRing;
+class SchurRing2;
 class WeylAlgebra;
 class SolvableAlgebra;
 
@@ -163,6 +164,8 @@ public:
   virtual       FractionField * cast_to_FractionField()          { return 0; }
   virtual const SchurRing * cast_to_SchurRing() const { return 0; }
   virtual       SchurRing * cast_to_SchurRing()       { return 0; }
+  virtual const SchurRing2 * cast_to_SchurRing2() const { return 0; }
+  virtual       SchurRing2 * cast_to_SchurRing2()       { return 0; }
   virtual const SkewPolynomialRing * cast_to_SkewPolynomialRing()  const      { return 0; }
   virtual       SkewPolynomialRing * cast_to_SkewPolynomialRing()             { return 0; }
   virtual const SolvableAlgebra * cast_to_SolvableAlgebra()  const      { return 0; }

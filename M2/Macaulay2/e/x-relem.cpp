@@ -340,7 +340,7 @@ const Ring /* or null */ *IM2_Ring_schur(const Ring *R)
 const Ring *rawSchurRing1(const Ring *A)
 {
   try {
-    SchurRing *result = SchurRing::createInfinite(A);
+    SchurRing2 *result = SchurRing2::createInfinite(A);
     return result;
   }
   catch (exc::engine_error e) {
@@ -353,7 +353,7 @@ const Ring *rawSchurRing1(const Ring *A)
 const Ring *rawSchurRing2(const Ring *A, int n)
 {
   try {
-    SchurRing *result = SchurRing::create(A,n);
+    SchurRing2 *result = SchurRing2::create(A,n);
     return result;
   }
   catch (exc::engine_error e) {
@@ -1025,6 +1025,28 @@ gmp_ZZorNull rawSchurDimension(const RingElement *f)
      }
 }
 
+const RingElement /* or null */ *rawSchurFromPartition(const Ring *R, M2_arrayint part)
+{
+  // R should be a SchurRing2
+  // part should be a partition: a weakly descending list of integers (for now, non-negative)
+  // if R has a limit on the size of partitions, then 
+  try {
+    const SchurRing2 *S = R->cast_to_SchurRing2();
+    if (S == 0)
+      {
+	ERROR("expected a Schur ring");
+	return 0;
+      }
+    // Check that part is a partition, and that the number of parts is <= number allowed
+    if (!S->is_valid_partition(part)) return 0;
+    ring_elem result = S->from_partition(part);
+    return RingElement::make_raw(S, result);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
 /* Special routines for tower rings */
 
 int rawDegree(int v, const RingElement *f)
