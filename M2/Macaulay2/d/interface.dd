@@ -1315,6 +1315,19 @@ export rawSchurDimension(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawSchurDimension",rawSchurDimension);
 
+export rawSchurFromPartition(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 2 then 
+     when a.0 is R:RawRingCell do 
+     if !isSequenceOfSmallIntegers(a.1) then WrongArg(2,"a sequence of small integers")
+     else toExpr(Ccode(RawRingElementOrNull, "rawSchurFromPartition(", R.p, ",", 
+	       getSequenceOfSmallIntegers(a.1),
+ 	       ")" ))
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawSchurFromPartition",rawSchurFromPartition);
+
 export rawCompare(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
