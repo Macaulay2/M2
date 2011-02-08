@@ -1661,6 +1661,7 @@ errorDepthS := dummySymbol;
 gbTraceS := dummySymbol;
 debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
+allowableThreadsS := dummySymbol;
 loadDepthS := dummySymbol;
 randomSeedS := dummySymbol;
 randomHeightS := dummySymbol;
@@ -1688,6 +1689,8 @@ topLevelModeS := dummySymbol;
 initialRandomSeed := toInteger(0);
 initialRandomHeight := toInteger(10);
 
+setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));
+
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
      (  debugLevelS = setupvarThread("debugLevel",toExpr(debugLevel));  debugLevelS  ),
@@ -1698,6 +1701,7 @@ syms := SymbolSequence(
      (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
      (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
+     (  allowableThreadsS = setupvar("allowableThreads",toExpr(Ccode( int, " getAllowableThreads() " )));  allowableThreadsS  ),
      (  loadDepthS = setupvarThread("loadDepth",toExpr(loadDepth));  loadDepthS  ),
      (  printingPrecisionS = setupvar("printingPrecision",toExpr(printingPrecision));  printingPrecisionS  ),
      (  printingAccuracyS = setupvar("printingAccuracy",toExpr(printingAccuracy));  printingAccuracyS  ),
@@ -1730,6 +1734,16 @@ export setLineNumber(b:int):void := (
      lineNumber = b;
      setGlobalVariable(lineNumberS,toExpr(b));
      );
+
+export setAllowableThreadsFun(b:int):void := (
+     Ccode( void, "
+     {
+	 extern void setAllowableThreads(int);
+	 setAllowableThreads(", b, ");
+     }
+     " );
+     setGlobalVariable(allowableThreadsS,toExpr(b));
+     );
 export setstopIfError(b:bool):void := (
      stopIfError = b;
      setGlobalVariable(stopIfErrorS,toExpr(b));
@@ -1742,7 +1756,7 @@ export sethandleInterrupts(b:bool):void := (
 threadLocal resetvars := (
      -- These are the thread local variables that got re-initialized in tokens.d:
      -- Actually, this is no good!  If the user assigns to one of these variables, the "top level" version
-     -- of the value will be global, even the the bottom level is thread local.
+     -- of the value will be global, even though the bottom level is thread local.
      setGlobalVariable(debuggingModeS,toExpr(debuggingMode));
      setGlobalVariable(debugLevelS,toExpr(debugLevel));
      setGlobalVariable(engineDebugLevelS,toExpr(engineDebugLevel));
@@ -1798,6 +1812,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
 		    else if sym === recursionLimitS then (recursionLimit = n; e)
 		    else if sym === lineNumberS then (lineNumber = n; e)
+		    else if sym === allowableThreadsS then (setAllowableThreadsFun(n); e)
 		    else if sym === printingPrecisionS then (
 			 if n < 0 then return buildErrorPacket("printingPrecision can not be set to negative value");
 			 printingPrecision = n;

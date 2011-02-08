@@ -688,9 +688,6 @@ export {
 	symbol setIOSyncronized,
 	symbol setIOExclusive,
 	symbol setIOUnSyncronized,
-	symbol getAllowableThreads,
-	symbol getMaxAllowableThreads,
-	symbol setAllowableThreads,
 	symbol Thread,
 	symbol symbolBody,
         symbol globalAssign,
@@ -840,6 +837,7 @@ export {
 	symbol mathML,
 	symbol matrix,
 	symbol max,
+        symbol maxAllowableThreads,
 	symbol maxPosition,
 	symbol member,
 	symbol memoize,
@@ -1166,6 +1164,7 @@ export {
 }
 
 exportMutable {
+        symbol allowableThreads,
 	symbol applicationDirectorySuffix,
 	symbol backtrace,
 	symbol backupFileRegexp,

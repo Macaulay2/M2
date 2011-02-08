@@ -188,36 +188,6 @@ setupfun("setIOSyncronized",setIOSyncronized);
 setupfun("setIOUnSyncronized",setIOUnSyncronized);
 setupfun("setIOExclusive",setIOExclusive);
 
-export setAllowableThreads(e:Expr):Expr := (
-     when e
-     is i:ZZcell do (
-	  if isInt(i)
-	  then (Ccode(void,"setAllowableThreads(",toInt(i),")"); nullE)
-	  else WrongArgSmallInteger(1))
-     else WrongArgZZ(1)
-);
-setupfun("setAllowableThreads",setAllowableThreads);
-
-export getAllowableThreads(e:Expr):Expr :=(
-    when e
-     is a:Sequence do (
-	  if length(a) == 0
-	  then toExpr(Ccode(int,"getAllowableThreads()"))
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
-);
-setupfun("getAllowableThreads",getAllowableThreads);
-
-export getMaxAllowableThreads(e:Expr):Expr :=(
-     when e
-     is a:Sequence do (
-	  if length(a) == 0
-	  then toExpr(Ccode(int,"getMaxAllowableThreads()"))
-	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
-);
-setupfun("getMaxAllowableThreads",getMaxAllowableThreads);
-
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "
 -- End:
