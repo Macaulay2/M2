@@ -2,6 +2,8 @@ dnl This is the only place where the Macaulay2 version number appears:
 
     AC_INIT(Macaulay 2, 1.4.0.1, Macaulay2@math.uiuc.edu, Macaulay2)
 
+dnl When incrementing the version number, add an entry to distributions/deb/changelog, too.
+
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a relatively major release, such as occurs every six months
 dnl   1.3.1   : a minor update, such as might occur a week after a major release
