@@ -129,6 +129,8 @@ public:
   ring_elem from_coeff(ring_elem a) const;
   ring_elem from_partition(M2_arrayint part) const;
 
+  bool get_scalar(const schur_poly *f, ring_elem &result) const;
+
   void dimension(const int *exp, mpz_t result) const;
   ring_elem dimension(const ring_elem f) const;
   // only allowed if nvars >= 0
@@ -146,21 +148,21 @@ public:
 
   virtual ring_elem from_rational(mpq_ptr q) const;
 
-  virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const { /* write me */ }
-  virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const { /* write me */ }
+  virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
+  virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const; // NOT DONE...
 
-  virtual int compare_elems(const ring_elem f, const ring_elem g) const { /* write me */ }
+  virtual int compare_elems(const ring_elem f, const ring_elem g) const;
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const { }  // let the GC do it!
 
-  virtual ring_elem negate(const ring_elem f) const { /* write me */ }
-  virtual ring_elem add(const ring_elem f, const ring_elem g) const { /* write me */ }
-  virtual ring_elem subtract(const ring_elem f, const ring_elem g) const { /* write me */ }
-  virtual ring_elem mult(const ring_elem f, const ring_elem g) const { /* write me */ }
+  virtual ring_elem negate(const ring_elem f) const;
+  virtual ring_elem add(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem mult(const ring_elem f, const ring_elem g) const;
 
   virtual ring_elem invert(const ring_elem f) const; // do nothing
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const; // do nothing
@@ -168,7 +170,7 @@ public:
   virtual void syzygy(const ring_elem a, const ring_elem b,
 		      ring_elem &x, ring_elem &y) const; // do nothing
 
-  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const { /* write me */ }
+  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
 };
 

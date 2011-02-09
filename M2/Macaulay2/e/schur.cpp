@@ -152,7 +152,7 @@ ring_elem SchurRing2::from_partition(M2_arrayint part) const
 
 void SchurRing2::text_out(buffer &o) const
 {
-  o << "SchurRing(";
+  o << "SchurRing2(";
   if (nvars >= 0)
     o << nvars << ",";
   coefficientRing->text_out(o);
@@ -231,6 +231,14 @@ bool SchurRing2::is_equal(const ring_elem f, const ring_elem g) const
   return true;
 }
 
+bool SchurRing2::get_scalar(const schur_poly *g, ring_elem &result) const
+{
+  if (g->size() != 1) return false;
+  if (g->monoms.size() != 1) return false;
+  result = g->coeffs[0];
+  return true;
+}
+
 ring_elem SchurRing2::from_coeff(ring_elem a) const
 {
   ring_elem result;
@@ -289,6 +297,80 @@ void SchurRing2::syzygy(const ring_elem a, const ring_elem b,
 {
   x = zero();
   y = zero();
+}
+
+int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const 
+{
+  /* write me */
+}
+bool SchurRing2::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
+{
+  // Cases:
+  // 1.  Rf is ZZ
+  // 2. Rf is coefficientRing
+  // 3. Rf is another SchurRing2
+
+  if (Rf == globalZZ)
+    {
+      from_coeff(Rf->promote(globalZZ, f, result));
+      return true;
+    }
+  else if (Rf == coefficientRing)
+    {
+      result = from_coeff(f);
+      return true;
+    }
+  else {
+    const SchurRing2 *Sf = Rf->cast_to_SchurRing2();
+    if (Sf != 0)
+      {
+	// TODO: WRITE THIS PART
+	return true;
+      }
+  }
+  return false;
+}
+bool SchurRing2::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+{
+  const schur_poly *f1 = f.schur_poly_val;
+  if (Rg == coefficientRing || Rg == globalZZ)
+    {
+      if (get_scalar(f1, result))
+	{
+	  if (Rg == globalZZ)
+	    return coefficientRing->lift(globalZZ, result, result);
+	  return true;
+	}
+    }
+  else {
+    const SchurRing2 *Sf = Rg->cast_to_SchurRing2();
+    if (Sf != 0)
+      {
+	// TODO: WRITE THIS PART
+	return true;
+      }
+  }
+  return false;
+}
+ring_elem SchurRing2::negate(const ring_elem f) const 
+{
+  /* write me */ 
+}
+ring_elem SchurRing2::add(const ring_elem f, const ring_elem g) const
+{
+  /* write me */ 
+}
+ring_elem SchurRing2::subtract(const ring_elem f, const ring_elem g) const
+{
+  /* write me */ 
+}
+ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
+{
+  /* write me */ 
+}
+ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var) const 
+{ 
+  /* write me */ 
 }
 
 
