@@ -13,6 +13,7 @@ class tableau
 {
   friend class SchurRing;
   friend class SchurRing2;
+  friend class LittlewoodRicharsdon;
 
   int dim;
   int maxwt;
@@ -34,45 +35,60 @@ class tableau
   void display() const;
 };
 
-typedef unsigned int *schur_partition;
-typedef const unsigned int *const_schur_partition;
+typedef int schur_word;
+typedef schur_word *schur_partition;
+typedef const schur_word *const_schur_partition;
+
+class schur_poly_iterator;;
 
 class schur_poly : public our_new_delete {
   friend class SchurRing2;
-
+  friend class schur_poly_iterator;
   VECTOR(ring_elem) coeffs;
-  VECTOR(unsigned int) monoms; // each monomial is a partition
+  VECTOR(schur_word) monoms; // each monomial is a partition
   // of the form:  len a_1 a_2 ... a_len,
   // where a_1 >= a_2 >= ... >= a_len
 
 public:
-  class iterator {
-    VECTOR(ring_elem)::const_iterator ic;
-    VECTOR(unsigned int)::const_iterator im;
+  typedef schur_poly_iterator iterator;
 
-    friend class schur_poly;
-
-    iterator(const schur_poly &f) : ic(f.coeffs.begin()), im(f.monoms.begin()) {}
-    iterator(const schur_poly &f, int) : ic(f.coeffs.end()), im(0) {}
-  public:
-    void operator++() { ++ic; im += *im;  }
-    ring_elem getCoefficient() { return *ic; }
-    const_schur_partition getMonomial() { return &*im; }
-
-    friend bool operator==(const iterator &a, const iterator &b);
-    friend bool operator!=(const iterator &a, const iterator &b);
-  };
-
-  iterator begin() const { return iterator(*this); }
-  iterator end() const { return iterator(*this,1); }
+  iterator begin() const;
+  iterator end() const;
   size_t size() const { return coeffs.size(); }
+
+  void append(iterator &first, iterator &last);
+  void appendTerm(ring_elem coeff, const_schur_partition monom);
 };
+
+class schur_poly_iterator {
+  VECTOR(ring_elem)::const_iterator ic;
+  VECTOR(schur_word)::const_iterator im;
+  
+  friend class schur_poly;
+  
+  schur_poly_iterator(const schur_poly &f) : ic(f.coeffs.begin()), im(f.monoms.begin()) {}
+  schur_poly_iterator(const schur_poly &f, int) : ic(f.coeffs.end()), im(0) {}
+public:
+  void operator++() { ++ic; im += *im;  }
+  ring_elem getCoefficient() { return *ic; }
+  const_schur_partition getMonomial() { return &*im; }
+  
+  friend bool operator==(const schur_poly_iterator &a, const schur_poly_iterator &b);
+  friend bool operator!=(const schur_poly_iterator &a, const schur_poly_iterator &b);
+};
+
 
 bool operator==(const schur_poly::iterator &a, const schur_poly::iterator &b);
 bool operator!=(const schur_poly::iterator &a, const schur_poly::iterator &b);
 
+inline schur_poly::iterator schur_poly::begin() const { return iterator(*this); }
+inline schur_poly::iterator schur_poly::end() const { return iterator(*this,1); }
+
 class LittlewoodRicharsdon
 {
+protected:
+  int n_rows; // can be increased via resizing
+  int max_weight;
   tableau _SMtab;
   tableau _SMfilled;
   int _SMcurrent;
@@ -81,12 +97,26 @@ class LittlewoodRicharsdon
   void bounds(int &lo, int &hi);
   void SM();
 
-  void skew_schur(const_schur_partition lambda, const_schur_partition p);
-
-protected:
-  virtual void append_term(ring_elem coeff, const_schur_partition f) = 0;
+  virtual void append_term(const_schur_partition f) = 0;
 public:
+  LittlewoodRicharsdon() {}
+  LittlewoodRicharsdon(int initial_max_weight);
+  void skew_schur(int* lambda, int* p);
+  void mult(int* a, int* b);
+};
+
+class LWSchur2 : public LittlewoodRicharsdon
+{
+  const Ring *coefficientRing;
+  virtual void append_term(const_schur_partition f);
+  // append this term to a poly heap
   
+public:
+  LWSchur2() {}
+  LWSchur2(size_t initial_max_weight, const Ring *A0);
+
+  schur_poly *skew_schur(const_schur_partition lambda, const_schur_partition p);
+  schur_poly *mult(const_schur_partition a, const_schur_partition b);
 };
 
 class SchurRing2 : public Ring
@@ -106,6 +136,7 @@ private:
   ring_elem mult_monomials(const int *m, const int *n);
 
   const Ring *coefficientRing;
+  LWSchur2 LR;
   int nvars; // max size of a partition, or -1 meaning infinity
 protected:
   bool initialize_schur();
@@ -115,6 +146,7 @@ protected:
   SchurRing2(const Ring *A, int n=-1);
 
   bool initialize_SchurRing2();
+  int compare_partitions(const_schur_partition a, const_schur_partition b) const;
 public:
   static SchurRing2 *create(const Ring *A, int n=-1);
 

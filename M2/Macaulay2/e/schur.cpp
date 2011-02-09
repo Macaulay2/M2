@@ -85,6 +85,18 @@ bool operator!=(const schur_poly::iterator &a, const schur_poly::iterator &b)
   return a.ic != b.ic;
 }
 
+void schur_poly::appendTerm(ring_elem coeff, const_schur_partition monom)
+{
+  coeffs.push_back(coeff);
+  for (int i=0; i<monom[0]; i++)
+    monoms.push_back(monom[i]);
+}
+void schur_poly::append(iterator &first, iterator &last)
+{
+  for ( ; first != last; ++first)
+    appendTerm(first.getCoefficient(), first.getMonomial());
+}
+
 SchurRing2 *SchurRing2::create(const Ring *A, int n)
 {
   SchurRing2 *R = new SchurRing2(A,n);
@@ -99,6 +111,7 @@ SchurRing2 *SchurRing2::createInfinite(const Ring *A)
 
 SchurRing2::SchurRing2(const Ring *A, int n)
   : coefficientRing(A),
+    LR(n,A),
     nvars(n)
 {
 }
@@ -218,8 +231,8 @@ bool SchurRing2::is_equal(const ring_elem f, const ring_elem g) const
   if (f1->monoms.size() != g1->monoms.size())
     return false;
 
-  VECTOR(unsigned int)::const_iterator m_f = f1->monoms.begin();
-  VECTOR(unsigned int)::const_iterator m_g = g1->monoms.begin();
+  VECTOR(schur_word)::const_iterator m_f = f1->monoms.begin();
+  VECTOR(schur_word)::const_iterator m_g = g1->monoms.begin();
   for ( ; m_f != f1->monoms.end(); ++m_f, ++m_g)
     if (*m_f != *m_g) return false;
 
@@ -299,6 +312,18 @@ void SchurRing2::syzygy(const ring_elem a, const ring_elem b,
   y = zero();
 }
 
+int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partition b) const
+{
+  int len = a[0];
+  if (b[0] < len) len = b[0];
+  for (int i=0; i<len; i++)
+    {
+      int cmp = a[i] - b[i];
+      if (cmp < 0) return LT;
+      if (cmp > 0) return GT;
+    }
+  return EQ; 
+}
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const 
 {
   /* write me */
@@ -354,23 +379,262 @@ bool SchurRing2::lift(const Ring *Rg, const ring_elem f, ring_elem &result) cons
 }
 ring_elem SchurRing2::negate(const ring_elem f) const 
 {
-  /* write me */ 
+  if (is_zero(f)) return f;
+  const schur_poly *f1 = f.schur_poly_val;
+  ring_elem resultRE;
+  schur_poly *result = new schur_poly;
+  resultRE.schur_poly_val = result;
+
+  for (VECTOR(ring_elem)::const_iterator i = f1->coeffs.begin(); i != f1->coeffs.end(); ++i)
+    result->coeffs.push_back(coefficientRing->negate(*i));
+
+  result->monoms.insert(result->monoms.end(), f1->monoms.begin(), f1->monoms.end());
+  return resultRE;
 }
+
 ring_elem SchurRing2::add(const ring_elem f, const ring_elem g) const
 {
-  /* write me */ 
+  if (is_zero(f)) return g;
+  if (is_zero(g)) return f;
+  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *g1 = g.schur_poly_val;
+
+  ring_elem resultRE;
+  schur_poly *result = new schur_poly;
+  resultRE.schur_poly_val = result;
+
+  schur_poly::iterator i = f1->begin();
+  schur_poly::iterator j = g1->begin();
+  schur_poly::iterator iend = f1->end();
+  schur_poly::iterator jend = g1->end();
+  
+  bool done = false;
+  while (!done)
+    {
+      int cmp = compare_partitions(i.getMonomial(), j.getMonomial());
+      switch (cmp) {
+      case LT:
+	result->appendTerm(j.getCoefficient(), j.getMonomial());
+	++j;
+	if (j == jend)
+	  {
+	    result->append(i, iend);
+	    done = true;
+	  }
+	break;
+      case GT:
+	result->appendTerm(i.getCoefficient(), i.getMonomial());
+	++i;
+	if (i == iend)
+	  {
+	    result->append(j, jend);
+	    done = true;
+	  }
+	break;
+      case EQ:
+	ring_elem c = coefficientRing->add(i.getCoefficient(), j.getCoefficient());
+	if (!coefficientRing->is_zero(c))
+	  result->appendTerm(c, i.getMonomial());
+	++j;
+	++i;
+	if (j == jend)
+	  {
+	    result->append(i, iend);
+	    done = true;
+	  }
+	else
+	  {
+	    if (i == iend)
+	      {
+		result->append(i, iend);
+		done = true;
+	      }
+	  }
+	break;
+      }
+    }
+  return resultRE;
 }
+
 ring_elem SchurRing2::subtract(const ring_elem f, const ring_elem g) const
 {
-  /* write me */ 
+  ring_elem h = negate(g);
+  return add(f,h);
 }
 ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
 {
+
+  //  if (get_scalar(f, a))
+  //    {
+  //      // just mult coeffs
+  //    }
+  //  else 
+  //    {
+  //      // really want to do a heap here of some sort...
+  //    }
   /* write me */ 
 }
 ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var) const 
 { 
   /* write me */ 
+}
+
+//////////////////////////////////////////
+LittlewoodRicharsdon::LittlewoodRicharsdon(int initial_max_weight)
+{
+  max_weight = initial_max_weight;
+  if (max_weight < 0) max_weight = 10;
+  _SMtab.initialize(initial_max_weight);
+  _SMfilled.initialize(initial_max_weight);
+  _SMcurrent = 0;
+  _SMfinalwt = 0;
+  
+  _SMtab.p = newarray_atomic_clear(int,max_weight+1);
+}
+
+void LittlewoodRicharsdon::bounds(int &lo, int &hi)
+{
+  int i, k;
+  int x = _SMfilled.xloc[_SMcurrent];
+  int y = _SMfilled.yloc[_SMcurrent];
+  
+  // First set the high bound, using info from the "one to the right"
+  // in the reverse lex filled skew tableau.
+
+  if (y == _SMfilled.p[x])	// There is not one to the right
+    {
+      hi = max_weight;
+      for (k=1; k<=max_weight; k++)
+	if (_SMtab.p[k] == 0)
+	  {
+	    hi = k;
+	    break;
+	  }
+    }
+  else				// note that the case _SMcurrent==1 will be handled
+    {				// in the previous statement.
+      hi = _SMtab.xloc[_SMcurrent-1];
+    }
+
+  // Now we set the lo bound, using info from the "one above"
+  
+  if (x == 1 || y <= _SMfilled.lambda[x-1])
+    lo = 1;			// There is not one above
+  else
+    {
+      int above = _SMcurrent - _SMfilled.p[x] + _SMfilled.lambda[x-1];
+      int xabove = _SMtab.xloc[above];
+      int yabove = _SMtab.yloc[above];
+      for (i=xabove+1; i<=hi; i++)
+	if (_SMtab.p[i] < yabove) break;
+      lo = i;
+    }
+    
+}
+
+void LittlewoodRicharsdon::SM()
+{
+  int lo, hi;
+
+  if (_SMcurrent == _SMfinalwt)
+    {
+      // partition is to be output
+      append_term(_SMtab.p);
+      return;
+    }
+  
+  _SMcurrent++;
+  bounds(lo, hi);
+  int this_one = LARGE_NUMBER;	// larger than any entry of _SMtab
+  int last_one;
+  for (int i=lo; i<=hi; i++)
+    {
+      last_one = this_one;
+      this_one = _SMtab.p[i];
+      if (last_one > this_one)
+	{
+	  _SMtab.p[i]++;
+	  _SMtab.xloc[_SMcurrent] = i;
+	  _SMtab.yloc[_SMcurrent] = _SMtab.p[i];
+	  SM();
+	  _SMtab.p[i]--;
+	}
+    }
+  _SMcurrent--;
+}
+
+void LittlewoodRicharsdon::skew_schur(int *lambda, int *p)
+{
+  _SMcurrent = 0;
+
+  _SMfinalwt = 0;
+  for (int i=1; p[i] != 0; i++)
+    _SMfinalwt += (p[i] - lambda[i]);
+
+  _SMtab.wt = _SMfinalwt;
+  _SMtab.resize(_SMfinalwt);
+  _SMfilled.resize(_SMfinalwt);
+  _SMfilled.fill(lambda, p);
+  SM();
+}
+
+void LittlewoodRicharsdon::mult(int *m, int *n)
+{
+  int i;
+
+  exponents a_part = ALLOCATE_EXPONENTS(sizeof(int) * (n_rows + 1));
+  exponents b_part = ALLOCATE_EXPONENTS(sizeof(int) * (n_rows + 1));
+  exponents lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * (n_rows + 1));
+  exponents p = ALLOCATE_EXPONENTS(2 * sizeof(int) * (n_rows + 1));
+
+  // First: obtain the partitions  MES: TODO: translate the monomials m and n to 0 terminated partitions
+  //  to_partition(m, a_part);
+  //  to_partition(n, b_part);
+  
+  // Second: make the skew partition
+  int a = b_part[1];
+  for (i=1; i <= max_weight && a_part[i] != 0; i++)
+    {
+      p[i] = a + a_part[i];
+      lambda[i] = a;
+    }
+  int top = i-1;
+  for (i=1; i <= max_weight && b_part[i] != 0; i++)
+    {
+      p[top+i] = b_part[i];
+      lambda[top+i] = 0;
+    }
+  p[top+i] = 0;
+  lambda[top+i] = 0;
+
+  // Call the SM() algorithm
+  return skew_schur(lambda, p);
+}
+
+LWSchur2::LWSchur2(size_t initial_max_weight, const Ring *A0)
+  : LittlewoodRicharsdon(initial_max_weight),
+    coefficientRing(A0)
+{
+}
+void LWSchur2::append_term(const_schur_partition f)
+{
+  // Append this partition to the answer
+}
+schur_poly *LWSchur2::skew_schur(const_schur_partition lambda, const_schur_partition p)
+{
+  // possibly increase the num rows
+  // initialize the schur_poly_heap
+  //  call skews_schur: should be a different name!!
+  // return the answer
+  return 0;
+}
+schur_poly *LWSchur2::mult(const_schur_partition a, const_schur_partition b)
+{
+  // possibly increase the num rows
+  // initialize the schur_poly_heap
+  //  call mult: should be a different name!!
+  // return the answer
+  return 0;
 }
 
 
@@ -488,6 +752,10 @@ void SchurRing::SM()
       // partition is to be output
       Nterm *f = new_term();
       f->coeff = K_->from_int(1);
+      //      fprintf(stderr, "partition: ");
+      //      for (int i=1; i <= nvars_; i++)
+      //	fprintf(stderr, " %d", _SMtab.p[i]);
+      //      fprintf(stderr, "\n");
       from_partition(_SMtab.p, f->monom);
       f->next = _SMresult;
       _SMresult = f;
