@@ -4,8 +4,14 @@
 #include <iostream>
 #include <stdlib.h>
 #include <assert.h>
+
+// We allocate this many threads initially, to save trouble with memory allocation.
+// We may have to raise this, in the future.
 const static int maxNumThreads = 16;
 
+// The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
+// There may be I/O bound threads, such as the the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
+// number of cores plus the expected number of I/O bound threads.
 static int currentAllowedThreads = 2;
 
 static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }

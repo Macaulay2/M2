@@ -1812,7 +1812,11 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
 		    else if sym === recursionLimitS then (recursionLimit = n; e)
 		    else if sym === lineNumberS then (lineNumber = n; e)
-		    else if sym === allowableThreadsS then (setAllowableThreadsFun(n); e)
+		    else if sym === allowableThreadsS then (
+			 if n < 1 || n > Ccode( int, " getMaxAllowableThreads() " ) 
+			 then return buildErrorPacket("allowableThreads: expected integer in range 1 .. " + tostring(Ccode( int, " getMaxAllowableThreads() " )));
+			 setAllowableThreadsFun(n);
+			 e)
 		    else if sym === printingPrecisionS then (
 			 if n < 0 then return buildErrorPacket("printingPrecision can not be set to negative value");
 			 printingPrecision = n;
@@ -1826,7 +1830,19 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === gbTraceS then (gbTrace = n; e)
 		    else if sym === printWidthS then (printWidth = n; e)
 		    else buildErrorPacket(msg))
-	       else buildErrorPacket(msg))
+	       else buildErrorPacket(
+		    if sym === debugLevelS
+		    || sym === engineDebugLevelS
+		    || sym === lineNumberS
+		    || sym === allowableThreadsS
+		    || sym === printingPrecisionS
+		    || sym === printingAccuracyS
+		    || sym === printingLeadLimitS
+		    || sym === printingTrailLimitS
+		    || sym === gbTraceS
+		    || sym === printWidthS
+		    then (when sym is s:SymbolClosure do s.symbol.word.name else "") + ": expected a small integer"
+		    else msg))
 	  else buildErrorPacket(msg))
      else WrongNumArgs(2));
 storeE := Expr(CompiledFunction(store,nextHash()));
