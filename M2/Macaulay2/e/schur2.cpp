@@ -1,0 +1,700 @@
+// Copyright 1996 Michael E. Stillman
+
+#include "schur2.hpp"
+#include <stdio.h>
+#include "text-io.hpp"
+#include "ZZ.hpp"
+
+const int SCHUR_MAX_WT = 100;
+const int LARGE_NUMBER = 32000;
+
+void tableau2::initialize(int nvars, int maxwt0)
+{
+  dim = nvars;
+  maxwt = SCHUR_MAX_WT;
+  wt = 0;
+  lambda = 0;
+  p = 0;
+  xloc = newarray_atomic(int,SCHUR_MAX_WT+1);
+  yloc = newarray_atomic(int,SCHUR_MAX_WT+1);
+}
+
+void tableau2::resize(int max_wt)
+{
+  if (max_wt <= SCHUR_MAX_WT) return;
+  deletearray(xloc);
+  deletearray(yloc);
+  maxwt = max_wt;
+  wt = max_wt;
+  xloc = newarray_atomic(int,maxwt+1);
+  yloc = newarray_atomic(int,maxwt+1);
+}
+
+int tableau2::elem(int x, int y) const
+{
+  // slow: only used for debugging
+  for (int i=1; i<=wt; i++)
+    if (xloc[i] == x && yloc[i] == y)
+      return i;
+  
+  // otherwise perhaps throw an error
+  fprintf(stderr, "tableau2: location (%d,%d) out of range\n", 
+	  x, y);
+  return 0;
+}
+
+void tableau2::fill(int *lamb, int *pp)
+     // Fill the skew tableau2 p\lambda with 1..nboxes
+     // starting at top right, moving left and then down
+     // row by row.
+{
+  int i, j;
+  p = pp;
+  lambda = lamb;
+
+  int next = 1;
+  for (i=1; p[i] != 0; i++)
+    {
+      int a = lambda[i];
+      for (j=p[i]; j>a; j--)
+	{
+	  xloc[next] = i;
+	  yloc[next++] = j;
+	}
+    }
+}
+
+void tableau2::display() const
+{
+  int i,j;
+
+  for (i=1; p[i] != 0; i++)
+    {
+      for (j=1; j <= lambda[i]; j++)
+	fprintf(stdout, "--  ");
+      for ( ; j <= p[i]; j++)
+	fprintf(stdout, "%2d  ", elem(i,j));
+      fprintf(stdout, "\n");
+    }
+}
+
+//////////////////////////////////////////
+bool operator==(const schur_poly::iterator &a, const schur_poly::iterator &b)
+{
+  return a.ic == b.ic;
+}
+bool operator!=(const schur_poly::iterator &a, const schur_poly::iterator &b)
+{
+  return a.ic != b.ic;
+}
+
+void schur_poly::appendTerm(ring_elem coeff, const_schur_partition monom)
+{
+  coeffs.push_back(coeff);
+  for (int i=0; i<monom[0]; i++)
+    monoms.push_back(monom[i]);
+}
+void schur_poly::append(iterator &first, iterator &last)
+{
+  for ( ; first != last; ++first)
+    appendTerm(first.getCoefficient(), first.getMonomial());
+}
+
+SchurRing2 *SchurRing2::create(const Ring *A, int n)
+{
+  SchurRing2 *R = new SchurRing2(A,n);
+  R->initialize_SchurRing2();
+  return R;
+}
+
+SchurRing2 *SchurRing2::createInfinite(const Ring *A)
+{
+  SchurRing2 *R = new SchurRing2(A);
+  R->initialize_SchurRing2();
+  return R;
+}
+
+SchurRing2::SchurRing2(const Ring *A, int n)
+  : coefficientRing(A),
+    nvars(n)
+{
+}
+
+bool SchurRing2::initialize_SchurRing2()
+{
+  initialize_ring(coefficientRing->charac());
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
+  SMinitialize(nvars,0);
+  return true;
+}
+
+bool SchurRing2::is_valid_partition(M2_arrayint part, bool set_error) const
+{
+  if (nvars >= 0 && part->len > nvars)
+    {
+      if (set_error)
+	ERROR("expected a partition of size at most %d\n", nvars);
+      return false;
+    }
+  for (int i=1; i<part->len; i++)
+    if (part->array[i-1] < part->array[i])
+      {
+	if (set_error)
+	  ERROR("expected a non-increasing sequence of integers");
+	return false;
+      }
+  if (part->len > 0 && part->array[part->len-1] <= 0)
+    {
+      if (set_error)
+	ERROR("expected positive integers only");
+      return false;
+    }
+  return true;
+}
+
+ring_elem SchurRing2::from_partition(M2_arrayint part) const
+{
+  ring_elem result;
+  schur_poly *f = new schur_poly;
+  f->coeffs.push_back(coefficientRing->one());
+  f->monoms.push_back(part->len + 1);
+  for (int i=0; i<part->len; i++)
+    f->monoms.push_back(part->array[i]);
+  result.schur_poly_val = f;
+  return result;
+}
+
+void SchurRing2::text_out(buffer &o) const
+{
+  o << "SchurRing2(";
+  if (nvars >= 0)
+    o << nvars << ",";
+  coefficientRing->text_out(o);
+  o << ")";
+}
+
+void SchurRing2::elem_text_out(buffer &o, 
+			       const ring_elem f, 
+			       bool p_one, 
+			       bool p_plus, 
+			       bool p_parens) const
+{
+  const schur_poly *g = f.schur_poly_val;
+  int n = g->size();
+
+  bool needs_parens = p_parens && (n > 1);
+  if (needs_parens) 
+    {
+      if (p_plus) o << '+';
+      o << '(';
+      p_plus = false;
+    }
+
+  p_one = false;
+  for (schur_poly::iterator i = g->begin(); i != g->end(); ++i)
+    {
+      const_schur_partition part = i.getMonomial();
+      int len = *part++;
+      int isone = (len == 1);  // the empty partition
+      p_parens = !isone;
+      coefficientRing->elem_text_out(o,i.getCoefficient(), p_one,p_plus,p_parens);
+      o << "{";
+      for (int j=0; j < len-1; j++)
+	{
+	  if (j > 0) o << ",";
+	  o << part[j];
+	}
+      o << "}";
+      p_plus = true;
+    }
+  if (needs_parens) o << ')';
+}
+
+bool SchurRing2::is_unit(const ring_elem f) const
+{
+  const schur_poly *g = f.schur_poly_val;
+  if (g->size() != 1) return false;
+  return (g->monoms.size() == 1) && (coefficientRing->is_unit(g->coeffs[0]));
+}
+
+bool SchurRing2::is_zero(const ring_elem f) const
+{
+  const schur_poly *g = f.schur_poly_val;
+  return g->size() == 0;
+}
+
+bool SchurRing2::is_equal(const ring_elem f, const ring_elem g) const
+{
+  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *g1 = g.schur_poly_val;
+  if (f1->size() != g1->size())
+    return false;
+  if (f1->monoms.size() != g1->monoms.size())
+    return false;
+
+  VECTOR(schur_word)::const_iterator m_f = f1->monoms.begin();
+  VECTOR(schur_word)::const_iterator m_g = g1->monoms.begin();
+  for ( ; m_f != f1->monoms.end(); ++m_f, ++m_g)
+    if (*m_f != *m_g) return false;
+
+  VECTOR(ring_elem)::const_iterator c_f = f1->coeffs.begin();
+  VECTOR(ring_elem)::const_iterator c_g = g1->coeffs.begin();
+  for ( ; c_f != f1->coeffs.end(); ++c_f, ++c_g)
+    if (!coefficientRing->is_equal(*c_f, *c_g)) return false;
+
+  return true;
+}
+
+bool SchurRing2::get_scalar(const schur_poly *g, ring_elem &result) const
+{
+  if (g->size() != 1) return false;
+  if (g->monoms.size() != 1) return false;
+  result = g->coeffs[0];
+  return true;
+}
+
+ring_elem SchurRing2::from_coeff(ring_elem a) const
+{
+  ring_elem result;
+  schur_poly *f = new schur_poly;
+  if (!coefficientRing->is_zero(a))
+    {
+      f->coeffs.push_back(a);
+      f->monoms.push_back(1);
+    }
+  result.schur_poly_val = f;
+  return result;
+}
+ring_elem SchurRing2::from_int(int n) const
+{
+  ring_elem a = coefficientRing->from_int(n);
+  return from_coeff(a);
+}
+ring_elem SchurRing2::from_int(mpz_ptr n) const
+{
+  ring_elem a = coefficientRing->from_int(n);
+  return from_coeff(a);
+}
+ring_elem SchurRing2::from_rational(mpq_ptr q) const
+{
+  ring_elem a = coefficientRing->from_rational(q);
+  return from_coeff(a);
+}
+
+ring_elem SchurRing2::copy(const ring_elem f) const
+{
+  const schur_poly *f1 = f.schur_poly_val;
+
+  ring_elem result;
+  schur_poly *g = new schur_poly;
+  result.schur_poly_val = g;
+
+  VECTOR(ring_elem)::iterator c_result;
+  for (VECTOR(ring_elem)::const_iterator c_f = f1->coeffs.begin(); c_f != f1->coeffs.end(); ++c_f)
+    g->coeffs.push_back(coefficientRing->negate(*c_f));
+
+  g->monoms.insert(g->monoms.end(), f1->monoms.begin(), f1->monoms.end());
+
+  return result;
+}
+
+ring_elem SchurRing2::invert(const ring_elem f) const
+{
+  // return 0
+  return zero();
+}
+
+ring_elem SchurRing2::divide(const ring_elem f, const ring_elem g) const
+{
+  return zero();
+}
+
+void SchurRing2::syzygy(const ring_elem a, const ring_elem b,
+	    ring_elem &x, ring_elem &y) const
+{
+  x = zero();
+  y = zero();
+}
+
+int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partition b) const
+{
+  int len = a[0];
+  if (b[0] < len) len = b[0];
+  for (int i=0; i<len; i++)
+    {
+      int cmp = a[i] - b[i];
+      if (cmp < 0) return LT;
+      if (cmp > 0) return GT;
+    }
+  return EQ; 
+}
+int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const 
+{
+  /* write me */
+}
+bool SchurRing2::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
+{
+  // Cases:
+  // 1.  Rf is ZZ
+  // 2. Rf is coefficientRing
+  // 3. Rf is another SchurRing2
+
+  if (Rf == globalZZ)
+    {
+      from_coeff(Rf->promote(globalZZ, f, result));
+      return true;
+    }
+  else if (Rf == coefficientRing)
+    {
+      result = from_coeff(f);
+      return true;
+    }
+  else {
+    const SchurRing2 *Sf = Rf->cast_to_SchurRing2();
+    if (Sf != 0)
+      {
+	// TODO: WRITE THIS PART
+	return true;
+      }
+  }
+  return false;
+}
+bool SchurRing2::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+{
+  const schur_poly *f1 = f.schur_poly_val;
+  if (Rg == coefficientRing || Rg == globalZZ)
+    {
+      if (get_scalar(f1, result))
+	{
+	  if (Rg == globalZZ)
+	    return coefficientRing->lift(globalZZ, result, result);
+	  return true;
+	}
+    }
+  else {
+    const SchurRing2 *Sf = Rg->cast_to_SchurRing2();
+    if (Sf != 0)
+      {
+	// TODO: WRITE THIS PART
+	return true;
+      }
+  }
+  return false;
+}
+ring_elem SchurRing2::negate(const ring_elem f) const 
+{
+  if (is_zero(f)) return f;
+  const schur_poly *f1 = f.schur_poly_val;
+  ring_elem resultRE;
+  schur_poly *result = new schur_poly;
+  resultRE.schur_poly_val = result;
+
+  for (VECTOR(ring_elem)::const_iterator i = f1->coeffs.begin(); i != f1->coeffs.end(); ++i)
+    result->coeffs.push_back(coefficientRing->negate(*i));
+
+  result->monoms.insert(result->monoms.end(), f1->monoms.begin(), f1->monoms.end());
+  return resultRE;
+}
+
+ring_elem SchurRing2::add(const ring_elem f, const ring_elem g) const
+{
+  if (is_zero(f)) return g;
+  if (is_zero(g)) return f;
+  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *g1 = g.schur_poly_val;
+
+  ring_elem resultRE;
+  schur_poly *result = new schur_poly;
+  resultRE.schur_poly_val = result;
+
+  schur_poly::iterator i = f1->begin();
+  schur_poly::iterator j = g1->begin();
+  schur_poly::iterator iend = f1->end();
+  schur_poly::iterator jend = g1->end();
+  
+  bool done = false;
+  while (!done)
+    {
+      int cmp = compare_partitions(i.getMonomial(), j.getMonomial());
+      switch (cmp) {
+      case LT:
+	result->appendTerm(j.getCoefficient(), j.getMonomial());
+	++j;
+	if (j == jend)
+	  {
+	    result->append(i, iend);
+	    done = true;
+	  }
+	break;
+      case GT:
+	result->appendTerm(i.getCoefficient(), i.getMonomial());
+	++i;
+	if (i == iend)
+	  {
+	    result->append(j, jend);
+	    done = true;
+	  }
+	break;
+      case EQ:
+	ring_elem c = coefficientRing->add(i.getCoefficient(), j.getCoefficient());
+	if (!coefficientRing->is_zero(c))
+	  result->appendTerm(c, i.getMonomial());
+	++j;
+	++i;
+	if (j == jend)
+	  {
+	    result->append(i, iend);
+	    done = true;
+	  }
+	else
+	  {
+	    if (i == iend)
+	      {
+		result->append(i, iend);
+		done = true;
+	      }
+	  }
+	break;
+      }
+    }
+  return resultRE;
+}
+
+
+ring_elem SchurRing2::subtract(const ring_elem f, const ring_elem g) const
+{
+  ring_elem h = negate(g);
+  return add(f,h);
+}
+
+schur_poly * SchurRing2::mult_by_coefficient(ring_elem a, const schur_poly *f) const
+{
+  schur_poly *result = new schur_poly;
+
+  VECTOR(ring_elem)::iterator c_result;
+  for (VECTOR(ring_elem)::const_iterator c_f = f->coeffs.begin(); c_f != f->coeffs.end(); ++c_f)
+    result->coeffs.push_back(coefficientRing->mult(a, *c_f));
+
+  result->monoms.insert(result->monoms.end(), f->monoms.begin(), f->monoms.end());
+
+  return result;
+}
+ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
+{
+  ring_elem resultRE;
+  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *g1 = g.schur_poly_val;
+  ring_elem a;
+  if (get_scalar(f1,a))
+    {
+      resultRE.schur_poly_val = mult_by_coefficient(a,g1);
+      return resultRE;
+      // In this case, do a simple multiplication
+    }
+  else if (get_scalar(g1,a))
+    {
+      resultRE.schur_poly_val = mult_by_coefficient(a,f1);
+      return resultRE;
+    }
+  else
+    {
+      // use the poly heap
+      schur_poly_heap H(this);
+      for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
+	for (schur_poly::iterator j = g1->begin(); j != g1->end(); ++j)
+	  {
+	    ring_elem c = coefficientRing->mult(i.getCoefficient(), j.getCoefficient());
+	    ring_elem r = const_cast<SchurRing2 *>(this)->mult_terms(i.getMonomial(), j.getMonomial());
+	    resultRE.schur_poly_val = mult_by_coefficient(c, r.schur_poly_val);
+	    delete r;
+	    H.add(resultRE);
+	  }
+      return H.value();
+    }
+}
+
+ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var) const 
+{ 
+  /* write me */ 
+}
+
+/////// Littlewood-Richardson algorithm /////////////////////////
+
+void SchurRing2::SMinitialize(int n, int maxwt)
+{
+  SMmaxrows = n;
+  SMmaxweight = maxwt;  // need this?
+
+  SMtab.initialize(SMmaxrows, SMmaxweight);
+  SMfilled.initialize(SMmaxrows, SMmaxweight);
+  SMcurrent = 0;
+  SMfinalwt = 0;
+  SMtab.p = new int[nvars+2];
+  SMheap = new schur_poly_heap(this);
+}
+
+void SchurRing2::SMbounds(int &lo, int &hi)
+{
+  int i, k;
+  int x = SMfilled.xloc[SMcurrent];
+  int y = SMfilled.yloc[SMcurrent];
+  
+  // First set the high bound, using info from the "one to the right"
+  // in the reverse lex filled skew tableau.
+
+  if (y == SMfilled.p[x])	// There is not one to the right
+    {
+      hi = SMmaxrows;
+      for (k=1; k<=SMmaxrows; k++)
+	if (SMtab.p[k] == 0)
+	  {
+	    hi = k;
+	    break;
+	  }
+    }
+  else				// note that the case SMcurrent==1 will be handled
+    {				// in the previous statement.
+      hi = SMtab.xloc[SMcurrent-1];
+    }
+
+  // Now we set the lo bound, using info from the "one above"
+  
+  if (x == 1 || y <= SMfilled.lambda[x-1])
+    lo = 1;			// There is not one above
+  else
+    {
+      int above = SMcurrent - SMfilled.p[x] + SMfilled.lambda[x-1];
+      int xabove = SMtab.xloc[above];
+      int yabove = SMtab.yloc[above];
+      for (i=xabove+1; i<=hi; i++)
+	if (SMtab.p[i] < yabove) break;
+      lo = i;
+    }
+}
+
+void SchurRing2::SMsetPartitionLength(schur_word *p, int SMmaxrows)
+{
+  int i;
+  for (i=2; i<SMmaxrows+2; i++)
+    if (p[i] == 0)
+      break;
+  p[0] = i;
+}
+
+void SchurRing2::SM()
+{
+  int lo, hi;
+
+  if (SMcurrent == SMfinalwt)
+    {
+      // partition is to be output
+      SMsetPartitionLength(SMtab.p-2, SMmaxrows);
+      SMappendTerm(SMtab.p-2);
+      return;
+    }
+  
+  SMcurrent++;
+  SMbounds(lo, hi);
+  int this_one = LARGE_NUMBER;	// larger than any entry of SMtab: SMfinalwt+1 should work...
+  int last_one;
+  for (int i=lo; i<=hi; i++)
+    {
+      last_one = this_one;
+      this_one = SMtab.p[i];
+      if (last_one > this_one)
+	{
+	  SMtab.p[i]++;
+	  SMtab.xloc[SMcurrent] = i;
+	  SMtab.yloc[SMcurrent] = SMtab.p[i];
+	  SM();
+	  SMtab.p[i]--;
+	}
+    }
+  SMcurrent--;
+}
+
+void SchurRing2::SMappendTerm(const_schur_partition f)
+{
+  // make a poly, and insert it into the heap
+  ring_elem RE;
+  RE.schur_poly_val = new schur_poly;
+  RE.schur_poly_val->appendTerm(coefficientRing->one(), f);
+  SMheap->add(RE);
+}
+
+ring_elem SchurRing2::skew_schur(const_schur_partition lambda, const_schur_partition p)
+{
+  SMcurrent = 0;
+
+  SMfinalwt = p[1] - lambda[1];
+  SMmaxrows = p[0] - 2; // this is the number of elements in the partition p
+  if (nvars != -1 && SMmaxrows > nvars)
+    SMmaxrows = nvars;
+
+  delete [] SMtab.p;
+  SMtab.p = new int[SMmaxrows+2];
+  // At some point we need to set SMtab.p[0].
+  SMtab.p[1] = SMfinalwt;
+  SMtab.p += 2;
+
+  SMtab.wt = SMfinalwt;
+  SMtab.resize(SMfinalwt);
+  SMfilled.resize(SMfinalwt);
+
+  // lambda and p should not be modified in the following call
+  lambda += 2;
+  p += 2;
+  SMfilled.fill(const_cast<schur_partition>(lambda), const_cast<schur_partition>(p));
+  SM();
+  return SMheap->value(); // resets itself back to new
+}
+
+ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition b)
+{
+  int i;
+
+  SMmaxrows = a[0] - 2 + b[0] - 2; // this is the max number of elements in the output partition
+  if (nvars != -1 && SMmaxrows > nvars)
+    SMmaxrows = nvars;
+  
+  schur_partition lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * SMmaxrows);
+  schur_partition p = ALLOCATE_EXPONENTS(2 * sizeof(int) * SMmaxrows);
+
+  // Second: make the skew partition (note: r,s>=1)
+  // this is: if a = r+2 wa a1 a2 ... ar
+  //             b = s+2 wb b1 b2 ... bs
+  // p is:
+  //   (r+s+2) wb+wa+r*b1 b1+a1 b1+a2 ... b1+ar b1 b2 ... bs
+  // lambda is:
+  //   (r+s+2) r*b1       b1    b1    ... b1    0  0  ... 0
+
+  int r = a[0]-2;
+  int s = b[0]-2;
+  int c = b[2];
+
+  for (i=2; i<r+1; i++)
+    {
+      p[i] = c + a[i];
+      lambda[i] = c;
+    }
+  for (i=r+2; i<r+s+2; i++)
+    {
+      p[i] = b[i-r-2];
+      lambda[i] = 0;
+    }
+  p[0] = r+s+2;
+  p[1] = a[1] + a[2] + r*c;
+  lambda[0] = r+2;
+  lambda[1] = r*c;
+  return skew_schur(lambda, p);
+}
+
+/////////////////////////////////////////////////////////////////
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// End:

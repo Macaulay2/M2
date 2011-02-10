@@ -5,6 +5,7 @@
 ##################
 
 INTERFACE = \
+	schur2 \
 	spair-heap \
 	dpoly \
 	tower \

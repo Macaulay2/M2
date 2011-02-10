@@ -13,6 +13,7 @@
 #include "GF.hpp"
 #include "polyring.hpp"
 #include "schur.hpp"
+#include "schur2.hpp"
 #include "frac.hpp"
 #include "weylalg.hpp"
 #include "skewpoly.hpp"
