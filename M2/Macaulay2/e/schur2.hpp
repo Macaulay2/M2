@@ -116,6 +116,7 @@ public:
   ring_elem dimension(const ring_elem f) const;
   // only allowed if nvars >= 0
 
+  engine_RawArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const;
 
 
   ////// from Ring //////////////////////////////////////////

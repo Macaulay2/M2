@@ -843,12 +843,17 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
 {
   try {
     const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
-    if (P == 0)
+    if (P != 0)
       {
-	ERROR("expected a polynomial");
-	return 0;
+	return P->list_form(coeffRing, f->get_value());
       }
-    return P->list_form(coeffRing, f->get_value());
+    const SchurRing2 *S = f->get_ring()->cast_to_SchurRing2();
+    if (S != 0)
+      {
+	return S->list_form(coeffRing, f->get_value());
+      }
+    ERROR("expected a polynomial");
+    return 0;
   }
   catch (exc::engine_error e) {
     ERROR(e.what());

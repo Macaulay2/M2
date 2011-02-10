@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "text-io.hpp"
 #include "ZZ.hpp"
+#include "relem.hpp"
+#include "monomial.hpp"
 
 const int SCHUR_MAX_WT = 100;
 const int LARGE_NUMBER = 32000;
@@ -53,7 +55,7 @@ void tableau2::fill(int *lamb, int *pp)
   lambda = lamb;
 
   int next = 1;
-  for (i=1; p[i] != 0; i++)
+  for (i=1; i<p[0]; i++)
     {
       int a = lambda[i];
       for (j=p[i]; j>a; j--)
@@ -62,13 +64,14 @@ void tableau2::fill(int *lamb, int *pp)
 	  yloc[next++] = j;
 	}
     }
+  //  display();
 }
 
 void tableau2::display() const
 {
   int i,j;
 
-  for (i=1; p[i] != 0; i++)
+  for (i=1; i<p[0]; i++)
     {
       for (j=1; j <= lambda[i]; j++)
 	fprintf(stdout, "--  ");
@@ -324,7 +327,7 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
 {
   int len = a[0];
   if (b[0] < len) len = b[0];
-  for (int i=0; i<len; i++)
+  for (int i=1; i<len; i++)
     {
       int cmp = a[i] - b[i];
       if (cmp < 0) return LT;
@@ -454,7 +457,7 @@ ring_elem SchurRing2::add(const ring_elem f, const ring_elem g) const
 	  {
 	    if (i == iend)
 	      {
-		result->append(i, iend);
+		result->append(j, jend);
 		done = true;
 	      }
 	  }
@@ -517,6 +520,69 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
     }
 }
 
+void toVarpower(const_schur_partition a, intarray &result)
+{
+  int len = a[0];
+  int *result_vp = result.alloc(2*len);
+  int *orig_result_vp = result_vp;
+  result_vp++;
+
+  if (len > 1)
+    {
+      int v = a[1];
+      int e = 1;
+      
+      for (int i=2; i<len; i++)
+	{
+	  if (v == a[i])
+	    e++;
+	  else 
+	    {
+	      *result_vp++ = v;
+	      *result_vp++ = e;
+	      v = a[i];
+	      e = 1;
+	    }
+	}
+      *result_vp++ = v;
+      *result_vp++ = e;
+    }
+
+  int newlen = static_cast<int>(result_vp - orig_result_vp);
+  *orig_result_vp = newlen;
+  result.shrink(newlen);
+}
+
+engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR, const ring_elem f) const
+{
+  if (coeffR != coefficientRing)
+    {
+      ERROR("expected coefficient ring of Schur ring");
+      return 0;
+    }
+  const schur_poly *f1 = f.schur_poly_val;
+  int n = f1->size();
+  engine_RawMonomialArray monoms = GETMEM(engine_RawMonomialArray, sizeofarray(monoms,n));
+  engine_RawRingElementArray coeffs = GETMEM(engine_RawRingElementArray, sizeofarray(coeffs,n));
+  monoms->len = n;
+  coeffs->len = n;
+  engine_RawArrayPair result = newitem(struct engine_RawArrayPair_struct);
+  result->monoms = monoms;
+  result->coeffs = coeffs;
+
+  // Loop through the terms
+  intarray vp;
+  schur_poly::iterator i = f1->begin();
+  for (int next=0; next<n; ++i, ++next)
+    {
+      coeffs->array[next] = RingElement::make_raw(coefficientRing, i.getCoefficient());
+      toVarpower(i.getMonomial(), vp);
+      monoms->array[next] = Monomial::make(vp.raw());
+      vp.shrink(0);
+    }
+  return result;
+}
+
 ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var) const 
 { 
   /* write me */ 
@@ -533,7 +599,8 @@ void SchurRing2::SMinitialize(int n, int maxwt)
   SMfilled.initialize(SMmaxrows, SMmaxweight);
   SMcurrent = 0;
   SMfinalwt = 0;
-  SMtab.p = new int[nvars+2];
+  SMtab.p = new int[nvars+1];
+  for (int i=0; i<=nvars; i++) SMtab.p[i] = 0;
   SMheap = new schur_poly_heap(this);
 }
 
@@ -579,7 +646,7 @@ void SchurRing2::SMbounds(int &lo, int &hi)
 void SchurRing2::SMsetPartitionLength(schur_word *p, int SMmaxrows)
 {
   int i;
-  for (i=2; i<SMmaxrows+2; i++)
+  for (i=1; i<=SMmaxrows; i++)
     if (p[i] == 0)
       break;
   p[0] = i;
@@ -592,8 +659,8 @@ void SchurRing2::SM()
   if (SMcurrent == SMfinalwt)
     {
       // partition is to be output
-      SMsetPartitionLength(SMtab.p-2, SMmaxrows);
-      SMappendTerm(SMtab.p-2);
+      SMsetPartitionLength(SMtab.p, SMmaxrows);
+      SMappendTerm(SMtab.p);
       return;
     }
   
@@ -630,25 +697,25 @@ ring_elem SchurRing2::skew_schur(const_schur_partition lambda, const_schur_parti
 {
   SMcurrent = 0;
 
-  SMfinalwt = p[1] - lambda[1];
-  SMmaxrows = p[0] - 2; // this is the number of elements in the partition p
+  SMfinalwt = 0;
+  for (int i=1; i<p[0]; i++) SMfinalwt += p[i];
+  for (int i=1; i<lambda[0]; i++) SMfinalwt -= lambda[i];
+  SMmaxrows = p[0] - 1; // this is the number of elements in the partition p
   if (nvars != -1 && SMmaxrows > nvars)
     SMmaxrows = nvars;
 
   delete [] SMtab.p;
-  SMtab.p = new int[SMmaxrows+2];
-  // At some point we need to set SMtab.p[0].
-  SMtab.p[1] = SMfinalwt;
-  SMtab.p += 2;
+  SMtab.p = new int[SMmaxrows+1];
+  for (int i=0; i<=SMmaxrows; i++) SMtab.p[i] = 0;
 
   SMtab.wt = SMfinalwt;
   SMtab.resize(SMfinalwt);
   SMfilled.resize(SMfinalwt);
 
   // lambda and p should not be modified in the following call
-  lambda += 2;
-  p += 2;
   SMfilled.fill(const_cast<schur_partition>(lambda), const_cast<schur_partition>(p));
+  lambda++;
+  p++;
   SM();
   return SMheap->value(); // resets itself back to new
 }
@@ -657,7 +724,7 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
 {
   int i;
 
-  SMmaxrows = a[0] - 2 + b[0] - 2; // this is the max number of elements in the output partition
+  SMmaxrows = a[0] - 1 + b[0] - 1; // this is the max number of elements in the output partition
   if (nvars != -1 && SMmaxrows > nvars)
     SMmaxrows = nvars;
   
@@ -665,31 +732,29 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
   schur_partition p = ALLOCATE_EXPONENTS(2 * sizeof(int) * SMmaxrows);
 
   // Second: make the skew partition (note: r,s>=1)
-  // this is: if a = r+2 wa a1 a2 ... ar
-  //             b = s+2 wb b1 b2 ... bs
+  // this is: if a = r+1 a1 a2 ... ar
+  //             b = s+1 b1 b2 ... bs
   // p is:
-  //   (r+s+2) wb+wa+r*b1 b1+a1 b1+a2 ... b1+ar b1 b2 ... bs
+  //   (r+s+1) b1+a1 b1+a2 ... b1+ar b1 b2 ... bs
   // lambda is:
-  //   (r+s+2) r*b1       b1    b1    ... b1    0  0  ... 0
+  //   (r+1)   b1    b1    ... b1    0  0  ... 0
 
-  int r = a[0]-2;
-  int s = b[0]-2;
-  int c = b[2];
+  int r = a[0]-1;
+  int s = b[0]-1;
+  int c = b[1];
 
-  for (i=2; i<r+1; i++)
+  for (i=1; i<=r; i++)
     {
       p[i] = c + a[i];
       lambda[i] = c;
     }
-  for (i=r+2; i<r+s+2; i++)
+  for (i=r+1; i<r+s+1; i++)
     {
-      p[i] = b[i-r-2];
+      p[i] = b[i-r];
       lambda[i] = 0;
     }
-  p[0] = r+s+2;
-  p[1] = a[1] + a[2] + r*c;
-  lambda[0] = r+2;
-  lambda[1] = r*c;
+  p[0] = r+s+1;
+  lambda[0] = r+1;
   return skew_schur(lambda, p);
 }
 
