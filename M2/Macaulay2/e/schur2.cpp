@@ -296,10 +296,7 @@ ring_elem SchurRing2::copy(const ring_elem f) const
   schur_poly *g = new schur_poly;
   result.schur_poly_val = g;
 
-  VECTOR(ring_elem)::iterator c_result;
-  for (VECTOR(ring_elem)::const_iterator c_f = f1->coeffs.begin(); c_f != f1->coeffs.end(); ++c_f)
-    g->coeffs.push_back(coefficientRing->negate(*c_f));
-
+  g->coeffs.insert(g->coeffs.end(), f1->coeffs.begin(), f1->coeffs.end());
   g->monoms.insert(g->monoms.end(), f1->monoms.begin(), f1->monoms.end());
 
   return result;
@@ -333,6 +330,9 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
       if (cmp < 0) return LT;
       if (cmp > 0) return GT;
     }
+  int cmp = a[0] - b[0];
+  if (cmp < 0) return LT;
+  if (cmp > 0) return GT;
   return EQ; 
 }
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const 
