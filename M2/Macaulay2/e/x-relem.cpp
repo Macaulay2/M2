@@ -932,8 +932,11 @@ void convolve(const PolyRing *R,
 	{
 	  ring_elem hr;
 	  Nterm *g = input_relems[j];
-	  hr.poly_val = R->mult_by_term(output_relems[i-j], g->coeff, g->monom);
-	  R->internal_add_to(result, hr);
+	  if (g != 0)
+	    {
+	      hr.poly_val = R->mult_by_term(output_relems[i-j], g->coeff, g->monom);
+	      R->internal_add_to(result, hr);
+	    }
 	}
       if (convolve_type == 1)
 	{
