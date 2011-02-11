@@ -995,6 +995,23 @@ export rawPairs(e:Expr):Expr := (
      );
 setupfun("rawPairs",rawPairs);
 
+export rawConvolve(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.1 is convolveType:ZZcell do if !isInt(convolveType) then WrongArgSmallInteger(2) else 
+     if isSequenceOfRingElements(s.0) then 
+     toExpr(Ccode(RawRingElementArrayOrNull, 
+	       "rawConvolve(",
+	       getSequenceOfRingElements(s.0), ",",
+	       toInt(convolveType),
+	       ")"))
+     else WrongArg(1,"a sequence of raw ring elements")
+     else WrongArgZZ(2)
+     else WrongNumArgs(2)
+     );
+setupfun("rawConvolve",rawConvolve);
+
+
 export rawGetParts(e:Expr):Expr := (
      when e
      is args:Sequence do
