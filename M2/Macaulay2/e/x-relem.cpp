@@ -889,6 +889,7 @@ engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
   }
 }
 
+#if 0
 void convolve(const Ring *R,
 	      const VECTOR(ring_elem) &input_relems, 
 	      VECTOR(ring_elem) &output_relems,
@@ -905,6 +906,39 @@ void convolve(const Ring *R,
 	{
 	  ring_elem f = R->mult(input_relems[j], output_relems[i-j]);
 	  result = R->add(result,f);
+	}
+      output_relems[i] = result;
+    }
+}
+#endif
+
+void convolve(const PolyRing *R,
+	      const VECTOR(ring_elem) &input_relems, 
+	      VECTOR(ring_elem) &output_relems,
+	      int convolve_type)
+{
+  const Ring *K = R->getCoefficientRing();
+  ring_elem invn;
+  int n = input_relems.size() - 1; // array is 0..n, with the 0 part being ignored.
+  // first set [1, e1] := [1, h1].
+  output_relems[0] = input_relems[0];
+  for (int i=1; i<=n; i++)
+    {
+      // ASSUMPTION: input_relems[i] is either a variable or - of a variable
+      ring_elem result = R->copy(input_relems[i]);
+      if (convolve_type == 2)
+	R->mult_coeff_to(K->from_int(-i), result);
+      for (int j=i-1; j>=1; --j)
+	{
+	  ring_elem hr;
+	  Nterm *g = input_relems[j];
+	  hr.poly_val = R->mult_by_term(output_relems[i-j], g->coeff, g->monom);
+	  R->internal_add_to(result, hr);
+	}
+      if (convolve_type == 1)
+	{
+	  invn = K->invert(K->from_int(i));
+	  R->mult_coeff_to(invn,result);
 	}
       output_relems[i] = result;
     }
@@ -926,7 +960,12 @@ engine_RawRingElementArrayOrNull rawConvolve(engine_RawRingElementArray H,
 	ERROR("expected ring element array of length at least 2");
 	return 0;
       }
-    const Ring *P = H->array[1]->get_ring();
+    const PolyRing *P = H->array[1]->get_ring()->cast_to_PolyRing();
+    if (P == 0)
+      {
+	ERROR("expected a polynomial ring");
+	return 0;
+      }
     VECTOR(ring_elem) input_relems(len);
     VECTOR(ring_elem) output_relems(len);
     for (int i=0; i<len; i++)
