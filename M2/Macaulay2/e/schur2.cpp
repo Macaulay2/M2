@@ -6,6 +6,7 @@
 #include "ZZ.hpp"
 #include "relem.hpp"
 #include "monomial.hpp"
+#include "ringmap.hpp"
 
 const int SCHUR_MAX_WT = 100;
 const int LARGE_NUMBER = 32000;
@@ -304,18 +305,20 @@ ring_elem SchurRing2::copy(const ring_elem f) const
 
 ring_elem SchurRing2::invert(const ring_elem f) const
 {
-  // return 0
+  // This function is not relevant for this ring
   return zero();
 }
 
 ring_elem SchurRing2::divide(const ring_elem f, const ring_elem g) const
 {
+  // This function is not relevant for this ring
   return zero();
 }
 
 void SchurRing2::syzygy(const ring_elem a, const ring_elem b,
 	    ring_elem &x, ring_elem &y) const
 {
+  // This function is not relevant for this ring
   x = zero();
   y = zero();
 }
@@ -339,6 +342,48 @@ int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
   /* write me */
 }
+bool SchurRing2::promote_coeffs(const SchurRing2 *Rf, const ring_elem f, ring_elem &resultRE) const
+{
+  // Assumption in use: Rf (ring of f) is a Schur ring, with coeff ring coeffRf
+  const schur_poly *f1 = f.schur_poly_val;
+  schur_poly *result = new schur_poly;
+  resultRE.schur_poly_val = result;
+
+  for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
+    {
+      if (i.getMonomial()[0] - 1 > nvars)
+	continue;
+      ring_elem a;
+      if (!coefficientRing->promote(Rf->getCoefficientRing(), i.getCoefficient(), a))
+	{
+	  delete result;
+	  return false;
+	}
+      result->appendTerm(a, i.getMonomial());
+    }
+  return true;
+}
+bool SchurRing2::lift_coeffs(const SchurRing2 *Sg, const ring_elem f, ring_elem &resultRE) const
+{
+  const schur_poly *f1 = f.schur_poly_val;
+  schur_poly *result = new schur_poly;
+  resultRE.schur_poly_val = result;
+
+  for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
+    {
+      if (i.getMonomial()[0] - 1 > Sg->n_vars())
+	continue;
+      ring_elem a;
+      if (!coefficientRing->lift(Sg->getCoefficientRing(), i.getCoefficient(), a))
+	{
+	  delete result;
+	  return false;
+	}
+      result->appendTerm(a, i.getMonomial());
+    }
+  return true;
+}
+
 bool SchurRing2::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // Cases:
@@ -360,8 +405,13 @@ bool SchurRing2::promote(const Ring *Rf, const ring_elem f, ring_elem &result) c
     const SchurRing2 *Sf = Rf->cast_to_SchurRing2();
     if (Sf != 0)
       {
-	// TODO: WRITE THIS PART
-	return true;
+	if (coefficientRing == Sf->getCoefficientRing())
+	  {
+	    result = truncate(f);
+	    return true;
+	  }
+
+	return promote_coeffs(Sf, f, result);
       }
   }
   return false;
@@ -379,11 +429,16 @@ bool SchurRing2::lift(const Ring *Rg, const ring_elem f, ring_elem &result) cons
 	}
     }
   else {
-    const SchurRing2 *Sf = Rg->cast_to_SchurRing2();
-    if (Sf != 0)
+    const SchurRing2 *Sg = Rg->cast_to_SchurRing2();
+    if (Sg != 0)
       {
-	// TODO: WRITE THIS PART
-	return true;
+	if (coefficientRing == Sg->getCoefficientRing())
+	  {
+	    result = Sg->truncate(f);
+	    return true;
+	  }
+
+	return lift_coeffs(Sg, f, result);
       }
   }
   return false;
@@ -400,6 +455,25 @@ ring_elem SchurRing2::negate(const ring_elem f) const
     result->coeffs.push_back(coefficientRing->negate(*i));
 
   result->monoms.insert(result->monoms.end(), f1->monoms.begin(), f1->monoms.end());
+  return resultRE;
+}
+
+ring_elem SchurRing2::truncate(const ring_elem f) const 
+// assumption: f is a schur poly over another schur ring, with the SAME coeff ring
+//  each term is copied over, if the number of elements in the partition is <= n_vars()
+{
+  if (is_zero(f)) return f;
+  const schur_poly *f1 = f.schur_poly_val;
+  ring_elem resultRE;
+  schur_poly *result = new schur_poly;
+  resultRE.schur_poly_val = result;
+
+  for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
+    {
+      if (i.getMonomial()[0] - 1 > nvars)
+	continue;
+      result->appendTerm(i.getCoefficient(), i.getMonomial());
+    }
   return resultRE;
 }
 
@@ -585,7 +659,9 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR, const ring_e
 
 ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var) const 
 { 
-  /* write me */ 
+  // Should we allow ring maps to other Schur rings?  No others are that well defined...
+  // Use promote and lift for those instead?
+  return map->get_ring()->zero();
 }
 
 /////// Littlewood-Richardson algorithm /////////////////////////

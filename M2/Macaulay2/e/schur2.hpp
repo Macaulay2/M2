@@ -95,7 +95,13 @@ protected:
   virtual ~SchurRing2() {}
 
   int compare_partitions(const_schur_partition a, const_schur_partition b) const;
+  ring_elem truncate(const ring_elem f) const;
+  bool promote_coeffs(const SchurRing2 *Sf, const ring_elem f, ring_elem &resultRE) const;
+  bool lift_coeffs(const SchurRing2 *Sg, const ring_elem f, ring_elem &resultRE) const;
 public:
+  int n_vars() const { return nvars; }
+  const Ring *getCoefficientRing() const { return coefficientRing; }
+
   static SchurRing2 *create(const Ring *A, int n=-1);
   static SchurRing2 *createInfinite(const Ring *A);
 
