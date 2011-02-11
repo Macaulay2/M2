@@ -889,6 +889,63 @@ engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
   }
 }
 
+void convolve(const Ring *R,
+	      const VECTOR(ring_elem) &input_relems, 
+	      VECTOR(ring_elem) &output_relems,
+	      int convolve_type)
+{
+  int n = input_relems.size() - 1; // array is 0..n, with the 0 part being ignored.
+  // first set [1, e1] := [1, h1].
+  output_relems[0] = input_relems[0];
+  output_relems[1] = input_relems[1];
+  for (int i=2; i<=n; i++)
+    {
+      ring_elem result = R->copy(input_relems[i]);
+      for (int j=i-1; j>=1; --j)
+	{
+	  ring_elem f = R->mult(input_relems[j], output_relems[i-j]);
+	  result = R->add(result,f);
+	}
+      output_relems[i] = result;
+    }
+}
+
+engine_RawRingElementArrayOrNull rawConvolve(engine_RawRingElementArray H,
+				       int convolve_type)
+{
+  // convolve_type == 1: E_n = E_(n-1) * H_1 - E(n-2) * H_2 + ... + (-1)^n * H_n
+  // convolve_type == 2: n * E_n = E_(n-1) * H_1 - E(n-2) * H_2 + ... + (-1)^n * H_n
+  // others of interest?  These are good for translating between symmetric functions of type E,H,P
+
+  // H_0 is ignored... (OR: should we instead shift everything: first entry of H is denoted H_1...?)
+
+  try {
+    int len = H->len;
+    if (len <= 1)
+      {
+	ERROR("expected ring element array of length at least 2");
+	return 0;
+      }
+    const Ring *P = H->array[1]->get_ring();
+    VECTOR(ring_elem) input_relems(len);
+    VECTOR(ring_elem) output_relems(len);
+    for (int i=0; i<len; i++)
+      input_relems[i] = H->array[i]->get_value();
+    convolve(P, input_relems, output_relems, convolve_type);
+
+    engine_RawRingElementArray result = getmemarraytype(engine_RawRingElementArray,len);
+    result->len = len;
+    for (int i=0; i<result->len; i++)
+      result->array[i] = RingElement::make_raw(P,output_relems[i]);
+
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 const RingElement /* or null */ *rawGetPart(const M2_arrayint wts,
 				   const RingElement *f,
 				   M2_bool lobound_given,

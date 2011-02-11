@@ -419,6 +419,13 @@ extern "C" {
             const Ring * coeffRing, /* ring of the result coefficients */
             const RingElement *f); /* drg: connected rawPairs */
 
+  engine_RawRingElementArrayOrNull rawConvolve(engine_RawRingElementArray H,
+					       int convolve_type);
+  /* assumes: H[0]..H[n] are in a ring.
+     returns the array determined by convolving H 
+     (see def in x-relem.cpp for more info)
+  */
+
   engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
 				const RingElement *f);
   /* Return an array of RingElement's, each having pure weight, and sorted by
