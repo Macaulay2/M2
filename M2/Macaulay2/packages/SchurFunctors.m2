@@ -365,6 +365,8 @@ simpleFind=(d,F)->(
 
 needsPackage "SymmetricPolynomials"
 needsPackage "SchurRings"
+-- schurRings interface has changed at version 0.5
+schurVersion = value SchurRings.Options.Version
 
 splitCharacter = method()
 splitCharacter RingElement := ce -> (
@@ -372,7 +374,10 @@ splitCharacter RingElement := ce -> (
      -- Assumption: ring of pe: vars 0..n-1 
      --   are orig vars, n..2n-1 are elem symm fcns
      n:=numgens source vars ring ce;
-     R2:=symmRing n; -- vars 0..n-1 are elem symm fcns
+     R2 := if schurVersion < .5 then
+     	  symmRing n -- vars 0..n-1 are elem symm fcns
+     else 
+     	  symmRing(coefficientRing ring pe, n); -- vars 0..n-1 are elem symm fcns
      es := (vars R2)_{0..n-1};
      toS substitute(pe,es|es)
      )
