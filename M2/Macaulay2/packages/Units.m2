@@ -1,7 +1,10 @@
 newPackage "Units"
 fundamentalUnits = { symbol s, symbol g, symbol m, symbol A, symbol cd, symbol mol, symbol K }
 UnitMonomial = new Type of HashTable
-scan(fundamentalUnits, u -> u <- new UnitMonomial from { u => 1 })
+scan(fundamentalUnits, u -> (
+	  u <- new UnitMonomial from { u => 1 };
+	  protect u;
+	  ))
 UnitMonomial * UnitMonomial := UnitMonomial UnitMonomial := (m,n) -> select(merge(m,n,plus), i -> i =!= 0)
 UnitMonomial ^ ZZ := (m,i) -> if i === 0 then new UnitMonomial from {} else applyValues(m, j -> i*j)
 UnitMonomial / UnitMonomial := (m,n) -> m * n^-1
@@ -37,8 +40,6 @@ Constant Number := Number Constant := times
 
 kg = 1000 g
 cm = m / 100
-g = kg / 1000
-
 
 exa = 10^18
 peta = 10^15
@@ -236,7 +237,7 @@ Measurement#{Standard,AfterPrint} = x -> (
      )
 
 UnitMonomial#{Standard,AfterPrint} = m -> (
-     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class x;
+     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class m;
      if type#?m then << concatenate(" (",between(", ",type#m),")");
      << endl;
      )
