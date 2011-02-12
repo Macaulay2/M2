@@ -17,6 +17,10 @@ newPackage(
 
 needsPackage "SchurRings"
 
+schurVersion = value SchurRings.Options.Version
+-- EorH is defined in SchurRings, version .5
+if  schurVersion < 0.5 then protect EorH
+
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle'", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "FlagBundle",
@@ -1139,15 +1143,27 @@ schur = method(TypicalValue => AbstractSheaf)
 schur(List, AbstractSheaf) := (p,E) -> (
      -- Make sure that p is a monotone descending sequence of non-negative integers
      --q := conjugate new Partition from p;
+     local R;
+     local J;
+     local F;
      p = splice p;
      q := p;
      n := sum p;
-     R := symmRing n;
      wedges := computeWedges(n,ch E,dim variety E);
-     J := jacobiTrudi(q,R); -- so the result will be a poly in the wedge powers
-     F := map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
+     if schurVersion < 0.5 then (
+     	  R = symmRing n;
+     	  J = jacobiTrudi(q,R); -- so the result will be a poly in the wedge powers
+     	  F = map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
 	                         apply(splice{n..2*n-1}, i -> R_i => 0)));
-     abstractSheaf(variety E, ChernCharacter => F J))
+	  )
+     else (
+     	  R = symmRing(QQ, n);
+     	  J = jacobiTrudi(q,R, EorH => "E"); -- so the result will be a poly in the wedge powers
+     	  F = map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
+	                         apply(splice{n..3*n-1}, i -> R_i => 0)));
+	  );
+     abstractSheaf(variety E, ChernCharacter => F J)
+     )
 
 schubertCycle' = method(TypicalValue => RingElement)
 schubertCycle = method(TypicalValue => RingElement)
