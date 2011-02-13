@@ -155,8 +155,9 @@ au = astronomicalunit = 499.004783806 light second
 solarmass = 1.9891e30 kg
 mu0 = 4 pi 10^-7 H/m
 epsilon0 = 1/mu0 c^2
-e = 1.602176462e-19 C
-h = 6.62606876e-34 J s
+electron = e = 1.602176462e-19 C
+ev = eV = electron volt
+h = 6.62606896p24e-34 J s
 hbar = h / 2 pi
 G = 6.6743e-11 N m^2 / kg^2
 amu = u = atomicmassunit = 1.66053873e-27 kg
