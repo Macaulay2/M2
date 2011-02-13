@@ -5,8 +5,10 @@ scan(fundamentalUnits, u -> (
 	  u <- new UnitMonomial from { u => 1 };
 	  protect u;
 	  ))
-UnitMonomial * UnitMonomial := UnitMonomial UnitMonomial := (m,n) -> select(merge(m,n,plus), i -> i =!= 0)
-UnitMonomial ^ ZZ := (m,i) -> if i === 0 then new UnitMonomial from {} else applyValues(m, j -> i*j)
+UnitMonomial * UnitMonomial := UnitMonomial UnitMonomial := (m,n) -> (
+     p := select(merge(m,n,plus), i -> i =!= 0);
+     if #p === 0 then 1 else p)
+UnitMonomial ^ ZZ := (m,i) -> if i === 0 then 1 else applyValues(m, j -> i*j)
 UnitMonomial / UnitMonomial := (m,n) -> m * n^-1
 expression UnitMonomial := m -> if #m === 0 then expression 1 else product(sort pairs m, (u,i) -> (hold u)^i)
 net UnitMonomial := net @@ expression
@@ -23,20 +25,27 @@ Number / Measurement  := Constant / Measurement  := (x,m) -> new Measurement fro
 Measurement * Number  := Measurement * Constant  := Measurement Number  := Measurement Constant  := (m,x) -> x*m
 Measurement / Number  := Measurement / Constant  := (m,x) -> new Measurement from { m#0/x, m#1 }
 
-Measurement * UnitMonomial := Measurement UnitMonomial := (m,n) -> new Measurement from {m#0,m#1*n}
-UnitMonomial * Measurement := UnitMonomial Measurement := (n,m) -> new Measurement from {m#0,n*m#1}
+Measurement * UnitMonomial := Measurement UnitMonomial := (m,n) -> (
+     p := m#1*n;
+     if p === 1 then m#0 else new Measurement from {m#0,p})
+UnitMonomial * Measurement := UnitMonomial Measurement := (n,m) -> (
+     p := n*m#1;
+     if p === 1 then m#0 else new Measurement from {m#0,p})
 UnitMonomial / Measurement := Measurement / UnitMonomial := (m,n) -> m * n^-1
 
-Measurement * Measurement := Measurement Measurement := (m,n) -> apply(m,n,times)
+Measurement * Measurement := Measurement Measurement := (m,n) -> (
+     x := m#0 * n#0;
+     p := m#1 * n#1;
+     if p === 1 then x else new Measurement from {x,p})
 Measurement / Measurement := (m,n) -> m * n^-1
 
-Measurement ^ ZZ := (m,i) -> new Measurement from {m#0^i,m#1^i}
+Measurement ^ ZZ := (m,i) -> if i === 0 then 1 else new Measurement from {m#0^i,m#1^i}
 
 - Measurement := (n) -> new Measurement from { - n#0 , n#1 }
 Measurement + Measurement := (m,n) -> ( if m#1 =!= n#1 then error "sum: incompatible measurements"; new Measurement from { m#0 + n#0 , m#1 } )
 Measurement - Measurement := (m,n) -> m + -n
 
-Constant Number := Number Constant := times
+Constant Number := Number Constant := Number Number := times
 
 kg = 1000 g
 cm = m / 100
@@ -241,5 +250,12 @@ UnitMonomial#{Standard,AfterPrint} = m -> (
      if type#?m then << concatenate(" (",between(", ",type#m),")");
      << endl;
      )
+
+onecolon = method()
+onecolon RR := x -> toString floor x | ":" | toString (60 * (x - floor x))
+onecolon QQ := x -> onecolon (0. + x)
+twocolon = method()
+twocolon RR := x -> toString floor x | ":" | onecolon (60 * (x - floor x))
+twocolon QQ := x -> twocolon (0. + x)
 
 export values Units#"private dictionary"
