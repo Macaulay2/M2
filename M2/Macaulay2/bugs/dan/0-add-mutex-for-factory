@@ -1,0 +1,2 @@
+the libfactory interface is not thread safe.
+This needs a C level mutex around it too.
