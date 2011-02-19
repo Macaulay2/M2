@@ -1,0 +1,4 @@
+The numerical limits for memory and time during the building of Macaulay2 from
+source (Macaulay2Doc/basictests, Macaulay2Doc/test) and during the installation
+of packages (m2/html.m2) should be derived from options to the configure
+script, so builders have easy access to them.

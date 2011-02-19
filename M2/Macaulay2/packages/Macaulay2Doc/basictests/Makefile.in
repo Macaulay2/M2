@@ -21,18 +21,31 @@ $(TESTRESULTS) : @pre_exec_prefix@/bin/M2@EXE@
 
 ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 
+ifeq "@DEBUG@" "no"
+TLIMIT ?= 20
+MLIMIT ?= 400000
+VLIMIT ?= 400000
+else
+TLIMIT ?= 60
+MLIMIT ?= 700000
+VLIMIT ?= 700000
+endif
+
+# make the stack limit always the same as it would be under MacOS
+SLIMIT ?= 8192
+
 LIMIT :=
 ifeq (@ULIMIT_T@,yes)
-LIMIT += ulimit -t 20 ;
+LIMIT += ulimit -t $(TLIMIT) ;
 endif
 ifeq (@ULIMIT_M@,yes)
-LIMIT += ulimit -m 500000 ;
+LIMIT += ulimit -m $(MLIMIT) ;
 endif
 ifeq (@ULIMIT_V@,yes)
-LIMIT += ulimit -v 500000 ;
+LIMIT += ulimit -v $(VLIMIT) ;
 endif
 ifeq (@ULIMIT_S@,yes)
-LIMIT += ulimit -s 8192 ;
+LIMIT += ulimit -s $(SLIMIT) ;
 endif
 
 %.okay : %.m2
