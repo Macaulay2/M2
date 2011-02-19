@@ -23,8 +23,8 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 20
-MLIMIT ?= 400000
-VLIMIT ?= 400000
+MLIMIT ?= 600000
+VLIMIT ?= 600000
 else
 TLIMIT ?= 60
 MLIMIT ?= 700000
