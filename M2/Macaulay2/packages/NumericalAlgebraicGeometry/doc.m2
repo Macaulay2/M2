@@ -1,11 +1,45 @@
+refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", arXiv:0911.1783" 
+refIntroToNAG := "A.J. Sommese, J. Verschelde, and C.W. Wampler, \"Introduction to numerical algebraic geometry\", 
+                  in \"Solving polynomial equations\"(2005), 301--338" 
+refSWbook := "A.J. Sommese and C.W. Wampler, \"The numerical solution of systems of polynomials\",
+              World Scientific Publishing (2005)"
+certifiedTrackingFunctions := UL{
+	     TO randomInitialPair,
+	     TO goodInitialPair,
+	     TO randomSd 
+	     }
 document {
      Key => NumericalAlgebraicGeometry,
      Headline => "Numerical Algebraic Geometry",
      "The package ", TO "NumericalAlgebraicGeometry", ", also known as ", 
-     EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", 
+     EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay2)", 
      " implements methods of polynomial homotopy continuation                                                                                                  
-     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties.", 
-     "The current version focuses on solving square systems with finite number of solutions." 
+     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties. ", 
+     "The current version focuses on solving square systems with finite number of solutions. ",
+     
+     HEADER3 "Basic functions:",
+     UL{
+	  TO track,
+	  TO solveSystem,
+	  TO refine,
+	  TO totalDegreeStartSystem
+	  },
+     HEADER3 "Service functions:",
+     UL{
+	  TO setDefault,
+	  TO getDefault,
+	  TO areEqual,
+     	  TO sortSolutions,
+	  TO NAGtrace
+	  },
+     HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
+     certifiedTrackingFunctions,
+     HEADER3 {"References:"},
+     UL{
+       refIntroToNAG,
+       refSWbook,
+       refBeltranLeykin
+       }
      }
 
 document {
@@ -22,27 +56,37 @@ document {
 		  },
 	Outputs => { {TT "v, v1, v2", ", value(s) of the parameter(s)"} },
 	"Set/get value(s) of (a) parameter(s) in the functions ", 
-	TO "track", ", ", TO "solveSystem", ", ", TO "refine", " as well as higher-level functions.", 
+	TO "track", ", ", TO "solveSystem", ", ", TO "refine", " as well as higher-level functions (that are under construction).", 
+     	PARA {},
 	EXAMPLE lines ///
 	getDefault Predictor
      	setDefault(Predictor=>Euler, CorrectorTolerance=>1e-10)
 	getDefault Predictor  
      	///,
+     	PARA {},
 	SeeAlso => {track, solveSystem, refine, areEqual}
 	}
 					
+document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
+	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
+	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], [track,SLPpredictor], [setDefault,SLPpredictor]},
+     Headline => "reserved for developers"
+     } 
+
 document {
 	Key => {(solveSystem, List),solveSystem},
 	Headline => "solve a square system of polynomial equations",
 	Usage => "s = solveSystem F",
-	Inputs => { {"F", ", polynomials with complex coefficients"} },
-	Outputs => {{ TT "s", ", all complex solutions to the system ", TT "F=0" }},
+	Inputs => { "F"=>"polynomials with complex coefficients" },
+	Outputs => { "s"=>{"all complex solutions to the system ", TT "F=0" }},
 	"Solve a system of polynomial equations using homotopy continuation methods.",
+     	PARA {},
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
 solveSystem F 
      	///,
+     	PARA {},
 	"The output contains all ", TO Point, "s obtained at the end of homotopy paths when tracking a total-degree homotopy. ",
 	"In particular, this means that solving the system that has fewer than Bezout bound many solutions will produce 
 	points that are not marked as regular. See ", TO track, " for detailed examples. ", 
@@ -58,27 +102,24 @@ document {
 	     [track, numberSuccessesBeforeIncrease], [setDefault,numberSuccessesBeforeIncrease],
 	     stepIncreaseFactor, numberSuccessesBeforeIncrease, 
 	     Predictor, [track,Predictor], [setDefault,Predictor], RungeKutta4, Multistep, Tangent, Euler, Secant,
-	     MultistepDegree, [track,MultistepDegree], [setDefault,MultistepDegree], Certified,
+	     MultistepDegree, [track,MultistepDegree], [setDefault,MultistepDegree], 
      	     [track,EndZoneFactor], [setDefault,EndZoneFactor], [track,maxCorrSteps], [setDefault,maxCorrSteps],
 	     [track,InfinityThreshold], [setDefault,InfinityThreshold],
      	     EndZoneFactor, maxCorrSteps, InfinityThreshold,
      	     Projectivize, [track,Projectivize], [setDefault,Projectivize], 
-	     AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
-	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
 	     CorrectorTolerance, [track,CorrectorTolerance], [setDefault,CorrectorTolerance],
-     	     [track,SLPcorrector], [setDefault,SLPcorrector], [track,SLPpredictor], [setDefault,SLPpredictor], 
 	     [track,NoOutput], [setDefault,NoOutput], 
 	     [track,Normalize], [setDefault,Normalize],
-	     SLPcorrector, SLPpredictor, NoOutput, Normalize
+	     NoOutput, Normalize
 	     },
 	Headline => "track a user homotopy",
 	Usage => "solsT = track(S,T,solsS)",
 	Inputs => { 
-	     "S" => {TO List, " of polynomials in the start system"},
-	     "T" => {TO List, " of polynomials in the target system"},
-	     "solsS" => {TO List, " of start solutions"},
-	     gamma => {"a parameter in the homotopy: H(t)=(1-t)^tDegree S + gamma t^tDegree T"}, 
-	     tDegree => {"a parameter in the homotopy: H(t)=(1-t)^tDegree S + gamma t^tDegree T"},
+	     "S" => {" polynomials in the start system"},
+	     "T" => {" polynomials in the target system"},
+	     "solsS" => {" start solutions"},
+	     gamma => {"a parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T"}, 
+	     tDegree => {"a parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T"},
 	     tStep => {"initial step size"}, 
 	     tStepMin => {"minimal step size"},
 	     stepIncreaseFactor => {"determine how step size is adjusted"},
@@ -96,12 +137,19 @@ document {
 	     Normalize => {"normalize the start and target systems w.r.t. Bombieri-Weyl norm"},
 	     NoOutput => {"if true, no output is produced (useful in combination with ", TO "getSolution", ")"} 	     
 	     },
-	Outputs => {{ TT "solsT", " is a list of ", TO "Point", "s that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
+	Outputs => {{ TT "solsT", " is a list of ", TO2{Point,"points"}, " that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
-	of the target system given a start system. Most commonly the following homotopy is considered:", BR{}, 
-	TT "    H(t) = gamma t^d T + (1-t)^d S", BR{}, "where ", TT "t", " is in the interval ", TT "[0,1]", " and ",
-	TT "d = ", TO "tDegree",   
-	". Here is an example with regular solutions at the ends of all homotopy paths:",   
+	of the target system given a start system. ",
+	"For an introduction to the subject see ", UL{
+	     {refIntroToNAG}, {refSWbook}
+	     }, 
+	"Most commonly the following homotopy is considered:", 
+	PARA{ 
+	     TEX "H(t) = \\gamma t^d T + (1-t)^d S" 
+	     }, 
+	"where ", TEX "t", " is in the interval ", TEX "[0,1]", " and ",
+	TEX "d = ", TO "tDegree",   
+	". ", PARA {"Here is an example with regular solutions at the ends of all homotopy paths:"},   
         EXAMPLE lines ///
 	R = CC[x,y];
 	S = {x^2-1,y^2-1};
@@ -109,8 +157,11 @@ document {
 	solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
 	track(S,T,solsS)  
      	///,
-	"Another outcome of tracking a path is divergence (established heuristically). 
-	In that case the divergent paths are marked with ", TT "I", " for infinity:",
+	PARA {
+	     "Another outcome of tracking a path is divergence (established heuristically). 
+	     In that case the divergent paths are marked with ", TT "I", 
+	     " (", TO status, " is set to ", TO Infinity, "). "
+	     },
         EXAMPLE lines ///
      	R = CC[x,y];
      	S = {x^2-1,y^2-1};
@@ -118,19 +169,23 @@ document {
      	solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
      	track(S,T,solsS,gamma=>0.6+0.8*ii) 
      	///,
-	"Some divergent paths as well as most of the paths ending in singular (solutions with multiplicity>1) 
-	or near-singular (clustered solutions) are indicated by ", TT "M", " for \"minimal step\" failure:",
+	PARA {
+	     "Some divergent paths as well as most of the paths ending in singular (multiplicity>1) 
+	     or near-singular (clustered) solutions are marked with ", TT "M", 
+	     " (", TO status, " is set to ", TO MinStepFailure, "). "
+	     },
 	EXAMPLE lines ///
      	R = CC[x,y];
      	S = {x^2-1,y^2-1};
      	T = {x^2+y^2-1, (x-y)^2};
      	solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
-     	track(S,T,solsS) 
-     	///,
-	"Tracking in the projective space uses the homotopy corresponding to an arc of a great circle 
-	on  a unit sphere in the space of homogeneous polynomial systems of a fixed degree. 
-	In particular, this is done for certified homotopy tracking (see ", 
-	     EM "Beltran, Leykin \"Certified numerical homotopy tracking\"","):",
+     	track(S,T,solsS)
+	///,
+	PARA {
+       	     "Tracking in the projective space uses the homotopy corresponding to an arc of a great circle 
+	     on  a unit sphere in the space of homogeneous polynomial systems of a fixed degree. 
+	     In particular, this is done for certified homotopy tracking (see "|refBeltranLeykin|"):"
+	     },
 	EXAMPLE lines ///
 	R = CC[x,y,z];
 	S = {x^2-z^2,y^2-z^2};
@@ -138,8 +193,10 @@ document {
 	solsS = {(1,-1,1),(1,1,1),(-1,1,1),(-1,-1,1)};
 	track(S,T,solsS,Predictor=>Certified,Normalize=>true)
 	///,
-	"Note that projective tracker is invoked either if the target system is a homogenous system or if ", TO "Projectivize", TT"=>true",
-	" is specified. ",
+	PARA {
+	     "Note that projective tracker is invoked either if the target system is a homogenous system or if ", TO "Projectivize", TT"=>true",
+	     " is specified. "
+	     },
 	SeeAlso => {solveSystem, setDefault, Point},
 	Caveat => {"Predictor=>Certified works only with Software=>[M2,M2engine] and Normalize=>true"}
 	}
@@ -156,7 +213,7 @@ document {
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
 	     "T" => {"polynomials of the system"},
-	     "sols" => {"solutions (lists of coordinates or ", TO "Point", "s)"},
+	     "sols" => {"solutions (lists of coordinates or ", TO2{Point,"points"}},
 	     Iterations => {"number of refining iterations of Newton's method"}, 
 	     Bits => {"number of bits of precision"}, 
 	     ErrorTolerance => {"a bound on the desired estimated error"},
@@ -170,15 +227,18 @@ document {
 -- 	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
 -- 	     took place with the same option and was given the same target system. 
 -- 	     Any other value of this option would launch an M2-language procedure."},
+        PARA {},
 	EXAMPLE lines ///
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, {-0.1,1.2} };
 refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
      	///,
+	PARA {},
 	"In case of a singular (multiplicity>1) solution, while ", TO solveSystem, " and ", TO track, 
 	" return the end of the homotopy paths marked as a 'failure', it is possible to improve the quality of approximation with ", 
 	TO refine, ". The resulting point will be marked as singular:", 
+	PARA {},
 	EXAMPLE lines ///
      	R = CC[x,y];
      	S = {x^2-1,y^2-1};
@@ -200,11 +260,13 @@ document {
 	Headline => "construct a start system for the total degree homotopy",
 	Usage => "(S,solsS) = totalDegreeStartSystem T",
 	Inputs => { 
-	     {"T", ", polynomials of the target system"},
+	     "T"=>{"polynomials of the target system"}
 	     },
-	Outputs => {{ TT "(S,solsS)", ", where ", TT "S", " is the list of polynomials in the start system and ", TT "solsS", " the list of start solutions"}},
+	Outputs => { {"where ", TT "S", " is the list of polynomials in the start system and ", 
+		  TT "solsS", " is the list of start solutions"} },
      	"Given a square target system, constructs a start system 
 	for a total degree homotopy together with the total degree many start solutions.",
+     	PARA {},
 	EXAMPLE lines ///
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
@@ -318,13 +380,14 @@ document {
 	Headline => "sort the list of solutions",
 	Usage => "t = sortSolutions s",
 	Inputs => { 
-	     {TT "s", ", the list of solutions"}
+	     "s"=>{"solutions (represented either by lists of coordinates or ", TO2{Point,"points"}}
 	     },
-	Outputs => {{ TT "t", ", sorted list"}},
+	Outputs => {"t"=> "sorted solutions"},
 	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
 	"The output format of ", TO track, " and ", TO solveSystem, " is respected.", BR{}, 
 	"For the corresponding coordinates a and b (of two real 2n-vectors) a < b if b-a is larger than ", 
 	TO Tolerance, ". ", 
+     	PARA {},
         EXAMPLE lines ///
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
@@ -340,11 +403,13 @@ document {
 	Inputs => {
 	     "x" => "a solution or list of solutions",
 	     "y" => "a solution or list of solutions",
-	     Projective=>{"if true, then solutions are considered as representatives of points in the projective space"}
+	     Projective=>{"if ", TO true, " then solutions are considered as representatives of points 
+		  in the projective space and the Riemannian distance in the projective space is measured"}
 	     },
-	Outputs => {"b"=>{"a Boolean value: whether x and y are approximately equal"}},
-	"The function returns false if Riemannian distance exceeds ", TO Tolerance, " and true, otherwise.",
-        EXAMPLE lines ///
+	Outputs => {"b"=>{"tells if ", TT "x", " and ", TT "y", " are approximately equal"}},
+	"The function returns false if distance exceeds ", TO Tolerance, " and true, otherwise.",
+	PARA {},
+	EXAMPLE lines ///
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
 areEqual(sortSolutions s / coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}})
@@ -361,7 +426,8 @@ document {
 	Outputs => {{ TT "T", ", list of polynomials"}},
 	"Generates a system of homogeneous polynomials T_i such that deg T_i = d_i. 
 	The system is normalized, so that it is on the unit sphere in the Bombieri-Weyl norm.",
-        EXAMPLE lines ///
+        PARA {},
+	EXAMPLE lines ///
 T = randomSd {2,3}
 (S,solsS) = goodInitialPair T;
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
@@ -380,7 +446,8 @@ document {
 	     { TT "sol", ", a list containing (one) solution of S"}},
 	"Generates a start system S that is conjectured to have good complexity when used in linear homotopy 
        	with target system T leading to one solution. ",
-        EXAMPLE lines ///
+        PARA {},
+	EXAMPLE lines ///
 T = randomSd {2,3};
 (S,solsS) = goodInitialPair T
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
@@ -398,7 +465,8 @@ document {
 	     { TT "sol", ", a list containing (one) solution of S"}},
 	"Generates a start system S that has an equal chance of reaching any of the solutions of 
        	the target system T. ",
-        EXAMPLE lines ///
+        PARA {},
+	EXAMPLE lines ///
 T = randomSd {2,3};
 (S,solsS) = randomInitialPair T
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
@@ -421,4 +489,22 @@ document {
 numericalRank matrix {{2,1},{0,0.001}}
      	///,
      	SeeAlso => {SVD}	
+	}
+
+document {
+	Key => {Certified},
+	Headline => "a value for the option Predictor that triggers certified tracking",
+	PARA {
+       	     "Tells basic functions, e.g., ", TO track, ", to use soft certification described in"
+	     },
+	refBeltranLeykin,
+	PARA{"The functions related to this paper are:"},
+	certifiedTrackingFunctions,
+	EXAMPLE lines ///
+	R = CC[x,y,z];
+	S = {x^2-z^2,y^2-z^2};
+	T = {x^2+y^2-z^2, x*y};
+	solsS = {(1,-1,1),(1,1,1)};
+	track(S,T,solsS,Predictor=>Certified,Normalize=>true)
+	///
 	}

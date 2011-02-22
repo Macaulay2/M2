@@ -35,17 +35,17 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber",
-     "numericalRank", "toAffineChart",
+     "numericalRank", --"toAffineChart",
      "NAGtrace"
      }
 exportMutable {
      }
 
--- local functions/symbols
+-- local functions/symbols:
 protect Processing, protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
--- experimental
+-- experimental:
 protect OrthogonalProjection, protect Variant, -- in conditionNumber
 protect AllowSingular, protect Output -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
@@ -92,7 +92,6 @@ DEFAULT = new MutableHashTable from {
      Normalize => false, -- normalize in the Bombieri-Weyl norm
      Projectivize => false, 
      AffinePatches => DynamicPatch,
-     -- slp's 
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-8,
@@ -2653,6 +2652,8 @@ end
 restart
 uninstallPackage "NumericalAlgebraicGeometry"
 installPackage "NumericalAlgebraicGeometry"
+installPackage ("NumericalAlgebraicGeometry",RunExamples=>false, RemakeAllDocumentation=>true)
+
 -- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
 
 -- install docs with no absolute links
