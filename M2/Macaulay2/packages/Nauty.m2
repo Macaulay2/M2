@@ -9,8 +9,8 @@
 needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
-    Version => "1.3",
-    Date => "29. November 2010",
+    Version => "1.4",
+    Date => "18. February 2011",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -82,15 +82,15 @@ export {
 -------------------
 
 -- Finds all graphs of G with an extra edge added.
-addEdges = method(Options => {MaxDegree => 0, NoNewOddCycles => false, NoNew3Cycles => false, NoNew4Cycles => false, NoNew5Cycles => false, NoNewSmallCycles => 0})
+addEdges = method(Options => {MaxDegree => null, NoNewOddCycles => false, NoNew3Cycles => false, NoNew4Cycles => false, NoNew5Cycles => false, NoNewSmallCycles => null})
 addEdges String := List => opts -> S -> (
     cmdStr := "addedgeg -q" |
-        (if instance(opts.MaxDegree, ZZ) and opts.MaxDegree > 0 then " -D" | toString(opts.MaxDegree) else "") |
-        (if instance(opts.NoNewOddCycles, Boolean) and opts.NoNewOddCycles then " -b" else "") |
-        (if instance(opts.NoNew3Cycles, Boolean) and opts.NoNew3Cycles then " -t" else "") |
-        (if instance(opts.NoNew4Cycles, Boolean) and opts.NoNew4Cycles then " -f" else "") |
-        (if instance(opts.NoNew5Cycles, Boolean) and opts.NoNew5Cycles then " -F" else "") |
-        (if instance(opts.NoNewSmallCycles, ZZ) and opts.NoNewSmallCycles > 0 then " -z" | toString(opts.NoNewSmallCycles) else "");
+        optionZZ(opts.MaxDegree, 0, "addEdges", "MaxDegree", "D") |
+        optionBoolean(opts.NoNewOddCycles, "addEdges", "NoNewOddCycles", "b") | 
+        optionBoolean(opts.NoNew3Cycles, "addEdges", "NoNew3Cycles", "t") | 
+        optionBoolean(opts.NoNew4Cycles, "addEdges", "NoNew4Cycles", "f") | 
+        optionBoolean(opts.NoNew5Cycles, "addEdges", "NoNew5Cycles", "F") | 
+        optionZZ(opts.NoNewSmallCycles, 0, "addEdges", "NoNewSmallCycles", "z");
     callNauty(cmdStr, {S})
 )
 addEdges Graph := List => opts -> G -> apply(addEdges(graphToString G, opts), l -> stringToGraph(l, ring G))
@@ -104,37 +104,36 @@ areIsomorphic (Graph, Graph) := Boolean => (G, H) -> areIsomorphic(graphToString
 buildGraphFilter = method()
 buildGraphFilter HashTable := String => h -> (
     validType := (str, type) -> h#?str and instance(h#str, type);
-    propStart := (str) -> if validType(str, Boolean) and h#str then "-~" else "-";
-    propBuildBoolean := (str, flag) -> if validType(str, Boolean) then ((if h#str then "-" else "-~") | flag) else "";
+    propStart := str -> if validType(str, Boolean) and h#str then "-~" else "-";
+    propBuildBoolean := (str, flag) -> if validType(str, Boolean) then ((if h#str then "-" else "-~") | flag | " ") else "";
     propBuildZZSeq := (str, flag) -> (
         if validType(str, ZZ) and h#str >= 0 then (
-            propStart("Negate" | str) | flag | toString h#str
+            propStart("Negate" | str) | flag | toString h#str | " "
         ) else if validType(str, Sequence) and #h#str == 2 then (
             if instance(h#str#0, Nothing) and instance(h#str#1, ZZ) and h#str#1 >= 0 then (
-                propStart("Negate" | str) | flag | ":" | toString h#str#1
+                propStart("Negate" | str) | flag | ":" | toString h#str#1 | " "
             ) else if instance(h#str#0, ZZ) and instance(h#str#1, Nothing) and h#str#0 >= 0 then (
-                propStart("Negate" | str) | flag | toString h#str#0 | ":"
+                propStart("Negate" | str) | flag | toString h#str#0 | ":" | " "
             ) else if instance(h#str#0, ZZ) and instance(h#str#1, ZZ) and h#str#0 >=0 and h#str#1 >= h#str#0 then (
-                propStart("Negate" | str) | flag | toString h#str#0 | ":" | toString h#str#1
+                propStart("Negate" | str) | flag | toString h#str#0 | ":" | toString h#str#1 | " "
             ) else ""
         ) else ""
     );
 
-    filter := {propBuildZZSeq("NumVertices", "n"),         propBuildZZSeq("NumEdges", "e"),
-               propBuildZZSeq("MinDegree", "d"),           propBuildZZSeq("MaxDegree", "D"),
-               propBuildBoolean("Regular", "r"),           propBuildBoolean("Bipartite", "b"),
-               propBuildZZSeq("Radius", "z"),              propBuildZZSeq("Diameter", "Z"),
-               propBuildZZSeq("Girth", "g"),               propBuildZZSeq("NumCycles", "Y"),
-               propBuildZZSeq("NumTriangles", "T"),        propBuildBoolean("Eulerian", "E"),
-               propBuildZZSeq("GroupSize", "a"),           propBuildZZSeq("Orbits", "o"),
-               propBuildZZSeq("FixedPoints", "F"),         propBuildBoolean("VertexTransitive", "t"),
-               propBuildZZSeq("Connectivity", "c"),
-               propBuildZZSeq("MinCommonNbrsAdj", "i"),    propBuildZZSeq("MaxCommonNbrsAdj", "I"),
-               propBuildZZSeq("MinCommonNbrsNonAdj", "j"), propBuildZZSeq("MaxCommonNbrsNonAdj", "J")
-              };
-
-    concatenate apply(filter, f -> if #f > 0 then (f | " ") else "")
+    concatenate {propBuildZZSeq("NumVertices", "n"),         propBuildZZSeq("NumEdges", "e"),
+                 propBuildZZSeq("MinDegree", "d"),           propBuildZZSeq("MaxDegree", "D"),
+                 propBuildBoolean("Regular", "r"),           propBuildBoolean("Bipartite", "b"),
+                 propBuildZZSeq("Radius", "z"),              propBuildZZSeq("Diameter", "Z"),
+                 propBuildZZSeq("Girth", "g"),               propBuildZZSeq("NumCycles", "Y"),
+                 propBuildZZSeq("NumTriangles", "T"),        propBuildBoolean("Eulerian", "E"),
+                 propBuildZZSeq("GroupSize", "a"),           propBuildZZSeq("Orbits", "o"),
+                 propBuildZZSeq("FixedPoints", "F"),         propBuildBoolean("VertexTransitive", "t"),
+                 propBuildZZSeq("Connectivity", "c"),
+                 propBuildZZSeq("MinCommonNbrsAdj", "i"),    propBuildZZSeq("MaxCommonNbrsAdj", "I"),
+                 propBuildZZSeq("MinCommonNbrsNonAdj", "j"), propBuildZZSeq("MaxCommonNbrsNonAdj", "J")
+                }
 )
+buildGraphFilter List := String => L -> buildGraphFilter hashTable L
 
 -- Count the graphs with certain properties.
 countGraphs = method()
@@ -143,36 +142,41 @@ countGraphs (List, String) := ZZ => (L, filter) -> (
     r := callNauty("countg -q " | filter, apply(L, graphToString));
     if not instance(r, List) or #r == 0 then return;
     p := regex("g", first r);
-    if not instance(p, Nothing) then value substring((0, first first regex("g", first r)), first r) else error("countGraphs: Invalid input; external call to Nauty failed.")
+    if not instance(p, Nothing) then value substring((0, first first regex("g", first r)), first r) 
+    else error("countGraphs: One or more of the input graphs was formatted incorrectly.")
 )
 countGraphs (List, HashTable) := ZZ => (L, fh) -> countGraphs(L, buildGraphFilter fh)
+countGraphs (List, List) := ZZ => (L, fl) -> countGraphs(L, buildGraphFilter hashTable fl)
 
 -- Filter a list of graphs for certain properties.
 filterGraphs = method()
 filterGraphs (List, String) := List => (L, filter) -> (
     if #L == 0 or #filter == 0 then return L;
-    r := callNauty("pickg -qV " | filter | " 2>&1 1>/dev/null", apply(L, graphToString));
+    -- nauty outputs useful information to the stderr and (to us) junk on stdout
+    r := callNauty("pickg -qV " | filter, apply(L, graphToString), ReadError => true);
     -- In nauty 2.4r2, the index is the first number.
     for l in r list ( s := select("[[:digit:]]+", l); if #s == 0 then continue else L_(-1 + value first s) )
 )
 filterGraphs (List, HashTable) := List => (L, fh) -> filterGraphs(L, buildGraphFilter fh)
+filterGraphs (List, List) := List => (L, fl) -> filterGraphs(L, buildGraphFilter hashTable fl)
 
 -- Generates all bipartite graphs of a given type.
-generateBipartiteGraphs = method(Options => {OnlyConnected => false, Class2DistinctNeighborhoods => false, Class2Degree2 => false, Class2MaxCommonNeighbors => 0, MaxDegree => 0, MinDegree => 0})
+generateBipartiteGraphs = method(Options => {OnlyConnected => false, Class2DistinctNeighborhoods => false, Class2Degree2 => false, Class2MaxCommonNeighbors => null, MaxDegree => null, MinDegree => null})
 generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
-    if n < 1 then error("generateBipartiteGraphs: The graph must have vertices!.");
-    if m < 1 then error("generateBipartiteGraphs: The first class has too few vertices.");
+    if n < 1 then error("generateBipartiteGraphs: nauty does not like graphs with non-positive numbers of vertices.");
+    if m == 0 then return generateBipartiteGraphs(n, n, le, ue, opts);
+    if m < 0 then error("generateBipartiteGraphs: The first class cannot have a negative number of vertices.");
     if m > n then error("generateBipartiteGraphs: The first class has too many vertices.");
-    if (le > ue) or (le > m*(n-m)) or (ue < 0) then return;
+    if le > ue or le > m*(n-m) or ue < 0 then return {};
 
     cmdStr := "genbg -q" | 
-        (if instance(opts.OnlyConnected, Boolean) and opts.OnlyConnected then " -c" else "") |
-        (if instance(opts.Class2DistinctNeighborhoods, Boolean) and opts.Class2DistinctNeighborhoods then " -z" else "") |
-        (if instance(opts.Class2Degree2, Boolean) and opts.Class2Degree2 then " -F" else "") |
-        (if instance(opts.Class2MaxCommonNeighbors, ZZ) and opts.Class2MaxCommonNeighbors > 0 then " -Z" | toString(opts.Class2MaxCommonNeighbors) else "") |
-        (if instance(opts.MinDegree, ZZ) and opts.MinDegree > 0 then " -d" | toString(opts.MinDegree) else "") |
-        (if instance(opts.MaxDegree, ZZ) and opts.MaxDegree > 0 then " -D" | toString(opts.MaxDegree) else "") |
-        (" " | toString(m) | " " | toString(n-m) | " " | toString(le) | ":" | toString(ue) | " 2>&1");
+        optionBoolean(opts.OnlyConnected, "generateBipartiteGraphs", "OnlyConnected", "c") | 
+        optionBoolean(opts.Class2DistinctNeighborhoods, "generateBipartiteGraphs", "Class2DistinctNeighborhoods", "z") | 
+        optionBoolean(opts.Class2Degree2, "generateBipartiteGraphs", "Class2Degree2", "F") | 
+        optionZZ(opts.Class2MaxCommonNeighbors, 0, "generateBipartiteGraphs", "Class2MaxCommonNeighbors", "Z") | 
+        optionZZ(opts.MinDegree, 0, "generateBipartiteGraphs", "MinDegree", "d") | 
+        optionZZ(opts.MaxDegree, 0, "generateBipartiteGraphs", "MaxDegree", "D") | 
+        (" " | toString m | " " | toString(n-m) | " " | toString le | ":" | toString ue);
 
     callNauty(cmdStr, {})
 )
@@ -185,21 +189,21 @@ generateBipartiteGraphs (PolynomialRing, ZZ) := List => opts -> (R, m) -> apply(
 generateBipartiteGraphs PolynomialRing := List => opts -> R -> apply(generateBipartiteGraphs(#gens R, opts), g -> stringToGraph(g, R))
 
 -- Generates all graphs of a given type.
-generateGraphs = method(Options => {OnlyConnected => false, OnlyBiconnected => false, OnlyTriangleFree => false, Only4CycleFree => false, OnlyBipartite => false, MinDegree => 0, MaxDegree => 0})
+generateGraphs = method(Options => {OnlyConnected => false, OnlyBiconnected => false, OnlyTriangleFree => false, Only4CycleFree => false, OnlyBipartite => false, MinDegree => null, MaxDegree => null})
 generateGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, le, ue) -> (
-    if n < 1 then error("generateGraphs: A graph must have vertices!");
-    if (le > ue) or (le > binomial(n,2)) or (ue < 0) then return;
+    if n < 1 then error("generateGraphs: nauty does not like graphs with non-positive numbers of vertices.");
+    if le > ue or le > binomial(n,2) or ue < 0 then return {};
     le = max(le, 0);
 
     cmdStr := "geng -q" |
-        (if instance(opts.OnlyConnected, Boolean) and opts.OnlyConnected then " -c" else "") |
-        (if instance(opts.OnlyBiconnected, Boolean) and opts.OnlyBiconnected then " -C" else "") |
-        (if instance(opts.OnlyTriangleFree, Boolean) and opts.OnlyTriangleFree then " -t" else "") |
-        (if instance(opts.Only4CycleFree, Boolean) and opts.Only4CycleFree then " -f" else "") |
-        (if instance(opts.OnlyBipartite, Boolean) and opts.OnlyBipartite then " -b" else "") |
-        (if instance(opts.MinDegree, ZZ) and opts.MinDegree > 0 then " -d" | toString(opts.MinDegree) else "") |
-        (if instance(opts.MaxDegree, ZZ) and opts.MaxDegree > 0 then " -D" | toString(opts.MaxDegree) else "") |
-        (" " | toString(n) | " " | toString(le) | ":" | toString(ue) | " 2>&1");
+        optionBoolean(opts.OnlyConnected, "generateGraphs", "OnlyConnected", "c") |
+        optionBoolean(opts.OnlyBiconnected, "generateGraphs", "OnlyBiconnected", "C") |
+        optionBoolean(opts.OnlyTriangleFree, "generateGraphs", "OnlyTriangleFree", "t") |
+        optionBoolean(opts.Only4CycleFree, "generateGraphs", "Only4CycleFree", "f") |
+        optionBoolean(opts.OnlyBipartite, "generateGraphs", "OnlyBipartite", "b") |
+        optionZZ(opts.MinDegree, 0, "generateBipartiteGraphs", "MinDegree", "d") | 
+        optionZZ(opts.MaxDegree, 0, "generateBipartiteGraphs", "MaxDegree", "D") | 
+        (" " | toString n | " " | toString le | ":" | toString ue);
     
     callNauty(cmdStr, {})
 )
@@ -210,43 +214,49 @@ generateGraphs (PolynomialRing, ZZ) := List => opts -> (R, e) -> apply(generateG
 generateGraphs PolynomialRing := List => opts -> R -> apply(generateGraphs(#gens R, opts), g -> stringToGraph(g, R))
 
 -- Generate random graphs with given properties.
-generateRandomGraphs = method(Options => {RandomSeed => 0})
+generateRandomGraphs = method(Options => {RandomSeed => null})
 generateRandomGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, p) -> (
-    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
-    if num < 1 then return {};
+    if n < 1 then error("generateRandomGraphs: nauty does not like graphs with non-positive numbers of vertices.");
     if p < 1 then error("generateRandomGraphs: Probability must be positive.");
-    if p > 100000000 then error("generateRandomGraphs: Probability must be at least 1/100000000.");
-    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
-    callNauty("genrang -qg -P" | toString(p) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
+    if not instance(opts.RandomSeed, Nothing) and not instance(opts.RandomSeed, ZZ) then error("generateRandomGraphs: Option [RandomSeed] is not a valid type, i.e., ZZ or Nothing.");
+    if p > 100000000 then p = 100000000; --silently bound it
+    if num < 1 then return {};
+    rndSeed := if instance(opts.RandomSeed, ZZ) then " -S" | toString(opts.RandomSeed % 2^30) else "";
+    callNauty("genrang -qg -P" | toString p | " "  | toString n | " " | toString num | rndSeed, {})
 )
 generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
-    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: nauty does not like graphs with non-positive numbers of vertices.");
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
-    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
-    -- nauty acts weird with numerators and denominators which are too big -- limit to a hundred-millionth for precision
+    if not instance(opts.RandomSeed, Nothing) and not instance(opts.RandomSeed, ZZ) then error("generateRandomGraphs: Option [RandomSeed] is not a valid type, i.e., ZZ or Nothing.");
+    rndSeed := if instance(opts.RandomSeed, ZZ) then " -S" | toString(opts.RandomSeed % 2^30) else "";
+    -- limit the precision to 1e-8
     q := round(100000000 * p) / 100000000;
-    callNauty("genrang -qg -P" | toString(q) | " "  | toString(n) | " " | toString(num) | rndSeed, {})
+    callNauty("genrang -qg -P" | toString q | " "  | toString n | " " | toString num | rndSeed, {})
 )
+generateRandomGraphs (ZZ, ZZ, RR) := List => opts -> (n, num, p) -> generateRandomGraphs(n, num, promote(p, QQ), opts)
 generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
-    if n < 1 then error("generateRandomGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomGraphs: nauty does not like graphs with non-positive numbers of vertices.");
+    if not instance(opts.RandomSeed, Nothing) and not instance(opts.RandomSeed, ZZ) then error("generateRandomGraphs: Option [RandomSeed] is not a valid type, i.e., ZZ or Nothing.");
     if num < 1 then return {};
-    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
-    callNauty("genrang -qg " | toString(n) | " " | toString(num) | rndSeed, {})
+    rndSeed := if instance(opts.RandomSeed, ZZ) then " -S" | toString(opts.RandomSeed % 2^30) else "";
+    callNauty("genrang -qg " | toString n | " " | toString num | rndSeed, {})
 )
 generateRandomGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
 generateRandomGraphs (PolynomialRing, ZZ, QQ) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
+generateRandomGraphs (PolynomialRing, ZZ, RR) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
 generateRandomGraphs (PolynomialRing, ZZ) := List => opts -> (R, num) -> apply(generateRandomGraphs(#gens R, num, opts), g -> stringToGraph(g, R))
 
 -- Generate random regular graphs in the Ring with given properties.
-generateRandomRegularGraphs = method(Options => {RandomSeed => 0})
+generateRandomRegularGraphs = method(Options => {RandomSeed => null})
 generateRandomRegularGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, reg) -> (
-    if n < 1 then error("generateRandomRegularGraphs: A graph must have vertices!");
+    if n < 1 then error("generateRandomRegularGraphs: nauty does not like graphs with non-positive numbers of vertices.");
+    if not instance(opts.RandomSeed, Nothing) and not instance(opts.RandomSeed, ZZ) then error("generateRandomGraphs: Option [RandomSeed] is not a valid type, i.e., ZZ or Nothing.");
     if num < 1 then return {};
     if reg < 1 or reg >= n then error("generateRandomRegularGraphs: Regularity must be positive but less than the number of vertices.");
     if odd n and odd reg then error("generateRandomRegularGraphs: There are no graphs with odd regularity on an odd number of vertices.");
-    rndSeed := if opts.RandomSeed != 0 then " -S" | toString(opts.RandomSeed) else "";
-    callNauty("genrang -qg -r" | toString(reg) | " " | toString(n) | " " | toString(num) | rndSeed | " 2>&1", {})
+    rndSeed := if instance(opts.RandomSeed, ZZ) then " -S" | toString(opts.RandomSeed % 2^30) else "";
+    callNauty("genrang -qg -r" | toString reg | " " | toString n | " " | toString num | rndSeed, {})
 )
 generateRandomRegularGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, num, reg) -> apply(generateRandomRegularGraphs(#gens R, num, reg, opts), g -> stringToGraph(g, R))
 
@@ -260,9 +270,9 @@ graph6ToSparse6 String := String => g6 -> (
 -- Complements a graph.
 graphComplement = method(Options => {OnlyIfSmaller => false})
 graphComplement String := String => opts -> S -> (
-    cmdStr := "complg -q" | (if instance(opts.OnlyIfSmaller, Boolean) and opts.OnlyIfSmaller then " -r" else "");
+    cmdStr := "complg -q" | optionBoolean(opts.OnlyIfSmaller, "graphComplement", "OnlyIfSmaller", "r");
     r := callNauty(cmdStr, {S});
-    if #r != 0 then first r else error("graphComplement: Invalid String format.")
+    if #r != 0 then first r else error("graphComplement: The graph is formatted incorrectly.")
 )
 graphComplement Graph := Graph => opts -> G -> (
     r := graphComplement(graphToString G, opts);
@@ -272,7 +282,8 @@ graphComplement Graph := Graph => opts -> G -> (
 -- Converts a graph to a string in Graph6 format.
 graphToString = method()
 graphToString (List, ZZ) := String => (E, n) -> (
-    if n > 68719476735 then error("graphToString: Too many vertices.");
+    if n < 1 then error("graphToString: nauty does not like graphs with non-positive numbers of vertices.");
+    if n > 68719476735 then error("graphToString: nauty does not like too many vertices (more than 68719476735).");
     if any(E, e -> #e != 2) or any(E, e -> first e == last e) or max(flatten E) >= n then error("graphToString: Edges are malformed.");
     N := take(reverse apply(6, i -> (n // 2^(6*i)) % 2^6), if n < 63 then -1 else if n < 258047 then -3 else -6);
 
@@ -310,7 +321,7 @@ newEdges (Graph, PolynomialRing) := List => (G, S) -> (
 relabelBipartite = method()
 relabelBipartite String := String => S -> (
     r := callNauty("biplabg -q", {S});
-    if #r != 0 then first r else error("relabelBipartite: Invalid String format or input is not a bipartite graph.")
+    if #r != 0 then first r else error("relabelBipartite: The graph is in an incorrect format or is not a bipartite graph.")
 )
 relabelBipartite Graph := Graph => G -> stringToGraph(relabelBipartite graphToString G, ring G)
 
@@ -320,7 +331,7 @@ relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> (
     if i > 15 or i < 0 then error("relabelGraph: The invariant selected is invalid.");
     if a < 0 then error("relabelGraph: The invariant argument must be nonnegative.");
     r := callNauty("labelg -qg -i" | toString i | " -K" | toString a, {S});
-    if #r != 0 then first r else error("relabelGraph: Invalid String format.")
+    if #r != 0 then first r else error("relabelGraph: The graph is in an incorrect format.")
 )
 relabelGraph (String, ZZ) := String => (S, i) -> relabelGraph(S, i, 3)
 relabelGraph String := String => S -> relabelGraph(S, 0, 3)
@@ -329,9 +340,9 @@ relabelGraph (Graph, ZZ) := Graph => (G, i) -> relabelGraph(G, i, 3)
 relabelGraph Graph := Graph => G -> relabelGraph(G, 0, 3)
         
 -- Finds all graphs defined by G with one edge removed.
-removeEdges = method(Options => {MinDegree => 0})
+removeEdges = method(Options => {MinDegree => null})
 removeEdges String := List => opts -> S -> (
-    cmdStr := "deledgeg -q" | (if instance(opts.MinDegree, ZZ) and opts.MinDegree > 0 then " -d" | toString(opts.MinDegree) else "");
+    cmdStr := "deledgeg -q" | optionZZ(opts.MinDegree, 0, "removeEdges", "MinDegree", "d");
     callNauty(cmdStr, {S})
 )
 removeEdges Graph := List => opts -> G -> apply(removeEdges(graphToString G, opts), l -> stringToGraph(l, ring G))
@@ -340,7 +351,8 @@ removeEdges Graph := List => opts -> G -> apply(removeEdges(graphToString G, opt
 removeIsomorphs = method()
 removeIsomorphs List := List => L -> (
     if #L == 0 then return {};
-    r := callNauty("shortg -qv 2>&1 1>/dev/null", apply(L, graphToString));
+    -- nauty outputs useful information to the stderr and (to us) junk on stdout
+    r := callNauty("shortg -qv", apply(L, graphToString), ReadError => true);
     -- for each line, check if it has a colon, if so, take the first graph
     for l in r list ( 
         s := separate(":", l);
@@ -355,7 +367,7 @@ removeIsomorphs List := List => L -> (
 sparse6ToGraph6 = method()
 sparse6ToGraph6 String := String => (s6) -> (
     r := callNauty("copyg -qg", {s6});
-    if #r != 0 then first r else error("sparse6ToGraph6: Invalid String format.")
+    if #r != 0 then first r else error("sparse6ToGraph6: The graph format is incorrect.")
 )
 
 -- Converts a graph given by a string in either Sparse6 or Graph6 format to an edge ideal in the given ring.
@@ -416,21 +428,60 @@ stringToGraph (String, PolynomialRing) := Graph => (str, R) -> graph stringToEdg
 -------------------
 
 -- Sends a command and retrieves the results into a list of lines.
-callNauty = method()
-callNauty (String, List) := List => (cmdStr, dataList) -> (
+-- If ReadError is set to true and the command is successfully executed,
+-- then the data from stderr is returned (filterGraphs and removeIsomorphs
+-- use this).
+protect ReadError;
+callNauty = method(Options => {ReadError => false})
+callNauty (String, List) := List => opts -> (cmdStr, dataList) -> (
     infn := temporaryFileName();
+    erfn := temporaryFileName();
+    -- output the data to a file
     o := openOut infn;
-    cleanup := () -> removeFile infn;
     scan(dataList, d -> o << d << endl);
     close o;
-    r := lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn)
+    -- try to harvest the lines
+    r := lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn | " 2>" | erfn)
     else (
-	 cleanup();
-	 error("callNauty: External call to nauty has failed; ensure that nauty is on the path and the input is valid.");
-	 );
-    cleanup();
+        -- nauty errored, harvest the error
+        e := last separate(":", first lines get openIn erfn);
+        removeFile infn;
+        removeFile erfn;
+        -- special cases 
+        if e == " not found" then error("callNauty: nauty could not be found on the path [" | nauty'path | "].");
+        if e == "#q -V] [--keys] [-constraints -v] [ifile [ofile]]" then e = "invalid filter";
+	    error("callNauty: nauty terminated with the error [", e, "].");
+    );
+    removeFile infn;
+    -- If the method wants it, then read the stderr data instead.
+    if opts.ReadError then (
+        r = lines try get openIn erfn else (
+            removeFile erfn;
+            error("callNauty: nauty ran successfully, but no data was written to stderr as expected.  Report this to the package maintainer.");
+        );
+    );
+    removeFile erfn;
     r
 )
+
+-- Processes an option which should be a Boolean.
+-- Throws an appropriate error if the type is bad, otherwise it returns the flag.
+optionBoolean = (b, m, o, f) -> (
+    if instance(b, Nothing) then ""
+    else if not instance(b, Boolean) then error(m | ": Option [" | o | "] is not a valid type, i.e., Boolean or Nothing.")
+    else if b then " -" | f 
+    else ""
+)
+
+-- Processes an option which should be an integer (ZZ).
+-- Throws an approprate error if the type is bad or the bound is bad, otherwise it returns the flag.
+optionZZ = (i, b, m, o, f) -> (
+    if instance(i, Nothing) then ""
+    else if not instance(i, ZZ) then error(m | ": Option [" | o | "] is not a valid type, i.e., ZZ or Nothing.")
+    else if i < b then error(m | ": Option [" | o | "] is too smaller (minimum is " | toString b | ").")
+    else " -" | f | toString i
+)
+
 
 -------------------
 -- Documentation
@@ -447,21 +498,23 @@ doc ///
         Interface to nauty
     Description
         Text
-            This package interfaces many of the functions provided in the software @TT "nauty"@
-            by Brendan D. McKay, available at @HREF "http://cs.anu.edu.au/~bdm/nauty/"@.  
-            The @TT "nauty"@ package provides very efficient methods for determining whether
+            This package provides an interface from Macaulay2 to many of the functions provided in
+            the software nauty by Brendan D. McKay, available at @HREF "http://cs.anu.edu.au/~bdm/nauty/"@.
+            The nauty package provides very efficient methods for determining whether
             given graphs are isomorphic, generating all graphs with particular properties,
             generating random graphs, and more.
             
             Most methods can handle graphs in either the Macaulay2 @TO "Graph"@ type as provided by
-            the @TO "EdgeIdeals"@ package or as Graph6 and Sparse6 @TO "String"@s as used by @TT "nauty"@.
-            The purpose of this is that graphs stored as @TO "String"@s are greatly more efficient than
-            graphs stored as @TO "Graph"@s.  (See @TO "Comparison of Graph6 and Sparse6 formats"@.)
+            the @TO "EdgeIdeals"@ package or as Graph6 and Sparse6 strings as used by nauty.
+            The purpose of this is that graphs stored as strings are greatly more efficient than
+            graphs stored as instances of the class @TO "Graph"@.  
+            (See @TO "Comparison of Graph6 and Sparse6 formats"@.)
             
-            It is recommended to work with @TO "String"@s while using @TT "nauty"@ provided methods
-            and then converting to @TO "Graph"@s for further work (e.g., computing the chromatic number).
+            It is recommended to work with graphs represented as strings while using nauty-provided
+            methods and then converting the graphs to instances fo the class @TO "Graph"@ for further work 
+            (e.g., computing the chromatic number).
 
-            The theoretical underpinnings of @TT "nauty"@ are in the paper:
+            The theoretical underpinnings of nauty are in the paper:
             B. D. McKay, "Practical graph isomorphism," Congr. Numer. 30 (1981), 45--87.
     SeeAlso
         "Comparison of Graph6 and Sparse6 formats"
@@ -486,16 +539,16 @@ document {
     Inputs => {
         "S" => String => "which describes a graph in Graph6 or Sparse6 format",
         "G" => Graph => {"which is built by the ", TO "EdgeIdeals", " package"},
-        MaxDegree => ZZ => "the maximum degree allowable for any vertex in the output graphs (ignored if zero)",
-        NoNew3Cycles => Boolean => "whether graphs with new three cycles are allowed",
-        NoNew4Cycles => Boolean => "whether graphs with new four cycles are allowed",
-        NoNew5Cycles => Boolean => "whether graphs with new five cycles are allowed",
-        NoNewOddCycles => Boolean => "whether graphs with new odd-length cycles are allowed",
-        NoNewSmallCycles => ZZ => "whether graphs with new cycles smaller than the given value are allowed"
+        MaxDegree => ZZ => "the maximum degree allowable for any vertex in the output graphs",
+        NoNew3Cycles => Boolean => "whether graphs with new 3-cycles are allowed",
+        NoNew4Cycles => Boolean => "whether graphs with new 4-cycles are allowed",
+        NoNew5Cycles => Boolean => "whether graphs with new 5-cycles are allowed",
+        NoNewOddCycles => Boolean => "whether graphs with new odd-cycles are allowed",
+        NoNewSmallCycles => ZZ => "an upper bound on cycles which are not allowed"
     },
     Outputs => {
-        "Lg" => List => TEX ///the list of Graphs obtained from $G$///,
-        "Ls" => List => TEX ///the list of Strings (in Graph6 format) obtained from $S$///
+        "Lg" => List => TEX ///the list of graphs obtained from $G$///,
+        "Ls" => List => TEX ///the list of strings (in Graph6 format) obtained from $S$///
     },
     PARA TEX ///
             Simply creates a list, in the same format as the input, of all possible graphs
@@ -534,7 +587,7 @@ doc ///
         Example
             R = QQ[a..e];
             areIsomorphic(cycle R, graph {a*c, c*e, e*b, b*d, d*a})
-            areIsomorphic("Dhc", "D~{") -- "Dhc" = cycle R, "D~{" = completeGraph R
+            areIsomorphic(cycle R, completeGraph R)
     SeeAlso
         "Example: Checking for isomorphic graphs"
         removeIsomorphs
@@ -544,12 +597,16 @@ doc ///
     Key
         buildGraphFilter
         (buildGraphFilter, HashTable)
+        (buildGraphFilter, List)
     Headline
         creates the appropriate filter string for use with filterGraphs and countGraphs
     Usage
         s = buildGraphFilter h
+        s = buildGraphFilter l
     Inputs
         h:HashTable
+            which describes the properties desired in filtering
+        l:List
             which describes the properties desired in filtering
     Outputs
         s:String
@@ -558,8 +615,8 @@ doc ///
         Text
             The @TO "filterGraphs"@ and @TO "countGraphs"@ methods both can use a tremendous number of constraints
             which are described by a rather tersely encoded string.  This method builds that string given information
-            in the @TO "HashTable"@ $h$.  Any keys which do not exist are simply ignored and any values which are not valid
-            (e.g., exactly $-3$ vertices) are also ignored.
+            in the @TO "HashTable"@ $h$ or the @TO "List"@ $l$.  Any keys which do not exist are simply ignored and 
+            any values which are not valid (e.g., exactly $-3$ vertices) are also ignored.
             
             The values can either be @TO "Boolean"@ or in @TO "ZZ"@.  @TO "Boolean"@ values are treated exactly
             as expected.  Numerical values are more complicated; we use an example to illustrate how numerical values
@@ -570,27 +627,27 @@ doc ///
         Example
             R = QQ[a..f];
             L = {graph {a*b}, graph {a*b, b*c}, graph {a*b, b*c, c*d}, graph {a*b, b*c, c*d, d*e}};
-            s = buildGraphFilter hashTable {"NumEdges" => 3}
+            s = buildGraphFilter {"NumEdges" => 3};
             filterGraphs(L, s)
         Text
             If the value is the @TO "Sequence"@ $(m,n)$, then all graphs with at least $m$ and at most $n$ edges are returned.
         Example
-            s = buildGraphFilter hashTable {"NumEdges" => (2,3)}
+            s = buildGraphFilter {"NumEdges" => (2,3)};
             filterGraphs(L, s)
         Text
             If the value is the @TO "Sequence"@ $(,n)$, then all graphs with at most $n$ edges are returned.
         Example
-            s = buildGraphFilter hashTable {"NumEdges" => (,3)}
+            s = buildGraphFilter {"NumEdges" => (,3)};
             filterGraphs(L, s)
         Text
             If the value is the @TO "Sequence"@ $(m,)$, then all graphs with at least $m$ edges are returned.
         Example
-            s = buildGraphFilter hashTable {"NumEdges" => (2,)}
+            s = buildGraphFilter {"NumEdges" => (2,)};
             filterGraphs(L, s)
         Text
             Moreover, the associated key @TT "NegateNumEdges"@, if true, causes the @EM "opposite"@ to occur.
         Example
-            s = buildGraphFilter hashTable {"NumEdges" => (2,), "NegateNumEdges" => true}
+            s = buildGraphFilter {"NumEdges" => (2,), "NegateNumEdges" => true};
             filterGraphs(L, s)
         Text
             The following are the boolean options: "Regular", "Bipartite", "Eulerian", "VertexTransitive".
@@ -599,12 +656,15 @@ doc ///
             "MinDegree", "MaxDegree", "Radius", "Diameter", "Girth", "NumCycles", "NumTriangles", "GroupSize", "Orbits",
             "FixedPoints", "Connectivity", "MinCommonNbrsAdj", "MaxCommonNbrsAdj", "MinCommonNbrsNonAdj", "MaxCommonNbrsNonAdj".
     Caveat
-            @TT "Connectivity"@ only works for the values $0, 1, 2$ and is strict, that is, @TT "{\"Connectivity\" => 1}"@
-            yields only those graphs with exactly 1-connectivity.  In order to filter for connected graphs, one must use
-            @TT "{\"Connectivity\" => 0, \"NegateConnectivity\" => true}"@.
+            @TT "Connectivity"@ only works for the values $0, 1, 2$ and uses the following definition of $k$-connectivity.
+            A graph is $0$-connected if it is a disconnected graph and a graph is $k$-connected, for $k > 0$, if there $k$
+            vertices can be removed from the graph to disconnect it, but there are not $k-1$ vertices which can be removed to
+            disconnect it.  
+
+            Thus, in order to filter for connected graphs, one must use @TT "{\"Connectivity\" => 0, \"NegateConnectivity\" => true}"@.
 
             @TT "NumCycles"@ can only be used with graphs on at most $n$ vertices, where $n$ is the number of bits for which
-            nauty was compiled.
+            nauty was compiled, typically $32$ or $64$.
     SeeAlso
         countGraphs
         "Example: Generating and filtering graphs"
@@ -616,7 +676,7 @@ doc ///
         "Comparison of Graph6 and Sparse6 formats"
     Description
         Text
-            @TT "nauty"@ uses two string-based formats for storing graphs:  Graph6 and Sparse6 format.
+            nauty uses two string-based formats for storing graphs:  Graph6 and Sparse6 format.
             Each format has benefits and drawbacks.  
 
             In particular, Graph6 is a consistent length, which is dependent only on the number of vertices.
@@ -648,29 +708,35 @@ doc ///
         countGraphs
         (countGraphs, List, String)
         (countGraphs, List, HashTable)
+        (countGraphs, List, List)
     Headline
         counts the number of graphs in the list with given properties
     Usage
         n = countGraphs(L, s)
         n = countGraphs(L, h)
+        n = countGraphs(L, l)
     Inputs
         L:List
-            contains graphs (mixed formats are allowed) which will be counted
+            containing graphs (mixed formats are allowed)
         s:String
             a filter, as generated by @TO "buildGraphFilter"@
         h:HashTable
+            a filter, as used by @TO "buildGraphFilter"@
+        l:List
             a filter, as used by @TO "buildGraphFilter"@
     Outputs
         n:ZZ
             the number of graphs in $L$ satisfying the filter
     Description
         Text
-            Counts the number of graphs in a list which satisfy certain restraints as given in
-            the filter (see @TO "buildGraphFilter"@).  Notice that the input list can be graphs in
-            both @TO "Graph"@ format and @TO "String"@ format.
+            Counts the number of graphs in a list that satisfy certain restraints as given in
+            the filter (see @TO "buildGraphFilter"@).  Notice that the input list can be graphs
+            represented as instances of the class @TO "Graph"@ or in a nauty-based @TO "String"@ format.
+        Text
+            For example, we can count the number of connected graphs on five vertices.
         Example
             L = generateGraphs 5;
-            countGraphs(L, hashTable {"Connectivity" => 0, "NegateConnectivity" => true}) -- the number of connected graphs on five vertices
+            countGraphs(L, {"Connectivity" => 0, "NegateConnectivity" => true})
     SeeAlso
         buildGraphFilter
         filterGraphs
@@ -681,16 +747,16 @@ doc ///
         "Example: Checking for isomorphic graphs"
     Description
         Text
-            The main use of @TT "nauty"@ is to determine if two graphs are isomorphic.  This
-            can be checked with the method @TO "areIsomorphic"@.  
+            The main use of nauty is to determine if two graphs are isomorphic.  We can
+            demonstrate it for two given graphs with the method @TO "areIsomorphic"@.  
         Example
             R = QQ[a..e];
             G = graph {{a, c}, {c, e}, {e, b}, {b, d}, {d, a}};
             areIsomorphic(cycle R, G)
         Text
-            Further, a list of graphs can be reduced to only graphs which are non-isomorphic
+            Further, a list of graphs can be reduced to only graphs that are non-isomorphic
             with the method @TO "removeIsomorphs"@.  Here we create a list of 120 different
-            labellings of the five cycle and use @TT "nauty"@ to verify they are indeed all
+            labellings of the 5-cycle and use nauty to verify they are indeed all
             the same.
         Example
             L = apply(permutations gens R, P -> graphToString graph apply(5, i-> {P_i, P_((i+1)%5)}));
@@ -708,32 +774,32 @@ doc ///
         Text
             The method @TO "generateGraphs"@ can generate all graphs with a given property.
             For example, we can verify the number of graphs on a given number of vertices.
-            Compare these results to the Online Encyclopedia of Integer Sequences (@HREF "http://oeis.org/"@)
-            where the sequence name is also it's OEIS identifier.
+            Compare these results to the Online Encyclopedia of Integer Sequences (@HREF "http://oeis.org/"@),
+            where the sequence name is also its OEIS identifier.
         Example
-            A000088 = apply(9, n -> #generateGraphs (n+1))
-            B = apply(12, n -> generateGraphs(n + 1, OnlyBipartite => true));
+            A000088 = apply(1..9, n -> #generateGraphs n)
+            B = apply(1..12, n -> generateGraphs(n, OnlyBipartite => true));
         Text
             Further, we can use @TO "filterGraphs"@ to refine the set of generate graphs
             for deeper properties.
 
-            Here we filter for forests then for trees only,
+            Here we filter for forests, then for trees only,
         Example
-            forestsOnly = buildGraphFilter hashTable {"NumCycles" => 0};
-            A005195 = apply(12, n -> #filterGraphs(B_n, forestsOnly))
-            treesOnly = buildGraphFilter hashTable {"NumCycles" => 0, "Connectivity" => 0, "NegateConnectivity" => true};
-            A000055 = apply(12, n -> #filterGraphs(B_n, treesOnly))
+            forestsOnly = buildGraphFilter {"NumCycles" => 0};
+            A005195 = apply(B, graphs -> #filterGraphs(graphs, forestsOnly))
+            treesOnly = buildGraphFilter {"NumCycles" => 0, "Connectivity" => 0, "NegateConnectivity" => true};
+            A000055 = apply(B, graphs -> #filterGraphs(graphs, treesOnly))
         Text
             Moreover, we can generate random graphs using the @TO "generateRandomGraphs"@ method.  Here
-            we verify a result of Erdos and R\'enyi (see @HREF "http://www.ams.org/mathscinet-getitem?mr=120167"@)
+            we verify a result of Erdos and R\'enyi (see @HREF "http://www.ams.org/mathscinet-getitem?mr=120167"@),
             which says that a random graph on $n$ vertices with edge probability $(1+\epsilon)$log$(n)/n$ is almost
             always connected while a graph with edge probability $(1-\epsilon)$log$(n)/n$ is almost never connected,
             at least as $n$ tends to infinity.
         Example
-            connected = buildGraphFilter hashTable {"Connectivity" => 0, "NegateConnectivity" => true};
-            prob = n -> promote(log(n)/n, QQ);
-            apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, 2*(prob n)), connected))
-            apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, (prob n)/2), connected))
+            connected = buildGraphFilter {"Connectivity" => 0, "NegateConnectivity" => true};
+            prob = n -> log(n)/n;
+            apply(2..30, n -> #filterGraphs(generateRandomGraphs(n, 100, 2*(prob n)), connected))
+            apply(2..30, n -> #filterGraphs(generateRandomGraphs(n, 100, (prob n)/2), connected))
     SeeAlso
         buildGraphFilter
         filterGraphs
@@ -747,17 +813,21 @@ doc ///
         filterGraphs
         (filterGraphs, List, String)
         (filterGraphs, List, HashTable)
+        (filterGraphs, List, List)
     Headline
-        filters graphs in a list for given properties
+        filters (i.e., selects) graphs in a list for given properties
     Usage
         F = filterGraphs(L, s)
         F = filterGraphs(L, h)
+        F = filterGraphs(L, l)
     Inputs
         L:List
-            contains graphs (mixed formats are allowed) which will be filtered
+            containing graphs (mixed formats are allowed)
         s:String
             a filter, as generated by @TO "buildGraphFilter"@
         h:HashTable
+            a filter, as used by @TO "buildGraphFilter"@
+        l:List
             a filter, as used by @TO "buildGraphFilter"@
     Outputs
         F:List
@@ -765,11 +835,14 @@ doc ///
     Description
         Text
             Filters the graphs in a list which satisfy certain restraints as given in
-            the filter (see @TO "buildGraphFilter"@).  Notice that the input list can be graphs in
-            both @TO "Graph"@ format and @TO "String"@ format.
+            the filter (see @TO "buildGraphFilter"@).  Notice that the input list can be graphs
+            represented as instances of the class @TO "Graph"@ or in a nauty-based @TO "String"@ format.
+        Text
+            For example, we can filter for the connected graphs on five vertices.
+
         Example
             L = generateGraphs 5;
-            filterGraphs(L, hashTable {"Connectivity" => 0, "NegateConnectivity" => true}) -- the connected graphs on five vertices
+            filterGraphs(L, {"Connectivity" => 0, "NegateConnectivity" => true})
     SeeAlso
         buildGraphFilter
         countGraphs
@@ -799,15 +872,15 @@ document {
     Outputs => {"G" => List => TEX ///the bipartite graphs satisfying the input conditions///},
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs",
-        "m" => ZZ => "the number of vertices in the first class of the bipartition; must be positive",
+        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
+        "m" => ZZ => "the number of vertices in the first class of the bipartition",
         "e" => ZZ => "the number of edges in the graphs", 
         "le" => ZZ => "a lower bound on the number of edges in the graphs",
         "ue" => ZZ => "an upper bound on the number of edges in the graphs",
         Class2Degree2 => Boolean => "whether the vertices in the second class must have at least two neighbors of degree at least 2",
         Class2DistinctNeighborhoods => Boolean => "whether all vertices in the second class must have distinct neighborhoods",
-        Class2MaxCommonNeighbors => ZZ => "an upper bound on the number of common neighbors of vertices in the second class (ignored if zero)",
-        MaxDegree => ZZ => "an upper bound on the degrees of the vertices (ignored if zero)",
+        Class2MaxCommonNeighbors => ZZ => "an upper bound on the number of common neighbors of vertices in the second class",
+        MaxDegree => ZZ => "an upper bound on the degrees of the vertices",
         MinDegree => ZZ => "a lower bound on the degrees of the vertices",
         OnlyConnected => Boolean => "whether to only allow connected graphs"
     },
@@ -820,11 +893,11 @@ document {
     PARA TEX ///
             If only one integer argument is given, then the method generates
             all bipartite graphs on that number of vertices with first class
-            of sizes $1$ to $n$.
+            of sizes $0$ to $n$.
         ///,
     PARA TEX ///
             If a PolynomialRing $R$ is supplied instead, then the number of
-            vertices is the number of generators.  Moreover, the Strings are
+            vertices is the number of generators.  Moreover, the strings are
             automatically converted to graphs in $R$.
         ///,
     EXAMPLE lines ///
@@ -833,11 +906,8 @@ document {
         ///,
     Caveat => {
         TEX ///
-            The input $m$ is the size of the first class of the bipartition and must
-            be positive (as forced by {\tt nauty}).  We continue this so that the second
-            class (of size $n-m$) can be from $0$ to $n$.  In particular, this is important
-            as the options {\tt Class2Degree2, Class2DistinctNeighborhoods,} and 
-            {\tt Class2MaxCommonNeighbors} only effect the second class.
+            The number of vertices $n$ must be positive as nauty cannot handle
+            graphs with zero vertices.
         ///},
     SeeAlso => {
         "generateGraphs"
@@ -865,17 +935,17 @@ document {
     Usage => "G = generateGraphs n\nG = generateGraphs(n, e)\nG = generateGraphs(n, le, ue)\nG = generateGraphs R\nG = generateGraphs(R, e)\nG = generateGraphs(R, le, ue)",
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs",
+        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
         "e" => ZZ => "the number of edges in the graphs",
         "le" => ZZ => "a lower bound on the number of edges in the graphs",
         "ue" => ZZ => "an upper bound on the number of edges in the graphs",
-        MaxDegree => ZZ => "an upper bound on the degrees of the vertices (ignored if zero)",
+        MaxDegree => ZZ => "an upper bound on the degrees of the vertices",
         MinDegree => ZZ => "a lower bound on the degrees of the vertices",
-        Only4CycleFree => Boolean => "whether to only allow graphs without four cycles",
+        Only4CycleFree => Boolean => "whether to only allow graphs without 4-cycles",
         OnlyBiconnected => Boolean => "whether to only allow biconnected graphs",
         OnlyBipartite => Boolean => "whether to only allow bipartite graphs",
         OnlyConnected => Boolean => "whether to only allow connected graphs",
-        OnlyTriangleFree => Boolean => "whether to only allow graphs without triangles (three cycles)"
+        OnlyTriangleFree => Boolean => "whether to only allow graphs without triangles (3-cycles)"
     },
     Outputs => {"G" => List => TEX ///the graphs satisfying the input conditions///},
     PARA TEX ///
@@ -884,14 +954,19 @@ document {
             to allow further constraining of the output.
         ///,
     PARA TEX ///
-            If a PolynomialRing $R$ is supplied instead, then the number of
-            vertices is the number of generators.  Moreover, the Strings are
-            automatically converted to graphs in $R$.
+            If a polynomial ring $R$ is supplied instead, then the number of
+            vertices is the number of generators.  Moreover, the nauty-derived strings are
+            automatically converted to instances of the class Graph in $R$.
         ///,
     EXAMPLE lines ///
             R = QQ[a..e];
             generateGraphs(R, 4, 6, OnlyConnected => true)
     ///,
+    Caveat => {
+        TEX ///
+            The number of vertices $n$ must be positive as nauty cannot handle
+            graphs with zero vertices.
+        ///},
     SeeAlso => {
         "Example: Generating and filtering graphs",
         "generateBipartiteGraphs"
@@ -904,20 +979,23 @@ document {
         (generateRandomGraphs, ZZ, ZZ),
         (generateRandomGraphs, ZZ, ZZ, ZZ),
         (generateRandomGraphs, ZZ, ZZ, QQ),
+        (generateRandomGraphs, ZZ, ZZ, RR),
         (generateRandomGraphs, PolynomialRing, ZZ),
         (generateRandomGraphs, PolynomialRing, ZZ, ZZ),
         (generateRandomGraphs, PolynomialRing, ZZ, QQ),
+        (generateRandomGraphs, PolynomialRing, ZZ, RR),
         [generateRandomGraphs, RandomSeed]
     },
     Headline => "generates random graphs on a given number of vertices",
     Usage => "G = generateRandomGraphs(n, num)\nG = generateRandomGraphs(n, num, pq)\nG = generateRandomGraphs(n, num, pz)\nG = generateRandomGraphs(R, num)\nG = generateRandomGraphs(R, num, pq)\nG = generateRandomGraphs(R, num, pz)",
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs",
+        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
         "num" => ZZ => "the number of random graphs to generate",
-        "pq" => QQ => "the probability of a given edge being included (between 0 and 1)",
-        "pz" => ZZ => "the probability of a given edge being included (positive)",
-        RandomSeed => ZZ => {"if nonzero, then the specified random seed is passed to nauty"}
+        "pq" => QQ => "the edge probability (between 0 and 1)",
+        "pq" => RR => "the edge probability (between 0 and 1)",
+        "pz" => ZZ => "the reciprocal of the edge probability (positive)",
+        RandomSeed => ZZ => {"the specified random seed is passed to nauty"}
     },
     Outputs => {"G" => List => TEX ///the randomly generated graphs///},
     PARA TEX ///
@@ -926,14 +1004,14 @@ document {
         ///,
     PARA TEX ///
             If a PolynomialRing $R$ is supplied instead, then the number of
-            vertices is the number of generators.  Moreover, the Strings are
-            automatically converted to graphs in $R$.
+            vertices is the number of generators.  Moreover, the nauty-based strings are
+            automatically converted to instances of the class Graph in $R$.
         ///,
     PARA TEX ///
             If the input $pq$ is included, then the edges are chosen to be
             included with probability $pq$.  If the input $pz$ is included
-            and is positive, then the edges are chose to be included with probability
-            $1/pz$.
+            and is positive, then the edges are chosen to be included with
+            probability $1/pz$.
         ///,
     EXAMPLE lines ///
             generateRandomGraphs(5, 5, RandomSeed => 314159)
@@ -942,10 +1020,9 @@ document {
     ///,
     Caveat => {
         TEX ///
-            If $pq$ is included, then it is rounded to a precision of one hundred millionth.
-            Similarly, if $pz$ is greater than one hundred million, then an error is given. 
-            This is because {\bf nauty} responds inconsistently when greater precision is 
-            attempted.
+            The number of vertices $n$ must be positive as nauty cannot handle
+            graphs with zero vertices.  Further, if the probability $pq$ is included,
+            then it is rounded to a precision of one-hundred millionth.
         ///},
     SeeAlso => {
         "Example: Generating and filtering graphs",
@@ -964,10 +1041,10 @@ document {
     Usage => "G = generateRandomRegularGraphs(n, num, reg)\nG = generateRandomRegularGraphs(R, num, reg)",
     Inputs => {
         "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs",
+        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
         "num" => ZZ => "the number of random graphs to generate",
         "reg" => ZZ => "the regularity of the generated graphs",
-        RandomSeed => ZZ => {"if nonzero, then the specified random seed is passed to nauty"}
+        RandomSeed => ZZ => {"the specified random seed is passed to nauty"}
     },
     Outputs => { "G" => List => TEX ///the randomly generated regular graphs///},
     PARA TEX ///
@@ -977,13 +1054,18 @@ document {
         ///,
     PARA TEX ///
             If a PolynomialRing $R$ is supplied instead, then the number of
-            vertices is the number of generators.  Moreover, the Strings are
-            automatically converted to graphs in $R$.
+            vertices is the number of generators.  Moreover, the nauty-based strings are
+            automatically converted to instances of the class Graph in $R$.
         ///,
     EXAMPLE lines ///
             R = QQ[a..e];
             generateRandomRegularGraphs(R, 3, 2)
-    ///,
+        ///,
+    Caveat => {
+        TEX ///
+            The number of vertices $n$ must be positive as nauty cannot handle
+            graphs with zero vertices.
+        ///},
     SeeAlso => {
         "generateRandomGraphs"
     }
@@ -999,14 +1081,14 @@ doc ///
         s6 = graph6ToSparse6 g6
     Inputs
         g6:String
-            a string in @TT "nauty"@'s Graph6 format
+            a string in nauty's Graph6 format
     Outputs
         s6:String
-            a string in @TT "nauty"@'s Sparse6 format
+            a string in nauty's Sparse6 format
     Description
         Text
-            This method converts a graph stored in @TT "nauty"@'s Graph6 format
-            to a graph stored in @TT "nauty"@'s Sparse6 format.  For graphs with
+            This method converts a graph stored in nauty's Graph6 format
+            to a graph stored in nauty's Sparse6 format.  For graphs with
             very few edges, the Sparse6 format can use dramatically less
             space.  However, for graphs with many edges, the Sparse6
             format can increase the storage requirements.
@@ -1069,12 +1151,12 @@ doc ///
         S = graphToString(E, n)
         S = graphToString I
         S = graphToString G
-        T = graphToString T
+        S = graphToString T
     Inputs
         E:List
             a list of edge pairs
         n:ZZ
-            the number of vertices in the graph
+            the number of vertices in the graph, must be positive (see caveat)
         I:Ideal
             the edge ideal of a graph
         G:Graph
@@ -1086,11 +1168,11 @@ doc ///
     Description
         Text
             This method converts various ways of representing a graph into
-            @TT "nauty"@'s Graph6 @TO "String"@ format.  Note that if the @TO "Ideal"@
+            nauty's Graph6 string format.  Note that if the @TO "Ideal"@
             (or @TO "MonomialIdeal"@) passed to the method is not squarefree and monomial, then the
             method may have unknown and possibly undesired results.
 
-            In this example, all graphs are the five cycle.
+            In this example, all graphs are the 5-cycle.
         Example
             graphToString({{0,1}, {1,2}, {2,3}, {3,4}, {0,4}}, 5)
             R = QQ[a..e];
@@ -1099,11 +1181,14 @@ doc ///
             graphToString "Dhc"
         Text
             We note that if the input is a string, then the output is simply that string returned,
-            regardless of format.
+            regardless of format or correctness.
     Caveat
         Notice that if using a @TO "List"@ and number of vertices input to create
-        the @TO "String"@, then the @TO "List"@ must have vertices labeled $0$ to
+        the string, then the @TO "List"@ must have vertices labeled $0$ to
         $n-1$.
+
+        The number of vertices $n$ must be positive as nauty cannot handle
+        graphs with zero vertices.
     SeeAlso
         "Comparison of Graph6 and Sparse6 formats"
         graph6ToSparse6
@@ -1140,7 +1225,7 @@ doc ///
         Text
             The method @TO "isPlanar"@ uses the program @TT "planarg"@. The
             code was written by Paulette Lieby for the Magma project and
-            used with permission in the Nauty package.
+            used with permission in the software nauty.
 ///
 
 doc ///
@@ -1159,12 +1244,12 @@ doc ///
         G:Graph
     Outputs
         L:List
-            a list of graphs, in the same format as the input, modified as described below
+            containing graphs, in the same format as the input, modified as described below
     Description
         Text
             The method creates a list of graphs, one for each vertex of the
             original graph $G$.  The graph associated to a vertex $v$
-            of $G$ has its neighborhood complemented.  
+            of $G$ has the neighborhood of $v$ complemented.  
 
             The method does not remove isomorphs.
         Example
@@ -1264,9 +1349,9 @@ doc ///
             a graph encoded in either Sparse6 or Graph6 format
         G:Graph
         i:ZZ
-            a choice of invariant to order by ($0 \leq i \leq 15$)
+            a choice of invariant to order by ($0 \leq i \leq 15$, default is $0$)
         a:ZZ
-            a non-negative argument passed to @TT "nauty"@, (default is three)
+            a non-negative argument passed to nauty, (default is $3$)
     Outputs
         T:String
             a graph isomorphic to $S$ encoded in either Sparse6 or Graph6 format
@@ -1275,7 +1360,7 @@ doc ///
     Description
         Text
             This method applies one of sixteen vertex invariant based refinements to a 
-            graph.  See the @TT "nauty"@ documentation for a more complete description
+            graph.  See the nauty documentation for a more complete description
             of each and how the argument $a$ is used.
 
             The sixteen vertex invariants are:
@@ -1299,9 +1384,8 @@ doc ///
             } / TEX) @
         Example
             R = QQ[a..e];
-            G = cycle R;
-            H = graph {a*e, e*c, c*b, b*d, d*a};
-            relabelGraph G == relabelGraph H
+            G = graph {a*e, e*c, c*b, b*d, d*a};
+            relabelGraph G
         Text
             Note that on most small graphs, all sixteen orderings produce the same result.
     SeeAlso
@@ -1322,7 +1406,7 @@ document {
         "G" => Graph => "",
         MinDegree => ZZ => "the minimum degree which a returned graph can have"
     },
-    Outputs => {"L" => List => "a list of all graphs obtained by removed one edge from the given graph in all possible ways; it contains graphs in the same format as the input"},
+    Outputs => {"L" => List => "a list of all graphs obtained by removed one edge from the given graph; it contains graphs in the same format as the input"},
     PARA ///This method creates a list of all possible graphs obtainable from
             the given graph by removing one edge.  Notice that isomorphic graphs
             are allowed within the list.///,
@@ -1346,10 +1430,10 @@ doc ///
         M = removeIsomorphs L
     Inputs
         L:List
-            a list of graphs in either Graph or Sparse6/Graph6 String format
+            containing graphs (mixed formats allowed)
     Outputs
         M:List
-            the sub-list of non-isomorphic graphs of the input list, retaining format
+            containing the sub-list of non-isomorphic graphs of the input list, retaining format
     Description
         Text
             This method returns the sublist of $L$ giving all 
@@ -1374,14 +1458,14 @@ doc ///
         g6 = sparse6ToGraph6 s6
     Inputs
         s6:String
-            a string in @TT "nauty"@'s Sparse6 format
+            a string in nauty's Sparse6 format
     Outputs
         g6:String
-            a string in @TT "nauty"@'s Graph6 format
+            a string in nauty's Graph6 format
     Description
         Text
-            This method converts a graph stored in @TT "nauty"@'s Sparse6 format
-            to a graph stored in @TT "nauty"@'s Graph6 format.  The Graph6 format
+            This method converts a graph stored in nauty's Sparse6 format
+            to a graph stored in nauty's Graph6 format.  The Graph6 format
             has the benefit of being a constant length dependent only
             on the number of vertices.
         Example
@@ -1405,7 +1489,7 @@ doc ///
         I = stringToEdgeIdeal(S, R)
     Inputs
         S:String
-            a string in @TT "nauty"@'s Sparse6 or Graph6 format
+            a string in nauty's Sparse6 or Graph6 format
         R:PolynomialRing
             a polynomial ring
     Outputs
@@ -1413,7 +1497,7 @@ doc ///
             an ideal in the given polynomial ring
     Description
         Text
-            This method converts a Sparse6 or Graph6 @TO "String"@ $S$ to an edge
+            This method converts a Sparse6 or Graph6 string $S$ to an edge
             ideal $I$ in the given polynomial ring $R$.  That is, for
             each edge $(a,b)$ in the graph given by $S$, the monomial
             $a*b$ is added as a generator to $I$.  
@@ -1424,8 +1508,8 @@ doc ///
             R = QQ[a..e];
             stringToEdgeIdeal("Dhc", R)
         Text
-            This method is almost always faster than converting the @TO "String"@ to
-            a @TO "Graph"@ and then to an edge ideal using the @TO "edgeIdeal"@ method.
+            This method is almost always faster than converting the string to
+            a graph and then to an edge ideal using the @TO "edgeIdeal"@ method.
     SeeAlso
         graphToString
         stringToGraph
@@ -1441,7 +1525,7 @@ doc ///
         G = stringToEdgeIdeal(S, R)
     Inputs
         S:String
-            a string in @TT "nauty"@'s Sparse6 or Graph6 format
+            a string in nauty's Sparse6 or Graph6 format
         R:PolynomialRing
             a polynomial ring
     Outputs
@@ -1449,8 +1533,8 @@ doc ///
             a graph in the given polynomial ring
     Description
         Text
-            This method converts a Sparse6 or Graph6 @TO "String"@ $S$ to a graph
-            $G$ in the given polynomial ring $R$.
+            This method converts a Sparse6 or Graph6 string $S$ to an instance
+            of the class Graph, stored in $G$, with the given polynomial ring $R$.
 
             Note, this method requires that the number of variables of $R$
             be the same as the number of vertices of $S$.
@@ -1507,10 +1591,10 @@ TEST ///
 
 -- buildGraphFilter
 TEST ///
-    assert(buildGraphFilter hashTable {"NumVertices" => 3} == "-n3 ");
-    assert(buildGraphFilter hashTable {"NumVertices" => (3,4)} == "-n3:4 ");
-    assert(buildGraphFilter hashTable {"NumVertices" => (3,)} == "-n3: ");
-    assert(buildGraphFilter hashTable {"NumVertices" => (,4)} == "-n:4 ");
+    assert(buildGraphFilter {"NumVertices" => 3} == "-n3 ");
+    assert(buildGraphFilter {"NumVertices" => (3,4)} == "-n3:4 ");
+    assert(buildGraphFilter {"NumVertices" => (3,)} == "-n3: ");
+    assert(buildGraphFilter {"NumVertices" => (,4)} == "-n:4 ");
     assert(buildGraphFilter hashTable {"NumVertices" => 3, "NegateNumVertices" => true} == "-~n3 ");
     assert(buildGraphFilter hashTable {"Regular" => true} == "-r ");
     assert(buildGraphFilter hashTable {"Regular" => false} == "-~r ");
@@ -1522,9 +1606,9 @@ TEST ///
     R = ZZ[a..f];
     G = {cycle R, completeGraph R, graph monomialIdeal (0_R), graph {a*b, c*d, e*f}, graph {a*b, b*c, c*d, d*e}};
     -- Connected?
-    assert(countGraphs(G, hashTable {"Connectivity" => 0, "NegateConnectivity" => true}) == 2);
+    assert(countGraphs(G, {"Connectivity" => 0, "NegateConnectivity" => true}) == 2);
     -- Bipartite?
-    assert(countGraphs(G, hashTable {"Bipartite" => true}) == 4);
+    assert(countGraphs(G, {"Bipartite" => true}) == 4);
     -- At least 4 edges?
     assert(countGraphs(G, hashTable {"NumEdges" => (4,)}) == 3);
 ///
@@ -1534,9 +1618,9 @@ TEST ///
     R = ZZ[a..f];
     G = {cycle R, completeGraph R, graph monomialIdeal (0_R), graph {a*b, c*d, e*f}, graph {a*b, b*c, c*d, d*e}};
     -- Connected?
-    assert(filterGraphs(G, hashTable {"Connectivity" => 0, "NegateConnectivity" => true}) == G_{0, 1});
+    assert(filterGraphs(G, {"Connectivity" => 0, "NegateConnectivity" => true}) == G_{0, 1});
     -- Bipartite?
-    assert(filterGraphs(G, hashTable {"Bipartite" => true}) == G_{0, 2, 3, 4});
+    assert(filterGraphs(G, {"Bipartite" => true}) == G_{0, 2, 3, 4});
     -- At least 4 edges?
     assert(filterGraphs(G, hashTable {"NumEdges" => (4,)}) == G_{0, 1, 4});
 ///
@@ -1688,4 +1772,36 @@ restart
 uninstallPackage "Nauty"
 installPackage "Nauty"
 check "Nauty"
+
+-----------------------
+-- For J-SAG Manuscript
+-----------------------
+restart
+
+needsPackage "Nauty";
+R = QQ[a..e];
+graphToString cycle R
+graphToString completeGraph R
+edges stringToGraph("Dhc", R)
+
+G = graph {{a, c}, {c, e}, {e, b}, {b, d}, {d, a}};
+areIsomorphic(cycle R, G)
+removeIsomorphs apply(permutations gens R, 
+   P -> graphToString graph apply(5, i-> {P_i, P_((i+1)%5)}))
+
+A000088 = apply(1..9, n -> #generateGraphs n)
+
+B = apply(1..12, n -> generateGraphs(n, OnlyBipartite => true));
+forestsOnly = buildGraphFilter {"NumCycles" => 0};
+A005195 = apply(B, graphs -> #filterGraphs(graphs, forestsOnly))
+
+treesOnly = buildGraphFilter {"NumCycles" => 0,
+   "Connectivity" => 0, "NegateConnectivity" => true};
+A000055 = apply(B, graphs -> #filterGraphs(graphs, treesOnly))
+
+connected = buildGraphFilter {"Connectivity" => 0, 
+    "NegateConnectivity" => true};
+prob = n -> log(n)/n;
+apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, 2*(prob n)), connected))
+apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, (prob n)/2), connected))
 
