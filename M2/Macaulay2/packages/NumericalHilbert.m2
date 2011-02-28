@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-  "hpackage",
+  "NumericalHilbert",
   Version => "0.0", 
   Date => "July 25, 2010",
   Authors => {{Name => "Robert Krone", 
