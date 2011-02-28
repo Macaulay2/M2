@@ -18,6 +18,8 @@ List - List  := List => (v,w) -> apply(v,w,difference)
 Thing * List := List => (a,v) -> apply(v,x->a * x)
 
 List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
+List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
+List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
 VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
 
