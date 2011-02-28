@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-  "NumericalHilbert",
+  "hpackage",
   Version => "0.0", 
   Date => "July 25, 2010",
   Authors => {{Name => "Robert Krone", 
@@ -9,7 +9,7 @@ newPackage(
   DebuggingMode => true
 )
 
-export {dualBasis, dualHilbert, hilbertB, hilbertC, Point, UseDZ, STmatrix, DZmatrix}
+export {dualBasis, dualHilbert, hilbertB, hilbertC, Point, UseDZ, STmatrix, DZmatrix, deflation, Size}
 
 --Generators of the dual space with all terms of degree d or less.
 --Uses ST algorithm by default, but can use DZ instead if specified.
@@ -133,6 +133,38 @@ hilbertC (Matrix, ZZ) := o -> (igens, d) -> (
   recurC(newm, 0, 1)
 )
 
+deflation = method(TypicalValue => ZZ, Options => {Point => matrix {{}}, Size => 0})
+deflation (Matrix) := o -> (igens) -> (
+  R := ring igens;
+  n := #(gens R);
+  epsilon := .001;
+  p := sub(o.Point,CC);
+  m := o.Size;
+  if p == matrix {{}} then p = matrix {apply(n, i->0_CC)};
+  if m == 0 then m = n;
+  A := matrix entries jacobian igens;
+  Asub := sub(A, p);
+  svs := (SVD(Asub))#0;
+  print SVD Asub;
+  print svs;
+  r := 0;
+  for v in svs do
+    if clean(epsilon,v) != 0 then r = r + 1;
+  if r == n then return take((entries p)#0,m);
+  print r;
+  h := randomVector(r+1);
+  Br := matrix apply(n, i->randomVector(r+1));
+  Bl := matrix apply(r, i->randomVector(n));
+  C := (Bl*Asub*Br) || matrix{h};
+  p = p | transpose solve(C, transpose matrix{(apply(r,i->0_CC))|{1_CC}});
+  print p;
+  R = CC[gens R,lambda_n..lambda_(n+r)];
+  lvec := transpose matrix{new List from lambda_n..lambda_(n+r)};
+  igens = sub(igens,R) | transpose (sub(A,R)*Br*lvec) | transpose (matrix{h}*lvec - 1);
+  print transpose igens;
+  deflation(igens, Point => p, Size => m)
+)
+
 --produces a list of all monomials of degree d in the ring R in lex order
 dMonomials = (R, d) -> (
   mons := new MutableHashTable;
@@ -181,6 +213,22 @@ rowReduce = (M,epsilon) -> (
   M = new Matrix from M
 )
 
+--generates a vector of specified length of random complex numbers with unit modulus
+randomVector = (dimension) -> (
+  apply(dimension, i -> exp((random 1.*pi)*ii))
+)
+
+newtonsMethod = (eqns, p, n) -> (
+  elist := (entries eqn)#0;
+  A := entries transpose jacobian eqn;
+  for i from 1 to n do (
+    for j from 0 to #elist-1 do (
+      val := sub(elist#j, p);
+      grad := sub(A#j, p);
+    );
+  );
+)
+
 beginDocumentation()
 document { 
   Key => NumericalHilbert,
@@ -216,6 +264,11 @@ document {
 end
 
 loadPackage "NumericalHilbert"
+R = CC[x,y]
+M = matrix {{y,x^2-y}}
+deflation(M)
+
+loadPackage "hpackage"
 R = RR[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix {{x*y,x^2-y^2,y^3}}
 M = matrix {{x^2 - y}}
