@@ -26,11 +26,15 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      -- threshholds and other tuning parameters (should include most of them as options)
      theSmallestNumber := 1e-12;
      
-     I := symbol I;
-     K := QQ[I]/ideal(I^2+1); -- THE coefficient ring
-     R = K[gens R]; 
-     S = apply(S,f->sub(f,R));
-     T = apply(T,f->sub(f,R));
+     K := coefficientRing R;
+     if class K === InexactFieldFamily then error "QQ or Gaussian rationals expected"; 
+     if K === QQ then (
+     	  I := symbol I;
+     	  K = QQ[I]/ideal(I^2+1); -- THE coefficient ring
+     	  R = K[gens R]; 
+     	  S = apply(S,f->sub(f,R));
+     	  T = apply(T,f->sub(f,R));
+	  );
      solsS = solsS / (s->sub(transpose matrix {toList s}, K)); -- convert to vectors
      	  -- affine patch functions ???
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
@@ -45,6 +49,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
 
+     print T;
      norm2T := BombieriWeylNormSquaredQI T; -- norm^2 of the target
      c'over'P := 1/40;
      max'deg := max deg;      
@@ -105,8 +110,41 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  etHt = etHt + tr#0;
 	  tr#1
 	  );
-     --evalMinusInverseHxHt := (x0,t0)-> -(inverseMatrix evalHx(x0,t0))*evalHt(x0,t0);
-     --solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
+     compute'dt'epsilon := (x0,t0) -> (
+	  H't0 := specH t0;	
+	  H0 := evalH(x0,t0);
+	  norm2H := BombieriWeylNormSquaredQI H't0;	
+	  invM := inverse evalHx(x0,t0);
+	  cols'invM := entries transpose invM; 					   
+	  norm2x0 := normSquareQI x0; 
+	  phiTildeSquare1 := sum(#deg, 
+	       i->(normSquareQI cols'invM#i)*(deg#i)*norm2H*norm2x0^(deg#i-1)
+	       ) + (normSquareQI last cols'invM)*norm2x0;
+	  ReScalarProductTandH't0 := Re BombieriWeylScalarProductQI(T,H't0);
+	  phiTildeSquare2 := 1 + normSquareQI(invM*(norm2H*evalH(x0,1) - ReScalarProductTandH't0*H0)) 
+	  / (norm2x0*(norm2T*norm2H - ReScalarProductTandH't0^2)); 
+	  phiTildeSquare := phiTildeSquare1*phiTildeSquare2;
+	  if DBG>1 then << "phiTildeSquare1 = " << toRR phiTildeSquare1 
+	  << ", phiTildeSquare2 = " << toRR phiTildeSquare2 << endl;
+	  c2'over'P2d3phi2 := c'over'P^2/(max'deg^2*phiTildeSquare);
+	  L := 1 - c2'over'P2d3phi2/2 + c2'over'P2d3phi2^2/24;
+	  U := 1 - c2'over'P2d3phi2/4; -- here R^2=2
+	  if DBG>1 then << "L = " << toRR L << "; U = " << toRR U << endl;
+
+          -- computation of epsilon
+	  u0 := 17586/100000;
+	  delta := 3/4;
+	  epsilon := (1-3*delta*u0/2)*(1-delta)*u0/approxSqrt(4*phiTildeSquare1*max'deg^3,1/100000);
+	  if DBG>1 then << "epsilon = " << toRR epsilon << endl;
+
+	  (-- return pair (dt,epsilon) 
+	       pick'dt((norm2H,
+		    Re BombieriWeylScalarProductQI(H't0,T-S),--Re <H't0,T-S>,
+		    BombieriWeylNormSquaredQI(T-S) --||T-S||^2
+		    ),L,U), 
+	       epsilon
+	       )
+	  );
      
      compStartTime := currentTime();      
 
@@ -125,42 +163,30 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      		    
 		    dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
 	     			
-		    H't0 := specH t0;	
-		    H0 := evalH(x0,t0);
-		    norm2H := BombieriWeylNormSquaredQI H't0;	
-     	       	    invM := inverse evalHx(x0,t0);
-		    cols'invM := entries transpose invM; 					   
-		    norm2x0 := normSquareQI x0; 
-		    phiTildeSquare1 := sum(#deg, i->(normSquareQI cols'invM#i)*(deg#i)*norm2H*norm2x0^(deg#i-1)) 
-		    + (normSquareQI last cols'invM)*norm2x0;
-		    ReScalarProductTandH't0 := BombieriWeylScalarProductQI(T,H't0);
-		    phiTildeSquare2 := 1 + normSquareQI(invM*(norm2H*evalH(x0,1) - ReScalarProductTandH't0*H0)) 
-			 / (norm2T*norm2H - ReScalarProductTandH't0^2); 
-		    phiTildeSquare := Re(phiTildeSquare1*phiTildeSquare2);
-		    c2'over'P2d3phi2 := c'over'P^2/(max'deg^2*phiTildeSquare);
-		    L := 1 - c2'over'P2d3phi2/2 + c2'over'P2d3phi2^2/24;
-		    U := 1 - c2'over'P2d3phi2/4; -- here R^2=2
-		    if DBG>5 then << "L = " << toRR L << "; U = " << toRR U << endl;
-     	       	    dt := pick'dt((norm2H,
-	   		 Re BombieriWeylScalarProductQI(H't0,T-S),--Re <H't0,T-S>,
-			 BombieriWeylNormSquaredQI(T-S) --||T-S||^2
- 			 ),L,U);
-		    
-                    dx = 0; -- 0-th order predictor
+		    (dt,epsilon) := compute'dt'epsilon(x0,t0); -- main work is done here
 
-		    if DBG > 5 then << "  dt = " << dt << "  dx = " << toString dx << endl;
+		    dPatch = matrix{ flatten entries (10*x0) / conjugateQI}; -- x0* used in evaluation
+		    compute'dt'epsilon(10*x0,t0); -- check independence on a respresentative
+		    dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
+
+
+                    dx := 0; -- 0-th order predictor
+
+		    if dt < 0.000001 then 1/0;
 		    if HISTORY then history#count#"dx" = dx;
 
     	 	    t1 := min(t0 + dt, 1);
 		    x1 := x0 + dx;
 		    
-		    nCorrSteps = 1;
 		    dx = -inverse(evalHx(x1,t1))*evalH(x1,t1);
 		    x1 = x1 + dx;
-		    x1 = roundQI(5,x1); -- round to 5 digits!!!
+		    x1 = shorterZero(x1,epsilon);
+		    --x1 = roundQI(5,x1); -- round to 5 digits!!!
 		    
-		    x0 = normalizeQI x1; -- approximate normalization 
+		    --x0 = normalizeQI x1; -- approximate normalization 
+		    x0 = x1;
 		    t0 = t1;
+		    if DBG>1 then << "step " << count << ", t0 = " << toRR t0 << ", x0 = " << toString x0 << endl;
 		    count = count + 1;
 		    if HISTORY then history#count = new MutableHashTable from {"t"=>t0,"x"=>x0};
 		    
@@ -213,33 +239,70 @@ normSquareQI = method(TypicalValue=>RingElement) -- 2-norm of a vector
 normSquareQI List := v -> sub(sum(v, x->x*conjugateQI x),QQ);
 normSquareQI Matrix := v -> normSquareQI flatten entries v -- this is Frobenius norm for a matrix
 
+productQI = method()
+productQI (List, List) := (a,b) -> sum(#a, i->a#i*conjugateQI b#i)
+productQI (Matrix, Matrix) := (a,b) -> productQI(flatten entries a, flatten entries b)
+
+distanceSquareQI = method()
+distanceSquareQI (Matrix, Matrix) := (a,b) -> (Re productQI(a,b))^2 / (normSquareQI a * normSquareQI b)  
+
 normalizeQI = method(TypicalValue => Matrix) -- normalizes a column vector
 normalizeQI Matrix := v -> (1/approxSqrt(normSquareQI v,1/100000))*v
 
 roundQI = method() 
-roundQI (ZZ, RingElement) := RingElement => (n,x) -> (
-     if x==0 then x else (
-     	  cs := coefficients (10^n * x);
-     	  ((first cs)*transpose matrix{apply(flatten entries last cs, c->10^(-n)*round sub(c,QQ))})_(0,0)
-     	  )
-     )
+roundQI (ZZ, RingElement) := RingElement => (n,x) -> 10^(-n)*(round(10^n*Re x) + round(10^n*Im x)*(ring x)_0)
 roundQI (ZZ, Matrix) := Matrix => (n,M) -> matrix apply(entries M, r->apply(r, e->roundQI(n,e)))
+
+QItoQQ = x -> sub(x,QQ)
 
 QItoCC = method()
 QItoCC RingElement := CC => x -> toRR Re x + ii*(toRR Im x)
 QItoCC List := List => L -> L/QItoCC
 QItoCC Matrix := Matrix => M -> matrix(M/QItoCC)
 	     
+floorQQ = method()
+floorQQ QQ := ZZ => x -> (numerator x // denominator x) - (if x<0 then 1 else 0)
+
 approxSqrt = method()
 approxSqrt(QQ,QQ) := (t,e) -> (
+     --t' := toQQ(sqrt t);
+     --if t'^2>=t and t'^2<t*(1+e)^2 then return t'; -- hack!!!
+     t' := approxSqrtGeqOne(numerator t,e) / approxSqrtGeqOne(denominator t, e/(1-e));
+     print (toRR t' - sqrt t);
+     t'
+     )
+
+approxSqrtGeqOne = method()
+approxSqrtGeqOne(ZZ,QQ) := (t,e) -> (
+     if t == 0 then return 0;
      t0 := t;
-     t' := (t0 + 1)/2;
+     t' = (t0 + 1)/2;
      while t'^2>t*(1+e)^2 do (
-	  if (floor t')^2 >= t then t' = floor t';
+	  if (floorQQ t')^2 >= t then t' = floorQQ t';
 	  t0 = t';
 	  t' = t0/2 + t/(2*t0);
 	  );
      t'
+     )
+shorterZero = method()
+shorterZero (Matrix,QQ) := Matrix => (x0,e) -> (
+     z := roundQI(10,x0); -- hack!!!
+     assert(acos distanceSquareQI(z,x0)<e^2); -- inexact!!!
+     assert(0<e and e<1/5);
+     n := numRows x0 - 1;
+     R := ring x0; 
+     x0'rat := apply(flatten entries x0, c->{Re c, Im c});     
+     m := lcm(flatten flatten x0'rat/denominator@@QItoQQ);
+     --1/0;
+     x := m*x0;
+     inv'norm := (n+1)/normSquareQI x;
+     r0 := approxSqrt(inv'norm,e/4);
+     r := r0/e;
+     z'rat := apply(x0'rat,c->apply(c,t->round(r*t)));
+     z' := transpose matrix{apply(z'rat, c->c#0+c#1*R_0)};
+     --<< "hack: " << z << "; non-hack: " << z' << endl;
+     --10*z -- hack
+     z
      )
 
 BombieriWeylScalarProductQI = method()
@@ -265,7 +328,27 @@ pick'dt = (abc,L,U) -> (
      C := toRR(a^2*(1-U^2));
      assert(A<0 and B^2-4*A*C>=0);
      t := (-B-sqrt(B^2-4*A*C))/(2*A);
-     <<"pick'dt: dt = " << t << endl;
-     s := 10^(-round log_10 t + 3);
-     round(s*t) / s  
+     if DBG>5 then <<"pick'dt: dt = " << t << endl;
+     toQQ(15,t)
      ) 
+toQQ = method()
+toQQ (ZZ,RR) := QQ => (n,t) -> ( -- n=number of binary digits
+     s := 2^(-round log_2 t + n);
+     round(s*t) / s  
+     )
+toQQ RR := QQ => t -> round (t<<(maxExponent//2))/2^(maxExponent//2)
+
+compute'u0RPc = delta -> (
+     u0 := 0.17586;
+     R := sqrt 2; 
+     P := sqrt 2 + sqrt(2+5/8);
+     a := (2*delta-1)*u0/(sqrt(2)+2*delta*u0);
+     c':= 1-(1-a)^(P/sqrt 2); 
+     c := (1-(sqrt 2)*u0/2)^(sqrt 2)*c'/(1+(sqrt 2)*u0/2);
+     (u0,R,P,c)
+     ) 
+///
+     load "certifiedNAG.m2"
+     (u0,R,P,c) = compute'u0RPc(3/4)
+     C = R*P/log_10(1+c)
+///     
