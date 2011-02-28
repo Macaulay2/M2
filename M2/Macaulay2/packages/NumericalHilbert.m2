@@ -24,7 +24,7 @@ dualBasis (Matrix, ZZ) := o -> (igens, d) -> (
   if M != 0 then (
     (svs, U, Vt) := SVD transpose sub(M,coefficientRing R);
     Vt = entries Vt;
-    dualGens = new MutableList;
+    dualGens := new MutableList;
     for i from 0 to #svs-1 do
       if abs svs#i <= epsilon then dualGens#(#dualGens) = apply(Vt#i, conjugate);
     for i from #svs to (numgens target M)-1 do
@@ -46,7 +46,7 @@ dualHilbert (Matrix, ZZ) := o -> (igens, d) -> (
              else mList = STmatrix(igens, d, Point => o.Point);
   fs := apply(mList, M->(
     svs := {};
-    if M != 0 then svs = (SVD sub(M,coefficientRing R))#0;
+    if M != 0 then svs = (SVD sub(M,coefficientRing ring igens))#0;
     --print(M, svs, numgens target M, #select(svs, v->(abs v > epsilon)));
     (numgens target M) - #select(svs, v->(abs v > epsilon)) + 1
   ));
@@ -183,10 +183,12 @@ rowReduce = (M,epsilon) -> (
 
 beginDocumentation()
 document { 
-  Key => hpackage,
+  Key => NumericalHilbert,
   Headline => "some local Hilbert series functions",
-  EM "hpackage", " is a basic package to be used as an example."
+  EM "NumericalHilbert", " is a basic package to be used as an example."
 }
+
+///
 document {
   Key => hilbertA,
   Headline => "local Hilbert series of the dual space of an ideal",
@@ -194,6 +196,8 @@ document {
   Inputs => { "igens", "d" },
   Outputs => {{ "the", TT "d", "th element of the Hilbert series corresponding to the ideal with generators", TT "igens" }},
 }
+///
+
 document {
   Key => hilbertB,
   Headline => "local Hilbert series of the quotient space of an ideal",
@@ -211,7 +215,7 @@ document {
 
 end
 
-loadPackage "hpackage"
+loadPackage "NumericalHilbert"
 R = RR[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix {{x*y,x^2-y^2,y^3}}
 M = matrix {{x^2 - y}}
@@ -225,7 +229,7 @@ dualBasis(M,4, UseDZ=>true)
 apply(0..4, i->hilbertB(M,i))
 apply(0..4, i->hilbertC(M,i))
 
-loadPackage "hpackage"
+loadPackage "NumericalHilbert"
 R = RR[x,y,z, MonomialOrder => {Weights=>{-1,-1,-1}}, Global => false]
 M = matrix {{x*y+z, y*z+x, x^2-z^2}}
 dualBasis(M,4)
