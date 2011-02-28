@@ -37,6 +37,8 @@ public:
 
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
+  virtual const Ring * get_ring() const { return G->get_ring(); }
+
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h)
   { return G->set_hilbert_function(h); }
   // The default version returns an error saying that Hilbert functions cannot be used.

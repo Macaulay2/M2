@@ -60,6 +60,8 @@ public:
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
 
+  virtual Ring *get_ring() const { return globalZZ; }
+
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////

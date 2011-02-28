@@ -324,6 +324,7 @@ public:
 
   void start_computation();
 
+  virtual const Ring * get_ring() const { return 0; } /* doesn't have a ring !!  */
   virtual const Matrix /* or null */ *get_gb();
 
   virtual const Matrix /* or null */ *get_mingens();

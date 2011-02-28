@@ -60,6 +60,8 @@ public:
 
   // Recall that the status of the computation is maintained by the Computation class,
 
+  virtual const Ring * get_ring() const { return G->get_ring() ; }
+
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////

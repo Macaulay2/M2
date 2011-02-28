@@ -50,6 +50,7 @@ public:
   // Values for algorithm and strategy are documented in engine.h
   // Returns NULL if an error occurs
 
+  virtual const Ring *get_ring() const = 0;
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
   // The default version returns an error saying that Hilbert functions cannot be used.
 

@@ -178,7 +178,7 @@ void GBWalker::start_computation()
 
 }
 
-const PolynomialRing *GBWalker::get_ring() 
+const PolynomialRing *GBWalker::get_ring() const
 { 
   // MES: TO WRITE
   return 0; 

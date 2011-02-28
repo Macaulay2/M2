@@ -48,7 +48,7 @@ public:
 
   void start_computation();
 
-  virtual const PolynomialRing *get_ring() { return originalR; }
+  virtual const PolynomialRing *get_ring() const { return originalR; }
 
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
 

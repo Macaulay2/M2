@@ -57,6 +57,8 @@ public:
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
 
+  virtual const Ring * get_ring() const { return R; }
+
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////

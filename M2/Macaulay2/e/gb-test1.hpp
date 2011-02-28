@@ -10,6 +10,7 @@
 #include "reducedgb.hpp"
 #include "interreduce.hpp"
 #include "f4/hilb-fcn.hpp"
+#include "polyring.hpp"
 
 // This GB algorithm does NOT handle:
 //   coeffs == ZZ
@@ -318,7 +319,7 @@ public:
 
   void start_computation();
 
-  virtual const PolynomialRing *get_ring() { return originalR; }
+  virtual const PolynomialRing *get_ring() const { return originalR; }
 
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
 

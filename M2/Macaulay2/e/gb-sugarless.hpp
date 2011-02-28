@@ -139,7 +139,7 @@ public:
 
   void start_computation();
 
-  virtual const PolynomialRing *get_ring() { return originalR; }
+  virtual const PolynomialRing *get_ring() const { return originalR; }
 
   virtual const Matrix /* or null */ *get_gb();
 

@@ -10,6 +10,7 @@
 #include "sagbi.hpp"
 #include "exceptions.hpp"
 #include "gb-walk.hpp"
+#include "relem.hpp"
 
 bool warning_given_for_gb_or_res_over_RR_or_CC = false;
 
@@ -487,6 +488,11 @@ IM2_GB_set_hilbert_function(Computation *C,
      try {
 	  clear_emit_size();
 	  GBComputation *G = C->cast_to_GBComputation();
+	  if (G->get_ring()->get_degree_ring() != h->get_ring())
+	    {
+	      ERROR("expected Hilbert function hint to be in correct degree ring");
+	      return 0;
+	    }
 	  if (G != 0)
 	    return G->set_hilbert_function(h);
 	  ERROR("computation type unknown or not implemented");

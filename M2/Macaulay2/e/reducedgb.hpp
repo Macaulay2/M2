@@ -9,6 +9,7 @@
 #include "montable.hpp"
 #include "montableZZ.hpp"
 #include "gbweight.hpp"
+#include "polyring.hpp"
 
 class ReducedGB : public GBComputation
 {
@@ -44,6 +45,8 @@ public:
   // The computation is complete up through this degree.
 
   // Recall that the status of the computation is maintained by the Computation class,
+
+  virtual const Ring * get_ring() const { return originalR ; }
 
   ////////////////////////////////
   // Results of the computation //
