@@ -8,7 +8,7 @@ document {
      Headline => "the ring of degrees",
      Usage => "degreesRing x",
      Inputs => {
-	  "x" => {ofClass{List,ZZ}, "a list of integers, or a single integer"}
+	  "x" => {ofClass{List,ZZ}, "; if a list, then a list of integers"}
 	  },
      Outputs => {
 	  PolynomialRing => {
@@ -18,7 +18,7 @@ document {
 	       }
 	  },
      PARA {
-	  "This function produces a Laurent polynomial ring in ", TT "n", " variables",
+	  "This function produces a Laurent polynomial ring in ", TT "n", " variables ",
 	  TT "T_0, ... , T_{n-1}", ", where ", TT "n", " is the length of ", TT "x", " if ", TT "x", " is a list and is ", TT "x", " otherwise.
 	  If ", TT "n=1", ", then the single variable is ", TT "T", ".  Use ", TO "use", " as in the following
 	  example to assign the indeterminates of the ring to global variables, or assign the ring itself to a global
