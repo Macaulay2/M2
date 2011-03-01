@@ -14,7 +14,7 @@ document {
 	  PolynomialRing => {
 	       "the ring of Laurent polynomials whose monomials correspond to the degrees of the
 	       monomials in a ring whose heft vector is ", TT "x", ", or, if ", TT "x", " is an integer, in a
-	       ring with degree rank ", TT "x", " and no heft vector.  See ", TO "degreeMonoid", "."
+	       ring with degree rank ", TT "x", " and no heft vector.  See ", TO degreesMonoid, "."
 	       }
 	  },
      PARA {
