@@ -159,6 +159,7 @@ document {
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
      TO "peek", ".  Different algorithms attach different information describing the point. For example, the
      solveSystem function with default options produces the following.",
+     PARA{},
      EXAMPLE lines ///
        loadPackage "NumericalAlgebraicGeometry";
        R = CC[x,y];
@@ -168,15 +169,18 @@ document {
        coordinates pt
        status pt
      ///,
-     "The condition number of the Jacobian of the polynomial system, evaluated at this point
-      (the smaller the value, the better):",
+     PARA{"For example, one may see the condition number of the Jacobian of the polynomial system, evaluated at this point
+      (the smaller the value, the better) as follows."},
      EXAMPLE lines ///
        pt.ConditionNumber
      ///,
-     "The last value of the continuation parameter produced during tracking:",
-     EXAMPLE lines ///
-       pt.LastT
-     ///
+     PARA{"The other keys that may be attached include "}, 
+     UL{
+	  {TO NumberOfSteps, " -- the number of steps in made by the continuation procedure"}, 
+     	  {TO LastT, " -- the last value of the continuation parameter produced during tracking (equals 1 for a regular solution)"},
+	  {TO ErrorBoundEstimate, " -- an estimate of the distance from the approximation to the actual solution"},
+	  {TT "Tracker", " -- reserved for developers"}
+	  }
      }
 document {
 	Key => {(point,List), point},

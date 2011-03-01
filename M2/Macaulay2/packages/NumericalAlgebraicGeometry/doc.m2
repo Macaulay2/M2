@@ -67,17 +67,19 @@ document {
 	SeeAlso => {track, solveSystem, refine, areEqual}
 	}
 					
-document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
+--document { Key => 
+undocumented     {AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
 	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
-	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], [track,SLPpredictor], [setDefault,SLPpredictor]},
-     Headline => "reserved for developers"
-     } 
+	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], [track,SLPpredictor], [setDefault,SLPpredictor]}
+	--,
+     --Headline => "reserved for developers"
+     --} 
 
 document {
 	Key => {(solveSystem, List),solveSystem},
 	Headline => "solve a square system of polynomial equations",
 	Usage => "s = solveSystem F",
-	Inputs => { "F"=>"polynomials with complex coefficients" },
+	Inputs => { "F"=>"the polynomials with complex coefficients" },
 	Outputs => { "s"=>{"all complex solutions to the system ", TT "F=0" }},
 	"Solve a system of polynomial equations using homotopy continuation methods.",
      	PARA {},
@@ -87,7 +89,7 @@ F = {x^2+y^2-1, x*y};
 solveSystem F 
      	///,
      	PARA {},
-	"The output contains all ", TO Point, "s obtained at the end of homotopy paths when tracking a total-degree homotopy. ",
+	"The output contains all ", TO2{Point,"points"}, "s obtained at the end of homotopy paths when tracking a total-degree homotopy. ",
 	"In particular, this means that solving the system that has fewer than Bezout bound many solutions will produce 
 	points that are not marked as regular. See ", TO track, " for detailed examples. ", 
 	Caveat => {"The system is assumed to be square (#equations = #variables) 
@@ -115,13 +117,13 @@ document {
 	Headline => "track a user homotopy",
 	Usage => "solsT = track(S,T,solsS)",
 	Inputs => { 
-	     "S" => {" polynomials in the start system"},
-	     "T" => {" polynomials in the target system"},
+	     "S" => {" the polynomials in the start system"},
+	     "T" => {" the polynomials in the target system"},
 	     "solsS" => {" start solutions"},
-	     gamma => {"a parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T"}, 
-	     tDegree => {"a parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T"},
-	     tStep => {"initial step size"}, 
-	     tStepMin => {"minimal step size"},
+	     gamma => {" (meaning gamma = ", toString DEFAULT.gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
+	     tDegree =>{" (meaning tDegree = ", toString DEFAULT.tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
+	     tStep => {" (meaning tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
+	     tStepMin => {" (meaning tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
 	     stepIncreaseFactor => {"determine how step size is adjusted"},
 	     numberSuccessesBeforeIncrease => {"determine how step size is adjusted"},
 	     Predictor => {"a method to predict the next point on the homotopy path: 
@@ -159,8 +161,8 @@ document {
      	///,
 	PARA {
 	     "Another outcome of tracking a path is divergence (established heuristically). 
-	     In that case the divergent paths are marked with ", TT "I", 
-	     " (", TO status, " is set to ", TO Infinity, "). "
+	     In that case the divergent paths are marked with an ", TT "I", 
+	     " (", TO2{Point, "status"}, " is set to ", TO Infinity, "). "
 	     },
         EXAMPLE lines ///
      	R = CC[x,y];
@@ -171,8 +173,8 @@ document {
      	///,
 	PARA {
 	     "Some divergent paths as well as most of the paths ending in singular (multiplicity>1) 
-	     or near-singular (clustered) solutions are marked with ", TT "M", 
-	     " (", TO status, " is set to ", TO MinStepFailure, "). "
+	     or near-singular (clustered) solutions are marked with an ", TT "M", 
+	     " (", TO2{Point, "status"}, " is set to ", TO MinStepFailure, "). "
 	     },
 	EXAMPLE lines ///
      	R = CC[x,y];
@@ -281,9 +283,9 @@ document {
      "One may specify which software is used in homotopy continuation. 
      Possible values for internal software are:",  
      UL{
-	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
+	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines (DEFAULT)"},
 	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine"},
-	  {"M2enginePrecookedSLPs", " -- (obsolete)"},
+	  {"M2enginePrecookedSLPs", " -- (reserved for developers)"},
 	  },
      "An external program may be used to replace a part of functionality of the package
      provide the corresponding software is installed:",
