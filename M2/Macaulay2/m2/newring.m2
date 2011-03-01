@@ -89,7 +89,10 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      if not ( isAffineRing R and isAffineRing S and k === coefficientRing S ) then error "expected polynomial rings over the same ring";
      gensk := generators(k, CoefficientRing => ZZ);
      if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";
-     RS := tensor(R,S, opts, MonomialOrder => Eliminate m, Degrees => join(degrees R, apply(degrees S, f.cache.DegreeMap)));
+     RS := tensor(R,S, opts, 
+	  MonomialOrder => Eliminate m, 
+	  Degrees => join(degrees R, apply(degrees S, f.cache.DegreeMap)),
+	  Heft => heft R);
      v := vars RS;
      yv := v_{m .. m+n-1};
      xv := v_{0 .. m-1};
