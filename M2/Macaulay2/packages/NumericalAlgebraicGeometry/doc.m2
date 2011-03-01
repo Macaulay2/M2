@@ -47,7 +47,7 @@ document {
 	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
-	Usage => "setDefault(p1=>v1, p2=>v2, ...); v = getDefault p",
+	Usage => "setDefault(p1=>v1, p2=>v2, ...); \\n v = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
 	     	  Attempts => {" -- the maximal number of attempts (e.g., to make a random regular homotopy); 
 		  so far used only in the functions under development."},

@@ -138,12 +138,9 @@ document {
      TO "PHCpack", "."
      }
 document {
-     Key => {Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate},
-     Headline => "various attributes of a Point"
-     }
-document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), 
-	  Regular, Singular, Infinity, MinStepFailure, (net, Point)},
+	  Regular, Singular, Infinity, MinStepFailure, (net, Point),
+	  Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate},
      Headline => "a type used to store a point in complex space",
      "This type is used to store a solution to a polynomial system obtained by such fuctions as ", 
      TO "solveSystem", ", ", TO "track",". The following methods can be used to access a ", 
@@ -160,7 +157,26 @@ document {
 	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"}
 	  },
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
-     TO "peek", "."
+     TO "peek", ".  Different algorithms attach different information describing the point. For example, the
+     solveSystem function with default options produces the following.",
+     EXAMPLE lines ///
+       loadPackage "NumericalAlgebraicGeometry";
+       R = CC[x,y];
+       sols = solveSystem{x^2+y^2-3, x^3-y^3-7}
+       pt = first sols
+       peek pt
+       coordinates pt
+       status pt
+     ///,
+     "The condition number of the Jacobian of the polynomial system, evaluated at this point
+      (the smaller the value, the better):",
+     EXAMPLE lines ///
+       pt.ConditionNumber
+     ///,
+     "The last value of the continuation parameter produced during tracking:",
+     EXAMPLE lines ///
+       pt.LastT
+     ///
      }
 document {
 	Key => {(point,List), point},
