@@ -25,6 +25,7 @@ pushOptions := new OptionTable from {
 
 pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matrix of the pushforward module
     -- written by Mike and David
+    assert( ring M === target f );
     comp := PushforwardComputation{M,NonLinear};
     if not f.cache#?comp then (
 	-- create the computation
@@ -34,44 +35,40 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
                  else if opts.MonomialOrder === ProductOrder then ProductOrder{n1, numgens S}
 		 else if opts.MonomialOrder === Lex then Lex
 		 else error("MonomialOrder option: expected Eliminate, ProductOrder, or Lex");
-	JJ := generators graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
+	gensJ := generators graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
 	m := presentation M;
 	-- now map M to the new ring.
-	xvars := map(ring JJ, ring M, submatrix(vars ring JJ, toList(0..n1-1)));
-	m1 := xvars m;
-	m1 = presentation ((cokernel m1) ** (cokernel JJ));
+	xvars := map(ring gensJ, ring M, submatrix(vars ring gensJ, toList(0..n1-1)));
+	m1 := presentation (cokernel xvars m  **  cokernel gensJ);
+	if false and opts.UseHilbertFunction and all((f,m),isHomogeneous) then (
+	     p := poincare cokernel m;
+	     if f.cache.DegreeLift =!= identity then error "not implemented yet for nontrivial degree maps";
+	     if degreesRing source f =!= degreesRing target f then (
+	     	  p = (map(degreesRing source f, degreesRing target f)) p;
+		  );
+	     D := ring p;
+	     hf := p * product(degrees source gensJ, d -> 1 - D_d);
+	     assert( degreesRing ring m1 === ring hf );
+	     (cokernel m1).cache.poincare = hf;
+	     );
 	deglen := degreeLength S;
-	mapback := map(S, ring JJ, map(S^1, S^n1, 0) | vars S, DegreeMap => d -> take(d,-deglen));
-
-	if opts.UseHilbertFunction === true 
-           and isHomogeneous m1 and isHomogeneous f and isHomogeneous m then (
-	    hf := poincare cokernel m;
-	    T := (ring hf)_0;
-	    hf = hf * product(numgens source JJ, i -> (d := (degrees source JJ)#i#0; 1 - T^d));
-	    (cokernel m1).cache.poincare = hf;
-	    );
-
-	cleanupcode := g -> mapback selectInSubring(1,generators g);
-
-	f.cache#comp = {m1, cleanupcode};
+	mapback := map(S, ring gensJ, map(S^1, S^n1, 0) | vars S, DegreeMap => d -> take(d,-deglen));
+	cleanupcode := g -> mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g);
+	f.cache#comp = (m1, cleanupcode);
 	);
-
-    if #( f.cache#comp ) === 1 then
-	f.cache#comp#0
+    if # f.cache#comp === 1
+    then f.cache#comp#0
     else (
-	gboptions := new OptionTable from {
-			StopBeforeComputation => opts.StopBeforeComputation,
-			DegreeLimit => opts.DegreeLimit,
-			PairLimit => opts.PairLimit};
-	m1 = f.cache#comp#0;
-	g := gb(m1,gboptions);
-	result := f.cache#comp#1 g;
-	--if isdone g then f.cache#comp = {result};  -- MES: There is NO way to check this yet!!
-
-	-- MES: check if the monomial order restricts to S. S If so, then do
-        -- forceGB result;
-	result
-	)
+	 (m1, cleanupcode) = f.cache#comp;
+	 g := gb(m1, new OptionTable from {
+		   StopBeforeComputation => opts.StopBeforeComputation,
+		   DegreeLimit => opts.DegreeLimit,
+		   PairLimit => opts.PairLimit});
+	 result := cleanupcode g;
+	 --if isdone g then f.cache#comp = {result};  -- MES: There is NO way to check this yet!!
+	 -- MES: check if the monomial order restricts to S.  If so, then do `` forceGB result ''
+	 result
+	 )
     )
 
 {*
