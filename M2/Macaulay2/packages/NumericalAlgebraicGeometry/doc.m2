@@ -89,7 +89,7 @@ F = {x^2+y^2-1, x*y};
 solveSystem F 
      	///,
      	PARA {},
-	"The output contains all ", TO2{Point,"points"}, "s obtained at the end of homotopy paths when tracking a total-degree homotopy. ",
+	"The output contains all ", TO2{Point,"points"}, " obtained at the end of homotopy paths when tracking a total-degree homotopy. ",
 	"In particular, this means that solving the system that has fewer than Bezout bound many solutions will produce 
 	points that are not marked as regular. See ", TO track, " for detailed examples. ", 
 	Caveat => {"The system is assumed to be square (#equations = #variables) 
@@ -149,7 +149,8 @@ document {
 	PARA{ 
 	     TEX "H(t) = \\gamma t^d T + (1-t)^d S" 
 	     }, 
-	"where ", TEX "t", " is in the interval ", TEX "[0,1]", " and ",
+	"where ", TEX "S", " and ", TEX "T", " are square systems (#equations = #variables) of polynomials over ", TO CC, ",", 
+	TEX "t", " is in the interval ", TEX "[0,1]", " and ",
 	TEX "d = ", TO "tDegree",   
 	". ", PARA {"Here is an example with regular solutions at the ends of all homotopy paths:"},   
         EXAMPLE lines ///
@@ -200,7 +201,8 @@ document {
 	     " is specified. "
 	     },
 	SeeAlso => {solveSystem, setDefault, Point},
-	Caveat => {"Predictor=>Certified works only with Software=>[M2,M2engine] and Normalize=>true"}
+	Caveat => {"Predictor=>Certified works only with (Software=>M2 or Software=>M2engine) and Normalize=>true. ", PARA{}, "The unspecified optional arguments get the default value ", TO null, 
+	     " and are grabbed from a local hashtable controlled by the functions ", TO getDefault, " and ", TO setDefault, "."}
 	}
 
 document {
