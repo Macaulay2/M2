@@ -55,32 +55,31 @@ document {
 		       if its condition number is greater than this value"}
 		  },
 	Outputs => { {TT "v, v1, v2", ", value(s) of the parameter(s)"} },
-	"Set/get value(s) of (a) parameter(s) in the functions ", 
-	TO "track", ", ", TO "solveSystem", ", ", TO "refine", " as well as higher-level functions (that are under construction).", 
-     	PARA {},
+	PARA {"To see a detailed description of an options click on its name."},
+	PARA { "These functions set/get value(s) of (a) parameter(s) in the functions ", 
+	     TO "track", ", ", TO "solveSystem", ", ", TO "refine", 
+	     " as well as higher-level functions (that are under construction)." }, 
 	EXAMPLE lines ///
 	getDefault Predictor
      	setDefault(Predictor=>Euler, CorrectorTolerance=>1e-10)
 	getDefault Predictor  
      	///,
-     	PARA {},
 	SeeAlso => {track, solveSystem, refine, areEqual}
 	}
 					
---document { Key => 
-undocumented     {AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
+document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
 	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
-	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], [track,SLPpredictor], [setDefault,SLPpredictor]}
-	--,
-     --Headline => "reserved for developers"
-     --} 
+	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], 
+	     [track,SLPpredictor], [setDefault,SLPpredictor]},
+     	Headline => "reserved for developers"
+     	} 
 
 document {
 	Key => {(solveSystem, List),solveSystem},
 	Headline => "solve a square system of polynomial equations",
 	Usage => "s = solveSystem F",
-	Inputs => { "F"=>"the polynomials with complex coefficients" },
-	Outputs => { "s"=>{"all complex solutions to the system ", TT "F=0" }},
+	Inputs => { "F"=>"contains polynomials with complex coefficients" },
+	Outputs => { "s"=>{"contains all complex solutions to the system ", TT "F=0" }},
 	"Solve a system of polynomial equations using homotopy continuation methods.",
      	PARA {},
 	EXAMPLE lines ///
@@ -89,8 +88,10 @@ F = {x^2+y^2-1, x*y};
 solveSystem F 
      	///,
      	PARA {},
-	"The output contains all ", TO2{Point,"points"}, " obtained at the end of homotopy paths when tracking a total-degree homotopy. ",
-	"In particular, this means that solving the system that has fewer than Bezout bound many solutions will produce 
+	"The output (produced by to ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
+	" obtained at the end of homotopy paths when tracking starting at the ", TO totalDegreeStartSystem, ". ",
+	"In particular, this means that solving the system that 
+	has fewer than Bezout bound many solutions will produce 
 	points that are not marked as regular. See ", TO track, " for detailed examples. ", 
 	Caveat => {"The system is assumed to be square (#equations = #variables) 
 	     and to have finitely many solutions."}	
@@ -117,27 +118,32 @@ document {
 	Headline => "track a user homotopy",
 	Usage => "solsT = track(S,T,solsS)",
 	Inputs => { 
-	     "S" => {" the polynomials in the start system"},
-	     "T" => {" the polynomials in the target system"},
-	     "solsS" => {" start solutions"},
+	     "S" => {" contains the polynomials in the start system"},
+	     "T" => {" contains the polynomials in the target system"},
+	     "solsS" => {" contains start solutions"},
 	     gamma => {" (meaning gamma = ", toString DEFAULT.gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
 	     tDegree =>{" (meaning tDegree = ", toString DEFAULT.tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
 	     tStep => {" (meaning tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
 	     tStepMin => {" (meaning tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
-	     stepIncreaseFactor => {"determine how step size is adjusted"},
-	     numberSuccessesBeforeIncrease => {"determine how step size is adjusted"},
-	     Predictor => {"a method to predict the next point on the homotopy path: 
-		  choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
+	     stepIncreaseFactor => {" (meaning stepIncreaseFactor = ", toString DEFAULT.stepIncreaseFactor, "). Determines how step size is adjusted."},
+	     numberSuccessesBeforeIncrease => {
+		  " (meaning numberSuccessesBeforeIncrease = ", toString DEFAULT.numberSuccessesBeforeIncrease, 
+		  "). Determines how step size is adjusted."},
+	     Predictor => {" (meaning Predictor = ", toString DEFAULT.Predictor, 
+		  "). A method to predict the next point on the homotopy path: choose between ", 
+		  TO "RungeKutta4", ", ", TO "Tangent", ", ", 
 		  TO "Euler", ", ", TO "Secant", ", ", TO "Multistep", ", ", TO "Certified", 
 		  ". The option ", TO "Certified", " provides certified tracking."},
-	     MultistepDegree => {"degree of the Multistep predictor"},
-	     maxCorrSteps => {"max number of steps corrector takes before a failure is declared"}, 
-	     CorrectorTolerance => {"corrector succeeds if the relative error does not exceed this tolerance"},
-     	     EndZoneFactor => {"size of `end zone'"},  
-	     InfinityThreshold => {"paths are truncated if the norm of the approximation exceeds the threshold"},
-     	     Projectivize => {"if true then the system is homogenized and projective tracker is executed"},
-	     Normalize => {"normalize the start and target systems w.r.t. Bombieri-Weyl norm"},
-	     NoOutput => {"if true, no output is produced (useful in combination with ", TO "getSolution", ")"} 	     
+	     MultistepDegree => {" (meaning MultistepDegree = ", toString DEFAULT.MultistepDegree, 
+		  "). Degree of the Multistep predictor."},
+	     maxCorrSteps => {" (meaning maxCorrSteps = ", toString DEFAULT.maxCorrSteps, 
+		  "). Max number of steps corrector takes before a failure is declared"}, 
+	     CorrectorTolerance => {" (meaning CorrectorTolerance = ", toString DEFAULT.CorrectorTolerance, "). Corrector succeeds if the relative error does not exceed this tolerance."},
+     	     EndZoneFactor => {" (meaning EndZoneFactor = ", toString DEFAULT.EndZoneFactor, "). Determines the size of the \"end zone\", the interval at the end of the path where", TO CorrectorTolerance, "is tighter." },  
+	     InfinityThreshold => {" (meaning InfinityThreshold = ", toString DEFAULT.InfinityThreshold, "). Paths are truncated if the norm of the approximation exceeds the threshold."},
+     	     Projectivize => {" (meaning Projectivize = ", toString DEFAULT.Projectivize, "). If true then the system is homogenized and projective tracker is executed."},
+	     Normalize => {" (meaning Normalize = ", toString DEFAULT.Normalize, "). Normalize the start and target systems w.r.t. Bombieri-Weyl norm."},
+	     NoOutput => {" (meaning NoOutput = ", toString DEFAULT.NoOutput, "). If true, no output is produced (used by developers)."} 	     
 	     },
 	Outputs => {{ TT "solsT", " is a list of ", TO2{Point,"points"}, " that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
@@ -145,7 +151,7 @@ document {
 	"For an introduction to the subject see ", UL{
 	     {refIntroToNAG}, {refSWbook}
 	     }, 
-	"Most commonly the following homotopy is considered:", 
+	"The package implements a most commonly used homotopy:", 
 	PARA{ 
 	     TEX "H(t) = \\gamma t^d T + (1-t)^d S" 
 	     }, 
@@ -252,7 +258,8 @@ refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
 	solsT / coordinates
 	refSols = refine(T, solsT)
 	refSols / status
-     	///
+     	///,
+	SeeAlso => {solveSystem, track}
 	}
 
 document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance], [setDefault,Tolerance]},
@@ -269,24 +276,25 @@ document {
 	Outputs => { {"where ", TT "S", " is the list of polynomials in the start system and ", 
 		  TT "solsS", " is the list of start solutions"} },
      	"Given a square target system, constructs a start system 
-	for a total degree homotopy together with the total degree many start solutions.",
-     	PARA {},
+	for a total degree homotopy together with the total degree (Bezout bound) many start solutions.",
+     	PARA {"For details see: ", refIntroToNAG},
 	EXAMPLE lines ///
-R = CC[x,y];
-T = {x^2+y^2-1, x*y};
+R = CC[x,y,z];
+T = {x^2+y^2-1, x*y^2, x^5+y*z+3};
 totalDegreeStartSystem T
-     	///
+     	///,
+	SeeAlso => { track, solveSystem }
 	}
 
 document {
      Key => {[solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],Software,
-	  "M2","M2engine","M2enginePrecookedSLPs"},
+	  M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
      Possible values for internal software are:",  
      UL{
-	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines (DEFAULT)"},
-	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine"},
+	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
+	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine (DEFAULT)"},
 	  {"M2enginePrecookedSLPs", " -- (reserved for developers)"},
 	  },
      "An external program may be used to replace a part of functionality of the package
@@ -396,7 +404,8 @@ document {
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
 sortSolutions s
-     	///
+     	///,
+	SeeAlso => {solveSystem, track, areEqual}
 	}
 
 document {
@@ -405,8 +414,8 @@ document {
 	Headline => "determine if solutions are equal",
 	Usage => "b = areEqual(x,y)",
 	Inputs => {
-	     "x" => "a solution or list of solutions",
-	     "y" => "a solution or list of solutions",
+	     "x" => "a solution or a list of solutions",
+	     "y" => "a solution or a list of solutions",
 	     Projective=>{"if ", TO true, " then solutions are considered as representatives of points 
 		  in the projective space and the Riemannian distance in the projective space is measured"}
 	     },
@@ -417,7 +426,8 @@ document {
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
 areEqual(sortSolutions s / coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}})
-     	///
+     	///,
+	SeeAlso => {solveSystem, track, sortSolutions}
 	}
 
 document {
@@ -435,7 +445,8 @@ document {
 T = randomSd {2,3}
 (S,solsS) = goodInitialPair T;
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
-     	///
+     	///,
+	SeeAlso => {Certified}
 	}
 
 document {
@@ -455,7 +466,8 @@ document {
 T = randomSd {2,3};
 (S,solsS) = goodInitialPair T
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
-     	///
+     	///,
+	SeeAlso => {Certified}
 	}
 
 document {
@@ -474,7 +486,8 @@ document {
 T = randomSd {2,3};
 (S,solsS) = randomInitialPair T
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
-     	///
+     	///,
+	SeeAlso => {Certified}
 	}
 								
 document {
