@@ -17,6 +17,8 @@ document {
      to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties. ", 
      "The current version focuses on solving square systems with a finite number of solutions. ",
      
+     PARA {"Basic types ", TO Point, " and ", TO "WitnessSet", " are defined in the package ", TO NAGtypes, "."},
+     
      HEADER3 "Basic functions:",
      UL{
 	  TO track,
@@ -49,15 +51,17 @@ document {
 	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
-	Usage => "setDefault(p1=>v1, p2=>v2, ...);\nv = getDefault p",
+	Usage => "setDefault(p1=>v1, p2=>v2, ...)\nv = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
 	     	  Attempts => {" (meaning Attempts = ", toString DEFAULT.Attempts, "). The maximal number of attempts (e.g., to make a random regular homotopy)."},
 		  SingularConditionNumber => {" (meaning SingularConditionNumber = ", toString DEFAULT.SingularConditionNumber, "). Matrix is considered to be singular 
 		       if its condition number is greater than this value."}
 		  },
-	Outputs => { {TT "v, v1, v2", ", value(s) of the parameter(s)"} },
+	Outputs => {
+	     {TT "setDefault", " returns ", TO null, "."}, 
+	     {TT "getDefault", " returns ", TT "v", ", the value of the specified parameter ", TT "p", "."} },
 	PARA {"To see a detailed description of an option click on its name."},
-	PARA { "These functions set/get value(s) of (a) parameter(s) in the functions ", 
+	PARA { "These functions set/get values of optional parameters used in the functions ", 
 	     TO "track", ", ", TO "solveSystem", ", ", TO "refine", 
 	     " as well as higher-level functions (that are under construction)." }, 
 	EXAMPLE lines ///
@@ -82,20 +86,19 @@ document {
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
 	Outputs => { "s"=>{"contains all complex solutions to the system ", TT "F=0" }},
 	"Solve a system of polynomial equations using homotopy continuation methods. (See ", TO track, " for more optional arguments.)",
-     	PARA {},
+     	PARA {"The system is assumed to be square (#equations = #variables) 
+	     and to have finitely many solutions."},
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
 solveSystem F 
      	///,
      	PARA {},
-	"The output (produced by to ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
+	"The output (produced by ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
 	" obtained at the end of homotopy paths when tracking starting at the ", TO totalDegreeStartSystem, ". ",
-	"In particular, this means that solving the system that 
+	"In particular, this means that solving a system that 
 	has fewer than Bezout bound many solutions will produce 
-	points that are not marked as regular. See ", TO track, " for detailed examples. ", 
-	Caveat => {"The system is assumed to be square (#equations = #variables) 
-	     and to have finitely many solutions."}	
+	points that are not marked as regular. See ", TO track, " for detailed examples. "
 	}
 document {
 	Key => { (track, List, List, List), track, 
@@ -122,7 +125,7 @@ document {
 	     "S" => {" contains the polynomials in the start system"},
 	     "T" => {" contains the polynomials in the target system"},
 	     "solsS" => {" contains start solutions"},
-	     gamma => {" (meaning gamma = ", toString DEFAULT.gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
+	     gamma => {" (meaning gamma = ",  toString DEFAULT.gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
 	     tDegree =>{" (meaning tDegree = ", toString DEFAULT.tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
 	     tStep => {" (meaning tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
 	     tStepMin => {" (meaning tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
@@ -138,12 +141,12 @@ document {
 	     MultistepDegree => {" (meaning MultistepDegree = ", toString DEFAULT.MultistepDegree, 
 		  "). Degree of the Multistep predictor."},
 	     maxCorrSteps => {" (meaning maxCorrSteps = ", toString DEFAULT.maxCorrSteps, 
-		  "). Max number of steps corrector takes before a failure is declared"}, 
+		  "). Max number of steps corrector takes before a failure is declared."}, 
 	     CorrectorTolerance => {" (meaning CorrectorTolerance = ", toString DEFAULT.CorrectorTolerance, "). Corrector succeeds if the relative error does not exceed this tolerance."},
      	     EndZoneFactor => {" (meaning EndZoneFactor = ", toString DEFAULT.EndZoneFactor, "). Determines the size of the \"end zone\", the interval at the end of the path where ", TO CorrectorTolerance, " is tighter." },  
 	     InfinityThreshold => {" (meaning InfinityThreshold = ", toString DEFAULT.InfinityThreshold, "). Paths are truncated if the norm of the approximation exceeds the threshold."},
-     	     Projectivize => {" (meaning Projectivize = ", toString DEFAULT.Projectivize, "). If true then the system is homogenized and projective tracker is executed."},
-	     Normalize => {" (meaning Normalize = ", toString DEFAULT.Normalize, "). Normalize the start and target systems w.r.t. Bombieri-Weyl norm."},
+     	     Projectivize => {" (meaning Projectivize = ", toString DEFAULT.Projectivize, "). If true then the system is homogenized and the projective tracker is executed."},
+	     Normalize => {" (meaning Normalize = ", toString DEFAULT.Normalize, "). Normalize the start and target systems w.r.t. the Bombieri-Weyl norm."},
 	     NoOutput => {" (meaning NoOutput = ", toString DEFAULT.NoOutput, "). If true, no output is produced (used by developers)."} 	     
 	     },
 	Outputs => {{ TT "solsT", " is a list of ", TO2{Point,"points"}, " that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
@@ -204,13 +207,13 @@ document {
 	track(S,T,solsS,Predictor=>Certified,Normalize=>true)
 	///,
 	PARA {
-	     "Note that projective tracker is invoked either if the target system is a homogenous system or if ", TO "Projectivize", TT"=>true",
+	     "Note that the projective tracker is invoked either if the target system is a homogenous system or if ", TO "Projectivize", TT"=>true",
 	     " is specified. "
 	     },
 	SeeAlso => {solveSystem, setDefault, Point},
 	Caveat => {"Predictor=>Certified works only with (Software=>M2 or Software=>M2engine) and Normalize=>true. ", 
-	     PARA{"The unspecified optional arguments get the default value ", TO null, 
-	     	  " and are grabbed from a local hashtable controlled by the functions ", 
+	     PARA{"Unspecified optional arguments (with default values ", TO null, 
+	     	  ") have their actual values taken from a local hashtable of defaults controlled by the functions ", 
 	     	  TO getDefault, " and ", TO setDefault, "."}
 	     }
 	}
@@ -233,7 +236,7 @@ document {
 	     ErrorTolerance => {" (meaning ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
 	     ResidualTolerance => {" (meaning ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."}
 	     },
-	Outputs => {"solsR" => {"refined solutions" }},
+	Outputs => {"solsR" => {"contains refined solutions (as ", TO2{Point, "points"}, ")" }},
 	"Uses Newton's method to correct the given solutions so that the resulting approximation 
 	has its estimated relative error bounded by ", TO "ErrorTolerance", 
 	". The number of iterations made is at most ", TO "Iterations", ".",
@@ -325,7 +328,7 @@ document {
      Key => PHCPACK,
      Headline => "use PHCpack for homotopy continuation",
      "Available at ", TT "http://www.math.uic.edu/~jan/download.html",
-     PARA {"PHCpack interface provided via the ", TT "PHCpack", " package."},
+     PARA {"PHCpack interface provided via the ", TO "PHCpack::PHCpack", " package."},
      SeeAlso => Software
      }
 ///--getSolution and SolutionAttributes are not exported anymore
@@ -397,9 +400,9 @@ document {
 	Headline => "sort the list of solutions",
 	Usage => "t = sortSolutions s",
 	Inputs => { 
-	     "s"=>{"solutions (represented either by lists of coordinates or ", TO2{Point,"points"}}
+	     "s"=>{"contains solutions (represented either by lists of coordinates or ", TO2{Point,"points"}, ")"}
 	     },
-	Outputs => {"t"=> "sorted solutions"},
+	Outputs => {"t"=> "contains solutions sorted as described below"},
 	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
 	"The output format of ", TO track, " and ", TO solveSystem, " is respected.", BR{}, 
 	"For the corresponding coordinates a and b (of two real 2n-vectors) a < b if b-a is larger than ", 
@@ -425,7 +428,8 @@ document {
 		  in the projective space and the Riemannian distance in the projective space is measured"}
 	     },
 	Outputs => {"b"=>{"tells if ", TT "x", " and ", TT "y", " are approximately equal"}},
-	"The function returns false if distance exceeds ", TO Tolerance, " and true, otherwise.",
+	PARA {"The inputs can be complex numbers, ", TO2{Point, "points"}, ", ", " or lists of points (presented as ", TO2{Point, "points"}, " or lists of coordinates)."},
+	"The function returns false if the distance between ", TT "x", " and ", TT "y", " exceeds ", TO Tolerance, " and true, otherwise.",
 	PARA {},
 	EXAMPLE lines ///
 R = CC[x,y];
@@ -436,14 +440,14 @@ areEqual(sortSolutions s / coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}})
 	}
 
 document {
-	Key => {randomSd, (randomSd, List)},
+	Key => {(randomSd, List), randomSd},
 	Headline => "a random homogeneous system of polynomial equations",
 	Usage => "T = randomSd d",
 	Inputs => { 
-	     {TT "d", ", list of degrees"}
+	     "d"=>"contains the degrees"
 	     },
-	Outputs => {{ TT "T", ", list of polynomials"}},
-	"Generates a system of homogeneous polynomials T_i such that deg T_i = d_i. 
+	Outputs => {"T"=>"contains polynomials"},
+	"Generates a system of homogeneous polynomials ", TEX "T_i", " such that ", TEX "deg(T_i) = d_i", ". 
 	The system is normalized, so that it is on the unit sphere in the Bombieri-Weyl norm.",
         PARA {},
 	EXAMPLE lines ///
@@ -451,41 +455,43 @@ T = randomSd {2,3}
 (S,solsS) = goodInitialPair T;
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
      	///,
-	SeeAlso => {Certified}
+	SeeAlso => {Certified,track}
 	}
 
 document {
-	Key => {goodInitialPair, (goodInitialPair, List), [goodInitialPair,GeneralPosition], GeneralPosition},
+	Key => {(goodInitialPair, List), goodInitialPair, [goodInitialPair,GeneralPosition], GeneralPosition},
 	Headline => "make an intial pair conjectured to be good by Shub and Smale",
 	Usage => "(S,sol) = goodInitialPair T",
 	Inputs => { 
-	     "T" => {"a list of polynomials"},
+	     "T" => {"contains homogeneous polynomials"},
 	     GeneralPosition => {"make a random unitary change of coordinates"} 
 	     },
-	Outputs => {{ TT "S", ", list of polynomials"},
-	     { TT "sol", ", a list containing (one) solution of S"}},
-	"Generates a start system S that is conjectured to have good complexity when used in linear homotopy 
-       	with target system T leading to one solution. ",
+	Outputs => {"S"=>"contains homogeneous polynomials",
+	     "sol"=>"contains one solution of S"},
+	"Generates a start system ", TT "S", " that is conjectured to have good complexity when used in linear homotopy 
+       	with target system ", TT "T", " leading to one solution. ", "For more details see: ", refBeltranLeykin,
         PARA {},
 	EXAMPLE lines ///
 T = randomSd {2,3};
 (S,solsS) = goodInitialPair T
 M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
      	///,
-	SeeAlso => {Certified}
+	SeeAlso => {Certified, track}
 	}
 
 document {
 	Key => {randomInitialPair, (randomInitialPair, List)},
 	Headline => "a random initial pair",
-	Usage => "(S,sol) =randomInitialPair T",
+	Usage => "(S,sol) = randomInitialPair T",
 	Inputs => { 
-	     {TT "T", ", list of polynomials"}
+	     "T"=>"contains homogeneous polynomials"
 	     },
-	Outputs => {{ TT "S", ", list of polynomials"},
-	     { TT "sol", ", a list containing (one) solution of S"}},
-	"Generates a start system S that has an equal chance of reaching any of the solutions of 
-       	the target system T. ",
+	Outputs => {
+	     "S"=>"contains homogeneous polynomials",
+	     "sol"=>"contains one solution of S"},
+	"Generates a start system ", TT "S", " that has an equal chance of reaching any of the solutions of 
+       	the target system ", TT "T", ". ", 
+	"For more details see: ", refBeltranLeykin,  
         PARA {},
 	EXAMPLE lines ///
 T = randomSd {2,3};
@@ -502,7 +508,7 @@ document {
 	Inputs => { 
 	     {TT "M", ", a matrix with real or complex entries"}
 	     },
-	Outputs => {{ TT "r"}},
+	Outputs => {{ TT "r", ", an integer"}},
 	"This function finds an approximate rank of the matrix ", TT "M", ".",
 	PARA {
 	     "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". ",
