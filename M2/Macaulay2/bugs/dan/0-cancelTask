@@ -1,0 +1,33 @@
+cancelTask doesn't always work
+
+i33 : t = schedule createTask (() -> sleep 2) ; cancelTask t
+
+i35 : t
+
+o35 = <<task, running, cancellation requested>>
+
+o35 : Thread
+
+i36 : t
+
+o36 = <<task, running, cancellation requested>>
+
+o36 : Thread
+
+i37 : t
+
+o37 = <<task, running, cancellation requested>>
+
+o37 : Thread
+
+i38 : t
+
+o38 = <<task, running, cancellation requested>>
+
+o38 : Thread
+
+i39 : t
+
+o39 = <<task, running, cancellation requested>>
+
+o39 : Thread
