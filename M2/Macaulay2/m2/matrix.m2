@@ -185,7 +185,7 @@ transpose Matrix := Matrix => (cacheValue symbol transpose) (
      	  then error "expected a map between free modules";
      	  map(dual source m, dual target m, rawDual m.RawMatrix)))
 
-Matrix * Vector := Vector => (m,v) -> (
+Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      u := m * v#0;
      new target u from {u})
 
