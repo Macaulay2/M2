@@ -36,6 +36,58 @@ dualBasis (Matrix, ZZ) := o -> (igens, d) -> (
   else (matrix {{1_R}}) | (matrix {new List from flatten dmons})
 );
 
+dualBasisBM = method(TypicalValue => Matrix, Options => {Point => {}})
+dualBasisBM (Matrix, ZZ) := o -> (igens, d) -> (
+  R := ring igens;
+  n := #gens R;
+  m := #igens;
+  epsilon := .001; --error tolerance for kernel
+  if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
+  betas := matrix{{1_R}};
+  bdiffs := {map(R^0,R^0,0)};
+  s := 1;
+  sold := 0;
+  Us := apply(n,i->map(R^sold,R^s,0)); --
+  A := apply(n,i->map(R^m,R^sold,0));
+  
+  for d from 1 to o.d do (
+    Us = apply(n,i->(
+      U := Us#i||map(R^(s-sold),R^s,0);
+      for b in newb do U = U|b;
+      U
+    );
+    bmatrix := new MutableList from 1..(n*(n-1)//2);
+    c := 0;
+    for i from 1 to n-1 do (
+      for j from 0 to i-1 do (
+        bmatrix#c = apply(n, k -> (
+	  if k == i then -Us#j
+	  else if k == j then Us#i
+	  else map(R^sold,R^s,0)
+	)
+        c = c+1;
+      );
+    );
+    M := blockMatrix(bmatrix);
+    
+    if A != 0 then (
+      (svs, U, Vt) := SVD M;
+      Vt = entries Vt;
+      newbetas := new MutableList;
+      f := vec -> take
+      for i from 0 to #svs-1 do
+        if abs svs#i <= epsilon then dualGens#(#dualGens) = Vt#i;
+      for i from #svs to (numgens target M)-1 do
+        dualGens#(#dualGens) = Vt#i;
+      dualGens = transpose rowReduce(matrix new List from dualGens, epsilon);
+      --print (dualGens, matrix {new List from flatten dmons});
+      (matrix {{1_R}}) | ((matrix {new List from flatten dmons})*sub(dualGens,R))
+    )
+      
+  );
+  0
+);
+
 --List of number of generators of the dual space with lead term of degree k for k from 0 to d.
 --Uses ST algorithm by default, but can use DZ instead if specified.
 dualHilbert = method(TypicalValue => List, Options => {Point => {}, UseDZ => false})
@@ -60,7 +112,7 @@ DZmatrix = method(TypicalValue => List, Options => {Point => {}})
 DZmatrix (Matrix, ZZ) := o -> (igens, d) -> (
   epsilon := .001; --error tolerance for kernel
   R := ring igens;
-  if o.Point != {} then igens = shift(igens, o.Point);
+  if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
   dmons := apply(d+1, i->dMonomials(R,i));
   M := k -> ( --# of dual space generators with lead term of deg k or less
     p := igens;
@@ -76,7 +128,7 @@ STmatrix = method(TypicalValue => List, Options => {Point => {}})
 STmatrix (Matrix, ZZ) := o -> (igens, d) -> (
   epsilon := .001; --error tolerance for kernel
   R := ring igens;
-  if o.Point != {} then igens = shift(igens, o.Point);
+  if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
   dmons := apply(d+1, i->dMonomials(R,i));
   Ms := new MutableList;
   M := matrix {{}};
@@ -107,7 +159,7 @@ STmatrix (Matrix, ZZ) := o -> (igens, d) -> (
 hilbertB = method(TypicalValue => ZZ, Options => {Point => {}})
 hilbertB (Matrix, ZZ) := o -> (igens, d) -> (
   R := ring igens;
-  if o.Point != {} then igens = shift(igens, o.Point);
+  if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
   G := (flatten entries gens gb igens) / leadMonomial;
   #select(dMonomials(R,d), m->(#select(G, g->isDivisible(m,g)) == 0))
 )
@@ -118,7 +170,7 @@ hilbertB (Matrix, ZZ) := o -> (igens, d) -> (
 hilbertC = method(TypicalValue => ZZ, Options => {Point => {}})
 hilbertC (Matrix, ZZ) := o -> (igens, d) -> (
   R := ring igens;
-  if o.Point != {} then igens = shift(igens, o.Point);
+  if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
   G := apply(flatten entries gens gb igens, g->(listForm g)#0#0); --store lead monomials as n-tuples of integers
   bin := (n,k) -> (if n >= 0 then binomial(n,k) else 0);
   listFormLCM := (a,b) -> apply(#a, i->(max {a#i,b#i}));
@@ -140,24 +192,21 @@ deflation (Matrix) := o -> (igens) -> (
   epsilon := .001;
   p := sub(o.Point,CC);
   m := o.Size;
-  if p == matrix {{}} then p = matrix {apply(n, i->0_CC)};
+  if p == 0 then p = matrix {apply(n, i->0_CC)};
   if m == 0 then m = n;
-  A := matrix entries jacobian igens;
+  A := jacobian igens;
   Asub := sub(A, p);
   svs := (SVD(Asub))#0;
-  print SVD Asub;
-  print svs;
   r := 0;
   for v in svs do
     if clean(epsilon,v) != 0 then r = r + 1;
   if r == n then return take((entries p)#0,m);
-  print r;
   h := randomVector(r+1);
   Br := matrix apply(n, i->randomVector(r+1));
   Bl := matrix apply(r, i->randomVector(n));
   C := (Bl*Asub*Br) || matrix{h};
   p = p | transpose solve(C, transpose matrix{(apply(r,i->0_CC))|{1_CC}});
-  print p;
+  lambda := symbol lambda;
   R = CC[gens R,lambda_n..lambda_(n+r)];
   lvec := transpose matrix{new List from lambda_n..lambda_(n+r)};
   igens = sub(igens,R) | transpose (sub(A,R)*Br*lvec) | transpose (matrix{h}*lvec - 1);
@@ -184,13 +233,6 @@ isDivisible = (a, b) -> (
   #select(dif, i->(i < 0)) == 0
 )
 
---translates the polynomials in matrix M so that Point becomes the origin
-shift = (M, Point) -> (
-  R := ring M;
-  subs := apply(#(gens R), i->((gens R)#i => (gens R)#i + Point#i));
-  sub(M, subs)
-)
-
 --performs Gaussian reduction on M but starting from the bottom right
 rowReduce = (M,epsilon) -> (
   n := (numgens source M) - 1;
@@ -215,12 +257,35 @@ rowReduce = (M,epsilon) -> (
 
 --generates a vector of specified length of random complex numbers with unit modulus
 randomVector = (dimension) -> (
-  apply(dimension, i -> exp((random 1.*pi)*ii))
+  apply(dimension, i -> exp((random 2.*pi)*ii))
+)
+
+--build a matrix from a nested list of matrices of uniform size
+blockMatrix = (blist) -> (
+  R := ring (blist#0#0);
+  m := #blist;
+  n := #(blist#0);
+  a := dim target (blist#0#0);
+  b := dim source (blist#0#0); 
+  M := map(R^0,R^(n*b),0);
+  for i from 0 to m-1 do (
+    N := map(R^a,R^0,0);
+    for j from 0 to n-1 do
+      N = N | (blist#i#j);
+    M = M || N;
+  );
+  M
+)
+
+--evaluation of a dual element v on a polynomial w
+innerProduct = (v,w) -> (
+  c := entries (coefficients matrix{{v,w}})#1;
+  sum(#c,(c#0)*(c#1))
 )
 
 newtonsMethod = (eqns, p, n) -> (
-  elist := (entries eqn)#0;
-  A := entries transpose jacobian eqn;
+  elist := (entries eqns)#0;
+  A := entries transpose jacobian eqns;
   for i from 1 to n do (
     for j from 0 to #elist-1 do (
       val := sub(elist#j, p);
