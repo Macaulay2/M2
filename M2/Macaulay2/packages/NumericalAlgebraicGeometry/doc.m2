@@ -86,7 +86,7 @@ document {
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
 	Outputs => { "s"=>{"contains all complex solutions to the system ", TT "F=0" }},
 	"Solve a system of polynomial equations using homotopy continuation methods. (See ", TO track, " for more optional arguments.)",
-     	PARA {"The system is assumed to be square (#equations = #variables) 
+     	PARA {"The system is assumed to be square (number of equations = number of variables) 
 	     and to have finitely many solutions."},
 	EXAMPLE lines ///
 R = CC[x,y];
@@ -159,7 +159,7 @@ document {
 	PARA{ 
 	     TEX "H(t) = \\gamma t^d T + (1-t)^d S" 
 	     }, 
-	"where ", TEX "S", " and ", TEX "T", " are square systems (#equations = #variables) of polynomials over ", TO CC, ", ", 
+	"where ", TEX "S", " and ", TEX "T", " are square systems (number of equations = number of variables) of polynomials over ", TO CC, ", ", 
 	TEX "t", " is in the interval ", TEX "[0,1]", " and ",
 	TEX "d = ", TO "tDegree",   
 	". ", PARA {"Here is an example with regular solutions at the ends of all homotopy paths:"},   
