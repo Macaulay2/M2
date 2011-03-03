@@ -2,8 +2,10 @@ newPackage(
 	"MonomialAlgebras",
     	Version => "1.0", 
     	Date => "Feb 27, 2011",
-    	Authors => {David Eisenbud, Janko Boehm
-                  },
+    	Authors => {
+         {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},	     
+         {Name => "Janko Boehm", Email => "boehm@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
+         },
     	Headline => "Monomial algebras",
 	CacheExampleOutput => false,
 	AuxiliaryFiles => false,
@@ -218,7 +220,8 @@ doc ///
       
       The corresponding monomial algebra K[A] is decomposed as a direct sum of ideals in K[B]. In
       
-      Le Tuan Hoa, Juergen Stueckrad: Castelnuovo–Mumford regularity of simplicial toric rings.
+      Le Tuan Hoa, Juergen Stueckrad: Castelnuovo-Mumford regularity of simplicial toric rings,
+      Journal of Algebra, Volume 259, Issue 1, 1 January 2003, Pages 127-146.
       
       it is shown that this decomposition exists in the case that K[B] is isomorphic to a polynomial ring
       and is the Noether normalization of K[A] (the simplicial case). It is easy to see that the same is true
@@ -467,10 +470,27 @@ doc ///
 
 
       
-      
-
-
-
+doc ///
+  Key
+    CoefficientField
+    [decomposeMonomialCurve,CoefficientField]
+    [decomposeSimplicialHomogeneousMonomialAlgebra,CoefficientField]
+  Headline
+    Option to set the coefficient field.
+  Description
+   Text
+    This option can be used to set the coefficient field of the polynomial rings
+    created by @TO decomposeMonomialCurve@ and @TO decomposeSimplicialHomogeneousMonomialAlgebra@.
+    
+    The standard option is @TO ZZ@/101.
+    
+   Example
+    A = {{1,2},{3,0},{0,4},{0,5}}
+    d=decomposeSimplicialHomogeneousMonomialAlgebra A;
+    d#{0, 1, 4}
+    d=decomposeSimplicialHomogeneousMonomialAlgebra (A,CoefficientField=>QQ);
+    d#{0, 1, 4}
+///
 {*
 restart
 uninstallPackage("MonomialAlgebras")
