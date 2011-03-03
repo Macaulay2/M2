@@ -1,6 +1,6 @@
 refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", arXiv:0911.1783" 
 refIntroToNAG := "A.J. Sommese, J. Verschelde, and C.W. Wampler, \"Introduction to numerical algebraic geometry\", 
-                  in \"Solving polynomial equations\"(2005), 301--338" 
+                  in \"Solving polynomial equations\" (2005), 301--338" 
 refSWbook := "A.J. Sommese and C.W. Wampler, \"The numerical solution of systems of polynomials\",
               World Scientific Publishing (2005)"
 certifiedTrackingFunctions := UL{
@@ -13,9 +13,9 @@ document {
      Headline => "Numerical Algebraic Geometry",
      "The package ", TO "NumericalAlgebraicGeometry", ", also known as ", 
      EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay2)", 
-     " implements methods of polynomial homotopy continuation                                                                                                  
+     ", implements methods of polynomial homotopy continuation                                                                                                  
      to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties. ", 
-     "The current version focuses on solving square systems with finite number of solutions. ",
+     "The current version focuses on solving square systems with a finite number of solutions. ",
      
      HEADER3 "Basic functions:",
      UL{
@@ -34,6 +34,8 @@ document {
 	  },
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
      certifiedTrackingFunctions,
+     HEADER3 "Other functions:",
+     UL { TO numericalRank },
      HEADER3 {"References:"},
      UL{
        refIntroToNAG,
@@ -47,15 +49,14 @@ document {
 	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
-	Usage => "setDefault(p1=>v1, p2=>v2, ...); \\n v = getDefault p",
+	Usage => "setDefault(p1=>v1, p2=>v2, ...);\nv = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
-	     	  Attempts => {" -- the maximal number of attempts (e.g., to make a random regular homotopy); 
-		  so far used only in the functions under development."},
-		  SingularConditionNumber => {" -- a matrix is considered to be singular 
-		       if its condition number is greater than this value"}
+	     	  Attempts => {" (meaning Attempts = ", toString DEFAULT.Attempts, "). The maximal number of attempts (e.g., to make a random regular homotopy)."},
+		  SingularConditionNumber => {" (meaning SingularConditionNumber = ", toString DEFAULT.SingularConditionNumber, "). Matrix is considered to be singular 
+		       if its condition number is greater than this value."}
 		  },
 	Outputs => { {TT "v, v1, v2", ", value(s) of the parameter(s)"} },
-	PARA {"To see a detailed description of an options click on its name."},
+	PARA {"To see a detailed description of an option click on its name."},
 	PARA { "These functions set/get value(s) of (a) parameter(s) in the functions ", 
 	     TO "track", ", ", TO "solveSystem", ", ", TO "refine", 
 	     " as well as higher-level functions (that are under construction)." }, 
@@ -80,7 +81,7 @@ document {
 	Usage => "s = solveSystem F",
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
 	Outputs => { "s"=>{"contains all complex solutions to the system ", TT "F=0" }},
-	"Solve a system of polynomial equations using homotopy continuation methods.",
+	"Solve a system of polynomial equations using homotopy continuation methods. (See ", TO track, " for more optional arguments.)",
      	PARA {},
 	EXAMPLE lines ///
 R = CC[x,y];
@@ -125,10 +126,10 @@ document {
 	     tDegree =>{" (meaning tDegree = ", toString DEFAULT.tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
 	     tStep => {" (meaning tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
 	     tStepMin => {" (meaning tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
-	     stepIncreaseFactor => {" (meaning stepIncreaseFactor = ", toString DEFAULT.stepIncreaseFactor, "). Determines how step size is adjusted."},
+	     stepIncreaseFactor => {" (meaning stepIncreaseFactor = ", toString DEFAULT.stepIncreaseFactor, "). Determines how the step size is adjusted."},
 	     numberSuccessesBeforeIncrease => {
 		  " (meaning numberSuccessesBeforeIncrease = ", toString DEFAULT.numberSuccessesBeforeIncrease, 
-		  "). Determines how step size is adjusted."},
+		  "). Determines how the step size is adjusted."},
 	     Predictor => {" (meaning Predictor = ", toString DEFAULT.Predictor, 
 		  "). A method to predict the next point on the homotopy path: choose between ", 
 		  TO "RungeKutta4", ", ", TO "Tangent", ", ", 
@@ -139,7 +140,7 @@ document {
 	     maxCorrSteps => {" (meaning maxCorrSteps = ", toString DEFAULT.maxCorrSteps, 
 		  "). Max number of steps corrector takes before a failure is declared"}, 
 	     CorrectorTolerance => {" (meaning CorrectorTolerance = ", toString DEFAULT.CorrectorTolerance, "). Corrector succeeds if the relative error does not exceed this tolerance."},
-     	     EndZoneFactor => {" (meaning EndZoneFactor = ", toString DEFAULT.EndZoneFactor, "). Determines the size of the \"end zone\", the interval at the end of the path where", TO CorrectorTolerance, "is tighter." },  
+     	     EndZoneFactor => {" (meaning EndZoneFactor = ", toString DEFAULT.EndZoneFactor, "). Determines the size of the \"end zone\", the interval at the end of the path where ", TO CorrectorTolerance, " is tighter." },  
 	     InfinityThreshold => {" (meaning InfinityThreshold = ", toString DEFAULT.InfinityThreshold, "). Paths are truncated if the norm of the approximation exceeds the threshold."},
      	     Projectivize => {" (meaning Projectivize = ", toString DEFAULT.Projectivize, "). If true then the system is homogenized and projective tracker is executed."},
 	     Normalize => {" (meaning Normalize = ", toString DEFAULT.Normalize, "). Normalize the start and target systems w.r.t. Bombieri-Weyl norm."},
@@ -155,7 +156,7 @@ document {
 	PARA{ 
 	     TEX "H(t) = \\gamma t^d T + (1-t)^d S" 
 	     }, 
-	"where ", TEX "S", " and ", TEX "T", " are square systems (#equations = #variables) of polynomials over ", TO CC, ",", 
+	"where ", TEX "S", " and ", TEX "T", " are square systems (#equations = #variables) of polynomials over ", TO CC, ", ", 
 	TEX "t", " is in the interval ", TEX "[0,1]", " and ",
 	TEX "d = ", TO "tDegree",   
 	". ", PARA {"Here is an example with regular solutions at the ends of all homotopy paths:"},   
@@ -207,8 +208,11 @@ document {
 	     " is specified. "
 	     },
 	SeeAlso => {solveSystem, setDefault, Point},
-	Caveat => {"Predictor=>Certified works only with (Software=>M2 or Software=>M2engine) and Normalize=>true. ", PARA{}, "The unspecified optional arguments get the default value ", TO null, 
-	     " and are grabbed from a local hashtable controlled by the functions ", TO getDefault, " and ", TO setDefault, "."}
+	Caveat => {"Predictor=>Certified works only with (Software=>M2 or Software=>M2engine) and Normalize=>true. ", 
+	     PARA{"The unspecified optional arguments get the default value ", TO null, 
+	     	  " and are grabbed from a local hashtable controlled by the functions ", 
+	     	  TO getDefault, " and ", TO setDefault, "."}
+	     }
 	}
 
 document {
@@ -222,17 +226,17 @@ document {
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
-	     "T" => {"polynomials of the system"},
-	     "sols" => {"solutions (lists of coordinates or ", TO2{Point,"points"}},
-	     Iterations => {"number of refining iterations of Newton's method"}, 
-	     Bits => {"number of bits of precision"}, 
-	     ErrorTolerance => {"a bound on the desired estimated error"},
-	     ResidualTolerance => {"a bound on desired residual"}
+	     "T" => {"contains the polynomials of the system"},
+	     "sols" => {"contains solutions (presented as lists of coordinates or ", TO2{Point,"points"}, ")"},
+	     Iterations => {" (meaning Iterations = ", toString DEFAULT.Iterations, "). Number of refining iterations of Newton's method."}, 
+	     Bits => {" (meaning Bits = ", toString DEFAULT.Bits, "). Number of bits of precision."}, 
+	     ErrorTolerance => {" (meaning ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
+	     ResidualTolerance => {" (meaning ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."}
 	     },
 	Outputs => {"solsR" => {"refined solutions" }},
 	"Uses Newton's method to correct the given solutions so that the resulting approximation 
-	has its estimated relative error bound by ", TO "ErrorTolerance", 
-	"; the number of iterations is at most ", TO "Iterations", ".",
+	has its estimated relative error bounded by ", TO "ErrorTolerance", 
+	". The number of iterations made is at most ", TO "Iterations", ".",
 -- 	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
 -- 	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
 -- 	     took place with the same option and was given the same target system. 
@@ -321,6 +325,7 @@ document {
      Key => PHCPACK,
      Headline => "use PHCpack for homotopy continuation",
      "Available at ", TT "http://www.math.uic.edu/~jan/download.html",
+     PARA {"PHCpack interface provided via the ", TT "PHCpack", " package."},
      SeeAlso => Software
      }
 ///--getSolution and SolutionAttributes are not exported anymore
@@ -361,9 +366,9 @@ document {
 	Headline => "set the trace level in NumericalAlgebraicGeometry package",
 	Usage => "a = NAGtrace b",
 	Inputs => { 
-	     {TT "b", ", new level"}
+	     {TT "b", ", the new level"}
 	     },
-	Outputs => {{ TT "a", ", old level"}},
+	Outputs => {{ TT "a", ", the old level"}},
 	"Determines how talkative the procedures of NumericalAlgebraicGeometry are. The most meaningful values are:", 
 	UL{
 	     {"0", " -- silent"},
@@ -372,10 +377,10 @@ document {
 	     },
 	"The progress is displayed as follows: ", 
 	UL{
-	     {"'.' = regular solution found"   },
-   	     {"'S' = singular solution (or encountered a singular point on the path)"   },
-	     {"'I' = a homotopy path (most probably) diverged to infinity"},
-	     {"'M' = minimum step bound reached"}
+	     {TT ".", " = regular solution found"   },
+   	     {TT "S", " = singular solution (or encountered a singular point on the path)"   },
+	     {TT "I", " = a homotopy path diverged to infinity"},
+	     {TT "M", " = minimum step bound reached"}
 	     },
      	     	
         EXAMPLE lines ///
@@ -498,10 +503,15 @@ document {
 	     {TT "M", ", a matrix with real or complex entries"}
 	     },
 	Outputs => {{ TT "r"}},
-	"Find an approximate rank of the matrix ", TT "M", " by finding the first large 'gap' between two consecutive 
-	singular values. The gap between sigma_i and sigma_{i+1} is large if ", TT "sigma_i/sigma_{i+1} > Threshold",
-	".",
-	Caveat => {"sigma_0=1 is assumed"},
+	"This function finds an approximate rank of the matrix ", TT "M", ".",
+	PARA {
+	     "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". ",
+	     "To establish numerical rank we look for the first large gap between two consecutive singular values. ",
+	     "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
+	     " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO Threshold,
+	     "."
+	     },
+	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
         EXAMPLE lines ///
 numericalRank matrix {{2,1},{0,0.001}}
      	///,

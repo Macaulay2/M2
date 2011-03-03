@@ -3,8 +3,8 @@
 needsPackage "NAGtypes"
 newPackage(
      "NumericalAlgebraicGeometry",
-     Version => "1.3.0.2",
-     Date => "August, 2010",
+     Version => "1.4",
+     Date => "March, 2011",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
