@@ -59,12 +59,12 @@ dualBasisBM (Matrix, ZZ) := o -> (igens, d) -> (
   	  );
      V := {{}};
      
-     for e from 1 to d do (
-	  print (m, M, E, bvectors, betas, newbetas);
+     for e from 1 to d+1 do (
+	  --print (m, M, E, bvectors, betas, newbetas);
 	  s := #betas;
 	  snew := #newbetas;
 	  M = bvectors || M;
-	  print M;
+	  --print M;
     	  for i from 0 to #newbetas-1 do (
 	       b := newbetas#i;
       	       --get alpha vector for b
@@ -72,17 +72,14 @@ dualBasisBM (Matrix, ZZ) := o -> (igens, d) -> (
 	       	    subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
 		    (gens R)#k * sub(b,subs)
 	       	    ));
-	       print ("alpha",alpha);
       	       --get new A from new alpha
-	       print apply(m, j->apply(alpha,a->innerProduct(a,igens_(0,j))));
 	       A := matrix apply(m, j->apply(alpha,a->innerProduct(a,igens_(0,j))));
 	       --expand E with alpha as next row
 	       E = E || matrix{alpha};
 	       --expand M with Vs and new A
 	       newcol := map(R^(s+snew),R^n,0) || A;
-	       print ("V",V);
-	       for v in V#i do (print ("v",v); newcol = newcol || v);
-	       print (M,newcol, numgens target M, numgens target newcol);
+	       for v in V#i do newcol = newcol || v;
+	       --print (M,newcol, numgens target M, numgens target newcol);
 	       M = M | newcol;
       	       );
     	  --add newbetas to betas
@@ -90,27 +87,27 @@ dualBasisBM (Matrix, ZZ) := o -> (igens, d) -> (
 	  s := #betas;
     	  --get bvectors from kernel of M
     	  (svs, U, Vt) := SVD sub(M,coefficientRing R);
-	  print (svs,U,Vt);
+	  --print (svs,U,Vt);
     	  Vt = entries Vt;
     	  bvectors = new MutableList;
     	  for i from 0 to #svs-1 do
 	       if i > #svs-1 or svs#i <= epsilon then bvectors#(#bvectors) = apply(Vt#i, conjugate);
     	  --bvectors = entries transpose rowReduce(matrix new List from bvectors, epsilon);
 	  bvectors = new List from bvectors;
-     	  print (M,bvectors);
     	  --find newbetas from bvectors
 	  newbetas = apply(bvectors, bv->sum(#bv, i->(bv#i * E_(i//n,i%n))));
     	  --find Vs from bvectors
 	  V = apply(#bvectors, i->(
 	       w := apply(s, j-> apply(n,k->((bvectors#i)#(j*n + k))));
-	       print ("w",w);
+	       --print ("w",w);
 	       apply(s, j->buildVBlock(w#j))
 	       ));
 	  if #bvectors > 0 then bvectors = matrix bvectors else break;
 	  M = M || map(R^(snew*#npairs),R^(n*s),0);
   	  );
      (mons,bmatrix) := coefficients matrix {betas};
-     print(mons,bmatrix);
+     --print(mons,bmatrix);
+     bmatrix = sub(bmatrix,coefficientRing R);
      mons * transpose rowReduce(transpose bmatrix,epsilon)
      );
 
@@ -261,6 +258,7 @@ isDivisible = (a, b) -> (
 
 --performs Gaussian reduction on M but starting from the bottom right
 rowReduce = (M,epsilon) -> (
+  R := ring M;
   n := (numgens source M) - 1;
   m := (numgens target M) - 1;
   rindex := m;
@@ -272,7 +270,7 @@ rowReduce = (M,epsilon) -> (
       if (entries M)#l#(n-k) != 0 then (a = l; break);
     if a == -1 then continue;
     rowSwap(M,a,rindex);
-    rowMult(M,rindex,1/((entries M)#rindex#(n-k)));
+    rowMult(M,rindex,1_R/M_(rindex,(n-k)));
     for l from 0 to m do
       if l != rindex then rowAdd(M,l,-1*(entries M)#l#(n-k),rindex);
     rindex = rindex-1;
@@ -365,7 +363,7 @@ R = RR[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix {{x*y,x^2-y^2,y^3}}
 M = matrix {{x^2 - y}}
 M = matrix {{x + y + x*y}}
-dualBasisBM(M,4)
+dualBasisBM(M,6)
 STmatrix(M,4)
 DZmatrix(M,4)
 dualHilbert(M,4)
