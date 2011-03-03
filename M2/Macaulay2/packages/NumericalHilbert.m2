@@ -9,7 +9,7 @@ newPackage(
   DebuggingMode => true
 )
 
-export {dualBasis, dualHilbert, hilbertB, hilbertC, Point, UseDZ, STmatrix, DZmatrix, deflation, Size}
+export {dualBasis, dualBasisBM, dualHilbert, hilbertB, hilbertC, Point, UseDZ, STmatrix, DZmatrix, deflation, Size}
 
 --Generators of the dual space with all terms of degree d or less.
 --Uses ST algorithm by default, but can use DZ instead if specified.
@@ -38,55 +38,81 @@ dualBasis (Matrix, ZZ) := o -> (igens, d) -> (
 
 dualBasisBM = method(TypicalValue => Matrix, Options => {Point => {}})
 dualBasisBM (Matrix, ZZ) := o -> (igens, d) -> (
-  R := ring igens;
-  n := #gens R;
-  m := #igens;
-  epsilon := .001; --error tolerance for kernel
-  if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
-  betas := matrix{{1_R}};
-  bdiffs := {map(R^0,R^0,0)};
-  s := 1;
-  sold := 0;
-  Us := apply(n,i->map(R^sold,R^s,0)); --
-  A := apply(n,i->map(R^m,R^sold,0));
-  
-  for d from 1 to o.d do (
-    Us = apply(n,i->(
-      U := Us#i||map(R^(s-sold),R^s,0);
-      for b in newb do U = U|b;
-      U
-    );
-    bmatrix := new MutableList from 1..(n*(n-1)//2);
-    c := 0;
-    for i from 1 to n-1 do (
-      for j from 0 to i-1 do (
-        bmatrix#c = apply(n, k -> (
-	  if k == i then -Us#j
-	  else if k == j then Us#i
-	  else map(R^sold,R^s,0)
-	)
-        c = c+1;
-      );
-    );
-    M := blockMatrix(bmatrix);
-    
-    if A != 0 then (
-      (svs, U, Vt) := SVD M;
-      Vt = entries Vt;
-      newbetas := new MutableList;
-      f := vec -> take
-      for i from 0 to #svs-1 do
-        if abs svs#i <= epsilon then dualGens#(#dualGens) = Vt#i;
-      for i from #svs to (numgens target M)-1 do
-        dualGens#(#dualGens) = Vt#i;
-      dualGens = transpose rowReduce(matrix new List from dualGens, epsilon);
-      --print (dualGens, matrix {new List from flatten dmons});
-      (matrix {{1_R}}) | ((matrix {new List from flatten dmons})*sub(dualGens,R))
-    )
-      
-  );
-  0
-);
+     R := ring igens;
+     n := #gens R;
+     m := #(entries igens)#0;
+     epsilon := .001; --error tolerance for kernel
+     if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
+     betas := {};
+     newbetas := {1_R};
+     npairs := subsets(n,2);
+     M := map(R^(m),R^0,0);
+     E := map(R^0,R^n,0);
+     bvectors := map(R^1,R^0,0);
+     buildVBlock := v -> (
+ 	  Vb := mutableMatrix(R,#npairs,n);
+    	  for i from 0 to #npairs-1 do (
+      	       Vb_(i,npairs#i#0) =  v#(npairs#i#1);
+      	       Vb_(i,npairs#i#1) = -v#(npairs#i#0);
+    	       );
+    	  new Matrix from Vb
+  	  );
+     V := {{}};
+     
+     for e from 1 to d do (
+	  print (m, M, E, bvectors, betas, newbetas);
+	  s := #betas;
+	  snew := #newbetas;
+	  M = bvectors || M;
+	  print M;
+    	  for i from 0 to #newbetas-1 do (
+	       b := newbetas#i;
+      	       --get alpha vector for b
+      	       alpha := apply(n, k->(
+	       	    subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
+		    (gens R)#k * sub(b,subs)
+	       	    ));
+	       print ("alpha",alpha);
+      	       --get new A from new alpha
+	       print apply(m, j->apply(alpha,a->innerProduct(a,igens_(0,j))));
+	       A := matrix apply(m, j->apply(alpha,a->innerProduct(a,igens_(0,j))));
+	       --expand E with alpha as next row
+	       E = E || matrix{alpha};
+	       --expand M with Vs and new A
+	       newcol := map(R^(s+snew),R^n,0) || A;
+	       print ("V",V);
+	       for v in V#i do (print ("v",v); newcol = newcol || v);
+	       print (M,newcol, numgens target M, numgens target newcol);
+	       M = M | newcol;
+      	       );
+    	  --add newbetas to betas
+	  betas = betas | newbetas;
+	  s := #betas;
+    	  --get bvectors from kernel of M
+    	  (svs, U, Vt) := SVD sub(M,coefficientRing R);
+	  print (svs,U,Vt);
+    	  Vt = entries Vt;
+    	  bvectors = new MutableList;
+    	  for i from 0 to #svs-1 do
+	       if i > #svs-1 or svs#i <= epsilon then bvectors#(#bvectors) = apply(Vt#i, conjugate);
+    	  --bvectors = entries transpose rowReduce(matrix new List from bvectors, epsilon);
+	  bvectors = new List from bvectors;
+     	  print (M,bvectors);
+    	  --find newbetas from bvectors
+	  newbetas = apply(bvectors, bv->sum(#bv, i->(bv#i * E_(i//n,i%n))));
+    	  --find Vs from bvectors
+	  V = apply(#bvectors, i->(
+	       w := apply(s, j-> apply(n,k->((bvectors#i)#(j*n + k))));
+	       print ("w",w);
+	       apply(s, j->buildVBlock(w#j))
+	       ));
+	  if #bvectors > 0 then bvectors = matrix bvectors else break;
+	  M = M || map(R^(snew*#npairs),R^(n*s),0);
+  	  );
+     (mons,bmatrix) := coefficients matrix {betas};
+     print(mons,bmatrix);
+     mons * transpose rowReduce(transpose bmatrix,epsilon)
+     );
 
 --List of number of generators of the dual space with lead term of degree k for k from 0 to d.
 --Uses ST algorithm by default, but can use DZ instead if specified.
@@ -280,7 +306,7 @@ blockMatrix = (blist) -> (
 --evaluation of a dual element v on a polynomial w
 innerProduct = (v,w) -> (
   c := entries (coefficients matrix{{v,w}})#1;
-  sum(#c,(c#0)*(c#1))
+  sum(#c,i->(c#i#0)*(c#i#1))
 )
 
 newtonsMethod = (eqns, p, n) -> (
@@ -333,11 +359,13 @@ R = CC[x,y]
 M = matrix {{y,x^2-y}}
 deflation(M)
 
-loadPackage "hpackage"
+loadPackage "NumericalHilbert"
+loadPackage ("NumericalHilbert", Reload => true)
 R = RR[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix {{x*y,x^2-y^2,y^3}}
 M = matrix {{x^2 - y}}
 M = matrix {{x + y + x*y}}
+dualBasisBM(M,4)
 STmatrix(M,4)
 DZmatrix(M,4)
 dualHilbert(M,4)
@@ -348,7 +376,7 @@ apply(0..4, i->hilbertB(M,i))
 apply(0..4, i->hilbertC(M,i))
 
 loadPackage "NumericalHilbert"
-R = RR[x,y,z, MonomialOrder => {Weights=>{-1,-1,-1}}, Global => false]
+R = CC[x,y,z, MonomialOrder => {Weights=>{-1,-1,-1}}, Global => false]
 M = matrix {{x*y+z, y*z+x, x^2-z^2}}
 dualBasis(M,4)
 dualHilbert(M,4)
