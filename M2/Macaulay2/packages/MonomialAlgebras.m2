@@ -1,8 +1,8 @@
 newPackage(
 	"MonomialAlgebras",
-    	Version => "0.1", 
+    	Version => "1.0", 
     	Date => "Feb 27, 2011",
-    	Authors => {
+    	Authors => {David Eisenbud, Janko Boehm
                   },
     	Headline => "Monomial algebras",
 	CacheExampleOutput => false,
