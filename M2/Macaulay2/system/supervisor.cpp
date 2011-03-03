@@ -16,8 +16,27 @@ static int currentAllowedThreads = 2;
 
 static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
 
+//thread that the interperter runs in.
+pthread_t interpThread;
+
 extern "C" {
-  THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
+
+  extern void setInterpThread()
+  {
+    interpThread=pthread_self();
+  }
+  extern int tryGlobalInterrupt()
+  {
+    if(interpThread==pthread_self())
+      return 0;
+    else
+    {
+      pthread_kill(interpThread,SIGINT);
+      return -1;
+    }
+  }
+
+ THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
   THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);
   struct ThreadSupervisor* threadSupervisor = 0 ;
   void initializeThreadSupervisor()

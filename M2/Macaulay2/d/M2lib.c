@@ -285,83 +285,80 @@ static bool abort_jump_set = FALSE;
 
 #include <readline/readline.h>
 static void interrupt_handler(int sig) {
-     #if 0
-     int r;
-     if (isatty(STDIN) && isatty(STDOUT) && !reading_from_readline) {
-	  r = write(STDERR,"\n",1);
-	  }
-     #endif
-     if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)) || THREADLOCAL(interrupts_interruptPending,bool)) {
-	  if (isatty(STDIN) && isatty(STDOUT)) 
-	       while (TRUE) {
-		    char buf[10];
-		    #              ifdef ABORT
-		    printf("\nAbort (y/n)? ");
-		    #              else
-		    printf("\nExit (y=yes/n=no/b=backtrace)? ");
-		    #              endif
-		    fflush(stdout);
-		    if (NULL == fgets(buf,sizeof(buf),stdin)) {
-			 fprintf(stderr,"exiting\n");
-			 exit(11);
-			 }
-		    if (buf[0]=='b' || buf[0]=='B') {
-			 stack_trace();
-			 fprintf(stderr,"exiting\n");
-			 exit(12);
-			 }
-		    if (buf[0]=='y' || buf[0]=='Y') {
-			 #                   ifdef DEBUG
-			 trap();
-			 #                   endif
-			 #                   ifdef ABORT
-			 if (!tokens_stopIfError && abort_jump_set) {
-			      extern void evaluate_clearInterruptFlag(), evaluate_determineExceptionFlag(), evaluate_clearAlarmedFlag();
-			      fprintf(stderr,"returning to top level\n");
-			      fflush(stderr);
-			      interrupts_clearInterruptFlag();
-			      libfac_interruptflag = FALSE;
-			      interrupts_interruptPending = FALSE;
-			      interrupts_interruptShield = FALSE;
-			      evaluate_clearAlarmedFlag();
-			      evaluate_determineExceptionFlag();
-			      siglongjmp(abort_jump,1); 
+     if (tryGlobalInterrupt() == 0) {
+	  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)) || THREADLOCAL(interrupts_interruptPending,bool)) {
+	       if (isatty(STDIN) && isatty(STDOUT)) {
+		    while (TRUE) {
+			 char buf[10];
+			 #              ifdef ABORT
+			 printf("\nAbort (y/n)? ");
+			 #              else
+			 printf("\nExit (y=yes/n=no/b=backtrace)? ");
+			 #              endif
+			 fflush(stdout);
+			 if (NULL == fgets(buf,sizeof(buf),stdin)) {
+			      fprintf(stderr,"exiting\n");
+			      exit(11);
 			      }
-			 else {
-			      #                   endif
+			 if (buf[0]=='b' || buf[0]=='B') {
+			      stack_trace();
 			      fprintf(stderr,"exiting\n");
 			      exit(12);
-			      #                   ifdef ABORT
 			      }
-			 #                   endif
+			 if (buf[0]=='y' || buf[0]=='Y') {
+			      #                   ifdef DEBUG
+			      trap();
+			      #                   endif
+			      #                   ifdef ABORT
+			      if (!tokens_stopIfError && abort_jump_set) {
+				   extern void evaluate_clearInterruptFlag(), evaluate_determineExceptionFlag(), evaluate_clearAlarmedFlag();
+				   fprintf(stderr,"returning to top level\n");
+				   fflush(stderr);
+				   interrupts_clearInterruptFlag();
+				   libfac_interruptflag = FALSE;
+				   interrupts_interruptPending = FALSE;
+				   interrupts_interruptShield = FALSE;
+				   evaluate_clearAlarmedFlag();
+				   evaluate_determineExceptionFlag();
+				   siglongjmp(abort_jump,1); 
+				   }
+			      else {
+				   #                   endif
+				   fprintf(stderr,"exiting\n");
+				   exit(12);
+				   #                   ifdef ABORT
+				   }
+			      #                   endif
+			      }
+			 else if (buf[0]=='n' || buf[0]=='N') {
+			      break;
+			      }
 			 }
-		    else if (buf[0]=='n' || buf[0]=='N') {
-			 break;
 			 }
+	       else {
+		    #              ifndef NDEBUG
+		    trap();
+		    #              endif
+		    exit(13);
 		    }
-	  else {
-	       #              ifndef NDEBUG
-     	       trap();
-	       #              endif
-	       exit(13);
 	       }
-	  }
-     else {
-       if (THREADLOCAL(interrupts_interruptShield,bool)) THREADLOCAL(interrupts_interruptPending,bool) = TRUE;
 	  else {
-               if (THREADLOCAL(tokens_stopIfError,bool)) {
-		    int interruptExit = 2;	/* see also interp.d */
-		    fprintf(stderr,"interrupted, stopping\n");
-		    exit(interruptExit);
+	    if (THREADLOCAL(interrupts_interruptShield,bool)) THREADLOCAL(interrupts_interruptPending,bool) = TRUE;
+	       else {
+		    if (THREADLOCAL(tokens_stopIfError,bool)) {
+			 int interruptExit = 2;	/* see also interp.d */
+			 fprintf(stderr,"interrupted, stopping\n");
+			 exit(interruptExit);
+			 }
+		    interrupts_setInterruptFlag();
+		    # if 0
+		    /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
+		    if (reading_from_readline) rl_free_line_state();
+		    #endif
+		    if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 		    }
-	       interrupts_setInterruptFlag();
-	       # if 0
-	       /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
-	       if (reading_from_readline) rl_free_line_state();
-	       #endif
-	       if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 	       }
-	  }
+          }
      oursignal(SIGINT,interrupt_handler);
      }
 
@@ -528,6 +525,7 @@ void* interpFunc(void* vargs2)
   char** saveargv = args->argv;
   int argc = args->argc;
   int volatile envc = args->envc;
+     setInterpThread();
      reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
      init_readline_variables();
      arginits(argc,(const char **)saveargv);
@@ -582,7 +580,6 @@ char **argv;
      while (*x) envc++, x++;
 
      system_cpuTime_init();
-
      call_shared_library();
 
 #ifdef HAVE_PYTHON
