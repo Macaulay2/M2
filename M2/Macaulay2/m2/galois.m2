@@ -72,19 +72,17 @@ isPrimitive = (g) -> g != 0 and (
 GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
-     if n === 1 then ZZ/p
+     x := opts.Variable;
+     x = if x === null then getSymbol "a" else baseName x;
+     R := (ZZ/p) (monoid [x]);
+     t := R_0;
+     f := runHooks(GaloisField,FindOne,(p,n,t));
+     if f =!= null then (
+	  k := R/f;
+	  GF(k,Variable => x, PrimitiveElement => k_0))
      else (
-	  x := opts.Variable;
-	  x = if x === null then getSymbol "a" else baseName x;
-	  R := (ZZ/p) (monoid [x]);
-	  t := R_0;
-	  f := runHooks(GaloisField,FindOne,(p,n,t));
-	  if f =!= null then (
-	       k := R/f;
-	       GF(k,Variable => x, PrimitiveElement => k_0))
-	  else (
-	       while ( f = t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
-	       GF(R/f,Variable => x))))
+	  while ( f = t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
+	  GF(R/f,Variable => x)))
 
 GF(ZZ) := GaloisField => options -> (q) -> (
      factors := factor q;
