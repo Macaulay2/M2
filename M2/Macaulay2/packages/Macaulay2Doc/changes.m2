@@ -7,6 +7,7 @@ document {
 	  TO "changes, 1.3",
 	  TO "changes, 1.3.1",
 	  TO "changes, 1.4",
+	  TO "changes, 1.5",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -53,6 +54,42 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
+document {
+     Key => "changes, 1.5",
+     UL {
+	  LI { "major improvements and additions:",
+	       UL {
+		    "A facility for scheduling tasks to be performed in parallel (in threads) has been developed ... "
+	       	    }
+	       },
+	  -- LI { "new packages:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  -- LI { "improved packages:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  -- LI { "functionality added or improved:",
+	  --      UL {
+          --	        }
+	  --      },
+	  LI { "functionality changed:",
+	       UL {
+		    LI {
+			 "Now ", TT "F = GF p", " will return a ring of type ", TO "GaloisField", " when ", TT "p", " is prime,
+			 instead of returning the quotient ring ", TT "ZZ/p", ".  In particular, the generator ", TT "F_0", "
+			 will be a generator of the multiplicative group."
+			 }
+	       	    }
+	       }
+	  -- LI { "new constants and operators:",
+	  --      -- UL {
+	  --      -- 	    }
+	  --      }
+	  }
+     }
 
 document {
      Key => "changes, 1.4",
