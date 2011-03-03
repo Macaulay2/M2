@@ -790,6 +790,21 @@ hilbertSeries(ZZ,BettiTally) := o -> (n,B) -> (
      denom := Product{Power{(1-T),n}};
      Divide{num, denom})
 -----------------------------------------------------------------------------
+Ring ^ BettiTally := (R,b) -> (
+   -- donated by Hans-Christian von Bothmer
+   -- given a betti Table b and a Ring R make a chainComplex -- with zero maps over R  that has betti diagramm b. --
+   -- negative entries are ignored
+   -- rational entries produce an error
+   -- multigraded R's work only if the betti Tally contains degrees of the correct degree length
+   F := new ChainComplex;
+   F.ring = R;
+   scan(sort pairs b, (k,n) -> (
+	     (i,deg,wt) := k;   -- the keys of a betti table have the form (homological degree, multidegree, weight)
+	     -- use F_i since it gives 0 if F#i is not there:
+	     F#i = F_i ++ R^{n:-deg};		    -- this could be a bit slow
+	     ));
+   F)
+-----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (
      -- this doesn't work any more because 'resolution' replaces the presentation of a cokernel
      -- by a minimal one.  The right way to fix it is to add an option to resolution.
