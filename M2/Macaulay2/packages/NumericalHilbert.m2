@@ -84,7 +84,7 @@ dualBasisBM (Matrix, ZZ) := o -> (igens, d) -> (
       	       );
     	  --add newbetas to betas
 	  betas = betas | newbetas;
-	  s := #betas;
+	  s = #betas;
     	  --get bvectors from kernel of M
     	  (svs, U, Vt) := SVD sub(M,coefficientRing R);
 	  --print (svs,U,Vt);
@@ -363,13 +363,13 @@ R = RR[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix {{x*y,x^2-y^2,y^3}}
 M = matrix {{x^2 - y}}
 M = matrix {{x + y + x*y}}
-dualBasisBM(M,6)
+dualBasisBM(M,10)
+dualBasis(M,10)
+dualBasis(M,10, UseDZ => true)
 STmatrix(M,4)
 DZmatrix(M,4)
 dualHilbert(M,4)
-dualBasis(M,6)
 dualHilbert(M,4, UseDZ=>true)
-dualBasis(M,4, UseDZ=>true)
 apply(0..4, i->hilbertB(M,i))
 apply(0..4, i->hilbertC(M,i))
 
