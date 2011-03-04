@@ -617,7 +617,7 @@ mons2intmat(Ideal,ZZ):=(I,c)->
 intmat2mons=method()
 intmat2mons(Matrix,Ring):=(expoVecs, r)->
 (
-   if(numColumns(expoVecs)> numgens(r))
+   if(numColumns(expoVecs) > numgens(r))
    then(
         error("intmat2mons: not enough variables in the basering");
    );
@@ -634,7 +634,7 @@ intmat2mons(Matrix,Ring):=(expoVecs, r)->
 -- takes only the rows with entry d in column c, ignoring column c
 intmat2mons(Matrix,Ring,ZZ,ZZ):=(expoVecs,r,d,c)->
 (
-   if(numColumns(expoVecs)< numgens(r))
+   if(numColumns(expoVecs)-1 > numgens(r))
    then(
         error("intmat2mons: not enough variables in the basering");
    );
