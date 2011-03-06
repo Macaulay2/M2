@@ -1,5 +1,8 @@
 #ifndef _system_supervisor_h_
 #define _system_supervisor_h_
+
+/* this next bit is copied from ../d/atomic.d, but it should be include, instead */
+
   #include <atomic_ops.h>
 #ifndef atomic_field_decl
 #define atomic_field_decl
