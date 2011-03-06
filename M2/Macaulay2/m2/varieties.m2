@@ -118,8 +118,8 @@ variety CoherentSheaf := Variety => (F) -> F.variety
 variety SheafOfRings := Variety => O -> O.variety
 ring CoherentSheaf := (F) -> ring F.module
 numgens CoherentSheaf := (F) -> numgens F.module
-module CoherentSheaf := Module => (F) -> F.module
-module SheafOfRings  := Module => (F) -> (F.ring)^1
+module CoherentSheaf := Module => F -> F.module
+module SheafOfRings  := Module => F -> module F.ring
 Ideal * CoherentSheaf := (I,F) -> sheaf(F.variety, I * module F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ++ G.module)
 tensor(CoherentSheaf,CoherentSheaf) := CoherentSheaf => options -> (F,G) -> F**G
