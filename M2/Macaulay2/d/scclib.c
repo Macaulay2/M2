@@ -403,9 +403,6 @@ static int read_via_readline(char *buf,int len,char *prompt) {
     reading_from_readline = TRUE; /* for the interrupt handler */
     p = readline(prompt);
     reading_from_readline = FALSE;
-#if 0
-    if (test_Field(interrupts_interruptedFlag)) return ERROR; /* interrupted system call, for example */
-#endif
     if (p == NULL) return 0;	/* EOF */
     i = 0;
     plen = strlen(p);
