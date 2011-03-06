@@ -25,8 +25,8 @@ dnl we should be able to replace IS_DECLARED with AC_CHECK_DECLS:
 AC_DEFUN(IS_DECLARED,[
   AC_CACHE_CHECK([whether $2 is declared],[m2_cv_$2_is_declared],
   	[AC_LANG(C)]
-	[AC_COMPILE_IFELSE([$3
-	    int main () { $1 x = $2 ; } ],
+	[AC_COMPILE_IFELSE([AC_LANG_SOURCE([$3
+	    int main () { $1 x = $2 ; } ])],
 	 m2_cv_$2_is_declared=yes,
 	 m2_cv_$2_is_declared=no)
 	])
@@ -409,7 +409,7 @@ AC_SUBST(USE_THREADS,yes) AC_ARG_ENABLE(threads, AS_HELP_STRING(--disable-thread
 AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
 if [[ "$USE_THREADS" = yes ]]
 then AC_LANG(C)
-     AC_COMPILE_IFELSE([__thread int x;],
+     AC_COMPILE_IFELSE([AC_LANG_SOURCE([__thread int x;])],
      	 [AC_MSG_RESULT(yes)],
 	 USE_THREADS=no; [AC_MSG_RESULT([no, disabling threads])])
 fi
@@ -726,8 +726,9 @@ AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable f
 AC_SUBST(ISYSTEM,no)
 AC_MSG_CHECKING(whether g++ gets confused about C linkage in system library files)
 AC_LANG(C++)
-AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
-	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+	# 1 "foo" 1 3 4
+	template <class T> struct A { };])],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
 dnl multi line sed commands may not work, reported by Anton:
 dnl AC_MSG_CHECKING(for the presence of synchronization builtins)
@@ -798,10 +799,10 @@ AC_SUBST(BUILTLIBS,)
 #    normaliz is used by the package Normaliz
 #    gfan is used by the packages gfanInterface and StatePolytope
 #    4ti2 is used by the package FourTiTwo
+#    linbox is provided as an option for experimentation
+#    givaro is used by linbox
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk    cddlib ")
-dnl I think we don't use this:
-dnl AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp  libglpk ")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby scscp glpk cddlib givaro linbox")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -817,6 +818,24 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
 	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
        esac
     done])
+
+AC_SUBST(ENABLE_GIVARO,no)
+AC_ARG_ENABLE(linbox,
+    [AS_HELP_STRING(--enable-givaro,enable building the givaro library and linking with it)],
+    AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
+    BUILD_givaro=yes
+    ENABLE_GIVARO=yes
+    )
+
+AC_SUBST(ENABLE_LINBOX,no)
+AC_ARG_ENABLE(linbox,
+    [AS_HELP_STRING(--enable-linbox,enable building the linbox library and linking with it)],
+    AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
+    BUILD_linbox=yes
+    BUILD_givaro=yes
+    ENABLE_LINBOX=yes
+    ENABLE_GIVARO=yes
+    )
 
 PROGLIST=" $PROGLIST "
 AC_ARG_WITH(unbuilt-programs, 
@@ -844,7 +863,9 @@ then AC_MSG_CHECKING([for library containing common symbol _rl_comment_begin and
      for lib in "" "-lreadline" "-lreadline -lhistory"
      do  test "$lib" && LIBS="$lib $LIBS"
 	 AC_LINK_IFELSE(
-	     [[ extern int rl_set_prompt(); extern int _rl_comment_begin; int main () { return rl_set_prompt() + _rl_comment_begin; } ]],
+	     [AC_LANG_SOURCE([
+	      [ extern int rl_set_prompt(); extern int _rl_comment_begin; int main () { return rl_set_prompt() + _rl_comment_begin; } ]
+	     ])],
 	     FOUND=yes; break;,
 	     LIBS=$SAVELIBS)
      done
@@ -994,7 +1015,7 @@ then AC_LANG(C)
      AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes,[#include <gmp.h>])
      if test $BUILD_mpfr = no
      then AC_MSG_CHECKING([whether mpfr library is recent enough, using mpfr.h])
-	  AC_RUN_IFELSE([ 
+	  AC_RUN_IFELSE([AC_LANG_SOURCE([
 		  #include <stdio.h>
 		  #include <mpfr.h>
 		  main () {
@@ -1004,7 +1025,7 @@ then AC_LANG(C)
 		      minor = MPFR_VERSION_MINOR;
 		      patch_level = MPFR_VERSION_PATCHLEVEL;
 		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, patch_level);
-		      return !( major > 2 || major == 2 && minor >= 3 ); }],
+		      return !( major > 2 || major == 2 && minor >= 3 ); }])],
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (mpfr will be built from downloaded sources)]); BUILD_mpfr=yes ],
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
@@ -1019,7 +1040,7 @@ then AC_LANG(C)
 		[AC_CHECK_HEADER(atomic_ops.h,
 			[
 			  AC_MSG_CHECKING(whether libgc is recent enough)
-			  AC_RUN_IFELSE([ 
+			  AC_RUN_IFELSE([AC_LANG_SOURCE([ 
 				  #include <stdio.h>
 				  main () {
 				      extern unsigned GC_version;
@@ -1030,7 +1051,7 @@ then AC_LANG(C)
 				      alpha = GC_version & 0xff;
 				      if (alpha == 0xff) fprintf(msg,"(version %d.%d found) ", major, minor);
 				      else fprintf(msg,"(version %d.%d alpha %d found) ", major, minor, alpha);
-				      return !( major >= 7 ); }],
+				      return !( major >= 7 ); }])],
 			     [ AC_MSG_RESULT(yes) ],
 			     [ AC_MSG_RESULT([no, version at least 7.0 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
 			     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
@@ -1067,10 +1088,10 @@ then AC_LANG(C++)
      SAVELIBS=$LIBS
      for lib in "" "-lntl" "-lntl -lgf2x"
      do  test "$lib" && LIBS="$lib $LIBS"
-	 AC_LINK_IFELSE( [
+	 AC_LINK_IFELSE([AC_LANG_SOURCE([
 		 #include <NTL/tools.h>
 		 int main () { _ntl_GetTime(); }
-		 ],
+		 ])],
 	     FOUND=yes; break;,
 	     LIBS=$SAVELIBS)
      done
@@ -1085,7 +1106,7 @@ then AC_LANG(C++)
 
      if test $BUILD_ntl = no
      then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])
-	  AC_RUN_IFELSE([[
+	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <stdio.h>
 		  #include <NTL/version.h>
 		  main () {
@@ -1095,14 +1116,14 @@ then AC_LANG(C++)
 		      minor = NTL_MINOR_VERSION;
 		      revision = NTL_REVISION;
 		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, revision);
-		      return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]],
+		      return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]])],
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, version at least 5.4.1 is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
      fi
 
      if test $BUILD_ntl = no
      then AC_MSG_CHECKING([whether ntl library is compiled with gmp (or mpir), using NTL/config.h])
-	  AC_RUN_IFELSE([[
+	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <NTL/config.h>
 		  main () {
 		      return !( 
@@ -1111,7 +1132,7 @@ then AC_LANG(C++)
 			  #else
 			  0
 			  #endif
-			  ); }]],
+			  ); }]])],
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, ntl compiled with gmp (or mpir) is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
      fi
@@ -1137,14 +1158,14 @@ do AC_LANG(C++)
    LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
    dnl if -lntl is needed, it's been added to $LIBS above
-   AC_LINK_IFELSE( [[ #undef NOSTREAMIO
+   AC_LINK_IFELSE([AC_LANG_SOURCE([[ #undef NOSTREAMIO
 	              #include <factory.h>
 		      #include <templates/ftmpl_inst.cc>
-		      int main () { return 0 ; } ]],
+		      int main () { return 0 ; } ]])],
        AC_MSG_RESULT(yes),
        AC_MSG_RESULT(no) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break )
    AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
-   AC_RUN_IFELSE( [[
+   AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
@@ -1170,7 +1191,7 @@ do AC_LANG(C++)
 		    );
 		return !( lOK && fOK );
 		}
-	   ]],
+	   ]])],
 	AC_MSG_RESULT(yes),
 	AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS)
    break
@@ -1187,7 +1208,7 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
      SAVELIBS=$LIBS LIBS="-framework vecLib $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
-	 AC_LANG_PROGRAM(,[sgemv_();dgetrf_();]),
+	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
 	 [
 	     AC_MSG_RESULT(yes)
 	     ],
@@ -1267,12 +1288,12 @@ fi
 
 AC_LANG(C)
 AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
-AC_RUN_IFELSE([
+AC_RUN_IFELSE([AC_LANG_SOURCE([
     #include <sys/types.h>
     #include <sys/socket.h>
     #include <netdb.h>
     main() { struct addrinfo *addr; return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr); }
-    ],
+    ])],
     GETADDRINFO_WORKS=1;AC_MSG_RESULT(yes),
     GETADDRINFO_WORKS=0;AC_MSG_RESULT(no),
     AC_MSG_RESULT([yes (cross-compiling, not tested)]))
@@ -1302,7 +1323,7 @@ AC_SUBST(HAVE_NO_STRICT_ALIASING,)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
-AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
 M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
@@ -1312,7 +1333,7 @@ AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wfatal-errors"
-AC_COMPILE_IFELSE([int main() {}], 
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     M2_CPPFLAGS="$M2_CPPFLAGS -Wfatal-errors"
     AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
     AC_MSG_RESULT(no))

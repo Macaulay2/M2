@@ -49,6 +49,8 @@ libraries/cddplus/Makefile
 libraries/lrslib/Makefile
 libraries/cddlib/Makefile
 libraries/glpk/Makefile
+libraries/linbox/Makefile
+libraries/givaro/Makefile
 libraries/polymake/Makefile
 libraries/normaliz/Makefile
 libraries/pari/Makefile
