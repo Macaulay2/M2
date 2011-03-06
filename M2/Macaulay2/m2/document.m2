@@ -49,7 +49,7 @@ normalizeDocumentKey    Thing := key -> (
      )
 
 isDocumentableThing  = method(Dispatch => Thing)
-isDocumentableThing    String := key -> true
+isDocumentableThing    String := key -> false
 isDocumentableThing    Symbol := key -> true
 isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
 isDocumentableThing   Nothing := key -> true
