@@ -3,6 +3,7 @@ declarations "
   #include <atomic_ops.h>
   #ifndef atomic_field_decl
   #define atomic_field_decl
+  /* if you change this, change the copy in ../system/supervisor.hpp, too; better yet, remove it. */
   struct atomic_field {
        AO_t field;
        };
