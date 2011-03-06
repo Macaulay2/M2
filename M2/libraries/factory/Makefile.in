@@ -55,6 +55,11 @@ uninstall clean ::
 		lib/libcf.a lib/libcfmem.a ;\
 	fi
 
+post-install: $(LIBRARIESDIR)/lib/libcfmem-newdelete-removed
+$(LIBRARIESDIR)/lib/libcfmem-newdelete-removed : $(LIBRARIESDIR)/lib/libcfmem.a
+	ar -d "$^" newdelete.o
+	touch "$@"
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/factory "
 # End:
