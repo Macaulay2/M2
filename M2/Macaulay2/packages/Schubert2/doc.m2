@@ -1215,6 +1215,83 @@ Node
 --------
 Node
   Key
+   blowup
+   (blowup, AbstractVarietyMap)
+  Headline
+   blow up an abstract variety along a subvariety
+  Usage
+   (Ytilde, PN, PNmap, Ymap) = blowup(i)
+  SeeAlso
+   exceptionalDivisor
+  Inputs
+   i:AbstractVarietyMap
+    the inclusion map of the subvariety $X$ to be blown up into the ambient variety $Y$
+  Outputs
+   Ytilde:AbstractVariety
+    the blowup of $Y$ along $X$
+   PN:FlagBundle
+    the exceptional divisor of the blowup, the projectivization of the normal bundle of $i$
+   PNmap:AbstractVarietyMap
+    the inclusion of $PN$ into the blowup
+   Ymap:AbstractVarietyMap
+    the map from the blowup down to $Y$
+  Consequences
+   Item
+    The exceptional divisor as a sheaf on the blowup can be obtained via {\tt exceptionalDivisor Ytilde}, see @ TO exceptionalDivisor @.
+  Description
+    Text
+      Blowing up a point in $\mathbb{P}^2$:
+    Example
+      X = projectiveSpace 0
+      Y = projectiveSpace 2
+      i = map(Y,X,OO_X)
+      (Ytilde, PN, PNmap, Ymap) = blowup(i)
+      Ediv = chern(1, exceptionalDivisor Ytilde) -- the class of the exceptional divisor
+      integral (Ediv^2)
+    Text
+      As a more interesting example, we can derive the classical formula for the degree of the zero-dimensional locus of intersection of three
+      surfaces in $\mathbb{P}^3$ containing a twisted cubic:
+    Example
+      B = base(r,s,t)
+      X = projectiveSpace(1, B)
+      Y = projectiveSpace(3, B)
+      i = map(Y,X,OO_X(3)) --includes P^1 into P^3 as the twisted cubic
+      (Ytilde, PN, PNmap, Ymap) = blowup(i)
+      Ediv = chern(1, exceptionalDivisor Ytilde)
+      hyperplane = chern(1,OO_Y(1))
+      (rsurf, ssurf, tsurf) = (x -> hyperplane * x) \ (r,s,t) --classes of surfaces of degrees r,s,t
+      (ptr, pts, ptt) = (x -> (Ymap^* x) - Ediv) \ oo --proper transforms of each surface
+      integral(ptr * pts * ptt)
+    Text
+      The file {\tt Schubert2/blowup-test.m2} has several more examples.
+--------
+Node
+  Key
+    exceptionalDivisor
+    (exceptionalDivisor,AbstractVariety)
+  Headline
+    get the exceptional divisor of a blowup
+  Usage
+    exceptionalDivisor X
+  Inputs
+    X:AbstractVariety
+     a blowup, built using @ TO blowup @@
+  Outputs
+    :AbstractSheaf
+      the exceptional divisor on X, expressed as a line bundle
+  SeeAlso
+    blowup
+  Description
+    Example
+      T = projectiveSpace 2
+      S = projectiveSpace 0
+      i = map(T,S,OO_S) -- inclusion of a point in P^2
+      X = first blowup(i)
+      exceptionalDivisor X
+      chern oo
+--------
+Node
+  Key
    integral
   Headline
    compute an integral (push forward a cycle to the base)
