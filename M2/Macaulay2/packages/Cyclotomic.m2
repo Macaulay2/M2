@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 --  cyclotomic.m2
 --
---  Copyright (C) 2009 Thomas Kahle <kahle@mis.mpg.de>
+--  Copyright (C) 2009-11 Thomas Kahle <kahle@mis.mpg.de>
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
@@ -23,11 +23,11 @@
 
 newPackage(
 	"Cyclotomic",
-	Version => "0.5.4",
-	Date => "December 2009",
+	Version => "0.5.5",
+	Date => "February 2011",
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "kahle@mis.mpg.de", 
-		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/bpd"}},
+		  HomePage => "http://thomas-kahle.de/bpd"}},
     	Headline => "routines for cyclotomic fields",
     	DebuggingMode => true
     	)
@@ -42,7 +42,6 @@ ww := local ww
   
 -- We use memoize to get physically the same cyclotomic field again and again!
 cf = (i) -> (
-     -- Todo: How to do this properly ??
      Q := QQ[symbol ww_i];
      return toField ((Q) / cyclotomicPoly (i, Q_0));
      )
@@ -79,17 +78,12 @@ joinCyclotomic = li -> (
      --Check for QQ
      if leastcm < 3 then return li;
      
-     --Check for nothing to do
-     -- As of M2 1.3 this check does not work anymore.
-     -- Joining has to be run in any case.
-     -- if delete (leastcm, lc) == {} then return li;
-     
      F := cyclotomicField leastcm;
      -- Here we use the assumptions that all rings have the same generators
      -- This should contain the variables of polynomials
-     ge := gens ring li#0;    
+     ge := gens ring li#0;
 
-     S := F[ge];
+     S := F(monoid [ge]);
      li2 := {}; ww:=F_0; local f;
      for i in 0..#li-1 do (
 	  if lc#i == 2 then (
@@ -159,7 +153,6 @@ findRootPower = R -> (
 
 beginDocumentation()
 
-
 document { 
         Key => Cyclotomic,
         Headline => "a package for cyclotomic fields",
@@ -221,12 +214,12 @@ document {
 
 document {
      Key => {joinCyclotomic},
-     Headline => "join ideals in polynomial rings over different cyclotomic fields.",
+     Headline => "Join ideals in polynomial rings over different cyclotomic fields",
      Usage => "joinCyclotomic l",
      Inputs => {
           "li" => { "a list of ideals in polynomial rings over cyclotomic fields"}},
      Outputs => {
-          "li2" => {"The list of ideals in common ring."} },
+          "li2" => {"The list of ideals in a common ring."} },
      EXAMPLE {
 	  "F = cyclotomicField 3; G = cyclotomicField 4;",
           "R = F[t]; I = ideal (t-F_0^2)",
@@ -235,3 +228,13 @@ document {
           },
      SeeAlso => cyclotomicField
      }
+
+TEST ///
+F = cyclotomicField 3
+G = cyclotomicField 4
+R = F[t]
+I = ideal (t-F_0^2)
+S = G[t]
+J = ideal (t^2-G_0)
+assert (findRootPower coefficientRing ring (joinCyclotomic {I,J})#0 == 12)
+///
