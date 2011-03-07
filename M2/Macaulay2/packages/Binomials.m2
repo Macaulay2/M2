@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 --  Binomials.m2
 --
---  Copyright (C) 2009,2010,2011 Thomas Kahle <kahle@mis.mpg.de>
+--  Copyright (C) 2009-2011 Thomas Kahle <kahle@mis.mpg.de>
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
@@ -23,8 +23,8 @@
 
 newPackage(
 	"Binomials",
-	Version => "0.6",
-	Date => "December 2010",
+	Version => "0.7",
+	Date => "January 2011",
 	Authors => {{
 		  Name => "Thomas Kahle",
 		  Email => "kahle@mis.mpg.de",
@@ -59,6 +59,7 @@ export {
      -- cellularAssociatedLattices,
      cellularBinomialPrimaryDecomposition,
      cellularBinomialRadical,
+     -- cellularEmbeddedLatticeWitnesses,
      -- simple wrappers:
      BPD,
      BCD,
@@ -66,13 +67,13 @@ export {
 --     BCDisPrimary,
      -- auxillary functions:
      partialCharacter,
+     idealFromCharacter,  -- should be renamed to ideal once M2 supports this
      randomBinomialIdeal,
      removeRedundant,
      -- Not in the interface:
 --     axisSaturate,
 --     cellVars,
 --     Lsat,
---     idealFromCharacter,
 --     saturatePChar,
 --     satIdeals,
 --     nonCellstdm,
@@ -89,11 +90,14 @@ export {
      returnPrimes, -- for binomialIsPrimary 
      returnPChars, -- for binomialIsPrimary
      returnCellVars, -- for binomialCellularDecomposition
-     verbose -- produce more output
+     verbose, -- produce more output
+     
+     --Types
+     PartialCharacter--HashTable
      }
 
 needsPackage "FourTiTwo";
-needsPackage "Cyclotomic"
+needsPackage "Cyclotomic";
 
 axisSaturate = (I,i) -> (
 -- By Ignacio Ojeda and Mike Stillman
@@ -200,8 +204,12 @@ cellVars Ideal := Ideal => o -> I -> (
 	  for i in gens ring I do if saturate (I,i) != substitute(ideal(1), ring I) then cv=cv|{i};
 	  return cv;
 	  )
-     else return ((i) -> sub(i, ring I)) \ o#cellVariables;
+--     else return ((i) -> sub(i, ring I)) \ o#cellVariables;
+     else return o#cellVariables;
      )
+
+PartialCharacter = new Type of HashTable;
+     --Setting up the PartialCharacter Type
 
 partialCharacter = method (Options => {cellVariables => null})
 partialCharacter Ideal := Ideal => o -> I -> (
@@ -214,7 +222,6 @@ partialCharacter Ideal := Ideal => o -> I -> (
      cl := {}; -- This will hold the coefficients
      R := ring I;
      CoeffR := coefficientRing R; -- needed to form terms below
-     scan (gens R, (v -> v = local v));
      II := ideal;
      
      -- The input should be a cellular ideal 
@@ -224,11 +231,11 @@ partialCharacter Ideal := Ideal => o -> I -> (
      -- If there are no cellular variables, 
      -- the ideal is monomial and the partial character is zero:
      if cv == {} then (
-	  return ({}, matrix "0", {1});
+	  return new PartialCharacter from {"J"=>{}, "L"=>matrix "0", "c"=>{1}};
 	  );
      
      -- We need to construct this ring to properly extract coefficients below
-     S := CoeffR[cv];
+     S := CoeffR(monoid [cv]);
      
      -- We intersect I with the ring k[E] and map to S
      if #ncv != 0 then (
@@ -243,7 +250,7 @@ partialCharacter Ideal := Ideal => o -> I -> (
      if ( II == 0 ) then (
 	  for i in cv do vs = vs | { 0_ZZ };
 	  cl = {1_ZZ};
-	  return (cv, transpose matrix {vs}, cl);
+	  return new PartialCharacter from {"J"=>cv, "L"=>transpose matrix {vs}, "c"=>cl};
 	  );
      
      -- So, II is not zero:
@@ -278,11 +285,10 @@ partialCharacter Ideal := Ideal => o -> I -> (
 	       );
 	  );
      
-     use R;
-     return (cv, transpose matrix vs , cl);
+     return (new PartialCharacter from {"J"=>cv, "L"=> transpose matrix vs , "c"=>cl});
      )
 
-randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (
+randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (	 
      -- Generate 'random' ideals for testing purposes. The distribution is completely heuristic and designed to serve
      -- internal purposes 
      -- Inputs: a ring R, the number of generators numgen, the maximal degree of each variable maxded,
@@ -335,18 +341,22 @@ randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (
      )
 
 isBinomial = I -> (
-     ge := flatten entries gens I;
+     -- Checking binomiality is only proper with a gb.
+     ge := flatten entries gens gb I;
+     isBinomial:=true;
      for g in ge do (
-          if #(terms g) > 2 then return false;	  
+          if #(terms g) > 2 then return false;
 	  );
      return true;
      )
 
 isPureDifference = I -> (
-     ge := flatten entries gens I;
+     -- Here we do allow monomials, because our algorithm also works
+     -- for pure difference + monomials
+     ge := flatten entries gens gb I;
      for g in ge do (
 	  coeffs := sort flatten entries (coefficients g)#1;
-     	  if coeffs == {1} then continue;
+	  if coeffs == {1} then continue;
 	  if coeffs == { -1} then continue;
 	  if coeffs == { -1 , 1} then continue;
 	  return false;
@@ -357,7 +367,6 @@ isPureDifference = I -> (
      
 nonCellstdm = {cellVariables=>null} >> o -> I -> (
      R := ring I;
-     scan (gens R, (v -> v = local v));     
 
      cv2 := cellVars(I, cellVariables=>o#cellVariables);
 
@@ -370,28 +379,23 @@ nonCellstdm = {cellVariables=>null} >> o -> I -> (
      
      -- We map I to the subring: k[ncv]
      CoeffR := coefficientRing R;
-     S := CoeffR[ncv];
+     S := CoeffR(monoid [ncv]);
      J := kernel map (R/I,S); -- image of I in the subring S
-     Q := S/J; 
-     slist := flatten entries flatten basis Q;
-     use R;
-     return slist;
+     return basis (S/J);
      )
 
 maxNonCellstdm = {cellVariables=>null} >> o -> I -> (
-     -- Extracts the maximal elements in the set of monomials 
-     cv := cellVars(I, cellVariables=>o#cellVariables);
+     -- Computes the maximal monomials in the non-cellular variables
 
-     nm := nonCellstdm (I,cellVariables=>cv);
-     -- print nm;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
+     nm := flatten entries nonCellstdm (I,cellVariables=>cv);
+     -- The following code extracts the maximal elements in a list of monomials 
      result := {};
      maxel := 0;
      while nm != {} do (
      	  maxel = max nm;
-     
           -- Add maxel to the result
       	  result = result | {maxel};
-
           -- Delete everyone who is dividing maxel     
      	  nm = for m in nm list (if maxel // m != 0 then continue; m);
      );
@@ -416,39 +420,40 @@ makeBinomial = (R,m,c) -> (
      return posmon - c*negmon;
      )
 
-idealFromCharacter = (R,A,c) -> (
+idealFromCharacter = method();
+idealFromCharacter (Ring, PartialCharacter) := Ideal => (R, pc) -> (
      -- Constructs the lattice Ideal I_+(c) in R
      -- R is a ring in which the ideal is returned
      -- The columns of A should contain exponent vectors of generators
      -- The vector c contains the corresponding coefficients which must lie
-     -- in the coefficient ring of R !!!
+     -- in the coefficient ring of R.
      
-     use R;
      var := gens R;
-     if A == 0 then return ideal 0_R;
+     if pc#"L" == 0 then return ideal 0_R;
      cols := null;
      binomials :=null;
+     c:= null;
      
      idmat := matrix mutableIdentity(ZZ,#var);
-     if A == idmat then (
+     if pc#"L" == idmat then (
 	  -- If A is the unit matrix we are lucky,
 	  -- no saturation is needed.
 
 	  -- We coerce the coefficients to R:
-	  c = apply (c, a -> (sub (a,R)));
-     	  cols = entries transpose A;    
-     	  binomials = for i in 0..numcols A-1 list makeBinomial (R,cols#i, c#i);	  
+	  c = apply (pc#"c", a -> (sub (a,R)));
+     	  cols = entries transpose pc#"L";
+     	  binomials = for i in 0..numcols(pc#"L")-1 list makeBinomial (R,cols#i, c#i);	  
 	  return ideal binomials
 	  )
-     else if set c === set {1} then (
+     else if set pc#"c" === set {1} then (
 	  -- all coefficients are one, we can use 4ti2.
-	  return toricMarkov (transpose A, R, InputType => "lattice");
+	  return toricMarkov (transpose pc#"L", R, InputType => "lattice");
 	  )
      else (
      	  -- The general case, fall back to saturation in M2:
-	  c = apply (c, a -> (sub (a,R)));
-     	  cols = entries transpose A;    
-     	  binomials = for i in 0..numcols A-1 list makeBinomial (R,cols#i, c#i);
+	  c = apply (pc#"c", a -> (sub (a,R)));
+     	  cols = entries transpose pc#"L";    
+     	  binomials = for i in 0..numcols(pc#"L")-1 list makeBinomial (R,cols#i, c#i);
      	  return saturate (ideal binomials, product var);
 	  );
      )
@@ -456,7 +461,6 @@ idealFromCharacter = (R,A,c) -> (
 latticeBasisIdeal = (R,L) -> (
      -- Constructs the lattice basis ideal (whose saturation is the lattice ideal)
      -- Convention is that L's columns generate the lattice.
-     use R;
      var := gens R;
      if L == 0 then return ideal 0_R;
      cols := null;
@@ -466,46 +470,46 @@ latticeBasisIdeal = (R,L) -> (
      return ideal binomials;
      )
 
-saturatePChar = (va, A, c) -> (
-     -- This function saturates a partial character.  A saturated character is distinguished from its saturation as the
-     -- saturation has a list as third entry.  
-     
+saturatePChar = (pc) -> (
+     -- This function saturates a partial character and returns the result
+     -- as a list, even if the input was saturated.
+          
      -- If the lattice is saturated, the character is saturated
-     if image Lsat A == image A then (
-	  return (va, A, {c});
+     -- Note that this shortcircuits all problems with c being non-constant.
+     if image Lsat pc#"L" == image pc#"L" then (
+	  return {pc};
 	  );
      
      -- The saturated lattice
-     S := Lsat(A);
+     S := Lsat(pc#"L");
      -- The coefficient matrix :
-     K := A // S;
+     K := pc#"L" // S;
      
      -- print K;
      -- Now we find the (binomial) equations for the saturated character:
      numvars := numrows K;
      varlist := for i in 0..numvars-1 list value ("m"|i);
-     scan (varlist, (v -> v = local v));
-     Q := QQ[varlist];
-     eqs := idealFromCharacter(Q,K,c);
+     Q := QQ(monoid [varlist]);
+     eqs := idealFromCharacter (Q, (new PartialCharacter from {"J"=>gens Q, "L"=>K, "c"=>pc#"c"}));
      
      result := binomialSolve eqs;
-     return (va, S, result);
+     r := #result;
+     i := 0;
+     
+     return(for i from 0 to r-1 list(
+	  new PartialCharacter from {"J" => pc#"J", "L" => S, "c" => result#i}));
      )
 
-satIdeals = (va, A, d) -> (
+satIdeals = (pc) -> (
      -- Computes all the ideals belonging to saturations of  
      -- a given partial character.
-     satpc := saturatePChar(va, A, d);
-     scan (satpc#0, (v -> v = local v));     
+     satpc := saturatePChar(pc);
      -- The following should be the smallest ring containing all new
      -- coefficients but not smaller than QQ
-     F := ring satpc#2#0#0;
+     F := ring satpc#0#"c"#0;
      if F === ZZ then F = QQ;
-     Q := F[satpc#0];
-     satideals := apply (satpc#2 , (c) -> (
-	       -- print {Q, satpc#1, c};
-	       idealFromCharacter(Q,satpc#1,c)));
-     return satideals;
+     Q := F(monoid [satpc#0#"J"]);
+     return for s in satpc list idealFromCharacter (Q, s);
      )
 
 binomialRadical = I -> (
@@ -527,10 +531,9 @@ cellularBinomialRadical Ideal := Ideal => o -> I -> (
      
      -- Computes the radical of a cellular binomial ideal
      R := ring I;
-     scan (gens R, (v -> v = local v));
      -- Get the partial character of I
      pc := partialCharacter(I, cellVariables=>cv);
-     noncellvars := toList(set (gens R) - pc#0);
+     noncellvars := toList(set (gens R) - pc#"J");
      	       
      M := sub (ideal (noncellvars),R);
      
@@ -553,7 +556,6 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
      -- If both are true then it will return characters.
      
      R := ring I;
-     scan (gens R, (v -> v = local v));
      -- Only proper ideals are considered primary
      if I == ideal(1_R) then return false;      
      
@@ -572,21 +574,20 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
      rad := prerad + M;
      
      -- If the partial character is not saturated, the radical is not prime
-     if image Lsat pc#1 != image pc#1 then (
+     if image Lsat pc#"L" != image pc#"L" then (
 	  print "The radical is not prime, as the character is not saturated";
 	  satpc := saturatePChar pc;
 	  if o#returnPChars then (
 	       -- This one is the fastest, so check it first
-	       return {{satpc#0,satpc#1,satpc#2#0}, {satpc#0,satpc#1,satpc#2#1}}
+	       return {{satpc#0#"J",satpc#0#"L",satpc#0#"c"}, {satpc#0#"J",satpc#0#"L",satpc#1#"c"}}
 	       );
 	  if o#returnPrimes then (
-     	       F := ring satpc#2#0#0;
-     	       S := F[satpc#0];
+     	       F := ring satpc#0#"c"#0;
+     	       S := F(monoid [satpc#0#"J"]);
 	       M = sub(M,S);
-	       ap1 := idealFromCharacter (S,satpc#1,satpc#2#0) + M;
-	       ap2 := idealFromCharacter (S,satpc#1,satpc#2#1) + M;
+	       ap1 := idealFromCharacter (S,satpc) + M;
+	       ap2 := idealFromCharacter (S,satpc) + M;
 	       -- Return two distinct associated primes:
-	       use R;
 	       return {ap1,ap2};
      	       )	   	       
 	  else return false;
@@ -598,7 +599,10 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
      -- standard monomials. 
      
      -- The list of maximally standard monomials:
-     maxstdmon := maxNonCellstdm (I,cellVariables=>cv) / (i -> sub (i,R));
+     maxlist := maxNonCellstdm (I,cellVariables=>cv);
+     -- need to map to R to do colons with I
+     f := map (R, ring maxlist#0);
+     maxstdmon := maxlist / f;
      
      for m in maxstdmon do (
 	  q := I:m;
@@ -609,20 +613,18 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
 	       -- creating some local names:
 	       satqchar := saturatePChar partialCharacter (q,cellVariables=>cv);
 	       if o#returnPChars then(
-		    return {pc, {satqchar#0,satqchar#1,satqchar#2#0}}
+		    return {pc, {satqchar#0#"J",satqchar#0#"L",satqchar#0#"c"}}
 		    );
 	       if o#returnPrimes then (
-		    F := ring satqchar#2#0#0;
-     	       	    S := F[satqchar#0];
+		    F := ring satqchar#0#"c"#0;
+     	       	    S := F(monoid [satqchar#0#"J"]);
 	       	    M = sub(M,S);
-		    ap2 := idealFromCharacter (S,satqchar#1,satqchar#2#0);
-		    use R;
+		    ap2 := idealFromCharacter (S, satqchar);
 		    return {rad, ap2 + M};
      	       	    )
 	       else return false;
 	       );
 	  );
-     use R;
      if o#returnPChars then return {pc};
      if o#returnPrimes then return {rad};
      return true;
@@ -647,7 +649,7 @@ binomialIsPrime Ideal := Ideal => o -> I -> (
      	  );
 
      -- Is the partial character saturated ???     
-     if image Lsat pc#1 != image pc#1 then return false;
+     if image Lsat pc#"L" != image pc#"L" then return false;
      
      -- all tests passed:
      return true;
@@ -713,14 +715,14 @@ binomialMinimalPrimes Ideal := Ideal => o -> I -> (
 	  ME := ideal(toList(set (gens R) - a#1));
 	  pc := partialCharacter (a#0, cellVariables=>a#1);
 	  -- Check whether we have a radical ideal already:
-	  if image Lsat pc#1 == image pc#1 then (
+	  if image Lsat pc#"L" == image pc#"L" then (
 	       si = {a#0};
 	       )
 	  else (
 	       si = satIdeals pc
 	       );
 	  F = coefficientRing ring si#0;
-	  if F === QQ then S = R else S = F[ge];
+	  if F === QQ then S = R else S = F(monoid [ge]);
 	  ME = sub (ME, S);
 	  si = for i in si list sub(i,S);
 	  si = si / (i -> trim (i + ME)); -- Adding monomials;
@@ -728,7 +730,6 @@ binomialMinimalPrimes Ideal := Ideal => o -> I -> (
 	  );
 
      mp = joinCyclotomic mp;
-     use R;
      return mp;
      );
 
@@ -760,6 +761,20 @@ removeEmbedded = l -> (
      return l;
      )
 
+isBetween = (a,b,c) -> (
+     	  -- Checks if a lies between b and c in divisibility order.
+	  -- b and c need not be comparable, or sorted.
+	  if (b%c == 0) then (
+	       -- c divides b
+	       if ( (a%c==0) and (b%a==0)) then return true;
+	       )
+	  else if (c%b == 0) then (
+	       if ( (a%b==0) and (c%a==0)) then return true;
+	       );
+	  -- b and c are not comparable
+	  return false;
+     )
+
 cellularBinomialAssociatedPrimes = method (Options => {cellVariables => null, verbose=>true}) 
 cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> ( 
      -- Computes the associated primes of cellular binomial ideal
@@ -771,53 +786,73 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
      -- Innovation: Use memoize to speed up determination of the associated primes:
      
      R := ring I;
-     scan (gens R, (v -> v = local v));
      
      cv := cellVars(I, cellVariables=>o#cellVariables);
           
      primes := {}; -- This will hold the list of primes
      ncv := toList(set (gens R) - cv); -- non-cell variables x \notin E
-     ml := nonCellstdm(I,cellVariables=>cv); -- List of std monomials in ncv
+     stdm := nonCellstdm(I,cellVariables=>cv); -- List of std monomials in ncv
      -- mapping to R:
-     ml = ml / ( m -> sub (m,R) );
+     f := map (R, ring stdm);
+     ml := flatten entries f stdm;
      
      if o#verbose then(
 	  if #ml == 1 then << "1 monomial to consider for this cellular component " << endl
      	  else <<  #ml << " monomials to consider for this cellular component" << endl;
 	  );
 
+     -- Saves all witness monomials for a given partialCharacter
      seenpc := new MutableHashTable;
 
      -- A dummy ideal and partial Characters:
      Im := ideal;
      pC := {}; sat := {};
-     for m in ml do (
+     -- save 1 as the bottom witness
+     seenpc#(partialCharacter (I, cellVariables=>cv))={1_R};
+     todolist := delete(1_R, ml);
+     -- While we have monomials to check
+     while #todolist > 0 do (
+--	  print ("On todolist: " | toString (#todolist));
+	  -- sample a random monomial:
+	  i := random(0, #todolist-1);
+	  m := todolist#i;
 	  Im = I:m;
 	  pC = partialCharacter(Im, cellVariables=>cv);
-	  -- Skip if we already had this character
-	  if seenpc#?pC then continue
-	  else seenpc#pC = true;
-	  if pC#1 == 0 then (
-	       primes = primes | {ideal(0_R)}; 
-	       continue;
-	       );
-	  if image Lsat pC#1 == image pC#1 then (
-	       sat = {Im};
+	  if seenpc#?pC then (
+	       -- We have seen this lattice: Time to prune the todolist
+--	       print ("Todolist items before: " | toString (#todolist));
+	       for n in seenpc#pC do (
+		    todolist = select (todolist , (mm -> not isBetween (mm, n, m))
+		    ));
+--	       print ("Todolist items after: " | toString (#todolist));
+	       -- add m to the pruning list
+	       todolist = delete(m, todolist);
+	       addmon := true;
+	       for mmm in seenpc#pC do if m%mmm==0 then (addmon = false; break);
+	       if addmon then seenpc#pC = seenpc#pC | {m};
+--	       print (#(seenpc#pC));
+	       )   
+	  else (
+	       -- a new associated lattice
+	       seenpc#pC = {m};
+	       todolist = delete(m, todolist);
+	       )
+	  );
+--     print ("Todolist items: " | toString (#todolist));
+     for pc in keys seenpc do (
+	  sat = satIdeals pc;
+	  -- If the coefficientRing is QQ, we map back to R
+	  F := coefficientRing ring sat#0;
+	  if F === QQ then (
+	       f = map (R, ring sat#0);
+	       sat = sat / f ;
 	       )
 	  else (
-	       sat = satIdeals pC;
-	       -- If the coefficientRing is QQ, we map back to R
-	       F := coefficientRing ring sat#0;
-	       if F === QQ then (
-		    sat = sat / ((p) -> sub(p,R));
-		    )
-	       else (
-		    -- otherwise to the extended ring
-		    -- this is necessary since satIdeals does not know about the non-cell variables
-		    ge := gens R;
-		    S := F[ge];
-		    sat = sat / ((p) -> sub(p,S));
-		    );
+	       -- otherwise to the extended ring
+	       -- this is necessary since satIdeals does not know about the non-cell variables
+	       S := F monoid R;
+	       f = map (S, ring sat#0);
+	       sat = sat / f;
 	       );
 	  primes = primes | sat;
 	  );
@@ -827,7 +862,6 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
      M := sub (ideal ncv, ring primes#0);
      primes = primes / (I -> I + M);
 
-     use R;
      -- Computation of mingens is necessary as unique or toList + set combi won't do without
      return unique (ideal \ mingens \ primes);
      )
@@ -858,15 +892,15 @@ cellularAssociatedLattices Ideal := Ideal => o -> I -> (
      -- Todo: Can we get the multiplicities too ?
      
      R := ring I;
-     scan (gens R, (v -> v = local v));
      cv := cellVars(I, cellVariables=>o#cellVariables);
      lats := {}; -- This will hold the list of lattices
      coeffs := {}; -- This will hold the values of the characters
      ncv := toList(set (gens R) - cv); -- non-cell variables x \notin E
      -- print "Noncellvars"; print ncv;
-     ml := nonCellstdm(I,cellVariables=>cv); -- List of std monomials in ncv
+     ml := flatten entries nonCellstdm(I,cellVariables=>cv); -- List of std monomials in ncv
      -- Coercing to R:
-     ml = ml / ( m -> sub (m,R) );
+     f := map (R, ring ml#0);
+     ml = ml/f;
      -- A dummy ideal and partial Characters:
      Im := ideal;
      pc := {};
@@ -878,22 +912,71 @@ cellularAssociatedLattices Ideal := Ideal => o -> I -> (
 	  -- We already know the cell variables in the following computation
 	  pc = partialCharacter(Im, cellVariables=>cv);
 	  if #lats == 0 then (
-	       lats = {pc#1};
-	       coeffs = {pc#2};
+	       lats = {pc#"L"};
+	       coeffs = {pc#"c"};
 	       continue;
 	       )
 	  else (
 	       redundant = false;
-	       scan (lats, (l -> (if image l == image pc#1 then redundant = true)))
+	       scan (lats, (l -> (if image l == image pc#"L" then redundant = true)))
      	       );
 	  if redundant then continue
 	  else (
-	       lats = lats | {pc#1};
-	       coeffs = coeffs | {pc#2};
+	       lats = lats | {pc#"L"};
+	       coeffs = coeffs | {pc#"c"};
 	       );
       	  ); -- for m in ml	    
      return {cv, lats, coeffs};
      ) -- CellularAssociatedLattices
+
+cellularEmbeddedLatticeWitnesses = method (Options => {cellVariables => null})
+cellularEmbeddedLatticeWitnesses Ideal := Ideal => o -> I -> (
+     -- Given an ideal whose radical is prime this function will produce
+     -- witness monomials for embedded lattices.
+     -- Throw in these monomials to get rid of additional associated primes,
+     -- i.e. compute Hull.
+
+     R := ring I;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
+     witnesses := {};
+     lats := {}; -- This will hold the list of lattices
+     ncv := toList(set (gens R) - cv); -- non-cell variables x \notin E
+     -- print "Noncellvars"; print ncv;
+     ml := flatten entries nonCellstdm(I,cellVariables=>cv); -- List of std monomials in ncv
+     -- Should be sorted by total degree to make the shortcut heuristics optimal.
+     ml = sort(ml, DegreeOrder=>Ascending);
+     -- Coercing to R:
+     f := map (R, ring ml#0);
+     ml = ml / f;
+     -- A dummy ideal and partial Characters:
+     Im := ideal;
+     pc := {};
+     redundant := true;
+     bottomlattice := partialCharacter (I, cellVariables=>cv);
+     -- For each monomial, check if I:m has a different lattice !
+     todolist := ml;
+--     print ("Number of monomials to consider : " | toString (#todolist));
+     while (#todolist > 0) do (
+	  i := random(0, #todolist-1); -- a random monomial
+	  m := todolist#i;
+	  -- Now two possibilities:
+	  -- if m witnesses an embedded lattice: Remove everything that is above m;
+	  Im = I:m;
+	  pc = partialCharacter(Im, cellVariables=>cv);
+	  if (image pc#"L" == image bottomlattice#"L") then (
+	       -- m is the same like 1. Remove everything between them
+	       todolist = select (todolist, (mm) -> not isBetween(mm, 1,m))
+	       )
+	  else (
+	       -- found a witness
+	       witnesses = witnesses | {m};
+	       todolist = for t in todolist list if t%m==0 then continue else t
+	       );
+--	  print ("Number of monomials to consider : " | toString (#todolist));
+	  ); -- while
+     return witnesses;
+     ) -- cellularEmbeddedLatticeWitnesses
+
 
 BCDisPrimary = I -> (
      print "Computing Cellular Decomposition";
@@ -912,25 +995,36 @@ BCDisPrimary = I -> (
      return cd;
      )
 
+
 minimalPrimaryComponent = method (Options => {cellVariables => null})
 minimalPrimaryComponent Ideal := Ideal => o -> I -> (
      -- Input a cellular binomial ideal whose radical is prime.
      -- Ouptut, generators for Hull(I)
-     
+
      cv := cellVars(I, cellVariables=>o#cellVariables);
      if cv === false then error "Input to minimalPrimaryComponent was not cellular!";
-     
+
+     return I + ideal (cellularEmbeddedLatticeWitnesses (I, cellVariables=>cv));
+     )
+
+minimalPrimaryComponent2 = method (Options => {cellVariables => null})
+minimalPrimaryComponent2 Ideal := Ideal => o -> I -> (
+     -- Input a cellular binomial ideal whose radical is prime.
+     -- Ouptut, generators for Hull(I)
+
+     cv := cellVars(I, cellVariables=>o#cellVariables);
+     if cv === false then error "Input to minimalPrimaryComponent was not cellular!";
+
      apc := binomialIsPrimary (I, returnPChars=>true, cellVariables => cv);
      if #apc == 1 then return I -- radical is only associated prime!
      else (
 	  R := ring I;
 	  CoeffR := coefficientRing R;
 	  -- A trick to not clobber the global variables
-	  scan (gens R, (v -> v = local v));
-	  
+
      	  pc1 := apc#0;
 	  pc2 := apc#1;
-	 
+
 	  -- ap#0 and ap#1 correspond to 
 	  -- distinct lattices L1 and L2
 	  L1 := image pc1#1;
@@ -952,12 +1046,12 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
 	       	    if pc1#2#i == pc2#2#i then continue
 	       	    else (
 		    	 -- Character differs. Form binomial:
-		    	 b = makeBinomial (CoeffR[pc2#0], (entries transpose pc2#1)#i, pc2#2#i );
+		    	 b = makeBinomial (CoeffR(monoid [pc2#0]), (entries transpose pc2#1)#i, pc2#2#i );
 		    	 break;
 		    	 );
 	       	    );
 	       -- Take the quotient of I with respect to b, such that the result is binomial
-	       return minimalPrimaryComponent (binomialQuotient (I,b, cellVariables=>cv), cellVariables=>cv);
+	       return minimalPrimaryComponent2 (binomialQuotient (I,b, cellVariables=>cv), cellVariables=>cv);
 	       )
        	   else (
 		-- The case of infinite index :
@@ -981,11 +1075,10 @@ minimalPrimaryComponent Ideal := Ideal => o -> I -> (
 		      i = i+1;
 		      );
      	         -- now i has the suitable index !
-		 b = makeBinomial(CoeffR[pc2#0], L2cols#i, pc2#2#i);
+		 b = makeBinomial(CoeffR(monoid [pc2#0]), L2cols#i, pc2#2#i);
 	    	 -- Take the quotient of I with respect to b, such that the result is binomial
-	    	 return minimalPrimaryComponent (binomialQuotient (I,b, cellVariables=>cv), cellVariables=>cv);
+		 return minimalPrimaryComponent2 (binomialQuotient (I,b, cellVariables=>cv), cellVariables=>cv);
 	    	 );
-       	    use R;
 	    ) -- else path of if not binomialIsPrimary
      ) -- minimalPrimaryComponent
 
@@ -1003,20 +1096,20 @@ binomialQuotient = {cellVariables => null} >> o -> (I,b) -> (
      quot :=  quotient (I , sub(ideal(b),R));
      if isBinomial quot then return quot;
      
-     scan (gens R, (v -> v = local v));
      cv := cellVars(I, cellVariables=>o#cellVariables);
      ncv := toList(set (gens R) - cv); -- non-cell variables x \notin E
  
      --Transporting the standardmonomials to R:
-     ncvm := (i -> sub (i,R) ) \ nonCellstdm (I,cellVariables=>cv) ;
-     -- print ncvm;
+     stdm := nonCellstdm (I,cellVariables=>cv);
+     f := map (R, ring stdm#0);
+     ncvm := stdm / f ;
   
      U' := {}; -- U' as in the paper
      D  := {};
      J := ideal (0_R); -- initialize with zero ideal
      -- We map b to the correct ring to extract exponents:
      CoeffR := coefficientRing R;
-     S := CoeffR[cv]; -- k[\delta] in the paper
+     S := CoeffR(monoid [cv]); -- k[\delta] in the paper
      bexp := (exponents sub(b,S))#0 - (exponents sub(b,S))#1; -- exponent vector of b
      -- We will often need the image of bexp, so lets cache it
      bexpim := image transpose matrix {bexp};
@@ -1031,18 +1124,18 @@ binomialQuotient = {cellVariables => null} >> o -> (I,b) -> (
 	  pc = partialCharacter (quot, cellVariables=>cv);
 	  	  
 	  --determine whether the exponents of b are in the saturated lattice
-	  if isSubset (bexpim, image Lsat pc#1) then (
+	  if isSubset (bexpim, image Lsat pc#"L") then (
      	       U' = U' | {m};
 	       i := 1;
 	       -- Computing the order of bexp in Lsat / L
 	       while true do (
-		    if isSubset (image transpose matrix {i * bexp} , image pc#1) then (
+		    if isSubset (image transpose matrix {i * bexp} , image pc#"L") then (
 			 D = D | {i};
 			 break;
 			 )
 		    else i = i+1;
 		    );
-	       -- print ("The order of " | toString bexp | "in " | toString image pc#1 | "is " | toString i);
+	       -- print ("The order of " | toString bexp | "in " | toString image pc#"L" | "is " | toString i);
 	       -- print D;
 	       );
 	  ); -- loop over monomials
@@ -1131,7 +1224,6 @@ binomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
       
      bpd = joinCyclotomic bpd;
      if vbopt then print "Removing redundant components...";
-     use ring I;
      return removeRedundant (bpd, verbose=>vbopt );
      )
 
@@ -1140,10 +1232,8 @@ cellularBinomialUnmixedDecomposition Ideal := Ideal => o -> I -> (
      -- computes the unmixed decomposition of a cellular ideal
      -- I needs to be cellular. Cell variables can be given to speed up
      -- Implements algorithm 9.7 in ES96, respectively A5 in OS97
-     cv := null;
      vbopt := o#verbose;
-     if o#cellVariables === null then cv = cellVars I
-     else cv = o#cellVariables;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
      ncv := toList (set gens ring I - cv);
      
      -- Get the associated lattices (or better characters)
@@ -1190,7 +1280,7 @@ cellularBinomialUnmixedDecomposition Ideal := Ideal => o -> I -> (
 	  i = i+1;
 	  );
      -- now i contains a suitable index
-     b := sub(makeBinomial(CoeffR[cv], L2cols#i, l2#1#i), R);
+     b := sub(makeBinomial(CoeffR(monoid [cv]), L2cols#i, l2#1#i), R);
      
      -- We can't follow Section 4.1 of Ojeda/Sanchez because there is no 
      -- effictive criterion to decide that mb^[e] will never lie in I, no
@@ -1220,24 +1310,23 @@ cellularBinomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
      -- computes the binomial primary decomposition of a cellular ideal
      -- I needs to be cellular. Cell variables can be given to speed up
      -- Implements algorithm 9.7 in ES96, respectively A5 in OS97
-     ap := {};
-     cv := null;
      vbopt := o#verbose;
-     if o#cellVariables === null then cv = cellVars I
-     else cv = o#cellVariables;
+     cv := cellVars(I, cellVariables=>o#cellVariables);
      ncv := toList (set gens ring I - cv);
-     ap = cellularBinomialAssociatedPrimes (I, cellVariables => cv,verbose=>vbopt);
+     ap := cellularBinomialAssociatedPrimes (I, cellVariables => cv,verbose=>vbopt);
      -- Projecting down the assoc. primes, removing monomials
-     sub2apring := (v) -> (sub (v, ring ap#0));
-     proj := (II) -> eliminate (sub2apring \ ncv,II); 
-     pap := ap / proj ;
+     if #ncv>0 then (
+     	  f := map (ring ap#0, ring ncv#0);
+     	  proj := (II) -> eliminate (f \ ncv,II);
+     	  ap = ap / proj ;
+	  );
      R := ring ap#0; -- All associated primes live in a common ring
      J := sub (I,R); -- get I over there to compute sums
+     mJ := sub (ideal product cv, R);
      -- Here, contrary to what is stated in ES'96, we can not assume that J+P is cellular.
      -- However, since Hull only wants the minimal primary component we can cellularize!
      -- TODO: Can this be skipped in some cases to be predetermined?
-     use ring I;
-     return pap / ( (P) -> minimalPrimaryComponent ( saturate (P + J , sub (ideal product cv, R)), cellVariables=>cv));
+     return ap / ( (P) -> minimalPrimaryComponent ( saturate (P + J , mJ), cellVariables=>cv));
      )
 
 removeRedundant = method (Options => {verbose => true})
@@ -1899,9 +1988,7 @@ document {
      Inputs => {
           "I" => { "a cellular binomial ideal"} },
      Outputs => {
-          "cv" => {"the cellular variables"},
-	  "L" => {"A matrix whose columns are generators for the lattice supporting the character"},
-	  "c" => {"The values that the character takes on the generator"}},
+          "pc" => {"the ", TO PartialCharacter, }},
      "If the cell variables are known, they can be given via the option ", TO cellVariables, " otherwise they are computed.",
      EXAMPLE {
 	  "R = QQ[x,y]",
@@ -2009,12 +2096,29 @@ document {
      }
 
 
+document {
+     Key => PartialCharacter,
+     Headline => "the class of all partial characters",
+     
+     "In ", TO Binomials , " the partial character of a cellular binomial ideal is given as an object of class,", TT "PartialCharacter", "which is
+     given with the following three descriptions:",
+     
+     UL {
+	  {"J the cellular variables"},
+	  {"L a matrix whose colmns are generators for the lattice"},
+	  {"c the values that the character takes on the generator"},
+    
+         }
+        
+     }
+
+
 --     -- tests
 
 TEST ///
 R = QQ[a..f]
 I = ideal(b*c-d*e,b*e*f-a*c,a*d*f-d*e,a*b*f-c*d,d^2*e-e,a*d*e-d*e,a*c*e-d*f) 
-time bpd = BPD I;
+bpd = BPD I;
 assert (intersect bpd == sub(I,ring bpd#0))
 ///
 
@@ -2032,4 +2136,27 @@ I = ideal (U00*R01-R00*U10,R01*D11-D01*R00,D11*L10-L11*D01,
 	   D12*L11-L12*D02,L11*U01-U11*L12);
 bpd = BPD I;
 assert (intersect bpd == I)
+///
+
+TEST ///
+R = QQ[a..h]
+I = ideal(d*g*h-e*g*h,a*b*g-c*f*h,a*b*c-e*g*h,c*f*h^2-d*f,e^2*g*h-d*h,b*d*f*h-c*g,a*d*f*g-c*e,b*c*e*g-a*f,a*b*e*f-c*d);
+bpd = binomialPrimaryDecomposition (I,verbose=>false);
+assert (intersect bpd == I); 
+///
+
+TEST ///
+-- Cyclotomic stuff
+R = QQ[x,y,z]; I = ideal (x^2*y-z^2, x^2-z^3, y^4-1); 
+bpd = BPD (I,verbose=>false);
+assert (intersect bpd == sub(I, ring bpd#0));
+///
+
+TEST ///
+-- Unmixed Decomposition
+R = QQ[x,y,z];
+I = ideal (x^2, y^2, x*y, x*(z^3-1), y*(z^2-1))
+bud = BUD (I, verbose=>false);
+assert(intersect bud == I);
+assert(dim \ flatten (associatedPrimes \ bud) == {1,0,0,0})
 ///
