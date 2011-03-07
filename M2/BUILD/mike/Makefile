@@ -120,8 +120,6 @@ opt64-ubuntu : always
 	cd opt;	../../../configure \
 		--prefix="`pwd`/installed" \
 		--build=x86_64-unknown-linux-gnu \
-		--enable-tarfile \
-		--enable-scscp \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
 
@@ -130,8 +128,6 @@ icc-ubuntu64 :
 	cd icc-opt; ../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="icc" CXX="icpc" \
-		--enable-tarfile \
-		--enable-scscp \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
   # ntl hangs on ./MakeDesc, so workaround:
