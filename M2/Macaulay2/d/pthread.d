@@ -14,6 +14,7 @@ export taskStarted(tp:taskPointer) ::=Ccode(int, "taskStarted(",tp,")")==1;
 pushTask(tp:taskPointer) ::=Ccode(void, "pushTask(",tp,")");
 taskResult(tp:taskPointer) ::=Ccode(voidPointer, "taskResult(",tp,")");
 export taskKeepRunning(tp:taskPointer) ::= Ccode(int, "taskKeepRunning(",tp,")")==1;
+export taskRunning(tp:taskPointer) ::= Ccode(int, "taskRunning(",tp,")")==1;
 taskInterrupt(tp:taskPointer) ::= Ccode(void, "taskInterrupt(",tp,")");
 taskAddCancelTask(tp:taskPointer, cancel:taskPointer) ::=Ccode(void, "addCancelTask(",tp,",",cancel,")");
 taskAddStartTask(tp:taskPointer, start:taskPointer) ::=Ccode(void, "addStartTask(",tp,",",start,")");

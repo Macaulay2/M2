@@ -116,6 +116,10 @@ extern "C" {
   {
     return task->m_KeepRunning;
   }
+  int taskRunning(struct ThreadTask* task)
+  {
+    return task->m_Running;
+  }
   void taskInterrupt(struct ThreadTask* task)
   {
     threadSupervisor->_i_cancelTask(task);
@@ -162,7 +166,7 @@ extern "C" {
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task):
-  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL),m_IsM2Task(isM2Task),m_ReadyToRun(false)
+  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL),m_IsM2Task(isM2Task),m_ReadyToRun(false),m_Running(false)
 {
    if(pthread_cond_init(&m_FinishCondition,NULL))
     abort();
@@ -339,9 +343,16 @@ void ThreadTask::run(SupervisorThread* thread)
     }
   m_CurrentThread=thread;
   m_Started = true;
+  m_Running=true;
   m_Mutex.unlock();
   m_Result = m_Func(m_UserData);
   m_Mutex.lock();
+  m_Running=false;
+  if(!m_KeepRunning)
+    {
+      m_Mutex.unlock();
+      return;
+    }
   m_Done = true;
   m_CurrentThread=NULL;
   threadSupervisor->_i_finished(this);

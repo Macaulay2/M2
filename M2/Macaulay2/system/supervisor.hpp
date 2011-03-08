@@ -54,6 +54,8 @@ struct ThreadTask
   bool m_KeepRunning;
   ///Is the task ready to run (queued, no deps, etc)
   bool m_ReadyToRun;
+  ///Is the task currently running
+  bool m_Running;
   ///tasks to cancel upon completion
   std::set<ThreadTask*> m_CancelTasks;
   ///tasks to start upon completion

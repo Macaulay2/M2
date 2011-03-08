@@ -53,6 +53,10 @@ extern "C" {
   **/
   extern int taskKeepRunning(struct ThreadTask* task);
   /**
+     Returns 1 if the task is running, 0 otherwise
+  **/
+  extern int taskRunning(struct ThreadTask* task);
+  /**
      Interrupt the task
    **/
   extern void taskInterrupt(struct ThreadTask* task);
