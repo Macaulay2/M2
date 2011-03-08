@@ -2158,5 +2158,4 @@ R = QQ[x,y,z];
 I = ideal (x^2, y^2, x*y, x*(z^3-1), y*(z^2-1))
 bud = BUD (I, verbose=>false);
 assert(intersect bud == I);
-assert(dim \ flatten (associatedPrimes \ bud) == {1,0,0,0})
 ///
