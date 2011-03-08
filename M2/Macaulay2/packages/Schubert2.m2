@@ -310,7 +310,7 @@ abstractVarietyMap(AbstractVariety,AbstractVariety,MethodFunction,MethodFunction
 	  if (lookup(pullback,QQ) === null) then (pullback QQ := a -> promote(a,SrcRing));
 	  pullback AbstractSheaf := E -> (	      
 	       if variety E =!= Targ then "pullback: variety mismatch";
-	       if E.?ChernCharacter and E.?ChernClass then (
+	       if E.?ChernCharacter and E.?cache and E.cache.?ChernClass then (
 		    abstractSheaf(Src,
 			 Rank => rank E,
 			 ChernClass => pullback chern E,
@@ -319,11 +319,11 @@ abstractVarietyMap(AbstractVariety,AbstractVariety,MethodFunction,MethodFunction
 		    	 abstractSheaf(Src,
 			      Rank => rank E,
 			      ChernCharacter => pullback ch E)
-		    ) else if E.?ChernClass then (
+		    ) else (
 		    	 abstractSheaf(Src,
 			      Rank => rank E,
 			      ChernClass => pullback chern E)
-		    ) else error "somehow trying to pull back a bundle with no Chern class or Chern character"
+		    )
 	       );
 	  );
      if (opts.TangentBundle =!= null) then f.TangentBundle = opts.TangentBundle else (
