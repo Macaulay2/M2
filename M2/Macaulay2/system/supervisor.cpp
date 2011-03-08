@@ -50,8 +50,15 @@ extern "C" {
   void pushTask(struct ThreadTask* task)
   {
     threadSupervisor->m_Mutex.lock();
+    task->m_Mutex.lock();
+    if(task->m_ReadyToRun)
+      {
+	task->m_Mutex.unlock();
+	return;
+      }
     if(task->m_Dependencies.empty())
       {
+	task->m_ReadyToRun=true;
 	threadSupervisor->m_ReadyTasks.push_back(task);
       }
     else
@@ -59,6 +66,7 @@ extern "C" {
 	threadSupervisor->m_WaitingTasks.push_back(task);
       }
     pthread_cond_signal(&threadSupervisor->m_TaskWaitingCondition);
+    task->m_Mutex.unlock();
     threadSupervisor->m_Mutex.unlock();
   }
   void delThread(pthread_t thread)
@@ -154,7 +162,7 @@ extern "C" {
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task):
-  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL),m_IsM2Task(isM2Task)
+  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL),m_IsM2Task(isM2Task),m_ReadyToRun(false)
 {
    if(pthread_cond_init(&m_FinishCondition,NULL))
     abort();
@@ -253,6 +261,12 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 {
   m_Mutex.lock();
   task->m_Mutex.lock();
+  if(task->m_ReadyToRun)
+    {
+      task->m_Mutex.unlock();
+      m_Mutex.unlock();
+      return;
+    }
   if(!task->m_Dependencies.empty())
     {
       if(!launcher)
@@ -275,6 +289,7 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 	}
     }
   m_WaitingTasks.remove(task);
+  task->m_ReadyToRun=true;
   m_ReadyTasks.push_back(task);
   if(pthread_cond_signal(&m_TaskWaitingCondition))
     abort();
