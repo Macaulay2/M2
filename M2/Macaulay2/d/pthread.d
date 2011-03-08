@@ -172,8 +172,9 @@ setupfun("schedule",schedule);
 
 taskResult(e:Expr):Expr := (
      when e is c:TaskCell do
-     if c.body.resultRetrieved then buildErrorPacket("thread result already retrieved")
-     else if !taskDone(c.body.task) then buildErrorPacket("thread not done yet")
+     if c.body.resultRetrieved then buildErrorPacket("task result already retrieved")
+     else if !taskKeepRunning(c.body.task) then buildErrorPacket("task canceled")
+     else if !taskDone(c.body.task) then buildErrorPacket("task not done yet")
      else (
 	  r := c.body.returnValue;
 	  c.body.returnValue = nullE;
