@@ -585,8 +585,8 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
      	       F := ring satpc#0#"c"#0;
      	       S := F(monoid [satpc#0#"J"]);
 	       M = sub(M,S);
-	       ap1 := idealFromCharacter (S,satpc) + M;
-	       ap2 := idealFromCharacter (S,satpc) + M;
+	       ap1 := idealFromCharacter (S,satpc#0) + M;
+	       ap2 := idealFromCharacter (S,satpc#1) + M;
 	       -- Return two distinct associated primes:
 	       return {ap1,ap2};
      	       )	   	       
