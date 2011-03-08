@@ -94,11 +94,11 @@ extern "C" {
   }
   int taskDone(struct ThreadTask* task)
   {
-    return task->m_Done;
+    return task && task->m_Done;
   }
   int taskStarted(struct ThreadTask* task)
   {
-    return task->m_Started;
+    return task && task->m_Started;
   }
   void* taskResult(struct ThreadTask* task)
   {
