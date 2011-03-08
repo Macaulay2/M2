@@ -12,7 +12,8 @@ newPackage(
 	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
-    	Headline => "computations of characteristic classes for varieties without equations"
+    	Headline => "computations of characteristic classes for varieties without equations",
+        DebuggingMode => true
     	)
 
 needsPackage "SchurRings"
@@ -32,7 +33,8 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base", 
      "toSchubertBasis", "Correspondence", "IncidenceCorrespondence", "intermediates",
      "incidenceCorrespondence","SchubertRing",
-     "tautologicalLineBundle", "bundles", "schubertRing"}
+     "tautologicalLineBundle", "bundles", "schubertRing",
+     "DefaultPushForward", "DefaultPullBack", "abstractVarietyMap"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
 protect ChernCharacter
@@ -99,31 +101,47 @@ AbstractVarietyMap#{Standard,AfterPrint} = f -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "a map to " << target f << " from " << source f << endl;
      )
-AbstractVarietyMap * AbstractVarietyMap := AbstractVarietyMap => (f,g) -> new AbstractVarietyMap from {
-     symbol source => source g,
-     symbol target => target f,
-     PullBack => g.PullBack @@ f.PullBack,
-     PushForward => f.PushForward @@ g.PushForward,	    -- may not be efficient
-     if g.?SectionClass and f.?SectionClass then SectionClass => g.SectionClass * g.PullBack f.SectionClass
-     }
+AbstractVarietyMap * AbstractVarietyMap := AbstractVarietyMap => (f,g) -> (
+     SrcRing := intersectionRing source g;
+     TargRing := intersectionRing target f;
+     if target g =!= source f then error: "maps not composable";
+     useDefaultPullBack := (f.?DefaultPullBack) and (f.DefaultPullBack) and (g.?DefaultPullBack) and (g.DefaultPullBack);
+     useDefaultPushForward := (f.?DefaultPushForward) and (f.DefaultPushForward) and (g.?DefaultPushForward) and (g.DefaultPushForward);
+     sec := if g.?SectionClass and f.?SectionClass and (lookup(g^*, AbstractSheaf) =!= null) then g.SectionClass * g^* f.SectionClass else null;
+     tbundle := if f.?TangentBundle and g.?TangentBundle and (lookup(g^*, AbstractSheaf) =!= null) then g^*(tangentBundle f) - tangentBundle g else null;
+     pbmethod := method();
+     pbmethod TargRing := a -> g^* f^* a;
+     if not useDefaultPullBack then (
+	  if(lookup(g^*,ZZ) =!= null) and (lookup(f^*, ZZ) =!= null) then pbmethod ZZ := a -> g^* f^* a;
+	  if(lookup(g^*,QQ) =!= null) and (lookup(f^*, QQ) =!= null) then pbmethod QQ := a -> g^* f^* a;	  
+	  if(lookup(g^*,AbstractSheaf) =!= null) and (lookup(f^*, AbstractSheaf) =!= null) then pbmethod AbstractSheaf := E -> g^* f^* E;
+	  );
+     pfmethod := method();
+     pfmethod SrcRing := a -> f_* g_* a;
+     if (lookup(f_*, ZZ) =!= null) and (lookup(g_*,ZZ) =!= null) then pfmethod ZZ := a -> f_* g_* a;
+     if (lookup(f_*, QQ) =!= null) and (lookup(g_*,QQ) =!= null) then pfmethod QQ := a -> f_* g_* a;
+     if not useDefaultPushForward and (lookup(g_*,AbstractSheaf) =!= null) and (lookup(f_*, AbstractSheaf) =!= null) then
+     	  pfmethod AbstractSheaf := E -> f_* g_* E;
+     abstractVarietyMap(target f, source g, pbmethod, pfmethod,
+	  DefaultPullBack => useDefaultPullBack,
+	  DefaultPushForward => useDefaultPushForward,
+	  SectionClass => sec,
+	  TangentBundle => tbundle)
+     )
 
 map(FlagBundle,AbstractVarietyMap,List) := AbstractVarietyMap => x -> notImplemented()
 map(FlagBundle,AbstractVariety,List) := AbstractVarietyMap => x -> notImplemented()
 AbstractVariety#id = (X) -> (
      R := intersectionRing X;
      idmap := id_R;
-     pullback := method();
-     pullback ZZ := pullback QQ := pullback R := z -> idmap z;
-     pullback AbstractSheaf := E -> (
-	  if variety E =!= X then error "pullback: variety mismatch";
-	  E);
-     new AbstractVarietyMap from {
-     symbol source => X,
-     symbol target => X,
-     PullBack => pullback,
-     PushForward => identity,
-     SectionClass => 1_(intersectionRing X)
-     })
+     pushforward := method();
+     pushforward ZZ := pushforward QQ := pushforward R := a -> a;
+     pushforward AbstractSheaf := E -> E;
+     abstractVarietyMap(X,X,idmap,pushforward,
+	  DefaultPushForward => false,
+	  SectionClass => 1_R,
+	  TangentBundle => abstractSheaf(X,Rank => 0, ChernClass => 1_R, ChernCharacter => 0_R))
+     )
 AbstractVariety / AbstractVariety := AbstractVarietyMap => (X,S) -> (
      maps := while X =!= S and X.?StructureMap list (f := X.StructureMap; X = target f; f);
      if #maps == 0 then id_X
@@ -259,6 +277,68 @@ abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
 	  else x -> (hold integral) part(d,x)
 	  );	  
      A.Variety = new opts#ReturnType from { global dim => d, IntersectionRing => A })
+
+-- The DefaultPullBack option has two effects:
+-- 1) if the given pullback method does not provide a method for pulling back integers and rationals, it installs the default one (promotion)
+-- 2) the default pullback method for sheaves is installed (pulling back chern classes/characters)
+--    Note: this OVERRIDES any special method for pullbacks; you must set this option to false if you want to give your own method
+-- The DefaultPushForward option is the same, except only part (2) above applies.
+abstractVarietyMap = method(TypicalValue => AbstractVarietyMap, Options => {DefaultPullBack => true, DefaultPushForward => true, SectionClass => null, TangentBundle => null})
+abstractVarietyMap(AbstractVariety,AbstractVariety,RingMap,MethodFunction) := opts -> (Targ,Src,pullback,pushforward) -> (
+     TargRing := intersectionRing Targ;
+     if TargRing =!= source pullback then error "Pullback ring map has wrong source";
+     if (intersectionRing Src) =!= target pullback then error "Pullback ring map has wrong target";
+     pbmethod := method();
+     pbmethod TargRing := a -> pullback a;
+     abstractVarietyMap(Targ,Src,pbmethod,pushforward, opts)
+     )
+abstractVarietyMap(AbstractVariety,AbstractVariety,MethodFunction,MethodFunction) := opts -> (Targ,Src,pullback,pushforward) -> (
+     f := new AbstractVarietyMap from {
+	  global source => Src,
+	  global target => Targ,
+	  PullBack => pullback,
+	  PushForward => pushforward,
+	  DefaultPushForward => opts.DefaultPushForward,
+	  DefaultPullBack => opts.DefaultPullBack
+	  };
+     if (opts.SectionClass =!= null) then f.SectionClass = opts.SectionClass;
+     SrcRing := intersectionRing Src;
+     TargRing := intersectionRing Targ;
+     if opts.DefaultPullBack then (
+     	  if (lookup(pullback,TargRing) === null) then error "Expected pullback map to have a method for acting on intersection ring of target";
+	  if (lookup(pullback,ZZ) === null) then (pullback ZZ := a -> promote(a,SrcRing));
+	  if (lookup(pullback,QQ) === null) then (pullback QQ := a -> promote(a,SrcRing));
+	  pullback AbstractSheaf := E -> (	      
+	       if variety E =!= Targ then "pullback: variety mismatch";
+	       if E.?ChernCharacter and E.?ChernClass then (
+		    abstractSheaf(Src,
+			 Rank => rank E,
+			 ChernClass => pullback chern E,
+			 ChernCharacter => pullback ch E)
+		    ) else if E.?ChernCharacter then (
+		    	 abstractSheaf(Src,
+			      Rank => rank E,
+			      ChernCharacter => pullback ch E)
+		    ) else if E.?ChernClass then (
+		    	 abstractSheaf(Src,
+			      Rank => rank E,
+			      ChernClass => pullback chern E)
+		    ) else error "somehow trying to pull back a bundle with no Chern class or Chern character"
+	       );
+	  );
+     if (opts.TangentBundle =!= null) then f.TangentBundle = opts.TangentBundle else (
+	  --next line is ugly because we directly access hash table of Src and Targ, which we shouldn't be making structural assumptions about
+	  if Src.?TangentBundle and Targ.?TangentBundle and (lookup(pullback,AbstractSheaf) =!= null) then
+	       f.TangentBundle = tangentBundle f;
+	  );
+     if opts.DefaultPushForward then (
+     	  if (lookup(pushforward,SrcRing) === null) then error "Expected pushforward map to have a method for acting on intersection ring of source";
+     	  if (f.?TangentBundle) then pushforward AbstractSheaf := E -> (
+	       if variety E =!= Src then "pushforward: variety mismatch";
+	       abstractSheaf(Targ,ChernCharacter => pushforward (ch E * todd tangentBundle f)));
+	       );
+     f
+     )
 
 tangentBundle = method(TypicalValue => AbstractSheaf)
 cotangentBundle = method(TypicalValue => AbstractSheaf)
@@ -548,29 +628,17 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      --FV.TautologicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
      pullback := method();
      pushforward := method();
-     pullback ZZ := pullback QQ := r -> promote(r,C);
      pullback S := r -> H promote(F promote(r,U), B);
      sec := if n === 0 then 1_C else product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      pushforward C := r -> coefficient(sec,r);
-     pullback AbstractSheaf := E -> (
-	  if variety E =!= X then "pullback: variety mismatch";
-	  abstractSheaf(FV,Rank => rank E, ChernClass => pullback chern E));
-     p := new AbstractVarietyMap from {
-	  global target => X,
-	  global source => FV,
-	  SectionClass => sec,
-	  PushForward => pushforward,
-	  PullBack => pullback
-	  };
-     FV.StructureMap = p;
-     pushforward AbstractSheaf := E -> (
-	  if variety E =!= FV then "pushforward: variety mismatch";
-	  abstractSheaf(X,ChernCharacter => pushforward (ch E * todd p)));
-     integral C := r -> integral p_* r;
-     FV.StructureMap.TangentBundle = (
+     pushforward ZZ := pushforward QQ := r -> coefficient(sec,promote(r,C));
+     pTangentBundle := (
 	  if #bundles > 0
 	  then sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))
 	  else OO_FV^0);
+     p := abstractVarietyMap(X,FV,pullback, pushforward, SectionClass => sec, TangentBundle => pTangentBundle);
+     FV.StructureMap = p;
+     integral C := r -> integral p_* r;
      if X.?TangentBundle then FV.TangentBundle = FV.StructureMap.TangentBundle + FV.StructureMap^* X.TangentBundle;
      use FV;
      FV)
@@ -626,7 +694,7 @@ tautologicalLineBundle FlagBundle := X -> (
 --warning 2: default is Fulton notation, currently no way to access Grothendieck-style if
 --target projective space has dimension 1
 map(FlagBundle,AbstractVariety,AbstractSheaf) := opts -> (P,X,L) -> (
-     --by Charley Crissman
+     --by Charley
      B := P.Base;
      try f := X / B else error "expected first variety to have same base as projective bundle";
      if not #P.Bundles == 2 then error "expected a projective bundle";
@@ -662,24 +730,8 @@ map(FlagBundle,AbstractVariety,AbstractSheaf) := opts -> (P,X,L) -> (
      else (matrix {(for i from 1 to n list (
 	  chern(i, (f^* E) - L))) | {cL}});
      pbmap := map(RX,RP,M);
-     pullback := method();
-     pullback RP := a -> pbmap a;
-     pullback AbstractSheaf := F -> (
-	  if variety F =!= P then error "pullback: variety mismatch";
-	  abstractSheaf(X,Rank => rank F,ChernClass => pullback chern F));
-     ourmap := new AbstractVarietyMap from {
-          global target => P,
-          global source => X,
-          PushForward => pushforward,
-          PullBack => pullback};
-     if X.?TangentBundle then (--can't build pushforward of sheaves without relative tangent bundle
-          pushforward AbstractSheaf := F -> (
-   	  if variety F =!= X then error "pushforward: variety mismatch";
-	       abstractSheaf(P,ChernCharacter => pushforward (ch F * todd ourmap))))
-     --can we compute relative tangent bundle to this map without tangent bundle of X?
-     else pushforward AbstractSheaf := F -> (
-          error "cannot push forward sheaves along map with no relative tangent bundle");
-     ourmap)
+     abstractVarietyMap(P,X,pbmap,pushforward)
+     )
  
 --Given a base variety X, bundles E_1,..,E_n on X, and a list of lists of integers
 --L = {{a_(1,1),..,a_(1,k_1)}, ... , {a_(n,1),..,a_(n,k_n)}},
@@ -738,34 +790,23 @@ multiFlag(List,List) := (bundleRanks, bundles) -> (
 			 bdl))));
      pullback := method();
      pushforward := method();
-     pullback ZZ := pullback QQ := r -> promote(r,C);
      pullback S := r -> promote(r, B);
-     --pullback S := r -> promote(promote(r,U), B);
      --probably take out the if n == 0 part
      sec := if n === 0 then 1_C else (
 	  product(0 .. n-1, l-> (
 		    if #(bundleRanks#l) === 0 then 1_C else (
 		         product(1 .. #(bundleRanks#l)-1, i -> promote((ctop MF.Bundles#l#i)^(sum(i, j -> bundleRanks#l#j)),B))))));
      pushforward C := r -> coefficient(sec,r);
-     pullback AbstractSheaf := E -> (
-	  if variety E =!= X then error "pullback-variety mismatch";
-	  abstractSheaf(MF,Rank => rank E, ChernClass => pullback chern E));
-     p := new AbstractVarietyMap from {
-	  global target => X,
-	  global source => MF,
-	  SectionClass => sec,
-	  PushForward => pushforward,
-	  PullBack => pullback
-	  };
-     MF.StructureMap = p;
      tangentBundles := toList apply(MF.Bundles, L -> (
 	  if #L > 1
 	  then sum(1..#L-1, i -> sum(i,j -> Hom(L#j,L#i)))
 	  else OO_MF^0));
-     MF.StructureMap.TangentBundle = sum tangentBundles;
-     pushforward AbstractSheaf := E -> (
-	  if variety E =!= MF then error "pushforward: variety mismatch";
-	  abstractSheaf(X,ChernCharacter => pushforward(ch E * todd p)));
+     pTangentBundle := sum tangentBundles;
+     p := abstractVarietyMap(X,MF,pullback,pushforward,
+	  SectionClass => sec,
+	  TangentBundle => pTangentBundle
+	  );
+     MF.StructureMap = p;
      integral C := r -> integral p_* r;
      --computing the tangent bundle of MF is very slow and likely unnecessary
      --if X.?TangentBundle then MF.TangentBundle = MF.StructureMap.TangentBundle + p^* X.TangentBundle;
@@ -776,7 +817,7 @@ multiFlag(List,List) := (bundleRanks, bundles) -> (
 --this method depends heavily on knowing the generators and monomial order of the
 --intersection ring of a flag variety and will break if those are ever changed
 map(FlagBundle,FlagBundle) := opts -> (B,A) -> (
-     --by Charley Crissman
+     --by Charley
      if not A.Base === B.Base then error "expected flag bundles over same base";
      S := intersectionRing B.Base;
      Arks := A.BundleRanks;
@@ -807,21 +848,17 @@ map(FlagBundle,FlagBundle) := opts -> (B,A) -> (
      M1 := matrix {gens RA | Bimages};
      f1 := map(RA,RMF',M1);
      mftoA := method();
-     mftoA ZZ := mftoA QQ := r -> promote(r,RA);
      mftoA RMF := c -> f1(k1 c);
-     mftoA AbstractSheaf := E -> (
-	  abstractSheaf(A, Rank => rank E, ChernClass => mftoA chern E));
      Atomf := method();
-     Atomf ZZ := Atomf QQ := r -> promote(r,RMF);
      Atomf RA := c -> ((map(RMF,RA,gens RMF)) c);
      Atomf AbstractSheaf := E -> (
 	  abstractSheaf(MF, Rank => rank E, ChernClass => Atomf chern E));
-     iso := new AbstractVarietyMap from {
-	  global source => A,
-	  global target => MF,
+     isoTangentBundle := abstractSheaf(A, Rank => 0, ChernClass => 1_RA, ChernCharacter => 0_RA);
+     iso := abstractVarietyMap (MF, A, mftoA, Atomf,
+	  DefaultPushForward => false,
 	  SectionClass => 1_RA,
-	  PushForward => Atomf,
-	  PullBack => mftoA};
+	  TangentBundle => isoTangentBundle
+	  );
      mftoB := MF / B;
      mftoB * iso
      )
@@ -845,7 +882,7 @@ incidenceCorrespondence(List,AbstractSheaf) := (L,B) -> (
 --is more efficient than using two forgetful maps because it creates one less intermediate object
 --currently only accepts Grassmannians but could be easily extended now that we have forgetful maps of flag varieties
 incidenceCorrespondence(FlagBundle,FlagBundle) := (G2,G1) -> (
-     --by Charley Crissman
+     --by Charley
      if G1.Base =!= G2.Base then error "expected FlagBundles over same base";
      B := intersectionRing G1.Base;
      if not (#G1.Bundles == 2 and #G2.Bundles == 2) then error "expected two Grassmannians";
@@ -888,7 +925,6 @@ incidenceCorrespondence(FlagBundle,FlagBundle) := (G2,G1) -> (
 	 M1 := matrix {m11|m12|m13|m14};
 	 pfmap := (map(R2,R1',M1)) * k1;
 	 pushforward := method();
-	 pushforward ZZ := pushforward QQ := r -> promote(r,R2);
 	 pushforward R1 := c -> pfmap c;
 	 pushforward AbstractSheaf := E -> (
 	      abstractSheaf(I2,Rank => rank E, ChernClass => pushforward chern E));
@@ -903,17 +939,10 @@ incidenceCorrespondence(FlagBundle,FlagBundle) := (G2,G1) -> (
 	 m24 := for i from 1 to n-b list chern(i,QQ1);
 	 M2 := matrix {m21|m22|m23|m24};	 
 	 pbmap := (map(R1,R2',M2)) * k2;
-	 pullback := method();
-	 pullback ZZ := pullback QQ := r -> promote(r,R1);
-	 pullback R2 := c -> pbmap c;
-	 pullback AbstractSheaf := E -> (
-	      abstractSheaf(I1,Rank => rank E, ChernClass => pullback chern E));
-	 iso := new AbstractVarietyMap from {
-	      global source => I1,
-	      global target => I2,
+	 iso := abstractVarietyMap(I2,I1,pbmap, pushforward,
 	      SectionClass => 1_R1,
-	      PushForward => pushforward,
-	      PullBack => pullback};
+	      TangentBundle => abstractSheaf(I1, Rank => 0, ChernClass => 1_R1),
+	      DefaultPushForward => false);
 	 A1 := intersectionRing G1;
 	 A2 := intersectionRing G2;
 	 sourcetotarget := method();
@@ -998,8 +1027,12 @@ blowup(AbstractVarietyMap) :=
      I := trim (I1 + I2 + I3 + I4);
      D := D1/I; -- the Chow ring of the blowup
      Ytilde := abstractVariety(dim Y, D); 
+     Ytilde.ExceptionalDivisor = abstractSheaf(Ytilde, Rank => 1, ChernClass => 1_D + D_(E_0));
      xpowers := matrix {for i from 0 to d-1 list x^i};
      E0powers := transpose matrix {for i from 0 to d-1 list (-D1_(E_0))^i};
+     
+     -- Building the map from PN into Ytilde --
+     
      jLower := (f) -> (
 	  -- takes an element f of C, returns an element of D
 	  cf := last coefficients(f, Monomials => xpowers);
@@ -1007,24 +1040,8 @@ blowup(AbstractVarietyMap) :=
 	  cfA := matrix {apply(flatten entries cf, iLowerMod)};
 	  (vars D * cfA * E0powers)_(0,0)
 	  );
-     Ytilde.ExceptionalDivisor = abstractSheaf(Ytilde, Rank => 1, ChernClass => 1_D + D_(E_0));
      pushforwardPN := method();
      pushforwardPN C := a -> jLower a;
-     -- to pull back a class from the blowup to PN we take E_i to -x*alphas#i; this corresponds to
-     -- the fact that pushing forward and then pulling back a class on PN is the same as multiplying by x = c_1(O(1))
-     jUpper := map(C, D, (for i from 0 to n-1 list -x * alphas#i) | flatten entries promote(iuppermatrix,C));
-     pullbackPN := method();
-     pullbackPN ZZ := pullbackPN QQ := a -> promote(a,C);
-     pullbackPN D := a -> jUpper a;
-     pullbackPN AbstractSheaf := F -> (
-	  if variety F =!= Ytilde then error "pullback: variety mismatch";
-	  abstractSheaf(PN,Rank => rank F,ChernClass => pullbackPN chern F));
-     pullbackY := method();
-     pullbackY ZZ := pullbackY QQ := pullbackY A := a -> promote(a,D);
-     pullbackY AbstractSheaf := F -> (
-	  if variety F =!= Y then error "pullback: variety mismatch";
-	  abstractSheaf(Ytilde,Rank => rank F,ChernClass => pullbackY chern F)
-	  );
      -- To calculate the Chern class of the tangent bundle, we use GRR without denominators, specifically
      -- the formula of Fulton Example 15.4.1.
      -- To calculate its Chern character, we use standard GRR as follows: we have an exact sequence
@@ -1038,18 +1055,19 @@ blowup(AbstractVarietyMap) :=
 	       (binomial(d-j, k) - binomial(d-j, k+1)) * x^k * (g^* chern(j, N))));
      Ytilde.TangentBundle = abstractSheaf(Ytilde,
 	  Rank => dim Y,
-	  ChernClass => chern(pullbackY tangentBundle Y) + jLower (chern(g^* tangentBundle X) * alpha),
+	  ChernClass => promote(chern(tangentBundle Y), D) + jLower (chern(g^* tangentBundle X) * alpha),
           ChernCharacter => ch tangentBundle Y - jLower(ch(dual first bundles PN) * (todd OO(-x))^-1));
-     PNmap := new AbstractVarietyMap from {
-	  global target => Ytilde,
-	  global source => PN,
-	  PushForward => pushforwardPN,
-	  PullBack => pullbackPN
-	  };
-     pushforwardPN AbstractSheaf := F -> (
-	  if variety F =!= PN then "pushforward: variety mismatch";
-	  abstractSheaf(Ytilde, ChernCharacter => pushforwardPN (ch F * todd PNmap))
-	  );
+     -- to pull back a class from the blowup to PN we take E_i to -x*alphas#i; this corresponds to
+     -- the fact that pushing forward and then pulling back a class on PN is the same as multiplying by x = c_1(O(1))
+     jUpper := map(C, D, (for i from 0 to n-1 list -x * alphas#i) | flatten entries promote(iuppermatrix,C));
+     pullbackPN := method();
+     pullbackPN D := a -> jUpper a;
+     PNmap := abstractVarietyMap(Ytilde, PN, jUpper, pushforwardPN);
+     
+     -- Building the map from Ytilde to Y --
+     
+     pullbackY := method();
+     pullbackY A := a -> promote(a,D);
      -- to push forward from Ytilde to Y, consider a class a + b on Ytilde, where a is pulled back from Y and b is pushed forward from PN
      -- pushing forward a is easy: since the blowup is birational, we send a to itself on Y
      -- to push forward b, we find the coefficient in b of the relative class of a point in PN over X, then push this coefficient forward from X to Y
@@ -1059,16 +1077,8 @@ blowup(AbstractVarietyMap) :=
      pushforwardY D := a -> (
 	  lift(coefficient(1_D, a), A)
 	  );
-     Ymap := new AbstractVarietyMap from {
-	  global target => Y,
-	  global source => Ytilde,
-	  PushForward => pushforwardY,
-	  PullBack => pullbackY
-	  };
-     pushforwardY AbstractSheaf := F -> (
-	  if variety F =!= Ytilde then error "pushforward: variety mismatch";
-	  abstractSheaf(Y, ChernCharacter => pushforwardY (ch F * todd Ymap))
-	  );
+     Ymap := abstractVarietyMap(Y,Ytilde,pullbackY,pushforwardY);
+     Ytilde.StructureMap = Ymap;
      integral D := a -> integral Ymap_* a;
      (Ytilde, PN, PNmap, Ymap)
      )
@@ -1458,22 +1468,14 @@ sectionZeroLocus AbstractSheaf := (F) -> (
      B := if iZ == 0 then A[Join => false] else A/iZ;
      Z := abstractVariety(dim X - rank F, B);
      pullback := method();
-     pullback ZZ := pullback QQ := pullback A := r -> promote(r,B);
-     pullback AbstractSheaf := E -> (
-	  if variety E =!= X then "pullback: variety mismatch";
-	  abstractSheaf(Z, Rank => rank E, ChernClass => pullback chern E));
+     pullback A := r -> promote(r,B);
      pushforward := method();
-     pushforward ZZ := pushforward QQ := r -> pushforward promote(r,B);
      pushforward B := b -> lift(b,A) * classZ;
-     i := Z.StructureMap = new AbstractVarietyMap from {
-     	  symbol source => Z,
-     	  symbol target => X,
-     	  PullBack => pullback,
-     	  PushForward => pushforward,
-	  TangentBundle => abstractSheaf(Z, ChernCharacter => - ch F)
-	  };
-     pushforward AbstractSheaf := E -> abstractSheaf(X,ChernCharacter => pushforward (ch E * todd i));
-     integral B := m -> integral( lift(m,A) * classZ );
+     pushforward ZZ := pushforward QQ := r -> pushforward promote(r,B);     
+     i := Z.StructureMap = abstractVarietyMap(X,Z,pullback,pushforward,
+	  TangentBundle => abstractSheaf(Z, ChernCharacter => -ch F)
+	  );
+     integral B := m -> integral i_* m;
      if X.?TangentBundle then Z.TangentBundle = abstractSheaf(Z, ChernCharacter => ch tangentBundle X - ch F);
      Z)
 

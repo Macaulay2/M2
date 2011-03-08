@@ -745,6 +745,86 @@ Node
 --------
 Node
   Key
+    abstractVarietyMap
+    (abstractVarietyMap,AbstractVariety,AbstractVariety,MethodFunction,MethodFunction)
+    (abstractVarietyMap,AbstractVariety,AbstractVariety,RingMap,MethodFunction)
+    [abstractVarietyMap, DefaultPullBack]
+    DefaultPullBack
+    [abstractVarietyMap, DefaultPushForward]
+    DefaultPushForward
+    [abstractVarietyMap, TangentBundle]
+    [abstractVarietyMap, SectionClass]
+  Headline
+    make an abstract variety morphism
+  Usage
+    f = abstractVarietyMap(Y,X,fUpper,fLower)
+  Inputs
+    Y:AbstractVariety
+      the target of $f$
+    X:AbstractVariety
+      the source of $f$
+    fUpper:
+      the method for pulling back from $Y$ to $X$; if given as a ring map, this should be a ring map from
+      the intersection ring of $Y$ to that of $X$.  If given as a MethodFunction, there must be a method
+      installed for pulling back elements of the intersection ring of $Y$ to that of $X$.  Optionally, a
+      method can also be given for pulling back sheaves from $Y$ to $X$, in which case the
+      {\tt DefaultPullBack => false} option must be set to override the default behavior.
+    fLower:
+      the method from pushing forward from $X$ to $Y$. Must have a method installed for pushing forward
+      elements of the intersection ring of $X$ to that of $Y$.  Optionally, a method can also be given
+      for pushing forward sheaves from $X$ to $Y$, in which case the {\tt DefaultPushForward => false}
+      option must be set to override the default behavior.
+    DefaultPullBack => Boolean
+      if true, sheaf pullbacks are computed in the default manner from ring element pullbacks
+    DefaultPushForward => Boolean
+      if true, sheaf pushforwards are computed (if possible) in the default manner from ring element
+      pushforwards
+    TangentBundle => AbstractSheaf
+      the relative tangent bundle of $f$.  If not supplied, is computed anyway if possible.
+    SectionClass => RingElement
+      the class of a section of $f$, an element of the intersection ring of $X$
+  Outputs
+   f:AbstractVarietyMap
+     the resulting map from $X$ to $Y$
+  Consequences
+   Item
+     If {\tt fUpper} is given as a ring map, then a new method is created for the pullback,
+     encapsulating this ring map.  However, if {\tt fUpper} is given as a MethodFunction, then
+     this MethodFunction is used directly, and may have new methods installed on it.
+   Item
+     If the {\tt DefaultPullBack => true} option is set (this is the default setting), then a
+     method for pulling back sheaves is installed in the method fUpper.  The default behavior
+     is to pull back both Chern classes and Chern characters via the supplied map.
+   Item
+     If the {\tt DefaultPullBack => true} option is set (this is the default setting),
+     and if the calculation of sheaf pushforward is possible (i.e. either $X$ and $Y$ have supplied
+     tangent bundles and $fUpper$ can pull back sheaves, or the {\tt TangentBundle} option is set),
+     method for pulling back sheaves is installed in the method fUpper.  The default behavior is
+     to compute the pushforward of sheaves via Grothendieck-Riemann-Roch.
+  Description
+    Text
+      Typically it is inconvenient to have to use this function unless absolutely necessary.  Consider
+      whether the morphism you need may be built via one of the built-in maps, for example via
+      @ TO (map, FlagBundle, AbstractVariety, AbstractSheaf) @.
+    Example
+      X = point
+      RX = intersectionRing X
+      Y = projectiveSpace 3
+      RY = intersectionRing Y
+      fUpper = map(RX, RY, splice{4:0_RX})
+      fLower = method()
+      fLower RX := a -> promote(a,RY) * ctop last bundles Y;            
+      incl = abstractVarietyMap(Y,X,fUpper,fLower)
+      integral incl_* 1_RX
+    Text
+      This same example can be done much more easily via:
+    Example
+      X = point
+      Y = projectiveSpace 3
+      incl = map(Y,X,OO_X)
+--------
+Node
+  Key
     AbstractVarietyMap
   Headline
     the class of all abstract variety maps
