@@ -1,0 +1,11 @@
+ideas:
+
+have the configure script print out, near the end, the list of programs found
+on the system that it hopes will be there also at run time, for the builder who
+will also distribute the result as a package in a distribution
+
+add M2's executable directory to PATH when running programs, and packages
+wouldn't have to have a hard-coded path at all. The configure script could
+detect the presence of the program, arrange for it not to be built, and print
+an emphatic message requesting the package assembler to put the package
+containing the program in the list of prerequisites.
