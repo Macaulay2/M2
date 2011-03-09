@@ -49,21 +49,12 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
 
-     print T;
-     norm2T := BombieriWeylNormSquaredQI T; -- norm^2 of the target
+     -- here come things we have to compute only once
+     norm2T := BombieriWeylNormSquaredQI T; -- n1
+     norm2S := BombieriWeylNormSquaredQI S; -- n2
      c'over'P := 1/40;
      max'deg := max deg;      
-     -- in both cases a linear homotopy on the unit sphere is performed ???
-     -- then (
--- 	  nS = (o.gamma/abs(o.gamma))*nS;
--- 	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
--- 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
--- 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
--- 	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(nS#i,nT#i));-- real Bombieri-Weyl scalar product
--- 	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
--- 	  bigT := asin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
--- 	  Hx := H/transpose@@jacobian; -- store jacobians (for evalHx)
---      	  )	  
+
      -- evaluation times
      etH := 0;
      etHx := 0; 
@@ -81,17 +72,6 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  etH = etH + tr#0;
 	  tr#1
 	  );
---      evalHxNoPatch := (x0,t0)-> (
--- 	  r := if o.Predictor === Certified then (
--- 	       sine := sin(t0*bigT); cosine := cos(t0*bigT);
--- 	       lift(sub(Hx#0,transpose x0),K)*(cosine-(reBW'ST/sqrt'one'minus'reBW'ST'2)*sine) 
--- 	       + lift(sub(Hx#1,transpose x0),K)*(sine/sqrt'one'minus'reBW'ST'2)   
--- 	       )
--- 	  else if o.SLP =!= false then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
---      	  else lift(sub(Hx, transpose x0 | matrix {{t0}}), K);
--- 	  --(old) if o.Predictor === Certified then r = r * normalizer t0;
--- 	  r
--- 	  );  
      evalHx := (x0,t0)->( 
 	  tr := timing (
      	       r := lift(sub(Hx, transpose x0 | matrix {{t0}}), K);
@@ -110,23 +90,38 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  etHt = etHt + tr#0;
 	  tr#1
 	  );
-     compute'dt'epsilon := (x0,t0) -> (
-	  H't0 := specH t0;	
-	  H0 := evalH(x0,t0);
-	  norm2H := BombieriWeylNormSquaredQI H't0;	
-	  invM := inverse evalHx(x0,t0);
+     compute'dt'epsilon := (
+	  x0,--z_i
+	  t0 --s_i
+	  ) -> (
+	  H't0 := specH t0; 	
+	  H0 := evalH(x0,t0); --g_i(z_i)
+	  norm2H := BombieriWeylNormSquaredQI H't0; --n4	
+	  invM := inverse evalHx(x0,t0); --M
 	  cols'invM := entries transpose invM; 					   
 	  norm2x0 := normSquareQI x0; 
-	  phiTildeSquare1 := sum(#deg, 
+	  chiTildeSquare1 := sum(#deg, 
 	       i->(normSquareQI cols'invM#i)*(deg#i)*norm2H*norm2x0^(deg#i-1)
-	       ) + (normSquareQI last cols'invM)*norm2x0;
-	  ReScalarProductTandH't0 := Re BombieriWeylScalarProductQI(T,H't0);
-	  phiTildeSquare2 := 1 + normSquareQI(invM*(norm2H*evalH(x0,1) - ReScalarProductTandH't0*H0)) 
-	  / (norm2x0*(norm2T*norm2H - ReScalarProductTandH't0^2)); 
-	  phiTildeSquare := phiTildeSquare1*phiTildeSquare2;
-	  if DBG>1 then << "phiTildeSquare1 = " << toRR phiTildeSquare1 
-	  << ", phiTildeSquare2 = " << toRR phiTildeSquare2 << endl;
-	  c2'over'P2d3phi2 := c'over'P^2/(max'deg^2*phiTildeSquare);
+	       ) + (normSquareQI last cols'invM)*norm2x0; --a
+	  ReScalarProductTandH't0 := Re BombieriWeylScalarProductQI(T,H't0); --Re <f,g_i>
+	  v1 := norm2H*evalH(x0,1) - ReScalarProductTandH't0*H0;
+	  chiTildeSquare2 := --b
+	    1 + 
+	    normSquareQI(
+		 invM
+		 *
+		 transpose matrix{drop(flatten entries v1,-1)|{0}} --v2
+		 )
+	    / (norm2x0*( --||z_i||^2
+		      norm2T*norm2H --n1*n4 
+		      --norm2T*norm2S --(why n1*n2 in Algo 2 ?)
+		      - 
+		      ReScalarProductTandH't0^2 --n5
+		      )); 
+	  chiTildeSquare := chiTildeSquare1*chiTildeSquare2; --ab
+	  if DBG>1 then << "chiTildeSquare1 = " << toRR chiTildeSquare1 
+	  << ", chiTildeSquare2 = " << toRR chiTildeSquare2 << endl;
+	  c2'over'P2d3phi2 := c'over'P^2/(max'deg^2*chiTildeSquare);
 	  L := 1 - c2'over'P2d3phi2/2 + c2'over'P2d3phi2^2/24;
 	  U := 1 - c2'over'P2d3phi2/4; -- here R^2=2
 	  if DBG>1 then << "L = " << toRR L << "; U = " << toRR U << endl;
@@ -134,7 +129,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
           -- computation of epsilon
 	  u0 := 17586/100000;
 	  delta := 3/4;
-	  epsilon := (1-3*delta*u0/2)*(1-delta)*u0/approxSqrt(4*phiTildeSquare1*max'deg^3,1/100000);
+	  epsilon := (1-3*delta*u0/2)*(1-delta)*u0/approxSqrt(4*chiTildeSquare1*max'deg^3,1/100000);
 	  if DBG>1 then << "epsilon = " << toRR epsilon << endl;
 
 	  (-- return pair (dt,epsilon) 
@@ -165,10 +160,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	     			
 		    (dt,epsilon) := compute'dt'epsilon(x0,t0); -- main work is done here
 
-		    dPatch = matrix{ flatten entries (10*x0) / conjugateQI}; -- x0* used in evaluation
-		    compute'dt'epsilon(10*x0,t0); -- check independence on a respresentative
-		    dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
-
+		    -- debugging code: multiply the representative by 10
+		    --dPatch = matrix{ flatten entries (10*x0) / conjugateQI}; -- x0* used in evaluation
+		    --compute'dt'epsilon(10*x0,t0); -- check independence on a respresentative
+		    --dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
 
                     dx := 0; -- 0-th order predictor
 
@@ -268,7 +263,7 @@ approxSqrt(QQ,QQ) := (t,e) -> (
      --t' := toQQ(sqrt t);
      --if t'^2>=t and t'^2<t*(1+e)^2 then return t'; -- hack!!!
      t' := approxSqrtGeqOne(numerator t,e) / approxSqrtGeqOne(denominator t, e/(1-e));
-     print (toRR t' - sqrt t);
+     --print (toRR t' - sqrt t);
      t'
      )
 
