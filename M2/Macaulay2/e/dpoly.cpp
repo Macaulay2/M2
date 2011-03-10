@@ -1486,7 +1486,7 @@ void DPolyTraverser::traverse(const_poly f)
 {
   exponents exp = new int[D->nvars];
   for (size_t i = 0; i<D->nvars; i++) exp[i] = 0;
-  traverse1(D->nlevels, f, exp); // the return value is only for the recursive algorithm
+  traverse1(D->nlevels-1, f, exp); // the return value is only for the recursive algorithm
   delete [] exp;
 }
 

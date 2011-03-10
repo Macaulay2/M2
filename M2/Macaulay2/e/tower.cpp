@@ -5,6 +5,7 @@
 #include "ring.hpp"
 #include "varpower.hpp"
 #include "ringmap.hpp"
+#include "polyring.hpp"
 
 Tower::~Tower()
 {
@@ -250,8 +251,10 @@ class TowerEvaluator : public DPolyTraverser
     //  H->add, or target->add_to
     vp.shrink(0);
     varpower::from_ntuple(nvars, exp, vp);
-    ring_elem a = map->eval_term(K, coeff, vp.raw(), first_var, nvars);
+    ring_elem c = K->from_int(coeff);
+    ring_elem a = map->eval_term(K, c, vp.raw(), first_var, nvars);
     H->add(a);
+    return true;
   }
 public:
   TowerEvaluator(const Tower *T, const RingMap *map0, const ring_elem f0, int first_var0) 
@@ -259,10 +262,13 @@ public:
       D(T->D), 
       map(map0), 
       f(TOWER_VAL(f0)), 
-      first_var(first_var0)
+      first_var(first_var0),
+      nvars(T->n_vars())
   {
     const Ring *target = map->get_ring();
     H = target->make_SumCollector();
+    const PolynomialRing *P = target->cast_to_PolynomialRing();
+    K = (P == 0 ? target : P->getCoefficients());
   }
 
   virtual ~TowerEvaluator() {
