@@ -46,9 +46,8 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
 	     if degreesRing S =!= degreesRing R then (
 	     	  p = (map(degreesRing S, degreesRing R)) p;
 		  );
-	     hf := p * product(degrees source generators J, d -> 1 - R_d);
-	     assert( ring m1 === G );
-	     assert( degreesRing ring m1 === ring hf );
+	     DR := degreesRing R;
+	     hf := p * product(degrees source generators J, d -> 1 - DR_d);
 	     (cokernel m1).cache.poincare = hf;
 	     );
 	deglen := degreeLength S;
