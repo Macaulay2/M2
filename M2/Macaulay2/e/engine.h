@@ -530,6 +530,13 @@ extern "C" {
   const RingElement /* or null */ *rawLowerP(const RingElement *f);  /* connected */
   /* Currently only valid for tower rings */
 
+  const RingElement *rawTowerTranslatePoly(const Ring *newRing, const RingElement *F);
+  /* 2 cases: ring of F is a polynomial ring, and newRing is a Tower.  
+     second case: ring of F is a tower, and newRing is a polynomial ring.
+     In both cases, the two rings should have the same characteristic, and the same number of variables.
+     This then translates F, returning the translated poly in the ring newRing.
+  */
+
   const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, const RingElement *g);  /* connected */
   /* Currently only valid for tower rings */
 

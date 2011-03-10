@@ -14,6 +14,8 @@
 #include "buffer.hpp"
 
 class Tower;
+class DPolyTraverser;
+typedef int * exponents; // used only in add_term
 
 typedef struct poly_struct * poly;
 typedef const struct poly_struct * const_poly;
@@ -27,6 +29,7 @@ struct poly_struct {
 };
 
 class DPoly {
+  friend class DPolyTraverser;
   int nvars;
   int nlevels; // #vars is nlevels+1
   poly *extensions;
@@ -100,6 +103,11 @@ public:
 
   poly var(int level, int v); // make the variable v (but at level 'level')
 
+  void add_term(int level, poly &result, long coeff, exponents exp) const; // modifies result.
+  // exp is an array [0..level-1] of exponent values for each variable 0..level-1
+  // the outer variable is at index 0.
+  // coeff is an already normalized coefficient.
+
   void negate_in_place(int level, poly &f);
   void add_in_place(int level, poly &f, const poly g);
   void subtract_in_place(int level, poly &f, const poly g);
@@ -155,6 +163,8 @@ public:
   typedef Tower ring_type;
   typedef poly elem;
 
+  DPoly *getDPoly() const { return &D; }
+
   static DRing * create(long p, int nvars0, const_poly *ext0);
   // ext0 should be an array of poly's of level 'nvars0'? 0..nvars0-1
 
@@ -173,6 +183,7 @@ public:
     return result != 0;
   }
 
+  void add_term(elem &result, long coeff, exponents exp) const;
 
   void add(elem &result, elem a, elem b) const
   {
@@ -299,6 +310,20 @@ public:
   int extension_degree(int firstvar); // returns -1 if infinite
   void power_mod(poly &result, const poly f, mpz_t n, const poly g) const { result = D.power_mod(level, f, n, g); } // f^n mod g  
   void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
+};
+
+class DPolyTraverser
+{
+  const DPoly *D;
+
+  bool traverse1(int level, const_poly g, exponents exp);
+protected:
+  virtual bool viewTerm(long coeff, const exponents exp) = 0;
+public:
+  DPolyTraverser(const DRing *D0) : D(D0->getDPoly()) {}
+  virtual ~DPolyTraverser() {}
+
+  void traverse(const_poly f);
 };
 
 // Format for polynomials in a file:

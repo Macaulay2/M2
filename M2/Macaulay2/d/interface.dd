@@ -1468,6 +1468,22 @@ export rawPowerMod(e:Expr):Expr := (
      );
 setupfun("rawPowerMod", rawPowerMod);
 
+export rawTowerTranslatePoly(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 2 then 
+     when a.0 is coeffRing:RawRingCell do
+     when a.1 is x:RawRingElementCell do toExpr(
+	  Ccode(RawRingElementOrNull,
+	       "rawTowerTranslatePoly(",
+	       coeffRing.p, ",",
+	       x.p,
+	       ")"))
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawTowerTranslatePoly",rawTowerTranslatePoly);
+
 -----------------------------------------------------------------------------
 -- free modules
 

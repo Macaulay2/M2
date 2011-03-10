@@ -10,6 +10,7 @@ class DRing;
 
 class Tower : public Ring
 {
+  friend class TowerEvaluator;
   int level;
   int nvars;
 
@@ -26,6 +27,8 @@ public:
 
   Tower * cast_to_Tower() { return this; }
   const Tower * cast_to_Tower() const { return this; }
+
+  int n_vars() const { return nvars; }
 
   static Tower * create(int charac, M2_ArrayString names);
   static Tower * create(const Tower *R, M2_ArrayString new_names);
@@ -84,7 +87,12 @@ public:
   int extension_degree(int nvars) const; // returns -1 if infinite
   ring_elem power_mod(const ring_elem f, mpz_t n, const ring_elem g) const;  // f^n mod g
   ring_elem lowerP(const ring_elem f) const;
+
+  ring_elem translate(const PolynomialRing *R, ring_elem fR) const;
+  // translate the element fR into a dpoly for this ring
+  
 };
+
 
 class RingElement;
 

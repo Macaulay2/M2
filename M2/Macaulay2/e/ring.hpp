@@ -7,6 +7,7 @@
 #include "ringelem.hpp"
 #include "monoid.hpp"
 
+
 ///// Ring Hierarchy ///////////////////////////////////
 
 class RingZZ;
@@ -33,6 +34,8 @@ class RingMap;
 class gbvectorHeap;
 class gbvector;
 class buffer;
+
+class SumCollector;
 
 class Ring : public mutable_object
 {
@@ -181,6 +184,8 @@ public:
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_Schreyer_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;
+
+  virtual SumCollector * make_SumCollector() const;
 
   virtual void text_out(buffer &o) const = 0;
 
@@ -438,6 +443,14 @@ public:
   vec vec_divide_by_given_content(vec f, ring_elem c) const;
   vec vec_divide_by_content(vec f) const;
   ring_elem vec_split_off_content(vec f, vec &result) const;
+};
+
+class SumCollector : public our_new_delete {
+public:
+  SumCollector() {}
+  virtual ~SumCollector() {}
+  virtual void add(ring_elem f) = 0;
+  virtual ring_elem getValue() = 0;
 };
 
 #define ZERO_RINGELEM (ring_elem(static_cast<Nterm *>(0)))

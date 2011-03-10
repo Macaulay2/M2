@@ -1237,36 +1237,20 @@ ring_elem PolyRing::eval(const RingMap *map, const ring_elem f, int first_var) c
   // The way we collect the result depends on whether the target ring
   // is a polynomial ring: if so, use a heap structure.  If not, just add to the result.
 
+  intarray vp;
   const Ring *target = map->get_ring();
-  const PolynomialRing *targetP = target->cast_to_PolynomialRing();
-  if (targetP != 0)
+  SumCollector *H = target->make_SumCollector();
+
+  for (Nterm *t = f; t != NULL; t = t->next)
     {
-      intarray vp;
-      polyheap H(targetP);
-      
-      for (Nterm *t = f; t != NULL; t = t->next)
-	{
-	  vp.shrink(0);
-	  M_->to_varpower(t->monom, vp);
-	  ring_elem g = map->eval_term(K_, t->coeff, vp.raw(), first_var, n_vars());
-	  H.add(g);
-	}
-      return H.value();
+      vp.shrink(0);
+      M_->to_varpower(t->monom, vp);
+      ring_elem g = map->eval_term(K_, t->coeff, vp.raw(), first_var, n_vars());
+      H->add(g);
     }
-  else 
-    {
-      ring_elem result = target->from_int(0);
-      intarray vp;
-      
-      for (Nterm *t = f; t != NULL; t = t->next)
-	{
-	  vp.shrink(0);
-	  M_->to_varpower(t->monom, vp);
-	  ring_elem g = map->eval_term(K_, t->coeff, vp.raw(), first_var, n_vars());
-	  target->add_to(result, g);
-	}
-      return result;
-    }
+  ring_elem result = H->getValue();
+  delete H;
+  return result;
 }
 
 ring_elem PolyRing::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const

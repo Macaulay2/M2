@@ -407,6 +407,24 @@ void Ring::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   // Default for rings not over RRR or CCC is to do nothing.
 }
 
+///////////////////////////////////
+// SumCollector: default version //
+///////////////////////////////////
+class SumCollectorDefault : public SumCollector {
+  const Ring *R;
+  ring_elem result;
+public:
+  SumCollectorDefault(const Ring *R0) : R(R0), result(R->zero()) {}
+  virtual ~SumCollectorDefault() {}
+  virtual void add(ring_elem f) { R->add_to(result, f); }
+  virtual ring_elem getValue() { ring_elem val = result; result = R->zero(); return val; }
+};
+
+SumCollector *Ring::make_SumCollector() const
+{
+  return new SumCollectorDefault(this);
+}
+
 ////////////////////////////////////////////
 // Translation gbvector <--> ringelem/vec //
 ////////////////////////////////////////////

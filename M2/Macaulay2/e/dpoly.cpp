@@ -31,6 +31,7 @@ long gcd_extended(long a,
   return g;
 }
 
+void ZZp_FROM_INT(long charac, long &a, long b) { a = b % charac; if (a < 0) a += charac; }
 void ZZp_NEGATE(long charac, long &a) { a = charac - a; }
 void ZZp_APXY(long charac, long &a, long b, long c) { a = (a+b*c) % charac; }
 void ZZp_ADD_TO(long charac, long &a, long b) { a += b; if (a >= charac) a -= charac; }
@@ -625,6 +626,26 @@ void DPoly::reset_degree_n(int level, poly &f)
     }
   // at this point, everything is 0!
   dealloc_poly(f); // sets f to 0
+}
+
+void DPoly::add_term(int level, poly &result, long coeff, exponents exp) const
+{
+  // modifies result.
+  // exp is an array [0..level-1] of exponent values for each variable 0..level-1
+  // the outer variable is at index 0.
+  // coeff is an already normalized coefficient, and is not 0.
+  
+  int e = exp[0];
+
+  if (result == 0) 
+    result = alloc_poly_n(e, 0);
+  else if (result->deg < e) 
+    increase_size_n(e, result);
+
+  if (level == 0)
+    ZZp_ADD_TO(charac, result->arr.ints[e], coeff);
+  else
+    add_term(level-1, result->arr.polys[e], coeff, exp+1);
 }
 
 void DPoly::add_in_place_0(poly &f, const poly g)
@@ -1451,6 +1472,51 @@ void DRing::elem_text_out(buffer &o,
 			  M2_ArrayString names) const
 {
   D.elem_text_out(o, level, f, p_one, p_plus, p_parens, names);
+}
+
+void DRing::add_term(elem &result, long coeff, exponents exp) const
+{
+  long c;
+  ZZp_FROM_INT(P, c, coeff); // puts it into normal form, just in case.
+  if (c == 0) return;
+  D.add_term(level, result, c, exp);
+}
+
+void DPolyTraverser::traverse(const_poly f)
+{
+  exponents exp = new int[D->nvars];
+  for (size_t i = 0; i<D->nvars; i++) exp[i] = 0;
+  traverse1(D->nlevels, f, exp); // the return value is only for the recursive algorithm
+  delete [] exp;
+}
+
+bool DPolyTraverser::traverse1(int level, const_poly f, exponents exp)
+{
+  if (level == 0)
+    {
+      long *cfs = f->arr.ints;
+      for (int i=f->deg; i>=0; --i)
+	if (cfs[i] != 0)
+	  {
+	    exp[level] = i;
+	    if (!viewTerm(cfs[i], exp))
+	      return false;
+	  }
+      exp[level] = 0;
+    }
+  else
+    {
+      poly *cfs = f->arr.polys;
+      for (int i=f->deg; i>=0; --i)
+	if (cfs[i] != 0)
+	  {
+	    exp[level] = i;
+	    if (!traverse1(level-1, cfs[i], exp))
+	      return false;
+	  }
+      exp[level] = 0;
+    }
+  return true;
 }
 
 // Local Variables:

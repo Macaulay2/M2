@@ -3,6 +3,8 @@
 #include "tower.hpp"
 #include "dpoly.hpp"
 #include "ring.hpp"
+#include "varpower.hpp"
+#include "ringmap.hpp"
 
 Tower::~Tower()
 {
@@ -228,11 +230,55 @@ void Tower::elem_text_out(buffer &o,
   D->elem_text_out(o, TOWER_VAL(f), p_one, p_plus, p_parens, names);
 }
 
+class TowerEvaluator : public DPolyTraverser
+{
+  const DRing *D;
+  const RingMap *map;
+  const Ring *K;
+  SumCollector *H;
+
+  poly f;
+  int first_var;
+  const Ring *target;
+  intarray vp;
+  int nvars;
+  
+  virtual bool viewTerm(long coeff, const exponents exp) {
+    // translate exp to varpwer
+    // map->eval_term
+    // either:
+    //  H->add, or target->add_to
+    vp.shrink(0);
+    varpower::from_ntuple(nvars, exp, vp);
+    ring_elem a = map->eval_term(K, coeff, vp.raw(), first_var, nvars);
+    H->add(a);
+  }
+public:
+  TowerEvaluator(const Tower *T, const RingMap *map0, const ring_elem f0, int first_var0) 
+    : DPolyTraverser(T->D),
+      D(T->D), 
+      map(map0), 
+      f(TOWER_VAL(f0)), 
+      first_var(first_var0)
+  {
+    const Ring *target = map->get_ring();
+    H = target->make_SumCollector();
+  }
+
+  virtual ~TowerEvaluator() {
+    delete H;
+  }
+
+  ring_elem getValue() {
+    traverse(f);
+    return H->getValue();
+  }
+};
+
 ring_elem Tower::eval(const RingMap *map, const ring_elem f, int first_var) const
 {
-  poly f1 = TOWER_VAL(f);
-
-  //TODO: finish
+  TowerEvaluator m(this, map, f, first_var);
+  return m.getValue();
 }
 
 bool Tower::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
@@ -359,6 +405,106 @@ const RingElement *towerExtendedGCD(const RingElement *F,
   return RingElement::make_raw(R, result);
 }
 
+/////////////////////////////////////////////////////////
+// top level translation to polynomials in other rings //
+/////////////////////////////////////////////////////////
+
+#include "polyring.hpp"
+
+ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
+{
+  // create a poly in the Tower T, return it.
+
+  const Monoid *M = R->getMonoid();
+  const Ring *K = R->getCoefficients();
+  int nvars = R->n_vars();
+  poly result = 0;
+  exponents exp = new int[nvars];
+  for (Nterm *t = fR; t != 0; t = t->next)
+    {
+      ring_elem c;
+      M->to_expvector(t->monom, exp);
+      int c1 = K->coerce_to_int(t->coeff);
+      D->add_term(result, c1, exp);
+    }
+  delete [] exp;
+  return TOWER_RINGELEM(result);
+}
+
+#if 0
+ring_elem DPoly::translateFromTower(int level, const PolynomialRing *P, poly f) const
+{
+  if (f == 0) return 0;
+  if (level == 0)
+    {
+      // create a univariate poly in variable P_0
+    }
+  else
+    {
+      ring_elem b = P->var(level);
+      for (int i=0; i<=f->deg; i++)
+	{
+	  if (f->arr.polys[i] != 0)
+	    {
+	      ring_elem a = translateFromTower(level-1, P, f->arr.polys[i]);
+	      ring_elem c = P->power(b,i);
+	      ring_elem d = P->mult(c,a);
+	      result = P->add(result, d);
+	    }
+	}
+      return result;
+    }
+}
+
+ring_elem DRing::translateFromTower(const PolynomialRing *P, poly f) const
+{
+  // create a polynomial in P from the tower poly fT
+  poly f = TOWER_VAL(fT);
+  return D.translateFromTower(level, P, f);
+}
+
+ring_elem Tower::translateFromTower(const PolynomialRing *P, ring_elem fT) const
+{
+  // create a polynomial in P from the tower poly fT
+  poly f = TOWER_VAL(fT);
+  return D->translateFromTower(P, f);
+}
+#endif
+
+const RingElement *rawTowerTranslatePoly(const Ring *newRing, const RingElement *F)
+{
+  // either: F is an element in a Tower, or is an element in a PolynomialRing.
+  // In both cases: the number of variables and the characteristic should
+  // be the same.
+  const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
+  const Tower *T = newRing->cast_to_Tower();
+  if (P != 0 && T != 0)
+    {
+      if (P->n_vars() != T->n_vars())
+	{
+	  ERROR("expected rings with the same number of variables");
+	  return 0;
+	}
+      if (P->charac() != T->charac())
+	{
+	  ERROR("expected rings with the same characteristic");
+	  return 0;
+	}
+      ring_elem a = T->translate(P, F->get_value());
+      return RingElement::make_raw(T, a);
+    }
+#if 0
+  P = newRing->cast_to_PolynomialRing();
+  T = F->get_ring()->cast_to_Tower();
+  if (P != 0 && T != 0)
+    {
+      ring_elem a = T->translateFromTower(P, F->get_value());
+      return RingElement::make_raw(P, a);
+    }
+#endif
+  ERROR("expected an element of a TowerRing or a PolynomialRing");
+  return 0;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

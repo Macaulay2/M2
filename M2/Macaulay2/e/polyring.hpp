@@ -223,6 +223,8 @@ public:
   virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
   virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
 
+  SumCollector *make_SumCollector() const;
+
   ////////////////////////////////
   // To possibly be over-ridded //
   ////////////////////////////////

@@ -5,6 +5,7 @@
 #include "polyquotient.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
+#include "geopoly.hpp"
 
 PolynomialRing::~PolynomialRing()
 {
@@ -184,6 +185,21 @@ Matrix * PolynomialRing::getPresentation() const
   return mat.to_matrix();
 }
 
+class SumCollectorPolyHeap : public SumCollector {
+  const PolynomialRing *R;
+  polyheap H;
+public:
+  SumCollectorPolyHeap(const PolynomialRing *R0) : R(R0), H(R0) {}
+  ~SumCollectorPolyHeap() {}
+
+  virtual void add(ring_elem f) { H.add(f); }
+  virtual ring_elem getValue() { return H.value(); }
+};
+
+SumCollector *PolynomialRing::make_SumCollector() const
+{
+  return new SumCollectorPolyHeap(this);
+}
 
 #if 0
 // const RRing *PPolynomialRing::findCoefficientRing(const RRing *A) const
