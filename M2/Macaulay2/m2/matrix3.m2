@@ -25,34 +25,34 @@ pushOptions := new OptionTable from {
 
 pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matrix of the pushforward module
     -- written by Mike and David
-    assert( ring M === target f );
+    R := target f;
+    assert( ring M === R );
     comp := PushforwardComputation{M,NonLinear};
-    if not f.cache#?comp then (
-	-- create the computation
+    if not f.cache#?comp then (	       -- a bad place to cache the computation, because M may not get garbage-collected
 	S := source f;
-	n1 := numgens target f;
+	n1 := numgens R;				    -- what if R is a tower?
         order := if opts.MonomialOrder === Eliminate then Eliminate n1
                  else if opts.MonomialOrder === ProductOrder then ProductOrder{n1, numgens S}
 		 else if opts.MonomialOrder === Lex then Lex
 		 else error("MonomialOrder option: expected Eliminate, ProductOrder, or Lex");
-	gensJ := generators graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
+	J := graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
+	G := ring J;
 	m := presentation M;
-	-- now map M to the new ring.
-	xvars := map(ring gensJ, ring M, submatrix(vars ring gensJ, toList(0..n1-1)));
-	m1 := presentation (cokernel xvars m  **  cokernel gensJ);
-	if false and opts.UseHilbertFunction and all((f,m),isHomogeneous) then (
+	xvars := map(G, R, submatrix(vars G, toList(0..n1-1)));
+	m1 := presentation (cokernel xvars m  **  cokernel generators J);
+	if opts.UseHilbertFunction and all((f,m),isHomogeneous) then (
 	     p := poincare cokernel m;
 	     if f.cache.DegreeLift =!= identity then error "not implemented yet for nontrivial degree maps";
-	     if degreesRing source f =!= degreesRing target f then (
-	     	  p = (map(degreesRing source f, degreesRing target f)) p;
+	     if degreesRing S =!= degreesRing R then (
+	     	  p = (map(degreesRing S, degreesRing R)) p;
 		  );
-	     D := ring p;
-	     hf := p * product(degrees source gensJ, d -> 1 - D_d);
+	     hf := p * product(degrees source generators J, d -> 1 - R_d);
+	     assert( ring m1 === G );
 	     assert( degreesRing ring m1 === ring hf );
 	     (cokernel m1).cache.poincare = hf;
 	     );
 	deglen := degreeLength S;
-	mapback := map(S, ring gensJ, map(S^1, S^n1, 0) | vars S, DegreeMap => d -> take(d,-deglen));
+	mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => d -> take(d,-deglen));
 	cleanupcode := g -> mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g);
 	f.cache#comp = (m1, cleanupcode);
 	);
