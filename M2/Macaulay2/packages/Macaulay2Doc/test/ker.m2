@@ -1,3 +1,11 @@
+R = QQ[x]
+S = QQ[y]
+f = map(S,R,{0})
+assert( ker f === ideal vars R)
+h = map(S^1,R^1,f,{{1}})
+ker h
+assert( ker h === image vars R)
+
 debug Core
 
 R=ZZ/101[a,b,c]
