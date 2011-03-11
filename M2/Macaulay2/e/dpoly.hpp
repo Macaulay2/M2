@@ -19,7 +19,7 @@ typedef int * exponents; // used only in add_term
 
 typedef struct poly_struct * poly;
 typedef const struct poly_struct * const_poly;
-struct poly_struct {
+struct poly_struct : public our_new_delete {
   unsigned long deg;
   unsigned long len;
   union {
@@ -152,7 +152,7 @@ public:
   DPoly(long p, int nvars0, const_poly *extensions=0);
 };
 
-class DRing
+class DRing : public our_new_delete
 {
   int level;
   mutable DPoly D;
@@ -312,7 +312,7 @@ public:
   void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
 };
 
-class DPolyTraverser
+class DPolyTraverser : public our_new_delete
 {
   const DPoly *D;
 

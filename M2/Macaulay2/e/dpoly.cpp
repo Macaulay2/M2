@@ -50,7 +50,7 @@ void DPoly::initialize(long p, int nvars0, const_poly *ext0)
   charac = p;
   nvars = nvars0;
   nlevels = nvars0;
-  extensions = new poly[nlevels];
+  extensions = newarray(poly, nlevels);
   if (ext0 == 0)
     for (int i=0; i<nlevels; i++)
       extensions[i] = 0;
@@ -204,7 +204,7 @@ void DPoly::increase_size_0(int newdeg, poly &f)
   assert(f != 0);
   if (f->len <= newdeg)
     {
-      long *newelems = new long[newdeg+1];
+      long *newelems = newarray_atomic(long,newdeg+1);
       long *fp = f->arr.ints;
       for (int i=0; i<= f->deg; i++)
 	newelems[i] = fp[i];
@@ -222,7 +222,7 @@ void DPoly::increase_size_n(int newdeg, poly &f)
   assert(f != 0);
   if (f->len <= newdeg)
     {
-      poly *newelems = new poly[newdeg+1];
+      poly *newelems = newarray(poly, newdeg+1);
       poly *fp = f->arr.polys;
       for (int i=0; i<= f->deg; i++)
 	newelems[i] = fp[i];
@@ -239,7 +239,7 @@ poly DPoly::alloc_poly_n(long deg, poly *elems)
 // if elems == 0, then set all coeffs to 0.
 {
   poly result = new poly_struct;
-  result->arr.polys = new poly[deg+1];
+  result->arr.polys = newarray(poly, deg+1);
   result->deg = deg;
   result->len = deg+1;
   if (elems == 0)
@@ -254,7 +254,7 @@ poly DPoly::alloc_poly_n(long deg, poly *elems)
 poly DPoly::alloc_poly_0(long deg, long *elems)
 {
   poly result = new poly_struct;
-  result->arr.ints = new long[deg+1];
+  result->arr.ints = newarray_atomic(long, deg+1);
   result->deg = deg;
   result->len = deg+1;
   if (elems == 0)
@@ -278,7 +278,7 @@ void DPoly::dealloc_poly(poly &f)
 poly DPoly::read_poly_n(char * &str, int level)
 {
   int len = 0;
-  poly *elems = new poly[100];
+  poly *elems = newarray(poly,100);
   poly this_elem = 0;
   if (*str != '[')
     {
@@ -318,7 +318,7 @@ poly DPoly::read_poly_n(char * &str, int level)
 poly DPoly::read_poly_0(char * &str)
 {
   int len = 0;
-  long *elems = new long[100];
+  long *elems = newarray_atomic(long,100);
   long this_elem = 0;
   if (*str != '[')
     {
@@ -1354,9 +1354,9 @@ poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
 	  mpz_clear(n);
 	  //	  fprintf(stdout, "final prod = ");
 	  //	  dpoly(level,prod);
-	  //	  fprintf(stdout, "\nbase = ");
-	  //	  dpoly(level,base);
-	  //	  fprintf(stdout, "\n");
+	  	  fprintf(stdout, "\nbase = ");
+	  	  dpoly(level,base);
+	  	  fprintf(stdout, "\n");
 	  //TODO: free base
 	  return prod;
 	}
