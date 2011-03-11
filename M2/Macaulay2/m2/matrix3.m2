@@ -42,16 +42,23 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
 	m1 := presentation (cokernel xvars m  **  cokernel generators J);
 	if opts.UseHilbertFunction and all((f,m),isHomogeneous) then (
 	     p := poincare cokernel m;
-	     if f.cache.DegreeLift =!= identity then error "not implemented yet for nontrivial degree maps";
-	     if degreesRing S =!= degreesRing R then (
-	     	  p = (map(degreesRing S, degreesRing R)) p;
-		  );
-	     DS := degreesRing S;
-	     hf := p * product(degrees source generators J, d -> 1 - DS_d);
+     	     assert( degreesRing R === degreesRing G );
+	     DG := degreesRing G;
+	     hf := p * product(degrees source generators J, d -> 1 - DG_d);
+	     assert( degreesRing ring m1 === ring hf );
 	     (cokernel m1).cache.poincare = hf;
 	     );
 	deglen := degreeLength S;
-	mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => d -> take(d,-deglen));
+	mapbackdeg := d -> take(d,-deglen);
+	-- that choice of degree map was chosen to make the symmetricPower functor homogeneous, but it doesn't have much
+	-- else to recommend it.
+	-- we should really be *lifting* the result to S along the natural map S ---> G
+	mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => mapbackdeg );
+	-- let's at least check it splits f's degree map:
+	for i from 0 to deglen-1 do (
+	     e := for j from 0 to deglen-1 list if i === j then 1 else 0;
+	     if mapbackdeg f.cache.DegreeMap e =!= e then error "not implemented yet: unexpected degree map of ring map";
+	     );
 	cleanupcode := g -> mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g);
 	f.cache#comp = (m1, cleanupcode);
 	);
