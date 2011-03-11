@@ -1,0 +1,10 @@
+In the code that deals with the class RingMap.  We could envision three type of
+ring maps: those implemented by a ring homomorphism in the kernel; those
+implemented by promotion; and those implemented by an identity function.  The
+method for RingMap * RingMap could figure out what to do in each case.  Then we
+could change Schubert2 so that all pullbacks are done by ring maps.  There
+should be a predicate for determining whether a ring map is an identity map.
+
+This could be used in Schubert2 for optimizing composition of pullback maps on
+cycle classes.
+
