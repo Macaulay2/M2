@@ -197,6 +197,20 @@ bbl = barrel = 42 gallon
 bu = bushel = 2150.42 inch^3
 peck = 1/4 * bushel
 
+
+Offset = new Type of BasicList
+Offset + Measurement := (o,m) -> new Offset from { o#0 + m, o#1 }
+Measurement + Offset := (m,o) -> new Offset from { o#0 + m, o#1 }
+Offset - Measurement := (o,m) -> new Offset from { o#0 - m, o#1 }
+Offset - Offset := (o,p) -> ( if o#1 =!= p#1 then error "expected offsets from the same base symbol"; o#0 - p#0 )
+expression Offset := o -> expression o#0 + expression o#1
+net Offset := net @@ expression
+
+ZeroKelvin = new Offset from { 0 * K , symbol ZeroKelvin }
+ZeroCelsius = ZeroKelvin + 273.15 K
+ZeroFahrenheit = ZeroCelsius - 32 degF
+
+
 type := new MutableHashTable;
 scan({
 	  s/s => "dimensionless quantity",
