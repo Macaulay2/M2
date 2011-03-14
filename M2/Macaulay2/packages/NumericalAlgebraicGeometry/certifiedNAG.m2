@@ -1,5 +1,3 @@
-needsPackage "NumericalAlgebraicGeometry"  
-DBG = 5;
 trackProjectiveCertified = method()
 trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 -- tracks solutions from start system to target system (robust certified)
@@ -94,8 +92,8 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  x0,--z_i
 	  t0 --s_i
 	  ) -> (
-	  H't0 := specH t0; 	
-	  H0 := evalH(x0,t0); --g_i(z_i)
+	  H't0 := specH t0; --g_i	
+	  H0 := evalH(x0,t0); --v2
 	  norm2H := BombieriWeylNormSquaredQI H't0; --n4	
 	  invM := inverse evalHx(x0,t0); --M
 	  cols'invM := entries transpose invM; 					   
@@ -110,11 +108,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	    normSquareQI(
 		 invM
 		 *
-		 transpose matrix{drop(flatten entries v1,-1)|{0}} --v2
+		 transpose matrix{drop(flatten entries v1,-1)|{0}} --v4
 		 )
 	    / (norm2x0*( --||z_i||^2
 		      norm2T*norm2H --n1*n4 
-		      --norm2T*norm2S --(why n1*n2 in Algo 2 ?)
 		      - 
 		      ReScalarProductTandH't0^2 --n5
 		      )); 
@@ -214,11 +211,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  << "Setup time: " << compStartTime - setupStartTime << endl;
 	  << "Computing time:" << currentTime() - compStartTime << endl; 
 	  );
-     apply(ret, s->point(
+     apply(ret, s->
 	       if HISTORY then drop(toList s, -1)
 	       else toList s
 	       )
-	  )
      )
 
 -- Gaussian rationals: "QI" = QQ[I]/(I^2+1)
