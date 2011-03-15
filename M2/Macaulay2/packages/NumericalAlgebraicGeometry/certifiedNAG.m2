@@ -50,8 +50,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      -- here come things we have to compute only once
      norm2T := BombieriWeylNormSquaredQI T; -- n1
      norm2S := BombieriWeylNormSquaredQI S; -- n2
-     c'over'P := 1/40;
      max'deg := max deg;      
+     W0 := 17/(50000*max'deg^3);
+     u0 := 17586/100000;
+     epsilon0 := u0^2/((4*max'deg)^3*(1+9*u0/8)^2);    
 
      -- evaluation times
      etH := 0;
@@ -63,9 +65,8 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      evalH := (x0,t0)-> (
 	  tr := timing (
      	       r := lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
-	       --(old) if o.Predictor === Certified then ((normalizer t0)*r) || matrix{{0_K}} else 
 	       if dPatch === null then r
-	       else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
+	       else r || matrix{{0}} -- zero is appended
 	       );
 	  etH = etH + tr#0;
 	  tr#1
@@ -91,7 +92,8 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      compute'dt'epsilon := (
 	  x0,--z_i
 	  t0 --s_i
-	  ) -> (
+	  ) -> 
+     (
 	  H't0 := specH t0; --g_i	
 	  H0 := evalH(x0,t0); --v2
 	  norm2H := BombieriWeylNormSquaredQI H't0; --n4	
@@ -102,13 +104,13 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	       i->(normSquareQI cols'invM#i)*(deg#i)*norm2H*norm2x0^(deg#i-1)
 	       ) + (normSquareQI last cols'invM)*norm2x0; --a
 	  ReScalarProductTandH't0 := Re BombieriWeylScalarProductQI(T,H't0); --Re <f,g_i>
-	  v1 := norm2H*evalH(x0,1) - ReScalarProductTandH't0*H0;
+	  v3 := norm2H*evalH(x0,1) - ReScalarProductTandH't0*H0; --v3
 	  chiTildeSquare2 := --b
 	    1 + 
 	    normSquareQI(
 		 invM
 		 *
-		 transpose matrix{drop(flatten entries v1,-1)|{0}} --v4
+		 v3 --v4
 		 )
 	    / (norm2x0*( --||z_i||^2
 		      norm2T*norm2H --n1*n4 
@@ -118,15 +120,14 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  chiTildeSquare := chiTildeSquare1*chiTildeSquare2; --ab
 	  if DBG>1 then << "chiTildeSquare1 = " << toRR chiTildeSquare1 
 	  << ", chiTildeSquare2 = " << toRR chiTildeSquare2 << endl;
-	  c2'over'P2d3phi2 := c'over'P^2/(max'deg^2*chiTildeSquare);
-	  L := 1 - c2'over'P2d3phi2/2 + c2'over'P2d3phi2^2/24;
-	  U := 1 - c2'over'P2d3phi2/4; -- here R^2=2
-	  if DBG>1 then << "L = " << toRR L << "; U = " << toRR U << endl;
-
+	  W := W0/chiTildeSquare;
+	  L := 1 - W/2 + W^2/6;
+	  U := 1 - W/2; 
+	  if DBG>1 then << "U - L = " << toRR (U-L) << "; ||x0|| = " << sqrt norm2x0 << 
+	  "; res1 = " << abs QItoCC H0_(0,0)/sqrt norm2x0 << endl;
+	  
           -- computation of epsilon
-	  u0 := 17586/100000;
-	  delta := 3/4;
-	  epsilon := (1-3*delta*u0/2)*(1-delta)*u0/approxSqrt(4*chiTildeSquare1*max'deg^3,1/100000);
+	  epsilon := epsilon0 / chiTildeSquare1;
 	  if DBG>1 then << "epsilon = " << toRR epsilon << endl;
 
 	  (-- return pair (dt,epsilon) 
@@ -157,14 +158,14 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	     			
 		    (dt,epsilon) := compute'dt'epsilon(x0,t0); -- main work is done here
 
-		    -- debugging code: multiply the representative by 10
+		    --debugging code: multiply the representative by 10
 		    --dPatch = matrix{ flatten entries (10*x0) / conjugateQI}; -- x0* used in evaluation
 		    --compute'dt'epsilon(10*x0,t0); -- check independence on a respresentative
 		    --dPatch = matrix{ flatten entries x0 / conjugateQI}; -- x0* used in evaluation
 
                     dx := 0; -- 0-th order predictor
 
-		    if dt < 0.000001 then 1/0;
+		    if dt < 0.000001 then error "dt is very small";
 		    if HISTORY then history#count#"dx" = dx;
 
     	 	    t1 := min(t0 + dt, 1);
@@ -173,10 +174,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 		    dx = -inverse(evalHx(x1,t1))*evalH(x1,t1);
 		    x1 = x1 + dx;
 		    x1 = shorterZero(x1,epsilon);
-		    --x1 = roundQI(5,x1); -- round to 5 digits!!!
+		    --x1 = roundQI(5,x1); -- round to a few digits!!!
 		    
-		    --x0 = normalizeQI x1; -- approximate normalization 
 		    x0 = x1;
+		    --x0 = normalizeQI x1; -- approximate normalization 
 		    t0 = t1;
 		    if DBG>1 then << "step " << count << ", t0 = " << toRR t0 << ", x0 = " << toString x0 << endl;
 		    count = count + 1;
@@ -275,26 +276,48 @@ approxSqrtGeqOne(ZZ,QQ) := (t,e) -> (
 	  );
      t'
      )
+-- shorterZero = method()
+-- shorterZero (Matrix,QQ) := Matrix => (x0,e) -> (
+--      z := roundQI(10,x0); -- hack!!!
+--      assert(acos distanceSquareQI(z,x0)<e^2); -- inexact!!!
+--      assert(0<e and e<1/5);
+--      n := numRows x0 - 1;
+--      R := ring x0; 
+--      x0'rat := apply(flatten entries x0, c->{Re c, Im c});     
+--      m := lcm(flatten flatten x0'rat/denominator@@QItoQQ);
+--      --1/0;
+--      x := m*x0;
+--      inv'norm := (n+1)/normSquareQI x;
+--      r0 := approxSqrt(inv'norm,e/4);
+--      r := r0/e;
+--      z'rat := apply(x0'rat,c->apply(c,t->round(r*t)));
+--      z' := transpose matrix{apply(z'rat, c->c#0+c#1*R_0)};
+--      --<< "hack: " << z << "; non-hack: " << z' << endl;
+--      --10*z -- hack
+--      z
+--      )
+
+-- out: z s.t. ||z-x0|| <= sqrt e and coords of z ar integers of length at most 1 + 3 sqrt((n+1)/e)
 shorterZero = method()
 shorterZero (Matrix,QQ) := Matrix => (x0,e) -> (
-     z := roundQI(10,x0); -- hack!!!
-     assert(acos distanceSquareQI(z,x0)<e^2); -- inexact!!!
-     assert(0<e and e<1/5);
-     n := numRows x0 - 1;
-     R := ring x0; 
-     x0'rat := apply(flatten entries x0, c->{Re c, Im c});     
-     m := lcm(flatten flatten x0'rat/denominator@@QItoQQ);
-     --1/0;
-     x := m*x0;
-     inv'norm := (n+1)/normSquareQI x;
-     r0 := approxSqrt(inv'norm,e/4);
-     r := r0/e;
-     z'rat := apply(x0'rat,c->apply(c,t->round(r*t)));
-     z' := transpose matrix{apply(z'rat, c->c#0+c#1*R_0)};
-     --<< "hack: " << z << "; non-hack: " << z' << endl;
-     --10*z -- hack
-     z
-     )
+      n := numRows x0 - 1;
+      R := ring x0; 
+      x0'rat := apply(flatten entries x0, c->{Re c, Im c});     
+      m := lcm(flatten flatten x0'rat/denominator@@QItoQQ);
+      x := m*x0;
+      x'rat := apply(flatten entries x, c->{Re c, Im c});     
+      norm2x := normSquareQI x;
+      --1/0;
+      r := (21/20)^2;
+      a := 4; 
+      k := 0;
+      while 2*(n+r)*a <= e*norm2x do (
+	   k = k+1;
+	   a = 4*a;
+	   );
+      z'rat := apply(x'rat,c->apply(c,t->round(2^(-k)*t)));
+      transpose matrix{apply(z'rat, c->c#0+c#1*R_0)}
+      )
 
 BombieriWeylScalarProductQI = method()
 BombieriWeylScalarProductQI (RingElement,RingElement) := RingElement => (f,g) -> sum(listForm f, a->(
@@ -320,7 +343,7 @@ pick'dt = (abc,L,U) -> (
      assert(A<0 and B^2-4*A*C>=0);
      t := (-B-sqrt(B^2-4*A*C))/(2*A);
      if DBG>5 then <<"pick'dt: dt = " << t << endl;
-     toQQ(15,t)
+     toQQ(10,t)
      ) 
 toQQ = method()
 toQQ (ZZ,RR) := QQ => (n,t) -> ( -- n=number of binary digits
