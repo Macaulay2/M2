@@ -435,12 +435,6 @@ if test "$XML" = yes
 then AC_DEFINE(HAVE_XML,1,[whether we are linking with the xml library])
 fi
 
-AC_SUBST(SCSCP,no)
-AC_ARG_ENABLE(scscp, AS_HELP_STRING(--enable-scscp,[download, compile, and link with scscp library]), SCSCP=$enableval)
-if test "$SCSCP" = yes
-then AC_DEFINE(HAVE_SCSCP,1,[whether we are linking with the scscp library])
-fi
-
 AC_SUBST(PYTHON,no)
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
 if test "$PYTHON" = yes
@@ -802,7 +796,7 @@ AC_SUBST(BUILTLIBS,)
 #    linbox is provided as an option for experimentation
 #    givaro is used by linbox
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby scscp glpk cddlib givaro linbox")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro linbox")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -811,7 +805,7 @@ do eval BUILD_$i=yes
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm mpir mpfr readline pari ntl factory libfac lapack frobby scscp)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm mpir mpfr readline pari ntl factory libfac lapack frobby)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -944,15 +938,6 @@ then if test $BUILD_pari = no
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
      test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
-fi
-
-if test "$SCSCP" = yes
-then if test $BUILD_scscp = no
-     then AC_LANG(C)
-	  AC_SEARCH_LIBS(SCSCP_sc_init,scscp,,BUILD_scscp=yes,-lxml2)
-	  AC_CHECK_HEADER(scscp.h,,BUILD_scscp=yes)
-     fi
-     test $BUILD_scscp = yes && BUILTLIBS="-lscscp -lxml2 $BUILTLIBS"
 fi
 
 if test "$PYTHON" = yes
