@@ -121,8 +121,8 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  if DBG>1 then << "chiTildeSquare1 = " << toRR chiTildeSquare1 
 	  << ", chiTildeSquare2 = " << toRR chiTildeSquare2 << endl;
 	  W := W0/chiTildeSquare;
-	  L := 1 - W/2 + W^2/6;
-	  U := 1 - W/2; 
+	  L := 1 - W + W^2/6;
+	  U := 1 - W; 
 	  if DBG>1 then << "U - L = " << toRR (U-L) << "; ||x0|| = " << sqrt norm2x0 << 
 	  "; res1 = " << abs QItoCC H0_(0,0)/sqrt norm2x0 << endl;
 	  
@@ -311,7 +311,7 @@ shorterZero (Matrix,QQ) := Matrix => (x0,e) -> (
       r := (21/20)^2;
       a := 4; 
       k := 0;
-      while 2*(n+r)*a <= e*norm2x do (
+      while 2*(n+1)*r*a <= e*norm2x do (
 	   k = k+1;
 	   a = 4*a;
 	   );
