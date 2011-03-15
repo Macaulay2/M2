@@ -124,7 +124,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  L := 1 - W + W^2/6;
 	  U := 1 - W; 
 	  if DBG>1 then << "U - L = " << toRR (U-L) << "; ||x0|| = " << sqrt norm2x0 << 
-	  "; res1 = " << abs QItoCC H0_(0,0)/sqrt norm2x0 << endl;
+	  "; res1 = " << abs QItoCC H0_(0,0)/(sqrt norm2x0)^max'deg << endl;
 	  
           -- computation of epsilon
 	  epsilon := epsilon0 / chiTildeSquare1;
