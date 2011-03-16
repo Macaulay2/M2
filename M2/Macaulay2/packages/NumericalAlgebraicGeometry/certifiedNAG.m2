@@ -122,7 +122,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  << ", chiTildeSquare2 = " << toRR chiTildeSquare2 << endl;
 	  W := W0/chiTildeSquare;
 	  L := 1 - W + W^2/6;
-	  U := 1 - W; 
+	  U := 1 - W/2; 
 	  if DBG>1 then << "U - L = " << toRR (U-L) << "; ||x0|| = " << sqrt norm2x0 << 
 	  "; res1 = " << abs QItoCC H0_(0,0)/(sqrt norm2x0)^max'deg << endl;
 	  
