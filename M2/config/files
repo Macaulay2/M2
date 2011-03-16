@@ -54,7 +54,6 @@ libraries/givaro/Makefile
 libraries/polymake/Makefile
 libraries/normaliz/Makefile
 libraries/pari/Makefile
-libraries/scscp/Makefile
 libraries/readline/Makefile
 libraries/ntl/Makefile
 libraries/libtool/Makefile
