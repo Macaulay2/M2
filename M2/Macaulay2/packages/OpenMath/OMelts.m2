@@ -40,7 +40,6 @@ OME (XMLnode, List) := (s, l) -> (
 	if #l > 0 and class(l#0) =!= XMLnode then l = apply(l, toOpenMath);
 	new XMLnode from {symbol tag => "OME", children => prepend(s, l) }
 )
-OME (String, String, List) := (a,b,l) -> (theOMerror = OMS(a,b), l; error("whoops"));
 OME (String) := s -> OME(OMS("scscp1", "error_system_specific"), {OMSTR(s)});
 
 OMV = method()

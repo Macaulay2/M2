@@ -82,6 +82,14 @@ toOpenMath Holder := x -> toOpenMath x#0
 ------------------------
 OMSEvaluators = new MutableHashTable;
 
+OMDeclareUnhandledSymbol = method()
+OMDeclareUnhandledSymbol (String, String) := (cd,nm) -> (
+	OMSEvaluators#cd#nm = (args, attrs) -> (
+		(theOMerror = OME(OMS("error", "unhandled_symbol"), {OMS(cd, nm)}); error("whoops"));
+	);
+)
+
+
 fromOpenMathOMI = x->(
 	s := (x.children)#0;
 	if class(s) =!= String then (
@@ -327,8 +335,15 @@ fromOpenMath Thing := x -> (
 ------------------------------------------------------------------------
 
 guard = f -> x -> (
-     theOMerror = null;
-     try f x else OME if theOMerror === null then "internal error: unidentified error" else theOMerror)
+	theOMerror = null;
+	try f x else
+		if theOMerror === null then
+			OME "internal error: unidentified error"
+		else if class theOMerror === String then
+			OME theOMerror
+		else
+			theOMerror
+)
 openMath = method();
 openMath Thing := guard (x -> replaceMultipleIDs toOpenMath x)
 

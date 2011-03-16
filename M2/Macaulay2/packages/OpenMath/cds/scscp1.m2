@@ -5,8 +5,9 @@
 --  * option_return_cookie, option_return_nothing, option_return_object
 --  * procedure_call, procedure_completed, procedure_terminated 
 --  * info_runtime, info_message
--- todo / not done:
+-- not necessary:
 --  * error_memory, error_runtime,
+-- todo / not done:
 --  * info_memory, 
 --  * option_debuglevel, option_max_memory, option_min_memory, option_runtime,
 

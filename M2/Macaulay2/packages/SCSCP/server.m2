@@ -9,7 +9,7 @@ startServer (String, String) := (host, port) -> (
 	--Maybe we should cleanup the old socket?
 	if serverSocket =!= null and class(serverSocket) === File then (
 		dbgout(1) << "[Server] Cleaning up old socket." << endl;
-		close serverSocket;
+		try close serverSocket;
 	);
 	
 	--Workaround: Creating the first finite field takes a while because the ConwayPolynomials

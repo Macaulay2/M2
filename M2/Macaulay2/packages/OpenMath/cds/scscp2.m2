@@ -1,8 +1,8 @@
 -- See -- See http://www.win.tue.nl/SCIEnce/cds/scscp2.html
--- done: retrieve, store_session, unbind, get_service_description, service_description
--- todo/not done: 
--- * get_allowed_heads, get_signature, get_transient_cd, is_allowed_head, no_such_transient_cd, 
--- * signature, store_persistent, symbol_set, symbol_set_all
+-- done: retrieve, store_session, unbind, get_service_description, service_description,
+--       get_allowed_heads, symbol_set
+-- always errors: get_signature, get_transient_cd, is_allowed_head, store_persistent
+-- not needed: signature, no_such_transient_cd, symbol_set_all
 
 OMSEvaluators#"scscp2" = new MutableHashTable;
 OMSEvaluators#"scscp2"#"retrieve" = (args, attrs) -> ( 
@@ -43,3 +43,15 @@ OMSEvaluators#"scscp2"#"get_service_description" = (args, attrs) -> (
 		OMSTR("SCSCP interface to Macaulay2")
 	})
 )
+OMSEvaluators#"scscp2"#"get_allowed_heads" = (args, attrs) -> ( 
+	supportedSymbols := flatten apply(keys OMSEvaluators, cdnm->(apply(keys OMSEvaluators#cdnm, symbnm -> 
+		OMS(cdnm, symbnm)
+	)));
+	
+	OMA("scscp2", "symbol_set", supportedSymbols)
+)
+
+OMDeclareUnhandledSymbol("scscp2", "get_signature");
+OMDeclareUnhandledSymbol("scscp2", "get_transient_cd");
+OMDeclareUnhandledSymbol("scscp2", "is_allowed_head");
+OMDeclareUnhandledSymbol("scscp2", "store_persistent");

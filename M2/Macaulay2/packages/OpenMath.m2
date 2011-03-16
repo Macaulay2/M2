@@ -20,10 +20,10 @@ needsPackage "XML"
 needsPackage "ConwayPolynomials"
 newPackage(
 	"OpenMath",
-    	Version => "0.2.1", 
-    	Date => "October 26, 2009",
+    	Version => "0.2.2", 
+    	Date => "March 16, 2011",
     	Authors => {
-			{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/users/danr"}
+			{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 		},
     	Headline => "OpenMath for Macaulay2",
     	DebuggingMode => true,

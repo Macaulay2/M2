@@ -17,10 +17,10 @@
 needsPackage "OpenMath"
 newPackage(
 	"SCSCP",
-	Version => "0.2", 
-	Date => "October 15, 2009",
+	Version => "0.2.1", 
+	Date => "March 16, 2011",
 	Authors => {
-		{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/users/danr"}
+		{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 	},
 	Headline => "SCSCP for Macaulay2",
 	DebuggingMode => false,
