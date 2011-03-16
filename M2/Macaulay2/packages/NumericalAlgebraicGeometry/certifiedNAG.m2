@@ -341,7 +341,7 @@ pick'dt = (abc,L,U) -> (
      B := toRR(2*a*b*(1-U^2));
      C := toRR(a^2*(1-U^2));
      assert(A<0 and B^2-4*A*C>=0);
-     t := (-B-sqrt(B^2-4*A*C))/(2*A);
+     t := (-B-sqrt(B^2-4*A*C))/(2*A); -- hack
      if DBG>5 then <<"pick'dt: dt = " << t << endl;
      toQQ(10,t)
      ) 
