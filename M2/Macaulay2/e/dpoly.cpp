@@ -1354,9 +1354,9 @@ poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
 	  mpz_clear(n);
 	  //	  fprintf(stdout, "final prod = ");
 	  //	  dpoly(level,prod);
-	  	  fprintf(stdout, "\nbase = ");
-	  	  dpoly(level,base);
-	  	  fprintf(stdout, "\n");
+	  //	  	  fprintf(stdout, "\nbase = ");
+	  //	  	  dpoly(level,base);
+	  //	  	  fprintf(stdout, "\n");
 	  //TODO: free base
 	  return prod;
 	}
