@@ -24,6 +24,10 @@ FIX_UNWIND=no
 
 # CONFIGOPTIONS += --disable-strip
 
+ifeq ($(FFPACK),yes)
+CONFIGOPTIONS += --enable-fflas-ffpack
+endif
+
 ifeq ($(LINBOX),yes)
 CONFIGOPTIONS += --enable-linbox
 endif

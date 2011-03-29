@@ -795,8 +795,11 @@ AC_SUBST(BUILTLIBS,)
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
 #    givaro is used by linbox
+#    fflas-ffpack is provided as an option for experimentation
+#	 warning: it is licensed only under GPL 2
+#        it needs lapack
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro linbox")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro linbox fflas_ffpack")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -813,8 +816,16 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
        esac
     done])
 
+AC_SUBST(ENABLE_FFLAS_FFPACK,no)
+AC_ARG_ENABLE(fflas-ffpack,
+    [AS_HELP_STRING(--enable-fflas-ffpack,enable building the fflas-ffpack library and linking with it)],
+    AC_DEFINE(HAVE_FFLAS_FFPACK,1,[whether we are linking with the fflas-ffpack library])
+    BUILD_fflas_ffpack=yes
+    ENABLE_FFLAS_FFPACK=yes
+    )
+
 AC_SUBST(ENABLE_GIVARO,no)
-AC_ARG_ENABLE(linbox,
+AC_ARG_ENABLE(givaro,
     [AS_HELP_STRING(--enable-givaro,enable building the givaro library and linking with it)],
     AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
     BUILD_givaro=yes
@@ -826,8 +837,9 @@ AC_ARG_ENABLE(linbox,
     [AS_HELP_STRING(--enable-linbox,enable building the linbox library and linking with it)],
     AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
     BUILD_linbox=yes
-    BUILD_givaro=yes
     ENABLE_LINBOX=yes
+    HAVE_GIVARO=1
+    BUILD_givaro=yes
     ENABLE_GIVARO=yes
     )
 

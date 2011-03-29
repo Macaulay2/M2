@@ -44,6 +44,7 @@ libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/4ti2/Makefile
 libraries/gfan/Makefile
+libraries/fflas_ffpack/Makefile
 libraries/nauty/Makefile
 libraries/cddplus/Makefile
 libraries/lrslib/Makefile
