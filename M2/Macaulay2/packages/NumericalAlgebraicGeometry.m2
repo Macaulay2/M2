@@ -894,7 +894,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       )  
 	  else error "expected a square system";
      	  );
-     if #solsT == 0 then error "expected a nonempty set of solutions";
+     if #solsT == 0 then return solsT;
      PT := null;
      if class first solsT === Point 
      then ( 
@@ -1682,6 +1682,7 @@ areEqual (List,List) := o -> (a,b) -> (
 	       )
 	  )
      ) 
+areEqual (RR,RR) := o -> (a,b) -> areEqual(toCC a, toCC b)
 areEqual (CC,CC) := o -> (a,b) -> (
      abs(a-b) < o.Tolerance
      ) 
@@ -1709,20 +1710,21 @@ sortSolutions List := o -> sols -> (
      if #sols == 0 then sols
      else (
 	  sorted := {0};
+	  get'coordinates := sol -> if class sol === Point then coordinates sol else sol;
 	  scan(#sols-1, s->(
 		    -- find the first element that is "larger";
 		    -- "larger" means the first coord that is not (approx.) equal 
 		    -- has (significantly) larger realPart, if tie then larger imaginaryPart
 		    --l := position(sorted, t->isGEQ(first t, first s));
      	       	    s = s + 1;
-		    t := coordinates sols#s;
+		    t := get'coordinates sols#s;
 		    l := 0; r := #sorted-1;
-		    if isGEQ(t, coordinates sols#(sorted#r)) then  sorted = sorted | {s}
-		    else if isGEQ(coordinates sols#(sorted#l),t) then  sorted = {s} | sorted 
+		    if isGEQ(t, get'coordinates sols#(sorted#r)) then  sorted = sorted | {s}
+		    else if isGEQ(get'coordinates sols#(sorted#l),t) then  sorted = {s} | sorted 
 		    else (
 		    	 while r-l>0 do (
 			      m := (l+r)//2;
-			      if isGEQ(coordinates sols#(sorted#m), t) then r=m
+			      if isGEQ(get'coordinates sols#(sorted#m), t) then r=m
 			      else l=m+1; 
 			      );
 		    	 sorted = take(sorted,r) | {s} | drop(sorted,r);

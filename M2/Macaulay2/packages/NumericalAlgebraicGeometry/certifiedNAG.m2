@@ -40,7 +40,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  --dPatch := true; -- not null ???       
      	  dPatch := null; -- for now !!!
      -- create homotopy
-     Rt := K(monoid[gens R, symbol t]); 
+     Rt := K(monoid[gens R, local t]); 
      t := last gens Rt; 
      H := matrix {apply(#S, i->(1-t)*sub(S#i,Rt)+t*sub(T#i,Rt))};
      JH := transpose jacobian H; 
@@ -223,6 +223,8 @@ conjugateQI = method()
 conjugateQI RingElement := RingElement => x -> sub(sub(x, matrix{{ -I }}),ring x)
 
 Re = method() 
+Re ZZ := identity
+Re QQ := identity
 Re RingElement := RingElement => x -> sub((x + conjugateQI x)/2,QQ)
 Im = method() 
 Im RingElement := RingElement => x -> sub((x - conjugateQI x)/2,QQ)

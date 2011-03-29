@@ -1,4 +1,4 @@
-export { reiffen, kOrderAnnFa,
+export { reiffen, kOrderAnnFa, kOrderAnnFs, kDiffFs,
      localBFunction, multiplierIdeal, ViaElimination, ViaColonIdeal, ViaLinearAlgebra,
      isInMultiplierIdeal, generalizedBFunction, mGeneralizedBFunction,
      jumpingCoefficients, hasRationalSing,

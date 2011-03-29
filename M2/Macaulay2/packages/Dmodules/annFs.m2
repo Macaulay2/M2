@@ -6,6 +6,11 @@ AnnFs RingElement := Ideal => f -> (
 -- Input:   f, a polynomial in n variables 
 --             (has to be an element of A_n, the Weyl algebra).
 -- Output:  Ann f^s, an ideal in A_n[s].	
+     if #(options (ring f).monoid)#WeylAlgebra == 0 -- not WA 
+     then (
+	  D := makeWeylAlgebra(ring f,SetVariables=>false);
+	  f = sub(f,D);
+	  );
      W := ring f;
      createDpairs W;
      dpI := W.dpairInds;
@@ -130,6 +135,19 @@ diffRatFun (List, RingElement) := RingElement => (m,f) -> (
      else error "polynomial or rational function function expected"   
      )
 
+-- IN: g,f in K[s,x_1,...,x_n]
+-- OUT: h, where hf^(s-k) = f^(k-ord(D_m)) * D_m(g*f^s)
+kDiffFs = method()
+kDiffFs (ZZ, List, RingElement, RingElement) := RingElement => (k,m,g,f) -> (
+     a := position(m,i->i>0);
+     if a === null then return g*f^k;
+     g' := kDiffFs(k-1,replace(a,m#a-1,m),g,f);
+     R := ring g;
+     s := R_0;
+     if a==0 then s*g'*f -- multiply by "s"
+     else diff(R_a,g')*f+(s-k+1)*g'*diff(R_a,f)
+     )
+
 kOrderAnnFa = method()
 kOrderAnnFa(ZZ,RingElement,ZZ) := Ideal => (k,f,a) -> (
      R := ring f;
@@ -137,10 +155,39 @@ kOrderAnnFa(ZZ,RingElement,ZZ) := Ideal => (k,f,a) -> (
      n := numgens R;
      d'indices := reverse flatten({{toList(n:0)}} | apply(k, d->compositions (n,d+1)));
      M := matrix {apply(d'indices, c->sub(f^(k+1)*diffRatFun(c,fa),R))};
+     pInfo(4, toString M);
      syzygies := entries transpose gens gb syz M;     
      pInfo(3, {"syz="}|syzygies);
      D := makeWeylAlgebra R;
      zeros := toList(n:0);
-     prune ideal ({0_D}|apply(syzygies, s->sum(#d'indices, i->sub(s#i,D)*D_(zeros|d'indices#i))))
+     ideal Dprune gens ideal ({0_D}|apply(syzygies, s->sum(#d'indices, i->sub(s#i,D)*D_(zeros|d'indices#i))))
      )
 
+kCoeffVectorWRTs = method()
+kCoeffVectorWRTs (ZZ,RingElement,Ring,RingMap) := (k,h,R,Rs'to'R) -> (
+     s := (ring h)_0;
+     ret := apply(k+1, i->Rs'to'R((h%s^(i+1))//s^i));
+     --print(h,ret);
+     ret 
+     )
+
+kOrderAnnFs = method()
+kOrderAnnFs(ZZ,RingElement) := Ideal => (k,f) -> (
+     R := ring f;
+     s := local s;
+     Rs := (coefficientRing R)[s,gens R,MonomialOrder=>Eliminate 1]; 
+     Rs'to'R := map(R,Rs,matrix{{0_R}}|vars R);
+     f = sub(f,Rs);
+     n := numgens R;
+     d'indices := reverse flatten({{toList(n+1:0)}} | apply(k, d->compositions (n+1,d+1)));
+     M := transpose matrix apply(d'indices, c->kCoeffVectorWRTs(k,kDiffFs(k,c,1_Rs,f),R,Rs'to'R));
+     pInfo(4, toString M);
+     syzygies := entries transpose gens gb syz M;     
+     pInfo(3, {"syz="}|syzygies);
+     D := makeWeylAlgebra R;
+     Ds := (coefficientRing D)[gens D, s, WeylAlgebra=>D.monoid.Options.WeylAlgebra, Weights=>toList(2*n:0)|{1}]; 
+     zeros := toList(n:0);
+     ideal Dprune gens ideal ({0_Ds}|apply(syzygies, s->sum(#d'indices, 
+		    i->sub(s#i,Ds)*Ds_(zeros|drop(d'indices#i,1)|take(d'indices#i,1))
+		    )))
+     )
