@@ -1,0 +1,34 @@
+"break" doesn't always escape from loading a file:
+
+Macaulay2, version 1.4.0.1
+with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone
+
+i1 : loadPackage "Macaulay2Doc"
+
+o1 = Macaulay2Doc
+
+o1 : Package
+
+i2 : loadPackage "Macaulay2Doc"
+src/M2/trunk/M2/Macaulay2/packages/Macaulay2Doc.m2:2:1:(3):[7]: error: package Macaulay2Doc not reloaded; try Reload => true
+src/M2/trunk/M2/Macaulay2/packages/Macaulay2Doc.m2:2:1:(3):[7]: --entering debugger (type help to see debugger commands)
+src/M2/trunk/M2/Macaulay2/packages/Macaulay2Doc.m2:2:1-11:24: --source code:
+newPackage ("Macaulay2Doc",
+     InfoDirSection => "Macaulay2 and its packages", 
+     AuxiliaryFiles => true,
+     Headline => "Macaulay2 documentation", 
+     Authors => {
+          {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
+          {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
+          },
+     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+     Version => version#"VERSION")
+
+ii3 : break
+--loading the Macaulay2 documentation from src/M2/trunk/M2/Macaulay2/packages/Macaulay2Doc/
+src/M2/trunk/M2/Macaulay2/packages/Macaulay2Doc/doc.m2:4:1:(3):[15]: error: item to be documented comes from another package: Macaulay2Doc :: length
+src/M2/trunk/M2/Macaulay2/packages/Macaulay2Doc/doc.m2:4:1:(3):[15]: --entering debugger (type help to see debugger commands)
+src/M2/trunk/M2/Macaulay2/packages/Macaulay2Doc/doc.m2:4:1-6:15: --source code:
+document {
+     Key => "length",
+     Headline => "length"
