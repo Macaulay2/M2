@@ -71,10 +71,14 @@ document {
 	  --      UL {
 	  --      	    }
 	  --      },
-	  -- LI { "functionality added or improved:",
-	  --      UL {
-          --	        }
-	  --      },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI {
+			 "The function ", TO "temporaryFileName", " now produces file names with no chance of
+			 collision, and deletes the files upon normal termination of the program."
+			 }
+		    }
+	       },
 	  LI { "functionality changed:",
 	       UL {
 		    LI {

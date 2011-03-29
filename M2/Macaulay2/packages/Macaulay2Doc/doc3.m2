@@ -1435,8 +1435,8 @@ document {
      Usage => "temporaryFileName()",
      Outputs => { "a unique temporary file name." },
      "The file name is so unique that even with various suffixes
-     appended, no collision with existing files should occur.  But
-     no check is done to see whether such files are present.",
+     appended, no collision with existing files will occur.  The files will be removed
+     when the program terminates, unless it terminates as the result of an error.",
      EXAMPLE {
 	  ///temporaryFileName () | ".tex"///,
      	  ///temporaryFileName () | ".html"///,

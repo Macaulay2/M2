@@ -190,11 +190,47 @@ String << Thing := File => (filename,x) -> (
 	  else error("multiple files already open with name ", format filename)	       
      	  ) << x)
 
-counter := 0
+temporaryDirectoryName = null
+temporaryDirectoryCounter = 0
+temporaryFilenameCounter = 0
+addStartFunction( () -> (
+	  temporaryDirectoryCounter = 0;
+	  temporaryFilenameCounter = 0;
+	  temporaryDirectoryName = null;
+	  ))
+addEndFunction( () -> (
+	  if temporaryDirectoryName =!= null 
+	  then scan(reverse findFiles temporaryDirectoryName, 
+	       fn -> (
+		    if isDirectory fn then (
+			 if debugLevel === 111 then stderr << "-- removing directory " << fn << endl;
+			 removeDirectory fn;
+			 )
+		    else (
+			 if debugLevel === 111 then stderr << "-- removing file " << fn << endl;
+			 removeFile fn;
+			 )))))
+
+temporaryDirectory = () -> (
+     if temporaryDirectoryName === null 
+     then temporaryDirectoryName = (
+	  tmp := "/tmp/";				    -- unix dependency here...
+	  if not isDirectory tmp then error("expected a directory: ", tmp);
+	  if 0 === (fileMode tmp & (2 * 8^2)) then error("expected a writable directory: ", tmp);
+	  while true do (
+	       fn := tmp | "M2-" | toString processID() | "-" | toString temporaryDirectoryCounter | "/";
+	       temporaryDirectoryCounter = temporaryDirectoryCounter + 1;
+	       try mkdir fn else continue;
+	       break fn
+	       )
+	  )
+     else temporaryDirectoryName
+     )
 
 temporaryFileName = () -> (
-     counter = counter + 1;
-     "/tmp/M2-" | toString processID() | "-" | toString counter
+     fn := temporaryDirectory() | toString temporaryFilenameCounter;
+     temporaryFilenameCounter = temporaryFilenameCounter + 1;
+     fn
      )
 -----------------------------------------------------------------------------
 tt := new MutableHashTable from toList apply(0 .. 255, i -> (
