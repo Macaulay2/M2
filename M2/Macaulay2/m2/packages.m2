@@ -261,7 +261,10 @@ newPackage(String) := opts -> (title) -> (
 	       )
 	  else scan(reverse Core#"base packages", needsPackage)
 	  );
-     dictionaryPath = prepend(newpkg#"private dictionary", dictionaryPath);
+     dictionaryPath = (
+	  if member(newpkg.Dictionary,dictionaryPath)
+     	  then join({newpkg#"private dictionary"}, dictionaryPath)
+	  else join({newpkg#"private dictionary",newpkg.Dictionary}, dictionaryPath));
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
@@ -442,6 +445,7 @@ use Package := pkg -> (
      	  loadedPackages = prepend(pkg,loadedPackages);
 	  --- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
 	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
+	  checkShadow();
 	  );
      if pkg.?use then pkg.use pkg;
      )
