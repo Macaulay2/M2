@@ -11,8 +11,8 @@
 needsPackage "SimplicialComplexes"
 
 newPackage("EdgeIdeals", 
-           Version => "1.0.1",
-           Date => "August 22, 2010",
+           Version => "1.0.2",
+           Date => "March 30, 2011",
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 		"journal URI" => "http://j-sag.org/",
@@ -1191,8 +1191,8 @@ vertexCovers HyperGraph := H -> (
 -- returns the vertices of the (hyper)graph
 --------------------------------------------
 
-vertices = method();
-vertices HyperGraph := H -> H#"vertices";
+EdgeIdeals$vertices = method();
+EdgeIdeals$vertices HyperGraph := H -> H#"vertices";
 
 beginDocumentation()
 
@@ -4147,12 +4147,12 @@ doc ///
 
 doc ///
 	Key
-		vertices
-		(vertices, HyperGraph)
+		EdgeIdeals$vertices
+		(EdgeIdeals$vertices, HyperGraph)
 	Headline 
 		gets the vertices of a (hyper)graph
 	Usage
-		V = vertices(H) 
+		V = EdgeIdeals$vertices(H) 
 	Inputs
 		H:HyperGraph
 		        the input
@@ -4165,9 +4165,9 @@ doc ///
 		Example
 	                S = QQ[a..d];
 			g = graph {a*b,b*c,c*d,d*a} -- the four cycle
-			vertices g 
+			EdgeIdeals$vertices g 
 			h = hyperGraph{a*b*c}
-			vertices h  -- the vertex d is treated as an isolated vertex
+			EdgeIdeals$vertices h  -- the vertex d is treated as an isolated vertex
         SeeAlso 
 	        edges
 ///
@@ -4400,49 +4400,49 @@ TEST///
 R = QQ[a,b,c]
 H = hyperGraph(R, {{a,b},{b,c}})
 assert(#(edges H) == 2)
-assert(#(vertices H) == 3)
+assert(#(EdgeIdeals$vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(R, {{a,b,c}})
 assert(#(edges H) == 1)
-assert(#(vertices H) == 3)
+assert(#(EdgeIdeals$vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(R, {a*b,b*c})
 assert(#(edges H) == 2)
-assert(#(vertices H) == 3)
+assert(#(EdgeIdeals$vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph({{a,b},{b,c}})
 assert(#(edges H) == 2)
-assert(#(vertices H) == 3)
+assert(#(EdgeIdeals$vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph({a*b,b*c})
 assert(#(edges H) == 2)
-assert(#(vertices H) == 3)
+assert(#(EdgeIdeals$vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(ideal {a*b,b*c})
 assert(#(edges H) == 2)
-assert(#(vertices H) == 3)
+assert(#(EdgeIdeals$vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(monomialIdeal {a*b,b*c})
 assert(#(edges H) === 2)
-assert(#(vertices H) === 3)
+assert(#(EdgeIdeals$vertices H) === 3)
 ///
 
 -----------------------------
@@ -5036,7 +5036,7 @@ TEST///
 R = QQ[a..e]
 G = randomGraph(R,3)
 assert(#(edges G) == 3)
-assert(vertices G == {a,b,c,d,e})
+assert(EdgeIdeals$vertices G == {a,b,c,d,e})
 ///
 
 -------------------------------------
@@ -5119,8 +5119,8 @@ assert(flatten entries gens coverIdeal g == vertexCovers g)
 TEST///
 R = QQ[a..f]
 G = graph {a*b,b*c,c*d,d*e,e*f} 
-V = vertices(G)
-assert(vertices(G) == {a,b,c,d,e,f})
+V = EdgeIdeals$vertices(G)
+assert(EdgeIdeals$vertices(G) == {a,b,c,d,e,f})
 ///
 
 
