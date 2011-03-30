@@ -53,7 +53,7 @@ document {
            }        
          }
          
-loadPackage "BooleanGB"
+needsPackage "BooleanGB"
 
 document {
         Key => { biBasis, 
