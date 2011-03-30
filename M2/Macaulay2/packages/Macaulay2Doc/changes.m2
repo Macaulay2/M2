@@ -66,6 +66,8 @@ document {
 	  LI { "new packages:",
 	       UL {
 		    LI { TO "BIBasis::BIBasis", ", a package for constructing reduced Pommaret and Gröbner bases in a Boolean ring,
+			 has been added." },
+		    LI { TO "KustinMiller::KustinMiller", ", a package for unprojection and the Kustin-Miller complex construction,
 			 has been added." }
 	  	    }
 	       },
