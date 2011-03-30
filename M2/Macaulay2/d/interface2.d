@@ -286,6 +286,24 @@ export rawGbBoolean(e:Expr):Expr := (
      );
 setupfun("rawGbBoolean",rawGbBoolean);
 
+export rawBIBasis(e:Expr):Expr := (
+    when e is s:Sequence do
+        if length(s) != 2 then WrongNumArgs(2)
+        else when s.0 is m:RawMatrixCell do
+             when s.1 is isProj:Boolean do
+                toExpr(Ccode(RawMatrixOrNull,
+                             "rawBIBasis(",
+                             m.p, ",",
+                             toBoolean(s.1),
+                             ")"
+                             )
+                       )
+             else WrongArgBoolean(2)
+             else WrongArgMatrix(1)
+    else WrongNumArgs(2)
+    );
+setupfun("rawBIBasis",rawBIBasis);
+
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface2.o "

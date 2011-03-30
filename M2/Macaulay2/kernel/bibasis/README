@@ -1,0 +1,66 @@
+The files in this directory support the package BIBasis, and are provided by Mikhail V. Zinin.
+
+The interface to the package is scattered in the following other files (but it would be
+better if that code would be in this directory):
+
+    Index: ../../e/engine.h
+    ===================================================================
+    --- ../../e/engine.h	(revision 13169)
+    +++ ../../e/engine.h	(working copy)
+    @@ -1746,6 +1746,7 @@
+       gmp_RRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN);
+       const Matrix /* or null */ *rawRefinePT(PathTracker* PT, const Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine);
+       const Matrix /* or null */ *rawGbBoolean(const Matrix *m);
+    +  const Matrix /* or null */ *rawBIBasis(const Matrix* m, int toGroebner);
+     #if defined(__cplusplus)
+     }
+     #endif
+    Index: ../../d/interface2.d
+    ===================================================================
+    --- ../../d/interface2.d	(revision 13169)
+    +++ ../../d/interface2.d	(working copy)
+    @@ -286,7 +286,25 @@
+	  );
+     setupfun("rawGbBoolean",rawGbBoolean);
+
+    +export rawBIBasis(e:Expr):Expr := (
+    +    when e is s:Sequence do
+    +        if length(s) != 2 then WrongNumArgs(2)
+    +        else when s.0 is m:RawMatrixCell do
+    +             when s.1 is isProj:Boolean do
+    +                toExpr(Ccode(RawMatrixOrNull,
+    +                             "rawBIBasis(",
+    +                             m.p, ",",
+    +                             toBoolean(s.1),
+    +                             ")"
+    +                             )
+    +                       )
+    +             else WrongArgBoolean(2)
+    +             else WrongArgMatrix(1)
+    +    else WrongNumArgs(2)
+    +    );
+    +setupfun("rawBIBasis",rawBIBasis);
+
+    +
+     -- Local Variables:
+     -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface2.o "
+     -- End:
+    Index: ../../bin/Makefile.in
+    ===================================================================
+    --- ../../bin/Makefile.in	(revision 13169)
+    +++ ../../bin/Makefile.in	(working copy)
+    @@ -8,6 +8,7 @@
+     include @srcdir@/../e/Makefile.files
+     include @srcdir@/../e/f4/Makefile.files
+     include @srcdir@/../system/Makefile.files
+    +include @srcdir@/../kernel/bibasis/Makefile.files
+
+     %.o : %.c
+     %.o : %-tmp.cc
+    @@ -21,6 +22,7 @@
+     M2_OBJECTS += $(ENGINE_OFILES:%=../e/%)
+     M2_OBJECTS += $(F4_OBJECT_FILES:%=../e/f4/%) 
+     M2_OBJECTS += $(SYSTEM_OFILES:%=../system/%) 
+    +M2_OBJECTS += $(BIBASIS_OFILES:%=../kernel/bibasis/%) 
+
+     EXEFILE = @pre_bindir@/M2@EXE@

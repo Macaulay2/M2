@@ -117,3 +117,5 @@ Macaulay2/packages/Macaulay2Doc/test/quarantine/Makefile
 Macaulay2/tests/rationality/Makefile
 Macaulay2/tests/Makefile
 Macaulay2/util/Makefile
+Macaulay2/kernel/Makefile
+Macaulay2/kernel/bibasis/Makefile
