@@ -8,8 +8,8 @@
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.1",
-    Date => "January 20, 2010",
+    Version => "1.2",
+    Date => "March 30, 2011",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -50,6 +50,7 @@ newPackage("Polyhedra",
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --
 ---------------------------------------------------------------------------
+
 
 export {"PolyhedralObject", 
         "Polyhedron", 
@@ -2900,7 +2901,9 @@ newMinkSum = (P,Q) -> (
 	  apply(L, l -> (
 		    l = (toList l#0,toList l#1);
 		    (l,select(HS, hs -> all(l#0, v -> (hs#0)*v - hs#1 == 0) and all(l#1, r -> (hs#0)*r == 0))))));
-     uniqueColumns := M -> matrix{(unique apply(numColumns M, i -> M_{i}))};
+     uniqueColumns := M -> (
+	  if M!=0 then matrix{(unique apply(numColumns M, i -> M_{i}))} else map(ZZ^(numRows M),ZZ^0,0)
+	  );
      n := ambDim P;
      HPP := hyperplanes P;
      HPQ := hyperplanes Q;
@@ -2948,7 +2951,9 @@ newMinkSum = (P,Q) -> (
 			 {(f#1#0#0,f#1#0#1 + matrix{{mQ}})}) else continue)
 	       else flatten for Pface in LP#i list (
 		    for Qface in LQ#(d-i-1) list (
-			 PfaceHS := if Pface#1 != {} then (matrix apply(Pface#1, f -> {f#0}) || HPP#0,matrix apply(Pface#1, f -> {f#1}) || HPP#1) else HPP;
+			 -- This fixes the descending vertex number bug. We forgot to add the common hyperplanes.
+			 HPPp := hyperplanes P;
+			 PfaceHS := if Pface#1 != {} then (matrix apply(Pface#1, f -> {f#0}) || HPPp#0,matrix apply(Pface#1, f -> {f#1}) || HPPp#1) else HPPp;
 			 QfaceHS := if Qface#1 != {} then (matrix apply(Qface#1, f -> {f#0}) || HPQ#0,matrix apply(Qface#1, f -> {f#1}) || HPQ#1) else HPQ;
 			 dP := rank PfaceHS#0;
 			 dQ := rank QfaceHS#0;
@@ -2969,8 +2974,11 @@ newMinkSum = (P,Q) -> (
 			      else continue)))));
      HS = (matrix apply(HS, e -> {first e}),matrix apply(HS, e -> {last e}));
      V := matrix {unique flatten apply(numColumns vertices P, i -> apply(numColumns vertices Q, j -> (vertices P)_{i}+(vertices Q)_{j}))};
-     R := promote(rays P | rays Q,QQ) | map(target V,QQ^1,0);
-     V = (map(QQ^1,source V,(i,j)->1) || V) | (map(QQ^1,source R,0) || R);
+     -- Maybe the following line is needed as well:
+     -- if V==0 then V = map(ZZ^(ambDim P),ZZ^1,0);
+     -- This fixes the wrong ring bug.
+     R := promote(rays P | rays Q,QQ) | map(target promote(V,QQ),QQ^1,0);
+     V = (map(QQ^1,source promote(V,QQ),(i,j)->1) || promote(V,QQ)) | (map(QQ^1,source R,0) || R);
      HS = sort makePrimitiveMatrix transpose(-(HS#1)|HS#0);
      HS = uniqueColumns HS;
      HP = sort makePrimitiveMatrix transpose(-(HP#1)|HP#0);
@@ -8921,6 +8929,35 @@ TEST ///
 P = convexHull matrix {{0,1,0,0,1,0,1,2,0,0},{0,0,1,0,1,0,2,2,0,-1},{0,0,0,1,2,0,1,2,0,-1},{0,0,0,0,-1,1,0,-1,0,1},{0,0,0,0,0,0,-1,-1,1,1}}
 assert not isNormal P
 assert isVeryAmple P
+///
+
+-- Test 68
+-- Checking minkowskiSum for higher dimensions
+TEST ///
+p = convexHull transpose matrix {{1,0,0,0,0}}
+
+p1 = convexHull transpose matrix {{0,0,0,0,0},{0,-1,0,0,0}}
+p2 = convexHull transpose matrix {{0,0,0,0,0},{0,0,-1,0,0}}
+p3 = convexHull transpose matrix {{0,0,0,0,0},{0,0,0,-1,0}}
+p4 = convexHull transpose matrix {{0,0,0,0,0},{0,0,0,0,-1}}
+
+r1 = convexHull transpose matrix {{0,0,0,0,0},{1,-1,-1,0,0}}
+r2 = convexHull transpose matrix {{0,0,0,0,0},{1,-1,0,-1,0}}
+r3 = convexHull transpose matrix {{0,0,0,0,0},{1,-1,0,0,-1}}
+p = minkowskiSum(p,p1)
+assert (numColumns vertices p == 2)
+p = minkowskiSum(p,p2)
+assert (numColumns vertices p == 4)
+p = minkowskiSum(p,p3)
+assert (numColumns vertices p == 8)
+p = minkowskiSum(p,p4)
+assert (numColumns vertices p == 16)
+p = minkowskiSum(p,r1)
+assert (numColumns vertices p == 32)
+p = minkowskiSum(p,r2)
+assert (numColumns vertices p == 56)
+p = minkowskiSum(p,r3)
+assert (numColumns vertices p == 92)
 ///
 
 end
