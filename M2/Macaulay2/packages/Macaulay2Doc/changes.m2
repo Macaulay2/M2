@@ -63,10 +63,12 @@ document {
 		    "A facility for scheduling tasks to be performed in parallel (in threads) has been developed ... "
 	       	    }
 	       },
-	  -- LI { "new packages:",
-	  --      UL {
-	  -- 	    }
-	  --      },
+	  LI { "new packages:",
+	       UL {
+		    LI { TO "BIBasis::BIBasis", ", a package for constructing reduced Pommaret and Gröbner bases in a Boolean ring,
+			 has been added." }
+	  	    }
+	       },
 	  -- LI { "improved packages:",
 	  --      UL {
 	  --      	    }
@@ -114,7 +116,7 @@ document {
 	  LI { "new packages:",
 	       UL {
 		    LI { TO "AdjointIdeal::AdjointIdeal", ", a package for adjoint ideals of plane curves, has been added." },
-		    LI { TO "BooleanGB::BooleanGB", ", a package for Groebner bases in Boolean rings, has been added." },
+		    LI { TO "BooleanGB::BooleanGB", ", a package for Gröbner bases in Boolean rings, has been added." },
 		    LI { TO "DGAlgebras::DGAlgebras", ", a package for handling differential graded algebras, has been added." },
 		    LI { TO "FormalGroupLaws::FormalGroupLaws", ", a package for commutative formal group laws, has been added." },
 		    LI { TO "GraphicalModels::GraphicalModels", ", a package for discrete and Gaussian statistical graphical models,
@@ -173,7 +175,7 @@ document {
 			 "The debugging function ", TO "on", " has been improved."
 			 },
 		    LI {
-			 "Groebner bases over fields are now autoreduced, so the answer is mathematically
+			 "Gröbner bases over fields are now autoreduced, so the answer is mathematically
 			 well-defined.  Resulting changes in coefficients of polynomials in matrices returned by such
 			 functions as ", TO "syz", " and ", TO "complement", " may be observed."
 			 },
