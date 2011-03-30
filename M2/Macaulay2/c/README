@@ -155,6 +155,10 @@ Types:
 
 				Example:  Ccode(returns, "return 1")
 
+				Warning: it is not checked whether the C code in the string actually returns, nor whether it
+				returns a value.  Hence it is a good idea to compile with options -Wreturn-type -Werror (when
+				using gcc.)
+
 	integer types defined internally:
 
 	   int			used for: array access indices, array lengths, integer constants (1),

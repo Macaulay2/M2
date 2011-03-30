@@ -834,8 +834,8 @@ export rawFromNumber(e:Expr):Expr := (
      when s.0
      is R:RawRingCell do
      when s.1
-     is n:ZZcell do toExpr(Ccode( RawRingElement, "IM2_RingElement_from_Integer(", R.p,",", n.v, ")"))
-     is x:QQcell do toExpr(Ccode( RawRingElement, "IM2_RingElement_from_rational(", R.p,",", x.v, ")"))
+     is n:ZZcell do toExpr(Ccode(RawRingElement, "IM2_RingElement_from_Integer(", R.p,",", n.v, ")"))
+     is x:QQcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_rational(", R.p,",", x.v, ")"))
      is x:RRcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigReal(",R.p,",",x.v,")"))
      is x:CCcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigComplex(",R.p,",",x.v,")"))
      else WrongArg(2,"an integer, real number, or complex number")
@@ -1452,7 +1452,7 @@ export rawLowerP(e:Expr):Expr := (
 setupfun("rawLowerP", rawLowerP);
 
 export powerMod(f:RawRingElement, n:ZZ, g:RawRingElement) : RawRingElementOrNull :=
-  Ccode(returns, "rawPowerMod(f,n,g)");
+  Ccode(RawRingElementOrNull, "rawPowerMod(f,n,g)");
 
 export rawPowerMod(e:Expr):Expr := (
      -- rawPowerMod(f,n,g)
