@@ -1,4 +1,4 @@
--- -*- coding: utf-8 -*-
+-- -*- coding: utf-8-unix -*-
 -- Code for Simplicial Complexes
 
 --------------------------------------------------------------------------------
@@ -9,10 +9,13 @@
 -- License, or any later version.
 --------------------------------------------------------------------------------
 
+-- Janko added class Face to be used in other packages
+-- should not affect the functionality present previously
+
 newPackage(
 	"SimplicialComplexes",
-    	Version => "1.1", 
-    	Date => "November 1, 2006",
+    	Version => "1.2", 
+    	Date => "March 4, 2011",
     	Authors => {
 	     {Name => "Sorin Popescu", Email => "sorin@math.sunysb.edu", HomePage => "http://www.math.sunysb.edu/~sorin/"},
 	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
@@ -30,7 +33,13 @@ export {SimplicialComplex,
      buchbergerComplex,
      lyubeznikComplex,
      superficialComplex,
-     faceIdeal}
+     faceIdeal,
+     Face,
+     vertices,
+     face,
+     useFaceClass,
+     isSubface,
+     isFaceOf}
 
 complement := local complement
 complement = (m) -> (
@@ -71,7 +80,26 @@ simplicialComplex MonomialIdeal := (I) -> (
      newSimplicialComplex(I, complement generators dual I)
      )
 
-simplicialComplex List := SimplicialComplex => (faces) -> (
+
+
+---------------------------------------------------------
+-- frame procedure of simplicialComplex now renamed (unchanged)
+-- to simplicialComplexM to allow as input also a list of faces
+-- added by Janko 
+
+simplicialComplex List := SimplicialComplex => (facets) -> (
+     if #facets === 0 then error "expected at least one facet";
+     if class facets#0 === Face then (
+        return simplicialComplexM(apply(facets,j->product vertices j));
+     ) else (
+        return simplicialComplexM(facets))
+)
+-------------------------------------------------------------
+
+
+
+simplicialComplexM=method()
+simplicialComplexM List := SimplicialComplex => (faces) -> (
      if #faces === 0 then error "expected at least one facet";
      R := class faces#0;
      if not isPolynomialRing R or not all(faces, m -> class m === R) then error "expected elements of a polynomial ring";
@@ -89,8 +117,18 @@ dual SimplicialComplex := {} >> o -> (D) -> (
 ring SimplicialComplex := (D) -> D.ring
 coefficientRing SimplicialComplex := (D) -> coefficientRing D.ring
 
-facets = method()
-facets SimplicialComplex := (D) -> D.facets
+
+------------------------------------------------------
+-- added option to return a list of Faces
+-- added by Janko
+
+facets = method(Options=>{useFaceClass=>false})
+facets SimplicialComplex := opt->(D) -> (
+if opt.useFaceClass then return(matrixToFaces(D.facets));
+D.facets)
+
+-----------------------------------------------------
+
 
 ideal SimplicialComplex := (D) -> ideal D.faceIdeal
 monomialIdeal SimplicialComplex := (D) -> D.faceIdeal
@@ -114,8 +152,41 @@ lcmM = (L) -> (
 
 dim SimplicialComplex := (D) -> max apply(first entries D.facets, s -> # support(s)) - 1
 
-faces = method()
-faces (ZZ, SimplicialComplex) := (r,D) -> (
+
+---------------------------------------
+-- frame procedure for original "faces" now renamed
+-- (unchanged) to facesM, which has the option
+-- to return also a list of Faces
+-- added by Janko
+
+faces = method(Options=>{useFaceClass=>false})
+faces(ZZ,SimplicialComplex) := opt->(r,D) -> (
+if opt.useFaceClass then (
+   matrixToFaces(facesM(r,D))
+) else (
+   facesM(r,D))
+)
+
+-- list of list of all faces
+faces SimplicialComplex := opt->(C)->(
+j:=0;
+f := j -> faces(j,C,opt);
+new MutableHashTable from toList apply(-1..dim C,j->j=>f j))
+
+
+-------------------------------------------------
+-- convert Matrix with Monomials to List of Faces
+-- added by Janko
+
+matrixToFaces=method()
+matrixToFaces(Matrix):=M->(
+if M==0 then return({});
+apply((entries M)#0,face))
+
+-------------------------------------------------
+
+facesM=method()
+facesM (ZZ, SimplicialComplex) := (r,D) -> (
      R := ring D;
      if not D.cache.?faces then (
          D.cache.faces = new MutableHashTable;
@@ -213,10 +284,10 @@ homology(ZZ,SimplicialComplex,Ring) := Module => opts -> (i,Delta,R) -> (
 homology(ZZ,SimplicialComplex) := Module => opts -> (i,Delta) -> (
      homology(i, chainComplex Delta))
 homology(Nothing,SimplicialComplex,Ring) :=
-homology(SimplicialComplex,Ring) := ChainComplex => opts -> (Delta,R) -> (
+homology(SimplicialComplex,Ring) := GradedModule => opts -> (Delta,R) -> (
      homology(chainComplex Delta ** R))
 homology(Nothing,SimplicialComplex) :=
-homology(SimplicialComplex) := ChainComplex => opts -> Delta -> (
+homology(SimplicialComplex) := GradedModule => opts -> Delta -> (
      homology(chainComplex Delta))
 
 fVector = method(TypicalValue => List)
@@ -357,6 +428,89 @@ superficialComplex(List, Ring) := (L,R) -> (
 
 superficialComplex(MonomialIdeal) := (I) -> (
      superficialComplex(flatten entries gens I, ring I))
+
+
+
+-----------------------------------------------------------------------
+-- Defining a class Face
+-- to be used in other package in particular in the KustinMiller package
+-- additions by Janko
+
+Face = new Type of MutableHashTable
+
+-- vertices of a face
+vertices=method()
+vertices Face := F -> F.vertices
+
+-- pretty print
+net Face := (f)-> (
+v:=vertices(f);
+if #v==0 then return(net({}));
+horizontalJoin(apply(v,j->net(j)|net(" "))))
+
+-- after print
+Face#{Standard,AfterPrint} = m -> (
+  n:=#vertices(m);
+  if n==0 then vstr:="empty face";
+  if n==1 then vstr="face with "|n|" vertex";
+  if n>1 then vstr="face with "|n|" vertices";
+      << endl;
+      << concatenate(interpreterDepth:"o") << lineNumber << " : "
+      << vstr|" in "|net(ring m)
+      << endl;)
+
+-- dimension
+dim Face := F->-1+#(vertices F)
+
+-- ring of a face
+ring Face :=F->F.ring;
+
+-- construct a face from a List of vertices
+face=method()
+face(List):= (L)-> new Face from {symbol vertices => L, symbol ring=> ring L#0}
+face(List,PolynomialRing):= (L,R)-> new Face from {symbol vertices => L, symbol ring=>R}
+
+-- construct a face from a monomial
+face(RingElement):= (m)-> face(support m,ring m)
+
+-- compare two faces
+Face == Face := (F,G)->(
+(#(vertices F))==(#(vertices G)) and set vertices F === set vertices G)
+
+-- test if a face is a subface of another
+isSubface=method()
+isSubface(Face,Face):=(F,G)->(
+isSubset(set vertices F,set vertices G))
+
+-- test if a face is a face of a complex
+isFaceOf=method()
+isFaceOf(Face,SimplicialComplex):=(F,C)->(
+fc:=facets(C,useFaceClass=>true);
+#(select(1,fc,G->isSubface(F,G)))>0)
+
+
+-- substitute a face to another ring
+substitute(Face,PolynomialRing):=(F,R)->(
+v:=vertices(F);
+face(apply(v,j->sub(j,R)),R))
+
+-- substitute a complex to another ring
+substitute(SimplicialComplex,PolynomialRing):=(C,R)->(
+simplicialComplex((entries sub(C.facets,R)))#0)
+
+
+{*
+installPackage "SimplicialComplexes"
+R = QQ[a..e]
+D = simplicialComplex monomialIdeal(a*b*c*d*e)
+substitute(D,R)
+F=(faces(1,D,useFaceClass=>true))#0
+isFaceOf(F,D)
+*}
+
+-------------------------------------------------------------------------
+
+
 
 beginDocumentation()
 
@@ -1422,6 +1576,633 @@ assert(C.dd_0 * C.dd_1 == 0)
 assert(C.dd_1 * C.dd_2 == 0)
 ///
 
+-----------------------------------------------------------
+-- tests added by Janko
+
+TEST ///
+R = QQ[x_0..x_4]
+D1 = simplicialComplex monomialIdeal(x_0*x_1*x_2*x_3*x_4)
+S = QQ[x_0..x_4,T]
+D2 = simplicialComplex monomialIdeal(x_0*x_1*x_2*x_3*x_4,T)
+assert(substitute(D1,S)==D2)
+///
+
+
+TEST ///
+R = QQ[x_0..x_4]
+D1 = simplicialComplex monomialIdeal(x_0*x_1*x_2*x_3*x_4)
+F1=(faces(1,D1,useFaceClass=>true))#0
+S = QQ[x_0..x_4,T]
+D2 = simplicialComplex monomialIdeal(x_0*x_1*x_2*x_3*x_4,T)
+F2=(faces(1,D2,useFaceClass=>true))#0
+assert(substitute(F1,S)==F2)
+///
+
+TEST ///
+R = QQ[x_0..x_4]
+D = simplicialComplex monomialIdeal(x_0*x_1*x_2*x_3*x_4)
+F=(faces(1,D,useFaceClass=>true))#0
+assert(isFaceOf(F,D))
+///
+
+TEST ///
+R = QQ[x_0..x_4]
+D = simplicialComplex monomialIdeal(x_0*x_1,x_2*x_3*x_4)
+fc=faces(D,useFaceClass=>true)
+assert(apply(-1..2,j->#fc#j)==(1,5,9,6))
+///
+
+TEST ///
+R = QQ[x_0..x_4]
+F = face (x_0*x_1)
+G = face (x_0*x_1*x_2)
+assert(isSubface(F,G))
+assert(dim(F)==1);
+assert(dim(G)==2);
+assert(ring(F)===R)
+///
+
+TEST ///
+R = QQ[x_0..x_4]
+F = face (x_0*x_1)
+assert(set vertices(F) === set {x_0,x_1})
+///
+
+TEST ///
+R = QQ[x_0..x_4]
+F = face (x_0*x_1)
+assert(set vertices(F) === set {x_0,x_1})
+///
+
+
+TEST ///
+R = QQ[a..e]
+D = simplicialComplex monomialIdeal(a*b*c*d*e)
+assert(D==simplicialComplex facets(D,useFaceClass =>true))
+///
+
+-------------------------------------------------------------------
+-- Documentation added by Janko
+
+
+doc ///
+  Key
+    Face
+  Headline
+   The class of faces of simplicial complexes.
+  Description
+   Text
+        The class of faces of simplicial complexes on the variables of a polynomial ring.
+        The faces are @TO MutableHashTable@s F with two @TO keys@
+        
+        F.vertices is a @TO List@ of vertices in the @TO PolynomialRing@ F.ring
+
+   Example
+     R=QQ[x_0..x_4];
+     F=face {x_0,x_2}
+     I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+     D=simplicialComplex I
+     fc=faces(1,D,useFaceClass=>true)
+     select(fc,j->j==F)
+  SeeAlso
+     SimplicialComplex
+     faces
+     facets
+///
+
+
+doc ///
+  Key
+    (symbol ==,Face,Face)
+  Headline
+   Compare two faces.
+  Usage
+    F==G
+  Inputs
+    F:Face
+    G:Face
+  Outputs
+    :Boolean
+  Description
+   Text
+        Checks whether F and G are equal.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1}
+     G1=face {x_1,x_0}
+     G2=face {x_1,x_2}
+     F==G1
+     F==G2
+  SeeAlso
+     Face
+     face
+///
+
+
+doc ///
+  Key
+    face
+    (face,List)
+    (face,List,PolynomialRing)
+    (face,RingElement)
+  Headline
+    Generate a face.
+  Usage
+    face(L)
+    face(L,R)
+    face(m)
+  Inputs
+    L:List
+    R:PolynomialRing
+    m:RingElement
+        a monomial
+  Outputs
+    :Face
+  Description
+   Text
+        Generates a face out of a list L or a squarefree monomial.
+        If L is not empty or a monomial the argument R is not required.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1}
+  SeeAlso
+     SimplicialComplex
+     faces
+     facets
+///
+
+doc ///
+  Key
+    (dim,Face)
+  Headline
+    The dimension of a face.
+  Usage
+    dimension(F)
+  Inputs
+    F:Face
+  Outputs
+    :ZZ
+      bigger or equal to -1
+  Description
+   Text
+        Returns the dimension of a @TO Face@, i.e., the number of @TO vertices@ F minus 1.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+     D=simplicialComplex I
+     fc=faces(D,useFaceClass=>true)
+     apply(-1..1, j->apply(fc#j,dim))
+  SeeAlso
+     face
+     facets
+     faces
+///
+
+doc ///
+  Key
+    vertices
+    (vertices,Face)
+  Headline
+    The vertices of a face of a simplicial complex.
+  Usage
+    vertices(F)
+  Inputs
+    F:Face
+  Outputs
+    :List
+  Description
+   Text
+        Returns a @TO List@ with the vertices of a @TO Face@ of a simplicial complex.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+     D=simplicialComplex I
+     fc=facets(D,useFaceClass=>true)
+     vertices fc#1
+  SeeAlso
+     face
+     facets
+     faces
+///
+
+doc ///
+  Key
+    isSubface
+    (isSubface,Face,Face)
+  Headline
+    Test whether a face is a subface of another face.
+  Usage
+    isSubface(F,G)
+  Inputs
+    F:Face
+    G:Face
+  Outputs
+    :Boolean
+  Description
+   Text
+        Test whether F is a subface of G.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     G=face {x_0,x_1,x_2}
+     F1=face {x_0,x_2}
+     F2=face {x_0,x_3}
+     isSubface(F1,G)
+     isSubface(F2,G)
+///
+
+doc ///
+  Key
+    (substitute,Face,PolynomialRing)
+  Headline
+    Substitute a face to a different ring.
+  Usage
+    substituteFace(F,R)
+  Inputs
+    F:Face
+    R:PolynomialRing
+  Outputs
+    :Face
+  Description
+   Text
+        Substitute a face to a different ring.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1,x_2}
+     S=R**K[y]
+     substitute(F,S)
+///
+
+doc ///
+  Key
+    (ring,Face)
+  Headline
+    Ring of a face.
+  Usage
+    ring(F)
+  Inputs
+    F:Face
+  Outputs
+    :Ring
+  Description
+   Text
+        Ring of a face.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1,x_2}
+     ring F
+///
+
+
+doc ///
+  Key
+    (substitute,SimplicialComplex,PolynomialRing)
+  Headline
+    Substitute a simplicial complex to a different ring.
+  Usage
+    substitute(C,R)
+  Inputs
+    C:SimplicialComplex
+    R:PolynomialRing
+  Outputs
+    :SimplicialComplex
+  Description
+   Text
+        Substitute a simplicial complex to a different ring. R should contain the variables of the @TO ring@ of C.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+     C=simplicialComplex I
+     S=R**K[y]
+     C1=substitute(C,S)
+     ring C1
+  SeeAlso
+     (substitute,Face,PolynomialRing)
+///
+
+doc ///
+  Key
+    isFaceOf
+    (isFaceOf,Face,SimplicialComplex)
+  Headline
+    Substitute a face to a different ring.
+  Usage
+    substitute(F,R)
+  Inputs
+    F:Face
+    R:PolynomialRing
+  Outputs
+    :Face
+  Description
+   Text
+        Substitute a face to a different ring.
+
+   Example
+     K=QQ;
+     R=K[x_1..x_5];
+     C=simplicialComplex monomialIdeal (x_1*x_2,x_3*x_4*x_5)
+     F1=face {x_1,x_2}
+     F2=face {x_1,x_3}
+     isFaceOf(F1,C)
+     isFaceOf(F2,C)
+///
+
+doc ///
+  Key
+    (net,Face)
+  Headline
+    Printing a face.
+  Usage
+    net(F)
+  Inputs
+    F:Face
+  Outputs
+    :Net
+  Description
+   Text
+        Prints a face. The vertices are printed without any brackets and with one space between them. Also prints the polynomial ring which contains the vertices.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     face {x_0,x_1}
+///
+
+doc ///
+  Key
+    useFaceClass
+    [faces,useFaceClass]
+    [facets,useFaceClass]
+  Headline
+    Option to return faces in the class Face
+  Description
+   Text
+    @TO Boolean@ @TO Option@ to return in the methods @TO faces@ and @TO facets@ a @TO List@ of @TO Face@s instead of a @TO Matrix@.
+///
+
+doc ///
+  Key
+    (faces,SimplicialComplex)
+  Headline
+    Compute all faces of a simplicial complex.
+  Usage
+    faces(C)
+  Inputs
+    C:SimplicialComplex
+  Outputs
+    :MutableHashTable
+  Description
+   Text
+        Return a list of lists of the faces of a simplicial complex.
+
+   Example
+    K=QQ;
+    R=K[x_1..x_5];
+    C=simplicialComplex monomialIdeal (x_1*x_2,x_3*x_4*x_5)
+    fc=faces(C,useFaceClass=>true)
+    fc#2
+ ///
+
+
+-------------------------------------------------------------------
+-- some previously missing documentation
+
+doc ///
+  Key
+    (net,SimplicialComplex)
+  Headline
+    Printing a simplicial complex.
+  Usage
+    net(C)
+  Inputs
+    C:SimplicialComplex
+  Outputs
+    :Net
+  Description
+   Text
+        Prints a simplicial complex. 
+
+   Example
+    K=QQ;
+    R=K[x_1..x_5];
+    C=simplicialComplex monomialIdeal (x_1*x_2,x_3*x_4*x_5)
+///
+
+doc ///
+  Key
+    (symbol ==,SimplicialComplex,SimplicialComplex)
+  Headline
+   Compare two simplicial complexes.
+  Usage
+    C1==C2
+  Inputs
+    C1:SimplicialComplex
+    C2:SimplicialComplex
+  Outputs
+    :Boolean
+  Description
+   Text
+        Checks whether C1 and C2 are equal.
+
+   Example
+    K=QQ;
+    R=K[x_1..x_3];
+    C1=simplicialComplex monomialIdeal (x_1*x_2*x_3)
+    C2=simplicialComplex {face {x_1,x_2},face {x_2,x_3},face {x_3,x_1}}
+    C1==C2
+///
+
+doc ///
+  Key
+    faceIdeal
+  Headline
+    Key to simplicial complex.
+  Description
+   Text
+      This is a @TO Key@ to a @TO SimplicialComplex@ C storing its Stanley-Reisner ideal, which will be returned by C.faceIdeal.
+
+      The Stanley-Reisner ideal of C can also be obtained by @TO ideal@ C.
+
+   Example
+    K=QQ;
+    R=K[x_1..x_5];
+    C=simplicialComplex monomialIdeal (x_1*x_2,x_3*x_4*x_5)
+    C.faceIdeal
+    ideal C
+  SeeAlso
+   (ideal,SimplicialComplex)
+///
+
+
+
+doc ///
+  Key    
+    (chainComplex,SimplicialComplex)
+    simplicialChainComplex
+    (simplicialChainComplex,List,SimplicialComplex)
+  Headline
+    The chain complex of boundary maps.
+  Usage
+    chainComplex C
+  Inputs
+    C:SimplicialComplex
+  Outputs
+    :ChainComplex
+  Description
+   Text
+     The @TO ChainComplex@ of @TO boundary@ maps from i-faces to (i-1)-faces.
+
+   Example
+    R = QQ[a..f];
+    D = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f);
+    R' = ZZ/2[a..f];
+    D' = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f);
+    c = chainComplex D
+    c' = chainComplex D'
+    c.dd_1
+    c'.dd_1
+  SeeAlso
+   boundary
+///
+
+
+doc ///
+  Key    
+    (homology,ZZ,SimplicialComplex)
+  Headline
+    Compute the homology of a simplicial complex.
+  Usage
+    homology(j,C)
+  Inputs
+    j:ZZ
+    C:SimplicialComplex
+  Outputs
+    :Module
+  Description
+   Text
+     Compute the j-th reduced homology of C with coefficients in @TO (coefficientRing,SimplicialComplex)@ C.
+
+   Example
+    R=ZZ[x_0..x_5];
+    D=simplicialComplex apply({{x_0, x_1, x_2}, {x_1, x_2, x_3}, {x_0, x_1, x_4}, {x_0, x_3, x_4}, {x_2, x_3, x_4}, {x_0, x_2, x_5}, {x_0, x_3, x_5}, {x_1, x_3, x_5}, {x_1, x_4, x_5}, {x_2, x_4, x_5}},face)
+    prune homology(1,D)
+  SeeAlso
+    (homology,ZZ,SimplicialComplex,Ring)
+   boundary
+   (chainComplex,SimplicialComplex)
+///
+
+doc ///
+  Key    
+    (homology,ZZ,SimplicialComplex,Ring)
+  Headline
+    Compute the homology of a simplicial complex.
+  Usage
+    homology(j,C,R)
+  Inputs
+    j:ZZ
+    C:SimplicialComplex
+    R:Ring
+  Outputs
+    :Module
+  Description
+   Text
+     Compute the j-th reduced homology of C with coefficients in R.
+
+   Example
+    R=ZZ[x_0..x_5];
+    D=simplicialComplex apply({{x_0, x_1, x_2}, {x_1, x_2, x_3}, {x_0, x_1, x_4}, {x_0, x_3, x_4}, {x_2, x_3, x_4}, {x_0, x_2, x_5}, {x_0, x_3, x_5}, {x_1, x_3, x_5}, {x_1, x_4, x_5}, {x_2, x_4, x_5}},face)
+    prune homology(1,D,ZZ)
+    prune homology(1,D,QQ)
+    prune homology(1,D,ZZ/2)
+  SeeAlso
+    (homology,ZZ,SimplicialComplex)
+   boundary
+   (chainComplex,SimplicialComplex)
+///
+
+doc ///
+  Key    
+    (homology,SimplicialComplex,Ring)
+    (homology,Nothing,SimplicialComplex,Ring)
+  Headline
+    Compute the homology of a simplicial complex.
+  Usage
+    homology(C,R)
+  Inputs
+    C:SimplicialComplex
+    R:Ring
+  Outputs
+    :GradedModule
+  Description
+   Text
+     The graded module of reduced homologies of C with coefficients in R.
+
+   Example
+    R=ZZ[x_0..x_5];
+    D=simplicialComplex apply({{x_0, x_1, x_2}, {x_1, x_2, x_3}, {x_0, x_1, x_4}, {x_0, x_3, x_4}, {x_2, x_3, x_4}, {x_0, x_2, x_5}, {x_0, x_3, x_5}, {x_1, x_3, x_5}, {x_1, x_4, x_5}, {x_2, x_4, x_5}},face)
+    homology(D)
+    homology(D,QQ)
+    homology(D,ZZ/2)
+  SeeAlso
+    (homology,SimplicialComplex)
+    (homology,ZZ,SimplicialComplex)
+    (homology,ZZ,SimplicialComplex,Ring)
+///
+
+doc ///
+  Key    
+    (homology,SimplicialComplex)
+    (homology,Nothing,SimplicialComplex)
+  Headline
+    Compute the homology of a simplicial complex.
+  Usage
+    homology C
+  Inputs
+    C:SimplicialComplex
+  Outputs
+    :GradedModule
+  Description
+   Text
+     The graded module of reduced homologies of C with coefficients in R.
+
+   Example
+    R=ZZ[x_0..x_5];
+    D=simplicialComplex apply({{x_0, x_1, x_2}, {x_1, x_2, x_3}, {x_0, x_1, x_4}, {x_0, x_3, x_4}, {x_2, x_3, x_4}, {x_0, x_2, x_5}, {x_0, x_3, x_5}, {x_1, x_3, x_5}, {x_1, x_4, x_5}, {x_2, x_4, x_5}},face)
+    homology D
+  SeeAlso
+    (homology,SimplicialComplex,Ring)
+    (homology,ZZ,SimplicialComplex)
+    (homology,ZZ,SimplicialComplex,Ring)
+///
+
+
+
+-------------------------------------------------------------------
+
+{*
+check ("SimplicialComplexes",UserMode=>false)
+loadPackage "SimplicialComplexes"
+installPackage "SimplicialComplexes"
+installPackage("SimplicialComplexes",RerunExamples=>true,UserMode=>false)
+*}
+
+-----------------------------------------------------------
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimplicialComplexes pre-install"
