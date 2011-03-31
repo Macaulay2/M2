@@ -669,8 +669,8 @@ simplicialComplex L)
 
 joinFaces=method()
 joinFaces(Face,Face):=(F,G)->(
-v1:=vertices F;
-v2:=vertices G;
+v1:=vert F;
+v2:=vert G;
 face(v1|v2))
 
 listMinus=method()
@@ -686,8 +686,8 @@ L3)
 
 coFace=method()
 coFace(Face,Face):=(F,G)->(
-v1:=vertices F;
-v2:=vertices G;
+v1:=vert F;
+v2:=vert G;
 R:=ring G;
 face(listMinus(v2,v1),R))
 
@@ -701,7 +701,7 @@ subdivideFace(Face,Face,PolynomialRing,PolynomialRing):= (D,s,n,R) -> (
    L := {};
    i:=0;
    nfc:={};
-   vs:=vertices s;
+   vs:=vert s;
    vn:=n_{0};
    for i from 0 to  #vs-1 do (
       nfc=joinFaces(nc,substitute(coFace(face {vs#i},s),R));
@@ -1111,7 +1111,7 @@ doc ///
      R=QQ[x_1..x_4,z_1];
      cc=res ideal(x_4*x_3, -x_1*x_2+x_4*z_1);
      cs=substitute(cc,QQ[x_1..x_4])
-     print cs.dd_1
+     cs.dd_1
   SeeAlso
     substitute
 ///
@@ -1276,8 +1276,8 @@ doc ///
     cc
     betti cc
     isExactRes cc
-    print cc.dd_1
-    print cc.dd_2
+    cc.dd_1
+    cc.dd_2
    Text
 
     Obviously the ideal resolved by the Kustin-Miller complex at the special fiber z_1=0
@@ -1301,9 +1301,9 @@ doc ///
     cc
     betti cc
     isExactRes cc
-    print cc.dd_1
-    print cc.dd_2
-    print cc.dd_3
+    cc.dd_1
+    cc.dd_2
+    cc.dd_3
    Text
 
     We compare with the combinatorics, i.e., check that the ideal
@@ -1334,7 +1334,7 @@ doc ///
     C=simplicialComplex I
     fVector C
     F=face {x_1,x_2}
-    Ilink=I:ideal(product vertices F)
+    Ilink=I:ideal(product vert F)
     J=Ilink+ideal(z_1)
     cI=res I
     betti cI
@@ -1345,10 +1345,10 @@ doc ///
     cc
     betti cc
     isExactRes cc
-    print cc.dd_1
-    print cc.dd_2
-    print cc.dd_3
-    print cc.dd_4
+    cc.dd_1
+    cc.dd_2
+    cc.dd_3
+    cc.dd_4
    Text
 
     (4) Starting out with the Pfaffian elliptic curve:
