@@ -72,6 +72,33 @@ yanoL RingElement := ZZ => o -> f -> (
       	  ) else error "unknown Strategy" 
      )
 
+-- annihilator of 1/f where f is a planar curve (with the singularity at 0)
+AnnF1PlanarCurve = method()
+AnnF1PlanarCurve RingElement := f -> (
+     mult := min(flatten entries monomials f / first@@degree);
+     k := 1;
+     local A;
+     while true do (
+     	  A = kOrderAnnFa(k,f,-1);
+     	  cI := charIdeal A;
+     	  << "order " << k << ": " << toString I << endl;
+     	  time dec := primaryDecomposition cI;
+	  --<< dec << endl;
+	  grD := ring cI;
+     	  conormalOfOrigin := select(dec, c->radical c == ideal take(gens grD, numgens grD//2));
+	  << conormalOfOrigin << endl;
+	  if #conormalOfOrigin != 1 then error "can't find the conormal of the origin"
+	  else (
+	       print(degree first conormalOfOrigin, mult-1);
+	       if degree first conormalOfOrigin <= mult-1 then break;
+	       ); 
+	  k = k+1;
+	  );
+     A
+     )
+
+
+
 tests = {
      (
      	  R = QQ[x_1,x_2]; f = x_1*x_2*(x_1+x_2)
@@ -105,16 +132,12 @@ assert(
 ///
 
 restart
-
+load "h-arr.m2"
 -- Reiffen curve: Ann^{(2)}=Ann
 f = tests#2
 minOrderForAnnF1 f
 
--- check
-As = AnnFs sub(f,makeWA ring f); -- Annihilator way
-A1 = sub(As, {last gens ring As => -1});
-assert(sub(A1,ring A#(kappa-1))==A#(kappa-1))
-	   
+-- old experiments	   
 degree (ideal jacobian ideal f + ideal f) -- Tjurina #
 D = ring first A;
 A = apply(A,A->sub(A,D));
@@ -126,6 +149,8 @@ m = ideal vars R;
 fD = D^1/A#0
 annA = VerticalList apply(ord-1, i->gens gb annihilator(A#(i+1)*(D^1/A#i)))
 quotient(A#0,A#2)
+
+-- annihilator does not work correctly!!!
 gens gb annihilator(
      A#2*(D^1/A#0)
      )

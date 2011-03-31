@@ -108,7 +108,7 @@ semicolonIdealIdeal := (I,J) -> (
      )
 semicolonMatrixMatrix := (M, v) -> (
      R := ring M; 
-     if target M != target v 
+     if R =!= ring v or rank target M != rank target v 
      then error "expected equal targets";
      ideal mingens ideal ker map(cokernel M , source v, v) 
      )
