@@ -207,22 +207,24 @@ local currentHelpTag
 fixup := method(Dispatch => Thing)
 
 valueWithText = s -> (
-     sav := dictionaryPath;
-     sav2 := loadedPackages;
-     needsPackage "Text";
-     v := value s;
-     dictionaryPath = sav;
-     loadedPackages = sav2;
-     v)
+     Text := value PackageDictionary#"Text";
+     if member(Text.Dictionary, dictionaryPath) then value s
+     else (
+     	  sav := dictionaryPath;
+	  dictionaryPath = prepend(Text.Dictionary, dictionaryPath);
+     	  v := value s;
+     	  dictionaryPath = sav;
+     	  v))
 
 toExternalStringWithText = s -> (
-     sav := dictionaryPath;
-     sav2 := loadedPackages;
-     needsPackage "Text";
-     v := toExternalString s;
-     dictionaryPath = sav;
-     loadedPackages = sav2;
-     v)
+     Text := value PackageDictionary#"Text";
+     if member(Text.Dictionary, dictionaryPath) then toExternalString s
+     else (
+     	  sav := dictionaryPath;
+	  dictionaryPath = prepend(Text.Dictionary, dictionaryPath);
+     	  v := toExternalString s;
+     	  dictionaryPath = sav;
+     	  v))
 
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
