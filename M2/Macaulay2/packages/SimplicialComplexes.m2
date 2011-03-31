@@ -35,7 +35,7 @@ export {SimplicialComplex,
      superficialComplex,
      faceIdeal,
      Face,
-     vertices,
+     vert,
      face,
      useFaceClass,
      isSubface,
@@ -90,7 +90,7 @@ simplicialComplex MonomialIdeal := (I) -> (
 simplicialComplex List := SimplicialComplex => (facets) -> (
      if #facets === 0 then error "expected at least one facet";
      if class facets#0 === Face then (
-        return simplicialComplexM(apply(facets,j->product vertices j));
+        return simplicialComplexM(apply(facets,j->product vert j));
      ) else (
         return simplicialComplexM(facets))
 )
@@ -439,18 +439,18 @@ superficialComplex(MonomialIdeal) := (I) -> (
 Face = new Type of MutableHashTable
 
 -- vertices of a face
-vertices=method()
-vertices Face := F -> F.vertices
+vert=method()
+vert Face := F -> F.vert
 
 -- pretty print
 net Face := (f)-> (
-v:=vertices(f);
+v:=vert(f);
 if #v==0 then return(net({}));
 horizontalJoin(apply(v,j->net(j)|net(" "))))
 
 -- after print
 Face#{Standard,AfterPrint} = m -> (
-  n:=#vertices(m);
+  n:=#vert(m);
   if n==0 then vstr:="empty face";
   if n==1 then vstr="face with "|n|" vertex";
   if n>1 then vstr="face with "|n|" vertices";
@@ -460,27 +460,27 @@ Face#{Standard,AfterPrint} = m -> (
       << endl;)
 
 -- dimension
-dim Face := F->-1+#(vertices F)
+dim Face := F->-1+#(vert F)
 
 -- ring of a face
 ring Face :=F->F.ring;
 
 -- construct a face from a List of vertices
 face=method()
-face(List):= (L)-> new Face from {symbol vertices => L, symbol ring=> ring L#0}
-face(List,PolynomialRing):= (L,R)-> new Face from {symbol vertices => L, symbol ring=>R}
+face(List):= (L)-> new Face from {symbol vert => L, symbol ring=> ring L#0}
+face(List,PolynomialRing):= (L,R)-> new Face from {symbol vert => L, symbol ring=>R}
 
 -- construct a face from a monomial
 face(RingElement):= (m)-> face(support m,ring m)
 
 -- compare two faces
 Face == Face := (F,G)->(
-(#(vertices F))==(#(vertices G)) and set vertices F === set vertices G)
+(#(vert F))==(#(vert G)) and set vert F === set vert G)
 
 -- test if a face is a subface of another
 isSubface=method()
 isSubface(Face,Face):=(F,G)->(
-isSubset(set vertices F,set vertices G))
+isSubset(set vert F,set vert G))
 
 -- test if a face is a face of a complex
 isFaceOf=method()
@@ -491,7 +491,7 @@ fc:=facets(C,useFaceClass=>true);
 
 -- substitute a face to another ring
 substitute(Face,PolynomialRing):=(F,R)->(
-v:=vertices(F);
+v:=vert(F);
 face(apply(v,j->sub(j,R)),R))
 
 -- substitute a complex to another ring
@@ -1625,13 +1625,13 @@ assert(ring(F)===R)
 TEST ///
 R = QQ[x_0..x_4]
 F = face (x_0*x_1)
-assert(set vertices(F) === set {x_0,x_1})
+assert(set vert(F) === set {x_0,x_1})
 ///
 
 TEST ///
 R = QQ[x_0..x_4]
 F = face (x_0*x_1)
-assert(set vertices(F) === set {x_0,x_1})
+assert(set vert(F) === set {x_0,x_1})
 ///
 
 
@@ -1655,7 +1655,7 @@ doc ///
         The class of faces of simplicial complexes on the variables of a polynomial ring.
         The faces are @TO MutableHashTable@s F with two @TO keys@
         
-        F.vertices is a @TO List@ of vertices in the @TO PolynomialRing@ F.ring
+        F.vert is a @TO List@ of vertices in the @TO PolynomialRing@ F.ring.
 
    Example
      R=QQ[x_0..x_4];
@@ -1749,7 +1749,7 @@ doc ///
       bigger or equal to -1
   Description
    Text
-        Returns the dimension of a @TO Face@, i.e., the number of @TO vertices@ F minus 1.
+        Returns the dimension of a @TO Face@, i.e., the number of @TO vert@ F minus 1.
 
    Example
      K=QQ;
@@ -1766,12 +1766,12 @@ doc ///
 
 doc ///
   Key
-    vertices
-    (vertices,Face)
+    vert
+    (vert,Face)
   Headline
     The vertices of a face of a simplicial complex.
   Usage
-    vertices(F)
+    vert(F)
   Inputs
     F:Face
   Outputs
@@ -1786,7 +1786,7 @@ doc ///
      I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
      D=simplicialComplex I
      fc=facets(D,useFaceClass=>true)
-     vertices fc#1
+     vert fc#1
   SeeAlso
      face
      facets
