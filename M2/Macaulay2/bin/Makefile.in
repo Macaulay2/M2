@@ -26,12 +26,13 @@ M2_OBJECTS += $(BIBASIS_OFILES:%=../kernel/bibasis/%)
 
 EXEFILE = @pre_bindir@/M2@EXE@
 
-all: $(EXEFILE)
+all: $(EXEFILE) checkrpath
 
 relink:
 	rm -f $(EXEFILE)
 	$(MAKE)
 
+checkrpath: $(EXEFILE)
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
@@ -43,7 +44,6 @@ else
 endif
 endif
 endif
-
 
 ## standard options
 M2_LDFLAGS  =
