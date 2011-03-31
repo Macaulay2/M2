@@ -10,39 +10,43 @@
 
 needsPackage "SimplicialComplexes"
 
-newPackage("EdgeIdeals", 
-           Version => "1.0.2",
-           Date => "March 30, 2011",
-	   Certification => {
+newPackage(
+	"EdgeIdeals", 
+	Version => "1.0.2",
+	Date => "March 30, 2011",
+	Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 		"journal URI" => "http://j-sag.org/",
 		"article title" => "EdgeIdeals: a package for (hyper)graphs",
 		"acceptance date" => "2009-06-27",
 		"published article URI" => "http://j-sag.org/Volume1/jsag-1-2009.pdf",
 		"published code URI" => "http://j-sag.org/Volume1/EdgeIdeals.m2",
-     	        "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/EdgeIdeals.m2",
+		"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/EdgeIdeals.m2",
 		"release at publication" => 9342,
 		"version at publication" => "1.0.0",
 		"volume number" => "1",
 		"volume URI" => "http://j-sag.org/Volume1/"
+	},
+	Authors => {
+		{
+			Name => "Chris Francisco", 
+			Email => "chris@math.okstate.edu",
+			HomePage => "http://www.math.okstate.edu/~chris/"
+			},
+		{
+			Name => "Andrew Hoefel", 
+			Email => "handrew@mathstat.dal.ca",
+			HomePage => "http://www.mathstat.dal.ca/~handrew/"
 		},
-           Authors => {
-		       {Name => "Chris Francisco", 
-                        Email => "chris@math.okstate.edu",
-                        HomePage => "http://www.math.okstate.edu/~chris/"
-                       },
-		       {Name => "Andrew Hoefel", 
-                        Email => "handrew@mathstat.dal.ca",
-                        HomePage => "http://www.mathstat.dal.ca/~handrew/"
-                       },
-		       {Name => "Adam Van Tuyl", 
-                        Email => "avantuyl@lakeheadu.ca",
-                        HomePage => "http://flash.lakeheadu.ca/~avantuyl/"
-                       }
-                      },
-           Headline => "a package for edge ideals.",
-           DebuggingMode => false
-          )
+		{
+			Name => "Adam Van Tuyl", 
+			Email => "avantuyl@lakeheadu.ca",
+			HomePage => "http://flash.lakeheadu.ca/~avantuyl/"
+		}
+	},
+	Headline => "a package for edge ideals.",
+	DebuggingMode => false
+)
 
 export {
 	"HyperGraph", 
@@ -108,13 +112,12 @@ export {
 	"spanningTree",
 	"vertexCoverNumber",
 	"vertexCovers",
-	"vertices",
 	"Gins",
 	"BranchLimit",
 	"TimeLimit",
 	"MaximalEdges",
 	"OriginalRing"
-        };
+};
 
 needsPackage "GenericInitialIdeal"
 needsPackage "SimplicialComplexes"
@@ -1191,8 +1194,8 @@ vertexCovers HyperGraph := H -> (
 -- returns the vertices of the (hyper)graph
 --------------------------------------------
 
-EdgeIdeals$vertices = method();
-EdgeIdeals$vertices HyperGraph := H -> H#"vertices";
+--exported by SimplicialComplexes
+vertices(HyperGraph) := H -> H#"vertices";
 
 beginDocumentation()
 
@@ -1524,7 +1527,7 @@ doc ///
 			The information decribing the hypergraph is stored in a hash table. We require that
 			there be no inclusion relations between the edges of a hypergraph; that is, that it
 			be a clutter. The reason is that this package is designed for edge ideals, which would
-			lose any information about edges that are supersets of other edges.			
+			lose any information about edges that are supersets of other edges.
 
 			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
@@ -1738,8 +1741,8 @@ doc ///
 		       G = graph {a*b,a*c,b*c,c*d,d*e,e*f,f*a,a*d}
 		       t = adjacencyMatrix G -- although the same graph, matrix is different since variables have different ordering
 	SeeAlso
-	    incidenceMatrix
-	    vertices
+		incidenceMatrix
+		(vertices,HyperGraph)
 ///
 
 ------------------------------------------------------------
@@ -2386,7 +2389,7 @@ doc ///
 			degreeVertex(h,2) -- degree of c
 	SeeAlso
 		neighbors
-		vertices
+		(vertices,HyperGraph)
 ///
 
 
@@ -2508,7 +2511,7 @@ doc ///
 		       k4 = completeGraph S
 		       edges k4
 	SeeAlso
-	        vertices
+		(vertices,HyperGraph)
 ///
 
 
@@ -2863,7 +2866,7 @@ doc ///
 			and the columns are indexed by the edges. The (i,j)^{th} entry in the 
 			matrix is 1 if vertex i is contained in edge j, and is 0 otherwise.
 			The order of the rows and columns are determined by the internal order of
-			the vertices and edges. See @TO edges@ and @TO vertices@.
+			the vertices and edges. See @TO edges@ and @TO (vertices,HyperGraph)@.
 		Example
                        S = QQ[a..f];
 		       g = hyperGraph {a*b*c*d,c*e,e*f}
@@ -2874,8 +2877,8 @@ doc ///
 	SeeAlso
 		adjacencyMatrix
 		edges	
-		vertices	
-///		      
+		(vertices,HyperGraph)
+///
 
 ------------------------------------------------------------
 -- DOCUMENTATION independenceComplex
@@ -3653,7 +3656,7 @@ doc ///
 		neighbors(G,{0,3})
         SeeAlso
 	     degreeVertex
-	     vertices
+	     (vertices,HyperGraph)
 ///
 
 ------------------------------------------------------------
@@ -3951,7 +3954,7 @@ doc ///
 		       describe ring h
 	SeeAlso
 	        edges
-	        vertices
+	        (vertices,HyperGraph)
 ///
 
 
@@ -4147,12 +4150,11 @@ doc ///
 
 doc ///
 	Key
-		EdgeIdeals$vertices
-		(EdgeIdeals$vertices, HyperGraph)
+		(vertices, HyperGraph)
 	Headline 
 		gets the vertices of a (hyper)graph
 	Usage
-		V = EdgeIdeals$vertices(H) 
+		V = vertices(H) 
 	Inputs
 		H:HyperGraph
 		        the input
@@ -4165,9 +4167,9 @@ doc ///
 		Example
 	                S = QQ[a..d];
 			g = graph {a*b,b*c,c*d,d*a} -- the four cycle
-			EdgeIdeals$vertices g 
+			vertices g 
 			h = hyperGraph{a*b*c}
-			EdgeIdeals$vertices h  -- the vertex d is treated as an isolated vertex
+			vertices h  -- the vertex d is treated as an isolated vertex
         SeeAlso 
 	        edges
 ///
@@ -4400,49 +4402,49 @@ TEST///
 R = QQ[a,b,c]
 H = hyperGraph(R, {{a,b},{b,c}})
 assert(#(edges H) == 2)
-assert(#(EdgeIdeals$vertices H) == 3)
+assert(#(vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(R, {{a,b,c}})
 assert(#(edges H) == 1)
-assert(#(EdgeIdeals$vertices H) == 3)
+assert(#(vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(R, {a*b,b*c})
 assert(#(edges H) == 2)
-assert(#(EdgeIdeals$vertices H) == 3)
+assert(#(vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph({{a,b},{b,c}})
 assert(#(edges H) == 2)
-assert(#(EdgeIdeals$vertices H) == 3)
+assert(#(vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph({a*b,b*c})
 assert(#(edges H) == 2)
-assert(#(EdgeIdeals$vertices H) == 3)
+assert(#(vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(ideal {a*b,b*c})
 assert(#(edges H) == 2)
-assert(#(EdgeIdeals$vertices H) == 3)
+assert(#(vertices H) == 3)
 ///
 
 TEST///
 R = QQ[a,b,c]
 H = hyperGraph(monomialIdeal {a*b,b*c})
 assert(#(edges H) === 2)
-assert(#(EdgeIdeals$vertices H) === 3)
+assert(#(vertices H) === 3)
 ///
 
 -----------------------------
@@ -5036,7 +5038,7 @@ TEST///
 R = QQ[a..e]
 G = randomGraph(R,3)
 assert(#(edges G) == 3)
-assert(EdgeIdeals$vertices G == {a,b,c,d,e})
+assert(vertices G == {a,b,c,d,e})
 ///
 
 -------------------------------------
@@ -5119,8 +5121,8 @@ assert(flatten entries gens coverIdeal g == vertexCovers g)
 TEST///
 R = QQ[a..f]
 G = graph {a*b,b*c,c*d,d*e,e*f} 
-V = EdgeIdeals$vertices(G)
-assert(EdgeIdeals$vertices(G) == {a,b,c,d,e,f})
+V = vertices(G)
+assert(vertices(G) == {a,b,c,d,e,f})
 ///
 
 
