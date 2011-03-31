@@ -26,27 +26,17 @@ M2_OBJECTS += $(BIBASIS_OFILES:%=../kernel/bibasis/%)
 
 EXEFILE = @pre_bindir@/M2@EXE@
 
-all: $(EXEFILE) checkrpath
+all: $(EXEFILE)
 
 relink:
 	rm -f $(EXEFILE)
 	$(MAKE)
 
-checkrpath: $(EXEFILE)
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
-M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
-ifneq (@OBJDUMP@,)
-	@OBJDUMP@ -x $< | egrep RPATH
-	@OBJDUMP@ -x $< | egrep "RPATH +@librariesdir@/lib$$"
-else
-	echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
+M2_LDFLAGS += -Wl,-rpath,@librariesdir@
 endif
 endif
-endif
-
-## standard options
-M2_LDFLAGS  =
 
 ifeq (@OS@,MacOS)
 ## This option should increase the stack size to 16MB, but it makes M2 crash.
@@ -196,6 +186,16 @@ else
 ifneq "@OBJCOPY@" ""
 	@OBJCOPY@ --add-gnu-debuglink=M2.debug-info "$@".tmp
 endif
+endif
+endif
+endif
+ifeq (@OS@ @SHARED@,Linux yes)
+ifneq (@BUILDLIST@,)
+ifneq (@OBJDUMP@,)
+	@OBJDUMP@ -x "$@".tmp | egrep RPATH
+	@OBJDUMP@ -x "$@".tmp | egrep "RPATH +@librariesdir@$$"
+else
+	echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
 endif
 endif
 endif

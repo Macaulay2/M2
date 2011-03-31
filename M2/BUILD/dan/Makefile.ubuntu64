@@ -5,6 +5,10 @@ export CXX =
 
 PRODUCTION = yes
 
+ifeq ($(SHARED),yes)
+CONFIGOPTIONS += --enable-shared
+endif
+
 ifeq ($(DEBUG),yes)
 
 default: arch-chk all
