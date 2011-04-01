@@ -28,7 +28,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      if class K === InexactFieldFamily then error "QQ or Gaussian rationals expected"; 
      if K === QQ then (
      	  I := symbol I;
-     	  K = QQ[I]/ideal(I^2+1); -- THE coefficient ring
+     	  K = makeQI(); -- THE coefficient ring
      	  R = K[gens R]; 
      	  S = apply(S,f->sub(f,R));
      	  T = apply(T,f->sub(f,R));
@@ -40,9 +40,11 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  --dPatch := true; -- not null ???       
      	  dPatch := null; -- for now !!!
      -- create homotopy
-     Rt := K(monoid[gens R, local t]); 
-     t := last gens Rt; 
-     H := matrix {apply(#S, i->(1-t)*sub(S#i,Rt)+t*sub(T#i,Rt))};
+     t := local t; 
+     Rt := K(monoid[gens R, t]); 
+     t = last gens Rt;
+     RtoRt := map(Rt,R,matrix{drop(gens Rt,-1)});
+     H := matrix {apply(#S, i->(1-t)*(RtoRt S#i)+t*(RtoRt T#i))};
      JH := transpose jacobian H; 
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
@@ -168,7 +170,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 		    if dt < 0.000001 then error "dt is very small";
 		    if HISTORY then history#count#"dx" = dx;
 
-    	 	    t1 := min(t0 + dt, 1);
+    	 	    t1 := min(t0 + dt, 1_QQ);
 		    x1 := x0 + dx;
 		    
 		    dx = -inverse(evalHx(x1,t1))*evalH(x1,t1);
@@ -179,7 +181,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 		    x0 = x1;
 		    --x0 = normalizeQI x1; -- approximate normalization 
 		    t0 = t1;
-		    if DBG>1 then << "step " << count << ", t0 = " << toRR t0 << ", x0 = " << toString x0 << endl;
+		    if DBG>1 then (
+			 << "*** step " << count << " ***: t0 = " << toRR t0 << ", x0 = " << toString x0 << endl;
+		    	 << "number of digits in the denominator of t0: " << log_2 denominator t0 << endl;
+			 );
 		    count = count + 1;
 		    if HISTORY then history#count = new MutableHashTable from {"t"=>t0,"x"=>x0};
 		    
@@ -219,6 +224,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      )
 
 -- Gaussian rationals: "QI" = QQ[I]/(I^2+1)
+THE'QI := QQ[I]/(I^2+1) 
+makeQI = method()
+makeQI = ()->THE'QI
+
 conjugateQI = method() 
 conjugateQI RingElement := RingElement => x -> sub(sub(x, matrix{{ -I }}),ring x)
 
@@ -249,8 +258,19 @@ roundQI (ZZ, Matrix) := Matrix => (n,M) -> matrix apply(entries M, r->apply(r, e
 
 QItoQQ = x -> sub(x,QQ)
 
+newCCRing := memoize (R->CC(monoid R))
+
 QItoCC = method()
-QItoCC RingElement := CC => x -> toRR Re x + ii*(toRR Im x)
+QItoCC RingElement := RingElement => x -> (
+     R := ring x;
+     if R === THE'QI then toRR Re x + ii*(toRR Im x)
+     else if instance(R, PolynomialRing) then (
+     	  CR := coefficientRing R;
+	  newR := newCCRing R;
+	  sum(listForm x, (m,c)->QItoCC c * newR_m)
+	  )
+     else "error can not convert to complex numbers"
+     )
 QItoCC List := List => L -> L/QItoCC
 QItoCC Matrix := Matrix => M -> matrix(M/QItoCC)
 	     
@@ -343,10 +363,35 @@ pick'dt = (abc,L,U) -> (
      B := toRR(2*a*b*(1-U^2));
      C := toRR(a^2*(1-U^2));
      assert(A<0 and B^2-4*A*C>=0);
-     t := (-B-sqrt(B^2-4*A*C))/(2*A); -- hack
+     --return toQQ( (-B-sqrt(B^2-4*A*C))/(2*A) ); -- hack
      if DBG>5 then <<"pick'dt: dt = " << t << endl;
-     toQQ(10,t)
+     local r;
+     isPositive := t -> (
+	  tb := t*b;
+	  r = (a+tb)^2 / (a*(a+2*tb+t^2*c));
+  	  a+tb > 0 and 4*r > (L+U)^2
+	  );
+     t1 := 1;
+     L2 := L^2;
+     isPositive t1;
+     count := 0;
+     if a+b>0 and r>=L2 then t1
+     else (
+	  U2 := U^2;
+	  t0 := 0;
+	  t2 := (t0+t1)/2;
+	  s2 := isPositive t2;
+	  while L2>r or U2<r do (
+	       count = count + 1;
+	       if s2 then t0 = t2 else t1 = t2;
+	       t2 = (t0+t1)/2;
+	       s2 = isPositive t2;
+	       ); 
+	  if DBG>1 then << "number of bisections: " << count << endl; 
+	  t2
+     	  )
      ) 
+
 toQQ = method()
 toQQ (ZZ,RR) := QQ => (n,t) -> ( -- n=number of binary digits
      s := 2^(-round log_2 t + n);
@@ -363,8 +408,9 @@ compute'u0RPc = delta -> (
      c := (1-(sqrt 2)*u0/2)^(sqrt 2)*c'/(1+(sqrt 2)*u0/2);
      (u0,R,P,c)
      ) 
-///
-     load "certifiedNAG.m2"
-     (u0,R,P,c) = compute'u0RPc(3/4)
-     C = R*P/log_10(1+c)
-///     
+end
+-----------------------------------------------------------------
+
+load "certifiedNAG.m2"
+(u0,R,P,c) = compute'u0RPc(3/4)
+C = R*P/log_10(1+c)
