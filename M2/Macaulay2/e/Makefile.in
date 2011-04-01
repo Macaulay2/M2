@@ -44,7 +44,7 @@ pi : pi.h
 all:; $(MAKE) -C f4
 
 ifeq "$(SHARED)" "yes"
-all: ../lib/libengine1.so ../lib/libengine2.so
+all: @pre_librariesdir@/libengine.so
 else
 all: $(ENGINE_OFILES)
 endif
@@ -58,7 +58,7 @@ endif
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
-../lib/libengine.so : $(LOFILES); @CC@ -shared $^ $(OUTPUT_OPTION)
+@pre_librariesdir@/libengine.so : $(LOFILES); @CC@ -shared $^ $(OUTPUT_OPTION)
 
 MORE_OPTIONS = -Wno-cast-qual
 COMPILE.c += $(MORE_OPTIONS)

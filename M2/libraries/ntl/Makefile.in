@@ -23,10 +23,10 @@ DEB_LDFLAGS =
 endif
 
 CONFIGUREOPTIONS =								\
-	PREFIX=@pre_librariesdir@						\
-	LIBDIR=@pre_librariesdir@/lib						\
-	INCLUDEDIR=@pre_librariesdir@/include					\
-	DOCDIR=@pre_librariesdir@/share/doc					\
+	PREFIX=@pre_libm2dir@						\
+	LIBDIR=@pre_librariesdir@						\
+	INCLUDEDIR=@pre_libm2dir@/include					\
+	DOCDIR=@pre_libm2dir@/share/doc					\
 	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on	\
 	CC="@CXX@"								\
 	CXX="@CXX@"								\
