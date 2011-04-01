@@ -669,8 +669,8 @@ simplicialComplex L)
 
 joinFaces=method()
 joinFaces(Face,Face):=(F,G)->(
-v1:=vert F;
-v2:=vert G;
+v1:=vertices F;
+v2:=vertices G;
 face(v1|v2))
 
 listMinus=method()
@@ -686,8 +686,8 @@ L3)
 
 coFace=method()
 coFace(Face,Face):=(F,G)->(
-v1:=vert F;
-v2:=vert G;
+v1:=vertices F;
+v2:=vertices G;
 R:=ring G;
 face(listMinus(v2,v1),R))
 
@@ -701,7 +701,7 @@ subdivideFace(Face,Face,PolynomialRing,PolynomialRing):= (D,s,n,R) -> (
    L := {};
    i:=0;
    nfc:={};
-   vs:=vert s;
+   vs:=vertices s;
    vn:=n_{0};
    for i from 0 to  #vs-1 do (
       nfc=joinFaces(nc,substitute(coFace(face {vs#i},s),R));
@@ -1334,7 +1334,7 @@ doc ///
     C=simplicialComplex I
     fVector C
     F=face {x_1,x_2}
-    Ilink=I:ideal(product vert F)
+    Ilink=I:ideal(product vertices F)
     J=Ilink+ideal(z_1)
     cI=res I
     betti cI
