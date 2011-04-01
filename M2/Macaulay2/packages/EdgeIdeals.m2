@@ -393,6 +393,7 @@ cliqueNumber Graph := G -> (
 
 complementGraph = method();
 complementGraph Graph := G -> (
+     v := G#"vertices";
      alledges := set(subsets(v,2) / set);
      gedges := set((G#"edges") / set);
      gcedges := alledges - gedges;  -- edges of the complement
