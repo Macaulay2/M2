@@ -1,0 +1,15 @@
+Okay.  I'll plan to make those limits (memory and time) settable in the configure script, eventually.
+
+    On Apr 1, 2011, at 2:39 AM, kroeker@uni-math.gwdg.de wrote:
+
+    Hello Dan,
+
+    I figured out the cause of the problem:
+    for some reasons starting 'pure' M2  already costs 974 Mb of virtual
+    memory, and thus  "ulimit -v 850000; M2 ..." will fail.
+
+    Unfortunately i have no knowledge about the linux virtual memory
+    management and hence no idea how to solve this problem without
+    incrementing the memory limit.
+
+
