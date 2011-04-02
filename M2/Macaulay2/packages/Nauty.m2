@@ -18,6 +18,7 @@ newPackage (
     Configuration => {"path" => ""},
     DebuggingMode => false
 )
+needsPackage "SimplicialComplexes"
 needsPackage "EdgeIdeals"
 
 -------------------
