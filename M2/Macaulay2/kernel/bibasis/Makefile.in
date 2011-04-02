@@ -8,6 +8,7 @@ include $(BIBASIS_DEPFILES)
 endif
 all: $(BIBASIS_OFILES)
 clean:; rm -f $(BIBASIS_OFILES) $(BIBASIS_DEPFILES) LOGFILE
+check:
 distclean:clean; rm -f Makefile
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/kernel/bibasis/Makefile
 # Local Variables:
