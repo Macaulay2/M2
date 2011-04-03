@@ -16,8 +16,6 @@
   limitations under the License.
 *}
 
-needsPackage "XML"
-needsPackage "ConwayPolynomials"
 newPackage(
 	"OpenMath",
     	Version => "0.2.2", 
@@ -26,11 +24,10 @@ newPackage(
 			{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 		},
     	Headline => "OpenMath for Macaulay2",
+	PackageExports => {"XML","ConwayPolynomials"},
     	DebuggingMode => true,
 		AuxiliaryFiles => true
     	)
-needsPackage "XML"
-needsPackage "ConwayPolynomials"
 
 theOMerror = null;
 

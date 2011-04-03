@@ -14,7 +14,6 @@
   limitations under the License.
 *}
 
-needsPackage "OpenMath"
 newPackage(
 	"SCSCP",
 	Version => "0.2.1", 
@@ -24,11 +23,12 @@ newPackage(
 	},
 	Headline => "SCSCP for Macaulay2",
 	DebuggingMode => false,
-	AuxiliaryFiles => true
+	AuxiliaryFiles => true,
+	PackageExports => {"OpenMath"},
+	PackageImports => {"XML"}
 )
 
-debug needsPackage "OpenMath" -- so that we have all global symbols of OpenMath in here.
-needsPackage "XML"
+debug OpenMath -- so that we have all global symbols of OpenMath in here.
 
 ----------------------------------
 ---------- SETTINGS --------------

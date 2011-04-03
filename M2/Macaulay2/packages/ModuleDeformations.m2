@@ -532,7 +532,6 @@ document {
      }
 
 TEST ///
---needsPackage "ModuleDeformations"
 R=QQ[x,y,Degrees=>{2,3}]/(x^3-y^2);
 (S,M)=deformMCMModule(module ideal (x,y));
 RS=ring M
@@ -545,7 +544,6 @@ assert (I == ideal det presentation M)
 ///
 
 TEST ///
-needsPackage "ModuleDeformations"
 OSigma=QQ[x,Degrees=>{2}]
 OY=QQ[y,z,x,Degrees=>{2,3,2}]/(z^2-(y-x)*y^2)
 phi=map(OY,OSigma,matrix({{x}}))
@@ -560,7 +558,6 @@ assert (I == ideal det presentation M)
 ///
 
 TEST ///
-needsPackage "ModuleDeformations"
 R=QQ[x,y,Degrees=>{3,4}]/(x^4-y^3);
 (S,M)=deformMCMModule(module ideal (x^2,y));
 assert (isHomogeneous S)

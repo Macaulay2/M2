@@ -60,7 +60,15 @@ loadPackage String := opts -> pkgtitle -> (
      if not PackageDictionary#?pkgtitle then error("the file ", actualFilename, " did not define a package called ", pkgtitle);
      value PackageDictionary#pkgtitle)
 
-needsPackage = method(Options => options loadPackage)
+needsPackage = method(
+     TypicalValue => Package,
+     Options => {
+	  -- these are most of the options of loadPackage
+	  FileName => null,
+	  DebuggingMode => null,
+	  LoadDocumentation => false,
+	  Configuration => {}
+	  })
 needsPackage String := opts -> pkg -> (
      if PackageDictionary#?pkg and instance(value PackageDictionary#pkg, Package) then (
 	  pkg = value PackageDictionary#pkg;
@@ -92,7 +100,9 @@ newPackage = method(
 	  HomePage => null,
 	  Date => null,
 	  Configuration => {},
-	  Reload => false
+	  Reload => false,
+	  PackageExports => {},
+	  PackageImports => {}
 	  })
 
 protect Reload
@@ -130,7 +140,8 @@ databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".d
 
 newPackage(String) := opts -> (title) -> (
      checkPackageName title;
-     scan({(Version,String),(AuxiliaryFiles,Boolean),(DebuggingMode,Boolean),(InfoDirSection,String),(Authors,List),(Configuration,List)},
+     scan({(Version,String),(AuxiliaryFiles,Boolean),(DebuggingMode,Boolean),(InfoDirSection,String),
+	       (PackageImports,List),(PackageExports,List),(Authors,List),(Configuration,List)},
 	  (k,K) -> if not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      scan({(Headline,String),(HomePage,String),(Date,String)},
 	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
@@ -139,6 +150,7 @@ newPackage(String) := opts -> (title) -> (
 	  if opts.Reload === null then warningMessage("package ", title, " being reloaded")
 	  else if opts.Reload === false then error("package ", title, " not reloaded; try Reload => true")
 	  );
+     scan(opts.PackageExports, needsPackage);
      dismiss title;
      save := (saveD := dictionaryPath, saveP := loadedPackages, debuggingMode, loadDepth);
      local hook;
@@ -269,6 +281,8 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
      if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
+     scan(opts.PackageExports, needsPackage);
+     scan(opts.PackageImports, needsPackage);
      newpkg.loadDepth = loadDepth;
      loadDepth = if title === "Core" then 1 else if not debuggingMode then 2 else 3;
      newpkg)
@@ -442,6 +456,7 @@ use Package := pkg -> (
      if a and not b then error("use: package ",toString pkg," appears in loadedPackages, but its dictionary is missing from dictionaryPath");
      if b and not a then error("use: package ",toString pkg," does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
      if not a and not b then (
+     	  scan(pkg.Options.PackageExports, needsPackage);
      	  loadedPackages = prepend(pkg,loadedPackages);
 	  --- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
 	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);

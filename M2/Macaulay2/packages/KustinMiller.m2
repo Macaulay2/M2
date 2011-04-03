@@ -1,7 +1,5 @@
 -- -*- coding: utf-8-unix -*-
 
-needsPackage "SimplicialComplexes"
-
 newPackage(
 	"KustinMiller",
     	Version => "1.1", 
@@ -14,6 +12,7 @@ newPackage(
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
     	Headline => "Unprojection and the Kustin-Miller complex construction",
+	PackageExports => {"SimplicialComplexes"},
     	DebuggingMode => true
         )
 
@@ -33,16 +32,11 @@ newPackage(
 
 -- the commands available to the user:
 
-
-
 export({"kustinMillerComplex","differentials","unprojectionHomomorphism","verbose"})
 
 export({"resBE","shiftComplex","dualComplex"})
 
 export({"stellarSubdivision","delta","isExactRes"})
-
-
-needsPackage "SimplicialComplexes"
 
 ------------------------------------------------------------------------
 -- Buchsbaum-Eisenbud resolution of the ideal of submaximal Pfaffians of a 

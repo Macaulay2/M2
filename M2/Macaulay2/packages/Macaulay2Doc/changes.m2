@@ -80,6 +80,11 @@ document {
 		    LI {
 			 "The function ", TO "temporaryFileName", " now produces file names with no chance of
 			 collision, and deletes the files upon normal termination of the program."
+			 },
+		    LI {
+			 "The function ", TO "newPackage", " now has two new options, ", TO "PackageExports", " and ", TO "PackageImports", ",
+			 which provide a more robust way to specify that other packages should be loaded when this new
+			 package is loaded."
 			 }
 		    }
 	       },

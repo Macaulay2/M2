@@ -1,4 +1,3 @@
-needsPackage "BoijSoederberg"
 newPackage(
 	"BGG",
     	Version => "1.4", 
@@ -12,9 +11,9 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
+	PackageExports => {"BoijSoederberg"},
     	DebuggingMode => true
     	)
-needsPackage "BoijSoederberg"
 
 export {
      "symExt", "bgg", "tateResolution", 

@@ -1,6 +1,4 @@
 
-needsPackage "Polymake"
-
 newPackage(
 	"gfanInterface",
     	Version => "0.2.1", 
@@ -17,7 +15,8 @@ newPackage(
 	      },
     	DebuggingMode => true,
 	CacheExampleOutput => true,
-	AuxiliaryFiles => true
+	AuxiliaryFiles => true,
+	PackageExports => {"Polymake"}
     	)
 
 export {
@@ -45,8 +44,6 @@ findProgram = pgmname -> (
 fig2dev'path = gfanInterface#Options#Configuration#"fig2devpath"
 
 needsPackage "FourierMotzkin"
-needsPackage "Polymake"
-
 
 writePolynomial = f -> (
 	E := exponents f;

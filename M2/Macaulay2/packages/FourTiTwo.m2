@@ -597,7 +597,6 @@ doc ///
 
 
 TEST/// 
-  needsPackage "FourTiTwo"    --testing toricMarkov w/ matrix inputt
   A = matrix "1,1,1,1; 1,2,3,4"
   M = toricMarkov(A)
   R = QQ[x_0,x_1,x_2,x_3]
@@ -606,7 +605,6 @@ TEST///
   assert(I==Irnc3)
 ///
 TEST ///   
-  needsPackage "FourTiTwo"   --testing toricMarkov w/ lattice input
   B = matrix "1,-2,1,0; 0,1,-2,1"
   M = toricMarkov(B, InputType => "lattice")
   R = QQ[x_0,x_1,x_2,x_3]
@@ -615,7 +613,6 @@ TEST ///
   assert(I== Irnc3)  
 ///
 TEST ///     
-  needsPackage "FourTiTwo"   --testing circuits
   R=CC[x_0,x_1,x_2,x_3]
   A = matrix "1,1,1,1; 1,2,3,4"
   C = toricCircuits(A)  --circuits returned by 4ti2
@@ -630,7 +627,6 @@ TEST ///
   assert(source C == source Ctrue)
 ///
 TEST ///     
-  needsPackage "FourTiTwo"   --testing rays and hilbert
   B = matrix "1,-2,1,0; 0,1,-2,1"  
   R = QQ[a..d]
   I = toBinomial(B,R)
@@ -645,7 +641,6 @@ TEST ///
   assert(numcols M1 == 4)
 ///
 TEST///
-  needsPackage "FourTiTwo"   --testing toricGroebner
   A = matrix "1,0,1,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0;0,1,1,0,0,0,0,0,0,1,0,1,1,0,1,0,0,0;0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,1;0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,1,1;0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0;1,0,1,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0;0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,0,1,1;0,0,0,0,0,0,1,0,1,0,0,0,1,0,1,1,0,1;0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1"
   M = toricGroebner(A); --note this matrix is the design matrix for the p1 statistical model on 4 nodes using a constant rho. (see fienberg/rinaldo/petrovic; in prep-missing reference).
   assert(numrows M == 137)

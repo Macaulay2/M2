@@ -1,8 +1,5 @@
 -- this file is licensed for use under the GNU General Public Licence version 2
 
-needsPackage "SimplicialComplexes"
-needsPackage "Graphs"
-
 newPackage(
 	"Posets",
     	Version => "0.2", 
@@ -12,7 +9,8 @@ newPackage(
 	     {Name => "Gwyn Whieldon", Email => "whieldon@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Grads/whieldon.html"}
 	     },
     	Headline => "Package for processing posets and order complexes",
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	PackageExports => {"SimplicialComplexes", "Graphs"}
     	)
  
 export {
@@ -50,9 +48,6 @@ export {
 	isAntichain,
 	meetIrreducibles
        }
-
-needsPackage "SimplicialComplexes"
-needsPackage "Graphs"
 
 Poset = new Type of HashTable
 

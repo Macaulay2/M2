@@ -1504,8 +1504,6 @@ break
 
 TEST ///
   -- descendents of a Digraph and MixedGraph
-  restart
-  needsPackage "Graphs"
   G = digraph { {1, {2,3}}, {2, {4}}, {3, {4}} }
   assert(descendents(G, 1) === set{2,3,4})
   assert(descendents(G, 4) === set{})

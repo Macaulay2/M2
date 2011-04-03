@@ -1,5 +1,4 @@
 -- -*- coding: utf-8 -*- this has to be on the first line
-needsPackage "AdjointIdeal"
 newPackage(
 	"Parametrization",
     	Version => "0.6", 
@@ -10,7 +9,9 @@ newPackage(
     	Headline => "Rational parametrization of rational plane curves and related computations",
     	DebuggingMode => true,
 	CacheExampleOutput => true,
-	AuxiliaryFiles => true
+	AuxiliaryFiles => true,
+	PackageExports => {"AdjointIdeal"},
+	PackageImports => {"MapleInterface"}
     	)
 
 -- For information see documentation key "Parametrization" below.
@@ -19,14 +20,6 @@ newPackage(
 export {"parametrize","mapToRNC","isomorphicProjectionOfRNC","rParametrizeRNC","rParametrizePlaneCurve","rationalPointOnConic",
 "rParametrizeConic","invertBirationalMap","modularSquareRoot","legendreSymbol","chineseRemainder","modularPower","modularInverse",
 "testParametrization","parametrizeConic","vb"}
-
-needsPackage "MapleInterface"
-needsPackage "AdjointIdeal"
-
-
-
-
-
 
 -------------------------------------------------------------
 

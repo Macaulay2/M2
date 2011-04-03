@@ -78,8 +78,8 @@ document {
      SeeAlso => {"packages", "an example of a package", needsPackage, load }
      }
 document {
-     Key => {needsPackage,(needsPackage,String),
-	  [needsPackage, LoadDocumentation],[needsPackage,Reload],[needsPackage,Configuration],[needsPackage,DebuggingMode],[needsPackage,FileName]},
+     Key => {(needsPackage,String),needsPackage,
+	  [needsPackage, LoadDocumentation],[needsPackage,Configuration],[needsPackage,DebuggingMode],[needsPackage,FileName]},
      Headline => "load a package if not already loaded",
      Usage => "needsPackage \"PACKAGENAME\"",
      Inputs => { 
@@ -87,28 +87,37 @@ document {
 	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
 	  LoadDocumentation => Boolean => {"whether to load the documentation of the package, too; see ", TO "beginDocumentation"},
 	  DebuggingMode => Boolean => {
-	       "the value of ", TO "debuggingMode", " during loading the package; specifying it here overrides the 
+	       "the value of the variable ", TO "debuggingMode", " during loading the package; specifying it here overrides the 
 	       value specified as an option to ", TO "newPackage", " by the package itself"
 	       },
 	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
 	       the source code of the package and the (possibly updated) values in the file in the user's application
-	       directory."},
-	  Reload => Boolean => {"whether to reload the package, if it has been loaded before"}
+	       directory."}
 	  },
-     Outputs => { { "either the ", TO Package, " just loaded, or ", TO null, " if the package has already been loaded."} },
-     Consequences => { {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"} },
-     PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "." },
+     Outputs => { 
+	  { "the package requested"}
+	  },
+     Consequences => { 
+	  {
+	       "loads the package ", TT "PACKAGENAME", " by loading the file ", TT "PACKAGENAME.m2", ", which should appear
+	       in one of the directories occuring in the list ", TO "path", ", unless it has
+	       already been loaded, in which case it ensures that the package's dictionary of exported symbols 
+	       occurs in ", TO "dictionaryPath", ", and are thus available to the user.  In addition, the function ", TO "needsPackage", "
+	       is applied to each of the packages whose names are specified by the ", TO "PackageExports", " option of ", TO "newPackage", " 
+	       for the requested package."
+	       },
+	  {
+	       "if the variable ", TO "notify", " is set to true, then an informational message is displayed after the file is loaded"
+	       }
+	  },
      PARA { "For example, to load the sample package ", TT "FirstPackage", ":"},
-     PARA {
-	  "If the variable ", TO "notify", " is set to true, then an informational message is displayed after the file is loaded."
-	  },
      EXAMPLE {
 	  ///notify = true///,
 	  ///needsPackage "FirstPackage"///,
 	  ///needsPackage "FirstPackage"///	  
 	  },
      "The second time the package was not reloaded.",
-     SeeAlso => {"packages", "an example of a package", loadPackage }
+     SeeAlso => {"packages", "an example of a package", loadPackage, needsPackage }
      }
 document {
      Key => {makePackageIndex,(makePackageIndex, List), (makePackageIndex, Sequence)},
@@ -192,6 +201,7 @@ document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
 	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput],
+	  [newPackage,PackageExports], PackageExports, [newPackage,PackageImports], PackageImports,
 	  [newPackage,Certification], [newPackage,Reload]
 	  }, 
      Headline => "package item: start a new package",
@@ -210,6 +220,8 @@ document {
 	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading"},
           AuxiliaryFiles => Boolean => {"whether the package source to be distributed includes a directory for
 	       auxiliary files, with the same name as the package"},
+	  PackageExports => List => {"a list of names of other packages to load, both for the user and for the code of the new package"},
+	  PackageImports => List => {"a list of names of other packages to load, just for the code of the new package"},
 	  CacheExampleOutput => Boolean => {
 	       "whether ", TO "installPackage", " should cache (newer) example output in a subdirectory of the ", TO2{[newPackage,AuxiliaryFiles],"auxiliary file directory"}, "
 	       named ", TT "examples", ", for use in a future installation.  This value can be overridden by a value explicitly specified

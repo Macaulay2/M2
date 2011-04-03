@@ -6,7 +6,6 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-needsPackage "EdgeIdeals"
 newPackage (
     "Nauty",
     Version => "1.4",
@@ -16,10 +15,9 @@ newPackage (
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Interface to nauty",
     Configuration => {"path" => ""},
+    PackageExports => {"EdgeIdeals"},
     DebuggingMode => false
 )
-needsPackage "SimplicialComplexes"
-needsPackage "EdgeIdeals"
 
 -------------------
 -- Configuration

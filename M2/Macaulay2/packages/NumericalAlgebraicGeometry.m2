@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
-needsPackage "NAGtypes"
+
 newPackage(
      "NumericalAlgebraicGeometry",
      Version => "1.4",
@@ -14,6 +14,7 @@ newPackage(
      Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
+     PackageExports => {"NAGtypes"},
      DebuggingMode => true --false
      )
 
@@ -51,10 +52,6 @@ protect AllowSingular, protect Output -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationRank, protect DeflationSequence
-
-needsPackage "NAGtypes"
-
-
 
 -- DEBUG CORE ----------------------------------------
 debug Core; -- to enable engine routines

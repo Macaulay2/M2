@@ -319,6 +319,8 @@ export {
 	symbol Outputs,
 	symbol Package,
 	symbol PackageDictionary,
+	symbol PackageImports,
+	symbol PackageExports,
 	symbol PackagePrefix,
 	symbol PairLimit,
 	symbol PairsRemaining,

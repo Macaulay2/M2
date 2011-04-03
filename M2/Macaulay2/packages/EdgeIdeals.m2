@@ -8,12 +8,12 @@
 -- License, or any later version.
 --------------------------------------------------------------------------------
 
-needsPackage "SimplicialComplexes"
-
 newPackage(
 	"EdgeIdeals", 
 	Version => "1.0.2",
 	Date => "March 30, 2011",
+	PackageExports => {"SimplicialComplexes"},
+	PackageImports => {"GenericInitialIdeal"},
 	Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 		"journal URI" => "http://j-sag.org/",
@@ -118,9 +118,6 @@ export {
 	"MaximalEdges",
 	"OriginalRing"
 };
-
-needsPackage "GenericInitialIdeal"
-needsPackage "SimplicialComplexes"
 
 ----------------------------------------------------------------------------------------
 --

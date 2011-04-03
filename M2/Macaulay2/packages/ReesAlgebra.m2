@@ -614,7 +614,6 @@ whichGm Ideal := i -> (
  
  
 beginDocumentation()
-needsPackage "SimpleDoc"
 debug SimpleDoc
 
 doc ///

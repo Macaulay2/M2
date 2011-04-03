@@ -1,7 +1,5 @@
 -- -*- coding: utf-8 -*-
 
-needsPackage "Graphs"
-
 newPackage(
      "GraphicalModels",
      Version => "0.1",
@@ -15,6 +13,7 @@ newPackage(
 	   HomePage => "http://www.math.cornell.edu/~mike/"} 
 	  },
      Headline => "A package for discrete and Gaussian statistical graphical models",
+     PackageExports => {"Graphs"},
      DebuggingMode => true
      )
 
@@ -102,8 +101,6 @@ export {bidirectedEdgesMatrix,
        trekSeparation,
        VariableName
 	} 
-     
-needsPackage "Graphs"
 
 markov = local markov
 markovVariables = local markovVariables

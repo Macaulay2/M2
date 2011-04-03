@@ -851,7 +851,6 @@ SeeAlso
 
 
 TEST ///
-needsPackage "RandomIdeal"
 S=ZZ/101[a..e]
 setRandomSeed 123456
 assert (randomMonomial(7,S)==a*b^3*c^3)

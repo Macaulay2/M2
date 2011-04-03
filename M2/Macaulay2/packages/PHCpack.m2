@@ -1,5 +1,4 @@
 
-needsPackage "NAGtypes"
 
 newPackage(
 	"PHCpack",
@@ -18,6 +17,7 @@ newPackage(
 	      },
     	DebuggingMode => false, 	-- DebuggingMode should be true while developing a package,  but false after it is done
 	AuxiliaryFiles=>true,
+	PackageExports => {"NAGtypes"},
 	CacheExampleOutput => true
 	)
 ------########################
@@ -70,8 +70,6 @@ protect ErrorTolerance, protect addSlackVariables, protect Iterations,
 protect generalEquations, protect tDegree, protect Bits, protect gamma, 
 protect ResidualTolerance, protect Append
 
-needsPackage "NAGtypes"
-
 -- GLOBAL VARIABLES ----------------------------------
 DBG = 0; -- debug level (10=keep temp files)
 path'PHC = (options PHCpack).Configuration#"path";
@@ -79,11 +77,6 @@ PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"; --is the executable st
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file for PHCpack inside Library -> Application Support -> Macaulay2 ->.
 
 -- QUESTION: do we need to prepend "rootPath" to all the file names to resolve issues with cygwin??
-
-
-needsPackage "SimpleDoc"
-
-
 
 
 ----------------------------------------------------------------------

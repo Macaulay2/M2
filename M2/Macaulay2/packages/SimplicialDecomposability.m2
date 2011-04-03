@@ -6,7 +6,6 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-needsPackage "SimplicialComplexes"
 newPackage (
    "SimplicialDecomposability",
    Version => "1.0.5",
@@ -28,9 +27,9 @@ newPackage (
 	"version at publication" => "1.0.5",
 	"volume number" => "2",
 	"volume URI" => "http://www.j-sag.org/volume2.html"
-	}
+	},
+   PackageExports => {"SimplicialComplexes"}
 )
-needsPackage "SimplicialComplexes"
 
 -------------------
 -- Exports

@@ -9,10 +9,10 @@ document { Key => "packages provided with Macaulay2",
      	  "Here is a list of the packages that are distributed with Macaulay2.  The ones that have been
 	  refereed are marked with a star."
 	  },
-     UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2"), 
+     UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2Doc"), 
 	  pkg -> (
 	       local p;
-	       (dictionaryPath,loadedPackages,p) = (dictionaryPath,loadedPackages,
+	       (dictionaryPath,loadedPackages,currentPackage,p) = (dictionaryPath,loadedPackages,currentPackage,
 		    try 
 		    needsPackage(pkg,DebuggingMode => true)
 		    else (

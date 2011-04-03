@@ -1,6 +1,5 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL, any version
-needsPackage "Graphics"
 
 newPackage(
 	"WeylGroups",
@@ -13,9 +12,8 @@ newPackage(
 		},
 	Headline => "Root systems and Weyl groups",
 	AuxiliaryFiles => true,
+	PackageExports => {"Graphics"},
 	DebuggingMode => false)
-
-needsPackage "Graphics" -- twice! otherwise doesn't work...
 
 -- Put here the name of functions that should be visible to users
 export{

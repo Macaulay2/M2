@@ -15,7 +15,6 @@
 -- You should have received a copy of the GNU General Public License along with
 -- this program.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------
-needsPackage "Polyhedra"
 newPackage(
   "NormalToricVarieties",
   AuxiliaryFiles => true,
@@ -26,6 +25,8 @@ newPackage(
       Email => "ggsmith@mast.queensu.ca", 
       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
   Headline => "normal toric varieties",
+  PackageExports => {"Polyhedra"},
+  PackageImports => {"FourierMotzkin","Normaliz"},
   DebuggingMode => false
   )
 
@@ -67,10 +68,6 @@ export {
   "blowup",
   "makeSmooth"
   }
---------------------------------------------------------------------------------
-needsPackage "FourierMotzkin" 
-needsPackage "Polyhedra"
-needsPackage "Normaliz"
 
 --------------------------------------------------------------------------------
 -- CODE
