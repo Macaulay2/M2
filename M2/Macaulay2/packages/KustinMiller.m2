@@ -2,8 +2,8 @@
 
 newPackage(
 	"KustinMiller",
-    	Version => "1.1", 
-    	Date => "March 8, 2011",
+    	Version => "1.1",
+    	Date => "March 31, 2011",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
@@ -34,7 +34,7 @@ newPackage(
 
 export({"kustinMillerComplex","differentials","unprojectionHomomorphism","verbose"})
 
-export({"resBE","shiftComplex","dualComplex"})
+export({"resBE","dualComplex"})
 
 export({"stellarSubdivision","delta","isExactRes"})
 
@@ -200,34 +200,33 @@ kustinMillerComplex(res I,res J,T0,opt));
 
 
 kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)->(
-if opt.verbose>1 then (
-  print("------------------------------------------------------------------------------------------------------------------------");
-  print("");
-  print("res(I): ");
-  print("");
-  for j from 1 to length(cI0) do (
-    print("a_"|j|" = "|net(cI0.dd_j)|" : "|net(degrees source cI0.dd_j)|" -> "|net(degrees target cI0.dd_j));print("");
-  );
-  print("");
-   print("------------------------------------------------------------------------------------------------------------------------");
-  print("");
-  print("res(J): ");
-  print("");
-  for j from 1 to length(cJ0) do (
-    print("b_"|j|" = "|net(cJ0.dd_j)|" : "|net(degrees source cJ0.dd_j)|" -> "|net(degrees target cJ0.dd_j));print("");
-  );
-   print("------------------------------------------------------------------------------------------------------------------------");
-  print("");
-);
+     if opt.verbose>1 then (
+       print("------------------------------------------------------------------------------------------------------------------------");
+       print("");
+       print("res(I): ");
+       print("");
+       for j from 1 to length(cI0) do (
+         print("a_"|j|" = "|net(cI0.dd_j)|" : "|net(degrees source cI0.dd_j)|" -> "|net(degrees target cI0.dd_j));print("");
+       );
+       print("");
+        print("------------------------------------------------------------------------------------------------------------------------");
+       print("");
+       print("res(J): ");
+       print("");
+       for j from 1 to length(cJ0) do (
+         print("b_"|j|" = "|net(cJ0.dd_j)|" : "|net(degrees source cJ0.dd_j)|" -> "|net(degrees target cJ0.dd_j));print("");
+       );
+        print("------------------------------------------------------------------------------------------------------------------------");
+       print("");
+     );
 I:=ideal(cI0.dd_1);
 J:=ideal(cJ0.dd_1);
 phi:=unprojectionHomomorphism(I,J);
 R:=ring I;
 if R =!= ring J then error("expected complexes over the same ring");
-v:= gens R;
 K:=coefficientRing R;
 degT:=degree phi;
-S:=K[toSequence(prepend(T0_0,v)),Degrees=>prepend(degT,degrees R)];
+S:=K[toSequence(prepend(T0_0,gens R)),Degrees=>prepend(degT,degrees R)];
 cI:=substitute(cI0,S);
 cJ:=substitute(cJ0,S);
 g:=length(cJ);
@@ -237,52 +236,47 @@ dualcI:= shiftComplex ( dualComplex cI, -codim I);
 dualcJ:= shiftComplex ( dualComplex cJ, -codim I);
 gJ:=gens source phi;
 degshift:=degree phi;
-if opt.verbose>1 then (
-   print("phi: "|toString((entries gJ)#0)|" -> "|toString((entries phi)#0));
-   print "";
-   print("degree phi = "|degshift);
-   print("");
-   print("------------------------------------------------------------------------------------------------------------------------");
-   print("");
-);
+     if opt.verbose>1 then (
+        print("phi: "|toString((entries gJ)#0)|" -> "|toString((entries phi)#0));
+        print "";
+        print("degree phi = "|toString(degshift));
+        print("");
+        print("------------------------------------------------------------------------------------------------------------------------");
+        print("");
+     );
 IJmap:=sub(matrix entries phi,S)*((gens ideal (dualcJ.dd_0))//(gens Js));
 alphaDual:=extend(dualcI,dualcJ, map(dualcI#0,dualcJ#0,IJmap));
 w:=(alphaDual_(length cI))_0_0;
-alpha:={};
-for j from 1 to g-1 do (
-  alpha=append(alpha, sub(w^(-1),S)*(transpose alphaDual_(g-1-j)));
-);
-if opt.verbose>1 then (
-   print("");
-   for j from 1 to #alpha do (
-    print("alpha_"|j|" = "|net(alpha_(j-1)));print("");
-   );
-   print("");
-   print("------------------------------------------------------------------------------------------------------------------------");
-   print("");
-);
+alpha:=toList apply(g-1,j->sub(w^(-1),S)*(transpose alphaDual_(g-2-j)));
+     if opt.verbose>1 then (
+        print("");
+        for j from 1 to #alpha do (
+         print("alpha_"|j|" = "|net(alpha_(j-1)));print("");
+        );
+        print("");
+        print("------------------------------------------------------------------------------------------------------------------------");
+        print("");
+     );
 cJ1:=shiftComplex(cJ ,1);
 betaMap:=sub(matrix entries phi,S)*((gens ideal (cJ1.dd_0))// (gens Js));
 beta1:=extend(cI,cJ1,map((cI#0,cJ1#0,betaMap)));
-beta:={};
-for j from 0 to g-1 do (
-  beta=append(beta, -(beta1_j));
-);
-if opt.verbose>1 then (
-   for j from 1 to #beta-1 do (
-    print("beta_"|j|" = "|net(beta_(j-1)));print("");
-   );
-   print("");
-   print("------------------------------------------------------------------------------------------------------------------------");
-   print("");
-);
+beta:=toList apply(g, j-> -(beta1_j));
+     if opt.verbose>1 then (
+        for j from 1 to #beta-1 do (
+         print("beta_"|j|" = "|net(beta_(j-1)));print("");
+        );
+        print("");
+        print("------------------------------------------------------------------------------------------------------------------------");
+        print("");
+     );
 u:=-(beta1_(length cI))_0_0;
-if opt.verbose>1 then (
-   print("u = "|toString(u));
-   print("");
-   print("------------------------------------------------------------------------------------------------------------------------");
-   print("");
-);
+     if opt.verbose>1 then (
+        print("u = "|toString(u));
+        print("");
+        print("------------------------------------------------------------------------------------------------------------------------");
+        print("");
+     );
+-- construct the homotopy h
 h:={0_S};
 for j from 1 to g-1 do (
   tC1:= chainComplex { id_(S^(rank (cI#j)))};
@@ -290,14 +284,15 @@ for j from 1 to g-1 do (
   hi:= (extend ( tC2, tC1, map (tC2#0, tC1#0,  beta#(j-1)*alpha#(j-1) - h#(j-1)*cI.dd_j  )));
   h=append(h,hi_1);
 );
-if opt.verbose>1 then (
-   for j from 1 to #h-1 do (
-    print("h_"|j|" = "|net(h_(j-1)));print("");
-   );
-   print("");
-   print("------------------------------------------------------------------------------------------------------------------------");
-   print("");
-);
+     if opt.verbose>1 then (
+        for j from 1 to #h-1 do (
+         print("h_"|j|" = "|net(h_(j-1)));print("");
+        );
+        print("");
+        print("------------------------------------------------------------------------------------------------------------------------");
+        print("");
+     );
+-- form the differentials of the Kustin-Miller complex
 L:={};
 for j from 1 to g do (
   if g==2 then (
@@ -350,14 +345,14 @@ for j from 1 to g do (
   );
   L=append(L,differentials(inL,j,g,degshift));
 );
-if opt.verbose>1 then (
-   for j from 1 to #L do (
-    print("f_"|j|" = "|net(L_(j-1))|" : "|net(degrees source L_(j-1))|" -> "|net(degrees target L_(j-1)));print("");
-   );
-   print("");
-   print("------------------------------------------------------------------------------------------------------------------------");
-   print("");
-);
+     if opt.verbose>1 then (
+        for j from 1 to #L do (
+         print("f_"|j|" = "|net(L_(j-1))|" : "|net(degrees source L_(j-1))|" -> "|net(degrees target L_(j-1)));print("");
+        );
+        print("");
+        print("------------------------------------------------------------------------------------------------------------------------");
+        print("");
+     );
 chainComplex(L))
 
 --kustinMillerComplex(I,J,QQ[t])
@@ -401,33 +396,33 @@ true)
 
 differentials=method()
 differentials(List,ZZ,ZZ,List):=(L,i,g,degshift)->(
-if i<0 or i>g then error("wrong index");
-if checkSameRing(L)==false then error("expected input over the same ring");
+       if i<0 or i>g then error("wrong index");
+       if checkSameRing(L)==false then error("expected input over the same ring");
 if g==2 then (
  if i==1 then (
    b1:=L#0;beta1:=L#1;a1:=L#2;T:=L#3;
-   if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
+       if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
    return(makeGrading((beta1+T*a1),L,{i,g},degshift));
  );
  if i==2 then (
   alphaim1:=L#0;ai:=L#1;bim1:=L#2;u:=L#3;T=L#4;
-  if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
-  if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
+       if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
+       if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
   return(makeGrading((-alphaim1+(-1)^i*u^(-1)*T*ai),L,{i,g},degshift))
  );
 );
 if g==3 then (
  if i==1 then (
    b1=L#0;beta1=L#1;a1=L#2;T=L#3;
-   if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
+       if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
    return(makeGrading(b1|(beta1+T*a1),L,{i,g},degshift));
  );
  if i==2 then (
   b2:=L#0;beta2:=L#1;h1:=L#2;a2:=L#3;alpha1:=L#4;T=L#5;
-  if rank target b2 != rank target beta2 or rank target b2 != rank target h1 then error("wrong size step "|(toString(i)));
-  if rank source a2 != rank source beta2 then error("wrong size step "|(toString(i)));
-  if rank target a2 != rank target alpha1 then error("wrong size step "|(toString(i)));  
-  if rank source h1 != rank source alpha1 then error("wrong size step "|(toString(i)));
+       if rank target b2 != rank target beta2 or rank target b2 != rank target h1 then error("wrong size step "|(toString(i)));
+       if rank source a2 != rank source beta2 then error("wrong size step "|(toString(i)));
+       if rank target a2 != rank target alpha1 then error("wrong size step "|(toString(i)));  
+       if rank source h1 != rank source alpha1 then error("wrong size step "|(toString(i)));
   n:=rank source b2;
   m:=rank target a2;
   R:=ring b2;
@@ -436,23 +431,23 @@ if g==3 then (
  );
  if i==3 then (
   alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;T=L#4;
-  if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
-  if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
-  if rank source ai != rank source bim1 then error("wrong size step "|(toString(i)));  
+       if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
+       if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
+       if rank source ai != rank source bim1 then error("wrong size step "|(toString(i)));  
   return(makeGrading((-alphaim1+(-1)^i*u^(-1)*T*ai)||(bim1),L,{i,g},degshift))
  );
 );
 if i==1 then (
    b1=L#0;beta1=L#1;a1=L#2;T=L#3;
-   if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
+        if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
    return(makeGrading(b1|(beta1+T*a1),L,{i,g},degshift));
 );
 if i==2 then (
   b2=L#0;beta2=L#1;h1=L#2;a2=L#3;alpha1=L#4;T=L#5;
-  if rank target b2 != rank target beta2 or rank target b2 != rank target h1 then error("wrong size step "|(toString(i)));
-  if rank source a2 != rank source beta2 then error("wrong size step "|(toString(i)));
-  if rank target a2 != rank target alpha1 then error("wrong size step "|(toString(i)));  
-  if rank source h1 != rank source alpha1 then error("wrong size step "|(toString(i)));
+       if rank target b2 != rank target beta2 or rank target b2 != rank target h1 then error("wrong size step "|(toString(i)));
+       if rank source a2 != rank source beta2 then error("wrong size step "|(toString(i)));
+       if rank target a2 != rank target alpha1 then error("wrong size step "|(toString(i)));  
+       if rank source h1 != rank source alpha1 then error("wrong size step "|(toString(i)));
   n=rank source b2;
   m=rank target a2;
   R=ring b2;
@@ -461,11 +456,11 @@ if i==2 then (
 );
 if i>=3 and i<=g-2 then (
   bi:=L#0;betai:=L#1;him1:=L#2;ai=L#3;alphaim1=L#4;bim1=L#5;T=L#6;
-  if rank target bi != rank target betai or rank target bi != rank target him1 then error("wrong size step "|(toString(i)));
-  if rank source ai != rank source betai then error("wrong size step "|(toString(i)));
-  if rank target ai != rank target alphaim1 then error("wrong size step "|(toString(i)));  
-  if rank source him1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
-  if rank source bim1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
+       if rank target bi != rank target betai or rank target bi != rank target him1 then error("wrong size step "|(toString(i)));
+       if rank source ai != rank source betai then error("wrong size step "|(toString(i)));
+       if rank target ai != rank target alphaim1 then error("wrong size step "|(toString(i)));  
+       if rank source him1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
+       if rank source bim1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
   n=rank source bi;
   m=rank target ai;
   l:=rank source ai;
@@ -478,11 +473,11 @@ if i>=3 and i<=g-2 then (
 );
 if i>=3 and i==g-1 then (
   betai=L#0;him1=L#1;ai=L#2;alphaim1=L#3;bim1=L#4;T=L#5;
-  if rank target betai != rank target him1 then error("wrong size step "|(toString(i)));
-  if rank source ai != rank source betai then error("wrong size step "|(toString(i)));
-  if rank target ai != rank target alphaim1 then error("wrong size step "|(toString(i)));  
-  if rank source him1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
-  if rank source bim1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
+       if rank target betai != rank target him1 then error("wrong size step "|(toString(i)));
+       if rank source ai != rank source betai then error("wrong size step "|(toString(i)));
+       if rank target ai != rank target alphaim1 then error("wrong size step "|(toString(i)));  
+       if rank source him1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
+       if rank source bim1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
   l=rank source ai;
   k=rank target bim1;
   R=ring ai;
@@ -491,13 +486,14 @@ if i>=3 and i==g-1 then (
 );
 if i>=3 and i==g then (
   alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;T=L#4;
-  if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
-  if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
-  if rank source ai != rank source bim1 then error("wrong size step "|(toString(i)));  
+       if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
+       if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
+       if rank source ai != rank source bim1 then error("wrong size step "|(toString(i)));  
   return(makeGrading((-alphaim1+(-1)^i*u^(-1)*T*ai)||(bim1),L,{i,g},degshift))
 );
 error("wrong index"))
 
+-- give the Kustin-Miller complex the correct grading
 makeGrading=method()
 makeGrading(Matrix,List,List,List):=(M,L,ig,degshift)->(
 i:=ig#0;
@@ -558,18 +554,19 @@ error("wrong index"))
 unprojectionHomomorphism=method()
 unprojectionHomomorphism(Ideal,Ideal):=(I,J)->(
 R:=ring I;
-if ring I =!= ring J then error("expected ideals in the same ring");
-if I+J!=J then error("expected first ideal contained in second");
+     if ring I =!= ring J then error("expected ideals in the same ring");
+     if I+J!=J then error("expected first ideal contained in second");
 M:=Hom(J,R^1/I);
 -- give some feedback on wrong input
-if rank source gens M != 2 then (
-   for j from 0 to -1+rank source gens M do (
-      phi:=homomorphism M_{j};
-      gJ:=gens source phi;
-      print("phi: "|toString((entries gJ)#0)|" -> "|toString((entries phi)#0));
-   );
-   error("wrong number of generators");
-);
+     if rank source gens M != 2 then (
+        for j from 0 to -1+rank source gens M do (
+           phi:=homomorphism M_{j};
+           gJ:=gens source phi;
+           print("phi: "|toString((entries gJ)#0)|" -> "|toString((entries phi)#0));
+        );
+        error("wrong number of generators");
+     );
+     if codim(I) != -1+codim(J) then error("expected codim 1 unprojection locus");
 f1:=homomorphism M_{0};
 f2:=homomorphism M_{1};
 if J+I==I+ideal (entries f1)#0 then (
@@ -582,6 +579,7 @@ if J+I==I+ideal (entries f1)#0 then (
 ---------------------------------------------------------------------
 -- some usefull stuff for chain complexes
 
+-- check whether a chain complex is a resolution
 -- note that this is not the same as isExact in the
 -- chain complex extras
 isExactRes=method()
@@ -605,7 +603,7 @@ substitute(ChainComplex,Ring):=(cc,S)->(
     cn)
 
 
-
+-- this behaves different to the grading than [ ]
 shiftComplex= method()
 shiftComplex(ChainComplex,ZZ) := (CJ,p) ->  (
     CJShifted := new ChainComplex;
@@ -614,7 +612,7 @@ shiftComplex(ChainComplex,ZZ) := (CJ,p) ->  (
     for i from min(CJ) -p+1  to max (CJ)-p   do  CJShifted.dd_i = CJ.dd_(i+p);
     CJShifted   )
 
--- not introducing the alternating sign as M2 does
+-- this is not introducing the alternating sign as the built in M2 command would do
 dualComplex= method()
 dualComplex(ChainComplex)  := (CJ) -> (
   dual CJ;
@@ -631,7 +629,6 @@ dualComplex(ChainComplex)  := (CJ) -> (
 -- Stellar subdivision code
 
 
-
 stellarSubdivisionSimplex=method()
 stellarSubdivisionSimplex(Face,Face,PolynomialRing,PolynomialRing):=(D,s,n,R)->(
    if  isSubface(s,D)==false then ( 
@@ -641,6 +638,8 @@ stellarSubdivisionSimplex(Face,Face,PolynomialRing,PolynomialRing):=(D,s,n,R)->(
    )
 )
 
+-- stellar subdivision of a simplicial complex with respect to the face
+-- introducing a new variable
 stellarSubdivision=method()
 stellarSubdivision(SimplicialComplex,Face,PolynomialRing):= (D,s0,n)  ->  (
    R1:=ring D;
@@ -937,6 +936,14 @@ doc ///
     differentials
 ///
 
+-- test unprojectionHomomorphism
+///TEST
+     R = QQ[x_1..x_4,z_1..z_4, T];
+     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
+     J = ideal (z_1..z_4);
+     phi=unprojectionHomomorphism(I,J);
+assert(phi==map(coker gens I,image gens J,matrix {{x_1*x_3, x_1*x_4, x_2*x_3, x_2*x_4}}));
+///
 
 doc ///
   Key
@@ -963,6 +970,15 @@ doc ///
      fVector C
      I=ideal C
      betti res I
+///
+
+-- test cyclic polytope command
+///TEST
+     K=QQ;
+     R=K[x_0..x_6];
+     C=delta(4,R);
+     fVector C;
+assert(ideal C==ideal(x_0*x_2*x_4,x_0*x_2*x_5,x_0*x_3*x_5,x_1*x_3*x_5,x_1*x_3*x_6,x_1*x_4*x_6,x_2*x_4*x_6))
 ///
 
 
@@ -1059,6 +1075,14 @@ doc ///
      res
 ///
 
+-- test Buchsbaum-Eisenbud command
+///TEST
+      R=QQ[x_1..x_4,z_1..z_4];
+      A=matrix {{0,x_1,x_2,x_3,x_4},{-x_1,0,0,z_1,z_2},{-x_2,0,0,z_3,z_4},{-x_3,-z_1,-z_3,0,0},{-x_4,-z_2,-z_4,0,0}};
+      cc=resBE A;
+assert(matrix entries cc.dd_2==A)
+///
+
 
 doc ///
   Key
@@ -1110,7 +1134,7 @@ doc ///
     substitute
 ///
 
-
+{*
 doc ///
   Key
     shiftComplex
@@ -1140,6 +1164,7 @@ doc ///
      res
      betti
 ///
+*}
 
 doc ///
   Key
@@ -1397,7 +1422,7 @@ doc ///
 
 
 
-
+-- test stellar subdivision code
 TEST ///
      K=QQ;
      R=K[x_0..x_4];
@@ -1422,7 +1447,8 @@ doc ///
     the codimension 4 cyclic polytope {\Delta}(4,8) from those of the
     cyclic polytopes {\Delta}(2,6) and {\Delta}(4,7) (the last one being Pfaffian).
 
-    Of course this process can be iterated, for details see
+    Of course this process can be iterated to give a recursive construction of the
+    resolutions of all cyclic polytopes, for details see
 
     {\it J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes}, @HREF"http://arxiv.org/abs/0912.2152"@
 
@@ -1465,6 +1491,41 @@ doc ///
     betti
 ///
 
+
+
+-- test Kustin-Miller complex command using C47 example
+TEST ///
+     K=QQ;
+     C26=delta(2,K[z,x_2..x_6])
+     R=K[z,x_1..x_7]
+     J=sub(ideal C26,R)
+     c26=res J;
+     C47=delta(4,K[x_1..x_7])
+     I=sub(ideal C47,R)
+     c47=res I;
+     cc=kustinMillerComplex(c47,c26,K[x_8]);
+assert(rank(cc#1)==16);
+assert(rank(cc#2)==30);
+assert(isExactRes(cc));
+///
+
+-- test whether the result of unprojection is C48
+TEST ///
+     K=QQ;
+     C26=delta(2,K[z,x_2..x_6])
+     R=K[z,x_1..x_7]
+     J=sub(ideal C26,R)
+     c26=res J;
+     C47=delta(4,K[x_1..x_7])
+     I=sub(ideal C47,R)
+     c47=res I;
+     cc=kustinMillerComplex(c47,c26,K[x_8]);
+     R'=K[x_1..x_8];
+     C48=delta(4,R');
+     I48=ideal C48;
+assert(I48==sub(ideal cc.dd_1,R'))
+///
+
 doc ///
   Key
     "Tom"
@@ -1502,7 +1563,7 @@ doc ///
 ///
 
 
-
+-- test Kustin-Miller complex command using Tom example
 TEST ///
      R = QQ[x_1..x_4,z_1..z_4]
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
