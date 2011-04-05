@@ -303,9 +303,17 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
      n := #T; 
+     K := CC_53; -- THE coefficient ring
+     
      if n > 0 then R := ring first T else error "expected nonempty target system";
-     if #S != n then 
-     error "expected same number of polynomials in start and target systems";
+     if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
+     coeffR := coefficientRing R; 
+     if #S != n then error "expected same number of polynomials in start and target systems";
+     if not(
+	  instance(ring 1_coeffR, ComplexField) 
+	  or instance(ring 1_coeffR, RealField)
+	  or coeffR===QQ or coeffR ===ZZ
+	  ) then error "expected coefficients that can be converted to complex numbers";  
      if any(S, f->ring f =!= R) or any(T, f->ring f =!= R)
      then error "expected all polynomials in the same ring";
      if o.tStep <= 0 then error "expected positive tStep";  
@@ -339,7 +347,6 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  else error "expected a square system";
      	  );
     
-     K := CC_53; -- THE coefficient ring
      solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
      if o.Projectivize then (
 	  if isProjective then error "the problem is already projective";
@@ -1657,7 +1664,8 @@ toAffineChart (ZZ,List) := List => (k,x) -> (
      ) 
 
 projectiveDistance = method()
-projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)));
+projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)))
+projectiveDistance (Point,Point) := (a,b) -> projectiveDistance(coordinates a, coordinates b)
 
 selectUnique = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
 selectUnique List := o -> sols ->(

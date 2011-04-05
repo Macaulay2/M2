@@ -31,7 +31,7 @@ document {
 	  TO setDefault,
 	  TO getDefault,
 	  TO areEqual,
-     	  TO sortSolutions,
+	  TO sortSolutions,
 	  TO NAGtrace
 	  },
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
@@ -425,16 +425,18 @@ document {
 	     "x" => "a solution or a list of solutions",
 	     "y" => "a solution or a list of solutions",
 	     Projective=>{"if ", TO true, " then solutions are considered as representatives of points 
-		  in the projective space and the Riemannian distance in the projective space is measured"}
+		  in the projective space"}
 	     },
 	Outputs => {"b"=>{"tells if ", TT "x", " and ", TT "y", " are approximately equal"}},
 	PARA {"The inputs can be complex numbers, ", TO2{Point, "points"}, ", ", " or lists of points (presented as ", TO2{Point, "points"}, " or lists of coordinates)."},
 	"The function returns false if the distance between ", TT "x", " and ", TT "y", " exceeds ", TO Tolerance, " and true, otherwise.",
-	PARA {},
+	PARA {"If ", TT "Projective=>true", " then ", TEX "1-\\cos\\alpha", " is compared with the ", TO Tolerance, ", where ",
+	     TEX "\\alpha", " is the angle between ", TT "x", " and ", TT "y", "." },
 	EXAMPLE lines ///
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
 areEqual(sortSolutions s / coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}})
+areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)  
      	///,
 	SeeAlso => {solveSystem, track, sortSolutions}
 	}
