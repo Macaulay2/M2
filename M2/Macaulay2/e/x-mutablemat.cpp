@@ -887,6 +887,51 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 #endif
 }
 
+#include "fflas-ffpack/modular-positive.h"
+#include "fflas-ffpack/ffpack.h"
+
+RingElement *rawFFPackDeterminant(MutableMatrix *M)
+// M should be a mutable matrix over a finite prime field, 
+// of square size.
+{
+  // declare the field DONE
+  // copy the matrix to an ffpack matrix
+  // call det
+  // translate the answer to a RingElement
+  // free the ffpack matrix
+
+  const Ring *R = M->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk == 0)
+    {
+      ERROR("expected finite prime field");
+      return 0;
+    }
+  typedef Modular<double>::Element ElementType;
+  Modular<double> F(static_cast<double>(R->charac()));
+  
+  ElementType * N = newarray(ElementType, M->n_rows() * M->n_cols());
+  ElementType *inN = N;
+  for (size_t i = 0; i<M->n_rows(); i++)
+    for (size_t j = 0; j<M->n_cols(); j++)
+      {
+	ring_elem a;
+	M->get_entry(i,j,a);
+	int b = kk->to_int(a);
+	double d = b;
+	F.init(*inN++, d);
+      }
+
+  size_t n = M->n_rows();
+#if 0
+  ElementType result = FFPACK::Rank(F, n, n, N, n);
+  int res = result;
+  deletearray(N);
+  return RingElement::make_raw(kk, kk->from_int(res));
+#endif
+  return 0;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
