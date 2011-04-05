@@ -1629,6 +1629,10 @@ int PathTracker::track(const Matrix* start_sols)
 	norm_of_inverse_via_svd(n, LHS, chi1); 
 	//printf("chi1=%lf\n", chi1);
 	*dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2*bigT);
+	if (dt->getreal() < dt_min_dbl)
+	  t_s->status = MIN_STEP_FAILED;
+	if ( dt->getreal() > 1 - t0->getreal() ) 
+	  *dt = complex(1-t0->getreal()); 
 	zero_complex_array(n,dx); 
       } break;
       default: ERROR("unknown predictor"); 
