@@ -20,7 +20,7 @@ export {
      "Equations", "Slice", "Points", "sliceEquations",
      -- point (solution)
      "Point", "point", "coordinates",
-     "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", 
+     "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "Regular", "Singular", "Infinity", "MinStepFailure"
      }
@@ -36,6 +36,7 @@ WitnessSet = new Type of MutableHashTable
 --   LastT => RR in [0,1]
 --   ConditionNumber => condition number of the Jacobian
 --   ErrorBoundEstimate => absolute error bound estimate (from Newton's method)
+--   Multiplicity => the multiplicity (sometimes: the number of paths converging to the point) 
 --   }
 Point.synonym = "point"
 point = method()

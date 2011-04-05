@@ -935,12 +935,12 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	  ref'sols = apply(solsT, s->(
 	       x1 := sub(transpose matrix {s}, CC); -- convert to vector 
 	       if isProjective then x1 = normalize x1;
-	       -- corrector step
+	       error'bound := infinity;
 	       norm'dx := infinity; -- dx = + infinity
 	       norm'residual := infinity;
 	       nCorrSteps := 0;
-	       while norm'residual > o.ResidualTolerance 
-	       and norm'dx > o.ErrorTolerance * norm x1 
+	       while (norm'residual > o.ResidualTolerance 
+	       	    or norm'dx > o.ErrorTolerance * norm x1) 
 	       and nCorrSteps < n'iterations 
 	       --and cond < o.SingularConditionNumber 
 	       do ( 
@@ -951,9 +951,13 @@ refine (List,List) := List => o -> (T,solsT) -> (
 		    dx := solve(J, -residual);
 		    norm'dx = norm dx;
 		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  residual << " dx=" << dx << endl;
-		    x1 = x1 + dx;
-		    if isProjective then x1 = normalize x1;
-		    nCorrSteps = nCorrSteps + 1;
+		    if norm'dx < error'bound then (
+		    	 x1 = x1 + dx;
+		    	 if isProjective then x1 = normalize x1;
+		    	 nCorrSteps = nCorrSteps + 1;
+			 )
+		    else break;
+		    error'bound = norm'dx; 
 		    );
 	       if DBG>0 then (
 		    if norm'residual > o.ResidualTolerance
@@ -968,13 +972,13 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       {flatten entries x1, 
 		    SolutionStatus=>st, 
 		    ConditionNumber=>if cond===null then conditionNumber evalJ(x1) else cond, 
-		    LastT=>1.} | (if norm'dx===infinity then {} else {ErrorBoundEstimate=>norm'dx}) 
+		    LastT=>1.} | (if norm'dx===infinity then {} else {ErrorBoundEstimate=>error'bound}) 
 	       ));
      	   );
       	   ref'sols/point
       )     
 
-refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.01})
+refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.0001})
 refineViaDeflation(List, List) := o->(T,solsT) -> refineViaDeflation(transpose matrix{T},solsT,o)
 refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
      n := numgens ring T;
@@ -1003,7 +1007,8 @@ refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
 			 else (
 			      rs := first refine(dT,{ls});
 			      --print(rs,coordinates s,s.ErrorBoundEstimate,norm matrix s);
-			      solsAreClose := (norm matrix{take(coordinates rs, n) - coordinates s} 
+			      solsAreClose := (
+				   norm matrix{take(coordinates rs, n) - coordinates s} 
 			      	   < o.Tolerance * norm matrix s); -- new approximation is not too far
 			      if rs.SolutionStatus===Regular and solsAreClose
 			      then (
@@ -1025,7 +1030,7 @@ refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
 	  dOrder = dOrder + 1;
 	  );
      --return (#ss == 0) -- success if everything deflated successfully
-     ref'solsT
+     	  solutionsWithMultiplicity ref'solsT
      )
 
 -- possible solution statuses returned by engine
@@ -1556,10 +1561,10 @@ regeneration List := List => o -> F -> (
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if o.Software == M2engine then (
 			 sing := toList singularSolutions(T,targetPoints);
-			 reg := select(targetPoints, p->p.SolutionStatus==Regular);
+			 regPoints := select(targetPoints, p->p.SolutionStatus==Regular);
 			 --print (sing,reg);
-		    	 if o.Output == Regular then targetPoints = targetPoints_reg 
-		    	 else targetPoints = targetPoints_reg | targetPoints_sing;
+		    	 if o.Output == Regular then targetPoints = regPoints 
+		    	 else targetPoints = regPoints | targetPoints_sing;
 			 );
 		    newW := witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), 
 			 selectUnique(targetPoints, Tolerance=>1e-2));
@@ -1780,6 +1785,16 @@ groupClusters MutableHashTable := H -> (
      cs
      )
 
+solutionsWithMultiplicity = method()
+solutionsWithMultiplicity List := sols -> ( 
+     clusters := groupClusters solutionDuplicates sols;
+     apply(clusters, c->(
+	       s := new Point from sols#(first c);
+	       if (s.Multiplicity = #c)>1 and s.SolutionStatus === Regular then s.SolutionStatus = Singular;
+	       s
+	       ))
+     )
+
 singularSolutions = method() -- decide on the tolerance!!!
 singularSolutions(List,List) := (T,sols) -> (
 -- find positions of singular solutions in sols
@@ -1875,19 +1890,19 @@ deflatedSystem(Ideal, Matrix, ZZ) := (I, M, r) -> (
      flatten entries squareUpSystem ( sub(transpose gens I,S) || DF )
      )
 
-liftSolution = method(Options=>{ResidualTolerance=>0.01}) -- lifts a solution s to a solution of a deflated system dT (returns null if unsuccessful)
+liftSolution = method(Options=>{Tolerance=>null}) -- lifts a solution s to a solution of a deflated system dT (returns null if unsuccessful)
 liftSolution(Point, List) := o->(s,dT)->liftSolution(s, transpose matrix{dT},o)
 liftSolution(Point, Matrix) := o->(s,dT)->(
      R := ring dT;
      c := coordinates s;
      n := #c;
      N := numgens R;
-     if N<=n then error "the number of variables in the deflated system is expected to be smaller"; 
+     if N<=n then error "the number of variables in the deflated system is expected to be larger"; 
      newVars := (vars R)_{n..N-1};
      dT0 := sub(sub(dT, matrix{c}|newVars), (coefficientRing R)(monoid[flatten entries newVars]));
-     ls := first solveSystem flatten entries squareUpSystem dT0;     
+     ls := first solveSystem flatten entries squareUpSystem dT0; -- here a linear system is solved!!!     
      ret := c | coordinates ls;
-     --if norm sub(dT, matrix{ret}) < o.ResidualTolerance * norm matrix{c} then ret else null
+     --if norm sub(dT, matrix{ret}) < o.Tolerance * norm matrix{c} then ret else null
      ret
      ) 
 
