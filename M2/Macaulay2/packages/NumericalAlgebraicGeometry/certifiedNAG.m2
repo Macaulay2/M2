@@ -91,7 +91,8 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	  etHt = etHt + tr#0;
 	  tr#1
 	  );
-     compute'dt'epsilon := (
+     local log'denominator't0; -- stores log_2 denominator t0
+     compute'dt'epsilon := ( -- local subroutine (relies on evaluation functions)
 	  x0,--z_i
 	  t0 --s_i
 	  ) -> 
@@ -136,10 +137,10 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	       pick'dt((norm2H,
 		    Re BombieriWeylScalarProductQI(H't0,T-S),--Re <H't0,T-S>,
 		    BombieriWeylNormSquaredQI(T-S) --||T-S||^2
-		    ),L,U), 
+		    ),L,U,log'denominator't0), 
 	       epsilon
 	       )
-	  );
+	  ); -- END compute'dt'epsilon
      
      compStartTime := currentTime();      
 
@@ -149,6 +150,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
 	       x0 := s; 
 	       t0 := 0; 
+	       log'denominator't0 = 0;
 	       count := 1; -- number of computed points
 	       if HISTORY then history := new MutableHashTable from{ count => new MutableHashTable from {
 			 "t"=>t0,"x"=>x0
@@ -179,11 +181,12 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 		    --x1 = roundQI(5,x1); -- round to a few digits!!!
 		    
 		    x0 = x1;
-		    --x0 = normalizeQI x1; -- approximate normalization 
+		    --x0 = normalizeQI x1; -- approximate normalization!!! 
 		    t0 = t1;
+		    log'denominator't0 = round log_2 denominator t0;
 		    if DBG>1 then (
 			 << "*** step " << count << " ***: t0 = " << toRR t0 << ", x0 = " << toString x0 << endl;
-		    	 << "number of digits in the denominator of t0: " << log_2 denominator t0 << endl;
+		    	 << "number of digits in the denominator of t0: " << log'denominator't0 << endl;
 			 );
 		    count = count + 1;
 		    if HISTORY then history#count = new MutableHashTable from {"t"=>t0,"x"=>x0};
@@ -236,7 +239,7 @@ Re ZZ := identity
 Re QQ := identity
 Re RingElement := RingElement => x -> sub((x + conjugateQI x)/2,QQ)
 Im = method() 
-Im RingElement := RingElement => x -> sub((x - conjugateQI x)/2,QQ)
+Im RingElement := RingElement => x -> sub((x - conjugateQI x)/(2*THE'QI_0),QQ)
      
 normSquareQI = method(TypicalValue=>RingElement) -- 2-norm of a vector                           
 normSquareQI List := v -> sub(sum(v, x->x*conjugateQI x),QQ);
@@ -298,26 +301,6 @@ approxSqrtGeqOne(ZZ,QQ) := (t,e) -> (
 	  );
      t'
      )
--- shorterZero = method()
--- shorterZero (Matrix,QQ) := Matrix => (x0,e) -> (
---      z := roundQI(10,x0); -- hack!!!
---      assert(acos distanceSquareQI(z,x0)<e^2); -- inexact!!!
---      assert(0<e and e<1/5);
---      n := numRows x0 - 1;
---      R := ring x0; 
---      x0'rat := apply(flatten entries x0, c->{Re c, Im c});     
---      m := lcm(flatten flatten x0'rat/denominator@@QItoQQ);
---      --1/0;
---      x := m*x0;
---      inv'norm := (n+1)/normSquareQI x;
---      r0 := approxSqrt(inv'norm,e/4);
---      r := r0/e;
---      z'rat := apply(x0'rat,c->apply(c,t->round(r*t)));
---      z' := transpose matrix{apply(z'rat, c->c#0+c#1*R_0)};
---      --<< "hack: " << z << "; non-hack: " << z' << endl;
---      --10*z -- hack
---      z
---      )
 
 -- out: z s.t. ||z-x0|| <= sqrt e and coords of z ar integers of length at most 1 + 3 sqrt((n+1)/e)
 shorterZero = method()
@@ -356,7 +339,7 @@ BombieriWeylNormSquaredQI RingElement := QQ => f -> Re sum(listForm f, a->(
 	  ))
 BombieriWeylNormSquaredQI List := QQ => F -> sum(F, f->BombieriWeylNormSquaredQI f) 
 
-pick'dt = (abc,L,U) -> (
+pick'dt = (abc,L,U,log'denominator't0) -> (
      (a,b,c) := abc;
      -- solve: (b^2-acU^2)t^2+2ab(1-U^2)+a^2(1-U^2)=0 and the same for L
      A := toRR(b^2-a*c*U^2);
@@ -374,17 +357,17 @@ pick'dt = (abc,L,U) -> (
      t1 := 1;
      L2 := L^2;
      isPositive t1;
-     count := 0;
      if a+b>0 and r>=L2 then t1
      else (
 	  U2 := U^2;
 	  t0 := 0;
 	  t2 := (t0+t1)/2;
+     	  count := 0; -- the number of bisections
 	  s2 := isPositive t2;
-	  while L2>r or U2<r do (
-	       count = count + 1;
+	  while (L2>r or U2<r) or count<log'denominator't0-1 do (
 	       if s2 then t0 = t2 else t1 = t2;
 	       t2 = (t0+t1)/2;
+	       count = count + 1;
 	       s2 = isPositive t2;
 	       ); 
 	  if DBG>1 then << "number of bisections: " << count << endl; 
