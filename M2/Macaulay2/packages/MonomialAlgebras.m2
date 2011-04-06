@@ -351,22 +351,22 @@ doc ///
       decomposeMonomialAlgebra f      
    Text
    
-    Consider the family of smooth monomial curves in $P^3$, the one of degree $d$
+    Consider the family of smooth monomial curves in $\mathbb{P}^3$, the one of degree $d$
     having parametrization 
     $$
-     (s,t) \mapsto (s^d, s^{d-1}t, st^{d-1} t^d)\in P^3.
+     (s,t) \mapsto (s^d, s^{d-1}t, st^{d-1} t^d) \in \mathbb{P}^3.
     $$
 
    Example
      kk=ZZ/101;
      L= for d from 4 to 10 list (f= map(kk[x_0..x_3,Degrees=>{{d,0},{d-1,1},{1,d-1},{0,d}}], kk[x_0,x_3,Degrees=>{{d,0},{0,d}}]));
-     (L/decomposeMonomialAlgebra)/print
+     print\decomposeMonomialAlgebra\L
    Text
      
      Using @TO decomposeMonomialCurve@ the same example is:
         
    Example
-     for d from 4 to 10 do (decomposeMonomialCurve{1,d-1,d})     
+     for d from 4 to 10 do (print decomposeMonomialCurve{1,d-1,d})
 ///
 
 
@@ -399,7 +399,7 @@ doc ///
       A = {{1,2},{3,0},{0,4},{0,5}}
       decomposeSimplicialHomogeneousMonomialAlgebra (A)
    Text
-     Using "decomposeMonomialAlgebra" we could do the same example as follows:
+     Using @TO decomposeMonomialAlgebra@ we could do the same example as follows:
    Example
       B = adjoinPurePowers homogenizeSemigroup A
       C = adjoinPurePowers homogenizeSemigroup {{0,5}}
@@ -411,9 +411,9 @@ doc ///
    
     Consider the family of smooth monomial curves in $P^3$, the one of degree $d$
     having parametrization 
-    $$
+    $
      (s,t) \mapsto (s^d, s^{d-1}t, st^{d-1} t^d)\in P^3.
-    $$
+    $
    
    Example
      for d from 4 to 10 do (A = {{d,0},{d-1,1},{1,d-1},{0,d}}; print decomposeSimplicialHomogeneousMonomialAlgebra A)
