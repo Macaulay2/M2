@@ -887,8 +887,10 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 #endif
 }
 
+#if defined(HAVE_FFLAS_FFPACK)
 #include "fflas-ffpack/modular-positive.h"
 #include "fflas-ffpack/ffpack.h"
+#endif
 
 RingElement *rawFFPackDeterminant(MutableMatrix *M)
 // M should be a mutable matrix over a finite prime field, 
@@ -900,6 +902,7 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
   // translate the answer to a RingElement
   // free the ffpack matrix
 
+#if defined(HAVE_FFLAS_FFPACK)
   const Ring *R = M->get_ring();
   const Z_mod *kk = R->cast_to_Z_mod();
   if (kk == 0)
@@ -923,6 +926,10 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
       }
 
   size_t n = M->n_rows();
+#else
+  ERROR("FFPack not present");
+  return 0;
+#endif
 #if 0
   ElementType result = FFPACK::Rank(F, n, n, N, n);
   int res = result;
