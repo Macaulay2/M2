@@ -22,7 +22,7 @@ export {
      "Point", "point", "coordinates",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
-     "Regular", "Singular", "Infinity", "MinStepFailure"
+     "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure"
      }
 
 Point = new Type of MutableHashTable 
@@ -46,6 +46,7 @@ net Point := p -> (
      else if p.SolutionStatus === Singular then net toSequence p.Coordinates
      else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
+     else if p.SolutionStatus === NumericalRankFailure then net "[N]"
      else error "the point is corrupted"
      ) 
 coordinates = method()

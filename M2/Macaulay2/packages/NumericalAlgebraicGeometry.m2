@@ -35,7 +35,7 @@ export {
      "Tolerance",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
-     "Attempts", "SingularConditionNumber",
+     "Attempts", "SingularConditionNumber", 
      "numericalRank", --"toAffineChart",
      "NAGtrace"
      }
@@ -51,7 +51,8 @@ protect OrthogonalProjection, protect Variant, -- in conditionNumber
 protect AllowSingular, protect Output -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
-protect DeflationRank, protect DeflationSequence
+protect DeflationSequence, protect DeflationRandomMatrix
+protect MaxNumberOfVariables
 
 -- DEBUG CORE ----------------------------------------
 debug Core; -- to enable engine routines
@@ -98,7 +99,8 @@ DEFAULT = new MutableHashTable from {
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
-     SingularConditionNumber => 1e4
+     SingularConditionNumber => 1e4,
+     MaxNumberOfVariables => 50
      }
 
 setDefault = method(Options => {
@@ -980,58 +982,65 @@ refine (List,List) := List => o -> (T,solsT) -> (
 
 refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.0001})
 refineViaDeflation(List, List) := o->(T,solsT) -> refineViaDeflation(transpose matrix{T},solsT,o)
-refineViaDeflation(Matrix, List) := o->(T,solsT) -> (
-     n := numgens ring T;
-     ref'solsT := refine(flatten entries T,solsT);     
-     ss := select(ref'solsT, s->s.SolutionStatus =!= Regular);
-     dOrder := 1;
-     while #ss > 0 and dOrder <= o.Order do (
-	  M := dMatrix(ideal T, dOrder);
-	  minRank := infinity;
-	  scan(ss, s->if (s.DeflationRank = numericalRank sub(M, matrix s)) < minRank 
-	       then minRank = s.DeflationRank);
-	  r := minRank;
-	  while r < numcols M do(
-	       s'r := select(ss, s->s.DeflationRank==r);
-	       dT := deflatedSystem(ideal T,M,r);
-	       scan(s'r, s->(
-			 attempt := 0;
-			 local ls;
-	       		 while attempt < DEFAULT.Attempts and (ls = liftSolution(s,dT))===null
-	       		 do (
-			      dT = deflatedSystem(ideal T,M,r);
-			      attempt = attempt + 1;
+refineViaDeflation(Matrix, List) := o->(sysT,solsT) -> (
+     n := numgens ring sysT;
+     ref'solsT := refine(flatten entries sysT,solsT);     
+     for s in ref'solsT do (
+	  if s.SolutionStatus =!= Regular then (
+	       T := sysT;
+	       s.DeflationRandomMatrix = {};
+	       s.DeflationSequence = {};
+	       local dT;
+	       local SM; 
+	       ls := coordinates s; -- current lifted solution
+	       dOrder := o.Order;
+	       minRank := infinity;
+	       done := false;
+	       while not done do (
+		    M := dMatrix(ideal T, dOrder);
+		    r := numericalRank sub(M, matrix{ls});
+ 		    attempt := 0;
+		    lucky := false;
+		    local new'ls;
+		    while not lucky and attempt < DEFAULT.Attempts do (
+			 (dT,SM) = deflatedSystem(ideal T,M,r,attempt);
+			 lucky = ((new'ls = liftSolution(ls,dT))=!=null);
+			 attempt = attempt + 1;
+			 );
+		    ls = new'ls;
+		    s.DeflationSequence = s.DeflationSequence|{dOrder}; 
+		    s.DeflationRandomMatrix = s.DeflationRandomMatrix | {SM};
+		    if not lucky
+		    then (
+			 1/0;
+			 s.SolutionStatus = NumericalRankFailure;
+			 done = true;
+			 )
+		    else (
+			 rs := first refine(dT,{ls});
+			 --print(rs,coordinates s,s.ErrorBoundEstimate,norm matrix s);
+			 solsAreClose := (
+			      norm matrix{take(coordinates rs, n) - coordinates s} 
+			      < o.Tolerance * norm matrix s); -- new approximation is not too far
+			 if solsAreClose then (
+			      s.Coordinates = take(coordinates rs, n); -- refine the approximation
 			      );
-			 if attempt == DEFAULT.Attempts 
-			 then s.DeflationRank = s.DeflationRank + 1 -- perhaps, rank>numericalRank 
-			 else (
-			      rs := first refine(dT,{ls});
-			      --print(rs,coordinates s,s.ErrorBoundEstimate,norm matrix s);
-			      solsAreClose := (
-				   norm matrix{take(coordinates rs, n) - coordinates s} 
-			      	   < o.Tolerance * norm matrix s); -- new approximation is not too far
-			      if rs.SolutionStatus===Regular and solsAreClose
-			      then (
-			      	   s.Coordinates = take(coordinates rs, n); -- refine the approximation
-				   if not s.?DeflationSequence then s.DeflationSequence = {};
-			      	   s.DeflationSequence = s.DeflationSequence|{dOrder}; 
-			      	   )
-			      else (
-				   --error "numerical rank problem";
-				   --s.DeflationRank = s.DeflationRank + 1; -- perhaps, rank>numericalRank 
-				   s.DeflationRank = infinity 
-				   )
+			 if rs.SolutionStatus===Regular
+			 then done = true
+			 else if rs.SolutionStatus===Singular then (
+			      done = numgens ring first dT > DEFAULT.MaxNumberOfVariables;
+			      if done then s.DeflationSequence = s.DeflationSequence|{infinity}; -- indicates that deflation failed  
+			      T = dT;
 			      )
-			 )); 
-	       r = r + 1;
-	       );
-	  ss = select(ss, s->s.DeflationRank >= numcols M); 
-	  scan(ss, s->s.DeflationRank = infinity); -- mark as not deflated successfully
-	  dOrder = dOrder + 1;
-	  );
-     --return (#ss == 0) -- success if everything deflated successfully
-     	  solutionsWithMultiplicity ref'solsT
+			 else (
+			      s.SolutionStatus = NumericalRankFailure;
+			      )
+			 ))
+	       )
+	  ); 
+     solutionsWithMultiplicity ref'solsT
      )
+
 
 -- possible solution statuses returned by engine
 solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
@@ -1838,7 +1847,7 @@ numericalRank Matrix := o -> M -> (
      then error "matrix with real or complex entries expected";
      S := first SVD M;
      r := 0; last's := 1;
-     for i to #S do (
+     for i to #S+1 do (
 	  if o.Threshold*S#i < last's 
 	  then break
 	  else (r = r + 1; last's = S#i)
@@ -1875,34 +1884,40 @@ dIdeal (Ideal, ZZ) := (I, d) -> (
      sub(I,S) + ideal(sub(A,S) * transpose (vars S)_{0..#ind-1})
      )	   
 deflatedSystem = method()
-deflatedSystem(Ideal, Matrix, ZZ) := (I, M, r) -> (
+deflatedSystem(Ideal, Matrix, ZZ, ZZ) := memoize (
+(I, M, r, attempt) -> (
 -- In: gens I = the original (square) system   
 --     M = deflation matrix
 --     r = numerical rank of M (at some point)
--- Out: square system of n+r equations
+-- Out: (square system of n+r equations, the random matrix SM)
      R := ring I;
      n := numgens R;
      SM := randomOrthonormalCols(numcols M, r+1);
-     newvars := apply(r, i->getSymbol("d"|(toString i)));
-     S := (coefficientRing R)(monoid[gens R | newvars]);
+     d := local d;
+     S := (coefficientRing R)(monoid[gens R, d_0..d_(r-1)]);
      DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+r-1}|matrix{{1_S}}); -- new equations
-     print DF;     
-     flatten entries squareUpSystem ( sub(transpose gens I,S) || DF )
+     --print DF;     
+     (
+	  flatten entries squareUpSystem ( sub(transpose gens I,S) || DF ),
+	  SM
+	  )
      )
+) -- END memoize
 
 liftSolution = method(Options=>{Tolerance=>null}) -- lifts a solution s to a solution of a deflated system dT (returns null if unsuccessful)
-liftSolution(Point, List) := o->(s,dT)->liftSolution(s, transpose matrix{dT},o)
-liftSolution(Point, Matrix) := o->(s,dT)->(
+liftSolution(List, List) := o->(s,dT)->liftSolution(s, transpose matrix{dT},o)
+liftSolution(List, Matrix) := o->(c,dT)->(
      R := ring dT;
-     c := coordinates s;
      n := #c;
      N := numgens R;
      if N<=n then error "the number of variables in the deflated system is expected to be larger"; 
      newVars := (vars R)_{n..N-1};
-     dT0 := sub(sub(dT, matrix{c}|newVars), (coefficientRing R)(monoid[flatten entries newVars]));
+     specR := (coefficientRing R)(monoid[flatten entries newVars]);
+     dT0 := (map(specR, R, matrix{c}|vars specR)) dT;
      ls := first solveSystem flatten entries squareUpSystem dT0; -- here a linear system is solved!!!     
+     if status ls =!= Regular then return null;
      ret := c | coordinates ls;
-     --if norm sub(dT, matrix{ret}) < o.Tolerance * norm matrix{c} then ret else null
+     -- if norm sub(dT, matrix{ret}) < o.Tolerance * norm matrix{c} then ret else null
      ret
      ) 
 
