@@ -221,3 +221,6 @@ system6R = () -> (
      f12= g0 * (z41^2 + z42^2 + z43^2 - 1);
      ideal (f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12)
      )
+
+decker2 = ()-> ( R = CC[x,y]; ideal(x+y^3,x^2*y-y^4) )
+      

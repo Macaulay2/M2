@@ -940,10 +940,12 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       error'bound := infinity;
 	       norm'dx := infinity; -- dx = + infinity
 	       norm'residual := infinity;
+	       newton'converges := true;
 	       nCorrSteps := 0;
 	       while (norm'residual > o.ResidualTolerance 
 	       	    or norm'dx > o.ErrorTolerance * norm x1) 
 	       and nCorrSteps < n'iterations 
+	       and newton'converges
 	       --and cond < o.SingularConditionNumber 
 	       do ( 
 		    residual := evalT(x1);
@@ -958,7 +960,11 @@ refine (List,List) := List => o -> (T,solsT) -> (
 		    	 if isProjective then x1 = normalize x1;
 		    	 nCorrSteps = nCorrSteps + 1;
 			 )
-		    else break;
+		    else (
+			 error'bound = norm'dx;
+			 if DBG>0 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
+			 newton'converges = false;
+			 );
 		    error'bound = norm'dx; 
 		    );
 	       if DBG>0 then (
@@ -997,6 +1003,7 @@ refineViaDeflation(Matrix, List) := o->(sysT,solsT) -> (
 	       minRank := infinity;
 	       done := false;
 	       while not done do (
+		    if DBG > 1 then << "-- performing deflation of order " << dOrder << " at the point " << ls << endl;  
 		    M := dMatrix(ideal T, dOrder);
 		    r := numericalRank sub(M, matrix{ls});
  		    attempt := 0;
@@ -1012,7 +1019,6 @@ refineViaDeflation(Matrix, List) := o->(sysT,solsT) -> (
 		    s.DeflationRandomMatrix = s.DeflationRandomMatrix | {SM};
 		    if not lucky
 		    then (
-			 1/0;
 			 s.SolutionStatus = NumericalRankFailure;
 			 done = true;
 			 )
