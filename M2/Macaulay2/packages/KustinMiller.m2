@@ -1,8 +1,10 @@
 -- -*- coding: utf-8-unix -*-
 
+--needsPackage "SimplicialComplexes"
+
 newPackage(
 	"KustinMiller",
-    	Version => "1.1",
+    	Version => "1.2",
     	Date => "March 31, 2011",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
@@ -25,18 +27,26 @@ newPackage(
 -- For more installation instructions see documentation key
 -- KustinMiller below
 
--- This package has been written and tested with M2 version 1.3.1
-
+-- This package has been written and tested with M2 version 1.4
+-- however due to the new key PackageExports it will only work
+-- with the next version of M2
+-- to make it work with 1.4 uncomment the two needsPackage lines
+-- and remove the PackageExports line
 
 --------------------------------------------------------------------
 
 -- the commands available to the user:
 
-export({"kustinMillerComplex","differentials","unprojectionHomomorphism","verbose"})
+
+
+export({"kustinMillerComplex","unprojectionHomomorphism","verbose"})
 
 export({"resBE","dualComplex"})
 
 export({"stellarSubdivision","delta","isExactRes"})
+
+--needsPackage "SimplicialComplexes"
+
 
 ------------------------------------------------------------------------
 -- Buchsbaum-Eisenbud resolution of the ideal of submaximal Pfaffians of a 
@@ -728,7 +738,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 
 ------------------------------------------------------------------------------------------------------------------
--- documentation and tests
+-- documentation
 
 beginDocumentation()
 
@@ -740,17 +750,18 @@ doc ///
   Description
     Text
       This package implements the construction of the Kustin-Miller complex [1]. This is the
-      fundamental construction of resolutions in unprojection theory [2].
+      fundamental construction of resolutions in unprojection theory [2]. For details on the
+      computation of the Kustin-Miller complex see [3].
 
       The main goal of unprojection theory is to provide a substitute for structure theorems
       not available for Gorenstein rings of codimension >3.
 
-      It has been applied in various cases to construct new varieties, e.g., in [3], [4] for Campedelli surfaces and Calabi-Yau varieties.
+      It has been applied in various cases to construct new varieties, e.g., in [4] for Campedelli surfaces and [5] for Calabi-Yau varieties.
       
-      We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller construction and demonstrate it at several examples connecting unprojection theory
-      and combinatorics like stellar subdivisions of simplicial complexes [5],
+      We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller complex construction and demonstrate it at several examples connecting unprojection theory
+      and combinatorics like stellar subdivisions of simplicial complexes [6],
       minimal resolutions of Stanley-Reisner rings of boundary complexes {\Delta}(d,m) 
-      of cyclic polytopes of dimension d on m vertices [6], and the classical 
+      of cyclic polytopes of dimension d on m vertices [7], and the classical 
       (non-monomial) Tom example of unprojection [2].
       
 
@@ -766,17 +777,17 @@ doc ///
 
       For constructing new varieties see for example:
 
-      [3] {\it J. Neves and S. Papadakis, A construction of numerical Campedelli surfaces with ZZ/6 torsion, Trans. Amer. Math. Soc. 361 (2009), 4999-5021}.
+      [4] {\it J. Neves and S. Papadakis, A construction of numerical Campedelli surfaces with ZZ/6 torsion, Trans. Amer. Math. Soc. 361 (2009), 4999-5021}.
 
-      [4] {\it J. Neves and S. Papadakis, Parallel Kustin-Miller unprojection with an application to Calabi-Yau geometry, preprint, 2009, 23 pp}, @HREF"http://arxiv.org/abs/0903.1335"@
+      [5] {\it J. Neves and S. Papadakis, Parallel Kustin-Miller unprojection with an application to Calabi-Yau geometry, preprint, 2009, 23 pp}, @HREF"http://arxiv.org/abs/0903.1335"@
 
       For the stellar subdivision case see:
 
-      [5] {\it J. Boehm, S. Papadakis: Stellar subdivisions and Stanley-Reisner rings of Gorenstein complexes}, @HREF"http://arxiv.org/abs/0912.2151"@
+      [6] {\it J. Boehm, S. Papadakis: Stellar subdivisions and Stanley-Reisner rings of Gorenstein complexes}, @HREF"http://arxiv.org/abs/0912.2151"@
 
       For the case of cyclic polytopes see:
 
-      [6] {\it J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes}, @HREF"http://arxiv.org/abs/0912.2152"@
+      [7] {\it J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes}, @HREF"http://arxiv.org/abs/0912.2152"@, to appear in Osaka J. Math.
 
 
       {\bf Examples:}
@@ -788,7 +799,7 @@ doc ///
       @TO "Tom"@  -- The Tom example of unprojection
 
       
-      {\bf Key functions and data types:}
+      {\bf Key user functions:}
 
       {\it The central function of the package is:}
 
@@ -800,7 +811,7 @@ doc ///
       @TO unprojectionHomomorphism@ -- Compute the homomorphism associated to an unprojection pair
 
 
-      {\it Types and functions used to compare with the combinatorics:}
+      {\it Functions used in the examples to compare with the combinatorics:}
 
       @TO delta@  --  The boundary complex of a cyclic polytope
 
@@ -915,35 +926,28 @@ doc ///
     f:Matrix
   Description
    Text
-    Compute the deformation associated to the unprojection of I in J (or
-    equivalently of J \subset R/I where R=ring(I)), i.e., a homomorphism phi:J \to R/I
+    Compute the deformation associated to the unprojection of $I \subset J$ (or
+    equivalently of $J \subset R/I$ where $R$ = @TO ring@ $I$ ), i.e., a homomorphism 
+    
+    $\phi:J \to R/I$
+    
     such that the unprojected ideal is given by the ideal
 
-    (T*u-phi(u)| u \in J )
+    $( T*u - \phi(u)  |  u \in J ) \subset R[T]$.
 
-    of R[T].
 
-    The result is represented by a matrix f with @TO source@(f) = @TO image@ @TO gens@ I
-    and @TO target@(f) = @TO cokernel@ @TO gens@ I.
+    The result is represented by a matrix $f$ with @TO source@ $f$ = @TO image@ @TO gens@ $I$
+    and @TO target@ $f$ = @TO cokernel@ @TO gens@ $I$.
 
    Example
      R = QQ[x_1..x_4,z_1..z_4, T]
-     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
+     I = ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
      J = ideal (z_1..z_4)
      unprojectionHomomorphism(I,J)
   SeeAlso
     kustinMillerComplex
-    differentials
 ///
 
--- test unprojectionHomomorphism
-///TEST
-     R = QQ[x_1..x_4,z_1..z_4, T];
-     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
-     J = ideal (z_1..z_4);
-     phi=unprojectionHomomorphism(I,J);
-assert(phi==map(coker gens I,image gens J,matrix {{x_1*x_3, x_1*x_4, x_2*x_3, x_2*x_4}}));
-///
 
 doc ///
   Key
@@ -972,14 +976,6 @@ doc ///
      betti res I
 ///
 
--- test cyclic polytope command
-///TEST
-     K=QQ;
-     R=K[x_0..x_6];
-     C=delta(4,R);
-     fVector C;
-assert(ideal C==ideal(x_0*x_2*x_4,x_0*x_2*x_5,x_0*x_3*x_5,x_1*x_3*x_5,x_1*x_3*x_6,x_1*x_4*x_6,x_2*x_4*x_6))
-///
 
 
 doc ///
@@ -996,7 +992,7 @@ doc ///
 ///
 
 
-
+{*
 doc ///
   Key
     differentials
@@ -1022,9 +1018,9 @@ doc ///
     of length g. So, e.g., for j=1 we obtain the relations of the 
     ring resolved and for j=2 the first syzygies of those.
 
-    We use the notation of Section 2.3 of
+    We use the notation of
 
-    J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes, @HREF"http://arxiv.org/abs/0912.2152"@ [math.AC]
+    J. Boehm, S. Papadakis: Implementing the Kustin-Miller complex construction, @HREF"http://arxiv.org/abs/1103.2314"@
 
     For any j the @TO last@ entry of L should be the variable T.
 
@@ -1046,7 +1042,7 @@ doc ///
     This is not really a user level function, however it is exported as occasionally it can be useful.
     The export may be removed at some point.
 ///
-
+*}
 
 
 doc ///
@@ -1075,13 +1071,6 @@ doc ///
      res
 ///
 
--- test Buchsbaum-Eisenbud command
-///TEST
-      R=QQ[x_1..x_4,z_1..z_4];
-      A=matrix {{0,x_1,x_2,x_3,x_4},{-x_1,0,0,z_1,z_2},{-x_2,0,0,z_3,z_4},{-x_3,-z_1,-z_3,0,0},{-x_4,-z_2,-z_4,0,0}};
-      cc=resBE A;
-assert(matrix entries cc.dd_2==A)
-///
 
 
 doc ///
@@ -1108,6 +1097,7 @@ doc ///
   SeeAlso
     res
 ///
+
 
 doc ///
   Key
@@ -1183,7 +1173,7 @@ doc ///
      Dualizes the chain complex cc, i.e., dc is the chain complex with modules
      dc_p = (dual cc_(-p)) and  differentials dc_p \to dc_{p-1}   the  transpose of cc_{-p+1} \to cc_p 
 
-     Other than the M2 method (dual,ChainComplex) we do
+     Different to the M2 method @TO (dual,ChainComplex)@ we do
      not introduce an alternating sign.
 
    Example
@@ -1250,6 +1240,111 @@ doc ///
 
 
 
+
+-----------------------------------------------------------------
+-- Tests
+
+-- test unprojectionHomomorphism
+///TEST
+     R = QQ[x_1..x_4,z_1..z_4, T];
+     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
+     J = ideal (z_1..z_4);
+     phi=unprojectionHomomorphism(I,J);
+assert(phi==map(coker gens I,image gens J,matrix {{x_1*x_3, x_1*x_4, x_2*x_3, x_2*x_4}}));
+///
+
+
+-- test cyclic polytope command
+///TEST
+     K=QQ;
+     R=K[x_0..x_6];
+     C=delta(4,R);
+     fVector C;
+assert(ideal C==ideal(x_0*x_2*x_4,x_0*x_2*x_5,x_0*x_3*x_5,x_1*x_3*x_5,x_1*x_3*x_6,x_1*x_4*x_6,x_2*x_4*x_6))
+///
+
+-- test Buchsbaum-Eisenbud resolution command
+///TEST
+      R=QQ[x_1..x_4,z_1..z_4];
+      A=matrix {{0,x_1,x_2,x_3,x_4},{-x_1,0,0,z_1,z_2},{-x_2,0,0,z_3,z_4},{-x_3,-z_1,-z_3,0,0},{-x_4,-z_2,-z_4,0,0}};
+      cc=resBE A;
+assert(matrix entries cc.dd_2==A);
+assert(pfaffians(4,A)==ideal cc.dd_1);
+///
+
+
+-- test isExactRes
+///TEST
+     R = QQ[x_1..x_4,z_1..z_4];
+     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
+     cc= res I;
+assert(isExactRes cc);
+///
+
+-- test stellar subdivision code
+TEST ///
+     K=QQ;
+     R=K[x_0..x_4];
+     I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+     D=simplicialComplex(I)
+     S=K[x_5]
+     D5=stellarSubdivision(D,face {x_0,x_2},S)
+     I5=ideal D5
+     use ring I5
+     assert(I5==ideal(x_4*x_5,x_3*x_5,x_1*x_5,x_3*x_4,x_0*x_4,x_2*x_3,x_1*x_2,x_0*x_2,x_0*x_1));
+///
+
+
+-- test Kustin-Miller complex command using C47 example
+TEST ///
+     K=QQ;
+     C26=delta(2,K[z,x_2..x_6])
+     R=K[z,x_1..x_7]
+     J=sub(ideal C26,R)
+     c26=res J;
+     C47=delta(4,K[x_1..x_7])
+     I=sub(ideal C47,R)
+     c47=res I;
+     cc=kustinMillerComplex(c47,c26,K[x_8]);
+assert(rank(cc#1)==16);
+assert(rank(cc#2)==30);
+assert(isExactRes(cc));
+///
+
+-- test whether the result of unprojection is C48
+TEST ///
+     K=QQ;
+     C26=delta(2,K[z,x_2..x_6])
+     R=K[z,x_1..x_7]
+     J=sub(ideal C26,R)
+     c26=res J;
+     C47=delta(4,K[x_1..x_7])
+     I=sub(ideal C47,R)
+     c47=res I;
+     cc=kustinMillerComplex(c47,c26,K[x_8]);
+     R'=K[x_1..x_8];
+     C48=delta(4,R');
+     I48=ideal C48;
+assert(I48==sub(ideal cc.dd_1,R'))
+///
+
+
+-- test Kustin-Miller complex command using Tom example
+TEST ///
+     R = QQ[x_1..x_4,z_1..z_4]
+     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
+     cI=res I
+     betti cI
+     J = ideal (z_1..z_4)
+     cJ=res J
+     betti cJ
+     cc=kustinMillerComplex(cI,cJ,QQ[T]);
+assert(rank(cc#1)==9);
+assert(rank(cc#2)==16);
+assert(isExactRes(cc));
+///
+
+
 -----------------------------------------------------------------
 -- Examples
 
@@ -1303,8 +1398,8 @@ doc ///
     is the Stanley-Reisner ideal of the stellar subdivision (i.e., of a 4-gon).
 
 
-    (2) Stellar of the facet \{x_1,x_2,x_4,x_6\}\  of the simplicial complex of the complete intersection (x_1*x_2*x_3,x_4*x_5*x_6)
-    resulting in a Pfaffian:
+    (2) Stellar of the facet \{x_1,x_2,x_4,x_6\}\  of the simplicial complex associated to the complete intersection (x_1*x_2*x_3, x_4*x_5*x_6).
+    The result is a Pfaffian:
 
    Example
     R=K[x_1..x_6,z_1..z_3];
@@ -1402,7 +1497,7 @@ doc ///
     betti cc
    Text
 
-    We compare again compare with the combinatorics:
+    We compare again with the combinatorics:
 
    Example
     R=K[x_1..x_9];
@@ -1422,19 +1517,6 @@ doc ///
 
 
 
--- test stellar subdivision code
-TEST ///
-     K=QQ;
-     R=K[x_0..x_4];
-     I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
-     D=simplicialComplex(I)
-     S=K[x_5]
-     D5=stellarSubdivision(D,face {x_0,x_2},S)
-     I5=ideal D5
-     use ring I5
-     assert(I5==ideal(x_4*x_5,x_3*x_5,x_1*x_5,x_3*x_4,x_0*x_4,x_2*x_3,x_1*x_2,x_0*x_2,x_0*x_1));
-///
-
 
 doc ///
   Key
@@ -1450,7 +1532,7 @@ doc ///
     Of course this process can be iterated to give a recursive construction of the
     resolutions of all cyclic polytopes, for details see
 
-    {\it J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes}, @HREF"http://arxiv.org/abs/0912.2152"@
+    {\it J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes}, @HREF"http://arxiv.org/abs/0912.2152"@, to appear in Osaka J. Math.
 
    Example
      K=QQ;
@@ -1491,40 +1573,8 @@ doc ///
     betti
 ///
 
+-- remark: print command avoids matrices to be broken to the next line in the html
 
-
--- test Kustin-Miller complex command using C47 example
-TEST ///
-     K=QQ;
-     C26=delta(2,K[z,x_2..x_6])
-     R=K[z,x_1..x_7]
-     J=sub(ideal C26,R)
-     c26=res J;
-     C47=delta(4,K[x_1..x_7])
-     I=sub(ideal C47,R)
-     c47=res I;
-     cc=kustinMillerComplex(c47,c26,K[x_8]);
-assert(rank(cc#1)==16);
-assert(rank(cc#2)==30);
-assert(isExactRes(cc));
-///
-
--- test whether the result of unprojection is C48
-TEST ///
-     K=QQ;
-     C26=delta(2,K[z,x_2..x_6])
-     R=K[z,x_1..x_7]
-     J=sub(ideal C26,R)
-     c26=res J;
-     C47=delta(4,K[x_1..x_7])
-     I=sub(ideal C47,R)
-     c47=res I;
-     cc=kustinMillerComplex(c47,c26,K[x_8]);
-     R'=K[x_1..x_8];
-     C48=delta(4,R');
-     I48=ideal C48;
-assert(I48==sub(ideal cc.dd_1,R'))
-///
 
 doc ///
   Key
@@ -1537,7 +1587,7 @@ doc ///
 
     Papadakis, Kustin-Miller unprojection with complexes,  J. Algebraic Geometry 13 (2004) 249-268, @HREF"http://arxiv.org/abs/math/0111195"@
 
-    Here we pass from a Pfaffian to codimension 4.
+    Here we pass from a Pfaffian to a codimension 4 variety.
 
    Example
      R = QQ[x_1..x_4,z_1..z_4]
@@ -1563,20 +1613,6 @@ doc ///
 ///
 
 
--- test Kustin-Miller complex command using Tom example
-TEST ///
-     R = QQ[x_1..x_4,z_1..z_4]
-     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-     cI=res I
-     betti cI
-     J = ideal (z_1..z_4)
-     cJ=res J
-     betti cJ
-     cc=kustinMillerComplex(cI,cJ,QQ[T]);
-assert(rank(cc#1)==9);
-assert(rank(cc#2)==16);
-assert(isExactRes(cc));
-///
 
 
 {*
