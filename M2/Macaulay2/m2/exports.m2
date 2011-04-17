@@ -395,6 +395,7 @@ export {
 	symbol SumOfTwists,
 	symbol Superscript,
 	symbol Symbol,
+	symbol SymbolBody,
 	symbol Syzygies,
 	symbol SyzygyLimit,
 	symbol SyzygyMatrix,
