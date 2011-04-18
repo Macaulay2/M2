@@ -266,11 +266,14 @@ UnitMonomial#{Standard,AfterPrint} = m -> (
      << endl;
      )
 
+twodigits := s -> if match("^[[:digit:]]{2}",s) then s else "0" | s
 onecolon = method()
-onecolon RR := x -> toString floor x | ":" | toString (60 * (x - floor x))
-onecolon QQ := x -> onecolon (0. + x)
+onecolon RR := x -> toString floor x | ":" | twodigits toString (60 * (x - floor x))
+onecolon QQ := onecolon ZZ := x -> onecolon (0. + x)
+onecolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1 )
 twocolon = method()
-twocolon RR := x -> toString floor x | ":" | onecolon (60 * (x - floor x))
-twocolon QQ := x -> twocolon (0. + x)
+twocolon RR := x -> toString floor x | ":" | twodigits onecolon (60 * (x - floor x))
+twocolon QQ := twocolon ZZ := x -> twocolon (0. + x)
+twocolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1 )
 
 export values Units#"private dictionary"
