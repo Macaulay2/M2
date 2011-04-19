@@ -921,20 +921,19 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
 	ring_elem a;
 	M->get_entry(i,j,a);
 	int b = kk->to_int(a);
+	if (b < 0) b += R->charac();
 	double d = b;
 	F.init(*inN++, d);
       }
 
   size_t n = M->n_rows();
-#else
-  ERROR("FFPack not present");
-  return 0;
-#endif
-#if 0
   ElementType result = FFPACK::Rank(F, n, n, N, n);
   int res = result;
   deletearray(N);
   return RingElement::make_raw(kk, kk->from_int(res));
+#else
+  ERROR("FFPack not present");
+  return 0;
 #endif
   return 0;
 }
