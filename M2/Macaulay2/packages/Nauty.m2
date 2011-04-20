@@ -8,8 +8,8 @@
 
 newPackage (
     "Nauty",
-    Version => "1.4",
-    Date => "18. February 2011",
+    Version => "1.4.1",
+    Date => "20. April 2011",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -241,8 +241,8 @@ generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
     rndSeed := if instance(opts.RandomSeed, ZZ) then " -S" | toString(opts.RandomSeed % 2^30) else "";
     callNauty("genrang -qg " | toString n | " " | toString num | rndSeed, {})
 )
-generateRandomGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
-generateRandomGraphs (PolynomialRing, ZZ, QQ) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
+generateRandomGraphs (PolynomialRing, ZZ, ZZ) := 
+generateRandomGraphs (PolynomialRing, ZZ, QQ) := 
 generateRandomGraphs (PolynomialRing, ZZ, RR) := List => opts -> (R, num, p) -> apply(generateRandomGraphs(#gens R, num, p, opts), g -> stringToGraph(g, R))
 generateRandomGraphs (PolynomialRing, ZZ) := List => opts -> (R, num) -> apply(generateRandomGraphs(#gens R, num, opts), g -> stringToGraph(g, R))
 
@@ -477,7 +477,7 @@ optionBoolean = (b, m, o, f) -> (
 optionZZ = (i, b, m, o, f) -> (
     if instance(i, Nothing) then ""
     else if not instance(i, ZZ) then error(m | ": Option [" | o | "] is not a valid type, i.e., ZZ or Nothing.")
-    else if i < b then error(m | ": Option [" | o | "] is too smaller (minimum is " | toString b | ").")
+    else if i < b then error(m | ": Option [" | o | "] is too small (minimum is " | toString b | ").")
     else " -" | f | toString i
 )
 
@@ -656,9 +656,7 @@ doc ///
             "FixedPoints", "Connectivity", "MinCommonNbrsAdj", "MaxCommonNbrsAdj", "MinCommonNbrsNonAdj", "MaxCommonNbrsNonAdj".
     Caveat
             @TT "Connectivity"@ only works for the values $0, 1, 2$ and uses the following definition of $k$-connectivity.
-            A graph is $0$-connected if it is a disconnected graph and a graph is $k$-connected, for $k > 0$, if there $k$
-            vertices can be removed from the graph to disconnect it, but there are not $k-1$ vertices which can be removed to
-            disconnect it.  
+            A graph is $k$-connected if $k$ is the minimum size of a set of vertices whose complement is not connected.
 
             Thus, in order to filter for connected graphs, one must use @TT "{\"Connectivity\" => 0, \"NegateConnectivity\" => true}"@.
 
@@ -675,10 +673,10 @@ doc ///
         "Comparison of Graph6 and Sparse6 formats"
     Description
         Text
-            nauty uses two string-based formats for storing graphs:  Graph6 and Sparse6 format.
+            The program nauty uses two string-based formats for storing graphs:  Graph6 and Sparse6 format.
             Each format has benefits and drawbacks.  
 
-            In particular, Graph6 is a consistent length, which is dependent only on the number of vertices.
+            In particular, the length of a Graph6 string representation of a graph depends only on the number of vertices.
             However, this also means that graphs with few edges take as much space as graphs with many edges.
             On the other hand, Sparse6 is a variable length format which can use dramatically less space for
             sparse graphs but can have a much larger storage size for dense graphs.
