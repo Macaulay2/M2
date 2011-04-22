@@ -6,7 +6,11 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-newPackage (
+-- There are three tests for the Macaulay2 version number.  They may be removed after a new binary distribution of
+-- Macaulay2 is available.
+if version#"VERSION" <= "1.4" then needsPackage "EdgeIdeals"
+
+newPackage select((
     "Nauty",
     Version => "1.4.1",
     Date => "20. April 2011",
@@ -15,9 +19,14 @@ newPackage (
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
     Headline => "Interface to nauty",
     Configuration => {"path" => ""},
-    PackageExports => {"EdgeIdeals"},
+    if version#"VERSION" > "1.4" then PackageExports => {"EdgeIdeals"},
     DebuggingMode => false
-)
+), x -> x =!= null)
+
+if version#"VERSION" <= "1.4" then (
+     needsPackage "SimplicialComplexes";
+     needsPackage "EdgeIdeals";
+     )
 
 -------------------
 -- Configuration
