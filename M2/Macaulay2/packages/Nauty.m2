@@ -20,7 +20,20 @@ newPackage select((
     Headline => "Interface to nauty",
     Configuration => {"path" => ""},
     if version#"VERSION" > "1.4" then PackageExports => {"EdgeIdeals"},
-    DebuggingMode => false
+    DebuggingMode => false,
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "Nauty in Macaulay2",
+	 "acceptance date" => "2011-04-20",
+	 "published article URI" => "http://j-sag.org/Volume3/jsag-1-2011.pdf",
+	 "published code URI" => "http://j-sag.org/Volume3/Nauty.m2",
+	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Nauty.m2",
+	 "release at publication" => 13224,
+	 "version at publication" => "1.4.1",
+	 "volume number" => "3",
+	 "volume URI" => "http://j-sag.org/Volume3/"
+	 }
 ), x -> x =!= null)
 
 if version#"VERSION" <= "1.4" then (
