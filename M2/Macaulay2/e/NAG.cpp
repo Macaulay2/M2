@@ -1276,7 +1276,11 @@ PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, g
     return NULL;
   }
   p->productST = mpfr_get_d(productST,GMP_RNDN);
-  p->bigT = asin(sqrt(1-p->productST*p->productST));  
+  //p->bigT = asin(sqrt(1-p->productST*p->productST));  
+  //const double pi = 3.141592653589793238462643383279502;
+  //if (p->productST < 0) 
+  //  p->bigT = pi - p->bigT;
+  p->bigT = acos(p->productST);
 
   int n = S->n_cols()+1; // equals the number of variables
   p->maxDegreeTo3halves = 0;

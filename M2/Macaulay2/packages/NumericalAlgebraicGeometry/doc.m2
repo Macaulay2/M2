@@ -32,6 +32,7 @@ document {
 	  TO getDefault,
 	  TO areEqual,
 	  TO sortSolutions,
+	  TO toAffineChart,
 	  TO NAGtrace
 	  },
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
@@ -439,6 +440,27 @@ areEqual(sortSolutions s / coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}})
 areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)  
      	///,
 	SeeAlso => {solveSystem, track, sortSolutions}
+	}
+
+document {
+	Key => {(toAffineChart, ZZ, List), toAffineChart},
+	Headline => "coordinates of a point in the projective space in an affine chart",
+	Usage => "y = toAffineChart(i,x)",
+	Inputs => {
+	     "i" => "the numebr of the standard chart",
+	     "x" => "projective coordinates of a point"
+	     },
+	Outputs => {"y"=>{"coordinates of ", TT "x", " in the ", TT "i", "-th affine chart"}},
+	Caveat => {"Returns ", TT "infinity", " if the ", TT "i", "-th coordinate of ", TT "x", " is zero."},
+	EXAMPLE lines ///
+toAffineChart(2,{1,2,3,4,5,6}) 
+toAffineChart(2,{1,2,0,4,5,6}) 
+CC[x,y];
+s = solveSystem {x^2+y^2}
+toAffineChart(0, coordinates s#0)
+toAffineChart(1, coordinates s#0)
+     	///,
+	SeeAlso => {solveSystem, areEqual}
 	}
 
 document {

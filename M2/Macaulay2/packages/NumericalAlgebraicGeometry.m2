@@ -36,7 +36,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     "numericalRank", --"toAffineChart",
+     "numericalRank", "toAffineChart",
      "NAGtrace"
      }
 exportMutable {
@@ -362,10 +362,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  );
      
      if o.Predictor===Certified and not isProjective 
-	  then "projective expected: either homogeneous system or Projectivize=>true";
+     then "projective expected: either homogeneous system or Projectivize=>true";
+     
      if isProjective then (
-	  if member(o.Software,{M2engine,M2enginePrecookedSLPs}) and not o.Normalize
-	  then error "Normalize=>true expected for this choice of Software";
      	  if o.Software === M2enginePrecookedSLPs 
 	  then error "Software=>M2enginePrecookedSLPs not implemented for projective case";	       
      	  -- affine patch functions 
@@ -392,25 +391,30 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       );
 	  ); 
      
+     --!!! currently all projective trackers use the unit sphere !!!
+     shouldNormalize := isProjective or o.Normalize;
+    
      -- create homotopy
      t := symbol t;
      Rt := K(monoid[gens R, t]); 
      t = last gens Rt; 
-     (nS,nT) := if o.Normalize -- make Bomboeri-Weyl norm of the systems equal 1
+     (nS,nT) := if shouldNormalize -- make Bomboeri-Weyl norm of the systems equal 1
      then (apply(S, s->s/sqrt(#S * BombieriWeylNormSquared s)), apply(T, s->s/sqrt(#T * BombieriWeylNormSquared s)))
      else (S,T);
      
      if o.Predictor===Certified or (isProjective and o.Software===M2engine)
      -- in both cases a linear homotopy on the unit sphere is performed
      then (
-	  nS = (o.gamma/abs(o.gamma))*nS;
+	  nT = (o.gamma/abs(o.gamma))*nT;
 	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
 	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(nS#i,nT#i));-- real Bombieri-Weyl scalar product
 	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
 	  bigT := asin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
+	  if reBW'ST < 0 then bigT = pi-bigT; -- want: sgn(cos)=sgn(reBW'ST) 
 	  Hx := H/transpose@@jacobian; -- store jacobians (for evalHx)
+	  if DBG>4 then << "Re<S,T> = " << reBW'ST << ", bigT = " << bigT << endl; 
      	  )	  
      else (
      	  H = matrix {apply(#S, i->o.gamma*(1-t)^(o.tDegree)*sub(nS#i,Rt)+t^(o.tDegree)*sub(nT#i,Rt))};
@@ -748,7 +752,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else error "unknown Predictor";
 
 
-		    if DBG > 3 then << "  dt = " << dt << "  dx = " << toString dx << endl;
+		    if DBG > 3 then << " x0 = " << x0 << ", t0 = " << t0 << ", res=" <<  toString evalH(x0,t0) << ",  dt = " << dt << ",  dx = " << toString dx << endl;
 		    if HISTORY then history#count#"dx" = dx;
 
     	 	    t1 := t0 + dt;
@@ -804,9 +808,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
               		    and predictorSuccesses >= o.numberSuccessesBeforeIncrease 
 			 then (			      
 			      predictorSuccesses = 0;
-			      stepAdj = 1;
-			      tStep = o.stepIncreaseFactor*tStep;	
-			      if DBG > 2 then << "increased tStep to "<< tStep << endl;
+			      if o.Predictor =!= Certified then (
+			      	   stepAdj = 1;
+			      	   tStep = o.stepIncreaseFactor*tStep;	
+			      	   if DBG > 2 then << "increased tStep to "<< tStep << endl;
+				   )
 			      )
 			 else stepAdj = 0; -- keep the same step size
 			 );
@@ -1679,6 +1685,7 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
 toAffineChart (ZZ,List) := List => (k,x) -> (
      if k<0 or k>#x then error "chart number is out of range ";
+     if x#k == 0 then return infinity;
      y := apply(x, c->c/x#k);
      take(y,k) | drop(y,k+1)
      ) 
@@ -1707,7 +1714,7 @@ areEqual (List,List) := o -> (a,b) -> (
 	       )
 	  )
      ) 
-areEqual (RR,RR) := o -> (a,b) -> areEqual(toCC a, toCC b)
+areEqual (RR,RR) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
 areEqual (CC,CC) := o -> (a,b) -> (
      abs(a-b) < o.Tolerance
      ) 

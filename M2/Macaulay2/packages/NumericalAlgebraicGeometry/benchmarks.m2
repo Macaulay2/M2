@@ -51,6 +51,12 @@ example1 = () -> (
   	  C1*g1^2*s1+C2*g2^2*s2 - 0.7,
   	  C1*g1*s1^2+C2*g2*s2^2 - 0.7)
      )
+
+fekete4 = () -> (
+     R := CC[x1,x2];
+     r := sqrt 2; -- this looks correct
+     ideal {x1*(x1^3-(r*x2)^3)}
+     )
       
 stewartGough40real = () -> (
      R := CC[n1,n2,n3,h11,h12,h13,h21,h22,h23];
@@ -223,4 +229,5 @@ system6R = () -> (
      )
 
 decker2 = ()-> ( R = CC[x,y]; ideal(x+y^3,x^2*y-y^4) )
+
       

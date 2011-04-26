@@ -24,20 +24,34 @@ S = apply(#M,i->M#i#SolutionStatus);
 assert( #select(S, s->s==Regular) == 70
      and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
 
+-- projective tracking (including Certified)
 for predictor in {RungeKutta4,Tangent,Certified} do (
      (S,T,solsS) = smallExample();
      M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine, Predictor=>predictor, Projectivize=>true, Normalize=>true);
      SM = sortSolutions M;
      assert areEqual( SM/coordinates, {{ -1, 0}, {0, -1}, {0, 1}, {1, 0}}, Tolerance=>0.03);
      )		    
+for predictor in {RungeKutta4,Tangent,Certified} do (
+     T = (fekete4())_*;	    
+     (S,solsS) := totalDegreeStartSystem T;
+     sols = {{-.707107-1.22474*ii,1_CC}, {1.41421_CC,1_CC}, {-.707107+1.22474*ii,1_CC}, {0_CC,1_CC}};
+     for a to 10 do (
+	  g = exp((0.1+a)*ii);
+     	  s1' = track(S,T,solsS,gamma=>g,Predictor=>predictor);
+	  s1 = sortSolutions( s1' / (p->toAffineChart(1,coordinates p)|{1_CC}), Tolerance=>1e-4);
+     	  s2 = sortSolutions sols;
+	  assert areEqual(s1,s2,Tolerance=>1e-4)
+     	  )
+     )		    
 end
+
 restart
 load "SoftwareM2engine.tst.m2"
+
 T = cyclic(6,CC) 
-M = solveSystem(T_*, Software=>M2engine);
-S = apply(#M,i->M#i#SolutionStatus);
-#select(S, s->s==Regular)
-S = M/(s->s.RCondition);
-#select(S, s->s>0.001)
+S = solveSystem(T_*, Software=>M2engine);
+#select(S, s->status s === Regular)
+#select(S, s->s.ConditionNumber < 1000)
+
 
 
