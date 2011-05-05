@@ -185,6 +185,7 @@ lb = pound = 0.45359237 kg
 hp = horsepower = 550 foot pound force / s
 grain = 1/7000 * pound
 oz = ounce = 1/16 * pound
+troyounce = 480 grain
 brgallon = 4.54609 l
 gal = gallon = usgallon = 231 inch^3
 qt = quart = 1/4 * gallon
