@@ -581,6 +581,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   GraphicalModels
   BIBasis
   KustinMiller
+  Units
 ")
 
 # convert the newlines in the list above to spaces
@@ -790,6 +791,7 @@ AC_SUBST(BUILTLIBS,)
 #	it writes a file into the user's home directory called ".polymake"
 #	it asks questions
 #    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
+#    normaliz needs boost
 #    Greg Smith requested cddplus and lrslib for future use
 #    nauty is used by the package Nauty
 #    normaliz is used by the package Normaliz
@@ -801,7 +803,7 @@ AC_SUBST(BUILTLIBS,)
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro linbox fflas_ffpack")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro linbox fflas_ffpack boost")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -817,6 +819,9 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
 	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
        esac
     done])
+
+# we don't expect "boost" to be installed
+BUILD_boost=yes
 
 AC_SUBST(ENABLE_FFLAS_FFPACK,no)
 AC_ARG_ENABLE(fflas-ffpack,

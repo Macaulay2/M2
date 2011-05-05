@@ -1,25 +1,16 @@
 # license for normaliz: GPL v3
-# http://www.mathematik.uni-osnabrueck.de/normaliz/
-VERSION = 2.5
-# for version 2.5, the doc says: "Make sure you have GCC 4.5 installed on your Mac."
-# file changed on their web site, probably:
 
-# URL = http://www.mathematik.uni-osnabrueck.de/normaliz
+VERSION = 2.7
+# http://www.mathematik.uni-osnabrueck.de/normaliz/Normaliz2.7/Normaliz2.7.zip
+# these authors sometimes change the file without changing the name, so we copy it to our own site:
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
+# the name of the tar file changes each time:
+TARFILE = Normaliz$(VERSION).zip
+# this changes each time, too:
+TARDIR = Normaliz$(VERSION)/source
 
-# TARFILE = Normaliz$(VERSION)Linux32.zip
-# TARDIR = Normaliz$(VERSION)Linux/source
 
-# 2.5
-# TARFILE = Normaliz$(VERSION).zip
-# TARDIR = Normaliz$(VERSION)/source
-# PATCHFILE = @abs_srcdir@/patch-2.5
 
-# 2.5, changed, just the source
-TARFILE = normaliz$(VERSION)Source.zip
-TARDIR = source
-
-# PATCHFILE = @abs_srcdir@/patch-2.2
 
 # Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
 # I have filed a bug report, Bug ID# 8338749:
@@ -31,22 +22,21 @@ ifeq ($(OPENMP),no)
 else
  CXXFLAGS0 = -fopenmp
 endif
-# -static doesn't work in Mac OS X
-# N64FLAGS = -Dnorm64 -static
-N64FLAGS = -Dnorm64
-# NBIGFLAGS = -Dnormbig -static
-NBIGFLAGS = -Dnormbig
+# -static doesn't work in Mac OS X, so override variables from normaliz's Makefile.configuration:
+# former value:
+# NORMFLAGS = -static
+# new value:
+NORMFLAGS = 
 ####
 
 CXXFLAGS1 = $(CPPFLAGS) -Wall -Wno-sign-compare -O3 -funroll-loops -Wno-unknown-pragmas $(CXXFLAGS0)
 UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
 CONFIGURECMD = true
 BUILDOPTIONS =  CXX="$(CXX)" \
-		N64FLAGS="$(N64FLAGS)" \
-		NBIGFLAGS="$(NBIGFLAGS)" \
+		NORMFLAGS="$(NORMFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
-PROGRAMS = norm64 normbig
+PROGRAMS = normaliz
 LICENSEFILES = COPYING
 INSTALLCMD = true
 CHECKTARGET = .

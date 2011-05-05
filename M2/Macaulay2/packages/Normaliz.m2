@@ -102,7 +102,7 @@ nmzFilename="";
 nmzNumberThreads=1;
 nmzUserCalled=true;  -- wether the user calls a method
 nmzFile="";
-nmzVersion="";     -- norm64 or normbig
+nmzVersion="";     -- normaliz
 nmzExecVersion=""; -- needs to be at last "2.5"
 nmzGen=true;      -- indicates whether ".gen" is generated
 -- component 1 is name of option
@@ -144,12 +144,12 @@ setNmzFile=()->
 
 
 
--- sets the version, by default it is norm64
+-- sets the version, by default it is normaliz
 setNmzExec=()->
 (
     if(nmzVersion!="")
     then(
-        if(nmzVersion!="norm64" and nmzVersion !="normbig") then <<error("nmzVersion must be one of the following: norm64, normbig")
+        if(nmzVersion!="norm64" and nmzVersion !="normbig" and nmzVersion!="normaliz") then <<error("nmzVersion must be one of the following: normaliz normbig norm64")
         else(
         nmzExec:=nmzVersion;
         );
