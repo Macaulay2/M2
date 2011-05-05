@@ -12,10 +12,10 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
+     PackageExports => {"NAGtypes"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     PackageExports => {"NAGtypes"},
-     DebuggingMode => true --false
+     DebuggingMode => false
      )
 
 -- Any symbols or functions that the user is to have access to
