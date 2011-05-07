@@ -156,7 +156,7 @@ setNmzExec=()->
     )
     else
     (
-        nmzExec="norm64";
+        nmzExec="normaliz";
     );
 --    return nmzExec;
     return prefixDirectory | currentLayout#"programs" | nmzExec;
@@ -484,10 +484,12 @@ checkNmzExecVersion=()->
 (
   if (nmzExecVersion=="") then (
     cmd := "! " | setNmzExec() | " 2>&1 </dev/null || true";
-    nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", get (cmd));
+    result := get cmd;
+    if not match("^Normaliz ([0-9.]*)\n",result) then error("normaliz executable not found: " | setNmzExec());
+    nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", result);
   );
   if (nmzExecVersion < "2.5") then
-    error("normaliz: Normaliz executable too old (" | nmzExecVersion | "), at least verison 2.5 needed!");
+    error("normaliz executable too old (" | setNmzExec() | "), at least verison 2.5 needed");
 )
 
 
