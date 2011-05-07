@@ -79,7 +79,7 @@ document {
      Outputs => {
 	  "M" => {"computes the homology module ", TT "(kernel f)/(image g)", "."}
 	  },
-     "Here ", TT "g", " and ", TT "f", " should be composable maps with ", TT "g*f", "
+     "Here ", TT "g", " and ", TT "f", " should be composable maps with ", TT "f*g", "
      equal to zero.",
      PARA {
 	  "In the following example, we ensure that the source of ", TT "f", " and the target of
