@@ -487,7 +487,7 @@ checkNmzExecVersion=()->
     nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", get (cmd));
   );
   if (nmzExecVersion < "2.5") then
-    error("normaliz: Normaliz executable to old (" | nmzExecVersion | "), at least verison 2.5 needed!");
+    error("normaliz: Normaliz executable too old (" | nmzExecVersion | "), at least verison 2.5 needed!");
 )
 
 
