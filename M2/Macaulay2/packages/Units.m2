@@ -1,4 +1,11 @@
-newPackage "Units"
+newPackage("Units",
+    	Headline => "units conversion and physical constants",
+    	Version => "0.9", 				    -- needs to be documented
+    	Date => "May 5, 2011",
+    	Authors => {
+	     {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://dangrayson.com/"}
+	     }
+    	)
 fundamentalUnits = { symbol s, symbol g, symbol m, symbol A, symbol cd, symbol mol, symbol K }
 UnitMonomial = new Type of HashTable
 scan(fundamentalUnits, u -> (
