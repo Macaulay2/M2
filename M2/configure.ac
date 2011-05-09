@@ -820,9 +820,6 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
        esac
     done])
 
-# we don't expect "boost" to be installed
-BUILD_boost=yes
-
 AC_SUBST(ENABLE_FFLAS_FFPACK,no)
 AC_ARG_ENABLE(fflas-ffpack,
     [AS_HELP_STRING(--enable-fflas-ffpack,enable building the fflas-ffpack library and linking with it)],
@@ -982,6 +979,11 @@ then AC_LANG(C)
      	CPPFLAGS="-I/usr/include/glpk $CPPFLAGS"
 	unset ac_cv_header_glpk_h
      	AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)])
+fi
+
+if test $BUILD_boost = no
+then AC_LANG(C++)
+     AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
 fi
 
 if test $BUILD_cddlib = no
