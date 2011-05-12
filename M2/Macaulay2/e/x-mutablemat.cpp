@@ -889,8 +889,50 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 
 #if defined(HAVE_FFLAS_FFPACK)
 #include "fflas-ffpack/modular-positive.h"
+#include "fflas-ffpack/modular-balanced.h"
 #include "fflas-ffpack/ffpack.h"
-#endif
+
+template < typename FieldType >
+typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F, MutableMatrix *M)
+{
+  typedef typename FieldType::Element ElementType;
+  
+  ElementType * N = newarray(ElementType, M->n_rows() * M->n_cols());
+  ElementType *inN = N;
+  for (size_t i = 0; i<M->n_rows(); i++)
+    for (size_t j = 0; j<M->n_cols(); j++)
+      {
+	ring_elem a;
+	M->get_entry(i,j,a);
+	int b = kk->to_int(a);
+	double d = b;
+	F.init(*inN++, d);
+      }
+  return N;
+}
+
+template < typename FieldType >
+MutableMatrix *fromFFPackMatrix(const Z_mod *kk, 
+				const FieldType &F,
+				typename FieldType::Element *N, 
+				size_t nrows, 
+				size_t ncols)
+{
+  typedef typename FieldType::Element ElementType;
+  
+  MutableMatrix * M = MutableMatrix::zero_matrix(kk, nrows, ncols, true);
+  ElementType *inN = N;
+  for (size_t i = 0; i<nrows; i++)
+    for (size_t j = 0; j<ncols; j++)
+      {
+	unsigned long a;
+	F.convert(a, *inN);
+	inN++;
+	ring_elem b = kk->from_int(a);
+	M->set_entry(i,j,b);
+      }
+  return M;
+}
 
 RingElement *rawFFPackDeterminant(MutableMatrix *M)
 // M should be a mutable matrix over a finite prime field, 
@@ -902,7 +944,6 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
   // translate the answer to a RingElement
   // free the ffpack matrix
 
-#if defined(HAVE_FFLAS_FFPACK)
   const Ring *R = M->get_ring();
   const Z_mod *kk = R->cast_to_Z_mod();
   if (kk == 0)
@@ -910,33 +951,171 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef Modular<double>::Element ElementType;
-  Modular<double> F(static_cast<double>(R->charac()));
-  
-  ElementType * N = newarray(ElementType, M->n_rows() * M->n_cols());
-  ElementType *inN = N;
-  for (size_t i = 0; i<M->n_rows(); i++)
-    for (size_t j = 0; j<M->n_cols(); j++)
-      {
-	ring_elem a;
-	M->get_entry(i,j,a);
-	int b = kk->to_int(a);
-	if (b < 0) b += R->charac();
-	double d = b;
-	F.init(*inN++, d);
-      }
+  typedef ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(R->charac());
+
+  ElementType *N = toFFPackMatrix(kk, F, M);
 
   size_t n = M->n_rows();
-  ElementType result = FFPACK::Rank(F, n, n, N, n);
-  int res = result;
+  ElementType result = FFPACK::Det(F, n, n, N, n);
+  unsigned long res;
+  F.convert(res,result);
   deletearray(N);
   return RingElement::make_raw(kk, kk->from_int(res));
+}
+
+size_t rawFFPackRank(MutableMatrix *M)
+{
+  const Ring *R = M->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk == 0)
+    {
+      ERROR("expected finite prime field");
+      return 0;
+    }
+  typedef ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(R->charac());
+
+  ElementType *N = toFFPackMatrix(kk, F, M);
+
+  size_t nr = M->n_rows();
+  size_t nc = M->n_cols();
+  size_t result = FFPACK::Rank(F, nr, nc, N, nc);
+  deletearray(N);
+  return result;
+}
+
+MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool right_side)
+{
+  const Ring *R = M->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk == 0)
+    {
+      ERROR("expected finite prime field");
+      return 0;
+    }
+  typedef ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(R->charac());
+
+  ElementType *N = toFFPackMatrix(kk, F, M);
+
+  size_t nr = M->n_rows();
+  size_t nc = M->n_cols();
+
+  ElementType *nullspace = 0;
+  size_t nullspace_dim;
+  size_t nullspace_leading_dim;
+  FFPACK::NullSpaceBasis(F,
+			 (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
+			 nr, nc, N, nc, nullspace, nullspace_leading_dim, nullspace_dim);
+  cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << endl;
+  size_t nullspace_nrows = (right_side ? nc : nullspace_dim);
+  if (right_side && nullspace_dim != nullspace_leading_dim)
+    {
+      cerr << "error: this should not happen!" << endl;
+    }
+  else if (!right_side && nullspace_leading_dim != nr)
+    {
+      cerr << "error: this should not happen either!" << endl;
+    }
+
+  MutableMatrix *result_nullspace = fromFFPackMatrix(kk, F, nullspace, nullspace_nrows, nullspace_leading_dim);
+  delete [] nullspace;
+  return result_nullspace;
+}
+
+MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A, MutableMatrix *B, M2_bool right_side)
+{
+  const Ring *R = A->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk == 0)
+    {
+      ERROR("expected finite prime field");
+      return 0;
+    }
+  typedef ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(R->charac());
+
+  size_t a_rows = A->n_rows();
+  size_t a_cols = A->n_cols();
+
+  size_t b_rows = B->n_rows();
+  size_t b_cols = B->n_cols();
+
+  ElementType *ffpackA = toFFPackMatrix(kk, F, A);
+  ElementType *ffpackB = toFFPackMatrix(kk, F, B);
+
+  // preallocate the space for the solutions:
+  size_t x_rows = (right_side ? a_cols : b_rows);
+  size_t x_cols = (right_side ? b_cols : a_rows);
+  size_t n_eqns = (right_side ? b_cols : b_rows);
+
+  ElementType *ffpackX = newarray(ElementType, x_rows * x_cols);
+
+  int info; // >0 if the system is inconsistent, ==0 means success
+
+  if (n_eqns == 1 && right_side)
+    {
+      FFPACK::Solve(F, 
+		    a_rows, 
+		    ffpackA, 
+		    a_cols, 
+		    ffpackX,
+		    1,
+		    ffpackB,
+		    1);
+    }
+  else 
+    {
+      FFPACK::fgesv(F, 
+		(right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
+		a_rows, a_cols, 
+		(right_side ? x_cols : x_rows), 
+		ffpackA, 
+		a_cols, // leading dim of A
+		ffpackX, x_cols, 
+		ffpackB, b_cols,
+		&info);
+
+      if (info > 0)
+	{
+	  // the system is inconsistent
+	  ERROR("the system is inconsistent");
+	  return 0;
+	}
+    }
+
+  MutableMatrix *X = fromFFPackMatrix(kk, F, ffpackX, x_rows, x_cols);
+  delete [] ffpackX;
+  return X;
+}
 #else
+RingElement *rawFFPackDeterminant(MutableMatrix *M)
+{
   ERROR("FFPack not present");
   return 0;
-#endif
+}
+RingElement *rawFFPackRank(MutableMatrix *M)
+{
+  ERROR("FFPack not present");
   return 0;
 }
+MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool right_side)
+{
+  ERROR("FFPack not present");
+  return 0;
+}
+MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A, MutableMatrix *B, M2_bool right_side)
+{
+  ERROR("FFPack not present");
+  return 0;
+}
+
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

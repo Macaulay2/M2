@@ -2619,6 +2619,42 @@ export rawFFPackDeterminant(e:Expr):Expr := (
      else WrongArgMutableMatrix());
 setupfun("rawFFPackDeterminant",rawFFPackDeterminant);
 
+export rawFFPackRank(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(int, "rawFFPackRank(", m.p, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawFFPackRank",rawFFPackRank);
+
+export rawFFPackNullSpace(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is M:RawMutableMatrixCell do
+     if !isBoolean(s.1) then WrongArgBoolean(1) else toExpr(
+	  Ccode(RawMutableMatrixOrNull, "rawFFPackNullSpace(", 
+	       M.p, ",", 
+	       toBoolean(s.1),
+	       ")"))
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(2));
+setupfun("rawFFPackNullSpace", rawFFPackNullSpace);
+
+export rawFFPackSolve(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMutableMatrixCell do
+     when s.1 is N:RawMutableMatrixCell do
+     if !isBoolean(s.2) then WrongArgBoolean(2) else toExpr(
+	  Ccode(RawMutableMatrixOrNull, "rawFFPackSolve(", 
+	       M.p, ",", 
+	       N.p, ",", 
+	       toBoolean(s.2),
+	       ")"))
+     else WrongArgMutableMatrix(1)
+     else WrongArgMutableMatrix(2)
+     else WrongNumArgs(3));
+setupfun("rawFFPackSolve", rawFFPackSolve);
+
 ----------------------------
 rawContent(e:Expr):Expr := (
      when e is f:RawRingElementCell do (

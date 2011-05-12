@@ -1229,6 +1229,20 @@ extern "C" {
   /* connected to rawFFPackDeterminant, MES */
   /* requires: M should be a square matrix over a prime finite field */
 
+  size_t rawFFPackRank(MutableMatrix *M);
+  /* connected to rawFFPackRank, MES */
+  /* requires: M should be a matrix over a prime finite field */
+
+  MutableMatrix /* Or Null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool right_side);
+  /* connected to rawFFPackNullSpace, MES */
+  /* requires: M should be a matrix over a prime finite field */
+  /* computes either left or right nullspace */
+
+  MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A, MutableMatrix *B, M2_bool right_side);
+  /* connected to rawFFPackSolve, MES */
+  /* requires: M should be a matrix over a prime finite field */
+  /* returns solution of AX=B or XA=B, depending on right_side */
+
   /***************************************************
    ***** Lapack routines for dense mutable matrices **
    ***************************************************/
