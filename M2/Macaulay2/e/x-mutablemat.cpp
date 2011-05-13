@@ -1099,7 +1099,7 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
   ERROR("FFPack not present");
   return 0;
 }
-RingElement *rawFFPackRank(MutableMatrix *M)
+size_t rawFFPackRank(MutableMatrix *M)
 {
   ERROR("FFPack not present");
   return 0;
