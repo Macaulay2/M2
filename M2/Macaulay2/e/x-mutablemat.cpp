@@ -1054,45 +1054,88 @@ MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A, MutableMatrix *B,
   size_t x_cols = (right_side ? b_cols : a_rows);
   size_t n_eqns = (right_side ? b_cols : b_rows);
 
-  ElementType *ffpackX = newarray(ElementType, x_rows * x_cols);
+  ElementType *ffpackX = newarray_clear(ElementType, x_rows * x_cols);
 
   int info; // >0 if the system is inconsistent, ==0 means success
 
-  if (n_eqns == 1 && right_side)
-    {
-      FFPACK::Solve(F, 
-		    a_rows, 
-		    ffpackA, 
-		    a_cols, 
-		    ffpackX,
-		    1,
-		    ffpackB,
-		    1);
-    }
-  else 
-    {
-      FFPACK::fgesv(F, 
-		(right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
+  FFPACK::fgesv(F, 
+	        (right_side ? FFLAS::FflasLeft : FFLAS::FflasRight), // 
 		a_rows, a_cols, 
-		(right_side ? x_cols : x_rows), 
+		(right_side ? b_cols : b_rows), 
 		ffpackA, 
 		a_cols, // leading dim of A
 		ffpackX, x_cols, 
 		ffpackB, b_cols,
 		&info);
-
-      if (info > 0)
-	{
-	  // the system is inconsistent
-	  ERROR("the system is inconsistent");
-	  return 0;
-	}
+  
+  if (info > 0)
+    {
+      // the system is inconsistent
+      ERROR("the system is inconsistent");
+      return 0;
     }
 
   MutableMatrix *X = fromFFPackMatrix(kk, F, ffpackX, x_rows, x_cols);
   delete [] ffpackX;
   return X;
 }
+
+MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M)
+{
+  const Ring *R = M->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk == 0)
+    {
+      ERROR("expected finite prime field");
+      return 0;
+    }
+  typedef ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(R->charac());
+  size_t n = M->n_rows();
+
+  ElementType *N = toFFPackMatrix(kk, F, M);
+  ElementType *invN = newarray_clear(ElementType, n * n);
+
+  int nullspacedim;
+  ElementType * retval = FFPACK::Invert2(F, n, N, n, invN, n, nullspacedim);
+
+  if (retval != invN)
+    cerr << "return value from Invert2 is not result matrix" << endl;
+
+  cerr << "nullspacedim = " << nullspacedim <<  endl;
+
+  MutableMatrix *result = fromFFPackMatrix(kk, F, invN, n, n);
+
+  deletearray(N);
+  deletearray(invN);
+
+  if (nullspacedim > 0)
+    {
+      ERROR("matrix not invertible");
+      return 0;
+    }
+  return result;
+}
+
+MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C, 
+						    MutableMatrix *A, 
+						    MutableMatrix *B,
+						    M2_bool transposeA,
+						    M2_bool transposeB,
+						    const RingElement *a,
+						    const RingElement *b)
+  /* A,B,C should be mutable matrices over a finite prime field, and a,b 
+     elements of this field.
+     C = b*C + a * op(A)*op(B),
+     where op(A) = A or transpose(A), depending on transposeA
+     where op(B) = B or transpose(B), depending on transposeB
+     connected to rawFFPackAddMultipleTo, MES
+  */
+{
+  return 0;
+}
+
 #else
 RingElement *rawFFPackDeterminant(MutableMatrix *M)
 {
@@ -1110,6 +1153,22 @@ MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool right
   return 0;
 }
 MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A, MutableMatrix *B, M2_bool right_side)
+{
+  ERROR("FFPack not present");
+  return 0;
+}
+MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M)
+{
+  ERROR("FFPack not present");
+  return 0;
+}
+MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C, 
+						    MutableMatrix *A, 
+						    MutableMatrix *B,
+						    M2_bool transposeA,
+						    M2_bool transposeB,
+						    const RingElement *a,
+						    const RingElement *b)
 {
   ERROR("FFPack not present");
   return 0;

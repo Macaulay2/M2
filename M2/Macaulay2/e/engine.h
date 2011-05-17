@@ -1243,6 +1243,26 @@ extern "C" {
   /* requires: M should be a matrix over a prime finite field */
   /* returns solution of AX=B or XA=B, depending on right_side */
 
+  MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M);
+  /* connected to rawFFPackInvert, MES */
+  /* requires: M should be a square matrix over a prime finite field */
+
+  MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C, 
+						      MutableMatrix *A, 
+						      MutableMatrix *B,
+						      M2_bool transposeA,
+						      M2_bool transposeB,
+						      const RingElement *a,
+						      const RingElement *b);
+  /* A,B,C should be mutable matrices over a finite prime field, and a,b 
+     elements of this field.
+     C = b*C + a * op(A)*op(B),
+     where op(A) = A or transpose(A), depending on transposeA
+     where op(B) = B or transpose(B), depending on transposeB
+     connected to rawFFPackAddMultipleTo, MES
+  */
+
+  
   /***************************************************
    ***** Lapack routines for dense mutable matrices **
    ***************************************************/

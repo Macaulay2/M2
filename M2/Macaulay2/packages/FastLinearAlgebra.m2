@@ -65,6 +65,31 @@ solveLinear(MutableMatrix, MutableMatrix) := opts -> (A,B) -> (
      	  map(R,rawFFPackSolve(raw A,raw B,opts.RightSide))
      ))
 
+invert = method()
+invert MutableMatrix := (A) -> (
+     R := ring A;
+     if isPrimeField R and char R > 0 then (
+     	  map(R,rawFFPackInvert(raw A)))
+     else 
+     	  error "invert only implemented for mutable matrices over prime finite fields"
+     )
+
+addMultipleTo = method(Options => {TransposeA => false, TransposeB => false, Alpha => null, Beta => null})
+addMultipleTo(MutableMatrix,MutableMatrix,MutableMatrix) := opts -> (C,A,B) -> (
+     R := ring C;
+     if ring A =!= ring C or ring B =!= ring C then error "expected matrices over the same ring";
+     if isPrimeField R and char R > 0 then (
+	  a := if opts.Alpha === null then 1_R else opts.Alpha;
+	  b := if opts.Beta === null then 1_R else opts.Beta;
+     	  rawFFPackAddMultipleTo(C,A,B,opts.TransposeA, opts.TransposeB, a, b);
+	  map(R, C))
+     )
+
+MutableMatrix * MutableMatrix := (A,B) -> (
+     C := mutableMatrix(ring A, numRows A, numColumns B, Dense=>true);
+     addMultipleTo(C,A,B)
+     )
+
 beginDocumentation()
 
 TEST ///
@@ -121,11 +146,24 @@ X = solveLinear(A,B)
 TEST ///
 kk = ZZ/101
 A = mutableMatrix random(kk^100, kk^100);
-B = mutableMatrix random(kk^100, kk^1);
+B = mutableMatrix random(kk^100, kk^5);
 X = solveLinear(A,B) 
-((matrix A) * (matrix X)) - matrix B  -- Not 0 !!  BUG
+((matrix A) * (matrix X)) - matrix B
 ///
 
+TEST ///
+kk = ZZ/101
+N = 5
+
+time A = mutableMatrix(kk, N, N, Dense=>true);
+time fillMatrix A;
+time B = invert A;
+--((matrix A) * (matrix B)) - 1 == 0
+
+idN = mutableIdentity(kk, N, Dense=>true);
+time X = solveLinear(A, idN);
+assert(B == X)
+///
 
 
 end
@@ -177,6 +215,17 @@ loadPackage "FastLinearAlgebra"
 --      (b) include in MutableMatrix: the functions we want.
 --      (c) write the matrix class.
 -- Also, want GF(q).  Current problem: givaro didn't even compile.
+
+-- invert2 DONE
+-- test that with solve DONE
+-- submatrix + stride
+-- rank profiles (column and row)
+-- LU decomposition
+-- multiplication
+
+-- after that:
+--  make a new mutable matrix data type
+--  
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"

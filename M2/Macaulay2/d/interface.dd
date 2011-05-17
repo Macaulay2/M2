@@ -2655,6 +2655,42 @@ export rawFFPackSolve(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawFFPackSolve", rawFFPackSolve);
 
+export rawFFPackInvert(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawMutableMatrixOrNull, "rawFFPackInvert(", m.p, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawFFPackInvert",rawFFPackInvert);
+
+
+export rawFFPackAddMultipleTo(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 7 then WrongNumArgs(7) else
+     when s.0 is C:RawMutableMatrixCell do
+     when s.1 is A:RawMutableMatrixCell do
+     when s.2 is B:RawMutableMatrixCell do
+     when s.5 is a:RawRingElementCell do
+     when s.6 is b:RawRingElementCell do
+     if !isBoolean(s.3) then WrongArgBoolean(4)
+     else if !isBoolean(s.4) then WrongArgBoolean(5) 
+     else toExpr(
+	  Ccode(RawMutableMatrixOrNull, "rawFFPackAddMultipleTo(", 
+	       C.p, ",", 
+	       A.p, ",", 
+	       B.p, ",", 
+	       toBoolean(s.3), ",",
+	       toBoolean(s.4), ",",
+	       a.p, ",", 
+	       b.p,
+	       ")"))
+     else WrongArg(7,"a raw ring element")
+     else WrongArg(6,"a raw ring element")
+     else WrongArgMutableMatrix(3)
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(7));
+setupfun("rawFFPackAddMultipleTo", rawFFPackAddMultipleTo);
+
 ----------------------------
 rawContent(e:Expr):Expr := (
      when e is f:RawRingElementCell do (
