@@ -22,6 +22,8 @@ export {
      RightSide,
      nullSpace,
      invert,
+     rowRankProfile,
+     columnRankProfile,
      addMultipleTo,
      solveLinear,
      TransposeA,
@@ -94,6 +96,20 @@ MutableMatrix * MutableMatrix := (A,B) -> (
      C := mutableMatrix(ring A, numRows A, numColumns B, Dense=>true);
      addMultipleTo(C,A,B)
      )
+
+rowRankProfile = method()
+rowRankProfile MutableMatrix := (A) -> (
+     R := ring A;
+     if isPrimeField R and char R > 0 then (
+     	  rawFFPackRowRankProfile A
+     ))
+
+columnRankProfile = method()
+columnRankProfile MutableMatrix := (A) -> (
+     R := ring A;
+     if isPrimeField R and char R > 0 then (
+     	  rawFFPackColumnRankProfile A
+     ))
 
 beginDocumentation()
 
@@ -282,10 +298,10 @@ loadPackage "FastLinearAlgebra"
 
 -- invert2 DONE
 -- test that with solve DONE
--- multiplication
+-- multiplication DONE
+-- LU decomposition
 -- submatrix + stride
 -- rank profiles (column and row)
--- LU decomposition
 
 -- after that:
 --  make a new mutable matrix data type

@@ -2691,6 +2691,18 @@ export rawFFPackAddMultipleTo(e:Expr):Expr := (
      else WrongNumArgs(7));
 setupfun("rawFFPackAddMultipleTo", rawFFPackAddMultipleTo);
 
+export rawFFPackRowRankProfile(e:Expr):Expr := (
+     when e is m:RawMutableMatrixCell do toExpr( 
+	  Ccode(RawArrayIntOrNull, "rawFFPackRowRankProfile(", m.p,")"))
+     else WrongArgMutableMatrix(1));
+setupfun("rawFFPackRowRankProfile", rawFFPackRowRankProfile);
+
+export rawFFPackColumnRankProfile(e:Expr):Expr := (
+     when e is m:RawMutableMatrixCell do toExpr( 
+	  Ccode(RawArrayIntOrNull, "rawFFPackColumnRankProfile(", m.p,")"))
+     else WrongArgMutableMatrix(1));
+setupfun("rawFFPackColumnRankProfile", rawFFPackColumnRankProfile);
+
 ----------------------------
 rawContent(e:Expr):Expr := (
      when e is f:RawRingElementCell do (

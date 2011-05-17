@@ -1214,6 +1214,55 @@ MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
   return C;
 }
 
+M2_arrayintOrNull rawFFPackRankProfile(MutableMatrix *A, bool row_profile)
+{
+  const Ring *R = A->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk == 0)
+    {
+      ERROR("expected finite prime field");
+      return 0;
+    }
+  typedef ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(R->charac());
+
+  ElementType *ffA = toFFPackMatrix(kk, F, A);
+  size_t * prof;
+
+  size_t rk;
+  if (row_profile)
+    rk = FFPACK::RowRankProfile(F,
+				A->n_rows(),A->n_cols(),
+				ffA,A->n_cols(),
+				prof);
+  else
+    rk = FFPACK::ColumnRankProfile(F,
+				A->n_rows(),A->n_cols(),
+				ffA,A->n_cols(),
+				prof);
+
+
+  M2_arrayint profile = M2_makearrayint(rk);
+  for (size_t i=0; i<rk; i++)
+    profile->array[i] = prof[i];
+
+  delete [] ffA;
+  delete [] prof;
+
+  return profile;
+}
+
+M2_arrayintOrNull rawFFPackRowRankProfile(MutableMatrix *A)
+{
+  return rawFFPackRankProfile(A,true);
+}
+
+M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A)
+{
+  return rawFFPackRankProfile(A,false);
+}
+
 #else
 RingElement *rawFFPackDeterminant(MutableMatrix *M)
 {
@@ -1251,6 +1300,18 @@ MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
   ERROR("FFPack not present");
   return 0;
 }
+
+M2_arrayintOrNull rawFFPackRowRankProfile(MutableMatrix *A)
+{
+  ERROR("FFPack not present");
+  return 0;
+}
+M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A)
+{
+  ERROR("FFPack not present");
+  return 0;
+}
+
 
 #endif
 

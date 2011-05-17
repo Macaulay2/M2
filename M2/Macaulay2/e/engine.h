@@ -1262,6 +1262,11 @@ extern "C" {
      connected to rawFFPackAddMultipleTo, MES
   */
 
+  M2_arrayintOrNull rawFFPackRowRankProfile(MutableMatrix *A);
+  /* connected, MES */
+
+  M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A);
+  /* connected, MES */
   
   /***************************************************
    ***** Lapack routines for dense mutable matrices **
