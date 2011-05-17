@@ -299,13 +299,20 @@ loadPackage "FastLinearAlgebra"
 -- invert2 DONE
 -- test that with solve DONE
 -- multiplication DONE
+-- rank profiles (column and row) MOSTLY DONE: need to fix ffpack, test it
 -- LU decomposition
 -- submatrix + stride
--- rank profiles (column and row)
+-- row and col echelon forms
 
 -- after that:
 --  make a new mutable matrix data type
 --  
+
+-- HW:
+--  Mike:
+--    think about the interface for ffpack matrices, so we do not need to copy matrices each operation
+--  Jakob:
+--    check with ffpack people about: row rank profile, and fgemv?
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
