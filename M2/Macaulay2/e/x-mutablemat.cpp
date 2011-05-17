@@ -934,6 +934,30 @@ MutableMatrix *fromFFPackMatrix(const Z_mod *kk,
   return M;
 }
 
+template < typename FieldType >
+MutableMatrix *fillFromFFPackMatrix(const Z_mod *kk, 
+				    const FieldType &F,
+				    MutableMatrix *C,
+				    typename FieldType::Element *N)
+// sets C from N.  Both should have the same shape!
+{
+  typedef typename FieldType::Element ElementType;
+  
+  size_t nrows = C->n_rows();
+  size_t ncols = C->n_cols();
+  ElementType *inN = N;
+  for (size_t i = 0; i<nrows; i++)
+    for (size_t j = 0; j<ncols; j++)
+      {
+	unsigned long a;
+	F.convert(a, *inN);
+	inN++;
+	ring_elem b = kk->from_int(a);
+	C->set_entry(i,j,b);
+      }
+  return C;
+}
+
 RingElement *rawFFPackDeterminant(MutableMatrix *M)
 // M should be a mutable matrix over a finite prime field, 
 // of square size.
@@ -1133,7 +1157,61 @@ MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
      connected to rawFFPackAddMultipleTo, MES
   */
 {
-  return 0;
+  const Ring *R = C->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk == 0)
+    {
+      ERROR("expected finite prime field");
+      return 0;
+    }
+  typedef ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(R->charac());
+
+  // set tA, tB
+  FFLAS::FFLAS_TRANSPOSE tA = (transposeA ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
+  FFLAS::FFLAS_TRANSPOSE tB = (transposeB ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
+  
+  // determine m,n,k
+  size_t m = (transposeA ? A->n_cols() : A->n_rows());
+  size_t n = (transposeB ? B->n_rows() : B->n_cols());
+  size_t k = (transposeA ? A->n_rows() : A->n_cols());
+  size_t k2 = (transposeB ? B->n_cols() : B->n_rows());
+  if (k != k2)
+    {
+      ERROR("matrices have wrong shape to be multiplied");
+      return 0;
+    }
+
+  ElementType ffa, ffb;
+  double d = kk->to_int(a->get_value());
+  F.init(ffa, d);
+  d = kk->to_int(b->get_value());
+  F.init(ffb, d);
+
+  ElementType *ffC = toFFPackMatrix(kk, F, C);
+  ElementType *ffA = toFFPackMatrix(kk, F, A);
+  ElementType *ffB = toFFPackMatrix(kk, F, B);
+
+  FFPACK::fgemm(F,
+		tA, tB, 
+		m,n,k,  
+		ffa,
+		ffA,
+		A->n_cols(),
+		ffB,
+		B->n_cols(),
+		ffb,
+		ffC,
+		C->n_cols()
+		);
+
+  fillFromFFPackMatrix(kk,F,C,ffC);
+  delete [] ffC;
+  delete [] ffA;
+  delete [] ffB;
+
+  return C;
 }
 
 #else

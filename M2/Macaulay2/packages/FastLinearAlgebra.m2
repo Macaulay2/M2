@@ -22,7 +22,12 @@ export {
      RightSide,
      nullSpace,
      invert,
-     solveLinear
+     addMultipleTo,
+     solveLinear,
+     TransposeA,
+     TransposeB,
+     Alpha,
+     Beta
 --     ,
 --     columnRankProfile,
 --     rowRankProfile
@@ -81,8 +86,8 @@ addMultipleTo(MutableMatrix,MutableMatrix,MutableMatrix) := opts -> (C,A,B) -> (
      if isPrimeField R and char R > 0 then (
 	  a := if opts.Alpha === null then 1_R else opts.Alpha;
 	  b := if opts.Beta === null then 1_R else opts.Beta;
-     	  rawFFPackAddMultipleTo(C,A,B,opts.TransposeA, opts.TransposeB, a, b);
-	  map(R, C))
+     	  rawFFPackAddMultipleTo(raw C, raw A, raw B,opts.TransposeA, opts.TransposeB, raw a, raw b);
+	  C)
      )
 
 MutableMatrix * MutableMatrix := (A,B) -> (
@@ -153,16 +158,75 @@ X = solveLinear(A,B)
 
 TEST ///
 kk = ZZ/101
-N = 5
+N = 10
 
 time A = mutableMatrix(kk, N, N, Dense=>true);
 time fillMatrix A;
 time B = invert A;
---((matrix A) * (matrix B)) - 1 == 0
+time C = A*B;
+C == mutableIdentity(kk, N)
 
 idN = mutableIdentity(kk, N, Dense=>true);
 time X = solveLinear(A, idN);
 assert(B == X)
+///
+
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+A * B
+(matrix A) * (matrix B) == matrix(A*B)
+///
+
+TEST ///
+kk = ZZ/101
+C = mutableMatrix random(kk^3, kk^7);
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+
+C0 = matrix C
+addMultipleTo(C,A,B,Alpha=>3_kk, Beta=>-1_kk)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleTo(C,mutableMatrix transpose matrix A, B,Alpha=>3_kk, Beta=>-1_kk, TransposeA=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleTo(C,A,mutableMatrix transpose matrix B,Alpha=>3_kk, Beta=>-1_kk, TransposeB=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleTo(C,mutableMatrix transpose matrix A,
+     mutableMatrix transpose matrix B,
+     Alpha=>3_kk, 
+     Beta=>-1_kk, 
+     TransposeB=>true, 
+     TransposeA=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+A * B
+assert((matrix A) * (matrix B) == matrix(A*B))
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^300, kk^400);
+B = mutableMatrix random(kk^400, kk^700);
+time C1 = A * B;
+time C2 = (matrix A) * (matrix B);
+assert(matrix C1 == C2)
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+assert (try (B * A;false) else true)
+time C2 = (matrix A) * (matrix B);
+assert(matrix C1 == C2)
 ///
 
 
@@ -218,10 +282,10 @@ loadPackage "FastLinearAlgebra"
 
 -- invert2 DONE
 -- test that with solve DONE
+-- multiplication
 -- submatrix + stride
 -- rank profiles (column and row)
 -- LU decomposition
--- multiplication
 
 -- after that:
 --  make a new mutable matrix data type
