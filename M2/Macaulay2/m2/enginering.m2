@@ -358,6 +358,7 @@ size RingElement := f -> rawTermCount(numgens ring f, raw f)
 
 isHomogeneous RingElement := f -> rawIsHomogeneous raw f
 
++ RingElement := identity
 - RingElement := RingElement => x -> new ring x from -raw x
 
 RingElement ? ZZ := (x,n) -> x ? n_(class x)
