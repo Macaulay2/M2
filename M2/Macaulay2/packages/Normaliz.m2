@@ -11,8 +11,8 @@ the License, or any later version.
 
 newPackage(
            "Normaliz",
-           Version=>"2.1",
-           Date=>"April 9, 2011",
+           Version=>"2.2",
+           Date=>"Mai 18, 2011",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@uni-osnabrueck.de"},
 					{Name=> "Christof Soeger",
@@ -44,7 +44,7 @@ export{rmNmzFiles,
        getNumInvs
       }
 
-exportMutable{nmzVersion, nmzDataPath, nmzFilename,nmzNumberThreads}
+exportMutable{nmzVersion, nmzDataPath, nmzFilename, nmzNumberThreads}
 
 ----------------------------------------------------------------------
 
@@ -100,10 +100,11 @@ ring MonomialSubalgebra:=R->R.ring;
 nmzDataPath="";
 nmzFilename="";
 nmzNumberThreads=1;
-nmzUserCalled=true;  -- wether the user calls a method
+nmzUserCalled=true;  -- whether the user calls a method
 nmzFile="";
 nmzVersion="";     -- normaliz
-nmzExecVersion=""; -- needs to be at last "2.5"
+nmzExecVersion=""; -- needs to be at least nmzMinExecVersion
+nmzMinExecVersion="2.5"; -- minimal normaliz version
 nmzGen=true;      -- indicates whether ".gen" is generated
 -- component 1 is name of option
 -- 2 is default value
@@ -112,15 +113,21 @@ nmzGen=true;      -- indicates whether ".gen" is generated
 -- value 2 of 4 indicates "no influence"
 
 nmzOptions= new MutableList from {
-            new MutableList from {"hvect",false,"-p",false},
-            new MutableList from {"triang",false,"-v",false},
             new MutableList from {"supp",false,"-s",false},
+            new MutableList from {"triang",false,"-v",false},
+            new MutableList from {"volume",false,"-V",false},
+            new MutableList from {"hvect",false,"-p",false},
+            new MutableList from {"hvect_l",false,"-P",false},
+            new MutableList from {"height1",false,"-1",false},
             new MutableList from {"normal",false,"-n",true},
+            new MutableList from {"normal_l",false,"-N",true},
             new MutableList from {"hilb",false,"-h",true},
+            new MutableList from {"hilb_l",false,"-H",true},
             new MutableList from {"dual",false,"-d",true},
             new MutableList from {"control",false,"-c",2},
             new MutableList from {"allf",false,"-a",2},
             new MutableList from {"errorcheck",false,"-e",2},
+            new MutableList from {"bigint",false,"-B",2},
             new MutableList from {"threads",false,"-x",2}};
 -------------------------------------------------------------
 
@@ -144,8 +151,8 @@ setNmzFile=()->
 
 
 
--- sets the version, by default it is normaliz
-setNmzExec=()->
+-- get the normaliz executable with full path
+getNmzExec=()->
 (
     if(nmzVersion!="")
     then(
@@ -483,13 +490,13 @@ showNmzOptions=()->
 checkNmzExecVersion=()->
 (
   if (nmzExecVersion=="") then (
-    cmd := "! " | setNmzExec() | " 2>&1 </dev/null || true";
+    cmd := "! " | getNmzExec() | " 2>&1 </dev/null || true";
     result := get cmd;
-    if not match("^Normaliz ([0-9.]*)\n",result) then error("normaliz executable not found: " | setNmzExec());
+    if not match("^Normaliz ([0-9.]*)\n",result) then error("normaliz executable not found: " | getNmzExec());
     nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", result);
   );
-  if (nmzExecVersion < "2.5") then
-    error("normaliz executable too old (" | setNmzExec() | "), at least verison 2.5 needed");
+  if (nmzExecVersion < nmzMinExecVersion) then
+    error("normaliz: Normaliz executable to old (" | nmzExecVersion | "), at least version " | nmzMinExecVersion | " needed!");
 )
 
 
@@ -542,7 +549,7 @@ runNormaliz(List):=opts>>o->(s)->
     dir:=select(".*/",nmzFile);
     if(dir!={}) then cmd="cd "|dir#0|"; ";
 
-    cmd = (cmd|setNmzExec()|options|baseFilename(nmzFile));
+    cmd = (cmd|getNmzExec()|options|baseFilename(nmzFile));
     if debugLevel > 0 then << "--running command: " << cmd << endl;
     if 0 != run cmd then error ("command failed : ", cmd);
     if debugLevel > 0 then << "--command succeeded" << endl;
@@ -950,9 +957,9 @@ beginDocumentation()
 document {
      Key => Normaliz,
      Headline => "an interface to use Normaliz in Macaulay 2",
-     "The package ", EM "Normaliz"," provides an interface for the use of ", TT "Normaliz 2.5"," within Macaulay 2.",
+     "The package ", EM "Normaliz"," provides an interface for the use of ", TT "Normaliz 2.7"," within Macaulay 2.",
 
-PARA{}, "The program ", TT "Normaliz 2.5", " (referred to as ", TT "Normaliz", " in the following) is mainly a tool for computing the Hilbert basis of a rational cone or, in other terms, for solving linear systems of inequalities.  Several additional data can be computed.
+PARA{}, "The program ", TT "Normaliz 2.7", " (referred to as ", TT "Normaliz", " in the following) is mainly a tool for computing the Hilbert basis of a rational cone or, in other terms, for solving linear systems of inequalities.  Several additional data can be computed.
 It is included in the Macaulay 2 distribution. For more details on the program, see ", HREF "http://www.math.uos.de/normaliz/", ".
 For the theory of affine semigroups and the notions of commutative algebra we refer to W. Bruns and J. Gubeladze, ", EM "Polytopes, rings and K-theory.", " Springer 2009. For algorithms see  W. Bruns and R. Koch, ", EM "Computing the integral closure of an affine semigroup. ", "Uni. Iaggelonicae Acta Math. 39, (2001), 59-70 and ",   "W. Bruns and B. Ichim ", EM "Normaliz: Algorithms for affine monoids and rational cones,"," J. Algebra
 (2010)", ", available at ", HREF "http://dx.doi.org/10.1016/j.jalgebra.2010.01.031",
@@ -1305,7 +1312,7 @@ PARA{},"If you want to change the directory where the files are saved (default i
 document {
   Key => "nmzVersion",
   Headline => "global variable holding the Normaliz version",
-PARA{},"The executable of the program ",  TT "Normaliz",  " comes in two versions: ",  TT "norm 64",  " and ",  TT "normbig",  ". The package Normaliz uses the version stored in the global variable nmzVersion. If no version is specified it will use ",  TT "norm 64", ".",
+PARA{},"The executable of the program ",  TT "Normaliz",  ". The package Normaliz uses the version stored in the global variable nmzVersion. It can be ", TT "normaliz", ", ",  TT "norm 64",  " or ",  TT "normbig", ". If no version is specified it will use ",  TT "normaliz", ". This can be used to use executables of Normaliz version 2.5 with this version of the Macaulay package.",
 EXAMPLE lines ///
 nmzVersion
 nmzVersion="normbig";
@@ -1693,16 +1700,23 @@ document {
      UL{
         {TT "-s", ":   supp, only the support hyperplanes are computed."},
         {TT "-v", ":   triang, computes the support hyperplanes, the triangulation and the multiplicity."},
+        {TT "-V", ":   volume, computes the support hyperplanes and the multiplicity."},
         {TT "-p", ":   hvect, computes the support hyperplanes, the triangulation, the multiplicity, the h-vector and the Hilbert polynomial."},
+        {TT "-P", ":   hvect_l, computes the support hyperplanes, the multiplicity, the h-vector and the Hilbert polynomial."},
        {TT "-n",  ":   normal, computes the support hyperplanes, the triangulation, the multiplicity and the Hilbert basis."},
-       {TT "-h",  ":   hilb, computes the support hyperplanes, the triangulation, the multiplicity, the Hilbert basis, the h-vector and the Hilbert polynomial ."},
+       {TT "-N",  ":   normal_l, computes the support hyperplanes, the multiplicity and the Hilbert basis."},
+       {TT "-h",  ":   hilb, computes the support hyperplanes, the triangulation, the multiplicity, the Hilbert basis, the h-vector and the Hilbert polynomial."},
+       {TT "-H",  ":   hilb_l, computes the support hyperplanes, the multiplicity, the Hilbert basis, the h-vector and the Hilbert polynomial."},
+       {TT "-1",  ":   heigth1, computes the Hilbert basis elements of heigth 1."},
        {TT "-d",  ":   dual, computes the Hilbert basis using Pottier's algorithm, cf. L. Pottier, ", EM "The Euclide algorithm in dimension n.", " Research report, ISSAC 96, ACM Press 1996. It is available only in type 4 and 5."}
      },
+	 "The options with _l indicate that they are in particular usefull for big examples.",
      "Further options:",
      UL{
         {TT "-c", ":   control, gives you some access to 'control' data during the computation. When switched on, data will be printed on the screen."},
         {TT "-a", ":   allf, all files are written",},
-        {TT "-e", ":   errorcheck, when switched on the arithmetic tests will be performed, in order to assure that no arithmetic errors do occur. This may slow down the computations. For ", TT "normbig", "(see ", TO "nmzVersion", "), this option is set to false, since in this case no arithmetic errors can occur."},
+        {TT "-e", ":   errorcheck, when switched on the arithmetic tests will be performed, in order to assure that no arithmetic errors do occur. This may slow down the computations. This option is ignored if bigint is activated, since in this case no arithmetic errors can occur."},
+        {TT "-B", ":   bigint, use indefinite precision arithmetic",},
         {TT "-x=<N>", ": threads, there ",TT "<N>"," stands for a positive integer limiting the number of threads that ", TT "Normaliz"," can access on your system. The default value is ", TT "<N>=",TEX"\\infty",". If you want to run ", TT "Normaliz"," in a strictly serial mode, choose ", TT "<N>=1",". If this option is enabled,",TT "<N>"," is taken as the value stored in the global variable ", TO "nmzNumberThreads","."}
      },
      PARA{},"Note that it makes no sense to activate more than one of the computation mode options. The ", TT "-f", " option, which makes the ", TT ".gen, .inv, .typ, .cst", " files to be printed, is always set. The default value of all options is ", TT "false",".",
