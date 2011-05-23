@@ -46,7 +46,7 @@ export {
      bayes
      }
 
-needs "ExampleIdeals/mayr-meyer.m2"
+needs "./ExampleIdeals/mayr-meyer.m2"
 
 ExampleTable = new Type of HashTable
 
