@@ -17,7 +17,20 @@ newPackage select((
      if version#"VERSION" > "1.4" then PackageExports => {"NAGtypes"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false
+     DebuggingMode => false,
+     Certification => {
+	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Numerical Algebraic Geometry",
+	  "acceptance date" => "2011-05-20",
+	  "published article URI" => "http://j-sag.org/Volume3/jsag-2-2011.pdf",
+	  "published code URI" => "http://j-sag.org/Volume3/NumericalAlgebraicGeometry.tar",
+	  "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
+	  "release at publication" => 13254,	    -- as an integer
+	  "version at publication" => "1.4",
+	  "volume number" => "3",
+	  "volume URI" => "http://j-sag.org/Volume3/"
+	  }
      ), x -> x =!= null)
 
 if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
