@@ -20,7 +20,7 @@ newPackage(
      Version => "0.7", 
      Date => "May 27, 2009",
      Authors => {
-	  {Name => "Jason McCullough", Email => "jmccullo@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~jmccullo"}
+	  {Name => "Jason McCullough", Email => "jmccullo@math.ucr.edu", HomePage => "http://www.math.ucr.edu/~jmccullo"}
 	  },
      Headline => "Computes successive approximations of Hilbert-Kunz and related
                   multiplicities in characteristic p > 0.  Frobenius action on
