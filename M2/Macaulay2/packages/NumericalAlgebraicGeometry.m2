@@ -1,7 +1,9 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
-newPackage(
+if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
+
+newPackage select((
      "NumericalAlgebraicGeometry",
      Version => "1.4",
      Date => "March, 2011",
@@ -12,11 +14,13 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes"},
+     if version#"VERSION" > "1.4" then PackageExports => {"NAGtypes"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false
-     )
+     ), x -> x =!= null)
+
+if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
