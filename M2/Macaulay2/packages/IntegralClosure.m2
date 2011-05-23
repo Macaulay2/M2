@@ -68,7 +68,12 @@ needsPackage "ReesAlgebra"
 --- program.  Right now it is well documented on its own.  I'm not
 --- sure what is best long term. 
 
-fixvarname = s -> if instance(s,String) then getSymbol s else s
+makeVariable = opts -> (
+     s := opts.Variable;
+     if instance(s,Symbol) then s else
+     if instance(s,String) then getSymbol s else
+     error "expected Variable option to provide a string or a symbol"
+     )
 
 integralClosure = method(Options=>{
 	  Variable => "w",
@@ -192,7 +197,7 @@ integralClosure Ring := Ring => o -> (R) -> (
 
 	  if verbosity >= 1 then << " [step " << nsteps << ": " << flush;
 
-	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,fixvarname o.Variable,keepvars,strategies));
+	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,makeVariable o,keepvars,strategies));
 
           if verbosity >= 1 then (
 		 if verbosity >= 5 then (
@@ -519,7 +524,7 @@ idealizer (Ideal, RingElement) := o -> (J, g) ->  (
 --     idJ := mingens(f*J : J);
      if H == 0 then 
 	  (id_R, map(frac R, frac R, vars frac R)) -- in this case R is isomorphic to Hom(J,J)
-     else ringFromFractions(H,f,Variable=>fixvarname o.Variable,Index=>o.Index)
+     else ringFromFractions(H,f,Variable=>makeVariable o,Index=>o.Index)
 	  )
 
 
@@ -585,12 +590,8 @@ ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
      	  degs := join(newdegs, (monoid R).Options.Degrees);
      	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
           kk := coefficientRing R;
-	  var := (
-	       if instance(o.Variable,Symbol) then o.Variable else
-	       if instance(o.Variable,String) then getSymbol o.Variable else
-	       error "expected Variable option to provide a string or a symbol"
-	       );
-     	  A := kk(monoid [fixvarname var_(o.Index,0)..fixvarname var_(o.Index,n-1), R.generatorSymbols,
+	  var := makeVariable o;
+     	  A := kk(monoid [var_(o.Index,0)..var_(o.Index,n-1), R.generatorSymbols,
 		    MonomialOrder=>MO, Degrees => degs]);
      	  I := ideal presentation R;
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
