@@ -17,6 +17,18 @@ opt64 : always
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+opt64-givaro : always
+	mkdir -p opt64-givaro
+	cd opt64-givaro; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 debug64 : always
 	mkdir -p debug64
 	cd debug64; ../../../configure \
