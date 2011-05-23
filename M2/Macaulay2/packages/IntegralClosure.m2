@@ -585,7 +585,12 @@ ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
      	  degs := join(newdegs, (monoid R).Options.Degrees);
      	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
           kk := coefficientRing R;
-     	  A := kk(monoid [fixvarname o.Variable_(o.Index,0)..fixvarname o.Variable_(o.Index,n-1), R.generatorSymbols,
+	  var := (
+	       if instance(o.Variable,Symbol) then o.Variable else
+	       if instance(o.Variable,String) then getSymbol o.Variable else
+	       error "expected Variable option to provide a string or a symbol"
+	       );
+     	  A := kk(monoid [fixvarname var_(o.Index,0)..fixvarname var_(o.Index,n-1), R.generatorSymbols,
 		    MonomialOrder=>MO, Degrees => degs]);
      	  I := ideal presentation R;
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
