@@ -1,5 +1,3 @@
-needsPackage "ExampleIdeals"
-
 linearExample = () -> (
      R := CC[x,y]; 
      ideal {x+y-3,x-y-1}
@@ -145,6 +143,25 @@ cyclicH = (n,kk) -> (
      R := kk[vars(53..n+53)];
      ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
        + ideal(product(n, i -> R_i) - R_n^n))
+
+--katsura = method()
+--katsura(ZZ,Ring) := (n,R) -> (
+--     )
+katsura = (n,kk) -> (
+     -- This is written to match the Singular version, which seems to differ
+     -- from the POSSO version
+     n = n-1;
+     R := kk[vars(0..n)];
+     L := gens R;
+     u := (i) -> (
+	  if i < 0 then i = -i;
+	  if i <= n then L_i else 0_R);
+     f1 := -1 + sum for i from -n to n list u i;
+     I := ideal prepend(f1,
+	  apply(0..n-1, i -> (
+	       - u i + sum(-n..n, j -> (u j) * (u (i-j)))
+	       )))
+     )
 
 katsuraBench = n -> (
      R := CC[vars(53..n+52)];

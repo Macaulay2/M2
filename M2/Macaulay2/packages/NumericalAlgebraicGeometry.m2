@@ -51,7 +51,6 @@ protect Processing, protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
 -- experimental:
-protect OrthogonalProjection, protect Variant, -- in conditionNumber
 protect AllowSingular, protect Output -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
@@ -306,7 +305,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- 	gamma => nonzero complex number
 -- OUT: solsT = list of target solutions corresponding to solsS
      o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); 
+     o = new OptionTable from o;
      HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
      n := #T; 
      K := CC_53; -- THE coefficient ring
@@ -2639,14 +2639,14 @@ NAGtrace = method()
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
 -- normalized condition number of F at x
-conditionNumber = method(Options=>{Variant=>OrthogonalProjection})
-conditionNumber Matrix := o-> M -> (s := first SVD M; max s / min s)
-conditionNumber (List,List) := o -> (F,x) -> (
+conditionNumber = method()
+conditionNumber Matrix := M -> (s := first SVD M; max s / min s)
+conditionNumber (List,List) := (F,x) -> (
      nF := apply(F, f->f/sqrt(#F * BombieriWeylNormSquared f)); -- normalize F
      x0 := normalize transpose matrix{x}; -- column unit vector
-     DMforPN := diagonalMatrix(nF/(f->1/sqrt first degree f) | if o.Variant===OrthogonalProjection then {1} else {});
+     DMforPN := diagonalMatrix(nF/(f->1/sqrt first degree f) | {1});
      J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
-     if o.Variant===OrthogonalProjection then J = J || matrix{ flatten entries x0 / conjugate};
+     J = J || matrix{ flatten entries x0 / conjugate};
      conditionNumber(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
      )
 
