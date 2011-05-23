@@ -1,4 +1,3 @@
-path = path| {"../", "../../"}
 needsPackage "ExampleIdeals"
 
 linearExample = () -> (
