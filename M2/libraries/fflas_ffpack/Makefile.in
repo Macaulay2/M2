@@ -2,15 +2,15 @@
 # http://linalg.org/projects/fflas-ffpack
 
 # the tar files provided are too old, so we took a snapshot:
-VERSION = 20110329
+# VERSION = 20110329
+VERSION = 1.4.2.169
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-TARDIR = fflas-ffpack
+TARDIR = fflas-ffpack-$(VERSION)
 LICENSEFILES = COPYING
-CONFIGURECMD = :
-BUILDCMD = :
-INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
-		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \
-		@INSTALL_DATA@ include/fflas-ffpack/*.{h,inl} $(LIBRARIESDIR)/include/fflas-ffpack/.
+PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
+# INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
+# 		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \
+# 		@INSTALL_DATA@ include/fflas-ffpack/*.{h,inl} $(LIBRARIESDIR)/include/fflas-ffpack/.
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/fflas_ffpack/Makefile
 # Local Variables:
