@@ -582,6 +582,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   BIBasis
   KustinMiller
   Units
+  MonomialMultiplierIdeals
 ")
 
 # convert the newlines in the list above to spaces
