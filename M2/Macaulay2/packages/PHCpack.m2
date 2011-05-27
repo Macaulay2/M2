@@ -722,7 +722,7 @@ load "./PHCpack/PHCpackDoc.m2";
 TEST/// 
       R=QQ[x11,x22,x21,x12,x23,x13,x14,x24]
       I=ideal(x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14)
-      assert{ # cascade I == 1}--there is one component of dim.5.
+      assert( # cascade I == 1 )--there is one component of dim.5.
 ///;
 
 -----------------------------------
@@ -787,7 +787,7 @@ TEST///
      f = {x^2 + 4*y^2 - 4, 2*y^2 - x}; 
      fSols = phcSolve(f);
      realSols = realFilter(fSols,1.0e-10)
-     assert{# realSols == 2} --cannot use isReal because the output has small imaginary parts!!
+     assert(# realSols == 2) --cannot use isReal because the output has small imaginary parts!!
 ///;
 
 -----------------------------------
@@ -836,7 +836,7 @@ TEST///
      f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
      fSols = phcSolve(f);
      nonzeroSols = nonZeroFilter(fSols,0,1.0e-10);
-     assert{# nonzeroSols ==10} -- this is just complement of zeroFilter which is tested in more detail. Here we are just counting the number of solutions to make sure the method ran.
+     assert(# nonzeroSols ==10) -- this is just complement of zeroFilter which is tested in more detail. Here we are just counting the number of solutions to make sure the method ran.
 ///;
 
 
