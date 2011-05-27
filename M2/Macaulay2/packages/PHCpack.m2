@@ -2,8 +2,8 @@ needsPackage "NAGtypes"
 
 newPackage(
   "PHCpack",
-  Version => "0.9", 
-  Date => "23 May 2011",
+  Version => "1.0", 
+  Date => "24 May 2011",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "lizgross@math.uic.edu",
@@ -14,7 +14,8 @@ newPackage(
     {Name => "Jan Verschelde", 
      Email => "jan@math.uic.edu",
      HomePage => "http://www.math.uic.edu/~jan"},
-    {Name => "Contributing Author: Anton Leykin"}
+    {Name => "Contributing Author: Anton Leykin",
+     HomePage => "http://www.math.gatech.edu/~leykin"}
   },
   Headline => "Interface to PHCpack",
   Configuration => { 
@@ -26,51 +27,6 @@ newPackage(
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
-
---##########################################################################--
--- UPDATE AND CHANGE LOG:
--- 23 May 2011 (pm)- SP:
--- 	returned comment lines about temporary file names to various methods in the package
--- 	updated headlines in documentation to be consitend and reference phc
--- 23 May 2011 (am)- SP:
---     wrote notes as comments in the cascade method to summarize the one last change 
--- 	we need for version 1.0 of the package!!
--- 19 May 2011 - SP: 
---    documentation updates listed in email. 
---    changed "phc -" executable to PHCexe|" -" where necessary (2 instances)
---    modified mixedVolume so it no longer incorrectly specifies TypicalValue=>Sequence.
---
---  19 May 2011 - JV:
---    documentation is in the file PHCpackDoc.m2, loaded below
---    removed refineSoln, documented refineSolutions with example
---    placed (other, older?) versions of cascade after comments
---    added options stableMV and startSystem to mixedVolume
---    needed new internal function "startSystemFromFile" for startSystem
---    added options gamma and tDegree to trackPaths with documentation
---    added internal method isPointReal and exported method RealFilter
---  20 April 2010. ~SP: draft of package.
---  5 May 2010 - SP: 
---    finished w/ mixed volume; black box; incld. slack variables. 
---  16 May 2010 -EG: 
---    documentation of mixed volume and black box.  
---    Need to include slack variables info and tests.
---  9 June 2010 ~SP: 
---    some housekeeping and clean-up of mixed volume and black box solver;
---    added a few things to documentation, mostly about dimension of the 
---    system and slack vars; 
---    many draft-like things still there. Please keep for now (at least 
---    as comments) for future reference.
---    rational input allowed for the black-box solver;
---    added "convertToPoly": a function that takes a rational system and
---    turns it into laurent (natural environment to M2, acceptable for PHC) .
---  24 June 2010 -EG:
---    added tests for phcSolve() and mixedVolume()
---  ? August 2010 ~Anton visited UIC and transfered over a few functions; 
---    we made a decision on what should be done next.
---  3 Oct 2010 -SP:
---    after Jan has added the new functions on 30 Sep 2010, I have cleaned 
---  up some of the comments in the file. No time for further changes. 
---##########################################################################--
 
 export { 
   phcSolve,
@@ -749,7 +705,7 @@ monodromyBreakup WitnessSet := o -> (W) -> (
 
 beginDocumentation()
 
-load "./PHCpackDoc.m2";
+load "./PHCpack/PHCpackDoc.m2";
 
 
 
