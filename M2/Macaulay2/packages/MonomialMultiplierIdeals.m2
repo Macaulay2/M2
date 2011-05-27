@@ -64,6 +64,8 @@ needsPackage("Normaliz");
 -- setNmzVersion("normbig");
 -- Format of command as of Macaulay2 1.4, Normaliz 2.5:
 -- nmzVersion="normbig";
+-- Format of command as of Normaliz 2.7:
+setNmzOption("bigint",true);
 
 needsPackage("ReesAlgebra");
 
