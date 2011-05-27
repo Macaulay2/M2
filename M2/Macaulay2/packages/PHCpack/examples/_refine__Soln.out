@@ -1,17 +1,10 @@
--- -*- M2-comint -*- {* hash: 2116675652 *}
---loading configuration for package "PHCpack" from file /home/aleykin3/.Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- {* hash: 568655613 *}
+--loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
 
-i1 : R=QQ[x,y,z]
+i1 : QQ[x,y,z]
 
-o1 = R
+o1 = QQ[x, y, z]
 
 o1 : PolynomialRing
 
-i2 : S={y-x^2,z-x^3,x+y+z-1}--this is not a good example; insert the one we were playing with @office last month.
-
-         2         3
-o2 = {- x  + y, - x  + z, x + y + z - 1}
-
-o2 : List
-
-i3 : 
+i2 : 
