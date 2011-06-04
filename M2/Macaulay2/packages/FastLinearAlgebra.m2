@@ -303,6 +303,7 @@ loadPackage "FastLinearAlgebra"
 -- LU decomposition
 -- submatrix + stride
 -- row and col echelon forms
+-- incorporate givaro types for all of these operations
 
 -- after that:
 --  make a new mutable matrix data type
@@ -312,8 +313,21 @@ loadPackage "FastLinearAlgebra"
 --  Mike:
 --    think about the interface for ffpack matrices, so we do not need to copy matrices each operation
 --  Jakob:
---    check with ffpack people about: row rank profile, and fgemv?
+--    check with ffpack people about: row rank profile.  DONE
 
+-- HW after 24 May 2001:
+--   givaro seems to crash M2 when linked in (Jakob and Mike will both look at this).  Still does!
+--   linbox: try to compile it in (maybe after givaro is working)
+--   need: how to use givaro in the same way as for fflas-ffpack. (Where is doc and test code for this?  Jakob will send to Mike?)
+--     converting elements?
+--     what exactly is the field?  ZZ/p[a]/(g(a)).  What is g?
+--   need: new snapshots of givaro and fflas-ffpack.  Dan does this? DONE
+--   need: ask them about license?  Check with Dan.  ffpack: LGPL license.  givaro: LGPL?
+--   ask Dan: look at the givaro license.
+--   Mike: in my GF ring code, allow givaro to decide the polynomial, and/or tell givaro what the poly is.
+--    learn givaro myself before our next meeting, on Tuesday at 10am, July 7.
+--    REALLY start thinking about design for placing these in as M2 types.
+--   Jakob: play with givaro
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
 -- End:

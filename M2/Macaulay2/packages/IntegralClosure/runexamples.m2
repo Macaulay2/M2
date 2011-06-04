@@ -1,6 +1,6 @@
-loadPackage "ExampleIdeals"
-loadPackage "IntegralClosure"
-loadPackage "ReesAlgebra"
+needsPackage "ExampleIdeals"
+needsPackage "IntegralClosure"
+needsPackage "ReesAlgebra"
 readExampleFile1 = (filename) -> (
      G := separateRegexp("---+", get filename);
      G = apply(G, s -> select(lines s, t -> #t > 0));

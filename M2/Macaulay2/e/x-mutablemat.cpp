@@ -888,9 +888,9 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 }
 
 #if defined(HAVE_FFLAS_FFPACK)
-#include "fflas-ffpack/modular-positive.h"
-#include "fflas-ffpack/modular-balanced.h"
-#include "fflas-ffpack/ffpack.h"
+#include "fflas-ffpack/field/modular-positive.h"
+#include "fflas-ffpack/field/modular-balanced.h"
+#include "fflas-ffpack/ffpack/ffpack.h"
 
 template < typename FieldType >
 typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F, MutableMatrix *M)
@@ -910,6 +910,38 @@ typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F,
       }
   return N;
 }
+
+#if 0
+// This is practice code to see about incorporating givaro types into these functions 
+template < typename M2FieldName > /* M2FieldName is Z_mod, or GF */
+/* Z_mod or GF would have the following types:
+     typename Z_mod::FieldType
+   therefore also
+     Z_mod::FieldType::ElementType
+*/
+MutableMatrix *fromFFPackMatrixPractice(const M2FieldName *kk, 
+					const typename M2FieldName::FieldType &F,
+					typename M2FieldName::FieldType::Element *N, 
+					size_t nrows, 
+					size_t ncols)
+{
+  typedef typename M2FieldName::FieldType FieldType;
+  typedef typename FieldType::Element ElementType;
+  
+  MutableMatrix * M = MutableMatrix::zero_matrix(kk, nrows, ncols, true);
+  ElementType *inN = N;
+  for (size_t i = 0; i<nrows; i++)
+    for (size_t j = 0; j<ncols; j++)
+      {
+	unsigned long a;
+	F.convert(a, *inN);
+	inN++;
+	ring_elem b = kk->from_int(a);
+	M->set_entry(i,j,b);
+      }
+  return M;
+}
+#endif
 
 template < typename FieldType >
 MutableMatrix *fromFFPackMatrix(const Z_mod *kk, 
@@ -975,7 +1007,7 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef ModularBalanced<double> FieldType;
+  typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
   FieldType F(R->charac());
 
@@ -998,7 +1030,7 @@ size_t rawFFPackRank(MutableMatrix *M)
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef ModularBalanced<double> FieldType;
+  typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
   FieldType F(R->charac());
 
@@ -1020,7 +1052,7 @@ MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool right
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef ModularBalanced<double> FieldType;
+  typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
   FieldType F(R->charac());
 
@@ -1060,7 +1092,7 @@ MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A, MutableMatrix *B,
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef ModularBalanced<double> FieldType;
+  typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
   FieldType F(R->charac());
 
@@ -1113,7 +1145,7 @@ MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M)
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef ModularBalanced<double> FieldType;
+  typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
   FieldType F(R->charac());
   size_t n = M->n_rows();
@@ -1164,7 +1196,7 @@ MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef ModularBalanced<double> FieldType;
+  typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
   FieldType F(R->charac());
 
@@ -1193,7 +1225,7 @@ MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
   ElementType *ffA = toFFPackMatrix(kk, F, A);
   ElementType *ffB = toFFPackMatrix(kk, F, B);
 
-  FFPACK::fgemm(F,
+  FFLAS::fgemm(F,
 		tA, tB, 
 		m,n,k,  
 		ffa,
@@ -1223,7 +1255,7 @@ M2_arrayintOrNull rawFFPackRankProfile(MutableMatrix *A, bool row_profile)
       ERROR("expected finite prime field");
       return 0;
     }
-  typedef ModularBalanced<double> FieldType;
+  typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
   FieldType F(R->charac());
 

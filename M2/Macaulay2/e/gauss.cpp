@@ -261,7 +261,7 @@ void GaussElimComputation::start_computation()
     {
       buffer o;
       text_out(o);
-      emit_line(o.str());
+      emit(o.str());
     }
   set_status(COMP_DONE);
 }

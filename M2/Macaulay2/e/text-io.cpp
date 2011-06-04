@@ -55,6 +55,7 @@ void emit_line(const char *s)
   while (*s != 0) {
     while (*s != '\n' && *s != 0) putchar(*s++);
     putchar('\n');
+    if (*s != 0) s++;
     fputs(wrapping_prefix,stdout);
     }
   fflush(stdout);
