@@ -16,8 +16,8 @@ the License, or any later version.
 
 newPackage(
   "MonomialMultiplierIdeals",
-      Version => "0.5", 
-      Date => "May 25, 2011",
+      Version => "0.6", 
+      Date => "June 4, 2011",
       Authors => {
        {Name => "Zach Teitler", Email => "zteitler@member.ams.org"}
       },
@@ -36,6 +36,9 @@ newPackage(
 --    First limited distribution!
 -- v0.5, May 25, 2011: Rename package to use correct capitalization convention. Strip out code
 --    for dealing with temporary directories; just use M2's built in facilities.
+-- v0.6, June 4, 2011: Add "monomialThreshold" feature: threshold of arbitrary monomials
+--    (lct = threshold of 1), together with list of facets imposing the threshold.
+--    Feature suggested by Bernd Sturmfels.
 
 
 ----------------------------------------------------------------------------------------------------
@@ -47,6 +50,7 @@ newPackage(
 export {
   monomialMultiplierIdeal,
   monomialLCT,
+  monomialThreshold,
   monomialJumpingNumbers}
 exportMutable {}
 
@@ -251,22 +255,80 @@ intmat2monomIdeal ( Matrix, Ring, ZZ, ZZ ) := (M,R,d,c) -> (
 monomialLCT = method();
 monomialLCT (MonomialIdeal) := (I) -> (
   
+--  M := NewtonPolyhedron(I);
+--  m := numRows M;
+--  n := numColumns M;
+--  
+--  lctList := {};
+--  
+--  local i;
+--  for i from 0 to m-1 do (
+--    s := sum( toList(0..(n-2)) , j -> M_(i,j) );
+--    if ( M_(i,n-1) != 0 and s != 0 ) then (
+--      lctList = append(lctList , -1*s / M_(i,n-1));
+--    );
+--  );
+--  
+--  return min(lctList);
+--);
+
+  return first monomialThreshold ( I , 1_(ring(I)) ) ;
+);
+
+  
+
+-- monomialThreshold
+-- threshold of inclusion in a multiplier ideal
+-- input:
+--  1. a monomial ideal I
+--  2. a monomial x^v, or exponent vector v
+-- output: a pair
+--  1. a rational number t, defined by
+--        t = sup { c : x^v is in the c'th multiplier ideal of I }
+--     the threshold (of inclusion of x^v in the multiplier ideal of I).
+--  2. a matrix (A' | -b') consisting of those rows of the defining matrix of Newt(I)
+--     which impose the threshold on x^v.
+--  In other words, the line joining the origin to the vector (v+(1,..,1)) hits the boundary of Newt(I)
+--  at (1/t)*(v+(1,..,1)), and the vector (1/t)*(v+(1,..,1)) lies on the facets defined by the rows of (A' | -b')
+--  (via: (A'|-b')(w|1)^transpose >= 0 )
+monomialThreshold = method();
+monomialThreshold (MonomialIdeal , RingElement) := (I , m) -> (
+  if ( leadMonomial(m) != m ) then (
+    error("Second input must be a monomial (input was ",m,")");
+  ) else (
+    return monomialThreshold(I,first exponents m);
+  );
+  return 0;
+);
+monomialThreshold (MonomialIdeal , List) := (I , v) -> (
+  
   M := NewtonPolyhedron(I);
   m := numRows M;
   n := numColumns M;
   
-  lctList := {};
-  
   local i;
+  threshVal := infinity;
+  facetList := {}; -- list of rows
+  
   for i from 0 to m-1 do (
-    s := sum( toList(0..(n-2)) , j -> M_(i,j) );
+    s := sum( toList(0..(n-2)) , j -> M_(i,j)*(1+v_j) );
     if ( M_(i,n-1) != 0 and s != 0 ) then (
-      lctList = append(lctList , -1*s / M_(i,n-1));
+      t := -1*s / M_(i,n-1) ;
+      if ( t < threshVal ) then (
+        threshVal = t;
+        facetList = {i};
+      ) else if ( t == threshVal ) then (
+        facetList = append(facetList , i);
+      );
     );
   );
   
-  return min(lctList);
+  facetMatrix := M^facetList;
+  
+  return ( threshVal , facetMatrix );
 );
+
+
 
 
 -- keynumber: 'key number' of an ideal,
@@ -429,7 +491,7 @@ monomialJumpingNumbers ( MonomialIdeal , QQ , QQ ) := (I , Left , Right) -> (
 beginDocumentation()
 document { 
   Key => MonomialMultiplierIdeals,
-  Headline => "A Macaulay2 package to compute multiplier ideals of monomial ideals",
+  Headline => "A package for computing multiplier ideals of monomial ideals",
   EM "MonomialMultiplierIdeals", " is a package to compute multiplier ideals of monomial ideals."
 }
 
@@ -438,7 +500,7 @@ document {
          (monomialMultiplierIdeal, MonomialIdeal, QQ),
          (monomialMultiplierIdeal, MonomialIdeal, ZZ)
          },
-  Headline => "Multiplier ideal of a monomial ideal",
+  Headline => "multiplier ideal of a monomial ideal",
   Usage => "monomialMultiplierIdeal(I,t)",
   Inputs => {
     "I" => MonomialIdeal => {"a monomial ideal in a polynomial ring"},
@@ -462,7 +524,7 @@ monomialMultiplierIdeal(I,5/6)
 
 document {
   Key => {monomialLCT, (monomialLCT, MonomialIdeal)},
-  Headline => "Log canonical threshold of a monomial ideal",
+  Headline => "log canonical threshold of a monomial ideal",
   Usage => "monomialLCT I",
   Inputs => {
     "I" => MonomialIdeal => {},
@@ -480,8 +542,44 @@ I = monomialIdeal(y^2,x^3);
 monomialLCT(I)
   ///,
   
-  SeeAlso => { "monomialMultiplierIdeal" }
+  SeeAlso => { "monomialMultiplierIdeal", "monomialThreshold" }
 }
+
+
+document {
+  Key => { monomialThreshold },
+  Headline => "thresholds of multiplier ideals of monomial ideals",
+  Usage => "monomialThreshold(I,m)",
+  Inputs => {
+    "I" => MonomialIdeal => {},
+    "m" => RingElement => {"a monomial"}
+  },
+  Outputs => {
+    QQ => {"the least t such that m is not in the t-th multiplier ideal of I"},
+    Matrix => {"the equations of the facets of the Newton polyhedron of I which impose the threshold on m"}
+  },
+  "Computes the threshold of inclusion of the monomial m=x^v in the multiplier ideal J(I^t), ",
+  "that is, the value t = sup{ c | m lies in J(I^c) } = min{ c | m does not lie in J(I^c)}. ",
+  "In other words, (1/t)*(v+(1,..,1)) lies on the boundary of the Newton polyhedron Newt(I). ",
+  "In addition, returns the linear inequalities for those facets of Newt(I) which contain (1/t)*(v+(1,..,1)). ",
+  "These are in the format of ", TO "Normaliz", ", i.e., a matrix (A | b) where the number of columns of A is ",
+  "the number of variables in the ring, b is a column vector, and the inequality on the column ",
+  "vector v is given by Av+b >= 0, entrywise. ",
+  "As a special case, the log canonical threshold is the threshold of the monomial 1_R = x^0.",
+  
+  EXAMPLE lines ///
+R = QQ[x,y];
+I = monomialIdeal(x^13,x^6*y^4,y^9);
+monomialThreshold(I,x^2*y)
+  ///,
+  
+  SeeAlso => { "monomialLCT" }
+}
+
+document { Key => { (monomialThreshold, MonomialIdeal, RingElement) } }
+document { Key => { (monomialThreshold, MonomialIdeal, List) } }
+
+
 
 document {
   Key => {monomialJumpingNumbers,
@@ -491,7 +589,7 @@ document {
           (monomialJumpingNumbers, MonomialIdeal, QQ, ZZ),
           (monomialJumpingNumbers, MonomialIdeal, QQ, QQ)
          },
-  Headline => "Jumping numbers of a monomial ideal and the corresponding multiplier ideals",
+  Headline => "jumping numbers of a monomial ideal and the corresponding multiplier ideals",
   Usage => "(jn, mi) = monomialJumpingNumbers I, (jn, mi) = monomialJumpingNumbers(I,a,b)",
   Inputs => {
     "I" => MonomialIdeal => {},
@@ -631,6 +729,19 @@ TEST ///
 ///
 
 
+-- Test 6
+-- Threshold computations
+TEST ///
+  needsPackage "MonomialMultiplierIdeals";
+  R := QQ[x,y];
+  use R;
+  I := monomialIdeal( y^2 , x^3 );
+  assert ( monomialThreshold( I , 1_R ) === (5/6,map(ZZ^1,ZZ^3,{{2, 3, -6}})) );
+  assert ( monomialThreshold( I , x ) === (7/6,map(ZZ^1,ZZ^3,{{2, 3, -6}})) );
+  I = monomialIdeal( x^3 , x*y , y^4 );
+  assert ( monomialThreshold( I , 1_R ) === (1/1,map(ZZ^2,ZZ^3,{{1, 2, -3}, {3, 1, -4}})) );
+  assert ( monomialThreshold( I , x ) === (4/3,map(ZZ^1,ZZ^3,{{1, 2, -3}})) );
+///
 
 
 end
