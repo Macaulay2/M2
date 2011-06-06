@@ -130,7 +130,7 @@ document {
 			 has been added." },
 		    LI { TO "Graphics::Graphics", ", a package for creating graphics, has been added." },
 		    LI { TO "Graphs::Graphs", ", a package providing data types, visualization, and basic functions for graphs, has been added." },
-		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", ", a pakcage for Hodge integrals on the moduli space of curves, has been added and certified." },
+		    LI { star, " ", TO "HodgeIntegrals::HodgeIntegrals", ", a package for Hodge integrals on the moduli space of curves, has been added and certified." },
 		    LI { TO "Kronecker::Kronecker", ", a package for Kronecker and rational normal forms, has been added." },
 		    LI { star, " ", TO "ModuleDeformations::ModuleDeformations", ", a package for
 			 computating versal deformations of maximal Cohen-Macaulay modules, has been added and certified." },
