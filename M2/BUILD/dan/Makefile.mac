@@ -32,6 +32,10 @@ ifeq ($(LINBOX),yes)
 CONFIGOPTIONS += --enable-linbox
 endif
 
+ifeq ($(GIVARO),yes)
+CONFIGOPTIONS += --enable-givaro
+endif
+
 ifeq ($(FIX_UNWIND),yes)
 # try this one if configuration fails because of an undefined symbol Unwind_Resume
 CONFIGOPTIONS += LDFLAGS=-static-libgcc
