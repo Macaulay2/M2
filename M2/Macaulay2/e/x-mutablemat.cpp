@@ -892,6 +892,23 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 #include "fflas-ffpack/field/modular-balanced.h"
 #include "fflas-ffpack/ffpack/ffpack.h"
 
+#if defined(HAVE_GIVARO)
+#include <givaro/givgfq.h>
+#include <givaro/givpower.h>
+#include <givaro/givtimer.h>
+
+void tryout_givaro()
+{
+  Givaro::GFqDom<long>::Residu_t p = 3;
+  Givaro::GFqDom<long>::Residu_t e = 4;
+  Givaro::GFqDom<long> GFq(3, 4);
+  Givaro::GFqDom<long> PrimeField(p,1);
+  std::cout << "Working in GF(" << p << '^' << e << ')' << std::endl;
+  std::cout << "Elements are polynomials in X modulo " << p << std::endl;
+}
+
+#endif
+
 template < typename FieldType >
 typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F, MutableMatrix *M)
 {
@@ -999,6 +1016,8 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
   // call det
   // translate the answer to a RingElement
   // free the ffpack matrix
+
+  tryout_givaro();
 
   const Ring *R = M->get_ring();
   const Z_mod *kk = R->cast_to_Z_mod();
