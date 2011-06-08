@@ -12,7 +12,7 @@ class CoefficientRingZZ_NTL : public our_new_delete
 {
 public:
   typedef RingZZ ring_type;
-  typedef ZZ elem;
+  typedef NTL::ZZ elem;
 
   CoefficientRingZZ_NTL(const RingZZ *R0) { }
 
@@ -69,7 +69,7 @@ public:
 
   void swap(elem &a, elem &b) const
   {
-    ::swap(a,b);
+    NTL::swap(a,b);
   }
 };
 

@@ -899,12 +899,25 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 
 void tryout_givaro()
 {
+
+  Givaro::GFqDom<long>::Residu_t prime,exponent;
+
+  std::vector<Givaro::GFqDom<long>::Residu_t> irreducible_11_2;
+  irreducible_11_2.resize(3,1);
+  irreducible_11_2[0]=6; // 6
+  irreducible_11_2[1]=9; // + 9*x
+  irreducible_11_2[2]=1; // + 1*x^2
+
+  Givaro::GFqDom<long> gfqField( 11, 2, irreducible_11_2);
+
+#if 0
   Givaro::GFqDom<long>::Residu_t p = 3;
   Givaro::GFqDom<long>::Residu_t e = 4;
   Givaro::GFqDom<long> GFq(3, 4);
   Givaro::GFqDom<long> PrimeField(p,1);
   std::cout << "Working in GF(" << p << '^' << e << ')' << std::endl;
   std::cout << "Elements are polynomials in X modulo " << p << std::endl;
+#endif
 }
 
 #endif
@@ -929,6 +942,7 @@ typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F,
 }
 
 #if 0
+
 // This is practice code to see about incorporating givaro types into these functions 
 template < typename M2FieldName > /* M2FieldName is Z_mod, or GF */
 /* Z_mod or GF would have the following types:
@@ -950,10 +964,10 @@ MutableMatrix *fromFFPackMatrixPractice(const M2FieldName *kk,
   for (size_t i = 0; i<nrows; i++)
     for (size_t j = 0; j<ncols; j++)
       {
-	unsigned long a;
+	unsigned long a;  // unsigned long should be a type: M2FieldName::FieldType::(Residu_t or unsigned long)
 	F.convert(a, *inN);
 	inN++;
-	ring_elem b = kk->from_int(a);
+	ring_elem b = kk->from_int(a); // MES: this will need to be changed to convert from givaro/ffpack types to M2 types
 	M->set_entry(i,j,b);
       }
   return M;

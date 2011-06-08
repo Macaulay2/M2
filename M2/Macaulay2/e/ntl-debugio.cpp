@@ -3,12 +3,12 @@
 #include <iostream>
 #include "ntl-interface.hpp"
 
-void dntl_matZZ(const mat_ZZ *A)
+void dntl_matZZ(const NTL::mat_ZZ *A)
 {
   std::cout << *A << std::endl;
 }
 
-void dntl_ZZ(const ZZ *f)
+void dntl_ZZ(const NTL::ZZ *f)
 {
   std::cout << *f << std::endl;
 }

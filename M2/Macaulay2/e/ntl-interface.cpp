@@ -3,7 +3,7 @@
 #include "ntl-interface.hpp"
 #include "mat.hpp"
 
-mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
+NTL::mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 {
   // Creates the TRANSPOSE of M
 
@@ -15,7 +15,7 @@ mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
   int ncols = A->n_rows();
   int nrows = A->n_cols();
 
-  mat_ZZ *X = makeNTLMatrixZZ(nrows,ncols);
+  NTL::mat_ZZ *X = makeNTLMatrixZZ(nrows,ncols);
   for (int i=0; i<ncols; i++)
     for (int j=0; j<nrows; j++)
       {
@@ -28,7 +28,7 @@ mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 
   return X;
 }
-MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
+MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const NTL::mat_ZZ *A)
 {
   // AGAIN: form the TRANSPOSE of A
   int ncols = static_cast<int>(A->NumRows());
@@ -72,14 +72,14 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
   int nrows = M->n_rows();
   int ncols = M->n_cols();
 
-  ZZ d;
+  NTL::ZZ d;
   long rk;
   double delta = static_cast<double>(numer)/static_cast<double>(denom);
 
   if (M2_gbTrace >= 10)
     printf("LLL: using strategy %d\n", strategy);
-  mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
-  mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : 0);
+  NTL::mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
+  NTL::mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : 0);
     
   switch (strategy) {
   case 2:

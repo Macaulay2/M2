@@ -316,14 +316,14 @@ loadPackage "FastLinearAlgebra"
 --    check with ffpack people about: row rank profile.  DONE
 
 -- HW after 24 May 2001:
---   givaro seems to crash M2 when linked in (Jakob and Mike will both look at this).  Still does!
+--   FIXED givaro seems to crash M2 when linked in (Jakob and Mike will both look at this).  Still does!
 --   linbox: try to compile it in (maybe after givaro is working)
 --   need: how to use givaro in the same way as for fflas-ffpack. (Where is doc and test code for this?  Jakob will send to Mike?)
 --     converting elements?
 --     what exactly is the field?  ZZ/p[a]/(g(a)).  What is g?
 --   need: new snapshots of givaro and fflas-ffpack.  Dan does this? DONE
---   need: ask them about license?  Check with Dan.  ffpack: LGPL license.  givaro: LGPL?
---   ask Dan: look at the givaro license.
+--   need: ask them about license?  Check with Dan.  ffpack: LGPL license.  givaro: LGPL? DONE: seems OK
+--   ask Dan: look at the givaro license. DONE
 --   Mike: in my GF ring code, allow givaro to decide the polynomial, and/or tell givaro what the poly is.
 --    learn givaro myself before our next meeting, on Tuesday at 10am, July 7.
 --    REALLY start thinking about design for placing these in as M2 types.

@@ -14,7 +14,7 @@
 #define SIZE(p) (((long *) (p))[1])
 #define DATA(p) ((mp_limb_t *) (((long *) (p)) + 2))
 
-void ntl_ZZ_to_mpz(mpz_t result, const ZZ &a)
+void ntl_ZZ_to_mpz(mpz_t result, const NTL::ZZ &a)
 {
   if (a == 0)
     {
@@ -34,15 +34,15 @@ void ntl_ZZ_to_mpz(mpz_t result, const ZZ &a)
     mpz_neg(result,result);
 }
 
-ZZ ntl_ZZ_from_mpz(mpz_t a)
+NTL::ZZ ntl_ZZ_from_mpz(mpz_t a)
 {
   // Make sure this handles -1, 0, 1 correctly too!
   if (mpz_sgn(a) == 0)
     {
-      return ZZ::zero();
+      return NTL::ZZ::zero();
     }
   long size = mpz_size(a);
-  ZZ result(INIT_SIZE, size);
+  NTL::ZZ result(NTL::INIT_SIZE, size);
   long *p = static_cast<long *>(result.rep); // why cast?  rep is a NTL_verylong, #define NTL_verylong _ntl_verylong, and typedef long * _ntl_verylong;
   for (int i=0; i<size; i++)
     p[2+i] = a->_mp_d[i];
@@ -50,22 +50,22 @@ ZZ ntl_ZZ_from_mpz(mpz_t a)
   return result;		// returning causes the result to be copied!
 }
 
-mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols)
+NTL::mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols)
 {
-  mat_ZZ *X = new mat_ZZ;
+  NTL::mat_ZZ *X = new NTL::mat_ZZ;
   X->SetDims(nrows,ncols);
   return X;
 }
 
-void mat_ZZ_set_entry(mat_ZZ *A, long i, long j, mpz_t a)
+void mat_ZZ_set_entry(NTL::mat_ZZ *A, long i, long j, mpz_t a)
 {
-  ZZ b = ntl_ZZ_from_mpz(a);
+  NTL::ZZ b = ntl_ZZ_from_mpz(a);
   (*A)(i+1,j+1) = b;
 }
 
-void mat_ZZ_get_entry(const mat_ZZ *A, long i, long j, mpz_t result)
+void mat_ZZ_get_entry(const NTL::mat_ZZ *A, long i, long j, mpz_t result)
 {
-  ZZ t = (*A)(i+1,j+1);
+  NTL::ZZ t = (*A)(i+1,j+1);
   ntl_ZZ_to_mpz(result, t);
 }
 
