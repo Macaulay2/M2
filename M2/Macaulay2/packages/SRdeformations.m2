@@ -3991,6 +3991,9 @@ doc ///
       {\bf Examples:}
 
       @TO mirrorSphere@ uses the above functions to compute the mirror sphere of a Calabi-Yau.
+
+
+      The author was supported by DFG (German Research Foundation) through Grant BO3330/1-1. 
        
 ///
 
