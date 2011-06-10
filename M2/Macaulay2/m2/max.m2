@@ -30,12 +30,17 @@ InfiniteNumber - ZZ := (i,j) -> i
 ZZ - InfiniteNumber := (i,j) -> -j
 InfiniteNumber * ZZ := (i,j) -> if j > 0 then i else if j < 0 then -i else indeterminate
 ZZ * InfiniteNumber := (j,i) -> if j > 0 then i else if j < 0 then -i else indeterminate
-InfiniteNumber == ZZ := (x,y) -> false
 ZZ // InfiniteNumber := ZZ / InfiniteNumber := (x,y) -> 0
 InfiniteNumber // ZZ := InfiniteNumber / ZZ := (x,y) -> if y > 0 then x else if y < 0 then -x else indeterminate
+InfiniteNumber == QQ := 
+InfiniteNumber == ZZ :=
+QQ == InfiniteNumber := 
 ZZ == InfiniteNumber := (x,y) -> false
 Thing ? InfiniteNumber := (x,y) -> if y === infinity then symbol < else symbol >
 InfiniteNumber ? Thing := (x,y) -> if x === infinity then symbol > else symbol <
+
+RR == InfiniteNumber := (x,y) -> isInfinite x and ( x < 0 and y < 0 or x > 0 and y > 0 )
+InfiniteNumber == RR := (x,y) -> y == x
 
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 
