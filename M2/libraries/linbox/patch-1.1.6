@@ -1,0 +1,24 @@
+diff -ur --exclude=configure /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/linbox/tmp/linbox-1.1.6/linbox/integer.h linbox-1.1.6/linbox/integer.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/linbox/tmp/linbox-1.1.6/linbox/integer.h	2008-06-14 03:20:55.000000000 +0200
++++ linbox-1.1.6/linbox/integer.h	2011-06-10 12:18:28.000000000 +0200
+@@ -32,7 +32,7 @@
+ cardinalities and when initializing field elements.  The integers are also represented as a 
+ LinBox ring for use in integer matrix computation, see pid-integers.h or ntl-ZZ.h.
+ 	 */ 
+-	typedef Integer integer;
++	typedef Givaro::Integer integer;
+ 
+ 	typedef signed __LINBOX_INT8 int8;
+ 	typedef signed __LINBOX_INT16 int16;
+diff -ur --exclude=configure /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/linbox/tmp/linbox-1.1.6/macros/givaro-check.m4 linbox-1.1.6/macros/givaro-check.m4
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/linbox/tmp/linbox-1.1.6/macros/givaro-check.m4	2008-09-20 04:56:00.000000000 +0200
++++ linbox-1.1.6/macros/givaro-check.m4	2011-06-10 12:15:37.000000000 +0200
+@@ -56,7 +56,7 @@
+ 
+ 	AC_TRY_LINK(
+ 	[#include <givaro/givinteger.h>],
+-	[Integer a;],
++	[Givaro::Integer a;],
+ 	[
+ 	AC_TRY_RUN(
+ 	[#include <givaro/givconfig.h>	 
