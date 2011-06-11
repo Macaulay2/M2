@@ -82,7 +82,7 @@ readSolutionsBertini = method(TypicalValue=>List)
 readSolutionsBertini (String,String) := (dir,f) -> (
   s := {};
   if f == "finite_solutions" then (
-       print "implementation unstable: Bertini output format uncertain";
+       --print "implementation unstable: Bertini output format uncertain";
        l := lines get (dir|"/"|f);
        nsols := value first separate(" ", l#0);
        l = drop(l,2);

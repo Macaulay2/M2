@@ -5,7 +5,7 @@ needsPackage "PHCpack"
 solvePHCpack = method(TypicalValue => List)
 solvePHCpack (List,HashTable) := List => (F,o) -> (
      -- Anton: options are not used at the moment
-     solveBlackBox F
+     phcSolve F
      )
 
 trackPHCpack = method(TypicalValue => List)
