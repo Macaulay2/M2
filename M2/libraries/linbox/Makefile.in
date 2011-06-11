@@ -2,6 +2,12 @@ VERSION = 1.1.6
 PATCHFILE = @abs_srcdir@/patch-1.1.6
 URL = http://www.linalg.org
 PRECONFIGURE = autoconf
+
+# linking linbox as a shared library is bad, because then under Mac OS X its static constructors
+# get run before ours do, and it calls our "operator new", which calls GC_malloc, before we've
+# had a chance to initialize it.
+CONFIGOPTIONS += --disable-shared
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/linbox/Makefile
 CONFIGOPTIONS += --with-gmp=$(LIBRARIESDIR) --with-givaro=$(LIBRARIESDIR)
