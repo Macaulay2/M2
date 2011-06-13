@@ -29,6 +29,19 @@ opt64-givaro : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+opt64-linbox : always
+	mkdir -p opt64-linbox
+	cd opt64-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 debug64-givaro : always
 	mkdir -p debug64-givaro
 	cd debug64-givaro; ../../../configure \
