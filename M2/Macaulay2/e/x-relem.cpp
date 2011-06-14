@@ -26,6 +26,8 @@
 
 #include "tower.hpp"
 
+#include "ring-test.hpp"
+
 unsigned long IM2_Ring_hash(const Ring *R)
 {
   return R->get_hash_value();

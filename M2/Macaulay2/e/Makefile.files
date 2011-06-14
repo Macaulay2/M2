@@ -5,6 +5,7 @@
 ##################
 
 INTERFACE = \
+	ring-test \
 	schur2 \
 	spair-heap \
 	dpoly \
@@ -64,7 +65,7 @@ INTERFACE = \
 	comb \
 	det \
 	frac \
-  franzi-brp \
+	franzi-brp \
 	freemod \
 	gb-default \
 	gb-homog2 \
