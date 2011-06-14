@@ -145,7 +145,7 @@ hyperGraph (PolynomialRing, List) := HyperGraph => (R, E) -> (
      V := gens R;
      --- check needed for square free 
      if any(E, e-> class class e === PolynomialRing) then E = apply(E, support);
-     E = apply(E, unique); --- Enforces square-free if edges are given as lists
+     E = apply(E, unique) / rsort; --- Enforces square-free if edges are given as lists
      H := new HyperGraph from hashTable({"ring" => R, "vertices" => V, "edges" => E});
      if any(H#"edges", e -> not instance(e, List)) then error "Edges must be lists.";
      if any(H#"edges", e -> not isSubset(e,H#"vertices")) then error "Edges must be subsets of the vertices.";
