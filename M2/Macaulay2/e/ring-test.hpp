@@ -28,7 +28,7 @@ namespace M2 {
     template<class RingType> 
     const RingWrap<RingType> * cast_to_RingWrap() const { return 0; }
 
-    virtual void init_set(RElement &a, long a) const = 0;
+    virtual void init_set(RElement &a, long b) const = 0;
     virtual void add_to(RElement &a, const RElement &b) const = 0;
   };
   
