@@ -44,6 +44,7 @@ namespace M2 {
   template <class RingType>
   class RElementWrap : public RElement
   {
+    friend bool converter(const ARing *A, const ARing *B, const RElement &a, RElement &b);
   public:
     typedef typename RingType::ElementType element_type;
     ~RElementWrap() {}
@@ -60,6 +61,7 @@ namespace M2 {
   template <class RingType>     // RingType should inherit from RingInterface
   class RingWrap : public ARing
   {
+    friend bool converter(const ARing *A, const ARing *B, const RElement &a, RElement &b);
   public:
     typedef typename RingType::ElementType element_type;
     typedef RElementWrap<RingType> ringelem_type;
@@ -159,6 +161,33 @@ namespace M2 {
   class SparseMatrix
   {
   };
+
+  ////////////////////////////////////////////////////////
+  // Converters //////////////////////////////////////////
+  ////////////////////////////////////////////////////////
+  template<typename Source, typename Target>
+  bool convert(const Source *A, 
+	       const Target *B, 
+	       const typename Source::ElementType &a,
+	       typename Target::ElementType &b);
+
+
+#if 0
+  // Here is one way to do the converter:
+  // We have another class tree:
+  //   ConverterBase (with a virtual function
+  //     Converter<RingType>
+  // Each class RingWrap<RingType> has a method returning 
+  class ConverterBase {
+  };
+
+  template <typename RingType>
+  class Converter : public ConverterBase {
+  };
+
+  // R->convert(targetring, a, b) is virtual and calls
+  // Converter<SourceRingType>::convert_to()
+#endif
 
 }; // namespace M2
 #endif
