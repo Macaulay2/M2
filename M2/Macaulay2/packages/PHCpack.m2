@@ -135,8 +135,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   -- parses solutions in PHCpack format 
   -- IN:  s = string of solutions in PHCmaple format 
   --      V = list of variable names
-  -- OUT: {list of solutions, list of multiplicities} 
------and more stuff, too!!! ~~sonja
+  -- OUT: List of solutions, each of type Point, carrying also other diagnostic information about each.
   oldprec := defaultPrecision;
   defaultPrecision = o.Bits;
   L := get s; 
@@ -148,8 +147,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   L = replace("rco", "\"rco\"", L);
   L = replace("multiplicity", "\"mult\"", L);
   L = replace("res", "\"residual\"", L);
-  L = replace("resolution", "\"residual\"", L);
-  -- because M2 automatically thinks "res"=resolution
+  L = replace("resolution", "\"residual\"", L);-- because M2 automatically thinks "res"=resolution
   use R; 	  
   sols := toList apply(value L, x->new HashTable from toList x);
   defaultPrecision = oldprec;
@@ -768,14 +766,12 @@ TEST///
      assert(n==2) --testing phc output against by-hand calculation
      sol1={11/6.,-1/6.,-13/6.}
      sol2={-11/6.,1/6.,13/6.}
-     assert((abs((sol1-L_0_0)_0)<.00000000001 and abs((sol1-L_0_0)_1)<.00000000001 and abs((sol1-L_0_0)_2)<.00000000001) or 
-     (abs((sol1-L_1_0)_0)<.00000000001 and abs((sol1-L_1_0)_1)<.00000000001 and abs((sol1-L_1_0)_2)<.00000000001))--since phc output is 
+     assert((abs((sol1-L_0#Coordinates)_0)<.00000000001 and abs((sol1-L_0#Coordinates)_1)<.00000000001 and abs((sol1-L_0#Coordinates)_2)<.00000000001) or 
+     (abs((sol1-L_1#Coordinates)_0)<.00000000001 and abs((sol1-L_1#Coordinates)_1)<.00000000001 and abs((sol1-L_1#Coordinates)_2)<.00000000001))--since phc output is 
      --numerical and not exact, comparision is done by looking at the modulus of the difference between the output and expected answer 
      --(is there an easier way to code this?)
-     assert((abs((sol1-L_0_0)_0)<.00000000001 and abs((sol1-L_0_0)_1)<.00000000001 and abs((sol1-L_0_0)_2)<.00000000001) or 
-     (abs((sol1-L_1_0)_0)<.00000000001 and abs((sol1-L_1_0)_1)<.00000000001 and abs((sol1-L_1_0)_2)<.00000000001))
-     --should I include second test with more difficult system that compares phc output with solution obtained through Macaulay 2 (if possible)
-     --or another package of Macaulay 2? (eg)
+     assert((abs((sol1-L_0#Coordinates)_0)<.00000000001 and abs((sol1-L_0#Coordinates)_1)<.00000000001 and abs((sol1-L_0#Coordinates)_2)<.00000000001) or 
+     (abs((sol1-L_1#Coordinates)_0)<.00000000001 and abs((sol1-L_1#Coordinates)_1)<.00000000001 and abs((sol1-L_1#Coordinates)_2)<.00000000001))
 ///;
 
 
@@ -798,9 +794,11 @@ TEST///
       S = {x^2 - 1/3, x*y - 1}; 
       roots = phcSolve(S);
       r0 = roots#0#Coordinates#1
-      newRoots = refineSolutions(S,roots,64)
-      newRoots#0 -- recall that solutions are of type Point
-      assert(newRoots#0#Coordinates#1 == 1.73205080756887729352744634150587236694280525381038062805580698)
+      newRoots = refineSolutions(S,roots,64) --recall that solutions are of type Point. 
+      --check if precision increased:
+      assert(precision newRoots#0#Coordinates#1 > precision roots#0#Coordinates#1) 
+      --check if input number of decimal places, 64, used correctly: 
+      assert(precision newRoots#0#Coordinates#1 == ceiling(log_2(10^64)))
 ///;
 
 -----------------------------------
@@ -823,8 +821,8 @@ TEST///
      f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
      fSols = phcSolve(f);
      zeroSols = zeroFilter(fSols,1,1.0e-10);
-     assert(zeroSols_0#Coordinates == {-1,0})
-     assert(zeroSols_1#Coordinates == {1,0})
+     assert(  sort {zeroSols_0#Coordinates,zeroSols_1#Coordinates} == {{-1, 0}, {1, 0}}
+	      )
 ///;
 
 
@@ -865,6 +863,7 @@ loadPackage ("PHCpack", Configuration=>{"path"=>"/Users/petrovic/","PHCexe"=>"./
 restart
 debug loadPackage "PHCpack"
 
+check "PHCpack"
 --##########################################################################--
 
 
