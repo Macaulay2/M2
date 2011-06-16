@@ -1148,8 +1148,8 @@ AC_ARG_ENABLE(linbox,
     ENABLE_GIVARO=yes
     )
 
-test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
+test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
