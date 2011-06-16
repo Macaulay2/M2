@@ -139,12 +139,6 @@ M2_LIBRARIES += -lstdc++
 M2_LDFLAGS += @FCLIBS_FLAGS@
 M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
 
-ifeq (@ENABLE_LINBOX@,yes)
-M2_LIBRARIES += -llinbox
-endif
-ifeq (@ENABLE_GIVARO@,yes)
-M2_LIBRARIES += -lgivaro
-endif
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
 endif

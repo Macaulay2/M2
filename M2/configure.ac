@@ -800,6 +800,7 @@ AC_SUBST(BUILTLIBS,)
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
 #    givaro is used by linbox
+#    mpir is used by givaro
 #    fflas-ffpack is provided as an option for experimentation
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
@@ -827,25 +828,6 @@ AC_ARG_ENABLE(fflas-ffpack,
     AC_DEFINE(HAVE_FFLAS_FFPACK,1,[whether we are linking with the fflas-ffpack library])
     BUILD_fflas_ffpack=yes
     ENABLE_FFLAS_FFPACK=yes
-    )
-
-AC_SUBST(ENABLE_GIVARO,no)
-AC_ARG_ENABLE(givaro,
-    [AS_HELP_STRING(--enable-givaro,enable building the givaro library and linking with it)],
-    AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
-    BUILD_givaro=yes
-    ENABLE_GIVARO=yes
-    )
-
-AC_SUBST(ENABLE_LINBOX,no)
-AC_ARG_ENABLE(linbox,
-    [AS_HELP_STRING(--enable-linbox,enable building the linbox library and linking with it)],
-    AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
-    BUILD_linbox=yes
-    ENABLE_LINBOX=yes
-    HAVE_GIVARO=1
-    BUILD_givaro=yes
-    ENABLE_GIVARO=yes
     )
 
 PROGLIST=" $PROGLIST "
@@ -1145,6 +1127,29 @@ then AC_LANG(C++)
      fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
+
+
+AC_SUBST(ENABLE_GIVARO,no)
+AC_ARG_ENABLE(givaro,
+    [AS_HELP_STRING(--enable-givaro,enable building the givaro library and linking with it)],
+    AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
+    BUILD_givaro=yes
+    ENABLE_GIVARO=yes
+    )
+
+AC_SUBST(ENABLE_LINBOX,no)
+AC_ARG_ENABLE(linbox,
+    [AS_HELP_STRING(--enable-linbox,enable building the linbox library and linking with it)],
+    AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
+    BUILD_linbox=yes
+    ENABLE_LINBOX=yes
+    HAVE_GIVARO=1
+    BUILD_givaro=yes
+    ENABLE_GIVARO=yes
+    )
+
+test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
+test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
