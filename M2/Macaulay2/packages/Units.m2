@@ -199,7 +199,7 @@ qt = quart = 1/4 * gallon
 pt = pint = 1/2 * quart
 cup = 1/2 * pint
 tbsp = tablespoon = 1/16 * cup
-teaspoon = 1/3 tablespoon
+teaspoon = 1/3 * tablespoon
 floz = fluidounce = 1/16 * pint
 bbl = barrel = 42 gallon
 bu = bushel = 2150.42 inch^3
