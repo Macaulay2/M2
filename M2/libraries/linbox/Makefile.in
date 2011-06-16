@@ -7,6 +7,10 @@ PRECONFIGURE = autoconf
 # had a chance to initialize it.
 CONFIGOPTIONS += --disable-shared 
 
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-debug
+endif
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/linbox/Makefile
 CONFIGOPTIONS += --with-gmp=$(LIBRARIESDIR) --with-givaro=$(LIBRARIESDIR) -with-fflas-ffpack=$(LIBRARIESDIR)
