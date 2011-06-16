@@ -114,6 +114,18 @@ columnRankProfile MutableMatrix := (A) -> (
 beginDocumentation()
 
 TEST ///
+restart
+needsPackage "FastLinearAlgebra"
+kk = ZZ/101
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4)
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+///
+
+TEST ///
 kk = ZZ/101
 A = random(kk^2, kk^4)
 B = random(kk^5, kk^2)
@@ -316,8 +328,8 @@ loadPackage "FastLinearAlgebra"
 --    check with ffpack people about: row rank profile.  DONE
 
 -- HW after 24 May 2001:
---   FIXED givaro seems to crash M2 when linked in (Jakob and Mike will both look at this).  Still does!
---   linbox: try to compile it in (maybe after givaro is working)
+--   FIXED givaro seems to crash M2 when linked in (Jakob and Mike will both look at this).  Still does! FIXED
+--   linbox: try to compile it in (maybe after givaro is working) FIXED: but need to patch M2
 --   need: how to use givaro in the same way as for fflas-ffpack. (Where is doc and test code for this?  Jakob will send to Mike?)
 --     converting elements?
 --     what exactly is the field?  ZZ/p[a]/(g(a)).  What is g?
@@ -325,9 +337,20 @@ loadPackage "FastLinearAlgebra"
 --   need: ask them about license?  Check with Dan.  ffpack: LGPL license.  givaro: LGPL? DONE: seems OK
 --   ask Dan: look at the givaro license. DONE
 --   Mike: in my GF ring code, allow givaro to decide the polynomial, and/or tell givaro what the poly is.
---    learn givaro myself before our next meeting, on Tuesday at 10am, July 7.
+--    learn givaro myself before our next meeting.
 --    REALLY start thinking about design for placing these in as M2 types.
 --   Jakob: play with givaro
+--
+-- HW after 15 June 2011:
+--   Jakob needs to check valgrind on his givaro-mpir mix
+--   Jakob: will check to see if linbox has a "better" solution for small vs large GF fields
+--   Mike: will setup GF so that in the presence of givaro, the polynomial used
+--     is chosen by givaro.
+--     Questions/issues: 1. front end chooses the polynomial currently
+--        2. We need to consider two cases: when the poly rep is via exponents vs via polynomials.
+--         (see the wiki for how to check this)
+--        3. Change the GF class to setup a givaro field once and for all.
+--   
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
 -- End:

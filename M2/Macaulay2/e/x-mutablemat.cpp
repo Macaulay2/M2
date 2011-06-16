@@ -4,6 +4,7 @@
 #include "relem.hpp"
 #include "ring.hpp"
 #include "QQ.hpp"
+#include "GF.hpp"
 
 #include "coeffrings.hpp"
 #include "mat.hpp"
@@ -910,17 +911,35 @@ void tryout_givaro()
 
   Givaro::GFqDom<long> gfqField( 11, 2, irreducible_11_2);
 
-#if 0
+
   Givaro::GFqDom<long>::Residu_t p = 3;
   Givaro::GFqDom<long>::Residu_t e = 4;
   Givaro::GFqDom<long> GFq(3, 4);
   Givaro::GFqDom<long> PrimeField(p,1);
   std::cout << "Working in GF(" << p << '^' << e << ')' << std::endl;
   std::cout << "Elements are polynomials in X modulo " << p << std::endl;
-#endif
+
 }
 
 #endif
+
+template < typename FieldType >
+typename FieldType::Element *GFtoFFPackMatrix(const GF *kk, const FieldType &F, MutableMatrix *M)
+{
+  typedef typename FieldType::Element ElementType;
+  
+  ElementType * N = newarray(ElementType, M->n_rows() * M->n_cols());
+  ElementType *inN = N;
+  for (size_t i = 0; i<M->n_rows(); i++)
+    for (size_t j = 0; j<M->n_cols(); j++)
+      {
+	ring_elem a;
+	M->get_entry(i,j,a);
+	int b = kk->discrete_log(a);
+	*inN++ = b;
+      }
+  return N;
+}
 
 template < typename FieldType >
 typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F, MutableMatrix *M)
@@ -1054,18 +1073,11 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
   return RingElement::make_raw(kk, kk->from_int(res));
 }
 
-size_t rawFFPackRank(MutableMatrix *M)
+size_t FFPackRankZZp(const Z_mod *kk, MutableMatrix *M)
 {
-  const Ring *R = M->get_ring();
-  const Z_mod *kk = R->cast_to_Z_mod();
-  if (kk == 0)
-    {
-      ERROR("expected finite prime field");
-      return 0;
-    }
   typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
-  FieldType F(R->charac());
+  FieldType F(kk->charac());
 
   ElementType *N = toFFPackMatrix(kk, F, M);
 
@@ -1074,6 +1086,38 @@ size_t rawFFPackRank(MutableMatrix *M)
   size_t result = FFPACK::Rank(F, nr, nc, N, nc);
   deletearray(N);
   return result;
+}
+
+size_t FFPackRankGF(const GF *kk, MutableMatrix *M)
+{
+  typedef Givaro::GFqDom<long> FieldType;
+  typedef FieldType::Element ElementType;
+  FieldType F(kk->charac(), kk->extension_degree());
+
+  std::cout << "polynomial is " << F.irreducible() << std::endl;
+  ElementType *N = GFtoFFPackMatrix(kk, F, M);
+
+  size_t nr = M->n_rows();
+  size_t nc = M->n_cols();
+  size_t result = FFPACK::Rank(F, nr, nc, N, nc);
+  deletearray(N);
+  return result;
+}
+
+size_t rawFFPackRank(MutableMatrix *M)
+{
+  const Ring *R = M->get_ring();
+  const Z_mod *kk = R->cast_to_Z_mod();
+  if (kk != 0) return FFPackRankZZp(kk, M);
+  else {
+    const GF *gf = R->cast_to_GF();
+    if (gf != 0) return FFPackRankGF(gf,M);
+    else
+      {
+	ERROR("expected finite prime field");
+	return -1;
+      }
+  }
 }
 
 MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool right_side)

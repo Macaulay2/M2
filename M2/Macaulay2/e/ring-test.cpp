@@ -19,26 +19,37 @@ namespace M2 {
   // One awful way to do convert:
   bool converter(const ARing *A, const ARing *B, const RElement &a, RElement &b)
   {
-    int i=10;
-    switch (i) {
-    case 10:
-      return convert(  & static_cast<const RingWrap<RingInterfaceExample> *>(A)->R_,
-		       & static_cast<const RingWrap<RingInterfaceExample> *>(B)->R_,
-		       static_cast<const RElementWrap<RingInterfaceExample> &>(a).val_,
-		       static_cast<RElementWrap<RingInterfaceExample> &>(b).val_);
-    default:
-      return false;
-    };
+    int i=A->getRingID();
+    int j=B->getRingID();
+    int n=ring_top;
+    switch(i + j*n) {
+      case 11:
+        return convert( & RING(RingInterfaceExample,A),
+			& RING(RingInterfaceExample,B),
+			constRELEM(RingInterfaceExample,a),
+			RELEM(RingInterfaceExample,b) );
+      default:
+        return false;
+      };
   }
-};
 
+#if 0
+	//      case RingElementInterface::id + NumRingIds * RingElementInterface::id :
+      case 10:
+	return convert(  & static_cast<const RingWrap<RingInterfaceExample> *>(A)->R_,
+	  & static_cast<const RingWrap<RingInterfaceExample> *>(B)->R_,
+								 static_cast<const RElementWrap<RingInterfaceExample> &>(a).val_,
+								 static_cast<RElementWrap<RingInterfaceExample> &>(b).val_);
+#endif
 
+#if 0
 void add5(const RingZ *S, ElementZ &a)
 {
   ElementZ b;
   S->init_set(b, 5);
   S->add_to(a, b);
 }
+#endif
 
 #if 0
 void special(const RingInterfaceExample *S1, RingInterfaceExample::ElementType &a)
@@ -60,6 +71,8 @@ void foo()
   S.init_set(a, 5);
 }
 #endif
+
+};
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

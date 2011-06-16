@@ -33,6 +33,8 @@ public:
 
   static GF * create(const RingElement *prim);
 
+  int extension_degree() const { return Qexp_; }
+
   int to_int(int a) const;
 
   GF * cast_to_GF() { return this; }

@@ -4,7 +4,78 @@
 #include "ring.hpp"
 #include "polyring.hpp"
 
+#define RING(T,A) static_cast<const RingWrap<T> *>(A)->R_
+#define RELEM(T,a) static_cast<RElementWrap<T> &>(a).val_
+#define constRELEM(T,a) static_cast<const RElementWrap<T> &>(a).val_
+
 namespace M2 {
+
+  ////////////////////////////////////////////////////////
+  // Programming level interfaces ////////////////////////
+  ////////////////////////////////////////////////////////
+  class RingInterface {}; // inherit from this if the class is to be used as a template parameter for RingWrap
+  class PolynomialRingInterface {}; // inherit from this if the class is to be used as a template param for PolynomialRingWrap
+
+  class ElementExample
+  {
+    
+  };
+
+  enum RingID {
+    ring_example = 0,
+    ring_ZZZ,
+    ring_ZZp,
+    ring_GF,
+    ring_RRR,
+    ring_CCC,
+    ring_top = 8 // used to determine the number of ring types
+  };
+
+  class RingInterfaceExample : RingInterface
+  {
+  public:
+    class DenseMatrixExample;
+    class SparseMatrixExample;
+
+    static const RingID ringId = ring_example;
+    typedef unsigned long ElementType;
+    typedef ElementType elem;
+    typedef DenseMatrixExample dense_matrix_type;
+    typedef SparseMatrixExample sparse_matrix_type;
+
+    void init_set(elem &a, long val) const { a = val; }
+    void add_to(elem &a, const elem &b) const { a += b; }
+  };
+  
+  class RingZZZ : RingInterface
+  {
+  };
+  
+  class RingZZp : RingInterface
+  {
+  };
+  
+  class RingGF : RingInterface
+  {
+  };
+  
+  class RingRRR : RingInterface
+  {
+  };
+  
+  class RingCCC : RingInterface
+  {
+  };
+
+  template<typename RingType>
+  class DenseMatrix
+  {
+  };
+
+  template<typename RingType>
+  class SparseMatrix
+  {
+  };
 
   ////////////////////////////////////////////////////////
   // User level types ////////////////////////////////////
@@ -28,13 +99,35 @@ namespace M2 {
     template<class RingType> 
     const RingWrap<RingType> * cast_to_RingWrap() const { return 0; }
 
+    virtual RingID getRingID() const = 0;
     virtual void init_set(RElement &a, long b) const = 0;
     virtual void add_to(RElement &a, const RElement &b) const = 0;
+
+    virtual bool conv(const Ring *target, const RElement &a, RElement &b) const = 0;
   };
   
   class ARingElement : public UserObject
   {
     // This should be like our RingElement class.
+  };
+
+  ////////////////////////////////////////////////////////
+  // Matrices ////////////////////////////////////////////
+  ////////////////////////////////////////////////////////
+  class AMatrix : public UserObject
+  {
+    // this is like MutableMatrix
+  };
+
+  class AGradedMatrix : public AMatrix
+  {
+  };
+
+  template<typename MatrixType> 
+  class MatrixWrap : public AMatrix
+  {
+    typedef typename MatrixType::RingType RingType;
+
   };
 
   ////////////////////////////////////////////////////////
@@ -66,6 +159,16 @@ namespace M2 {
     typedef typename RingType::ElementType element_type;
     typedef RElementWrap<RingType> ringelem_type;
 
+    virtual RingID getRingID() const { return RingType::ringID; }
+#if 0
+    virtual bool conv(const ARing *target, const RElement &a, RElement &b) const {
+      return target->convB(this->R_, constRELEM(RingType,a), b);
+    }
+
+    bool convB(const RingWrap<RingInterfaceExample> *sourceR, 
+	       const RingInterfaceExample::ElementType &a,
+	       RElement &b);
+#endif
     virtual void init_set(RElement &a, long val) const { 
       R_.init_set( static_cast<ringelem_type &>(a).val_, 
 		   val ); 
@@ -87,84 +190,12 @@ namespace M2 {
   class PolynomialRingWrap : public PolynomialRing
   {
   };
-  
-  ////////////////////////////////////////////////////////
-  // Programming level interfaces ////////////////////////
-  ////////////////////////////////////////////////////////
-  class RingInterface {}; // inherit from this if the class is to be used as a template parameter for RingWrap
-  class PolynomialRingInterface {}; // inherit from this if the class is to be used as a template param for PolynomialRingWrap
-
-  class ElementExample
-  {
-    
-  };
-
-  class RingInterfaceExample : RingInterface
-  {
-  public:
-    class DenseMatrixExample;
-    class SparseMatrixExample;
-    
-    typedef unsigned long ElementType;
-    typedef ElementType elem;
-    typedef DenseMatrixExample dense_matrix_type;
-    typedef SparseMatrixExample sparse_matrix_type;
-
-    void init_set(elem &a, long val) const { a = val; }
-    void add_to(elem &a, const elem &b) const { a += b; }
-  };
-  
-  class RingZZZ : RingInterface
-  {
-  };
-  
-  class RingZZp : RingInterface
-  {
-  };
-  
-  class RingGF : RingInterface
-  {
-  };
-  
-  class RingRRR : RingInterface
-  {
-  };
-  
-  class RingCCC : RingInterface
-  {
-  };
-  ////////////////////////////////////////////////////////
-  // Matrices ////////////////////////////////////////////
-  ////////////////////////////////////////////////////////
-  class AMatrix : public UserObject
-  {
-    // this is like MutableMatrix
-  };
-
-  class AGradedMatrix : public AMatrix
-  {
-  };
-
-  template<typename MatrixType> 
-  class MatrixWrap : public AMatrix
-  {
-    typedef typename MatrixType::RingType RingType;
-
-  };
-
-  template<typename RingType>
-  class DenseMatrix
-  {
-  };
-
-  template<typename RingType>
-  class SparseMatrix
-  {
-  };
 
   ////////////////////////////////////////////////////////
   // Converters //////////////////////////////////////////
   ////////////////////////////////////////////////////////
+  bool converter(const ARing *sourceR, const ARing *targetR, const RElement &a, RElement &b);
+
   template<typename Source, typename Target>
   bool convert(const Source *A, 
 	       const Target *B, 
