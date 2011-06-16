@@ -799,13 +799,14 @@ AC_SUBST(BUILTLIBS,)
 #    gfan is used by the packages gfanInterface and StatePolytope
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
-#    givaro is used by linbox
+#    linbox needs fflas-ffpack and givaro
+#    fflas-ffpack needs givaro and lapack
 #    mpir is used by givaro
 #    fflas-ffpack is provided as an option for experimentation
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro linbox fflas_ffpack boost")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -828,6 +829,8 @@ AC_ARG_ENABLE(fflas-ffpack,
     AC_DEFINE(HAVE_FFLAS_FFPACK,1,[whether we are linking with the fflas-ffpack library])
     BUILD_fflas_ffpack=yes
     ENABLE_FFLAS_FFPACK=yes
+    BUILD_givaro=yes
+    ENABLE_GIVARO=yes
     )
 
 PROGLIST=" $PROGLIST "
@@ -1146,6 +1149,8 @@ AC_ARG_ENABLE(linbox,
     HAVE_GIVARO=1
     BUILD_givaro=yes
     ENABLE_GIVARO=yes
+    BUILD_fflas_ffpack=yes
+    ENABLE_FFLAS_FFPACK=yes
     )
 
 test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"

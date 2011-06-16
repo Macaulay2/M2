@@ -1,6 +1,4 @@
-#VERSION = 1.1.6
 VERSION = 1.2.0
-#PATCHFILE = @abs_srcdir@/patch-1.1.6
 URL = http://www.linalg.org
 PRECONFIGURE = autoconf
 
