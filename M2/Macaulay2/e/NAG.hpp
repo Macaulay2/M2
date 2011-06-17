@@ -261,6 +261,36 @@ public:
   typedef complex element_type;
 };
 
+
+#if 0
+class StraightLineProgram : public mutable_object {
+public:
+  StraightLineProgram(const Ring *R) : R_(R) {}
+
+  static StraightLineProgram /* or null */ *make(const PolyRing* R, ring_elem e);
+  static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
+  
+  virtual StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) = 0;
+
+  virtual StraightLineProgram /* or null */ *jacobian(bool makeHxH, 
+						      StraightLineProgram *&slpHxH, 
+						      bool makeHxtH, 
+						      StraightLineProgram *&slpHxtH) = 0;
+
+  virtual StraightLineProgram /* or null */ *copy() = 0;
+
+  virtual void text_out(buffer& o) const = 0;
+
+  //void stats_out(buffer& o) const;
+
+  virtual void evaluate(int n, const element_type* values, element_type* out) = 0;
+
+  virtual Matrix* evaluate(const Matrix *vals) = 0;
+protected:
+  const Ring *R_;
+};
+#endif
+
 template <class Field>
 class SLP : public object
 {
@@ -323,17 +353,17 @@ public:
   static StraightLineProgram /* or null */ *make(const PolyRing* R, ring_elem e);
   static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
   
-  StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) { return dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::concatenate(slp)); }
+  StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) { return static_cast<StraightLineProgram*>(SLP<ComplexField>::concatenate(slp)); }
 
   StraightLineProgram /* or null */ *jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH) {
     SLP<ComplexField> *SLP1, *SLP2;  
-    StraightLineProgram* ret =  dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::jacobian(makeHxH, SLP1, makeHxtH, SLP2));
-    slpHxH = dynamic_cast<StraightLineProgram*> (SLP1);
-    slpHxtH = dynamic_cast<StraightLineProgram*> (SLP2);
+    StraightLineProgram* ret =  static_cast<StraightLineProgram*>(SLP<ComplexField>::jacobian(makeHxH, SLP1, makeHxtH, SLP2));
+    slpHxH = static_cast<StraightLineProgram*> (SLP1);
+    slpHxtH = static_cast<StraightLineProgram*> (SLP2);
     return ret;
   }
 
-  StraightLineProgram /* or null */ *copy() { return dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::copy()); }
+  StraightLineProgram /* or null */ *copy() { return static_cast<StraightLineProgram*>(SLP<ComplexField>::copy()); }
 
   void text_out(buffer& o) const;
   //void stats_out(buffer& o) const;

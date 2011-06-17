@@ -17,7 +17,7 @@ namespace M2 {
   }
   
   // One awful way to do convert:
-  bool converter(const ARing *A, const ARing *B, const RElement &a, RElement &b)
+  bool ARing::converter(const ARing *A, const ARing *B, const RElement &a, RElement &b)
   {
     int i=A->getRingID();
     int j=B->getRingID();
@@ -34,13 +34,29 @@ namespace M2 {
   }
 
 #if 0
-	//      case RingElementInterface::id + NumRingIds * RingElementInterface::id :
-      case 10:
-	return convert(  & static_cast<const RingWrap<RingInterfaceExample> *>(A)->R_,
-	  & static_cast<const RingWrap<RingInterfaceExample> *>(B)->R_,
-								 static_cast<const RElementWrap<RingInterfaceExample> &>(a).val_,
-								 static_cast<RElementWrap<RingInterfaceExample> &>(b).val_);
+  const ARing *rawRingZZp(unsigned long p)
+  /* p must be a prime number <= 32767 */
+  {
+    if (p <= 1)
+      {
+	ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
+	return 0;
+      }
+    if (p < 32750)
+      {
+#if 0
+	const RingWrap<RingLogZZp> *A = new RingWrap<RingLogZZp>;
+	A->getInternalRing()->initialize(p);
+	return A;
 #endif
+	return 0;
+      }
+    RingWrap<RingZZp> *B = new RingWrap<RingZZp>;
+    B->getInternalRing().initialize(p);
+    return B;
+}
+#endif
+
 
 #if 0
 void add5(const RingZ *S, ElementZ &a)
