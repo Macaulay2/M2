@@ -10,16 +10,26 @@
 #include "poly.hpp"
 #include "relem.hpp"
  
-// Straight Line Program class
+// Straight Line Program classes
 
-StraightLineProgram::StraightLineProgram()
+// functions of the wrapper !!!
+StraightLineProgram /* or null */ *StraightLineProgram::make(const PolyRing* R, ring_elem e) { return dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::make(R,e)); }
+StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *consts, M2_arrayint program) { return dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::make(consts,program)); }
+void StraightLineProgram::text_out(buffer& o) const {SLP<ComplexField>::text_out(o);}
+void StraightLineProgram::evaluate(int n, const element_type* values, element_type* out) {SLP<ComplexField>::evaluate(n,values,out);}
+Matrix* StraightLineProgram::evaluate(const Matrix *vals) {return SLP<ComplexField>::evaluate(vals);}
+
+
+template <class Field>
+SLP<Field>::SLP()
 {
   handle = NULL;
   eval_time = 0;
   n_calls = 0;
 }
 
-StraightLineProgram::~StraightLineProgram()
+template <class Field>
+SLP<Field>::~SLP()
 { 
   if (handle!=NULL) {
     printf("closing library\n");
@@ -27,13 +37,16 @@ StraightLineProgram::~StraightLineProgram()
   }
 }
 
-int StraightLineProgram::num_slps = 0;
-StraightLineProgram* StraightLineProgram::catalog[MAX_NUM_SLPs];
+template <class Field>
+int SLP<Field>::num_slps = 0;
+template <class Field>
+SLP<Field>* SLP<Field>::catalog[MAX_NUM_SLPs];
 
-StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *m_consts, M2_arrayint program)
+template <class Field>
+SLP<Field> /* or null */ *SLP<Field>::make(const Matrix *m_consts, M2_arrayint program)
 {
   // todo: move some of these lines to rawSLP
-  StraightLineProgram* res;
+  SLP<Field>* res;
   if (num_slps>MAX_NUM_SLPs) {
     ERROR("max number of slps exceeded");
     res = NULL;
@@ -42,7 +55,7 @@ StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *m_con
     ERROR("invalid SLP");
     res = NULL;
   } else {
-    res = new StraightLineProgram;
+    res = new SLP<Field>;
     catalog[num_slps++] = res;
     res->is_relative_position = false;
     res->num_consts = program->array[0];
@@ -55,7 +68,7 @@ StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *m_con
     switch (program->array[4]) {
     case slpCOMPILED: {
       // nodes = constants + input + output
-      res->nodes = newarray_atomic(complex, res->num_consts + res->num_inputs + res->rows_out*res->cols_out);
+      res->nodes = newarray_atomic(element_type, res->num_consts + res->num_inputs + res->rows_out*res->cols_out);
       char libname[100]; 
       sprintf(libname, "%s%d.dylib", libPREFIX, program->array[5]);//Mac OS
       //sprintf(libname, "%s%d.so", libPREFIX, program->array[5]);//Linux (not working yet)
@@ -63,29 +76,30 @@ StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *m_con
       printf("loading slpFN from %s\n", libname);
       res->handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
       if (res->handle == NULL) ERROR("can't load library %s", libname);
-      res->compiled_fn = (void (*)(complex*,complex*)) dlsym(res->handle, funname);
+      res->compiled_fn = (void (*)(element_type*,element_type*)) dlsym(res->handle, funname);
       if (res->compiled_fn == NULL) ERROR("can't link function %s from library %s",funname,libname);
     } break;
     case slpPREDICTOR: 
     case slpCORRECTOR:
-      res->nodes = newarray_atomic(complex, res->num_consts+res->num_inputs+res->rows_out*res->cols_out);
+      res->nodes = newarray_atomic(element_type, res->num_consts+res->num_inputs+res->rows_out*res->cols_out);
       break;
-    default: res->nodes = newarray_atomic(complex, program->len+res->num_consts+res->num_inputs);
+    default: res->nodes = newarray_atomic(element_type, program->len+res->num_consts+res->num_inputs);
     }
     for (int i=0; i<res->num_consts; i++) { 
-      res->nodes[i] = complex(BIGCC_VAL(m_consts->elem(0,i)));
+      res->nodes[i] = element_type(BIGCC_VAL(m_consts->elem(0,i)));
     }
   }
   return res;
 }
 
-StraightLineProgram /* or null */ *StraightLineProgram::copy()
+template <class Field>
+SLP<Field> /* or null */ *SLP<Field>::copy()
 {
-  StraightLineProgram* res = new StraightLineProgram;
+  SLP<Field>* res = new SLP<Field>;
   res->is_relative_position = is_relative_position;
   res->program = M2_makearrayint(program->len);
   memcpy(res->program->array, program->array, program->len*sizeof(int));
-  res->nodes = newarray_atomic(complex, num_consts+num_inputs+num_operations);
+  res->nodes = newarray_atomic(element_type, num_consts+num_inputs+num_operations);
   for(int i=0; i<num_consts; i++)
       res->nodes[i] = nodes[i];
   res->node_index = node_index; // points to position in program (rel. to start) of operation correspoding to a node
@@ -128,7 +142,8 @@ Nterm * extract_divisible_by_x(Nterm *&ff, int i) // auxiliary
   return fx;
 }
 
-int add_constant_get_position(array<complex>& consts, complex c) //auxiliary
+template <class Field>
+int add_constant_get_position(array<typename Field::element_type>& consts, typename Field::element_type c) //auxiliary
 {
   //!!! smarter implementation coming !!!
   consts.append(c);
@@ -136,7 +151,8 @@ int add_constant_get_position(array<complex>& consts, complex c) //auxiliary
 }
 
 /* create the part of slp computing f, return the position of the final operation */
-int StraightLineProgram::poly_to_horner_slp(int n, intarray& prog, array<complex>& consts, Nterm *&f) // auxiliary
+template <class Field>
+int SLP<Field>::poly_to_horner_slp(int n, intarray& prog, array<element_type>& consts, Nterm *&f) // auxiliary
 {
   int part_pos[n]; // absolute positions of the parts
   int last_nonzero_part_pos = ZERO_CONST;
@@ -168,7 +184,7 @@ int StraightLineProgram::poly_to_horner_slp(int n, intarray& prog, array<complex
   prog.append(slpMULTIsum);
   prog.append(c); 
   if (f!=NULL) 
-    prog.append(CONST_OFFSET + add_constant_get_position(consts,complex(BIGCC_VAL(f->coeff))));
+    prog.append(CONST_OFFSET + add_constant_get_position<Field>(consts,element_type(BIGCC_VAL(f->coeff))));
   for (int i=0; i<n; i++) 
     if (part_pos[i] != ZERO_CONST) 
       prog.append(part_pos[i] - cur_p); // relative position of the i-th part
@@ -184,22 +200,23 @@ void monomials_to_conventional_exponent_vectors(int n, Nterm *f) //auxiliary
 }
 
 
-StraightLineProgram /* or null */ *StraightLineProgram::make(const PolyRing *R, ring_elem e)
+template <class Field>
+SLP<Field> /* or null */ *SLP<Field>::make(const PolyRing *R, ring_elem e)
 {
   // todo: move some of these lines to rawSLP
-  StraightLineProgram* res;
+  SLP<Field>* res;
   if (num_slps>MAX_NUM_SLPs) {
     ERROR("max number of slps exceeded");
     res = NULL;
   } else {
-    res = new StraightLineProgram;
+    res = new SLP<Field>;
     res->is_relative_position = true;
     int n = res->num_inputs = R->n_vars();
     res->num_operations = 0;
     res->rows_out = 1;
     res->cols_out = 1;
     intarray prog;
-    array<complex> consts;
+    array<element_type> consts;
  
     // make prog and node
     e = R->copy(e); /* a copy of "e" will be decomposed; 
@@ -227,14 +244,15 @@ StraightLineProgram /* or null */ *StraightLineProgram::make(const PolyRing *R, 
     memcpy(res->program->array+SLP_HEADER_LEN, prog.raw(), sizeof(int)*prog.length());
     
     // make nodes: [constants, inputs, operations]
-    res->nodes = newarray_atomic(complex, res->num_consts+res->num_inputs+res->num_operations);
+    res->nodes = newarray_atomic(element_type, res->num_consts+res->num_inputs+res->num_operations);
     for(int i=0; i<res->num_consts; i++)
       res->nodes[i] = consts[i];
   }
   return res;
 }
 
-StraightLineProgram /* or null */ *StraightLineProgram::concatenate(const StraightLineProgram* slp)
+template <class Field>
+SLP<Field> /* or null */ *SLP<Field>::concatenate(const SLP<Field>* slp)
 {
   if (!is_relative_position || !slp->is_relative_position  
       || num_inputs!=slp->num_inputs || rows_out!=slp->rows_out) 
@@ -250,14 +268,14 @@ StraightLineProgram /* or null */ *StraightLineProgram::concatenate(const Straig
   int slp_len = slp->program->len - SLP_HEADER_LEN - slp_num_outputs; 
   // length of the part containing operations and slpEND
   
-  StraightLineProgram* res = new StraightLineProgram;
+  SLP<Field>* res = new SLP<Field>;
   res->is_relative_position = true;
   res->num_inputs = num_inputs;
   res->num_operations = num_operations + slp->num_operations;
   res->rows_out = rows_out;
   res->cols_out = cols_out + slp->cols_out;
   
-  //  array<complex> consts; // !!! use to optimize constants
+  //  array<element_type> consts; // !!! use to optimize constants
   
   // make program
   res->program = M2_makearrayint(program->len + slp_len - 1 + slp_num_outputs);
@@ -290,14 +308,15 @@ StraightLineProgram /* or null */ *StraightLineProgram::concatenate(const Straig
   res->program->array[0] = res->num_consts = num_consts + slp->num_consts; //!!! assume: appending constants
   
   // make nodes: [constants, inputs, operations]
-  res->nodes = newarray_atomic(complex, res->num_consts+res->num_inputs+res->num_operations);
-  memcpy(res->nodes, nodes, num_consts*sizeof(complex)); //!!! assume: appending constants
-  memcpy(res->nodes+num_consts, slp->nodes, slp->num_consts*sizeof(complex)); //!!! assume: appending constants
+  res->nodes = newarray_atomic(element_type, res->num_consts+res->num_inputs+res->num_operations);
+  memcpy(res->nodes, nodes, num_consts*sizeof(element_type)); //!!! assume: appending constants
+  memcpy(res->nodes+num_consts, slp->nodes, slp->num_consts*sizeof(element_type)); //!!! assume: appending constants
   return res;
 }
 
 /* ref = reference to a node rel. n */
-int StraightLineProgram::diffPartReference(int n, int ref, int v, intarray& prog)
+template <class Field>
+int SLP<Field>::diffPartReference(int n, int ref, int v, intarray& prog)
 {
   if (ref<0) 
     return diffNodeInput(n+ref, v, prog);
@@ -308,7 +327,8 @@ int StraightLineProgram::diffPartReference(int n, int ref, int v, intarray& prog
   else return ZERO_CONST; // a constant
 }
 
-int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by jacobian
+template <class Field>
+int SLP<Field>::diffNodeInput(int n, int v, intarray& prog) // used by jacobian
 {
   int i = node_index[n];
   switch (prog[i]) {
@@ -443,7 +463,8 @@ int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by 
   }
 }
 
-StraightLineProgram /* or null */ *StraightLineProgram::jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH)
+template <class Field>
+SLP<Field> /* or null */ *SLP<Field>::jacobian(bool makeHxH, SLP<Field> *&slpHxH, bool makeHxtH, SLP<Field> *&slpHxtH)
   /* Produces a jacobian of the slp H: (i,j)-th output = dH_j/dx_i
      Constructs also HxH and HxtH. */ 
 {
@@ -456,14 +477,14 @@ StraightLineProgram /* or null */ *StraightLineProgram::jacobian(bool makeHxH, S
   int num_outputs = rows_out*cols_out;
   int *end_program = program->array+program->len - num_outputs;
   
-  StraightLineProgram* res = new StraightLineProgram;
+  SLP<Field>* res = new SLP<Field>;
   res->is_relative_position = true;
   res->num_inputs = num_inputs;
   res->num_operations = num_operations;
   res->rows_out = num_inputs;
   res->cols_out = cols_out;
   
-  //  array<complex> consts; // !!! use to optimize constants
+  //  array<element_type> consts; // !!! use to optimize constants
   intarray prog(program->len);
   for (int i=SLP_HEADER_LEN; i < program->len-num_outputs - 1/*for slpEND*/; i++)
     prog.append(program->array[i]);
@@ -490,9 +511,9 @@ StraightLineProgram /* or null */ *StraightLineProgram::jacobian(bool makeHxH, S
   memcpy(res->program->array+SLP_HEADER_LEN, prog.raw(), sizeof(int)*prog.length());
 
   // make nodes: [constants, inputs, operations]
-  res->nodes = newarray_atomic(complex, res->num_consts+res->num_inputs+res->num_operations);
-  memcpy(res->nodes, nodes, num_consts*sizeof(complex)); // old constants
-  res->nodes[num_consts] = complex(0,0); // ... plus ZERO
+  res->nodes = newarray_atomic(element_type, res->num_consts+res->num_inputs+res->num_operations);
+  memcpy(res->nodes, nodes, num_consts*sizeof(element_type)); // old constants
+  res->nodes[num_consts] = element_type(0,0); // ... plus ZERO
 
   if (makeHxH) {
     slpHxH = res->copy();
@@ -513,21 +534,23 @@ StraightLineProgram /* or null */ *StraightLineProgram::jacobian(bool makeHxH, S
   return res;
 }
 
-void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
+template <typename Field>
+void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
 {
   if (n != num_inputs) ERROR("wrong number of inputs");
  
-  complex* out = NULL; // used by compiledSLP                                                                                                                
+  element_type* out = NULL; // used by compiledSLP                                                                                                                
   int out_entries_shift = 0; // position of "out matrix"
 
   int cur_node = num_consts;
   int i;
-  copy_complex_array(num_inputs, values, nodes+cur_node);
+  copy_complex_array<Field>(num_inputs, values, nodes+cur_node);
   cur_node += num_inputs;
 
   clock_t start_t = clock(); // clock execution time
 
   switch (program->array[4]) {
+  /* obsolete !!!
   case slpPREDICTOR:
     out = nodes+num_consts+num_inputs;
     predictor();
@@ -536,6 +559,7 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
     out = nodes+num_consts+num_inputs;
     corrector();
     break;
+  */
   case slpCOMPILED:
     // evaluation via dynamically linked function
     // input: nodes (shifted by number of consts)
@@ -555,7 +579,7 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
 	{	
 	  int n_summands = program->array[i+1];
 	  nodes[cur_node] = (n_summands>0) ?  // create a temp var?  
-	    nodes[program->array[i+2]] : complex(0,0); // zero if empty sum
+	    nodes[program->array[i+2]] : element_type(0,0); // zero if empty sum
 	  for(int j=1; j<n_summands; j++)
 	    nodes[cur_node] = nodes[cur_node]+nodes[program->array[i+j+2]];
 	  i += n_summands+2; 
@@ -581,11 +605,11 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
   case slpPREDICTOR:
   case slpCOMPILED:
     //dynamically linked
-    copy_complex_array(rows_out*cols_out, out, ret);
+    copy_complex_array<ComplexField>(rows_out*cols_out, out, ret);
     break;
   default: 
     //interptretation
-    complex* c = ret;
+    element_type* c = ret;
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++,c++)  
 	*c = nodes[program->array[i*cols_out+j+out_entries_shift]];
@@ -593,10 +617,11 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
   }
 }
 
-Matrix *StraightLineProgram::evaluate(const Matrix *values)
+template <class Field>
+Matrix *SLP<Field>::evaluate(const Matrix *values)
 {
  
-  complex* out = NULL; // used by compiledSLP 
+  element_type* out = NULL; // used by compiledSLP 
   int out_entries_shift = 0; // position of "out matrix" in slp->program
 
   int cur_node = num_consts;
@@ -604,11 +629,12 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   if (values->n_cols() != num_inputs) 
     ERROR("different number of inputs expected");
   for(i=0; i<num_inputs; i++, cur_node++)
-    nodes[cur_node] = complex(BIGCC_VAL(values->elem(0,i)));
+    nodes[cur_node] = element_type(BIGCC_VAL(values->elem(0,i)));
 
   clock_t start_t = clock(); // clock execution time
 
   switch (program->array[4]) {
+    /* obsolete !!!
   case slpPREDICTOR:
     out = nodes+num_consts+num_inputs;
     predictor();
@@ -617,6 +643,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
     out = nodes+num_consts+num_inputs;
     corrector();
     break;
+    */
   case slpCOMPILED:
     // evaluation via dynamically linked function
     // input: nodes (shifted by number of consts)
@@ -636,7 +663,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 	{	
 	  int n_summands = program->array[i+1];
 	  nodes[cur_node] = (n_summands>0) ?  // create a temp var?  
-	    nodes[program->array[i+2]] : complex(0,0); // zero if empty sum
+	    nodes[program->array[i+2]] : element_type(0,0); // zero if empty sum
 	  for(int j=1; j<n_summands; j++)
 	    nodes[cur_node] = nodes[cur_node]+nodes[program->array[i+j+2]];
 	  i += n_summands+2; 
@@ -670,7 +697,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   case slpCORRECTOR:
   case slpCOMPILED: {
     //printf("predictor output: %d by %d\n", rows_out, cols_out);
-    complex* c = out; 
+    element_type* c = out; 
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++,c++) {
 	//printf("%lf %lf \n", c->getreal(), c->getimaginary());
@@ -683,7 +710,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   default: //interptretation
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++) {
-	complex c = nodes[program->array[i*cols_out+j+out_entries_shift]]; 
+	element_type c = nodes[program->array[i*cols_out+j+out_entries_shift]]; 
 	mpfr_set_d(re, c.getreal(), GMP_RNDN);
 	mpfr_set_d(im, c.getimaginary(), GMP_RNDN);
 	ring_elem e = R->from_BigReals(re,im);
@@ -696,7 +723,8 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 }
 
 
-void StraightLineProgram::convert_to_absolute_position()
+template <class Field>
+void SLP<Field>::convert_to_absolute_position()
 {
   if (is_relative_position) 
     is_relative_position = false;
@@ -728,13 +756,15 @@ void StraightLineProgram::convert_to_absolute_position()
   }
 }
 
-void StraightLineProgram::stats_out(buffer& o) const
+template <class Field>
+void SLP<Field>::stats_out(buffer& o) const
 {
   o << "Called " << n_calls << " times, total evaluation time = " 
     << (eval_time / CLOCKS_PER_SEC) << "." << (eval_time%CLOCKS_PER_SEC) << " sec" << newline;
 }
 
-void StraightLineProgram::text_out(buffer& o) const
+template <class Field>
+void SLP<Field>::text_out(buffer& o) const
 {
   if (!is_relative_position) {
     if (program->array[4]==slpCOMPILED) {
@@ -800,55 +830,134 @@ void StraightLineProgram::text_out(buffer& o) const
     }   
   }
 }
-// end StraightLineProgram
+// end SLP
 
 
-void zero_complex_array(int n, complex* a)
+
+/* obsolete !!!
+template <class Field>
+void SLP<Field>::predictor()
 {
-  for (int i=0; i<n; i++,a++)
-    *a=0.;
+  int n = num_inputs - 2; // n = size of vectors and matrices 
+  const complex* x0t0 = nodes+num_consts;
+  const complex* dt = x0t0+n+1;
+  complex* dx = nodes+num_consts+num_inputs;
+  int predictor_type = program->array[5];
+  SLP<Field>* Hx = catalog[program->array[6]];
+  SLP<Field>* Ht = catalog[program->array[7]];
+  //SLP* H = catalog[program->array[8]];
+
+  complex* RHS = newarray_atomic(complex, n);
+  complex* LHS = newarray_atomic(complex, n*n);
+  switch(predictor_type) {
+  case TANGENT: {
+    Ht->evaluate(n+1,x0t0, RHS);
+    multiply_complex_array_scalar(n,RHS,-*dt);
+    Hx->evaluate(n+1,x0t0, LHS);
+    solve_via_lapack(n,LHS,1,RHS,dx);
+  } break;
+  case RUNGE_KUTTA: {
+    complex one_half(0.5,0);
+
+    complex* xt = newarray_atomic(complex,n+1);
+    copy_complex_array<ComplexField>(n+1,x0t0,xt);
+    complex* dx1 = newarray_atomic(complex,n);
+    Ht->evaluate(n+1, xt, RHS);
+    negate_complex_array(n,RHS);
+    Hx->evaluate(n+1, xt, LHS);
+    solve_via_lapack(n,LHS,1,RHS,dx1);
+    
+    complex* dx2 = newarray_atomic(complex,n);
+    multiply_complex_array_scalar(n,dx1,one_half*(*dt)); 
+    add_to_complex_array(n,xt,dx1); // x0+.5dx1*dt
+    xt[n] += one_half*(*dt); // t0+.5dt
+    Ht->evaluate(n+1, xt, RHS);
+    negate_complex_array(n,RHS);
+    Hx->evaluate(n+1, xt, LHS);
+    solve_via_lapack(n,LHS,1,RHS,dx2);
+    
+    complex* dx3 = newarray_atomic(complex,n);
+    multiply_complex_array_scalar(n,dx2,one_half*(*dt));
+    copy_complex_array<ComplexField>(n,x0t0,xt); // spare t
+    add_to_complex_array(n,xt,dx2); // x0+.5dx2*dt
+    // xt[n] += one_half*(*dt); // t0+.5dt (SAME)
+    Ht->evaluate(n+1, xt, RHS);
+    negate_complex_array(n,RHS);
+    Hx->evaluate(n+1, xt, LHS);
+    solve_via_lapack(n,LHS,1,RHS,dx3);
+    
+    complex* dx4 = newarray_atomic(complex,n);
+    multiply_complex_array_scalar(n,dx3,*dt);
+    copy_complex_array<ComplexField>(n+1,x0t0,xt);
+    add_to_complex_array(n,xt,dx3); // x0+dx3*dt
+    xt[n] += *dt; // t0+dt
+    Ht->evaluate(n+1, xt, RHS);
+    negate_complex_array(n,RHS);
+    Hx->evaluate(n+1, xt, LHS);
+    solve_via_lapack(n,LHS,1,RHS,dx4);
+    
+    // "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
+    multiply_complex_array_scalar(n,dx4,*dt);
+    multiply_complex_array_scalar(n,dx1,2);
+    multiply_complex_array_scalar(n,dx2,4);
+    multiply_complex_array_scalar(n,dx3,2);
+    add_to_complex_array(n,dx4,dx1);
+    add_to_complex_array(n,dx4,dx2);
+    add_to_complex_array(n,dx4,dx3);
+    multiply_complex_array_scalar(n,dx4,1.0/6);
+    copy_complex_array<ComplexField>(n,dx4,dx);
+    deletearray(dx1);
+    deletearray(dx2);
+    deletearray(dx3);
+    deletearray(dx4);
+  } break;
+  default: ERROR("unknown predictor"); 
+  };
+  deletearray(LHS);
+  deletearray(RHS);
 }
 
-void copy_complex_array(int n, const complex* a, complex* b)
+template <class Field>
+void SLP<Field>::corrector()
 {
-  for (int i=0; i<n; i++,a++,b++)
-    *b = *a;
+  int n = num_inputs - 2; // n = size of vectors and matrices 
+  double epsilon2 = 1e-10; // square of the tolerance
+  double theSmallestNumber = 1e-12; 
+  double minStep = 1e-6;
+
+  complex* x0t = nodes+num_consts;
+  complex* t = x0t+n; 
+  complex* dt = t+1;
+  SLP<Field>* Hx = catalog[program->array[5]];
+  SLP<Field>* H = catalog[program->array[6]];
+  int maxCorSteps = program->array[7]; 
+  if (1-t->getreal()<theSmallestNumber && dt->getreal()<=minStep) 
+    maxCorSteps = program->array[8]; // finalMaxCorSteps 
+  
+  complex* x1 = nodes+num_consts+num_inputs; // output
+  complex* dx = x1+n; // on return: estimate of the error
+
+  complex* x1t = newarray(complex, n+1); 
+  copy_complex_array<ComplexField>(n+1, x0t, x1t);
+  complex* RHS = newarray_atomic(complex, n);
+  complex* LHS = newarray_atomic(complex, n*n);
+  int i=0; // number of steps
+  do {
+    i++;
+    H->evaluate(n+1,x1t, RHS);
+    negate_complex_array(n,RHS);
+    Hx->evaluate(n+1,x1t, LHS);
+    solve_via_lapack(n,LHS,1,RHS,dx);
+    add_to_complex_array(n,x1t,dx);
+  } while (norm2_complex_array(n,dx)>epsilon2*norm2_complex_array(n,x1t) and i<maxCorSteps);
+
+  copy_complex_array<ComplexField>(n,x1t,x1);
+
+  deletearray(x1t);
+  deletearray(LHS);
+  deletearray(RHS);
 }
-
-complex* make_copy_complex_array(int n, const complex* a)
-{
-  complex* b = newarray_atomic(complex, n);
-  for (int i=0; i<n; i++,a++)
-    b[i] = *a;
-  return b;
-}
-
-
-void multiply_complex_array_scalar(int n, complex* a, const complex b)
-{
-  for (int i=0; i<n; i++,a++)
-    *a = *a * b; 
-} 
-
-void add_to_complex_array(int n, complex* a, const complex* b)
-{
-  for (int i=0; i<n; i++,a++)
-    *a = *a + b[i]; 
-} 
-
-void negate_complex_array(int n, complex* a)
-{
-  for (int i=0; i<n; i++,a++)
-    *a = -*a; 
-} 
-
-double norm2_complex_array(int n, complex* a) // square of 2-norm
-{
-  double t = 0;
-  for (int i=0; i<n; i++,a++)
-    t += a->getreal()*a->getreal()+a->getimaginary()*a->getimaginary();
-  return t;
-}
+*/
 
 // BEGIN lapack-based routines
 
@@ -875,7 +984,7 @@ bool solve_via_lapack(
   for(i=0; i<size; i++) for(j=0; j<size; j++) // transpose the matrix: lapack solves A^t x = b
     *(At+i*size+j) = *(A+j*size+i);
   double *copyA = (double*) At; 
-  copy_complex_array(size,b,x);
+  copy_complex_array<ComplexField>(size,b,x);
   double *copyb = (double*) x; // result is stored in copyb
 
   /*
@@ -934,7 +1043,7 @@ bool solve_via_lapack_without_transposition(
   int *permutation = newarray_atomic(int, size);
   // int i,j;
   double *copyA = (double*) A; 
-  copy_complex_array(size,b,x);
+  copy_complex_array<ComplexField>(size,b,x);
   double *copyb = (double*) x; // result is stored in copyb
 
   /*
@@ -1111,127 +1220,6 @@ bool norm_of_inverse_via_svd(int size, complex* A, double& norm)
 
 // END lapack-based routines
 
-void StraightLineProgram::predictor()
-{
-  int n = num_inputs - 2; // n = size of vectors and matrices 
-  const complex* x0t0 = nodes+num_consts;
-  const complex* dt = x0t0+n+1;
-  complex* dx = nodes+num_consts+num_inputs;
-  int predictor_type = program->array[5];
-  StraightLineProgram* Hx = catalog[program->array[6]];
-  StraightLineProgram* Ht = catalog[program->array[7]];
-  //StraightLineProgram* H = catalog[program->array[8]];
-
-  complex* RHS = newarray_atomic(complex, n);
-  complex* LHS = newarray_atomic(complex, n*n);
-  switch(predictor_type) {
-  case TANGENT: {
-    Ht->evaluate(n+1,x0t0, RHS);
-    multiply_complex_array_scalar(n,RHS,-*dt);
-    Hx->evaluate(n+1,x0t0, LHS);
-    solve_via_lapack(n,LHS,1,RHS,dx);
-  } break;
-  case RUNGE_KUTTA: {
-    complex one_half(0.5,0);
-
-    complex* xt = newarray_atomic(complex,n+1);
-    copy_complex_array(n+1,x0t0,xt);
-    complex* dx1 = newarray_atomic(complex,n);
-    Ht->evaluate(n+1, xt, RHS);
-    negate_complex_array(n,RHS);
-    Hx->evaluate(n+1, xt, LHS);
-    solve_via_lapack(n,LHS,1,RHS,dx1);
-    
-    complex* dx2 = newarray_atomic(complex,n);
-    multiply_complex_array_scalar(n,dx1,one_half*(*dt)); 
-    add_to_complex_array(n,xt,dx1); // x0+.5dx1*dt
-    xt[n] += one_half*(*dt); // t0+.5dt
-    Ht->evaluate(n+1, xt, RHS);
-    negate_complex_array(n,RHS);
-    Hx->evaluate(n+1, xt, LHS);
-    solve_via_lapack(n,LHS,1,RHS,dx2);
-    
-    complex* dx3 = newarray_atomic(complex,n);
-    multiply_complex_array_scalar(n,dx2,one_half*(*dt));
-    copy_complex_array(n,x0t0,xt); // spare t
-    add_to_complex_array(n,xt,dx2); // x0+.5dx2*dt
-    // xt[n] += one_half*(*dt); // t0+.5dt (SAME)
-    Ht->evaluate(n+1, xt, RHS);
-    negate_complex_array(n,RHS);
-    Hx->evaluate(n+1, xt, LHS);
-    solve_via_lapack(n,LHS,1,RHS,dx3);
-    
-    complex* dx4 = newarray_atomic(complex,n);
-    multiply_complex_array_scalar(n,dx3,*dt);
-    copy_complex_array(n+1,x0t0,xt);
-    add_to_complex_array(n,xt,dx3); // x0+dx3*dt
-    xt[n] += *dt; // t0+dt
-    Ht->evaluate(n+1, xt, RHS);
-    negate_complex_array(n,RHS);
-    Hx->evaluate(n+1, xt, LHS);
-    solve_via_lapack(n,LHS,1,RHS,dx4);
-    
-    // "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
-    multiply_complex_array_scalar(n,dx4,*dt);
-    multiply_complex_array_scalar(n,dx1,2);
-    multiply_complex_array_scalar(n,dx2,4);
-    multiply_complex_array_scalar(n,dx3,2);
-    add_to_complex_array(n,dx4,dx1);
-    add_to_complex_array(n,dx4,dx2);
-    add_to_complex_array(n,dx4,dx3);
-    multiply_complex_array_scalar(n,dx4,1.0/6);
-    copy_complex_array(n,dx4,dx);
-    deletearray(dx1);
-    deletearray(dx2);
-    deletearray(dx3);
-    deletearray(dx4);
-  } break;
-  default: ERROR("unknown predictor"); 
-  };
-  deletearray(LHS);
-  deletearray(RHS);
-}
-
-
-void StraightLineProgram::corrector()
-{
-  int n = num_inputs - 2; // n = size of vectors and matrices 
-  double epsilon2 = 1e-10; // square of the tolerance
-  double theSmallestNumber = 1e-12; 
-  double minStep = 1e-6;
-
-  complex* x0t = nodes+num_consts;
-  complex* t = x0t+n; 
-  complex* dt = t+1;
-  StraightLineProgram* Hx = catalog[program->array[5]];
-  StraightLineProgram* H = catalog[program->array[6]];
-  int maxCorSteps = program->array[7]; 
-  if (1-t->getreal()<theSmallestNumber && dt->getreal()<=minStep) 
-    maxCorSteps = program->array[8]; // finalMaxCorSteps 
-  
-  complex* x1 = nodes+num_consts+num_inputs; // output
-  complex* dx = x1+n; // on return: estimate of the error
-
-  complex* x1t = newarray(complex, n+1); 
-  copy_complex_array(n+1, x0t, x1t);
-  complex* RHS = newarray_atomic(complex, n);
-  complex* LHS = newarray_atomic(complex, n*n);
-  int i=0; // number of steps
-  do {
-    i++;
-    H->evaluate(n+1,x1t, RHS);
-    negate_complex_array(n,RHS);
-    Hx->evaluate(n+1,x1t, LHS);
-    solve_via_lapack(n,LHS,1,RHS,dx);
-    add_to_complex_array(n,x1t,dx);
-  } while (norm2_complex_array(n,dx)>epsilon2*norm2_complex_array(n,x1t) and i<maxCorSteps);
-
-  copy_complex_array(n,x1t,x1);
-
-  deletearray(x1t);
-  deletearray(LHS);
-  deletearray(RHS);
-}
 
 ////////////////// PathTracker //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1509,7 +1497,7 @@ int PathTracker::track(const Matrix* start_sols)
     t_s->status = PROCESSING;
     bool end_zone = false;
     double tol2 = epsilon2; // current tolerance squared, will change in end zone
-    copy_complex_array(n,s_s,x0);
+    copy_complex_array<ComplexField>(n,s_s,x0);
     *t0 = complex(0,0);
 
     *dt = complex(t_step);
@@ -1532,7 +1520,7 @@ int PathTracker::track(const Matrix* start_sols)
       bool LAPACK_success = false;
 
       if (is_projective) //normalize
-	multiply_complex_array_scalar(n,x0,1/sqrt(norm2_complex_array(n,x0)));
+	multiply_complex_array_scalar<ComplexField>(n,x0,1/sqrt(norm2_complex_array<ComplexField>(n,x0)));
 
       // PREDICTOR in: x0t0,dt,pred_type
       //           out: dx
@@ -1541,7 +1529,7 @@ int PathTracker::track(const Matrix* start_sols)
 	evaluate_slpHxt(n,x0t0, Hxt); 
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
-	multiply_complex_array_scalar(n,RHS,-*dt);
+	multiply_complex_array_scalar<ComplexField>(n,RHS,-*dt);
         LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
       } break;
       case EULER: {
@@ -1549,77 +1537,77 @@ int PathTracker::track(const Matrix* start_sols)
         LHS = HxtH;
         RHS = HxtH+n*(n+1); // H
 	complex* Ht = RHS-n; 
-	multiply_complex_array_scalar(n,Ht,*dt);
-	add_to_complex_array(n,RHS,Ht);
-	negate_complex_array(n,RHS);
+	multiply_complex_array_scalar<ComplexField>(n,Ht,*dt);
+	add_to_complex_array<ComplexField>(n,RHS,Ht);
+	negate_complex_array<ComplexField>(n,RHS);
 	LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
       } break;
       case RUNGE_KUTTA: {
-	copy_complex_array(n+1,x0t0,xt);
+	copy_complex_array<ComplexField>(n+1,x0t0,xt);
 	
 	// dx1
 	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
-	negate_complex_array(n,RHS);
+	negate_complex_array<ComplexField>(n,RHS);
 	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx1);
 	
 	// dx2
-	multiply_complex_array_scalar(n,dx1,one_half*(*dt)); 
-	add_to_complex_array(n,xt,dx1); // x0+.5dx1*dt
+	multiply_complex_array_scalar<ComplexField>(n,dx1,one_half*(*dt)); 
+	add_to_complex_array<ComplexField>(n,xt,dx1); // x0+.5dx1*dt
 	xt[n] += one_half*(*dt); // t0+.5dt
 	//
 	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
-	negate_complex_array(n,RHS);
+	negate_complex_array<ComplexField>(n,RHS);
 	LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx2);
     
 	// dx3
-	multiply_complex_array_scalar(n,dx2,one_half*(*dt));
-	copy_complex_array(n,x0t0,xt); // spare t
-	add_to_complex_array(n,xt,dx2); // x0+.5dx2*dt
+	multiply_complex_array_scalar<ComplexField>(n,dx2,one_half*(*dt));
+	copy_complex_array<ComplexField>(n,x0t0,xt); // spare t
+	add_to_complex_array<ComplexField>(n,xt,dx2); // x0+.5dx2*dt
 	// xt[n] += one_half*(*dt); // t0+.5dt (SAME)
 	//
 	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
-	negate_complex_array(n,RHS);
+	negate_complex_array<ComplexField>(n,RHS);
 	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx3);
     
 	// dx4
-	multiply_complex_array_scalar(n,dx3,*dt);
-	copy_complex_array(n+1,x0t0,xt);
-	add_to_complex_array(n,xt,dx3); // x0+dx3*dt
+	multiply_complex_array_scalar<ComplexField>(n,dx3,*dt);
+	copy_complex_array<ComplexField>(n+1,x0t0,xt);
+	add_to_complex_array<ComplexField>(n,xt,dx3); // x0+dx3*dt
 	xt[n] += *dt; // t0+dt
 	//
 	evaluate_slpHxt(n,xt,Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
-	negate_complex_array(n,RHS);
+	negate_complex_array<ComplexField>(n,RHS);
 	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx4);
     
 	// "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
-	multiply_complex_array_scalar(n,dx4,*dt);
-	multiply_complex_array_scalar(n,dx1,2);
-	multiply_complex_array_scalar(n,dx2,4);
-	multiply_complex_array_scalar(n,dx3,2);
-	add_to_complex_array(n,dx4,dx1);
-	add_to_complex_array(n,dx4,dx2);
-	add_to_complex_array(n,dx4,dx3);
-	multiply_complex_array_scalar(n,dx4,1.0/6);
-	copy_complex_array(n,dx4,dx);
+	multiply_complex_array_scalar<ComplexField>(n,dx4,*dt);
+	multiply_complex_array_scalar<ComplexField>(n,dx1,2);
+	multiply_complex_array_scalar<ComplexField>(n,dx2,4);
+	multiply_complex_array_scalar<ComplexField>(n,dx3,2);
+	add_to_complex_array<ComplexField>(n,dx4,dx1);
+	add_to_complex_array<ComplexField>(n,dx4,dx2);
+	add_to_complex_array<ComplexField>(n,dx4,dx3);
+	multiply_complex_array_scalar<ComplexField>(n,dx4,1.0/6);
+	copy_complex_array<ComplexField>(n,dx4,dx);
       } break;
       case PROJECTIVE_NEWTON: {
 	evaluate_slpHxt(n,x0t0, Hxt); 
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
         LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx); // dx used as temp
-	double chi2 = sqrt(norm2_complex_array(n,RHS) +  norm2_complex_array(n,dx));
+	double chi2 = sqrt(norm2_complex_array<ComplexField>(n,RHS) +  norm2_complex_array<ComplexField>(n,dx));
 	double chi1;
 
 	// evaluate again: LHS destroyed by solve_... !!!
@@ -1637,14 +1625,14 @@ int PathTracker::track(const Matrix* start_sols)
 	  t_s->status = MIN_STEP_FAILED;
 	if ( dt->getreal() > 1 - t0->getreal() ) 
 	  *dt = complex(1-t0->getreal()); 
-	zero_complex_array(n,dx); 
+	zero_complex_array<ComplexField>(n,dx); 
       } break;
       default: ERROR("unknown predictor"); 
       };
 
       // make prediction
-      copy_complex_array(n+1,x0t0,x1t1);
-      add_to_complex_array(n+1,x1t1,dxdt);
+      copy_complex_array<ComplexField>(n+1,x0t0,x1t1);
+      add_to_complex_array<ComplexField>(n+1,x1t1,dxdt);
 
       // CORRECTOR
       int n_corr_steps = 0; 
@@ -1656,12 +1644,12 @@ int PathTracker::track(const Matrix* start_sols)
 	LHS = HxH; 	
 	RHS = HxH+n*n; // i.e., H
 	//
-	negate_complex_array(n,RHS);
+	negate_complex_array<ComplexField>(n,RHS);
 	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
-	add_to_complex_array(n,x1t1,dx);
+	add_to_complex_array<ComplexField>(n,x1t1,dx);
 	is_successful = (pred_type==PROJECTIVE_NEWTON) 
-	  || (norm2_complex_array(n,dx) < tol2*norm2_complex_array(n,x1t1));
-	//printf("c: |dx|^2 = %lf\n", norm2_complex_array(n,dx));
+	  || (norm2_complex_array<ComplexField>(n,dx) < tol2*norm2_complex_array<ComplexField>(n,x1t1));
+	//printf("c: |dx|^2 = %lf\n", norm2_complex_array<ComplexField>(n,dx));
       } while (!is_successful and n_corr_steps<max_corr_steps);
     
       if (!is_successful) { 
@@ -1673,20 +1661,20 @@ int PathTracker::track(const Matrix* start_sols)
       } else { 
 	// predictor success
 	predictor_successes = predictor_successes + 1;
-	copy_complex_array(n+1, x1t1, x0t0);
+	copy_complex_array<ComplexField>(n+1, x1t1, x0t0);
 	count++;
 	if (is_successful && predictor_successes >= num_successes_before_increase) { 
 	  predictor_successes = 0;
 	  *dt  = complex(dt_increase_factor_dbl)*(*dt);	
 	}
       }
-      if (norm2_complex_array(n,x0) > infinity_threshold2)
+      if (norm2_complex_array<ComplexField>(n,x0) > infinity_threshold2)
 	t_s->status = INFINITY_FAILED;
       if (!LAPACK_success)
 	t_s->status = SINGULAR;
     }
     // record the solution
-    copy_complex_array(n, x0, t_s->x);    
+    copy_complex_array<ComplexField>(n, x0, t_s->x);    
     t_s->t = t0->getreal();
     if (t_s->status == PROCESSING)
       t_s->status = REGULAR;
@@ -1758,7 +1746,7 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
 
   complex* s_s = s_sols; //current solution 
   for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n) {
-    copy_complex_array(n,s_s,x1);
+    copy_complex_array<ComplexField>(n,s_s,x1);
     *t1 = complex(1,0);
     // CORRECTOR
     bool is_successful; 
@@ -1770,14 +1758,14 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
       LHS = HxH; 	
       RHS = HxH+n*n; // i.e., H
       //
-      negate_complex_array(n,RHS);
+      negate_complex_array<ComplexField>(n,RHS);
       solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
-      add_to_complex_array(n,x1t1,dx);
-      is_successful = norm2_complex_array(n,dx) < epsilon2*norm2_complex_array(n,x1t1);
+      add_to_complex_array<ComplexField>(n,x1t1,dx);
+      is_successful = norm2_complex_array<ComplexField>(n,dx) < epsilon2*norm2_complex_array<ComplexField>(n,x1t1);
     } while (!is_successful and n_corr_steps<max_corr_steps_refine);
     if (!is_successful) 
       printf("max number of corrector steps exceeded for solution %d", sol_n);
-    copy_complex_array(n,x1,s_s);
+    copy_complex_array<ComplexField>(n,x1,s_s);
   }
   
   // make the output matrix
@@ -1913,6 +1901,13 @@ void PathTracker::text_out(buffer& o) const
 }
 
 // ------------------------- service functions -------------------------
+void Solution::make(int m, const complex* s_s) { 
+  this->n = m; 
+  x = newarray(complex,m); 
+  start_x = newarray(complex,m); 
+  copy_complex_array<ComplexField>(m, s_s, start_x); 
+}
+
 int degree_ring_elem(const PolyRing* R, ring_elem re)
 {
   RingElement* RE = RingElement::make_raw(R,re);
@@ -1932,6 +1927,10 @@ void print_complex_matrix(int size, const double* A)
     printf("\n");
   }
 }
+
+//template class StraightLineProgram<complex>;
+//template class StraightLineProgram<CC>;
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

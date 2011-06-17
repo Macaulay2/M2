@@ -170,10 +170,59 @@ inline void complex::sprint(char* s)
 }
 
 
-void zero_complex_array(int n, complex* a);
-void copy_complex_array(int n, const complex* a, complex* b);
-complex* make_copy_complex_array(int n, const complex* a);
-void multiply_complex_array_scalar(int n, complex* a, const complex b);
+template <class Field>
+void zero_complex_array(int n, typename Field::element_type* a)
+{
+  for (int i=0; i<n; i++,a++)
+    *a=0.;
+}
+
+template <class Field>
+void copy_complex_array(int n, const typename Field::element_type* a, typename Field::element_type* b)
+{
+  for (int i=0; i<n; i++,a++,b++)
+    *b = *a;
+}
+
+template <class Field>
+typename Field::element_type* make_copy_complex_array(int n, const typename Field::element_type* a)
+{
+  typename Field::element_type* b = newarray_atomic(typename Field::element_type, n);
+  for (int i=0; i<n; i++,a++)
+    b[i] = *a;
+  return b;
+}
+
+
+template <class Field>
+void multiply_complex_array_scalar(int n, typename Field::element_type* a, const typename Field::element_type b)
+{
+  for (int i=0; i<n; i++,a++)
+    *a = *a * b; 
+} 
+
+template <class Field>
+void add_to_complex_array(int n, typename Field::element_type* a, const typename Field::element_type* b)
+{
+  for (int i=0; i<n; i++,a++)
+    *a = *a + b[i]; 
+} 
+
+template <class Field>
+void negate_complex_array(int n, typename Field::element_type* a)
+{
+  for (int i=0; i<n; i++,a++)
+    *a = -*a; 
+} 
+
+template <class Field>
+double norm2_complex_array(int n, typename Field::element_type* a) // square of 2-norm
+{
+  double t = 0;
+  for (int i=0; i<n; i++,a++)
+    t += a->getreal()*a->getreal()+a->getimaginary()*a->getimaginary();
+  return t;
+}
 
 // see ../packages/NAG.m2 for the description of the structure of SLPs
 
@@ -205,37 +254,47 @@ void multiply_complex_array_scalar(int n, complex* a, const complex b);
    nodes are refered via negative integers;
    i-th input --> i;
    i-th constant --> i + CONST_OFFSET. */
-class StraightLineProgram : public object
+
+class ComplexField 
 {
+public:
+  typedef complex element_type;
+};
+
+template <class Field>
+class SLP : public object
+{
+  Field F; // F->add(a,b,c)
+public:
+  typedef typename Field::element_type element_type;
+private:
   friend class PathTracker;
 
-  static StraightLineProgram* catalog[MAX_NUM_SLPs];
+  static SLP<Field>* catalog[MAX_NUM_SLPs];
   static int num_slps;
 
   bool is_relative_position; // can use relative or absolute addressing
   M2_arrayint program;
-  complex* nodes; // array of CCs
+  element_type* nodes; // array of CCs
   intarray node_index; // points to position in program (rel. to start) of operation correspoding to a node
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
   void *handle; //dynamic library handle
-  void (*compiled_fn)(complex*,complex*);
+  void (*compiled_fn)(element_type*,element_type*);
   clock_t eval_time; // accumulates time spent in evaluation 
   int n_calls; // number of times called   
 
-  StraightLineProgram();
+  SLP();
 
-  static StraightLineProgram /* or null */ *make(const PolyRing*, ring_elem);
-  int poly_to_horner_slp(int n, intarray& prog, array<complex>& consts, Nterm *&f); // used by make
+  int poly_to_horner_slp(int n, intarray& prog, array<element_type>& consts, Nterm *&f); // used by make
 
-  StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp);
-
-  StraightLineProgram /* or null */ *jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH);
   int diffNodeInput(int n, int v, intarray& prog); // used by jacobian
   int diffPartReference(int n, int ref, int v, intarray& prog); // used by diffNodeInput
 
+  /* obsolete!!!
   void predictor(); // evaluates a predictor
   void corrector(); // evaluates a corrector
+  */
 
   void relative_to_absolute(int& aa, int cur_node) // used by convert_to_absolute_position     
   { 
@@ -245,16 +304,44 @@ class StraightLineProgram : public object
   }
   void convert_to_absolute_position();
 
-  StraightLineProgram /* or null */ *copy();
 public:
-  static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
-  virtual ~StraightLineProgram();
+  SLP<Field> /* or null */ *copy();
+  SLP<Field> /* or null */ *jacobian(bool makeHxH, SLP<Field> *&slpHxH, bool makeHxtH, SLP<Field> *&slpHxtH);
+  SLP<Field> /* or null */ *concatenate(const SLP<Field>* slp);
+  static SLP<Field> /* or null */ *make(const PolyRing*, ring_elem);
+  static SLP<Field> /* or null */ *make(const Matrix *consts, M2_arrayint program);
+  virtual ~SLP();
 
   void text_out(buffer& o) const;
   void stats_out(buffer& o) const;
-  void evaluate(int n, const complex* values, complex* out);
-  Matrix *evaluate(const Matrix *vals);
+  void evaluate(int n, const element_type* values, element_type* out);
+  Matrix* evaluate(const Matrix *vals);
 };
+
+class StraightLineProgram : public SLP<ComplexField> {
+public:
+  static StraightLineProgram /* or null */ *make(const PolyRing* R, ring_elem e);
+  static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
+  
+  StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) { return dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::concatenate(slp)); }
+
+  StraightLineProgram /* or null */ *jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH) {
+    SLP<ComplexField> *SLP1, *SLP2;  
+    StraightLineProgram* ret =  dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::jacobian(makeHxH, SLP1, makeHxtH, SLP2));
+    slpHxH = dynamic_cast<StraightLineProgram*> (SLP1);
+    slpHxtH = dynamic_cast<StraightLineProgram*> (SLP2);
+    return ret;
+  }
+
+  StraightLineProgram /* or null */ *copy() { return dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::copy()); }
+
+  void text_out(buffer& o) const;
+  //void stats_out(buffer& o) const;
+  void evaluate(int n, const element_type* values, element_type* out);
+  Matrix* evaluate(const Matrix *vals);
+};
+			    
+//typedef SLP<ComplexField> StraightLineProgram; 
 
 enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
 struct Solution
@@ -268,8 +355,7 @@ struct Solution
   int num_steps; // number of steps taken along the path
   
   Solution() { status = UNDETERMINED; }
-  void make(int m, const complex* s_s) { this->n = m; x = newarray(complex,m); 
-    start_x = newarray(complex,m); copy_complex_array(m, s_s, start_x); }
+  void make(int m, const complex* s_s);
   ~Solution() { release(); }
   void release() { deletearray(x); deletearray(start_x); } 
 };
