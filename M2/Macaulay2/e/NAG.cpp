@@ -15,12 +15,12 @@
 // functions of the wrapper !!!
 StraightLineProgram /* or null */ *StraightLineProgram::make(const PolyRing* R, ring_elem e) 
 { 
-  StraightLineProgram* ret = dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::make(R,e)); 
+  StraightLineProgram* ret = static_cast<StraightLineProgram*>(SLP<ComplexField>::make(R,e)); 
   return ret;
 }
 StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *consts, M2_arrayint program) 
 { 
-  StraightLineProgram* ret = dynamic_cast<StraightLineProgram*>(SLP<ComplexField>::make(consts,program));
+  StraightLineProgram* ret = static_cast<StraightLineProgram*>(SLP<ComplexField>::make(consts,program));
   return ret;
 }
 void StraightLineProgram::text_out(buffer& o) const {SLP<ComplexField>::text_out(o);}
