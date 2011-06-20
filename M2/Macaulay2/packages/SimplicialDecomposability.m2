@@ -6,10 +6,11 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-newPackage (
+if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
+newPackage select((
    "SimplicialDecomposability",
-   Version => "1.0.5",
-   Date => "16. August 2010",
+   Version => "1.0.6",
+   Date => "20. June 2011",
    Authors => {{Name => "David W. Cook II",
                 Email => "dcook@ms.uky.edu",
                 HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -28,8 +29,9 @@ newPackage (
 	"volume number" => "2",
 	"volume URI" => "http://www.j-sag.org/volume2.html"
 	},
-   PackageExports => {"SimplicialComplexes"}
-)
+    if version#"VERSION" > "1.4" then PackageExports => {"SimplicialComplexes"}
+), x -> x =!= null)
+if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
 
 -------------------
 -- Exports
@@ -216,7 +218,7 @@ isShelling List := L -> (
    -- Use Definition III.2.1. in [St] for pure shellability.
    else (
        -- prime the loop
-       f0 := ta := null;
+       f0 := T := null;
        f1 := set apply(subsets support L_0, product);
        -- for each face in the list
        for i from 1 to #L - 1 do (
@@ -224,10 +226,9 @@ isShelling List := L -> (
            f0 = f1;
            -- update with the new step
            f1 = f1 + set apply(subsets support L_i, product);
-           -- find the added faces & count their dimensions (+1)
-           ta = tally flatten apply(toList(f1 - f0), degree);
            -- make sure the minimal face is unique
-           if ta_(min keys ta) != 1 then return false;
+           T = sort toList(f1 - f0);
+           if any(drop(T, 1), m -> m // T_0 == 0) then return false;
        );
    );
    true
@@ -361,10 +362,10 @@ recursivePureShell (List, List) := (O, P) -> (
    OisShelling := true;
    if #O > 1 then (
        -- the previous step is a shelling, but is the newest step?
-       f0 := set allFaces simplicialComplex drop(O, -1);
+       f0 := set allFaces simplicialComplex drop(O, -1) + set {1};
        f1 := f0 + set apply(subsets support last O, product);
-       ta := tally flatten apply(toList(f1 - f0), degree);
-       OisShelling = (ta_(min keys ta) == 1);
+       T := sort toList(f1 - f0);
+       OisShelling = all(drop(T, 1), m -> m // T_0 != 0);
    );
    if OisShelling then (
        -- Nothing else to add: we're done
@@ -1004,6 +1005,11 @@ assert(isShellable simplicialComplex {a*b, c});
 assert(not isShellable simplicialComplex {a*b, c*d});
 assert(isShellable simplicialComplex {a*b*c, c*d, d*e, e*f, d*f});
 assert(not isShellable simplicialComplex {a*b*c, c*d, d*e*f});
+-- The following tests for the fix of a bug in version 1.0.5 found by Sam Kolins and
+-- Gwyn Whieldon.  In particular, RP2 is not shellable, though removing a face should be.
+RP2 = {a*b*d,a*c*d,a*c*f,a*b*e,a*e*f,b*c*f,b*d*f,b*c*e,c*d*e,d*e*f};
+assert(not isShellable simplicialComplex RP2);
+assert(not isShellable simplicialComplex drop(RP2, 1));
 ///
 
 -- Tests of isShelling
