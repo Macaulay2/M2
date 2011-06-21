@@ -1,0 +1,9 @@
+The list of dependencies is this:
+
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
+
+(see the current version of configure.ac)
+
+For gentoo and other distributions that like external programs to be separate packages,
+we should ensure that the configure script actually looks for the programs, instead of
+automatically building all of them.
