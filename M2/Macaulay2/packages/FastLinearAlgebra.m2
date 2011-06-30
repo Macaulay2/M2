@@ -327,7 +327,7 @@ loadPackage "FastLinearAlgebra"
 --  Jakob:
 --    check with ffpack people about: row rank profile.  DONE
 
--- HW after 24 May 2001:
+-- HW after 24 May 2011:
 --   FIXED givaro seems to crash M2 when linked in (Jakob and Mike will both look at this).  Still does! FIXED
 --   linbox: try to compile it in (maybe after givaro is working) FIXED: but need to patch M2
 --   need: how to use givaro in the same way as for fflas-ffpack. (Where is doc and test code for this?  Jakob will send to Mike?)
@@ -351,6 +351,54 @@ loadPackage "FastLinearAlgebra"
 --         (see the wiki for how to check this)
 --        3. Change the GF class to setup a givaro field once and for all.
 --   
+-- Plan made 30 June 2011, before Mike goes to Budapest:
+--   A. class structure (rings and matrix types)
+--   B. make sure top level interface to lin algebra routines is what we want
+--   C. Connect ffpack, givaro, linbox to this interface (in B).
+--   D. Want possibly other functions from linbox, or elsewhere
+--   E. think about connecting Fgb of Faugere (but it is not open source)
+--   Milestones:
+--    1. Do (B): Top level interface and documentation for these functions.  For fast linear algebra functions
+--       what is needed: FastLinearAlgebra package: have to document the functions.
+--       thid package should also document: rank, det, ...  but it can't quite do that.  So we will need to change the
+--       doc in M2 itself.  Need examples and tests.  Do this in July (in particular: the week of July 18).
+--    2. Do (A). The current implementation of rings: each ring type will have a type from (A) as a member field
+--      5 days of work?  Jakob: look at e/ring-test.hpp before August. 
+--      Do this in August.  Finish this in August.  
+--      Also do (or start)  (3), (4) in August.
+--    3. Connect linear algebra over ZZ/p  (fflas-ffpack) (adding each ring type: should be easy code, but tests should be written, in FastLinearAlgebra)
+--    4. Connect linear algebra over GF(q)  (givaro, or maybe linbox)
+--    5. Connect linear algebra over ZZ or QQ (linbox).  This includes LLL, Smith normal form, and perhaps other normal forms.
+--      finish (5) in September?
+--    6. Want these linear algebra routines (det, solving, LU, ...) for approximate fields: RRR, CCC (i.e. arbitrary precision real and complex).
+--       Other possible approx fields: interval, ball arithmetic. (use mathemagix?  Date for this one is unspecified).
+--
+--   Field  <-- what we have been using
+--   FieldEnvelope <-- wrapper for Field for doing virtual function calls, also a template (takes a Field)
+--   FieldAbstract <-- base for all of the FieldEnvelope's
+--   FieldExample <-- example Field
+--   Mike's plan: create a similar class structure
+--    also: EngineTests package
+--   matrices:
+--     we are interested in the following routines:
+--       rank
+--       det
+--       LU decomposition
+--       solve AX=B, or XA = B
+--       A*B
+--         template<typename Ring, template Mat1, template Mat2> multiplyMatrices(const Mat1<Ring> &, const Mat2<Ring> &);
+--         (Mat1, Mat2 could be DenseMatrix or SparseMatrix).
+--       A += B*C
+--       Smith normal form
+--       maybe others
+--     dmat.hpp: implement dense matrices over coeff rings.  These are templates.
+--     matrix.hpp: use mutable matrices as the base. (these are immutable, graded matrices)
+--   overall:
+--    C++ organization of classes (like above)
+--    top level interface to these functions (the user writing m2 code)
+--      rank, det, A*B, solving interfaces should not need to change.
+--      a few functions need to be added.
+--
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
 -- End:
