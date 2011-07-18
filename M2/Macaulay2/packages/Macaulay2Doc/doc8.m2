@@ -346,7 +346,7 @@ document {
      PARA{},
      "If either ", TT "f", " or ", TT "g", " is a ring element, then it is taken to be a scalar matrix acting on ", TT "H", ".  If both are ring elements,
      then the result is also a ring element.  If ", TT "g", " is a
-     ", TO "MonomialIdeal", ", then it is taken to be the matrix of generators of ", TT "g", ".  Finally, if the identityg is a ", TO "GroebnerBasis", "
+     ", TO "MonomialIdeal", ", then it is taken to be the matrix of generators of ", TT "g", ".  Finally, if ", TT "g", " is a ", TO "GroebnerBasis", "
      object, then the Gröbner basis as so far computed is used.  In these latter two cases, no Gröbner bases 
      will be computed.",
      PARA{},
