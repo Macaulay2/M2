@@ -16,8 +16,8 @@ the License, or any later version.
 
 newPackage(
   "MonomialMultiplierIdeals",
-      Version => "0.6", 
-      Date => "June 4, 2011",
+      Version => "0.6.1", 
+      Date => "July 21, 2011",
       Authors => {
        {Name => "Zach Teitler", Email => "zteitler@member.ams.org"}
       },
@@ -39,6 +39,9 @@ newPackage(
 -- v0.6, June 4, 2011: Add "monomialThreshold" feature: threshold of arbitrary monomials
 --    (lct = threshold of 1), together with list of facets imposing the threshold.
 --    Feature suggested by Bernd Sturmfels.
+-- v0.6.1, July 21, 2011: Clean up the way the "bump" is formed in computing the multiplier ideal
+--    (no longer incorrectly "bump" the row corresponding to the upper halfspace);
+--    also, number tests correctly (starting from 0)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -189,9 +192,8 @@ monomialMultiplierIdeal (MonomialIdeal, QQ) := (I,t) -> (
     -- Set up "bump" of nontrivial facets, but don't bump coordinate facets
     -- (except we do end up bumping the row (0,..,0,1); but that's okay, no harm)
     bump := apply(toList(0..<m) ,
-      i -> (  if ( M_(i,n-1) == 0 ) then ( return 0; ) else ( return 1; )  ) );
+      i -> (  if ( M_(i,n-1) >= 0 ) then ( return 0; ) else ( return 1; )  ) );
     -- now bump has a 0 in rows corresponding to coordinate facets, 1 in other rows
-    -- (and also a 1 in row for coordinate facet (0,..,0,1), but doesn't matter)
   
     -- "Bump" t*Newt(I): push nontrivial facets in by "epsilon" (which is 1)
     M2 := M1 - ( matrix(toList(m:toList((n-1):0))) | transpose matrix({bump}) );
@@ -621,7 +623,7 @@ monomialJumpingNumbers(I)
 ----------------------------------------------------------------------------------------------------
 
 
--- Test 1
+-- Test 0
 -- Compute a NewtonPolyhedron and intmat2monomialIdeal:
 -- go from Ideal -> Polyhedron -> Ideal, see if it is the same again
 TEST ///
@@ -641,7 +643,7 @@ TEST ///
 ///
 
 
--- Test 2
+-- Test 1
 -- Test some of the underlying routines
 -- jumpingDenominators
 -- potentialJumpingNumbers
@@ -665,7 +667,7 @@ TEST ///
 ///
 
 
--- Test 3
+-- Test 2
 -- Compute some LCTs of diagonal monomial ideals
 TEST ///
   needsPackage "MonomialMultiplierIdeals";
@@ -687,7 +689,7 @@ TEST ///
 ///
 
 
--- Test 4
+-- Test 3
 -- A very small ordinary computation
 TEST ///
   needsPackage "MonomialMultiplierIdeals";
@@ -703,7 +705,7 @@ TEST ///
 ///
 
 
--- Test 5
+-- Test 4
 -- A small ordinary computation
 TEST ///
   needsPackage "MonomialMultiplierIdeals";
@@ -729,7 +731,7 @@ TEST ///
 ///
 
 
--- Test 6
+-- Test 5
 -- Threshold computations
 TEST ///
   needsPackage "MonomialMultiplierIdeals";
