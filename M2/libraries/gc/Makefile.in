@@ -21,8 +21,8 @@ CVSROOT = :pserver:anonymous@bdwgc.cvs.sourceforge.net:/cvsroot/bdwgc
 # AOVERSION = -1.2
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-VERSION = 7.2alpha4
-AOVERSION = 
+# VERSION = 7.2alpha4
+# AOVERSION = 
 # this version is not ready yet:
 #    misc.c:462: error: 'SIGRTMIN' undeclared (first use in this function)
 # bit it works under 32 bit ubuntu.  Perhaps it was darwin?
@@ -33,8 +33,17 @@ AOVERSION =
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # URL = http://www.math.uiuc.edu/Macaulay2/Extra
 
-VERSION = 7.2alpha5-2010-09-03
-TARDIR = gc-7.2alpha5
+# VERSION = 7.2alpha5-2010-09-03
+# TARDIR = gc-7.2alpha5
+# AOVERSION = 
+# # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# URL = http://www.math.uiuc.edu/Macaulay2/Extra
+
+# VERSION = 7.2alpha6
+# AOVERSION = 
+
+VERSION = 7.2alpha7-2011-07-25
+TARDIR = gc-7.2alpha7
 AOVERSION = 
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
