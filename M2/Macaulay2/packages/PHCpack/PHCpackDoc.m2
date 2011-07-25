@@ -283,8 +283,6 @@ doc ///
       This random coefficient system can serve as a start system to solve the original input system.
 ///;
 
-
-
 -----------------------------------
 -- trackPaths
 -----------------------------------
@@ -328,7 +326,6 @@ doc ///
     tDegree
     gamma
 ///;
-
 
 -- options for trackPaths
 
@@ -383,13 +380,31 @@ doc ///
       fsols = trackPaths(f,q,qsols,tDegree => 1)      
 ///;
 
+-----------------------------------
+-- phcEmbed
+-----------------------------------
 
-
-
+doc ///
+  Key
+    phcEmbed
+    (phcEmbed,List,ZZ)
+  Headline
+    calls phc -c to construct an embedding of a polynomial system
+  Usage
+    g = phcEmbed(f,k)
+  Description
+    Text
+      To compute generic points of a k-dimensional solution set of a
+      polynomial system, we add k random linear equations to the system.
+    Example
+      R = CC[x,y,z];
+      f = { x^2 - y, x^3 - z };
+      fe1 = phcEmbed(f,1)
+///;
+   
 -----------------------------------
 -- cascade
 -----------------------------------
-
 
 doc ///
   Key 
@@ -480,7 +495,6 @@ doc ///
     Text	       	  
       This method is called by @TO phcSolve @.
 ///;
-
 
 -----------------------------------
 -- realFilter
