@@ -154,6 +154,7 @@ case $OS-$REL in
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
   Darwin-9.*) REL=10.5 ; OS=MacOS ;;
   Darwin-10.*) REL=10.6 ; OS=MacOS ;;
+  Darwin-11.*) REL=10.7 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
 esac
 
@@ -583,6 +584,12 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   KustinMiller
   Units
   MonomialMultiplierIdeals
+  RandomObjects
+  RandomCurves/Plane
+  RandomCurves/Space
+  RandomCurves/Genus14
+  RandomCurves/Canonical
+  RandomCurves
 ")
 
 # convert the newlines in the list above to spaces
