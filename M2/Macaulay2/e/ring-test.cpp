@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "ring-test.hpp"
 
 using namespace M2;
@@ -6,6 +8,35 @@ typedef RingWrap<RingInterfaceExample> RingZ;
 typedef RElementWrap<RingInterfaceExample> ElementZ;
 
 namespace M2 {
+
+  void testit()
+  {
+    RingGF R(5,2);
+    const ARing *A = new RingWrap<RingGF>(R);
+    const RingWrap<RingGF> *S = A->cast_to_RingWrap<RingGF>();
+    if (S == 0)
+      {
+	std::cout << "result was 0" << std::endl;
+      }
+    else
+      {
+	std::cout << "result was nonzero" << std::endl;
+      }
+
+    const RingWrap<RingZZp> *T = A->cast_to_RingWrap<RingZZp>();
+    if (T == 0)
+      {
+	std::cout << "result was 0" << std::endl;
+      }
+    else
+      {
+	std::cout << "result was nonzero" << std::endl;
+      }
+
+    MatrixWrap< DenseMatrix<RingGF> > M ( S, 5, 10 );
+    std::cout << "dense = " << M.isDense() << std::endl;
+  }
+
   template<>
   bool convert<RingInterfaceExample,RingInterfaceExample>(const RingInterfaceExample *A, 
 							  const RingInterfaceExample *B, 

@@ -14,6 +14,7 @@
 #include "exceptions.hpp"
 
 #include "matrix.hpp"
+#include "ring-test.hpp"
 
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
 						 int n,
@@ -1050,6 +1051,7 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
   // translate the answer to a RingElement
   // free the ffpack matrix
 
+  M2::testit();
   tryout_givaro();
 
   const Ring *R = M->get_ring();

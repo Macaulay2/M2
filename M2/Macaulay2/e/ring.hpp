@@ -3,6 +3,7 @@
 #ifndef _ring_hh_
 #define _ring_hh_
 
+//#include "ring-test.hpp"
 #include "hash.hpp"
 #include "ringelem.hpp"
 #include "monoid.hpp"
@@ -37,9 +38,12 @@ class buffer;
 
 class SumCollector;
 
+class ARing;
+
 class Ring : public mutable_object
 {
 protected:
+  const ARing * getARing() const { return AR; }
   int P;
   const PolynomialRing *degree_ring;
   M2_arrayint heft_vector;
@@ -48,6 +52,7 @@ protected:
   // If non-NULL, this should dot to a positive value for every variable in the ring.
   // Question: does this include coefficient variables in the ring?
 
+  const ARing *AR;
   ring_elem _non_unit;
   int _isfield;		// 1: means yes, or declared yes.
                         // 0: means not declared to be so.
