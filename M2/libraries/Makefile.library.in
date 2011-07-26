@@ -139,7 +139,7 @@ endif
 endif
 endif
 ifeq ($(FETCHER),curl)
-FETCHOPTS = -o "$(TARFILE)"
+FETCHOPTS = --location -o "$(TARFILE)"
 else
 ifneq ($(FETCHER),wget)
 FETCHOPTS = 
