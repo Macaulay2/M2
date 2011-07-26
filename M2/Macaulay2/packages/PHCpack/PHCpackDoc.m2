@@ -392,6 +392,15 @@ doc ///
     calls phc -c to construct an embedding of a polynomial system
   Usage
     g = phcEmbed(f,k)
+  Inputs
+    f:List
+      of polynomials expected to have a component of dimension k
+    k:ZZ 
+      the expected (top) dimension of the solution set of f
+  Outputs
+    g:List
+      of polynomials containing the original system with k random
+      linear polynomials and k slack variables
   Description
     Text
       To compute generic points of a k-dimensional solution set of a
@@ -399,7 +408,13 @@ doc ///
     Example
       R = CC[x,y,z];
       f = { x^2 - y, x^3 - z };
-      fe1 = phcEmbed(f,1)
+      fe1 = phcEmbed(f,1);
+      toString fe1
+    Text
+      The ring in which the original system lives is extended with
+      as many slack variables as the dimension provided as the second
+      argument k to phcEmbed.  Solutions of the embedded system with
+      zero values for the slack variables are candidate generic points.
 ///;
    
 -----------------------------------
