@@ -14,6 +14,7 @@
 #include "polyring.hpp"
 #include "schur.hpp"
 #include "schur2.hpp"
+#include "schurSn.hpp"
 #include "frac.hpp"
 #include "weylalg.hpp"
 #include "skewpoly.hpp"
@@ -365,6 +366,17 @@ const Ring *rawSchurRing2(const Ring *A, int n)
   }
 }
 
+const Ring *rawSchurSnRing(const Ring *A, int n)
+{
+  try {
+    SchurSnRing *result = SchurSnRing::create(A,n);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
 
 const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names)
 {
@@ -1130,6 +1142,30 @@ gmp_ZZorNull rawSchurDimension(const RingElement *f)
 	  ERROR(e.what());
 	  return NULL;
      }
+}
+
+const RingElement /* or null */ *rawSchurSnTensorMult(const RingElement *a, const RingElement *b)
+  /* the tensor multiplication function in SchurSnRing */
+{
+  try {
+    const SchurSnRing *R = a->get_ring()->cast_to_SchurSnRing();
+    if (R == 0)
+      {
+	ERROR("expected a SchurSn ring element");
+	return 0;
+      }
+    if (R != b->get_ring()) 
+      {
+	ERROR("expected SchurSn ring elements");
+	return 0;
+      }
+    ring_elem result = R->tensor_mult(a->get_value(), b->get_value());
+    return RingElement::make_raw(R,result);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 const RingElement /* or null */ *rawSchurFromPartition(const Ring *R, M2_arrayint part)

@@ -6,6 +6,7 @@
 
 INTERFACE = \
 	ring-test \
+	schurSn \
 	schur2 \
 	spair-heap \
 	dpoly \

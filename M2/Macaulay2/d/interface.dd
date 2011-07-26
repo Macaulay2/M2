@@ -795,6 +795,22 @@ export rawSchurRing1(e:Expr):Expr := (
      ) else WrongArg("a raw ring"));
 setupfun("rawSchurRing1",rawSchurRing1);
 
+export rawSchurSnRing(e:Expr):Expr := (
+     when e
+     is a:Sequence do (
+       if length(a) == 2 then (
+         when a.0 is A:RawRingCell do
+	 when a.1 is p:ZZcell do 
+           if !isInt(p)
+       	     then WrongArgSmallInteger(2)
+	     else toExpr(Ccode(RawRingOrNull, "rawSchurSnRing(", A.p, ",", toInt(p), ")" ))
+	 else WrongArg(2,"an integer")
+	 else WrongArg(1, "a raw ring")
+         )
+       else WrongNumArgs(2)
+     ) else WrongArg("a raw ring"));
+setupfun("rawSchurSnRing",rawSchurSnRing);
+
 export rawIsField(e:Expr):Expr := (
      when e is K:RawRingCell do toExpr(Ccode(bool, "IM2_Ring_is_field(", K.p, ")" ))
      else WrongArg("a raw ring"));
@@ -1325,6 +1341,19 @@ export rawPseudoRemainder(e:Expr):Expr := (
      else WrongNumArgs(2)
      );
 setupfun("rawPseudoRemainder",rawPseudoRemainder);
+
+export rawSchurSnTensorMult(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) == 2 then 
+     when s.0 is x:RawRingElementCell do
+     when s.1 is y:RawRingElementCell do toExpr(Ccode(RawRingElementOrNull,
+	       "rawSchurSnTensorMult(",
+	       x.p, ",", y.p, ")" ))
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring element")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawSchurSnTensorMult",rawSchurSnTensorMult);
 
 export rawSchurDimension(e:Expr):Expr := (
      when e
