@@ -1,0 +1,25 @@
+-*- utf-8 -*-
+
+
+i10 : {* 你好 *}   1    /   0
+stdio:12:21:(3): error: division by zero
+	 ^^
+	 not the right column number
+
+
+i6 : {* NH *}   1    /   0
+stdio:7:17:(3): error: division by zero
+	^^
+	this is what it should have been
+
+
+It's counting bytes instead of utf-8 characters.
+
+i7 : ascii "你好"
+
+o7 = {228, 189, 160, 229, 165, 189}
+
+o7 : List
+
+
+This could be a command line option, because there might be other encodings compatible with ascii.
