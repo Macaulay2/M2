@@ -2,7 +2,6 @@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
-include ../Makefile.include
 include ../Makefile.common
 
 CPPFLAGS := -I. -I@srcdir@/.. -I../../e-includes $(CPPFLAGS) -I../../d -I@srcdir@/../../c
