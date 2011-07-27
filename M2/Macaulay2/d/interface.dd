@@ -3496,6 +3496,48 @@ export rawFFLU(e:Expr):Expr := (
 setupfun("rawFFLU",rawFFLU);
 
 -----------------------------------------------------------------------------
+-- Chine remainder operations
+-----------------------------------------------------------------------------
+
+export rawRingElementCRA(f:RawRingElement, g:RawRingElement, m:ZZ, n:ZZ) : RawRingElementOrNull :=
+  Ccode(RawRingElementOrNull, "rawRingElementCRA(f,g,m,n)");
+
+export rawRingElementCRA(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
+       when s.0 is f:RawRingElementCell do
+       when s.1 is g:RawRingElementCell do
+       when s.2 is m:ZZcell do
+       when s.3 is n:ZZcell do
+         toExpr(rawRingElementCRA(f.p,g.p,m.v,n.v))
+       else WrongArg(4, "an integer")
+       else WrongArg(3, "an integer")
+       else WrongArg(2, "a raw ring element")
+       else WrongArg(1, "a raw ring element")
+       else WrongNumArgs(4)
+     );
+setupfun("rawRingElementCRA", rawRingElementCRA);
+
+
+export rawMatrixCRA(f:RawMatrix, g:RawMatrix, m:ZZ, n:ZZ) : RawMatrixOrNull :=
+  Ccode(RawMatrixOrNull, "rawMatrixCRA(f,g,m,n)");
+
+export rawMatrixCRA(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
+       when s.0 is f:RawMatrixCell do
+       when s.1 is g:RawMatrixCell do
+       when s.2 is m:ZZcell do
+       when s.3 is n:ZZcell do
+         toExpr(rawMatrixCRA(f.p,g.p,m.v,n.v))
+       else WrongArg(4, "an integer")
+       else WrongArg(3, "an integer")
+       else WrongArg(2, "a raw matrix")
+       else WrongArg(1, "a raw matrix")
+       else WrongNumArgs(4)
+     );
+setupfun("rawMatrixCRA", rawMatrixCRA);
+
+
+-----------------------------------------------------------------------------
 -- integer matrix normal forms
 -----------------------------------------------------------------------------
 

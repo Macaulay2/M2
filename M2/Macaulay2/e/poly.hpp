@@ -14,13 +14,14 @@ class Matrix;
 class GBRing;
 class GBRingSkew;
 class GBComputation;
-
+class ChineseRemainder;
 #include "polyring.hpp"
 
 class PolyRing : public PolyRingFlat
 {
   friend class GBRingSkew;
   friend class FreeModule;
+  friend class ChineseRemainder;
 
   void initialize_poly_ring(const Ring *K, const Monoid *M, 
 			    const PolynomialRing *deg_ring);

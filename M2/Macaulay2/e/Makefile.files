@@ -5,6 +5,7 @@
 ##################
 
 INTERFACE = \
+	cra \
 	ring-test \
 	schurSn \
 	schur2 \

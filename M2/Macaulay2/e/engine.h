@@ -1626,6 +1626,21 @@ enum gbTraceValues
 							 int * complete_up_through_this_degree); 
   /* WARNING: 'minimize' is completely ignored, and should be removed from the interface */
   /* drg: connected rawResolutionStatusLevel */
+
+  /****************************************************/
+  /**** Chinese remainder and rational reconstruction */
+  /****************************************************/
+
+  const RingElement * rawRingElementCRA(const RingElement *f, 
+					const RingElement *g,
+					mpz_t m,
+					mpz_t n);
+
+  const Matrix * rawMatrixCRA(const Matrix *f, 
+			      const Matrix *g,
+			      mpz_t m,
+			      mpz_t n);
+					
   
   /**************************************************/
   /**** Fraction free LU decomposition **************/
