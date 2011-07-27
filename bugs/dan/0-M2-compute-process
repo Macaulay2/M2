@@ -1,0 +1,8 @@
+now that dumpdata/loaddata no longer work anywhere, we might replace it
+as follows:
+
+   start an M2 process and pause waiting for messages over a pair of pipes
+   accept a start message and fork
+   	in the child accept further command line arguments and
+	process them, returning the output, exiting when done
+   repeat
