@@ -436,7 +436,29 @@ doc ///
       and phcEmbed added one surplus variable ss1 and one slack variable zz1.
       Only solutions with zero values for the surplus variable ss1 matter.
 ///;
-   
+
+-----------------------------------
+-- topWitnessSet
+-----------------------------------
+
+doc ///
+  Key
+    topWitnessSet
+    (topWitnessSet,List,ZZ)
+  Headline
+    returns a witness set for the top dimensional solution set
+  Usage
+    w = topWitnessSet(f,k)
+  Inputs
+    f:List
+      of polynomials expected to have a component of dimension k
+    k:ZZ 
+      the expected (top) dimension of the solution set of f
+  Outputs
+    w:WitnessSet
+      for the k-dimensional solution set of f
+///;
+
 -----------------------------------
 -- cascade
 -----------------------------------
