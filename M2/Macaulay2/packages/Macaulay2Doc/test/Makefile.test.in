@@ -47,7 +47,6 @@ else
 check: check-deferred-warning
 check-deferred-warning:
 	@ for i in $(TESTFILES) ; do echo "$$i:1: warning: test file deferred" >&2 ; done
-	@ false
 endif
 
 $(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@ always
