@@ -283,6 +283,8 @@ doc ///
       This random coefficient system can serve as a start system to solve the original input system.
 ///;
 
+
+
 -----------------------------------
 -- trackPaths
 -----------------------------------
@@ -327,6 +329,7 @@ doc ///
     gamma
 ///;
 
+
 -- options for trackPaths
 
 doc ///
@@ -351,12 +354,9 @@ doc ///
       fsols = trackPaths(f,q,qsols,gamma => exp(ii*pi/3))
     Text
       Reference: 
-      {A.J. Sommese, J. Verschelde, and C.W. Wampler. {\em Introduction 
-      to numerical algebraic geometry.}
-      In: Solving Polynomial Equations. Foundations, Algorithms 
-      and Applications, volume 14 of 
-      Algorithms and Computation in Mathematics, pages 301-337. 
-      Springer-Verlag, 2005.}
+      {A.J. Sommese, J. Verschelde, and C.W. Wampler. {\em Introduction to numerical algebraic geometry.}
+      In: Solving Polynomial Equations. Foundations, Algorithms and Applications, volume 14 of 
+      Algorithms and Computation in Mathematics, pages 301-337. Springer-Verlag, 2005.}
 ///;
 
 doc ///
@@ -368,11 +368,9 @@ doc ///
     Text
       By default, the homotopy is created with tDegree equal to 2.
       This option allows the user to give another value for tDegree;
-      e.g., a linear homotopy between start system q and target system f 
-      is of the form (1-t)*q + t*f.
+      e.g., a linear homotopy between start system q and target system f is of the form (1-t)*q + t*f.
       
-      In general, if tDegree is k, then the homotopy is 
-      of the form (1-t)^k*q + t^k*f. 
+      In general, if tDegree is k, then the homotopy is of the form (1-t)^k*q + t^k*f. 
       
       A reason for changing the tDegree would be the following: 
       higher degree homotopies ensure that the system doesn't change as fast in the beginning and the end of the homotopy; 
@@ -385,83 +383,13 @@ doc ///
       fsols = trackPaths(f,q,qsols,tDegree => 1)      
 ///;
 
------------------------------------
--- phcEmbed
------------------------------------
 
-doc ///
-  Key
-    phcEmbed
-    (phcEmbed,List,ZZ)
-  Headline
-    calls phc -c to construct an embedding of a polynomial system
-  Usage
-    g = phcEmbed(f,k)
-  Inputs
-    f:List
-      of polynomials expected to have a component of dimension k
-    k:ZZ 
-      the expected (top) dimension of the solution set of f
-  Outputs
-    g:List
-      of polynomials containing the original system with k random
-      linear polynomials and k slack variables
-  Description
-    Text
-      To compute generic points of a k-dimensional solution set of a
-      polynomial system, we add k random linear equations to the system.
-    Example
-      R = CC[x,y,z];
-      f = { x^2 - y, x^3 - z };
-      fe1 = phcEmbed(f,1);
-      toString fe1
-    Text
-      The ring in which the original system lives is extended with
-      as many slack variables as the dimension provided as the second
-      argument k to phcEmbed.  The slack variables start with zz.
-      Solutions of the embedded system with
-      zero values for the slack variables are candidate generic points.
 
-      If the system on input is overdetermined (there are more equations
-      than unknowns), then as many surplus variables are introduced as
-      the difference between the number of equations and the number of
-      variables.  Surplus variables start with ss.
-    Example
-      R = CC[x,y,z];
-      f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
-      fe1 = phcEmbed(f,1);
-      toString fe1
-    Text
-      In the example above we gave four equations in three unknowns
-      and phcEmbed added one surplus variable ss1 and one slack variable zz1.
-      Only solutions with zero values for the surplus variable ss1 matter.
-///;
-
------------------------------------
--- topWitnessSet
------------------------------------
-
-doc ///
-  Key
-    topWitnessSet
-    (topWitnessSet,List,ZZ)
-  Headline
-    returns a witness set for the top dimensional solution set
-  Usage
-    w = topWitnessSet(f,k)
-  Inputs
-    f:List
-      of polynomials expected to have a component of dimension k
-    k:ZZ 
-      the expected (top) dimension of the solution set of f
-  Outputs
-    w:WitnessSet
-      for the k-dimensional solution set of f
-///;
 
 -----------------------------------
 -- cascade
 -----------------------------------
+
 
 doc ///
   Key 
@@ -552,6 +480,7 @@ doc ///
     Text	       	  
       This method is called by @TO phcSolve @.
 ///;
+
 
 -----------------------------------
 -- realFilter
