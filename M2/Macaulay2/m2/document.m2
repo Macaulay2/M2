@@ -74,7 +74,25 @@ isDocumentableMethod ScriptedFunctor := fn -> hasAttribute(fn,ReverseDictionary)
 verifyKey = method(Dispatch => Thing)
 verifyKey Thing    := s -> null
 
+methodNames = set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, Ext, Tor}
+
 verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module, Module)
+     if #s == 0 then error "documentation key () encountered";
+     if #s == 1 and not instance(s#0, Function) then error(
+	  "documentation key ", format toString s, 
+	  " encountered, but ", format toString s#0,
+	  " is not a function");
+     if #s > 1 
+     and not instance(s#0, Function) 
+     and not instance(s#0, Command)
+     and not instance(s#0, ScriptedFunctor)
+     and not instance(s#0, Keyword)
+     and not methodNames#?(s#0)
+     and not (instance(s#0,Sequence) and 2==#s#0 and s#0#1===symbol = and instance(s#0#0,Keyword))
+     then error(
+	  "documentation key ", format toString s, 
+	  " encountered, but ", format toString s#0,
+	  " is not a function, command, scripted functor, or keyword");
      if (
 	  if #s > 2 then (
 	       t := youngest drop(s,1);	                    -- this will all get screwed up with immutable types present
