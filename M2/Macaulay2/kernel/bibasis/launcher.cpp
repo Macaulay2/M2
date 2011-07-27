@@ -22,8 +22,7 @@ namespace BIBasis
     {
         if (!CheckMatrix(matrix))
         {
-            ERROR("rawBIBasis(): input matrix is inappropriate.");
-            return 0;
+            return NULL;
         }
         
         switch(GetSettingsManager().GetMonomialOrder())
