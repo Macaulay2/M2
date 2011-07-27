@@ -154,8 +154,10 @@ bool pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
 */
 
 #define pari_examine(x) do { fputs(" " #x ": ", stdout); voir(x,-1); } while (0)
-#define pari_display(x) do { fputs(" " #x ": ", stdout); outbeaut(x); } while (0)
+#define pari_display(x) do { fputs(" " #x ": ", stdout); output(x); } while (0)
 #define abs(x) ((x)<0?-(x):(x))
+
+#define max(a,b) ((a)>(b)?(a):(b))
 
 static void gmp_examine0(mpz_t z) {
   int i, n = max(z->_mp_alloc,abs(z->_mp_size));
