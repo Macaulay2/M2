@@ -54,6 +54,11 @@ CONFIGURECMD += | tee pari-config.log
 
 include ../Makefile.library
 
+ifeq (@DEBUG@ @OPTIMIZE@ @GCCVERSION@ @OS@ @ISSUE@,no yes 4.2 MacOS 10.7)
+ # work around a bug in gcc that makes pari crash
+CFLAGS += -O0
+endif
+
 # we have to detect which of these two answers it gives:
 #   ### Building without GNU MP support
 #   Using GNU MP, version 4.2.1
