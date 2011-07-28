@@ -312,9 +312,9 @@ hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F
 hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> ( notImplemented(); hilbertFunction(d,ring X))
 
 dual CoherentSheaf := {} >> o -> F -> sheaf_(F.variety) dual F.module
-betti CoherentSheaf := F -> (
+betti CoherentSheaf := opts -> F -> (
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     betti F.module)
+     betti (F.module,opts))
 
 binaryPower := (W,n,times,unit,inverse) -> (
      if n === 0 then return unit();
