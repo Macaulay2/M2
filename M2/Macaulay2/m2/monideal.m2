@@ -228,7 +228,7 @@ degree MonomialIdeal := I -> degree cokernel generators I   -- maybe it's faster
 jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 
 resolution MonomialIdeal := ChainComplex => options -> I -> resolution ideal I
-betti MonomialIdeal := I -> betti ideal I
+betti MonomialIdeal := opts -> I -> betti(ideal I,opts)
 
 lcm MonomialIdeal := (I) -> (if I.cache.?lcm 
   then I.cache.lcm
