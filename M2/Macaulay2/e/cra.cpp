@@ -294,13 +294,13 @@ const Matrix * rawMatrixCRA(const Matrix *f,
   // Error handling:
   if (f->get_ring() != g->get_ring())
   {
-    ERROR("matrtices have different base rings");
+    ERROR("matrices have different base rings");
     return 0;
   }
   if (f->rows()->rank() != g->rows()->rank() 
       || f->cols()->rank() != g->cols()->rank())
   {
-    ERROR("matrixces have different shapes");
+    ERROR("matrices have different shapes");
     return 0;
   }
   
