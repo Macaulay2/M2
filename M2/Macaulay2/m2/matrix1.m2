@@ -466,7 +466,8 @@ ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
 expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence apply(toSequence first entries generators I, expression) }
 net Ideal := (I) -> net expression I
-toString Ideal := toExternalString Ideal := (I) -> toString expression I
+toString Ideal := (I) -> toString expression I
+toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
