@@ -9,6 +9,7 @@
 // engine.h defines rawRingElementCRA, rawMatrixCRA
 
 #include "matrix.hpp"
+#include "matrix-con.hpp"
 
 class ChineseRemainder {
 public:

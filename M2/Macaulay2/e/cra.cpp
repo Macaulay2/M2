@@ -189,6 +189,51 @@ vec ChineseRemainder::CRA(const PolyRing *R, vec f, vec g, mpz_t um, mpz_t vn, m
 
 
 
+Matrix * ChineseRemainder::CRA(const Matrix *f, const Matrix *g, mpz_t um, mpz_t vn, mpz_t mn)
+{
+  if (f->get_ring() != g->get_ring())
+  {
+    ERROR("matrices have different base rings");
+    return 0;
+  }
+  if (f->rows()->rank() != g->rows()->rank()
+      || f->cols()->rank() != g->cols()->rank())
+  {
+    ERROR("matrices have different shapes");
+    return 0;
+  }
+  
+  const PolyRing *R = f->get_ring()->cast_to_PolyRing();
+  if (R == 0)
+  {
+    ERROR("expected polynomial ring over ZZ");
+    return 0;
+  }
+  
+  const FreeModule *F = f->rows();
+  const FreeModule *G = f->cols();
+  const int *deg;
+  
+  if (!f->rows()->is_equal(g->rows()))
+    F = R->make_FreeModule(f->n_rows());
+  
+  if (!f->cols()->is_equal(g->cols()))
+    G = R->make_FreeModule(f->n_cols());
+  
+  if (EQ == f->degree_monoid()->compare(f->degree_shift(), g->degree_shift()))
+    deg = f->degree_shift();
+  else
+    deg = f->degree_monoid()->make_one();
+  
+  MatrixConstructor mat(F,G,deg);
+  for (int i=0; i<f->n_cols(); i++)
+  {
+    vec u = CRA(R,f->elem(i),g->elem(i),um,vn,mn);
+    mat.set_column(i,u);
+  }
+  return mat.to_matrix();
+}
+
 
 
 const RingElement * rawRingElementCRA(const RingElement *f, 
@@ -269,12 +314,16 @@ const Matrix * rawMatrixCRA(const Matrix *f,
   ChineseRemainder::computeMultipliers(m, n, um, vn, mn);
   mpz_t result_coeff;
   mpz_init(result_coeff);
+  Matrix * result=ChineseRemainder::CRA(f,g,um,vn,mn);
+  mpz_clear(um);
+  mpz_clear(vn);
+  mpz_clear(mn);
+  return result;
   
-  //const Monoid *M = R->getMonoid();
-  //const Ring *K = R->getCoefficientRing();
-  
-  return 0;
 }
+
+
+
 
 #if 0
 Matrix *Matrix::operator+(const Matrix &m) const
