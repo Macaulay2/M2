@@ -1640,6 +1640,20 @@ enum gbTraceValues
 			      const Matrix *g,
 			      mpz_t m,
 			      mpz_t n);
+  
+  const RingElement * rawRingElementRatConversion(const RingElement *f, 
+                                  mpz_t m,
+                                  const Ring *RQ);
+
+  // f should be an element in the polynomial ring R (over ZZ).
+  // RQ should be the same ring as R, but with rational coefficients
+
+  const Matrix * rawMatrixRatConversion(const Matrix *f, 
+                                        mpz_t m,
+                                        const Ring *RQ);
+  // f should be a matrix in the polynomial ring R (over ZZ).
+  // RQ should be the same ring as R, but with rational coefficients
+
 					
   
   /**************************************************/

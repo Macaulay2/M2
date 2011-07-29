@@ -390,3 +390,21 @@ Matrix * ChineseRemainder::reconstruct(const Ring *RQ, const Matrix *f, mpz_t m)
   return 0;
 }
 
+
+const RingElement * rawRingElementRatConversion(const RingElement *f, 
+                                                mpz_t m,
+                                                const Ring *RQ)
+{
+  return 0;
+}
+
+// f should be an element in the polynomial ring R (over ZZ).
+// RQ should be the same ring as R, but with rational coefficients
+
+const Matrix * rawMatrixRatConversion(const Matrix *f, 
+                                      mpz_t m,
+                                      const Ring *RQ)
+{
+  return 0;
+}
+

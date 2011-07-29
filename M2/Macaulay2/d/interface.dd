@@ -3537,6 +3537,46 @@ export rawMatrixCRA(e:Expr):Expr := (
 setupfun("rawMatrixCRA", rawMatrixCRA);
 
 
+
+export rawRingElementRatConversion(f:RawRingElement,m:ZZ,RQ:RawRing) : RawRingElementOrNull :=
+  Ccode(RawRingElementOrNull,"rawRingElementRatConversion(f,m,RQ)");
+  
+export rawRingElementRatConversion(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+       when s.0 is f:RawRingElementCell do
+       when s.1 is m:ZZcell do
+       when s.3 is RQ:RawRingCell do
+         toExpr(rawRingElementRatConversion(f.p,m.v,RQ.p))
+       else WrongArg(3, "a rawRing")
+       else WrongArg(2, "an integer")
+       else WrongArg(1, "a raw ring element")
+       else WrongNumArgs(3)
+     );
+
+setupfun("rawRingElementRatConversion", rawRingElementRatConversion);
+
+export rawMatrixRatConversion(f:RawMatrix,m:ZZ,RQ:RawRing) : RawMatrixOrNull :=
+  Ccode(RawMatrixOrNull,"rawMatrixRatConversion(f,m,RQ)");
+  
+export rawMatrixRatConversion(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+       when s.0 is f:RawMatrixCell do
+       when s.1 is m:ZZcell do
+       when s.3 is RQ:RawRingCell do
+         toExpr(rawMatrixRatConversion(f.p,m.v,RQ.p))
+       else WrongArg(3, "a rawRing")
+       else WrongArg(2, "an integer")
+       else WrongArg(1, "a raw matrix")
+       else WrongNumArgs(3)
+     );
+
+setupfun("rawMatrixRatConversion", rawMatrixRatConversion);
+
+
+       
+
+
+
 -----------------------------------------------------------------------------
 -- integer matrix normal forms
 -----------------------------------------------------------------------------
