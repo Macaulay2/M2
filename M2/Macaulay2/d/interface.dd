@@ -609,7 +609,7 @@ setupfun("rawIndexIfVariable",rawIndexIfVariable);
 
 export rawIndices(e:Expr):Expr := (
      when e is f:RawRingElementCell do toExpr(Ccode(array(int), "rawRingElementIndices(", f.p, ")" ))
-     else when e is m:RawMatrixCell do toExpr(Ccode(array(int), "rawMatrixIndices(", m.p, ")" ))
+     else when e is m:RawMatrixCell do toExpr(Ccode(RawArrayIntOrNull, "rawMatrixIndices(", m.p, ")" ))
      else WrongArg("a raw ring element or raw matrix"));
 setupfun("rawIndices",rawIndices);
 
