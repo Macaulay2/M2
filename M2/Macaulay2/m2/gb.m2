@@ -362,7 +362,7 @@ Matrix % GroebnerBasis := Matrix => (n,g) -> (
      map(target n,, rawGBMatrixRemainder(raw g, raw n)));
 
 RingElement % GroebnerBasis := RingElement =>
-ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
+Number % GroebnerBasis := (r,g) -> ((promote(r,ring g) * id_(target g)) % g)_(0,0)
 
 leadTerm GroebnerBasis := (g) -> map(ring g, rawGBGetLeadTerms(raw g,-1))
 

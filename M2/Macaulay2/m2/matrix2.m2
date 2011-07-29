@@ -345,8 +345,8 @@ RingElement % Ideal := (r,I) -> (
      if ring r =!= ring I then error "expected ring element and ideal for the same ring";
      if r == 0 then return r;
      r % if isHomogeneous I then gb(I, DegreeLimit => degree r) else gb I)
-ZZ % Ideal := (r,I) -> (
-     r = r_(ring I);
+Number % Ideal := (r,I) -> (
+     r = promote(r,ring I);
      if r == 0 then return r;
      r % if isHomogeneous I then gb(I,DegreeLimit=>0) else gb I)
 
