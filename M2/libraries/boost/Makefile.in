@@ -7,6 +7,7 @@ TARDIR = boost_$(UVERSION)
 TARFILE = boost_$(UVERSION).tar.gz
 LICENSEFILES = LICENSE_1_0.txt
 URL = http://downloads.sourceforge.net/project/boost/boost/$(VERSION)
+CHECKTARGET = .
 CONFIGURECMD = :
 BUILDCMD = :
 INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR) && tar cf - boost | tar xf - -C $(LIBRARIESDIR)/include
