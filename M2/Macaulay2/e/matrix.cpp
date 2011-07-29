@@ -912,16 +912,13 @@ M2_arrayintOrNull Matrix::support() const
 	  {
 	    R->getMonoid()->to_expvector(f->monom, exp2);
 	    for (int k=0; k<n; k++)
-	      if (exp2[k] != 0) {
-		if (exp[k] == 0) nsupp++;
+	      if (exp2[k] != 0 && exp[k] == 0) {
 		exp[k] = 1;
-		if (nsupp == n) {
-		  f = 0; 
-		  v = 0;
-		}
+		if (++nsupp == n) goto out;
 	      }
 	  }	
       }
+ out:
   M2_arrayint result = M2_makearrayint(nsupp);
   int next = 0;
   for (int i=0; i<n; i++)
