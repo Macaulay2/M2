@@ -1111,8 +1111,8 @@ document {
 	  (symbol %, RR, QQ),
 	  (symbol %, RR, RR),
 	  (symbol %, RR, ZZ),
-	  (symbol %, ZZ, GroebnerBasis),
-	  (symbol %, ZZ, Ideal),
+	  (symbol %, Number, GroebnerBasis),
+	  (symbol %, Number, Ideal),
 	  (symbol %, ZZ, MonomialIdeal),
 	  (symbol %, ZZ, ZZ)
 	  },	  
