@@ -2,8 +2,8 @@ needsPackage "NAGtypes"
 
 newPackage(
   "PHCpack",
-  Version => "1.0", 
-  Date => "24 May 2011",
+  Version => "1.07", 
+  Date => "29 Jul 2011",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "lizgross@math.uic.edu",
@@ -24,7 +24,7 @@ newPackage(
     "keep files" => true
   },
   DebuggingMode => false,
-  AuxiliaryFiles => true,
+  AuxiliaryFiles => false,
   CacheExampleOutput => true
 )
 
@@ -41,6 +41,9 @@ export {
   realFilter,
   zeroFilter,
   nonZeroFilter,
+  phcEmbed,
+  topWitnessSet,
+  phcFactor,
   cascade
 }
 
@@ -83,7 +86,9 @@ getFilename = () -> (
 systemToFile = method(TypicalValue => Nothing)
 systemToFile (List,String) := (F,name) -> (
   file := openOut name;
-  file << #F << " " << numgens ring F#0 << endl;
+  if (#F == numgens ring F#0)
+   then file << #F << endl
+   else file << #F << " " << numgens ring F#0 << endl;
   scan(F, f->( 
     L := toExternalString f;
     L = replace("ii", "I", L);
@@ -117,9 +122,49 @@ startSystemFromFile (String) := (name) -> (
     while not stop do (
       if #L_j != 0 then (
         -- we have to bite off the first "+" sign of the term
-        term = value substring(1,#L_j-1,L_j); p = p + term;
-        if (L_j_(#L_j-1) == ";") then (
+        if (L_j_(#L_j-1) != ";") then (
+           term = value substring(1,#L_j-1,L_j); p = p + term;
+        ) else ( -- in this case (L_j_(#L_j-1) == ";") holds
           term = value substring(1,#L_j-2,L_j); p = p + term;
+          stop = true; result = result | {p}
+        );
+      ); j = j + 1;
+      stop = stop or (j >= #L);
+    );
+    i = i + 1; 
+  );
+  result
+)
+
+systemFromFile = method(TypicalValue => List)
+systemFromFile (String) := (name) -> (
+  -- IN: file name starting with a polynomial system
+  -- OUT: list of polynomials in a ring with coefficients in CC
+  -- NOTE: the format of the system on file may be such that the
+  --   first term starts with +1*x which cannot be digested by M2.
+  --   In contrast to the startSystemFromFile, the first term could
+  --   also be "-1*x" so we must be a bit more careful...
+  s := get name;
+  s = replace("i","ii",s);
+  s = replace("E","e",s);
+  L := lines(s);
+  n := value L_0;
+  result := {};
+  i := 0; j := 1;
+  local stop;
+  local term;
+  local p;
+  while i < n do (
+    stop = false; p = 0;
+    while not stop do (
+      if #L_j != 0 then (
+        if (L_j_(#L_j-1) != ";") then (
+          -- we have to bite off the first "+" sign of the term
+          term = value substring(1,#L_j-1,L_j);
+          if (L_j_0 == "+") then p = p + term else p = p - term;
+        ) else ( -- in this case (L_j_(#L_j-1) == ";") holds
+          term = value substring(1,#L_j-2,L_j);
+          if (L_j_0 == "+") then p = p + term else p = p - term;
           stop = true; result = result | {p}
         );
       ); j = j + 1;
@@ -135,7 +180,8 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   -- parses solutions in PHCpack format 
   -- IN:  s = string of solutions in PHCmaple format 
   --      V = list of variable names
-  -- OUT: List of solutions, each of type Point, carrying also other diagnostic information about each.
+  -- OUT: List of solutions, each of type Point, 
+  --      carrying also other diagnostic information about each.
   oldprec := defaultPrecision;
   defaultPrecision = o.Bits;
   L := get s; 
@@ -181,10 +227,64 @@ solutionsToFile (List,Ring,String) := o -> (S,R,name) -> (
   close file;
 ) 
 
+pointsToFile = method(TypicalValue => Nothing, Options => {Append => false})
+pointsToFile (List,Ring,String) := o -> (S,R,name) -> (
+  -- writes list of points to file in PHCpack format
+  -- IN: S, list of points, e.g.: obtained as points(WitnessSet);
+  --     R, ring (with symbols for the variables);
+  --     name, string with file name.
+  file := if o.Append then openOutAppend name else openOut name;
+  if o.Append then 
+    file << endl << "THE SOLUTIONS :" << endl;
+  file << #S << " " << numgens R << endl << 
+  "===========================================================" << endl;
+  scan(#S, i->( 
+    file << "solution " << i << " :" << endl <<
+    "t :  0.00000000000000E+00   0.00000000000000E+00" << endl <<
+    "m :  1" << endl <<
+    "the solution for t :" << endl;
+     scan(numgens R, v->(
+       L := " "|toString R_v|" :  "|
+       format(0,-1,9,9,realPart toCC S#i#v)|"  "|
+       format(0,-1,9,9,imaginaryPart toCC S#i#v);
+       file << L << endl; 
+    ));
+    file <<  "== err :  0 = rco :  1 = res :  0 ==" << endl;
+  ));
+  close file;
+) 
 
-----------------------------------
---- conversion to Point        ---
-----------------------------------
+dimEmbedding = method(TypicalValue => ZZ)
+dimEmbedding (List) := (system) -> (
+  -- IN: embedded system with slack variables.
+  -- OUT: returns the number of slack variables = the dimension.
+  eR := ring first system;
+  v := vars eR;
+  slack := v_(#v-2)_0;
+  zz := toString(slack);
+  ds := substring(2,#zz-1,zz);
+  dimension := value(ds);
+  return dimension;
+)
+
+witnessSetFromFile = method(TypicalValue => WitnessSet)
+witnessSetFromFile (String) := (name) -> (
+  -- IN: file name which contains a witness set in PHCpack format
+  -- OUT: a witness set
+  e := systemFromFile(name); 
+  d := dimEmbedding(e);
+  witnessPointsFile := temporaryFileName() | "PHCwitnessPoints";
+  run(PHCexe|" -z " | name | " "|witnessPointsFile);
+  eR := ring first e;
+  g := parseSolutions(witnessPointsFile,eR);
+  w := witnessSet(ideal(take(e,{0,#e-d-1})),ideal(take(e,{#e-d,#e-1})),g);
+  return w;
+)
+
+-----------------------------
+---  conversion to Point  ---
+-----------------------------
+
 outputToPoint = method()
 outputToPoint HashTable := (H)->{
   SolutionStatus => if H#"mult" == 1 then Regular else Singular, 
@@ -223,17 +323,18 @@ isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
   return abs(L_k)<=tol; 
 )
 
-
 --##########################################################################--
 -- EXPORTED METHODS
 --
 -- NOTE:
--- trackPaths and refineSolutions are methods adapted from  NumericalAlgebraicGEometry/PHCpack.interface.m2
+-- trackPaths and refineSolutions are methods adapted 
+-- from  NumericalAlgebraicGEometry/PHCpack.interface.m2
 --##########################################################################--
 
 -----------------------------------
 ------ POLY SYSTEM CONVERTER ------
 -----------------------------------
+
 convertToPoly = method(TypicalValue => List)
 convertToPoly List := List => system -> (
   -- IN: system (or a poly) which is rational 
@@ -277,6 +378,7 @@ convertToPoly List := List => system -> (
 ----------------------------------
 ------ THE BLACKBOX SOLVER -------
 ----------------------------------
+
 phcSolve = method(TypicalValue => List)
 phcSolve  List := List => system -> (
   -- IN:  system = list of polynomials in the system 
@@ -326,6 +428,7 @@ phcSolve  List := List => system -> (
 -----------------------------------
 -------- MIXED VOLUME -------------
 -----------------------------------
+
 mixedVolume = method(Options => {stableMV => false, startSystem => false})
 mixedVolume  List := Sequence => opt -> system -> (
   -- IN:  system = list of polynomials in the system 
@@ -496,6 +599,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
 -----------------------------------
 ----- REFINING SOLUTIONS ----------
 -----------------------------------
+
 refineSolutions = method()
 refineSolutions (List,List,ZZ) := (f,sols,dp) -> (
   -- IN: f, a polynomial system;
@@ -507,12 +611,12 @@ refineSolutions (List,List,ZZ) := (f,sols,dp) -> (
   PHCbatchFile := temporaryFileName() | "PHCbatch";
   PHCsessionFile := temporaryFileName() | "PHCsession";
   PHCsolutions := temporaryFileName() | "PHCsolutions";
-  -- stdio << "writing input system to " << PHCinputFile << endl;
+  stdio << "writing input system to " << PHCinputFile << endl;
   systemToFile(f,PHCinputFile);
-  -- stdio << "appending solutions to " << PHCinputFile << endl;
+  stdio << "appending solutions to " << PHCinputFile << endl;
   R := ring first f;
   solutionsToFile(sols,R,PHCinputFile,Append=>true);
-  -- stdio << "preparing input data for phc -v in " << PHCbatchFile << endl;
+  stdio << "preparing input data for phc -v in " << PHCbatchFile << endl;
   s := concatenate("3\n",PHCinputFile);
   s = concatenate(s,"\n");
   s = concatenate(s,PHCoutputFile);
@@ -531,11 +635,12 @@ refineSolutions (List,List,ZZ) := (f,sols,dp) -> (
   close bat;
   -- stdio << "running phc -v, writing output to " << PHCsessionFile << endl;
   run(PHCexe|" -v < " | PHCbatchFile | " > " | PHCsessionFile);
-  stdio << "using temporary file " << PHCoutputFile << " for storing refined solutions " << endl;
-  -- stdio << "running phc -z on " << PHCoutputFile << endl;
-  -- stdio << "solutions in Maple format in " << PHCsolutions << endl;
+  stdio << "using temporary file " << PHCoutputFile;
+  stdio << " for storing refined solutions " << endl;
+  stdio << "running phc -z on " << PHCoutputFile << endl;
+  stdio << "solutions in Maple format in " << PHCsolutions << endl;
   run(PHCexe|" -z " | PHCoutputFile | " " | PHCsolutions);
-  -- stdio << "parsing file " << PHCsolutions << " for solutions" << endl;
+  stdio << "parsing file " << PHCsolutions << " for solutions" << endl;
   b := ceiling(log_2(10^dp));
   result := parseSolutions(PHCsolutions,R,Bits=>b);
   result
@@ -575,8 +680,118 @@ nonZeroFilter (List,ZZ,RR) := (sols,k,tol) -> (
 )
 
 -----------------------------------------------
+------------------  EMBED  --------------------
+-----------------------------------------------
+ 
+phcEmbed = method(TypicalValue => List)
+phcEmbed (List,ZZ) := (system,dimension) -> (
+  -- IN: system, a polynomial system;
+  --     dimension, expected dimension of the solution set.
+  -- OUT : system with as many random hyperplanes at the end
+  --       as the value of dimension.
+  PHCinputFile := temporaryFileName() | "PHCinput";
+  PHCoutputFile := temporaryFileName() | "PHCoutput";
+  PHCbatchFile := temporaryFileName() | "PHCbatch";
+  PHCsessionFile := temporaryFileName() | "PHCsession";
+  stdio << "writing output to file " << PHCoutputFile << endl;
+  systemToFile(system,PHCinputFile);
+  s := concatenate("1\ny\n",PHCinputFile);
+  s = concatenate(s,"\n",PHCoutputFile);
+  s = concatenate(s,"\n");
+  s = concatenate(s,toString(dimension));
+  s = concatenate(s,"\nn\n");
+  bat := openOut PHCbatchFile;
+  bat << s;
+  close bat;
+  stdio << "calling phc -c < " << PHCbatchFile;
+  stdio << " > " << PHCsessionFile << endl;
+  run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
+  stdio << "output of phc -c is in file " << PHCoutputFile << endl;
+  -- extending the ring with slack variables zz1, zz2, .. , zzdimension
+  slackvars := apply(dimension, i->getSymbol("zz"|toString(i+1)));
+  R := ring ideal system;
+  -- surplus variables are used when the initial system is overconstrained
+  nv := numgens R; nq := #system; nbss := nq - nv;
+  local RwithSlack;
+  if (nbss > 0) then (
+    surplusvars := apply(nbss, i->getSymbol("ss"|toString(i+1)));
+    RwithSlack = (coefficientRing R)[gens R, surplusvars, slackvars];
+  ) else (
+    RwithSlack = (coefficientRing R)[gens R, slackvars];
+  );
+  use RwithSlack;
+  return systemFromFile(PHCoutputFile);
+)
+
+-----------------------------------------------
+------------  TOP WITNESS SET  ----------------
+-----------------------------------------------
+ 
+topWitnessSet = method()
+topWitnessSet (List,ZZ) := (system,dimension) -> (
+  -- IN: system, a polynomial system;
+  --     dimension, top dimension of the solution set.
+  -- OUT : a witness set for the top dimensional component,
+  --       a list of nonsolutions
+  stdio << "... calling phcEmbed ..." << endl;
+  e := phcEmbed(system,dimension);
+  stdio << "... calling phcSolve ..." << endl;
+  s := phcSolve(e);
+  g := zeroFilter(s,#e-1,1.0e-10);
+  ns := nonZeroFilter(s,#e-1,1.0e-10);
+  stdio << "... constructing a witness set ... " << endl;
+  w := witnessSet(ideal(take(e,{0,#e-dimension-1})),
+                  ideal(take(e,{#e-dimension,#e-1})),g);
+  return (w,ns);
+)
+
+-----------------------------------
+-----------  FACTOR  --------------
+-----------------------------------
+
+phcFactor = method(TypicalValue=>List)
+phcFactor (WitnessSet ) := w -> (
+  -- IN: a witness set properly embedded with slack variables.
+  -- OUT: a list of witness sets, every element is irreducible.
+  PHCinputFile := temporaryFileName() | "PHCinput";
+  PHCoutputFile := temporaryFileName() | "PHCoutput";
+  PHCbatchFile := temporaryFileName() | "PHCbatch";
+  PHCsessionFile := temporaryFileName() | "PHCsession";
+  stdio << "preparing input file to " << PHCinputFile << endl;
+  system := equations(w) | slice(w); 
+  systemToFile(system,PHCinputFile);
+  R := ring first system;
+  L := toList(points(w));
+  pointsToFile(L,R,PHCinputFile,Append=>true);
+  stdio << "preparing batch file to " << PHCbatchFile << endl;
+  s := concatenate("2\n",PHCinputFile); -- option 2 of phc -f
+  s = concatenate(s,"\n",PHCoutputFile);
+  s = concatenate(s,"\n1\n"); -- use monodromy to factor
+  s = concatenate(s,"0\n");   -- default settings of path trackers
+  bat := openOut PHCbatchFile;
+  bat << s;
+  close bat;
+  stdio << "... calling monodromy breakup ..." << endl;
+  run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
+  stdio << "session information of phc -f is in " << PHCsessionFile << endl;
+  stdio << "output of phc -f is in file " << PHCoutputFile << endl;
+  -- counting the number of factors
+  count := 0;
+  result := new MutableList from {};
+  name := PHCinputFile | "_f" | toString(count+1);
+  while (fileExists name) do (
+    result = append(result,witnessSetFromFile(name));
+    count = count + 1;
+    name = PHCinputFile | "_f" | toString(count+1);
+  );
+  stdio << "found " << count << " irreducible factors " << endl;
+  return toList(result);
+)
+
+-----------------------------------------------
 ------------------ CASCADE --------------------
 -----------------------------------------------
+
 cascade = method(TypicalValue=>List)
 cascade Ideal := List => (I) -> (
      -- returns a list of WitnessSet's ...
@@ -703,7 +918,7 @@ monodromyBreakup WitnessSet := o -> (W) -> (
 
 beginDocumentation()
 
-load "./PHCpack/PHCpackDoc.m2";
+load "./PHCpackDoc.m2";
 
 
 
@@ -851,7 +1066,7 @@ end   -- terminate reading ...
 restart
 uninstallPackage "PHCpack"
 
-installPackage("PHCpack", RemakeAllDocumentation=>true, UserMode=>true,DebuggingMode => true)
+installPackage("PHCpack", RemakeAllDocumentation=>true, RerunExamples=>true, UserMode=>true,DebuggingMode => true)
 viewHelp PHCpack
 -- RerunExamples=>true,
 
