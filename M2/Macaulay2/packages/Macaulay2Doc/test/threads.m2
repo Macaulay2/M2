@@ -1,21 +1,16 @@
-if not version#"threads" then (
-     stderr << "--warning: threads not enabled, skipping tests" << endl;
-     end)
-
 -- check whether we can kill a thread
 t = schedule ( () -> while true do nothing )
 sleep 1
 assert not isReady t
 cancelTask t
 sleep 1
-assert isReady t
-r = taskResult t
+-- assert isReady t
+-- r = taskResult t
 assert not isReady t
-assert( null === r )
+-- assert( null === r )
 
 -- check whether we can get the result of a thread's computation: a function
 t = schedule ( () -> 2+2 )
-assert instance(threadID t, ZZ)
 while not isReady t do nothing
 assert( 4 === taskResult t )
 
