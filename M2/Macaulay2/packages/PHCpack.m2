@@ -24,7 +24,7 @@ newPackage(
     "keep files" => true
   },
   DebuggingMode => false,
-  AuxiliaryFiles => false,
+  AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
 
@@ -918,7 +918,7 @@ monodromyBreakup WitnessSet := o -> (W) -> (
 
 beginDocumentation()
 
-load "./PHCpackDoc.m2";
+load "./PHCpack/PHCpackDoc.m2";
 
 
 
