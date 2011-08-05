@@ -26,7 +26,7 @@ $(foreach t,$(CLEANTARGETS),$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
 
 check: check-deferred
 check-deferred:
-	@ if egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >/dev/null 2>&1 ; \
+	-@ if egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >/dev/null 2>&1 ; \
 	  then echo "make: *** warning: tests in the following files have been deferred:" >&2 ; \
 	       egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >&2 ; \
 	       false ; \
