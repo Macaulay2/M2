@@ -19,7 +19,7 @@ newPackage(
   "NormalToricVarieties",
   AuxiliaryFiles => true,
   Version => "1.0",
-  Date => "15 September 2010",
+  Date => "5 August 2011",
   Authors => {{
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
@@ -1090,9 +1090,10 @@ document {
   varieties and related geometric objects.  An introduction to the theory of
   normal toric varieties can be found in the following textbooks:",
   UL { 
-    {"David A. Cox, John B. Little, Hal Schenck, ", EM "Toric varieties", ",
-      preprint available at ", HREF("http://www.cs.amherst.edu/~dac/toric.html",
-      TT "www.cs.amherst.edu/~dac/toric.html")},
+    {"David A. Cox, John B. Little, Hal Schenck, ", 
+      HREF("http://www.cs.amherst.edu/~dac/toric.html", EM "Toric varieties"), 
+      ", Graduate Studies in Mathematics 124. American Mathematical Society, 
+      Providence RI, 2011.  ISBN: 978-0-8218-4817-7")},
     {"Günter Ewald, ", EM "Combinatorial convexity and algebraic geometry", ",
       Graduate Texts in Mathematics 168.  Springer-Verlag, New York, 1996. ISBN:
       0-387-94755-8" },      
