@@ -1,25 +1,25 @@
 -- -*- M2-comint -*- {* hash: 900653958 *}
---loading configuration for package "PHCpack" from file /Users/jan/Library/Application Support/Macaulay2/init-PHCpack.m2
+--loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x,y];
 
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
 i3 : (m,q,qsols) = mixedVolume(f,startSystem=>true);
-using temporary files /tmp/M2-422-1PHCinput and /tmp/M2-422-1PHCoutput
+using temporary files /tmp/M2-5147-1PHCinput and /tmp/M2-5147-1PHCoutput
 
 i4 : fsols = trackPaths(f,q,qsols)
-using temporary files /tmp/M2-422-4PHCoutput and /tmp/M2-422-6PHCtargetsols
+using temporary files /tmp/M2-5147-4PHCoutput and /tmp/M2-5147-6PHCtargetsols
 
-o4 = {{-.764107, -.544612}, (.757097+.645047*ii, -1.80871+1.11945*ii),
+o4 = {{-1.59272, .964857}, {-.894935+.624334*ii, .143333-1.14868*ii},
      ------------------------------------------------------------------------
-     {1.33076-.335184*ii, -.62414+.513163*ii}, {-.894935+.624334*ii,
+     {-.894935-.624334*ii, .143333+1.14868*ii}, {1.33076-.335184*ii,
      ------------------------------------------------------------------------
-     .143333-1.14868*ii}, {-.894935-.624334*ii, .143333+1.14868*ii},
+     -.62414+.513163*ii}, {.742585-.425943*ii, .270685+1.00715*ii},
      ------------------------------------------------------------------------
-     {.742585-.425943*ii, .270685+1.00715*ii}, (-.338128-.643984*ii,
+     {1.33076+.335184*ii, -.62414-.513163*ii}, {-.764107, -.544612},
      ------------------------------------------------------------------------
-     1.27187-1.75902*ii), {.742585+.425943*ii, .270685-1.00715*ii}}
+     {.742585+.425943*ii, .270685-1.00715*ii}}
 
 o4 : List
 
