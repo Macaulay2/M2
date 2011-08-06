@@ -1005,6 +1005,9 @@ namespace mixedCells
 
   typedef Reducer<LType,RType> ReducerExact;
 
+
+  Reducer<LType,RType> TEST123;
+
 #if HASH
   //    unsigned char ReducerExact::hashTable[256];
 #endif
