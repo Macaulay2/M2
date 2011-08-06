@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string.h>
 #include "cstdio"
 
 // this should be changed next!!! 
@@ -20,6 +21,18 @@ void outOfRange(int i, int n)
 
 namespace mixedCells
 {
+  int round(double x) { return (x>0)? int(x+.499999) : int(x-.499999); }
+  int gcd(int a, int b) 
+  {
+    while (true) {
+      if (b == 0) return a;
+      else {
+	int c = a%b;
+	a = b;
+	b = c;
+      }
+    }
+  }
   bool isPositive(double a)
   {
     return a>EPSILON;
@@ -57,6 +70,8 @@ namespace mixedCells
     return a+EPSILON<b;
   }
 
+  class MyGen; // g++ 4.1.2 wants this
+  
   class MyInt{
     double rep;
   public:
@@ -65,7 +80,11 @@ namespace mixedCells
       rep=(double)a;
     }
     
-    static bool isField() {return true;}
+    MY_INLINE static bool isField() 
+    {
+      return true; // this is true!
+      //return false; // for experiment!!!
+    }
 
     friend bool isZero(MyInt const &a)
     {
@@ -74,6 +93,10 @@ namespace mixedCells
     friend bool isZero2(MyInt const &a)
     {
       return isZero(a.rep);
+    }
+    friend bool isOne(MyInt const &a)
+    {
+      return isZero(a.rep-1);
     }
     friend MyInt operator/(MyInt const &a, MyInt const &b)
     {
@@ -87,6 +110,10 @@ namespace mixedCells
     {
       return MyInt(a.rep-b.rep);
     }
+    friend MyInt operator+(MyInt const &a, MyInt const &b)
+    {
+      return MyInt(a.rep+b.rep);
+    }
     friend class MyGen;
     friend class MyGen operator*(MyInt const &a, MyGen const &b);
     //    friend class MyGen operator/(MyInt const &a, MyGen const &b);//!!!!!!!!!!
@@ -98,6 +125,11 @@ namespace mixedCells
     {
       return MyInt(s.rep*t.rep);
     }
+    friend MyInt gcd(MyInt const &s, MyInt const &t)
+    {
+      //assert(false);
+      return gcd(round(s.rep),round(t.rep));
+    }
     void operator+=(MyInt const &a)
     {
       rep+=a.rep;
@@ -105,6 +137,12 @@ namespace mixedCells
     void operator-=(MyInt const &a)
     {
       rep-=a.rep;
+    }
+    void operator/=(MyInt const &a)
+    {
+      // only exact divisions should be allowed (no round off).
+      assert(round(rep)%round(a.rep)==0);
+      rep/=a.rep;
     }
     void operator*=(MyInt const &a)
     {
@@ -141,7 +179,7 @@ namespace mixedCells
       rep=a;
     }
     
-    static bool isField() {return false;}
+    MY_INLINE static bool isField() {return false;}
 
     friend bool isZero(TrueInt const &a)
     {
@@ -151,8 +189,13 @@ namespace mixedCells
     {
       return (a.rep==0);
     }
+    friend bool isOne(TrueInt const &a)
+    {
+      return isZero(a.rep-1);
+    }
     friend TrueInt operator/(TrueInt const &a, TrueInt const &b)
     {
+      assert(a.rep%b.rep==0);
       return TrueInt(a.rep/b.rep);
     }
     friend TrueInt operator-(TrueInt const &a)
@@ -162,6 +205,10 @@ namespace mixedCells
     friend TrueInt operator-(TrueInt const &a, TrueInt const &b)
     {
       return TrueInt(a.rep-b.rep);
+    }
+    friend TrueInt operator+(TrueInt const &a, TrueInt const &b)
+    {
+      return TrueInt(a.rep+b.rep);
     }
     friend class TrueGen;
     friend class TrueGen operator*(TrueInt const &a, TrueGen const &b);
@@ -182,9 +229,19 @@ namespace mixedCells
     {
       rep-=a.rep;
     }
+    void operator/=(TrueInt const &a)
+    {
+      // only exact divisions should be allowed (no round off).
+      assert(rep%a.rep==0);
+      rep/=a.rep;
+    }
     void operator*=(TrueInt const &a)
     {
       rep*=a.rep;
+    }
+    friend TrueInt gcd(TrueInt const &s, TrueInt const &t)
+    {
+      return gcd(s.rep,t.rep);
     }
     friend double toDoubleForPrinting(TrueInt const &s)//change this to produce string
     {
@@ -229,6 +286,11 @@ namespace mixedCells
     {
       return isZero(a.rep);
     }
+    friend bool isOne(MyGen const &a)
+    {
+      return isZero(a.rep-1);
+    }
+
     friend MyGen operator/(MyGen const &a, MyGen const &b)
     {
       return MyGen(a.rep/b.rep);
@@ -270,6 +332,18 @@ namespace mixedCells
     {
       rep-=a.rep;
     }
+    void operator/=(MyInt const &a)
+    {
+      // only exact divisions should be allowed (no round off).
+      assert(round(rep)%round(a.rep)==0);
+      rep/=a.rep;
+    }
+    void operator/=(TrueInt const &a)
+    {
+      // only exact divisions should be allowed (no round off).
+      assert(round(rep)%a.rep==0);
+      rep/=a.rep;
+    }
     friend bool isPositive(MyGen const &a)
     {
       return a.rep>EPSILON;
@@ -295,17 +369,42 @@ namespace mixedCells
     {
       return a.rep<b.rep;
     }
+    /**
+       This will return the largest integer by which *this is
+       divisible. If all integers divide, then 0 is returned.
+     */
+    void assignGCD(MyInt &dest)const
+    {
+      dest=MyInt(0);
+    }
+    void assignGCD(TrueInt &dest)const
+    {
+      dest=TrueInt(0);
+    }
   };
 
   
   
 
-  //typedef MyInt LType;
-  typedef TrueInt LType;
+  typedef MyInt LType;
+  //typedef TrueInt LType;
   //typedef double LType;
   typedef MyGen RType;
   //typedef double RType;
 
+  
+  void normalizeRowPair(Matrix<LType> &AL, int j, Vector<RType> &R)
+  {
+    Matrix<LType>::RowRef row = AL[j];
+    LType g(0);
+    R[j].assignGCD(g);
+    for (int i=0; isOne(g) && i<AL.getWidth(); i++)
+      g = gcd(g,row[i]);
+    if (isZero(g)) return;
+    for (int i=0; i<AL.getWidth(); i++)
+      row[i] /= g;
+    R[j] /= g;
+  }
 
   void removeZeroRowsPair(Matrix<LType> &AL, Vector<RType> &AR)
 {
@@ -354,11 +453,22 @@ int reducePair(Matrix<LType> &L, Vector<RType> &R, bool returnIfZeroDeterminant)
 	  if (LType::isField()) {
 	    for(int j=currentRow+1;j<L.getHeight();j++)
 	      {
-		LType s=(L)[j][i]/(L)[currentRow][i];
-		L.multiplyAndAddRow(currentRow,-s,j);
-		R[j]+=(-s)*R[currentRow];
+		LType s = -L[j][i]/L[currentRow][i];
+		L.multiplyAndAddRow(currentRow,s,j);
+		R[j]+=s*R[currentRow];
 	      }
-	  } else assert(false);
+	  } else {
+	    for(int j=currentRow+1;j<L.getHeight();j++)
+	      if (!isZero(L[j][i])) {
+		//cerr << L[j].toVector() << endl;
+		LType g = gcd(L[j][i],L[currentRow][i]);
+		LType b = L[j][i]/g;
+		LType a = L[currentRow][i]/g;
+		L.replaceWithLinearCombination(j,a,currentRow,-b,j);
+		R[j] = a*R[j]-b*R[currentRow];
+		//cerr << "\n  a = " << a << ", b = " << b << " gcd = " << g << "\n " << (L[j][i]) << "\n";
+	      }
+	  };
 	  currentRow++;
 	}
       else
@@ -489,7 +599,9 @@ namespace mixedCells
      to which this matrix is reduced is changed dynamically. For this
      to work the pivotIndices and isPivot vectors are needed.
 
-     ????The last column is never a pivot???????
+     It is not possible to push a vector which forces the last column
+     to have a pivot (the push call will "fail"), see push(). The last
+     column will never have a pivot.
    */  
   template<class typL, class typR> class Reducer
 {
@@ -509,9 +621,15 @@ namespace mixedCells
   Vector<typL> temp2L;
   typR temp2R;
   /**
-     
+     The ith entry of this vector contains the index of the pivot in
+     the ith row. This vector has length n at initialization but only
+     the first d entries are meaningful.
    */
   IntegerVector pivotIndices;
+  /**
+     The ith entry of this matrix tells whether the ith column of
+     [mL] (restricted to the first d rows) contains a pivot.
+   */
   IntegerVector isPivot;
   /**
      The dimension of the ambient space of L is n+1.
@@ -528,15 +646,24 @@ namespace mixedCells
     mL(n_,n_),
     mR(n_,1),
     pivotIndices(n_),
-    isPivot(n_+1),//last is never pivot
+    isPivot(n_),
     tempL(n_),
     temp2L(n_)
   {
   }
+  /**
+     Add the line generated by (vL,vR) to the subspace. Notice that if
+     this makes the standard basis vector e_{n+1} go into the L, then
+     the push is not performed and false is returned. Also if the line
+     was already contained in L no push is performed and the return
+     value is false. In the first case we get an inconsistency for our
+     LPs since the last coordinate of an element in the kernel is
+     forced to be zero. The latter case never happens in our
+     application since the dimension is supposed to drop by one every
+     time because of the generic lifting.?????? Is this really true?
+   */
   bool push(Vector<typL> const &vL, typR const &vR)
   {
-    //    cerr<<*this;
-    //    cerr<<"REDUCERPUSH:"<<vL<<vR<<endl;
     mL[d].set(vL);
     mR[d]=vR;
     for(int i=0;i<d;i++)
@@ -546,41 +673,53 @@ namespace mixedCells
       }
     int pivot=-1;
     for(int j=0;j<n;j++)if(!isZero(mL[d][j])){pivot=j;break;}
-    if(pivot==-1)if(!isZero(mR[d]))pivot=n;
-    if(pivot==-1)return false;
-    if(pivot==n)
+    if(pivot==-1)
       {
-	return false;//???????????????????????????????????????????????????
-	mR[d]=1;//(1.0/mL[d][pivot])*mR[d];
-	//mL.scaleRow(d,1.0/mL[d][pivot]);
-	pivotIndices[d]=pivot;
-	//isPivot[pivot]=true;
-	d++;
-	return true;
+	assert(!isZero(mR[d]));// Remove this line later.??????
+	return false;
       }
     if (typL::isField()) {
       typL mult = 1/mL[d][pivot];
       mR[d] = mult*mR[d];
       mL.scaleRow(d,mult);
-    } else assert(false);
+    } else {
+      normalizeRowPair(mL,d,mR);
+    }
     pivotIndices[d]=pivot;
     isPivot[pivot]=true;
     d++;
-    //cerr<<"PUSH";
     return true;
   }
+  /**
+     Pop the latest added generator to L.
+   */
   void pop()
   {
-    //    cerr<<"POP";
     d--;
     isPivot[pivotIndices[d]]=false;
-  } 
+  }
   friend std::ostream& operator<<(std::ostream& s, Reducer const &r)
   {
     s<<"Reducer:"<<endl;
     s<<r.mL.submatrix(0,0,r.d,r.mL.getWidth());
     s<<r.mR.subvector(0,r.d);
+    return s;
   }
+  /**
+     This mehtod transforms the inequalities (rows of the matrix
+     [originalL|originalR]) to their normal forms modulo L by reducing
+     with the matrix representation of L. Only coordinates with no
+     pivots have to be stored. That is, n-d for the left handside, and
+     1 for the right hand side. In total d coordinates are removed.
+
+     The output is stored in [LeftHandSide|RightHandSide], and these
+     two matrices (/vector) must have been initialiazed to the right
+     width, and with a sufficient number of rows before calling.
+
+     If the normal form of an inequality turns out to be zero, then it
+     is not stored. The total number of stored inequalities is the
+     return value of the method.
+   */
   int storeAndSplitNormalForms(Matrix<typL> const &originalL, Vector<typR> const &originalR, Matrix<typL> &LeftHandSide, Vector<typR> &RightHandSide)
   {
     int ret=0;
@@ -607,6 +746,24 @@ namespace mixedCells
       }
     return ret;
   }
+  /**
+     This mehtod transforms the inequalities (rows of the matrix
+     [sourceL|sourceR]) to their normal forms modulo L by reducing
+     with the matrix representation of L. Only coordinates with no pivots have
+     to be stored. Therefore, the input has n+1 coordinates for the
+     left handside, and 1 for the right hand side. The output has only
+     n-d coordinates for the left handside.
+
+     The output is stored in [destinationL|destinationR], but
+     starting at row destinationOffset. The two matrices (/vector)
+     must have been initialiazed to the right width, and with a
+     sufficient number of rows before calling.
+
+     If the normal form of an inequality turns out to be zero, then it
+     is not stored. The total number of stored inequalities is the
+     return value of the method unless if one of the inequalities is
+     inconsistent. In this case a -1 is returned. FIX DOCUMENTATION
+   */
   int reduction(Matrix<typL> const &sourceL, Vector<typR> const sourceR, Matrix<typL> &destinationL, Vector<typR> &destinationR, int destinationOffset)
   {
     /*    cerr<<"-----------------------"<<endl;
@@ -655,6 +812,26 @@ namespace mixedCells
   //  static unsigned char hashTable[256];
  mutable unsigned char hashTable[256];
 #endif
+  /**
+     This mehtod transforms the inequalities (rows of the matrix
+     [sourceL|sourceR]) to their normal forms modulo L by reducing
+     with the matrix representation of L, under the assumption that
+     the equations were already reduced by the first d-1 rows of the
+     matrix representation of L. Only coordinates with no pivots have
+     to be stored. Therefore, the input has n-d+1 coordinates for the
+     left handside, and 1 for the right hand side. The output has
+     only n-d coordinates for the left handside.
+
+     The output is stored in [destinationL|destinationR], but
+     starting at row destinationOffset. The two matrices (/vector)
+     must have been initialiazed to the right width, and with a
+     sufficient number of rows before calling.
+
+     If the normal form of an inequality turns out to be zero, then it
+     is not stored. The total number of stored inequalities is the
+     return value of the method unless if one of the inequalities is
+     inconsistent. In this case a -1 is returned. FIX DOCUMENTATION
+   */
   int singleReduction(Matrix<typL> const &sourceL, Vector<typR> const &sourceR, int numberOfUsedRowsInSource, Matrix<typL> &destinationL, Vector<typR> &destinationR)
   {
     /*    cerr<<"------------++++++++++-----------"<<endl;
@@ -757,7 +934,7 @@ namespace mixedCells
     //	for(int j=0;j<n-d;j++)if(!m.isZero(destination[ret][j])){leftHandSideZero=false;break;}
     assert(destinationL.getWidth()==n-d);
     bool leftHandSideZero=destinationL[ret].isZero();
-	if(leftHandSideZero)//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	if(leftHandSideZero)
 	  {
 	    if(isNegative(destinationR[ret]/*[n-d]*/))return -1;//infeasible
 	  }
@@ -823,6 +1000,8 @@ namespace mixedCells
     return false;
   }
 };
+
+
 
   typedef Reducer<LType,RType> ReducerExact;
 
@@ -1303,7 +1482,9 @@ namespace mixedCells
 	    int newAffineDimension=reducer->newAffineDimension();
 	    Inequalities=Matrix<LType>(numberOfInequalities,newAffineDimension);
 	    RightHandSide=Vector<RType>(numberOfInequalities);
-	    int newNumberOfInequalities=reducer->storeAndSplitNormalForms(this->inequalitiesL,this->inequalitiesR,Inequalities,RightHandSide);
+	    //int newNumberOfInequalities=reducer->storeAndSplitNormalForms(this->inequalitiesL,this->inequalitiesR,Inequalities,RightHandSide);
+	    int newNumberOfInequalities=reducer->reduction(this->inequalitiesL,this->inequalitiesR,Inequalities,RightHandSide,0);
+	    assert(newNumberOfInequalities>=0);
 	    if(newNumberOfInequalities!=this->inequalitiesL.getHeight())
 	      {
 		Inequalities=Inequalities.submatrix(0,0,newNumberOfInequalities,Inequalities.getWidth());
@@ -1316,6 +1497,7 @@ namespace mixedCells
 	    Vector<RType> equationsR=this->equationsR;
 	    //	    equations.reduce(false);
 	    reducePair(equationsL,equationsR,false);
+	    //	    cerr << equationsL << endl << equationsR << endl; 
 	    {
 	      if(equationsL.numberOfPivots()!=equationsL.getHeight())return false;//THIS ONLY WORKS IF THERE ARE NO REPEATED EQUATIONS
 	      /*	      int pivotI=-1;
@@ -1918,8 +2100,6 @@ public:
 		}
 	      if(ok)statistics.nLPRunNodes++;
 	      bool pushed=reducer.push(fans[chosenFans[index]].cones[i].equationsL[0].toVector(),fans[chosenFans[index]].cones[i].equationsR[0]);
-	      //	      cerr<<"+++";
-	      // cerr<<"RETURNVAL:"<<pushed<<endl<<reducer;
 	      if(pushed)
 		{
 		  int numberOfAddedInequalities=0;

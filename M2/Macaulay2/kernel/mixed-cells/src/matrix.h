@@ -387,6 +387,14 @@ template <class typ> class Matrix{
 	//    for(int i=0;i<width;i++)
 	// (*this)[destinationRow][i]+=scalar* (*this)[sourceRow][i];
   }
+  void replaceWithLinearCombination(int row1, typ a1, int row2, typ a2, int destinationRow)
+  {
+    typ * __restrict r1=data+width*row1;
+    typ * __restrict r2=data+width*row2;
+    typ * __restrict dest=data+width*destinationRow;
+    for(int i=0;i<width;i++)
+      dest[i] = a1*r1[i]+a2*r2[i];
+  }
   void scaleColumn(int column, typ scalar)
   {
     for(int i=0;i<height;i++)
@@ -397,7 +405,6 @@ template <class typ> class Matrix{
     for(int i=0;i<width;i++)
       (*this)[row][i]*=scalar;
   }
-
   friend std::ostream& operator<<(std::ostream& s, const Matrix &m)
 {
   s<<m.height<<" "<<m.width<<endl;
@@ -653,7 +660,10 @@ template <class typ> class Matrix{
 }
   void cycleColumnsLeft(int offset);
 
-  void REformToRREform(bool scalePivotsToOne=false)
+  /**
+     Takes the matrix from row echelon form to reduced row echelon form.
+   */
+  void REformToRREform(bool scalePivotsToOne=false) //!!! next function to rewrite
   {
     int pivotI=-1;
     int pivotJ=-1;
@@ -716,7 +726,7 @@ template <class typ> class Matrix{
   // cerr<<"TEMP"<<temp;
   temp.reduce(false);
   //cerr<<"TEMP"<<temp;
-  temp.REformToRREform(true);
+  temp.REformToRREform(true/*!!!LType::isField()*/);
   //cerr<<"TEMP"<<temp;
   Matrix ret=temp.submatrix(0,height,height,2*height);
   ///cerr<<"RET"<<ret;
