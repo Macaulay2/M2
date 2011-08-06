@@ -794,6 +794,9 @@ template <class typ> class Matrix{
     return ret;
   }
 #else
+  /**
+     We use the second int word of the data, since typ most likely is a double, and the interesting part of a 64bit double happens in those 32 bit.
+   */
   MY_INLINE unsigned char hashValue(int row, int numberOfEntriesToConsider)const
   {
     int ret=0;
