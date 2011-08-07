@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 --------------------------------------------------------------------------------
--- Copyright 2009, 2010  Gregory G. Smith
+-- Copyright 2009, 2010, 2011  Gregory G. Smith
 --
 -- This program is free software: you can redistribute it and/or modify it under
 -- the terms of the GNU General Public License as published by the Free Software
@@ -18,8 +18,8 @@
 newPackage(
   "NormalToricVarieties",
   AuxiliaryFiles => true,
-  Version => "1.0",
-  Date => "5 August 2011",
+  Version => "1.1",
+  Date => "7 August 2011",
   Authors => {{
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
@@ -63,8 +63,6 @@ export {
   "emsBound",
   "rawHHOO",
   "makeSimplicial",
-  "Regular",
-  "Push",
   "blowup",
   "makeSmooth"
   }
@@ -969,14 +967,14 @@ regularSubdivision (NormalToricVariety, List, List) := NormalToricVariety => (
 
 makeSimplicial = method(
   TypicalValue => NormalToricVariety,
-  Options => {Strategy => Regular})
+  Options => {Strategy => 0})
 makeSimplicial NormalToricVariety := opts -> X -> (
   Y := X;
   local F;
   local V;
   local k;
   local s;
-  if opts.Strategy === Push then (
+  if opts.Strategy === 1 then (
     while true do (
       F = max Y;
       V = transpose matrix rays Y;
@@ -1093,7 +1091,7 @@ document {
     {"David A. Cox, John B. Little, Hal Schenck, ", 
       HREF("http://www.cs.amherst.edu/~dac/toric.html", EM "Toric varieties"), 
       ", Graduate Studies in Mathematics 124. American Mathematical Society, 
-      Providence RI, 2011.  ISBN: 978-0-8218-4817-7")},
+      Providence RI, 2011.  ISBN: 978-0-8218-4817-7"},
     {"Günter Ewald, ", EM "Combinatorial convexity and algebraic geometry", ",
       Graduate Texts in Mathematics 168.  Springer-Verlag, New York, 1996. ISBN:
       0-387-94755-8" },      
@@ -4015,7 +4013,7 @@ document {
   Usage => "makeSimplical X",
   Inputs => {
     "X" => NormalToricVariety,
-    Strategy => {"either ", TT "Regular", " or ", TT "Push"}},
+    Strategy => {"either ", TT "0", " or ", TT "1"}},
   Outputs => {NormalToricVariety => " which is simplicial"},
   "A normal toric variety is simplical if every cone in its fan is simplicial
   and a cone is simplicial if its minimal generators are linearly independent
@@ -4032,9 +4030,9 @@ document {
   PARA{},
   "Given a normal toric variety, this method makes a simplicial toric variety
   with the same rays by triangulating the non-simplicial maximal cones.  For 
-  the ", TT "Regular", " strategy, the triangulation is constructed by repeated 
+  the ", TT "0", " strategy, the triangulation is constructed by repeated 
   regular subdivisions using random integral weight vectors.  For the ",
-  TT "Push", " strategy, the triangulation is constructed by repeated pushing
+  TT "1", " strategy, the triangulation is constructed by repeated pushing
   subdivisions (i.e. blowups at a given ray).",
   EXAMPLE lines ///
     X = normalToricVariety(id_(ZZ^3) | - id_(ZZ^3));
@@ -4044,7 +4042,7 @@ document {
     rays Y1 === rays X
     max Y1
     max X
-    Y2 = makeSimplicial(X, Strategy => Push);
+    Y2 = makeSimplicial(X, Strategy => 1);
     isSimplicial Y2
     rays Y2 === rays X
     max Y2
