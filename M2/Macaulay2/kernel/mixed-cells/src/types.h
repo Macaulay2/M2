@@ -1,11 +1,16 @@
 
 namespace mixedCells
 {
+  // service functions ////////////////////////////////////////////////
   int round(double x) { return (x>0)? int(x+.499999) : int(x-.499999); }
+  
+  /// returns g = gcd(a,b)
+  /// sgn(g) == sgn(a) 
   int gcd(int a, int b) 
   {
+    bool p = (a>=0);
     while (true) {
-      if (b == 0) return a;
+      if (b == 0) return ((a>=0)==p)?a:-a;
       else {
 	int c = a%b;
 	a = b;
@@ -52,6 +57,9 @@ namespace mixedCells
 
   class DoubleGen; // g++ 4.1.2 wants this
   
+  /** An inmitation integer class
+   */
+
   class DoubleInt{
     double rep;
   public:
@@ -246,6 +254,123 @@ namespace mixedCells
     }
   };
 
+  /** short rational numbers ************************************
+   */
+  class ShortRat{
+    int c,d,;
+  public:
+    ShortRat(int a, int b)
+    {
+      assert (b!=0);
+      c=a; d=b;
+    }
+    ShortRat(int a)
+    {
+      c=a;
+      d=1;
+    }
+    void reduce()
+    {
+      if (c==0) {
+	d = 1;
+      } else {
+	int g = gcd(d,c);
+	d /= g;
+	c /= g;
+      }
+    }
+    bool isInteger() const
+    {
+      return gcd(d,c)==d;
+    }
+    MY_INLINE static bool isField() 
+    {
+      return true;
+    }
+    friend bool isZero(ShortRat const &a)
+    {
+      return (a.c==0);
+    }
+    friend bool isZero2(ShortRat const &a)
+    {
+      return (a.c==0);
+    }
+    friend bool isOne(ShortRat const &a)
+    {
+      return (a.c==a.d);
+    }
+    friend ShortRat operator/(ShortRat const &a, ShortRat const &b)
+    {
+      assert (!isZero(b));
+      return ShortRat(a.c*b.d, a.d*b.c);
+    }
+    friend ShortRat operator-(ShortRat const &a)
+    {
+      return ShortRat(-a.c,a.d);
+    }
+    friend ShortRat operator-(ShortRat const &a, ShortRat const &b)
+    {
+      return ShortRat(a.c*b.d-b.c*a.d, a.d*b.d);
+    }
+    friend ShortRat operator+(ShortRat const &a, ShortRat const &b)
+    {
+      return ShortRat(a.c*b.d+b.c*a.d, a.d*b.d);
+    }
+    friend class DoubleGen;
+    friend class DoubleGen operator*(ShortRat const &a, DoubleGen const &b);
+    friend int volumeToInt(ShortRat const &a)
+    {
+      assert(a.isInteger());
+      return a.c;
+    }
+    friend ShortRat operator*(ShortRat const &s, ShortRat const &t)
+    {
+      return ShortRat(s.c*t.c, s.d*t.d);
+    }
+    void operator+=(ShortRat const &a)
+    {
+      c = c*a.d+d*a.c;
+      d *= a.d; 
+    }
+    void operator-=(ShortRat const &a)
+    {
+      c = c*a.d-d*a.c;
+      d *= a.d; 
+    }
+    void operator/=(ShortRat const &a)
+    {
+      assert(!isZero(a));
+      c *= a.d;
+      d *= a.c;
+    }
+    void operator*=(ShortRat const &a)
+    {
+      c *= a.c;
+      d *= a.d;
+    }
+    friend ShortRat gcd(ShortRat const &s, ShortRat const &t)
+    {
+      return ShortRat(1);
+    }
+    friend double toDoubleForPrinting(ShortRat const &s)//change this to produce string
+    {
+      return ((double)s.c)/s.d;
+    }
+    friend std::ostream& operator<<(std::ostream& s, const ShortRat &a)
+    {
+      s<<toDoubleForPrinting(a);
+      return s;
+    }
+    friend bool isNegative(ShortRat const &a)
+    {
+      return a.c<0&&a.d>0 || a.c>0&&a.d<0;
+    }
+    friend bool isEpsilonLessThan(ShortRat const &a, ShortRat const &b)
+    {
+      return isNegative(a-b);
+    }
+  };
+
   class DoubleGen{
     double rep;
   public:
@@ -291,6 +416,10 @@ namespace mixedCells
     {
       return DoubleGen(a.rep*b.rep);
     }
+    friend class DoubleGen operator*(ShortRat const &a, DoubleGen const &b)
+    {
+      return DoubleGen(a.c*b.rep/a.d);
+    }
     friend class TrueGen operator*(ShortInt const &a, TrueGen const &b)
     {
       return TrueGen(a.rep*b.rep);
@@ -323,6 +452,10 @@ namespace mixedCells
       // only exact divisions should be allowed (no round off).
       assert(round(rep)%a.rep==0);
       rep/=a.rep;
+    }
+    void operator/=(ShortRat const &a)
+    {
+      rep = rep * a.d / a.c;
     }
     friend bool isPositive(DoubleGen const &a)
     {
@@ -361,5 +494,10 @@ namespace mixedCells
     {
       dest=ShortInt(0);
     }
+    void assignGCD(ShortRat &dest)const
+    {
+      dest=ShortRat(0);
+    }
   };
-};
+
+};// end namespace mixedCells

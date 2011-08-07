@@ -1,6 +1,7 @@
 namespace mixedCells
 {
-  typedef DoubleInt LType;
+  typedef ShortRat LType;
+  //typedef DoubleInt LType;
   //typedef ShortInt LType;
   //typedef double LType;
   typedef DoubleGen RType;
