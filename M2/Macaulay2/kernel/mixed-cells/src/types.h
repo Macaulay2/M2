@@ -1,4 +1,4 @@
-
+#define ABS(d) (((d)>=0)?(d):-(d))
 namespace mixedCells
 {
   // service functions ////////////////////////////////////////////////
@@ -37,7 +37,7 @@ namespace mixedCells
 
   int volumeToInt(double d)
   {
-    return (int)(((d>=0)?d:-d)+0.25);
+    return (int)(ABS(d)+0.25);
   }
 
   double toDoubleForPrinting(double s)
@@ -203,7 +203,7 @@ namespace mixedCells
     //    friend class TrueGen operator/(ShortInt const &a, TrueGen const &b);//!!!!!!!!!!
     friend int volumeToInt(ShortInt const &a)
     {
-      return a.rep;
+      return ABS(a.rep);
     }
     friend ShortInt operator*(ShortInt const &s, ShortInt const &t)
     {
@@ -257,12 +257,13 @@ namespace mixedCells
   /** short rational numbers ************************************
    */
   class ShortRat{
-    int c,d,;
+    int c,d;
   public:
     ShortRat(int a, int b)
     {
       assert (b!=0);
       c=a; d=b;
+      reduce();
     }
     ShortRat(int a)
     {
@@ -278,6 +279,10 @@ namespace mixedCells
 	d /= g;
 	c /= g;
       }
+    }
+    int toInteger() const
+    {
+      return c/d;
     }
     bool isInteger() const
     {
@@ -321,7 +326,7 @@ namespace mixedCells
     friend int volumeToInt(ShortRat const &a)
     {
       assert(a.isInteger());
-      return a.c;
+      return ABS(a.toInteger());
     }
     friend ShortRat operator*(ShortRat const &s, ShortRat const &t)
     {
@@ -331,22 +336,26 @@ namespace mixedCells
     {
       c = c*a.d+d*a.c;
       d *= a.d; 
+      reduce();
     }
     void operator-=(ShortRat const &a)
     {
       c = c*a.d-d*a.c;
       d *= a.d; 
+      reduce();
     }
     void operator/=(ShortRat const &a)
     {
       assert(!isZero(a));
       c *= a.d;
       d *= a.c;
+      reduce();
     }
     void operator*=(ShortRat const &a)
     {
       c *= a.c;
       d *= a.d;
+      reduce();
     }
     friend ShortRat gcd(ShortRat const &s, ShortRat const &t)
     {

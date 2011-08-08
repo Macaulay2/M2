@@ -271,11 +271,11 @@ template <class typ> class Matrix{
   height(height_),
     width(width_)
   {
-    data=(typ*)MATRIXMALLOC(height*width*sizeof(typ));
+    data=(typ*)MATRIXMALLOC(height*width*sizeof(typ)); //!!! won't work with gmp
     //    for(int i=0;i<height*width;i++)data[i]=0;
     const int I=height*width;
-    //for(int i=0;i<I;i++)data[i]=0;
-    memset(data,0,sizeof(typ)*width*height);
+    for(int i=0;i<I;i++) data[i] = 0;
+    // memset(data,0,sizeof(typ)*width*height); // does not work with ShortRat
   }
  Matrix(const Matrix &m):
   height(m.height),
@@ -284,7 +284,7 @@ template <class typ> class Matrix{
      data=(typ*)MATRIXMALLOC(height*width*sizeof(typ));
      //for(int i=0;i<height*width;i++)data[i]=m.data[i];
      const int I=height*width;
-     for(int i=0;i<I;i++)data[i]=m.data[i];
+     for(int i=0;i<I;i++)data[i]=m.data[i]; //!!! won't work with gmp
      //memcpy(data,m.data,sizeof(typ)*width*height);
     }
   Matrix& operator=(const Matrix& m)
@@ -407,6 +407,7 @@ template <class typ> class Matrix{
   }
   friend std::ostream& operator<<(std::ostream& s, const Matrix &m)
 {
+  assert(0);
   s<<m.height<<" "<<m.width<<endl;
   for(int i=0;i<m.height;i++)
     {
@@ -613,6 +614,7 @@ template <class typ> class Matrix{
    determinant is zero. */
   int reduce(bool returnIfZeroDeterminant)
 {
+  //  cerr<<*this;
   //  if(width<=1)cerr<<height<<"x"<<width<<endl;
   int retSwaps=0;
   int currentRow=0;

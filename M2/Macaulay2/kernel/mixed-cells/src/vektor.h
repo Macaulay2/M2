@@ -14,6 +14,7 @@ typedef signed long long int64;
 //#define VECTORMALLOC(x) malloc(x)
 //#define VECTORFREE(x) free(x)
 
+// !!! Can't be used for more advanced classes !!! 
 #define VECTORMALLOC(x) mixedCells::allocator.alloc(x)
 #define VECTORFREE(x) mixedCells::allocator.free(x)
 

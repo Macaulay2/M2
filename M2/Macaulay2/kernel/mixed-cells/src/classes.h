@@ -652,6 +652,8 @@ namespace mixedCells
     void updateCandidateEdge(int i)
     {
       edgeCandidateOneEntry=i;
+      // cerr << "Ainv " << Ainv;
+      // cerr << "A " << A;
       for(int j=0;j<basis.size();j++)
 	edgeCandidateValues[j]=-A.rowDotColumnOfOther(i,Ainv,j);
     }
