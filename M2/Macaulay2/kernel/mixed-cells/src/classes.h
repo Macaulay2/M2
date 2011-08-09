@@ -4,7 +4,8 @@ namespace mixedCells
   //typedef DoubleInt LType;
   //typedef ShortInt LType;
   //typedef double LType;
-  typedef DoubleGen RType;
+  //  typedef DoubleGen RType;
+  typedef ShortRatGen RType;
   //typedef double RType;
 
   
@@ -684,40 +685,37 @@ namespace mixedCells
       bool first=true;
       newNonBasisMemberIndex=-1;
 
-      //      if(useNewAntiCyclingRule)
-      {
-	for(int s=0;s<basis.size();s++)
-	  if(isNegative(edgeCandidateValues[s]))
-	    {
-	      if(first)
-		{
-		  newNonBasisMemberIndex=s;
-		  first=false;
-		}
-	      else
-		{
-		  bool isBetter=true;
-		  //		  if(-yValues[s]/edgeCandidateValues[s]+EPSILON<-yValues[newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex])goto isBetter;
-		  if(isEpsilonLessThan(-yValues[s]/edgeCandidateValues[s],-yValues[newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex]))goto isBetter;
-		  if(isEpsilonLessThan(-yValues[newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex],-yValues[s]/edgeCandidateValues[s]))goto isNotBetter;
-		  for(int a=0;a<basis.size();a++)
-		    {
-		  
-		      if(isEpsilonLessThan(-Ainv[a][s]/edgeCandidateValues[s],-Ainv[a][newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex]))goto isBetter;
-		      if(isEpsilonLessThan(-Ainv[a][newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex],-Ainv[a][s]/edgeCandidateValues[s]))goto isNotBetter;
-		    }
-		  assert(0);
+      // This is the new anti-cycling rule
+      for(int s=0;s<basis.size();s++)
+	if(isNegative(edgeCandidateValues[s]))
+	  {
+	    if(first)
+	      {
+		newNonBasisMemberIndex=s;
+		first=false;
+	      }
+	    else
+	      {
+		bool isBetter=true;
+		//		  if(-yValues[s]/edgeCandidateValues[s]+EPSILON<-yValues[newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex])goto isBetter;
+		if(isEpsilonLessThan(-yValues[s]/edgeCandidateValues[s],-yValues[newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex]))goto isBetter;
+		if(isEpsilonLessThan(-yValues[newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex],-yValues[s]/edgeCandidateValues[s]))goto isNotBetter;
+		for(int a=0;a<basis.size();a++)
+		  {
+		    
+		    if(isEpsilonLessThan(-Ainv[a][s]/edgeCandidateValues[s],-Ainv[a][newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex]))goto isBetter;
+		    if(isEpsilonLessThan(-Ainv[a][newNonBasisMemberIndex]/edgeCandidateValues[newNonBasisMemberIndex],-Ainv[a][s]/edgeCandidateValues[s]))goto isNotBetter;
+		  }
+		assert(0);
 		isNotBetter:		    
-		  isBetter=false;
-		isBetter:
-		  if(isBetter)newNonBasisMemberIndex=s;
-		}
-	    }
-	if(newNonBasisMemberIndex!=-1)
-	  return -(yValues[newNonBasisMemberIndex])/edgeCandidateValues[newNonBasisMemberIndex]*ew;
-	return 0;
-      }
-      return ret*ew;
+		isBetter=false;
+	      isBetter:
+		if(isBetter)newNonBasisMemberIndex=s;
+	      }
+	  }
+      if(newNonBasisMemberIndex!=-1)
+	return -(yValues[newNonBasisMemberIndex])/edgeCandidateValues[newNonBasisMemberIndex]*ew;
+      return 0;
     }
   public:
     /**
@@ -1058,7 +1056,7 @@ namespace mixedCells
 
       int newAffineDimension=reducer.newAffineDimension();
       Matrix<LType> Inequalities=coneInequalitiesL.submatrix(0,0,newNumberOfInequalities,newAffineDimension);
-      Vector<RType>  RightHandSide=-1*(coneInequalitiesR.subvector(0,newNumberOfInequalities));
+      Vector<RType>  RightHandSide=-coneInequalitiesR.subvector(0,newNumberOfInequalities);
 
       LPExact lp(Inequalities,Vector<LType>(Inequalities.getWidth()));
       lp.setObjectiveFunction(RightHandSide);
@@ -1140,7 +1138,7 @@ namespace mixedCells
 	    
 	    normalFormPairs(inequalitiesL,inequalitiesR,Inequalities,RightHandSide,equationsL,equationsR);
 	    removeZeroRowsPair(Inequalities,RightHandSide);
-	    RightHandSide=(-1)*RightHandSide;
+	    RightHandSide=-RightHandSide;
 	  }
 
 	
@@ -1225,7 +1223,7 @@ namespace mixedCells
     {
       int numberOfVertices=p.vertices.size();
       Vector<RType> heights(numberOfVertices);
-      for(int i=0;i<numberOfVertices;i++)heights[i]=random();
+      for(int i=0;i<numberOfVertices;i++)heights[i].random();
       cerr<<"Heights"<<heights<<endl;
 
       vector<pair<int,int> > edges;

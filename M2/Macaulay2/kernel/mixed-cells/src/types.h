@@ -1,4 +1,6 @@
+#define MAX_RANDOM_INT 50
 #define ABS(d) (((d)>=0)?(d):-(d))
+#define MAX(a,b) (((a)>(b))?(a):(b))
 namespace mixedCells
 {
   // service functions ////////////////////////////////////////////////
@@ -270,6 +272,11 @@ namespace mixedCells
       c=a;
       d=1;
     }
+    ShortRat()
+    {
+      c=0;
+      d=1;
+    }
     void reduce()
     {
       if (c==0) {
@@ -374,7 +381,15 @@ namespace mixedCells
     {
       return a.c<0&&a.d>0 || a.c>0&&a.d<0;
     }
+    friend bool isPositive(ShortRat const &a)
+    {
+      return a.c<0&&a.d<0 || a.c>0&&a.d>0;
+    }
     friend bool isEpsilonLessThan(ShortRat const &a, ShortRat const &b)
+    {
+      return isNegative(a-b);
+    }
+    friend bool operator<(ShortRat const &a, ShortRat const &b)
     {
       return isNegative(a-b);
     }
@@ -490,6 +505,191 @@ namespace mixedCells
     friend bool operator<(DoubleGen const &a, DoubleGen const &b)
     {
       return a.rep<b.rep;
+    }
+    /**
+       This will return the largest integer by which *this is
+       divisible. If all integers divide, then 0 is returned.
+     */
+    void assignGCD(DoubleInt &dest)const
+    {
+      dest=DoubleInt(0);
+    }
+    void assignGCD(ShortInt &dest)const
+    {
+      dest=ShortInt(0);
+    }
+    void assignGCD(ShortRat &dest)const
+    {
+      dest=ShortRat(0);
+    }
+  };
+
+  class ShortRatGen{
+    static const int maxlength=3;
+    int length;
+    ShortRat v[maxlength];
+  public:
+    ShortRatGen()
+    {
+      length=0;
+    }
+    /*ShortRatGen(double a)
+    {
+      rep=(double)a;
+    }
+    */
+
+    ShortRatGen(int a)
+    {
+      length=1;
+      v[0]=a;
+    }
+    void random()
+    {
+      length=maxlength;
+      for(int i=0; i<length; i++) v[i]=rand()%MAX_RANDOM_INT;
+    }
+    friend bool isZero(ShortRatGen const &a)
+    {
+      for(int i=0;i<a.length;i++)if(!isZero(a.v[i]))return false;
+      return true;
+    }
+    /*    friend bool isZero2(ShortRatGen const &a)
+    {
+      return isZero(a.rep);
+      }*/
+    /*    friend bool isOne(ShortRatGen const &a)
+    {
+      return isZero(a.rep-1);
+      }*/
+
+    /*    friend ShortRatGen operator/(ShortRatGen const &a, ShortRatGen const &b)
+    {
+      return ShortRatGen(a.rep/b.rep);
+      }*/
+    friend ShortRatGen operator-(ShortRatGen const &a)
+    {
+      ShortRatGen ret;
+      ret.length = a.length;
+      for(int i=0;i<ret.length;i++) ret.v[i]=-a.v[i];
+      return ret;
+    }
+    friend ShortRatGen operator-(ShortRatGen const &a, ShortRatGen const &b)
+    {
+      ShortRatGen ret;
+      for(int i=0;i<maxlength;i++)ret.v[i]=a.v[i]-b.v[i];
+      ret.length=MAX(a.length,b.length);
+      return ret;
+    }
+    friend ShortRatGen operator+(ShortRatGen const &a, ShortRatGen const &b)
+    {
+      ShortRatGen ret;
+      for(int i=0;i<maxlength;i++)ret.v[i]=a.v[i]+b.v[i];
+      ret.length=MAX(a.length,b.length);
+      return ret;
+    }
+    /*    friend class ShortRatGen operator*(DoubleInt const &a, ShortRatGen const &b)
+    {
+      return ShortRatGen(a.rep*b.rep);
+      }*/
+    friend class ShortRatGen operator*(ShortRat const &a, ShortRatGen const &b)
+    {
+      ShortRatGen ret;
+      for(int i=0;i<b.length;i++)ret.v[i]=a*b.v[i];
+      ret.length=b.length;
+      return ret;
+    }
+    /*
+    friend class TrueGen operator*(ShortInt const &a, TrueGen const &b)
+    {
+      return TrueGen(a.rep*b.rep);
+    }
+    friend ShortRatGen operator*(ShortRatGen const &s, ShortRatGen const &t)
+    {
+      //      assert(0);//WHY IS THIS CALLED?
+      return ShortRatGen(s.rep*t.rep);
+      }*/
+    /*    friend class ShortRatGen operator/(DoubleInt const &a, ShortRatGen const &b)
+    {
+      return ShortRatGen(a.rep/b.rep);
+      }*/
+    void operator+=(ShortRatGen const &a)
+    {
+      if(length<a.length)length=a.length;
+      for(int i=0;i<length;i++)v[i]+=a.v[i];
+    }
+    void operator-=(ShortRatGen const &a)
+    {
+      if(length<a.length)length=a.length;
+      for(int i=0;i<length;i++)v[i]-=a.v[i];
+    }
+    /*    void operator/=(DoubleInt const &a)
+    {
+      // only exact divisions should be allowed (no round off).
+      assert(round(rep)%round(a.rep)==0);
+      rep/=a.rep;
+      }*/
+    /*    void operator/=(ShortInt const &a)
+    {
+      // only exact divisions should be allowed (no round off).
+      assert(round(rep)%a.rep==0);
+      rep/=a.rep;
+      }*/
+    void operator/=(ShortRat const &a)
+    {
+      for(int i=0;i<length;i++)v[i]=v[i]/a;
+    }
+    friend bool isPositive(ShortRatGen const &a)
+    {
+      for(int i=0;i<a.length;i++)
+	{
+	  if(isPositive(a.v[i]))return true;
+	  if(isNegative(a.v[i]))return false;
+	}
+      return false;
+    }
+    friend bool isNegative(ShortRatGen const &a)
+    {
+      for(int i=0;i<a.length;i++)
+	{
+	  if(isPositive(a.v[i]))return false;
+	  if(isNegative(a.v[i]))return true;
+	}
+      return false;
+    }
+    friend double toDoubleForPrinting(ShortRatGen const &s)//change this to produce string
+    {
+      double ret=0;
+      double epsn=1;
+      for(int i=0;i<s.length;i++)
+	{
+	  ret+=epsn*toDoubleForPrinting(s.v[i]);
+	  epsn*=0.01;
+	}
+      return ret;
+    }
+    friend std::ostream& operator<<(std::ostream& s, const ShortRatGen &a)
+    {
+      s<<toDoubleForPrinting(a);
+      return s;
+    }
+    friend bool isGreaterEqual(ShortRatGen const &a, ShortRatGen const &b)
+    {
+      for(int i=0;i<maxlength;i++)
+	{
+	  if(a.v[i]<b.v[i])return false;
+	  if(b.v[i]<a.v[i])return true;
+	}
+      return true;
+    }
+    friend bool operator<(ShortRatGen const &a, ShortRatGen const &b)
+    {
+      for(int i=0;i<maxlength;i++)
+	{
+	  if(a.v[i]<b.v[i])return true;
+	  if(b.v[i]<a.v[i])return false;
+	}
+      return false;
     }
     /**
        This will return the largest integer by which *this is

@@ -120,7 +120,12 @@ public:
   //  void resize(int n){v.resize(n,0);};
   //void grow(int i){if(size()<i)resize(i);}
 
-  inline friend Vektor operator-(const Vektor& q){return -1*q;};
+  inline friend Vektor operator-(const Vektor& q){
+    Vektor ret(q.size());
+    for(int i=0;i<q.size();i++) 
+      ret[i]=-q[i];
+    return ret;
+  };
   inline friend Vektor operator*(typ s, const Vektor& q){Vektor p=q;for(int i=0;i<q.size();i++)p[i]*=s;return p;}
   inline friend Vektor operator/(const Vektor& q, typ s){Vektor p=q;for(int i=0;i<q.size();i++)p[i]/=s;return p;}
   inline friend Vektor operator*(const Vektor& p, const Vektor& q){assert(p.size()==q.size());Vektor p1=p;for(int i=0;i<p.size();i++)p1.v[i]*=q.v[i];return p1;}

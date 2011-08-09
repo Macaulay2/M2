@@ -68,6 +68,12 @@ namespace mixedCells
 	data=0;
       }
   };
+  inline friend Vector operator-(const Vector& q){
+    Vector ret(q.size());
+    for(int i=0;i<q.size();i++) 
+      ret[i]=-q[i];
+    return ret;
+  };
   Vector& operator=(const Vector& v)
     {
       if(this==&v)
