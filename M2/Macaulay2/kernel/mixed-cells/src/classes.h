@@ -289,9 +289,23 @@ namespace mixedCells
       }
     int pivot=-1;
     for(int j=0;j<n;j++)if(!isZero(mL[d][j])){pivot=j;break;}
-    if(pivot==-1)
+    if(pivot==-1) 
       {
-	assert(!isZero(mR[d]));// Remove this line later.??????
+	if(isZero(mR[d])) { // mR[d] == 0 means non-generic
+	  assert(false);
+	  /** implement measures treating the non-generic case
+	   One strategy: 
+           -- (relation=equation)
+           -- (generate heights with full precision; do not store)
+	   -- build relations and inequalities (contained in cones) 
+	      so that they have full-precision RHS
+	   -- relations should store the list (more like a pair) of _involved heights_
+	   -- reducers (mL,mR) should remember a reference to the original relation 
+	   -- Reducer stores precision for _every_ height
+	   -- pop() should restore the precision of every height 
+	      to the original precision of the parent node. (How?)
+	   */
+	}
 	return false;
       }
     if (typL::isField()) {
