@@ -42,7 +42,7 @@ if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 export {
      "setDefault", "getDefault",
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
-     "areEqual", "sortSolutions", -- "multistepPredictor", "multistepPredictorLooseEnd",
+     -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
@@ -51,7 +51,6 @@ export {
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
-     "Tolerance",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
@@ -1729,71 +1728,6 @@ selectUnique List := o -> sols ->(
      u
      )
  
-areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
-areEqual (List,List) := o -> (a,b) -> (
-     if class first a === List 
-     or class first a === Point 
-     then (
-	  #a == #b and all(#a, i->areEqual(a#i,b#i,o))
-	  ) else (
-     	  #a == #b and ( if o.Projective 
-	       then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm2 a) * (norm2 b)) < o.Tolerance  -- projective distance is too rough in practice
-	       else norm2 (a-b) < o.Tolerance * norm2 a
-	       )
-	  )
-     ) 
-areEqual (RR,RR) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
-areEqual (CC,CC) := o -> (a,b) -> (
-     abs(a-b) < o.Tolerance
-     ) 
-areEqual (Matrix,Matrix) := o -> (a,b) -> (
-     areEqual(flatten entries a, flatten entries b, o)
-     ) 
-areEqual (Point,Point) := o -> (a,b) -> areEqual(a.Coordinates, b.Coordinates, o) 
-
-isGEQ := method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
-isGEQ(List,List) := o->(t,s)-> (
-     n := #t;
-     for i from 0 to n-1 do ( 
-	  if not areEqual(t#i,s#i, Tolerance=>o.Tolerance) 
-	  then 
-	  if abs(realPart t#i - realPart s#i) < o.Tolerance then 
-	  return imaginaryPart t#i > imaginaryPart s#i
-	  else return realPart t#i > realPart s#i
-	  ); 
-     true -- if approx. equal 
-     )
-
-sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
-sortSolutions List := o -> sols -> (
--- sorts numerical solutions     
-     if #sols == 0 then sols
-     else (
-	  sorted := {0};
-	  get'coordinates := sol -> if class sol === Point then coordinates sol else sol;
-	  scan(#sols-1, s->(
-		    -- find the first element that is "larger";
-		    -- "larger" means the first coord that is not (approx.) equal 
-		    -- has (significantly) larger realPart, if tie then larger imaginaryPart
-		    --l := position(sorted, t->isGEQ(first t, first s));
-     	       	    s = s + 1;
-		    t := get'coordinates sols#s;
-		    l := 0; r := #sorted-1;
-		    if isGEQ(t, get'coordinates sols#(sorted#r)) then  sorted = sorted | {s}
-		    else if isGEQ(get'coordinates sols#(sorted#l),t) then  sorted = {s} | sorted 
-		    else (
-		    	 while r-l>0 do (
-			      m := (l+r)//2;
-			      if isGEQ(get'coordinates sols#(sorted#m), t) then r=m
-			      else l=m+1; 
-			      );
-		    	 sorted = take(sorted,r) | {s} | drop(sorted,r);
-		    	 )
-		    ));      
-	  );
-     apply(sorted, i->sols#i)
-     )
-
 solutionDuplicates = method(TypicalValue=>MutableHashTable)
 solutionDuplicates List := sols -> ( 
 -- find positions of duplicate solutions

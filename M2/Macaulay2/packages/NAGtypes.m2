@@ -22,6 +22,7 @@ export {
      -- point (solution)
      "Point", "point", "coordinates",
      isRealPoint, plugIn, residual, relativeErrorEstimate, classifyPoint,
+     "Tolerance", "sortSolutions", "areEqual", "isGEQ",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
@@ -87,6 +88,72 @@ classifyPoint(Point) := o -> p -> if status p === null and p.?ConditionNumber th
      then Regular  
      else Singular
      )  
+
+areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
+areEqual (List,List) := o -> (a,b) -> (
+     if class first a === List 
+     or class first a === Point 
+     then (
+	  #a == #b and all(#a, i->areEqual(a#i,b#i,o))
+	  ) else (
+     	  #a == #b and ( if o.Projective 
+	       then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm(2,a)) * (norm(2,b))) < o.Tolerance  -- projective distance is too rough in practice
+	       else norm(2,(a-b)) < o.Tolerance * norm(2,a)
+	       )
+	  )
+     ) 
+areEqual (RR,RR) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
+areEqual (CC,CC) := o -> (a,b) -> (
+     abs(a-b) < o.Tolerance
+     ) 
+areEqual (Matrix,Matrix) := o -> (a,b) -> (
+     areEqual(flatten entries a, flatten entries b, o)
+     ) 
+areEqual (Point,Point) := o -> (a,b) -> areEqual(a.Coordinates, b.Coordinates, o) 
+
+isGEQ = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
+isGEQ(List,List) := o->(t,s)-> (
+     n := #t;
+     for i from 0 to n-1 do ( 
+	  if not areEqual(t#i,s#i, Tolerance=>o.Tolerance) 
+	  then 
+	  if abs(realPart t#i - realPart s#i) < o.Tolerance then 
+	  return imaginaryPart t#i > imaginaryPart s#i
+	  else return realPart t#i > realPart s#i
+	  ); 
+     true -- if approx. equal 
+     )
+
+sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+sortSolutions List := o -> sols -> (
+-- sorts numerical solutions     
+     if #sols == 0 then sols
+     else (
+	  sorted := {0};
+	  get'coordinates := sol -> if class sol === Point then coordinates sol else sol;
+	  scan(#sols-1, s->(
+		    -- find the first element that is "larger";
+		    -- "larger" means the first coord that is not (approx.) equal 
+		    -- has (significantly) larger realPart, if tie then larger imaginaryPart
+		    --l := position(sorted, t->isGEQ(first t, first s));
+     	       	    s = s + 1;
+		    t := get'coordinates sols#s;
+		    l := 0; r := #sorted-1;
+		    if isGEQ(t, get'coordinates sols#(sorted#r)) then  sorted = sorted | {s}
+		    else if isGEQ(get'coordinates sols#(sorted#l),t) then  sorted = {s} | sorted 
+		    else (
+		    	 while r-l>0 do (
+			      m := (l+r)//2;
+			      if isGEQ(get'coordinates sols#(sorted#m), t) then r=m
+			      else l=m+1; 
+			      );
+		    	 sorted = take(sorted,r) | {s} | drop(sorted,r);
+		    	 )
+		    ));      
+	  );
+     apply(sorted, i->sols#i)
+     )
+
 
 -----------------------------------------------------------------------
 -- WITNESS SET = {
@@ -294,15 +361,67 @@ sliceEquations(matrix{{1,2,3},{4,5,6*ii}}, R)
      	///
 	}
 
+document {
+	Key => {(sortSolutions,List), sortSolutions},
+	Headline => "sort the list of solutions",
+	Usage => "t = sortSolutions s",
+	Inputs => { 
+	     "s"=>{"contains solutions (represented either by lists of coordinates or ", TO2{Point,"points"}, ")"}
+	     },
+	Outputs => {"t"=> "contains solutions sorted as described below"},
+	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
+	"The output format of ", TO "track", " and ", TO "solveSystem", " is respected.", BR{}, 
+	"For the corresponding coordinates a and b (of two real 2n-vectors) a < b if b-a is larger than ", 
+	TO Tolerance, ". ", 
+     	PARA {},
+        EXAMPLE lines ///
+needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,y];
+s = solveSystem {x^2+y^2-1, x*y}
+sortSolutions s
+     	///,
+	SeeAlso => {"solveSystem", "track", areEqual}
+	}
+
+document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance]},
+     Headline => "specifies the tolerance of a numerical computation" 
+     }
+
+document {
+	Key => {areEqual, (areEqual,CC,CC), (areEqual,RR,RR), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	     [areEqual,Projective]},
+	Headline => "determine if solutions are equal",
+	Usage => "b = areEqual(x,y)",
+	Inputs => {
+	     "x" => "a solution or a list of solutions",
+	     "y" => "a solution or a list of solutions",
+	     Projective=>{"if ", TO true, " then solutions are considered as representatives of points 
+		  in the projective space"}
+	     },
+	Outputs => {"b"=>{"tells if ", TT "x", " and ", TT "y", " are approximately equal"}},
+	PARA {"The inputs can be complex numbers, ", TO2{Point, "points"}, ", ", " or lists of points (presented as ", TO2{Point, "points"}, " or lists of coordinates)."},
+	"The function returns false if the distance between ", TT "x", " and ", TT "y", " exceeds ", TO Tolerance, " and true, otherwise.",
+	PARA {"If ", TT "Projective=>true", " then ", TEX "1-\\cos\\alpha", " is compared with the ", TO Tolerance, ", where ",
+	     TEX "\\alpha", " is the angle between ", TT "x", " and ", TT "y", "." },
+	EXAMPLE lines ///
+areEqual({{-1,1e-7},{1e-7*ii,-1}}, {{-1, 0}, {0, -1}})
+areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)  
+     	///,
+	SeeAlso => {"solveSystem", "track", sortSolutions}
+	}
+
 TEST ///
 CC[x,y]
 S = {x^2+y^2-6, 2*x^2-y}
-p = point({{1,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
+p = point({{1.0,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
 assert ( (100*plugIn(S,p)/round) == {29, -30} )
 assert (round (1000*norm(4.5,p)) == 2312)
 assert isRealPoint p
 classifyPoint p
 assert(round (10000*residual(S,p)) == 4173)
+p2 =  point {{1.001,2.3+ii}}
+p3 =  point {{.999,2.3+ii}}
+assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 ///
 endPackage "NAGtypes" 
 
@@ -318,3 +437,4 @@ installPackage("Style", AbsoluteLinks=>false)
 installPackage("NAGtypes", AbsoluteLinks=>false)
 
 installPackage ("NAGtypes", MakeDocumentation=>false)
+check "NAGtypes"

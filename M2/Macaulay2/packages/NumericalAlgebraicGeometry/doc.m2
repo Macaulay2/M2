@@ -270,7 +270,7 @@ refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
 	SeeAlso => {solveSystem, track}
 	}
 
-document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance], [setDefault,Tolerance]},
+document { Key => {[setDefault,Tolerance]},
      Headline => "specifies the tolerance of a numerical computation" 
      }
 
@@ -394,52 +394,6 @@ T = {x^2+y^2-1, x+y};
 NAGtrace 1
 track(S,T,{(1,1),(1,-1),(-1,1),(-1,-1)})
      	///
-	}
-
-document {
-	Key => {(sortSolutions,List), sortSolutions},
-	Headline => "sort the list of solutions",
-	Usage => "t = sortSolutions s",
-	Inputs => { 
-	     "s"=>{"contains solutions (represented either by lists of coordinates or ", TO2{Point,"points"}, ")"}
-	     },
-	Outputs => {"t"=> "contains solutions sorted as described below"},
-	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
-	"The output format of ", TO track, " and ", TO solveSystem, " is respected.", BR{}, 
-	"For the corresponding coordinates a and b (of two real 2n-vectors) a < b if b-a is larger than ", 
-	TO Tolerance, ". ", 
-     	PARA {},
-        EXAMPLE lines ///
-R = CC[x,y];
-s = solveSystem {x^2+y^2-1, x*y}
-sortSolutions s
-     	///,
-	SeeAlso => {solveSystem, track, areEqual}
-	}
-
-document {
-	Key => {areEqual, (areEqual,CC,CC), (areEqual,RR,RR), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
-	     [areEqual,Projective]},
-	Headline => "determine if solutions are equal",
-	Usage => "b = areEqual(x,y)",
-	Inputs => {
-	     "x" => "a solution or a list of solutions",
-	     "y" => "a solution or a list of solutions",
-	     Projective=>{"if ", TO true, " then solutions are considered as representatives of points 
-		  in the projective space"}
-	     },
-	Outputs => {"b"=>{"tells if ", TT "x", " and ", TT "y", " are approximately equal"}},
-	PARA {"The inputs can be complex numbers, ", TO2{Point, "points"}, ", ", " or lists of points (presented as ", TO2{Point, "points"}, " or lists of coordinates)."},
-	"The function returns false if the distance between ", TT "x", " and ", TT "y", " exceeds ", TO Tolerance, " and true, otherwise.",
-	PARA {"If ", TT "Projective=>true", " then ", TEX "1-\\cos\\alpha", " is compared with the ", TO Tolerance, ", where ",
-	     TEX "\\alpha", " is the angle between ", TT "x", " and ", TT "y", "." },
-	EXAMPLE lines ///
-R = CC[x,y];
-s = solveSystem {x^2+y^2-1, x*y}
-areEqual(sortSolutions s / coordinates, {{-1, 0}, {0, -1}, {0, 1}, {1, 0}})
-areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)  
-     	///,
-	SeeAlso => {solveSystem, track, sortSolutions}
 	}
 
 document {
