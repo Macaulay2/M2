@@ -15,13 +15,16 @@ newPackage(
      )
 
 export {
+     Norm, MaxConditionNumber, -- options
      -- witness set
      "WitnessSet", "witnessSet", "equations", "slice", "points", 
      "Equations", "Slice", "Points", "sliceEquations",
      -- point (solution)
      "Point", "point", "coordinates",
+     isRealPoint, plugIn, residual, relativeErrorEstimate, classifyPoint,
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
+     "MaxPrecision", "WindingNumber", "DeflationNumber",
      "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure"
      }
 
@@ -32,11 +35,14 @@ WitnessSet = new Type of MutableHashTable
 -- POINT = {
 --   Coordinates => List of CC,
 --   NumberOfSteps => ZZ, -- number of steps made while tracking the path
---   SolutionStatus => {RegularSolution, SingularSolution, Infinity, MinStepFailure}
+--   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, null}
 --   LastT => RR in [0,1]
 --   ConditionNumber => condition number of the Jacobian
 --   ErrorBoundEstimate => absolute error bound estimate (from Newton's method)
 --   Multiplicity => the multiplicity (sometimes: the number of paths converging to the point) 
+--   MaxPrecision => max precision used during the homotopy tracking
+--   WindingNumber => used in the end-games
+--   DeflationNumber => number of first-order deflations 
 --   }
 Point.synonym = "point"
 point = method()
@@ -51,8 +57,37 @@ net Point := p -> (
      ) 
 coordinates = method()
 coordinates Point := p -> p.Coordinates
-status Point := o -> p -> p.SolutionStatus
+status Point := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
 matrix Point := o -> p -> matrix {coordinates p}
+
+-- plug a point p into the system S (expects S to be a list of polynomials)
+plugIn = method()
+plugIn (List, Point) := (S,p) -> flatten entries sub(matrix{S}, matrix{ coordinates p / toCC })
+
+norm (Number, Point) := (no,p) -> norm(no, coordinates p)
+norm (Number, List) := (no,p) -> (
+     if no === infinity then return max(p, c->abs c);
+     assert((instance(no, ZZ) or instance(no, QQ) or instance(no, RR)) and no>0);
+     (sum(p, c->c^no))^(1/no)
+     )
+
+residual = method(Options=>{Norm=>2})
+residual (List,Point) := o->(S,p)->norm(o.Norm,plugIn(S,p))
+
+relativeErrorEstimate = method(Options=>{Norm=>2})
+relativeErrorEstimate(Point) := o->p->p.ErrorBoundEstimate/norm(o.Norm,p) 
+
+isRealPoint = method(Options=>{Tolerance=>1e-6})
+isRealPoint(Point) := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
+
+classifyPoint = method(Options=>{MaxConditionNumber=>1e6})
+classifyPoint(Point) := o -> p -> if status p === null and p.?ConditionNumber then (
+     p.SolutionStatus = 
+     if p.ConditionNumber < o.MaxConditionNumber 
+     then Regular  
+     else Singular
+     )  
+
 -----------------------------------------------------------------------
 -- WITNESS SET = {
 --   Equations,            -- an ideal  
@@ -156,7 +191,8 @@ document {
      UL { {"Regular", " -- the jacobian of the polynomial system is regular at the point"}, 
 	  {"Singular", " -- the jacobian of the polynomial system is (near)singular at the point"}, 
 	  {"Infinity", " -- the solution path has been deemed divergent"},
-	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"}
+	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"},
+	  {null, " -- the point has not been classified"}
 	  },
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
      TO "peek", ".  Different algorithms attach different information describing the point. For example, the
@@ -258,6 +294,16 @@ sliceEquations(matrix{{1,2,3},{4,5,6*ii}}, R)
      	///
 	}
 
+TEST ///
+CC[x,y]
+S = {x^2+y^2-6, 2*x^2-y}
+p = point({{1,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
+assert ( (100*plugIn(S,p)/round) == {29, -30} )
+assert (round (1000*norm(4.5,p)) == 2312)
+assert isRealPoint p
+classifyPoint p
+assert(round (10000*residual(S,p)) == 4173)
+///
 endPackage "NAGtypes" 
 
 end
