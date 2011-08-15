@@ -346,11 +346,6 @@ bool ChineseRemainder::ratConversion(mpz_t c, mpz_t m, mpq_t result)
   mpz_init(mhalf);
     
   mpz_tdiv_q_2exp(mhalf,m,1);
-
-  // print for debugging:
-  showint(c);
-  showint(m);
-  fprintf(stderr,"\n");
   
   for (;;) 
   {
@@ -383,10 +378,6 @@ bool ChineseRemainder::ratConversion(mpz_t c, mpz_t m, mpq_t result)
   }
   // clean up
   mpz_clears(a1,a2,u1,u2,q,h,mhalf,u2sqr,a2sqr,(void *)0); 
-
-  showint(mpq_numref(result));
-  showint(mpq_denref(result));
-  fprintf(stderr,"\n");
   return retVal;
 }
 
@@ -439,8 +430,6 @@ vec ChineseRemainder::ratConversion(vec f,
 }
 
 
-
-
 const RingElement * rawRingElementRatConversion(const RingElement *f, 
                                                 mpz_t m,
                                                 const Ring *RQ)
@@ -486,6 +475,31 @@ const Matrix * rawMatrixRatConversion(const Matrix *f,
                                       mpz_t m,
                                       const Ring *RQ)
 {
-  return 0;
+  
+  const PolyRing *R = f->get_ring()->cast_to_PolyRing();
+  const PolyRing *PQ = RQ->cast_to_PolyRing();
+
+  if (R == 0)
+  {
+    ERROR("expected polynomial ring over ZZ");
+    return 0;
+  }
+  
+  const FreeModule *F = f->rows();
+  const FreeModule *G = f->cols();
+  const FreeModule *FQ = PQ->make_FreeModule(F->rank());
+  const FreeModule *GQ = PQ->make_FreeModule(G->rank());
+
+  const int *deg;
+
+  deg = f->degree_monoid()->make_one();
+  
+  MatrixConstructor mat(FQ,GQ,deg);
+  for (int i=0; i<f->n_cols(); i++)
+  {
+    vec u = ChineseRemainder::ratConversion(f->elem(i),m,PQ);
+    mat.set_column(i,u);
+  }
+  return mat.to_matrix();
 }
 
