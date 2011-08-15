@@ -13,11 +13,11 @@ newPackage select((
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
-     Configuration => { "PHCPACK" => null,  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
+     Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      if version#"VERSION" > "1.4" then PackageExports => {"NAGtypes"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false,
+     DebuggingMode => true,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",

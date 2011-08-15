@@ -73,30 +73,6 @@ yanoL RingElement := ZZ => o -> f -> (
      )
 
 -- annihilator of 1/f where f is a planar curve (with the singularity at 0)
-AnnF1PlanarCurve = method()
-AnnF1PlanarCurve RingElement := f -> (
-     mult := min(flatten entries monomials f / first@@degree);
-     k := 1;
-     local A;
-     while true do (
-     	  A = kOrderAnnFa(k,f,-1);
-     	  cI := charIdeal A;
-     	  << "order " << k << ": " << toString I << endl;
-     	  time dec := primaryDecomposition cI;
-	  --<< dec << endl;
-	  grD := ring cI;
-     	  conormalOfOrigin := select(dec, c->radical c == ideal take(gens grD, numgens grD//2));
-	  << conormalOfOrigin << endl;
-	  if #conormalOfOrigin != 1 then error "can't find the conormal of the origin"
-	  else (
-	       print(degree first conormalOfOrigin, mult-1);
-	       if degree first conormalOfOrigin <= mult-1 then break;
-	       ); 
-	  k = k+1;
-	  );
-     A
-     )
-
 
 
 tests = {

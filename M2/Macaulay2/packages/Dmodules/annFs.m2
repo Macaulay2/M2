@@ -158,7 +158,7 @@ kOrderAnnFa(ZZ,RingElement,ZZ) := Ideal => (k,f,a) -> (
      pInfo(4, toString M);
      syzygies := entries transpose gens gb syz M;     
      pInfo(3, {"syz="}|syzygies);
-     D := makeWeylAlgebra R;
+     D := makeWeylAlgebra(R, SetVariables=>false);
      zeros := toList(n:0);
      ideal Dprune gens ideal ({0_D}|apply(syzygies, s->sum(#d'indices, i->sub(s#i,D)*D_(zeros|d'indices#i))))
      )
@@ -184,10 +184,36 @@ kOrderAnnFs(ZZ,RingElement) := Ideal => (k,f) -> (
      pInfo(4, toString M);
      syzygies := entries transpose gens gb syz M;     
      pInfo(3, {"syz="}|syzygies);
-     D := makeWeylAlgebra R;
+     D := makeWeylAlgebra(R, SetVariables=>false);
      Ds := (coefficientRing D)[gens D, s, WeylAlgebra=>D.monoid.Options.WeylAlgebra, Weights=>toList(2*n:0)|{1}]; 
      zeros := toList(n:0);
      ideal Dprune gens ideal ({0_Ds}|apply(syzygies, s->sum(#d'indices, 
 		    i->sub(s#i,Ds)*Ds_(zeros|drop(d'indices#i,1)|take(d'indices#i,1))
 		    )))
      )
+
+AnnF1PlanarCurve = method()
+AnnF1PlanarCurve RingElement := f -> (
+     mult := min(flatten entries monomials f / first@@degree);
+     k := 1;
+     local A;
+     while true do (
+     	  pInfo(2, {"order ", k, ": "});
+     	  t'A := timing kOrderAnnFa(k,f,-1);
+	  pInfo(2, {"  syzygy computation time: ", first t'A});
+	  A = last t'A;
+     	  cI := charIdeal A;
+     	  t'dec := timing primaryDecomposition cI;
+	  pInfo(2, {"  primary decomposition time: ", first t'dec});
+	  dec := last t'dec;
+	  grD := ring cI;
+     	  conormalOfOrigin := select(dec, c->radical c == ideal take(gens grD, numgens grD//2));
+	  if #conormalOfOrigin != 1 then error "can't find the conormal of the origin"
+	  else (
+	       if degree first conormalOfOrigin <= mult-1 then break;
+	       ); 
+	  k = k+1;
+	  );
+     A
+     )
+
