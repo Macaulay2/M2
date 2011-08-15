@@ -418,7 +418,7 @@ sortSolutions s
 	}
 
 document {
-	Key => {areEqual, (areEqual,CC,CC), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	Key => {areEqual, (areEqual,CC,CC), (areEqual,RR,RR), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
 	     [areEqual,Projective]},
 	Headline => "determine if solutions are equal",
 	Usage => "b = areEqual(x,y)",
