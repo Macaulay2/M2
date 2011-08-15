@@ -11,13 +11,13 @@ FINALLIBRARIESDIR = $(PREFIX)
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FCFLAGS
 
-all install :: .installed
-unconfigure : ; rm -f .configured .compiled .installed
-reconfigure : unconfigure .configured
-uninstall   : ; rm -f .installed
-reinstall   : uninstall .installed
-diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
-unmark : ; rm -f .configured .compiled
+all install :: .installed-$(VERSION)
+unconfigure : ; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
+reconfigure : unconfigure .configured-$(VERSION)
+uninstall   : ; rm -f .installed-$(VERSION)
+reinstall   : uninstall .installed-$(VERSION)
+diffs : .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
 package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
@@ -29,21 +29,21 @@ INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 
 BUILDDIR      ?= $(TARDIR)
-.installed  : .compiled   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
-.compiled   : .configured ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
-.configured : .patched    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+.installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
+.compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
+.configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
 ifneq ($(PATCHFILE),)
-.patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@
+.patched-$(VERSION) : $(PATCHFILE) .untarred-$(VERSION) ; patch -p0 <$< && touch $@
 else
-.patched : .untarred ; touch $@
+.patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
 
 UNTARCMD ?= tar xzf $(TARFILE)
-.untarred : .fetched ; $(UNTARCMD) && touch $@
-.untarred2 : .fetched ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
-.fetched : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
-clean ::; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
+.untarred-$(VERSION) : $(TARFILE) ; $(UNTARCMD) && touch $@
+.untarred2-$(VERSION) : $(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
+$(TARFILE) : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)"
+clean ::; rm -rf .patched* $(TARDIR) .fetched .untarred* $(LIBNAME)-*.tar.gz .compiled* .configured* .installed* diffs tmp
 distclean :: clean ; rm -rf Makefile
 check ::
 
@@ -62,7 +62,3 @@ help :;
 	@ echo "  package-distclean	      remove all created files in the package"
 	@ echo "  check			      check whether library compiled correctly"
 	@ echo ""
-
-# Local Variables:
-# compile-command: "make -C $M2BUILDDIR/libraries "
-# End:
