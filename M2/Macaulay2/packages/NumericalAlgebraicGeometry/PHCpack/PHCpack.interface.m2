@@ -1,6 +1,6 @@
 -- PHCpack interface for NAG4M2
 -- used by ../NumericalAlgebraicGeometry.m2
-needsPackage "PHCpack"
+-- needsPackage "PHCpack"
 
 solvePHCpack = method(TypicalValue => List)
 solvePHCpack (List,HashTable) := List => (F,o) -> (

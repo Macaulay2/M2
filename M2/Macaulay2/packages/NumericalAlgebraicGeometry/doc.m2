@@ -103,9 +103,9 @@ solveSystem F
 	}
 document {
 	Key => { (track, List, List, List), track, 
-	     [track,gamma], [setDefault,gamma], [track,tDegree], [setDefault,tDegree], 
+	     [track,NumericalAlgebraicGeometry$gamma], [setDefault,NumericalAlgebraicGeometry$gamma], [track,NumericalAlgebraicGeometry$tDegree], [setDefault,NumericalAlgebraicGeometry$tDegree], 
 	     [track,tStep], [setDefault,tStep], [track,tStepMin], [setDefault,tStepMin],
-	     gamma, tDegree, tStep, tStepMin, 
+	     NumericalAlgebraicGeometry$gamma, NumericalAlgebraicGeometry$tDegree, tStep, tStepMin, 
 	     [track,stepIncreaseFactor], [setDefault,stepIncreaseFactor], 
 	     [track, numberSuccessesBeforeIncrease], [setDefault,numberSuccessesBeforeIncrease],
 	     stepIncreaseFactor, numberSuccessesBeforeIncrease, 
@@ -126,8 +126,8 @@ document {
 	     "S" => {" contains the polynomials in the start system"},
 	     "T" => {" contains the polynomials in the target system"},
 	     "solsS" => {" contains start solutions"},
-	     gamma => {" (meaning gamma = ",  toString DEFAULT.gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
-	     tDegree =>{" (meaning tDegree = ", toString DEFAULT.tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
+	     NumericalAlgebraicGeometry$gamma => {" (meaning gamma = ",  toString DEFAULT.NumericalAlgebraicGeometry$gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
+	     NumericalAlgebraicGeometry$tDegree =>{" (meaning tDegree = ", toString DEFAULT.NumericalAlgebraicGeometry$tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
 	     tStep => {" (meaning tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
 	     tStepMin => {" (meaning tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
 	     stepIncreaseFactor => {" (meaning stepIncreaseFactor = ", toString DEFAULT.stepIncreaseFactor, "). Determines how the step size is adjusted."},
