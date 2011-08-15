@@ -289,7 +289,7 @@ const Matrix * rawMatrixCRA(const Matrix *f,
 			    mpz_t n)
 {
   
-  const Ring *R = f->get_ring();
+  const Ring *R = f->get_ring(); // not used
 
   // Error handling:
   if (f->get_ring() != g->get_ring())
@@ -323,78 +323,159 @@ const Matrix * rawMatrixCRA(const Matrix *f,
 }
 
 
-
-
-#if 0
-Matrix *Matrix::operator+(const Matrix &m) const
+void showint(mpz_t a)
 {
-  if (get_ring() != m.get_ring())
+  char s[1000];
+  mpz_get_str(s,10,a);
+  fprintf(stderr," %s ",s);
+}
+
+
+bool ChineseRemainder::ratConversion(mpz_t c, mpz_t m, mpq_t result)
+{
+  mpz_t a1,a2,u1,u2,q,h,mhalf,u2sqr,a2sqr;
+  bool retVal=true;
+  mpz_init_set(a1,m);
+  mpz_init_set(a2,c);
+  mpz_init_set_si(u1,0);
+  mpz_init_set_si(u2,1);
+  mpz_init_set_si(q,0);
+  mpz_init_set_si(h,0);
+  mpz_init(u2sqr);
+  mpz_init(a2sqr);
+  mpz_init(mhalf);
+    
+  mpz_tdiv_q_2exp(mhalf,m,1);
+
+  // print for debugging:
+  showint(c);
+  showint(m);
+  fprintf(stderr,"\n");
+  
+  for (;;) 
   {
-    ERROR("matrices have different base rings");
-    return 0;
+    mpz_mul(u2sqr,u2,u2);
+    
+    if (mpz_cmp(u2sqr,mhalf)>=0) // u2sqr >= mhalf
+    {
+      retVal=false;
+      mpq_set_z(result,c);
+      break;
+    }
+    
+    mpz_mul(a2sqr,a2,a2);
+    
+    if (mpz_cmp(a2sqr,mhalf)<0) // a2sqr < half
+    {
+      retVal=true;
+      mpq_set_num(result,a2);
+      mpq_set_den(result,u2);
+      mpq_canonicalize(result);
+      break;
+    }
+      
+    mpz_fdiv_q(q,a1,a2);
+    mpz_submul(a1,q,a2);
+    mpz_submul(u1,q,u2);
+    mpz_swap(a1,a2);
+    mpz_swap(u1,u2);      
+
   }
-  if (rows()->rank() != m.rows()->rank()
-      || cols()->rank() != m.cols()->rank())
+  // clean up
+  mpz_clears(a1,a2,u1,u2,q,h,mhalf,u2sqr,a2sqr,(void *)0); 
+
+  showint(mpq_numref(result));
+  showint(mpq_denref(result));
+  fprintf(stderr,"\n");
+  return retVal;
+}
+
+
+ring_elem ChineseRemainder::ratConversion(const ring_elem ff,
+                        mpz_t m,
+                        const PolyRing *RQ)
+{
+  mpq_t result_coeff;
+  mpq_init(result_coeff);
+  Nterm *f = ff;
+  Nterm head;
+  Nterm *result = &head;
+  
+  const Monoid *M = RQ->getMonoid();
+  const Ring *K = RQ->getCoefficientRing();
+  
+  for (;f!=NULL;f=f->next)
   {
-    ERROR("matrices have different shapes");
-    return 0;
-  }
+    result->next=RQ->new_term();
+    result=result->next;
+    result->next=0;
+    M->copy(f->monom,result->monom);
+    ratConversion(f->coeff.get_mpz(),m,result_coeff);
+    result->coeff=K->from_rational(result_coeff);
+  }  
   
-  const Ring *R = get_ring();
-  const FreeModule *F = rows();
-  const FreeModule *G = cols();
-  const int *deg;
-  
-  if (!rows()->is_equal(m.rows()))
-    F = R->make_FreeModule(n_rows());
-  
-  if (!cols()->is_equal(m.cols()))
-    G = R->make_FreeModule(n_cols());
-  
-  if (EQ == degree_monoid()->compare(degree_shift(), m.degree_shift()))
-    deg = degree_shift();
-  else
-    deg = degree_monoid()->make_one();
-  
-  MatrixConstructor mat(F,G,deg);
-  for (int i=0; i<n_cols(); i++)
+  mpq_clear(result_coeff);
+  result->next = 0;
+  return head.next;
+}
+
+vec ChineseRemainder::ratConversion(vec f,
+                  mpz_t m,
+                  const PolyRing *RQ)
+{
+  vecterm head;
+  vec result = &head;
+  for (;f!=NULL;f=f->next)
   {
-    vec v = R->copy_vec(elem(i));
-    vec w = R->copy_vec(m[i]);
-    R->add_vec_to(v,w);
-    mat.set_column(i, v);
+    result->next = RQ->new_vec();
+    result = result->next;
+    result->next = 0;
+    result->comp=f->comp;
+    result->coeff=ratConversion(f->coeff,m,RQ);    
   }
-  return mat.to_matrix();
-}
-#endif
-
-
-ring_elem ChineseRemainder::reconstruct(const PolynomialRing *RQ, const Ring *R, ring_elem f, mpz_t m)
-{
-  // f should be an element in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
-  return 0;
+  
+  result->next = 0;
+  return head.next;
 }
 
-RingElement * ChineseRemainder::reconstruct(const Ring *RQ, const RingElement *f, mpz_t m)
-{
-  // f should be an element in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
-  return 0;
-}
 
-Matrix * ChineseRemainder::reconstruct(const Ring *RQ, const Matrix *f, mpz_t m)
-{
-  // f should be an element in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
-  return 0;
-}
 
 
 const RingElement * rawRingElementRatConversion(const RingElement *f, 
                                                 mpz_t m,
                                                 const Ring *RQ)
 {
+  const Ring *Rf = f->get_ring();
+  const PolyRing *P = Rf->cast_to_PolyRing();
+  const PolyRing *PQ = RQ->cast_to_PolyRing();
+
+  if (P == 0)
+  {
+    // check whether Rf is ZZ.  If not, error.
+    if (!Rf->is_ZZ())
+    {
+      ERROR("expected ZZ, or polynomial ring over ZZ");
+      return 0;
+    }
+    ERROR("not implemented yet");
+    return 0;
+  }
+  else 
+  {
+    const Ring *K = P->getCoefficientRing();
+    if (K->is_ZZ())
+    {
+      ring_elem rf = f->get_value();
+      ring_elem result = ChineseRemainder::ratConversion(rf,m,PQ);    
+      return RingElement::make_raw(PQ,result); // debug this line!
+    }
+    else
+    {
+      ERROR("expected coefficient ring to be ZZ");
+      return 0;
+    }
+  }
+  ERROR("not written yet");
   return 0;
 }
 

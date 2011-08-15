@@ -8,6 +8,8 @@
 #include "engine.h"
 // engine.h defines rawRingElementCRA, rawMatrixCRA
 
+// !!!! we need the balanced residue class in chinese remainder !!!
+
 #include "matrix.hpp"
 #include "matrix-con.hpp"
 
@@ -33,24 +35,25 @@ public:
   static RingElement * CRA(const RingElement *f, const RingElement *g,  mpz_t um, mpz_t vn, mpz_t mn);
   // does the ring element combination without error checking and with precomputed multipliers
 
+  static bool ratConversion(mpz_t a, mpz_t m, mpq_t result);
+  // computes a rational number "result" that reduces to a mod m
+  // if the numerator and denominator can be chosen to smaller than
+  // 1/2*sqrt(m) then "true" is returned.
   
-
-
-
+  static ring_elem ratConversion(const ring_elem f, 
+                                 mpz_t m,
+                                 const PolyRing *RQ);
+  // computes a polynomial with rational coefficients that reduces
+  // to f mod m; f should be in a polynomial ring ZZ[M] and RQ=QQ[M] 
+  
+  static vec ratConversion(vec f,
+                           mpz_t m, 
+                           const PolyRing *RQ);
+  // computes a polynomial with rational coefficients that reduces
+  // to f mod m; f should be in a polynomial ring ZZ[M] and RQ=QQ[M] 
+  
   static ring_elem CRA(const PolyRing *R, ring_elem f, ring_elem g, mpz_t m, mpz_t n);
   // Assumption: f and g are in a poly ring whose coeff ring is ZZ
-
-  static ring_elem reconstruct(const PolynomialRing *RQ, const Ring *R, ring_elem f, mpz_t m);
-  // f should be an element in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
-
-  static RingElement * reconstruct(const Ring *RQ, const RingElement *f, mpz_t m);
-  // f should be an element in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
-
-  static Matrix * reconstruct(const Ring *RQ, const Matrix *f, mpz_t m);
-  // f should be an element in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
 };
 
 

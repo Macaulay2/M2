@@ -3496,7 +3496,7 @@ export rawFFLU(e:Expr):Expr := (
 setupfun("rawFFLU",rawFFLU);
 
 -----------------------------------------------------------------------------
--- Chine remainder operations
+-- Chinese remainder operations
 -----------------------------------------------------------------------------
 
 export rawRingElementCRA(f:RawRingElement, g:RawRingElement, m:ZZ, n:ZZ) : RawRingElementOrNull :=
@@ -3517,7 +3517,6 @@ export rawRingElementCRA(e:Expr):Expr := (
      );
 setupfun("rawRingElementCRA", rawRingElementCRA);
 
-
 export rawMatrixCRA(f:RawMatrix, g:RawMatrix, m:ZZ, n:ZZ) : RawMatrixOrNull :=
   Ccode(RawMatrixOrNull, "rawMatrixCRA(f,g,m,n)");
 
@@ -3536,8 +3535,6 @@ export rawMatrixCRA(e:Expr):Expr := (
      );
 setupfun("rawMatrixCRA", rawMatrixCRA);
 
-
-
 export rawRingElementRatConversion(f:RawRingElement,m:ZZ,RQ:RawRing) : RawRingElementOrNull :=
   Ccode(RawRingElementOrNull,"rawRingElementRatConversion(f,m,RQ)");
   
@@ -3545,7 +3542,7 @@ export rawRingElementRatConversion(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
        when s.0 is f:RawRingElementCell do
        when s.1 is m:ZZcell do
-       when s.3 is RQ:RawRingCell do
+       when s.2 is RQ:RawRingCell do
          toExpr(rawRingElementRatConversion(f.p,m.v,RQ.p))
        else WrongArg(3, "a rawRing")
        else WrongArg(2, "an integer")
