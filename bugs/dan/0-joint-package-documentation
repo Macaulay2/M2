@@ -1,0 +1,13 @@
+suggestion from Mike:
+
+having all of the included packages integrated into our documentation would be
+very good (especially having them all in the main index).
+
+Also, I think there should be a semi-hand-crafted page which has all of the
+packages divided up by section.  Perhaps with an "especially useful" section
+too...
+
+This last could be automated if we allow in the package header (or somewhere) a
+Section option, where we have a specific selection of allowed values.  Those
+that don't have one will go in an "Other" section.  Of course, there should
+also be an alphabetical list still somewhere.
