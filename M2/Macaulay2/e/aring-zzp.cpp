@@ -49,6 +49,7 @@ namespace M2 {
     initialize_tables();
   }
   
+  
 };
 
 // Local Variables:

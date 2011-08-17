@@ -4,6 +4,7 @@
 #define _aring_zzp_hpp_
 
 #include "aring.hpp"
+#include "buffer.hpp"
 
 namespace M2 {
   class ARingZZp : RingInterface
@@ -42,20 +43,36 @@ namespace M2 {
 
     static int findPrimitiveRoot(int P);
 
+    void text_out(buffer &o) const { o << "AZZ/" << p; }
+
+    /////////////////////////////////
+    // ElementType informational ////
+    /////////////////////////////////
+
+    bool is_unit(ElementType f) const { return f != 0; }
+    bool is_zero(ElementType f) const { return f == 0; }
+    bool is_equal(ElementType f, ElementType g) const { return f == g; }
+
+    int compare_elems(ElementType f, ElementType g) const { 
+      int a = exp_table[f];
+      int b = exp_table[g];
+      if (a < b) return -1; 
+      if (a > b) return 1;
+      return 0;
+    }
+
     // 'get' functions
 
     int get_int(elem f) const { return exp_table[f]; }
 
     int get_repr(elem f) const { return f; }
 
-    void get_str(char *s, size_t max_size, elem f);
+    void get_str(char *s, size_t max_size, elem f) const;
 
     // 'init', 'init_set' functions
 
-    void init(elem &result) { result = 0; }
+    void init(elem &result) const { result = 0; }
 
-    void init_set(elem &result, elem a) const { result = a; }
-    
     void set_zero(elem &result) const { result = 0; }
     
     void set(elem &result, elem a) const { result = a; }
@@ -66,9 +83,19 @@ namespace M2 {
       result = log_table[a];
     }
 
+    void set_from_mpz(elem &result, mpz_ptr a) const {
+      int b = static_cast<int>(mpz_fdiv_ui(a, p));
+      result = log_table[b];
+    }
+
+    void set_from_mpq(elem &result, mpq_ptr a) const { 
+      int n, d;
+      set_from_mpz(n, mpq_numref(a));
+      set_from_mpz(d, mpq_denref(a));
+      divide(result,n,d);
+    }
+
     // arithmetic
-    bool is_zero(elem result) const { return result == 0; }
-    
     void invert(elem &result, elem a) const
       // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
     {

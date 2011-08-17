@@ -48,7 +48,9 @@ namespace M2 {
     // result will be either 0, or this.
 
     virtual RingID getRingID() const = 0;
+
     virtual void init_set(RElement &a, long b) const = 0;
+
     virtual void add_to(RElement &a, const RElement &b) const = 0;
 
     static bool converter(const ARing *sourceR, const ARing *targetR, const RElement &a, RElement &b);
