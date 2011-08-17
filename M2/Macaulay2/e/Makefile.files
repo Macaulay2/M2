@@ -6,7 +6,9 @@
 
 INTERFACE = \
 	cra \
-	ring-test \
+	aring-zzp \
+	aring-wrap \
+	aring \
 	schurSn \
 	schur2 \
 	spair-heap \

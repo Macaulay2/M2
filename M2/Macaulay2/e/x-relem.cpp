@@ -27,7 +27,7 @@
 
 #include "tower.hpp"
 
-#include "ring-test.hpp"
+#include "aring.hpp"
 
 unsigned long IM2_Ring_hash(const Ring *R)
 {

@@ -889,12 +889,11 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 #endif
 }
 
-#if defined(HAVE_FFLAS_FFPACK)
+#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
 #include "fflas-ffpack/field/modular-positive.h"
 #include "fflas-ffpack/field/modular-balanced.h"
 #include "fflas-ffpack/ffpack/ffpack.h"
 
-#if defined(HAVE_GIVARO)
 #include <givaro/givgfq.h>
 #include <givaro/givpower.h>
 #include <givaro/givtimer.h>
@@ -922,7 +921,6 @@ void tryout_givaro()
 
 }
 
-#endif
 
 template < typename FieldType >
 typename FieldType::Element *GFtoFFPackMatrix(const GF *kk, const FieldType &F, MutableMatrix *M)
@@ -1053,7 +1051,6 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
 
   M2::testit();
   tryout_givaro();
-
   const Ring *R = M->get_ring();
   const Z_mod *kk = R->cast_to_Z_mod();
   if (kk == 0)
