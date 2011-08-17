@@ -176,28 +176,35 @@ document {
 document {
      Key => installMethod,
      Headline => "install methods",
-     PARA{},
-     "Most users will use a different way of installing methods.",
-     PARA{},
-     TT "installMethod(M,A,f)", "     -- installs a function ", TT "f", " as a unary method for
-     the class ", TT "A", " under the name ", TT "M", ".  This is the same as ", "M A := f", " 
-     if ", TT "M", " is a function.  As currently implemented, this is also the same 
-     as ", TT "A#M = f", ".",
-     PARA{},
-     TT "installMethod(M,A,B,f)", "   -- installs a function ", TT "f", " as a binary method for
-     classes ", TT "A", " and ", TT "B", " under the name ", TT "M", ".  This is the same as 
-     ", TT "M(A,B) := f", " if ", TT "M", " is a
-     function, or the same as ", TT "A M B := f", " if ", TT "M", " is a binary operator. As currently
-     implemented, this is also the same as ", TT "Y#(M,A,B) = f", ", where ", TT "Y", " is 
-     the younger of ", TT "A", " and ", TT "B", ".",
-     PARA{},
-     TT "installMethod(M,A,B,C,f)", " -- installs a function ", TT "f", " as a ternary method 
-     for classes ", TT "A", ", ", TT "B", ", and ", TT "C", " under the name ", TT "M", ".  
-     This is the same as ", TT "M(A,B,C) := f", " if ", TT "f", "
-     is a function.  As currently implemented, this is also the same as
-     ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
-     and ", TT "C", ".",
-     PARA{},
+     PARA{"Most users will use a different way of installing methods."},
+     PARA{
+	  TT "installMethod(M,f)", "     -- installs a function ", TT "f", " as a unary method for
+	  the class ", TT "A", " under the name ", TT "M", ".  This is a replacement for the syntax ", "M () := f", ",
+	  which hasn't yet been made to work.  As currently implemented, this is also the same 
+	  as ", TT "nullaryMethods#(1:M) = f", "."
+	  },
+     PARA{
+	  TT "installMethod(M,A,f)", "     -- installs a function ", TT "f", " as a unary method for
+	  the class ", TT "A", " under the name ", TT "M", ".  This is the same as ", "M A := f", " 
+	  if ", TT "M", " is a function.  As currently implemented, this is also the same 
+	  as ", TT "A#M = f", "."
+	  },
+     PARA{
+	  TT "installMethod(M,A,B,f)", "   -- installs a function ", TT "f", " as a binary method for
+	  classes ", TT "A", " and ", TT "B", " under the name ", TT "M", ".  This is the same as 
+	  ", TT "M(A,B) := f", " if ", TT "M", " is a
+	  function, or the same as ", TT "A M B := f", " if ", TT "M", " is a binary operator. As currently
+	  implemented, this is also the same as ", TT "Y#(M,A,B) = f", ", where ", TT "Y", " is 
+	  the younger of ", TT "A", " and ", TT "B", "."
+	  },
+     PARA{
+	  TT "installMethod(M,A,B,C,f)", " -- installs a function ", TT "f", " as a ternary method 
+	  for classes ", TT "A", ", ", TT "B", ", and ", TT "C", " under the name ", TT "M", ".  
+	  This is the same as ", TT "M(A,B,C) := f", " if ", TT "f", "
+	  is a function.  As currently implemented, this is also the same as
+	  ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
+	  and ", TT "C", "."
+	  },
      SeeAlso =>{"#", "lookup",  "new"}
      }
 document {
