@@ -20,7 +20,7 @@ namespace M2 {
     
   public:
     static const RingID ringID = ring_ZZp;
-    typedef unsigned int ElementType;
+    typedef int ElementType;
 
     typedef int elem;
     

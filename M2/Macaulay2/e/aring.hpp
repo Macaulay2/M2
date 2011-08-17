@@ -29,9 +29,7 @@ namespace M2 {
     ring_top = 8 // used to determine the number of ring types
   };
 
-  class ARing;
-
-  template <class RingType> class RingWrap;
+  template <class RingType> class ARingWrap;
 
   class RElement
   {
@@ -46,7 +44,7 @@ namespace M2 {
   {
   public:
     template<class RingType> 
-    const RingWrap<RingType> * cast_to_RingWrap() const { return dynamic_cast< const RingWrap<RingType> * >(this) ; }
+    const ARingWrap<RingType> * cast_to_ARingWrap() const { return dynamic_cast< const ARingWrap<RingType> * >(this) ; }
     // result will be either 0, or this.
 
     virtual RingID getRingID() const = 0;

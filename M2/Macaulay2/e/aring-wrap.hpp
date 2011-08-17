@@ -20,20 +20,20 @@ namespace M2 {
     RElementWrap(const RElement &a) : val_( static_cast<const RElementWrap&>(a).val_ ) {}
 
   private:
-    friend class RingWrap<RingType>;
+    friend class ARingWrap<RingType>;
     element_type val_;
   };
 
   template <class RingType>     // RingType should inherit from RingInterface
-  class RingWrap : public ARing
+  class ARingWrap : public ARing
   {
     friend bool ARing::converter(const ARing *sourceR, const ARing *targetR, const RElement &a, RElement &b);
   public:
     typedef typename RingType::ElementType element_type;
     typedef RElementWrap<RingType> ringelem_type;
 
-    RingWrap() {}
-    RingWrap(RingType R) : R_(R) {}
+    ARingWrap() {}
+    ARingWrap(RingType R) : R_(R) {}
 
     virtual RingID getRingID() const { return RingType::ringID; }
     RingType & getInternalRing() { return R_; }

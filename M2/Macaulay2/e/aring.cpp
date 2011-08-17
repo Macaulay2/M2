@@ -6,7 +6,7 @@
 
 namespace M2 {
 
-    class RingWrap<ARingZZp>;
+    class ARingWrap<ARingZZp>;
 };
 
 // Local Variables:
