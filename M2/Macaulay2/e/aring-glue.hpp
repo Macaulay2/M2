@@ -252,16 +252,30 @@ namespace M2 {
       return result;
     }
     
-    virtual void syzygy(const ring_elem a, const ring_elem b,
+    virtual void syzygy(const ring_elem f, const ring_elem g,
 			ring_elem &x, ring_elem &y) const
     {
       fprintf(stderr, "calling syzygy\n");
+      ElementType a, b, xe, ye;
+      R->init(a);
+      R->init(b);
+      R->init(xe);
+      R->init(ye);
+      from_ring_elem(a, f);
+      from_ring_elem(b,g);
+      R->syzygy(a,b, xe,ye);
+      to_ring_elem(x,xe);
+      to_ring_elem(y,ye);
     }
     
     virtual ring_elem random() const
     {
       fprintf(stderr, "calling random\n");
-      return 0;
+      ring_elem result;
+      ElementType a;
+      R->random(a);
+      to_ring_elem(result,a);
+      return result;
     }
     
     virtual void elem_text_out(buffer &o, 

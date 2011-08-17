@@ -193,7 +193,22 @@ namespace M2 {
 		       bool p_one, 
 		       bool p_plus, 
 		       bool p_parens) const;
-	  
+
+    void syzygy(ElementType a, ElementType b,
+		ElementType &x, ElementType &y) const
+    // returns x,y s.y. x*a + y*b == 0.
+    // if possible, x is set to 1.
+    // no need to consider the case a==0 or b==0.
+    {
+      x = p1;
+      divide(y,a,b);
+      negate(y,y);
+    }
+
+    void random(ElementType &result) const
+    {
+      result = rawRandomInt((int32_t)p);
+    }
   };
   
 };
