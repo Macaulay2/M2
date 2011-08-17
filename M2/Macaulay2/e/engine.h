@@ -166,6 +166,16 @@ extern "C" {
     /* For debugging purposes */
 
   /**************************************************/
+  /**** ARing routines ******************************/
+  /**************************************************/
+
+  const Ring /* or null */ *rawARingZZp(int p); /* connected */
+    /* Expects a prime number p in range 2 <= p <= 32749 */
+
+  const Ring /* or null */ *rawARingGaloisField(int p, int n); /* connected */
+  /* creates a ring GF(p^n).  Constraints on p, n? */
+
+  /**************************************************/
   /**** Ring routines *******************************/
   /**************************************************/
   unsigned long IM2_Ring_hash(const Ring *R);  /* drg: connected hash */

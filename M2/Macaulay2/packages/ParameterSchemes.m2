@@ -11,7 +11,7 @@ newPackage(
     	)
 
 export { 
-     findHeft,
+     findHefty,
      findWtVec,
      smallerMonomials, 
      standardMonomials,
@@ -74,7 +74,7 @@ standardMonomials(List) := (L) -> (
 
 
 ----------------------------------
-findHeft = (degs) -> (
+findHefty = (degs) -> (
      A := transpose matrix degs;
      needsPackage "FourierMotzkin";
      B := ((value getGlobalSymbol "fourierMotzkin") A)#0;
@@ -267,7 +267,7 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      (J1, phi' F)
      )
 
-preprune = (J,F) -> (
+prepruneOld = (J,F) -> (
      -- asumption: J is homogeneous
      R' := (coefficientRing ring J) [ gens ring J ];
      J' := sub(J,R');

@@ -13,6 +13,8 @@ header "
   #include <monomial.hpp>
   #include <exceptions.hpp>
   #include <relem.hpp>
+  #include <aring-glue.hpp>
+  #include <aring-zzp.hpp>
   ";
 
 -- debugging:
@@ -588,6 +590,19 @@ export rawZZp(e:Expr):Expr := (
      else WrongArgZZ());
 setupfun("rawZZp", rawZZp);
 
+export rawARingZZp(e:Expr):Expr := (
+     when e is p:ZZcell do 
+       if !isInt(p)
+       then WrongArgSmallInteger(1)
+       else (
+	    P := toInt(p);
+	    if P <= 1 || P >= 32750
+              then WrongArg(1, "ZZ/p: expected a prime number n range 1 <= p <= 32749")
+	      else
+                toExpr(Ccode(RawRingOrNull, "rawARingZZp(", P, ")")))
+     else WrongArgZZ());
+setupfun("rawARingZZp", rawARingZZp);
+
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toInt(prec),")" ))
@@ -702,6 +717,23 @@ export rawGaloisField(e:Expr):Expr := (
      when e is f:RawRingElementCell do toExpr(Ccode(RawRingOrNull,"rawGaloisField(", f.p, ")"))
      else WrongArg("a raw ring element"));
 setupfun("rawGaloisField", rawGaloisField);
+
+export rawARingGaloisField(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 2 then 
+     when a.0 is p:ZZcell do 
+     when a.1 is n:ZZcell do 
+     if !isInt(p) then WrongArgSmallInteger()
+     else if !isInt(n) then WrongArgSmallInteger()
+     else (
+       toExpr(Ccode(RawRingOrNull, "rawARingGaloisField(", toInt(p), ",",
+ 	       toInt(n),
+ 	       ")" )))
+     else WrongArgZZ(2)
+     else WrongArgZZ(1)
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawARingGaloisField", rawARingGaloisField);
 
 export rawFractionRing(e:Expr):Expr := (
      when e is R:RawRingCell do toExpr( Ccode(RawRingOrNull,"IM2_Ring_frac(", R.p, ")"))

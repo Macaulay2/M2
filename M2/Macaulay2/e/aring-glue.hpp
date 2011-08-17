@@ -25,9 +25,11 @@ namespace M2 {
     
     virtual int coerce_to_int(ring_elem a) const
     {
+      return 0;
     }
     virtual int discrete_log(ring_elem a) const // returns -1 if a is 0
     {
+      return 0;
     }
     
     // The following are all the routines required by 'ring'
@@ -66,11 +68,13 @@ namespace M2 {
       return result;
     }
     
-    virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const
+    virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const
     {
+      return false;
     }
-    virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const
+    virtual bool lift(const Ring *S, const ring_elem f, ring_elem &result) const
     {
+      return false;
     }
     
     virtual bool is_unit(const ring_elem f) const
@@ -111,6 +115,7 @@ namespace M2 {
     
     virtual ring_elem copy(const ring_elem f) const
     {
+      return 0;
     }
     
     virtual void remove(ring_elem &f) const
@@ -119,34 +124,42 @@ namespace M2 {
     
     virtual ring_elem negate(const ring_elem f) const
     {
+      return 0;
     }
 
     virtual ring_elem add(const ring_elem f, const ring_elem g) const
     {
+      return 0;
     }
 
     virtual ring_elem subtract(const ring_elem f, const ring_elem g) const
     {
+      return 0;
     }
 
     virtual ring_elem mult(const ring_elem f, const ring_elem g) const
     {
+      return 0;
     }
 
     virtual ring_elem power(const ring_elem f, mpz_t n) const
     {
+      return 0;
     }
 
     virtual ring_elem power(const ring_elem f, int n) const
     {
+      return 0;
     }
 
     virtual ring_elem invert(const ring_elem f) const
     {
+      return 0;
     }
 
     virtual ring_elem divide(const ring_elem f, const ring_elem g) const
     {
+      return 0;
     }
     
     virtual void syzygy(const ring_elem a, const ring_elem b,
@@ -156,6 +169,7 @@ namespace M2 {
     
     virtual ring_elem random() const
     {
+      return 0;
     }
     
     virtual void elem_text_out(buffer &o, 
@@ -168,6 +182,7 @@ namespace M2 {
     
     virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const
     {
+      return 0;
     }
   };
 };
