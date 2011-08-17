@@ -41,6 +41,7 @@ namespace M2 {
     
     virtual ring_elem from_int(int n) const 
     { 
+      fprintf(stderr, "calling from_int\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -51,6 +52,7 @@ namespace M2 {
     
     virtual ring_elem from_int(mpz_ptr n) const 
     {
+      fprintf(stderr, "calling from_int(mpz)\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -60,6 +62,7 @@ namespace M2 {
     }
     virtual ring_elem from_rational(mpq_ptr q) const
     {
+      fprintf(stderr, "calling from_rational\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -70,15 +73,18 @@ namespace M2 {
     
     virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const
     {
+      fprintf(stderr, "calling promote\n");
       return false;
     }
     virtual bool lift(const Ring *S, const ring_elem f, ring_elem &result) const
     {
+      fprintf(stderr, "calling lift\n");
       return false;
     }
     
     virtual bool is_unit(const ring_elem f) const
     {
+      fprintf(stderr, "calling is_unit\n");
       ElementType a;
       R->init(a);
       from_ring_elem(a, f);
@@ -87,6 +93,7 @@ namespace M2 {
     
     virtual bool is_zero(const ring_elem f) const
     {
+      fprintf(stderr, "calling is_zero\n");
       ElementType a;
       R->init(a);
       from_ring_elem(a, f);
@@ -95,6 +102,7 @@ namespace M2 {
     
     virtual bool is_equal(const ring_elem f, const ring_elem g) const
     {
+      fprintf(stderr, "calling is_equal\n");
       ElementType a, b;
       R->init(a);
       R->init(b);
@@ -105,6 +113,7 @@ namespace M2 {
     
     virtual int compare_elems(const ring_elem f, const ring_elem g) const
     {
+      fprintf(stderr, "calling compare_elems\n");
       ElementType a, b;
       R->init(a);
       R->init(b);
@@ -115,60 +124,143 @@ namespace M2 {
     
     virtual ring_elem copy(const ring_elem f) const
     {
-      return 0;
+      fprintf(stderr, "calling copy\n");
+      ElementType a,b;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      from_ring_elem(a, f);
+      R->copy(b,a);
+      to_ring_elem(result,b);
+      return result;
     }
     
     virtual void remove(ring_elem &f) const
     {
+      fprintf(stderr, "calling remove\n");
     }
     
     virtual ring_elem negate(const ring_elem f) const
     {
-      return 0;
+      fprintf(stderr, "calling negate\n");
+      ElementType a,b;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      from_ring_elem(a, f);
+      R->negate(b,a);
+      to_ring_elem(result,b);
+      return result;
     }
 
     virtual ring_elem add(const ring_elem f, const ring_elem g) const
     {
-      return 0;
+      fprintf(stderr, "calling add\n");
+      ElementType a, b, c;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      R->init(c);
+      from_ring_elem(a, f);
+      from_ring_elem(b,g);
+      R->add(c,a,b);
+      to_ring_elem(result,c);
+      return result;
     }
 
     virtual ring_elem subtract(const ring_elem f, const ring_elem g) const
     {
-      return 0;
+      fprintf(stderr, "calling subtract\n");
+      ElementType a, b, c;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      R->init(c);
+      from_ring_elem(a, f);
+      from_ring_elem(b,g);
+      R->subtract(c,a,b);
+      to_ring_elem(result,c);
+      return result;
     }
 
     virtual ring_elem mult(const ring_elem f, const ring_elem g) const
     {
-      return 0;
+      fprintf(stderr, "calling mult\n");
+      ElementType a, b, c;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      R->init(c);
+      from_ring_elem(a, f);
+      from_ring_elem(b,g);
+      R->mult(c,a,b);
+      to_ring_elem(result,c);
+      return result;
     }
 
     virtual ring_elem power(const ring_elem f, mpz_t n) const
     {
-      return 0;
+      fprintf(stderr, "calling power mpz\n");
+      ElementType a,b;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      from_ring_elem(a, f);
+      R->power_mpz(b,a,n);
+      to_ring_elem(result,b);
+      return result;
     }
 
     virtual ring_elem power(const ring_elem f, int n) const
     {
-      return 0;
+      fprintf(stderr, "calling power int\n");
+      ElementType a,b;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      from_ring_elem(a, f);
+      R->power(b,a,n);
+      to_ring_elem(result,b);
+      return result;
     }
 
     virtual ring_elem invert(const ring_elem f) const
     {
-      return 0;
+      fprintf(stderr, "calling invert\n");
+      ElementType a,b;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      from_ring_elem(a, f);
+      R->invert(b,a);
+      to_ring_elem(result,b);
+      return result;
     }
 
     virtual ring_elem divide(const ring_elem f, const ring_elem g) const
     {
-      return 0;
+      fprintf(stderr, "calling divide\n");
+      ElementType a, b, c;
+      ring_elem result;
+      R->init(a);
+      R->init(b);
+      R->init(c);
+      from_ring_elem(a, f);
+      from_ring_elem(b,g);
+      R->divide(c,a,b);
+      to_ring_elem(result,c);
+      return result;
     }
     
     virtual void syzygy(const ring_elem a, const ring_elem b,
 			ring_elem &x, ring_elem &y) const
     {
+      fprintf(stderr, "calling syzygy\n");
     }
     
     virtual ring_elem random() const
     {
+      fprintf(stderr, "calling random\n");
       return 0;
     }
     
@@ -178,10 +270,16 @@ namespace M2 {
 			       bool p_plus=false, 
 			       bool p_parens=false) const
     {
+      fprintf(stderr, "calling elem_text_out\n");
+      ElementType a;
+      R->init(a);
+      from_ring_elem(a, f);
+      R->elem_text_out(o,a,p_one,p_plus,p_parens);
     }
     
     virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const
     {
+      fprintf(stderr, "calling eval\n");
       return 0;
     }
   };

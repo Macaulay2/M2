@@ -67,15 +67,15 @@ namespace M2 {
 
     int get_repr(elem f) const { return f; }
 
-    void get_str(char *s, size_t max_size, elem f) const;
-
     // 'init', 'init_set' functions
 
     void init(elem &result) const { result = 0; }
 
+    void clear(elem &result) const { /* nothing */ }
+
     void set_zero(elem &result) const { result = 0; }
     
-    void set(elem &result, elem a) const { result = a; }
+    void copy(elem &result, elem a) const { result = a; }
 
     void set_from_int(elem &result, int a) const { 
       a = a % p; 
@@ -96,6 +96,14 @@ namespace M2 {
     }
 
     // arithmetic
+    void negate(elem &result, elem a) const
+    {
+      if (a != 0)
+	result = p - a;
+      else
+	result = 0;
+    }
+
     void invert(elem &result, elem a) const
       // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
     {
@@ -155,13 +163,37 @@ namespace M2 {
       else
 	result = 0;
     }
-    
+
+    void power(elem &result, elem a, int n) const
+    {
+      if (a != 0) 
+	{
+	  result = (a*n) % p1;
+	  if (result <= 0) result += p1;
+	}
+      else
+	result = 0;
+    }
+
+    void power_mpz(elem &result, elem a, mpz_ptr n) const
+    {
+      int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
+      power(result,a,n1);
+    }
+
     void swap(ElementType &a, ElementType &b) const
     {
       ElementType tmp = a;
       a = b;
       b = tmp;
     }
+
+    void elem_text_out(buffer &o, 
+		       ElementType a, 
+		       bool p_one, 
+		       bool p_plus, 
+		       bool p_parens) const;
+	  
   };
   
 };

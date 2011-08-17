@@ -22,7 +22,7 @@ namespace M2 {
 
   void ARingZZp::initialize_tables()
   {
-    int i,j,q,n;
+    int i,n;
     
     prim_root = findPrimitiveRoot(p);
 
@@ -33,8 +33,20 @@ namespace M2 {
 	log_table[n] = i;  // i = log_(base _prim_root)(n)
 	exp_table[i] = n;  // n = (_prim_root)^i 
       }
+    exp_table[p1] = 1;
     exp_table[0] = 0;
-    log_table[0] = 0;
+    log_table[1] = p1;
+
+#if 0
+    fprintf(stderr, "char %d primitive %d\n", p, prim_root);
+    fprintf(stderr, "exp: ");
+    for (i=0; i<p; i++)
+      fprintf(stderr, "%d ", exp_table[i]);
+    fprintf(stderr, "\nlog: ");
+    for (i=0; i<p; i++)
+      fprintf(stderr, "%d ", log_table[i]);
+    fprintf(stderr, "\n");
+#endif
   }
 
   ARingZZp::ARingZZp(int p0)
@@ -49,6 +61,22 @@ namespace M2 {
     initialize_tables();
   }
   
+  void ARingZZp::elem_text_out(buffer &o, 
+			       ElementType a, 
+			       bool p_one, 
+			       bool p_plus, 
+			       bool p_parens) const
+  {
+    int n = exp_table[a];
+    if (n < 0) 
+      {
+	o << '-';
+	n = -n;
+      }
+    else if (p_plus) 
+      o << '+';
+    if (p_one || n != 1) o << n;
+  }
   
 };
 
