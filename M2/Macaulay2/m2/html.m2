@@ -458,7 +458,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
-     pkgname := pkg#"title";
+     pkgname := toString pkg;
      ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'loadPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | src | ldpkg;
@@ -626,11 +626,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
-dir  := s -> ( m := regex(".*/",s); if m === null or 0 === #m then "./" else substring(m#0#0,m#0#1-1,s))
-
 installPackage Package := opts -> pkg -> (
-     pkgorig := pkg;
-
      verbose := opts.Verbose or debugLevel > 0;
      oldlayout := installationLayout;
      installationLayout = if opts.SeparateExec then Layout#2 else Layout#1;
@@ -659,17 +655,15 @@ installPackage Package := opts -> pkg -> (
      if verbose then stderr << "--installing package " << pkg << " in " << buildPrefix << endl;
      
      currentSourceDir := pkg#"source directory";
-     currentSourceFilename := pkg#"source filename";
      if verbose then stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy package source file
      pkgDirectory := installationLayout#"packages";
      makeDirectory (buildPrefix|pkgDirectory);
      bn := buildPackage | ".m2";
-     if not fileExists currentSourceFilename then error("file ", currentSourceFilename, " not found");
-     targetSourceFilename := buildPrefix|pkgDirectory|bn;
-     makeDirectory dir targetSourceFilename;
-     copyFile(currentSourceFilename, targetSourceFilename, Verbose => debugLevel > 5);
+     fn := currentSourceDir|bn;
+     if not fileExists fn then error("file ", fn, " not found");
+     copyFile(fn, buildPrefix|pkgDirectory|bn, Verbose => debugLevel > 5);
 
      excludes := Exclude => {"^CVS$", "^\\.svn$"};
 

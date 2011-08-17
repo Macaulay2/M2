@@ -8,7 +8,7 @@ addStartFunction(
 
 Package = new Type of MutableHashTable
 Package.synonym = "package"
-net Package := toString Package := p -> if p#?"fixed title" then p#"fixed title" else "{*package*}"
+net Package := toString Package := p -> if p#?"title" then p#"title" else "{*package*}"
 loadedPackages = {}
 options Package := p -> p.Options
 
@@ -40,12 +40,10 @@ loadPackage = method(
 	  Reload => null
 	  } )
 packageLoadingOptions := new MutableHashTable
-checkPackageName = title -> if not match("^[a-zA-Z0-9/]+$",title) then error( "package title not alphanumeric, with slashes: ",format title)
-fixPackageName = title -> replace("/","$",title)
+checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",format title)
 
 loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;
-     fixtitle := fixPackageName pkgtitle;
      if opts.Reload === true then (
 	  dismiss pkgtitle;
 	  if PackageDictionary#?pkgtitle then PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
@@ -59,8 +57,8 @@ loadPackage String := opts -> pkgtitle -> (
      actualFilename := loadedFiles#(#loadedFiles-1);
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
      remove(packageLoadingOptions,pkgtitle);
-     if not PackageDictionary#?fixtitle then error("the file ", actualFilename, " did not define a package called ", pkgtitle);
-     value PackageDictionary#fixtitle)
+     if not PackageDictionary#?pkgtitle then error("the file ", actualFilename, " did not define a package called ", pkgtitle);
+     value PackageDictionary#pkgtitle)
 
 needsPackage = method(
      TypicalValue => Package,
@@ -142,7 +140,6 @@ databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".d
 
 newPackage(String) := opts -> (title) -> (
      checkPackageName title;
-     fixtitle := fixPackageName title;
      scan({(Version,String),(AuxiliaryFiles,Boolean),(DebuggingMode,Boolean),(InfoDirSection,String),
 	       (PackageImports,List),(PackageExports,List),(Authors,List),(Configuration,List)},
 	  (k,K) -> if not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
@@ -154,14 +151,14 @@ newPackage(String) := opts -> (title) -> (
 	  else if opts.Reload === false then error("package ", title, " not reloaded; try Reload => true")
 	  );
      scan(opts.PackageExports, needsPackage);
-     dismiss fixtitle;
+     dismiss title;
      save := (saveD := dictionaryPath, saveP := loadedPackages, debuggingMode, loadDepth);
      local hook;
      if title =!= "Core" then (
      	  hook = haderror -> (
 	       if haderror then (
 	       	    (dictionaryPath, loadedPackages, debuggingMode, loadDepth) = save;
-		    PackageDictionary#fixtitle <- PackageDictionary#fixtitle;
+		    PackageDictionary#title <- PackageDictionary#title;
 		    )
 	       else endPackage title
 	       );
@@ -205,7 +202,6 @@ newPackage(String) := opts -> (title) -> (
 	  );
      newpkg := new Package from nonnull {
           "title" => title,
-          "fixed title" => fixtitle,
 	  symbol Options => opts,
      	  symbol Dictionary => new Dictionary, -- this is the global one
      	  "private dictionary" => if title === "Core" then first dictionaryPath else new Dictionary, -- this is the local one
@@ -223,7 +219,6 @@ newPackage(String) := opts -> (title) -> (
 	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => toAbsolutePath currentFileDirectory,
-	  "source filename" => toAbsolutePath currentFileName,
 	  if opts.AuxiliaryFiles then "auxiliary files" => toAbsolutePath currentFileDirectory | title | "/",
 	  "source file" => toAbsolutePath currentFileName,
 	  "undocumented keys" => new MutableHashTable,
@@ -261,9 +256,9 @@ newPackage(String) := opts -> (title) -> (
 	       	    if notify then stderr << "--database not present: " << rawdbname << endl;
 		    )));
      pkgsym := (
-	  if PackageDictionary#?fixtitle
-	  then getGlobalSymbol(PackageDictionary,fixtitle)
-	  else PackageDictionary#("Package$" | fixtitle) = getGlobalSymbol(PackageDictionary,fixtitle)
+	  if PackageDictionary#?title
+	  then getGlobalSymbol(PackageDictionary,title)
+	  else PackageDictionary#("Package$" | title) = getGlobalSymbol(PackageDictionary,title)
 	  );
 
      global currentPackage <- newpkg;
@@ -282,8 +277,8 @@ newPackage(String) := opts -> (title) -> (
 	  if member(newpkg.Dictionary,dictionaryPath)
      	  then join({newpkg#"private dictionary"}, dictionaryPath)
 	  else join({newpkg#"private dictionary",newpkg.Dictionary}, dictionaryPath));
-     setAttribute(newpkg.Dictionary,PrintNames,fixtitle | ".Dictionary");
-     setAttribute(newpkg#"private dictionary",PrintNames,fixtitle | "#\"private dictionary\"");
+     setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
+     setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
      if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
      scan(opts.PackageExports, needsPackage);
@@ -301,7 +296,7 @@ export List := v -> (
      if currentPackage === null then error "no current package";
      pd := currentPackage#"private dictionary";
      d := currentPackage.Dictionary;
-     fixtitle := currentPackage#"fixed title";
+     title := currentPackage#"title";
      syms := new MutableHashTable;
      scan(v, sym -> (
 	       local nam;
@@ -324,7 +319,7 @@ export List := v -> (
 		    error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
 		    sym = getGlobalSymbol(pd,nam);	    -- replace sym by one in the current package's private dictionary
 		    );
-	       syn := fixtitle | "$" | nam;
+	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       syms#sym = true;
 	       ));

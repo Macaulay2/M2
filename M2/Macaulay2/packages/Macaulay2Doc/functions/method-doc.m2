@@ -105,7 +105,7 @@ document {
 	  methodOptions r
      ///,
      PARA {
-	  "In the next example we define a method function that leaves option processing to the individual methods."
+	  "In this example we defined a method function that leaves option processing to the individual methods."
 	  },
      EXAMPLE lines ///
      	  s = method(Options => true)
@@ -116,14 +116,6 @@ document {
 	  options s
 	  options(s,ZZ)
 	  options(s,RR)
-     ///,
-     PARA {
-	  "For now, one installs a method function for ", TT "s", " with no non-optional arguments using ", TO installMethod, ":"
-	  },
-     EXAMPLE lines ///
-     	  installMethod(s,{ Slope => 1234 } >> o -> () -> o.Slope)
-	  s()
-	  s(Slope => 4)
      ///,
      SeeAlso => {"methods", "specifying typical values" }
      }
