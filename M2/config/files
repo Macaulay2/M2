@@ -43,6 +43,9 @@ libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/boost/Makefile
+libraries/mpack/Makefile
+libraries/qd/Makefile
+libraries/mpc/Makefile
 libraries/4ti2/Makefile
 libraries/gfan/Makefile
 libraries/fflas_ffpack/Makefile

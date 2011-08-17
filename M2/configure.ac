@@ -405,7 +405,7 @@ AC_SUBST(HAVE_PERSONALITY,)
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 AC_DEFINE_UNQUOTED(HAVE_PERSONALITY,$HAVE_PERSONALITY,[whether personality() is found])
 
-AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
+dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
 AC_SUBST(STRIP,no)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
@@ -413,17 +413,17 @@ AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
-AC_SUBST(USE_THREADS,yes) AC_ARG_ENABLE(threads, AS_HELP_STRING(--disable-threads,[disable thread local storage and thread creation]), USE_THREADS=$enableval)
-AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
-if [[ "$USE_THREADS" = yes ]]
-then AC_LANG(C)
-     AC_COMPILE_IFELSE([AC_LANG_SOURCE([__thread int x;])],
-     	 [AC_MSG_RESULT(yes)],
-	 USE_THREADS=no; [AC_MSG_RESULT([no, disabling threads])])
-fi
-if [[ "$USE_THREADS" = yes ]]
-then AC_DEFINE(USE_THREADS,1,[whether to use thread local storage])
-fi
+dnl AC_SUBST(USE_THREADS,yes) AC_ARG_ENABLE(threads, AS_HELP_STRING(--disable-threads,[disable thread local storage and thread creation]), USE_THREADS=$enableval)
+dnl AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
+dnl if [[ "$USE_THREADS" = yes ]]
+dnl then AC_LANG(C)
+dnl      AC_COMPILE_IFELSE([AC_LANG_SOURCE([__thread int x;])],
+dnl      	 [AC_MSG_RESULT(yes)],
+dnl 	 USE_THREADS=no; [AC_MSG_RESULT([no, disabling threads])])
+dnl fi
+dnl if [[ "$USE_THREADS" = yes ]]
+dnl then AC_DEFINE(USE_THREADS,1,[whether to use thread local storage])
+dnl fi
 
 AC_SUBST(FROBBY,yes)
 AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[do not download, compile, and link with frobby library]), FROBBY=$enableval)
@@ -486,9 +486,10 @@ then AC_FC_DUMMY_MAIN()
      AC_FC_LIBRARY_LDFLAGS()
 fi
 
-if test "$PTHREADS" = yes
-then AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)
-fi
+dnl if test "$PTHREADS" = yes
+dnl then
+    AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)
+dnl fi
 
 AC_SUBST(PROFILING,no)
 AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING=$enableval)
@@ -813,8 +814,10 @@ AC_SUBST(BUILTLIBS,)
 #    fflas-ffpack is provided as an option for experimentation
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
+#    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
+#    mpack depends on gmp (which mpir provides) mpfr mpc qd
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -823,7 +826,7 @@ do eval BUILD_$i=yes
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm mpir mpfr readline pari ntl factory libfac lapack frobby)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -1062,11 +1065,12 @@ then AC_LANG(C)
 fi
 AC_SUBST(GC_LIBS,-lgc)
 if test $BUILD_gc = yes
-then if test $PTHREADS = yes
-     then # libpthread isn't really built by us, but gc will need to link against it
+then 
+     dnl if test $PTHREADS = yes
+     dnl then # libpthread isn't really built by us, but gc will need to link against it
 	  BUILTLIBS="-lpthread $BUILTLIBS"
 	  GC_LIBS="$GC_LIBS -lpthread"
-     fi
+     dnl fi
      BUILTLIBS="-lgc $BUILTLIBS"
 fi
 
@@ -1139,10 +1143,19 @@ then AC_LANG(C++)
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 
+AC_SUBST(ENABLE_MPACK,no)
+AC_ARG_ENABLE(mpack,
+    [AS_HELP_STRING(--enable-mpack,[enable building the mpack library, linking with it, and compiling the experimental code that uses it])],
+    AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
+    BUILD_mpack=yes
+    BUILD_qd=yes
+    BUILD_mpc=yes
+    ENABLE_MPACK=yes
+    )
 
 AC_SUBST(ENABLE_GIVARO,no)
 AC_ARG_ENABLE(givaro,
-    [AS_HELP_STRING(--enable-givaro,enable building the givaro library and linking with it)],
+    [AS_HELP_STRING(--enable-givaro,[enable building the givaro library and linking with it])],
     AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
     BUILD_givaro=yes
     ENABLE_GIVARO=yes

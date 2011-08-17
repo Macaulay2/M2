@@ -5,7 +5,7 @@ isAlphaNumeric := s -> match("^[[:alnum:]]+$",s)
 okay := method()
 okay(String,Keyword) := okay(String,Symbol) := (nam,sym) -> #nam > 1 and isAlphaNumeric nam
 symbols := sort join( 
-     apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
+     apply(join(unique separateRegexp("[ /]",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
      flatten apply(
      	  join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"}),
      	  pkgnam -> (

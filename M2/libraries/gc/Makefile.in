@@ -52,12 +52,14 @@ URL = http://www.math.uiuc.edu/Macaulay2/Extra
 
 PRECONFIGURE = (cd libatomic_ops$(AOVERSION) && autoconf)
 VPATH = @srcdir@
-ifeq (@PTHREADS@,yes)
+
+# ifeq (@ PTHREADS @,yes)
 CONFIGOPTIONS += --enable-threads=posix
 CONFIGOPTIONS += --enable-parallel-mark
-else 
-CONFIGOPTIONS += --disable-threads
-endif
+# else 
+# CONFIGOPTIONS += --disable-threads
+# endif
+
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
