@@ -54,7 +54,6 @@ endif
 #   xconsole
 #   xkill
 
-# CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
 # BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true

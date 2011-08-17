@@ -13,7 +13,7 @@ ifeq ($(DEBUG),yes)
 
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug --disable-pthreads
+CONFIGOPTIONS += --enable-debug
 DIRECTORY = ubuntu64.debug
 
 else

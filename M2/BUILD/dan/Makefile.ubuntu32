@@ -11,8 +11,6 @@ INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug
 CONFIGOPTIONS += --with-mysql
 CONFIGOPTIONS += --with-python
-# I want to debug with threads:
-# CONFIGOPTIONS += --disable-pthreads
 DIRECTORY = ubuntu32.debug
 CONFIGOPTIONS += --disable-tarfile
 else
@@ -26,7 +24,7 @@ endif
 # i386 must be the architecture for debian based systems
 # CONFIGOPTIONS += --build=i386-pc-linux-gnu
 
-# but we need i586 or i686 to get multiple threads from libgc!
+# we need i586 or i686 to get multiple threads from libgc:
 CONFIGOPTIONS += --build=i686-pc-linux-gnu
 
 # we get this message later (when linking 4ti2) if we use --build=i386-pc-linux-gnu:

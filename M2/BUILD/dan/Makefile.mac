@@ -32,6 +32,10 @@ ifeq ($(LINBOX),yes)
 CONFIGOPTIONS += --enable-linbox
 endif
 
+ifeq ($(MPACK),yes)
+CONFIGOPTIONS += --enable-mpack
+endif
+
 ifeq ($(GIVARO),yes)
 CONFIGOPTIONS += --enable-givaro
 endif
@@ -56,10 +60,6 @@ CONFIGOPTIONS += CC="gcc -m32" CXX="g++ -m32" --build=i386-apple-darwin
 endif
 
 default: all
-
-# gc crashes if we enable pthreads, in testgc and in html-check-links
-# (under Mac OS 10.4 on power pc):
-# CONFIGOPTIONS += --disable-pthreads
 
 ifeq ($(PRODUCTION),yes)
    default: check install

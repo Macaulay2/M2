@@ -226,7 +226,6 @@ else
 DIRECTORY = windows
 endif
 
-# CONFIGOPTIONS += --disable-pthreads
 include Makefile.include
 default:install check
 foo:; : $(SHELL) ; type mkdir

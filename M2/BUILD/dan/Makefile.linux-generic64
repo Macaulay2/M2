@@ -3,7 +3,6 @@
 DIRECTORY ?= linux64
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-static
-CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
 include Makefile.include
 default: check

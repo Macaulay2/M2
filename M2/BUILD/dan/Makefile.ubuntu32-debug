@@ -2,7 +2,7 @@
 
 DIRECTORY = ubuntu32-debug
 CONFIGOPTIONS += --enable-build-libraries="mpfr"
-CONFIGOPTIONS += --enable-debug --disable-pthreads
+CONFIGOPTIONS += --enable-debug
 # CONFIGOPTIONS += --enable-python
 CONFIGOPTIONS += --disable-tarfile
 # CONFIGOPTIONS += LDFLAGS="-L/usr/lib/python2.5/config"

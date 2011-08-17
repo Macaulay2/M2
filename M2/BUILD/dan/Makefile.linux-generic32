@@ -4,7 +4,6 @@ DIRECTORY ?= linux32.generic.production
 CONFIGOPTIONS += --build=i486-pc-linux-gnu
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-static
-CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
 CONFIGOPTIONS += --disable-common-staging-area
 
