@@ -34,6 +34,7 @@ namespace M2 {
     result = a.int_val;
   }
 
+  template class RingWrap<ARingZZp>;
 };
 
 // Local Variables:

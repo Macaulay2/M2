@@ -161,6 +161,16 @@ opt64-ubuntu : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
 
+ubuntu64-givaro : always
+	mkdir -p opt64-givaro
+	cd opt64-givaro; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 icc-ubuntu64 :
 	mkdir -p icc-opt
 	cd icc-opt; ../../../configure \
