@@ -1,7 +1,7 @@
 VPATH = @srcdir@
 HOMEPAGE = http://mplapack.sourceforge.net/
 VERSION = 0.6.7
-PATCHFILE = @srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoconf
 # old: SUBDIRS = external mpfrc++ mblas mlapack examples
 # BUILDOPTIONS = SUBDIRS='mpfrc++ mblas mlapack'
