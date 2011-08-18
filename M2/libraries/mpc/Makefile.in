@@ -3,6 +3,9 @@ HOMEPAGE = http://www.multiprecision.org/
 VERSION = 0.8.2
 URL = http://www.multiprecision.org/mpc/download
 # this is libmpc-dev in ubuntu
+ifeq (@SHARED@,no)
+CONFIGOPTIONS += --disable-shared
+endif
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpc/Makefile
 # Local Variables:
