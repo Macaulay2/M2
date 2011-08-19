@@ -3,6 +3,8 @@
 
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
+#include "aring-gf.hpp"
+
 
 const Ring /* or null */ *rawARingZZp(int p)
   /* p must be a prime number <= 32767 */
@@ -23,8 +25,8 @@ const Ring /* or null */ *rawARingGaloisField(int p, int n)
   // Check that f is monic
   // If any of these fail, then return 0.
      try {
-       M2::ARingZZp *A = new M2::ARingZZp(p);
-       return M2::RingWrap<M2::ARingZZp>::create(A);
+       M2::ARingGF *A = new M2::ARingGF(p,n);
+       return M2::RingWrap<M2::ARingGF>::create(A);
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
