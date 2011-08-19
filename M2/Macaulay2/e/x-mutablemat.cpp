@@ -890,6 +890,7 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 }
 
 #if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
+//#if 0 
 #include "fflas-ffpack/field/modular-positive.h"
 #include "fflas-ffpack/field/modular-balanced.h"
 #include "fflas-ffpack/ffpack/ffpack.h"
@@ -897,6 +898,7 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 #include <givaro/givgfq.h>
 #include <givaro/givpower.h>
 #include <givaro/givtimer.h>
+
 
 void tryout_givaro()
 {
@@ -1049,7 +1051,7 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
   // translate the answer to a RingElement
   // free the ffpack matrix
 
-  M2::testit();
+  //M2::testit();
   tryout_givaro();
   const Ring *R = M->get_ring();
   const Z_mod *kk = R->cast_to_Z_mod();
