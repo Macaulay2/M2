@@ -96,6 +96,9 @@ UTT dimension; ///< same as extensionDegree
 		void set_from_mpz(elem &result, mpz_ptr a) const ;
 		
 		void set_from_mpq(elem &result, mpq_ptr a) const ;
+
+    void set_var(elem &result, int v) const { result = 1; }
+
 	/** @} */
 
 

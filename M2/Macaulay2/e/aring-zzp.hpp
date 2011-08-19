@@ -83,6 +83,8 @@ namespace M2 {
       result = log_table[a];
     }
 
+    void set_var(elem &result, int v) const { result = 1; }
+
     void set_from_mpz(elem &result, mpz_ptr a) const {
       int b = static_cast<int>(mpz_fdiv_ui(a, p));
       result = log_table[b];

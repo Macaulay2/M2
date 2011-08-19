@@ -70,6 +70,17 @@ namespace M2 {
       to_ring_elem(result, a);
       return result;
     }
+
+    virtual ring_elem var(int v) const
+    {
+      fprintf(stderr, "calling var\n");
+      ring_elem result;
+      ElementType a;
+      R->init(a);
+      R->set_var(a,v);
+      to_ring_elem(result, a);
+      return result;
+    }
     
     virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const
     {
