@@ -51,7 +51,7 @@ UTT dimension; ///< same as extensionDegree
 	@{ */
     		void text_out(buffer &o) const { o << "GF(" << charac << "," << dimension << ")"; }
 		  void elem_text_out(buffer &o, 
-		       ElementType a, 
+		      const  ElementType a, 
 		       bool p_one, 
 		       bool p_plus, 
 		       bool p_parens) const;
@@ -61,16 +61,16 @@ UTT dimension; ///< same as extensionDegree
 
 	/** @name properties
 	@{ */
-		bool is_unit(ElementType f) const ;
-		bool is_zero(ElementType f) const ;
+		bool is_unit(const ElementType f) const ;
+		bool is_zero(const ElementType f) const ;
 	/** @} */
 
 
 	/** @name operators
 	@{ */
-		bool is_equal(ElementType f, ElementType g) const 	;
+		bool is_equal(const ElementType f,const ElementType g) const 	;
 		
-		int compare_elems(ElementType f, ElementType g) const ;
+		int compare_elems(const ElementType f,const ElementType g) const ;
 	/** @} */
 
 
@@ -89,13 +89,13 @@ UTT dimension; ///< same as extensionDegree
 	
 		void set_zero(elem &result) const ;
 		
-		void copy(elem &result, elem a) const ;
+		void copy(elem &result,const elem a) const ;
 		
 		void set_from_int(elem &result, int a) const ;
 
-		void set_from_mpz(elem &result, mpz_ptr a) const ;
+		void set_from_mpz(elem &result,const mpz_ptr a) const ;
 		
-		void set_from_mpq(elem &result, mpq_ptr a) const ;
+		void set_from_mpq(elem &result,const mpq_ptr a) const ;
 
     void set_var(elem &result, int v) const { result = 1; }
 
@@ -104,25 +104,25 @@ UTT dimension; ///< same as extensionDegree
 
 	/** @name arithmetic
 	@{ */
-		void negate(elem &result, elem a) const;
+		void negate(elem &result,const elem a) const;
 		
-		void invert(elem &result, elem a) const;
+		void invert(elem &result,const elem a) const;
 		
-		void add(elem &result, elem a, elem b) const;
+		void add(elem &result, const elem a,const elem b) const;
 		
-		void subtract(ElementType &result, ElementType a, ElementType b) const;
+		void subtract(ElementType &result,const  ElementType a,const  ElementType b) const;
 		
-		void subtract_multiple(elem &result, elem a, elem b) const;
+		void subtract_multiple(elem &result,const  elem a,const  elem b) const;
 		
-		void mult(elem &result, elem a, elem b) const;
+		void mult(elem &result,const  elem a,const  elem b) const;
 		
-		void divide(elem &result, elem a, elem b) const;
+		void divide(elem &result,const  elem a,const  elem b) const;
 		
-		void power(elem &result, elem a, STT n) const;
+		void power(elem &result,const  elem a,const  STT n) const;
 		
-		void power_mpz(elem &result, elem a, mpz_ptr n) const;
+		void power_mpz(elem &result,const  elem a,const  mpz_ptr n) const;
 		
-	   	void syzygy(ElementType a, ElementType b,
+	   	void syzygy(const ElementType a, const ElementType b,
 				ElementType &x, ElementType &y) const;
 	/** @} */
 
