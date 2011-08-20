@@ -114,6 +114,16 @@ columnRankProfile MutableMatrix := (A) -> (
 beginDocumentation()
 
 TEST ///
+debug Core
+A = rawARingGaloisField(5,3)
+a = A_0
+assert(a^125 == a)
+assert(a^124 == 1_A)
+///
+
+end
+
+TEST ///
 restart
 needsPackage "FastLinearAlgebra"
 kk = ZZ/101

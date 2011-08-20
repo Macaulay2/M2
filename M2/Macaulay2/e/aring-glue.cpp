@@ -28,18 +28,6 @@ namespace M2 {
   }
 
   template<>
-  void RingWrap<ARingGF>::from_ring_elem(ElementType &result, const ring_elem &a) const
-  {
-    result = a.int_val;
-  }
-
- template<>
-  void RingWrap<ARingGF>::to_ring_elem(ring_elem &result, const ElementType &a) const
-  {
-    result.int_val = a;
-  }
-
-  template<>
   void RingWrap<ARingZZp>::from_ring_elem(ElementType &result, const ring_elem &a) const
   {
     result = a.int_val;
@@ -48,7 +36,25 @@ namespace M2 {
 
   //explicit instantiation
  template class RingWrap< ARingZZp >;
+
+#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
+ template<>
+  void RingWrap<ARingGF>::to_ring_elem(ring_elem &result, const ElementType &a) const
+  {
+    result.int_val = a;
+  }
+
+  template<>
+  void RingWrap<ARingGF>::from_ring_elem(ElementType &result, const ring_elem &a) const
+  {
+    result = a.int_val;
+  }
+
+  //explicit instantiation
  template class RingWrap< ARingGF >;
+#endif
+
+
 
 };
 

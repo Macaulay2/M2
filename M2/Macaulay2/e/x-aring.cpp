@@ -25,8 +25,13 @@ const Ring /* or null */ *rawARingGaloisField(int p, int n)
   // Check that f is monic
   // If any of these fail, then return 0.
      try {
+#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
        M2::ARingGF *A = new M2::ARingGF(p,n);
        return M2::RingWrap<M2::ARingGF>::create(A);
+#else
+       ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
+       return 0;
+#endif
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
