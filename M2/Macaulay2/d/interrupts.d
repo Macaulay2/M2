@@ -10,6 +10,9 @@ export threadLocal steppingFlag := false;
 
 
 import threadLocal interruptedFlag:atomicField;
+declarations "
+#define interrupted() test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))
+";
 
 
 import threadLocal exceptionFlag:atomicField; -- indicates interrupt, stepping, or alarm
