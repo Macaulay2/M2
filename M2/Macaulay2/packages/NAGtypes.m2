@@ -16,9 +16,11 @@ newPackage(
 
 export {
      Norm, MaxConditionNumber, -- options
+     -- service functions
+     generalEquations, addSlackVariables,
      -- witness set
      "WitnessSet", "witnessSet", "equations", "slice", "points", 
-     "Equations", "Slice", "Points", "sliceEquations",
+     "Equations", "Slice", "Points", "sliceEquations", "IsIrreducible",
      -- point (solution)
      "Point", "point", "coordinates",
      isRealPoint, plugIn, residual, relativeErrorEstimate, classifyPoint,
@@ -159,7 +161,8 @@ sortSolutions List := o -> sols -> (
 -- WITNESS SET = {
 --   Equations,            -- an ideal  
 --   Slice,                -- a list of linear equations OR a matrix (of their coefficients)
---   Points	           -- a list of points (in the format of the output of solveSystem/track) 
+--   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
+--   IsIrreducible         -- true, false, or null
 --   }
 -- caveat: we assume that #Equations = dim(Slice)   
 WitnessSet.synonym = "witness set"
@@ -172,24 +175,48 @@ ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> W.Equations
 net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
+
 witnessSet = method(TypicalValue=>WitnessSet)
-witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
-witnessSet (Ideal,Matrix,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P}
+witnessSet (Ideal,Ideal,List) := (I,S,P) -> 
+  new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P, IsIrreducible=>null }
+witnessSet (Ideal,Matrix,List) := (I,S,P) -> 
+  new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P, IsIrreducible=>null}
+
 points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, coordinates)
+
 equations = method() -- returns list of equations
 equations WitnessSet := (W) -> (W.Equations)_*
+
 slice = method() -- returns linear equations for the slice (in both cases)   
 slice WitnessSet := (W) -> ( if class W.Slice === List then W.Slice
      else if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
      else error "ill-formed slice in WitnessSet" )
+
 sliceEquations = method(TypicalValue=>List) 
 sliceEquations (Matrix,Ring) := (S,R) -> (
 -- make slicing plane equations
      apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
      )
 
--- extra functions
+{**********************************************************************
+A NEW PROPOSED DATA TYPE: 
+
+  NumericalVariety = {
+     0 => list of (irreducible) witness sets
+     1 => list of (irreducible) witness sets
+     ...
+     dim => list of (irreducible) witness sets
+     ...
+     }
+
+SERVICE FUNCTIONS:
+  dim
+  degree
+  isReduced
+  NumericalVariety union NumericalVariety (binary)
+  
+*}
 
 generalEquations = method()
 generalEquations WitnessSet := (W) -> (
@@ -234,12 +261,28 @@ addSlackVariables WitnessSet := (W) -> (
 
 beginDocumentation()
 
+undocumented {(generalEquations,WitnessSet), generalEquations, isRealPoint}
+
 document {
      Key => NAGtypes,
      Headline => "Common types used in Numerical Algebraic Geometry",
-     "The package defines types used by the package ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", 
-     " as well as other numerical algebraic geometry packages: e.g., an interface package ", 
-     TO "PHCpack::PHCpack", "."
+     PARA{
+     	  "The package defines types used by the package ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", 
+     	  " as well as other numerical algebraic geometry packages: e.g., an interface package ", 
+     	  TO "PHCpack::PHCpack", "."
+	  },  
+     "Main datatypes: ",
+     UL{
+	  {"Point", " -- numerical approximation of a point in a complex space (and related methods)"},
+	  {"WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"}
+	  },
+     "Other service functions: ",
+     UL{
+	  {"areEqual", ""},
+	  {"sortSolutions", ""},
+	  {"addSlackVariables", ""},
+	  {"generalEquations", ""}
+	  }
      }
 document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), 
@@ -409,6 +452,7 @@ areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)
      	///,
 	SeeAlso => {"solveSystem", "track", sortSolutions}
 	}
+
 
 TEST ///
 CC[x,y]

@@ -1,5 +1,8 @@
 -- -*- M2-comint -*- {* hash: -486431813 *}
---loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
+--warning: symbol "generalEquations" in PHCpack#"private dictionary" is shadowed by a symbol in NAGtypes.Dictionary
+--  no synonym is available
+--warning: symbol "addSlackVariables" in PHCpack#"private dictionary" is shadowed by a symbol in NAGtypes.Dictionary
+--  no synonym is available
 
 i1 : QQ[x,y,z];
 
