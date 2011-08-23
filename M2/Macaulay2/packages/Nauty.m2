@@ -1,7 +1,7 @@
 -------------------
 -- Package Header
 -------------------
--- Copyright 2010 David W. Cook II
+-- Copyright 2010, 2011 David W. Cook II
 -- You may redistribute this file under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
@@ -12,8 +12,8 @@ if version#"VERSION" <= "1.4" then needsPackage "EdgeIdeals"
 
 newPackage select((
     "Nauty",
-    Version => "1.4.1",
-    Date => "20. April 2011",
+    Version => "1.4.3",
+    Date => "23. August 2011",
     Authors => {{Name => "David W. Cook II",
                  Email => "dcook@ms.uky.edu",
                  HomePage => "http://www.ms.uky.edu/~dcook"}},
@@ -71,6 +71,7 @@ export {
     "isPlanar",
     "neighborhoodComplements",
     "newEdges",
+    "onlyPlanar",
     "relabelBipartite",
     "relabelGraph",
     "removeEdges",
@@ -104,7 +105,7 @@ export {
 
 -- Finds all graphs of G with an extra edge added.
 addEdges = method(Options => {MaxDegree => null, NoNewOddCycles => false, NoNew3Cycles => false, NoNew4Cycles => false, NoNew5Cycles => false, NoNewSmallCycles => null})
-addEdges String := List => opts -> S -> (
+addEdges List := List => opts -> L -> (
     cmdStr := "addedgeg -q" |
         optionZZ(opts.MaxDegree, 0, "addEdges", "MaxDegree", "D") |
         optionBoolean(opts.NoNewOddCycles, "addEdges", "NoNewOddCycles", "b") | 
@@ -112,14 +113,17 @@ addEdges String := List => opts -> S -> (
         optionBoolean(opts.NoNew4Cycles, "addEdges", "NoNew4Cycles", "f") | 
         optionBoolean(opts.NoNew5Cycles, "addEdges", "NoNew5Cycles", "F") | 
         optionZZ(opts.NoNewSmallCycles, 0, "addEdges", "NoNewSmallCycles", "z");
-    callNauty(cmdStr, {S})
+    callNauty(cmdStr, apply(L, graphToString))
 )
-addEdges Graph := List => opts -> G -> apply(addEdges(graphToString G, opts), l -> stringToGraph(l, ring G))
+addEdges String := List => opts -> S -> addEdges({S}, opts)
+addEdges Graph := List => opts -> G -> apply(addEdges({G}, opts), l -> stringToGraph(l, ring G))
 
 -- Determines if two graphs are isomorphic. 
 areIsomorphic = method()
 areIsomorphic (String, String) := Boolean => (G, H) -> (#callNauty("shortg -q", {G, H})) == 1
 areIsomorphic (Graph, Graph) := Boolean => (G, H) -> areIsomorphic(graphToString G, graphToString H)
+areIsomorphic (String, Graph) := Boolean => (G, H) -> areIsomorphic(G, graphToString H)
+areIsomorphic (Graph, String) := Boolean => (G, H) -> areIsomorphic(graphToString G, H)
 
 -- Builds a filter string for countGraphs and filterGraphs.
 buildGraphFilter = method()
@@ -283,22 +287,16 @@ generateRandomRegularGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, num,
 
 -- Converts a Graph6 string to a Sparse6 string.
 graph6ToSparse6 = method()
-graph6ToSparse6 String := String => g6 -> (
-    r := callNauty("copyg -qs", {g6});
-    if #r != 0 then first r else error("graph6ToSparse6: Invalid String format.")
-)
+graph6ToSparse6 String := String => g6 -> first callNauty("copyg -qs", {g6})
 
 -- Complements a graph.
 graphComplement = method(Options => {OnlyIfSmaller => false})
-graphComplement String := String => opts -> S -> (
+graphComplement List := List => opts -> L -> (
     cmdStr := "complg -q" | optionBoolean(opts.OnlyIfSmaller, "graphComplement", "OnlyIfSmaller", "r");
-    r := callNauty(cmdStr, {S});
-    if #r != 0 then first r else error("graphComplement: The graph is formatted incorrectly.")
+    callNauty(cmdStr, apply(L, graphToString))
 )
-graphComplement Graph := Graph => opts -> G -> (
-    r := graphComplement(graphToString G, opts);
-    if not instance(r, Nothing) then stringToGraph(r, ring G)
-)
+graphComplement String := String => opts -> S -> first graphComplement({S}, opts)
+graphComplement Graph := Graph => opts -> G -> stringToGraph(first graphComplement({G}, opts), ring G)
 
 -- Converts a graph to a string in Graph6 format.
 graphToString = method()
@@ -325,48 +323,62 @@ isPlanar Graph := Boolean => G -> isPlanar(graphToString G)
 
 -- For each vertex, switch the edges between its neighborhood and its neighborhood's complement.
 neighborhoodComplements = method()
-neighborhoodComplements String := List => S -> callNauty("NRswitchg -q", {S})
-neighborhoodComplements Graph := List => G -> apply(neighborhoodComplements graphToString G, l -> stringToGraph(l, ring G))
+neighborhoodComplements List := List => L -> callNauty("NRswitchg -q", apply(L, graphToString))
+neighborhoodComplements String := List => S -> neighborhoodComplements {S}
+neighborhoodComplements Graph := List => G -> apply(neighborhoodComplements {G}, l -> stringToGraph(l, ring G))
 
 -- For each disjoint pair of edges (a,b), (c,d), replace the edges with 
 -- (a,e), (e,b), (c,f), (f,d), and add the edge (e,f), where {e,f} are
 -- new vertices.
 newEdges = method()
-newEdges String := List => S -> callNauty("newedgeg -q", {S})
+newEdges List := List => L -> callNauty("newedgeg -q", apply(L, graphToString))
+newEdges String := List => S -> newEdges {S}
 newEdges (Graph, PolynomialRing) := List => (G, S) -> (
     if #vertices G + 2 != #gens S then error("newEdges: The ring must have exactly two more variables than the graph has vertices.");
-    apply(newEdges graphToString G, l -> stringToGraph(l, S))
+    apply(newEdges {G}, l -> stringToGraph(l, S))
 )
+
+-- Removes non-planar graphs from a list of graphs
+onlyPlanar = method()
+onlyPlanar (List, Boolean) := List => (L, non) -> (
+    cmdStr := "planarg -q " | if non then "-v" else "";
+    callNauty(cmdStr, apply(L, graphToString))
+)
+onlyPlanar List := List => L -> onlyPlanar(L, false)
 
 -- Reorders a bipartite graph so all vertices of each color are continguous.
 relabelBipartite = method()
-relabelBipartite String := String => S -> (
-    r := callNauty("biplabg -q", {S});
-    if #r != 0 then first r else error("relabelBipartite: The graph is in an incorrect format or is not a bipartite graph.")
+relabelBipartite List := List => L -> (
+    r := callNauty("biplabg -q", apply(L, graphToString));
+    if #r == #L then r else error("relabelBipartite: One of the graphs is not a bipartite graph.")
 )
-relabelBipartite Graph := Graph => G -> stringToGraph(relabelBipartite graphToString G, ring G)
+relabelBipartite String := String => S -> first relabelBipartite {S}
+relabelBipartite Graph := Graph => G -> stringToGraph(first relabelBipartite {G}, ring G)
 
 -- Relabels a graph using a canonical labelling.
 relabelGraph = method()
-relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> (
+relabelGraph (List, ZZ, ZZ) := List => (L, i, a) -> (
     if i > 15 or i < 0 then error("relabelGraph: The invariant selected is invalid.");
     if a < 0 then error("relabelGraph: The invariant argument must be nonnegative.");
-    r := callNauty("labelg -qg -i" | toString i | " -K" | toString a, {S});
-    if #r != 0 then first r else error("relabelGraph: The graph is in an incorrect format.")
+    callNauty("labelg -qg -i" | toString i | " -K" | toString a, apply(L, graphToString))
 )
-relabelGraph (String, ZZ) := String => (S, i) -> relabelGraph(S, i, 3)
-relabelGraph String := String => S -> relabelGraph(S, 0, 3)
-relabelGraph (Graph, ZZ, ZZ) := Graph => (G, i, a) -> stringToGraph(relabelGraph(graphToString G, i, a), ring G)
-relabelGraph (Graph, ZZ) := Graph => (G, i) -> relabelGraph(G, i, 3)
-relabelGraph Graph := Graph => G -> relabelGraph(G, 0, 3)
+relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> first relabelGraph({S}, i, a)
+relabelGraph (Graph, ZZ, ZZ) := Graph => (G, i, a) -> stringToGraph(first relabelGraph({G}, i, a), ring G)
+relabelGraph (List, ZZ) := String => (L, i) -> relabelGraph(L, i, 3)
+relabelGraph (String, ZZ) := String => (S, i) -> first relabelGraph({S}, i, 3)
+relabelGraph (Graph, ZZ) := Graph => (G, i) -> stringToGraph(first relabelGraph({G}, i, 3), ring G)
+relabelGraph List := String => L -> relabelGraph(L, 0, 3)
+relabelGraph String := String => S -> first relabelGraph({S}, 0, 3)
+relabelGraph Graph := Graph => G -> stringToGraph(first relabelGraph({G}, 0, 3), ring G)
         
 -- Finds all graphs defined by G with one edge removed.
 removeEdges = method(Options => {MinDegree => null})
-removeEdges String := List => opts -> S -> (
+removeEdges List := List => opts -> L -> (
     cmdStr := "deledgeg -q" | optionZZ(opts.MinDegree, 0, "removeEdges", "MinDegree", "d");
-    callNauty(cmdStr, {S})
+    callNauty(cmdStr, apply(L, graphToString))
 )
-removeEdges Graph := List => opts -> G -> apply(removeEdges(graphToString G, opts), l -> stringToGraph(l, ring G))
+removeEdges String := List => opts -> S -> removeEdges({S}, opts)
+removeEdges Graph := List => opts -> G -> apply(removeEdges({G}, opts), l -> stringToGraph(l, ring G))
 
 -- Removes all isomorphs from a list of graphs. 
 removeIsomorphs = method()
@@ -507,9 +519,6 @@ optionZZ = (i, b, m, o, f) -> (
 -------------------
 -- Documentation
 -------------------
--- Nota Bene: Some document nodes are in a different format than the rest.  This is to take advantage
--- in the differences in the two formats.  Primarily, those nodes dealing with optional inputs are 
--- in the older document{...} format instead of the newer doc ///.../// format.
 beginDocumentation()
 
 doc ///
@@ -543,57 +552,78 @@ doc ///
         "Example: Generating and filtering graphs"
 ///
 
-document {
-    Key => {
-        addEdges,
-        (addEdges, String),
-        (addEdges, Graph),
-        [addEdges, MaxDegree],
-        [addEdges, NoNew3Cycles],
-        [addEdges, NoNew4Cycles],
-        [addEdges, NoNew5Cycles],
-        [addEdges, NoNewOddCycles],
+
+doc ///
+    Key
+        addEdges
+        (addEdges, List)
+        (addEdges, String)
+        (addEdges, Graph)
+        [addEdges, MaxDegree]
+        [addEdges, NoNew3Cycles]
+        [addEdges, NoNew4Cycles]
+        [addEdges, NoNew5Cycles]
+        [addEdges, NoNewOddCycles]
         [addEdges, NoNewSmallCycles]
-    },
-    Headline => "creates a list of graphs obtained by adding one new edge to the given graph in all possible ways",
-    Usage => "Lg = addEdges G\nLs = addEdges S",
-    Inputs => {
-        "S" => String => "which describes a graph in Graph6 or Sparse6 format",
-        "G" => Graph => {"which is built by the ", TO "EdgeIdeals", " package"},
-        MaxDegree => ZZ => "the maximum degree allowable for any vertex in the output graphs",
-        NoNew3Cycles => Boolean => "whether graphs with new 3-cycles are allowed",
-        NoNew4Cycles => Boolean => "whether graphs with new 4-cycles are allowed",
-        NoNew5Cycles => Boolean => "whether graphs with new 5-cycles are allowed",
-        NoNewOddCycles => Boolean => "whether graphs with new odd-cycles are allowed",
-        NoNewSmallCycles => ZZ => "an upper bound on cycles which are not allowed"
-    },
-    Outputs => {
-        "Lg" => List => TEX ///the list of graphs obtained from $G$///,
-        "Ls" => List => TEX ///the list of strings (in Graph6 format) obtained from $S$///
-    },
-    PARA TEX ///
+    Headline
+        creates a list of graphs obtained by adding one new edge to the given graph in all possible ways
+    Usage
+        Ll = addEdges L
+        Lg = addEdges G
+        Ls = addEdges S
+    Inputs
+        L:List
+            containing graphs in various formats
+        S:String
+            which describes a graph in Graph6 or Sparse6 format
+        G:Graph
+        MaxDegree=>ZZ
+            the maximum degree allowable for any vertex in the output graphs
+        NoNew3Cycles=>Boolean
+            whether graphs with new 3-cycles are allowed
+        NoNew4Cycles=>Boolean
+            whether graphs with new 4-cycles are allowed
+        NoNew5Cycles=>Boolean
+            whether graphs with new 5-cycles are allowed
+        NoNewOddCycles=>Boolean
+            whether graphs with new odd-cycles are allowed
+        NoNewSmallCycles=>ZZ
+            an upper bound on cycles which are not allowed
+    Outputs
+        Ll:List
+            the list of graphs obtained from the graphs in $L$ in Graph6 format
+        Lg:List
+            the list of graphs obtained from $G$
+        Ls:List
+            the list of strings (in Graph6 format) obtained from $S$
+    Description
+        Text
             Simply creates a list, in the same format as the input, of all possible graphs
             obtained by adding one new edge to the input graph.
-        ///,
-    EXAMPLE lines ///
-        R = QQ[a..e];
-        addEdges cycle R
-        ///,
-    SeeAlso => {
-        "removeEdges"
-    }
-}
+        Example
+            R = QQ[a..e];
+            addEdges cycle R
+        Text
+            If the List input format is used, then one should use care as
+            the list may contain isomorphic pairs.
+    SeeAlso
+        removeEdges
+///
 
 doc ///
     Key
         areIsomorphic
         (areIsomorphic, String, String)
         (areIsomorphic, Graph, Graph)
+        (areIsomorphic, String, Graph)
+        (areIsomorphic, Graph, String)
     Headline
         determines whether two graphs are isomorphic
     Usage
         b = areIsomorphic(G, H)
         b = areIsomorphic(S, T)
+        b = areIsomorphic(S, H)
+        b = areIsomorphic(G, T)
     Inputs
         G:Graph
         H:Graph
@@ -868,227 +898,267 @@ doc ///
         "Example: Generating and filtering graphs"
 ///
 
-document {
-    Key => {
-        generateBipartiteGraphs,
-        (generateBipartiteGraphs, ZZ),
-        (generateBipartiteGraphs, ZZ, ZZ),
-        (generateBipartiteGraphs, ZZ, ZZ, ZZ),
-        (generateBipartiteGraphs, ZZ, ZZ, ZZ, ZZ),
-        (generateBipartiteGraphs, PolynomialRing),
-        (generateBipartiteGraphs, PolynomialRing, ZZ),
-        (generateBipartiteGraphs, PolynomialRing, ZZ, ZZ),
-        (generateBipartiteGraphs, PolynomialRing, ZZ, ZZ, ZZ),
-        [generateBipartiteGraphs, Class2Degree2],
-        [generateBipartiteGraphs, Class2DistinctNeighborhoods],
-        [generateBipartiteGraphs, Class2MaxCommonNeighbors],
-        [generateBipartiteGraphs, MaxDegree],
-        [generateBipartiteGraphs, MinDegree],
+doc ///
+    Key
+        generateBipartiteGraphs
+        (generateBipartiteGraphs, ZZ)
+        (generateBipartiteGraphs, ZZ, ZZ)
+        (generateBipartiteGraphs, ZZ, ZZ, ZZ)
+        (generateBipartiteGraphs, ZZ, ZZ, ZZ, ZZ)
+        (generateBipartiteGraphs, PolynomialRing)
+        (generateBipartiteGraphs, PolynomialRing, ZZ)
+        (generateBipartiteGraphs, PolynomialRing, ZZ, ZZ)
+        (generateBipartiteGraphs, PolynomialRing, ZZ, ZZ, ZZ)
+        [generateBipartiteGraphs, Class2Degree2]
+        [generateBipartiteGraphs, Class2DistinctNeighborhoods]
+        [generateBipartiteGraphs, Class2MaxCommonNeighbors]
+        [generateBipartiteGraphs, MaxDegree]
+        [generateBipartiteGraphs, MinDegree]
         [generateBipartiteGraphs, OnlyConnected]
-    },
-    Headline => "generates the bipartite graphs with a given bipartition",
-    Usage => "G = generateBipartiteGraphs n\nG = generateBipartiteGraphs(n, m)\nG = generateBipartiteGraphs(n, m, e)\nG = generateBipartiteGraphs(n, m, le, ue)\nG = generateBipartiteGraphs R\nG = generateBipartiteGraphs(R, m)\nG = generateBipartiteGraphs(R, m, e)\nG = generateBipartiteGraphs(R, m, le, ue)",
-    Outputs => {"G" => List => TEX ///the bipartite graphs satisfying the input conditions///},
-    Inputs => {
-        "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
-        "m" => ZZ => "the number of vertices in the first class of the bipartition",
-        "e" => ZZ => "the number of edges in the graphs", 
-        "le" => ZZ => "a lower bound on the number of edges in the graphs",
-        "ue" => ZZ => "an upper bound on the number of edges in the graphs",
-        Class2Degree2 => Boolean => "whether the vertices in the second class must have at least two neighbors of degree at least 2",
-        Class2DistinctNeighborhoods => Boolean => "whether all vertices in the second class must have distinct neighborhoods",
-        Class2MaxCommonNeighbors => ZZ => "an upper bound on the number of common neighbors of vertices in the second class",
-        MaxDegree => ZZ => "an upper bound on the degrees of the vertices",
-        MinDegree => ZZ => "a lower bound on the degrees of the vertices",
-        OnlyConnected => Boolean => "whether to only allow connected graphs"
-    },
-    PARA TEX ///
+    Headline
+        generates the bipartite graphs with a given bipartition
+    Usage
+        G = generateBipartiteGraphs n
+        G = generateBipartiteGraphs(n, m)
+        G = generateBipartiteGraphs(n, m, e)
+        G = generateBipartiteGraphs(n, m, le, ue)
+        G = generateBipartiteGraphs R
+        G = generateBipartiteGraphs(R, m)
+        G = generateBipartiteGraphs(R, m, e)
+        G = generateBipartiteGraphs(R, m, le, ue)
+    Inputs
+        R:PolynomialRing
+            the ring in which the graphs will be created
+        n:ZZ
+            the number of vertices of the graphs, must be positive (see caveat)
+        m:ZZ
+            the number of vertices in the first class of the bipartition
+        e:ZZ
+            the number of edges in the graphs
+        le:ZZ
+            a lower bound on the number of edges in the graphs
+        ue:ZZ 
+            an upper bound on the number of edges in the graphs
+        Class2Degree2=>Boolean
+            whether the vertices in the second class must have at least two neighbors of degree at least 2
+        Class2DistinctNeighborhoods=>Boolean 
+            whether all vertices in the second class must have distinct neighborhoods
+        Class2MaxCommonNeighbors=>ZZ
+            an upper bound on the number of common neighbors of vertices in the second class
+        MaxDegree=>ZZ
+            an upper bound on the degrees of the vertices
+        MinDegree=>ZZ
+            a lower bound on the degrees of the vertices
+        OnlyConnected=>Boolean
+            whether to only allow connected graphs
+    Outputs
+        G:List
+            the bipartite graphs satisfying the input conditions
+    Description
+        Text
             This method generates all bipartite graphs on $n$ vertices.  
             The size of the bipartition is specified by giving the size of
             one class; the other class is determined automatically from the
             number of vertices.
-        ///,
-    PARA TEX ///
+        Text
             If only one integer argument is given, then the method generates
             all bipartite graphs on that number of vertices with first class
             of sizes $0$ to $n$.
-        ///,
-    PARA TEX ///
+        Text
             If a PolynomialRing $R$ is supplied instead, then the number of
             vertices is the number of generators.  Moreover, the strings are
             automatically converted to graphs in $R$.
-        ///,
-    EXAMPLE lines ///
+        Example
             R = QQ[a..e];
             generateBipartiteGraphs(R, 2)
-        ///,
-    Caveat => {
-        TEX ///
-            The number of vertices $n$ must be positive as nauty cannot handle
-            graphs with zero vertices.
-        ///},
-    SeeAlso => {
-        "generateGraphs"
-    }
-}
+    Caveat
+        The number of vertices $n$ must be positive as nauty cannot handle
+        graphs with zero vertices.
+    SeeAlso
+        generateGraphs
+///
 
-document {
-    Key => {
-        generateGraphs,
-        (generateGraphs, PolynomialRing),
-        (generateGraphs, PolynomialRing, ZZ),
-        (generateGraphs, PolynomialRing, ZZ, ZZ),
-        (generateGraphs, ZZ),
-        (generateGraphs, ZZ, ZZ),
-        (generateGraphs, ZZ, ZZ, ZZ),
-        [generateGraphs, MaxDegree],
-        [generateGraphs, MinDegree],
-        [generateGraphs, Only4CycleFree],
-        [generateGraphs, OnlyBiconnected],
-        [generateGraphs, OnlyBipartite],
-        [generateGraphs, OnlyConnected],
+doc ///
+    Key
+        generateGraphs
+        (generateGraphs, PolynomialRing)
+        (generateGraphs, PolynomialRing, ZZ)
+        (generateGraphs, PolynomialRing, ZZ, ZZ)
+        (generateGraphs, ZZ)
+        (generateGraphs, ZZ, ZZ)
+        (generateGraphs, ZZ, ZZ, ZZ)
+        [generateGraphs, MaxDegree]
+        [generateGraphs, MinDegree]
+        [generateGraphs, Only4CycleFree]
+        [generateGraphs, OnlyBiconnected]
+        [generateGraphs, OnlyBipartite]
+        [generateGraphs, OnlyConnected]
         [generateGraphs, OnlyTriangleFree]
-    },
-    Headline => "generates the graphs on a given number of vertices",
-    Usage => "G = generateGraphs n\nG = generateGraphs(n, e)\nG = generateGraphs(n, le, ue)\nG = generateGraphs R\nG = generateGraphs(R, e)\nG = generateGraphs(R, le, ue)",
-    Inputs => {
-        "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
-        "e" => ZZ => "the number of edges in the graphs",
-        "le" => ZZ => "a lower bound on the number of edges in the graphs",
-        "ue" => ZZ => "an upper bound on the number of edges in the graphs",
-        MaxDegree => ZZ => "an upper bound on the degrees of the vertices",
-        MinDegree => ZZ => "a lower bound on the degrees of the vertices",
-        Only4CycleFree => Boolean => "whether to only allow graphs without 4-cycles",
-        OnlyBiconnected => Boolean => "whether to only allow biconnected graphs",
-        OnlyBipartite => Boolean => "whether to only allow bipartite graphs",
-        OnlyConnected => Boolean => "whether to only allow connected graphs",
-        OnlyTriangleFree => Boolean => "whether to only allow graphs without triangles (3-cycles)"
-    },
-    Outputs => {"G" => List => TEX ///the graphs satisfying the input conditions///},
-    PARA TEX ///
+    Headline
+        generates the graphs on a given number of vertices
+    Usage
+        G = generateGraphs n
+        G = generateGraphs(n, e)
+        G = generateGraphs(n, le, ue)
+        G = generateGraphs R
+        G = generateGraphs(R, e)
+        G = generateGraphs(R, le, ue)
+    Inputs
+        R:PolynomialRing 
+            the ring in which the graphs will be created
+        n:ZZ
+            the number of vertices of the graphs, must be positive (see caveat)
+        e:ZZ
+            the number of edges in the graphs
+        le:ZZ
+            a lower bound on the number of edges in the graphs
+        ue:ZZ
+            an upper bound on the number of edges in the graphs
+        MaxDegree=>ZZ
+            an upper bound on the degrees of the vertices
+        MinDegree=>ZZ
+            a lower bound on the degrees of the vertices
+        Only4CycleFree=>Boolean
+            whether to only allow graphs without 4-cycles
+        OnlyBiconnected=>Boolean
+            whether to only allow biconnected graphs
+        OnlyBipartite=>Boolean
+            whether to only allow bipartite graphs
+        OnlyConnected=>Boolean
+            whether to only allow connected graphs
+        OnlyTriangleFree=>Boolean
+            whether to only allow graphs without triangles (3-cycles)
+    Outputs
+        G:List
+            the graphs satisfying the input conditions
+    Description
+        Text
             This method generates all graphs on $n$ vertices subject to the 
             constraints on the number of edges.  It uses numerous options
             to allow further constraining of the output.
-        ///,
-    PARA TEX ///
-            If a polynomial ring $R$ is supplied instead, then the number of
+        Text
+            If a @TO "PolynomialRing"@ $R$ is supplied instead, then the number of
             vertices is the number of generators.  Moreover, the nauty-derived strings are
-            automatically converted to instances of the class Graph in $R$.
-        ///,
-    EXAMPLE lines ///
+            automatically converted to instances of the class @TO "Graph"@ in $R$.
+        Example
             R = QQ[a..e];
             generateGraphs(R, 4, 6, OnlyConnected => true)
-    ///,
-    Caveat => {
-        TEX ///
-            The number of vertices $n$ must be positive as nauty cannot handle
-            graphs with zero vertices.
-        ///},
-    SeeAlso => {
-        "Example: Generating and filtering graphs",
-        "generateBipartiteGraphs"
-    }
-}
+    Caveat 
+        The number of vertices $n$ must be positive as nauty cannot handle
+        graphs with zero vertices.
+    SeeAlso
+        "Example: Generating and filtering graphs"
+        generateBipartiteGraphs
+///
 
-document {
-    Key => {
-        generateRandomGraphs,
-        (generateRandomGraphs, ZZ, ZZ),
-        (generateRandomGraphs, ZZ, ZZ, ZZ),
-        (generateRandomGraphs, ZZ, ZZ, QQ),
-        (generateRandomGraphs, ZZ, ZZ, RR),
-        (generateRandomGraphs, PolynomialRing, ZZ),
-        (generateRandomGraphs, PolynomialRing, ZZ, ZZ),
-        (generateRandomGraphs, PolynomialRing, ZZ, QQ),
-        (generateRandomGraphs, PolynomialRing, ZZ, RR),
+doc ///
+    Key
+        generateRandomGraphs
+        (generateRandomGraphs, ZZ, ZZ)
+        (generateRandomGraphs, ZZ, ZZ, ZZ)
+        (generateRandomGraphs, ZZ, ZZ, QQ)
+        (generateRandomGraphs, ZZ, ZZ, RR)
+        (generateRandomGraphs, PolynomialRing, ZZ)
+        (generateRandomGraphs, PolynomialRing, ZZ, ZZ)
+        (generateRandomGraphs, PolynomialRing, ZZ, QQ)
+        (generateRandomGraphs, PolynomialRing, ZZ, RR)
         [generateRandomGraphs, RandomSeed]
-    },
-    Headline => "generates random graphs on a given number of vertices",
-    Usage => "G = generateRandomGraphs(n, num)\nG = generateRandomGraphs(n, num, pq)\nG = generateRandomGraphs(n, num, pz)\nG = generateRandomGraphs(R, num)\nG = generateRandomGraphs(R, num, pq)\nG = generateRandomGraphs(R, num, pz)",
-    Inputs => {
-        "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
-        "num" => ZZ => "the number of random graphs to generate",
-        "pq" => QQ => "the edge probability (between 0 and 1)",
-        "pq" => RR => "the edge probability (between 0 and 1)",
-        "pz" => ZZ => "the reciprocal of the edge probability (positive)",
-        RandomSeed => ZZ => {"the specified random seed is passed to nauty"}
-    },
-    Outputs => {"G" => List => TEX ///the randomly generated graphs///},
-    PARA TEX ///
+    Headline
+        generates random graphs on a given number of vertices
+    Usage
+        G = generateRandomGraphs(n, num)
+        G = generateRandomGraphs(n, num, pq)
+        G = generateRandomGraphs(n, num, pz)
+        G = generateRandomGraphs(R, num)
+        G = generateRandomGraphs(R, num, pq)
+        G = generateRandomGraphs(R, num, pz)
+    Inputs
+        R:PolynomialRing 
+            the ring in which the graphs will be created
+        n:ZZ 
+            the number of vertices of the graphs, must be positive (see caveat)
+        num:ZZ 
+            the number of random graphs to generate
+        pq:QQ 
+            the edge probability (between 0 and 1)
+        pq:RR 
+            the edge probability (between 0 and 1)
+        pz:ZZ 
+            the reciprocal of the edge probability (positive)
+        RandomSeed=>ZZ
+            the specified random seed is passed to nauty
+    Outputs
+        G:List
+            the randomly generated graphs
+    Description
+        Text
             This method generates a specified number of random graphs with a given
             number of vertices.  Note that some graphs may be isomorphic.
-        ///,
-    PARA TEX ///
-            If a PolynomialRing $R$ is supplied instead, then the number of
+        Text
+            If a @TO "PolynomialRing"@ $R$ is supplied instead, then the number of
             vertices is the number of generators.  Moreover, the nauty-based strings are
-            automatically converted to instances of the class Graph in $R$.
-        ///,
-    PARA TEX ///
+            automatically converted to instances of the class @TO "Graph"@ in $R$.
+        Text
             If the input $pq$ is included, then the edges are chosen to be
             included with probability $pq$.  If the input $pz$ is included
             and is positive, then the edges are chosen to be included with
             probability $1/pz$.
-        ///,
-    EXAMPLE lines ///
+        Example
             generateRandomGraphs(5, 5, RandomSeed => 314159)
             generateRandomGraphs(5, 5)
             generateRandomGraphs(5, 5, RandomSeed => 314159)
-    ///,
-    Caveat => {
-        TEX ///
-            The number of vertices $n$ must be positive as nauty cannot handle
-            graphs with zero vertices.  Further, if the probability $pq$ is included,
-            then it is rounded to a precision of one-hundred millionth.
-        ///},
-    SeeAlso => {
-        "Example: Generating and filtering graphs",
-        "generateRandomRegularGraphs"
-    }
-}
+    Caveat 
+        The number of vertices $n$ must be positive as nauty cannot handle
+        graphs with zero vertices.  Further, if the probability $pq$ is included,
+        then it is rounded to a precision of one-hundred millionth.
+    SeeAlso
+        "Example: Generating and filtering graphs"
+        generateRandomRegularGraphs
+///
 
-document {
-    Key => {
-        generateRandomRegularGraphs,
-        (generateRandomRegularGraphs, ZZ, ZZ, ZZ),
-        (generateRandomRegularGraphs, PolynomialRing, ZZ, ZZ),
+doc ///
+    Key
+        generateRandomRegularGraphs
+        (generateRandomRegularGraphs, ZZ, ZZ, ZZ)
+        (generateRandomRegularGraphs, PolynomialRing, ZZ, ZZ)
         [generateRandomRegularGraphs, RandomSeed]
-    },
-    Headline => "generates random regular graphs on a given number of vertices",
-    Usage => "G = generateRandomRegularGraphs(n, num, reg)\nG = generateRandomRegularGraphs(R, num, reg)",
-    Inputs => {
-        "R" => PolynomialRing => "the ring in which the graphs will be created",
-        "n" => ZZ => "the number of vertices of the graphs, must be positive (see caveat)",
-        "num" => ZZ => "the number of random graphs to generate",
-        "reg" => ZZ => "the regularity of the generated graphs",
-        RandomSeed => ZZ => {"the specified random seed is passed to nauty"}
-    },
-    Outputs => { "G" => List => TEX ///the randomly generated regular graphs///},
-    PARA TEX ///
+    Headline
+        generates random regular graphs on a given number of vertices
+    Usage
+        G = generateRandomRegularGraphs(n, num, reg) 
+        G = generateRandomRegularGraphs(R, num, reg)
+    Inputs 
+        R:PolynomialRing 
+            the ring in which the graphs will be created
+        n:ZZ
+            the number of vertices of the graphs, must be positive (see caveat)
+        num:ZZ 
+            the number of random graphs to generate
+        reg:ZZ 
+            the regularity of the generated graphs
+        RandomSeed=>ZZ 
+            the specified random seed is passed to nauty
+    Outputs 
+        G:List
+            the randomly generated regular graphs
+    Description
+        Text
             This method generates a specified number of random graphs on
             a given number of vertices with a given regularity.
             Note that some graphs may be isomorphic.
-        ///,
-    PARA TEX ///
-            If a PolynomialRing $R$ is supplied instead, then the number of
+        Text
+            If a @TO "PolynomialRing"@ $R$ is supplied instead, then the number of
             vertices is the number of generators.  Moreover, the nauty-based strings are
-            automatically converted to instances of the class Graph in $R$.
-        ///,
-    EXAMPLE lines ///
+            automatically converted to instances of the class @TO "Graph"@ in $R$.
+        Example
             R = QQ[a..e];
             generateRandomRegularGraphs(R, 3, 2)
-        ///,
-    Caveat => {
-        TEX ///
-            The number of vertices $n$ must be positive as nauty cannot handle
-            graphs with zero vertices.
-        ///},
-    SeeAlso => {
-        "generateRandomGraphs"
-    }
-}
+    Caveat
+        The number of vertices $n$ must be positive as nauty cannot handle
+        graphs with zero vertices.
+    SeeAlso
+        generateRandomGraphs
+///
 
 doc ///
     Key
@@ -1122,39 +1192,58 @@ doc ///
         sparse6ToGraph6
 ///
 
-document {
-    Key => {
-        graphComplement,
-        (graphComplement, String),
-        (graphComplement, Graph),
+doc ///
+    Key
+        graphComplement
+        (graphComplement, List)
+        (graphComplement, String)
+        (graphComplement, Graph)
         [graphComplement, OnlyIfSmaller]
-    },
-    Headline => "computes the complement of a graph",
-    Usage => "T = graphComplement S\nH = graphComplement G",
-    Inputs => {
-        "S" => String => "a graph encoded in either Sparse6 or Graph6 format",
-        "G" => Graph => "",
-        OnlyIfSmaller => Boolean => "when true, then the smaller (fewer edges) of the graph and its complement are returned"
-    },
-    Outputs => {
-        "T" => String => TEX ///the graph complement of $S$ stored in the same format at $S$///,
-        "H" => Graph => TEX ///the graph complement of $G$///
-    },
-    PARA "This method computes the graph complement of the input graph
-            and returns the result in the same format.",
-    PARA {"For graphs as defined in the ", TO "EdgeIdeals", " package, one can use the ",
-            TO "complementGraph", " method to achieve the same effect; however,
+    Headline
+        computes the complement of a graph
+    Usage 
+        L' = graphComplement L
+        T = graphComplement S
+        H = graphComplement G
+    Inputs
+        L:List
+            containing graphs in various formats
+        S:String
+            a graph encoded in either Sparse6 or Graph6 format
+        G:Graph
+        OnlyIfSmaller=>Boolean
+            when true, then the smaller (fewer edges) of the graph and its complement are returned
+    Outputs
+        L':List
+            the graph complement of the elements of $L$ stored in Graph6 format
+        T:String
+            the graph complement of $S$ stored in the same format at $S$
+        H:Graph
+            the graph complement of $G$
+    Description
+        Text
+            This method computes the graph complement of the input graph
+            and returns the result in the same format.
+        Text
+            For graphs as defined in the @TO "EdgeIdeals"@ package, one can use the 
+            @TO "complementGraph"@ method to achieve the same effect; however,
             this method provides the option of not taking the complement if the
-            complement has more edges than the graph itself."},
-    EXAMPLE lines ///
+            complement has more edges than the graph itself.
+        Example
             R = QQ[a..e];
             graphComplement cycle R
             graphComplement "Dhc"
-    ///,
-    SeeAlso => {
-        "complementGraph"
-    }
-}
+        Text
+            Batch calls can be performed considerably faster when using the 
+            List input format.  However, care should be taken as the returned
+            list is entirely in Graph6 or Sparse6 format.
+        Example
+            G = generateBipartiteGraphs 7;
+            time graphComplement G;
+            time (graphComplement \ G);
+    SeeAlso
+        complementGraph
+///
 
 doc ///
     Key
@@ -1242,27 +1331,35 @@ doc ///
             isPlanar cycle R
             isPlanar completeGraph R
         Text
-            The method @TO "isPlanar"@ uses the program @TT "planarg"@. The
+            This method uses the program @TT "planarg"@. The
             code was written by Paulette Lieby for the Magma project and
             used with permission in the software nauty.
+    SeeAlso
+        onlyPlanar
 ///
 
 doc ///
     Key
         neighborhoodComplements
+        (neighborhoodComplements, List)
         (neighborhoodComplements, String)
         (neighborhoodComplements, Graph)
     Headline
         complements the neighborhood for each vertex, individually
     Usage
-        L = neighborhoodComplements S
-        L = neighborhoodComplements G
+        N' = neighborhoodComplements L
+        N = neighborhoodComplements S
+        N = neighborhoodComplements G
     Inputs
+        L:List
+            containing graphs in various formats
         S:String
             a graph encoded in either Sparse6 or Graph6 format
         G:Graph
     Outputs
-        L:List
+        N':List
+            containing graphs in either Graph6 or Sparse6 format, modified as described below
+        N:List
             containing graphs, in the same format as the input, modified as described below
     Description
         Text
@@ -1282,21 +1379,27 @@ doc ///
 doc ///
     Key
         newEdges
+        (newEdges, List)
         (newEdges, String)
         (newEdges, Graph, PolynomialRing)
     Headline
         replaces disjoint pairs of edges by disjoint pairs of two-chains
     Usage
-        L = newEdges S
-        L = newEdges(G, R)
+        N' = newEdges L
+        N = newEdges S
+        N = newEdges(G, R)
     Inputs
+        L:List
+            containing graphs in various formats
         S:String
             a graph encoded in either Sparse6 or Graph6 format
         G:Graph
         R:PolynomialRing
             a ring with exactly two more variables than the ring of $G$
     Outputs
-        L:List
+        N':List
+            containing graphs in either Graph6 or Sparse6 format, modified as described below
+        N:List
             a list of graphs, in the same format as the input, modified as described below
     Description
         Text
@@ -1310,24 +1413,71 @@ doc ///
             G = graph {a*b, c*d};
             S = QQ[a..f];
             newEdges(G, S)
+        Text
+            If the List input format is used, then one should use care as
+            the list may contain isomorphic pairs.
+///
+
+doc ///
+    Key
+        onlyPlanar
+        (onlyPlanar, List, Boolean)
+        (onlyPlanar, List)
+    Headline
+        removes non-planar graphs from a list
+    Usage
+        P = onlyPlanar L
+        P = onlyPlanar(L, non)
+    Inputs
+        L:List
+            containing graphs in various formats
+        non:Boolean
+            whether to return non-planar graphs
+    Outputs
+        P:List
+            containing the planar graphs of $L$ in Graph6 or Sparse6 format
+    Description
+        Text
+            A graph is planar if the graph can be embedded in the plane, i.e.,
+            the vertices can be arranged such that no edges cross except at
+            vertices.
+        Text
+            The only non-planar graph on five vertices is the complete graph.
+        Example
+            R = QQ[a..e];
+            K5 = completeGraph R;
+            P = onlyPlanar(generateGraphs 5, true)
+            areIsomorphic(first P, K5)
+        Text
+            This method uses the program @TT "planarg"@. The
+            code was written by Paulette Lieby for the Magma project and
+            used with permission in the software nauty.
+    SeeAlso
+        isPlanar
 ///
 
 doc ///
     Key
         relabelBipartite
+        (relabelBipartite, List)
         (relabelBipartite, String)
         (relabelBipartite, Graph)
     Headline
         relabels a bipartite graph so all vertices of a given class are contiguous
     Usage
+        L' = relabelBipartite L
         T = relabelBipartite S
         H = relabelBipartite G
     Inputs
+        L:List
+            a list of bipartite graphs in various formats
         S:String
             a bipartite graph encoded in either Sparse6 or Graph6 format
         G:Graph
             a bipartite graph
     Outputs
+        L':List
+            a list of graphs isomorphic to $S$
         T:String
             a graph isomorphic to $S$ encoded in either Sparse6 or Graph6 format
         H:Graph
@@ -1341,6 +1491,9 @@ doc ///
             R = QQ[a..f];
             G = graph flatten apply({a,c,e}, v->v*{b,d,f})
             relabelBipartite G
+        Text
+            If any of the inputs are not bipartite graphs, then the method
+            throws an error.
     SeeAlso
         relabelGraph
 ///
@@ -1348,6 +1501,9 @@ doc ///
 doc ///
     Key
         relabelGraph
+        (relabelGraph, List, ZZ, ZZ)
+        (relabelGraph, List, ZZ)
+        (relabelGraph, List)
         (relabelGraph, String, ZZ, ZZ)
         (relabelGraph, String, ZZ)
         (relabelGraph, String)
@@ -1357,6 +1513,9 @@ doc ///
     Headline
         applies a vertex invariant based refinement to a graph
     Usage
+        L' = relabelGraph(L, i, a)
+        L' = relabelGraph(L, i)
+        L' = relabelGraph L
         T = relabelGraph(S, i, a)
         T = relabelGraph(S, i)
         T = relabelGraph S
@@ -1364,6 +1523,8 @@ doc ///
         H = relabelGraph(G, i)
         H = relabelGraph G
     Inputs
+        L:List
+            a list of graphs in various formats
         S:String
             a graph encoded in either Sparse6 or Graph6 format
         G:Graph
@@ -1372,6 +1533,8 @@ doc ///
         a:ZZ
             a non-negative argument passed to nauty, (default is $3$)
     Outputs
+        L':List
+            a list of graphs isomorphic to $S$
         T:String
             a graph isomorphic to $S$ encoded in either Sparse6 or Graph6 format
         H:Graph
@@ -1411,33 +1574,47 @@ doc ///
         relabelBipartite
 ///
 
-document {
-    Key => {
-        removeEdges,
-        (removeEdges, String),
-        (removeEdges, Graph),
+doc ///
+    Key
+        removeEdges
+        (removeEdges, List)
+        (removeEdges, String)
+        (removeEdges, Graph)
         [removeEdges, MinDegree]
-    },
-    Headline => "creates a list of graphs obtained by removing one edge from the given graph in all possible ways",
-    Usage => "L = removeEdges S\nL = removeEdges G",
-    Inputs => {
-        "S" => String => "a graph encoded in either Sparse6 or Graph6 format",
-        "G" => Graph => "",
-        MinDegree => ZZ => "the minimum degree which a returned graph can have"
-    },
-    Outputs => {"L" => List => "a list of all graphs obtained by removed one edge from the given graph; it contains graphs in the same format as the input"},
-    PARA ///This method creates a list of all possible graphs obtainable from
+    Headline
+        creates a list of graphs obtained by removing one edge from the given graph in all possible ways
+    Usage
+        R' = removeEdges L
+        R = removeEdges S
+        R = removeEdges G
+    Inputs
+        L:List
+            containing graphs in various formats
+        S:String 
+            a graph encoded in either Sparse6 or Graph6 format
+        G:Graph
+        MinDegree=>ZZ
+            the minimum degree which a returned graph can have
+    Outputs
+        R':List
+            a list of all graphs obtained by removed one edge from the given graphs; it contains graphs in Graph6 or Sparse6 format
+        R:List
+            a list of all graphs obtained by removed one edge from the given graph; it contains graphs in the same format as the input
+    Description
+        Text
+            This method creates a list of all possible graphs obtainable from
             the given graph by removing one edge.  Notice that isomorphic graphs
-            are allowed within the list.///,
-    EXAMPLE lines ///
+            are allowed within the list.
+        Example
             R = QQ[a..e];
             removeEdges cycle R
             removeEdges graph {a*b, a*c, b*c, c*d, d*e}
-    ///,
-    SeeAlso => {
+        Text
+            If the List input format is used, then one should use care as
+            the list may contain isomorphic pairs.
+    SeeAlso
         "addEdges"
-    }
-}
+///
 
 doc ///
     Key
@@ -1595,7 +1772,9 @@ undocumented {
 TEST ///
     R = ZZ[a..f];
     assert(#addEdges cycle R == 9);
+    assert(#addEdges {cycle R} == 9);
     assert(#addEdges completeGraph R == 0);
+    assert(#addEdges {completeGraph R} == 0);
     -- "E???" is the empty graph
     assert(#addEdges "E???" == binomial(6, 2));
 ///
@@ -1693,6 +1872,8 @@ TEST ///
     G = graph {a*b, b*c, c*d, d*e};
     assert(graphComplement(G, OnlyIfSmaller => true) == G);
     assert(#edges graphComplement G == 6);
+    L = generateGraphs 6;
+    assert(#graphComplement L == #L);
 ///
 
 -- graphToString
@@ -1721,6 +1902,7 @@ TEST ///
 TEST ///
     R = ZZ[a..f];
     assert(#neighborhoodComplements cycle R == #gens R);
+    assert(#neighborhoodComplements {cycle R} == #gens R);
 ///
 
 -- newEdges
@@ -1731,6 +1913,16 @@ TEST ///
     assert(#newEdges(cycle R, S) == 9);
     -- There are 45 pairs of disjoint edges in K6.
     assert(#newEdges(completeGraph R, S) == 45);
+    assert(#newEdges {completeGraph R} == 45);
+///
+
+-- onlyPlanar
+TEST ///
+    L = generateGraphs 5;
+    assert(#onlyPlanar L == #L - 1);
+    R = QQ[a..e];
+    K5 = completeGraph R;
+    assert(areIsomorphic(K5, first onlyPlanar(L, true)));
 ///
 
 -- relabelBipartite
@@ -1738,6 +1930,7 @@ TEST ///
     R = ZZ[a..f];
     G = graph {a*d, d*b, b*e, e*c, c*f, f*a};
     assert(relabelBipartite cycle R == G);
+    assert(relabelBipartite {"EhEG"} == {"EEY_"});
 ///
 
 -- relabelGraph
@@ -1745,12 +1938,15 @@ TEST ///
     R = ZZ[a..f];
     G = cycle R;
     assert(#apply(0..15, i -> relabelGraph(G, i)) == 16);
+    L = generateGraphs 5;
+    assert(#relabelGraph L == #L);
 ///
 
 -- removeEdges
 TEST ///
     R = ZZ[a..f];
     assert(#removeEdges cycle R == 6);
+    assert(#removeEdges {cycle R} == 6);
     assert(#removeEdges completeGraph R == binomial(6,2));
 ///
 
