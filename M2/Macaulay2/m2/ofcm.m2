@@ -141,7 +141,8 @@ degreesMonoid List := memoize(
 tensorDefaults = merge(monoidDefaults, 
      new OptionTable from {
 	  MonomialOrder => null,
-	  VariableBaseName => null			    -- monoids being tensored already have variable names
+	  VariableBaseName => null,			    -- monoids being tensored already have variable names
+	  Inverses => null				    -- so we can detect a mixture and give an error
 	  },
      (x,y) -> y)
 
@@ -494,10 +495,10 @@ degreePad = (n,x) -> (
 
 degreeNoLift = () -> error "degree not liftable"
 
-tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
+tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
-     opts = new MutableHashTable from opts;
+     opts := new MutableHashTable from opts0;
      opts.Weights = {};
      if opts.Variables === null 
      then opts.Variables = join(Mopts.Variables, Nopts.Variables)
@@ -546,8 +547,13 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;
 	  if opts.DegreeLift === null then opts.DegreeLift = Mopts.DegreeLift;
 	  );
+     if opts.Inverses === null 
+     then (
+	  if Mopts.Inverses =!= Nopts.Inverses then error "in tensor product of two monoids, one has Inverses=>true and the other doesn't";
+	  opts.Inverses = Mopts.Inverses;
+	  )
+     else opts.Inverses = opts.Inverses;
      opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft,opts.Inverses);
-     opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
      wfix := (M,w,bump) -> (
 	  if class w === Option then w = {w};
 	  apply(w, o -> monoidIndex(M,o#0) + bump => monoidIndex(M,o#1) + bump));
