@@ -113,7 +113,7 @@ addEdges List := List => opts -> L -> (
         optionBoolean(opts.NoNew4Cycles, "addEdges", "NoNew4Cycles", "f") | 
         optionBoolean(opts.NoNew5Cycles, "addEdges", "NoNew5Cycles", "F") | 
         optionZZ(opts.NoNewSmallCycles, 0, "addEdges", "NoNewSmallCycles", "z");
-    callNauty(cmdStr, apply(L, graphToString))
+    callNauty(cmdStr, L)
 )
 addEdges String := List => opts -> S -> addEdges({S}, opts)
 addEdges Graph := List => opts -> G -> apply(addEdges({G}, opts), l -> stringToGraph(l, ring G))
@@ -164,7 +164,7 @@ buildGraphFilter List := String => L -> buildGraphFilter hashTable L
 countGraphs = method()
 countGraphs (List, String) := ZZ => (L, filter) -> (
     if #L == 0 or #filter == 0 then return #L;
-    r := callNauty("countg -q " | filter, apply(L, graphToString));
+    r := callNauty("countg -q " | filter, L);
     if not instance(r, List) or #r == 0 then return;
     p := regex("g", first r);
     if not instance(p, Nothing) then value substring((0, first first regex("g", first r)), first r) 
@@ -178,7 +178,7 @@ filterGraphs = method()
 filterGraphs (List, String) := List => (L, filter) -> (
     if #L == 0 or #filter == 0 then return L;
     -- nauty outputs useful information to the stderr and (to us) junk on stdout
-    r := callNauty("pickg -qV " | filter, apply(L, graphToString), ReadError => true);
+    r := callNauty("pickg -qV " | filter, L, ReadError => true);
     -- In nauty 2.4r2, the index is the first number.
     for l in r list ( s := select("[[:digit:]]+", l); if #s == 0 then continue else L_(-1 + value first s) )
 )
@@ -293,7 +293,7 @@ graph6ToSparse6 String := String => g6 -> first callNauty("copyg -qs", {g6})
 graphComplement = method(Options => {OnlyIfSmaller => false})
 graphComplement List := List => opts -> L -> (
     cmdStr := "complg -q" | optionBoolean(opts.OnlyIfSmaller, "graphComplement", "OnlyIfSmaller", "r");
-    callNauty(cmdStr, apply(L, graphToString))
+    callNauty(cmdStr, L)
 )
 graphComplement String := String => opts -> S -> first graphComplement({S}, opts)
 graphComplement Graph := Graph => opts -> G -> stringToGraph(first graphComplement({G}, opts), ring G)
@@ -308,12 +308,12 @@ graphToString (List, ZZ) := String => (E, n) -> (
 
     B := new MutableList from toList(6*ceiling(binomial(n,2)/6):0);
     -- the edges must be in {min, max} order, so sort them
-    for e in apply(E, sort) do B#(binomial(last e, 2) + first e) = 1;
+    for e in sort \ E do B#(binomial(last e, 2) + first e) = 1;
     ascii apply(N | apply(pack(6, toList B), b -> fold((i,j) -> i*2+j, b)), l -> l + 63)
 )
-graphToString MonomialIdeal := String => I -> graphToString(apply(first entries generators I, indices), #gens ring I)
+graphToString MonomialIdeal := String => I -> graphToString(indices \ first entries generators I, #gens ring I)
 graphToString Ideal := String => I -> graphToString monomialIdeal I
-graphToString Graph := String => G -> graphToString(apply(edges G, e -> apply(e, index)), #vertices G)
+graphToString Graph := String => G -> graphToString(apply(edges G, e -> index \ e), #vertices G)
 graphToString String := String => S -> S
 
 -- Tests the planarity of a graph
@@ -323,7 +323,7 @@ isPlanar Graph := Boolean => G -> isPlanar(graphToString G)
 
 -- For each vertex, switch the edges between its neighborhood and its neighborhood's complement.
 neighborhoodComplements = method()
-neighborhoodComplements List := List => L -> callNauty("NRswitchg -q", apply(L, graphToString))
+neighborhoodComplements List := List => L -> callNauty("NRswitchg -q", L)
 neighborhoodComplements String := List => S -> neighborhoodComplements {S}
 neighborhoodComplements Graph := List => G -> apply(neighborhoodComplements {G}, l -> stringToGraph(l, ring G))
 
@@ -331,7 +331,7 @@ neighborhoodComplements Graph := List => G -> apply(neighborhoodComplements {G},
 -- (a,e), (e,b), (c,f), (f,d), and add the edge (e,f), where {e,f} are
 -- new vertices.
 newEdges = method()
-newEdges List := List => L -> callNauty("newedgeg -q", apply(L, graphToString))
+newEdges List := List => L -> callNauty("newedgeg -q", L)
 newEdges String := List => S -> newEdges {S}
 newEdges (Graph, PolynomialRing) := List => (G, S) -> (
     if #vertices G + 2 != #gens S then error("newEdges: The ring must have exactly two more variables than the graph has vertices.");
@@ -342,14 +342,14 @@ newEdges (Graph, PolynomialRing) := List => (G, S) -> (
 onlyPlanar = method()
 onlyPlanar (List, Boolean) := List => (L, non) -> (
     cmdStr := "planarg -q " | if non then "-v" else "";
-    callNauty(cmdStr, apply(L, graphToString))
+    callNauty(cmdStr, L)
 )
 onlyPlanar List := List => L -> onlyPlanar(L, false)
 
 -- Reorders a bipartite graph so all vertices of each color are continguous.
 relabelBipartite = method()
 relabelBipartite List := List => L -> (
-    r := callNauty("biplabg -q", apply(L, graphToString));
+    r := callNauty("biplabg -q", L);
     if #r == #L then r else error("relabelBipartite: One of the graphs is not a bipartite graph.")
 )
 relabelBipartite String := String => S -> first relabelBipartite {S}
@@ -360,7 +360,7 @@ relabelGraph = method()
 relabelGraph (List, ZZ, ZZ) := List => (L, i, a) -> (
     if i > 15 or i < 0 then error("relabelGraph: The invariant selected is invalid.");
     if a < 0 then error("relabelGraph: The invariant argument must be nonnegative.");
-    callNauty("labelg -qg -i" | toString i | " -K" | toString a, apply(L, graphToString))
+    callNauty("labelg -qg -i" | toString i | " -K" | toString a, L)
 )
 relabelGraph (String, ZZ, ZZ) := String => (S, i, a) -> first relabelGraph({S}, i, a)
 relabelGraph (Graph, ZZ, ZZ) := Graph => (G, i, a) -> stringToGraph(first relabelGraph({G}, i, a), ring G)
@@ -375,7 +375,7 @@ relabelGraph Graph := Graph => G -> stringToGraph(first relabelGraph({G}, 0, 3),
 removeEdges = method(Options => {MinDegree => null})
 removeEdges List := List => opts -> L -> (
     cmdStr := "deledgeg -q" | optionZZ(opts.MinDegree, 0, "removeEdges", "MinDegree", "d");
-    callNauty(cmdStr, apply(L, graphToString))
+    callNauty(cmdStr, L)
 )
 removeEdges String := List => opts -> S -> removeEdges({S}, opts)
 removeEdges Graph := List => opts -> G -> apply(removeEdges({G}, opts), l -> stringToGraph(l, ring G))
@@ -385,7 +385,7 @@ removeIsomorphs = method()
 removeIsomorphs List := List => L -> (
     if #L == 0 then return {};
     -- nauty outputs useful information to the stderr and (to us) junk on stdout
-    r := callNauty("shortg -qv", apply(L, graphToString), ReadError => true);
+    r := callNauty("shortg -qv", L, ReadError => true);
     -- for each line, check if it has a colon, if so, take the first graph
     for l in r list ( 
         s := separate(":", l);
@@ -471,7 +471,7 @@ callNauty (String, List) := List => opts -> (cmdStr, dataList) -> (
     erfn := temporaryFileName();
     -- output the data to a file
     o := openOut infn;
-    scan(dataList, d -> o << d << endl);
+    scan(graphToString \ dataList, d -> o << d << endl);
     close o;
     -- try to harvest the lines
     r := lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn | " 2>" | erfn)
