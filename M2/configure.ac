@@ -592,6 +592,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   KustinMiller
   Units
   MonomialMultiplierIdeals
+  NautyGraphs
 ")
 
 # convert the newlines in the list above to spaces
