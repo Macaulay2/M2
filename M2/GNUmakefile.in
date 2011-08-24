@@ -95,6 +95,7 @@ unmark-packages:; $(MAKE) -C Macaulay2/packages $@
 reconfigure: reconfigure-top-only unconfigure-libs 
 unconfigure-libs:; $(MAKE) -C libraries unconfigure
 remove-deps:; find . -name \*.dep -delete
+log-archive:; find . -name config.log |xargs tar xzf config-logs.tgz
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 	: Macaulay2 executable location:
