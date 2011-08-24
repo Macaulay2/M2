@@ -108,6 +108,9 @@ areIsomorphic (String, String) := Boolean => (G, H) -> (#callNauty("shortg -q", 
 areIsomorphic (Graph, Graph) := Boolean => (G, H) -> areIsomorphic(graphToString G, graphToString H)
 areIsomorphic (String, Graph) := Boolean => (G, H) -> areIsomorphic(G, graphToString H)
 areIsomorphic (Graph, String) := Boolean => (G, H) -> areIsomorphic(graphToString G, H)
+Graph == Graph := areIsomorphic
+Graph == String := areIsomorphic
+String == Graph := areIsomorphic
 
 -- Builds a filter string for countGraphs and filterGraphs.
 buildGraphFilter = method()
@@ -601,13 +604,19 @@ doc ///
         (areIsomorphic, Graph, Graph)
         (areIsomorphic, String, Graph)
         (areIsomorphic, Graph, String)
+        (symbol ==, Graph, Graph)
+        (symbol ==, Graph, String)
+        (symbol ==, String, Graph)
     Headline
         determines whether two graphs are isomorphic
     Usage
         b = areIsomorphic(G, H)
+        G == H
         b = areIsomorphic(S, T)
         b = areIsomorphic(S, H)
+        S == H
         b = areIsomorphic(G, T)
+        G == T
     Inputs
         G:Graph
         H:Graph
@@ -624,7 +633,11 @@ doc ///
             H = graph {{1,3},{3,5},{5,2},{2,4},{4,1}};
             I = graph {{1,2},{1,3},{1,4},{1,5},{2,3},{2,4},{2,5},{3,4},{3,5},{4,5}};
             areIsomorphic(G, H)
+            G == H
             areIsomorphic(G, I)
+            G == "Dhc"
+            I == "Dhc"
+
     SeeAlso
         "Example: Checking for isomorphic graphs"
         removeIsomorphs
@@ -1304,11 +1317,13 @@ doc ///
         newEdges
         (newEdges, List)
         (newEdges, String)
+        (newEdges, Graph)
     Headline
         replaces disjoint pairs of edges by disjoint pairs of two-chains
     Usage
         N' = newEdges L
         N = newEdges S
+        N = newEdges G
     Inputs
         L:List
             containing graphs in various formats
