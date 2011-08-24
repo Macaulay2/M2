@@ -65,7 +65,8 @@ matrix Point := o -> p -> matrix {coordinates p}
 
 -- plug a point p into the system S (expects S to be a list of polynomials)
 plugIn = method()
-plugIn (List, Point) := (S,p) -> flatten entries sub(matrix{S}, matrix{ coordinates p / toCC })
+plugIn (List, List) := (S,p) -> flatten entries sub(matrix{S}, matrix{ p / toCC })
+plugIn (List, Point) := (S,p) -> plugIn(S,coordinates p)
 
 norm (Number, Point) := (no,p) -> norm(no, coordinates p)
 norm (Number, List) := (no,p) -> (
@@ -219,9 +220,17 @@ SERVICE FUNCTIONS:
 *}
 
 generalEquations = method()
+
+-- make k random linear combinations of gens I
+generalEquations (ZZ,Ideal) := (k,I) -> (
+     R := ring I;
+     ngens := numgens I;
+     ideal ( (gens I) * random(R^ngens, R^k) )
+     )
+
+-- change the equations to be general change of vars, if not a CI
+-- the output is a new witness set, with the same points and slice.
 generalEquations WitnessSet := (W) -> (
-     -- change the equations to be general change of vars, if not a CI
-     -- the output is a new witness set, with the same points and slice.
      R := ring W;
      n := numgens R;
      d := dim W;
