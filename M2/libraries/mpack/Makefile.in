@@ -2,14 +2,14 @@ VPATH = @srcdir@
 HOMEPAGE = http://mplapack.sourceforge.net/
 VERSION = 0.6.7
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-PRECONFIGURE = autoconf
+
+# it seems to be impossible to recreate a functioning configure script after patching configure.in
+# PRECONFIGURE = autoconf
+
 # old: SUBDIRS = external mpfrc++ mblas mlapack examples
 # BUILDOPTIONS = SUBDIRS='mpfrc++ mblas mlapack'
 # INSTALLOPTIONS = SUBDIRS='mpfrc++ mblas mlapack'
-CONFIGOPTIONS = --with-system-gmp --with-system-mpfr --with-system-mpc --with-system-qd
-ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared
-endif
+CONFIGOPTIONS = --with-system-gmp --with-system-mpfr --with-system-mpc --with-system-qd LIBS="-lmpfr -lgmpxx -lgmp"
 BUILDTARGET = all -o check-TESTS -o check-recursive -o check
 URL = http://downloads.sourceforge.net/project/mplapack/mpack/mpack%20$(VERSION)
 include ../Makefile.library

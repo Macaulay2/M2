@@ -1,18 +1,6 @@
-diff -ur --exclude=configure /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpack/tmp/mpack-0.6.7/configure.in mpack-0.6.7/configure.in
---- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpack/tmp/mpack-0.6.7/configure.in	2010-08-19 03:29:59.000000000 -0500
-+++ mpack-0.6.7/configure.in	2011-07-29 13:39:37.000000000 -0500
-@@ -192,7 +192,7 @@
-         if test x$HAVE_MPFR_HEADER = xyes; then
-             save_LDFLAGS="$LDFLAGS"
-             LDFLAGS="$LDFLAGS -L$MPFR_LIBDIR"
--            AC_CHECK_LIB(mpfr, mpfr_init, [MPFR_LIBS="-lmpfr -lgmp"; HAVE_MPFR=yes])
-+            AC_CHECK_LIB(mpfr, mpfr_init, [MPFR_LIBS="-lmpfr -lgmp"; HAVE_MPFR=yes],,-lgmp)
-             LDFLAGS=$save_LDFLAGS
-         fi
-         if test x$HAVE_MPFR != xyes; then
 diff -ur --exclude=configure /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpack/tmp/mpack-0.6.7/mpfrc++/mpreal.h mpack-0.6.7/mpfrc++/mpreal.h
---- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpack/tmp/mpack-0.6.7/mpfrc++/mpreal.h	2010-08-09 21:48:11.000000000 -0500
-+++ mpack-0.6.7/mpfrc++/mpreal.h	2011-07-29 12:10:19.000000000 -0500
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpack/tmp/mpack-0.6.7/mpfrc++/mpreal.h	2010-08-09 22:48:11.000000000 -0400
++++ mpack-0.6.7/mpfrc++/mpreal.h	2011-08-24 19:00:26.000000000 -0400
 @@ -92,6 +92,7 @@
  	mpreal(const char* s, mp_prec_t prec = default_prec, int base = default_base, mp_rnd_t mode = default_rnd);
  
