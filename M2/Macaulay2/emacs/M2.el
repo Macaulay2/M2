@@ -38,7 +38,6 @@
 \\{M2-comint-mode-map}"
   (M2-common)
   (setq comint-prompt-regexp M2-comint-prompt-regexp)
-  (setq comint-use-prompt-regexp-instead-of-fields t)
   (set (make-local-variable 'comint-dynamic-complete-functions) '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
   ;; give up trying to fix this:
   ;; (set (make-local-variable 'ansi-color-for-comint-mode-on) nil)
@@ -46,7 +45,6 @@
 
 (defun M2-common()
   "Set up features common to both Macaulay 2 major modes."
-  (set (make-local-variable 'comint-use-prompt-regexp-instead-of-fields) nil) ; we might want to start using "input fields", too!
   (set (make-local-variable 'comment-start) "-- ")
   (set (make-local-variable 'comment-end) "")
   (set (make-local-variable 'comment-column) 60)
