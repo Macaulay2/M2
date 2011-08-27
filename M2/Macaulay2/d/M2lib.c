@@ -84,7 +84,9 @@ static void unblock(int sig) {
 }
 
 static void alarm_handler(int sig) {
-     interrupts_setAlarmedFlag();
+     if (tryGlobalAlarm() == 0) {
+	  interrupts_setAlarmedFlag();
+	  }
      oursignal(SIGALRM,alarm_handler);
      }
 
