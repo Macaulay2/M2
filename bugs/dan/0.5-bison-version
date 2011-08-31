@@ -1,0 +1,2 @@
+configure should check that bison is at least version 2,
+because bison++ is an old fork still around that mimicks it.
