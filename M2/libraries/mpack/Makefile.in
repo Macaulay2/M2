@@ -13,6 +13,9 @@ CONFIGOPTIONS = --with-system-gmp --with-system-mpfr --with-system-mpc --with-sy
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
+
+CONFIGOPTIONS += --disable-testing
+
 BUILDTARGET = all -o check-TESTS -o check-recursive -o check
 URL = http://downloads.sourceforge.net/project/mplapack/mpack/mpack%20$(VERSION)
 include ../Makefile.library
