@@ -154,18 +154,21 @@ Node
     keyword {\bf Item}; the text in each subsection can be marked up as
     described above.
 
-    The text in the {\bf Description} section occurs in subsections labeled with
-    the keywords {\bf Text}, {\bf Example}, {\bf Pre}, and {\bf Code}.  The
-    text in a {\bf Text} subsection can be separated into paragraphs with blank
-    lines.  Each paragraph can contain markup as described above.  The text in
-    an {\bf Example} subsection consists of lines of code to be used as
-    examples in the documentation node.  Within in each complete expression,
-    indent lines after the first one more than the first.  The text in a {\bf
-    Pre} section, with common indentation removed, is wrapped with @ TO PRE @.
-    The text in a {\bf Code} section, with common indentation removed, is
-    wrapped with parentheses and evaluated; the result is spliced into the list
-    of documentation items at the appropriate point before passing the list to
-    @TO document@.
+    The text in the {\bf Description} section occurs in subsections labeled
+    with the keywords {\bf Text}, {\bf Example}, {\bf CannedExample}, {\bf
+    Pre}, and {\bf Code}.  The text in a {\bf Text} subsection can be separated
+    into paragraphs with blank lines.  Each paragraph can contain markup as
+    described above.  The text in an {\bf Example} subsection consists of lines
+    of Macaulay2 code to be used as examples in the documentation node; within
+    in each complete expression, indent lines after the first one more than the
+    first; output will be generated automatically and incorporated into the
+    display.  The text in a {\bf CannedExample} subsection consists of lines
+    containing an interaction with Macaulay2, to displayed as an example.  The
+    text in a {\bf Pre} section, with common indentation removed, is wrapped
+    with @ TO PRE @.  The text in a {\bf Code} section, with common indentation
+    removed, is wrapped with parentheses and evaluated; the result is spliced
+    into the list of documentation items at the appropriate point before
+    passing the list to @TO document@.
 
     The lines in the {\bf Subnodes} section not beginning with a colon are keys
     giving links to the subnodes of the current documentation node.  The
