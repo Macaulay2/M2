@@ -227,6 +227,8 @@ generalEquations (ZZ,Ideal) := (k,I) -> (
      ngens := numgens I;
      ideal ( (gens I) * random(R^ngens, R^k) )
      )
+generalEquations (ZZ,List) := (k,F) -> (generalEquations(k,ideal F))_*;
+
 
 -- change the equations to be general change of vars, if not a CI
 -- the output is a new witness set, with the same points and slice.

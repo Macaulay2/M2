@@ -134,6 +134,15 @@ diffRatFun (List, RingElement) := RingElement => (m,f) -> (
 	  )
      else error "polynomial or rational function function expected"   
      )
+diffRatFun (List, RingElement, RingElement, ZZ) := (m,g,f,a) -> (
+     R := ring f;
+     p := position(m,i->i>0);
+     if p === null then (g,f,a)
+     else  diffRatFun(replace(p,m#p-1,m), diff(R_p,g)*f-a*g*diff(R_p,f), f, a+1) 
+     )
+memoize'diffRatFun = memoize diffRatFun
+     
+
 
 -- IN: g,f in K[s,x_1,...,x_n]
 -- OUT: h, where hf^(s-k) = f^(k-ord(D_m)) * D_m(g*f^s)
@@ -147,6 +156,7 @@ kDiffFs (ZZ, List, RingElement, RingElement) := RingElement => (k,m,g,f) -> (
      if a==0 then s*g'*f -- multiply by "s"
      else diff(R_a,g')*f+(s-k+1)*g'*diff(R_a,f)
      )
+memoize'kDiffFs := memoize kDiffFs
 
 kOrderAnnFa = method()
 kOrderAnnFa(ZZ,RingElement,ZZ) := Ideal => (k,f,a) -> (
@@ -154,7 +164,13 @@ kOrderAnnFa(ZZ,RingElement,ZZ) := Ideal => (k,f,a) -> (
      fa := if a>=0 then f^a else 1/f^(-a);
      n := numgens R;
      d'indices := reverse flatten({{toList(n:0)}} | apply(k, d->compositions (n,d+1)));
-     M := matrix {apply(d'indices, c->sub(f^(k+1)*diffRatFun(c,fa),R))};
+     --time M := matrix {apply(d'indices, c->sub(f^(k+1)*memoize'diffRatFun(c,fa),R))};
+     time M := matrix {  
+	  apply(d'indices, c->(
+		    (g',f',a') := memoize'diffRatFun(c,1_R,f,-a);
+		    f^(k-a-a')*g'
+		    ))  
+	  };
      pInfo(4, toString M);
      syzygies := entries transpose gens gb syz M;     
      pInfo(3, {"syz="}|syzygies);
@@ -180,7 +196,7 @@ kOrderAnnFs(ZZ,RingElement) := Ideal => (k,f) -> (
      f = sub(f,Rs);
      n := numgens R;
      d'indices := reverse flatten({{toList(n+1:0)}} | apply(k, d->compositions (n+1,d+1)));
-     M := transpose matrix apply(d'indices, c->kCoeffVectorWRTs(k,kDiffFs(k,c,1_Rs,f),R,Rs'to'R));
+     M := transpose matrix apply(d'indices, c->kCoeffVectorWRTs(k,memoize'kDiffFs(k,c,1_Rs,f),R,Rs'to'R));
      pInfo(4, toString M);
      syzygies := entries transpose gens gb syz M;     
      pInfo(3, {"syz="}|syzygies);
@@ -192,8 +208,8 @@ kOrderAnnFs(ZZ,RingElement) := Ideal => (k,f) -> (
 		    )))
      )
 
-AnnF1PlanarCurve = method()
-AnnF1PlanarCurve RingElement := f -> (
+kappaAnnF1PlanarCurve = method()
+kappaAnnF1PlanarCurve RingElement := f -> (
      mult := min(flatten entries monomials f / first@@degree);
      k := 1;
      local A;
@@ -203,17 +219,26 @@ AnnF1PlanarCurve RingElement := f -> (
 	  pInfo(2, {"  syzygy computation time: ", first t'A});
 	  A = last t'A;
      	  cI := charIdeal A;
-     	  t'dec := timing primaryDecomposition cI;
-	  pInfo(2, {"  primary decomposition time: ", first t'dec});
-	  dec := last t'dec;
-	  grD := ring cI;
-     	  conormalOfOrigin := select(dec, c->radical c == ideal take(gens grD, numgens grD//2));
-	  if #conormalOfOrigin != 1 then error "can't find the conormal of the origin"
-	  else (
-	       if degree first conormalOfOrigin <= mult-1 then break;
-	       ); 
+--      	  t'dec := timing primaryDecomposition cI;
+-- 	  pInfo(2, {"  primary decomposition time: ", first t'dec});
+-- 	  dec := last t'dec;
+-- 	  grD := ring cI;
+--      	  conormalOfOrigin := select(dec, c->radical c == ideal take(gens grD, numgens grD//2));
+-- 	  if #conormalOfOrigin != 1 then error "can't find the conormal of the origin"
+-- 	  else (
+--	       deg := degree first conormalOfOrigin;
+	         R := ring cI; 
+	         n := numgens R // 2;
+		 cIcapRandomPlane := cI + ideal (drop(gens R,n)-{0,1}); --apply(drop(gens R,n), x->x-1);
+		 time print decompose cIcapRandomPlane;
+		 time print (dec2 := primaryDecomposition cIcapRandomPlane);
+		 time deg2 := degree first select(dec2,J->isSubset(ideal take(gens R,n),radical J));
+		 deg := deg2;
+	       pInfo(2, {"  (deg,mult-1) = (", deg, ",", mult-1, ") : ", deg2});
+	       if deg <= mult-1 then break;
+--	       ); 
 	  k = k+1;
 	  );
-     A
+     (k,A)
      )
 

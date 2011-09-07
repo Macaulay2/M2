@@ -1,4 +1,4 @@
-export { AnnF1PlanarCurve,reiffen, kOrderAnnFa, kOrderAnnFs, kDiffFs,
+export { kappaAnnF1PlanarCurve, reiffen, kOrderAnnFa, kOrderAnnFs, kDiffFs,
      localBFunction, multiplierIdeal, ViaElimination, ViaColonIdeal, ViaLinearAlgebra,
      isInMultiplierIdeal, generalizedBFunction, mGeneralizedBFunction,
      jumpingCoefficients, hasRationalSing,

@@ -19,7 +19,7 @@ assert all({1,3}, i->M#i#SolutionStatus==Regular)
 assert(M#3#LastT>0.99999 and M#3#NumberOfSteps < 20)
 
 T = cyclic(5,CC) 
-M = solveSystem(T_*, Software=>M2engine);
+M = solveSystem(T_*, Software=>M2engine, PostProcess=>false);
 S = apply(#M,i->M#i#SolutionStatus);
 assert( #select(S, s->s==Regular) == 70
      and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
@@ -43,6 +43,11 @@ for predictor in {RungeKutta4,Tangent,Certified} do (
 	  assert areEqual(s1,s2,Tolerance=>1e-4)
      	  )
      )		    
+
+-- a non-square system
+CC[x,y]
+solveSystem{x^2,y^2,x+y}
+
 end
 
 restart

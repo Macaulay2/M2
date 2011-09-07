@@ -27,7 +27,7 @@ for predictor in {RungeKutta4,Certified} do (
 					     
 -- T = cyclic(5,CC) -- runs for a minute
 T = example2()
-SM = solveSystem(T_*, Software=>M2)
+SM = solveSystem(T_*, Software=>M2, PostProcess=>false)
 assert(  #select(SM,s->status s === Regular) == 2
      and #select(SM,s->status s === Infinity) == 14
      and #select(SM,s->status s === MinStepFailure) == 0 )

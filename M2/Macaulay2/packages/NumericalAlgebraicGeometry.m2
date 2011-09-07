@@ -43,7 +43,7 @@ export {
      "setDefault", "getDefault",
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
-     "Software", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
+     "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
@@ -1342,7 +1342,7 @@ randomInitialPair List := T -> (
      )     
 
 -- INTERFACE part ------------------------------------
-solveSystem = method(TypicalValue => List, Options =>{Software=>null})
+solveSystem = method(TypicalValue => List, Options =>{Software=>null, PostProcess=>true})
 solveSystem List := List => o -> F -> (
 -- solves a system of polynomial equations
 -- IN:  F = list of polynomials
@@ -1354,10 +1354,14 @@ solveSystem List := List => o -> F -> (
      scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      local result;
      R := ring F#0;
-     --if numgens R != #F then error "expected a square system";
      v := flatten entries vars R;
+     if numgens R > #F then error "expected a 0-dimensional system";
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
-	  result = 
+	  overdetermined := numgens R < #F; 
+	  T := (if overdetermined 
+	       then generalEquations(numgens R, F)
+	       else F);  
+  	  result = 
 -- 	  if all(F, f -> first degree f <= 1)
 --      	  then ( 
 -- 	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
@@ -1366,9 +1370,13 @@ solveSystem List := List => o -> F -> (
 -- 	       )
 --	  else 
 	       (
-	       (S,solsS) := totalDegreeStartSystem F;
-	       track(S,F,solsS,NAG$gamma=>exp(random(0.,2*pi)*ii),o)
-	       )
+	       (S,solsS) := totalDegreeStartSystem T;
+	       track(S,T,solsS,NAG$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
+	       );
+	  if o.PostProcess and not overdetermined then result = select(refine(F,result), s->residual(F,s)<DEFAULT.Tolerance) {* 
+	  !!! need to write a decent post processing procedure that refines, 
+	  groups the same solutions, and assigns (path)multiplicities
+	  *}
 	  )
      else if o.Software == PHCPACK then result = solvePHCpack(F,o)
      else if o.Software == BERTINI then result = solveBertini(F,o)
