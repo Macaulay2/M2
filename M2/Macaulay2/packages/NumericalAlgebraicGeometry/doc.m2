@@ -410,7 +410,7 @@ document {
 toAffineChart(2,{1,2,3,4,5,6}) 
 toAffineChart(2,{1,2,0,4,5,6}) 
 CC[x,y];
-s = solveSystem {x^2+y^2}
+s = track({x^2-y^2},{x*y},{{1,1}})
 toAffineChart(0, coordinates s#0)
 toAffineChart(1, coordinates s#0)
      	///,

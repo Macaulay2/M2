@@ -2672,6 +2672,7 @@ end
 restart
 uninstallPackage "NumericalAlgebraicGeometry"
 installPackage "NumericalAlgebraicGeometry"
+installPackage ("NumericalAlgebraicGeometry",RunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("NumericalAlgebraicGeometry",RunExamples=>false, RemakeAllDocumentation=>true)
 
 -- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)

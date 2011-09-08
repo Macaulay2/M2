@@ -165,7 +165,8 @@ kOrderAnnFa(ZZ,RingElement,ZZ) := Ideal => (k,f,a) -> (
      n := numgens R;
      d'indices := reverse flatten({{toList(n:0)}} | apply(k, d->compositions (n,d+1)));
      --time M := matrix {apply(d'indices, c->sub(f^(k+1)*memoize'diffRatFun(c,fa),R))};
-     time M := matrix {  
+     --time 
+     M := matrix {  
 	  apply(d'indices, c->(
 		    (g',f',a') := memoize'diffRatFun(c,1_R,f,-a);
 		    f^(k-a-a')*g'
@@ -210,13 +211,33 @@ kOrderAnnFs(ZZ,RingElement) := Ideal => (k,f) -> (
 
 kappaAnnF1PlanarCurve = method()
 kappaAnnF1PlanarCurve RingElement := f -> (
+     a := 0; b := 1; -- warning: an artificial choice
+     -- CheckGenericity
+     Rf := ring f;
+     aaa := symbol aaa;
+     R := (coefficientRing Rf)(monoid[gens Rf,aaa_1..aaa_(numgens Rf)]); 
+     gensRf := (vars R)_(toList(0..numgens Rf-1));
+     ff := (map(R,Rf,gensRf)) f;
+     sz := syz matrix{{diff(R_0,ff),diff(R_1,ff)}};
+     I := ideal((vars R)_(toList(numgens Rf..numgens R-1))*sz) + ideal ff;
+     J := saturate(I,ideal gensRf);
+     if sub(J, matrix{{0_R,0,a,b}}) != ideal 1_R
+     then "algorithm's artificial choice is non-generic: see code";
+
+     -- main algorithm
      mult := min(flatten entries monomials f / first@@degree);
      k := 1;
      local A;
+     -- store data in a hashtable
+     sf := toString f;
+     pInfo(2, {"data#\"", sf, "\" = new MutableHashTable"});
+     pInfo(2, {"data#\"", sf, "\"#\"m\" = new MutableHashTable"});
+     pInfo(2, {"data#\"", sf, "\"#\"syz time\" = new MutableHashTable"});
      while true do (
-     	  pInfo(2, {"order ", k, ": "});
+     	  pInfo(1, {"-- order ", k, ": "});
      	  t'A := timing kOrderAnnFa(k,f,-1);
-	  pInfo(2, {"  syzygy computation time: ", first t'A});
+	  pInfo(1, {"-- syzygy computation time: ", first t'A});
+	  pInfo(2, {"data#\"", sf, "\"#\"syz time\"#", k, " = ", first t'A});
 	  A = last t'A;
      	  cI := charIdeal A;
 --      	  t'dec := timing primaryDecomposition cI;
@@ -227,14 +248,17 @@ kappaAnnF1PlanarCurve RingElement := f -> (
 -- 	  if #conormalOfOrigin != 1 then error "can't find the conormal of the origin"
 -- 	  else (
 --	       deg := degree first conormalOfOrigin;
-	         R := ring cI; 
+	         R = ring cI; 
 	         n := numgens R // 2;
-		 cIcapRandomPlane := cI + ideal (drop(gens R,n)-{0,1}); --apply(drop(gens R,n), x->x-1);
-		 time print decompose cIcapRandomPlane;
-		 time print (dec2 := primaryDecomposition cIcapRandomPlane);
-		 time deg2 := degree first select(dec2,J->isSubset(ideal take(gens R,n),radical J));
+		 cIcapRandomPlane := cI + ideal (drop(gens R,n)-{a,b});
+		 --time print decompose cIcapRandomPlane;
+		 --time 
+		 dec2 := primaryDecomposition cIcapRandomPlane;
+		 --time 
+		 deg2 := degree first select(dec2,J->isSubset(ideal take(gens R,n),radical J));
 		 deg := deg2;
-	       pInfo(2, {"  (deg,mult-1) = (", deg, ",", mult-1, ") : ", deg2});
+	       pInfo(2, {"data#\"", sf, "\"#\"m\"#", k, " = ", deg});
+	       pInfo(2, {"--  (deg,mult-1) = (", deg, ",", mult-1, ") : ", deg2});
 	       if deg <= mult-1 then break;
 --	       ); 
 	  k = k+1;
