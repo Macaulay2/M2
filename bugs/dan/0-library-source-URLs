@@ -9,3 +9,15 @@ apply these changes on the 1.4 branch to refer all URLs to math.uiuc.edu
     r13972 | dan | 2011-09-08 11:52:25 +0000 (Thu, 08 Sep 2011) | 1 line
 
     arrange for source code of all libraries to be downloaded from math.uiuc.edu
+
+For the future, the automated procedure should probably be to try first from
+the third-party website and then, if that fails, to try math.uiuc.edu, since
+for development or recovery from errors, it would be nice to be able to try
+just
+
+	make MPIR_VERSION=2.4.0
+
+at top level.  There should also be a configure option to try just from
+math.uiuc.edu, as a way of testing whether all the needed files have been
+put there.  And that should be the default for us when we are preparing distributions
+on various architectures, since the set of needed libraries varies.
