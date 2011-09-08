@@ -124,7 +124,7 @@ toString'(Function, Expression) := (fmt,v) -> (
 --texMath Holder2 := v -> "{" | texMath v#0 | "}"
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
-texMath Holder := v -> error( "no method for texMath applied to an object of class ", toString class v#0 )
+texMath Holder := v -> toString v#0 -- may not always be right, but it will work for "texMath expression 4"
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 
