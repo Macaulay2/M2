@@ -243,10 +243,6 @@ Microsoft Windows XP and Vista notes
 	   ln -s /usr/bin/cpp /lib
 
 ----------------------
-Linux notes
-----------------------
-
-----------------------
 MacOS X notes
 ----------------------
 
@@ -272,66 +268,4 @@ There are several methods for installing Macaulay2 under Mac OS X.
     
     For specific scripts that we use to build the disk images,
     see BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
-
--------------------------------
--- Ubuntu linux, from source --
--------------------------------
-
-Here are the steps to take a newly installed ubuntu 7.10 system (64 bit),
-and to get Macaulay2 running (either via an ubuntu package or via source.
-
-From the package file:
-
-     You may prepare for installing Macaulay 2 (with apt-get, gdebi-gtk, or the
-     Synaptic Package Manager) by adding the following line to the file
-     /etc/apt/sources.list:
-
-         deb http://www.math.uiuc.edu/Macaulay2/Repositories/Debian stable main
-
-     One way to add this line to that file is with the Synaptic Package
-     Manager. Pull down the "Settings" menu, and select "Repositories".
-
-     You may see a tab labelled "Third Party Software" (for example, under
-     Debian). Click on it, then click on "Add", and add the entry. If you make
-     a mistake, be prepared to use an editor to edit the file to correct it.
-
-     Alternatively, you may see a tab labelled "Installation Media" (for
-     example, under Debian 4.0). Click on it, then click on "Add" and then
-     "Custom", and add the entry.
-
-     Having added the line, now reload the package lists from the repositories
-     (i.e., click on the "Reload" button) and then click on the Mathematics
-     (Math) section. You should see "macaulay2" on the list, available for
-     download. (The package manager will consult
-     http://www.math.uiuc.edu/Macaulay2/Repositories/Debian/dists/.)
-
-     Another way to install Macaulay 2, after those lines are added to
-     /etc/apt/sources.list, is with this command line.
-
-	sudo apt-get install macaulay2
-
-From source:
-
-     Install required packages (via the command line, as here, or via the
-     synaptic package manager):
-
-     On Ubuntu 9.04, here is what I think is the complete set needed:
-
-     	     sudo apt-get install subversion
-     	     sudo apt-get install build-essential
-	     sudo apt-get install autoconf
-	     sudo apt-get install libncurses5-dev
-	     sudo apt-get install gfortran
-	     sudo apt-get install bison
-	     sudo apt-get install flex
-
-     Now grab, configure, compile and install Macaulay2:
-
-	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-	  cd M2; make
-	  mkdir BUILD/opt64; cd BUILD/opt64
-	  ../../configure
-          make
-	  make install # places M2 into /usr/local
-	  make check # optional, but recommended
 
