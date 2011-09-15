@@ -1,3 +1,4 @@
+setRandomSeed 1
 --*********************************************************************
 --*
 --*This file contains the code implementing the algorithms described
