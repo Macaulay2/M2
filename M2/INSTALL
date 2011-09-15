@@ -37,15 +37,41 @@ Libraries
 ---------
 
 Here are some libraries you may have to install on your system to build
-Macaulay 2.  If your operating system distinguished between development
+Macaulay 2.  If your operating system distinguishes between development
 versions and run-time versions of the libraries, you will need the development
 version.
 
-   library: libxml2
-     notes: if absent, there will be an error message about the file
-     	    libxml/tree.h not being found     
-    get at: Mac OS X : already present, if you've installed Xcode
-    	    ubuntu, debian : install the package libxml2-dev
+Here are commands that will get you a good development environment under
+various modern operating systems:
+
+  Ubuntu:
+
+    sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev libz-dev
+
+  Debian:
+
+    sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libgmp3-dev libmpfr-dev libpari-dev autoconf bison emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev make openssh-server subversion xbase-clients libxml2-dev curl libz-dev
+
+  Fedora:
+
+    sudo yum -y install emacs gcc-c++ bison flex autoconf subversion patch ncurses-devel ncurses-devel gdbm-devel glpk-devel cddlib-devel libxml2-devel rpm-build kernel-devel fakeroot pari-devel gc-devel ntl-devel lapack-devel gmp-devel mpfr-devel rpmdevtools
+
+  Scientific linux:
+
+    sudo yum install -y emacs subversion lapack gcc-c++ gcc-gfortran flex bison autoconf autoconf flex bison ncurses-devel libxml2-devel zlib-devel gdbm-devel gmp-devel readline-devel rpm-build strace
+
+    For making an rpm file, install fakeroot manually, from:
+    	 http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
+
+  Cygwin under Microsoft Windows:
+
+    # use setup to install these packages:
+	autoconf automake bison emacs-X11 file flex gcc4-core gcc4-fortran gcc4-g++ gdb
+	libgc-devel libgdbm-devel libglpk-devel liblapack-devel libstdc++6-devel
+	libxml2-devel make mpfr-devel patchutils readline subversion time wget
+
+    # you may also want these:
+    	emacs-el gvim libxml2-doc openssh psmisc unzip vim xconsole xkill
 
 ----------------------
 Getting the source code
