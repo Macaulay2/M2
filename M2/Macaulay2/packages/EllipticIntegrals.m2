@@ -10,6 +10,11 @@ newPackage(
     	DebuggingMode => true
     	)
 
+{* The notation used here comes from my paper
+   The arithogeometric mean, Archiv der Mathematik, volume 52, 1989, pages 507-512,
+   scanned versions available here: http://www.math.uiuc.edu/~dan/cv.html#agm
+*}
+
 export { 
      symbol EllipticCurve, 
      symbol Period, 
@@ -369,6 +374,11 @@ TEST ///
 defaultPrecision = 200;
 D = new EllipticCurve from {49/4,16};
 assert( D.log D {4,-18,1} === .369919481948619552895243135959626649608662476782124725192805177111472521060507737885616486p200 );
+assert( D.periodCoordinates D.log D {4,-18,1} === {1./4,0.} );
+assert( D.periodCoordinates D.log D {-8,12,1} === {1./8,-1./2} );
+assert( D.Period === .14796779277944782115809725438385065984346499071284989007712207p200e1 )
+assert( D.Period' === toCC(.0p200,-.99348185850601324739329990214047552905027815853831220628647471p200) )
+ {* actually, the paper has the complex conjugate of this period ... *}
 ///
 
 TEST ///
