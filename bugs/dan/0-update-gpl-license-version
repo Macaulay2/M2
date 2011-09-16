@@ -1,0 +1,68 @@
+our 1.4 binary distributions should not be licensed under GPL v 2 or later:
+
+thallium$ svn log -r  11872
+------------------------------------------------------------------------
+r11872 | dan | 2010-08-21 18:15:57 -0500 (Sat, 21 Aug 2010) | 3 lines
+
+update to mpfr 3.0.0, which means we have to license our binary distributions
+under GPL v3, since it is LGPL 3+
+
+------------------------------------------------------------------------
+thallium$ M2
+Macaulay2, version 1.4
+with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone
+
+i1 : copyright
+
+o1 = Macaulay2, version 1.4
+    Copyright 2010 Daniel R. Grayson and Michael E. Stillman,
+      licensed under the GNU General Public License version 2 or 3.
+    For Macaulay2 packages, see their source code for licensing terms.
+    Compiled with the following libraries:
+      GC 7.2 alpha 5, by H. Boehm and Alan J. Demers
+      Singular-Factory 3.1.1, by G.-M. Greuel et al.
+      Singular-Libfac 3.1.1, by M. Messollen
+      frobby 0.8.2, by B. H. Roune
+      pari 2.3.5, the PARI Group, Bordeaux
+      NTL 5.5.2, by V. Shoup
+      MPIR 2.1.2, by Free Software Foundation et al.
+      MPFR 3.0.0, by Free Software Foundation
+      BLAS and LAPACK 3.0, by J. Dongarra et al.
+
+i2 : version
+
+o2 = HashTable{architecture => x86_64                                                                     }
+              build => x86_64-apple-darwin
+              compile node name => thallium.local
+              compile time => Nov  2 2010, 10:56:27
+              compiler => gcc 4.2.1
+              configure arguments =>  '--enable-encap' '--enable-download' '--enable-common-staging-area' 'CC=gcc -m64' 'CXX=g++ -m64' '--build=x86_64-apple-darwin' '--disable-common-staging-area' '--enable-dmg' '--prefix=/usr' 'build_alias=x86_64-apple-darwin'
+              dumpdata => false
+              endianness => dcba
+              executable extension => 
+              factory version => 3.1.1
+              frobby version => 0.8.2
+              gc version => 7.2 alpha 5
+              gmp version => not present
+              host => x86_64-apple-darwin
+              issue => 10.6
+              libfac version => 3.1.1
+              M2 name => M2
+              M2 suffix => 
+              machine => x86_64-MacOS-10.6
+              mpfr version => 3.0.0
+              mpir version => 2.1.2
+              mysql version => not present
+              ntl version => 5.5.2
+              operating system => MacOS
+              operating system release => 10.6
+              packages => Style Macaulay2Doc FirstPackage Parsing Classic Browse Benchmark Text SimpleDoc PackageTemplate PrimaryDecomposition FourierMotzkin Dmodules Depth Elimination GenericInitialIdeal IntegralClosure HyperplaneArrangements LexIdeals Markov NoetherNormalization Points ReesAlgebra Regularity SchurRings SymmetricPolynomials SchurFunctors SimplicialComplexes LLLBases TangentCone ChainComplexExtras Schubert2 LocalRings BoijSoederberg BGG Bruns InvolutiveBases ConwayPolynomials EdgeIdeals FourTiTwo StatePolytope Polyhedra Polymake gfanInterface PieriMaps Normaliz Posets XML OpenMath SCSCP RationalPoints MapleInterface ConvexInterface SRdeformations NumericalAlgebraicGeometry BeginningMacaulay2 FormalGroupLaws Graphics WeylGroups HodgeIntegrals Cyclotomic Binomials Kronecker Nauty ToricVectorBundles ModuleDeformations PHCpack SimplicialDecomposability BooleanGB AdjointIdeal Parametrization Serialization NAGtypes NormalToricVarieties DGAlgebras Graphs GraphicalModels
+              pari version => 2.3.5
+              pointer size => 8
+              python version => not present
+              readline version => 6.0
+              scscp version => not present
+              threads => false
+              VERSION => 1.4
+
+o2 : HashTable
