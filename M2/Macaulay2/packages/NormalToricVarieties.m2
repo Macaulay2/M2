@@ -942,9 +942,8 @@ euler CoherentSheaf := F -> (
 -- which the normal vector has negative last coordinate) form a polyhedral
 -- complex and the regular subdivision is the image of this complex.  For a
 -- generic weight vector, this subdivision will be a triangulation.
-regularSubdivision = method()
-regularSubdivision (NormalToricVariety, List, List) := NormalToricVariety => (
-  (X,s,w) -> (
+regularSubdivision = method(TypicalValue => NormalToricVariety)
+regularSubdivision (NormalToricVariety, List, List) := (X,s,w) -> (
     F := max X;
     R := rays X;
     V := transpose matrix R;
@@ -960,10 +959,12 @@ regularSubdivision (NormalToricVariety, List, List) := NormalToricVariety => (
       F' := apply(apply(numRows inc, i -> select(numColumns inc,
 	    j -> inc_(i,j) === 0)), t -> f_t);
       k := position(F, t -> t === f);
-      F = drop(F,{k,k}) | F');
-    Y := normalToricVariety(R,F);
-    Y.cache.Weights = apply(#R, i -> wtg i);
-    return Y))    
+      if all(F', t -> #t == rank V_f) then F = drop(F,{k,k}) | F');
+    if F == max X then return X
+    else (
+      Y := normalToricVariety(R,F);
+      Y.cache.Weights = apply(#R, i -> wtg i));
+    return Y)    
 
 makeSimplicial = method(
   TypicalValue => NormalToricVariety,
@@ -4481,6 +4482,7 @@ assert(isSmooth Y === true)
 
 -- test 9
 TEST ///
+setRandomSeed 1
 X = normalToricVariety(id_(ZZ^3) | -id_(ZZ^3));
 assert(isWellDefined X === true)
 assert(set rays X === set entries matrix{{1,1,1},{-1,1,1},{1,-1,1},{-1,-1,1},
@@ -4504,9 +4506,11 @@ assert(isCartier K == true)
 assert(isNef K == false)
 Y = makeSimplicial X;
 assert(isWellDefined Y === true)
+Y = makeSimplicial X;
+assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isSmooth Y === false)
-Y = makeSimplicial(X, Strategy => Push);
+Y = makeSimplicial(X, Strategy => 1);
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isSmooth Y === false)
@@ -4539,7 +4543,7 @@ Y = makeSimplicial X;
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isSmooth Y === false)
-Y = makeSimplicial(X, Strategy => Push);
+Y = makeSimplicial(X, Strategy => 0);
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isSmooth Y === false)
@@ -4636,9 +4640,10 @@ debugLevel = 2;
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isProjective Y === true)
-Y = makeSimplicial(X, Strategy => Push);
+Y = makeSimplicial(X, Strategy => 0);
 assert(isWellDefined Y === true)
 assert(isSimplicial Y === true)
 assert(isProjective Y === true)
 
 ///
+
