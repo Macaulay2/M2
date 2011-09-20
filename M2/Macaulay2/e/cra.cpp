@@ -5,9 +5,17 @@
 
 void ChineseRemainder::CRA0(mpz_t a, mpz_t b, mpz_t um, mpz_t vn, mpz_t mn, mpz_t result)
 {
+  mpz_t mnHalf;
+  mpz_init(mnHalf);
   mpz_mul(result,um,b);
   mpz_addmul(result,vn,a);
   mpz_mod(result,result,mn);
+  mpz_tdiv_q_2exp(mnHalf,mn,1);
+  // get canonical representative 
+  if (mpz_cmp(result,mnHalf)>0) 
+  {
+    mpz_sub(result,result,mn);
+  }
 }
 
 bool ChineseRemainder::computeMultipliers(mpz_t m, mpz_t n, mpz_t result_um, mpz_t result_vn, mpz_t result_mn)

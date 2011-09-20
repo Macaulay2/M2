@@ -4,7 +4,7 @@
 
 #ifndef _cra_hpp_
 #define _cra_hpp_
-
+								
 #include "engine.h"
 // engine.h defines rawRingElementCRA, rawMatrixCRA
 
