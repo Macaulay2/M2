@@ -76,7 +76,7 @@ ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 # -Winline gives too many warning messages
 
-M2_BOTH = -pipe -Wall -Wshadow -Wcast-qual
+M2_BOTH = -pipe -Wall -Wno-shadow -Wcast-qual
 
 # use no GNU extensions
 # CXXFLAGS += -std=c++98
