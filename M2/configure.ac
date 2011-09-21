@@ -818,7 +818,7 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -1152,6 +1152,15 @@ AC_ARG_ENABLE(mpack,
     BUILD_qd=yes
     BUILD_mpc=yes
     ENABLE_MPACK=yes
+    )
+
+AC_SUBST(ENABLE_FLINT,no)
+AC_ARG_ENABLE(flint,
+    [AS_HELP_STRING(--enable-flint,[enable building the flint library, linking with it, and compiling the experimental code that uses it])],
+    AC_DEFINE(HAVE_FLINT,1,[whether we are linking with the flint library])
+    BUILD_flint=yes
+    BUILTLIBS="-lflint $BUILTLIBS"
+    ENABLE_FLINT=yes
     )
 
 AC_SUBST(ENABLE_GIVARO,no)

@@ -1,0 +1,247 @@
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/assert.h factory-3-1-3/assert.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/assert.h	2009-11-02 11:12:22.000000000 +0100
++++ factory-3-1-3/assert.h	2011-09-21 10:26:14.000000000 +0200
+@@ -5,6 +5,9 @@
+ #if defined (NDEBUG) && ! defined (NOASSERT)
+ #define NOASSERT
+ #endif
++ 
++/* need a declaration of "abort" */
++#include <stdlib.h>
+ 
+ /* It should be possible to include this file multiple times for different */
+ /* settings of NOASSERT */
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/cf_cyclo.cc factory-3-1-3/cf_cyclo.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/cf_cyclo.cc	2010-11-15 16:34:57.000000000 +0100
++++ factory-3-1-3/cf_cyclo.cc	2011-09-21 10:22:45.000000000 +0200
+@@ -83,7 +83,7 @@
+   }
+   if (j >= 31397)
+     fail= true;
+-  ASSERT (j < 31397, "integer factorizer ran out of primes") //sic
++  ASSERT (j < 31397, "integer factorizer ran out of primes"); //sic
+   return result;
+ }
+ 
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/cf_gcd_smallp.cc factory-3-1-3/cf_gcd_smallp.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/cf_gcd_smallp.cc	2011-02-15 13:32:51.000000000 +0100
++++ factory-3-1-3/cf_gcd_smallp.cc	2011-09-21 10:24:47.000000000 +0200
+@@ -1420,7 +1420,7 @@
+ solveGeneralVandermonde (const CFArray& M, const CFArray& A)
+ {
+   int r= M.size();
+-  ASSERT (c == r, "number of columns and rows not equal");
++  //  ASSERT (c == r, "number of columns and rows not equal");
+   ASSERT (A.size() == r, "vector does not have right size");
+   if (r == 1)
+   {
+@@ -1915,8 +1915,8 @@
+   B= M(B);
+ 
+   Variable x= Variable (1);
+-  ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
+-  ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
++  //ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
++  //ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
+ 
+   //univariate case 
+   if (A.isUnivariate() && B.isUnivariate())
+@@ -2177,8 +2177,8 @@
+   B= M(B);
+ 
+   Variable x= Variable (1);
+-  ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
+-  ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
++  //ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
++  //ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
+ 
+   //univariate case 
+   if (A.isUnivariate() && B.isUnivariate())
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/cf_gcd_smallp.h factory-3-1-3/cf_gcd_smallp.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/cf_gcd_smallp.h	2010-11-22 11:12:46.000000000 +0100
++++ factory-3-1-3/cf_gcd_smallp.h	2011-09-21 10:29:36.000000000 +0200
+@@ -24,6 +24,7 @@
+ 
+ #include <config.h>
+ #include "assert.h"
++#include <cf_factory.h>
+ 
+ CanonicalForm GCD_Fp_extension (const CanonicalForm& F, const CanonicalForm& G,
+                   Variable & alpha, CFList& l, bool& top_level);
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/facFqSquarefree.h factory-3-1-3/facFqSquarefree.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/facFqSquarefree.h	2010-11-15 16:34:57.000000000 +0100
++++ factory-3-1-3/facFqSquarefree.h	2011-09-21 10:23:54.000000000 +0200
+@@ -17,7 +17,7 @@
+ #define FAC_FQ_SQUAREFREE_H
+ 
+ #include "assert.h"
+-
++#include <cf_factory.h>
+ 
+ /// squarefree factorization over a finite field
+ /// @a return a list of squarefree factors with multiplicity
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/gfops.cc factory-3-1-3/gfops.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/gfops.cc	2009-11-02 11:12:22.000000000 +0100
++++ factory-3-1-3/gfops.cc	2011-09-21 10:30:53.000000000 +0200
+@@ -183,7 +183,7 @@
+ 
+ void gf_setcharacteristic ( int p, int n, char name )
+ {
+-    ASSERT( gf_valid_combination( p, n ), "illegal immediate GF(q)" );
++  //ASSERT( gf_valid_combination( p, n ), "illegal immediate GF(q)" );
+     gf_name = name;
+     gf_get_table( p, n );
+ }
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_array.cc factory-3-1-3/templates/ftmpl_array.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_array.cc	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_array.cc	2011-09-21 10:21:20.000000000 +0200
+@@ -1,7 +1,7 @@
+ /* emacs edit mode for this file is -*- C++ -*- */
+ /* $Id: ftmpl_array.cc 13210 2010-09-17 13:36:19Z seelisch $ */
+ 
+-#include <factory/templates/ftmpl_array.h>
++#include <templates/ftmpl_array.h>
+ 
+ template <class T>
+ Array<T>::Array() : data(0), _min(0), _max(-1), _size(0)
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_array.h factory-3-1-3/templates/ftmpl_array.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_array.h	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_array.h	2011-09-21 10:21:49.000000000 +0200
+@@ -4,7 +4,7 @@
+ #ifndef INCL_ARRAY_H
+ #define INCL_ARRAY_H
+ 
+-#include <factory/factoryconf.h>
++#include <factoryconf.h>
+ 
+ #ifndef NOSTREAMIO
+ #ifdef HAVE_IOSTREAM
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_factor.cc factory-3-1-3/templates/ftmpl_factor.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_factor.cc	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_factor.cc	2011-09-21 10:21:49.000000000 +0200
+@@ -1,7 +1,7 @@
+ /* emacs edit mode for this file is -*- C++ -*- */
+ /* $Id: ftmpl_factor.cc 13210 2010-09-17 13:36:19Z seelisch $ */
+ 
+-#include <factory/templates/ftmpl_factor.h>
++#include <templates/ftmpl_factor.h>
+ 
+ template <class T>
+ Factor<T>& Factor<T>::operator= ( const Factor<T>& f )
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_factor.h factory-3-1-3/templates/ftmpl_factor.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_factor.h	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_factor.h	2011-09-21 10:21:49.000000000 +0200
+@@ -4,7 +4,7 @@
+ #ifndef INCL_FACTOR_H
+ #define INCL_FACTOR_H
+ 
+-#include <factory/factoryconf.h>
++#include <factoryconf.h>
+ 
+ #ifndef NOSTREAMIO
+ #ifdef HAVE_IOSTREAM
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_functions.h factory-3-1-3/templates/ftmpl_functions.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_functions.h	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_functions.h	2011-09-21 10:21:49.000000000 +0200
+@@ -26,7 +26,7 @@
+ //
+ //}}}
+ 
+-#include <factory/factoryconf.h>
++#include <factoryconf.h>
+ 
+ //{{{ template <class T> inline T tmax ( const T & a, const T & b )
+ //{{{ docu
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_list.cc factory-3-1-3/templates/ftmpl_list.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_list.cc	2010-12-14 13:07:00.000000000 +0100
++++ factory-3-1-3/templates/ftmpl_list.cc	2011-09-21 10:21:49.000000000 +0200
+@@ -1,7 +1,7 @@
+ /* emacs edit mode for this file is -*- C++ -*- */
+ /* $Id: ftmpl_list.cc 13769 2010-12-14 12:07:00Z mlee $ */
+ 
+-#include <factory/templates/ftmpl_list.h>
++#include <templates/ftmpl_list.h>
+ 
+ template <class T>
+ ListItem<T>::ListItem( const ListItem<T>& i )
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_list.h factory-3-1-3/templates/ftmpl_list.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_list.h	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_list.h	2011-09-21 10:21:49.000000000 +0200
+@@ -4,7 +4,7 @@
+ #ifndef INCL_LIST_H
+ #define INCL_LIST_H
+ 
+-#include <factory/factoryconf.h>
++#include <factoryconf.h>
+ 
+ #ifndef NOSTREAMIO
+ #ifdef HAVE_IOSTREAM
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_matrix.cc factory-3-1-3/templates/ftmpl_matrix.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_matrix.cc	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_matrix.cc	2011-09-21 10:21:49.000000000 +0200
+@@ -1,7 +1,7 @@
+ /* emacs edit mode for this file is -*- C++ -*- */
+ /* $Id: ftmpl_matrix.cc 13210 2010-09-17 13:36:19Z seelisch $ */
+ 
+-#include <factory/templates/ftmpl_matrix.h>
++#include <templates/ftmpl_matrix.h>
+ 
+ template <class T>
+ Matrix<T>::Matrix( int nr, int nc ) : NR(nr), NC(nc)
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_matrix.h factory-3-1-3/templates/ftmpl_matrix.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/templates/ftmpl_matrix.h	2010-09-17 15:36:19.000000000 +0200
++++ factory-3-1-3/templates/ftmpl_matrix.h	2011-09-21 10:21:49.000000000 +0200
+@@ -4,7 +4,7 @@
+ #ifndef INCL_MATRIX_H
+ #define INCL_MATRIX_H
+ 
+-#include <factory/factoryconf.h>
++#include <factoryconf.h>
+ 
+ #ifndef NOSTREAMIO
+ #ifdef HAVE_IOSTREAM
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/variable.cc factory-3-1-3/variable.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/variable.cc	2010-11-15 16:34:57.000000000 +0100
++++ factory-3-1-3/variable.cc	2011-09-21 10:31:15.000000000 +0200
+@@ -169,7 +169,7 @@
+ 
+ Variable rootOf( const CanonicalForm & mipo, char name )
+ {
+-    ASSERT( legal_mipo( mipo ), "not a legal extension" );
++  //ASSERT( legal_mipo( mipo ), "not a legal extension" );
+ 
+     int l;
+     if ( var_names_ext == 0 ) {
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/factory.template factory-3-1-3/factory.template
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory-3-1-3/factory.template	2011-03-23 14:30:30.000000000 +0100
++++ factory-3-1-3/factory.template	2011-09-21 10:39:03.000000000 +0200
+@@ -21,7 +21,7 @@
+ //
+ //}}}
+ 
+-#include <factory/factoryconf.h>
++#include <factoryconf.h>
+ 
+ #ifndef NOSTREAMIO
+ #  ifdef HAVE_IOSTREAM
+@@ -36,15 +36,15 @@
+ #endif /* ! NOSTREAMIO */
+ 
+ #ifdef SINGULAR
+-#  include <factory/cf_gmp.h>
++#  include <cf_gmp.h>
+ #else
+ #  include <gmp.h>
+ #endif /* SINGULAR */
+ 
+-#include <factory/templates/ftmpl_array.h>
+-#include <factory/templates/ftmpl_factor.h>
+-#include <factory/templates/ftmpl_list.h>
+-#include <factory/templates/ftmpl_matrix.h>
++#include <templates/ftmpl_array.h>
++#include <templates/ftmpl_factor.h>
++#include <templates/ftmpl_list.h>
++#include <templates/ftmpl_matrix.h>
+ 
+ /*MAKEHEADER PUBLIC ONLY*/
+ #include "cf_globals.h"

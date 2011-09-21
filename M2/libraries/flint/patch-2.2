@@ -1,0 +1,74 @@
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/flint/tmp/flint-2.2/Makefile.in flint-2.2/Makefile.in
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/flint/tmp/flint-2.2/Makefile.in	2011-06-05 00:28:12.000000000 +0200
++++ flint-2.2/Makefile.in	2011-09-21 09:25:29.000000000 +0200
+@@ -1,7 +1,7 @@
+ LIBS=-L$(CURDIR) -L$(FLINT_MPIR_LIB_DIR) -L$(FLINT_MPFR_LIB_DIR) -lflint -lmpir -lmpfr -lm
+ LIBS2=-L$(FLINT_MPIR_LIB_DIR) -L$(FLINT_MPFR_LIB_DIR) -lmpir -lmpfr -lm
+ INCS=-I$(CURDIR) -I$(FLINT_MPIR_INCLUDE_DIR) -I$(FLINT_MPFR_INCLUDE_DIR)
+-LINKLIBS=$(FLINT_MPIR_LIB_DIR)/libmpir.a $(FLINT_MPFR_LIB_DIR)/libmpfr.a
++LINKLIBS=
+ 
+ LD_LIBRARY_PATH:=${CURDIR}:${FLINT_MPFR_LIB_DIR}:${FLINT_MPIR_LIB_DIR}:${LD_LIBRARY_PATH}
+ export LD_LIBRARY_PATH
+@@ -11,12 +11,12 @@
+ 
+ HEADERS = $(wildcard *.h)
+ 
+-OBJS = $(patsubst %.c, build/%.o, $(SOURCES))
+-
+ LOBJS = $(patsubst %.c, build/%.lo, $(SOURCES))
+ 
+ LIB_SOURCES = $(SOURCES) $(foreach dir, $(BUILD_DIRS), $(wildcard $(dir)/*.c))
+ 
++OBJS = $(patsubst %.c, build/%.o, $(LIB_SOURCES))
++
+ LIB_OBJS = $(patsubst %.c, build/%.lo, $(LIB_SOURCES))
+ 
+ EXMP_SOURCES = $(wildcard examples/*.c)
+@@ -79,7 +79,9 @@
+ endif
+ 
+ library-recursive:
++ifdef FLINT_SHARED
+ 	$(foreach dir, $(BUILD_DIRS), mkdir -p build/$(dir); export BUILD_DIR=../build/$(dir); $(MAKE) -C $(dir) library;) 
++endif
+ 
+ $(FLINT_LIB): library
+ 
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/flint/tmp/flint-2.2/configure flint-2.2/configure
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/flint/tmp/flint-2.2/configure	2011-06-05 00:28:12.000000000 +0200
++++ flint-2.2/configure	2011-09-21 08:57:35.000000000 +0200
+@@ -31,13 +31,13 @@
+          exit 0
+          ;;
+       "--with-mpir="*)
+-         MPIR_DIR=`expr substr $1 13 length $1`
++         MPIR_DIR=`expr substr "$1" 13 length "$1"`
+          ;;
+       "--with-mpfr="*)
+-         MPFR_DIR=`expr substr $1 13 length $1`
++         MPFR_DIR=`expr substr "$1" 13 length "$1"`
+          ;;
+       "--prefix="*)
+-         PREFIX=`expr substr $1 10 length $1`
++         PREFIX=`expr substr "$1" 10 length "$1"`
+ 	 ;;
+       "--disable-shared")
+          SHARED=0
+@@ -46,13 +46,13 @@
+          STATIC=0
+          ;;
+       "AR="*)
+-         AR=`expr substr $1 4 length $1`
++         AR=`expr substr "$1" 4 length "$1"`
+          ;;
+       "CC="*)
+-         CC=`expr substr $1 4 length $1`
++         CC=`expr substr "$1" 4 length "$1"`
+          ;;
+       "CFLAGS="*)
+-         CFLAGS=`expr substr $1 8 length $1`
++         CFLAGS=`expr substr "$1" 8 length "$1"`
+          ;;
+       *) usage
+          exit 1

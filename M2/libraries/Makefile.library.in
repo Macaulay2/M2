@@ -72,7 +72,7 @@ uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
 diffs: .untarred2-$(VERSION) always
-	D=`pwd`; cd $(UNTARDIR) && diff -ur --exclude=configure $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
+	D=`pwd`; cd $(UNTARDIR) && diff -ur $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean
@@ -87,11 +87,21 @@ config-chk:
 
 PROGRAMS ?=
 LICENSEFILES ?=
+LIBRARIES ?=
+INCLUDEFILES ?=
 .installed-$(VERSION)  : .compiled-$(VERSION)
 	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
 ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
 	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s $$p $(BIN_DIR)) ; done
+endif
+ifneq ($(LIBRARIES),)
+	$(MKDIR_P) $(LIBRARIESDIR)/lib
+	cd $(BUILDDIR) && for p in $(LIBRARIES) ; do (set -x ; @INSTALL@ $$p $(LIBRARIESDIR)/lib) ; done
+endif
+ifneq ($(INCLUDEFILES),)
+	$(MKDIR_P) $(LIBRARIESDIR)/include
+	cd $(BUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
 endif
 ifeq ($(LICENSEFILES),)
 	@ echo warning: no license files to be installed

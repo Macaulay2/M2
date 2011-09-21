@@ -2,9 +2,6 @@
 use common;
 use util;
 
-toExpr(x:array(ZZ)):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
-toExpr(x:array(array(ZZ))):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
-
 import factorint(x:ZZ,flags:long):array(array(ZZ));
 pfactorint(e:Expr):Expr := (
      when e

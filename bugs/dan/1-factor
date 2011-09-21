@@ -110,6 +110,12 @@ CFFList qs=newfactoras(F,as,success);
 
 Hans
 -----------------------------------------------------------------------------
+
+The problem is that the code below gives the wrong answer.  It's a bug
+in factory, not fixed yet in version 3.1.3.  To work around it, test
+the answer by multiplying.  If it's wrong, just try again.
+
+-----------------------------------------------------------------------------
 #endif
 
 #include <factor.h>
@@ -128,5 +134,5 @@ int main () {
 }
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/dan/builds/ubuntu32/libraries/final/include -L../../../BUILD/dan/builds/ubuntu32/libraries/final/lib  -I../../../BUILD/dan/builds/ubuntu32/libraries/final/include -L../../../BUILD/dan/builds/ubuntu32/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (ulimit -v 100000 -t 1 ; set -x ; time ./0-factor.exe | dd count=20)"
+// compile-command: "g++ -g -I$M2BUILDDIR/libraries/final/include -L$M2BUILDDIR/libraries/final/lib -x c++ 1-factor -lfac -lcf -lcfmem -lntl -lgmp -o 1-factor.exe && (ulimit -v 100000 -t 1 ; set -x ; time ./1-factor.exe | dd count=20)"
 // End:

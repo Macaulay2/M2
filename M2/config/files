@@ -39,6 +39,7 @@ libraries/Makefile.library
 libraries/M2/Makefile
 libraries/gc/Makefile
 libraries/gdbm/Makefile
+libraries/flint/Makefile
 libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/mpir/Makefile

@@ -6,7 +6,7 @@
 #VERSION = 2.4.2
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-VERSION = 3.0.0
+VERSION = 3.0.1
 
 RELAX = yes
 URL = http://www.mpfr.org/mpfr-$(VERSION)

@@ -36,6 +36,10 @@ ifeq ($(MPACK),yes)
 CONFIGOPTIONS += --enable-mpack
 endif
 
+ifeq ($(FLINT),yes)
+CONFIGOPTIONS += --enable-flint
+endif
+
 ifeq ($(GIVARO),yes)
 CONFIGOPTIONS += --enable-givaro
 endif

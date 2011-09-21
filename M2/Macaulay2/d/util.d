@@ -247,6 +247,10 @@ export toExpr(x:constcharstarOrNull):Expr := (
      );
 export toExpr(x:constucharstar) ::= toExpr(Ccode(constcharstar,"((const char *)",x,")"));
 export toExpr(x:constucharstarOrNull) ::= toExpr(Ccode(constcharstarOrNull,"((const char *)",x,")"));
+export arrayZZ := array(ZZ);
+export arrayarrayZZ := array(arrayZZ);
+export toExpr(x:arrayZZ):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
+export toExpr(x:arrayarrayZZ):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d util.o "

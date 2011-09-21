@@ -1,0 +1,15 @@
+HOMEPAGE = http://flintlib.org
+URL = http://flintlib.org
+VERSION = 2.2
+PATCHFILE = @abs_srcdir@/patch-2.2
+LICENSEFILES = flint.h
+ifeq (@DEBUG@,yes)
+CFLAGS += -O0 -fno-unroll-loops 
+endif
+CONFIGURECMD = ./configure --prefix='$(PREFIX)' --disable-shared CC='$(CC)' CFLAGS='$(CPPFLAGS) $(CFLAGS)'
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/flint/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/flint "
+# End:

@@ -40,16 +40,16 @@ M2_DFILES += gmp.d
 M2_DFILES += engine.dd
 ifeq (@XML@,yes)
 M2_DFILES += xml.d
+M2_LASTCFILES += xml-c.c
+else
+M2_SRCFILES += xml.d xml-c.c
+endif
 M2_DFILES += stdio0.d
 M2_DFILES += parse.d
 M2_DFILES += expr.d
 M2_DFILES += stdio.d
 M2_DFILES += stdiop.d
 M2_DFILES += err.d
-M2_LASTCFILES += xml-c.c
-else
-M2_SRCFILES += xml.d xml-c.c
-endif
 M2_DFILES += gmp1.d
 M2_DFILES += tokens.d
 M2_DFILES += getline.d
@@ -95,6 +95,13 @@ M2_CFILES += pari-c.c
 else
 M2_SRCFILES += pari.d pari-c.h pari-c.c
 endif
+
+ifeq (@ENABLE_FLINT@,yes)
+M2_DFILES += flint.d
+else
+M2_SRCFILES += flint.d
+endif
+
 ifeq (@PYTHON@,yes)
 M2_LASTCFILES += python-c.c
 M2_DFILES += python.d
