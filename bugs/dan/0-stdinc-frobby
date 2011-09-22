@@ -1,0 +1,2 @@
+if frobby's stdinc.h is installed in /usr/include/frobby, the configure
+script should disover that and tell d/Makefile.in so version.dd will compile
