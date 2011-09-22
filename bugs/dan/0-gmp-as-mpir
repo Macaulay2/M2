@@ -1,0 +1,4 @@
+since we link with mpir as a substiture for gmp, we should ensure that gmp.h is
+actually mpir.h, so libraries and our code that use gmp.h don't get something
+wrong.  That can happen if both gmp and mpir are pre-installed on the build
+system.
