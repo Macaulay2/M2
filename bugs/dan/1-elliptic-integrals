@@ -1,0 +1,5 @@
+check that the branch cuts of E.log are not pathological
+
+check the sign of the imaginary part of the second period:
+      assert( D.Period' === toCC(.0p200,-.99348185850601324739329990214047552905027815853831220628647471p200) )
+      {* actually, the paper has the complex conjugate of this period ... *}
