@@ -1,0 +1,8 @@
+> What is the
+> theoretical reason to not allow the use of select on mutable hash
+> tables?  
+
+It was for thread safety, originally.  But in those days I wasn't thinking
+about using mutexes to prevent things from changing.  I suppose one could
+lock each bucket before looking at it, hmm…  I'll add that to the list
+of things to rethink.
