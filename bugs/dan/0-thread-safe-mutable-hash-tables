@@ -1,0 +1,5 @@
+Does reading from a mutable hash table has to be done with a mutex?
+Find out.  We don't want to miss an entry present both before and
+after the other thread changed everything.
+
+
