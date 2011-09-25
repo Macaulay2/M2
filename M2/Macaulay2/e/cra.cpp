@@ -5,14 +5,16 @@
 
 void ChineseRemainder::CRA0(mpz_t a, mpz_t b, mpz_t um, mpz_t vn, mpz_t mn, mpz_t result)
 {
-  mpz_t mnHalf;
-  mpz_init(mnHalf);
+  mpz_t mn_half;
+  mpz_t zerompz;
+  mpz_init_set_si(zerompz,0);
+  mpz_init(mn_half);
   mpz_mul(result,um,b);
   mpz_addmul(result,vn,a);
   mpz_mod(result,result,mn);
-  mpz_tdiv_q_2exp(mnHalf,mn,1);
+  mpz_tdiv_q_2exp(mn_half,mn,1);
   // get canonical representative 
-  if (mpz_cmp(result,mnHalf)>0) 
+  if (mpz_cmp(result,mn_half)>0) 
   {
     mpz_sub(result,result,mn);
   }
@@ -34,12 +36,15 @@ bool ChineseRemainder::computeMultipliers(mpz_t m, mpz_t n, mpz_t result_um, mpz
 ring_elem ChineseRemainder::CRA(const PolyRing *R, ring_elem ff, ring_elem gg, mpz_t um, mpz_t vn, mpz_t mn)
 {
   mpz_t result_coeff;
+  mpz_t mn_half;
   mpz_init(result_coeff);
-  
+  mpz_init(mn_half);
   Nterm *f = ff;
   Nterm *g = gg;
   Nterm head;
   Nterm *result = &head;
+  
+  mpz_tdiv_q_2exp(mn_half,mn,1);
   
   const Monoid *M = R->getMonoid();
   const Ring *K = R->getCoefficientRing();
@@ -55,7 +60,12 @@ ring_elem ChineseRemainder::CRA(const PolyRing *R, ring_elem ff, ring_elem gg, m
         result = result->next;
         result->next = 0;
         M->copy(f->monom, result->monom);
-        mpz_mul(result_coeff, f->coeff.get_mpz(), um);
+        mpz_mul(result_coeff, f->coeff.get_mpz(), vn);
+        mpz_mod(result_coeff,result_coeff,mn);
+        if (mpz_cmp(result_coeff,mn_half)>0) 
+        {
+          mpz_sub(result_coeff,result_coeff,mn);
+        }
         result->coeff = K->from_int(result_coeff);
       }
       break;
@@ -70,6 +80,11 @@ ring_elem ChineseRemainder::CRA(const PolyRing *R, ring_elem ff, ring_elem gg, m
         result->next = 0;
         M->copy(g->monom, result->monom);
         mpz_mul(result_coeff, g->coeff.get_mpz(), um);
+        mpz_mod(result_coeff,result_coeff,mn);
+        if (mpz_cmp(result_coeff,mn_half)>0) 
+        {
+          mpz_sub(result_coeff,result_coeff,mn);
+        }
         result->coeff = K->from_int(result_coeff);
       }
       break;
