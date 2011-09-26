@@ -294,6 +294,20 @@ Here is another possible benchmark, but it doesn't work for us yet:
 
 -- Results:
 
+---- Intel i7-2600 3.4GHz "Sandy Bridge" processor with 16G of RAM
+  -- beginning computation Mon Sep 26 13:08:57 PDT 2011
+  -- Linux gatto 2.6.32-33-server #72-Ubuntu SMP Fri Jul 29 21:21:55 UTC 2011 x86_64 GNU/Linux
+  -- Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz  GenuineIntel  cpu MHz 1600.000
+  -- Macaulay2 1.4, compiled with gcc 4.4.5
+  -- deg2generic: gb of a generic ideal of codimension 2 and degree 2: 29.2788 seconds
+  -- gb4by4comm: gb of the ideal of generic commuting 4 by 4 matrices over ZZ/101: 1.03668 seconds
+  -- gb3445: gb of an ideal with elements of degree 3,4,4,5 in 8 variables: 13.7588 seconds
+  -- gbB148: gb of Bayesian graph ideal #148: 12.3361 seconds
+  -- res39: res of a generic 3 by 9 matrix over ZZ/101: .0820532 seconds
+  -- resG25: res of the coordinate ring of Grassmannian(2,5): 1.28195 seconds
+  -- yang-gb1: an example of Yang-Hui He arising in string theory: 31.6871 seconds
+  -- yang-subring: an example of Yang-Hui He: 11.6752 seconds
+
 ---- Intel Core i7-950 "Bloomfield" 3.06GHz with 12GB of RAM
   -- beginning computation Sat Dec 18 17:55:13 PST 2010
   -- Linux atlas.internal 2.6.32-26-server #48-Ubuntu SMP Wed Nov 24 10:28:32 UTC 2010 x86_64 GNU/Linux
