@@ -149,7 +149,7 @@ randomSquareFreeStep(List) := o -> (L) ->(
      ISocgens := L_2;
      nSocI := #ISocgens;
      if random RR < nSocI/(nI+nSocI) then
-	  J = I + monomialIdeal ISocgens_(random nSocI)
+	  J := I + monomialIdeal ISocgens_(random nSocI)
      else (
 	  --p := random nI;
 	  p := monomialIdeal Igens_(random nI);
@@ -161,9 +161,9 @@ randomSquareFreeStep(List) := o -> (L) ->(
   	  J = p'+sqFreeMults
 	  );
      --Decide whether to accept the step or not
-     Jgens = flatten entries gens J;
-     nJ = #Jgens;
-     JSocgens = soc J;
+     Jgens := flatten entries gens J;
+     nJ := #Jgens;
+     JSocgens := soc J;
      nSocJ := #JSocgens;
      --accept with probability P (if P<1) or unconditionally (P>=1):
      P := (nI+nSocI)/(nJ+nSocJ);
@@ -199,7 +199,7 @@ randomSparseIdeal(Matrix, ZZ, ZZ) := Ideal => (B,s,n) -> (
      -- n is the number of polys
      S := ring B;
      t := rank source B;
-     BB=(first entries B);
+     BB := (first entries B);
      kk := ultimate(coefficientRing, S);
      trim ideal apply(n, j -> 
      sum apply(s, i -> random kk * BB#(random t)))
