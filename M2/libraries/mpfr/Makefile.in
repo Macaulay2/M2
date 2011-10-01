@@ -12,6 +12,10 @@ RELAX = yes
 URL = http://www.mpfr.org/mpfr-$(VERSION)
 # URL = http://macaulay2.com/Downloads/SourceCode
 
+ifeq (@CC_THREAD_SUPPORT@,yes)
+CONFIGOPTIONS += --enable-thread-safe
+endif
+
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
