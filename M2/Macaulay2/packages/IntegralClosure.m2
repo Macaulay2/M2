@@ -691,8 +691,10 @@ isNormal(Ring) := Boolean => (R) -> (
      test := apply((dim ring I)-n-1,i->i);
      if all(test, j -> (codim Ext^(j+n+1)(M,ring M)) >= j+n+3) 
      then ( 
-	  Jac := minors(n,jacobian R);  
-	  dim R - dim Jac >=2)
+	  Jac := minors(n,jacobian R);
+	  d := dim Jac;
+	  if d < 0 then d = -infinity;
+	  dim R - d >=2)
      else false
      )
 
