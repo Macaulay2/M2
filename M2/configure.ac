@@ -414,13 +414,13 @@ AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encaps
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
 dnl AC_SUBST(USE_THREADS,yes) AC_ARG_ENABLE(threads, AS_HELP_STRING(--disable-threads,[disable thread local storage and thread creation]), USE_THREADS=$enableval)
-dnl AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
-dnl if [[ "$USE_THREADS" = yes ]]
-dnl then AC_LANG(C)
-dnl      AC_COMPILE_IFELSE([AC_LANG_SOURCE([__thread int x;])],
-dnl      	 [AC_MSG_RESULT(yes)],
-dnl 	 USE_THREADS=no; [AC_MSG_RESULT([no, disabling threads])])
-dnl fi
+AC_SUBST(CC_THREAD_SUPPORT)
+AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
+AC_LANG(C)
+AC_COMPILE_IFELSE(
+	[AC_LANG_SOURCE([__thread int x;])],
+     	CC_THREAD_SUPPORT=yes; [AC_MSG_RESULT(yes)],
+	CC_THREAD_SUPPORT=no ; [AC_MSG_RESULT(no)])
 dnl if [[ "$USE_THREADS" = yes ]]
 dnl then AC_DEFINE(USE_THREADS,1,[whether to use thread local storage])
 dnl fi
@@ -817,6 +817,7 @@ AC_SUBST(BUILTLIBS,)
 #        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
+#    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
 AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
 for i in $LIBLIST
