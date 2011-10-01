@@ -866,6 +866,18 @@ extendIdeal = (I,f) -> (
      trim ideal(psi*beta))
 
 TEST ///
+  assert isNormal (QQ[x]/(x^2+1))
+  assert not isNormal (QQ[x,y,z]/( ideal(x*y, z) * ideal (z-1) ))
+  assert not isNormal (QQ[x,y,z]/( ideal(x*y)    * ideal (x-1,y-1) ))
+  assert not isNormal (QQ[x,y,z]/( ideal(x*y, z) * ideal (x-1,y-1) ))
+  assert not isNormal (QQ[x,y,z]/( ideal(x*y)    * ideal (z-1) ))
+  assert not isNormal (QQ[x,y,z]/( ideal(x*y)    * ideal (z-1) ))
+  assert isNormal (QQ[x,y,z,t]/( ideal (x^2+y^2+z^2,t) ))
+  -- bug:
+  -- assert isNormal (QQ[x,y,z,t]/( ideal (x^2+y^2+z^2,t) * ideal(t-1) ))
+///
+
+TEST ///
 debug IntegralClosure
 kk=ZZ/101
 S=kk[a,b,c]
