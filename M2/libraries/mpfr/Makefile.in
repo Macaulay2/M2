@@ -13,7 +13,12 @@ URL = http://www.mpfr.org/mpfr-$(VERSION)
 # URL = http://macaulay2.com/Downloads/SourceCode
 
 ifeq (@CC_THREAD_SUPPORT@,yes)
-CONFIGOPTIONS += --enable-thread-safe
+# compiling mpfr with thread local variables is incompatible with libgc, because
+#   some libgc pointers are cached in the variables __gmpfr_cache_const_pi, 
+#   __gmpfr_cache_const_log2, __gmpfr_cache_const_euler, __gmpfr_cache_const_catalan
+# so for now we comment this out.  (Detect the bug by running the tests in
+# the package EllipticIntegrals.)
+# CONFIGOPTIONS += --enable-thread-safe
 endif
 
 ifeq (@SHARED@,no)
