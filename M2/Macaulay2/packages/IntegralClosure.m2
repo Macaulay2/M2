@@ -873,9 +873,10 @@ TEST ///
   assert not isNormal (QQ[x,y,z]/( ideal(x*y)    * ideal (z-1) ))
   assert not isNormal (QQ[x,y,z]/( ideal(x*y)    * ideal (z-1) ))
   assert isNormal (QQ[x,y,z,t]/( ideal (x^2+y^2+z^2,t) ))
-  -- bug:
-  -- assert isNormal (QQ[x,y,z,t]/( ideal (x^2+y^2+z^2,t) * ideal(t-1) ))
 ///
+
+  -- here is an example of why the ring has to be equidimensional:
+  -- assert isNormal (QQ[x,y,z,t]/( ideal (x^2+y^2+z^2,t) * ideal(t-1) ))
 
 TEST ///
 debug IntegralClosure
