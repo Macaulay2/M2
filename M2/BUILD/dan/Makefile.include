@@ -21,8 +21,10 @@ check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
 big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
 configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
 	mkdir -p builds.tmp/$(DIRECTORY)
-	D=`pwd`;\
-	    cd builds.tmp/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS)
+	D=`pwd` ;\
+	  echo "make: Entering directory \`$$D/builds.tmp/$(DIRECTORY)'" &&\
+	  cd builds.tmp/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS) &&\
+	  echo "make: Leaving directory \`$$D/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all
 default: check-links
 distclean: distclean1
