@@ -1,0 +1,36 @@
+further work is needed on serialization:
+
+    serialize fails for objects containing empty
+    MutableLists/MutableHashTables,  for MutableMatrices,
+    for serializing strings and null at top-level:
+    ----------------------
+    load "Serialization";
+    deepCopy:= obj->value serialize obj;
+
+    entry=null;
+    deepCopy entry; --fails
+    entry = {null}
+    deepCopy entry; --ok
+
+    str="a string";
+    deepCopy str;--fails
+    str = {"a string";}
+    deepCopy str; --ok
+
+    mht = new MutableHashTable;
+    deepCopy mht;-- fails
+
+    ml = new MutableList;
+    deepCopy ml;-- fails
+
+    ll = { ml };
+    deepCopy ll;-- fails
+    ll = { mht };
+    deepCopy ll;-- fails
+
+
+    mat= matrix{{1,1}}
+    mutablemat= mutableMatrix(mat)
+    deepCopy mat; --ok
+    deepCopy mutablemat;-- fails
+    --------------
