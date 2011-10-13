@@ -3,13 +3,12 @@
 namespace mixedCells
 {
   typedef GmpRational LType;
-  //  typedef ShortRat LType;
+  //typedef ShortRat LType;
   //typedef DoubleInt LType;
   //typedef ShortInt LType;
   //typedef double LType;
   //  typedef DoubleGen RType;
-  //  typedef RatGen<ShortRat> RType;
-  typedef RatGen<GmpRational> RType;
+  typedef RatGen<LType> RType;
   //typedef double RType;
 
   

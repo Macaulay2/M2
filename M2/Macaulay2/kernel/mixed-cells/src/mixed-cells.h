@@ -46,24 +46,29 @@ namespace mixedCells
     {
       assert(length>=0);
       data=(typ*)VECTORMALLOC(length*sizeof(typ));
-      for(int i=0;i<length;i++)data[i]=0;
+      for(int i=0;i<length;i++)
+	new (data+i) typ();
+      //data[i]=0;
     }
-  Vector(int n_, bool clear):
+  Vector(int n_, bool clear): // clear is ignored
     length(n_)
     {
       assert(length>=0);
       data=(typ*)VECTORMALLOC(length*sizeof(typ));
-      //      if(clear)for(int i=0;i<length;i++)data[i]=0; ???
+      for(int i=0;i<length;i++)
+	new (data+i) typ();
     }
   Vector(const Vector &a):
     length(a.length)
     {
       data=(typ*)VECTORMALLOC(length*sizeof(typ));
-      for(int i=0;i<length;i++)data[i]=a.data[i];
+      for(int i=0;i<length;i++)	new (data+i) typ(a.data[i]);
+      //data[i]=a.data[i];
     }
   ~Vector(){
     if(data)
       {
+	for(int i=0;i<length;i++) data[i].~typ();
 	VECTORFREE(data);
 	data=0;
       }
@@ -86,15 +91,18 @@ namespace mixedCells
 	    {
 	      if(length!=v.length)
 		{
-		  length=v.length;
+		  for(int i=0;i<length;i++) data[i].~typ();
 		  VECTORFREE(data);
+		  length=v.length;
 		  data=(typ*)VECTORMALLOC(length*sizeof(typ));
-		}
+		  for(int i=0;i<length;i++)	new (data+i) typ();
+      		}
 	    }
 	  else
 	    {
 	      length=v.length;
 	      data=(typ*)VECTORMALLOC(length*sizeof(typ));
+	      for(int i=0;i<length;i++)	new (data+i) typ();
 	    }
 	  for(int i=0;i<length;i++)data[i]=v.data[i];
 	}
@@ -278,9 +286,9 @@ template <class typ> class Matrix{
     width(width_)
   {
     data=(typ*)MATRIXMALLOC(height*width*sizeof(typ)); //!!! won't work with gmp
-    //    for(int i=0;i<height*width;i++)data[i]=0;
     const int I=height*width;
-    for(int i=0;i<I;i++) data[i] = 0;
+    for(int i=0;i<I;i++) 
+      new (data+i) typ();
     // memset(data,0,sizeof(typ)*width*height); // does not work with ShortRat
   }
  Matrix(const Matrix &m):
@@ -290,7 +298,9 @@ template <class typ> class Matrix{
      data=(typ*)MATRIXMALLOC(height*width*sizeof(typ));
      //for(int i=0;i<height*width;i++)data[i]=m.data[i];
      const int I=height*width;
-     for(int i=0;i<I;i++)data[i]=m.data[i]; //!!! won't work with gmp
+     for(int i=0;i<I;i++) 
+       new (data+i) typ(m.data[i]);
+       //data[i]=m.data[i]; //!!! won't work with gmp
      //memcpy(data,m.data,sizeof(typ)*width*height);
     }
   Matrix& operator=(const Matrix& m)
@@ -305,10 +315,12 @@ template <class typ> class Matrix{
 	    {
 	      if(!((width==m.width) && (height==m.height)))
 		{
+		  for(int i=0;i<height*width;i++) data[i].~typ();
+		  MATRIXFREE(data);
 		  width=m.width;
 		  height=m.height;
-		  MATRIXFREE(data);
 		  data=(typ*)MATRIXMALLOC(height*width*sizeof(typ));
+		  for(int i=0;i<height*width;i++) new (data+i) typ();
 		}
 	    }
 	  else
@@ -316,6 +328,7 @@ template <class typ> class Matrix{
 	      width=m.width;
 	      height=m.height;
 	      data=(typ*)MATRIXMALLOC(height*width*sizeof(typ));
+	      for(int i=0;i<height*width;i++) new (data+i) typ();
 	    }
 
 	  //for(int i=0;i<height*width;i++)data[i]=m.data[i];
@@ -329,6 +342,7 @@ template <class typ> class Matrix{
     {
       if(data)
 	{
+	  for(int i=0;i<height*width;i++) data[i].~typ();
 	  MATRIXFREE(data);
 	  data=0;
 	}
@@ -438,14 +452,14 @@ template <class typ> class Matrix{
       }
     assert(top.getWidth()==bottom.getWidth());
     Matrix ret(top.getHeight()+bottom.getHeight(),top.getWidth());
-    /*    for(int j=0;j<top.getWidth();j++)
+    for(int j=0;j<top.getWidth();j++)
       {
 	for(int i=0;i<top.getHeight();i++)ret[i][j]=top[i][j];
 	for(int i=0;i<bottom.getHeight();i++)ret[i+top.getHeight()][j]=bottom[i][j];
       }
-    */
-    memcpy(ret.data,top.data,sizeof(typ)*top.getWidth()*top.getHeight());
-    memcpy(ret.data+top.getHeight()*top.getWidth(),bottom.data,sizeof(typ)*bottom.getWidth()*bottom.getHeight());
+    
+    //memcpy(ret.data,top.data,sizeof(typ)*top.getWidth()*top.getHeight());
+    //memcpy(ret.data+top.getHeight()*top.getWidth(),bottom.data,sizeof(typ)*bottom.getWidth()*bottom.getHeight());
 
     return ret;
   }

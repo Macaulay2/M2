@@ -30,28 +30,30 @@ public:
   length(a.length)
     {
       data=(typ*)VECTORMALLOC(length*sizeof(typ));
-      for(int i=0;i<length;i++)data[i]=a.data[i];
+      for(int i=0;i<length;i++)	new (data+i) typ(a.data[i]);
+      //data[i]=a.data[i];
     }
  Vektor(int n):
   length(n)
   {
     assert(n>=0);
     data=(typ*)VECTORMALLOC(length*sizeof(typ));
-    //memset(data,0,length*sizeof(typ));
-    //    for(int i=0;i<length;i++)data[i]=0;
-    for(int i=0;i<length;i++)data[i]=0;
+    for(int i=0;i<length;i++)	new (data+i) typ();
+    //for(int i=0;i<length;i++)data[i]=0;
   };
  Vektor(const typ *p, int n):
   length(n)
   { 
     assert(n>=0);
     data=(typ*)VECTORMALLOC(length*sizeof(typ));
-    for(int i=0;i<length;i++)data[i]=p[i];
+    for(int i=0;i<length;i++) new (data+i) typ(p[i]);
+    //for(int i=0;i<length;i++)data[i]=p[i];
   };
   
   ~Vektor(){
     if(data)
       {
+	for(int i=0;i<length;i++) data[i].~typ();
 	VECTORFREE(data);
 	data=0;
       }
@@ -74,15 +76,18 @@ public:
 	    {
 	      if(length!=v.length)
 		{
-		  length=v.length;
+		  for(int i=0;i<length;i++) data[i].~typ();
 		  VECTORFREE(data);
+		  length=v.length;
 		  data=(typ*)VECTORMALLOC(length*sizeof(typ));
+		  for(int i=0;i<length;i++) new (data+i) typ();
 		}
 	    }
 	  else
 	    {
 	      length=v.length;
 	      data=(typ*)VECTORMALLOC(length*sizeof(typ));
+	      for(int i=0;i<length;i++) new (data+i) typ();
 	    }
 	  for(int i=0;i<length;i++)data[i]=v.data[i];
 	}

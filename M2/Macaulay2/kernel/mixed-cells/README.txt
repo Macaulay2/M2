@@ -1,5 +1,5 @@
 To compile, go to src/ and run
-g++ -O3 mixed-cells.cpp
+g++ -O3 mixed-cells.cpp -lgmp
 
 Then run
 time ./a.out ../demicsExamples/cyclic10.dat
