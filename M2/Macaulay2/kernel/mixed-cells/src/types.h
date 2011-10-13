@@ -256,144 +256,6 @@ namespace mixedCells
     }
   };
 
-  /** short rational numbers ************************************
-   */
-  class ShortRat{
-    int c,d;
-  public:
-    ShortRat(int a, int b)
-    {
-      assert (b!=0);
-      c=a; d=b;
-      reduce();
-    }
-    ShortRat(int a)
-    {
-      c=a;
-      d=1;
-    }
-    ShortRat()
-    {
-      c=0;
-      d=1;
-    }
-    void reduce()
-    {
-      if (c==0) {
-	d = 1;
-      } else {
-	int g = gcd(d,c);
-	d /= g;
-	c /= g;
-      }
-    }
-    int toInteger() const
-    {
-      return c/d;
-    }
-    bool isInteger() const
-    {
-      return gcd(d,c)==d;
-    }
-    MY_INLINE static bool isField() 
-    {
-      return true;
-    }
-    friend bool isZero(ShortRat const &a)
-    {
-      return (a.c==0);
-    }
-    friend bool isZero2(ShortRat const &a)
-    {
-      return (a.c==0);
-    }
-    friend bool isOne(ShortRat const &a)
-    {
-      return (a.c==a.d);
-    }
-    friend ShortRat operator/(ShortRat const &a, ShortRat const &b)
-    {
-      assert (!isZero(b));
-      return ShortRat(a.c*b.d, a.d*b.c);
-    }
-    friend ShortRat operator-(ShortRat const &a)
-    {
-      return ShortRat(-a.c,a.d);
-    }
-    friend ShortRat operator-(ShortRat const &a, ShortRat const &b)
-    {
-      return ShortRat(a.c*b.d-b.c*a.d, a.d*b.d);
-    }
-    friend ShortRat operator+(ShortRat const &a, ShortRat const &b)
-    {
-      return ShortRat(a.c*b.d+b.c*a.d, a.d*b.d);
-    }
-    friend class DoubleGen;
-    friend class DoubleGen operator*(ShortRat const &a, DoubleGen const &b);
-    friend int volumeToInt(ShortRat const &a)
-    {
-      assert(a.isInteger());
-      return ABS(a.toInteger());
-    }
-    friend ShortRat operator*(ShortRat const &s, ShortRat const &t)
-    {
-      return ShortRat(s.c*t.c, s.d*t.d);
-    }
-    void operator+=(ShortRat const &a)
-    {
-      c = c*a.d+d*a.c;
-      d *= a.d; 
-      reduce();
-    }
-    void operator-=(ShortRat const &a)
-    {
-      c = c*a.d-d*a.c;
-      d *= a.d; 
-      reduce();
-    }
-    void operator/=(ShortRat const &a)
-    {
-      assert(!isZero(a));
-      c *= a.d;
-      d *= a.c;
-      reduce();
-    }
-    void operator*=(ShortRat const &a)
-    {
-      c *= a.c;
-      d *= a.d;
-      reduce();
-    }
-    friend ShortRat gcd(ShortRat const &s, ShortRat const &t)
-    {
-      return ShortRat(1);
-    }
-    friend double toDoubleForPrinting(ShortRat const &s)//change this to produce string
-    {
-      return ((double)s.c)/s.d;
-    }
-    friend std::ostream& operator<<(std::ostream& s, const ShortRat &a)
-    {
-      s<<toDoubleForPrinting(a);
-      return s;
-    }
-    friend bool isNegative(ShortRat const &a)
-    {
-      return a.c<0&&a.d>0 || a.c>0&&a.d<0;
-    }
-    friend bool isPositive(ShortRat const &a)
-    {
-      return a.c<0&&a.d<0 || a.c>0&&a.d>0;
-    }
-    friend bool isEpsilonLessThan(ShortRat const &a, ShortRat const &b)
-    {
-      return isNegative(a-b);
-    }
-    friend bool operator<(ShortRat const &a, ShortRat const &b)
-    {
-      return isNegative(a-b);
-    }
-  };
 
   class DoubleGen{
     double rep;
@@ -440,10 +302,10 @@ namespace mixedCells
     {
       return DoubleGen(a.rep*b.rep);
     }
-    friend class DoubleGen operator*(ShortRat const &a, DoubleGen const &b)
+    /*    friend class DoubleGen operator*(ShortRat const &a, DoubleGen const &b)
     {
       return DoubleGen(a.c*b.rep/a.d);
-    }
+      }*/
     friend class TrueGen operator*(ShortInt const &a, TrueGen const &b)
     {
       return TrueGen(a.rep*b.rep);
@@ -476,11 +338,11 @@ namespace mixedCells
       // only exact divisions should be allowed (no round off).
       assert(round(rep)%a.rep==0);
       rep/=a.rep;
-    }
+    }/*
     void operator/=(ShortRat const &a)
     {
       rep = rep * a.d / a.c;
-    }
+      }*/
     friend bool isPositive(DoubleGen const &a)
     {
       return a.rep>EPSILON;
@@ -518,18 +380,18 @@ namespace mixedCells
     {
       dest=ShortInt(0);
     }
-    void assignGCD(ShortRat &dest)const
+    /*    void assignGCD(ShortRat &dest)const
     {
       dest=ShortRat(0);
-    }
+      }*/
   };
 
-  class ShortRatGen{
+  template <class Rational> class RatGen{
     static const int maxlength=3;
     int length;
-    ShortRat v[maxlength];
+    Rational v[maxlength];
   public:
-    ShortRatGen()
+    RatGen()
     {
       length=0;
     }
@@ -539,7 +401,7 @@ namespace mixedCells
     }
     */
 
-    ShortRatGen(int a)
+    RatGen(int a)
     {
       length=1;
       v[0]=a;
@@ -549,7 +411,7 @@ namespace mixedCells
       length=maxlength;
       for(int i=0; i<length; i++) v[i]=rand()%MAX_RANDOM_INT;
     }
-    friend bool isZero(ShortRatGen const &a)
+    friend bool isZero(RatGen const &a)
     {
       for(int i=0;i<a.length;i++)if(!isZero(a.v[i]))return false;
       return true;
@@ -567,23 +429,23 @@ namespace mixedCells
     {
       return ShortRatGen(a.rep/b.rep);
       }*/
-    friend ShortRatGen operator-(ShortRatGen const &a)
+    friend RatGen operator-(RatGen const &a)
     {
-      ShortRatGen ret;
+      RatGen ret;
       ret.length = a.length;
       for(int i=0;i<ret.length;i++) ret.v[i]=-a.v[i];
       return ret;
     }
-    friend ShortRatGen operator-(ShortRatGen const &a, ShortRatGen const &b)
+    friend RatGen operator-(RatGen const &a, RatGen const &b)
     {
-      ShortRatGen ret;
+      RatGen ret;
       for(int i=0;i<maxlength;i++)ret.v[i]=a.v[i]-b.v[i];
       ret.length=MAX(a.length,b.length);
       return ret;
     }
-    friend ShortRatGen operator+(ShortRatGen const &a, ShortRatGen const &b)
+    friend RatGen operator+(RatGen const &a, RatGen const &b)
     {
-      ShortRatGen ret;
+      RatGen ret;
       for(int i=0;i<maxlength;i++)ret.v[i]=a.v[i]+b.v[i];
       ret.length=MAX(a.length,b.length);
       return ret;
@@ -592,9 +454,9 @@ namespace mixedCells
     {
       return ShortRatGen(a.rep*b.rep);
       }*/
-    friend class ShortRatGen operator*(ShortRat const &a, ShortRatGen const &b)
+    friend class RatGen operator*(Rational const &a, RatGen const &b)
     {
-      ShortRatGen ret;
+      RatGen ret;
       for(int i=0;i<b.length;i++)ret.v[i]=a*b.v[i];
       ret.length=b.length;
       return ret;
@@ -613,12 +475,12 @@ namespace mixedCells
     {
       return ShortRatGen(a.rep/b.rep);
       }*/
-    void operator+=(ShortRatGen const &a)
+    void operator+=(RatGen const &a)
     {
       if(length<a.length)length=a.length;
       for(int i=0;i<length;i++)v[i]+=a.v[i];
     }
-    void operator-=(ShortRatGen const &a)
+    void operator-=(RatGen const &a)
     {
       if(length<a.length)length=a.length;
       for(int i=0;i<length;i++)v[i]-=a.v[i];
@@ -635,11 +497,11 @@ namespace mixedCells
       assert(round(rep)%a.rep==0);
       rep/=a.rep;
       }*/
-    void operator/=(ShortRat const &a)
+    void operator/=(Rational const &a)
     {
       for(int i=0;i<length;i++)v[i]=v[i]/a;
     }
-    friend bool isPositive(ShortRatGen const &a)
+    friend bool isPositive(RatGen const &a)
     {
       for(int i=0;i<a.length;i++)
 	{
@@ -648,7 +510,7 @@ namespace mixedCells
 	}
       return false;
     }
-    friend bool isNegative(ShortRatGen const &a)
+    friend bool isNegative(RatGen const &a)
     {
       for(int i=0;i<a.length;i++)
 	{
@@ -657,7 +519,7 @@ namespace mixedCells
 	}
       return false;
     }
-    friend double toDoubleForPrinting(ShortRatGen const &s)//change this to produce string
+    friend double toDoubleForPrinting(RatGen const &s)//change this to produce string
     {
       double ret=0;
       double epsn=1;
@@ -668,12 +530,12 @@ namespace mixedCells
 	}
       return ret;
     }
-    friend std::ostream& operator<<(std::ostream& s, const ShortRatGen &a)
+    friend std::ostream& operator<<(std::ostream& s, const RatGen &a)
     {
       s<<toDoubleForPrinting(a);
       return s;
     }
-    friend bool isGreaterEqual(ShortRatGen const &a, ShortRatGen const &b)
+    friend bool isGreaterEqual(RatGen const &a, RatGen const &b)
     {
       for(int i=0;i<maxlength;i++)
 	{
@@ -682,7 +544,7 @@ namespace mixedCells
 	}
       return true;
     }
-    friend bool operator<(ShortRatGen const &a, ShortRatGen const &b)
+    friend bool operator<(RatGen const &a, RatGen const &b)
     {
       for(int i=0;i<maxlength;i++)
 	{
@@ -703,9 +565,9 @@ namespace mixedCells
     {
       dest=ShortInt(0);
     }
-    void assignGCD(ShortRat &dest)const
+    void assignGCD(Rational &dest)const
     {
-      dest=ShortRat(0);
+      dest=Rational(0);
     }
   };
 

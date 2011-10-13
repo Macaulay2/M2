@@ -65,6 +65,15 @@ using namespace mixedCells;
 using namespace std;
 int main(int argc, char **argv)
 {
+
+  /*  GmpRational s(2,3);
+  GmpRational t;
+  t=s;
+  std::cerr<<s;
+  vector<GmpRational> v(2);
+  return 0;
+  */
+  std::cerr<<"The code does not work at the moment because we do not call the constructor for gmp numbers when constructing a matrix.";
     rand();
     useNewAntiCyclingRule=false;
 
