@@ -7,6 +7,10 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
+#include <M2/config.h>
+#ifdef HAVE_STDDEF_H 1
+#include <stddef.h>
+#endif
 #include "monomDRL.hpp"
 
 namespace BIBasis
