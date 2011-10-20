@@ -240,7 +240,7 @@ fi
 AC_SUBST(GCCVERSION,)
 if test $GCC = yes
 then AC_MSG_CHECKING(for $CC version)
-     GCCVERSION=`$CC --dumpversion 2>&1 | sed 's/.*-\(.*\):.*/\1/'`
+     GCCVERSION=`$CC -dumpversion 2>&1 | sed 's/.*-\(.*\):.*/\1/'`
      AC_MSG_RESULT($GCCVERSION)
 fi
 
