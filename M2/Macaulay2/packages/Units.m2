@@ -172,7 +172,7 @@ N$A = avogadro = gram/amu mol
 R = gasconstant = 8.314472 J / mol K
 k = boltzmann = R / N$A
 stdtemp = standardtemp = 273.15 K
-atm = 101325 Pa
+atmosphere = atm = 101325 Pa
 force = gravity = 9.80665 m/s^2
 water = gram force/cm^3
 waterdensity = gram / cm^3
