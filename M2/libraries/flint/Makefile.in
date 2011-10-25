@@ -2,7 +2,7 @@ HOMEPAGE = http://flintlib.org
 URL = http://flintlib.org
 VERSION = 2.2
 PATCHFILE = @abs_srcdir@/patch-2.2
-LICENSEFILES = flint.h
+LICENSEFILES = flint.h gpl-2.0.txt
 ifeq (@DEBUG@,yes)
 CFLAGS += -O0 -fno-unroll-loops 
 endif
