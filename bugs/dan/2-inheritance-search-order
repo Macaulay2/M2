@@ -1,0 +1,14 @@
+Steven Watt suggests using a "homogeneous" search for
+dispatching to method functions, i.e., if 
+
+   x in X0 < X1 < ...
+   y in Y0 < Y1 < ...
+
+and f(x,y) is entered, then look for methods in this order:
+
+    f(X0,Y0)
+    f(X0,Y1) f(X1,Y0)
+    f(X0,Y2) f(X1,Y1) f(X2,Y0)
+    ...
+
+Is there an efficient way to do it?
