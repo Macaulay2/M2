@@ -32,10 +32,6 @@ ifeq ($(LINBOX),yes)
 CONFIGOPTIONS += --enable-linbox
 endif
 
-ifeq ($(MPACK),yes)
-CONFIGOPTIONS += --enable-mpack
-endif
-
 ifeq ($(FLINT),yes)
 CONFIGOPTIONS += --enable-flint
 endif

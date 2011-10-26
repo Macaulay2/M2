@@ -56,6 +56,7 @@ document {
 	  TO "LAPACK",
 	  TO "BLAS",
 	  TO "NTL library",
+	  TO "mpack",
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
@@ -64,6 +65,14 @@ document {
 	  TO "cdd+",
 	  TO "lrslib"
      	  }
+     }
+
+document {
+     Key => "mpack",
+     PARA {
+	  "The library ", TT "mpack", " is a multiprecision linear algebra package based on lapack and blas,
+	  written by Nakata Maho.  It is available at ", HREF "http://mplapack.sourceforge.net/", "."
+	  }
      }
 
 document {

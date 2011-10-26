@@ -54,6 +54,11 @@ CPPFLAGS := \
 	 -I@abs_top_builddir@/include \
 	 -I$(BUILTLIBPATH)/include \
 	 $(CPPFLAGS)
+
+ifeq "@ENABLE_MPACK@" "yes"
+CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
+endif
+
 vpath %.h $(BUILTLIBPATH)/include
 LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
 vpath %.a $(BUILTLIBPATH)/lib

@@ -1145,16 +1145,6 @@ then AC_LANG(C++)
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 
-AC_SUBST(ENABLE_MPACK,no)
-AC_ARG_ENABLE(mpack,
-    [AS_HELP_STRING(--enable-mpack,[enable building the mpack library, linking with it, and compiling the experimental code that uses it])],
-    AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
-    BUILD_mpack=yes
-    BUILD_qd=yes
-    BUILD_mpc=yes
-    ENABLE_MPACK=yes
-    )
-
 AC_SUBST(ENABLE_FLINT,no)
 AC_ARG_ENABLE(flint,
     [AS_HELP_STRING(--enable-flint,[enable building the flint library, linking with it, and compiling the experimental code that uses it])],
@@ -1324,6 +1314,17 @@ AC_CHECK_HEADER(libxml/parser.h,,
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
 AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(libxml2 not found or not linkable))
+
+AC_SUBST(ENABLE_MPACK,no)
+AC_ARG_ENABLE(mpack,
+    [AS_HELP_STRING(--enable-mpack,[enable building the mpack library, linking with it, and compiling the experimental code that uses it])],
+    AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
+    BUILD_mpack=yes
+    BUILD_qd=yes
+    BUILD_mpc=yes
+    ENABLE_MPACK=yes
+    BUILTLIBS="-lmlapack_mpfr -lmblas_mpfr -lmpfrcxx $BUILTLIBS"
+    )
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS

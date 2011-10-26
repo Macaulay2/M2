@@ -252,6 +252,7 @@ export {
 	symbol Inverses,
 	symbol MaximalRank,
 	symbol MaxReductionCount,
+	symbol Precision,
 	symbol Iterate,
 	symbol Join,
 	symbol KeepZeroes,
