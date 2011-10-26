@@ -4,6 +4,12 @@
 #include "ZZp.hpp"
 #include "dmat.hpp"
 #include "mat.hpp"
+#include "mpfr.h"
+#ifdef HAVE_MPACK
+#include <mpack/mblas_mpfr.h>
+#include <mpack/mlapack_mpfr.h>
+#endif
+#include <iostream>
 
 template<typename CoeffRing>
 DMat<CoeffRing>::DMat(const RingType *R0, int nrows, int ncols)
@@ -733,6 +739,32 @@ template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
   return result;
 }
 
+template <> __mpfr_struct *DMat<CoefficientRingCCC>::make_mpack_array() const
+{
+  long len = n_rows() * n_cols();
+  __mpfr_struct *result = new __mpfr_struct[2*len];
+
+  elem *a = array_;
+  __mpfr_struct *p = result;
+ 
+ //std::cout<<"inside make_mpack"<<std::endl;
+ for (long i=0; i<len; i++)
+    {
+      *p= *(a->re);
+      p++;
+      a++;
+    }
+
+	a =array_;
+  for (long i=len; i< 2*len; i++) 
+	{
+	*p= *(a->im);
+        p++;
+	a++;	
+	}
+  return result;
+}
+
 template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack_array)
 {
   long len = n_rows() * n_cols();
@@ -746,6 +778,20 @@ template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack
       a++;
     }
 }
+
+/* template <> void DMat<CoefficientRingCCC>::fill_from_mpack_array(mpreal *mparray)
+{
+  long len = n_rows() * n_cols();
+
+  elem *a = array_;
+  mpreal *p = mparray;
+  for (long i=0; i<len; i++)
+    {
+//      mpfr_set_d(a->re, *p++, GMP_RNDN);
+//      mpfr_set_d(a->im, *p++, GMP_RNDN);
+      a++;
+    }
+} */
 
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<CoefficientRingZZp>;

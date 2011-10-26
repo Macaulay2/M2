@@ -1,6 +1,8 @@
 #include "coeffrings.hpp"
 #include "lapack.hpp"
 #include <M2/config.h>
+#include <iostream>
+
 
 //typedef DMat<CoefficientRingRR> LMatrixRR;
 
@@ -9,6 +11,66 @@
 // and should be freed via deletearray.
 
 typedef double *LapackDoubles;
+
+/* void printmat(int N, int M, mpreal * A, int LDA)
+{
+    mpreal mtmp;
+
+    printf("[ ");
+    for (int i = 0; i < N; i++) {
+	printf("[ ");
+	for (int j = 0; j < M; j++) {
+	    mtmp = A[i + j * LDA];
+	    mpfr_printf("%5.2Re", mpfr_ptr(mtmp));
+	    if (j < M - 1)
+		printf(", ");
+	}
+	if (i < N - 1)
+	    printf("]; ");
+	else
+	    printf("] ");
+    }
+    printf("]");
+} */
+
+
+#ifdef HAVE_MPACK
+void Lapack::fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows)
+{
+	CCelem *cursor;
+	__mpfr_struct *temp;
+	for (int i=0,k=0; i< cols; i++,k++) {	
+		for (int j=0,l=0; j < rows; j++,l++){
+			cursor=elemarray+(k*rows+l);
+			*(cursor->re)=*((mparray[i*rows*2+j].getmp())[0]);
+		}	
+	}
+	for (int i=0, k=0; i< cols; i++,k++) {	
+		for (int j=rows,l=0; j <rows*2; j++,l++){
+			cursor=elemarray+(k*rows+l);
+			*(cursor->im)=*((mparray[i*rows*2+j].getmp())[0]);
+
+		}	
+	}
+	return;
+}
+#endif
+
+ /* void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows)
+{
+	CCelem *cursor1 = elemarray;
+	 mpcomplex *cursor2 = mparray;
+	//for (int i=0; i<cols; i++) {	
+		for (int j=0; j < rows; j++){
+			//cursor=elemarray+(i*rows+j);
+			cursor1->re=&(cursor2->real())[0];
+			cursor1->im=&(cursor2->imag())[0];
+			cursor1++;
+			cursor2++;
+		}	
+	//}
+	return;
+} */
 
 M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
 			      LMatrixRR *L,
@@ -944,6 +1006,8 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
   int size = A->n_rows();
   int bsize = b->n_cols();
   int info;
+  unsigned long precision=A->get_ring()->get_precision();
+
 
   /* make sure matrix is square */
   if (size != A->n_cols())
@@ -959,11 +1023,117 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
       return false;
     }
 
+     
+
   if (size == 0)
     {
       x->resize(size, bsize);
       return true;
     }
+
+  if (precision > 53) {
+
+#ifndef HAVE_MPACK
+    ERROR("high precision requested, library mpack not available");
+    return false;
+#else
+	mpackint infomp;
+	mpfr_set_default_prec(precision);
+	mpackint *ipiv = new mpackint[size*2];
+
+	__mpfr_struct *rawA=A->make_mpack_array();
+	__mpfr_struct *rawB=b->make_mpack_array();
+
+
+	mpreal *Amp = new mpreal[size * 2 * size * 2];
+        mpreal *Bmp= new mpreal[size * 2 * bsize];
+
+        //mpcomplex *Ac=new mpcomplex[size*size];
+        //mpcomplex *Bc=new mpcomplex[bsize*size];
+	
+	__mpfr_struct *cursor; // i  is column of mpack matrix, j is row of mpack matrix, k is column of mpfr matrix, l is row of mpfr matrix
+	for (int i=0,k=0; i< A->n_cols(); i++,k++){
+		for (int j=0,l=0; j < A->n_cols(); j++, l++){
+			cursor=rawA+(k*size+l);			
+			Amp[i*2*size+j]= mpreal(cursor);
+		}
+	}
+
+
+	for (int i=size,k=size; i< size*2; i++,k++){
+		for (int j=0,l=0; j < A->n_cols(); j++, l++){
+			cursor=rawA+(k*size+l);			
+			Amp[i*2*size+j]= (-1)*mpreal(cursor);
+		}
+	}
+
+	for (int i=0,k=size; i< A->n_cols(); i++,k++){
+		for (int j=size,l=0; j < (A->n_cols()*2); j++, l++){
+			cursor=rawA+(k*size+l);			
+			Amp[i*2*size+j]= mpreal(cursor);
+		}
+	}
+	for (int i=size,k=0; i< (A->n_cols()*2); i++,k++){
+		for (int j=size,l=0; j < (A->n_cols()*2); j++, l++){
+			cursor=rawA+(k*size+l);			
+			Amp[i*2*size+j]= mpreal(cursor);
+		}
+	}
+
+
+	for (int i=0,k=0; i< bsize; i++,k++) {	
+		for (int j=0,l=0; j < size; j++,l++){
+			cursor=rawB+(k*size+l);
+			Bmp[i*size*2+j]=mpreal(cursor);
+		}	
+	}
+	for (int i=0, k=bsize; i< bsize; i++,k++) {	
+		for (int j=size,l=0; j < size*2; j++,l++){
+			cursor=rawB+(k*size+l);
+			Bmp[i*size*2+j]=mpreal(cursor);
+		}	
+	}
+	//forms the complex matrices
+	/*for (int i=0; i< A->n_cols(); i++){
+		for (int j=0; j < A->n_cols(); j++){
+			Ac[i*size+j]=mpcomplex(Amp[i*2*size+j],Amp[i*2*size+j+size]);		
+		}
+	}
+	for (int i=0; i< bsize; i++){
+		for (int j=0; j < A->n_cols(); j++){
+			Bc[i*size+j]=mpcomplex(Bmp[i*2*size+j],Bmp[i*2*size+j+size]);		
+		}
+	} */
+
+
+	Rgesv(size*2, bsize, Amp, size*2, ipiv, Bmp, size*2, &infomp);
+//	Cgesv(size, bsize, Ac, size, ipivc, Bc, size, &infomp);
+
+	if (infomp > 0)       
+	    {
+	      ERROR("according to zgesv, matrix is singular");
+	      ret = false;
+	    }
+	  else if (infomp < 0)
+	    {
+	      ERROR("argument passed to zgesv had an illegal value");
+	      ret = false;
+	    }
+	  else
+	    {
+		x->resize(size,bsize);
+	        fill_from_mpack_array(x->get_array(), Bmp, bsize, size);
+	     }
+	delete (rawA);
+	delete (rawB);
+	delete (Amp);
+	delete (Bmp);
+	delete (ipiv);
+	return ret;
+		
+#endif
+	}
+
 
   int *permutation = newarray_atomic(int, size);
   double *copyA = A->make_lapack_array();
@@ -1565,6 +1735,7 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
   return ret;
 #endif
 }
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -5,6 +5,9 @@
 
 union ring_elem;
 #include "ZZp.hpp"
+//#include <mblas_mpfr.h>
+//#include <mlapack_mpfr.h>
+//#include "mpreal.h"
 // This is the low level dense matrix class.
 // The only reason "RingType" is present is to more easily
 //   communicate with the rest of Macaulay2
@@ -14,7 +17,10 @@ class MutableMatrix;
 template<typename CoeffRing>
 class DMat : public our_new_delete
 {
-  typedef typename CoeffRing::elem elem;
+  public:
+	 typedef typename CoeffRing::elem elem;
+
+  private:
   typedef typename CoeffRing::ring_type RingType;
   const RingType *R; // To interface to the outside world
   CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
@@ -49,7 +55,9 @@ public:
   double *get_lapack_array() const; // redefined by RR,CC
 
   double *make_lapack_array() const; // creates an array of doubles (or 0, if not applicable)
+  __mpfr_struct *make_mpack_array() const;
   void fill_from_lapack_array(double *lapack_array);  // The size of the array should match the size of this.
+  //void fill_from_mpack_array(mpreal *mparray);
 
   class iterator : public our_new_delete
   {

@@ -2,7 +2,11 @@
 #define __lapack_h_
 
 #include "dmat.hpp"
-
+#ifdef HAVE_MPACK
+#include <mpack/mblas_mpfr.h>
+#include <mpack/mlapack_mpfr.h>
+#endif
+#include <mpfr.h>
 /* Lapack routines */
 /* Compute solutions x to Ax = b for square matrix A and a matrix b */
 extern "C" {
@@ -275,6 +279,8 @@ class Lapack {
  public:
   typedef DMat<CoefficientRingRRR> LMatrixRR;
   typedef DMat<CoefficientRingCCC> LMatrixCC;
+  typedef LMatrixCC::elem CCelem;
+  //typedef CoeffRing::elem CCelem;
 
   ///////////////////////////////////////////
   // Translation to/from RR/CC and RRR/CCC //
@@ -321,6 +327,8 @@ class Lapack {
 			       );
 
   static bool solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
+
+  //static bool solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x, const unsigned long precision);
   // A and b are not modifed.  The result is placed into x.
   // Returns x s.t. Ax = b
   // A should be non-singular.
@@ -340,6 +348,12 @@ class Lapack {
   static bool least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
 
   static bool least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
+
+#ifdef HAVE_MPACK
+  static void fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows);
+#endif
+  //static void fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows);
+  static void freeRaw(__mpfr_struct *start, int size);
 };
 
 #endif
