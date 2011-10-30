@@ -34,43 +34,6 @@ typedef double *LapackDoubles;
 } */
 
 
-#ifdef HAVE_MPACK
-void Lapack::fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows)
-{
-	CCelem *cursor;
-	__mpfr_struct *temp;
-	for (int i=0,k=0; i< cols; i++,k++) {	
-		for (int j=0,l=0; j < rows; j++,l++){
-			cursor=elemarray+(k*rows+l);
-			*(cursor->re)=*((mparray[i*rows*2+j].getmp())[0]);
-		}	
-	}
-	for (int i=0, k=0; i< cols; i++,k++) {	
-		for (int j=rows,l=0; j <rows*2; j++,l++){
-			cursor=elemarray+(k*rows+l);
-			*(cursor->im)=*((mparray[i*rows*2+j].getmp())[0]);
-
-		}	
-	}
-	return;
-}
-#endif
-
- /* void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows)
-{
-	CCelem *cursor1 = elemarray;
-	 mpcomplex *cursor2 = mparray;
-	//for (int i=0; i<cols; i++) {	
-		for (int j=0; j < rows; j++){
-			//cursor=elemarray+(i*rows+j);
-			cursor1->re=&(cursor2->real())[0];
-			cursor1->im=&(cursor2->imag())[0];
-			cursor1++;
-			cursor2++;
-		}	
-	//}
-	return;
-} */
 
 M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
 			      LMatrixRR *L,
@@ -995,6 +958,49 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
 #endif
 }
 
+#ifdef HAVE_MPACK
+/** clears and deletes mpfr array of length len 
+ */
+void Lapack::delete_mpack_array(__mpfr_struct* a, int len)
+{
+  for (int i=0; i<len; i++)
+    mpfr_clear(a+i);
+  delete a;
+}
+
+void Lapack::fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows)
+{
+	CCelem *cursor;
+	for (int i=0,k=0; i< cols; i++,k++) {	
+		for (int j=0,l=0; j < rows; j++,l++){
+			cursor=elemarray+(k*rows+l);
+			mpfr_set(cursor->re,(mparray[i*rows*2+j].getmp())[0],GMP_RNDN);
+		}	
+	}
+	for (int i=0, k=0; i< cols; i++,k++) {	
+		for (int j=rows,l=0; j <rows*2; j++,l++){
+			cursor=elemarray+(k*rows+l);
+			mpfr_set(cursor->im,(mparray[i*rows*2+j].getmp())[0],GMP_RNDN);
+
+		}	
+	}
+	return;
+}
+
+// can't link... it looks like mpcomplex can't be supported by the current version of MPACK
+// void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows)
+// {
+// 	CCelem *c = elemarray;
+// 	mpcomplex* mp = mparray;
+// 	for (int i=0; i<cols*rows; i++,c++,mp++) {	
+// 	  *c->re = *(mp->real().getmp()[0]);
+// 	  *c->im = *(mp->imag().getmp()[0]);
+// 	}
+// 	return;
+// } 
+
+#endif
+
 bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
 #if !LAPACK
@@ -1038,18 +1044,26 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     return false;
 #else
 	mpackint infomp;
-	mpfr_set_default_prec(precision);
+	mpfr_set_default_prec(precision); //has no effect on default_precision in mpack!!!
+	mpreal::set_default_prec(precision); 
+	
 	mpackint *ipiv = new mpackint[size*2];
+	//	mpackint *ipivc = new mpackint[size];
 
+	// the sizes of _real_ matrices that rempresent complex A and B
+	int rawA_size = 2*size*size; 
+	int rawB_size = 2*bsize;
+	int A_size = 4*size*size; 
+	int B_size = size * 2 * bsize;
 	__mpfr_struct *rawA=A->make_mpack_array();
 	__mpfr_struct *rawB=b->make_mpack_array();
 
 
-	mpreal *Amp = new mpreal[size * 2 * size * 2];
-        mpreal *Bmp= new mpreal[size * 2 * bsize];
+	mpreal *Amp = new mpreal[A_size];
+        mpreal *Bmp = new mpreal[B_size];
 
-        //mpcomplex *Ac=new mpcomplex[size*size];
-        //mpcomplex *Bc=new mpcomplex[bsize*size];
+//         mpcomplex *Ac=new mpcomplex[size*size];
+//         mpcomplex *Bc=new mpcomplex[bsize*size];
 	
 	__mpfr_struct *cursor; // i  is column of mpack matrix, j is row of mpack matrix, k is column of mpfr matrix, l is row of mpfr matrix
 	for (int i=0,k=0; i< A->n_cols(); i++,k++){
@@ -1093,21 +1107,23 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 			Bmp[i*size*2+j]=mpreal(cursor);
 		}	
 	}
-	//forms the complex matrices
-	/*for (int i=0; i< A->n_cols(); i++){
-		for (int j=0; j < A->n_cols(); j++){
-			Ac[i*size+j]=mpcomplex(Amp[i*2*size+j],Amp[i*2*size+j+size]);		
-		}
-	}
-	for (int i=0; i< bsize; i++){
-		for (int j=0; j < A->n_cols(); j++){
-			Bc[i*size+j]=mpcomplex(Bmp[i*2*size+j],Bmp[i*2*size+j+size]);		
-		}
-	} */
+
+// 	//forms the complex matrices
+
+// 	for (int i=0; i< A->n_cols(); i++){
+// 		for (int j=0; j < A->n_cols(); j++){
+// 			Ac[i*size+j]=mpcomplex(Amp[i*2*size+j],Amp[i*2*size+j+size]);		
+// 		}
+// 	}
+// 	for (int i=0; i< bsize; i++){
+// 		for (int j=0; j < A->n_cols(); j++){
+// 			Bc[i*size+j]=mpcomplex(Bmp[i*2*size+j],Bmp[i*2*size+j+size]);		
+// 		}
+// 	} 
 
 
 	Rgesv(size*2, bsize, Amp, size*2, ipiv, Bmp, size*2, &infomp);
-//	Cgesv(size, bsize, Ac, size, ipivc, Bc, size, &infomp);
+	//	Cgesv(size, bsize, Ac, size, ipivc, Bc, size, &infomp);
 
 	if (infomp > 0)       
 	    {
@@ -1124,10 +1140,10 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 		x->resize(size,bsize);
 	        fill_from_mpack_array(x->get_array(), Bmp, bsize, size);
 	     }
-	delete (rawA);
-	delete (rawB);
-	delete (Amp);
-	delete (Bmp);
+	delete_mpack_array(rawA, rawA_size); 
+	delete_mpack_array (rawB, rawB_size);
+	delete[] (Amp);
+	delete[] (Bmp);
 	delete (ipiv);
 	return ret;
 		

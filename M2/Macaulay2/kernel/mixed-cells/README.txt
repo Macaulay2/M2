@@ -17,7 +17,9 @@ How to use etags:
 run
 etags *.cpp *.h
 in the shell.
-Then in emacs place the cursor on a variable or type name and press META "." to jump to its definition?
+Then in emacs place the cursor on a variable or type name and 
+press META "." to jump to the first occurence 
+press CTRL-u META-"." to jump to the next occurence
 
 Mysterious symbols:
 

@@ -350,9 +350,11 @@ class Lapack {
   static bool least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
 
 #ifdef HAVE_MPACK
+  static void delete_mpack_array(__mpfr_struct* a, int len);
   static void fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows);
+// can't link... it looks like mpcomplex can't be supported by the current version of MPACK
+//  static void fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows);
 #endif
-  //static void fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows);
   static void freeRaw(__mpfr_struct *start, int size);
 };
 

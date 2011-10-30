@@ -739,29 +739,32 @@ template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
   return result;
 }
 
-template <> __mpfr_struct *DMat<CoefficientRingCCC>::make_mpack_array() const
+template <> __mpfr_struct *DMat<CoefficientRingCCC>::make_mpack_array() const // why is this here???
 {
   long len = n_rows() * n_cols();
   __mpfr_struct *result = new __mpfr_struct[2*len];
-
+   
   elem *a = array_;
   __mpfr_struct *p = result;
  
  //std::cout<<"inside make_mpack"<<std::endl;
  for (long i=0; i<len; i++)
-    {
-      *p= *(a->re);
-      p++;
-      a++;
-    }
-
-	a =array_;
-  for (long i=len; i< 2*len; i++) 
-	{
-	*p= *(a->im);
-        p++;
-	a++;	
-	}
+   {
+     mpfr_init(p);
+     mpfr_set(p, a->re, GMP_RNDN);
+     p++;
+     a++;
+   }
+ 
+ a =array_;
+ for (long i=len; i< 2*len; i++) 
+   {
+     mpfr_init(p);
+     mpfr_set(p, a->im, GMP_RNDN);
+     //*p= *(a->im);
+     p++;
+     a++;	
+   }
   return result;
 }
 
