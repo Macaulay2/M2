@@ -284,40 +284,67 @@ document {
 document {
      Key => List,
      Headline => "the class of all lists -- {...}",
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
      "Lists in Macaulay2 consist of elements of any type, enclosed in braces, and separated by commas.",
      EXAMPLE "L = {a,1,b,2}",
      "The length of a list has two notations, the version with the ",  TT "#", " is faster when writing programs.",
      EXAMPLE "#L, length L",
      "The first entry of the list has index 0.  Indexing is performed using ", TO symbol#, ".",
      EXAMPLE "L#2",
-     PARA{},
-     "Lists in Macaulay2 are immutable. See ", TO MutableList, " for making and using 
-     lists that you may modify.",
-     PARA{},
-     "In Macaulay2, there are several kinds of lists, the main difference being their notation.  These
-     include ", TO Array, " and ", TO Sequence, ". See ", TO VisibleList, ".", 
+     PARA{
+	  "Lists in Macaulay2 are immutable. See ", TO MutableList, " for making and using lists that you may modify."
+	  },
+     PARA {
+	  "To convert lists to and from other types of ", TO "BasicList", ", in addition to ", TO "toList", ", one may use ", TO "new", "."
+	  },
+     EXAMPLE lines ///
+     new Array from {a,b,c}
+     new List from [a,b,c]
+     ///,
+     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
      }
 
 document {
      Key => Array,
      Headline => "the class of all arrays -- [...]",
+     PARA {
+	  "An array can be created by enclosing elements of any type in brackets."
+	  },
+     EXAMPLE lines ///
+     x = [a,b,c]
+     # x
+     x#1
+     ///,
+     PARA {
+	  "To convert arrays to and from other types of ", TO "BasicList", ", one may use ", TO "new", "."
+	  },
+     EXAMPLE lines ///
+     new Array from {a,b,c}
+     new Sequence from [a,b,c]
+     ///,
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."}
      }
 
 document {
      Key => Sequence,
      Headline => "the class of all sequences -- (...)",
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     "A sequence is an ordered collection of things enclosed by parentheses
-     and separated by commas.  Use ", TO "#", " to get the length of a
-     sequence of to get one of the elements.",
+     PARA {
+	  "A sequence is an ordered collection of things enclosed by parentheses
+	  and separated by commas.  Use ", TO "#", " to get the length of a
+	  sequence of to get one of the elements."
+	  },
      EXAMPLE {
 	  "v = (a,b,c)",
 	  "#v",
 	  "v#2"
 	  },
-     SeeAlso => "lists and sequences"
+     PARA {
+	  "To convert sequences to and from other types of ", TO "BasicList", ", in addition to ", TO "toSequence", ", one may use ", TO "new", "."
+	  },
+     EXAMPLE lines ///
+     new Array from (a,b,c)
+     new Sequence from [a,b,c]
+     ///,
+     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
      }
 
 document {
