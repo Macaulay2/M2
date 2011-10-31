@@ -1,0 +1,7 @@
+make an interface for M2 in the style of "Reinteract", written by
+Owen Taylor, which is an interface
+for python -- it does tab-completion, shows tooltips with information about
+stuff on screen, including graphs, etc.  See
+http://fishsoup.net/software/reinteract/
+
+would be portable to Windows/Mac.
