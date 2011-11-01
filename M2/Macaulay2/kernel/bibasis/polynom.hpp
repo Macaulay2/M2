@@ -219,8 +219,7 @@ namespace BIBasis
                     delete iteratorAnother;
                 }
             }
-
-            while (iteratorAnother)
+            else while (iteratorAnother)
             {
                 *iterator = new MonomType(*iteratorAnother);
                 iterator = &((*iterator)->Next);
