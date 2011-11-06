@@ -176,13 +176,15 @@ inline void complex::sprint(char* s)
  */
 class complexAP
 {
-private:
+public://!!!
+  //private:
   gmp_CC_struct value;
 public:
   void init() { mpfc_init(&value,53); }
   complexAP();
   //complexAP(double);
   complexAP(double,double);
+  complexAP(double);
   complexAP(const complexAP&);
   complexAP(const complex&);
   complexAP(gmp_CC_struct*);
@@ -196,24 +198,26 @@ public:
   complexAP getconjugate() ;
   complexAP getreciprocal();
   double getmodulus();
-  double getreal();
-  double getimaginary();
+  double getreal() const;
+  double getimaginary() const;
   bool operator ==(complexAP);
   void operator =(complexAP);
   void sprint(char*);
-  complex to_complex(); 
+  void print();
+  complex to_complex() const; 
 };
 
 //                                        CONSTRUCTOR
 inline  complexAP::complexAP() { init(); } //!!! double precision
 
-/*
+
 inline complexAP::complexAP(double r)
 {
-  real=r;
-  imag=0;
+  init();
+  mpfr_set_d(value.re, r, GMP_RNDN);
+  mpfr_set_d(value.im, 0, GMP_RNDN);
 }
-*/
+
 
 inline complexAP::complexAP(double re, double im)
 {
@@ -265,12 +269,13 @@ inline complexAP complexAP::operator -(complexAP c)
   return tmp;
 }
 
-/*
+
 inline complexAP complexAP::operator -() 
 {
-  return *this;
+  complexAP tmp(0,0);
+  return tmp-*this;
 }
-*/
+
  
 inline complexAP complexAP::operator *(complexAP c)
 {
@@ -314,14 +319,14 @@ inline double complexAP::getmodulus()
   return z;
 }
 */ 
-inline double complexAP::getreal()
+inline double complexAP::getreal() const
 {
   return mpfr_get_d(value.re,MPFR_RNDN);
 }
  
-inline double complexAP::getimaginary()
+inline double complexAP::getimaginary() const
 {
-  return mpfr_get_d(value.re,MPFR_RNDN);
+  return mpfr_get_d(value.im,MPFR_RNDN);
 }
 
  
@@ -337,7 +342,7 @@ inline void complexAP::sprint(char* s)
   sprintf(s, "(%lf) + i*(%lf)", getreal(), getimaginary());
 }
 
-inline complex complexAP::to_complex()
+inline complex complexAP::to_complex() const
 {
   return complex(getreal(), getimaginary());
 }
@@ -532,6 +537,7 @@ public:
 };
 
 #define SLPdouble
+//#define SLPmpfr
 #ifdef SLPdouble
 /** Wrapper for SLP: eventually should be replaced 
 */
@@ -558,7 +564,6 @@ public:
   Matrix* evaluate(const Matrix *vals);
 };
 #endif
-//#define SLPmpfr
 #ifdef SLPmpfr
 /** same but AP 
 */
@@ -600,6 +605,7 @@ struct Solution
   
   Solution() { status = UNDETERMINED; }
   void make(int m, const complex* s_s);
+  void make(int m, const complexAP* s_s);
   ~Solution() { release(); }
   void release() { deletearray(x); deletearray(start_x); } 
 };
