@@ -1,0 +1,4 @@
+There is no way to get just one element of a mutable hash table whose keys are unknown,
+because "select(1,x,i->true) requires x to be immutable.  Fix by relaxing that
+requirement, or by doing something else.  We probably thought that requirement was
+important for thread safety, but now we can use mutexes or something.
