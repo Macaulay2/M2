@@ -47,8 +47,8 @@ ProductOrder = new SelfInitializingType of BasicList
 
 isSmall := i -> class i === ZZ and i < 2^15 and i > -2^15
 isCount := i -> class i === ZZ and i >= 0 and i < 2^15
-isListOfIntegers = x -> class x === List and all(x,i -> class i === ZZ)
-isListOfListsOfIntegers = x -> class x === List and all(x,isListOfIntegers)
+isListOfIntegers = x -> instance(x, List) and all(x,i -> class i === ZZ)
+isListOfListsOfIntegers = x -> instance(x, List) and all(x,isListOfIntegers)
 checkCount := i -> if not isCount i then error "expected a small positive integer"
 
 fixup1 := method(Dispatch => Thing)			    -- stage 1, everything except Tiny and Small
