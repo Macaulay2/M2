@@ -4,8 +4,8 @@
 
 newPackage(
 	"KustinMiller",
-    	Version => "1.2",
-    	Date => "March 31, 2011",
+    	Version => "1.3",
+    	Date => "Nov 11, 2011",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
@@ -19,19 +19,23 @@ newPackage(
         )
 
 
+{*
 
--- Install this package with the Macaulay2 command:
+      Installation:
 
--- installPackage "KustinMiller"
+      Put the file KustinMiller.m2 somewhere into the path of Macaulay2      
+      (usually into the directory .Macaulay2/code inside your home directory, type
+      path in M2 to see the path) and do inside M2
 
--- For more installation instructions see documentation key
--- KustinMiller below
+      installPackage "KustinMiller"
+      
+      This package requires the package SimplicialComplexes.m2 Version 1.2 or higher,
+      so install this first.
 
--- This package has been written and tested with M2 version 1.4
--- however due to the new key PackageExports it will only work
--- with the next version of M2
--- to make it work with 1.4 uncomment the two needsPackage lines
--- and remove the PackageExports line
+*}
+
+
+
 
 --------------------------------------------------------------------
 
@@ -45,8 +49,11 @@ export({"resBE","dualComplex"})
 
 export({"stellarSubdivision","delta","isExactRes"})
 
---needsPackage "SimplicialComplexes"
 
+needsPackage "SimplicialComplexes"
+
+if version#"VERSION" < "1.4" then error "This package was written for Macaulay2 Version 1.4 or higher.";
+if (options SimplicialComplexes).Version < "1.2" then error "This package requires the SimplicialComplexes package Version 1.2 or higher."
 
 ------------------------------------------------------------------------
 -- Buchsbaum-Eisenbud resolution of the ideal of submaximal Pfaffians of a 
@@ -246,6 +253,7 @@ dualcI:= shiftComplex ( dualComplex cI, -codim I);
 dualcJ:= shiftComplex ( dualComplex cJ, -codim I);
 gJ:=gens source phi;
 degshift:=degree phi;
+if degshift#0<=0 then print("Warning: Unprojection variable does not have positive degree.");
      if opt.verbose>1 then (
         print("phi: "|toString((entries gJ)#0)|" -> "|toString((entries phi)#0));
         print "";
@@ -568,7 +576,7 @@ R:=ring I;
      if I+J!=J then error("expected first ideal contained in second");
 M:=Hom(J,R^1/I);
 -- give some feedback on wrong input
-     if rank source gens M != 2 then (
+     if rank source gens M != 2 and rank source gens M != 1 then (
         for j from 0 to -1+rank source gens M do (
            phi:=homomorphism M_{j};
            gJ:=gens source phi;
@@ -577,12 +585,17 @@ M:=Hom(J,R^1/I);
         error("wrong number of generators");
      );
      if codim(I) != -1+codim(J) then error("expected codim 1 unprojection locus");
-f1:=homomorphism M_{0};
-f2:=homomorphism M_{1};
-if J+I==I+ideal (entries f1)#0 then (
- f2
+if rank source gens M == 1 then (
+  print "Warning: Ideal J is principle in R/I.";
+  return homomorphism M_{0};
 ) else (
- f1
+  f1:=homomorphism M_{0};
+  f2:=homomorphism M_{1};
+  if J+I==I+ideal (entries f1)#0 then (
+   return f2
+  ) else (
+   return f1
+  )
 ))
 
 
@@ -818,17 +831,6 @@ doc ///
       @TO stellarSubdivision@  -- Compute the stellar subdivision of a simplicial complex
 
 
-      {\bf Installation:}
-
-      Put the file {\it KustinMiller.m2} somewhere into the path of Macaulay2      
-      (usually into the directory .Macaulay2/code inside your home directory, type
-      path in M2 to see the path) and do inside M2
-
-      @TO installPackage@ "KustinMiller"
-      
-      This package requires {\it SimplicialComplexes.m2} Version 1.2 or higher,
-      so install this first.
-
 ///
 
 
@@ -903,8 +905,6 @@ doc ///
      print cc.dd_3
      print cc.dd_4
   SeeAlso
-    kustinMillerComplex
-    differentials
     unprojectionHomomorphism
 ///
 
