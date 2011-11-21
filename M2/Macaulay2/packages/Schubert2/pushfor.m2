@@ -61,7 +61,7 @@ pushFwd(RingMap):=(f)->
      
      -- Added, MES:
      phi := map(R,B,matrix{{y_1..y_n}});
-     toA := map(A,R,flatten{n:0_A, gens A});
+     toA := map(A,R,flatten{n:0_A, varsA});
      mapf := (b) -> (
 	  (mons,cfs) := coefficients((phi b) % I, Monomials => mat, Variables => {y_1..y_n});
 	  toA cfs
