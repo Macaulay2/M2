@@ -117,8 +117,9 @@ partition(Function,Tally) := (f,s) -> (
      applyValues(new HashTable from p, px -> new class s from px))
 partition(Function,VisibleList) := (f,s) -> (
      p := new MutableHashTable;
-     scan(s, x -> ( y := f x; if p#?y then p#y = (p#y,x) else p#y = 1:x; ));
-     applyValues(new HashTable from p, px -> new class s from deepSplice px))
+     scan(s, x -> ( y := f x; if p#?y then (p#y)#(#p#y) = x else p#y = new MutableHashTable from {(0,x)}));
+     p = pairs p;
+     new HashTable from apply(p, (k,v) -> (k,new class s from values v)))
 
 -----------------------------------------------------------------------------
 -- a first use of sets:
