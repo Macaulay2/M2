@@ -108,7 +108,7 @@ AbstractVarietyMap * AbstractVarietyMap := AbstractVarietyMap => (f,g) -> (
      useDefaultPullBack := (f.?DefaultPullBack) and (f.DefaultPullBack) and (g.?DefaultPullBack) and (g.DefaultPullBack);
      useDefaultPushForward := (f.?DefaultPushForward) and (f.DefaultPushForward) and (g.?DefaultPushForward) and (g.DefaultPushForward);
      sec := if g.?SectionClass and f.?SectionClass and (lookup(g^*, AbstractSheaf) =!= null) then g.SectionClass * g^* f.SectionClass else null;
-     tbundle := if f.?TangentBundle and g.?TangentBundle and (lookup(g^*, AbstractSheaf) =!= null) then g^*(tangentBundle f) - tangentBundle g else null;
+     tbundle := if f.?TangentBundle and g.?TangentBundle and (lookup(g^*, AbstractSheaf) =!= null) then g^*(tangentBundle f) + tangentBundle g else null;
      pbmethod := method();
      pbmethod TargRing := a -> g^* f^* a;
      if not useDefaultPullBack then (
