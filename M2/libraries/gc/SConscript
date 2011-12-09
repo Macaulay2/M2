@@ -1,0 +1,35 @@
+import os.path
+import shutil
+import subprocess
+
+Import('state')
+
+def extractPackageName(package):
+   package = package.replace('.tar.gz','')
+   package = package.replace('.tar.bz2','')
+   return package
+
+def buildLibrary(target,source,env):
+   source = source[0].rstr()
+   sourceFile = os.path.split(source)[1]
+   packagename = extractPackageName(sourceFile)
+   buildpath = env.state[env.mode]['buildpath']
+   tarpath = env.state[env.mode]['tarpath']
+   if(not os.path.isdir(source)):
+      newdir = env.state[env.mode]['buildpath']
+      shutil.copy(source,newdir)
+      tarp = subprocess.Popen(['tar', '-xvf',sourceFile],cwd=buildpath)
+      if(tarp.wait()):
+         raise Exception("Unable to untar " + packagename)
+   realpath = buildpath+packagename+'/'
+   configp = subprocess.Popen([os.path.abspath(realpath)+'/configure','--enable-threads=posix','--enable-parallel-mark','--disable-shared'],cwd=realpath)
+   if(configp.wait()):
+      raise Exception("Unable to configure GC")
+   makep = subprocess.Popen(['make'],cwd=realpath)
+   if(makep.wait()):
+      raise Exception("Unable to make GC")
+   
+   return None
+for mode in state.keys():
+   if(state[mode]['build']):
+      state[mode]['env'].Append(BUILDERS = {'build_gc' : Builder(action=buildLibrary, single_source=1)})

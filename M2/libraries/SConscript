@@ -1,0 +1,51 @@
+import os.path
+Import('state')
+def Glob( pattern = '*.*', dir = '.' ):
+    import os, fnmatch
+    files = []
+    for file in os.listdir( Dir(dir).srcnode().abspath ):
+        if fnmatch.fnmatch(file, pattern) :
+            files.append( file )
+    return files
+
+#This part of the code is designed to build state[mode]['existingpackages'] a list of existing packages.
+for mode in state.keys():
+    state[mode]['existingpackages']=set()
+    if(state[mode]['build']==False):
+        continue
+    buildpath = '../'+state[mode]['buildpath']
+    if(not os.path.isdir(buildpath)):
+       os.makedirs(buildpath)
+    for partialPath in os.listdir(buildpath):
+        if(os.path.isdir(buildpath+partialPath)):
+            state[mode]['existingpackages'].add(partialPath)
+
+#This part of the code is designed to build up packages and packageBases, a list of compressed packages and their base part (without extension) in the mpackages directory.
+packages = Glob(pattern='*.tar.gz')+Glob(pattern='*.tar.bz2')
+packageBases = set()
+for package in packages:
+    package = package.replace('.tar.gz','')
+    package = package.replace('.tar.bz2','')
+    packageBases.add(package)
+#This part of the code is designed to make directories for nonexisting packages and extract their contents.
+for package in packageBases:
+    for mode in state.keys():
+        if(state[mode]['build']==True):
+            if(not package in state[mode]['existingpackages']):
+                Execute(Mkdir(state[mode]['buildpath']+str(package)))
+#Create environments for dependencies.
+for mode in state.keys():
+    if(state[mode]['build']):
+        env = Environment()
+        env.mode = mode
+        env.state = state
+        state[mode]['env']=env
+
+#Import SConscript files for packages.
+import re
+for package in packageBases:
+    package = re.match('\A[0-9,a-z,A-Z]+',package).group(0)
+    SConscript(package+'/SConscript',exports={'state':state})
+SConscript('gc/SConscript',exports={'state':state})
+state['debug']['env'].build_gc('debug','../'+state['debug']['tarpath']+'gc-7.2alpha7.tar.gz')
+state['release']['env'].build_gc('release','../'+state['release']['tarpath']+'gc-7.2alpha7.tar.gz')

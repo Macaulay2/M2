@@ -1,0 +1,18 @@
+state = {
+    'debug':{
+        'includepath':'local/debug/include/',
+        'buildpath':'BUILD/debug/',
+        'tarpath':'BUILD/tarfiles/',
+        'build':True
+        },
+    'release':{
+      'includepath':'local/release/include/',
+      'buildpath':'BUILD/release/',
+        'tarpath':'BUILD/tarfiles/',
+      'build':True
+      }
+}
+
+SConscript('libraries/SConscript',exports={'state':state})
+#SConscript('Macaulay2/SConscript',exports={'state':state})
+
