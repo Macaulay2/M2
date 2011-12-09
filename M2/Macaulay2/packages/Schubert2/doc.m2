@@ -710,6 +710,8 @@ Node
     abstractVariety
     [abstractVariety,ReturnType]
     ReturnType
+    [abstractVariety,DefaultIntegral]
+    DefaultIntegral
   Headline
     make an abstract variety
   Usage
@@ -720,6 +722,7 @@ Node
      of degree length 1
     ReturnType => Type
      a type of AbstractVariety
+    DefaultIntegral => Boolean
   Outputs
    :
     of dimension {\tt d} whose intersection ring is {\tt A} and whose @ TO class @
@@ -733,7 +736,7 @@ Node
     display monomials of higher degree further to the right, parenthesizing multiple
     terms of the same degree.
    Item
-    A default method for integration of elements of the intersection ring is installed, which returns a
+    Unless @ TO DefaultIntegral @ is set to false, a default method for integration of elements of the intersection ring is installed, which returns a
     formal @ TO2{Expression,"expression"} @ representing the integral of the degree $d$ part of the element when $d$ is
     greater than zero, and simply returns the degree 0 part of the element when $d$ is zero.
   Description

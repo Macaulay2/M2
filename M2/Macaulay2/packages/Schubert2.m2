@@ -34,7 +34,7 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "toSchubertBasis", "Correspondence", "IncidenceCorrespondence", "intermediates",
      "incidenceCorrespondence","SchubertRing",
      "tautologicalLineBundle", "bundles", "schubertRing",
-     "DefaultPushForward", "DefaultPullBack", "abstractVarietyMap"}
+     "DefaultPushForward", "DefaultPullBack", "DefaultIntegral", "abstractVarietyMap"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
 protect ChernCharacter
@@ -262,7 +262,7 @@ bydegree := net -> f -> (
      tms = apply(tms, e -> if instance(e,Sum) then new Parenthesize from {e} else e);
      net new Sum from tms)
 
-abstractVariety = method(TypicalValue => AbstractVariety, Options => { ReturnType => AbstractVariety })
+abstractVariety = method(TypicalValue => AbstractVariety, Options => { ReturnType => AbstractVariety, DefaultIntegral => true})
 abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      if A.?VarietyDimension then error "ring already in use as an intersection ring";
      if ultimate(coefficientRing,A) =!= QQ then error "expected a QQ-algebra";
@@ -271,7 +271,7 @@ abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      net A := bydegree net;
      toString A := bydegree toString;
      if not ancestor(AbstractVariety,opts#ReturnType) then error "expected value of ReturnType option to be a type of AbstractVariety";
-     integral A := (
+     if opts.DefaultIntegral then integral A := (
 	  if d === 0
 	  then x -> part(d,x)
 	  else x -> (hold integral) part(d,x)
