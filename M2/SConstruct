@@ -1,17 +1,87 @@
+defaultModes = 'debug'
+AddOption('--deepcleanlib',dest='deepcleanlib',nargs=1,action='store',type='string',help='Remove all libraries or the specified library only')
+AddOption('--cleanlib',dest='cleanlib',nargs=1,action='store',type='string',help='Clean all libraries or the specified library only')
+AddOption('--configlib',dest='configlib',nargs=1,action='store',type='string',help='Reconfigure and remake the specified library only')
+AddOption('--makelib',dest='makelib',nargs=1,action='store',type='string',help='Remake the specified library only')
+AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='release,debug',help='One or more modes to build separated by commas.  Defaults to ' + defaultModes)
+
 state = {
     'debug':{
         'includepath':'local/debug/include/',
         'buildpath':'BUILD/debug/',
         'tarpath':'BUILD/tarfiles/',
-        'build':True
+        'build':False,
+	'libspecific':{ }
         },
     'release':{
       'includepath':'local/release/include/',
       'buildpath':'BUILD/release/',
         'tarpath':'BUILD/tarfiles/',
-      'build':True
-      }
+      'build':False,
+      'libspecific':{}
+      },
+    'modes':set(['debug','release']),
+    'build':True,
+    'clean':False
 }
+def setLibSpecific(mode, lib, opt ,val):
+    """
+    Set the library specific option to val for option opt for library lib for the given mode.
+    """
+    if(state[mode]['libspecific'].get(lib)==None):
+        state[mode]['libspecific'][lib]={}
+    state[mode]['libspecific'][lib][opt]=val
+def getLibSpecific(mode,lib, opt):
+    """
+    Get the library specific option for option opt, library lib, and mode mode.
+    """
+    try:
+        return state[mode]['libspecific'][lib][opt]
+    except KeyError:
+        return None
+
+if(GetOption('clean')!=None):
+    state['build']=False
+    state['clean']=True
+modes = GetOption('modes')
+splitModes = modes.split(',')
+for mode in splitModes:
+    try:
+        state[mode]['build']=mode
+        #handle clean lib
+        if(GetOption('cleanlib')!=None):
+            if(GetOption('cleanlib')=='all'):
+                state[mode]['cleanlib']=True
+            else:
+                splitCleanLib = GetOption('cleanlib').split(',')
+                for s in splitCleanLib:
+                    setLibSpecific(mode,s,'clean',True)
+        #handle deep clean
+        if(GetOption('deepcleanlib')!=None):
+            if(GetOption('deepcleanlib')=='all'):
+                state[mode]['deepcleanlib']=True
+            else:
+                splitDeepCleanLib = GetOption('deepcleanlib').split(',')
+                for s in splitDeepCleanLib:
+                    setLibSpecific(mode,s,'deepclean',True)
+        #handle configlib
+        if(GetOption('configlib')!=None):
+            if(GetOption('configlib')=='all'):
+                state[mode]['configlib']=True
+            else:
+                splitConfigLib = GetOption('configlib').split(',')
+                for s in splitConfigLib:
+                    setLibSpecific(mode,s,'configlib',True)            
+        #handle makelib
+        if(GetOption('makelib')!=None):
+            if(GetOption('makelib')=='all'):
+                state[mode]['makelib']=True
+            else:
+                splitMakeLib = GetOption('configlib').split(',')
+                for s in splitMakeLib:
+                    setLibSpecific(mode,s,'configlib',True)            
+    except KeyError:
+        raise Exception('Unknown mode: "' + mode + '"')
 
 SConscript('libraries/SConscript',exports={'state':state})
 #SConscript('Macaulay2/SConscript',exports={'state':state})

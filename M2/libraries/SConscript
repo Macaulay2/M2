@@ -1,4 +1,5 @@
 import os.path
+import re
 Import('state')
 def Glob( pattern = '*.*', dir = '.' ):
     import os, fnmatch
@@ -8,44 +9,125 @@ def Glob( pattern = '*.*', dir = '.' ):
             files.append( file )
     return files
 
-#This part of the code is designed to build state[mode]['existingpackages'] a list of existing packages.
-for mode in state.keys():
-    state[mode]['existingpackages']=set()
-    if(state[mode]['build']==False):
-        continue
-    buildpath = '../'+state[mode]['buildpath']
+def modeBuild(mode):
+    """
+    This function returns true if the mode should be built, false otherwise.
+    """
+    return state[mode]['build']
+
+def modeBuildPath(mode):
+    """
+    This function returns the build path for the current mode.
+    """
+    return "../"+state[mode]['buildpath']
+
+def modeTarPath(mode):
+    """
+    This function returns the tar path for the current mode.
+    """
+    return '../'+state[mode]['tarpath']
+
+def modeBuildPackageSets(mode):
+    """
+    This function is responsible for building lists of packages to build.
+    It returns:
+    A set of packages present
+    A set of base packages present (defined to be the packages minus any extensions).
+    """
+    tarpath = modeTarPath(mode)
+    packages = set(Glob(pattern='*.tar.gz',dir=tarpath)+Glob(pattern='*.tar.bz2',dir=tarpath))
+    packageBases = set()
+    for package in packages:
+        package = extractPackageName(package)
+        packageBases.add(package)
+    return packages, packageBases
+    
+def modeBuildExistingPackages(mode):
+    """
+    This function is responsible for building lists of existing packages.
+    An existing package is one that exists in the build directory.
+    """
+    existingPackages = set()
+    buildpath = modeBuildPath(mode)
+    #Make the directory if it does not already exist.
     if(not os.path.isdir(buildpath)):
        os.makedirs(buildpath)
+    #Check for existing packages by looking at directories in the build path.
     for partialPath in os.listdir(buildpath):
-        if(os.path.isdir(buildpath+partialPath)):
-            state[mode]['existingpackages'].add(partialPath)
+        if(not os.path.isdir(buildpath+partialPath)):
+            continue
+        if(partialPath[0]=='.'):
+            continue
+        existingPackages.add(partialPath)
+    state[mode]['existingpackages']=existingPackages
+    return existingPackages
 
-#This part of the code is designed to build up packages and packageBases, a list of compressed packages and their base part (without extension) in the mpackages directory.
-packages = Glob(pattern='*.tar.gz')+Glob(pattern='*.tar.bz2')
-packageBases = set()
-for package in packages:
+def modeBuildEnvironments(mode):
+    """
+    This function creates environments for the libraries to use.
+    """
+    if(not modeBuild(mode)):
+        return
+    env = Environment()
+    env.mode = mode
+    env.state = state
+    state[mode]['env']=env
+
+def extractPackageName(package):
+    """
+    This function extracts the package name from a file.
+    This is the file name minus the extension.
+    """
+    if(package.find('nauty')==0):
+        return 'nauty'
+    if(package.find('gfan')==0):
+        return 'gfan'
+    if(package.find('cdd+')==0):
+        return 'cddplus'
     package = package.replace('.tar.gz','')
     package = package.replace('.tar.bz2','')
-    packageBases.add(package)
-#This part of the code is designed to make directories for nonexisting packages and extract their contents.
-for package in packageBases:
-    for mode in state.keys():
-        if(state[mode]['build']==True):
-            if(not package in state[mode]['existingpackages']):
-                Execute(Mkdir(state[mode]['buildpath']+str(package)))
-#Create environments for dependencies.
-for mode in state.keys():
-    if(state[mode]['build']):
-        env = Environment()
-        env.mode = mode
-        env.state = state
-        state[mode]['env']=env
+    return package
 
-#Import SConscript files for packages.
-import re
-for package in packageBases:
-    package = re.match('\A[0-9,a-z,A-Z]+',package).group(0)
-    SConscript(package+'/SConscript',exports={'state':state})
-SConscript('gc/SConscript',exports={'state':state})
+def extractPackageBaseName(package):
+    """
+    This extracts the package base name from a file.
+    This is the beginning of the file name up to the first non-alpha numeric character.
+    """
+    return re.match('\A[0-9,a-z,A-Z]+',package).group(0)
+
+#This holds a set of SConscripts that have already been imported.
+importedSConscripts = set()
+def modeImportSConscript(mode,packageBases):
+    """
+    This function imports SConscripts for packages.
+    """
+    for package in packageBases:
+        package = extractPackageBaseName(package)
+        if(not package in importedSConscripts):
+            SConscript(package+'/SConscript',exports={'state':state,'extractPackageName':extractPackageName,'extractPackageBaseName':extractPackageBaseName})
+            importedSConscripts.add(package)
+
+    
+def modeSpecific1(mode):
+    """
+    This is the first call to set up modes.
+    """
+    if(state[mode]['build']==False):
+        return
+    packages,packageBases = modeBuildPackageSets(mode)
+    existingPackages = modeBuildExistingPackages(mode)
+    modeBuildEnvironments(mode)
+    state[mode]['packagebases']=packageBases
+
+def modeSpecific2(mode):
+    if(modeBuild(mode)):
+        modeImportSConscript(mode,state[mode]['packagebases'])
+
+#Setup the various modes.
+for mode in state['modes']:
+    modeSpecific1(mode)
+for mode in state['modes']:
+    modeSpecific2(mode)
+
 state['debug']['env'].build_gc('debug','../'+state['debug']['tarpath']+'gc-7.2alpha7.tar.gz')
 state['release']['env'].build_gc('release','../'+state['release']['tarpath']+'gc-7.2alpha7.tar.gz')

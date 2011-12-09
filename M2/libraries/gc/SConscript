@@ -2,34 +2,56 @@ import os.path
 import shutil
 import subprocess
 
-Import('state')
-
-def extractPackageName(package):
-   package = package.replace('.tar.gz','')
-   package = package.replace('.tar.bz2','')
-   return package
+Import('state','extractPackageName','extractPackageBaseName')
 
 def buildLibrary(target,source,env):
    source = source[0].rstr()
    sourceFile = os.path.split(source)[1]
-   packagename = extractPackageName(sourceFile)
+   packageName = extractPackageName(sourceFile)
+   packageBaseName = extractPackageBaseName(packageName)
+   libspecific = state[mode]['libspecific'].get(packageBaseName)
+   if(libspecific==None):
+      libspecific = {}
    buildpath = env.state[env.mode]['buildpath']
    tarpath = env.state[env.mode]['tarpath']
-   if(not os.path.isdir(source)):
-      newdir = env.state[env.mode]['buildpath']
+   newdir = env.state[env.mode]['buildpath']
+   realpath = buildpath+packageName+'/'
+   cleaned = cleanLibrary(env.mode,realpath,packageBaseName)
+   #newdir is for detection if we have created a new directory.
+   #if we have, we always want to build.
+   newdir = False
+   if(not os.path.isdir(realpath)):
       shutil.copy(source,newdir)
       tarp = subprocess.Popen(['tar', '-xvf',sourceFile],cwd=buildpath)
       if(tarp.wait()):
-         raise Exception("Unable to untar " + packagename)
-   realpath = buildpath+packagename+'/'
-   configp = subprocess.Popen([os.path.abspath(realpath)+'/configure','--enable-threads=posix','--enable-parallel-mark','--disable-shared'],cwd=realpath)
-   if(configp.wait()):
-      raise Exception("Unable to configure GC")
-   makep = subprocess.Popen(['make'],cwd=realpath)
-   if(makep.wait()):
-      raise Exception("Unable to make GC")
+         raise Exception("Unable to untar " + packageName + ".")
+   if(newdir == True or libspecific.get('configure')==True):
+      configp = subprocess.Popen([os.path.abspath(realpath)+'/configure','--enable-threads=posix','--enable-parallel-mark','--disable-shared'],cwd=realpath)
+      if(configp.wait()):
+         raise Exception("Unable to configure " + packageName + ".")
+   if(newdir == True or libspecific.get('configure')==True or libspecific.get('make')==True or cleaned):
+      makep = subprocess.Popen(['make'],cwd=realpath)
+      if(makep.wait()):
+         raise Exception("Unable to make " + packageName + ".")
    
    return None
-for mode in state.keys():
+
+def cleanLibrary(mode,directory,packageBaseName):
+   libspecific = state[mode]['libspecific'].get(packageBaseName)
+   if(libspecific==None):
+      libspecific={}
+   if(state[mode].get('deepcleanlib')==True or libspecific.get('deepclean')==True):
+      print 'Deleting build directory for: ' + packageBaseName + ' at ' + directory
+      Delete(directory)
+      return True
+   if(state[mode].get('cleanlib')==True or libspecific.get('clean')==True):
+      print 'Cleaning ' + packageBaseName + ' at ' + directory
+      cleanp = subprocess.Popen(['make','clean'],cwd=directory)
+      if(cleanp.wait()):
+         raise Exception("Unable to clean " + packageBaseName)
+      return True
+   return False
+
+for mode in state['modes']:
    if(state[mode]['build']):
       state[mode]['env'].Append(BUILDERS = {'build_gc' : Builder(action=buildLibrary, single_source=1)})
