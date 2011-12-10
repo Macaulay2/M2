@@ -6,83 +6,167 @@ AddOption('--makelib',dest='makelib',nargs=1,action='store',type='string',help='
 AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='release,debug',help='One or more modes to build separated by commas.  Defaults to ' + defaultModes)
 
 state = {
-    'debug':{
-        'includepath':'local/debug/include/',
-        'buildpath':'BUILD/debug/',
-        'tarpath':'BUILD/tarfiles/',
-        'build':False,
-	'libspecific':{ }
+    'linux-x86_64':
+        {
+        'debug':{
+            'includepath':'local/debug/include/',
+            'buildpath':'BUILD/debug/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{ }
+            },
+        'release':{
+            'includepath':'local/release/include/',
+            'buildpath':'BUILD/release/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{}
+            },
+        'modes':set(['debug','release']),
         },
-    'release':{
-      'includepath':'local/release/include/',
-      'buildpath':'BUILD/release/',
-        'tarpath':'BUILD/tarfiles/',
-      'build':False,
-      'libspecific':{}
-      },
-    'modes':set(['debug','release']),
+    'linux-x86':
+        {
+        'debug':{
+            'includepath':'local/debug/include/',
+            'buildpath':'BUILD/debug/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{ }
+            },
+        'release':{
+            'includepath':'local/release/include/',
+            'buildpath':'BUILD/release/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{}
+            },
+        'modes':set(['debug','release']),
+        },
+    'architectures':['linux-x86_64','linux-x86'],
     'build':True,
     'clean':False
 }
-def setLibSpecific(mode, lib, opt ,val):
+
+def getState(mode,architecture,attribute,exception=True):
     """
-    Set the library specific option to val for option opt for library lib for the given mode.
+    This returns the attribute requested for the given mode and architecture.
     """
-    if(state[mode]['libspecific'].get(lib)==None):
-        state[mode]['libspecific'][lib]={}
-    state[mode]['libspecific'][lib][opt]=val
-def getLibSpecific(mode,lib, opt):
+    if(mode == None or architecture == None or attribute == None):
+        raise Exception("Invalid arguments to getState")
+    adict = state.get(architecture)
+    if(adict == None):
+        raise KeyError("Unknown architecture: " + architecture)
+    mdict = adict.get(mode)
+    if(mdict == None):
+        raise KeyError("Unknown mode: " + mode)
+    value = mdict.get(attribute)
+    if(value is None):
+        if(exception):
+            raise KeyError("Unknown attribute: " + attribute)
+    return value
+
+def setState(mode,architecture,attribute,value):
     """
-    Get the library specific option for option opt, library lib, and mode mode.
+    This sets the attribute to the value for the given mode and architecture.
     """
+    if(mode == None or architecture == None or attribute == None):
+        raise Exception("Invalid arguments to getState")
+    adict = state.get(architecture)
+    if(adict == None):
+        raise KeyError("Unknown architecture: " + architecture)
+    mdict = adict.get(mode)
+    if(mdict == None):
+        raise KeyError("Unknown mode: " + mode)
+    mdict[attribute] = value
+
+def getLibSpecific(mode,architecture,libraryBaseName,attribute):
+    """
+    Get the library specific attribute for the given library, mode, and architecture.
+    """
+    if(libraryBaseName == None or attribute == None):
+        raise Exception("Invalid arguments to getLibSpecific")
     try:
-        return state[mode]['libspecific'][lib][opt]
+        libspecific = getState(mode,architecture,'libspecific')
     except KeyError:
         return None
+    return libspecific.get(attribute)
+    
+def setLibSpecific(mode,architecture,libraryBaseName,attribute,value):
+    """
+    This sets the given attribute for the given mode and architecture.
+    """
+    if(type(architecture)==list):
+        for arch in architecture:
+            setLibSpecific(mode,arch,libraryBaseName,attribute,value)
+        return
+    elif(architecture=='all'):
+        for arch in state['architectures']:
+            setLibSpecific(mode,arch,libraryBaseName,attribute,value)
+        return
+    elif(mode=='all'):
+        for lmode in state[architecture]['modes']:
+            setLibSpecific(lmode,architecture,libraryBaseName,attribute,value)
+        return
+    if(libraryBaseName == None or attribute == None):
+        raise Exception("Invalid arguments to getLibSpecific")
+    try:
+        libspecific = getState(mode,architecture,'libspecific')
+    except KeyError:
+        state[architecture][mode]['libspecific']={}
+    libspecific[attribute]=value  
 
 if(GetOption('clean')!=None):
     state['build']=False
     state['clean']=True
+architecture = 'linux-x86_64'
 modes = GetOption('modes')
 splitModes = modes.split(',')
 for mode in splitModes:
     try:
-        state[mode]['build']=mode
+        setState(mode,architecture,'build',True)
         #handle clean lib
         if(GetOption('cleanlib')!=None):
             if(GetOption('cleanlib')=='all'):
-                state[mode]['cleanlib']=True
+                setState(mode,architecture,'cleanlib',True)
             else:
                 splitCleanLib = GetOption('cleanlib').split(',')
                 for s in splitCleanLib:
-                    setLibSpecific(mode,s,'clean',True)
+                    setLibSpecific(mode,architecture,s,'clean',True)
         #handle deep clean
         if(GetOption('deepcleanlib')!=None):
             if(GetOption('deepcleanlib')=='all'):
-                state[mode]['deepcleanlib']=True
+                setState(mode,architecture,'deepcleanlib',True)
             else:
                 splitDeepCleanLib = GetOption('deepcleanlib').split(',')
                 for s in splitDeepCleanLib:
-                    setLibSpecific(mode,s,'deepclean',True)
+                    setLibSpecific(mode,architecture,s,'deepclean',True)
         #handle configlib
         if(GetOption('configlib')!=None):
             if(GetOption('configlib')=='all'):
-                state[mode]['configlib']=True
+                setState(mode,architecture,'configlib',True)
             else:
                 splitConfigLib = GetOption('configlib').split(',')
                 for s in splitConfigLib:
-                    setLibSpecific(mode,s,'configlib',True)            
+                    setLibSpecific(mode,architecture,s,'config',True)            
         #handle makelib
         if(GetOption('makelib')!=None):
             if(GetOption('makelib')=='all'):
-                state[mode]['makelib']=True
+                setState(mode,architecture,'makelib',True)
             else:
-                splitMakeLib = GetOption('configlib').split(',')
+                splitMakeLib = GetOption('makelib').split(',')
                 for s in splitMakeLib:
-                    setLibSpecific(mode,s,'configlib',True)            
+                    setLibSpecific(mode,architecture,s,'make',True)            
     except KeyError:
         raise Exception('Unknown mode: "' + mode + '"')
 
-SConscript('libraries/SConscript',exports={'state':state})
+SConscript('libraries/SConscript',exports=
+           {
+        'state':state,
+        'getLibSpecific':getLibSpecific,
+        'setLibSpecific':setLibSpecific,
+        'getState':getState,
+        'setState':setState,
+        'architecture':architecture
+        })
 #SConscript('Macaulay2/SConscript',exports={'state':state})
 

@@ -1,57 +1,47 @@
 import os.path
 import shutil
 import subprocess
-
-Import('state','extractPackageName','extractPackageBaseName')
-
-def buildLibrary(target,source,env):
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv','configureLibrary','makeLibrary','deepCleanLibrary','cleanLibrary','architecture')
+#set this to library name
+libraryName = 'gc'
+#Library specific declarations go here.
+setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
+setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CXXFLAGS','-g -O2')
+setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'FFLAGS','-g -O2')
+setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'FCFLAGS','-g -O2')
+setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
+setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecific('all','all','libraryName','configureArguments',['--enable-threads=posix','--enable-parallel-mark','--disable-shared','--enable-large-config','--disable-gcj-support','--disable-java-finalization'])
+   
+def BuildLibrary(target,source,env):
+   """
+   Build target for the library.
+   """
    source = source[0].rstr()
    sourceFile = os.path.split(source)[1]
    packageName = extractPackageName(sourceFile)
-   packageBaseName = extractPackageBaseName(packageName)
-   libspecific = state[mode]['libspecific'].get(packageBaseName)
-   if(libspecific==None):
-      libspecific = {}
-   buildpath = env.state[env.mode]['buildpath']
-   tarpath = env.state[env.mode]['tarpath']
-   newdir = env.state[env.mode]['buildpath']
-   realpath = buildpath+packageName+'/'
-   cleaned = cleanLibrary(env.mode,realpath,packageBaseName)
-   #newdir is for detection if we have created a new directory.
-   #if we have, we always want to build.
-   newdir = False
-   if(not os.path.isdir(realpath)):
-      shutil.copy(source,newdir)
-      tarp = subprocess.Popen(['tar', '-xvf',sourceFile],cwd=buildpath)
-      if(tarp.wait()):
-         raise Exception("Unable to untar " + packageName + ".")
-   if(newdir == True or libspecific.get('configure')==True):
-      configp = subprocess.Popen([os.path.abspath(realpath)+'/configure','--enable-threads=posix','--enable-parallel-mark','--disable-shared'],cwd=realpath)
-      if(configp.wait()):
-         raise Exception("Unable to configure " + packageName + ".")
-   if(newdir == True or libspecific.get('configure')==True or libspecific.get('make')==True or cleaned):
-      makep = subprocess.Popen(['make'],cwd=realpath)
-      if(makep.wait()):
-         raise Exception("Unable to make " + packageName + ".")
-   
+   cleaned = CleanLibrary(env.mode,architecture,libraryName)
+   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
    return None
 
-def cleanLibrary(mode,directory,packageBaseName):
-   libspecific = state[mode]['libspecific'].get(packageBaseName)
-   if(libspecific==None):
-      libspecific={}
-   if(state[mode].get('deepcleanlib')==True or libspecific.get('deepclean')==True):
-      print 'Deleting build directory for: ' + packageBaseName + ' at ' + directory
-      Delete(directory)
+def CleanLibrary(mode,directory,packageBaseName):
+   """
+   Actual function that gets called to process a clean library command
+   """
+   if(deepCleanLibrary(mode,architecture,libraryName)):
       return True
-   if(state[mode].get('cleanlib')==True or libspecific.get('clean')==True):
-      print 'Cleaning ' + packageBaseName + ' at ' + directory
-      cleanp = subprocess.Popen(['make','clean'],cwd=directory)
-      if(cleanp.wait()):
-         raise Exception("Unable to clean " + packageBaseName)
-      return True
+   if(cleanLibrary(mode,architecture,libraryName)):
+      return True   
    return False
 
-for mode in state['modes']:
-   if(state[mode]['build']):
-      state[mode]['env'].Append(BUILDERS = {'build_gc' : Builder(action=buildLibrary, single_source=1)})
+for mode in state[architecture]['modes']:
+   if(getState(mode,architecture,'build')):
+      builder = Builder(action=BuildLibrary, single_source=1)
+      print state[architecture][mode]['env']
+      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
+      if(state[architecture][mode].get('builders')==None):
+         setState(mode,architecture,'builders',{})
+      getState(mode,architecture,'builders')[libraryName]=builder
+

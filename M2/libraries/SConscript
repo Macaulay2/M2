@@ -1,6 +1,8 @@
 import os.path
 import re
-Import('state')
+import subprocess
+import shutil
+Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture')
 def Glob( pattern = '*.*', dir = '.' ):
     import os, fnmatch
     files = []
@@ -9,32 +11,32 @@ def Glob( pattern = '*.*', dir = '.' ):
             files.append( file )
     return files
 
-def modeBuild(mode):
+def modeBuild(mode,architecture):
     """
     This function returns true if the mode should be built, false otherwise.
     """
-    return state[mode]['build']
+    return getState(mode,architecture,'build')
 
-def modeBuildPath(mode):
+def modeBuildPath(mode,architecture):
     """
     This function returns the build path for the current mode.
     """
-    return "../"+state[mode]['buildpath']
+    return "../"+getState(mode,architecture,'buildpath')
 
-def modeTarPath(mode):
+def modeTarPath(mode,architecture):
     """
     This function returns the tar path for the current mode.
     """
-    return '../'+state[mode]['tarpath']
+    return '../'+getState(mode,architecture,'tarpath')
 
-def modeBuildPackageSets(mode):
+def modeBuildPackageSets(mode,architecture):
     """
     This function is responsible for building lists of packages to build.
     It returns:
     A set of packages present
     A set of base packages present (defined to be the packages minus any extensions).
     """
-    tarpath = modeTarPath(mode)
+    tarpath = modeTarPath(mode,architecture)
     packages = set(Glob(pattern='*.tar.gz',dir=tarpath)+Glob(pattern='*.tar.bz2',dir=tarpath))
     packageBases = set()
     for package in packages:
@@ -42,13 +44,13 @@ def modeBuildPackageSets(mode):
         packageBases.add(package)
     return packages, packageBases
     
-def modeBuildExistingPackages(mode):
+def modeBuildExistingPackages(mode,architecture):
     """
     This function is responsible for building lists of existing packages.
     An existing package is one that exists in the build directory.
     """
     existingPackages = set()
-    buildpath = modeBuildPath(mode)
+    buildpath = modeBuildPath(mode,architecture)
     #Make the directory if it does not already exist.
     if(not os.path.isdir(buildpath)):
        os.makedirs(buildpath)
@@ -59,19 +61,19 @@ def modeBuildExistingPackages(mode):
         if(partialPath[0]=='.'):
             continue
         existingPackages.add(partialPath)
-    state[mode]['existingpackages']=existingPackages
+    setState(mode,architecture,'existingpackages',existingPackages)
     return existingPackages
 
-def modeBuildEnvironments(mode):
+def modeBuildEnvironments(mode,architecture):
     """
     This function creates environments for the libraries to use.
     """
-    if(not modeBuild(mode)):
+    if(not modeBuild(mode,architecture)):
         return
     env = Environment()
     env.mode = mode
     env.state = state
-    state[mode]['env']=env
+    setState(mode,architecture,'env',env)
 
 def extractPackageName(package):
     """
@@ -95,8 +97,117 @@ def extractPackageBaseName(package):
     """
     return re.match('\A[0-9,a-z,A-Z]+',package).group(0)
 
+def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName):
+   """
+   This untars the library if the appropriate state flags are set.
+   Source is the source file.
+   """
+   #Source file is the file name of the tarball.
+   sourceFile = os.path.split(source)[1]
+   #Buildpath is the build directory
+   buildpath = getState(mode,architecture,'buildpath')
+   #realpath is the path to extract to.
+   realpath = buildpath+libraryName+'/'
+   #Check to see if it has already been extracted.
+   if(not os.path.isdir(realpath)):
+      #If not, copy the tarball and extract it.
+       shutil.copy(source,buildpath)
+       tarp = subprocess.Popen(['tar', '-xvf',sourceFile],cwd=buildpath)
+       if(tarp.wait()):
+           raise Exception("Unable to untar " + libraryName + ".")
+       setLibSpecific(mode,architecture,libraryBaseName,'config',True)
+       return True
+   else:
+       return False
+
+def transferEnv(env,mode,architecture,library,attr):
+   """
+   If the given library specific attribute exists for the given mode and architecture, set it in the env dictionary
+   """
+   s = getLibSpecific(mode,architecture,library,attr)
+   if(s):
+      env[attr]=s
+
+def configureLibrary(state, mode, architecture, source, packageName, libraryBaseName):
+   """
+   Configure the given library
+   """
+   #Source file is the file name of the tarball.
+   sourceFile = os.path.split(source)[1]
+   #Buildpath is the build directory
+   buildpath = getState(mode,architecture,'buildpath')
+   #realpath is the path to extract to.
+   realpath = buildpath+packageName+'/'
+   if(getLibSpecific(mode,architecture,packageName,'config')==True):
+       args = [os.path.abspath(realpath)+'/configure']
+       configureArguments = getLibSpecific(mode,architecture,libraryBaseName,'configureArguments')
+       if(configureArguments!=None):
+           args = args + configureArguments
+       newEnv = os.environ
+       transferEnv(newEnv,mode,architecture,libraryBaseName,'CFLAGS')
+       transferEnv(newEnv,mode,architecture,libraryBaseName,'CXXFLAGS')
+       transferEnv(newEnv,mode,architecture,libraryBaseName,'FFLAGS')
+       transferEnv(newEnv,mode,architecture,libraryBaseName,'FCFLAGS')
+       transferEnv(newEnv,mode,architecture,libraryBaseName,'CC')
+       transferEnv(newEnv,mode,architecture,libraryBaseName,'CXX')
+       configp = subprocess.Popen(args,cwd=realpath,env=newEnv)
+       if(configp.wait()):
+           raise Exception("Unable to configure " + packageName + ".")
+       setLibSpecific(mode,architecture,libraryBaseName,'make',True)       
+
+def makeLibrary(state, mode, architecture, source, packageName, libraryBaseName):
+   """
+   Make the given library
+   """
+   #Source file is the file name of the tarball.
+   sourceFile = os.path.split(source)[1]
+   #Buildpath is the build directory
+   buildpath = getState(mode,architecture,'buildpath')
+   #realpath is the path to extract to.
+   realpath = buildpath+packageName+'/'
+   if(getLibSpecific(mode,architecture,libraryBaseName,'make')==True):
+       makep = subprocess.Popen(['make'],cwd=realpath)
+       if(makep.wait()):
+           raise Exception("Unable to make " + packageName + ".")
+
+def deepCleanLibrary(mode, architecture, packageBaseName):
+    """
+    Deep clean the given library.
+    This removes the existing directory so the tarball will be reextracted
+    """
+    if(getState(mode,architecture,'deepcleanlib',exception=False)==True or getLibSpecific(mode,architecture,packageBaseName,'deepclean')==True):
+        existingPackages = getState(mode,architecture,'existingpackages')
+        for existing in existingPackages:
+            if(extractPackageBaseName(existing)==packageBaseName):
+                directory = getState(mode,architecture,'buildpath') + existing
+                print 'Deleting build directory for: ' + packageBaseName + ' at ' + directory
+                Execute(Delete(directory))
+        return True
+    else:
+        return False
+   
+def cleanLibrary(mode, architecture, packageBaseName):
+    """
+    Clean the given library.
+    This is equivalent to make clean.
+    """
+    if(getState(mode,architecture,'cleanlib',exception=False)==True or getLibSpecific(mode,architecture,packageBaseName,'clean')==True):
+        existingPackages = getState(mode,architecture,'existingpackages')
+        for existing in existingPackages:
+            if(extractPackageBaseName(existing)==packageBaseName):
+                directory = getState(mode,architecture,'buildpath') + existing
+                print 'Cleaning ' + packageBaseName + ' at ' + directory
+                cleanp = subprocess.Popen(['make','clean'],cwd=directory)
+                if(cleanp.wait()):
+                    raise Exception("Unable to clean " + packageBaseName)
+                setLibSpecific(mode,architecture,packageBaseName,'make',True)
+        return True
+    else:
+        return False
+    
 #This holds a set of SConscripts that have already been imported.
 importedSConscripts = set()
+
 def modeImportSConscript(mode,packageBases):
     """
     This function imports SConscripts for packages.
@@ -104,30 +215,45 @@ def modeImportSConscript(mode,packageBases):
     for package in packageBases:
         package = extractPackageBaseName(package)
         if(not package in importedSConscripts):
-            SConscript(package+'/SConscript',exports={'state':state,'extractPackageName':extractPackageName,'extractPackageBaseName':extractPackageBaseName})
+            SConscript(package+'/SConscript',exports={
+                    'state':state,
+                    'extractPackageName':extractPackageName,
+                    'extractPackageBaseName':extractPackageBaseName,
+                    'getLibSpecific':getLibSpecific,
+                    'setLibSpecific':setLibSpecific,
+                    'getState':getState,
+                    'setState':setState,
+                    'untarLibrary':untarLibrary,
+                    'transferEnv':transferEnv,
+                    'configureLibrary':configureLibrary,
+                    'makeLibrary':makeLibrary,
+                    'deepCleanLibrary':deepCleanLibrary,
+                    'cleanLibrary':cleanLibrary,
+                    'architecture':architecture
+                    })
             importedSConscripts.add(package)
 
     
-def modeSpecific1(mode):
+def modeSpecific1(mode,architecture):
     """
     This is the first call to set up modes.
     """
-    if(state[mode]['build']==False):
+    if(getState(mode,architecture,'build')==False):
         return
-    packages,packageBases = modeBuildPackageSets(mode)
-    existingPackages = modeBuildExistingPackages(mode)
-    modeBuildEnvironments(mode)
-    state[mode]['packagebases']=packageBases
+    packages,packageBases = modeBuildPackageSets(mode,architecture)
+    existingPackages = modeBuildExistingPackages(mode,architecture)
+    modeBuildEnvironments(mode,architecture)
+    setState(mode,architecture,'packagebases',packageBases)
 
-def modeSpecific2(mode):
-    if(modeBuild(mode)):
-        modeImportSConscript(mode,state[mode]['packagebases'])
+def modeSpecific2(mode,architecture):
+    if(modeBuild(mode,architecture)):
+        modeImportSConscript(mode,getState(mode,architecture,'packagebases'))
 
 #Setup the various modes.
-for mode in state['modes']:
-    modeSpecific1(mode)
-for mode in state['modes']:
-    modeSpecific2(mode)
+for mode in state[architecture]['modes']:
+    modeSpecific1(mode,architecture)
+for mode in state[architecture]['modes']:
+    modeSpecific2(mode,architecture)
 
-state['debug']['env'].build_gc('debug','../'+state['debug']['tarpath']+'gc-7.2alpha7.tar.gz')
-state['release']['env'].build_gc('release','../'+state['release']['tarpath']+'gc-7.2alpha7.tar.gz')
+state[architecture]['debug']['env'].build_gc('debug','../'+getState('debug',architecture,'tarpath')+'gc-7.2alpha7.tar.gz')
+state[architecture]['release']['env'].build_gc('release','../'+getState('release',architecture,'tarpath')+'gc-7.2alpha7.tar.gz')

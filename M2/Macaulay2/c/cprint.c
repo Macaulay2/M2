@@ -376,11 +376,9 @@ static void cprintsomesizeof(node t, node arraylen){
 	       assert(arraylen != NULL);
 	       put(" + (");
 	       cprint(arraylen);
-	       put(")*sizeof(");
+	       put(" - 1)*sizeof(");
 	       cprint(typ);
-	       put(")-sizeof(");
-	       cprint(typ);
-	       put(")");
+	       put(")")
 	       }
 	  }
      }
@@ -395,11 +393,6 @@ static void cprintgetmem(node g){
   put(") ");
   put(pointer_to_atomic_memory(t) ? "GC_MALLOC_ATOMIC" : "GC_MALLOC");
   put("(");
-  cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
-  put(");\n");
-  put("if (0 == ");
-  cprint(s);
-  put(") outofmem2((size_t)");
   cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
   put(")");
 }
