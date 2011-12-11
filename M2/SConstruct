@@ -5,6 +5,7 @@ AddOption('--configlib',dest='configlib',nargs=1,action='store',type='string',he
 AddOption('--makelib',dest='makelib',nargs=1,action='store',type='string',help='Remake the specified library only')
 AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='release,debug',help='One or more modes to build separated by commas.  Defaults to ' + defaultModes)
 AddOption('--jj',dest='jj',nargs=1,action='store',type='int',default='1',help='Number of parallel sub-tasks to run for each build task')
+AddOption('--disable-parallel',dest='disableparallel',nargs=0,action='store',help='Disable parallel build')
 
 state = {
     'linux-x86_64':
@@ -129,19 +130,164 @@ def setLibSpecific(mode,architecture,libraryBaseName,attribute,value):
         llspec = libspecific[libraryBaseName] = { }
     llspec[attribute]=value
 
+def setLibSpecificConfigExport(mode,architecture,libraryBaseName,attribute,value):
+    """
+    Sets a library specific make export
+    """
+    makeenv = getLibSpecific(mode,architecture,libraryBaseName,'config env')
+    if(libspecific is None):
+        makeenv = setLibSpecific(mode,architecture,libraryBaseName,'config env')
+    makeenv[attribute]=value
+
 def setLibSpecificMakeExport(mode,architecture,libraryBaseName,attribute,value):
-    libspecific = getLibSpecific(mode,architecture,libraryBaseName,'make env')
-#    if(libspecific is None):
-        
+    """
+    Sets a library specific make export
+    """
+    makeenv = getLibSpecific(mode,architecture,libraryBaseName,'make env')
+    if(libspecific is None):
+        makeenv = setLibSpecific(mode,architecture,libraryBaseName,'make env')
+    makeenv[attribute]=value
 
 def setLibSpecificMakeInstallExport(mode,architecture,libraryBaseName,attribute,value):
-    libspecific = getLibSpecific(mode,architecture,libraryBaseName,'make install env')
+    makeenv = getLibSpecific(mode,architecture,libraryBaseName,'make env')
+    if(libspecific is None):
+        makeenv = setLibSpecific(mode,architecture,libraryBaseName,'make install env')
+    makeenv[attribute]=value
 
+def  determineNumberOfCPUs():
+    """
+    Number of virtual or physical CPUs on this system, i.e.
+    user/real as output by time(1) when called with an optimally scaling
+    userspace-only program
+    See: http://stackoverflow.com/questions/1006289/how-to-find-out-the-number-of-cpus-in-python
+    """
+    import os,re,subprocess
+    # Python 2.6+
+    try:
+        import multiprocessing
+        return multiprocessing.cpu_count()
+    except (ImportError,NotImplementedError):
+        pass
+
+    # POSIX
+    try:
+        res = int(os.sysconf('SC_NPROCESSORS_ONLN'))
+
+        if res > 0:
+            return res
+    except (AttributeError,ValueError):
+        pass
+
+    # Windows
+    try:
+        res = int(os.environ['NUMBER_OF_PROCESSORS'])
+
+        if res > 0:
+            return res
+    except (KeyError, ValueError):
+        pass
+
+    # BSD
+    try:
+        sysctl = subprocess.Popen(['sysctl', '-n', 'hw.ncpu'],
+                                      stdout=subprocess.PIPE)
+        scStdout = sysctl.communicate()[0]
+        res = int(scStdout)
+
+        if res > 0:
+            return res
+    except (OSError, ValueError):
+        pass
+
+    # Linux
+    try:
+        res = open('/proc/cpuinfo').read().count('processor\t:')
+
+        if res > 0:
+            return res
+    except IOError:
+        pass
+
+    # Solaris
+    try:
+        pseudoDevices = os.listdir('/devices/pseudo/')
+        expr = re.compile('^cpuid@[0-9]+$')
+
+        res = 0
+        for pd in pseudoDevices:
+            if expr.match(pd) != None:
+                res += 1
+
+        if res > 0:
+            return res
+    except OSError:
+        pass
+
+    # Other UNIXes (heuristic)
+    try:
+        try:
+            dmesg = open('/var/run/dmesg.boot').read()
+        except IOError:
+            dmesgProcess = subprocess.Popen(['dmesg'], stdout=subprocess.PIPE)
+            dmesg = dmesgProcess.communicate()[0]
+
+        res = 0
+        while '\ncpu' + str(res) + ':' in dmesg:
+            res += 1
+
+        if res > 0:
+            return res
+    except OSError:
+        pass
+
+    return 1
+
+#Number of cores.  Use this for autoscaling.
+numCore = determineNumberOfCPUs()
+#Number of subtasks
+numSubTasks = numCore
+
+def numberSubTasks():
+    """
+    Return the number of parallel make subtasks allowed.
+    """
+    return numSubTasks
+
+#Number of parallel jobs
+numJobs = determineNumberOfCPUs()
+
+def numberJobs():
+    """
+    Return the number of jobs the build is using
+    """
+    return numJobs
+
+#Original number of jobs (-j parameter)
+originalNumJobs = GetOption('num_jobs')
+#Set appropriate auto parallel settings.
+if(GetOption('disableparallel') is not None):
+    print 'Parallel build disabled'
+    numJobs = 1
+    numSubTasks = 1
+elif originalNumJobs==1:
+    SetOption('num_jobs', numCore)
+    print 'Autodetected ' + str(numCore) + ' CPUs.'
+else:
+    numJobs = originalNumJobs
+#If the user requested to specify number of subtasks, do it.
+if(GetOption('jj')):
+    numSubTasks=GetOption('jj')
+
+
+#Set the state based on if clean was requested.
 if(GetOption('clean')!=None):
     state['build']=False
     state['clean']=True
+#Current architecture to build under.
 architecture = 'linux-x86_64'
+#Requested build modes.
 modes = GetOption('modes')
+#List of modes requested to build.
 splitModes = modes.split(',')
 for mode in splitModes:
     try:
@@ -188,7 +334,9 @@ SConscript('libraries/SConscript',exports=
         'setLibSpecific':setLibSpecific,
         'getState':getState,
         'setState':setState,
-        'architecture':architecture
+        'architecture':architecture,
+        'numberJobs':numberJobs,
+        'numberSubTasks':numberSubTasks,
         })
 #SConscript('Macaulay2/SConscript',exports={'state':state})
 

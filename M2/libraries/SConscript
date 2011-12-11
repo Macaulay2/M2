@@ -3,7 +3,7 @@ import os.path
 import re
 import subprocess
 import shutil
-Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture')
+Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks')
 
 dependencies = {
     'mpfr':'mpir',
@@ -111,6 +111,24 @@ def extractPackageBaseName(package):
         return 'cddplus'
     return re.match('\A[0-9,a-z,A-Z]+',package).group(0)
 
+def getConfigureCommand(state,mode,architecture):
+    lsv = getLibSpecific(state,mode,architecture,"configure command")
+    if(lsv):
+        return lsv
+    return "configure"
+
+def getMakeCommand(state,mode,architecture):
+    lsv = getLibSpecific(state,mode,architecture,"make command")
+    if(lsv):
+        return lsv
+    return "make"
+
+def getMakeInstallCommand(state,mode,architecture):
+    lsv = getLibSpecific(state,mode,architecture,"make install command")
+    if(lsv):
+        return lsv
+    return "make install"
+
 def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName):
    """
    This untars the library if the appropriate state flags are set.
@@ -204,7 +222,7 @@ def makeLibrary(state, mode, architecture, source, packageName, libraryBaseName,
        if(extramake is not None):
            args = args + extramake
        if(getLibSpecific(mode,architecture,libraryBaseName,'enableParallelSubBuild')==True):
-           args = args + ['-j'+str(GetOption('jj'))]
+           args = args + ['-j'+str(numberSubTasks())]
            
        makep = subprocess.Popen(args,cwd=realpath,env=newEnv)
        if(makep.wait()):
