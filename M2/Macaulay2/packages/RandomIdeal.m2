@@ -194,7 +194,7 @@ randomBinomialIdeal(List, Ring) := Ideal => (L,S)->(
 
 randomSparseIdeal = method(TypicalValue => Ideal)
 randomSparseIdeal(Matrix, ZZ, ZZ) := Ideal => (B,s,n) -> (
-     -- B is a 1xn matrix of monomials
+     -- B is a 1xt matrix of monomials
      -- s is the size of each poly
      -- n is the number of polys
      S := ring B;
