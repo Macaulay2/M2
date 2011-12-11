@@ -1,7 +1,7 @@
 import os.path
 import shutil
 import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv','configureLibrary','makeLibrary','deepCleanLibrary','cleanLibrary','architecture')
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv','configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture')
 #set this to library name
 libraryName = 'gc'
 #Library specific declarations go here.
@@ -11,7 +11,7 @@ setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'FFLAGS','-g -
 setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'FCFLAGS','-g -O2')
 setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecific('all','all','libraryName','configureArguments',['--enable-threads=posix','--enable-parallel-mark','--disable-shared','--enable-large-config','--disable-gcj-support','--disable-java-finalization'])
+setLibSpecific('all','all',libraryName,'configureArguments',['--enable-threads=posix','--enable-parallel-mark','--disable-shared','--enable-large-config','--disable-gcj-support','--disable-java-finalization'])
    
 def BuildLibrary(target,source,env):
    """
@@ -24,6 +24,7 @@ def BuildLibrary(target,source,env):
    untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
    configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
    makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
    return None
 
 def CleanLibrary(mode,directory,packageBaseName):
@@ -39,7 +40,6 @@ def CleanLibrary(mode,directory,packageBaseName):
 for mode in state[architecture]['modes']:
    if(getState(mode,architecture,'build')):
       builder = Builder(action=BuildLibrary, single_source=1)
-      print state[architecture][mode]['env']
       getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
       if(state[architecture][mode].get('builders')==None):
          setState(mode,architecture,'builders',{})

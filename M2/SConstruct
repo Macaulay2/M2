@@ -4,19 +4,24 @@ AddOption('--cleanlib',dest='cleanlib',nargs=1,action='store',type='string',help
 AddOption('--configlib',dest='configlib',nargs=1,action='store',type='string',help='Reconfigure and remake the specified library only')
 AddOption('--makelib',dest='makelib',nargs=1,action='store',type='string',help='Remake the specified library only')
 AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='release,debug',help='One or more modes to build separated by commas.  Defaults to ' + defaultModes)
+AddOption('--jj',dest='jj',nargs=1,action='store',type='int',default='1',help='Number of parallel sub-tasks to run for each build task')
 
 state = {
     'linux-x86_64':
         {
         'debug':{
+            'prefixpath':'local/',
             'includepath':'local/debug/include/',
+            'libpath':'local/debug/lib',
             'buildpath':'BUILD/debug/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
             'libspecific':{ }
             },
         'release':{
+            'prefixpath':'local/',
             'includepath':'local/release/include/',
+            'libpath':'local/release/lib/',
             'buildpath':'BUILD/release/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
@@ -27,14 +32,18 @@ state = {
     'linux-x86':
         {
         'debug':{
+            'prefixpath':'local/',
             'includepath':'local/debug/include/',
+            'libpath':'local/debug/lib/',
             'buildpath':'BUILD/debug/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
             'libspecific':{ }
             },
         'release':{
+            'prefixpath':'local/',
             'includepath':'local/release/include/',
+            'libpath':'local/release/lib/',
             'buildpath':'BUILD/release/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
@@ -85,11 +94,12 @@ def getLibSpecific(mode,architecture,libraryBaseName,attribute):
     """
     if(libraryBaseName == None or attribute == None):
         raise Exception("Invalid arguments to getLibSpecific")
+
     try:
-        libspecific = getState(mode,architecture,'libspecific')
-    except KeyError:
+        libspecific = getState(mode,architecture,'libspecific')[libraryBaseName][attribute]
+    except KeyError, e:
         return None
-    return libspecific.get(attribute)
+    return libspecific
     
 def setLibSpecific(mode,architecture,libraryBaseName,attribute,value):
     """
@@ -112,8 +122,20 @@ def setLibSpecific(mode,architecture,libraryBaseName,attribute,value):
     try:
         libspecific = getState(mode,architecture,'libspecific')
     except KeyError:
-        state[architecture][mode]['libspecific']={}
-    libspecific[attribute]=value  
+        libspecific = state[architecture][mode]['libspecific']={}
+    try:
+        llspec = libspecific[libraryBaseName]
+    except:
+        llspec = libspecific[libraryBaseName] = { }
+    llspec[attribute]=value
+
+def setLibSpecificMakeExport(mode,architecture,libraryBaseName,attribute,value):
+    libspecific = getLibSpecific(mode,architecture,libraryBaseName,'make env')
+#    if(libspecific is None):
+        
+
+def setLibSpecificMakeInstallExport(mode,architecture,libraryBaseName,attribute,value):
+    libspecific = getLibSpecific(mode,architecture,libraryBaseName,'make install env')
 
 if(GetOption('clean')!=None):
     state['build']=False

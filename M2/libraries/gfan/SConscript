@@ -1,0 +1,52 @@
+import os.path
+import shutil
+import subprocess
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv','configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture')
+#set this to library name
+libraryName = 'gfan'
+#Library specific declarations go here.
+setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
+   
+def BuildLibrary(target,source,env):
+   """
+   Build target for the library.
+   """
+   source = source[0].rstr()
+   sourceFile = os.path.split(source)[1]
+   packageName = extractPackageName(sourceFile)
+   cleaned = CleanLibrary(env.mode,architecture,libraryName)
+   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+   if(getLibSpecific(env.mode,architecture,libraryName,'config')):
+	setLibSpecific(env.mode,architecture,libraryName,'make',True)
+   setLibSpecificMakeExport(env.mode,architecture,libraryName,'CC','gcc -I'+os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/include/'))
+   setLibSpecificMakeExport(env.mode,architecture,libraryName,'CCC','g++ -I'+os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/include/'))
+   setLibSpecificMakeExport(env.mode,architecture,libraryName,'CLINKER','ld -L'+os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/lib/'))
+   setLibSpecificMakeExport(env.mode,architecture,libraryName,'CCLINKER','ld -L'+os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/lib/'))
+ #  setLibSpecificMakeExport(env.mode,architecture,libraryName,'CDD_LINK_OPTIONS','-lcddgmp'
+  # setLibSpecificMakeInstallExport(env.mode,architecture,libraryName,'PREFIX',os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/')
+
+   #CC="$(CC) $(CPPFLAGS)" CCC="$(CXX) $(CPPFLAGS)" CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp
+#   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)   
+   newEnv = os.environ
+   newEnv['PREFIX']=os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/')
+   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName,newEnv=newEnv)
+   return None
+
+def CleanLibrary(mode,directory,packageBaseName):
+   """
+   Actual function that gets called to process a clean library command
+   """
+   if(deepCleanLibrary(mode,architecture,libraryName)):
+      return True
+   if(cleanLibrary(mode,architecture,libraryName)):
+      return True   
+   return False
+
+for mode in state[architecture]['modes']:
+   if(getState(mode,architecture,'build')):
+      builder = Builder(action=BuildLibrary, single_source=1)
+      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
+      if(state[architecture][mode].get('builders')==None):
+         setState(mode,architecture,'builders',{})
+      getState(mode,architecture,'builders')[libraryName]=builder
+

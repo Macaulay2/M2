@@ -1,0 +1,44 @@
+import os.path
+import shutil
+import subprocess
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv','configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture')
+#set this to library name
+libraryName = 'readline'
+#Library specific declarations go here.
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecific('all','all','libraryName','configureArguments',['--disable-shared',])
+setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
+   
+def BuildLibrary(target,source,env):
+   """
+   Build target for the library.
+   """
+   source = source[0].rstr()
+   sourceFile = os.path.split(source)[1]
+   packageName = extractPackageName(sourceFile)
+   cleaned = CleanLibrary(env.mode,architecture,libraryName)
+   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   return None
+
+def CleanLibrary(mode,directory,packageBaseName):
+   """
+   Actual function that gets called to process a clean library command
+   """
+   if(deepCleanLibrary(mode,architecture,libraryName)):
+      return True
+   if(cleanLibrary(mode,architecture,libraryName)):
+      return True   
+   return False
+
+for mode in state[architecture]['modes']:
+   if(getState(mode,architecture,'build')):
+      builder = Builder(action=BuildLibrary, single_source=1)
+      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
+      if(state[architecture][mode].get('builders')==None):
+         setState(mode,architecture,'builders',{})
+      getState(mode,architecture,'builders')[libraryName]=builder
+
