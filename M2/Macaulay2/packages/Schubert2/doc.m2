@@ -38,6 +38,7 @@ Node
     "Riemann-Roch on a curve"
     "Riemann-Roch on a surface"
     "Riemann-Roch without denominators"
+    "A cubic fourfold containing a degree-5 del Pezzo surface"    
     "Examples from Schubert, translated"
     "Ideas for future development"
     :methods not involving something exported by this package:
@@ -193,6 +194,75 @@ Node
      integral chern A
   SeeAlso
      "Lines on hypersurfaces"
+-------
+Node
+  Key
+    "A cubic fourfold containing a degree-5 del Pezzo surface"       
+  Headline
+    an example
+  Description
+    Text
+      A smooth cubic fourfold {\tt Y} containing a degree-5 del Pezzo surface {\tt X} is known to be rational, see for example S. L. Tregub's "Three constructions of rationality of a four-dimensional cubic", 1984.  If {\tt H} is the hyperplane class on {\tt Y}, then {\tt 2H - X} is a linear series which gives a birational map from {\tt Y} to \mathbb{P}^4.  We will reproduce the numerical calculations which suggest (but do not prove) this fact.  We start by building part of the Chow ring of {\tt Y}:
+    Example
+      p = base(r,s)
+      P5 = projectiveBundle(5,p)
+      Y = sectionZeroLocus OO_P5(3) -- cubic fourfold
+      YtoP5 = Y / P5 -- structure map to P5
+      x = YtoP5^* chern(1, last bundles P5) -- hyperplane class
+    Text
+      We then build the Chow ring of the degree-5 del Pezzo:
+    Example
+      S = intersectionRing p -- important that we use the same base ring
+      B1 = S[e_1..e_4,h, Join => false]
+      -- relations imposed by dimension:
+      I1 = (ideal vars B1)^3
+      -- relations imposed by non-intersection:
+      I2 = ideal flatten (for i from 0 to 4 list (for j from i+1 to 4 list (B1_i * B1_j)))
+      -- relations that make each exceptional divisor a (-1)-curve:
+      I3 = ideal for i from 1 to 4 list (e_i^2 + h^2)
+      I = trim (I1 + I2 + I3)
+      B = B1/I
+      integral B := b -> coefficient((B_4)^2, b)
+    Text
+      We build the canonical class and tangent class of {\tt X}:
+    Example
+      K = -(3*h - e_1 - e_2 - e_3 - e_4)
+      tX = 1 - K + 7*h^2
+    Text
+      The pullback map from {\tt Y} to {\tt X} takes the hyperplane class to the anticanonical class on {\tt X}.  Because a @ TO projectiveBundle @ has extra generators, we end up also having to say where powers of the hyperplane class map to:
+    Example
+      A = intersectionRing Y
+      f = map(B, A, {K, -K, K^2, -K^3, K^4, -K^5})
+    Text
+      Now we build the @ TO inclusion @ of {\tt X} in {\tt Y}, which assembles the above information into a variety:
+    Example
+      i = inclusion(f,
+         SubTangent => tX,
+         SubDimension => 2,
+         Base => p)
+      X = source i
+      Z = target i
+    Text
+      We blow up this inclusion so that we can work with the linear series {\tt 2H - X} as a divisor.
+    Example
+      (Ztilde, PN, PNmap, Zmap) = blowup(i)
+    Text
+      And now we calculate the Euler characteristic and degree of the line bundle {\tt 2H - E} on {\tt Ztilde}.
+    Example
+      AZtilde = intersectionRing Ztilde
+      exc = chern(1,exceptionalDivisor Ztilde) -- exceptional class
+      EBA = intersectionRing Z
+      hyp = Zmap^* promote(x, EBA) -- hyperplane class of Ztilde
+      L = OO_Ztilde(2*hyp - exc)
+      chi L
+      integral ((chern(1,L))^4)
+    Text
+      More generally, we can compute the Euler characteristic and degree of all line bundles of the form {\tt rH + sE} on {\tt Ztilde}:
+    Example
+      (r', s') = ((r_A, s_A) / (elt ->  promote(elt, EBA))) / Zmap^*
+      L = OO_Ztilde(r' * hyp + s' * exc)
+      chi L
+      integral ((chern(1,L))^4)
 --------
 Node
   Key
@@ -1375,6 +1445,117 @@ Node
 --------
 Node
   Key
+    extensionAlgebra
+    (extensionAlgebra,RingMap,RingElement)
+    [extensionAlgebra,Codimension]
+    [extensionAlgebra,CoefficientRing]
+  Headline
+    extend a graded algebra by a graded module
+  Usage
+    extensionAlgebra(f,c)
+    extensionAlgebra(f,c,Codimension => r)
+    extensionAlgebra(f,c,CoefficientRing => S)
+    extensionAlgebra(f,c,Codimension => r, CoefficientRing => S)        
+  Inputs
+    f:
+      from {\tt A} to {\tt B}
+    c:
+      a homogeneous element of {\tt B}
+    Codimension => ZZ
+      the desired degree of the inclusion map from {\tt B} to {\tt E}; only required if {\tt c = 0}, and otherwise must match degree of {\tt c}
+    CoefficientRing => Ring
+      a coefficient ring of A, which will be used as the coefficient ring of the output
+  Consequences
+   Item
+     An algebra {\tt E} is created and promotion methods from {\tt A} and {\tt B} to {\tt E} and vice-versa are installed.  The natural pullback map from {\tt E} to {\tt B} given by sending {\tt a+b} to {\tt f(a) + cb} is stored in {\tt E.PullBack}, see @ TO PullBack @.
+  Outputs
+    :Ring
+      the algebra obtained by making the direct sum of {\tt A} and {\tt B[-r]} into an algebra with the multiplication rule {\tt (a+b)(a'+b') = aa' + ab' + a'b + cbb'}.
+  Description
+    Example
+      A = QQ[x]
+      B = QQ[y]
+      c = 2_B
+      f = map(B,A,gens B)
+      extensionAlgebra(f,c)
+      oo.PullBack
+--------
+Node
+  Key
+    inclusion
+    (inclusion,RingMap)
+    [inclusion,Codimension]
+    [inclusion,NormalClass]
+    NormalClass
+    [inclusion,SubDimension]
+    SubDimension
+    [inclusion,SuperDimension]
+    SuperDimension
+    [inclusion,SubTangent]                
+    SubTangent
+    [inclusion,SuperTangent]    
+    SuperTangent
+    [inclusion,Base]
+  Headline
+    build the freest possible inclusion map
+  Usage
+    inclusion(f, NormalClass => c, Codimension => r, SuperTangent => tY, SuperDimension => dY, Base => S)
+    inclusion(f, SubTangent => tX, SubDimension => dX, SuperTangent => tY, SuperDimension => dY)    
+    inclusion(f)
+  Inputs
+    f:
+      from {\tt A} to {\tt B}; we think of {\tt A} as part of the Chow ring of {\tt Y} and {\tt B} as part of the Chow ring of {\tt X}
+    Codimension => ZZ
+      the codimension of {\tt X} in {\tt Y}
+    SubDimension => ZZ
+      the dimension of {\tt X}
+    SuperDimension => ZZ
+      the dimension of {\tt Y}
+    SubTangent => RingElement
+      element of {\tt B}, the Chern class of the tangent bundle of {\tt X}
+    SuperTangent => RingElement
+      element of {\tt A}, the Chern class of the tangent bundle of {\tt Y}
+    NormalClass => RingElement
+      element of {\tt B}, the Chern class of the normal bundle of {\tt X} in {\tt Y}
+    Base => Thing
+      a Ring or AbstractVariety, the base ring/variety to work over
+  Consequences
+   Item
+     An @ TO extensionAlgebra @ of {\tt A} by {\tt B} is built, with normal class equal to the degree-{\tt r} part of {\tt c}.  This algebra is made into the ring of a variety {\tt Z}, see @ TO abstractVariety @.  A tangent class is installed on {\tt Z}, see @ TO tangentBundle @.  If {\tt A} and {\tt B} each have an @ TO integral @ defined, then an integral is defined on the coordinate ring of {\tt Z}, and a @ TO StructureMap @ is installed on {\tt Z}.
+   Item
+     A variety {\tt X} for {\tt B} is built if {\tt B} is not already the ring of a variety, see @ TO abstractVariety @.  A tangent class is installed on {\tt X} if it does not already have one, see @ TO tangentBundle @.  A @ TO StructureMap @ is installed if {\tt B} already has an @ TO integral @ defined.
+   Item
+     If {\tt Base} option is used, the supplied ring is made into the ring of a variety, if it is not already one.
+  Outputs
+    :AbstractVarietyMap
+      the natural map from {\tt X} to {\tt Z}.
+  Description
+    Text
+      Given the pullback map {\tt f} from {\tt A} to {\tt B}, builds the freest possible extension {\tt E} of {\tt A} by {\tt B} (see @ TO extensionAlgebra @), and then adds appropriate metadata to make the maps from {\tt E} to {\tt B} and vice-versa into an @ TO AbstractVarietyMap @.  Enough information must be given to compute the dimensions of {\tt X} and {\tt Y}, either by using the SubDimension, SuperDimension, and Codimension optons, or by having varieties already attached to {\tt A} and/or {\tt B}.  Likewise, enough information must be given to compute the tangent classes of {\tt X} and {\tt Y}.
+    Text
+      This construction is useful for computations where the pullback map is known but the pushforward is either not known or cannot be defined.
+    Example
+      -- Building the inclusion of the Veronese in P5, the hard way
+      p = point
+      S = intersectionRing p
+      Y = projectiveBundle(5,p)
+      A = intersectionRing Y      
+      B = S[h, Join => false]/h^3 -- A^*(P2), but using 2 times a line as the generating class:
+      integral B := (b) -> (4 * coefficient((B_0)^2, b))
+      c = 1 + (9/2)*h + (15/2)*h^2 -- normal class
+      f = map(B,A,{-h, h, h^2, h^3, h^4, h^5})
+      i = inclusion(f,
+          NormalClass => c,
+          Codimension => 3,
+	  Base => p) -- Base not necessary, will be correctly computed
+      Z = target i
+      X = source i
+      Xstruct = X / point
+      rank Xstruct_* tangentBundle X
+      integral chern tangentBundle Z
+--------
+Node
+  Key
    integral
   Headline
    compute an integral (push forward a cycle to the base)
@@ -1451,6 +1632,7 @@ Node
    a symbol used internally as a key for storing the pull back map in an abstract variety map
   SeeAlso
    (symbol ^*,AbstractVarietyMap)
+   extensionAlgebra
 --------
 Node
   Key
