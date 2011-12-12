@@ -207,19 +207,15 @@ Node
       p = base(r,s)
       P5 = projectiveBundle(5,p)
       Y = sectionZeroLocus OO_P5(3) -- cubic fourfold
-      YtoP5 = Y / P5 -- structure map to P5
-      x = YtoP5^* chern(1, last bundles P5) -- hyperplane class
+      x = chern(1,OO_Y(1)) -- hyperplane class
     Text
       We then build the Chow ring of the degree-5 del Pezzo:
     Example
       S = intersectionRing p -- important that we use the same base ring
       B1 = S[e_1..e_4,h, Join => false]
-      -- relations imposed by dimension:
-      I1 = (ideal vars B1)^3
-      -- relations imposed by non-intersection:
-      I2 = ideal flatten (for i from 0 to 4 list (for j from i+1 to 4 list (B1_i * B1_j)))
-      -- relations that make each exceptional divisor a (-1)-curve:
-      I3 = ideal for i from 1 to 4 list (e_i^2 + h^2)
+      I1 = (ideal vars B1)^3 -- relations imposed by dimension
+      I2 = ideal flatten (for i from 0 to 4 list (for j from i+1 to 4 list (B1_i * B1_j))) -- relations imposed by non-intersection
+      I3 = ideal for i from 1 to 4 list (e_i^2 + h^2) -- relations that make each exceptional divisor a (-1)-curve
       I = trim (I1 + I2 + I3)
       B = B1/I
       integral B := b -> coefficient((B_4)^2, b)
