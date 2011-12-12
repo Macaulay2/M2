@@ -1723,6 +1723,7 @@ sectionZeroLocus AbstractSheaf := (F) -> (
 	  );
      integral B := m -> integral i_* m;
      if X.?TangentBundle then Z.TangentBundle = abstractSheaf(Z, ChernCharacter => ch tangentBundle X - ch F);
+     try Z.TautologicalLineBundle = i^* tautologicalLineBundle X;
      Z)
 
 degeneracyLocus2 = method(TypicalValue => RingElement)
