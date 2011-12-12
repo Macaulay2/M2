@@ -378,7 +378,7 @@ static void cprintsomesizeof(node t, node arraylen){
 	       cprint(arraylen);
 	       put(" - 1)*sizeof(");
 	       cprint(typ);
-	       put(")")
+	       put(")");
 	       }
 	  }
      }
