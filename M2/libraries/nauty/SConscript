@@ -29,16 +29,15 @@ def BuildLibrary(target,source,env):
    cleaned = CleanLibrary(env.mode,architecture,libraryName)
    untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
    configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   buildpath = getState(env.mode,architecture,'buildpath')
-   realpath = buildpath+packageName+'/'
-   #install...
-   try:
-      os.makedirs(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin'))
-   except:
-      None
-   for target in 'NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg directg dreadnaut dretog genbg geng genrang gentourng labelg listg multig newedgeg pickg planarg shortg showg'.split(' '):
-      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target),realpath+target))
+   if makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName):
+      buildpath = getState(env.mode,architecture,'buildpath')
+      realpath = buildpath+packageName+'/'
+      try:
+         os.makedirs(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin'))
+      except:
+         None
+      for target in 'NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg directg dreadnaut dretog genbg geng genrang gentourng labelg listg multig newedgeg pickg planarg shortg showg'.split(' '):
+         Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target),realpath+target))
    return None
    
 
