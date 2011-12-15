@@ -3,17 +3,21 @@ import os.path
 import re
 import subprocess
 import shutil
-Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks')
+Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
+        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+        'getLibSpecificStageCommand','getLibSpecificEnv')
 
 dependencies = {
     'mpfr':'mpir',
     'cddlib':'mpir',
     'glpk':'mpir',
-    'gfan':'cddlib',
-    'cddplus':'cddlib'
+#    'gfan':'cddlib',
+    'nauty':'mpir',
+#    'cddplus':'cddlib'
 }
 #list of dependencies to build.
-buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk'])
+buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty'])
 
 def Glob( pattern = '*.*', dir = '.' ):
     import os, fnmatch
@@ -147,7 +151,7 @@ def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName
        tarp = subprocess.Popen(['tar', '-xvf',sourceFile],cwd=buildpath)
        if(tarp.wait()):
            raise Exception("Unable to untar " + libraryName + ".")
-       setLibSpecific(mode,architecture,libraryBaseName,'config',True)
+       setLibSpecific(mode,architecture,libraryBaseName,'stage0',True)
        return True
    else:
        return False
@@ -168,89 +172,51 @@ def appendEnv(env,attr,val):
     else:
         env[attr]=val
 
-def configureLibrary(state, mode, architecture, source, packageName, libraryBaseName):
-   """
-   Configure the given library
-   """
+def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,stage):
    #Source file is the file name of the tarball.
    sourceFile = os.path.split(source)[1]
    #Buildpath is the build directory
    buildpath = getState(mode,architecture,'buildpath')
    #realpath is the path to extract to.
    realpath = buildpath+packageName+'/'
-   if(getLibSpecific(mode,architecture,libraryBaseName,'config')==True):
-       args = [os.path.abspath(realpath)+'/configure']
-       configureArguments = getLibSpecific(mode,architecture,libraryBaseName,'configureArguments')
-       if(configureArguments!=None):
-           args = args + configureArguments
-       installpath = os.path.abspath(getState(mode,architecture,'prefixpath')+mode)
-       args = args + ['--prefix='+installpath]
+   if(getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)) is True):
+       if(stage >= getLibSpecificNumStages(stage,mode,architecture)):
+           raise Exception("Stage " + str(stage) + " > " + str(getLibSpecificNumStages(stage,mode,architecture)))
+       cmd = getLibSpecificStageCommand(state,mode,libraryBaseName,stage)
+       if(cmd==''):
+           return
+       args = getLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage)
+       if(cmd!='make'):
+           args = [os.path.abspath(realpath+cmd)]+args
+       else:
+           args = [cmd]+args
        newEnv = os.environ
-       appendEnv(newEnv,'CPPFLAGS','-I'+os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/include/'))
-       appendEnv(newEnv,'LDFLAGS','-L'+os.path.abspath(getState(mode,architecture,'prefixpath')+mode+'/lib/'))
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'CFLAGS')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'CXXFLAGS')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'FFLAGS')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'FCFLAGS')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'CC')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'CXX')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'CFLAGS')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'CPPFLAGS')
-       transferEnv(newEnv,mode,architecture,libraryBaseName,'LDFLAGS')
-
-       configp = subprocess.Popen(args,cwd=realpath,env=newEnv)
-       if(configp.wait()):
-           raise Exception("Unable to configure " + packageName + ".")
-       setLibSpecific(mode,architecture,libraryBaseName,'make',True)       
+       getLibSpecificEnv(mode,architecture,libraryBaseName,stage,newEnv)
+       print 'Execute: ' + str(args)
+       proc = subprocess.Popen(args,cwd=realpath,env=newEnv)
+       if(proc.wait()):
+           raise Exception("Unable to execute " + str(args) + " for library " + packageName)
+       setLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage+1),True)       
+    
+def configureLibrary(state, mode, architecture, source, packageName, libraryBaseName):
+   """
+   Configure the given library
+   """
+   executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,0)
 
 def makeLibrary(state, mode, architecture, source, packageName, libraryBaseName, newEnv = os.environ):
    """
    Make the given library
    Note that we use popen instead of system because we are not allowed to chdir.
    """
-   #Source file is the file name of the tarball.
-   sourceFile = os.path.split(source)[1]
-   #Buildpath is the build directory
-   buildpath = getState(mode,architecture,'buildpath')
-   #realpath is the path to extract to.
-   realpath = buildpath+packageName+'/'
-   #need to separate out make and make install
-   #for some libs such as mpir these are not equivalent.
-   if(getLibSpecific(mode,architecture,libraryBaseName,'make')==True):
-       extramake = getLibSpecific(mode,architecture,libraryBaseName,'makeArguments')
-       args = ['make']
-       if(extramake is not None):
-           args = args + extramake
-       if(getLibSpecific(mode,architecture,libraryBaseName,'enableParallelSubBuild')==True):
-           args = args + ['-j'+str(numberSubTasks())]
-           
-       makep = subprocess.Popen(args,cwd=realpath,env=newEnv)
-       if(makep.wait()):
-           raise Exception("Unable to make " + packageName + ".")
+   executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,1)
 
 def makeInstallLibrary(state, mode, architecture, source, libraryName, libraryBaseName, newEnv = os.environ):
    """
    Install the given library
    Note that we use popen instead of system because we are not allowed to chdir.
    """
-   #Source file is the file name of the tarball.
-   sourceFile = os.path.split(source)[1]
-   #Buildpath is the build directory
-   buildpath = getState(mode,architecture,'buildpath')
-   #realpath is the path to extract to.
-   realpath = buildpath+libraryName+'/'
-   #need to separate out make and make install
-   #for some libs such as mpir these are not equivalent.
-   if(getLibSpecific(mode,architecture,libraryBaseName,'make')==True):
-       extramake = getLibSpecific(mode,architecture,libraryBaseName,'makeArguments')
-       args = ['make','install']
-       if(extramake is not None):
-           args = args + extramake
-       newEnv = os.environ
-       makep = subprocess.Popen(args,cwd=realpath,env=newEnv)
-       if(makep.wait()):
-           raise Exception("Unable to make install" + libraryName + ".")
-
+   executeStageLibrary(state,mode,architecture,source,libraryName,libraryBaseName,2)
 
 def deepCleanLibrary(mode, architecture, packageBaseName):
     """
@@ -313,7 +279,22 @@ def modeImportSConscript(mode,packageBases):
                     'makeInstallLibrary':makeInstallLibrary,
                     'deepCleanLibrary':deepCleanLibrary,
                     'cleanLibrary':cleanLibrary,
-                    'architecture':architecture
+                    'architecture':architecture,
+                    'setLibSpecificStateEnvExport':setLibSpecificStateEnvExport,
+                    'setLibSpecificConfigExport':setLibSpecificConfigExport,
+                    'setLibSpecificMakeExport':setLibSpecificMakeExport,
+                    'setLibSpecificMakeInstallExport':setLibSpecificMakeInstallExport,
+                    'setLibSpecificNumStages':setLibSpecificNumStages,
+                    'setLibSpecificStageCommandArguments':setLibSpecificStageCommandArguments,
+                    'setLibSpecificStageCommand':setLibSpecificStageCommand,
+                    'getLibSpecificStageEnvExport':getLibSpecificStageEnvExport,
+                    'getLibSpecificConfigEnv':getLibSpecificConfigEnv,
+                    'getLibSpecificMakeEnv':getLibSpecificMakeEnv,
+                    'getLibSpecificMakeInstallEnv':getLibSpecificMakeInstallEnv,
+                    'getLibSpecificNumStages':getLibSpecificNumStages,
+                    'getLibSpecificStageCommandArguments':getLibSpecificStageCommandArguments,
+                    'getLibSpecificStageCommand':getLibSpecificStageCommand,
+
                     })
             importedSConscripts.add(package)
 
@@ -324,12 +305,15 @@ def modeSpecific1(mode,architecture):
     """
     if(getState(mode,architecture,'build')==False):
         return
+    print "Building " + mode + " on " + architecture
     try:
-        os.makedirs(getState(mode,architecture,'prefixpath')+'lib/')
+        libdirpath = os.path.abspath('../'+getState(mode,architecture,'prefixpath')+'lib/')
+        os.makedirs(libdirpath)
     except OSError:
         None
     try:
-        os.makedirs(getState(mode,architecture,'prefixpath')+'include/')
+        includedirpath = os.path.abspath('../'+getState(mode,architecture,'prefixpath')+'include/')
+        os.makedirs(includedirpath)
     except OSError:
         None
     packages,packageBases = modeBuildPackageSets(mode,architecture)
@@ -383,15 +367,10 @@ for mode in state[architecture]['modes']:
     for target, tdependencies in dependencies.items():
         if(type(tdependencies) is list):
             for dependency in tdependencies:
-                try:
-                    Requires(builders[target],builders[dependency])
-                except KeyError:
-                    None
+                Requires(builders[target],builders[dependency])
         else:
-            try:
-                Requires(builders[target],builders[tdependencies])
-            except KeyError:
-                None
+            Requires(builders[target],builders[tdependencies])
+
 
 
 

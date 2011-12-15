@@ -1,13 +1,18 @@
 import os.path
 import shutil
 import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv','configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture')
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+       'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+       'getLibSpecificStageCommand')
+
 #set this to library name
 libraryName = 'mpir'
 #Library specific declarations go here.
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecific('all','all',libraryName,'configureArguments',['--enable-gmpcompat','--enable-cxx','--disable-shared'])
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecificStageCommandArguments('all','all',libraryName,0,['--enable-gmpcompat','--enable-cxx','--disable-shared','--prefix=$SConsInstallPrefixPath'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
 def BuildLibrary(target,source,env):

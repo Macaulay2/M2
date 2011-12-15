@@ -1,3 +1,4 @@
+import os.path
 defaultModes = 'debug'
 AddOption('--deepcleanlib',dest='deepcleanlib',nargs=1,action='store',type='string',help='Remove all libraries or the specified library only')
 AddOption('--cleanlib',dest='cleanlib',nargs=1,action='store',type='string',help='Clean all libraries or the specified library only')
@@ -11,7 +12,7 @@ state = {
     'linux-x86_64':
         {
         'debug':{
-            'prefixpath':'local/',
+            'prefixpath':'local/debug/',
             'includepath':'local/debug/include/',
             'libpath':'local/debug/lib',
             'buildpath':'BUILD/debug/',
@@ -20,7 +21,7 @@ state = {
             'libspecific':{ }
             },
         'release':{
-            'prefixpath':'local/',
+            'prefixpath':'local/release/',
             'includepath':'local/release/include/',
             'libpath':'local/release/lib/',
             'buildpath':'BUILD/release/',
@@ -33,7 +34,7 @@ state = {
     'linux-x86':
         {
         'debug':{
-            'prefixpath':'local/',
+            'prefixpath':'local/debug/',
             'includepath':'local/debug/include/',
             'libpath':'local/debug/lib/',
             'buildpath':'BUILD/debug/',
@@ -42,7 +43,7 @@ state = {
             'libspecific':{ }
             },
         'release':{
-            'prefixpath':'local/',
+            'prefixpath':'local/release/',
             'includepath':'local/release/include/',
             'libpath':'local/release/lib/',
             'buildpath':'BUILD/release/',
@@ -93,7 +94,7 @@ def getLibSpecific(mode,architecture,libraryBaseName,attribute):
     """
     Get the library specific attribute for the given library, mode, and architecture.
     """
-    if(libraryBaseName == None or attribute == None):
+    if(libraryBaseName == None or attribute == None or mode is None or architecture is None):
         raise Exception("Invalid arguments to getLibSpecific")
 
     try:
@@ -129,30 +130,178 @@ def setLibSpecific(mode,architecture,libraryBaseName,attribute,value):
     except:
         llspec = libspecific[libraryBaseName] = { }
     llspec[attribute]=value
+    return value
+
+def performLibSpecificTemplate(mode,architecture,libraryBaseName,s):
+    """
+    Perform lib specific template evaluation on s
+    """
+    prefixpath = getState(mode,architecture,'prefixpath')
+    s = s.replace("$SConsInstallPrefixPath",os.path.abspath(prefixpath))
+    return s
+
+def setLibSpecificStateEnvExport(mode,architecture,libraryBaseName,stage,attribute,value):
+    """
+    Sets a library specific export for a stage in the make process.
+    """
+    if(type(architecture)==list):
+        for arch in architecture:
+            setLibSpecificStateEnvExport(mode,arch,libraryBaseName,stage,attribute,value)
+        return
+    elif(architecture=='all'):
+        for arch in state['architectures']:
+            setLibSpecificStateEnvExport(mode,arch,libraryBaseName,stage,attribute,value)
+        return
+    elif(mode=='all'):
+        for lmode in state[architecture]['modes']:
+            setLibSpecificStateEnvExport(lmode,architecture,libraryBaseName,stage,attribute,value)
+        return
+
+        
+    stageName = 'stage'+str(stage)+'env'
+    stageDict = getLibSpecific(mode,architecture,libraryBaseName,stageName)
+    if(stageDict is None):
+        stageDict = setLibSpecific(mode,architecture,libraryBaseName,stageName,{ })
+    stageDict[attribute]=value
 
 def setLibSpecificConfigExport(mode,architecture,libraryBaseName,attribute,value):
     """
     Sets a library specific make export
     """
-    makeenv = getLibSpecific(mode,architecture,libraryBaseName,'config env')
-    if(libspecific is None):
-        makeenv = setLibSpecific(mode,architecture,libraryBaseName,'config env')
-    makeenv[attribute]=value
+    setLibSpecificStateEnvExport(mode,architecture,libraryBaseName,0,attribute,value)
 
 def setLibSpecificMakeExport(mode,architecture,libraryBaseName,attribute,value):
     """
     Sets a library specific make export
     """
-    makeenv = getLibSpecific(mode,architecture,libraryBaseName,'make env')
-    if(libspecific is None):
-        makeenv = setLibSpecific(mode,architecture,libraryBaseName,'make env')
-    makeenv[attribute]=value
+    setLibSpecificStateEnvExport(mode,architecture,libraryBaseName,1,attribute,value)
 
 def setLibSpecificMakeInstallExport(mode,architecture,libraryBaseName,attribute,value):
-    makeenv = getLibSpecific(mode,architecture,libraryBaseName,'make env')
-    if(libspecific is None):
-        makeenv = setLibSpecific(mode,architecture,libraryBaseName,'make install env')
-    makeenv[attribute]=value
+    """
+    Set a library specific make install export
+    """
+    setLibSpecificStateEnvExport(mode,architecture,libraryBaseName,2,attribute,value)
+
+def getLibSpecificStageEnvExport(mode,architecture,libraryBaseName,stage,attribute):
+    """
+    Get a library specific export for a stage in the make process.
+    """
+    stageName = 'stage'+str(stage)+'env'
+    stageDict = getLibSpecific(mode,architecture,libraryBaseName,stageName)
+    if(stageDict is None):
+        stageDict = getLibSpecific(mode,architecture,libraryBaseName,stageName)
+    return performLibSpecificTemplate(mode,architecture,libraryBaseName,stageDict.get(attribute))
+
+def getLibSpecificConfigExport(mode,architecture,libraryBaseName,attribute):
+    """
+    Get a library specific config export
+    """
+    return getLibSpecificConfigExport(mode,architecture,libraryBaseName,0,attribute)
+
+def getLibSpecificMakeExport(mode,architecture,libraryBaseName,attribute):
+    """
+    Get a library specific make export
+    """
+    return getLibSpecificConfigExport(mode,architecture,libraryBaseName,1,attribute)
+
+def getLibSpecificMakeInstallExport(mode,architecture,libraryBaseName,attribute,value):
+    """
+    Get a library specific make install export
+    """
+    return getLibSpecificConfigExport(mode,architecture,libraryBaseName,2,attribute)
+
+def getLibSpecificEnv(mode,architecture,libraryBaseName,stage,newenv):
+    stageName = 'stage'+str(stage)+'env'
+    stageDict = getLibSpecific(mode,architecture,libraryBaseName,stageName)
+    if(stageDict is None):
+        return
+    for(key,value) in stageDict.items():
+        newval = performLibSpecificTemplate(mode,architecture,libraryBaseName,value)
+        if(key in newenv):
+            print "Warning: Env already contains " + key
+        newenv[key]=newval
+
+def getLibSpecificConfigEnv(mode,architecture,libraryBaseName,newenv):
+    """
+    Fill new env with configuration enviroment variables for the given library
+    """
+    getLibSpecificEnv(mode,architecture,libraryBaseName,0,newenv)
+
+def getLibSpecificMakeEnv(mode,architecture,libraryBaseName,attribute,newenv):
+    """
+    Fill new env with make enviroment variables for the given library
+    """
+    getLibSpecificEnv(mode,architecture,libraryBaseName,1,newenv)
+
+def getLibSpecificMakeInstallEnv(mode,architecture,libraryBaseName,attribute,newenv):
+    """
+    Fill new env with make install enviroment variables for the given library
+    """
+    getLibSpecificEnv(mode,architecture,libraryBaseName,2,newenv)
+
+def setLibSpecificStageCommand(mode,architecture,libraryBaseName,stage,command):
+    """
+    Sets the command to run at the specific stage of library compilation.
+    """
+    setLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)+'cmd',command)
+
+def getLibSpecificStageCommand(mode,architecture,libraryBaseName,stage):
+    """
+    Get the command that is run at a specific stage of library compilation.
+    This will raise a key error if the stage does not exist.
+    If the command has not been set, it will return the defaults of configure/make/make (install)
+    """
+    cmd =  getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)+'cmd')
+    if(cmd is None):
+        if(stage==0):
+            return 'configure'
+        elif(stage==1):
+            return 'make'
+        elif(stage==2):
+            return 'make'
+        else:
+            raise KeyError
+    return cmd
+
+def setLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage,args):
+    """
+    Set the arguments for the command that is run at a specific stage of library compilation.
+    """
+    attribute = 'stage'+str(stage)+'args'
+    setLibSpecific(mode,architecture,libraryBaseName,attribute,args)
+
+def getLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage):
+    """
+    Return the arguments for the command that is run at a specific stage of library compilation.
+    This will raise a key error if the stage does not exist.
+    If the args have not been set, will return defaults of [],[],[install]
+    """
+    attribute = 'stage'+str(stage)+'args'
+    oldArgs = getLibSpecific(mode,architecture,libraryBaseName,attribute)
+    args=[]
+    if(oldArgs is not None):
+        for i in range(0,len(oldArgs)):
+            args.append(performLibSpecificTemplate(mode,architecture,libraryBaseName,oldArgs[i]))
+    else:
+        args = []
+    if(stage==2):
+        return ['install']+args
+    else:
+        return args
+
+def getLibSpecificNumStages(mode,architecture,libraryBaseName):
+    """
+    Return the number of stages for building a given library.  This defaults to 3.
+    """
+    numStages =  getLibSpecific(mode,architecture,libraryBaseName,'numStages')
+    if(numStages is None):
+        return 3
+
+def setLibSpecificNumStages(mode,architecture,libraryBaseName,stages):
+    """
+    Set the number of library specific stages.  
+    """
+    setLibSpecific(mode,architecture,libraryBaseName,'numstages',stages)
 
 def  determineNumberOfCPUs():
     """
@@ -337,6 +486,21 @@ SConscript('libraries/SConscript',exports=
         'architecture':architecture,
         'numberJobs':numberJobs,
         'numberSubTasks':numberSubTasks,
+        'setLibSpecificStateEnvExport':setLibSpecificStateEnvExport,
+        'setLibSpecificConfigExport':setLibSpecificConfigExport,
+        'setLibSpecificMakeExport':setLibSpecificMakeExport,
+        'setLibSpecificMakeInstallExport':setLibSpecificMakeInstallExport,
+        'setLibSpecificNumStages':setLibSpecificNumStages,
+        'setLibSpecificStageCommandArguments':setLibSpecificStageCommandArguments,
+        'setLibSpecificStageCommand':setLibSpecificStageCommand,
+        'getLibSpecificStageEnvExport':getLibSpecificStageEnvExport,
+        'getLibSpecificConfigEnv':getLibSpecificConfigEnv,
+        'getLibSpecificMakeEnv':getLibSpecificMakeEnv,
+        'getLibSpecificMakeInstallEnv':getLibSpecificMakeInstallEnv,
+        'getLibSpecificNumStages':getLibSpecificNumStages,
+        'getLibSpecificStageCommandArguments':getLibSpecificStageCommandArguments,
+        'getLibSpecificStageCommand':getLibSpecificStageCommand,
+        'getLibSpecificEnv':getLibSpecificEnv,
         })
-#SConscript('Macaulay2/SConscript',exports={'state':state})
+#Sconscript('Macaulay2/SConscript',exports={'state':state})
 

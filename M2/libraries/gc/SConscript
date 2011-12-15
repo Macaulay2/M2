@@ -1,17 +1,24 @@
 import os.path
 import shutil
 import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv','configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture')
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+       'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+       'getLibSpecificStageCommand')
+
 #set this to library name
 libraryName = 'gc'
 #Library specific declarations go here.
-setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
-setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CXXFLAGS','-g -O2')
-setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'FFLAGS','-g -O2')
-setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'FCFLAGS','-g -O2')
-setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
-setLibSpecific('release',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecific('all','all',libraryName,'configureArguments',['--enable-threads=posix','--enable-parallel-mark','--disable-shared','--enable-large-config','--disable-gcj-support','--disable-java-finalization'])
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CXXFLAGS','-g -O2')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'FFLAGS','-g -O2')
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'FCFLAGS','-g -O2')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecificStageCommandArguments('all','all',libraryName,0,['--enable-threads=posix','--enable-parallel-mark','--disable-shared','--enable-large-config','--disable-gcj-support','--disable-java-finalization', '--prefix=$SConsInstallPrefixPath'])
    
 def BuildLibrary(target,source,env):
    """
