@@ -12,12 +12,15 @@ dependencies = {
     'mpfr':'mpir',
     'cddlib':'mpir',
     'glpk':'mpir',
-#    'gfan':'cddlib',
+    'gfan':'cddlib',
     'nauty':'mpir',
-#    'cddplus':'cddlib'
+    '4ti2':['mpir','glpk'],
+    'cddplus':'cddlib',
+    'lrslib':'mpir',
+    'pari':'mpir',
 }
 #list of dependencies to build.
-buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty'])
+buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari'])
 
 def Glob( pattern = '*.*', dir = '.' ):
     import os, fnmatch
@@ -53,7 +56,7 @@ def modeBuildPackageSets(mode,architecture):
     A set of base packages present (defined to be the packages minus any extensions).
     """
     tarpath = modeTarPath(mode,architecture)
-    packages = set(Glob(pattern='*.tar.gz',dir=tarpath)+Glob(pattern='*.tar.bz2',dir=tarpath))
+    packages = set(Glob(pattern='*.tar.gz',dir=tarpath)+Glob(pattern='*.tar.bz2',dir=tarpath)+Glob(pattern='*.tgz',dir=tarpath))
     packageBases = set()
     for package in packages:
         package = extractPackageName(package)
@@ -100,6 +103,7 @@ def extractPackageName(package):
     """
     package = package.replace('.tar.gz','')
     package = package.replace('.tar.bz2','')
+    package = package.replace('.tgz','')
     return package
 
 def extractPackageBaseName(package):
@@ -114,24 +118,6 @@ def extractPackageBaseName(package):
     if(package.find('cdd+')==0):
         return 'cddplus'
     return re.match('\A[0-9,a-z,A-Z]+',package).group(0)
-
-def getConfigureCommand(state,mode,architecture):
-    lsv = getLibSpecific(state,mode,architecture,"configure command")
-    if(lsv):
-        return lsv
-    return "configure"
-
-def getMakeCommand(state,mode,architecture):
-    lsv = getLibSpecific(state,mode,architecture,"make command")
-    if(lsv):
-        return lsv
-    return "make"
-
-def getMakeInstallCommand(state,mode,architecture):
-    lsv = getLibSpecific(state,mode,architecture,"make install command")
-    if(lsv):
-        return lsv
-    return "make install"
 
 def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName):
    """
@@ -172,17 +158,19 @@ def appendEnv(env,attr,val):
     else:
         env[attr]=val
 
-def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,stage):
+def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,stage,diroffset=None):
    #Source file is the file name of the tarball.
    sourceFile = os.path.split(source)[1]
    #Buildpath is the build directory
    buildpath = getState(mode,architecture,'buildpath')
    #realpath is the path to extract to.
    realpath = buildpath+packageName+'/'
+   if(diroffset):
+       realpath = realpath+diroffset
    if(getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)) is True):
-       if(stage >= getLibSpecificNumStages(stage,mode,architecture)):
-           raise Exception("Stage " + str(stage) + " > " + str(getLibSpecificNumStages(stage,mode,architecture)))
-       cmd = getLibSpecificStageCommand(state,mode,libraryBaseName,stage)
+#       if(stage >= getLibSpecificNumStages(stage,mode,architecture)):
+#           raise Exception("Stage " + str(stage) + " > " + str(getLibSpecificNumStages(stage,mode,architecture)))
+       cmd = getLibSpecificStageCommand(mode,architecture,libraryBaseName,stage)
        if(cmd==''):
            return
        args = getLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage)
@@ -195,28 +183,31 @@ def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseNa
        print 'Execute: ' + str(args)
        proc = subprocess.Popen(args,cwd=realpath,env=newEnv)
        if(proc.wait()):
-           raise Exception("Unable to execute " + str(args) + " for library " + packageName)
+           raise Exception("Unable to execute " + str(args) + " for library " + packageName + " in " + realpath)
        setLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage+1),True)       
+       return True
+   else:
+       return False
     
 def configureLibrary(state, mode, architecture, source, packageName, libraryBaseName):
    """
    Configure the given library
    """
-   executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,0)
+   return executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,0)
 
-def makeLibrary(state, mode, architecture, source, packageName, libraryBaseName, newEnv = os.environ):
+def makeLibrary(state, mode, architecture, source, packageName, libraryBaseName, diroffset = None):
    """
    Make the given library
    Note that we use popen instead of system because we are not allowed to chdir.
    """
-   executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,1)
+   return executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,1,diroffset)
 
-def makeInstallLibrary(state, mode, architecture, source, libraryName, libraryBaseName, newEnv = os.environ):
+def makeInstallLibrary(state, mode, architecture, source, libraryName, libraryBaseName, diroffset = None):
    """
    Install the given library
    Note that we use popen instead of system because we are not allowed to chdir.
    """
-   executeStageLibrary(state,mode,architecture,source,libraryName,libraryBaseName,2)
+   return executeStageLibrary(state,mode,architecture,source,libraryName,libraryBaseName,2,diroffset)
 
 def deepCleanLibrary(mode, architecture, packageBaseName):
     """
@@ -367,9 +358,15 @@ for mode in state[architecture]['modes']:
     for target, tdependencies in dependencies.items():
         if(type(tdependencies) is list):
             for dependency in tdependencies:
-                Requires(builders[target],builders[dependency])
+                try:
+                    Requires(builders[target],builders[dependency])
+                except KeyError:
+                    None
         else:
-            Requires(builders[target],builders[tdependencies])
+            try:
+                Requires(builders[target],builders[tdependencies])
+            except KeyError:
+                None
 
 
 

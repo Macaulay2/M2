@@ -8,16 +8,9 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
        'getLibSpecificStageCommand')
 
 #set this to library name
-libraryName = 'cddplus'
+libraryName = 'lapack'
 #Library specific declarations go here.
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CXXFLAGS','-g -O3')
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O3')
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
-setLibSpecificStageCommandArguments('all','all',libraryName,1,[ 'prefix=$SConsInstallPrefixPath','LDFLAGS=-L$SConsInstallPrefixPath/lib/', 'CFLAGS=-I. -I$SConsInstallPrefixPath/include/ -g -O3',
-                                                                'CPPFLAGS=-I. -I$SConsInstallPrefixPath -g -O3', 'all'])
+setLibSpecificStageCommandArguments('all','all',libraryName,1, ['PREFIX=$SConsInstallPrefixPath','PLAT=','FORTRAN=gfortran','OPTS=-O2 -g','NOOPT=','LOADER=gfortran','RANLIB=ranlib','LOADOPTS=-L$SConsInstallPrefixPath/lib','TIMER=INT_ETIME','blaslib','lapack_install','lib'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
 def BuildLibrary(target,source,env):
@@ -28,21 +21,18 @@ def BuildLibrary(target,source,env):
    sourceFile = os.path.split(source)[1]
    packageName = extractPackageName(sourceFile)
    cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+   buildpath = getState(env.mode,architecture,'buildpath')
+   realpath = buildpath+packageName+'/'
+   if(untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)):
+      Execute(Copy(realpath+'make.inc',realpath+'make.inc.example'))
    if(getLibSpecific(env.mode,architecture,libraryName,'stage0')):
       setLibSpecific(env.mode,architecture,libraryName,'stage1',True)
    else:
       return None
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   buildpath = getState(env.mode,architecture,'buildpath')
-   realpath = buildpath+packageName+'/'
-   #install...
-   try:
-      os.makedirs(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin'))
-   except:
-      None
-   for target in 'cddr+ cddf+'.split(' '):
-      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target),realpath+target))
+   if(makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)):
+      for target in 'blas.a lapack.a'.split(' '):
+         abstarget = os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/lib/'+target)
+         Execute(Copy(abstarget,realpath+target))
    return None
    
 

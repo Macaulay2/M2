@@ -138,6 +138,8 @@ def performLibSpecificTemplate(mode,architecture,libraryBaseName,s):
     """
     prefixpath = getState(mode,architecture,'prefixpath')
     s = s.replace("$SConsInstallPrefixPath",os.path.abspath(prefixpath))
+    s = s.replace("$SConsArchitecture",architecture)
+    s = s.replace("$SConsMode",mode)
     return s
 
 def setLibSpecificStateEnvExport(mode,architecture,libraryBaseName,stage,attribute,value):
@@ -252,6 +254,11 @@ def getLibSpecificStageCommand(mode,architecture,libraryBaseName,stage):
     If the command has not been set, it will return the defaults of configure/make/make (install)
     """
     cmd =  getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)+'cmd')
+    if(libraryBaseName=='pari'):
+        print mode
+        print architecture
+        print libraryBaseName
+        print cmd
     if(cmd is None):
         if(stage==0):
             return 'configure'
@@ -284,10 +291,9 @@ def getLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage)
             args.append(performLibSpecificTemplate(mode,architecture,libraryBaseName,oldArgs[i]))
     else:
         args = []
-    if(stage==2):
-        return ['install']+args
-    else:
-        return args
+        if(stage==2):
+            args = ['install']
+    return args
 
 def getLibSpecificNumStages(mode,architecture,libraryBaseName):
     """

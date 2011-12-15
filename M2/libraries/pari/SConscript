@@ -1,0 +1,53 @@
+import os.path
+import shutil
+import subprocess
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+       'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+       'getLibSpecificStageCommand')
+
+#set this to library name
+libraryName = 'pari'
+#Library specific declarations go here.
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
+setLibSpecificStageCommandArguments('all','all',libraryName,0,['--prefix=$SConsInstallPrefixPath','--with-gmp=$SConsInstallPrefixPath'])
+setLibSpecificStageCommandArguments('all','all',libraryName,1,['lib-sta'])
+setLibSpecificStageCommandArguments('all','all',libraryName,2,['lib-sta','install-include'])
+setLibSpecificStageCommand('all','all',libraryName,0,'Configure')
+   
+def BuildLibrary(target,source,env):
+   """
+   Build target for the library.
+   """
+   source = source[0].rstr()
+   sourceFile = os.path.split(source)[1]
+   packageName = extractPackageName(sourceFile)
+   cleaned = CleanLibrary(env.mode,architecture,libraryName)
+   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = 'O'+str(architecture)+'/')
+   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = 'O'+str(architecture)+'/')
+   return None
+   
+
+def CleanLibrary(mode,directory,packageBaseName):
+   """
+   Actual function that gets called to process a clean library command
+   """
+   if(deepCleanLibrary(mode,architecture,libraryName)):
+      return True
+   if(cleanLibrary(mode,architecture,libraryName)):
+      return True   
+   return False
+
+for mode in state[architecture]['modes']:
+   if(getState(mode,architecture,'build')):
+      builder = Builder(action=BuildLibrary, single_source=1)
+      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
+      if(state[architecture][mode].get('builders')==None):
+         setState(mode,architecture,'builders',{})
+      getState(mode,architecture,'builders')[libraryName]=builder
