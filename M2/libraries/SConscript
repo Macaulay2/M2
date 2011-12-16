@@ -18,9 +18,11 @@ dependencies = {
     'cddplus':'cddlib',
     'lrslib':'mpir',
     'pari':'mpir',
+    #serialize
+    'ntl':['mpir','pari','lrslib','cddplus','4ti2','nauty','gfan','glpk','cddlib','mpfr']
 }
 #list of dependencies to build.
-buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari'])
+buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','ntl'])
 linuxBuildLibraries = buildlibraries
 state['linux-x86_64']['buildlibraries']=linuxBuildLibraries
 state['linux-x86']['buildlibraries']=linuxBuildLibraries
@@ -170,6 +172,14 @@ def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName
        if(tarp.wait()):
            raise Exception("Unable to untar " + libraryName + ".")
        setLibSpecific(mode,architecture,libraryBaseName,'stage0',True)
+       patchfile = getLibSpecific(mode,architecture,libraryBaseName,'patchfile')
+       if patchfile is None:
+           return True
+       patchargs = ['patch','-p1','--input='+patchfile]
+       print "Patching " + str(patchargs)
+       patchp = subprocess.Popen(patchargs,cwd=realpath)
+       if(patchp.wait()):
+           raise Exception("Unable to patch " + patch + " in " + realpath)
        return True
    else:
        return False
@@ -197,6 +207,9 @@ def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseNa
    buildpath = getState(mode,architecture,'buildpath')
    #realpath is the path to extract to.
    realpath = buildpath+packageName+'/'
+   buildDirectory = getLibSpecific(mode,architecture,libraryBaseName,'builddirectory')
+   if(buildDirectory):
+       realpath = realpath+buildDirectory
    if(diroffset):
        realpath = realpath+diroffset
    if(getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)) is True):

@@ -27,7 +27,6 @@ def BuildLibrary(target,source,env):
    source = source[0].rstr()
    sourceFile = os.path.split(source)[1]
    packageName = extractPackageName(sourceFile)
-   print 'in gdbm build lib'
    cleaned = CleanLibrary(env.mode,architecture,libraryName)
    untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
    configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
@@ -39,7 +38,6 @@ def CleanLibrary(mode,directory,packageBaseName):
    """
    Actual function that gets called to process a clean library command
    """
-   print 'gdbm clean'
    if(deepCleanLibrary(mode,architecture,libraryName)):
       return True
    if(cleanLibrary(mode,architecture,libraryName)):
