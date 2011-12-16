@@ -1,0 +1,20 @@
+import os.path
+Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
+        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
+
+cfiles = Glob('*.c','.')
+cfiles.remove('scc-core.c')
+cfiles.remove('test.c')
+cflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG'
+cobjects = []
+for f in cfiles:
+    cobjects.append(Object(f,CFLAGS=cflags))
+libpath = '#'+getState(mode,architecture,'prefixpath')+'lib/'
+scc = Program('scc',cobjects,LIBS=['gc','gdbm','pthread'],LIBPATH=libpath)
+setState(mode,architecture,'scc',scc)
+state[architecture][mode]['scc']=scc
+state[architecture][mode]['sccfiles']=cobjects
+
+

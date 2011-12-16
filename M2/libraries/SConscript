@@ -6,7 +6,7 @@ import shutil
 Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-        'getLibSpecificStageCommand','getLibSpecificEnv')
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob')
 
 dependencies = {
     'mpfr':'mpir',
@@ -20,6 +20,7 @@ dependencies = {
     'pari':'mpir',
     'frobby':'mpir',
     'normaliz':['boost','mpir'],
+    'sccfiles':['gc','gdbm'],
     #serialize
     'ntl':['mpir','pari','lrslib','cddplus','4ti2','nauty','gfan','glpk','cddlib','mpfr','readline','gdbm','gc','boost'],
     'factory':'ntl',
@@ -58,15 +59,6 @@ def downloadLibraries(architecture,mode):
                 localFile.close()
             else:
                 raise Exception("Unable to find library: " + library + " and downloading libraries is disabled.")
-
-           
-def Glob( pattern = '*.*', dir = '.' ):
-    import os, fnmatch
-    files = []
-    for file in os.listdir( Dir(dir).srcnode().abspath ):
-        if fnmatch.fnmatch(file, pattern) :
-            files.append( file )
-    return files
 
 def modeBuild(mode,architecture):
     """
@@ -341,7 +333,7 @@ def modeImportSConscript(mode,packageBases):
                     'getLibSpecificNumStages':getLibSpecificNumStages,
                     'getLibSpecificStageCommandArguments':getLibSpecificStageCommandArguments,
                     'getLibSpecificStageCommand':getLibSpecificStageCommand,
-
+                    'executeStageLibrary':executeStageLibrary,
                     })
             importedSConscripts.add(package)
 
@@ -413,17 +405,23 @@ for mode in state[architecture]['modes']:
         builders[libraryBase] = builder
         AlwaysBuild(builder)
     for target, tdependencies in dependencies.items():
-        if(type(tdependencies) is list):
-            for dependency in tdependencies:
-                try:
-                    Requires(builders[target],builders[dependency])
-                except KeyError:
-                    None
+        if(target == 'scc'):
+            btarget=state[architecture][mode]['scc']
+        elif target == 'sccfiles':
+            btarget=state[architecture][mode]['sccfiles']
         else:
-            try:
-                Requires(builders[target],builders[tdependencies])
-            except KeyError:
-                None
+            btarget = builders[target]
+        if(type(tdependencies) is list):
+            if(type(btarget) is list):
+                for bltarget in btarget:
+                    for dependency in tdependencies:
+                        Requires(bltarget,builders[dependency])
+            else:
+                for dependency in tdependencies:
+                    Requires(btarget,builders[dependency])                
+        else:
+            Requires(btarget,builders[tdependencies])
+
 
 
 

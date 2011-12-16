@@ -5,20 +5,31 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
        'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand')
+       'getLibSpecificStageCommand','executeStageLibrary')
 
 #set this to library name
 libraryName = 'gc'
 #Library specific declarations go here.
 setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
-setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CXXFLAGS','-g -O2')
+setLibSpecificConfigExport('debug',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O0')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
-setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'FFLAGS','-g -O2')
-setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'FCFLAGS','-g -O2')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecificStageCommandArguments('all','all',libraryName,0,['--enable-threads=posix','--enable-parallel-mark','--disable-shared','--enable-large-config','--disable-gcj-support','--disable-java-finalization', '--prefix=$SConsInstallPrefixPath'])
+setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64'],libraryName,0,['--enable-threads=posix','--enable-parallel-mark','--disable-shared','--enable-large-config','--disable-gcj-support','--disable-java-finalization', '--prefix=$SConsInstallPrefixPath'])
+
+setLibSpecificStateEnvExport('release',['linux-x86','linux-x86_64'],libraryName,3,'CFLAGS','-g -O2')
+setLibSpecificStateEnvExport('debug',['linux-x86','linux-x86_64'],libraryName,3,'CFLAGS','-g -O0')
+setLibSpecificStateEnvExport('all',['linux-x86','linux-x86_64'],libraryName,3,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
+setLibSpecificStateEnvExport('all',['linux-x86','linux-x86_64'],libraryName,3,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
+setLibSpecificStateEnvExport('all',['linux-x86','linux-x86_64'],libraryName,3,'CC','gcc')
+setLibSpecificStateEnvExport('all',['linux-x86','linux-x86_64'],libraryName,3,'CXX','g++')
+setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64'],libraryName,3,['--prefix=$SConsInstallPrefixPath'])
+setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64'],libraryName,5,['install'])
+setLibSpecificStageCommand('all',['linux-x86','linux-x86_64'],libraryName,3,'configure')
+setLibSpecificStageCommand('all',['linux-x86','linux-x86_64'],libraryName,4,'make')
+setLibSpecificStageCommand('all',['linux-x86','linux-x86_64'],libraryName,5,'make')
+
    
 def BuildLibrary(target,source,env):
    """
@@ -32,6 +43,9 @@ def BuildLibrary(target,source,env):
    configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
    makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
    makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,3,'libatomic_ops/')
+   executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,4,'libatomic_ops/')
+   executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,5,'libatomic_ops/')
    return None
 
 def CleanLibrary(mode,directory,packageBaseName):

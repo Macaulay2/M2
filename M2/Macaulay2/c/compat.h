@@ -25,6 +25,8 @@ extern char errfmtnc[];
 
 #include <gc/gc.h>
 
+#ifndef NO_CONFIG
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -64,6 +66,21 @@ extern char errfmtnc[];
 #include <varargs.h>
 #endif
 
+#else
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <string.h>
+#include <memory.h>
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <stdarg.h>
+
+
+#endif
 /*
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/c "

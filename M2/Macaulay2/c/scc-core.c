@@ -1,5 +1,5 @@
 /* this file (or a replacement) gets linked into each program created using scc1 */
-#include <scc-core.h>
+#include "scc-core.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdarg.h>

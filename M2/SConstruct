@@ -310,6 +310,14 @@ def setLibSpecificNumStages(mode,architecture,libraryBaseName,stages):
     """
     setLibSpecific(mode,architecture,libraryBaseName,'numstages',stages)
 
+def Glob( pattern = '*.*', dir = '.' ):
+    import os, fnmatch
+    files = []
+    for file in os.listdir( Dir(dir).srcnode().abspath ):
+        if fnmatch.fnmatch(file, pattern) :
+            files.append( file )
+    return files
+
 def  determineNumberOfCPUs():
     """
     Number of virtual or physical CPUs on this system, i.e.
@@ -485,9 +493,7 @@ for mode in splitModes:
     except KeyError:
         raise Exception('Unknown mode: "' + mode + '"')
 
-SConscript('libraries/SConscript',exports=
-           {
-        'state':state,
+exportDict = {'state':state,
         'getLibSpecific':getLibSpecific,
         'setLibSpecific':setLibSpecific,
         'getState':getState,
@@ -510,6 +516,14 @@ SConscript('libraries/SConscript',exports=
         'getLibSpecificStageCommandArguments':getLibSpecificStageCommandArguments,
         'getLibSpecificStageCommand':getLibSpecificStageCommand,
         'getLibSpecificEnv':getLibSpecificEnv,
-        })
-#Sconscript('Macaulay2/SConscript',exports={'state':state})
+        'Glob':Glob,
+        }
+exportDict['exportDict']=exportDict
+
+for mode in state[architecture]['modes']:
+    ed = dict(exportDict)
+    ed['mode']=mode
+    ed['exportDict']=ed
+    SConscript('Macaulay2/SConscript', exports=ed, variant_dir=getState(mode,architecture,'buildpath')+'Macaulay2/', duplicate=0)
+SConscript('libraries/SConscript', exports=exportDict)
 

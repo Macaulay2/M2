@@ -1,6 +1,7 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
-
+#ifndef NO_CONFIG
 #include "M2/config.h"
+#endif
 #include "compat.h"
 
 #define EQUAL 0

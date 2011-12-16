@@ -17,7 +17,7 @@ setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'F
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--disable-shared','--prefix=$SConsInstallPrefixPath'])
-setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64'],libraryName,2,['BINOWN='+str(os.getuid()),'BINGRP='+str(os.getgid())])
+setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64'],libraryName,2,['BINOWN='+str(os.getuid()),'BINGRP='+str(os.getgid()),'install'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
 def BuildLibrary(target,source,env):
