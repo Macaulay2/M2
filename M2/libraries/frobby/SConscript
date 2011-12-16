@@ -1,0 +1,60 @@
+import os.path
+import shutil
+import subprocess
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+       'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+       'getLibSpecificStageCommand')
+
+#set this to library name
+libraryName = 'frobby'
+#Library specific declarations go here.
+setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
+setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecificStageCommandArguments('release','all',libraryName,1,[ 'prefix=$SConsInstallPrefixPath','LDFLAGS=-L$SConsInstallPrefixPath/lib/', 'CFLAGS=-I$SConsInstallPrefixPath/include/ -g -O3 -Wno-deprecated', 'library'])
+setLibSpecificStageCommandArguments('debug','all',libraryName,1,[ 'prefix=$SConsInstallPrefixPath','LDFLAGS=-L$SConsInstallPrefixPath/lib/', 'CFLAGS=-I$SConsInstallPrefixPath/include/ -g -O0 -Wno-deprecated','library'])
+
+setLibSpecific('all','all',libraryName,'patchfile','../../../libraries/frobby/patch-0.8.2')
+setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
+   
+def BuildLibrary(target,source,env):
+   """
+   Build target for the library.
+   """
+   source = source[0].rstr()
+   sourceFile = os.path.split(source)[1]
+   packageName = extractPackageName(sourceFile)
+   cleaned = CleanLibrary(env.mode,architecture,libraryName)
+   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+   if(getLibSpecific(env.mode,architecture,libraryName,'stage0')):
+      setLibSpecific(env.mode,architecture,libraryName,'stage1',True)
+   else:
+      return None
+   if makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName):
+      buildpath = getState(env.mode,architecture,'buildpath')
+      realpath = buildpath+packageName+'/'
+   #install...
+      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'bin/libfrobby.a'),realpath+'lib/libfrobby.a'))
+      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'include/frobby.h'),realpath+'src/frobby.h'))
+      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'include/stdinc.h'),realpath+'src/stdinc.h'))
+   return None
+   
+
+def CleanLibrary(mode,directory,packageBaseName):
+   """
+   Actual function that gets called to process a clean library command
+   """
+   if(deepCleanLibrary(mode,architecture,libraryName)):
+      return True
+   if(cleanLibrary(mode,architecture,libraryName)):
+      return True   
+   return False
+
+for mode in state[architecture]['modes']:
+   if(getState(mode,architecture,'build')):
+      builder = Builder(action=BuildLibrary, single_source=1)
+      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
+      if(state[architecture][mode].get('builders')==None):
+         setState(mode,architecture,'builders',{})
+      getState(mode,architecture,'builders')[libraryName]=builder

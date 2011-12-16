@@ -1,0 +1,46 @@
+import os.path
+import shutil
+import subprocess
+Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+       'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+       'getLibSpecificStageCommand')
+
+#set this to library name
+libraryName = 'boost'
+#Library specific declarations go here.
+   
+def BuildLibrary(target,source,env):
+   """
+   Build target for the library.
+   """
+   source = source[0].rstr()
+   sourceFile = os.path.split(source)[1]
+   packageName = extractPackageName(sourceFile)
+   cleaned = CleanLibrary(env.mode,architecture,libraryName)
+   if(untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)):
+   #install...
+      buildpath = getState(env.mode,architecture,'buildpath')
+      realpath = buildpath+packageName+'/'
+      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'include/boost/'),realpath+'boost/'))
+   return None
+   
+
+def CleanLibrary(mode,directory,packageBaseName):
+   """
+   Actual function that gets called to process a clean library command
+   """
+   if(deepCleanLibrary(mode,architecture,libraryName)):
+      return True
+   if(cleanLibrary(mode,architecture,libraryName)):
+      return True   
+   return False
+
+for mode in state[architecture]['modes']:
+   if(getState(mode,architecture,'build')):
+      builder = Builder(action=BuildLibrary, single_source=1)
+      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
+      if(state[architecture][mode].get('builders')==None):
+         setState(mode,architecture,'builders',{})
+      getState(mode,architecture,'builders')[libraryName]=builder
