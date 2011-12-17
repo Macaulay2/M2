@@ -69,7 +69,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       symbol Subscript, symbol drop, symbol showStructure, symbol dictionaryPath, symbol lines, symbol gcd, symbol lift, subscript, symbol printWidth, symbol presentation, symbol
       append, symbol extend, symbol cone, symbol Hypertext, symbol openDatabaseOut, symbol Layout, symbol ModuleMap, symbol addStartFunction, symbol help, symbol pushForward1, symbol
       fromDual, symbol ascii, symbol locate, symbol get, symbol QuotientRing, symbol toSequence, symbol minors, Inverses, symbol shield, symbol local, Outputs, symbol isPrime, symbol
-      copy, symbol super, symbol columnate, symbol ||, symbol reduceHilbert, symbol userSymbols, symbol dumpdata, symbol tan, symbol graphIdeal, symbol HTML, symbol Nothing, symbol
+      copy, symbol super, symbol columnate, symbol ||, symbol reduceHilbert, symbol userSymbols, symbol tan, symbol graphIdeal, symbol HTML, symbol Nothing, symbol
       annihilator, symbol promote, symbol cosh, DegreeOrder, symbol texMath, symbol Superscript, symbol showTex, baseRings, symbol status, symbol RowExpression, symbol FractionField, symbol
       link}
 

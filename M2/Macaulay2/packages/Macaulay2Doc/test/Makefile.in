@@ -32,10 +32,6 @@ check-deferred:
 	       false ; \
 	  fi
 
-ifneq "@DUMPDATA@" "no"
-RESULTS += dumpdata.out
-endif
-
 docStructure.out: docStructure.m2
 
 Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile

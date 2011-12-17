@@ -74,11 +74,9 @@ Macaulay2/packages/Macaulay2Doc/basictests/Makefile
 Macaulay2/packages/SCSCP/docinput/Makefile
 Macaulay2/book/Makefile
 Macaulay2/c/Makefile
-Macaulay2/compat/Makefile
 Macaulay2/d/Makefile
 Macaulay2/d/Makefile.files
 Macaulay2/d/startup.m2
-Macaulay2/dumpdata/Makefile
 Macaulay2/bin/Makefile
 Macaulay2/e-includes/Makefile
 Macaulay2/e/Makefile
@@ -107,7 +105,6 @@ Macaulay2/packages/ComputationsBook/solving/Makefile
 Macaulay2/packages/ComputationsBook/toricHilbertScheme/Makefile
 Macaulay2/packages/ComputationsBook/varieties/Makefile
 Macaulay2/packages/Makefile
-Macaulay2/probe/Makefile
 Macaulay2/regex/Makefile
 Macaulay2/srcdir
 Macaulay2/system/Makefile
