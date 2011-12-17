@@ -136,13 +136,6 @@ setupconst("version", Expr(toHashTable(Sequence(
    "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
-   "dumpdata" => Ccode(bool,"
-	  #if DUMPDATA
-	       haveDumpdata()
-	  #else
-	       0
-	  #endif
-	  "),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if USE_MYSQL

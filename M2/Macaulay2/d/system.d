@@ -91,8 +91,6 @@ import waitNoHang(pid:array(int)):array(int);
 import select(s:array(int)):array(int);
 import hash(x:double):int;
 import getcwd():string;
-import dumpdata(filename:string):int;
-import loaddata(notify:int,filename:string):int;
 import errfmt(filename:string,lineno:int,colno:int,loaddepth:int):string;
 threadLocal export loadDepth := ushort(0);
 import dbmopen(filename:string,write:bool):int;

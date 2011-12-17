@@ -80,7 +80,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/makem2.m2 \
 		../emacs/makesyms.m2 \
 		loads.awk \
-		@srcdir@/../*/COPYRIGHT \
 		@srcdir@/../packages/Macaulay2Doc/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \

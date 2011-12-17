@@ -600,7 +600,6 @@ export {
 	symbol document,
 	symbol drop,
 	symbol dual,
-	symbol dumpdata,
 	symbol eagonNorthcott,
 	symbol echoOff,
 	symbol echoOn,

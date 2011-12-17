@@ -161,8 +161,8 @@ CXXFLAGS += -Wreturn-type -Werror
 
 python-c.o : | python-exports.h.tmp
 M2lib.o scclib.o : | interp-exports.h.tmp
-scclib.o : expr-exports.h M2mem.h M2inits.h ../dumpdata/map.h debug.h types.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
-M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
+scclib.o : expr-exports.h M2mem.h M2inits.h debug.h types.h ../c/compat.h ../e/engine.h
+M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h
 gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o M2inits.o debug.o : ../../include/M2/config.h
 M2.o : ../../include/M2/config.h
 

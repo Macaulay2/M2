@@ -252,7 +252,6 @@ if firstTime then (
 	  else applicationDirectorySuffix
 	  );
 
-     dumpdataFile = null;
 
      initlayout := () -> (
 	  if regex(".*/","/aa/bb") =!= {(0, 4)}
@@ -373,7 +372,6 @@ notyet := arg -> if phase == 1 then (
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
 progname := notdir commandLine#0
 
-local dump
 usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
@@ -383,8 +381,6 @@ usage := arg -> (
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
      << "    --debug n          debug warning message n by signalling an error" << newline
-     << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
-     << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading files during initialization" << newline
      << "                       and when evaluating command line arguments" << newline
@@ -407,14 +403,9 @@ usage := arg -> (
      << "    -e '...'           evaluate expression '...' after initialization" << newline
      << "    --top-srcdir '...' add top source or build tree '...' to initial path" << newline
      << "environment:"       << newline
-     << "    M2ARCH             a hint to find the dumpdata file as" << newline
-     << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
-     << "                       directory containing the Macaulay2 executable" << newline
      << "    EDITOR             default text editor" << newline
-     << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
-     << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
-     << "    LOADDATA_DEBUG            (loaddata: verbose debugging messages)" << newline
      ;)
+
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
      filetime := fileTime fn;
@@ -444,7 +435,6 @@ action := hashTable {
      "-silent" => obsolete,
      "-tty" => notyet,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
-     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 4 then dump()),
      "--help" => arg -> (usage(); exit 0),
      "--int" => arg -> arg,
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
@@ -582,45 +572,14 @@ loadSetup := () -> (
      error "can't load setup.m2"
      )
 
-dump = () -> (
-     if not version#"dumpdata" then (
-	  error "not configured for dumping data with this version of Macaulay2";
-	  );
-     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
-     fn := (
-	  if prefixDirectory =!= null then concatenate(prefixDirectory, replaceStrings("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")	  
-	  );
-     if fn === null then error "can't find cache directory for dumpdata file";
-     fntmp := fn | ".tmp";
-     fnmaps := fn | ".maps";
-     fnmaps << showMaps() << endl << close;
-     runEndFunctions();
-     dumpdataFile = toAbsolutePath fn;					    -- so we know after "loaddata" where we put the file
-     collectGarbage();
-     stderr << "--dumping to " << fntmp << endl;
-     dumpdata fntmp;
-     stderr << "--success" << endl;
-     moveFile(fntmp,fn,Verbose=>true);
-     exit 0;
-     )
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
      stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
-     if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
-if firstTime and not noloaddata and version#"dumpdata" then (
-     -- try to load dumped data
-     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
-     datafile := minimizeFilename (
-	  if prefixDirectory =!= null then concatenate(prefixDirectory, replaceStrings("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")
-	  else concatenate("Macaulay2-", arch, "-data")
-	  );
-     if fileExists datafile then (
-	  if notify then stderr << "--loading cached memory data from " << datafile << newline << flush;
-     	  try loaddata(notify,datafile);
-	  if notify then stderr << "--warning: unable to load data from " << datafile << newline << flush))
+     if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
+)
 
-scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
+scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()

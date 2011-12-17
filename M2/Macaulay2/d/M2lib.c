@@ -8,7 +8,6 @@
 
 #include "M2mem.h"
 #include "M2inits.h"
-#include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
 
@@ -271,10 +270,6 @@ void segv_handler(int sig) {
   level --;
   _exit(1);
 }
-
-#if DUMPDATA
-static sigjmp_buf loaddata_jump;
-#endif
 
 static sigjmp_buf abort_jump;
 
@@ -567,15 +562,8 @@ char **argv;
 {
 
      int volatile envc = 0;
-#if DUMPDATA
-     static int old_collections = 0;
-     const char ** volatile saveenvp = NULL;
-     const char ** volatile saveargv;
-     int volatile savepid = 0;
-#else
 #define saveenvp our_environ
 #define saveargv argv
-#endif
      void main_inits();
 
      char **x = our_environ; 
@@ -631,61 +619,6 @@ char **argv;
      }
 #endif
 
-#if DUMPDATA
-     {
-	  int i;
-
-	  /* save arguments on stack in case they're on the heap */
-	  saveargv = (char **)alloca((argc + 1)*sizeof(char *));
-	  for (i=0; i<argc; i++) {
-	       saveargv[i] = alloca(strlen(argv[i]) + 1);
-	       strcpy(saveargv[i],argv[i]);
-	  }
-	  saveargv[i] = NULL;
-
-	  /* save environment on stack in case it's on the heap */
-	  saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
-	  for (i=0; i<envc; i++) {
-	       saveenvp[i] = alloca(strlen(our_environ[i]) + 1);
-	       strcpy(saveenvp[i],our_environ[i]);
-	  }
-	  saveenvp[i] = NULL;
-     }
-#endif
-
-#if DUMPDATA
-     if (0 != sigsetjmp(loaddata_jump,TRUE)) {
-	  if (gotArg("--notify", saveargv)) putstderr("--loaded cached memory data");
-	  struct GC_stack_base sb;
-	  GC_get_stack_base(&sb);
-	  GC_stackbottom = (char *)sb.mem_base;	/* the stack may have moved (since we may have reloaded all the static data) */
-	  old_collections = GC_gc_no;
-          {
-	       char **environ0;
-	       int i;
-	       our_environ = saveenvp;	/* our_environ is a static variable that points
-					to the heap and has been overwritten by
-					loaddata(), thereby pointing to a previous
-					incarnation of the heap. */
-	       /* Make a copy of the environment on the heap for 'our_environ'. */
-	       /* In some systems, putenv() calls free() on the old item,
-		  so we are careful to use malloc here, and not GC_malloc. */
-	       environ0 = (char **)malloc((envc + 1)*sizeof(char *));
-	       /* amazing but true:
-		  On linux, malloc calls getenv to get values for tunable
-		  parameters, so don't trash our_environ yet.
-		  */
-	       if (environ0 == NULL) fatal("out of memory");
-	       for (i=0; i<envc; i++) {
-		    environ0[i] = malloc(strlen(saveenvp[i]) + 1);
-		    if (environ0[i] == NULL) fatal("out of memory");
-		    strcpy(environ0[i],saveenvp[i]);
-	       }
-	       environ0[i] = NULL;
-	       our_environ = environ0;
-               }
-	  }
-#endif
 
      if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
           FATAL("possible memory leak, gmp allocator not set up properly");
@@ -730,43 +663,9 @@ void clean_up(void) {
 
 void scclib__prepare(void) {}
 
-int system_dumpdata(M2_string datafilename)
-{
-     /* this routine should keep its data on the stack */
-#if !DUMPDATA
-     return ERROR;
-#else
-     bool haderror = FALSE;
-     char *datafilename_s = tocharstar(datafilename);
-     if (ERROR == dumpdata(datafilename_s)) haderror = TRUE;
-     GC_FREE(datafilename_s);
-     return haderror ? ERROR : OKAY;
-#endif
-     }
 
 #define FENCE 0x47474747
 
-int system_loaddata(int notify, M2_string datafilename){
-#if !DUMPDATA
-     return ERROR;
-#else
-     char *datafilename_s = tocharstar(datafilename);
-     volatile int fence0 = FENCE;
-     sigjmp_buf save_loaddata_jump;
-     volatile int fence1 = FENCE;
-     /* int loadDepth = system_loadDepth; */
-     memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
-     if (ERROR == loaddata(M2_notify,datafilename_s)) return ERROR;
-     memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
-     /* system_loadDepth = loadDepth + 1; */
-     if (fence0 != FENCE || fence1 != FENCE) {
-       putstderr("--internal error: fence around loaddata longjmp save area on stack destroyed, aborting");
-       abort();
-     }
-     if (M2_notify) putstderr("--loaddata: data loaded, ready for longjmp");
-     siglongjmp(loaddata_jump,1);
-#endif
-     }
 
 int system_isReady(int fd) {
   int ret;

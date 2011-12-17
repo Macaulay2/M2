@@ -1,8 +1,9 @@
+import os.path
 Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
 
-SConscript('c/SConscript',exports=exportDict)
-SConscript('d/SConscript',exports=exportDict)
-SConscript('e/SConscript',exports=exportDict)
+dfiles = Glob('*.d','.')
+ddfiles = Glob('*.dd','.')
+

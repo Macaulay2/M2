@@ -3,32 +3,15 @@ include ../../include/config.Makefile
 vpath %.a  $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
 VPATH = @srcdir@
-EXES := echoout timestmp
+EXES := 
 CPPFLAGS :=  -I. -I../../include $(CPPFLAGS)
-
-ifeq (@OS@,Linux)
-EXES += screen
-endif
 
 all: $(EXES)
 
-# overlay.h is no longer needed
-#  all: overlay.h
-#  overlay.h : overlay ; ./$< >$@
-
-# all: targettypes.h
-#  we don't need targettypes.h any more
-#  it's replaced by stdint.h
-#  and it makes cross-compiling not work
-# targettypes.h : targettypes ; ./$^ >$@
 clean:
-	rm -f overlay.h overlay gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h gc_tested gc_test
+	rm -f gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) gc_tested gc_test
 	rm -rf *.dSYM
 ../bin/linkexec : linkexec ; cp -a $< $@
-ifeq "@OS@" "Windows-95-98-NT"
-all: ../setup.exe
-../setup.exe : setup; cp setup.exe ..
-endif
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 # gc_test

@@ -7,10 +7,7 @@ $(foreach d,d e,							\
 	$(eval initialize-in-$d:; $$(MAKE) -C $d initialize DEPENDS=no)	\
 	$(eval .PHONY initialize-in-subdirs:initialize-in-$d)		\
 	$(eval .PHONY: initialize-in-subdirs))
-SUBDIRS = compat util probe regex c
-ifeq "@DUMPDATA@" "yes"
-SUBDIRS += dumpdata
-endif
+SUBDIRS = util regex c
 SUBDIRS += e-includes d e system kernel bin packages/Macaulay2Doc/basictests m2 emacs man packages html-check-links tests
 SUBDIRS += book
 SUBDIRS += packages/Macaulay2Doc/test
