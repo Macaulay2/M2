@@ -1,9 +1,91 @@
 import os.path
+import shutil
+import subprocess
 Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
 
-dfiles = Glob('*.d','.')
-ddfiles = Glob('*.dd','.')
 
+dfiles = ['arithmetic.d','atomic.d','M2.d','system.d','strings.d','varstrin.d','strings1.d','errio.d','vararray.d','ctype.d','nets.d',
+          'varnets.d','interrupts.d','pthread0.d','stdiop0.d','gmp.d','engine.dd','xml.d','stdio0.d','parse.d','expr.d','stdio.d','stdiop.d',
+          'err.d','gmp1.d','tokens.d','getline.d','lex.d','parser.d','binding.d','basic.d','convertr.d','common.d','util.d','struct.d',
+          'classes.dd','buckets.dd','equality.dd','hashtables.dd','sets.dd','version.dd','evaluate.d','mysqldummy.d','pthread.d','actors.d',
+          'actors2.d','actors3.d','actors4.d','xmlactors.d','actors5.d','threads.dd','pari.d','interface.dd','texmacs.d','interp.d']
+
+def DBuildDependency(target,source,env):
+    source = str(source[0])
+    target = str(target[0])
+    sourceFile = os.path.split(source)[1]
+    splitTargetPath = os.path.split(target)
+    targetPath = splitTargetPath[0]+'/'
+    try:
+        os.makedirs(taretPath)
+    except:
+        None
+    targetFile = splitTargetPath[1]
+    cmd = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/c/scc')
+    args = [cmd, '-dep', os.path.abspath(source),'-I../d/']
+    if(os.path.splitext(target)[1]=='.dd'):
+        args = args + ['-cxx']
+    proc = subprocess.Popen(args,cwd=targetPath)
+    if(proc.wait()):
+        raise Exception("Unable to execute " + str(args) + ' in ' + targetPath)
+    shutil.move(target+'.tmp',target)
+    shutil.move(target[:-4]+'.sig.tmp',target[:-4]+'.sig')
+    return None
+
+def DBuild(target,source,env):
+    origTargets = target
+    source = str(source[0])
+    target = str(target[0])
+    sourceFile = os.path.split(source)[1]
+    splitTargetPath = os.path.split(target)
+    targetPath = splitTargetPath[0]+'/'
+    targetFile = splitTargetPath[1]
+    cmd = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/c/scc')
+    args = [cmd, '-ronly', os.path.abspath(source),'-I../d/']
+    if(os.path.splitext(target)[1]=='.dd'):
+        args = args + ['-cxx']
+    proc = subprocess.Popen(args,cwd=targetPath)
+    if(proc.wait()):
+        raise Exception("Unable to execute " + str(args) + ' in ' + targetPath)
+    shutil.move(str(origTargets[1])+'.tmp',str(origTargets[1]))
+    return None
+
+
+ddepbuilder = Builder(action=DBuildDependency, single_source=1)
+dbuilder = Builder(action=DBuild,single_source=1)
+depbuilders = []
+env = Environment()
+env.mode = mode
+env['BUILDERS']['ddepbuilder']=ddepbuilder
+env['BUILDERS']['dbuilder']=dbuilder
+for i in range(0,len(dfiles)):
+    df = dfiles[i]
+    sf = os.path.split(df)
+    se = os.path.splitext(sf[1])
+    builder = env.ddepbuilder([se[0]+'.dep',se[0]+'.sig'], df)
+    ParseDepends(se[0]+'.dep')
+    if i!=0:            
+        Requires(builder,depbuilders[i-1])
+    depbuilders.append(builder)
+    builders = []
+for i in range(0,len(dfiles)):
+    df = dfiles[i]
+    sf = os.path.split(df)
+    se = os.path.splitext(sf[1])
+    if(se[1]=='.dd'):
+        targetf = se[0]+'-tmp.cc'
+    elif(se[1]=='.d'):
+        targetf = se[0]+'-tmp.c'
+    else:
+        raise Exception
+    builder = env.dbuilder([targetf,se[0]+'-exports.h'],df)
+    Depends(builder,se[0]+'.dep')
+    Requires(builder,depbuilders[len(depbuilders)-1])
+    # It is not necessary to serialize on typecode.db since we are only reading since we have already generated all dependencies...
+    #    SideEffect('typecode.db',builder)
+    builders.append(builder)
+setState(mode,architecture,'dstart',depbuilders[0])
+setState(mode,architecture,'dend',builders[len(builders)-1])

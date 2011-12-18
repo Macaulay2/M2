@@ -10,6 +10,7 @@ extern bool casechks;
 extern bool nomacros;
 extern bool compilerThreadLocal;
 extern bool pthreadThreadLocal;
+extern bool gdbm_ronly;
 extern char *getmem(unsigned);
 extern char *strnperm(const char *, unsigned);
 extern char *strperm(const char *);

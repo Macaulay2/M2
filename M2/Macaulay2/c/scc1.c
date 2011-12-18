@@ -14,6 +14,7 @@ bool arraychks = TRUE;
 bool casechks = TRUE;
 bool compilerThreadLocal = FALSE;
 bool pthreadThreadLocal = TRUE;
+bool gdbm_ronly = FALSE;
 
 
 static char Copyright[] = "Copyright 1993, 2010, by Daniel R. Grayson";
@@ -182,6 +183,7 @@ static void usage() {
   printf("    -yydebug      debug the parser\n");
   printf("    -debug        set debugging mode on, write symbol table, list of types, and list of strings to foo.sym\n");
   printf("    -Ixxx         append xxx to the path used for finding *.sig files, initially \".\"\n");
+  printf("    -ronly        open typecode.db in read only mode");
 }
 
 int main(int argc, char **argv){
@@ -200,6 +202,10 @@ int main(int argc, char **argv){
 	       stop_after_dep = TRUE;
 	       continue;
 	       }
+	  if (EQUAL == strcmp(argv[i],"-ronly")) {
+	    gdbm_ronly = TRUE;
+	    continue;
+	  }
      	  if (EQUAL == strcmp(argv[i],"-cxx")) {
 	       do_cxx = TRUE;
 	       continue;

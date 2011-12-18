@@ -4,3 +4,11 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
 
+efiles = Glob('*.c','.')
+eflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG '+getState(mode,architecture,'eflags')
+eobjects = []
+#for f in efiles:
+#    eobjects.append(Object(f,CFLAGS=cflags))
+state[architecture][mode]['efiles']=eobjects
+
+

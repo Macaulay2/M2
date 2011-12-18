@@ -282,7 +282,10 @@ static int numkeys;
 static void opendb() {
   datum key;
   int maxn = 0;
-  db = gdbm_open("typecode.db",0,GDBM_WRCREAT|GDBM_SYNC,0644,NULL);
+  if(gdbm_ronly)
+    db = gdbm_open("typecode.db",0,GDBM_READER,0644,NULL);
+  else
+    db = gdbm_open("typecode.db",0,GDBM_WRCREAT|GDBM_SYNC,0644,NULL);
   if (db == NULL) fatal("failed to open typecode.db");
   key = gdbm_firstkey(db);
   while (key.dptr != NULL) {

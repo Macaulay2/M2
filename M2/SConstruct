@@ -18,7 +18,8 @@ state = {
             'buildpath':'BUILD/debug/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
-            'libspecific':{ }
+            'libspecific':{ },
+            'eflags':'-O0 -g',
             },
         'release':{
             'prefixpath':'local/release/',
@@ -27,7 +28,8 @@ state = {
             'buildpath':'BUILD/release/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
-            'libspecific':{}
+            'libspecific':{},
+            'eflags':'-O2 -g',
             },
         'modes':set(['debug','release']),
         },
@@ -40,7 +42,8 @@ state = {
             'buildpath':'BUILD/debug/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
-            'libspecific':{ }
+            'libspecific':{ },
+            'eflags':'-O0 -g',
             },
         'release':{
             'prefixpath':'local/release/',
@@ -49,7 +52,8 @@ state = {
             'buildpath':'BUILD/release/',
             'tarpath':'BUILD/tarfiles/',
             'build':False,
-            'libspecific':{}
+            'libspecific':{},
+            'eflags':'-O2 -g',
             },
         'modes':set(['debug','release']),
         },
