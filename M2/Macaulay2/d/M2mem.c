@@ -29,7 +29,7 @@ static inline void exit_getmem() {}
 void outofmem(void) {
      const char *msg = "\n\n *** out of memory, exiting ***\n";
      int r = write(STDERR,msg,strlen(msg));
-     if (r == ERROR) exit(1);
+     if (r == -1) exit(1);
      exit(1);
 }
 
@@ -38,7 +38,7 @@ void outofmem2(size_t new) {
      static char buf[sizeof(msg) + 100];
      sprintf(buf,msg,(long)new);
      int r = write(STDERR,buf,strlen(buf));
-     if (r == ERROR) exit(1);
+     if (r == -1) exit(1);
      exit(1);
 }
 

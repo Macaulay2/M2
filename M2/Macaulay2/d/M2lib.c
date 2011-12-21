@@ -1,44 +1,11 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
-
 #include "interp-exports.h"
-
-/* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
-#define GDBM_STATIC
-#include <gdbm.h>
+#include "../platform/platform.h"
 
 #include "M2mem.h"
 #include "M2inits.h"
 #include "types.h"
 #include "debug.h"
-
-#if HAVE_ALLOCA_H
-#include <alloca.h>
-#else
-#ifdef __GNUC__
-#ifndef alloca
-#define alloca __builtin_alloca
-#endif
-#endif
-
-#endif
-
-#if !defined(PROFILING)
-#error PROFILING not defined
-#endif
-
-#if HAVE_LINUX_PERSONALITY_H
-#include <linux/personality.h>
-#undef personality
-#endif
-
-#if HAVE_DECL_ADDR_NO_RANDOMIZE
-#else
-#define ADDR_NO_RANDOMIZE 0x0040000
-#endif
-
-#if HAVE_PERSONALITY
-extern long personality(unsigned long persona);
-#endif
 
 #include "../system/supervisorinterface.h"
 
@@ -47,7 +14,7 @@ static void ignore(int);
 
 static void putstderr(const char *m) {
      ignore(write(STDERR,m,strlen(m)));
-     ignore(write(STDERR,NEWLINE,strlen(NEWLINE)));
+     ignore(write(STDERR,"\n",strlen("\n")));
      }
 
 static void ignore(int x) { }
@@ -61,303 +28,7 @@ void WarnS(const char *m) {
   putstderr(m);
 }
 
-static void alarm_handler(int sig), interrupt_handler(int sig);
-static void oursignal(int sig, void (*handler)(int)) {
-  struct sigaction act;
-  act.sa_flags = 0;	/* no SA_RESTART */
-  act.sa_handler = handler;
-  sigemptyset(&act.sa_mask);
-  sigfillset(&act.sa_mask);
-  sigaction(sig,&act,NULL); /* old way: signal(sig,interrupt_handler); */
-}
-void system_handleInterruptsSetup(M2_bool handleInterrupts) {
-  oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
-  oursignal(SIGINT,handleInterrupts ? interrupt_handler : SIG_DFL);
-}
 
-static void unblock(int sig) {
-  sigset_t s;
-  sigemptyset(&s);
-  sigaddset(&s,sig);
-  sigprocmask(SIG_UNBLOCK,&s,NULL);
-}
-
-static void alarm_handler(int sig) {
-     if (tryGlobalAlarm() == 0) {
-	  interrupts_setAlarmedFlag();
-	  }
-     oursignal(SIGALRM,alarm_handler);
-     }
-
-#define BACKTRACE_WORKS 0	/* doesn't work under ubuntu, or works very slowly when threads are involved */
-
-#if defined(HAVE_EXECINFO_H) && defined(HAVE_BACKTRACE)
-#include <execinfo.h>
-#endif
-
-#if !BACKTRACE_WORKS
-int backtrace(void **buffer, int size) {
-  buffer[0] = NULL;		/* see GC_save_callers() in gc's os_dep.c, which insists on at least one */
-  return 1;
-}
-#endif
-
-#if defined(HAVE_BACKTRACE) && BACKTRACE_WORKS
-#define STACK_SIZE 20
-void stack_trace() {
-  static void *buf[STACK_SIZE];
-  int n = backtrace(buf,STACK_SIZE);
-  backtrace_symbols_fd(buf,n,STDERR);
-}
-
-#elif __GNUC__
-
-static sigjmp_buf stack_trace_jump;
-
-void segv_handler2(int sig) {
-     // fprintf(stderr,"--SIGSEGV during stack trace\n");
-     siglongjmp(stack_trace_jump,1);
-}
-
-void stack_trace() {
-     void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
-     unblock(SIGSEGV);
-     fprintf(stderr,"-- stack trace, pid %ld:\n", (long)getpid());
-     if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
-#	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
-#	  define i 0
-	  D;
-#	  undef i
-#	  define i 1
-	  D;
-#	  undef i
-#	  define i 2
-	  D;
-#	  undef i
-#	  define i 3
-	  D;
-#	  undef i
-#	  define i 4
-	  D;
-#	  undef i
-#	  define i 5
-	  D;
-#	  undef i
-#	  define i 6
-	  D;
-#	  undef i
-#	  define i 7
-	  D;
-#	  undef i
-#	  define i 8
-	  D;
-#	  undef i
-#	  define i 9
-	  D;
-#	  undef i
-#	  define i 10
-	  D;
-#	  undef i
-#	  define i 11
-	  D;
-#	  undef i
-#	  define i 12
-	  D;
-#	  undef i
-#	  define i 13
-	  D;
-#	  undef i
-#	  define i 14
-	  D;
-#	  undef i
-#	  define i 15
-	  D;
-#	  undef i
-#	  define i 16
-	  D;
-#	  undef i
-#	  define i 17
-	  D;
-#	  undef i
-#	  define i 18
-	  D;
-#	  undef i
-#	  define i 19
-	  D;
-#	  undef i
-#	  define i 20
-	  D;
-#	  undef i
-#	  define i 20
-	  D;
-#	  undef i
-#	  define i 21
-	  D;
-#	  undef i
-#	  define i 22
-	  D;
-#	  undef i
-#	  define i 23
-	  D;
-#	  undef i
-#	  define i 24
-	  D;
-#	  undef i
-#	  define i 25
-	  D;
-#	  undef i
-#	  define i 26
-	  D;
-#	  undef i
-#	  define i 27
-	  D;
-#	  undef i
-#	  define i 28
-	  D;
-#	  undef i
-#	  define i 29
-	  D;
-#	  undef i
-#	  define i 30
-	  D;
-#	  undef i
-#	  define i 31
-	  D;
-#	  undef i
-#	  define i 32
-	  D;
-#	  undef i
-#	  define i 33
-	  D;
-#	  undef i
-#	  define i 34
-	  D;
-#	  undef i
-#	  define i 35
-	  D;
-#	  undef i
-#	  define i 36
-	  D;
-#	  undef i
-#	  define i 37
-	  D;
-#	  undef i
-#	  define i 38
-	  D;
-#	  undef i
-#	  define i 39
-	  D;
-#	  undef i
-     }
-     fprintf(stderr,"-- end stack trace\n");
-     signal(SIGSEGV,old);
-}
-#else
-void stack_trace() {
-  fprintf(stderr,"-- stack trace not available\n");
-}
-#endif
-
-void segv_handler(int sig) {
-  static int level;
-  fprintf(stderr,"-- SIGSEGV\n");
-  level ++;
-  if (level > 1) {
-    fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
-    _exit(2);
-  }
-  stack_trace();
-  level --;
-  _exit(1);
-}
-
-static sigjmp_buf abort_jump;
-
-sigjmp_buf interrupt_jump;
-bool interrupt_jump_set = FALSE;
-
-#undef ABORT
-
-static bool abort_jump_set = FALSE;
-
-#include <readline/readline.h>
-static void interrupt_handler(int sig) {
-     if (tryGlobalInterrupt() == 0) {
-	  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)) || THREADLOCAL(interrupts_interruptPending,bool)) {
-	       if (isatty(STDIN) && isatty(STDOUT)) {
-		    while (TRUE) {
-			 char buf[10];
-			 #              ifdef ABORT
-			 printf("\nAbort (y/n)? ");
-			 #              else
-			 printf("\nExit (y=yes/n=no/b=backtrace)? ");
-			 #              endif
-			 fflush(stdout);
-			 if (NULL == fgets(buf,sizeof(buf),stdin)) {
-			      fprintf(stderr,"exiting\n");
-			      exit(11);
-			      }
-			 if (buf[0]=='b' || buf[0]=='B') {
-			      stack_trace();
-			      fprintf(stderr,"exiting\n");
-			      exit(12);
-			      }
-			 if (buf[0]=='y' || buf[0]=='Y') {
-			      #                   ifdef DEBUG
-			      trap();
-			      #                   endif
-			      #                   ifdef ABORT
-			      if (!tokens_stopIfError && abort_jump_set) {
-				   extern void evaluate_clearInterruptFlag(), evaluate_determineExceptionFlag(), evaluate_clearAlarmedFlag();
-				   fprintf(stderr,"returning to top level\n");
-				   fflush(stderr);
-				   interrupts_clearInterruptFlag();
-				   libfac_interruptflag = FALSE;
-				   interrupts_interruptPending = FALSE;
-				   interrupts_interruptShield = FALSE;
-				   evaluate_clearAlarmedFlag();
-				   evaluate_determineExceptionFlag();
-				   siglongjmp(abort_jump,1); 
-				   }
-			      else {
-				   #                   endif
-				   fprintf(stderr,"exiting\n");
-				   exit(12);
-				   #                   ifdef ABORT
-				   }
-			      #                   endif
-			      }
-			 else if (buf[0]=='n' || buf[0]=='N') {
-			      break;
-			      }
-			 }
-			 }
-	       else {
-		    #              ifndef NDEBUG
-		    trap();
-		    #              endif
-		    exit(13);
-		    }
-	       }
-	  else {
-	    if (THREADLOCAL(interrupts_interruptShield,bool)) THREADLOCAL(interrupts_interruptPending,bool) = TRUE;
-	       else {
-		    if (THREADLOCAL(tokens_stopIfError,bool)) {
-			 int interruptExit = 2;	/* see also interp.d */
-			 fprintf(stderr,"interrupted, stopping\n");
-			 exit(interruptExit);
-			 }
-		    interrupts_setInterruptFlag();
-		    # if 0
-		    /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
-		    if (reading_from_readline) rl_free_line_state();
-		    #endif
-		    if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
-		    }
-	       }
-          }
-     oursignal(SIGINT,interrupt_handler);
-     }
 
 static struct COUNTER { 
      int *count; char *filename; int lineno; char *funname;
@@ -375,134 +46,22 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
      return 0;
      }
 
-#if defined(HAVE_CLOCK_GETTIME) && ( defined(CLOCK_THREAD_CPUTIME_ID) || defined(CLOCK_THREAD_CPUTIME) || defined(CLOCK_PROCESS_CPUTIME_ID) || defined(CLOCK_PROCESS_CPUTIME) )
-
-	#ifdef HAVE_SYS_TYPES_H
-	#include <sys/types.h>
-	#endif
-	#include <stdlib.h>
-	#ifdef HAVE_SYSCALL_H
-	#include <syscall.h>
-	#endif
-	#include <time.h>
-	#include <stdio.h>
-	#include <unistd.h> // for sysconf
-	static __thread double startTime;
-	double system_cpuTime(void) {
-	     struct timespec t;
-	     int err = clock_gettime(
-		  #if defined(CLOCK_THREAD_CPUTIME_ID)
-		  CLOCK_THREAD_CPUTIME_ID
-		  #elif defined(CLOCK_THREAD_CPUTIME)
-		  CLOCK_THREAD_CPUTIME
-		  #elif defined(CLOCK_PROCESS_CPUTIME_ID)
-		  CLOCK_PROCESS_CPUTIME_ID
-		  #elif defined(CLOCK_PROCESS_CPUTIME)
-		  CLOCK_PROCESS_CPUTIME
-		  #else
-		  #error "clock_gettime: no suitable argument for getting CPU time"
-		  #endif
-		  ,&t);
-	     if (err) return 0;		/* silent about error */
-	     double u = t.tv_sec + t.tv_nsec * 1e-9;
-	     return u - startTime;
-	     }
-        void system_cpuTime_init(void) {
-	     startTime = system_cpuTime();
-	     }
-
-#else
-
-    #if !defined(CLOCKS_PER_SEC) || CLOCKS_PER_SEC > 10000
-
-	
-	#define INITVAL 100000000 /* very long, and then an interrupt occurs, sadly */
-        void system_cpuTime_init(void) {
-	     struct itimerval it;
-	     int ret;
-	     it.it_value.tv_sec = INITVAL;
-	     it.it_value.tv_usec = 0;
-	     it.it_interval.tv_sec = INITVAL;
-	     it.it_interval.tv_usec = 0;
-	     ret = setitimer(ITIMER_VIRTUAL,&it,(struct itimerval *)NULL);
-	     if (ret) perror("setitimer() failed");
-	     signal(SIGVTALRM,SIG_IGN);
-	     }
-	double system_cpuTime(void) {
-	     struct itimerval it;
-	     long sec,usec;
-	     getitimer(ITIMER_VIRTUAL,&it);
-	     sec = INITVAL - it.it_value.tv_sec;
-	     usec =   0    - it.it_value.tv_usec;
-	     return sec + usec / 1000000.;
-	     }
-
-    #else
-					/* ANSI C */
-	static clock_t start_time;
-	void system_cpuTime_init(void) {
-	     start_time = clock();
-	     }
-	double system_cpuTime(void) {
-	     return (double)(clock()-start_time) / CLOCKS_PER_SEC;
-	     }
-    #endif
-
-#endif
-
-#if defined HAVE___ENVIRON
-    #define our_environ __environ
-    #if !HAVE_DECL___ENVIRON
-    extern char **__environ;
-    #endif
-#elif defined HAVE__ENVIRON
-    #define our_environ _environ
-    #if !HAVE_DECL__ENVIRON
-    extern char **_environ;
-    #endif
-#elif defined HAVE_ENVIRON
-    #define our_environ environ
-    #if !HAVE_DECL_ENVIRON
-    extern char **environ;
-    #endif
-#else
-    #error "no environment variable available"
-#endif
-
-extern void clean_up();
+//Forward declaration of clean_up found later in file.
+void clean_up();
+/***
+    Initialize readline variables?
+**/
 extern void init_readline_variables();
+/// Not exactly clear what this is.
 extern char *GC_stackbottom;
+/// Not exactly clear what this is.
 extern void arginits(int, const char **);
-extern bool gotArg(const char *arg, const char ** argv);
-
-#include <dlfcn.h>
-
-static void call_shared_library() {
-#if 0
-  const char *libname = "libM2.so";
-  const char *funname = "entry";
-  void *handle;
-  int (*g)();
-  errno = 0;
-  handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
-  if (handle == NULL) { error("can't load library %s", libname); return; }
-  g = dlsym(handle, funname);
-  if (g == NULL) { error("can't link function %s from sharable library %s",funname,libname); return; }
-  g();
-  if (0 != dlclose(handle)) { error("can't close sharable library %s",libname); return; }
-#endif
-}
-
-#ifdef HAVE_PYTHON
-#include <python2.5/Python.h>
-#endif
-
-void* testFunc(void* q )
-{
-  printf("testfunc %lu\n",(unsigned long)q);
-  return NULL;
-}
-
+/// Not exactly clear what this is.
+extern int gotArg(const char *arg, const char ** argv);
+/***
+    This structure is used to hold the state of the environment/program arguments.
+    It contains everything needed to reconstruct the information passed into the program.
+ ***/
 struct saveargs
 {
   int argc;
@@ -510,105 +69,72 @@ struct saveargs
   char** envp;
   int volatile envc;
 };
-
-static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
-
-static char dummy;
+/***
+    File local copy of the save args struct.
+    This is used to pass information between Macaulay2_Main and interpFunc.
+**/
 static struct saveargs* vargs;
-void* interpFunc(void* vargs2)
+/***
+    This is used, given a list of initializations, to run the initializations in reverse order.
+**/
+static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
+/***
+    This has something to do with garbage collection.
+***/
+static char dummy;
+
+/***
+   Function that is called by task system to start the interperter.
+   @param unused An unused parameter slot.
+***/
+void* interpFunc(void* unused)
 {
-  struct saveargs* args = (struct saveargs*) vargs;
-  char** saveenvp = args->envp;
-  char** saveargv = args->argv;
-  int argc = args->argc;
-  int volatile envc = args->envc;
-     setInterpThread();
-     reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
-     init_readline_variables();
-     arginits(argc,(const char **)saveargv);
-
-     //     void M2__prepare();
-     ///     M2__prepare();
-
-     if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
+  char** saveargv = vargs->argv;
+  int argc = vargs->argc;
+  int envc = vargs->envc;
+  setInterpThread();
+  // Since there are a number of thread local variables that are pointers, etc, they must be initialized.
+  reverse_run(thread_prepare_list);
+  // Initialize readline.
+  init_readline_variables();
+  arginits(argc,(const char **)vargs->argv);
+  //Not exactly clear what this does.
+  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      
-     M2_envp = M2_tostrings(envc,(char **)saveenvp);
-     M2_argv = M2_tostrings(argc,(char **)saveargv);
-     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
-     interp_setupargv();
-     sigsetjmp(abort_jump,TRUE);
-     abort_jump_set = TRUE;
+  M2_envp = M2_tostrings(envc,getEnviron());
+  M2_argv = M2_tostrings(argc,getEnviron());
+  M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
+  interp_setupargv();
 
-#if __GNUC__
-     signal(SIGSEGV, segv_handler);
-#endif
+  //This calls the Macaulay2 interpereter.
+  //When this exits, the Macaulay2 process will begin to clean up for exit.
+  interp_process(); 
 
-     interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
-
-     clean_up();
-#if 0
-     fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
-	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
-#endif
-     exit(0);
-     return NULL;
+  clean_up();
+  //print GC statistics if needed.
+  onExitGCStatistics();
+  exit(0);
+  return NULL;
 }
 
 /* these get put into startup.c by Makefile.in */
-
-int Macaulay2_main(argc,argv)
-int argc; 
-char **argv;
+/***
+    Entry point for Macaulay 2 code.
+    @param argc Number of arguments.
+    @param argv Array of string arguments.
+***/
+int Macaulay2_main(int argc,char** argv)
 {
 
      int volatile envc = 0;
-#define saveenvp our_environ
-#define saveargv argv
      void main_inits();
 
-     char **x = our_environ; 
+     char **x = getEnviron(); 
      while (*x) envc++, x++;
 
      system_cpuTime_init();
-     call_shared_library();
-
-#ifdef HAVE_PYTHON
-     Py_SetProgramName(argv[0]);
-     Py_Initialize();
-#endif
-
-#if HAVE_PERSONALITY && !PROFILING
-     if (!gotArg("--no-personality", (const char **)argv)) {
-	  /* this avoids mmap() calls resulting in address randomization */
-	  int oldpersonality = personality(-1);
-	  if ((oldpersonality & ADDR_NO_RANDOMIZE) == 0) {
-	       int newpersonality;
-	       personality(oldpersonality | ADDR_NO_RANDOMIZE);
-	       newpersonality = personality(-1);
-	       personality(oldpersonality | ADDR_NO_RANDOMIZE);	/* just in case the previous line sets the personality to -1, which can happen */
-	       if ((newpersonality & ADDR_NO_RANDOMIZE) != 0) return execvp(argv[0],argv);
-	  }
-	  else personality(oldpersonality);
-     }
-#endif
-
-#if defined(_WIN32)
-     if (argv[0][0]=='/' && argv[0][1]=='/' && argv[0][3]=='/') {
-       /* we must be in Windows 95 or NT running under CYGWIN32, and
-	  the path to our executable has been mangled from D:/a/b/c
-	  into //D/a/b/c */
-       argv[0][0] = argv[0][2];
-       argv[0][1] = ':';
-       strcpy(argv[0]+2,argv[0]+3);
-     }
-     {
-       /* change all \ in path to executable to / */
-       char *p;
-       for (p=argv[0]; *p; p++) if (*p == '\\') *p = '/';
-     }
-#endif
-
-     abort_jump_set = FALSE;
+     
+     //performWindowsNameMangling(argv);
 
 #ifdef HAVE__SETMODE
      {
@@ -629,9 +155,9 @@ char **argv;
      system_handleInterruptsSetup(TRUE);
      
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
-     vargs->argv=saveargv;
+     vargs->argv=argv;
      vargs->argc=argc;
-     vargs->envp=saveenvp;
+     vargs->envp=getEnviron();
      vargs->envc = envc;
 
 
@@ -641,7 +167,9 @@ char **argv;
      waitOnTask(interpTask);
      return 0;
      }
-
+/***
+   Not exactly all to clear what this does.
+***/
 void clean_up(void) {
      extern void close_all_dbms();
      close_all_dbms();
@@ -653,19 +181,12 @@ void clean_up(void) {
 	  final_list->fun();
 	  final_list = final_list->next;
 	  }
-#ifdef HAVE_PYTHON
-     if (Py_IsInitialized()) Py_Finalize();
-#endif
 #    ifndef NDEBUG
      trap();
 #    endif
      }
 
 void scclib__prepare(void) {}
-
-
-#define FENCE 0x47474747
-
 
 int system_isReady(int fd) {
   int ret;

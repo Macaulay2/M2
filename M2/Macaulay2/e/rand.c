@@ -1,6 +1,6 @@
 // Copyright 2008 by Michael Stillman
-
-#include "rand.h"
+#include "../platform/platform.h"
+#include <engine-exports.h>
 #include "../d/M2mem.h"
 
 #define INITIALMAXINT 10

@@ -5,7 +5,7 @@ AddOption('--cleanlib',dest='cleanlib',nargs=1,action='store',type='string',help
 AddOption('--configlib',dest='configlib',nargs=1,action='store',type='string',help='Reconfigure and remake the specified library only')
 AddOption('--makelib',dest='makelib',nargs=1,action='store',type='string',help='Remake the specified library only')
 AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='release,debug',help='One or more modes to build separated by commas.  Defaults to ' + defaultModes)
-AddOption('--jj',dest='jj',nargs=1,action='store',type='int',default='1',help='Number of parallel sub-tasks to run for each build task')
+AddOption('--jj',dest='jj',nargs=1,action='store',type='int',help='Number of parallel sub-tasks to run for each build task')
 AddOption('--disable-parallel',dest='disableparallel',nargs=0,action='store',help='Disable parallel build')
 AddOption('--disable-download',dest='disabledownload',nargs=0,action='store',help='Disable downloading packages')
 state = {
@@ -20,6 +20,7 @@ state = {
             'build':False,
             'libspecific':{ },
             'eflags':'-O0 -g',
+            'M2flags':'-O0 -g',
             },
         'release':{
             'prefixpath':'local/release/',
@@ -30,6 +31,7 @@ state = {
             'build':False,
             'libspecific':{},
             'eflags':'-O2 -g',
+            'M2flags':'-O2 -g',
             },
         'modes':set(['debug','release']),
         },
@@ -44,6 +46,7 @@ state = {
             'build':False,
             'libspecific':{ },
             'eflags':'-O0 -g',
+            'M2flags':'-O0 -g',
             },
         'release':{
             'prefixpath':'local/release/',
@@ -54,6 +57,7 @@ state = {
             'build':False,
             'libspecific':{},
             'eflags':'-O2 -g',
+            'M2flags':'-O2 -g',
             },
         'modes':set(['debug','release']),
         },
@@ -445,6 +449,7 @@ else:
 #If the user requested to specify number of subtasks, do it.
 if(GetOption('jj')):
     numSubTasks=GetOption('jj')
+    print "Setting subtasks: " + str(numSubTasks)
 if(GetOption('disabledownload') is not None):
     print 'Downloading libraries disabled'
     state['enabledownload'] = False

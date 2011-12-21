@@ -12,7 +12,7 @@ dfiles = ['arithmetic.d','atomic.d','M2.d','system.d','strings.d','varstrin.d','
           'err.d','gmp1.d','tokens.d','getline.d','lex.d','parser.d','binding.d','basic.d','convertr.d','common.d','util.d','struct.d',
           'classes.dd','buckets.dd','equality.dd','hashtables.dd','sets.dd','version.dd','evaluate.d','mysqldummy.d','pthread.d','actors.d',
           'actors2.d','actors3.d','actors4.d','xmlactors.d','actors5.d','threads.dd','pari.d','interface.dd','texmacs.d','interp.d']
-
+cfiles = ['gdbm_interface.c','xml-c.c','M2inits.c','gmp_aux.c','pari-c.c','main.c','M2mem.c','M2lib.c','scclib.c','M2-factory.cpp','regex.c','readline.c']
 def DBuildDependency(target,source,env):
     source = str(source[0])
     target = str(target[0])
@@ -70,7 +70,12 @@ for i in range(0,len(dfiles)):
     if i!=0:            
         Requires(builder,depbuilders[i-1])
     depbuilders.append(builder)
-    builders = []
+builders = []
+objFiles = []
+buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/d/'
+prefixPath = getState(mode,architecture,'prefixpath')
+cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes "+getState(mode,architecture,'M2flags')
+ddict = {}
 for i in range(0,len(dfiles)):
     df = dfiles[i]
     sf = os.path.split(df)
@@ -85,7 +90,30 @@ for i in range(0,len(dfiles)):
     Depends(builder,se[0]+'.dep')
     Requires(builder,depbuilders[len(depbuilders)-1])
     # It is not necessary to serialize on typecode.db since we are only reading since we have already generated all dependencies...
-    #    SideEffect('typecode.db',builder)
     builders.append(builder)
+    #export the engine builder because it is needed for dependencies for e.
+    ddict[sf[1]]=builder
+    objFiles.append(Object('#'+buildpath+targetf,CFLAGS=cflags, CXXFLAGS=cflags))
+setState(mode,architecture,'dFileDict',ddict)
+for f in cfiles:
+    builder = Object(f,CFLAGS=cflags,CXXFLAGS=cflags)
+    if f=='M2lib.c':
+        Depends(builder,getState(mode,architecture,'dFileDict')['interp.d'])
+    elif f=='gdbm_interface.c':
+        Depends(builder,getState(mode,architecture,'dFileDict')['M2.d'])
+    elif f=='scclib.c':
+        Depends(builder,getState(mode,architecture,'dFileDict')['expr.d'])
+    elif f=='xml-c.c':
+        Depends(builder,getState(mode,architecture,'dFileDict')['xml.d'])
+    elif f=='M2inits.c':
+        Depends(builder,getState(mode,architecture,'dFileDict')['engine.dd'])
+    elif f=='regex.c':
+        Depends(builder,getState(mode,architecture,'dFileDict')['M2.d'])
+    elif f=='readline.c':
+        Depends(builder,getState(mode,architecture,'dFileDict')['expr.d'])
+    objFiles.append(builder)
+
 setState(mode,architecture,'dstart',depbuilders[0])
 setState(mode,architecture,'dend',builders[len(builders)-1])
+setState(mode,architecture,'dObjectFiles',objFiles)
+Return('objFiles')

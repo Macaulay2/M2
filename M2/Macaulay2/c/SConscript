@@ -7,7 +7,7 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
 cfiles = Glob('*.c','.')
 cfiles.remove('scc-core.c')
 cfiles.remove('test.c')
-cflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG'
+cflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG ' + getState(mode,architecture,'M2flags')
 cobjects = []
 for f in cfiles:
     cobjects.append(Object(f,CFLAGS=cflags))

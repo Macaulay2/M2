@@ -336,7 +336,6 @@ typedef enum
    `translate', and `no_sub' can be set.  After the pattern has been
    compiled, the `re_nsub' field is available.  All other fields are
    private to the regex routines.  */
-
 #ifndef RE_TRANSLATE_TYPE
 # define RE_TRANSLATE_TYPE char *
 #endif

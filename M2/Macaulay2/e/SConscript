@@ -4,11 +4,27 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
 
-efiles = Glob('*.c','.')
-eflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG '+getState(mode,architecture,'eflags')
-eobjects = []
-#for f in efiles:
-#    eobjects.append(Object(f,CFLAGS=cflags))
-state[architecture][mode]['efiles']=eobjects
 
+interface = ['cra.cpp','aring-glue.cpp','aring-zzp.cpp','aring-gf.cpp','aring-wrap.cpp','aring.cpp','schurSn.cpp','schur2.cpp','spair-heap.cpp','dpoly.cpp','tower.cpp','interreduce.cpp','gb-test1.cpp','finalize.cpp','NAG.cpp','points.cpp','overflow.cpp','memory-status.cpp','exceptions.cpp','newdelete.cpp','imonorder.cpp','sagbi.cpp','monideal-minprimes.cpp','dmat-LU.cpp','lapack.cpp','LLL.cpp','fractionfreeLU.cpp','ntl-interface.cpp','mat.cpp','dmat.cpp','smat.cpp','coeffrings.cpp','Eschreyer.cpp','gbweight.cpp','qring.cpp','polyquotient.cpp','poly.cpp','debug.cpp','comp.cpp','comp-gb.cpp','comp-gb-proxy.cpp','comp-gb-declared.cpp','comp-res.cpp','res-a0.cpp','res-a0-poly.cpp','res-a1.cpp','res-a1-poly.cpp','res-a2.cpp','reducedgb.cpp','reducedgb-field.cpp','reducedgb-marked.cpp','reducedgb-field-local.cpp','reducedgb-ZZ.cpp','montable.cpp','montableZZ.cpp','schorder.cpp','GF.cpp','ZZ.cpp','QQ.cpp','RRR.cpp','CCC.cpp','assprime.cpp','buffer.cpp','comb.cpp','det.cpp','frac.cpp','franzi-brp.cpp','freemod.cpp','gb-default.cpp','gb-homog2.cpp','gb-sugarless.cpp','gb-toric.cpp','gb-walk.cpp','gbring.cpp','gauss.cpp','hermite.cpp','hilb.cpp','int-bag.cpp','intarray.cpp','matrix.cpp','matrix-con.cpp','mem.cpp','monideal.cpp','monoid.cpp','monomial.cpp','ntuple.cpp','polyring.cpp','pfaff.cpp','relem.cpp','ring.cpp','ringmap.cpp','schur.cpp','skew.cpp','skewpoly.cpp','solvable.cpp','spair.cpp','text-io.cpp','varpower.cpp','weylalg.cpp','ZZp.cpp','complex.c','error.c','exptable.c','monordering.c','rand.c','table.c']
+
+commands = ['ntl-internal.cpp','ntl-debugio.cpp','matrix-kbasis.cpp','matrix-symm.cpp','matrix-sort.cpp','ring-vecs.cpp','res-a2-gb.cpp','engine.cpp','x-aring.cpp','x-monom.cpp','x-monoid.cpp','x-relem.cpp','x-factor.cpp','x-free.cpp','x-mat.cpp','x-monideal.cpp','x-gb.cpp','x-ringmap.cpp','x-mutablemat.cpp','franzi-gb.cpp','franzi-interface.cpp']
+
+f4 = ['f4/f4.cpp','f4/f4-syz.cpp','f4/f4-mem.cpp','f4/f4-monlookup.cpp','f4/f4-types.cpp','f4/f4-computation.cpp','f4/f4-spairs.cpp','f4/f4-m2-interface.cpp','f4/hilb-fcn.cpp','f4/monhashtable.cpp','f4/monsort.cpp','f4/moninfo.cpp','f4/ntuple-monomial.cpp','f4/varpower-monomial.cpp','f4/gausser.cpp']
+
+
+efiles = interface + commands + f4
+buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/e/'
+prefixPath = getState(mode,architecture,'prefixpath')
+eflags = "-I"+buildpath+"../d/ -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes "+getState(mode,architecture,'eflags')
+eobjects = []
+dengine = getState(mode,architecture,'dFileDict')['engine.dd']
+if dengine is None:
+    raise Exception("Internal error")
+for f in efiles:
+    obj = Object(f,CFLAGS=eflags,CXXFLAGS=eflags)
+    eobjects.append(obj)
+    Depends(obj,dengine)
+    
+state[architecture][mode]['efiles']=eobjects
+Return('eobjects')
 

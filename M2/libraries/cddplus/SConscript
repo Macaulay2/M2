@@ -42,7 +42,7 @@ def BuildLibrary(target,source,env):
       except:
          None
       for target in 'cddr+ cddf+'.split(' '):
-         Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target),realpath+target))
+         shutil.copy2(realpath+target,os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target))
    return None
    
 

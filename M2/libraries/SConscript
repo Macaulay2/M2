@@ -8,6 +8,9 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob')
 
+setLibSpecific('all','all','libxml2','downloadPath','ftp://xmlsoft.org/libxml2/')
+
+
 dependencies = {
     'mpfr':'mpir',
     'cddlib':'mpir',
@@ -22,20 +25,20 @@ dependencies = {
     'normaliz':['boost','mpir'],
     'sccfiles':['gc','gdbm'],
     #serialize
-    'ntl':['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','cddplus','frobby','gfan','normaliz','boost','scc'],
+    'ntl':['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','cddplus','frobby','gfan','normaliz','boost','scc','libxml2'],
     'factory':'ntl',
     'libfac':'factory',
     'dstart':['scc','libfac']
 }
 #list of dependencies to build.
-buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','ntl','factory','cddplus','frobby','gfan','libfac','normaliz','boost'])
+buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','ntl','factory','cddplus','frobby','gfan','libfac','normaliz','boost','libxml2'])
 linuxBuildLibraries = buildlibraries
 state['linux-x86_64']['buildlibraries']=linuxBuildLibraries
 state['linux-x86']['buildlibraries']=linuxBuildLibraries
 linuxVersions = ['4ti2-1.3.2.tar.gz','gfan0.4plus.tar.gz','Normaliz2.7.zip','boost_1_46_1.tar.gz','glpk-4.44.tar.gz','ntl-5.5.2.tar.gz',
                  'cdd+-077a.tar.gz','lapack-3.2.2.tgz','pari-2.5.0.tar.gz','cddlib-094f.tar.gz','libfac-3-1-3.tar.gz','factory-3-1-3.tar.gz',
                  'lrslib-042c.tar.gz','readline61-002','frobby_v0.8.2.tar.gz','mpfr-3.0.1.tar.gz','readline-6.1.tar.gz','gc-7.2alpha7.tar.gz',
-                 'mpir-2.4.0.tar.bz2','gdbm-1.8.3.tar.gz','nauty24r2.tar.gz']
+                 'mpir-2.4.0.tar.bz2','gdbm-1.8.3.tar.gz','nauty24r2.tar.gz','libxml2-2.7.8.tar.gz']
 state['linux-x86_64']['tarfiles']=linuxVersions
 state['linux-x86']['tarfiles']=linuxVersions
 
@@ -50,9 +53,12 @@ def downloadLibraries(architecture,mode):
         filepath = '../'+state[architecture][mode]['tarpath']+library
         absfilepath = os.path.abspath(filepath)
         if not os.path.isfile(filepath):
-            print 'Downloading: ' + absfilepath
             if state['enabledownload']:
-                url = 'http://www.math.uiuc.edu/Macaulay2/Extra/'+library
+                url = getLibSpecific(mode,architecture,extractPackageBaseName(library),'downloadPath')
+                if(url is None):
+                    url = 'http://www.math.uiuc.edu/Macaulay2/Extra/'
+                url = url + library
+                print 'Downloading: ' + absfilepath + ' from ' + url
                 req = Request(url)
                 f = urlopen(req)
                 localFile = open(absfilepath,'w')
@@ -230,7 +236,10 @@ def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseNa
        print 'Execute: ' + str(args)
        proc = subprocess.Popen(args,cwd=realpath,env=newEnv)
        if(proc.wait()):
-           raise Exception("Unable to execute " + str(args) + " for library " + packageName + " in " + realpath)
+           if(cmd=='bjam'):
+               None
+           else:
+               raise Exception("Unable to execute " + str(args) + " for library " + packageName + " in " + realpath)
        setLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage+1),True)       
        return True
    else:
@@ -304,6 +313,7 @@ def modeImportSConscript(mode,packageBases):
         if(not package in importedSConscripts):
             SConscript(package+'/SConscript',exports={
                     'state':state,
+                    'numberSubTasks':numberSubTasks,
                     'extractPackageName':extractPackageName,
                     'extractPackageBaseName':extractPackageBaseName,
                     'getLibSpecific':getLibSpecific,

@@ -20,6 +20,7 @@ const(x:charstar):constcharstar := Ccode(constcharstar,x);
 const(x:charstarOrNull):constcharstarOrNull := Ccode(constcharstarOrNull,x);
 
 header "#include <M2mem.h>";
+header "#include <platform.h>";
 header " extern void *GC_check_annotated_obj(void*); ";
 export tostring(s:constcharstarOrNull):string := -- we want the name of this function to be "tostring", sigh, so keep it first
 Ccode(returns, "

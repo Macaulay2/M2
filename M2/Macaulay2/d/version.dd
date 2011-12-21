@@ -126,16 +126,15 @@ compiler := (
 	    ")));
 
 setupconst("version", Expr(toHashTable(Sequence(
-   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
-   "architecture" => Ccode(constcharstar,"ARCH"),
-   "issue" => Ccode(constcharstar,"ISSUE"),
-   "machine" => Ccode(constcharstar,"MACHINE"),
-   "operating system" => Ccode(constcharstar,"OS"),
-   "operating system release" => Ccode(constcharstar,"REL"),
-   "compiler" => compiler,
-   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
-   "compile time" => Ccode(constcharstar,"timestamp"),
-   "compile node name" => Ccode(constcharstar,"NODENAME"),
+--   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
+--   "architecture" => Ccode(constcharstar,"ARCH"),
+--   "issue" => Ccode(constcharstar,"ISSUE"),
+--   "machine" => Ccode(constcharstar,"MACHINE"),
+--   "operating system" => Ccode(constcharstar,"OS"),
+--   "operating system release" => Ccode(constcharstar,"REL"),
+--   "compiler" => compiler,
+--   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
+--   "compile time" => Ccode(constcharstar,"timestamp"),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if USE_MYSQL
@@ -200,14 +199,14 @@ setupconst("version", Expr(toHashTable(Sequence(
    "factory version" => factoryversion(),
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"mpfr_version"),
-   "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
+--   "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
-   "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
+--   "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
    "endianness" => Ccode(constcharstar,"(char *)endianness_string"),
    "pointer size" => Ccode(int,"sizeof(void *)"),
-   "packages" => Ccode(constcharstar,"PACKAGES"),
-   "build" => Ccode(constcharstar,"buildsystemtype"),
-   "host" => Ccode(constcharstar,"hostsystemtype"),
+--   "packages" => Ccode(constcharstar,"PACKAGES"),
+--   "build" => Ccode(constcharstar,"buildsystemtype"),
+--   "host" => Ccode(constcharstar,"hostsystemtype"),
    "threads" => USE_THREADS
    ))));
 

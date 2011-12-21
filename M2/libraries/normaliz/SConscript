@@ -31,7 +31,7 @@ def BuildLibrary(target,source,env):
       buildpath = getState(env.mode,architecture,'buildpath')
       realpath = buildpath+packageName+'/'
    #install...
-      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'bin/normaliz'),realpath+'source/normaliz'))
+      shutil.copy2(realpath+'source/normaliz',os.path.abspath(getState(env.mode,architecture,'prefixpath')+'bin/normaliz'))
    return None
    
 

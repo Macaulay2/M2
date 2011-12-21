@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <gmp.h>
 #include <mpfr.h>
+#include "../platform/platform.h"
 
 #if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>

@@ -11,7 +11,7 @@
 #ifndef M2_CONFIG_H
 #error M2/config.h file included was not ours
 #endif
-
+#include "../platform/platform.h"
 #include <stdio.h>
 #if HAVE_STDINT_H
 #include <stdint.h>

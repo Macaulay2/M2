@@ -1,6 +1,7 @@
 // Copyright 2009 Michael E. Stillman
 
 #include <M2/config.h>
+#include "../platform/platform.h"
 #include <stdio.h>
 #if HAVE_STDINT_H
 #include <stdint.h>

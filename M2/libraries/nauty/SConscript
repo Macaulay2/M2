@@ -37,7 +37,7 @@ def BuildLibrary(target,source,env):
       except:
          None
       for target in 'NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg directg dreadnaut dretog genbg geng genrang gentourng labelg listg multig newedgeg pickg planarg shortg showg'.split(' '):
-         Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target),realpath+target))
+         shutil.copy2(realpath+target,os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target))
    return None
    
 

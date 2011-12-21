@@ -20,6 +20,10 @@ extern char *getmoremem(char *, size_t oldsize, size_t newsize);
 extern char *getmoremem1(char *, size_t newsize);
 extern char *getmoremem_atomic(char *, size_t oldsize, size_t newsize);
 
+#if defined(__cplusplus)
+}
+#endif
+
 #define sizeofarray(s,len) (sizeof(*(s)) - sizeof((s)->array) + (len)*sizeof((s)->array[0]))
 #define sizeofarraytype(S,len) sizeofarray((S)0,len)
 #define sizeofstruct(s) sizeof(*(s))
@@ -38,10 +42,6 @@ extern char *getmoremem_atomic(char *, size_t oldsize, size_t newsize);
 #define getmematomicstructtype(S) (S)(getmem_atomic(sizeofstructtype(S)))
 #define getmemvectortype(S,len) (S*)(getmem(sizeof(S)*len))
 #define getmematomicvectortype(S,len) (S*)(getmem_atomic(sizeof(S)*(len)))
-#endif
-
-#if defined(__cplusplus)
-}
 #endif
 
 #endif

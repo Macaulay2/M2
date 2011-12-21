@@ -10,7 +10,7 @@
 #include "exceptions.hpp"
 #include <assert.h>
 #include <M2/config.h>
-
+#include "../platform/platform.h"
 #if HAVE_STDINT_H
 #include <stdint.h>
 #elif HAVE_INTTYPES_H

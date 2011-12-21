@@ -16,9 +16,8 @@ setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFL
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--prefix=$SConsInstallPrefixPath','--with-gmp=$SConsInstallPrefixPath'])
 setLibSpecificStageCommandArguments('all','all',libraryName,1,['lib-sta'])
-setLibSpecificStageCommandArguments('all','all',libraryName,2,['lib-sta','install-include'])
+setLibSpecificStageCommandArguments('all','all',libraryName,2,['install-lib-sta','install-include'])
 setLibSpecificStageCommand('all','all',libraryName,0,'Configure')
-   
 def BuildLibrary(target,source,env):
    """
    Build target for the library.

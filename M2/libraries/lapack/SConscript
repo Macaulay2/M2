@@ -24,15 +24,15 @@ def BuildLibrary(target,source,env):
    buildpath = getState(env.mode,architecture,'buildpath')
    realpath = buildpath+packageName+'/'
    if(untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)):
-      Execute(Copy(realpath+'make.inc',realpath+'make.inc.example'))
+      shutil.copy2(realpath+'make.inc.example',realpath+'make.inc')
    if(getLibSpecific(env.mode,architecture,libraryName,'stage0')):
       setLibSpecific(env.mode,architecture,libraryName,'stage1',True)
    else:
       return None
    if(makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)):
       for target in 'blas.a lapack.a'.split(' '):
-         abstarget = os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/lib/'+target)
-         Execute(Copy(abstarget,realpath+target))
+         abstarget = os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/lib/lib'+target)
+         shutil.copy2(realpath+target,abstarget)
    return None
    
 

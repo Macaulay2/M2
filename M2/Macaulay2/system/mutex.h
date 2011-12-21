@@ -1,7 +1,7 @@
 #ifndef _mutex_h_
 #define _mutex_h_
 #include <pthread.h>
-#include <../include/M2/config.h>
+#include <M2/config.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

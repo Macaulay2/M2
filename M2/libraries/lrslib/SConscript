@@ -30,7 +30,7 @@ def BuildLibrary(target,source,env):
       return None
    if(makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)):
       for target in 'lrs redund redund1 nash setupnash setupnash2 fourier buffer 2nash'.split(' '):
-         Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/lib/'+target),realpath+target))
+         shutil.copy2(realpath+target,os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/lib/'+target))
    return None
    
 

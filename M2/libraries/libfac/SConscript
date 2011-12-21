@@ -19,6 +19,7 @@ setLibSpecificConfigExport('debug',['linux-x86','linux-x86_64'],libraryName,'CFL
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--enable-NTL','--prefix=$SConsInstallPrefixPath'])
+setLibSpecificStageCommandArguments('all','all',libraryName,1,['libfac.a'])
 setLibSpecific('all','all',libraryName,'patchfile','../../../libraries/libfac/patch-3.1.3')
    
 def BuildLibrary(target,source,env):
@@ -32,7 +33,12 @@ def BuildLibrary(target,source,env):
    untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
    configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
    makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   if(makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)):
+      prefixpath = getState(env.mode,architecture,'prefixpath')
+      buildpath = getState(env.mode,architecture,'buildpath')
+      realpath = buildpath+packageName+'/'
+   #install...
+      shutil.copy(realpath+'libfac.a',os.path.abspath(prefixpath+'lib/libfac.a'))
    return None
    
 

@@ -32,12 +32,13 @@ def BuildLibrary(target,source,env):
    else:
       return None
    if makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName):
+      prefixpath = getState(env.mode,architecture,'prefixpath')
       buildpath = getState(env.mode,architecture,'buildpath')
       realpath = buildpath+packageName+'/'
    #install...
-      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'bin/libfrobby.a'),realpath+'lib/libfrobby.a'))
-      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'include/frobby.h'),realpath+'src/frobby.h'))
-      Execute(Copy(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'include/stdinc.h'),realpath+'src/stdinc.h'))
+      shutil.copy(realpath+'bin/libfrobby.a',os.path.abspath(prefixpath+'lib/libfrobby.a'))
+      shutil.copy(realpath+'src/frobby.h',os.path.abspath(prefixpath+'include/frobby.h'))
+      shutil.copy(realpath+'src/stdinc.h',os.path.abspath(prefixpath+'include/stdinc.h'))
    return None
    
 
