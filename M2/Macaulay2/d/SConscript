@@ -95,6 +95,7 @@ for i in range(0,len(dfiles)):
     ddict[sf[1]]=builder
     objFiles.append(Object('#'+buildpath+targetf,CFLAGS=cflags, CXXFLAGS=cflags))
 setState(mode,architecture,'dFileDict',ddict)
+cobjs = []
 for f in cfiles:
     builder = Object(f,CFLAGS=cflags,CXXFLAGS=cflags)
     if f=='M2lib.c':
@@ -112,8 +113,9 @@ for f in cfiles:
     elif f=='readline.c':
         Depends(builder,getState(mode,architecture,'dFileDict')['expr.d'])
     objFiles.append(builder)
+    cobjs.append(builder)
 
-setState(mode,architecture,'dstart',depbuilders[0])
-setState(mode,architecture,'dend',builders[len(builders)-1])
+setState(mode,architecture,'dstart',depbuilders[0]+cobjs)
+setState(mode,architecture,'dend',builders[len(builders)-1]+cfiles)
 setState(mode,architecture,'dObjectFiles',objFiles)
 Return('objFiles')

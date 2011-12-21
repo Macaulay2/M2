@@ -46,7 +46,7 @@ def downloadLibraries(architecture,mode):
     from urllib2 import Request, urlopen, URLError, HTTPError
     libraries = state[architecture]['tarfiles']
     try:
-        os.makedirs(state[architecture][mode]['tarpath'])
+        os.makedirs('../'+state[architecture][mode]['tarpath'])
     except:
         None
     for library in libraries:
