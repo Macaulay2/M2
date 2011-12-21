@@ -1,0 +1,27 @@
+import os.path
+Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
+        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
+
+
+pfiles = ['posix.c','posix_segv.c']
+
+buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/platform/'
+prefixPath = getState(mode,architecture,'prefixpath')
+eflags = "-I"+buildpath+"../d/ -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes "+getState(mode,architecture,'eflags')
+pobjects = []
+dm2 = getState(mode,architecture,'dFileDict')['M2.d']
+dtokens = getState(mode,architecture,'dFileDict')['tokens.d']
+dinterrupts = getState(mode,architecture,'dFileDict')['interrupts.d']
+if dm2 is None:
+    raise Exception("Internal error")
+for f in pfiles:
+    obj = Object(f,CFLAGS=eflags,CXXFLAGS=eflags)
+    pobjects.append(obj)
+    Depends(obj,dm2)
+    Depends(obj,dtokens)
+    Depends(obj,dinterrupts)
+    
+state[architecture][mode]['pfiles']=pobjects
+Return('pobjects')
