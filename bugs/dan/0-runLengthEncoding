@@ -1,0 +1,8 @@
+that's a bit too aggressive:
+
+ii10 : runLengthEncode {7,2,5,6}
+
+oo10 = {7, 2, 5..6}
+
+oo10 : List
+
