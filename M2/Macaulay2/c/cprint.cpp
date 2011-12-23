@@ -9,7 +9,7 @@ int threadLocalDeclarationFlag=0;
 
 
 static void printstringconst(node p){
-     char *s = tostring(p);
+     const char *s = tostring(p);
      putchar('"');
      while (*s) {
 	  switch(*s) {
@@ -25,7 +25,7 @@ static void printstringconst(node p){
      putchar('"');
      }
 
-char *tostring(node e){
+const char *tostring(node e){
      if (e == NULL) return "<<NULL>>";
      switch(e->tag){
           case cons_tag: pp(e);return "<<cons>>";
@@ -41,6 +41,24 @@ char *tostring(node e){
 	  default: assert(FALSE); return "<<unrecognized node type>>";
 	  }
      }
+/***
+    This function will output special delimited names if the d keyword is actually a c++ reserved keyword. 
+    @return 1 if this function found a reserved symbol, 0 otherwise.
+ ***/
+static int makeSymbolSafe(node p)
+{
+  if(0==strcmp(p->body.symbol.Cname,"class"))
+    put("_class");
+  else if(0==strcmp(p->body.symbol.Cname,"mutable"))
+    put("_mutable");
+  else if(0==strcmp(p->body.symbol.Cname,"not"))
+    put("_not");
+  else if(0==strcmp(p->body.symbol.Cname,"new"))
+    put("_new");
+  else
+    return 0;
+  return 1;
+}
 static void printsymbolbasic(node p){
      assert(p != NULL);
      assert(p->tag == symbol_tag);
@@ -48,14 +66,20 @@ static void printsymbolbasic(node p){
 	  cprint(p->body.symbol.cprintvalue);
 	  }
      else if (p->body.symbol.Cname != NULL) {
-	  put(p->body.symbol.Cname);
-	  }
+       /**
+	  This case corresponds to emitting a basic symbol.
+	  Note that we have a few special cases in here because class, mutable, and not are not keywords in d but they are in c++.
+	  While these cases will compile fine in C, they will cause c++ compiler errors if we do not special case and catch them.
+	**/
+       if(!makeSymbolSafe(p))
+	 put(p->body.symbol.Cname);
+     }
      else {
-          put(tostring(p));
+       put(tostring(p));
 	  }
      }
 
-char* getsymbolbasicname(node p){
+const char* getsymbolbasicname(node p){
      assert(p != NULL);
      assert(p->tag == symbol_tag);
      if (p->body.symbol.Cname != NULL) {
@@ -83,7 +107,7 @@ void printsymbol(node p){
 	  printsymbolbasic(p);
      }
 
-void pput(char *s){
+void pput(const char *s){
      while (*s) {
 	  putchar(*s);
 	  if (*s == '\n') ;
@@ -104,7 +128,7 @@ static void cindent(){
 	  }
      }     
 
-void put(char *s){
+void put(const char *s){
      if (0 == strcmp(s,"{")) clevel++;
      if (0 == strcmp(s,"}")) clevel--;
      while (*s) {
@@ -357,7 +381,11 @@ static void cprinttype(node t, bool withstar, bool usename){
      else assert(FALSE);
      return;
      }
-
+/***
+    This function prints the sizeof type t.
+    @param t Type, not null, to print size of.
+    @param arrayLength Length of array.  NULL if not array type, otherwise node that describes array length.
+ ***/
 static void cprintsomesizeof(node t, node arraylen){
      assert(istype(t));
      put("sizeof(");
@@ -680,7 +708,7 @@ static void cprintfuncall(node fun, node args){
      put(")");
      }
 
-void put_unescape(char *s) {
+void put_unescape(const char *s) {
   while (*s) {
     if (*s == '\\') {
       s++;

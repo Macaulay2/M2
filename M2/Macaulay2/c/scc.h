@@ -1,4 +1,7 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
+#ifndef _SCC_H_
+#define _SCC_H_
+
 #ifndef NO_CONFIG
 #include "M2/config.h"
 #endif
@@ -16,109 +19,134 @@
 #define roundup(n,d) ((((n)+(d)-1)/(d))*(d))
 #endif
 
-struct POS { char *filename; short lineno, column; } ;
+struct POS 
+{
+	char *filename;
+	short lineno; 
+	int column; 
+} ;
 typedef struct NODE *node;
 typedef struct SCOPE *scope;
-scope global_scope;
+extern scope global_scope;
 typedef node (*chkfun) (node,scope);
 
 #define clear_memory(v) memset(v,0,sizeof(*v))
+enum TAG {
+	cons_tag, position_tag, unique_string_tag, string_tag, int_const_tag,
+	double_const_tag, type_tag, char_const_tag,
+	string_const_tag, symbol_tag };
+struct CONS { 
+	node car, cdr; 
+	struct POS pos;
+} ;
+struct INT_CONST { char *contents; };
+struct CHAR_CONST { char contents; };
+struct DOUBLE_CONST { char *contents;};
+struct POSITION { 
+	node contents;
+	struct POS pos;
+};
+struct UNIQUE_STRING {
+	const char *characters; 
+	node symbol_list;
+	int flags;
+	unsigned short seqno;
+	unsigned short hash;
+	unsigned short token;
+};
+struct STRING {
+	const char *characters;
+};
+struct STRING_CONST {
+	const char *characters;
+};
+struct SYMBOL {
+	node name;
+	node package;
+	node defining_statement;
+	node type;
+	node value;
+	node cprintvalue;
+	struct POS pos;
+	chkfun check;
+	const char *Cname;
+	unsigned short seqno;
+	node args, body, export_list;
+	int flags;
+};
+struct TYPE {
+	node name;
+	node forward;
+	node definition;
+	node commons;  	/* for an or-type, the typedeftail held in common
+					   by the non-null components of the or */
+	const char *Cname;
+	short seqno;
+	int runtime_type_code;
+	int flags;
+};
+
+const int str_keyword_F =0x1;
+const int tmp_F =	   	 0x1;
+const int readonly_F =	 0x2;
+const int symbol_F =        0x4;
+const int keyword_F =       0x8;
+const int constant_F =      0x10;
+const int defined_F =       0x20;
+const int macro_function_F =0x80;
+const int export_F =        0x100;
+const int import_F =        0x200;
+const int global_F =        0x400;
+const int intern_F =    	 0x800;
+const int literal_F =       0x1000;
+const int visible_F =       0x2000;
+const int signature_F =  0x4000;
+const int nouniquify_F =    0x8000;
+const int constructor_F =   0x10000;
+const int destructor_F =    0x20000;
+const int threadLocal_F =   0x40000;
+const int const_F =         0x80000;
+const int macro_variable_F =0x100000;
+const int errmsg_given_F =  0x200000;
+const int package_active_F =0x400000;
+const int none_F = 0;
+const int deferred_F =1;
+/***
+	A type whose definition is not known yet
+***/
+const int should_be_pointer_F =2;
+const int should_be_tagged_F =4;
+const int identified_F =8;
+/***
+Identified by the algorithm in totypesRec()
+***/
+const int raw_pointer_type_F =0x10;
+const int raw_atomic_pointer_type_F =0x20;
+const int raw_type_F =0x40;
+const int raw_atomic_type_F =0x80;
+const int arithmetic_type_F =0x100;
+const int basic_type_F =0x200;
+const int integer_type_F =0x400;
+/***
+An or type with at least 2 nonnull members
+***/
+const int composite_F =0x800;
 
 struct NODE {
-     enum TAG {
-	  cons_tag, position_tag, unique_string_tag, string_tag, int_const_tag,
-	  double_const_tag, type_tag, char_const_tag,
-	  string_const_tag, symbol_tag } tag;
-     union BODY {
-     	  struct INT_CONST { char *contents; } int_const;
-	  struct CHAR_CONST { char contents; } char_const;
-	  struct DOUBLE_CONST { char *contents;} double_const;
-	  struct CONS { 
-	       node car, cdr; 
-	       struct POS pos;
-	       } cons;
-	  struct POSITION { 
-	       node contents;
-	       struct POS pos;
- 	       } position;
-	  struct UNIQUE_STRING {
-	       char *characters; 
-	       node symbol_list;
-	       int flags;
-#define str_keyword_F 0x1
-	       unsigned short seqno;
-	       unsigned short hash;
-	       unsigned short token;
-	       } unique_string;
-	  struct STRING {
-	       char *characters;
-	       } string;
-	  struct STRING_CONST {
-	       char *characters;
-	       } string_const;
-     	  struct SYMBOL {
-	       node name;
-	       node package;
-	       node defining_statement;
-	       node type;
-	       node value;
-	       node cprintvalue;
-	       struct POS pos;
-	       chkfun check;
-	       char *Cname;
-	       unsigned short seqno;
-	       node args, body, export_list;
-	       int flags;
-#define tmp_F 	   	 0x1
-#define readonly_F 	 0x2
-#define symbol_F         0x4
-#define keyword_F        0x8
-#define constant_F       0x10
-#define defined_F        0x20
-#define macro_function_F 0x80
-#define export_F         0x100
-#define import_F         0x200
-#define global_F         0x400
-#define intern_F     	 0x800
-#define literal_F        0x1000
-#define visible_F        0x2000
-#define signature_F	 0x4000
-#define nouniquify_F     0x8000
-#define constructor_F    0x10000
-#define destructor_F     0x20000
-#define threadLocal_F    0x40000
-#define const_F          0x80000
-#define macro_variable_F 0x100000
-#define errmsg_given_F   0x200000
-#define package_active_F 0x400000
-#define none_F	   	0
-	       } symbol;
-	  struct TYPE {
-	       node name;
-     	       node forward;
-	       node definition;
-     	       node commons;  	/* for an or-type, the typedeftail held in common
-				   by the non-null components of the or */
-	       char *Cname;
-	       short seqno;
-	       int runtime_type_code;
-     	       int flags;
-#define deferred_F 1		/* a type whose definition is not known yet */
-#define should_be_pointer_F 2
-#define should_be_tagged_F 4
-#define identified_F 8		/* identified by the algorithm in totypesRec() */
-#define raw_pointer_type_F 0x10
-#define raw_atomic_pointer_type_F 0x20
-#define raw_type_F 0x40
-#define raw_atomic_type_F 0x80
-#define arithmetic_type_F 0x100
-#define basic_type_F 0x200
-#define integer_type_F 0x400
-#define composite_F 0x800	/*an or type with at least 2 nonnull members*/
-	       } type;
-	  } body;
-     };
-
+	enum TAG tag;
+	union BODY {
+		struct INT_CONST int_const;
+		struct CHAR_CONST char_const;
+		struct DOUBLE_CONST double_const;
+		struct CONS cons;
+		struct POSITION position;
+		struct UNIQUE_STRING unique_string;
+		struct STRING string;
+		struct STRING_CONST string_const;
+		struct SYMBOL symbol;
+		struct TYPE type;
+	} body;
+};
 struct SCOPE {
      scope previous;		/* scope containing this one */
      node current_package;
@@ -146,7 +174,7 @@ struct SCOPE {
      int deferred_definitions_active;
      node previous_deferred_definition;
      };
-void fatalpos(node, char *,...);
+void fatalpos(node, const char *,...);
 node totype(node);
 void cprinttypevar(node, node);
 bool isarraytype(node);
@@ -158,7 +186,7 @@ node functionrettype(node);
 void unwind(node *);
 
 #define newnode(bodyPART,tag) newnode1( \
-     sizeof(struct NODE) - sizeof(union BODY) + sizeof(struct bodyPART), \
+									   sizeof(struct NODE) - sizeof(NODE::BODY) + sizeof(bodyPART), \
      tag )
 	  
 #define apply(f,p)  ((p)=f(p))
@@ -184,6 +212,8 @@ void unwind(node *);
 #include "scc1.h"
 #include "grammar.h"
 #include "debugging.h"
+
+#endif
 
 /*
 # Local Variables:

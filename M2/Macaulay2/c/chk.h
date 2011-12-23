@@ -9,6 +9,14 @@ node chklist(node e, scope v);
 void init_chk(void);
 extern node headerstrings;
 extern node declarationsstrings;
+/***
+   Print the define headers for type codes to the given file.
+   @param file File to print to, not null.
+***/
+void printTypeCodesToFile(FILE* file);
+/***
+    Print a list of define headers for type codes to stdout.
+***/
 void printtypecodes();
 node leftOperator(node);
 node rightOperator(node);

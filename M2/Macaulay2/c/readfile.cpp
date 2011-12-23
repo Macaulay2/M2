@@ -43,7 +43,7 @@ static bool istoken(int c) {
      return isalnum(c) || c=='_';
      }
 
-bool validtoken(char *s) {
+bool validtoken(const char *s) {
      if (!istokenfirst(*s++)) return FALSE;
      while (*s != 0) if (!istoken(*s++)) return FALSE;
      return TRUE;
@@ -189,7 +189,7 @@ node gettoken(){
 /* keep the next lines together */
      char setup_filename[] = __FILE__;
      int  setup_lineno     = __LINE__;
-     char *setup_text[]     = {"\n\
+     const char *setup_text[]     = {"\n\
 	leftOperator 3 \"^^\";      ","\n\
 	leftOperator 3 \"<<\";      ","\n\
 	leftOperator 3 \"|\";      ","\n\
@@ -229,7 +229,7 @@ void read_setup(){
      cur.column = 0;
      for (i=0; i<numberof(setup_text); i++) {
 	  int r;
-	  char *s = setup_text[i];
+	  char *s = const_cast<char*>(setup_text[i]);
 	  cur.text = s;
 	  cur.eot = cur.text + strlen(s);
      	  r = yyparse();
@@ -255,7 +255,7 @@ static char *readfile2(int fd, int *plen) {
 	       }
 	  len += n;
 	  if (len == bufsize) {
-	       char *p = GC_MALLOC(bufsize *= 2);
+		  char *p = reinterpret_cast<char*>(GC_MALLOC(bufsize *= 2));
 	       memcpy(p,txt,len);
 	       txt = p;
 	       }
@@ -317,9 +317,9 @@ static int pathopen(const char *path, const char *filename, char **pathopened){
 	  }
      }
 
-char *sigpath =".";
+const char *sigpath =".";
 
-bool sigreadfile(char *name, char **pathopened) {
+bool sigreadfile(const char *name, char **pathopened) {
      node e, sig;
      int size;
      char buf[100];

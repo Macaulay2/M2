@@ -2,7 +2,7 @@
 
 #include "scc.h"
 
-void fatal(char *s,...)
+void fatal(const char *s,...)
 {
      va_list ap;
      va_start(ap,s);
@@ -21,7 +21,7 @@ int n_errors = 0;
 int warnings = 0;
 #define WARNLIMIT 240
 
-void error(char *s,...)
+void error(const char *s,...)
 {
      va_list ap;
      va_start(ap,s);
@@ -35,7 +35,7 @@ void error(char *s,...)
      if (n_errors > ERRLIMIT) fatal("too many errors");
      }
 
-void warning(char *s,...)
+void warning(const char *s,...)
 {
      va_list ap;
      va_start(ap,s);
@@ -47,7 +47,7 @@ void warning(char *s,...)
      if (warnings > WARNLIMIT) fatal("too many warnings");
      }
 
-void fatalpos(node p, char *s,...)
+void fatalpos(node p, const char *s,...)
 {
      va_list ap;
      downpos(p);
@@ -59,7 +59,7 @@ void fatalpos(node p, char *s,...)
      exit(1);
      }
 
-void errorpos(node p, char *s,...)
+void errorpos(node p, const char *s,...)
 {
      va_list ap;
      downpos(p);
@@ -72,7 +72,7 @@ void errorpos(node p, char *s,...)
      if (n_errors > ERRLIMIT) fatal("too many errors");
      }
 
-void warningpos(node p, char *s,...)
+void warningpos(node p, const char *s,...)
 {
      va_list ap;
      downpos(p);
@@ -105,7 +105,7 @@ void quit(){
      exit(n_errors != 0);
      }
 
-void fail(char *filename, int lineno) {
+void fail(const char *filename, int lineno) {
      fprintf(stderr,"%s:%d: assertion failed\n", filename,lineno);
      if (cur.filename != NULL) {
      	  fprintf(stderr,"%s:%d: <- here\n",
@@ -126,7 +126,7 @@ void downpos(node n){
      }
 
 
-void failpos(char *filename, int lineno, node p) {
+void failpos(const char *filename, int lineno, node p) {
      downpos(p);
      fprintf(stderr,"internal error\n");
      fprintf(stderr,errfmtnc,filename,lineno,"... assertion failed\n");

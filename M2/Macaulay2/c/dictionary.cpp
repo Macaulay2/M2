@@ -1,13 +1,11 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
 #include "scc.h"
-#define extern
 #include "dictionary.h"
-#undef extern
 
 static node hash_buckets[7313];
 
-char *Csymbols[] = {
+const char *Csymbols[] = {
      "NULL", "stdout", "stdin", "stderr", "flush", "select", 
      "min", "max", "abort",
      "abs", "times", "erase", "frame", "index",
@@ -20,12 +18,17 @@ char *Csymbols[] = {
      "characters"
      };
 
-char *CXXkeywords[] = {
+node type__T, keyword_T, int_T, double_T,
+       bool_T, char_T, symbol_T, package_T;
+node void_T, exits_T, returns_T, bad_or_undefined_T, null_T, deferred__T;
+node complete_symbol_list;
+
+const char *CXXkeywords[] = {
   /* avoid collisions with C++ keywords not allowed as identifiers */
   "this", "default",
 };
 
-char *uniquify(char *s){
+const char *uniquify(const char *s){
      node ss = UniqueString(s);
      int seqno = ss->body.unique_string.seqno++;
      char buf[1000];
@@ -34,12 +37,12 @@ char *uniquify(char *s){
      return strperm(buf);
      }
 
-static void uniquifyCXX(char *s){
+static void uniquifyCXX(const char *s){
      node ss = UniqueString(s);
      ss->body.unique_string.flags |= str_keyword_F;
      }
 
-static void undefine(node s){
+static void undefine(const node s){
      assertpos(issym(s),s);
      /* if (debug) fprintf(stderr,"undefining %s\n",tostring(s)); */
      pop(s->body.symbol.name->body.unique_string.symbol_list);
@@ -105,7 +108,7 @@ void init_dictionary(scope v){
      for (i=0; i<numberof(CXXkeywords); i++) uniquifyCXX(CXXkeywords[i]);
      }
 
-static unsigned int hashn(char *p, unsigned int len){
+static unsigned int hashn(const char *p, unsigned int len){
      unsigned int i = 0;
      while (len>0) {
 	  i *= 47;
@@ -115,7 +118,7 @@ static unsigned int hashn(char *p, unsigned int len){
      return i;
      }
 
-node UniqueStringN(char *s, unsigned int len){
+node UniqueStringN(const char *s, unsigned int len){
      int h = hashn(s,len) % numberof(hash_buckets);
      node p;
      for (p = hash_buckets[h]; p != NULL; p = CDR(p)) {
@@ -132,11 +135,11 @@ node UniqueStringN(char *s, unsigned int len){
      return q;
      }
 
-node UniqueString(char *s) {
+node UniqueString(const char *s) {
      return UniqueStringN(s,strlen(s));
      }
 
-node String(char *s){
+node String(const char *s){
      node q = newnode(STRING,string_tag);
      q->body.unique_string.characters = s;
      return q;
@@ -247,14 +250,14 @@ void printsymboltable(){
      pput("\n");
      }
 
-static void laydown(char *w, char **p){
+static void laydown(const char *w, char **p){
      while (*w) {
 	  *(*p)++ = *w++;
 	  }
      *(*p)++ = '_';
      }
 
-char *totoken(char *s){
+const char *totoken(const char *s){
      char buf[1000];
      char *p = buf;
      if ('0' <= *s && *s <= '9') *p++ = '_';
@@ -319,7 +322,7 @@ static void setprefix(char *buf, node package){
 	  }
      }
 
-char *prefixify(node package, char *name){
+const char *prefixify(node package, const char *name){
      char buf[500];
      if (package==NULL) return name;
      assertpos(issym(package),package);
@@ -353,7 +356,7 @@ void internsymbol(node s, scope v){
      if (v != NULL) reinternsymbol(s,v);
      /* if ( 0 == strcmp("x",tostring(s)) ) trap(); */
      if (s->body.symbol.type!=keyword_T) {
-	  char *Cname;
+	  const char *Cname;
 	  assertpos(issym(s),s);
 	  if (s->body.symbol.flags & literal_F) {
 	    Cname = tostring(s); /* no totoken here? */

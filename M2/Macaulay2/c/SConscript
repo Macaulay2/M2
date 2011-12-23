@@ -5,12 +5,16 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
 
 cfiles = Glob('*.c','.')
-cfiles.remove('scc-core.c')
+cfiles = cfiles + Glob('*.cpp','.')
+cfiles.remove('scc-core.cpp')
 cfiles.remove('test.c')
 cflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG ' + getState(mode,architecture,'M2flags')
 cobjects = []
 for f in cfiles:
-    cobjects.append(Object(f,CFLAGS=cflags))
+    if(f=='grammar.cpp'):   
+        cobjects.append(Object(f,CFLAGS=cflags,CXXFLAGS=cflags))
+    else:
+        cobjects.append(Object(f,CFLAGS=cflags+' -Wwrite-strings',CXXFLAGS=cflags))
 libpath = '#'+getState(mode,architecture,'prefixpath')+'lib/'
 scc = Program('scc',cobjects,LIBS=['gc','gdbm','pthread'],LIBPATH=libpath)
 setState(mode,architecture,'scc',scc)

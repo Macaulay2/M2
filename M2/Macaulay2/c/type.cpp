@@ -310,12 +310,12 @@ static bool distinguishable(int i, int j){
 
 static void mark(int i, int j){
      struct DISTIN *d = table(i,j);
-     struct PAIR *l = d->listp;
+     struct DISTIN::PAIR *l = d->listp;
      assert(!d->distinguishable || d->listp==NULL);
      d->listp = NULL;
      d->distinguishable = TRUE;
      while (l != NULL) {
-	  struct PAIR p;
+		 struct DISTIN::PAIR p;
 	  p = *l;
 	  mark(p.i,p.j);
 	  l = p.next;
@@ -324,10 +324,10 @@ static void mark(int i, int j){
 
 static void appendlt(int i, int j, int ii, int jj) {
      /* assert that ii and jj would be distinguishable if i and j were */
-     struct PAIR *p;
+     struct DISTIN::PAIR *p;
      struct DISTIN *d;
      if (i == j) return;
-     p = new(struct PAIR);	/* this gets freed in mark() */
+     p = new(struct DISTIN::PAIR);	/* this gets freed in mark() */
      d = table(i,j);
      p->i = ii;
      p->j = jj;

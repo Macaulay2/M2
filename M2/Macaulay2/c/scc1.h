@@ -1,8 +1,8 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
 extern FILE *dependfile;
-extern char *targetname;
-extern char *outfilename;
+extern const char *targetname;
+extern const char *outfilename;
 extern bool do_this_cxx;
 extern bool noline;
 extern bool arraychks;
@@ -15,15 +15,15 @@ extern char *getmem(unsigned);
 extern char *strnperm(const char *, unsigned);
 extern char *strperm(const char *);
 extern node newnode1(unsigned int, enum TAG);
-extern void fail (char *, int);
-extern const struct POS empty_pos;
-extern char *intToString(int);
-extern int substr(char *, char *);
-extern int strequaln(char *, char *, unsigned int);    
-extern char *tail(char *);
-extern char *BaseName(char *) ;
-extern char *newsuffix(char *, char *);
-extern char *newsuffixbase(char *, char *);
+extern void fail (const char *, int);
+extern struct POS empty_pos;
+extern const char *intToString(int);
+extern int substr(const char *, const char *);
+extern int strequaln(const char *, const char *, unsigned int);    
+extern const char *tail(const char *);
+extern const char *BaseName(const char *) ;
+extern const char *newsuffix(const char *, const char *);
+extern const char *newsuffixbase(const char *, const char *);
 
 /*
 # Local Variables:

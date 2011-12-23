@@ -3,8 +3,8 @@
 #include "scc.h"
 
 FILE *dependfile;
-char *targetname;
-char *outfilename;
+const char *targetname;
+const char *outfilename;
 static bool stop_after_dep = FALSE;
 bool do_cxx = FALSE;
 bool do_this_cxx = FALSE;
@@ -21,12 +21,14 @@ static char Copyright[] = "Copyright 1993, 2010, by Daniel R. Grayson";
 static char Version[]   = "Safe C - version 2.0";
 
 char *getmem(unsigned n) {
-     char *p = GC_MALLOC(n);	/* GC_MALLOC clears the memory */
+     char *p = reinterpret_cast<char*>(GC_MALLOC(n));	/* GC_MALLOC clears the memory */
      if (p == NULL) fatal("out of memory");
      return p;
      }
 
-static char *progname;
+static const char *progname;
+scope global_scope;
+
 
 node newnode1(unsigned int len, enum TAG tag) {
      node p = (node) getmem(len);
@@ -46,7 +48,7 @@ char *strperm(const char *s){
      return strnperm(s,strlen(s));
      }
 
-char *intToString(int n){
+const char *intToString(int n){
      int sign = 1;
      static char s[20];
      int i;
@@ -64,7 +66,7 @@ char *intToString(int n){
      return s+i;
      }
 
-int substr(char *s, char *t){
+int substr(const char *s, const char *t){
      assert(s != NULL);
      assert(t != NULL);
      while (*s) {
@@ -75,7 +77,7 @@ int substr(char *s, char *t){
      return TRUE;
      }
 
-int strequaln(char *s, char *t, unsigned int tlen){ /* s is null-terminated, but tlen is the length of t */
+int strequaln(const char *s, const char *t, unsigned int tlen){ /* s is null-terminated, but tlen is the length of t */
      assert(s != NULL);
      assert(t != NULL);
      while (*s && tlen>0) {
@@ -86,20 +88,20 @@ int strequaln(char *s, char *t, unsigned int tlen){ /* s is null-terminated, but
      return *s==0 && tlen==0;
      }
 
-char *tail(char *s){
-     char *u = NULL;
+const char *tail(const char *s){
+     const char *u = NULL;
      for (; *s; s++) if (*s == '.') u = s;
      return u == NULL ? s : u;
      }
 
-char *BaseName(char *s) {
-     char *u = s;
+const char *BaseName(const char *s) {
+     const char *u = s;
      for (; *s; s++) if (*s == '/') u = s+1;
      return u;
      }
 
-char *newsuffix(char *s, char *suf){
-     char *t = tail(s);
+const char *newsuffix(const char *s, const char *suf){
+     const char *t = tail(s);
      unsigned int len = t-s;
      char *u = getmem(len+1+strlen(suf));
      strncpy(u,s,len);
@@ -107,8 +109,9 @@ char *newsuffix(char *s, char *suf){
      return u;
      }
 
-char *newsuffixbase(char *s, char *suf){
-     char *t, *u;
+const char *newsuffixbase(const char *s, const char *suf){
+     const char *t;
+     char* u;
      unsigned int len;
      s = BaseName(s);
      t = tail(s);
@@ -118,8 +121,8 @@ char *newsuffixbase(char *s, char *suf){
      strcpy(u+len,suf);
      return u;
      }
-
-const struct POS empty_pos;
+// we would like this to be const we can't because POS is in a union, so it can't have a constructor.
+struct POS empty_pos;
 
 static char declarations_header[] = "\
 /* included from " __FILE__ "*/\n\
@@ -175,6 +178,7 @@ static void usage() {
   printf("    -noline       insert no source code line numbers\n");
   printf("    -sig          stop after creating signature file foo.sig.tmp\n");
   printf("    -typecodes    print typecodes (from typecode.db), then stop\n");
+  printf("    -typecodefile generate typecode.h file containing typecode definitions\n");
   printf("    -nomacros     do not parse internal macro definitions\n");
   printf("    -noarraychks  insert no array bound checking code\n");
   printf("    -nocasechks   insert no type case checking code\n");
@@ -183,7 +187,7 @@ static void usage() {
   printf("    -yydebug      debug the parser\n");
   printf("    -debug        set debugging mode on, write symbol table, list of types, and list of strings to foo.sym\n");
   printf("    -Ixxx         append xxx to the path used for finding *.sig files, initially \".\"\n");
-  printf("    -ronly        open typecode.db in read only mode");
+  printf("    -ronly        open typecode.db in read only mode\n");
 }
 
 int main(int argc, char **argv){
@@ -223,6 +227,17 @@ int main(int argc, char **argv){
 	       printtypecodes();
 	       return 0;
 	       }
+	  if (EQUAL == strcmp(argv[i],"-typecodefile"))
+	    {
+	      FILE* fp = fopen("typecodes.h","w");
+	      if(fp==NULL)
+		{
+		  abort();
+		}
+	      printTypeCodesToFile(fp);
+	      fclose(fp);
+	      return 0;
+	    }
      	  if (EQUAL == strcmp(argv[i],"-noarraychks")) {
 	       arraychks = FALSE;
 	       continue;
@@ -284,7 +299,7 @@ int main(int argc, char **argv){
 	       targetname = newsuffixbase(argv[i],"");
 	       f = readfile(argv[i]);
 	       if (debug) {
-		    char *n = newsuffixbase(argv[i],".out");
+		    const char *n = newsuffixbase(argv[i],".out");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -294,13 +309,13 @@ int main(int argc, char **argv){
 		    }
 	       outfilename = newsuffixbase(argv[i], do_this_cxx ? "-tmp.cc" : "-tmp.c");
 	       {
-		    char *n = newsuffixbase(argv[i],".dep.tmp");
+		    const char *n = newsuffixbase(argv[i],".dep.tmp");
 		    dependfile = fopen(n,"w");
 		    if (dependfile == NULL) fatal("can't open file %s",n);
 		    }
 	       f = chkprogram(f);
 	       if (debug) {
-		    char *n = newsuffixbase(argv[i],".log");
+		    const char *n = newsuffixbase(argv[i],".log");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -308,7 +323,7 @@ int main(int argc, char **argv){
 		    }
 	       {
 		    node t = global_scope->signature;
-		    char *n = newsuffixbase(argv[i],".sig.tmp");
+		    const char *n = newsuffixbase(argv[i],".sig.tmp");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -322,7 +337,7 @@ int main(int argc, char **argv){
 	       if (stop_after_dep) quit();
 	       checkfordeferredsymbols();
 	       if (debug) {
-		    char *n = newsuffixbase(argv[i],".sym");
+		    const char *n = newsuffixbase(argv[i],".sym");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -334,7 +349,7 @@ int main(int argc, char **argv){
 		    quit();
 		    }
 	       if (TRUE) {
-		    char *n = newsuffixbase(argv[i],"-exports.h.tmp");
+		    const char *n = newsuffixbase(argv[i],"-exports.h.tmp");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -349,6 +364,7 @@ int main(int argc, char **argv){
 			 declarationsstrings = cdr(declarationsstrings);
 			 }
 		    put(declarations_header);
+		    printf("#include <typecodes.h>");
 		    /* printtypecodes(); */
 		    cprinttypes();
 		    put(declarations_trailer);

@@ -8,15 +8,15 @@
 #define assert(e)          1
 #endif
 
-extern void fail(char *, int);
-extern void failpos(char *, int, node);
+extern void fail(const char *, int);
+extern void failpos(const char *, int, node);
 extern int n_errors;
-void fatal(char *s,...);
-void error(char *s,...);
-void warning(char *s,...);
-void fatalpos(node p, char *s,...);
-void errorpos(node p, char *s,...);
-void warningpos(node p, char *s,...);
+void fatal(const char *s,...);
+void error(const char *s,...);
+void warning(const char *s,...);
+void fatalpos(node p, const char *s,...);
+void errorpos(node p, const char *s,...);
+void warningpos(node p, const char *s,...);
 node typemismatch(node e);
 node badnumargs(node e,int n);
 node notimpl(node e);

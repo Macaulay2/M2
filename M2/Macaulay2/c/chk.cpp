@@ -283,9 +283,9 @@ static void opendb() {
   datum key;
   int maxn = 0;
   if(gdbm_ronly)
-    db = gdbm_open("typecode.db",0,GDBM_READER,0644,NULL);
+	  db = gdbm_open(const_cast<char*>("typecode.db"),0,GDBM_READER,0644,NULL);
   else
-    db = gdbm_open("typecode.db",0,GDBM_WRCREAT|GDBM_SYNC,0644,NULL);
+	  db = gdbm_open(const_cast<char*>("typecode.db"),0,GDBM_WRCREAT|GDBM_SYNC,0644,NULL);
   if (db == NULL) fatal("failed to open typecode.db");
   key = gdbm_firstkey(db);
   while (key.dptr != NULL) {
@@ -309,6 +309,24 @@ void printtypecodes() {
     key = gdbm_nextkey(db,key);
   }
 }
+void printTypeCodesToFile(FILE* file)
+{
+  datum key;
+  if (db == NULL) opendb();
+  key = gdbm_firstkey(db);
+  fprintf(file,"#ifndef _TYPECODES_H_\n#define _TYPECODES_H_\n");
+  while (key.dptr != NULL) {
+    datum value = gdbm_fetch(db,key);
+    fprintf(file,"///SCC Type code for the type %s\n",datumtostring(key));
+    fprintf(file, "static const int %s_typecode = %s;\n",datumtostring(key),datumtostring(value));
+    key = gdbm_nextkey(db,key);
+  }
+  fprintf(file,"/***\n");
+  fprintf(file,"This stores the number of type codes for the current compilation.\n");
+  fprintf(file,"***/\n");
+  fprintf(file,"static const int numTypeCodes = %d;\n",numkeys);
+  fprintf(file,"#endif");
+}
 
 static int gettypecode(node t) {
      assert(istype(t));
@@ -320,7 +338,7 @@ static int gettypecode(node t) {
      if (t->body.type.runtime_type_code != -1) return t->body.type.runtime_type_code;
      if (db == NULL) opendb();
      datum key;
-     key.dptr = tostring(t);
+     key.dptr = const_cast<char*>(tostring(t));
      key.dsize = strlen(key.dptr);
      datum value = gdbm_fetch(db,key);
      int n;
@@ -2115,7 +2133,7 @@ static node chklength(node e,scope v){
      return arraylength(s);
      }
 
-static int truestrlen(char *s){
+static int truestrlen(const char *s){
      int len = 0, i=3;
      while (*s) {
 	  if (*s == '\\') {
@@ -2264,12 +2282,12 @@ static node chkcolon(node e, scope v){
 static node chkcoloncolonequal(node e, scope v){
      /* macros! */
      node f, fsym;
-     bool export = FALSE;
      int macro_flag;
+	 bool _export = false;
      if (length(e) != 3) return badnumargs(e,2);
      f = cadr(e);
      if (iscons(f) && (equal(car(f),export_S) || equal(car(f),import_S))) {
-       export = TRUE;
+		 _export = true;
        f = cadr(f);
      }
      if (isstrpos(f)) {
@@ -2308,7 +2326,7 @@ static node chkcoloncolonequal(node e, scope v){
 	  fsym->body.symbol.args = reverse(n);
 	  }
      internsymbol(fsym,v);
-     if (export) {
+     if (_export) {
        push(v->signature, e);
        exportit(fsym,v);
      }
@@ -2442,8 +2460,8 @@ static node chkheader(node e, scope v) {
 
 node leftOperator(node e) {
      int prty = atoi(tostring(cadr(e)));
-     char *str = tostring(caddr(e));
-     if (ERROR == setopleft(prty,str)) {
+     const char *str = tostring(caddr(e));
+     if (ERROR == setopleft(prty,const_cast<char*>(str))) {
 	  errorpos(e,"invalid operator definition");
 	  }
      return e;
@@ -2451,16 +2469,16 @@ node leftOperator(node e) {
 
 node rightOperator(node e) {
      int prty = atoi(tostring(cadr(e)));
-     char *str = tostring(caddr(e));
-     if (ERROR == setopright(prty,str))
+     const char *str = tostring(caddr(e));
+     if (ERROR == setopright(prty,const_cast<char*>(str)))
 	  errorpos(e,"invalid operator definition");
      return e;
      }
 
 node prefixOperator(node e) {
      int prty = atoi(tostring(cadr(e)));
-     char *str = tostring(caddr(e));
-     if (ERROR == setopprefix(prty,str))
+     const char *str = tostring(caddr(e));
+     if (ERROR == setopprefix(prty,const_cast<char*>(str)))
 	  errorpos(e,"invalid operator definition");
      return e;
      }

@@ -1,9 +1,9 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
-extern char *uniquify(char *);
-extern char *totoken(char *);
+extern const char *uniquify(const char *);
+extern const char *totoken(const char *);
 extern void exportit(node, scope);
-extern char *prefixify(node, char *);
+extern const char *prefixify(node, const char *);
 extern void checkfordeferredsymbols();
 extern void reinternsymbol(node, scope);
 extern int sequence(node);
@@ -11,9 +11,9 @@ extern node complete_symbol_list;
 extern void internsymbol(node, scope);
 extern void printsymboltable();
 extern void printstringlist();
-extern node String(char *);
-extern node UniqueString(char *);
-extern node UniqueStringN(char *s, unsigned int len);
+extern node String(const char *);
+extern node UniqueString(const char *);
+extern node UniqueStringN(const char *s, unsigned int len);
 extern void init_dictionary(scope v);
 extern void setcprintvalue(node, node);
 extern node lookupword(node);
