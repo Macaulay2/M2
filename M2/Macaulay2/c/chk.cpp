@@ -3,11 +3,15 @@
 #include "scc.h"
 
 static node chklhscolon(node, scope);
-
+/***
+	Return true if e is a return, goto, or break, false otherwise.
+***/
 static bool isjump(node e){
      return (iscons(e) && (equal(car(e),return_S) || equal(car(e),goto__S))) || equal(e,break_S);
      }
-
+/***
+	Return true if e is a keyword.
+***/
 static bool iskeyword(node e){
      return issym(e) && (e->body.symbol.flags & keyword_F);
      }
@@ -29,7 +33,6 @@ static bool has_no_effect(node ee){
 	  }
      return FALSE;
      }
-
 static node cons_maybe(node n, node l){
      if (has_no_effect(n))
 	  return l;
@@ -53,7 +56,9 @@ static node map_cons_maybe(node newitems, node previous){
 	  }
      return previous;
      }
-
+/***
+	Return true if f is assigment, false otherwise.
+***/
 static bool isassignment(node f) {
      return iscons(f) && CAR(f) == assign__S;
      }
@@ -233,7 +238,6 @@ static node array_take(node x, node a){
      assert(type(a) == int_T);
      return list(3,array_take_S,x,a);
      }
-
 static node arraylength(node arr){
      node t = type(arr), m;
      assert(isarraytype(t)||istaggedarraytype(t));
@@ -266,7 +270,9 @@ static void assign(node lhs, node rhs, scope v){
      }
 
 #include <gdbm.h>
-
+/***
+	Convert GDBM data to string.
+***/
 static char *datumtostring(datum p) {
   char *buf;
   assert(p.dptr != NULL);
@@ -278,7 +284,9 @@ static char *datumtostring(datum p) {
 
 static GDBM_FILE db;
 static int numkeys;
-
+/***
+	Open GDBM values database.  Fails with fatal error on gdbm error.
+***/
 static void opendb() {
   datum key;
   int maxn = 0;
@@ -298,7 +306,6 @@ static void opendb() {
   }
   assert( numkeys == maxn );
 }
-
 void printtypecodes() {
   datum key;
   if (db == NULL) opendb();
@@ -327,7 +334,13 @@ void printTypeCodesToFile(FILE* file)
   fprintf(file,"static const int numTypeCodes = %d;\n",numkeys);
   fprintf(file,"#endif");
 }
-
+/***
+	Return the type code for the given type node.
+	If the type does not exist in the type database, this will create the type in the database.
+	This will fail in read only mode.
+	@param t A type node.
+	@return The type integer for the given type.
+***/
 static int gettypecode(node t) {
      assert(istype(t));
      t = typeforward(t);
@@ -427,15 +440,15 @@ static bool isnegint(node e){
      e = unpos(e);
      return e->tag == int_const_tag && e->body.int_const.contents[0] == '-';
      }
-
-static node chkfor(node e, scope v) {
-#if 0
+/***
+	????
+	Syntax: 
       (for (n) ... ) 	    	        n times 
       (for (i n) ... )      	   	i = 1,2,...n 
       (for (i m n) ... )	   	i = m,m+1,...,n
       (for (i m n s) ... ) 	        i = m,m+s,...,until i>n        [s>=0]
-      	   	     	       	        i = m,m+s,...,until i<n        [s<0]
-#endif
+***/
+static node chkfor(node e, scope v) {
      node argblock, indx, init, final, body, step;
      node looplabel = newlabel();
      node breaklabel = newlabel(), skiplabel = newlabel();
@@ -799,7 +812,7 @@ static node chkwhen(node e, scope v){
 			 if (!member(nt,casetypes)) {
 			      if (doswitch) {
 				   if (nt != null_T)
-					perform(list(5, Ccode_S, void_T, String("case "), integer(gettypecode(nth(types,i))), String(":")), v);
+					   perform(list(5, Ccode_S, void_T, String("case "), String(tostring(nth(types,i))), String("_typecode:")), v);
 				   }
 			      else
 				   perform(list(2,label__S, nth(labels, i)),v);
@@ -841,7 +854,7 @@ static node chkwhen(node e, scope v){
 			 }
 		    else {
 			 if (doswitch)
-			      perform(list(5, Ccode_S, void_T, String("case "), integer(gettypecode(casetype)), String(":")), v);
+				 perform(list(5, Ccode_S, void_T, String("case "), String(tostring(casetype)), String("_typecode:")), v);
 			 else
 			      perform(list(2,label__S, nth(labels, memberindex(casetype,types))),v);
 			 }
