@@ -12,9 +12,9 @@ cflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG ' +
 cobjects = []
 for f in cfiles:
     if(f=='grammar.cpp'):   
-        cobjects.append(Object(f,CFLAGS=cflags,CXXFLAGS=cflags))
+        cobjects.append(Object(f,CXXFLAGS=cflags+' -Wno-write-strings'))
     else:
-        cobjects.append(Object(f,CFLAGS=cflags+' -Wwrite-strings',CXXFLAGS=cflags))
+        cobjects.append(Object(f,CFLAGS=cflags,CXXFLAGS=cflags))
 libpath = '#'+getState(mode,architecture,'prefixpath')+'lib/'
 scc = Program('scc',cobjects,LIBS=['gc','gdbm','pthread'],LIBPATH=libpath)
 setState(mode,architecture,'scc',scc)

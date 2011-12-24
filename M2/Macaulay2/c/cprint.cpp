@@ -2,12 +2,14 @@
 
 #include "scc.h"
 
-
 //are we currently printing a declaration?
 //used only for when in pthread mode to tell symbols not to print workaround for symbol 
 int threadLocalDeclarationFlag=0;
 
-
+/***
+	Print escaped string constant.
+	@param p String_Const node, not null.
+***/
 static void printstringconst(node p){
      const char *s = tostring(p);
      putchar('"');
@@ -43,6 +45,7 @@ const char *tostring(node e){
      }
 /***
     This function will output special delimited names if the d keyword is actually a c++ reserved keyword. 
+	@param p A symbol node, not null.
     @return 1 if this function found a reserved symbol, 0 otherwise.
  ***/
 static int makeSymbolSafe(node p)
@@ -59,74 +62,87 @@ static int makeSymbolSafe(node p)
     return 0;
   return 1;
 }
+/***
+	Print a basic C or C++ symbol.
+	@param p A symbol node.
+***/
 static void printsymbolbasic(node p){
-     assert(p != NULL);
-     assert(p->tag == symbol_tag);
-     if (p->body.symbol.cprintvalue) {
-	  cprint(p->body.symbol.cprintvalue);
-	  }
-     else if (p->body.symbol.Cname != NULL) {
-       /**
-	  This case corresponds to emitting a basic symbol.
-	  Note that we have a few special cases in here because class, mutable, and not are not keywords in d but they are in c++.
-	  While these cases will compile fine in C, they will cause c++ compiler errors if we do not special case and catch them.
-	**/
-       if(!makeSymbolSafe(p))
-	 put(p->body.symbol.Cname);
-     }
-     else {
-       put(tostring(p));
-	  }
-     }
-
+	assert(p != NULL);
+	assert(p->tag == symbol_tag);
+	if (p->body.symbol.cprintvalue) {
+		cprint(p->body.symbol.cprintvalue);
+	}
+	else if (p->body.symbol.Cname != NULL) {
+		/**
+		   This case corresponds to emitting a basic symbol.
+		   Note that we have a few special cases in here because class, mutable, and not are not keywords in d but they are in c++.
+		   While these cases will compile fine in C, they will cause c++ compiler errors if we do not special case and catch them.
+		   For backwards compatability we do this here.  If we did it by making them d keywords, we would break existing d code.
+		**/
+		if(!makeSymbolSafe(p))
+			put(p->body.symbol.Cname);
+	}
+	else {
+		put(tostring(p));
+	}
+}
+/***
+	Get symbol name.
+	@param p Symbol node, not null.
+***/
 const char* getsymbolbasicname(node p){
-     assert(p != NULL);
-     assert(p->tag == symbol_tag);
-     if (p->body.symbol.Cname != NULL) {
-	  return (p->body.symbol.Cname);
-	  }
-     else {
-          return (tostring(p));
-	  }
-     }
+	assert(p != NULL);
+	assert(p->tag == symbol_tag);
+	if (p->body.symbol.Cname != NULL) {
+		return (p->body.symbol.Cname);
+	}
+	else {
+		return (tostring(p));
+	}
+}
 
 void printsymbol(node p){
-     if(pthreadThreadLocal && !threadLocalDeclarationFlag && p->body.symbol.flags & threadLocal_F)
-	  {
+	if(pthreadThreadLocal && !threadLocalDeclarationFlag && p->body.symbol.flags & threadLocal_F)
+	{
 	    //THIS IS AN INT EXAMPLE
 	    //	    *((int*)TS_Get_Local(M2_gbTrace_id)) = 0;
-    	    put("(*((");
+		put("(*((");
 	    node ltype = type(p);
 	    cprint(ltype);
 	    put("*)");
 	    put("TS_Get_Local(");
 	    printsymbolbasic(p);
 	    put("_id)))");
-	  }
-     else
-	  printsymbolbasic(p);
-     }
+	}
+	else
+		printsymbolbasic(p);
+}
 
 void pput(const char *s){
-     while (*s) {
-	  putchar(*s);
-	  if (*s == '\n') ;
-	  s++;
-	  }
-     }
-
+	while (*s) {
+		putchar(*s);
+		if (*s == '\n') ;
+		s++;
+	}
+}
+/***
+	Current c indentation level.
+***/
 int clevel=0;
+/***
+	Put correct number of tabs/spaces for current c indentation level.
+***/
 static void cindent(){
-     int cols = 2 * clevel;
-     while (cols >= 8) {
-	  cols -= 8;
-	  pput("\t");
-	  }
-     while (cols >= 1) {
-	  cols -= 1;
-	  pput(" ");
-	  }
-     }     
+	int cols = 2 * clevel;
+	while (cols >= 8) {
+		cols -= 8;
+		pput("\t");
+	}
+	while (cols >= 1) {
+		cols -= 1;
+		pput(" ");
+	}
+}     
 
 void put(const char *s){
      if (0 == strcmp(s,"{")) clevel++;
@@ -141,10 +157,6 @@ void put(const char *s){
 static struct POS *curpos = NULL;
 
 struct POS *pos2(node n) {
-     /* this is a version of pos() that ignores the position where a
-        symbol was defined, and insists on seeing the position where it
-	is being used */
-     /* it also ignores "define" commands */
      struct POS *p;
      while (iscons(n)) {
      	  if (CAR(n) == declare__S) return NULL;
@@ -159,7 +171,6 @@ struct POS *pos2(node n) {
 	  : NULL
 	  );
      }
-
 void locn(node n){
      if (n == NULL) {
 	  curpos = NULL;
@@ -268,7 +279,6 @@ void pp(node n){
 void pprintl(node n){
      while (n != NULL) pp(CAR(n)), n = CDR(n);
      }
-
 void cprintlist(node e){
      put("(");
      if (e != NULL) while (TRUE) {
@@ -279,7 +289,6 @@ void cprintlist(node e){
 	  }
      put(")");
      }
-
 void cprintsemi(node e){
      while (e != NULL) {
 	  node f = CAR(e);
@@ -292,7 +301,11 @@ void cprintsemi(node e){
 	  e = CDR(e);
 	  }
      }
-
+/***
+	Print C struct header for an object type to current output file.
+	@param t Type, not null.
+	@param baseclass True if a baseclass definition should be emitted.  This is to enable C++ new/delete compatability.
+ ***/
 static void cprintstructtag(node t,bool baseclass) {
   assert(istype(t));
   printf("struct ");
@@ -303,7 +316,10 @@ static void cprintstructtag(node t,bool baseclass) {
   else printf("M2_%d",t->body.type.seqno);
   if (baseclass) printf(" BASECLASS");
 }
-
+/***
+	Print an array object definition.
+	@param t Type node, that is an array, not null.
+***/
 static void cprintarraydef(node t){
      bool tagged = istaggedarraytype(t);
      node m = typedeftail(t);
@@ -321,7 +337,10 @@ static void cprintarraydef(node t){
      if (len!=NULL) cprint(len); else put("1");
      put("];};\n");
      }
-
+/***
+	Print an object (struct) definition.
+	@Param t Type node, not null.
+ ***/
 static void cprintobjectdef(node t){
      node m;
      bool had_a_member = FALSE;
@@ -342,7 +361,12 @@ static void cprintobjectdef(node t){
 	  }
      put("};\n");
      }
-
+/***
+	Print type to current c output file.
+	@param t Type node.
+	@param withstar Make pointer type (append *).
+	@Param usename If true, use name of type instead of cname.
+***/
 static void cprinttype(node t, bool withstar, bool usename){
      assert(istype(t));
      if (t == bad_or_undefined_T) {
@@ -410,7 +434,13 @@ static void cprintsomesizeof(node t, node arraylen){
 	       }
 	  }
      }
-
+/***
+	Given node s of type previously determined getmem__S, print the c code to the current output file.
+	Generates malloc calls.
+	CAR(s) = assignment target
+	If CADR(s) exists, sizeof(CADR(s)), else sizeof(type(CAR(s))))
+	@param g Node s (Note: not CAR since g needs a list).
+ ***/
 static void cprintgetmem(node g){
   node s = CAR(g);
   node t = type(s);
@@ -424,7 +454,9 @@ static void cprintgetmem(node g){
   cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
   put(")");
 }
-
+/***
+	Print typedefs to the current output file.
+ ***/
 static void cprinttypedef(node t) {
      /* define the structure/union tag */
      assert(istype(t));
@@ -508,17 +540,25 @@ static void cprintdefine(node t,bool definitions) {
      if (flags & constructor_F) put(" __attribute__ ((constructor))");
      if (flags & destructor_F) put(" __attribute__ ((destructor))");
      }
-
+/***
+	Given node s of type previously determined return_S, print the c code to the current output file.
+	@param g Node s.  (Note that g is a list, so no CAR).
+***/
 static void cprintreturn(node s){
-     if (length(s)==0) {
-	  put("return");
-	  }
-     else {
-     	  put("return ");
-     	  cprint(CAR(s));
-	  }
-     }
+	if (length(s)==0) {
+		put("return");
+	}
+	else {
+		put("return ");
+		cprint(CAR(s));
+	}
+}
 
+/***
+	Given node s of type previously determined assign__S, print the c code to the current output file.
+	@param s CAR(s)
+	@param t CADR(s)
+ ***/
 static void cprintassign(node s, node t){
      cprint(s);
      put(" = ");
@@ -542,7 +582,11 @@ void cprinttypevar(node t, node v){
 	  }
      }
 
-
+/***
+	Given node s of type previously determined define__S, print the c code to the current output file.
+	This prints a function definition.
+	@param g Node s.  (Note no CAR since the function needs a list).
+***/
 static void cprintdefun(node g) {
      node fun = CAAR(g);
      node args = CDAR(g);
@@ -574,12 +618,18 @@ static void cprintdefun(node g) {
      put("}");
      put("\n");
      }
-
+/***
+	Given node s of type previously determined goto__S, print the c code to the current output file.
+	@param l CAR(s)
+ ***/
 static void cprintgoto(node l){
      put("goto ");
      cprint(l);
      }
-
+/***
+	Given node s of type previously determined if_S, print the c code to the current output file.
+	@param g Node s.  (Note no CAR since if needs a list).
+***/
 static void cprintif(node g){
      put("if (");
      cprint(CAR(g));
@@ -590,17 +640,27 @@ static void cprintif(node g){
 	  cprint(CADDR(g));
 	  }
      }
-
+/***
+	Given node s of type previously determined label__S, print the c code to the current output file.
+	@param l CAR(s)
+***/
 static void cprintlabel(node l){
      cprint(l);
      put(":");
      }
-
+/***
+	Given node s of type previously determined isnull__S, print the c code to the current output file.
+	@param e CAR(s)
+ ***/
 static void cprintisnull(node e){
-     put("0 == ");
+     put("NULL == ");
      cprint(e);
      }
-
+/***
+	Given node s of type previously determined cast__S, print the c code to the current output file.
+	@param typ CAR(s)
+	@param e CADR(s)
+***/
 static void cprintcast(node typ, node e){
      put("((");
      cprint(typ);
@@ -608,7 +668,11 @@ static void cprintcast(node typ, node e){
      cprint(e);
      put(")");
      }
-
+/***
+	Given node s of type previously determined array_check, print the c code to the current output file.
+	@param indx CAR(s)
+	@param len CADR(s)
+***/
 static void cprintarraycheck(node indx, node len){
      struct POS *p;
      if (!arraychks) return;
@@ -635,7 +699,10 @@ static void cprintarraycheck(node indx, node len){
 	  }
      put(")");
      }
-
+/***
+	Given node s of type previously determined array_len_check_S, print the c code to the current output file.
+	@param len CAR(g)
+***/
 static void cprintarraylencheck(node len){
      struct POS *p;
      if (!arraychks) return;
@@ -655,20 +722,32 @@ static void cprintarraylencheck(node len){
 	  }
      put(")");
      }
-
+/***
+	Given node s of type previously determined array_take_S, print the c code to the current output file.
+	@param array CAR(s)
+	@param indx CADR(s)
+***/
 static void cprintarraytake(node arr, node indx){
      cprint(arr);
      put("->array[");
      cprint(indx);
      put("]");
      }     
-
+/***
+	Given node s of type previously determined take__S, print the c code to the current output file.
+	@param f CAR(s)
+	@param e CADR(s)
+***/
 static void cprinttake(node f, node e){
      cprint(f);
      put("->");
      cprint(e);
      }
-
+/***
+	Given node s of type previously determined prefix__S, print the c code to the current output file.
+	@pram fun CAR(s)
+	@param x CADR(s)
+***/
 static void cprintprefix(node fun, node x){
      put("(");
      cprint(fun);
@@ -676,7 +755,11 @@ static void cprintprefix(node fun, node x){
      cprint(x);
      put(")");
      }
-
+/***
+	Given node s of type previously determined postfix_S, print the c code to the current output file.
+	@param fun CAR(s)
+	@param x CADR(s)
+***/
 static void cprintpostfix(node fun, node x){
      put("(");
      cprint(x);
@@ -684,7 +767,12 @@ static void cprintpostfix(node fun, node x){
      cprint(fun);
      put(")");
      }
-
+/***
+	Given node s of type previously determined infix__S, print the c code to the current output file.
+	@param fun CAR(s)
+	@param x CADR(s)
+	@param y CADDR(s)
+ ***/
 static void cprintinfix(node fun, node x, node y){
      put("(");
      cprint(x);
@@ -694,7 +782,11 @@ static void cprintinfix(node fun, node x, node y){
      cprint(y);
      put(")");
      }
-
+/***
+	Given node s of type previously determined funcall__S, print the c code to the current output file.
+	@param fun CAR(s)
+	@param args CDR(s)
+ ***/
 static void cprintfuncall(node fun, node args){
      node g = args;
      cprint(fun);
@@ -709,119 +801,131 @@ static void cprintfuncall(node fun, node args){
      }
 
 void put_unescape(const char *s) {
-  while (*s) {
-    if (*s == '\\') {
-      s++;
-      switch (*s) {
-      case 'n': putchar('\n'); break;
-      case '"' : putchar('"'); break;
-      case 'b': putchar('\b'); break;
-      case 't': putchar('\t'); break;
-      case 'f': putchar('\f'); break;
-      case 'r': putchar('\r'); break;
-      case  0 : return       ;	/* shouldn't happen */
-      default : putchar(*s)  ; break;
-      }
-    }
-    else putchar(*s);
-    s++;
-  }
+	while (*s) {
+		if (*s == '\\') {
+			s++;
+			switch (*s) {
+			case 'n': putchar('\n'); break;
+			case '"' : putchar('"'); break;
+			case 'b': putchar('\b'); break;
+			case 't': putchar('\t'); break;
+			case 'f': putchar('\f'); break;
+			case 'r': putchar('\r'); break;
+			case  0 : return       ;	/* shouldn't happen */
+			default : putchar(*s)  ; break;
+			}
+		}
+		else putchar(*s);
+		s++;
+	}
 }
-
+/***
+	Given node s of type previously determined Ccode_S, print the c code to the current output file.
+	@param s Node previously determined to be Ccode_S.
+***/
 static void cprintCcode(node s){
-     while (s != NULL) {
-	  node a = CAR(s);
-	  if (a->tag == string_const_tag) put_unescape(tostring(a));
-	  else cprint(a);
-	  s = CDR(s);
-	  }
-     }
-
+	while (s != NULL) {
+		node a = CAR(s);
+		if (a->tag == string_const_tag) put_unescape(tostring(a));
+		else cprint(a);
+		s = CDR(s);
+	}
+}
+/***
+	Print the split cons node to the c/cpp output equivalent in the current output file.
+	@param f Given cons e, CAR(e)
+	@param g Given cons e, CDR(e)
+***/
 static void cprintcons(node f, node g) {
-     if (ispos(f)) f = f->body.position.contents;
-     if (f == getmem__S) cprintgetmem(g);
-     else if (f == array_len_check_S) cprintarraylencheck(CAR(g));
-     else if (f == array_check_S) cprintarraycheck(CAR(g),CADR(g));
-     else if (f == array_take_S) cprintarraytake(CAR(g),CADR(g));
-     else if (f == assign__S) cprintassign(CAR(g),CADR(g));
-     else if (f == cast__S) cprintcast(CAR(g),CADR(g));
-     else if (f == declare__S) {
-       node s = CAR(g);
-       cprintdefine(s,TRUE);
-     }
-     else if (f == define__S) cprintdefun(g);
-     else if (f == equalequal__S) cprintinfix(f,CAR(g),CADR(g));
-     else if (f == unequal_S) cprintinfix(f,CAR(g),CADR(g));
-     else if (f == funcall__S) cprintfuncall(CAR(g),CDR(g));
-     else if (f == goto__S) cprintgoto(CAR(g));
-     else if (f == if_S) cprintif(g);
-     else if (f == infix__S) cprintinfix(CAR(g),CADR(g),CADDR(g));
-     else if (f == isnull__S) cprintisnull(CAR(g));
-     else if (f == label__S) cprintlabel(CAR(g));
-     else if (f == prefix__S) cprintprefix(CAR(g),CADR(g));
-     else if (f == postfix__S) cprintpostfix(CAR(g),CADR(g));
-     else if (f == return_S) cprintreturn(g);
-     else if (f == Ccode_S) cprintCcode(CDR(g));
-     else if (f == take__S) cprinttake(CAR(g),CADR(g));
-     else if (isbasictype(f)) {
-	  put("((");
-	  cprint(f);
-	  put(")");
-	  cprint(CAR(g));
-	  put(")");
-	  }
-     else {
-	  assert(FALSE);
-	  }
-     }
-
-void cprint(node e){
-     assert(e != NULL);
-     switch(e->tag){
-	  case type_tag: { 
-	       cprinttype(e,TRUE,TRUE); 
-	       return; 
-	       }
-	  case double_const_tag: {
-	       put(e->body.double_const.contents); 
-	       return;
-	       }
-	  case int_const_tag: {
-	       put(e->body.int_const.contents); 
-	       return;
-	       }
-	  case char_const_tag: {
-	       put(intToString(e->body.char_const.contents)); 
-	       return;
-	       }
-	  case unique_string_tag: case string_tag: {
-	       put(tostring(e));
-	       return;
-	       }
-	  case string_const_tag: {
-	       printstringconst(e); 
-	       return;
-	       }
-	  case symbol_tag: { printsymbol(e); return; }
-	  case position_tag: { cprint(e->body.position.contents); return; }
-	  case cons_tag: {
-	       node f = CAR(e);
-	       if (f == function_S) {
+	if (ispos(f)) f = f->body.position.contents;
+	if (f == getmem__S) cprintgetmem(g);
+	else if (f == array_len_check_S) cprintarraylencheck(CAR(g));
+	else if (f == array_check_S) cprintarraycheck(CAR(g),CADR(g));
+	else if (f == array_take_S) cprintarraytake(CAR(g),CADR(g));
+	else if (f == assign__S) cprintassign(CAR(g),CADR(g));
+	else if (f == cast__S) cprintcast(CAR(g),CADR(g));
+	else if (f == declare__S) {
+		cprintdefine(CAR(g),TRUE);
+	}
+	else if (f == define__S) cprintdefun(g);
+	else if (f == equalequal__S) cprintinfix(f,CAR(g),CADR(g));
+	else if (f == unequal_S) cprintinfix(f,CAR(g),CADR(g));
+	else if (f == funcall__S) cprintfuncall(CAR(g),CDR(g));
+	else if (f == goto__S) cprintgoto(CAR(g));
+	else if (f == if_S) cprintif(g);
+	else if (f == infix__S) cprintinfix(CAR(g),CADR(g),CADDR(g));
+	else if (f == isnull__S) cprintisnull(CAR(g));
+	else if (f == label__S) cprintlabel(CAR(g));
+	else if (f == prefix__S) cprintprefix(CAR(g),CADR(g));
+	else if (f == postfix__S) cprintpostfix(CAR(g),CADR(g));
+	else if (f == return_S) cprintreturn(g);
+	else if (f == Ccode_S) cprintCcode(CDR(g));
+	else if (f == take__S) cprinttake(CAR(g),CADR(g));
+	else if (isbasictype(f)) {
+		put("((");
+		cprint(f);
+		put(")");
+		cprint(CAR(g));
+		put(")");
+	}
+	else {
+		assert(FALSE);
+	}
+}
+/***
+	Print the given node to the c/cpp output equivalent in the curent output file.
+	@param e The node to print, not null.
+***/
+void cprint(node e) {
+	assert(e != NULL);
+	switch(e->tag) {
+	case type_tag: { 
+		cprinttype(e,TRUE,TRUE); 
+		return; 
+	}
+	case double_const_tag: {
+		put(e->body.double_const.contents); 
+		return;
+	}
+	case int_const_tag: {
+		put(e->body.int_const.contents); 
+		return;
+	}
+	case char_const_tag: {
+		put(intToString(e->body.char_const.contents)); 
+		return;
+	}
+	case unique_string_tag: case string_tag: {
+		put(tostring(e));
+		return;
+	}
+	case string_const_tag: {
+		printstringconst(e); 
+		return;
+	}
+	case symbol_tag: { printsymbol(e); return; }
+	case position_tag: { cprint(e->body.position.contents); return; }
+	case cons_tag: {
+		node f = CAR(e);
+		if (f == function_S) {
 		    cprint(CADDR(e));
 		    put(" (*)");
 		    cprintlist(CADR(e));
-		    }
-	       else {
-		 if (e->body.cons.pos.filename) curpos = &e->body.cons.pos;
-		 cprintcons(f,CDR(e)); 
-	         }
-	       return; 
-	       }
-	  }
-     }
-
+		}
+		else {
+			if (e->body.cons.pos.filename) curpos = &e->body.cons.pos;
+			cprintcons(f,CDR(e)); 
+		}
+		return; 
+	}
+	}
+}
+/***
+	A first type is largely an organizational definition used to put "simple" typedefs first in cprinttypes.
+	@return True if a first type, false otherwise.
+ ***/
 static bool firsttype(node t) {
-  return israwpointertypeexpr(t) || israwtypeexpr(t) || isobjecttype(t) || istaggedobjecttype(t) || isortype(t) || isarraytype(t) || istaggedarraytype(t);
+	return israwpointertypeexpr(t) || israwtypeexpr(t) || isobjecttype(t) || istaggedobjecttype(t) || isortype(t) || isarraytype(t) || istaggedarraytype(t);
 }
 
 void cprinttypes(){
@@ -871,14 +975,17 @@ void cprinttypes(){
 	    }
           }
      }     
-
+/***
+	Current indentation level in the d file.
+***/
 static int signest = 0;
-
+/***
+	Print signature indentation to the d file.
+***/
 static void sigindent(){
      int i;
      for (i=0; i<signest; i++) put("     ");
      }
-
 void dprinttype(node e){
      assert(istype(e));
      if (e->body.type.name != NULL) {
@@ -888,16 +995,18 @@ void dprinttype(node e){
 	  dprint(e->body.type.definition);
 	  }
      }
-
 void dprintlist(node e){
-     if (e != NULL) while (TRUE) {
-	  dprint(CAR(e));
-	  e = CDR(e);
-	  if (e == NULL) break;
-	  put(",");
-	  }
-     }
-
+	if (e != NULL) while (TRUE) {
+			dprint(CAR(e));
+			e = CDR(e);
+			if (e == NULL) break;
+			put(",");
+		}
+}
+/***
+	Print the signature for the given node.
+	@param g Are there subtle restrictions on this node?
+ ***/
 static void dprintsig(node g){
      signest++;
      put("signature ");
@@ -912,12 +1021,17 @@ static void dprintsig(node g){
      sigindent();
      put(")");
      }
-
+/***
+	???
+	@param f Are there subtle restrictions on this node?
+ ***/
 static void dprintop(node f){
      if (isstr(f) && !validtoken(tostring(f))) put("op");
      dprint(f);
      }
-
+/***
+	???
+***/
 static void dprintinfix(node op, node args){
      int i;
      put("(");
@@ -931,14 +1045,15 @@ static void dprintinfix(node op, node args){
 	  }
      put(")");
      }
-
+/***
+	Print to the d file the output equivalent of function node e.
+***/
 static void dprintfunction(node g){
      put("function(");
      dprintlist(car(g));
      put("):");
      dprint(cadr(g));
      }
-
 void dprintcons(node f, node g) {
      f = unpos(f);
      if (f == colon__S) { dprint(CAR(g)); dprint(f); dprint(CADR(g));}

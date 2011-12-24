@@ -6,6 +6,10 @@ node chkprogram(node e);
 node chktype(node,scope);
 node chk(node, scope);
 node chklist(node e, scope v);
+/***
+	Initialization routine.
+	Setup chk functions.
+***/
 void init_chk(void);
 extern node headerstrings;
 extern node declarationsstrings;

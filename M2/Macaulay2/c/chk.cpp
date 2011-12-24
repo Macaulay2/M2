@@ -137,22 +137,21 @@ static bool typematch(node e, node f){
      }
 
 node lookupfunction(node fun, node argtypes){
-     fun = unpos(fun);
-     if (equal(argtypes,functionargtypes(type(fun)))) return fun;
-     if (fun->tag == symbol_tag) {
-     	  node f = fun->body.symbol.name;
-     	  assert(isstr(f));
-	  node slist;
-     	  for (slist = f->body.unique_string.symbol_list; slist!=NULL; slist=cdr(slist)) {
-	       node sym = car(slist);
-	       if (sym == fun) continue;
-	       node t = type(sym);
-	       if (!isfunctiontype(t)) continue;
-	       if (equal(argtypes,functionargtypes(t))) return sym;
-	       }
-	  }
-     return NULL;
-     }
+	fun = unpos(fun);
+	if (equal(argtypes,functionargtypes(type(fun)))) return fun;
+	if (fun->tag == symbol_tag) {
+		node f = fun->body.symbol.name;
+		assert(isstr(f));
+		for (node slist = f->body.unique_string.symbol_list; slist!=NULL; slist=cdr(slist)) {
+			node sym = car(slist);
+			if (sym == fun) continue;
+			node t = type(sym);
+			if (!isfunctiontype(t)) continue;
+			if (equal(argtypes,functionargtypes(t))) return sym;
+		}
+	}
+	return NULL;
+}
 
 static node lookupexactfunction(node fun, node argtypes){
      fun = unpos(fun);
@@ -281,8 +280,13 @@ static char *datumtostring(datum p) {
   buf[p.dsize]=0;
   return buf;
 }
-
+/***
+	Global GDBM database for types.
+***/
 static GDBM_FILE db;
+/***
+	Global number of keys (types) in gdbm database.
+***/
 static int numkeys;
 /***
 	Open GDBM values database.  Fails with fatal error on gdbm error.
@@ -430,12 +434,18 @@ static node entmp(node e, scope v){
      perform(list(3,assign__S,tmp,e),v);
      return tmp;
      }
-
+/**
+   Return true if the node is a positive integer, false otherwise.
+   @param e Node, not null.
+**/
 static bool isposint(node e){
      e = unpos(e);
      return e->tag == int_const_tag && e->body.int_const.contents[0] != '-';
      }
-
+/***
+	Return true if the node is an negative integer, false otherwise.
+	@param e Node, not null.
+***/
 static bool isnegint(node e){
      e = unpos(e);
      return e->tag == int_const_tag && e->body.int_const.contents[0] == '-';
