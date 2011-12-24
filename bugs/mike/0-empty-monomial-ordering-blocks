@@ -1,0 +1,36 @@
+The answer should be | x y z |, but the Eliminate 0 block is removed during joining.
+
+    i1 : R = QQ[x,y,z, MonomialOrder => {Eliminate 0, Eliminate 1}]
+
+    o1 = R
+
+    o1 : PolynomialRing
+
+    i2 : selectInSubring(1,vars R)
+
+    o2 = | y z |
+
+		 1       2
+    o2 : Matrix R  <--- R
+
+My first attempt to fix it was:
+
+    Index: monordering.c
+    ===================================================================
+    --- monordering.c	(revision 14174)
+    +++ monordering.c	(working copy)
+    @@ -332,7 +332,9 @@
+       case MO_LAURENT_REVLEX:
+       case MO_REVLEX:
+       case MO_WEIGHTS:
+    -    return (p->nvars > 0);
+    +       // it is a bad idea to elide blocks in the ordering, because that changes the number of them, and 
+    +       // functions such as selectInSubring depend on the numbering:
+    +       //    return (p->nvars > 0);
+       case MO_POSITION_UP:
+       case MO_POSITION_DOWN:
+	 return 1;
+
+but that broke many tests.
+
+-- Dan
