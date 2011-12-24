@@ -10,6 +10,7 @@
 #if defined(__cplusplus)
   extern "C" {
 #endif
+#include <typecodes.h>
     extern void scc_core_prepare() __attribute__ ((constructor));
     #if defined(__STDC__)
     extern void fatal(const char *s,...);
@@ -23,6 +24,15 @@
     extern void fatalarraylen(int,const char*,int,int);
     extern void fatalarrayindex(int,int,const char*,int,int);
     extern void outofmem2(size_t);
+	  /***
+		 Check to see if the type is valid.
+		 Raise invalid type tag error on failure.
+	  ***/
+	  static inline void checkTypeValidity(int typecode, const char* file, int line)
+	  {
+		  if(typecode >= numTypeCodes)
+			  invalidTypeTag(typecode, file,line,-1);
+	  }
     #if defined(GC_DEBUG) && !defined(NDEBUG)
       #include <assert.h>
       void *GC_check_annotated_obj(void *);
