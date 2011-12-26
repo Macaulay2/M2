@@ -6,6 +6,7 @@ matB = matrix{{1_B}}
 kernel map(B^1, A^1, f, matB)
 
 
+This happens on the trunk, but not in 1.4:
 
 i8 : kernel map(B^1, A^1, f, matB)
 ../../M2/trunk/M2/Macaulay2/m2/matrix3.m2:45:14:(1):[5]: error: assertion failed
