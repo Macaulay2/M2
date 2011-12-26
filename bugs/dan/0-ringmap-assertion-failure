@@ -1,0 +1,14 @@
+C = QQ[x]
+A = C[y]
+B = C[z]
+f = map(B,A,{z})
+matB = matrix{{1_B}}
+kernel map(B^1, A^1, f, matB)
+
+
+
+i8 : kernel map(B^1, A^1, f, matB)
+../../M2/trunk/M2/Macaulay2/m2/matrix3.m2:45:14:(1):[5]: error: assertion failed
+../../M2/trunk/M2/Macaulay2/m2/matrix3.m2:45:14:(1):[5]: --entering debugger (type help to see debugger commands)
+../../M2/trunk/M2/Macaulay2/m2/matrix3.m2:45:14-45:52: --source code:
+             assert( degreesRing R === degreesRing G );
