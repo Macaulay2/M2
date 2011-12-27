@@ -12,7 +12,11 @@
 #include <errno.h>
 #include <string.h>
 #include <math.h>
-
+#ifndef _REENTRANT
+#define _REENTRANT
+#endif
+#include <pthread.h>
+#define GC_THREADS
 #include <gc.h>
 
 #ifndef O_BINARY
@@ -29,7 +33,7 @@
 //#include <scc-core.h>
 
 extern int system_errno();
-extern char *progname;
+extern const char *progname;
 
 
 extern const char *libfac_version;

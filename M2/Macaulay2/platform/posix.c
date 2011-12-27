@@ -1,5 +1,6 @@
 #include <tokens-exports.h>
 #include "platform.h"
+#include <M2mem.h>
 
 /**
    Posix spec guarentees the existance of these headers
@@ -148,14 +149,16 @@ int system_chmod(M2_string name,int mode) {
   GC_FREE(cname);
   return r;
 }
-/***
-    @param cname Path to directory.
-    @return True if the path is a directory, False otherwise or if the path does not exist.
-***/
-static int isDirectory(const char *cname) {
+/**
+   @param cname Path to directory.
+   @return 1 if path is a directory, 0 otherwise or if the path does not exist.
+**/
+int platformIsDirectory(const char *cname) {
   struct stat buf;
   int r = lstat(cname,&buf);
-  return r != -1 && S_ISDIR(buf.st_mode);
+  if(r != -1 && S_ISDIR(buf.st_mode))
+    return 1;
+  return 0;
 }
 /**
    Returns if the path is a directory.
@@ -165,7 +168,7 @@ static int isDirectory(const char *cname) {
 **/
 int system_isDirectory(M2_string name) {
   char *cname = M2_tocharstar(name);
-  int r = isDirectory(cname);
+  int r = platformIsDirectory(cname);
   GC_FREE(cname);
   return r;
 }

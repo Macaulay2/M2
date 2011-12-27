@@ -7,12 +7,12 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
 
 
-dfiles = ['arithmetic.d','atomic.d','M2.d','system.d','strings.d','varstrin.d','strings1.d','errio.d','vararray.d','ctype.d','nets.d',
-          'varnets.d','interrupts.d','pthread0.d','stdiop0.d','gmp.d','engine.dd','xml.d','stdio0.d','parse.d','expr.d','stdio.d','stdiop.d',
-          'err.d','gmp1.d','tokens.d','getline.d','lex.d','parser.d','binding.d','basic.d','convertr.d','common.d','util.d','struct.d',
-          'classes.dd','buckets.dd','equality.dd','hashtables.dd','sets.dd','version.dd','evaluate.d','mysqldummy.d','pthread.d','actors.d',
-          'actors2.d','actors3.d','actors4.d','xmlactors.d','actors5.d','threads.dd','pari.d','interface.dd','texmacs.d','interp.d']
-cfiles = ['gdbm_interface.c','xml-c.c','M2inits.c','gmp_aux.c','pari-c.c','main.c','M2mem.c','M2lib.c','scclib.c','M2-factory.cpp','regex.c','readline.c']
+dfiles = ['arithmetic.dd','atomic.dd','M2.dd','system.dd','strings.dd','varstrin.dd','strings1.dd','errio.dd','vararray.dd','ctype.dd','nets.dd',
+          'varnets.dd','interrupts.dd','pthread0.dd','stdiop0.dd','gmp.dd','engine.dd','xml.dd','stdio0.dd','parse.dd','expr.dd','stdio.dd','stdiop.dd',
+          'err.dd','gmp1.dd','tokens.dd','getline.dd','lex.dd','parser.dd','binding.dd','basic.dd','convertr.dd','common.dd','util.dd','struct.dd',
+          'classes.dd','buckets.dd','equality.dd','hashtables.dd','sets.dd','version.dd','evaluate.dd','mysqldummy.dd','pthread.dd','actors.dd',
+          'actors2.dd','actors3.dd','actors4.dd','xmlactors.dd','actors5.dd','threads.dd','pari.dd','interface.dd','texmacs.dd','interp.dd']
+cfiles = ['gdbm_interface.cpp','xml-c.c','M2inits.cpp','gmp_aux.cpp','pari-c.c','main.cpp','M2mem.c','M2lib.cpp','scclib.c','M2-factory.cpp','regex.c','readline.cpp','gmp_init.cc','startup.c']
 def DBuildDependency(target,source,env):
     source = str(source[0])
     target = str(target[0])
@@ -35,6 +35,15 @@ def DBuildDependency(target,source,env):
     shutil.move(target[:-4]+'.sig.tmp',target[:-4]+'.sig')
     return None
 
+def DBuildTypes(target,source,env):
+    cmd = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/c/scc')
+    targetPath = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/d/')
+    args = [cmd, '-typecodefile']
+    proc = subprocess.Popen(args,cwd=targetPath)
+    if(proc.wait()):
+        raise Exception("Unable to execute " + str(args) + ' in ' + targetPath)
+    return None
+
 def DBuild(target,source,env):
     origTargets = target
     source = str(source[0])
@@ -44,7 +53,7 @@ def DBuild(target,source,env):
     targetPath = splitTargetPath[0]+'/'
     targetFile = splitTargetPath[1]
     cmd = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/c/scc')
-    args = [cmd, '-ronly', os.path.abspath(source),'-I../d/']
+    args = [cmd, '-ronly', '-noline', os.path.abspath(source),'-I../d/']
     if(os.path.splitext(target)[1]=='.dd'):
         args = args + ['-cxx']
     proc = subprocess.Popen(args,cwd=targetPath)
@@ -56,16 +65,24 @@ def DBuild(target,source,env):
 
 ddepbuilder = Builder(action=DBuildDependency, single_source=1)
 dbuilder = Builder(action=DBuild,single_source=1)
+dtypesbuilder = Builder(action=DBuildTypes, single_source=1)
 depbuilders = []
 env = Environment()
 env.mode = mode
 env['BUILDERS']['ddepbuilder']=ddepbuilder
 env['BUILDERS']['dbuilder']=dbuilder
+env['BUILDERS']['dtypesbuilder']=dtypesbuilder
+#setup D build type target.
+dtb = env.dtypesbuilder(os.path.abspath('Macaulay2/d/typescode.h'),[])
+#Setup D dependency build targets.
+scc = getState(mode,architecture,'scc')
 for i in range(0,len(dfiles)):
     df = dfiles[i]
     sf = os.path.split(df)
     se = os.path.splitext(sf[1])
     builder = env.ddepbuilder([se[0]+'.dep',se[0]+'.sig'], df)
+    Depends(builder,scc)
+    Depends(dtb,builder)
     ParseDepends(se[0]+'.dep')
     if i!=0:            
         Requires(builder,depbuilders[i-1])
@@ -76,46 +93,52 @@ buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/d/'
 prefixPath = getState(mode,architecture,'prefixpath')
 cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes "+getState(mode,architecture,'M2flags')
 ddict = {}
+
+#setup D build targets.
 for i in range(0,len(dfiles)):
     df = dfiles[i]
     sf = os.path.split(df)
     se = os.path.splitext(sf[1])
     if(se[1]=='.dd'):
         targetf = se[0]+'-tmp.cc'
-    elif(se[1]=='.d'):
+    elif(se[1]=='.dd'):
         targetf = se[0]+'-tmp.c'
     else:
         raise Exception
     builder = env.dbuilder([targetf,se[0]+'-exports.h'],df)
+    Depends(builder,scc)
+    Depends(builder,dtb)
     Depends(builder,se[0]+'.dep')
     Requires(builder,depbuilders[len(depbuilders)-1])
     # It is not necessary to serialize on typecode.db since we are only reading since we have already generated all dependencies...
     builders.append(builder)
     #export the engine builder because it is needed for dependencies for e.
-    ddict[sf[1]]=builder
-    objFiles.append(Object('#'+buildpath+targetf,CFLAGS=cflags, CXXFLAGS=cflags))
+    obj = Object('#'+buildpath+targetf,CFLAGS=cflags, CXXFLAGS=cflags)
+    objFiles.append(obj)
+    ddict[sf[1]]=obj
 setState(mode,architecture,'dFileDict',ddict)
+#Setup C/C++ object file targets for files in D directory
 cobjs = []
 for f in cfiles:
     builder = Object(f,CFLAGS=cflags,CXXFLAGS=cflags)
-    if f=='M2lib.c':
-        Depends(builder,getState(mode,architecture,'dFileDict')['interp.d'])
-    elif f=='gdbm_interface.c':
-        Depends(builder,getState(mode,architecture,'dFileDict')['M2.d'])
+    if f=='M2lib.cpp':
+        Depends(builder,ddict['interp.dd'])
+    elif f=='gdbm_interface.cpp':
+        Depends(builder,ddict['M2.dd'])
     elif f=='scclib.c':
-        Depends(builder,getState(mode,architecture,'dFileDict')['expr.d'])
+        Depends(builder,ddict['expr.dd'])
     elif f=='xml-c.c':
-        Depends(builder,getState(mode,architecture,'dFileDict')['xml.d'])
-    elif f=='M2inits.c':
-        Depends(builder,getState(mode,architecture,'dFileDict')['engine.dd'])
+        Depends(builder,ddict['xml.dd'])
+    elif f=='M2inits.cpp':
+        Depends(builder,ddict['engine.dd'])
     elif f=='regex.c':
-        Depends(builder,getState(mode,architecture,'dFileDict')['M2.d'])
-    elif f=='readline.c':
-        Depends(builder,getState(mode,architecture,'dFileDict')['expr.d'])
+        Depends(builder,ddict['M2.dd'])
+    elif f=='readline.cpp':
+        Depends(builder,ddict['expr.dd'])
     objFiles.append(builder)
     cobjs.append(builder)
 
 setState(mode,architecture,'dstart',depbuilders[0]+cobjs)
-setState(mode,architecture,'dend',builders[len(builders)-1]+cfiles)
+setState(mode,architecture,'dend',builders[len(builders)-1])
 setState(mode,architecture,'dObjectFiles',objFiles)
 Return('objFiles')

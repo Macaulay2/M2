@@ -1210,7 +1210,7 @@ export abs(x:CC):RR := (
      Ccode( void, "mpfr_hypot(", z, ",", x.re, ",", x.im, ",GMP_RNDN)" );
      z);
 
-header "  void mpfc_sqrt(gmp_CC result, gmp_CC a); ";	    -- see ../e/complex.c
+header " extern \"C\" { void mpfc_sqrt(gmp_CC result, gmp_CC a); } ";	    -- see ../e/complex.c
 
 export sqrt(x:CC):CC := (
      z := newCC(precision(x));

@@ -1,5 +1,5 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
-
+#include <sstream>
 /***
 	Get the current position in the D source file of the given node.
 	This ignore the position where a symbol was defined, and insists on seeing the position where it
@@ -20,6 +20,10 @@ void cprintlist(node);
 ***/
 void cprinttypes(void);
 /***
+	Print c include list for types.
+***/
+void cprintIncludeList();
+/***
 	Pprint cons list.
 	@param n Cons node to print, may be null.
 ***/
@@ -36,20 +40,21 @@ void cprint(node e);
  ***/
 void dprinttype(node e);
 /***
-	Print c statement(s) to the current output file.
-	@param e Node.  May be cons or not.  
+	Put c statement(s) to the stringstream.
+	@param e A node, may be cons or not.  
+	@param ss Stringstream to write to.
  ***/
-void cprintsemi(node e);
+void generateCSemi(node e,std::stringstream& ss);
 /***
 	Put characters directly to current output file.
 	@param s Null terminated character string, not null.
 ***/
-void pput(const char *);
+void d_pput(const char *);
 /***
 	Put characters to output file, adjusting c indentation level if needed.
 	@param s Null terminated character string, not null.
  ***/
-void put(const char *);
+void d_put(const char *);
 /***
 	Used to print information about the node to the stdout.
 	Appears to be mainly used for debugging.
@@ -62,12 +67,12 @@ void pprint(node e);
 	Example: A thread local variable on a system that does not support __thread needs to be a function call.
 	@param p Symbol node, not null.
 ***/
-void printsymbol(node);
+void d_printsymbol(node);
 /***
 	Print the node, followed by newline.
 	@param n Node to print, may be null.
 ***/
-void pp(node n);
+void d_pp(node n);
 /***
 	Attempt to create a string from the node in a sane way.
 	@param e Node to create a string from, not null.
@@ -84,7 +89,7 @@ void dprint(node e);
 	Used primarily to output c code directly entered by the user.
 	@param s Null terminated character string, not null.
  ***/
-void put_unescape(const char *s);
+void d_put_unescape(const char *s);
 /***
 	Set the current position to the position of n.
 	If n is null, current position becomes n.
@@ -95,7 +100,7 @@ void locn(node);
    This function will print to the c file the current location in the d file where this code was generated.
    This is used by GDB for debugging.
 ***/
-void printpos();
+void d_printpos();
 void dprinttype(node);
 /***
 	This function will print to the d file the output equivalent of the list g with type f.

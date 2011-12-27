@@ -226,7 +226,7 @@ struct TOKENTREE {
 
 int registerop(char *s, int token){
      struct TOKENTREE *p;
-     if (tokentree == NULL) tokentree = new(struct TOKENTREE);
+     if (tokentree == NULL) tokentree = newoftype(struct TOKENTREE);
      p = tokentree;
      while (TRUE) {
 	  int c = (*s++) & 0x7f;
@@ -235,7 +235,7 @@ int registerop(char *s, int token){
 	       p->token[c] = token;
 	       return 0;
 	       }
-	  if (p->next[c] == NULL) p->next[c] = new(struct TOKENTREE);
+	  if (p->next[c] == NULL) p->next[c] = newoftype(struct TOKENTREE);
 	  p = p->next[c];
 	  }
      }
@@ -412,7 +412,7 @@ static int yylex() {
 	       	    fprintf(stderr,"Got %s operator: ", 
 			 yytname[YYTRANSLATE(token)]);
 	       	    fflush(stderr);
-	       	    pp(yylval);
+	       	    d_pp(yylval);
 	       	    fflush(stdout);
 #else
 #endif
@@ -425,7 +425,7 @@ static int yylex() {
      if (yydebug) {
 	  fprintf(stderr,"Got token ");
 	  fflush(stderr);
-	  pp(yylval);
+	  d_pp(yylval);
 	  fflush(stdout);
 	  }
      switch ( n -> tag ) {

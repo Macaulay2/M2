@@ -9,7 +9,7 @@
 
 #define EQUAL 0
 
-#define new(type) (type *)getmem(sizeof(type))
+#define newoftype(type) (type *)getmem(sizeof(type))
 #define newarray(type,n) (type *) getmem((n) * sizeof(type))
 #define numberof(x) (sizeof(x)/sizeof(x[0]))
 #define forarray(i,x) for(i=0; i<numberof(x); i++)

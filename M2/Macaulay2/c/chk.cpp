@@ -109,7 +109,7 @@ static void performfinals(scope v){
 	@return new child scope.
 ***/
 static scope enternewscope(scope *vp){
-     scope w = new(struct SCOPE);
+     scope w = newoftype(struct SCOPE);
      w->previous = *vp;
      *vp = w;
      return w;
@@ -2632,6 +2632,9 @@ static node chklvalue(node e, scope v) {
      return x;
      }
 
+std::set<std::string> headerFilesNeeded;
+std::set<std::string> importPrefixes;
+
 static node chk_use(node e, scope v){
      bool fresh;
      node p, syms, name, pp = enclosing_package(v);
@@ -2649,11 +2652,16 @@ static node chk_use(node e, scope v){
 	       return bad__K;
 	       }
 	  assert(pathopened != NULL);
+	  headerFilesNeeded.insert(newsuffixbase(pathopened,"-exports.h"));
+	  importPrefixes.insert(newsuffixbase(pathopened,""));
 	  if (dependfile != NULL)
+	  {
 	       fprintf(dependfile,"%s %s %s : %s\n", 
 		       outfilename, newsuffixbase(targetname,".o"), newsuffixbase(targetname,".sig"), 
 		       newsuffixbase(pathopened,".sig")
 		    );
+		   fprintf(dependfile,"%s : %s\n",newsuffixbase(targetname,".o"),newsuffixbase(pathopened,"-exports.h"));
+	  }
 	  p = lookupword(name);
      	  if (p == NULL) {
 	       errorpos(CADR(e), "signature file read, but package remains undefined");

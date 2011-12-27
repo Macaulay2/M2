@@ -156,18 +156,18 @@ node lookupword(node f){
 void printstringlist(){
      node p;
      unsigned int h;
-     pput("String Table\n");
+     d_pput("String Table\n");
      for (h=0; h<numberof(hash_buckets); h++) {
 	  for (p = hash_buckets[h]; p != NULL; p = CDR(p)) {
 	       node str = CAR(p);
 	       assertpos(isstr(str),str);
 	       pprint(str);
-	       pput(" : ");
+	       d_pput(" : ");
 	       pprint(str->body.unique_string.symbol_list);
-	       pput("\n");
+	       d_pput("\n");
 	       }
 	  }
-     pput("\n");
+     d_pput("\n");
      }
 
 void checkfordeferredsymbols(){
@@ -191,17 +191,17 @@ static void psymbol(node s){
      assertpos(s->tag == symbol_tag,s);
      cprint(s->body.symbol.name);
      if (s->body.symbol.cprintvalue) {
-	  put("\n      cprintvalue => ");
+	  d_put("\n      cprintvalue => ");
 	  cprint(s->body.symbol.cprintvalue);
-	  put("\n      ");
+	  d_put("\n      ");
 	  }
      if (s->body.symbol.Cname != NULL) {
-	  put("\n      Cname => ");
-	  put(s->body.symbol.Cname);
+	  d_put("\n      Cname => ");
+	  d_put(s->body.symbol.Cname);
 	  }
-     put("\n      type => ");
+     d_put("\n      type => ");
      pprint(s->body.symbol.type);
-     put("\n      value => ");
+     d_put("\n      value => ");
      if (s->body.symbol.value != NULL) {
 	  node val = s->body.symbol.value;
 	  if (istype(val) && val->body.type.name == s) {
@@ -210,44 +210,44 @@ static void psymbol(node s){
 	  else pprint(val);
 	  }
      else {
-       put("none");
+       d_put("none");
        }
-     put("\n      flags:");
-     if (s->body.symbol.flags & macro_function_F) put(" macro-function");
-     if (s->body.symbol.flags & macro_variable_F) put(" macro-variable");
-     if (s->body.symbol.flags & readonly_F) put(" readonly");
-     if (s->body.symbol.flags & symbol_F) put(" symbol");
-     if (s->body.symbol.flags & keyword_F) put(" keyword");
-     if (s->body.symbol.flags & constant_F) put(" constant");
-     if (s->body.symbol.flags & defined_F) put(" initialized");
-     if (s->body.symbol.flags & export_F) put(" export");
-     if (s->body.symbol.flags & import_F) put(" import");
-     if (s->body.symbol.flags & threadLocal_F) put(" thread");
-     if (s->body.symbol.flags & const_F) put(" const");
-     if (s->body.symbol.flags & global_F) put(" global");
-     if (s->body.symbol.flags & literal_F) put(" literal");
-     if (s->body.symbol.flags & visible_F) put(" visible");
-     if ( !(s->body.symbol.flags & defined_F) && !(s->body.symbol.flags & import_F) ) put(" (never initialized)");
+     d_put("\n      flags:");
+     if (s->body.symbol.flags & macro_function_F) d_put(" macro-function");
+     if (s->body.symbol.flags & macro_variable_F) d_put(" macro-variable");
+     if (s->body.symbol.flags & readonly_F) d_put(" readonly");
+     if (s->body.symbol.flags & symbol_F) d_put(" symbol");
+     if (s->body.symbol.flags & keyword_F) d_put(" keyword");
+     if (s->body.symbol.flags & constant_F) d_put(" constant");
+     if (s->body.symbol.flags & defined_F) d_put(" initialized");
+     if (s->body.symbol.flags & export_F) d_put(" export");
+     if (s->body.symbol.flags & import_F) d_put(" import");
+     if (s->body.symbol.flags & threadLocal_F) d_put(" thread");
+     if (s->body.symbol.flags & const_F) d_put(" const");
+     if (s->body.symbol.flags & global_F) d_put(" global");
+     if (s->body.symbol.flags & literal_F) d_put(" literal");
+     if (s->body.symbol.flags & visible_F) d_put(" visible");
+     if ( !(s->body.symbol.flags & defined_F) && !(s->body.symbol.flags & import_F) ) d_put(" (never initialized)");
      if (s->body.symbol.args != NULL) {
-	  put("\n      args => ");
+	  d_put("\n      args => ");
 	  cprintlist(s->body.symbol.args);
 	  }
      if (s->body.symbol.body != NULL) {
-	  put("\n      body => ");
+	  d_put("\n      body => ");
 	  pprint(s->body.symbol.body);
 	  }
      if (s->body.symbol.export_list != NULL) {
-	  put("\n      export_list => ");
+	  d_put("\n      export_list => ");
 	  cprintlist(s->body.symbol.export_list);
 	  }
-     pput("\n");
+     d_pput("\n");
      }
 
 void printsymboltable(){
      node p;
-     pput("Symbol Table\n");
+     d_pput("Symbol Table\n");
      for (p = complete_symbol_list; p != NULL; p = CDR(p)) psymbol(CAR(p));
-     pput("\n");
+     d_pput("\n");
      }
 
 static void laydown(const char *w, char **p){

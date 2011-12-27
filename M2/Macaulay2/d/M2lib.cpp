@@ -1,6 +1,7 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 #include "interp-exports.h"
 #include "../platform/platform.h"
+#include "../platform/gc_debug.h"
 
 #include "M2mem.h"
 #include "M2inits.h"
@@ -147,14 +148,15 @@ int Macaulay2_main(int argc,char** argv)
 
 
      if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
-          FATAL("possible memory leak, gmp allocator not set up properly");
+       //          FATAL("possible memory leak, gmp allocator not set up properly");
 	  fprintf(stderr,"--internal warning: possible memory leak, gmp allocator not set up properly, resetting\n");
+	  abort();
      }
 
      signal(SIGPIPE,SIG_IGN);
      system_handleInterruptsSetup(TRUE);
      
-     vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
+     vargs = reinterpret_cast<struct saveargs*>(GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs)));
      vargs->argv=argv;
      vargs->argc=argc;
      vargs->envp=getEnviron();
@@ -181,9 +183,6 @@ void clean_up(void) {
 	  final_list->fun();
 	  final_list = final_list->next;
 	  }
-#    ifndef NDEBUG
-     trap();
-#    endif
      }
 
 void scclib__prepare(void) {}

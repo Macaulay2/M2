@@ -1,8 +1,10 @@
 #ifndef _POSIX_H_
 #define _POSIX_H_
 #define HAVE_INTTYPES_H 1
+#define OS "Linux"
 #include <setjmp.h>
 #include <pthread.h>
+#include <sys/time.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

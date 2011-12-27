@@ -17,13 +17,13 @@ buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/e/'
 prefixPath = getState(mode,architecture,'prefixpath')
 eflags = "-I"+buildpath+"../d/ -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes "+getState(mode,architecture,'eflags')
 eobjects = []
-dengine = getState(mode,architecture,'dFileDict')['engine.dd']
-if dengine is None:
-    raise Exception("Internal error")
+#we depend on all d files because of the complex include relationships.
+ddict = getState(mode,architecture,'dFileDict')
 for f in efiles:
     obj = Object(f,CFLAGS=eflags,CXXFLAGS=eflags)
     eobjects.append(obj)
-    Depends(obj,dengine)
+    Depends(obj,ddict['engine.dd'])
+    Depends(obj,ddict['M2.dd'])
     
 state[architecture][mode]['efiles']=eobjects
 Return('eobjects')

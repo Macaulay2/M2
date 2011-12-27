@@ -12,7 +12,6 @@
 #define FALSE 0
 #define ERROR (-1)
 
-typedef char bool;
 static int numfiles = 0;
 static GDBM_FILE *gdbm_files = NULL;
 void close_all_dbms(void) {
@@ -23,10 +22,10 @@ void close_all_dbms(void) {
      }
 
 #include "M2-exports.h"
-
-int system_dbmopen(M2_string filename, M2_bool mutable) {
+extern "C" {
+int system_dbmopen(M2_string filename, M2_bool _mutable) {
      int gdbm_handle;
-     int flags = mutable ? GDBM_WRCREAT : GDBM_READER;
+     int flags = _mutable ? GDBM_WRCREAT : GDBM_READER;
      int mode = 0666;
      char *FileName = M2_tocharstar(filename);
      GDBM_FILE f = gdbm_open(FileName, 0, flags, mode, NULL);
@@ -122,7 +121,7 @@ int system_dbmreorganize(int handle) {
 M2_string system_dbmstrerror(void) {
      return M2_tostring(gdbm_strerror(gdbm_errno));
      }
-
+}
 /*
  Local Variables:
  compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d gdbm-interface.o "
