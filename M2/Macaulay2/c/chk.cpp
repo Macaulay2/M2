@@ -1019,44 +1019,54 @@ static node chkif(node e, scope v) {
 	       errorpos(cadr(e),"condition should be of type bool");
 	       }
 	  bafter = v->after, v->after = NULL;
-	  perform(list(3,if_S,b,list(2,goto__S,l)),v);
+	  //then clause
+	  perform(list(3,if_S,b,list(3,Ccode_S,void_T,String("\n{\n"))),v);
 	  performlist(bafter,v);
-	  if (length(e)==4) elseclause = chk(enblock(cadddr(e)),v);
-	  elsetype = type(elseclause);
-	  if (elsetype != void_T && elsetype != returns_T && elsetype != exits_T) {
-	       vtmp = newtmp(elsetype,v,TRUE);
-	       assign(vtmp,elseclause,v);
-	       }
-	  else if (elseclause != NULL) perform(elseclause,v);
-	  performafters(v);
-	  if (reachable(v)) {
-	       m = newlabel();
-	       perform(list(2,goto__S,m), v);
-	       }
-	  perform(list(2,label__S,l), v);
-	  performlist(bafter,v);
+	  node elsenode;
 	  thenclause = chk(enblock(caddr(e)),v);
 	  thentype = type(thenclause);
 	  if (thenclause == bad__K || elseclause == bad__K || b == bad__K) return bad__K;
-	  if (elsetype == deferred__T) {
-	       errorpos(cadddr(e),"undefined");
-	       return bad__K;
-	       }
 	  if (type(thenclause) == deferred__T) {
 	       errorpos(caddr(e),"undefined");
 	       return bad__K;
 	       }
+	  if (thentype != void_T && thentype != returns_T && thentype != exits_T) {
+	       vtmp = newtmp(thentype,v,TRUE);
+	       assign(vtmp,thenclause,v);
+	       }
+	  else
+	  {
+		  perform(thenclause,v);
+	  }
+	  perform(list(3,Ccode_S,void_T,String("}\n")),v);
+	  //else clause
+	  if (length(e)==4)
+	  {
+		  perform(list(3,Ccode_S,void_T,String("else\n{\n")),v);
+		  performlist(bafter,v);
+		  elseclause = chk(enblock(cadddr(e)),v);
+	  }
+	  elsetype = type(elseclause);
 	  if (length(e) == 4 && !typematch(thentype,elsetype)) {
 	       errorpos(e,"then/else clauses not of same type");
 	       return bad__K;
 	       }
-	  if (thentype != void_T && thentype != returns_T && thentype != exits_T) {
-	       if (vtmp == NULL) vtmp = newtmp(thentype,v,TRUE);
-	       assign(vtmp,thenclause,v);
+
+	  if (elsetype != void_T && elsetype != returns_T && elsetype != exits_T) {
+		  if (vtmp == NULL) vtmp = newtmp(elsetype,v,TRUE);
+	       assign(vtmp,elseclause,v);
 	       }
-	  else perform(thenclause,v);
+	  else if (elseclause != NULL)
+	  {
+		  perform(elseclause,v);
+	  }
+	  if(length(e)==4)
+		  perform(list(3,Ccode_S,void_T,String("}\n")),v);
 	  performafters(v);
-	  if (m != NULL) perform(list(2,label__S,m), v);
+	  if (elsetype == deferred__T) {
+	       errorpos(cadddr(e),"undefined");
+	       return bad__K;
+	       }
 	  pushbackscope(&v);
 	  return vtmp;
 	  }

@@ -386,8 +386,13 @@ void generateCSemi(node e,std::stringstream& ss){
 		locn(f);
 		printpos(ss);
 		generateC(f,ss);
+		std::string curstring = ss.str();
 		if (g==block__K || g==define__S ) 
 		{
+		}
+		else if(curstring[curstring.length()-1]=='\n')
+		{
+			
 		}
 		else
 		{
