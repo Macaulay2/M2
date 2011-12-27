@@ -45,6 +45,7 @@ void dprinttype(node e);
 	@param ss Stringstream to write to.
  ***/
 void generateCSemi(node e,std::stringstream& ss);
+void generateC(node e, std::stringstream& ss);
 /***
 	Put characters directly to current output file.
 	@param s Null terminated character string, not null.

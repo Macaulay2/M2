@@ -102,9 +102,9 @@ readlineversion():constcharstar := Ccode(returns,"
 
 ic := Ccode(int, "
      #if defined(__INTEL_COMPILER)
-     	  __INTEL_COMPILER
+     	  __INTEL_COMPILER;
      #else
-     	  0
+     	  0;
      #endif
      ");
 compiler := (

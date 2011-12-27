@@ -394,6 +394,10 @@ void generateCSemi(node e,std::stringstream& ss){
 		{
 			
 		}
+		else if(curstring[curstring.length()-1]==' ')
+		{
+			
+		}
 		else
 		{
 			ss << ";\n";

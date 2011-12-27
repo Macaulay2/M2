@@ -995,15 +995,15 @@ static node chkoror(node e, scope v) {
 	  }
      bafter = v->after, v->after = NULL;
      assign(vtmp,b,v);
-     perform(list(3,if_S,vtmp,list(2,goto__S,l)),v);
+     perform(list(3,if_S,list(3,prefix__S,not_S,vtmp),list(3,Ccode_S,void_T,String("{\n"))),v);
      c = chk(enblock(caddr(e)),v);
      if (c!=bad__K && type(c) != bool_T) {
 	  errorpos(caddr(e),"condition should be of type bool");
 	  }
      assign(vtmp,c,v);
      performafters(v);
-     perform(list(2,label__S,l), v);
-     performlist(bafter,v);
+	 perform(list(3,Ccode_S,void_T,String("}\n")),v);
+     performlist(bafter,v); 
      if (b==bad__K || c==bad__K) return bad__K;
      pushbackscope(&v);
      return vtmp;
