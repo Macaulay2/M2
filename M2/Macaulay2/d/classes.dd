@@ -109,13 +109,13 @@ export Class(e:Expr):HashTable := (
      is x:List do x.Class
      is ZZcell do ZZClass
      is CodeClosure do codeClass
-     is pythonObjectCell do pythonObjectClass
+--     is pythonObjectCell do pythonObjectClass
      is xmlNodeCell do xmlNodeClass
      is TaskCell do threadClass
      is xmlAttrCell do xmlAttrClass
-     is MysqlConnectionWrapper do mysqlConnectionClass
-     is MysqlResultWrapper do mysqlResultClass
-     is MysqlFieldWrapper do mysqlFieldClass
+--     is MysqlConnectionWrapper do mysqlConnectionClass
+--     is MysqlResultWrapper do mysqlResultClass
+--     is MysqlFieldWrapper do mysqlFieldClass
      is functionCode do functionBodyClass
      is CompiledFunctionBody do compiledFunctionBodyClass
      is QQcell do QQClass

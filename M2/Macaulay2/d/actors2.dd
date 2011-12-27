@@ -455,18 +455,18 @@ header "
     ";
 close(g:Expr):Expr := (
      when g
-     is m:MysqlConnectionWrapper do (
-	  when m.mysql
-	  is null do nothing
-	  is n:MysqlConnection do (
-	       Ccode(void,"
-		    #if USE_MYSQL
-		       mysql_close(",n,")
-		    #endif
-		    ");
-	       m.mysql = null();
-	       );
-	  g)
+--     is m:MysqlConnectionWrapper do (
+--	  when m.mysql
+--	  is null do nothing
+--	  is n:MysqlConnection do (
+--	       Ccode(void,"
+--		    #if USE_MYSQL
+--		       mysql_close(",n,")
+--		    #endif
+--		    ");
+--	       m.mysql = null();
+--	       );
+--	  g)
      is f:file do when close(f) is m:errmsg do buildErrorPacket(m.message) else g
      is x:Database do dbmclose(x)
      else buildErrorPacket("expected a file or database"));

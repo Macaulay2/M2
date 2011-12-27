@@ -933,17 +933,17 @@ linesfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("separate",linesfun);
 
-tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
-     #if USE_MYSQL
-       mysql_get_host_info(", n, ")
-     #else
-       \"not present\"
-     #endif
-"));
+--tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
+--     #if USE_MYSQL
+--       mysql_get_host_info(", n, ")
+--     #else
+--       \"not present\"
+--     #endif
+--"));
 
-tostring(m:MysqlConnectionWrapper):string := (
-     "<<MysqlConnection : " + ( when m.mysql is null do "closed" is n:MysqlConnection do tostring(n) ) + ">>"
-     );
+--tostring(m:MysqlConnectionWrapper):string := (
+--     "<<MysqlConnection : " + ( when m.mysql is null do "closed" is n:MysqlConnection do tostring(n) ) + ">>"
+--     );
 
 tostringfun(e:Expr):Expr := (
      when e 
@@ -955,19 +955,19 @@ tostringfun(e:Expr):Expr := (
      is b:Boolean do toExpr(if b.v then "true" else "false")
      is Nothing do toExpr("null")
      is f:Database do toExpr(f.filename)
-     is m:MysqlConnectionWrapper do toExpr(tostring(m))
-     is res:MysqlResultWrapper do toExpr(
-	  "<<MysqlResult : " 
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
-	  + " by "
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
-	  + ">>")
-     is fld:MysqlFieldWrapper do toExpr(
-	  "<<MysqlField : " 
-	  + tostring(Ccode(constcharstarOrNull,"(\n #if USE_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
-	  + " : "
-	  + tostring(Ccode(int,"\n # if USE_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
-	  + ">>")
+--     is m:MysqlConnectionWrapper do toExpr(tostring(m))
+--     is res:MysqlResultWrapper do toExpr(
+--	  "<<MysqlResult : " 
+--	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
+--	  + " by "
+--	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
+--	  + ">>")
+--     is fld:MysqlFieldWrapper do toExpr(
+--	  "<<MysqlField : " 
+--	  + tostring(Ccode(constcharstarOrNull,"(\n #if USE_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
+--	  + " : "
+--	  + tostring(Ccode(int,"\n # if USE_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
+--	  + ">>")
      is Net do toExpr("<<net>>")
      is CodeClosure do toExpr("<<pseudocode>>")
      is functionCode do toExpr("<<a function body>>")
@@ -1001,12 +1001,12 @@ tostringfun(e:Expr):Expr := (
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string(",x.p,")" )
 	  )
      is c:RawComputationCell do toExpr(Ccode(string, "IM2_GB_to_string(",c.p,")" ))
-     is po:pythonObjectCell do (
-	  -- Expr("<<a python object>>")
-	  str := Ccode(pythonObject,"PyObject_Str(",po.v,")");
-	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyString_AS_STRING(",str,")")));
-	  Ccode(void,"Py_DECREF(",str,")");
-	  r)
+--     is po:pythonObjectCell do (
+--	  -- Expr("<<a python object>>")
+--	  str := Ccode(pythonObject,"PyObject_Str(",po.v,")");
+--	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyString_AS_STRING(",str,")")));
+--	  Ccode(void,"Py_DECREF(",str,")");
+--	  r)
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")
      is x:TaskCell do (

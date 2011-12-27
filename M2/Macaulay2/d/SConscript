@@ -66,6 +66,7 @@ def DBuild(target,source,env):
 ddepbuilder = Builder(action=DBuildDependency, single_source=1)
 dbuilder = Builder(action=DBuild,single_source=1)
 dtypesbuilder = Builder(action=DBuildTypes, single_source=1)
+buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/d/'
 depbuilders = []
 env = Environment()
 env.mode = mode
@@ -73,7 +74,7 @@ env['BUILDERS']['ddepbuilder']=ddepbuilder
 env['BUILDERS']['dbuilder']=dbuilder
 env['BUILDERS']['dtypesbuilder']=dtypesbuilder
 #setup D build type target.
-dtb = env.dtypesbuilder(os.path.abspath('Macaulay2/d/typescode.h'),[])
+dtb = env.dtypesbuilder(['#'+os.path.abspath(buildpath+'typecodes.h')],[])
 #Setup D dependency build targets.
 scc = getState(mode,architecture,'scc')
 for i in range(0,len(dfiles)):
@@ -89,7 +90,6 @@ for i in range(0,len(dfiles)):
     depbuilders.append(builder)
 builders = []
 objFiles = []
-buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/d/'
 prefixPath = getState(mode,architecture,'prefixpath')
 cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes "+getState(mode,architecture,'M2flags')
 ddict = {}
@@ -121,6 +121,7 @@ setState(mode,architecture,'dFileDict',ddict)
 cobjs = []
 for f in cfiles:
     builder = Object(f,CFLAGS=cflags,CXXFLAGS=cflags)
+    Depends(builder,dtb)
     if f=='M2lib.cpp':
         Depends(builder,ddict['interp.dd'])
     elif f=='gdbm_interface.cpp':
