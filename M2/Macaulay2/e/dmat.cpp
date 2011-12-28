@@ -41,7 +41,7 @@ void DMat<CoeffRing>::initialize(int nrows, int ncols, elem *array)
   if (array == 0)
     {
       for (long i=0; i<len; i++)
-	coeffR->set_zero(array_[i]);
+        coeffR->set_zero(array_[i]);
     }
   else
     for (long i=0; i<len; i++)
@@ -99,7 +99,7 @@ int DMat<CoeffRing>::lead_row(int col) const
   for ( ; loc >= last; loc--)
     {
       if (!coeffR->is_zero(*loc))
-	return static_cast<int>(loc-last);
+        return static_cast<int>(loc-last);
     }
   return -1;
 }
@@ -116,10 +116,10 @@ int DMat<CoeffRing>::lead_row(int col, elem &result) const
   for ( ; loc >= last; loc--)
     {
       if (!coeffR->is_zero(*loc))
-	{
-	  coeffR->set(result, *loc);
-	  return static_cast<int>(loc-last);
-	}
+        {
+          coeffR->set(result, *loc);
+          return static_cast<int>(loc-last);
+        }
     }
   return -1;
 }
@@ -261,9 +261,9 @@ void DMat<CoeffRing>::column_op(int i, const elem &r, int j)
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::row2by2(int r1, int r2, 
-	       const elem &a1, const elem &a2,
-	       const elem &b1, const elem &b2)
+void DMat<CoeffRing>::row2by2(int r1, int r2,
+               const elem &a1, const elem &a2,
+               const elem &b1, const elem &b2)
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -294,8 +294,8 @@ void DMat<CoeffRing>::row2by2(int r1, int r2,
 
 template<typename CoeffRing>
 void DMat<CoeffRing>::column2by2(int c1, int c2,
-		  const elem &a1, const elem &a2,
-		  const elem &b1, const elem &b2)
+                  const elem &a1, const elem &a2,
+                  const elem &b1, const elem &b2)
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
@@ -361,11 +361,11 @@ bool DMat<CoeffRing>::row_permute(int start_row, M2_arrayint perm)
     {
       int j = perm->array[i];
       if (!done[j])
-	{
-	  ERROR("expected permutation");
-	  deletearray(done);
-	  return false;
-	}
+        {
+          ERROR("expected permutation");
+          deletearray(done);
+          return false;
+        }
       done[j] = false;
     }
   elem *tmp = newarray_clear(elem,ncols_);
@@ -375,28 +375,28 @@ bool DMat<CoeffRing>::row_permute(int start_row, M2_arrayint perm)
   while (next < nrows_to_permute)
     {
       if (done[next] || perm->array[next] == next)
-	{
-	  next++;
-	}
+        {
+          next++;
+        }
       else
-	{
-	  // store row 'next' into tmp
-	  copy_elems(ncols_,tmp,1,arr + next, nrows_);
-	  
-	  int r = next;
-	  for (;;)
-	    {
-	      // copy row perm[r] to row r
-	      copy_elems(ncols_, arr + r, nrows_, arr + perm->array[r], nrows_);
-	      done[r] = true;
-	      int next_r = perm->array[r];
-	      if (next_r == next) break; // and so r is the previous one
-	      r = perm->array[r];
-	    }
-	  // Now copy tmp back
-	  copy_elems(ncols_, arr + r, nrows_, tmp, 1);
-	  done[r] = true;
-	}
+        {
+          // store row 'next' into tmp
+          copy_elems(ncols_,tmp,1,arr + next, nrows_);
+
+          int r = next;
+          for (;;)
+            {
+              // copy row perm[r] to row r
+              copy_elems(ncols_, arr + r, nrows_, arr + perm->array[r], nrows_);
+              done[r] = true;
+              int next_r = perm->array[r];
+              if (next_r == next) break; // and so r is the previous one
+              r = perm->array[r];
+            }
+          // Now copy tmp back
+          copy_elems(ncols_, arr + r, nrows_, tmp, 1);
+          done[r] = true;
+        }
     }
   deletearray(tmp);
   deletearray(done);
@@ -415,11 +415,11 @@ bool DMat<CoeffRing>::column_permute(int start_col, M2_arrayint perm)
     {
       int j = perm->array[i];
       if (!done[j])
-	{
-	  ERROR("expected permutation");
-	  deletearray(done);
-	  return false;
-	}
+        {
+          ERROR("expected permutation");
+          deletearray(done);
+          return false;
+        }
       done[j] = false;
     }
   elem *tmp = newarray_clear(elem,nrows_);
@@ -429,28 +429,28 @@ bool DMat<CoeffRing>::column_permute(int start_col, M2_arrayint perm)
   while (next < ncols_to_permute)
     {
       if (done[next] || perm->array[next] == next)
-	{
-	  next++;
-	}
+        {
+          next++;
+        }
       else
-	{
-	  // store col 'next' into tmp
-	  copy_elems(nrows_,tmp,1,arr + next * nrows_, 1);
-	  
-	  int r = next;
-	  for (;;)
-	    {
-	      // copy col perm[r] to col r
-	      copy_elems(nrows_, arr + r * nrows_, 1, arr + perm->array[r] * nrows_, 1);
-	      done[r] = true;
-	      int next_r = perm->array[r];
-	      if (next_r == next) break; // and so r is the previous one
-	      r = perm->array[r];
-	    }
-	  // Now copy tmp back
-	  copy_elems(nrows_, arr + r * nrows_, 1, tmp, 1);
-	  done[r] = true;
-	}
+        {
+          // store col 'next' into tmp
+          copy_elems(nrows_,tmp,1,arr + next * nrows_, 1);
+
+          int r = next;
+          for (;;)
+            {
+              // copy col perm[r] to col r
+              copy_elems(nrows_, arr + r * nrows_, 1, arr + perm->array[r] * nrows_, 1);
+              done[r] = true;
+              int next_r = perm->array[r];
+              if (next_r == next) break; // and so r is the previous one
+              r = perm->array[r];
+            }
+          // Now copy tmp back
+          copy_elems(nrows_, arr + r * nrows_, 1, tmp, 1);
+          done[r] = true;
+        }
     }
   deletearray(tmp);
   deletearray(done);
@@ -458,7 +458,7 @@ bool DMat<CoeffRing>::column_permute(int start_col, M2_arrayint perm)
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::insert_columns(int i, int n_to_add) 
+void DMat<CoeffRing>::insert_columns(int i, int n_to_add)
 /* Insert n_to_add columns directly BEFORE column i. */
 {
   elem *tmp = array_;
@@ -538,9 +538,9 @@ void DMat<CoeffRing>::delete_rows(int i, int j)
 }
 
 template<typename CoeffRing>
-bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows, 
-				    M2_arrayint cols, 
-				    const MutableMatrix *M)
+bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows,
+                                    M2_arrayint cols,
+                                    const MutableMatrix *M)
 {
   MutableMatrix::iterator *i = M->begin();
 #ifdef DEVELOPMENT
@@ -552,11 +552,11 @@ bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 //   for (long c=0; c<ncols; c++)
 //     {
 //       for (i->set(c); i->valid(); i->next())
-// 	{
-// 	  ring_elem a;
-// 	  i->copy_ring_elem(a);
-// 	  coeffR->from_ring_elem(*(first + i->row()), a);
-// 	}
+//      {
+//        ring_elem a;
+//        i->copy_ring_elem(a);
+//        coeffR->from_ring_elem(*(first + i->row()), a);
+//      }
 //       first += nrows_;
 //     }
 #endif
@@ -574,16 +574,16 @@ bool DMat<CoeffRing>::is_zero() const
 }
 
 template<typename CoeffRing>
-DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint rows, 
-					     M2_arrayint cols) const
+DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint rows,
+                                             M2_arrayint cols) const
 {
   DMat<CoeffRing> *result = new DMat<CoeffRing>(R,rows->len,cols->len);
   for (int r=0; r<rows->len; r++)
     for (int c=0; c<cols->len; c++)
       {
-	elem f;
-	get_entry(rows->array[r],cols->array[c],f);
-	result->set_entry(r,c,f);
+        elem f;
+        get_entry(rows->array[r],cols->array[c],f);
+        result->set_entry(r,c,f);
       }
   return result;
 }
@@ -595,9 +595,9 @@ DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint cols) const
   for (int r=0; r<nrows_; r++)
     for (int c=0; c<cols->len; c++)
       {
-	elem f;
-	get_entry(r,cols->array[c],f);
-	result->set_entry(r,c,f);
+        elem f;
+        get_entry(r,cols->array[c],f);
+        result->set_entry(r,c,f);
       }
   return result;
 }
@@ -616,24 +616,24 @@ bool DMat<CoeffRing>::is_equal(const MutableMatrix *B) const
       i->set(c);
       j.set(c);
       for (;;)
-	{
-	  if (!i->valid())
-	    {
-	      if (j.valid()) return false;
-	      break;
-	    }
-	  else if (!j.valid()) return false;
-	  // i->valid(), j.valid() are both true
-	  if (i->row() != j.row())
-	    return false;
-	  ring_elem a, b;
-	  i->copy_ring_elem(a);
-	  coeffR->to_ring_elem(b, j.value());
-	  if (!get_ring()->is_equal(a,b))
-	    return false;
-	  i->next();
-	  j.next();
-	}
+        {
+          if (!i->valid())
+            {
+              if (j.valid()) return false;
+              break;
+            }
+          else if (!j.valid()) return false;
+          // i->valid(), j.valid() are both true
+          if (i->row() != j.row())
+            return false;
+          ring_elem a, b;
+          i->copy_ring_elem(a);
+          coeffR->to_ring_elem(b, j.value());
+          if (!get_ring()->is_equal(a,b))
+            return false;
+          i->next();
+          j.next();
+        }
     }
   return true;
 }
@@ -743,10 +743,10 @@ template <> __mpfr_struct *DMat<CoefficientRingCCC>::make_mpack_array() const //
 {
   long len = n_rows() * n_cols();
   __mpfr_struct *result = new __mpfr_struct[2*len];
-   
+
   elem *a = array_;
   __mpfr_struct *p = result;
- 
+
  //std::cout<<"inside make_mpack"<<std::endl;
  for (long i=0; i<len; i++)
    {
@@ -755,15 +755,15 @@ template <> __mpfr_struct *DMat<CoefficientRingCCC>::make_mpack_array() const //
      p++;
      a++;
    }
- 
+
  a =array_;
- for (long i=len; i< 2*len; i++) 
+ for (long i=len; i< 2*len; i++)
    {
      mpfr_init(p);
      mpfr_set(p, a->im, GMP_RNDN);
      //*p= *(a->im);
      p++;
-     a++;	
+     a++;
    }
   return result;
 }
@@ -805,4 +805,5 @@ template class DMat<CoefficientRingR>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

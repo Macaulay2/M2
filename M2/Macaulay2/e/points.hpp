@@ -13,13 +13,14 @@ class PointsComputation
 {
 public:
   static Matrix *points(const PolynomialRing *R,
-			const typename CoeffRing::ring_type *K,
-			const DMat<CoeffRing> *Pts,
-			Matrix * & result_std_monoms);
+                        const typename CoeffRing::ring_type *K,
+                        const DMat<CoeffRing> *Pts,
+                        Matrix * & result_std_monoms);
 };
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

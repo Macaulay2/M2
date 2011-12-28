@@ -8,7 +8,7 @@
 #include "random.hpp"
 #include "coeffrings.hpp"
 
-bool CC::initialize_CC(double epsilon) 
+bool CC::initialize_CC(double epsilon)
 {
   initialize_ring(0);
   declare_field();
@@ -139,13 +139,13 @@ void CC::elem_text_out(buffer &o, const ring_elem ap) const
   bool is_imag = compare_CC(a,0.0) == EQ;
   bool is_neg = compare_CC(a,0.0) == LT;
   bool is_one = (compare_CC(fabs(a),1.0) == EQ &&
-		 compare_CC(b,0.0) == EQ);
+                 compare_CC(b,0.0) == EQ);
 
-  if (is_one) 
-    {  
+  if (is_one)
+    {
       if (!is_neg && p_plus) o << '+';
       if (is_neg) o << '-';
-      if (p_one) o << '1'; 
+      if (p_one) o << '1';
     }
   else if (is_real)
     {
@@ -159,19 +159,19 @@ void CC::elem_text_out(buffer &o, const ring_elem ap) const
       sprintf(s, "%fii", b);
       o << s;
     }
-  else 
+  else
     {
       if (p_plus) o << "+";
       if (compare_CC(b,0.0) == LT)
-	{
-	  sprintf(s, "(%f%fii)", a, b);
-	  o << s;
-	}
+        {
+          sprintf(s, "(%f%fii)", a, b);
+          o << s;
+        }
       else
-	{
-	  sprintf(s, "(%f+%fii)", a,b);
-	  o << s;
-	}
+        {
+          sprintf(s, "(%f+%fii)", a,b);
+          o << s;
+        }
     }
 }
 
@@ -222,8 +222,8 @@ bool CC::is_unit(const ring_elem f) const
 bool CC::is_equal(const ring_elem f, const ring_elem g) const
 {
   return (compare_CC(sqrt((CC_RE(f)-CC_RE(g))*(CC_RE(f)-CC_RE(g)) +
-			  (CC_IM(f)-CC_IM(g))*(CC_IM(f)-CC_IM(g))),
-		     0.0) == EQ);
+                          (CC_IM(f)-CC_IM(g))*(CC_IM(f)-CC_IM(g))),
+                     0.0) == EQ);
 }
 
 int CC::compare_elems(const ring_elem f, const ring_elem g) const
@@ -233,7 +233,7 @@ int CC::compare_elems(const ring_elem f, const ring_elem g) const
 int CC::is_positive(const ring_elem f) const
 {
   return (compare_CC(CC_RE(f),0.0) == GT
-	  && compare_CC(CC_IM(f),0.0) == GT);
+          && compare_CC(CC_IM(f),0.0) == GT);
 }
 
 ring_elem CC::copy(const ring_elem f) const
@@ -313,7 +313,7 @@ ring_elem CC::power(const ring_elem f, int n) const
 ring_elem CC::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!RingZZ::get_si(n1, n)) 
+  if (!RingZZ::get_si(n1, n))
     { ERROR("exponent too large"); }
   return CC::power(f,n1);
 }
@@ -333,14 +333,14 @@ ring_elem CC::divide(const ring_elem f, const ring_elem g) const
 }
 
 void CC::syzygy(const ring_elem a, const ring_elem b,
-	       ring_elem &x, ring_elem &y) const
+               ring_elem &x, ring_elem &y) const
 {
   if (CC::is_zero(b))
     {
       x = CC::from_double(0.0);
       y = CC::from_double(1.0);
     }
-  else 
+  else
     {
       x = CC::from_double(1.0);
       y = CC::divide(a,b);
@@ -354,4 +354,5 @@ ring_elem CC::eval(const RingMap *map, const ring_elem f, int) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

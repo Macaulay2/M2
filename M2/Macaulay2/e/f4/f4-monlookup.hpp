@@ -18,19 +18,19 @@ class F4MonomialLookupTableT : public our_new_delete
   struct mi_node : public our_new_delete // monomial ideal internal node ///
   {
     varpower_word       var;
-    varpower_word       exp;		
+    varpower_word       exp;
     mi_node           * left;
     mi_node           * right;
     mi_node           * header;
     enum { node, leaf } tag;
     union {
-      mi_node         * down;	// 'up' node, if this is a head of a list
+      mi_node         * down;   // 'up' node, if this is a head of a list
       Key             key;
     } val;
   public:
     mi_node *&down   () { return val.down; }
     Key     &key() { return val.key; }
-    
+
     void insert_to_left(mi_node *q)
     {
       q->header = header;
@@ -55,13 +55,13 @@ private:
   void reset_exponent_vector(const_varpower_monomial m);
 
 
-  bool find_one_divisor1(mi_node *mi, 
-			const_ntuple_monomial exp, 
-			Key &result_k) const;
+  bool find_one_divisor1(mi_node *mi,
+                        const_ntuple_monomial exp,
+                        Key &result_k) const;
 
   void find_all_divisors1(mi_node *mi,
-			 const_ntuple_monomial exp,
-			 VECTOR(Key) &result_k) const;
+                         const_ntuple_monomial exp,
+                         VECTOR(Key) &result_k) const;
 
 
   void insert1(mi_node *&p, const_varpower_monomial m, Key k);
@@ -71,42 +71,42 @@ public:
   ~F4MonomialLookupTableT();
 
   //  // Should we write these two routines?
-  //  void insert_minimal_packed(const MonomialInfo *M, 
-  //		      const_packed_monomial m, 
-  //		      Key k);
+  //  void insert_minimal_packed(const MonomialInfo *M,
+  //                  const_packed_monomial m,
+  //                  Key k);
   //        // It is assumed that 'm' is not already in the monomial ideal.
   //
-  //  bool insert_packed(const MonomialInfo *M, 
-  //	      const_packed_monomial m, 
-  //	      Key &k);
+  //  bool insert_packed(const MonomialInfo *M,
+  //          const_packed_monomial m,
+  //          Key &k);
   //        // If m is already divisible by an element, return false, and set k
   //        // to be the key of that element.
   //        // If m is not divisible, then insert (m,k), and return true.
 
   void insert_minimal_vp(long comp,
-		     const_varpower_monomial m, 
-		     Key k);
+                     const_varpower_monomial m,
+                     Key k);
 
   bool insert_vp(long comp,
-	     const_varpower_monomial m, 
-	     Key &k);
+             const_varpower_monomial m,
+             Key &k);
 
   bool find_one_divisor_vp(long comp,
-			const_varpower_monomial m, 
-			Key &result_k) const;
-  
+                        const_varpower_monomial m,
+                        Key &result_k) const;
+
   bool find_one_divisor_packed(const MonomialInfo *M,
-			const_packed_monomial m, 
-			Key &result_k) const;
+                        const_packed_monomial m,
+                        Key &result_k) const;
         // Search.  Return whether a monomial which divides 'm' is
-	// found.  If so, return true, set the key.
+        // found.  If so, return true, set the key.
 
   void find_all_divisors_vp(long comp,
-			 const_varpower_monomial m, 
-			 VECTOR(Key) &result_k) const;
+                         const_varpower_monomial m,
+                         VECTOR(Key) &result_k) const;
 
   void find_all_divisors_packed(const MonomialInfo *M,
-			 const_packed_monomial m,
+                         const_packed_monomial m,
                          VECTOR(Key) &result_k) const;
         // Search. Return a vector of all keys corresponding to
         // monomials which divide m.
@@ -128,9 +128,9 @@ private:
 
 void
 minimalize_varpower_monomials(
-			      const VECTOR(varpower_monomial) &elems,
-			      VECTOR(int) &result_minimals,
-			      stash *mi_stash=0);
+                              const VECTOR(varpower_monomial) &elems,
+                              VECTOR(int) &result_minimals,
+                              stash *mi_stash=0);
 
 
 #endif
@@ -139,4 +139,5 @@ minimalize_varpower_monomials(
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

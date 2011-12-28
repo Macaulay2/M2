@@ -9,9 +9,9 @@
 #include "monideal.hpp"
 
 M2_bool rawIdealOfPoints(const Ring *R,
-			 const MutableMatrix *Pts,
-			 Matrix /* or null */ ** result_GB,
-			 Matrix /* or null */ ** result_std_monoms)
+                         const MutableMatrix *Pts,
+                         Matrix /* or null */ ** result_GB,
+                         Matrix /* or null */ ** result_std_monoms)
 {
   // Branch depending on the type of K, the ring of Pts.
   // If Pts is not a DMatrix, make it one.
@@ -20,7 +20,7 @@ M2_bool rawIdealOfPoints(const Ring *R,
 
   // Now branch depending on this type
   const Ring *K = Pts->get_ring();
-  const PolynomialRing *P = R->cast_to_PolynomialRing(); 
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0 || K != P->getCoefficients())
     {
       ERROR("expected polynomial ring with same coefficient ring");
@@ -31,7 +31,7 @@ M2_bool rawIdealOfPoints(const Ring *R,
     {
       DMat<CoefficientRingZZp> *Pts1 = 0;
       *result_GB = PointsComputation<CoefficientRingZZp>::points
-	(P,KZZp,Pts1,*result_std_monoms);
+        (P,KZZp,Pts1,*result_std_monoms);
       return true;
     }
 
@@ -51,9 +51,9 @@ public:
 
 template <typename CoeffRing>
 Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
-					     const typename CoeffRing::ring_type *K,
-					     const DMat<CoeffRing> *Pts,
-					     Matrix * & result_std_monoms)
+                                             const typename CoeffRing::ring_type *K,
+                                             const DMat<CoeffRing> *Pts,
+                                             Matrix * & result_std_monoms)
 {
   // Declare and initialize our variables
   // int nvars = R->n_vars();
@@ -65,7 +65,7 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
   //  MonomialIdeal *inG = new MonomialIdeal(R);
   //  VECTOR(monomial) stdG;
   //  monom_int_list monoms_todo(R);
-  
+
   //  int next_col = 0;
   // MES Place the monomials [0,0,vp], ..., [0,nvars-1,vp] onto monom list
   // MES Make the first column of P, PLU all ones.
@@ -75,14 +75,14 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
 //   while (monoms_todo.remove(old,x,vp))
 //     {
 //       // First, see if this monomial is in inG, if so, continue.
-// 
+//
 //       // Place this monomial as the 'next_col' column of P, PLU.
-// 
+//
 //       // LU1
-// 
-//       // 
+//
+//       //
 //     }
-#endif  
+#endif
   // THIS STILL NEEDS TO BE WRITTEN!!
   return 0;
 }
@@ -96,4 +96,5 @@ template class PointsComputation<CoefficientRingZZp>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

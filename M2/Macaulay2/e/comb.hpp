@@ -18,10 +18,10 @@ class comb
     {
       int i = tab.rawelem(n).length();
       if (i == 0)
-	{
-	  expand(n,0);
-	  i = tab.rawelem(n).length();
-	}
+        {
+          expand(n,0);
+          i = tab.rawelem(n).length();
+        }
       return i;
     }
 
@@ -35,14 +35,14 @@ public:
 
   ~comb() {}
 
-  int binom(int n, int p) 
-    { 
+  int binom(int n, int p)
+    {
       if (p < 0) return 0;
       if (p >= tab.length())
-	expand(n,p);
+        expand(n,p);
       else if (n >= tab[p].length())
-	expand(n,p);
-      return tab[p][n]; 
+        expand(n,p);
+      return tab[p][n];
     }
   int encode(int *a, int p);
   void decode(int c, int *a, int p);
@@ -50,11 +50,12 @@ public:
   // The following static functions do not access 'tab'
   static bool increment(int p, int n, int *s);
   static bool valid_subset(int p, int n, const int *s);
-  static int mult_subsets(int p, const int *s, 
-			  int q, const int *t, int *&result);
+  static int mult_subsets(int p, const int *s,
+                          int q, const int *t, int *&result);
 };
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

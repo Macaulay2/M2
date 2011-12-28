@@ -19,29 +19,29 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
 
   const Monoid *M = R_->get_flattened_monoid();
   nvars_ = R_->n_vars();
-  
+
   wts_ = M2_makearrayint(nvars_);
 
   if (!wts0 || wts0->len != nvars_)
     {
       use_component_degrees_ = true;
       for (int i=0; i<nvars_; i++)
-	{
-	  int d = M->primary_degree_of_var(i);
-	  wts_->array[i] = (d > 0 ? d : 1);
-	  if (d <= 0)
-	    use_component_degrees_ = false;
-	}
+        {
+          int d = M->primary_degree_of_var(i);
+          wts_->array[i] = (d > 0 ? d : 1);
+          if (d <= 0)
+            use_component_degrees_ = false;
+        }
     }
   else
     {
       // Use the provided wt vector
       use_component_degrees_ = false;
       for (int i=0; i<nvars_; i++)
-	{
-	  int d = wts0->array[i];
-	  wts_->array[i] = (d > 0 ? d : 1);
-	}
+        {
+          int d = wts0->array[i];
+          wts_->array[i] = (d > 0 ? d : 1);
+        }
     }
 
   exp_size = EXPONENT_BYTE_SIZE(nvars_);
@@ -51,7 +51,7 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
       Fdegs_ = newarray_atomic(long, F->rank()+1);
       Fdegs_[0] = 0;
       for (int j=0; j<F->rank(); j++)
-	Fdegs_[j+1] = F->primary_degree(j);
+        Fdegs_[j+1] = F->primary_degree(j);
     }
   else
     Fdegs_ = 0;
@@ -79,12 +79,12 @@ int GBWeight::gbvector_weight(const gbvector *f, int &initial_term_weight) const
 {
   /* Return the maximum degree of any term of f */
 
-  if (f == 0) 
+  if (f == 0)
     {
       initial_term_weight = 0;
       return 0;
     }
-  int deg = gbvector_term_weight(f); 
+  int deg = gbvector_term_weight(f);
   initial_term_weight = deg;
   for (const gbvector *t=f->next; t != 0; t = t->next)
     {
@@ -110,4 +110,5 @@ int GBWeight::monomial_weight(const int *monom, int comp) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

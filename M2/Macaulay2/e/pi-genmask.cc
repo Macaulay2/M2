@@ -25,4 +25,3 @@ int main() {
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e pi-masks.h"
 // End:
-

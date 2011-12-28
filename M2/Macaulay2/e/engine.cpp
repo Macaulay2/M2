@@ -23,10 +23,10 @@ long object::next_hash_sequence_number = -7;
 template class array< char * >;
 template class queue< int >;
 
-const int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
-			       16384, 65536, 262144, 1048576, 4194304,
-			       16777216, 67108864, 268435456,
-			       1073741824};
+const int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
+                               16384, 65536, 262144, 1048576, 4194304,
+                               16777216, 67108864, 268435456,
+                               1073741824};
 
 static bool initialized = false;
 
@@ -66,4 +66,5 @@ M2_string IM2_last_error_message()
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

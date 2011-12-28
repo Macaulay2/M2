@@ -4,7 +4,7 @@
 
 #ifndef _cra_hpp_
 #define _cra_hpp_
-								
+
 #include "engine.h"
 // engine.h defines rawRingElementCRA, rawMatrixCRA
 
@@ -25,13 +25,13 @@ public:
 
   static ring_elem CRA(const PolyRing *R, const ring_elem f, const ring_elem g, mpz_t um, mpz_t vn, mpz_t mn);
   // does the vector combination without error checking and with precomputed multipliers
-  
+
   static vec CRA(const PolyRing *R, vec f, vec g, mpz_t um, mpz_t vn, mpz_t mn);
   // does the vector combination without error checking and with precomputed multipliers
-  
+
   static Matrix * CRA(const Matrix *f, const Matrix *g, mpz_t um, mpz_t vn, mpz_t mn);
   // does the matrix combination without error checking and with precomputed multipliers
-  
+
   static RingElement * CRA(const RingElement *f, const RingElement *g,  mpz_t um, mpz_t vn, mpz_t mn);
   // does the ring element combination without error checking and with precomputed multipliers
 
@@ -39,19 +39,19 @@ public:
   // computes a rational number "result" that reduces to a mod m
   // if the numerator and denominator can be chosen to smaller than
   // 1/2*sqrt(m) then "true" is returned.
-  
-  static ring_elem ratConversion(const ring_elem f, 
+
+  static ring_elem ratConversion(const ring_elem f,
                                  mpz_t m,
                                  const PolyRing *RQ);
   // computes a polynomial with rational coefficients that reduces
-  // to f mod m; f should be in a polynomial ring ZZ[M] and RQ=QQ[M] 
-  
+  // to f mod m; f should be in a polynomial ring ZZ[M] and RQ=QQ[M]
+
   static vec ratConversion(vec f,
-                           mpz_t m, 
+                           mpz_t m,
                            const PolyRing *RQ);
   // computes a polynomial with rational coefficients that reduces
-  // to f mod m; f should be in a polynomial ring ZZ[M] and RQ=QQ[M] 
-  
+  // to f mod m; f should be in a polynomial ring ZZ[M] and RQ=QQ[M]
+
   static ring_elem CRA(const PolyRing *R, ring_elem f, ring_elem g, mpz_t m, mpz_t n);
   // Assumption: f and g are in a poly ring whose coeff ring is ZZ
 };

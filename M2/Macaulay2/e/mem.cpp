@@ -14,7 +14,7 @@ const int trace_bad_deletes = 0;
 
 int slab::n_slabs = 0;
 
-//Array of stashes of 2^n powers. 
+//Array of stashes of 2^n powers.
 //This looks thread unsafe, but is actually thread safe because it is only initialized once when the engine is setup.
 doubling_stash *doubles = NULL;
 
@@ -25,7 +25,7 @@ stash::stash(const char *s, size_t len)
   // Make sure element_size is a multiple of the word size.
   if (len <= 0) len = word_size;
   element_size = word_size * ((len + word_size - 1) / word_size);
-  // number of elements per slab is the slab size divided by the element size rounded down.  
+  // number of elements per slab is the slab size divided by the element size rounded down.
   n_per_slab = static_cast<int>((slab_size - sizeof(void *)) / element_size);
   n_per_slab=0;
   //This is for debugging purposes only -- NOT THREADSAFE
@@ -42,21 +42,21 @@ stash::~stash()
     {
       slab *p = slabs;
       slabs = slabs->next;
-      GC_FREE(p);		// this dramatically improves our memory usage
+      GC_FREE(p);               // this dramatically improves our memory usage
       //printf("removed %p\n", p);
     }
   /*  assert(stash_list != NULL);
   if (stash_list == this)
     stash_list = next;
-  else 
+  else
     {
       for (stash *q = stash_list; q->next != NULL; q = q->next)
-	if (q->next == this)
-	  {
-	    q->next = next;
-	    next = NULL;
-	    return;
-	  }
+        if (q->next == this)
+          {
+            q->next = next;
+            next = NULL;
+            return;
+          }
       assert(0);
       }*/
 }
@@ -76,7 +76,7 @@ void stash::chop_slab()
       //new_slab = new slab;
       //printf("new %p\n", new_slab);
     }
-  
+
   new_slab->next = slabs;
   slabs = new_slab;
 
@@ -98,15 +98,15 @@ void stash::text_out(buffer &o) const
 {
   char s[200];
   sprintf(s, "%16s %9dk %9dk %10zd %10lu %10lu %10lu %10lu%s",
-	  name, 
-	  static_cast<int>((element_size * highwater + 1023)/1024),
-	  static_cast<int>((element_size * n_inuse + 1023)/1024),
-	  element_size,
-	  n_allocs,
-	  n_inuse,
-	  highwater,
-	  n_frees,
-	  newline);
+          name,
+          static_cast<int>((element_size * highwater + 1023)/1024),
+          static_cast<int>((element_size * n_inuse + 1023)/1024),
+          element_size,
+          n_allocs,
+          n_inuse,
+          highwater,
+          n_frees,
+          newline);
   o << s;
 }
 //TODO: MAKE THREADSAFE -- For statistics purposes only
@@ -119,23 +119,23 @@ void stash::stats(buffer &o)
 {
 //  o << "total space allocated from system = " << engine_allocated << endl;
 //  o << "number of global delete's  = " << engine_dealloc << endl;
-  int n = (slab::n_slabs*slab_size)/1024 + 
+  int n = (slab::n_slabs*slab_size)/1024 +
     (allocated_amount - deleted_amount)/1024;
   o << "size of each slabs = " << sizeof(slab) << newline;
-  o << "total engine space allocated = " 
+  o << "total engine space allocated = "
     << n << "k" << newline;
 
   char s[200];
   sprintf(s, "%16s %10s %10s %10s %10s %10s %10s %10s%s",
-	  "stash",
-	  "k total",
-	  "k in use",
-	  "size",
-	  "nalloc",
-	  "inuse",
-	  "highwater",
-	  "freed",
-	  newline);
+          "stash",
+          "k total",
+          "k in use",
+          "size",
+          "nalloc",
+          "inuse",
+          "highwater",
+          "freed",
+          newline);
   o << s;
 
   /*  for (stash *p = stash_list; p != NULL; p = p->next)
@@ -162,7 +162,7 @@ doubling_stash::~doubling_stash()
   for (int i=0; i<NDOUBLES; i++)
     {
       if (doubles[i] != NULL)
-	emit("internal warning -- deleting a double stash");
+        emit("internal warning -- deleting a double stash");
       deleteitem(doubles[i]);
     }
 }
@@ -198,4 +198,5 @@ size_t doubling_stash::allocated_size(void *p)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

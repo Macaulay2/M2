@@ -54,7 +54,7 @@ void testEquality() {
   if (bar != bar) {
     cout << "Testing same BRP for equality failed" << endl;
   }
-  
+
   monomials foo1;
   foo1.push_back(8);
   foo1.push_back(3);
@@ -63,7 +63,7 @@ void testEquality() {
   if (bar1 != bar) {
     cout << "Testing equal BRPs for equality failed" << endl;
   }
-  
+
   monomials foo2;
   foo2.push_back(8);
   foo2.push_back(3);
@@ -75,7 +75,7 @@ void testEquality() {
   if (bar2 == bar) {
     cout << "Testing different BRPs for equality failed" << endl;
   }
-  
+
 }
 
 void testAddition() {
@@ -102,7 +102,7 @@ void testAddition() {
   foo3.push_back(1);
 
   BRP bar4 = BRP(foo3);
- 
+
   if (bar3 != bar4 ) {
     cout << "Testing addition: " << (bar3 == bar4 ? "is good" : "is bad") << endl;
   }
@@ -115,7 +115,7 @@ void testAddition() {
     cout << "Addition failed" << endl;
   }
 }
-  
+
 void testAddition2() {
   BRP a = BRP(35) + BRP(16) + BRP(15) + BRP(5) + BRP(2);
   BRP b = BRP(38) + BRP(13) + BRP(12) + BRP(6) + BRP(4) + BRP(2) + BRP(1);
@@ -126,7 +126,7 @@ void testAddition2() {
     cout << "Addition failed" << endl;
   }
 }
-  
+
 void testAddition3() {
   BRP a = BRP(35) + BRP(16) + BRP(15) + BRP(5) + BRP(2) + BRP(0);
   BRP b = BRP(38) + BRP(13) + BRP(12) + BRP(6) + BRP(4) + BRP(2) + BRP(1);
@@ -172,33 +172,33 @@ void testMultiplication() {
   if (barMultiply != bar3) {
     cout << "Testing multiplication: " << (barMultiply == bar3 ? "is good" : "is bad") << endl;
   }
-  
+
   BRP a = BRP(13) + BRP(12) + BRP(6) + BRP(4) + BRP(2) + BRP(1);
   BRP b = BRP(13);
   BRP c = a*b;
   // 13 + 13 + 15 + 13 + 15 + 13
   BRP correct = BRP();
 
-  if (c != correct ) { 
+  if (c != correct ) {
     cout << "Multiplication not correct. Is " << c << endl;
   }
-  
+
   a =  BRP(13) + BRP(12) + BRP(6) + BRP(4) + BRP(2) + BRP(1);
   int d = 13;
   c = a*d;
   // 13 + 13 + 15 + 13 + 15 + 13
   correct = BRP();
 
-  if (c != correct ) { 
+  if (c != correct ) {
     cout << "Multiplication not correct. Is " << c << endl;
   }
-  
+
   a = BRP (16) + BRP(13) + BRP(12) + BRP(6) + BRP(4) + BRP(2) + BRP(1);
   b = BRP(13);
   c = a*b;
   // 29 + 13 + 13 + 15 + 13 + 15 + 13
   correct = BRP(29);
-  if (c != correct ) { 
+  if (c != correct ) {
     cout << "Multiplication not correct. Is " << c << endl;
   }
 
@@ -207,16 +207,16 @@ void testMultiplication() {
   c = a*d;
   // 29 + 13 + 13 + 15 + 13 + 15 + 13
   correct = BRP(29);
-  if (c != correct ) { 
+  if (c != correct ) {
     cout << "Multiplication not correct. Is " << c << endl;
   }
 
-  a = BRP (16) + BRP(13) + BRP(12) + BRP(6) + BRP(4); 
+  a = BRP (16) + BRP(13) + BRP(12) + BRP(6) + BRP(4);
   d = 220;
   c = a*d;
-  // 220 + 221 + 220 + 222 + 220 
+  // 220 + 221 + 220 + 222 + 220
   correct = BRP(222) + BRP(221) + BRP(220);
-  if (c != correct ) { 
+  if (c != correct ) {
     cout << "Multiplication not correct. Is " << c << endl;
   }
 
@@ -241,7 +241,7 @@ void testLT() {
   foo.push_back(8);
   foo.push_back(3);
   BRP bar = BRP(foo);
-  
+
   if ( bar.LT() != 8 ) {
     cout << "Testing LT(): " << (bar.LT() == 8 ? "is good" : "is bad") << endl;
   }
@@ -256,7 +256,7 @@ void testLT() {
     cout << "Testing LT(): " << (bar.LT() == 8 ? "is good" : "is bad") << endl;
   }
 }
- 
+
 
 void testIsLeadingReducibleBy() {
   BRP f = BRP(2) * BRP(8) + BRP(7);
@@ -270,13 +270,13 @@ void testIsLeadingReducibleBy() {
     cout << "error" << endl;
   }
 }
-  
-void testRemainder() { //f = ax+g 
+
+void testRemainder() { //f = ax+g
   BRP f = BRP(2) * BRP(8) + BRP(7);
-  if ( (BRP(7) )  != f.remainder(BRP(8) ) ) { 
+  if ( (BRP(7) )  != f.remainder(BRP(8) ) ) {
     cout << "error" << endl;
   }
-  if ( (BRP(2) )  == f.remainder(BRP(8) ) ) { 
+  if ( (BRP(2) )  == f.remainder(BRP(8) ) ) {
     cout << "error" << endl;
   }
 
@@ -329,4 +329,3 @@ int main() {
   testIsRelativelyPrime();
   testOrder();
 }
-

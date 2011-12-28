@@ -15,41 +15,41 @@ PolyRingQuotient::~PolyRingQuotient()
 }
 
 #if 0
-// PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
-// 					   VECTOR(Nterm *) &elems)
+// PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
+//                                         VECTOR(Nterm *) &elems)
 //   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
 //   // They should also form a GB.
 // {
 //   PolyRingQuotient *result = new PolyRingQuotient;
 //   result->initialize_ring(R->charac(),
-// 			  R->get_degree_ring());
+//                        R->get_degree_ring());
 //   result->R_ = R;
-// 
+//
 //   result->overZZ_ = R->getCoefficients()->is_ZZ();
 //   if (result->overZZ_)
 //     result->setQuotientInfo(new QRingInfo_ZZ(R,elems));
 //   else
 //     result->setQuotientInfo(new QRingInfo_field_basic(R,elems));
-// 
+//
 //   for (int i=0; i<result->n_quotients(); i++)
 //     {
 //       if (!R->is_homogeneous(result->quotient_element(i)))
-// 	{
-// 	  result->setIsGraded(false);
-// 	  break;
-// 	}
+//      {
+//        result->setIsGraded(false);
+//        break;
+//      }
 //     }
-// 
+//
 //   result->zeroV = result->from_int(0);
 //   result->oneV = result->from_int(1);
 //   result->minus_oneV = result->from_int(-1);
-//   
+//
 //   return result;
 // }
-// 
-// 
-// PolyRingQuotient *PolyRingQuotient::create(const PolynomialRing *R, 
-// 					   const Matrix *M)
+//
+//
+// PolyRingQuotient *PolyRingQuotient::create(const PolynomialRing *R,
+//                                         const Matrix *M)
 // {
 //   if (M->get_ring() != R)
 //     {
@@ -61,19 +61,19 @@ PolyRingQuotient::~PolyRingQuotient()
 //     elems.push_back(R->quotient_element(i));
 //   for (int i=0; i<M->n_cols(); i++)
 //     elems.push_back(M->elem(0,i));
-// 
+//
 //   return create(R->getAmbientRing(),elems);
 // }
-// 
-// PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
-// 					   const PolynomialRing *B)
+//
+// PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
+//                                         const PolynomialRing *B)
 //   // R should be an ambient poly ring
 //   // B should have: ambient of B is the logical coeff ring of R
 //   //   i.e. R = A[x], B = A/I
 //   // return A[x]/I.
 // {
 //   VECTOR(Nterm *) elems;
-// 
+//
 //   for (int i=0; i<B->n_quotients(); i++)
 //     {
 //       ring_elem f;
@@ -82,11 +82,11 @@ PolyRingQuotient::~PolyRingQuotient()
 //     }
 //   return create(R,elems);
 // }
-// 
+//
 // Matrix * PolyRingQuotient::getPresentation() const
 // {
 //   const PolyRing *R = getAmbientRing();
-// 
+//
 //   MatrixConstructor mat(R->make_FreeModule(1), 0);
 //   for (int i=0; i<n_quotients(); i++)
 //     mat.append(R->make_vec(0, quotient_element(i)));
@@ -158,13 +158,13 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
       const RingElement *v1;
       const RingElement *ret = rawExtendedGCDRingElement(f1,g1,&u1,&v1);
       if (ret == NULL) {
-	// one reason this might return NULL is if the coefficient ring is not ZZ/n, ZZ, or QQ
-	// now what do we do?
-	// we can't return NULL
-	INTERNAL_ERROR("ring element gcd computation failed");
+        // one reason this might return NULL is if the coefficient ring is not ZZ/n, ZZ, or QQ
+        // now what do we do?
+        // we can't return NULL
+        INTERNAL_ERROR("ring element gcd computation failed");
       }
       return u1->get_value();
-      
+
     }
   else if (M_->getNonTermOrderVariables()->len ==  0)
     return ann(from_int(1),f);
@@ -195,25 +195,25 @@ GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
 
   M2_arrayint weights = M2_makearrayint(n_vars());
   for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
-  GBComputation *G = GBComputation::choose_gb(mg, 
-					      false, // collect syz
-					      -1,
-					      weights,
-					      false,
-					      -1,
-					      0,
-					      0
-					      /* , max_reduction_count */
-					      );
+  GBComputation *G = GBComputation::choose_gb(mg,
+                                              false, // collect syz
+                                              -1,
+                                              weights,
+                                              false,
+                                              -1,
+                                              0,
+                                              0
+                                              /* , max_reduction_count */
+                                              );
   G->set_stop_conditions(false,
-			 NULL,
-			 -1,
-			 -1, // syzygy limit
-			 -1,
-			 -1,
-			 -1,
-			 false,
-			 NULL);
+                         NULL,
+                         -1,
+                         -1, // syzygy limit
+                         -1,
+                         -1,
+                         -1,
+                         false,
+                         NULL);
 
   G->start_computation();
   return G;
@@ -265,8 +265,8 @@ ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
   return result;
 }
 
-ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-						 ring_elem &quot) const
+ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_elem g,
+                                                 ring_elem &quot) const
 {
   if (K_->get_precision() > 0)
     {
@@ -318,7 +318,7 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
 
 
 void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
-			      ring_elem &x, ring_elem &y) const
+                              ring_elem &x, ring_elem &y) const
 {
   MatrixConstructor mat(make_FreeModule(1),2);
   mat.set_entry(0,0,a);
@@ -326,24 +326,24 @@ void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
   Matrix *m = mat.to_matrix(); // {a,b}
   M2_arrayint weights = M2_makearrayint(n_vars());
   for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
-  GBComputation *G = GBComputation::choose_gb(m, 
-					      true, // collect syz
-					      -1, // keep all rows
-					      weights,
-					      false,
-					      -1,
-					      0,0
-					      /* , max_reduction_count */
-					      );
+  GBComputation *G = GBComputation::choose_gb(m,
+                                              true, // collect syz
+                                              -1, // keep all rows
+                                              weights,
+                                              false,
+                                              -1,
+                                              0,0
+                                              /* , max_reduction_count */
+                                              );
   G->set_stop_conditions(false,
-			 NULL,
-			 -1,
-			 1, // syzygy limit
-			 -1,
-			 -1,
-			 -1,
-			 false,
-			 NULL);
+                         NULL,
+                         -1,
+                         1, // syzygy limit
+                         -1,
+                         -1,
+                         -1,
+                         false,
+                         NULL);
   G->start_computation();
   const Matrix *s = G->get_syzygies();
 
@@ -371,4 +371,5 @@ ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f,int first
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

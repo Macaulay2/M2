@@ -8,15 +8,15 @@
 #define DEBUGGCDno
 
 long gcd_extended(long a,
-		  long b,
-		  long &u,
-		  long &v)
+                  long b,
+                  long &u,
+                  long &v)
 {
   long g;
   long q ;
   long u1, v1, g1;
   long utemp, vtemp, gtemp;
- 
+
   g1 = b; u1 = 0; v1 = 1;
   g  = a;  u = 1;  v = 0;
   while (g1 != 0)
@@ -57,11 +57,11 @@ void DPoly::initialize(long p, int nvars0, const_poly *ext0)
   else
     for (int i=0; i<nlevels; i++)
       {
-	extensions[i] = copy(nlevels-1, ext0[i]);
-	down_level(i, nlevels-1, extensions[i]);
+        extensions[i] = copy(nlevels-1, ext0[i]);
+        down_level(i, nlevels-1, extensions[i]);
       }
 }
-DPoly::DPoly(long p, int nvars0, const_poly *ext0) 
+DPoly::DPoly(long p, int nvars0, const_poly *ext0)
 {
   initialize(p, nvars0, ext0);
 }
@@ -81,10 +81,10 @@ bool DPoly::down_level(int newlevel, int oldlevel, poly &f)
   for (int i=oldlevel; i>newlevel; i--)
     {
       if (f->deg > 0)
-	{
-	  dealloc_poly(f);
-	  return false;
-	}
+        {
+          dealloc_poly(f);
+          return false;
+        }
       poly g = f->arr.polys[0];
       f->arr.polys[0] = 0;
       dealloc_poly(f);
@@ -100,23 +100,23 @@ static int n_nonzero_terms(int level, const_poly f)
   if (level == 0)
     {
       for (int i=0; i<=f->deg; i++)
-	if (f->arr.ints[i] != 0) nterms++;
+        if (f->arr.ints[i] != 0) nterms++;
     }
   else
     {
       for (int i=0; i<=f->deg; i++)
-	if (f->arr.polys[i] != 0) nterms++;
+        if (f->arr.polys[i] != 0) nterms++;
     }
   return nterms;
 }
 
-void DPoly::elem_text_out(buffer &o, 
-			  int level, 
-			  const poly f,
-			  bool p_one,
-			  bool p_plus, 
-			  bool p_parens,
-			  M2_ArrayString names) const
+void DPoly::elem_text_out(buffer &o,
+                          int level,
+                          const poly f,
+                          bool p_one,
+                          bool p_plus,
+                          bool p_parens,
+                          M2_ArrayString names) const
 {
   //o << to_string(level, f);
   if (f == 0)
@@ -128,7 +128,7 @@ void DPoly::elem_text_out(buffer &o,
   int nterms = n_nonzero_terms(level,f);
   bool needs_parens = p_parens && (nterms >= 2);
 
-  if (needs_parens) 
+  if (needs_parens)
     {
       if (p_plus) o << '+';
       o << '(';
@@ -151,38 +151,38 @@ void DPoly::elem_text_out(buffer &o,
 
       bool firstterm = true;
       for (int i=f->deg; i>=0; i--)
-	if (f->arr.ints[i] != 0)
-	  {
-	    if (!firstterm || p_plus) o << "+";
-	    firstterm = false;
-	    if (i == 0 || f->arr.ints[i] != 1)
-	      o << f->arr.ints[i];
-	    if (i  > 0)
-	      o << this_varname;
-	    if (i > 1)
-	      o << i;
-	  }
+        if (f->arr.ints[i] != 0)
+          {
+            if (!firstterm || p_plus) o << "+";
+            firstterm = false;
+            if (i == 0 || f->arr.ints[i] != 1)
+              o << f->arr.ints[i];
+            if (i  > 0)
+              o << this_varname;
+            if (i > 1)
+              o << i;
+          }
       if (needs_parens) o << ")";
     }
   else
     {
       bool firstterm = true;
       for (int i=f->deg; i>=0; i--)
-	if (f->arr.polys[i] != 0)
-	  {
-	    bool this_p_parens = p_parens || (i > 0);
+        if (f->arr.polys[i] != 0)
+          {
+            bool this_p_parens = p_parens || (i > 0);
 
-	    if (i == 0 || !is_one(level-1,f->arr.polys[i]))
-	      elem_text_out(o, level-1,f->arr.polys[i], p_one, p_plus || !firstterm, this_p_parens, names);
-	    else if (p_plus || !firstterm)
-	      o << "+";
-	    if (i  > 0)
-	      o << this_varname;
-	    if (i > 1)
-	      o << i;
+            if (i == 0 || !is_one(level-1,f->arr.polys[i]))
+              elem_text_out(o, level-1,f->arr.polys[i], p_one, p_plus || !firstterm, this_p_parens, names);
+            else if (p_plus || !firstterm)
+              o << "+";
+            if (i  > 0)
+              o << this_varname;
+            if (i > 1)
+              o << i;
 
-	    firstterm = false;
-	  }
+            firstterm = false;
+          }
       if (needs_parens) o << ")";
     }
 }
@@ -192,10 +192,10 @@ void DPoly::extensions_text_out(buffer &o, M2_ArrayString names) const
   for (int i=0; i<nlevels; i++)
     {
       if (extensions[i] != 0)
-	{
-	  o << newline << "    ";
-	  elem_text_out(o, i, extensions[i], true, false, false, names);
-	}
+        {
+          o << newline << "    ";
+          elem_text_out(o, i, extensions[i], true, false, false, names);
+        }
     }
 }
 
@@ -207,9 +207,9 @@ void DPoly::increase_size_0(int newdeg, poly &f)
       long *newelems = newarray_atomic(long,newdeg+1);
       long *fp = f->arr.ints;
       for (int i=0; i<= f->deg; i++)
-	newelems[i] = fp[i];
+        newelems[i] = fp[i];
       for (int i = f->deg+1; i < newdeg+1; i++)
-	newelems[i] = 0;
+        newelems[i] = 0;
       delete [] fp;
       f->arr.ints = newelems;
       f->len = newdeg+1;
@@ -225,9 +225,9 @@ void DPoly::increase_size_n(int newdeg, poly &f)
       poly *newelems = newarray(poly, newdeg+1);
       poly *fp = f->arr.polys;
       for (int i=0; i<= f->deg; i++)
-	newelems[i] = fp[i];
+        newelems[i] = fp[i];
       for (int i = f->deg+1; i < newdeg+1; i++)
-	newelems[i] = 0;
+        newelems[i] = 0;
       delete [] fp;
       f->arr.polys = newelems;
       f->len = newdeg+1;
@@ -286,25 +286,25 @@ poly DPoly::read_poly_n(char * &str, int level)
       exit(1);
     }
   str++;
-  // Now loop 
+  // Now loop
   while (*str != ']')
     {
       while (isspace(*str)) str++;
       if (*str == ',')
-	{
-	  str++;
-	}
+        {
+          str++;
+        }
       else if (*str == '[')
-	{
-	  this_elem = read_poly(str, level-1); // eats ]
-	  while (isspace(*str)) str++;
-	  if (*str == ',') str++;
-	}
-      else 
-	{
-	  fprintf(stderr, "expected , or [, but got %s\n", str);
-	  exit(1);
-	}
+        {
+          this_elem = read_poly(str, level-1); // eats ]
+          while (isspace(*str)) str++;
+          if (*str == ',') str++;
+        }
+      else
+        {
+          fprintf(stderr, "expected , or [, but got %s\n", str);
+          exit(1);
+        }
       elems[len++] = this_elem;
       this_elem = 0;
     }
@@ -326,27 +326,27 @@ poly DPoly::read_poly_0(char * &str)
       exit(1);
     }
   str++;
-  // Now loop 
+  // Now loop
   while (*str != ']')
     {
       while (isspace(*str)) str++;
       if (*str == ',')
-	{
-	  str++;
-	}
+        {
+          str++;
+        }
       else if (isdigit(*str))
-	{
-	  char *end;
-	  this_elem = strtol(str,&end, 10);
-	  str = end;
-	  while (isspace(*str)) str++;
-	  if (*str == ',') str++;
-	}
-      else 
-	{
-	  fprintf(stderr, "expected , or [, but got %s\n", str);
-	  exit(1);
-	}
+        {
+          char *end;
+          this_elem = strtol(str,&end, 10);
+          str = end;
+          while (isspace(*str)) str++;
+          if (*str == ',') str++;
+        }
+      else
+        {
+          fprintf(stderr, "expected , or [, but got %s\n", str);
+          exit(1);
+        }
       elems[len++] = this_elem;
       this_elem = 0;
     }
@@ -366,17 +366,17 @@ poly DPoly::read_poly(char * &str, int level)
 
 std::ostream& DPoly::append_to_stream(std::ostream &o, int level, const poly f)
 {
-  if (f == 0) 
+  if (f == 0)
     o << "0";
   else if (level == 0)
     {
       long *p = f->arr.ints;
       o << "[";
       for (int i=0; i<=f->deg; i++)
-	{
-	  if (i > 0) o << ",";
-	  if (p[i] != 0) o << p[i];
-	}
+        {
+          if (i > 0) o << ",";
+          if (p[i] != 0) o << p[i];
+        }
       o << "]";
     }
   else
@@ -384,10 +384,10 @@ std::ostream& DPoly::append_to_stream(std::ostream &o, int level, const poly f)
       poly *p = f->arr.polys;
       o << "[";
       for (int i=0; i<=f->deg; i++)
-	{
-	  if (i > 0) o << ",";
-	  if (p[i] != 0) append_to_stream(o, level-1, p[i]);
-	}
+        {
+          if (i > 0) o << ",";
+          if (p[i] != 0) append_to_stream(o, level-1, p[i]);
+        }
       o << "]";
     }
   return o;
@@ -402,12 +402,12 @@ char *DPoly::to_string(int level, const poly f)
   char *result = new char[n+1];
   strcpy(result, s);
   return result;
-}  
+}
 
 
 void DPoly::display_poly(FILE *fil, int level, const poly f)
 {
-  if (f == 0) 
+  if (f == 0)
     fprintf(fil, "0");
   else if (level == 0)
     {
@@ -415,10 +415,10 @@ void DPoly::display_poly(FILE *fil, int level, const poly f)
       //fprintf(fil, "[(%ld)", f->deg);
       fprintf(fil, "[");
       for (int i=0; i<=f->deg; i++)
-	{
-	  if (i > 0) fprintf(fil, ",");
-	  if (p[i] != 0) fprintf(fil, "%ld", p[i]);
-	}
+        {
+          if (i > 0) fprintf(fil, ",");
+          if (p[i] != 0) fprintf(fil, "%ld", p[i]);
+        }
       fprintf(fil, "]");
     }
   else
@@ -427,10 +427,10 @@ void DPoly::display_poly(FILE *fil, int level, const poly f)
       // fprintf(fil, "[(%ld)", f->deg);
       fprintf(fil, "[");
       for (int i=0; i<=f->deg; i++)
-	{
-	  if (i > 0) fprintf(fil, ",");
-	  if (p[i] != 0) display_poly(fil, level-1, p[i]);
-	}
+        {
+          if (i > 0) fprintf(fil, ",");
+          if (p[i] != 0) display_poly(fil, level-1, p[i]);
+        }
       fprintf(fil, "]");
     }
 }
@@ -453,7 +453,7 @@ bool DPoly::is_equal(int level, const poly f, const poly g)
       long *fp = f->arr.ints;
       long *gp = g->arr.ints;
       for (int i=0; i<=f->deg; i++)
-	if (fp[i] != gp[i]) return false;
+        if (fp[i] != gp[i]) return false;
       return true;
     }
   // level > 0
@@ -556,23 +556,23 @@ int DPoly::compare(int level, poly f, poly g)
   if (f->deg > g->deg) return -1;
   if (f->deg < g->deg) return 1;
 
-  if (level == 0) 
+  if (level == 0)
     {
       for (int i=f->deg; i>=0; i--)
-	{
-	  int cmp = f->arr.ints[i] - g->arr.ints[i];
-	  if (cmp > 0) return -1;
-	  if (cmp < 0) return 1;
-	}
+        {
+          int cmp = f->arr.ints[i] - g->arr.ints[i];
+          if (cmp > 0) return -1;
+          if (cmp < 0) return 1;
+        }
     }
   else
     {
       for (int i=f->deg; i>=0; i--)
-	{
-	  int cmp = compare(level-1, f->arr.polys[i], g->arr.polys[i]);
-	  if (cmp > 0) return -1;
-	  if (cmp < 0) return 1;
-	}
+        {
+          int cmp = compare(level-1, f->arr.polys[i], g->arr.polys[i]);
+          if (cmp > 0) return -1;
+          if (cmp < 0) return 1;
+        }
     }
   return 0;
 }
@@ -594,14 +594,14 @@ void DPoly::negate_in_place(int level, poly &f)
       int deg = f->deg;
       long *p = f->arr.ints;
       for (int i=0; i<=deg; i++)
-	if (p[i] != 0) ZZp_NEGATE(charac, p[i]);
+        if (p[i] != 0) ZZp_NEGATE(charac, p[i]);
     }
   else
     {
       int deg = f->deg;
       poly *p = f->arr.polys;
       for (int i=0; i<=deg; i++)
-	if (p[i] != 0) negate_in_place(level-1, p[i]);
+        if (p[i] != 0) negate_in_place(level-1, p[i]);
     }
 }
 
@@ -634,12 +634,12 @@ void DPoly::add_term(int level, poly &result, long coeff, exponents exp) const
   // exp is an array [0..level-1] of exponent values for each variable 0..level-1
   // the outer variable is at index 0.
   // coeff is an already normalized coefficient, and is not 0.
-  
+
   int e = exp[0];
 
-  if (result == 0) 
+  if (result == 0)
     result = alloc_poly_n(e, 0);
-  else if (result->deg < e) 
+  else if (result->deg < e)
     increase_size_n(e, result);
 
   if (level == 0)
@@ -652,7 +652,7 @@ void DPoly::add_in_place_0(poly &f, const poly g)
 {
   int i;
   if (g == 0) return;
-  if (f == 0) 
+  if (f == 0)
     {
       f = copy(0, g);
       return;
@@ -662,9 +662,9 @@ void DPoly::add_in_place_0(poly &f, const poly g)
 
   increase_size_0(g->deg, f);
   for (i=0; i<=gdeg; i++) ZZp_ADD_TO(charac, f->arr.ints[i], g->arr.ints[i]);
-  if (gdeg > fdeg) 
+  if (gdeg > fdeg)
     f->deg = gdeg;
-  else if (gdeg == fdeg) 
+  else if (gdeg == fdeg)
     reset_degree_0(f);
 }
 
@@ -672,14 +672,14 @@ void DPoly::add_in_place_n(int level, poly &f, const poly g)
 {
   int i;
   if (g == 0) return;
-  if (f == 0) 
+  if (f == 0)
     {
       f = copy(level, g);
       return;
     }
   int fdeg = f->deg;
   int gdeg = g->deg;
- 
+
   increase_size_n(g->deg, f);
   for (i=0; i<=gdeg; i++) add_in_place(level-1, f->arr.polys[i], g->arr.polys[i]);
   if (gdeg > fdeg) f->deg = gdeg;
@@ -687,8 +687,8 @@ void DPoly::add_in_place_n(int level, poly &f, const poly g)
     // need to change the degree
     for (int j = fdeg; j>=0; --j)
       if (f->arr.polys[j] != 0) {
-	f->deg = j;
-	return;
+        f->deg = j;
+        return;
       }
     // at this point, everything is 0!
     dealloc_poly(f);
@@ -707,7 +707,7 @@ void DPoly::subtract_in_place_0(poly &f, const poly g)
 {
   int i;
   if (g == 0) return;
-  if (f == 0) 
+  if (f == 0)
     {
       f = copy(0, g);
       negate_in_place(0, f);
@@ -723,8 +723,8 @@ void DPoly::subtract_in_place_0(poly &f, const poly g)
     // need to change the degree
     for (int j = fdeg; j>=0; --j)
       if (f->arr.ints[j] != 0) {
-	f->deg = j;
-	return;
+        f->deg = j;
+        return;
       }
     // at this point, everything is 0!
     dealloc_poly(f);
@@ -735,7 +735,7 @@ void DPoly::subtract_in_place_n(int level, poly &f, const poly g)
 {
   int i;
   if (g == 0) return;
-  if (f == 0) 
+  if (f == 0)
     {
       f = copy(level, g);
       negate_in_place(level, f);
@@ -751,8 +751,8 @@ void DPoly::subtract_in_place_n(int level, poly &f, const poly g)
     // need to change the degree
     for (int j = fdeg; j>=0; --j)
       if (f->arr.polys[j] != 0) {
-	f->deg = j;
-	return;
+        f->deg = j;
+        return;
       }
     // at this point, everything is 0!
     dealloc_poly(f);
@@ -776,7 +776,7 @@ poly DPoly::mult_0(const poly f, const poly g, bool reduce_by_extension)
     {
       long a = f->arr.ints[i];
       for (int j=0; j<=g->deg; j++)
-	ZZp_APXY(charac, result->arr.ints[i+j], a, g->arr.ints[j]);
+        ZZp_APXY(charac, result->arr.ints[i+j], a, g->arr.ints[j]);
     }
 
   if (reduce_by_extension && extensions[0] != 0)
@@ -792,16 +792,16 @@ poly DPoly::mult_n(int level, const poly f, const poly g, bool reduce_by_extensi
     {
       poly a = f->arr.polys[i];
       if (a != 0)
-	for (int j=0; j<=g->deg; j++)
-	  {
-	    poly b = g->arr.polys[j];
-	    poly c = mult(level-1,a,b, true);
-	    if (c != 0)
-	      {
-		add_in_place(level-1,result->arr.polys[i+j], c);
-		dealloc_poly(c);
-	      }
-	  }
+        for (int j=0; j<=g->deg; j++)
+          {
+            poly b = g->arr.polys[j];
+            poly c = mult(level-1,a,b, true);
+            if (c != 0)
+              {
+                add_in_place(level-1,result->arr.polys[i+j], c);
+                dealloc_poly(c);
+              }
+          }
     }
 
   if (reduce_by_extension && extensions[level] != 0)
@@ -819,7 +819,7 @@ poly  DPoly::invert(int level, const poly a)
 {
   // plan: compute the extended gcd of a and extensions[level]
   //   as univariate polynomials (at level 'level').
-  // either return 0, if the gcd returned was not 1, or return 
+  // either return 0, if the gcd returned was not 1, or return
   // result_u.
   poly u, v;
   poly g = gcd_coefficients(level, a, extensions[level], u, v);
@@ -842,8 +842,8 @@ void DPoly::mult_by_coeff_0(poly &f, long b)
   else if (b != 1)
     for (int i=0; i<= deg; i++)
       {
-	if (*p != 0) ZZp_MULT(charac, *p, b);
-	p++;
+        if (*p != 0) ZZp_MULT(charac, *p, b);
+        p++;
       }
 }
 void DPoly::mult_by_coeff_n(int level, poly &f, poly b)
@@ -858,8 +858,8 @@ void DPoly::mult_by_coeff_n(int level, poly &f, poly b)
   else if (!is_one(level-1, b))
     for (int i=0; i<= deg; i++)
       {
-	if (*p != 0) *p = mult(level-1, *p, b, true);
-	p++;
+        if (*p != 0) *p = mult(level-1, *p, b, true);
+        p++;
       }
 }
 void DPoly::make_monic_0(poly & f, long &result_multiplier)
@@ -936,22 +936,22 @@ poly  DPoly::division_in_place_monic(int level, poly & f, const poly g)
     }
   int shift = f->deg - g->deg;
   poly quot = alloc_poly_n(shift);
-  
+
   if (level == 0)
     {
       long *p = f->arr.ints;
       long *q = g->arr.ints;
       for (int d=f->deg; shift>=0; d--, shift--)
-	{
-	  long a = p[d];
-	  if (a != 0)
-	    {
-	      quot->arr.ints[shift] = a;
-	      ZZp_NEGATE(charac, a);
-	      for (int j=0; j<=g->deg; j++) 
-		ZZp_APXY(charac, p[shift+j], a, q[j]);
-	    }
-	}
+        {
+          long a = p[d];
+          if (a != 0)
+            {
+              quot->arr.ints[shift] = a;
+              ZZp_NEGATE(charac, a);
+              for (int j=0; j<=g->deg; j++)
+                ZZp_APXY(charac, p[shift+j], a, q[j]);
+            }
+        }
       reset_degree_0(f);
     }
   else
@@ -959,18 +959,18 @@ poly  DPoly::division_in_place_monic(int level, poly & f, const poly g)
       poly *p = f->arr.polys;
       poly *q = g->arr.polys;
       for (int d=f->deg; shift>=0; d--, shift--)
-	{
-	  poly a = p[d];
-	  if (a != 0)
-	    {
-	      quot->arr.polys[shift] = copy(level-1,a);
-	      for (int j=0; j<=g->deg; j++) 
-		{
-		  poly b = mult(level-1,a,q[j],true);
-		  subtract_in_place(level-1,p[j+shift],b);
-		}
-	    }
-	}
+        {
+          poly a = p[d];
+          if (a != 0)
+            {
+              quot->arr.polys[shift] = copy(level-1,a);
+              for (int j=0; j<=g->deg; j++)
+                {
+                  poly b = mult(level-1,a,q[j],true);
+                  subtract_in_place(level-1,p[j+shift],b);
+                }
+            }
+        }
       reset_degree_n(level, f);
     }
   return quot;
@@ -986,7 +986,7 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
     }
   int shift = f->deg - g->deg;
   result_quot = alloc_poly_n(shift);
-  
+
   if (level == 0)
     {
       // TODO: this code seems completely wrong!??!!  too?
@@ -995,21 +995,21 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
       long leadcoeff = q[g->deg];
       long invlead = 1;
       if (leadcoeff != 1)
-	{
-	  ZZp_INVERT(charac, invlead, leadcoeff);
-	}
+        {
+          ZZp_INVERT(charac, invlead, leadcoeff);
+        }
       for (int d=f->deg; shift>=0; d--, shift--)
-	{
-	  long a = p[d];
-	  if (a != 0)
-	    {
-	      ZZp_MULT(charac, a, invlead);
-	      result_quot->arr.ints[shift] = a;
-	      ZZp_NEGATE(charac, a);
-	      for (int j=0; j<=g->deg; j++) 
-		ZZp_APXY(charac, p[shift+j], a, q[j]);
-	    }
-	}
+        {
+          long a = p[d];
+          if (a != 0)
+            {
+              ZZp_MULT(charac, a, invlead);
+              result_quot->arr.ints[shift] = a;
+              ZZp_NEGATE(charac, a);
+              for (int j=0; j<=g->deg; j++)
+                ZZp_APXY(charac, p[shift+j], a, q[j]);
+            }
+        }
       reset_degree_0(f);
       return true;
     }
@@ -1021,27 +1021,27 @@ bool  DPoly::division_in_place(int level, poly & f, const poly g, poly & result_
       poly leadcoeff = q[g->deg];
       poly invlead;
       if (is_one(level-1,leadcoeff))
-	invlead = leadcoeff;
+        invlead = leadcoeff;
       else
-	{
-	  invlead = invert(level-1,leadcoeff);
-	  if (invlead == 0)
-	    return false;
-	}
+        {
+          invlead = invert(level-1,leadcoeff);
+          if (invlead == 0)
+            return false;
+        }
       for (int d=f->deg; shift>=0; d--, shift--)
-	{
-	  poly a = p[d];
-	  if (a != 0)
-	    {
-	      poly b = mult(level-1,invlead,a,true);
-	      result_quot->arr.polys[shift] = copy(level-1,b);
-	      for (int j=0; j<=g->deg; j++) 
-		{
-		  b = mult(level-1,a,q[j],true);
-		  subtract_in_place(level-1,p[j+shift],b);
-		}
-	    }
-	}
+        {
+          poly a = p[d];
+          if (a != 0)
+            {
+              poly b = mult(level-1,invlead,a,true);
+              result_quot->arr.polys[shift] = copy(level-1,b);
+              for (int j=0; j<=g->deg; j++)
+                {
+                  b = mult(level-1,a,q[j],true);
+                  subtract_in_place(level-1,p[j+shift],b);
+                }
+            }
+        }
       reset_degree_n(level,f);
       return true;
     }
@@ -1110,8 +1110,8 @@ poly  DPoly::gcd(int level, const poly f, const poly g)
     }
 }
 
-poly  DPoly::gcd_coefficients(int level, const poly f, const poly g, 
-					  poly &result_u, poly &result_v)
+poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
+                                          poly &result_u, poly &result_v)
 {
   // Assumption:
   //  f and g are non-zero
@@ -1145,7 +1145,7 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
       printf("u1 = %s\n", to_string(level,u1));
       printf("u2 = %s\n", to_string(level,u2));
       printf("u3 = %s\n", to_string(level,u3));
-      
+
       printf("v1 = %s\n", to_string(level,v1));
       printf("v2 = %s\n", to_string(level,v2));
       printf("v3 = %s\n", to_string(level,v3));
@@ -1155,27 +1155,27 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
   while (v3 != 0)
     {
       if (!make_monic3(level,v1,v2,v3))
-	{
-	  // deallocate some polynomials, then return 0.  No monic gcd
-	  dealloc_poly(q);
-	  dealloc_poly(u1);
-	  dealloc_poly(u2);
-	  dealloc_poly(u3);
-	  dealloc_poly(v1);
-	  dealloc_poly(v2);
-	  dealloc_poly(v3);
-	  result_u = 0;
-	  result_v = 0;
-	  return 0;
-	}
+        {
+          // deallocate some polynomials, then return 0.  No monic gcd
+          dealloc_poly(q);
+          dealloc_poly(u1);
+          dealloc_poly(u2);
+          dealloc_poly(u3);
+          dealloc_poly(v1);
+          dealloc_poly(v2);
+          dealloc_poly(v3);
+          result_u = 0;
+          result_v = 0;
+          return 0;
+        }
       q = division_in_place_monic(level, u3, v3); // u3 := u3 - q*v3, as v3 is monic, this is always possible
 
 #ifdef DEBUGGCD
       if (level == 1)
-	{
-	  printf("q = %s\n", to_string(level,q));
-	  printf("u3 = %s\n", to_string(level,u3));
-	}
+        {
+          printf("q = %s\n", to_string(level,q));
+          printf("u3 = %s\n", to_string(level,u3));
+        }
 #endif
 
       negate_in_place(level,q);
@@ -1186,11 +1186,11 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
 
 #ifdef DEBUGGCD
       if (level == 1)
-	{
-	  printf("u1 = %s\n", to_string(level,u1));
-	  printf("u2 = %s\n", to_string(level,u2));
-	  printf("u3 = %s\n", to_string(level,u3));
-	}
+        {
+          printf("u1 = %s\n", to_string(level,u1));
+          printf("u2 = %s\n", to_string(level,u2));
+          printf("u3 = %s\n", to_string(level,u3));
+        }
 #endif
       dealloc_poly(a); // MES: totally wipeout polys a, b here!
       dealloc_poly(b);
@@ -1229,10 +1229,10 @@ int DPoly::degree(int level, int whichvar, const poly f) const
     {
       poly g = f->arr.polys[i];
       if (g != 0)
-	{
-	  int d = degree(level-1,whichvar-1,g);
-	  if (d > deg) deg = d;
-	}
+        {
+          int d = degree(level-1,whichvar-1,g);
+          if (d > deg) deg = d;
+        }
     }
   return deg;
 }
@@ -1244,10 +1244,10 @@ poly DPoly::mult_by_int_0(long a, const poly f)
     {
       long c = f->arr.ints[i];
       if (c != 0)
-	{
-	  ZZp_MULT(charac, c, a);
-	  result->arr.ints[i] = c;
-	}
+        {
+          ZZp_MULT(charac, c, a);
+          result->arr.ints[i] = c;
+        }
     }
   reset_degree_0(result);
   return result;
@@ -1259,7 +1259,7 @@ poly DPoly::mult_by_int_n(int level, long a, const poly f)
     {
       poly c = f->arr.polys[i];
       if (c != 0)
-	result->arr.polys[i] = mult_by_int(level-1, a, c);
+        result->arr.polys[i] = mult_by_int(level-1, a, c);
     }
   reset_degree_n(level,result);
   return result;
@@ -1280,10 +1280,10 @@ poly DPoly::diff_0(const poly f)
     {
       long c = f->arr.ints[i];
       if (c != 0)
-	{
-	  ZZp_MULT(charac, c, i);
-	  result->arr.ints[i-1] = c;
-	}
+        {
+          ZZp_MULT(charac, c, i);
+          result->arr.ints[i-1] = c;
+        }
     }
   reset_degree_0(result);
   return result;
@@ -1296,21 +1296,21 @@ poly DPoly::diff_n(int level, int whichvar, const poly f)
     {
       result = alloc_poly_0(f->deg-1);
       for (int i=1; i<=f->deg; i++)
-	{
-	  poly c = f->arr.polys[i];
-	  if (c != 0)
-	    result->arr.polys[i-1] = mult_by_int(level-1, i, c);
-	}
+        {
+          poly c = f->arr.polys[i];
+          if (c != 0)
+            result->arr.polys[i-1] = mult_by_int(level-1, i, c);
+        }
     }
   else
     {
       result = alloc_poly_0(f->deg);
       for (int i=0; i<=f->deg; i++)
-	{
-	  poly c = f->arr.polys[i];
-	  if (c != 0)
-	    result->arr.polys[i] = diff(level-1, whichvar-1, c);
-	}
+        {
+          poly c = f->arr.polys[i];
+          if (c != 0)
+            result->arr.polys[i] = diff(level-1, whichvar-1, c);
+        }
 
     }
   reset_degree_n(level, result);
@@ -1342,31 +1342,31 @@ poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
       //      dpoly(level,base);
       //      fprintf(stdout, "\n");
       if (RingZZ::mod_ui(n,2) == 1)
-	{
-	  tmp = mult(level, prod, base, false);
-	  remainder(level, tmp, g);
-	  //TODO: free prod
-	  prod = tmp;
-	}
+        {
+          tmp = mult(level, prod, base, false);
+          remainder(level, tmp, g);
+          //TODO: free prod
+          prod = tmp;
+        }
       mpz_tdiv_q_2exp(n, n, 1);
       if (mpz_sgn(n) == 0)
-	{
-	  mpz_clear(n);
-	  //	  fprintf(stdout, "final prod = ");
-	  //	  dpoly(level,prod);
-	  //	  	  fprintf(stdout, "\nbase = ");
-	  //	  	  dpoly(level,base);
-	  //	  	  fprintf(stdout, "\n");
-	  //TODO: free base
-	  return prod;
-	}
+        {
+          mpz_clear(n);
+          //      fprintf(stdout, "final prod = ");
+          //      dpoly(level,prod);
+          //              fprintf(stdout, "\nbase = ");
+          //              dpoly(level,base);
+          //              fprintf(stdout, "\n");
+          //TODO: free base
+          return prod;
+        }
       else
-	{
-	  tmp = mult(level,base, base, false);
-	  remainder(level, tmp, g);
-	  //TODO: free base
-	  base = tmp;
-	}
+        {
+          tmp = mult(level,base, base, false);
+          remainder(level, tmp, g);
+          //TODO: free base
+          base = tmp;
+        }
     }
 }
 
@@ -1381,25 +1381,25 @@ poly DPoly::lowerP(int level, const poly f)
       result = alloc_poly_0(newdeg);
       // In this situation, we just need to grab every p*i coeff...
       for (i=0, j=0; i<=newdeg; i++, j += charac)
-	result->arr.ints[i] = f->arr.ints[j];
+        result->arr.ints[i] = f->arr.ints[j];
     }
-  else 
+  else
     {
       result = alloc_poly_n(newdeg);
       mpz_t order;
       mpz_init(order);
       unsigned long extdeg = 1;
       for (i=0; i<level; i++)
-	extdeg *= degree_of_extension(i);
+        extdeg *= degree_of_extension(i);
       mpz_ui_pow_ui(order, charac, extdeg-1);
       for (i=0, j=0; i<=newdeg; i++, j += charac)
-	{
-	  // need p-th roots of the coefficients.  So we take p^(n-1)
-	  // power (if coefficients are in field of size p^n)
-	  poly a = f->arr.polys[j];
-	  poly b = power_mod(level-1, a, order, extensions[level-1]);
-	  result->arr.polys[i] = b;
-	}
+        {
+          // need p-th roots of the coefficients.  So we take p^(n-1)
+          // power (if coefficients are in field of size p^n)
+          poly a = f->arr.polys[j];
+          poly b = power_mod(level-1, a, order, extensions[level-1]);
+          result->arr.polys[i] = b;
+        }
       mpz_clear(order);
     }
   return result;
@@ -1428,7 +1428,7 @@ void DRing::set_from_int(poly &result, mpz_ptr r)
   result = D.from_int(level, c);
 }
 
-bool DRing::set_from_rational(poly &result, mpq_ptr r) 
+bool DRing::set_from_rational(poly &result, mpq_ptr r)
 {
   // returns false if r doesn't lift
   mpz_t a;
@@ -1447,13 +1447,13 @@ bool DRing::set_from_rational(poly &result, mpq_ptr r)
     }
   ZZp_INVERT(P, cbottom, cbottom);
   ZZp_MULT(P, ctop, cbottom);
-  
+
   result = D.from_int(level, ctop);
   return true;
 }
 
 int DRing::extension_degree(int firstvar) // returns -1 if infinite
-{ 
+{
   int result = 1;
   for (int i=0; i<=level-firstvar; i++)
     {
@@ -1464,12 +1464,12 @@ int DRing::extension_degree(int firstvar) // returns -1 if infinite
   return result;
 }
 
-void DRing::elem_text_out(buffer &o, 
-			  const poly f,
-			  bool p_one,
-			  bool p_plus, 
-			  bool p_parens,
-			  M2_ArrayString names) const
+void DRing::elem_text_out(buffer &o,
+                          const poly f,
+                          bool p_one,
+                          bool p_plus,
+                          bool p_parens,
+                          M2_ArrayString names) const
 {
   D.elem_text_out(o, level, f, p_one, p_plus, p_parens, names);
 }
@@ -1496,24 +1496,24 @@ bool DPolyTraverser::traverse1(int level, const_poly f, exponents exp)
     {
       long *cfs = f->arr.ints;
       for (int i=f->deg; i>=0; --i)
-	if (cfs[i] != 0)
-	  {
-	    exp[level] = i;
-	    if (!viewTerm(cfs[i], exp))
-	      return false;
-	  }
+        if (cfs[i] != 0)
+          {
+            exp[level] = i;
+            if (!viewTerm(cfs[i], exp))
+              return false;
+          }
       exp[level] = 0;
     }
   else
     {
       poly *cfs = f->arr.polys;
       for (int i=f->deg; i>=0; --i)
-	if (cfs[i] != 0)
-	  {
-	    exp[level] = i;
-	    if (!traverse1(level-1, cfs[i], exp))
-	      return false;
-	  }
+        if (cfs[i] != 0)
+          {
+            exp[level] = i;
+            if (!traverse1(level-1, cfs[i], exp))
+              return false;
+          }
       exp[level] = 0;
     }
   return true;
@@ -1521,4 +1521,5 @@ bool DPolyTraverser::traverse1(int level, const_poly f, exponents exp)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

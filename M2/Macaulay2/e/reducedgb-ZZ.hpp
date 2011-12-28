@@ -8,9 +8,9 @@
 class ReducedGB_ZZ : public ReducedGB
 {
   friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
-				      const FreeModule *F0,
-				      const FreeModule *Fsyz0,
-				      const GBWeight *wt0);
+                                      const FreeModule *F0,
+                                      const FreeModule *Fsyz0,
+                                      const GBWeight *wt0);
 
   enum divisor_type { DIVISOR_NONE, DIVISOR_RING, DIVISOR_MODULE};
 
@@ -20,9 +20,9 @@ class ReducedGB_ZZ : public ReducedGB
   enum divisor_type find_divisor(exponents exp, int comp, int &result_loc);
 
   ReducedGB_ZZ(GBRing *R0,
-	       const PolynomialRing *originalR0,
-	       const FreeModule *F0,
-	       const FreeModule *Fsyz0);
+               const PolynomialRing *originalR0,
+               const FreeModule *F0,
+               const FreeModule *Fsyz0);
 
 public:
 
@@ -33,7 +33,7 @@ public:
   virtual void set_gb(VECTOR(POLY) &polys0);
 
   virtual void minimalize(const VECTOR(POLY) &polys0,
-			  bool auto_reduced);
+                          bool auto_reduced);
   // I have to decide: does this ADD to the existing set?
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
@@ -41,10 +41,11 @@ public:
   // REALLY??
   virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom);
 
-};	     
+};
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

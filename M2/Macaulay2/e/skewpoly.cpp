@@ -16,8 +16,8 @@ bool SkewPolynomialRing::initialize_skew(M2_arrayint skewvars)
 }
 
 SkewPolynomialRing *SkewPolynomialRing::create(const Ring *K,
-					       const Monoid *M,
-					       M2_arrayint skewvars)
+                                               const Monoid *M,
+                                               M2_arrayint skewvars)
 {
   SkewPolynomialRing *result = new SkewPolynomialRing;
 
@@ -35,9 +35,9 @@ void SkewPolynomialRing::text_out(buffer &o) const
   o << ")";
 }
 
-ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f, 
-					       const ring_elem c, 
-					       const int *m) const
+ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
+                                               const ring_elem c,
+                                               const int *m) const
   // Computes c*m*f, BUT NOT doing normal form wrt a quotient ideal..
 {
   Nterm head;
@@ -57,7 +57,7 @@ ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
       t->next = 0;
       t->coeff = K_->mult(c, s->coeff);
       if (sign < 0)
-	K_->negate_to(t->coeff);
+        K_->negate_to(t->coeff);
 
       M_->mult(m, s->monom, t->monom);
       inresult->next = t;
@@ -73,7 +73,7 @@ ring_elem SkewPolynomialRing::power(const ring_elem f, mpz_t n) const
   int n1;
   if (RingZZ::get_si(n1,n))
     return power(f,n1);
-  else 
+  else
     {
       ERROR("exponent too large");
       return ZERO_RINGELEM;
@@ -88,4 +88,5 @@ ring_elem SkewPolynomialRing::power(const ring_elem f, int n) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

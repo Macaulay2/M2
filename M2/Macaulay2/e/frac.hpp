@@ -13,8 +13,8 @@ struct frac_elem
 
 class FractionField : public Ring
 {
-  const PolyRingFlat *R_;		// Base ring.  Assumed to be a domain.
-  ring_elem _MINUS_ONE;		// this is -1 in the ring R.
+  const PolyRingFlat *R_;               // Base ring.  Assumed to be a domain.
+  ring_elem _MINUS_ONE;         // this is -1 in the ring R.
   bool use_gcd_simplify;     // Use built in gcd only if this is frac(ZZ[xs]) or frac(ZZ/p[xs])
                              // When we (if we) change fractions to be flat, then this
                              // restriction should go away.
@@ -71,10 +71,10 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual bool multi_degree(const ring_elem f, int *d) const;
-  virtual void degree_weights(const ring_elem f, M2_arrayint wts, 
-			      int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
-			       M2_arrayint wts) const;
+  virtual void degree_weights(const ring_elem f, M2_arrayint wts,
+                              int &lo, int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg,
+                               M2_arrayint wts) const;
   virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
@@ -94,15 +94,15 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
@@ -118,4 +118,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

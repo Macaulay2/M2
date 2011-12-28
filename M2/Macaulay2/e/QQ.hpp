@@ -24,7 +24,7 @@ public:
   const QQ * cast_to_QQ() const { return this; }
 
   virtual bool is_QQ() const         { return true; }
-  virtual bool is_basic_ring() const { return false; } 
+  virtual bool is_basic_ring() const { return false; }
 
   virtual const Ring *get_ambient_ring() const { return globalZZ; }
   virtual const Ring *get_denominator_ring() const { return globalZZ; }
@@ -79,15 +79,15 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
@@ -97,25 +97,26 @@ public:
 #if 0
 // protected:
 //   ring_elem trans_one; // 1 as an element of globalZZ.
-// 
-//   virtual ring_elem trans_to_ringelem(ring_elem coeff, 
-// 				      const int *exp) const;
-//   virtual ring_elem trans_to_ringelem_denom(ring_elem coeff, 
-// 					    ring_elem denom, 
-// 					    int *exp) const;
-//   virtual void trans_from_ringelem(gbvectorHeap &H, 
-// 				   ring_elem coeff, 
-// 				   int comp, 
-// 				   int *exp,
-// 				   int firstvar) const;
-//   
+//
+//   virtual ring_elem trans_to_ringelem(ring_elem coeff,
+//                                    const int *exp) const;
+//   virtual ring_elem trans_to_ringelem_denom(ring_elem coeff,
+//                                          ring_elem denom,
+//                                          int *exp) const;
+//   virtual void trans_from_ringelem(gbvectorHeap &H,
+//                                 ring_elem coeff,
+//                                 int comp,
+//                                 int *exp,
+//                                 int firstvar) const;
+//
 //   virtual trans_tag trans_type() const { return FRAC_QQ; }
 #endif
-  
+
 };
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

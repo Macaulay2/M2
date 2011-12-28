@@ -17,12 +17,12 @@ namespace M2 {
     virtual ~RingWrap() {}
   public:
     typedef typename RingType::ElementType ElementType;
-    
+
     static RingWrap<RingType> * create(const RingType *R);
-    
+
     //  Z_mod * cast_to_Z_mod() { return this; }
     //  const Z_mod * cast_to_Z_mod() const { return this; }
-    
+
     virtual int coerce_to_int(ring_elem a) const
     {
       return 0;
@@ -31,32 +31,32 @@ namespace M2 {
     {
       return 0;
     }
-    
+
     // The following are all the routines required by 'ring'
-    
+
     void to_ring_elem(ring_elem &result, const ElementType &a) const;
     void from_ring_elem(ElementType &result, const ring_elem &a) const; // result should have been 'init'ed
-    
+
     virtual void text_out(buffer &o) const { return R->text_out(o); }
-    
-    virtual ring_elem from_int(int n) const 
-    { 
+
+    virtual ring_elem from_int(int n) const
+    {
       fprintf(stderr, "calling from_int\n");
       ring_elem result;
       ElementType a;
       R->init(a);
-      R->set_from_int(a,n); 
+      R->set_from_int(a,n);
       to_ring_elem(result, a);
       return result;
     }
-    
-    virtual ring_elem from_int(mpz_ptr n) const 
+
+    virtual ring_elem from_int(mpz_ptr n) const
     {
       fprintf(stderr, "calling from_int(mpz)\n");
       ring_elem result;
       ElementType a;
       R->init(a);
-      R->set_from_mpz(a,n); 
+      R->set_from_mpz(a,n);
       to_ring_elem(result, a);
       return result;
     }
@@ -66,7 +66,7 @@ namespace M2 {
       ring_elem result;
       ElementType a;
       R->init(a);
-      R->set_from_mpq(a,q); 
+      R->set_from_mpq(a,q);
       to_ring_elem(result, a);
       return result;
     }
@@ -81,7 +81,7 @@ namespace M2 {
       to_ring_elem(result, a);
       return result;
     }
-    
+
     virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const
     {
       fprintf(stderr, "calling promote\n");
@@ -92,7 +92,7 @@ namespace M2 {
       fprintf(stderr, "calling lift\n");
       return false;
     }
-    
+
     virtual bool is_unit(const ring_elem f) const
     {
       fprintf(stderr, "calling is_unit\n");
@@ -101,7 +101,7 @@ namespace M2 {
       from_ring_elem(a, f);
       return R->is_unit(f);
     }
-    
+
     virtual bool is_zero(const ring_elem f) const
     {
       fprintf(stderr, "calling is_zero\n");
@@ -110,7 +110,7 @@ namespace M2 {
       from_ring_elem(a, f);
       return R->is_zero(f);
     }
-    
+
     virtual bool is_equal(const ring_elem f, const ring_elem g) const
     {
       fprintf(stderr, "calling is_equal\n");
@@ -121,7 +121,7 @@ namespace M2 {
       from_ring_elem(b,g);
       return R->is_equal(a,b);
     }
-    
+
     virtual int compare_elems(const ring_elem f, const ring_elem g) const
     {
       fprintf(stderr, "calling compare_elems\n");
@@ -132,7 +132,7 @@ namespace M2 {
       from_ring_elem(b,g);
       return R->compare_elems(a,b);
     }
-    
+
     virtual ring_elem copy(const ring_elem f) const
     {
       fprintf(stderr, "calling copy\n");
@@ -145,12 +145,12 @@ namespace M2 {
       to_ring_elem(result,b);
       return result;
     }
-    
+
     virtual void remove(ring_elem &f) const
     {
       fprintf(stderr, "calling remove\n");
     }
-    
+
     virtual ring_elem negate(const ring_elem f) const
     {
       fprintf(stderr, "calling negate\n");
@@ -262,9 +262,9 @@ namespace M2 {
       to_ring_elem(result,c);
       return result;
     }
-    
+
     virtual void syzygy(const ring_elem f, const ring_elem g,
-			ring_elem &x, ring_elem &y) const
+                        ring_elem &x, ring_elem &y) const
     {
       fprintf(stderr, "calling syzygy\n");
       ElementType a, b, xe, ye;
@@ -278,7 +278,7 @@ namespace M2 {
       to_ring_elem(x,xe);
       to_ring_elem(y,ye);
     }
-    
+
     virtual ring_elem random() const
     {
       fprintf(stderr, "calling random\n");
@@ -288,12 +288,12 @@ namespace M2 {
       to_ring_elem(result,a);
       return result;
     }
-    
-    virtual void elem_text_out(buffer &o, 
-			       const ring_elem f, 
-			       bool p_one=true, 
-			       bool p_plus=false, 
-			       bool p_parens=false) const
+
+    virtual void elem_text_out(buffer &o,
+                               const ring_elem f,
+                               bool p_one=true,
+                               bool p_plus=false,
+                               bool p_parens=false) const
     {
       fprintf(stderr, "calling elem_text_out\n");
       ElementType a;
@@ -301,7 +301,7 @@ namespace M2 {
       from_ring_elem(a, f);
       R->elem_text_out(o,a,p_one,p_plus,p_parens);
     }
-    
+
     virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const
     {
       fprintf(stderr, "calling eval\n");
@@ -315,5 +315,5 @@ namespace M2 {
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

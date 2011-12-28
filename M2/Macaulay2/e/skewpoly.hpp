@@ -15,8 +15,8 @@ class SkewPolynomialRing : public PolyRing
   virtual ~SkewPolynomialRing();
 public:
   static SkewPolynomialRing *create(const Ring *K,
-			     const Monoid *M,
-			     M2_arrayint skewvars);
+                             const Monoid *M,
+                             M2_arrayint skewvars);
 
   void text_out(buffer &o) const;
 
@@ -31,12 +31,13 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
 
 protected:
-  virtual ring_elem mult_by_term(const ring_elem f, 
-				     const ring_elem c, 
-				     const int *m) const;
+  virtual ring_elem mult_by_term(const ring_elem f,
+                                     const ring_elem c,
+                                     const int *m) const;
 };
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -34,7 +34,7 @@ const Ring /* or null */ *rawARingGaloisField(int p, int n)
 #endif
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }

@@ -26,11 +26,11 @@ int FractionField::n_fraction_vars() const
   return R_->n_vars();
 }
 
-bool FractionField::initialize_frac(const PolyRingFlat *R) 
+bool FractionField::initialize_frac(const PolyRingFlat *R)
 {
   initialize_ring(R->charac(),
-		  R->get_degree_ring(),
-		  R->get_heft_vector());
+                  R->get_degree_ring(),
+                  R->get_heft_vector());
 
   R_ = R;
   _MINUS_ONE = R->from_int(-1);
@@ -39,7 +39,7 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
-  if (R->n_quotients() > 0 
+  if (R->n_quotients() > 0
       || R->getCoefficients()->cast_to_FractionField() // disallowed in x-relem.cpp
       || R->getMonoid()->getNonTermOrderVariables()->len > 0) // disallowed in x-relem.cpp
     use_gcd_simplify = false;
@@ -117,7 +117,7 @@ void FractionField::simplify(frac_elem *f) const
 #if 0
       // Debugging code
             buffer o;
-	    o << newline;
+            o << newline;
             o << "a = ";
             a->text_out(o);
             o << "  b = ";
@@ -128,10 +128,10 @@ void FractionField::simplify(frac_elem *f) const
             emit(o.str());
 #endif
       if (!R_->is_equal(c->get_value(), R_->one()))
-	{
-	  f->numer = R_->divide(f->numer, c->get_value());
-	  f->denom = R_->divide(f->denom, c->get_value());
-	}
+        {
+          f->numer = R_->divide(f->numer, c->get_value());
+          f->denom = R_->divide(f->denom, c->get_value());
+        }
       // Now, let's take the content of the denominator, and divide the numerator
       // and denominator by this value.
       ring_elem ct = R_->content(f->denom, f->numer); // result is in R_->getCoefficients()
@@ -139,32 +139,32 @@ void FractionField::simplify(frac_elem *f) const
 #if 0
             o.reset();
             o << "f->numer = ";
-	    R_->elem_text_out(o,f->numer);
+            R_->elem_text_out(o,f->numer);
             o << "  f->denom = ";
-	    R_->elem_text_out(o,f->denom);
-	    o << " ass= ";
-	    R_->getCoefficients()->elem_text_out(o,ct);
-	    o << newline;
+            R_->elem_text_out(o,f->denom);
+            o << " ass= ";
+            R_->getCoefficients()->elem_text_out(o,ct);
+            o << newline;
             emit(o.str());
 #endif
 
      if (!R_->getCoefficients()->is_equal(ct, R_->getCoefficients()->one()))
-	{
-	  f->numer = R_->divide_by_given_content(f->numer,ct);
-	  f->denom = R_->divide_by_given_content(f->denom,ct);
-	}
+        {
+          f->numer = R_->divide_by_given_content(f->numer,ct);
+          f->denom = R_->divide_by_given_content(f->denom,ct);
+        }
     }
   else
     {
       R_->syzygy(f->numer, f->denom, x, y);
       if (R_->is_zero(x))
-	{
-	  R_->remove(x);
-	  set_non_unit_frac(f->denom);
-	  f->numer = R_->zero();
-	  f->denom = R_->one();
-	  return;
-	}
+        {
+          R_->remove(x);
+          set_non_unit_frac(f->denom);
+          f->numer = R_->zero();
+          f->denom = R_->one();
+          return;
+        }
       R_->negate_to(y);
       R_->remove(f->numer);
       R_->remove(f->denom);
@@ -190,7 +190,7 @@ void FractionField::lower_content(ring_elem &c, const ring_elem g) const
       c = g;
       return;
     }
-  
+
   frac_elem *cf = FRAC_VAL(c);
   frac_elem *gf = FRAC_VAL(g);
   const RingElement *c1 = RingElement::make_raw(R_,cf->numer);
@@ -207,7 +207,7 @@ void FractionField::lower_content(ring_elem &c, const ring_elem g) const
   frac_elem *result = new_frac_elem();
   result->numer = c1->get_value();
   result->denom = cc4->get_value();
-  
+
   c = FRAC_RINGELEM(result);
 }
 
@@ -223,11 +223,11 @@ ring_elem FractionField::random() const
   return FRAC_RINGELEM(make_elem(a,b));
 }
 
-void FractionField::elem_text_out(buffer &o, 
-				  const ring_elem a,
-				  bool p_one, 
-				  bool p_plus, 
-				  bool p_parens) const
+void FractionField::elem_text_out(buffer &o,
+                                  const ring_elem a,
+                                  bool p_one,
+                                  bool p_plus,
+                                  bool p_parens) const
 {
   frac_elem *f = FRAC_VAL(a);
   int denom_one = R_->is_equal(f->denom, R_->one());
@@ -278,7 +278,7 @@ ring_elem FractionField::var(int v) const
 int FractionField::index_of_var(const ring_elem a) const
 {
   const frac_elem *f = FRAC_VAL(a);
-  if (!R_->is_unit(f->denom)) 
+  if (!R_->is_unit(f->denom))
     // If so, a cannot be a variable, otherwise, by 'simplify', f->denom == 1.
     return -1;
   return R_->index_of_var(f->numer);
@@ -318,28 +318,28 @@ bool FractionField::lift(const Ring *Rg, const ring_elem f, ring_elem &result) c
   // Rg = R ---> frac R
   // f is an element of frac R.
 
-  ring_elem hdenom;  // used in the case when the denominator can be a unit, but not 1 
-                     // e.g. when this = frac (QQ[x,y,z]).  Is an element of 
+  ring_elem hdenom;  // used in the case when the denominator can be a unit, but not 1
+                     // e.g. when this = frac (QQ[x,y,z]).  Is an element of
   if (Rg == R_)
     {
       frac_elem *h = FRAC_VAL(f);
       if (R_->is_equal(h->denom, R_->one()))
-	{
-	  result = R_->copy(h->numer);
-	  return true;
-	}
+        {
+          result = R_->copy(h->numer);
+          return true;
+        }
       else {
-	if (R_->is_field())
-	  {
-	    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	    // try to lift denominator.  If can, can lift, otherwise not.
-	    if (R_->lift(R_, h->denom, hdenom))
-	      {
-		ring_elem hinv = R_->invert(hdenom);
-		result = R_->mult(hinv, h->numer);
-		return true;
-	      }
-	  }
+        if (R_->is_field())
+          {
+            // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+            // try to lift denominator.  If can, can lift, otherwise not.
+            if (R_->lift(R_, h->denom, hdenom))
+              {
+                ring_elem hinv = R_->invert(hdenom);
+                result = R_->mult(hinv, h->numer);
+                return true;
+              }
+          }
       }
     }
   return false;
@@ -413,10 +413,10 @@ void FractionField::internal_add_to(ring_elem &a, ring_elem &b) const
       R_->add_to(f->numer, tmp);
       R_->mult_to(f->denom, g->denom);
       if (R_->is_zero(f->denom))
-	{
-	  set_non_unit_frac(g->denom);
-	  return;
-	}
+        {
+          set_non_unit_frac(g->denom);
+          return;
+        }
     }
   simplify(f);
   remove(b);
@@ -436,10 +436,10 @@ void FractionField::internal_subtract_to(ring_elem &a, ring_elem &b) const
       R_->subtract_to(f->numer, tmp);
       R_->mult_to(f->denom, g->denom);
       if (R_->is_zero(f->denom))
-	{
-	  set_non_unit_frac(g->denom);
-	  return;
-	}
+        {
+          set_non_unit_frac(g->denom);
+          return;
+        }
     }
   simplify(f);
   remove(b);
@@ -473,7 +473,7 @@ ring_elem FractionField::add(const ring_elem a, const ring_elem b) const
       R_->add_to(top, tmp);
       bottom = R_->mult(f->denom, g->denom);
       if (R_->is_zero(bottom))
-	return set_non_unit_frac(f->denom);
+        return set_non_unit_frac(f->denom);
     }
   frac_elem *result = make_elem(top, bottom);
   return FRAC_RINGELEM(result);
@@ -497,7 +497,7 @@ ring_elem FractionField::subtract(const ring_elem a, const ring_elem b) const
       R_->subtract_to(top, tmp);
       bottom = R_->mult(f->denom, g->denom);
       if (R_->is_zero(bottom))
-	return set_non_unit_frac(f->denom);
+        return set_non_unit_frac(f->denom);
     }
   frac_elem *result = make_elem(top, bottom);
   return FRAC_RINGELEM(result);
@@ -524,20 +524,20 @@ ring_elem FractionField::power(const ring_elem a, int n) const
       bottom = R_->power(f->denom, n);
 
       if (R_->is_zero(bottom))
-	return set_non_unit_frac(f->denom);
+        return set_non_unit_frac(f->denom);
     }
   else
     {
       if (R_->is_zero(f->numer))
-	{
-	  ERROR("attempt to divide by zero");
-	  return zero();
-	}
+        {
+          ERROR("attempt to divide by zero");
+          return zero();
+        }
       top = R_->power(f->denom, -n);
       bottom = R_->power(f->numer, -n);
 
       if (R_->is_zero(bottom))
-	return set_non_unit_frac(f->numer);
+        return set_non_unit_frac(f->numer);
     }
 
 
@@ -553,16 +553,16 @@ ring_elem FractionField::power(const ring_elem a, mpz_t n) const
       bottom = R_->power(f->denom, n);
 
       if (R_->is_zero(bottom))
-	return set_non_unit_frac(f->denom);
+        return set_non_unit_frac(f->denom);
 
     }
   else
     {
       if (R_->is_zero(f->numer))
-	{
-	  ERROR("attempt to divide by zero");
-	  return zero();
-	}
+        {
+          ERROR("attempt to divide by zero");
+          return zero();
+        }
 
       mpz_neg(n, n);
       top = R_->power(f->denom, n);
@@ -570,7 +570,7 @@ ring_elem FractionField::power(const ring_elem a, mpz_t n) const
       mpz_neg(n, n);
 
       if (R_->is_zero(bottom))
-	return set_non_unit_frac(f->numer);
+        return set_non_unit_frac(f->numer);
     }
 
   return FRAC_RINGELEM(make_elem(top, bottom));
@@ -598,7 +598,7 @@ ring_elem FractionField::divide(const ring_elem a, const ring_elem b) const
 }
 
 void FractionField::syzygy(const ring_elem a, const ring_elem b,
-			   ring_elem &x, ring_elem &y) const
+                           ring_elem &x, ring_elem &y) const
 {
   x = FractionField::from_int(1);
   y = FractionField::divide(a,b);
@@ -662,8 +662,8 @@ void FractionField::degree_weights(const ring_elem, M2_arrayint, int &lo, int &h
   lo = hi = 0;
 }
 
-ring_elem FractionField::homogenize(const ring_elem a, int v, int deg, 
-				    M2_arrayint wts) const
+ring_elem FractionField::homogenize(const ring_elem a, int v, int deg,
+                                    M2_arrayint wts) const
 {
   int d1,d2,lo1,lo2;
   ring_elem top, bottom;
@@ -718,5 +718,5 @@ ring_elem FractionField::get_terms(int nvars0, const ring_elem f, int, int) cons
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

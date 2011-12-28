@@ -28,14 +28,14 @@ public:
 
   virtual void remove_gb() {}
 
-  GBComputation *replace_GB(GBComputation *G0) { 
+  GBComputation *replace_GB(GBComputation *G0) {
     GBComputation *result = G;
     set_status(G->status());
     G = G0;
     return result;
   }
 
-  virtual GBComputation * cast_to_GBComputation() { return this;} 
+  virtual GBComputation * cast_to_GBComputation() { return this;}
 
   virtual const Ring * get_ring() const { return G->get_ring(); }
 
@@ -74,8 +74,8 @@ public:
   }
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient) {
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient) {
     return G->matrix_lift(m,result_remainder,result_quotient);
   }
 
@@ -98,4 +98,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

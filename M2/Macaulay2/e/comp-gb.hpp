@@ -36,17 +36,17 @@ public:
 
   virtual void remove_gb() = 0; // Should free all space associated with GB
 
-  virtual GBComputation * cast_to_GBComputation() { return this;} 
+  virtual GBComputation * cast_to_GBComputation() { return this;}
 
   static GBComputation *choose_gb(const Matrix *m,
-				  M2_bool collect_syz,
-				  int n_rows_to_keep,
-				  M2_arrayint gb_weights,
-				  M2_bool use_max_degree,
-				  int max_degree,
-				  int algorithm,
-				  int strategy,
-				  int max_reduction_count = 10);
+                                  M2_bool collect_syz,
+                                  int n_rows_to_keep,
+                                  M2_arrayint gb_weights,
+                                  M2_bool use_max_degree,
+                                  int max_degree,
+                                  int algorithm,
+                                  int strategy,
+                                  int max_reduction_count = 10);
   // Values for algorithm and strategy are documented in engine.h
   // Returns NULL if an error occurs
 
@@ -83,8 +83,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) = 0;
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient) = 0;
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient) = 0;
 
   virtual int contains(const Matrix *m) = 0;
 
@@ -102,4 +102,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

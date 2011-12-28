@@ -16,7 +16,7 @@ class MemoryBlock : public our_new_delete
   slab *current_slab;
   slab *last_slab;
   T *next_free; /* points into current_slab */
-  
+
  private:
   slab *new_slab();
 
@@ -27,7 +27,7 @@ class MemoryBlock : public our_new_delete
   void reset();
 
   T * reserve(int len); // returns space for len T's.
-  void intern(int len); // increments 
+  void intern(int len); // increments
   T * allocate(int len=1); // reserve and intern
 
   int n_slabs() const;
@@ -87,15 +87,15 @@ T * MemoryBlock<T,NSLAB>::reserve(int len)
   if (next_free + len > current_slab->block + NSLAB)
     {
       if (current_slab->next == 0)
-	{
-	  last_slab->next = new slab;
-	  last_slab = last_slab->next;
-	  current_slab = last_slab;
-	}
+        {
+          last_slab->next = new slab;
+          last_slab = last_slab->next;
+          current_slab = last_slab;
+        }
       else
-	{
-	  current_slab = current_slab->next;
-	}
+        {
+          current_slab = current_slab->next;
+        }
       next_free = current_slab->block;
     }
   return next_free;

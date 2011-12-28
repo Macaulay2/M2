@@ -19,11 +19,11 @@ NTL::mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
   for (int i=0; i<ncols; i++)
     for (int j=0; j<nrows; j++)
       {
-	ring_elem a;
-	if (A->get_entry(i,j,a))
-	  {
-	    mat_ZZ_set_entry(X,j,i,a.get_mpz());
-	  }
+        ring_elem a;
+        if (A->get_entry(i,j,a))
+          {
+            mat_ZZ_set_entry(X,j,i,a.get_mpz());
+          }
       }
 
   return X;
@@ -42,11 +42,11 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const NTL::mat_ZZ *A)
   for (int i=0; i<ncols; i++)
     for (int j=0; j<nrows; j++)
       {
-	if ((*A)(i+1,j+1) != 0)
-	  {
-	    mat_ZZ_get_entry(A,i,j,a);
-	    B->set_entry(j,i,ring_elem(a));
-	  }
+        if ((*A)(i+1,j+1) != 0)
+          {
+            mat_ZZ_get_entry(A,i,j,a);
+            B->set_entry(j,i,ring_elem(a));
+          }
       }
 
   return B;
@@ -80,7 +80,7 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
     printf("LLL: using strategy %d\n", strategy);
   NTL::mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
   NTL::mat_ZZ *V = (U ? mutableMatrix_to_NTL_mat_ZZ(U) : 0);
-    
+
   switch (strategy) {
   case 2:
     if (!V)
@@ -212,24 +212,24 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
   /* Put this back into M */
   mpz_t a;
   mpz_init(a);
-  
+
   for (int j=0; j<ncols; j++)
     for (int i=0; i<nrows; i++)
       {
-	mat_ZZ_get_entry(A,j,i,a);
-	ring_elem b = globalZZ->from_int(a);
-	M->set_entry(i,j,b);
+        mat_ZZ_get_entry(A,j,i,a);
+        ring_elem b = globalZZ->from_int(a);
+        M->set_entry(i,j,b);
       }
 
   if (U)
     {
       for (int j=0; j<ncols; j++)
-	for (int i=0; i<ncols; i++)
-	  {
-	    mat_ZZ_get_entry(V,j,i,a);
-	    ring_elem b = globalZZ->from_int(a);
-	    U->set_entry(i,j,b);
-	  }
+        for (int i=0; i<ncols; i++)
+          {
+            mat_ZZ_get_entry(V,j,i,a);
+            ring_elem b = globalZZ->from_int(a);
+            U->set_entry(i,j,b);
+          }
     }
   delete A;
   if (V) delete V;
@@ -237,5 +237,5 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
 }
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

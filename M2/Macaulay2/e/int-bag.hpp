@@ -11,7 +11,7 @@ class int_bag : public our_new_delete
     int b_elem;
     void *b_ptr;
   } val;
-  intarray mon;			// varpower representation
+  intarray mon;                 // varpower representation
 
 public:
   int_bag() : mon() { memset(&val,0,sizeof(val)); }
@@ -36,4 +36,5 @@ typedef int_bag Bag;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -7,4 +7,5 @@ pm<int,long> yyyy(0,0,n);
 
 // Local Variables:
 // compile-command: "cd $M2BUILDDIR/Macaulay2/e && make pm-test.o"
+// indent-tabs-mode: nil
 // End:

@@ -22,8 +22,8 @@
 
 //typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef long monomial_word; // Used for all types of monomials.  Is this OK?
-typedef monomial_word * packed_monomial; 
-typedef const monomial_word * const_packed_monomial; 
+typedef monomial_word * packed_monomial;
+typedef const monomial_word * const_packed_monomial;
   // format: [hash,component,e1,...,envars],
   // where [e1,...,envars] is packed.
   // OR: [hash,component,weight,e1,...,envars]
@@ -35,7 +35,7 @@ typedef const monomial_word * const_packed_monomial;
 // [hashval p0 p1 ... pr]
 // Multiplication: as long as the answer is in range,
 //   it is just addition in each slot
-// Comparison: Either: 
+// Comparison: Either:
 //   either lex in order p0 --> p1 --> ...
 //   or grevlex in the order pr --> p(r-1) --> ...
 // Component:
@@ -48,7 +48,7 @@ typedef const monomial_word * const_packed_monomial;
 //   b. the variable exponents are packed: either 8 bits, 16 bits, etc.
 //   c. weight vector values take the same space as a variable
 //      these come first (lex) or last (grevlex).  In the later case
-//      the value of the weight vector is negated so that larger values 
+//      the value of the weight vector is negated so that larger values
 //      come first
 //      The total degree is included as a weight vector value?
 //   d. component order can be first/last, up/down. In half the cases, the negative
@@ -56,7 +56,7 @@ typedef const monomial_word * const_packed_monomial;
 // Examples:
 // 1. grevlex on 7 vars with an elimination order (first 3 vars)
 //    [hashval -component {p0,p1,p2,p3,p4,p5,p6,wt(1,1,1)} {-degree,unused:7}]
-// 2. 
+// 2.
 class MonomialInfoPacked : public our_new_delete
 {
   int nbytes; // per monomial
@@ -91,7 +91,7 @@ public:
   long hash_value(const_packed_monomial m) const { return *m; }
     // This hash value is an ADDITIVE hash (trick due to A. Steel)
 
-  void copy(const_packed_monomial src, packed_monomial target) const { 
+  void copy(const_packed_monomial src, packed_monomial target) const {
     memcpy(target, src, nbytes);
   }
 
@@ -121,7 +121,7 @@ public:
   }
 
   bool one(long comp, packed_monomial result) const {
-    // Pack the vector (0,...,0,comp) with nvars zeroes.  
+    // Pack the vector (0,...,0,comp) with nvars zeroes.
     // Hash value = 0. ??? Should the hash-function take component into account ???
     memset(result, 0, nbytes);
     set_component(comp, result);
@@ -129,7 +129,7 @@ public:
   }
 
   monomial_word get_exponent(const_packed_monomial m, int i) const {
-    return 
+    return
   }
 
   void show() const;
@@ -142,7 +142,7 @@ public:
   }
 
   void set_component(long component, packed_monomial m) const { m[1] = component; }
-  
+
   long get_component(const_packed_monomial m) const { return m[1]; }
 
   bool from_exponent_vector(const_ntuple_monomial e, long comp, packed_monomial result) const {
@@ -151,9 +151,9 @@ public:
     result[1] = comp;
     for (int i=0; i<nvars; i++)
       {
-	result[2+i] = e[i];
-	if (e[i] > 0)
-	  result[0] += hashfcn[i] * e[i];
+        result[2+i] = e[i];
+        if (e[i] > 0)
+          result[0] += hashfcn[i] * e[i];
       }
     return true;
   }
@@ -175,12 +175,12 @@ public:
     int len = 0;
     for (int i=nvars-1; i>=0; i--)
       {
-	if (*--m1 > 0)
-	  {
-	    *t++ = i;
-	    *t++ = *m1;
-	    len++;
-	  }
+        if (*--m1 > 0)
+          {
+            *t++ = i;
+            *t++ = *m1;
+            len++;
+          }
       }
     *result = len;
   }
@@ -191,17 +191,17 @@ public:
     result[1] = comp;
     for (int i=0; i<nvars; i++)
       {
-	result[2+i] = 0;
+        result[2+i] = 0;
       }
     for (index_varpower_monomial j = m; j.valid(); ++j)
       {
-	int v = j.var();
-	int e = j.exponent();
-	result[2 + v] = e;
-	if (e == 1)
-	  result[0] += hashfcn[v];
-	else
-	  result[0] += e * hashfcn[v];
+        int v = j.var();
+        int e = j.exponent();
+        result[2 + v] = e;
+        if (e == 1)
+          result[0] += hashfcn[v];
+        else
+          result[0] += e * hashfcn[v];
       }
   }
 
@@ -213,7 +213,7 @@ public:
       if (mask & (*m++)) return false;
     return true;
   }
-  
+
 
   bool mult(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
     unchecked_mult(m,n,result);
@@ -224,10 +224,10 @@ public:
 
   void show(const_packed_monomial m) const;
 
-  bool unnecessary(const_packed_monomial m, 
-		   const_packed_monomial p1,
-		   const_packed_monomial p2,
-		   const_packed_monomial lcm) const
+  bool unnecessary(const_packed_monomial m,
+                   const_packed_monomial p1,
+                   const_packed_monomial p2,
+                   const_packed_monomial lcm) const
     // Returns true if the corresponding pair could be removed
     // This is essentially the Buchberger-Moeller criterion
     // Assumptions: lcm(p1,p2) = lcm.
@@ -236,7 +236,7 @@ public:
     //   (b) if m does not divide lcm, return false
     //   (c) need that (A) lcm(p1,m) != lcm and that (B) lcm(p2,m) != lcm
     //       (in these two cases, we will have already removed one of the other
-    //        two pairs: (p1,m), (p2,m).  Note that in any case, 
+    //        two pairs: (p1,m), (p2,m).  Note that in any case,
     //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
     //        if A and B then return true
   {
@@ -248,19 +248,19 @@ public:
     lcm += 2;
     for (int i=0; i<nvars; i++)
       {
-	if (m[i] > lcm[i]) return false;
-	if (m[i] == lcm[i]) continue;
-	if (!A && p1[i] < lcm[i]) {A = true; continue;}
-	if (!B && p2[i] < lcm[i]) {B = true; }
+        if (m[i] > lcm[i]) return false;
+        if (m[i] == lcm[i]) continue;
+        if (!A && p1[i] < lcm[i]) {A = true; continue;}
+        if (!B && p2[i] < lcm[i]) {B = true; }
       }
     return (A && B);
   }
 
   void quotient_as_vp(const_packed_monomial a,
-		      const_packed_monomial b,
-		      varpower_monomial result,
-		      int &deg, 
-		      bool &are_disjoint) const
+                      const_packed_monomial b,
+                      varpower_monomial result,
+                      int &deg,
+                      bool &are_disjoint) const
   {
     // sets result, deg, are_disjoint
     deg = 0;
@@ -271,16 +271,16 @@ public:
     varpower_word *r = result+1;
     for (int i=nvars-1; i>=0; --i)
       {
-	if (a[i] != 0 && b[i] != 0)
-	  are_disjoint = false;
-	long c = a[i] - b[i];
-	if (c > 0)
-	  {
-	    *r++ = i;
-	    *r++ = c;
-	    deg += c;
-	    len++;
-	  }
+        if (a[i] != 0 && b[i] != 0)
+          are_disjoint = false;
+        long c = a[i] - b[i];
+        if (c > 0)
+          {
+            *r++ = i;
+            *r++ = c;
+            deg += c;
+            len++;
+          }
       }
     result[0] = len;
   }
@@ -290,4 +290,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

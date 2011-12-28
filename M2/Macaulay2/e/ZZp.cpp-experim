@@ -37,7 +37,7 @@ bool Z_mod::initialize_Z_mod(int p)
   for (i=1, n=prim_root; i<P; i++, n=(n*prim_root)%P)
     {
       log_table[n] = i;  // i = log_(base prim_root)(n)
-      exp_table[i] = n;  // n = (prim_root)^i 
+      exp_table[i] = n;  // n = (prim_root)^i
     }
   // 0 is represented by 0.
   exp_table[0] = 0;
@@ -75,7 +75,7 @@ int Z_mod::to_int(int f) const
 }
 
 int Z_mod::coerce_to_int(ring_elem a) const
-{ 
+{
   return to_int(a.int_val);
 }
 
@@ -86,19 +86,19 @@ int Z_mod::discrete_log(ring_elem a) const
   return a.int_val;
 }
 
-void Z_mod::elem_text_out(buffer &o, 
-			const ring_elem a, 
-			bool p_one, 
-			bool p_plus, 
-			bool p_parens) const
+void Z_mod::elem_text_out(buffer &o,
+                        const ring_elem a,
+                        bool p_one,
+                        bool p_plus,
+                        bool p_parens) const
 {
   int n = to_int(a);
-  if (n < 0) 
+  if (n < 0)
     {
       o << '-';
       n = -n;
     }
-  else if (p_plus) 
+  else if (p_plus)
     o << '+';
   if (p_one || n != 1) o << n;
 }
@@ -220,7 +220,7 @@ ring_elem Z_mod::subtract(const ring_elem f, const ring_elem g) const
 {
   if (g == 0) return f;
   if (f == 0) return negate(g);
-  
+
   int e1 = exp_table[f.int_val];
   int e2 = exp_table[g.int_val];
   int n = e1 - e2;
@@ -271,7 +271,7 @@ ring_elem Z_mod::divide(const ring_elem f, const ring_elem g) const
 }
 
 void Z_mod::syzygy(const ring_elem a, const ring_elem b,
-		   ring_elem &x, ring_elem &y) const
+                   ring_elem &x, ring_elem &y) const
 {
   x = Z_mod::from_int(1);
   y = Z_mod::divide(a,b);

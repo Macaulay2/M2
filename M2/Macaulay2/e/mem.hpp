@@ -7,7 +7,7 @@
 #include "../system/mutex.h"
 #include <strings.h>
 
-//2*2^NDOUBLES = Largest stash size.  
+//2*2^NDOUBLES = Largest stash size.
 const int NDOUBLES = 25;
 //const int slab_size = 2040;
 const int slab_size = 2032;
@@ -37,7 +37,7 @@ class slab : public our_new_delete
   static int n_slabs;
   slab *next;
   char s[slab_size];
-  
+
   slab() : next(NULL) { n_slabs++; }
   ~slab() { n_slabs--; }
 };
@@ -57,21 +57,21 @@ private:
   stash *next;
 
   const char *name;
-  size_t element_size;		// In bytes
+  size_t element_size;          // In bytes
   //n_per_slab provides the number of elements of element_size in each slab.  If 0, elements are new'ed directly.
   int n_per_slab;
 
-  //List of slabs 
+  //List of slabs
   //Uses slab::next to indicate next element in list
   // This will be 0 if n_per_slab is 0.
-  slab *slabs;			
- 
+  slab *slabs;
+
   //Free list for this stash.
   //Currently: if n_per_slab is 0, then elements are deleted'd directly.
   //Note that this essentially a list of the elements from various slabs.
   //a pointer to the next element in the list is in the first sizeof(void*) bytes.
   void *free_list;
-                                   
+
 
   // statistics
   size_t n_allocs;
@@ -81,7 +81,7 @@ private:
 
   // private routines
   void chop_slab();
-  
+
   //spinlock for modifying member lists
   spinLock list_spinlock;
 };
@@ -94,18 +94,18 @@ inline void *stash::new_elem()
   n_allocs++;
   n_inuse++;
   if (n_inuse > highwater) highwater = n_inuse;
-  if (free_list == NULL) 
+  if (free_list == NULL)
     {
-      if (n_per_slab == 0) 
-	{
-	  void *result = newarray_clear(char,element_size);
-	  //allocated_amount += element_size;
-	  releaseSpinLock(&list_spinlock);
-	  return result;
-	}
+      if (n_per_slab == 0)
+        {
+          void *result = newarray_clear(char,element_size);
+          //allocated_amount += element_size;
+          releaseSpinLock(&list_spinlock);
+          return result;
+        }
       chop_slab();
     }
-  assert(free_list != NULL);	// chop_slab should not let this happen.
+  assert(free_list != NULL);    // chop_slab should not let this happen.
   void *result = free_list;
   free_list = *(reinterpret_cast<void **>(free_list));
   releaseSpinLock(&list_spinlock);
@@ -121,8 +121,8 @@ inline void stash::delete_elem(void *p)
   //  if (trace_bad_deletes)
   //    {
   //      for (void *q = free_list; q != NULL; q = *(reinterpret_cast<void **>(q)))
-  //	if (q == p)
-  //	  assert(0);
+  //    if (q == p)
+  //      assert(0);
   //    }
 
   n_inuse--;
@@ -135,7 +135,7 @@ inline void stash::delete_elem(void *p)
       return;
     }
   acquireSpinLock(&list_spinlock);
-  bzero(p,element_size);	// we clear this element because it's free, and it may contain words that look like pointers to gc
+  bzero(p,element_size);        // we clear this element because it's free, and it may contain words that look like pointers to gc
   *(reinterpret_cast<void **>(p)) = free_list;
   free_list = p;
   releaseSpinLock(&list_spinlock);
@@ -155,7 +155,7 @@ public:
   ~doubling_stash();
   //Get a new element of given size.  Essentially this just dispatches to the correct stash
   void *new_elem(size_t size);
-  //Delete an element of a given size.  Essentially this just deletes an element 
+  //Delete an element of a given size.  Essentially this just deletes an element
   void delete_elem(void *p);
   //return the allocated size.
   size_t allocated_size(void *p);
@@ -182,4 +182,5 @@ static inline void engine_dealloc(size_t n)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

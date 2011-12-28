@@ -9,11 +9,11 @@ class MonomialOrderMatrix
 {
   int nvars;
   long **order;
-  
+
 public:
   MonomialOrderMatrix(const MonomialOrdering *mo);
   ~MonomialOrderMatrix();
-  
+
   const long *part(int i) const { assert(i < nvars); return order[i]; }
   int compare(long *m1, long *m2) const;
 
@@ -25,17 +25,17 @@ public:
 
   MonomialOrdering *toMonomialOrdering() const;// TODO
 
-// Routines needed: 
+// Routines needed:
   int facet_compare(long *mon1, long *mon2); // TODO
-  
+
 };
 
 
 ////////////////////////////////
 
 GBWalker::GBWalker(MarkedGB *G0,
-		   long **order1,
-		   long **order2)
+                   long **order1,
+                   long **order2)
   :  R(G0->get_gb_ring()),
      F(G0->get_ambient_FreeModule()),
      G(G0),
@@ -45,17 +45,17 @@ GBWalker::GBWalker(MarkedGB *G0,
 {
 
   // TODO: need to set what else?
-  // 
+  //
 }
 
 
 GBWalker::GBWalker(const Matrix *gb_under_order1,
-		   const MonomialOrdering *order1)
+                   const MonomialOrdering *order1)
 {
 }
 
 GBWalker * GBWalker::create(const Matrix *gb_under_order1,
-			    const MonomialOrdering *order1)
+                            const MonomialOrdering *order1)
 {
   // TODO MES: TO WRITE
   return new GBWalker(gb_under_order1, order1);
@@ -79,24 +79,24 @@ GBComputation * GBWalker::make_gb(const Matrix *M) const
   for (int i=0; i<R->n_vars(); i++) weights->array[i] = 1;
 
   GBComputation *G0 = GBComputation::choose_gb(M,
-					      false, // collect syz
-					      -1,
-					      weights,
-					      false,
-					      -1,
-					      0,
-					      0
-					      /* , max_reduction_count */
-					      );
+                                              false, // collect syz
+                                              -1,
+                                              weights,
+                                              false,
+                                              -1,
+                                              0,
+                                              0
+                                              /* , max_reduction_count */
+                                              );
   G0->set_stop_conditions(false,
-			 NULL,
-			 -1,
-			 -1, // syzygy limit
-			 -1,
-			 -1,
-			 -1,
-			 false,
-			 NULL);
+                         NULL,
+                         -1,
+                         -1, // syzygy limit
+                         -1,
+                         -1,
+                         -1,
+                         false,
+                         NULL);
   return G0;
 }
 
@@ -125,7 +125,7 @@ bool GBWalker::compute_next_w()
 
 //////////////////////////////////////////////////////
 // GBComputation and Computation inherited routines //
-//////////////////////////////////////////////////////  
+//////////////////////////////////////////////////////
 void GBWalker::remove_gb()
 {
   // MES: TO WRITE
@@ -140,12 +140,12 @@ void GBWalker::start_computation()
     switch (state) {
     case STATE_compute_w:
       if (!compute_next_w())
-	{
-	  // We are done!
-	  state = STATE_done;
-	  set_status(COMP_DONE);
-	  return;
-	}
+        {
+          // We are done!
+          state = STATE_done;
+          set_status(COMP_DONE);
+          return;
+        }
       inwwG = G->get_parallel_lead_terms(ww);
       gb_inwwG = make_gb(inwwG);
       state = STATE_do_gb;
@@ -153,18 +153,18 @@ void GBWalker::start_computation()
       // Now compute the GB object.  If not interrupted, go on:
       gb_inwwG->start_computation();
       if (gb_inwwG->status() == COMP_INTERRUPTED)
-	{
-	  set_status(COMP_INTERRUPTED);
-	  return;
-	}
+        {
+          set_status(COMP_INTERRUPTED);
+          return;
+        }
       next_to_reduce = 0;
       state = STATE_reduce;
     case STATE_reduce:
       while (next_to_reduce < 0) // TODO: consider the top of the loop
-	{
-	  H =  G->matrix_remainder(gb_inwwG->get_gb()); // Not quite: need to subtract...
-	  next_to_reduce++;
-	}
+        {
+          H =  G->matrix_remainder(gb_inwwG->get_gb()); // Not quite: need to subtract...
+          next_to_reduce++;
+        }
       state = STATE_autoreduce;
     case STATE_autoreduce:
       G->remove_gb();
@@ -179,9 +179,9 @@ void GBWalker::start_computation()
 }
 
 const PolynomialRing *GBWalker::get_ring() const
-{ 
+{
   // MES: TO WRITE
-  return 0; 
+  return 0;
 }
 
 Computation /* or null */ *GBWalker::set_hilbert_function(const RingElement *h)
@@ -233,9 +233,9 @@ const Matrix /* or null */ *GBWalker::matrix_remainder(const Matrix *m)
 }
 
 M2_bool GBWalker::matrix_lift(const Matrix *m,
-		 const Matrix /* or null */ **result_remainder,
-		 const Matrix /* or null */ **result_quotient
-		 )
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
+                 )
 {
   // MES: TO WRITE, should this be written?
   *result_remainder = 0;
@@ -273,4 +273,5 @@ int GBWalker::complete_thru_degree() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// indent-tabs-mode: nil
 // End:

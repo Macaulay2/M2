@@ -28,58 +28,58 @@ unsigned long int IM2_FreeModule_hash(const FreeModule *F); /* TODO */
 const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank)
 {
      try {
-	  if (rank < 0)
-	    {
-	      ERROR("freemodule rank must be non-negative");
-	      return 0;
-	    }
-	  return R->make_FreeModule(rank);
+          if (rank < 0)
+            {
+              ERROR("freemodule rank must be non-negative");
+              return 0;
+            }
+          return R->make_FreeModule(rank);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R, 
-						 M2_arrayint degs)
+const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
+                                                 M2_arrayint degs)
 {
      try {
-	  const Monoid *D = R->degree_monoid();
-	  unsigned int eachdeg = D->n_vars();
-	  if (eachdeg == 0) {
-	       ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
-	       return NULL;
-	  }
-	  unsigned int rank = degs->len / eachdeg;
-	  if (rank * eachdeg != degs->len)
-	    {
-	      ERROR("inappropriate number of degrees");
-	      return 0;
-	    }
-	  int *deg = D->make_one();
-	  FreeModule *F = R->make_FreeModule();
-	  for (unsigned int i=0; i<rank; i++)
-	    {
-	      D->from_expvector(degs->array + i*eachdeg, deg);
-	      F->append(deg);
-	    }
-	  return F;
+          const Monoid *D = R->degree_monoid();
+          unsigned int eachdeg = D->n_vars();
+          if (eachdeg == 0) {
+               ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
+               return NULL;
+          }
+          unsigned int rank = degs->len / eachdeg;
+          if (rank * eachdeg != degs->len)
+            {
+              ERROR("inappropriate number of degrees");
+              return 0;
+            }
+          int *deg = D->make_one();
+          FreeModule *F = R->make_FreeModule();
+          for (unsigned int i=0; i<rank; i++)
+            {
+              D->from_expvector(degs->array + i*eachdeg, deg);
+              F->append(deg);
+            }
+          return F;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
 {
      try {
-	  return FreeModule::make_schreyer(m);
+          return FreeModule::make_schreyer(m);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -94,7 +94,7 @@ M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
     {
       D->to_expvector(F->degree(i), exp);
       for (int j=0; j<D->n_vars(); j++)
-	result->array[next++] = exp[j];
+        result->array[next++] = exp[j];
     }
   deletearray(exp);
   return result;
@@ -105,8 +105,8 @@ const Matrix * IM2_FreeModule_get_schreyer(const FreeModule *F)
   return F->get_induced_order();
 }
 
-M2_bool IM2_FreeModule_is_equal(const FreeModule *F, 
-				      const FreeModule *G)
+M2_bool IM2_FreeModule_is_equal(const FreeModule *F,
+                                      const FreeModule *G)
 /* Determines if F and G are the same graded module.  If one has a
    Schreyer order and one does not, but their ranks and degrees are the
    same, then they are considered equal by this routine. */
@@ -116,68 +116,69 @@ M2_bool IM2_FreeModule_is_equal(const FreeModule *F,
 
 
 const FreeModule /* or null */ * IM2_FreeModule_sum(const FreeModule *F,
-					    const FreeModule *G)
+                                            const FreeModule *G)
 {
   return F->direct_sum(G);
 }
 
 const FreeModule /* or null */ * IM2_FreeModule_tensor(const FreeModule *F,
-					       const FreeModule *G)
+                                               const FreeModule *G)
 {
      try {
-	  return F->tensor(G);
+          return F->tensor(G);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F)
 {
      try {
-	  return F->transpose();
+          return F->transpose();
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const FreeModule * IM2_FreeModule_symm(int n, const FreeModule *F)
 {
      try {
-	  return F->symm(n);
+          return F->symm(n);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const FreeModule * IM2_FreeModule_exterior(int n, const FreeModule *F)
 {
      try {
-	  return F->exterior(n);
+          return F->exterior(n);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-const FreeModule * IM2_FreeModule_submodule(const FreeModule *F, 
-					    M2_arrayint selection)
+const FreeModule * IM2_FreeModule_submodule(const FreeModule *F,
+                                            M2_arrayint selection)
 {
      try {
-	  return F->sub_space(selection);
+          return F->sub_space(selection);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

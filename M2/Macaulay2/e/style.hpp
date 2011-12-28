@@ -25,7 +25,7 @@ typedef int *ptr_to_int;
 typedef unsigned int *ptr_to_unsigned_int;
 
 #if defined(_WIN32)
-template <class T> 
+template <class T>
 inline void swap(T &t1, T &t2)
 {
   T tmp = t1;
@@ -50,4 +50,5 @@ extern const int heap_size[GEOHEAP_SIZE];
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

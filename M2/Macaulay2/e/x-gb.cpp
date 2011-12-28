@@ -23,42 +23,42 @@ void test_over_RR_or_CC(const Ring *R)
       (P != 0 && (P->getCoefficients()->is_RRR() || P->getCoefficients()->is_CCC())))
     {
       if (!warning_given_for_gb_or_res_over_RR_or_CC)
-	{
-	  buffer o;
-	  o << "-- warning: experimental computation over inexact field begun" << newline;
-	  o << "--          results not reliable (one warning given per session)"  << newline;
-	  emit(o.str());
-	  warning_given_for_gb_or_res_over_RR_or_CC = true;
-	}
+        {
+          buffer o;
+          o << "-- warning: experimental computation over inexact field begun" << newline;
+          o << "--          results not reliable (one warning given per session)"  << newline;
+          emit(o.str());
+          warning_given_for_gb_or_res_over_RR_or_CC = true;
+        }
     }
 }
 ////////////////////////////////////
 // new GB computations /////////////
 ////////////////////////////////////
 EngineComputationOrNull *rawGB(const Matrix *m,
-			       M2_bool collect_syz,
-			       int n_rows_to_keep,
-			       M2_arrayint gb_weights,
-			       M2_bool use_max_degree,
-			       int max_degree,
-			       int algorithm,
-			       int strategy,
-			       int max_reduction_count) /* drg: connected rawGB */
+                               M2_bool collect_syz,
+                               int n_rows_to_keep,
+                               M2_arrayint gb_weights,
+                               M2_bool use_max_degree,
+                               int max_degree,
+                               int algorithm,
+                               int strategy,
+                               int max_reduction_count) /* drg: connected rawGB */
 {
   // Choose the correct computation here.
   try {
     clear_emit_size();
     return EngineGBComputation::create(
-	GBBComputation::choose_gb(
-		 m,
-		 collect_syz,
-		 n_rows_to_keep,
-		 gb_weights,
-		 use_max_degree,
-		 max_degree,
-		 algorithm,
-		 strategy,
-		 max_reduction_count));
+        GBBComputation::choose_gb(
+                 m,
+                 collect_syz,
+                 n_rows_to_keep,
+                 gb_weights,
+                 use_max_degree,
+                 max_degree,
+                 algorithm,
+                 strategy,
+                 max_reduction_count));
   } catch (exc::engine_error e) {
     ERROR(e.what());
     return NULL;
@@ -67,7 +67,7 @@ EngineComputationOrNull *rawGB(const Matrix *m,
 
 EngineComputationOrNull *
 rawGBSetHilbertFunction(EngineComputation *C,
-			const RingElement *h)
+                        const RingElement *h)
 {
   try {
     clear_emit_size();
@@ -84,32 +84,32 @@ rawGBSetHilbertFunction(EngineComputation *C,
 }
 
 void rawComputationSetStop(EngineComputation *G,
-			   M2_bool always_stop,
-			   M2_arrayint degree_limit,
-			   int basis_element_limit,
-			   int syzygy_limit,
-			   int pair_limit,
-			   int codim_limit,
-			   int subring_limit,
-			   M2_bool just_min_gens,
-			   M2_arrayint length_limit)
+                           M2_bool always_stop,
+                           M2_arrayint degree_limit,
+                           int basis_element_limit,
+                           int syzygy_limit,
+                           int pair_limit,
+                           int codim_limit,
+                           int subring_limit,
+                           M2_bool just_min_gens,
+                           M2_arrayint length_limit)
 /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
 /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 {
   // No errors can surface here.
   clear_emit_size();
   G->set_stop_conditions(always_stop,
-			 degree_limit,
-			 basis_element_limit,
-			 syzygy_limit,
-			 pair_limit,
-			 codim_limit,
-			 subring_limit,
-			 just_min_gens,
-			 length_limit);
+                         degree_limit,
+                         basis_element_limit,
+                         syzygy_limit,
+                         pair_limit,
+                         codim_limit,
+                         subring_limit,
+                         just_min_gens,
+                         length_limit);
 }
 
-EngineComputationOrNull* 
+EngineComputationOrNull*
 rawStartEngineComputation(EngineComputation *C)
   /* start or continue the computation */
 {
@@ -119,39 +119,39 @@ rawStartEngineComputation(EngineComputation *C)
 
     if (M2_gbTrace == 15)
       {
-	ComputationStatusCode ret = C->status();
-	switch (ret) {
-	case COMP_DONE_DEGREE_LIMIT:
-	  emit_line("computation stopped at degree limit");
-	  break;
-	case COMP_DONE:
-	  emit_line("computation of GB completed");
-	  break;
-	case COMP_DONE_PAIR_LIMIT:
-	  emit_line("computation stopped at pair limit");
-	  break;
-	case COMP_NEED_RESIZE:
-	case COMP_ERROR:
-	case COMP_INTERRUPTED:
-	case COMP_NOT_STARTED:
-	case COMP_INITIAL_STOP:
-	case COMP_DONE_LENGTH_LIMIT:
-	case COMP_DONE_SYZYGY_LIMIT:
-	case COMP_DONE_GB_LIMIT:
-	case COMP_DONE_SYZ_LIMIT:
-	case COMP_DONE_CODIM:
-	case COMP_DONE_MIN_GENS:
-	case COMP_DONE_STEPS:
-	case COMP_DONE_SUBRING_LIMIT:
-	case COMP_COMPUTING:
-	case COMP_OVERFLOWED:
-	  emit_line("computation stopped for some good reason");
-	  break;
-	default:
-	  emit_line("incorrect status code encountered");
-	  break;
-	}
-      }	
+        ComputationStatusCode ret = C->status();
+        switch (ret) {
+        case COMP_DONE_DEGREE_LIMIT:
+          emit_line("computation stopped at degree limit");
+          break;
+        case COMP_DONE:
+          emit_line("computation of GB completed");
+          break;
+        case COMP_DONE_PAIR_LIMIT:
+          emit_line("computation stopped at pair limit");
+          break;
+        case COMP_NEED_RESIZE:
+        case COMP_ERROR:
+        case COMP_INTERRUPTED:
+        case COMP_NOT_STARTED:
+        case COMP_INITIAL_STOP:
+        case COMP_DONE_LENGTH_LIMIT:
+        case COMP_DONE_SYZYGY_LIMIT:
+        case COMP_DONE_GB_LIMIT:
+        case COMP_DONE_SYZ_LIMIT:
+        case COMP_DONE_CODIM:
+        case COMP_DONE_MIN_GENS:
+        case COMP_DONE_STEPS:
+        case COMP_DONE_SUBRING_LIMIT:
+        case COMP_COMPUTING:
+        case COMP_OVERFLOWED:
+          emit_line("computation stopped for some good reason");
+          break;
+        default:
+          emit_line("incorrect status code encountered");
+          break;
+        }
+      }
     return error() ? 0 : C;
   }
   catch (exc::engine_error e) {
@@ -217,7 +217,7 @@ const Matrix /* or null */ *rawEngineGBMinimalGenerators(EngineComputation *C)
 const Matrix /* or null */ *rawEngineGBChangeOfBasis(EngineComputation *C)
   /* Yields the change of basis matrix from the Groebner basis to
      the original generators, at least if n_rows_to_keep was set
-     when creating the GB computation.  This matrix, after the 
+     when creating the GB computation.  This matrix, after the
      computation has run to completion, should satisfy:
      (original matrix) = (GB matrix) * (change of basis matrix). */
 {
@@ -288,8 +288,8 @@ const Matrix /* or null */ *rawEngineGBSyzygies(EngineComputation *C)
   }
 }
 
-const Matrix /* or null */ *rawEngineGBMatrixRemainder(EngineComputation *C, 
-					       const Matrix *m)
+const Matrix /* or null */ *rawEngineGBMatrixRemainder(EngineComputation *C,
+                                               const Matrix *m)
 {
   try {
     clear_emit_size();
@@ -306,10 +306,10 @@ const Matrix /* or null */ *rawEngineGBMatrixRemainder(EngineComputation *C,
 }
 
 void rawEngineGBMatrixDivMod(EngineComputation *C,
-			     const Matrix *m,
-			     const Matrix /* or null */ **result_remainder,
-			     const Matrix /* or null */ **result_quotient
-			     )
+                             const Matrix *m,
+                             const Matrix /* or null */ **result_remainder,
+                             const Matrix /* or null */ **result_quotient
+                             )
 {
   try {
     clear_emit_size();
@@ -324,8 +324,8 @@ void rawEngineGBMatrixDivMod(EngineComputation *C,
   }
 }
 
-int rawEngineGBMatrixContains(EngineComputation *C, 
-			      const Matrix *m)
+int rawEngineGBMatrixContains(EngineComputation *C,
+                              const Matrix *m)
 {
   try {
     clear_emit_size();
@@ -343,9 +343,9 @@ int rawEngineGBMatrixContains(EngineComputation *C,
 
 EngineComputationOrNull *
 rawEngineGBDeclared(const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
-		    const Matrix *gb,
-		    const Matrix *change, /* same number of columns as 'gb', if not 0 */
-		    const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
+                    const Matrix *gb,
+                    const Matrix *change, /* same number of columns as 'gb', if not 0 */
+                    const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
   try {
     return EngineGBComputation::create(GBDeclared::create(m,gb,change,syz));
@@ -358,23 +358,23 @@ rawEngineGBDeclared(const Matrix *m, /* trimmed or minimal gens, may be the same
 
 EngineComputationOrNull *
 rawMarkedEngineGB(const Matrix *leadterms,
-		  const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
-		  const Matrix *gb,
-		  const Matrix *change, /* same number of columns as 'gb', if not 0 */
-		  const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
+                  const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
+                  const Matrix *gb,
+                  const Matrix *change, /* same number of columns as 'gb', if not 0 */
+                  const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
   try {
     return EngineGBComputation::create(GBDeclared::create(leadterms,m,gb,change,syz));
   }
   catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
   }
 }
 
 EngineComputationOrNull *
 rawEngineGroebnerWalk(const Matrix *gb,
-		      const MonomialOrdering *order1)
+                      const MonomialOrdering *order1)
 {
   try {
     return EngineGBComputation::create(GBWalker::create(gb,order1));
@@ -406,16 +406,16 @@ unsigned long rawEngineComputationHash(const Computation *C)
 ////////////////////////////////////
 const RingElement /* or null */ * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
-     for coker leadterms(M), using the degrees of the rows of M. 
+     for coker leadterms(M), using the degrees of the rows of M.
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 {
      try {
-	  return hilb_comp::hilbertNumerator(M);
+          return hilb_comp::hilbertNumerator(M);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -423,214 +423,214 @@ const RingElement /* or null */ * IM2_Matrix_Hilbert(const Matrix *M)
 ///////// The following will be reomoved once the new code is functional //////////
 ///////////////////////////////////////////////////////////////////////////////////
 Computation /* or null */ *IM2_GB_make(const Matrix *m,
-			       M2_bool collect_syz,
-			       int n_rows_to_keep,
-			       M2_arrayint gb_weights,
-			       M2_bool use_max_degree,
-			       int max_degree,
-			       int algorithm,
-			       int strategy,
-			       int max_reduction_count) /* drg: connected rawGB */
+                               M2_bool collect_syz,
+                               int n_rows_to_keep,
+                               M2_arrayint gb_weights,
+                               M2_bool use_max_degree,
+                               int max_degree,
+                               int algorithm,
+                               int strategy,
+                               int max_reduction_count) /* drg: connected rawGB */
 {
   // Choose the correct computation here.
      try {
           test_over_RR_or_CC(m->get_ring());
-	  clear_emit_size();
-	  return GBComputation::choose_gb(
-				  m,
-				  collect_syz,
-				  n_rows_to_keep,
-				  gb_weights,
-				  use_max_degree,
-				  max_degree,
-				  algorithm,
-				  strategy,
-				  max_reduction_count);
+          clear_emit_size();
+          return GBComputation::choose_gb(
+                                  m,
+                                  collect_syz,
+                                  n_rows_to_keep,
+                                  gb_weights,
+                                  use_max_degree,
+                                  max_degree,
+                                  algorithm,
+                                  strategy,
+                                  max_reduction_count);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 Computation /* or null */ *IM2_res_make(
            const Matrix *m,
-	   M2_bool resolve_cokernel,
-	   int max_level,
-	   M2_bool use_max_slanted_degree,
-	   int max_slanted_degree,
-	   int algorithm,
-	   int strategy
-	   )
+           M2_bool resolve_cokernel,
+           int max_level,
+           M2_bool use_max_slanted_degree,
+           int max_slanted_degree,
+           int algorithm,
+           int strategy
+           )
 {
      try {
           test_over_RR_or_CC(m->get_ring());
-	  // Choose the correct computation here.
-	  clear_emit_size();
-	  return ResolutionComputation::choose_res(m,
-				 resolve_cokernel,
-				 max_level,
-				 use_max_slanted_degree,
-				 max_slanted_degree,
-				 algorithm,
-				 strategy);
+          // Choose the correct computation here.
+          clear_emit_size();
+          return ResolutionComputation::choose_res(m,
+                                 resolve_cokernel,
+                                 max_level,
+                                 use_max_slanted_degree,
+                                 max_slanted_degree,
+                                 algorithm,
+                                 strategy);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 Computation /* or null */ *
 IM2_GB_set_hilbert_function(Computation *C,
-			    const RingElement *h)
+                            const RingElement *h)
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G->get_ring()->get_degree_ring() != h->get_ring())
-	    {
-	      ERROR("expected Hilbert function hint to be in correct degree ring");
-	      return 0;
-	    }
-	  if (G != 0)
-	    return G->set_hilbert_function(h);
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G->get_ring()->get_degree_ring() != h->get_ring())
+            {
+              ERROR("expected Hilbert function hint to be in correct degree ring");
+              return 0;
+            }
+          if (G != 0)
+            return G->set_hilbert_function(h);
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 Computation /* or null */ *
 IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
-	     const Matrix *gb,
-	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
-	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
+             const Matrix *gb,
+             const Matrix *change, /* same number of columns as 'gb', if not 0 */
+             const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
      test_over_RR_or_CC(m->get_ring());
      try {
-	  return GBDeclared::create(m,gb,change,syz);
+          return GBDeclared::create(m,gb,change,syz);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 Computation /* or null */ *
 rawMarkedGB(const Matrix *leadterms,
-	     const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
-	     const Matrix *gb,
-	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
-	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
+             const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
+             const Matrix *gb,
+             const Matrix *change, /* same number of columns as 'gb', if not 0 */
+             const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
      test_over_RR_or_CC(m->get_ring());
      try {
-	  return GBDeclared::create(leadterms,m,gb,change,syz);
+          return GBDeclared::create(leadterms,m,gb,change,syz);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 Computation /* or null */ *
 rawGroebnerWalk(const Matrix *gb,
-		const MonomialOrdering *order1)
+                const MonomialOrdering *order1)
 {
      try {
        return GBWalker::create(gb,order1);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-Computation /* or null */* 
+Computation /* or null */*
 IM2_Computation_set_stop(Computation *G,
-		M2_bool always_stop,
-		M2_arrayint degree_limit,
-		int basis_element_limit,
-		int syzygy_limit,
-		int pair_limit,
-		int codim_limit,
-		int subring_limit,
-		M2_bool just_min_gens,
-		M2_arrayint length_limit) /* TODO */
+                M2_bool always_stop,
+                M2_arrayint degree_limit,
+                int basis_element_limit,
+                int syzygy_limit,
+                int pair_limit,
+                int codim_limit,
+                int subring_limit,
+                M2_bool just_min_gens,
+                M2_arrayint length_limit) /* TODO */
   /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
   /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 {
      try {
-	  clear_emit_size();
-	  return  G->set_stop_conditions(always_stop,
-					 degree_limit,
-					 basis_element_limit,
-					 syzygy_limit,
-					 pair_limit,
-					 codim_limit,
-					 subring_limit,
-					 just_min_gens,
-					 length_limit);
+          clear_emit_size();
+          return  G->set_stop_conditions(always_stop,
+                                         degree_limit,
+                                         basis_element_limit,
+                                         syzygy_limit,
+                                         pair_limit,
+                                         codim_limit,
+                                         subring_limit,
+                                         just_min_gens,
+                                         length_limit);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-Computation /* or null */* 
+Computation /* or null */*
 rawStartComputation(Computation *C)
   /* start or continue the computation */
 {
      try {
-	  clear_emit_size();
-	  C->start_computation();
+          clear_emit_size();
+          C->start_computation();
 
-	  if (M2_gbTrace == 15)
-	    {
-	      ComputationStatusCode ret = C->status();
-	      switch (ret) {
-	      case COMP_DONE_DEGREE_LIMIT:
-		emit_line("computation stopped at degree limit");
-		break;
-	      case COMP_DONE:
-		emit_line("computation of GB completed");
-		break;
-	      case COMP_DONE_PAIR_LIMIT:
-		emit_line("computation stopped at pair limit");
-		break;
-	      case COMP_NEED_RESIZE:
-	      case COMP_ERROR:
-	      case COMP_INTERRUPTED:
-	      case COMP_NOT_STARTED:
-	      case COMP_INITIAL_STOP:
-	      case COMP_DONE_LENGTH_LIMIT:
-	      case COMP_DONE_SYZYGY_LIMIT:
-	      case COMP_DONE_GB_LIMIT:
-	      case COMP_DONE_SYZ_LIMIT:
-	      case COMP_DONE_CODIM:
-	      case COMP_DONE_MIN_GENS:
-	      case COMP_DONE_STEPS:
-	      case COMP_DONE_SUBRING_LIMIT:
-	      case COMP_COMPUTING:
-	      case COMP_OVERFLOWED:
-		emit_line("computation stopped for some good reason");
-		break;
-	      default:
-		emit_line("incorrect status code encountered");
-		break;
-	      }
-	    }
+          if (M2_gbTrace == 15)
+            {
+              ComputationStatusCode ret = C->status();
+              switch (ret) {
+              case COMP_DONE_DEGREE_LIMIT:
+                emit_line("computation stopped at degree limit");
+                break;
+              case COMP_DONE:
+                emit_line("computation of GB completed");
+                break;
+              case COMP_DONE_PAIR_LIMIT:
+                emit_line("computation stopped at pair limit");
+                break;
+              case COMP_NEED_RESIZE:
+              case COMP_ERROR:
+              case COMP_INTERRUPTED:
+              case COMP_NOT_STARTED:
+              case COMP_INITIAL_STOP:
+              case COMP_DONE_LENGTH_LIMIT:
+              case COMP_DONE_SYZYGY_LIMIT:
+              case COMP_DONE_GB_LIMIT:
+              case COMP_DONE_SYZ_LIMIT:
+              case COMP_DONE_CODIM:
+              case COMP_DONE_MIN_GENS:
+              case COMP_DONE_STEPS:
+              case COMP_DONE_SUBRING_LIMIT:
+              case COMP_COMPUTING:
+              case COMP_OVERFLOWED:
+                emit_line("computation stopped for some good reason");
+                break;
+              default:
+                emit_line("incorrect status code encountered");
+                break;
+              }
+            }
 
-	  return error() ? 0 : C;
+          return error() ? 0 : C;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -654,16 +654,16 @@ const Matrix /* or null */ *rawGBGetMatrix(Computation *C)
      Each call to this will produce a different raw matrix */
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	       return G->get_gb();
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+               return G->get_gb();
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -674,37 +674,37 @@ const Matrix /* or null */ *rawGBMinimalGenerators(Computation *C)
      sometimes smaller than the entire Groebner basis. */
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->get_mingens();
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->get_mingens();
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const Matrix /* or null */ *rawGBChangeOfBasis(Computation *C)
   /* Yields the change of basis matrix from the Groebner basis to
      the original generators, at least if n_rows_to_keep was set
-     when creating the GB computation.  This matrix, after the 
+     when creating the GB computation.  This matrix, after the
      computation has run to completion, should satisfy:
      (original matrix) = (GB matrix) * (change of basis matrix). */
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->get_change();
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->get_change();
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -712,16 +712,16 @@ const Matrix /* or null */ *
 rawGBGetLeadTerms(Computation *C, int nparts)
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->get_initial(nparts);
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->get_initial(nparts);
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -729,16 +729,16 @@ const Matrix /* or null */ *
 rawGBGetParallelLeadTerms(Computation *C, M2_arrayint w)
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->get_parallel_lead_terms(w);
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->get_parallel_lead_terms(w);
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -750,113 +750,113 @@ const Matrix /* or null */ *rawGBSyzygies(Computation *C)
      syzygy are kept. */
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->get_syzygies();
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->get_syzygies();
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const Matrix /* or null */ *
-rawGBMatrixRemainder(Computation *C, 
-		     const Matrix *m)
+rawGBMatrixRemainder(Computation *C,
+                     const Matrix *m)
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->matrix_remainder(m);
-	  ERROR("computation type unknown or not implemented");
-	  return 0;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->matrix_remainder(m);
+          ERROR("computation type unknown or not implemented");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 M2_bool IM2_GB_matrix_lift(Computation *C,
-			const Matrix *m,
-			const Matrix /* or null */ **result_remainder,
-			const Matrix /* or null */ **result_quotient
-			)
+                        const Matrix *m,
+                        const Matrix /* or null */ **result_remainder,
+                        const Matrix /* or null */ **result_quotient
+                        )
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->matrix_lift(m, result_remainder, result_quotient);
-	  else ERROR("computation type unknown or not implemented");
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->matrix_lift(m, result_remainder, result_quotient);
+          else ERROR("computation type unknown or not implemented");
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
+          ERROR(e.what());
      }
      return false;
 }
 
-int 
-IM2_GB_contains(Computation *C, 
-		const Matrix *m)
+int
+IM2_GB_contains(Computation *C,
+                const Matrix *m)
 {
      try {
-	  clear_emit_size();
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G != 0)
-	    return G->contains(m);
-	  ERROR("computation type unknown or not implemented");
-	  return -2;
+          clear_emit_size();
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G != 0)
+            return G->contains(m);
+          ERROR("computation type unknown or not implemented");
+          return -2;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return -2;
+          ERROR(e.what());
+          return -2;
      }
 }
 
 const Matrix /* or null */ *
-rawResolutionGetMatrix(Computation *C, 
-		       int level)
+rawResolutionGetMatrix(Computation *C,
+                       int level)
 {
      try {
-	  clear_emit_size();
-	  ResolutionComputation *G = C->cast_to_ResolutionComputation();
-	  if (G != 0)
-	    return G->get_matrix(level);
-	  ERROR("expected resolution computation type");
-	  return 0;
+          clear_emit_size();
+          ResolutionComputation *G = C->cast_to_ResolutionComputation();
+          if (G != 0)
+            return G->get_matrix(level);
+          ERROR("expected resolution computation type");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const FreeModule /* or null */ *
-rawResolutionGetFree(Computation *C, 
-		     int level)
+rawResolutionGetFree(Computation *C,
+                     int level)
 {
      try {
-	  clear_emit_size();
-	  ResolutionComputation *G = C->cast_to_ResolutionComputation();
-	  if (G != 0)
-	    return G->get_free(level);
-	  ERROR("expected resolution computation type");
-	  return 0;
+          clear_emit_size();
+          ResolutionComputation *G = C->cast_to_ResolutionComputation();
+          if (G != 0)
+            return G->get_free(level);
+          ERROR("expected resolution computation type");
+          return 0;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 int IM2_Resolution_status(Computation *C,
-			  int * complete_up_through_this_degree,
-			  int * complete_up_through_this_level)
+                          int * complete_up_through_this_degree,
+                          int * complete_up_through_this_level)
 {
 #ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
@@ -867,10 +867,10 @@ int IM2_Resolution_status(Computation *C,
 
 
 enum ComputationStatusCode
-IM2_Resolution_status_level(Computation *C, 
-		    int level, 
-		    M2_bool minimize,
-		    int * complete_up_through_this_degree)
+IM2_Resolution_status_level(Computation *C,
+                    int level,
+                    M2_bool minimize,
+                    int * complete_up_through_this_degree)
 {
 #ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
@@ -888,19 +888,19 @@ IM2_Resolution_status_level(Computation *C,
 
 M2_arrayintOrNull
 rawResolutionBetti(Computation *C,
-	     int type)
+             int type)
   /* see engine.h for description of what 'type' should be */
 {
      try {
-	  ResolutionComputation *G = C->cast_to_ResolutionComputation();
-	  if (G != 0)
-	    return G->get_betti(type);
-	  ERROR("expected resolution computation type");
-	  return NULL;
+          ResolutionComputation *G = C->cast_to_ResolutionComputation();
+          if (G != 0)
+            return G->get_betti(type);
+          ERROR("expected resolution computation type");
+          return NULL;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -910,12 +910,12 @@ IM2_GB_to_string(Computation *C)
 {
      buffer o;
      try {
-	  C->text_out(o);
-	  return o.to_string();
+          C->text_out(o);
+          return o.to_string();
      }
      catch (exc::engine_error e) {
-	  o << "[unprintable gb]";
-	  return o.to_string();
+          o << "[unprintable gb]";
+          return o.to_string();
      }
 }
 
@@ -925,21 +925,21 @@ unsigned long IM2_GB_hash(const Computation *C)
 }
 
 Matrix /* or null */ * rawSubduction(const Matrix *M,
-			     const RingMap *F,
-			     Computation *C)
+                             const RingMap *F,
+                             Computation *C)
 {
      try {
-	  GBComputation *G = C->cast_to_GBComputation();
-	  if (G == 0)
-	    {
-	      ERROR("expected a Groebner basis computation");
-	      return 0;
-	    }
-	  return sagbi::subduct(M,F,G);
+          GBComputation *G = C->cast_to_GBComputation();
+          if (G == 0)
+            {
+              ERROR("expected a Groebner basis computation");
+              return 0;
+            }
+          return sagbi::subduct(M,F,G);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -951,12 +951,13 @@ M2_string engineMemory()
        return o.to_string();
      }
      catch (exc::engine_error e) {
-	  o << "Internal error: [unprintable memory display]";
-	  return o.to_string();
+          o << "Internal error: [unprintable memory display]";
+          return o.to_string();
      }
 }
 
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

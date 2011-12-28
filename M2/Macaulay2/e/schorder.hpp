@@ -15,7 +15,7 @@ class SchreyerOrder : public our_new_delete
   const Monoid *M;
 
   intarray _order; // Each 'entry' is an array of ints of length _nslots:
-		   // compare_num, followed by the (encoded) monomial.
+                   // compare_num, followed by the (encoded) monomial.
   int _nslots;
   int _rank;
 
@@ -62,14 +62,14 @@ public:
   }
 
   int schreyer_compare(const int *m,
-		       int m_comp,
-		       const int *n,
-		       int n_comp) const;
+                       int m_comp,
+                       const int *n,
+                       int n_comp) const;
 
   int schreyer_compare_encoded(const int *m,
-			       int m_comp,
-			       const int *n,
-			       int n_comp) const;
+                               int m_comp,
+                               const int *n,
+                               int n_comp) const;
 
   void text_out(buffer &o) const;
 };
@@ -78,4 +78,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

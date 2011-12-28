@@ -20,4 +20,5 @@ void pm::mult(BIN *dest, BIN *x, BIN *y) {
 
 // Local Variables:
 // compile-command: "cd $M2BUILDDIR/Macaulay2/e && make pm.o"
+// indent-tabs-mode: nil
 // End:

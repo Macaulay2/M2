@@ -33,10 +33,10 @@ int tableau::elem(int x, int y) const
   for (int i=1; i<=wt; i++)
     if (xloc[i] == x && yloc[i] == y)
       return i;
-  
+
   // otherwise perhaps throw an error
-  fprintf(stderr, "tableau: location (%d,%d) out of range\n", 
-	  x, y);
+  fprintf(stderr, "tableau: location (%d,%d) out of range\n",
+          x, y);
   return 0;
 }
 
@@ -54,10 +54,10 @@ void tableau::fill(int *lamb, int *pp)
     {
       int a = lambda[i];
       for (j=p[i]; j>a; j--)
-	{
-	  xloc[next] = i;
-	  yloc[next++] = j;
-	}
+        {
+          xloc[next] = i;
+          yloc[next++] = j;
+        }
     }
 }
 
@@ -68,9 +68,9 @@ void tableau::display() const
   for (i=1; p[i] != 0; i++)
     {
       for (j=1; j <= lambda[i]; j++)
-	fprintf(stdout, "--  ");
+        fprintf(stdout, "--  ");
       for ( ; j <= p[i]; j++)
-	fprintf(stdout, "%2d  ", elem(i,j));
+        fprintf(stdout, "%2d  ", elem(i,j));
       fprintf(stdout, "\n");
     }
 }
@@ -82,7 +82,7 @@ bool SchurRing::initialize_schur()
   _SMcurrent = 0;
   _SMfinalwt = 0;
   _SMresult = 0;
-  
+
   _SMtab.p = newarray_atomic_clear(int,nvars_+1);
   return true;
 }
@@ -91,7 +91,7 @@ SchurRing * SchurRing::create(const PolynomialRing *R)
 {
   SchurRing *result = new SchurRing;
   result->initialize_poly_ring(R->getCoefficients(),
-			       R->getMonoid());
+                               R->getMonoid());
   if (!result->initialize_schur()) return 0;
   // No GBRing
   return result;
@@ -143,39 +143,39 @@ void SchurRing::bounds(int &lo, int &hi)
   int i, k;
   int x = _SMfilled.xloc[_SMcurrent];
   int y = _SMfilled.yloc[_SMcurrent];
-  
+
   // First set the high bound, using info from the "one to the right"
   // in the reverse lex filled skew tableau.
 
-  if (y == _SMfilled.p[x])	// There is not one to the right
+  if (y == _SMfilled.p[x])      // There is not one to the right
     {
       hi = nvars_;
       for (k=1; k<=nvars_; k++)
-	if (_SMtab.p[k] == 0)
-	  {
-	    hi = k;
-	    break;
-	  }
+        if (_SMtab.p[k] == 0)
+          {
+            hi = k;
+            break;
+          }
     }
-  else				// note that the case _SMcurrent==1 will be handled
-    {				// in the previous statement.
+  else                          // note that the case _SMcurrent==1 will be handled
+    {                           // in the previous statement.
       hi = _SMtab.xloc[_SMcurrent-1];
     }
 
   // Now we set the lo bound, using info from the "one above"
-  
+
   if (x == 1 || y <= _SMfilled.lambda[x-1])
-    lo = 1;			// There is not one above
+    lo = 1;                     // There is not one above
   else
     {
       int above = _SMcurrent - _SMfilled.p[x] + _SMfilled.lambda[x-1];
       int xabove = _SMtab.xloc[above];
       int yabove = _SMtab.yloc[above];
       for (i=xabove+1; i<=hi; i++)
-	if (_SMtab.p[i] < yabove) break;
+        if (_SMtab.p[i] < yabove) break;
       lo = i;
     }
-    
+
 }
 
 void SchurRing::SM()
@@ -189,30 +189,30 @@ void SchurRing::SM()
       f->coeff = K_->from_int(1);
       //      fprintf(stderr, "partition: ");
       //      for (int i=1; i <= nvars_; i++)
-      //	fprintf(stderr, " %d", _SMtab.p[i]);
+      //        fprintf(stderr, " %d", _SMtab.p[i]);
       //      fprintf(stderr, "\n");
       from_partition(_SMtab.p, f->monom);
       f->next = _SMresult;
       _SMresult = f;
       return;
     }
-  
+
   _SMcurrent++;
   bounds(lo, hi);
-  int this_one = LARGE_NUMBER;	// larger than any entry of _SMtab
+  int this_one = LARGE_NUMBER;  // larger than any entry of _SMtab
   int last_one;
   for (int i=lo; i<=hi; i++)
     {
       last_one = this_one;
       this_one = _SMtab.p[i];
       if (last_one > this_one)
-	{
-	  _SMtab.p[i]++;
-	  _SMtab.xloc[_SMcurrent] = i;
-	  _SMtab.yloc[_SMcurrent] = _SMtab.p[i];
-	  SM();
-	  _SMtab.p[i]--;
-	}
+        {
+          _SMtab.p[i]++;
+          _SMtab.xloc[_SMcurrent] = i;
+          _SMtab.yloc[_SMcurrent] = _SMtab.p[i];
+          SM();
+          _SMtab.p[i]--;
+        }
     }
   _SMcurrent--;
 }
@@ -248,7 +248,7 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
   // First: obtain the partitions
   to_partition(m, a_part);
   to_partition(n, b_part);
-  
+
   // Second: make the skew partition
   int a = b_part[1];
   for (i=1; i <= nvars_ && a_part[i] != 0; i++)
@@ -269,9 +269,9 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
   return skew_schur(lambda, p);
 }
 
-ring_elem SchurRing::mult_by_term(const ring_elem f, 
-				    const ring_elem c, 
-				    const int *m) const
+ring_elem SchurRing::mult_by_term(const ring_elem f,
+                                    const ring_elem c,
+                                    const int *m) const
 {
   // return c*m*f
   ring_elem result = ZERO_RINGELEM;
@@ -280,10 +280,10 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
       ring_elem a = K_->mult(c, t->coeff);
       ring_elem g = const_cast<SchurRing *>(this)->mult_monomials(t->monom, m);
       for (Nterm *s = g; s != NULL; s = s->next)
-	{
-	  ring_elem b = K_->mult(a, s->coeff);
-	  s->coeff = b;
-	}
+        {
+          ring_elem b = K_->mult(a, s->coeff);
+          s->coeff = b;
+        }
       Nterm *gt = g;
       sort(gt);
       g = gt;
@@ -336,12 +336,12 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
   for (i=1; i<nvars_; i++)
     for (j=i+1; j<=nvars_; j++)
       if (exp[i] != exp[j])
-	mpz_mul_ui(result, result, exp[i] - exp[j] + j - i);
+        mpz_mul_ui(result, result, exp[i] - exp[j] + j - i);
 
   for (i=1; i<nvars_; i++)
     for (j=i+1; j<=nvars_; j++)
       if (exp[i] != exp[j])
-	mpz_fdiv_q_ui(result, result, j - i);
+        mpz_fdiv_q_ui(result, result, j - i);
 }
 
 ring_elem SchurRing::dimension(const ring_elem f) const
@@ -362,17 +362,17 @@ ring_elem SchurRing::dimension(const ring_elem f) const
   return result;
 }
 
-void SchurRing::elem_text_out(buffer &o, 
-			const ring_elem f, 
-			bool p_one, 
-			bool p_plus, 
-			bool p_parens) const
+void SchurRing::elem_text_out(buffer &o,
+                        const ring_elem f,
+                        bool p_one,
+                        bool p_plus,
+                        bool p_parens) const
 {
   exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
   int n = n_terms(f);
 
   bool needs_parens = p_parens && (n > 1);
-  if (needs_parens) 
+  if (needs_parens)
     {
       if (p_plus) o << '+';
       o << '(';
@@ -388,7 +388,7 @@ void SchurRing::elem_text_out(buffer &o,
       to_partition(t->monom, EXP);
       o << "{" << EXP[1];
       for (int i=2; i<=nvars_ && EXP[i] != 0; i++)
-	o << "," << EXP[i];
+        o << "," << EXP[i];
       o << "}";
       p_plus = true;
     }
@@ -397,4 +397,5 @@ void SchurRing::elem_text_out(buffer &o,
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

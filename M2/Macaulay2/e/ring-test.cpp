@@ -16,21 +16,21 @@ namespace M2 {
     const RingWrap<RingGF> *S = A->cast_to_RingWrap<RingGF>();
     if (S == 0)
       {
-	std::cout << "result was 0" << std::endl;
+        std::cout << "result was 0" << std::endl;
       }
     else
       {
-	std::cout << "result was nonzero" << std::endl;
+        std::cout << "result was nonzero" << std::endl;
       }
 
     const RingWrap<RingZZp> *T = A->cast_to_RingWrap<RingZZp>();
     if (T == 0)
       {
-	std::cout << "result was 0" << std::endl;
+        std::cout << "result was 0" << std::endl;
       }
     else
       {
-	std::cout << "result was nonzero" << std::endl;
+        std::cout << "result was nonzero" << std::endl;
       }
 
     MatrixWrap< DenseMatrix<RingGF> > M ( S, 5, 10 );
@@ -38,15 +38,15 @@ namespace M2 {
   }
 
   template<>
-  bool convert<RingInterfaceExample,RingInterfaceExample>(const RingInterfaceExample *A, 
-							  const RingInterfaceExample *B, 
-							  const RingInterfaceExample::ElementType &a, 
-							  RingInterfaceExample::ElementType &b)
+  bool convert<RingInterfaceExample,RingInterfaceExample>(const RingInterfaceExample *A,
+                                                          const RingInterfaceExample *B,
+                                                          const RingInterfaceExample::ElementType &a,
+                                                          RingInterfaceExample::ElementType &b)
   {
     b = a;
     return true;
   }
-  
+
   // One awful way to do convert:
   bool ARing::converter(const ARing *A, const ARing *B, const RElement &a, RElement &b)
   {
@@ -56,9 +56,9 @@ namespace M2 {
     switch(i + j*n) {
       case 11:
         return convert( & RING(RingInterfaceExample,A),
-			& RING(RingInterfaceExample,B),
-			constRELEM(RingInterfaceExample,a),
-			RELEM(RingInterfaceExample,b) );
+                        & RING(RingInterfaceExample,B),
+                        constRELEM(RingInterfaceExample,a),
+                        RELEM(RingInterfaceExample,b) );
       default:
         return false;
       };
@@ -70,17 +70,17 @@ namespace M2 {
   {
     if (p <= 1)
       {
-	ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
-	return 0;
+        ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
+        return 0;
       }
     if (p < 32750)
       {
 #if 0
-	const RingWrap<RingLogZZp> *A = new RingWrap<RingLogZZp>;
-	A->getInternalRing()->initialize(p);
-	return A;
+        const RingWrap<RingLogZZp> *A = new RingWrap<RingLogZZp>;
+        A->getInternalRing()->initialize(p);
+        return A;
 #endif
-	return 0;
+        return 0;
       }
     RingWrap<RingZZp> *B = new RingWrap<RingZZp>;
     B->getInternalRing().initialize(p);
@@ -123,4 +123,5 @@ void foo()
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
 // End:

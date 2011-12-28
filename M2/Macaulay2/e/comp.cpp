@@ -9,14 +9,14 @@
 // EngineComputation /////////////////////////
 //////////////////////////////////////////////
 void EngineComputation::set_stop_conditions(M2_bool always_stop,
-					    M2_arrayint degree_limit,
-					    int basis_element_limit,
-					    int syzygy_limit,
-					    int pair_limit,
-					    int codim_limit,
-					    int subring_limit,
-					    M2_bool just_min_gens,
-					    M2_arrayint length_limit)
+                                            M2_arrayint degree_limit,
+                                            int basis_element_limit,
+                                            int syzygy_limit,
+                                            int pair_limit,
+                                            int codim_limit,
+                                            int subring_limit,
+                                            M2_bool just_min_gens,
+                                            M2_arrayint length_limit)
 {
   stop_.always_stop = always_stop;
   stop_.stop_after_degree = (degree_limit != 0 && degree_limit->len > 0);
@@ -64,8 +64,8 @@ enum ComputationStatusCode EngineComputation::set_status(enum ComputationStatusC
 {
      switch (computation_status) {
      case COMP_OVERFLOWED:
-	  // if (computation_status == COMP_NEED_RESIZE) break;
-	  throw(exc::internal_error("attempted to reset status of a computation that overflowed"));
+          // if (computation_status == COMP_NEED_RESIZE) break;
+          throw(exc::internal_error("attempted to reset status of a computation that overflowed"));
      default: return computation_status = c;
      }
 }
@@ -128,14 +128,14 @@ long EngineGBComputation::complete_thru_degree() const
 //////////////////////////////////////////////
 Computation /* or null */ *
 Computation::set_stop_conditions(M2_bool always_stop,
-				 M2_arrayint degree_limit,
-				 int basis_element_limit,
-				  int syzygy_limit,
-				 int pair_limit,
-				 int codim_limit,
-				 int subring_limit,
-				 M2_bool just_min_gens,
-				 M2_arrayint length_limit)
+                                 M2_arrayint degree_limit,
+                                 int basis_element_limit,
+                                  int syzygy_limit,
+                                 int pair_limit,
+                                 int codim_limit,
+                                 int subring_limit,
+                                 M2_bool just_min_gens,
+                                 M2_arrayint length_limit)
 {
   stop_.always_stop = always_stop;
   stop_.stop_after_degree = (degree_limit != 0 && degree_limit->len > 0);
@@ -190,12 +190,13 @@ enum ComputationStatusCode Computation::set_status(enum ComputationStatusCode c)
 {
      switch (computation_status) {
      case COMP_OVERFLOWED:
-	  // if (computation_status == COMP_NEED_RESIZE) break;
-	  throw(exc::internal_error("attempted to reset status of a computation that overflowed"));
+          // if (computation_status == COMP_NEED_RESIZE) break;
+          throw(exc::internal_error("attempted to reset status of a computation that overflowed"));
      default: return computation_status = c;
      }
 }
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

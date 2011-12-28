@@ -10,7 +10,7 @@
 class Monomial : public immutable_object
 {
   intarray val;
-  
+
   Monomial();
   Monomial(int v, int e);
   Monomial(const int *vp);
@@ -49,4 +49,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

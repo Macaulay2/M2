@@ -14,7 +14,7 @@ gb_emitter::gb_emitter(const Matrix *m)
   assert(originalR != 0);
   GR = originalR->get_gb_ring();
   this_degree = m->cols()->lowest_primary_degree() - 1;
-  n_gens = 0;			// Also needs to be set at that time.
+  n_gens = 0;                   // Also needs to be set at that time.
   these = newarray_atomic_clear(int,m->n_cols());
 }
 
@@ -39,16 +39,16 @@ enum ComputationStatusCode gb_emitter::calc_gb(int degree)
   for (;;)
     {
       if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-	return COMP_INTERRUPTED;
+        return COMP_INTERRUPTED;
       if (n_i >= n_gens) return COMP_DONE;
       if (g != NULL)
-	{
-	  ring_elem denom;
-	  gbvector *v = originalR->translate_gbvector_from_vec(gens->rows(),
-					      (*gens)[these[n_i]],
-					      denom);
-	  g->receive_generator(v, these[n_i], denom);
-	}
+        {
+          ring_elem denom;
+          gbvector *v = originalR->translate_gbvector_from_vec(gens->rows(),
+                                              (*gens)[these[n_i]],
+                                              denom);
+          g->receive_generator(v, these[n_i], denom);
+        }
       n_i++;
       n_left--;
     }
@@ -66,7 +66,7 @@ int gb_emitter::start_degree(int deg)
   for (int i=0; i<gens->n_cols(); i++)
     {
       if (gens->cols()->primary_degree(i) == this_degree)
-	these[n_gens++] = i;
+        these[n_gens++] = i;
     }
   return n_gens;
 }
@@ -92,10 +92,10 @@ void gb_emitter::text_out(buffer &o) const
 
 typedef gb_node *gb_node_ptr;
 
-void gbres_comp::setup(const Matrix *m, 
-		     int length,
-		     int origsyz,
-		     int strategy)
+void gbres_comp::setup(const Matrix *m,
+                     int length,
+                     int origsyz,
+                     int strategy)
 {
   int i;
   originalR = m->get_ring()->cast_to_PolynomialRing();
@@ -116,20 +116,20 @@ void gbres_comp::setup(const Matrix *m,
   if (length > 1 && origsyz > 0)
     {
       if (origsyz > m->n_cols())
-	origsyz = m->n_cols();
+        origsyz = m->n_cols();
       int *one = originalR->getMonoid()->make_one();
       const int *mon;
       for (i=0; i<origsyz; i++)
-	{
-	  if ((*m)[i] == NULL)
-	    mon = one;
-	  else
-	    {
-	      Nterm *t = (*m)[i]->coeff;
-	      mon = t->monom;
-	    }
-	  Fsyz->append_schreyer(m->cols()->degree(i), mon, i);
-	}
+        {
+          if ((*m)[i] == NULL)
+            mon = one;
+          else
+            {
+              Nterm *t = (*m)[i]->coeff;
+              mon = t->monom;
+            }
+          Fsyz->append_schreyer(m->cols()->degree(i), mon, i);
+        }
       originalR->getMonoid()->remove(one);
     }
 
@@ -154,14 +154,14 @@ void gbres_comp::setup(const Matrix *m,
       int deg = lo_degree+1;
       if (origsyz > 0) deg--;
       for (i=2; i<n_nodes-1; i++)
-	{
-	  FreeModule *F = originalR->make_Schreyer_FreeModule();
-	  nodes[i] = new gb2_comp(F,mi_stash,nodes[i-1],deg++,-1,i,strategy);
-	  nodes[i-1]->set_output(nodes[i]);
-	}
+        {
+          FreeModule *F = originalR->make_Schreyer_FreeModule();
+          nodes[i] = new gb2_comp(F,mi_stash,nodes[i-1],deg++,-1,i,strategy);
+          nodes[i-1]->set_output(nodes[i]);
+        }
       FreeModule *F = originalR->make_Schreyer_FreeModule();
       nodes[n_nodes-1] = new gb2_comp(F,mi_stash,nodes[n_nodes-2],deg++,0,n_nodes-1,strategy);
-      nodes[n_nodes-1]->set_output(NULL);      
+      nodes[n_nodes-1]->set_output(NULL);
     }
   strategy_flags = strategy;
 }
@@ -172,7 +172,7 @@ gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz, int strategy)
 }
 
 gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz,
-		 const RingElement */*hf*/, int strategy)
+                 const RingElement */*hf*/, int strategy)
 {
   // MES: check homogeniety
   setup(m, length, origsyz, strategy);
@@ -213,7 +213,7 @@ void gbres_comp::start_computation()
 {
   //  int old_compare_type = compare_type;
   //  compare_type = (strategy_flags >> 10);
-  //  if (M2_gbTrace >= 4) 
+  //  if (M2_gbTrace >= 4)
   //    {
   //      buffer o;
   //      o << "compare=" << compare_type << newline;
@@ -222,24 +222,24 @@ void gbres_comp::start_computation()
   for (int i=lo_degree; !is_done(); i++)
     {
       if (stop_.stop_after_degree && stop_.degree_limit->array[0] < i)
-	{
-	  set_status(COMP_DONE_DEGREE_LIMIT);
-	  //	  compare_type = old_compare_type;
-	  return;
-	}
-      if (M2_gbTrace >= 1)	
-	{
-	  buffer o;
-	  o << "{" << i << "}";
-	  emit(o.str());
-	}
+        {
+          set_status(COMP_DONE_DEGREE_LIMIT);
+          //      compare_type = old_compare_type;
+          return;
+        }
+      if (M2_gbTrace >= 1)
+        {
+          buffer o;
+          o << "{" << i << "}";
+          emit(o.str());
+        }
       enum ComputationStatusCode ret = nodes[n_nodes-1]->calc_gens(i+n_nodes-3);
       if (ret != COMP_DONE)
-	{
-	  set_status(ret);
-	  //	  compare_type = old_compare_type;
-	  return;
-	}
+        {
+          set_status(ret);
+          //      compare_type = old_compare_type;
+          return;
+        }
       last_completed_degree = i;
     }
   //  compare_type = old_compare_type;
@@ -374,27 +374,27 @@ M2_arrayint gbres_comp::betti_minimal() const
     {
       const FreeModule *F = free_module(lev);
       if (F->rank() > 0)
-	len = lev;
+        len = lev;
 
       for (i=0; i<F->rank(); i++)
-	{
-	  d = F->primary_degree(i) - lev;
-	  if (d > hi) hi = d;
-	}
+        {
+          d = F->primary_degree(i) - lev;
+          if (d > hi) hi = d;
+        }
     }
 
   int *bettis;
   betti_init(lo,hi,len,bettis);
-  
+
   for (lev=0; lev<=len; lev++)
     {
       const FreeModule *F = free_module(lev);
 
       for (i=0; i<F->rank(); i++)
-	{
-	  d = F->primary_degree(i) - lev - lo;
-	  bettis[lev+(len+1)*d]++;
-	}
+        {
+          d = F->primary_degree(i) - lev - lo;
+          bettis[lev+(len+1)*d]++;
+        }
     }
   M2_arrayint result = betti_make(lo,hi,len,bettis);
   deletearray(bettis);
@@ -415,4 +415,5 @@ M2_arrayint gbres_comp::get_betti(int type) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

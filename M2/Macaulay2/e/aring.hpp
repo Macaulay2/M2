@@ -43,7 +43,7 @@ namespace M2 {
   class ARing : public UserObject
   {
   public:
-    template<class RingType> 
+    template<class RingType>
     const ARingWrap<RingType> * cast_to_ARingWrap() const { return dynamic_cast< const ARingWrap<RingType> * >(this) ; }
     // result will be either 0, or this.
 
@@ -79,4 +79,5 @@ namespace M2 {
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
 // End:

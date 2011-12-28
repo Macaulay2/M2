@@ -45,7 +45,7 @@ public:
     {
       return collection->valid(ind);
     }
-  
+
   void *val() { return ind; }
 };
 
@@ -53,4 +53,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

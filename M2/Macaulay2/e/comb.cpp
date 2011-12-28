@@ -27,7 +27,7 @@ void comb::expand(int nn, int dd)
 
   for (d = tab.length(); d<=dd; d++)
     tab[d][0] = 0;
-  for (n = tab[0].length(); n<=nn; n++) 
+  for (n = tab[0].length(); n<=nn; n++)
     tab[0][n] = 1;
   tab[0][0] = 1;
 
@@ -43,7 +43,7 @@ void comb::text_out(buffer &o)
     {
       o << '[' << tab[i].length() << "] ";
       for(int j=0; j < tab[i].length(); j++)
-	o << tab[i][j] << ' ';
+        o << tab[i][j] << ' ';
       o << newline;
     }
 }
@@ -71,13 +71,13 @@ void comb::decode(int b, int *result, int p)
   for (i=p; i>0; i--)
     {
       while(bit = len % 2, len >>= 1)
-	{
-	  if (binom(bot+len, i) <= tmp)
-	    {
-	      bot += len;
-	      len += bit;
-	    }
-	}
+        {
+          if (binom(bot+len, i) <= tmp)
+            {
+              bot += len;
+              len += bit;
+            }
+        }
       result[i-1] = bot;
       tmp -= binom(bot, i);
       len = bot+1;
@@ -91,13 +91,13 @@ bool comb::increment(int p, int n, int *s)
     {
       // Attempt to increment this one element
       if ((i < p-1 && s[i]+1 < s[i+1])
-	  || (i == p-1 && s[i]+1 < n))
-	{
-	  s[i]++;
-	  for (int j=0; j<i; j++)
-	    s[j] = j;
-	  return true;
-	}
+          || (i == p-1 && s[i]+1 < n))
+        {
+          s[i]++;
+          for (int j=0; j<i; j++)
+            s[j] = j;
+          return true;
+        }
     }
   return false;
 }
@@ -128,26 +128,26 @@ int comb::mult_subsets(int p, const int *s, int q, const int *t, int *&result)
   for (;;)
     {
       if (a >= p)
-	{
-	  while (b < q) 
-	    result[c++] = t[b++];
-	  break;
-	}
+        {
+          while (b < q)
+            result[c++] = t[b++];
+          break;
+        }
       else if (b >= q)
-	{
-	  while (a < p) 
-	    result[c++] = s[a++];
-	  break;
-	}
+        {
+          while (a < p)
+            result[c++] = s[a++];
+          break;
+        }
       if (s[a] > t[b])
-	{
-	  sign += p-a;
-	  result[c++] = t[b++];
-	}
+        {
+          sign += p-a;
+          result[c++] = t[b++];
+        }
       else if (s[a] < t[b])
-	{
-	  result[c++] = s[a++];
-	}
+        {
+          result[c++] = s[a++];
+        }
       else return 0;
     }
   if ((sign % 2) == 0) return 1;
@@ -161,10 +161,11 @@ void pcombtab(comb *C)
     {
       printf("[%d] ", C->tab[i].length());
       for (int j=0; j<C->tab[i].length(); j++)
-	printf("%d ",C->tab[i][j]);
+        printf("%d ",C->tab[i][j]);
       printf("\n");
     }
 }
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

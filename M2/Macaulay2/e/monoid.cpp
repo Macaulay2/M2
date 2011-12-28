@@ -54,10 +54,10 @@ Monoid *Monoid::get_trivial_monoid()
 }
 
 Monoid *Monoid::create(const MonomialOrdering *mo,
-		       M2_ArrayString names,
-		       const PolynomialRing *deg_ring,
-		       M2_arrayint degs,
-		       M2_arrayint hefts)
+                       M2_ArrayString names,
+                       const PolynomialRing *deg_ring,
+                       M2_arrayint degs,
+                       M2_arrayint hefts)
 {
   unsigned int nvars = rawNumberOfVariables(mo);;
   unsigned int eachdeg = deg_ring->n_vars();
@@ -76,10 +76,10 @@ Monoid *Monoid::create(const MonomialOrdering *mo,
 }
 
 Monoid::Monoid(const MonomialOrdering *mo,
-	       M2_ArrayString names,
-	       const PolynomialRing *deg_ring,
-	       M2_arrayint degs,
-	       M2_arrayint hefts)
+               M2_ArrayString names,
+               const PolynomialRing *deg_ring,
+               M2_arrayint degs,
+               M2_arrayint hefts)
   :  nvars_(rawNumberOfVariables(mo)),
      varnames_(names),
      degvals_(degs),
@@ -113,9 +113,9 @@ Monoid::Monoid(const MonomialOrdering *mo,
       case MO_LEX:
       case MO_LEX2:
       case MO_LEX4:
-      case MO_NC_LEX: 
-	get_out = true;
-	break;
+      case MO_NC_LEX:
+        get_out = true;
+        break;
       case MO_REVLEX:
       case MO_LAURENT:
       case MO_LAURENT_REVLEX:
@@ -126,11 +126,11 @@ Monoid::Monoid(const MonomialOrdering *mo,
       case MO_GREVLEX2_WTS:
       case MO_GREVLEX4_WTS:
       case MO_WEIGHTS:
-	first_weights_slot_ = 0;
+        first_weights_slot_ = 0;
       case MO_POSITION_UP: continue;
       case MO_POSITION_DOWN: continue;
       default:
-	INTERNAL_ERROR("monomial order block type not handled");
+        INTERNAL_ERROR("monomial order block type not handled");
       }
     }
   exp_size = EXPONENT_BYTE_SIZE(nvars_);
@@ -148,7 +148,7 @@ Monoid::Monoid(const MonomialOrdering *mo,
 //    {
 //      fprintf(stderr, "they are: ");
 //      for (int i=0; i<local_vars->len; i++)
-//	fprintf(stderr, "%d ", local_vars->array[i]);
+//      fprintf(stderr, "%d ", local_vars->array[i]);
 //      fprintf(stderr, "\n");
 //    }
     }
@@ -173,16 +173,16 @@ void Monoid::set_degrees()
   if (degvars > 0)
     for (int i=0; i<nvars_; i++)
       {
-	monomial m = degree_monoid_->make_one();
-	degree_monoid_->from_expvector(t, m);
-	degree_of_var_.append(m);
-	heft_degree_of_var_->array[i] = ntuple::weight(degvars,t,heftvals_);
-	t += degvars;
+        monomial m = degree_monoid_->make_one();
+        degree_monoid_->from_expvector(t, m);
+        degree_of_var_.append(m);
+        heft_degree_of_var_->array[i] = ntuple::weight(degvars,t,heftvals_);
+        t += degvars;
       }
   else
     {
       for (int i=0; i<nvars_; i++)
-	heft_degree_of_var_->array[i] = 1;
+        heft_degree_of_var_->array[i] = 1;
     }
   degree_of_var_.append(degree_monoid_->make_one());
 }
@@ -201,39 +201,39 @@ void Monoid::set_overflow_flags()
       case MO_LAURENT:
       case MO_LAURENT_REVLEX:
       case MO_NC_LEX:
-	   flag = OVER;
-	   goto fillin;
+           flag = OVER;
+           goto fillin;
       case MO_POSITION_UP:
       case MO_POSITION_DOWN:
-	   ERROR("internal error - MO_POSITION_DOWN or MO_POSITION_UP encountered");
-	   assert(0);
-	   break;
+           ERROR("internal error - MO_POSITION_DOWN or MO_POSITION_UP encountered");
+           assert(0);
+           break;
       case MO_LEX:
       case MO_GREVLEX:
       case MO_GREVLEX_WTS:
-	   flag = OVER1;
-	   goto fillin;
+           flag = OVER1;
+           goto fillin;
       case MO_LEX2:
       case MO_GREVLEX2:
       case MO_GREVLEX2_WTS:
-	   flag = OVER2;
-	   goto fillin;
+           flag = OVER2;
+           goto fillin;
       case MO_LEX4:
       case MO_GREVLEX4:
       case MO_GREVLEX4_WTS:
-	   flag = OVER4;
-	   goto fillin;
+           flag = OVER4;
+           goto fillin;
       fillin:
-	   assert(b->first_slot == k);
-	   for (int p=b->nslots; p>0; p--) {
-		assert(k < monomial_size_);
-		overflow[k++] = flag;
-	   }
-	   break;
+           assert(b->first_slot == k);
+           for (int p=b->nslots; p>0; p--) {
+                assert(k < monomial_size_);
+                overflow[k++] = flag;
+           }
+           break;
       default:
-	   ERROR("internal error - missing case");
-	   assert(0);
-	   break;
+           ERROR("internal error - missing case");
+           assert(0);
+           break;
       }
     }
   assert(k == monomial_size_);
@@ -265,11 +265,11 @@ void Monoid::text_out(buffer &o) const
       if (i != 0) o << ", ";
       if (ndegrees != 1) o << '{';
       for (int j=0; j<ndegrees; j++)
-	{
-	  if (j != 0) o << ", ";
-	  o << degvals_->array[i*ndegrees+j];
-	}
-      if (ndegrees != 1) o << '}';	  
+        {
+          if (j != 0) o << ", ";
+          o << degvals_->array[i*ndegrees+j];
+        }
+      if (ndegrees != 1) o << '}';
     }
   o << "}";
 
@@ -277,8 +277,8 @@ void Monoid::text_out(buffer &o) const
     o << "," << newline << "  Heft => {";
     for (i=0; i<heftvals_->len; i++)
       {
-	if (i != 0) o << ", ";
-	o << heftvals_->array[i];
+        if (i != 0) o << ", ";
+        o << heftvals_->array[i];
       }
     o << "}";
   }
@@ -425,7 +425,7 @@ void Monoid::remove(monomial d) const
 
 void Monoid::one(monomial result) const
 {
-  for (int i=0; i<monomial_size(); i++) 
+  for (int i=0; i<monomial_size(); i++)
     *result++ = 0;
 }
 
@@ -468,15 +468,15 @@ void Monoid::monsyz(const_monomial m, const_monomial n, monomial sm, monomial sn
   to_expvector(n, EXP2);
   for (int i=0; i<nvars_; i++)
       if (EXP1[i] > EXP2[i])
-	{
-	  EXP2[i] = EXP1[i] - EXP2[i];
-	  EXP1[i] = 0;
-	}
+        {
+          EXP2[i] = EXP1[i] - EXP2[i];
+          EXP1[i] = 0;
+        }
       else
-	{
-	  EXP1[i] = EXP2[i] - EXP1[i];
-	  EXP2[i] = 0;
-	}
+        {
+          EXP1[i] = EXP2[i] - EXP1[i];
+          EXP2[i] = 0;
+        }
   from_expvector(EXP1, sm);
   from_expvector(EXP2, sn);
 }
@@ -530,8 +530,8 @@ void Monoid::multi_degree(const_monomial m, monomial result) const
   for (int i=0; i<nvars_; i++)
     if (EXP1[i] != 0)
       {
-	degree_monoid()->power(degree_of_var(i), EXP1[i], mon1);
-	degree_monoid()->mult(result, mon1, result);
+        degree_monoid()->power(degree_of_var(i), EXP1[i], mon1);
+        degree_monoid()->mult(result, mon1, result);
       }
   degree_monoid()->remove(mon1);
 }
@@ -546,10 +546,10 @@ void Monoid::degree_of_varpower(const_varpower vp, monomial result) const
 
   for (index_varpower j = vp; j.valid(); ++j)
       {
-	int v = j.var();
-	int e = j.exponent();
-	degree_monoid()->power(degree_of_var(v), e, mon1);
-	degree_monoid()->mult(result, mon1, result);
+        int v = j.var();
+        int e = j.exponent();
+        degree_monoid()->power(degree_of_var(v), e, mon1);
+        degree_monoid()->mult(result, mon1, result);
       }
   degree_monoid()->remove(mon1);
 }
@@ -577,7 +577,7 @@ bool Monoid::is_one(const_monomial m) const
 }
 
 bool Monoid::is_invertible(const_monomial m) const
-// is every variable that occurs 
+// is every variable that occurs
 // in 'm' allowed to be negative?
 {
   if (n_invertible_vars_ == 0)
@@ -611,4 +611,5 @@ void Monoid::to_varpower(const_monomial m, intarray &result_vp) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e monoid.o "
+// indent-tabs-mode: nil
 // End:

@@ -14,12 +14,12 @@
 #include "moninfo.hpp"
 
 GBComputation *createF4GB(const Matrix *m,
-			  M2_bool collect_syz,
-			  int n_rows_to_keep,
-			  M2_arrayint gb_weights,
-			  int strategy,
-			  M2_bool use_max_degree,
-			  int max_degree)
+                          M2_bool collect_syz,
+                          int n_rows_to_keep,
+                          M2_arrayint gb_weights,
+                          int strategy,
+                          M2_bool use_max_degree,
+                          int max_degree)
 {
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
@@ -30,30 +30,30 @@ GBComputation *createF4GB(const Matrix *m,
       ERROR("cannot use Algorithm => LinearAlgebra with this type of coefficient ring");
       return NULL;
     }
-  
+
   GBComputation *G;
   G = new F4Computation(KK,
-			Mem,
-			m,
-			collect_syz,
-			n_rows_to_keep,
-			gb_weights,
-			strategy,
-			use_max_degree,
-			max_degree);
+                        Mem,
+                        m,
+                        collect_syz,
+                        n_rows_to_keep,
+                        gb_weights,
+                        strategy,
+                        use_max_degree,
+                        max_degree);
   return G;
 }
 
 F4Computation::F4Computation(
-			     Gausser *K0,
-			     F4Mem *Mem0,
-			     const Matrix *m, 
-			     M2_bool collect_syz, 
-			     int n_rows_to_keep,
-			     M2_arrayint gb_weights,
-			     int strategy, 
-			     M2_bool use_max_degree,
-			     int max_degree)
+                             Gausser *K0,
+                             F4Mem *Mem0,
+                             const Matrix *m,
+                             M2_bool collect_syz,
+                             int n_rows_to_keep,
+                             M2_arrayint gb_weights,
+                             int strategy,
+                             M2_bool use_max_degree,
+                             int max_degree)
 {
   // Note: the F4Mem which K0 uses should be Mem.
   KK = K0;
@@ -63,16 +63,16 @@ F4Computation::F4Computation(
   Mem = Mem0;
 
   f4 = new F4GB(KK,
-		Mem0,
-		MI,
-		m->rows(),
-		collect_syz,
-		n_rows_to_keep,
-		gb_weights,
-		strategy,
-		use_max_degree,
-		max_degree);
-  
+                Mem0,
+                MI,
+                m->rows(),
+                collect_syz,
+                n_rows_to_keep,
+                gb_weights,
+                strategy,
+                use_max_degree,
+                max_degree);
+
   F4toM2Interface::from_M2_matrix(KK,MI,m,gb_weights,f4->get_generators());
   f4->new_generators(0, m->n_cols()-1);
 }
@@ -114,8 +114,8 @@ const Matrix /* or null */ *F4Computation::get_mingens()
 {
 #if 0
 //   MatrixConstructor mat(_F,0);
-//   for (VECTOR(gbelem *)::iterator i = gb.begin(); 
-//        i != gb.end(); 
+//   for (VECTOR(gbelem *)::iterator i = gb.begin();
+//        i != gb.end();
 //        i++)
 //     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
 //       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
@@ -145,9 +145,9 @@ const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 }
 
 M2_bool F4Computation::matrix_lift(const Matrix *m,
-		 const Matrix /* or null */ **result_remainder,
-		 const Matrix /* or null */ **result_quotient
-		 )
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
+                 )
 {
   *result_remainder = 0;
   *result_quotient = 0;
@@ -187,4 +187,5 @@ void F4Computation::show() const // debug display
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

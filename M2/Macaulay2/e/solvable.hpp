@@ -12,8 +12,8 @@ class SolvableAlgebra : public PolyRing
   const Matrix *Q_;
 
   static SolvableAlgebra *create(const Ring *K,
-				 const Monoid *M,
-				 const Matrix *Q);
+                                 const Monoid *M,
+                                 const Matrix *Q);
 
 protected:
   bool initialize_solvable(const Matrix *Q);
@@ -22,7 +22,7 @@ protected:
 
 public:
   static SolvableAlgebra *create(const PolynomialRing *R,
-				 const Matrix *Q);
+                                 const Matrix *Q);
 
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_solvable_algebra() const { return true; }
@@ -34,12 +34,13 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
 
 public:
-  virtual ring_elem mult_by_term(const ring_elem f, 
-				     const ring_elem c, 
-				     const int *m) const;
+  virtual ring_elem mult_by_term(const ring_elem f,
+                                     const ring_elem c,
+                                     const int *m) const;
 };
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -15,27 +15,27 @@ class DetComputation : public our_new_delete
   const Ring *R;
   const Matrix *M;
   const FreeModule *F; // target free module of the result
-  //  Matrix *result;  // Either:One row matrix collecting non-zero 
-		  // determinants, or the resulting
-		  // exterior power; depending on 'do_exterior'
-  MatrixConstructor result;// Either:One row matrix collecting non-zero 
-		  // determinants, or the resulting
-		  // exterior power; depending on 'do_exterior'
+  //  Matrix *result;  // Either:One row matrix collecting non-zero
+                  // determinants, or the resulting
+                  // exterior power; depending on 'do_exterior'
+  MatrixConstructor result;// Either:One row matrix collecting non-zero
+                  // determinants, or the resulting
+                  // exterior power; depending on 'do_exterior'
 
   bool done;
   int p;
 
-  bool do_exterior;		// true = construct exterior
-				// power of matrix, false =
-				// collect non-zero minors
-  int strategy;		        // 0: use Bareiss (fraction free, DOMAINS only)
-				// 1: use cofactor method.
+  bool do_exterior;             // true = construct exterior
+                                // power of matrix, false =
+                                // collect non-zero minors
+  int strategy;                 // 0: use Bareiss (fraction free, DOMAINS only)
+                                // 1: use cofactor method.
   int * row_set;
   int * col_set;
   int this_row;
   int this_col;
 
-  ring_elem **D;		// size p by p, dense representation.
+  ring_elem **D;                // size p by p, dense representation.
 
   void get_minor(int *r, int *c, int p, ring_elem **D);
   // Sets D[0..p-1,0..p-1] with the given minor of M.
@@ -43,8 +43,8 @@ class DetComputation : public our_new_delete
   // Used in Bareiss:
   bool get_pivot(ring_elem **D, int p, ring_elem &pivot, int &pivot_col);
   ring_elem detmult(ring_elem f1, ring_elem g1,
-		    ring_elem f2, ring_elem g2,
-		    ring_elem d);
+                    ring_elem f2, ring_elem g2,
+                    ring_elem d);
   void gauss(ring_elem **D, int i, int r, int pivot_col, ring_elem lastpivot);
 
 
@@ -69,7 +69,7 @@ public:
   void clear();
   void discard() { clear(); }
   void set_next_minor(const int* rows, const int* cols);
-  
+
   Matrix *determinants() { return result.to_matrix(); }
 };
 
@@ -77,4 +77,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

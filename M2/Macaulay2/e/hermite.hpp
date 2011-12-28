@@ -23,14 +23,14 @@ private:
   int row;
   VECTOR(hm_elem *) initial;
 
-  const Matrix *gens;			// This is the input
+  const Matrix *gens;                   // This is the input
 
   hm_elem *GB_list;
   const FreeModule *Fsyz;
   VECTOR(vec) syz_list;
 
   int n_gb;
-  int collect_syz;	// 0 or 1
+  int collect_syz;      // 0 or 1
   int n_comps_per_syz;
 
 private:
@@ -45,7 +45,7 @@ private:
 
   void gb_reduce(vec &f) const;
   void gb_reduce(vec &f, vec &fsyz) const;
-  
+
   virtual bool stop_conditions_ok() { return true; }
 
 public:
@@ -82,8 +82,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient);
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient);
 
   virtual int contains(const Matrix *m);
 
@@ -99,4 +99,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

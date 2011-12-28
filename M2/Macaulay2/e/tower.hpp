@@ -15,8 +15,8 @@ class Tower : public Ring
   int nvars;
 
   M2_ArrayString names;
-  
-  DRing *D; 
+
+  DRing *D;
 
 protected:
   Tower() {}
@@ -68,18 +68,18 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f,
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   ring_elem gcd(const ring_elem f, const ring_elem g) const;
   ring_elem gcd_extended(const ring_elem f, const ring_elem g,
-			 ring_elem &u, ring_elem &v) const;
+                         ring_elem &u, ring_elem &v) const;
 
   // These routines are here so we can write higher level operations in M2 to test the (eventual) engine routines
   int degree(int var, const ring_elem f) const;
@@ -90,22 +90,22 @@ public:
 
   ring_elem translate(const PolynomialRing *R, ring_elem fR) const;
   // translate the element fR into a dpoly for this ring
-  
+
 };
 
 
 class RingElement;
 
-extern const RingElement *towerGCD(const RingElement *F, 
-				   const RingElement *G);
-extern const RingElement *towerExtendedGCD(const RingElement *F, 
-					   const RingElement *G,
-					   const RingElement **A,
-					   const RingElement **B);
+extern const RingElement *towerGCD(const RingElement *F,
+                                   const RingElement *G);
+extern const RingElement *towerExtendedGCD(const RingElement *F,
+                                           const RingElement *G,
+                                           const RingElement **A,
+                                           const RingElement **B);
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

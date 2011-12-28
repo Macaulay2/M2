@@ -11,15 +11,15 @@
 #include <tr1/unordered_map>
 
 F4GB::F4GB(const Gausser *KK0,
-	   F4Mem *Mem0,
-	   const MonomialInfo *M0,
-	   const FreeModule *F0,
-	   M2_bool collect_syz, 
-	   int n_rows_to_keep,
-	   M2_arrayint weights0,
-	   int strategy, 
-	   M2_bool use_max_degree,
-	   int max_degree)
+           F4Mem *Mem0,
+           const MonomialInfo *M0,
+           const FreeModule *F0,
+           M2_bool collect_syz,
+           int n_rows_to_keep,
+           M2_arrayint weights0,
+           int strategy,
+           M2_bool use_max_degree,
+           int max_degree)
   : KK(KK0),
     M(M0),
     F(F0),
@@ -30,11 +30,11 @@ F4GB::F4GB(const Gausser *KK0,
     n_gens_left(0),
     n_subring(0),
     complete_thru_this_degree(-1), // need to reset this in the body
-    this_degree(), 
+    this_degree(),
     is_ideal(F0->rank() == 1),
     hilbert(0),
-    gens(), 
-    gb(), 
+    gens(),
+    gb(),
     syz_basis(),
     lookup(0),
     S(0),
@@ -42,16 +42,16 @@ F4GB::F4GB(const Gausser *KK0,
     mat(0),
     H(M0,17),
     Mem(Mem0),
-    B(), 
-    next_monom(), 
+    B(),
+    next_monom(),
     syz_next_col_to_process(0),
     syz(0),
     master_syz(0),
     syzH(M0,17),
     master_syzH(M0,17),
-    syzB(), 
-    master_syzB(), 
-    syz_next_monom(), 
+    syzB(),
+    master_syzB(),
+    syz_next_monom(),
     //syzF4Vec("syzygy vector manager"),
     gauss_row(),
     clock_sort_columns(0),
@@ -75,7 +75,7 @@ F4GB::F4GB(const Gausser *KK0,
     fprintf(stderr, "SYZ: using_syz = %i\n", using_syz);
   syz = new coefficient_matrix;
   master_syz = new coefficient_matrix;
-  if (using_syz) 
+  if (using_syz)
     syzF = F->get_ring()->make_Schreyer_FreeModule();
 
 }
@@ -171,7 +171,7 @@ void F4GB::load_gen(int which)
   row_elem r;
   r.monom = NULL; // This says that this element corresponds to a generator
   r.elem = which;
-  
+
   r.len = g.len;
   r.coeffs = 0;  // will be fetched when needed via get_coeffs_array
   r.comps = Mem->components.allocate(g.len);
@@ -185,7 +185,7 @@ void F4GB::load_gen(int which)
     }
 
   mat->rows.push_back(r);
-  
+
   syz_load_gen(which);
 }
 
@@ -210,7 +210,7 @@ void F4GB::load_row(packed_monomial monom, int which)
     }
 
   mat->rows.push_back(r);
-  
+
   syz_load_row(monom, which);
 }
 
@@ -238,7 +238,7 @@ void F4GB::process_column(int c)
       ce.head = INTSIZE(mat->rows);
       load_row(n,which);
     }
-  else 
+  else
     ce.head = -1;
 }
 
@@ -325,7 +325,7 @@ void F4GB::reorder_columns()
   clock_sort_columns += nsecs;
   if (M2_gbTrace >= 2)
     fprintf(stderr, " time = %f\n", nsecs);
- 
+
   // STL version ///////////////
 
   C.reset_ncomparisons();
@@ -370,20 +370,20 @@ void F4GB::reorder_columns()
     {
       row_elem &row = mat->rows[r];
       for (int i=0; i<row.len; i++)
-	{
-	  int oldcol = row.comps[i];
-	  int newcol = ord[oldcol];
-	  row.comps[i] = newcol;
-	}
+        {
+          int oldcol = row.comps[i];
+          int newcol = ord[oldcol];
+          row.comps[i] = newcol;
+        }
       for (int i=1; i<row.len; i++)
-	{
-	  if (row.comps[i] <= row.comps[i-1])
-	    {
-	      fprintf(stderr, "Internal error: array out of order\n");
-	      break;
-	    }
+        {
+          if (row.comps[i] <= row.comps[i-1])
+            {
+              fprintf(stderr, "Internal error: array out of order\n");
+              break;
+            }
 
-	}
+        }
     }
 
   std::swap(mat->columns, newcols);
@@ -409,16 +409,16 @@ void F4GB::reorder_rows()
     {
       int oldrow = mat->columns[c].head;
       if (oldrow >= 0)
-	{
-	  // Move the row into place
-	  int newrow = INTSIZE(newrows);
-	  newrows.push_back(mat->rows[oldrow]);
-	  rowlocs[oldrow] = newrow;
-	  mat->columns[c].head = newrow;
-	  if (mat->columns[c].head == oldrow)
-	    mat->columns[c].head = newrow;
-	}
-      
+        {
+          // Move the row into place
+          int newrow = INTSIZE(newrows);
+          newrows.push_back(mat->rows[oldrow]);
+          rowlocs[oldrow] = newrow;
+          mat->columns[c].head = newrow;
+          if (mat->columns[c].head == oldrow)
+            mat->columns[c].head = newrow;
+        }
+
     }
   for (int r = 0; r < nrows; r++)
     if (rowlocs[r] < 0)
@@ -428,7 +428,7 @@ void F4GB::reorder_rows()
 
 void F4GB::reset_matrix()
 {
-  // mat 
+  // mat
   next_col_to_process = 0;
   next_monom = B.reserve(1+M->max_monomial_size());
   next_monom++;
@@ -477,11 +477,11 @@ void F4GB::make_matrix()
 
   // DEBUGGING:
   if (M2_gbTrace >= 2) {
-    fprintf(stderr, "--matrix--%ld by %ld\n", 
-	    (long)mat->rows.size(), (long)mat->columns.size());
-    if (using_syz) 
-      fprintf(stderr, "-syzygies-%ld by %ld\n", 
-	      (long)syz->rows.size(), (long)syz->columns.size());
+    fprintf(stderr, "--matrix--%ld by %ld\n",
+            (long)mat->rows.size(), (long)mat->columns.size());
+    if (using_syz)
+      fprintf(stderr, "-syzygies-%ld by %ld\n",
+              (long)syz->rows.size(), (long)syz->columns.size());
   }
   //  show_row_info();
   //  show_column_info();
@@ -537,7 +537,7 @@ void F4GB::gauss_reduce(bool diagonalize)
     }
 
   KK->dense_row_allocate(gauss_row, ncols);
-  if (using_syz) KK->dense_row_allocate(syz_row, nrows);  
+  if (using_syz) KK->dense_row_allocate(syz_row, nrows);
   for (int i=0; i<nrows; i++)
     {
       row_elem &r = mat->rows[i];
@@ -548,59 +548,59 @@ void F4GB::gauss_reduce(bool diagonalize)
 
       F4CoefficientArray rcoeffs = get_coeffs_array(r);
       n_pairs_computed++;
-      KK->dense_row_fill_from_sparse(gauss_row, r.len, rcoeffs, r.comps); 
+      KK->dense_row_fill_from_sparse(gauss_row, r.len, rcoeffs, r.comps);
       syz_dense_row_fill_from_sparse(i); // fill syz_row from row[i]
-    
+
       int firstnonzero = ncols;
       int first = r.comps[0];
       int last = r.comps[r.len-1];
       do {
-	pivotrow = mat->columns[first].head;
-	if (pivotrow >= 0)
-	  {
-	    row_elem &pivot_rowelem = mat->rows[pivotrow];
-	    F4CoefficientArray pivot_coeffs = get_coeffs_array(pivot_rowelem);
-	    syzygy_row_record_reduction(pivotrow, 
-					  KK->lead_coeff(rcoeffs), KK->lead_coeff(pivot_coeffs));    
-	    n_reduction_steps++;
-	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_coeffs, pivot_rowelem.comps);
-	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
-	    if (last1 > last) last = last1;
-	  }
-	else if (firstnonzero == ncols)
-	  firstnonzero = first;
-	first = KK->dense_row_next_nonzero(gauss_row, first+1, last);
+        pivotrow = mat->columns[first].head;
+        if (pivotrow >= 0)
+          {
+            row_elem &pivot_rowelem = mat->rows[pivotrow];
+            F4CoefficientArray pivot_coeffs = get_coeffs_array(pivot_rowelem);
+            syzygy_row_record_reduction(pivotrow,
+                                          KK->lead_coeff(rcoeffs), KK->lead_coeff(pivot_coeffs));
+            n_reduction_steps++;
+            KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_coeffs, pivot_rowelem.comps);
+            int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
+            if (last1 > last) last = last1;
+          }
+        else if (firstnonzero == ncols)
+          firstnonzero = first;
+        first = KK->dense_row_next_nonzero(gauss_row, first+1, last);
       } while (first <= last);
       if (r.coeffs) KK->deallocate_F4CCoefficientArray(r.coeffs, r.len);
       Mem->components.deallocate(r.comps);
       r.len = 0;
-      KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
+      KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last);
       // the above line leaves gauss_row zero, and also handles the case when r.len is 0
       // it also potentially frees the old r.coeffs and r.comps
       if (using_syz) {
-	row_elem& s = syz->rows[i];
-	if (s.len>0) // the opposite should not happen
-	  {
-	    int* scoeffs = static_cast<int *>(s.coeffs);
-	    Mem->coefficients.deallocate(scoeffs);
-	    Mem->components.deallocate(s.comps);
-	    s.len = 0;
-	  }
-	syz_dense_row_to_sparse_row(syz->rows[i]);
-	// the above line leaves syz_row zero
+        row_elem& s = syz->rows[i];
+        if (s.len>0) // the opposite should not happen
+          {
+            int* scoeffs = static_cast<int *>(s.coeffs);
+            Mem->coefficients.deallocate(scoeffs);
+            Mem->components.deallocate(s.comps);
+            s.len = 0;
+          }
+        syz_dense_row_to_sparse_row(syz->rows[i]);
+        // the above line leaves syz_row zero
       }
       if (r.len > 0)
-	{
-	  syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
-	  KK->sparse_row_make_monic(r.len, r.coeffs);
-	  mat->columns[r.comps[0]].head = i;
-	  if (--n_newpivots == 0) break;
-	}
+        {
+          syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
+          KK->sparse_row_make_monic(r.len, r.coeffs);
+          mat->columns[r.comps[0]].head = i;
+          if (--n_newpivots == 0) break;
+        }
       else
-	n_zero_reductions++;
+        n_zero_reductions++;
     }
   KK->dense_row_deallocate(gauss_row);
-  if (using_syz) KK->dense_row_deallocate(syz_row);    
+  if (using_syz) KK->dense_row_deallocate(syz_row);
 
   if (M2_gbTrace >= 3)
     fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions);
@@ -613,9 +613,9 @@ void F4GB::tail_reduce()
 {
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
-  
+
   KK->dense_row_allocate(gauss_row, ncols);
-  if (using_syz) KK->dense_row_allocate(syz_row, nrows);  
+  if (using_syz) KK->dense_row_allocate(syz_row, nrows);
   for (int i=nrows-1; i>=0; i--)
     {
       row_elem &r = mat->rows[i];
@@ -628,54 +628,54 @@ void F4GB::tail_reduce()
       int first = (r.len == 1 ? ncols :  r.comps[1]);
       int last = r.comps[r.len-1];
       while (first <= last) {
-	int pivotrow = mat->columns[first].head;
-	if (pivotrow >= 0)
-	  {
-	    anychange = true;
-	    row_elem &pivot_rowelem = mat->rows[pivotrow]; // pivot_rowelems.coeffs is set at this point
-	    syzygy_row_record_reduction(pivotrow, 
-					  KK->lead_coeff(r.coeffs), KK->lead_coeff(pivot_rowelem.coeffs));    
-	    KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_rowelem.coeffs, pivot_rowelem.comps);
-	    int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
-	    if (last1 > last) last = last1;
-	  }
-	else if (firstnonzero == ncols)
-	  firstnonzero = first;
-	first = KK->dense_row_next_nonzero(gauss_row, first+1, last);
+        int pivotrow = mat->columns[first].head;
+        if (pivotrow >= 0)
+          {
+            anychange = true;
+            row_elem &pivot_rowelem = mat->rows[pivotrow]; // pivot_rowelems.coeffs is set at this point
+            syzygy_row_record_reduction(pivotrow,
+                                          KK->lead_coeff(r.coeffs), KK->lead_coeff(pivot_rowelem.coeffs));
+            KK->dense_row_cancel_sparse(gauss_row, pivot_rowelem.len, pivot_rowelem.coeffs, pivot_rowelem.comps);
+            int last1 = pivot_rowelem.comps[pivot_rowelem.len-1];
+            if (last1 > last) last = last1;
+          }
+        else if (firstnonzero == ncols)
+          firstnonzero = first;
+        first = KK->dense_row_next_nonzero(gauss_row, first+1, last);
       };
       if (anychange)
-	{
-	  Mem->components.deallocate(r.comps);
-	  KK->deallocate_F4CCoefficientArray(r.coeffs, r.len); // the coeff array is owned by the row here
-	  r.len = 0;
-	  KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last); 
-	  if (using_syz) {
-	    row_elem& s = syz->rows[i];
-	    if (s.len>0) // the opposite should not happen
-	      {
-		int* scoeffs = static_cast<int *>(s.coeffs);
-		Mem->coefficients.deallocate(scoeffs);
-		Mem->components.deallocate(s.comps);
-		s.len = 0;
-	      }
-	    syz_dense_row_to_sparse_row(syz->rows[i]);
-	    // the above line leaves syz_row zero
-	  }
-	}
+        {
+          Mem->components.deallocate(r.comps);
+          KK->deallocate_F4CCoefficientArray(r.coeffs, r.len); // the coeff array is owned by the row here
+          r.len = 0;
+          KK->dense_row_to_sparse_row(gauss_row, r.len, r.coeffs, r.comps, firstnonzero, last);
+          if (using_syz) {
+            row_elem& s = syz->rows[i];
+            if (s.len>0) // the opposite should not happen
+              {
+                int* scoeffs = static_cast<int *>(s.coeffs);
+                Mem->coefficients.deallocate(scoeffs);
+                Mem->components.deallocate(s.comps);
+                s.len = 0;
+              }
+            syz_dense_row_to_sparse_row(syz->rows[i]);
+            // the above line leaves syz_row zero
+          }
+        }
       else
-	{
-	  KK->dense_row_clear(gauss_row, firstnonzero, last);
-	  KK->dense_row_clear(gauss_row, 0, INTSIZE(syz->columns)-1); //!!!lazy
-	}
+        {
+          KK->dense_row_clear(gauss_row, firstnonzero, last);
+          KK->dense_row_clear(gauss_row, 0, INTSIZE(syz->columns)-1); //!!!lazy
+        }
       if (r.len > 0)
-	{
-	  syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
-	  KK->sparse_row_make_monic(r.len, r.coeffs);	  
-	}
+        {
+          syzygy_row_divide(i, static_cast<int*>(r.coeffs)[0]);
+          KK->sparse_row_make_monic(r.len, r.coeffs);
+        }
     }
 
   KK->dense_row_deallocate(gauss_row);
-  if (using_syz) KK->dense_row_deallocate(syz_row);    
+  if (using_syz) KK->dense_row_deallocate(syz_row);
 }
 
 ///////////////////////////////////////////////////
@@ -702,7 +702,7 @@ void F4GB::insert_gb_element(row_elem &r)
 
   result->f.coeffs = (r.coeffs ? r.coeffs : KK->copy_F4CoefficientArray(r.len, get_coeffs_array(r)));
   r.coeffs = 0;;
-  
+
   result->f.monoms = Mem->allocate_monomial_array(nlongs);
 
   monomial_word *nextmonom = result->f.monoms;
@@ -743,7 +743,7 @@ void F4GB::insert_gb_element(row_elem &r)
 void F4GB::new_GB_elements()
 {
   /* After LU decomposition, loop through each
-     row of the matrix.  If the corresponding 
+     row of the matrix.  If the corresponding
      lead term is not in the initial ideal (or, at least,
      wasn't) then insert GB element (and so update spairs, etc,
      but don't do auto_reduce...)
@@ -751,17 +751,17 @@ void F4GB::new_GB_elements()
      If instead the lead term is not new, then keep track of this
      information somehow: place ... into a monheap...
   */
-  
+
   /* If we can place the possible new elements first, or in a separate place, then
      we don't need to loop through all of these */
-     
+
   for (int r=0; r<mat->rows.size(); r++)
     {
       if (is_new_GB_row(r)) {
-	insert_syz(syz->rows[r], INTSIZE(gb));
-	insert_gb_element(mat->rows[r]);
+        insert_syz(syz->rows[r], INTSIZE(gb));
+        insert_gb_element(mat->rows[r]);
       } else {
-	insert_syz(syz->rows[r]);
+        insert_syz(syz->rows[r]);
       }
     }
 }
@@ -776,7 +776,7 @@ void F4GB::do_spairs()
   if (hilbert && hilbert->nRemainingExpected() == 0)
     {
       if (M2_gbTrace >= 1)
-	fprintf(stderr, "-- skipping degree...no elements expected in this degree\n");
+        fprintf(stderr, "-- skipping degree...no elements expected in this degree\n");
       return;
     }
   reset_matrix();
@@ -798,7 +798,7 @@ void F4GB::do_spairs()
   nsecs /= CLOCKS_PER_SEC;
   if (M2_gbTrace >= 2)
     fprintf(stderr, " make matrix time = %f\n", nsecs);
-  
+
   if (M2_gbTrace >= 2)
     H.dump();
 
@@ -819,20 +819,20 @@ void F4GB::do_spairs()
 
       fprintf(stderr, " lcm dups            = %ld\n", n_lcmdups);
       if (M2_gbTrace >= 5)
-	{
-	  fprintf(stderr, "---------\n");
-	  show_matrix();
-	  fprintf(stderr, "---------\n");
-	  show_syz_matrix();
-	  //  show_new_rows_matrix();
-	}
+        {
+          fprintf(stderr, "---------\n");
+          show_matrix();
+          fprintf(stderr, "---------\n");
+          show_syz_matrix();
+          //  show_new_rows_matrix();
+        }
     }
   new_GB_elements();
   int ngb = INTSIZE(gb);
   if (M2_gbTrace >= 1) {
     fprintf(stderr, " # GB elements   = %d\n", ngb);
     if (M2_gbTrace >= 5) show_gb_array(gb);
-    if (using_syz) 
+    if (using_syz)
       fprintf(stderr, " # syzygies      = %ld\n", static_cast<long>(syz_basis.size()));
     if (M2_gbTrace >= 5) show_syz_basis();
   }
@@ -844,7 +844,7 @@ void F4GB::do_spairs()
 enum ComputationStatusCode F4GB::computation_is_complete(StopConditions &stop_)
 {
   // This handles everything but stop_.always, stop_.degree_limit
-  if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit) 
+  if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit)
     return COMP_DONE_GB_LIMIT;
   if (stop_.pair_limit > 0 && n_pairs_computed >= stop_.pair_limit)
     return COMP_DONE_PAIR_LIMIT;
@@ -860,7 +860,7 @@ enum ComputationStatusCode F4GB::computation_is_complete(StopConditions &stop_)
       int c = 0; // replace this line
       //int c = codim_of_lead_terms();
       if (c >= stop_.codim_limit)
-	return COMP_DONE_CODIM;
+        return COMP_DONE_CODIM;
     }
   return COMP_COMPUTING;
 }
@@ -896,57 +896,57 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
   for (;;)
     {
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) 
-	{
-	  is_done = COMP_INTERRUPTED;
-	  break;
-	}
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+        {
+          is_done = COMP_INTERRUPTED;
+          break;
+        }
 
       is_done = computation_is_complete(stop_);
       if (is_done != COMP_COMPUTING) break;
 
       this_degree = S->prepare_next_degree(-1, npairs);
-      
+
       if (npairs == 0)
-	{
-	  is_done = COMP_DONE;
-	  break;
-	}
+        {
+          is_done = COMP_DONE;
+          break;
+        }
       if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
-	{
-	  is_done = COMP_DONE_DEGREE_LIMIT;
-	  break;
-	}
+        {
+          is_done = COMP_DONE_DEGREE_LIMIT;
+          break;
+        }
 
       if (hilbert)
-	{
-	  if (!hilbert->setDegree(this_degree))
-	    {
-	      is_done = COMP_INTERRUPTED;
-	      break;
-	    }
-	}
+        {
+          if (!hilbert->setDegree(this_degree))
+            {
+              is_done = COMP_INTERRUPTED;
+              break;
+            }
+        }
 
       if (M2_gbTrace >= 1)
-	{
-	  if (hilbert)
-	    fprintf(stderr, "DEGREE %d (nexpected %d npairs %d)\n", this_degree, hilbert->nRemainingExpected(), npairs);
-	  else
-	    fprintf(stderr, "DEGREE %d (npairs %d)\n", this_degree, npairs);
-	}
+        {
+          if (hilbert)
+            fprintf(stderr, "DEGREE %d (nexpected %d npairs %d)\n", this_degree, hilbert->nRemainingExpected(), npairs);
+          else
+            fprintf(stderr, "DEGREE %d (npairs %d)\n", this_degree, npairs);
+        }
       do_spairs();
       complete_thru_this_degree = this_degree;
     }
 
-  clear_master_syz();  
+  clear_master_syz();
 
   if (M2_gbTrace>=2)
     {
       fprintf(stderr, "number of calls to cancel row       : %ld\n", KK->n_dense_row_cancel);
       fprintf(stderr, "number of calls to subtract_multiple: %ld\n", KK->n_subtract_multiple);
       fprintf(stderr, "total time for sorting columns: %f\n", clock_sort_columns);
-      if (using_syz) 
-	fprintf(stderr, "total time for sorting syz columns: %f\n", syz_clock_sort_columns);
+      if (using_syz)
+        fprintf(stderr, "total time for sorting syz columns: %f\n", syz_clock_sort_columns);
       fprintf(stderr, "total time for making matrix (includes sort): %f\n", ((double)clock_make_matrix)/CLOCKS_PER_SEC);
       fprintf(stderr, "total time for gauss: %f\n", ((double)clock_gauss)/CLOCKS_PER_SEC);
       fprintf(stderr, "number of spairs computed           : %ld\n", n_pairs_computed);
@@ -975,26 +975,26 @@ void F4GB::show_gb_array(const gb_array &g) const
   for (int i=0; i<g.size(); i++)
     {
       vec v = F4toM2Interface::to_M2_vec(KK, M, g[i]->f, F);
-      o << "element " << i 
-	<< " degree " << g[i]->deg 
-	<< " alpha " << g[i]->alpha 
-	<< newline << "    ";
+      o << "element " << i
+        << " degree " << g[i]->deg
+        << " alpha " << g[i]->alpha
+        << newline << "    ";
       F->get_ring()->vec_text_out(o, v);
       o << newline;
     }
   emit(o.str());
 }
 
-void F4GB::show_row_info() const 
+void F4GB::show_row_info() const
 {
   // Debugging routine
   for (int i=0; i<mat->rows.size(); i++)
     {
       fprintf(stderr, "%4d ", mat->rows[i].elem);
       if (mat->rows[i].monom == 0)
-	fprintf(stderr, "generator");
+        fprintf(stderr, "generator");
       else
-	M->show(mat->rows[i].monom);
+        M->show(mat->rows[i].monom);
       fprintf(stderr, "\n");
     }
 }
@@ -1004,9 +1004,9 @@ void F4GB::show_column_info() const
   // Debugging routine
   for (int i=0; i<mat->columns.size(); i++)
     {
-      fprintf(stderr, "head %4d monomial ", 
-	      mat->columns[i].head
-	      );
+      fprintf(stderr, "head %4d monomial ",
+              mat->columns[i].head
+              );
       M->show(mat->columns[i].monom);
       fprintf(stderr, "\n");
     }
@@ -1036,21 +1036,21 @@ void F4GB::gauss_reduce_linbox()
   // dumps the current matrix into a file in the linbox sparse matrix format
 {
   // dump the matrix in a file
-  char fname[30];      
+  char fname[30];
   sprintf(fname, "tmp.%i.matrix", this_degree);
-  FILE* mfile = fopen(fname, "w");  
+  FILE* mfile = fopen(fname, "w");
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
-  
+
   fprintf(mfile, "%i %i M\n", nrows, ncols);
   for (int i=0; i<nrows; i++)
     {
       row_elem &r = mat->rows[i];
       int *sparseelems = static_cast<int *>(r.coeffs);
       for (int j=0; j<r.len; j++) {
-	fprintf(mfile, "%i %i %i\n",i+1,r.comps[j]+1,KK->coeff_to_int(*sparseelems++)); //is *sparseelems integer? 
+        fprintf(mfile, "%i %i %i\n",i+1,r.comps[j]+1,KK->coeff_to_int(*sparseelems++)); //is *sparseelems integer?
       }
-    }  
+    }
   fprintf(mfile, "0 0 0\n");
   fclose(mfile);
 }
@@ -1070,26 +1070,26 @@ void F4GB::show_new_rows_matrix()
   for (int nr=0; nr<mat->rows.size(); nr++)
     if (is_new_GB_row(nr))
       {
-	r++;
-	row_elem &row = mat->rows[nr];
-	ring_elem *rowelems = newarray(ring_elem, row.len);
-	if (row.coeffs == 0)
-	  {
-	    if (row.monom == 0)
-	      KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
-	    else
-	      KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
-	  }
-	else
-	  {
-	    KK->to_ringelem_array(row.len, row.coeffs, rowelems);
-	  }
-	for (int i=0; i<row.len; i++)
-	  {
-	    int c = row.comps[i];
-	    gbM->set_entry(r,c,rowelems[i]);
-	  }
-	deletearray(rowelems);
+        r++;
+        row_elem &row = mat->rows[nr];
+        ring_elem *rowelems = newarray(ring_elem, row.len);
+        if (row.coeffs == 0)
+          {
+            if (row.monom == 0)
+              KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
+            else
+              KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
+          }
+        else
+          {
+            KK->to_ringelem_array(row.len, row.coeffs, rowelems);
+          }
+        for (int i=0; i<row.len; i++)
+          {
+            int c = row.comps[i];
+            gbM->set_entry(r,c,rowelems[i]);
+          }
+        deletearray(rowelems);
       }
 
   buffer o;
@@ -1103,5 +1103,5 @@ template class MemoryBlock<monomial_word>;
 template class MemoryBlock<pre_spair>;
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4 f4.o "
+// indent-tabs-mode: nil
 // End:
-

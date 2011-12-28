@@ -16,7 +16,7 @@ RingMap::RingMap(const Matrix *m)
       M = P->getMonoid();
       K = P->getCoefficientRing();
     }
-  else 
+  else
     K = R;
 
   nvars = m->n_cols();
@@ -41,43 +41,43 @@ RingMap::RingMap(const Matrix *m)
       _elem[i].bigelem = f;
 
       if (R->is_zero(f))
-	_elem[i].is_zero = true;
+        _elem[i].is_zero = true;
       else if (P == 0)
-	{
-	  // Not a polynomial ring, so put everything into coeff
-	  if (!K->is_equal(f, one))
-	    {
-	      _elem[i].coeff_is_one = false;
-	      _elem[i].coeff = K->copy(f);
-	    }
-	}
+        {
+          // Not a polynomial ring, so put everything into coeff
+          if (!K->is_equal(f, one))
+            {
+              _elem[i].coeff_is_one = false;
+              _elem[i].coeff = K->copy(f);
+            }
+        }
       else {
-	// A polynomial ring.
+        // A polynomial ring.
 #ifdef DEVELOPMENT
 #warning "also handle fraction rings"
 #endif
-	Nterm *t = f;
-	if (t->next == NULL)
-	  {
-	    // This is a single term
-	    if (!K->is_equal(t->coeff, one))
-	      {
-		_elem[i].coeff_is_one = false;
-		_elem[i].coeff = K->copy(t->coeff);
-	      }
-	    
-	    if (!M->is_one(t->monom))  // should handle M->n_vars() == 0 case correctly.
-	      {
-		_elem[i].monom_is_one = false;
-		_elem[i].monom = M->make_new(t->monom);
-	      }
-	  }
-	else
-	  {
-	    // This is a bigterm
-	    is_monomial = false;
-	    _elem[i].bigelem_is_one = false;
-	  }
+        Nterm *t = f;
+        if (t->next == NULL)
+          {
+            // This is a single term
+            if (!K->is_equal(t->coeff, one))
+              {
+                _elem[i].coeff_is_one = false;
+                _elem[i].coeff = K->copy(t->coeff);
+              }
+
+            if (!M->is_one(t->monom))  // should handle M->n_vars() == 0 case correctly.
+              {
+                _elem[i].monom_is_one = false;
+                _elem[i].monom = M->make_new(t->monom);
+              }
+          }
+        else
+          {
+            // This is a bigterm
+            is_monomial = false;
+            _elem[i].bigelem_is_one = false;
+          }
       }
       K->remove(one);
     }
@@ -128,16 +128,16 @@ void RingMap::text_out(buffer &o) const
 }
 
 ring_elem RingMap::eval_term(const Ring *sourceK,
-			     const ring_elem a, 
-			     const int *vp, 
-			     int first_var,
-			     int nvars_in_source) const
+                             const ring_elem a,
+                             const int *vp,
+                             int first_var,
+                             int nvars_in_source) const
 {
   for (index_varpower i = vp; i.valid(); ++i)
     {
       int v = first_var + i.var();
       if (v >= nvars || _elem[v].is_zero)
-	return R->from_int(0);	// The result is zero.
+        return R->from_int(0);  // The result is zero.
     }
 
   // If K is a coeff ring of R, AND map is an identity on K,
@@ -160,65 +160,65 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
     {
       // This is the only non-commutative case so far
       for (index_varpower i = vp; i.valid(); ++i)
-	{
-	  int v = first_var + i.var();
-	  int e = i.exponent();
-	  ring_elem g;
-	  if (e >= 0)
-	    g = _elem[v].bigelem;
-	  else
-	    g = R->invert(_elem[v].bigelem);
-	  for (int j=0; j<e; j++)
-	    {
-	      assert(v < nvars);
-	      ring_elem tmp = R->mult(g,result);
-	      R->remove(result);
-	      result = tmp;
-	    }
-	}
+        {
+          int v = first_var + i.var();
+          int e = i.exponent();
+          ring_elem g;
+          if (e >= 0)
+            g = _elem[v].bigelem;
+          else
+            g = R->invert(_elem[v].bigelem);
+          for (int j=0; j<e; j++)
+            {
+              assert(v < nvars);
+              ring_elem tmp = R->mult(g,result);
+              R->remove(result);
+              result = tmp;
+            }
+        }
     }
   else {
     for (index_varpower i = vp; i.valid(); ++i)
       {
-	int v = first_var + i.var();
-	int e = i.exponent();
-	assert(v < nvars);
-	if (_elem[v].bigelem_is_one && e > 0)
-	  {
-	    if (!_elem[v].coeff_is_one)
-	      {
-		ring_elem tmp = K->power(_elem[v].coeff, e);
-		K->mult_to(result_coeff, tmp);
-		K->remove(tmp);
-	      }
-	    if (!_elem[v].monom_is_one)
-	      {
-		M->power(_elem[v].monom, e, temp_monom);
-		M->mult(result_monom, temp_monom, result_monom);
-	      }
-	  }
-	else
-	  {
-	    ring_elem thispart = R->power(_elem[v].bigelem, e);
-	    R->mult_to(result, thispart);
-	    R->remove(thispart);
-	    if (R->is_zero(result)) break;
-	  }
+        int v = first_var + i.var();
+        int e = i.exponent();
+        assert(v < nvars);
+        if (_elem[v].bigelem_is_one && e > 0)
+          {
+            if (!_elem[v].coeff_is_one)
+              {
+                ring_elem tmp = K->power(_elem[v].coeff, e);
+                K->mult_to(result_coeff, tmp);
+                K->remove(tmp);
+              }
+            if (!_elem[v].monom_is_one)
+              {
+                M->power(_elem[v].monom, e, temp_monom);
+                M->mult(result_monom, temp_monom, result_monom);
+              }
+          }
+        else
+          {
+            ring_elem thispart = R->power(_elem[v].bigelem, e);
+            R->mult_to(result, thispart);
+            R->remove(thispart);
+            if (R->is_zero(result)) break;
+          }
       }
     if (P != 0)
       {
-	ring_elem temp = P->make_flat_term(result_coeff, result_monom);
-	K->remove(result_coeff);
-	M->remove(result_monom);
-	M->remove(temp_monom);
-	P->mult_to(result,temp);
-	P->remove(temp);
+        ring_elem temp = P->make_flat_term(result_coeff, result_monom);
+        K->remove(result_coeff);
+        M->remove(result_monom);
+        M->remove(temp_monom);
+        P->mult_to(result,temp);
+        P->remove(temp);
       }
     else
       {
-	// result_monom has not been used
-	// and result, result_coeff are both in the ring K
-	result = K->mult(result, result_coeff);
+        // result_monom has not been used
+        // and result, result_coeff are both in the ring K
+        result = K->mult(result, result_coeff);
       }
   }
   return result;
@@ -226,8 +226,8 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 
 RingElement /* or null */ *RingMap::eval(const RingElement *r) const
 {
-  RingElement *result = RingElement::make_raw(get_ring(), 
-					      r->get_ring()->eval(this, r->get_value(),0) );
+  RingElement *result = RingElement::make_raw(get_ring(),
+                                              r->get_ring()->eval(this, r->get_value(),0) );
   if (error()) return 0;
   return result;
 }
@@ -245,4 +245,5 @@ Matrix /* or null */ *RingMap::eval(const FreeModule *F, const Matrix *m) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

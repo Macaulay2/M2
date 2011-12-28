@@ -8,17 +8,17 @@
 class ReducedGB_Field : public ReducedGB
 {
   friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
-				      const FreeModule *F0,
-				      const FreeModule *Fsyz0,
-				      const GBWeight *wt0);
+                                      const FreeModule *F0,
+                                      const FreeModule *Fsyz0,
+                                      const GBWeight *wt0);
 protected:
   MonomialTable *T;
   const MonomialIdeal *Rideal;
 
   ReducedGB_Field(GBRing *R0,
-		  const PolynomialRing *originalR0,
-		  const FreeModule *F0,
-		  const FreeModule *Fsyz0);
+                  const PolynomialRing *originalR0,
+                  const FreeModule *F0,
+                  const FreeModule *Fsyz0);
 
 public:
   virtual ~ReducedGB_Field();
@@ -28,16 +28,17 @@ public:
   virtual void set_gb(VECTOR(POLY) &polys0);
 
   virtual void minimalize(const VECTOR(POLY) &polys0,
-			  bool auto_reduced);
+                          bool auto_reduced);
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
 
   virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom);
 
-};	     
+};
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

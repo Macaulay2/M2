@@ -19,19 +19,19 @@ class GaussElimComputation : public GBComputation
 {
 private:
   int row;
-  gm_elem **reduce_list;	// One list for each row
-  gm_elem **gb_list;		// The GB elem (if any) with the given row index
-				// as lead term.
+  gm_elem **reduce_list;        // One list for each row
+  gm_elem **gb_list;            // The GB elem (if any) with the given row index
+                                // as lead term.
 
-  const Ring *R;		// Ring of 'gens'.  Should be a field.
-  const Matrix *gens;		// This is the input
+  const Ring *R;                // Ring of 'gens'.  Should be a field.
+  const Matrix *gens;           // This is the input
   const FreeModule *Fsyz;
   VECTOR(vec) syz_list;
 
   int n_gb;
   int n_pairs, n_syz;
 
-  int collect_syz;	// 0 or 1
+  int collect_syz;      // 0 or 1
   int n_comps_per_syz;
 
 private:
@@ -79,8 +79,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient);
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient);
 
   virtual int contains(const Matrix *m);
 
@@ -96,4 +96,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

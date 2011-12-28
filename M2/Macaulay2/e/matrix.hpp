@@ -14,58 +14,58 @@ class Matrix : public object
 {
   FreeModule *_rows;
   FreeModule *_cols;
-  int *_degree_shift;		// An element of the degree monoid
+  int *_degree_shift;           // An element of the degree monoid
   array<vec> _entries;
 
   friend class FreeModule;
 private:
   friend class MatrixConstructor;
-  Matrix(const FreeModule *rows, 
-	 const FreeModule *cols,
-	 const int *degree_shift,
-	 VECTOR(vec) & entries);
+  Matrix(const FreeModule *rows,
+         const FreeModule *cols,
+         const int *degree_shift,
+         VECTOR(vec) & entries);
 
   static bool make_sparse_vecs(MatrixConstructor &mat,
-			       const FreeModule *target,
-			       int ncols,
-			       M2_arrayint rows,
-			       M2_arrayint cols,
-			       const engine_RawRingElementArray entries);
+                               const FreeModule *target,
+                               int ncols,
+                               M2_arrayint rows,
+                               M2_arrayint cols,
+                               const engine_RawRingElementArray entries);
   // returns false if an error, true otherwise.
   // Places the elements into 'mat'.
 
 
   // These two routines are private to 'coeffs'
-  vec strip_vector(vec &f, const int *vars, 
-		       const FreeModule *F, vec &vmonom) const;
+  vec strip_vector(vec &f, const int *vars,
+                       const FreeModule *F, vec &vmonom) const;
   int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
 
 public:
   static const Matrix /* or null */ * make(const FreeModule *target,
-				   int ncols,
-				   const engine_RawRingElementArray M);
+                                   int ncols,
+                                   const engine_RawRingElementArray M);
 
   static const Matrix /* or null */ * make(const FreeModule *target,
-				   const FreeModule *source,
-				   M2_arrayint deg,
-				   const engine_RawRingElementArray M);
+                                   const FreeModule *source,
+                                   M2_arrayint deg,
+                                   const engine_RawRingElementArray M);
 
   static const Matrix /* or null */ * make_sparse(const FreeModule *target,
-					  int ncols,
-					  M2_arrayint rows,
-					  M2_arrayint cols,
-					  const engine_RawRingElementArray entries);
+                                          int ncols,
+                                          M2_arrayint rows,
+                                          M2_arrayint cols,
+                                          const engine_RawRingElementArray entries);
 
   static const Matrix /* or null */ * make_sparse(const FreeModule *target,
-					  const FreeModule *source,
-					  M2_arrayint deg,
-					  M2_arrayint rows,
-					  M2_arrayint cols,
-					  const engine_RawRingElementArray entries);
+                                          const FreeModule *source,
+                                          M2_arrayint deg,
+                                          M2_arrayint rows,
+                                          M2_arrayint cols,
+                                          const engine_RawRingElementArray entries);
 
   const Matrix /* or null */ * remake(const FreeModule *target,
-			      const FreeModule *source,
-			      M2_arrayint deg) const;
+                              const FreeModule *source,
+                              M2_arrayint deg) const;
 
   const Matrix /* or null */ * remake(const FreeModule *target) const;
 
@@ -94,7 +94,7 @@ public:
 
   // to/from monideals
   MonomialIdeal * make_monideal(int n, bool use_only_monomials_with_unit_coeffs=false) const;
-  
+
   // matrices over RRR, CCC
   Matrix /* or null */ *clean(gmp_RR epsilon) const;
   gmp_RRorNull norm(gmp_RR p) const;
@@ -143,21 +143,21 @@ public:
   Matrix *top_coefficients(Matrix * &monoms) const;
 
   const Matrix /* or null */ * basis(M2_arrayint lo_degree,
-			     M2_arrayint hi_degree,
-			     M2_arrayint wt,
-			     M2_arrayint vars,
-			     bool do_truncation,
-			     int limit) const;
+                             M2_arrayint hi_degree,
+                             M2_arrayint wt,
+                             M2_arrayint vars,
+                             bool do_truncation,
+                             int limit) const;
 
   Matrix *exterior(int p,int strategy) const;
   Matrix *minors(int p,int strategy) const;
   Matrix /* or null */ *minors(int p,
-		       int strategy, 
-		       int n_to_compute, // -1 means all
-		       M2_arrayintOrNull first_row, // possibly NULL
-		       M2_arrayintOrNull first_col // possibly NULL
-		       ) const;
-    
+                       int strategy,
+                       int n_to_compute, // -1 means all
+                       M2_arrayintOrNull first_row, // possibly NULL
+                       M2_arrayintOrNull first_col // possibly NULL
+                       ) const;
+
   Matrix *pfaffians(int p) const;  // in pfaff.cpp
   static Matrix *wedge_product(int p, int q, const FreeModule *F);
 //  static Matrix wedge_dual(int p, const FreeModule *F);
@@ -172,8 +172,8 @@ public:
 
   // Simplification of column set
   Matrix *simplify(int n) const;
-  Matrix *auto_reduce() const;	// An error is given, if there are two lead terms
-				// one which divides another.
+  Matrix *auto_reduce() const;  // An error is given, if there are two lead terms
+                                // one which divides another.
 
   // Sorting the columns of the matrix (new positions into 'result')
   //  void sort(int degorder, int monorder, intarray &result) const;
@@ -181,19 +181,19 @@ public:
 
   // Matrix selection
   Matrix *lead_term(int n=-1) const; // Select those monomials in each column
-				  // which are maximal in the order under
-				  // the first n weight vectors
-  // If n is -1, then the flat lead terms are returned, 
+                                  // which are maximal in the order under
+                                  // the first n weight vectors
+  // If n is -1, then the flat lead terms are returned,
   // If n is > 0, then the first n parts of the monomial order are used.
   //   HOWEVER: in this case, the Schreyer order is not used: the usual order
   //   of the ring (for free modules) is used.
 
   // Module operations
-  int dimension1() const;	// Compute the dimension of the quotient of the 
-				// submodule generated by the lead terms of the
-				// columns of the matrix, modulo any lead terms of the
-				// presentation ideal of the ring of m.
-				// Over ZZ, this gives the dimension over QQ.
+  int dimension1() const;       // Compute the dimension of the quotient of the
+                                // submodule generated by the lead terms of the
+                                // columns of the matrix, modulo any lead terms of the
+                                // presentation ideal of the ring of m.
+                                // Over ZZ, this gives the dimension over QQ.
 
   // See engine.h for the definition of 'content' here
   const Matrix /* or null */ *content() const;
@@ -215,11 +215,11 @@ public:
 
   static Matrix *random(const Ring *R, int r, int c);
 
-  static Matrix *random(const Ring *R, 
-			int r, int c, 
-			double fraction_non_zero, 
-			int special_type); // 0: general, 1:upper triangular, others?
-    
+  static Matrix *random(const Ring *R,
+                        int r, int c,
+                        double fraction_non_zero,
+                        int special_type); // 0: general, 1:upper triangular, others?
+
   void text_out(buffer &o) const;
 
   class iterator : public our_new_delete
@@ -242,4 +242,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

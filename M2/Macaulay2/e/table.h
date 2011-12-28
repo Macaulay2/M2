@@ -23,17 +23,17 @@ typedef struct T T;
 extern "C" {
 #endif
 extern T *   Table_new (int hint,
-	int cmp(const void *x, const void *y),
-	unsigned hash(const void *key));
+        int cmp(const void *x, const void *y),
+        unsigned hash(const void *key));
 extern void Table_free(T **table);
 extern int   Table_length(T * table);
 extern void *Table_put   (T * table, const void *key,
-	void *value);
+        void *value);
 extern void *Table_get   (T * table, const void *key);
 extern void *Table_remove(T * table, const void *key);
 extern void   Table_map    (T * table,
-	void apply(const void *key, void **value, void *cl),
-	void *cl);
+        void apply(const void *key, void **value, void *cl),
+        void *cl);
 const extern void **Table_toArray(T * table, void *end);
 #if defined(__cplusplus)
 }
@@ -46,5 +46,6 @@ const extern void **Table_toArray(T * table, void *end);
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
 */

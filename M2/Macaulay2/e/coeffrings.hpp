@@ -9,7 +9,7 @@ class Z_mod;
 
 class CoefficientRingZZpLog
 {
-  // Integers mod p, implemented as 
+  // Integers mod p, implemented as
   // exponents of a primitive element a
   // Representation:
   // 0  means 0
@@ -51,7 +51,7 @@ public:
     else
       minus_one = (p-1)/2;
 
-    // We need to compute the 
+    // We need to compute the
   }
 
   void to_double(elem a, double &result)
@@ -71,8 +71,8 @@ public:
     result = a;
   }
 
-  void set_zero(elem &result) const 
-  { 
+  void set_zero(elem &result) const
+  {
     result = 0;
   }
 
@@ -81,9 +81,9 @@ public:
     result = a;
   }
 
-  bool is_zero(elem result) const 
-  { 
-    return result == 0; 
+  bool is_zero(elem result) const
+  {
+    return result == 0;
   }
 
   void invert(elem &result, elem a) const
@@ -112,14 +112,14 @@ public:
     //   result = ab;
     // else
     //   {
-    // 	int n = modulus_sub(exp_table[result], exp_table[ab], p);
-    // 	result = log_table[n];
+    //  int n = modulus_sub(exp_table[result], exp_table[ab], p);
+    //  result = log_table[n];
     //   }
   }
 
   void mult(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0) 
+    if (a == 0 || b == 0)
       result = 0;
     else
       result = modulus_add(a,b,p1);
@@ -127,7 +127,7 @@ public:
 
   void divide(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0) 
+    if (a == 0 || b == 0)
       result = 0;
     else
       result = modulus_sub(a,b,p1);
@@ -200,7 +200,7 @@ public:
 
   void invert(elem &result, elem a) const
   {
-    if (a == 0) 
+    if (a == 0)
       result = 0; // this is the case a == ONE
     else
       result = p - 1 - a;
@@ -213,8 +213,8 @@ public:
     else if (b == zero) result = a;
     else
       {
-	int n = modulus_add(exp_table[a], exp_table[b], p);
-	result = log_table[n];
+        int n = modulus_add(exp_table[a], exp_table[b], p);
+        result = log_table[n];
       }
   }
 
@@ -224,8 +224,8 @@ public:
     else if (a == zero) result = modulus_add(b, minus_one, p1);
     else
       {
-	int n = modulus_sub(exp_table[a], exp_table[b], p);
-	result = log_table[n];
+        int n = modulus_sub(exp_table[a], exp_table[b], p);
+        result = log_table[n];
       }
   }
 
@@ -240,14 +240,14 @@ public:
     //   result = ab;
     // else
     //   {
-    // 	int n = modulus_sub(exp_table[result], exp_table[ab], p);
-    // 	result = log_table[n];
+    //  int n = modulus_sub(exp_table[result], exp_table[ab], p);
+    //  result = log_table[n];
     //   }
   }
 
   void mult(elem &result, elem a, elem b) const
   {
-    if (a == zero || b == zero) 
+    if (a == zero || b == zero)
       result = zero;
     else
       result = modulus_add(a,b,p1);
@@ -255,7 +255,7 @@ public:
 
   void divide(elem &result, elem a, elem b) const
   {
-    if (a == zero || b == zero) 
+    if (a == zero || b == zero)
       result = zero;
     else
       result = modulus_sub(a,b,p1);
@@ -292,9 +292,9 @@ public:
 
   void init_set(elem &result, elem a) const { mpfr_init_set(&result, &a, GMP_RNDN); }
 
-  void set_zero(elem &result) const { 
+  void set_zero(elem &result) const {
     mpfr_init2(&result, R->get_precision());
-    mpfr_set_si(&result, 0, GMP_RNDN); 
+    mpfr_set_si(&result, 0, GMP_RNDN);
   }
 
   void set(elem &result, elem a) const { mpfr_set(&result, &a, GMP_RNDN); }
@@ -314,8 +314,8 @@ public:
 
   void divide(elem &result, elem a, elem b) const { mpfr_div(&result, &a, &b, GMP_RNDN); }
 
-  void to_ring_elem(ring_elem &result, const elem a) const  { 
-    R->from_BigReal(const_cast<elem *>(&a), result); 
+  void to_ring_elem(ring_elem &result, const elem a) const  {
+    R->from_BigReal(const_cast<elem *>(&a), result);
   }
 
   void from_ring_elem(elem &result, const ring_elem &a) const
@@ -414,7 +414,7 @@ public:
 
   void invert(elem &result, elem a) const { CCArithmetic::invert(result, a); }
 
-  void subtract_multiple(elem &result, elem a, elem b) const { 
+  void subtract_multiple(elem &result, elem a, elem b) const {
     // result -= a*b
     CCArithmetic::subtract_multiple(result,a,b);
   }
@@ -443,7 +443,7 @@ public:
     elem tmp = a;
     a = b;
     b = tmp;
-  }  
+  }
 };
 #endif
 
@@ -461,11 +461,11 @@ public:
 
   CoefficientRingCCC(CCC *R0) : R(R0) {}
 
-  void init_set(elem &result, elem a) const { 
-    mpfc_init_set(&result,&a); 
+  void init_set(elem &result, elem a) const {
+    mpfc_init_set(&result,&a);
   }
 
-  void set_zero(elem &result) const { 
+  void set_zero(elem &result) const {
     mpfc_init(&result, R->get_precision());
     mpfc_set_si(&result, 0);
   }
@@ -484,7 +484,7 @@ public:
 
   void divide(elem &result, elem a, elem b) const { mpfc_div(&result,&a,&b); }
 #if 0
-  void subtract_multiple(elem &result, elem a, elem b) const { 
+  void subtract_multiple(elem &result, elem a, elem b) const {
     // result -= a*b
     mpfc_subtract_multiple(result,a,b);
   }
@@ -507,7 +507,7 @@ public:
     elem tmp = a;
     a = b;
     b = tmp;
-  }  
+  }
 };
 
 class CoefficientRingR : public our_new_delete
@@ -581,4 +581,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

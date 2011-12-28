@@ -10,7 +10,7 @@ include @srcdir@/Makefile.files
 include Makefile.common
 CPPFLAGS := -I. -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c
 
-.PHONY : tags
+.PHONY : tags fixspace
 
 ###################################################################
 ## Targets ##
@@ -110,6 +110,11 @@ test.o : CXXFLAGS += -Wno-unused -Wno-uninitialized -Wno-cast-qual
 
 clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
 clean :: ; rm -rf *.dSYM
+
+# fixing spaces.  Thanks to Bjarke Roune for the 'fixspace' shell script
+# BUT: this cannot be run on Makefile's (that is why we just grab c and c++ source files)
+fixspace:
+	find @srcdir@ . -name "*.hpp" -or -name "*.cpp" -or -name "*.h" -or -name "*.c" |xargs @srcdir@/fixspace;
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e "

@@ -35,7 +35,7 @@ public:
   int compare(pmonomial<BIN> x, pmonomial<BIN> y) {
     int j = 0, n = numbins;
     while (1) {
-      if expect_false (x[j] > y[j]) return  1; 
+      if expect_false (x[j] > y[j]) return  1;
       else if expect_false (x[j] < y[j]) return -1;
       j++;
       n--;
@@ -45,7 +45,7 @@ public:
   virtual int compare_partial(pmonomial<BIN> x, pmonomial<BIN> y, int numparts);
   virtual int Schreyer_compare(vmonomial<BIN> x, vmonomial<BIN> y, pmonomial<BIN> *sch, int *tiebreaker);
   virtual void mult(pmonomial<BIN> dest, const pmonomial<BIN> , const pmonomial<BIN> );
-  virtual void mult_unsafe(pmonomial<BIN> dest, const pmonomial<BIN> x, const pmonomial<BIN> y) { 
+  virtual void mult_unsafe(pmonomial<BIN> dest, const pmonomial<BIN> x, const pmonomial<BIN> y) {
     int j = numbins;
     while (--j >= 0) dest.contents[j] = x.contents[j] + y.contents[j] - identity.contents[j];
   }
@@ -62,7 +62,7 @@ public:
   virtual EXP  degree_bound(const EXP *wt);
 };
 
-template <typename EXP, typename BIN> 
+template <typename EXP, typename BIN>
 struct pm_makers {
   pm<EXP,BIN> *grevlex(int numvars, int bitsperfield);
   pm<EXP,BIN> *lrevlex(int numvars, int bitsperfield);
@@ -81,4 +81,5 @@ struct pm_makers {
 
 // Local Variables:
 // compile-command: "cd $M2BUILDDIR/Macaulay2/e && make pm-test.o"
+// indent-tabs-mode: nil
 // End:

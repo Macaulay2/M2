@@ -32,13 +32,13 @@ exponents gbA::exponents_make()
 }
 
 gbA * gbA::create(const Matrix *m,
-		  M2_bool collect_syz,
-		  int n_rows_to_keep,
-		  M2_arrayint gb_weights,
-		  int strategy,
-		  M2_bool use_max_degree_limit,
-		  int max_degree_limit,
-		  int max_reduction_count)
+                  M2_bool collect_syz,
+                  int n_rows_to_keep,
+                  M2_arrayint gb_weights,
+                  int strategy,
+                  M2_bool use_max_degree_limit,
+                  int max_degree_limit,
+                  int max_reduction_count)
 {
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy, max_reduction_count);
@@ -50,7 +50,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
      // max_reduction_count: default was 10
      // 1 is best possible for 3-anderbuch!
      // 5 is: (114.64 sec, 494 MB)
-     // 10 is best so far (125.33 sec, 527 MB virtual).  
+     // 10 is best so far (125.33 sec, 527 MB virtual).
      // 50 is faster/smaller than 100, and 1000 was awful, on 3-andersbuch
 
   max_reduction_count = max_reduction_count0;
@@ -84,7 +84,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   n_rows_per_syz = nsyz;
 
   _F = m->rows();
-  _Fsyz = m->cols()->sub_space(n_rows_per_syz);  
+  _Fsyz = m->cols()->sub_space(n_rows_per_syz);
 
   S = new SPairSet;
   first_in_degree = 0;
@@ -140,11 +140,11 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
 
       first_gb_element = originalR->n_quotients();
       for (int i=0; i<first_gb_element; i++)
-	{
-	  gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
-	  gbelem *g = gbelem_ring_make(f);
-	  gb.push_back(g);
-	}
+        {
+          gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
+          gbelem *g = gbelem_ring_make(f);
+          gb.push_back(g);
+        }
     }
   for (int i=0; i<m->n_cols(); i++)
     {
@@ -152,10 +152,10 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       gbvector *f = originalR->translate_gbvector_from_vec(_F,(*m)[i], denom);
       spair *p = new_gen(i, f, denom);
       if (p != NULL)
-	{
-	  spair_set_insert(p);
-	  n_gens_left++;
-	}
+        {
+          spair_set_insert(p);
+          n_gens_left++;
+        }
     }
 
   state = STATE_NEWDEGREE; // will be changed if hilb fcn is used
@@ -178,10 +178,10 @@ gbA::spair *gbA::new_gen(int i, gbvector *f, ring_elem denom)
     {
       originalR->get_quotient_info()->gbvector_normal_form(_Fsyz, fsyz);
       if (!R->gbvector_is_zero(fsyz))
-	{
-	  //vec fsyzvec = _GR->gbvector_to_vec(_Fsyz,fsyz);
-	  collect_syzygy(fsyz);
-	}
+        {
+          //vec fsyzvec = _GR->gbvector_to_vec(_Fsyz,fsyz);
+          collect_syzygy(fsyz);
+        }
       return NULL;
     }
 
@@ -235,13 +235,13 @@ gbA::~gbA()
  * Exponent handling *****
  *************************/
 
-static void exponents_lcm(int nvars, 
-			  int dega, 
-			  exponents a, 
-			  exponents b, 
-			  exponents result, 
-			  M2_arrayint weights,
-			  int &result_degree)
+static void exponents_lcm(int nvars,
+                          int dega,
+                          exponents a,
+                          exponents b,
+                          exponents result,
+                          M2_arrayint weights,
+                          int &result_degree)
 // can handle the case when a == result or b == result
 {
   int i;
@@ -250,12 +250,12 @@ static void exponents_lcm(int nvars,
     {
       int diff = b[i] - a[i];
       if (diff <= 0)
-	result[i] = a[i];
+        result[i] = a[i];
       else
-	{
-	  result[i] = b[i];
-	  deg += diff * weights->array[i];
-	}
+        {
+          result[i] = b[i];
+          deg += diff * weights->array[i];
+        }
     }
   result_degree = deg;
 }
@@ -306,9 +306,9 @@ gbA::gbelem *gbA::gbelem_ring_make(gbvector *f)
 
 
 gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
-			      gbvector *fsyz, // grabs fsyz
-			      gbelem_type minlevel,
-			      int deg)
+                              gbvector *fsyz, // grabs fsyz
+                              gbelem_type minlevel,
+                              int deg)
 {
   int f_wt, f_leadweight;
   gbelem *g = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
@@ -453,8 +453,8 @@ void gbA::spair_text_out(buffer &o, spair *p)
     o << " lcm[";
     for (int i=0; i<_nvars+2; i++)
       {
-	sprintf(s, "%d ", p->lcm[i]);
-	o << s;
+        sprintf(s, "%d ", p->lcm[i]);
+        o << s;
       }
     o << "]";
     break;
@@ -466,8 +466,8 @@ void gbA::spair_text_out(buffer &o, spair *p)
     o << " lcm exponents [";
     for (int i=0; i<_nvars+2; i++)
       {
-	sprintf(s, "%d ", p->lcm[i]);
-	o << s;
+        sprintf(s, "%d ", p->lcm[i]);
+        o << s;
       }
     o << "]";
     break;
@@ -513,8 +513,8 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
   if (p->type != SPAIR_SPAIR && p->type != SPAIR_RING) return false;
   mexp = m->lead;
   lcm = p->lcm;
-  if (gbelem_COMPONENT(m) != 
-      spair_COMPONENT(p)) 
+  if (gbelem_COMPONENT(m) !=
+      spair_COMPONENT(p))
     return false;
 
   first = p->x.pair.i;
@@ -523,9 +523,9 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
   p2exp = gb[second]->lead; /* If a ring pair, this should index into gb array */
 
   ncalls++;
-  for (i=0; i<_nvars; i++, nloops++) 
+  for (i=0; i<_nvars; i++, nloops++)
     if (mexp[i] > lcm[i]) return false;
-      
+
   firstok = false;
   for (i=0; i<_nvars; i++)
     {
@@ -547,7 +547,7 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
 void gbA::remove_unneeded_pairs(int id)
 {
   /* Removes all pairs from C->S that are not needed */
-  if (over_ZZ()) return; 
+  if (over_ZZ()) return;
   spair head;
   spair *p = &head;
   gbelem *m = gb[id];
@@ -556,19 +556,19 @@ void gbA::remove_unneeded_pairs(int id)
   while (p->next != 0)
     if (pair_not_needed(p->next, m))
       {
-	nsaved_unneeded++;
-	spair *tmp = p->next;
-	p->next = tmp->next;
-	tmp->next = 0;
-	if (M2_gbTrace >= 10)
-	  {
-	    buffer o;
-	    o << "removing unneeded ";
-	    spair_text_out(o, tmp);
-	    emit_line(o.str());
-	  }
-	spair_delete(tmp);
-	S->nelems--;
+        nsaved_unneeded++;
+        spair *tmp = p->next;
+        p->next = tmp->next;
+        tmp->next = 0;
+        if (M2_gbTrace >= 10)
+          {
+            buffer o;
+            o << "removing unneeded ";
+            spair_text_out(o, tmp);
+            emit_line(o.str());
+          }
+        spair_delete(tmp);
+        S->nelems--;
       }
   else
     p = p->next;
@@ -590,8 +590,8 @@ bool gbA::is_gcd_one_pair(spair *p)
   return true;
 }
 
-gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first, 
-				       gbA::spairs::iterator next)
+gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
+                                       gbA::spairs::iterator next)
 {
   /* a is an array of spair's, and a[first], ..., a[next-1] all have the
      same lcm, which is a minimal monomial generator of all such lcm's.
@@ -613,10 +613,10 @@ struct spair_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool
       if (cmp < 0) result = true;
       else if (cmp > 0) result = false;
       else {
-	cmp = a->type - b->type;
-	if (cmp < 0) result = true;
-	else if (cmp > 0) result = false;
-	else result = exponents_less_than(nvars,a->lcm, b->lcm);
+        cmp = a->type - b->type;
+        if (cmp < 0) result = true;
+        else if (cmp > 0) result = false;
+        else result = exponents_less_than(nvars,a->lcm, b->lcm);
       }
       return result;
     }
@@ -641,21 +641,21 @@ public:
     int cmp = a->deg - b->deg;
     if (cmp < 0) result = GT;
       else if (cmp > 0) result = LT;
-      else 
-	{
-	  gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
-	  gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
-	  if (a1 == 0)
-	    {
-	      if (b1 == 0) result = EQ;
-	      else result = LT;
-	    }
-	  else
-	    {
-	      if (!b1) result = GT;
-	      else result = R->gbvector_compare(F,a1, b1);
-	    }
-	}
+      else
+        {
+          gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
+          gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
+          if (a1 == 0)
+            {
+              if (b1 == 0) result = EQ;
+              else result = LT;
+            }
+          else
+            {
+              if (!b1) result = GT;
+              else result = R->gbvector_compare(F,a1, b1);
+            }
+        }
     return result;
   }
 
@@ -663,8 +663,8 @@ public:
     : F(F0), R(R0), ncmps(0) {}
 
   long ncomparisons() const { return ncmps; }
-  
-  ~SPolySorter() {} 
+
+  ~SPolySorter() {}
 };
 
 // ZZZZ split
@@ -691,44 +691,44 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
       next = first+1;
       spair *me = *first;
       while (next != end)
-	{
-	  spair *p = *next;
-	  if (!exponents_equal(_nvars, me->lcm, p->lcm)) break;
-	  next++;
-	}
+        {
+          spair *p = *next;
+          if (!exponents_equal(_nvars, me->lcm, p->lcm)) break;
+          next++;
+        }
       /* At this point: [first,next) is the range of equal monomials */
-      
+
       int inideal = montab->find_divisors(1, me->lcm, 1);
       if (inideal == 0)
-	{
-	  spairs::iterator t = choose_pair(first, next);
-	  spair *p = *t;
-	  if (_is_ideal && is_gcd_one_pair(p))
-	    {
-	      stats_ngcd1++;
-	      if ((M2_gbTrace & PRINT_SPAIR_TRACKING) != 0)
-		{
-		  buffer o;
-		  o << "removing spair because of gcd: ";
-		  spair_text_out(o, p);
-		  emit_line(o.str());
-		}
-	      spair_delete(p);
-	    }
-	  else
-	    {
-	      if (M2_gbTrace >= 4)
-		{
-		  buffer o;
-		  o << "    new ";
-		  spair_text_out(o,p);
-		  emit_line(o.str());
-		}
-	      spair_set_insert(p);
-	      montab->insert(p->lcm, 1, 0);
-	    }
-	  *t = 0;
-	}
+        {
+          spairs::iterator t = choose_pair(first, next);
+          spair *p = *t;
+          if (_is_ideal && is_gcd_one_pair(p))
+            {
+              stats_ngcd1++;
+              if ((M2_gbTrace & PRINT_SPAIR_TRACKING) != 0)
+                {
+                  buffer o;
+                  o << "removing spair because of gcd: ";
+                  spair_text_out(o, p);
+                  emit_line(o.str());
+                }
+              spair_delete(p);
+            }
+          else
+            {
+              if (M2_gbTrace >= 4)
+                {
+                  buffer o;
+                  o << "    new ";
+                  spair_text_out(o,p);
+                  emit_line(o.str());
+                }
+              spair_set_insert(p);
+              montab->insert(p->lcm, 1, 0);
+            }
+          *t = 0;
+        }
     }
 
   delete montab;
@@ -738,7 +738,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 
 void gbA::minimalize_pairs_ZZ(spairs &new_set)
 {
-  // Prune down the set of spairs to a 'minimal' set.  For each one, we 
+  // Prune down the set of spairs to a 'minimal' set.  For each one, we
   // need to add in a "gcd" combination spair as well.
 
   VECTOR(mpz_ptr) coeffs;
@@ -746,7 +746,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
   VECTOR(exponents) exps;
   VECTOR(int) comps;
   VECTOR(int) positions;
-  
+
   coeffs.reserve(gb.size());
   coeffs2.reserve(gb.size());
   exps.reserve(gb.size());
@@ -756,26 +756,26 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
     {
       spair *a = *i;
       exps.push_back(a->lcm);
-      comps.push_back(1); /* This is not needed here, as all of these 
+      comps.push_back(1); /* This is not needed here, as all of these
                              have the same component */
       /* Now get the coefficient */
       /* This is the lcm divided by the lead coeff, but it depends on the kind of spair */
       if (a->type == SPAIR_SKEW)
-	{
-	  coeffs.push_back(globalZZ->one().get_mpz());
-	  coeffs2.push_back(0); // will never be referred to below
-	}
-      else 
-	{
-	  /* */
-	  gbvector *f1 = gb[a->x.pair.i]->g.f;
-	  gbvector *f2 = gb[a->x.pair.j]->g.f;
-	  ring_elem u,v;
-	  globalZZ->syzygy(f1->coeff, f2->coeff, u, v);
-	  coeffs.push_back(u.get_mpz());
-	  coeffs2.push_back(v.get_mpz());
-	}
-    }  
+        {
+          coeffs.push_back(globalZZ->one().get_mpz());
+          coeffs2.push_back(0); // will never be referred to below
+        }
+      else
+        {
+          /* */
+          gbvector *f1 = gb[a->x.pair.i]->g.f;
+          gbvector *f2 = gb[a->x.pair.j]->g.f;
+          ring_elem u,v;
+          globalZZ->syzygy(f1->coeff, f2->coeff, u, v);
+          coeffs.push_back(u.get_mpz());
+          coeffs2.push_back(v.get_mpz());
+        }
+    }
 
   MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
 
@@ -784,25 +784,25 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
       // Insert this spair, and also the corresponding gcd one.
       spair *p = new_set[*i];
       if (M2_gbTrace >= 4)
-	{
-	  buffer o;
-	  spair_text_out(o, p);
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          spair_text_out(o, p);
+          emit_line(o.str());
+        }
       spair_set_insert(p);
       mpz_ptr u = coeffs[*i];
       mpz_ptr v = coeffs2[*i];
       if (p->type != SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
-	{
-	  spair *p2 = spair_make_gcd_ZZ(p->x.pair.i, p->x.pair.j);
-	  if (M2_gbTrace >= 4)
-	    {
-	      buffer o;
-	      spair_text_out(o, p2);
-	      emit_line(o.str());
-	    }
-	  spair_set_insert(p2);
-	}
+        {
+          spair *p2 = spair_make_gcd_ZZ(p->x.pair.i, p->x.pair.j);
+          if (M2_gbTrace >= 4)
+            {
+              buffer o;
+              spair_text_out(o, p2);
+              emit_line(o.str());
+            }
+          spair_set_insert(p2);
+        }
     }
 }
 
@@ -821,7 +821,7 @@ void gbA::update_pairs(int id)
 
   /* Step 1.  Remove un-needed old pairs */
   remove_unneeded_pairs(id);
-  
+
   /* Step 2.  Collect new pairs */
   spairs new_set;
 
@@ -829,11 +829,11 @@ void gbA::update_pairs(int id)
   if (R->is_skew_commutative())
     {
       for (int i=0; i<R->n_skew_commutative_vars(); i++)
-	if (r->lead[R->skew_variable(i)] > 0)
-	  {
-	    spair *s = spair_make_skew(id,i);
-	    new_set.push_back(s);
-	  }
+        if (r->lead[R->skew_variable(i)] > 0)
+          {
+            spair *s = spair_make_skew(id,i);
+            new_set.push_back(s);
+          }
     }
   /* Step 2b: pairs from ring elements, or 'in stone' elements */
   for (int i=0; i<first_gb_element; i++)
@@ -847,10 +847,10 @@ void gbA::update_pairs(int id)
     {
       gbelem *g = gb[i];
       if ((g->minlevel & ELEM_MINGB) && gbelem_COMPONENT(g) == x)
-	{
-	  spair *s = spair_make(id,i);
-	  new_set.push_back(s);
-	}
+        {
+          spair *s = spair_make(id,i);
+          new_set.push_back(s);
+        }
     }
 
   /* Step 3. Minimalize this set */
@@ -863,9 +863,9 @@ void gbA::update_pairs(int id)
 
 
 gbA::SPairSet::SPairSet()
-  : nelems(0), 
-    n_in_degree(0), 
-    heap(0), 
+  : nelems(0),
+    n_in_degree(0),
+    heap(0),
     n_computed(0),
     spair_list(0),
     spair_last_deferred(0),
@@ -921,43 +921,43 @@ gbA::spair *gbA::spair_set_next()
   else
     {
       if (S->spair_deferred_list.next != 0)
-	{
-	  if (M2_gbTrace >= 4)
-	    {
-	      emit_line("considering deferred pairs: ");
-	    }
-	  S->spair_list = S->spair_deferred_list.next;
-	  S->spair_deferred_list.next = 0;
-	  S->spair_last_deferred = &S->spair_deferred_list;
-	  result = S->spair_list;
-	  S->spair_list = result->next;
-	}
+        {
+          if (M2_gbTrace >= 4)
+            {
+              emit_line("considering deferred pairs: ");
+            }
+          S->spair_list = S->spair_deferred_list.next;
+          S->spair_deferred_list.next = 0;
+          S->spair_last_deferred = &S->spair_deferred_list;
+          result = S->spair_list;
+          S->spair_list = result->next;
+        }
       else
-	{
-	  // Now do the same for generators
-	  result = S->gen_list;
-	  if (result)
-	    {
-	      S->gen_list = result->next;
-	    }
-	  else
-	    {
-	      if (S->gen_deferred_list.next != 0)
-		{
-		  if (M2_gbTrace >= 4)
-		    {
-		      emit_line("  deferred gen pairs: ");
-		    }
-		  S->gen_list = S->gen_deferred_list.next;
-		  S->gen_deferred_list.next = 0;
-		  S->gen_last_deferred = &S->gen_deferred_list;
-		  result = S->gen_list;
-		  S->gen_list = result->next;
-		}
-	      else
-		return 0;
-	    }
-	}
+        {
+          // Now do the same for generators
+          result = S->gen_list;
+          if (result)
+            {
+              S->gen_list = result->next;
+            }
+          else
+            {
+              if (S->gen_deferred_list.next != 0)
+                {
+                  if (M2_gbTrace >= 4)
+                    {
+                      emit_line("  deferred gen pairs: ");
+                    }
+                  S->gen_list = S->gen_deferred_list.next;
+                  S->gen_deferred_list.next = 0;
+                  S->gen_last_deferred = &S->gen_deferred_list;
+                  result = S->gen_list;
+                  S->gen_list = result->next;
+                }
+              else
+                return 0;
+            }
+        }
     }
 
   result->next = 0;
@@ -1000,12 +1000,12 @@ int gbA::spair_set_determine_next_degree(int &nextdegree)
   if (S->heap == 0) return 0;
   nextdeg = S->heap->deg;
   for (p = S->heap->next; p!=0; p=p->next)
-    if (p->deg > nextdeg) 
+    if (p->deg > nextdeg)
       continue;
     else if (p->deg < nextdeg)
       {
-	len = 1;
-	nextdeg = p->deg;
+        len = 1;
+        nextdeg = p->deg;
       }
   else
     len++;
@@ -1023,7 +1023,7 @@ int gbA::spair_set_prepare_next_degree(int &nextdegree)
   S->gen_list = 0;
   S->gen_deferred_list.next = 0;
   S->gen_last_deferred = &S->gen_deferred_list;
-  
+
   int len = spair_set_determine_next_degree(nextdegree);
   if (len == 0) return 0;
 
@@ -1036,19 +1036,19 @@ int gbA::spair_set_prepare_next_degree(int &nextdegree)
       p = p->next;
     else
       {
-	spair *tmp = p->next;
-	p->next = tmp->next;
-	if (tmp->type == SPAIR_GEN)
-	  {
-	    tmp->next = S->gen_list;
-	    S->gen_list = tmp;
-	  }
-	else
-	  {
-	    // All other types are on the spair list
-	    tmp->next = S->spair_list;
-	    S->spair_list = tmp;
-	  }
+        spair *tmp = p->next;
+        p->next = tmp->next;
+        if (tmp->type == SPAIR_GEN)
+          {
+            tmp->next = S->gen_list;
+            S->gen_list = tmp;
+          }
+        else
+          {
+            // All other types are on the spair list
+            tmp->next = S->spair_list;
+            S->spair_list = tmp;
+          }
       }
   S->heap = head.next;
   S->n_in_degree = len;
@@ -1090,9 +1090,9 @@ void gbA::spairs_sort(int len, spair *&ps)
   for (spair *p = ps; p != 0; p=p->next)
     {
       if ((p->type > gbA::SPAIR_SKEW) || p->lead_of_spoly)
-	a.push_back(p);
+        a.push_back(p);
       else
-	b.push_back(p);
+        b.push_back(p);
     }
 
   SPolySorter SP(R,_F);
@@ -1101,18 +1101,18 @@ void gbA::spairs_sort(int len, spair *&ps)
   int asize = INTSIZE(a);
   int bsize = INTSIZE(b);
 
-  if (asize > 0) 
+  if (asize > 0)
     {
       ps = a[0];
       for (int i=1; i<asize; i++)
-	a[i-1]->next = a[i];
+        a[i-1]->next = a[i];
     }
   else if (bsize > 0)
     {
       ps = b[0];
       //debugging// fprintf(stderr, "bsize is %d\n",bsize);
     }
-  else 
+  else
     {
       ps = 0;
       return;
@@ -1120,10 +1120,10 @@ void gbA::spairs_sort(int len, spair *&ps)
 
   if (asize > 0)
     a[asize-1]->next = (bsize > 0 ? b[0] : 0);
-  if (bsize > 0) 
+  if (bsize > 0)
     {
       for (int i=1; i<bsize; i++)
-	b[i-1]->next = b[i];
+        b[i-1]->next = b[i];
       b[bsize-1]->next = 0;
     }
 }
@@ -1138,38 +1138,38 @@ void gbA::spair_set_lead_spoly(spair *p)
 {
   gbvector *ltsyz = 0;
   POLY f,g;
-  if (p->type > SPAIR_SKEW) 
-    { 
+  if (p->type > SPAIR_SKEW)
+    {
       R->gbvector_remove(p->lead_of_spoly);
       p->lead_of_spoly = 0;
-      return; 
+      return;
     }
   f = gb[p->x.pair.i]->g;
   if (p->type == SPAIR_SKEW)
     {
       const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
-			       R->one(), mon,
-			       f.f, 0,
-			       p->lead_of_spoly, ltsyz);
+                               R->one(), mon,
+                               f.f, 0,
+                               p->lead_of_spoly, ltsyz);
     }
   else if (p->type == SPAIR_GCD_ZZ)
     {
       g = gb[p->x.pair.j]->g;
-      R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz, 
-					f.f, 0,
-					g.f, 0,
-					p->lead_of_spoly,
-					ltsyz);
+      R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz,
+                                        f.f, 0,
+                                        g.f, 0,
+                                        p->lead_of_spoly,
+                                        ltsyz);
     }
   else
     {
       g = gb[p->x.pair.j]->g;
-      R->gbvector_cancel_lead_terms(_F, _Fsyz, 
-				    f.f, 0,
-				    g.f, 0,
-				    p->lead_of_spoly,
-				    ltsyz);
+      R->gbvector_cancel_lead_terms(_F, _Fsyz,
+                                    f.f, 0,
+                                    g.f, 0,
+                                    p->lead_of_spoly,
+                                    ltsyz);
     }
   if (p->lead_of_spoly != 0)
     {
@@ -1196,27 +1196,27 @@ void gbA::compute_s_pair(spair *p)
     {
       const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
-			       R->one(), mon,
-			       f.f, f.fsyz,
-			       p->f(), p->fsyz());
+                               R->one(), mon,
+                               f.f, f.fsyz,
+                               p->f(), p->fsyz());
     }
   else if (p->type == SPAIR_GCD_ZZ)
     {
       g = gb[p->x.pair.j]->g;
-      R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz, 
-					f.f, f.fsyz,
-					g.f,g.fsyz,
-					p->f(),
-					p->fsyz());
+      R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz,
+                                        f.f, f.fsyz,
+                                        g.f,g.fsyz,
+                                        p->f(),
+                                        p->fsyz());
     }
   else
     {
       g = gb[p->x.pair.j]->g;
-      R->gbvector_cancel_lead_terms(_F, _Fsyz, 
-				    f.f, f.fsyz,
-				    g.f,g.fsyz,
-				    p->f(),
-				    p->fsyz());
+      R->gbvector_cancel_lead_terms(_F, _Fsyz,
+                                    f.f, f.fsyz,
+                                    g.f,g.fsyz,
+                                    p->f(),
+                                    p->fsyz());
     }
   p->type = SPAIR_ELEM;
   if (M2_gbTrace >= 5 && M2_gbTrace != 15)
@@ -1252,68 +1252,68 @@ bool gbA::reduce_kk(spair *p)
   while (!R->gbvector_is_zero(p->f()))
     {
       if (count++ > max_reduction_count)
-      	{
-      	  spair_set_defer(p);
-      	  return false;
-      	}
+        {
+          spair_set_defer(p);
+          return false;
+        }
       if (M2_gbTrace >= 5)
-	{
-	  if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > this_degree)
-	    {
-	      buffer o;
-	      o << "ERROR: degree of polynomial is too high: deg " <<  wt 
-		<< " termwt " << tmf 
-		<< " expectedeg " << this_degree
-		<< newline;
-	      emit(o.str());
-	    }
-	}
+        {
+          if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > this_degree)
+            {
+              buffer o;
+              o << "ERROR: degree of polynomial is too high: deg " <<  wt
+                << " termwt " << tmf
+                << " expectedeg " << this_degree
+                << newline;
+              emit(o.str());
+            }
+        }
 
       int gap,w;
       R->gbvector_get_lead_exponents(_F, p->f(), EXP);
       int x = p->f()->comp;
-      w = find_good_divisor(EXP,x,this_degree, gap); 
+      w = find_good_divisor(EXP,x,this_degree, gap);
 
       // replaced gap, g.
       if (w < 0) break;
       if (gap > 0)
-	{
-	  POLY h;
-	  h.f = R->gbvector_copy(p->x.f.f);
-	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-	  insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
-	}
+        {
+          POLY h;
+          h.f = R->gbvector_copy(p->x.f.f);
+          h.fsyz = R->gbvector_copy(p->x.f.fsyz);
+          insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
+        }
       POLY g = gb[w]->g;
 
       R->gbvector_reduce_lead_term(_F, _Fsyz,
-				   0,
-				   p->f(), p->fsyz(), /* modifies these */
-				   g.f, g.fsyz);
+                                   0,
+                                   p->f(), p->fsyz(), /* modifies these */
+                                   g.f, g.fsyz);
 
       stats_nreductions++;
       if (M2_gbTrace == 15)
-	{
-	  buffer o;
-	  o << "    reducing by g" << w;
-	  o << ", yielding ";
-	  R->gbvector_text_out(o, _F, p->f(), 3);
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          o << "    reducing by g" << w;
+          o << ", yielding ";
+          R->gbvector_text_out(o, _F, p->f(), 3);
+          emit_line(o.str());
+        }
       if (R->gbvector_is_zero(p->f())) break;
       if (gap > 0)
-	{
-	  p->deg += gap;
-	  if (M2_gbTrace == 15)
-	    {
-	      buffer o;
-	      o << "    deferring to degree " << p->deg;
-	      emit_line(o.str());
-	    }
-	  spair_set_insert(p);
-	  return false;
-	}
+        {
+          p->deg += gap;
+          if (M2_gbTrace == 15)
+            {
+              buffer o;
+              o << "    deferring to degree " << p->deg;
+              emit_line(o.str());
+            }
+          spair_set_insert(p);
+          return false;
+        }
     }
-  if (M2_gbTrace >= 4 && M2_gbTrace != 15) 
+  if (M2_gbTrace >= 4 && M2_gbTrace != 15)
     {
       buffer o;
       o << "." << count;
@@ -1345,22 +1345,22 @@ bool gbA::reduce_ZZ(spair *p)
   while (!R->gbvector_is_zero(p->f()))
     {
       if (count++ > max_reduction_count)
-      	{
-      	  spair_set_defer(p);
-      	  return false;
-      	}
+        {
+          spair_set_defer(p);
+          return false;
+        }
       if (M2_gbTrace >= 5)
-	{
-	  if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > this_degree)
-	    {
-	      buffer o;
-	      o << "ERROR: degree of polynomial is too high: deg " <<  wt 
-		<< " termwt " << tmf 
-		<< " expectedeg " << this_degree
-		<< newline;
-	      emit(o.str());
-	    }
-	}
+        {
+          if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > this_degree)
+            {
+              buffer o;
+              o << "ERROR: degree of polynomial is too high: deg " <<  wt
+                << " termwt " << tmf
+                << " expectedeg " << this_degree
+                << newline;
+              emit(o.str());
+            }
+        }
 
       int gap,w;
       R->gbvector_get_lead_exponents(_F, p->f(), EXP);
@@ -1368,93 +1368,93 @@ bool gbA::reduce_ZZ(spair *p)
       mpz_ptr c = p->f()->coeff.get_mpz();
 
       w = find_good_term_divisor_ZZ(c,EXP,x,this_degree,gap);
-      
+
       // If w < 0, then no divisor was found.  Is there a GB element of
       // the same degree as this one, and with the same exponent vector?
-      // If so, use gcdextended to find (g,u,v), 
+      // If so, use gcdextended to find (g,u,v),
       if (w < 0 || gap > 0)
-	{
-	  MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP,
-								       x,
-								       first_in_degree);
-	  if (t != 0)
-	    {
-	      // f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
-	      // p <-- c*p-d*f
-	      gbelem *g = gb[t->_val];
-	      if (M2_gbTrace >= 10)
-		{
-		  buffer o;
-		  o << "  swapping with GB element " << t->_val;
-		  emit_line(o.str());
-		}
-	      R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
-	      // Before continuing, do remainder of g->g
-	      tail_remainder_ZZ(g->g, this_degree);
-	      lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
-	      
-		// If the element p is a generator, then we must assume that now the
-		// swapped g is a (possible) minimal generator.
-	      g->minlevel |= ELEM_MINGB;
-		if (p->type == SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
-		  {
-		    g->minlevel |= ELEM_MINGEN;
-		    p->type = SPAIR_GEN;
-		  }
-	      
-	      auto_reduce_by(t->_val);
-	      if (M2_gbTrace >= 10)
-		{
-		  buffer o;
-		  o << "  swap yielded";
-		  emit_line(o.str()); o.reset();
-		  o << "      ";
-		  R->gbvector_text_out(o, _F, p->f(), 3);
-		  emit_line(o.str()); o.reset();
-		  o << "      ";
-		  R->gbvector_text_out(o, _F, g->g.f, 3);
-		  emit_line(o.str());
-		}
-	      continue;
-	    }
-	}
-  
+        {
+          MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP,
+                                                                       x,
+                                                                       first_in_degree);
+          if (t != 0)
+            {
+              // f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
+              // p <-- c*p-d*f
+              gbelem *g = gb[t->_val];
+              if (M2_gbTrace >= 10)
+                {
+                  buffer o;
+                  o << "  swapping with GB element " << t->_val;
+                  emit_line(o.str());
+                }
+              R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
+              // Before continuing, do remainder of g->g
+              tail_remainder_ZZ(g->g, this_degree);
+              lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
+
+                // If the element p is a generator, then we must assume that now the
+                // swapped g is a (possible) minimal generator.
+              g->minlevel |= ELEM_MINGB;
+                if (p->type == SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
+                  {
+                    g->minlevel |= ELEM_MINGEN;
+                    p->type = SPAIR_GEN;
+                  }
+
+              auto_reduce_by(t->_val);
+              if (M2_gbTrace >= 10)
+                {
+                  buffer o;
+                  o << "  swap yielded";
+                  emit_line(o.str()); o.reset();
+                  o << "      ";
+                  R->gbvector_text_out(o, _F, p->f(), 3);
+                  emit_line(o.str()); o.reset();
+                  o << "      ";
+                  R->gbvector_text_out(o, _F, g->g.f, 3);
+                  emit_line(o.str());
+                }
+              continue;
+            }
+        }
+
       if (w < 0) break;
       if (gap > 0)
-	{
-	  POLY h;
-	  h.f = R->gbvector_copy(p->x.f.f);
-	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-	  insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
-	}
+        {
+          POLY h;
+          h.f = R->gbvector_copy(p->x.f.f);
+          h.fsyz = R->gbvector_copy(p->x.f.fsyz);
+          insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
+        }
       POLY g = gb[w]->g;
 
       R->gbvector_reduce_lead_term_ZZ(_F,_Fsyz,p->f(), p->fsyz(),
-					  g.f, g.fsyz);
+                                          g.f, g.fsyz);
       stats_nreductions++;
       if (M2_gbTrace == 15)
-	{
-	  buffer o;
-	  o << "    reducing by g" << w;
-	  o << ", yielding ";
-	  R->gbvector_text_out(o, _F, p->f(), 3);
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          o << "    reducing by g" << w;
+          o << ", yielding ";
+          R->gbvector_text_out(o, _F, p->f(), 3);
+          emit_line(o.str());
+        }
       if (R->gbvector_is_zero(p->f())) break;
       if (gap > 0)
-	{
-	  p->deg += gap;
-	  if (M2_gbTrace == 15)
-	    {
-	      buffer o;
-	      o << "    deferring to degree " << p->deg;
-	      emit_line(o.str());
-	    }
-	  spair_set_insert(p);
-	  return false;
-	}
+        {
+          p->deg += gap;
+          if (M2_gbTrace == 15)
+            {
+              buffer o;
+              o << "    deferring to degree " << p->deg;
+              emit_line(o.str());
+            }
+          spair_set_insert(p);
+          return false;
+        }
     }
-  if (M2_gbTrace >= 4 && M2_gbTrace != 15) 
+  if (M2_gbTrace >= 4 && M2_gbTrace != 15)
     {
       buffer o;
       o << "." << count;
@@ -1475,11 +1475,11 @@ bool gbA::reduceit(spair *p)
  ***********************/
 
 int gbA::find_good_monomial_divisor_ZZ(
-				       mpz_ptr c,
-				       exponents e,
-				       int x,
-				       int degf, 
-				       int &result_gap)
+                                       mpz_ptr c,
+                                       exponents e,
+                                       int x,
+                                       int degf,
+                                       int &result_gap)
 {
   // Get all of the term divisors.
   // Choose one with the smallest gap.
@@ -1498,39 +1498,39 @@ int gbA::find_good_monomial_divisor_ZZ(
   n += lookupZZ->find_monomial_divisors(-1, e, x, &divisors);
 
   /* Now find the minimal gap value */
-  if (n == 0) 
+  if (n == 0)
     return -1;
   int result = divisors[0]->_val;
   gbelem *tg = gb[result];
   gap = tg->gap - egap;
-  if (gap <= 0) 
+  if (gap <= 0)
     gap = 0;
   else
     for (i=1; i<n; i++)
       {
-	int new_val = divisors[i]->_val;
-	tg = gb[new_val];
-	newgap = tg->gap - egap;
-	if (newgap <= 0) {
-	  gap = 0;
-	  result = new_val;
-	  break;
-	} else if (newgap < gap) 
-	  {
-	    result = new_val;
-	    gap = newgap;
-	  }
+        int new_val = divisors[i]->_val;
+        tg = gb[new_val];
+        newgap = tg->gap - egap;
+        if (newgap <= 0) {
+          gap = 0;
+          result = new_val;
+          break;
+        } else if (newgap < gap)
+          {
+            result = new_val;
+            gap = newgap;
+          }
       }
   result_gap = gap;
   return result;
 }
 
 int gbA::find_good_term_divisor_ZZ(
-				   mpz_ptr c,
-				   exponents e,
-				   int x,
-				   int degf, 
-				   int &result_gap)
+                                   mpz_ptr c,
+                                   exponents e,
+                                   int x,
+                                   int degf,
+                                   int &result_gap)
 {
   // Get all of the term divisors.
   // Choose one with the smallest gap.
@@ -1548,7 +1548,7 @@ int gbA::find_good_term_divisor_ZZ(
   n += lookupZZ->find_term_divisors(-1, c, e, x, &divisors);
 
   /* Now find the minimal gap value */
-  if (n == 0) 
+  if (n == 0)
     {
       result_gap = 0;
       return -1;
@@ -1556,32 +1556,32 @@ int gbA::find_good_term_divisor_ZZ(
   int result = divisors[n-1]->_val;
   gbelem *tg = gb[result];
   gap = tg->gap - egap;
-  if (gap <= 0) 
+  if (gap <= 0)
     gap = 0;
   else
     for (i=n-2; i>=0; i--)
       {
-	int new_val = divisors[i]->_val;
-	tg = gb[new_val];
-	newgap = tg->gap - egap;
-	if (newgap <= 0) {
-	  gap = 0;
-	  result = new_val;
-	  break;
-	} else if (newgap < gap) 
-	  {
-	    result = new_val;
-	    gap = newgap;
-	  }
+        int new_val = divisors[i]->_val;
+        tg = gb[new_val];
+        newgap = tg->gap - egap;
+        if (newgap <= 0) {
+          gap = 0;
+          result = new_val;
+          break;
+        } else if (newgap < gap)
+          {
+            result = new_val;
+            gap = newgap;
+          }
       }
   result_gap = gap;
   return result;
 }
 
 int gbA::find_good_divisor(exponents e,
-			   int x,
-			   int degf, 
-			   int &result_gap)
+                           int x,
+                           int degf,
+                           int &result_gap)
   // Returns an integer w.
   // if w >=0: gb[w]'s lead term divides [e,x].
   // if w<0: no gb[w] has lead term dividing [e,x].
@@ -1597,10 +1597,10 @@ int gbA::find_good_divisor(exponents e,
       gbelem *tg = gb[divisor_previous];
       gap = tg->gap - egap;
       if (gap <= 0 && exponents_divide(_nvars, tg->lead, e))
-	{
-	  result_gap = 0;
-	  return divisor_previous;
-	}
+        {
+          result_gap = 0;
+          return divisor_previous;
+        }
     }
 
   /* First search for ring divisors */
@@ -1615,16 +1615,16 @@ int gbA::find_good_divisor(exponents e,
       gbelem *tg = gb[divisors[n-1]->_val];
       int sz = tg->size;
       if (sz >= 0) // was 3, why??
-	{
-	  buffer o;
-	  o << "    reducers: ";
-	  for (int j=0; j<n; j++)
-	    o << "g" << divisors[j]->_val << " ";
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          o << "    reducers: ";
+          for (int j=0; j<n; j++)
+            o << "g" << divisors[j]->_val << " ";
+          emit_line(o.str());
+        }
     }
   /* Now find the minimal gap value */
-  if (n == 0) 
+  if (n == 0)
     {
       result_gap = 0;
       return -1;
@@ -1642,32 +1642,32 @@ int gbA::find_good_divisor(exponents e,
     int size  = gb[j]->size;
     ////
     while (true) {
-	 int mingap = gap;
-	 //int maxminlevel = minlevel;
-	 //int mindeg = deg;
-	 //int minsize  = size;
-	 int best = j;
-	 do {
-	      if (++i == n) {
-		   divisor_previous = best;
-		   divisor_previous_comp = x;
-		   result_gap = mingap; // a difference between two gaps is no longer a "gap"...
-		   if (result_gap < 0) result_gap = 0; // I'm not sure this is needed.
-		   return best;
-	      }
-	      j = divisors[i]->_val;
-	      gap = gb[j]->gap-egap;
-	      if (gap < 0) gap = 0;
-	      minlevel = gb[j]->minlevel;
-	      deg   = gb[j]->deg;
-	      size  = gb[j]->size;
-	 } while (!
-		  ( gap < mingap || gap == mingap && 
-		    // ( minlevel > maxminlevel || minlevel == maxminlevel && 
-		    // ( deg < mindeg || deg == mindeg &&
-		    // ( size < minsize || size == minsize && 
-			  false
-		    // )))
+         int mingap = gap;
+         //int maxminlevel = minlevel;
+         //int mindeg = deg;
+         //int minsize  = size;
+         int best = j;
+         do {
+              if (++i == n) {
+                   divisor_previous = best;
+                   divisor_previous_comp = x;
+                   result_gap = mingap; // a difference between two gaps is no longer a "gap"...
+                   if (result_gap < 0) result_gap = 0; // I'm not sure this is needed.
+                   return best;
+              }
+              j = divisors[i]->_val;
+              gap = gb[j]->gap-egap;
+              if (gap < 0) gap = 0;
+              minlevel = gb[j]->minlevel;
+              deg   = gb[j]->deg;
+              size  = gb[j]->size;
+         } while (!
+                  ( gap < mingap || gap == mingap &&
+                    // ( minlevel > maxminlevel || minlevel == maxminlevel &&
+                    // ( deg < mindeg || deg == mindeg &&
+                    // ( size < minsize || size == minsize &&
+                          false
+                    // )))
       )
     );
     }
@@ -1677,44 +1677,44 @@ int gbA::find_good_divisor(exponents e,
     int result = divisors[n-1]->_val;
     gbelem *tg = gb[result];
     gap = tg->gap - egap;
-    if (gap <= 0) 
+    if (gap <= 0)
       {
-	gap = 0;
-	int minsz = tg->size;
-	for (int i=n-2; i>=0; i--)
-	  {
-	    int new_val = divisors[i]->_val;
-	    tg = gb[new_val];
-	    int sz = tg->size;
-	    if (sz < minsz)
-	      {
-		if (tg->gap <= egap)
-		  {
-		    minsz = sz;
-		    result = new_val;
-		  }
-	      }
-	  }
+        gap = 0;
+        int minsz = tg->size;
+        for (int i=n-2; i>=0; i--)
+          {
+            int new_val = divisors[i]->_val;
+            tg = gb[new_val];
+            int sz = tg->size;
+            if (sz < minsz)
+              {
+                if (tg->gap <= egap)
+                  {
+                    minsz = sz;
+                    result = new_val;
+                  }
+              }
+          }
       }
     else
       //    for (i=1; i<n; i++)
       for (int i=n-2; i>=0; i--)
-	{
-	  int new_val = divisors[i]->_val;
-	  tg = gb[new_val];
+        {
+          int new_val = divisors[i]->_val;
+          tg = gb[new_val];
 
 
-	  newgap = tg->gap - egap;
-	  if (newgap <= 0) {
-	    gap = 0;
-	    result = new_val;
-	    break;
-	  } else if (newgap < gap) 
-	    {
-	      result = new_val;
-	      gap = newgap;
-	    }
-	}
+          newgap = tg->gap - egap;
+          if (newgap <= 0) {
+            gap = 0;
+            result = new_val;
+            break;
+          } else if (newgap < gap)
+            {
+              result = new_val;
+              gap = newgap;
+            }
+        }
     divisor_previous = result;
     divisor_previous_comp = x;
     result_gap = gap;
@@ -1747,35 +1747,35 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
       int x = h.f->comp;
       int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP,x,degf,  gap);
       if (w < 0 || gap > 0)
-	{
-	  frem->next = h.f;
-	  frem = frem->next;
-	  h.f = h.f->next;
-	  frem->next = 0;
-	}
+        {
+          frem->next = h.f;
+          frem = frem->next;
+          h.f = h.f->next;
+          frem->next = 0;
+        }
       else
-	{
-	  POLY g = gb[w]->g;
-	  if (!R->gbvector_reduce_lead_term_ZZ(_F, _Fsyz,
-					       h.f, h.fsyz,
-					       g.f, g.fsyz))
-	    {
-	      // This term is still there, so we must move it to result.
-	      frem->next = h.f;
-	      frem = frem->next;
-	      h.f = h.f->next;
-	      frem->next = 0;
-	    }
-	  count++;
-	  if (M2_gbTrace == 15)
-	    {
-	      buffer o;
-	      o << "    tail rem by g" << w;
-	      o << ", yielding ";
-	      R->gbvector_text_out(o, _F, h.f, 3);
-	      emit_line(o.str());
-	    }
-	}
+        {
+          POLY g = gb[w]->g;
+          if (!R->gbvector_reduce_lead_term_ZZ(_F, _Fsyz,
+                                               h.f, h.fsyz,
+                                               g.f, g.fsyz))
+            {
+              // This term is still there, so we must move it to result.
+              frem->next = h.f;
+              frem = frem->next;
+              h.f = h.f->next;
+              frem->next = 0;
+            }
+          count++;
+          if (M2_gbTrace == 15)
+            {
+              buffer o;
+              o << "    tail rem by g" << w;
+              o << ", yielding ";
+              R->gbvector_text_out(o, _F, h.f, 3);
+              emit_line(o.str());
+            }
+        }
     }
   h.f = head.next;
   // Negate these if needed
@@ -1822,36 +1822,36 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
       int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP,x,degf,  gap);
         // replaced gap, g.
       if (w < 0 || gap > 0)
-	{
-	  frem->next = h.f;
-	  frem = frem->next;
-	  h.f = h.f->next;
-	  frem->next = 0;
-	}
+        {
+          frem->next = h.f;
+          frem = frem->next;
+          h.f = h.f->next;
+          frem->next = 0;
+        }
       else
-	{
-	  POLY g = gb[w]->g;
-	  if (!R->gbvector_reduce_lead_term_ZZ(_F, _Fsyz,
-					       h.f, h.fsyz,
-					       g.f, g.fsyz))
-	    {
-	      // This term is still there, so we must move it to result.
-	      frem->next = h.f;
-	      frem = frem->next;
-	      h.f = h.f->next;
-	      frem->next = 0;
-	    }
-	  count++;
-	  //	  stats_ntail++;
-	  if (M2_gbTrace == 15)
-	    {
-	      buffer o;
-	      o << "    tail red by g" << w;
-	      o << ", yielding ";
-	      R->gbvector_text_out(o, _F, h.f, 3);
-	      emit_line(o.str());
-	    }
-	}
+        {
+          POLY g = gb[w]->g;
+          if (!R->gbvector_reduce_lead_term_ZZ(_F, _Fsyz,
+                                               h.f, h.fsyz,
+                                               g.f, g.fsyz))
+            {
+              // This term is still there, so we must move it to result.
+              frem->next = h.f;
+              frem = frem->next;
+              h.f = h.f->next;
+              frem->next = 0;
+            }
+          count++;
+          //      stats_ntail++;
+          if (M2_gbTrace == 15)
+            {
+              buffer o;
+              o << "    tail red by g" << w;
+              o << ", yielding ";
+              R->gbvector_text_out(o, _F, h.f, 3);
+              emit_line(o.str());
+            }
+        }
     }
   h.f = head.next;
   // Negate these if needed
@@ -1918,33 +1918,33 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
       int w = find_good_divisor(EXP,x,degf,  gap);
         // replaced gap, g.
       if (w < 0 || gap > 0)
-	{
-	  frem->next = h.f;
-	  frem = frem->next;
-	  h.f = h.f->next;
-	  frem->next = 0;
-	}
+        {
+          frem->next = h.f;
+          frem = frem->next;
+          h.f = h.f->next;
+          frem->next = 0;
+        }
       else
-	{
-	  POLY g = gb[w]->g;
-	  R->gbvector_reduce_lead_term(_F, _Fsyz,
-				       head.next,
-				       h.f, h.fsyz,
-				       g.f, g.fsyz,
-				       use_denom, denom);
-	  count++;
-	  //	  stats_ntail++;
-	  if (M2_gbTrace >= 10)
-	    {
-	      buffer o;
-	      o << "  tail reducing by ";
-	      R->gbvector_text_out(o,_F,g.f, 2);
-	      o << "\n    giving ";
-	      R->gbvector_text_out(o,_F,h.f, 3);
-	      emit_line(o.str());
-	    }
-	  
-	}
+        {
+          POLY g = gb[w]->g;
+          R->gbvector_reduce_lead_term(_F, _Fsyz,
+                                       head.next,
+                                       h.f, h.fsyz,
+                                       g.f, g.fsyz,
+                                       use_denom, denom);
+          count++;
+          //      stats_ntail++;
+          if (M2_gbTrace >= 10)
+            {
+              buffer o;
+              o << "  tail reducing by ";
+              R->gbvector_text_out(o,_F,g.f, 2);
+              o << "\n    giving ";
+              R->gbvector_text_out(o,_F,h.f, 3);
+              emit_line(o.str());
+            }
+
+        }
     }
   h.f = head.next;
   R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
@@ -1983,23 +1983,23 @@ void gbA::auto_reduce_by(int id)
       if (g->deg < me->deg) return;
       if (g->gap < a) continue;
       if (M2_gbTrace >= 10)
-	{
-	  buffer o;
-	  o << "  auto reduce " << i << " by " << id;
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          o << "  auto reduce " << i << " by " << id;
+          emit_line(o.str());
+        }
       if (over_ZZ())
-	{
-	  R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
-				  g->g.f, g->g.fsyz, // these are modified
-				  me->g.f, me->g.fsyz);
-	}
+        {
+          R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
+                                  g->g.f, g->g.fsyz, // these are modified
+                                  me->g.f, me->g.fsyz);
+        }
       else
-	{
-	  R->gbvector_auto_reduce(_F, _Fsyz,
-				  g->g.f, g->g.fsyz, // these are modified
-				  me->g.f, me->g.fsyz);
-	}
+        {
+          R->gbvector_auto_reduce(_F, _Fsyz,
+                                  g->g.f, g->g.fsyz, // these are modified
+                                  me->g.f, me->g.fsyz);
+        }
     }
 }
 
@@ -2019,17 +2019,17 @@ void gbA::collect_syzygy(gbvector *f)
 
 void gbA::insert_gb(POLY f, gbelem_type minlevel)
 {
-  /* Reduce this element as far as possible.  This either removes content, 
+  /* Reduce this element as far as possible.  This either removes content,
      makes it monic, or at least negates it so the lead coeff is positive. */
   ring_elem junk;
 
   //DEBUG BLOCK  int fwt;
   //  int fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d gap %d\n", 
-  //	  gb.size(), 
-  //	  this_degree,
-  //	  fdeg,
-  //	  fdeg-fwt);
+  //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d gap %d\n",
+  //      gb.size(),
+  //      this_degree,
+  //      fdeg,
+  //      fdeg-fwt);
 
   if (is_local_gb)
     R->gbvector_remove_content(f.f,f.fsyz,false,junk);
@@ -2037,9 +2037,9 @@ void gbA::insert_gb(POLY f, gbelem_type minlevel)
     remainder(f,this_degree,false,junk);
 
   //  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  //  fprintf(stderr, "    after remainder deg %d gap %d\n", 
-  //	  fdeg,
-  //	  fdeg-fwt);
+  //  fprintf(stderr, "    after remainder deg %d gap %d\n",
+  //      fdeg,
+  //      fdeg-fwt);
 
   stats_ngb++;
 
@@ -2128,21 +2128,21 @@ bool gbA::process_spair(spair *p)
   if (!R->gbvector_is_zero(f.f))
     {
       insert_gb(f,minlevel);
-      if (M2_gbTrace == 3)	emit_wrapped("m");
+      if (M2_gbTrace == 3)      emit_wrapped("m");
     }
-  else 
+  else
     {
       originalR->get_quotient_info()->gbvector_normal_form(_Fsyz, f.fsyz);
       if (!R->gbvector_is_zero(f.fsyz))
-	{
-	  /* This is a syzygy */
-	  collect_syzygy(f.fsyz);
-	  if (M2_gbTrace == 3) emit_wrapped("z");
-	}
+        {
+          /* This is a syzygy */
+          collect_syzygy(f.fsyz);
+          if (M2_gbTrace == 3) emit_wrapped("z");
+        }
       else
-	{
-	  if (M2_gbTrace == 3) emit_wrapped("o");
-	}
+        {
+          if (M2_gbTrace == 3) emit_wrapped("o");
+        }
     }
   return true;
 }
@@ -2150,7 +2150,7 @@ bool gbA::process_spair(spair *p)
 ComputationStatusCode gbA::computation_is_complete()
 {
   // This handles everything but stop_.always, stop_.degree_limit
-  if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit) 
+  if (stop_.basis_element_limit > 0 && gb.size() >= stop_.basis_element_limit)
     return COMP_DONE_GB_LIMIT;
   if (stop_.syzygy_limit > 0 && n_syz >= stop_.syzygy_limit)
     return COMP_DONE_SYZ_LIMIT;
@@ -2166,7 +2166,7 @@ ComputationStatusCode gbA::computation_is_complete()
       int c = 0;
       //int c = codim_of_lead_terms();
       if (c >= stop_.codim_limit)
-	return COMP_DONE_CODIM;
+        return COMP_DONE_CODIM;
     }
   return COMP_COMPUTING;
 }
@@ -2178,16 +2178,16 @@ Matrix *gbA::make_lead_term_matrix()
     {
       gbelem *g = gb[i];
       if (g->minlevel & ELEM_MINGB)
-	{
-	  gbvector *f = g->g.f;
-	  assert(f != 0);
-	  // Only grab the lead term, which should be non-null
-	  gbvector *fnext = f->next;
-	  f->next = 0;
-	  vec v = originalR->translate_gbvector_to_vec(_F, f);
-	  f->next = fnext;
-	  result.append(v);
-	}
+        {
+          gbvector *f = g->g.f;
+          assert(f != 0);
+          // Only grab the lead term, which should be non-null
+          gbvector *fnext = f->next;
+          f->next = 0;
+          vec v = originalR->translate_gbvector_to_vec(_F, f);
+          f->next = fnext;
+          result.append(v);
+        }
     }
   return result.to_matrix();
 }
@@ -2219,163 +2219,163 @@ void gbA::do_computation()
   for (;;)
     {
       if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
-	{
-	  // Break out now if we don't have anything else to compute in this degree.
-	  set_status(COMP_DONE_DEGREE_LIMIT);
-	  return;
-	}
+        {
+          // Break out now if we don't have anything else to compute in this degree.
+          set_status(COMP_DONE_DEGREE_LIMIT);
+          return;
+        }
       if (M2_gbTrace & PrintingDegree)
-	{
-	}
+        {
+        }
 
       switch(state) {
 
       case STATE_NEWPAIRS:
-	// Loop through all of the new GB elements, and
-	// compute spairs.  Start at np_i
-	// np_i is initialized at the beginning, and also here.
-	    while (np_i < n_gb)
-	      {
-		if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-		  {
-		    set_status(COMP_INTERRUPTED);
-		    return;
-		  }
-		if (gb[np_i]->minlevel & ELEM_MINGB)
-		  update_pairs(np_i);
-		np_i++;
-	      }
-	    state = STATE_HILB;
-	    
+        // Loop through all of the new GB elements, and
+        // compute spairs.  Start at np_i
+        // np_i is initialized at the beginning, and also here.
+            while (np_i < n_gb)
+              {
+                if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+                  {
+                    set_status(COMP_INTERRUPTED);
+                    return;
+                  }
+                if (gb[np_i]->minlevel & ELEM_MINGB)
+                  update_pairs(np_i);
+                np_i++;
+              }
+            state = STATE_HILB;
+
       case STATE_HILB:
-	// If we are using hilbert function tracking:
-	// Recompute the Hilbert function if new GB elements have been added
-	
-	    if (hilb_new_elems)
-	      {
-		// Recompute h, hf_diff
-		Matrix *hf = make_lead_term_matrix();
-		RingElement *h = hilb_comp::hilbertNumerator(hf);
-		if (h == 0)
-		  {
-		    set_status(COMP_INTERRUPTED);
-		    return;
-		  }
-		hf_diff = (*h) - (*hf_orig);
-		hilb_new_elems = false;
-	      }
-	    state = STATE_NEWDEGREE;
-	    
+        // If we are using hilbert function tracking:
+        // Recompute the Hilbert function if new GB elements have been added
+
+            if (hilb_new_elems)
+              {
+                // Recompute h, hf_diff
+                Matrix *hf = make_lead_term_matrix();
+                RingElement *h = hilb_comp::hilbertNumerator(hf);
+                if (h == 0)
+                  {
+                    set_status(COMP_INTERRUPTED);
+                    return;
+                  }
+                hf_diff = (*h) - (*hf_orig);
+                hilb_new_elems = false;
+              }
+            state = STATE_NEWDEGREE;
+
       case STATE_NEWDEGREE:
-	// Get the spairs and generators for the next degree
-	
-	    if (S->n_in_degree == 0)
-	      {
-		int old_degree = this_degree;
-		npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
-		if (old_degree < this_degree)
-		  first_in_degree = INTSIZE(gb);
-		complete_thru_this_degree = this_degree-1;
-		if (npairs == 0)
-		  {
-		    state = STATE_DONE;
-		    set_status(COMP_DONE);
-		    return;
-		  }
-		if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
-		  {
-		    set_status(COMP_DONE_DEGREE_LIMIT);
-		    return;
-		  }
-		if (use_hilb)
-		  {
-		    hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
-		    if (hilb_n_in_degree == 0) flush_pairs();
-		  }
-	      }
-	    if (M2_gbTrace == 15)
-	      {
-		buffer o;
-		o << "DEGREE " << this_degree;
-		o << ", number of spairs = " << npairs;
-		if (use_hilb) 
-		  o << ", expected number in this degree = " << hilb_n_in_degree;
-		emit_line(o.str());
-	      }
-	    else if (M2_gbTrace >= 1)
-	      {
-		buffer o;
-		o << '{' << this_degree << '}';
-		o << '(';
-		if (use_hilb) 
-		  o << hilb_n_in_degree << ',';
-		o << npairs << ')';
-		emit_wrapped(o.str());
-	      }
-	    ar_i = n_gb;
-	    ar_j = ar_i+1;
-	    state = STATE_SPAIRS;
-	    
+        // Get the spairs and generators for the next degree
+
+            if (S->n_in_degree == 0)
+              {
+                int old_degree = this_degree;
+                npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
+                if (old_degree < this_degree)
+                  first_in_degree = INTSIZE(gb);
+                complete_thru_this_degree = this_degree-1;
+                if (npairs == 0)
+                  {
+                    state = STATE_DONE;
+                    set_status(COMP_DONE);
+                    return;
+                  }
+                if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
+                  {
+                    set_status(COMP_DONE_DEGREE_LIMIT);
+                    return;
+                  }
+                if (use_hilb)
+                  {
+                    hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
+                    if (hilb_n_in_degree == 0) flush_pairs();
+                  }
+              }
+            if (M2_gbTrace == 15)
+              {
+                buffer o;
+                o << "DEGREE " << this_degree;
+                o << ", number of spairs = " << npairs;
+                if (use_hilb)
+                  o << ", expected number in this degree = " << hilb_n_in_degree;
+                emit_line(o.str());
+              }
+            else if (M2_gbTrace >= 1)
+              {
+                buffer o;
+                o << '{' << this_degree << '}';
+                o << '(';
+                if (use_hilb)
+                  o << hilb_n_in_degree << ',';
+                o << npairs << ')';
+                emit_wrapped(o.str());
+              }
+            ar_i = n_gb;
+            ar_j = ar_i+1;
+            state = STATE_SPAIRS;
+
       case STATE_SPAIRS:
       case STATE_GENS:
-	// Compute the spairs for this degree
-	
-	    while ((p = spair_set_next()) != 0)
-	      {
-		process_spair(p);
-		npairs--;
-		n_pairs_computed++;
+        // Compute the spairs for this degree
 
-		if ((ret = computation_is_complete()) != COMP_COMPUTING)
-		  {
-		    set_status(ret);
-		    return;
-		  }
-		
-		if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-		  {
-		    set_status(COMP_INTERRUPTED);
-		    return;
-		  }
-	      }
-	    state = STATE_AUTOREDUCE;
-	    // or state = STATE_NEWPAIRS
-	    
+            while ((p = spair_set_next()) != 0)
+              {
+                process_spair(p);
+                npairs--;
+                n_pairs_computed++;
+
+                if ((ret = computation_is_complete()) != COMP_COMPUTING)
+                  {
+                    set_status(ret);
+                    return;
+                  }
+
+                if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+                  {
+                    set_status(COMP_INTERRUPTED);
+                    return;
+                  }
+              }
+            state = STATE_AUTOREDUCE;
+            // or state = STATE_NEWPAIRS
+
       case STATE_AUTOREDUCE:
-	// This is still possibly best performed when inserting a new element
-	// Perform the necessary or desired auto-reductions
-	if (!is_local_gb)
-	while (ar_i < n_gb)
-	      {
-		while (ar_j < n_gb)
-		  {
-		    if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-		      {
-			set_status(COMP_INTERRUPTED);
-			return;
-		      }
-		    if (over_ZZ())
-		      {
-			R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
-						   gb[ar_i]->g.f, gb[ar_i]->g.fsyz, 
-						   gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
-		      }
-		    else
-		      {
-			R->gbvector_auto_reduce(_F, _Fsyz,
-						gb[ar_i]->g.f, gb[ar_i]->g.fsyz, 
-						gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
-		      }
-		    ar_j++;
-		  }
-		ar_i++;
-		ar_j = ar_i+1;
-	      }
-	    state = STATE_NEWPAIRS;
-	    break;
-	    
+        // This is still possibly best performed when inserting a new element
+        // Perform the necessary or desired auto-reductions
+        if (!is_local_gb)
+        while (ar_i < n_gb)
+              {
+                while (ar_j < n_gb)
+                  {
+                    if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+                      {
+                        set_status(COMP_INTERRUPTED);
+                        return;
+                      }
+                    if (over_ZZ())
+                      {
+                        R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
+                                                   gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
+                                                   gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+                      }
+                    else
+                      {
+                        R->gbvector_auto_reduce(_F, _Fsyz,
+                                                gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
+                                                gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+                      }
+                    ar_j++;
+                  }
+                ar_i++;
+                ar_j = ar_i+1;
+              }
+            state = STATE_NEWPAIRS;
+            break;
+
       case STATE_DONE:
-	return;
+        return;
       }
   }
 }
@@ -2388,29 +2388,29 @@ void gbA::start_computation()
   nloops = 0;
   nsaved_unneeded = 0;
   do_computation();
-  if (M2_gbTrace >= 1) 
+  if (M2_gbTrace >= 1)
     {
       show_mem_usage();
       if (M2_gbTrace >= 3)
-	{
-	  buffer o;
-	  emit_line(o.str());
-	  o.reset();
-	  o << "#reduction steps = " << stats_nreductions;
-	  emit_line(o.str());
-	  o.reset();
-	  o << "#spairs done = " << stats_npairs;
-	  emit_line(o.str());
-	  o.reset();
-	  o << "ncalls = " << ncalls;
-	  emit_line(o.str());
-	  o.reset();
-	  o << "nloop = " << nloops;
-	  emit_line(o.str());
-	  o.reset();
-	  o << "nsaved = " << nsaved_unneeded;
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          emit_line(o.str());
+          o.reset();
+          o << "#reduction steps = " << stats_nreductions;
+          emit_line(o.str());
+          o.reset();
+          o << "#spairs done = " << stats_npairs;
+          emit_line(o.str());
+          o.reset();
+          o << "ncalls = " << ncalls;
+          emit_line(o.str());
+          o.reset();
+          o << "nloop = " << nloops;
+          emit_line(o.str());
+          o.reset();
+          o << "nsaved = " << nsaved_unneeded;
+          emit_line(o.str());
+        }
       if (M2_gbTrace >= 15) show();
     }
 }
@@ -2424,12 +2424,12 @@ void gbA::minimalize_gb()
 
   delete minimal_gb;
   minimal_gb = ReducedGB::create(originalR,_F,_Fsyz);
-  
+
   VECTOR(POLY) polys;
   for (int i=first_gb_element; i<gb.size(); i++)
     {
       if (gb[i]->minlevel & ELEM_MINGB)
-	polys.push_back(gb[i]->g);
+        polys.push_back(gb[i]->g);
     }
 
   minimal_gb->minimalize(polys);
@@ -2529,9 +2529,9 @@ const Matrix /* or null */ *gbA::matrix_remainder(const Matrix *m)
 }
 
 M2_bool gbA::matrix_lift(const Matrix *m,
-		 const Matrix /* or null */ **result_remainder,
-		 const Matrix /* or null */ **result_quotient
-		 )
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
+                 )
 {
   minimalize_gb();
   return minimal_gb->matrix_lift(m, result_remainder, result_quotient);
@@ -2560,9 +2560,9 @@ void gbA::text_out(buffer &o) const
   if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
     for (unsigned int i=0; i<gb.size(); i++)
       {
-	o << i << '\t';
-	R->gbvector_text_out(o, _F, gb[i]->g.f);
-	o << newline;
+        o << i << '\t';
+        R->gbvector_text_out(o, _F, gb[i]->g.f);
+        o << newline;
       }
 }
 
@@ -2597,7 +2597,7 @@ void gbA::show() const
   for (unsigned int i=0; i<gb.size(); i++)
     {
       gbelem_text_out(o,i);
-      emit_line(o.str()); 
+      emit_line(o.str());
       o.reset();
     }
 }
@@ -2622,4 +2622,5 @@ void gbA::show_mem_usage()
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// indent-tabs-mode: nil
 // End:

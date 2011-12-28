@@ -29,7 +29,7 @@ public:
   M2_arrayint get_weights() const { return wts_; }
 
   // All of these routines expect components in the range 1..N,
-  // or, if the component is 0, then it is in the ring, not in the 
+  // or, if the component is 0, then it is in the ring, not in the
   // free module F_
 
   int exponents_weight(const int * exponent_vector, int comp) const;
@@ -47,4 +47,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

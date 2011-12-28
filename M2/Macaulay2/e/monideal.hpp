@@ -19,21 +19,21 @@ class Nmi_node // monomial ideal internal node ///
 
 protected:
   int                 var;
-  int                 exp;		
+  int                 exp;
   Nmi_node           * left;
   Nmi_node           * right;
   Nmi_node           * header;
   enum { node, leaf } tag;
   union {
-    Nmi_node         * down;	// 'up' node, if this is a head of a list
+    Nmi_node         * down;    // 'up' node, if this is a head of a list
     Bag             * bag;
   } val;
 
-  //  Nmi_node(int v, int e, Nmi_node *d) 
+  //  Nmi_node(int v, int e, Nmi_node *d)
   //    : var(v), exp(e), left(NULL), right(NULL), header(NULL), tag(node)
   //  { val.down = d; }
   //
-  //  Nmi_node(int v, int e, Bag *b) 
+  //  Nmi_node(int v, int e, Bag *b)
   //    : var(v), exp(e), left(NULL), right(NULL), header(NULL), tag(leaf)
   //  { val.bag = b; }
   //
@@ -100,13 +100,13 @@ public:
   void text_out(buffer &o) const;
 
   const PolynomialRing * get_ring() const { return R; }
-  const Monoid* degree_monoid() const 
-  { 
+  const Monoid* degree_monoid() const
+  {
     const Ring *S = R;
-    return S->degree_monoid(); 
+    return S->degree_monoid();
   }
-  
-  // Insertion of new monomials.  
+
+  // Insertion of new monomials.
   void insert_minimal(Bag *b);
         // Insert baggage 'b'.  It is assumed
         // that 'b' is not already in the monomial ideal.
@@ -115,7 +115,7 @@ public:
 
   void insert_w_deletions(Bag *b, queue<Bag *> &deletions);
         // Insert 'm', removing any monomials divisible by 'm', and
-	// returning their baggage in a list of moninfo *'s.
+        // returning their baggage in a list of moninfo *'s.
 
   int remove(Bag *&b);
         // Deletion.  Remove the lexicographically largest element, placing
@@ -123,15 +123,15 @@ public:
 
   int search_expvector(const int *m, Bag *&b) const;
         // Search.  Return whether a monomial which divides 'm' is
-	// found.  If so, return the baggage.  'm' is assumed to be an
-	// exponent vector of length larger than the top variable occuring
-	// in 'this'
+        // found.  If so, return the baggage.  'm' is assumed to be an
+        // exponent vector of length larger than the top variable occuring
+        // in 'this'
   int search(const int *m, Bag *&b) const;
         // Search.  Return whether a monomial which divides 'm' is
-	// found.  If so, return the baggage.  'm' is a varpower monomial.
+        // found.  If so, return the baggage.  'm' is a varpower monomial.
   void find_all_divisors(const int *exp, array<Bag *> &b) const;
   // Search. Return a list of all elements which divide 'exp'.
-  
+
   Bag *operator[](Index< MonomialIdeal  > i) const;
   Index< MonomialIdeal  > first() const;
   Index< MonomialIdeal  > last () const;
@@ -175,20 +175,20 @@ struct monideal_pair : public our_new_delete
 {
   MonomialIdeal * mi;
   MonomialIdeal * mi_search;
-  
-  monideal_pair(const PolynomialRing *R) : mi(new MonomialIdeal(R)), 
+
+  monideal_pair(const PolynomialRing *R) : mi(new MonomialIdeal(R)),
     mi_search(new MonomialIdeal(R)) {}
 
-  monideal_pair(const PolynomialRing *R, stash *mi_stash) : mi(new MonomialIdeal(R,mi_stash)), 
+  monideal_pair(const PolynomialRing *R, stash *mi_stash) : mi(new MonomialIdeal(R,mi_stash)),
     mi_search(new MonomialIdeal(R,mi_stash)) {}
 };
 
 //-----------------------------------------------------------------
 
-inline void MonomialIdeal::insert_minimal(Bag *b) 
+inline void MonomialIdeal::insert_minimal(Bag *b)
 {
-  insert1(mi, b); 
-  count += 2; 
+  insert1(mi, b);
+  count += 2;
 }
 
 inline Bag * MonomialIdeal::operator[](Index<MonomialIdeal > i) const
@@ -207,13 +207,13 @@ inline Nmi_node *MonomialIdeal::last_node() const
   return prev(mi);
 }
 
-inline Index<MonomialIdeal > MonomialIdeal::first() const 
-{ 
+inline Index<MonomialIdeal > MonomialIdeal::first() const
+{
   return Index<MonomialIdeal >(next(reinterpret_cast<void *>(mi)), this);
 }
 
-inline Index<MonomialIdeal > MonomialIdeal::last() const 
-{ 
+inline Index<MonomialIdeal > MonomialIdeal::last() const
+{
   return Index<MonomialIdeal >(prev(reinterpret_cast<void *>(mi)), this);
 }
 
@@ -223,4 +223,5 @@ inline Index<MonomialIdeal > MonomialIdeal::last() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -30,23 +30,23 @@ public:
   // Arithmetic //////////
   ////////////////////////
 
-  virtual ring_elem from_int(int n) const { 
-    ring_elem result = numerR_->from_int(n); 
+  virtual ring_elem from_int(int n) const {
+    ring_elem result = numerR_->from_int(n);
     normal_form(result);
     return result;
   }
-  virtual ring_elem from_int(mpz_ptr n) const { 
-    ring_elem result = numerR_->from_int(n); 
+  virtual ring_elem from_int(mpz_ptr n) const {
+    ring_elem result = numerR_->from_int(n);
     normal_form(result);
     return result;
   }
-  virtual ring_elem from_rational(mpq_ptr q) const { 
-    ring_elem result = numerR_->from_rational(q); 
+  virtual ring_elem from_rational(mpq_ptr q) const {
+    ring_elem result = numerR_->from_rational(q);
     normal_form(result);
     return result;
   }
 
-  virtual ring_elem var(int v) const { 
+  virtual ring_elem var(int v) const {
     ring_elem result = numerR_->var(v);
     normal_form(result);
     return result;
@@ -58,22 +58,22 @@ public:
 
   virtual void lower_content(ring_elem &c, ring_elem g) const { numerR_->lower_content(c,g); }
   virtual ring_elem content(ring_elem f) const { return numerR_->content(f); }
-  virtual ring_elem divide_by_given_content(ring_elem f, ring_elem c) const 
+  virtual ring_elem divide_by_given_content(ring_elem f, ring_elem c) const
     { return numerR_->divide_by_given_content(f,c); }
 
 
   virtual bool is_unit(const ring_elem f) const; // TODO
 
-  virtual bool is_zero(const ring_elem f) const { 
+  virtual bool is_zero(const ring_elem f) const {
     return numerR_->PolyRing::is_zero(f);
   }
 
   virtual bool is_equal(const ring_elem f, const ring_elem g) const {
-    return numerR_->PolyRing::is_equal(f,g); 
+    return numerR_->PolyRing::is_equal(f,g);
   }
 
   virtual int compare_elems(const ring_elem f, const ring_elem g) const {
-    return numerR_->PolyRing::compare_elems(f,g); 
+    return numerR_->PolyRing::compare_elems(f,g);
   }
 
   virtual ring_elem copy(const ring_elem f) const {
@@ -119,21 +119,21 @@ public:
 
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
 
-  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
-					 ring_elem &quot) const;
+  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g,
+                                         ring_elem &quot) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f,
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const {
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const {
     numerR_->PolyRing::elem_text_out(o,f);
   }
-  
+
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
   /////////////////////////
@@ -159,13 +159,13 @@ public:
     return numerR_->PolyRing::multi_degree(f,d);
   }
 
-  virtual void degree_weights(const ring_elem f, M2_arrayint wts, 
-			      int &lo, int &hi) const {
+  virtual void degree_weights(const ring_elem f, M2_arrayint wts,
+                              int &lo, int &hi) const {
     return numerR_->PolyRing::degree_weights(f,wts,lo,hi);
   }
 
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
-			       M2_arrayint wts) const {
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg,
+                               M2_arrayint wts) const {
     ring_elem result = numerR_->PolyRing::homogenize(f,v,deg,wts);
     normal_form(result);
     return result;
@@ -177,8 +177,8 @@ public:
     return result;
   }
 
-  virtual ring_elem mult_by_term(const ring_elem f, 
-				  const ring_elem c, const int *m) const {
+  virtual ring_elem mult_by_term(const ring_elem f,
+                                  const ring_elem c, const int *m) const {
     ring_elem result = numerR_->mult_by_term(f,c,m);
     normal_form(result);
     return result;
@@ -200,12 +200,12 @@ public:
     return numerR_->PolyRing::get_parts(wts,f,result_len);
   }
 
-  virtual ring_elem get_part(const M2_arrayint wts, 
-			      const ring_elem f,
-			      bool lobound_given,
-			      bool hibound_given,
-			      long lobound,
-			      long hibound) const {
+  virtual ring_elem get_part(const M2_arrayint wts,
+                              const ring_elem f,
+                              bool lobound_given,
+                              bool hibound_given,
+                              long lobound,
+                              long hibound) const {
     return numerR_->PolyRing::get_part(wts,f,lobound_given,hibound_given,lobound,hibound);
   }
 
@@ -294,7 +294,7 @@ public:
     // Returns a pointer to the lead vector of v.
     // This works if F has a Schreyer order, or an up/down order.
     return numerR_->PolyRing::vec_locate_lead_term(F, v);
-  }    
+  }
 
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const {
     return numerR_->PolyRing::vec_lead_term(nparts, F, v);
@@ -314,24 +314,24 @@ public:
 
   // result/denom == v.
   // result_denom will be an element in getDenominatorRing() (if non-NULL).
-  virtual gbvector * translate_gbvector_from_vec(const FreeModule *F, 
-						 const vec v, 
-						 ring_elem &result_denominator) const {
+  virtual gbvector * translate_gbvector_from_vec(const FreeModule *F,
+                                                 const vec v,
+                                                 ring_elem &result_denominator) const {
     return numerR_->PolyRing::translate_gbvector_from_vec(F,v,result_denominator);
   }
 
   virtual vec translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const {
     return numerR_->PolyRing::translate_gbvector_to_vec(F,v);
   }
-  
+
 
   // Translate v/denom to a vector in F.  denom does not need to be positive,
   // although it had better be non-zero.
   // denom should be an element of getDenominatorRing() (if non-NULL, otherwise 'denom'
   // is ignored).
-  virtual vec translate_gbvector_to_vec_denom(const FreeModule *F, 
-					      const gbvector *v,
-					      const ring_elem denom) const {
+  virtual vec translate_gbvector_to_vec_denom(const FreeModule *F,
+                                              const gbvector *v,
+                                              const ring_elem denom) const {
     return numerR_->PolyRing::translate_gbvector_to_vec_denom(F,v,denom);
   }
 };
@@ -340,4 +340,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

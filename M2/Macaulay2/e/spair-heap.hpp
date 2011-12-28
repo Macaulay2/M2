@@ -22,7 +22,7 @@ class myallocator {
   typedef T& reference;
   typedef const T& const_reference;
   typedef T value_type;
-  
+
   template<class U> struct rebind {
     typedef myallocator<U> other;
   };
@@ -31,7 +31,7 @@ class myallocator {
   myallocator(const myallocator &) throw() {}
   template<class U> myallocator(const myallocator<U>&) throw() {}
   ~myallocator() throw() {}
-  
+
   pointer address(reference x) const { return &x; }
   const_pointer address(const_reference x) const { return &x; }
 
@@ -124,4 +124,5 @@ private:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -16,7 +16,7 @@ template <typename ValueType>
 class MonomialHashTable
 {
   typedef typename ValueType::value value;
-  
+
 private:
   const ValueType *M;
   value *hashtab;
@@ -40,11 +40,11 @@ public:
   MonomialHashTable(const ValueType *M0, int logsize = 16);
   // The hash table size will be a power of 2, and this
   // is the initial power.
-  
+
   ~MonomialHashTable();
 
   void reset();
-  // Clear out the hash table, resetting all values to 0, and 
+  // Clear out the hash table, resetting all values to 0, and
   // all counting values back to 0 (count,nclashes,max_run_length)
   // BUT: the size is kept the same.
 
@@ -66,4 +66,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -9,12 +9,12 @@
 #include "../system/supervisorinterface.h"
 
 void gb2_comp::setup(FreeModule *FFsyz,
-		     stash *mi_stash0,
-		     gb_node *ggens,
-		     int lodeg,
-		     int origsyz, 
-		     int lev,
-		     int strategy)
+                     stash *mi_stash0,
+                     gb_node *ggens,
+                     int lodeg,
+                     int origsyz,
+                     int lev,
+                     int strategy)
 {
   level = lev;
   int i;
@@ -46,8 +46,8 @@ void gb2_comp::setup(FreeModule *FFsyz,
   n_pairs_gb = n_pairs_zero = 0;
   n_pairs_gcd = n_pairs_hilb = 0;
 
-  orig_syz = origsyz;		// Note: if orig_syz > 0, then Fsyz is 
-				// completely set already.
+  orig_syz = origsyz;           // Note: if orig_syz > 0, then Fsyz is
+                                // completely set already.
 
   this_degree = lodeg;
 
@@ -72,16 +72,16 @@ void gb2_comp::setup(FreeModule *FFsyz,
 }
 
 gb2_comp::gb2_comp(FreeModule *Fsyz0,
-		   stash *mi_stash0,
-		   gb_node *gens0,
-		   int lodegree,
-		   int origsyz,
-		   int level0,
-		   int strat)
+                   stash *mi_stash0,
+                   gb_node *gens0,
+                   int lodegree,
+                   int origsyz,
+                   int level0,
+                   int strat)
 {
   setup(Fsyz0,mi_stash0,gens0,lodegree,origsyz,level0,strat);
 }
-void gb2_comp::set_output(gb_node *p) 
+void gb2_comp::set_output(gb_node *p)
 {
   syz = p;
   use_hilb = (strategy_flags & STRATEGY_USE_HILB) && (syz != NULL);
@@ -166,13 +166,13 @@ int gb2_comp::gb_sort_partition(int lo, int hi)
       while (M->compare(gb[i]->f->monom, pivot_monom) > 0);
 
       if (i < j)
-	{
-	  gb_elem *tmp = gb[j];
-	  gb[j] = gb[i];
-	  gb[i] = tmp;
-	}
+        {
+          gb_elem *tmp = gb[j];
+          gb[j] = gb[i];
+          gb[i] = tmp;
+        }
       else
-	return j;
+        return j;
     }
 }
 
@@ -205,19 +205,19 @@ void gb2_comp::find_pairs(gb_elem *p)
       M->to_expvector(f_m, find_pairs_exp);
 
       for (int v=0; v<GR->n_skew_commutative_vars(); v++)
-	{
-	  int w = GR->skew_variable(v);
-	  if (find_pairs_exp[w] == 0) continue;
+        {
+          int w = GR->skew_variable(v);
+          if (find_pairs_exp[w] == 0) continue;
 
-	  find_pairs_exp[w]++;
-	  M->from_expvector(find_pairs_exp, find_pairs_lcm);
-	  find_pairs_exp[w]--;
-	      
-	  vplcm.shrink(0);
-	  M->to_varpower(find_pairs_lcm, vplcm);
-	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
-	  elems.insert(new Bag(q, vplcm));
-	}
+          find_pairs_exp[w]++;
+          M->from_expvector(find_pairs_exp, find_pairs_lcm);
+          find_pairs_exp[w]--;
+
+          vplcm.shrink(0);
+          M->to_varpower(find_pairs_lcm, vplcm);
+          s_pair *q = new_ring_pair(p, find_pairs_lcm);
+          elems.insert(new Bag(q, vplcm));
+        }
       deletearray(find_pairs_exp);
     }
 
@@ -226,14 +226,14 @@ void gb2_comp::find_pairs(gb_elem *p)
   if (originalR->is_quotient_ring())
     {
       for (int i=0; i<originalR->n_quotients(); i++)
-	{
-	  const Nterm * f = originalR->quotient_element(i);
-	  M->lcm(f->monom, f_m, find_pairs_lcm);
-	  vplcm.shrink(0);
-	  M->to_varpower(find_pairs_lcm, vplcm);
-	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
-	  elems.insert(new Bag(q, vplcm));
-	}
+        {
+          const Nterm * f = originalR->quotient_element(i);
+          M->lcm(f->monom, f_m, find_pairs_lcm);
+          vplcm.shrink(0);
+          M->to_varpower(find_pairs_lcm, vplcm);
+          s_pair *q = new_ring_pair(p, find_pairs_lcm);
+          elems.insert(new Bag(q, vplcm));
+        }
     }
 
   // Add in syzygies arising as s-pairs
@@ -244,9 +244,9 @@ void gb2_comp::find_pairs(gb_elem *p)
       M->lcm(find_pairs_m, f_m, find_pairs_lcm);
       vplcm.shrink(0);
       M->to_varpower(find_pairs_lcm, vplcm);
-      s_pair *q = new_s_pair(p, 
-			     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()), 
-			     find_pairs_lcm);
+      s_pair *q = new_s_pair(p,
+                             reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()),
+                             find_pairs_lcm);
       elems.insert(new Bag(q, vplcm));
     }
 
@@ -274,26 +274,26 @@ void gb2_comp::find_pairs(gb_elem *p)
       n_pairs++;
       s_pair *q = reinterpret_cast<s_pair *>((*mi)[j]->basis_ptr());
       if (is_ideal2 && q->syz_type == SPAIR_PAIR)
-	{
-	  // MES: the following line is suspect, for Schreyer orders
-	  M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_m);
-	  if (M->is_one(find_pairs_m))
-	    {
-	      n_pairs_gcd++;
-	      if (M2_gbTrace >= 8)
-		{
-		  buffer o;
-		  o << "removed pair[" << q->first->me << " " 
-		    << q->second->me << "]" << newline;
-		  emit(o.str());
-		}
-	      remove_pair(q);
-	    }
-	  else
-	    spairs->insert(q);
-	}
+        {
+          // MES: the following line is suspect, for Schreyer orders
+          M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_m);
+          if (M->is_one(find_pairs_m))
+            {
+              n_pairs_gcd++;
+              if (M2_gbTrace >= 8)
+                {
+                  buffer o;
+                  o << "removed pair[" << q->first->me << " "
+                    << q->second->me << "]" << newline;
+                  emit(o.str());
+                }
+              remove_pair(q);
+            }
+          else
+            spairs->insert(q);
+        }
       else
-	spairs->insert(q);
+        spairs->insert(q);
     }
 
   delete mi;
@@ -312,15 +312,15 @@ void gb2_comp::compute_s_pair(s_pair *p)
       M->divide(p->lcm, s, s);
 
       GR->gbvector_mult_by_term(F,Fsyz,
-				GR->one(), s,
-				p->first->f, 
-				p->first->fsyz,
-				p->f, 
-				p->fsyz);
+                                GR->one(), s,
+                                p->first->f,
+                                p->first->fsyz,
+                                p->f,
+                                p->fsyz);
       if (p->syz_type == SPAIR_PAIR)
-	GR->gbvector_reduce_lead_term(F,Fsyz,
-				      0,p->f,p->fsyz,
-				      p->second->f, p->second->fsyz);
+        GR->gbvector_reduce_lead_term(F,Fsyz,
+                                      0,p->f,p->fsyz,
+                                      p->second->f, p->second->fsyz);
       M->remove(s);
     }
 }
@@ -349,40 +349,40 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       GR->gbvector_get_lead_exponents(F, f, div_totalexp);
-      if (originalR->is_quotient_ring() 
-	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
-	{
-	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
-	  GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,g,0);
-	  count++;
-	}
-      else 
-	if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
-	  {
-	    gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
-	    GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
-	    count++;
-	    if (M2_gbTrace == 10)
-	      {
-		buffer o;
-		o << "  reduced by ";
-		GR->gbvector_text_out(o,F,q->f);
-		o << newline;
-		o << "    giving ";
-		GR->gbvector_text_out(o,F,f);
-		o << newline;
-		emit(o.str());
-	      }
-	  }
+      if (originalR->is_quotient_ring()
+          && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+        {
+          const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
+          GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,g,0);
+          count++;
+        }
       else
-	{
-	  result->next = f;
-	  f = f->next;
-	  result = result->next;
-	  result->next = 0;
-	}
+        if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
+          {
+            gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
+            GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
+            count++;
+            if (M2_gbTrace == 10)
+              {
+                buffer o;
+                o << "  reduced by ";
+                GR->gbvector_text_out(o,F,q->f);
+                o << newline;
+                o << "    giving ";
+                GR->gbvector_text_out(o,F,f);
+                o << newline;
+                emit(o.str());
+              }
+          }
+      else
+        {
+          result->next = f;
+          f = f->next;
+          result = result->next;
+          result->next = 0;
+        }
     }
-  
+
   if (M2_gbTrace >= 4)
     {
       buffer o;
@@ -411,32 +411,32 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       GR->gbvector_get_lead_exponents(F, lead, div_totalexp);
-      if (originalR->is_quotient_ring() 
-	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
-	{
-	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
-	  GR->reduce_lead_term_heap(F,Fsyz,
-				    lead, div_totalexp, // are these two needed
-				    head.next,fb,fsyzb,
-				    g,0);
-	  count++;
-	}
-      else 
-	if (monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
-	  {
-	    gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
-	    GR->reduce_lead_term_heap(F,Fsyz,
-				      lead, div_totalexp,
-				      head.next,fb,fsyzb,
-				      q->f,q->fsyz);
-	  count++;
-	  }
-	else
-	  {
-	    result->next = fb.remove_lead_term();
-	    result = result->next;
-	    result->next = 0;
-	  }
+      if (originalR->is_quotient_ring()
+          && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+        {
+          const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
+          GR->reduce_lead_term_heap(F,Fsyz,
+                                    lead, div_totalexp, // are these two needed
+                                    head.next,fb,fsyzb,
+                                    g,0);
+          count++;
+        }
+      else
+        if (monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
+          {
+            gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
+            GR->reduce_lead_term_heap(F,Fsyz,
+                                      lead, div_totalexp,
+                                      head.next,fb,fsyzb,
+                                      q->f,q->fsyz);
+          count++;
+          }
+        else
+          {
+            result->next = fb.remove_lead_term();
+            result = result->next;
+            result->next = 0;
+          }
     }
 
   if (M2_gbTrace >= 4)
@@ -480,7 +480,7 @@ void gb2_comp::schreyer_append(gbvector * f)
       originalR->degree_monoid()->remove(d);
     }
 }
-  
+
 void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
 {
   int *f_m = M->make_one();
@@ -517,13 +517,13 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
   if (orig_syz >= 0 || !ismin)
     for (int i=n_gb_first; i<n_gb; i++)
       {
-	// Now compute gb(i) := gb(i) - c gb(j), where
-	// c in(gb(j)) is a term in gb(i).
-	// Also compute change(i) -= c change(j).
-	
-	GR->gbvector_auto_reduce(F,Fsyz,
-				 gb[i]->f, gb[i]->fsyz, 
-				 p->f, p->fsyz);
+        // Now compute gb(i) := gb(i) - c gb(j), where
+        // c in(gb(j)) is a term in gb(i).
+        // Also compute change(i) -= c change(j).
+
+        GR->gbvector_auto_reduce(F,Fsyz,
+                                 gb[i]->f, gb[i]->fsyz,
+                                 p->f, p->fsyz);
       }
 
   n_gb++;
@@ -534,16 +534,16 @@ int gb2_comp::get_pairs()
   int n = 0;
   s_pair head;
   s_pair *slast = &head;
-  
+
   for (;;)
     {
       s_pair *p = spairs->remove();
       if (p == NULL) break;
-      if (p->degree != this_degree) 
-	{
-	  spairs->put_back(p);
-	  break;
-	}
+      if (p->degree != this_degree)
+        {
+          spairs->put_back(p);
+          break;
+        }
 
       slast->next = p;
       slast = p;
@@ -557,7 +557,7 @@ int gb2_comp::get_pairs()
   return n;
 }
 bool gb2_comp::s_pair_step()
-     // If no s-pairs left in the current degree, 
+     // If no s-pairs left in the current degree,
      // return false
      // Otherwise, compute the current s-pair, reduce it, and
      // dispatch the result.  Return true.
@@ -570,7 +570,7 @@ bool gb2_comp::s_pair_step()
 
   n_pairs_computed++;
   compute_s_pair(p);
-  
+
   gbvector * f = p->f;
   gbvector * fsyz = p->fsyz;
   p->f = NULL;
@@ -588,16 +588,16 @@ bool gb2_comp::s_pair_step()
   else if (fsyz != NULL && syz != NULL)
     {
       if (syz->receive_generator(fsyz,n_syz++,GR->one()))
-	{
-	  n_gb_syz--;
-	  n_pairs_syz++;
-	  if (M2_gbTrace >= 3) emit_wrapped("z");
-	}
+        {
+          n_gb_syz--;
+          n_pairs_syz++;
+          if (M2_gbTrace >= 3) emit_wrapped("z");
+        }
       else
-	{
-	  n_pairs_usyz++;
-	  if (M2_gbTrace >= 3) emit_wrapped("u");
-	}
+        {
+          n_pairs_usyz++;
+          if (M2_gbTrace >= 3) emit_wrapped("u");
+        }
     }
   else
     {
@@ -630,18 +630,18 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
   if (orig_syz >= 0)
     {
       if (orig_syz > n)
-	fsyz = GR->gbvector_term(Fsyz,denom,n+1); // Note the change in component number
+        fsyz = GR->gbvector_term(Fsyz,denom,n+1); // Note the change in component number
       gb_reduce(f,fsyz);
       if (f == NULL)
-	{
-	  if (fsyz != NULL && syz != NULL)
-	    syz->receive_generator(fsyz, n_syz++, GR->one());
-	}
+        {
+          if (fsyz != NULL && syz != NULL)
+            syz->receive_generator(fsyz, n_syz++, GR->one());
+        }
       else
-	{
-	  isgen = true;
-	  gb_insert(f,fsyz,1);
-	}
+        {
+          isgen = true;
+          gb_insert(f,fsyz,1);
+        }
     }
   else
     {
@@ -649,15 +649,15 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
       GR->gbvector_remove(fsyz);
       GR->gbvector_remove_content(f,NULL);
       if (f != NULL)
-	{
-	  //schreyer_append(f);
-	  isgen = true;
-	  //gb_insert(f,Fsyz->e_sub_i(n_mingens),1);
-	  // The fsyz part will be set at the end of the degree,
-	  // after sorting takes place, and after auto-reduction in
-	  // this degree.
-	  gb_insert(f,NULL,1);
-	}
+        {
+          //schreyer_append(f);
+          isgen = true;
+          //gb_insert(f,Fsyz->e_sub_i(n_mingens),1);
+          // The fsyz part will be set at the end of the degree,
+          // after sorting takes place, and after auto-reduction in
+          // this degree.
+          gb_insert(f,NULL,1);
+        }
     }
   return isgen;
 }
@@ -673,11 +673,11 @@ void gb2_comp::end_degree()
   if (orig_syz < 0)
     {
       for (int j=n_gb_first; j < n_gb; j++)
-	if (gb[j]->is_min)
-	  {
-	    schreyer_append(gb[j]->f);
-	    gb[j]->fsyz = GR->gbvector_term(Fsyz,GR->one(),Fsyz->rank());
-	  }
+        if (gb[j]->is_min)
+          {
+            schreyer_append(gb[j]->f);
+            gb[j]->fsyz = GR->gbvector_term(Fsyz,GR->one(),Fsyz->rank());
+          }
     }
 
   // Now set the state so that we know we have finished here
@@ -690,8 +690,8 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg)
   enum ComputationStatusCode ret = COMP_DONE;
   if (this_degree > deg) return COMP_DONE;
   if (state == STATE_DONE) return COMP_DONE; // This includes knowledge
-				// that there will be no new generators.
-  if (this_degree < deg) 
+                                // that there will be no new generators.
+  if (this_degree < deg)
     {
       // Now make sure that previous computations have been done:
       ret = calc_gens(deg-1);
@@ -707,62 +707,62 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg)
   if (state == STATE_NEW_DEGREE)
     {
       if (use_hilb)
-	{
-	  RingElement *hsyz;
-	  const PolynomialRing *DR = originalR->get_degree_ring();
-	  RingElement *h = RingElement::make_raw(DR, DR->zero());
-	  if (syz != NULL)
-	    {
-	      hsyz = syz->hilbertNumerator();
-	      if (hsyz == 0) return COMP_INTERRUPTED;
-	      //	      o1 << "hsyz = "; hsyz->text_out(o);
-	      h = (*h) + (*hsyz);
-	    }
-	  RingElement *hf1 = hilbertNumerator();
-	  if (hf1 == 0) return COMP_INTERRUPTED;
-	  h = (*h) + (*hf1);
-	  RingElement *hF = hilb_comp::hilbertNumerator(F);
-	  if (hF == 0) return COMP_INTERRUPTED;
-	  h = (*h) - (*hF);
+        {
+          RingElement *hsyz;
+          const PolynomialRing *DR = originalR->get_degree_ring();
+          RingElement *h = RingElement::make_raw(DR, DR->zero());
+          if (syz != NULL)
+            {
+              hsyz = syz->hilbertNumerator();
+              if (hsyz == 0) return COMP_INTERRUPTED;
+              //              o1 << "hsyz = "; hsyz->text_out(o);
+              h = (*h) + (*hsyz);
+            }
+          RingElement *hf1 = hilbertNumerator();
+          if (hf1 == 0) return COMP_INTERRUPTED;
+          h = (*h) + (*hf1);
+          RingElement *hF = hilb_comp::hilbertNumerator(F);
+          if (hF == 0) return COMP_INTERRUPTED;
+          h = (*h) - (*hF);
 
 #if 0
-// 	  o1 << "\nhf   = "; hf1->text_out(o1);
-// 	  o1 << "\nhF   = "; hF->text_out(o1);
-// 	  o1 << "\nh    = "; h->text_out(o1);
-// 	  o1 << "\n";
-// 	  emit(o1.str());
-// 	  o1.reset();
+//        o1 << "\nhf   = "; hf1->text_out(o1);
+//        o1 << "\nhF   = "; hF->text_out(o1);
+//        o1 << "\nh    = "; h->text_out(o1);
+//        o1 << "\n";
+//        emit(o1.str());
+//        o1.reset();
 #endif
-	  if (M2_gbTrace >= 1 && n_gb_syz != 0)
-	    {
-	      buffer o;
-	      o << "<WARNING: remaining nsyz+ngb = " << n_gb_syz << ">";
-	      emit(o.str());
-	    }
+          if (M2_gbTrace >= 1 && n_gb_syz != 0)
+            {
+              buffer o;
+              o << "<WARNING: remaining nsyz+ngb = " << n_gb_syz << ">";
+              emit(o.str());
+            }
 
-	  n_gb_syz = hilb_comp::coeff_of(h, this_degree);
-	  if (error())
-	    return COMP_ERROR;
+          n_gb_syz = hilb_comp::coeff_of(h, this_degree);
+          if (error())
+            return COMP_ERROR;
 
-	}
+        }
 
       // Compute new s-pairs
       for (int i=n_gb_first; i<n_gb; i++)
-	find_pairs(gb[i]);
+        find_pairs(gb[i]);
 
       state = STATE_GB;
       n_gb_first = n_gb;
       int npairs = get_pairs();
       if (M2_gbTrace >= 1 && npairs > 0)
-	{
-	  buffer o;
-	  // Should only display this if there are some pairs.
-	  o << '[' << level << ',' << npairs;
-	  if (use_hilb)
-	    o << ",e" << n_gb_syz; // << "," << n1 << "," << n2;
-	  o << ']';
-	  emit(o.str());
-	}
+        {
+          buffer o;
+          // Should only display this if there are some pairs.
+          o << '[' << level << ',' << npairs;
+          if (use_hilb)
+            o << ",e" << n_gb_syz; // << "," << n1 << "," << n2;
+          o << ']';
+          emit(o.str());
+        }
     }
 
   if (state == STATE_GB)
@@ -770,20 +770,20 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg)
       ret = COMP_COMPUTING;
       // Now compute all the s-pairs here.
       for (;;)
-	{
-	  if (ret != COMP_COMPUTING) break;
-	  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) 
-	    {
-	      ret = COMP_INTERRUPTED;
-	      break;
-	    }
-	  // Check ending conditions...
-	  if (!s_pair_step())
-	    {
-	      ret = COMP_DONE;
-	      state = STATE_GENS;
-	    }
-	}
+        {
+          if (ret != COMP_COMPUTING) break;
+          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+            {
+              ret = COMP_INTERRUPTED;
+              break;
+            }
+          // Check ending conditions...
+          if (!s_pair_step())
+            {
+              ret = COMP_DONE;
+              state = STATE_GENS;
+            }
+        }
     }
 
   if (state == STATE_GENS && orig_syz > 0)
@@ -792,14 +792,14 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg)
       // may produce syzygies of this degree.
       ret = gens->calc_gb(deg);
       if (ret == COMP_DONE)
-	{
-	  // Cleanup, go to next degree.
-	  end_degree();
-	}
+        {
+          // Cleanup, go to next degree.
+          end_degree();
+        }
     }
   // MES: put out an endl if M2_gbTrace >= 1?
 
-  // Is this where we should compute the HF again: for use by the 
+  // Is this where we should compute the HF again: for use by the
   // previous node... Do we really have to compute it twice per degree/level
   // node?
 
@@ -944,10 +944,10 @@ void gb2_comp::text_out(buffer &o) const
       int nmonoms = 0;
       int nchange = 0;
       for (int i=0; i<gb.length(); i++)
-	{
-	  nmonoms += GR->gbvector_n_terms(gb[i]->f);
-	  nchange += GR->gbvector_n_terms(gb[i]->fsyz);
-	}
+        {
+          nmonoms += GR->gbvector_n_terms(gb[i]->f);
+          nchange += GR->gbvector_n_terms(gb[i]->fsyz);
+        }
       o.put(n_gb, 5);              o.put(" ");
       o.put(n_pairs, 5);           o.put(" ");
       o.put(n_pairs_computed, 5);  o.put(" ");
@@ -965,9 +965,9 @@ void gb2_comp::text_out(buffer &o) const
   if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
     for (int i=0; i<gb.length(); i++)
       {
-	o << i << '\t';
-	GR->gbvector_text_out(o, F, gb[i]->f);
-	o << newline;
+        o << i << '\t';
+        GR->gbvector_text_out(o, F, gb[i]->f);
+        o << newline;
       }
 }
 
@@ -979,10 +979,10 @@ void gb2_comp::stats() const
       int nmonoms = 0;
       int nchange = 0;
       for (int i=0; i<gb.length(); i++)
-	{
-	  nmonoms += GR->gbvector_n_terms(gb[i]->f);
-	  nchange += GR->gbvector_n_terms(gb[i]->fsyz);
-	}
+        {
+          nmonoms += GR->gbvector_n_terms(gb[i]->f);
+          nchange += GR->gbvector_n_terms(gb[i]->fsyz);
+        }
       o.put(n_gb, 5);              o.put(" ");
       o.put(n_pairs, 5);           o.put(" ");
       o.put(n_pairs_computed, 5);  o.put(" ");
@@ -1005,13 +1005,13 @@ void gb2_comp::stats() const
       F->text_out(o);
       o << newline;
       for (int i=0; i<gb.length(); i++)
-	{
-	  o.reset();
-	  o << i << '\t';
-	  GR->gbvector_text_out(o, F, gb[i]->f);
-	  o << newline;
-	  emit(o.str());
-	}
+        {
+          o.reset();
+          o << i << '\t';
+          GR->gbvector_text_out(o, F, gb[i]->f);
+          o << newline;
+          emit(o.str());
+        }
     }
 
   dfree(F);
@@ -1021,4 +1021,5 @@ void gb2_comp::stats() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

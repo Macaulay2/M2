@@ -14,8 +14,8 @@ bool SolvableAlgebra::initialize_solvable(const Matrix *Q)
 }
 
 SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
-					 const Monoid *M,
-					 const Matrix *Q)
+                                         const Monoid *M,
+                                         const Matrix *Q)
 {
   SolvableAlgebra *result = new SolvableAlgebra;
 
@@ -26,11 +26,11 @@ SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
 }
 
 SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
-					 const Matrix *Q)
+                                         const Matrix *Q)
 {
   return create(R->getCoefficients(),
-		R->getMonoid(),
-		Q);
+                R->getMonoid(),
+                Q);
 }
 
 #if 0
@@ -40,21 +40,21 @@ SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
 // {
 //   const Monoid *newM = Monoid::tensor_product(M, getMonoid());
 //   if (newM == 0) return 0;
-// 
+//
 //   // Somehow generate a new matrix Q?
 //   const Matrix *Q = Q_;
-// 
+//
 //   return create(getCoefficients(),
-// 		newM,
-// 		this,
-// 		M,
-// 		Q);
+//              newM,
+//              this,
+//              M,
+//              Q);
 // }
 #endif
 
-ring_elem SolvableAlgebra::mult_by_term(const ring_elem f, 
-					       const ring_elem c, 
-					       const int *m) const
+ring_elem SolvableAlgebra::mult_by_term(const ring_elem f,
+                                               const ring_elem c,
+                                               const int *m) const
   // Computes c*m*f, BUT NOT doing normal form wrt a quotient ideal..
 {
   // TODO
@@ -69,7 +69,7 @@ ring_elem SolvableAlgebra::power(const ring_elem f, mpz_t n) const
   int n1;
   if (RingZZ::get_si(n1,n))
     return power(f,n1);
-  else 
+  else
     {
       ERROR("exponent too large");
       return ZERO_RINGELEM;
@@ -84,4 +84,5 @@ ring_elem SolvableAlgebra::power(const ring_elem f, int n) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

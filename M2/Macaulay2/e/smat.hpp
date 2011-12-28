@@ -49,10 +49,10 @@ class SMat : public our_new_delete
     // v := v+w, w := 0
   void vec_row_op(sparsevec *&v, int r1, const elem &a, int r2) const;
     // row(r1 in v) := row(r1 in v) + a * row(r2 in v)
-  void vec_row_op2(sparsevec *&v, 
-		   int r1, int r2, 
-		   const elem &a1, const elem &a2,
-		   const elem &b1, const elem &b2) const;
+  void vec_row_op2(sparsevec *&v,
+                   int r1, int r2,
+                   const elem &a1, const elem &a2,
+                   const elem &b1, const elem &b2) const;
     // row(r1 in v) := a1 * row(r1 in v) + a2 * row(r2 in v)
     // row(r2 in v) := b1 * row(r1 in v) + b2 * row(r2 in v) (RHS refers to previous values)
   void vec_column_op(sparsevec *&v, const elem &a, sparsevec *w) const;
@@ -88,19 +88,19 @@ public:
     int col;
     sparsevec *v;
   public:
-    void set(int col0) { 
+    void set(int col0) {
       col = col0;
       v = M->columns_[col];
     }
-    iterator(const SMat<CoeffRing> *M0) : M(M0), 
-					  col(-1), 
-					  v(0) {}
+    iterator(const SMat<CoeffRing> *M0) : M(M0),
+                                          col(-1),
+                                          v(0) {}
     const elem &value() { return v->coeff; }
     void next() { v = v->next; }
     bool valid() { return v != 0; }
     int row() { return v->row; }
 
-    void copy_elem(ring_elem &result) { 
+    void copy_elem(ring_elem &result) {
       M->get_CoeffRing()->to_ring_elem(result, value());
     }
   };
@@ -130,16 +130,16 @@ public:
   void set_entry(int r, int c, const elem a);
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
-  void interchange_rows(int i, int j); 
+  void interchange_rows(int i, int j);
   /* swap rows: row(i) <--> row(j) */
 
-  void interchange_columns(int i, int j); 
+  void interchange_columns(int i, int j);
   /* swap columns: column(i) <--> column(j) */
 
-  void scale_row(int i, elem r); 
+  void scale_row(int i, elem r);
   /* row(i) <- r * row(i) */
 
-  void scale_column(int i, elem r); 
+  void scale_column(int i, elem r);
   /* column(i) <- r * column(i) */
 
   void divide_row(int i, elem r);
@@ -148,27 +148,27 @@ public:
   void divide_column(int i, elem r);
   /* column(i) <- column(i) / r */
 
-  void row_op(int i, elem r, int j); 
+  void row_op(int i, elem r, int j);
   /* row(i) <- row(i) + r * row(j) */
 
-  void column_op(int i, elem r, int j); 
+  void column_op(int i, elem r, int j);
   /* column(i) <- column(i) + r * column(j) */
 
-  void column2by2(int c1, int c2, 
-		  elem a1, elem a2,
-		  elem b1, elem b2);
+  void column2by2(int c1, int c2,
+                  elem a1, elem a2,
+                  elem b1, elem b2);
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
-  void row2by2(int r1, int r2, 
-	       elem a1, elem a2,
-	       elem b1, elem b2);
+  void row2by2(int r1, int r2,
+               elem a1, elem a2,
+               elem b1, elem b2);
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 
-  void dot_product(int i, int j, elem &result) const; 
+  void dot_product(int i, int j, elem &result) const;
 
   bool row_permute(int start_row, M2_arrayint perm);
 
@@ -187,8 +187,8 @@ public:
   /* Delete rows i .. j from M */
 
   bool set_submatrix(M2_arrayint rows,
-		     M2_arrayint cols,
-		     const MutableMatrix *M);
+                     M2_arrayint cols,
+                     const MutableMatrix *M);
 
   SMat<CoeffRing> *submatrix(M2_arrayint rows, M2_arrayint cols) const;
 
@@ -220,4 +220,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

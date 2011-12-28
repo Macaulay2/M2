@@ -18,9 +18,9 @@ union ring_elem
   int    int_val;
   Nterm * poly_val;
   schur_poly *schur_poly_val;
- private:			// move this line up to the top eventually
+ private:                       // move this line up to the top eventually
   mpz_ptr  mpz_val;
-  
+
  public:
   ring_elem() : poly_val(0) {}
   //explicit ring_elem(int a) : int_val(a) {} // really want this version...
@@ -85,4 +85,5 @@ struct vecterm : public our_new_delete
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

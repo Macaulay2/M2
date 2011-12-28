@@ -9,12 +9,12 @@ const int init_intarray_size = 16;
 class intarray
 {
   int *entries;
-  int  len;			// Allocated length
-  int  max;			// Current length
+  int  len;                     // Allocated length
+  int  max;                     // Current length
 public:
   intarray() : entries(NULL), len(0), max(0) {}
 
-  intarray(int i_size) 
+  intarray(int i_size)
     : max(0)
     {
       int n = init_intarray_size;
@@ -26,13 +26,13 @@ public:
   intarray(const intarray &a) : max(a.max)
     {
       if (a.len == 0)
-	{ entries = NULL; len = 0; }
+        { entries = NULL; len = 0; }
       else
-	{
-	  entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*a.max));
-	  len = static_cast<int>(doubles->allocated_size(entries)/sizeof(int));
-	  for (int i=0; i<max; i++) entries[i] = a.entries[i];
-	}
+        {
+          entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*a.max));
+          len = static_cast<int>(doubles->allocated_size(entries)/sizeof(int));
+          for (int i=0; i<max; i++) entries[i] = a.entries[i];
+        }
     }
 
   ~intarray() { doubles->delete_elem(entries); entries = 0; }
@@ -60,13 +60,13 @@ public:
   int *raw() { assert(entries != NULL); return entries; }
   const int *raw() const { assert(entries != NULL); return entries; }
 
-  void append(int t) 
-    { 
-      if (max == len) expand(max); 
-      entries[max++] = t; 
+  void append(int t)
+    {
+      if (max == len) expand(max);
+      entries[max++] = t;
     }
 
-  int *alloc(int extra) 
+  int *alloc(int extra)
     // make room for 'extra' elements, return pointer to first,
     // and set 'max' to be max+extra.
     {
@@ -81,7 +81,7 @@ public:
       int *t = alloc(lngth);
       int *result = t;
       for (int i=0; i<lngth; i++)
-	*t++ = *a++;
+        *t++ = *a++;
       return result;
     }
 
@@ -101,9 +101,9 @@ public:
   int operator==(const intarray &a) const
     {
       if (max != a.max) return 0;
-      for (int i=0; i<max; i++) 
-	if (entries[i] != a.entries[i])
-	  return 0;
+      for (int i=0; i<max; i++)
+        if (entries[i] != a.entries[i])
+          return 0;
       return 1;
     }
 
@@ -116,4 +116,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

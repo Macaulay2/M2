@@ -15,7 +15,7 @@
 // #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring) 
+bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring)
 {
   initialize_ring(0);
   _elem_size = sizeof(mpz_t);
@@ -68,8 +68,8 @@ unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
 }
 
 int RingZZ::coerce_to_int(ring_elem a) const
-{ 
-  return static_cast<int>(mpz_get_si(a.get_mpz())); 
+{
+  return static_cast<int>(mpz_get_si(a.get_mpz()));
 }
 
 ring_elem RingZZ::random() const
@@ -77,11 +77,11 @@ ring_elem RingZZ::random() const
   return rawRandomInteger(0);
 }
 
-void RingZZ::elem_text_out(buffer &o, 
-			   const ring_elem ap, 
-			   bool p_one, 
-			   bool p_plus, 
-			   bool p_parens) const
+void RingZZ::elem_text_out(buffer &o,
+                           const ring_elem ap,
+                           bool p_one,
+                           bool p_plus,
+                           bool p_parens) const
 {
   mpz_ptr a = ap.get_mpz();
 
@@ -97,10 +97,10 @@ void RingZZ::elem_text_out(buffer &o,
   char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
   if (!is_neg && p_plus) o << '+';
-  if (is_one) 
-    {  
+  if (is_one)
+    {
       if (is_neg) o << '-';
-      if (p_one) o << '1'; 
+      if (p_one) o << '1';
     }
   else
     {
@@ -145,7 +145,7 @@ bool RingZZ::is_unit(const ring_elem f) const
 {
   mpz_ptr a = f.get_mpz();
   return (mask_mpz_cmp_si(a, 1)==0 ||
-	  mask_mpz_cmp_si(a, -1)==0);
+          mask_mpz_cmp_si(a, -1)==0);
 }
 
 bool RingZZ::is_zero(const ring_elem f) const
@@ -292,7 +292,7 @@ ring_elem RingZZ::power(const ring_elem f, mpz_t n) const
 {
   mpz_ptr result = new_elem();
   int n1;
-  if (!get_si(n1, n)) 
+  if (!get_si(n1, n))
     { ERROR("exponent too large"); }
   else
     mpz_pow_ui(result, f.get_mpz(), n1);
@@ -314,8 +314,8 @@ ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
   return ring_elem(result);
 }
 
-ring_elem RingZZ::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				  ring_elem &quot) const
+ring_elem RingZZ::remainderAndQuotient(const ring_elem f, const ring_elem g,
+                                  ring_elem &quot) const
 {
   mpz_ptr q = new_elem();
   mpz_ptr r = new_elem();
@@ -363,8 +363,8 @@ ring_elem RingZZ::gcd(const ring_elem f, const ring_elem g) const
   return ring_elem(result);
 }
 
-ring_elem RingZZ::gcd_extended(const ring_elem f, const ring_elem g, 
-			    ring_elem &u, ring_elem &v) const
+ring_elem RingZZ::gcd_extended(const ring_elem f, const ring_elem g,
+                            ring_elem &u, ring_elem &v) const
 {
   mpz_ptr result = new_elem();
   mpz_ptr u1 = new_elem();
@@ -376,7 +376,7 @@ ring_elem RingZZ::gcd_extended(const ring_elem f, const ring_elem g,
 }
 
 void RingZZ::syzygy(const ring_elem a, const ring_elem b,
-	       ring_elem &x, ring_elem &y) const
+               ring_elem &x, ring_elem &y) const
 {
   // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
   if (RingZZ::is_zero(a))
@@ -418,4 +418,5 @@ ring_elem RingZZ::eval(const RingMap *map, const ring_elem f,int) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

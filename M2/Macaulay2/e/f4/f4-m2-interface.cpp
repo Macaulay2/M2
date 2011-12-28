@@ -10,10 +10,10 @@
 #include "../gbring.hpp"
 
 void F4toM2Interface::from_M2_vec(const Gausser *KK,
-				  const MonomialInfo *MI,
-				  const FreeModule *F, 
-				  vec v,
-				  poly &result)
+                                  const MonomialInfo *MI,
+                                  const FreeModule *F,
+                                  vec v,
+                                  poly &result)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
@@ -36,7 +36,7 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
       relem_array[n] = t->coeff;
       M->to_expvector(t->monom, exp);
       for (int a =0; a<M->n_vars(); a++)
-	lexp[a] = exp[a];
+        lexp[a] = exp[a];
       MI->from_exponent_vector(lexp, t->comp-1, nextmonom); // gbvector components are shifted up by one
       nextmonom += MI->monomial_size(nextmonom);
       n++;
@@ -46,16 +46,16 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
 }
 
 void F4toM2Interface::poly_set_degrees(const Gausser *KK,
-						  const MonomialInfo *MI,
-						  const M2_arrayint wts,
-						  const poly &f,
-						  int &deg_result, 
-						  int &alpha)
+                                                  const MonomialInfo *MI,
+                                                  const M2_arrayint wts,
+                                                  const poly &f,
+                                                  int &deg_result,
+                                                  int &alpha)
 {
   const monomial_word *w = f.monoms;
   monomial_word leaddeg = MI->monomial_weight(w, wts);
   monomial_word deg = leaddeg;
-  
+
   for (int i=1; i<f.len; i++)
     {
       w = w + MI->monomial_size(w);
@@ -67,10 +67,10 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
 }
 
 void F4toM2Interface::from_M2_matrix(const Gausser *KK,
-				     const MonomialInfo *MI,
-				     const Matrix *m, 
-				     M2_arrayint wts,
-				     gb_array &result_polys)
+                                     const MonomialInfo *MI,
+                                     const Matrix *m,
+                                     M2_arrayint wts,
+                                     gb_array &result_polys)
 {
   const FreeModule *F = m->rows();
   for (int i=0; i<m->n_cols(); i++)
@@ -78,19 +78,19 @@ void F4toM2Interface::from_M2_matrix(const Gausser *KK,
       gbelem *g = new gbelem;
       from_M2_vec(KK,MI,F,m->elem(i),g->f);
       if (wts != 0)
-	poly_set_degrees(KK,MI,wts,g->f,g->deg,g->alpha);
+        poly_set_degrees(KK,MI,wts,g->f,g->deg,g->alpha);
       result_polys.push_back(g);
     }
 }
 
 vec F4toM2Interface::to_M2_vec(const Gausser *KK,
-			       const MonomialInfo *MI,
-			       const poly &f,
-			       const FreeModule *F)
+                               const MonomialInfo *MI,
+                               const poly &f,
+                               const FreeModule *F)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
-  
+
   int *m1 = M->make_one();
 
   Nterm **comps = newarray(Nterm *, F->rank());
@@ -114,31 +114,31 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
       MI->to_exponent_vector(w, lexp, comp);
       w = w + MI->monomial_size(w);
       for (int a=0; a<M->n_vars(); a++)
-	exp[a] = static_cast<int>(lexp[a]);
+        exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
       Nterm * g = R->make_flat_term(relem_array[i], m1);
       g->next = 0;
       if (last[comp] == 0)
-	{
-	  comps[comp] = g;
-	  last[comp] = g;
-	}
+        {
+          comps[comp] = g;
+          last[comp] = g;
+        }
       else
-	{
-	  last[comp]->next = g;
-	  last[comp] = g;
-	}
+        {
+          last[comp]->next = g;
+          last[comp] = g;
+        }
     }
   vec result = 0;
   for (int i=0; i<F->rank(); i++)
     {
       if (comps[i] != 0)
-	{
-	  vec v = R->make_vec(i,comps[i]);
-	  R->add_vec_to(result,v);
-	  comps[i] = 0;
-	  last[i] = 0;
-	}
+        {
+          vec v = R->make_vec(i,comps[i]);
+          R->add_vec_to(result,v);
+          comps[i] = 0;
+          last[i] = 0;
+        }
     }
 
   deletearray(relem_array);
@@ -146,9 +146,9 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
 }
 
 Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
-				      const MonomialInfo *MI,
-				      gb_array &polys, 
-				      const FreeModule *F)
+                                      const MonomialInfo *MI,
+                                      gb_array &polys,
+                                      const FreeModule *F)
 {
   MatrixConstructor result(F,INTSIZE(polys));
   for (int i=0; i<polys.size(); i++)
@@ -157,9 +157,9 @@ Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
 }
 
 MutableMatrix * F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
-						     coefficient_matrix *mat,
-						     gb_array &gens,
-						     gb_array &gb)
+                                                     coefficient_matrix *mat,
+                                                     gb_array &gens,
+                                                     gb_array &gb)
 {
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
@@ -169,22 +169,22 @@ MutableMatrix * F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
       row_elem &row = mat->rows[r];
       ring_elem *rowelems = newarray(ring_elem, row.len);
       if (row.coeffs == 0)
-	{
-	  if (row.monom == 0)
-	    KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
-	  else
-	    KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
-	}
+        {
+          if (row.monom == 0)
+            KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
+          else
+            KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
+        }
       else
-	{
-	  KK->to_ringelem_array(row.len, row.coeffs, rowelems);
-	}
+        {
+          KK->to_ringelem_array(row.len, row.coeffs, rowelems);
+        }
       for (int i=0; i<row.len; i++)
- 	{
- 	  int c = row.comps[i];
- 	  ////	  c = mat->columns[c].ord;
- 	  M->set_entry(r,c,rowelems[i]);
-	}
+        {
+          int c = row.comps[i];
+          ////    c = mat->columns[c].ord;
+          M->set_entry(r,c,rowelems[i]);
+        }
       deletearray(rowelems);
     }
   return M;

@@ -23,13 +23,13 @@ void ntl_ZZ_to_mpz(mpz_t result, const NTL::ZZ &a)
     }
   long size = SIZE(a.rep);
   if (size < 0) size = -size;
-  mpz_import(result, 
-	     size,
-	     -1, /* most sig first */
-	     sizeof(long), 
-	     0, /* native endian-ness */
-	     0, /* NAILS stuff */
-	     DATA(a.rep));
+  mpz_import(result,
+             size,
+             -1, /* most sig first */
+             sizeof(long),
+             0, /* native endian-ness */
+             0, /* NAILS stuff */
+             DATA(a.rep));
   if (SIZE(a.rep) < 0)
     mpz_neg(result,result);
 }
@@ -47,7 +47,7 @@ NTL::ZZ ntl_ZZ_from_mpz(mpz_t a)
   for (int i=0; i<size; i++)
     p[2+i] = a->_mp_d[i];
   p[1] = a->_mp_size;
-  return result;		// returning causes the result to be copied!
+  return result;                // returning causes the result to be copied!
 }
 
 NTL::mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols)
@@ -72,4 +72,5 @@ void mat_ZZ_get_entry(const NTL::mat_ZZ *A, long i, long j, mpz_t result)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

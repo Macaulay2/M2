@@ -8,7 +8,7 @@
 class Z_mod : public Ring
 {
   //int P; // this is defined in class Ring
-  int _P1;	// = P-1
+  int _P1;      // = P-1
   int _ZERO;     // = p-1, log of zero...
 
   int _prim_root;
@@ -68,15 +68,15 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };
@@ -85,4 +85,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -38,12 +38,12 @@ private:
   const FreeModule *F;
   MatrixConstructor *leadterms;
 
-  bool hilb_new_elems;	// True if any new elements since HF was last computed
+  bool hilb_new_elems;  // True if any new elements since HF was last computed
   int hilb_n_in_degree; // The number of new elements that we expect to find
-			 // in the current degree.
+                         // in the current degree.
 
-  const RingElement *hf_orig;	// The Hilbert function that we are given at the beginning
-  RingElement *hf_diff;		// The difference between hf_orig and the computed hilb fcn
+  const RingElement *hf_orig;   // The Hilbert function that we are given at the beginning
+  RingElement *hf_diff;         // The difference between hf_orig and the computed hilb fcn
 
   VECTOR(vec) elems;
 };
@@ -52,4 +52,5 @@ private:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

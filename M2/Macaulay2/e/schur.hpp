@@ -16,12 +16,12 @@ class tableau
   int dim;
   int maxwt;
   int wt;
-  int *lambda;			// A partition vector 0..nvars-1
-  int *p;			// A partition vector 0..nvars-1
-  int *xloc;			// array 1..|p|-|lambda| of the horizontal location
-				// of this number in the skew table
-  int *yloc;			// array 1..|p|-|lambda| of the vertical location
-				// of this number in the skew table
+  int *lambda;                  // A partition vector 0..nvars-1
+  int *p;                       // A partition vector 0..nvars-1
+  int *xloc;                    // array 1..|p|-|lambda| of the horizontal location
+                                // of this number in the skew table
+  int *yloc;                    // array 1..|p|-|lambda| of the vertical location
+                                // of this number in the skew table
 
   void initialize(int nvars);
   tableau() {}
@@ -36,7 +36,7 @@ class tableau
 class SchurRing : public PolyRing
 {
 private:
-  // These are variables that are used in the recursive routine 
+  // These are variables that are used in the recursive routine
   // SM(), which is called from skew_schur().
   tableau _SMtab;
   tableau _SMfilled;
@@ -70,17 +70,17 @@ public:
   virtual       SchurRing * cast_to_SchurRing()       { return this; }
 
   virtual void text_out(buffer &o) const;
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   void dimension(const int *exp, mpz_t result) const;
   ring_elem dimension(const ring_elem f) const;
 
-  virtual ring_elem mult_by_term(const ring_elem f, 
-				  const ring_elem c, const int *m) const;
+  virtual ring_elem mult_by_term(const ring_elem f,
+                                  const ring_elem c, const int *m) const;
 
   ring_elem power(const ring_elem f, mpz_t n) const;
   ring_elem power(const ring_elem f, int n) const;
@@ -90,4 +90,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

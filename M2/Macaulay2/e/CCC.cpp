@@ -10,7 +10,7 @@
 #include "ringmap.hpp"
 #include "gbring.hpp"
 
-bool CCC::initialize_CCC(unsigned long prec) 
+bool CCC::initialize_CCC(unsigned long prec)
 {
   initialize_ring(0);
   declare_field();
@@ -58,14 +58,14 @@ ring_elem CCC::random() const
   return BIGCC_RINGELEM(result);
 }
 
-void CCC::elem_text_out(buffer &o, 
-			const ring_elem ap, 
-			bool p_one, 
-			bool p_plus, 
-			bool p_parens) const
+void CCC::elem_text_out(buffer &o,
+                        const ring_elem ap,
+                        bool p_one,
+                        bool p_plus,
+                        bool p_parens) const
 {
   M2_string s = (p_parens ? (*gmp_tonetCCparenpointer)(BIGCC_VAL(ap))
-		 : (*gmp_tonetCCpointer)(BIGCC_VAL(ap)));
+                 : (*gmp_tonetCCpointer)(BIGCC_VAL(ap)));
 
   // if: first char is a "-", and p_plus, o << "+"
   // if: an internal "+" or "-", then put parens around it.
@@ -74,9 +74,9 @@ void CCC::elem_text_out(buffer &o,
 
   bool prepend_plus = p_plus && (s->array[0] != '-');
   bool strip_last = !p_one && (
-			      (s->len == 1 && s->array[0] == '1')
-			      || (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
-  
+                              (s->len == 1 && s->array[0] == '1')
+                              || (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
+
   if (prepend_plus) o << "+";
   if (strip_last)
     o.put(s->array, s->len-1);
@@ -330,7 +330,7 @@ ring_elem CCC::power(const ring_elem f, int n) const
   while (n > 0)
     {
       if (n%2) {
-	result = CCC::mult(result, curr_pow);
+        result = CCC::mult(result, curr_pow);
       }
       n = n/2;
       curr_pow = CCC::mult(curr_pow, curr_pow);
@@ -341,9 +341,9 @@ ring_elem CCC::power(const ring_elem f, int n) const
 ring_elem CCC::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!RingZZ::get_si(n1, n)) 
-    { 
-      ERROR("exponent too large"); 
+  if (!RingZZ::get_si(n1, n))
+    {
+      ERROR("exponent too large");
       return from_int(1);
     }
   return power(f, n1);
@@ -373,14 +373,14 @@ ring_elem CCC::divide(const ring_elem f, const ring_elem g) const
 }
 
 void CCC::syzygy(const ring_elem a, const ring_elem b,
-	       ring_elem &x, ring_elem &y) const
+               ring_elem &x, ring_elem &y) const
 {
   if (is_zero(b))
     {
       x = from_int(0);
       y = from_int(1);
     }
-  else 
+  else
     {
       x = from_int(1);
       y = divide(negate(a),b);
@@ -396,7 +396,7 @@ ring_elem CCC::eval(const RingMap *map, const ring_elem f, int) const
 
 ring_elem CCC::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
 {
-  // This is the one that needs to be rewritten: 14 Jan 2008 
+  // This is the one that needs to be rewritten: 14 Jan 2008
   mpfr_ptr f1 = BIGCC_RE(f);
   bool re_is_zero = (mpfr_cmpabs(f1,epsilon) < 0);
   mpfr_ptr f2 = BIGCC_IM(f);
@@ -433,4 +433,5 @@ void CCC::increase_maxnorm(gmp_RR norm, const ring_elem f) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -57,16 +57,16 @@ int PfaffianComputation::calc(int nsteps)
     {
       int result = step();
       if (result == COMP_DONE)
-	return COMP_DONE;
+        return COMP_DONE;
       if (--nsteps == 0)
-	return COMP_DONE_STEPS;
+        return COMP_DONE_STEPS;
       if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-	return COMP_INTERRUPTED;
+        return COMP_INTERRUPTED;
     }
 }
 
 ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
-     // Compute the pfaffian of the (skew symmetric) 
+     // Compute the pfaffian of the (skew symmetric)
      // minor with rows and columns r[0]..r[p2-1].
      // assumption: p2 is an even number.
 {
@@ -79,23 +79,23 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
       std::swap(r[i],r[p2-2]);
       negate = !negate;
       ring_elem g = M->elem(r[p2-2],r[p2-1]);
-      if (R->is_zero(g)) 
-	{
-	  R->remove(g);
-	  continue;
-	}
+      if (R->is_zero(g))
+        {
+          R->remove(g);
+          continue;
+        }
       ring_elem h = calc_pfaff(r,p2-2);
       ring_elem gh = R->mult(g,h);
       R->remove(g);
       R->remove(h);
       if (negate)
-	R->subtract_to(result, gh);
+        R->subtract_to(result, gh);
       else
-	R->add_to(result, gh);
+        R->add_to(result, gh);
     }
-  
+
   // pulling out the columns has disordered r. Fix it.
-  
+
   int temp = r[p2-2];
   for (int i=p2-2; i>0; i--)
     r[i] = r[i-1];
@@ -119,4 +119,5 @@ Matrix *Matrix::pfaffians(int p) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

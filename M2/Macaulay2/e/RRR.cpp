@@ -16,7 +16,7 @@
 // #define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-bool RRR::initialize_RRR(unsigned long prec) 
+bool RRR::initialize_RRR(unsigned long prec)
 {
   initialize_ring(0);
   declare_field();
@@ -57,18 +57,18 @@ ring_elem RRR::random() const
   return MPF_RINGELEM(result);
 }
 
-void RRR::elem_text_out(buffer &o, 
-			const ring_elem ap, 
-			bool p_one, 
-			bool p_plus, 
-			bool p_parens) const
+void RRR::elem_text_out(buffer &o,
+                        const ring_elem ap,
+                        bool p_one,
+                        bool p_plus,
+                        bool p_parens) const
 {
   mpfr_ptr a = MPF_VAL(ap);
   M2_string s = (*gmp_tostringRRpointer)(a);
   bool prepend_plus = p_plus && (s->array[0] != '-');
   bool strip_last = !p_one && (
-			      (s->len == 1 && s->array[0] == '1')
-			      || (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
+                              (s->len == 1 && s->array[0] == '1')
+                              || (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
 
   if (prepend_plus)
     o << "+";
@@ -289,14 +289,14 @@ ring_elem RRR::divide(const ring_elem f, const ring_elem g) const
 }
 
 void RRR::syzygy(const ring_elem a, const ring_elem b,
-	       ring_elem &x, ring_elem &y) const
+               ring_elem &x, ring_elem &y) const
 {
   if (is_zero(b))
     {
       x = from_int(0);
       y = from_int(1);
     }
-  else 
+  else
     {
       x = from_int(1);
       y = divide(negate(a),b);
@@ -329,4 +329,5 @@ void RRR::increase_maxnorm(gmp_RR norm, const ring_elem f) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

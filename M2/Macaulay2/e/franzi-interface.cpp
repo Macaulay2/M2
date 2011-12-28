@@ -29,12 +29,12 @@ void longToExponents(int nvars, brMonomial mono, exponents exp)
       mono >>= 1;
 //      cout << "after shift longToExponents " << mono << endl;
     }
-//  for( int i=0; i < nvars; i++ ) 
+//  for( int i=0; i < nvars; i++ )
 //  {
 //    cout << exp[i] << " ";
 //  }
 //  cout << endl;
-//    
+//
 }
 
 IntermediateBasis BRPSfromMatrix(const Matrix *m)
@@ -52,11 +52,11 @@ IntermediateBasis BRPSfromMatrix(const Matrix *m)
       if (v == 0) continue;
       BRP temp;
       for (Nterm *f = v->coeff; f != 0; f = f->next)
-	{
-	  M->to_expvector(f->monom, exp);
-	  brMonomial mono = exponentsToLong(n, exp);
-	  temp = temp + BRP(mono);
-	}
+        {
+          M->to_expvector(f->monom, exp);
+          brMonomial mono = exponentsToLong(n, exp);
+          temp = temp + BRP(mono);
+        }
       F[i] = temp;
     }
   deletearray(exp);
@@ -75,22 +75,22 @@ const Matrix *BRPStoMatrix(const PolynomialRing *P, const IntermediateBasis &F)
     {
       ring_elem f;
       for (monomials::const_iterator it2 = it->second.m.begin(); it2 != it->second.m.end(); ++it2)
-	{
-	  brMonomial mono = *it2;
+        {
+          brMonomial mono = *it2;
           //cout << "a single mono in brpstoMatrix " << mono << endl;
-	  longToExponents(n, mono, exp);
-//          for( int i=0; i < n; i++ ) 
+          longToExponents(n, mono, exp);
+//          for( int i=0; i < n; i++ )
 //          {
 //            cout << exp[i] << " ";
 //          }
 //          cout << endl;
-	  M->from_expvector(exp, mon);
-	  ring_elem g = P->make_flat_term(K->one(), mon);
-	  P->add_to(f, g);
-	}
+          M->from_expvector(exp, mon);
+          ring_elem g = P->make_flat_term(K->one(), mon);
+          P->add_to(f, g);
+        }
       C.append(P->make_vec(0, f));
     }
-  
+
   deletearray(exp);
   return C.to_matrix();
 }
@@ -117,7 +117,7 @@ extern "C" const Matrix * rawGbBoolean(const Matrix *m)
       return 0;
     }
   int n = P->n_vars();
-  if ( n > 64 ) 
+  if ( n > 64 )
     {
       ERROR("Cannot handle more than 64 variables yet");
       return 0;
@@ -127,7 +127,8 @@ extern "C" const Matrix * rawGbBoolean(const Matrix *m)
   return BRPStoMatrix(P, F);
 }
 
- 
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -24,7 +24,7 @@ public:
   static void lcm(int nvars, const int *a, const int *b, int *result);
   static void gcd(int nvars, const int *a, const int *b, int *result);
   static void syz(int nvars, const int *a, const int *b,
-		  int *a1, int *a2);
+                  int *a1, int *a2);
   static bool divides(int nvars, const int *a, const int *b);
   static unsigned int mask(int nvars, const int *a);
 
@@ -32,23 +32,23 @@ public:
   static void copy(int nvars, const int *a, int *result);
   static int weight(int nvars, const int *a, M2_arrayint wt);
   static int degree(int nvars, const int *a);
-  static void elem_text_out(buffer &o, 
-			    unsigned int nvars,
-			    const int *a, 
-			    M2_ArrayString varnames,
-			    bool p_one=true);
+  static void elem_text_out(buffer &o,
+                            unsigned int nvars,
+                            const int *a,
+                            M2_ArrayString varnames,
+                            bool p_one=true);
 };
 
-inline 
+inline
 void ntuple::one(int nvars, int *result)
 {
   for (int i=0; i<nvars; i++) *result++ = 0;
 }
 
-inline 
+inline
 bool ntuple::is_one(int nvars, int *a)
 {
-  for (int i=0; i<nvars; i++) 
+  for (int i=0; i<nvars; i++)
     if (*a++ != 0) return false;
   return true;
 }
@@ -104,7 +104,7 @@ inline
 bool ntuple::divides(int nvars, const int *a, const int *b)
   // Does a divide b?
 {
-  for (int i=0; i<nvars; i++)	// we go upward, because some rings have unused variables at the end
+  for (int i=0; i<nvars; i++)   // we go upward, because some rings have unused variables at the end
     if (a[i] > b[i]) return false;
   return true;
 }
@@ -114,9 +114,9 @@ unsigned int ntuple::mask(int nvars, const int *exp)
 {
      unsigned int result = 0, bit = 1;
      for (int i = nvars-1; i>=0; i--) {
-	  if (exp[i] > 0) result |= bit;
-	  bit <<= 1;
-	  if (bit == 0) bit = 1;
+          if (exp[i] > 0) result |= bit;
+          bit <<= 1;
+          if (bit == 0) bit = 1;
      }
      return result;
 }
@@ -158,19 +158,19 @@ inline
 void ntuple::syz(int nvars, const int *a, const int *b, int *a1, int *b1)
 {
      for (int i=0; i<nvars; i++) {
-	  if ((a[i] < 0 || b[i] < 0) && !(a[i] < 0 && b[i] < 0)) {
-	       a1[i] = -a[i];
-	       b1[i] = -b[i];
-	       //warning: Mike: does this routine ever get called with negative exponents?
-	       if (a1[i] == a[i] && a[i] < 0 || b1[i] == b[i] && b[i] < 0) { // yes, we overflow a bit too often here
-		    throw(exc::overflow_error("monomial overflow"));
-	       }
-	  }
-	  else {
-	       int c = a[i] - b[i];
-	       if (c >= 0) a1[i] = 0, b1[i] = c;
-	       else a1[i] = -c, b1[i] = 0;
-	  }
+          if ((a[i] < 0 || b[i] < 0) && !(a[i] < 0 && b[i] < 0)) {
+               a1[i] = -a[i];
+               b1[i] = -b[i];
+               //warning: Mike: does this routine ever get called with negative exponents?
+               if (a1[i] == a[i] && a[i] < 0 || b1[i] == b[i] && b[i] < 0) { // yes, we overflow a bit too often here
+                    throw(exc::overflow_error("monomial overflow"));
+               }
+          }
+          else {
+               int c = a[i] - b[i];
+               if (c >= 0) a1[i] = 0, b1[i] = c;
+               else a1[i] = -c, b1[i] = 0;
+          }
      }
 }
 
@@ -178,4 +178,5 @@ void ntuple::syz(int nvars, const int *a, const int *b, int *a1, int *b1)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

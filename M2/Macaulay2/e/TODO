@@ -9,36 +9,36 @@ int_bag --> int-bag
   -- resterm stash added
   -- stash: delete_elem, new_elem made inline
   -- monideal: added stash for Nmi_node's: this seemed to slow resolutions down!
-  -- 
+  --
 
   -- things to still do/try:
     streamline monomial ops
 -- Mike's to do list, new version, started 3/29/04
 
-BUGS: 
+BUGS:
       Grassmannian(2,5)
       compress (uses submatrix)
       submatrix (vectors not yet re-implemented)
       terms RingElement
       sortColumns
-      
+
 packages:
-	gin
-	lexideal
-	schur -- cauchy -- bott
-	bgg
-	special surfaces
-	points
-	complexes
-	toric ideals
-	markov
-	borel -- generating sets of ideals
-	
+        gin
+        lexideal
+        schur -- cauchy -- bott
+        bgg
+        special surfaces
+        points
+        complexes
+        toric ideals
+        markov
+        borel -- generating sets of ideals
+
 matrix2.m2 gg problems:
   divideByVariable DONE
   compress
   oldCoefficients
-  selectInSubring	
+  selectInSubring
   Matrix::lead_var_coefficients -- needed for decompose
     changed to top_coefficients
 
@@ -50,14 +50,14 @@ random aspects of resolutions and GB's:
        DONE: HF code
        DONE: HF use in resolutions: this I think was not correct
        MAYBE: Frank Schreyer's suggestions
-       AT SOME POINT: minimalization routine for resolutions (over fraction rings, ZZ, 
+       AT SOME POINT: minimalization routine for resolutions (over fraction rings, ZZ,
          inhomog, etc).
        gb2: computation completion conditions are not used, except for degree...
 
 routines to implement: gin, lexideal, macaulayRep, noetherNormalization, routines for
 points, toric rings, LPP, what else?
 
-pushforward, pushforward1 should be stashed too, and should work functorially and with 
+pushforward, pushforward1 should be stashed too, and should work functorially and with
 inhomogeneous maps and modules.
 
 subring, quotient, and saturation computations need to be interruptable: so we must
@@ -65,7 +65,7 @@ stash the results.
 
 factorization and decomposition from singular needs to be interruptable.
 
-Groebner bases todo: HF use, mingens, subring elements, elements sorted in 
+Groebner bases todo: HF use, mingens, subring elements, elements sorted in
 decreasing monomial order?
 
 random should take optional parameters for FractionNonZero, UpperTriangular, or something
@@ -79,10 +79,10 @@ DONE (I think) leadTerm needs to be made to work again
 
 basis needs to be made to work again (engine part DONE)
 
-basis needs to be functorial 
+basis needs to be functorial
 
-DONE rawMonomials needs to be connected to front end (this is the new version which 
-takes a matrix instead a list of exponent vectors) 
+DONE rawMonomials needs to be connected to front end (this is the new version which
+takes a matrix instead a list of exponent vectors)
 
 Monomial orders for free modules should obey what we agreed with Cox
 
@@ -139,45 +139,45 @@ do:
 
        e_1 < e_2 < ... (bottom down, top up)
 
-	    R = ZZ[x,y,z]
-	    R = ZZ[x,y,z, MonomialOrder => GRevLex ]
-	    R = ZZ[x,y,z, MonomialOrder => { GRevLex } ]
-	    R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position } ]
-	    R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position => Up} ]
+            R = ZZ[x,y,z]
+            R = ZZ[x,y,z, MonomialOrder => GRevLex ]
+            R = ZZ[x,y,z, MonomialOrder => { GRevLex } ]
+            R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position } ]
+            R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position => Up} ]
 
        e_1 > e_2 > ... (top down, bottom up)
 
-	    R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position => Down } ]
+            R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position => Down } ]
 
     position over term (POT) :
 
        e_1 < e_2 < ... (bottom down, top up)
 
-	    R = ZZ[x,y,z, MonomialOrder => Position ]
-	    R = ZZ[x,y,z, MonomialOrder => { Position } ]
-	    R = ZZ[x,y,z, MonomialOrder => { Position, GRevLex } ]
-	    R = ZZ[x,y,z, MonomialOrder => { Position => Up} ]
-	    R = ZZ[x,y,z, MonomialOrder => { Position => Up, GRevLex} ]
+            R = ZZ[x,y,z, MonomialOrder => Position ]
+            R = ZZ[x,y,z, MonomialOrder => { Position } ]
+            R = ZZ[x,y,z, MonomialOrder => { Position, GRevLex } ]
+            R = ZZ[x,y,z, MonomialOrder => { Position => Up} ]
+            R = ZZ[x,y,z, MonomialOrder => { Position => Up, GRevLex} ]
 
        e_1 > e_2 > ... (top down, bottom up)
 
-	    R = ZZ[x,y,z, MonomialOrder => { Position => Down } ]
-	    R = ZZ[x,y,z, MonomialOrder => { Position => Down, GRevLex } ]
+            R = ZZ[x,y,z, MonomialOrder => { Position => Down } ]
+            R = ZZ[x,y,z, MonomialOrder => { Position => Down, GRevLex } ]
 
     Many other ordering keywords can replace or supplement GRevLex:
 
-	    GRevLex => 3	     (order just 3 variables this way)
-	    Lex
-	    Lex => 3
-	    RevLex
-	    RevLex => 3
-	    Eliminate 3
-	    ProductOrder {...}
-	    GroupLex
-	    NCLex
-	    ...
+            GRevLex => 3             (order just 3 variables this way)
+            Lex
+            Lex => 3
+            RevLex
+            RevLex => 3
+            Eliminate 3
+            ProductOrder {...}
+            GroupLex
+            NCLex
+            ...
 
- Dear Dan: Up and Down are great.  The example we do using Macaulay 2 is 
+ Dear Dan: Up and Down are great.  The example we do using Macaulay 2 is
    the following very simple computation:
 
    R = QQ[a..d, MonomialOrder => {Position => Down}]
@@ -186,13 +186,13 @@ do:
 
    gens gb M
 
-   The answer appears as equation (2.10) on page 205 of Using Algebraic 
-   Geometry.  We also do this example in Singular (and, in the 2nd edition, 
-   also in Maple).  In all three computations, we use TOP downward grevlex. 
-     It would be wonderful if you could check this in Macaulay 2.  
+   The answer appears as equation (2.10) on page 205 of Using Algebraic
+   Geometry.  We also do this example in Singular (and, in the 2nd edition,
+   also in Maple).  In all three computations, we use TOP downward grevlex.
+     It would be wonderful if you could check this in Macaulay 2.
        Many thanks, David
 
--- required engine routines: 
+-- required engine routines:
    gcdExtended
    forceGB
    autoReduce
@@ -200,13 +200,13 @@ do:
    compare of ring elements
    simplify (make it several?)
    findNonMember
-   setRandomSeed   
+   setRandomSeed
    schur
    compress
    topCoefficients
 
 -- just need m2 file connecting, possibly debugging in engine
-   monideal routines   
+   monideal routines
    toField, getNonUnit, getZeroDivisor
 
 -- add GB type
@@ -215,63 +215,63 @@ do:
 -------------------------------------------------
 -- files:
 --    factor.m2
-	gggcdextended
-	rawTopCoefficients -- DONE
+        gggcdextended
+        rawTopCoefficients -- DONE
 --    galois.m2
-	GF Ring
+        GF Ring
 --    gb.m2
-	forceGB
-	GroebnerBasis == GroebnerBasis
-	autoReduce
+        forceGB
+        GroebnerBasis == GroebnerBasis
+        autoReduce
 --    genmat.m2
-	random: add Options
+        random: add Options
 --    matrix.m2
-	Matrix * Vector
+        Matrix * Vector
 --    matrix1.m2
-	fixDegree, called from matrixTable
-	matrix(List)
+        fixDegree, called from matrixTable
+        matrix(List)
 --    matrix2.m2
-	oldCoefficients
-	compress -- DONE
+        oldCoefficients
+        compress -- DONE
 --    modules2.m2
-	truncate(List,Module)
+        truncate(List,Module)
 --    monideal.m2
-	monomialIdeal MonomialIdeal  REMOVED
-	poincare MonomialIdeal DONE EXCEPT: need rawHilbert MonomialIdeal
-	minprimes MonomialIdeal DONE: except the name is bad
+        monomialIdeal MonomialIdeal  REMOVED
+        poincare MonomialIdeal DONE EXCEPT: need rawHilbert MonomialIdeal
+        minprimes MonomialIdeal DONE: except the name is bad
 --    multilin.m2
-	someMinors -- this is never called? But we want the functionality
+        someMinors -- this is never called? But we want the functionality
 --    ofcm.m2
-	promote(MonoidElement,RingElement): BUG: (1_ZZ has no RawRingElement, 1_(ZZ/5) does)
+        promote(MonoidElement,RingElement): BUG: (1_ZZ has no RawRingElement, 1_(ZZ/5) does)
 --    orderedmonoidrings.m2
-	is skew ring degree info correct?
-	RM ? RM
+        is skew ring degree info correct?
+        RM ? RM
 --    overviewC.m2
-	remove Ring ^ Matrix
-	add routine: leadTerm(ZZ,RingElement)
-	at end of file: some suggestions for routines to implement
+        remove Ring ^ Matrix
+        add routine: leadTerm(ZZ,RingElement)
+        at end of file: some suggestions for routines to implement
 --    primdecomp-SY.m2
-	simplify
-	newdecompose -- this routine looks awful
-	findNonMember
+        simplify
+        newdecompose -- this routine looks awful
+        findNonMember
 --    primdecomp-fastgb.m2
-	fastmingens  -- these routines should become part of the mainstream routines?
-	fastgb
-	fastquotient
-	fastequal
+        fastmingens  -- these routines should become part of the mainstream routines?
+        fastgb
+        fastquotient
+        fastequal
 --    quotring.m2
-	toField
-	getNonUnit
-	getZeroDivisor
+        toField
+        getNonUnit
+        getZeroDivisor
 --    ringmap.m2
-	RingMap * RingMap -- should be easy to replace
+        RingMap * RingMap -- should be easy to replace
 --    sagbi.m2 -- is this functional?
-      	sagbi
-	subduction
+        sagbi
+        subduction
 --    schur.m2
         Schur ZZ
 --    system.m2
-	setRandomSeed
+        setRandomSeed
 --
 -- these represent the following routines/computations:
 --   factorization/char series
@@ -281,127 +281,127 @@ do:
 --   random
 --   multiply matrix by a vector
 --   leadTerm
---   
+--
 indigo:~/src/M2/Macaulay2/m2 mike$ grep gg *.m2
-exports.m2:	symbol sendgg,
+exports.m2:     symbol sendgg,
 factor.m2:     error "gggcdextended not re-implemented";
 factor.m2:     sendgg(ggPush f, ggPush g, gggcdextended);
 factor.m2:     sendgg(ggpop);
 factor.m2:     sendgg(ggPush f, ggfactor1);
 factor.m2:     sendgg(ggPush f, ggfactor2);
 factor.m2:     sendgg(ggPush f, ggcoeffs);
-galois.m2:     	  sendgg(ggPush S, ggGF);
-galois.m2:     	  sendgg (ggPush g, ggGF);
-galois.m2:	  F.ConvertToExpression, sendgg(ggPush t, ggtonet)
-galois.m2:	  sendgg ( ggPush x, ggPush y, ggdiv);
+galois.m2:        sendgg(ggPush S, ggGF);
+galois.m2:        sendgg (ggPush g, ggGF);
+galois.m2:        F.ConvertToExpression, sendgg(ggPush t, ggtonet)
+galois.m2:        sendgg ( ggPush x, ggPush y, ggdiv);
 gb.m2:          ggPush minmat,
-gb.m2:          ggPush f, 
-gb.m2:          ggPush changemat, 
-gb.m2:          ggPush syzmat, 
+gb.m2:          ggPush f,
+gb.m2:          ggPush changemat,
+gb.m2:          ggPush syzmat,
 gb.m2:          gggb);
-gb.m2:     	  sendgg(ggPush g, ggPush h, ggisequal);
+gb.m2:            sendgg(ggPush g, ggPush h, ggisequal);
 gb.m2:     sendgg(ggPush m, ggautoreduce);
-genmat.m2:     sendgg(ggPush R, ggPush r, ggPush c, ggrandom); 
+genmat.m2:     sendgg(ggPush R, ggPush r, ggPush c, ggrandom);
 matrix.m2:     sendgg(ggPush m, ggPush v, ggmult);
 matrix.m2:     sendgg(ggPush m, ggINT, gg i, gginitial);
 matrix.m2:     sendgg(ggPush m, gginitial);
 matrix.m2:     sendgg (
-matrix.m2:	  ggPush m, ggINT, gg 0, ggmonideal,  -- get monomial lead ideal
-matrix.m2:	  ggborel,                            -- monomial borel now on stack
-matrix.m2:	  ggmatrix);
+matrix.m2:        ggPush m, ggINT, gg 0, ggmonideal,  -- get monomial lead ideal
+matrix.m2:        ggborel,                            -- monomial borel now on stack
+matrix.m2:        ggmatrix);
 matrix1.m2:     sendgg (
-matrix1.m2:	  ggPush cover M,
-matrix1.m2:	  ggPush cover N,
-matrix1.m2:	  ggPush m, 
-matrix1.m2:	  ggPush degreeCheck(d,R),
-matrix1.m2:	  ggmatrix);
-matrix1.m2:	       h := newHandle(ggPush\m, ggPush rawM, ggPush (#m), ggmatrix);
-matrix1.m2:     	       N := (sendgg(ggPush h,gggetcols); new Module from R);
-matrix2.m2:    sendgg(ggPush m, ggPush v, ggcoeffs); 
-matrix2.m2:     sendgg(ggPush f, ggPush v, ggcoeffs); 
+matrix1.m2:       ggPush cover M,
+matrix1.m2:       ggPush cover N,
+matrix1.m2:       ggPush m,
+matrix1.m2:       ggPush degreeCheck(d,R),
+matrix1.m2:       ggmatrix);
+matrix1.m2:            h := newHandle(ggPush\m, ggPush rawM, ggPush (#m), ggmatrix);
+matrix1.m2:                    N := (sendgg(ggPush h,gggetcols); new Module from R);
+matrix2.m2:    sendgg(ggPush m, ggPush v, ggcoeffs);
+matrix2.m2:     sendgg(ggPush f, ggPush v, ggcoeffs);
 matrix2.m2:     sendgg(ggPush m, ggdup, ggPush i, ggelim, ggsubmatrix);
 matrix2.m2:     sendgg(ggPush m, ggPush index v, ggPush (-1), ggsat);
 matrix2.m2:     sendgg(ggPush m, ggPush index v, ggPush d, ggsat);
 matrix2.m2:--     sendgg( ggPush m, ggcompress );
 modules2.m2:     sendgg(ggPush top, ggPush bottom, ggPush deg, ggtruncate);
 monideal.m2:          sendgg(ggPush I, ggcopy);
-monideal.m2:	    sendgg(ggPush ZZn, ggPush M, gghilb);
+monideal.m2:        sendgg(ggPush ZZn, ggPush M, gghilb);
 monideal.m2:        sendgg(ggPush M.cache.poincareComputation, ggPush (-1), ggcalc);
-monideal.m2:	sendgg(ggPush M.cache.poincareComputation, gggetvalue);
+monideal.m2:    sendgg(ggPush M.cache.poincareComputation, gggetvalue);
 monideal.m2:     sendgg(ggPush m, ggprimes);
 multilin.m2:     sendgg(
-multilin.m2:	  ggPush m,			  -- m
-multilin.m2:	  ggPush j,
-multilin.m2:	  ggPush strat,          -- 0: bareiss, 1: cofactor.
-multilin.m2:	  ggdets);			  -- create computation
+multilin.m2:      ggPush m,                       -- m
+multilin.m2:      ggPush j,
+multilin.m2:      ggPush strat,          -- 0: bareiss, 1: cofactor.
+multilin.m2:      ggdets);                        -- create computation
 multilin.m2:         sendgg(
-multilin.m2:	   ggPush h,
-multilin.m2:	   ggPush nsteps,
-multilin.m2:	   ggPush 0,  -- don't discard previous (there are none...)
-multilin.m2:	   ggPush options.First#0,
-multilin.m2:	   ggPush options.First#1,
-multilin.m2:	   ggcalc))
+multilin.m2:       ggPush h,
+multilin.m2:       ggPush nsteps,
+multilin.m2:       ggPush 0,  -- don't discard previous (there are none...)
+multilin.m2:       ggPush options.First#0,
+multilin.m2:       ggPush options.First#1,
+multilin.m2:       ggcalc))
 multilin.m2:       sendgg(
-multilin.m2:	  ggPush h,
-multilin.m2:	  ggPush nsteps,
-multilin.m2:	  ggcalc);
+multilin.m2:      ggPush h,
+multilin.m2:      ggPush nsteps,
+multilin.m2:      ggcalc);
 multilin.m2:     sendgg(ggPush h,
-multilin.m2:	  ggPush 0,
-multilin.m2:	  ggindex);
+multilin.m2:      ggPush 0,
+multilin.m2:      ggindex);
 obsolete.m2:scan({sendgg,ggPush,ConvertJoin,ConvertRepeat,ConvertApply,newHandle},
-ofcm.m2:	  sendgg(ggPush R, ggPush one, ggPush m, ggterm);
-orderedmonoidrings.m2:-- 		    	 ggPush degRing, 
-orderedmonoidrings.m2:-- 		    	 ggPush flatten apply((options M).Degrees, (options M).Adjust), <<<<< ---- do we have to do something with this???
-orderedmonoidrings.m2:-- 		    	 ggPush R, 
-orderedmonoidrings.m2:-- 		    	 ggPush M,
-orderedmonoidrings.m2:-- 		    	 ggPush skews,
-orderedmonoidrings.m2:-- 		    	 ggskewpolyring
-orderedmonoidrings.m2:	       sendgg(ggPush f, ggleadmonom, ggPush g, ggleadmonom, ggcompare);
+ofcm.m2:          sendgg(ggPush R, ggPush one, ggPush m, ggterm);
+orderedmonoidrings.m2:--                         ggPush degRing,
+orderedmonoidrings.m2:--                         ggPush flatten apply((options M).Degrees, (options M).Adjust), <<<<< ---- do we have to do something with this???
+orderedmonoidrings.m2:--                         ggPush R,
+orderedmonoidrings.m2:--                         ggPush M,
+orderedmonoidrings.m2:--                         ggPush skews,
+orderedmonoidrings.m2:--                         ggskewpolyring
+orderedmonoidrings.m2:         sendgg(ggPush f, ggleadmonom, ggPush g, ggleadmonom, ggcompare);
 overviewC.m2:Ring ^ Matrix := (R,m) -> (sendgg(ggPush m, ggfree); new Module from R)
 overviewC.m2:  -- leadTerm should call a ggleadterm routine?  DO THIS
 primdecomp-SY.m2:     sendgg(ggPush m, ggPush n, ggsimplify);
 primdecomp-SY.m2:     sendgg(ggPush m, ggPush n, ggissubset);
 primdecomp-fastgb.m2:     sendgg(ggPush m, -- the matrix
-primdecomp-fastgb.m2:	  ggPush 0, -- collect syzygyies?
-primdecomp-fastgb.m2:	  ggPush 0, -- how many rows
-primdecomp-fastgb.m2:	  ggPush 0, -- 0 for now
-primdecomp-fastgb.m2:	  gggb);
-primdecomp-fastgb.m2:     sendgg(ggPush g, 
-primdecomp-fastgb.m2:	  ggPush {}, -- degree bound
-primdecomp-fastgb.m2:	  ggPush {-1, -- generator limit
+primdecomp-fastgb.m2:     ggPush 0, -- collect syzygyies?
+primdecomp-fastgb.m2:     ggPush 0, -- how many rows
+primdecomp-fastgb.m2:     ggPush 0, -- 0 for now
+primdecomp-fastgb.m2:     gggb);
+primdecomp-fastgb.m2:     sendgg(ggPush g,
+primdecomp-fastgb.m2:     ggPush {}, -- degree bound
+primdecomp-fastgb.m2:     ggPush {-1, -- generator limit
 primdecomp-fastgb.m2:     sendgg ggcalc;
-primdecomp-fastgb.m2:     sendgg(ggPush g, 
-primdecomp-fastgb.m2:	    gggetmingens,
+primdecomp-fastgb.m2:     sendgg(ggPush g,
+primdecomp-fastgb.m2:       gggetmingens,
 primdecomp-fastgb.m2:            ggdup, ggPush 1, ggPush (-1), ggsortcolumns, ggsubmatrix);
 primdecomp-fastgb.m2:     sendgg(ggPush m, -- the matrix
-primdecomp-fastgb.m2:	  ggPush 0, -- collect syzygyies?
-primdecomp-fastgb.m2:	  ggPush 0, -- how many rows
-primdecomp-fastgb.m2:	  ggPush 0, -- 0 for now
-primdecomp-fastgb.m2:	  gggb);
-primdecomp-fastgb.m2:     sendgg(ggPush g, 
-primdecomp-fastgb.m2:	  ggPush {}, -- degree bound
-primdecomp-fastgb.m2:	  ggPush {-1, -- generator limit
+primdecomp-fastgb.m2:     ggPush 0, -- collect syzygyies?
+primdecomp-fastgb.m2:     ggPush 0, -- how many rows
+primdecomp-fastgb.m2:     ggPush 0, -- 0 for now
+primdecomp-fastgb.m2:     gggb);
+primdecomp-fastgb.m2:     sendgg(ggPush g,
+primdecomp-fastgb.m2:     ggPush {}, -- degree bound
+primdecomp-fastgb.m2:     ggPush {-1, -- generator limit
 primdecomp-fastgb.m2:     sendgg ggcalc;
 primdecomp-fastgb.m2:     sendgg(ggPush g, gggetgb);
-primdecomp-fastgb.m2:     sendgg(ggPush m, 
-primdecomp-fastgb.m2:	  ggPush 1, 	 
-primdecomp-fastgb.m2:	  ggPush 1,
-primdecomp-fastgb.m2:	  ggPush 0,
-primdecomp-fastgb.m2:	  gggb);
+primdecomp-fastgb.m2:     sendgg(ggPush m,
+primdecomp-fastgb.m2:     ggPush 1,
+primdecomp-fastgb.m2:     ggPush 1,
+primdecomp-fastgb.m2:     ggPush 0,
+primdecomp-fastgb.m2:     gggb);
 primdecomp-fastgb.m2:     sendgg(ggPush g, ggPush {}, ggPush {-1,-1,-1,-1,0,-1,0});
 primdecomp-fastgb.m2:     sendgg ggcalc;
 primdecomp-fastgb.m2:     sendgg(ggPush g, gggetsyz);
 primdecomp-fastgb.m2:     sendgg(ggPush m, ggPush n, ggisequal);
-quotring.m2:	  sendgg(ggPush R, ggdeclarefield);
-quotring.m2:		    sendgg(ggPush x, ggPush y, ggdiv);
-quotring.m2:     	  sendgg(ggPush R, gggetzerodivisor);
-quotring.m2:     	  sendgg(ggPush R, gggetzerodivisor);
-ringmap.m2:	  symbol handle => newHandle(ggPush m, ggringmap),
-sagbi.m2:	  sendgg(ggPush M, ggsagbi);
+quotring.m2:      sendgg(ggPush R, ggdeclarefield);
+quotring.m2:                sendgg(ggPush x, ggPush y, ggdiv);
+quotring.m2:              sendgg(ggPush R, gggetzerodivisor);
+quotring.m2:              sendgg(ggPush R, gggetzerodivisor);
+ringmap.m2:       symbol handle => newHandle(ggPush m, ggringmap),
+sagbi.m2:         sendgg(ggPush M, ggsagbi);
 sagbi.m2:     sendgg(ggPush M.SagbiComputation, ggPush {}, ggPush {}, ggcalc);
 sagbi.m2:     time sendgg(ggPush m, ggPush FRStoRS, ggPush g, ggsubduction);
 sagbi.m2:sendgg(ggPush m.SagbiComputation, gggetgb)
 sagbi.m2:     sendgg(ggPush g, ggPush f, ggsubduction);
-schur.m2:	  error "ggdim for Schur rings not re-implemented yet";
-schur.m2:	  sendgg(ggPush s, ggdim);
+schur.m2:         error "ggdim for Schur rings not re-implemented yet";
+schur.m2:         sendgg(ggPush s, ggdim);
 system.m2:     (callgg(ggrandomseed, seed);)

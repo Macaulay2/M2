@@ -43,8 +43,8 @@ int32_t rawRandomInt(int32_t max)
 {
   if (max <= 0) return 0;
   int32_t k = RandomSeed/IQ;
-  RandomSeed = IA * (RandomSeed - k*IQ) - IR*k; /* Schrage algorithm to compute 
-				       idum = (IA*idum) mod IM */
+  RandomSeed = IA * (RandomSeed - k*IQ) - IR*k; /* Schrage algorithm to compute
+                                       idum = (IA*idum) mod IM */
   if (RandomSeed < 0) RandomSeed += IM;
   return RandomSeed % max;
 }
@@ -99,4 +99,5 @@ gmp_CC rawRandomCC(unsigned long precision)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

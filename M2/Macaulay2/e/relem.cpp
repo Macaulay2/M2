@@ -173,7 +173,7 @@ Monomial *RingElement::lead_monom(int nvars) const
       ERROR("expected polynomial ring");
       return 0;
     }
-  if (is_zero()) 
+  if (is_zero())
     {
       ERROR("zero polynomial has no lead monomial");
       return 0;
@@ -198,18 +198,18 @@ bool RingElement::is_homogeneous() const
 // {
 //   // This should return an M2_arrayint?
 //   intarray result;
-// 
+//
 //   int *mon = newarray_atomic(int,R->degree_monoid()->monomial_size());
 //   int *d = result.alloc(R->degree_monoid()->n_vars());
-// 
-//   if (is_zero()) 
+//
+//   if (is_zero())
 //     ERROR("the zero element has no degree");
 //   else
 //     {
 //       R->degree(get_value(), mon);
 //       R->degree_monoid()->to_expvector(mon, d);
 //     }
-// 
+//
 //   deletearray(mon);
 //   return result;
 // }
@@ -233,7 +233,7 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
 
 M2_arrayint RingElement::multi_degree() const
 {
-  if (is_zero()) 
+  if (is_zero())
     {
       ERROR("the zero element has no degree");
       return 0;
@@ -270,7 +270,7 @@ RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
       ERROR("homogenization: variable weight is zero");
       return 0;
     }
-  
+
   RingElement *result = new RingElement(P, P->homogenize(val, v, wts));
   if (error()) return 0;
   return result;
@@ -299,7 +299,7 @@ RingElement *RingElement::homogenize(int v, int deg, M2_arrayint wts) const
       ERROR("homogenization: variable weight is zero");
       return 0;
     }
-  
+
   RingElement *result = new RingElement(R, P->homogenize(val, v, deg, wts));
   if (error()) return 0;
   return result;
@@ -362,9 +362,9 @@ const RingElement /* or null */ *RingElement::split_off_content(const RingElemen
 RingElement *RingElement::numerator() const
 {
   if (R == globalQQ)
-    return new RingElement(globalZZ, globalQQ->numerator(val));      
+    return new RingElement(globalZZ, globalQQ->numerator(val));
   const FractionField *K = R->cast_to_FractionField();
-  if (K == NULL) 
+  if (K == NULL)
     {
       ERROR("fraction field required");
       return 0;
@@ -375,9 +375,9 @@ RingElement *RingElement::numerator() const
 RingElement *RingElement::denominator() const
 {
   if (R == globalQQ)
-    return new RingElement(globalZZ, globalQQ->denominator(val));      
+    return new RingElement(globalZZ, globalQQ->denominator(val));
   const FractionField *K = R->cast_to_FractionField();
-  if (K == NULL) 
+  if (K == NULL)
     {
       ERROR("fraction field required");
       return 0;
@@ -390,7 +390,7 @@ RingElement *RingElement::fraction(const Ring *K, const RingElement *bottom) con
   if (K == globalQQ)
     return new RingElement(globalQQ, globalQQ->fraction(val, bottom->get_value()));
   const FractionField *K1 = K->cast_to_FractionField();
-  if (K1 == NULL || K1->get_ring() != R) 
+  if (K1 == NULL || K1->get_ring() != R)
     {
       ERROR("fraction field required");
       return 0;
@@ -400,4 +400,5 @@ RingElement *RingElement::fraction(const Ring *K, const RingElement *bottom) con
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

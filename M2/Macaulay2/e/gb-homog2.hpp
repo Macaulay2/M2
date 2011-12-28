@@ -14,7 +14,7 @@
 class hilb_comp;
 
 // These are the possible states of a GB computation
-const int GB_COMP_NEWDEGREE        = 1; 
+const int GB_COMP_NEWDEGREE        = 1;
 const int GB_COMP_NEED_RESIZE      = 2;
 const int GB_COMP_S_PAIRS          = 3;
 const int GB_COMP_GENS             = 4;
@@ -38,8 +38,8 @@ private:
 
   // state information
   int _state;  // GB_COMP_*
-  int _ar_i, _ar_j;		// State info used for autoreduction
-  int _np_i;			// State info used for new pairs
+  int _ar_i, _ar_j;             // State info used for autoreduction
+  int _np_i;                    // State info used for new pairs
 
   s_pair_heap *_spairs;
   s_pair_heap *_gens;
@@ -55,7 +55,7 @@ private:
   int _n_gens_left;
   int _n_pairs_computed;
   int _n_subring;
-  int _n_syz;			// Same as _syz.length()
+  int _n_syz;                   // Same as _syz.length()
 
   int _n_saved_gcd;
   int _n_reductions;
@@ -64,27 +64,27 @@ private:
   bool _collect_syz;
   int _n_rows_per_syz;
   bool _is_ideal;
-  int _strategy;			// USE_SORT, STRATEGY_LONGPOLYNOMIALS, or both
+  int _strategy;                        // USE_SORT, STRATEGY_LONGPOLYNOMIALS, or both
 
   // Hilbert function information
   bool _use_hilb;
-  bool _hilb_new_elems;	// True if any new elements since HF was last computed
+  bool _hilb_new_elems; // True if any new elements since HF was last computed
   int _hilb_n_in_degree; // The number of new elements that we expect to find
-			 // in this degree.
+                         // in this degree.
   int _n_saved_hilb;
-  const RingElement *_hf_orig;	// The Hilbert function that we are given at the beginning
-  RingElement *_hf_diff;		// The difference between hf_orig and the computed hilb fcn
+  const RingElement *_hf_orig;  // The Hilbert function that we are given at the beginning
+  RingElement *_hf_diff;                // The difference between hf_orig and the computed hilb fcn
 private:
   void initialize0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
-  void initialize(const Matrix *m, 
-		  int csyz, 
-		  int nsyz, 
-		  M2_arrayint gb_weights,
-		  int strategy);
+  void initialize(const Matrix *m,
+                  int csyz,
+                  int nsyz,
+                  M2_arrayint gb_weights,
+                  int strategy);
 
-  void initialize_forced(const Matrix *m, 
-			 const Matrix *gb, 
-			 const Matrix *mchange);
+  void initialize_forced(const Matrix *m,
+                         const Matrix *gb,
+                         const Matrix *mchange);
 
   // S-pair control
   s_pair *new_var_pair(gb_elem *p, const int *lcm);
@@ -105,7 +105,7 @@ private:
   // Hilbert function use
   void flush_pairs(int deg);
   RingElement /* or null */ *compute_hilbert_function() const;
-  
+
   int next_degree();
   ComputationStatusCode computation_is_complete() const;
 
@@ -131,17 +131,17 @@ public:
   //////////////////////////
   // Computation routines //
   //////////////////////////
-  static GB_comp * create(const Matrix *m, 
-			  M2_bool collect_syz, 
-			  int n_rows_to_keep,
-			  M2_arrayint gb_weights,
-			  int strategy, 
-			  M2_bool use_max_degree,
-			  int max_degree);
+  static GB_comp * create(const Matrix *m,
+                          M2_bool collect_syz,
+                          int n_rows_to_keep,
+                          M2_arrayint gb_weights,
+                          int strategy,
+                          M2_bool use_max_degree,
+                          int max_degree);
 
-  static GB_comp * create_forced(const Matrix *m, 
-				 const Matrix *gb, 
-				 const Matrix *mchange);
+  static GB_comp * create_forced(const Matrix *m,
+                                 const Matrix *gb,
+                                 const Matrix *mchange);
 
   virtual int kind() { return 1; }
 
@@ -167,22 +167,23 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient
-			   );
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
+                           );
 
   virtual int contains(const Matrix *m);
 
-  virtual void text_out(buffer &o) const; 
+  virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the
      M2_gbTrace value */
 
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
 
-};  
+};
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

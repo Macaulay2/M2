@@ -142,16 +142,16 @@ public:
 
   void column_op(int i, const elem &b, int j) {}
 
-  void column2by2(int c1, int c2, 
-		  const elem &a1, const elem &a2,
-		  const elem &b1, const elem &b2) {}
+  void column2by2(int c1, int c2,
+                  const elem &a1, const elem &a2,
+                  const elem &b1, const elem &b2) {}
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
-  void row2by2(int r1, int r2, 
-	       const elem &a1, const elem &a2,
-	       const elem &b1, const elem &b2) {}
+  void row2by2(int r1, int r2,
+               const elem &a1, const elem &a2,
+               const elem &b1, const elem &b2) {}
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -177,11 +177,11 @@ public:
   ///////////////////////////////
 
 
-  void dot_product(int i, int j, elem &result) const { } 
+  void dot_product(int i, int j, elem &result) const { }
 
   bool set_submatrix(M2_arrayint rows,
-		     M2_arrayint cols,
-		     const MutableMatrix *N) { return false; }
+                     M2_arrayint cols,
+                     const MutableMatrix *N) { return false; }
 
   Mat<CoeffRing> * submatrix(M2_arrayint rows, M2_arrayint cols) const
   { return 0; }
@@ -244,7 +244,7 @@ public:
   };
 
   virtual iterator * begin() const = 0;
-  
+
   virtual const Ring * get_ring() const = 0;
 
   virtual int n_rows() const = 0;
@@ -254,13 +254,13 @@ public:
   virtual bool is_dense() const = 0;
 
   static MutableMatrix *zero_matrix(const Ring *R, int nrows, int ncols, bool dense);
-  // If the ring is RR or CC, and dense is true, then MutableMatrixRR or 
+  // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 
   static MutableMatrix *identity(const Ring *R, int nrows, bool dense);
 
   static MutableMatrix *from_matrix(const Matrix *N, bool is_dense);
-  // If the ring is RR or CC, and dense is true, then MutableMatrixRR or 
+  // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 
   Matrix *to_matrix() const;
@@ -270,8 +270,8 @@ public:
   virtual MutableMatrix *copy(bool prefer_dense) const = 0;
 
   bool set_values(M2_arrayint rows,
-		  M2_arrayint cols,
-		  engine_RawRingElementArray values);
+                  M2_arrayint cols,
+                  engine_RawRingElementArray values);
 
   //////////////////////////////
   // Casts down the hierarchy //
@@ -349,16 +349,16 @@ public:
   virtual bool column_op(int i, ring_elem r, int j) = 0;
   /* column(i) <- column(i) + r * column(j) */
 
-  virtual bool column2by2(int c1, int c2, 
-			  ring_elem a1, ring_elem a2,
-			  ring_elem b1, ring_elem b2) = 0;
+  virtual bool column2by2(int c1, int c2,
+                          ring_elem a1, ring_elem a2,
+                          ring_elem b1, ring_elem b2) = 0;
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
-  virtual bool row2by2(int r1, int r2, 
-		       ring_elem a1, ring_elem a2,
-		       ring_elem b1, ring_elem b2) = 0;
+  virtual bool row2by2(int r1, int r2,
+                       ring_elem a1, ring_elem a2,
+                       ring_elem b1, ring_elem b2) = 0;
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -390,8 +390,8 @@ public:
   virtual MutableMatrix * submatrix(M2_arrayint cols) const = 0;
 
   virtual bool set_submatrix(M2_arrayint rows,
-			     M2_arrayint cols,
-			     const MutableMatrix *N) = 0;
+                             M2_arrayint cols,
+                             const MutableMatrix *N) = 0;
   // returns false iff there is an error
 
   virtual bool is_zero() const = 0;
@@ -399,22 +399,22 @@ public:
 
   virtual bool is_equal(const MutableMatrix *B) const = 0;
 
-  virtual MutableMatrix /* or null */ * add(const MutableMatrix *B) const = 0; 
+  virtual MutableMatrix /* or null */ * add(const MutableMatrix *B) const = 0;
   // return this + B.  return NULL of sizes or types do not match.
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
 
-  virtual MutableMatrix /* or null */ * subtract(const MutableMatrix *B) const = 0; 
+  virtual MutableMatrix /* or null */ * subtract(const MutableMatrix *B) const = 0;
   // return this - B.  return NULL of sizes or types do not match.
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 
-  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const = 0; 
+  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const = 0;
   // return this * B.  return NULL of sizes or types do not match.
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.
 
-  virtual MutableMatrix /* or null */ * mult(const RingElement *f) const = 0; 
+  virtual MutableMatrix /* or null */ * mult(const RingElement *f) const = 0;
   // return f*this.  return NULL of sizes or types do not match.
 
   virtual MutableMatrix * negate() const = 0;
@@ -427,26 +427,26 @@ public:
 
   virtual bool nullspaceU(MutableMatrix *x) const = 0;
   // resets x, find a basis of solutions for Ux=0, where U is
-  // 'this', and is in upper triangular form from an LU decomp.  Returns true if 
+  // 'this', and is in upper triangular form from an LU decomp.  Returns true if
   // this matrix type implements this algorith,
 
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
-				MutableMatrix *U) const = 0;
+                                MutableMatrix *U) const = 0;
 
   virtual bool eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const = 0;
 
   virtual bool eigenvectors(MutableMatrix *eigenvals,
-			    MutableMatrix *eigenvecs,
-			    bool is_symm_or_hermitian) const = 0;
+                            MutableMatrix *eigenvecs,
+                            bool is_symm_or_hermitian) const = 0;
 
   virtual bool SVD(MutableMatrix *Sigma,
-		   MutableMatrix *U,
-		   MutableMatrix *Vt,
-		   bool use_divide_and_conquer) const = 0;
+                   MutableMatrix *U,
+                   MutableMatrix *Vt,
+                   bool use_divide_and_conquer) const = 0;
 
   virtual bool least_squares(const MutableMatrix *b,
-			     MutableMatrix *x,
-			     bool assume_full_rank) const = 0;
+                             MutableMatrix *x,
+                             bool assume_full_rank) const = 0;
 };
 
 ///////////////////////////////////////////////////
@@ -554,7 +554,7 @@ public:
     if (ret >= 0)
       mat.get_CoeffRing()->to_ring_elem(result, b);
     return ret;
-  }    
+  }
 
   virtual bool get_entry(int r, int c, ring_elem &result) const
   // Returns false if (r,c) is out of range or if result is 0.  No error
@@ -562,13 +562,13 @@ public:
   {
     if (r >= 0 && r < n_rows() && c >= 0 && c < n_cols())
       {
-	elem a;
-	mat.get_CoeffRing()->set_zero(a);
-	if (mat.get_entry(r,c,a))
-	  {
-	    mat.get_CoeffRing()->to_ring_elem(result,a);
-	    return true;
-	  }
+        elem a;
+        mat.get_CoeffRing()->set_zero(a);
+        if (mat.get_entry(r,c,a))
+          {
+            mat.get_CoeffRing()->to_ring_elem(result,a);
+            return true;
+          }
       }
 
     result = mat.get_ring()->zero();
@@ -686,9 +686,9 @@ public:
     return true;
   }
 
-  virtual bool column2by2(int c1, int c2, 
-			  ring_elem a1, ring_elem a2,
-			  ring_elem b1, ring_elem b2)
+  virtual bool column2by2(int c1, int c2,
+                          ring_elem a1, ring_elem a2,
+                          ring_elem b1, ring_elem b2)
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
@@ -706,9 +706,9 @@ public:
     return true;
   }
 
-  virtual bool row2by2(int r1, int r2, 
-		       ring_elem a1, ring_elem a2,
-		       ring_elem b1, ring_elem b2)
+  virtual bool row2by2(int r1, int r2,
+                       ring_elem a1, ring_elem a2,
+                       ring_elem b1, ring_elem b2)
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -753,8 +753,8 @@ public:
   {
     if (i < 0 || i > n_cols() || n_to_add < 0)
       {
-	ERROR("cannot insert %l columns before column %ln",n_to_add,i);
-	return false;
+        ERROR("cannot insert %l columns before column %ln",n_to_add,i);
+        return false;
       }
     mat.insert_columns(i, n_to_add);
     return true;
@@ -765,8 +765,8 @@ public:
   {
     if (i < 0 || i > n_rows() || n_to_add < 0)
       {
-	ERROR("cannot insert %l rows before row %ln",n_to_add,i);
-	return false;
+        ERROR("cannot insert %l rows before row %ln",n_to_add,i);
+        return false;
       }
     mat.insert_rows(i, n_to_add);
     return true;
@@ -778,8 +778,8 @@ public:
     int ncols = n_cols();
     if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
       {
-	ERROR("column index out of range");
-	return false;
+        ERROR("column index out of range");
+        return false;
       }
 
     mat.delete_columns(i, j);
@@ -792,8 +792,8 @@ public:
     int nrows = n_rows();
     if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
       {
-	ERROR("row index out of range");
-	return false;
+        ERROR("row index out of range");
+        return false;
       }
     mat.delete_rows(i, j);
     return true;
@@ -814,8 +814,8 @@ public:
   }
 
   virtual bool set_submatrix(M2_arrayint rows,
-			     M2_arrayint cols,
-			     const MutableMatrix *N)
+                             M2_arrayint cols,
+                             const MutableMatrix *N)
   // returns false iff there is an error
   {
     return mat.set_submatrix(rows,cols,N);
@@ -885,7 +885,7 @@ public:
   ///////////////////////////////
   // Linear algebra /////////////
   ///////////////////////////////
-  
+
   virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const;
   // resets x, find a basis of solutions for Ax=b
   // assumes that 'this' is full rank and a square matrix
@@ -894,22 +894,22 @@ public:
   // resets x, find a basis of solutions for Ux=0, U upper triangular
 
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
-				MutableMatrix *U) const;
+                                MutableMatrix *U) const;
 
   virtual bool eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const;
 
   virtual bool eigenvectors(MutableMatrix *eigenvals,
-			    MutableMatrix *eigenvecs,
-			    bool is_symm_or_hermitian) const;
+                            MutableMatrix *eigenvecs,
+                            bool is_symm_or_hermitian) const;
 
   virtual bool SVD(MutableMatrix *Sigma,
-		   MutableMatrix *U,
-		   MutableMatrix *Vt,
-		   bool use_divide_and_conquer) const;
+                   MutableMatrix *U,
+                   MutableMatrix *Vt,
+                   bool use_divide_and_conquer) const;
 
   virtual bool least_squares(const MutableMatrix *b,
-			     MutableMatrix *x,
-			     bool assume_full_rank) const;
+                             MutableMatrix *x,
+                             bool assume_full_rank) const;
 };
 
 
@@ -917,5 +917,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

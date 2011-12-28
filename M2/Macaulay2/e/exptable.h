@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
 exponent_table * exponent_table_new(int hint,
-				    int nvars);
+                                    int nvars);
 
 int exponent_table_length(exponent_table *E);
 
@@ -36,5 +36,6 @@ const void ** exponent_table_to_array(exponent_table *E);
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
 */

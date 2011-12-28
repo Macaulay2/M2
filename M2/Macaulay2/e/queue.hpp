@@ -37,26 +37,26 @@ class queue : public our_new_delete
     {
       queue<T> &q = const_cast<queue<T> &>(qq);
       if (q.ephemeral == 0)
-	copy(q);
+        copy(q);
       else
-	{
-	  ephemeral = 1;
-	  std::swap(head, q.head);
-	  std::swap(tail, q.tail);
-	  std::swap(head_i, q.head_i);
-	  std::swap(tail_i, q.tail_i);
-	  std::swap(len, q.len);
-	}
+        {
+          ephemeral = 1;
+          std::swap(head, q.head);
+          std::swap(tail, q.tail);
+          std::swap(head_i, q.head_i);
+          std::swap(tail_i, q.tail_i);
+          std::swap(len, q.len);
+        }
     }
 
   void del_list()
     {
       while(head != NULL)
-	{
-	  queue_block<T> *temp = head;
-	  head = head->next;
-	  delete temp;
-	}
+        {
+          queue_block<T> *temp = head;
+          head = head->next;
+          delete temp;
+        }
     }
  public:
   queue() : ephemeral(0), head(NULL), head_i(0),
@@ -66,11 +66,11 @@ class queue : public our_new_delete
   ~queue() { del_list(); }
 
   void make_ephemeral() { ephemeral = 1; }
-  
+
   queue<T> &operator=(const queue<T> &q)
     {
-      if (&q != this) 
-	obtain(q);
+      if (&q != this)
+        obtain(q);
       return *this;
     }
 
@@ -97,11 +97,11 @@ void queue<T>::copy(const queue<T> &q)
   if (q.len == 0)
     {
       while (head != NULL)
-	{
-	  queue_block<T> *tmp = head;
-	  head = head->next;
-	  delete tmp;
-	}
+        {
+          queue_block<T> *tmp = head;
+          head = head->next;
+          delete tmp;
+        }
       head_i = tail_i = len = 0;
       tail = NULL;
       return;
@@ -141,11 +141,11 @@ bool queue<T>::remove(T &elem)
   if (head == tail)
     {
       if (head_i == tail_i)
-	{
-	  delete head;
-	  head = NULL;
-	  len = head_i = tail_i = 0;
-	}
+        {
+          delete head;
+          head = NULL;
+          len = head_i = tail_i = 0;
+        }
     }
   else if (head_i >= block_size)
     {
@@ -164,4 +164,5 @@ bool queue<T>::remove(T &elem)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

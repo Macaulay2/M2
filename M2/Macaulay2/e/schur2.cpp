@@ -39,10 +39,10 @@ int tableau2::elem(int x, int y) const
   for (int i=1; i<=wt; i++)
     if (xloc[i] == x && yloc[i] == y)
       return i;
-  
+
   // otherwise perhaps throw an error
-  fprintf(stderr, "tableau2: location (%d,%d) out of range\n", 
-	  x, y);
+  fprintf(stderr, "tableau2: location (%d,%d) out of range\n",
+          x, y);
   return 0;
 }
 
@@ -60,10 +60,10 @@ void tableau2::fill(int *lamb, int *pp)
     {
       int a = lambda[i];
       for (j=p[i]; j>a; j--)
-	{
-	  xloc[next] = i;
-	  yloc[next++] = j;
-	}
+        {
+          xloc[next] = i;
+          yloc[next++] = j;
+        }
     }
   //  display();
 }
@@ -75,9 +75,9 @@ void tableau2::display() const
   for (i=1; i<p[0]; i++)
     {
       for (j=1; j <= lambda[i]; j++)
-	fprintf(stdout, "--  ");
+        fprintf(stdout, "--  ");
       for ( ; j <= p[i]; j++)
-	fprintf(stdout, "%2d  ", elem(i,j));
+        fprintf(stdout, "%2d  ", elem(i,j));
       fprintf(stdout, "\n");
     }
 }
@@ -141,20 +141,20 @@ bool SchurRing2::is_valid_partition(M2_arrayint part, bool set_error) const
   if (nvars >= 0 && part->len > nvars)
     {
       if (set_error)
-	ERROR("expected a partition of size at most %d\n", nvars);
+        ERROR("expected a partition of size at most %d\n", nvars);
       return false;
     }
   for (int i=1; i<part->len; i++)
     if (part->array[i-1] < part->array[i])
       {
-	if (set_error)
-	  ERROR("expected a non-increasing sequence of integers");
-	return false;
+        if (set_error)
+          ERROR("expected a non-increasing sequence of integers");
+        return false;
       }
   if (part->len > 0 && part->array[part->len-1] <= 0)
     {
       if (set_error)
-	ERROR("expected positive integers only");
+        ERROR("expected positive integers only");
       return false;
     }
   return true;
@@ -181,17 +181,17 @@ void SchurRing2::text_out(buffer &o) const
   o << ")";
 }
 
-void SchurRing2::elem_text_out(buffer &o, 
-			       const ring_elem f, 
-			       bool p_one, 
-			       bool p_plus, 
-			       bool p_parens) const
+void SchurRing2::elem_text_out(buffer &o,
+                               const ring_elem f,
+                               bool p_one,
+                               bool p_plus,
+                               bool p_parens) const
 {
   const schur_poly *g = f.schur_poly_val;
   int n = g->size();
 
   bool needs_parens = p_parens && (n > 1);
-  if (needs_parens) 
+  if (needs_parens)
     {
       if (p_plus) o << '+';
       o << '(';
@@ -208,10 +208,10 @@ void SchurRing2::elem_text_out(buffer &o,
       coefficientRing->elem_text_out(o,i.getCoefficient(), p_one,p_plus,p_parens);
       o << "{";
       for (int j=0; j < len-1; j++)
-	{
-	  if (j > 0) o << ",";
-	  o << part[j];
-	}
+        {
+          if (j > 0) o << ",";
+          o << part[j];
+        }
       o << "}";
       p_plus = true;
     }
@@ -316,7 +316,7 @@ ring_elem SchurRing2::divide(const ring_elem f, const ring_elem g) const
 }
 
 void SchurRing2::syzygy(const ring_elem a, const ring_elem b,
-	    ring_elem &x, ring_elem &y) const
+            ring_elem &x, ring_elem &y) const
 {
   // This function is not relevant for this ring
   x = zero();
@@ -336,9 +336,9 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
   int cmp = a[0] - b[0];
   if (cmp < 0) return LT;
   if (cmp > 0) return GT;
-  return EQ; 
+  return EQ;
 }
-int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const 
+int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
   /* write me */
 }
@@ -352,13 +352,13 @@ bool SchurRing2::promote_coeffs(const SchurRing2 *Rf, const ring_elem f, ring_el
   for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
     {
       if (i.getMonomial()[0] - 1 > nvars)
-	continue;
+        continue;
       ring_elem a;
       if (!coefficientRing->promote(Rf->getCoefficientRing(), i.getCoefficient(), a))
-	{
-	  delete result;
-	  return false;
-	}
+        {
+          delete result;
+          return false;
+        }
       result->appendTerm(a, i.getMonomial());
     }
   return true;
@@ -372,13 +372,13 @@ bool SchurRing2::lift_coeffs(const SchurRing2 *Sg, const ring_elem f, ring_elem 
   for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
     {
       if (i.getMonomial()[0] - 1 > Sg->n_vars())
-	continue;
+        continue;
       ring_elem a;
       if (!coefficientRing->lift(Sg->getCoefficientRing(), i.getCoefficient(), a))
-	{
-	  delete result;
-	  return false;
-	}
+        {
+          delete result;
+          return false;
+        }
       result->appendTerm(a, i.getMonomial());
     }
   return true;
@@ -405,13 +405,13 @@ bool SchurRing2::promote(const Ring *Rf, const ring_elem f, ring_elem &result) c
     const SchurRing2 *Sf = Rf->cast_to_SchurRing2();
     if (Sf != 0)
       {
-	if (coefficientRing == Sf->getCoefficientRing())
-	  {
-	    result = truncate(f);
-	    return true;
-	  }
+        if (coefficientRing == Sf->getCoefficientRing())
+          {
+            result = truncate(f);
+            return true;
+          }
 
-	return promote_coeffs(Sf, f, result);
+        return promote_coeffs(Sf, f, result);
       }
   }
   return false;
@@ -422,28 +422,28 @@ bool SchurRing2::lift(const Ring *Rg, const ring_elem f, ring_elem &result) cons
   if (Rg == coefficientRing || Rg == globalZZ)
     {
       if (get_scalar(f1, result))
-	{
-	  if (Rg == globalZZ)
-	    return coefficientRing->lift(globalZZ, result, result);
-	  return true;
-	}
+        {
+          if (Rg == globalZZ)
+            return coefficientRing->lift(globalZZ, result, result);
+          return true;
+        }
     }
   else {
     const SchurRing2 *Sg = Rg->cast_to_SchurRing2();
     if (Sg != 0)
       {
-	if (coefficientRing == Sg->getCoefficientRing())
-	  {
-	    result = Sg->truncate(f);
-	    return true;
-	  }
+        if (coefficientRing == Sg->getCoefficientRing())
+          {
+            result = Sg->truncate(f);
+            return true;
+          }
 
-	return lift_coeffs(Sg, f, result);
+        return lift_coeffs(Sg, f, result);
       }
   }
   return false;
 }
-ring_elem SchurRing2::negate(const ring_elem f) const 
+ring_elem SchurRing2::negate(const ring_elem f) const
 {
   if (is_zero(f)) return f;
   const schur_poly *f1 = f.schur_poly_val;
@@ -458,7 +458,7 @@ ring_elem SchurRing2::negate(const ring_elem f) const
   return resultRE;
 }
 
-ring_elem SchurRing2::truncate(const ring_elem f) const 
+ring_elem SchurRing2::truncate(const ring_elem f) const
 // assumption: f is a schur poly over another schur ring, with the SAME coeff ring
 //  each term is copied over, if the number of elements in the partition is <= n_vars()
 {
@@ -471,7 +471,7 @@ ring_elem SchurRing2::truncate(const ring_elem f) const
   for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
     {
       if (i.getMonomial()[0] - 1 > nvars)
-	continue;
+        continue;
       result->appendTerm(i.getCoefficient(), i.getMonomial());
     }
   return resultRE;
@@ -492,50 +492,50 @@ ring_elem SchurRing2::add(const ring_elem f, const ring_elem g) const
   schur_poly::iterator j = g1->begin();
   schur_poly::iterator iend = f1->end();
   schur_poly::iterator jend = g1->end();
-  
+
   bool done = false;
   while (!done)
     {
       int cmp = compare_partitions(i.getMonomial(), j.getMonomial());
       switch (cmp) {
       case LT:
-	result->appendTerm(j.getCoefficient(), j.getMonomial());
-	++j;
-	if (j == jend)
-	  {
-	    result->append(i, iend);
-	    done = true;
-	  }
-	break;
+        result->appendTerm(j.getCoefficient(), j.getMonomial());
+        ++j;
+        if (j == jend)
+          {
+            result->append(i, iend);
+            done = true;
+          }
+        break;
       case GT:
-	result->appendTerm(i.getCoefficient(), i.getMonomial());
-	++i;
-	if (i == iend)
-	  {
-	    result->append(j, jend);
-	    done = true;
-	  }
-	break;
+        result->appendTerm(i.getCoefficient(), i.getMonomial());
+        ++i;
+        if (i == iend)
+          {
+            result->append(j, jend);
+            done = true;
+          }
+        break;
       case EQ:
-	ring_elem c = coefficientRing->add(i.getCoefficient(), j.getCoefficient());
-	if (!coefficientRing->is_zero(c))
-	  result->appendTerm(c, i.getMonomial());
-	++j;
-	++i;
-	if (j == jend)
-	  {
-	    result->append(i, iend);
-	    done = true;
-	  }
-	else
-	  {
-	    if (i == iend)
-	      {
-		result->append(j, jend);
-		done = true;
-	      }
-	  }
-	break;
+        ring_elem c = coefficientRing->add(i.getCoefficient(), j.getCoefficient());
+        if (!coefficientRing->is_zero(c))
+          result->appendTerm(c, i.getMonomial());
+        ++j;
+        ++i;
+        if (j == jend)
+          {
+            result->append(i, iend);
+            done = true;
+          }
+        else
+          {
+            if (i == iend)
+              {
+                result->append(j, jend);
+                done = true;
+              }
+          }
+        break;
       }
     }
   return resultRE;
@@ -582,15 +582,15 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
       // use the poly heap
       schur_poly_heap H(this);
       for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
-	for (schur_poly::iterator j = g1->begin(); j != g1->end(); ++j)
-	  {
-	    ring_elem c = coefficientRing->mult(i.getCoefficient(), j.getCoefficient());
-	    ring_elem r = const_cast<SchurRing2 *>(this)->mult_terms(i.getMonomial(), j.getMonomial());
-	    resultRE.schur_poly_val = mult_by_coefficient(c, r.schur_poly_val);
+        for (schur_poly::iterator j = g1->begin(); j != g1->end(); ++j)
+          {
+            ring_elem c = coefficientRing->mult(i.getCoefficient(), j.getCoefficient());
+            ring_elem r = const_cast<SchurRing2 *>(this)->mult_terms(i.getMonomial(), j.getMonomial());
+            resultRE.schur_poly_val = mult_by_coefficient(c, r.schur_poly_val);
 #warning "Dan commented out a 'delete' call that was freeing a pointer twice; leaving for Mike to debug"
-	    //	    delete r;
-	    H.add(resultRE);
-	  }
+            //      delete r;
+            H.add(resultRE);
+          }
       return H.value();
     }
 }
@@ -606,19 +606,19 @@ void toVarpower(const_schur_partition a, intarray &result)
     {
       int v = a[1];
       int e = 1;
-      
+
       for (int i=2; i<len; i++)
-	{
-	  if (v == a[i])
-	    e++;
-	  else 
-	    {
-	      *result_vp++ = v;
-	      *result_vp++ = e;
-	      v = a[i];
-	      e = 1;
-	    }
-	}
+        {
+          if (v == a[i])
+            e++;
+          else
+            {
+              *result_vp++ = v;
+              *result_vp++ = e;
+              v = a[i];
+              e = 1;
+            }
+        }
       *result_vp++ = v;
       *result_vp++ = e;
     }
@@ -658,8 +658,8 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR, const ring_e
   return result;
 }
 
-ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var) const 
-{ 
+ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var) const
+{
   // Should we allow ring maps to other Schur rings?  No others are that well defined...
   // Use promote and lift for those instead?
   return map->get_ring()->zero();
@@ -686,36 +686,36 @@ void SchurRing2::SMbounds(int &lo, int &hi)
   int i, k;
   int x = SMfilled.xloc[SMcurrent];
   int y = SMfilled.yloc[SMcurrent];
-  
+
   // First set the high bound, using info from the "one to the right"
   // in the reverse lex filled skew tableau.
 
-  if (y == SMfilled.p[x])	// There is not one to the right
+  if (y == SMfilled.p[x])       // There is not one to the right
     {
       hi = SMmaxrows;
       for (k=1; k<=SMmaxrows; k++)
-	if (SMtab.p[k] == 0)
-	  {
-	    hi = k;
-	    break;
-	  }
+        if (SMtab.p[k] == 0)
+          {
+            hi = k;
+            break;
+          }
     }
-  else				// note that the case SMcurrent==1 will be handled
-    {				// in the previous statement.
+  else                          // note that the case SMcurrent==1 will be handled
+    {                           // in the previous statement.
       hi = SMtab.xloc[SMcurrent-1];
     }
 
   // Now we set the lo bound, using info from the "one above"
-  
+
   if (x == 1 || y <= SMfilled.lambda[x-1])
-    lo = 1;			// There is not one above
+    lo = 1;                     // There is not one above
   else
     {
       int above = SMcurrent - SMfilled.p[x] + SMfilled.lambda[x-1];
       int xabove = SMtab.xloc[above];
       int yabove = SMtab.yloc[above];
       for (i=xabove+1; i<=hi; i++)
-	if (SMtab.p[i] < yabove) break;
+        if (SMtab.p[i] < yabove) break;
       lo = i;
     }
 }
@@ -740,23 +740,23 @@ void SchurRing2::SM()
       SMappendTerm(SMtab.p);
       return;
     }
-  
+
   SMcurrent++;
   SMbounds(lo, hi);
-  int this_one = LARGE_NUMBER;	// larger than any entry of SMtab: SMfinalwt+1 should work...
+  int this_one = LARGE_NUMBER;  // larger than any entry of SMtab: SMfinalwt+1 should work...
   int last_one;
   for (int i=lo; i<=hi; i++)
     {
       last_one = this_one;
       this_one = SMtab.p[i];
       if (last_one > this_one)
-	{
-	  SMtab.p[i]++;
-	  SMtab.xloc[SMcurrent] = i;
-	  SMtab.yloc[SMcurrent] = SMtab.p[i];
-	  SM();
-	  SMtab.p[i]--;
-	}
+        {
+          SMtab.p[i]++;
+          SMtab.xloc[SMcurrent] = i;
+          SMtab.yloc[SMcurrent] = SMtab.p[i];
+          SM();
+          SMtab.p[i]--;
+        }
     }
   SMcurrent--;
 }
@@ -804,7 +804,7 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
   SMmaxrows = a[0] - 1 + b[0] - 1; // this is the max number of elements in the output partition
   if (nvars != -1 && SMmaxrows > nvars)
     SMmaxrows = nvars;
-  
+
   schur_partition lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * SMmaxrows);
   schur_partition p = ALLOCATE_EXPONENTS(2 * sizeof(int) * SMmaxrows);
 
@@ -839,4 +839,5 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -20,8 +20,8 @@ struct ReducedGB_Field_sorter : public std::binary_function<int,int,bool> {
   const FreeModule *F;
   const VECTOR(POLY) &gb;
   ReducedGB_Field_sorter(GBRing *R0,
-			 const FreeModule *F0,
-			 const VECTOR(POLY) &gb0)
+                         const FreeModule *F0,
+                         const VECTOR(POLY) &gb0)
     : R(R0), F(F0), gb(gb0) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx].f;
@@ -31,9 +31,9 @@ struct ReducedGB_Field_sorter : public std::binary_function<int,int,bool> {
 };
 
 ReducedGB_Field::ReducedGB_Field(GBRing *R0,
-				 const PolynomialRing *originalR0,
-				 const FreeModule *F0,
-				 const FreeModule *Fsyz0) 
+                                 const PolynomialRing *originalR0,
+                                 const FreeModule *F0,
+                                 const FreeModule *Fsyz0)
 : ReducedGB(R0,originalR0,F0,Fsyz0), T(0)
 {
   T = MonomialTable::make(R0->n_vars());
@@ -42,7 +42,7 @@ ReducedGB_Field::ReducedGB_Field(GBRing *R0,
 }
 
 void ReducedGB_Field::minimalize(const VECTOR(POLY) &polys0,
-				 bool auto_reduced)
+                                 bool auto_reduced)
 // I have to decide: does this ADD to the existing set?
 {
   // First sort these elements via increasing lex order (or monomial order?)
@@ -66,26 +66,26 @@ void ReducedGB_Field::minimalize(const VECTOR(POLY) &polys0,
       exponents e = R->exponents_make();
       R->gbvector_get_lead_exponents(F,f,e);
       if ((!Rideal || !Rideal->search_expvector(e, not_used))
-	  && T->find_divisors(1, e, f->comp) == 0)
-	{
-	  // Keep this element
-	  
-	  POLY h;
-	  ring_elem junk;
-	  
-	  h.f = R->gbvector_copy(f);
-	  h.fsyz = R->gbvector_copy(polys0[*i].fsyz);
-	  
-	  if (auto_reduced)
-	    remainder(h,false,junk); // This auto-reduces h.
+          && T->find_divisors(1, e, f->comp) == 0)
+        {
+          // Keep this element
 
-	  R->gbvector_remove_content(h.f,h.fsyz);
+          POLY h;
+          ring_elem junk;
 
-	  T->insert(e, f->comp, INTSIZE(polys));
-	  polys.push_back(h);
-	}
+          h.f = R->gbvector_copy(f);
+          h.fsyz = R->gbvector_copy(polys0[*i].fsyz);
+
+          if (auto_reduced)
+            remainder(h,false,junk); // This auto-reduces h.
+
+          R->gbvector_remove_content(h.f,h.fsyz);
+
+          T->insert(e, f->comp, INTSIZE(polys));
+          polys.push_back(h);
+        }
       else
-	R->exponents_delete(e);
+        R->exponents_delete(e);
     }
 }
 
@@ -102,35 +102,35 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
       int x = h.f->comp;
       Bag *b;
       if (Rideal != 0 && Rideal->search_expvector(EXP,b))
-	{
-	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
-	  R->gbvector_reduce_lead_term(F, Fsyz,
-				       head.next,
-				       h.f, h.fsyz,
-				       g, 0,
-				       use_denom, denom);
-	  
-	}
+        {
+          const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
+          R->gbvector_reduce_lead_term(F, Fsyz,
+                                       head.next,
+                                       h.f, h.fsyz,
+                                       g, 0,
+                                       use_denom, denom);
+
+        }
       else
-	{
-	  int w = T->find_divisor(EXP,x);
-	  if (w >= 0)
-	    {
-	      POLY g = polys[w];
-	      R->gbvector_reduce_lead_term(F, Fsyz,
-					   head.next,
-					   h.f, h.fsyz,
-					   g.f, g.fsyz,
-					   use_denom, denom);
-	    }
-	  else
-	    {
-	      frem->next = h.f;
-	      frem = frem->next;
-	      h.f = h.f->next;
-	      frem->next = 0;
-	    }
-	}
+        {
+          int w = T->find_divisor(EXP,x);
+          if (w >= 0)
+            {
+              POLY g = polys[w];
+              R->gbvector_reduce_lead_term(F, Fsyz,
+                                           head.next,
+                                           h.f, h.fsyz,
+                                           g.f, g.fsyz,
+                                           use_denom, denom);
+            }
+          else
+            {
+              frem->next = h.f;
+              frem = frem->next;
+              h.f = h.f->next;
+              frem->next = 0;
+            }
+        }
     }
   h.f = head.next;
   //  R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
@@ -153,35 +153,35 @@ void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
       int x = h->comp;
       Bag *b;
       if (Rideal != 0 && Rideal->search_expvector(EXP,b))
-	{
-	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
-	  R->gbvector_reduce_lead_term(F, Fsyz,
-				       head.next,
-				       h, zero,
-				       g, zero,
-				       use_denom, denom);
-	  
-	}
-      else 
-	{
-	  int w = T->find_divisor(EXP,x);
-	  if (w < 0)
-	    {
-	      frem->next = h;
-	      frem = frem->next;
-	      h = h->next;
-	      frem->next = 0;
-	    }
-	  else
-	    {
-	      POLY g = polys[w];
-	      R->gbvector_reduce_lead_term(F, Fsyz,
-					   head.next,
-					   h, zero,
-					   g.f, zero,
-					   use_denom, denom);
-	    }
-	}
+        {
+          const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
+          R->gbvector_reduce_lead_term(F, Fsyz,
+                                       head.next,
+                                       h, zero,
+                                       g, zero,
+                                       use_denom, denom);
+
+        }
+      else
+        {
+          int w = T->find_divisor(EXP,x);
+          if (w < 0)
+            {
+              frem->next = h;
+              frem = frem->next;
+              h = h->next;
+              frem->next = 0;
+            }
+          else
+            {
+              POLY g = polys[w];
+              R->gbvector_reduce_lead_term(F, Fsyz,
+                                           head.next,
+                                           h, zero,
+                                           g.f, zero,
+                                           use_denom, denom);
+            }
+        }
     }
   h = head.next;
   // R->gbvector_remove_content(h, 0, use_denom, denom);
@@ -191,5 +191,5 @@ void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

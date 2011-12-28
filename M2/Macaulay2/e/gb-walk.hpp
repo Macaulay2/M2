@@ -24,7 +24,7 @@ class GBWalker : public GBComputation {
   bool compute_next_w();
 
   // local data in the computation (kept because of possible interrupts)
-  enum { STATE_compute_w, STATE_do_gb, STATE_reduce, STATE_autoreduce, STATE_done} state;   
+  enum { STATE_compute_w, STATE_do_gb, STATE_reduce, STATE_autoreduce, STATE_done} state;
   M2_arrayint ww;
   const Matrix *inwwG;
   GBComputation *gb_inwwG;
@@ -37,23 +37,23 @@ protected:
   virtual bool stop_conditions_ok();
 
   GBWalker(const Matrix *gb_under_order1,
-	   const MonomialOrdering *order1);
+           const MonomialOrdering *order1);
 
   GBWalker(MarkedGB *G0,
-	   long **order1,
-	   long **order2);
+           long **order1,
+           long **order2);
 
 public:
   static GBWalker * create(MarkedGB *G0,
-			   long **order1,
-			   long **order2);
+                           long **order1,
+                           long **order2);
 
   static GBWalker * create(const Matrix *gb_under_order1,
-			   const MonomialOrdering *order1);
+                           const MonomialOrdering *order1);
 
   virtual ~GBWalker();
 
-  // GBComputation and Computation inherited routines //  
+  // GBComputation and Computation inherited routines //
   virtual void remove_gb();
 
   virtual void start_computation();
@@ -77,13 +77,13 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient
-			   );
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
+                           );
 
   virtual int contains(const Matrix *m);
 
-  virtual void text_out(buffer &o) const; 
+  virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the
      M2_gbTrace value */
 
@@ -100,4 +100,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

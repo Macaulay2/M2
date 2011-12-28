@@ -59,7 +59,7 @@ bool HilbertController::recomputeHilbertFunction()
       Matrix *M = make_lead_term_matrix();
       RingElement *h = hilb_comp::hilbertNumerator(M);
       if (h == 0)
-	return false; // computation was interrupted
+        return false; // computation was interrupted
       hf_diff = (*h) - (*hf_orig);
       hilb_new_elems = false;
     }
@@ -77,4 +77,5 @@ Matrix *HilbertController::make_lead_term_matrix()
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -10,13 +10,13 @@ class GF : public Ring
   const PolynomialRing *_originalR; // This should be the ring ((Z/p)[t])/f(t).
 
   const RingElement *_primitive_element;  // An element of K
-  int _x_exponent;			// (primitive_element)^(x_exponent) = x,
-					// the given generator of K.
+  int _x_exponent;                      // (primitive_element)^(x_exponent) = x,
+                                        // the given generator of K.
   int Q_;        // this is GF(Q) = GF(P^Qexp)
-  int Qexp_;	// P^Qexp = Q
-  int Q1_;	// Q1 = Q-1
+  int Qexp_;    // P^Qexp = Q
+  int Q1_;      // Q1 = Q-1
   int _ZERO;     // = 0   is our representation of 0.
-  int _ONE;	// = Q-1 is our representation of 1.
+  int _ONE;     // = Q-1 is our representation of 1.
   int _MINUS_ONE; // = (Q-1)/2 if Q odd, = ONE if Q even.
 
   int *_one_table;   // Indexed from 0..Q1
@@ -83,15 +83,15 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f,
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };
@@ -100,4 +100,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

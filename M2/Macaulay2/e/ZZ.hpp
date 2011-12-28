@@ -97,23 +97,23 @@ public:
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
-					 ring_elem &quot) const;
+  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g,
+                                         ring_elem &quot) const;
 
   ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const;
+  ring_elem gcd_extended(const ring_elem f, const ring_elem g,
+                                  ring_elem &u, ring_elem &v) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
@@ -123,4 +123,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

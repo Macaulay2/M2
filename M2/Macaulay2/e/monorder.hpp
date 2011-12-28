@@ -10,7 +10,7 @@
 enum mon_order_types
 {
   MO1_GRLEX = 0,
-  MO1_RLEX = 1,			// not usable with monoid
+  MO1_RLEX = 1,                 // not usable with monoid
   MO1_GLEX = 2,
   MO1_LEX = 3,
   MO1_ELIM = 4,
@@ -46,15 +46,15 @@ public:
   static mon_order *lex(M2_arrayint degs,M2_arrayint wts);
   static mon_order *elim(M2_arrayint degs, unsigned int i,M2_arrayint wts);
   static mon_order *product(M2_arrayint degs, M2_arrayint blocks,
-			    M2_arrayint wts);
+                            M2_arrayint wts);
 
   static mon_order *product(const mon_order *m1, const mon_order *m2);
   static mon_order *elim_product(const mon_order *m1, const mon_order *m2);
   static mon_order *graded_product(const mon_order *m1, const mon_order *m2);
-  static mon_order *general_order(M2_arrayint degs, 
-				  M2_arrayint order, 
-				  M2_arrayint invorder,
-				  M2_arrayint invdegs);
+  static mon_order *general_order(M2_arrayint degs,
+                                  M2_arrayint order,
+                                  M2_arrayint invorder,
+                                  M2_arrayint invdegs);
 
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
@@ -94,7 +94,7 @@ class product_mon_order : public mon_order
   int *blocks;
 public:
   product_mon_order(M2_arrayint degs, M2_arrayint blocks,
-		    M2_arrayint weights);
+                    M2_arrayint weights);
   ~product_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -103,7 +103,7 @@ public:
 };
 class elim_mon_order : public mon_order
 {
-  int nelim;			// Number of variables to eliminate
+  int nelim;                    // Number of variables to eliminate
 public:
   elim_mon_order(M2_arrayint degs, unsigned int n, M2_arrayint weights);
   ~elim_mon_order();
@@ -126,7 +126,7 @@ public:
 
   int length_of() const { return val->n_vars(); }
 
-  void text_out(buffer &o) const 
+  void text_out(buffer &o) const
     {
       if (val != NULL) val->text_out(o);
     }
@@ -136,4 +136,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

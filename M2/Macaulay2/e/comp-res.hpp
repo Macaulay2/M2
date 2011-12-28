@@ -21,19 +21,19 @@ protected:
 
   void betti_display(buffer &o, M2_arrayint a) const;
 public:
-  virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;} 
+  virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;}
 
   virtual ~ResolutionComputation();
   virtual void remove_res();
 
   static ResolutionComputation *choose_res(const Matrix *m,
-					   M2_bool resolve_cokernel,
-					   int max_level,
-					   M2_bool use_max_slanted_degree,
-					   int max_slanted_degree,
-					   int algorithm,
-					   int strategy
-					   );
+                                           M2_bool resolve_cokernel,
+                                           int max_level,
+                                           M2_bool use_max_slanted_degree,
+                                           int max_slanted_degree,
+                                           int algorithm,
+                                           int strategy
+                                           );
   // Values for algorithm and strategy are documented in engine.h
 
   virtual void start_computation() = 0;
@@ -71,12 +71,12 @@ protected:
   EngineResolutionComputation(ResolutionComputation *C);
   virtual ~EngineResolutionComputation();
 public:
-  virtual EngineResolutionComputation * cast_to_EngineResolutionComputation() { return this;} 
+  virtual EngineResolutionComputation * cast_to_EngineResolutionComputation() { return this;}
 
   static EngineResolutionComputation * create(ResolutionComputation *C0);
 
   virtual void destroy();
-  
+
   virtual void start_computation();
 
   virtual long complete_thru_degree() const;
@@ -94,4 +94,5 @@ void intern_res(ResolutionComputation *G);
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

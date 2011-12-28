@@ -25,19 +25,19 @@ protected:
   // return false, and use ERROR(...) to provide an error message.
 
   ReducedGB(GBRing *R0,
-	    const PolynomialRing *originalR0,
-	    const FreeModule *F0,
-	    const FreeModule *Fsyz0);
+            const PolynomialRing *originalR0,
+            const FreeModule *F0,
+            const FreeModule *Fsyz0);
 public:
 
   virtual ~ReducedGB();
 
   static ReducedGB *create(const PolynomialRing *originalR0,
-			   const FreeModule *F0,
-			   const FreeModule *Fsyz0,
-			   const GBWeight *wt0 = 0);
+                           const FreeModule *F0,
+                           const FreeModule *Fsyz0,
+                           const GBWeight *wt0 = 0);
 
-  virtual GBComputation * cast_to_GBComputation() { return this;} 
+  virtual GBComputation * cast_to_GBComputation() { return this;}
 
   virtual void start_computation() {}
 
@@ -78,8 +78,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient);
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient);
 
   virtual int contains(const Matrix *m);
 
@@ -119,4 +119,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -58,7 +58,7 @@ partition_table::partition_table(int nvars, stash *mi_stash0)
 {
   dad = adad.alloc(nvars);
   occurs = aoccurs.alloc(nvars);
-  for (int i=0; i<nvars; i++) 
+  for (int i=0; i<nvars; i++)
     {
       dad[i] = -1;
       occurs[i] = 0;
@@ -82,7 +82,7 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
   reset(I->topvar()+1);
   // Create the sets
   for (Index<MonomialIdeal> i = I->first(); i.valid(); i++)
-    if (n_sets > 1) 
+    if (n_sets > 1)
       merge_in((*I)[i]->monom().raw());
     else
       break;
@@ -98,8 +98,8 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
   for (k=0; k<n_vars; k++)
     if (occurs[k] && dad[k] < 0)
       {
-	dad[k] = this_label--;
-	n_sets++;
+        dad[k] = this_label--;
+        n_sets++;
       }
 
   if (n_sets == 1)
@@ -126,11 +126,11 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
 }
 
 #define MAX_EXP (1 << (8*sizeof(int)-2))
-static int popular_var(const MonomialIdeal &I, 
-		int &npure, int *pure, 
-		int &nhits,
-		       const int *& non_pure_power,
-		       int & exp_of_popular)
+static int popular_var(const MonomialIdeal &I,
+                int &npure, int *pure,
+                int &nhits,
+                       const int *& non_pure_power,
+                       int & exp_of_popular)
      // Return the variable which occurs the most often in non pure monomials,
      // placing the number of monomials in which it occurs into 'nhits'.
      // At the same time, set 'pure' and 'npure'.  If there is a non pure
@@ -153,33 +153,33 @@ static int popular_var(const MonomialIdeal &I,
     {
       const int *m = I[i]->monom().raw();
       index_varpower j = m;
-      assert(j.valid());	// The monomial cannot be '1'.
+      assert(j.valid());        // The monomial cannot be '1'.
       ++j;
       if (j.valid())
-	{
-	  non_pure_power = m;
-	  //hits[v]++;
-	  for ( ; j.valid(); ++j)
-	    {
-	      int v = j.var();
-	      int e = j.exponent();
-	      if (minnonzero[v] > e)
-		minnonzero[v] = e;
-	      hits[v]++;
-	    }
-	}
+        {
+          non_pure_power = m;
+          //hits[v]++;
+          for ( ; j.valid(); ++j)
+            {
+              int v = j.var();
+              int e = j.exponent();
+              if (minnonzero[v] > e)
+                minnonzero[v] = e;
+              hits[v]++;
+            }
+        }
       else
-	{
-	  int v = j.var();
-	  int e = j.exponent();
-	  if (pure[v] == -1)
-	    {
-	      npure++;
-	      pure[v] = e;
-	    }
-	  else
-	    if (pure[v] > e) pure[v] = e;
-	}
+        {
+          int v = j.var();
+          int e = j.exponent();
+          if (pure[v] == -1)
+            {
+              npure++;
+              pure[v] = e;
+            }
+          else
+            if (pure[v] > e) pure[v] = e;
+        }
     }
 
   int popular = 0;
@@ -204,7 +204,7 @@ static int find_pivot(const MonomialIdeal &I, int &npure, int *pure, intarray &m
   int exp_of_v;
   const int *vp;
   int v = popular_var(I, npure, pure, nhits, vp, exp_of_v);
-  
+
   // The following will take some tweaking...
   // Some possibilities: take just this variable, take gcd of 2 or 3
   // elements containing this variable (choose first 3, last 3, or randomly).
@@ -222,10 +222,10 @@ static int find_pivot(const MonomialIdeal &I, int &npure, int *pure, intarray &m
 }
 
 static void iquotient_and_sum(MonomialIdeal &I,
-		       const int *m, // varpower
-		       MonomialIdeal *&quot, 
-		       MonomialIdeal *&sum,
-		       stash *mi_stash)
+                       const int *m, // varpower
+                       MonomialIdeal *&quot,
+                       MonomialIdeal *&sum,
+                       stash *mi_stash)
 {
   array< queue<Bag *> *> bins;
   sum = new MonomialIdeal(I.get_ring(), mi_stash);
@@ -238,19 +238,19 @@ static void iquotient_and_sum(MonomialIdeal &I,
       Bag *b = new Bag();
       varpower::quotient(I[i]->monom().raw(), m, b->monom());
       if (varpower::divides(m, I[i]->monom().raw()))
-	quot->insert_minimal(b);
+        quot->insert_minimal(b);
       else
-	{
-	  sum->insert_minimal(new Bag(0,I[i]->monom()));
-	  int d = varpower::simple_degree(b->monom().raw());
-	  if (d >= bins.length())
-	    for (int j=bins.length(); j<=d; j++)
-	      // bins.append((queue<Bag *> *)NULL);
-	      bins.append(NULL);
-	  if (bins[d] == NULL) //(queue<Bag *> *)NULL)
-	    bins[d] = new queue<Bag *>;
-	  bins[d]->insert(b);
-	}
+        {
+          sum->insert_minimal(new Bag(0,I[i]->monom()));
+          int d = varpower::simple_degree(b->monom().raw());
+          if (d >= bins.length())
+            for (int j=bins.length(); j<=d; j++)
+              // bins.append((queue<Bag *> *)NULL);
+              bins.append(NULL);
+          if (bins[d] == NULL) //(queue<Bag *> *)NULL)
+            bins[d] = new queue<Bag *>;
+          bins[d]->insert(b);
+        }
     }
 
   // Now insert the elements in the queue.
@@ -260,8 +260,8 @@ static void iquotient_and_sum(MonomialIdeal &I,
   for (int j=0; j < bins.length(); j++)
     if (bins[j] != NULL)
       {
-	while (bins[j]->remove(b)) quot->insert(b);
-	delete bins[j];
+        while (bins[j]->remove(b)) quot->insert(b);
+        delete bins[j];
       }
 }
 
@@ -290,9 +290,9 @@ void hilb_comp::reset()
   else
     while (current->up != NULL) current = current->up;
 
-  R->remove(current->h0);	// This line should not be needed...
+  R->remove(current->h0);       // This line should not be needed...
   R->remove(current->h1);
-  current->h0 = R->from_int(0);		// This top level h0 is not used
+  current->h0 = R->from_int(0);         // This top level h0 is not used
   current->h1 = R->from_int(1);
 }
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
@@ -361,11 +361,11 @@ hilb_comp::~hilb_comp()
     {
       hilb_step *p = current;
       current = current->down;
-      
+
       R->remove(p->h0);
       R->remove(p->h1);
       for (int i=0; i<p->monids.length(); i++)
-	delete p->monids[i];
+        delete p->monids[i];
       delete p;
     }
 
@@ -385,22 +385,22 @@ int hilb_comp::calc(int n_steps)
     {
       int calc_nsteps = nsteps + n_steps;
       while (calc_nsteps-- > 0)
-	{
-	  int result = step();
-	  if (result == COMP_DONE)
-	    return COMP_DONE;
-	  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-	    return COMP_INTERRUPTED;
-	}
+        {
+          int result = step();
+          if (result == COMP_DONE)
+            return COMP_DONE;
+          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+            return COMP_INTERRUPTED;
+        }
       return COMP_DONE_STEPS;
     }
   else for (;;)
     {
       int result = step();
       if (result == COMP_DONE)
-	return COMP_DONE;
+        return COMP_DONE;
       if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-	return COMP_INTERRUPTED;
+        return COMP_INTERRUPTED;
     }
 }
 
@@ -430,25 +430,25 @@ int hilb_comp::step()
       current->h0 = R->from_int(0);
       current->h1 = R->from_int(0);
       current->monids.shrink(0);
-      if (current->up == NULL) 
-	{
-	  if (input_mat)
-	    {
-	      ring_elem tmp = R->make_flat_term(one, input_mat->rows()->degree(this_comp));
-	      R->mult_to(f, tmp);
-	      R->remove(tmp);
-	    }
-	  R->add_to(result_poincare, f);
-	  this_comp++;
+      if (current->up == NULL)
+        {
+          if (input_mat)
+            {
+              ring_elem tmp = R->make_flat_term(one, input_mat->rows()->degree(this_comp));
+              R->mult_to(f, tmp);
+              R->remove(tmp);
+            }
+          R->add_to(result_poincare, f);
+          this_comp++;
 
-	  // Now check if we have any more components
-	  if (this_comp >= n_components)
-	    return COMP_DONE;
-	  // otherwise go on to the next component:
+          // Now check if we have any more components
+          if (this_comp >= n_components)
+            return COMP_DONE;
+          // otherwise go on to the next component:
 
-	  next_monideal();
-	  return COMP_COMPUTING;
-	}
+          next_monideal();
+          return COMP_COMPUTING;
+        }
       current = current->up;
       R->mult_to(current->h1, f);
       current->i--;
@@ -499,59 +499,59 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
       R->add_to(F, G);
 
       if (len == 2)
-	{
-	  M->degree_of_varpower(I->second_elem(), LOCAL_deg1);
-	  G = R->make_flat_term(minus_one, LOCAL_deg1);
-	  R->add_to(F, G);
-	  LOCAL_vp.shrink(0);
-	  varpower::lcm(I->first_elem(), I->second_elem(), LOCAL_vp);
-	  M->degree_of_varpower(LOCAL_vp.raw(), LOCAL_deg1);
-	  G = R->make_flat_term(one, LOCAL_deg1);
-	  R->add_to(F,G);
-	}
+        {
+          M->degree_of_varpower(I->second_elem(), LOCAL_deg1);
+          G = R->make_flat_term(minus_one, LOCAL_deg1);
+          R->add_to(F, G);
+          LOCAL_vp.shrink(0);
+          varpower::lcm(I->first_elem(), I->second_elem(), LOCAL_vp);
+          M->degree_of_varpower(LOCAL_vp.raw(), LOCAL_deg1);
+          G = R->make_flat_term(one, LOCAL_deg1);
+          R->add_to(F,G);
+        }
       delete I;
     }
-  else 
+  else
     {
       int npure;
       intarray pivot;
       intarray pure_a;
       int *pure = pure_a.alloc(I->topvar()+1);
       if (!find_pivot(*I, npure, pure, pivot))
-	{
-	  // set F to be product(1-t^(deg x_i^e_i)) 
-	  //              - t^(deg pivot) product((1-t^(deg x_i^(e_i - m_i)))
-	  // where e_i >= 1 is the smallest number s.t. x_i^(e_i) is in I,
-	  // and m_i = exponent of x_i in pivot element (always < e_i).
-	  M->degree_of_varpower(pivot.raw(), LOCAL_deg1);
-	  G = R->make_flat_term(one, LOCAL_deg1);
-	  for (index_varpower i = pivot.raw(); i.valid(); ++i)
-	    if (pure[i.var()] != -1)
-	      {
-		ring_elem H = R->from_int(1);
-		D->power(M->degree_of_var(i.var()), pure[i.var()], LOCAL_deg1);
-		ring_elem tmp = R->make_flat_term(minus_one, LOCAL_deg1);
-		R->add_to(H, tmp);
-		R->mult_to(F, H);
-		R->remove(H);
-		
-		H = R->from_int(1);
-		D->power(M->degree_of_var(i.var()), pure[i.var()] - i.exponent(), LOCAL_deg1);
-		tmp = R->make_flat_term(minus_one, LOCAL_deg1);
-		R->add_to(H, tmp);
-		R->mult_to(G, H);
-		R->remove(H);
-	      }
-	  R->subtract_to(F, G);
-	  delete I;
-	}
+        {
+          // set F to be product(1-t^(deg x_i^e_i))
+          //              - t^(deg pivot) product((1-t^(deg x_i^(e_i - m_i)))
+          // where e_i >= 1 is the smallest number s.t. x_i^(e_i) is in I,
+          // and m_i = exponent of x_i in pivot element (always < e_i).
+          M->degree_of_varpower(pivot.raw(), LOCAL_deg1);
+          G = R->make_flat_term(one, LOCAL_deg1);
+          for (index_varpower i = pivot.raw(); i.valid(); ++i)
+            if (pure[i.var()] != -1)
+              {
+                ring_elem H = R->from_int(1);
+                D->power(M->degree_of_var(i.var()), pure[i.var()], LOCAL_deg1);
+                ring_elem tmp = R->make_flat_term(minus_one, LOCAL_deg1);
+                R->add_to(H, tmp);
+                R->mult_to(F, H);
+                R->remove(H);
+
+                H = R->from_int(1);
+                D->power(M->degree_of_var(i.var()), pure[i.var()] - i.exponent(), LOCAL_deg1);
+                tmp = R->make_flat_term(minus_one, LOCAL_deg1);
+                R->add_to(H, tmp);
+                R->mult_to(G, H);
+                R->remove(H);
+              }
+          R->subtract_to(F, G);
+          delete I;
+        }
       else
-	{
-	  // This is the one case in which we recurse down
-	  R->remove(F);
-	  recurse(I, pivot.raw());
-	  return;
-	}
+        {
+          // This is the one case in which we recurse down
+          R->remove(F);
+          recurse(I, pivot.raw());
+          return;
+        }
     }
   R->mult_to(current->h1, F);
   R->remove(F);
@@ -583,7 +583,7 @@ void hilb_comp::stats() const
   o << "current depth = " << depth << newline;
   o << "#ideal        = " << nideal << newline;
   o << "#recurse      = " << nrecurse << newline;
-  
+
   hilb_step *p = current;
   int d = depth;
   while (p != NULL)
@@ -595,12 +595,12 @@ void hilb_comp::stats() const
       o << "  h0 = ";  R->elem_text_out(o, p->h0); o << newline;
       o << "  h1 = ";  R->elem_text_out(o, p->h1); o << newline;
       for (int i=0; i<p->monids.length(); i++)
-	{
-	  o << "  ---- monomial ideal ---------------" << newline;
-	  o << "  ";
-	  p->monids[i]->text_out(o);
-	  o << newline;
-	}
+        {
+          o << "  ---- monomial ideal ---------------" << newline;
+          o << "  ";
+          p->monids[i]->text_out(o);
+          o << newline;
+        }
       p = p->up;
       d--;
     }
@@ -619,7 +619,7 @@ void hilb_comp::stats() const
 #endif
 RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
-     for coker leadterms(M), using the degrees of the rows of M. 
+     for coker leadterms(M), using the degrees of the rows of M.
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 {
@@ -668,19 +668,19 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   for (Nterm *f = h->get_value(); f!=NULL; f=f->next)
     {
       P->getMonoid()->to_expvector(f->monom, exp);
-      if (exp[0] < deg) 
-	{
-	  ERROR("incorrect Hilbert function given");
+      if (exp[0] < deg)
+        {
+          ERROR("incorrect Hilbert function given");
 #warning "this error message doesn't get printed out, because 0 is a valid return value for this function"
-	  result = 0;
-	  break;
-	}
+          result = 0;
+          break;
+        }
       else if (exp[0] == deg)
-	{
-	  int n = P->getCoefficientRing()->coerce_to_int(f->coeff);
-	  result += n;
-	}
-	
+        {
+          int n = P->getCoefficientRing()->coerce_to_int(f->coeff);
+          result += n;
+        }
+
     }
   deletearray(exp);
   return result;
@@ -688,4 +688,5 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
