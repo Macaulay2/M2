@@ -137,6 +137,7 @@ static char declarations_header[] = "\
 #include <gc/gc.h>\n\
 #endif\n\
 #include <../system/mutex.h>\n\
+#include <../system/interp.hpp>\n\
 #ifndef SCC_HEADER\n\
 #define SCC_HEADER\n\
 #ifdef __cplusplus\n\

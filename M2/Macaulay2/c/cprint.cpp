@@ -781,11 +781,31 @@ static void generateCreturn(node s, std::stringstream& ss){
 static void generateCassign(node s, node t, std::stringstream& ss){
 	std::stringstream ss2;
 	generateC(type(s),ss2);
-	//note we need to cast because sequence numbers may be different.
+	/*note we need to cast because of incompatabilities between sequence numbers/differences between c & c++.
+	  This right now seems to be the only case where this actually raises a problem.
+	  Essentially this makes sure that if we are returning some sort of array that is identical to a M2_arrayint,
+	  it actually returns an M2_arrayint and not something similar.  
+	**/
 	if(ss2.str().find("(*)")==std::string::npos)
 	{
 		generateC(s,ss);
-		ss << " = (" << ss2.str() << ")";
+		ss << " = ";
+		if(t->tag==cons_tag)
+		{
+			node a = CAR(t);
+			node b = CDR(t);
+			if(a==funcall__S)
+			{
+				node c = CAR(b);
+				node typec = type(c);
+				std::stringstream ss3;
+				generateC(typec,ss3);
+				std::string ftypestr = ss3.str();
+				std::string rettype = ftypestr.substr(0,ftypestr.find(' '));
+				if(rettype == "M2_arrayint")
+					ss << "(" << rettype << ")";
+			}
+		}
 	}
 	else
 	{

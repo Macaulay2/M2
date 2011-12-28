@@ -2228,10 +2228,8 @@ static node chkstringconst(node e, scope v) {
      assert(f->tag == string_const_tag);
      i = truestrlen(f->body.string_const.characters);
      len = integer(i);
-     perform(list(3, getmem__S,tmp,len),v);
      setup(tmp,v);
-     assign(take(tmp, len_S), len, v);
-     perform(list(5,funcall__S,memcpy_S, take(tmp, array_S), e, len),v);
+	 perform(list(6, Ccode_S, void_T, tmp, String(" = M2CPP_NewConstString("),e,String(")")),v);
      return enpos(tmp,pos(e));
      }
 
