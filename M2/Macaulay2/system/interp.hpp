@@ -96,6 +96,7 @@ template<class R, class T> inline R M2CPP_NewObject(int typecode)
 {
 	R r = reinterpret_cast<R>(GC_MALLOC(sizeof(T)));
 	r->type_ = typecode;
+	return r;
 }
 /***
    Create a new M2 string with the given name.

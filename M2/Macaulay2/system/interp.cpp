@@ -3,6 +3,7 @@
 #include <M2-exports.h>
 #include <interp-exports.h>
 #include <cstring>
+#include <iostream>
 
 M2CPP_Interperter M2CPP_InterperterSingleton;
 
