@@ -11,11 +11,13 @@ eflags = "-I"+buildpath+"../d/ -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/
 eobjects = []
 dpthread = getState(mode,architecture,'dFileDict')['pthread.dd']
 dm2 = getState(mode,architecture,'dFileDict')['M2.dd']
+dinterp = getState(mode,architecture,'dFileDict')['interp.dd']
 for f in efiles:
     obj = Object(f,CFLAGS=eflags,CXXFLAGS=eflags)
     eobjects.append(obj)
     Depends(obj,dpthread)
     Depends(obj,dm2)
+    Depends(obj,dinterp)
     
 state[architecture][mode]['systemfiles']=eobjects
 Return('eobjects')

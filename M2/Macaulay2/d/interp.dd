@@ -7,41 +7,41 @@ use texmacs;
 use actors5;
 import dirname(s:string):string;
 
-dummyError := Error(dummyPosition,"dummy error message",nullE,false,dummyFrame);
+export dummyError := Error(dummyPosition,"dummy error message",nullE,false,dummyFrame);
 
 export setupargv():void := (
      setupconst("commandLine",toExpr(argv));
      setupconst("environment",toExpr(envp));
      );
 
-fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
-currentFileName := setupvar("currentFileName", nullE);
-currentPosFile  := dummyPosFile;
-currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
-update(err:Error,prefix:string,f:Code):Error := (
+export fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
+export currentFileName := setupvar("currentFileName", nullE);
+export currentPosFile  := dummyPosFile;
+export currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
+export update(err:Error,prefix:string,f:Code):Error := (
      if !err.printed
      then printErrorMessage0(f,prefix + ": " + err.message)
      else printErrorMessage0(f,prefix + ": --backtrace update-- ")
      );
-previousLineNumber := -1;
+export previousLineNumber := -1;
 
-BeforeEval := makeProtectedSymbolClosure("BeforeEval");
-AfterEval := makeProtectedSymbolClosure("AfterEval");
-BeforePrint := makeProtectedSymbolClosure("BeforePrint");
-Print := makeProtectedSymbolClosure("Print");
-NoPrint := makeProtectedSymbolClosure("NoPrint");
-AfterPrint := makeProtectedSymbolClosure("AfterPrint");
-AfterNoPrint := makeProtectedSymbolClosure("AfterNoPrint");
-runmethod(methodname:SymbolClosure,g:Expr):Expr := (
+export BeforeEval := makeProtectedSymbolClosure("BeforeEval");
+export AfterEval := makeProtectedSymbolClosure("AfterEval");
+export BeforePrint := makeProtectedSymbolClosure("BeforePrint");
+export Print := makeProtectedSymbolClosure("Print");
+export NoPrint := makeProtectedSymbolClosure("NoPrint");
+export AfterPrint := makeProtectedSymbolClosure("AfterPrint");
+export AfterNoPrint := makeProtectedSymbolClosure("AfterNoPrint");
+export runmethod(methodname:SymbolClosure,g:Expr):Expr := (
      method := lookup(Class(g),methodname);
      if method == nullE then g else applyEE(method,g)
      );
-runmethod(methodname:Expr,g:Expr):Expr := (
+export runmethod(methodname:Expr,g:Expr):Expr := (
      method := lookup(Class(g),methodname);
      if method == nullE then g else applyEE(method,g)
      );
 
-endInput := makeProtectedSymbolClosure("end");
+export endInput := makeProtectedSymbolClosure("end");
 
 PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      methodname := if semi then NoPrint else Print;
@@ -50,204 +50,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else applyEE(method,g)
      );
-readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
-     lastvalue := nullE;
-     mode := topLevelMode;
-     modeBeforePrint := list(mode,Expr(BeforePrint));
-     modeNoPrint := list(mode,Expr(NoPrint));
-     modePrint := list(mode,Expr(Print));
-     modeAfterNoPrint := list(mode,Expr(AfterNoPrint));
-     modeAfterPrint := list(mode,Expr(AfterPrint));
-     bumpLineNumber := true;
-     promptWanted := false;
-     issuePrompt := false;
-     lasterrmsg := dummyError;
-     while true do (
-	  if debugLevel == 123 then stderr <<  "------------ top of loop" << endl;
-	  if bumpLineNumber then (
-	       if debugLevel == 123 then stderr <<  "-- bumpLineNumber" << endl;
-     	       if printout then setLineNumber(lineNumber + 1);
-	       bumpLineNumber = false;
-	       );
-	  if promptWanted then (
-	       if debugLevel == 123 then stderr <<  "-- promptWanted" << endl;
-     	       previousLineNumber = -1;	-- to force a prompt at the beginning of the next input line
-	       promptWanted = false;
-	       );
-	  if issuePrompt then (
-	       if debugLevel == 123 then stderr <<  "-- issuePrompt" << endl;
-	       previousLineNumber = -1;
-	       stdIO << file.posFile.file.prompt();
-	       issuePrompt = false;
-	       );
-	  clearAllFlags();
-	  if debugLevel == 123 then (
-	       stderr << "-- file: " << file.posFile.filename << ":" << file.posFile.line << ":" << file.posFile.column << newline;
-	       c := peek(file.posFile.file);
-	       stderr << "-- next character: ";
-	       if c == int('\n') then stderr << "NEWLINE" else if c >= 0 then stderr << char(c) else stderr << c;
-	       stderr << endl;
-	       );
-	  u := peektoken(file,true);
-	  interruptPending = false; determineExceptionFlag();
-	  if u == errorToken || test(interruptedFlag) then (
-	       gettoken(file,true);
-	       if test(interruptedFlag) then (
-		    if debugLevel == 123 then stderr <<  "-- token read interrupted" << endl;
-		    clearFileError(file);
-	       	    store(interruptedFlag, false);
-		    determineExceptionFlag();
-		    promptWanted = true;
-		    issuePrompt = true;
-		    )
-	       else (
-		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
-		    promptWanted = true;
-	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
-		    )
-	       )
-	  else (
-	       t := u.word;
-	       if t == wordEOF then (
-		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << position(u) << endl;
-		    return if returnLastvalue then lastvalue else nullE;
-		    )
-	       else if t == NewlineW then (
-		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << position(u) << endl;
-		    gettoken(file,true);
-		    )
-	       else if t == wordEOC then (
-		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << position(u) << endl;
-		    gettoken(file,true);
-		    )
-	       else (
-	  	    previousLineNumber = lineNumber;
-		    promptWanted = true;
-		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << position(u) << endl;
-		    parsed := parse(file,SemicolonW.parse.precedence,true);
-		    if parsed == errorTree then (
-			 if test(interruptedFlag) then (
-		    	      if debugLevel == 123 then stderr <<  "-- parsing interrupted" << endl;
-		    	      clearFileError(file);
-	       	    	      store(interruptedFlag, false);
-			      determineExceptionFlag();
-			      promptWanted = true;
-			      -- issuePrompt = true;
-			      )
-			 else (
-		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
-			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
-			      );
-			 )
-		    else (
-			 if debugLevel == 123 then (
-			      stderr
-			      << "-- parsing successful" << newline
-			      << "-- parse tree size: " << size(parsed) << endl;
-			      );
-     	       	    	 bumpLineNumber = true;
-			 -- { [ (
-			 -- get the token that terminated the parsing of the expression
-			 -- it has parsing precedence at most that of the semicolon
-			 -- so it is end of file, end of cell, newline, semicolon, or one of the right parentheses : ) ] } 
-			 -- that explains the next error message
-			 s := gettoken(file,true);
-			 if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC || s.word == wordEOF)
-			 then (
-			      msg := "syntax error: unmatched " + s.word.name;
-			      printErrorMessage(s,msg);
-			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
-			      )
-			 else (
-			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
-			      then (
-				   -- result of BeforeEval is ignored unless error:
-				   -- BeforeEval method is independent of mode
-				   f := convert(parsed); -- convert to runnable code
-				   be := runmethod(BeforeEval,nullE);
-				   when be is err:Error do (
-					err = update(err,"before eval",f);
-					if stopIfError || returnIfError then return Expr(err);
-					lasterrmsg = err;
-					)
-				   else nothing;
-				   lastvalue = evalexcept(f);	  -- run it
-				   if lastvalue == endInput then return nullE;
-				   when lastvalue is err:Error do (
-					if err.message == returnMessage
-					|| err.message == continueMessage || err.message == continueMessageWithArg 
-					|| err.message == stepMessage || err.message == stepMessageWithArg 
-					|| err.message == breakMessage || err.message == throwMessage then (
-					     if stopIfBreakReturnContinue then return lastvalue;
-					     );
-					if err.message == unwindMessage then (
-					     lastvalue = nullE;
-					     )
-					else (
-					     if !err.printed then printErrorMessage(err);
-					     if stopIfError || returnIfError then return lastvalue;
-					     );
-					lasterrmsg = err;
-					)
-				   else (
-					if printout then (
-					     if mode != topLevelMode then (
-						  mode = topLevelMode;
-						  modeBeforePrint = list(mode,Expr(BeforePrint));
-						  modeNoPrint = list(mode,Expr(NoPrint));
-						  modePrint = list(mode,Expr(Print));
-						  modeAfterNoPrint = list(mode,Expr(AfterNoPrint));
-						  modeAfterPrint = list(mode,Expr(AfterPrint));
-						  );
-					     -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it:
-					     g := runmethod(AfterEval,lastvalue);
-					     when g is err:Error
-					     do (
-						  err = update(err,"after eval",f); 
-						  if stopIfError || returnIfError then return err;
-						  lastvalue = nullE;
-						  lasterrmsg = err;
-						  ) 
-					     else lastvalue = g;
-					     -- result of BeforePrint is printed instead unless error:
-					     printvalue := nullE;
-					     g = runmethod(modeBeforePrint,lastvalue);
-					     when g is err:Error
-					     do (
-						  err = update(err,"before print",f);
-						  if stopIfError || returnIfError then return err;
-						  lasterrmsg = err;
-						  )
-					     else printvalue = g;
-					     -- result of Print is ignored:
-					     g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue);
-					     when g is err:Error do (
-						  err = update(err,"at print",f);
-						  if stopIfError || returnIfError then return err;
-						  lasterrmsg = err;
-						  )
-					     else nothing;
-					     -- result of AfterPrint is ignored:
-					     g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue);
-					     when g is err:Error do (
-						  err = update(err,"after print",f);
-						  if stopIfError || returnIfError then return err;
-						  lasterrmsg = err;
-						  )
-					     else nothing;
-					     )
-					)
-				   )
-			      else (
-				   -- an error occurred in localBind
-				   if isatty(file) 
-				   then flush(file)
-				   else return (
-					if lasterrmsg != dummyError
-					then Expr(lasterrmsg)
-					else buildErrorPacket("error occurred in parsing")))))))));
+import readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr;
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
 incrementInterpreterDepth():void := (
@@ -258,39 +61,8 @@ decrementInterpreterDepth():void := (
      setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
 
 
-readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
-     saveLocalFrame := localFrame;
-     localFrame = dc.frame;
-      savecf := getGlobalVariable(currentFileName);
-      savecd := getGlobalVariable(currentFileDirectory);
-      savepf := currentPosFile;
-	setGlobalVariable(currentFileName,toExpr(file.posFile.file.filename));
-	setGlobalVariable(currentFileDirectory,toExpr(dirname(file.posFile.file.filename)));
-        currentPosFile = file.posFile;
-	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue,returnIfError);
-      setGlobalVariable(currentFileDirectory,savecd);
-      setGlobalVariable(currentFileName,savecf);
-      currentPosFile = savepf;
-     localFrame = saveLocalFrame;
-     ret);
-readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
-     savefe := getGlobalVariable(fileExitHooks);
-     setGlobalVariable(fileExitHooks,emptyList);
-     printout := false; mode := nullE;
-     ret := readeval3(file,printout,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false,returnIfError);
-     haderror := when ret is Error do True else False;
-     lastexiterror := dummyError;
-     hook := getGlobalVariable(fileExitHooks);
-     when hook is x:List do foreach f in x.v do (
-	  r := applyEE(f,haderror);
-	  when r is err:Error do (
-	       if lastexiterror != dummyError && !lastexiterror.printed then printErrorMessage(lastexiterror); -- or else it gets bumped
-	       lastexiterror = err;
-	       ) else nothing
-	  )
-     else nothing;
-     setGlobalVariable(fileExitHooks,savefe);
-     if lastexiterror != dummyError then Expr(lastexiterror) else ret);
+import readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr;
+import readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr;
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
@@ -497,30 +269,8 @@ debugger(f:Frame,c:Code):Expr := (
      ret);
 debuggerFun = debugger;
 
-currentString := setupvar("currentString", nullE);
-value(e:Expr):Expr := (
-     when e
-     is q:SymbolClosure do (
-	  vals := q.frame.values;
-	  i := q.symbol.frameindex;
-	  if i < length(vals) then vals.i 
-	  else nullE					    -- localFrame is the only one that might be short
-	  )
-     is c:CodeClosure do eval(c.frame,c.code)
-     is s:stringCell do (
-      	  savecs := getGlobalVariable(currentString);
-	  setGlobalVariable(currentString,e);
-	  r := readeval(stringTokenFile("currentString", s.v+newline),true,true);
-	  setGlobalVariable(currentString,savecs);
-	  when r 
-	  is err:Error do (
-	       if err.message == returnMessage
-	       || err.message == continueMessage || err.message == continueMessageWithArg 
-	       || err.message == stepMessage || err.message == stepMessageWithArg 
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value 
-	       else r)
-	  else r)
-     else WrongArg(1,"a string, a symbol, or pseudocode"));
+export currentString := setupvar("currentString", nullE);
+import value(e:Expr):Expr;
 setupfun("value",value).Protected = false;
 
 tmpbuf := new string len 100 do provide ' ' ;
@@ -563,45 +313,7 @@ internalCapture(e:Expr):Expr := (
      else WrongArg(1,"a string"));
 setupfun("internalCapture",internalCapture);
 
-normalExit := 0;
-errorExit := 1;
-interruptExit := 2;					    -- see also M2lib.c
-failedExitExit := 3;
-
-Exit(err:Error):void := exit(
-     if err.message === interruptMessage then interruptExit
-     else errorExit
-     );
-
-header "#include <unistd.h>";
-export process():void := (
-     localFrame = globalFrame;
-     previousLineNumber = -1;			  -- might have done dumpdata()
-     stdIO .inisatty  =   0 != isatty(0) ;
-     stdIO.echo       = !(0 != isatty(0));
-     stdIO.outisatty =   0 != isatty(1) ;
-     stdError.outisatty =   0 != isatty(2) ;
-     setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
-     sethandleInterrupts(true);
-     -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
-     everytimeRun();
-     -- we don't know the right directory; calls commandInterpreter and eventually returns:
-     ret := readeval(stringTokenFile(startupFile,startupString),false,false);
-     when ret is err:Error do (
-	  if !err.printed then printError(err);		    -- just in case
-	  if stopIfError
-	  then Exit(err)	 -- probably can't happen, because layout.m2 doesn't set stopIfError
-	  else if !topLevel()				    -- give a prompt for debugging
-	  then Exit(err))
-     else nothing;
-     when ret is n:ZZcell do (
-	  if isInt(n) then (
-     	       value(toExpr("exit " + tostring(toInt(n))));   -- try to exit the user's way
-     	       ))
-     else nothing;
-     value(toExpr("exit 0"));				    -- try to exit the user's way
-     exit(failedExitExit);		   -- if that doesn't work, try harder and indicate an error
-     );
+import process():void;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "
