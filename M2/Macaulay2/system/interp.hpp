@@ -3,39 +3,7 @@
 #if defined(__cplusplus)
 #include <string>
 #include "supervisorinterface.h"
-typedef struct M2_string_struct * M2_string;
-typedef struct M2_arrayint_struct * M2_arrayint;
-typedef M2_arrayint M2_arrayintOrNull;
-typedef struct M2_stringCell_struct * M2_stringCell;
-typedef struct M2_ArrayString_struct * M2_ArrayString;
-typedef M2_ArrayString M2_ArrayStringOrNull;
-typedef char * M2_charstar;
-typedef unsigned char * M2_ucharstar;
-typedef char ** M2_charstarstar;
-typedef const char * M2_constcharstar;
-typedef const unsigned char * M2_constucharstar;
-typedef const char ** M2_constcharstarstar;
-typedef char * M2_charstarOrNull;
-typedef const char * M2_constcharstarOrNull;
-typedef const unsigned char * M2_constucharstarOrNull;
-typedef const char ** M2_constcharstarstarOrNull;
-
-typedef struct parse_Frame_struct * parse_Frame;
-typedef struct parse_Error_struct * parse_Error;
-typedef struct parse_TokenFile_struct * parse_TokenFile;
-typedef struct parse_Dictionary_struct * parse_Dictionary;
-typedef struct parse_DictionaryClosure_struct * parse_DictionaryClosure;
-typedef struct varstrin_varstring_struct * varstrin_varstring;
-typedef struct tagged_union * parse_Expr;
-typedef varstrin_varstring errio_BasicFile;
-//exports
-extern "C" {
-	extern void interp_process();
-	extern parse_Expr interp_value(parse_Expr e);
-	extern parse_Expr interp_readeval(parse_TokenFile file,char returnLastvalue,char returnIfError);
-	extern parse_Expr interp_readeval3(parse_TokenFile file,char printout,parse_DictionaryClosure dc,char returnLastvalue,char stopIfBreakReturnContinue,char returnIfError);
-	extern parse_Expr interp_readeval4(parse_TokenFile file,char printout,parse_Dictionary dictionary,char returnLastvalue,char stopIfBreakReturnContinue,char returnIfError);
-}
+#include "typedefs.hpp"
 
 class M2CPP_Interperter;
 /***
@@ -43,52 +11,52 @@ class M2CPP_Interperter;
 	This really should not be a singleton, but while we transition code it will be.
 ***/
 extern M2CPP_Interperter M2CPP_InterperterSingleton;
+extern __thread M2CPP_InterperterLocal* t_InterperterLocal;
+/***
+	The M2CPP_Interperter contains the global state for a Macaulay2 interperter.
+	The state local to a given thread is stored in the M2CPP_InterperterLocal class.
+	It is necessary to set up the local state when first executing in a new thread by calling initalizeLocalState().
+	The M2CPP_Interperter is currently set up as a singleton, but there is no reason that multiple ones could not eventually exist.
+	However M2CPP_InterperterLocal is designed around the assumption that there is exactly one M2CPP_InterperterLocal per thread.
 
+	Binding is the process of converting from the lexed trees and assigning frames & frame indicies to each variable/operator.
+	Binding is accomplished in M2CPP_InterperterLocal.  
+	It is considered a local process because multiple threads may be binding at once (if they are parsing code at the same time).  
+	Binding is both reinterant and thread safe, but binding non-global variables will not change non-thread-local data.
+	Once code is ready to be executed it does not need to be rebound.
+	
+	Frames should be thought of as the equivalent of stack frames except M2 has them for scopes.  
+	There are global frames, thread local frames and dynamic frames.  Each frame consists of a sequence of pointers.  
+	These pointers are indexed by the frame index that is associated with a variable.
+	Enlarging frames is not currently thread safe.
+	Both the enlarge function and thread frame size have race conditions present that can cause data corruption.
+***/
 class M2CPP_Interperter
 {
 public:
-	parse_Frame* localFrame();
-	char* stopIfError();
-	int& debugLevel();
-	errio_BasicFile* M2_stderr();
-	struct atomic_field* interruptedFlag();
-	char* interruptPending();
 	/***
 		Get the current M2CPP Interperter in some well defined way.
 		Currently returns the global interperter.
 		Eventually will be instance local.
 	***/
 	static M2CPP_Interperter* gsp() { return &M2CPP_InterperterSingleton; }
-	
-	void interp_process();
 	/***
-		Attempt to execute the given expression.  
-		@param e SymbolClosure, CodeClosure,stringCell, not null.
-		@return Expr, possibly an error.
+		Initialize any local state for the interperter.
 	***/
-	parse_Expr value(parse_Expr e);
+	void initializeLocalState();
 	/***
-		???
-		@param returnLastvalue ???
-		@param returnIfError ???
-		@param file File to read & evaluate.
-		@return Expr, possibly an error.
+		Get the current local state for this interperter.
 	***/
-	parse_Expr readeval(parse_TokenFile file,char returnLastvalue,char returnIfError);
-	parse_Expr readeval3(parse_TokenFile file,char printout,parse_DictionaryClosure dc,char returnLastvalue,char stopIfBreakReturnContinue,char returnIfError);
-	parse_Expr readeval4(parse_TokenFile file,char printout,parse_Dictionary dictionary,char returnLastvalue,char stopIfBreakReturnContinue,char returnIfError);
-protected:
-	/***
-		From an error, deduce the correct exit code and attempt to exit.
-		@param err An error, not null.  
-	***/
-	void exit(parse_Error err);
-	/***
-		Create a new file with line numbers for tokenizing the given string.
-		@return Not null.
-	***/
-	parse_TokenFile stringTokenFile(M2_string name,M2_string contents);
+	M2CPP_InterperterLocal* glp() { return t_InterperterLocal; }
 };
+/***
+   Create a new M2 object of type T and return it as type R
+***/
+template<class R, class T> inline R M2CPP_NewObject()
+{
+	R r = reinterpret_cast<R>(GC_MALLOC(sizeof(T)));
+	return r;
+}
 /***
    Create a new M2 object of type T and return it as type R
 ***/
@@ -96,6 +64,15 @@ template<class R, class T> inline R M2CPP_NewObject(int typecode)
 {
 	R r = reinterpret_cast<R>(GC_MALLOC(sizeof(T)));
 	r->type_ = typecode;
+	return r;
+}
+/***
+   Create a new M2 object of type T with array of type I and length arrayLength and return it as type R
+***/
+template<class R, class T, class I> inline R M2CPP_NewArray(size_t arrayLength)
+{
+	R r = reinterpret_cast<R>(GC_MALLOC(sizeof(T)+(arrayLength-1)*sizeof(I)));
+	r->len = arrayLength;
 	return r;
 }
 /***

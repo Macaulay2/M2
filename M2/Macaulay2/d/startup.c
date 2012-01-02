@@ -1,4 +1,4 @@
-char startupString[] =
+const char startupString[] =
 "-- -*- coding: utf-8 -*-\n"
 "--		Copyright 1993-2009 by Daniel R. Grayson\n"
 "-- layout.m2, includes the former contents of ../m2/startup.m2\n"

@@ -23,6 +23,7 @@ void fatal(const char *s,...)   {
      fprintf(stderr,"\n");
      fflush(stderr);
      va_end(ap);
+	 assert(0);
      exit(1);
      }
 

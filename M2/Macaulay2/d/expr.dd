@@ -60,6 +60,7 @@ export globalFrame := Frame(self, 0, globalFramesize, true,
      Sequence(
 	  nullE						    -- one value for dummySymbol
 	  ));
+---there be big bugs here.
 export threadFrameID := 0;
 export threadFramesize := 0;
 export threadLocal threadFrame  := Frame(self, threadFrameID, 0, true, Sequence());

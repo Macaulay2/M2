@@ -50,7 +50,6 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else applyEE(method,g)
      );
-import readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr;
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
 incrementInterpreterDepth():void := (
@@ -312,8 +311,6 @@ internalCapture(e:Expr):Expr := (
 	  Expr(Sequence( when r is err:Error do True else False, toExpr(out) )))
      else WrongArg(1,"a string"));
 setupfun("internalCapture",internalCapture);
-
-import process():void;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "

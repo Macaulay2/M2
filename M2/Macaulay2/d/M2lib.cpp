@@ -2,6 +2,8 @@
 #include "interp-exports.h"
 #include "../platform/platform.h"
 #include "../platform/gc_debug.h"
+#include "../system/interp.hpp"
+#include "../system/interplocal.hpp"
 
 #include "M2mem.h"
 #include "M2inits.h"
