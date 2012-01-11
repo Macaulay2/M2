@@ -10,6 +10,7 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 #set this to library name
 libraryName = 'gc'
 #Library specific declarations go here.
+setLibSpecific('all','all',libraryName,'tarfolder','gc-7.2alpha7')
 setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
 setLibSpecificConfigExport('debug',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O0')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')

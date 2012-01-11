@@ -28,8 +28,14 @@ def BuildLibrary(target,source,env):
    cleaned = CleanLibrary(env.mode,architecture,libraryName)
    untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
    configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = 'O'+str(architecture)+'/')
-   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = 'O'+str(architecture)+'/')
+   if architecture == 'linux-x86_64':
+      offset = 'Olinux-x86_64/'
+   elif architecture == 'linux-x86':
+      offset = 'Olinux-i686/'
+   else:
+      raise NotImplementedError(architecture + " not implemented for Pari")
+   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = offset)
+   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = offset)
    return None
    
 

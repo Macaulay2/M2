@@ -10,8 +10,8 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 #set this to library name
 libraryName = 'normaliz'
 #Library specific declarations go here.
-setLibSpecificStageCommandArguments('all',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -O0 -g','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
-setLibSpecificStageCommandArguments('all',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -O3 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+setLibSpecificStageCommandArguments('debug',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+setLibSpecificStageCommandArguments('release',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O3 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
 setLibSpecific('all','all',libraryName,'builddirectory','source/')
    
 def BuildLibrary(target,source,env):
@@ -23,13 +23,18 @@ def BuildLibrary(target,source,env):
    packageName = extractPackageName(sourceFile)
    cleaned = CleanLibrary(env.mode,architecture,libraryName)
    untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+   buildpath = getState(env.mode,architecture,'buildpath')
+   realpath = buildpath+packageName+'/'
+   try:
+      os.remove(realpath+'source/libnormaliz/libnormaliz.o')
+      print 'Removed libnormaliz.o\n'
+   except:
+      pass
    if(getLibSpecific(env.mode,architecture,libraryName,'stage0')):
       setLibSpecific(env.mode,architecture,libraryName,'stage1',True)
    else:
       return None
    if makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName):
-      buildpath = getState(env.mode,architecture,'buildpath')
-      realpath = buildpath+packageName+'/'
    #install...
       shutil.copy2(realpath+'source/normaliz',os.path.abspath(getState(env.mode,architecture,'prefixpath')+'bin/normaliz'))
    return None

@@ -9,8 +9,12 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob')
 
 setLibSpecific('all','all','libxml2','downloadPath','ftp://xmlsoft.org/libxml2/')
-
-
+setLibSpecific('all','all','boost','downloadPath','http://sourceforge.net/projects/boost/files/boost/1.46.1/')
+setLibSpecific('all','all','pari','downloadPath','http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk/')
+setLibSpecific('all','all','libfac','downloadPath','ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac/')
+setLibSpecific('all','all','factory','downloadPath','ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory/')
+setLibSpecific('all','all','mpfr','downloadPath','http://www.mpfr.org/mpfr-3.0.1/')
+setLibSpecific('all','all','mpir','downloadPath','http://www.mpir.org/')
 dependencies = {
     'mpfr':'mpir',
     'cddlib':'mpir',
@@ -28,7 +32,7 @@ dependencies = {
     'ntl':['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','cddplus','frobby','gfan','normaliz','boost','scc','libxml2'],
     'factory':'ntl',
     'libfac':'factory',
-    'dstart':['scc','libfac']
+    'dstart':['scc','libfac','pari']
 }
 #list of dependencies to build.
 buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','ntl','factory','cddplus','frobby','gfan','libfac','normaliz','boost','libxml2'])
@@ -37,7 +41,7 @@ state['linux-x86_64']['buildlibraries']=linuxBuildLibraries
 state['linux-x86']['buildlibraries']=linuxBuildLibraries
 linuxVersions = ['4ti2-1.3.2.tar.gz','gfan0.4plus.tar.gz','Normaliz2.7.zip','boost_1_46_1.tar.gz','glpk-4.44.tar.gz','ntl-5.5.2.tar.gz',
                  'cdd+-077a.tar.gz','lapack-3.2.2.tgz','pari-2.5.0.tar.gz','cddlib-094f.tar.gz','libfac-3-1-3.tar.gz','factory-3-1-3.tar.gz',
-                 'lrslib-042c.tar.gz','readline61-002','frobby_v0.8.2.tar.gz','mpfr-3.0.1.tar.gz','readline-6.1.tar.gz','gc-7.2alpha7.tar.gz',
+                 'lrslib-042c.tar.gz','readline61-002','frobby_v0.8.2.tar.gz','mpfr-3.0.1.tar.gz','readline-6.1.tar.gz','gc-7.2alpha7-2011-07-25.tar.gz',
                  'mpir-2.4.0.tar.bz2','gdbm-1.8.3.tar.gz','nauty24r2.tar.gz','libxml2-2.7.8.tar.gz']
 state['linux-x86_64']['tarfiles']=linuxVersions
 state['linux-x86']['tarfiles']=linuxVersions
@@ -180,6 +184,9 @@ def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName
            if(unzipp.wait()):
                raise Exception("Unable to decompress " + libraryName + ".")
        setLibSpecific(mode,architecture,libraryBaseName,'stage0',True)
+       tarfolder = getLibSpecific(mode,architecture,libraryBaseName,'tarfolder')
+       if tarfolder:
+           shutil.move(buildpath+tarfolder,realpath)
        patchfile = getLibSpecific(mode,architecture,libraryBaseName,'patchfile')
        if patchfile is None:
            return True
@@ -233,7 +240,7 @@ def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseNa
            args = [cmd]+args
        newEnv = os.environ
        getLibSpecificEnv(mode,architecture,libraryBaseName,stage,newEnv)
-       print 'Execute: ' + str(args)
+       print 'Execute: ' + str(args) + " in " + realpath
        proc = subprocess.Popen(args,cwd=realpath,env=newEnv)
        if(proc.wait()):
            if(cmd=='bjam'):

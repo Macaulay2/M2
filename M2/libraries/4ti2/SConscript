@@ -15,7 +15,6 @@ setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX',
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--prefix=$SConsInstallPrefixPath'])
-#setLibSpecificStageCommandArguments('all','all',libraryName,1,['PREFIX=$SConsInstallPrefixPath'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
 def BuildLibrary(target,source,env):

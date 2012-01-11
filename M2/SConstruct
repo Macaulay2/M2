@@ -66,13 +66,38 @@ state = {
     'clean':False,
     'enabledownload':True
 }
+def detectArchitecture():
+    import platform
+    if platform.system()=='Linux':
+        if platform.architecture()[0]=='64bit':
+            return 'linux-x86_64'
+        elif platform.architecture()[0]=='32bit':
+            return 'linux-x86'
+        else:
+            raise NotImplementedError("Unknown linux architecture %s" % architecture)
+    elif platform.system()=='Darwin':
+        if platform.architecture()[0]=='64bit':
+            return 'Darwin-x86_64'
+        elif platform.architecture()[0]=='32bit':
+            return 'Darwin-x86'
+        else:
+            raise NotImplementedError("Unknown Darwin architecture %s" % architecture)
+    elif platform.system()=='nt':
+        if platform.architecture()[0]=='64bit':
+            return 'nt-x86_64'
+        elif platform.architecture()[0]=='32bit':
+            return 'nt-x86'
+        else:
+            raise NotImplementedError("Unknown NT architecture %s" % architecture)
+    else:
+        raise NotImplementedError("Unknown NT architecture %s" % architecture)
 
 def getState(mode,architecture,attribute,exception=True):
     """
     This returns the attribute requested for the given mode and architecture.
     """
     if(mode == None or architecture == None or attribute == None):
-        raise Exception("Invalid arguments to getState")
+        raise Exception("Invalid arguments to getState %s %s %s",mode,architecture,attribute)
     adict = state.get(architecture)
     if(adict == None):
         raise KeyError("Unknown architecture: " + architecture)
@@ -458,8 +483,8 @@ if(GetOption('disabledownload') is not None):
 if(GetOption('clean')!=None):
     state['build']=False
     state['clean']=True
-#Current architecture to build under.
-architecture = 'linux-x86_64'
+#Detect current architecture to build under.
+architecture = detectArchitecture()
 #Requested build modes.
 modes = GetOption('modes')
 #List of modes requested to build.
