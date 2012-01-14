@@ -652,6 +652,12 @@ static void generateCtypedef(node t, std::stringstream& ss, bool exportFile = fa
 	assert(istype(t));
 	if (t->body.type.name != NULL) {
 		if (isfunctiontype(t)) {
+			std::stringstream ss2;
+			generateC(t->body.type.name,ss2);
+			if(exportFile && isTypedefImported(ss2.str().c_str()))
+			{
+				return;
+			}					  
 			ss << "typedef ";
 			generateC(functionrettype(t),ss);
 			ss << " ";
