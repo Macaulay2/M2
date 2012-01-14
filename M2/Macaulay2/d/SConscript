@@ -91,7 +91,7 @@ for i in range(0,len(dfiles)):
 builders = []
 objFiles = []
 prefixPath = getState(mode,architecture,'prefixpath')
-cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes "+getState(mode,architecture,'M2flags')
+cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes -IMacaulay2/system/ "+getState(mode,architecture,'M2flags')
 ddict = {}
 
 #setup D build targets.
