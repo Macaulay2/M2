@@ -12,9 +12,10 @@ libraryName = 'mpir'
 #Library specific declarations go here.
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecificConfigExport('all',['linux-x86'],libraryName,'ABI','32')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--enable-gmpcompat','--enable-cxx','--disable-shared','--prefix=$SConsInstallPrefixPath'])
 #This is broken on ubuntu 32 bit
-#setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
+setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
 def BuildLibrary(target,source,env):
    """
