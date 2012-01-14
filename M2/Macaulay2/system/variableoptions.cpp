@@ -5,3 +5,7 @@ VariableOptions::VariableOptions(const std::string& name, bool isThread, bool is
 {
 	m_Name = M2CPP_NewString(name);
 }
+VariableOptions::VariableOptions(const std::string& name):m_IsThread(false),m_IsProtected(false),m_PackageName(NULL),m_DictionaryClosure(NULL)
+{
+	m_Name = M2CPP_NewString(name);
+}

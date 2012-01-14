@@ -25,6 +25,11 @@ static const char* newline = "\n";
 #include "posix.h"
 #endif
 #ifdef __cplusplus
+/***
+	Set this to true to enable trace mode.
+***/
+static const bool c_EnableTrace = true;
+
 extern "C" {
 #endif
   /***

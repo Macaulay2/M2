@@ -91,6 +91,12 @@ M2CPP_InterperterLocal::M2CPP_InterperterLocal()
 {
 	m_BindingLookupCountIncrement = 1;
 	m_BindingHadError = false;
+	if(c_EnableTrace)
+	{
+		m_TraceFile.open("tracefile.log",std::fstream::out | std::fstream::trunc);
+		if(m_TraceFile.fail())
+			fatal("Unable to open trace file for writing");
+	}
 }
 
 parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,parse_Dictionary dictionary,bool returnLastvalue,bool stopIfBreakReturnContinue,bool returnIfError){
@@ -1671,44 +1677,31 @@ parse_Symbol M2CPP_InterperterLocal::setupVariable(M2_string name, parse_Expr va
 {
 	parse_Word word_3 = lex_makeUniqueWord(name, expr_parseWORD);
 	parse_Symbol tmp__93 = binding_lookup_1(word_3, expr_globalDictionary);
+	parse_Symbol entry;
 	if(NULL == tmp__93)
-	{
-		parse_Symbol entry_2 = binding_makeSymbol_1(word_3, stdiop0_dummyPosition, expr_globalDictionary, thread);
-		parse_Frame tmp__94;
-		if (thread) 
-			tmp__94 = expr_enlargeThreadFrame();
-		else
-			tmp__94 = expr_globalFrame;
-		if (entry_2->frameindex < 0 || entry_2->frameindex >= tmp__94->values->len)
-		{
-			assert(0);
-			fatalarrayindex(entry_2->frameindex,tmp__94->values->len,__FILE__,__LINE__,78);
-		}
-		tmp__94->values->array[entry_2->frameindex] = value;
-		return entry_2;
-	}
+		//symbol does not exist yet so make it
+	    entry = binding_makeSymbol_1(word_3, stdiop0_dummyPosition, expr_globalDictionary, thread);
 	else
+		//symbol already exists.
+		entry = ((parse_Symbol)tmp__93);
+	parse_Frame tmp__94;
+	if (thread) 
+		tmp__94 = expr_enlargeThreadFrame();
+	else
+		tmp__94 = expr_globalFrame;
+	if (entry->frameindex < 0 || entry->frameindex >= tmp__94->values->len)
 	{
-		parse_Symbol entry_3 = ((parse_Symbol)tmp__93);
-		parse_Frame tmp__97;
-		if (thread) 
-		{
-			assert(entry_3->thread);
-			tmp__97 = expr_enlargeThreadFrame();
-		}
-		else
-			tmp__97 = expr_globalFrame;
-		if (entry_3->frameindex < 0 || entry_3->frameindex >= tmp__97->values->len)
-		{
-			assert(0);
-			fatalarrayindex(entry_3->frameindex,tmp__97->values->len,__FILE__,__LINE__,78);
-		}
-		tmp__97->values->array[entry_3->frameindex] = value;
-		return entry_3;
+		assert(0);
+		fatalarrayindex(entry->frameindex,tmp__94->values->len,__FILE__,__LINE__,78);
 	}
+	tmp__94->values->array[entry->frameindex] = value;
+	return entry;
 }
 parse_Symbol M2CPP_InterperterLocal::setupVariable(parse_Expr value, const VariableOptions& params)
 {
+	assert(params.packageName()==NULL);
+	assert(params.dictionaryClosure()==NULL);
+	setupVariable(params.name(),value,params.isThread());
 }
 parse_Symbol M2CPP_InterperterLocal::setupVariable(int value, const VariableOptions& params)
 {

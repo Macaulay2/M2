@@ -29,6 +29,10 @@ public:
 	}
 	/***
 		@param name Name of the variable, not null.
+	***/
+    VariableOptions(const std::string& name);
+	/***
+		@param name Name of the variable, not null.
 		@param thread True for thread local variable, false for global variable.
 		@param isProtected True if the variable should be protected from change, false otherwise.
 	***/

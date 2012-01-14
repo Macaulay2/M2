@@ -1,5 +1,5 @@
-#ifndef _INTERPLOCAL_H_
-#define _INTERPLOCAL_H_
+#pragma once
+#include <fstream>
 #include "typedefs.hpp"
 #include "../e/newdelete.hpp"
 #include "variableoptions.hpp"
@@ -483,6 +483,9 @@ protected:
 		Lookup count increment for binding process.
 	***/
 	int m_BindingLookupCountIncrement;
+	/***
+		File stream for trace mode.
+	 ***/
+	std::fstream m_TraceFile;
 };
 
-#endif
