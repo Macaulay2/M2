@@ -11,7 +11,6 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 libraryName = 'lapack'
 #Library specific declarations go here.
 setLibSpecificStageCommandArguments('all','all',libraryName,1, ['PREFIX=$SConsInstallPrefixPath','PLAT=','FORTRAN=gfortran','OPTS=-O2 -g','NOOPT=','LOADER=gfortran','RANLIB=ranlib','LOADOPTS=-L$SConsInstallPrefixPath/lib','TIMER=INT_ETIME','blaslib','lapack_install','lib'])
-setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
 def BuildLibrary(target,source,env):
    """
