@@ -42,7 +42,7 @@ state['linux-x86']['buildlibraries']=linuxBuildLibraries
 linuxVersions = ['4ti2-1.3.2.tar.gz','gfan0.4plus.tar.gz','Normaliz2.7.zip','boost_1_46_1.tar.gz','glpk-4.44.tar.gz','ntl-5.5.2.tar.gz',
                  'cdd+-077a.tar.gz','lapack-3.2.2.tgz','pari-2.5.0.tar.gz','cddlib-094f.tar.gz','libfac-3-1-3.tar.gz','factory-3-1-3.tar.gz',
                  'lrslib-042c.tar.gz','readline61-002','frobby_v0.8.2.tar.gz','mpfr-3.0.1.tar.gz','readline-6.1.tar.gz','gc-7.2alpha7-2011-07-25.tar.gz',
-                 'mpir-2.5.0.tar.bz2','gdbm-1.8.3.tar.gz','nauty24r2.tar.gz','libxml2-2.7.8.tar.gz']
+                 'mpir-2.4.0.tar.bz2','gdbm-1.8.3.tar.gz','nauty24r2.tar.gz','libxml2-2.7.8.tar.gz']
 state['linux-x86_64']['tarfiles']=linuxVersions
 state['linux-x86']['tarfiles']=linuxVersions
 
