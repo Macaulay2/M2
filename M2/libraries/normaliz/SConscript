@@ -9,6 +9,10 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 
 #set this to library name
 libraryName = 'normaliz'
+setLibSpecific('all','all',libraryName,'CompressedLib','Normaliz2.7.zip')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/normaliz'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'Dependencies',['boost','mpir'])
 #Library specific declarations go here.
 setLibSpecificStageCommandArguments('debug',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
 setLibSpecificStageCommandArguments('release',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O3 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
@@ -25,12 +29,12 @@ def BuildLibrary(target,source,env):
    untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
    buildpath = getState(env.mode,architecture,'buildpath')
    realpath = buildpath+packageName+'/'
-   try:
-      os.remove(realpath+'source/libnormaliz/libnormaliz.o')
-      print 'Removed libnormaliz.o\n'
-   except:
-      pass
    if(getLibSpecific(env.mode,architecture,libraryName,'stage0')):
+      try:
+         os.remove(realpath+'source/libnormaliz/libnormaliz.o')
+         print 'Removed libnormaliz.o\n'
+      except:
+         pass
       setLibSpecific(env.mode,architecture,libraryName,'stage1',True)
    else:
       return None

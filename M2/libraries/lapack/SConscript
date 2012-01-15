@@ -10,6 +10,10 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 #set this to library name
 libraryName = 'lapack'
 #Library specific declarations go here.
+setLibSpecific('all','all',libraryName,'CompressedLib','lapack-3.2.2.tgz')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/liblapack.a'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecificNumStages('all','all',libraryName,2)
 setLibSpecificStageCommandArguments('all','all',libraryName,1, ['PREFIX=$SConsInstallPrefixPath','PLAT=','FORTRAN=gfortran','OPTS=-O2 -g','NOOPT=','LOADER=gfortran','RANLIB=ranlib','LOADOPTS=-L$SConsInstallPrefixPath/lib','TIMER=INT_ETIME','blaslib','lapack_install','lib'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    

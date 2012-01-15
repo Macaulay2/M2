@@ -10,6 +10,11 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 #set this to library name
 libraryName = 'nauty'
 #Library specific declarations go here.
+setLibSpecific('all','all',libraryName,'CompressedLib','nauty24r2.tar.gz')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/listg'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'Dependencies',['mpir'])
+
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')

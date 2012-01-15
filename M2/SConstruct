@@ -333,15 +333,17 @@ def getLibSpecificNumStages(mode,architecture,libraryBaseName):
     """
     Return the number of stages for building a given library.  This defaults to 3.
     """
-    numStages =  getLibSpecific(mode,architecture,libraryBaseName,'numStages')
+    numStages = getLibSpecific(mode,architecture,libraryBaseName,'numStages')
     if(numStages is None):
         return 3
+    else:
+        return int(numStages)
 
 def setLibSpecificNumStages(mode,architecture,libraryBaseName,stages):
     """
     Set the number of library specific stages.  
     """
-    setLibSpecific(mode,architecture,libraryBaseName,'numstages',stages)
+    setLibSpecific(mode,architecture,libraryBaseName,'numStages',stages)
 
 def Glob( pattern = '*.*', dir = '.' ):
     import os, fnmatch
@@ -480,7 +482,7 @@ if(GetOption('disabledownload') is not None):
     state['enabledownload'] = False
 
 #Set the state based on if clean was requested.
-if(GetOption('clean')!=None):
+if(GetOption('clean')!=None or GetOption('deepcleanlib')!=None or GetOption('cleanlib')!=None):
     state['build']=False
     state['clean']=True
 #Detect current architecture to build under.
@@ -550,6 +552,7 @@ exportDict = {'state':state,
         'getLibSpecificStageCommandArguments':getLibSpecificStageCommandArguments,
         'getLibSpecificStageCommand':getLibSpecificStageCommand,
         'getLibSpecificEnv':getLibSpecificEnv,
+        'performLibSpecificTemplate':performLibSpecificTemplate,
         'Glob':Glob,
         }
 exportDict['exportDict']=exportDict

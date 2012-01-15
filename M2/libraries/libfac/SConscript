@@ -10,6 +10,11 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 #set this to library name
 libraryName = 'libfac'
 #Library specific declarations go here.
+setLibSpecific('all','all','libfac','downloadPath','ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac/')
+setLibSpecific('all','all',libraryName,'CompressedLib','libfac-3-1-3.tar.gz')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libfac.a'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'Dependencies',['factory'])
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
 setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CXXFLAGS','-g -O2')

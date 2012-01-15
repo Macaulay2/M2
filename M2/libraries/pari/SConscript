@@ -10,6 +10,12 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 #set this to library name
 libraryName = 'pari'
 #Library specific declarations go here.
+setLibSpecific('all','all','pari','downloadPath','http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk/')
+setLibSpecific('all','all',libraryName,'CompressedLib','pari-2.5.0.tar.gz')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libpari.a'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'Dependencies',['mpir'])
+setLibSpecificNumStages('all','all',libraryName,3)
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')

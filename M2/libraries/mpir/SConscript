@@ -1,51 +1,19 @@
-import os.path
-import shutil
-import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
-       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+Import('setLibSpecific','setState',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
-       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand')
+       'setLibSpecificStageCommand','buildBuilders')
 
 #set this to library name
 libraryName = 'mpir'
 #Library specific declarations go here.
+setLibSpecific('all','all',libraryName,'downloadPath','http://www.mpir.org/')
+setLibSpecific('all','all',libraryName,'CompressedLib','mpir-2.4.0.tar.bz2')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libmpir.a'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecificNumStages('all','all',libraryName,3)
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
 setLibSpecificConfigExport('all',['linux-x86'],libraryName,'ABI','32')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--enable-gmpcompat','--enable-cxx','--disable-shared','--prefix=$SConsInstallPrefixPath'])
-#This is broken on ubuntu 32 bit
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
-def BuildLibrary(target,source,env):
-   """
-   Build target for the library.
-   """
-   source = source[0].rstr()
-   sourceFile = os.path.split(source)[1]
-   packageName = extractPackageName(sourceFile)
-   cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   return None
-   
-
-def CleanLibrary(mode,directory,packageBaseName):
-   """
-   Actual function that gets called to process a clean library command
-   """
-   if(deepCleanLibrary(mode,architecture,libraryName)):
-      return True
-   if(cleanLibrary(mode,architecture,libraryName)):
-      return True   
-   return False
-
-for mode in state[architecture]['modes']:
-   if(getState(mode,architecture,'build')):
-      builder = Builder(action=BuildLibrary, single_source=1)
-      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-      if(state[architecture][mode].get('builders')==None):
-         setState(mode,architecture,'builders',{})
-      getState(mode,architecture,'builders')[libraryName]=builder
+buildBuilders(libraryName)

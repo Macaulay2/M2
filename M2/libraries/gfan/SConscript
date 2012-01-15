@@ -1,54 +1,19 @@
-import os.path
-import shutil
-import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
-       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+Import('setLibSpecific','setState',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
-       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand')
+       'setLibSpecificStageCommand','buildBuilders','state','architecture')
 
 #set this to library name
 libraryName = 'gfan'
 #Library specific declarations go here.
-setLibSpecificStageCommandArguments('all','all',libraryName,1,[ 'PREFIX=$SConsInstallPrefixPath','CCLINKER=g++ -L$SConsInstallPrefixPath/lib/', 'CC=gcc -I$SConsInstallPrefixPath/include/','CCC=g++ -I$SConsInstallPrefixPath/include/' ,'CDD_LINKOPTIONS=-lcddgmp'])
-setLibSpecificStageCommandArguments('all','all',libraryName,2,['PREFIX=$SConsInstallPrefixPath','install'])
+setLibSpecific('all','all',libraryName,'CompressedLib','gfan0.4plus.tar.gz')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/gfan'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'Dependencies',['cddlib'])
+setLibSpecificNumStages('all','all',libraryName,2)
+setLibSpecificStageCommand('all','all',libraryName,0,'make')
+setLibSpecificStageCommand('all','all',libraryName,1,'make')
+setLibSpecificStageCommandArguments('all','all',libraryName,0,[ 'PREFIX=$SConsInstallPrefixPath','CCLINKER=g++ -L$SConsInstallPrefixPath/lib/', 'CC=gcc -I$SConsInstallPrefixPath/include/','CCC=g++ -I$SConsInstallPrefixPath/include/' ,'CDD_LINKOPTIONS=-lcddgmp'])
+setLibSpecificStageCommandArguments('all','all',libraryName,1,['PREFIX=$SConsInstallPrefixPath','install'])
 setLibSpecific('all','all',libraryName,'patchfile','../../../libraries/gfan/patch-0.4plus')
-   
-def BuildLibrary(target,source,env):
-   """
-   Build target for the library.
-   """
-   source = source[0].rstr()
-   sourceFile = os.path.split(source)[1]
-   packageName = extractPackageName(sourceFile)
-   cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-   if(getLibSpecific(env.mode,architecture,libraryName,'stage0')):
-      setLibSpecific(env.mode,architecture,libraryName,'stage1',True)
-   else:
-      return None
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   if makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName):
-      buildpath = getState(env.mode,architecture,'buildpath')
-      realpath = buildpath+packageName+'/'
-   #install...
-   return None
-   
-
-def CleanLibrary(mode,directory,packageBaseName):
-   """
-   Actual function that gets called to process a clean library command
-   """
-   if(deepCleanLibrary(mode,architecture,libraryName)):
-      return True
-   if(cleanLibrary(mode,architecture,libraryName)):
-      return True   
-   return False
-
-for mode in state[architecture]['modes']:
-   if(getState(mode,architecture,'build')):
-      builder = Builder(action=BuildLibrary, single_source=1)
-      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-      if(state[architecture][mode].get('builders')==None):
-         setState(mode,architecture,'builders',{})
-      getState(mode,architecture,'builders')[libraryName]=builder
+ 
+buildBuilders(libraryName)  

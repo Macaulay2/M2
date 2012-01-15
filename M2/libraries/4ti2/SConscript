@@ -1,51 +1,20 @@
-import os.path
-import shutil
-import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
-       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+Import('setLibSpecific','setState',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
-       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand')
+       'setLibSpecificStageCommand','buildBuilders','state','architecture')
 
 #set this to library name
 libraryName = '4ti2'
 #Library specific declarations go here.
+setLibSpecific('all','all',libraryName,'CompressedLib','4ti2-1.3.2.tar.gz')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/lib4ti2gmp.a'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'Dependencies',['mpir','glpk'])
+setLibSpecificNumStages('all','all',libraryName,3)
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--prefix=$SConsInstallPrefixPath'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
-   
-def BuildLibrary(target,source,env):
-   """
-   Build target for the library.
-   """
-   source = source[0].rstr()
-   sourceFile = os.path.split(source)[1]
-   packageName = extractPackageName(sourceFile)
-   cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   return None
-   
 
-def CleanLibrary(mode,directory,packageBaseName):
-   """
-   Actual function that gets called to process a clean library command
-   """
-   if(deepCleanLibrary(mode,architecture,libraryName)):
-      return True
-   if(cleanLibrary(mode,architecture,libraryName)):
-      return True   
-   return False
-
-for mode in state[architecture]['modes']:
-   if(getState(mode,architecture,'build')):
-      builder = Builder(action=BuildLibrary, single_source=1)
-      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-      if(state[architecture][mode].get('builders')==None):
-         setState(mode,architecture,'builders',{})
-      getState(mode,architecture,'builders')[libraryName]=builder
+buildBuilders(libraryName)

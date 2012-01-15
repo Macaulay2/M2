@@ -8,68 +8,47 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob')
 
-setLibSpecific('all','all','libxml2','downloadPath','ftp://xmlsoft.org/libxml2/')
-setLibSpecific('all','all','boost','downloadPath','http://sourceforge.net/projects/boost/files/boost/1.46.1/')
-setLibSpecific('all','all','pari','downloadPath','http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk/')
-setLibSpecific('all','all','libfac','downloadPath','ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac/')
-setLibSpecific('all','all','factory','downloadPath','ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory/')
-setLibSpecific('all','all','mpfr','downloadPath','http://www.mpfr.org/mpfr-3.0.1/')
-setLibSpecific('all','all','mpir','downloadPath','http://www.mpir.org/')
-dependencies = {
-    'mpfr':'mpir',
-    'cddlib':'mpir',
-    'glpk':'mpir',
-    'gfan':'cddlib',
-    'nauty':'mpir',
-    '4ti2':['mpir','glpk'],
-    'cddplus':'cddlib',
-    'lrslib':'mpir',
-    'pari':'mpir',
-    'frobby':'mpir',
-    'normaliz':['boost','mpir'],
-    'sccfiles':['gc','gdbm'],
-    #serialize
-    'ntl':['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','cddplus','frobby','gfan','normaliz','boost','scc','libxml2'],
-    'factory':'ntl',
-    'libfac':'factory',
-    'dstart':['scc','libfac','pari']
-}
 #list of dependencies to build.
-buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','mpir','pari','ntl','factory','cddplus','frobby','gfan','libfac','normaliz','boost','libxml2'])
+buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','pari','ntl','factory','cddplus','frobby','gfan','libfac','normaliz','boost','libxml2'])
 linuxBuildLibraries = buildlibraries
 state['linux-x86_64']['buildlibraries']=linuxBuildLibraries
 state['linux-x86']['buildlibraries']=linuxBuildLibraries
-linuxVersions = ['4ti2-1.3.2.tar.gz','gfan0.4plus.tar.gz','Normaliz2.7.zip','boost_1_46_1.tar.gz','glpk-4.44.tar.gz','ntl-5.5.2.tar.gz',
-                 'cdd+-077a.tar.gz','lapack-3.2.2.tgz','pari-2.5.0.tar.gz','cddlib-094f.tar.gz','libfac-3-1-3.tar.gz','factory-3-1-3.tar.gz',
-                 'lrslib-042c.tar.gz','readline61-002','frobby_v0.8.2.tar.gz','mpfr-3.0.1.tar.gz','readline-6.1.tar.gz','gc-7.2alpha7-2011-07-25.tar.gz',
-                 'mpir-2.4.0.tar.bz2','gdbm-1.8.3.tar.gz','nauty24r2.tar.gz','libxml2-2.7.8.tar.gz']
-state['linux-x86_64']['tarfiles']=linuxVersions
-state['linux-x86']['tarfiles']=linuxVersions
 
-def downloadLibraries(architecture,mode):
+dependencies = {
+    'sccfiles':['gc','gdbm'],
+    'dstart':['scc','libfac','pari'],
+    'm2':list(buildlibraries),
+}
+
+def downloadLibrary(architecture,mode,library):
     from urllib2 import Request, urlopen, URLError, HTTPError
-    libraries = state[architecture]['tarfiles']
     try:
         os.makedirs('../'+state[architecture][mode]['tarpath'])
     except:
         None
-    for library in libraries:
-        filepath = '../'+state[architecture][mode]['tarpath']+library
-        absfilepath = os.path.abspath(filepath)
-        if not os.path.isfile(filepath):
-            if state['enabledownload']:
-                url = getLibSpecific(mode,architecture,extractPackageBaseName(library),'downloadPath')
-                if(url is None):
-                    url = 'http://www.math.uiuc.edu/Macaulay2/Extra/'
-                url = url + library
-                print 'Downloading: ' + absfilepath + ' from ' + url
-                req = Request(url)
-                f = urlopen(req)
-                localFile = open(absfilepath,'w')
-                localFile.write(f.read())
-                localFile.close()
-            else:
-                raise Exception("Unable to find library: " + library + " and downloading libraries is disabled.")
+    libraryFile = getLibSpecific(mode,architecture,library,'CompressedLib')
+    if libraryFile is None:
+        raise Exception("Compressed Lib Name is None for " + library)
+    filepath = '../'+state[architecture][mode]['tarpath'] + libraryFile
+    absfilepath = os.path.abspath(filepath)
+    if not os.path.isfile(filepath):
+        if state['enabledownload']:
+            url = getLibSpecific(mode,architecture,library,'downloadPath')
+            if(url is None):
+                url = 'http://www.math.uiuc.edu/Macaulay2/Extra/'
+            url = url + libraryFile
+            print 'Downloading: ' + absfilepath + ' from ' + url
+            req = Request(url)
+            f = urlopen(req)
+            localFile = open(absfilepath,'w')
+            localFile.write(f.read())
+            localFile.close()
+        else:
+            raise Exception("Unable to find library: " + library + " and downloading libraries is disabled.")    
+
+def downloadLibraries(architecture,mode):
+    for library in buildlibraries:
+        downloadLibrary(architecture,mode,library)
 
 def modeBuild(mode,architecture):
     """
@@ -88,22 +67,6 @@ def modeTarPath(mode,architecture):
     This function returns the tar path for the current mode.
     """
     return '../'+getState(mode,architecture,'tarpath')
-
-def modeBuildPackageSets(mode,architecture):
-    """
-    This function is responsible for building lists of packages to build.
-    It returns:
-    A set of packages present
-    A set of base packages present (defined to be the packages minus any extensions).
-    """
-    tarpath = modeTarPath(mode,architecture)
-    packages = set(Glob(pattern='*.tar.gz',dir=tarpath)+Glob(pattern='*.tar.bz2',dir=tarpath)+Glob(pattern='*.tgz',dir=tarpath)+Glob(pattern='*.zip',dir=tarpath))
-    packageBases = set()
-    for package in packages:
-        package = extractPackageName(package)
-        packageBases.add(package)
-    setState(mode,architecture,'packages',packages)
-    return packages, packageBases
     
 def modeBuildExistingPackages(mode,architecture):
     """
@@ -194,7 +157,7 @@ def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName
        print "Patching " + str(patchargs)
        patchp = subprocess.Popen(patchargs,cwd=realpath)
        if(patchp.wait()):
-           raise Exception("Unable to patch " + patch + " in " + realpath)
+           raise Exception("Unable to patch " + libraryBaseName + " " + libraryName + " in " + realpath)
        return True
    else:
        return False
@@ -225,6 +188,9 @@ def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseNa
    buildDirectory = getLibSpecific(mode,architecture,libraryBaseName,'builddirectory')
    if(buildDirectory):
        realpath = realpath+buildDirectory
+   stageoffset = getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)+'DirOffset')
+   if(stageoffset):
+       realpath = realpath + stageoffset
    if(diroffset):
        realpath = realpath+diroffset
    if(getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)) is True):
@@ -350,8 +316,12 @@ def modeImportSConscript(mode,packageBases):
                     'getLibSpecificStageCommandArguments':getLibSpecificStageCommandArguments,
                     'getLibSpecificStageCommand':getLibSpecificStageCommand,
                     'executeStageLibrary':executeStageLibrary,
+                    'buildBuilders':buildBuilders,
                     })
             importedSConscripts.add(package)
+            deps = getLibSpecific(mode,architecture,package,'Dependencies')
+            if deps:
+                dependencies[package]=deps
 
     
 def modeSpecific1(mode,architecture):
@@ -360,8 +330,6 @@ def modeSpecific1(mode,architecture):
     """
     if(getState(mode,architecture,'build')==False):
         return
-    print "Building " + mode + " on " + architecture
-    downloadLibraries(architecture,mode)
     try:
         libdirpath = os.path.abspath('../'+getState(mode,architecture,'prefixpath')+'lib/')
         os.makedirs(libdirpath)
@@ -372,7 +340,7 @@ def modeSpecific1(mode,architecture):
         os.makedirs(includedirpath)
     except OSError:
         None
-    packages,packageBases = modeBuildPackageSets(mode,architecture)
+    packageBases = state[architecture]['buildlibraries']
     existingPackages = modeBuildExistingPackages(mode,architecture)
     modeBuildEnvironments(mode,architecture)
     setState(mode,architecture,'packagebases',packageBases)
@@ -380,6 +348,7 @@ def modeSpecific1(mode,architecture):
 def modeSpecific2(mode,architecture):
     if(modeBuild(mode,architecture)):
         modeImportSConscript(mode,getState(mode,architecture,'packagebases'))
+    downloadLibraries(architecture,mode)
 
 def buildCandidates(mode,architecture):
     """
@@ -388,7 +357,7 @@ def buildCandidates(mode,architecture):
     """
     if(getState(mode,architecture,'build')==False):
         return
-    packages = getState(mode,architecture,'packages')
+    packages = [getLibSpecific(mode,architecture,library,'CompressedLib') for library in getState(mode,architecture,'packagebases')]
     existingPackages = getState(mode,architecture,'existingpackages')
     tarpath = "../"+getState(mode,architecture,'tarpath')
     doBuildLibraries = {}
@@ -403,6 +372,60 @@ def buildCandidates(mode,architecture):
                 doBuildLibraries[libraryBaseName]=package
     return doBuildLibraries
 
+def buildBuilders(libraryName):
+    """
+    Build build functions for the given library.
+    """
+    def BuildLibrary(target,source,env):
+        """
+        Build target for the library.
+        """
+        source = source[0].rstr()
+        sourceFile = os.path.split(source)[1]
+        packageName = extractPackageName(sourceFile)
+        cleaned = CleanLibrary(env.mode,architecture,libraryName)
+        if getLibSpecific(env.mode,architecture,libraryName,'DecompressLib') is True:
+            untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
+            numstages = getLibSpecificNumStages(env.mode,architecture,libraryName)
+            for i in range(0,numstages):
+                executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,i)
+            return None
+            
+            
+    def CleanLibrary(mode,directory,packageBaseName):
+        """
+        Actual function that gets called to process a clean library command
+        """
+        if(deepCleanLibrary(mode,architecture,libraryName)):
+            return True
+        if(cleanLibrary(mode,architecture,libraryName)):
+            return True   
+        return False
+
+    for mode in state[architecture]['modes']:
+        if(getState(mode,architecture,'build')):
+            builder = Builder(action=BuildLibrary, single_source=1)
+            getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
+            if(state[architecture][mode].get('builders')==None):
+                setState(mode,architecture,'builders',{})
+            getState(mode,architecture,'builders')[libraryName]=builder
+
+def createBuilders(mode,architecture,libraryBase,builders):
+    library = getLibSpecific(mode,architecture,libraryBase,'CompressedLib')
+    source = '../'+getState(mode,architecture,'tarpath')+library
+    builder = state[architecture][mode]['env'].__dict__['build_'+libraryBase](builddir+library,source)
+    builders[libraryBase] = builder
+    AlwaysBuild(builder)
+    setLibSpecific(mode,architecture,libraryBase,'stage0',True)
+    #recursively rebuild library dependencies.
+    for dlibrary,deps in dependencies.items():
+        if not dlibrary in state[architecture]['buildlibraries']:
+            continue
+        if libraryBase in deps:
+            if not builders.has_key(dlibrary):
+                createBuilders(mode,architecture,dlibrary,builders)
+    
+
 #Setup the various modes.
 for mode in state[architecture]['modes']:
     modeSpecific1(mode,architecture)
@@ -413,29 +436,44 @@ for mode in state[architecture]['modes']:
         continue
     builders = {}
     builders['dstart'] = getState(mode,architecture,'dstart')
-#    builders['dend'] = getState(mode,architecture,'dend')
     builders['scc'] = getState(mode,architecture,'scc')
     builders['sccfiles'] = getState(mode,architecture,'sccfiles')
+    builders['m2']=getState(mode,architecture,'m2')
     dbl = buildCandidates(mode,architecture)
     for libraryBase,library in dbl.items():
         libraryName = extractPackageName(library)
         builddir = '../'+getState(mode,architecture,'buildpath')
         source = '../'+getState(mode,architecture,'tarpath')+library
-        builder = state[architecture][mode]['env'].__dict__['build_'+libraryBase](builddir+library,source)
-        builders[libraryBase] = builder
-        AlwaysBuild(builder)
+        build = False
+        for f in getLibSpecific(mode,architecture,libraryBase,'InstallFiles'):
+            prefixpath = getState(mode,architecture,'prefixpath')
+            f = f.replace("$SConsInstallPrefixPath",os.path.abspath('../'+prefixpath))
+            if not os.path.exists(f):
+                build = True
+        if(getState(mode,architecture,'deepcleanlib',exception=False)==True or getLibSpecific(mode,architecture,libraryBase,'deepclean')==True):
+            build = True
+        elif(getState(mode,architecture,'cleanlib',exception=False)==True or getLibSpecific(mode,architecture,libraryBase,'clean')==True):
+            build = True
+        if build:
+            createBuilders(mode,architecture,libraryBase,builders)
+
     for target, tdependencies in dependencies.items():
+        if not builders.has_key(target):
+            continue
         btarget = builders[target]
         if(type(tdependencies) is list):
             if(type(btarget) is list):
                 for bltarget in btarget:
                     for dependency in tdependencies:
-                        Requires(bltarget,builders[dependency])
+                        if(builders.has_key(dependency)):
+                            Requires(bltarget,builders[dependency])
             else:
                 for dependency in tdependencies:
-                    Requires(btarget,builders[dependency])                
+                    if(builders.has_key(dependency)):
+                        Requires(btarget,builders[dependency])                
         else:
-            Requires(btarget,builders[tdependencies])
+            if(builders.has_key(tdependency)):
+                Requires(btarget,builders[tdependencies])
 
 
 

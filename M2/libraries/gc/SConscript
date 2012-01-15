@@ -1,16 +1,16 @@
-import os.path
-import shutil
-import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
-       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+Import('setLibSpecific','setState',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
-       'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand','executeStageLibrary')
+       'setLibSpecificStageCommand','buildBuilders')
 
 #set this to library name
 libraryName = 'gc'
 #Library specific declarations go here.
+setLibSpecific('all','all',libraryName,'CompressedLib','gc-7.2alpha7-2011-07-25.tar.gz')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libgc.a'])
+setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'tarfolder','gc-7.2alpha7')
+setLibSpecificNumStages('all','all',libraryName,6)
+
 setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
 setLibSpecificConfigExport('debug',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O0')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
@@ -30,40 +30,8 @@ setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64'],libraryNa
 setLibSpecificStageCommand('all',['linux-x86','linux-x86_64'],libraryName,3,'configure')
 setLibSpecificStageCommand('all',['linux-x86','linux-x86_64'],libraryName,4,'make')
 setLibSpecificStageCommand('all',['linux-x86','linux-x86_64'],libraryName,5,'make')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'stage3DirOffset','libatomic_ops/')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'stage4DirOffset','libatomic_ops/')
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'stage5DirOffset','libatomic_ops/')
 
-   
-def BuildLibrary(target,source,env):
-   """
-   Build target for the library.
-   """
-   source = source[0].rstr()
-   sourceFile = os.path.split(source)[1]
-   packageName = extractPackageName(sourceFile)
-   cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,3,'libatomic_ops/')
-   executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,4,'libatomic_ops/')
-   executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,5,'libatomic_ops/')
-   return None
-
-def CleanLibrary(mode,directory,packageBaseName):
-   """
-   Actual function that gets called to process a clean library command
-   """
-   if(deepCleanLibrary(mode,architecture,libraryName)):
-      return True
-   if(cleanLibrary(mode,architecture,libraryName)):
-      return True   
-   return False
-
-for mode in state[architecture]['modes']:
-   if(getState(mode,architecture,'build')):
-      builder = Builder(action=BuildLibrary, single_source=1)
-      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-      if(state[architecture][mode].get('builders')==None):
-         setState(mode,architecture,'builders',{})
-      getState(mode,architecture,'builders')[libraryName]=builder
-
+buildBuilders(libraryName)
