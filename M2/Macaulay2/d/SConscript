@@ -74,8 +74,7 @@ env['BUILDERS']['ddepbuilder']=ddepbuilder
 env['BUILDERS']['dbuilder']=dbuilder
 env['BUILDERS']['dtypesbuilder']=dtypesbuilder
 #setup D build type target.
-typecodesdb = '#'+os.path.abspath(buildpath+'typecode.db')
-dtb = env.dtypesbuilder([os.path.abspath('typecodes.h')],['#'+buildpath+'typecode.db'])
+dtb = env.dtypesbuilder(['typecodes.h'],['#'+buildpath+'typecode.db'])
 #Setup D dependency build targets.
 scc = getState(mode,architecture,'scc')
 for i in range(0,len(dfiles)):
