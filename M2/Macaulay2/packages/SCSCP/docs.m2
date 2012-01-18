@@ -103,7 +103,9 @@ document {
 	used without their first argument if no confusion can arise about the SCSCP server where the 
 	computation should take place.",
 	EXAMPLE { PRE get (currentFileDirectory|"docinput/gappol.out") },
-    "We create matrices in Macaulay2 and compute the order of the group they generate in GAP",
+    "We create matrices in Macaulay2 and compute the order of the group they generate in GAP.
+    Note that you may have to set 'SCSCPserverAcceptsOnlyTransientCD := false;' in your GAP configuration
+    (particularly scscp/config.g) in order for this example to work.",
 	EXAMPLE { PRE get (currentFileDirectory|"docinput/gapmats.out") },
 	SeeAlso => { newConnection, (symbol SPACE, Manipulator, SCSCPConnection), (symbol SPACE, SCSCPConnection, Thing) }	
 
