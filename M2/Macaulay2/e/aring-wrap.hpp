@@ -7,6 +7,9 @@
 
 namespace M2 {
 
+/**
+\ingroup rings
+*/
   template <class RingType>
   class RElementWrap : public RElement
   {
@@ -24,6 +27,9 @@ namespace M2 {
     element_type val_;
   };
 
+/**
+\ingroup rings
+*/
   template <class RingType>     // RingType should inherit from RingInterface
   class ARingWrap : public ARing
   {
@@ -41,12 +47,12 @@ namespace M2 {
 
     virtual void init_set(RElement &a, long val) const {
       R_.init_set( RELEM(RingType, a),
-                   val );
+                    val ); 
     }
 
     virtual void add_to(RElement &a, const RElement &b) const {
       R_.add_to( RELEM(RingType, a),
-                 constRELEM(RingType, b) );
+                constRELEM(RingType, b) );
     }
 
   private:

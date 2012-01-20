@@ -5,6 +5,9 @@
 
 #include "ZZ.hpp"
 
+/**
+    @ingroup rings
+*/
 class QQ : public Ring
 {
   int _elem_size;

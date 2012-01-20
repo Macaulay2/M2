@@ -11,12 +11,15 @@ union ring_elem;
 
 class MutableMatrix;
 
-template<typename CoeffRing>
+template<typename ACoeffRing>
 class SMat : public our_new_delete
 {
+public:
+  typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
   typedef typename CoeffRing::ring_type RingType;
 
+private:
   struct sparsevec : public our_new_delete
   {
     sparsevec *next;
@@ -24,44 +27,6 @@ class SMat : public our_new_delete
     elem coeff;
   };
 
-  const RingType *R; // To interface to the outside world
-  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
-  int nrows_;
-  int ncols_;
-  sparsevec **columns_; // array has length nrows*ncols
-                // columns stored one after another
-
-  ////////////////////////
-  // sparsevec routines //
-  ////////////////////////
-  sparsevec *vec_new() const;
-  void vec_remove_node(sparsevec *&v) const;
-  void vec_remove(sparsevec *&v) const;
-  sparsevec *vec_copy(const sparsevec *v) const;
-  bool vec_get_entry(const sparsevec *v, int r, elem &result) const;
-  void vec_set_entry(sparsevec *&v, int r, const elem &result) const;
-  void vec_interchange_rows(sparsevec *&v, int r1, int r2) const;
-  void vec_scale_row(sparsevec *&v, int r, const elem &a) const;
-  void vec_scale(sparsevec *&v, const elem &a) const;
-  void vec_divide_row(sparsevec *&v, int r, const elem &a) const;
-  void vec_divide(sparsevec *&v, const elem &a) const;
-  void vec_add_to(sparsevec *&v, sparsevec *&w) const;
-    // v := v+w, w := 0
-  void vec_row_op(sparsevec *&v, int r1, const elem &a, int r2) const;
-    // row(r1 in v) := row(r1 in v) + a * row(r2 in v)
-  void vec_row_op2(sparsevec *&v,
-                   int r1, int r2,
-                   const elem &a1, const elem &a2,
-                   const elem &b1, const elem &b2) const;
-    // row(r1 in v) := a1 * row(r1 in v) + a2 * row(r2 in v)
-    // row(r2 in v) := b1 * row(r1 in v) + b2 * row(r2 in v) (RHS refers to previous values)
-  void vec_column_op(sparsevec *&v, const elem &a, sparsevec *w) const;
-    // v := v + a*w
-  void vec_dot_product(sparsevec *v, sparsevec *w, elem &result) const;
-  void vec_sort(sparsevec *&v) const;
-  void vec_permute(sparsevec *&v, int start_row, M2_arrayint perm) const;
-  void vec_insert_rows(sparsevec *&v, int i, int n_to_add) const;
-  void vec_delete_rows(sparsevec *&v, int i, int j) const;
 public:
   SMat():R(0), coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
 
@@ -214,6 +179,46 @@ public:
   // return f*this.  return NULL of sizes or types do not match.
 
   SMat * negate() const;
+
+private:
+  const RingType *R; // To interface to the outside world
+  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
+  int nrows_;
+  int ncols_;
+  sparsevec **columns_; // array has length nrows*ncols
+                // columns stored one after another
+
+  ////////////////////////
+  // sparsevec routines //
+  ////////////////////////
+  sparsevec *vec_new() const;
+  void vec_remove_node(sparsevec *&v) const;
+  void vec_remove(sparsevec *&v) const;
+  sparsevec *vec_copy(const sparsevec *v) const;
+  bool vec_get_entry(const sparsevec *v, int r, elem &result) const;
+  void vec_set_entry(sparsevec *&v, int r, const elem &result) const;
+  void vec_interchange_rows(sparsevec *&v, int r1, int r2) const;
+  void vec_scale_row(sparsevec *&v, int r, const elem &a) const;
+  void vec_scale(sparsevec *&v, const elem &a) const;
+  void vec_divide_row(sparsevec *&v, int r, const elem &a) const;
+  void vec_divide(sparsevec *&v, const elem &a) const;
+  void vec_add_to(sparsevec *&v, sparsevec *&w) const;
+    // v := v+w, w := 0
+  void vec_row_op(sparsevec *&v, int r1, const elem &a, int r2) const;
+    // row(r1 in v) := row(r1 in v) + a * row(r2 in v)
+  void vec_row_op2(sparsevec *&v, 
+		   int r1, int r2, 
+		   const elem &a1, const elem &a2,
+		   const elem &b1, const elem &b2) const;
+    // row(r1 in v) := a1 * row(r1 in v) + a2 * row(r2 in v)
+    // row(r2 in v) := b1 * row(r1 in v) + b2 * row(r2 in v) (RHS refers to previous values)
+  void vec_column_op(sparsevec *&v, const elem &a, sparsevec *w) const;
+    // v := v + a*w
+  void vec_dot_product(sparsevec *v, sparsevec *w, elem &result) const;
+  void vec_sort(sparsevec *&v) const;
+  void vec_permute(sparsevec *&v, int start_row, M2_arrayint perm) const;
+  void vec_insert_rows(sparsevec *&v, int i, int n_to_add) const;
+  void vec_delete_rows(sparsevec *&v, int i, int j) const;
 };
 
 #endif

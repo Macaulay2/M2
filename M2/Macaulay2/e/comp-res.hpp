@@ -6,6 +6,12 @@
 #include "comp.hpp"
 class buffer;
 
+/**
+    @ingroup res
+
+    @brief Base class for free resolution computation classes.
+*/
+
 class ResolutionComputation : public Computation
 // This is the base type for all resolution computations
 {

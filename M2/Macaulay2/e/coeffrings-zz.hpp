@@ -8,6 +8,9 @@
 #include "ZZ.hpp"
 #include "ntl-interface.hpp"
 
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingZZ_NTL : public our_new_delete
 {
 public:

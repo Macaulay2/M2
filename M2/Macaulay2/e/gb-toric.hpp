@@ -245,6 +245,11 @@ public:
 #define GB_FLAG_IS_NONDEGENERATE 2
 #define GB_FLAG_BIGCELL 4
 
+/**
+    @ingroup gb
+
+    @brief Non-functional.
+*/
 class binomialGB_comp : public GBComputation
 {
   binomial_ring *R;

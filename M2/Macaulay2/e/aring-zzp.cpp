@@ -68,7 +68,8 @@ namespace M2 {
                                bool p_parens) const
   {
     int n = exp_table[a];
-    if (n < 0)
+    o << "me.";
+    if (n < 0) 
       {
         o << '-';
         n = -n;

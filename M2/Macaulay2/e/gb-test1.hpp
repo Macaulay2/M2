@@ -22,6 +22,11 @@ const int ELEMB_IN_RING = 1;
 const int ELEMB_MINGEN = 2;
 const int ELEMB_MINGB = 4;
 
+/**
+    @ingroup gb
+
+    @brief A modification of the default algorithm to try to speed it up in inhomogeneous cases.
+*/
 class gbB : public GBComputation {
 public:
   typedef int gbelem_type;

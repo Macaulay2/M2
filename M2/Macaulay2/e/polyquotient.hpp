@@ -7,6 +7,9 @@
 #include "monideal.hpp"
 #include "qring.hpp"
 
+/**
+ * \ingroup polynomialrings
+ */
 class PolyRingQuotient : public PolyRingFlat
 {
   friend class PolynomialRing;

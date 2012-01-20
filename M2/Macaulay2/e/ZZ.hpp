@@ -13,6 +13,9 @@ class CoefficientRingZZ_NTL;
 extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i) { return mpz_cmp_si(x,i); }
 extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j) { return mpq_cmp_si(x,i,j); }
 
+/**
+    @ingroup rings
+*/
 class RingZZ : public Ring
 {
   friend class CoefficientRingZZ_NTL;
@@ -41,6 +44,7 @@ public:
   const RingZZ * cast_to_RingZZ() const { return this; }
 
   CoefficientRingZZ_NTL * get_CoeffRing() const { return coeffR; }
+  CoefficientRingZZ_NTL * get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
 
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }

@@ -2,6 +2,7 @@
 
 #include "coeffrings.hpp"
 #include "ZZp.hpp"
+#include "aring-gf.hpp"
 #include "dmat.hpp"
 #include "mat.hpp"
 #include "mpfr.h"
@@ -11,10 +12,12 @@
 #endif
 #include <iostream>
 
+#include "aring-zzp.hpp"
+
 template<typename CoeffRing>
 DMat<CoeffRing>::DMat(const RingType *R0, int nrows, int ncols)
   : R(R0),
-    coeffR(R0->get_CoeffRing()),
+    coeffR(R0->get_ARing()),
     nrows_(nrows),
     ncols_(ncols)
 {
@@ -796,8 +799,11 @@ template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack
     }
 } */
 
+
+//#include "aring-gf.hpp"
 template class DMat<CoefficientRingZZ_NTL>;
-template class DMat<CoefficientRingZZp>;
+template class DMat<M2::ARingZZp>;
+//template class DMat<M2::ARingGF>;
 template class DMat<CoefficientRingRRR>;
 template class DMat<CoefficientRingCCC>;
 template class DMat<CoefficientRingR>;

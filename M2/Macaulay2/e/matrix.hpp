@@ -10,6 +10,9 @@
 #include <vector>
 class MatrixConstructor;
 
+/**
+ * \ingroup matrices
+ */
 class Matrix : public object
 {
   FreeModule *_rows;

@@ -49,6 +49,11 @@ struct hilb_step : public our_new_delete
   array<MonomialIdeal *> monids;        // The (partitoned) array of monomial ideals
 };
 
+/**
+    @ingroup hilb
+
+    @brief Computation of Hilbert functions
+*/
 class hilb_comp : public mutable_object
 {
   const PolynomialRing *S;              // This is the base ring of the monomial ideal

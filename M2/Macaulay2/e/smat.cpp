@@ -5,6 +5,8 @@
 #include "smat.hpp"
 #include "mat.hpp"
 
+#include "aring-zzp.hpp"
+
 //////////////////////////
 // sparsevec operations //
 //////////////////////////
@@ -506,7 +508,7 @@ void SMat<CoeffRing>::vec_delete_rows(sparsevec *&v, int i, int j) const
 template<typename CoeffRing>
 SMat<CoeffRing>::SMat(const RingType *R0, int nrows, int ncols)
   : R(R0),
-    coeffR(R0->get_CoeffRing()),
+    coeffR(R0->get_ARing()),
     nrows_(nrows),
     ncols_(ncols)
 {
@@ -953,7 +955,7 @@ M2_arrayint columnEchelonForm(SMat<CoeffRing> *A)
 }
 
 template class SMat<CoefficientRingZZ_NTL>;
-template class SMat<CoefficientRingZZp>;
+template class SMat<M2::ARingZZp>;
 template class SMat<CoefficientRingRRR>;
 template class SMat<CoefficientRingCCC>;
 template class SMat<CoefficientRingR>;

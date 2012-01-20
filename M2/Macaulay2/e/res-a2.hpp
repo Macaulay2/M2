@@ -241,6 +241,13 @@ public:
   void stats() const;
 };
 
+/**
+    @ingroup res
+
+    @brief One of the Resolution computations, based on computing step by step.
+    
+    Induced (Schreyer) orders are used to speed up computation.
+*/
 class gbres_comp : public ResolutionComputation
 {
 private:

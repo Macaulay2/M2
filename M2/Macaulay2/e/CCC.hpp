@@ -8,6 +8,10 @@
 #include "ring.hpp"
 
 class CoefficientRingCCC;
+
+/**
+    @ingroup rings
+*/
 class CCC : public Ring
 {
   unsigned long precision;
@@ -31,6 +35,8 @@ public:
   const CCC * cast_to_CCC() const { return this; }
 
   CoefficientRingCCC *get_CoeffRing() const { return coeffR; }
+  CoefficientRingCCC *get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
+  
   unsigned long get_precision() const { return precision; }
 
   // should there be a complex conjugation function?

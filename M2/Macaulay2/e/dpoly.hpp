@@ -19,6 +19,10 @@ typedef int * exponents; // used only in add_term
 
 typedef struct poly_struct * poly;
 typedef const struct poly_struct * const_poly;
+
+/**
+ * \ingroup polynomialrings
+ */
 struct poly_struct : public our_new_delete {
   unsigned long deg;
   unsigned long len;
@@ -28,6 +32,9 @@ struct poly_struct : public our_new_delete {
   } arr;
 };
 
+/**
+ * \ingroup polynomialrings
+ */
 class DPoly {
   friend class DPolyTraverser;
   int nvars;
@@ -152,6 +159,10 @@ public:
   DPoly(long p, int nvars0, const_poly *extensions=0);
 };
 
+
+/**
+ * \ingroup polynomialrings
+ */
 class DRing : public our_new_delete
 {
   int level;
@@ -312,6 +323,9 @@ public:
   void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
 };
 
+/**
+ * \ingroup polynomialrings
+ */
 class DPolyTraverser : public our_new_delete
 {
   const DPoly *D;

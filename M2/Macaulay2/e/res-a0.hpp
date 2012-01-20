@@ -84,6 +84,11 @@ struct res2_level : public our_new_delete
   res2_level() : pairs(NULL), npairs(0), nleft(0), nminimal(0) {}
 };
 
+/**
+    @ingroup res
+
+    @brief One of the Resolution computations, based on Schreyer and Lascala.
+*/
 class res2_comp : public ResolutionComputation
 {
   // Base ring and input

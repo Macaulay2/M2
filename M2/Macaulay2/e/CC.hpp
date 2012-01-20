@@ -7,6 +7,9 @@
 
 class CoefficientRingCC;
 
+/**
+    @ingroup rings
+*/
 class CC : public Ring
 // Elements of this ring are two real numbers: 'double's representing real and imaginary parts
 {

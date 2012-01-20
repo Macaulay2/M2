@@ -8,6 +8,9 @@
 #include "ZZ.hpp"
 
 class CoefficientRingRRR;
+/**
+    @ingroup rings
+*/
 class RRR : public Ring
 {
   unsigned long precision;
@@ -29,6 +32,8 @@ public:
   const RRR * cast_to_RRR() const { return this; }
 
   CoefficientRingRRR *get_CoeffRing() const { return coeffR; }
+  CoefficientRingRRR *get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
+  
   unsigned long get_precision() const { return precision; }
 
   bool is_greater(const ring_elem a, const ring_elem b) const;

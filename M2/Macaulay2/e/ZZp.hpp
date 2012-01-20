@@ -4,7 +4,12 @@
 
 #include "ring.hpp"
 #include "coeffrings.hpp"
-
+namespace M2 {
+  class ARingZZp;
+};
+/**
+    @ingroup rings
+*/
 class Z_mod : public Ring
 {
   //int P; // this is defined in class Ring
@@ -19,6 +24,7 @@ class Z_mod : public Ring
   int int_to_exp(int a) const;
 
   CoefficientRingZZp *coeffR;
+  M2::ARingZZp *aringZZp;
 protected:
   Z_mod() {}
   virtual ~Z_mod() {}
@@ -30,6 +36,8 @@ public:
   const Z_mod * cast_to_Z_mod() const { return this; }
 
   CoefficientRingZZp * get_CoeffRing() const { return coeffR; }
+  M2::ARingZZp * get_ARing() const { return aringZZp; }
+  
   virtual int coerce_to_int(ring_elem a) const;
   virtual int discrete_log(ring_elem a) const; // returns -1 if a is 0
 

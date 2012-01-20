@@ -5,6 +5,9 @@
 #include "engine.h"
 #include "ring.hpp"
 
+/**
+ * \ingroup matrices
+ */
 class MatrixConstructor
 {
   const Ring *R;

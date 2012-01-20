@@ -4,6 +4,9 @@
 
 #include "relem.hpp"
 
+/**
+    @ingroup rings
+*/
 class GF : public Ring
 {
   //int P; // this is defined in class Ring

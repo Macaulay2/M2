@@ -6,6 +6,11 @@
 #include "comp-gb.hpp"
 #include "reducedgb.hpp"
 
+/**
+    @ingroup gb
+
+    @brief declared Groebner bases.
+*/
 class GBDeclared : public GBComputation
 // This contains a GBComputation, which can be changed.
 // For example, we can start with a computation, and then

@@ -6,6 +6,11 @@
 #include "reducedgb-field.hpp"
 class GBWeight;
 
+/**
+    @ingroup reducedgb
+
+    @brief Computation of a reduced GB w.r.t. a local order, over a field
+*/
 class ReducedGB_Field_Local : public ReducedGB_Field
 {
   friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,

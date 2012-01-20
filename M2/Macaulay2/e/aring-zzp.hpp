@@ -5,8 +5,14 @@
 
 #include "aring.hpp"
 #include "buffer.hpp"
+#include "ringelem.hpp"
+
+class Z_mod;
 
 namespace M2 {
+/**
+\ingroup rings
+*/
   class ARingZZp : RingInterface
   {
     // Integers mod p, implemented as
@@ -21,6 +27,7 @@ namespace M2 {
 
   public:
     static const RingID ringID = ring_ZZp;
+    typedef Z_mod ring_type;
     typedef int ElementType;
 
     typedef int elem;
@@ -45,6 +52,13 @@ namespace M2 {
 
     void text_out(buffer &o) const { o << "AZZ/" << p; }
 
+    /////////////////////////////////////////////////////////
+    // Routines to help in switch from coeffrings to aring //
+    // these will be renamed or go away (hopefully) /////////
+    /////////////////////////////////////////////////////////
+    void init_set(elem &result, elem a) const { result = a; }
+    void set(elem &result, elem a) const { result = a; }
+
     /////////////////////////////////
     // ElementType informational ////
     /////////////////////////////////
@@ -59,6 +73,32 @@ namespace M2 {
       if (a < b) return -1;
       if (a > b) return 1;
       return 0;
+    }
+
+    ////////////////////////////
+    // to/from ringelem ////////
+    ////////////////////////////
+    // These simply repackage the element as either a ringelem or an 'ElementType'.
+    // No reinitialization is done.
+    // Do not take the same element and store it as two different ring_elem's!!
+    void to_ring_elem(ring_elem &result, const ElementType &a) const
+    {
+      if (a == 0) 
+	result.int_val = p1;
+      else if (a == p1) 
+	result.int_val = 0;
+      else
+	result.int_val = a;
+    }
+
+    void from_ring_elem(ElementType &result, const ring_elem &a) const
+    {
+      if (a.int_val == 0)
+	result = p1;
+      else if (a.int_val == p1)
+	result = 0;
+      else
+	result = a.int_val;
     }
 
     // 'get' functions

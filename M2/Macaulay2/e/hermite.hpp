@@ -17,6 +17,11 @@ struct hm_elem : public our_new_delete
   vec fsyz;
 };
 
+/**
+    @ingroup gb
+
+    @brief Slow Hermite normal form computation over ZZ.  Replace.
+*/
 class HermiteComputation : public GBComputation
 {
 private:

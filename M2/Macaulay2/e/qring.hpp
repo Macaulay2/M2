@@ -15,6 +15,10 @@ class MonomialTableZZ;
 class gbvector;
 class GBRing;
 
+
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo : public our_new_delete
 {
   VECTOR(Nterm *) quotient_ideal;
@@ -57,6 +61,9 @@ public:
   // Each id is an index into quotient_ideal_
 };
 
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_field : public QRingInfo
 {
 protected:
@@ -75,6 +82,9 @@ public:
   // Each id is an index into quotient_ideal_
 };
 
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_field_basic : public QRingInfo_field
 {
   void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
@@ -88,7 +98,9 @@ public:
   void gbvector_normal_form(const FreeModule *F, gbvector *&f) const;
 };
 
-
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_field_QQ : public QRingInfo_field
 {
   void reduce_lead_term_QQ(Nterm * &f, const Nterm * g) const;
@@ -104,6 +116,9 @@ public:
   void gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const;
 };
 
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_ZZ : public QRingInfo
 {
   MonomialTableZZ *ringtableZZ;

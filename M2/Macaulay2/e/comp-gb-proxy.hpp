@@ -5,6 +5,11 @@
 
 #include "comp-gb.hpp"
 
+/**
+    @ingroup gb
+
+    @brief handle to a GB.  Should be expunged, as full functionality isn't used.
+*/
 class GBProxy : public GBComputation
 // This contains a GBComputation, which can be changed.
 // For example, we can start with a computation, and then

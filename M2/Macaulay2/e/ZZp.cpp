@@ -7,6 +7,8 @@
 #include "ZZ.hpp"
 #include "gbring.hpp"
 
+#include "aring-zzp.hpp"
+
 extern RingZZ *globalZZ;
 
 bool Z_mod::initialize_Z_mod(int p)
@@ -52,6 +54,8 @@ bool Z_mod::initialize_Z_mod(int p)
   minus_oneV = from_int(-1);
 
   coeffR = new CoefficientRingZZp(P,_log_table, _exp_table);
+  aringZZp = new M2::ARingZZp(P); // WARNING: this uses that the primitive element is the SAME as computed above!!
+    // Remove this warning once Z_mod is not in existence any longer.
   return true;
 }
 

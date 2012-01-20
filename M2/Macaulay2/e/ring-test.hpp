@@ -24,6 +24,7 @@ namespace M2 {
     ring_ZZp,
     ring_logZZp,
     ring_GF,
+     ring_FFPACK,
     ring_RRR,
     ring_CCC,
     ring_top = 8 // used to determine the number of ring types
@@ -82,6 +83,20 @@ namespace M2 {
     void add_to(ElementType &a, const ElementType &b) const { a += b; }
   };
 
+   class RingFFPACK : RingInterface
+  {
+  public:
+    static const RingID ringID = ring_FFPACK;
+    typedef unsigned int ElementType;
+
+    RingFFPACK(int p, int n) {}
+
+    void initialize(unsigned long charac);
+
+    void init_set(ElementType &a, long val) const { a = val; }
+    void add_to(ElementType &a, const ElementType &b) const { a += b; }
+  };
+  
   // ring-rr.hpp
   class RingRRR : RingInterface
   {

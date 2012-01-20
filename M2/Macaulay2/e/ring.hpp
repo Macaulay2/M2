@@ -41,6 +41,13 @@ class SumCollector;
 
 class ARing;
 
+/**
+    @ingroup rings
+
+    @brief xxx
+    xxx
+    xxx
+*/
 class Ring : public mutable_object
 {
 protected:
@@ -383,8 +390,6 @@ public:
   void negate_vec_to(vec &v) const; // v <- -v.
   void add_vec_to(vec &v, vec &w) const; // v <- v+w, w is set to 0.
   void subtract_vec_to(vec &v, vec &w) const; // v <- v-w, w is set to 0.
-  void interchange_rows(vec &v, int i, int j) const;
-  void vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const;
 
   vec mult_vec_matrix(const Matrix *m,
                       vec v,
@@ -397,10 +402,6 @@ public:
   vec tensor(const FreeModule *F, vec v,
              const FreeModule *G, vec w) const;
 
-
-  void row2by2(vec &, int r1, int r2,
-               ring_elem a1, ring_elem a2,
-               ring_elem b1, ring_elem b2) const;
 
   void divide_vec_to(vec &v, const ring_elem a) const;
   void divide_row(vec &v, int r, const ring_elem a) const;

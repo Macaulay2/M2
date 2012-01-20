@@ -5,6 +5,11 @@
 
 #include "reducedgb.hpp"
 
+/**
+    @ingroup reducedgb
+
+    @brief Computation of a reduced GB w.r.t. a term order, over a field
+*/
 class ReducedGB_Field : public ReducedGB
 {
   friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,

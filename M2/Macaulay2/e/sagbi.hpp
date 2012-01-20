@@ -6,6 +6,12 @@
 #include "matrix.hpp"
 #include "comp-gb.hpp"
 
+/**
+    @ingroup comp
+
+    @brief Helper routines for computing Sagbi bases.  Not currently functional?
+*/
+
 class sagbi
 {
 public:

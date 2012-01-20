@@ -22,7 +22,6 @@ public:
   const Ring * get_ring  ()             const { return R; }
 
   // ring arithmetic
-  int          int_of() const { return R->coerce_to_int(val); }
 
   bool is_zero() const;
   bool is_equal(const RingElement &b) const;

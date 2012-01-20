@@ -6,6 +6,10 @@
 #include "engine.h"
 #include "dmat.hpp"
 
+
+/**
+    @ingroup matrices
+*/
 template <typename CoeffRing>
 class DMatLU
 {

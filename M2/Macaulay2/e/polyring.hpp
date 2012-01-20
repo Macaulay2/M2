@@ -31,6 +31,9 @@ class GBComputation;
 #include "ring.hpp"
 #include "qring.hpp"
 
+/**
+ * \ingroup polynomialrings
+ */
 class PolynomialRing : public Ring
 {
   bool is_graded_;
@@ -334,11 +337,17 @@ public:
   // is ignored).
 };
 
+/**
+ * \ingroup polynomialrings
+ */
 class PolyFrac : public PolynomialRing
 // The class of polynomial rings implemented as (numer,denom)
 {
 };
 
+/**
+ * \ingroup polynomialrings
+ */
 class PolyRingFlat : public PolynomialRing
 // The class of polynomial rings implemented as a pointer (single value).
 {

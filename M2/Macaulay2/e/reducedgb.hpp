@@ -11,6 +11,13 @@
 #include "gbweight.hpp"
 #include "polyring.hpp"
 
+/**
+    @ingroup reducedgb
+
+    @brief Base class for reduced Groebner basis computation.
+    
+    These classes take a Groebner basis, and compute a corresponding minimal Groebner basis.
+*/
 class ReducedGB : public GBComputation
 {
 protected:

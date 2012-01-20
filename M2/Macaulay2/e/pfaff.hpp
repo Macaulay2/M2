@@ -9,6 +9,12 @@
 
 class MatrixConstructor;
 
+/**
+    @ingroup comp
+
+    @brief Computation of pfaffians of a skew symmetric matrix.
+*/
+
 class PfaffianComputation : public our_new_delete
 {
   const Ring *R;

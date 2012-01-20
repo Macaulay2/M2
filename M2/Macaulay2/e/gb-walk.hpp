@@ -7,6 +7,12 @@
 #include "polyring.hpp"
 #include "reducedgb-marked.hpp"
 
+/**
+    @ingroup gb
+
+    @brief The generic Groebner walk algorithm.  Not yet working?
+*/
+
 class GBWalker : public GBComputation {
   const GBRing *R;
   const FreeModule *F; // The free module containing the elements of the GB

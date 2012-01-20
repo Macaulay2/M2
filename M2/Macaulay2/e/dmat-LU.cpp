@@ -595,9 +595,10 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
 
 
 #include "coeffrings.hpp"
+#include "aring-zzp.hpp"
 template class DMatLU<CoefficientRingRRR>;
 template class DMatLU<CoefficientRingCCC>;
-template class DMatLU<CoefficientRingZZp>;
+template class DMatLU<M2::ARingZZp>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

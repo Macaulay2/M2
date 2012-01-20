@@ -18,6 +18,12 @@ public:
   long offset();
 };
 
+/**
+    @ingroup gb
+
+    @brief Unfinished code.  Meant to handle tracing of a GB from ZZ/p to QQ.
+*/
+
 class GBTrace : public newdelete
 {
   // Commands:

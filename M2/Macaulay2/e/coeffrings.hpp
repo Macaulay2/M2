@@ -7,6 +7,9 @@ class Z_mod;
 #include "ringelem.hpp"
 #include "ZZ.hpp"
 
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingZZpLog
 {
   // Integers mod p, implemented as
@@ -151,6 +154,10 @@ public:
   }
 };
 
+
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingZZp : public our_new_delete
 {
   int p;
@@ -280,7 +287,13 @@ public:
 };
 
 
+
+
+
 #include "RRR.hpp"
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingRRR : public our_new_delete
 {
 public:
@@ -332,6 +345,9 @@ public:
 };
 
 #include "RR.hpp"
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingRR : public our_new_delete
 {
 public:
@@ -449,7 +465,9 @@ public:
 
 #include "complex.h"
 #include "CCC.hpp"
-
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingCCC : public our_new_delete
 {
 public:
@@ -510,6 +528,9 @@ public:
   }
 };
 
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingR : public our_new_delete
 {
   const Ring *R;

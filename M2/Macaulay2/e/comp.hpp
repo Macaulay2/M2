@@ -21,6 +21,12 @@ class EngineResolutionComputation;
 class buffer;
 class GBComputation;
 class GBBComputation;
+
+/**
+    @ingroup gb
+
+    @brief Non-functional code.
+*/
 class GBBComputation : public mutable_object
 // This is the base type for all Groebner basis and syzygy computations
 {

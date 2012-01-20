@@ -22,6 +22,11 @@ const int GB_COMP_AUTO_REDUCE      = 5;
 const int GB_COMP_NEWPAIRS         = 6;
 const int GB_COMP_DONE             = 7;
 
+/**
+    @ingroup gb
+
+    @brief A Groebner basis computation class for homogeneous input modules.
+*/
 class GB_comp : public GBComputation
 {
 private:

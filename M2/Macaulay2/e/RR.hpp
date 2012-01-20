@@ -6,7 +6,9 @@
 #include "ring.hpp"
 
 class CoefficientRingRR;
-
+/**
+    @ingroup rings
+*/
 class RingRR : public Ring
 // Elements of this ring are real numbers: 'double's
 {

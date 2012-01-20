@@ -15,6 +15,14 @@ struct gm_elem : public our_new_delete
   vec fsyz;
 };
 
+/**
+    @ingroup gb
+
+    @brief Gaussian elimination class.  To be rewritten.
+    
+    This class provides very slow Gaussian elimination functionality, and also only over
+    (exact) fields.
+*/
 class GaussElimComputation : public GBComputation
 {
 private:

@@ -16,6 +16,11 @@ const int ELEM_IN_RING = 1;
 const int ELEM_MINGEN = 2;
 const int ELEM_MINGB = 4;
 
+/**
+    @ingroup gb
+
+    @brief The default Groebner basis computation class.
+*/
 class gbA : public GBComputation {
 public:
   typedef int gbelem_type;

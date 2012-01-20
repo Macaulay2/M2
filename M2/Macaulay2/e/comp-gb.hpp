@@ -19,7 +19,11 @@ const int SPAIR_RING   = 7;
 const int SPAIR_REMOVED = 8;
 const int SPAIR_DEFERRED = 9;
 
+/**
+    @ingroup gb
 
+    @brief base class for Groebner basis computations.
+*/
 class GBComputation : public Computation
 // This is the base type for all Groebner basis and syzygy computations
 {

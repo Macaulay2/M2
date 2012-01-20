@@ -1,7 +1,7 @@
 // Copyright 2011 Michael E. Stillman
 
-#ifndef _aring_gf_hpp_
-#define _aring_gf_hpp_
+#ifndef _aring_ffpack_hpp_
+#define _aring_ffpack_hpp_
 
 #include "aring.hpp"
 #include "buffer.hpp"
@@ -9,15 +9,13 @@
 #include <iostream>
 
 
-//enable this lines to trick Kdevelop
+//enable this lines to trick Kdevelop and do not forget to comment out them before committing. Other ideas ?
 // #define HAVE_FFLAS_FFPACK 1 
 // #define HAVE_GIVARO 1
 
-#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
-#include <givaro/givgfq.h>
-#include <givaro/givpower.h>
-#include <givaro/givtimer.h>
-//#include <givaro/givextension.h>     //multiple definition problem...   solvable by encapsulating (see linbox)? Also solvable with the namespace trick, but do not overuse that...
+#if defined(HAVE_FFLAS_FFPACK) 
+#include <fflas-ffpack/field/modular-balanced.h>
+ 
 
 
 namespace M2 {
@@ -25,39 +23,44 @@ namespace M2 {
 /**
     @ingroup rings
 
-    @brief wrapper for the  Givaro::GFqDom<>  galois field implementation
+    @brief wrapper for the  FFPACK::ModularBalanced<double>   field implementation
 */
-  /// @todo: think about deriving from RingInterface AND from Ring
-  class ARingGF : RingInterface
+  
+  class ARingFFPACK : RingInterface
   {
 
 
   public:
-    static const RingID ringID = ring_GF;
+    static const RingID ringID = ring_FFPACK;
+    
+  typedef FFPACK::ModularBalanced<double> FieldType;
+  typedef FieldType::Element ElementType;
+ 
 
-    typedef Givaro::GFqDom<long> FieldType;
-    typedef FieldType::Element ElementType;
-    typedef M2::ARingGF    ring_type ;
-    //  CoefficientRingZZp * get_CoeffRing() const { return coeffR; }
-    M2::ARingGF * get_ARing() const { return new M2::ARingGF(charac,dimension); }
-  
+ 
     typedef ElementType elem;
 
-    typedef  FieldType::Residu_t UTT; ///< types depends on FieldType definition!
-    typedef Signed_Trait<FieldType::Residu_t>::signed_type STT;///< types depends on FieldType definition!
+    typedef  uint32_t UTT; ////// attention: depends on STT;currently manual update
+    // to use the signed_trait thing, we need givaro....
+    //typedef Signed_Trait<UTT>::signed_type STT;///< types depends on FieldType definition!
+    typedef  int32_t STT; /// attention: depends on UTT; currently manual update
 
 
-
-    ARingGF( UTT charac_,   UTT dimension_);
+   // @todo: problem, wenn typ von cHarakteristif 
+    ARingFFPACK( UTT charac_);
 
   private:
-    mutable  FieldType::randIter     givaroRandomIterator;
+   mutable  FieldType::RandIter     ffpackRandomIterator;
+
+
+   
+   
+    const FieldType ffpackField;
+
     UTT charac;
     UTT dimension; ///< same as extensionDegree
-
-    const FieldType givaroField;
-
-
+    
+    ElementType generator;
     //  int p1; // p-1
     // int minus_one;
     // int prim_root; // element we will use for our primitive root
@@ -68,7 +71,7 @@ namespace M2 {
 
     /** @name IO
     @{ */
-            void text_out(buffer &o) const { o << "GF(" << charac << "," << dimension << ")"; }
+            void text_out(buffer &o) const { o << "FFIELD(" << charac << "," << dimension << ")"; }
 
             void elem_text_out(buffer &o, 
                                 const  ElementType a,
@@ -132,8 +135,10 @@ namespace M2 {
         void set_from_mpz(elem &result,const mpz_ptr a) const ;
 
         void set_from_mpq(elem &result,const mpq_ptr a) const ;
+        
+        ElementType computeGenerator ( ) const; 
 
-        void set_var(elem &result, int v) const         { result = 1; }
+        void set_var(elem &result, int v) const         { result = generator; }
 
     /** @} */
 
@@ -170,6 +175,11 @@ namespace M2 {
 
             void random(ElementType &result) const;
     /** @} */
+     
+    static inline double getMaxModulus() 
+    {
+      return FieldType::getMaxModulus();
+    }
   };
 
 };
@@ -180,5 +190,4 @@ namespace M2 {
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
-// indent-tabs-mode: nil
 // End:

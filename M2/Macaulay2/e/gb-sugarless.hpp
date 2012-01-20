@@ -12,6 +12,14 @@
 #include "matrix-con.hpp"
 class GBWeight;
 
+/**
+    @ingroup gb
+
+    @brief A Groebner basis computation class for inhomogeneous input modules.
+    
+    Works for homogeneous modules too.  Poor performance in many cases, but dramatically good
+    performance in others.
+*/
 class GBinhom_comp : public GBComputation
 {
 private:

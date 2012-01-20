@@ -3,6 +3,7 @@
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
 #include "aring-gf.hpp"
+#include "aring-ffpack.hpp"
 namespace M2 {
 
 
@@ -21,39 +22,22 @@ namespace M2 {
     return result;
   }
 
-  template<>
-  void RingWrap<ARingZZp>::to_ring_elem(ring_elem &result, const ElementType &a) const
-  {
-    result.int_val = a;
-  }
-
-  template<>
-  void RingWrap<ARingZZp>::from_ring_elem(ElementType &result, const ring_elem &a) const
-  {
-    result = a.int_val;
-  }
-
 
   //explicit instantiation
  template class RingWrap< ARingZZp >;
 
 #if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
- template<>
-  void RingWrap<ARingGF>::to_ring_elem(ring_elem &result, const ElementType &a) const
-  {
-    result.int_val = a;
-  }
-
-  template<>
-  void RingWrap<ARingGF>::from_ring_elem(ElementType &result, const ring_elem &a) const
-  {
-    result = a.int_val;
-  }
 
   //explicit instantiation
  template class RingWrap< ARingGF >;
+ 
 #endif
+#if defined(HAVE_FFLAS_FFPACK)  
 
+  //explicit instantiation
+ 
+ template class RingWrap< ARingFFPACK >;
+#endif
 
 
 };

@@ -11,6 +11,11 @@
 //
 // Sorting is NOT done
 
+/**
+    @ingroup reducedgb
+
+    @brief Computation of a reduced GB w.r.t. a marked ordering.
+*/
 class MarkedGB : public ReducedGB
 {
   friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,

@@ -14,24 +14,17 @@ union ring_elem;
 
 class MutableMatrix;
 
-template<typename CoeffRing>
+/**
+ * \ingroup matrices
+ */
+template<typename ACoeffRing>
 class DMat : public our_new_delete
 {
-  public:
-         typedef typename CoeffRing::elem elem;
-
-  private:
-  typedef typename CoeffRing::ring_type RingType;
-  const RingType *R; // To interface to the outside world
-  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
-  int nrows_;
-  int ncols_;
-  elem *array_; // array has length nrows*ncols
-                // columns stored one after another
-
-
-  void copy_elems(long n_to_copy, elem *target, int target_stride, elem *source, int stride);
 public:
+  typedef ACoeffRing CoeffRing;
+  typedef typename CoeffRing::elem elem;
+  typedef typename CoeffRing::ring_type RingType;
+
   DMat():R(0), coeffR(0), nrows_(0), ncols_(0), array_(0) {} // Makes a zero matrix
 
   DMat(const RingType *R0, int nrows, int ncols); // Makes a zero matrix
@@ -200,6 +193,17 @@ public:
   // return f*this.  return NULL of sizes or types do not match.
 
   DMat * negate() const;
+
+private:
+  const RingType *R; // To interface to the outside world
+  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
+  int nrows_;
+  int ncols_;
+  elem *array_; // array has length nrows*ncols
+                // columns stored one after another
+
+
+  void copy_elems(long n_to_copy, elem *target, int target_stride, elem *source, int stride);
 };
 
 #endif

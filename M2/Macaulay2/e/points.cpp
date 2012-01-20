@@ -8,6 +8,8 @@
 #include "polyring.hpp"
 #include "monideal.hpp"
 
+#include "aring-zzp.hpp"
+
 M2_bool rawIdealOfPoints(const Ring *R,
                          const MutableMatrix *Pts,
                          Matrix /* or null */ ** result_GB,
@@ -29,8 +31,8 @@ M2_bool rawIdealOfPoints(const Ring *R,
   const Z_mod *KZZp = K->cast_to_Z_mod();
   if (KZZp != 0)
     {
-      DMat<CoefficientRingZZp> *Pts1 = 0;
-      *result_GB = PointsComputation<CoefficientRingZZp>::points
+      DMat<M2::ARingZZp> *Pts1 = 0;
+      *result_GB = PointsComputation<M2::ARingZZp>::points
         (P,KZZp,Pts1,*result_std_monoms);
       return true;
     }
@@ -87,7 +89,7 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
   return 0;
 }
 
-template class PointsComputation<CoefficientRingZZp>;
+template class PointsComputation<M2::ARingZZp>;
 
 //#include "coeffrings.hpp"
 //template class PointsComputation<CoefficientRingRRR>;

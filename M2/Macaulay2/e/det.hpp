@@ -10,6 +10,11 @@
 const int DET_BAREISS = 0;
 const int DET_COFACTOR = 1;
 
+/**
+    @ingroup comp
+
+    @brief Computation of minors of a matrix
+*/
 class DetComputation : public our_new_delete
 {
   const Ring *R;

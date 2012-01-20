@@ -1,0 +1,31 @@
+--- /media/var_scratch/kroeker/M2branch/BUILD/FastLinearAlgebra/libraries/fflas_ffpack/tmp/fflas-ffpack-1.4.2.169/utils/debug.h	2011-05-24 18:16:40.000000000 +0200
++++ fflas-ffpack-1.4.2.169/utils/debug.h	2011-10-21 11:30:05.000000000 +0200
+@@ -105,7 +105,7 @@
+ 
+ namespace FFPACK {
+ 
+-
++namespace {
+ 	/*!  A precondtion failed.
+ 	 * @ingroup util
+ 	 * The \c throw mechanism is usually used here as in
+@@ -117,7 +117,7 @@
+ 	 */
+ 	class Failure {//: public LinboxError BB: otherwise,  error.h:39 segfaults
+ 	protected:
+-		static std::ostream *_errorStream;
++		 static std::ostream *_errorStream;
+ 
+ 	public:
+ 		/*! @internal
+@@ -210,7 +210,9 @@
+ 
+ #endif
+ 
+-	std::ostream *Failure::_errorStream;
++	 std::ostream *Failure::_errorStream;
++	}
++	
+ } // FFPACK
+ 
+ #endif // __FFLAFLAS_util_debug_H

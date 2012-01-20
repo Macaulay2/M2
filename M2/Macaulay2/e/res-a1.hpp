@@ -60,6 +60,11 @@ public:
   res_level() : compare_num_list(NULL), npairs(0), nleft(0), nminimal(0) {}
 };
 
+/**
+    @ingroup res
+
+    @brief One of the Resolution computations, based on Schreyer and Lascala.
+*/
 class res_comp : public ResolutionComputation
 {
   // Base ring and input
