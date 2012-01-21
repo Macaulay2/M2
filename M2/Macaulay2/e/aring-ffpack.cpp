@@ -16,7 +16,7 @@ namespace M2 {
                                         ffpackRandomIterator(ffpackField),
                                         generator(computeGenerator())
   {
-    assert( FieldType::getMaxModulus()>=charact );
+    assert( FieldType::getMaxModulus()>=charac );
   }
  
 /// @mike correct output : print generator variable of the ring instead of 'X', whatever generator variable will be 
