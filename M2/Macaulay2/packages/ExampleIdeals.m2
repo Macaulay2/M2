@@ -28,6 +28,7 @@ export {
      runSingularGB,     
 
      toMagma,
+     magmaGBString,
      runMagmaGB,
      runMagmaIntegralClosure,
      
@@ -451,11 +452,11 @@ toMagma Ring := (R) -> (
      kk := coefficientRing R;
      p := char kk;
      basering := if p === 0 then "RationalField()" else "GF("|p|")";
-     "R<" | concatenate between(",", (gens R)/toString) | "> := PolynomialRing(" 
+     "R1<" | concatenate between(",", (gens R)/toString) | "> := PolynomialRing(" 
        | basering | "," | toString numgens R | ",\"grevlex\");"
      )
 toMagma Ideal := (I) -> (
-     a := "I := ideal< R | \n   ";
+     a := "I1 := ideal< R1 | \n   ";
      g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
      a | g | ">;\n" 
      )
@@ -471,8 +472,8 @@ runMagmaGB Ideal := (I) -> (
      "foo" 
      << toMagma ring I << endl
      << toMagma I
-     << "time J := GroebnerBasis(I);\n"
-     << "#J;\n"
+     << "time J1 := GroebnerBasis(I1);\n"
+     << "#J1;\n"
      << "quit;\n" << close;
      run "magma <foo"
      )
@@ -482,10 +483,26 @@ runMagmaIntegralClosure Ideal := (I) -> (
      "foo" 
      << toMagma ring I << endl
      << toMagma I
-     << "time Js := Normalization(I);\n"
+     << "time Js := Normalization(I1);\n"
      << "#Js;\n"
      << "quit;\n" << close;
      run "magma <foo"
+     )
+
+magmaGBtemplate = 
+///
+$ring
+$ideal
+time J1 := GroebnerBasis(I1);
+#J1;
+quit;
+///
+--------------------------
+
+magmaGBString = method()
+magmaGBString Ideal := (I) -> (
+     replace("\\$ring", toMagma ring I,
+	  replace("\\$ideal", toMagma I, magmaGBtemplate))
      )
 
 beginDocumentation()
