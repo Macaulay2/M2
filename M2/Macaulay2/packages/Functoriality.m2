@@ -199,7 +199,7 @@ document {
      Headline => "Adds functoriality to Tor and Ext functions as well as functions
                   to compute the connecting homomorphisms",      
      EM "Functoriality", " is a package which adds functorial functionality to the
-         Tor and Ext methods.  In particular we add functions", TO (Tor, ZZ, Matrix, Module), ", ", TO (Tor, ZZ, Module, Matrix), ", ", TO (Ext, ZZ, Matrix, Module), ", ", TO (Ext, ZZ, Module, Matrix), ", ", TO (TorConnectingMap, ZZ, Module, Matrix), ", ", TO (ExtConnectingMap, ZZ, Module, Matrix), ", ", TO (coneInjectTarget, ChainComplexMap), ", ", TO (coneInjectSource, ChainComplexMap), TO (coneSurjectTarget, ChainComplexMap), ", and ", TO (coneSurjectSource, ChainComplexMap), "."
+         Tor and Ext methods.  In particular we add functions", TO (Tor, ZZ, Matrix, Module), ", ", TO (Tor, ZZ, Module, Matrix), ", ", TO (Ext, ZZ, Matrix, Module), ", ", TO (Ext, ZZ, Module, Matrix), ", ", TO (TorConnectingMap, ZZ, Module, Matrix), ", ", TO (coneInjectTarget, ChainComplexMap), ", and ", TO (coneInjectSource, ChainComplexMap), "."
       }
   
 -----------------------------------------------------------------------------
