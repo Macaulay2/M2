@@ -34,3 +34,16 @@ My first attempt to fix it was:
 but that broke many tests.
 
 -- Dan
+
+
+PS:
+
+    Here are some useful tests for after fixing the bug:
+
+-- a fix retains null monomial ordering blocks when joining:
+R = QQ[x,y,z, MonomialOrder => {Eliminate 0, Eliminate 1}]
+assert( (selectInSubring(1,vars R)) === map(R^1,R^{{-1},{-1},{-1}},{{x, y, z}}) )
+R = QQ[x,y,z, MonomialOrder => {Eliminate 1, Eliminate 1}]
+assert( (selectInSubring(1,vars R)) === map(R^1,R^{{-1},{-1}},{{y, z}}) )
+R = QQ[x,y,z, MonomialOrder => {Eliminate 2, Eliminate 1}]
+assert( (selectInSubring(1,vars R)) === map(R^1,R^{{-1}},{{z}}) )
