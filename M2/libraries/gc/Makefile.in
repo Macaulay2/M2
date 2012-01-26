@@ -17,6 +17,7 @@ HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/
 # run the appropriate autoconf tools and tar them up
 
 VERSION = 7.3alpha1.2012.01.23
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 AOVERSION = 
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 
@@ -48,7 +49,7 @@ CONFIGOPTIONS += --enable-gc-debug
 #   because addresses of roots are added that are not a multiple of 8.
 #   One such address is "start", the linker defined symbol, which can be a
 #   non-multiple of 8 under gcc 4.6.2
-# CONFIGOPTIONS += --enable-gc-assertions
+CONFIGOPTIONS += --enable-gc-assertions
 
 else
 # INSTALLTARGET = install-strip
