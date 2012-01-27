@@ -20,6 +20,8 @@ VERSION = 7.3alpha1.2012.01.23
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 AOVERSION = 
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
+VLIMIT = 2000000
+MLIMIT = 2000000
 
 CONFIGOPTIONS += --enable-cplusplus
 
