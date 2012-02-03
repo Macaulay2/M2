@@ -187,7 +187,6 @@ mul(x:ZZ, y:ZZ, z:int) ::= Ccode( void, "mpz_mul_si(", x, ",", y, ",", z, ")" );
 mul(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_mul_ui(", x, ",", y, ",", z, ")" );
 pow(x:ZZ, y:ZZ, n:ulong) ::= Ccode( void, "mpz_pow_ui(", x, ",", y, ",", n, ")" );
 export (x:ZZ) ^ (n:ulong) : ZZ := (
-     if isZero0(x) then return x;
      y := newZZ();
      pow(y,x,n);
      y);
