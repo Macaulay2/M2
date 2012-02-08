@@ -148,7 +148,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "Copyright 2010 Daniel R. Grayson and Michael E. Stillman," | newline
+	  | "Copyright 2012 Daniel R. Grayson and Michael E. Stillman," | newline
      	  | "  licensed under the GNU General Public License version 2 or 3." | newline
 	  | "For Macaulay2 packages, see their source code for licensing terms." | newline
      	  | "Compiled with the following libraries:" | newline
@@ -279,6 +279,7 @@ if firstTime then (
 	       "programs" => "@programsdir@/",
 	       "program licenses" => "@licensesdir@/",
 	       "package" => "@packagesdir@/PKG/",
+	       "factory gftables" =>  "@packagesdir@/Core/factory/",
 	       "packagedoc" => "@docdir@/PKG/",
 	       "packageimages" => "@docdir@/PKG/images/",
 	       "packagetests" => "@docdir@/PKG/tests/",
