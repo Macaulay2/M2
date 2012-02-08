@@ -396,6 +396,7 @@ doc := new HashTable from {
      "docdir" => "documentation for Macaulay2 packages",
      "emacs" => "emacs source files (*.el, *.elc)",
      "exec" => "architecture dependent files",
+     "factory gftables" => "directory for files containing addition tables in small finite fields used by the library 'factory'",
      "info" => "documentation in info form",
      "lib" => "architecture dependent data and executable files",
      "libraries" => "dynamically loadable libraries from third party packages linked with Macaulay2",

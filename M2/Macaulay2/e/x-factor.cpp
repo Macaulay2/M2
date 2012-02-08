@@ -13,7 +13,6 @@ using std::endl;
 #define Matrix MaTrIx
 #include <factor.h>             // from Messollen's libfac
 #undef Matrix
-//#include <templates/ftmpl_list.cc>
 #include <NTL/ZZ.h>
 
 #include "matrix.hpp"
@@ -493,12 +492,7 @@ void rawFactor(const RingElement *g,
           // displayCF(P,h);
           CFFList q;
           init_seeds();
-          if (P->charac() == 0) {
-            q = factorize(h);           // suitable for k = QQ, comes from libcf (factory)
-          }
-          else {
-            q = Factorize(h);           // suitable for k = ZZ/p, comes from libfac
-          }
+          q = factorize(h);
           int nfactors = q.length();
 
           *result_factors = getmemarraytype(engine_RawRingElementArray,nfactors);
@@ -658,3 +652,4 @@ void rawDummy(void) {
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-factor.o "
 // indent-tabs-mode: nil
 // End:
+

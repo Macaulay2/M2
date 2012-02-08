@@ -58,7 +58,7 @@ header "
    extern unsigned int GC_version; /* in libgc.a */
    #include <gmp.h>
    #include <NTL/version.h>
-   #include <factoryconf.h>
+   #include <factory/factoryconf.h>
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
    #include <readline/readline.h>

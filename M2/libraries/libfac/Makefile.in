@@ -1,28 +1,12 @@
 # license for libfac: freely, with copyright notice, state if modifications are made
 #   see file 00README for details
 
-# VERSION = 3.0.4
-
-# VERSION = 3.1.0
-# PATCHFILE = @abs_srcdir@/patch-3.1.0
-
-# VERSION = 3.1.1
-# PATCHFILE = @abs_srcdir@/patch-3.1.1
-# PRECONFIGURE = autoconf
-
-# VERSION = 3.1.2
-# VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
-# PRECONFIGURE = autoconf
-# TARDIR = libfac-$(VERSIONH)
-# LICENSEFILES = 00README COPYING
-# PATCHFILE = @abs_srcdir@/patch-3.1.2
-
-VERSION = 3.1.3
+VERSION = 3.1.4
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
-PRECONFIGURE = autoconf
-TARDIR = libfac-$(VERSIONH)
+TARDIR = libfac
+PATCHFILE = @abs_srcdir@/patch-3.1.4
+
 LICENSEFILES = 00README COPYING
-PATCHFILE = @abs_srcdir@/patch-3.1.3
 BUILDTARGET = libfac.a
 INSTALLTARGET = .
 LIBRARIES = libfac.a
@@ -34,9 +18,6 @@ CONFIGOPTIONS += --enable-NTL
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --with-debug
 endif
-ifeq (@OPTIMIZE@,yes)
-CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
-endif
 
 ## CONFIGOPTIONS += --build=@build@
 
@@ -45,7 +26,15 @@ endif
 CHECKTARGET = .
 
 CHECKOPTIONS = LIBS="-lfac -lcf -lcfmem -lntl -lgmp"
+
 include ../Makefile.library
+
+CPPFLAGS += -I$(LIBRARIESDIR)/include/factory
+
+ifeq (@OPTIMIZE@,yes)
+CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
+endif
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
 clean uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ;\

@@ -1,0 +1,64 @@
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/gfops.cc factory/gfops.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/gfops.cc	2012-02-02 07:41:58.000000000 -0600
++++ factory/gfops.cc	2012-02-08 10:03:19.000000000 -0600
+@@ -61,6 +61,13 @@
+     return result;
+ }
+ 
++static char *gftable_dir;
++extern "C" {
++  void set_gftable_dir(char *d){
++    gftable_dir = d;
++  }
++}
++
+ static void gf_get_table ( int p, int n )
+ {
+     char buffer[gf_maxbuffer];
+@@ -91,14 +98,31 @@
+ #endif
+ 
+     // try to open file
++    char *gffilename;
++    FILE * inputfile;
++    if (gftable_dir) {
++      sprintf( buffer, "/gftable.%d.%d", p, n );
++      gffilename = (char *)malloc(strlen(gftable_dir) + strlen(buffer) + 1);
++      STICKYASSERT(gffilename,"out of memory");
++      strcpy(gffilename,gftable_dir);
++      strcat(gffilename,buffer);
++      inputfile = fopen( gffilename, "r" );
++    }
++    else {
+ #ifndef SINGULAR
+     sprintf( buffer, GFTABLEDIR "/gftable.%d.%d", p, n );
+-    FILE * inputfile = fopen( buffer, "r" );
++    gffilename = buffer;
++    inputfile = fopen( buffer, "r" );
+ #else
+     sprintf( buffer, "gftables/%d", q );
+-    FILE * inputfile = feFopen( buffer, "r" );
++    gffilename = buffer;
++    inputfile = feFopen( buffer, "r" );
+ #endif
+-    STICKYASSERT( inputfile, "can not open GF(q) table" );
++    }
++    if (!inputfile) {
++      fprintf(stderr,"can not open GF(q) addition table: %s\n",gffilename);
++      STICKYASSERT(inputfile, "can not open GF(q) table");
++    }
+ 
+     // read ID
+     char * bufptr;
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/memutil.c factory/memutil.c
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory/memutil.c	2012-02-02 07:41:58.000000000 -0600
++++ factory/memutil.c	2012-02-08 10:01:37.000000000 -0600
+@@ -6,6 +6,8 @@
+ 
+ #include <stdlib.h>
+ 
++#include <string.h>
++
+ #include "assert.h"
+ 
+ #include "memutil.h"

@@ -788,7 +788,7 @@ AC_SUBST(BUILTLIBS,)
 #     initially, we offer no option for not compiling some of them
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
-#    factory needs ntl and gmp
+#    factory needs gftables, ntl and gmp
 #    libfac needs factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
@@ -819,7 +819,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -828,7 +828,7 @@ do eval BUILD_$i=yes
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -1184,6 +1184,8 @@ AC_SUBST(LAPACK,yes)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$withval)
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
+
+BUILD_gftables=yes
 
 if test "$DEBUG" = yes
 then SINGULARLIBS="-lfac -lcf -lcfmem"
