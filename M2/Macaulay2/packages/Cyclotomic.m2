@@ -151,7 +151,7 @@ document {
         Headline => "a package for cyclotomic fields",
         EM "Cyclotomic", " is a package for cyclotomic fields.  It is used in
         to construct extensions of the coefficient field during binomial
-        primary decomposition using the package ", TO Binomials, "."
+        primary decomposition using the package ", TO "Binomials::Binomials", "."
         }
 
 document {
