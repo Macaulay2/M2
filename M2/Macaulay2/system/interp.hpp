@@ -91,6 +91,114 @@ extern M2_string M2CPP_NewConstString(const char* string);
    @param string STL string.
 ***/
 extern M2_string M2CPP_NewString(const std::string& str);
+/***
+	Create a new M2 sequence with the given length.
+	@param length Length of the sequence.
+	@return Sequence, not null.
+***/
+extern parse_Sequence M2CPP_NewSequence(int length);
+/***
+	Create a new M2 sequence with the given length initialized to value.
+	@param length Length of the sequence.
+	@return Sequence, not null.
+***/
+extern parse_Sequence M2CPP_NewSequence(int length, parse_Expr value);
+/***
+	Resize a new M2 sequence by possibly creating a new one.
+	Truncate or set to null any remaining values.
+	@param s Sequence
+	@param len Length of new sequence.
+	@return New or existing sequence, not null.
+***/
+extern parse_Sequence M2CPP_ResizeSequence(parse_Sequence s, int length);
+/***
+	Enlarge the sequence by doubling it.
+	@param s Sequence.
+	@return New sequence, not null of length = length(s)*2.
+***/
+extern parse_Sequence M2CPP_EnlargeSequence(parse_Sequence s);
+/***
+	Create a new list from the sequence, resizing as needed.
+	Truncate or set to null any remaining values.
+	@param s Sequence, not null.
+	@param len Length of list.
+	@return New list, not null.
+***/
+extern parse_Expr M2CPP_NewList(parse_Sequence s, int length);
+/***
+	Perform safety checks in debug mode.
+	@param e Expr, not null.
+***/
+inline void M2CPP_PerformAssertions(parse_Expr e)
+{
+	assert(e!=NULL);
+	assert(e->type_ < numTypeCodes);
+}
+/***
+	Return true if the expr is an error, false otherwise.
+	@param e Expr, not null.
+***/
+inline bool M2CPP_IsError(parse_Expr e)
+{
+	M2CPP_PerformAssertions(e);
+	return e->type_ == Error_typecode;
+}
+/***
+	Return true if e has given typecode, false otherwise.
+	@param e Expr, not null.
+***/
+inline bool M2CPP_IsTypeExact(parse_Expr e, int typecode)
+{
+	M2CPP_PerformAssertions(e);
+	return e->type_==typecode;
+}
+/***
+	Return true if e has given typecode, false otherwise.
+	@param c Code, not null.
+***/
+inline bool M2CPP_IsTypeExact(parse_Code e, int typecode)
+{
+	return e->type_==typecode;
+}
+/***
+	Use this function when an erroneous condition has been detected.
+	This would frequently be used after a !M2CPP_IsTypeExact statement.
+	@param e Expr, not null.
+	@param errorMessage error message, not null.
+	@return e if error, else common_printErrorMessageE(errorMessage)
+***/
+extern parse_Expr M2CPP_ErrorOrErrorMessage(parse_Expr e, M2_string errorMessage);
+/***
+	Use this function when an erroneous condition has been detected.
+	This would frequently be used after a !M2CPP_IsTypeExact statement.
+	@param e Expr, not null.
+	@param errorMessage Error message, not null.
+	@return e if error, else common_printErrorMessageE(errorMessage)
+***/
+extern parse_Expr M2CPP_ErrorOrErrorMessage(parse_Expr e, const char* errorMessage);
+/***
+	Equivalent to common_printErrorMessageE(i,M2CPP_NewConstString(errorMessage))
+	@param i Expr that caused error.
+	@param errorMessage Error mesage, not null.
+	@return Expr, not null.
+***/
+extern parse_Expr M2CPP_PrintErrorMessageE(parse_Expr i, const char* errorMessage);
+/***
+	Return typecode of expr.
+	@param e Expr, not null.
+***/
+inline int M2CPP_Type(parse_Expr e)
+{
+	return e->type_;
+}
+/***
+	Create a new ZZCell with value of x.
+	@return ZZCell, not null.
+***/
+extern parse_Expr M2CPP_ZZCell(int x);
+/***
+	Create a new frame
+***/
+extern parse_Frame M2CPP_NewFrame(parse_Frame outerFrame, int frameId, int frameSize, bool notRecycleable);
 #endif
-
 #endif

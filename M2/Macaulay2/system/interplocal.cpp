@@ -63,12 +63,14 @@ extern "C" {
 	}
 }
 
-parse_Frame* M2CPP_InterperterLocal::localFrame() { return reinterpret_cast<parse_Frame*>(TS_Get_Local(expr_localFrame_id)); }
+parse_Frame*& M2CPP_InterperterLocal::localFrame() { return reinterpret_cast<parse_Frame*>(TS_Get_Local(expr_localFrame_id)); }
 bool& M2CPP_InterperterLocal::stopIfError() { return *reinterpret_cast<bool*>(TS_Get_Local(tokens_stopIfError_id)); }
 int& M2CPP_InterperterLocal::debugLevel() { return *reinterpret_cast<int*>(TS_Get_Local(expr_debugLevel_id)); }
 errio_BasicFile* M2CPP_InterperterLocal::M2_stderr() { return reinterpret_cast<errio_BasicFile*>(TS_Get_Local(errio_stderr_id)); }
 struct atomic_field* M2CPP_InterperterLocal::interruptedFlag() { return reinterpret_cast<struct atomic_field*>(TS_Get_Local(interrupts_interruptedFlag_id)); }
 bool& M2CPP_InterperterLocal::interruptPending() { return *reinterpret_cast<bool*>(TS_Get_Local(interrupts_interruptPending_id)); }
+bool M2CPP_InterperterLocal::getInterruptedFlag() { return 0!=load_Field(*interruptedFlag()); }
+void M2CPP_InterperterLocal::setInterruptedFlag(bool value) { store_Field(*interruptedFlag(),value?1:0); }
 
 /***
 	Return value from program for normal exit.
@@ -91,11 +93,17 @@ M2CPP_InterperterLocal::M2CPP_InterperterLocal()
 {
 	m_BindingLookupCountIncrement = 1;
 	m_BindingHadError = false;
+	for(size_t i = 0; i < c_RecycleBinLength; ++i)
+	{
+		m_RecycleBin[i] = NULL;
+		m_RecycleBinLength[i] = 0;
+	}
 	if(c_EnableTrace)
 	{
 		m_TraceFile.open("tracefile.log",std::fstream::out | std::fstream::trunc);
 		if(m_TraceFile.fail())
 			fatal("Unable to open trace file for writing");
+		m_TraceFile << "Opened in trace mode.\n";
 	}
 }
 
@@ -113,6 +121,8 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 	parse_Error lasterrmsg = interp_dummyError;
 	while (true)
 	{
+		//flush the trace file each loop to guarentee it is emitted.
+		if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: Readeval4 loop started\n"; m_TraceFile.flush(); }
 		//top of loop
 		if (bumpLineNumber) 
 		{
@@ -127,6 +137,7 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 			//this forces a prompt at the beginning of the next line.
 			interp_previousLineNumber = (- 1);
 			promptWanted = 0;
+			if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Prompt wanted\n";
 		}
 		if (issuePrompt) 
 		{
@@ -134,6 +145,7 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 			interp_previousLineNumber = (- 1);
 			stdio_less_less__2(stdio_stdIO, file->posFile->file->prompt());
 			issuePrompt = 0;
+			if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Issue prompt\n";
 		}
 		interrupts_clearAllFlags();
 		parse_Token u = parser_peektoken(file, 1);
@@ -142,25 +154,28 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 		if (u == lex_errorToken || (load_Field(*interruptedFlag()) != (AO_t)0))
 		{
 			parser_gettoken(file, 1);
-			if ((load_Field((*((struct atomic_field*)TS_Get_Local(interrupts_interruptedFlag_id)))) != ((AO_t)0))) 
+			if (getInterruptedFlag())
 			{
 				//token read interrupted
 				tokens_clearFileError(file);
-				store_Field((*((struct atomic_field*)TS_Get_Local(interrupts_interruptedFlag_id))),((AO_t)0));
+				setInterruptedFlag(false);
 				interrupts_determineExceptionFlag();
 				promptWanted = 1;
 				issuePrompt = 1;
+				if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Interrupted " << __LINE__ << "\n";
 			}
 			else
 			{
 				//token read error
 				promptWanted = 1;
+				if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Token read error\n";
 				if (tokens_fileError(file)) 
 				{
 					return expr_buildErrorPacket(tokens_fileErrorMessage(file));
 				}
 				if (stopIfError() || returnIfError)
 				{
+					if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Emitting backtrace\n";
 					return expr_buildErrorPacket(M2CPP_NewConstString("--backtrace: token read error--"));
 				}
 			}
@@ -170,6 +185,7 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 			parse_Word t = u->word;
 			if (t == lex_wordEOF)
 			{
+				if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: EOF\n";
 				//EOF token, returning.
 				if (returnLastvalue) 
 					return lastvalue;
@@ -180,6 +196,7 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 			{
 				if (t == lex_NewlineW)
 				{
+					if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Newline\n";
 					//newline token, discarding.
 					parser_gettoken(file, 1);
 				}
@@ -187,6 +204,7 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 				{
 					if (t == lex_wordEOC)
 					{
+						if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: End of cell.\n";
 						//end-of-cell token, discarding
 						parser_gettoken(file, 1);
 					}
@@ -196,25 +214,29 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 						promptWanted = 1;
 						//ordinary token, ready to parse
 						parse_ParseTree parsed = parser_parse(file, binding_SemicolonW->parse->precedence, 1);
+						if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Have Parse Tree\n";
 						if (parsed == parser_errorTree)
 						{
-							if (load_Field(*interruptedFlag()) != (AO_t)0) 
+							if(getInterruptedFlag())
 							{
+								if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Interrupted " << __LINE__ << "\n";
 								//parsing interrupted
 								tokens_clearFileError(file);
-								store_Field(*interruptedFlag(),(AO_t)0);
+								setInterruptedFlag(false);
 								interrupts_determineExceptionFlag();
 								promptWanted = 1;
 							}
 							else
 							{
 								//error during parsing.
+								if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Parse Error\n";
 								if (tokens_fileError(file)) 
 								{
 									return expr_buildErrorPacket(tokens_fileErrorMessage(file));
 								}
 								if (stopIfError() || returnIfError)
 								{
+									if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Emitting Back Trace\n";
 									return expr_buildErrorPacket(M2CPP_NewConstString("--backtrace: parse error--"));
 								}
 							}
@@ -230,10 +252,12 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 							parse_Token s = parser_gettoken(file, 1);
 							if (!(s->word == binding_SemicolonW || s->word == lex_NewlineW || s->word == lex_wordEOC || s->word == lex_wordEOF))
 							{
+								if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: syntax error: unmatched " << s->word->name << std::endl;
 								M2_string msg = strings_plus_(M2CPP_NewConstString("syntax error: unmatched "), s->word->name);
 								tokens_printErrorMessage_1(s, msg);
 								if (stopIfError() || returnIfError)
 								{
+									if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Returning parse_Error\n";
 									parse_Error tmp__33 = M2CPP_NewObject<parse_Error,struct parse_Error_struct>(Error_typecode);
 									tmp__33->position = tokens_position(s);
 									tmp__33->message = msg;
@@ -248,12 +272,14 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 								//assigns scope to tokens, lookup symbols, returns false iff an error occured
 								if (binding_localBind(parsed, dictionary)) 
 								{
+									if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Local bind successful\n"; 
 									parse_Code f_1 = convertr_convert(parsed);
 									parse_Expr be = interp_runmethod(interp_BeforeEval, parse_nullE);
 									if (be == 0) invalidNullPointer(__FILE__,__LINE__,-1);
 									switch (be->type_) {;
 									case Error_typecode:
 										{
+											if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: interp_runmethod returned error\n"; m_TraceFile.flush(); }
 											parse_Error err_1 = reinterpret_cast<parse_Error>(be);
 											err_1 = interp_update(err_1, M2CPP_NewConstString("before eval"), f_1);
 											if (stopIfError() || returnIfError)
@@ -267,15 +293,19 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 										checkTypeValidity(be->type_,__FILE__,__LINE__);
 										break;
 									};
+									if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: Start evaluate_evalexcept\n"; m_TraceFile.flush(); }
 									lastvalue = evaluate_evalexcept(f_1);
+									if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: End evaluate_evalexcept\n"; m_TraceFile.flush(); }
 									if (reinterpret_cast<void *>(lastvalue) == reinterpret_cast<void *>(interp_endInput))
 									{
+										if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: evaluate_evalexcept returned interp_endInput\n"; m_TraceFile.flush(); }
 										return parse_nullE;
 									}
 									if (lastvalue == 0) invalidNullPointer(__FILE__,__LINE__,-1);
 									switch (lastvalue->type_) {;
 									case Error_typecode:
 										{
+											if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: evaluate_evalexcept returned error\n"; m_TraceFile.flush(); }
 											parse_Error err_2 = reinterpret_cast<parse_Error>(lastvalue);
 											if (err_2->message == tokens_returnMessage || err_2->message == tokens_continueMessage || err_2->message == tokens_continueMessageWithArg || err_2->message == tokens_stepMessage || err_2->message == tokens_stepMessageWithArg || err_2->message == tokens_breakMessage || err_2->message == tokens_throwMessage) 
 											{
@@ -307,12 +337,14 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 												modeAfterNoPrint = basic_list_6(mode, reinterpret_cast<parse_Expr>(interp_AfterNoPrint));
 												modeAfterPrint = basic_list_6(mode, reinterpret_cast<parse_Expr>(interp_AfterPrint));
 											}
+											if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: eval_except successful\n";
 											//result of after eval replaces lastvalue unless error, in which case null replaces it.
 											parse_Expr g_1 = interp_runmethod(interp_AfterEval, lastvalue);
 											if (g_1 == 0) invalidNullPointer(__FILE__,__LINE__,-1);
 											switch (g_1->type_) {;
 											case Error_typecode:
 												{
+													if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: error_typecode " <<  __LINE__ << "\n"; m_TraceFile.flush(); }
 													parse_Error err_3 = reinterpret_cast<parse_Error>(g_1);
 													err_3 = interp_update(err_3, M2CPP_NewConstString("after eval"), f_1);
 													if (stopIfError() || returnIfError)
@@ -333,6 +365,7 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 											switch (g_1->type_) {
 											case Error_typecode:
 												{
+													if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: error_typecode " <<  __LINE__ << "\n"; m_TraceFile.flush(); }
 													parse_Error err_4 = reinterpret_cast<parse_Error>(g_1);
 													err_4 = interp_update(err_4, M2CPP_NewConstString("before print"), f_1);
 													if (stopIfError() || returnIfError)
@@ -360,6 +393,7 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 											switch (g_1->type_) {
 											case Error_typecode:
 												{
+													if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: error_typecode " << __LINE__ << "\n"; m_TraceFile.flush(); }
 													parse_Error err_5 = reinterpret_cast<parse_Error>(g_1);
 													err_5 = interp_update(err_5, M2CPP_NewConstString("at print"), f_1);
 													if (stopIfError() || returnIfError)
@@ -386,6 +420,8 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 											switch (g_1->type_) {;
 											case Error_typecode:
 												{
+													if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: error_typecode " << __LINE__ << 
+"\n"; m_TraceFile.flush(); }
 													parse_Error err_6 = reinterpret_cast<parse_Error>(g_1);
 													err_6 = interp_update(err_6, M2CPP_NewConstString("after print"), f_1);
 													if (stopIfError() || returnIfError)
@@ -403,11 +439,13 @@ parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,
 								}
 								else
 								{
+									if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::readeval4: Local bind error\n";
 									// an error occured in local bind.
 									if (tokens_isatty(file)) 
 										tokens_flush(file);
 									else
 									{
+										if(c_EnableTrace) { m_TraceFile << "M2CPP_InterperterLocal::readeval4: Returning parse_Error\n"; m_TraceFile.flush(); }
 										if (lasterrmsg != interp_dummyError)
 										{
 											return reinterpret_cast<parse_Expr>(lasterrmsg);
@@ -593,6 +631,7 @@ void M2CPP_InterperterLocal::exit(parse_Error err)
 extern "C" {
 extern const char* startupString;
 }
+
 void M2CPP_InterperterLocal::interp_process()
 {
 	*localFrame() = expr_globalFrame;
@@ -926,6 +965,7 @@ void M2CPP_InterperterLocal::binding_makeSymbol(parse_ParseTree e,parse_Dictiona
 
 parse_Symbol M2CPP_InterperterLocal::binding_lookup(parse_Word word,parse_SymbolHashTable table)
 {
+	if(c_EnableTrace) m_TraceFile << "M2CPP_InterperterLocal::binding_lookup on " << word->name->array << " @ " << table << std::endl;
 	if (table == expr_dummySymbolHashTable)
 	{
 		assert(0);
@@ -938,6 +978,7 @@ parse_Symbol M2CPP_InterperterLocal::binding_lookup(parse_Word word,parse_Symbol
 	{
 		if (NULL == entryList_1)
 		{
+			m_TraceFile << "M2CPP_InterperterLocal::binding_lookup found NULL\n";
 			return NULL;
 		}
 		parse_SymbolListCell entryListCell_1 = reinterpret_cast<parse_SymbolListCell>(entryList_1);
@@ -945,10 +986,12 @@ parse_Symbol M2CPP_InterperterLocal::binding_lookup(parse_Word word,parse_Symbol
 		{
 			parse_Symbol e_3 = entryListCell_1->entry;
 			e_3->lookupCount = (e_3->lookupCount + binding_lookupCountIncrement());
+			m_TraceFile << "M2CPP_InterperterLocal::binding_lookup found " << e_3->frameID << ":" << e_3->frameindex << "\n";
 			return e_3;
 		}
 		entryList_1 = entryListCell_1->next;
 	}
+	m_TraceFile << "M2CPP_InterperterLocal::binding_lookup found NULL\n";
 	return NULL;
 }
 
@@ -1730,4 +1773,47 @@ parse_Symbol M2CPP_InterperterLocal::setupVariable(const std::string& value, con
 parse_Symbol M2CPP_InterperterLocal::setupVariable(const char* value, const VariableOptions& params)
 {
 	return setupVariable(params.name(),util_toExpr_4(M2CPP_NewString(value)),params.isThread());
+}
+
+parse_Frame M2CPP_InterperterLocal::enterNewFrame(int frameId, int framesize, bool notRecycleable)
+{
+	parse_Frame frame =  M2CPP_NewFrame(localFrame(),frameId,frameSize,notRecycleable);
+	localFrame() = frame;
+	return frame;
+}
+void M2CPP_InterperterLocal::enterFrame(parse_Frame frame)
+{
+	assert(frame->outerFrame==localFrame());
+	localFrame() = frame;
+}
+parse_Frame M2CPP_InterperterLocal::exitFrame()
+{
+	assert(localFrame()->outerFrame());
+	assert(localFrame()->outerFrame()!=localFrame());
+	parse_Frame newFrame = localFrame()->outerFrame();
+	localFrame() = newFrame;
+	return newFrame;
+}
+void M2CPP_InterperterLocal::exitFrame(parse_Frame frame)
+{
+	assert(localFrame()!=frame);
+	localFrame() = frame;
+}
+parse_Frame M2CPP_InterperterLocal::recycledFrame(parse_Frame outerFrame, int frameId, int frameSize)
+{
+	if(frameSize >= c_RecycleBinLength || m_RecycleBinLength[frameSize] == 0)
+		return M2CPP_NewFrame(outerFrame,frameId,frameSize, false);
+	parse_Frame retFrame = m_RecycleBin[frameSize];
+	m_RecycleBin[frameSize] = retFrame->outerFrame;
+	return retFrame;
+}
+void M2CPP_InterperterLocal::recycleFrame(parse_Frame frame)
+{
+	if(frame->frameSize >= c_RecycleBinLength)
+		return;
+	if(m_RecycleBinLength[frame->frameSize] >= c_RecycleBinListLength)
+		return;
+	frame->outerFrame = m_RecycleBin[frame->frameSize];
+	frame->frameID = -2;
+	m_RecycleBin[frame->frameSize] = frame;
 }

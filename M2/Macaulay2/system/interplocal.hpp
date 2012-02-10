@@ -45,7 +45,10 @@ public:
 	***/
 	M2CPP_InterperterLocal();
 	//These are the class equivalents for the thread local variables.
-	parse_Frame* localFrame();
+	/***
+		Local frame for evaluation.
+	***/
+	parse_Frame*& localFrame();
 	bool& stopIfError();
 	/***
 		Debug level for the current local interperter.
@@ -59,6 +62,16 @@ public:
 		Boolean interrupted flag for the local interperter.
 	***/
 	struct atomic_field* interruptedFlag();
+	/***
+		Set the interrupted flag.
+		@param value True for interrupted, false to clear.
+	***/
+	void setInterruptedFlag(bool value);
+	/***
+		Get the interrupted flag.
+		@return True for interrupted, false otherwise.
+	***/
+	bool getInterruptedFlag();
 	/***
 		True if interrupt pending, false otherwise.
 	***/
@@ -251,18 +264,21 @@ public:
 	/***
 		???
 		@param word ???
+		@return Symbol or NULL
 	***/
 	parse_Symbol binding_globalLookup(parse_Word w);
 	/***
 		This is the same as a global lookup except that this lets you specify a dictionary to start looking in before performing global lookup.
 		@param w ???
 		@param d ???
+		@return Symbol or NULL
 	***/
 	parse_Symbol binding_lookup_1(parse_Word w,parse_Dictionary d);
 	/***
 		@param t ???
 		@param forcedef Should this force definition of the symbol at global scope if the definition does not exist.
 		@param thread ???
+		@return Symbol or NULL
 	***/
 	void binding_lookup(parse_Token t,char forcedef,char thread);
 	/***
@@ -446,17 +462,68 @@ public:
 	***/
 	parse_Symbol setupVariable(parse_Expr value, const VariableOptions& params);		
 
-
-
-
-
+	/***
+		Enter new frame
+		@param frameId The id of the frame.
+		@param framesize The length of the storage area for frame variables.
+		@param notRecycleable Set to true to disallow frame recycling.
+		@return New frame.
+	***/
+	parse_Frame enterNewFrame(int frameId, int framesize, bool notRecycleable);
+	/***
+		Enter given frame.
+		@param frame Frame to enter, not null.
+	***/
+	void enterFrame(parse_Frame frame);
+	/***
+		Exit current frame.
+		@return Previous frame, not null.
+	***/
+	parse_Frame exitFrame();
+	/***
+		Exit current frame to given frame.
+		@param frame Frame to exit to.
+	***/
+	void exitFrame(parse_Frame frame);
+	/***
+		Return a frame from the recycle bin if possible, else return a new frame.
+		@return Frame, not null.
+	***/
+	parse_Frame recycledFrame(parse_Frame outerFrame, int frameId, int frameSize);
+	/***
+		Recycle the given frame.
+	***/
+	void recycleFrame(parse_Frame frame);
+	/***
+		Return the current recursion limit.
+	***/
+	int getRecursionLimit() { return m_RecursionLimit; }
+	/***
+		Set the current recursion limit.
+	***/
+	void setRecursionLimit(int recursionLimit) { assert(recursionLimit); m_RecursionLimit = recursionLimit; }
+	/***
+		Get current recursion depth
+	***/
+	int getRecursionDepth() { return m_RecursionDepth; }
+	/***
+		Set current recursion depth
+	***/
+	void setRecursionDepth(int recursionDepth) { m_RecursionDepth = recursionDepthp; }
+	/***
+		Increment recursion depth
+	***/
+	void incrementRecursionDepth() { m_RecursionDepth++; }
+	/***
+		Decrement recursion depth
+	***/
+	void decrementRecursionDepth() { m_RecursionDepth--; }
 protected:
 	/***
 		From an error, deduce the correct exit code and attempt to exit.
 		@param err An error, not null.  
 	***/
 	void exit(parse_Error err);
-	/***
 	/***
 		Create a new file with line numbers for tokenizing the given string.
 		@param name Name of the file.
@@ -483,6 +550,30 @@ protected:
 		Lookup count increment for binding process.
 	***/
 	int m_BindingLookupCountIncrement;
+	/***
+		Current recursion depth
+	***/
+	int m_RecursionDepth;
+	/***
+		Current recursion limit.
+	***/
+	int m_RecursionLimit;
+	/***
+		Length of list for each size in the recycle bin.
+	***/
+	static const int c_RecycleBinListLength = 25;
+	/***
+		Length of recycle bin.
+	***/
+	static const int c_RecycleBinLength = 25;
+	/***
+		Recycle bin for frames;
+	***/
+	parse_Frame m_RecycleBin[c_RecycleBinLength];
+	/***
+		Length of each list for the recycle bin.
+	***/
+	size_t m_RecycleBinLength[c_RecycleBinLength];
 	/***
 		File stream for trace mode.
 	 ***/
