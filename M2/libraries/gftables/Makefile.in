@@ -6,6 +6,7 @@ TARFILE = factory-gftables.tar.gz
 TARDIR = gftables
 CONFIGURECMD = :
 BUILDCMD = :
+CHECKTARGET = .
 # same as in m2/factor.m2
 GFTABLEDIR = @pre_packagesdir@/Core/factory
 INSTALLCMD = $(MKDIR_P) $(GFTABLEDIR) && cp -v gf* $(GFTABLEDIR)/.
