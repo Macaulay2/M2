@@ -245,7 +245,7 @@ document {
      }
 document {
      Key => {(openIn, String),openIn},
-     Headline => "open an output file",
+     Headline => "open an input file",
      Usage => "openIn fn",
      Inputs => { "fn" },
      Outputs => {
