@@ -818,8 +818,8 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
+AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
