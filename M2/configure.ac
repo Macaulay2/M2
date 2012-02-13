@@ -1193,15 +1193,14 @@ else SINGULARLIBS="-lfac -lcf -lcfmem"
 fi
 while test $BUILD_factory = no -o $BUILD_libfac = no
 do AC_LANG(C++)
-   AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
    dnl if -lntl is needed, it's been added to $LIBS above
    AC_LINK_IFELSE([AC_LANG_SOURCE([[ #undef NOSTREAMIO
-	              #include <factory.h>
-		      #include <templates/ftmpl_inst.cc>
+	              #include <factory/factory.h>
 		      int main () { return 0 ; } ]])],
        AC_MSG_RESULT(yes),
        AC_MSG_RESULT(no) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break )
@@ -1210,9 +1209,8 @@ do AC_LANG(C++)
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
-	   #include <factory.h>
+	   #include <factory/factory.h>
 	   #include <factor.h>
-	   #include <templates/ftmpl_inst.cc>
 	   extern const char * libfac_version;
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
