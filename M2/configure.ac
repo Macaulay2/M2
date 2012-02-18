@@ -1187,9 +1187,11 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 BUILD_gftables=yes
 
+# the instantiations needed by an initialization in libcf are in libfac,
+# and libfac depends on libcf, so we mention libfac twice:
 if test "$DEBUG" = yes
-then SINGULARLIBS="-lfac -lcf -lcfmem"
-else SINGULARLIBS="-lfac -lcf -lcfmem"
+then SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
+else SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
 fi
 while test $BUILD_factory = no -o $BUILD_libfac = no
 do AC_LANG(C++)
