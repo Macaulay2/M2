@@ -27,7 +27,12 @@ endif
 CHECKCMD = true
 include ../Makefile.library
 
-WARNFLAGS += -Wno-int-to-pointer-cast -Wno-uninitialized -Wno-unused-but-set-variable -Wno-write-strings
+# add code to add these options only for gcc
+WARNFLAGS += -Wno-uninitialized -Wno-write-strings
+## add code to add these options only for recent enough versions of gcc
+# WARNFLAGS += -Wno-int-to-pointer-cast
+# WARNFLAGS += -Wno-unused-but-set-variable
+
 ifeq (@OPTIMIZE@,yes)
 WARNFLAGS += -Wno-deprecated
 endif
