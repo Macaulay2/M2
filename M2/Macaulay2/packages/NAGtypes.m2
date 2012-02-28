@@ -23,7 +23,7 @@ export {
      "Equations", "Slice", "Points", "sliceEquations", "IsIrreducible",
      -- point (solution)
      "Point", "point", "coordinates",
-     isRealPoint, plugIn, residual, relativeErrorEstimate, classifyPoint,
+     isRealPoint, realPoints, plugIn, residual, relativeErrorEstimate, classifyPoint,
      "Tolerance", "sortSolutions", "areEqual", "isGEQ",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
@@ -68,11 +68,11 @@ plugIn = method()
 plugIn (List, List) := (S,p) -> flatten entries sub(matrix{S}, matrix{ p / toCC })
 plugIn (List, Point) := (S,p) -> plugIn(S,coordinates p)
 
-norm (Number, Point) := (no,p) -> norm(no, coordinates p)
-norm (Number, List) := (no,p) -> (
-     if no === infinity then return max(p, c->abs c);
+norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
+norm (Thing, List) := (no,p) -> (
+     if instance(no,InfiniteNumber) and no === infinity then return max(p/abs);
      assert((instance(no, ZZ) or instance(no, QQ) or instance(no, RR)) and no>0);
-     (sum(p, c->c^no))^(1/no)
+     (sum(p, c->abs(c)^no))^(1/no)
      )
 
 residual = method(Options=>{Norm=>2})
@@ -82,7 +82,10 @@ relativeErrorEstimate = method(Options=>{Norm=>2})
 relativeErrorEstimate(Point) := o->p->p.ErrorBoundEstimate/norm(o.Norm,p) 
 
 isRealPoint = method(Options=>{Tolerance=>1e-6})
-isRealPoint(Point) := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
+isRealPoint Point := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
+
+realPoints = method(Options=>{Tolerance=>1e-6})
+realPoints List := o -> pp -> select(pp, isRealPoint)
 
 classifyPoint = method(Options=>{MaxConditionNumber=>1e6})
 classifyPoint(Point) := o -> p -> if status p === null and p.?ConditionNumber then (
@@ -105,7 +108,7 @@ areEqual (List,List) := o -> (a,b) -> (
 	       )
 	  )
      ) 
-areEqual (RR,RR) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
+areEqual (Number,Number) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
 areEqual (CC,CC) := o -> (a,b) -> (
      abs(a-b) < o.Tolerance
      ) 
@@ -272,7 +275,7 @@ addSlackVariables WitnessSet := (W) -> (
 
 beginDocumentation()
 
-undocumented {(generalEquations,WitnessSet), generalEquations, isRealPoint}
+undocumented {(generalEquations,WitnessSet), generalEquations}
 
 document {
      Key => NAGtypes,
@@ -437,12 +440,29 @@ sortSolutions s
 	SeeAlso => {"solveSystem", "track", areEqual}
 	}
 
-document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance]},
+document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance], [isGEQ,Tolerance], [isRealPoint,Tolerance], [realPoints,Tolerance]},
      Headline => "specifies the tolerance of a numerical computation" 
      }
 
 document {
-	Key => {areEqual, (areEqual,CC,CC), (areEqual,RR,RR), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	Key => {isGEQ, (isGEQ,List,List)},
+	Headline => "compare two points",
+	Usage => "b = isGEQ(x,y)",
+	Inputs => {
+	     "x" => "complex (floating point) numbers",
+	     "y" => "complex (floating point) numbers"
+	     },
+	Outputs => {"b"=>{"tells if ", TT "x", " is (approximately) greater or equal than ", TT "y"}},
+	PARA {"The inputs are lists of complex numbers, the order is (approximately) lexicographic: regard each complex n-vector as real 2n-vector, 
+	      for the corresponding coordinates a and b (of two real 2n-vectors) a < b if b-a is larger than ", TO Tolerance, ". "},
+	EXAMPLE lines ///
+isGEQ({1,1,1},{1,0,2})
+isGEQ({1,1e-7},{1, 0})
+     	///,
+	SeeAlso => {"areEqual"}
+	}
+document {
+	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
 	     [areEqual,Projective]},
 	Headline => "determine if solutions are equal",
 	Usage => "b = areEqual(x,y)",
@@ -463,6 +483,58 @@ areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)
      	///,
 	SeeAlso => {"solveSystem", "track", sortSolutions}
 	}
+
+
+document {
+     Key => {isRealPoint, (isRealPoint,Point)},
+     Headline => "determine whether a point is real",
+     Usage => "b = isRealPoint p",
+     Inputs => {
+	     "p"
+	     },
+     Outputs => {"b"=>{"tells if ", TT "p", " is within ", TO Tolerance, " to a real point"}},
+     PARA{},
+     EXAMPLE lines ///
+     needsPackage "NumericalAlgebraicGeometry"
+     R = CC[x,y];
+     sols = solveSystem{x^3-y^2, x-y-2}
+     sols / isRealPoint
+     ///
+     }
+document {
+     Key => {realPoints, (realPoints,List)},
+     Headline => "determine whether a point is real",
+     Usage => "R = isRealPoint L",
+     Inputs => {
+	     "L" => {TO2{Point,"points"}}
+	     },
+     Outputs => {"R"=>{TO2{Point,"points"}, " that are real (up to ", TO Tolerance, ")"}},
+     PARA{},
+     EXAMPLE lines ///
+     needsPackage "NumericalAlgebraicGeometry"
+     R = CC[x,y];
+     sols = solveSystem{x^6-y^4, x-y-2}
+     realPoints sols
+     ///
+     }
+document {
+     Key => {(norm,Thing,Point)},
+     Headline => "p-norm of the point",
+     Usage => "a = norm(p,pt)",
+     Inputs => {
+	     "p"=>{"a positive real number or ", TO infinity},
+	     "pt"
+	     },
+     Outputs => {"a"=>{"the ", TT "p", "-norm of the point ", TT "pt"}},
+     PARA{},
+     EXAMPLE lines ///
+     needsPackage "NumericalAlgebraicGeometry"
+     R = CC[x,y];
+     sols = solveSystem{x^2+y^2-3, x^3-y^3-7}
+     norm(infinity, first sols)
+     norm(2.5, last sols) 
+     ///
+     }
 
 
 TEST ///
