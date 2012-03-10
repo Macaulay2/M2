@@ -1170,6 +1170,15 @@ kill(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("kill",kill);
 
+limitResources(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) == 0 
+     then if limitResources() == 0 then nullE
+     else buildErrorPacket(syserrmsg())
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("limitResources",limitResources);
+
 setEcho(e:Expr):Expr := (
      when e is f:file do (
 	  f.echo = true;

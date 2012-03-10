@@ -15,6 +15,7 @@ declarations "
     #endif
     #include <unistd.h>
     #include <math.h>
+    #include <sys/resource.h>
 ";
 
 export isatty(fd:int) ::= Ccode(int, "isatty(", fd, ")" );
@@ -143,7 +144,7 @@ export everytime(f:function():void):void := everytimeList = everytimeCell(f,ever
 export everytimeRun():void := (
      x := everytimeList;
      while x.next != x do (x.f(); x = x.next;));
-
+export limitResources():int := Ccode(returns, "static const struct rlimit zero; return setrlimit(RLIMIT_NOFILE,&zero) | setrlimit(RLIMIT_NPROC,&zero)");
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d system.o "
 -- End:
