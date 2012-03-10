@@ -127,6 +127,7 @@ echoOn File := Nothing => echoOn
 --      f -> closeOut f		    -- this code is bypassed by built-in compiled code
 
 kill File := Nothing => kill
+kill ZZ := Nothing => kill
 read File := String => read
 read (File,ZZ) := String => read
 read Sequence := String => read
