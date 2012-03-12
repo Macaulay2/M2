@@ -138,7 +138,9 @@ export substrAlwaysCopy(x:string,start:int,leng:int):string := Ccode(returns, "
   GC_CHECK_CLOBBER(p);
   return p;");
 
-export newline := tostring(Ccode(constcharstarOrNull,"\"\\n\""));
+declarations " extern char newline[]; ";
+header " char newline[] = \"\\n\"; ";
+export newline := tostring(Ccode(constcharstarOrNull,"newline"));
 export envp := array(string)();
 export argv := array(string)();
 export args := array(string)();

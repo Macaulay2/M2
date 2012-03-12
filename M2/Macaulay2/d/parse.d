@@ -343,12 +343,12 @@ export SpecialExpr := {+					    -- this allows specialization of arbitrary type
 export Boolean := {+v:bool};
 export Nothing := {+nothing:void};
 
---export MysqlConnection := Pointer "struct st_mysql *";
---export MysqlConnectionWrapper := {+mysql:MysqlConnection or null};
---export MysqlResult := Pointer "struct st_mysql_res *";
---export MysqlResultWrapper := {+connection:MysqlConnectionWrapper, res:MysqlResult};
---export MysqlField  := Pointer "struct st_mysql_field *";
---export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
+export MysqlConnection := Pointer "struct st_mysql *";
+export MysqlConnectionWrapper := {+mysql:MysqlConnection or null};
+export MysqlResult := Pointer "struct st_mysql_res *";
+export MysqlResultWrapper := {+connection:MysqlConnectionWrapper, res:MysqlResult};
+export MysqlField  := Pointer "struct st_mysql_field *";
+export MysqlFieldWrapper  := {+res:MysqlResultWrapper, fld:MysqlField};
 
 export pythonObject := Pointer "struct _object *";
 export pythonObjectCell := {+v:pythonObject};
@@ -392,16 +392,16 @@ export Expr := (
      RawRingCell or
      RawRingElementCell or
      RawRingMapCell or
---     MysqlConnectionWrapper or
---     MysqlResultWrapper or
---    MysqlFieldWrapper or
+     MysqlConnectionWrapper or
+     MysqlResultWrapper or
+     MysqlFieldWrapper or
      Sequence or
      SpecialExpr or
      SymbolClosure or
      SymbolBody or
      file or
      stringCell or
---     pythonObjectCell or
+     pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
      fileOutputSyncState

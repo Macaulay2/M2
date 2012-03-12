@@ -1,7 +1,6 @@
 --		Copyright 1995,2010 by Daniel R. Grayson
 use actors;
 use actors2;
-use expr;
 
 header "#include \"../e/engine.h\"";
 

@@ -13,7 +13,7 @@ int tty(){
 void d(node n){
      debug=1;
      tty();
-     d_pp(n);
+     pp(n);
      }
 
 /* to be called from the debugger */
@@ -22,16 +22,16 @@ void dt(node n){
      tty();
      if (istype(n))
 	  dprinttype(n);
-     else d_put("not a type");
-     d_put("\n");
+     else put("not a type");
+     put("\n");
      }
 
 /* to be called from the debugger */
 void ds(scope v) {
      debug=1;
      tty();
-     #define DS(X) if (v->X) { d_put("->" #X ": "); d_pp(v->X); }
-     #define DSR(X) if (v->X) { d_put("->" #X ", reversed: "); d_pp(reverse(v->X)); }
+     #define DS(X) if (v->X) { put("->" #X ": "); pp(v->X); }
+     #define DSR(X) if (v->X) { put("->" #X ", reversed: "); pp(reverse(v->X)); }
      DS(current_package);
      DS(symbols);
      DSR(decls);

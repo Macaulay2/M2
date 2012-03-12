@@ -2,6 +2,99 @@
 
 #include "scc.h"
 
+node car(node x){
+     node y = CAR(x);
+     return y;
+     }
+
+node cdr(node x){
+     node y = CDR(x);
+     assert(islist(y));
+     return y;
+     }
+
+node caadr(node x) {
+     x = CDR(x);
+     x = CAR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node caar(node x) {
+     x = CAR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node cadadr(node x) {
+     x = CDR(x);
+     x = CAR(x);
+     x = CDR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node cadar(node x) {
+     x = CAR(x);
+     x = CDR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node cadddr(node x) {
+     x = CDR(x);
+     x = CDR(x);
+     x = CDR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node caddr(node x) {
+     x = CDR(x);
+     x = CDR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node caaddr(node x) {
+     x = CDR(x);
+     x = CDR(x);
+     x = CAR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node cadr(node x) {
+     x = CDR(x);
+     x = CAR(x);
+     return x;
+     }
+
+node cdadr(node x) {
+     x = CDR(x);
+     x = CAR(x);
+     x = CDR(x);
+     return x;
+     }
+
+node cdar(node x) {
+     x = CAR(x);
+     x = CDR(x);
+     return x;
+     }
+
+node cdddr(node x) {
+     x = CDR(x);
+     x = CDR(x);
+     x = CDR(x);
+     return x;
+     }
+
+node cddr(node x) {
+     x = CDR(x);
+     x = CDR(x);
+     return x;
+     }
 
 node cons(node x, node y){
      node p;
@@ -22,16 +115,15 @@ int length(node x){
      return n;
      }
 
-node last(node l)
-{
-	return car(tailend(l));
-}
+node last(node l){
+     while (CDR(l) != NULL) l = CDR(l);
+     return car(l);
+     }
 
-node tailend(node l)
-{
-	while (CDR(l) != NULL) l = CDR(l);
-	return l;
-}
+node tailend(node l){
+     while (CDR(l) != NULL) l = CDR(l);
+     return l;
+     }
 
 node nth(node x, unsigned int n){
      assert(n >= 1);

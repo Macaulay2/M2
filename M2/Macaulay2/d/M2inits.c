@@ -25,17 +25,17 @@
 /* to get IM2_initialize() : */
 #include "engine.h"
 
-const char *progname;
-void arginits(int argc, const char **argv) { progname = argv[0]; }
+char *progname;
+void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
      GC_all_interior_pointers = TRUE;
      GC_INIT();
      }
 
-void *malloc_function (size_t _new) {
-     void *p = malloc(_new);
-     if (p == NULL) outofmem2(_new);
+void *malloc_function (size_t new) {
+     void *p = malloc(new);
+     if (p == NULL) outofmem2(new);
 #    ifdef DEBUG
      trapchk(p);
 #    endif
@@ -49,10 +49,10 @@ void free_function (void *s, size_t old) {
      free(s);
 }
 
-void *realloc_function (void *s, size_t old, size_t _new) {
-     void *p = malloc(_new);
-     if (p == NULL) outofmem2(_new);
-     memcpy(p, s, old<_new ? old : _new);
+void *realloc_function (void *s, size_t old, size_t new) {
+     void *p = malloc(new);
+     if (p == NULL) outofmem2(new);
+     memcpy(p, s, old<new ? old : new);
      free(s);
 #    ifdef DEBUG
      trapchk(p);
@@ -91,6 +91,10 @@ void M2inits(void) {
     enterM2();
     IM2_initialize();
   }
+}
+
+void M2inits_linker_dummy(void) {
+    M2inits2();			/* just to make M2inits2.o link */
 }
 
 void scc_core_prepare() {

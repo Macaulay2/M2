@@ -1,5 +1,6 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
+typedef char bool;
 
 extern char posfmt[];
 extern char errfmt[];
@@ -73,7 +74,7 @@ extern char errfmtnc[];
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
-#include <ctype.h>
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdarg.h>

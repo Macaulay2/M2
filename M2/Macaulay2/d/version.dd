@@ -4,7 +4,6 @@ use hashtables;
 
 declarations "
    #include <M2/config.h>
-   #include <platform.h>
    #if USE_MYSQL
      #include <mysql/mysql.h>
    #endif
@@ -102,9 +101,9 @@ readlineversion():constcharstar := Ccode(returns,"
 
 ic := Ccode(int, "
      #if defined(__INTEL_COMPILER)
-     	  __INTEL_COMPILER;
+     	  __INTEL_COMPILER
      #else
-     	  0;
+     	  0
      #endif
      ");
 compiler := (
@@ -127,11 +126,11 @@ compiler := (
 	    ")));
 
 setupconst("version", Expr(toHashTable(Sequence(
-   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
+--   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
 --   "architecture" => Ccode(constcharstar,"ARCH"),
 --   "issue" => Ccode(constcharstar,"ISSUE"),
-   "machine" => Ccode(constcharstar,"MACHINE"),
-   "operating system" => Ccode(constcharstar,"OS"),
+--   "machine" => Ccode(constcharstar,"MACHINE"),
+--   "operating system" => Ccode(constcharstar,"OS"),
 --   "operating system release" => Ccode(constcharstar,"REL"),
 --   "compiler" => compiler,
 --   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),

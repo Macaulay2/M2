@@ -184,7 +184,18 @@ export setupfun(name:string,value:fun):Symbol := (
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
      entry.Protected = true;
      entry);
-import setupvar(name:string,value:Expr,thread:bool):Symbol; -- was exported
+export setupvar(name:string,value:Expr,thread:bool):Symbol := (
+     word := makeUniqueWord(name,parseWORD);
+     when lookup(word,globalDictionary)
+     is null do (
+     	  entry := makeSymbol(word,dummyPosition,globalDictionary,thread);
+     	  (if thread then enlargeThreadFrame() else globalFrame).values.(entry.frameindex) = value;
+	  entry)
+     is entry:Symbol do (
+	  -- we are doing it again after loading data with loaddata()
+	  -- or we are reassigning to o or oo in interpret.d
+     	  (if thread then enlargeThreadFrame() else globalFrame).values.(entry.frameindex) = value;
+	  entry));
 export setupvar(name:string,value:Expr):Symbol := setupvar(name,value,false);
 export setupvarThread(name:string,value:Expr):Symbol := setupvar(name,value,true);
 export setupconst(name:string,value:Expr):Symbol := (

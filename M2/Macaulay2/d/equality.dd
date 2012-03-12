@@ -190,13 +190,13 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  is y:RawMatrixCell do toExpr(Ccode(bool, "IM2_Matrix_is_equal(",x.p,",",y.p,")"))
 	  else False
 	  )
---     is x:MysqlConnectionWrapper do (
---	  when rhs
---	  is y:MysqlConnectionWrapper do if x.mysql == y.mysql then True else False
---	  else False
---	  )
---     is MysqlFieldWrapper do False
---     is MysqlResultWrapper do False
+     is x:MysqlConnectionWrapper do (
+	  when rhs
+	  is y:MysqlConnectionWrapper do if x.mysql == y.mysql then True else False
+	  else False
+	  )
+     is MysqlFieldWrapper do False
+     is MysqlResultWrapper do False
      is RawMutableMatrixCell do False			    -- mutable matrices may not stay equal, so they aren't equal
      is RawStraightLineProgramCell do False
      is RawPathTrackerCell do False
@@ -217,12 +217,11 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is Database do False
---     is pythonObjectCell do False
+     is pythonObjectCell do False
      is xmlNodeCell do False				    -- unimplemented
      is xmlAttrCell do False				    -- unimplemented
      is x:TaskCell do False
      is x:fileOutputSyncState do False
-     else False
      );
 
 -- Local Variables:

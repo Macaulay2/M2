@@ -266,20 +266,20 @@ struct DISTIN {
     distinguished = {NULL,TRUE};
 
 void printtypelist(){
-	int i;
-	d_pput("Type List\n");
-	for (i=0; i<numtypes; i++) {
-		printf("%3d : %3d : ",i,typelist[i]->body.type.seqno);
-		if (typelist[i]->body.type.name != NULL
-			&& typelist[i]->body.type.definition != NULL) {
-			pprint(typelist[i]->body.type.name);
-			d_put(" : ");
-			d_pp(typelist[i]->body.type.definition);
-		}
-		else d_pp(typelist[i]);
-	}
-	d_pput("\n");
-}
+     int i;
+     pput("Type List\n");
+     for (i=0; i<numtypes; i++) {
+	  printf("%3d : %3d : ",i,typelist[i]->body.type.seqno);
+	  if (typelist[i]->body.type.name != NULL
+	       && typelist[i]->body.type.definition != NULL) {
+	       pprint(typelist[i]->body.type.name);
+	       put(" : ");
+	       pp(typelist[i]->body.type.definition);
+	       }
+	  else pp(typelist[i]);
+	  }
+     pput("\n");
+     }
 
 node thetype(int i){
      assert(i >= 0);
@@ -310,12 +310,12 @@ static bool distinguishable(int i, int j){
 
 static void mark(int i, int j){
      struct DISTIN *d = table(i,j);
-     struct DISTIN::PAIR *l = d->listp;
+     struct PAIR *l = d->listp;
      assert(!d->distinguishable || d->listp==NULL);
      d->listp = NULL;
      d->distinguishable = TRUE;
      while (l != NULL) {
-		 struct DISTIN::PAIR p;
+	  struct PAIR p;
 	  p = *l;
 	  mark(p.i,p.j);
 	  l = p.next;
@@ -324,10 +324,10 @@ static void mark(int i, int j){
 
 static void appendlt(int i, int j, int ii, int jj) {
      /* assert that ii and jj would be distinguishable if i and j were */
-     struct DISTIN::PAIR *p;
+     struct PAIR *p;
      struct DISTIN *d;
      if (i == j) return;
-     p = newoftype(struct DISTIN::PAIR);	/* this gets freed in mark() */
+     p = new(struct PAIR);	/* this gets freed in mark() */
      d = table(i,j);
      p->i = ii;
      p->j = jj;

@@ -6,11 +6,11 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
 objFiles = []
 SConscript('c/SConscript',exports=exportDict)
 objFiles+=SConscript('regex/SConscript',exports=exportDict)
-objFiles+=SConscript('d/SConscript',exports=exportDict)
-objFiles+=SConscript('platform/SConscript',exports=exportDict)
-objFiles+=SConscript('system/SConscript',exports=exportDict)
-objFiles+=SConscript('e/SConscript',exports=exportDict)
+#objFiles+=SConscript('d/SConscript',exports=exportDict)
+#objFiles+=SConscript('platform/SConscript',exports=exportDict)
+#objFiles+=SConscript('system/SConscript',exports=exportDict)
+#objFiles+=SConscript('e/SConscript',exports=exportDict)
 
 libs = ['lapack','blas','fac','cf','cfmem','ntl','gdbm','gc','mpfr','frobby','pari','mpirxx','mpir','readline','history','xml2','z','m','ncurses','gfortran','dl','rt','m','pthread']
-m2 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+getState(mode,architecture,'prefixpath')+'lib/')
-setState(mode,architecture,'m2',m2)
+#m2 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+getState(mode,architecture,'prefixpath')+'lib/')
+#setState(mode,architecture,'m2',m2)

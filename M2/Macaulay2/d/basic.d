@@ -23,9 +23,9 @@ export hash(e:Expr):int := (
      is Nothing do 333889
      is x:List do x.hash
      is f:functionCode do f.hash
---     is MysqlConnectionWrapper do 237489 -- improve this later!
---     is MysqlFieldWrapper do 23748 -- improve this later!
---     is MysqlResultWrapper do 2374 -- improve this later!
+     is MysqlConnectionWrapper do 237489 -- improve this later!
+     is MysqlFieldWrapper do 23748 -- improve this later!
+     is MysqlResultWrapper do 2374 -- improve this later!
      is CodeClosure do 73889				 -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:QQcell do hash(x.v)
@@ -69,12 +69,11 @@ export hash(e:Expr):int := (
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
      is f:CompiledFunctionBody do 12347
---     is po:pythonObjectCell do int(Ccode(long, "PyObject_Hash(",po.v,")"))
+     is po:pythonObjectCell do int(Ccode(long, "PyObject_Hash(",po.v,")"))
      is xmlNodeCell do int(123456)
      is xmlAttrCell do int(123457)
      is t:TaskCell do int(123459)
      is foss:fileOutputSyncState do int(123458)
-     else 123460
      );
 
 export hash(x:List):int := (

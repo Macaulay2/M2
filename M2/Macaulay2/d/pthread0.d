@@ -1,5 +1,17 @@
 declarations "
 
+    /* gc doc tells us to include pthread.h before gc.h */
+    #ifdef GC_MALLOC
+      #error \"gc.h already included\"
+    #endif
+    #ifndef _REENTRANT
+      #define _REENTRANT
+    #endif
+    #include <pthread.h>
+    #define GC_THREADS
+    #include <gc/gc.h>
+    #include <../system/mutex.h>
+
 ";
 export voidPointer := Pointer "void *";
 export nullPointer() ::= Ccode(voidPointer,"((void *)0)");

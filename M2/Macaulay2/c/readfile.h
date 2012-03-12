@@ -9,12 +9,12 @@ extern struct CURRENT cur;
 extern bool iswhite(int);
 extern void read_setup();
 extern node gettoken(void);
-extern bool validtoken(const char *);
+extern bool validtoken(char *);
 extern void advance(void);
 extern node readfile(char *filename);
 extern int tabwidth;
-extern bool sigreadfile(const char *, char **);
-extern const char *sigpath;
+extern bool sigreadfile(char *, char **);
+extern char *sigpath;
 
 /*
 # Local Variables:

@@ -3,15 +3,11 @@
 #include "scc.h"
 
 static node chklhscolon(node, scope);
-/***
-	Return true if e is a return, goto, or break, false otherwise.
-***/
+
 static bool isjump(node e){
      return (iscons(e) && (equal(car(e),return_S) || equal(car(e),goto__S))) || equal(e,break_S);
      }
-/***
-	Return true if e is a keyword.
-***/
+
 static bool iskeyword(node e){
      return issym(e) && (e->body.symbol.flags & keyword_F);
      }
@@ -33,39 +29,23 @@ static bool has_no_effect(node ee){
 	  }
      return FALSE;
      }
-/***
-	The idea here is given node n and list l, if n is not a no-op, add it to list l.
-	@param n Node, not null, that may be a no-op.
-	@param l Cons list.
-***/
+
 static node cons_maybe(node n, node l){
      if (has_no_effect(n))
 	  return l;
      else return cons(n,l);
      }
-/***
-	Push declaration onto list l if the thing being declared occurs in the list.
-	@param l Cons list, not null.
-	@param d Thing to test for.
- ***/
+
 static node pushdecl(node l, node d) {
      if (occursin(cadr(d),l)) return cons(d,l);
      else return l;
      }
-/***
-	Push declaration list onto list if for each declaration, that declaration is needed.
-	@param l Cons list, not null.
-	@param dl Cons list of declarations.
-***/
+
 static node pushdecllist(node l, node dl) {
      while (dl != NULL) l = pushdecl(l,car(dl)), dl = cdr(dl);
      return l;
      }
-/***
-	Iterate through newitems, adding them to previous if they are not no-ops.
-	@param newitems Cons list of potential no-ops, may be null.
-	@param previous Cons list to append onto, not null.
-***/
+
 static node map_cons_maybe(node newitems, node previous){
      while (newitems != NULL) {
 	  previous = cons_maybe(car(newitems),previous);
@@ -73,9 +53,7 @@ static node map_cons_maybe(node newitems, node previous){
 	  }
      return previous;
      }
-/***
-	Return true if f is assigment, false otherwise.
-***/
+
 static bool isassignment(node f) {
      return iscons(f) && CAR(f) == assign__S;
      }
@@ -103,13 +81,8 @@ static void performfinals(scope v){
      v->finals = NULL;
      }
 
-/***
-	Given the current scope vp, create a new child scope.
-	@param vp Current scope.
-	@return new child scope.
-***/
 static scope enternewscope(scope *vp){
-     scope w = newoftype(struct SCOPE);
+     scope w = new(struct SCOPE);
      w->previous = *vp;
      *vp = w;
      return w;
@@ -159,21 +132,22 @@ static bool typematch(node e, node f){
      }
 
 node lookupfunction(node fun, node argtypes){
-	fun = unpos(fun);
-	if (equal(argtypes,functionargtypes(type(fun)))) return fun;
-	if (fun->tag == symbol_tag) {
-		node f = fun->body.symbol.name;
-		assert(isstr(f));
-		for (node slist = f->body.unique_string.symbol_list; slist!=NULL; slist=cdr(slist)) {
-			node sym = car(slist);
-			if (sym == fun) continue;
-			node t = type(sym);
-			if (!isfunctiontype(t)) continue;
-			if (equal(argtypes,functionargtypes(t))) return sym;
-		}
-	}
-	return NULL;
-}
+     fun = unpos(fun);
+     if (equal(argtypes,functionargtypes(type(fun)))) return fun;
+     if (fun->tag == symbol_tag) {
+     	  node f = fun->body.symbol.name;
+     	  assert(isstr(f));
+	  node slist;
+     	  for (slist = f->body.unique_string.symbol_list; slist!=NULL; slist=cdr(slist)) {
+	       node sym = car(slist);
+	       if (sym == fun) continue;
+	       node t = type(sym);
+	       if (!isfunctiontype(t)) continue;
+	       if (equal(argtypes,functionargtypes(t))) return sym;
+	       }
+	  }
+     return NULL;
+     }
 
 static node lookupexactfunction(node fun, node argtypes){
      fun = unpos(fun);
@@ -259,6 +233,7 @@ static node array_take(node x, node a){
      assert(type(a) == int_T);
      return list(3,array_take_S,x,a);
      }
+
 static node arraylength(node arr){
      node t = type(arr), m;
      assert(isarraytype(t)||istaggedarraytype(t));
@@ -291,9 +266,7 @@ static void assign(node lhs, node rhs, scope v){
      }
 
 #include <gdbm.h>
-/***
-	Convert GDBM data to string.
-***/
+
 static char *datumtostring(datum p) {
   char *buf;
   assert(p.dptr != NULL);
@@ -302,24 +275,17 @@ static char *datumtostring(datum p) {
   buf[p.dsize]=0;
   return buf;
 }
-/***
-	Global GDBM database for types.
-***/
+
 static GDBM_FILE db;
-/***
-	Global number of keys (types) in gdbm database.
-***/
 static int numkeys;
-/***
-	Open GDBM values database.  Fails with fatal error on gdbm error.
-***/
+
 static void opendb() {
   datum key;
   int maxn = 0;
   if(gdbm_ronly)
-	  db = gdbm_open(const_cast<char*>("typecode.db"),0,GDBM_READER,0644,NULL);
+    db = gdbm_open("typecode.db",0,GDBM_READER,0644,NULL);
   else
-	  db = gdbm_open(const_cast<char*>("typecode.db"),0,GDBM_WRCREAT|GDBM_SYNC,0644,NULL);
+    db = gdbm_open("typecode.db",0,GDBM_WRCREAT|GDBM_SYNC,0644,NULL);
   if (db == NULL) fatal("failed to open typecode.db");
   key = gdbm_firstkey(db);
   while (key.dptr != NULL) {
@@ -332,6 +298,7 @@ static void opendb() {
   }
   assert( numkeys == maxn );
 }
+
 void printtypecodes() {
   datum key;
   if (db == NULL) opendb();
@@ -342,37 +309,7 @@ void printtypecodes() {
     key = gdbm_nextkey(db,key);
   }
 }
-void printTypeCodesToFile(FILE* file)
-{
-  datum key;
-  if (db == NULL) opendb();
-  key = gdbm_firstkey(db);
-  fprintf(file,"#ifndef _TYPECODES_H_\n#define _TYPECODES_H_\n");
-  while (key.dptr != NULL) {
-    datum value = gdbm_fetch(db,key);
-    fprintf(file,"///SCC Type code for the type %s\n",datumtostring(key));
-    fprintf(file, "static const int %s_typecode = %s;\n",datumtostring(key),datumtostring(value));
-    key = gdbm_nextkey(db,key);
-  }
-  fprintf(file,"/***\n");
-  fprintf(file,"This stores the number of type codes generated by scc for the current compilation.\n");
-  fprintf(file,"***/\n");
-  fprintf(file,"static const int numDTypeCodes = %d;\n",numkeys);
-  fprintf(file,"#define NUMDTYPECODES %d\n",numkeys);
-  fprintf(file,"#include <statictypecodes.h>\n");
-  fprintf(file,"/***\n");
-  fprintf(file,"This stores the number of type codes for the current compilation.\n");
-  fprintf(file,"***/\n");
-  fprintf(file,"static const int numTypeCodes = %d + NUMSTATICTYPECODES;\n",numkeys);
-  fprintf(file,"#endif");
-}
-/***
-	Return the type code for the given type node.
-	If the type does not exist in the type database, this will create the type in the database.
-	This will fail in read only mode.
-	@param t A type node.
-	@return The type integer for the given type.
-***/
+
 static int gettypecode(node t) {
      assert(istype(t));
      t = typeforward(t);
@@ -383,7 +320,7 @@ static int gettypecode(node t) {
      if (t->body.type.runtime_type_code != -1) return t->body.type.runtime_type_code;
      if (db == NULL) opendb();
      datum key;
-     key.dptr = const_cast<char*>(tostring(t));
+     key.dptr = tostring(t);
      key.dsize = strlen(key.dptr);
      datum value = gdbm_fetch(db,key);
      int n;
@@ -462,31 +399,25 @@ static node entmp(node e, scope v){
      perform(list(3,assign__S,tmp,e),v);
      return tmp;
      }
-/**
-   Return true if the node is a positive integer, false otherwise.
-   @param e Node, not null.
-**/
+
 static bool isposint(node e){
      e = unpos(e);
      return e->tag == int_const_tag && e->body.int_const.contents[0] != '-';
      }
-/***
-	Return true if the node is an negative integer, false otherwise.
-	@param e Node, not null.
-***/
+
 static bool isnegint(node e){
      e = unpos(e);
      return e->tag == int_const_tag && e->body.int_const.contents[0] == '-';
      }
-/***
-	????
-	Syntax: 
+
+static node chkfor(node e, scope v) {
+#if 0
       (for (n) ... ) 	    	        n times 
       (for (i n) ... )      	   	i = 1,2,...n 
       (for (i m n) ... )	   	i = m,m+1,...,n
       (for (i m n s) ... ) 	        i = m,m+s,...,until i>n        [s>=0]
-***/
-static node chkfor(node e, scope v) {
+      	   	     	       	        i = m,m+s,...,until i<n        [s<0]
+#endif
      node argblock, indx, init, final, body, step;
      node looplabel = newlabel();
      node breaklabel = newlabel(), skiplabel = newlabel();
@@ -783,186 +714,184 @@ static node chkwhile(node e, scope v) {
      }
 
 static node chkwhen(node e, scope v){
-	int i, nulls = 0, nullindex = 0, ntypes;
-	bool hadelse = false;
-	node sym1, sym, typ, types, labels = NULL, firstcasecodetype = NULL,
-		cases, vtmp=NULL, casetypes = NULL, after = NULL, endlabel = NULL, nullcaselabel = NULL;
-	sym1 = cadr(e);
-	cases = cddr(e);
-	enternewscope(&v);
-	sym = chk(sym1,v);
-	after = v->after, v->after = NULL;
-	pushbackscope(&v);
-	if (sym == bad__K) return bad__K;
-	typ = type(sym);
-	if (!isortype(typ)) {
-		errorpos(cadr(e),typ == deferred__T ? "not declared yet" : "when-clause requires a union type");
-		return bad__K;
-	}
-	if (!issym(unpos(sym)))
-		sym = entmp(sym,v);
-	if (debug) perform(list(5,Ccode_S,void_T,String("GC_CHECK_CLOBBER("),sym,String(")")),v);
-	types = typedeftail(typ);
-	ntypes = length(types);
-	for (i=1; i<=ntypes; i++) 
-		if (nth(types,i)==null_T) 
-			++nulls, nullindex=i;
-	// doswitch is false if there is only one non-null type in the union.
-	bool doswitch = nulls + 1 != ntypes;
-	if (!doswitch) {
-		for (i=1; i<=ntypes; i++) labels = cons(newlabel(),labels);
-		labels = reverse(labels); /* just so the numbers appear to increase */
-		if (nulls > 0) 
-			perform( list(3,if_S, list(2,isnull__S,sym), list(2,goto__S,nth(labels,nullindex))),v);
-	}
-	else {
-		if (nulls > 0) {
-			nullcaselabel = newlabel();
-			perform( list(3,if_S, list(2,isnull__S,sym), list(2,goto__S,nullcaselabel)),v);
-		}
-	}
-	// if there are no nullable types, check for null pointer exception.
-	if (nulls == 0 && casechks) {
-		perform(list(5,Ccode_S, void_T, String("if ("), sym, String(" == 0) invalidNullPointer(__FILE__,__LINE__,-1)")),v);
-	}
-	if (!doswitch) endlabel = newlabel();
-	// we don't examine the type tag when there is only one non-null type in the union, because it might not be there
-	if (doswitch) {
-		perform(list(6, Ccode_S, void_T, String("switch ("), take(sym,type__S), String(") "), String("{")),v);
-	}
-	else {
-		for (i=1; i<=ntypes; i++) {
-			if (nth(types,i) != null_T) {
-				perform(list(2,goto__S,nth(labels,i)),v);
-				break;
+     int i, nulls = 0, nullindex = 0, ntypes;
+     bool hadelse = FALSE, doswitch;
+     node sym1, sym, typ, types, labels = NULL, firstcasecodetype = NULL,
+	  cases, vtmp=NULL, casetypes = NULL, after = NULL, endlabel = NULL, nullcaselabel = NULL;
+     sym1 = cadr(e);
+     cases = cddr(e);
+     enternewscope(&v);
+     sym = chk(sym1,v);
+     after = v->after, v->after = NULL;
+     pushbackscope(&v);
+     if (sym == bad__K) return bad__K;
+     typ = type(sym);
+     if (!isortype(typ)) {
+	  errorpos(cadr(e),typ == deferred__T ? "not declared yet" : "when-clause requires a union type");
+	  return bad__K;
+	  }
+     if (!issym(unpos(sym)))
+	  sym = entmp(sym,v);
+     if (debug) perform(list(5,Ccode_S,void_T,String("GC_CHECK_CLOBBER("),sym,String(")")),v);
+     types = typedeftail(typ);
+     ntypes = length(types);
+     for (i=1; i<=ntypes; i++) if (nth(types,i)==null_T) ++nulls, nullindex=i;
+     doswitch = nulls + 1 != ntypes;
+     if (!doswitch) {
+	  for (i=1; i<=ntypes; i++) labels = cons(newlabel(),labels);
+	  labels = reverse(labels); /* just so the numbers appear to increase */
+	  if (nulls > 0) 
+	       perform( list(3,if_S, list(2,isnull__S,sym), list(2,goto__S,nth(labels,nullindex))),v);
+	  }
+     else {
+	  if (nulls > 0) {
+	       nullcaselabel = newlabel();
+	       perform( list(3,if_S, list(2,isnull__S,sym), list(2,goto__S,nullcaselabel)),v);
+	       }
+	  }
+     if (nulls == 0 && casechks) {
+	  perform(list(5,Ccode_S, void_T, String("if ("), sym, String(" == 0) invalidNullPointer(__FILE__,__LINE__,-1)")),v);
+	  }
+     if (!doswitch) endlabel = newlabel();
+     /* we don't examine the type tag when there is only one non-null type in the union, because it might not be there */
+     if (doswitch) {
+	  perform(list(6, Ccode_S, void_T, String("switch ("), take(sym,type__S), String(") "), String("{")),v);
+	  }
+     else {
+     	  for (i=1; i<=ntypes; i++) {
+	       if (nth(types,i) != null_T) {
+		    perform(list(2,goto__S,nth(labels,i)),v);
+		    break;
 		    }
-		}
-	}
-	for(; cases != NULL; cases = cdr(cases)) {
-		node cas, casecode, casetype=NULL, casesym=NULL, casecodetype;
-		if (length(CAR(cases))==1) {
-			/* this is the else clause at the end */
-			assert(CDR(cases) == NULL);
-			cas = NULL;
-			casecode = CAAR(cases);
-			casetype = NULL;
-			casesym = NULL;
-			hadelse = TRUE;
-			if (!doswitch) {
-				for(i=1; i<=length(types); i++) { /* this is a slow way to traverse a linked list! */
-					node nt = nth(types,i);
-					if (!member(nt,casetypes)) {
-						perform(list(2,label__S, nth(labels, i)),v);
-					}
-				}
+	       }
+	  }
+     for(; cases != NULL; cases = cdr(cases)) {
+	  node cas, casecode, casetype=NULL, casesym=NULL, casecodetype;
+	  if (length(CAR(cases))==1) {
+	       /* this is the else clause at the end */
+	       assert(CDR(cases) == NULL);
+	       cas = NULL;
+	       casecode = CAAR(cases);
+	       casetype = NULL;
+	       casesym = NULL;
+	       hadelse = TRUE;
+	       if (casechks || !doswitch) {
+		    for(i=1; i<=length(types); i++) { /* this is a slow way to traverse a linked list! */
+			 node nt = nth(types,i);
+			 if (!member(nt,casetypes)) {
+			      if (doswitch) {
+				   if (nt != null_T)
+					perform(list(5, Ccode_S, void_T, String("case "), integer(gettypecode(nth(types,i))), String(":")), v);
+				   }
+			      else
+				   perform(list(2,label__S, nth(labels, i)),v);
+			      }
+			 }
 		    }
-			else {
-				if(casechks)
-					perform(list(5, Ccode_S, void_T, String("default:\ncheckTypeValidity("),take(sym,type__S),String(",__FILE__,__LINE__)")), v);
-				else
-					perform(list(3, Ccode_S, void_T, String("default:")), v);
-			}
-			if (nullcaselabel) {
-				perform(list(2,label__S, nullcaselabel),v);
-				nullcaselabel = NULL;
+	       else {
+		    perform(list(3, Ccode_S, void_T, String("default:")), v);
+	            }
+	       if (nullcaselabel) {
+		    perform(list(2,label__S, nullcaselabel),v);
+		    nullcaselabel = NULL;
 		    }
-		}
-		else {
-			cas = CAAR(cases);
-			casecode = CADAR(cases);
-			if (iscons(cas) && equal(car(cas),colon__S)) {
-				if (length(cas) != 3) return badnumargs(cas,2);
-				casesym = CADR(cas);
-				casetype = chktype(CADDR(cas),v);
-				if (casetype == bad__K) return bad__K;
-				casetype = totype(casetype);
+	       }
+	  else {
+	       cas = CAAR(cases);
+	       casecode = CADAR(cases);
+	       if (iscons(cas) && equal(car(cas),colon__S)) {
+		    if (length(cas) != 3) return badnumargs(cas,2);
+		    casesym = CADR(cas);
+		    casetype = chktype(CADDR(cas),v);
+		    if (casetype == bad__K) return bad__K;
+		    casetype = totype(casetype);
 		    }
-			else if (cas != NULL) {
-				casetype = chktype(cas,v);
-				if (casetype == bad__K) return bad__K;
-				casetype = totype(casetype);
-				casesym = NULL;
+	       else if (cas != NULL) {
+		    casetype = chktype(cas,v);
+		    if (casetype == bad__K) return bad__K;
+		    casetype = totype(casetype);
+		    casesym = NULL;
 		    }
-			if (!member(casetype,types)) {
-				errorpos(iscons(cas)&&length(cas)==3 ? caddr(cas) : cas,
-						 "type not among those represented by the when-clause");
+	       if (!member(casetype,types)) {
+		    errorpos(iscons(cas)&&length(cas)==3 ? caddr(cas) : cas,
+			     "type not among those represented by the when-clause");
 		    }
-			else {
-				if (casetype == null_T && nullcaselabel) {
-					perform(list(2,label__S, nullcaselabel),v);
-					nullcaselabel = NULL;
-				}
-				else {
-					if (doswitch)
-						perform(list(5, Ccode_S, void_T, String("case "), String(tostring(casetype)), String("_typecode:")), v);
-					else
-						perform(list(2,label__S, nth(labels, memberindex(casetype,types))),v);
-				}
+	       else {
+		    if (casetype == null_T && nullcaselabel) {
+			 perform(list(2,label__S, nullcaselabel),v);
+			 nullcaselabel = NULL;
+			 }
+		    else {
+			 if (doswitch)
+			      perform(list(5, Ccode_S, void_T, String("case "), integer(gettypecode(casetype)), String(":")), v);
+			 else
+			      perform(list(2,label__S, nth(labels, memberindex(casetype,types))),v);
+			 }
 		    }
-			casetypes = cons(casetype,casetypes);
-		}
-		enternewscope(&v);
-		if (casesym != NULL) {
-			casesym = newsymbol(casesym,casetype,v,intern_F|defined_F);
-			push(v->decls,list(2,declare__S,casesym));
-			assign(casesym,sym,v);
-		}
-		performlist(after,v);
-		casecode = chk(list(2,blockn__K,casecode),v);
-		casecodetype = type(casecode);
-		if (firstcasecodetype == NULL) {
-			if (casecodetype != returns_T && casecodetype != exits_T) {
-				firstcasecodetype = casecodetype;
-				if (firstcasecodetype != void_T) {
-					vtmp = newtmp(firstcasecodetype,v,TRUE);
-				}
+	       casetypes = cons(casetype,casetypes);
+	       }
+	  enternewscope(&v);
+	  if (casesym != NULL) {
+	       casesym = newsymbol(casesym,casetype,v,intern_F|defined_F);
+	       push(v->decls,list(2,declare__S,casesym));
+	       assign(casesym,sym,v);
+	       }
+	  performlist(after,v);
+	  casecode = chk(list(2,blockn__K,casecode),v);
+	  casecodetype = type(casecode);
+	  if (firstcasecodetype == NULL) {
+	       if (casecodetype != returns_T && casecodetype != exits_T) {
+		    firstcasecodetype = casecodetype;
+		    if (firstcasecodetype != void_T) {
+			 vtmp = newtmp(firstcasecodetype,v,TRUE);
+			 }
 		    }
-		}
-		else {
-			if (!typematch(firstcasecodetype,casecodetype)) {
-				errorpos(CAR(cases),"type mismatch between branches");
+	       }
+	  else {
+	       if (!typematch(firstcasecodetype,casecodetype)) {
+		    errorpos(CAR(cases),"type mismatch between branches");
 		    }
-		}
-		if (casecode != NULL) {
-			if (firstcasecodetype != void_T && casecodetype != returns_T && casecodetype != exits_T)
-				assign(vtmp,casecode,v);
-			else perform(casecode,v);
-		}
-		unwind(&v->symbols);
-		performafters(v);
-		performfinals(v);
-		pushbackscope(&v);
-		if (doswitch)
-			perform(break_S,v);
-		else
-			perform(list(2,goto__S,endlabel),v);
-	}
-	if (!hadelse) {
-		/* check for a missing case */
-		int missing = 0;
-		for(i=1; i<=length(types); i++)
-			if (!member(nth(types,i),casetypes)) missing++;
-		if (missing > 0) {
-			char buf[400];
-			strcpy(buf,missing > 1 ? "missing cases" : "missing case");
-			for(i=1; i<=length(types); i++) {
-				if (!member(nth(types,i),casetypes)) {
-					sprintf(buf + strlen(buf)," %d",i);
-				}
+	       }
+	  if (casecode != NULL) {
+	       if (firstcasecodetype != void_T && casecodetype != returns_T && casecodetype != exits_T)
+		    assign(vtmp,casecode,v);
+	       else perform(casecode,v);
+	       }
+	  unwind(&v->symbols);
+	  performafters(v);
+	  performfinals(v);
+	  pushbackscope(&v);
+	  if (doswitch)
+	       perform(break_S,v);
+	  else
+	       perform(list(2,goto__S,endlabel),v);
+	  }
+     if (!hadelse) {
+	  /* check for a missing case */
+	  int missing = 0;
+     	  for(i=1; i<=length(types); i++)
+	       if (!member(nth(types,i),casetypes)) missing++;
+	  if (missing > 0) {
+	       char buf[400];
+	       strcpy(buf,missing > 1 ? "missing cases" : "missing case");
+	       for(i=1; i<=length(types); i++) {
+		    if (!member(nth(types,i),casetypes)) {
+		    	 sprintf(buf + strlen(buf)," %d",i);
+		    	 }
 		    }
-			errorpos(e,buf);
-			return bad__K;
-		}
-	}
-	assert(! nullcaselabel);
-	//	if (doswitch)
-	//		perform(list(5, Ccode_S, void_T, String("default: invalidTypeTag("),take(sym,type__S),String(",__FILE__,__LINE__,-1)")), v);
-	if (doswitch)
-		perform(list(3,Ccode_S,void_T,String("}")),v);
-	else
-		perform(list(2,label__S,endlabel),v);
-	return vtmp;
-}
+	       errorpos(e,buf);
+	       return bad__K;
+	       }
+	  }
+     assert(! nullcaselabel);
+     if (doswitch && casechks)
+	  perform(list(5, Ccode_S, void_T, String("default: invalidTypeTag("),take(sym,type__S),String(",__FILE__,__LINE__,-1)")), v);
+     if (doswitch)
+	  perform(list(3,Ccode_S,void_T,String("}")),v);
+     else
+	  perform(list(2,label__S,endlabel),v);
+     return vtmp;
+     }
 
 static bool reachable(scope v) {
      return v->before == NULL || !isjump(car(v->before));
@@ -977,7 +906,7 @@ static node chkandand(node e, scope v) {
 	  }
      bafter = v->after, v->after = NULL;
      assign(vtmp,b,v);
-     perform(list(3,if_S,vtmp,list(3,Ccode_S,void_T,String("{\n"))),v);
+     perform(list(3,if_S,list(3,prefix__S,not_S,vtmp),list(2,goto__S,l)),v);
      c = chk(enblock(caddr(e)),v);
      if (c!=bad__K && type(c) != bool_T) {
 	  errorpos(caddr(e),"condition should be of type bool");
@@ -985,7 +914,7 @@ static node chkandand(node e, scope v) {
 	  }
      assign(vtmp,c,v);
      performafters(v);
-	 perform(list(3,Ccode_S,void_T,String("}\n")),v);
+     perform(list(2,label__S,l), v);
      performlist(bafter,v);
      if (b==bad__K || c==bad__K) return bad__K;
      pushbackscope(&v);
@@ -1001,15 +930,15 @@ static node chkoror(node e, scope v) {
 	  }
      bafter = v->after, v->after = NULL;
      assign(vtmp,b,v);
-     perform(list(3,if_S,list(3,prefix__S,not_S,vtmp),list(3,Ccode_S,void_T,String("{\n"))),v);
+     perform(list(3,if_S,vtmp,list(2,goto__S,l)),v);
      c = chk(enblock(caddr(e)),v);
      if (c!=bad__K && type(c) != bool_T) {
 	  errorpos(caddr(e),"condition should be of type bool");
 	  }
      assign(vtmp,c,v);
      performafters(v);
-	 perform(list(3,Ccode_S,void_T,String("}\n")),v);
-     performlist(bafter,v); 
+     perform(list(2,label__S,l), v);
+     performlist(bafter,v);
      if (b==bad__K || c==bad__K) return bad__K;
      pushbackscope(&v);
      return vtmp;
@@ -1025,54 +954,44 @@ static node chkif(node e, scope v) {
 	       errorpos(cadr(e),"condition should be of type bool");
 	       }
 	  bafter = v->after, v->after = NULL;
-	  //then clause
-	  perform(list(3,if_S,b,list(3,Ccode_S,void_T,String("\n{\n"))),v);
+	  perform(list(3,if_S,b,list(2,goto__S,l)),v);
 	  performlist(bafter,v);
-	  node elsenode;
+	  if (length(e)==4) elseclause = chk(enblock(cadddr(e)),v);
+	  elsetype = type(elseclause);
+	  if (elsetype != void_T && elsetype != returns_T && elsetype != exits_T) {
+	       vtmp = newtmp(elsetype,v,TRUE);
+	       assign(vtmp,elseclause,v);
+	       }
+	  else if (elseclause != NULL) perform(elseclause,v);
+	  performafters(v);
+	  if (reachable(v)) {
+	       m = newlabel();
+	       perform(list(2,goto__S,m), v);
+	       }
+	  perform(list(2,label__S,l), v);
+	  performlist(bafter,v);
 	  thenclause = chk(enblock(caddr(e)),v);
 	  thentype = type(thenclause);
 	  if (thenclause == bad__K || elseclause == bad__K || b == bad__K) return bad__K;
-	  if (type(thenclause) == deferred__T) {
-	       errorpos(caddr(e),"undefined");
-	       return bad__K;
-	       }
-	  if (thentype != void_T && thentype != returns_T && thentype != exits_T) {
-	       vtmp = newtmp(thentype,v,TRUE);
-	       assign(vtmp,thenclause,v);
-	       }
-	  else
-	  {
-		  perform(thenclause,v);
-	  }
-	  perform(list(3,Ccode_S,void_T,String("}\n")),v);
-	  //else clause
-	  if (length(e)==4)
-	  {
-		  perform(list(3,Ccode_S,void_T,String("else\n{\n")),v);
-		  performlist(bafter,v);
-		  elseclause = chk(enblock(cadddr(e)),v);
-	  }
-	  elsetype = type(elseclause);
-	  if (length(e) == 4 && !typematch(thentype,elsetype)) {
-	       errorpos(e,"then/else clauses not of same type");
-	       return bad__K;
-	       }
-
-	  if (elsetype != void_T && elsetype != returns_T && elsetype != exits_T) {
-		  if (vtmp == NULL) vtmp = newtmp(elsetype,v,TRUE);
-	       assign(vtmp,elseclause,v);
-	       }
-	  else if (elseclause != NULL)
-	  {
-		  perform(elseclause,v);
-	  }
-	  if(length(e)==4)
-		  perform(list(3,Ccode_S,void_T,String("}\n")),v);
-	  performafters(v);
 	  if (elsetype == deferred__T) {
 	       errorpos(cadddr(e),"undefined");
 	       return bad__K;
 	       }
+	  if (type(thenclause) == deferred__T) {
+	       errorpos(caddr(e),"undefined");
+	       return bad__K;
+	       }
+	  if (length(e) == 4 && !typematch(thentype,elsetype)) {
+	       errorpos(e,"then/else clauses not of same type");
+	       return bad__K;
+	       }
+	  if (thentype != void_T && thentype != returns_T && thentype != exits_T) {
+	       if (vtmp == NULL) vtmp = newtmp(thentype,v,TRUE);
+	       assign(vtmp,thenclause,v);
+	       }
+	  else perform(thenclause,v);
+	  performafters(v);
+	  if (m != NULL) perform(list(2,label__S,m), v);
 	  pushbackscope(&v);
 	  return vtmp;
 	  }
@@ -1080,39 +999,33 @@ static node chkif(node e, scope v) {
      return NULL;
      }
 
-/***
-	Check Ccode node.  
-	This doesn't have any surprising features.
-	@param e Ccode node, not null.
-	@param v Current scope.
-***/
 static node chkCcode(node e, scope v){
-	bool bad = false;
-	node r = NULL, t, ee;
-	if (length(e) < 2) {
-		errorpos(e,"Ccode takes at least one argument");
-		return bad__K;
-	}
-	t = totype(chktype(cadr(e),v));
-	for (ee = CDDR(e);ee != NULL;ee = CDR(ee)) {
-		node b = car(ee);
-		node u = unpos(b);
-		if (u->tag != string_const_tag) {
-			u = chk(b,v);
-		}
-		if (u == bad__K) bad=TRUE;
-		r = cons(u,r);
-	}
-	if (bad) return bad__K;
-	else {
-		node z;
-		r = reverse(r);
-		z = cons(Ccode_S,cons(t,r));
-		/* if (t != void_T && t != returns_T && t != exits_T) z = entmp(z,v); */
-		z = enpos(z,pos(e));
-		return z;
-	}
-}
+     bool bad = FALSE;
+     node r = NULL, t, ee;
+     if (length(e) < 2) {
+	  errorpos(e,"Ccode takes at least one argument");
+	  return bad__K;
+	  }
+     t = totype(chktype(cadr(e),v));
+     for (ee = CDDR(e);ee != NULL;ee = CDR(ee)) {
+	  node b = car(ee);
+	  node u = unpos(b);
+	  if (u->tag != string_const_tag) {
+	       u = chk(b,v);
+	       }
+	  if (u == bad__K) bad=TRUE;
+	  r = cons(u,r);
+	  }
+     if (bad) return bad__K;
+     else {
+	  node z;
+	  r = reverse(r);
+	  z = cons(Ccode_S,cons(t,r));
+	  /* if (t != void_T && t != returns_T && t != exits_T) z = entmp(z,v); */
+	  z = enpos(z,pos(e));
+	  return z;
+          }
+     }
 
 static void returngather(scope v){
      scope w = v;
@@ -2202,7 +2115,7 @@ static node chklength(node e,scope v){
      return arraylength(s);
      }
 
-static int truestrlen(const char *s){
+static int truestrlen(char *s){
      int len = 0, i=3;
      while (*s) {
 	  if (*s == '\\') {
@@ -2234,8 +2147,10 @@ static node chkstringconst(node e, scope v) {
      assert(f->tag == string_const_tag);
      i = truestrlen(f->body.string_const.characters);
      len = integer(i);
+     perform(list(3, getmem__S,tmp,len),v);
      setup(tmp,v);
-	 perform(list(6, Ccode_S, void_T, tmp, String(" = M2CPP_NewConstString("),e,String(")")),v);
+     assign(take(tmp, len_S), len, v);
+     perform(list(5,funcall__S,memcpy_S, take(tmp, array_S), e, len),v);
      return enpos(tmp,pos(e));
      }
 
@@ -2349,12 +2264,12 @@ static node chkcolon(node e, scope v){
 static node chkcoloncolonequal(node e, scope v){
      /* macros! */
      node f, fsym;
+     bool export = FALSE;
      int macro_flag;
-	 bool _export = false;
      if (length(e) != 3) return badnumargs(e,2);
      f = cadr(e);
      if (iscons(f) && (equal(car(f),export_S) || equal(car(f),import_S))) {
-		 _export = true;
+       export = TRUE;
        f = cadr(f);
      }
      if (isstrpos(f)) {
@@ -2393,7 +2308,7 @@ static node chkcoloncolonequal(node e, scope v){
 	  fsym->body.symbol.args = reverse(n);
 	  }
      internsymbol(fsym,v);
-     if (_export) {
+     if (export) {
        push(v->signature, e);
        exportit(fsym,v);
      }
@@ -2527,8 +2442,8 @@ static node chkheader(node e, scope v) {
 
 node leftOperator(node e) {
      int prty = atoi(tostring(cadr(e)));
-     const char *str = tostring(caddr(e));
-     if (ERROR == setopleft(prty,const_cast<char*>(str))) {
+     char *str = tostring(caddr(e));
+     if (ERROR == setopleft(prty,str)) {
 	  errorpos(e,"invalid operator definition");
 	  }
      return e;
@@ -2536,16 +2451,16 @@ node leftOperator(node e) {
 
 node rightOperator(node e) {
      int prty = atoi(tostring(cadr(e)));
-     const char *str = tostring(caddr(e));
-     if (ERROR == setopright(prty,const_cast<char*>(str)))
+     char *str = tostring(caddr(e));
+     if (ERROR == setopright(prty,str))
 	  errorpos(e,"invalid operator definition");
      return e;
      }
 
 node prefixOperator(node e) {
      int prty = atoi(tostring(cadr(e)));
-     const char *str = tostring(caddr(e));
-     if (ERROR == setopprefix(prty,const_cast<char*>(str)))
+     char *str = tostring(caddr(e));
+     if (ERROR == setopprefix(prty,str))
 	  errorpos(e,"invalid operator definition");
      return e;
      }
@@ -2646,9 +2561,6 @@ static node chklvalue(node e, scope v) {
      return x;
      }
 
-std::set<std::string> headerFilesNeeded;
-std::set<std::string> importPrefixes;
-
 static node chk_use(node e, scope v){
      bool fresh;
      node p, syms, name, pp = enclosing_package(v);
@@ -2666,16 +2578,11 @@ static node chk_use(node e, scope v){
 	       return bad__K;
 	       }
 	  assert(pathopened != NULL);
-	  headerFilesNeeded.insert(newsuffixbase(pathopened,"-exports.h"));
-	  importPrefixes.insert(newsuffixbase(pathopened,""));
 	  if (dependfile != NULL)
-	  {
 	       fprintf(dependfile,"%s %s %s : %s\n", 
 		       outfilename, newsuffixbase(targetname,".o"), newsuffixbase(targetname,".sig"), 
 		       newsuffixbase(pathopened,".sig")
 		    );
-		   fprintf(dependfile,"%s : %s\n",newsuffixbase(targetname,".o"),newsuffixbase(pathopened,"-exports.h"));
-	  }
 	  p = lookupword(name);
      	  if (p == NULL) {
 	       errorpos(CADR(e), "signature file read, but package remains undefined");

@@ -1,11 +1,10 @@
 /*		Copyright 1993,2010 by Daniel R. Grayson		*/
 
 #include "scc.h"
-#include <sstream>
 
 FILE *dependfile;
-const char *targetname;
-const char *outfilename;
+char *targetname;
+char *outfilename;
 static bool stop_after_dep = FALSE;
 bool do_cxx = FALSE;
 bool do_this_cxx = FALSE;
@@ -22,14 +21,12 @@ static char Copyright[] = "Copyright 1993, 2010, by Daniel R. Grayson";
 static char Version[]   = "Safe C - version 2.0";
 
 char *getmem(unsigned n) {
-     char *p = reinterpret_cast<char*>(GC_MALLOC(n));	/* GC_MALLOC clears the memory */
+     char *p = GC_MALLOC(n);	/* GC_MALLOC clears the memory */
      if (p == NULL) fatal("out of memory");
      return p;
      }
 
-static const char *progname;
-scope global_scope;
-
+static char *progname;
 
 node newnode1(unsigned int len, enum TAG tag) {
      node p = (node) getmem(len);
@@ -49,7 +46,7 @@ char *strperm(const char *s){
      return strnperm(s,strlen(s));
      }
 
-const char *intToString(int n){
+char *intToString(int n){
      int sign = 1;
      static char s[20];
      int i;
@@ -67,7 +64,7 @@ const char *intToString(int n){
      return s+i;
      }
 
-int substr(const char *s, const char *t){
+int substr(char *s, char *t){
      assert(s != NULL);
      assert(t != NULL);
      while (*s) {
@@ -78,7 +75,7 @@ int substr(const char *s, const char *t){
      return TRUE;
      }
 
-int strequaln(const char *s, const char *t, unsigned int tlen){ /* s is null-terminated, but tlen is the length of t */
+int strequaln(char *s, char *t, unsigned int tlen){ /* s is null-terminated, but tlen is the length of t */
      assert(s != NULL);
      assert(t != NULL);
      while (*s && tlen>0) {
@@ -89,20 +86,20 @@ int strequaln(const char *s, const char *t, unsigned int tlen){ /* s is null-ter
      return *s==0 && tlen==0;
      }
 
-const char *tail(const char *s){
-     const char *u = NULL;
+char *tail(char *s){
+     char *u = NULL;
      for (; *s; s++) if (*s == '.') u = s;
      return u == NULL ? s : u;
      }
 
-const char *BaseName(const char *s) {
-     const char *u = s;
+char *BaseName(char *s) {
+     char *u = s;
      for (; *s; s++) if (*s == '/') u = s+1;
      return u;
      }
 
-const char *newsuffix(const char *s, const char *suf){
-     const char *t = tail(s);
+char *newsuffix(char *s, char *suf){
+     char *t = tail(s);
      unsigned int len = t-s;
      char *u = getmem(len+1+strlen(suf));
      strncpy(u,s,len);
@@ -110,9 +107,8 @@ const char *newsuffix(const char *s, const char *suf){
      return u;
      }
 
-const char *newsuffixbase(const char *s, const char *suf){
-     const char *t;
-     char* u;
+char *newsuffixbase(char *s, char *suf){
+     char *t, *u;
      unsigned int len;
      s = BaseName(s);
      t = tail(s);
@@ -122,40 +118,31 @@ const char *newsuffixbase(const char *s, const char *suf){
      strcpy(u+len,suf);
      return u;
      }
-// we would like this to be const we can't because POS is in a union, so it can't have a constructor.
-struct POS empty_pos;
+
+const struct POS empty_pos;
 
 static char declarations_header[] = "\
 /* included from " __FILE__ "*/\n\
 \n\
-#ifndef GC_MALLOC\n\
-#ifndef _REENTRANT\n\
-#define _REENTRANT\n\
-#endif\n\
-#include <pthread.h>\n\
-#define GC_THREADS\n\
-#include <gc/gc.h>\n\
-#endif\n\
-#include <../system/mutex.h>\n\
-#include <../system/interp.hpp>\n\
-#ifndef SCC_HEADER\n\
-#define SCC_HEADER\n\
 #ifdef __cplusplus\n\
   #define BASECLASS : public our_new_delete\n\
   #include \"newdelete.hpp\"\n\
 #else\n\
   #define BASECLASS\n\
 #endif\n\
-#endif\n\
 \n\
 #if defined(__cplusplus)\n\
   extern \"C\" {\n\
 #endif\n\
 \n\
+#ifndef SAFEC_EXPORTS\n\
+#define SAFEC_EXPORTS\n\
+#endif\n\
 #ifndef SAFEC_basic_typedefs_defined\n\
 #define SAFEC_basic_typedefs_defined\n\
 typedef char M2_bool;\n\
 struct tagged_union { unsigned short type_; };\n\
+#undef M2_basic_typedefs_defined\n\
 #endif\n\
 \n\
 ";
@@ -188,7 +175,6 @@ static void usage() {
   printf("    -noline       insert no source code line numbers\n");
   printf("    -sig          stop after creating signature file foo.sig.tmp\n");
   printf("    -typecodes    print typecodes (from typecode.db), then stop\n");
-  printf("    -typecodefile generate typecode.h file containing typecode definitions\n");
   printf("    -nomacros     do not parse internal macro definitions\n");
   printf("    -noarraychks  insert no array bound checking code\n");
   printf("    -nocasechks   insert no type case checking code\n");
@@ -197,7 +183,7 @@ static void usage() {
   printf("    -yydebug      debug the parser\n");
   printf("    -debug        set debugging mode on, write symbol table, list of types, and list of strings to foo.sym\n");
   printf("    -Ixxx         append xxx to the path used for finding *.sig files, initially \".\"\n");
-  printf("    -ronly        open typecode.db in read only mode\n");
+  printf("    -ronly        open typecode.db in read only mode");
 }
 
 int main(int argc, char **argv){
@@ -237,17 +223,6 @@ int main(int argc, char **argv){
 	       printtypecodes();
 	       return 0;
 	       }
-	  if (EQUAL == strcmp(argv[i],"-typecodefile"))
-	    {
-			FILE* fp = fopen("typecodes.h","w");
-			if(fp==NULL)
-			{
-				abort();
-			}
-			printTypeCodesToFile(fp);
-			fclose(fp);
-			return 0;
-	    }
      	  if (EQUAL == strcmp(argv[i],"-noarraychks")) {
 	       arraychks = FALSE;
 	       continue;
@@ -300,44 +275,32 @@ int main(int argc, char **argv){
 	       error("unrecognized option %s\n",argv[i]);
 	       usage();
 	       exit(1);
-	       }		  
+	       }
 	  if ( EQUAL == strcmp(".d",tail(argv[i])) || EQUAL == strcmp(".dd",tail(argv[i])) ) {
-		  if(gdbm_ronly==false && stop_after_dep==false)
-		  {
-			  //this provides backwards compatability with non-scons build system.
-			  FILE* fp = fopen("typecodes.h","w");
-			  if(fp==NULL)
-			  {
-				  abort();
-			  }
-			  printTypeCodesToFile(fp);
-			  fclose(fp);
-			  return 0;
-		  }
 	       node f;
 	       do_this_cxx = do_cxx || EQUAL == strcmp(".dd",tail(argv[i]));
-	       global_scope = newoftype(struct SCOPE);
+	       global_scope = new(struct SCOPE);
 	       readsetup(global_scope);
 	       targetname = newsuffixbase(argv[i],"");
 	       f = readfile(argv[i]);
 	       if (debug) {
-		    const char *n = newsuffixbase(argv[i],".out");
+		    char *n = newsuffixbase(argv[i],".out");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
-		    d_put("After parsing:\n");
-		    d_pp(f);
+		    put("After parsing:\n");
+		    pp(f);
 		    fflush(stdout);
 		    }
 	       outfilename = newsuffixbase(argv[i], do_this_cxx ? "-tmp.cc" : "-tmp.c");
 	       {
-		    const char *n = newsuffixbase(argv[i],".dep.tmp");
+		    char *n = newsuffixbase(argv[i],".dep.tmp");
 		    dependfile = fopen(n,"w");
 		    if (dependfile == NULL) fatal("can't open file %s",n);
 		    }
 	       f = chkprogram(f);
 	       if (debug) {
-		    const char *n = newsuffixbase(argv[i],".log");
+		    char *n = newsuffixbase(argv[i],".log");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -345,21 +308,21 @@ int main(int argc, char **argv){
 		    }
 	       {
 		    node t = global_scope->signature;
-		    const char *n = newsuffixbase(argv[i],".sig.tmp");
+		    char *n = newsuffixbase(argv[i],".sig.tmp");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
 		    printf("-- generated by %s\n\n",progname);
 		    while (t != NULL) {
 			 dprint(CAR(t));
-			 d_put(";\n");
+			 put(";\n");
 			 t = CDR(t);
 			 }
 		    }
 	       if (stop_after_dep) quit();
 	       checkfordeferredsymbols();
 	       if (debug) {
-		    const char *n = newsuffixbase(argv[i],".sym");
+		    char *n = newsuffixbase(argv[i],".sym");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -371,7 +334,7 @@ int main(int argc, char **argv){
 		    quit();
 		    }
 	       if (TRUE) {
-		    const char *n = newsuffixbase(argv[i],"-exports.h.tmp");
+		    char *n = newsuffixbase(argv[i],"-exports.h.tmp");
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
@@ -381,38 +344,34 @@ int main(int argc, char **argv){
 		    while (declarationsstrings) {
 			 node s = unpos(car(declarationsstrings));
 			 assert(isstrconst(s));
-			 d_put_unescape(s->body.string_const.characters);
-			 d_put("\n");
+			 put_unescape(s->body.string_const.characters);
+			 put("\n");
 			 declarationsstrings = cdr(declarationsstrings);
 			 }
-		    d_put(declarations_header);
-		    printf("#include <typecodes.h>");
+		    put(declarations_header);
 		    /* printtypecodes(); */
-			cprintIncludeList();
 		    cprinttypes();
-		    d_put(declarations_trailer);
-		    d_put("#endif\n");
+		    put(declarations_trailer);
+		    put("#endif\n");
 		    }
 	       if (TRUE) {
 		    if (NULL == freopen(outfilename,"w", stdout)) {
 			 fatal("can't open file %s",outfilename);
 			 }
 		    printf("#include \"%s\"\n",newsuffixbase(argv[i],"-exports.h"));
-		    d_put(code_header);
+		    put(code_header);
 		    headerstrings = reverse(headerstrings);
 		    while (headerstrings) {
 			 locn(car(headerstrings));
-			 d_printpos();
+			 printpos();
 			 node s = unpos(car(headerstrings));
 			 assert(isstrconst(s));
-			 d_put_unescape(s->body.string_const.characters);
-			 d_put("\n");
+			 put_unescape(s->body.string_const.characters);
+			 put("\n");
 			 locn(NULL);
 			 headerstrings = cdr(headerstrings);
 			 }
-			std::stringstream ss;
-		    generateCSemi(f, ss);
-			d_put(ss.str().c_str());
+		    cprintsemi(f);
 		    }
 	       }
 	  else {

@@ -135,6 +135,8 @@ export peektoken(file:TokenFile,obeylines:bool):Token := (
 	  )
      is w:Token do w
      );
+--What is this?   It doesn't appear to be used anywhere
+level := 0;
 --Empty Parsetree to reresent error
 export errorTree := ParseTree(dummy(dummyPosition));
 skip(file:TokenFile,prec:int):void := (

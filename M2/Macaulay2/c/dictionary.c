@@ -1,11 +1,13 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
 #include "scc.h"
+#define extern
 #include "dictionary.h"
+#undef extern
 
 static node hash_buckets[7313];
 
-const char *Csymbols[] = {
+char *Csymbols[] = {
      "NULL", "stdout", "stdin", "stderr", "flush", "select", 
      "min", "max", "abort",
      "abs", "times", "erase", "frame", "index",
@@ -18,17 +20,12 @@ const char *Csymbols[] = {
      "characters"
      };
 
-node type__T, keyword_T, int_T, double_T,
-       bool_T, char_T, symbol_T, package_T;
-node void_T, exits_T, returns_T, bad_or_undefined_T, null_T, deferred__T;
-node complete_symbol_list;
-
-const char *CXXkeywords[] = {
+char *CXXkeywords[] = {
   /* avoid collisions with C++ keywords not allowed as identifiers */
   "this", "default",
 };
 
-const char *uniquify(const char *s){
+char *uniquify(char *s){
      node ss = UniqueString(s);
      int seqno = ss->body.unique_string.seqno++;
      char buf[1000];
@@ -37,12 +34,12 @@ const char *uniquify(const char *s){
      return strperm(buf);
      }
 
-static void uniquifyCXX(const char *s){
+static void uniquifyCXX(char *s){
      node ss = UniqueString(s);
      ss->body.unique_string.flags |= str_keyword_F;
      }
 
-static void undefine(const node s){
+static void undefine(node s){
      assertpos(issym(s),s);
      /* if (debug) fprintf(stderr,"undefining %s\n",tostring(s)); */
      pop(s->body.symbol.name->body.unique_string.symbol_list);
@@ -108,7 +105,7 @@ void init_dictionary(scope v){
      for (i=0; i<numberof(CXXkeywords); i++) uniquifyCXX(CXXkeywords[i]);
      }
 
-static unsigned int hashn(const char *p, unsigned int len){
+static unsigned int hashn(char *p, unsigned int len){
      unsigned int i = 0;
      while (len>0) {
 	  i *= 47;
@@ -118,7 +115,7 @@ static unsigned int hashn(const char *p, unsigned int len){
      return i;
      }
 
-node UniqueStringN(const char *s, unsigned int len){
+node UniqueStringN(char *s, unsigned int len){
      int h = hashn(s,len) % numberof(hash_buckets);
      node p;
      for (p = hash_buckets[h]; p != NULL; p = CDR(p)) {
@@ -135,11 +132,11 @@ node UniqueStringN(const char *s, unsigned int len){
      return q;
      }
 
-node UniqueString(const char *s) {
+node UniqueString(char *s) {
      return UniqueStringN(s,strlen(s));
      }
 
-node String(const char *s){
+node String(char *s){
      node q = newnode(STRING,string_tag);
      q->body.unique_string.characters = s;
      return q;
@@ -156,18 +153,18 @@ node lookupword(node f){
 void printstringlist(){
      node p;
      unsigned int h;
-     d_pput("String Table\n");
+     pput("String Table\n");
      for (h=0; h<numberof(hash_buckets); h++) {
 	  for (p = hash_buckets[h]; p != NULL; p = CDR(p)) {
 	       node str = CAR(p);
 	       assertpos(isstr(str),str);
 	       pprint(str);
-	       d_pput(" : ");
+	       pput(" : ");
 	       pprint(str->body.unique_string.symbol_list);
-	       d_pput("\n");
+	       pput("\n");
 	       }
 	  }
-     d_pput("\n");
+     pput("\n");
      }
 
 void checkfordeferredsymbols(){
@@ -191,17 +188,17 @@ static void psymbol(node s){
      assertpos(s->tag == symbol_tag,s);
      cprint(s->body.symbol.name);
      if (s->body.symbol.cprintvalue) {
-	  d_put("\n      cprintvalue => ");
+	  put("\n      cprintvalue => ");
 	  cprint(s->body.symbol.cprintvalue);
-	  d_put("\n      ");
+	  put("\n      ");
 	  }
      if (s->body.symbol.Cname != NULL) {
-	  d_put("\n      Cname => ");
-	  d_put(s->body.symbol.Cname);
+	  put("\n      Cname => ");
+	  put(s->body.symbol.Cname);
 	  }
-     d_put("\n      type => ");
+     put("\n      type => ");
      pprint(s->body.symbol.type);
-     d_put("\n      value => ");
+     put("\n      value => ");
      if (s->body.symbol.value != NULL) {
 	  node val = s->body.symbol.value;
 	  if (istype(val) && val->body.type.name == s) {
@@ -210,54 +207,54 @@ static void psymbol(node s){
 	  else pprint(val);
 	  }
      else {
-       d_put("none");
+       put("none");
        }
-     d_put("\n      flags:");
-     if (s->body.symbol.flags & macro_function_F) d_put(" macro-function");
-     if (s->body.symbol.flags & macro_variable_F) d_put(" macro-variable");
-     if (s->body.symbol.flags & readonly_F) d_put(" readonly");
-     if (s->body.symbol.flags & symbol_F) d_put(" symbol");
-     if (s->body.symbol.flags & keyword_F) d_put(" keyword");
-     if (s->body.symbol.flags & constant_F) d_put(" constant");
-     if (s->body.symbol.flags & defined_F) d_put(" initialized");
-     if (s->body.symbol.flags & export_F) d_put(" export");
-     if (s->body.symbol.flags & import_F) d_put(" import");
-     if (s->body.symbol.flags & threadLocal_F) d_put(" thread");
-     if (s->body.symbol.flags & const_F) d_put(" const");
-     if (s->body.symbol.flags & global_F) d_put(" global");
-     if (s->body.symbol.flags & literal_F) d_put(" literal");
-     if (s->body.symbol.flags & visible_F) d_put(" visible");
-     if ( !(s->body.symbol.flags & defined_F) && !(s->body.symbol.flags & import_F) ) d_put(" (never initialized)");
+     put("\n      flags:");
+     if (s->body.symbol.flags & macro_function_F) put(" macro-function");
+     if (s->body.symbol.flags & macro_variable_F) put(" macro-variable");
+     if (s->body.symbol.flags & readonly_F) put(" readonly");
+     if (s->body.symbol.flags & symbol_F) put(" symbol");
+     if (s->body.symbol.flags & keyword_F) put(" keyword");
+     if (s->body.symbol.flags & constant_F) put(" constant");
+     if (s->body.symbol.flags & defined_F) put(" initialized");
+     if (s->body.symbol.flags & export_F) put(" export");
+     if (s->body.symbol.flags & import_F) put(" import");
+     if (s->body.symbol.flags & threadLocal_F) put(" thread");
+     if (s->body.symbol.flags & const_F) put(" const");
+     if (s->body.symbol.flags & global_F) put(" global");
+     if (s->body.symbol.flags & literal_F) put(" literal");
+     if (s->body.symbol.flags & visible_F) put(" visible");
+     if ( !(s->body.symbol.flags & defined_F) && !(s->body.symbol.flags & import_F) ) put(" (never initialized)");
      if (s->body.symbol.args != NULL) {
-	  d_put("\n      args => ");
+	  put("\n      args => ");
 	  cprintlist(s->body.symbol.args);
 	  }
      if (s->body.symbol.body != NULL) {
-	  d_put("\n      body => ");
+	  put("\n      body => ");
 	  pprint(s->body.symbol.body);
 	  }
      if (s->body.symbol.export_list != NULL) {
-	  d_put("\n      export_list => ");
+	  put("\n      export_list => ");
 	  cprintlist(s->body.symbol.export_list);
 	  }
-     d_pput("\n");
+     pput("\n");
      }
 
 void printsymboltable(){
      node p;
-     d_pput("Symbol Table\n");
+     pput("Symbol Table\n");
      for (p = complete_symbol_list; p != NULL; p = CDR(p)) psymbol(CAR(p));
-     d_pput("\n");
+     pput("\n");
      }
 
-static void laydown(const char *w, char **p){
+static void laydown(char *w, char **p){
      while (*w) {
 	  *(*p)++ = *w++;
 	  }
      *(*p)++ = '_';
      }
 
-const char *totoken(const char *s){
+char *totoken(char *s){
      char buf[1000];
      char *p = buf;
      if ('0' <= *s && *s <= '9') *p++ = '_';
@@ -322,7 +319,7 @@ static void setprefix(char *buf, node package){
 	  }
      }
 
-const char *prefixify(node package, const char *name){
+char *prefixify(node package, char *name){
      char buf[500];
      if (package==NULL) return name;
      assertpos(issym(package),package);
@@ -356,7 +353,7 @@ void internsymbol(node s, scope v){
      if (v != NULL) reinternsymbol(s,v);
      /* if ( 0 == strcmp("x",tostring(s)) ) trap(); */
      if (s->body.symbol.type!=keyword_T) {
-	  const char *Cname;
+	  char *Cname;
 	  assertpos(issym(s),s);
 	  if (s->body.symbol.flags & literal_F) {
 	    Cname = tostring(s); /* no totoken here? */
