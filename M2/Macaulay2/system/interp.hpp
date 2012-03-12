@@ -47,7 +47,7 @@ public:
 	/***
 		Get the current local state for this interperter.
 	***/
-	M2CPP_InterperterLocal* glp() { return t_InterperterLocal; }
+	static M2CPP_InterperterLocal* glp() { return t_InterperterLocal; }
 };
 /***
    Create a new M2 object of type T and return it as type R

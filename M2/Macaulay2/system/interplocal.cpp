@@ -107,6 +107,18 @@ M2CPP_InterperterLocal::M2CPP_InterperterLocal()
 	}
 }
 
+parse_Error M2CPP_InterperterLocal::createNewError(stdiop0_Position position, M2_string message, parse_Expr value, parse_Frame frame)
+{
+	parse_Error tmp = M2CPP_NewObject<parse_Error,parse_Error_struct>(Error_typecode);
+	tmp->position = position;
+	tmp->message = message;
+	tmp->value = value;
+	tmp->printed = 0;
+	tmp->frame = frame;
+	return tmp;
+}
+
+
 parse_Expr M2CPP_InterperterLocal::readeval4(parse_TokenFile file,bool printout,parse_Dictionary dictionary,bool returnLastvalue,bool stopIfBreakReturnContinue,bool returnIfError){
 	parse_Expr lastvalue = parse_nullE;
 	parse_Expr mode = actors5_topLevelMode;

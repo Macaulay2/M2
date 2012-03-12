@@ -23,13 +23,10 @@ parse_Code evaluate_evalAllButTail(parse_Code c){
 					c = i->elseClause;
 				else
 				{
-					parse_error tmp__12 = reinterpret_cast<parse_Error>(GC_MALLOC(sizeof(struct parse_Error_struct)));
-					tmp__12->type_ = Error_typecode;
-					tmp__12->position = common_codePosition(i->predicate);
-					tmp__12->message = M2CPP_NewConstString("expected true or false");
-					tmp__12->value = parse_nullE;
-					tmp__12->printed = 0;
-					tmp__12->frame = expr_dummyFrame;
+					parse_Error tmp__12  M2CPP_Interperter::glp()->createNewEerror(common_codePosition(i->predicate),
+																				   M2CPP_NewConstString("expected true or false"),
+																				   parse_nullE,
+																				   expr_dummyFrame);
 					return reinterpret_cast<parse_Code>(tmp__12);
 				}
 				break;
@@ -59,9 +56,8 @@ parse_Code evaluate_evalAllButTail(parse_Code c){
 ***/
 parse_Expr evaluate_RecursionLimit()
 {
-	M2_string str__3 = M2CPP_NewConstString("recursion limit of ");
-	M2_string str__4 = M2CPP_NewConstString(" exceeded");
-	return expr_buildErrorPacket(strings_plus_(strings_plus_(str__3, strings1_tostring_2((*((int*)TS_Get_Local(expr_recursionLimit_id))))), str__4));
+	std::streamstream ss << "recursion limit of " << getRecursionLimit() << " exceeded";
+	return buildErrorPacket(ss.str());
 }
 /***
 	This builds an error for hitting the internal recursion limit
@@ -69,9 +65,9 @@ parse_Expr evaluate_RecursionLimit()
 ***/
 parse_Expr evaluate_InternalRecursionLimit()
 {
-	M2_string str__5 = M2CPP_NewConstString("internal recursion limit of ");
-	M2_string str__6 = M2CPP_NewConstString(" exceeded");
-	return expr_buildErrorPacket(strings_plus_(strings_plus_(str__5, strings1_tostring_2((*((int*)TS_Get_Local(expr_recursionLimit_id))))), str__6));
+	std::stringstream ss << "internal recursion limit of " << getRecursionLimit() << " exceeded";
+	return buildErrorPacket(ss.str());
+	return expr_buildErrorPacket(strings_plus_(strings_plus_(str__5, strings1_tostring_2(getRecursionLimit(), str__6));
 }
 /***
 	Store eval(rhs) in x[eval(i)]
@@ -1842,16 +1838,8 @@ parse_Expr evaluate_applyEEE(parse_Expr g,parse_Expr e0,parse_Expr e1){
 	};
 	return tmp__408;
 }
-static M2_string str__40;
-parse_Expr evaluate_applyEEEE(parse_Expr g,parse_Expr e0,parse_Expr e1,parse_Expr e2){
-	parse_CompiledFunction ff_8;
-	parse_CompiledFunctionClosure ff_9;
-	parse_SpecialExpr s_4;
-	parse_FunctionClosure c_6;
-	parse_functionCode model_5;
-	parse_functionDescription desc_5;
-	parse_Frame previousFrame_5;
-	int framesize_5;
+parse_Expr evaluate_applyEEEE(parse_Expr g,parse_Expr e0,parse_Expr e1,parse_Expr e2)
+{
 	parse_Frame f_15;
 	parse_Frame previousStashedFrame_4;
 	parse_Frame saveLocalFrame_12;
@@ -1864,8 +1852,6 @@ parse_Expr evaluate_applyEEEE(parse_Expr g,parse_Expr e0,parse_Expr e1,parse_Exp
 	parse_Sequence tmp__434;
 	parse_Expr tmp__435;
 	parse_Sequence tmp__436;
-	parse_Sequence tmp__437;
-	parse_Expr tmp__438;
 	parse_Expr tmp__439;
 	parse_Expr tmp__440;
 	int tmp__441;
@@ -1889,63 +1875,54 @@ parse_Expr evaluate_applyEEEE(parse_Expr g,parse_Expr e0,parse_Expr e1,parse_Exp
 	parse_Sequence tmp__459;
 	int tmp__460;
 	parse_Expr tmp__461;
-	if (g == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-	switch (g->type_) {;
-	case CompiledFunction_typecode:;
-		ff_8 = ((parse_CompiledFunction)g);
-		tmp__434 = (parse_Sequence) GC_MALLOC(sizeof(struct parse_Sequence_struct) + (3 - 1)*sizeof(parse_Expr));
-		tmp__434->type_ = 6;
-		tmp__434->len = 3;
-		tmp__434->array[0] = e0;
-		tmp__434->array[1] = e1;
-		tmp__434->array[2] = e2;
-		tmp__435 = ff_8->fn(((parse_Expr)tmp__434));
-		break;
-	case CompiledFunctionClosure_typecode:;
-		ff_9 = ((parse_CompiledFunctionClosure)g);
-		tmp__436 = (parse_Sequence) GC_MALLOC(sizeof(struct parse_Sequence_struct) + (3 - 1)*sizeof(parse_Expr));
-		tmp__436->type_ = 6;
-		tmp__436->len = 3;
-		tmp__436->array[0] = e0;
-		tmp__436->array[1] = e1;
-		tmp__436->array[2] = e2;
-		tmp__435 = ff_9->fn(((parse_Expr)tmp__436), ff_9->env);
-		break;
-	case SpecialExpr_typecode:;
-		s_4 = ((parse_SpecialExpr)g);
-		tmp__435 = evaluate_applyEEEE(s_4->e, e0, e1, e2);
-		break;
-	case FunctionClosure_typecode:;
-		c_6 = ((parse_FunctionClosure)g);
-		model_5 = c_6->model;
-		desc_5 = model_5->desc;
-		if (desc_5->restargs) 
+	M2CPP_PerformAssertions(g);
+	switch (g->type_) {
+	case CompiledFunction_typecode:
 		{
-			tmp__437 = (parse_Sequence) GC_MALLOC(sizeof(struct parse_Sequence_struct) + (3 - 1)*sizeof(parse_Expr));
-			tmp__437->type_ = 6;
-			tmp__437->len = 3;
-			tmp__437->array[0] = e0;
-			tmp__437->array[1] = e1;
-			tmp__437->array[2] = e2;
-			tmp__438 = evaluate_applyFCS(c_6, tmp__437);
+			parse_CompiledFunction ff = reinterpret_cast<parse_CompiledFunction>(g);
+			parse_Sequence tmp = M2CPP_NewSequence(3);
+			tmp->array[0] = e0;
+			tmp->array[1] = e1;
+			tmp->array[2] = e2;
+			return ff_8->fn(reinterpret_cast<parse_Expr>(tmp));
 		}
-		else
+	case CompiledFunctionClosure_typecode:
 		{
-			if ((desc_5->numparms != 3)) 
+			parse_CompiledFunctionClosure ff = reinterpret_cast<parse_CompiledFunctionClosure>(g);
+			parse_Sequence tmp = M2CPP_NewSequence(3);
+			tmp->array[0] = e0;
+			tmp->array[1] = e1;
+			tmp->array[2] = e2;
+			return ff_9->fn(reinterpret_cast<parse_Expr>(tmp), ff->env);
+		}
+	case SpecialExpr_typecode:
+		{
+			parse_SpecialExpr s_4 = reinterpret_cast<parse_SpecialExpr>(g);
+			return evaluate_applyEEEE(s_4->e, e0, e1, e2);
+		}
+	case FunctionClosure_typecode:
+		{
+			//this should be factored out into its own function!
+			parse_FunctionClosure c = reinterpret_cast<parse_FunctionClosure>(g);
+			parse_functionCode model = c->model;
+			parse_functionDescription desc = model->desc;
+			if (desc->restargs) 
 			{
-				tmp__439 = common_WrongNumArgs_1(model_5->arrow, desc_5->numparms, 3);
+				parse_Sequence tmp__437 = M2CPP_NewSequence(3);
+				tmp__437->array[0] = e0;
+				tmp__437->array[1] = e1;
+				tmp__437->array[2] = e2;
+				return evaluate_applyFCS(c_6, tmp__437);
 			}
-			else
-			{
-				if (((*((int*)TS_Get_Local(expr_recursionDepth_id))) > (*((int*)TS_Get_Local(expr_recursionLimit_id))))) 
-				{
-					tmp__440 = evaluate_RecursionLimit();
-				}
-				else
-				{
-					previousFrame_5 = c_6->frame;
-					framesize_5 = desc_5->framesize;
-					if ((framesize_5 < (*((struct SCC_M2_0_int_len_parse_Frame_array1 **)TS_Get_Local(recycleBin_id)))->len)) 
+			if (desc_5->numparms != 3)
+				return common_WrongNumArgs_1(model_5->arrow, desc_5->numparms, 3);
+			if (il->getRecursionDepth() > il->getRecursionLimit())
+				return evaluate_RecursionLimit();
+			parse_Frame previousFrame = c->frame;
+			int framesize = desc->framesize;
+			//next we need to enter a new frame...
+			f = 
+			if (framesize_5 < (*((struct SCC_M2_0_int_len_parse_Frame_array1 **)TS_Get_Local(recycleBin_id)))->len)) 
 					{
 						tmp__441 = framesize_5;
 						if (tmp__441 < 0 || tmp__441 >= (*((struct SCC_M2_0_int_len_parse_Frame_array1 **)TS_Get_Local(recycleBin_id)))->len) fatalarrayindex(tmp__441,(*((struct SCC_M2_0_int_len_parse_Frame_array1 **)TS_Get_Local(recycleBin_id)))->len,"/home/gfurnish/M2/gfurnish/scons/M2/Macaulay2/d/evaluate.dd",984,36);
@@ -2110,128 +2087,63 @@ parse_Expr evaluate_applyEEEE(parse_Expr g,parse_Expr e0,parse_Expr e1,parse_Exp
 		break;
 	default:
 		checkTypeValidity(g->type_,__FILE__,__LINE__);
-		tmp__435 = expr_buildErrorPacket(str__40);
+		static M2_string str__40;
+		tmp__435 = expr_buildErrorPacket(M2CPP_NewConstString("expected a function"));
 		break;
 	};
 	return tmp__435;
 }
-parse_Expr evaluate_unarymethod(parse_Code rhs,parse_SymbolClosure methodkey){
-	parse_Expr right;
-	parse_Expr method;
-	parse_Expr tmp__462;
-	parse_Expr tmp__463;
-	right = evaluate_eval(rhs);
-	if (right == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-	switch (right->type_) {;
-	case Error_typecode:;
-		tmp__462 = right;
-		break;
-	default:
-		checkTypeValidity(right->type_,__FILE__,__LINE__);
-		method = hashtables_lookup(classes_Class(right), ((parse_Expr)methodkey), methodkey->symbol->hash);
-		if ((method == parse_nullE)) 
-		{
-			tmp__463 = expr_MissingMethod_1(methodkey);
-		}
-		else
-		{
-			tmp__463 = evaluate_applyEE(method, right);
-		}
-		tmp__462 = tmp__463;
-		break;
-	};
-	return tmp__462;
+parse_Expr evaluate_unarymethod(parse_Code rhs,parse_SymbolClosure methodkey)
+{
+	parse_Expr right = evaluate_eval(rhs);
+	if(M2CPP_IsError(right))
+		return right;
+	parse_Expr method = hashtables_lookup(classes_Class(right), reinterpret_cast<parse_Expr>(methodkey), methodkey->symbol->hash);
+	if (method == parse_nullE)
+		return expr_MissingMethod_1(methodkey);
+	else
+		return evaluate_applyEE(method, right);
 }
-parse_Expr evaluate_binarymethod(parse_Code lhs,parse_Code rhs,parse_SymbolClosure methodkey){
-	parse_Expr left_1;
-	parse_Expr right_1;
-	parse_Expr method_1;
-	parse_Expr tmp__464;
-	parse_Expr tmp__465;
-	parse_Expr tmp__466;
-	left_1 = evaluate_eval(lhs);
-	if (left_1 == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-	switch (left_1->type_) {;
-	case Error_typecode:;
-		tmp__464 = left_1;
-		break;
-	default:
-		checkTypeValidity(left_1->type_,__FILE__,__LINE__);
-		right_1 = evaluate_eval(rhs);
-		if (right_1 == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-		switch (right_1->type_) {;
-		case Error_typecode:;
-			tmp__465 = right_1;
-			break;
-		default:
-			checkTypeValidity(right_1->type_,__FILE__,__LINE__);
-			method_1 = hashtables_lookupBinaryMethod(classes_Class(left_1), classes_Class(right_1), ((parse_Expr)methodkey), methodkey->symbol->hash);
-			if ((method_1 == parse_nullE)) 
+parse_Expr evaluate_binarymethod(parse_Code lhs,parse_Code rhs,parse_SymbolClosure methodkey)
+{
+	parse_Expr left = evaluate_eval(lhs);
+	if(M2CPP_IsError(left))
+		return left;
+	parse_Expr right = evaluate_eval(rhs);
+	if(M2CPP_IsError(right))
+		return right;
+	parse_Expr method = hashtables_lookupBinaryMethod(classes_Class(left), classes_Class(right), reinterpret_cast<parse_Expr>(methodkey), methodkey->symbol->hash);
+	if (method == parse_nullE)
+		return expr_MissingMethodPair_2(methodkey, left, right);
+	else
+		return evaluate_applyEEE(method, left, right);
+}
+parse_Expr evaluate_binarymethod_1(parse_Expr left,parse_Code rhs,parse_SymbolClosure methodkey)
+{
+	parse_Expr right = evaluate_eval(rhs);
+	if(M2CPP_IsError(right))
+		return right;
+	parse_Expr method = hashtables_lookupBinaryMethod(classes_Class(left), classes_Class(right_2), reinterpret_cast<parse_Expr>(methodkey), methodkey->symbol->hash);
+	if (method == parse_nullE)
+	{
+		if (methodkey == binding_AdjacentS)
+		{
+			M2CPP_PerformAssertions(left);
+			if(M2CPP_IsTypeExact(left,SymbolClosure_typecode))
 			{
-				tmp__466 = expr_MissingMethodPair_2(methodkey, left_1, right_1);
+				parse_SymbolClosure f = reinterpret_cast<parse_SymbolClosure>(left);
+				M2_string str__41 = M2CPP_NewConstString("symbol '");
+				M2_string str__42 = M2CPP_NewConstString("' has not been defined as a function");
+				return expr_buildErrorPacket(strings_plus_(strings_plus_(str__41, f->symbol->word->name), str__42));
 			}
 			else
-			{
-				tmp__466 = evaluate_applyEEE(method_1, left_1, right_1);
-			}
-			tmp__465 = tmp__466;
-			break;
-		};
-		tmp__464 = tmp__465;
-		break;
-	};
-	return tmp__464;
-}
-static M2_string str__41;
-static M2_string str__42;
-parse_Expr evaluate_binarymethod_1(parse_Expr left,parse_Code rhs,parse_SymbolClosure methodkey){
-	parse_Expr right_2;
-	parse_Expr method_2;
-	parse_SymbolClosure f_17;
-	parse_Expr tmp__467;
-	parse_Expr tmp__468;
-	parse_Expr tmp__469;
-	parse_Expr tmp__470;
-	right_2 = evaluate_eval(rhs);
-	if (right_2 == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-	switch (right_2->type_) {;
-	case Error_typecode:;
-		tmp__467 = right_2;
-		break;
-	default:
-		checkTypeValidity(right_2->type_,__FILE__,__LINE__);
-		method_2 = hashtables_lookupBinaryMethod(classes_Class(left), classes_Class(right_2), ((parse_Expr)methodkey), methodkey->symbol->hash);
-		if ((method_2 == parse_nullE)) 
-		{
-			if ((methodkey == binding_AdjacentS)) 
-			{
-				if (left == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-				switch (left->type_) {;
-				case SymbolClosure_typecode:;
-					f_17 = ((parse_SymbolClosure)left);
-					tmp__468 = expr_buildErrorPacket(strings_plus_(strings_plus_(str__41, f_17->symbol->word->name), str__42));
-					break;
-				default:
-					checkTypeValidity(left->type_,__FILE__,__LINE__);
-					tmp__468 = expr_MissingMethodPair_2(methodkey, left, right_2);
-					break;
-				};
-				tmp__469 = tmp__468;
-			}
-			else
-			{
-				tmp__469 = expr_MissingMethodPair_2(methodkey, left, right_2);
-			}
-			tmp__470 = tmp__469;
+				return expr_MissingMethodPair_2(methodkey, left, right);
 		}
 		else
-		{
-			tmp__470 = evaluate_applyEEE(method_2, left, right_2);
-		}
-		tmp__467 = tmp__470;
-		break;
-	};
-	return tmp__467;
+			return expr_MissingMethodPair_2(methodkey, left, right);
+	}
+	else
+		return evaluate_applyEEE(method, left, right);
 }
 static M2_string str__43;
 static M2_string str__44;
@@ -2667,14 +2579,9 @@ static char steppingFurther(parse_Code c){
 	}
 	return tmp__508;
 }
-static M2_string str__57;
-static M2_string str__58;
-static M2_string str__59;
-static M2_string str__60;
-static parse_Expr handleError(parse_Code c,parse_Expr e){
-	parse_Error err_27;
-	stdiop0_Position p_6;
-	parse_Frame oldReportFrame;
+static parse_Expr handleError(parse_Code c,parse_Expr e)
+{
+
 	parse_Expr z_3;
 	parse_Error z_4;
 	gmp_ZZcell step;
@@ -2706,98 +2613,45 @@ static parse_Expr handleError(parse_Code c,parse_Expr e){
 	parse_Expr tmp__540;
 	parse_Expr tmp__541;
 	parse_Expr tmp__542;
-	if (e == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-	switch (e->type_) {;
-	case Error_typecode:;
-		err_27 = ((parse_Error)e);
-		if ((*((char*)TS_Get_Local(stdiop_SuppressErrors_id)))) 
+	if(!M2CPP_IsError(e))
+		return e;
+	parse_Error err = reinterpret_cast<parse_Error>(e);
+	M2CPP_InterperterLocal* il = M2CPP_Interperter::glp();
+	if(il->shouldSuppressErrors())
+		return e;
+	if(err->message == tokens_returnMessage || err->message == tokens_continueMessage || err->message == tokens_continueMessageWithArg ||
+	   err->message == tokens_stepMessage || err->message == tokens_stepMessageWithArg || err->message == tokens->breakMessage ||
+	   err->message == tokens_unwindMessage || err->message == tokens_throwMessage)
+	{
+		//an error message that is being used to transfer control must be passed in the line.
+		//the position is plugged in just in case its unhandled.
+		if (err->position == stdiop0_dummyPosition)
+			err_27->position = common_codePosition(c);
+		return e;
+	}
+	stdiop0_Position p = common_codePosition(c);
+	interrupts_clearAllFlags();
+	interrupts_clearAlarm();
+	if(p->loadDepth >= il->getErrorDepth() && !stdiop0_equal_equal_equal_(err->position, p))
+	{
+		parse_Frame oldReportFrame = err->frame;
+		err->frame = parse_noRecycle(il->getLocalFrame());
+		err->position = p;
+		if(!err->printed || il->shouldBackTrace() && il->getLocalFrame()!=oldReportFrame)
 		{
-			tmp__515 = e;
-			return tmp__515;
-		}
-		tmp__522 = (err_27->message == tokens_returnMessage);
-		if ((! tmp__522)) {
-			tmp__522 = (err_27->message == tokens_continueMessage);
-		}
-		tmp__521 = tmp__522;
-		if ((! tmp__521)) {
-			tmp__521 = (err_27->message == tokens_continueMessageWithArg);
-		}
-		tmp__520 = tmp__521;
-		if ((! tmp__520)) {
-			tmp__520 = (err_27->message == tokens_stepMessage);
-		}
-		tmp__519 = tmp__520;
-		if ((! tmp__519)) {
-			tmp__519 = (err_27->message == tokens_stepMessageWithArg);
-		}
-		tmp__518 = tmp__519;
-		if ((! tmp__518)) {
-			tmp__518 = (err_27->message == tokens_breakMessage);
-		}
-		tmp__517 = tmp__518;
-		if ((! tmp__517)) {
-			tmp__517 = (err_27->message == tokens_unwindMessage);
-		}
-		tmp__516 = tmp__517;
-		if ((! tmp__516)) {
-			tmp__516 = (err_27->message == tokens_throwMessage);
-		}
-		if (tmp__516) 
-		{
-			if ((err_27->position == stdiop0_dummyPosition)) 
+			if(il->inDebuggingMode() && !il->stopIfError() && !(strings_equal_equal_equal_(p_6->filename, str__57)))
 			{
-				err_27->position = common_codePosition(c);
-			}
-			tmp__523 = e;
-			return tmp__523;
-		}
-		p_6 = common_codePosition(c);
-		interrupts_clearAllFlags();
-		interrupts_clearAlarm();
-		tmp__524 = (p_6->loadDepth >= (*((unsigned short*)TS_Get_Local(common_errorDepth_id))));
-		if (tmp__524) {
-			tmp__524 = (!(stdiop0_equal_equal_equal_(err_27->position, p_6)));
-		}
-		if (tmp__524) 
-		{
-			oldReportFrame = err_27->frame;
-			err_27->frame = parse_noRecycle((*((parse_Frame*)TS_Get_Local(expr_localFrame_id))));
-			err_27->position = p_6;
-			tmp__525 = (!(err_27->printed));
-			if ((! tmp__525)) {
-				tmp__526 = (*((char*)TS_Get_Local(evaluate_backtrace_id)));
-				if (tmp__526) {
-					tmp__526 = ((*((parse_Frame*)TS_Get_Local(expr_localFrame_id))) != oldReportFrame);
-				}
-				tmp__525 = tmp__526;
-			}
-			if (tmp__525) 
-			{
-				tmp__528 = (*((char*)TS_Get_Local(tokens_debuggingMode_id)));
-				if (tmp__528) {
-					tmp__528 = (!((*((char*)TS_Get_Local(tokens_stopIfError_id)))));
-				}
-				tmp__527 = tmp__528;
-				if (tmp__527) {
-					tmp__527 = (!(strings_equal_equal_equal_(p_6->filename, str__57)));
-				}
-				if (tmp__527) 
+				if (!err->printed)
+					tokens_printError(err);
+				stdiop_printErrorMessage(err_27->position, str__58);
+				parse_Expr z = tokens_debuggerFun(il->getLocalFrame(), c);
+				if(M2CPP_IsError(z))
 				{
-					if ((!(err_27->printed))) 
+					parse_Error z_4 = reinterpret_cast<parse_Error>(z);
+					if (z_4->message == tokens_breakMessage) 
 					{
-						tmp__529 = tokens_printError(err_27);
+						tmp__530 = expr_buildErrorPacket(tokens_unwindMessage);
 					}
-					stdiop_printErrorMessage(err_27->position, str__58);
-					z_3 = tokens_debuggerFun((*((parse_Frame*)TS_Get_Local(expr_localFrame_id))), c);
-					if (z_3 == 0) invalidNullPointer(__FILE__,__LINE__,-1);
-					switch (z_3->type_) {;
-					case Error_typecode:;
-						z_4 = ((parse_Error)z_3);
-						if ((z_4->message == tokens_breakMessage)) 
-						{
-							tmp__530 = expr_buildErrorPacket(tokens_unwindMessage);
-						}
 						else
 						{
 							if ((z_4->message == tokens_returnMessage)) 

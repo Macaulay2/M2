@@ -77,6 +77,10 @@ public:
 	***/
 	bool& interruptPending();
 	/***
+		True if errors should be surpressed, false otherwise.
+	***/
+	bool shouldSuppressErrors() { return m_SuppressErrors; }
+	/***
 		Some sort of state variable for binding.
 	 ***/
 	int& binding_lookupCountIncrement() { return m_BindingLookupCountIncrement; }
@@ -518,6 +522,15 @@ public:
 		Decrement recursion depth
 	***/
 	void decrementRecursionDepth() { m_RecursionDepth--; }
+	/***
+		Create new error.
+		@param position position in code, not null.  Use stdiop0_dummyPosition for unused.
+		@param message Message string, not null.
+		@param value expr associated with the message, not null.  Use parse_nullE for unused.
+		@param frame Frame that triggered the error, not null.  Use expr_dummyFrame for unused.
+		@return new parse error, not null.
+	***/
+	parse_Error createNewError(stdiop0_Position position, M2_string message, parse_Expr value, parse_Frame frame);
 protected:
 	/***
 		From an error, deduce the correct exit code and attempt to exit.
