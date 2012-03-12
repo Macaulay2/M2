@@ -9,6 +9,32 @@ AddOption('--jj',dest='jj',nargs=1,action='store',type='int',help='Number of par
 AddOption('--disable-parallel',dest='disableparallel',nargs=0,action='store',help='Disable parallel build')
 AddOption('--disable-download',dest='disabledownload',nargs=0,action='store',help='Disable downloading packages')
 state = {
+    'Darwin-x86_64':
+        {
+        'debug':{
+            'prefixpath':'local/debug/',
+            'includepath':'local/debug/include/',
+            'libpath':'local/debug/lib',
+            'buildpath':'BUILD/debug/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{ },
+            'eflags':'-O0 -g',
+            'M2flags':'-O0 -g',
+            },
+        'release':{
+            'prefixpath':'local/release/',
+            'includepath':'local/release/include/',
+            'libpath':'local/release/lib/',
+            'buildpath':'BUILD/release/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{},
+            'eflags':'-O2 -g',
+            'M2flags':'-O2 -g',
+            },
+        'modes':set(['debug','release']),
+        },
     'linux-x86_64':
         {
         'debug':{
@@ -61,7 +87,7 @@ state = {
             },
         'modes':set(['debug','release']),
         },
-    'architectures':['linux-x86_64','linux-x86'],
+    'architectures':['linux-x86_64','linux-x86','Darwin-x86_64'],
     'build':True,
     'clean':False,
     'enabledownload':True
@@ -527,7 +553,7 @@ for mode in splitModes:
                 for s in splitMakeLib:
                     setLibSpecific(mode,architecture,s,'make',True)            
     except KeyError:
-        raise Exception('Unknown mode: "' + mode + '"')
+        raise Exception('Unknown mode: "' + mode + '" on "' + architecture + '"')
 
 exportDict = {'state':state,
         'getLibSpecific':getLibSpecific,

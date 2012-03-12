@@ -13,6 +13,7 @@ buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','naut
 linuxBuildLibraries = buildlibraries
 state['linux-x86_64']['buildlibraries']=linuxBuildLibraries
 state['linux-x86']['buildlibraries']=linuxBuildLibraries
+state['Darwin-x86_64']['buildlibraries']=set(['gc'])
 
 dependencies = {
     'sccfiles':['gc','gdbm'],
@@ -47,7 +48,7 @@ def downloadLibrary(architecture,mode,library):
             raise Exception("Unable to find library: " + library + " and downloading libraries is disabled.")    
 
 def downloadLibraries(architecture,mode):
-    for library in buildlibraries:
+    for library in state[architecture]['buildlibraries']:
         downloadLibrary(architecture,mode,library)
 
 def modeBuild(mode,architecture):
@@ -363,7 +364,7 @@ def buildCandidates(mode,architecture):
     doBuildLibraries = {}
     for package in packages:
         libraryBaseName = extractPackageBaseName(package)
-        if(libraryBaseName in buildlibraries):
+        if(libraryBaseName in state[architecture]['buildlibraries']):
             existingPackage = doBuildLibraries.get(libraryBaseName)
             if(existingPackage is not None):
                 if(os.path.getmtime(tarpath+existingPackage) < os.path.getmtime(tarpath+package)):
