@@ -15,7 +15,7 @@ setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'Dependencies',['boost','mpir'])
 #Library specific declarations go here.
 setLibSpecificStageCommandArguments('debug',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
-setLibSpecificStageCommandArguments('release',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O3 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+setLibSpecificStageCommandArguments('release',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
 setLibSpecific('all','all',libraryName,'builddirectory','source/')
    
 def BuildLibrary(target,source,env):
