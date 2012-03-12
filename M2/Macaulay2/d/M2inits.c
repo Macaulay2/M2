@@ -25,7 +25,7 @@
 /* to get IM2_initialize() : */
 #include "engine.h"
 
-char *progname;
+const char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
@@ -94,7 +94,7 @@ void M2inits(void) {
 }
 
 void M2inits_linker_dummy(void) {
-    M2inits2();			/* just to make M2inits2.o link */
+	//    M2inits2();			/* just to make M2inits2.o link */
 }
 
 void scc_core_prepare() {

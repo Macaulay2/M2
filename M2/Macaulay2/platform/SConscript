@@ -11,9 +11,9 @@ buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/platform/'
 prefixPath = getState(mode,architecture,'prefixpath')
 eflags = "-I"+buildpath+"../d/ -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes -IMacaulay2/system "+getState(mode,architecture,'eflags')
 pobjects = []
-dm2 = getState(mode,architecture,'dFileDict')['M2.dd']
-dtokens = getState(mode,architecture,'dFileDict')['tokens.dd']
-dinterrupts = getState(mode,architecture,'dFileDict')['interrupts.dd']
+dm2 = getState(mode,architecture,'dFileDict')['M2.d']
+dtokens = getState(mode,architecture,'dFileDict')['tokens.d']
+dinterrupts = getState(mode,architecture,'dFileDict')['interrupts.d']
 if dm2 is None:
     raise Exception("Internal error")
 for f in pfiles:

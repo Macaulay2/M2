@@ -435,10 +435,10 @@ for mode in state[architecture]['modes']:
     if(not getState(mode,architecture,'build')):
         continue
     builders = {}
-    builders['dstart'] = getState(mode,architecture,'dstart')
+#    builders['dstart'] = getState(mode,architecture,'dstart')
     builders['scc'] = getState(mode,architecture,'scc')
     builders['sccfiles'] = getState(mode,architecture,'sccfiles')
-    builders['m2']=getState(mode,architecture,'m2')
+#    builders['m2']=getState(mode,architecture,'m2')
     dbl = buildCandidates(mode,architecture)
     for libraryBase,library in dbl.items():
         libraryName = extractPackageName(library)

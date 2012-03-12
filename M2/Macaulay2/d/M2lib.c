@@ -112,7 +112,7 @@ void* interpFunc(void* unused)
 
   clean_up();
   //print GC statistics if needed.
-  onExitGCStatistics();
+//  onExitGCStatistics();
   exit(0);
   return NULL;
 }
@@ -147,7 +147,8 @@ int Macaulay2_main(int argc,char** argv)
 
 
      if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
-          FATAL("possible memory leak, gmp allocator not set up properly");
+//          FATAL("possible memory leak, gmp allocator not set up properly");
+	abort();
 	  fprintf(stderr,"--internal warning: possible memory leak, gmp allocator not set up properly, resetting\n");
      }
 
@@ -182,7 +183,7 @@ void clean_up(void) {
 	  final_list = final_list->next;
 	  }
 #    ifndef NDEBUG
-     trap();
+//     trap();
 #    endif
      }
 

@@ -15,10 +15,27 @@
 /* complete machine description (to appear in name of tar file) */
 #define MACHINE "x86_64-Linux-Ubuntu-11.10"
 
-static const char* newline = "\n";
+//static const char* newline = "\n";
 
 #include "types.h"
-#include <M2-exports.h>
+//#include <M2-exports.h>
+typedef char M2_bool;
+typedef struct M2_string_struct * M2_string;
+typedef struct M2_arrayint_struct * M2_arrayint;
+typedef M2_arrayint M2_arrayintOrNull;
+typedef struct M2_stringCell_struct * M2_stringCell;
+typedef struct M2_ArrayString_struct * M2_ArrayString;
+typedef M2_ArrayString M2_ArrayStringOrNull;
+typedef char * M2_charstar;
+typedef unsigned char * M2_ucharstar;
+typedef char ** M2_charstarstar;
+typedef const char * M2_constcharstar;
+typedef const unsigned char * M2_constucharstar;
+typedef const char ** M2_constcharstarstar;
+typedef char * M2_charstarOrNull;
+typedef const char * M2_constcharstarOrNull;
+typedef const unsigned char * M2_constucharstarOrNull;
+typedef const char ** M2_constcharstarstarOrNull;
 
 #include "../system/supervisorinterface.h"
 #if ARCH == x86_64

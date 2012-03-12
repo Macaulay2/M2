@@ -1,13 +1,13 @@
 #include "pthread-exports.h"
 #include "supervisor.hpp"
-#include "interp.hpp"
+
 #include <iostream>
 #include <stdlib.h>
 #include <assert.h>
 
 // We allocate this many threads initially, to save trouble with memory allocation.
 // We may have to raise this, in the future.
-const static int maxNumThreads = 2;
+const static int maxNumThreads = 16;
 
 // The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
 // There may be I/O bound threads, such as the the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
@@ -199,7 +199,6 @@ void* ThreadTask::waitOn()
 
 void staticThreadLocalInit()
 {
-	
   THREADLOCALINIT(interrupts_exceptionFlag);
   THREADLOCALINIT(interrupts_interruptedFlag);
   //Make ABSOLUTELY sure that the exception and interrupt flags are not set.
@@ -394,8 +393,6 @@ void SupervisorThread::threadEntryPoint()
   #endif
   m_Interrupt=&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field);
   m_Exception=&THREADLOCAL(interrupts_exceptionFlag,struct atomic_field);
-  // Initialize local state of the interperter.
-  M2CPP_Interperter::gsp()->initializeLocalState();
   reverse_run(thread_prepare_list);// re-initialize any thread local variables
   while(m_KeepRunning)
     {

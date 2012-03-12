@@ -6,7 +6,7 @@ Import('state','getState','setState','getLibSpecific','setLibSpecific','architec
 
 cfiles = Glob('*.c','.')
 cfiles = cfiles + Glob('*.cpp','.')
-cfiles.remove('scc-core.cpp')
+cfiles.remove('scc-core.c')
 cfiles.remove('test.c')
 cflags = '-I'+getState(mode,architecture,'prefixpath')+'include/ -DNO_CONFIG ' + getState(mode,architecture,'M2flags')
 cobjects = []

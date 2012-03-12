@@ -23,7 +23,7 @@ for f in efiles:
     obj = Object(f,CFLAGS=eflags,CXXFLAGS=eflags)
     eobjects.append(obj)
     Depends(obj,ddict['engine.dd'])
-    Depends(obj,ddict['M2.dd'])
+    Depends(obj,ddict['M2.d'])
     
 state[architecture][mode]['efiles']=eobjects
 Return('eobjects')
