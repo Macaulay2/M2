@@ -1,6 +1,6 @@
-diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/pari/tmp/pari-2.5.0/config/Makefile.SH pari-2.5.0/config/Makefile.SH
---- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/pari/tmp/pari-2.5.0/config/Makefile.SH	2011-05-30 04:28:34.000000000 -0500
-+++ pari-2.5.0/config/Makefile.SH	2012-01-25 13:01:39.000000000 -0600
+diff -ur /home2/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/ubuntu64.debug/libraries/pari/tmp/pari-2.5.0/config/Makefile.SH pari-2.5.0/config/Makefile.SH
+--- /home2/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/ubuntu64.debug/libraries/pari/tmp/pari-2.5.0/config/Makefile.SH	2011-05-30 04:28:34.000000000 -0500
++++ pari-2.5.0/config/Makefile.SH	2012-03-12 23:10:48.825081534 -0500
 @@ -540,7 +540,7 @@
  
  gp-dyn: $add_funclist \$(OBJSGP) \$(LIBPARI_DYN) \$(EXPORT_LIB)
@@ -10,9 +10,9 @@ diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/librar
  	$postconfig gp-dyn
  
  \$(LIBPARI_DYN): $add_funclist \$(OBJS) \$(EXPORT_FILE)
-diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/pari/tmp/pari-2.5.0/src/headers/pariinl.h pari-2.5.0/src/headers/pariinl.h
---- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/pari/tmp/pari-2.5.0/src/headers/pariinl.h	2011-05-30 04:28:34.000000000 -0500
-+++ pari-2.5.0/src/headers/pariinl.h	2012-01-25 13:48:48.000000000 -0600
+diff -ur /home2/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/ubuntu64.debug/libraries/pari/tmp/pari-2.5.0/src/headers/pariinl.h pari-2.5.0/src/headers/pariinl.h
+--- /home2/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/ubuntu64.debug/libraries/pari/tmp/pari-2.5.0/src/headers/pariinl.h	2011-05-30 04:28:34.000000000 -0500
++++ pari-2.5.0/src/headers/pariinl.h	2012-03-12 23:10:48.825081534 -0500
 @@ -554,12 +554,12 @@
  /**                                                                **/
  /********************************************************************/
@@ -28,14 +28,20 @@ diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/librar
    *data = NULL;
    s->n = 0;
    s->alloc = 0;
-diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/pari/tmp/pari-2.5.0/src/language/parsec.h pari-2.5.0/src/language/parsec.h
---- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/pari/tmp/pari-2.5.0/src/language/parsec.h	2011-05-30 04:28:26.000000000 -0500
-+++ pari-2.5.0/src/language/parsec.h	2012-01-25 13:49:12.000000000 -0600
-@@ -53,6 +53,7 @@
-     pari_tree[i].flags= 0;
-   }
- }
-+
- void
- pari_close_parser(void) { stack_delete(&s_node); }
+diff -ur /home2/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/ubuntu64.debug/libraries/pari/tmp/pari-2.5.0/src/language/es.c pari-2.5.0/src/language/es.c
+--- /home2/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/ubuntu64.debug/libraries/pari/tmp/pari-2.5.0/src/language/es.c	2011-06-21 07:04:22.000000000 -0500
++++ pari-2.5.0/src/language/es.c	2012-03-12 23:48:39.600531572 -0500
+@@ -3614,13 +3614,7 @@
  
+ const char *
+ pari_default_path(void) {
+-#if PATH_SEPARATOR == ';'
+-  return ".;C:;C:/gp";
+-#elif defined(UNIX)
+-  return ".:~:~/gp";
+-#else
+   return ".";
+-#endif
+ }
+ 
+ void
