@@ -29,7 +29,7 @@ CHECKOPTIONS = LIBS="-lfac -lcf -lcfmem -lntl -lgmp"
 
 include ../Makefile.library
 
-CPPFLAGS += -I$(LIBRARIESDIR)/include/factory
+CPPFLAGS := -I$(LIBRARIESDIR)/include/factory $(CPPFLAGS)
 
 ifeq (@OPTIMIZE@,yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
