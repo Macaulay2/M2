@@ -7,7 +7,7 @@ libraryName = 'libxml2'
 #Library specific declarations go here.
 setLibSpecific('all','all','libxml2','downloadPath','ftp://xmlsoft.org/libxml2/')
 setLibSpecific('all','all',libraryName,'CompressedLib','libxml2-2.7.8.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libmpfr.a'])
+setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libxml2.a','$SConsInstallPrefixPath/include/libxml2/libxml/parser.h'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecificNumStages('all','all',libraryName,3)
 setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
