@@ -1170,14 +1170,23 @@ kill(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("kill",kill);
 
-limitResources(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) == 0 
-     then if limitResources() == 0 then nullE
+limitFiles(e:Expr):Expr := (
+     when e is n:ZZcell do
+     if isInt(n)
+     then if limitFiles(toInt(n)) == 0 then nullE
      else buildErrorPacket(syserrmsg())
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("limitResources",limitResources);
+     else WrongArgSmallInteger(0)
+     else WrongArgZZ(0));
+setupfun("limitFiles",limitFiles);
+
+limitProcesses(e:Expr):Expr := (
+     when e is n:ZZcell do
+     if isInt(n)
+     then if limitProcesses(toInt(n)) == 0 then nullE
+     else buildErrorPacket(syserrmsg())
+     else WrongArgSmallInteger(0)
+     else WrongArgZZ(0));
+setupfun("limitProcesses",limitProcesses);
 
 setEcho(e:Expr):Expr := (
      when e is f:file do (
@@ -1686,6 +1695,7 @@ stopIfErrorS := dummySymbol;
 handleInterruptsS := dummySymbol;
 printWidthS := dummySymbol;
 notifyS := dummySymbol;
+readonlyfilesS := dummySymbol;
 
 setupconst("minExponent",toExpr(minExponent));
 setupconst("maxExponent",toExpr(maxExponent));

@@ -145,6 +145,7 @@ export argv := array(string)();
 export args := array(string)();
 export gbTrace := 0;
 export notify := false;
+export readonlyfiles := false;				    -- see stdio.d
 
 declarations "#include <M2/config.h>";
 export USE_THREADS ::= Ccode(bool,"

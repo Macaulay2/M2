@@ -144,7 +144,18 @@ export everytime(f:function():void):void := everytimeList = everytimeCell(f,ever
 export everytimeRun():void := (
      x := everytimeList;
      while x.next != x do (x.f(); x = x.next;));
-export limitResources():int := Ccode(returns, "static const struct rlimit zero; return setrlimit(RLIMIT_NOFILE,&zero) | setrlimit(RLIMIT_NPROC,&zero)");
+
+export limitFiles(n:int):int := Ccode(returns, "
+     struct rlimit lim;
+     lim.rlim_cur = lim.rlim_max = n;
+     return setrlimit(RLIMIT_NOFILE,&lim);
+     ");
+export limitProcesses(n:int):int := Ccode(returns, "
+     struct rlimit lim;
+     lim.rlim_cur = lim.rlim_max = n;
+     return setrlimit(RLIMIT_NPROC,&lim);
+     ");
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d system.o "
 -- End:

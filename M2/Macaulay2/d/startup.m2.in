@@ -396,11 +396,13 @@ usage := arg -> (
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
      << "    --restarted        used internally to indicate this is a restart" << newline
+     << "    --read-only-files  disallow file and socket creation and writing" << newline
      << "    --script           as first argument, interpret second argument as name of a script" << newline
      << "                       implies --stop, --no-debug, --silent and -q" << newline
      << "                       see scriptCommandLine" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
+     << "    --no-tty           do not treat stdin and stdout as tty's" << newline
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
@@ -457,6 +459,7 @@ action := hashTable {
      "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
      "--no-tty" => arg -> arg,			    -- handled in d/stdio.d
+     "--read-only-files" => arg -> arg,		    -- handled in d/stdio.d
      "--script" => arg -> error "script option should be first argument, of two",
      "--silent" => arg -> nobanner = true,
      "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d

@@ -144,12 +144,20 @@ init():void := (
 	       stdIO.prompt = texmacsprompt;
 	       stdIO.reward = texmacsreward;
 	       stdIO.fulllines = true;
-	       );
-	  if arg === "--no-readline" then stdIO.readline = false;
+	       )
+	  else
+	  if arg === "--no-readline" then (
+	       stdIO.readline = false
+	       )
+	  else
 	  if arg === "--no-tty" then (
 	       stdIO.inisatty = false; 
 	       stdIO.outisatty = false;
-	       );
+	       )
+	  else
+	  if arg === "--read-only-files" then (
+	       readonlyfiles = true;
+	       )
 	  );
      -- strange but true: readline refuses to display CTRL-A when it occurs in a prompt
      );
@@ -178,6 +186,7 @@ rmfile(o:file):void := (
 addfile(stdIO);
 addfile(stdError);
 opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg) := (
+     if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening a socket not permitted"));
      host0 := substr(filename,1);
      serv := "2500";		  -- Macaulay 2 default port
      foreach c at j in filename do if c == ':' then (
@@ -210,6 +219,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
 	  0, 0, false, dummyNetList,0,-1,false,0))));
 accept(f:file,input:bool,output:bool):(file or errmsg) := (
+     if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: accepting a connection not permitted"));
      if !f.listener then return (file or errmsg)(errmsg("expected a listener"));
      sd := NOFD;
      if f.connection != NOFD
@@ -232,6 +242,7 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  0, 0, false, dummyNetList,0,-1,false,0))));
 
 openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
+     if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening a pipe not permitted"));
      toChild := array(int)(NOFD,NOFD);
      fromChild := array(int)(NOFD,NOFD);
      if output && pipe(toChild) == ERROR || input && pipe(fromChild) == ERROR 
@@ -307,6 +318,7 @@ export openIn(filename:string):(file or errmsg) := (
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, false,noprompt,noprompt,false,true,false,0,
 		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0,-1,false,0)))));
 export openOut(filename:string):(file or errmsg) := (
+     if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening an output file not permitted"));
      if filename === "-"
      then (file or errmsg)(stdIO)
      else if length(filename) > 0 && filename . 0 == '$'
@@ -324,6 +336,7 @@ export openOut(filename:string):(file or errmsg) := (
 		    false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false,0)))));
 export openOutAppend(filename:string):(file or errmsg) := (
+     if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening an output file not permitted"));
      filename = expandFileName(filename);
      fd := openoutappend(filename);
      if fd == ERROR
@@ -334,6 +347,7 @@ export openOutAppend(filename:string):(file or errmsg) := (
 	       false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
 	       true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false,0))));
 export openInOut(filename:string):(file or errmsg) := (
+     if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening an output file not permitted"));
      if filename === "-"
      then (file or errmsg)(stdIO)
      else if length(filename) > 0 && filename . 0 == '$'
@@ -342,6 +356,7 @@ export openInOut(filename:string):(file or errmsg) := (
      then openpipe(filename,true,true)
      else (file or errmsg)(errmsg("can't open file "+filename+" for both input and output")));
 export openListener(filename:string):(file or errmsg) := (
+     if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening a listener not permitted"));
      if length(filename) > 0 && filename . 0 == '$'
      then opensocket(filename,false,false,true)
      else (file or errmsg)(errmsg("openListener: expected file name starting with '$'")));
