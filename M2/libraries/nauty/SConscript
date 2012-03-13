@@ -11,14 +11,16 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 libraryName = 'nauty'
 #Library specific declarations go here.
 setLibSpecific('all','all',libraryName,'CompressedLib','nauty24r2.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/listg'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/listg'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'Dependencies',['mpir'])
 
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
+setLibSpecificConfigExport('all',['Darwin-x86_64'],libraryName,'CC','gcc -m64')
+setLibSpecificConfigExport('all',['Darwin-x86_64'],libraryName,'CXX','g++ -m64')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--disable-shared','--prefix=$SConsInstallPrefixPath'])
 setLibSpecificStageCommandArguments('all','all',libraryName,1,['all'])
 setLibSpecificNumStages('all','all',libraryName,2)

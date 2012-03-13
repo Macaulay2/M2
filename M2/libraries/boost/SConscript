@@ -7,7 +7,7 @@ libraryName = 'boost'
 #Library specific declarations go here.
 setLibSpecific('all','all','boost','downloadPath','http://sourceforge.net/projects/boost/files/boost/1.46.1/')
 setLibSpecific('all','all',libraryName,'CompressedLib','boost_1_46_1.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libboost_thread.a'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libboost_thread.a'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecificNumStages('all','all',libraryName,2)
 setLibSpecificStageCommand('all','all',libraryName,0,'bootstrap.sh')

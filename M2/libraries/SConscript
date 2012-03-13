@@ -13,7 +13,7 @@ buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','naut
 linuxBuildLibraries = buildlibraries
 state['linux-x86_64']['buildlibraries']=linuxBuildLibraries
 state['linux-x86']['buildlibraries']=linuxBuildLibraries
-state['Darwin-x86_64']['buildlibraries']=set(['gc'])
+state['Darwin-x86_64']['buildlibraries']=set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lrslib','pari','ntl','factory','cddplus','frobby','gfan','libfac','normaliz','boost'])
 
 dependencies = {
     'sccfiles':['gc','gdbm'],

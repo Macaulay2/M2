@@ -6,13 +6,14 @@ Import('setLibSpecific','setState',
 libraryName = 'gfan'
 #Library specific declarations go here.
 setLibSpecific('all','all',libraryName,'CompressedLib','gfan0.4plus.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/gfan'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/gfan'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'Dependencies',['cddlib'])
 setLibSpecificNumStages('all','all',libraryName,2)
 setLibSpecificStageCommand('all','all',libraryName,0,'make')
 setLibSpecificStageCommand('all','all',libraryName,1,'make')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,[ 'PREFIX=$SConsInstallPrefixPath','CCLINKER=g++ -L$SConsInstallPrefixPath/lib/', 'CC=gcc -I$SConsInstallPrefixPath/include/','CCC=g++ -I$SConsInstallPrefixPath/include/' ,'CDD_LINKOPTIONS=-lcddgmp'])
+setLibSpecificStageCommandArguments('all','Darwin-x86_64',libraryName,0,[ 'PREFIX=$SConsInstallPrefixPath','CCLINKER=g++ -m64 -L$SConsInstallPrefixPath/lib/', 'CC=gcc -m64 -I$SConsInstallPrefixPath/include/','CCC=g++ -m64 -I$SConsInstallPrefixPath/include/' ,'CDD_LINKOPTIONS=-lcddgmp'])
 setLibSpecificStageCommandArguments('all','all',libraryName,1,['PREFIX=$SConsInstallPrefixPath','install'])
 setLibSpecific('all','all',libraryName,'patchfile','../../../libraries/gfan/patch-0.4plus')
  

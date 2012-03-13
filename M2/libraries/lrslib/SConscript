@@ -11,7 +11,7 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 libraryName = 'lrslib'
 #Library specific declarations go here.
 setLibSpecific('all','all',libraryName,'CompressedLib','lrslib-042c.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/lrs'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/lrs'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'Dependencies',['mpir'])
 setLibSpecificNumStages('all','all',libraryName,2)

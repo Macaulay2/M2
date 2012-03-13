@@ -11,13 +11,15 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 libraryName = 'cddplus'
 #Library specific declarations go here.
 setLibSpecific('all','all',libraryName,'CompressedLib','cdd+-077a.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/cddr+'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/cddr+'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'Dependencies',['cddlib'])
 setLibSpecificNumStages('all','all',libraryName,2)
 
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
-setLibSpecificMakeExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
+setLibSpecificMakeExport('all',['linux-x86','linux-x86_64','Darwin-x86'],libraryName,'CC','gcc')
+setLibSpecificMakeExport('all',['linux-x86','linux-x86_64','Darwin-x86'],libraryName,'CXX','g++')
+setLibSpecificMakeExport('all',['Darwin-x86_64'],libraryName,'CC','gcc -m64')
+setLibSpecificMakeExport('all',['Darwin-x86_64'],libraryName,'CXX','g++ -m64')
 setLibSpecificStageCommandArguments('release','all',libraryName,1,[ 'prefix=$SConsInstallPrefixPath','LDFLAGS=-L$SConsInstallPrefixPath/lib/', 'CFLAGS=-I. -I$SConsInstallPrefixPath/include/ -g -O3',
                                                                 'CPPFLAGS=-I. -I$SConsInstallPrefixPath -g -O3', 'all'])
 setLibSpecificStageCommandArguments('debug','all',libraryName,1,[ 'prefix=$SConsInstallPrefixPath','LDFLAGS=-L$SConsInstallPrefixPath/lib/', 'CFLAGS=-I. -I$SConsInstallPrefixPath/include/ -g -O0',

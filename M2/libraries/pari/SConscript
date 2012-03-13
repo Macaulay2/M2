@@ -12,14 +12,14 @@ libraryName = 'pari'
 #Library specific declarations go here.
 setLibSpecific('all','all','pari','downloadPath','http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk/')
 setLibSpecific('all','all',libraryName,'CompressedLib','pari-2.5.0.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libpari.a'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86_64','Darwin-x86'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libpari.a'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'Dependencies',['mpir'])
 setLibSpecificNumStages('all','all',libraryName,3)
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64','Darwin-x86'],libraryName,'CC','gcc')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64','Darwin-x86'],libraryName,'CXX','g++')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64','Darwin-x86'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64','Darwin-x86'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--prefix=$SConsInstallPrefixPath','--with-gmp=$SConsInstallPrefixPath'])
 setLibSpecificStageCommandArguments('all','all',libraryName,1,['lib-sta'])
 setLibSpecificStageCommandArguments('all','all',libraryName,2,['install-lib-sta','install-include'])
@@ -38,6 +38,10 @@ def BuildLibrary(target,source,env):
       offset = 'Olinux-x86_64/'
    elif architecture == 'linux-x86':
       offset = 'Olinux-i686/'
+   elif architecture == 'Darwin-x86_64':
+      offset = 'Odarwin-i386'
+   elif architecture == 'Darwin-x86':
+      offset = 'Odarwin-i386'
    else:
       raise NotImplementedError(architecture + " not implemented for Pari")
    makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = offset)

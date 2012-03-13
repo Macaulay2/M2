@@ -10,12 +10,15 @@ Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','s
 #set this to library name
 libraryName = 'normaliz'
 setLibSpecific('all','all',libraryName,'CompressedLib','Normaliz2.7.zip')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/normaliz'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/normaliz'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecific('all','all',libraryName,'Dependencies',['boost','mpir'])
 #Library specific declarations go here.
-setLibSpecificStageCommandArguments('debug',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
-setLibSpecificStageCommandArguments('release',['linux-x86_64','linux-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+setLibSpecificStageCommandArguments('debug',['linux-x86_64','linux-x86','Darwin-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+setLibSpecificStageCommandArguments('release',['linux-x86_64','linux-x86','Darwin-x86'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+setLibSpecificStageCommandArguments('debug',['Darwin-x86_64'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++ -m64','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O0 -g','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+setLibSpecificStageCommandArguments('release',['Darwin-x86_64'],libraryName,1,['prefix=$SConsInstallPrefixPath','NORMFLAGS=','CXX=g++ -m64','CXXFLAGS=-I$SConsInstallPrefixPath/include -DNDEBUG -Wall -Wno-sign-compare -Wno-unknown-pragmas -O3 -g -funroll-loops','GMPFLAGS=-L$SConsInstallPrefixPath/lib -lgmpxx -lgmp -lgomp'])
+
 setLibSpecific('all','all',libraryName,'builddirectory','source/')
    
 def BuildLibrary(target,source,env):

@@ -5,12 +5,14 @@ Import('setLibSpecific','setState',
 libraryName = 'readline'
 #Library specific declarations go here.
 setLibSpecific('all','all',libraryName,'CompressedLib','readline-6.1.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libreadline.a'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libreadline.a'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
-setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
+setLibSpecificConfigExport('all',['Darwin-x86_64'],libraryName,'CC','gcc -m64')
+setLibSpecificConfigExport('all',['Darwin-x86_64'],libraryName,'CXX','g++ -m64')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'CPPFLAGS','-I$SConsInstallPrefixPath/include/')
+setLibSpecificConfigExport('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'LDFLAGS','-L$SConsInstallPrefixPath/lib/')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--disable-shared','--prefix=$SConsInstallPrefixPath'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
 

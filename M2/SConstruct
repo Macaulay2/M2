@@ -35,6 +35,32 @@ state = {
             },
         'modes':set(['debug','release']),
         },
+    'Darwin-x86':
+        {
+        'debug':{
+            'prefixpath':'local/debug/',
+            'includepath':'local/debug/include/',
+            'libpath':'local/debug/lib',
+            'buildpath':'BUILD/debug/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{ },
+            'eflags':'-O0 -g',
+            'M2flags':'-O0 -g',
+            },
+        'release':{
+            'prefixpath':'local/release/',
+            'includepath':'local/release/include/',
+            'libpath':'local/release/lib/',
+            'buildpath':'BUILD/release/',
+            'tarpath':'BUILD/tarfiles/',
+            'build':False,
+            'libspecific':{},
+            'eflags':'-O2 -g',
+            'M2flags':'-O2 -g',
+            },
+        'modes':set(['debug','release']),
+        },
     'linux-x86_64':
         {
         'debug':{
@@ -105,6 +131,7 @@ def detectArchitecture():
         if platform.architecture()[0]=='64bit':
             return 'Darwin-x86_64'
         elif platform.architecture()[0]=='32bit':
+            raise NotImplementedError("Darwin-x86 unsupported")
             return 'Darwin-x86'
         else:
             raise NotImplementedError("Unknown Darwin architecture %s" % architecture)

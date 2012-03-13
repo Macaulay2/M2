@@ -7,17 +7,17 @@ Import('setLibSpecific','setState',
 libraryName = 'gdbm'
 #Library specific declarations go here.
 setLibSpecific('all','all',libraryName,'CompressedLib','gdbm-1.8.3.tar.gz')
-setLibSpecific('all',['linux-x86','linux-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libgdbm.a'])
+setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libgdbm.a'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
 setLibSpecificNumStages('all','all',libraryName,3)
-setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CFLAGS','-g -O2')
-setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'CXXFLAGS','-g -O2')
-setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'FFLAGS','-g -O2')
-setLibSpecificConfigExport('release',['linux-x86','linux-x86_64'],libraryName,'FCFLAGS','-g -O2')
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'CFLAGS','-g -O2')
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'CXXFLAGS','-g -O2')
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'FFLAGS','-g -O2')
+setLibSpecificConfigExport('release',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,'FCFLAGS','-g -O2')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CC','gcc')
 setLibSpecificConfigExport('all',['linux-x86','linux-x86_64'],libraryName,'CXX','g++')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,['--disable-shared','--prefix=$SConsInstallPrefixPath'])
-setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64'],libraryName,2,['BINOWN='+str(os.getuid()),'BINGRP='+str(os.getgid()),'install'])
+setLibSpecificStageCommandArguments('all',['linux-x86','linux-x86_64','Darwin-x86_64'],libraryName,2,['BINOWN='+str(os.getuid()),'BINGRP='+str(os.getgid()),'install'])
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
 
 buildBuilders(libraryName)   
