@@ -102,7 +102,7 @@ void* interpFunc(void* unused)
   if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      
   M2_envp = M2_tostrings(envc,getEnviron());
-  M2_argv = M2_tostrings(argc,getEnviron());
+  M2_argv = M2_tostrings(argc,(char **)vargs->argv);
   M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
   interp_setupargv();
 
