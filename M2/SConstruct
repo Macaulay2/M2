@@ -7,7 +7,7 @@ AddOption('--makelib',dest='makelib',nargs=1,action='store',type='string',help='
 AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='release,debug',help='One or more modes to build separated by commas.  Defaults to ' + defaultModes)
 AddOption('--jj',dest='jj',nargs=1,action='store',type='int',help='Number of parallel sub-tasks to run for each build task')
 AddOption('--disable-parallel',dest='disableparallel',nargs=0,action='store',help='Disable parallel build')
-AddOption('--disable-download',dest='disabledownload',nargs=0,action='store',help='Disable downloading packages')
+AddOption('--enable-download',dest='enabledownload',nargs=0,action='store',help='Disable downloading packages')
 state = {
     'Darwin-x86_64':
         {
@@ -116,7 +116,7 @@ state = {
     'architectures':['linux-x86_64','linux-x86','Darwin-x86_64'],
     'build':True,
     'clean':False,
-    'enabledownload':True
+    'enabledownload':False
 }
 def detectArchitecture():
     import platform
@@ -530,9 +530,8 @@ else:
 if(GetOption('jj')):
     numSubTasks=GetOption('jj')
     print "Setting subtasks: " + str(numSubTasks)
-if(GetOption('disabledownload') is not None):
-    print 'Downloading libraries disabled'
-    state['enabledownload'] = False
+if(GetOption('enabledownload') is not None):
+    state['enabledownload'] = True
 
 #Set the state based on if clean was requested.
 if(GetOption('clean')!=None or GetOption('deepcleanlib')!=None or GetOption('cleanlib')!=None):

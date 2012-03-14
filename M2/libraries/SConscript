@@ -45,7 +45,7 @@ def downloadLibrary(architecture,mode,library):
             localFile.write(f.read())
             localFile.close()
         else:
-            raise Exception("Unable to find library: " + library + " and downloading libraries is disabled.")    
+            raise Exception("Unable to find library: " + library + " and downloading libraries is disabled")    
 
 def downloadLibraries(architecture,mode):
     for library in state[architecture]['buildlibraries']:
