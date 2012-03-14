@@ -1,0 +1,43 @@
+
+
+ii11 : help
+
+oo11 = initial help
+       ************
+
+       Welcome to Macaulay2
+
+
+       Try entering '2+2' at your next input prompt, which begins with i.  The two output prompts begin with o.  The first one, with the equal sign, '=',
+       gives the value computed from your input, and the second one, with the colon, ':', tells what type of thing the value is.
+
+
+       Type one of these commands to get started reading the documentation:
+         * copyright                         -- the copyright
+         * help "Macaulay2"                  -- top node of the documentation.
+         * help "reading the documentation"  -- 
+         * help "getting started"            -- 
+         * help "a first Macaulay2 session"  -- 
+         * help x                            -- display the documentation for x
+         * ? f                               -- display brief documentation for a function f
+         * printWidth = 80                   -- set print width to 80 characters
+         * viewHelp                          -- view documentation in a browser
+         * viewHelp x                        -- view documentation on x in browser
+       To read the documentation in info form, in case you happen to be running Macaulay2 in a terminal window, replace "help" by "infoHelp" in any of the
+       commands above.
+
+ii14 :          * copyright                         -- the copyright
+stdio:10:10:(3): error: expected key to have only single interior spaces:"Macaulay2, version 1.4.0.1
+Copyright 2012 Daniel R. Grayson and Michael E. Stillman,
+  licensed under the GNU General Public License version 2 or 3.
+For Macaulay2 packages, see their source code for licensing terms.
+Compiled with the following libraries:
+  GC 7.3 alpha 1, by H. Boehm and Alan J. Demers
+  Singular-Factory 3.1.4, by G.-M. Greuel et al.
+  Singular-Libfac 3.1.3, by M. Messollen
+  frobby 0.8.2, by B. H. Roune
+  pari 2.5.0, the PARI Group, Bordeaux
+  NTL 5.5.2, by V. Shoup
+  MPIR 2.4.0, by Free Software Foundation et al.
+  MPFR 3.0.1, by Free Software Foundation
+  BLAS and LAPACK 3.0, by J. Dongarra et al."
