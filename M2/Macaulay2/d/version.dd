@@ -126,11 +126,11 @@ compiler := (
 	    ")));
 
 setupconst("version", Expr(toHashTable(Sequence(
---   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
+   "VERSION" => Ccode(constcharstar,"\"unknown PACKAGE_VERSION\""),
 --   "architecture" => Ccode(constcharstar,"ARCH"),
 --   "issue" => Ccode(constcharstar,"ISSUE"),
---   "machine" => Ccode(constcharstar,"MACHINE"),
---   "operating system" => Ccode(constcharstar,"OS"),
+   "machine" => Ccode(constcharstar,"\"unknown MACHINE\""),
+   "operating system" => Ccode(constcharstar,"\"unknown OS\""),
 --   "operating system release" => Ccode(constcharstar,"REL"),
 --   "compiler" => compiler,
 --   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
