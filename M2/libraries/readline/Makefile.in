@@ -8,8 +8,10 @@ VERSION = 6.1
 PATCHES = 001 002
 
 RELAX = yes
-URL = ftp://ftp.gnu.org/gnu/readline
-PATCHURL = $(URL)/readline-$(VERSION)-patches
+# URL = ftp://ftp.gnu.org/gnu/readline
+# PATCHURL = $(URL)/readline-$(VERSION)-patches
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+PATCHURL = $(URL)
 
 BUILDTARGET = all -o install-examples
 INSTALLTARGET = install -o install-examples

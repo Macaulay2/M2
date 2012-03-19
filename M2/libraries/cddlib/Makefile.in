@@ -1,7 +1,8 @@
 # license for cddlib: GPL v2
 VERSION = 094f
 # http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
-URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd
+# URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 ALLOPTIONS     = SUBDIRS="lib-src lib-src-gmp" gmpdir=/nowhere
 CONFIGOPTIONS  = $(ALLOPTIONS)
 BUILDOPTIONS   = $(ALLOPTIONS)

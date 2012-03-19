@@ -6,11 +6,11 @@
 #VERSION = 2.4.2
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-VERSION = 3.0.1
+VERSION = 3.1.0
 
 RELAX = yes
-URL = http://www.mpfr.org/mpfr-$(VERSION)
-# URL = http://macaulay2.com/Downloads/SourceCode
+# URL = http://www.mpfr.org/mpfr-$(VERSION)
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 
 ifeq (@CC_THREAD_SUPPORT@,yes)
 # compiling mpfr with thread local variables is incompatible with libgc, because

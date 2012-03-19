@@ -7,7 +7,8 @@ PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
-URL = http://shoup.net/ntl
+# URL = http://shoup.net/ntl
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
 
 ifeq (@DEBUG@,yes)

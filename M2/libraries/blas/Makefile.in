@@ -1,6 +1,7 @@
 # http://www.netlib.org/blas/
 # Basic Linear Algebra Subprograms
-URL = http://www.netlib.org/blas
+# URL = http://www.netlib.org/blas
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 TARFILE = blas.tgz
 TARDIR = BLAS
 CONFIGURECMD = true

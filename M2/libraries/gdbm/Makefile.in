@@ -1,6 +1,7 @@
 # license for gdbm: GPL v2
 
-URL = ftp://ftp.gnu.org/gnu/gdbm
+# URL = ftp://ftp.gnu.org/gnu/gdbm
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 VERSION = 1.8.3
 INSTALLOPTIONS = BINOWN=$(shell id -u) BINGRP=$(shell id -g)
 ifeq (@SHARED@,no)

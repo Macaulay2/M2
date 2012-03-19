@@ -7,7 +7,7 @@
 # URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.3
 
 VERSION = 4.44
-URL = http://www.math.uiuc.edu/Macaulay2/Extra
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 
 # see http://www.gnu.org/software/glpk/
 # URL = ftp://ftp.gnu.org/gnu/glpk
