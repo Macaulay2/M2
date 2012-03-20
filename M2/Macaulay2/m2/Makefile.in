@@ -49,11 +49,13 @@ loads.m2: loads.awk loadsequence
 	@awk -f $^ >$@
 
 ############################## tvalues.m2
+STOP = --stop
+ARGS = -q --silent $(STOP) -e errorDepth=0
 DUMPEDM2FILES += tvalues.m2
-TVFILES := $(shell egrep -l -e "-- . typical value: " @srcdir@/../d/*.d)
+TVFILES := $(wildcard @srcdir@/../d/*.d)
 all: tvalues.m2
-tvalues.m2: $(TVFILES)
-	egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
+tvalues.m2: @srcdir@/tvalues-make.m2 $(TVFILES)
+	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'make "@srcdir@/../d/"; exit 0'
 clean::;rm -rf tvalues.m2
 ############################## installedpackages.m2
 INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
