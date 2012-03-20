@@ -192,7 +192,7 @@ typval = x -> (
      else if #x == 5 then typval5f x
      else error "typval: expected 3, 4, or 5 arguments"
      )
-load "tvalues.m2"
+if not member("--no-tvalues", commandLine) then load "tvalues.m2"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
