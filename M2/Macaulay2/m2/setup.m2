@@ -137,7 +137,9 @@ warning = x -> (
 lastLN := 0
 lastWI := 0
      
-load "loads.m2"
+tryget = (filename) -> pathdo(get,path,filename, (fullfilename,filetime) -> if notify then stderr << "--read " << fullfilename << endl)
+scan(lines tryget "loadsequence", load)
+
 -- after this point, private global symbols, such as noinitfile, are no longer visible
 protect Core.Dictionary
 -- Local Variables:
