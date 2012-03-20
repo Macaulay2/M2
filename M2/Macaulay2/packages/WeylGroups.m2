@@ -3,8 +3,8 @@
 
 newPackage(
 	"WeylGroups",
-	Version => "0.4",
-	Date => "February 26, 2010",
+	Version => "0.5",
+	Date => "March 20, 2012",
 	Authors => {
 		{Name => "Baptiste Calmès",
 		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
@@ -239,13 +239,16 @@ dynkinExponents(DynkinType):= (D) ->
 	  (
 	  if D#i#0=="A" then toList (1..D#i#1)
 	  else if D#i#0=="B" or D#i#0=="C" then apply(toList (1..D#i#1),x->2*x-1)
-	  else if D#i#0=="D" then append(apply(toList(1..D#i#1-1),x->2*x-1),D#i#1)
-	  else if D#i#0=="G" then {2,6}
-	  else if D#i#0=="F" then {2,6,8,12}
+	  else if D#i#0=="D" then 
+	    (if odd(D#i#1) then append(apply(toList(1..D#i#1-1),x->2*x-1),D#i#1-1)
+	    else if even(D#i#1) then apply(toList(1..D#i#1-2),x->2*x-1)|{D#i#1-1,D#i#1-1}
+	    )
+	  else if D#i#0=="G" then {1,5}
+	  else if D#i#0=="F" then {1,5,7,11}
 	  else if D#i#0=="E" then 
-	    (if D#i#1==6 then {2,5,6,8,9,12}
-	     else if D#i#1==7 then {2,6,8,10,12,14,18}
-	     else if D#i#1==8 then {2,8,12,14,18,20,24,30}
+	    (if D#i#1==6 then {1,4,5,7,8,11}
+	     else if D#i#1==7 then {1,5,7,9,11,13,17}
+	     else if D#i#1==8 then {1,7,11,13,17,19,23,29}
 	    ) 
 	  )
 	)
