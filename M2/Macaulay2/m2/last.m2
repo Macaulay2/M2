@@ -82,7 +82,7 @@ addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile the
 addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 noinitfile' := noinitfile
-load "installedpackages.m2"
+Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
 Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
 path = packagepath
 Function.GlobalReleaseHook = (X,x) -> (
