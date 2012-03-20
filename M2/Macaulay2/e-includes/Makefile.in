@@ -7,6 +7,7 @@ GENERATED_H := geogbvec geores
 
 all: $(addsuffix .hpp, $(GENERATED_H)) statuscodes.h
 statuscodes.h : statuscodes; (sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' ; echo "  DUMMY_STATUS_CODE") <$< >$@
+FILES_TO_COPY := statuscodes
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e-includes/Makefile
 clean::; rm -f $(addsuffix .hpp, $(GENERATED_H)) statuscodes.h
 
@@ -16,6 +17,11 @@ RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g" 
 geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
+
+@pre_packagesdir@ :; @INSTALL@ -d $@
+@pre_packagesdir@/Core  : ; @INSTALL@ -d $@
+@pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
+all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e-includes "

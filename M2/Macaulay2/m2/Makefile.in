@@ -22,15 +22,12 @@ DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/variables/*.m2 \
 		../packages/Macaulay2Doc.m2
 OTHERM2FILES := sagbi.m2
+############################## loadsequence
+LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
+DUMPEDM2FILES += $(LOADSEQUENCE)
+DUMPEDM2SRCFILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
 ############################## statuscodes.m2
-DUMPEDM2FILES += statuscodes.m2
-initialize:: statuscodes.m2
-statuscodes.m2: ../e-includes/statuscodes
-	( \
-		echo 'RawStatusCodes = new HashTable from {' ; \
-		sed 's/\(.*\):\(.*\):\(.*\)/  \1 => \3,/' ; \
-		echo '}' ; \
-	) <$< >$@
+# an obsolete file:
 clean::; rm -f statuscodes.m2
 ############################## mpcodes.m2
 ifdef MP
@@ -47,7 +44,7 @@ TVFILES := $(wildcard @srcdir@/../d/*.d)
 all: tvalues.m2
 tvalues.m2: @srcdir@/tvalues-make.m2 $(TVFILES)
 	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'make "@srcdir@/../d/"; exit 0'
-clean::;rm -rf tvalues.m2
+clean::;rm -r tvalues.m2
 ############################## installedpackages.m2
 INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
 DUMPEDM2FILES += installedpackages.m2
