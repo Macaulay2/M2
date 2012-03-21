@@ -12,7 +12,20 @@ dfiles = ['arithmetic.d','atomic.d','M2.d','system.d','strings.d','varstrin.d','
           'err.d','gmp1.d','tokens.d','getline.d','lex.d','parser.d','binding.d','basic.d','convertr.d','common.d','util.d','struct.d',
           'classes.dd','buckets.dd','equality.dd','hashtables.dd','sets.dd','version.dd','evaluate.d','mysqldummy.d','pthread.d','actors.d',
           'actors2.d','actors3.d','actors4.d','xmlactors.d','actors5.d','threads.dd','pari.d','interface.dd','texmacs.d','interp.d']
-cfiles = ['gdbm_interface.c','xml-c.c','M2inits.c','gmp_aux.c','pari-c.c','main.c','M2mem.c','M2lib.c','scclib.c','M2-factory.cpp','regex.c','readline.c','gmp_init.cc','startup.c']
+cfiles = ['gdbm_interface.c','xml-c.c','M2inits.c','gmp_aux.c','pari-c.c','main.c','M2mem.c','M2lib.c','scclib.c','M2-factory.cpp','regex.c','readline.c','gmp_init.cc']
+def startupBuilder(target,source,env):
+    source = str(source[0])
+    target = str(target[0])
+    startupin = open(source,"r")
+    startupout = open(target,"w")
+    startupout.write('char startupFile  [] =" startup.m2.in";\n')
+    startupout.write('const char startupString[] =\n')
+    for line in startupin: 
+        startupout.write('"'+str.replace(line[:-1],'"','\\"')+'\\n"\n')
+    startupout.write(';')
+    startupout.close()
+    startupin.close()
+    
 def DBuildDependency(target,source,env):
     source = str(source[0])
     target = str(target[0])
@@ -53,7 +66,7 @@ def DBuild(target,source,env):
     shutil.move(str(origTargets[1])+'.tmp',str(origTargets[1]))
     return None
 
-
+startupbuilder = Builder(action=startupBuilder, single_source=1)
 ddepbuilder = Builder(action=DBuildDependency, single_source=1)
 dbuilder = Builder(action=DBuild,single_source=1)
 buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/d/'
@@ -62,6 +75,7 @@ env = Environment()
 env.mode = mode
 env['BUILDERS']['ddepbuilder']=ddepbuilder
 env['BUILDERS']['dbuilder']=dbuilder
+env['BUILDERS']['startupbuilder']=startupbuilder
 #Setup D dependency build targets.
 scc = getState(mode,architecture,'scc')
 for i in range(0,len(dfiles)):
@@ -103,6 +117,9 @@ for i in range(0,len(dfiles)):
     ddict[sf[1]]=obj
 setState(mode,architecture,'dFileDict',ddict)
 #Setup C/C++ object file targets for files in D directory
+startupc = env.startupbuilder('#'+buildpath+'startup.c','startup.m2.in')
+startupobj = Object(startupc,CFLAGS=cflags,CXXFLAGS=cflags)
+objFiles.append(startupobj)
 cobjs = []
 for f in cfiles:
     builder = Object(f,CFLAGS=cflags,CXXFLAGS=cflags)
