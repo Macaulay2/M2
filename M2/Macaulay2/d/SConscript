@@ -21,7 +21,7 @@ def startupBuilder(target,source,env):
     startupout.write('char startupFile  [] =" startup.m2.in";\n')
     startupout.write('const char startupString[] =\n')
     for line in startupin: 
-        startupout.write('"'+str.replace(line[:-1],'"','\\"')+'\\n"\n')
+        startupout.write('"'+line[:-1].replace('\\','\\\\').replace("'","\'").replace('"','\\"')+'\\n"\n')
     startupout.write(';')
     startupout.close()
     startupin.close()
