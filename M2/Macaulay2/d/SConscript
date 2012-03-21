@@ -35,15 +35,6 @@ def DBuildDependency(target,source,env):
     shutil.move(target[:-4]+'.sig.tmp',target[:-4]+'.sig')
     return None
 
-def DBuildTypes(target,source,env):
-    cmd = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/c/scc')
-    targetPath = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/d/')
-    args = [cmd]
-    proc = subprocess.Popen(args,cwd=targetPath)
-    if(proc.wait()):
-        raise Exception("Unable to execute " + str(args) + ' in ' + targetPath)
-    return None
-
 def DBuild(target,source,env):
     origTargets = target
     source = str(source[0])
@@ -65,16 +56,12 @@ def DBuild(target,source,env):
 
 ddepbuilder = Builder(action=DBuildDependency, single_source=1)
 dbuilder = Builder(action=DBuild,single_source=1)
-dtypesbuilder = Builder(action=DBuildTypes, single_source=1)
 buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/d/'
 depbuilders = []
 env = Environment()
 env.mode = mode
 env['BUILDERS']['ddepbuilder']=ddepbuilder
 env['BUILDERS']['dbuilder']=dbuilder
-env['BUILDERS']['dtypesbuilder']=dtypesbuilder
-#setup D build type target.
-dtb = env.dtypesbuilder(['#'+buildpath+'typecodes.h'],[])
 #Setup D dependency build targets.
 scc = getState(mode,architecture,'scc')
 for i in range(0,len(dfiles)):
@@ -83,7 +70,6 @@ for i in range(0,len(dfiles)):
     se = os.path.splitext(sf[1])
     builder = env.ddepbuilder([se[0]+'.dep',se[0]+'.sig'], df)
     Depends(builder,scc)
-    Depends(dtb,builder)
     ParseDepends(se[0]+'.dep')
     if i!=0:            
         Requires(builder,depbuilders[i-1])
@@ -107,7 +93,6 @@ for i in range(0,len(dfiles)):
         raise Exception
     builder = env.dbuilder([targetf,se[0]+'-exports.h'],df)
     Depends(builder,scc)
-    Depends(builder,dtb)
     Depends(builder,se[0]+'.dep')
     Requires(builder,depbuilders[len(depbuilders)-1])
     # It is not necessary to serialize on typecode.db since we are only reading since we have already generated all dependencies...
@@ -121,7 +106,6 @@ setState(mode,architecture,'dFileDict',ddict)
 cobjs = []
 for f in cfiles:
     builder = Object(f,CFLAGS=cflags,CXXFLAGS=cflags)
-    Depends(builder,dtb)
     if f=='M2lib.c':
         Depends(builder,ddict['interp.d'])
     elif f=='gdbm_interface.c':
