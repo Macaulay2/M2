@@ -4014,7 +4014,7 @@ doc ///
 
 TEST ///
 	R=rootSystemE(6)++rootSystemA(4)++rootSystemB(3)++rootSystemA(4);
-	assert(dynkinExponents(dynkinType(R))=={{1, 2, 3, 4}, {1, 2, 3, 4}, {1, 3, 5}, {2, 5, 6, 8, 9, 12}});
+	assert(dynkinExponents(dynkinType(R))=={{1, 2, 3, 4}, {1, 2, 3, 4}, {1, 3, 5}, {1, 4, 5, 7, 8, 11}});
 ///
 
 doc ///
