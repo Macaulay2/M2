@@ -43,7 +43,7 @@ DUMPEDM2FILES += tvalues.m2
 TVFILES := $(wildcard @srcdir@/../d/*.d)
 all: tvalues.m2
 tvalues.m2: @srcdir@/tvalues-make.m2 $(TVFILES)
-	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'make "@srcdir@/../d/"; exit 0'
+	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) --no-tvalues $< -e 'make "@srcdir@/../d/"; exit 0'
 clean::;rm -f tvalues.m2
 ############################## installedpackages.m2
 # an obsolete file
