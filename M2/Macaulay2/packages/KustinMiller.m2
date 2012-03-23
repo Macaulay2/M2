@@ -4,8 +4,8 @@
 
 newPackage(
 	"KustinMiller",
-    	Version => "1.3",
-    	Date => "Nov 11, 2011",
+    	Version => "1.4",
+    	Date => "Mar 23, 2012",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
@@ -15,8 +15,21 @@ newPackage(
                    },
     	Headline => "Unprojection and the Kustin-Miller complex construction",
 	PackageExports => {"SimplicialComplexes"},
-    	DebuggingMode => true
+    	DebuggingMode => false
         )
+
+
+-------------------------------------------------------------------------------
+
+{*
+Copyright [2011] [Janko Boehm, Stavros Papadakis]
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
+*}
 
 
 {*
@@ -43,12 +56,13 @@ newPackage(
 
 
 
-export({"kustinMillerComplex","unprojectionHomomorphism","verbose"})
+export {"kustinMillerComplex","unprojectionHomomorphism"}
 
-export({"resBE","dualComplex"})
+export {"resBE"}
 
-export({"stellarSubdivision","delta","isExactRes"})
+export {"stellarSubdivision","delta","isExactRes"}
 
+export {"Tom","Jerry"}
 
 --needsPackage "SimplicialComplexes"
 
@@ -60,101 +74,93 @@ if (options SimplicialComplexes).Version < "1.2" then error "This package requir
 -- skew symmetric matrix, keeping the syzygy matrix skew-symmetric
 
 resBE=method()
-resBE(Matrix) := (A) -> (
-R:=ring A;
-p:=gens pfaffians(-1+rank source A,A);
-n:=rank source p;
-g:=matrix {apply(n,j-> (-1)^(j)*p_(n-j-1)_0)};
-chainComplex {g,A,transpose g,map(R^1,R^0,0)});
+resBE Matrix := A -> (
+        R:=ring A;
+        p:=gens pfaffians(-1+rank source A,A);
+        n:=rank source p;
+        g:=matrix {apply(n,j-> (-1)^(j)*p_(n-j-1)_0)};
+        chainComplex {g,A,transpose g,map(R^1,R^0,0)})
+
 --cc=resBE b2
 
 
 -------------------------------------------------------------------------
 -- Boundary complex of a cyclic polytope
 
--- find out the index of a variable
-positionRing=method()
-positionRing(RingElement):=(m)->(
-position(gens ring m,j->j==m));
 
---R=QQ[x_1..x_10]
---positionRing(x_1)
-
-isContigous=method()
-isContigous(List):=(X)->(
-if X=={} then return(false);
-X1:=sort(X);
-p2:=X1#(#X1-1);
-p1:=X1#0;
-abs(positionRing(p2)-positionRing(p1))==#X1-1);
-
-{*
-isContigous({x_2,x_3,x_6,x_4,x_5,x_8,x_7})
-isContigous({x_2,x_3,x_6,x_4,x_5,x_8,x_7})
-isContigous({x_1,x_2,x_5,x_3})
-*}
+-- for more details on how to create the boundary complex
+-- of a cyclic polytope see
+-- J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes}, http://arxiv.org/abs/0912.2152, to appear in Osaka J. Math.
 
 
-contigousSubsets=method()
-contigousSubsets(List):=(W)->(
-select(subsets(W),isContigous))
+-- test whether the list of variables X is contiguous
+-- used by contiguousSubsets
+isContiguous=method()
+isContiguous List := X -> (
+        if X=={} then return false ;
+        X1:=sort X;
+        p2:=X1#-1;
+        p1:=X1#0;
+        abs(index p2 - index p1)==#X1-1)
 
 {*
-contigousSubsets({x_4,x_5})
-contigousSubsets({x_3,x_4})
-contigousSubsets({x_1,x_2,x_3})
-contigousSubsets({x_2,x_3,x_4})
-contigousSubsets({x_1,x_2,x_4})
+isContiguous {x_2,x_3,x_6,x_4,x_5,x_8,x_7}
+isContiguous {x_2,x_3,x_6,x_4,x_5,x_8,x_7}
+isContiguous {x_1,x_2,x_5,x_3}
 *}
 
+-- compute the contiguous subsets
+-- used by maximalContiguousSubsets
+contiguousSubsets=method()
+contiguousSubsets List := W -> 
+        select(subsets(W),isContiguous) 
 
+{*
+contiguousSubsets {x_4,x_5}
+contiguousSubsets {x_3,x_4}
+contiguousSubsets {x_1,x_2,x_3}
+contiguousSubsets {x_2,x_3,x_4}
+contiguousSubsets {x_1,x_2,x_4}
+*}
+
+-- given a list L,  maximalElements L  returns a list containing the maximal
+-- elements of L with respect to inclusion
+-- used by maximalContiguousSubsets
 maximalElements=method()
-maximalElements(List):=(L)->(
-L2:=L;
-L1:=maxmon(L2);
-while #L1<#L2 do (
-  L2=L1;
-  L1=maxmon(L2);
-);
-L1)
+maximalElements List := L -> (
+        M:=L;
+        for j from 0 to #L-1 do (
+          for jj from j+1 to #L-1 do (
+               if isSubset(set L#j,set L#jj) then (M=remove(L,j);break);
+               if isSubset(set L#jj,set L#j) then (M=remove(L,jj);break);
+          );
+        );
+        if #M==#L then return L;
+        maximalElements M)
 
---maximalElements({{x_1,x_2,x_3},{x_1,x_2},{x_3,x_4},{x_2,x_3,x_4,x_7,x_8}})
+--maximalElements {{x_1,x_2,x_3},{x_1,x_2},{x_3,x_4},{x_2,x_3,x_4,x_7,x_8}}
+--maximalElements ({{x_1,x_2,x_3}, {x_2,x_2,x_3}, {x_1,x_2},{x_3,x_9},{x_6}})
+--maximalElements ({{x_2,x_1,x_3}, {x_1,x_2,x_3}, {x_1,x_2},{x_3,x_9},{x_6}})
 
-maxmon=method()
-maxmon(List):=(L)->(
-rm:=-1;
-j:=0;
-jj:=0;
-while j<#L and rm==-1 do (
-  jj=0;
-  while jj<#L and rm==-1 do (
-    if j!=jj and isSubset(set L#j,set L#jj)==true then rm=j;
-  jj=jj+1);
-j=j+1);
-L1:={};
-j=0;
-while j<#L do (
-  if j!=rm then L1=append(L1,L#j);
-j=j+1);
-L1);
 
---maxmon({{x_1,x_2,x_3},{x_1,x_2},{x_3,x_4},{x_2,x_3,x_4,x_7,x_8}})
 
-maximalContigousSubsets=method()
-maximalContigousSubsets(List):=(L)->(
-maximalElements(contigousSubsets(L)))
+-- compute the maximal contiguous subsets of a list of variables
+-- used by oddContiguousNonEndsets
+maximalContiguousSubsets=method()
+maximalContiguousSubsets List := 
+        maximalElements @@ contiguousSubsets 
 
 {*
-maximalContigousSubsets({x_1,x_2,x_4})
-maximalContigousSubsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
+maximalContiguousSubsets({x_1,x_2,x_4})
+maximalContiguousSubsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
 *}
 
-
+-- test whether a list of variables is an endset
+-- used by removeEndsets
 isEndset=method()
-isEndset(List):=(L)->(
-v:=(entries vars ring L#0)#0;
-if isSubset({v#0},L)==true or isSubset({v#(#v-1)},L)==true then return(true);
-false)
+isEndset List := L ->(
+        v:=gens ring first L;
+        member(v#0,L) or member(v#-1,L))
 
 {*
 isEndset({x_1,x_2})
@@ -162,34 +168,39 @@ isEndset({x_1,x_3})
 isEndset({x_2,x_3})
 *}
 
-
+-- remove the endsets from a list of lists of variables
+-- used by oddContiguousNonEndsets
 removeEndsets=method()
-removeEndsets(List):=(L)->(
-select(L,j->not isEndset(j)))
+removeEndsets List := L ->
+        select(L,j->not isEndset j )
 
 
 {*
-removeEndsets({{x_1,x_2},{x_3,x_4}})
-removeEndsets({{x_1,x_3},{x_7,x_8}})
+removeEndsets {{x_1,x_2},{x_3,x_4}} 
+removeEndsets {{x_1,x_3},{x_7,x_8}}
 
-removeEndsets(maximalContigousSubsets({x_1,x_2,x_4}))
-removeEndsets(maximalContigousSubsets({x_1,x_2,x_4,x_5,x_7,x_8}))
+removeEndsets maximalContiguousSubsets {x_1,x_2,x_4}
+removeEndsets maximalContiguousSubsets {x_1,x_2,x_4,x_5,x_7,x_8}
 *}
 
-oddContigousNonEndsets=method()
-oddContigousNonEndsets(List):=(L)->(
-L1:=removeEndsets(maximalContigousSubsets(L));
-select(L1,j->odd(#j)))
+-- compute the odd contiguous non-endsets contained in a list of variables
+-- used by isFaceOfCyclicPolytope
+oddContiguousNonEndsets=method()
+oddContiguousNonEndsets List := L ->(
+        L1:=removeEndsets maximalContiguousSubsets L;
+        select(L1,j->odd(#j)))
 
 {*
-maximalContigousSubsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
-removeEndsets(oo)
-oddContigousNonEndsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
+maximalContiguousSubsets {x_1,x_2,x_4,x_5,x_7,x_8,x_9}
+removeEndsets oo 
+oddContiguousNonEndsets {x_1,x_2,x_4,x_5,x_7,x_8,x_9}
 *}
 
+-- tests whether W is a face of a cyclic polytope of dimension d
+-- used by delta
 isFaceOfCyclicPolytope=method()
-isFaceOfCyclicPolytope(List,ZZ):=(W,d)->(
-W=={} or #oddContigousNonEndsets(W)<=d-#W);
+isFaceOfCyclicPolytope(List,ZZ):=(W,d)->
+        W=={} or #oddContiguousNonEndsets(W)<=d-#W
 
 {*
 isFaceOfCyclicPolytope({x_2,x_3},3)
@@ -198,180 +209,137 @@ isFaceOfCyclicPolytope({x_4,x_9},3)
 *}
 
 -- boundary complex of a cyclic polytope
+-- of dimension d on the vertices corresponding to the variables of R
 delta=method()
-delta(ZZ,PolynomialRing):=(d,R)->(
-S1:=apply(select(subsets(gens R,d),j->isFaceOfCyclicPolytope(j,d)),face);
-simplicialComplex S1);
+delta(ZZ,PolynomialRing):=(d,R)->
+        simplicialComplex apply(select(subsets(gens R,d),j->isFaceOfCyclicPolytope(j,d)),face)
+
 
 
 -----------------------------------------------------------------------------
 -- Constructing the Kustin-Miller complex
 
-kustinMillerComplex=method(Options=>{verbose=>0})
+kustinMillerComplex=method(Options=>{Verbose=>0})
 
 kustinMillerComplex(Ideal,Ideal,PolynomialRing):=opt->(I,J,T0)->(
-if ring I =!= ring J then error("expected ideals in the same ring");
-if I+J!=J then error("expected first ideal contained in second");
-if codim(I) != -1+codim(J) then error("expected codim 1 unprojection locus");
-kustinMillerComplex(res I,res J,T0,opt));
+        if ring I =!= ring J then error "expected the rings of the first and second argument to be the same";
+        if not isSubset(I,J) then error "expected first argument to be an ideal contained in the second";
+        if codim(I) != -1+codim(J) then error "expected an unprojection locus of codimension 1";
+        kustinMillerComplex(res I,res J,T0,opt))
 
 
 kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)->(
-     if opt.verbose>1 then (
-       print("------------------------------------------------------------------------------------------------------------------------");
-       print("");
-       print("res(I): ");
-       print("");
-       for j from 1 to length(cI0) do (
-         print("a_"|j|" = "|net(cI0.dd_j)|" : "|net(degrees source cI0.dd_j)|" -> "|net(degrees target cI0.dd_j));print("");
-       );
-       print("");
-        print("------------------------------------------------------------------------------------------------------------------------");
-       print("");
-       print("res(J): ");
-       print("");
-       for j from 1 to length(cJ0) do (
-         print("b_"|j|" = "|net(cJ0.dd_j)|" : "|net(degrees source cJ0.dd_j)|" -> "|net(degrees target cJ0.dd_j));print("");
-       );
-        print("------------------------------------------------------------------------------------------------------------------------");
-       print("");
-     );
-I:=ideal(cI0.dd_1);
-J:=ideal(cJ0.dd_1);
-phi:=unprojectionHomomorphism(I,J);
-R:=ring I;
-if R =!= ring J then error("expected complexes over the same ring");
-K:=coefficientRing R;
-degT:=degree phi;
-S:=K[toSequence(prepend(T0_0,gens R)),Degrees=>prepend(degT,degrees R)];
-cI:=substitute(cI0,S);
-cJ:=substitute(cJ0,S);
-g:=length(cJ);
-Is:=substitute(I,S);
-Js:=substitute(J,S);
-dualcI:= shiftComplex ( dualComplex cI, -codim I);
-dualcJ:= shiftComplex ( dualComplex cJ, -codim I);
-gJ:=gens source phi;
-degshift:=degree phi;
-if degshift#0<=0 then print("Warning: Unprojection variable does not have positive degree.");
-     if opt.verbose>1 then (
-        print("phi: "|toString((entries gJ)#0)|" -> "|toString((entries phi)#0));
-        print "";
-        print("degree phi = "|toString(degshift));
-        print("");
-        print("------------------------------------------------------------------------------------------------------------------------");
-        print("");
-     );
-IJmap:=sub(matrix entries phi,S)*((gens ideal (dualcJ.dd_0))//(gens Js));
-alphaDual:=extend(dualcI,dualcJ, map(dualcI#0,dualcJ#0,IJmap));
-w:=(alphaDual_(length cI))_0_0;
-alpha:=toList apply(g-1,j->sub(w^(-1),S)*(transpose alphaDual_(g-2-j)));
-     if opt.verbose>1 then (
-        print("");
-        for j from 1 to #alpha do (
-         print("alpha_"|j|" = "|net(alpha_(j-1)));print("");
+             if opt.Verbose>1 then (
+               <<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+               <<"res(I):"<<endl;
+               for j from 1 to length(cI0) do (
+                   <<"a_"<<j<<" = "<<cI0.dd_j<<" : "<<degrees source cI0.dd_j <<" -> "<<degrees target cI0.dd_j<<endl;
+               );
+               <<endl<<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+               <<"res(J):"<<endl;
+               for j from 1 to length(cJ0) do (
+                   <<"b_"<<j<<" = "<<cJ0.dd_j<<" : "<<degrees source cJ0.dd_j <<" -> "<<degrees target cJ0.dd_j<<endl;
+               );
+               <<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+             );
+        I:=ideal cI0.dd_1;
+        J:=ideal cJ0.dd_1;
+        phi:=unprojectionHomomorphism(I,J);
+        R:=ring I;
+        if R =!= ring J then error("expected the rings of the first and second argument to be the same");
+        K:=coefficientRing R;
+        degT:=degree phi;
+        S:=K(monoid[toSequence(prepend(T0_0,gens R)),Degrees=>prepend(degT,degrees R)]);
+        cI:=substitute(cI0,S);
+        cJ:=substitute(cJ0,S);
+        g:=length cJ ;
+        dualcI:=(dual cI)[-codim I];
+        dualcJ:=(dual cJ)[-codim I];
+        degshift:=degree phi;
+        if degshift#0<=0 then <<"Warning: Unprojection variable does not have positive degree.";
+             if opt.Verbose>0 then (
+                gJ:=gens source phi;
+                <<"phi: "<<(entries gJ)#0<<" -> "<<(entries phi)#0<<endl;
+                <<"degree phi = "<<degshift<<endl;
+                <<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+             );
+        gJs:=sub(gens source phi,S);
+        IJmap:=sub(matrix entries phi,S)*((gens ideal (dualcJ.dd_0))//gJs);
+        alphaDual:=extend(dualcI,dualcJ, map(dualcI#0,dualcJ#0,IJmap));
+        w:=(alphaDual_(length cI))_0_0;
+        alpha:=toList apply(g-1,j->sub(w^(-1),S)*((transpose alphaDual_(g-2-j))**S^{-degshift}));
+             if opt.Verbose>1 then (
+                <<endl;
+                for j from 1 to #alpha do (
+                  <<"alpha_"<<j<<" = "<<alpha_(j-1)<<endl;
+                );
+                <<endl<<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+             );
+        cJ1:=cJ[1];
+        betaMap:=map((cI#0,(cJ1#0)**S^{-degshift},-sub(matrix entries phi,S)*((gens ideal (cJ1.dd_0))//gJs)));
+        beta1:=extend(cI,cJ1**S^{-degshift},betaMap);
+        beta:=toList apply(g, j-> (-1)^(j + codim I)*beta1_j);
+             if opt.Verbose>1 then (
+                for j from 1 to #beta-1 do (
+                   <<"beta_"<<j<<" = "<<beta_(j-1)<<endl;
+                );
+                <<endl<<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+             );
+        u:=(beta1_(length cI))_0_0;
+             if opt.Verbose>1 then (
+                <<"u = "<<u<<endl;
+                <<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+             );
+        -- construct the homotopy h
+        h:={0_S};
+        for j from 1 to g-1 do (
+          tC1:= chainComplex { id_(S^(rank (cI#j)))};
+          tC2:= chainComplex { cI.dd_j };
+          hi:= (extend ( tC2, tC1, map (tC2#0, tC1#0,  beta#(j-1)*alpha#(j-1) - h#(j-1)*cI.dd_j  )));
+          h=append(h,map(cI#j,cI#j**S^{-degshift},hi_1));
         );
-        print("");
-        print("------------------------------------------------------------------------------------------------------------------------");
-        print("");
-     );
-cJ1:=shiftComplex(cJ ,1);
-betaMap:=sub(matrix entries phi,S)*((gens ideal (cJ1.dd_0))// (gens Js));
-beta1:=extend(cI,cJ1,map((cI#0,cJ1#0,betaMap)));
-beta:=toList apply(g, j-> -(beta1_j));
-     if opt.verbose>1 then (
-        for j from 1 to #beta-1 do (
-         print("beta_"|j|" = "|net(beta_(j-1)));print("");
+             if opt.Verbose>1 then (
+                for j from 1 to #h-1 do (
+                   <<"h_"<<j<<" = "<<h_(j-1)<<endl;
+                );
+                <<endl<<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+             );
+        cJ=cJ**S^{-degshift};
+        -- form the differentials of the Kustin-Miller complex
+        L:={};
+        for j from 1 to g do (
+          if g==2 then (
+           if j==1 then (
+             inL:={cI.dd_1,beta#0,cJ.dd_1,S_0};
+           );
+           if j==2 then (
+             inL={alpha#(j-2),cJ.dd_j,cI.dd_(j-1),u,S_0};
+           );
+          );
+          if g>=3 then (
+           if j==1 then (
+             inL={cI.dd_1,beta#0,cJ.dd_1,S_0};
+           );
+           if j==2 then (
+             inL={cI.dd_2,beta#1,h#1,cJ.dd_2,alpha#0,S_0};
+           );
+           if j>=3 and j<=g-2 then (
+             inL={cI.dd_j,beta#(j-1),h#(j-1),cJ.dd_j,alpha#(j-2),cI.dd_(j-1),S_0};
+           );
+           if j>=3 and j==g-1 then (
+             inL={beta#(j-1),h#(j-1),cJ.dd_j,alpha#(j-2),cI.dd_(j-1),S_0};
+           );
+           if j>=3 and j==g then (
+             inL={alpha#(j-2),cJ.dd_j,cI.dd_(j-1),u,S_0};
+           );
+          );
+          L=append(L,differentials(inL,j,g,degshift));
+             if opt.Verbose>0 then (
+                 <<"f_"<<j<<" = "<<L_(j-1)<<" : "<<degrees source L_(j-1)<<" -> "<<degrees target L_(j-1)<<endl;
+                 <<endl<<"------------------------------------------------------------------------------------------------------------------------"<<endl;
+             );
         );
-        print("");
-        print("------------------------------------------------------------------------------------------------------------------------");
-        print("");
-     );
-u:=-(beta1_(length cI))_0_0;
-     if opt.verbose>1 then (
-        print("u = "|toString(u));
-        print("");
-        print("------------------------------------------------------------------------------------------------------------------------");
-        print("");
-     );
--- construct the homotopy h
-h:={0_S};
-for j from 1 to g-1 do (
-  tC1:= chainComplex { id_(S^(rank (cI#j)))};
-  tC2:= chainComplex { cI.dd_j };
-  hi:= (extend ( tC2, tC1, map (tC2#0, tC1#0,  beta#(j-1)*alpha#(j-1) - h#(j-1)*cI.dd_j  )));
-  h=append(h,hi_1);
-);
-     if opt.verbose>1 then (
-        for j from 1 to #h-1 do (
-         print("h_"|j|" = "|net(h_(j-1)));print("");
-        );
-        print("");
-        print("------------------------------------------------------------------------------------------------------------------------");
-        print("");
-     );
--- form the differentials of the Kustin-Miller complex
-L:={};
-for j from 1 to g do (
-  if g==2 then (
-   if j==1 then (
-     beta1:=beta#0;
-     inL:={cI.dd_1,beta1,cJ.dd_1,S_0};
-   );
-   if j==2 then (
-     ai:=cJ.dd_j;
-     bim1:=cI.dd_(j-1);
-     alphaim1:=alpha#(j-2);
-     inL={alphaim1,ai,bim1,u,S_0};
-   );
-  );
-  if g>=3 then (
-   if j==1 then (
-     beta1=beta#0;
-     inL={cI.dd_1,beta1,cJ.dd_1,S_0};
-   );
-   if j==2 then (
-     b2:=cI.dd_2;
-     a2:=cJ.dd_2;
-     beta2:=beta#1;
-     h1:=h#1;
-     inL={b2,beta2,h1,a2,alpha#0,S_0};
-   );
-   if j>=3 and j<=g-2 then (
-     bi:=cI.dd_j;
-     ai=cJ.dd_j;
-     bim1=cI.dd_(j-1);
-     alphaim1=alpha#(j-2);
-     betai:=beta#(j-1);
-     him1:=h#(j-1);
-     inL={bi,betai,him1,ai,alphaim1,bim1,S_0};
-   );
-   if j>=3 and j==g-1 then (
-     ai=cJ.dd_j;
-     bim1=cI.dd_(j-1);
-     alphaim1=alpha#(j-2);
-     him1=h#(j-1);
-     betai=beta#(j-1);
-     inL={betai,him1,ai,alphaim1,bim1,S_0};
-   );
-   if j>=3 and j==g then (
-     ai=cJ.dd_j;
-     bim1=cI.dd_(j-1);
-     alphaim1=alpha#(j-2);
-     inL={alphaim1,ai,bim1,u,S_0};
-   );
-  );
-  L=append(L,differentials(inL,j,g,degshift));
-);
-     if opt.verbose>1 then (
-        for j from 1 to #L do (
-         print("f_"|j|" = "|net(L_(j-1))|" : "|net(degrees source L_(j-1))|" -> "|net(degrees target L_(j-1)));print("");
-        );
-        print("");
-        print("------------------------------------------------------------------------------------------------------------------------");
-        print("");
-     );
-chainComplex(L))
+        chainComplex L)
 
 --kustinMillerComplex(I,J,QQ[t])
 
@@ -403,167 +371,85 @@ cc.dd_4
 
 -- some auxiliary procedures
 
-checkSameRing=method()
-checkSameRing(List):=(L)->(
-for j from 0 to #L-2 do (
-  if (ring L#j)=!=(ring L#(j+1)) then return(false);
-);
-true)
 
-
+-- make the differentials of the Kustin-Miller complex
+-- this command (and its documentation, which you can find below) is not a user level function and hence does not get exported
 
 differentials=method()
 differentials(List,ZZ,ZZ,List):=(L,i,g,degshift)->(
-       if i<0 or i>g then error("wrong index");
-       if checkSameRing(L)==false then error("expected input over the same ring");
-if g==2 then (
- if i==1 then (
-   b1:=L#0;beta1:=L#1;a1:=L#2;T:=L#3;
-       if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
-   return(makeGrading((beta1+T*a1),L,{i,g},degshift));
- );
- if i==2 then (
-  alphaim1:=L#0;ai:=L#1;bim1:=L#2;u:=L#3;T=L#4;
-       if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
-       if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
-  return(makeGrading((-alphaim1+(-1)^i*u^(-1)*T*ai),L,{i,g},degshift))
- );
-);
-if g==3 then (
- if i==1 then (
-   b1=L#0;beta1=L#1;a1=L#2;T=L#3;
-       if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
-   return(makeGrading(b1|(beta1+T*a1),L,{i,g},degshift));
- );
- if i==2 then (
-  b2:=L#0;beta2:=L#1;h1:=L#2;a2:=L#3;alpha1:=L#4;T=L#5;
-       if rank target b2 != rank target beta2 or rank target b2 != rank target h1 then error("wrong size step "|(toString(i)));
-       if rank source a2 != rank source beta2 then error("wrong size step "|(toString(i)));
-       if rank target a2 != rank target alpha1 then error("wrong size step "|(toString(i)));  
-       if rank source h1 != rank source alpha1 then error("wrong size step "|(toString(i)));
-  n:=rank source b2;
-  m:=rank target a2;
-  R:=ring b2;
-  zero1:=map(R^m,R^n,0);
-  return(makeGrading((beta2|(h1+T*id_(R^(rank target b2))))||((-a2)|(-alpha1)),L,{i,g},degshift));
- );
- if i==3 then (
-  alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;T=L#4;
-       if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
-       if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
-       if rank source ai != rank source bim1 then error("wrong size step "|(toString(i)));  
-  return(makeGrading((-alphaim1+(-1)^i*u^(-1)*T*ai)||(bim1),L,{i,g},degshift))
- );
-);
-if i==1 then (
-   b1=L#0;beta1=L#1;a1=L#2;T=L#3;
-        if rank target b1 != rank target beta1 or rank target b1 != rank target a1 then error("wrong size step "|(toString(i)));
-   return(makeGrading(b1|(beta1+T*a1),L,{i,g},degshift));
-);
-if i==2 then (
-  b2=L#0;beta2=L#1;h1=L#2;a2=L#3;alpha1=L#4;T=L#5;
-       if rank target b2 != rank target beta2 or rank target b2 != rank target h1 then error("wrong size step "|(toString(i)));
-       if rank source a2 != rank source beta2 then error("wrong size step "|(toString(i)));
-       if rank target a2 != rank target alpha1 then error("wrong size step "|(toString(i)));  
-       if rank source h1 != rank source alpha1 then error("wrong size step "|(toString(i)));
-  n=rank source b2;
-  m=rank target a2;
-  R=ring b2;
-  zero1=map(R^m,R^n,0);
-  return(makeGrading((b2|beta2|(h1+T*id_(R^(rank target b2))))||(zero1|(-a2)|(-alpha1)),L,{i,g},degshift));
-);
-if i>=3 and i<=g-2 then (
-  bi:=L#0;betai:=L#1;him1:=L#2;ai=L#3;alphaim1=L#4;bim1=L#5;T=L#6;
-       if rank target bi != rank target betai or rank target bi != rank target him1 then error("wrong size step "|(toString(i)));
-       if rank source ai != rank source betai then error("wrong size step "|(toString(i)));
-       if rank target ai != rank target alphaim1 then error("wrong size step "|(toString(i)));  
-       if rank source him1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
-       if rank source bim1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
-  n=rank source bi;
-  m=rank target ai;
-  l:=rank source ai;
-  k:=rank target bim1;
-  R=ring bi;
-  zero1=map(R^m,R^n,0);
-  zero2:=map(R^k,R^n,0);
-  zero3:=map(R^k,R^l,0);
-  return(makeGrading((bi|betai|(him1+(-1)^i*T*id_(R^(rank target bi))))||(zero1|(-ai)|(-alphaim1))||(zero2|zero3|bim1),L,{i,g},degshift))
-);
-if i>=3 and i==g-1 then (
-  betai=L#0;him1=L#1;ai=L#2;alphaim1=L#3;bim1=L#4;T=L#5;
-       if rank target betai != rank target him1 then error("wrong size step "|(toString(i)));
-       if rank source ai != rank source betai then error("wrong size step "|(toString(i)));
-       if rank target ai != rank target alphaim1 then error("wrong size step "|(toString(i)));  
-       if rank source him1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
-       if rank source bim1 != rank source alphaim1 then error("wrong size step "|(toString(i)));
-  l=rank source ai;
-  k=rank target bim1;
-  R=ring ai;
-  zero3=map(R^k,R^l,0);
-  return(makeGrading((betai|(him1+(-1)^i*T*id_(R^(rank source bim1))))||((-ai)|(-alphaim1))||(zero3|bim1),L,{i,g},degshift))
-);
-if i>=3 and i==g then (
-  alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;T=L#4;
-       if rank target alphaim1 != rank target ai then error("wrong size step "|(toString(i)));
-       if rank source alphaim1 != rank source ai then error("wrong size step "|(toString(i)));
-       if rank source ai != rank source bim1 then error("wrong size step "|(toString(i)));  
-  return(makeGrading((-alphaim1+(-1)^i*u^(-1)*T*ai)||(bim1),L,{i,g},degshift))
-);
-error("wrong index"))
+        if i<0 or i>g then error("second argument should be between 0 and "|g);
+        T:=last L;
+        mT:=matrix {{T}};
+        R:=ring first L;
+        -- codim 2 case
+        if g==2 then (
+         -- first differential
+         if i==1 then (
+           b1:=L#0;beta1:=L#1;a1:=L#2;
+           return(beta1+ mT**a1)
+         );
+         -- second differential
+         if i==2 then (
+          alphaim1:=L#0;ai:=L#1;bim1:=L#2;u:=L#3;
+          return(-alphaim1+((-1)^i*u^(-1)*mT**ai));
+         );
+        );
+        -- codim 3 case
+        if g==3 then (
+         -- first differential
+         if i==1 then (
+           b1=L#0;beta1=L#1;a1=L#2;
+           return matrix {{b1, beta1+ mT**a1}};
+         );
+         -- second differential
+         if i==2 then (
+           b2:=L#0;beta2:=L#1;h1:=L#2;a2:=L#3;alpha1:=L#4;
+           return matrix {{beta2, h1+ mT**id_(R^(rank target b2))}, 
+                          {  -a2, -alpha1                        }};
+         );
+         -- third differential
+         if i==3 then (
+          alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;
+          sbim1:=bim1**R^{-degshift};
+          return matrix {{-alphaim1+(-1)^i*u^(-1)*mT**ai},
+                         {sbim1                         }};
+         );
+        );
+        -- general case
+        -- first differential
+        if i==1 then (
+           b1=L#0;beta1=L#1;a1=L#2;
+           return matrix {{b1, beta1+mT**a1}};
+        );
+        -- second differential
+        if i==2 then (
+          b2=L#0;beta2=L#1;h1=L#2;a2=L#3;alpha1=L#4;
+          return matrix {{b2,     beta2, h1+mT**id_(R^(rank target b2))},
+                         { 0,       -a2, -alpha1                       }};
+        );
+        -- the general differential
+        if i>=3 and i<=g-2 then (
+          bi:=L#0;betai:=L#1;him1:=L#2;ai=L#3;alphaim1=L#4;bim1=L#5;
+          sbim1=bim1**R^{-degshift};
+          return matrix {{bi,    betai,  him1+(-1)^i*mT**id_(R^(rank target bi))},
+                         { 0,      -ai,  -alphaim1                              },
+                         { 0,        0,  sbim1                                  }};
+        );
+        -- second last differential
+        if i>=3 and i==g-1 then (
+          betai=L#0;him1=L#1;ai=L#2;alphaim1=L#3;bim1=L#4;
+          sbim1=bim1**R^{-degshift};
+          return matrix {{betai,  him1+(-1)^i*T*id_(R^(rank source bim1))},
+                         {  -ai,  -alphaim1                              },
+                         {    0,  sbim1                                  }};
+        );
+        -- case i>=3 and i==g
+        -- last differential
+        alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;
+        sbim1=bim1**R^{-degshift};
+        matrix {{-alphaim1+(-1)^i*u^(-1)*mT**ai},
+                {sbim1                         }} )
 
--- give the Kustin-Miller complex the correct grading
-makeGrading=method()
-makeGrading(Matrix,List,List,List):=(M,L,ig,degshift)->(
-i:=ig#0;
-g:=ig#1;
-R:=ring M;
-if g==2 then (
-   if i==1 then (
-     b1:=L#0;beta1:=L#1;a1:=L#2;T:=L#3;
-     return(map(target b1,(source a1)**R^{-degshift},M));
-   );
-   if i==2 then (
-     alphaim1:=L#0;ai:=L#1;bim1:=L#2;u:=L#3;T=L#4;
-     return(map((target ai)**R^{-degshift},(source bim1)**R^{-degshift},M));
-   );
-);
-if g==3 then (
- if i==1 then (
-   b1=L#0;beta1=L#1;a1=L#2;T=L#3;
-   return(map(target b1,(source b1)++(source a1)**R^{-degshift},M));
- );
- if i==2 then (
-   b2:=L#0;beta2:=L#1;h1:=L#2;a2:=L#3;alpha1:=L#4;T=L#5;
-   return(map((target b2)++(target a2)**R^{-degshift},((source a2)**R^{-degshift})++(target b2)**R^{-degshift},M));
- );
- if i==3 then (
-   alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;T=L#4;
-   return(map(((target ai)**R^{-degshift})++(target bim1)**R^{-degshift},(source bim1)**R^{-degshift},M));
- );
-);
-if g>3 then (
-  if i==1 then (
-    b1=L#0;beta1=L#1;a1=L#2;T=L#3;
-    return(map(target b1,(source b1)++(source a1)**R^{-degshift},M));
-  );
-  if i==2 then (
-    b2=L#0;beta2=L#1;h1=L#2;a2=L#3;alpha1=L#4;T=L#5;
-    return(map((target b2)++(target a2)**R^{-degshift},(source b2)++((source a2)**R^{-degshift})++(target b2)**R^{-degshift},M));
-  );
-  if i>=3 and i<=g-2 then (
-    bi:=L#0;betai:=L#1;him1:=L#2;ai=L#3;alphaim1=L#4;bim1=L#5;T=L#6;
-    return(map((target bi)++((target ai)**R^{-degshift})++(target bim1)**R^{-degshift},(source bi)++((source ai)**R^{-degshift})++(target bi)**R^{-degshift},M));
-  );
-  if i>=3 and i==g-1 then (
-    betai=L#0;him1=L#1;ai=L#2;alphaim1=L#3;bim1=L#4;T=L#5;
-    return(map((source bim1)++((target ai)**R^{-degshift})++(target bim1)**R^{-degshift},((source ai)**R^{-degshift})++(source bim1)**R^{-degshift},M));
-  );
-  if i>=3 and i==g then (
-    alphaim1=L#0;ai=L#1;bim1=L#2;u=L#3;T=L#4;
-    return(map(((target ai)**R^{-degshift})++(target bim1)**R^{-degshift},(source bim1)**R^{-degshift},M));
-  );
-);
-error("wrong index"))
 
 
 ------------------------------------------------------------------------------
@@ -571,79 +457,71 @@ error("wrong index"))
 
 unprojectionHomomorphism=method()
 unprojectionHomomorphism(Ideal,Ideal):=(I,J)->(
-R:=ring I;
-     if ring I =!= ring J then error("expected ideals in the same ring");
-     if I+J!=J then error("expected first ideal contained in second");
-M:=Hom(J,R^1/I);
--- give some feedback on wrong input
-     if rank source gens M != 2 and rank source gens M != 1 then (
-        for j from 0 to -1+rank source gens M do (
-           phi:=homomorphism M_{j};
-           gJ:=gens source phi;
-           print("phi: "|toString((entries gJ)#0)|" -> "|toString((entries phi)#0));
+        R:=ring I;
+        if R =!= ring J then error "expected both ideals to be contained in the same ring";
+        if not isSubset(I,J) then error "expected first ideal to be contained in the second";
+        if codim(I) != -1 + codim(J) then error "the unprojection locus does not have codimension 1";
+        Q:=R/I;
+        M:=Hom(ideal mingens sub(J,Q),Q^1);
+        -- give some feedback on wrong input
+        if rank source gens M != 2 and rank source gens M != 1 then (
+            for j from 0 to -1+rank source gens M do (
+               phi:=homomorphism M_{j};
+                gJ:=gens source phi;
+                <<"phi: "<<(first entries gJ)<<" -> "<<(first entries phi)<<endl;
+             );
+             error "The module of homomorphisms does not have the expected number of generators";
         );
-        error("wrong number of generators");
-     );
-     if codim(I) != -1+codim(J) then error("expected codim 1 unprojection locus");
-if rank source gens M == 1 then (
-  print "Warning: Ideal J is principle in R/I.";
-  return homomorphism M_{0};
-) else (
-  f1:=homomorphism M_{0};
-  f2:=homomorphism M_{1};
-  if J+I==I+ideal (entries f1)#0 then (
-   return f2
-  ) else (
-   return f1
-  )
-))
+        if rank source gens M == 1 then (
+          <<"Warning: The ideal J/I is principle in R/I.";
+          return homomorphism M_{0};
+        ) else (
+          f1:=homomorphism M_{0};
+          f2:=homomorphism M_{1};
+          if J==I+sub(ideal (entries f1)#0,R) then (
+           return f2
+          ) else (
+           return f1
+          )
+        ))
 
 
 ---------------------------------------------------------------------
 -- some usefull stuff for chain complexes
 
 -- check whether a chain complex is a resolution
+-- that is it is exact everywhere except at the
+-- first non-zero module
 -- note that this is not the same as isExact in the
 -- chain complex extras
+
+-- we first find the first non-zero module
+firstNonzero=method()
+firstNonzero(ChainComplex):= cc -> (
+       for i from min cc to max cc do if cc_i!=0 then return i;
+       infinity)
+
 isExactRes=method()
-isExactRes(ChainComplex):=(cc)->(
-tst:=true;
-for j from min(cc)+1 to max(cc) do (
-    if cc.dd_(j)*cc.dd_(j+1) !=0 then return false;
-    if (HH^j cc) !=0 then return false;
-);
-true)
+isExactRes(ChainComplex):= cc ->(
+        for j from firstNonzero(cc)+1 to max(cc)+1 do (
+            if cc.dd_(j)*cc.dd_(j+1) !=0 then return false;
+            if (HH_j cc) !=0 then return false;
+        );
+        true)
 
 -- with this method also the substituted complexes
--- recognize when printed, if a name is assigned to
+-- recognize, when printed, if a name is assigned to
 -- the ring of the complex
 substitute(ChainComplex,Ring):=(cc,S)->(
-    dual cc;
-    cn:= new ChainComplex;
-    cn.ring = S;
-    for i from min(cc) to max(cc) do cn#i = S^(degrees (cc#i));
-    for i from min(cc)+1 to max(cc) do cn.dd_i = sub(cc.dd_i,S);
-    cn)
+        dual cc;
+        cn:= new ChainComplex;
+        cn.ring = S;
+        for i from min(cc) to max(cc) do cn#i = S^(degrees (cc#i));
+        for i from min(cc)+1 to max(cc) do cn.dd_i = sub(cc.dd_i,S);
+        cn)
 
 
--- this behaves different to the grading than [ ]
-shiftComplex= method()
-shiftComplex(ChainComplex,ZZ) := (CJ,p) ->  (
-    CJShifted := new ChainComplex;
-    CJShifted.ring = ring CJ;
-    for i from min(CJ) -p  to max (CJ)-p   do  CJShifted#i = (CJ#(i+p));
-    for i from min(CJ) -p+1  to max (CJ)-p   do  CJShifted.dd_i = CJ.dd_(i+p);
-    CJShifted   )
 
--- this is not introducing the alternating sign as the built in M2 command would do
-dualComplex= method()
-dualComplex(ChainComplex)  := (CJ) -> (
-  dual CJ;
-  CJdual := new ChainComplex; 
-  CJdual.ring = ring CJ;
-  for i from -max(CJ) to -min(CJ) do  CJdual#i = CJ#(-i);
-  for i from -max(CJ)+1  to -min(CJ) do  CJdual.dd#i = transpose  CJ.dd_(-i+1); 
-  CJdual )
 
 
 
@@ -654,100 +532,71 @@ dualComplex(ChainComplex)  := (CJ) -> (
 
 stellarSubdivisionSimplex=method()
 stellarSubdivisionSimplex(Face,Face,PolynomialRing,PolynomialRing):=(D,s,n,R)->(
-   if  isSubface(s,D)==false then ( 
-      {substitute(D,R)}
-   ) else ( 
-      facets(subdivideFace (D,s,n,R),useFaceClass=>true)
-   )
-)
+        if isSubface(s,D) then
+           facets(subdivideFace (D,s,n,R),useFaceClass=>true)
+        else
+           {substitute(D,R)})
 
 -- stellar subdivision of a simplicial complex with respect to the face
 -- introducing a new variable
 stellarSubdivision=method()
 stellarSubdivision(SimplicialComplex,Face,PolynomialRing):= (D,s0,n)  ->  (
-   R1:=ring D;
-   s:=substitute(s0,R1);
-   if isFaceOf(s,D)==false then (
-      use ring D;
-      error("not a face");
-   );
-   L :={};
-   fc:=facets(D,useFaceClass=>true);
-   i:=0;
-   R1=ring D;
-   K:=coefficientRing R1;
-   v:=join(gens R1,gens n);
-   R:=K[v];
-   for i from 0 to #fc-1  do (
-     L = join(L,stellarSubdivisionSimplex (fc#i,s,n,R));
-   );
-simplicialComplex L)
+        R1:=ring D;
+        s:=substitute(s0,R1);
+        if not isFaceOf(s,D) then (
+           error "second argument is not a face of the first argument";
+        );
+        fc:=facets(D,useFaceClass=>true);
+        R1=ring D;
+        K:=coefficientRing R1;
+        v:=join(gens R1,gens n);
+        R:=K(monoid[v]);
+        L:=join toSequence for i to #fc-1 list stellarSubdivisionSimplex (fc#i,s,n,R);
+        simplicialComplex L)
 
 joinFaces=method()
 joinFaces(Face,Face):=(F,G)->(
-v1:=vertices F;
-v2:=vertices G;
-face(v1|v2))
+        v1:=vertices F;
+        v2:=vertices G;
+        face(v1|v2))
+
 
 listMinus=method()
 listMinus(List,List):=(L1,L2)->(
-L3:={};
-q:=0;
-while q<#L1 do (
-  if member(L1#q,L2)==false then L3=append(L3,L1#q);
-q=q+1);
-L3)
-
+        for i in L1 list 
+           if member(i,L2) then continue else i)
 
 
 coFace=method()
 coFace(Face,Face):=(F,G)->(
-v1:=vertices F;
-v2:=vertices G;
-R:=ring G;
-face(listMinus(v2,v1),R))
+        v1:=vertices F;
+        v2:=vertices G;
+        R:=ring G;
+        face(listMinus(v2,v1),R))
 
 
 
 subdivideFace=method()
 subdivideFace(Face,Face,PolynomialRing,PolynomialRing):= (D,s,n,R) -> (
-   comp := substitute(coFace(s,D),R);
-   nface:= substitute(face {n_0},R);
-   nc:=joinFaces(comp,nface);
-   L := {};
-   i:=0;
-   nfc:={};
-   vs:=vertices s;
-   vn:=n_{0};
-   for i from 0 to  #vs-1 do (
-      nfc=joinFaces(nc,substitute(coFace(face {vs#i},s),R));
-      L= append(L,nfc);
-   );
-simplicialComplex L)
+       comp := substitute(coFace(s,D),R);
+       nface:= substitute(face {n_0},R);
+       nc:=joinFaces(comp,nface);
+       vs:=vertices s;
+       L := for i to #vs-1 list joinFaces(nc,substitute(coFace(face {vs#i},s),R));
+       simplicialComplex L)
 
 
 
 {*
 installPackage "KustinMiller"
 R=QQ[x_1..x_6]
-I=monomialIdeal(product((entries vars R)#0))
+I=monomialIdeal(product(gens R))
 D=simplicialComplex I
 Dsigma=stellarSubdivision(D,face {x_1,x_2,x_3},QQ[t])
 
 
 *}
 
--------------------------------------------------------------------------------
-
-{*
-Copyright (C) [2011] [Janko Boehm, Stavros Papadakis]
-
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
-*}
 
 
 ------------------------------------------------------------------------------------------------------------------
@@ -766,17 +615,23 @@ doc ///
       fundamental construction of resolutions in unprojection theory [2]. For details on the
       computation of the Kustin-Miller complex see [3].
 
-      The main goal of unprojection theory is to provide a substitute for structure theorems
-      not available for Gorenstein rings of codimension >3.
+      Gorenstein rings with an embedding codimension at most 2 are known to be
+      complete intersections, and those with embedding codimension 3 are described
+      by the theorem of Buchsbaum and Eisenbud as Pfaffians of a skew-symmetric matrix; 
+      general structure theorems in higher codimension are lacking and the main goal of unprojection theory 
+      is to provide a substitute for a structure theorem.
 
-      It has been applied in various cases to construct new varieties, e.g., in [4] for Campedelli surfaces and [5] for Calabi-Yau varieties.
+      Unprojection theorey has been applied in various cases to construct new varieties, for example, in [4] in the case of Campedelli surfaces and [5] in the case of Calabi-Yau varieties.
       
-      We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller complex construction and demonstrate it at several examples connecting unprojection theory
-      and combinatorics like stellar subdivisions of simplicial complexes [6],
+      We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller complex construction and demonstrate it on several examples connecting unprojection theory
+      and combinatorics such as stellar subdivisions of simplicial complexes [6],
       minimal resolutions of Stanley-Reisner rings of boundary complexes {\Delta}(d,m) 
       of cyclic polytopes of dimension d on m vertices [7], and the classical 
       (non-monomial) Tom example of unprojection [2].
       
+      This package requires the package
+      @HREF{"http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/SimplicialComplexes/SimplicialComplexes.m2","SimplicialComplexes.m2"}@
+      version 1.2 or higher, so install this first.
 
       {\bf References:}
 
@@ -810,6 +665,8 @@ doc ///
       @TO "Stellar Subdivisions"@  -- Stellar subdivisions and unprojection
 
       @TO "Tom"@  -- The Tom example of unprojection
+
+      @TO "Jerry"@  -- The Jerry example of unprojection
 
       
       {\bf Key user functions:}
@@ -862,12 +719,12 @@ doc ///
   Description
    Text
     Compute Kustin-Miller resolution of the unprojection of I in J (or
-    equivalently of J \subset R/I) with unprojection variable T.
+    equivalently of the image J' of J in R/I) with unprojection variable T.
 
     We have the following setup:
 
     Assume R is a @TO PolynomialRing@ over a field, the degrees of all
-    variables positive and I inside J inside R two homogeneous ideals of R
+    variables positive and $I \subset J \subset R$ two homogeneous ideals of R
     such that R/I and R/J are Gorenstein and dim(R/J)=dim(R/I)-1.
 
     For a description of this resolution and how it is computed see
@@ -920,30 +777,37 @@ doc ///
     unprojectionHomomorphism(I,J)
   Inputs
     J:Ideal
+        with R/J Gorenstein
     I:Ideal
-        contained in J
+        contained in J with R/I Gorenstein and dim(R/J)=dim(R/I)-1.
   Outputs
     f:Matrix
   Description
    Text
     Compute the deformation associated to the unprojection of $I \subset J$ (or
-    equivalently of $J \subset R/I$ where $R$ = @TO ring@ $I$ ), i.e., a homomorphism 
+    equivalently of $J'\subset R/I$ where $R$ = @TO ring@ $I$ and $J'=$@TO sub@$(J,R/I)$), 
+    i.e., a homomorphism 
     
-    $\phi:J \to R/I$
+    $\phi : J' \to R/I$
     
-    such that the unprojected ideal is given by the ideal
+    such that the unprojected ideal $U\subset R[T]$ is the inverse image of
 
-    $( T*u - \phi(u)  |  u \in J ) \subset R[T]$.
+    $U' = (T*u - \phi(u)  |  u \in J' ) \subset (R/I)[T]$
 
+    under the natural map $R[T]\to(R/I)[T]$.
 
-    The result is represented by a matrix $f$ with @TO source@ $f$ = @TO image@ @TO gens@ $I$
-    and @TO target@ $f$ = @TO cokernel@ @TO gens@ $I$.
+    The result is represented by a matrix $f$ with @TO source@ $f$ = J'
+    and @TO target@ $f$ = (R/I)^1.
 
    Example
      R = QQ[x_1..x_4,z_1..z_4, T]
      I = ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
      J = ideal (z_1..z_4)
-     unprojectionHomomorphism(I,J)
+     phi = unprojectionHomomorphism(I,J)
+     S = ring target phi;
+     I == ideal S
+     source phi
+     target phi
   SeeAlso
     kustinMillerComplex
 ///
@@ -980,8 +844,7 @@ doc ///
 
 doc ///
   Key
-    verbose
-    [kustinMillerComplex,verbose]
+    [kustinMillerComplex,Verbose]
   Headline
     Option to print intermediate data
   Description
@@ -1039,8 +902,7 @@ doc ///
   SeeAlso
     kustinMillerComplex
   Caveat
-    This is not really a user level function, however it is exported as occasionally it can be useful.
-    The export may be removed at some point.
+    This is not a user level function.
 ///
 *}
 
@@ -1087,13 +949,19 @@ doc ///
     :Boolean
   Description
    Text
-    Test whether a chain complex is an exact resolution (except at position 0)
+    Test whether a chain complex is an exact resolution, that is,
+    it is exact everywhere except at the first non-zero module.
+
+    We consider cc as a doubly infinite complex extending it by adding
+    trivial modules and homomorphisms.
 
    Example
      R = QQ[x_1..x_4,z_1..z_4]
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
      cc= res I
      isExactRes cc
+     isExactRes(cc[1])
+     isExactRes(cc[-1])
   SeeAlso
     res
 ///
@@ -1124,70 +992,6 @@ doc ///
     substitute
 ///
 
-{*
-doc ///
-  Key
-    shiftComplex
-    (shiftComplex,ChainComplex,ZZ)
-  Headline
-    Shift the indexing of a chain complex
-  Usage
-    shiftComplex(cc,p)
-  Inputs
-    cc:ChainComplex
-    p:ZZ
-  Outputs
-    cs:ChainComplex
-  Description
-   Text
-     Shifts the chain complex cc by p, i.e., returns a new chain complex CS
-     with cs_i =  cc_{i+p} and the same differentials as cc.     
-
-   Example
-     R = QQ[x_1..x_4,z_1..z_4, T]
-     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-     cc = res I
-     betti cc
-     cs=shiftComplex(cc,-3)
-     betti cs
-  SeeAlso
-     res
-     betti
-///
-*}
-
-doc ///
-  Key
-    dualComplex
-    (dualComplex,ChainComplex)
-  Headline
-    Dualize a chain complex
-  Usage
-    dualComplex(cc)
-  Inputs
-    cc:ChainComplex
-  Outputs
-    dc:ChainComplex
-  Description
-   Text
-     Dualizes the chain complex cc, i.e., dc is the chain complex with modules
-     dc_p = (dual cc_(-p)) and  differentials dc_p \to dc_{p-1}   the  transpose of cc_{-p+1} \to cc_p 
-
-     Different to the M2 method @TO (dual,ChainComplex)@ we do
-     not introduce an alternating sign.
-
-   Example
-     R = QQ[x_1..x_4,z_1..z_4, T]
-     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-     cc = res I
-     betti cc
-     dc=dualComplex(cc)
-     betti dc
-  SeeAlso
-     (dual,ChainComplex)
-///
-
-
 
 doc ///
   Key
@@ -1211,13 +1015,13 @@ doc ///
    Text
         Computes the stellar subdivision of a simplicial complex D by subdividing the face F with a new vertex
         corresponding to the variable of S.
-        The result is a complex on the variables of R**S. It is a subcomplex of the simplex on the variables of R**S.
+        The result is a complex on the variables of R \otimes S. It is a subcomplex of the simplex on the variables of R \otimes S.
         
    Example
      R=QQ[x_0..x_4];
      I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
      betti res I
-     D=simplicialComplex(I)
+     D=simplicialComplex I 
      fc=facets(D,useFaceClass=>true)
      S=QQ[x_5]
      D5=stellarSubdivision(D,fc#0,S)
@@ -1227,7 +1031,7 @@ doc ///
 
    Example
      R=QQ[x_1..x_6]
-     I=monomialIdeal(product((entries vars R)#0))
+     I=monomialIdeal product gens R
      D=simplicialComplex I
      S=QQ[x_7]
      Dsigma=stellarSubdivision(D,face {x_1,x_2,x_3},S)
@@ -1279,6 +1083,13 @@ assert(pfaffians(4,A)==ideal cc.dd_1);
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
      cc= res I;
 assert(isExactRes cc);
+C=chainComplex presentation QQ^1;
+assert(isExactRes C);
+assert(isExactRes(C[1]));
+assert(isExactRes(C[-1]));
+assert(isExactRes(dual C));
+assert(isExactRes(dual C[1]));
+assert(isExactRes(dual C[-1] ));
 ///
 
 -- test stellar subdivision code
@@ -1286,7 +1097,7 @@ TEST ///
      K=QQ;
      R=K[x_0..x_4];
      I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
-     D=simplicialComplex(I)
+     D=simplicialComplex I
      S=K[x_5]
      D5=stellarSubdivision(D,face {x_0,x_2},S)
      I5=ideal D5
@@ -1341,7 +1152,7 @@ TEST ///
      cc=kustinMillerComplex(cI,cJ,QQ[T]);
 assert(rank(cc#1)==9);
 assert(rank(cc#2)==16);
-assert(isExactRes(cc));
+assert(isExactRes cc);
 ///
 
 
@@ -1372,7 +1183,7 @@ doc ///
 
     (1) The simplest example:
 
-    The stellar of the edge \{x_1,x_2\}\  of the triangle with vertices x_1,x_2,x_3.
+    Consider the stellar subdivision of the edge \{x_1,x_2\}\  of the triangle with vertices x_1,x_2,x_3.
     The new vertex is x_4 and z_1 is the base of the unprojection deformation.
 
    Example
@@ -1398,7 +1209,7 @@ doc ///
     is the Stanley-Reisner ideal of the stellar subdivision (i.e., of a 4-gon).
 
 
-    (2) Stellar of the facet \{x_1,x_2,x_4,x_6\}\  of the simplicial complex associated to the complete intersection (x_1*x_2*x_3, x_4*x_5*x_6).
+    (2) Stellar subdivision of the facet \{x_1,x_2,x_4,x_6\}\  of the simplicial complex associated to the complete intersection (x_1*x_2*x_3, x_4*x_5*x_6).
     The result is a Pfaffian:
 
    Example
@@ -1440,7 +1251,7 @@ doc ///
     This is always true for stellars of facets.
 
 
-    (3) Stellar of an edge:
+    (3) Stellar subdivision of an edge:
 
    Example
     R=K[x_1..x_5,z_1];
@@ -1462,7 +1273,6 @@ doc ///
     cc.dd_1
     cc.dd_2
     cc.dd_3
-    cc.dd_4
    Text
 
     (4) Starting out with the Pfaffian elliptic curve:
@@ -1480,7 +1290,7 @@ doc ///
     betti cc
    Text
 
-    (5) One more example of a stellar of an edge starting with a codimension 4 complete intersection:
+    (5) One more example of a stellar subdivision of an edge starting with a codimension 4 complete intersection:
  
    Example
     R=K[x_1..x_9,z_1];
@@ -1526,10 +1336,10 @@ doc ///
   Description
    Text
     In the following example we construct the minimal resolution of the Stanley-Reisner ring of
-    the codimension 4 cyclic polytope {\Delta}(4,8) from those of the
-    cyclic polytopes {\Delta}(2,6) and {\Delta}(4,7) (the last one being Pfaffian).
+    the cyclic polytope {\Delta}(4,8) of embedding codimension 4 (as a subcomplex of the simplex on 8 vertices) 
+    from those of the cyclic polytopes {\Delta}(2,6) and {\Delta}(4,7) (the last one being Pfaffian).
 
-    Of course this process can be iterated to give a recursive construction of the
+    This process can be iterated to give a recursive construction of the
     resolutions of all cyclic polytopes, for details see
 
     {\it J. Boehm, S. Papadakis: On the structure of Stanley-Reisner rings associated to cyclic polytopes}, @HREF"http://arxiv.org/abs/0912.2152"@, to appear in Osaka J. Math.
@@ -1549,7 +1359,7 @@ doc ///
      betti cc
    Text
 
-     We compare with the combinatorics, i.e., check that
+     We compare with the combinatorics, that is, check that
      the Kustin-Miller complex at the special fiber z=0 indeed resolves 
      the Stanley-Reisner ring of {\Delta}(4,8).
 
@@ -1591,7 +1401,43 @@ doc ///
 
    Example
      R = QQ[x_1..x_4,z_1..z_4]
-     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
+     b2 = matrix {{0,x_1,x_2,x_3,x_4},{-x_1,0,0,z_1,z_2},{-x_2,0,0,z_3,z_4},{-x_3,-z_1,-z_3,0,0},{-x_4,-z_2,-z_4,0,0}}
+     betti(cI=resBE b2)
+     b1 = cI.dd_1
+     J = ideal (z_1..z_4);
+     betti(cJ=res J)
+     betti(cU=kustinMillerComplex(cI,cJ,QQ[T]))
+     S=ring cU
+     isExactRes cU
+     print cU.dd_1
+     print cU.dd_2
+     print cU.dd_3
+     print cU.dd_4
+  SeeAlso
+    kustinMillerComplex
+    res
+    betti
+    "Jerry"
+///
+
+-- we use print to avoid line breaking inside the matrices
+
+doc ///
+  Key
+    "Jerry"
+  Headline
+    The Kustin-Miller complex for Jerry
+  Description
+   Text
+    The Kustin-Miller complex construction for the Jerry example which can be found in Section 5.7 of 
+
+    Papadakis, Kustin-Miller unprojection with complexes,  J. Algebraic Geometry 13 (2004) 249-268, @HREF"http://arxiv.org/abs/math/0111195"@
+
+    Here we pass from a Pfaffian to a codimension 4 variety.
+
+   Example
+     R = QQ [x_1..x_3, z_1..z_4]
+     I = ideal(-z_2*z_3+z_1*x_1,-z_2*z_4+z_1*x_2,-z_3*z_4+z_1*x_3,-z_3*x_2+z_2*x_3,z_4*x_1-z_3*x_2)
      cI=res I
      betti cI
      J = ideal (z_1..z_4)
@@ -1610,8 +1456,8 @@ doc ///
     kustinMillerComplex
     res
     betti
+    "Tom"
 ///
-
 
 
 
