@@ -4442,6 +4442,7 @@ assert(HH^1(X,OO_X(-2,1,1,-2)) == QQ^2)
 
 -- test 7
 TEST ///
+-- it is odd that this test runs out of memory on a Mac OS X machine with 4GB RAM when run by the makefile, but succeeds when run manually
 setRandomSeed 123456
 for i to 20 do (
   j := random(20);
