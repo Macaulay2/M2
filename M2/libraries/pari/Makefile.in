@@ -12,11 +12,31 @@ VPATH = @srcdir@
 # # pari maintainers have been known to break URL's, so we copy their software to another server:
 # # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 
-VERSION = 2.5.0
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 2.5.1
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
 
-CHECKTARGET = bench test-all test-compat test-ellglobalred test-galois test-intnum test-qfbsolve test-rfrac test-round4 test-stark test-ploth
+# leave out these tests:
+#   test-ellglobalred - requires data files that we don't download
+#   test-ellsea - requires data files "seadata"
+#   test-galois - requires galois data files "galdata"
+#   test-ploth - needs to pop up a window
+
+CHECKTARGET =										\
+    test-addprimes test-analyz test-apply test-aurifeuille test-bezout			\
+    test-bnfisintnorm test-bnr test-charpoly test-combinat test-compat			\
+    test-contfrac test-cxtrigo test-debugger test-det test-diffop test-ell		\
+    test-elliptic test-ellweilpairing test-err		\
+    test-exact0 test-extract test-ff test-ffisom test-galoisinit		\
+    test-graph test-ideal test-idealappr test-idealramgroups test-intformal		\
+    test-intnum test-ispower test-krasner test-linear test-list test-lll test-mat	\
+    test-matsnf test-member test-minim test-modpr test-multivar-mul test-nf		\
+    test-nffactor test-nfhilbert test-nfields test-nfrootsof1 test-number		\
+    test-objets test-partition test-polchebyshev test-polmod test-polred		\
+    test-polyser test-printf test-program test-qf test-qfbsolve test-quad		\
+    test-quadclassunit test-quadray test-random test-resultant test-rfrac test-rnf	\
+    test-rnfkummer test-round4 test-select test-stark test-subcyclo test-subfields	\
+    test-subst test-sumiter test-thue test-trans test-zetak test-zn
 
 BUILDTARGET = lib-sta
 INSTALLTARGET = install-lib-sta install-include
