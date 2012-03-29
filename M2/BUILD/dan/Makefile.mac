@@ -30,8 +30,9 @@ CC=gcc-4.2
 CXX=g++-4.2
 
 # now I've installed gcc 4.6.2
-CC=/usr/local/bin/gcc
-CXX=/usr/local/bin/g++
+# but it compiles e/montableZZ.cpp incorrectly, or else evokes a bug in it:
+# CC=/usr/local/bin/gcc
+# CXX=/usr/local/bin/g++
 
 ifeq ($(FFPACK),yes)
 CONFIGOPTIONS += --enable-fflas-ffpack
