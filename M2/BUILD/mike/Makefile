@@ -12,6 +12,16 @@ sandboxed : always
 		--prefix="`pwd`/sandbox" \
 		--enable-download
 
+dan-ubuntu64: always
+	mkdir -p dan-ubuntu64
+	cd dan-ubuntu64; ../../../configure \
+		--prefix="`pwd`/sandbox" \
+                --enable-encap \
+	        --enable-download \
+                --disable-common-staging-area \
+                --build=x86_64-unknown-linux-gnu \
+                --with-mpir-config-options="ABI=64"
+
 opt64 : always
 	mkdir -p opt64
 	cd opt64; ../../../configure \
