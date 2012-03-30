@@ -448,7 +448,7 @@ package Symbol := s -> (
 	       if d === PackageDictionary and class value s === Package then break value s
 	       else if package d =!= null then break package d)));
 package HashTable := package Function := x -> if hasAttribute(x,ReverseDictionary) then package getAttribute(x,ReverseDictionary)
-package Sequence := s -> package youngest s
+package Sequence := s -> youngest (package\s)
 
 use Package := pkg -> (
      a := member(pkg,loadedPackages);
