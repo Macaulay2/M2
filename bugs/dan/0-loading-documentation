@@ -1,0 +1,30 @@
++ M2 --no-readline --print-width 109
+Macaulay2, version 1.4
+with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra,
+               TangentCone
+
+i1 : html ofClass { ScriptedFunctor }
+--loading the Macaulay2 documentation from /Applications/Macaulay2-1.4/share/Macaulay2/Macaulay2Doc/
+--loading configuration for package "MapleInterface" from file /Users/dan/Library/Application Support/Macaulay2/init-MapleInterface.m2
+--loading configuration for package "FourTiTwo" from file /Users/dan/Library/Application Support/Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "ConvexInterface" from file /Users/dan/Library/Application Support/Macaulay2/init-ConvexInterface.m2
+--loading configuration for package "gfanInterface" from file /Users/dan/Library/Application Support/Macaulay2/init-gfanInterface.m2
+--loading configuration for package "Nauty" from file /Users/dan/Library/Application Support/Macaulay2/init-Nauty.m2
+--warning: *** package NormalToricVarieties failed to load while generating list of packages provided with Macaulay2
+--loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
+--loading configuration for package "NumericalAlgebraicGeometry" from file /Users/dan/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
+--new configuration options for package NumericalAlgebraicGeometry
+--backup file created: /Users/dan/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2.bak-2
+--storing configuration for package NumericalAlgebraicGeometry in /Users/dan/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
+--warning: symbol "tDegree" in PHCpack.Dictionary is shadowed by a symbol in NumericalAlgebraicGeometry.Dictionary
+--  use the synonym PHCpack$tDegree
+--warning: symbol "gamma" in PHCpack.Dictionary is shadowed by a symbol in NumericalAlgebraicGeometry.Dictionary
+--  use the synonym PHCpack$gamma
+--warning: *** package NumericalAlgebraicGeometry failed to load while generating list of packages provided with Macaulay2
+--loading configuration for package "SRdeformations" from file /Users/dan/Library/Application Support/Macaulay2/init-SRdeformations.m2
+--loading configuration for package "StatePolytope" from file /Users/dan/Library/Application Support/Macaulay2/init-StatePolytope.m2
+/Applications/Macaulay2-1.4/share/Macaulay2/Macaulay2Doc.m2:25:1:(2):[20]: error: global symbols inadvertently defined by package Macaulay2Doc: 'PackageImports', 'PackageExports'
+/Users/dan/Library/Application Support/Macaulay2/local/share/Macaulay2/NormalToricVarieties.m2:29:3-29:17: here is the first use of 'PackageImports'
+/Users/dan/Library/Application Support/Macaulay2/local/share/Macaulay2/NormalToricVarieties.m2:28:3-28:17: here is the first use of 'PackageExports'
+
+i2 : 
