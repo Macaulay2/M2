@@ -20,7 +20,10 @@ end
 -- there is a bug involving this: different answers come from gcc 4.6.x and earlier gcc's...
 
 J = ideal((f1)^(p+k),(f2)^(p+k),(f3)^(p+k))
-gens gb J
+gbTrace=3
+gens gb(J, DegreeLimit=>28); -- 38 gens
+gens gb(J, DegreeLimit=>29); -- 55 gens
+gens gb J;
 f0 % J -- == 0
 M = f0 // (gens J)
 (gens J) * M == f0 -- true!!
