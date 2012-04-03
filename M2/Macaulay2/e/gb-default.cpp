@@ -630,12 +630,10 @@ public:
 private:
   const FreeModule *F;
   GBRing *R;
-  long ncmps;
 public:
   int compare(value a, value b)
   {
     // returns: LT if a < b, EQ if a == b, GT if a > b.
-    ncmps ++;
     /* Compare using degree, then type, then lead term of spoly */
     int result;
     int cmp = a->deg - b->deg;
@@ -659,10 +657,13 @@ public:
     return result;
   }
 
-  SPolySorter(GBRing *R0, const FreeModule *F0)
-    : F(F0), R(R0), ncmps(0) {}
+  bool operator()(value a, value b)
+  {
+    return compare(a,b) == LT;
+  }
 
-  long ncomparisons() const { return ncmps; }
+  SPolySorter(GBRing *R0, const FreeModule *F0)
+    : F(F0), R(R0) {}
 
   ~SPolySorter() {}
 };
@@ -679,7 +680,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 //     debug_spair(new_set[i]);
 //   }
 #endif
-  sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
+  std::sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
   MonomialTable *montab = MonomialTable::make(_nvars);
 
   //  array_sort(new_set, (compareFcn)spair_compare, 0);
@@ -1096,8 +1097,8 @@ void gbA::spairs_sort(int len, spair *&ps)
     }
 
   SPolySorter SP(R,_F);
-  QuickSorter<SPolySorter>::sort(&SP,&a[0],a.size());
-
+  //  QuickSorter<SPolySorter>::sort(&SP,&a[0],a.size());
+  std::sort(a.begin(), a.end(), SP);
   int asize = INTSIZE(a);
   int bsize = INTSIZE(b);
 
