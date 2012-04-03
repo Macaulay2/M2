@@ -4,7 +4,6 @@
 #include <ctime>
 
 #include "f4.hpp"
-#include "monsort.hpp"
 #include "../freemod.hpp"
 #include "../../system/supervisorinterface.h"
 
@@ -281,8 +280,6 @@ void F4GB::process_s_pair(spair *p)
   }
 }
 
-template class QuickSorter<ColumnsSorter>;
-
 long ColumnsSorter::ncmps0 = 0;
 long ColumnsSorter::ncmps = 0;
 
@@ -305,6 +302,8 @@ void F4GB::reorder_columns()
 
   // Actual sort of columns /////////////////
 
+#if 0
+  //TODO: MES remove the code in this ifdef 0
   C.reset_ncomparisons();
 
   clock_t begin_time = clock();
@@ -325,7 +324,7 @@ void F4GB::reorder_columns()
   clock_sort_columns += nsecs;
   if (M2_gbTrace >= 2)
     fprintf(stderr, " time = %f\n", nsecs);
-
+#endif
   // STL version ///////////////
 
   C.reset_ncomparisons();

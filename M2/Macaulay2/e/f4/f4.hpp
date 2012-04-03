@@ -67,7 +67,6 @@
 #include "f4-mem.hpp"
 #include "monhashtable.hpp"
 #include "memblock.hpp"
-#include "monsort.hpp"
 #include "f4-spairs.hpp"
 #include "gausser.hpp"
 #include "hilb-fcn.hpp"
