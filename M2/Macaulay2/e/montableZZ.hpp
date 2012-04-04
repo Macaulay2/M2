@@ -100,7 +100,7 @@ public:
   void show_mon_term(FILE *fil, mon_term *t) const; /* Only for debugging */
   void show(FILE *fil) const; /* Only for debugging */
   void showmontable();
-
+  void show_weak(FILE *fil, mpz_ptr coeff, exponents exp, int comp, int val) const; /* Debugging */
 
 private:
   int _nvars;
