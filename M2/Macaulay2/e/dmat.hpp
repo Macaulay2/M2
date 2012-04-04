@@ -5,12 +5,44 @@
 
 union ring_elem;
 #include "ZZp.hpp"
+
+#include "aring-ffpack.hpp"
+#include "aring-gf.hpp"
+
+
 //#include <mblas_mpfr.h>
 //#include <mlapack_mpfr.h>
 //#include "mpreal.h"
 // This is the low level dense matrix class.
 // The only reason "RingType" is present is to more easily
 //   communicate with the rest of Macaulay2
+
+// enable_if is probably only available for never standard, e.g. compiler flag -std=c++0x
+template<bool, typename T = void> 
+  struct enable_if {};
+
+template<typename T>
+  struct enable_if<true, T> {
+    typedef T type;
+  };
+
+template< typename T > 
+struct is_givaro_or_ffpack{ 
+  static const bool value = false;
+};
+
+template<> 
+struct is_givaro_or_ffpack< M2::ARingZZpFFPACK >{ 
+  static const bool value = true; 
+};
+
+template<> 
+struct is_givaro_or_ffpack< M2::ARingGF >{ 
+  static const bool value = true; 
+};
+
+
+
 
 class MutableMatrix;
 
@@ -23,11 +55,13 @@ class DMat : public our_new_delete
 public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
-  typedef typename CoeffRing::ring_type RingType;
+  typedef elem ElementType; // same as elem.  Will possibly remove 'elem' later.
 
   DMat():R(0), coeffR(0), nrows_(0), ncols_(0), array_(0) {} // Makes a zero matrix
 
-  DMat(const RingType *R0, int nrows, int ncols); // Makes a zero matrix
+  DMat(const Ring *R, const ACoeffRing *R0, int nrows, int ncols); // Makes a zero matrix
+
+  DMat(const DMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
 
   void grab(DMat *M);// swaps M and this.
 
@@ -37,12 +71,15 @@ public:
 
   int n_rows() const { return nrows_; }
   int n_cols() const { return ncols_; }
-  const RingType * get_ring() const { return R; }
+  const Ring * get_ring() const { return R; }
   const CoeffRing * get_CoeffRing() const { return coeffR; }
+  const CoeffRing& ring() const { return *coeffR; }
 
   void set_matrix(const DMat<CoeffRing> *mat0);
   void initialize(int nrows, int ncols, elem *array);
   void resize(int nrows, int ncols);
+
+  ///@todo potential trouble if array is modivied by the caller... either return copy  or introduce a second non-const function .
   elem * get_array() const { return array_; } // Used for lapack type routines
 
   double *get_lapack_array() const; // redefined by RR,CC
@@ -194,16 +231,67 @@ public:
 
   DMat * negate() const;
 
+  ///////////////////////////////////
+  /// Fast linear algebra routines //
+  ///////////////////////////////////
+
+  
+  template<class RingType>
+  size_t rank(typename enable_if<is_givaro_or_ffpack<RingType>::value >::type* dummy = 0) const;
+  size_t rank() const;
+ 
+  
+  template<class RingType>
+  void determinantGF_or_FFPACK(elem &result) const;
+
+  void determinant(elem &result) const;
+
+  // Set 'inverse' with the inverse of 'this'.  If the matrix is not square, or 
+  // the matrix is not invertible, or
+  // the ring is one in which the matrix cannot be inverted,
+  // then false is returned, and an error message is set.
+  bool invert(DMat<ACoeffRing> &inverse) const;
+
+  // Returns an array of increasing integers {n_1, n_2, ...}
+  // such that if M is the matrix with rows (resp columns, if row_profile is false)
+  // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
+  // NULL is returned, and an error is set, if this function is not available
+  // for the given choice of ring and dense/sparseness.
+  M2_arrayintOrNull rankProfile(bool row_profile) const;
+  
+  // Find a spanning set for the null space.  If M = this,
+  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
+  // otherwise return a matrix whose columns span {x | Mx = 0}
+  void nullSpace(DMat<ACoeffRing> &nullspace, bool right_side) const;
+
+  // X is set to  a matrix whose rows or columns solve either AX = B (right_side=true)
+  // or XA = B (right_side=false). If no solutions are found, false is returned.
+  bool solveLinear(DMat<ACoeffRing> &X, const DMat<ACoeffRing> &B, bool right_side) const;
+
+  /** C=this,A,B should be mutable matrices over the same ring, and a,b
+     elements of this ring. AND of the same density type.
+     C = b*C + a * op(A)*op(B),
+     where op(A) = A or transpose(A), depending on transposeA
+     where op(B) = B or transpose(B), depending on transposeB
+  */
+  void addMultipleTo(DMat<ACoeffRing> &C,
+                     const DMat<ACoeffRing> &A,
+                     const DMat<ACoeffRing> &B,
+                     bool transposeA,
+                     bool transposeB,
+                     ring_elem a,
+                     ring_elem b) const;
+
 private:
-  const RingType *R; // To interface to the outside world
-  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
+  const Ring *R; // To interface to the outside world
+  const CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
   int nrows_;
   int ncols_;
   elem *array_; // array has length nrows*ncols
                 // columns stored one after another
 
 
-  void copy_elems(long n_to_copy, elem *target, int target_stride, elem *source, int stride);
+  void copy_elems(long n_to_copy, elem *target, int target_stride, const elem *source, int stride) const;
 };
 
 #endif

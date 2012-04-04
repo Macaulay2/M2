@@ -6,11 +6,12 @@
 
 INTERFACE = \
 	cra \
+	aring-m2-gf \
+	aring-promoter \
 	aring-glue \
 	aring-zzp \
 	aring-gf \
 	aring-ffpack \
-	aring-wrap \
 	aring \
 	schurSn \
 	schur2 \
@@ -21,7 +22,6 @@ INTERFACE = \
 	gb-test1 \
 	finalize \
 	NAG \
-	points \
 	overflow \
 	memory-status \
 	exceptions \

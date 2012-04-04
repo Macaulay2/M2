@@ -1,5 +1,31 @@
 // Copyright 1995 Michael E. Stillman
 
+/*
+Note from MES to MES, 27 Jan 2012
+We could have a class which mediates between _originalR and this ring.
+
+
+class GFTranslator
+// needs to be able to find a "good" minimal polynomial for (p,n).
+// needs to be able to tell if a specific polynomial is "good" (i.e. is 
+// needs to be able to find a primitive element mod a poly f(x).
+{
+public:
+  GFTranslator(); // What input?
+
+  const PolyRing &ring() const;
+  ring_elem minimalPolynomial();
+  ring_elem primitiveElement();
+
+  ring_elem fromLog(int exp); // allow negative exponents too?
+  int discreteLog(ring_elem a); // return the value r s.t. primitiveRoot^r == a.
+
+  createTables();
+private:
+
+};
+ */
+
 #include "ZZ.hpp"
 #include "GF.hpp"
 #include "text-io.hpp"
@@ -7,6 +33,10 @@
 #include "ringmap.hpp"
 #include "poly.hpp"
 #include "../system/supervisorinterface.h"
+
+#include "aring-m2-gf.hpp"
+#include <iostream>
+
 bool GF::initialize_GF(const RingElement *prim)
 {
   // set the GF ring tables.  Returns false if there is an error.
@@ -93,6 +123,9 @@ bool GF::initialize_GF(const RingElement *prim)
   zeroV = from_int(0);
   oneV = from_int(1);
   minus_oneV = from_int(-1);
+
+  // M2::GaloisFieldTable G(*_originalR, primelem);
+  //  G.display(std::cout);
 
   return true;
 }

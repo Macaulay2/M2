@@ -29,7 +29,12 @@ GF = method (
      Options => { 
 	  PrimitiveElement => FindOne,
 	  Variable => null,
-	  SizeLimit => 10000
+	  SizeLimit => 10000,
+	  Strategy => null 
+	    -- other Strategy options:
+	    --   "Givaro":  use Givaro representation, but Conway polynomial, if one exists
+	    --      gives an error if size is over the SizeLimit
+	    --   "CompleteGivaro", uses Givaro representation, and also its choice of polynomial
 	  }
      )
 
@@ -69,20 +74,84 @@ isPrimitive = (g) -> g != 0 and (
      q := p^n;
      all(factor (q-1), v -> 1 != g ^ ((q-1)//v#0)))
 
-GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
+findPrimitive = (S) -> (
+     -- S should be a polynomial ring of the form (ZZ/p)[x]/(f)
+     -- 
+     t := S_0;
+     if isPrimitive t then t
+     else (
+	  n := S.degree;
+	  p := char S;
+	  local g;
+	  while ( 
+	       g = sum(n, i -> random p * t^i); 
+	       not isPrimitive g
+	  ) do ();
+     	  g
+	  )
+     )
+
+findGalois = method (Options => options GF)
+
+findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      x := opts.Variable;
      x = if x === null then getSymbol "a" else baseName x;
      R := (ZZ/p) (monoid [x]);
      t := R_0;
-     f := runHooks(GaloisField,FindOne,(p,n,t));
-     if f =!= null then (
-	  k := R/f;
-	  GF(k,Variable => x, PrimitiveElement => k_0))
-     else (
-	  while ( f = t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
-	  GF(R/f,Variable => x)))
+     local kk;
+     local f;
+     if opts.Strategy =!= "CompleteGivaro" then (
+     	  f = runHooks(GaloisField,FindOne,(p,n,t));
+     	  if f =!= null then (
+	       kk = R/f;
+	       kk.char = p;
+	       kk.degree = n;
+	       kk.order = p^n;
+	       kk_0)
+     	  else (
+	       while ( f = t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
+	       kk = R/f;
+	       kk.char = p;
+	       kk.degree = n;
+	       kk.order = p^n;
+	       findPrimitive kk)
+	  )
+     else if opts.Strategy === "CompleteGivaro" then (
+	  if p^n >= opts.SizeLimit then 
+	      error "increase SizeLimit in order to use Givaro representation for Galois Field";
+	  rawkk := rawARingGaloisField(p,n);
+	  af := rawARingGFPolynomial rawkk;
+	  f = sum(#af, i -> af#i * t^i);
+	  kk = R/f;
+	  kk.char = p;
+	  kk.degree = n;
+	  kk.order = p^n;
+	  kk#"Givaro" = rawkk;
+	  findPrimitive kk
+	  )
+     else error (opts.Strategy | " is not a valid argument for' Strategy' option")
+     )
+
+GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
+     if not isPrime p then error "expected a prime number as base";
+     if n <= 0 then error "expected positive exponent";
+     x := opts.Variable;
+     primelem := findGalois(p,n,opts);
+     GF(ring primelem, PrimitiveElement=>primelem, Strategy=>opts.Strategy, SizeLimit=>opts.SizeLimit, Variable=>opts.Variable)
+     )
+
+--     x = if x === null then getSymbol "a" else baseName x;
+--     R := (ZZ/p) (monoid [x]);
+--     t := R_0;
+--     f := runHooks(GaloisField,FindOne,(p,n,t));
+--     if f =!= null then (
+--	  k := R/f;
+--	  GF(k,Variable => x, PrimitiveElement => k_0))
+--     else (
+--	  while ( f = t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
+--	  GF(R/f,Variable => x)))
 
 GF(ZZ) := GaloisField => options -> (q) -> (
      factors := factor q;
@@ -114,7 +183,16 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      d := p^n-1;
      if d < opts.SizeLimit
      then (
-	  F := new GaloisField from rawGaloisField raw primitiveElement;
+	  -- three cases: call rawGaloisField, rawARingGaloisField, rawARingGaloisField1
+	  rawF := if opts.Strategy === null then 
+	              rawGaloisField raw primitiveElement
+		  else if opts.Strategy === "Givaro" then
+		       rawARingGaloisFieldFromQuotient raw primitiveElement
+		  else if opts.Strategy === "CompleteGivaro" then 
+		       rawARingGaloisFieldFromQuotient raw primitiveElement
+		  else if opts.Strategy === "New" then
+		      rawARingGaloisField1 raw primitiveElement;
+	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;
 	  F.rawGaloisField = true;
 	  )

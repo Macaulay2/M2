@@ -1,0 +1,189 @@
+diff -rupN givaro-3.4.3.491//src/kernel/zpz/givgfq.inl givaro-3.4.3.491.copy//src/kernel/zpz/givgfq.inl
+--- givaro-3.4.3.491//src/kernel/zpz/givgfq.inl  2011-05-24 17:32:04.000000000 +0200
++++ givaro-3.4.3.491.copy//src/kernel/zpz/givgfq.new.inl  2012-03-30 16:31:12.000000000 +0200
+@@ -1119,7 +1119,71 @@ namespace Givaro {
+         _plus1[_qm1o2] = 0;
+     }
+ 
++template<typename TT>
++    inline GFqDom<TT>::GFqDom(const UTT P, const UTT e, const std::vector<UTT>& modPoly, const std::vector<UTT>& generatorPol):
++            zero(0)
++        , one (power(P,e) - 1  )
++        , _characteristic(P)
++        , _exponent(e)
++        , _q( one + 1 )
++        , _qm1 ( one )
++        , _qm1o2(  (P==2)?  (one)  :  (_q >> 1) )   // 1 == -1 in GF(2^k)
++        , _log2pol( _q )
++        , _pol2log( _q )
++        , _plus1( _q )
++        , _dcharacteristic( (double)P )
++    {
+ 
++            // 1 is represented by q-1, zero by 0
++        _log2pol[0] = zero;
++
++        GFqDom<TT> Zp(P,1);
++        typedef Poly1FactorDom< GFqDom<TT>, Dense > PolDom;
++        PolDom Pdom( Zp );
++        typename PolDom::Element Ft, F(e+1), G(e), H;
++
++        for( size_t i = 0; i < F.size(); ++i )
++            Zp.init( F[i], modPoly[i]);
++
++        for( size_t i = 0; i < G.size(); ++i )
++            Zp.init( G[i], generatorPol[i]);
++
++        //Pdom.give_prim_root(G,F);
++        Pdom.assign(H,G);
++
++        typedef Poly1PadicDom< GFqDom<TT>, Dense > PadicDom;
++        PadicDom PAD(Pdom);
++
++        PAD.eval(_log2pol[1],H);
++        PAD.eval(_irred, F);
++
++        for (UTT i = 2; i < _qm1; ++i) {
++            Pdom.mulin(H, G);
++            Pdom.modin(H, F);
++            PAD.eval(_log2pol[i], H);
++        }
++        _log2pol[_qm1] = 1;
++
++        _log2pol[0] = 0;
++
++        for (UTT i = 0; i < _q; ++i)
++            _pol2log[ _log2pol[i] ] = i;
++
++        _plus1[0] = 0;
++
++        UTT a,b,r;
++        for (UTT i = 1; i < _q; ++i) {
++            a = _log2pol[i];
++            r = a % P;
++            if (r == (P - 1))
++                b = a - r;
++            else
++                b = a + 1;
++            _plus1[i] = _pol2log[b] - _qm1;
++        }
++
++        _plus1[_qm1o2] = 0;
++    }
+ 
+ 
+     template<typename TT> inline void GFqDom<TT>::Init() {}
+diff -rupN givaro-3.4.3.491//src/kernel/zpz/givextension.h givaro-3.4.3.491.copy//src/kernel/zpz/givextension.h
+--- givaro-3.4.3.491//src/kernel/zpz/givextension.h	2011-05-24 17:32:04.000000000 +0200
++++ givaro-3.4.3.491.copy//src/kernel/zpz/givextension.h	2012-01-30 14:36:27.916056625 +0100
+@@ -39,7 +39,7 @@ template<typename Field> unsigned long E
+ }
+ 
+ 
+-template<> unsigned long Exponent_Trait(const GFqDom<long>& F) {
++template<> inline unsigned long Exponent_Trait(const GFqDom<long>& F) {
+     return F.exponent();
+ }
+
+diff -rupN givaro-3.4.3.491//src/kernel/system/givconfig.h givaro-3.4.3.491.copy//src/kernel/system/givconfig.h
+--- givaro-3.4.3.491//src/kernel/system/givconfig.h	2011-05-24 17:32:04.000000000 +0200
++++ givaro-3.4.3.491.copy//src/kernel/system/givconfig.h	2012-03-21 17:59:47.000000000 +0100
+@@ -77,52 +77,78 @@
+ // -- Defines the basic integer arithmetics available on this machine
+ #include <givaro-config.h>
+ #ifdef __GIVARO_HAVE_STDINT_H
++#ifndef __STDC_LIMIT_MACROS
+ #define __STDC_LIMIT_MACROS
++#endif
+ #include <stdint.h>
+ #ifndef INT64_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT64_MAX std::numeric_limits<int64_t>::max()
+ #endif
+ 
+ #ifndef UINT64_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT64_MAX std::numeric_limits<uint64_t>::max()
+ #endif
+ 
+ #ifndef INT32_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT32_MAX std::numeric_limits<int32_t>::max()
+ #endif
+ 
+ #ifndef UINT32_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT32_MAX std::numeric_limits<uint32_t>::max()
+ #endif
+ 
+ #ifndef INT16_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT16_MAX std::numeric_limits<int16_t>::max()
+ #endif
+ 
+ #ifndef UINT16_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT16_MAX std::numeric_limits<uint16_t>::max()
+ #endif
+ 
+ #ifndef INT8_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT8_MAX std::numeric_limits<int8_t>::max()
+ #endif
+ 
+ #ifndef UINT8_MAX
+-#pragma message "#warning somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT8_MAX std::numeric_limits<uint8_t>::max()
+ #endif
+
+--- givaro-3.4.3.491//src/kernel/zpz/givgfq.h 2011-05-24 17:32:04.000000000 +0200
++++ givaro-3.4.3.491//src/kernel/zpz/givgfq.new.h 2012-03-30 17:02:06.000000000 +0200
+@@ -81,6 +81,7 @@ public:
+        //   there will be a call to Z/pZ.init to build the 
+        //   representation of the irreducible polynomial
+	GFqDom( const UTT P, const UTT e, const std::vector<UTT>& modPoly);
++	GFqDom( const UTT P, const UTT e, const std::vector<UTT>& modPoly, const std::vector<UTT>& generatorPoly);
+
+	GFqDom( const GFqDom<TT>& F)
+	{
+

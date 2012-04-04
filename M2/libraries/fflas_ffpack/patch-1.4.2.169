@@ -1,6 +1,94 @@
 --- /media/var_scratch/kroeker/M2branch/BUILD/FastLinearAlgebra/libraries/fflas_ffpack/tmp/fflas-ffpack-1.4.2.169/utils/debug.h	2011-05-24 18:16:40.000000000 +0200
 +++ fflas-ffpack-1.4.2.169/utils/debug.h	2011-10-21 11:30:05.000000000 +0200
-@@ -105,7 +105,7 @@
+@@ -38,53 +38,79 @@
+ 
+ 
+ #ifdef __FFLAFLAS_HAVE_STDINT_H
++#ifndef __STDC_LIMIT_MACROS
+ #define __STDC_LIMIT_MACROS
++#endif
+ #include <stdint.h>
+ 
+ #ifndef INT64_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT64_MAX std::numeric_limits<int64_t>::max()
+ #endif
+ 
+ #ifndef UINT64_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT64_MAX std::numeric_limits<uint64_t>::max()
+ #endif
+ 
+ #ifndef INT32_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT32_MAX std::numeric_limits<int32_t>::max()
+ #endif
+ 
+ #ifndef UINT32_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT32_MAX std::numeric_limits<uint32_t>::max()
+ #endif
+ 
+ #ifndef INT16_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT16_MAX std::numeric_limits<int16_t>::max()
+ #endif
+ 
+ #ifndef UINT16_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT16_MAX std::numeric_limits<uint16_t>::max()
+ #endif
+ 
+ #ifndef INT8_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define INT8_MAX std::numeric_limits<int8_t>::max()
+ #endif
+ 
+ #ifndef UINT8_MAX
+-#warning "somebody nasty previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#ifndef __STDC_LIMIT_MACROS_WARNING
++#define __STDC_LIMIT_MACROS_WARNING
++#warning "somebody previously included <stdint.h> without __STDC_LIMIT_MACROS :)"
++#endif
+ #include <limits>
+ #define UINT8_MAX std::numeric_limits<uint8_t>::max()
+ #endif
+@@ -105,7 +131,7 @@ throw FFPACK::Failure (__func__, __FILE_
  
  namespace FFPACK {
  
@@ -9,7 +97,7 @@
  	/*!  A precondtion failed.
  	 * @ingroup util
  	 * The \c throw mechanism is usually used here as in
-@@ -117,7 +117,7 @@
+@@ -117,7 +143,7 @@ namespace FFPACK {
  	 */
  	class Failure {//: public LinboxError BB: otherwise,  error.h:39 segfaults
  	protected:
@@ -18,7 +106,7 @@
  
  	public:
  		/*! @internal
-@@ -210,7 +210,9 @@
+@@ -210,7 +236,9 @@ namespace FFPACK {
  
  #endif
  
@@ -29,3 +117,143 @@
  } // FFPACK
  
  #endif // __FFLAFLAS_util_debug_H
+--- config-blas.h	2011-05-24 18:16:40.000000000 +0200
++++ fflas-ffpack-1.4.2.169/fflas-ffpack/config-blas.h	2012-03-08 02:27:28.000000000 +0100
+@@ -111,32 +111,32 @@ extern "C" {
+ 
+ 	// level 1 routines
+ 
+-	void cblas_daxpy(const int N, const double alpha, const double *X, const int incX, double *Y, const int incY)
++	inline void cblas_daxpy(const int N, const double alpha, const double *X, const int incX, double *Y, const int incY)
+ 	{
+ 		daxpy_ (&N,&alpha, X, &incX, Y, &incY);
+ 	}
+ 
+-	double cblas_ddot(const int N, const double *X, const int incX, const double *Y, const int incY)
++	inline double cblas_ddot(const int N, const double *X, const int incX, const double *Y, const int incY)
+ 	{
+ 		return ddot_ (&N, X, &incX, Y, &incY);
+ 	}
+ 
+-	double cblas_dasum(const int N, const double *X, const int incX){
++	inline double cblas_dasum(const int N, const double *X, const int incX){
+ 		return dasum_ (&N, X, &incX);
+ 	}
+ 
+-	int cblas_idamax(const int N, const double *X, const int incX){
++	inline int cblas_idamax(const int N, const double *X, const int incX){
+ 		return idamax_ (&N, X, &incX);
+ 	}
+ 
+-	double cblas_dnrm2(const int N, const double *X, const int incX){
++	inline double cblas_dnrm2(const int N, const double *X, const int incX){
+ 		return dnrm2_(&N, X, &incX);
+ 	}
+ 
+ 
+ 	// level 2 routines
+ 
+-	void cblas_dgemv(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const int M, const int N, const double alpha,
++	inline void cblas_dgemv(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const int M, const int N, const double alpha,
+ 			 const double *A, const int lda, const double *X, const int incX, const double beta, double *Y, const int incY)
+ 	{
+ 		if (Order == CblasRowMajor)
+@@ -144,7 +144,7 @@ extern "C" {
+ 		else
+ 			dgemv_ ( EXT_BLAS_TRANSPOSE(TransA), &M, &N, &alpha, A, &lda, X, &incX, &beta, Y, &incY);
+ 	}
+-	void cblas_sgemv(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const int M, const int N, const float alpha,
++	inline void cblas_sgemv(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const int M, const int N, const float alpha,
+ 			 const float *A, const int lda, const float *X, const int incX, const float beta, float *Y, const int incY)
+ 	{
+ 		if (Order == CblasRowMajor)
+@@ -153,7 +153,7 @@ extern "C" {
+ 			sgemv_ ( EXT_BLAS_TRANSPOSE(TransA), &M, &N, &alpha, A, &lda, X, &incX, &beta, Y, &incY);
+ 	}
+ 
+-	void cblas_dger(const enum CBLAS_ORDER Order, const int M, const int N, const double alpha, const double *X, const int incX,
++	inline void cblas_dger(const enum CBLAS_ORDER Order, const int M, const int N, const double alpha, const double *X, const int incX,
+ 			const double *Y, const int incY, double *A, const int lda)
+ 	{
+ 		if (Order == CblasRowMajor)
+@@ -166,7 +166,7 @@ extern "C" {
+ 
+ 	// level 3 routines
+ 
+-	void cblas_dtrsm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
++	inline void cblas_dtrsm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
+ 			 const enum CBLAS_DIAG Diag, const int M, const int N, const double alpha, const double *A, const int lda,
+ 			 double *B, const int ldb)
+ 	{
+@@ -175,7 +175,7 @@ extern "C" {
+ 		else
+ 			dtrsm_ ( EXT_BLAS_SIDE(Side), EXT_BLAS_UPLO(Uplo), EXT_BLAS_TRANSPOSE(TransA), EXT_BLAS_DIAG(Diag), &M, &N, &alpha, A, &lda, B, &ldb);
+ 	}
+-	void cblas_strsm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
++	inline void cblas_strsm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
+ 			 const enum CBLAS_DIAG Diag, const int M, const int N, const float alpha, const float *A, const int lda,
+ 			 float *B, const int ldb)
+ 	{
+@@ -185,7 +185,7 @@ extern "C" {
+ 			strsm_ ( EXT_BLAS_SIDE(Side), EXT_BLAS_UPLO(Uplo), EXT_BLAS_TRANSPOSE(TransA), EXT_BLAS_DIAG(Diag), &M, &N, &alpha, A, &lda, B, &ldb);
+ 	}
+ 
+-	void cblas_dtrmm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
++	inline void cblas_dtrmm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
+ 			 const enum CBLAS_DIAG Diag, const int M, const int N, const double alpha, const double *A, const int lda,
+ 			 double *B, const int ldb)
+ 	{
+@@ -194,7 +194,7 @@ extern "C" {
+ 		else
+ 			dtrmm_ ( EXT_BLAS_SIDE(Side), EXT_BLAS_UPLO(Uplo), EXT_BLAS_TRANSPOSE(TransA), EXT_BLAS_DIAG(Diag), &M, &N, &alpha, A, &lda, B, &ldb);
+ 	}
+-	void cblas_strmm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
++	inline void cblas_strmm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
+ 			 const enum CBLAS_DIAG Diag, const int M, const int N, const float alpha, const float *A, const int lda,
+ 			 float *B, const int ldb)
+ 	{
+@@ -204,7 +204,7 @@ extern "C" {
+ 			strmm_ ( EXT_BLAS_SIDE(Side), EXT_BLAS_UPLO(Uplo), EXT_BLAS_TRANSPOSE(TransA), EXT_BLAS_DIAG(Diag), &M, &N, &alpha, A, &lda, B, &ldb);
+ 	}
+ 
+-	void cblas_dgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
++	inline void cblas_dgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
+ 			 const int K, const double alpha, const double *A, const int lda, const double *B, const int ldb,
+ 			 const double beta, double *C, const int ldc)
+ 	{
+@@ -213,7 +213,7 @@ extern "C" {
+ 		else
+ 			dgemm_ ( EXT_BLAS_TRANSPOSE(TransA), EXT_BLAS_TRANSPOSE(TransB), &M, &N, &K, &alpha, A, &lda, B, &ldb, &beta, C, &ldc);
+ 	}
+-	void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
++	inline void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
+ 			 const int K, const float alpha, const float *A, const int lda, const float *B, const int ldb,
+ 			 const float beta, float *C, const int ldc)
+ 	{
+@@ -229,7 +229,7 @@ extern "C" {
+ 
+ 	// return A=P.L.U (L unitary) with ColMajor
+ 	// return A=L.U.P (U unitary) with RowMajor
+-	int clapack_dgetrf(const enum CBLAS_ORDER Order, const int M, const int N,
++	inline int clapack_dgetrf(const enum CBLAS_ORDER Order, const int M, const int N,
+ 			   double *A, const int lda, int *ipiv)
+         {
+             int info;
+@@ -239,7 +239,7 @@ extern "C" {
+ #endif
+ 
+ #ifdef  __FFLAFLAS_HAVE_DGETRI
+-	int clapack_dgetri(const enum CBLAS_ORDER Order, const int N, double *A,
++	inline int clapack_dgetri(const enum CBLAS_ORDER Order, const int N, double *A,
+ 			   const int lda, const int *ipiv)
+ 	{
+ 		int info;
+@@ -284,7 +284,7 @@ extern "C" {
+ 
+ #ifdef  __FFLAFLAS_HAVE_DTRTRI
+ 
+-	int clapack_dtrtri(const enum CBLAS_ORDER Order,const enum CBLAS_UPLO Uplo,
++	inline int clapack_dtrtri(const enum CBLAS_ORDER Order,const enum CBLAS_UPLO Uplo,
+ 			   const enum CBLAS_DIAG Diag,const int N, double *A, const int lda)
+ 	{
+ 		int info;

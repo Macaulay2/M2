@@ -6,6 +6,7 @@ newPackage(
                   Email => "", 
                   HomePage => ""}},
         Headline => "a test suite for the Macaulay2 engine",
+	PackageExports => {"FastLinearAlgebra"},
         DebuggingMode => true
         )
 
@@ -51,11 +52,11 @@ ringOpsZZp = (p) -> (
 	    -- check that i+j mod p == i_kk + j_kk
 	    a := mutableMatrix(kk,1,1); a_(0,0) = i_kk;
 	    b := mutableMatrix(kk,1,1); b_(0,0) = i_kk;
-	    
 	    )
      )
 
 testops = (R) -> (
+  << "testops..." << endl;
   m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   assert(numRows m == 5);
   assert(numColumns m == 6);
@@ -113,6 +114,7 @@ testops = (R) -> (
 debug Core
 testops2 = (R) -> (
   --
+  << "testops2..." << endl;  
   m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   rawInsertColumns(raw m,1,2);
   m1 := matrix m;
@@ -147,6 +149,7 @@ testops2 = (R) -> (
   )
 
 testops3 = (R) -> (
+  << "testops3..." << endl;
   -- rawMatrixColumnOperation2, rawMatrixRowOperation2, rawSortColumns2, rawColumnDotProduct
   m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   rawMatrixColumnOperation2(raw m, 1, 2, raw promote(1,R), 
@@ -191,6 +194,7 @@ testops3 = (R) -> (
   )
 
 testops4 = (R) -> (
+  << "testops4..." << endl;
   m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   m1 := matrix columnPermute(m,1,{2,0,1});
   m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
@@ -204,13 +208,41 @@ testops4 = (R) -> (
   assert(m1 == m2);
   )
 
-testMutableMatrices = (R) -> (testops R; testops2 R; testops3 R; testops4 R)
+debug FastLinearAlgebra
+
+testrank = (R) -> (
+     << "testrank..." << endl;
+     m1 := random(R^5, R^11);
+     m2 := random(R^11, R^6);
+     m := mutableMatrix(m1 * m2);
+     assert(5 == fastRank m) -- this can fail every now and then.
+     )
+
+testMutableMatrices = (R) -> (
+     testops R; 
+     testops2 R; 
+     testops3 R; 
+     testops4 R;
+     testrank R;
+     << "tests passed for " << describe R << endl;
+     )
 
 TEST ///
 rings = {ZZ, ZZ/101, ZZ/2, GF(4), GF(25), QQ, QQ[x,y], frac(QQ[x,y]), RR_53, RR_100, CC_53, CC_100}
 rings/testMutableMatrices
 ///
 
+TEST ///
+-- of rawDiscreteLog
+kk = ZZ/32003
+L = for i from 1 to 32002 list rawDiscreteLog raw (i_kk);
+a = 2_kk;
+assert(1 == rawDiscreteLog (raw a))
+L2 = for i from 0 to 32001 list a^(L#i);
+L3 = toList (1..32002);
+assert(L2 == L3)
+
+///
 end
 
 restart
@@ -222,5 +254,37 @@ testMutableMatrices(ZZ/101)
 testMutableMatrices(ZZ/2)
 testMutableMatrices(GF 4)
 
+(67108819, 67108837, 67108859, 67108879, 67108913, 67108919, 67108933, 67108957, 67108961, 67108981)
 
+kk = ZZp 67108819
+testMutableMatrices kk
 
+kk = ZZp 67108981
+
+kk = ZZp 32003
+testMutableMatrices kk
+
+kk = ZZp 1049599
+kk = ZZp 1073742851
+
+-- Question: how do we get 
+--kk = GF (1073742851, 1, Strategy=>"Givaro")
+--testMutableMatrices kk
+
+--kk = GF (1049599, 1, Strategy=>"CompleteGivaro")
+--testMutableMatrices kk
+
+kk = GF(2,4,Strategy=>"New")
+testMutableMatrices kk -- fails, since rank is not yet defined for this type of ring
+
+kk = GF(2,4,Strategy=>"Givaro")
+testMutableMatrices kk
+
+kk = GF(2,4,Strategy=>"CompleteGivaro")
+testMutableMatrices kk
+
+kk = GF(2,12,Strategy=>"New")
+testMutableMatrices kk
+
+kk = GF(5,12,Strategy=>"New")
+testMutableMatrices kk
