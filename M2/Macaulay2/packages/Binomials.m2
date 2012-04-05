@@ -24,14 +24,26 @@
 newPackage(
 	"Binomials",
 	Version => "1.0",
-	Date => "Februar 2012",
+	Date => "February, 2012",
 	Authors => {{
 		  Name => "Thomas Kahle",
 		  Email => "thomas-kahle@gmx.de",
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "Specialized routines for binomial ideals",
 	Configuration => { },
-	Reload=>true
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Decompositions of binomial ideals",
+	     "acceptance date" => "2012-02-06",
+	     "published article URI" => "http://j-sag.org/Volume4/jsag-1-2012.pdf",
+	     "published code URI" => "http://j-sag.org/Volume4/Binomials.m2",
+	     "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Binomials.m2",
+	     "release at publication" => 14467,
+	     "version at publication" => "1.0",
+	     "volume number" => "4",
+	     "volume URI" => "http://j-sag.org/Volume4/"
+	     }
     	)
    
 export {
