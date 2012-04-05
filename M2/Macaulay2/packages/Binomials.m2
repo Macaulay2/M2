@@ -1964,3 +1964,28 @@ I = ideal (x^2, y^2, x*y, x*(z^3-1), y*(z^2-1))
 bud = BUD (I, Verbose=>false);
 assert(intersect bud == I);
 ///
+
+end
+------------------------------------------------------------
+restart
+uninstallPackage "Binomials"
+installPackage "Binomials"
+check "Binomials"
+
+restart
+needsPackage "Binomials";
+S = QQ[x,y];
+b = makeBinomial (S, [2,-3], 5)
+isBinomial ideal b
+I = ideal(x^2-x*y, x*y-y^2);
+isCellular I
+binomialIsPrimary I
+binomialRadical I
+binomialPrimaryDecomposition I
+
+L = binomialPrimaryDecomposition ideal(x^3-1)
+L#0
+
+P = binomialPrimaryDecomposition ideal (x^10000 * (y-1), x^10001)
+radical P#0
+P#1
