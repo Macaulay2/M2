@@ -492,7 +492,8 @@ rank A
 ///
 
 TEST ///
-    kk = ZZ/101
+    kk = ZZp 101;
+    --kk = ZZ/101
     A = random(kk^2, kk^4)
     B = random(kk^5, kk^2)
     M = mutableMatrix(B*A)
@@ -553,7 +554,7 @@ X = solveLinear(A,B)
 TEST ///
 kk = ZZ/101
 N = 10
-
+  kk = ZZp 101
 time A = mutableMatrix(kk, N, N, Dense=>true);
 time fillMatrix A;
 time B = invert A;

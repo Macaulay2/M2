@@ -62,7 +62,8 @@ debug64-givaro : always
 	mkdir -p debug64-givaro
 	cd debug64-givaro; ../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
+		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
+		CPPFLAGS="-DENGINE_DEBUG" \
 		--build=x86_64-apple-darwin \
 		--enable-fflas-ffpack \
 		--enable-givaro \

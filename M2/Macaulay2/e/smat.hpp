@@ -17,6 +17,8 @@ class SMat : public our_new_delete
 public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
+  typedef elem ElementType; // same as elem.  Will possibly remove 'elem' later.
+
   //typedef typename CoeffRing::ring_type RingType;
 
 private:
@@ -219,13 +221,12 @@ public:
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
   */
-  void addMultipleTo(SMat<ACoeffRing> &C,
-                     const SMat<ACoeffRing> &A,
+  void addMultipleTo(const SMat<ACoeffRing> &A,
                      const SMat<ACoeffRing> &B,
                      bool transposeA,
                      bool transposeB,
-                     ring_elem a,
-                     ring_elem b) const;
+                     ElementType& a,
+                     ElementType& b);
 
 private:
   const Ring *R; // To interface to the outside world

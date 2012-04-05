@@ -976,14 +976,12 @@ size_t SMat<CoeffRing>::rank() const
 template<typename CoeffRing>
 void SMat<CoeffRing>::determinant(elem &result) const
 {
-  //TODO:MES: write these determinant functions!!
   ERROR("not implemented for this ring yet");
 }
 
 template<typename CoeffRing>
 bool SMat<CoeffRing>::invert(SMat<CoeffRing> &inverse) const
 {
-  //TODO:MES: write these determinant functions!!
   ERROR("not implemented for this ring yet");
   return false;
 }
@@ -991,7 +989,6 @@ bool SMat<CoeffRing>::invert(SMat<CoeffRing> &inverse) const
 template<typename CoeffRing>
 M2_arrayintOrNull SMat<CoeffRing>::rankProfile(bool row_profile) const
 {
-  //TODO:MES: write these determinant functions!!
   ERROR("not implemented for this ring yet");
   return 0;
 }
@@ -999,28 +996,24 @@ M2_arrayintOrNull SMat<CoeffRing>::rankProfile(bool row_profile) const
 template<typename CoeffRing>
 void SMat<CoeffRing>::nullSpace(SMat<CoeffRing> &nullspace, bool right_side) const
 {
-  //TODO:MES: write these determinant functions!!
   ERROR("not implemented for this ring yet");
 }
 
 template<typename CoeffRing>
 bool SMat<CoeffRing>::solveLinear(SMat<CoeffRing> &X, const SMat<CoeffRing> &B, bool right_side) const
 {
-  //TODO:MES: write these determinant functions!!
   ERROR("not implemented for this ring yet");
   return false;
 }
 
 template<typename CoeffRing>
-void SMat<CoeffRing>::addMultipleTo(SMat<CoeffRing> &C,
-                                    const SMat<CoeffRing> &A,
+void SMat<CoeffRing>::addMultipleTo(const SMat<CoeffRing> &A,
                                     const SMat<CoeffRing> &B,
                                     bool transposeA,
                                     bool transposeB,
-                                    ring_elem a,
-                                    ring_elem b) const
+                                    ElementType& a,
+                                    ElementType& b)
 {
-  //TODO:MES: write these determinant functions!!
   ERROR("not implemented for this ring yet");
 }
 

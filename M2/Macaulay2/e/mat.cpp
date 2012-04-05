@@ -717,10 +717,18 @@ MutableMatrix* MutableMat<T>::addMultipleTo(const MutableMatrix* A,
                                             bool transposeA,
                                             bool transposeB,
                                             const RingElement* a,
-                                            const RingElement* b) const
+                                            const RingElement* b)
 {
-  ERROR("not implemented for this ring type/ sparsity setting");
-  return 0;
+  const MutableMat<T>* A1 = A->cast_to_MutableMat<T>();
+  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+
+  typename T::ElementType fa, fb;
+  mat.get_CoeffRing()->from_ring_elem(fa, a->get_value());
+  mat.get_CoeffRing()->from_ring_elem(fb, b->get_value());
+
+  mat.addMultipleTo(A1->mat, B1->mat, transposeA, transposeB, fa, fb);
+  
+  return this;
 }
 
 

@@ -514,7 +514,7 @@ public:
                                              bool transposeA,
                                              bool transposeB,
                                              const RingElement* a,
-                                             const RingElement* b) const;
+                                             const RingElement* b);
 };
 
 #endif

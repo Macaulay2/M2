@@ -240,10 +240,6 @@ public:
   size_t rank(typename enable_if<is_givaro_or_ffpack<RingType>::value >::type* dummy = 0) const;
   size_t rank() const;
  
-  
-  template<class RingType>
-  void determinantGF_or_FFPACK(elem &result) const;
-
   void determinant(elem &result) const;
 
   // Set 'inverse' with the inverse of 'this'.  If the matrix is not square, or 
@@ -274,14 +270,14 @@ public:
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
   */
-  void addMultipleTo(DMat<ACoeffRing> &C,
-                     const DMat<ACoeffRing> &A,
+  void addMultipleTo(const DMat<ACoeffRing> &A,
                      const DMat<ACoeffRing> &B,
                      bool transposeA,
                      bool transposeB,
-                     ring_elem a,
-                     ring_elem b) const;
+                     ElementType& a,
+                     ElementType& b);
 
+  void copy_elems(long n_to_copy, elem *target, int target_stride, const elem *source, int stride) const;
 private:
   const Ring *R; // To interface to the outside world
   const CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
@@ -289,9 +285,6 @@ private:
   int ncols_;
   elem *array_; // array has length nrows*ncols
                 // columns stored one after another
-
-
-  void copy_elems(long n_to_copy, elem *target, int target_stride, const elem *source, int stride) const;
 };
 
 #endif
