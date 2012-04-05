@@ -39,19 +39,6 @@ DMat<CoeffRing>::DMat(const DMat<CoeffRing> &m, size_t nrows, size_t ncols)
   initialize(nrows,ncols,0);
 }
 
-#if 0
-//TODO: MES: remove if above works fine.
-template <> DMat<CoefficientRingR>::DMat(const Ring *R0, const CoefficientRingR *coeffR, int nrows, int ncols)
-  : R(R0),
-    coeffR(coeffR),
-    nrows_(nrows),
-    ncols_(ncols)
-{
-  coeffR = new CoefficientRingR(R0);
-  initialize(nrows,ncols,0);
-}
-#endif
-
 template<typename CoeffRing>
 void DMat<CoeffRing>::initialize(int nrows, int ncols, elem *array)
 {
@@ -1055,18 +1042,6 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
         return true;
     } 
 
-#if 0
-  const Ring *R = C->get_ring();
-  const Z_mod *kk = R->cast_to_Z_mod();
-  if (kk == 0)
-    {
-      ERROR("expected finite prime field");
-      return 0;
-    }
-//       connected to rawFFPackAddMultipleTo, MES
-
-#endif
-
     template<typename CoeffRing>
     void FFpackAddMultipleTo(DMat<CoeffRing>& C, 
                              const DMat<CoeffRing>& A,
@@ -1166,7 +1141,6 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
         FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);
     }
 
-///  problem: Givaro requires FFPACK anyway and vize versa.
 #ifdef HAVE_GIVARO
 
     //////////////////////////////////////////////////////
@@ -1187,40 +1161,52 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
         FFpackDeterminant<M2::ARingGF>(*this, result );
     }
     
+    template<>
+    bool DMat<M2::ARingGF>::invert(DMat<M2::ARingGF> &inverse) const
+    {
+        std::cout << "Calling  DMat<M2::ARingGF>::inverse" << std::endl;
+        return FFpackInvert<M2::ARingGF>(*this, inverse);
+    }
 
+    template<>
+    void DMat<M2::ARingGF>::nullSpace(DMat<M2::ARingGF> &nullspace, bool right_side) const
+    {
+        std::cout << "Calling  DMat<M2::ARingGF>::nullspace" << std::endl;
+        FFpackNullSpace<M2::ARingGF>(*this, nullspace, right_side);
+    }
 
-    
-    
-    
-    
-    
+    template<>
+    M2_arrayintOrNull DMat<M2::ARingGF>::rankProfile(bool row_profile) const
+    {
+        std::cout << "Calling  DMat<M2::ARingGF>::rankProfile" << std::endl;
+        return FFpackRankProfile(*this, row_profile);
+    }
+
+    template<>
+    bool DMat<M2::ARingGF>::solveLinear(DMat<M2::ARingGF> &X, 
+                                               const DMat<M2::ARingGF> &B, 
+                                               bool right_side) const
+    {
+        std::cout << "Calling  DMat<M2::ARingGF>::solveLinear" << std::endl;
+        return FFpackSolveLinear(*this, X, B, right_side);
+    }
+
+    template<>
+    void DMat<M2::ARingGF>::addMultipleTo(const DMat<M2::ARingGF> &A,
+                                                 const DMat<M2::ARingGF> &B,
+                                                 bool transposeA,
+                                                 bool transposeB,
+                                                 ElementType& a,
+                                                 ElementType& b)
+    {
+        std::cout << "Calling  DMat<M2::ARingGF>::addMultipleTo" << std::endl;
+        FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);
+    }
 
   #endif
 
 #endif
 
-
-
-/* Insert n_to_add rows directly BEFORE row i. */
-
-
-/* template <> void DMat<CoefficientRingCCC>::fill_from_mpack_array(mpreal *mparray)
-{
-  long len = n_rows() * n_cols();
-
-  elem *a = array_;
-  mpreal *p = mparray;
-  for (long i=0; i<len; i++)
-    {
-//      mpfr_set_d(a->re, *p++, GMP_RNDN);
-//      mpfr_set_d(a->im, *p++, GMP_RNDN);
-      a++;
-    }
-} */
-
-
-
-//#include "aring-gf.hpp"
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;
 template class DMat<M2::ARingZZpFFPACK>;

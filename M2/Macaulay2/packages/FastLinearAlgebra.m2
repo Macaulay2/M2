@@ -488,6 +488,14 @@ rank A
 kk = GF(2^4, Strategy=>"New")
 A = mutableMatrix random(kk^2, kk^2)
 rank A
+
+kk = GF(2^4, Strategy=>"Givaro")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4, Strategy=>"CompleteGivaro")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
  
 ///
 

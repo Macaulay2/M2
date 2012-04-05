@@ -79,6 +79,13 @@ namespace M2 {
       givaroRandomIterator( FieldType::randIter(givaroField )),
       mGeneratorExponent(1)
     {
+      std::vector<UTT> debugGenPoly = M2arrayToStdVec(charact_, generatorPoly);
+      std::cerr << "generatorPoly: ";
+      for (int i=0; i<debugGenPoly.size(); i++) {
+        std::cerr << debugGenPoly[i] << " ";
+      }
+      std::cerr << std::endl;
+
             /// @jakob: find out if the irreducible polynomial is checked in givaro.     
             UTT localdegree = M2arrayGetDegree(modPolynomial);
         

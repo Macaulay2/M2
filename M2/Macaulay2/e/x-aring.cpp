@@ -176,9 +176,14 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
   M2_arrayint modPoly = getPolynomialCoefficients(R, R->quotient_element(0));
   if (modPoly == 0)
     return 0;
+
+  // Now get the generator for the group of units (a 'primitive' element)
+  M2_arrayint primitiveElementPoly = getPolynomialCoefficients(R, a->get_value());
+  if (primitiveElementPoly == 0)
+    return 0;
     
   try {
-    M2::ARingGF *A = new M2::ARingGF(R->charac(), modPoly, *R);
+    M2::ARingGF *A = new M2::ARingGF(R->charac(), modPoly, primitiveElementPoly, *R);
     return M2::ConcreteRing<M2::ARingGF>::create(A);
   }
   catch (exc::engine_error e) {

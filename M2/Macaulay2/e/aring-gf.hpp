@@ -38,6 +38,11 @@ namespace M2 {
            const M2_arrayint & modPolynomial, 
            const PolynomialRing &originalR
            )  {}
+        ARingGF( int charac_,  
+           const M2_arrayint & modPolynomial, 
+           const M2_arrayint & primitiveElement, 
+           const PolynomialRing &originalR
+           )  {}
    };
 };
 
