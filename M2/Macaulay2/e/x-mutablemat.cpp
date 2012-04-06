@@ -961,7 +961,9 @@ MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
                                                     const RingElement* a,
                                                     const RingElement* b)
 {
-  return C->addMultipleTo(A,B,transposeA,transposeB,a,b);
+    std::cerr << "x-mutableMat : rawLinAlgAddMultipleTo" << std::endl;
+    C->addMultipleTo(A,B,transposeA,transposeB,a,b);
+    return C;
 }
 
 //////////////////////////////////

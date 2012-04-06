@@ -1292,7 +1292,7 @@ extern "C" {
      C = b*C + a * op(A)*op(B),
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
-  */
+  */ 
   MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
                                                       const MutableMatrix* A,
                                                       const MutableMatrix* B,

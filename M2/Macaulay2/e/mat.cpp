@@ -712,13 +712,15 @@ std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* 
 }
 
 template <typename T>
-MutableMatrix* MutableMat<T>::addMultipleTo(const MutableMatrix* A,
+void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
                                             const MutableMatrix* B,
                                             bool transposeA,
                                             bool transposeB,
                                             const RingElement* a,
                                             const RingElement* b)
 {
+    std::cerr << "somewhere addMultipleTo" << std::endl;
+
   const MutableMat<T>* A1 = A->cast_to_MutableMat<T>();
   const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
 
@@ -728,7 +730,7 @@ MutableMatrix* MutableMat<T>::addMultipleTo(const MutableMatrix* A,
 
   mat.addMultipleTo(A1->mat, B1->mat, transposeA, transposeB, fa, fb);
   
-  return this;
+  return ;
 }
 
 

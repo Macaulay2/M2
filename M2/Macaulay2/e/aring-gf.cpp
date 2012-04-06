@@ -250,6 +250,8 @@ M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum,
     std::cerr << "representationToM2Array:\n";
     M2_arrayint     polynomialCoeffs = M2_makearrayint(coeffNum);
     std::cerr << "coeffNum" << coeffNum << std::endl;
+    std::cerr << "charac" << charac << std::endl;
+    std::cerr << "representation" << representation << std::endl;
     long exp = 0;
     assert( representation !=0 );
     
@@ -309,7 +311,7 @@ M2_arrayint ARingGF::getModPolynomialCoeffs() const
     UTT             modPolynomialRepresentation = this->givaroField.irreducible();
     return modPolynomialRepresentationToM2Array( modPolynomialRepresentation );
 
-}
+} 
 
 M2_arrayint ARingGF::getGeneratorCoeffs() const
 {
@@ -319,6 +321,9 @@ M2_arrayint ARingGF::getGeneratorCoeffs() const
     ElementType genRep,packedGenPolynomial; ///todo: typ (gen) eigentlich UTT?
     givaroField.generator(genRep);
     packedGenPolynomial = givaroField.generator();
+
+    std::cerr << "packedGenPolynomial " << packedGenPolynomial << std::endl;
+    std::cerr << "genRep " << genRep << std::endl;
     //assert(gen==genRep);
     //UTT  generatorRepresentation;
     //generatorRepresentation = this->givaroField.convert(generatorRepresentation,gen);
@@ -328,9 +333,20 @@ M2_arrayint ARingGF::getGeneratorCoeffs() const
 
 ring_elem  ARingGF::getGenerator() const
 {
+   std::cerr << "  ARingGF::getGenerator()" << std::endl;
     ElementType packedGenPolynomial = givaroField.generator();  
+    ElementType genRep;
+    givaroField.generator(genRep);
+
+     std::cerr << "packedGenPolynomial " << packedGenPolynomial << std::endl;
+    std::cerr << "genRep " << genRep << std::endl;
+     elementRepresentationToM2Array( packedGenPolynomial ) ;
+    std::cerr << "end elementRepresentationToM2Array " << genRep << std::endl;
+
     ring_elem result;
-    to_ring_elem(result,packedGenPolynomial);
+    //to_ring_elem(result,packedGenPolynomial);
+    to_ring_elem(result, genRep);
+    //std::cerr << " result " << *result << std::endl;
     return result;
 }
 
@@ -559,8 +575,9 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
 
     result = givaroField.zero;
     int exp[1];
-    ElementType gen;
-    givaroField.generator(gen);
+    ElementType genRep;
+    givaroField.generator(genRep);
+    std::cerr << "genRep " << genRep << std::endl;
     for (Nterm *t = f; t != NULL; t = t->next)
       {
         elem a, b;
@@ -569,7 +586,7 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
         mOriginalRing->getMonoid()->to_expvector(t->monom, exp);
         // exp[0] is the variable we want.  Notice that since the ring is a quotient,
         // this degree is < n (where Q_ = P^n).
-        power(b, gen, exp[0]);
+        power(b, genRep, exp[0]);
         mult(a, a, b);
         add(result, result, a);
       }

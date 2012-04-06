@@ -500,7 +500,7 @@ public:
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false
   // in this case.
-  std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
+  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
                                               bool right_side) const;
 
   /** C=this,A,B should be mutable matrices over the same ring, and a,b
@@ -509,7 +509,7 @@ public:
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
   */
-  MutableMatrix* /* or null */ addMultipleTo(const MutableMatrix* A,
+  virtual void addMultipleTo(const MutableMatrix* A,
                                              const MutableMatrix* B,
                                              bool transposeA,
                                              bool transposeB,

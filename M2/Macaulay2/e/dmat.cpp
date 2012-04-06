@@ -16,7 +16,7 @@
 
 #include "aring-zzp.hpp"
 #include "aring-ffpack.hpp"
-
+ #include <typeinfo>
 
 
 template<typename CoeffRing>
@@ -839,10 +839,12 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
                                     const DMat<CoeffRing> &B,
                                     bool transposeA,
                                     bool transposeB,
-                                    ElementType& a,
-                                    ElementType& b)
+                                    const ElementType& a,
+                                    const ElementType& b)
 {
-  ERROR("not implemented for this ring yet");
+  std::cerr << "DMat  addMultipleTo" << std::endl;
+    std::cerr << "typeid: " << typeid(CoeffRing).name () << std::endl;
+  ERROR("addMultipleTo not implemented for this ring yet");
 }
 
 #ifdef HAVE_FFLAS_FFPACK
@@ -1056,29 +1058,41 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
        where op(A) = A or transpose(A), depending on transposeA
        where op(B) = B or transpose(B), depending on transposeB
     */
-    {
+    { 
+        std::cout << " FFpackAddMultipleTo " << std::endl;
         // set tA, tB
-        FFLAS::FFLAS_TRANSPOSE tA = (!transposeA ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
-        FFLAS::FFLAS_TRANSPOSE tB = (!transposeB ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
+        FFLAS::FFLAS_TRANSPOSE tA = (transposeA ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
+        FFLAS::FFLAS_TRANSPOSE tB = (transposeB ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
 
         // determine m,n,k
-        size_t m = (transposeA ? A.n_cols() : A.n_rows());
-        size_t n = (transposeB ? B.n_rows() : B.n_cols());
+        //size_t m = (transposeA ? A.n_cols() : A.n_rows());
+        //size_t n = (transposeB ? B.n_rows() : B.n_cols());
+        //size_t k = (transposeA ? A.n_rows() : A.n_cols());
+        //size_t k2 = (transposeB ? B.n_cols() : B.n_rows());
+
+        size_t m = (transposeB ? B.n_rows() : B.n_cols());
+        size_t n = (transposeA ? A.n_cols() : A.n_rows());
+        
         size_t k = (transposeA ? A.n_rows() : A.n_cols());
         size_t k2 = (transposeB ? B.n_cols() : B.n_rows());
+
+        std::cout <<"k  :" << k << std::endl;
+        std::cout <<"k2 :" << k2 << std::endl;
         assert(k == k2); // The user of this function must insure that sizes are correct.
+        if (k!=k2)
+            ERROR("matrices are not composable");
 
         FFLAS::fgemm(C.ring().field(),
                      tA, tB,
                      m,n,k,
-                     b,
-                     B.get_array(),
-                     B.n_cols(),
-                     A.get_array(),
-                     A.n_cols(),
                      a,
+                     B.get_array(),
+                     B.n_rows(),
+                     A.get_array(),
+                     A.n_rows(),
+                     b,
                      C.get_array(),
-                     C.n_cols()
+                     C.n_rows()
                      );
     }
 
@@ -1134,10 +1148,10 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
                                                  const DMat<M2::ARingZZpFFPACK> &B,
                                                  bool transposeA,
                                                  bool transposeB,
-                                                 ElementType& a,
-                                                 ElementType& b)
+                                                 const ElementType& a,
+                                                 const ElementType& b)
     {
-        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::addMultipleTo" << std::endl;
+        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::addMultipleTo *" << std::endl;
         FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);
     }
 
@@ -1196,8 +1210,8 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
                                                  const DMat<M2::ARingGF> &B,
                                                  bool transposeA,
                                                  bool transposeB,
-                                                 ElementType& a,
-                                                 ElementType& b)
+                                                 const ElementType& a,
+                                                 const ElementType& b)
     {
         std::cout << "Calling  DMat<M2::ARingGF>::addMultipleTo" << std::endl;
         FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);

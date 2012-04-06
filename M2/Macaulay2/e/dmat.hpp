@@ -269,13 +269,13 @@ public:
      C = b*C + a * op(A)*op(B),
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
-  */
+  */  
   void addMultipleTo(const DMat<ACoeffRing> &A,
                      const DMat<ACoeffRing> &B,
                      bool transposeA,
                      bool transposeB,
-                     ElementType& a,
-                     ElementType& b);
+                     const ElementType& a,
+                     const ElementType& b);
 
   void copy_elems(long n_to_copy, elem *target, int target_stride, const elem *source, int stride) const;
 private:
