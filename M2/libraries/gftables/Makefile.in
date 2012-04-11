@@ -1,6 +1,7 @@
 # this pseudo-library fetches the precomputed finite field addition tables used by factory and puts them in the right place
 
-URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
+# URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 VERSION=1.0
 TARFILE = factory-gftables.tar.gz
 TARDIR = gftables

@@ -14,7 +14,8 @@ VPATH = @srcdir@
 
 VERSION = 2.5.1
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
+# URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 
 # leave out these tests:
 #   test-ellglobalred - requires data files that we don't download
