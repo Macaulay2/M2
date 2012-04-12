@@ -352,10 +352,11 @@ Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G)
 
 Matrix *Matrix::identity(const FreeModule *F)
 {
-  const ring_elem one = F->get_ring()->one();
+  const Ring *R = F->get_ring();
+  const ring_elem one = R->from_int(1);
   MatrixConstructor mat(F,F,0);
   for (int i=0; i<F->rank(); i++)
-    mat.set_entry(i,i,one);
+    mat.set_entry(i,i,R->copy(one));
   return mat.to_matrix();
 }
 

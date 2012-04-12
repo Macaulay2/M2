@@ -10,9 +10,12 @@ newPackage(
         DebuggingMode => true
         )
 
-export { ringOps, testMutableMatrices }
+export { ringOps, 
+     testMutableMatrices
+     }
 
--- Code here
+--load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
+load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
 
 beginDocumentation()
 
@@ -215,7 +218,7 @@ testrank = (R) -> (
      m1 := random(R^5, R^11);
      m2 := random(R^11, R^6);
      m := mutableMatrix(m1 * m2);
-     assert(5 == fastRank m) -- this can fail every now and then.
+     assert(5 == rank m); -- this can fail every now and then.
      )
 
 testMutableMatrices = (R) -> (
@@ -223,7 +226,7 @@ testMutableMatrices = (R) -> (
      testops2 R; 
      testops3 R; 
      testops4 R;
-     testrank R;
+     --testrank R;
      << "tests passed for " << describe R << endl;
      )
 
@@ -234,6 +237,7 @@ rings/testMutableMatrices
 
 TEST ///
 -- of rawDiscreteLog
+debug Core
 kk = ZZ/32003
 L = for i from 1 to 32002 list rawDiscreteLog raw (i_kk);
 a = 2_kk;
