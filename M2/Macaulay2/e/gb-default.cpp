@@ -775,10 +775,25 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
           globalZZ->syzygy(f1->coeff, f2->coeff, u, v);
           coeffs.push_back(u.get_mpz());
           coeffs2.push_back(v.get_mpz());
+
+          if (mpz_cmpabs_ui(u.get_mpz(),1) && mpz_cmpabs_ui(v.get_mpz(),1))
+            {
+              spair *p2 = spair_make_gcd_ZZ(a->x.pair.i, a->x.pair.j);
+              if (M2_gbTrace >= 4)
+                {
+                  buffer o;
+                  spair_text_out(o, p2);
+                  emit_line(o.str());
+                }
+              spair_set_insert(p2);
+            }
         }
     }
 
-  MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
+  if (_strategy == 0)
+    MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
+  else
+    MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions, true);
 
   for (VECTOR(int)::iterator i = positions.begin(); i != positions.end(); i++)
     {
@@ -791,6 +806,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
           emit_line(o.str());
         }
       spair_set_insert(p);
+#if 0
       mpz_ptr u = coeffs[*i];
       mpz_ptr v = coeffs2[*i];
       if (p->type != SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
@@ -804,6 +820,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
             }
           spair_set_insert(p2);
         }
+#endif
     }
 }
 

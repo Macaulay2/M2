@@ -163,9 +163,8 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
 {
   MutableMatrix *result = MutableMatrix::zero_matrix(R,nrows,nrows,dense);
-  ring_elem one = R->one();
   for (int i=0; i<nrows; i++)
-    result->set_entry(i,i,one);
+    result->set_entry(i,i,R->from_int(1));
   return result;
 }
 

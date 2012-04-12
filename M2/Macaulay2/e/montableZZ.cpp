@@ -500,10 +500,11 @@ void MonomialTableZZ::show_weak(FILE *fil, mpz_ptr coeff, exponents exp, int com
 }
 
 void MonomialTableZZ::find_weak_generators(int nvars,
-                                      const VECTOR(mpz_ptr) &coeffs,
-                                      const VECTOR(exponents) &exps,
-                                      const VECTOR(int) &comps,
-                                      VECTOR(int) &result_positions)
+                                           const VECTOR(mpz_ptr) &coeffs,
+                                           const VECTOR(exponents) &exps,
+                                           const VECTOR(int) &comps,
+                                           VECTOR(int) &result_positions,
+                                           bool use_stable_sort)
 {
   // Find a set of elements which generate all of them, as a submodule.
   // The indices for these are placed into result_positions.
@@ -540,7 +541,10 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 
   /* The following sorts in ascending lex order, considering the component, exp vector
      and finally the coefficient */
-  std::sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
+  if (use_stable_sort)
+    std::stable_sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
+  else
+    std::sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
 #if 0
   // debugging
