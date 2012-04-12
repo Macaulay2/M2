@@ -21,7 +21,7 @@
 #include "dmat-LU.hpp"
 
 template<typename MatT> 
-MatT * MutableMatrix::coerce()
+inline MatT * MutableMatrix::coerce()
 {
   MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
   if (P == 0) return 0;
@@ -29,7 +29,7 @@ MatT * MutableMatrix::coerce()
 }
 
 template<typename MatT> 
-const MatT * MutableMatrix::coerce() const
+inline const MatT * MutableMatrix::coerce() const
 {
   const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
   if (P == 0) return 0;

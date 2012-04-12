@@ -1135,6 +1135,7 @@ N = 4
 --M= matrix {{-a^3+a^2-a-1, -a^3-a^2-a-1, a-1, a-1}, {-a^2-1, a^3-a^2-a, a^3+a^2, -a^3-a^2+a+1}, {a^3-a^2+1, -a^2-a-1, -a^3-a^2+a, a^3-a^2-a+1}, {0, a^2-a-1, -a^2-1, -a^3+a-1}}
 M=matrix {{a^3+a^2, -a^3+a^2+a-1, a^3-a^2+a, -a^2-a}, {a^3-a-1, a^3-a^2-a-1, -a^3-a^2-a, a^3-a^2-1}, {a^2+a-1, a^2+1, -a^3-a^2, a^2+a+1}, {a^3+a^2-a-1, a^3+a^2-1, -a^2-a, a^3-a^2+a}}
 time det M
+M_(0,0)
 m = mutableMatrix M;
 time determinant m  -- WRONG
 rank m -- WRONG
@@ -1142,10 +1143,42 @@ rank M
 time minv = invert m; -- NOT IMPLEMENTED for GF
 (matrix minv) * M
 
+for i from 0 to 3 list (
+  Mij := submatrix(M, drop(splice{0..3}, {i,i}), {1..3});
+  det1 := det Mij;
+  det2 := det mutableMatrix Mij;
+  det1-det2)
+
+result1 = 0_(ring M)
+result2 = 0_(ring M)
+for i from 0 to 3 list (
+  Mij := submatrix(M, drop(splice{0..3}, {i,i}), {1..3});
+  result1 = result1 + (-1)^i * M_(i,0) * det Mij;
+  result2 = result2 + (-1)^i * M_(i,0) * det mutableMatrix Mij;
+  )
+result1
+result2
+det M
+det mutableMatrix M -- wrong
+
+det M00
+det mutableMatrix M00
+
 M1 = M_{0} | M_{1} | M_{0} + 2*M_{1} | M_{2} | M_{2} | M_{3}
 rowRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
 columnRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
 
+///
+
+/// -- looking into LUdivine
+loadPackage "FastLinearAlgebra"
+R = ZZp 101
+M = random(R^3, R^5)
+m = mutableMatrix M
+L = mutableMatrix(R,0,0)
+U = mutableMatrix(R,0,0)
+debug Core
+rawLU(raw m, raw L, raw U)
 ///
 -- TODO:
 --   top level M2 package (this file): calls the rawFFPack routines
@@ -1374,6 +1407,30 @@ columnRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
 --         possible errors: not invertible.
 --                          not implemented for this ring/matrix type
 --                          not a square matrix
+-- 12 April 2012
+--     todo:
+--       fix givaro matrix bug: it seems that det, rank are incorrect
+--         check with authors?
+--       make a complete test suite for these functions, for ZZ/p and GF
+--       attach ffpack LU function
+--       attach minimal and char polynomials
+--       Mike: write these lin alg functions for other rings: e.g. RR, CC, ZZ, QQ.
+--       linbox: ZZ, QQ matrix ops?
+--       look at libraries used by sage.  Look at flint.
+--       connect all of these functions to actual M2 code:
+--         e.g.: det M should call these routines,
+--           same with:
+--               det M
+--               minors(r,M)
+--               M^-1, or inverse M
+--               M * N
+--               syz M, ker M -- get null space
+--               M // N -- should call solve
+--               M % N -- reduces each column of M by column space of N
+--       after this, remove code, including: FFLU, gauss.
+--       implement these functions for sparse large matrices
+--       matrix: implement using MutableMatrix (or DMat<>, SMat<>).
+
 ----------------------------------------------
 -- not discussed yet:
 --    a. bugs in ffpack ZZ/p: basis(2,R) fails (R = polyring over ZZ/p).  Fix this?  MIKE 

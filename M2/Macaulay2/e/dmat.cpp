@@ -1221,6 +1221,62 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
 
 #endif
 
+#include "mutablemat.hpp"
+
+template<typename MatT> 
+inline MatT * MutableMatrix::coerce()
+{
+  MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
+  if (P == 0) return 0;
+  return P->get_Mat();
+}
+
+template<typename MatT> 
+inline const MatT * MutableMatrix::coerce() const
+{
+  const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
+  if (P == 0) return 0;
+  return P->get_Mat();
+}
+
+M2_arrayintOrNull rawLQUP(MutableMatrix *A, M2_bool transpose)
+{
+#ifdef HAVE_FFLAS_FFPACK
+  // Suppose A is m x n
+  // P is n element permutation on columns
+  // Qt is m element permutation on rows (inverse permutation)
+  DMat<M2::ARingZZpFFPACK> *mat = A->coerce< DMat<M2::ARingZZpFFPACK> >();
+  if (mat == 0) 
+    {
+      ERROR("LUDivine not defined for this ring");
+      return 0;
+    }
+  size_t nelems = mat->n_cols();
+  if (mat->n_rows() > mat->n_cols()) nelems = mat->n_rows();
+  size_t* P = newarray_atomic(size_t, nelems ); // initialize this (column perm
+  size_t* Qt = newarray_atomic(size_t, nelems); // initialize this
+  size_t rk = LUdivine(mat->ring().field(),
+                       FFLAS::FflasNonUnit,
+                       (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
+                       mat->n_cols(),
+                       mat->n_rows(),
+                       mat->get_array(),
+                       mat->n_rows(),
+                       P, 
+                       Qt);
+  std::cout << "P = [";
+  for (size_t i=0; i<nelems; i++)
+    std::cout << P[i] << " ";
+  std::cout << "]" << std::endl;
+
+  std::cout << "Qt = [";
+  for (size_t i=0; i<nelems; i++)
+    std::cout << Qt[i] << " ";
+  std::cout << "]" << std::endl;
+#endif
+  return 0;
+}
+
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;
 template class DMat<M2::ARingZZpFFPACK>;

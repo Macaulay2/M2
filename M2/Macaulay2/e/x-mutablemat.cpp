@@ -713,6 +713,16 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
 //typedef DMat<CoefficientRingRRR> LMatrixRR;
 //typedef DMat<CoefficientRingCCC> LMatrixCC;
 
+extern M2_arrayintOrNull rawLQUP(MutableMatrix *A, M2_bool transpose);
+
+M2_arrayintOrNull rawLUdivine(const MutableMatrix *A,
+                         MutableMatrix *L,
+                         MutableMatrix *U)
+{
+  MutableMatrix *A1 = const_cast<MutableMatrix *>(A);
+  return rawLQUP(A1, false);
+}
+
 M2_arrayintOrNull rawLU(const MutableMatrix *A,
                          MutableMatrix *L,
                          MutableMatrix *U)
@@ -965,6 +975,8 @@ MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
     C->addMultipleTo(A,B,transposeA,transposeB,a,b);
     return C;
 }
+
+
 
 //////////////////////////////////
 // Older code we used to figure things out.  Will be removed
