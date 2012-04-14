@@ -3,6 +3,7 @@ include ../../../include/config.Makefile
 include @srcdir@/Makefile.files
 include ../../e/Makefile.common
 CPPFLAGS := -I. -I../../e-includes -I@srcdir@/../../e $(CPPFLAGS) -I../../d -I@srcdir@/../../c
+DEPENDS = yes
 ifeq "$(DEPENDS)" "yes"
 include $(BIBASIS_DEPFILES)
 endif
