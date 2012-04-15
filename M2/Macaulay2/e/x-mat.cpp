@@ -4,6 +4,7 @@
 #include "matrix.hpp"
 #include "matrix-con.hpp"
 #include "LLL.hpp"
+#include "fractionfreeLU.hpp"
 #include "text-io.hpp"
 #include "exceptions.hpp"
 #include "NAG.hpp"

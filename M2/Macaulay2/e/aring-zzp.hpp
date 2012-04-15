@@ -8,13 +8,12 @@
 #include "ringelem.hpp"
 
 class Z_mod;
-class RingMap;
 
 namespace M2 {
 /**
 \ingroup rings
 */
-  class ARingZZp : public RingInterface
+  class ARingZZp : RingInterface
   {
     // Integers mod p, implemented as
     // exponents of a primitive element a
@@ -30,16 +29,28 @@ namespace M2 {
     static const RingID ringID = ring_ZZp;
     typedef Z_mod ring_type;
     typedef int ElementType;
+
     typedef int elem;
 
-    ARingZZp(size_t prime);
+    void initialize_tables();
 
+    ARingZZp(int p0);
+
+  private:
+    unsigned long charac;
+    int p; // charac == p ??
+    int p1; // p-1
+    int minus_one;
+    int prim_root; // element we will use for our primitive root
+    int *log_table; // 0..p-1
+    int *exp_table; // 0..p-1
+  public:
     // ring informational
-    size_t characteristic() const { return charac; }
+    unsigned long characteristic() const { return p; }
 
     static int findPrimitiveRoot(int P);
 
-    void text_out(buffer &o) const;
+    void text_out(buffer &o) const { o << "AZZ/" << p; }
 
     /////////////////////////////////////////////////////////
     // Routines to help in switch from coeffrings to aring //
@@ -185,7 +196,6 @@ namespace M2 {
 
     void divide(elem &result, elem a, elem b) const
     {
-      ASSERT(b != 0);
       if (a != 0 && b != 0)
         {
           int c = a-b;
@@ -241,19 +251,6 @@ namespace M2 {
     {
       result = rawRandomInt((int32_t)p);
     }
-
-    void eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const;
-  private:
-    void initialize_tables();
-    
-    size_t charac;
-    int p; // charac == p ??
-    int p1; // p-1
-    int minus_one;
-    int prim_root; // element we will use for our primitive root
-    int *log_table; // 0..p-1
-    int *exp_table; // 0..p-1
-    
   };
 
 };

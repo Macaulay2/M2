@@ -1,6 +1,8 @@
 // Copyright 2005 Michael E. Stillman
 
 #include "f4-spairs.hpp"
+#include "monsort.hpp"
+
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
   : M(M0),
@@ -249,6 +251,8 @@ void insert_pre_spair(VECTOR(VECTOR(pre_spair *) ) &bins, pre_spair *p)
   bins[d].push_back(p);
 }
 
+template class QuickSorter<PreSPairSorter>;
+
 long PreSPairSorter::ncmps = 0;
 
 int F4SPairSet::construct_pairs(bool remove_disjoints)
@@ -284,9 +288,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
     {
       if (bins[i].size() == 0) continue;
       // First sort the monomials of this degree
-
-      //TODO: MES remove all uses of QuickSorter here.
-      //      QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0], bins[i].size());
+      QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0], bins[i].size());
 
       std::sort(bins[i].begin(), bins[i].end(), C);
 

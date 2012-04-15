@@ -1,8 +1,6 @@
 // Copyright 2011 Michael E. Stillman
 
 #include "aring-zzp.hpp"
-#include "aring-promoter.hpp"
-#include "ringmap.hpp"
 
 namespace M2 {
   int ARingZZp::findPrimitiveRoot(int P)
@@ -51,7 +49,7 @@ namespace M2 {
 #endif
   }
 
-  ARingZZp::ARingZZp(size_t p0)
+  ARingZZp::ARingZZp(int p0)
     : p(p0),
       p1(p-1)
   {
@@ -63,11 +61,6 @@ namespace M2 {
     initialize_tables();
   }
 
-  void ARingZZp::text_out(buffer &o) const 
-  { 
-    o << "AZZ/" << characteristic(); 
-  }
-
   void ARingZZp::elem_text_out(buffer &o,
                                ElementType a,
                                bool p_one,
@@ -75,6 +68,7 @@ namespace M2 {
                                bool p_parens) const
   {
     int n = exp_table[a];
+    o << "me.";
     if (n < 0) 
       {
         o << '-';
@@ -83,13 +77,6 @@ namespace M2 {
     else if (p_plus)
       o << '+';
     if (p_one || n != 1) o << n;
-  }
-
-  void ARingZZp::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
-  {
-    // translate f to 
-    int a = exp_table[f];
-    result = map->get_ring()->from_int(a);
   }
 
 };

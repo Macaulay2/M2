@@ -7,7 +7,6 @@
 #include "GF.hpp"
 
 #include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
 #include "mat.hpp"
 #include "fractionfreeLU.hpp"
 #include "LLL.hpp"
@@ -15,6 +14,7 @@
 #include "exceptions.hpp"
 
 #include "matrix.hpp"
+#include "ring-test.hpp"
 
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
                                                  int n,
@@ -427,11 +427,6 @@ M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M,
   return M->is_equal(N);
 }
 
-M2_bool rawMutableMatrixIsDense(const MutableMatrix *M)
-{
-  return M->is_dense();
-}
-
 MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
 {
   return M->copy(prefer_dense);
@@ -713,16 +708,6 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
 //typedef DMat<CoefficientRingRRR> LMatrixRR;
 //typedef DMat<CoefficientRingCCC> LMatrixCC;
 
-extern M2_arrayintOrNull rawLQUP(MutableMatrix *A, M2_bool transpose);
-
-M2_arrayintOrNull rawLUdivine(const MutableMatrix *A,
-                         MutableMatrix *L,
-                         MutableMatrix *U)
-{
-  MutableMatrix *A1 = const_cast<MutableMatrix *>(A);
-  return rawLQUP(A1, false);
-}
-
 M2_arrayintOrNull rawLU(const MutableMatrix *A,
                          MutableMatrix *L,
                          MutableMatrix *U)
@@ -904,83 +889,6 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 #endif
 }
 
-//////////////////////////////////
-// Fast linear algebra routines //
-//////////////////////////////////
-
-// how many of each need to be written:
-// DONE FastLinearAlgebra
-// DONE interface.dd, actually done.  But should rename these functions
-//   rawFFPackRank
-//   rawFFPackDeterminant
-//   rawFFPackInvert
-//   rawFFPackRankProfile
-//   rawFFPackNullSpace
-//   rawFFPackSolve
-//   rawFFPackAddMultipleTo
-// DONE engine.h
-// DONE x-mutablemat.cpp
-// DONE MutableMatrix (not addMultipleTo)
-// MutableMat<X> -- has actual code to call the routines in DMat, SMat
-// DMat<X>  -- one for each X, and one that is the "default" (default: DONE)
-// SMat<X> -- one for each X and one that is the "default" (default: DONE)
-
-size_t rawLinAlgRank(MutableMatrix* M)
-{
-  return M->rank();
-}
-
-const RingElement* rawLinAlgDeterminant(MutableMatrix* A)
-{
-  return A->determinant();
-}
-
-MutableMatrix* rawLinAlgInvert(MutableMatrix* A)
-{
-  return A->invert();
-}
-
-M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile)
-{
-  return A->rankProfile(row_profile);
-}
-
-MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side)
-{
-  return A->nullSpace(right_side);
-}
-
-MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
-                         const MutableMatrix* B,
-                         M2_bool right_side)
-{
-  std::cerr << "calling rawLinAlgSolve" << std::endl;
-  //TODO: return type doesn't distinguish between error, and no solution.
-  std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
-  if (result.first)
-    return result.second;
-  ERROR("got a zero -- why??");
-  return 0;
-}
-
-MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
-                                                    const MutableMatrix* A,
-                                                    const MutableMatrix* B,
-                                                    M2_bool transposeA,
-                                                    M2_bool transposeB,
-                                                    const RingElement* a,
-                                                    const RingElement* b)
-{
-    std::cerr << "x-mutableMat : rawLinAlgAddMultipleTo" << std::endl;
-    C->addMultipleTo(A,B,transposeA,transposeB,a,b);
-    return C;
-}
-
-
-
-//////////////////////////////////
-// Older code we used to figure things out.  Will be removed
-//////////////////////////////////
 #if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
 //#if 0
 #include "fflas-ffpack/field/modular-positive.h"
@@ -994,6 +902,9 @@ MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
 
 void tryout_givaro()
 {
+
+  Givaro::GFqDom<long>::Residu_t prime,exponent;
+
   std::vector<Givaro::GFqDom<long>::Residu_t> irreducible_11_2;
   irreducible_11_2.resize(3,1);
   irreducible_11_2[0]=6; // 6
@@ -1002,17 +913,19 @@ void tryout_givaro()
 
   Givaro::GFqDom<long> gfqField( 11, 2, irreducible_11_2);
 
+
   Givaro::GFqDom<long>::Residu_t p = 3;
   Givaro::GFqDom<long>::Residu_t e = 4;
   Givaro::GFqDom<long> GFq(3, 4);
   Givaro::GFqDom<long> PrimeField(p,1);
   std::cout << "Working in GF(" << p << '^' << e << ')' << std::endl;
   std::cout << "Elements are polynomials in X modulo " << p << std::endl;
+
 }
 
 
 template < typename FieldType >
-typename FieldType::Element *GFtoFFPackMatrix(const GF *kk, const FieldType &F, const MutableMatrix *M)
+typename FieldType::Element *GFtoFFPackMatrix(const GF *kk, const FieldType &F, MutableMatrix *M)
 {
   typedef typename FieldType::Element ElementType;
 
@@ -1030,7 +943,7 @@ typename FieldType::Element *GFtoFFPackMatrix(const GF *kk, const FieldType &F, 
 }
 
 template < typename FieldType >
-typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F,const MutableMatrix *M)
+typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F, MutableMatrix *M)
 {
   typedef typename FieldType::Element ElementType;
 
@@ -1163,21 +1076,14 @@ RingElement *rawFFPackDeterminant(MutableMatrix *M)
 
 size_t FFPackRankZZp(const Z_mod *kk, MutableMatrix *M)
 {
-    std::cout << "Calling FFPackRankZZp" << std::endl;
-
   typedef FFPACK::ModularBalanced<double> FieldType;
   typedef FieldType::Element ElementType;
-   
-    std::cout << "kk->charac() : " << kk->charac() << std::endl;
-  FieldType F( kk->charac() );
+  FieldType F(kk->charac());
 
   ElementType *N = toFFPackMatrix(kk, F, M);
 
   size_t nr = M->n_rows();
   size_t nc = M->n_cols();
-  std::cout << "M->n_rows() : " << M->n_rows() << std::endl;
-  std::cout << "M->n_cols() : " << M->n_cols() << std::endl;
-
   size_t result = FFPACK::Rank(F, nr, nc, N, nc);
   deletearray(N);
   return result;
@@ -1199,11 +1105,8 @@ size_t FFPackRankGF(const GF *kk, MutableMatrix *M)
   return result;
 }
 
-
 size_t rawFFPackRank(MutableMatrix *M)
 {
-  std::cout << "Calling rawFFPackRank" << std::endl;
-  return rawLinAlgRank(M);
   const Ring *R = M->get_ring();
   const Z_mod *kk = R->cast_to_Z_mod();
   if (kk != 0) return FFPackRankZZp(kk, M);
@@ -1213,7 +1116,7 @@ size_t rawFFPackRank(MutableMatrix *M)
     else
       {
         ERROR("expected finite prime field");
-        return static_cast<size_t>(-1);
+        return -1;
       }
   }
 }
@@ -1350,8 +1253,8 @@ MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M)
 }
 
 MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
-                                                    const MutableMatrix *A,
-                                                    const MutableMatrix *B,
+                                                    MutableMatrix *A,
+                                                    MutableMatrix *B,
                                                     M2_bool transposeA,
                                                     M2_bool transposeB,
                                                     const RingElement *a,
@@ -1497,8 +1400,8 @@ MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M)
   return 0;
 }
 MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
-                                                    const MutableMatrix *A,
-                                                    const MutableMatrix *B,
+                                                    MutableMatrix *A,
+                                                    MutableMatrix *B,
                                                     M2_bool transposeA,
                                                     M2_bool transposeB,
                                                     const RingElement *a,

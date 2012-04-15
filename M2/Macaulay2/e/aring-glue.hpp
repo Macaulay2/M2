@@ -3,51 +3,35 @@
 #ifndef _ring_glue_hh_
 #define _ring_glue_hh_
 
+#include "ring.hpp"
 #include "aring.hpp"
+
 #include "ring.hpp"
 
-static const bool displayArithmeticCalls = false;
-
-#define COERCE_RING(RingType,R) dynamic_cast<const RingType *>(R)
-
 namespace M2 {
-  template<class RingType>
-  MutableMatrix* makeMutableZeroMatrix(const Ring* Rgeneral,
-                                       const RingType* R,
-                                       size_t nrows,
-                                       size_t ncols,
-                                       bool dense);
 /**
     @ingroup rings
 */
   template <class RingType>
-  class ConcreteRing : public Ring
+  class RingWrap : public Ring
   {
     const RingType *R;
-    ConcreteRing(const RingType *R0) : R(R0) {}
-    virtual ~ConcreteRing() {}
+    RingWrap(const RingType *R0) : R(R0) {}
+    virtual ~RingWrap() {}
   public:
     typedef typename RingType::ElementType ElementType;
 
-    static ConcreteRing<RingType> * create(const RingType *R);
+    static RingWrap<RingType> * create(const RingType *R);
 
-    virtual M2::RingID ringID() const { return RingType::ringID; }
+    //  Z_mod * cast_to_Z_mod() { return this; }
+    //  const Z_mod * cast_to_Z_mod() const { return this; }
 
-    const RingType & ring() const { return *R; }
-
-    /// Create either a dense or sparse MutableMatrix of the given size
-    virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const
-    {
-      //return R->makeMutableMatrix(this, nrows, ncols, dense);
-      return makeMutableZeroMatrix(this, R, nrows, ncols, dense);
-    }
-
-    ////////////////////////////
-    // Functions on elements ///
-    ////////////////////////////
     virtual int coerce_to_int(ring_elem a) const
     {
-      //TODO: implement or remove
+      return 0;
+    }
+    virtual int discrete_log(ring_elem a) const // returns -1 if a is 0
+    {
       return 0;
     }
 
@@ -56,7 +40,7 @@ namespace M2 {
 
     virtual ring_elem from_int(int n) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling from_int\n");
+      fprintf(stderr, "calling from_int\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -67,7 +51,7 @@ namespace M2 {
 
     virtual ring_elem from_int(mpz_ptr n) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling from_int(mpz)\n");
+      fprintf(stderr, "calling from_int(mpz)\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -77,7 +61,7 @@ namespace M2 {
     }
     virtual ring_elem from_rational(mpq_ptr q) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling from_rational\n");
+      fprintf(stderr, "calling from_rational\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -88,7 +72,7 @@ namespace M2 {
 
     virtual ring_elem var(int v) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling var\n");
+      fprintf(stderr, "calling var\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -97,59 +81,36 @@ namespace M2 {
       return result;
     }
 
-    /** If there is a "natural" map S --> R=this, where f is an element of
-    // S , then result is set to the image of f, and true is returned.
-    // Otherwise, false is returned.
-    //
-    // The map must one-step, e.g. for k --> k[x] --> k[x][y], promotion
-    // must be done with two consecutive calls to promote(with different arguments).
-    // Examples of natural maps:
-    //  ZZ --> R, for any R
-    //  QQ --> RR --> CC
-    //  ZZ --> ZZ/p
-    //  ZZ/p --> GF(p^n)
-    //  GF(p^m) --> GF(p^n), where m|n
-    //  A --> A[vars]/I
-    //  A[vars]/J --> A[vars]/I  (assumption: I contains J).
-    */
-
-    virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const;
-
-    //* If there is a "natural" map S --> R=this, where f is an element of
-    // R, then result is set to an element f in S which maps to f, and true is returned.
-    // Otherwise, false is returned.
-    //
-    // For examples of maps, see 'promote'.
-    //
-    // Lifting elements of ZZ/p to QQ does not count, as there is no actual homomorphism
-    // from QQ --> ZZ/p
-
+    virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const
+    {
+      fprintf(stderr, "calling promote\n");
+      return false;
+    }
     virtual bool lift(const Ring *S, const ring_elem f, ring_elem &result) const
     {
-      //TODO: implement
-      if (displayArithmeticCalls) fprintf(stderr, "calling lift\n");
+      fprintf(stderr, "calling lift\n");
       return false;
     }
 
     virtual bool is_unit(const ring_elem f) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling is_unit\n");
+      fprintf(stderr, "calling is_unit\n");
       ElementType a;
       R->from_ring_elem(a, f);
-      return R->is_unit(a);
+      return R->is_unit(f);
     }
 
     virtual bool is_zero(const ring_elem f) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling is_zero\n");
+      fprintf(stderr, "calling is_zero\n");
       ElementType a;
       R->from_ring_elem(a, f);
-      return R->is_zero(a);
+      return R->is_zero(f);
     }
 
     virtual bool is_equal(const ring_elem f, const ring_elem g) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling is_equal\n");
+      fprintf(stderr, "calling is_equal\n");
       ElementType a, b;
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
@@ -158,7 +119,7 @@ namespace M2 {
 
     virtual int compare_elems(const ring_elem f, const ring_elem g) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling compare_elems\n");
+      fprintf(stderr, "calling compare_elems\n");
       ElementType a, b;
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
@@ -167,7 +128,7 @@ namespace M2 {
 
     virtual ring_elem copy(const ring_elem f) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling copy\n");
+      fprintf(stderr, "calling copy\n");
       ElementType a,b;
       ring_elem result;
       R->init(b);
@@ -179,13 +140,12 @@ namespace M2 {
 
     virtual void remove(ring_elem &f) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling remove\n");
-      /* currently, do nothing... */
+      fprintf(stderr, "calling remove\n");
     }
 
     virtual ring_elem negate(const ring_elem f) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling negate\n");
+      fprintf(stderr, "calling negate\n");
       ElementType a,b;
       ring_elem result;
       R->init(b);
@@ -197,7 +157,7 @@ namespace M2 {
 
     virtual ring_elem add(const ring_elem f, const ring_elem g) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling add\n");
+      fprintf(stderr, "calling add\n");
       ElementType a, b, c;
       ring_elem result;
       R->init(c);
@@ -210,7 +170,7 @@ namespace M2 {
 
     virtual ring_elem subtract(const ring_elem f, const ring_elem g) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling subtract\n");
+      fprintf(stderr, "calling subtract\n");
       ElementType a, b, c;
       ring_elem result;
       R->init(c);
@@ -223,7 +183,7 @@ namespace M2 {
 
     virtual ring_elem mult(const ring_elem f, const ring_elem g) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling mult\n");
+      fprintf(stderr, "calling mult\n");
       ElementType a, b, c;
       ring_elem result;
       R->init(c);
@@ -236,7 +196,7 @@ namespace M2 {
 
     virtual ring_elem power(const ring_elem f, mpz_t n) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling power mpz\n");
+      fprintf(stderr, "calling power mpz\n");
       ElementType a,b;
       ring_elem result;
       R->init(b);
@@ -248,7 +208,7 @@ namespace M2 {
 
     virtual ring_elem power(const ring_elem f, int n) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling power int\n");
+      fprintf(stderr, "calling power int\n");
       ElementType a,b;
       ring_elem result;
       R->init(b);
@@ -260,7 +220,7 @@ namespace M2 {
 
     virtual ring_elem invert(const ring_elem f) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling invert\n");
+      fprintf(stderr, "calling invert\n");
       ElementType a,b;
       ring_elem result;
       R->init(b);
@@ -272,7 +232,7 @@ namespace M2 {
 
     virtual ring_elem divide(const ring_elem f, const ring_elem g) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling divide\n");
+      fprintf(stderr, "calling divide\n");
       ElementType a, b, c;
       ring_elem result;
       R->init(c);
@@ -286,7 +246,7 @@ namespace M2 {
     virtual void syzygy(const ring_elem f, const ring_elem g,
                         ring_elem &x, ring_elem &y) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling syzygy\n");
+      fprintf(stderr, "calling syzygy\n");
       ElementType a, b, xe, ye;
       R->init(xe);
       R->init(ye);
@@ -299,7 +259,7 @@ namespace M2 {
 
     virtual ring_elem random() const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling random\n");
+      fprintf(stderr, "calling random\n");
       ring_elem result;
       ElementType a;
       R->init(a);
@@ -314,25 +274,18 @@ namespace M2 {
                                bool p_plus=false,
                                bool p_parens=false) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling elem_text_out\n");
+      fprintf(stderr, "calling elem_text_out\n");
       ElementType a;
       R->from_ring_elem(a, f);
       R->elem_text_out(o,a,p_one,p_plus,p_parens);
     }
 
-    // map : this = R --> S, f in R
-    // sending primelem --> map->elem(firstvar)
-    // return map(f) as a ring_elem in S
     virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const
     {
-      ElementType a;
-      ring_elem result;
-      R->from_ring_elem(a, f);
-      R->eval(map, a, first_var, result);
-      return result;
+      fprintf(stderr, "calling eval\n");
+      return 0;
     }
   };
-
 };
 
 #endif

@@ -1,10 +1,8 @@
 // Copyright 2005  Michael E. Stillman
 
 #include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
 #include "ZZp.hpp"
 #include "aring-gf.hpp"
-#include "aring-m2-gf.hpp"
 #include "dmat.hpp"
 #include "mat.hpp"
 #include "mpfr.h"
@@ -15,27 +13,24 @@
 #include <iostream>
 
 #include "aring-zzp.hpp"
-#include "aring-ffpack.hpp"
- #include <typeinfo>
-
 
 template<typename CoeffRing>
-DMat<CoeffRing>::DMat(const Ring *R0, const CoeffRing *coeffR0, int nrows, int ncols)
+DMat<CoeffRing>::DMat(const RingType *R0, int nrows, int ncols)
   : R(R0),
-    coeffR(coeffR0),
+    coeffR(R0->get_ARing()),
     nrows_(nrows),
     ncols_(ncols)
 {
   initialize(nrows,ncols,0);
 }
 
-template<typename CoeffRing>
-DMat<CoeffRing>::DMat(const DMat<CoeffRing> &m, size_t nrows, size_t ncols)
-  : R(m.R),
-    coeffR(m.coeffR),
+template <> DMat<CoefficientRingR>::DMat(const Ring *R0, int nrows, int ncols)
+  : R(R0),
+    coeffR(0),
     nrows_(nrows),
     ncols_(ncols)
 {
+  coeffR = new CoefficientRingR(R0);
   initialize(nrows,ncols,0);
 }
 
@@ -92,7 +87,7 @@ void DMat<CoeffRing>::grab(DMat<CoeffRing> *M)
 template<typename CoeffRing>
 DMat<CoeffRing> *DMat<CoeffRing>::copy() const
 {
-  DMat<CoeffRing> *result = new DMat<CoeffRing>(get_ring(), get_CoeffRing(), 0, 0);
+  DMat<CoeffRing> *result = new DMat<CoeffRing>(get_ring(), 0, 0);
   result->initialize(nrows_, ncols_, array_);
   return result;
 }
@@ -347,7 +342,7 @@ void DMat<CoeffRing>::dot_product(int i, int j, elem &result) const
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::copy_elems(long n_to_copy, elem *target, int target_stride, const elem *source, int stride) const
+void DMat<CoeffRing>::copy_elems(long n_to_copy, elem *target, int target_stride, elem *source, int stride)
 {
   for (long i=0; i<n_to_copy; i++)
     {
@@ -585,7 +580,7 @@ template<typename CoeffRing>
 DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint rows,
                                              M2_arrayint cols) const
 {
-  DMat<CoeffRing> *result = new DMat<CoeffRing>(get_ring(), get_CoeffRing(),rows->len,cols->len);
+  DMat<CoeffRing> *result = new DMat<CoeffRing>(R,rows->len,cols->len);
   for (int r=0; r<rows->len; r++)
     for (int c=0; c<cols->len; c++)
       {
@@ -599,7 +594,7 @@ DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint rows,
 template<typename CoeffRing>
 DMat<CoeffRing> * DMat<CoeffRing>::submatrix(M2_arrayint cols) const
 {
-  DMat<CoeffRing> *result = new DMat<CoeffRing>(get_ring(), get_CoeffRing(),nrows_,cols->len);
+  DMat<CoeffRing> *result = new DMat<CoeffRing>(R,nrows_,cols->len);
   for (int r=0; r<nrows_; r++)
     for (int c=0; c<cols->len; c++)
       {
@@ -790,503 +785,29 @@ template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack
     }
 }
 
-///////////////////////////////////
-/// Fast linear algebra routines //
-///////////////////////////////////
-
-template<typename CoeffRing>
-size_t DMat<CoeffRing>::rank() const
+/* template <> void DMat<CoefficientRingCCC>::fill_from_mpack_array(mpreal *mparray)
 {
-  ERROR("not implemented for this ring yet");
-  return static_cast<size_t>(-1);
-}
+  long len = n_rows() * n_cols();
 
-template<typename CoeffRing>
-void DMat<CoeffRing>::determinant(elem &result) const
-{
-  ERROR("not implemented for this ring yet");
-}
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::invert(DMat<CoeffRing> &inverse) const
-{
-  ERROR("not implemented for this ring yet");
-  return false;
-}
-
-template<typename CoeffRing>
-M2_arrayintOrNull DMat<CoeffRing>::rankProfile(bool row_profile) const
-{
-  ERROR("not implemented for this ring yet");
-  return 0;
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::nullSpace(DMat<CoeffRing> &nullspace, bool right_side) const
-{
-  ERROR("not implemented for this ring yet");
-}
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::solveLinear(DMat<CoeffRing> &X, const DMat<CoeffRing> &B, bool right_size) const
-{
-  ERROR("not implemented for this ring yet");
-  return false;
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
-                                    const DMat<CoeffRing> &B,
-                                    bool transposeA,
-                                    bool transposeB,
-                                    const ElementType& a,
-                                    const ElementType& b)
-{
-  std::cerr << "DMat  addMultipleTo" << std::endl;
-    std::cerr << "typeid: " << typeid(CoeffRing).name () << std::endl;
-  ERROR("addMultipleTo not implemented for this ring yet");
-}
-
-#ifdef HAVE_FFLAS_FFPACK
-
-    template<typename  CoeffRing >
-    template<class RingType>
-    size_t DMat < CoeffRing >::rank(typename enable_if<is_givaro_or_ffpack<RingType>::value >::type* dummy ) const
+  elem *a = array_;
+  mpreal *p = mparray;
+  for (long i=0; i<len; i++)
     {
-        // assert not neccesary because the test is already done by  "enable_if<is_givaro_or_ffpack<RingType>::value >"
-        // assert( typeid(CoeffRing) == typeid(M2::ARingZZpFFPACK) || typeid(CoeffRing) == typeid(M2::ARingGF ));
-        std::cout << "Calling rankGF_or_FFPACK" << std::endl;
-        ElementType *N = newarray(ElementType, n_rows() * n_cols() );
-        /// @jakob: replace with memcopy or something fast.
-        /// @jakob: potention problem: (  n_rows()*n_cols() ) - overflow for big matrices 
-        copy_elems( n_rows()*n_cols(), N, 1, get_array(), 1); 
-        /// @note 1. matrix data (N) is modified by FFPACK
-        /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
-    
-        /* //debug
-        typename MatrixType::ElementType *Npos=N;
-        for ( int currRow=0; currRow < n_rows(); currRow++ )
-        for ( int currCol =0; currCol < n_cols(); currCol++ )
-        {
-            typename MatrixType::ElementType entry;
-                get_entry(currRow, currCol,entry)  ;
-                ring().field().init(Npos, entry );
-            //  mat.setEntry( currRow, currCol ,( (int)rand() ) % characteristic );
-        }*/
-    
-        size_t result = FFPACK::Rank(ring().field(), n_cols(), n_rows(),  N,  n_rows() );
-        deletearray(N);
-        return result;
+//      mpfr_set_d(a->re, *p++, GMP_RNDN);
+//      mpfr_set_d(a->im, *p++, GMP_RNDN);
+      a++;
     }
+} */
 
-    template<typename CoeffRing>
-    void FFpackDeterminant(const DMat<CoeffRing>& mat, 
-                                 typename CoeffRing::ElementType& result )
-    {
-        typedef typename CoeffRing::ElementType ElementType;
-        std::cout << "Calling FFpackDeterminant" << std::endl;
-        assert( typeid(CoeffRing) == typeid(M2::ARingZZpFFPACK) || typeid(CoeffRing) == typeid(M2::ARingGF ));
-        ElementType* N = newarray( ElementType, mat.n_rows() * mat.n_cols());    
-        mat.copy_elems(mat.n_rows()*mat.n_cols(), N, 1, mat.get_array(), 1); 
-        /// @note 1. matrix data (N) is modified by FFPACK
-        /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
-        result = FFPACK::Det(mat.ring().field(), mat.n_cols(), mat.n_rows(),  N,  mat.n_rows());
-        deletearray(N);
-    }
 
-    template<typename CoeffRing>
-    bool FFpackInvert(const DMat<CoeffRing> &mat, DMat<CoeffRing> &inverse)
-    {
-        typedef typename CoeffRing::ElementType ElementType;
-        ASSERT(mat.n_rows() == mat.n_cols());
-        ElementType* N = newarray( ElementType, mat.n_rows() * mat.n_cols());    
-        mat.copy_elems(mat.n_rows()*mat.n_cols(), N, 1, mat.get_array(), 1); 
-    
-        size_t n = mat.n_rows(); // same as n_cols()
-        int nullspacedim;
-        FFPACK::Invert2(mat.ring().field(), n, N, n, inverse.get_array(), n, nullspacedim);
-    
-        deletearray(N);
-        return true;
-    }
-
-    template<typename CoeffRing>
-    void FFpackNullSpace(const DMat<CoeffRing> &mat, 
-                         DMat<CoeffRing> &nullspace, 
-                         bool right_side)
-    {
-        right_side = !right_side; // because FFPACK stores by rows, not columns.
-
-        typedef typename CoeffRing::ElementType ElementType;
-        ElementType* N = newarray( ElementType, mat.n_rows() * mat.n_cols());    
-        mat.copy_elems(mat.n_rows()*mat.n_cols(), N, 1, mat.get_array(), 1); 
-    
-        size_t nr = mat.n_rows();
-        size_t nc = mat.n_cols();
-    
-        ElementType *nullspaceFFPACK = 0;
-    
-        size_t nullspace_dim;
-        size_t nullspace_leading_dim;
-    
-        FFPACK::NullSpaceBasis(mat.ring().field(),
-                               (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
-                               nc, nr, N, nr, nullspaceFFPACK, nullspace_leading_dim, nullspace_dim);
-    
-        std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
-        size_t nullspace_nrows = (right_side ? nc : nullspace_dim);
-        if (right_side && nullspace_dim != nullspace_leading_dim)
-          {
-            std::cerr << "error: this should not happen!" << std::endl;
-          }
-        else if (!right_side && nullspace_leading_dim != nc)
-          {
-            std::cerr << "error: this should not happen either!" << std::endl;
-          }
-    
-        if (right_side)
-          nullspace.resize(nullspace_dim,nr);
-        else
-          nullspace.resize(nc,nullspace_dim);
-    
-        mat.copy_elems(nullspace.n_rows() * nullspace.n_cols(), nullspace.get_array(), 1, nullspaceFFPACK, 1); 
-    
-        delete [] nullspaceFFPACK;
-    }
-
-    template<typename CoeffRing>
-    M2_arrayintOrNull FFpackRankProfile(const DMat<CoeffRing> &mat,
-                                        bool row_profile)
-    {
-        // Note that FFPack stores matrices by row, not column, the opposite of what we do.
-        // So row_profile true means use ffpack column rank profile!
-
-        typedef typename CoeffRing::ElementType ElementType;
-        ElementType* N = newarray( ElementType, mat.n_rows() * mat.n_cols());    
-        mat.copy_elems(mat.n_rows()*mat.n_cols(), N, 1, mat.get_array(), 1); 
-    
-        size_t * prof; // this is where the result will be placed
-    
-        size_t rk;
-        if (!row_profile)
-          rk = FFPACK::RowRankProfile(mat.ring().field(),
-                                      mat.n_cols(),mat.n_rows(),
-                                      N,mat.n_rows(),
-                                      prof);
-        else
-          rk = FFPACK::ColumnRankProfile(mat.ring().field(),
-                                         mat.n_cols(),mat.n_rows(),
-                                         N,mat.n_rows(),
-                                         prof);
-        
-        M2_arrayint profile = M2_makearrayint(rk);
-        for (size_t i=0; i<rk; i++)
-          profile->array[i] = prof[i];
-    
-        delete [] prof;
-        deletearray(N);
-
-        return profile;
-    }
-
-    template<typename CoeffRing>
-    bool FFpackSolveLinear(const DMat<CoeffRing> &mat, 
-                           DMat<CoeffRing> &X, 
-                           const DMat<CoeffRing> &B, 
-                           bool right_side)
-    {
-        std::cerr << "inside FFpackSolveLinear" << std::endl;
-
-        typedef typename CoeffRing::ElementType ElementType;
-        size_t a_rows = mat.n_rows();
-        size_t a_cols = mat.n_cols();
-    
-        size_t b_rows = B.n_rows();
-        size_t b_cols = B.n_cols();
-    
-        ElementType* ffpackA = newarray(ElementType, mat.n_rows() * mat.n_cols());
-        mat.copy_elems(mat.n_rows()*mat.n_cols(), ffpackA, 1, mat.get_array(), 1); 
-    
-        ElementType* ffpackB = newarray(ElementType, b_rows * b_cols);
-        B.copy_elems(b_rows * b_cols, ffpackB, 1, B.get_array(), 1); 
-    
-        // preallocate the space for the solutions:
-        size_t x_rows = (right_side ? a_cols : b_rows);
-        size_t x_cols = (right_side ? b_cols : a_rows);
-        size_t n_eqns = (right_side ? b_cols : b_rows);
-    
-        ElementType *ffpackX = newarray_clear(ElementType, x_rows * x_cols);
-    
-        int info; // >0 if the system is inconsistent, ==0 means success
-    
-        FFPACK::fgesv(mat.ring().field(),
-                      (!right_side ? FFLAS::FflasLeft : FFLAS::FflasRight),
-                      a_cols, a_rows, 
-                      (!right_side ? b_cols : b_rows),
-                      ffpackA,
-                      a_rows, // leading dim of A
-                      ffpackX, x_rows,
-                      ffpackB, b_rows,
-                      &info);
-    
-        if (info > 0)
-          {
-            // the system is inconsistent
-            ERROR("the system is inconsistent");
-            return false;
-          }
-    
-        X.resize(x_rows, x_cols);
-        X.copy_elems(x_rows * x_cols, X.get_array(), 1, ffpackX, 1); 
-    
-        delete [] ffpackX;
-    
-        return true;
-    } 
-
-    template<typename CoeffRing>
-    void FFpackAddMultipleTo(DMat<CoeffRing>& C, 
-                             const DMat<CoeffRing>& A,
-                             const DMat<CoeffRing>& B,
-                             bool transposeA,
-                             bool transposeB,
-                             const typename CoeffRing::ElementType& a,
-                             const typename CoeffRing::ElementType& b)
-    /* A,B,C should be mutable matrices over a finite prime field, and a,b
-       elements of this field.
-       C = b*C + a * op(A)*op(B),
-       where op(A) = A or transpose(A), depending on transposeA
-       where op(B) = B or transpose(B), depending on transposeB
-    */
-    { 
-        std::cout << " FFpackAddMultipleTo " << std::endl;
-        // set tA, tB
-        FFLAS::FFLAS_TRANSPOSE tA = (transposeA ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
-        FFLAS::FFLAS_TRANSPOSE tB = (transposeB ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
-
-        // determine m,n,k
-        //size_t m = (transposeA ? A.n_cols() : A.n_rows());
-        //size_t n = (transposeB ? B.n_rows() : B.n_cols());
-        //size_t k = (transposeA ? A.n_rows() : A.n_cols());
-        //size_t k2 = (transposeB ? B.n_cols() : B.n_rows());
-
-        size_t m = (transposeB ? B.n_rows() : B.n_cols());
-        size_t n = (transposeA ? A.n_cols() : A.n_rows());
-        
-        size_t k = (transposeA ? A.n_rows() : A.n_cols());
-        size_t k2 = (transposeB ? B.n_cols() : B.n_rows());
-
-        std::cout <<"k  :" << k << std::endl;
-        std::cout <<"k2 :" << k2 << std::endl;
-        assert(k == k2); // The user of this function must insure that sizes are correct.
-        if (k!=k2)
-            ERROR("matrices are not composable");
-
-        FFLAS::fgemm(C.ring().field(),
-                     tA, tB,
-                     m,n,k,
-                     a,
-                     B.get_array(),
-                     B.n_rows(),
-                     A.get_array(),
-                     A.n_rows(),
-                     b,
-                     C.get_array(),
-                     C.n_rows()
-                     );
-    }
-
-    //////////////////////////////////////////////////////
-    // ARingZZpFFPACK specific linear algebra functions //
-    //////////////////////////////////////////////////////
-    template<>
-    size_t DMat<M2::ARingZZpFFPACK>::rank() const
-    {
-        std::cout << "DMat<M2::ARingZZpFFPACK>::rank()" << std::endl;
-        return rank<M2::ARingZZpFFPACK>( );
-    }
-
-    template<>
-    void DMat<M2::ARingZZpFFPACK>::determinant(elem &result) const
-    {
-        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::determinant" << std::endl;
-        FFpackDeterminant<M2::ARingZZpFFPACK>(*this, result);
-    }
-
-    template<>
-    bool DMat<M2::ARingZZpFFPACK>::invert(DMat<M2::ARingZZpFFPACK> &inverse) const
-    {
-        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::inverse" << std::endl;
-        return FFpackInvert<M2::ARingZZpFFPACK>(*this, inverse);
-    }
-
-    template<>
-    void DMat<M2::ARingZZpFFPACK>::nullSpace(DMat<M2::ARingZZpFFPACK> &nullspace, bool right_side) const
-    {
-        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::nullspace" << std::endl;
-        FFpackNullSpace<M2::ARingZZpFFPACK>(*this, nullspace, right_side);
-    }
-
-    template<>
-    M2_arrayintOrNull DMat<M2::ARingZZpFFPACK>::rankProfile(bool row_profile) const
-    {
-        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::rankProfile" << std::endl;
-        return FFpackRankProfile(*this, row_profile);
-    }
-
-    template<>
-    bool DMat<M2::ARingZZpFFPACK>::solveLinear(DMat<M2::ARingZZpFFPACK> &X, 
-                                               const DMat<M2::ARingZZpFFPACK> &B, 
-                                               bool right_side) const
-    {
-        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::solveLinear" << std::endl;
-        return FFpackSolveLinear(*this, X, B, right_side);
-    }
-
-    template<>
-    void DMat<M2::ARingZZpFFPACK>::addMultipleTo(const DMat<M2::ARingZZpFFPACK> &A,
-                                                 const DMat<M2::ARingZZpFFPACK> &B,
-                                                 bool transposeA,
-                                                 bool transposeB,
-                                                 const ElementType& a,
-                                                 const ElementType& b)
-    {
-        std::cout << "Calling  DMat<M2::ARingZZpFFPACK>::addMultipleTo *" << std::endl;
-        FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);
-    }
-
-#ifdef HAVE_GIVARO
-
-    //////////////////////////////////////////////////////
-    // ARingGF specific linear algebra functions /////////
-    //////////////////////////////////////////////////////
-    
-    template<>
-    size_t DMat<M2::ARingGF>::rank() const
-    {
-        std::cout << "Calling  DMat<M2::ARingGF>::rank()" << std::endl;
-        return rank<M2::ARingGF>( );
-    }
-    
-    template<>
-    void DMat<M2::ARingGF>::determinant(elem &result) const
-    {
-        std::cout << "Calling  DMat<M2::ARingGF>::determinant" << std::endl;
-        FFpackDeterminant<M2::ARingGF>(*this, result );
-    }
-    
-    template<>
-    bool DMat<M2::ARingGF>::invert(DMat<M2::ARingGF> &inverse) const
-    {
-        std::cout << "Calling  DMat<M2::ARingGF>::inverse" << std::endl;
-        return FFpackInvert<M2::ARingGF>(*this, inverse);
-    }
-
-    template<>
-    void DMat<M2::ARingGF>::nullSpace(DMat<M2::ARingGF> &nullspace, bool right_side) const
-    {
-        std::cout << "Calling  DMat<M2::ARingGF>::nullspace" << std::endl;
-        FFpackNullSpace<M2::ARingGF>(*this, nullspace, right_side);
-    }
-
-    template<>
-    M2_arrayintOrNull DMat<M2::ARingGF>::rankProfile(bool row_profile) const
-    {
-        std::cout << "Calling  DMat<M2::ARingGF>::rankProfile" << std::endl;
-        return FFpackRankProfile(*this, row_profile);
-    }
-
-    template<>
-    bool DMat<M2::ARingGF>::solveLinear(DMat<M2::ARingGF> &X, 
-                                               const DMat<M2::ARingGF> &B, 
-                                               bool right_side) const
-    {
-        std::cout << "Calling  DMat<M2::ARingGF>::solveLinear" << std::endl;
-        return FFpackSolveLinear(*this, X, B, right_side);
-    }
-
-    template<>
-    void DMat<M2::ARingGF>::addMultipleTo(const DMat<M2::ARingGF> &A,
-                                                 const DMat<M2::ARingGF> &B,
-                                                 bool transposeA,
-                                                 bool transposeB,
-                                                 const ElementType& a,
-                                                 const ElementType& b)
-    {
-        std::cout << "Calling  DMat<M2::ARingGF>::addMultipleTo" << std::endl;
-        FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);
-    }
-
-  #endif
-
-#endif
-
-#include "mutablemat.hpp"
-
-template<typename MatT> 
-inline MatT * MutableMatrix::coerce()
-{
-  MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
-
-template<typename MatT> 
-inline const MatT * MutableMatrix::coerce() const
-{
-  const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
-
-M2_arrayintOrNull rawLQUP(MutableMatrix *A, M2_bool transpose)
-{
-#ifdef HAVE_FFLAS_FFPACK
-  // Suppose A is m x n
-  // P is n element permutation on columns
-  // Qt is m element permutation on rows (inverse permutation)
-  DMat<M2::ARingZZpFFPACK> *mat = A->coerce< DMat<M2::ARingZZpFFPACK> >();
-  if (mat == 0) 
-    {
-      ERROR("LUDivine not defined for this ring");
-      return 0;
-    }
-  size_t nelems = mat->n_cols();
-  if (mat->n_rows() > mat->n_cols()) nelems = mat->n_rows();
-  size_t* P = newarray_atomic(size_t, nelems ); // initialize this (column perm
-  size_t* Qt = newarray_atomic(size_t, nelems); // initialize this
-  size_t rk = LUdivine(mat->ring().field(),
-                       FFLAS::FflasNonUnit,
-                       (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
-                       mat->n_cols(),
-                       mat->n_rows(),
-                       mat->get_array(),
-                       mat->n_rows(),
-                       P, 
-                       Qt);
-  std::cout << "P = [";
-  for (size_t i=0; i<nelems; i++)
-    std::cout << P[i] << " ";
-  std::cout << "]" << std::endl;
-
-  std::cout << "Qt = [";
-  for (size_t i=0; i<nelems; i++)
-    std::cout << Qt[i] << " ";
-  std::cout << "]" << std::endl;
-#endif
-  return 0;
-}
-
+//#include "aring-gf.hpp"
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;
-template class DMat<M2::ARingZZpFFPACK>;
-
+//template class DMat<M2::ARingGF>;
 template class DMat<CoefficientRingRRR>;
 template class DMat<CoefficientRingCCC>;
 template class DMat<CoefficientRingR>;
 
-template class DMat<M2::ARingGF>;
-template class DMat<M2::ARingGFM2>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

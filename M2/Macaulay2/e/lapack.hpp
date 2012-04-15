@@ -107,7 +107,6 @@ int dgelss_(int* rows,     // rows
             int *lwork,    // size of workspace
             int *info);    // error info
 
-#ifndef __FFLAFLAS_config_blas_H
 /* cblas routines */
 // computes "ax + y"
 void cblas_daxpy(const int n,     // length of vectors
@@ -117,7 +116,11 @@ void cblas_daxpy(const int n,     // length of vectors
                  double* y,       // vector y
                  const int incy); // increment of y
 
-
+// computes ax
+void cblas_dscal(const int n,     // length of vectors
+                 const double a,  // scalar alpha
+                 const double* x, // vector x
+                 const int incx); // increment of x
 
 // computes "alpha AB + beta C"
 // NOTE: first 3 args should formally be ENUMS, not ints.
@@ -136,14 +139,6 @@ void cblas_dgemm(const int Order,     // how matrices are stored, by column or r
                  const double beta,   // scalar bet
                  double *C,           // matrix C; on output, alphaAB+betaC
                  const int ldc);      // rows of C
-#endif
-
-// computes ax
-void cblas_dscal(const int n,     // length of vectors
-                 const double a,  // scalar alpha
-                 const double* x, // vector x
-                 const int incx); // increment of x
-
 
 int zgesv_(int *n,    // number of rows in A
            int *nrhs, // number of right hand sides
@@ -246,7 +241,6 @@ int zgelss_(int* rows,     // rows
             double *rwork,  // workspace
             int *info);    // error info
 
-#ifndef __FFLAFLAS_config_blas_H
 /* cblas routines */
 // computes "ax + y"
 void cblas_daxpy(const int n,     // length of vectors
@@ -255,14 +249,12 @@ void cblas_daxpy(const int n,     // length of vectors
                  const int incx,  // increment of x
                  double* y,       // vector y
                  const int incy); // increment of y
-#endif
 
 // computes ax
 void cblas_dscal(const int n,     // length of vectors
                  const double a,  // scalar alpha
                  const double* x, // vector x
                  const int incx); // increment of x
-
 
 // computes "alpha AB + beta C"
 // NOTE: first 3 args should formally be ENUMS, not ints.
@@ -281,7 +273,6 @@ void cblas_zgemm(const int Order,   // how matrices are stored, by column or row
                  const void *beta,  // scalar bet
                  void *C,           // matrix C; on output, alphaAB+betaC
                  const int ldc);    // rows of C
-
 };
 
 class Lapack {

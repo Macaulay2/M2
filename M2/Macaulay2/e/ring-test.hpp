@@ -6,7 +6,7 @@
 //#include "ring.hpp"
 //#include "polyring.hpp"
 
-#define RING(T,A) static_cast<const ConcreteRing<T> *>(A)->R_
+#define RING(T,A) static_cast<const RingWrap<T> *>(A)->R_
 #define RELEM(T,a) static_cast<RElementWrap<T> &>(a).val_
 #define constRELEM(T,a) static_cast<const RElementWrap<T> &>(a).val_
 
@@ -15,8 +15,8 @@ namespace M2 {
   ////////////////////////////////////////////////////////
   // Programming level interfaces ////////////////////////
   ////////////////////////////////////////////////////////
-  class RingInterface {}; // inherit from this if the class is to be used as a template parameter for ConcreteRing
-  class PolynomialRingInterface {}; // inherit from this if the class is to be used as a template param for PolynomialConcreteRing
+  class RingInterface {}; // inherit from this if the class is to be used as a template parameter for RingWrap
+  class PolynomialRingInterface {}; // inherit from this if the class is to be used as a template param for PolynomialRingWrap
 
   enum RingID {
     ring_example = 0,
@@ -32,7 +32,7 @@ namespace M2 {
 
   class ARing;
 
-  class RingInterfaceExample : public RingInterface
+  class RingInterfaceExample : RingInterface
   {
   public:
     static const RingID ringId = ring_example;
@@ -113,7 +113,7 @@ namespace M2 {
   ////////////////////////////////////////////////////////
   // User level types ////////////////////////////////////
   ////////////////////////////////////////////////////////
-  template <class RingType> class ConcreteRing;
+  template <class RingType> class RingWrap;
 
   class UserObject {};
 
@@ -130,7 +130,7 @@ namespace M2 {
   {
   public:
     template<class RingType>
-    const ConcreteRing<RingType> * cast_to_ConcreteRing() const { return dynamic_cast< const ConcreteRing<RingType> * >(this) ; }
+    const RingWrap<RingType> * cast_to_RingWrap() const { return dynamic_cast< const RingWrap<RingType> * >(this) ; }
     // result will be either 0, or this.
 
     virtual RingID getRingID() const = 0;
@@ -286,9 +286,9 @@ namespace M2 {
   public:
     typedef typename MatrixType::RingType RingType;
 
-    const ConcreteRing<RingType> * getRing() const { return R_; }
+    const RingWrap<RingType> * getRing() const { return R_; }
 
-    MatrixWrap(const ConcreteRing<RingType> *R, size_t nrows, size_t ncols)
+    MatrixWrap(const RingWrap<RingType> *R, size_t nrows, size_t ncols)
       : R_(R), mat(R->getInternalRing(),nrows,ncols)
     {
     }
@@ -296,7 +296,7 @@ namespace M2 {
     bool isDense() const { return MatrixType::isDense; }
 
   private:
-    const ConcreteRing<RingType> *R_;
+    const RingWrap<RingType> *R_;
     MatrixType mat;
   };
 
@@ -317,20 +317,20 @@ namespace M2 {
     RElementWrap(const RElement &a) : val_( static_cast<const RElementWrap&>(a).val_ ) {}
 
   private:
-    friend class ConcreteRing<RingType>;
+    friend class RingWrap<RingType>;
     element_type val_;
   };
 
   template <class RingType>     // RingType should inherit from RingInterface
-  class ConcreteRing : public ARing
+  class RingWrap : public ARing
   {
     friend bool ARing::converter(const ARing *sourceR, const ARing *targetR, const RElement &a, RElement &b);
   public:
     typedef typename RingType::ElementType element_type;
     typedef RElementWrap<RingType> ringelem_type;
 
-    ConcreteRing() {}
-    ConcreteRing(RingType R) : R_(R) {}
+    RingWrap() {}
+    RingWrap(RingType R) : R_(R) {}
 
     virtual RingID getRingID() const { return RingType::ringID; }
     RingType & getInternalRing() { return R_; }
@@ -353,7 +353,7 @@ namespace M2 {
   ///////////////////
 
   template <class R>
-  class PolynomialConcreteRing : public APolynomialRing
+  class PolynomialRingWrap : public APolynomialRing
   {
   };
 

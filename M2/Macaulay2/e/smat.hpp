@@ -17,9 +17,7 @@ class SMat : public our_new_delete
 public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
-  typedef elem ElementType; // same as elem.  Will possibly remove 'elem' later.
-
-  //typedef typename CoeffRing::ring_type RingType;
+  typedef typename CoeffRing::ring_type RingType;
 
 private:
   struct sparsevec : public our_new_delete
@@ -32,9 +30,7 @@ private:
 public:
   SMat():R(0), coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
 
-  SMat(const Ring *R0, const CoeffRing * coeffR0, int nrows, int ncols); // Makes a zero matrix
-
-  SMat(const SMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
+  SMat(const RingType *R0, int nrows, int ncols); // Makes a zero matrix
 
   void grab(SMat *M);// swaps M and this.
 
@@ -44,9 +40,8 @@ public:
 
   int n_rows() const { return nrows_; }
   int n_cols() const { return ncols_; }
-  const Ring * get_ring() const { return R; }
+  const RingType * get_ring() const { return R; }
   const CoeffRing * get_CoeffRing() const { return coeffR; }
-  const CoeffRing& ring() const { return *coeffR; }
 
   //  void set_matrix(const SMat<CoeffRing> *mat0);
   void initialize(int nrows, int ncols, sparsevec **cols);
@@ -185,52 +180,9 @@ public:
 
   SMat * negate() const;
 
-  ///////////////////////////////////
-  /// Fast linear algebra routines //
-  ///////////////////////////////////
-
-  size_t rank() const;
-
-  void determinant(elem &result) const;
-
-  // Set 'inverse' with the inverse of 'this'.  If the matrix is not square, or 
-  // the matrix is not invertible, or
-  // the ring is one in which the matrix cannot be inverted,
-  // then false is returned, and an error message is set.
-  bool invert(SMat<ACoeffRing> &inverse) const;
-
-  // Returns an array of increasing integers {n_1, n_2, ...}
-  // such that if M is the matrix with rows (resp columns, if row_profile is false)
-  // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
-  // NULL is returned, and an error is set, if this function is not available
-  // for the given choice of ring and dense/sparseness.
-  M2_arrayintOrNull rankProfile(bool row_profile) const;
-  
-  // Find a spanning set for the null space.  If M = this,
-  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
-  // otherwise return a matrix whose columns span {x | Mx = 0}
-  void nullSpace(SMat<ACoeffRing> &nullspace, bool right_side) const;
-
-  // X is set to  a matrix whose rows or columns solve either AX = B (right_side=true)
-  // or XA = B (right_side=false). If no solutions are found, false is returned.
-  bool solveLinear(SMat<ACoeffRing> &X, const SMat<ACoeffRing> &B, bool right_side) const;
-
-  /** C=this,A,B should be mutable matrices over the same ring, and a,b
-     elements of this ring. AND of the same density type.
-     C = b*C + a * op(A)*op(B),
-     where op(A) = A or transpose(A), depending on transposeA
-     where op(B) = B or transpose(B), depending on transposeB
-  */
-  void addMultipleTo(const SMat<ACoeffRing> &A,
-                     const SMat<ACoeffRing> &B,
-                     bool transposeA,
-                     bool transposeB,
-                     ElementType& a,
-                     ElementType& b);
-
 private:
-  const Ring *R; // To interface to the outside world
-  const CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
+  const RingType *R; // To interface to the outside world
+  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
   int nrows_;
   int ncols_;
   sparsevec **columns_; // array has length nrows*ncols

@@ -51,7 +51,7 @@ public:
   ring_elem get_rep(ring_elem f) const;
   // takes an element of this ring, and returns an element of _originalR->XXX()
 
-  int discrete_log(ring_elem a) const;
+  virtual int discrete_log(ring_elem a) const;
 
 // The following are all the routines required by 'ring'
 

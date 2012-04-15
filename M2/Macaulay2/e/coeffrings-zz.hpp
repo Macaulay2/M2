@@ -16,7 +16,6 @@ class CoefficientRingZZ_NTL : public our_new_delete
 public:
   typedef RingZZ ring_type;
   typedef NTL::ZZ elem;
-  typedef NTL::ZZ ElementType;
 
   CoefficientRingZZ_NTL(const RingZZ *R0) { }
 

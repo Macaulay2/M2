@@ -39,6 +39,11 @@ class RingMap : public immutable_object
                                 // the i th variable.
   RingMap(const Matrix *m);
 
+  friend class GF; // To obtain the value of this element
+  const ring_elem elem(int i) const {
+    assert(i < nvars);
+    return _elem[i].bigelem;
+  }
 public:
   ~RingMap();
 
@@ -47,12 +52,6 @@ public:
   const Ring *get_ring() const { return R; }
 
   bool is_equal(const RingMap *phi) const;
-
-  const ring_elem elem(int i) const {
-    ASSERT(i >= 0);
-    ASSERT(i < nvars);
-    return _elem[i].bigelem;
-  }
 
   ring_elem eval_term(const Ring *coeff_ring, const ring_elem coeff,
                       const int *vp,
