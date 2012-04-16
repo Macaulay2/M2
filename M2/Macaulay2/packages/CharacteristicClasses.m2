@@ -6,11 +6,11 @@
 -----------------------------------------------------------------
 
 newPackage(
-	"characteristicClasses",
+	"CharacteristicClasses",
 	Version => "0.1", 
     	Date => "April 3, 2012",
     	Authors => {{Name => "Christine Jost", 
-		  Email => "jost at math.su.se", 
+		  Email => "jost@math.su.se", 
 		  HomePage => "http://www.math.su.se/~jost"}},
     	Headline => "Degrees of Chern and Segre classes",
     	DebuggingMode => false,
@@ -25,9 +25,9 @@ newPackage(
 -- Configuration of the Bertini path
 ---------------------------------------------------------------
  
--- Check the ~/.Macaulay2/init-characteristicClasses.m2 file for the absolute path.
+-- Check the ~/.Macaulay2/init-CharacteristicClasses.m2 file for the absolute path.
 -- If it's not there, then use the root path.
-bertini'path = (options characteristicClasses).Configuration#"pathToBertini";
+bertini'path = (options CharacteristicClasses).Configuration#"pathToBertini";
 if bertini'path == "" then bertini'path = rootPath | "/";
 
 if not instance(bertini'path,String) then error "Expected configuration option pathToBertini to be a string."
@@ -400,12 +400,12 @@ beginDocumentation()
 
 doc ///
      Key
-     	  characteristicClasses
+     	  CharacteristicClasses
      Headline
      	  Degrees of Chern and Segre classes
      Description
      	  Text
-	       The package characteristicClasses provides commands to compute the degrees of the Chern and Segre classes of subvarieties and subschemes of projective space. 
+	       The package CharacteristicClasses provides commands to compute the degrees of the Chern and Segre classes of subvarieties and subschemes of projective space. 
 	       Equivalently, it computes the pushforward to projective space of the Chern and Segre classes.
 	       
 	       Let X be an n-dimensional subscheme of projective space P^k. If X is smooth, then by definition the Chern classes of X are the Chern classes c_0(T_X), ..., c_n(T_X) 
@@ -600,17 +600,17 @@ doc ///
      	  "configuring Bertini"
      Description
      	  Text
-	       Using the numeric version of any command in the package characteristicClasses needs version 1.3 or higher of Bertini
+	       Using the numeric version of any command in the package CharacteristicClasses needs version 1.3 or higher of Bertini
 	       to be installed. Download and installation of Bertini are explained at the @HREF {"http://www.nd.edu/~sommese/bertini/","Bertini homepage"}@. 
 	       
 	       If Bertini cannot be called from the root Path (e.g. / on Unix-based system), you have to tell
-	       the package how to find Bertini. When the package is installed, a file called {\tt init-characteristicClasses.m2} is created automatically.
+	       the package how to find Bertini. When the package is installed, a file called {\tt init-CharacteristicClasses.m2} is created automatically.
 	       Under Linux, the file is sought in the directory {\tt HOME/.Macaulay2/}, where {\tt HOME} is replaced by 
 	       the path to the user's home directory. Under Mac OS X, the file is sought instead in the directory 
 	       {\tt  HOME/Library/Application Support/Macaulay2/}. Windows users will have installed both Macaulay2 and Bertini under cygwin, so the file will be
 	       sought in the directory  {\tt HOME/.Macaulay2/}, where {\tt HOME} is replaced by the path to the user's home directory in the cygwin directory.
 	       
-	       In the file {\tt init-characteristicClasses.m2}, replace {\tt ""} in  the line {\tt "pathToBertini" => ""}
+	       In the file {\tt init-CharacteristicClasses.m2}, replace {\tt ""} in  the line {\tt "pathToBertini" => ""}
 	       by the path to Bertini in quotation marks, e.g. {\tt "pathToBertini" => "/usr/local/BertiniLinux64&#95;v1.3.1/"}. The / at the end is important.	
 	       Windows users should use the path relative to the cygwin directory, e.g. {\tt "/usr/local/BertiniWindows32&#95;v1.3.1/"} if Bertini is installed under 
 	       {\tt pathToTheCygwinDirectory&#92;cygwin&#92;usr&#92;local&#92;BertiniWindows32&#95;v1.3.1 }.
@@ -660,21 +660,21 @@ TEST ///
 ///
 
 
-TEST ///
-   R = QQ[x,y,z,w]
-   I = minors(2,matrix{{x,y,z},{y,z,w}})
-   assert( segreClassList(I, ResidualStrategy=>Bertini) == {3,-10} )
-   assert( chernClassList(I, ResidualStrategy=>Bertini) == {3,2} )
- ///
+-- TEST ///
+--    R = QQ[x,y,z,w]
+--    I = minors(2,matrix{{x,y,z},{y,z,w}})
+--    assert( segreClassList(I, ResidualStrategy=>Bertini) == {3,-10} )
+--    assert( chernClassList(I, ResidualStrategy=>Bertini) == {3,2} )
+--  ///
  
-TEST ///
-   R = QQ[x,y,z,w]
-   I = minors(2,matrix{{x,y,z},{y,z,w}})
-   totalSegre = segreClass(I, ResidualStrategy=>Bertini)
-   assert( totalSegre == 3*( (ring(totalSegre))_0 )^2 - 10*( (ring(totalSegre))_0 )^3 )
-   totalChern = chernClass(I, ResidualStrategy=>Bertini)
-   assert( totalChern == 3*( (ring(totalChern))_0 )^2 + 2 * ((ring(totalChern))_0)^3 )
-///
+-- TEST ///
+--    R = QQ[x,y,z,w]
+--    I = minors(2,matrix{{x,y,z},{y,z,w}})
+--    totalSegre = segreClass(I, ResidualStrategy=>Bertini)
+--    assert( totalSegre == 3*( (ring(totalSegre))_0 )^2 - 10*( (ring(totalSegre))_0 )^3 )
+--    totalChern = chernClass(I, ResidualStrategy=>Bertini)
+--    assert( totalChern == 3*( (ring(totalChern))_0 )^2 + 2 * ((ring(totalChern))_0)^3 )
+-- ///
 
 
 -------------------------------------------------------
