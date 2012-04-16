@@ -6,7 +6,7 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 3.1.4
+VERSION = 3.1.4.1
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 TARFILE = factory-$(VERSIONH).tar.gz
 TARDIR = factory

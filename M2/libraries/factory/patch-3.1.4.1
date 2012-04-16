@@ -1,0 +1,35 @@
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory-3-1-4/cf_gcd_smallp.h factory/cf_gcd_smallp.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory-3-1-4/cf_gcd_smallp.h	2012-04-10 01:33:42.000000000 -0700
++++ factory/cf_gcd_smallp.h	2012-04-16 15:35:32.000000000 -0700
+@@ -55,8 +55,7 @@
+ /// GCD of A and B over GF
+ static inline CanonicalForm GCD_GF (const CanonicalForm& A, const CanonicalForm& B)
+ {
+-  ASSERT (CFFactory::gettype() == GaloisFieldDomain,
+-          "GF as base field expected");
++  //ASSERT (CFFactory::gettype() == GaloisFieldDomain, "GF as base field expected");
+   CFList list;
+   bool top_level= true;
+   return GCD_GF (A, B, list, top_level);
+@@ -69,8 +68,7 @@
+ static inline
+ CanonicalForm sparseGCDFp (const CanonicalForm& A, const CanonicalForm& B)
+ {
+-  ASSERT (CFFactory::gettype() == GaloisFieldDomain, 
+-          "GF as base field expected");
++  //ASSERT (CFFactory::gettype() == GaloisFieldDomain, "GF as base field expected");
+   CFList list;
+   bool topLevel= true;
+   return sparseGCDFp (A, B, topLevel, list);
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory-3-1-4/memutil.c factory/memutil.c
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/factory/tmp/factory-3-1-4/memutil.c	2012-04-10 01:33:42.000000000 -0700
++++ factory/memutil.c	2012-04-16 15:35:34.000000000 -0700
+@@ -8,6 +8,8 @@
+ 
+ #include <stdlib.h>
+ 
++#include <string.h>
++
+ #include "assert.h"
+ 
+ #include "memutil.h"
