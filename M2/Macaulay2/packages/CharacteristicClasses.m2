@@ -26,9 +26,8 @@ newPackage(
 ---------------------------------------------------------------
  
 -- Check the ~/.Macaulay2/init-CharacteristicClasses.m2 file for the absolute path.
--- If it's not there, then use the root path.
 bertini'path = (options CharacteristicClasses).Configuration#"pathToBertini";
-if bertini'path == "" then bertini'path = rootPath | "/";
+-- if bertini'path == "" then bertini'path = rootPath | "/";
 
 if not instance(bertini'path,String) then error "Expected configuration option pathToBertini to be a string."
 
