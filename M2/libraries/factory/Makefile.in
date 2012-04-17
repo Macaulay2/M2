@@ -57,6 +57,10 @@ Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/M
 #      #include <wchar.h>
 #    }
 
+install : install-assert-h
+install-assert-h : 
+	cd $(BUILDDIR) && (set -x ; @INSTALL_DATA@ assert.h $(LIBRARIESDIR)/include/factory )
+
 uninstall clean ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf \
