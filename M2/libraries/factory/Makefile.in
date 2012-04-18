@@ -59,6 +59,7 @@ Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/M
 
 .installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/assert.h 
 $(LIBRARIESDIR)/include/factory/assert.h : $(BUILDDIR)/assert.h .compiled-$(VERSION) 
+	$(MKDIR_P) $(LIBRARIESDIR)/include/factory
 	@INSTALL_DATA@ $< $@
 
 uninstall clean ::
