@@ -1,0 +1,4 @@
+Some system administrators don't like M2 using multiple threads, so
+we have to make --disable-pthreads work again, to prevent gc from
+automatically creating threads, and possible to make --disable-threads
+to prevent the user from using them.
