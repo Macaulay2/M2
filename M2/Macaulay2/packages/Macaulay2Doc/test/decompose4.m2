@@ -1,7 +1,11 @@
 -- This one seems fixed.  10-12-09.
 kk = QQ[a..d]
 I = ideal"1/2a2bc-2/3c2,a-b"
-assert(decompose I == {ideal(a-b,c), ideal(a-b,3*b^3-4*c)})
+assert(
+     decompose I == {ideal(a-b,c), ideal(a-b,3*b^3-4*c)}
+     or
+     decompose I == {ideal(a-b,3*b^3-4*c), ideal(a-b,c)}
+     )
 
 kk = QQ
 R = kk[w_(4,0), w_(3,0), w_(2,2), x]
