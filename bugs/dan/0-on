@@ -7,3 +7,29 @@ on2 = f -> scan(methods f, m -> (
 
 It should treat method functions with options properly, digging
 in one level deeper.
+
+This almost works:
+
+    --- debugging.m2	(revision 14504)
+    +++ debugging.m2	(working copy)
+    @@ -47,6 +47,18 @@
+	  if not callCount#?fb then callCount#fb = 0;
+	  limit := opts.CallLimit;
+	  if not instance(f, Function) then error("expected a function");
+    +     if instance(f, MethodFunction) then (
+    +	  scan(methods f, m -> (
+    +		    on( lookup m, Name => "method for " | toString m );
+    +		    ));
+    +	  return;
+    +	  );
+    +     if instance(f, MethodFunctionWithOptions) then (
+    +	  scan(methods f, m -> (
+    +		    on( (lookup m) {}, Name => "method for " | toString m);
+    +		    ));
+    +	  return;
+    +	  );
+	  fn := if opts.Name =!= null then opts.Name else try toString f else "{*function*}";
+	  x -> (
+	      saveCallCount := callCount#fb = callCount#fb+1;
+
+but not all method function (such as toString, toExternalString) are in one of those classes.
