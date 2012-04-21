@@ -1,0 +1,9 @@
+"on" should do something for all methods of a method function, 
+like this:
+
+on2 = f -> scan(methods f, m -> (
+	  installMethod append ( m , on( lookup m, Name => "method for " | toString m#0 | " " | toString unsequence drop(m,1)));
+	  ))
+
+It should treat method functions with options properly, digging
+in one level deeper.
