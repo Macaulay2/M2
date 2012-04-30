@@ -1,11 +1,11 @@
 import os.path
 import shutil
 import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
-       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+Import('extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand')
+       'getLibSpecificStageCommand','defaultCleanLibrary','installBuilders')
 
 #set this to library name
 libraryName = 'cddplus'
@@ -25,49 +25,33 @@ setLibSpecificStageCommandArguments('release','all',libraryName,1,[ 'prefix=$SCo
 setLibSpecificStageCommandArguments('debug','all',libraryName,1,[ 'prefix=$SConsInstallPrefixPath','LDFLAGS=-L$SConsInstallPrefixPath/lib/', 'CFLAGS=-I. -I$SConsInstallPrefixPath/include/ -g -O0',
                                                                 'CPPFLAGS=-I. -I$SConsInstallPrefixPath -g -O0', 'all'])
 
-setLibSpecific('all','all',libraryName,'patchfile','../../../libraries/cddplus/patch-077a')
+setLibSpecific('all','all',libraryName,'patchfile','../../../../../libraries/cddplus/patch-077a')
 setLibSpecific('all','all',libraryName,'enableParallelSubBuild',True)
    
 def BuildLibrary(target,source,env):
    """
    Build target for the library.
    """
+   buildSettings = env.buildSettings
    source = source[0].rstr()
    sourceFile = os.path.split(source)[1]
    packageName = extractPackageName(sourceFile)
-   cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-   if(getLibSpecific(env.mode,architecture,libraryName,'stage0')):
-      setLibSpecific(env.mode,architecture,libraryName,'stage1',True)
+   cleaned = defaultCleanLibrary(buildSettings,libraryName)
+   untarLibrary(buildSettings,source, packageName, libraryName)
+   if(buildSettings.getLibSpecific(libraryName,'stage0')):
+      buildSettings.setLibSpecific(libraryName,'stage1',True)
    else:
       return None
-   if makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName):
-      buildpath = getState(env.mode,architecture,'buildpath')
+   if makeLibrary(buildSettings,source,packageName,libraryName):
+      buildpath = buildSettings.getBuildPath()
       realpath = buildpath+packageName+'/'
    #install...
       try:
-         os.makedirs(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin'))
+         os.makedirs(os.path.abspath(buildSettings.getPrefixPath()+'/bin'))
       except:
          None
       for target in 'cddr+ cddf+'.split(' '):
-         shutil.copy2(realpath+target,os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target))
+         shutil.copy2(realpath+target,os.path.abspath(buildSettings.getPrefixPath()+'/bin/'+target))
    return None
    
-
-def CleanLibrary(mode,directory,packageBaseName):
-   """
-   Actual function that gets called to process a clean library command
-   """
-   if(deepCleanLibrary(mode,architecture,libraryName)):
-      return True
-   if(cleanLibrary(mode,architecture,libraryName)):
-      return True   
-   return False
-
-for mode in state[architecture]['modes']:
-   if(getState(mode,architecture,'build')):
-      builder = Builder(action=BuildLibrary, single_source=1)
-      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-      if(state[architecture][mode].get('builders')==None):
-         setState(mode,architecture,'builders',{})
-      getState(mode,architecture,'builders')[libraryName]=builder
+installBuilders(BuildLibrary,libraryName)

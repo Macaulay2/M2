@@ -1,4 +1,4 @@
-Import('setLibSpecific','setState',
+Import('setLibSpecific',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
        'setLibSpecificStageCommand','buildBuilders')
 

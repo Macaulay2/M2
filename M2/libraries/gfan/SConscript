@@ -1,6 +1,6 @@
-Import('setLibSpecific','setState',
+Import('setLibSpecific',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
-       'setLibSpecificStageCommand','buildBuilders','state','architecture')
+       'setLibSpecificStageCommand','buildBuilders')
 
 #set this to library name
 libraryName = 'gfan'
@@ -15,6 +15,6 @@ setLibSpecificStageCommand('all','all',libraryName,1,'make')
 setLibSpecificStageCommandArguments('all','all',libraryName,0,[ 'PREFIX=$SConsInstallPrefixPath','CCLINKER=g++ -L$SConsInstallPrefixPath/lib/', 'CC=gcc -I$SConsInstallPrefixPath/include/','CCC=g++ -I$SConsInstallPrefixPath/include/' ,'CDD_LINKOPTIONS=-lcddgmp'])
 setLibSpecificStageCommandArguments('all','Darwin-x86_64',libraryName,0,[ 'PREFIX=$SConsInstallPrefixPath','CCLINKER=g++ -m64 -L$SConsInstallPrefixPath/lib/', 'CC=gcc -m64 -I$SConsInstallPrefixPath/include/','CCC=g++ -m64 -I$SConsInstallPrefixPath/include/' ,'CDD_LINKOPTIONS=-lcddgmp'])
 setLibSpecificStageCommandArguments('all','all',libraryName,1,['PREFIX=$SConsInstallPrefixPath','install'])
-setLibSpecific('all','all',libraryName,'patchfile','../../../libraries/gfan/patch-0.4plus')
+setLibSpecific('all','all',libraryName,'patchfile','../../../../../libraries/gfan/patch-0.4plus')
  
 buildBuilders(libraryName)  

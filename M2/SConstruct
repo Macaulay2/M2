@@ -8,108 +8,65 @@ AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='r
 AddOption('--jj',dest='jj',nargs=1,action='store',type='int',help='Number of parallel sub-tasks to run for each build task')
 AddOption('--disable-parallel',dest='disableparallel',nargs=0,action='store',help='Disable parallel build')
 AddOption('--enable-download',dest='enabledownload',nargs=0,action='store',help='Disable downloading packages')
+AddOption('--distribution',dest='distribution',type='string',nargs=1,action='store',default='Source-System',help='Distribution to build.  Defaults to "Source-System"')
+
+debugGCCEFlags = debugGCCM2Flags = debugGCCFlags = '-O0 -g'
+releaseGCCEFlags = releaseGCCM2Flags = releaseGCCFlags = '-O2 -g'
+
 state = {
     'Darwin-x86_64':
         {
         'debug':{
-            'prefixpath':'local/debug/',
-            'includepath':'local/debug/include/',
-            'libpath':'local/debug/lib',
-            'buildpath':'BUILD/debug/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{ },
-            'eflags':'-O0 -g',
-            'M2flags':'-O0 -g',
+            'eflags':debugGCCEFlags,
+            'M2flags':debugGCCM2Flags,
             },
         'release':{
-            'prefixpath':'local/release/',
-            'includepath':'local/release/include/',
-            'libpath':'local/release/lib/',
-            'buildpath':'BUILD/release/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{},
-            'eflags':'-O2 -g',
-            'M2flags':'-O2 -g',
+            'eflags':releaseGCCEFlags,
+            'M2flags':releaseGCCM2Flags,
             },
         'modes':set(['debug','release']),
         },
     'Darwin-x86':
         {
         'debug':{
-            'prefixpath':'local/debug/',
-            'includepath':'local/debug/include/',
-            'libpath':'local/debug/lib',
-            'buildpath':'BUILD/debug/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{ },
-            'eflags':'-O0 -g',
-            'M2flags':'-O0 -g',
+            'eflags':debugGCCEFlags,
+            'M2flags':debugGCCM2Flags,
             },
         'release':{
-            'prefixpath':'local/release/',
-            'includepath':'local/release/include/',
-            'libpath':'local/release/lib/',
-            'buildpath':'BUILD/release/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{},
-            'eflags':'-O2 -g',
-            'M2flags':'-O2 -g',
+            'eflags':releaseGCCEFlags,
+            'M2flags':releaseGCCM2Flags,
             },
         'modes':set(['debug','release']),
         },
     'linux-x86_64':
         {
         'debug':{
-            'prefixpath':'local/debug/',
-            'includepath':'local/debug/include/',
-            'libpath':'local/debug/lib',
-            'buildpath':'BUILD/debug/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{ },
-            'eflags':'-O0 -g',
-            'M2flags':'-O0 -g',
+            'eflags':debugGCCEFlags,
+            'M2flags':debugGCCEFlags,
             },
         'release':{
-            'prefixpath':'local/release/',
-            'includepath':'local/release/include/',
-            'libpath':'local/release/lib/',
-            'buildpath':'BUILD/release/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{},
-            'eflags':'-O2 -g',
-            'M2flags':'-O2 -g',
+            'eflags':releaseGCCEFlags,
+            'M2flags':releaseGCCM2Flags,
             },
         'modes':set(['debug','release']),
         },
     'linux-x86':
         {
         'debug':{
-            'prefixpath':'local/debug/',
-            'includepath':'local/debug/include/',
-            'libpath':'local/debug/lib/',
-            'buildpath':'BUILD/debug/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{ },
-            'eflags':'-O0 -g',
-            'M2flags':'-O0 -g',
+            'eflags':debugGCCEFlags,
+            'M2flags':debugGCCM2Flags,
             },
         'release':{
-            'prefixpath':'local/release/',
-            'includepath':'local/release/include/',
-            'libpath':'local/release/lib/',
-            'buildpath':'BUILD/release/',
-            'tarpath':'BUILD/tarfiles/',
-            'build':False,
             'libspecific':{},
-            'eflags':'-O2 -g',
-            'M2flags':'-O2 -g',
+            'eflags':releaseGCCEFlags,
+            'M2flags':releaseGCCM2Flags,
             },
         'modes':set(['debug','release']),
         },
@@ -118,7 +75,90 @@ state = {
     'clean':False,
     'enabledownload':False
 }
+class BuildSettings:
+    """
+    This class encapsulates the unique idenitfing information for a given possible build.
+    These are:
+    Mode (debug or release),
+    Architecture (linux-x86, Darwin-x86_64, etc),
+    Distribution Type (Source, Fedora, Ubuntu, etc)
+    """
+    def __init__(self,architecture,mode,distributionType):
+        self._mode = mode
+        self._architecture = architecture
+        self._distributionType = distributionType
+        self._autoDetectLibs = True
+        self._state={}
+        self._builders = {}
+        self._libSpecific = {}
+    def mode(self):
+        return self._mode
+    def architecture(self):
+        return self._architecture
+    def distributionType(self):
+        return self._distributionType
+    def autodetectLibs(self):
+        """
+        Return True if should auto detect which libraries to build, false otherwise.
+        """
+        return self._autoDetectLibs
+    def setAutoDetectLibs(self, autoDetectLibs):
+        """
+        Set auto detection of libraries to true to enable, false to disable.
+        """
+        if(type(autoDetectLibs)!=bool):
+            raise TypeException("autoDetectLibs must be true or false")
+        self._autoDetectLibs = autoDetectLibs
+    def setAvailablePackageBases(self,packageBases):
+        self._availablePackageBases = packageBases
+    def getExistingPackages(self):
+        return self._state['existingpackages']
+    def getPackageBases(self):
+        return self._availablePackageBases
+    def getM2Flags(self):
+        return getStateMode(self._mode,self._architecture,'M2flags')
+    def getEnv(self):
+        return self._state['env']
+    def getBuilders(self):
+        return self._builders
+    def getPrefixPath(self):
+        return self._state['prefixpath']
+    def getBuildPath(self):
+        return self._state['buildpath']
+    def getTarPath(self):
+        return 'BUILD/tarfiles/'
+    def getState(self,attribute,throwException=True):
+        if(throwException):
+            return self._state[attribute]
+        try:
+            return self._state[attribute]
+        except:
+            return None
+    def setState(self,attribute,val):
+        self._state[attribute]=val
+    def setLibSpecific(self,libraryName,attribute,val):
+        try:
+            d = self._libSpecific[libraryName]
+        except KeyError:
+            d = {}
+            self._libSpecific[libraryName]=d
+        d[attribute]=val
+    def getLibSpecific(self,libraryName,attribute,throwException=True):
+        if(throwException):
+            return self._libSpecific[libraryName][attribute]
+        try:
+            return self._libSpecific[libraryName][attribute]
+        except KeyError:
+            return None
+    def shouldDeepCleanLib(self,libraryName):
+        return (self.getState('deepclean',False) == True) or (self.getLibSpecific(libraryName,'deepcleanlib',False)==True)
+    def shouldCleanLib(self,libraryName):
+        return (self.getState('cleanlib',False) == True) or (self.getLibSpecific(libraryName,'cleanlib',False)==True)
+    
 def detectArchitecture():
+    """
+    Return detected architecture of currently running operating system & CPU architecture as string.
+    """
     import platform
     if platform.system()=='Linux':
         if platform.architecture()[0]=='64bit':
@@ -145,12 +185,30 @@ def detectArchitecture():
     else:
         raise NotImplementedError("Unknown NT architecture %s" % architecture)
 
-def getState(mode,architecture,attribute,exception=True):
+def getState(buildSettings,attribute,exception=True):
     """
     This returns the attribute requested for the given mode and architecture.
     """
-    if(mode == None or architecture == None or attribute == None):
-        raise Exception("Invalid arguments to getState %s %s %s",mode,architecture,attribute)
+    if(buildSettings is None or (not isinstance(buildSettings,BuildSettings)) or attribute is None):
+        raise Exception("Invalid arguments to getState %s %s",str(buildSettings),attribute)
+    adict = state.get(buildSettings.architecture())
+    if(adict == None):
+        raise KeyError("Unknown architecture: " + architecture)
+    mdict = adict.get(buildSettings.mode())
+    if(mdict == None):
+        raise KeyError("Unknown mode: " + mode)
+    value = mdict.get(attribute)
+    if(value is None):
+        if(exception):
+            raise KeyError("Unknown attribute: " + attribute)
+    return value
+
+def getStateMode(mode,architecture,attribute,exception=True):
+    """
+    This returns the attribute requested for the given mode and architecture.
+    """
+    if(buildSettings is None or (not isinstance(buildSettings,BuildSettings)) or attribute is None):
+        raise Exception("Invalid arguments to getState %s %s",str(buildSettings),attribute)
     adict = state.get(architecture)
     if(adict == None):
         raise KeyError("Unknown architecture: " + architecture)
@@ -163,10 +221,13 @@ def getState(mode,architecture,attribute,exception=True):
             raise KeyError("Unknown attribute: " + attribute)
     return value
 
-def setState(mode,architecture,attribute,value):
+
+def setArchitectureState(buildSettings,attribute,value):
     """
     This sets the attribute to the value for the given mode and architecture.
     """
+    mode = buildSettings.mode()
+    architecture = buildSettings.architecture()
     if(mode == None or architecture == None or attribute == None):
         raise Exception("Invalid arguments to getState")
     adict = state.get(architecture)
@@ -185,7 +246,7 @@ def getLibSpecific(mode,architecture,libraryBaseName,attribute):
         raise Exception("Invalid arguments to getLibSpecific")
 
     try:
-        libspecific = getState(mode,architecture,'libspecific')[libraryBaseName][attribute]
+        libspecific = getStateMode(mode,architecture,'libspecific')[libraryBaseName][attribute]
     except KeyError, e:
         return None
     return libspecific
@@ -209,7 +270,7 @@ def setLibSpecific(mode,architecture,libraryBaseName,attribute,value):
     if(libraryBaseName == None or attribute == None):
         raise Exception("Invalid arguments to getLibSpecific")
     try:
-        libspecific = getState(mode,architecture,'libspecific')
+        libspecific = getStateMode(mode,architecture,'libspecific')
     except KeyError:
         libspecific = state[architecture][mode]['libspecific']={}
     try:
@@ -219,14 +280,14 @@ def setLibSpecific(mode,architecture,libraryBaseName,attribute,value):
     llspec[attribute]=value
     return value
 
-def performLibSpecificTemplate(mode,architecture,libraryBaseName,s):
+def performLibSpecificTemplate(buildSettings,libraryBaseName,s):
     """
     Perform lib specific template evaluation on s
     """
-    prefixpath = getState(mode,architecture,'prefixpath')
+    prefixpath = buildSettings.getPrefixPath()
     s = s.replace("$SConsInstallPrefixPath",os.path.abspath(prefixpath))
-    s = s.replace("$SConsArchitecture",architecture)
-    s = s.replace("$SConsMode",mode)
+    s = s.replace("$SConsArchitecture",buildSettings.architecture())
+    s = s.replace("$SConsMode",buildSettings.mode())
     return s
 
 def setLibSpecificStateEnvExport(mode,architecture,libraryBaseName,stage,attribute,value):
@@ -299,13 +360,13 @@ def getLibSpecificMakeInstallExport(mode,architecture,libraryBaseName,attribute,
     """
     return getLibSpecificConfigExport(mode,architecture,libraryBaseName,2,attribute)
 
-def getLibSpecificEnv(mode,architecture,libraryBaseName,stage,newenv):
+def getLibSpecificEnv(buildSettings,libraryBaseName,stage,newenv):
     stageName = 'stage'+str(stage)+'env'
-    stageDict = getLibSpecific(mode,architecture,libraryBaseName,stageName)
+    stageDict = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBaseName,stageName)
     if(stageDict is None):
         return
     for(key,value) in stageDict.items():
-        newval = performLibSpecificTemplate(mode,architecture,libraryBaseName,value)
+        newval = performLibSpecificTemplate(buildSettings,libraryBaseName,value)
         if(key in newenv):
             print "Warning: Env already contains " + key
         newenv[key]=newval
@@ -334,18 +395,13 @@ def setLibSpecificStageCommand(mode,architecture,libraryBaseName,stage,command):
     """
     setLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)+'cmd',command)
 
-def getLibSpecificStageCommand(mode,architecture,libraryBaseName,stage):
+def getLibSpecificStageCommand(buildSettings,libraryBaseName,stage):
     """
     Get the command that is run at a specific stage of library compilation.
     This will raise a key error if the stage does not exist.
     If the command has not been set, it will return the defaults of configure/make/make (install)
     """
-    cmd =  getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)+'cmd')
-    if(libraryBaseName=='pari'):
-        print mode
-        print architecture
-        print libraryBaseName
-        print cmd
+    cmd =  getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBaseName,'stage'+str(stage)+'cmd')
     if(cmd is None):
         if(stage==0):
             return 'configure'
@@ -364,18 +420,18 @@ def setLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage,
     attribute = 'stage'+str(stage)+'args'
     setLibSpecific(mode,architecture,libraryBaseName,attribute,args)
 
-def getLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage):
+def getLibSpecificStageCommandArguments(buildSettings,libraryBaseName,stage):
     """
     Return the arguments for the command that is run at a specific stage of library compilation.
     This will raise a key error if the stage does not exist.
     If the args have not been set, will return defaults of [],[],[install]
     """
     attribute = 'stage'+str(stage)+'args'
-    oldArgs = getLibSpecific(mode,architecture,libraryBaseName,attribute)
+    oldArgs = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBaseName,attribute)
     args=[]
     if(oldArgs is not None):
         for i in range(0,len(oldArgs)):
-            args.append(performLibSpecificTemplate(mode,architecture,libraryBaseName,oldArgs[i]))
+            args.append(performLibSpecificTemplate(buildSettings,libraryBaseName,oldArgs[i]))
     else:
         args = []
         if(stage==2):
@@ -543,50 +599,60 @@ architecture = detectArchitecture()
 modes = GetOption('modes')
 #List of modes requested to build.
 splitModes = modes.split(',')
+#Requested build distributions.
+distributions=GetOption('distribution')
+#List of distributions requested to build.
+distributions = distributions.split(',')
+#List of build settings to build.
+buildSettingsList = []
 for mode in splitModes:
-    try:
-        setState(mode,architecture,'build',True)
-        #handle clean lib
-        if(GetOption('cleanlib')!=None):
-            if(GetOption('cleanlib')=='all'):
-                setState(mode,architecture,'cleanlib',True)
-            else:
-                splitCleanLib = GetOption('cleanlib').split(',')
-                for s in splitCleanLib:
-                    setLibSpecific(mode,architecture,s,'clean',True)
-        #handle deep clean
-        if(GetOption('deepcleanlib')!=None):
-            if(GetOption('deepcleanlib')=='all'):
-                setState(mode,architecture,'deepcleanlib',True)
-            else:
-                splitDeepCleanLib = GetOption('deepcleanlib').split(',')
-                for s in splitDeepCleanLib:
-                    setLibSpecific(mode,architecture,s,'deepclean',True)
-        #handle configlib
-        if(GetOption('configlib')!=None):
-            if(GetOption('configlib')=='all'):
-                setState(mode,architecture,'configlib',True)
-            else:
-                splitConfigLib = GetOption('configlib').split(',')
-                for s in splitConfigLib:
-                    setLibSpecific(mode,architecture,s,'config',True)            
-        #handle makelib
-        if(GetOption('makelib')!=None):
-            if(GetOption('makelib')=='all'):
-                setState(mode,architecture,'makelib',True)
-            else:
-                splitMakeLib = GetOption('makelib').split(',')
-                for s in splitMakeLib:
-                    setLibSpecific(mode,architecture,s,'make',True)            
-    except KeyError:
-        raise Exception('Unknown mode: "' + mode + '" on "' + architecture + '"')
+    for distribution in distributions:
+        buildSettings = BuildSettings(architecture,mode,distribution)
+        buildSettings.setState('prefixpath','local/'+architecture+'/'+distribution+'/'+mode+'/')
+        buildSettings.setState('buildpath','BUILD/'+architecture+'/'+distribution+'/'+mode+'/')
+        try:
+            setArchitectureState(buildSettings,'build',True)
+            #handle clean lib
+            if(GetOption('cleanlib')!=None):
+                if(GetOption('cleanlib')=='all'):
+                    buildSettings.setState('cleanlib',True)
+                else:
+                    splitCleanLib = GetOption('clean').split(',')
+                    for s in splitCleanLib:
+                        buildSettings.setLibSpecific(s,'clean',True)
+            #handle deep clean
+            if(GetOption('deepcleanlib')!=None):
+                if(GetOption('deepcleanlib')=='all'):
+                    buildSettings.setState('deepclean',True)
+                else:
+                    splitDeepCleanLib = GetOption('deepcleanlib').split(',')
+                    for s in splitDeepCleanLib:
+                        buildSettings.setLibSpecific(s,'deepclean',True)
+            #handle configlib
+            if(GetOption('configlib')!=None):
+                if(GetOption('configlib')=='all'):
+                    setArchitectureState(buildSettings,'configlib',True)
+                else:
+                    splitConfigLib = GetOption('configlib').split(',')
+                    for s in splitConfigLib:
+                        setLibSpecific(mode,architecture,s,'config',True)            
+            #handle makelib
+            if(GetOption('makelib')!=None):
+                if(GetOption('makelib')=='all'):
+                    setArchitectureState(buildSettings,'makelib',True)
+                else:
+                    splitMakeLib = GetOption('makelib').split(',')
+                    for s in splitMakeLib:
+                        setLibSpecific(mode,architecture,s,'make',True)            
+        except KeyError:
+            raise Exception('Unknown mode: "' + mode + '" on "' + architecture + '" with distribution "' + distribution + '"')
+        buildSettingsList.append(buildSettings)
 
 exportDict = {'state':state,
         'getLibSpecific':getLibSpecific,
         'setLibSpecific':setLibSpecific,
         'getState':getState,
-        'setState':setState,
-        'architecture':architecture,
+        'setArchitectureState':setArchitectureState,
         'numberJobs':numberJobs,
         'numberSubTasks':numberSubTasks,
         'setLibSpecificStateEnvExport':setLibSpecificStateEnvExport,
@@ -605,14 +671,15 @@ exportDict = {'state':state,
         'getLibSpecificStageCommand':getLibSpecificStageCommand,
         'getLibSpecificEnv':getLibSpecificEnv,
         'performLibSpecificTemplate':performLibSpecificTemplate,
+        'buildSettingsList':buildSettingsList,
         'Glob':Glob,
         }
 exportDict['exportDict']=exportDict
 
-for mode in state[architecture]['modes']:
+for buildSettings in buildSettingsList:
     ed = dict(exportDict)
-    ed['mode']=mode
+    ed['buildSettings'] = buildSettings
     ed['exportDict']=ed
-    SConscript('Macaulay2/SConscript', exports=ed, variant_dir=getState(mode,architecture,'buildpath')+'Macaulay2/', duplicate=0)
+    SConscript('Macaulay2/SConscript', exports=ed, variant_dir=buildSettings.getBuildPath()+'Macaulay2/', duplicate=0)
 SConscript('libraries/SConscript', exports=exportDict)
 

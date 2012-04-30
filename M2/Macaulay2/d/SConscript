@@ -1,10 +1,10 @@
 import os.path
 import shutil
 import subprocess
-Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
+Import('setArchitectureState','getLibSpecific','setLibSpecific','numberSubTasks',
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','buildSettings')
 
 
 dfiles = ['arithmetic.d','atomic.d','M2.d','system.d','strings.d','varstrin.d','strings1.d','errio.d','vararray.d','ctype.d','nets.d',
@@ -37,7 +37,7 @@ def DBuildDependency(target,source,env):
     except:
         None
     targetFile = splitTargetPath[1]
-    cmd = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/c/scc')
+    cmd = os.path.abspath(buildSettings.getBuildPath()+'Macaulay2/c/scc')
     args = [cmd, '-dep', os.path.abspath(source),'-I../d/']
     if(os.path.splitext(target)[1]=='.dd'):
         args = args + ['-cxx']
@@ -56,7 +56,7 @@ def DBuild(target,source,env):
     splitTargetPath = os.path.split(target)
     targetPath = splitTargetPath[0]+'/'
     targetFile = splitTargetPath[1]
-    cmd = os.path.abspath(getState(mode,architecture,'buildpath')+'Macaulay2/c/scc')
+    cmd = os.path.abspath(buildSettings.getBuildPath()+'Macaulay2/c/scc')
     args = [cmd, '-ronly', '-noline', os.path.abspath(source),'-I../d/']
     if(os.path.splitext(target)[1]=='.dd'):
         args = args + ['-cxx']
@@ -69,15 +69,15 @@ def DBuild(target,source,env):
 startupbuilder = Builder(action=startupBuilder, single_source=1)
 ddepbuilder = Builder(action=DBuildDependency, single_source=1)
 dbuilder = Builder(action=DBuild,single_source=1)
-buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/d/'
+buildpath = buildSettings.getBuildPath()+'Macaulay2/d/'
 depbuilders = []
 env = Environment()
-env.mode = mode
+env.mode = buildSettings.mode()
 env['BUILDERS']['ddepbuilder']=ddepbuilder
 env['BUILDERS']['dbuilder']=dbuilder
 env['BUILDERS']['startupbuilder']=startupbuilder
 #Setup D dependency build targets.
-scc = getState(mode,architecture,'scc')
+scc = buildSettings.getState('scc')
 for i in range(0,len(dfiles)):
     df = dfiles[i]
     sf = os.path.split(df)
@@ -90,8 +90,8 @@ for i in range(0,len(dfiles)):
     depbuilders.append(builder)
 builders = []
 objFiles = []
-prefixPath = getState(mode,architecture,'prefixpath')
-cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes -IMacaulay2/system/ "+getState(mode,architecture,'M2flags')
+prefixPath = buildSettings.getPrefixPath()
+cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes -IMacaulay2/system/ "+buildSettings.getM2Flags()
 ddict = {}
 
 #setup D build targets.
@@ -115,7 +115,7 @@ for i in range(0,len(dfiles)):
     obj = Object('#'+buildpath+targetf,CFLAGS=cflags, CXXFLAGS=cflags)
     objFiles.append(obj)
     ddict[sf[1]]=obj
-setState(mode,architecture,'dFileDict',ddict)
+setArchitectureState(buildSettings,'dFileDict',ddict)
 #Setup C/C++ object file targets for files in D directory
 startupc = env.startupbuilder('#'+buildpath+'startup.c','startup.m2.in')
 startupobj = Object(startupc,CFLAGS=cflags,CXXFLAGS=cflags)
@@ -140,7 +140,7 @@ for f in cfiles:
     objFiles.append(builder)
     cobjs.append(builder)
 
-setState(mode,architecture,'dstart',depbuilders[0]+cobjs)
-setState(mode,architecture,'dend',builders[len(builders)-1])
-setState(mode,architecture,'dObjectFiles',objFiles)
+buildSettings.setState('dstart',depbuilders[0]+cobjs)
+buildSettings.setState('dend',builders[len(builders)-1])
+buildSettings.setState('dObjectFiles',objFiles)
 Return('objFiles')

@@ -3,10 +3,10 @@ import os.path
 import re
 import subprocess
 import shutil
-Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
+Import('state','getState','setArchitectureState','getLibSpecific','setLibSpecific','numberSubTasks',
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-        'getLibSpecificStageCommand','getLibSpecificEnv','Glob')
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','buildSettingsList')
 
 #list of dependencies to build.
 buildlibraries = set(['gc','mpir','readline','gdbm','mpfr','cddlib','glpk','nauty','4ti2','lapack','lrslib','pari','ntl','factory','cddplus','frobby','gfan','libfac','normaliz','boost','libxml2'])
@@ -22,6 +22,9 @@ dependencies = {
 }
 
 def downloadLibrary(architecture,mode,library):
+    """
+    Download library if it does not already xexist in tarpath.
+    """
     from urllib2 import Request, urlopen, URLError, HTTPError
     try:
         os.makedirs('../'+state[architecture][mode]['tarpath'])
@@ -33,49 +36,43 @@ def downloadLibrary(architecture,mode,library):
     filepath = '../'+state[architecture][mode]['tarpath'] + libraryFile
     absfilepath = os.path.abspath(filepath)
     if not os.path.isfile(filepath):
-        if state['enabledownload']:
-            url = getLibSpecific(mode,architecture,library,'downloadPath')
-            if(url is None):
-                url = 'http://www.math.uiuc.edu/Macaulay2/Extra/'
-            url = url + libraryFile
-            print 'Downloading: ' + absfilepath + ' from ' + url
-            req = Request(url)
-            f = urlopen(req)
-            localFile = open(absfilepath,'w')
-            localFile.write(f.read())
-            localFile.close()
-        else:
-            raise Exception("Unable to find library: " + library + " and downloading libraries is disabled")    
+        url = getLibSpecific(mode,architecture,library,'downloadPath')
+        if(url is None):
+            url = 'http://www.math.uiuc.edu/Macaulay2/Extra/'
+        url = url + libraryFile
+        print 'Downloading: ' + absfilepath + ' from ' + url
+        req = Request(url)
+        f = urlopen(req)
+        localFile = open(absfilepath,'w')
+        localFile.write(f.read())
+        localFile.close()
 
 def downloadLibraries(architecture,mode):
+    """
+    Download any missing libraries to be built.
+    """
     for library in state[architecture]['buildlibraries']:
         downloadLibrary(architecture,mode,library)
 
-def modeBuild(mode,architecture):
+def currentBuildPath(buildSettings):
     """
-    This function returns true if the mode should be built, false otherwise.
+    This function returns the build path for the current buildSettings.
     """
-    return getState(mode,architecture,'build')
+    return "../"+buildSettings.getBuildPath()
 
-def modeBuildPath(mode,architecture):
-    """
-    This function returns the build path for the current mode.
-    """
-    return "../"+getState(mode,architecture,'buildpath')
-
-def modeTarPath(mode,architecture):
+def currentTarPath(buildSettings):
     """
     This function returns the tar path for the current mode.
     """
-    return '../'+getState(mode,architecture,'tarpath')
+    return '../'+buildSettings.getTarPath()
     
-def modeBuildExistingPackages(mode,architecture):
+def buildExistingPackages(buildSettings):
     """
     This function is responsible for building lists of existing packages.
     An existing package is one that exists in the build directory.
     """
     existingPackages = set()
-    buildpath = modeBuildPath(mode,architecture)
+    buildpath = currentBuildPath(buildSettings)
     #Make the directory if it does not already exist.
     if(not os.path.isdir(buildpath)):
        os.makedirs(buildpath)
@@ -86,20 +83,18 @@ def modeBuildExistingPackages(mode,architecture):
         if(partialPath[0]=='.'):
             continue
         existingPackages.add(partialPath)
-    setState(mode,architecture,'existingpackages',existingPackages)
-    
+    buildSettings.setState('existingpackages',existingPackages)
     return existingPackages
 
-def modeBuildEnvironments(mode,architecture):
+def modeBuildEnvironments(buildSettings):
     """
     This function creates environments for the libraries to use.
     """
-    if(not modeBuild(mode,architecture)):
-        return
     env = Environment()
-    env.mode = mode
+    env.mode = buildSettings.mode
     env.state = state
-    setState(mode,architecture,'env',env)
+    env.buildSettings = buildSettings
+    buildSettings.setState('env',env)
 
 def extractPackageName(package):
     """
@@ -127,15 +122,16 @@ def extractPackageBaseName(package):
         return 'normaliz'
     return re.match('\A[0-9,a-z,A-Z]+',package).group(0)
 
-def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName):
+def untarLibrary(buildSettings, source, libraryName, libraryBaseName):
    """
    This untars the library if the appropriate state flags are set.
    Source is the source file.
    """
+   print 'untar library ' + libraryName
    #Source file is the file name of the tarball.
    sourceFile = os.path.split(source)[1]
    #Buildpath is the build directory
-   buildpath = getState(mode,architecture,'buildpath')
+   buildpath = buildSettings.getBuildPath()
    #realpath is the path to extract to.
    realpath = buildpath+libraryName+'/'
    #Check to see if it has already been extracted.
@@ -147,11 +143,11 @@ def untarLibrary(state, mode, architecture, source, libraryName, libraryBaseName
            unzipp = subprocess.Popen(['unzip', '-x',sourceFile],cwd=buildpath)
            if(unzipp.wait()):
                raise Exception("Unable to decompress " + libraryName + ".")
-       setLibSpecific(mode,architecture,libraryBaseName,'stage0',True)
-       tarfolder = getLibSpecific(mode,architecture,libraryBaseName,'tarfolder')
+       buildSettings.setLibSpecific(libraryBaseName,'stage0',True)
+       tarfolder = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBaseName,'tarfolder')
        if tarfolder:
            shutil.move(buildpath+tarfolder,realpath)
-       patchfile = getLibSpecific(mode,architecture,libraryBaseName,'patchfile')
+       patchfile = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBaseName,'patchfile')
        if patchfile is None:
            return True
        patchargs = ['patch','-p1','--input='+patchfile]
@@ -179,34 +175,32 @@ def appendEnv(env,attr,val):
     else:
         env[attr]=val
 
-def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,stage,diroffset=None):
+def executeStageLibrary(buildSettings,source,packageName,libraryBaseName,stage,diroffset=None):
    #Source file is the file name of the tarball.
    sourceFile = os.path.split(source)[1]
    #Buildpath is the build directory
-   buildpath = getState(mode,architecture,'buildpath')
+   buildpath = buildSettings.getBuildPath()
    #realpath is the path to extract to.
    realpath = buildpath+packageName+'/'
-   buildDirectory = getLibSpecific(mode,architecture,libraryBaseName,'builddirectory')
+   buildDirectory = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBaseName,'builddirectory')
    if(buildDirectory):
        realpath = realpath+buildDirectory
-   stageoffset = getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)+'DirOffset')
+   stageoffset = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBaseName,'stage'+str(stage)+'DirOffset')
    if(stageoffset):
        realpath = realpath + stageoffset
    if(diroffset):
        realpath = realpath+diroffset
-   if(getLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage)) is True):
-#       if(stage >= getLibSpecificNumStages(stage,mode,architecture)):
-#           raise Exception("Stage " + str(stage) + " > " + str(getLibSpecificNumStages(stage,mode,architecture)))
-       cmd = getLibSpecificStageCommand(mode,architecture,libraryBaseName,stage)
+   if(buildSettings.getLibSpecific(libraryBaseName,'stage'+str(stage),False) is True):
+       cmd = getLibSpecificStageCommand(buildSettings,libraryBaseName,stage)
        if(cmd==''):
            return
-       args = getLibSpecificStageCommandArguments(mode,architecture,libraryBaseName,stage)
+       args = getLibSpecificStageCommandArguments(buildSettings,libraryBaseName,stage)
        if(cmd!='make'):
            args = [os.path.abspath(realpath+cmd)]+args
        else:
            args = [cmd]+args
        newEnv = os.environ
-       getLibSpecificEnv(mode,architecture,libraryBaseName,stage,newEnv)
+       getLibSpecificEnv(buildSettings,libraryBaseName,stage,newEnv)
        print 'Execute: ' + str(args) + " in " + realpath
        proc = subprocess.Popen(args,cwd=realpath,env=newEnv)
        if(proc.wait()):
@@ -214,55 +208,55 @@ def executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseNa
                None
            else:
                raise Exception("Unable to execute " + str(args) + " for library " + packageName + " in " + realpath)
-       setLibSpecific(mode,architecture,libraryBaseName,'stage'+str(stage+1),True)       
+       buildSettings.setLibSpecific(libraryBaseName,'stage'+str(stage+1),True)       
        return True
    else:
        return False
     
-def configureLibrary(state, mode, architecture, source, packageName, libraryBaseName):
+def configureLibrary(buildSettings, source, packageName, libraryBaseName):
    """
    Configure the given library
    """
-   return executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,0)
+   return executeStageLibrary(buildSettings,source,packageName,libraryBaseName,0)
 
-def makeLibrary(state, mode, architecture, source, packageName, libraryBaseName, diroffset = None):
+def makeLibrary(buildSettings, source, packageName, libraryBaseName, diroffset = None):
    """
    Make the given library
    Note that we use popen instead of system because we are not allowed to chdir.
    """
-   return executeStageLibrary(state,mode,architecture,source,packageName,libraryBaseName,1,diroffset)
+   return executeStageLibrary(buildSettings,source,packageName,libraryBaseName,1,diroffset)
 
-def makeInstallLibrary(state, mode, architecture, source, libraryName, libraryBaseName, diroffset = None):
+def makeInstallLibrary(buildSettings, source, libraryName, libraryBaseName, diroffset = None):
    """
    Install the given library
    Note that we use popen instead of system because we are not allowed to chdir.
    """
-   return executeStageLibrary(state,mode,architecture,source,libraryName,libraryBaseName,2,diroffset)
+   return executeStageLibrary(buildSettings,source,libraryName,libraryBaseName,2,diroffset)
 
-def deepCleanLibrary(mode, architecture, packageBaseName):
+def deepCleanLibrary(buildSettings, packageBaseName):
     """
     Deep clean the given library.
     This removes the existing directory so the tarball will be reextracted
     """
-    if(getState(mode,architecture,'deepcleanlib',exception=False)==True or getLibSpecific(mode,architecture,packageBaseName,'deepclean')==True):
-        existingPackages = getState(mode,architecture,'existingpackages')
+    if buildSettings.shouldDeepCleanLib(packageBaseName):
+        existingPackages = buildSettings.getExistingPackages()
         for existing in existingPackages:
             if(extractPackageBaseName(existing)==packageBaseName):
                 directory = getState(mode,architecture,'buildpath') + existing
                 print 'Deleting build directory for: ' + packageBaseName + ' at ' + directory
                 Execute(Delete(directory))
-        setLibSpecific(mode,architecture,packageBaseName,'config',True)
+        buildSettings.setLibSpecific(packageBaseName,'stage0',True)
         return True
     else:
         return False
    
-def cleanLibrary(mode, architecture, packageBaseName):
+def cleanLibrary(buildSettings, packageBaseName):
     """
     Clean the given library.
     This is equivalent to make clean.
     """
-    if(getState(mode,architecture,'cleanlib',exception=False)==True or getLibSpecific(mode,architecture,packageBaseName,'clean')==True):
-        existingPackages = getState(mode,architecture,'existingpackages')
+    if buildSettings.shouldCleanLib(packageBaseName):
+        existingPackages = buildSettings.getExistingPackages()
         for existing in existingPackages:
             if(extractPackageBaseName(existing)==packageBaseName):
                 directory = getState(mode,architecture,'buildpath') + existing
@@ -270,7 +264,7 @@ def cleanLibrary(mode, architecture, packageBaseName):
                 cleanp = subprocess.Popen(['make','clean'],cwd=directory)
                 if(cleanp.wait()):
                     raise Exception("Unable to clean " + packageBaseName)
-                setLibSpecific(mode,architecture,packageBaseName,'make',True)
+                buildSettings.setLibSpecific(packageBaseName,'stage1',True)
         return True
     else:
         return False
@@ -278,22 +272,20 @@ def cleanLibrary(mode, architecture, packageBaseName):
 #This holds a set of SConscripts that have already been imported.
 importedSConscripts = set()
 
-def modeImportSConscript(mode,packageBases):
+def modeImportSConscript(buildSettings):
     """
     This function imports SConscripts for packages.
     """
+    packageBases = buildSettings.getPackageBases()
     for package in packageBases:
         package = extractPackageBaseName(package)
         if(not package in importedSConscripts):
             SConscript(package+'/SConscript',exports={
-                    'state':state,
                     'numberSubTasks':numberSubTasks,
                     'extractPackageName':extractPackageName,
                     'extractPackageBaseName':extractPackageBaseName,
                     'getLibSpecific':getLibSpecific,
                     'setLibSpecific':setLibSpecific,
-                    'getState':getState,
-                    'setState':setState,
                     'untarLibrary':untarLibrary,
                     'transferEnv':transferEnv,
                     'configureLibrary':configureLibrary,
@@ -301,7 +293,6 @@ def modeImportSConscript(mode,packageBases):
                     'makeInstallLibrary':makeInstallLibrary,
                     'deepCleanLibrary':deepCleanLibrary,
                     'cleanLibrary':cleanLibrary,
-                    'architecture':architecture,
                     'setLibSpecificStateEnvExport':setLibSpecificStateEnvExport,
                     'setLibSpecificConfigExport':setLibSpecificConfigExport,
                     'setLibSpecificMakeExport':setLibSpecificMakeExport,
@@ -316,55 +307,57 @@ def modeImportSConscript(mode,packageBases):
                     'getLibSpecificNumStages':getLibSpecificNumStages,
                     'getLibSpecificStageCommandArguments':getLibSpecificStageCommandArguments,
                     'getLibSpecificStageCommand':getLibSpecificStageCommand,
+                    'defaultCleanLibrary':defaultCleanLibrary,
                     'executeStageLibrary':executeStageLibrary,
                     'buildBuilders':buildBuilders,
+                    'installBuilders':installBuilders,
                     })
             importedSConscripts.add(package)
-            deps = getLibSpecific(mode,architecture,package,'Dependencies')
+            deps = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),package,'Dependencies')
             if deps:
                 dependencies[package]=deps
 
     
-def modeSpecific1(mode,architecture):
-    """
-    This is the first call to set up modes.
-    """
-    if(getState(mode,architecture,'build')==False):
-        return
+def safemakedirs(path):
     try:
-        libdirpath = os.path.abspath('../'+getState(mode,architecture,'prefixpath')+'lib/')
-        os.makedirs(libdirpath)
+        os.makedirs(path)
     except OSError:
         None
-    try:
-        includedirpath = os.path.abspath('../'+getState(mode,architecture,'prefixpath')+'include/')
-        os.makedirs(includedirpath)
-    except OSError:
-        None
-    packageBases = state[architecture]['buildlibraries']
-    existingPackages = modeBuildExistingPackages(mode,architecture)
-    modeBuildEnvironments(mode,architecture)
-    setState(mode,architecture,'packagebases',packageBases)
 
-def modeSpecific2(mode,architecture):
-    if(modeBuild(mode,architecture)):
-        modeImportSConscript(mode,getState(mode,architecture,'packagebases'))
-    downloadLibraries(architecture,mode)
+def modeSpecific1(buildSettings):
+    """
+    This is the first call to set up libraries for the various buildSettings.
+    """
+    #Create default directories.
+    safemakedirs(os.path.abspath('../'+buildSettings.getPrefixPath()+'lib/'))
+    safemakedirs(os.path.abspath('../'+buildSettings.getPrefixPath()+'include/'))
+    buildSettings.setAvailablePackageBases(state[buildSettings.architecture()]['buildlibraries'])
+    #Build existing packages list (for cleaning).
+    buildExistingPackages(buildSettings)
+    #Build SCons Environments.
+    modeBuildEnvironments(buildSettings)
+def modeSpecific2(buildSettings):
+    """
+    This is the second call to set up libraries for the various buildSettings.
+    """
+    #Import library sconscript files.
+    modeImportSConscript(buildSettings)
+    #Download libraries if necessary
+    if state['enabledownload']:
+        downloadLibraries(architecture,mode)
 
-def buildCandidates(mode,architecture):
+def buildCandidates(buildSettings):
     """
     This function assembles a list of build candidates.
     In the event of multiple files for the same library, the newest by creation date is used.
     """
-    if(getState(mode,architecture,'build')==False):
-        return
-    packages = [getLibSpecific(mode,architecture,library,'CompressedLib') for library in getState(mode,architecture,'packagebases')]
-    existingPackages = getState(mode,architecture,'existingpackages')
-    tarpath = "../"+getState(mode,architecture,'tarpath')
+    packages = [getLibSpecific(buildSettings.mode(),buildSettings.architecture(),library,'CompressedLib') for library in buildSettings.getPackageBases()]
+    existingPackages = buildSettings.getExistingPackages()
+    tarpath = "../"+buildSettings.getTarPath()
     doBuildLibraries = {}
     for package in packages:
         libraryBaseName = extractPackageBaseName(package)
-        if(libraryBaseName in state[architecture]['buildlibraries']):
+        if(libraryBaseName in buildSettings.getPackageBases()):
             existingPackage = doBuildLibraries.get(libraryBaseName)
             if(existingPackage is not None):
                 if(os.path.getmtime(tarpath+existingPackage) < os.path.getmtime(tarpath+package)):
@@ -373,90 +366,90 @@ def buildCandidates(mode,architecture):
                 doBuildLibraries[libraryBaseName]=package
     return doBuildLibraries
 
+def defaultCleanLibrary(buildSettings,packageBaseName):
+    """
+    Default function that gets called to process a clean library command
+    """
+    if(deepCleanLibrary(buildSettings,libraryName)):
+        return True
+    if(cleanLibrary(buildSettings,libraryName)):
+        return True   
+    return False
+
+def defaultBuildLibrary(target,source,env):
+    """
+    Build target for the library.
+    """
+    source = source[0].rstr()
+    sourceFile = os.path.split(source)[1]
+    packageName = extractPackageName(sourceFile)
+    buildSettings = env.buildSettings
+    libraryName = extractPackageBaseName(packageName)
+    cleaned = defaultCleanLibrary(buildSettings,libraryName)
+    if getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryName,'DecompressLib') is True:
+        untarLibrary(buildSettings,source, packageName, libraryName)
+    numstages = getLibSpecificNumStages(buildSettings.mode(),buildSettings.architecture(),libraryName)
+    for i in range(0,numstages):
+        executeStageLibrary(env.buildSettings,source,packageName,libraryName,i)
+    return None            
+
+def installBuilders(buildFunc, libraryName):
+    """
+    Install buildFunc as the builders for libraryName
+    """
+    for buildSettings in buildSettingsList:
+        builder = Builder(action=buildFunc, single_source=1)
+        buildSettings.getEnv().Append(BUILDERS = {'build_'+libraryName : builder})
+        buildSettings.getBuilders()[libraryName]=builder
+    
 def buildBuilders(libraryName):
     """
     Build build functions for the given library.
     """
-    def BuildLibrary(target,source,env):
-        """
-        Build target for the library.
-        """
-        source = source[0].rstr()
-        sourceFile = os.path.split(source)[1]
-        packageName = extractPackageName(sourceFile)
-        cleaned = CleanLibrary(env.mode,architecture,libraryName)
-        if getLibSpecific(env.mode,architecture,libraryName,'DecompressLib') is True:
-            untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-            numstages = getLibSpecificNumStages(env.mode,architecture,libraryName)
-            for i in range(0,numstages):
-                executeStageLibrary(env.state,env.mode,architecture,source,packageName,libraryName,i)
-            return None
-            
-            
-    def CleanLibrary(mode,directory,packageBaseName):
-        """
-        Actual function that gets called to process a clean library command
-        """
-        if(deepCleanLibrary(mode,architecture,libraryName)):
-            return True
-        if(cleanLibrary(mode,architecture,libraryName)):
-            return True   
-        return False
+    installBuilders(defaultBuildLibrary,libraryName)
 
-    for mode in state[architecture]['modes']:
-        if(getState(mode,architecture,'build')):
-            builder = Builder(action=BuildLibrary, single_source=1)
-            getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-            if(state[architecture][mode].get('builders')==None):
-                setState(mode,architecture,'builders',{})
-            getState(mode,architecture,'builders')[libraryName]=builder
-
-def createBuilders(mode,architecture,libraryBase,builders):
-    library = getLibSpecific(mode,architecture,libraryBase,'CompressedLib')
-    source = '../'+getState(mode,architecture,'tarpath')+library
-    builder = state[architecture][mode]['env'].__dict__['build_'+libraryBase](builddir+library,source)
+def createBuilders(buildSettings,libraryBase,builders):
+    library = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBase,'CompressedLib')
+    source = '../'+buildSettings.getTarPath()+library
+    builder = buildSettings.getEnv().__dict__['build_'+libraryBase](builddir+library,source)
     builders[libraryBase] = builder
     AlwaysBuild(builder)
-    setLibSpecific(mode,architecture,libraryBase,'stage0',True)
+    buildSettings.setLibSpecific(libraryBase,'stage0',True)
     #recursively rebuild library dependencies.
     for dlibrary,deps in dependencies.items():
-        if not dlibrary in state[architecture]['buildlibraries']:
+        if not dlibrary in buildSettings.getPackageBases():
             continue
         if libraryBase in deps:
             if not builders.has_key(dlibrary):
-                createBuilders(mode,architecture,dlibrary,builders)
+                createBuilders(buildSettings,dlibrary,builders)
     
 
 #Setup the various modes.
-for mode in state[architecture]['modes']:
-    modeSpecific1(mode,architecture)
-for mode in state[architecture]['modes']:
-    modeSpecific2(mode,architecture)
-for mode in state[architecture]['modes']:
-    if(not getState(mode,architecture,'build')):
-        continue
+for buildSettings in buildSettingsList:
+    modeSpecific1(buildSettings)
+for buildSettings in buildSettingsList:
+    modeSpecific2(buildSettings)
     builders = {}
-    builders['dstart'] = getState(mode,architecture,'dstart')
-    builders['scc'] = getState(mode,architecture,'scc')
-    builders['sccfiles'] = getState(mode,architecture,'sccfiles')
-    builders['m2']=getState(mode,architecture,'m2')
-    dbl = buildCandidates(mode,architecture)
+    builders['dstart'] = buildSettings.getState('dstart')
+    builders['scc'] = buildSettings.getState('scc')
+    builders['sccfiles'] = buildSettings.getState('sccfiles')
+    builders['m2']=buildSettings.getState('m2')
+    dbl = buildCandidates(buildSettings)
     for libraryBase,library in dbl.items():
         libraryName = extractPackageName(library)
-        builddir = '../'+getState(mode,architecture,'buildpath')
-        source = '../'+getState(mode,architecture,'tarpath')+library
+        builddir = '../'+buildSettings.getBuildPath()
+        source = '../'+buildSettings.getTarPath()+library
         build = False
-        for f in getLibSpecific(mode,architecture,libraryBase,'InstallFiles'):
-            prefixpath = getState(mode,architecture,'prefixpath')
+        for f in getLibSpecific(buildSettings.mode(),buildSettings.architecture(),libraryBase,'InstallFiles'):
+            prefixpath = buildSettings.getPrefixPath()
             f = f.replace("$SConsInstallPrefixPath",os.path.abspath('../'+prefixpath))
             if not os.path.exists(f):
+                print 'Unable to find: ' + f + ' for ' + libraryBase
                 build = True
-        if(getState(mode,architecture,'deepcleanlib',exception=False)==True or getLibSpecific(mode,architecture,libraryBase,'deepclean')==True):
-            build = True
-        elif(getState(mode,architecture,'cleanlib',exception=False)==True or getLibSpecific(mode,architecture,libraryBase,'clean')==True):
-            build = True
+        if(buildSettings.shouldDeepCleanLib(libraryBase) or buildSettings.shouldCleanLib(libraryBase)):
+            build=True
         if build:
-            createBuilders(mode,architecture,libraryBase,builders)
+            createBuilders(buildSettings,libraryBase,builders)
 
     for target, tdependencies in dependencies.items():
         if not builders.has_key(target):

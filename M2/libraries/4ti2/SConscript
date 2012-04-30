@@ -1,6 +1,6 @@
-Import('setLibSpecific','setState',
+Import('setLibSpecific',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
-       'setLibSpecificStageCommand','buildBuilders','state','architecture')
+       'setLibSpecificStageCommand','buildBuilders')
 
 #set this to library name
 libraryName = '4ti2'

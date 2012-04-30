@@ -1,7 +1,7 @@
-Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
+Import('setArchitectureState','getLibSpecific','setLibSpecific','numberSubTasks',
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','buildSettings')
 
 objFiles = []
 SConscript('c/SConscript',exports=exportDict)
@@ -12,5 +12,5 @@ objFiles+=SConscript('system/SConscript',exports=exportDict)
 objFiles+=SConscript('e/SConscript',exports=exportDict)
 
 libs = ['lapack','blas','fac','cf','cfmem','ntl','gdbm','gc','mpfr','frobby','pari','mpirxx','mpir','readline','history','xml2','z','m','ncurses','gfortran','dl','rt','m','pthread']
-m2 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+getState(mode,architecture,'prefixpath')+'lib/')
-setState(mode,architecture,'m2',m2)
+m2 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+buildSettings.getPrefixPath()+'lib/')
+buildSettings.setState('m2',m2)

@@ -1,18 +1,17 @@
 import os.path
-Import('state','getState','setState','getLibSpecific','setLibSpecific','architecture','numberSubTasks',
+Import('state','getState','setArchitectureState','getLibSpecific','setLibSpecific','numberSubTasks',
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','mode')
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','buildSettings')
 
 efiles = ['regex.c']
-buildpath = getState(mode,architecture,'buildpath')+'Macaulay2/regex/'
-prefixPath = getState(mode,architecture,'prefixpath')
-eflags = "-IMacaulay2/regex "+getState(mode,architecture,'eflags')+" -Dre_compile_fastmap=M2_re_compile_fastmap -Dre_compile_pattern=M2_re_compile_pattern -Dre_match=M2_re_match -Dre_match_2=M2_re_match_2 -Dre_search=M2_re_search -Dre_search_2=M2_re_search_2 -Dre_set_registers=M2_re_set_registers -Dre_set_syntax=M2_re_set_syntax -Dregcomp=M2_regcomp -Dregerror=M2_regerror -Dregexec=M2_regexec -Dregfree=M2_regfree"
+buildpath = buildSettings.getBuildPath()+'Macaulay2/regex/'
+prefixPath = buildSettings.getPrefixPath()
+eflags = "-IMacaulay2/regex "+getState(buildSettings,'eflags')+" -Dre_compile_fastmap=M2_re_compile_fastmap -Dre_compile_pattern=M2_re_compile_pattern -Dre_match=M2_re_match -Dre_match_2=M2_re_match_2 -Dre_search=M2_re_search -Dre_search_2=M2_re_search_2 -Dre_set_registers=M2_re_set_registers -Dre_set_syntax=M2_re_set_syntax -Dregcomp=M2_regcomp -Dregerror=M2_regerror -Dregexec=M2_regexec -Dregfree=M2_regfree"
 eobjects = []
 for f in efiles:
     obj = Object(f,CFLAGS=eflags,CXXFLAGS=eflags)
     eobjects.append(obj)
-    
-state[architecture][mode]['regexfiles']=eobjects
+setArchitectureState(buildSettings,'regexfiles',eobjects)
 Return('eobjects')
 

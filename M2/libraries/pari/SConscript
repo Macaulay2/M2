@@ -1,11 +1,11 @@
 import os.path
 import shutil
 import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
-       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+Import('extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand')
+       'getLibSpecificStageCommand','defaultCleanLibrary','installBuilders')
 
 #set this to library name
 libraryName = 'pari'
@@ -28,12 +28,14 @@ def BuildLibrary(target,source,env):
    """
    Build target for the library.
    """
+   buildSettings = env.buildSettings
    source = source[0].rstr()
    sourceFile = os.path.split(source)[1]
    packageName = extractPackageName(sourceFile)
-   cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
+   cleaned = defaultCleanLibrary(buildSettings,libraryName)
+   untarLibrary(buildSettings,source, packageName, libraryName)
+   configureLibrary(buildSettings,source,packageName,libraryName)
+   architecture = buildSettings.architecture()
    if architecture == 'linux-x86_64':
       offset = 'Olinux-x86_64/'
    elif architecture == 'linux-x86':
@@ -44,25 +46,8 @@ def BuildLibrary(target,source,env):
       offset = 'Odarwin-i386'
    else:
       raise NotImplementedError(architecture + " not implemented for Pari")
-   makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = offset)
-   makeInstallLibrary(env.state,env.mode,architecture,source,packageName,libraryName,diroffset = offset)
+   makeLibrary(buildSettings,source,packageName,libraryName,diroffset = offset)
+   makeInstallLibrary(buildSettings,source,packageName,libraryName,diroffset = offset)
    return None
    
-
-def CleanLibrary(mode,directory,packageBaseName):
-   """
-   Actual function that gets called to process a clean library command
-   """
-   if(deepCleanLibrary(mode,architecture,libraryName)):
-      return True
-   if(cleanLibrary(mode,architecture,libraryName)):
-      return True   
-   return False
-
-for mode in state[architecture]['modes']:
-   if(getState(mode,architecture,'build')):
-      builder = Builder(action=BuildLibrary, single_source=1)
-      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-      if(state[architecture][mode].get('builders')==None):
-         setState(mode,architecture,'builders',{})
-      getState(mode,architecture,'builders')[libraryName]=builder
+installBuilders(BuildLibrary,libraryName)

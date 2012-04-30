@@ -1,11 +1,11 @@
 import os.path
 import shutil
 import subprocess
-Import('state','extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','getState','setState','untarLibrary','transferEnv',
-       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary','architecture',
+Import('extractPackageName','extractPackageBaseName','getLibSpecific','setLibSpecific','untarLibrary','transferEnv',
+       'configureLibrary','makeLibrary','makeInstallLibrary','deepCleanLibrary','cleanLibrary',
        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
-       'getLibSpecificStageCommand')
+       'getLibSpecificStageCommand','defaultCleanLibrary','installBuilders')
 
 #set this to library name
 libraryName = 'nauty'
@@ -33,35 +33,19 @@ def BuildLibrary(target,source,env):
    source = source[0].rstr()
    sourceFile = os.path.split(source)[1]
    packageName = extractPackageName(sourceFile)
-   cleaned = CleanLibrary(env.mode,architecture,libraryName)
-   untarLibrary(env.state,env.mode,architecture,source, packageName, libraryName)
-   configureLibrary(env.state,env.mode,architecture,source,packageName,libraryName)
-   if makeLibrary(env.state,env.mode,architecture,source,packageName,libraryName):
-      buildpath = getState(env.mode,architecture,'buildpath')
+   buildSettings = env.buildSettings
+   cleaned = defaultCleanLibrary(buildSettings,libraryName)
+   untarLibrary(buildSettings,source, packageName, libraryName)
+   configureLibrary(buildSettings,source,packageName,libraryName)
+   if makeLibrary(buildSettings,source,packageName,libraryName):
+      buildpath = buildSettings.getBuildPath()
       realpath = buildpath+packageName+'/'
       try:
-         os.makedirs(os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin'))
+         os.makedirs(os.path.abspath(buildSettings.getPrefixPath()+'/bin'))
       except:
          None
       for target in 'NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg directg dreadnaut dretog genbg geng genrang gentourng labelg listg multig newedgeg pickg planarg shortg showg'.split(' '):
-         shutil.copy2(realpath+target,os.path.abspath(getState(env.mode,architecture,'prefixpath')+'/bin/'+target))
+         shutil.copy2(realpath+target,os.path.abspath(buildSettings.getPrefixPath()+'/bin/'+target))
    return None
    
-
-def CleanLibrary(mode,directory,packageBaseName):
-   """
-   Actual function that gets called to process a clean library command
-   """
-   if(deepCleanLibrary(mode,architecture,libraryName)):
-      return True
-   if(cleanLibrary(mode,architecture,libraryName)):
-      return True   
-   return False
-
-for mode in state[architecture]['modes']:
-   if(getState(mode,architecture,'build')):
-      builder = Builder(action=BuildLibrary, single_source=1)
-      getState(mode,architecture,'env').Append(BUILDERS = {'build_'+libraryName : builder})
-      if(state[architecture][mode].get('builders')==None):
-         setState(mode,architecture,'builders',{})
-      getState(mode,architecture,'builders')[libraryName]=builder
+installBuilders(BuildLibrary,libraryName)
