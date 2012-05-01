@@ -86,6 +86,69 @@ def buildExistingPackages(buildSettings):
     buildSettings.setState('existingpackages',existingPackages)
     return existingPackages
 
+def allowSystem(buildSettings,package):
+    """
+    Return True if the library is allowed to be provide by the system, False otherwise.
+    """
+    return getLibSpecific(buildSettings.mode(),buildSettings.architecture(),package,'allowsystem')
+def checkLibraryCIncludes(buildSettings,package,conf):
+    """
+    Check if for the given build settings and package the required system C include files exist.
+    Return True on success, False on failure.
+    """
+    includes = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),package,'systemcincludes')
+    if includes is None:
+        return True
+    for include in includes:
+        if not conf.CheckCHeader(include):
+            return False
+    return True
+def checkLibraryCPPIncludes(buildSettings,package,conf):
+    """
+    Check if for the given build settings and package the required system C++ include files exist.
+    Return True on success, False on failure.
+    """
+    includes = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),package,'systemcppincludes')
+    if includes is None:
+        return True
+    for include in includes:
+        if not conf.CheckCXXHeader(include):
+            return False
+    return True
+def checkLibraryLibs(buildSettings,package,conf):
+    """
+    Check if for the given build settings and package the required system libraries exist.
+    Return True on success, False on failure.
+    """
+    libs = getLibSpecific(buildSettings.mode(),buildSettings.architecture(),package,'systemlibs')
+    if libs is None:
+        return True
+    for lib in libs:
+        if not conf.CheckLib(lib):
+            return False
+    return True
+def detectBuildPackages(buildSettings):
+    """
+    This function detects which of available packages should be built.
+    """
+    if buildSettings.autoDetectLibs():
+        conf = Configure(buildSettings.getEnv())
+        neededPackages = set()
+        for package in buildSettings.getAvailablePackageBases():
+            if not allowSystem(buildSettings,package):
+                neededPackages.add(package)
+                continue
+            available = checkLibraryCIncludes(buildSettings,package,conf) and checkLibraryCPPIncludes(buildSettings,package,conf) and checkLibraryLibs(buildSettings,package,conf)
+            if not available:
+                print 'Need ' + package
+                neededPackages.add(package)
+            else:
+                print 'Found system version of ' + package
+        buildSettings.setState('env',conf.Finish())
+        buildSettings.setPackageBases(neededPackages)
+    else:
+        buildSettings.setPackageBases(buildSettings.getAvailablePackageBases())
+
 def modeBuildEnvironments(buildSettings):
     """
     This function creates environments for the libraries to use.
@@ -276,7 +339,7 @@ def modeImportSConscript(buildSettings):
     """
     This function imports SConscripts for packages.
     """
-    packageBases = buildSettings.getPackageBases()
+    packageBases = buildSettings.getAvailablePackageBases()
     for package in packageBases:
         package = extractPackageBaseName(package)
         if(not package in importedSConscripts):
@@ -336,12 +399,14 @@ def modeSpecific1(buildSettings):
     buildExistingPackages(buildSettings)
     #Build SCons Environments.
     modeBuildEnvironments(buildSettings)
+
 def modeSpecific2(buildSettings):
     """
     This is the second call to set up libraries for the various buildSettings.
     """
     #Import library sconscript files.
     modeImportSConscript(buildSettings)
+    detectBuildPackages(buildSettings)
     #Download libraries if necessary
     if state['enabledownload']:
         downloadLibraries(architecture,mode)

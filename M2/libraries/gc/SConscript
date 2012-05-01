@@ -8,6 +8,10 @@ libraryName = 'gc'
 setLibSpecific('all','all',libraryName,'CompressedLib','gc-7.2alpha7-2011-07-25.tar.gz')
 setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/lib/libgc.a'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'allowsystem',True)
+setLibSpecific('all','all',libraryName,'systemlibs',['gc','atomic_ops',])
+setLibSpecific('all','all',libraryName,'systemcincludes',['gc.h','atomic_ops.h'])
+setLibSpecific('all','all',libraryName,'systemcppincludes',['gc_cpp.h'])
 setLibSpecific('all','all',libraryName,'tarfolder','gc-7.2alpha7')
 setLibSpecificNumStages('all','all',libraryName,6)
 

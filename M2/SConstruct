@@ -97,7 +97,7 @@ class BuildSettings:
         return self._architecture
     def distributionType(self):
         return self._distributionType
-    def autodetectLibs(self):
+    def autoDetectLibs(self):
         """
         Return True if should auto detect which libraries to build, false otherwise.
         """
@@ -111,9 +111,13 @@ class BuildSettings:
         self._autoDetectLibs = autoDetectLibs
     def setAvailablePackageBases(self,packageBases):
         self._availablePackageBases = packageBases
+    def setPackageBases(self,packageBases):
+        self._packageBases = packageBases
     def getExistingPackages(self):
         return self._state['existingpackages']
     def getPackageBases(self):
+        return self._packageBases
+    def getAvailablePackageBases(self):
         return self._availablePackageBases
     def getM2Flags(self):
         return getStateMode(self._mode,self._architecture,'M2flags')
@@ -244,7 +248,6 @@ def getLibSpecific(mode,architecture,libraryBaseName,attribute):
     """
     if(libraryBaseName == None or attribute == None or mode is None or architecture is None):
         raise Exception("Invalid arguments to getLibSpecific")
-
     try:
         libspecific = getStateMode(mode,architecture,'libspecific')[libraryBaseName][attribute]
     except KeyError, e:
