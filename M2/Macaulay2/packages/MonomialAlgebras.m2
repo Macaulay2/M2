@@ -3,7 +3,7 @@ needsPackage "Polyhedra"
 newPackage(
 	"MonomialAlgebras",
     	Version => "2.1", 
-    	Date => "Sept 20, 2011",
+    	Date => "May 04, 2012",
     	Authors => {
          {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},	     
          {Name => "Janko Boehm", Email => "boehm@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
@@ -12,7 +12,7 @@ newPackage(
     	Headline => "Monomial algebras",
 	CacheExampleOutput => false,
 	AuxiliaryFiles => false,
-    	DebuggingMode => true,
+    	DebuggingMode => false,
         Configuration => {"Use4ti2"=>false}
         )
 
@@ -586,7 +586,7 @@ regularityMA(HashTable,List):=opt->(dc,B)->(
   L2:=apply(L1,j->j#0+j#1);
   m:=max(L2);
   L3:=apply(#L,j->(L#j,L2#j));
-  {m,select(L3,j->j#1==m)})
+  {m,apply(select(L3,j->j#1==m),first)})
 
 regularityMonomialCurve=method()
 regularityMonomialCurve(HashTable,List):=(dc,B)->(
@@ -618,7 +618,7 @@ regularityMonomialCurve(HashTable,List):=(dc,B)->(
   L2:=apply(L1,j->j#0+j#1);
   m:=max(L2);
   L3:=apply(#L,j->(L#j,L2#j));
-  {m,select(L3,j->j#1==m)})
+  {m,apply(select(L3,j->j#1==m),first)})
 
 
 ---------------------------------------------------------------------------------
@@ -1148,9 +1148,9 @@ doc ///
     decomposeMonomialAlgebra B
   Inputs
     f : RingMap
-        between multigraded polynomial rings
+        between multigraded polynomial rings, or
     R  : PolynomialRing 
-           multigraded, with B = @TO degrees@ R and K = @TO coefficientRing@ R
+           multigraded, with B = @TO degrees@ R and K = @TO coefficientRing@ R, or
     B  : List
            In the case B is specified, K is set via the @TO Option@ @TO CoefficientField@.
            If a list of positive integers is given, the function uses @TO adjoinPurePowers@ and @TO homogenizeSemigroup@
