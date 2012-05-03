@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 --------------------------------------------------------------------------------
--- Copyright 2009, 2010, 2011  Gregory G. Smith
+-- Copyright 2009, 2010, 2011, 2012  Gregory G. Smith
 --
 -- This program is free software: you can redistribute it and/or modify it under
 -- the terms of the GNU General Public License as published by the Free Software
@@ -18,8 +18,8 @@
 newPackage(
   "NormalToricVarieties",
   AuxiliaryFiles => true,
-  Version => "1.1",
-  Date => "7 August 2011",
+  Version => "1.2",
+  Date => "3 May 2012",
   Authors => {{
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
@@ -519,8 +519,7 @@ nef NormalToricVariety := List => X -> (
   if not isComplete X then return false
   else (
     n := #rays X;
-    B := transpose matrix rays X;
-    A := transpose gens kernel B;
+    A := transpose matrix degrees ring X;
     outer := 0 * A_{0};
     for s in max X do (
       sc := select(n, i -> not member(i,s));
