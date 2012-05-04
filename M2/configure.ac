@@ -9,7 +9,7 @@ dnl   1.3     : a relatively major release, such as occurs every six months
 dnl   1.3.1   : a minor update, such as might occur a week after a major release
 dnl   1.3.1.1 : a development version, with no binary distributions
 dnl   1.3.9   : almost ready for a major release
-dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the numbe
+dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
 
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
@@ -595,6 +595,13 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   NautyGraphs
   VersalDeformations
   CharacteristicClasses
+  RandomObjects
+  RandomPlaneCurves
+  RandomSpaceCurves
+  RandomGenus14Curves
+  RandomCanonicalCurves
+  RandomCurves
+  TensorComplexes
 ")
 
 # convert the newlines in the list above to spaces
