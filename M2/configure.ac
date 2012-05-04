@@ -602,6 +602,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   RandomCanonicalCurves
   RandomCurves
   TensorComplexes
+  MonomialAlgebras
 ")
 
 # convert the newlines in the list above to spaces
