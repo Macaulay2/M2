@@ -14,3 +14,4 @@ objFiles+=SConscript('e/SConscript',exports=exportDict)
 libs = ['lapack','blas','fac','cf','cfmem','ntl','gdbm','gc','mpfr','frobby','pari','mpirxx','mpir','readline','history','xml2','z','m','ncurses','gfortran','dl','rt','m','pthread']
 m2 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+buildSettings.getPrefixPath()+'lib/')
 buildSettings.setState('m2',m2)
+Command('#'+buildSettings.getPrefixPath()+'bin/m2',m2,Copy("$TARGET","$SOURCE"))

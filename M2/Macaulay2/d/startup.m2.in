@@ -263,35 +263,31 @@ if firstTime then (
 	  or select("a+","aaa aaaa") =!= {"aaa","aaaa"}
 	  then error "regex regular expression library not working";
 	  t := hashTable {
-	       "exec" => "${exec_prefix}/",
-	       "common" => "${prefix}/",
-	       "bin" => "@bindir@/",
-	       "lib" => "@libdir@/",
-	       "info" => "@infodir@/",
-	       "data" => "@datadir@/",
-	       "man" => "@mandir@/",
-	       "emacs" => "@emacsdir@/",
-	       "doc" => "@docdir@/",
-	       "packages" => "@packagesdir@/",
-	       "docdir" => "@docdir@/",
-	       "libraries" => "@librariesdir@/",
-	       "programs" => "@programsdir@/",
-	       "program licenses" => "@licensesdir@/",
-	       "package" => "@packagesdir@/PKG/",
-	       "packagedoc" => "@docdir@/PKG/",
-	       "packageimages" => "@docdir@/PKG/images/",
-	       "packagetests" => "@docdir@/PKG/tests/",
-	       "packagehtml" => "@docdir@/PKG/html/",
-	       "packagecache" => "@libm2dir@/PKG/cache/",
-	       "packagelib" => "@libm2dir@/PKG/",
-	       "packageexampleoutput" => "@docdir@/PKG/example-output/"
+	       "exec" => "",
+	       "common" => "",
+	       "bin" => "bin/",
+	       "lib" => "lib/",
+	       "info" => "share/info/",
+	       "data" => "share/",
+	       "man" => "share/man/",
+	       "emacs" => "share/emacs/site-lisp/",
+	       "doc" => "share/doc/Macaulay2/",
+	       "packages" => "share/Macaulay2/PKG/",
+	       "docdir" => "share/doc/Macaulay2/",
+	       "libraries" => "lib/Macaulay2/",
+	       "programs" => "libexec/Macaulay2/",
+	       "program licenses" => "libexec/Macaulay2/program-licenses/",
+	       "package" => "share/Macaulay2/PKG/",
+	       "packagedoc" => "share/doc/Macaulay2/PKG/",
+	       "packageimages" => "share/doc/Macaulay2/PKG/images/",
+	       "packagetests" => "share/doc/Macaulay2/PKG/tests/",
+	       "packagehtml" => "share/doc/Macaulay2/PKG/html/",
+	       "packagecache" => "lib/Macaualy2/PKG/cache/",
+	       "packagelib" => "lib/Macaulay2//PKG/",
+	       "packageexampleoutput" => "share/doc/Macaulay2/PKG/example-output/"
 	       };
-	  Layout = hashTable {
-	       1 => applyValues( t, x -> replaceStrings("^\\$\\{(pre_)?(exec_)?prefix\\}/","",x)),
-	       2 => applyValues( t, x -> 
-		    replaceStrings("^\\$\\{(pre_)?prefix\\}","common",	    -- as in configure.ac
-			 replaceStrings("^\\$\\{(pre_)?exec_prefix\\}",version#"machine", -- as in configure.ac
-			      x)))};
+	  Layout = t;
+	  currentLayout = t
 	  );
      initlayout();
      )
@@ -301,33 +297,11 @@ base := s -> ( m := regex(".*/",s); if m === null or 0 === #m then s    else sub
 initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
      bindir := dir exe | "/";
-     currentLayout = (
-	  if issuffix(Layout#2#"bin",bindir) then Layout#2 else
-	  if issuffix(Layout#1#"bin",bindir) then Layout#1
-	  );
      prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
      if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;
-     if readlink exe =!= null then (
-	  exe2 := concatPath(realpath dir exe, readlink exe);
-	  bindir2 := dir exe2 | "/";
-	  currentLayout2 := (
-	       if issuffix(Layout#2#"bin",bindir2) then Layout#2 else
-	       if issuffix(Layout#1#"bin",bindir2) then Layout#1
-	       );
-	  );
-     prefixDirectory2 := if currentLayout2 =!= null then substring(bindir2,0,#bindir2-#currentLayout2#"bin");
-     if prefixDirectory2 =!= null
-	and isDirectory(prefixDirectory2|currentLayout2#"packages")
-	and (currentLayout === null or not isDirectory(prefixDirectory|currentLayout#"packages"))
-     then (
-	  prefixDirectory = prefixDirectory2;
-	  currentLayout = currentLayout2;
-	  );
-     stA := "StagingArea/";
+     stA := "local/"|version#"architecture"|"/"|version#"distribution"|"/"|version#"release"|"/";
      topBuilddir = (
-	  if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
-	  else
-	  if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA));
+	  if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA));
      if notify then stderr << "--topBuilddir = " << topBuilddir << endl;
      topSrcdir = if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
 	  sdir := first lines get(topBuilddir|"srcdir");

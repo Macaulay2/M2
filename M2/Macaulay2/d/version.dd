@@ -128,6 +128,9 @@ compiler := (
 setupconst("version", Expr(toHashTable(Sequence(
    "VERSION" => Ccode(constcharstar,"\"unknown PACKAGE_VERSION\""),
 --   "architecture" => Ccode(constcharstar,"ARCH"),
+     "architecture" => Ccode(constcharstar,"\"linux-x86_64\""),
+     "distribution" => Ccode(constcharstar,"\"Source-System\""),
+     "release" => Ccode(constcharstar,"\"debug\""),
 --   "issue" => Ccode(constcharstar,"ISSUE"),
    "machine" => Ccode(constcharstar,"\"unknown MACHINE\""),
    "operating system" => Ccode(constcharstar,"\"unknown OS\""),
