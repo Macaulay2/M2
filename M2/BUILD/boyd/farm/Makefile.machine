@@ -1,48 +1,56 @@
 # -*- makefile -*-
+
 CMD = case `uname -s` in CYGWIN*) cygpath -w `pwd` ;; *) pwd ;; esac
 DIR := "$(shell $(CMD))"
 MACHINE := $(notdir $(shell pwd))
-# export HOME = C:/Users/dan
+
 all: $(ISO) disk.vdi $(MACHINE) settings 
+
 sha1sum md5sum:; $@ $(ISO)
-start:; VBoxManage --nologo startvm $(MACHINE) --type vrdp
+
+start:; VBoxManage --nologo startvm $(MACHINE) --type gui
+
 stop poweroff:; VBoxManage controlvm $(MACHINE) poweroff
+
 $(ISO):; wget $(URL)
 
 disk.vdi:
-	VBoxManage createhd --filename $(DIR)/disk.vdi --size 5120 # --register
-#	There seems to be no way to use VBoxManage to unregister the disk, so we provide no "clean" method
+	VBoxManage createhd --filename $(DIR)/disk.vdi --size 5120
 
 $(MACHINE):
-	rm -f machine.xml
-	VBoxManage createvm --name $(MACHINE) --settingsfile $(DIR)/machine.xml
-	VBoxManage registervm $(DIR)/machine.xml
+	VBoxManage createvm --name $(MACHINE) --register
 	VBoxManage storagectl $(MACHINE) --name 'IDE Controller' --add ide
 	VBoxManage storageattach $(MACHINE) --storagectl 'IDE Controller' --port 0 --device 0 --type hdd --medium $(DIR)/disk.vdi
 	VBoxManage storageattach $(MACHINE) --storagectl 'IDE Controller' --port 1 --device 0 --type dvddrive --medium $(DIR)/$(ISO)
 
 always:
+
 mount-cd:; VBoxManage modifyvm $(MACHINE) -dvd $(DIR)/$(ISO)
+
 umount-cd:; VBoxManage modifyvm $(MACHINE) -dvd none
+
 settings: always
 	VBoxManage modifyvm $(MACHINE) --boot1 dvd
 	VBoxManage modifyvm $(MACHINE) --boot2 disk
 	VBoxManage modifyvm $(MACHINE) --hwvirtex on
 	VBoxManage modifyvm $(MACHINE) --ioapic on
-	VBoxManage modifyvm $(MACHINE) --vrdp on
-	VBoxManage modifyvm $(MACHINE) --vrdpport $(RDPPORT)
-	VBoxManage modifyvm $(MACHINE) --vrdpauthtype null
+	VBoxManage modifyvm $(MACHINE) --vrde on
+	VBoxManage modifyvm $(MACHINE) --vrdeport $(RDPPORT)
+	VBoxManage modifyvm $(MACHINE) --vrdeauthtype null
 	VBoxManage modifyvm $(MACHINE) --memory 1024
 	VBoxManage modifyvm $(MACHINE) --nic1 nat
-#	VBoxManage modifyvm $(MACHINE) --dvd $(DIR)/$(ISO)
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  $(SSHPORT)
+
 clean:
 	VBoxManage modifyvm $(MACHINE) --hda none
 	VBoxManage modifyvm $(MACHINE) --dvd none
 	VBoxManage unregistervm $(MACHINE)
 	rm -rfv machine.xml {*}
+
 veryclean:clean; rm -rf disk.vdi
+
 show:; VBoxManage showvminfo $(MACHINE)
+
 status state:; VBoxManage showvminfo $(MACHINE) |grep State:

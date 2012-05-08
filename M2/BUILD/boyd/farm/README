@@ -1,11 +1,23 @@
-packages to install
+**
+* REQUIRES: 
+**
 
-	 virtualbox-ose
-	 virtualbox-ose-modules-generic
-	 virtualbox-ose-modules-2.6.24-21-generic
-	 virtualbox-ose-modules-2.6.24-23-generic
-	
-or
+virtualbox-ose
+wget
 
-	dpkg -i virtualbox-2.1_2.1.2-41885_Ubuntu_hardy_amd64.deb 
+**
+* USAGE:
+**
 
+To create/register VM: make all
+To start VM: make start
+To stop VM: make stop
+To show VM info: make show
+
+**
+* NOTES:
+**
+
+Makefile.machine is not particularly stable, prone to error depending on version of VirtualBox installed.
+
+Particularly problematic is the "make $(MACHINE)" rule, since it gives an error if the VM already exists.
