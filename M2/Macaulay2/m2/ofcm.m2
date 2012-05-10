@@ -339,7 +339,7 @@ processDegrees := (degs,degrk,nvars) -> (
      	  scan(degs, d -> if not (instance(d,List) and all(d, i -> instance(i,ZZ))) then error "expected degree to be an integer or list of integers");
      	  if degrk === null then (
 	       if not same(length \ degs) then error "expected degrees all of the same rank";
- 	       degrk = if #degs > 0 then #degs#0 else 0;
+ 	       degrk = if #degs > 0 then #degs#0 else 1;
 	       )
 	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
 	  );
