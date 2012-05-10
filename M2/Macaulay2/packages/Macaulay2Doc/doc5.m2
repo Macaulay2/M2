@@ -126,8 +126,8 @@ document {
      Usage => "on f",
      Inputs => { 
 	  "f" => Function,
-	  CallLimit => ZZ => "the maximum number of times to permit the function f to be called",
-	  Name => String => "the name to use for the function, in case ", TT "f", " is an anonymous function (not assigned to a global variable)",
+	  CallLimit => ZZ => {"the maximum number of times to permit the function ", TT "f", " to be called"},
+	  Name => String => {"the name to use for the function, in case ", TT "f", " is an anonymous function (not assigned to a global variable)"},
      	  GenerateAssertions => Boolean => {
 	       "whether to print assertion statements that can be used as input to Macaulay2 to
 	       check the behavior of the function remains the same.  Arguments and values are prepared
