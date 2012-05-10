@@ -384,7 +384,7 @@ rank Module := (cacheValue symbol rank) (M -> (
 			 numgens source generators gb M.generators)
 		    else numgens M))
 	  else if dim M < dim ring M then 0
-	  else degree M // degree ring M
+	  else floor ( degree M / degree ring M )	    -- note: degrees can be rational
 	  ))
 
 ambient Module := Module => M -> (
