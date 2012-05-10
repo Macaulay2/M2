@@ -103,10 +103,10 @@ toString' = method()
 toString'(Function,Thing) := (toString,x) -> toString x
 toString Expression := v -> toString'(toString,v)
 
-toExternalFormat = method()
+toExternalFormat = method(Dispatch=>Thing)
 toExternalFormat Thing := toExternalString
 toExternalFormat Expression := v -> toString'(toExternalFormat,v)
-toExternalFormat Symbol := toString
+toExternalFormat Symbol := toExternalFormat Sequence := toString
 
 toString'(Function, Expression) := (fmt,v) -> (
      op := class v;
