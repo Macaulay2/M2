@@ -1,11 +1,11 @@
 -- -*- coding: utf-8-unix -*-
 
---needsPackage "SimplicialComplexes"
+-- needsPackage "SimplicialComplexes"
 
 newPackage(
 	"KustinMiller",
     	Version => "1.4",
-    	Date => "Mar 23, 2012",
+    	Date => "May 14, 2012",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
@@ -64,7 +64,7 @@ export {"stellarSubdivision","delta","isExactRes"}
 
 export {"Tom","Jerry"}
 
---needsPackage "SimplicialComplexes"
+-- needsPackage "SimplicialComplexes"
 
 if version#"VERSION" < "1.4" then error "This package was written for Macaulay2 Version 1.4 or higher.";
 if (options SimplicialComplexes).Version < "1.2" then error "This package requires the SimplicialComplexes package Version 1.2 or higher."
@@ -81,7 +81,6 @@ resBE Matrix := A -> (
         g:=matrix {apply(n,j-> (-1)^(j)*p_(n-j-1)_0)};
         chainComplex {g,A,transpose g,map(R^1,R^0,0)})
 
---cc=resBE b2
 
 
 -------------------------------------------------------------------------
@@ -103,11 +102,12 @@ isContiguous List := X -> (
         p1:=X1#0;
         abs(index p2 - index p1)==#X1-1)
 
-{*
-isContiguous {x_2,x_3,x_6,x_4,x_5,x_8,x_7}
-isContiguous {x_2,x_3,x_6,x_4,x_5,x_8,x_7}
-isContiguous {x_1,x_2,x_5,x_3}
-*}
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_9]
+assert(isContiguous {x_2,x_3,x_6,x_4,x_5,x_8,x_7})
+assert(not isContiguous {x_1,x_2,x_5,x_3})
+///
 
 -- compute the contiguous subsets
 -- used by maximalContiguousSubsets
@@ -115,13 +115,13 @@ contiguousSubsets=method()
 contiguousSubsets List := W -> 
         select(subsets(W),isContiguous) 
 
-{*
-contiguousSubsets {x_4,x_5}
-contiguousSubsets {x_3,x_4}
-contiguousSubsets {x_1,x_2,x_3}
-contiguousSubsets {x_2,x_3,x_4}
-contiguousSubsets {x_1,x_2,x_4}
-*}
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_6]
+assert(contiguousSubsets {x_4,x_5} == {{x_4}, {x_5}, {x_4, x_5}})
+assert(contiguousSubsets {x_1,x_2,x_3} == {{x_1}, {x_2}, {x_1, x_2}, {x_3}, {x_2, x_3}, {x_1, x_2, x_3}})
+assert(contiguousSubsets {x_1,x_2,x_4} == {{x_1}, {x_2}, {x_1, x_2}, {x_4}})
+///
 
 -- given a list L,  maximalElements L  returns a list containing the maximal
 -- elements of L with respect to inclusion
@@ -131,16 +131,20 @@ maximalElements List := L -> (
         M:=L;
         for j from 0 to #L-1 do (
           for jj from j+1 to #L-1 do (
-               if isSubset(set L#j,set L#jj) then (M=remove(L,j);break);
-               if isSubset(set L#jj,set L#j) then (M=remove(L,jj);break);
+               if isSubset(L#j,L#jj) then (M=remove(L,j);break);
+               if isSubset(L#jj,L#j) then (M=remove(L,jj);break);
           );
         );
         if #M==#L then return L;
         maximalElements M)
 
---maximalElements {{x_1,x_2,x_3},{x_1,x_2},{x_3,x_4},{x_2,x_3,x_4,x_7,x_8}}
---maximalElements ({{x_1,x_2,x_3}, {x_2,x_2,x_3}, {x_1,x_2},{x_3,x_9},{x_6}})
---maximalElements ({{x_2,x_1,x_3}, {x_1,x_2,x_3}, {x_1,x_2},{x_3,x_9},{x_6}})
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_10]
+assert(maximalElements {{x_1,x_2,x_3},{x_1,x_2},{x_3,x_4},{x_2,x_3,x_4,x_7,x_8}} == {{x_1, x_2, x_3}, {x_2, x_3, x_4, x_7, x_8}})
+assert(maximalElements {{x_1,x_2,x_3}, {x_2,x_2,x_3}, {x_1,x_2},{x_3,x_9},{x_6}} == {{x_1, x_2, x_3}, {x_3, x_9}, {x_6}})
+assert(maximalElements {{x_2,x_1,x_3}, {x_1,x_2,x_3}, {x_1,x_2},{x_3,x_9},{x_6}} == {{x_1, x_2, x_3}, {x_3, x_9}, {x_6}})
+///
 
 
 
@@ -150,10 +154,12 @@ maximalContiguousSubsets=method()
 maximalContiguousSubsets List := 
         maximalElements @@ contiguousSubsets 
 
-{*
-maximalContiguousSubsets({x_1,x_2,x_4})
-maximalContiguousSubsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
-*}
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_10]
+assert(maximalContiguousSubsets {x_1,x_2,x_4} == {{x_1, x_2}, {x_4}})
+assert(maximalContiguousSubsets {x_1,x_2,x_4,x_5,x_7,x_8,x_9} == {{x_1, x_2}, {x_4, x_5}, {x_7, x_8, x_9}})
+///
 
 -- test whether a list of variables is an endset
 -- used by removeEndsets
@@ -162,11 +168,13 @@ isEndset List := L ->(
         v:=gens ring first L;
         member(v#0,L) or member(v#-1,L))
 
-{*
-isEndset({x_1,x_2})
-isEndset({x_1,x_3})
-isEndset({x_2,x_3})
-*}
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_10]
+assert(isEndset {x_1,x_2})
+assert(isEndset {x_1,x_3})
+assert(not isEndset {x_2,x_3})
+///
 
 -- remove the endsets from a list of lists of variables
 -- used by oddContiguousNonEndsets
@@ -175,13 +183,14 @@ removeEndsets List := L ->
         select(L,j->not isEndset j )
 
 
-{*
-removeEndsets {{x_1,x_2},{x_3,x_4}} 
-removeEndsets {{x_1,x_3},{x_7,x_8}}
-
-removeEndsets maximalContiguousSubsets {x_1,x_2,x_4}
-removeEndsets maximalContiguousSubsets {x_1,x_2,x_4,x_5,x_7,x_8}
-*}
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_10]
+assert(removeEndsets {{x_1,x_2},{x_3,x_4}} == {{x_3,x_4}})
+assert(removeEndsets {{x_1,x_3},{x_7,x_8}} == {{x_7,x_8}})
+assert(removeEndsets maximalContiguousSubsets {x_1,x_2,x_4} == {{x_4}})
+assert(removeEndsets maximalContiguousSubsets {x_1,x_2,x_4,x_5,x_7,x_8} == {{x_4, x_5}, {x_7, x_8}})
+///
 
 -- compute the odd contiguous non-endsets contained in a list of variables
 -- used by isFaceOfCyclicPolytope
@@ -190,11 +199,12 @@ oddContiguousNonEndsets List := L ->(
         L1:=removeEndsets maximalContiguousSubsets L;
         select(L1,j->odd(#j)))
 
-{*
-maximalContiguousSubsets {x_1,x_2,x_4,x_5,x_7,x_8,x_9}
-removeEndsets oo 
-oddContiguousNonEndsets {x_1,x_2,x_4,x_5,x_7,x_8,x_9}
-*}
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_10]
+assert(removeEndsets maximalContiguousSubsets {x_1,x_2,x_4,x_5,x_7,x_8,x_9} == {{x_4, x_5}, {x_7, x_8, x_9}})
+assert(oddContiguousNonEndsets {x_1,x_2,x_4,x_5,x_7,x_8,x_9} == {{x_7, x_8, x_9}})
+///
 
 -- tests whether W is a face of a cyclic polytope of dimension d
 -- used by delta
@@ -202,11 +212,13 @@ isFaceOfCyclicPolytope=method()
 isFaceOfCyclicPolytope(List,ZZ):=(W,d)->
         W=={} or #oddContiguousNonEndsets(W)<=d-#W
 
-{*
-isFaceOfCyclicPolytope({x_2,x_3},3)
-isFaceOfCyclicPolytope({x_3,x_4},3)
-isFaceOfCyclicPolytope({x_4,x_9},3)
-*}
+TEST ///
+debug KustinMiller
+R=QQ[x_1..x_10]
+assert(isFaceOfCyclicPolytope({x_2,x_3},3))
+assert(isFaceOfCyclicPolytope({x_3,x_4},3))
+assert(not isFaceOfCyclicPolytope({x_4,x_9},3))
+///
 
 -- boundary complex of a cyclic polytope
 -- of dimension d on the vertices corresponding to the variables of R
@@ -256,7 +268,7 @@ kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)
         dualcI:=(dual cI)[-codim I];
         dualcJ:=(dual cJ)[-codim I];
         degshift:=degree phi;
-        if degshift#0<=0 then <<"Warning: Unprojection variable does not have positive degree.";
+        if degshift#0<=0 then error "Unprojection variable must have positive degree. (Recall that, if I is the first argument and J is the second, then the degree of the unprojection variable is k_1 - k_2, where R/I(k_1) and R/J(k_2) are the canonical modules of R/I and R/J respectively.)";
              if opt.Verbose>0 then (
                 gJ:=gens source phi;
                 <<"phi: "<<(entries gJ)#0<<" -> "<<(entries phi)#0<<endl;
@@ -344,25 +356,13 @@ kustinMillerComplex(ChainComplex,ChainComplex,PolynomialRing):=opt->(cI0,cJ0,T0)
 --kustinMillerComplex(I,J,QQ[t])
 
 
-{*
-restart
-installPackage("KustinMiller")
+TEST ///
 R = QQ[x_1..x_4,z_1..z_4, T]
 I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-betti res I
 J = ideal (z_1..z_4)
-betti res J
 cc=kustinMillerComplex(I,J,QQ[t]);
-S=ring cc
-cc
-betti cc
-isExactRes cc
-cc.dd_1
-cc.dd_2
-cc.dd_3
-cc.dd_4
-
-*}
+assert(isExactRes cc)
+///
 
 
 --kustinMillerComplex(L#0,L#1,QQ[t])
@@ -461,6 +461,7 @@ unprojectionHomomorphism(Ideal,Ideal):=(I,J)->(
         if R =!= ring J then error "expected both ideals to be contained in the same ring";
         if not isSubset(I,J) then error "expected first ideal to be contained in the second";
         if codim(I) != -1 + codim(J) then error "the unprojection locus does not have codimension 1";
+        if not isGorenstein(I) or not isGorenstein(J) then error("input ideals should be projectively Gorenstein");
         Q:=R/I;
         M:=Hom(ideal mingens sub(J,Q),Q^1);
         -- give some feedback on wrong input
@@ -470,10 +471,9 @@ unprojectionHomomorphism(Ideal,Ideal):=(I,J)->(
                 gJ:=gens source phi;
                 <<"phi: "<<(first entries gJ)<<" -> "<<(first entries phi)<<endl;
              );
-             error "The module of homomorphisms does not have the expected number of generators";
+             error "internal error: the computed module of homomorphisms does not have the number of generators predicted by theory";
         );
         if rank source gens M == 1 then (
-          <<"Warning: The ideal J/I is principle in R/I.";
           return homomorphism M_{0};
         ) else (
           f1:=homomorphism M_{0};
@@ -485,6 +485,25 @@ unprojectionHomomorphism(Ideal,Ideal):=(I,J)->(
           )
         ))
 
+
+-- test whether I is projectively Gorenstein
+isGorenstein=method()
+isGorenstein(Ideal):= I->(
+          R:= ring I;
+          (pdim(R^1 / I) == codim I) and (rank gens Ext^(codim I)(coker gens I, R^1)==1)
+        )
+
+
+TEST ///
+debug KustinMiller
+R = QQ[x_1..x_4,z_1..z_4, T]
+I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
+assert(isGorenstein I )
+R = QQ[x_1..x_6]
+assert(not isGorenstein minors (2, matrix {{x_1..x_3},{x_4..x_6}}))
+R = QQ[x_1..x_3]
+assert(not isGorenstein ideal (x_1*x_2, x_1*x_3))
+///
 
 ---------------------------------------------------------------------
 -- some usefull stuff for chain complexes
@@ -587,15 +606,14 @@ subdivideFace(Face,Face,PolynomialRing,PolynomialRing):= (D,s,n,R) -> (
 
 
 
-{*
-installPackage "KustinMiller"
+TEST ///
 R=QQ[x_1..x_6]
 I=monomialIdeal(product(gens R))
 D=simplicialComplex I
 Dsigma=stellarSubdivision(D,face {x_1,x_2,x_3},QQ[t])
-
-
-*}
+S=ring Dsigma
+assert(facets Dsigma == matrix {{x_2*x_3*x_5*x_6*t, x_1*x_3*x_5*x_6*t, x_1*x_2*x_5*x_6*t,      x_2*x_3*x_4*x_6*t, x_1*x_3*x_4*x_6*t, x_1*x_2*x_4*x_6*t,      x_2*x_3*x_4*x_5*t, x_1*x_3*x_4*x_5*t, x_1*x_2*x_4*x_5*t,      x_2*x_3*x_4*x_5*x_6, x_1*x_3*x_4*x_5*x_6, x_1*x_2*x_4*x_5*x_6}})
+///
 
 
 
@@ -727,6 +745,8 @@ doc ///
     variables positive and $I \subset J \subset R$ two homogeneous ideals of R
     such that R/I and R/J are Gorenstein and dim(R/J)=dim(R/I)-1.
 
+    Let R/I(k_1) and R/J(k_2) be the canonical modules of R/I and R/J respectively. We require k_1 - k_2, that is, the degree of the unprojection variable, to be positive.
+
     For a description of this resolution and how it is computed see
     
     J. Boehm, S. Papadakis: Implementing the Kustin-Miller complex construction, @HREF"http://arxiv.org/abs/1103.2314"@
@@ -736,7 +756,7 @@ doc ///
 
     The function @TO kustinMillerComplex@ returns a chain complex over a new polynomial ring S
     with the same @TO coefficientRing@ as R and the variables of R and W, where
-    degree(T) = @TO degree@ @TO unprojectionHomomorphism@(I,J). 
+    degree(T) = @TO degree@ @TO unprojectionHomomorphism@(I,J) = k_1-k_2.
     
     To avoid printing the variables of this ring when printing the chain complex
     just give a name to the ring (e.g., do S = @TO ring@ cc  to call it S).
