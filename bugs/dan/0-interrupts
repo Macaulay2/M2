@@ -1,0 +1,2 @@
+Interrupt handling might work better if the interpreter were all compiled in C++
+and used C++ exceptions.  But how do we make that work with multiple threads?
