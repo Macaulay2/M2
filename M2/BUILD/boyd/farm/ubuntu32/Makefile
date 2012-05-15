@@ -4,6 +4,8 @@ SSHPORT = 2227
 RDPPORT = 3391
 
 MACHINE = ubuntu32
+OS = Ubuntu
+
 RELEASE = 12.04
 ARCH = i386
 VERSION = $(RELEASE)-desktop
