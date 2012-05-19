@@ -107,7 +107,7 @@ objFiles = []
 prefixPath = buildSettings.getPrefixPath()
 cflags="-I"+buildpath+" -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes -IMacaulay2/system/ "+buildSettings.getM2Flags()
 ddict = {}
-
+buildsettings = env.settingsbuilder('#'+buildpath+'buildsettings.h',[])
 #setup D build targets.
 for i in range(0,len(dfiles)):
     df = dfiles[i]
@@ -121,6 +121,7 @@ for i in range(0,len(dfiles)):
         raise Exception
     builder = env.dbuilder([targetf,se[0]+'-exports.h'],df)
     Depends(builder,scc)
+    Depends(builder,buildsettings)
     Depends(builder,se[0]+'.dep')
     Requires(builder,depbuilders[len(depbuilders)-1])
     # It is not necessary to serialize on typecode.db since we are only reading since we have already generated all dependencies...
@@ -132,7 +133,6 @@ for i in range(0,len(dfiles)):
 setArchitectureState(buildSettings,'dFileDict',ddict)
 #Setup C/C++ object file targets for files in D directory
 startupc = env.startupbuilder('#'+buildpath+'startup.c','startup.m2.in')
-env.settingsbuilder('#'+buildpath+'buildsettings.h',[])
 startupobj = Object(startupc,CFLAGS=cflags,CXXFLAGS=cflags)
 objFiles.append(startupobj)
 cobjs = []
