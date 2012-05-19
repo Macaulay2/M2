@@ -38,9 +38,9 @@ typedef const unsigned char * M2_constucharstarOrNull;
 typedef const char ** M2_constcharstarstarOrNull;
 
 #include "../system/supervisorinterface.h"
-#if ARCH == x86_64
+
 #include "posix.h"
-#endif
+
 #ifdef __cplusplus
 /***
 	Set this to true to enable trace mode.

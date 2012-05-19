@@ -299,7 +299,7 @@ initcurrentlayout := () -> (
      bindir := dir exe | "/";
      prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
      if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;
-     stA := "local/"|version#"architecture"|"/"|version#"distribution"|"/"|version#"release"|"/";
+     stA := "local/"|version#"architecture"|"/"|version#"distribution"|"/"|version#"buildmode"|"/";
      topBuilddir = (
 	  if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA));
      if notify then stderr << "--topBuilddir = " << topBuilddir << endl;

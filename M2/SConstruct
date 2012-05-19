@@ -97,6 +97,10 @@ class BuildSettings:
         return self._architecture
     def distributionType(self):
         return self._distributionType
+    def packageVersion(self):
+        return "1.4.0.1"
+    def packages(self):
+        return ""
     def autoDetectLibs(self):
         """
         Return True if should auto detect which libraries to build, false otherwise.

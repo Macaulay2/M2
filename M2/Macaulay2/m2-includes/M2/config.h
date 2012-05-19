@@ -1,6 +1,7 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#include <buildsettings.h>
 
 #define M2_CONFIG_H 1
 /* Define to the address where bug reports for this package should be sent. */
@@ -18,8 +19,6 @@
 /* Define to the home page for this package. */
 #define PACKAGE_URL ""
 
-/* Define to the version of this package. */
-#define PACKAGE_VERSION "1.4.0.1"
 /* suffix the compiler appends to executable filenames */
 #define EXEEXT ""
 

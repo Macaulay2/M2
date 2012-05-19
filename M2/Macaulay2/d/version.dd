@@ -126,18 +126,16 @@ compiler := (
 	    ")));
 
 setupconst("version", Expr(toHashTable(Sequence(
-   "VERSION" => Ccode(constcharstar,"\"unknown PACKAGE_VERSION\""),
---   "architecture" => Ccode(constcharstar,"ARCH"),
-     "architecture" => Ccode(constcharstar,"\"linux-x86_64\""),
-     "distribution" => Ccode(constcharstar,"\"Source-System\""),
-     "release" => Ccode(constcharstar,"\"debug\""),
+   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
+   "architecture" => Ccode(constcharstar,"QARCH"),
+   "distribution" => Ccode(constcharstar,"DISTRIBUTION"),
+   "buildmode" => Ccode(constcharstar,"BUILDMODE"),
 --   "issue" => Ccode(constcharstar,"ISSUE"),
    "machine" => Ccode(constcharstar,"\"unknown MACHINE\""),
    "operating system" => Ccode(constcharstar,"\"unknown OS\""),
 --   "operating system release" => Ccode(constcharstar,"REL"),
 --   "compiler" => compiler,
 --   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
---   "compile time" => Ccode(constcharstar,"timestamp"),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if USE_MYSQL

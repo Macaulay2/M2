@@ -25,6 +25,18 @@ def startupBuilder(target,source,env):
     startupout.write(';')
     startupout.close()
     startupin.close()
+
+def settingsBuilder(target,source,env):
+    target = str(target[0])
+    targetout = open(target,"w")
+    targetout.write('#define ARCH ' + buildSettings.architecture() +'\n')    
+    targetout.write('#define QARCH "' + buildSettings.architecture() +'"\n')
+    targetout.write('#define DISTRIBUTION "' + buildSettings.distributionType() + '"\n')
+    targetout.write('#define BUILDMODE "' + buildSettings.mode() + '"\n')
+    targetout.write('#define PACKAGE_VERSION "' + buildSettings.packageVersion() + '"\n')
+    targetout.write('#define PACKAGES "' + buildSettings.packages() + '"\n')
+    targetout.close()
+    
     
 def DBuildDependency(target,source,env):
     source = str(source[0])
@@ -67,6 +79,7 @@ def DBuild(target,source,env):
     return None
 
 startupbuilder = Builder(action=startupBuilder, single_source=1)
+settingsbuilder = Builder(action=settingsBuilder, single_source=1)
 ddepbuilder = Builder(action=DBuildDependency, single_source=1)
 dbuilder = Builder(action=DBuild,single_source=1)
 buildpath = buildSettings.getBuildPath()+'Macaulay2/d/'
@@ -76,6 +89,7 @@ env.mode = buildSettings.mode()
 env['BUILDERS']['ddepbuilder']=ddepbuilder
 env['BUILDERS']['dbuilder']=dbuilder
 env['BUILDERS']['startupbuilder']=startupbuilder
+env['BUILDERS']['settingsbuilder']=settingsbuilder
 #Setup D dependency build targets.
 scc = buildSettings.getState('scc')
 for i in range(0,len(dfiles)):
@@ -118,6 +132,7 @@ for i in range(0,len(dfiles)):
 setArchitectureState(buildSettings,'dFileDict',ddict)
 #Setup C/C++ object file targets for files in D directory
 startupc = env.startupbuilder('#'+buildpath+'startup.c','startup.m2.in')
+env.settingsbuilder('#'+buildpath+'buildsettings.h',[])
 startupobj = Object(startupc,CFLAGS=cflags,CXXFLAGS=cflags)
 objFiles.append(startupobj)
 cobjs = []
