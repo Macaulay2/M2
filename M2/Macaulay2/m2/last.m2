@@ -58,8 +58,7 @@ addStartFunction( () -> (
 
 userpath' := userpath = {
 	  applicationDirectory() | "code/",
-	  d1 := applicationDirectory() | "local/" | Layout#1#"packages", 
-	  d2 := applicationDirectory() | "local/" | Layout#2#"packages"
+	  d1 := applicationDirectory() | "local/" | Layout#"packages", 
 	  }
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory
@@ -69,7 +68,6 @@ addStartFunction( () -> if not noinitfile then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
 		    if readlink fn =!= null and not fileExists fn then removeFile fn
 		    ));
-	  -- if isDirectory d1 and isDirectory d2 then stderr << "--warning: both types of layout in use for user-installed packages" << endl
 	  ))
 
 addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
