@@ -14,7 +14,7 @@ extern "C" {
 extern sigjmp_buf interrupt_jump; 
 extern int interrupt_jump_set;
 extern int reading_from_readline;
-
+#ifdef DONTCOMPILE
 /***
     Internal M2 function for calling exec.
     Return code may be buggy.
@@ -77,6 +77,7 @@ extern int system_chmod(M2_string name,int mode);
     @return True if the file is a regular file, false if it is not or the path does not exist.
 ***/
 extern int system_isRegularFile(M2_string name);
+#endif
 #ifdef __cplusplus
 }
 #endif

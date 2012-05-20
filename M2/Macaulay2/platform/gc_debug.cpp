@@ -7,3 +7,4 @@ void onExitGCStatistics()
 	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
 #endif
 }
+

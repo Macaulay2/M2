@@ -13,6 +13,7 @@
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>		/* just for window width */
 #include <termios.h>		/* just for window width */
