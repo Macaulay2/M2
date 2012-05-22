@@ -21,10 +21,12 @@ dependencies = {
     'm2':list(buildlibraries),
 }
 
-def downloadLibrary(architecture,mode,library):
+def downloadLibrary(buildSettings,library):
     """
     Download library if it does not already xexist in tarpath.
     """
+    architecture = buildSettings.architecture()
+    mode = buildSettings.mode()
     from urllib2 import Request, urlopen, URLError, HTTPError
     try:
         os.makedirs('../'+state[architecture][mode]['tarpath'])
@@ -33,7 +35,7 @@ def downloadLibrary(architecture,mode,library):
     libraryFile = getLibSpecific(mode,architecture,library,'CompressedLib')
     if libraryFile is None:
         raise Exception("Compressed Lib Name is None for " + library)
-    filepath = '../'+state[architecture][mode]['tarpath'] + libraryFile
+    filepath = '../'+buildSettings.getTarPath() + libraryFile
     absfilepath = os.path.abspath(filepath)
     if not os.path.isfile(filepath):
         url = getLibSpecific(mode,architecture,library,'downloadPath')
@@ -47,12 +49,12 @@ def downloadLibrary(architecture,mode,library):
         localFile.write(f.read())
         localFile.close()
 
-def downloadLibraries(architecture,mode):
+def downloadLibraries(buildSettings):
     """
     Download any missing libraries to be built.
     """
-    for library in state[architecture]['buildlibraries']:
-        downloadLibrary(architecture,mode,library)
+    for library in buildSettings.getPackageBases():
+        downloadLibrary(buildSettings,library)
 
 def currentBuildPath(buildSettings):
     """
@@ -131,6 +133,12 @@ def detectBuildPackages(buildSettings):
     """
     This function detects which of available packages should be built.
     """
+    fnull=open(os.devnull,'w')
+    try:
+        proc = subprocess.Popen(['patch','-v'],stdout=fnull,stderr=fnull)
+    except:
+        raise Exception("patch not found, plase install")
+    fnull.close()
     if buildSettings.autoDetectLibs():
         conf = Configure(buildSettings.getEnv())
         neededPackages = set()
@@ -140,10 +148,11 @@ def detectBuildPackages(buildSettings):
                 continue
             available = checkLibraryCIncludes(buildSettings,package,conf) and checkLibraryCPPIncludes(buildSettings,package,conf) and checkLibraryLibs(buildSettings,package,conf)
             if not available:
-                print 'Need ' + package
+#                print 'Need ' + package
                 neededPackages.add(package)
             else:
-                print 'Found system version of ' + package
+#                print 'Found system version of ' + package
+                None
         buildSettings.setState('env',conf.Finish())
         buildSettings.setPackageBases(neededPackages)
     else:
@@ -409,7 +418,7 @@ def modeSpecific2(buildSettings):
     detectBuildPackages(buildSettings)
     #Download libraries if necessary
     if state['enabledownload']:
-        downloadLibraries(architecture,mode)
+        downloadLibraries(buildSettings)
 
 def buildCandidates(buildSettings):
     """
@@ -509,7 +518,7 @@ for buildSettings in buildSettingsList:
             prefixpath = buildSettings.getPrefixPath()
             f = f.replace("$SConsInstallPrefixPath",os.path.abspath('../'+prefixpath))
             if not os.path.exists(f):
-                print 'Unable to find: ' + f + ' for ' + libraryBase
+#                print 'Unable to find: ' + f + ' for ' + libraryBase
                 build = True
         if(buildSettings.shouldDeepCleanLib(libraryBase) or buildSettings.shouldCleanLib(libraryBase)):
             build=True
