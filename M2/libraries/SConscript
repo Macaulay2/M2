@@ -29,8 +29,8 @@ def downloadLibrary(buildSettings,library):
     mode = buildSettings.mode()
     from urllib2 import Request, urlopen, URLError, HTTPError
     try:
-        os.makedirs('../'+state[architecture][mode]['tarpath'])
-    except:
+        os.makedirs('../'+buildSettings.getTarPath())
+    except OSError:
         None
     libraryFile = getLibSpecific(mode,architecture,library,'CompressedLib')
     if libraryFile is None:
