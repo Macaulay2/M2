@@ -2,7 +2,7 @@
 newPackage(
      "NumericalHilbert",
      Version => "0.1", 
-     Date => "July 25, 2010",
+     Date => "May 11, 2012",
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
      Headline => "some local Hilbert series functions",
@@ -253,11 +253,13 @@ DZSmatrix (Matrix, RR) := o -> (igens, tol) -> (
 	  dmons = append(dmons, first entries basis(d,R));
 	  kern := findKernel(transpose M, tol);
 	  newBasis := first entries parseKernel(kern, dmons, tol);
+	  if tol > 0 then newBasis = apply(newBasis,b->clean(tol,b));
 	  newMGs := newMonomialGens(monGens, newBasis, take(dmons,{d-ecart,d}), d);
 	  --print(d, " newMGs: ",newMGs);
 	  if o.ProduceSB and #newMGs > 0 then (
 	       kern2 := findKernel(transpose sub(kern,R), tol);
 	       iBasis := first entries parseKernel(kern2, dmons, tol);
+	       if tol > 0 then iBasis = apply(iBasis,b->clean(tol,b));
 	       newSBs := new List from apply(newMGs, n->
 		    (first select(1,iBasis, b->(leadMonomial b == n#0)),0)
 		    );
@@ -268,7 +270,8 @@ DZSmatrix (Matrix, RR) := o -> (igens, tol) -> (
      	  d = d+1;
 	  oldBasis = newBasis;
 	  );
-     
+     print monGens;
+     print SBasis;
      (
 	  monGens,
 	  select(oldBasis,i->(gDegree i < d-ecart)),
@@ -420,8 +423,9 @@ rowReduce = (M,epsilon) -> (
      for k from 0 to n do (
     	  --if epsilon > 0 then M = new MutableMatrix from clean(epsilon,new Matrix from M);
     	  a := -1;
+	  aval := 0;
     	  for l from 0 to rindex do
-      	       if abs M_(l,n-k) > epsilon then (a = l; break);
+      	       if abs M_(l,n-k) > max(epsilon,aval) then (a,aval) = (l, abs M_(l,n-k));
     	  if a == -1 then continue;
     	  rowSwap(M,a,rindex);
     	  rowMult(M,rindex,1_R/M_(rindex,(n-k)));
@@ -591,7 +595,8 @@ M = matrix {{z*y-x^2, y^2}}
 dualBasis(M,5)
 dualHilbert(M,4)
 
-loadPackage ("NumericalHilbert", Reload => true)
+restart
+loadPackage ("NumericalHilbert")
 R = CC[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 R = QQ[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 R = (ZZ/101)[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
@@ -600,8 +605,10 @@ M = matrix {{x*y}}
 M = matrix {{x^9 - y}}
 standardBasis(M)
 dualHilbert(M,25, Strategy => DZS1)
---DZSmatrix(M,0.001)
+DZSmatrix(M,0.001)
+DZSmatrix(M,0.001, ProduceSB => true)
 dualHilbert(M)
+
 
 -- small example
 restart
