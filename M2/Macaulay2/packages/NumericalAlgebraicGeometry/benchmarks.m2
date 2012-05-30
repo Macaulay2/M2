@@ -246,4 +246,115 @@ system6R = () -> (
 
 decker2 = ()-> ( R = CC[x,y]; ideal(x+y^3,x^2*y-y^4) )
 
-      
+
+-- In: 
+--   BottomPlate, a 6x3 matrix (columns = bottom plate joints)
+--   TopPlate, a 3x6 matrix (columns = top plate joints)
+--   LegLengths, a 1x6 matrix
+-- Out:
+--   polynomial system (complete intersection of 7 quadrics -- may throw out any generator but the first) 
+makeStewartGoughPlatformInStudyCoordinates = method(Options=>{Top=>null, Bottom=>null, LegLengths=>null})
+makeStewartGoughPlatformInStudyCoordinates Ring := o -> C -> (
+     v := {};
+     if o.Bottom===null then (
+	  a := symbol a;
+	  v = v | toList(a_(1,1)..a_(6,3));
+	  );
+     if o.Top===null then (
+	  b := symbol b;
+	  v = v | toList(b_(1,1)..b_(6,3));
+	  );
+     if o.LegLengths===null then (
+	  L := symbol L;
+	  v = v | toList(L_1..L_6);
+	  );
+     e := symbol e;
+     g := symbol g;
+     R := C[v, e_1..e_4, g_1..g_4, Degrees=>toList(#v:0)|toList(8:1)];
+     e = new Qu from toList(e_1..e_4);
+     e' := conjugate e;
+     g = new Qu from toList(g_1..g_4);
+     A := if o.Bottom===null then map(R^6,R^3,(i,j)->a_(i+1,j+1)) else o.Bottom;
+     B := if o.Top===null then map(R^6,R^3,(i,j)->b_(i+1,j+1)) else o.Top;
+     LL := if o.LegLengths===null then toList(L_1..L_6) else o.LegLengths; 
+     {sum(4, i -> e#i*g#i)} | -- Study quadric
+     apply(6,i -> LL#i^2 * (norm2 e) - norm2(
+	       ((g*e'+ e*pureQu(B^{i})*e') )   
+	       -
+	       pureQu(A^{i}) * (norm2 e)
+	       ) // norm2 e
+	  )
+     )
+
+-- In: 
+--   BottomPlate, a 3x6 matrix (columns = bottom plate joints)
+--   TopPlate, a 3x6 matrix (rows = top plate joints)
+--   VectorP, a 3x1 matrix
+--   LegLengths, a 1x6 matrix
+-- Out: !!!!!!!!!!!!!!!!!
+--   
+makeStewartGoughPlatform = method(Options=>{Top=>null, Bottom=>null, VectorP=>null, LegLengths=>null})
+makeStewartGoughPlatform Ring := o -> C -> (
+     v := {};
+     if o.Bottom===null then (
+	  a := symbol a;
+	  v = v | toList(a_(1,1)..a_(6,3));
+	  );
+     if o.Top===null then (
+	  b := symbol b;
+	  v = v | toList(b_(1,1)..b_(6,3));
+	  );
+     if o.VectorP===null then (
+	  p := symbol p;
+	  v = v | toList(p_1..p_3);
+	  );
+     if o.LegLengths===null then (
+	  L := symbol L;
+	  v = v | toList(L_1..L_6);
+	  );
+     R := C[v]; 
+     A := if o.Bottom===null then map(R^6,R^3,(i,j)->a_(i,j)) else o.Bottom;
+     B := if o.Top===null then map(R^6,R^3,(i,j)->b_(i,j)) else o.Top;
+     P := if o.VectorP===null then map(R^1,R^3,(i,j)->p_j) else o.VectorP;   
+     LL := if o.LegLengths===null then toList(L_1..L_6) else o.LegLengths; 
+     R     
+     )
+
+Qu = new Type of List
+--w = new Qu from {1,-2,0,4}
+expression Qu := z -> (
+     expression z#0 +
+     expression z#1 * expression "I" +
+     expression z#2 * expression "J" +
+     expression z#3 * expression "K");
+net Qu := z -> net expression z;
+toString Qu := z -> toString expression z;
+tex Qu := z -> tex expression z;
+html Qu := z -> html expression z;
+Qu + Qu := (x,y) -> new Qu from apply(4,i->x#i+y#i)
+Qu * Qu := (x,y) -> new Qu from {
+     x#0*y#0-x#1*y#1-x#2*y#2-x#3*y#3, 
+     x#0*y#1+x#1*y#0+x#2*y#3-x#3*y#2,
+     x#0*y#2+x#2*y#0-x#1*y#3+x#3*y#1,
+     x#0*y#3+x#3*y#0-x#2*y#1+x#1*y#2
+     }
+Qu * RingElement := (x,y) -> x*realQu y
+RingElement * Qu := (y,x) -> x*realQu y
+conjugate Qu := x -> new Qu from {x#0,-x#1,-x#2,-x#3}
+norm2 = method()
+norm2 Qu := x -> (x*conjugate x)#0
+inverse Qu := x -> conjugate x / norm2 x
+Qu / Qu := (x,y) -> x * inverse y
+realQu = method()
+realQu RingElement := x -> new Qu from {x,0,0,0}
+pureQu = method()
+pureQu Matrix := M -> new Qu from {0} | flatten entries M 
+end
+
+-- quaternion tests
+w = new Qu from {1,2,3,4}     
+conjugate w
+w*w
+w*conjugate w
+abs w
+inverse w
