@@ -8,7 +8,8 @@
 We thank the United States National Science Foundation for generous funding to
 develop Macaulay2.
 
-Macaulay2 is copyright 2010 by Daniel R. Grayson and Michael E. Stillman.  We
-permit you to use it under the terms of the GNU General Public License, version
-2 or version 3, as published by the Free Software Foundation; see the files
-Macaulay2/COPYING-GPL-2 and Macaulay2/COPYING-GPL-3.
+Macaulay2 is copyright 1993-2012 by Daniel R. Grayson and Michael E. Stillman.
+We permit you to use the source code under the terms of the GNU General Public
+License (GPL), version 2 or version 3, as published by the Free Software
+Foundation; see the files Macaulay2/COPYING-GPL-2 and Macaulay2/COPYING-GPL-3,
+whereas the binary distribution is licensed under GPL version 3.

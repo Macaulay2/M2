@@ -9,10 +9,15 @@ We thank the United States National Science Foundation for generous funding
 to develop Macaulay2.
 
 Macaulay2 is copyright 1993-2012 by Daniel R. Grayson and Michael E. Stillman.
-We permit you to use it under the terms of the GNU General Public License,
-version 2 or 3, as published by the Free Software Foundation; see the files
-Macaulay2/COPYING-*.  This is free software.  There is no warranty; not even
-for merchantability or fitness for a particular purpose.
+We permit you to use the source code under the terms of the GNU General Public
+License (GPL), version 2 or 3, as published by the Free Software Foundation;
+see the files Macaulay2/COPYING-*.  The packages contributed by various
+authors, located in the directory Macaulay2/packages/, come with separate
+licenses.  The binary distributions of Macaulay2 are licensed under GPL 
+version 3.
+
+This is free software.  There is no warranty; not even for merchantability or
+fitness for a particular purpose.
 
 This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
@@ -46,7 +51,7 @@ various modern operating systems:
 
   Ubuntu:
 
-    sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev libz-dev
+    sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev libz-dev libreadline-dev libncurses-dev
 
   Debian:
 
