@@ -1,18 +1,18 @@
 
-			   Macaulay 2
+			   Macaulay2
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
 
 	available from http://www.math.uiuc.edu/Macaulay2/
 
 We thank the United States National Science Foundation for generous funding
-to develop Macaulay 2.
+to develop Macaulay2.
 
-Macaulay 2 is copyright 1993-2009 by Daniel R. Grayson and Michael
-E. Stillman.  We permit you to use it under the terms of the GNU General
-Public License, version 2, as published by the Free Software Foundation; see
-the file Macaulay2/COPYING.  This is free software.  There is no warranty;
-not even for merchantability or fitness for a particular purpose.
+Macaulay2 is copyright 1993-2012 by Daniel R. Grayson and Michael E. Stillman.
+We permit you to use it under the terms of the GNU General Public License,
+version 2 or 3, as published by the Free Software Foundation; see the files
+Macaulay2/COPYING-*.  This is free software.  There is no warranty; not even
+for merchantability or fitness for a particular purpose.
 
 This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
@@ -22,7 +22,7 @@ distribution.
 Programs
 ---------
 
-Here are programs you may have to install on your system to build Macaulay 2.
+Here are programs you may have to install on your system to build Macaulay2.
 
    program: fakeroot
     get at: http://ftp.debian.org/debian/pool/main/f/fakeroot
@@ -37,7 +37,7 @@ Libraries
 ---------
 
 Here are some libraries you may have to install on your system to build
-Macaulay 2.  If your operating system distinguishes between development
+Macaulay2.  If your operating system distinguishes between development
 versions and run-time versions of the libraries, you will need the development
 version.
 
