@@ -1,5 +1,8 @@
 Here are some notes about the current state of the licensing of our libraries.
-Our license statements are in the files M2/INSTALL and M2/Macaulay2/d/startup.m2.in .
+Our license statements are in the files:
+    M2/INSTALL
+    M2/Macaulay2/d/startup.m2.in
+    M2/distributions/cygwin/Macaulay2.README.in
 
 libraries linked with M2:
 
