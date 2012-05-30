@@ -81,7 +81,7 @@ standardBasis (Matrix) := o -> (igens) -> (
 
 --Returns a list of the dimensions of the quotient space at each degree up to the specified degree d.
 --Algorithm choices: Dayton-Zeng, Stetter-Thallinger find the dual space; GB1, GB2 use a Groebner Basis.
-dualHilbert = method(TypicalValue => List, Options => {Point => {}, Strategy => DZ, Tolerance => -1.})
+dualHilbert = method(TypicalValue => List, Options => {Point => {}, Strategy => DZS1, Tolerance => -1.})
 dualHilbert (Matrix, ZZ) := o -> (igens, d) -> (
      R := ring igens;
      tol := if o.Tolerance == -1. then (if precision 1_R == infinity then 0. else defaultT()) else o.Tolerance;
@@ -100,7 +100,6 @@ dualHilbert (Matrix, ZZ) := o -> (igens, d) -> (
 
 --Returns a list of the dimensions of the quotient space at each degree up to a degree at which it coincides
 --with the Hilbert polynomial.
-dualHilbert = method(TypicalValue => List, Options => {Point => {}, Strategy => DZS1, Tolerance => -1.})
 dualHilbert (Matrix) := o -> (igens) -> (
      R := ring igens;
      n := numgens R;
@@ -255,7 +254,8 @@ DZSmatrix (Matrix, RR) := o -> (igens, tol) -> (
 	  newBasis := first entries parseKernel(kern, dmons, tol);
 	  if tol > 0 then newBasis = apply(newBasis,b->clean(tol,b));
 	  newMGs := newMonomialGens(monGens, newBasis, take(dmons,{d-ecart,d}), d);
-	  --print(d, " newMGs: ",newMGs);
+	  print(d, " newMGs: ",newMGs);
+	  --print newBasis;
 	  if o.ProduceSB and #newMGs > 0 then (
 	       kern2 := findKernel(transpose sub(kern,R), tol);
 	       iBasis := first entries parseKernel(kern2, dmons, tol);
@@ -606,9 +606,9 @@ M = matrix {{x^9 - y}}
 standardBasis(M)
 dualHilbert(M,25, Strategy => DZS1)
 DZSmatrix(M,0.001)
+DZSmatrix(M,0.001,Point=>{0.000000000000000000000000001,0.0000000000000000000000000000000001})
 DZSmatrix(M,0.001, ProduceSB => true)
 dualHilbert(M)
-
 
 -- small example
 restart

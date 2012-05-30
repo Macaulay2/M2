@@ -14,7 +14,9 @@ makeBertiniInput List := o -> T -> (
 -- IN:
 --	T = polynomials of target system
 --      o.StartSystem = start system
-  v := gens ring T#0; -- variables
+  R := ring T#0;
+  v := gens R; -- variables
+  prec := precision coefficientRing R;
   dir := temporaryFileName(); 
   makeDirectory dir;
   f := openOut (dir|"/input"); -- THE name for Bertini's input file 
@@ -39,7 +41,8 @@ makeBertiniInput List := o -> T -> (
        then f << "f" << i << ", "
        else f << "f" << i << ";" << endl << endl
       );
-  bertiniNumbers := p->( L := toString p; 
+  bertiniNumbers := p->( L := toExternalString p; 
+       L = replace("p"|toString prec, "", L);
        L = replace("ii", "I", L); 
        L = replace("e", "E", L);
        L

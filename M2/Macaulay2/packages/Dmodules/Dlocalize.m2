@@ -56,7 +56,7 @@ DlocalizeAll(Module, RingElement) := options -> (M, f) -> (
 --
 -- Two different strategies are possible:
 --
--- 1. "Saturated" -- appears in Walther's paper on local cohomology and 
+-- 1. "Oaku" -- appears in Walther's paper on local cohomology and 
 --     based on Oaku's work
 --
 -- 2. "OTW" -- appears in paper of Oaku-Takayama-Walther on localization
@@ -263,7 +263,7 @@ computeLocalization = (M, f, output, options) -> (
 		  );	     
 	     );
 	)
-   else error "Only recognizes strategies Saturated and OTW (default)";
+   else error "Only recognizes strategies Oaku and OTW (default)";
 
    if member(LocModule, output) then outputList = append(outputList, 
 	LocModule => locModule);
