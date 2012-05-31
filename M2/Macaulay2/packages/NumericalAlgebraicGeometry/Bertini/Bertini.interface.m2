@@ -22,7 +22,10 @@ makeBertiniInput List := o -> T -> (
   f := openOut (dir|"/input"); -- THE name for Bertini's input file 
   f << "CONFIG" << endl;
   --f << "MPTYPE: 2;" << endl; -- multiprecision
-  f << "MPTYPE: 0;" << endl; -- double precision (default?)
+  --f << "MPTYPE: 0;" << endl; -- double precision (default?)
+  f << "TRACKTYPE: 1;" << endl;
+  f << "USEREGENERATION: 1;" << endl;
+    
   if #o.StartSystem > 0 then
     f << "USERHOMOTOPY: 1;" << endl;
   f << endl << "END;" << endl << endl;
@@ -38,23 +41,23 @@ makeBertiniInput List := o -> T -> (
   f << "function "; -- "function" section
   scan(#T, i->
        if i<#T-1
-       then f << "f" << i << ", "
-       else f << "f" << i << ";" << endl << endl
+       then f << "fff" << i << ", "
+       else f << "fff" << i << ";" << endl << endl
       );
   bertiniNumbers := p->( L := toExternalString p; 
        L = replace("p"|toString prec, "", L);
-       L = replace("ii", "I", L); 
-       L = replace("e", "E", L);
+       L = replace("\\bii\\b", "I", L); 
+       L = replace("([0-9])e([0-9])", "\\1E\\2", L);
        L
        );
   if #o.StartSystem == 0 
-  then scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl)
+  then scan(#T, i -> f << "fff" << i << " = " << bertiniNumbers T#i << ";" << endl)
   else (
        if #o.StartSystem != #T then error "expected equal number of equations in start and target systems";
        f << "pathvariable t;" << endl 
          << "parameter s;" << endl
          << "s = t;" << endl;
-       scan(#T, i -> f << "f" << i 
+       scan(#T, i -> f << "fff" << i 
 	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
 	   );
        );
