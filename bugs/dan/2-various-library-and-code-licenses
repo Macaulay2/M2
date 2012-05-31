@@ -12,10 +12,10 @@ libraries linked with M2:
 -lgdbm		gdbm			GPL 2 for version 1.8.3, which we currently link with
 					GPL 3 for version 1.9.1, which we could link with
 -lgc		Boehm gc		"Permission is hereby granted to use or copy this program for any purpose,  provided the above notices are retained on all copies."
--lmpfr		mpfr			LGPL 3 or later
+-lmpfr		mpfr			Lesser GPL 3 or later
 -lfrobby	frobby			GPL 2 or later
 -lpari		pari			GPL 2 or later
--lmpirxx -lmpir	mpir			version 2.4.0 : LGPL 2.1 or later
+-lmpirxx -lmpir	mpir			version 2.4.0 : Lesser GPL 2.1 or later
 	 	lapack			copyright by U Tennessee under a liberal license
 		blas			no license file provided, probably public domain
 
@@ -27,7 +27,15 @@ Macaulay2/e code by Franziska Hinkelmann 		public domain
 Macaulay2/e code by Anton Leykin			public domain
 Macaulay2/system code et al., by Bill Furnish		public domain
 
-for M2 binaries:
+Note: according to the chart at
 
-We are prevented from using GPL 2 by mpir and mpfr
-We are prevented from using GPL 2.1 by mpfr
+      http://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
+
+LGPL 2.1 is compatible with GLP 2.
+
+
+Final analysis: for M2 binaries,
+
+      we are prevented from using GPL 2 by mpfr
+      and we have to be careful about gdbm
+
