@@ -13,19 +13,13 @@ export {
      dualBasis,
      dualHilbert,
      standardBasis,
+     dualInfo,
      Point,
      Tolerance,
      DZ,
-     --ST,
+     ST,
      BM,
-     GB1,
-     GB2,
-     DZS1,
-     DZS2,
-     DZSmatrix,
-     ProduceSB,
-     deflation,
-     Size,
+     GB,
      dualSpace
      }
 
@@ -56,74 +50,77 @@ isBasis DualSpace := V -> kernel V#"generators" == 0;
 
 DualSpace == DualSpace := (V,W) -> kernel(V#"generators" + W#"generators") == kernel(V#"generators");
 
+-----------------------------------------------------------------------------------------
 
 --Default tolerance value for inexact fields (the default is 0 for exact fields)
 defaultT := () -> 0.0001;
 
---Returns a DualSpace object of generators of the dual space up to the specified degree d.
---Algorithm choices: Dayton-Zeng, Stetter-Thallinger, or Mourrain.
-dualBasis = method(TypicalValue => DualSpace, Options => {Point => {}, Strategy => DZ, Tolerance => -1.})
-dualBasis (Matrix, ZZ) := o -> (igens, d) -> (
-     R := ring igens;
-     tol := if o.Tolerance == -1. then (if precision 1_R == infinity then 0. else defaultT()) else o.Tolerance;
-     if      o.Strategy == DZ then dualBasisDZST(igens, d, tol, Point => o.Point)
-     --else if o.Strategy == ST then dualBasisDZST(igens, d, tol, Point => o.Point, Strategy => ST)
-     else if o.Strategy == BM then dualBasisBM(igens, d, tol, Point => o.Point)
-     else error "unrecognized strategy"
-     );
 
-standardBasis = method(TypicalValue => Matrix, Options => {Point => {}, Strategy => DZ, Tolerance => -1.}) 
-standardBasis (Matrix) := o -> (igens) -> (
-     R := ring igens;
-     tol := if o.Tolerance == -1. then (if precision 1_R == infinity then 0. else defaultT()) else o.Tolerance;
-     matrix {(DZSmatrix(igens, tol, ProduceSB => true))#3}
-     );
+dualBasis = method(TypicalValue => DualSpace, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1.})
+dualBasis (Matrix) := o -> (igens) -> (dualInfo(igens, Truncate=>o.Truncate, Point=>o.Point, Strategy=>o.Strategy, Tolerance=>o.Tolerance))#0;
 
---Returns a list of the dimensions of the quotient space at each degree up to the specified degree d.
---Algorithm choices: Dayton-Zeng, Stetter-Thallinger find the dual space; GB1, GB2 use a Groebner Basis.
-dualHilbert = method(TypicalValue => List, Options => {Point => {}, Strategy => DZS1, Tolerance => -1.})
-dualHilbert (Matrix, ZZ) := o -> (igens, d) -> (
+standardBasis = method(TypicalValue => Matrix, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1.}) 
+standardBasis (Matrix) := o -> (igens) -> (dualInfo(igens, Truncate=>o.Truncate, Point=>o.Point, Strategy=>o.Strategy, Tolerance=>o.Tolerance, ProduceSB=>true))#2;
+
+dualHilbert = method(TypicalValue => List, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1.})
+dualHilbert (Matrix) := o -> (igens) -> (dualInfo(igens, Truncate=>o.Truncate, Point=>o.Point, Strategy=>o.Strategy, Tolerance=>o.Tolerance))#4;
+
+dualInfo = method(TypicalValue => Sequence, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1., ProduceSB => false})
+dualInfo (Matrix) := o -> (igens) -> (
      R := ring igens;
-     tol := if o.Tolerance == -1. then (if precision 1_R == infinity then 0. else defaultT()) else o.Tolerance;
+     tol := o.Tolerance;
+     deg := o.Truncate;
+     if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
      if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
-     if      o.Strategy == DZ then dualHilbertDZST(igens, d, tol)
-     --else if o.Strategy == ST then dualHilbertDZST(igens, d, tol, Strategy => ST)
-     else if o.Strategy == GB1 then apply(0..d, i->hilbertB(flatten entries gens gb igens,i))
-     else if o.Strategy == GB2 then apply(0..d, i->hilbertC(flatten entries gens gb igens,i))
-     else if o.Strategy == DZS1 or o.Strategy == DZS2 then (
-     	  sbElements := sbReduce (DZSmatrix(igens,tol))#0;
-     	  if o.Strategy == DZS1 then apply(0..d, i->hilbertB(sbElements,i))
-	  else                       apply(0..d, i->hilbertC(sbElements,i))
-	  )
-     else error "unrecognized strategy"
+     
+     --outputs
+     dbasis   := new Matrix;
+     gcorners := new List;
+     sbasis   := new List;
+     regul    := 0;
+     hseries  := new Sequence;
+     hpoly    := 0;
+     
+     if deg != -1 then (
+     	  --Macaulay matrix strategies (DZ, ST)
+     	  if o.Strategy == DZ or strat == ST then (
+	       M := new Matrix;
+     	       if o.Strategy == DZ then M = transpose DZmatrix(igens, deg, false, Point => point);
+     	       if o.Strategy == ST then M = transpose STmatrix(igens, deg, Point => point);
+	       
+     	       dmons := apply(deg+1, i->first entries basis(i,R)); --nested list of monomials up to order d
+     	       dbasis = parseKernel(findKernel(M, tol), dmons, tol);
+     	       
+	       n := numgens R;
+	       genDegs := (first entries igens)/lDegree;
+     	       cList := apply(deg+1, i->bin(i + n, n));
+     	       rList := apply(deg+1, i->sum(genDegs, j->bin(i-j+n,n)));
+     	       L := apply(deg+1, i->(
+	       		 subM := M_(toList (0..(cList#i)-1))^(toList (0..(rList#i)-1));
+	       		 numgens source findKernel(subM, tol)
+	       		 ));
+               L = {0}|L;
+     	       hseries = apply(deg+1, i->(L#(i+1)-L#i));
+	       );
+     	  
+     	  --Mourrain algorithm (BM)
+     	  if o.Strategy == BM then
+	       (dbasis,hseries) = dualBasisBM(igens, deg, tol);
+     	  );
+     
+     --Sylvester array strategies
+     if deg == -1 then (
+	  d := 0;
+	  (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB);
+	  gcorners = sbReduce gcorners;
+	  regul = first degree lcm monomialIdeal gcorners;
+	  hseries = apply(regul, i->hilbertC(gcorners, i));
+	  );
+     
+     (dbasis, gcorners, sbasis, regul, hseries, hpoly)
      );
 
---Returns a list of the dimensions of the quotient space at each degree up to a degree at which it coincides
---with the Hilbert polynomial.
-dualHilbert (Matrix) := o -> (igens) -> (
-     R := ring igens;
-     n := numgens R;
-     tol := if o.Tolerance == -1. then (if precision 1_R == infinity then 0. else defaultT()) else o.Tolerance;
-     if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
-     sbMons := sbReduce (DZSmatrix(igens,tol))#0;
-     sbListForm := apply(sbMons, e -> (listForm e)#0#0); --store lead monomials as n-tuples of integers
-     d := sum(n, i->max(apply(sbListForm, l->l#i)));
-     if      o.Strategy == DZS1 then apply(0..d, i->hilbertB(sbMons,i))
-     else if o.Strategy == DZS2 then apply(0..d, i->hilbertC(sbMons,i))
-     else error "unrecognized strategy"
-     );
 
---Generators of the dual space with all terms of degree d or less.
---Uses ST algorithm by default, but can use DZ instead if specified.
-dualBasisDZST = method(TypicalValue => DualSpace, Options => {Point => {}, Strategy => DZ})
-dualBasisDZST (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
-     R := ring igens;
-     M := new Matrix;
-     if o.Strategy == DZ then M = transpose DZmatrix(igens, d, false, Point => o.Point)
-                         else M = transpose STmatrix(igens, d, Point => o.Point);
-     dmons := apply(d+1, i->first entries basis(i,R)); --nested list of monomials up to order d
-     dualSpace parseKernel(findKernel(M, tol), dmons, tol)
-     );
 
 findKernel = (M, tol) -> (
      R := ring M;
@@ -152,6 +149,7 @@ dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
      n := #gens R;
      m := #(entries igens)#0;
      if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
+     hseries := new MutableList;
      betas := {}; --previously found generators
      newbetas := {1_R}; --new generators
      npairs := subsets(n,2);
@@ -168,7 +166,7 @@ dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
   	  );
      V := {{}};
      
-     for e from 1 to d+1 do (
+     for e from 0 to d do (
 	  --print (m, M, E, bvectors, betas, newbetas);
 	  s := #betas;
 	  snew := #newbetas;
@@ -194,6 +192,7 @@ dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
 	  betas = betas | newbetas;
 	  s = #betas;
 	  bvectors = entries transpose findKernel(M, tol);
+	  hseries#e = #bvectors;
     	  --find newbetas from bvectors
 	  newbetas = apply(bvectors, bv->sum(#bv, i->(bv#i * E_(i//n,i%n))));
     	  --build Vs from bvectors
@@ -209,34 +208,14 @@ dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
      --print(mons,bmatrix);
      bmatrix = sub(bmatrix,coefficientRing R);
      --print(numgens source M, numgens target M);
-     dualSpace (mons * transpose rowReduce(transpose bmatrix,tol))
+     (mons * transpose rowReduce(transpose bmatrix,tol), new Sequence from hseries)
      );
 
---version of the BM algorithm with automatic stopping criterion
-
---ST or DZ algorithms.
-dualHilbertDZST = method(TypicalValue => List, Options => {Point => {}, Strategy => DZ})
-dualHilbertDZST (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
-     R := ring igens;
-     n := #gens R;
-     genDegs := (first entries igens)/lDegree;
-     cList := apply(d+1, i->bin(i + n, n));
-     rList := apply(d+1, i->sum(genDegs, j->bin(i-j+n,n)));
-     M := new Matrix;
-     if o.Strategy == DZ then M = transpose DZmatrix(igens, d, false, Point => o.Point)
-     else                     M = transpose STmatrix(igens, d, Point => o.Point);
-     L := apply(d+1, i->(
-	       subM := M_(toList (0..(cList#i)-1))^(toList (0..(rList#i)-1));
-	       numgens source findKernel(subM, tol)
-	       ));
-     L = {0}|L;
-     apply(d+1, i->(L#(i+1)-L#i))
-     );
 
 --Constructs Sylvester array matrix using DZ algorithm
 --(for use with automatic stopping criterion)
-DZSmatrix = method(TypicalValue => List, Options => {Point => {}, ProduceSB => false})
-DZSmatrix (Matrix, RR) := o -> (igens, tol) -> (
+dualBasisSA = method(TypicalValue => List, Options => {Point => {}, ProduceSB => false})
+dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
      R := ring igens;
      if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
      ecart := max apply(first entries igens, g->(gDegree g - lDegree g)); --max ecart of generators
@@ -254,8 +233,7 @@ DZSmatrix (Matrix, RR) := o -> (igens, tol) -> (
 	  newBasis := first entries parseKernel(kern, dmons, tol);
 	  if tol > 0 then newBasis = apply(newBasis,b->clean(tol,b));
 	  newMGs := newMonomialGens(monGens, newBasis, take(dmons,{d-ecart,d}), d);
-	  print(d, " newMGs: ",newMGs);
-	  --print newBasis;
+	  --print(d, " newMGs: ",newMGs);
 	  if o.ProduceSB and #newMGs > 0 then (
 	       kern2 := findKernel(transpose sub(kern,R), tol);
 	       iBasis := first entries parseKernel(kern2, dmons, tol);
@@ -440,7 +418,7 @@ rowReduce = (M,epsilon) -> (
 --auxilary function
 sbReduce = L -> (
      L = L / first;
-     Lgood := select(#L, i->(
+     Lgood := select(0..#L-1, i->(
      	  all(#L, j->(j == i or not isDivisible(L#i,L#j)))
 	  ));
      new List from apply(Lgood, i->L#i)
@@ -567,36 +545,9 @@ doc ///
 *}
 end
 
-needsPackage "NumericalHilbert"
-R = CC[x,y]
-M = matrix {{y,x^2-y}}
-deflation(M)
-
-needsPackage "NumericalHilbert"
-R = CC[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
-R = QQ[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
-M = matrix {{ii*x}}
-M = matrix {{x*y, x^2-y^2, y^3}}
-M = matrix {{x^2-y}}
-M = matrix {{x+y+x*y}}
-M = matrix {{x+y+y^3}}
-V = dualBasis(M,5, Strategy => BM)
-V = dualBasis(M,5, Strategy => DZ)
---V = dualBasis(M,5, Strategy => ST)
-dualHilbert(M,4, Strategy => DZ)
---dualHilbert(M,4, Strategy => ST)
-dualHilbert(M,4, Strategy => GB1)
-dualHilbert(M,4, Strategy => GB2)
-
-loadPackage ("NumericalHilbert", Reload => true)
-R = CC[x,y,z, MonomialOrder => {Weights=>{-1,-1,-1}}, Global => false]
-M = matrix {{x*y+z, y*z+x, x^2-z^2}}
-M = matrix {{z*y-x^2, y^2}}
-dualBasis(M,5)
-dualHilbert(M,4)
 
 restart
-loadPackage ("NumericalHilbert")
+loadPackage "NumericalHilbert"
 R = CC[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 R = QQ[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 R = (ZZ/101)[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
@@ -604,11 +555,9 @@ M = matrix {{x^2-x*y^2,x^3}}
 M = matrix {{x*y}}
 M = matrix {{x^9 - y}}
 standardBasis(M)
-dualHilbert(M,25, Strategy => DZS1)
-DZSmatrix(M,0.001)
-DZSmatrix(M,0.001,Point=>{0.000000000000000000000000001,0.0000000000000000000000000000000001})
-DZSmatrix(M,0.001, ProduceSB => true)
-dualHilbert(M)
+dualHilbert(M,Truncate=>25)
+dualBasis(M)
+dualInfo(M)
 
 -- small example
 restart
