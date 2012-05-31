@@ -344,35 +344,6 @@ hilbertC (List, ZZ) := (sbElements, d) -> (
      hsum
      );
 
-deflation = method(TypicalValue => ZZ, Options => {Point => matrix {{}}, Size => 0})
-deflation (Matrix) := o -> (igens) -> (
-     R := ring igens;
-     n := #(gens R);
-     epsilon := .001;
-     p := sub(o.Point,CC);
-     m := o.Size;
-     if p == 0 then p = matrix {apply(n, i->0_CC)};
-     if m == 0 then m = n;
-     A := jacobian igens;
-     Asub := sub(A, p);
-     svs := (SVD(Asub))#0;
-     r := 0;
-     for v in svs do
-          if clean(epsilon,v) != 0 then r = r + 1;
-     if r == n then return take((entries p)#0,m);
-     h := randomVector(r+1);
-     Br := matrix apply(n, i->randomVector(r+1));
-     Bl := matrix apply(r, i->randomVector(n));
-     C := (Bl*Asub*Br) || matrix{h};
-     p = p | transpose solve(C, transpose matrix{(apply(r,i->0_CC))|{1_CC}});
-     lambda := symbol lambda;
-     R = CC[gens R,lambda_n..lambda_(n+r)];
-     lvec := transpose matrix{new List from lambda_n..lambda_(n+r)};
-     igens = sub(igens,R) | transpose (sub(A,R)*Br*lvec) | transpose (matrix{h}*lvec - 1);
-     print transpose igens;
-     deflation(igens, Point => p, Size => m)
-     );
-
 --returns if lead term of a is divisible by lead term of b
 isDivisible = (a, b) -> (
      dif := (listForm a)#0#0 - (listForm b)#0#0;
@@ -424,11 +395,6 @@ sbReduce = L -> (
      new List from apply(Lgood, i->L#i)
      );
 
---generates a vector of specified length of random complex numbers with unit modulus
-randomVector = (dimension) -> (
-     apply(dimension, i -> exp((random 2.*pi)*ii))
-     );
-
 --build a matrix from a nested list of matrices of uniform size
 blockMatrix = (blist) -> (
      R := ring (blist#0#0);
@@ -452,16 +418,7 @@ innerProduct = (v,w) -> (
      sum(#c,i->(c#i#0)*(c#i#1))
      );
 
-newtonsMethod = (eqns, p, n) -> (
-     elist := (entries eqns)#0;
-     A := entries transpose jacobian eqns;
-     for i from 1 to n do (
-    	  for j from 0 to #elist-1 do (
-      	       val := sub(elist#j, p);
-      	       grad := sub(A#j, p);
-    	       );
-  	  );
-     );
+
 {*
 beginDocumentation()
 
