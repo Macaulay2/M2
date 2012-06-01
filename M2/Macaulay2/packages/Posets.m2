@@ -1,28 +1,7 @@
-------------------------------------------
--- Currently working on:
-------------------------------------------
--- David: Yes
--- Gwyn:  Tests (tests not running right now, will be fixed tomorrow)
-
-------------------------------------------
--- To do list:
-------------------------------------------
--- Documentation:
-    -- Add a few extended examples
-    -- Grammar/spelling check extant nodes
-
--- Tests
-    -- Everything!
-
--- Several enumerator methods could be made more efficient (avoid "subsets"):
-    -- intersectionLattice, hibiIdeal, hibiRing, pPartitionRing 
-    
--- Everything above the line below should be removed before the package is submitted.
-------------------------------------------
-
 -- Copyright 2011: David Cook II, Sonja Mapes, Gwyn Whieldon
 -- You may redistribute this file under the terms of the GNU General Public
--- License Version 2 as published by the Free Software Foundation.
+-- License as published by the Free Software Foundation, either version 2
+-- of the License, or any later version.
 
 ------------------------------------------
 ------------------------------------------
