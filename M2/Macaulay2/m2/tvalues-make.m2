@@ -3,8 +3,8 @@
 
 -- egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
 
-make = (srcdir) -> (
-     outfile = openOut "tvalues.m2";
+make = (srcdir,outfileString) -> (
+     outfile = openOut outfileString;
      srcdir = minimizeFilename srcdir;
      scan(select(readDirectory srcdir, dir -> match("\\.d$",dir)), file -> (
 	       file = srcdir | file;

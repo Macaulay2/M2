@@ -2,7 +2,10 @@ Import('setArchitectureState','getLibSpecific','setLibSpecific','numberSubTasks'
         'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
         'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
         'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','buildSettings')
-
+import os
+import subprocess
+import shutil
+import time
 objFiles = []
 SConscript('c/SConscript',exports=exportDict)
 objFiles+=SConscript('regex/SConscript',exports=exportDict)
@@ -10,8 +13,41 @@ objFiles+=SConscript('d/SConscript',exports=exportDict)
 objFiles+=SConscript('platform/SConscript',exports=exportDict)
 objFiles+=SConscript('system/SConscript',exports=exportDict)
 objFiles+=SConscript('e/SConscript',exports=exportDict)
+objFiles+=SConscript('kernel/SConscript',exports=exportDict)
+
+def tvalueBuilder(target,source,env):
+    """
+    Builder to generate tvalues.m2 file.
+    This must run after m2 has been copied to the local directory.
+    #bin/m2 
+    """
+    shutil.copy2(buildSettings.getBuildPath()+'Macaulay2/M2',buildSettings.getPrefixPath()+'bin')
+    #This exists because of a race condition internal to some unix operating systems where copy2 can return before the file is available for execution.
+    time.sleep(1)
+    try:
+        os.makedirs(buildSettings.getCorePath())
+    except OSError:
+        None
+    try:
+        m2exe = buildSettings.getPrefixPath()+'bin/M2'
+        m2target = 'Macaulay2/m2/tvalues-make.m2'
+        cwdpath = buildSettings.getCorePath()
+        runcmd = 'errorDepth=0; make(\"Macaulay2/d/\",\"'+cwdpath+"tvalues.m2\"); exit 0;'"
+        proc = subprocess.Popen([m2exe,m2target,"-e",runcmd,"--no-tvalues","-q","--silent"])
+
+    except Exception as e:
+        print e;
+        raise Exception("M2 not found while generating tvalues.m2")
+    if proc.wait():
+        raise Exception("M2 did not terminate cleanly while generating tvalues.m2")
+
+tvaluebuilder = Builder(action=tvalueBuilder, single_source=1)
+env = Environment()
+env['BUILDERS']['tvaluebuilder']=tvaluebuilder
 
 libs = ['lapack','blas','fac','cf','cfmem','ntl','gdbm','gc','mpfr','frobby','pari','mpirxx','mpir','readline','history','xml2','m','ncurses','gfortran','dl','rt','m','pthread']
-m2 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+buildSettings.getPrefixPath()+'lib/')
+m2_1 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+buildSettings.getPrefixPath()+'lib/')
+
+m2 = env.tvaluebuilder(['#'+buildSettings.getCorePath()+'tvalues.m2','#'+buildSettings.getPrefixPath()+'bin/M2'],'m2/tvalues-make.m2')
+Depends(m2,m2_1)
 buildSettings.setState('m2',m2)
-Command('#'+buildSettings.getPrefixPath()+'bin/m2',m2,Copy("$TARGET","$SOURCE"))

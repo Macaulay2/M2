@@ -9,7 +9,7 @@
 
 #ifndef BIBASIS_FAST_ALLOCATOR_HPP
 #define BIBASIS_FAST_ALLOCATOR_HPP
-
+using std::size_t;
 namespace BIBasis
 {
     class FastAllocator

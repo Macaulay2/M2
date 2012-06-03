@@ -148,10 +148,10 @@ def detectBuildPackages(buildSettings):
                 continue
             available = checkLibraryCIncludes(buildSettings,package,conf) and checkLibraryCPPIncludes(buildSettings,package,conf) and checkLibraryLibs(buildSettings,package,conf)
             if not available:
-#                print 'Need ' + package
+                print 'Need ' + package
                 neededPackages.add(package)
             else:
-#                print 'Found system version of ' + package
+                print 'Found system version of ' + package
                 None
         buildSettings.setState('env',conf.Finish())
         buildSettings.setPackageBases(neededPackages)

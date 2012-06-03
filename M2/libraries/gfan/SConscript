@@ -8,6 +8,8 @@ libraryName = 'gfan'
 setLibSpecific('all','all',libraryName,'CompressedLib','gfan0.4plus.tar.gz')
 setLibSpecific('all',['linux-x86','linux-x86_64','Darwin-x86','Darwin-x86_64'],libraryName,'InstallFiles',['$SConsInstallPrefixPath/bin/gfan'])
 setLibSpecific('all','all',libraryName,'DecompressLib',True)
+setLibSpecific('all','all',libraryName,'allowsystem',True)
+setLibSpecific('all','all',libraryName,'systembins',['gfan',])
 setLibSpecific('all','all',libraryName,'Dependencies',['cddlib'])
 setLibSpecificNumStages('all','all',libraryName,2)
 setLibSpecificStageCommand('all','all',libraryName,0,'make')

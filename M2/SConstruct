@@ -92,12 +92,24 @@ class BuildSettings:
         self._builders = {}
         self._libSpecific = {}
     def mode(self):
+        """
+        Return mode as string.
+        """
         return self._mode
     def architecture(self):
+        """
+        Return architecture as string.
+        """
         return self._architecture
     def distributionType(self):
+        """
+        Return distribution type as string.
+        """
         return self._distributionType
     def packageVersion(self):
+        """
+        Return version of Macaulay2 as string.
+        """
         return "1.4.0.1"
     def packages(self):
         return ""
@@ -114,26 +126,58 @@ class BuildSettings:
             raise TypeException("autoDetectLibs must be true or false")
         self._autoDetectLibs = autoDetectLibs
     def setAvailablePackageBases(self,packageBases):
+        """
+        Set packages that are available to be built.
+        """
         self._availablePackageBases = packageBases
     def setPackageBases(self,packageBases):
+        """
+        Set packages that are to be built.
+        """
         self._packageBases = packageBases
     def getExistingPackages(self):
+        """
+        Get packages that already exist.
+        """
         return self._state['existingpackages']
     def getPackageBases(self):
+        """
+        Get packages that are to be built.
+        """
         return self._packageBases
     def getAvailablePackageBases(self):
+        """
+        Get packages that are avilable to be built.
+        """
         return self._availablePackageBases
     def getM2Flags(self):
         return getStateMode(self._mode,self._architecture,'M2flags')
     def getEnv(self):
+        """
+        Return current build environment.
+        """
         return self._state['env']
     def getBuilders(self):
         return self._builders
     def getPrefixPath(self):
+        """
+        Return prefix path from M2 root.
+        """
         return self._state['prefixpath']
+    def getCorePath(self):
+        """
+        Return the path to put M2 core files in
+        """
+        return self.getPrefixPath()+'share/Macaulay2/Core/'
     def getBuildPath(self):
+        """
+        Return build path offset from M2 root.
+        """
         return self._state['buildpath']
     def getTarPath(self):
+        """
+        Return tar path offset from root of M2 directory.
+        """
         return 'BUILD/tarfiles/'
     def getState(self,attribute,throwException=True):
         if(throwException):
@@ -159,8 +203,14 @@ class BuildSettings:
         except KeyError:
             return None
     def shouldDeepCleanLib(self,libraryName):
+        """
+        Return true if the library should be deep cleaned (removed and rebuilt), false otherwise.
+        """
         return (self.getState('deepclean',False) == True) or (self.getLibSpecific(libraryName,'deepcleanlib',False)==True)
     def shouldCleanLib(self,libraryName):
+        """
+        Return true if the library should be cleaned, false otherwise.
+        """
         return (self.getState('cleanlib',False) == True) or (self.getLibSpecific(libraryName,'cleanlib',False)==True)
     
 def detectArchitecture():

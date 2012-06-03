@@ -1,0 +1,24 @@
+import os.path
+Import('state','getState','setArchitectureState','getLibSpecific','setLibSpecific','numberSubTasks',
+        'setLibSpecificStateEnvExport','setLibSpecificConfigExport','setLibSpecificMakeExport','setLibSpecificMakeInstallExport','setLibSpecificNumStages','setLibSpecificStageCommandArguments',
+        'setLibSpecificStageCommand','getLibSpecificStageEnvExport','getLibSpecificConfigEnv','getLibSpecificMakeEnv','getLibSpecificMakeInstallEnv','getLibSpecificNumStages','getLibSpecificStageCommandArguments',
+        'getLibSpecificStageCommand','getLibSpecificEnv','Glob','exportDict','buildSettings')
+
+
+bibasis = Glob(pattern='*.cpp',dir='bibasis/')
+
+buildpath = buildSettings.getBuildPath()+'Macaulay2/kernel/'
+prefixPath = buildSettings.getPrefixPath()
+eflags = "-I"+buildpath+"../d/ -IMacaulay2/platform/ -IMacaulay2/d/ -IMacaulay2/e -IMacaulay2/e-includes -I"+prefixPath+"include/ -I"+prefixPath+"include/libxml2/ -IMacaulay2/c/ -IMacaulay2/m2-includes -IMacaulay2/system "+getState(buildSettings,'eflags')
+bibasisobjects = []
+#we depend on all d files because of the complex include relationships.
+ddict = getState(buildSettings,'dFileDict')
+for f in bibasis:
+    obj = Object('bibasis/'+f,CFLAGS=eflags,CXXFLAGS=eflags)
+    bibasisobjects.append(obj)
+    Depends(obj,ddict['engine.dd'])
+    Depends(obj,ddict['M2.d'])
+    
+setArchitectureState(buildSettings,'bibasisobjects',bibasisobjects)
+Return('bibasisobjects')
+

@@ -591,8 +591,7 @@ if firstTime then normalPrompts()
 printWidth = fileWidth stdio
 
 processCommandLineOptions 2				    -- just for path to core files and packages
-
-path = join(initialPath, path)
+--path = join(initialPath, path)
 
 (loadDepth = 1; if firstTime and not nosetup then loadSetup(); loadDepth = 0)
 
