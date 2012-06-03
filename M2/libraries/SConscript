@@ -17,7 +17,7 @@ state['Darwin-x86_64']['buildlibraries']=set(['gc','mpir','readline','gdbm','mpf
 
 dependencies = {
     'sccfiles':['gc','gdbm'],
-    'dstart':['scc','libfac','pari','libxml2'],
+    'dstart':['scc','libfac','pari','libxml2','frobby'],
     'm2':list(buildlibraries),
 }
 
