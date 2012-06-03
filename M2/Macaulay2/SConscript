@@ -23,7 +23,8 @@ def tvalueBuilder(target,source,env):
     """
     shutil.copy2(buildSettings.getBuildPath()+'Macaulay2/M2',buildSettings.getPrefixPath()+'bin')
     #This exists because of a race condition internal to some unix operating systems where copy2 can return before the file is available for execution.
-    time.sleep(1)
+    while not os.path.exists(buildSettings.getPrefixPath()+'bin/M2'):
+        time.sleep(1)
     try:
         os.makedirs(buildSettings.getCorePath())
     except OSError:
