@@ -58,7 +58,7 @@ addStartFunction( () -> (
 
 userpath' := userpath = {
 	  applicationDirectory() | "code/",
-	  d1 := applicationDirectory() | "local/" | Layout#"packages", 
+	  d1 := applicationDirectory() | "local/" | Layout#"packages"
 	  }
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory
