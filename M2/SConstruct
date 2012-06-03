@@ -8,7 +8,7 @@ AddOption('--modes',dest='modes',nargs=1,action='store',type='string',default='r
 AddOption('--jj',dest='jj',nargs=1,action='store',type='int',help='Number of parallel sub-tasks to run for each build task')
 AddOption('--disable-parallel',dest='disableparallel',nargs=0,action='store',help='Disable parallel build')
 AddOption('--enable-download',dest='enabledownload',nargs=0,action='store',help='Disable downloading packages')
-AddOption('--distribution',dest='distribution',type='string',nargs=1,action='store',default='Source-System',help='Distribution to build.  Defaults to "Source-System"')
+AddOption('--distribution',dest='distribution',type='string',nargs=1,action='store',default='',help='Distribution to build.  Defaults to "Source-System"')
 
 debugGCCEFlags = debugGCCM2Flags = debugGCCFlags = '-O0 -g'
 releaseGCCEFlags = releaseGCCM2Flags = releaseGCCFlags = '-O2 -g'
@@ -159,11 +159,43 @@ class BuildSettings:
         return self._state['env']
     def getBuilders(self):
         return self._builders
+    def getAdditionalIncludeDirectories(self):
+        """
+        Return additional include directories.
+        """
+        v = self._state.get('additionalIncludeDirectories')
+        if v:
+            return v
+        return []
+    def getAdditionalLibraryDirectories(self):
+        """
+        Return additional library directories.
+        """
+        v = self._state.get('additionalLibraryDirectories')
+        if v:
+            return v
+        return []
+    def getAdditionalBinDirectories(self):
+        """
+        Return additional bin directories.
+        """
+        v = self._state.get('additionalBinDirectories')
+        if v:
+            return v
+        return []
     def getPrefixPath(self):
         """
         Return prefix path from M2 root.
         """
         return self._state['prefixpath']
+    def getBinPath(self):
+        """
+        Return path for M2 binaries.
+        """
+        v = self._state.get('binoffset')
+        if v:
+            return self.getPrefixPath()+self._state['binoffset']
+        return self.getPrefixPath()+'bin/'
     def getCorePath(self):
         """
         Return the path to put M2 core files in
@@ -659,7 +691,11 @@ splitModes = modes.split(',')
 #Requested build distributions.
 distributions=GetOption('distribution')
 #List of distributions requested to build.
-distributions = distributions.split(',')
+defaultdistributions = ['Source-System','Source']
+if distributions == '':
+    distributions = defaultdistributions
+else:
+    distributions = distributions.split(',')
 #List of build settings to build.
 buildSettingsList = []
 for mode in splitModes:
@@ -704,6 +740,12 @@ for mode in splitModes:
         except KeyError:
             raise Exception('Unknown mode: "' + mode + '" on "' + architecture + '" with distribution "' + distribution + '"')
         buildSettingsList.append(buildSettings)
+
+for buildSettings in buildSettingsList:
+    if buildSettings.distributionType()=='Source-System':
+        buildSettings.setAutoDetectLibs(True)
+    elif buildSettings.distributionType()=='Source':
+        buildSettings.setAutoDetectLibs(False)
 
 exportDict = {'state':state,
         'getLibSpecific':getLibSpecific,

@@ -22,23 +22,27 @@ def tvalueBuilder(target,source,env):
     #bin/m2 
     """
     shutil.copy2(buildSettings.getBuildPath()+'Macaulay2/M2',buildSettings.getPrefixPath()+'bin')
-    #This exists because of a race condition internal to some unix operating systems where copy2 can return before the file is available for execution.
-    while not os.path.exists(buildSettings.getPrefixPath()+'bin/M2'):
-        time.sleep(1)
     try:
         os.makedirs(buildSettings.getCorePath())
     except OSError:
         None
-    try:
-        m2exe = buildSettings.getPrefixPath()+'bin/M2'
-        m2target = 'Macaulay2/m2/tvalues-make.m2'
-        cwdpath = buildSettings.getCorePath()
-        runcmd = 'errorDepth=0; make(\"Macaulay2/d/\",\"'+cwdpath+"tvalues.m2\"); exit 0;'"
-        proc = subprocess.Popen([m2exe,m2target,"-e",runcmd,"--no-tvalues","-q","--silent"])
-
-    except Exception as e:
-        print e;
-        raise Exception("M2 not found while generating tvalues.m2")
+    proc = None
+    m2exe = buildSettings.getBinPath()+'M2'
+    m2target = 'Macaulay2/m2/tvalues-make.m2'
+    cwdpath = buildSettings.getCorePath()
+    runcmd = 'errorDepth=0; make(\"Macaulay2/d/\",\"'+cwdpath+"tvalues.m2\"); exit 0;'"
+    #This exists because of a race condition internal to some unix operating systems where copy2 can return before the file is available for execution.
+    restart = True
+    while restart:
+        try:
+            proc = subprocess.Popen([m2exe,m2target,"-e",runcmd,"--no-tvalues","-q","--silent"])
+            restart = False
+        except Exception as e:
+            if str(e)=="[Errno 26] Text file busy":
+                print "Waiting for M2 to not be busy"
+                time.sleep(1)
+            else:
+                raise Exception("M2 not found while generating tvalues.m2")
     if proc.wait():
         raise Exception("M2 did not terminate cleanly while generating tvalues.m2")
 
@@ -49,6 +53,6 @@ env['BUILDERS']['tvaluebuilder']=tvaluebuilder
 libs = ['lapack','blas','fac','cf','cfmem','ntl','gdbm','gc','mpfr','frobby','pari','mpirxx','mpir','readline','history','xml2','m','ncurses','gfortran','dl','rt','m','pthread']
 m2_1 = Program(target='M2',source = objFiles,LIBS=libs,LIBPATH='#'+buildSettings.getPrefixPath()+'lib/')
 
-m2 = env.tvaluebuilder(['#'+buildSettings.getCorePath()+'tvalues.m2','#'+buildSettings.getPrefixPath()+'bin/M2'],'m2/tvalues-make.m2')
+m2 = env.tvaluebuilder(['#'+buildSettings.getCorePath()+'tvalues.m2','#'+buildSettings.getBinPath()+'M2'],'m2/tvalues-make.m2')
 Depends(m2,m2_1)
 buildSettings.setState('m2',m2)
