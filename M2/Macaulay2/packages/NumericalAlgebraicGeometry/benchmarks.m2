@@ -286,6 +286,7 @@ makeStewartGoughPlatformInStudyCoordinates Ring := o -> C -> (
 	  )
      )
 
+-- !!!! Should take 
 -- In: 
 --   BottomPlate, a 3x6 matrix (columns = bottom plate joints)
 --   TopPlate, a 3x6 matrix (rows = top plate joints)
@@ -320,6 +321,8 @@ makeStewartGoughPlatform Ring := o -> C -> (
      R     
      )
 
+-----------------------------------------------------------------------
+-- QUATERNION class ---------------------------------------------------
 Qu = new Type of List
 --w = new Qu from {1,-2,0,4}
 expression Qu := z -> (

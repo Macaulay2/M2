@@ -934,24 +934,20 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	  else error "expected a square system";
      	  );
      if #solsT == 0 then return solsT;
-     PT := null;
-     if class first solsT === Point 
-     then ( 
-	  if (first solsT).?Tracker then PT = (first solsT).Tracker;
-	  solsT = solsT/coordinates;
-     	  );
      
      ref'sols := null;
      if not isProjective then (
      	  if o.Software === M2engine then ( -- engine refiner is primitive
---	        if PT=!=null then (
--- 		    ref'sols = apply(entries map(CC_53, 
--- 		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
--- 		    	      ), s->{s}); -- old format
---		    )
-     	       ) 
+--      	       PT := if class first solsT === Point and (first solsT).?Tracker then (first solsT).Tracker else null;
+--                if PT=!=null then (
+--  		    ref'sols = apply(entries map(CC_53, 
+--  		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
+--  		    	      ), s->{s}); -- old format
+-- 		    );
+-- 	       error "refine is not implemented in the engine yet";
+	       ) 
 	  else if o.Software === PHCPACK then (
-	       ref'sols = refinePHCpack(T,solsT,o)
+	       ref'sols = refinePHCpack(T,solsT,o)/point
 	       );
 	  );
      -- M2 part 
@@ -968,8 +964,11 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
 	       );
 	  ref'sols = apply(solsT, s->(
-	       x1 := sub(transpose matrix {s}, CC); -- convert to vector 
-	       if isProjective then x1 = normalize x1;
+	       if class s =!= Point then s = point s;
+	       if s.SolutionStatus === Infinity or s.SolutionStatus === Singular then return s;
+	       x := sub(transpose matrix s, CC); -- convert to vector 
+	       if isProjective then x = normalize x;
+	       x1 := x; -- refined x
 	       error'bound := infinity;
 	       norm'dx := infinity; -- dx = + infinity
 	       norm'residual := infinity;
@@ -1000,7 +999,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 			 );
 		    error'bound = norm'dx; 
 		    );
-	       if DBG>0 then (
+	       if DBG>1 then (
 		    if norm'residual > o.ResidualTolerance
 		    then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
 		    if norm'dx > o.ErrorTolerance * norm x1 
@@ -1010,13 +1009,20 @@ refine (List,List) := List => o -> (T,solsT) -> (
 		    );
 	       cond := conditionNumber evalJ(x1);
 	       st := if cond > o.SingularConditionNumber then Singular else Regular;
-	       {flatten entries x1, 
+     	       if s.?ErrorBoundEstimate and norm(x-x1) > s.ErrorBoundEstimate then (
+		    if DBG>1 then print "warning: refinement failed";
+		    s.ErrorBoundEstimate = infinity;
+		    s
+		    )
+	       else (
+		    point ({flatten entries x1, 
 		    SolutionStatus=>st, 
 		    ConditionNumber=>if cond===null then conditionNumber evalJ(x1) else cond, 
-		    LastT=>1.} | (if norm'dx===infinity then {} else {ErrorBoundEstimate=>error'bound}) 
+		    LastT=>1.} | (if norm'dx===infinity then {} else {ErrorBoundEstimate=>error'bound}))
+	       )     
 	       ));
      	   );
-      	   ref'sols/point
+      	   ref'sols
       )     
 
 refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.0001})
@@ -1373,10 +1379,17 @@ solveSystem List := List => o -> F -> (
 	       (S,solsS) := totalDegreeStartSystem T;
 	       track(S,T,solsS,NAG$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
 	       );
-	  if o.PostProcess and not overdetermined then result = select(refine(F,result), s->residual(F,s)<DEFAULT.Tolerance) {* 
-	  !!! need to write a decent post processing procedure that refines, 
-	  groups the same solutions, and assigns (path)multiplicities
-	  *}
+	  if o.PostProcess and not overdetermined 
+	  then (
+	       result = select(refine(F,result), s->residual(F,s)<DEFAULT.Tolerance);
+	       result = solutionsWithMultiplicity result;
+	       -- below is a hack!!!
+	       scan(result, s->if status s =!= Regular and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
+			 if DBG>1 then print "path jump occured";
+			 s.Multiplicity = 1;
+			 s.SolutionStatus = Regular;
+			 ));
+	       )
 	  )
      else if o.Software == PHCPACK then result = solvePHCpack(F,o)
      else if o.Software == BERTINI then result = solveBertini(F,o)
