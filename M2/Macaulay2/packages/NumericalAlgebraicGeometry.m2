@@ -964,8 +964,8 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
 	       );
 	  ref'sols = apply(solsT, s->(
-	       if class s =!= Point then s = point s;
-	       if s.SolutionStatus === Infinity or s.SolutionStatus === Singular then return s;
+	       if class s =!= Point then s = point {s} 
+	       else if s.SolutionStatus === Infinity or s.SolutionStatus === Singular then return s;
 	       x := sub(transpose matrix s, CC); -- convert to vector 
 	       if isProjective then x = normalize x;
 	       x1 := x; -- refined x
