@@ -20,7 +20,8 @@ export {
      ST,
      BM,
      GB,
-     dualSpace
+     dualSpace,
+     ProduceSB
      }
 
 DualSpace = new Type of MutableHashTable
@@ -71,7 +72,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      tol := o.Tolerance;
      deg := o.Truncate;
      if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
-     if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
+     if o.Point != {} then igens = sub(igens, matrix{gens R + apply(o.Point,p->sub(p,R))});
      
      --outputs
      dbasis   := new Matrix;
@@ -83,10 +84,10 @@ dualInfo (Matrix) := o -> (igens) -> (
      
      if deg != -1 then (
      	  --Macaulay matrix strategies (DZ, ST)
-     	  if o.Strategy == DZ or strat == ST then (
+     	  if o.Strategy == DZ or o.Strategy == ST then (
 	       M := new Matrix;
-     	       if o.Strategy == DZ then M = transpose DZmatrix(igens, deg, false, Point => point);
-     	       if o.Strategy == ST then M = transpose STmatrix(igens, deg, Point => point);
+     	       if o.Strategy == DZ then M = transpose DZmatrix(igens, deg, false);
+     	       if o.Strategy == ST then M = transpose STmatrix(igens, deg);
 	       
      	       dmons := apply(deg+1, i->first entries basis(i,R)); --nested list of monomials up to order d
      	       dbasis = parseKernel(findKernel(M, tol), dmons, tol);
@@ -106,6 +107,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      	  --Mourrain algorithm (BM)
      	  if o.Strategy == BM then
 	       (dbasis,hseries) = dualBasisBM(igens, deg, tol);
+	       dbasis = flatten entries dbasis;
      	  );
      
      --Sylvester array strategies
@@ -147,13 +149,16 @@ dualBasisBM = method(TypicalValue => Matrix, Options => {Point => {}})
 dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
      R := ring igens;
      n := #gens R;
-     m := #(entries igens)#0;
+     m := #(first entries igens);
      if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
-     hseries := new MutableList;
+     M := transpose sub(igens,map(R^1,R^n,0));
+     if numcols findKernel(M,tol) == 0 then return (matrix {{}}, (d+1):0); 
+     hseries := new MutableList from {1};
      betas := {}; --previously found generators
      newbetas := {1_R}; --new generators
      npairs := subsets(n,2);
-     M := map(R^(m),R^0,0); --the main matrix
+     M = map(R^m,R^0,0); --the main matrix
+     print M;
      E := map(R^0,R^n,0); --stores evaluation of each dual generator integral on each ideal generator
      bvectors := map(R^1,R^0,0); --vectors of derivative coefficients of new generators (basis of kernel of M)
      buildVBlock := v -> ( --function to build new blocks to add to M
@@ -166,7 +171,7 @@ dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
   	  );
      V := {{}};
      
-     for e from 0 to d do (
+     for e from 1 to d+1 do (
 	  --print (m, M, E, bvectors, betas, newbetas);
 	  s := #betas;
 	  snew := #newbetas;
@@ -205,12 +210,15 @@ dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
 	  M = M || map(R^(snew*#npairs),R^(n*s),0);
   	  );
      (mons,bmatrix) := coefficients matrix {betas};
-     --print(mons,bmatrix);
      bmatrix = sub(bmatrix,coefficientRing R);
-     --print(numgens source M, numgens target M);
      (mons * transpose rowReduce(transpose bmatrix,tol), new Sequence from hseries)
      );
 
+--inserts entries of Matrix B into MutableMatrix M
+insertBlock = (M,B,roffset,coffset) -> (
+     scan(numrows B, i->(scan(numcols B, j->(M_(i+roffset,j+coffset) = B_(i,j)))));
+     true
+     );
 
 --Constructs Sylvester array matrix using DZ algorithm
 --(for use with automatic stopping criterion)
@@ -223,7 +231,7 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
      dmons := {};
      monGens := {};
      SBasis := {};
-     finalDeg := 2*(max topDegs);
+     finalDeg := max(topDegs);
      d := 0;
      oldBasis := {};
      while d <= finalDeg do (
@@ -243,8 +251,12 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
 		    );
 	       SBasis = SBasis|newSBs;
 	       );
-	  if #newMGs > 0 then finalDeg = max(finalDeg,2*d);
 	  monGens = monGens|newMGs;
+	  if #newMGs > 0 then (
+	       topLCM := max apply(subsets(#monGens,2),s->(
+		         homogenizedLCMdegree(monGens#(s#0), monGens#(s#1))));
+	       finalDeg = max(finalDeg,topLCM);
+	       );
      	  d = d+1;
 	  oldBasis = newBasis;
 	  );
@@ -257,6 +269,14 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
 	  sbReduce SBasis,
 	  hilbertPolynomial ideal toList apply(monGens,g->g#0)
 	  )
+     );
+
+homogenizedLCMdegree = (a,b) -> (
+     alist := ((listForm(a#0))#0#0);
+     blist := ((listForm(b#0))#0#0);
+     lcmlist := apply(alist,blist, (i,j)->max(i,j));
+     tdegree := max(a#1 - sum alist, b#1 - sum blist);
+     sum lcmlist + tdegree
      );
 
 newMonomialGens = (oldGens, newBasis, dmons, d) -> (
@@ -511,6 +531,7 @@ R = (ZZ/101)[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix {{x^2-x*y^2,x^3}}
 M = matrix {{x*y}}
 M = matrix {{x^9 - y}}
+dualInfo(M,Truncate=>8,Point=>{0.00001,0.00001})
 standardBasis(M)
 dualHilbert(M,Truncate=>25)
 dualBasis(M)
