@@ -267,7 +267,7 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
 	  select(oldBasis,i->(gDegree i < d-ecart)),
 	  d-ecart-1,
 	  sbReduce SBasis,
-	  hilbertPolynomial ideal toList apply(monGens,g->g#0)
+	  hilbertPolynomial( ideal toList apply(monGens,g->g#0), Projective=>false)
 	  )
      );
 
@@ -536,6 +536,7 @@ standardBasis(M)
 dualHilbert(M,Truncate=>25)
 dualBasis(M)
 dualInfo(M)
+dualInfo(M,Point=>{0.00001,0.00001})
 
 -- small example
 restart
