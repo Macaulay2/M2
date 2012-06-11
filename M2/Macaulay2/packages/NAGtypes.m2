@@ -21,6 +21,8 @@ export {
      -- witness set
      "WitnessSet", "witnessSet", "equations", "slice", "points", 
      "Equations", "Slice", "Points", "sliceEquations", "IsIrreducible",
+     -- numerical variety
+     "NumericalVariety", "numericalVariety",
      -- point (solution)
      "Point", "point", "coordinates",
      isRealPoint, realPoints, plugIn, residual, relativeErrorEstimate, classifyPoint,
@@ -33,6 +35,7 @@ export {
 
 Point = new Type of MutableHashTable 
 WitnessSet = new Type of MutableHashTable 
+NumericalVariety = new Type of MutableHashTable 
 
 -----------------------------------------------------------------------
 -- POINT = {
@@ -170,7 +173,7 @@ sortSolutions List := o -> sols -> (
 --   }
 -- caveat: we assume that #Equations = dim(Slice)   
 WitnessSet.synonym = "witness set"
-protect Tolerance
+protect Tolerance -- ???
 dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
      else if class W.Slice === Matrix then numrows W.Slice 
      else error "ill-formed slice in WitnessSet" )
@@ -204,9 +207,8 @@ sliceEquations (Matrix,Ring) := (S,R) -> (
      )
 
 {**********************************************************************
-A NEW PROPOSED DATA TYPE: 
-
-  NumericalVariety = {
+NumericalVariety = {
+     Equations => the defining equations
      0 => list of (irreducible) witness sets
      1 => list of (irreducible) witness sets
      ...
@@ -221,6 +223,38 @@ SERVICE FUNCTIONS:
   NumericalVariety union NumericalVariety (binary)
   
 *}
+NumericalVariety.synonym = "numerical variety"
+dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
+numericalVariety = method(TypicalValue=>NumericalVariety)
+numericalVariety List := Ws -> (
+     V := new NumericalVariety;
+     scan(Ws, W->(
+     	       if not V.?Equations then V.Equations = W.Equations;
+	       d := dim W;
+	       if V#?d then V#d = V#d | {W} else V#d = {W};
+	       ));     
+     check V;
+     V
+     )
+check NumericalVariety := o-> V -> (
+     if any(keys V, k->(class k =!= ZZ or k<0) and k != Equations) 
+     then error "the keys of a NumericalVariety should be nonnegative integers";
+     scan(keys V, k->if class k === ZZ then scan(V#k, W->(
+		    if dim W != k then 
+		    error "dimension of a witness set does not match the key in NumericalVariety";
+	     	    if gens W.Equations != gens V.Equations then 
+		    error "equations for WitnessSet differ from those for NumericalVariety";    	    
+		    )));
+     )
+net NumericalVariety := V -> (
+     out := "((dim=" | net dim V |")) with components in";
+     scan(keys V, k->if class k === ZZ then (
+	       row := "dim "|net k|": ";
+	       scan(V#k, W->row = row|" "|net W);
+	       out = out || row;
+	       ));
+     out
+     )
 
 generalEquations = method()
 
@@ -535,6 +569,30 @@ document {
      norm(2.5, last sols) 
      ///
      }
+document {
+     Key => {NumericalVariety},
+Headline => "a numerical variety",
+     "This type stores a collection of witness sets representing a variety. ",
+     SeeAlso => {WitnessSet}
+     }
+document {
+	Key => {numericalVariety},
+	Headline => "construct a numerical variety",
+	Usage => "V = numericalVariety Ws",
+	Inputs => { 
+	     "Ws" => List => {"contains (irreducible) witness sets representing components of a variety"}
+	     },
+	Outputs => {"V"=> NumericalVariety},
+	PARA {"Used to construct a numerical variety. It is expected that for every witness set", TT "W", 
+	     " in the list ", TT "Ws", " has the same ", TT "W.Equations", "."},
+        EXAMPLE lines ///
+R = CC[x,y]	
+w1 = witnessSet( ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
+w0 = witnessSet( ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y), ideal R, {point {{0.,0.}}})
+V = numericalVariety {w0,w1}
+     	///
+	}
+
 
 
 TEST ///
