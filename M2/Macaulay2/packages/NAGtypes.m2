@@ -583,7 +583,7 @@ document {
 	     "Ws" => List => {"contains (irreducible) witness sets representing components of a variety"}
 	     },
 	Outputs => {"V"=> NumericalVariety},
-	PARA {"Used to construct a numerical variety. It is expected that for every witness set", TT "W", 
+	PARA {"Used to construct a numerical variety. It is expected that every witness set ", TT "W", 
 	     " in the list ", TT "Ws", " has the same ", TT "W.Equations", "."},
         EXAMPLE lines ///
 R = CC[x,y]	
