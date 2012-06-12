@@ -82,6 +82,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      hseries  := new Sequence;
      hpoly    := 0;
      
+     --truncated strategies
      if deg != -1 then (
      	  --Macaulay matrix strategies (DZ, ST)
      	  if o.Strategy == DZ or o.Strategy == ST then (
@@ -113,7 +114,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      --Sylvester array strategies
      if deg == -1 then (
 	  d := 0;
-	  (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB);
+	  (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
 	  gcorners = sbReduce gcorners;
 	  regul = first degree lcm monomialIdeal gcorners;
 	  hseries = apply(regul, i->hilbertC(gcorners, i));
@@ -122,8 +123,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      (dbasis, gcorners, sbasis, regul, hseries, hpoly)
      );
 
-
-
+--Finds kernel numerically with SVD or symbolically depending on the base field
 findKernel = (M, tol) -> (
      R := ring M;
      M = sub(M, coefficientRing R);
@@ -138,6 +138,7 @@ findKernel = (M, tol) -> (
 	  )
      );
 
+--Takes kernel coefficient matrix, and produces row reduced polynomial basis
 parseKernel = (kern, dmons, tol) -> (
      R := ring first flatten dmons;
      dualGens := transpose rowReduce(transpose kern, tol);
@@ -148,97 +149,100 @@ parseKernel = (kern, dmons, tol) -> (
 dualBasisBM = method(TypicalValue => Matrix, Options => {Point => {}})
 dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
      R := ring igens;
-     n := #gens R;
-     m := #(first entries igens);
      if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
-     M := transpose sub(igens,map(R^1,R^n,0));
-     if numcols findKernel(M,tol) == 0 then return (matrix {{}}, (d+1):0); 
-     hseries := new MutableList from {1};
-     betas := {}; --previously found generators
-     newbetas := {1_R}; --new generators
-     npairs := subsets(n,2);
-     M = map(R^m,R^0,0); --the main matrix
-     print M;
-     E := map(R^0,R^n,0); --stores evaluation of each dual generator integral on each ideal generator
-     bvectors := map(R^1,R^0,0); --vectors of derivative coefficients of new generators (basis of kernel of M)
-     buildVBlock := v -> ( --function to build new blocks to add to M
- 	  Vb := mutableMatrix(R,#npairs,n);
-    	  for i from 0 to #npairs-1 do (
-      	       Vb_(i,npairs#i#0) =  v#(npairs#i#1);
-      	       Vb_(i,npairs#i#1) = -v#(npairs#i#0);
-    	       );
-    	  new Matrix from Vb
-  	  );
-     V := {{}};
+     hseries := new MutableList;
+     betas := {}; --all previously found generators
+     bpairs := {}; --most recently found generators
+     M := {}; --the main matrix
+     E := {}; --list of all dual basis integrals (including 1)
      
-     for e from 1 to d+1 do (
-	  --print (m, M, E, bvectors, betas, newbetas);
-	  s := #betas;
-	  snew := #newbetas;
-	  M = bvectors || M;
-    	  for i from 0 to #newbetas-1 do (
-	       b := newbetas#i;
-      	       --get alpha vector for b
-      	       alpha := apply(n, k->(
-	       	    subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
-		    (gens R)#k * sub(b,subs)
-	       	    ));
-      	       --get new A from new alpha
-	       A := matrix apply(m, j->apply(alpha,a->innerProduct(a,igens_(0,j))));
-	       --expand E with alpha as next row
-	       E = E || matrix{alpha};
-	       --expand M with Vs and new A
-	       newcol := map(R^(s+snew),R^n,0) || A;
-	       for v in V#i do newcol = newcol || v;
-	       --print (M,newcol, numgens target M, numgens target newcol);
-	       M = M | newcol;
-      	       );
-    	  --add newbetas to betas
-	  betas = betas | newbetas;
-	  s = #betas;
-	  bvectors = entries transpose findKernel(M, tol);
-	  hseries#e = #bvectors;
-    	  --find newbetas from bvectors
-	  newbetas = apply(bvectors, bv->sum(#bv, i->(bv#i * E_(i//n,i%n))));
-    	  --build Vs from bvectors
-	  V = apply(#bvectors, i->(
-	       w := apply(s, j-> apply(n,k->((bvectors#i)#(j*n + k))));
-	       --print ("w",w);
-	       apply(s, j->buildVBlock(w#j))
-	       ));
-	  if #bvectors > 0 then bvectors = matrix bvectors else break;
-	  M = M || map(R^(snew*#npairs),R^(n*s),0);
+     for e from 0 to d do (
+	  (M,E,bpairs) = BMmatrix(igens,M,E,bpairs,tol,false);
+	  betas = betas | bpairs/last;
+	  hseries#e = #bpairs;
+	  if #bpairs == 0 then break;
   	  );
+     
      (mons,bmatrix) := coefficients matrix {betas};
      bmatrix = sub(bmatrix,coefficientRing R);
      (mons * transpose rowReduce(transpose bmatrix,tol), new Sequence from hseries)
      );
 
---inserts entries of Matrix B into MutableMatrix M
-insertBlock = (M,B,roffset,coffset) -> (
-     scan(numrows B, i->(scan(numcols B, j->(M_(i+roffset,j+coffset) = B_(i,j)))));
-     true
+BMmatrix = (igens, M, E, bpairs, tol, homogeneous) -> (
+     --print(igens,M,E,bpairs);
+     R := ring igens;
+     n := numgens R;
+     m := numcols igens;
+     snew := #bpairs;
+     offset := if homogeneous then 0 else 1;
+     s := (#E - offset)//n;
+     npairs := subsets(n,2);
+     if snew == 0 then (M,E) = (transpose sub(igens,map(R^1,R^n,0)), {1_R}) else ( --degree 0
+     	  if not homogeneous then (
+     	       M = M || map(R^(m + s*(1+#npairs) - numrows M),R^(#E),0);
+     	       M = matrix(bpairs/first) || M;
+	       ) else (
+	       M = map(R^(m + s*#npairs),R^0,0);
+	       E = {};
+	       );
+     	  for bp in bpairs do (
+	       E' := apply(n, k->(
+	       	    	 subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
+		    	 (gens R)#k * sub(bp#1,subs)
+	       	    	 ));
+	       E = E | E';
+	       M' := matrix apply(m, j->apply(E',a->innerProduct(a,igens_(0,j))));
+	       if not homogeneous then M' = map(R^(s+snew),R^n,0) || M';
+	       for j from 0 to s-1 do (
+	       	    w := apply(n,k->((bp#0)#(offset + j*n + k)));
+	       	    v := mutableMatrix(R,#npairs,n);
+	       	    for i from 0 to #npairs-1 do (
+		    	 v_(i,npairs#i#0) =  w#(npairs#i#1);
+		    	 v_(i,npairs#i#1) = -w#(npairs#i#0);
+		    	 );
+	       	    M' = M' || new Matrix from v;
+	       	    );
+	       M = M | M';
+	       );
+	  );
+     bvectors := entries transpose findKernel(M, tol);
+     bpairs = apply(bvectors, bv->(bv, sum(#bv, i->(bv#i * E#i))));
+     (M, E, bpairs)
      );
 
---Constructs Sylvester array matrix using DZ algorithm
---(for use with automatic stopping criterion)
-dualBasisSA = method(TypicalValue => List, Options => {Point => {}, ProduceSB => false})
+--Dual basis algorithm with automatic stopping criterion.
+--DZ strategy uses Sylvester arrays.  BM strategy uses homogenization.
+dualBasisSA = method(TypicalValue => List, Options => {Point => {}, ProduceSB => false, Strategy => BM})
 dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
      R := ring igens;
+     n := numgens R;
+     x := symbol x;
+     S := (coefficientRing R)[x_0..x_n, MonomialOrder => {Weights => (n+1):-1}, Global => false]; --projectivization of R
+     homog := f -> homogenize((map(S,R,drop(gens S, 1))) f, x_0);
+     dehomog := map(R,S,{1_R} | gens R);
      if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
      ecart := max apply(first entries igens, g->(gDegree g - lDegree g)); --max ecart of generators
      topDegs := apply(first entries igens, gDegree);
-     dmons := {};
-     monGens := {};
-     SBasis := {};
+     dmons := {}; --list of monomials up to degree d
+     monGens := {}; --monomials generating initial ideal (g-corners)
+     SBasis := {}; --standard basis elements (if ProduceSB => true)
      finalDeg := max(topDegs);
      d := 0;
-     oldBasis := {};
+     oldBasis := {}; newBasis := {};
+     M := {}; E := {}; bpairs := {};
+     kern := {};
      while d <= finalDeg do (
-     	  M := DZmatrix(igens, d, true);
 	  dmons = append(dmons, first entries basis(d,R));
-	  kern := findKernel(transpose M, tol);
-	  newBasis := first entries parseKernel(kern, dmons, tol);
+	  if o.Strategy == BM then (
+	       higens := homog igens;
+	       (M,E,bpairs) = BMmatrix(higens,M,E,bpairs,tol,true);
+	       betas := apply(bpairs, bp->(dehomog last bp));
+	       kern = last coefficients(matrix{betas}, Monomials=>flatten dmons);
+	       kern = sub(kern, coefficientRing R);
+	       ) else (
+	       kern = findKernel(transpose DZmatrix(igens, d, true), tol);
+	       );
+	  newBasis = first entries parseKernel(kern, dmons, tol);
 	  if tol > 0 then newBasis = apply(newBasis,b->clean(tol,b));
 	  newMGs := newMonomialGens(monGens, newBasis, take(dmons,{d-ecart,d}), d);
 	  --print(d, " newMGs: ",newMGs);
@@ -415,23 +419,6 @@ sbReduce = L -> (
      new List from apply(Lgood, i->L#i)
      );
 
---build a matrix from a nested list of matrices of uniform size
-blockMatrix = (blist) -> (
-     R := ring (blist#0#0);
-     m := #blist;
-     n := #(blist#0);
-     a := dim target (blist#0#0);
-     b := dim source (blist#0#0); 
-     M := map(R^0,R^(n*b),0);
-     for i from 0 to m-1 do (
-    	  N := map(R^a,R^0,0);
-    	  for j from 0 to n-1 do
-      	  N = N | (blist#i#j);
-    	  M = M || N;
-  	  );
-     M
-     );
-
 --evaluation of a dual element v on a polynomial w
 innerProduct = (v,w) -> (
      c := entries (coefficients matrix{{v,w}})#1;
@@ -531,11 +518,12 @@ R = (ZZ/101)[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix {{x^2-x*y^2,x^3}}
 M = matrix {{x*y}}
 M = matrix {{x^9 - y}}
-dualInfo(M,Truncate=>8,Point=>{0.00001,0.00001})
+dualInfo(M,Truncate=>8)
 standardBasis(M)
 dualHilbert(M,Truncate=>25)
 dualBasis(M)
 dualInfo(M)
+dualInfo(M, Strategy=>DZ)
 dualInfo(M,Point=>{0.00001,0.00001})
 
 -- small example
