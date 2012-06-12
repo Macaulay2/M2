@@ -1694,9 +1694,14 @@ decompose WitnessSet := (W) -> (
 	       mergeComponents(c,c');
 	       if linearTraceTest(W, cs#c) then (i'cs = i'cs | {cs#c}; cs#c = {});  
 	       n'misses = 0 );
-	  done = all(new List from cs, c->#c==0) or n'misses > 10;
+	  done = all(new List from cs, c->#c==0) or n'misses > 30;
 	  );
-     apply(i'cs, c->new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_c})
+     incomplete := select(new List from cs, c->#c!=0);
+     if #incomplete>0 then print "-- decompose: some witness points were not classified";
+     irred := apply(i'cs, c->new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_c});
+     scan(irred, c->c.IsIrreducible = true);
+     irred | if #incomplete == 0 then {} 
+             else {new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_(flatten(incomplete))}}
      ) 
 
 linearTraceTest = method() -- check linearity of trace to see if component is irreducible

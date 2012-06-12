@@ -255,6 +255,7 @@ decker2 = ()-> ( R = CC[x,y]; ideal(x+y^3,x^2*y-y^4) )
 --   polynomial system (complete intersection of 7 quadrics -- may throw out any generator but the first) 
 makeStewartGoughPlatformInStudyCoordinates = method(Options=>{Top=>null, Bottom=>null, LegLengths=>null})
 makeStewartGoughPlatformInStudyCoordinates Ring := o -> C -> (
+     norm2 := x -> (x*conjugate x)#0; -- square of norm for Qu
      v := {};
      if o.Bottom===null then (
 	  a := symbol a;
@@ -286,41 +287,6 @@ makeStewartGoughPlatformInStudyCoordinates Ring := o -> C -> (
 	  )
      )
 
--- !!!! Should take 
--- In: 
---   BottomPlate, a 3x6 matrix (columns = bottom plate joints)
---   TopPlate, a 3x6 matrix (rows = top plate joints)
---   VectorP, a 3x1 matrix
---   LegLengths, a 1x6 matrix
--- Out: !!!!!!!!!!!!!!!!!
---   
-makeStewartGoughPlatform = method(Options=>{Top=>null, Bottom=>null, VectorP=>null, LegLengths=>null})
-makeStewartGoughPlatform Ring := o -> C -> (
-     v := {};
-     if o.Bottom===null then (
-	  a := symbol a;
-	  v = v | toList(a_(1,1)..a_(6,3));
-	  );
-     if o.Top===null then (
-	  b := symbol b;
-	  v = v | toList(b_(1,1)..b_(6,3));
-	  );
-     if o.VectorP===null then (
-	  p := symbol p;
-	  v = v | toList(p_1..p_3);
-	  );
-     if o.LegLengths===null then (
-	  L := symbol L;
-	  v = v | toList(L_1..L_6);
-	  );
-     R := C[v]; 
-     A := if o.Bottom===null then map(R^6,R^3,(i,j)->a_(i,j)) else o.Bottom;
-     B := if o.Top===null then map(R^6,R^3,(i,j)->b_(i,j)) else o.Top;
-     P := if o.VectorP===null then map(R^1,R^3,(i,j)->p_j) else o.VectorP;   
-     LL := if o.LegLengths===null then toList(L_1..L_6) else o.LegLengths; 
-     R     
-     )
-
 -----------------------------------------------------------------------
 -- QUATERNION class ---------------------------------------------------
 Qu = new Type of List
@@ -344,8 +310,6 @@ Qu * Qu := (x,y) -> new Qu from {
 Qu * RingElement := (x,y) -> x*realQu y
 RingElement * Qu := (y,x) -> x*realQu y
 conjugate Qu := x -> new Qu from {x#0,-x#1,-x#2,-x#3}
---norm2 := method()
-norm2 Qu := x -> (x*conjugate x)#0
 inverse Qu := x -> conjugate x / norm2 x
 Qu / Qu := (x,y) -> x * inverse y
 realQu = method()
