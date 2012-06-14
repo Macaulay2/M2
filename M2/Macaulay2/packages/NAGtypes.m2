@@ -181,8 +181,8 @@ codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> W.Equations
-net WitnessSet := W -> if W.IsIrreducible===null or not W.IsIrreducible 
-                       then "{{dim=" | net dim W |",deg="| net degree W | "}}" else "(dim=" | net dim W |",deg="| net degree W | ")" 
+net WitnessSet := W -> if not W.?IsIrreducible or W.IsIrreducible===null or not W.IsIrreducible 
+                       then "[dim=" | net dim W |",deg="| net degree W | "]" else "(dim=" | net dim W |",deg="| net degree W | ")" 
 
 witnessSet = method(TypicalValue=>WitnessSet)
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> 

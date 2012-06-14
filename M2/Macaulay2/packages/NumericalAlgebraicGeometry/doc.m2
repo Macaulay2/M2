@@ -101,6 +101,8 @@ solveSystem F
 	has fewer than Bezout bound many solutions will produce 
 	points that are not marked as regular. See ", TO track, " for detailed examples. "
 	}
+
+
 document {
 	Key => { (track, List, List, List), track, 
 	     [track,NAG$gamma], [setDefault,NAG$gamma], [track,NAG$tDegree], [setDefault,NAG$tDegree], 
@@ -220,6 +222,13 @@ document {
 	}
 
 document {
+     Key => {[solveSystem,PostProcess],PostProcess},
+     Headline => "specifies whether to postprocess the solutions",
+     "Postprocessing includes refinement and clustering the solutions",
+     SeeAlso=>{refine}
+     }
+
+document {
 	Key => {
 	     (refine, List, List), refine, 
 	     [refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
@@ -295,7 +304,7 @@ totalDegreeStartSystem T
 	}
 
 document {
-     Key => {[solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],Software,
+     Key => {[solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],[regeneration,Software],Software,
 	  M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
@@ -518,4 +527,48 @@ document {
 	solsS = {(1,-1,1),(1,1,1)};
 	track(S,T,solsS,Predictor=>Certified,Normalize=>true)
 	///
+	}
+
+document {
+	Key => {(regeneration, List),regeneration,[regeneration,Output],Output},
+	Headline => "solve a system of polynomial equations with regeneration method",
+	Usage => "Ws = regeneration F",
+	Inputs => { "F"=>"contains polynomials with complex coefficients" },
+	Outputs => { "Ws"=>{"contains ", TO2{WitnessSet,"witness sets"}, " for equidimensional components of the variety ", TT "{x|F(x)=0}" }},
+     	"Regeneration is a blackbox method that obtains a numerical describtion of an aalgebraic variety. ",
+	"Note that ", TT "Ws", " are not necessarily irreducible witness sets; use ", 
+	TO (decompose, WitnessSet), " to decompose into irreducibles. ",
+	EXAMPLE lines ///
+R = CC[x,y]
+F = {x^2+y^2-1, x*y};
+regeneration F 
+R = CC[x,y,z]
+sph = (x^2+y^2+z^2-1); I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+cs = regeneration I_*
+     	///,
+	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
+	     "The (temporary) option ", TO Output, " can take two values: ", TO Regular, " (default) and ", TO Singular, ". 
+	     It specifies whether the algorithm attempts to keep singular points." },
+        SeeAlso=>{(decompose, WitnessSet)}
+	}
+document {
+	Key => {(decompose,WitnessSet)},
+	Headline => "decompose a witness set into irreducibles",
+	Usage => "Ws = decompose W",
+	Inputs => { "W"=>"represents an equidimensional component of a variety" },
+	Outputs => { "Ws"=>{"contains irreducible witness sets ", TO2{WitnessSet,"witness sets"}, ", the union of which is ", TT "W"}},
+     	"Monodromy driven decomposition is followed by the linear trace test. ",
+	EXAMPLE lines ///
+R = CC[x,y]
+F = {x^2+y^2-1, x*y};
+W = first regeneration F 
+decompose W
+R = CC[x,y,z]
+sph = (x^2+y^2+z^2-1); I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+regeneration I_* / decompose
+     	///,
+	Caveat => {"This function is under development. It can not decompose nonreduced components at the moment. 
+	     If monodromy breakup algorithm fails to classify some points, the unnclassified points appear 
+	     as one witness set (that is not marked as irreducible)." },
+        SeeAlso=>{regeneration}
 	}

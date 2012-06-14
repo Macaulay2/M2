@@ -55,6 +55,8 @@ export {
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
      "numericalRank", "toAffineChart",
+     "regeneration", 
+     "Output", -- may rename/remove later
      "NAGtrace"
      }
 exportMutable {
@@ -65,7 +67,7 @@ protect Processing, protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
 -- experimental:
-protect AllowSingular, protect Output -- in movePoints, regeneration
+protect AllowSingular -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
