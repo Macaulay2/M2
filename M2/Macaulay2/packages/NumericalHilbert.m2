@@ -21,7 +21,8 @@ export {
      BM,
      GB,
      dualSpace,
-     ProduceSB
+     ProduceSB,
+     rowReduce
      }
 
 DualSpace = new Type of MutableHashTable
@@ -73,6 +74,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      deg := o.Truncate;
      if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
      if o.Point != {} then igens = sub(igens, matrix{gens R + apply(o.Point,p->sub(p,R))});
+     print transpose igens;
      
      --outputs
      dbasis   := new Matrix;
@@ -113,9 +115,16 @@ dualInfo (Matrix) := o -> (igens) -> (
      
      --Sylvester array strategies
      if deg == -1 then (
-	  d := 0;
-	  (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
-	  gcorners = sbReduce gcorners;
+	  if o.Strategy == DZ or o.Strategy == BM then (
+	       d := 0;
+	       (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
+	       gcorners = sbReduce gcorners;
+	       );
+	  if o.Strategy == GB then (
+	       sbasis = first entries gens gb igens;
+	       print sbasis;
+	       gcorners = sbasis/lLeadMonomial;
+	       );
 	  regul = first degree lcm monomialIdeal gcorners;
 	  hseries = apply(regul, i->hilbertC(gcorners, i));
 	  );
@@ -142,6 +151,8 @@ findKernel = (M, tol) -> (
 parseKernel = (kern, dmons, tol) -> (
      R := ring first flatten dmons;
      dualGens := transpose rowReduce(transpose kern, tol);
+     --print dualGens;
+     --print flatten dmons;
      (matrix {new List from flatten dmons})*sub(dualGens,R)
      );
 
@@ -163,6 +174,7 @@ dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
 	  if #bpairs == 0 then break;
   	  );
      
+     if #betas == 0 then return (map(R^1,R^0,0), new Sequence from hseries);
      (mons,bmatrix) := coefficients matrix {betas};
      bmatrix = sub(bmatrix,coefficientRing R);
      (mons * transpose rowReduce(transpose bmatrix,tol), new Sequence from hseries)
@@ -232,20 +244,22 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
      M := {}; E := {}; bpairs := {};
      kern := {};
      while d <= finalDeg do (
-	  dmons = append(dmons, first entries basis(d,R));
+	  dmons = append(dmons, first entries sort(basis(d,R), MonomialOrder=>Descending));
+	  --print last dmons;
 	  if o.Strategy == BM then (
 	       higens := homog igens;
 	       (M,E,bpairs) = BMmatrix(higens,M,E,bpairs,tol,true);
 	       betas := apply(bpairs, bp->(dehomog last bp));
-	       kern = last coefficients(matrix{betas}, Monomials=>flatten dmons);
+	       if #betas != 0 then kern = last coefficients(matrix{betas}, Monomials=>flatten dmons)
+ 	       else kern = map(R^(#(flatten dmons)),R^0,0);
 	       kern = sub(kern, coefficientRing R);
 	       ) else (
 	       kern = findKernel(transpose DZmatrix(igens, d, true), tol);
 	       );
 	  newBasis = first entries parseKernel(kern, dmons, tol);
-	  if tol > 0 then newBasis = apply(newBasis,b->clean(tol,b));
+	  --if tol > 0 then newBasis = apply(newBasis,b->clean(10*tol,b));
+	  --print transpose matrix{newBasis/gLeadMonomial, newBasis};
 	  newMGs := newMonomialGens(monGens, newBasis, take(dmons,{d-ecart,d}), d);
-	  --print(d, " newMGs: ",newMGs);
 	  if o.ProduceSB and #newMGs > 0 then (
 	       kern2 := findKernel(transpose sub(kern,R), tol);
 	       iBasis := first entries parseKernel(kern2, dmons, tol);
@@ -261,11 +275,12 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
 		         homogenizedLCMdegree(monGens#(s#0), monGens#(s#1))));
 	       finalDeg = max(finalDeg,topLCM);
 	       );
+	  print(d,(numrows M,numcols M), #(flatten dmons), newMGs/first);
      	  d = d+1;
 	  oldBasis = newBasis;
 	  );
-     print monGens;
-     print SBasis;
+     --print monGens;
+     --print SBasis;
      (
 	  monGens,
 	  select(oldBasis,i->(gDegree i < d-ecart)),
@@ -284,12 +299,14 @@ homogenizedLCMdegree = (a,b) -> (
      );
 
 newMonomialGens = (oldGens, newBasis, dmons, d) -> (
-     mons := sort(flatten dmons, MonomialOrder=>Descending);
-     newBasis = sort(newBasis/gLeadMonomial, MonomialOrder=>Descending);
-     --print(mons,newBasis);
+     mons := first entries sort(matrix{flatten dmons}, MonomialOrder=>Descending);
+     newBasis = first entries sort(matrix{newBasis/gLeadMonomial}, MonomialOrder=>Descending);
+     print mons;
+     print newBasis;
      newGens := {};
      i := 0;
      for m in mons do (
+	  while i < #newBasis and m < newBasis#i do i = i+1;
 	  if i < #newBasis and m == newBasis#i then (i = i+1; continue);
 	  if any(oldGens, g->(isDivisible(m,g#0) and gDegree m - gDegree(g#0) <= d - g#1)) then continue;
 	  newGens = append(newGens, (m,d));
@@ -387,27 +404,30 @@ lDegree = f -> first degree lLeadMonomial f;
 gDegree = f -> first degree gLeadMonomial f;
 
 --performs Gaussian reduction on M but starting from the bottom right
-rowReduce = (M,epsilon) -> (
+rowReduce = method(TypicalValue => Matrix)
+rowReduce (Matrix, RR) := (M, tol) -> (
      R := ring M;
-     n := (numgens source M) - 1;
-     m := (numgens target M) - 1;
-     rindex := m;
+     (m,n) := (numrows M, numcols M);
+     rindex := m-1;
      M = new MutableMatrix from M;
-     for k from 0 to n do (
-    	  --if epsilon > 0 then M = new MutableMatrix from clean(epsilon,new Matrix from M);
-    	  a := -1;
-	  aval := 0;
-    	  for l from 0 to rindex do
-      	       if abs M_(l,n-k) > max(epsilon,aval) then (a,aval) = (l, abs M_(l,n-k));
+     for k from 1 to n do (
+    	  --if tol > 0 then M = new MutableMatrix from clean(epsilon,new Matrix from M);
+    	  (a,aval) := (-1, 0);
+    	  for l from 0 to rindex do (
+	       --if abs M_(l,n-k) <= tol then M_(l,n-k) = 0_R;
+      	       if abs M_(l,n-k) > max(tol,aval) then (a,aval) = (l, abs M_(l,n-k));
+	       );
     	  if a == -1 then continue;
     	  rowSwap(M,a,rindex);
-    	  rowMult(M,rindex,1_R/M_(rindex,(n-k)));
-    	  for l from 0 to m do
-      	       if l != rindex then rowAdd(M,l,-1*M_(l,n-k),rindex);
+	  c := M_(rindex,n-k);
+    	  --for i from 0 to n-1 do M_(rindex,i) = M_(rindex,i)/c;
+    	  for l from 0 to m-1 do
+      	       if l != rindex then (d := M_(l,n-k); for i from 0 to n-1 do M_(l,i) = M_(l,i)-d*M_(rindex,i)/c);
     	  rindex = rindex-1;
-    	  --print new Matrix from M;
+    	  --print (n-k,rindex,a,aval);
+	  --print new Matrix from M;
   	  );
-     M = new Matrix from M
+     if tol > 0 then clean(tol,new Matrix from M) else new Matrix from M
      );
 
 --auxilary function
@@ -524,7 +544,7 @@ dualHilbert(M,Truncate=>25)
 dualBasis(M)
 dualInfo(M)
 dualInfo(M, Strategy=>DZ)
-dualInfo(M,Point=>{0.00001,0.00001})
+dualInfo(M,Point=>{0.01,0.01})
 
 -- small example
 restart
