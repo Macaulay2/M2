@@ -1735,6 +1735,8 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
      abs det matrix three'samples < DEFAULT.Tolerance  -- points are (approximately) on a line
      )  
 
+numericalVariety Ideal := I -> numericalVariety(I, flatten (regeneration I_* / decompose))
+
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart

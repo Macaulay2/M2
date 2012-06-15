@@ -227,10 +227,10 @@ SERVICE FUNCTIONS:
 NumericalVariety.synonym = "numerical variety"
 dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
 numericalVariety = method(TypicalValue=>NumericalVariety)
-numericalVariety List := Ws -> (
+numericalVariety (Ideal, List) := (I,Ws) -> (
      V := new NumericalVariety;
+     V.Equations = I;
      scan(Ws, W->(
-     	       if not V.?Equations then V.Equations = W.Equations;
 	       d := dim W;
 	       if V#?d then V#d = V#d | {W} else V#d = {W};
 	       ));     
@@ -243,12 +243,12 @@ check NumericalVariety := o-> V -> (
      scan(keys V, k->if class k === ZZ then scan(V#k, W->(
 		    if dim W != k then 
 		    error "dimension of a witness set does not match the key in NumericalVariety";
-	     	    if gens W.Equations != gens V.Equations then 
-		    error "equations for WitnessSet differ from those for NumericalVariety";    	    
+	     	    --if gens W.Equations != gens V.Equations then 
+		    --error "equations for WitnessSet differ from those for NumericalVariety";    	    
 		    )));
      )
 net NumericalVariety := V -> (
-     out := "((dim=" | net dim V |")) with components in";
+     out := "A variety of dimension " | net dim V |" with components in";
      scan(keys V, k->if class k === ZZ then (
 	       row := "dim "|net k|": ";
 	       scan(V#k, W->row = row|" "|net W);
@@ -572,25 +572,27 @@ document {
      }
 document {
      Key => {NumericalVariety},
-Headline => "a numerical variety",
-     "This type stores a collection of witness sets representing a variety. ",
+     Headline => "a numerical variety",
+     PARA {"This type stores a collection of witness sets representing a variety. "},
      SeeAlso => {WitnessSet}
      }
 document {
-	Key => {numericalVariety},
+	Key => {(numericalVariety,Ideal,List), numericalVariety},
 	Headline => "construct a numerical variety",
-	Usage => "V = numericalVariety Ws",
+	Usage => "V = numericalVariety(I,Ws)",
 	Inputs => { 
-	     "Ws" => List => {"contains (irreducible) witness sets representing components of a variety"}
+	     "I" => "the defining ideal of the variety",
+	     "Ws" => {"contains (irreducible) witness sets representing components of a variety"}
 	     },
 	Outputs => {"V"=> NumericalVariety},
 	PARA {"Used to construct a numerical variety. It is expected that every witness set ", TT "W", 
 	     " in the list ", TT "Ws", " has the same ", TT "W.Equations", "."},
         EXAMPLE lines ///
 R = CC[x,y]	
-w1 = witnessSet( ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
-w0 = witnessSet( ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y), ideal R, {point {{0.,0.}}})
-V = numericalVariety {w0,w1}
+I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
+w1 = witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
+w0 = witnessSet(I, ideal R, {point {{0.,0.}}})
+V = numericalVariety (I, {w0,w1}) 
      	///
 	}
 
@@ -617,6 +619,8 @@ restart
 loadPackage "NAGtypes"
 uninstallPackage "NAGtypes"
 installPackage "NAGtypes"
+installPackage ("NAGtypes",RerunExamples=>true, RemakeAllDocumentation=>true)
+installPackage ("NAGtypes",RerunExamples=>false, RemakeAllDocumentation=>true)
 -- install docs with no absolute links
 uninstallPackage "Style"
 installPackage("Style", AbsoluteLinks=>false)

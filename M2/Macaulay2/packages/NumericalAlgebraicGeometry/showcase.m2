@@ -1,4 +1,3 @@
-needsPackage "NumericalAlgebraicGeometry"
 NAGtrace 2
 load (currentFileDirectory|"benchmarks.m2")
 
@@ -17,7 +16,6 @@ systems = {
      -- random generalized eigenvalue problem
      (setRandomSeed 0; randomGeneralizedEigenvalueProblem 35) -- #sols=35, M2:3, B:40, P:323 
      };
-softwares = {M2engine,Bertini,PHCpack,HOM4PS2};
 
 for system in systems do (
      (T,S,solsS) = system;
@@ -34,7 +32,10 @@ for system in systems do (
      )
  
 end
+
 restart
+needsPackage "NumericalAlgebraicGeometry"
+softwares = {M2engine,Bertini,PHCpack,HOM4PS2};
 load "showcase.m2"
 M = sols#(first softwares);
 << "Multiple solutions: " << select(toList(0..#M-2), i->areEqual(first M#i,first M#(i+1),Tolerance=>1e-3)) << endl;

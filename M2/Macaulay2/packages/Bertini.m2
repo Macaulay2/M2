@@ -17,7 +17,7 @@ newPackage(
     "BERTINIexe"=>"bertini", 
     "keep files" => true
   },
-  DebuggingMode => false,
+  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
@@ -425,7 +425,6 @@ local codimen;
        --Now we go through all blocks of solutions (each block contains the coordinates of the solution and a bunch of other stuff.
        stdio << "Solutions, in homogeneous coordinates:" << endl << endl;
 
-       pt =  Point;
 --       pts := {};
        numPts := 0;
        wList := {};
@@ -450,6 +449,7 @@ local codimen;
             solNum = value(first l);
             l = drop(l,1); 
 
+            pt = new Point;
             pt.coordinates = coords;
             print pt.coordinates;
             --pts = join(pts, {pt});  -- other data is currently not stored anywhere but will eventually go into Point data type.         
@@ -458,7 +458,7 @@ local codimen;
 	    wList = join(wList, {ws});
             );
   
-         nv = numericalVariety wList ;
+         nv = numericalVariety(ideal F, wList);
        )
 
 

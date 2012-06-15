@@ -224,7 +224,9 @@ document {
 document {
      Key => {[solveSystem,PostProcess],PostProcess},
      Headline => "specifies whether to postprocess the solutions",
-     "Postprocessing includes refinement and clustering the solutions",
+     "Postprocessing includes refinement and clustering the solutions.",
+     Caveat=>{"Postprocessing is coded in top-level M2 language 
+	  and can be much slower than the homotopy contination done without postprocessing."},
      SeeAlso=>{refine}
      }
 
@@ -535,7 +537,7 @@ document {
 	Usage => "Ws = regeneration F",
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
 	Outputs => { "Ws"=>{"contains ", TO2{WitnessSet,"witness sets"}, " for equidimensional components of the variety ", TT "{x|F(x)=0}" }},
-     	"Regeneration is a blackbox method that obtains a numerical describtion of an aalgebraic variety. ",
+     	"Regeneration is a blackbox method that obtains a numerical describtion of an algebraic variety. ",
 	"Note that ", TT "Ws", " are not necessarily irreducible witness sets; use ", 
 	TO (decompose, WitnessSet), " to decompose into irreducibles. ",
 	EXAMPLE lines ///
@@ -543,7 +545,8 @@ R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 regeneration F 
 R = CC[x,y,z]
-sph = (x^2+y^2+z^2-1); I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+sph = (x^2+y^2+z^2-1); 
+I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
 cs = regeneration I_*
      	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
@@ -564,11 +567,33 @@ F = {x^2+y^2-1, x*y};
 W = first regeneration F 
 decompose W
 R = CC[x,y,z]
-sph = (x^2+y^2+z^2-1); I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+sph = (x^2+y^2+z^2-1); 
+I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
 regeneration I_* / decompose
      	///,
 	Caveat => {"This function is under development. It can not decompose nonreduced components at the moment. 
 	     If monodromy breakup algorithm fails to classify some points, the unnclassified points appear 
 	     as one witness set (that is not marked as irreducible)." },
         SeeAlso=>{regeneration}
+	}
+
+document {
+	Key => {(numericalVariety, Ideal)},
+	Headline => "constructs a numerical variety defined by the given ideal",
+	Usage => "V = numericalVariety I",
+	Inputs => { "I"=>"contained in the ring of polynomials with complex coefficients" },
+	Outputs => { "V" },
+     	"The ", TO2{WitnessSet,"witness sets"}, " of ", TT "V",
+	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
+	EXAMPLE lines ///
+R = CC[x,y,z]
+sph = (x^2+y^2+z^2-1); 
+I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+V = numericalVariety I 
+peek V
+    	///,
+	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
+	     "The (temporary) option ", TO Output, " can take two values: ", TO Regular, " (default) and ", TO Singular, ". 
+	     It specifies whether the algorithm attempts to keep singular points." },
+        SeeAlso=>{(decompose, WitnessSet)}
 	}
