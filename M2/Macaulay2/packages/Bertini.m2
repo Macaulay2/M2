@@ -179,7 +179,7 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
           if o.runType == 5 then ( -- Refine/Sharpen 
     	    run("cd "|dir|"; "|BERTINIexe|" < sharpen_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
-          readSolutionsBertini(dir,o) -- o contains runType, so we can switch inside readSolutionsBertini
+          readSolutionsBertini(dir,F,o) -- o contains runType, so we can switch inside readSolutionsBertini
           )
 
 
@@ -369,9 +369,9 @@ cleanupOutput String := s -> (
 -----------------------
 
 
-readSolutionsBertini = method(TypicalValue=>List, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,points=>{},digits=>-1,runType=>0})
+readSolutionsBertini = method(TypicalValue=>numericalVariety, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,points=>{},digits=>-1,runType=>0})
 
-readSolutionsBertini String := o -> dir -> (  -- dir=directory holding the output files, options are same as bertiniSolve
+readSolutionsBertini (String,List) := o -> (dir,F) -> (  -- dir=directory holding the output files, options are same as bertiniSolve
 
 local pt;
 local coord;
@@ -391,9 +391,9 @@ local ptType;
 local ptMult;
 local compNum;
 local numDeflations;
-
-
-print o.runType;
+local nv;
+local ws;
+local codimen;
 
   s := {};
 
@@ -425,8 +425,10 @@ print o.runType;
        --Now we go through all blocks of solutions (each block contains the coordinates of the solution and a bunch of other stuff.
        stdio << "Solutions, in homogeneous coordinates:" << endl << endl;
 
-       pt = new Point;
-       pts := {};
+       pt =  Point;
+--       pts := {};
+       numPts := 0;
+       wList := {};
 
        while solNum > -1 do ( -- -1 in solNum position (top of solution block) is key to end of solutions.
             maxPrec := value(first l);
@@ -450,8 +452,13 @@ print o.runType;
 
             pt.coordinates = coords;
             print pt.coordinates;
-            pts = join(pts, {pt});  -- other data is currently not stored anywhere but will eventually go into Point data type.         
+            --pts = join(pts, {pt});  -- other data is currently not stored anywhere but will eventually go into Point data type.         
+            numPts = numPts + 1;
+            ws = witnessSet(ideal F,ideal 0, {pt});
+	    wList = join(wList, {ws});
             );
+  
+         nv = numericalVariety wList ;
        )
 
 
@@ -492,7 +499,6 @@ print o.runType;
          ptsInCodim = value(first l); l=drop(l,1);
 
          for ptNum from 1 to ptsInCodim do (
-
             maxPrec := value(first l);
             l = drop(l,1);
             coords = {};
@@ -509,7 +515,9 @@ print o.runType;
             ptMult = value(first l); l=drop(l,1);
             compNum = value(first l); l=drop(l,1);
             numDeflations = value(first l); l=drop(l,1);
+print(codimNum, ptNum, compNum);
            ); 
+
 
          );
        )
@@ -555,7 +563,9 @@ print o.runType;
 	    );     
 
     ) else error "unknown output file";  
-  pts; 
+--  pts;
+  return nv;
+ 
   )
 
 --trackBertini = method(TypicalValue => List)
