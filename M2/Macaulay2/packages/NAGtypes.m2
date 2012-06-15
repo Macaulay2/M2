@@ -226,6 +226,10 @@ SERVICE FUNCTIONS:
 *}
 NumericalVariety.synonym = "numerical variety"
 dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
+degree NumericalVariety := V -> (
+     d := dim V;
+     sum(keys V, k->if k =!= d then 0 else sum(V#k,degree))
+     )
 numericalVariety = method(TypicalValue=>NumericalVariety)
 numericalVariety (Ideal, List) := (I,Ws) -> (
      V := new NumericalVariety;
