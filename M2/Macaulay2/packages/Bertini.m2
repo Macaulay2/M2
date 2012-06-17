@@ -400,6 +400,7 @@ local coefParts;
 local M;
 local colsToSkip;
 local N;
+local dehomCoords;
 
   s := {};
 
@@ -443,7 +444,15 @@ local N;
               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
               );
- 
+    
+            -- now we dehomogenize, assuming the first variable is the hom coord:
+            dehomCoords = {};
+            for j from 1 to numVars-1 do (
+	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
+              );
+
+            --print dehomCoords; 
+
             funcResid = value(cleanupOutput(first l)); l=drop(l,1);
             condNum = value(cleanupOutput(first l)); l=drop(l,1);
             newtonResid = value(cleanupOutput(first l)); l=drop(l,1);
@@ -454,8 +463,7 @@ local N;
             l = drop(l,1); 
 
             pt = new Point;
-            pt.coordinates = coords;
-            --print pt.coordinates;
+            pt.coordinates = dehomCoords;
             ws = witnessSet(ideal F,ideal 0, {pt});
 	    wList = join(wList, {ws});
             );
@@ -518,6 +526,16 @@ local N;
               );
 
             l = drop(l,numVars+1);  -- don't need second copy of point or extra copy of maxPrec
+
+            -- now we dehomogenize, assuming the first variable is the hom coord:
+            dehomCoords = {};
+            for j from 1 to numVars-1 do (
+              dehomCoords = join(dehomCoords, {coords#j / coords#0});
+              );
+
+--print dehomCoords;
+
+
             
 	    condNum = value(cleanupOutput(first l)); l=drop(l,4);
             ptType = value(first l); l=drop(l,1);
@@ -527,7 +545,7 @@ local N;
 --print(codimNum, ptNum, compNum);
 
             pt = new Point;
-            pt.coordinates = coords;
+            pt.coordinates = dehomCoords;
             pts = join(pts,{pt});
             compNums = join(compNums,{compNum});
 --print compNums;
