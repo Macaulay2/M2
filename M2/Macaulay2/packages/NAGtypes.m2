@@ -52,6 +52,7 @@ NumericalVariety = new Type of MutableHashTable
 --   }
 Point.synonym = "point"
 point = method()
+point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 net Point := p -> (
      if not p.?SolutionStatus or p.SolutionStatus === Regular then net p.Coordinates 

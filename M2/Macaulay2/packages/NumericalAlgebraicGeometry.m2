@@ -356,8 +356,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 --     then error "Certified (experimental) requires Software=>M2 and o.SLP=>false";
      
      -- PHCpack -------------------------------------------------------
-     if o.Software == PHCPACK then return trackPHCpack(S,T,solsS,o)
-     else if o.Software == BERTINI then return trackBertini(S,T,solsS,o)
+     if o.Software === PHCPACK then return trackPHCpack(S,T,solsS,o)
+     else if o.Software === BERTINI then return trackBertini(S,T,solsS,o)
      else if not member(o.Software,{M2,M2engine,M2enginePrecookedSLPs}) 
      then error "wrong Software option or implementation is not available";
      
@@ -996,12 +996,12 @@ refine (List,List) := List => o -> (T,solsT) -> (
 			 )
 		    else (
 			 error'bound = norm'dx;
-			 if DBG>0 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
+			 if DBG>2 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
 			 newton'converges = false;
 			 );
 		    error'bound = norm'dx; 
 		    );
-	       if DBG>1 then (
+	       if DBG>2 then (
 		    if norm'residual > o.ResidualTolerance
 		    then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
 		    if norm'dx > o.ErrorTolerance * norm x1 
@@ -1012,7 +1012,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       cond := conditionNumber evalJ(x1);
 	       st := if cond > o.SingularConditionNumber then Singular else Regular;
      	       if s.?ErrorBoundEstimate and norm(x-x1) > s.ErrorBoundEstimate then (
-		    if DBG>1 then print "warning: refinement failed";
+		    if DBG>2 then print "warning: refinement failed";
 		    s.ErrorBoundEstimate = infinity;
 		    s
 		    )

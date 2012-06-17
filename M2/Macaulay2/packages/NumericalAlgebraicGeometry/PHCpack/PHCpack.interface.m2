@@ -11,7 +11,8 @@ solvePHCpack (List,HashTable) := List => (F,o) -> (
 trackPHCpack = method(TypicalValue => List)
 trackPHCpack (List,List,List,HashTable) := List => (S,T,sols,o) -> (
      -- Anton: options are not used at the moment
-     trackPaths(S,T,sols,gamma=>o.gamma,tDegree=>o.tDegree)
+     --trackPaths(S,T,sols,PHCpack$gamma=>o.NAG$gamma,PHCpack$tDegree=>o.NAG$tDegree)     
+     trackPaths(S,T,sols,gamma=>o.NAG$gamma,tDegree=>o.NAG$tDegree)
      )
 
 refinePHCpack = method(TypicalValue => List)

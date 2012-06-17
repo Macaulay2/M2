@@ -23,9 +23,9 @@ for system in systems do (
 	       << "---------------------------------------------------------" << endl;
 	       << "---------- COMPUTING with " << soft << "-----------------" << endl; 
 	       << "---------------------------------------------------------" << endl;
-	       soft=>sortSolutions if soft===HOM4PS2 then solveSystem(T,Software=>soft)
+	       soft=>sortSolutions if soft===HOM4PS2 then solveSystem(T,Software=>soft)/point
 	       else 
-	       track(S,T,solsS,gamma=>1+ii,Software=>soft)
+	       track(S,T,solsS,gamma=>1+ii,Software=>soft)/point
 	       ));
      --assert all(drop(softwares,1), soft->areEqual(sols#soft/(s->{first s}),sols#(first softwares),Tolerance=>1e-3));
      --on large problems some of the softwares do not refine solutions to high enough precision -- can't check the match
@@ -35,8 +35,8 @@ end
 
 restart
 needsPackage "NumericalAlgebraicGeometry"
-softwares = {M2engine,Bertini,PHCpack,HOM4PS2};
-load "showcase.m2"
+softwares = {M2engine,BERTINI,PHCPACK,HOM4PS2};
+load "NumericalAlgebraicGeometry/showcase.m2"
 M = sols#(first softwares);
 << "Multiple solutions: " << select(toList(0..#M-2), i->areEqual(first M#i,first M#(i+1),Tolerance=>1e-3)) << endl;
 assert all(#M, i->getSolution(i,SolutionAttributes=>SolutionStatus)=="REGULAR") 

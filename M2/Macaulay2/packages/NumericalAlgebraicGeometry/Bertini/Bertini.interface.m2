@@ -4,12 +4,12 @@
 solveBertini = method(TypicalValue => List)
 solveBertini (List,HashTable) := List => (F,o) -> (
   	  dir := makeBertiniInput F; 
-  	  run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
-	  readSolutionsBertini(dir,"finite_solutions")
+  	  run("cd "|dir|"; "|BERTINIexe|if DBG<2 then " >bertini_session.log" else "");
+	  readSolutionsBertini(dir,"raw_solutions")
 	  )
 
 protect StartSolutions, protect StartSystem
-makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii})
+makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},NAG$gamma=>1.0+ii})
 makeBertiniInput List := o -> T -> (
 -- IN:
 --	T = polynomials of target system
@@ -23,7 +23,7 @@ makeBertiniInput List := o -> T -> (
   f << "CONFIG" << endl;
   --f << "MPTYPE: 2;" << endl; -- multiprecision
   --f << "MPTYPE: 0;" << endl; -- double precision (default?)
-  f << "TRACKTYPE: 1;" << endl;
+  --f << "TRACKTYPE: 1;" << endl;
   f << "USEREGENERATION: 1;" << endl;
     
   if #o.StartSystem > 0 then
@@ -44,7 +44,9 @@ makeBertiniInput List := o -> T -> (
        then f << "fff" << i << ", "
        else f << "fff" << i << ";" << endl << endl
       );
-  bertiniNumbers := p->( L := toExternalString p; 
+  bertiniNumbers := p->if class p === CC 
+  then toString realPart p | "+" | toString imaginaryPart p | "*I"
+  else ( L := toExternalString p; 
        L = replace("p"|toString prec, "", L);
        L = replace("\\bii\\b", "I", L); 
        L = replace("([0-9])e([0-9])", "\\1E\\2", L);
@@ -57,8 +59,9 @@ makeBertiniInput List := o -> T -> (
        f << "pathvariable t;" << endl 
          << "parameter s;" << endl
          << "s = t;" << endl;
+	 
        scan(#T, i -> f << "fff" << i 
-	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
+	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.NAG$gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
 	   );
        );
   f << endl << "END" << endl << endl;
@@ -85,6 +88,88 @@ cleanupOutput String := s -> (
   )
 
 readSolutionsBertini = method(TypicalValue=>List)
+
+-- -- Dan's new stuff
+-- readSolutionsBertini (String,List) := (dir,F) -> (
+-- local pt;
+-- local coord;
+-- local coords;
+-- local funcResid;
+-- local condNum;
+-- local newtonResid;
+-- local lastT;
+-- local cycleNum;
+-- local success;
+-- local solNum;
+-- local numVars;
+-- local a;
+-- local numCodims;
+-- local ptsInCodim;
+-- local ptType; 
+-- local ptMult;
+-- local compNum;
+-- local numDeflations;
+-- local nv;
+-- local ws;
+-- local codimen;
+-- local l;
+--        l = lines get (dir|"/witness_data"); -- grabs all lines of the file
+--        numVars = value(first l);  l=drop(l,1);
+--        numCodims = value(first l); l=drop(l,1);
+
+--        wList := {};  --list of witness sets
+
+--        for codimNum from 1 to numCodims do (
+
+--          -- WARNING!!!!!????? 
+--          -- For now, this data is overwritten in each pass through the codimNum loop: need to store codim's worth of data at end of loop (later, when witness data type is stabilized/understood)
+
+--          pts := {};  --for each codim, we store all points and all codims (next line), then sort after gathering all points in the codim
+--          compNums := {};
+--          maxCompNum := 0;  --keeps track of max component number in this codim
+
+--          codimen = value(first l); l=drop(l,1);
+--          ptsInCodim = value(first l); l=drop(l,1);
+
+--          for ptNum from 1 to ptsInCodim do (
+--             maxPrec := value(first l);
+--             l = drop(l,1);
+--             coords = {};
+--             for j from 1 to numVars do ( -- grab each coordinate
+--               coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+--               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+--               l = drop(l,1);
+--               );
+
+--             l = drop(l,numVars+1);  -- don't need second copy of point or extra copy of maxPrec
+            
+-- 	    condNum = value(cleanupOutput(first l)); l=drop(l,4);
+--             ptType = value(first l); l=drop(l,1);
+--             ptMult = value(first l); l=drop(l,1);
+--             compNum = value(first l); l=drop(l,1);
+--             numDeflations = value(first l); l=drop(l,1);
+-- 	    --print(codimNum, ptNum, compNum);
+
+--             pt = new Point;
+--             pt.coordinates = coords;
+--             pts = join(pts,{pt});
+--             compNums = join(compNums,{compNum});
+--             if (compNum > maxCompNum) then maxCompNum=compNum; 
+--           ); 
+	 
+-- 	  for j from 0 to maxCompNum do ( --loop through the component numbers in this codim to break them into witness sets
+--  	    ptsInWS := {}; --stores all points in the same witness set
+--             for k from 0 to #pts-1 do (
+-- 	      print (j,k); 
+-- 	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k}); --save the point if its in the current component (component j)
+-- 	    );
+--             ws = witnessSet(ideal F,ideal 0, ptsInWS); --turn these points into a witness set
+--             wList = join(wList, {ws}); --add witness set to list
+--           );
+--         );
+--         nv = numericalVariety(ideal F, wList);
+--      	)
+
 readSolutionsBertini (String,String) := (dir,f) -> (
   s := {};
   if f == "finite_solutions" then (
@@ -131,9 +216,9 @@ trackBertini = method(TypicalValue => List)
 trackBertini (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
      -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
      -- mkdir tempdir; 	  
-     dir := makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
+     dir := makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, NAG$gamma=>o.NAG$gamma);
      compStartTime := currentTime();      
-     run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
+     run("cd "|dir|"; "|BERTINIexe|if DBG<2 then " >bertini_session.log" else "");
      if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
      readSolutionsBertini(dir, "raw_solutions")
      )
