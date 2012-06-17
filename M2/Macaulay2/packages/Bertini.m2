@@ -388,6 +388,18 @@ local numDeflations;
 local nv;
 local ws;
 local codimen;
+local listOfCodims;
+local randDims;
+local numRands;
+local numToSkip;
+local linCoeffDims;
+local numLinCoeffs;
+local rw;
+local mat;
+local coefParts;
+local M;
+local colsToSkip;
+local N;
 
   s := {};
 
@@ -443,7 +455,7 @@ local codimen;
 
             pt = new Point;
             pt.coordinates = coords;
-            print pt.coordinates;
+            --print pt.coordinates;
             ws = witnessSet(ideal F,ideal 0, {pt});
 	    wList = join(wList, {ws});
             );
@@ -481,6 +493,7 @@ local codimen;
        numCodims = value(first l); l=drop(l,1);
 
        wList := {};  --list of witness sets
+       listOfCodims := {};  --keeps track of codimension of each witness set; needed since we add slice data later.
 
        for codimNum from 1 to numCodims do (
 
@@ -511,26 +524,86 @@ local codimen;
             ptMult = value(first l); l=drop(l,1);
             compNum = value(first l); l=drop(l,1);
             numDeflations = value(first l); l=drop(l,1);
-print(codimNum, ptNum, compNum);
+--print(codimNum, ptNum, compNum);
 
             pt = new Point;
             pt.coordinates = coords;
             pts = join(pts,{pt});
             compNums = join(compNums,{compNum});
-print compNums;
+--print compNums;
             if (compNum > maxCompNum) then maxCompNum=compNum; 
           ); 
 	 
 	  for j from 0 to maxCompNum do ( --loop through the component numbers in this codim to break them into witness sets
  	    ptsInWS := {}; --stores all points in the same witness set
             for k from 0 to #pts-1 do (
-	      print (j,k); 
+	      --print (j,k); 
 	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k}); --save the point if its in the current component (component j)
 	    );
             ws = witnessSet(ideal F,ideal 0, ptsInWS); --turn these points into a witness set
             wList = join(wList, {ws}); --add witness set to list
+            listOfCodims = join(listOfCodims, {codimNum});
           );
         );
+
+        -- now we grab the slice data, at the end of the witness_data file, to be inserted into the witnessSets with dim>0
+	l = drop(l,3); -- -1, blank line, MPTYPE
+        randDims = select("[0-9]+", first l);  -- grabs #rows, #cols for the matrix used to randomize the system 
+	l = drop(l,1);
+        numRands = value(randDims#0) * value(randDims#1);  -- numRands is the number of random numbers we want to skip next
+        l = drop(l,numRands+1);   -- includes blank line after rands
+	-- next we have the same number of integers (degrees needed ot keep homogenization right)
+        l = drop(l,numRands);
+	-- next we have an integer and a list of row vectors (the number of which is the initial integer).  Again related to homogenization.
+ 	numToSkip = select("[0-9]+", first l);
+        l = drop(l,value(numToSkip#0)+3); -- dropping all those, plus line containing integer (before), then blank line, and one more line
+	--finally, we have the number of linears and the number of coefficients per linear
+        linCoeffDims = select("[0-9]+", first l);
+        l = drop(l,1);
+
+        --now we just read in the matrix
+        numLinCoeffs = value(linCoeffDims#0) * value(linCoeffDims#1);
+        rw = {};
+        mat = {};
+        for i from 1 to value(linCoeffDims#1) do 
+        { 
+          for j from 1 to value(linCoeffDims#0) do 
+          {
+            coefParts = select("[0-9]+/[0-9]+", first l);
+            rw = join(rw, {toCC(53,value(coefParts#0)) + ii*toCC(53,value(coefParts#1))});  -- definitely losing data here, going from rational number to float!!
+            l = drop(l,1);
+          };
+          mat = join(mat, {rw});  
+          rw = {};
+        };
+        M = matrix(mat);
+        --print M;
+
+        -- Finally, we can cycle through the witness sets in nv and add the slice data.
+        -- There are length listOfCodims witness sets, the first of which uses the full set of slices (all of M).
+        -- The higher codimensions need higher-dimensional hyperplane sections, so fewer slices (part of M).
+        -- The lowest slice is kept longest.  Ex:  If there is a codim 1 set with a 2x4 matrix of slice data, a subsequent codim 2 set would have a 
+        -- 1x4 matrix of slice data consists of the second (not first) line of the codim 1 slice data.
+        for codimNum from 0 to length listOfCodims - 1 do
+        {
+          coeffList := {};  --We store the cols of M needed for this particular codimNum in coeffList, then turn it into a matrix and store it the witness set.
+          colsToSkip = listOfCodims#codimNum - listOfCodims#0;  
+          -- print numgens target M; -- gives the number of rows
+          -- print numgens source M; -- gives the number of cols
+          for i from colsToSkip to numgens source M - 1 do
+          {
+            coeffCol := {};
+	    for j from 0 to numgens target M - 1 do
+            { 
+              coeffCol = join(coeffCol, {M_(j,i)});
+            }; 
+            coeffList = join(coeffList, {coeffCol});
+          };
+          N = matrix(coeffList);
+          (wList#codimNum).Slice = N;
+ 	  
+        };
+
         nv = numericalVariety(ideal F, wList);
 
       )
@@ -649,6 +722,8 @@ beginDocumentation()
 --      S = bertiniSolve F
 --///;
 
-
+-- slices
+-- dehom
+-- doc
 
 end
