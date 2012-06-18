@@ -35,7 +35,12 @@ end
 
 restart
 needsPackage "NumericalAlgebraicGeometry"
-softwares = {M2engine,BERTINI,PHCPACK,HOM4PS2};
+softwares = {
+     M2engine,
+     BERTINI,
+     PHCPACK,
+     HOM4PS2
+     };
 load "NumericalAlgebraicGeometry/showcase.m2"
 M = sols#(first softwares);
 << "Multiple solutions: " << select(toList(0..#M-2), i->areEqual(first M#i,first M#(i+1),Tolerance=>1e-3)) << endl;
