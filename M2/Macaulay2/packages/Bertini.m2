@@ -401,8 +401,12 @@ local M;
 local colsToSkip;
 local N;
 local dehomCoords;
+local vars;
+local R;
 
   s := {};
+  vars := gens ring F#0; -- variables
+  R = QQ[vars]; --setting the ring
 
   if (o.runType == 0) then ( --raw_data, for zeroDim 
 --raw_data output file structure:
@@ -430,7 +434,7 @@ local dehomCoords;
        solNum = value(first l);
        l = drop(l,1);
        --Now we go through all blocks of solutions (each block contains the coordinates of the solution and a bunch of other stuff.
-       stdio << "Solutions, in homogeneous coordinates:" << endl << endl;
+       --stdio << "Solutions:" << endl << endl;
 
        wList := {}; --list of witness sets 
 
@@ -464,7 +468,8 @@ local dehomCoords;
 
             pt = new Point;
             pt.coordinates = dehomCoords;
-            ws = witnessSet(ideal F,ideal 0, {pt});
+            N = map(CC^0,CC^4,0);
+            ws = witnessSet(ideal F, N, {pt});
 	    wList = join(wList, {ws});
             );
   
@@ -558,7 +563,8 @@ local dehomCoords;
 	      --print (j,k); 
 	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k}); --save the point if its in the current component (component j)
 	    );
-            ws = witnessSet(ideal F,ideal 0, ptsInWS); --turn these points into a witness set
+            N = map(CC^0,CC^4,0);
+            ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
             wList = join(wList, {ws}); --add witness set to list
             listOfCodims = join(listOfCodims, {codimNum});
           );
@@ -617,7 +623,11 @@ local dehomCoords;
             }; 
             coeffList = join(coeffList, {coeffCol});
           };
-          N = matrix(coeffList);
+--print coeffList;
+          if (#coeffList > 0) then
+            N = matrix(coeffList)
+          else
+            N = map(CC^0,CC^4,0); 
           (wList#codimNum).Slice = N;
  	  
         };
