@@ -3,6 +3,7 @@
 
 if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 if version#"VERSION" <= "1.4" then needsPackage "PHCpack"
+if version#"VERSION" <= "1.4" then needsPackage "Bertini"
 
 newPackage select((
      "NumericalAlgebraicGeometry",
@@ -16,7 +17,7 @@ newPackage select((
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      if version#"VERSION" > "1.4" then PackageExports => {"NAGtypes"},
-     if version#"VERSION" > "1.4" then PackageImports => {"PHCpack"},
+     if version#"VERSION" > "1.4" then PackageImports => {"PHCpack", "Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
 --     DebuggingMode => true,
@@ -1736,7 +1737,13 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
      abs det matrix three'samples < DEFAULT.Tolerance  -- points are (approximately) on a line
      )  
 
-numericalVariety Ideal := I -> numericalVariety(I, flatten (regeneration I_* / decompose))
+numericalVarietyM2 = I -> numericalVariety flatten (regeneration I_* / decompose)
+numericalVarietyBertini = I -> bertiniPosDimSolve I_*
+numericalVariety Ideal := I -> (
+     if DEFAULT.Software === BERTINI 
+     then numericalVarietyBertini 
+     else numericalVarietyM2
+     ) I
 
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS

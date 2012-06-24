@@ -1,5 +1,7 @@
 -- this file is created to test Bertini interface separately from NAG package
 restart
+NAG = loadPackage "NumericalAlgebraicGeometry"
+NAG.DebuggingMode = true
 R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
@@ -12,10 +14,10 @@ T = (katsuraBench 11)_*; -- #sols=1024, M2:4, H:7, B:15, P:37
 (S,solsS) = totalDegreeStartSystem T; 
 ///
 
-load "Bertini.interface.m2"
-BERTINIexe = "bertini"; DBG = 0;
-o = new OptionTable from {gamma=>1+ii} -- NAG's "solve" and "track" pass more options (type "help track")
-solsT = solveBertini(T,o)
-solsT = trackBertini(S,T,solsS,o);
+sols = solveSystem(T, Software=>BERTINI)
+sols = track(S,T,solsS,Software=>BERTINI)
+
+setDefault (Software=>BERTINI) 
+V = numericalVariety F
 
 

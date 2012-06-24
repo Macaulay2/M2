@@ -3,10 +3,27 @@
 
 solveBertini = method(TypicalValue => List)
 solveBertini (List,HashTable) := List => (F,o) -> (
-  	  dir := makeBertiniInput F; 
-  	  run("cd "|dir|"; "|BERTINIexe|if DBG<2 then " >bertini_session.log" else "");
-	  readSolutionsBertini(dir,"raw_solutions")
-	  )
+     return solveBertini F; 
+     dir := makeBertiniInput F; 
+     run("cd "|dir|"; "|BERTINIexe|if DBG<2 then " >bertini_session.log" else "");
+     readSolutionsBertini(dir,"raw_solutions")
+     )
+solveBertini List := List => F -> ( -- uses Bertini package
+     R := ring first F;
+     coeffR := coefficientRing R;
+     if not(
+	  instance(ring 1_coeffR, ComplexField) 
+	  or instance(ring 1_coeffR, RealField)
+	  or coeffR===QQ or coeffR ===ZZ
+	  ) then error "expected coefficients that can be converted to complex numbers";  
+--     R' := CC[gens R];
+     V := bertiniSolve F; --apply(F, f ->sub(f,R'));
+     if dim V != 0 then error "input system is not 0-dimensional (infinite number of solutions)";
+     apply(V#0, p->(
+	       if #p.Points != 1 then error "expected 1 point per component";
+	       first p.Points
+	       ))
+     )
 
 protect StartSolutions, protect StartSystem
 makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},NAG$gamma=>1.0+ii})

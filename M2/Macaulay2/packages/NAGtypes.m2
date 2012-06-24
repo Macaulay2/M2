@@ -232,9 +232,8 @@ degree NumericalVariety := V -> (
      sum(keys V, k->if k =!= d then 0 else sum(V#k,degree))
      )
 numericalVariety = method(TypicalValue=>NumericalVariety)
-numericalVariety (Ideal, List) := (I,Ws) -> (
+numericalVariety List := Ws -> (
      V := new NumericalVariety;
-     V.Equations = I;
      scan(Ws, W->(
 	       d := dim W;
 	       if V#?d then V#d = V#d | {W} else V#d = {W};
@@ -243,13 +242,11 @@ numericalVariety (Ideal, List) := (I,Ws) -> (
      V
      )
 check NumericalVariety := o-> V -> (
-     if any(keys V, k->(class k =!= ZZ or k<0) and k != Equations) 
+     if any(keys V, k->(class k =!= ZZ or k<0)) 
      then error "the keys of a NumericalVariety should be nonnegative integers";
      scan(keys V, k->if class k === ZZ then scan(V#k, W->(
 		    if dim W != k then 
 		    error "dimension of a witness set does not match the key in NumericalVariety";
-	     	    --if gens W.Equations != gens V.Equations then 
-		    --error "equations for WitnessSet differ from those for NumericalVariety";    	    
 		    )));
      )
 net NumericalVariety := V -> (
@@ -582,22 +579,22 @@ document {
      SeeAlso => {WitnessSet}
      }
 document {
-	Key => {(numericalVariety,Ideal,List), numericalVariety},
+	Key => {(numericalVariety,List), numericalVariety},
 	Headline => "construct a numerical variety",
 	Usage => "V = numericalVariety(I,Ws)",
 	Inputs => { 
-	     "I" => "the defining ideal of the variety",
+--	     "I" => "the defining ideal of the variety",
 	     "Ws" => {"contains (irreducible) witness sets representing components of a variety"}
 	     },
 	Outputs => {"V"=> NumericalVariety},
-	PARA {"Used to construct a numerical variety. It is expected that every witness set ", TT "W", 
+	PARA {"Used to construct a numerical variety. It is NOT expected that every witness set ", TT "W", 
 	     " in the list ", TT "Ws", " has the same ", TT "W.Equations", "."},
         EXAMPLE lines ///
 R = CC[x,y]	
 I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
 w1 = witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
 w0 = witnessSet(I, ideal R, {point {{0.,0.}}})
-V = numericalVariety (I, {w0,w1}) 
+V = numericalVariety {w0,w1}
      	///
 	}
 
