@@ -18,7 +18,7 @@ newPackage(
     "keep files" => true
   },
   DebuggingMode => true,
-  AuxiliaryFiles => true,
+  AuxiliaryFiles => false,
   CacheExampleOutput => true
 )
 
