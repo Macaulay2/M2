@@ -592,8 +592,6 @@ I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)
 V = numericalVariety I 
 peek V
     	///,
-	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
-	     "The (temporary) option ", TO Output, " can take two values: ", TO Regular, " (default) and ", TO Singular, ". 
-	     It specifies whether the algorithm attempts to keep singular points." },
+	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
         SeeAlso=>{(decompose, WitnessSet)}
 	}

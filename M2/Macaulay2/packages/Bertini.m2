@@ -284,12 +284,20 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
        then f << "f" << i << ", "
        else f << "f" << i << ";" << endl << endl
       );
-  bertiniNumbers := p->( L := toString p; -- bertiniNumbers is a method that takes in "p" (list of polynomials) and returns them with ii replaced with I, e replaced with E (don't know why the latter)???
-       L = replace("ii", "I", L); 
+  bertiniNumbers := p->if class p === CC 
+  then toString realPart p | "+" | toString imaginaryPart p | "*I"
+  else ( L := toExternalString p; 
+       L = replace("p"|toString precision p, "", L);
+       L = replace("\\bii\\b", "I", L); 
        L = replace("([0-9])e([0-9])", "\\1E\\2", L);
---       L = replace("e", "E", L);
        L
        );
+--  bertiniNumbers := p->( L := toString p; -- bertiniNumbers is a method that takes in "p" (list of polynomials) and returns them with ii replaced with I, e replaced with E (don't know why the latter)???
+--       L = replace("ii", "I", L); 
+--       L = replace("([0-9])e([0-9])", "\\1E\\2", L);
+--       L = replace("e", "E", L);
+--       L
+--       );
   if (o.runType!=1) -- non-param runs: just write out the polynomials
     then scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl) 
   else (  -- param runs: write out polys AND other junk (see next several lines!)
