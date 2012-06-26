@@ -2,24 +2,23 @@
 ---------------------------------------------------------------------------
 -- PURPOSE: Calculating versal deformations and local Hilbert schemes
 -- PROGRAMMER : Nathan Ilten
--- UPDATE HISTORY : June 2011
+-- UPDATE HISTORY : April 2012
 ---------------------------------------------------------------------------
 newPackage("VersalDeformations",
     Headline => "A package for calculating versal deformations and local Hilbert schemes",
-    Version => "0.7",
-    Date => "July 20, 2011",
+    Version => "1.0",
+    Date => "April 10, 2012",
     Authors => {
         {Name => "Nathan Owen Ilten",
 	  HomePage => "http://people.cs.uchicago.edu/~nilten/",
 	  Email => "nilten@cs.uchicago.edu"}},
-    DebuggingMode => true,
-    Configuration => {}
+    Configuration => {"DefaultDefParam"=>"t"}
     )
 
 ---------------------------------------------------------------------------
 -- COPYRIGHT NOTICE:
 --
--- Copyright 2011 Nathan Owen Ilten
+-- Copyright 2012 Nathan Owen Ilten
 --
 --
 -- This program is free software: you can redistribute it and/or modify
@@ -37,35 +36,37 @@ newPackage("VersalDeformations",
 --
 ---------------------------------------------------------------------------
 
+defaultdefparam = (options VersalDeformations).Configuration#"DefaultDefParam"
 
 
 export {"liftDeformation",
      "firstOrderDeformations",
      "CT",
-     "cotanComplexOne",
-     "cotanComplexTwo",
-     "normalModule",
+     "cotangentCohomology1",
+     "cotangentCohomology2",
+     "normalMatrix",
      "versalDeformation",
      "localHilbertScheme",
      "PolynomialCheck",
      "SanityCheck",
      "HighestOrder",
-     "TimeLimit",
      "SmartLift",
-     "t",
+     "DefParam",
      "correctDeformation",
      "correctionMatrix",
-     "CorrectionMatrix"
-     }
+     "CorrectionMatrix",
+     "CacheName",
+     "VersalDeformationResults"
+      }
 
-t = new IndexedVariableTable;
-
+protect VersalDeformationResults
+protect CacheName
 protect SanityCheck
-protect TimeLimit
 protect PolynomialCheck
 protect HighestOrder
 protect SmartLift
 protect CorrectionMatrix
+protect DefParam
 
      
      
@@ -73,45 +74,70 @@ protect CorrectionMatrix
 -- Cotangent cohomology and normal modules
 ----------------------------------------------------------------------------     
 
+
+
 CT=new ScriptedFunctor
-CT#superscript=i->(if i==1 then return cotanComplexOne; if i==2 then return cotanComplexTwo)
+CT#superscript=i->(if i==1 then return cotangentCohomology1; if i==2 then return cotangentCohomology2;
+	error "Higher cotangent cohomology not yet implemented")
 
-cotanComplexOne=method(TypicalValue=>Matrix)
+cotangentCohomology1=method(TypicalValue=>Matrix,Options=>{SourceRing=>null})
 
-cotanComplexOneMod:=(F)->(
+cotangentCohomology1Mod:=(F)->(
      A:=ring F/image F; --quotient ring
      Hom(ideal F,A)/(image ((transpose substitute(jacobian F,A)))))
      
-cotanComplexOne Matrix:=F->lift(ambient basis(cotanComplexOneMod F), ring F)
-cotanComplexOne (ZZ,Matrix):=(deg,F)->lift(ambient basis(deg,cotanComplexOneMod(F)), ring F)
-cotanComplexOne (List,Matrix):=(deg,F)->lift(ambient basis(deg,cotanComplexOneMod(F)), ring F)
-cotanComplexOne (ZZ,ZZ,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,cotanComplexOneMod(F)), ring F)
-cotanComplexOne (InfiniteNumber,ZZ,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,cotanComplexOneMod(F)), ring F)
-cotanComplexOne (ZZ,InfiniteNumber,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,cotanComplexOneMod(F)), ring F)
+cotangentCohomology1 Matrix:=opts->F->lift(ambient basis(cotangentCohomology1Mod F,opts), ring F)
+cotangentCohomology1 (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology1Mod(F),opts), ring F)
+cotangentCohomology1 (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology1Mod(F),opts), ring F)
+cotangentCohomology1 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),opts), ring F)
+cotangentCohomology1 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),opts), ring F)
+cotangentCohomology1 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),opts), ring F)
+
+cotangentCohomology1 Ideal:=opts->I->lift(ambient basis(cotangentCohomology1Mod gens I,opts), ring I)
+cotangentCohomology1 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology1Mod(gens I),opts), ring I)
+cotangentCohomology1 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology1Mod(gens I),opts), ring I)
+cotangentCohomology1 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),opts), ring I)
+cotangentCohomology1 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),opts), ring I)
+cotangentCohomology1 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),opts), ring I)
 
 
-cotanComplexTwo=method(TypicalValue=>Matrix)
-cotanComplexTwoMod:=F->(
+
+cotangentCohomology2=method(TypicalValue=>Matrix,Options=>{SourceRing=>null})
+cotangentCohomology2Mod:=F->(
      A:=ring F/image F;
      R:=gens ker F;
      kos:=koszul(2,F);
      (Hom((image R/image kos),A)/(image substitute(transpose R,A)))
      )
 
-cotanComplexTwo Matrix:=F->lift(ambient basis(cotanComplexTwoMod F),ring F)
-cotanComplexTwo (ZZ,Matrix):=(deg,F)->lift(ambient basis(deg,cotanComplexTwoMod(F)), ring F)
-cotanComplexTwo (List,Matrix):=(deg,F)->lift(ambient basis(deg,cotanComplexTwoMod(F)), ring F)
-cotanComplexTwo (ZZ,ZZ,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,cotanComplexTwoMod(F)), ring F)
-cotanComplexTwo (InfiniteNumber,ZZ,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,cotanComplexTwoMod(F)), ring F)
-cotanComplexTwo (ZZ,InfiniteNumber,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,cotanComplexTwoMod(F)), ring F)
+cotangentCohomology2 Matrix:=opts->F->lift(ambient basis(cotangentCohomology2Mod F,opts),ring F)
+cotangentCohomology2 (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts), ring F)
+cotangentCohomology2 (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts), ring F)
+cotangentCohomology2 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
+cotangentCohomology2 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
+cotangentCohomology2 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
 
-normalModule=method(TypicalValue=>Matrix)
-normalModule Matrix:=F->lift(ambient basis(Hom(ideal F, ring F/ideal F)), ring F)
-normalModule (ZZ,Matrix):=(deg,F)->lift(ambient basis(deg,Hom(ideal F, ring F/ideal F)), ring F)
-normalModule (List,Matrix):=(deg,F)->lift(ambient basis(deg,Hom(ideal F, ring F/ideal F)), ring F)
-normalModule (ZZ,ZZ,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,Hom(ideal F, ring F/ideal F)), ring F)
-normalModule (InfiniteNumber,ZZ,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi,Hom(ideal F, ring F/ideal F)), ring F)
-normalModule (ZZ,InfiniteNumber,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi.Hom(ideal F, ring F/ideal F)), ring F)
+cotangentCohomology2 Ideal:=opts->I->lift(ambient basis(cotangentCohomology2Mod gens I,opts),ring I)
+cotangentCohomology2 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts), ring I)
+cotangentCohomology2 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts), ring I)
+cotangentCohomology2 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
+cotangentCohomology2 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
+cotangentCohomology2 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
+
+normalMatrix=method(TypicalValue=>Matrix,Options=>{SourceRing=>null})
+normalMatrix Matrix:=opts->F->lift(ambient basis(Hom(ideal F, ring F/ideal F),opts), ring F)
+normalMatrix (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,Hom(ideal F, ring F/ideal F),opts), ring F)
+normalMatrix (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,Hom(ideal F, ring F/ideal F),opts), ring F)
+normalMatrix (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,Hom(ideal F, ring F/ideal F),opts), ring F)
+normalMatrix (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,Hom(ideal F, ring F/ideal F),opts), ring F)
+normalMatrix (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi.Hom(ideal F, ring F/ideal F),opts), ring F)
+
+normalMatrix Ideal:=opts->I->lift(ambient basis(Hom(I, ring I/I),opts), ring I)
+normalMatrix (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,Hom(I, ring I/I),opts), ring I)
+normalMatrix (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,Hom(I, ring I/I),opts), ring I)
+normalMatrix (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,Hom(I, ring I/I),opts), ring I)
+normalMatrix (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,Hom(I, ring I/I),opts), ring I)
+normalMatrix (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi.Hom(I, ring I/I),opts), ring I)
      
 ----------------------------------------------------------------------------
 -- Stuff to lift deformation equation solutions
@@ -120,14 +146,14 @@ normalModule (ZZ,InfiniteNumber,Matrix):=(lo,hi,F)->lift(ambient basis(lo,hi.Hom
 lowestOrderTerms:=(F,G,C,n,d)->(
      if n==1 then (lowG:=map(source C_0,target F_0,0);
      	  lowDeg:=toList(d:0)) 
-     else (lowDeg=apply(toList(0..(d-1)),i->min ({n-2}|positions(G,g->not g^{i}==0)));
+     else (lowDeg=apply(toList(0..(d-1)),i->min ({n-2}|positions(G,g->g^{i}!=0)));
     	  lowG=matrix(apply(toList(0..(d-1)),i->{(G_(lowDeg_i))^{i}})));
      (lowDeg,lowG))
 
-liftDeformation=method (TypicalValue=>Sequence,Options=>true)
-liftopts:={SanityCheck=>true,Verbosity=>4}
+liftDeformation=method (Options=>{SanityCheck=>true,Verbose=>0})
 
-liftDeformation(List,List,List,List):= liftopts >> opts -> (F,R,G,C)->(
+
+liftDeformation(List,List,List,List):= opts->(F,R,G,C)->(
      n:=#F-1; --order so far
      d:=numgens source C_0; --number of obstructions
      if n<1 then error "Need order at least one";
@@ -136,11 +162,11 @@ liftDeformation(List,List,List,List):= liftopts >> opts -> (F,R,G,C)->(
      else lowG=map(source C_0,target F_0,0); --unobstructed case
      T:=ring F_0;
      A:=T/ideal (F_0|transpose lowG); --setup a common ring
-     if opts#Verbosity > 3 then print "Calculating residual terms";
+     if opts#Verbose > 3 then print "Calculating residual terms";
      fterms:=sum(apply(toList(1..n),i->F_i*R_(n+1-i))); --order n+1 terms
      eterms:=sum(apply(toList(1..(n-2)),i->C_i*G_(n-1-i))); -- terms from base equations
      rem:=substitute(((transpose fterms)+eterms),A); --reduce modulo our ideal
-     if opts#Verbosity >3 then print "Lifting Family and Equations";
+     if opts#Verbose >3 then print "Lifting Family and Equations";
      lfameq:=rem//(substitute((transpose R_0)|C_0,A));
      FO:=F|{-transpose lift(lfameq^(toList(0..(numgens target R_0)-1)),T)}; --lift the family
      NG:=-lift(lfameq^(toList((numgens target R_0)..(numgens target R_0)+(numgens source C_0)-1)),T); --lift equations
@@ -155,7 +181,7 @@ liftDeformation(List,List,List,List):= liftopts >> opts -> (F,R,G,C)->(
      	  COC=matrix {apply(toList(0..(d-1)),i->ltv_i*(C_0)_{i})}; --correct coefficients
      	  );
      GO:=G|{CNG};
-     if opts#Verbosity >3 then print "Lifting Relations and Coefficients";
+     if opts#Verbose >3 then print "Lifting Relations and Coefficients";
      lrelco:=((fterms+FO_(n+1)*R_0)+transpose(eterms+COC*CNG))//(F_0|transpose lowG);
      RO:=R|{-lift(lrelco^(toList(0..(numgens target R_0)-1)),T)}; --lift relations
      NC:=-transpose lift(lrelco^(toList((numgens target R_0)..(numgens target R_0)+d-1)),T);
@@ -168,12 +194,13 @@ liftDeformation(List,List,List,List):= liftopts >> opts -> (F,R,G,C)->(
 			 )
 		    )))
           ); --correct the entries of coefficient matrices
-     if opts#Verbosity>3 and opts#SanityCheck	   then print "Doing Sanity Check";
-     if opts#SanityCheck then if not (transpose(sum(apply(toList(0..(n+1)),i->FO_i*RO_(n+1-i))))+sum(apply(toList(0..(n-1)),i->CO_i*GO_(n-1-i))))==0 then error "Something is wrong"; 
+     if opts#Verbose>3 and opts#SanityCheck	   then print "Doing Sanity Check";
+     if opts#SanityCheck then if not 
+		(transpose(sum(apply(toList(0..(n+1)),i->FO_i*RO_(n+1-i))))+sum(apply(toList(0..(n-1)),i->CO_i*GO_(n-1-i))))==0 then error "Something is wrong"; 
      (FO,RO,GO,CO))
 
 --auxiliary function to find the action of  T1 on liftings     
-correctionMatrix=method(TypicalValue=>Sequence)
+correctionMatrix=method()
 
 correctionMatrix(Matrix,Matrix):=(F1,R1)->(
      T:=ring F1;
@@ -185,11 +212,10 @@ correctionMatrix(Matrix,Matrix):=(F1,R1)->(
      (M,L))
 
 
+correctDeformation=method (Options=>{SanityCheck=>true,Verbose=>0})
 
-correctDeformation=method (TypicalValue=>Sequence,Options=>true)
-correctopts:={SanityCheck=>true,Verbosity=>4}
 
-correctDeformation(Sequence,Matrix,List):= correctopts >> opts -> (S,M,L)->(
+correctDeformation(Sequence,Matrix,List):=  opts -> (S,M,L)->(
      (F,R,G,C):=S; --we have to do things this way since we can only have at most four arguments
      n:=#F-1; --order so far
      d:=numgens source C_0; --number of obstructions
@@ -198,33 +224,35 @@ correctDeformation(Sequence,Matrix,List):= correctopts >> opts -> (S,M,L)->(
      (lowDeg,lowG):=lowestOrderTerms(F,G,C,n,d);
      T:=ring F_0;
      A:=T/ideal (F_0|transpose lowG); --setup a common ring
-     if opts#Verbosity > 3 then print "Calculating next order residual terms";
+     if opts#Verbose > 3 then print "Calculating next order residual terms";
      fterms:=sum(apply(toList(1..n),i->F_i*R_(n+1-i))); --order n+1 terms
      eterms:=sum(apply(toList(1..(n-2)),i->C_i*G_(n-1-i))); -- terms from base equations
      rem:=substitute(((transpose fterms)+eterms),A); --reduce modulo our ideal
-     if opts#Verbosity >3 then print "Trying to kill obstructions";
+     if opts#Verbose >3 then print "Trying to kill obstructions";
      kobseq:=rem//(substitute((transpose R_0)|M,A));
      CM:=-lift(kobseq^(toList((numgens target R_0)..(numgens target R_0)+(numgens source M)-1)),T); --here is how to perturb F
-     if opts#Verbosity >3 then print "Adjusting family and relations";
+     if opts#Verbose >3 then print "Adjusting family and relations";
      FC:=sum apply(toList(0..#L-1),i->CM_(i,0)*(L_i_0));
      RC:=sum apply(toList(0..#L-1),i->CM_(i,0)*(L_i_1));
      FO:=drop(F,-1)|{F_n+FC};
      RO:=drop(R,-1)|{R_n+RC};
-     if opts#Verbosity>3 and opts#SanityCheck	   then print "Doing Sanity Check";
-     if opts#SanityCheck then if not (transpose(sum(apply(toList(0..(n)),i->FO_i*RO_(n-i))))+sum(apply(toList(0..(n-2)),i->C_i*G_(n-2-i))))==0 then error "Something is wrong"; 
+     if opts#Verbose>3 and opts#SanityCheck	   then print "Doing Sanity Check";
+     if opts#SanityCheck then if not 
+		(transpose(sum(apply(toList(0..(n)),i->FO_i*RO_(n-i))))+sum(apply(toList(0..(n-2)),i->C_i*G_(n-2-i))))==0 then error "Something is wrong"; 
      (FO,RO))
 
-correctDeformation(List,List,List,List):= correctopts >> opts -> (F,R,G,C)->(
+correctDeformation(List,List,List,List):=  opts -> (F,R,G,C)->(
      (M,L):=correctionMatrix(F_1,R_1);
      correctDeformation((F,R,G,C),M,L))
 
 --methodfunction for finding describing first order deformations and relations
-firstOrderDeformations=method(TypicalValue=>Sequence,Options=>true)
-firstOrderDeformations(Matrix,Matrix,Matrix):={SanityCheck=>true} >> opts -> (F,R,T1)->(
+firstOrderDeformations=method(Options=>{SanityCheck=>true,DefParam=>defaultdefparam})
+firstOrderDeformations(Matrix,Matrix,Matrix):=  opts -> (F,R,T1)->(
      if T1==0 then return ({F,0*F},{R,0*R}); -- if rigid, nothing to do
      n:=numgens source T1; --number of deformation parameters
-     T:=(ring F)[t_1..t_n]; --setup ring with parameters
-     FO:={substitute(F,T),(matrix{toList(t_1..t_n)})*transpose substitute(T1,T)}; --first order family
+     defparam:=opts#DefParam; --deformation parameter name
+     T:=(ring F)[(value defparam)_1..(value defparam)_n]; --setup ring with parameters
+     FO:={substitute(F,T),(matrix{toList((value defparam)_1..(value defparam)_n)})*transpose substitute(T1,T)}; --first order family
      RO:={substitute(R,T),(-FO_1*substitute(R,T))//FO_0}; --first order relations
      if opts#SanityCheck then if not (FO_0*RO_1+FO_1*RO_0)==0 then error "Relations don't lift";
      (FO,RO))     
@@ -232,52 +260,62 @@ firstOrderDeformations(Matrix,Matrix,Matrix):={SanityCheck=>true} >> opts -> (F,
 ----------------------------------------------------------------------------
 -- Iterated lifting methods
 ----------------------------------------------------------------------------
+versalopts:={HighestOrder=>20,Verbose=>0,SanityCheck=>true, PolynomialCheck=>true,SmartLift=>true,CorrectionMatrix=>"auto",DefParam=>"t",CacheName=>null}
+versalDeformation=method(Options=>versalopts) 
+localHilbertScheme=method(Options=>versalopts)
 
-versalDeformation=method(Options=> true,TypicalValue=>Sequence) 
-localHilbertScheme=method(Options=>true,TypicalValue=>Sequence)
 
-versalopts:={HighestOrder=>20,Verbosity=>2,TimeLimit=>infinity,SanityCheck=>true, PolynomialCheck=>true,SmartLift=>true,CorrectionMatrix=>"auto"}
-
-versalDeformation (List,List,List,List):=versalopts >> opts ->(f,r,g,c)->(
+versalDeformation (List,List,List,List):= opts ->(f,r,g,c)->(
+     cachename:=opts#CacheName;
+     if cachename===null then cachename=(f_0).cache; 
      ord:=-1+opts#HighestOrder;
      (F,R,G,C):=(f,r,g,c);
      if opts#SmartLift then (
 	  if (opts#CorrectionMatrix==="auto") then (M,L):=correctionMatrix(F_1,R_1) else (M,L)=opts#CorrectionMatrix);
      i:=#F-2;
-     if opts#Verbosity >0 then print "Starting lifting";
+     polysol:=false;
+     timestop:=false;
+     if opts#Verbose >0 then print "Starting lifting";
      while (i<ord) do (
-	  if opts#Verbosity >1 then print ("Order "|toString(i+2));
-	  if opts#TimeLimit==infinity then (F,R,G,C)=(liftDeformation(F,R,G,C,Verbosity=>opts#Verbosity,SanityCheck=>opts#SanityCheck));
-	  if not opts#TimeLimit== infinity then (F,R,G,C)=try(alarm opts#TimeLimit; liftDeformation(F,R,G,C,Verbosity=>opts#Verbosity,SanityCheck=>opts#SanityCheck)) else(if opts#Verbosity>0 then print "Time limit exceeded or something didn't lift";i=ord;(F,R,G,C));
-  	 if opts#SmartLift and numgens source C_0>0 then (F,R)=correctDeformation((F,R,G,C),M,L,Verbosity=>opts#Verbosity,SanityCheck=>opts#SanityCheck);
+	  if opts#Verbose >1 then print ("Order "|toString(i+2));
+	  (F,R,G,C)=(liftDeformation(F,R,G,C,Verbose=>opts#Verbose,SanityCheck=>opts#SanityCheck));
+  	 if opts#SmartLift and numgens source C_0>0 then 
+		(F,R)=correctDeformation((F,R,G,C),M,L,Verbose=>opts#Verbose,SanityCheck=>opts#SanityCheck);
 	  i=i+1;
 	  if opts#PolynomialCheck then ( --check if solution lifts to polynomial ring
-	       if opts#Verbosity>3 then print "Checking polynomial lifting";
+	       if opts#Verbose>3 then print "Checking polynomial lifting";
 	       if F_(-1)==0 and R_(-1)==0 and G_(-1)==0 then (
 	       	    if transpose((sum F)*(sum R))+(sum C)*(sum G)==0 then (
 			 i=ord;
-			 if opts#Verbosity>0 then print "Solution is polynomial";
+			 polysol=true;
+			 if opts#Verbose>0 then print "Solution is polynomial";
 			 )
 		    )
 	       );
-	  );
+	cachename#VersalDeformationResults=(F,R,G,C);  
+	);
+     if not polysol and not timestop then print "Warning: calculation terminated since HighestOrder has been reached.";
      (F,R,G,C))
 
-versalDeformation (Matrix,Matrix,Matrix):=versalopts >> opts ->(F0,T1,T2)->(
+versalDeformation (Matrix,Matrix,Matrix):= opts ->(F0,T1,T2)->(
+     cachename:=opts#CacheName;
+     if cachename===null then cachename=(F0).cache; 
      ord:=-1+opts#HighestOrder;
-     if opts#Verbosity >1 then print "Calculating first order relations";
-     (F,R):=firstOrderDeformations(F0,gens ker F0,T1,SanityCheck=>opts#SanityCheck);
+     if opts#Verbose >1 then print "Calculating first order relations";
+     (F,R):=firstOrderDeformations(F0,gens ker F0,T1,SanityCheck=>opts#SanityCheck,DefParam=>opts#DefParam);
      C:={substitute(T2,ring F_0)};
      G:={};
-     versalDeformation(F,R,G,C,opts))
+     versalDeformation(F,R,G,C,HighestOrder=>opts#HighestOrder,Verbose=>opts#Verbose,
+	  SanityCheck=>opts#SanityCheck, PolynomialCheck=>opts#PolynomialCheck,SmartLift=>opts#SmartLift,
+	  CorrectionMatrix=>opts#CorrectionMatrix,CacheName=>cachename))
    
-versalDeformation Matrix:= versalopts >> opts ->F0->(
-     if opts#Verbosity > 0 then print "Calculating first order deformations and obstruction space";
+versalDeformation Matrix:=  opts ->F0->(
+     if opts#Verbose > 0 then print "Calculating first order deformations and obstruction space";
      versalDeformation(F0,CT^1(F0),CT^2(F0),opts))
 
-localHilbertScheme Matrix:= versalopts >> opts ->F0->(
-     if opts#Verbosity > 0 then print "Calculating first order deformations and obstruction space";
-     versalDeformation(F0,normalModule(0,F0),CT^2(0,F0),opts))
+localHilbertScheme Matrix:=  opts ->F0->(
+     if opts#Verbose > 0 then print "Calculating first order deformations and obstruction space";
+     versalDeformation(F0,normalMatrix(0,F0),CT^2(0,F0),opts))
 
 ---------------------------------------
 -- DOCUMENTATION
@@ -307,16 +345,16 @@ document {
 	  for ",TO versalDeformation," and ",TO localHilbertScheme," are classical
 	  deformation problems, considered in the following articles:"},
      UL {
-	  {"Klaus Altmann, ",EM "The versal deformation of an isolated Gorenstein 
+	  {"[Al97] Klaus Altmann, ",EM "The versal deformation of an isolated Gorenstein 
 	       singularity",
-	   ", Inventiones Mathematicae Vol. 128 No. 3, 1997."},
-      {"Dustin Cartwright and Bernd Sturmfels, ",EM "The Hilbert scheme of the diagonal
+	   ", Inventiones Mathematicae Vol. 128 No. 3, 443-479 1997."},
+      {"[CS10] Dustin Cartwright and Bernd Sturmfels, ",EM "The Hilbert scheme of the diagonal
 	   in a product of projective spaces", ", International Mathematics Research 
-	   Notices Vol. 2010 No. 9."},
-	{"Ragni Piene and Michael Schlessinger, ",EM "On the Hilbert scheme compactification
+	   Notices Vol. 2010 No. 9, 1741-1771."},
+	{"[PS85] Ragni Piene and Michael Schlessinger, ",EM "On the Hilbert scheme compactification
 	of the space of twisted cubic curves", ", American Journal of Mathematics, Vol. 107
-	No. 4, 1985."},
-	{"Henry Pinkham, ",EM "Deformations of variety with G_m action",
+	No. 4, 761-774, 1985."},
+	{"[Pi74] Henry Pinkham, ",EM "Deformations of algebraic varieties with G_m action",
 	      ", Asterisque 20, 1974."},   
       },
  
@@ -327,88 +365,123 @@ document {
 
 document {
      Key =>{localHilbertScheme,(localHilbertScheme,Matrix),
-	  [(localHilbertScheme,Matrix),PolynomialCheck],
-	  [(localHilbertScheme,Matrix),HighestOrder],
-	  [(localHilbertScheme,Matrix),SanityCheck],
-	  [(localHilbertScheme,Matrix),SmartLift],
-	  [(localHilbertScheme,Matrix),CorrectionMatrix],
-	  [(localHilbertScheme,Matrix),TimeLimit]},
+	  [localHilbertScheme,PolynomialCheck],
+	  [localHilbertScheme,HighestOrder],
+	  [localHilbertScheme,SanityCheck],
+	  [localHilbertScheme,SmartLift],
+	  [localHilbertScheme,DefParam],
+	  [localHilbertScheme,CacheName],
+	  [localHilbertScheme,CorrectionMatrix]
+	  },
      Headline => "computes a power series representation of the local Hilbert scheme",
      Usage=>"(F,R,G,C) = localHilbertScheme(F0)",
      Inputs=>{"F0" => Matrix,},
-     Outputs=>{"(F,R,G,C)" => Sequence },
+     Outputs=>{"F" => {ofClass List, " of matrices"},
+		"R"=> {ofClass List, " of matrices"},
+		"G"=> {ofClass List, " of matrices"},
+		"C" =>{ofClass List, " of matrices"},},
      
      PARA{TT "F0"," should  be a matrix with homogeneous entries over some polynomial ring with one row."},
 
      
      PARA{"Each element of the sequence ", TT "(F,R,G,C)"," is a list of matrices
-	  in increasing powers of ",TO t,". Their
+	  in increasing powers of the deformation parameter specified by ",TO DefParam,". Their
 	  sums satisfy the deformation equation ",
-	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of ",TO t," equal to the
+	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
 	  length of ",TT "F",". Furthermore,
 	  ",TT "F_0=F0",", ",TT "R_0=gens ker F0",", ",TT "C_0=T^2(0,F_0)", " and ",TT "F_1"," consists 
-	  of first order perturbations corresponding to ",TT "normalModule(0,F0)",". Thus,
+	  of first order perturbations corresponding to ",TT "normalMatrix(0,F0)",". Thus,
 	   ",TT "F"," and ",TT "G"," represent a universal family and
 	  local analytic equations for the Hilbert scheme." 
 	  }, 
 	
-	PARA{"Several options are available to control the termination of the calculation. 
+	 	PARA{"Several options are available to control the termination of the calculation. 
 	The calculation will terminate at the very latest after reaching order equal to 
 	the option ",	TO HighestOrder,
-	". If any single lifting step takes longer than ", TO TimeLimit,
-	" the algorithm will terminate earlier. If ",TO PolynomialCheck," is set to ",
-        TO true,", then the algorithm will check if the present solution lifts 
+	", which has default value ",TT "20",". If this order is reached, a warning message is generated.
+	 If ",TO PolynomialCheck," is set to ",
+        TO true,", as is the default, then the algorithm will check if the present solution lifts 
 	to infinite order
-	and terminate if this is the case. If ",TO SanityCheck," is set to ",TO true,", then
+	and terminate if this is the case. If ",TO SanityCheck," is set to ",TO true,", as is the
+	default, then
 	the algorithm will check that the present solution really does solve the deformation
-	equation, and terminate if this is not the case. Finally, ",TO Verbosity," may be
-	used to control the verbosity of the output."}, 
+	equation, and terminate with an error if this is not the case."},
+	  
+	PARA{"The option ",TO Verbose," may be
+	used to control the verbosity of the output. Its value should be an integer, with higher values corresponding
+	to more verbose output. Default value is ",TT "0","."}, 
 	
 	PARA{"The option ", TO SmartLift," is also available, which controls whether the algorithm
 	     spends extra time trying to find liftings which introduce no new obstructions at the next 
-	     highest order. The option ",TO CorrectionMatrix," may be used to control which liftings 
-	     are considered."},
-	 
- 	PARA {"For example, consider a degenerate twisted cubic curve:"},
+	     highest order. By default, this option is enabled. The option ",TO CorrectionMatrix," may be used to control which liftings 
+	     are considered."},	
+	     
+	PARA{"After each step of lifting, the solution ",TT "(F,R,G,C)"," to the deformation equation is cached. By default, it is stored in ",TT "F0.cache#VersalDeformationResults"," but may stored elsewhere by setting the option ",TO CacheName," to something other than ",TO null,"."}, 
+
+ 	PARA {"For example, consider a degenerate twisted cubic curve, see ",TO2 {VersalDeformations,"[PS85]"},
+	     ":"},
      	EXAMPLE {"S=QQ[x,y,z,w];",
 	"F0=matrix {{x*z,y*z,z^2,x^3}}",
-	"(F,R,G,C)=localHilbertScheme(F0);"
+	"(F,R,G,C)=localHilbertScheme(F0,Verbose=>2);"
 	},
      	PARA {"Local equations for the Hilbert scheme are thus given by"},
-	EXAMPLE {"sum G"},
+	EXAMPLE {"T=ring first G;",
+	     "sum G"},
 	Caveat => {"The output may not be the local Hilbert scheme if standard comparison theorems 
 	     do not hold for the ideal generated by ",TT "FO","."}, 
      }
 
 document {
-     Key =>{(versalDeformation,List,List,List,List),
-	  [(versalDeformation,List,List,List,List),SanityCheck],
-	  [(versalDeformation,List,List,List,List),PolynomialCheck],
-	  [(versalDeformation,List,List,List,List),HighestOrder],
-	  [(versalDeformation,List,List,List,List),SmartLift],
-	  	  [(versalDeformation,List,List,List,List),TimeLimit],
-		  	  [(versalDeformation,List,List,List,List),CorrectionMatrix]
+     Key =>{(versalDeformation,List,List,List,List)
 	  	  },
      Usage=>"(F,R,G,C) = versalDeformation(F0)\n
      (F,R,G,C) = versalDeformation(F0,T1,T2)",
      Inputs=>{"f"=>List,"r"=>List,"g"=>List,"c"=>List},
-     Outputs=>{"(F,R,G,C)" => Sequence },
+     Outputs=>{"F" => {ofClass List, " of matrices"},
+		"R"=> {ofClass List, " of matrices"},
+		"G"=> {ofClass List, " of matrices"},
+		"C" =>{ofClass List, " of matrices"},},
      Headline => "continues calculation of  a versal deformation",
-     PARA {"The input ",TT "(f,r,g,c)"," should be a valid solution to the deformation equation output in
+     PARA {"Each element of the sequence ", TT "(F,R,G,C)"," is a list of matrices
+	  in increasing powers of the deformation parameter. The input ",TT "(f,r,g,c)"," should be a valid solution to the deformation equation output in
      the form done by ",TO (versalDeformation,Matrix,Matrix,Matrix),". This function continues lifting this solution
-     to higher order. All options described for ",TO (versalDeformation,Matrix,Matrix,Matrix)," may be used 
+     to higher order. All options described for ",TO (versalDeformation,Matrix)," may be used 
      to the same effect."},
+	PARA{"After each step of lifting, the solution ",TT "(F,R,G,C)"," to the deformation equation is cached. By default, it is stored in ",TT "(f_0).cache#VersalDeformationResults"," but may stored elsewhere by setting the option ",TO CacheName," to something other than ",TO null,"."}, 
+
      PARA {"This function is especially useful for finding one-parameter families when the versal family
-     is too complicated to calculate."}
-         }
+     is too complicated to calculate."},
+             PARA {"We may consider the example of the versal deformation of a degree 12 toric Fano threefold:"},
+     EXAMPLE {"S=QQ[x1,x2,x3,x4,x5,x6,y1,y2,z];",
+	  "I=ideal {x1*x4-z^2,x2*x5-z^2,x3*x6-z^2,x1*x3-z*x2,x2*x4-z*x3,x3*x5-z*x4,x4*x6-z*x5,x5*x1-z*x6,x6*x2-z*x1,y1*y2-z^2};",
+	"F0=gens I;",
+	"(F,R,G,C)=versalDeformation(F0,CT^1(0,F0),CT^2(0,F0),HighestOrder=>2);"},
+     PARA {"We stop the calculation at order 2, since in this case, the solution to the deformation
+equation calculated by the lifting algorithm will not be polynomial. Equations for the tangent cone at the origin of a versal base space are"},
+     EXAMPLE {"T=ring first G;",
+	  "G_0"},
+     PARA {"This decomposes into three components:"},
+     EXAMPLE {"decompose ideal G_0"},
+     PARA {"We now find a one-parameter deformation onto the component of highest dimension:"},
+     EXAMPLE {"A=(coefficientRing ring F_0)[s];",
+	"sublist=apply(gens T,v->(if v==t_19 or v==t_20  then return v=>s;v=>0));",
+	"f=apply(F,i->sub(i,sublist));",
+	"r=apply(R,i->sub(i,sublist));",
+	"g=apply(G,i->sub(i,sublist));",
+	"c=apply(C,i->sub(i,sublist));",
+	"(F,R,G,C)=versalDeformation(f,r,g,c);",
+	"sum F"}   
+}
 
 document{
      	 Key=>{versalDeformation},
 	      Headline => "computes a power series representation of a versal deformation",
 	      PARA{"Here we provide an overview of our approach to solving deformation problems.
 	      For details on using the command ",TT "versalDeformation",", please see the documentation 
-	      links below.  For simplicity, we restrict to the case of the 
-	      versal deformation of an isolated singularity, "
+	      links below.  
+	      The most basic use of the method is via ",TO (versalDeformation,Matrix),", which computes
+	      the versal deformation of an isolated singularity. We restrict to this case in the following
+	      overview."
 	      },
 	      PARA{TEX///First we fix some notation. Let $S$ be a polynomial ring over 
 		   some field $k$, and let $I$ be an ideal of $S$ defining a 
@@ -457,35 +530,23 @@ The $G^i$ now give equations for the miniversal base space of $X$.///},
 	 }
 document {
      Key =>{(versalDeformation,Matrix,Matrix,Matrix),
-	  (versalDeformation,Matrix),
-	  [(versalDeformation,Matrix),SanityCheck],
-   	  [(versalDeformation,Matrix),PolynomialCheck],
-	  [(versalDeformation,Matrix),HighestOrder],
-	  [(versalDeformation,Matrix),SmartLift],
-	  [(versalDeformation,Matrix),TimeLimit],
-	    [(versalDeformation,Matrix),CorrectionMatrix],
-  	  [(versalDeformation,Matrix,Matrix,Matrix),SanityCheck],
-   	  [(versalDeformation,Matrix,Matrix,Matrix),PolynomialCheck],
-	  [(versalDeformation,Matrix,Matrix,Matrix),HighestOrder],
-	  [(versalDeformation,Matrix,Matrix,Matrix),SmartLift],
-	   [(versalDeformation,Matrix,Matrix,Matrix),CorrectionMatrix],
-	  [(versalDeformation,Matrix,Matrix,Matrix),TimeLimit]
 	  	  },
      Usage=>"(F,R,G,C) = versalDeformation(F0)\n
      (F,R,G,C) = versalDeformation(F0,T1,T2)",
      Inputs=>{"F0" => Matrix, "T1" => Matrix, "T2" => Matrix},
-     Outputs=>{"(F,R,G,C)" => Sequence },
+     Outputs=>{"F" => {ofClass List, " of matrices"},
+		"R"=> {ofClass List, " of matrices"},
+		"G"=> {ofClass List, " of matrices"},
+		"C" =>{ofClass List, " of matrices"},},
      Headline => "computes a power series representation of a versal deformation",
      
      PARA{TT "F0",", ",TT "T1",", and ",TT "T2"," should all be matrices over some common
-	  polynomial ring, and ",TT "F0"," should have one row. If ",TT "T1"," and ",TT "T2",
-	  " are omitted, then bases of the first and second cotangent cohomology modules
-     for ",TT "F0"," are used."},
+	  polynomial ring, and ",TT "F0"," should have one row."}, 
      
      PARA{"Each element of the sequence ", TT "(F,R,G,C)"," is a list of matrices
-	  in increasing powers of ",TO t,". Their
+	  in increasing powers of the deformation parameter specified by ",TO DefParam,". Their
 	  sums satisfy the deformation equation ",
-	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of ",TO t," equal to the
+	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
 	  length of ",TT "F",". Furthermore,
 	  ",TT "F_0=F0",", ",TT "R_0=gens ker F0",", the columns of ",TT "C_0"," are multiples
 	  of those of ",TT "T2", " and ",TT "F_1"," consists 
@@ -498,106 +559,188 @@ document {
 	PARA{"Several options are available to control the termination of the calculation. 
 	The calculation will terminate at the very latest after reaching order equal to 
 	the option ",	TO HighestOrder,
-	". If any single lifting step takes longer than ", TO TimeLimit,
-	" the algorithm will terminate earlier. If ",TO PolynomialCheck," is set to ",
-        TO true,", then the algorithm will check if the present solution lifts 
+	", which has default value ",TT "20",". If this order is reached, a warning message is generated.
+	If ",TO PolynomialCheck," is set to ",
+        TO true,", as is the default, then the algorithm will check if the present solution lifts 
 	to infinite order
-	and terminate if this is the case. If ",TO SanityCheck," is set to ",TO true,", then
+	and terminate if this is the case. If ",TO SanityCheck," is set to ",TO true,", as is the
+	default, then
 	the algorithm will check that the present solution really does solve the deformation
-	equation, and terminate if this is not the case. Finally, ",TO Verbosity," may be
-	used to control the verbosity of the output."},  
+	equation, and terminate with an error if this is not the case."},
+	  
+	PARA{"The option ",TO Verbose," may be
+	used to control the verbosity of the output. Its value should be an integer, with higher values corresponding
+	to more verbose output. Default value is ",TT "0","."}, 
 	
 	PARA{"The option ", TO SmartLift," is also available, which controls whether the algorithm
-	spends extra time trying to find liftings which introduce no new obstructions at the next 
-	highest order.  The option ",TO CorrectionMatrix," may be used to control which liftings 
-	     are considered."},
+	     spends extra time trying to find liftings which introduce no new obstructions at the next 
+	     highest order. By default, this option is enabled. The option ",TO CorrectionMatrix," may be used to control which liftings 
+	     are considered."},	
+	PARA{"After each step of lifting, the solution ",TT "(F,R,G,C)"," to the deformation equation is cached. By default, it is stored in ",TT "F0.cache#VersalDeformationResults"," but may stored elsewhere by setting the option ",TO CacheName," to something other than ",TO null,"."}, 
+	
 	     
-     PARA {"For example, consider the cone over the rational normal curve of degree four:"},
-     EXAMPLE {"S=QQ[x_0..x_4];",
-	  "I=minors(2,matrix {{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});",
-	  "F0=gens I",
-	  "(F,R,G,C)=versalDeformation(F0);"},
-     PARA {"Equations for a versal base space are"},
-     EXAMPLE {"sum G"},
-     PARA {"The versal family is given by"},
-     EXAMPLE {"sum F"},
      
-     PARA {"We may also consider the example of the cone over the del Pezzo surface of degree
-	  six:"},
-     EXAMPLE {"S=QQ[x1,x2,x3,x4,x5,x6,z];",
-	  "I=ideal {x1*x4-z^2,x2*x5-z^2,x3*x6-z^2,x1*x3-z*x2,x2*x4-z*x3,x3*x5-z*x4,x4*x6-z*x5,x5*x1-z*x6,x6*x2-z*x1};",
-	"F0=gens I;",
-	"(F,R,G,C)=versalDeformation(F0);"},
-     PARA {"Equations for a versal base space are"},
-     EXAMPLE {"sum G"},
-     PARA {"The versal family is given by"},
-     EXAMPLE {"sum F"},  
-     
-     PARA{"We may also compute local multigraded Hilbert schemes. Here, we consider
+     PARA{"We may use this method to compute local multigraded Hilbert schemes. Here, we consider
 	  the Borel fixed ideal for the multigraded Hilbert scheme of the diagonal in
-	  a product of three projective planes:"},
+	  a product of three projective planes, see ",TO2 {VersalDeformations,"[CS10]"},":"},
      EXAMPLE{
 	  "S=QQ[x1,x2,x3,y1,y2,y3,z1,z2,z3,Degrees=>
 	  {{1,0,0},{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1},{0,0,1}}];",
 	  "I=ideal {y1*z2, x1*z2, y2*z1, y1*z1, x2*z1, x1*z1, x1*y2, x2*y1,
 	   x1*y1, x2*y2*z2};",
-	  "(F,R,G,C)=versalDeformation(gens I,normalModule({0,0,0},gens I),
-	  CT^2({0,0,0},gens I));"},
+	  "(F,R,G,C)=versalDeformation(gens I,normalMatrix({0,0,0},gens I),
+	  CT^2({0,0,0},gens I),Verbose=>2);"},
      PARA {"Local equations for the multigraded Hilbert scheme  are"},
-     EXAMPLE {"sum G"},
-     PARA {"At this point, the multigraded HIlbert scheme has 7 irreducible components:"},
+     EXAMPLE {"T=ring first G;",
+	  "sum G"},
+     PARA {"At this point, the multigraded Hilbert scheme has 7 irreducible components:"},
      EXAMPLE {"# primaryDecomposition ideal sum G"},	      
       }
 
+
+
+document {
+     Key =>{
+	  (versalDeformation,Matrix),
+	  [versalDeformation,SanityCheck],
+   	  [versalDeformation,PolynomialCheck],
+	  [versalDeformation,HighestOrder],
+	  [versalDeformation,SmartLift],
+	  [versalDeformation,CacheName],
+  	  [versalDeformation,DefParam],
+	    [versalDeformation,CorrectionMatrix],
+  	 	  	  },
+     Usage=>"(F,R,G,C) = versalDeformation(F0)",
+     Inputs=>{"F0" => Matrix},
+     Outputs=>{"F" => {ofClass List, " of matrices"},
+		"R"=> {ofClass List, " of matrices"},
+		"G"=> {ofClass List, " of matrices"},
+		"C" =>{ofClass List, " of matrices"},},
+     Headline => "computes a power series representation of a versal deformation",
+     
+     PARA{TT "F0", " should  be a matrix over some 
+	  polynomial ring with one row."},
+	  
+     
+     PARA{"Each element of the sequence ", TT "(F,R,G,C)"," is a list of matrices
+	  in increasing powers of the deformation parameter specified by ",TO DefParam,". Their
+	  sums satisfy the deformation equation ",
+	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
+	  length of ",TT "F",". Furthermore,
+	  ",TT "F_0=F0",", ",TT "R_0=gens ker F0",", the columns of ",TT "C_0"," are multiples
+	  of the those of ",TO cotangentCohomology2,TT "(F0)",",  and ",TT "F_1"," consists 
+	  of first order perturbations corresponding to the basis of ",TO cotangentCohomology1,TT "(F0)",
+	  ". Thus, ",TT "F"," and ",TT "G"," represent a versal family and
+	  equations for a versal base space for the scheme cut out by the columns of ",TT "F0","." 
+	  }, 
+	
+	PARA{"Several options are available to control the termination of the calculation. 
+	The calculation will terminate at the very latest after reaching order equal to 
+	the option ",	TO HighestOrder,
+	", which has default value ",TT "20",". If this order is reached, a warning message is generated.
+	If ",TO PolynomialCheck," is set to ",
+        TO true,", as is the default, then the algorithm will check if the present solution lifts 
+	to infinite order
+	and terminate if this is the case. If ",TO SanityCheck," is set to ",TO true,", as is the
+	default, then
+	the algorithm will check that the present solution really does solve the deformation
+	equation, and terminate with an error if this is not the case."},
+	  
+	PARA{"The option ",TO Verbose," may be
+	used to control the verbosity of the output. Its value should be an integer, with higher values corresponding
+	to more verbose output. Default value is ",TT "0","."}, 
+	
+	PARA{"The option ", TO SmartLift," is also available, which controls whether the algorithm
+	     spends extra time trying to find liftings which introduce no new obstructions at the next 
+	     highest order. By default, this option is enabled. The option ",TO CorrectionMatrix," may be used to control which liftings 
+	     are considered."},	
+	PARA{"After each step of lifting, the solution ",TT "(F,R,G,C)"," to the deformation equation is cached. By default, it is stored in ",TT "F0.cache#VersalDeformationResults"," but may stored elsewhere by setting the option ",TO CacheName," to something other than ",TO null,"."}, 
+	
+	     
+     PARA {"For example, consider the cone over the rational normal curve of degree four, see ",TO2 {VersalDeformations,"[Pi74]"},":"},
+     EXAMPLE {"S=QQ[x_0..x_4];",
+	  "I=minors(2,matrix {{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});",
+	  "F0=gens I",
+	  "(F,R,G,C)=versalDeformation(F0,Verbose=>2);"},
+     PARA {"Equations for a versal base space are"},
+     EXAMPLE {"T=ring first G;",
+	  "sum G"},
+     PARA {"The versal family is given by"},
+     EXAMPLE {"sum F"},
+     
+     PARA {"We may also consider the example of the cone over the del Pezzo surface of degree
+	  six, see ",TO2 {VersalDeformations,"[Al97]"},":"},
+     EXAMPLE {"S=QQ[x1,x2,x3,x4,x5,x6,z];",
+	  "I=ideal {x1*x4-z^2,x2*x5-z^2,x3*x6-z^2,x1*x3-z*x2,x2*x4-z*x3,x3*x5-z*x4,x4*x6-z*x5,x5*x1-z*x6,x6*x2-z*x1};",
+	"F0=gens I;",
+	"(F,R,G,C)=versalDeformation(F0,Verbose=>2);"},
+     PARA {"Equations for a versal base space are"},
+     EXAMPLE {"T=ring first G;",
+	  "sum G"},
+     PARA {"The versal family is given by"},
+     EXAMPLE {"sum F"}  
+      } 
+
 document {
      Key =>{liftDeformation,(liftDeformation,List,List,List,List),
-	  [(liftDeformation,List,List,List,List),SanityCheck]},
+	  [liftDeformation,SanityCheck]
+     },
      Headline => "lift a solution of the deformation equation to the next order",
      Usage => "(F,R,G,C) = liftDeformation(f,r,g,c)",
      Inputs=> {"f"=>List,"r"=>List,"g"=>List,"c"=>List},
-     Outputs=>{"(F,R,G,C)"=>Sequence},
+     Outputs=>{"F" => {ofClass List, " of matrices"},
+		"R"=> {ofClass List, " of matrices"},
+		"G"=> {ofClass List, " of matrices"},
+		"C" =>{ofClass List, " of matrices"},},
      PARA{"Each element of the sequence ", TT "(f,r,g,c)"," is a list of matrices
-	  in increasing powers of ",TO t,". Their
+	  in increasing powers of some deformation parameter. Their
 	  sums satisfy the deformation equation ",
-	  TT "transpose ( (sum f)*(sum r))+(sum c)*sum(g)==0"," up to powers of ",TO t," equal to the
+	  TT "transpose ( (sum f)*(sum r))+(sum c)*sum(g)==0"," up to powers of the deformation parameter equal to the
 	  length of ",TT "f","." 
 	    },
        
      PARA{"Each element of the output sequence ", TT "(F,R,G,C)"," is a list of matrices
-	  in increasing powers of ",TO t,". The first three matrices of the sequence
+	  in increasing powers of the deformation parameter. The first three matrices of the sequence
 	  are gotten from ", TT "(f,r,g)"," by appending one
 	  matrix to each list in the sequence,
 	  and furthermore the columns of ",TT "C_0"," are multiples of those of ",TT "c_0",
 	  ". The other matrices are chosen to satisfy
 	  the deformation equation ",
-	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of ",TO t," equal to the
-	  length of ",TT "F",", provided that there is such a solution." 
+	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
+	  length of ",TT "F",", provided that there is such a solution. If ",TO SanityCheck," is set to ",TO true,", as is the
+	default, then
+	the algorithm will check that the lifted solution really does solve the deformation
+	equation, and terminate with an error if this is not the case." 
 	    },
-     PARA {"For example, consider the cone over the rational normal curve of degree four:"},
+     PARA {"For example, consider the cone over the rational normal curve of degree four, see ",TO2 {VersalDeformations,"[Pi74]"},":"},
      EXAMPLE {"S=QQ[x_0..x_4];",
 	  "I=minors(2,matrix {{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});",
 	  "F0=gens I",
-	  "T1=cotanComplexOne(F0);",
+	  "T1=cotangentCohomology1(F0);",
  	  "R0=gens ker F0;",
 	  "(f,r)=firstOrderDeformations(F0,R0,T1);"
 	  },
      PARA {"We now lift the first order deformations to second order:"},
      EXAMPLE{
-      "T2=cotanComplexTwo(F0);",
+      "T2=cotangentCohomology2(F0);",
       "c={substitute(T2,ring f_0)};",
       "g={};",
       "(F,R,G,C)=liftDeformation(f,r,g,c);",
+      "T=ring first F;",
       "sum F -- equations for family",
       "sum G -- base equations",},
      }
 
 document {
      Key =>{firstOrderDeformations,(firstOrderDeformations,Matrix,Matrix,Matrix),
-	  [(firstOrderDeformations,Matrix,Matrix,Matrix),SanityCheck]},
+	  [firstOrderDeformations,SanityCheck],
+     	  [firstOrderDeformations,DefParam]},
      Headline => "use tangent space to create first order peturbations and find relations",
      Usage => "(F,R) = firstOrderDeformations(F0,R0,T1)",
      Inputs => {"F0" =>Matrix, "R0"=>Matrix, "T1"=>Matrix},
-     Outputs => {"(F,R)" =>Sequence},
+     Outputs=>{"F" => {ofClass List, " of matrices"},
+		"R"=> {ofClass List, " of matrices"},
+		},
      PARA{TT "F0",", ",TT "R0",", and ",TT "T1"," should all be matrices over some common
 	  polynomial ring, and ",TT "F0"," and ",TT "T1"," should have one row. ",TT "R0"," should be the 
 	  first syzygy matrix of ",TT "F0"," and ",TT "T1"," should have the same number of
@@ -606,12 +749,16 @@ document {
      PARA{TT "F"," is a list of length two with ",TT "F_0=F0"," and ",TT "F_1"," the first
 	  order perturbations corresponding to ",TT "T1",". ",TT "R"," is a list of length
 	  two with ",TT "R_0=R0"," and ",TT "R_1"," such that
-	  ",TT "F_0*R_1+F_1*R_0==0","."}, 
-         PARA {"For example, consider the cone over the rational normal curve of degree four:"},
+	  ",TT "F_0*R_1+F_1*R_0==0",". If ",TO SanityCheck," is set to ",TO true,", as is the
+	default, then
+	the algorithm will check that this equation is satisfied,
+	 and terminate with an error if this is not the case."}, 
+     PARA{"The parameters used in the perturbations may be specified by the option ",TO DefParam,"."},
+         PARA {"For example, consider the cone over the rational normal curve of degree four, see ",TO2 {VersalDeformations,"[Pi74]"},":"},
      EXAMPLE {"S=QQ[x_0..x_4];",
 	  "I=minors(2,matrix {{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});",
 	  "F0=gens I",
-	  "T1=cotanComplexOne(F0);",
+	  "T1=cotangentCohomology1(F0);",
 	  "R0=gens ker F0;",
 	  "(F,R)=firstOrderDeformations(F0,R0,T1)"
 	  },
@@ -620,28 +767,33 @@ document {
 
 document {
      Key =>{correctDeformation,(correctDeformation,List,List,List,List),
-	  [(correctDeformation,List,List,List,List),SanityCheck],
+	  [correctDeformation,SanityCheck],
 	  (correctDeformation,Sequence,Matrix,List),
-     	  [(correctDeformation,Sequence,Matrix,List),SanityCheck]},
+     	  },
      Headline => "correct lifting to avoid obstructions at next order",
      Usage => "(F,R) = correctDeformation(f,r,g,c)\n
      (F,R) = correctDeformation(S,M,L)",
      Inputs=> {"f"=>List,"r"=>List,"g"=>List,"c"=>List,
 	  "(f,r,g,c)"=>Sequence,"M"=>Matrix,"L"=>List},
-     Outputs=>{"(F,R)"=>Sequence},
-     PARA {TT "(f,r,g,c)"," should be as in the output of ", TO liftDeformation ," and ", TT "(M,L)",
+     Outputs=>{"F" => {ofClass List, " of matrices"},
+     "R" => {ofClass List, " of matrices"},},
+     PARA {"Each element of the sequence ", TT "(F,R)"," is a list of matrices
+	  in increasing powers of the deformation parameter. ",TT "(f,r,g,c)"," should be as in the output of ", TO liftDeformation ," and ", TT "(M,L)",
 	  "should be as in the output of ", TO correctionMatrix,". If the latter are omitted, they are replaced
 	  by ", TT "(M,L)=correctionMatrix(f_1,r_1)","."},
      PARA {TT "correctDeformation"," perturbs the last entries of ",TT "f"," and ",TT "r"," such that  
      if possible, the next invocation of ", TO liftDeformation," will introduce no new terms in the 
-     obstruction equations."},
-     PARA {"For example, consider a degenerate twisted cubic curve:"},
+     obstruction equations.  If ",TO SanityCheck," is set to ",TO true,", as is the
+	default, then
+	the algorithm will check that the corrected perturbation really does solve the deformation
+	equation, and terminate with an error if this is not the case."},
+     PARA {"For example, consider a degenerate twisted cubic curve, see ",TO2 {VersalDeformations,"[PS85]"},":"},
      EXAMPLE {"S=QQ[x,y,z,w];",
      "F0=matrix {{x*z,y*z,z^2,x^3}};",
-     	"(f,r,g,c)=localHilbertScheme(F0,Verbosity=>0,HighestOrder=>2,SmartLift=>false);",
-	"(liftDeformation(f,r,g,c,Verbosity=>0))_2",
+     	"(f,r,g,c)=localHilbertScheme(F0,Verbose=>0,HighestOrder=>2,SmartLift=>false);",
+	"(liftDeformation(f,r,g,c))_2",
 	"(F,R)=correctDeformation(f,r,g,c);",
-	"(liftDeformation(F,R,g,c,Verbosity=>0))_2"},
+	"(liftDeformation(F,R,g,c))_2"},
      Caveat=>{"If the obstruction space is zero, this will generate an error."}    
 	}
      
@@ -658,95 +810,109 @@ document {
      
      
 document {
-     Key =>{cotanComplexOne,(cotanComplexOne,Matrix),(cotanComplexOne,ZZ,Matrix),
-	  (cotanComplexOne,List,Matrix),(cotanComplexOne,InfiniteNumber,ZZ,Matrix),
-	  (cotanComplexOne,ZZ,InfiniteNumber,Matrix),(cotanComplexOne,ZZ,ZZ,Matrix)},
+     Key =>{cotangentCohomology1,
+	  (cotangentCohomology1,Matrix),(cotangentCohomology1,ZZ,Matrix),
+	  (cotangentCohomology1,List,Matrix),(cotangentCohomology1,InfiniteNumber,ZZ,Matrix),
+	  (cotangentCohomology1,ZZ,InfiniteNumber,Matrix),(cotangentCohomology1,ZZ,ZZ,Matrix),
+	  (cotangentCohomology1,Ideal),(cotangentCohomology1,ZZ,Ideal),
+	  (cotangentCohomology1,List,Ideal),(cotangentCohomology1,InfiniteNumber,ZZ,Ideal),
+	  (cotangentCohomology1,ZZ,InfiniteNumber,Ideal),(cotangentCohomology1,ZZ,ZZ,Ideal),
+	[cotangentCohomology1,SourceRing]},
      Headline => "calculate first cotangent cohomology",
-     Usage => "T1 = cotanComplexOne(F) \n
-     T1 = cotanComplexOne(deg,F) \n
-     T1 = cotanComplexOne(lo,hi,F)",
-     Inputs => {"F" =>Matrix,  "deg" => {"a ",(TO2 {List,"list"})," or ",(TO2 {ZZ,"integer"})},
+     Usage => "T1 = cotangentCohomology1(F) \n
+     T1 = cotangentCohomology1(deg,F) \n
+     T1 = cotangentCohomology1(lo,hi,F)",
+     Inputs => {"F" => {"a ",(TO Matrix)," or an ",(TO Ideal)},  "deg" => {"a ",(TO2 {List,"list"})," or ",(TO2 {ZZ,"integer"})},
 	  "lo" => {"an ",(TO2 {ZZ,"integer"})," or -",(TO infinity)},
 	  "hi" => {"an ",(TO2 {ZZ,"integer"})," or ",(TO infinity)}
 	  },
      Outputs=>{"T1" => Matrix},
-     PARA {"The matrix ",TT "F"," must have a single row.  The output ",TT "T1"," is a matrix
+     PARA {"The matrix ",TT "F"," must have a single row. Inputing an ideal instead has the same effect as inputing ",TT "gens F",".  The output ",TT "T1"," is a matrix
 	  over the same ring as ",TT "F"," whose columns form a basis for 
 	  (a graded piece of) the first cotangent cohomology
 	  module of ",TT "S/I",", where ",TT "S"," is the ring of ",TT "F"," and ",TT "I",
 	  " is ideal generated by the columns of ",TT "F",". Selection
 	  of graded pieces is done in the same manner as with ",TO basis,". If the selected
-	  pieces are infinite dimensional, an error occurs."},
-     PARA {"For example, consider the cone over the rational normal curve of degree four:"},
+	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashing as with ",TO basis,"."},
+         PARA {"This is ",ofClass MethodFunction,", which may also be accessed via the ",TO ScriptedFunctor," ",TO CT,"."},
+	  PARA {"For example, consider the cone over the rational normal curve of degree four, see ",TO2 {VersalDeformations,"[Pi74]"},":"},
      EXAMPLE {"S=QQ[x_0..x_4];",
 	  "I=minors(2,matrix {{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});",
-	  "F=gens I",
-	  "T1=cotanComplexOne(F)"},
+	  "T1=cotangentCohomology1(I)"},
      PARA {"The first cotangent cohomology module, and thus the tangent space of the versal deformation,
 	   is four dimensional."},
      }
 
+
 document { Key
-     =>{cotanComplexTwo,(cotanComplexTwo,Matrix),(cotanComplexTwo,ZZ,Matrix),
-     (cotanComplexTwo,List,Matrix),(cotanComplexTwo,InfiniteNumber,ZZ,Matrix),
-     (cotanComplexTwo,ZZ,InfiniteNumber,Matrix),(cotanComplexTwo,ZZ,ZZ,Matrix)},
+     =>{cotangentCohomology2,(cotangentCohomology2,Matrix),(cotangentCohomology2,ZZ,Matrix),
+     (cotangentCohomology2,List,Matrix),(cotangentCohomology2,InfiniteNumber,ZZ,Matrix),
+     (cotangentCohomology2,ZZ,InfiniteNumber,Matrix),(cotangentCohomology2,ZZ,ZZ,Matrix),
+     (cotangentCohomology2,Ideal),(cotangentCohomology2,ZZ,Ideal),
+     (cotangentCohomology2,List,Ideal),(cotangentCohomology2,InfiniteNumber,ZZ,Ideal),
+     (cotangentCohomology2,ZZ,InfiniteNumber,Ideal),(cotangentCohomology2,ZZ,ZZ,Ideal),
+	[cotangentCohomology2,SourceRing]},
      Headline => "calculate second cotangent cohomology",
-      Usage => "T2 = cotanComplexTwo(F) \n
-     T2 = cotanComplexTwo(deg,F) \n
-     T2 = cotanComplexTwo(lo,hi,F)",
-     Inputs => {"F" =>Matrix,  "deg" => {"a ",(TO2 {List,"list"})," or ",(TO2 {ZZ,"integer"})},
+      Usage => "T2 = cotangentCohomology2(F) \n
+     T2 = cotangentCohomology2(deg,F) \n
+     T2 = cotangentCohomology2(lo,hi,F)",
+     Inputs => {"F" =>{"a ",(TO Matrix)," or an ",(TO Ideal)},  "deg" => {"a ",(TO2 {List,"list"})," or ",(TO2 {ZZ,"integer"})},
 	  "lo" => {"an ",(TO2 {ZZ,"integer"})," or -",(TO infinity)},
 	  "hi" => {"an ",(TO2 {ZZ,"integer"})," or ",(TO infinity)}
 	  },
      Outputs=>{"T2" => Matrix},
-     PARA {"The matrix ",TT "F"," must have a single row.  The output ",TT "T2"," is a matrix
+     PARA {"The matrix ",TT "F"," must have a single row.  Inputing an ideal instead has the same effect as inputing ",TT "gens F",".  The output ",TT "T2"," is a matrix
 	  over the same ring as ",TT "F"," whose columns form a basis for 
 	  (a graded piece of) the second cotangent cohomology
 	  module of ",TT "S/I",", where ",TT "S"," is the ring of ",TT "F"," and ",TT "I",
 	  " is ideal generated by the columns of ",TT "F",". Selection
 	  of graded pieces is done in the same manner as with ",TO basis,". If the selected
-	  pieces are infinite dimensional, an error occurs."},
-     PARA {"For example, consider the cone over the rational normal curve of degree four:"},
+	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashing as with ",TO basis,"."},
+     PARA {"This is ",ofClass MethodFunction,", which may also be accessed via the ",TO ScriptedFunctor," ",TO CT,"."},
+     PARA {"For example, consider the cone over the rational normal curve of degree four, see ",TO2 {VersalDeformations,"[Pi74]"},":"},
      EXAMPLE {"S=QQ[x_0..x_4];",
 	  "I=minors(2,matrix {{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});",
-	  "F=gens I",
-	  "T2=cotanComplexTwo(F)"},
+	  "T2=cotangentCohomology2(I)"},
      PARA {"The second cotangent cohomology module is three dimensional. Thus, the base space of the
 	  versal deformation is cut out by (at most) three equations."
 	   },
-      PARA {"We also consider the graded example of a degenerate twisted cubic curve:"},
+      PARA {"We also consider the graded example of a degenerate twisted cubic curve, see ",TO2 {VersalDeformations,"[PS85]"},":"},
      EXAMPLE {"S=QQ[x,y,z,w];",
 	  "F=matrix {{x*z,y*z,z^2,x^3}}",
-	  "T2=cotanComplexTwo(0,F)"},
+	  "T2=cotangentCohomology2(0,F)"},
      PARA {"The degree zero component of the second cotangent cohomology module
 	  is four dimensional. Thus the Hilbert scheme is (locally analytically)
 	   cut out by (at most) four equations."},
       }
 
 document {
-     Key =>{normalModule,(normalModule,Matrix),(normalModule,ZZ,Matrix),
-	  (normalModule,List,Matrix),(normalModule,InfiniteNumber,ZZ,Matrix),
-	  (normalModule,ZZ,InfiniteNumber,Matrix),(normalModule,ZZ,ZZ,Matrix)},
+     Key =>{normalMatrix,(normalMatrix,Matrix),(normalMatrix,ZZ,Matrix),
+	  (normalMatrix,List,Matrix),(normalMatrix,InfiniteNumber,ZZ,Matrix),
+	  (normalMatrix,ZZ,InfiniteNumber,Matrix),(normalMatrix,ZZ,ZZ,Matrix),
+	  (normalMatrix,Ideal),(normalMatrix,ZZ,Ideal),
+	  (normalMatrix,List,Ideal),(normalMatrix,InfiniteNumber,ZZ,Ideal),
+	  (normalMatrix,ZZ,InfiniteNumber,Ideal),(normalMatrix,ZZ,ZZ,Ideal),
+		[normalMatrix,SourceRing]},
      Headline => "calculate normal module",
-      Usage => "N = normalModule(F) \n
-     N = normalModule(deg,F) \n
-     N = normalModule(lo,hi,F)",
-     Inputs => {"F" =>Matrix,  "deg" => {"a ",(TO2 {List,"list"})," or ",(TO2 {ZZ,"integer"})},
+      Usage => "N = normalMatrix(F) \n
+     N = normalMatrix(deg,F) \n
+     N = normalMatrix(lo,hi,F)",
+     Inputs => {"F" =>{"a ",(TO Matrix)," or an ",(TO Ideal)},  "deg" => {"a ",(TO2 {List,"list"})," or ",(TO2 {ZZ,"integer"})},
 	  "lo" => {"an ",(TO2 {ZZ,"integer"})," or -",(TO infinity)},
 	  "hi" => {"an ",(TO2 {ZZ,"integer"})," or ",(TO infinity)}
 	  },
      Outputs=>{"N" => Matrix},
-     PARA {"The matrix ",TT "F"," must have a single row.  The output ",TT "N"," is a matrix
+     PARA {"The matrix ",TT "F"," must have a single row.  Inputing an ideal instead has the same effect as inputing ",TT "gens F",".  The output ",TT "N"," is a matrix
 	  over the same ring as ",TT "F"," whose columns form a basis for 
 	  (a graded piece of) the normal module ",TT "Hom(I,S/I)",",
 	  where ",TT "S"," is the ring of ",TT "F"," and ",TT "I",
 	  " is ideal generated by the columns of ",TT "F",". Selection
 	  of graded pieces is done in the same manner as with ",TO basis,". If the selected
-	  pieces are infinite dimensional, an error occurs."},
-     PARA {"For example, consider a degenerate twisted cubic curve:"},
+	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashing as with ",TO basis,"."},
+     PARA {"For example, consider a degenerate twisted cubic curve, see ",TO2 {VersalDeformations,"[PS85]"},":"},
      EXAMPLE {"S=QQ[x,y,z,w];",
 	  "F=matrix {{x*z,y*z,z^2,x^3}}",
-	  "N=normalModule(0,F)"},
+	  "N=normalMatrix(0,F)"},
      PARA {"The degree zero component of the normal module, and thus the tangent space of the Hilbert scheme,
 	   is sixteen dimensional."},}
 
@@ -754,38 +920,28 @@ document {
      Key =>CT,
      Headline => "cotangent cohomology",
      PARA {TT "CT"," is a ",TO2{ScriptedFunctor,"scripted functor"}," providing an interface for cotangent cohomology
-	  calculations. ",TT "CT^1"," is equivalent to ",TO cotanComplexOne," and  
-	   ",TT "CT^2"," is equivalent to ",TO cotanComplexTwo,"."}
+	  calculations. ",TT "CT^1"," is equivalent to ",TO cotangentCohomology1," and  
+	   ",TT "CT^2"," is equivalent to ",TO cotangentCohomology2,"."}
      }
 
 document {
      Key =>PolynomialCheck,
      Headline => "checks if power series solution terminates",
-     PARA{TT "PolynomialCheck"," is a ",TO2(Boolean,"boolean")," which determines whether 
+     PARA{TT "PolynomialCheck"," is the name of an optional argument. Its value is ", ofClass Boolean,", which determines whether 
 	 or not to check if a solution of the deformation equation lifts trivially
 	 to arbitrary order. Default value is ",TO true},
      }
-
-document {
-     Key =>TimeLimit,
-     Headline => "sets time limit for lifting calculation",
-     PARA{TT "TimeLimit"," is either an ",TO2(ZZ,"integer")," or ",TO infinity," which 
-	  gives an upper bound on the time in seconds allowed for lifting 
-	  a solution of the deformation equation.
-	 Default value is ",TT "infinity"},     
-     Caveat=>{"If ",TT "HighestOrder"," is not set to ",TT "infinity",", errors may 
-	  not be handled properly."},}
 document {
      Key =>SanityCheck,
      Headline => "checks if lifting solves deformation equation",
-     PARA{TT "SanityCheck"," is a ",TO2(Boolean,"boolean")," which determines whether 
+     PARA{TT "SanityCheck"," is the name of an optional argument. Its value is ",ofClass Boolean,", which determines whether 
 	 or not to check if a supposed solution of the deformation equation
-	 actually satisfies it. Default value is ",TO true},     }
+	 actually satisfies it. Default value is ",TO true,"."},     }
 
 document {
      Key =>HighestOrder,
      Headline => "sets the order to which we compute",
-     PARA{TT "HighestOrder"," is an ",TO2(ZZ,"integer")," which 
+     PARA{TT "HighestOrder"," is the name of an optional argument. Its value is an ",TO2(ZZ,"integer"),", which 
 	  gives an upper bound on to what order
 	  a solution of the deformation equation is lifted.
 	 Default value is ",TT "20."},     }
@@ -793,7 +949,7 @@ document {
 document {
      Key =>SmartLift,
      Headline => "chooses lifting to avoid obstructions at next order",
-     PARA{TT "SanityCheck"," is a ",TO2(Boolean,"boolean"),". If set to ",TO true,",
+     PARA{TT "SmartLift"," is the name of an optional argument whose value is ",ofClass Boolean,". If set to ",TO true,",
 	   ",TO versalDeformation," or ",TO localHilbertScheme," will utilize the function
 	   ",TO correctDeformation," in order to
 	   choose liftings of the 
@@ -802,33 +958,67 @@ document {
 	  the time of calculation, but will hopefully result in nicer equations for the base space.
 	  Default value is ",TO true},
 	  
-	PARA {"For example, consider a degenerate twisted cubic curve:"},
+	PARA {"For example, consider a degenerate twisted cubic curve, see",TO2 {VersalDeformations,"[PS85]"},":"},
      	EXAMPLE {"S=QQ[x,y,z,w];",
 	"F0=matrix {{x*z,y*z,z^2,x^3}}"},
    	PARA {"With the default setting ",TT "SmartLift=>true", " we get very
 	     nice equations for the base space:"},
 	EXAMPLE {
-	"time (F,R,G,C)=localHilbertScheme(F0,Verbosity=>0);",
+	"time (F,R,G,C)=localHilbertScheme(F0);",
+	"T=ring first G;",
 	"sum G"},
    	PARA {"With the setting ",TT "SmartLift=>false", " the calculation
 	     is faster, but the equations are no longer homogeneous:"},
 	EXAMPLE {
-	"time (F,R,G,C)=localHilbertScheme(F0,SmartLift=>false,Verbosity=>0);",
+	"time (F,R,G,C)=localHilbertScheme(F0,SmartLift=>false);",
 	"sum G"},
    	       }
 	  
 document {
      Key =>CorrectionMatrix,
      Headline => "determines the first order deformations used in correcting liftings",
-     PARA{TT "CorrectionMatrix"," is either a ",TO String," with value auto or a ",TO Sequence," of 
-	  the form output by ",TO correctionMatrix,". If set to auto, ",TO correctionMatrix," is used to calculate
-	  the relevant sequence."}}
-	
+     PARA{TT "CorrectionMatrix"," is the name of an optional argument, whose value is either ",ofClass String," with value auto or ",ofClass Sequence," of 
+	  the form output by ",TO correctionMatrix,". The second term in the sequence is a list of two matrices which give some parameter-free first-order deformations and the corresponding lifted relations, respectively. The first term in the sequence is ",ofClass Matrix,", which describes the action on liftings of equations by the specified first-order deformations.  If set to auto, ",TO correctionMatrix," is used to calculate
+	  the relevant sequence. The default value of ",TT "CorrectionMatrix"," is auto."}}
+
+	document {
+     Key =>CacheName,
+     Headline => "determines hash table in which to cache solutions to the deformation equation",
+     PARA{TT "CacheName"," is the name of an optional argument, whose value is either ",ofClass MutableHashTable," or ",TO null,". After each stage of lifting, the methods ",TO versalDeformation," and ",TO localHilbertScheme," will store the solution to the deformation equation 
+in ",TT "CacheName#VersalDeformationResults",". If the value of ",TT "CacheName"," is ",TO null,"
+ is as the default, then the solution is stored in the hash table described in the documenatation of ",TO versalDeformation," and ",TO localHilbertScheme,"."}}
+
 document {
-     Key =>t,
-     Headline => "deformation parameter",
-     PARA {TT "t"," is used as a deformation parameter."},
-     SeeAlso => {firstOrderDeformations,liftDeformation,versalDeformation,localHilbertScheme}, 
+     Key =>VersalDeformationResults,
+     Headline => "hash table key for cached solutions to the deformation equation",
+     PARA{TT "VersalDeformationResults"," is the name of ",ofClass Symbol," used as a key for caching the output of ",TO versalDeformation," and ",TO localHilbertScheme,". See ",TO CacheName," for more information."}}
+
+
+
+document {
+    Key =>DefParam,
+   Headline => "deformation parameter",
+   PARA {TT "DefParam"," is the name of an optional arguemt. Its value is ",ofClass Symbol,", which specifies the name of the deformation parameter.
+	Its default value is determined by the loadtime configuration ",TO Option," ",TT "DefaultDefParam",", which
+	 has default value ",TT "t","."
+	},
+    PARA {"For example, we may use the deformation parameter ",TT "s",":"},
+     EXAMPLE {"S=QQ[x_0..x_4];",
+	  "I=minors(2,matrix {{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});",
+	  "F0=gens I",
+	  "(F,R,G,C)=versalDeformation(F0,DefParam=>s);",
+	  "sum F"
+	  },
+  SeeAlso => {firstOrderDeformations,versalDeformation,localHilbertScheme}, 
+         }
+
+document{
+     Key=>{[liftDeformation,Verbose],[versalDeformation,Verbose],
+	  [localHilbertScheme,Verbose],[correctDeformation,Verbose]},
+     Headline => "control the verbosity of output",
+     PARA {TT "Verbose"," is the name of an optional argument. Its value is an integer, which specifies how verbose output of the above commands
+	  should be. Default value is ",TT "0"," which gives the tersest possible output. Highest 
+	  verbosity is attained with the value ",TT "4","."}
      }
 
 
@@ -844,7 +1034,7 @@ S = QQ[x_0..x_2,y_0..y_2]
 J = minors(2,matrix{{x_0,x_1,x_2},{y_0,y_1,y_2}})
 assert (CT^1(gens J)==0)
 assert (CT^2(gens J)==0)
-assert( numgens source normalModule(0,gens J)==24)
+assert( numgens source normalMatrix(0,gens J)==24)
 (F,R,G,C)=versalDeformation(gens J)
 assert(sum F==sub(gens J,ring sum F))
 assert(sum G==0)
@@ -884,3 +1074,48 @@ assert (sum C1==map(target C1_0,source C1_0,matrix {{-w^3*t_5*t_10*t_16-w^3*t_7*
 FC=(correctDeformation(F1_{0,1,2},R1_{0,1,2},G1_{0},C1_{0}))_0
 assert (sub(sum FC,ring F_0)==sum F_{0,1,2})
 ///
+
+end;
+--------------------------------------------------------------------------------
+restart
+uninstallPackage "VersalDeformations"
+installPackage "VersalDeformations"
+check "VersalDeformations"
+
+restart
+needsPackage "VersalDeformations";
+S = QQ[x_0..x_4];
+I = minors(2, matrix{{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}});
+F0 = gens I;
+transpose F0
+CT^1(F0)
+CT^2(F0)
+(F,R,G,C) = versalDeformation(F0, Verbose=>2);
+T = ring first G;
+sum G
+transpose sum F
+
+S = QQ[x_1..x_3,y_1..y_3,z_1..z_3,Degrees=>{{1,0,0},{1,0,0},
+    {1,0,0},{0,1,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1},{0,0,1}}];
+I=ideal {y_1*z_2, x_1*z_2, y_2*z_1, y_1*z_1, x_2*z_1, 
+  x_1*z_1, x_1*y_2, x_2*y_1, x_1*y_1, x_2*y_2*z_2};
+(F,R,G,C) = versalDeformation(gens I, normalMatrix({0,0,0},gens I), 
+  CT^2({0,0,0},gens I), Verbose=>2);
+T = ring first G;
+sum G
+# primaryDecomposition ideal sum G
+
+
+------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
