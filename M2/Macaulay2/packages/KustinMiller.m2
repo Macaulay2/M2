@@ -1,6 +1,6 @@
 -- -*- coding: utf-8-unix -*-
 
--- needsPackage "SimplicialComplexes"
+needsPackage "SimplicialComplexes"
 
 newPackage(
 	"KustinMiller",
@@ -14,7 +14,7 @@ newPackage(
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
     	Headline => "Unprojection and the Kustin-Miller complex construction",
-	PackageExports => {"SimplicialComplexes"},
+	--PackageExports => {"SimplicialComplexes"},
     	DebuggingMode => false
         )
 
@@ -64,7 +64,7 @@ export {"stellarSubdivision","delta","isExactRes"}
 
 export {"Tom","Jerry"}
 
--- needsPackage "SimplicialComplexes"
+needsPackage "SimplicialComplexes"
 
 if version#"VERSION" < "1.4" then error "This package was written for Macaulay2 Version 1.4 or higher.";
 if (options SimplicialComplexes).Version < "1.2" then error "This package requires the SimplicialComplexes package Version 1.2 or higher."
@@ -1488,3 +1488,11 @@ installPackage("KustinMiller")
 installPackage("KustinMiller",RerunExamples=>true)
 viewHelp("KustinMiller")
 *}
+
+end
+
+restart
+uninstallPackage "KustinMiller"
+installPackage "KustinMiller"
+check KustinMiller
+
