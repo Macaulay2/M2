@@ -13,7 +13,20 @@ newPackage(
                    },
     	Headline => "Unprojection and the Kustin-Miller complex construction",
 	PackageExports => {"SimplicialComplexes"},
-    	DebuggingMode => false
+    	DebuggingMode => false,
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Implementing the Kustin-Miller complex construction",
+	     "acceptance date" => "2012-05-07",
+	     "published article URI" => "http://j-sag.org/Volume4/jsag-2-2012.pdf",
+	     "published code URI" => "http://j-sag.org/Volume4/KustinMiller.m2",
+	     "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/KustinMiller.m2",
+	     "release at publication" => 1.4,	    -- as an integer
+	     "version at publication" => "14712",
+	     "volume number" => "4",
+	     "volume URI" => "http://j-sag.org/Volume4/"
+	     }
         )
 
 
