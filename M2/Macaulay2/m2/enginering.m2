@@ -35,7 +35,7 @@ basicLift = opts -> (r,Brawring,Bclass) -> (
      s := rawLift(Brawring, raw r);
      if s =!= null then new Bclass from s
      else if opts.Verify then error "cannot lift given ring element")
-multipleBasicLift = opts -> (r,v) -> ( 
+multipleLift = opts -> (r,v) -> ( 
      r = raw r; 
      scan(v, B -> (
 	       r = rawLift(raw B, r);
@@ -44,7 +44,7 @@ multipleBasicLift = opts -> (r,v) -> (
      if r =!= null then new v#-1 from r
      else if opts.Verify then error "cannot lift given ring element")
 basicPromote = (r,B) -> new B from rawPromote(raw B, raw r)
-multipleBasicPromote = (r,v) -> (
+multiplePromote = (r,v) -> (
      r = raw r;
      scan(v, B -> r = rawPromote(raw B, r));
      new v#-1 from r)
@@ -61,45 +61,72 @@ makepromoter = memoize (
 		    )
 	       ))
 
-basicPromoteMatrix = (m,R,p) -> (
-     dF := p minus degrees target m;
-     dG := p minus degrees source m;
-     F := R^dF;
-     G := R^dG;
-     map(F,G, rawPromote(raw F, raw m)))
+basicPromoteModule = (M,R,p) -> (
+     N := R^(p minus degrees M);
+     if M.cache.?components then N.cache.components = apply(M.cache.components, M -> basicPromoteModule(M,R,p)); -- lift the direct summands, too
+     N)
 
-multipleBasicPromoteMatrix = (m,v) -> (
-     dF := - degrees target m;
-     dG := - degrees source m;
+basicLiftModule = (M,R,p) -> (
+     N := R^(p minus degrees M);
+     if M.cache.?components then N.cache.components = apply(M.cache.components, M -> basicLiftModule(M,R,p)); -- lift the direct summands, too
+     N)
+
+multipleLiftModule = (M,v) -> (
+     dM := - degrees M;
+     local S;
+     scan(v, (R,p) -> (S,dM) = (R,p dM));
+     N := S^dM;
+     if M.cache.?components then N.cache.components = apply(M.cache.components, M -> multipleLiftModule(M,v)); -- lift the direct summands, too
+     N)
+
+multiplePromoteModule = (M,v) -> (
+     dM := - degrees M;
+     local S;
+     scan(v, (R,p) -> (S,dM) = (R,p dM));
+     N := S^dM;
+     if M.cache.?components then N.cache.components = apply(M.cache.components, M -> multiplePromoteModule(M,v)); -- lift the direct summands, too
+     N)
+
+basicPromoteMatrix = (m,R,p) -> (
+     F := basicPromoteModule(target m,R,p);
+     G := basicPromoteModule(source m,R,p);
+     map(F, G, rawPromote(raw F, raw m)))
+
+multiplePromoteMatrix = (m,v) -> (
+     F := target m;
+     dF := - degrees F;
+     G := source m;
+     dG := - degrees G;
      m = raw m;
      local S;
      scan(v, (R,p) -> ( S = R; dF = p dF; dG = p dG; m = rawPromote((raw R)^dF, m)));
-     map(S^dF,S^dG,m))
+     map(multiplePromoteModule(F,v),multiplePromoteModule(G,v),m))
 
 basicLiftMatrix = opts -> (m,R,p) -> (
-     dF := p minus degrees target m;
-     dG := p minus degrees source m;
-     F := R^dF;
-     G := R^dG;
+     F := basicLiftModule(target m, R, p);
+     G := basicLiftModule(source m, R, p);
      n := rawLift(raw F, raw m);
      if n =!= null then map(F,G,n)
      else if opts.Verify then error "cannot lift given matrix")
-multipleBasicLiftMatrix = opts -> (m,v) -> (
-     dF := - degrees target m;
-     dG := - degrees source m;
+
+multipleLiftMatrix = opts -> (m,v) -> (
+     F := target m;
+     G := source m;
+     dF := - degrees F;
+     dG := - degrees G;
      m = raw m;
      local S;
      scan(v, (R,p) -> ( 
 	       S = R; 
 	       dF = p dF; 
-	       m = rawLift((raw R)^dF, m);
+	       m = rawLift((raw R)^dF, m);		    -- lift as raw matrices to avoid making many intermediate free modules
 	       if m === null then break;
 	       dG = p dG; 
 	       ));
-     if m =!= null then map(S^dF,S^dG,m)
+     if m =!= null then map(multipleLiftModule(F,v),multipleLiftModule(G,v),m)
      else if opts.Verify then error "cannot lift given matrix")
 
-multipleBasicLiftDegrees = multipleBasicPromoteDegrees = (dF,v) -> ( scan(v, p -> dF = p dF); dF )
+multipleLiftDegrees = multiplePromoteDegrees = (dF,v) -> ( scan(v, p -> dF = p dF); dF )
 
 promote(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
 
@@ -110,6 +137,8 @@ commonRingInitializations = (F) -> (
      promote(Matrix,F,F) := (m,F,G) -> m;
      lift(List,F,F) := opts -> (m,F,G) -> m;
      lift(Matrix,F,F) := opts -> (m,F,G) -> m;
+     promote(Module,F,F) := (M,F,G) -> M;
+     lift(Module,F,F) := opts -> (M,F,G) -> M;
      )
 
 commonEngineRingInitializations = (F) -> (
@@ -133,6 +162,8 @@ commonEngineRingInitializations = (F) -> (
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else basicPromote);
 		    lift(F,A) := opts -> (F,A) -> (basicLift opts)(F,rawA,Aclass);
+     	       	    promote(Module,A,F) := (M,A,F) -> basicPromoteModule(M,F,promoter);
+     	       	    lift(Module,F,A) := opts -> (M,F,A) -> basicLiftModule(M,A,lifter);
 		    promote(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F,promoter);
 		    lift(Matrix,F,A) := opts -> (m,F,A) -> (basicLiftMatrix opts)(m,A,lifter);
 		    promote(List,A,F) := (m,A,F) -> promoter m;
@@ -143,17 +174,19 @@ commonEngineRingInitializations = (F) -> (
 		    liftChain    := reverse take(baserings, {i,n-1});
 		    promoteDegreesChain := take(promoters, {i+1,n});
 		    liftDegreesChain    := reverse take(lifters, {i+1,n});
-		    promoteMatrixChain := apply(promoteChain, promoteDegreesChain, identity);
-		    liftMatrixChain    := apply(liftChain   , liftDegreesChain   , identity);
+		    promoteRingsAndDegreesChain := apply(promoteChain, promoteDegreesChain, identity);
+		    liftRingsAndDegreesChain    := apply(liftChain   , liftDegreesChain   , identity);
 	       	    promote(Aclass,F) := (
 			 if ancestor(Number, A)
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
-	       	    	 else (a,F) -> multipleBasicPromote(a, promoteChain));
-		    lift(F,A) := opts -> (f,A) -> (multipleBasicLift opts)(f, liftChain);
-		    promote(Matrix,A,F) := (m,A,F) -> multipleBasicPromoteMatrix(m,promoteMatrixChain);
-		    lift   (Matrix,F,A) := opts -> (m,F,A) -> (multipleBasicLiftMatrix opts)(m,liftMatrixChain);
-		    promote(List,A,F) := (m,A,F) -> multipleBasicPromoteDegrees(m,promoteDegreesChain);
-		    lift   (List,F,A) := (m,F,A) -> multipleBasicLiftDegrees(m,liftDegreesChain);
+	       	    	 else (a,F) -> multiplePromote(a, promoteChain));
+		    lift(F,A) := opts -> (f,A) -> (multipleLift opts)(f, liftChain);
+		    promote(Module,A,F) := (M,A,F) -> multiplePromoteModule(M,liftRingsAndDegreesChain);
+		    lift   (Module,F,A) := opts -> (M,F,A) -> multipleLiftModule(M,liftRingsAndDegreesChain);
+		    promote(Matrix,A,F) := (m,A,F) -> multiplePromoteMatrix(m,promoteRingsAndDegreesChain);
+		    lift   (Matrix,F,A) := opts -> (m,F,A) -> (multipleLiftMatrix opts)(m,liftRingsAndDegreesChain);
+		    promote(List,A,F) := (m,A,F) -> multiplePromoteDegrees(m,promoteDegreesChain);
+		    lift   (List,F,A) := (m,F,A) -> multipleLiftDegrees(m,liftDegreesChain);
 		    )));
      if debugLevel > 25 then (
 	  registerFinalizer(F,"ring");

@@ -138,6 +138,24 @@ degreeLength Module := M -> degreeLength ring M
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring
 
+lift(Module,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
+lift(Module,InexactNumber') :=
+lift(Module,RingElement) := 
+lift(Module,Number) := Module => opts -> (M,S) -> (
+     R := ring M;
+     if R === S then return M;
+     if not isFreeModule M then error "lift: expected module to be free";
+     lift(M, R, S, opts))     
+
+promote(Module,InexactNumber) := (M,RR) -> promote(M,default RR)
+promote(Module,InexactNumber') :=
+promote(Module,RingElement) := 
+promote(Module,Number) := Module => (M,S) -> (
+     R := ring M;
+     if R === S then return M;
+     if not isFreeModule M then error "promote: expected module to be free";
+     promote(M, R, S))
+
 isModule = method(TypicalValue => Boolean)
 isModule Thing := M -> false
 isModule Module := M -> true
