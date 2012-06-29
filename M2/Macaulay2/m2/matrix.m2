@@ -381,7 +381,7 @@ submatrix(Matrix,VisibleList            ) := (m,cols     ) -> map(target m,,rawS
 submatrix(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> submatrix(m,cols)
 submatrix(Matrix,VisibleList,Nothing    ) := (m,rows,cols) -> (
      rows = splice rows; 
-     map((ring m)^#rows,source m,rawSubmatrix(raw m, listZ toList rows, 0 .. numgens source m - 1)))
+     map((ring m)^((- degrees target m)_rows),source m,rawSubmatrix(raw m, listZ toList rows, 0 .. numgens source m - 1)))
 
 compl := (m,v) -> toList (0 .. m-1) - set v
 submatrix'(Matrix,VisibleList,VisibleList) := (m,rows,cols) -> if #rows === 0 and #cols === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),compl(numgens source m,listZ toList splice cols))
