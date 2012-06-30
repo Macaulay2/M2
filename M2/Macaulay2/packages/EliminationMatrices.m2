@@ -9,7 +9,7 @@ newPackage("EliminationMatrices",
    Authors => {
          {Name => "Nicolás Botbol", Email => "nbotbol@dm.uba.ar", HomePage => "http://mate.dm.uba.ar/~nbotbol/"},
 	     {Name => "Laurent Busé", Email => "Laurent.Buse@inria.fr", HomePage => "http://www-sop.inria.fr/members/Laurent.Buse/"},
-	     {Name => "Manuel Dubinsky"}
+	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
    Headline => "Package for computing resultants",
    DebuggingMode => false
