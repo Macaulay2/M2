@@ -604,6 +604,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   TensorComplexes
   MonomialAlgebras
   QthPower
+  EliminationMatrices
 ")
 
 # convert the newlines in the list above to spaces
