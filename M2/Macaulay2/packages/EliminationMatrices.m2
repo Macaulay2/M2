@@ -1,3 +1,4 @@
+-- -*- coding: utf-8-unix -*-
 --######################################################################
 -- PROGRAMMER : Nicolás Botbol, Laurent Busé, Manuel Dubinsky
 -- UPDATE HISTORY : 3 March 2011 -> 16 June 2011 -> 7 July 2011 -> 6 September 2011 -> 17 October 2011 -> 24 October 2011 -> 2 November 2011 -> 12 January 2012 -> 13 February 2012.
