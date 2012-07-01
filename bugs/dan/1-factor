@@ -2,6 +2,8 @@
 
 #if 0
 
+/*
+
 gcd now works over GF, so work on factoring
 -----------------------------------------------------------------------------
 From: hannes@mathematik.uni-kl.de
@@ -111,15 +113,71 @@ CFFList qs=newfactoras(F,as,success);
 Hans
 -----------------------------------------------------------------------------
 
-The problem is that the code below gives the wrong answer.  It's a bug
+The problem is that the code below gives the wrong answer.  It is a bug
 in factory, not fixed yet in version 3.1.3.  To work around it, test
-the answer by multiplying.  If it's wrong, just try again.
+the answer by multiplying.  If it is wrong, just try again.
+
+    #include <factor.h>
+    using std::cout;
+    using std::endl;
+    int main () {
+      factoryseed(123);
+      Off( SW_RATIONAL );
+      setCharacteristic(101);
+      Variable a('a'), x('x');
+      CanonicalForm mipo = a*a - 2, f = x*x-2;
+      cout << "f = " << f << endl;
+      cout << "Factorize(f,mipo) = " << Factorize(f,mipo) << endl;
+      return 0;
+    }
 
 -----------------------------------------------------------------------------
+
+latest word on how to factor polynomials over extension fields:
+
+Date: Fri, 3 Feb 2012 15:57:10 +0100
+From: Hans Schoenemann <hannes@mathematik.uni-kl.de>
+To: "Grayson, Daniel R." <dan@math.uiuc.edu>
+Subject: Re: [Singular-users] Singular-3-1-4 is available
+Message-ID: <20120203145710.GS6760@mathematik.uni-kl.de>
+
+On Tue, Jan 31, 2012 at 12:15:36PM -0600, Grayson, Daniel R. wrote:
+> Hi, Hannes.
+> 
+> Will the factory and libfac libraries get new versions, too?
+> 
+> 
+Hi Dan,
+yes, we have also new version of factory and libfac.
+Interface changes:
+- the type to convert CananicalForm to/from long integers is not MP_INT
+  any more, but mpz_t
+- factorize should handle polynomial factorization for all
+  ground fields, Factorize (and its wrappers) is depreciated
+  (but still used internally for characteristic sets)
+- gcd should handle gcd computations for all ground fields,
+  algcd and alg_gcd are depreciated
+
+Concerning the factory bugs: 
+- computation over ZZ versus computation over QQ
+  in principle, one should use for QQ:
+    setCharacteristic(0); On(SW_RATIONAL);
+  and for ZZ:
+    setCharacteristic(0); Off(SW_RATIONAL);
+  but it seems that some parts require the coefficients in ZZ,
+  so it is best to multiply polynomials by their common denominator
+  and use Off(SW_RATIONAL);
+- "coefficient not immidiate" in ZZ/2 hould be gone with the
+  new factorization code.
+
+Hannes
+
+*/
+
 #endif
 
+
 #include <factor.h>
-// CanonicalForm alg_gcd(const CanonicalForm &, const CanonicalForm &, const CFList &);
 using std::cout;
 using std::endl;
 int main () {
@@ -127,12 +185,14 @@ int main () {
   Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable a('a'), x('x');
-  CanonicalForm mipo = a*a - 2, f = x*x-2;
-  cout << "f = " << f << endl;
-  cout << "Factorize(f,mipo) = " << Factorize(f,mipo) << endl;
+  CanonicalForm mipo = a*a - 2;
+  Variable b = rootOf(mipo);
+  CanonicalForm g = x*x - b;
+  cout << "g = " << g << endl;
+  cout << "factorize(g) = " << factorize(g) << endl;
   return 0;
 }
 
 // Local Variables:
-// compile-command: "g++ -g -I$M2BUILDDIR/libraries/final/include -L$M2BUILDDIR/libraries/final/lib -x c++ 1-factor -lfac -lcf -lcfmem -lntl -lgmp -o 1-factor.exe && (ulimit -v 100000 -t 1 ; set -x ; time ./1-factor.exe | dd count=20)"
+// compile-command: "g++ -g -I$M2BUILDDIR/libraries/final/include -L$M2BUILDDIR/libraries/final/lib -x c++ 1-factor -lfac -lcf -lcfmem -lntl -lgmp -o 1-factor.exe && (ulimit -v 100000 -t 1 ; set -x ; time ./1-factor.exe)"
 // End:
