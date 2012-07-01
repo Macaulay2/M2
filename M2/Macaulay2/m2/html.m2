@@ -462,7 +462,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'loadPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | src | ldpkg;
-     cmdname := commandLine#0;
+     cmdname := toAbsolutePath commandLine#0;
      if ulimit === null then (
 	  ulimit = utest "-t 350" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
 	  );

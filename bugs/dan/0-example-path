@@ -1,8 +1,0 @@
-If you run M2 with a relative path, such as ../../BUILD/foo/M2 on the command
-line, then installPackage copies that as the name of the command for running
-examples, but it changes to a different directory, so the command is not found.
-
-There are two work-arounds: add the absolute directory to the front of the PATH
-environment variable and type just M2 as the command; or use an absolute path.
-
-Fix it.
