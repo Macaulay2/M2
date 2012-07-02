@@ -3829,11 +3829,6 @@ ConstantII(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("ConstantII",ConstantII);
 
-export rawDummy(e:Expr):Expr := (
-     Ccode(void,"rawDummy();");
-     nullE);
-setupfun("rawDummy",rawDummy);
-
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "
 -- End:

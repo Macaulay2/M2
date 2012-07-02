@@ -627,27 +627,6 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
      }
 }
 
-void rawDummy(void) {
-  struct enter_factory foo;
-  // we use this routine just for testing bits of stand-alone factory code
-#ifdef DEVELOPMENT
-  Off( SW_RATIONAL );
-  setCharacteristic(101);
-  Variable a('a');
-  Variable x('x');
-  CanonicalForm mipo = a*a - 2;
-  cout << "a^2     = " << a*a << endl;
-  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
-  cout << "f = " << f << endl;
-  // f = Prem(f,mipo);
-  cout << "f = " << f << endl;
-  cout << "x.level() = " << x.level() << endl ;
-  cout << "a.level() = " << a.level() << endl ;
-  CFFList fac = Factorize(f,mipo);
-  cout << "fac = " << fac << endl;
-#endif
-}
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-factor.o "
 // indent-tabs-mode: nil
