@@ -184,12 +184,11 @@ int main () {
   factoryseed(123);
   Off( SW_RATIONAL );
   setCharacteristic(101);
-  Variable a('a'), x('x');
-  CanonicalForm mipo = a*a - 2;
-  Variable b = rootOf(mipo);
-  CanonicalForm g = x*x - b;
+  Variable x('x');
+  Variable b = rootOf(x*x - 2);
+  CanonicalForm g = x*x - 2;
   cout << "g = " << g << endl;
-  cout << "factorize(g) = " << factorize(g) << endl;
+  cout << "factorize(g,b) = " << factorize(g,b) << endl;
   return 0;
 }
 
