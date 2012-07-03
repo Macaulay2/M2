@@ -1,7 +1,12 @@
+-- -*- M2 -*-
 -- run this in the debug version to get:
 --  error: illegal exponent
 --  canonicalform.cc:1703: In function `CanonicalForm power(const CanonicalForm&, int)':
 --  failed assertion `n >= 0'
+-- with factory 3.1.4.1 it doesn't seem to crash, but it doesn't finish, either
+-- One idea would be to rewrite rawCharSeries so it begins by clearing denominators
+-- and then working over ZZ.  But in the example below 16*mm does have the denominators
+-- cleared, and for that one it doesn't work.
 
 R = QQ[g, e, f, h, MonomialOrder => Lex]
 mm = map(R^1,R^{{-9},{-9},{-9},{-9}}, {{
