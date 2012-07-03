@@ -1345,7 +1345,23 @@ export rawFactor(e:Expr):Expr := (
 	       "&",resultPowers, ")" );
 	  when resultFactors is null do engineErrorMessage() is f:RawRingElementArray do
 	  when resultPowers is null do engineErrorMessage() is p:RawArrayInt do Expr(Sequence(toExpr(f),toExprSeq(p))))
-     else WrongArg("a raw ring element")
+     is s:Sequence do (
+	  if length(s) == 2 then
+	  when s.0 is g:RawRingElementCell do
+	  when s.1 is mipo:RawRingElementCell do (
+	       resultFactors := RawRingElementArrayOrNull(NULL);
+	       resultPowers  := RawArrayIntOrNull(NULL);
+	       Ccode( void, "rawFactor2(", 
+		    g.p, ",",				    -- polynomial to factor
+		    mipo.p, ",",			    -- minimal polynomial of last variable
+		    "&",resultFactors, ",",
+		    "&",resultPowers, ")" );
+	       when resultFactors is null do engineErrorMessage() is f:RawRingElementArray do
+	       when resultPowers is null do engineErrorMessage() is p:RawArrayInt do Expr(Sequence(toExpr(f),toExprSeq(p))))	  
+     	  else WrongArg(2,"a raw ring element")
+     	  else WrongArg(1,"a raw ring element")
+     	  else WrongNumArgs(2))
+     else WrongArg("a raw ring element or a pair of raw ring elements")
      );
 setupfun("rawFactor",rawFactor);
 

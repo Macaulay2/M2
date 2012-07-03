@@ -469,11 +469,13 @@ const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f, const 
   return r;
 }
 
-void rawFactor(const RingElement *g,
-               engine_RawRingElementArrayOrNull *result_factors,
-               M2_arrayintOrNull *result_powers)
+void rawFactorBase(const RingElement *g,
+                   engine_RawRingElementArrayOrNull *result_factors,
+                   M2_arrayintOrNull *result_powers,
+                   const RingElement *mipo = NULL // minimal polynomial of generator of field extension, if any; generator is last variable
+                   )
 {
-  const bool inExtension = false;
+     bool inExtension = mipo != NULL;
      try {
           const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
           *result_factors = 0;
@@ -484,15 +486,31 @@ void rawFactor(const RingElement *g,
           }
           struct enter_factory foo(P);
           if (foo.mode == modeGF) {
+            inExtension = true;
+            # warning: "to do"
             ERROR("not implemented yet");
             return;
           }
           if (foo.mode == modeError) return;
-          CanonicalForm h = convertToFactory(*g,inExtension);
-          // displayCF(P,h);
           CFFList q;
           init_seeds();
-          q = factorize(h);
+
+          if (inExtension) {
+            CanonicalForm mipocf = convertToFactory(*mipo,false);
+            Variable a = rootOf(mipocf,'a');
+            algebraicElement_Fac = a;
+            CanonicalForm h = convertToFactory(*g,inExtension);
+            // displayCF(P,h);
+            q = factorize(h,a);
+            algebraicElement_M2 = RingElement::make_raw(P,P->var(P->n_vars()-1)); // the algebraic generator is always the last variable in M2, the first one in factory
+          }
+          else {
+            CanonicalForm h = convertToFactory(*g,inExtension);
+            // displayCF(P,h);
+            q = factorize(h);
+            algebraicElement_M2 = NULL;
+          }
+
           int nfactors = q.length();
 
           *result_factors = getmemarraytype(engine_RawRingElementArray,nfactors);
@@ -505,6 +523,7 @@ void rawFactor(const RingElement *g,
             (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
             (*result_powers)->array[next++] = i.getItem().exp();
           }
+          algebraicElement_M2 = NULL;
           if (error()) *result_factors = NULL, *result_powers = NULL;
      }
      catch (exc::engine_error e) {
@@ -512,6 +531,21 @@ void rawFactor(const RingElement *g,
           return;
      }
 }
+
+void rawFactor(const RingElement *g,
+               engine_RawRingElementArrayOrNull *result_factors,
+               M2_arrayintOrNull *result_powers)
+{
+  rawFactorBase(g,result_factors,result_powers);
+}
+
+void rawFactor2(const RingElement *g, const RingElement *minpoly,
+               engine_RawRingElementArrayOrNull *result_factors,
+               M2_arrayintOrNull *result_powers)
+{
+  rawFactorBase(g,result_factors,result_powers,minpoly);
+}
+
 
 M2_arrayintOrNull rawIdealReorder(const Matrix *M)
 {

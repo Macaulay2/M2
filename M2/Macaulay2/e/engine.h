@@ -1775,6 +1775,9 @@ enum gbTraceValues
   void rawFactor(const RingElement *f,
                  engine_RawRingElementArrayOrNull *result_factors,
                  M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
+  void rawFactor2(const RingElement *f, const RingElement *minpoly,
+                 engine_RawRingElementArrayOrNull *result_factors,
+                 M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
   M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
 

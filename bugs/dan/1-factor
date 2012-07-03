@@ -185,10 +185,10 @@ int main () {
   Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable x('x');
-  Variable b = rootOf(x*x - 2);
+  Variable a1 = rootOf(x*x - 2);
   CanonicalForm g = x*x - 2;
   cout << "g = " << g << endl;
-  cout << "factorize(g,b) = " << factorize(g,b) << endl;
+  cout << "factorize(g,a1) = " << factorize(g,a1) << endl;
   return 0;
 }
 
