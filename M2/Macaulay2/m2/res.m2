@@ -188,7 +188,11 @@ engineReady := M -> (
 	  )
      )
 
+protect ManualResolution				    -- not to be exported
+storefuns#resolution = (M,C) -> M.cache.ManualResolution = C
+
 resolution Module := ChainComplex => o -> (M) -> (
+     if M.cache.?ManualResolution then return M.cache.ManualResolution;
      C := runHooks(Module,symbol resolution,(o,M));
      if C =!= null then return C;
      R := ring M;
