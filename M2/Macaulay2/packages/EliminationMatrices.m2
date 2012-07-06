@@ -327,7 +327,7 @@ mapsComplex(ZZ, List, ChainComplex) := (d, var, complex) -> (
 
 -- PURPOSE : this function calculates the sub-morphisms of a ChainComplex with respect to a subset of the variables of the polynomial ring.
 -- INPUT: (complex, var, d): 'complex' is a ChainComplex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
--- OUTPUT: a list of matrices representing a restriction and correstriction of the morphisms of the chain complex (the choice of the rows and columns is done according to the computation of a determinant of a complex).
+-- OUTPUT: a list of matrices representing a restriction and corestriction of the morphisms of the chain complex (the choice of the rows and columns is done according to the computation of a determinant of a complex).
 
 minorsComplex = method(Options => { Strategy => null });
 minorsComplex(ZZ, List, ChainComplex) := List => options -> (d, var, complex) -> (
