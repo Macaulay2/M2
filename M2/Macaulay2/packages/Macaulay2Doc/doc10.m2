@@ -207,13 +207,30 @@ document {   -- This node is used as an example for the documentation node: Key,
 	  "M = coker vars R",
 	  "C = resolution(M, LengthLimit=>6)"
 	  },
-     "For an overview of resolutions, in order of increasing detail, see",
+     PARA {
+	  "A manually constructed resolution can be installed as the resolution of
+	  a module, bypassing the call to the engine when a resolution is requested,
+	  as follows."
+	  },
+     EXAMPLE {
+     	  "A = QQ[x,y]",
+	  "C = chainComplex(
+	       map(A^1,A^{3:-2},{{x^2,x*y,y^2}}),
+	       map(A^{3:-2},A^{2:-3},{{y,0},{ -x,y},{0,-x}}),
+	       map(A^{2:-3},0,0))",
+	  "M = HH_0 C",
+	  "res M = C;",
+	  "res M"
+	  },
+     PARA {
+     	  "For an overview of resolutions, in order of increasing detail, see:"
+	  },
      UL {
 	  SPAN (TO "Hilbert functions and free resolutions"),
 	  TO "free resolutions of modules",
 	  SPAN (TO "computing resolutions", " -- most detailed")
 	  },
-     "Some useful related functions",
+     "Some useful related functions:",
      UL {
 	  TO (betti,GradedModule),
 	  TO (status,Resolution),
