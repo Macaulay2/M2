@@ -1,0 +1,30 @@
+We need a way to document the assignment of values to functions.
+Probably a new type of documentation "key" is needed.
+
+    -- values of functions by lookup
+    lookupfuns = new MutableHashTable
+    storefuns = new MutableHashTable
+    lookupfuns#toString = x -> f -> if hasAttribute(x,PrintNames) then getAttribute(x,PrintNames) else f x
+    storefuns #toString = (x,e) -> (
+	 if not instance(e,String) then error "expected a string";
+	 setAttribute(x,PrintNames,e))
+    Function Thing = (f,x,e) -> (
+	 if not storefuns#?f then error("no method for storing values of function ", toString f);
+	 storefuns#f (x,e))
+
+    ...
+
+    protect ManualResolution				    -- not to be exported
+    storefuns#resolution = (M,C) -> M.cache.ManualResolution = C
+
+    ...
+
+    i24 : code ((symbol SPACE, symbol =), Function, Thing)
+
+    o24 = -- code for method: Function SPACE Thing = Thing
+	  M2/Macaulay2/m2/methods.m2:571:26-573:21: --source code:
+	  Function Thing = (f,x,e) -> (
+	       if not storefuns#?f then error("no method for storing values of function ", toString f);
+	       storefuns#f (x,e))
+
+The code for resolution storage should check the classes of M and C.
