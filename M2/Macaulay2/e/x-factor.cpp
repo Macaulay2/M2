@@ -30,6 +30,7 @@ using std::endl;
 
 using namespace NTL;
 
+const bool notInExtension = false;
 
 #define REVERSE_VARIABLES 1     // did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
@@ -44,7 +45,12 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      return modeError;
 }
 
-int debugging;
+int debugging
+    #ifdef DEBUG
+      = true
+    #endif
+    ;
+
 static void init_seeds() {
      SetSeed(ZZ::zero());       // NTL
      factoryseed(0);            // factory (which uses NTL, as we've compiled it)
@@ -485,18 +491,22 @@ void rawFactorBase(const RingElement *g,
                return;
           }
           struct enter_factory foo(P);
-          if (foo.mode == modeGF) {
-            inExtension = true;
-            # warning: "to do"
-            ERROR("not implemented yet");
-            return;
-          }
           if (foo.mode == modeError) return;
+
           CFFList q;
           init_seeds();
 
-          if (inExtension) {
-            CanonicalForm mipocf = convertToFactory(*mipo,false);
+          if (foo.mode == modeGF) {
+            inExtension = true;
+            CanonicalForm mipocf = convertToFactory(*foo.gf->get_minimal_poly(),notInExtension);
+            Variable a = rootOf(mipocf,'a');
+            algebraicElement_Fac = a;
+            CanonicalForm h = convertToFactory(*g,notInExtension);
+            q = factorize(h,a);
+            (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,/* sets: */ algebraicElement_M2);
+          }
+          else if (mipo != NULL) {
+            CanonicalForm mipocf = convertToFactory(*mipo,notInExtension);
             Variable a = rootOf(mipocf,'a');
             algebraicElement_Fac = a;
             CanonicalForm h = convertToFactory(*g,inExtension);
