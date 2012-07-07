@@ -22,3 +22,10 @@ assert( g ==
      1535036180013100998866802012477932028046514061312*s+277647002779575917914460964010185396568090214400 )
 factor g
 assert( # factor g == 11 )
+
+-- factoring over finite fields
+GF 4[x]
+assert ( factor (x^9-1) === 
+     new Product from {new Power from {x+a,1},new Power from {x+a+1,1},new
+        Power from {x+1,1},new Power from {x^3+a,1},new Power from {x^3+a+1,1}}
+   	)
