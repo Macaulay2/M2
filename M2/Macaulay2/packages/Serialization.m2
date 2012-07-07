@@ -88,7 +88,10 @@ serialize = x -> (
 		    if t === null then t = "";
 		    t = t | u;
 		    );
-	       if t =!= null then code2#(k#x) = t;
+	       if t =!= null then (
+		    assert( t =!= "" );
+		    code2#(k#x) = t;
+		    )
 	       ));
      pp(Thing, x -> (
 	       if mutable x then 
@@ -134,7 +137,7 @@ serialize = x -> (
 	       else ( scan(x,p); "newClass(" | p class x | ",{})")));
      qq(MutableList, x -> (
 	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
-	       concatenate between_"\n" w for i from 1 to #x list ( j := #x-i; px := p x ; px | "#" | toString j | "=" | p x#j )));
+	       if #x > 0 then concatenate between_"\n" w for i from 1 to #x list ( j := #x-i; px := p x ; px | "#" | toString j | "=" | p x#j )));
      pp(MutableHashTable, x -> (
 	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else (
@@ -144,7 +147,7 @@ serialize = x -> (
 		    else "newClass(" | p class x | ",hashTable{})")));
      qq(MutableHashTable, x -> (
 	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
-	       concatenate between_"\n" w apply(pairs x,(k,v) -> (p x, "#", p k, "=", p v))
+	       if #x > 0 then concatenate between_"\n" w apply(pairs x,(k,v) -> (p x, "#", p k, "=", p v))
 	       ));
      pp(GlobalDictionary, x -> (
 	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
@@ -170,6 +173,7 @@ serialize = x -> (
 		else if all(degrees x, deg -> all(deg, zero)) 
 		then p ring x | "^" | numgens x
 		else p ring x | "^" | toString runLengthEncode (- degrees x)));
+     pp(Nothing, x -> "null");
      pp(RingElement, x -> (
 	       R := p ring x;
 	       k := coefficientRing ring x;
@@ -194,13 +198,19 @@ serialize = x -> (
 	       "{",
 	       between_"," apply(entries x, row -> ("{", between_"," apply(row, p), "}")),
 	       "})"));
+     pp(MutableMatrix, x -> concatenate( "mutableMatrix(", p ring x, ",", toString numrows x, ",", toString numcols x, ")" ));
+     qq(MutableMatrix, x -> (
+	       n := p x;
+	       concatenate between_"\n" w flatten for i to numrows x - 1 list for j to numcols x - 1
+	       list (n,"_(",toString i,",",toString j,")=",toExternalString x_(i,j))));
      p x;
      k = newClass(HashTable,k);
      k' = newClass(HashTable,k');
      code1 = newClass(HashTable,code1);
      scanKeys(k,q);
      code2 = newClass(HashTable,code2);
-     assert Thing#?p; remove(Thing,p);
+     -- why did we do this?:
+     -- assert Thing#?p; remove(Thing,p);
      if debugLevel == 101 then print netList {
 	  {"objects by index  (k)",k},
 	  {"indices by object (k')",k'},
