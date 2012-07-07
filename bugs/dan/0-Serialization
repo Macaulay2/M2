@@ -1,11 +1,16 @@
-further work is needed on serialization:
+-- -*- M2 -*-
+-- further work is needed on serialization:
 
-    serialize fails for objects containing empty
-    MutableLists/MutableHashTables,  for MutableMatrices,
-    for serializing strings and null at top-level:
+    -- serialize fails for objects containing empty
+    -- MutableLists/MutableHashTables,  for MutableMatrices,
+    -- for serializing strings and null at top-level:
     ----------------------
-    load "Serialization";
-    deepCopy:= obj->value serialize obj;
+    errorDepth = 0
+    needsPackage "Serialization";
+    deepCopy:= obj->(
+	 s := serialize obj;
+	 << obj << " --> " << stack lines s << " --> " << value s << endl;
+	 );
 
     entry=null;
     deepCopy entry; --fails
