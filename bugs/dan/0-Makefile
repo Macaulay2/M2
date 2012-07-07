@@ -1,5 +1,0 @@
-reorganize all the makefiles so there is just one top level makefile
-
-make "-j" work
-
-
