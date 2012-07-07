@@ -1,5 +1,8 @@
 -*- coding: utf-8 -*-
 
+The idea below has been partially implemented by the command line option
+"--read-only-files".
+
 add a function "sandbox()" that forks into a sandbox following the advice in
     Daniel J. Bernstein. "Some thoughts on security after ten years of qmail 1.0"
     http://cr.yp.to/qmail/qmailsec-20071101.pdf
