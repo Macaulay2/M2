@@ -1,2 +1,0 @@
-make a separate directory for failing tests
-maybe the makefile and M2 should deposit failing test files there automatically!
