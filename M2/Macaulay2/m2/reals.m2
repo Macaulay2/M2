@@ -119,15 +119,18 @@ lift(RR,QQ) := opts -> (r,QQ) -> (
      if r == 0 then return 0/1;
      r' := r;
      p := precision r;
+     p2 := 2^p;
      m := mutableIdentity(ZZ,2);
      while true do (
-	  a := floor r';
+	  a := round r';
 	  columnSwap(m,0,1);
 	  columnAdd(m,0,a,1);
 	  r' = r' - a;
-	  q := m_(0,0) / m_(1,0);
+	  n := m_(0,0);
+	  d := m_(1,0);
+	  q := n / d;
 	  if r === numeric(p,q) then return q;
-	  if r' == 0 then return promote(r,QQ);
+	  if r' == 0 or abs(n*d) > p2 then return promote(r,QQ);
 	  r' = 1/r' ;
 	  ))
 lift(RR,ZZ) := opts -> (r,ZZ) -> (

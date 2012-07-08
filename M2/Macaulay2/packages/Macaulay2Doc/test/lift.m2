@@ -37,6 +37,22 @@ g = matrix{{d}}
 (q,r) = quotientRemainder(f,g)
 assert(g*q+r == f)
 
+a =-1.428571429e-01
+lift(a,QQ)
+assert( instance(oo,QQ) and a === promote(oo,RR) )
+a = 4.537815126e-01
+lift(a,QQ)
+assert( instance(oo,QQ) and a === promote(oo,RR) )
+a = 5.923344948e-02
+lift(a,QQ)
+assert( instance(oo,QQ) and a === promote(oo,RR) )
+a = -7.481504637e-02
+lift(a,QQ) 
+assert( instance(oo,QQ) and a === promote(oo,RR) )
+a = -1.984139325e-01
+lift(a,QQ)
+assert( instance(oo,QQ) and a === promote(oo,RR) )
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test lift.out"
