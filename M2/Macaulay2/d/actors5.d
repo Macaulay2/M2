@@ -447,7 +447,7 @@ examine(e:Expr):Expr := (
      is model:functionCode do (
 	  desc := model.desc;
 	  stdIO
-     	  << "function closure :" << endl
+     	  << "function body :" << endl
      	  << " hash : " << model.hash << endl
 	  << " restargs : " << desc.restargs << endl
 	  << " frameID : " << desc.frameID << endl
