@@ -75,6 +75,18 @@ We could also have "over" as a keyword:
 *}
 
 
+{*
+  new Matrix from List := (Matrix,v) -> matrix v
+
+    -- This one will not work currently, because:
+    --     (1) Matrix is a type of HashTable
+    --     (2) there is already a (built-in) method for new HashTable from List
+    --     (3) the internal code uses the method for new HashTable from List
+    -- I'll fix that in the engine eventually.
+*}
+
+
+
 -----------------------------------------------------------------------------
 -- Here are the current parsing precedences, version 1.3.1.1, which we probably
 -- want to preserve:
