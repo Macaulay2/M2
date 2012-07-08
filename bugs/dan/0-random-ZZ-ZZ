@@ -1,5 +1,0 @@
-This should give an error, because 3 is less than 4:
-
-    i11 : random(4,3)
-
-    o11 = 4

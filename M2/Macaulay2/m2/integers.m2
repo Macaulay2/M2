@@ -82,7 +82,10 @@ isPrime ZZ := Boolean => (
 	  ))
 
 random ZZ := ZZ => opts -> n -> if n > 0 then rawRandomZZ n else error "random: expected a positive integer"
-random(ZZ,ZZ) := ZZ => opts -> (min,max) -> min + rawRandomZZ(max-min+1)
+random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (
+     if min > max then error "random: empty range";
+     min + rawRandomZZ(max-min+1)
+     )
 ceiling = x -> - floor(-x)
 isUnit ZZ := x -> x == 1 or x == -1
 
