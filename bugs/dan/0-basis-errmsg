@@ -3,16 +3,16 @@ comes from the engine, which means there's not enough checking at top level.
 I'll add a bug report.
 
 > On Jul 25, 2010, at 4:37 PM, David Eisenbud wrote:
-> 
-> 
+>
+>
 > Here's a snippet of code that produces (in v 1.3.1) an error message that I don't understand:
-> 
-> S = kk[a,b,c]                                                                                                                                                                                                                  
-> M = coker matrix"a;b;c"                                                                                                                                                                                                        
-> h = presentation M                                                                                                                                                                                                             
-> Starget = symmetricAlgebra target h                                                                                                                                                                                            
-> Btarget = basis({d,0}, Starget)                                                                                                                                                                                                
-> 
-> 
+>
+> S = kk[a,b,c]
+> M = coker matrix"a;b;c"
+> h = presentation M
+> Starget = symmetricAlgebra target h
+> Btarget = basis({d,0}, Starget)
+>
+>
 > gives:
 > stdio:5:11:(3):[0]: error: expected argument 2 to be a sequence of small integers.
