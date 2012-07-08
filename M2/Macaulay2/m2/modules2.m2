@@ -675,6 +675,8 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if hi === infinity then hi = {};
      if #lo != 0 and #lo > degreeLength R or #hi != 0 and #hi > degreeLength R then error "expected length of degree bound not to exceed that of ring";
      if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
+     if not all(lo, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString lo);
+     if not all(hi, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString hi);
 
      A := ultimate(ambient,R);
      if not (
