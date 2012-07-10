@@ -213,7 +213,6 @@ principalFilter' := (P, i) -> positions(first entries(P.RelationMatrix^{i}), j -
 Poset = new Type of HashTable
 poset = method(Options => {symbol AntisymmetryStrategy => "rank"})
 poset (List, List, Matrix) := Poset => opts -> (G, R, M) -> (
-    if not instance(opts.AntisymmetryStrategy, String) then error "The option AntisymmetryStrategy must be a Boolean.";
     a := if opts.AntisymmetryStrategy === "rank" then rank M === #G
     else if opts.AntisymmetryStrategy === "none" then true
     else if opts.AntisymmetryStrategy === "digraph" then (
@@ -231,10 +230,8 @@ poset (List, List, Matrix) := Poset => opts -> (G, R, M) -> (
         })
 poset (List, List) := Poset => opts -> (G, R) -> poset(G, R = toList \ R, transitiveClosure(G, R), opts)
 poset (List, Function) := Poset => opts -> (G, cmp) -> (
-    try (
-        M := matrix for a in G list for b in G list if cmp(a,b) then 1 else 0;
-        R := flatten for i to #G-1 list for j to #G-1 list if i != j and M_j_i == 1 then {G_i, G_j} else continue;
-    ) else error "The comparison function cmp must (i) take two inputs, (ii) return a Boolean, and (iii) be defined for all pairs of G.";
+    M := matrix for a in G list for b in G list if cmp(a,b) then 1 else 0;
+    R := flatten for i to #G-1 list for j to #G-1 list if i != j and M_j_i == 1 then {G_i, G_j} else continue;
     poset(G, R, M, opts)
     )
 poset List := Poset => opts -> R -> poset(unique flatten (R = toList \ R), R, opts);
@@ -1081,8 +1078,9 @@ standardMonomialPoset MonomialIdeal := Poset => I -> poset(first entries basis q
 -- This method is an implementation of Algorithm 5.3 (page 129 and 130) from:
 -- Martin Charles Golumbic, "Algorithmic graph theory and perfect graphs."  Second edition.
 -- Annals of Discrete Mathematics, 57.  Elsevier Science B.V., Amsterdam, 2004. xxvi+314pp.
-transitiveOrientation = method(Options => {symbol Random => false})
+transitiveOrientation = method(Options => {symbol Random => false, symbol Strategy => "error"})
 transitiveOrientation Graph := Poset => opts -> G -> (
+    if opts.Strategy =!= "error" and opts.Strategy =!= "null" then error "The option Strategy must either be 'error' or 'null'.";
     if not instance(opts.Random, Boolean) then error "The option Random must be a Boolean.";
     explore := (G, orientation, i, j) -> (
         k := orientation#{i,j};
@@ -1090,16 +1088,17 @@ transitiveOrientation Graph := Poset => opts -> G -> (
             if orientation#{i,m} === 0 then (
                 orientation#{i,m} = k;
                 orientation#{m,i} = -k;
-                explore(G, orientation, i, m);
+                if not explore(G, orientation, i, m) then return false;
                 )
-            else if orientation#{i,m} === -k then error "The graph does not have a transitive orientation.";
+            else if orientation#{i,m} === -k then return false;
         for m in toList G#graph#j do if not member(m, G#graph#i) or abs orientation#{i, m} < k then 
             if orientation#{m,j} === 0 then (
                 orientation#{m,j} = k;
                 orientation#{j,m} = -k;
-                explore(G, orientation, m, j);
+                if not explore(G, orientation, m, j) then return false;
                 )
-            else if orientation#{m,j} === -k then error "The graph does not have a transitive orientation.";
+            else if orientation#{m,j} === -k then return false;
+        true
         );
     E := edges simpleGraph G;
     E = (if opts.Random then random else identity) join(E, reverse \ E);
@@ -1109,7 +1108,10 @@ transitiveOrientation Graph := Poset => opts -> G -> (
         k = k + 1;
         orientation#e = k;
         orientation#(reverse e) = -k;
-        explore(G, orientation, first e, last e);
+        if not explore(G, orientation, first e, last e) then (
+            if opts.Strategy === "error" then error "The graph does not have a transitive orientation."
+            else if opts.Strategy === "null" then return null;
+            );
         );
     poset select(E, e -> orientation#e > 0)
     )
@@ -1611,10 +1613,7 @@ isBounded Poset := Boolean => P -> #minimalElements P == 1 and #maximalElements 
 
 -- See the code of transitiveOrientation for a note on the implemented algorithm.
 isComparabilityGraph = method()
-isComparabilityGraph Graph := Boolean => G -> (
-    if #edges G > recursionLimit then print "The recursionLimit is small relative to the number of edges of G.  This method may return a false-negative.\nSet the recursionLimit higher to avoid this problem.";
-    try ( transitiveOrientation G; true ) else false
-    )
+isComparabilityGraph Graph := Boolean => G -> transitiveOrientation(G, Strategy => "null") =!= null
 
 isConnected = method()
 isConnected Poset := Boolean => P -> #connectedComponents P == 1
@@ -3780,6 +3779,7 @@ doc ///
         transitiveOrientation
         (transitiveOrientation,Graph)
         [transitiveOrientation,Random]
+        [transitiveOrientation,Strategy]
     Headline
         generates a poset whose comparability graph is the given graph
     Usage
@@ -3788,6 +3788,8 @@ doc ///
         G:Graph
         Random=>Boolean
             whether to randomise the edges first
+        Strategy=>String
+            whether to throw an error ('error') if the graph has no transitive orientation or to return a null ('null')
     Outputs
         P:Poset
             such that @TO "comparabilityGraph"@ $P$ is isomorphic to $G$
@@ -3816,9 +3818,6 @@ doc ///
             The method implemented is Algorithm 5.3 (pages 129-130) from
             Martin Charles Golumbic, "Algorithmic graph theory and perfect graphs."  Second edition.
             Annals of Discrete Mathematics, 57.  Elsevier Science B.V., Amsterdam, 2004. xxvi+314pp.
-    Caveat
-        This method is recursive.  If the number of edges of $G$ is large relative to the
-        @TO "recursionLimit"@, then the method will throw an error.
     SeeAlso
         comparabilityGraph
         isComparabilityGraph
@@ -5265,10 +5264,6 @@ doc ///
             This method calls @TO "transitiveOrientation"@ and checks that an
             error is not thrown.  See the documentation for that method for
             a note on the implemented algorithm.
-    Caveat
-        The method @TO "transitiveOrientation"@ is recursive.  If the number of 
-        edges of $G$ is large relative to the @TO "recursionLimit"@, then 
-        a false negative may occur.  
     SeeAlso
         comparabilityGraph
         transitiveOrientation
