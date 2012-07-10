@@ -44,7 +44,7 @@ public:
 
   void set_matrix_degree(const int *deg);
 
-  Matrix * to_matrix();
+  M2_Matrix * to_matrix();
 };
 
 #endif

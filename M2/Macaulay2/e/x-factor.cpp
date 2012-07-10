@@ -10,9 +10,7 @@ using std::cout;
 using std::endl;
 #include <cstdio>
 
-#define Matrix MaTrIx
 #include <factor.h>             // from Messollen's libfac
-#undef Matrix
 #include <NTL/ZZ.h>
 
 #include "matrix.hpp"
@@ -557,7 +555,7 @@ void rawFactor2(const RingElement *g, const RingElement *minpoly,
 }
 
 
-M2_arrayintOrNull rawIdealReorder(const Matrix *M)
+M2_arrayintOrNull rawIdealReorder(const M2_Matrix *M)
 {
   const bool inExtension = false;
      try {
@@ -615,7 +613,7 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M)
      }
 }
 
-engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
+engine_RawMatrixArrayOrNull rawCharSeries(const M2_Matrix *M)
 {
   const bool inExtension = false;
      try {

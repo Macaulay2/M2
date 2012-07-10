@@ -34,7 +34,7 @@ struct M2File
 {
 public:
   /**
-     Constructor for a M2file for a given unsyncronized state.
+     Constructor for a M2file for a given unsynchronized state.
   **/
   M2File(stdio0_fileOutputSyncState fileUnsyncState);
   ~M2File();

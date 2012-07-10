@@ -1142,7 +1142,7 @@ void PolyRing::syzygy(const ring_elem a, const ring_elem b,
 //       syzygy_stop_conditions.append(0);
 //
 //       const FreeModule *F = make_FreeModule(1);
-//       Matrix *m = new Matrix(F);
+//       M2_Matrix *m = new M2_Matrix(F);
 //       m->append(F->raw_term(a,0));
 //       m->append(F->raw_term(b,0));
 // #if 0
@@ -1161,7 +1161,7 @@ void PolyRing::syzygy(const ring_elem a, const ring_elem b,
 //
 //       gb_comp *g = gb_comp::make(m,true,-1,0);
 //       g->calc(0, syzygy_stop_conditions);
-//       Matrix *s = g->syz_matrix();
+//       M2_Matrix *s = g->syz_matrix();
 //
 // #if 0
 // //   if (s.n_cols() != 1)

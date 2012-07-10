@@ -12,11 +12,11 @@ struct GBMatrix : public our_new_delete {
   const FreeModule *F; // target
   VECTOR(gbvector *) elems;
 
-  GBMatrix(const Matrix *m);
+  GBMatrix(const M2_Matrix *m);
   GBMatrix(const FreeModule *F);
   void append(gbvector *f); // grabs f
   const FreeModule * get_free_module() const { return F; }
-  Matrix *to_matrix();
+  M2_Matrix *to_matrix();
 };
 
 class GBKernelComputation : public Computation

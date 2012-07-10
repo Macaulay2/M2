@@ -315,7 +315,7 @@ export rawPathTrackerClass := newtypeof(rawObjectClass);    -- RawStraightLinePr
 export pythonObjectClass := newbasictype();
 export xmlNodeClass := newbasictype();
 export xmlAttrClass := newbasictype();
-export threadClass := newbasictype();
+export taskClass := newbasictype();
 export symbolBodyClass := newbasictype();
 export fileOutputSyncStateClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!

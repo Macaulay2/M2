@@ -212,7 +212,7 @@ vec ChineseRemainder::CRA(const PolyRing *R, vec f, vec g, mpz_t um, mpz_t vn, m
 
 
 
-Matrix * ChineseRemainder::CRA(const Matrix *f, const Matrix *g, mpz_t um, mpz_t vn, mpz_t mn)
+M2_Matrix * ChineseRemainder::CRA(const M2_Matrix *f, const M2_Matrix *g, mpz_t um, mpz_t vn, mpz_t mn)
 {
   if (f->get_ring() != g->get_ring())
   {
@@ -306,8 +306,8 @@ const RingElement * rawRingElementCRA(const RingElement *f,
   return 0;
 }
 
-const Matrix * rawMatrixCRA(const Matrix *f,
-                            const Matrix *g,
+const M2_Matrix * rawMatrixCRA(const M2_Matrix *f,
+                            const M2_Matrix *g,
                             mpz_t m,
                             mpz_t n)
 {
@@ -337,7 +337,7 @@ const Matrix * rawMatrixCRA(const Matrix *f,
   ChineseRemainder::computeMultipliers(m, n, um, vn, mn);
   mpz_t result_coeff;
   mpz_init(result_coeff);
-  Matrix * result=ChineseRemainder::CRA(f,g,um,vn,mn);
+  M2_Matrix * result=ChineseRemainder::CRA(f,g,um,vn,mn);
   mpz_clear(um);
   mpz_clear(vn);
   mpz_clear(mn);
@@ -494,7 +494,7 @@ const RingElement * rawRingElementRatConversion(const RingElement *f,
 // f should be an element in the polynomial ring R (over ZZ).
 // RQ should be the same ring as R, but with rational coefficients
 
-const Matrix * rawMatrixRatConversion(const Matrix *f,
+const M2_Matrix * rawMatrixRatConversion(const M2_Matrix *f,
                                       mpz_t m,
                                       const Ring *RQ)
 {

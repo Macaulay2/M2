@@ -26,7 +26,7 @@ scan( {
 	  Symbol => (x,p) -> (value x,(p,value)),
 	  SymbolBody => a -> null,
 	  Thing => (x,p) -> error ("findAll: internal error: unhandled type ", toString class x),
-	  Thread => a -> null
+	  Task => a -> null
 	  },
      t -> t#0 # global findAll = t#1)
 

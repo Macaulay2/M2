@@ -40,7 +40,7 @@ FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
     schreyer = 0;
 }
 
-FreeModule *FreeModule::make_schreyer(const Matrix *m)
+FreeModule *FreeModule::make_schreyer(const M2_Matrix *m)
 {
   int i;
   const Ring *R = m->get_ring();
@@ -79,11 +79,11 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
   return G;
 }
 
-Matrix * FreeModule::get_induced_order() const
+M2_Matrix * FreeModule::get_induced_order() const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (!schreyer || P == 0)
-    return Matrix::zero(R->make_FreeModule(0),this);
+    return M2_Matrix::zero(R->make_FreeModule(0),this);
   const SchreyerOrder *S = schreyer;
   int i;
   int maxtie = 0;

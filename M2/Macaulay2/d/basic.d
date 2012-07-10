@@ -72,7 +72,7 @@ export hash(e:Expr):int := (
      is po:pythonObjectCell do int(Ccode(long, "PyObject_Hash(",po.v,")"))
      is xmlNodeCell do int(123456)
      is xmlAttrCell do int(123457)
-     is t:TaskCell do int(123459)
+     is t:TaskCell do t.body.hash
      is foss:fileOutputSyncState do int(123458)
      );
 

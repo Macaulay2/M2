@@ -56,7 +56,7 @@ bool HilbertController::recomputeHilbertFunction()
   if (hilb_new_elems)
     {
       // Recompute h, hf_diff
-      Matrix *M = make_lead_term_matrix();
+      M2_Matrix *M = make_lead_term_matrix();
       RingElement *h = hilb_comp::hilbertNumerator(M);
       if (h == 0)
         return false; // computation was interrupted
@@ -66,7 +66,7 @@ bool HilbertController::recomputeHilbertFunction()
   return true;
 }
 
-Matrix *HilbertController::make_lead_term_matrix()
+M2_Matrix *HilbertController::make_lead_term_matrix()
 {
   MatrixConstructor mat(F, INTSIZE(elems));
   for (int i=0; i<elems.size(); i++)

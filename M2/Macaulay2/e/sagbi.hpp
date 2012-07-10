@@ -20,7 +20,7 @@ public:
                      const RingMap *phi,
                      GBComputation *J);
 
-  static Matrix *subduct(const Matrix *m,
+  static M2_Matrix *subduct(const M2_Matrix *m,
                          const RingMap *phi,
                          GBComputation *J);
 };
@@ -37,13 +37,13 @@ public:
 //   int _n_held;
 //   int _base_degree;
 //   int _lo_degree;
-//   array<Matrix *> pending;
+//   array<M2_Matrix *> pending;
 // public:
-//   pending_list(Matrix *m);
+//   pending_list(M2_Matrix *m);
 //   ~pending_list();
 //
-//   void insert(Matrix *m);  // removes m?
-//   Matrix *take_lowest_matrix();
+//   void insert(M2_Matrix *m);  // removes m?
+//   M2_Matrix *take_lowest_matrix();
 //   int lo_degree() { return _lo_degree; }
 //   int n_left() { return _n_held; }
 // };
@@ -63,37 +63,37 @@ public:
 // //   pending_list Pending;           // Over R
 // //
 // //   FreeModule *F;
-// //   Matrix G;                       // Sagbi basis as so far computed, over R.
+// //   M2_Matrix G;                       // Sagbi basis as so far computed, over R.
 // //   PolynomialRing *RS;
 // //   binomialGB_comp *J;
 // //   RingMap *Gmap;
 // //   RingMap *RtoRS;
 // //   RingMap *RStoR;
 // //
-// //   void append_to_basis(Matrix &m);  // Adds to G, also modifies J,RS,...
-// //   Matrix grab_lowest_degree();
-// //   void row_reduce(Matrix &m);  // Modifies m.
+// //   void append_to_basis(M2_Matrix &m);  // Adds to G, also modifies J,RS,...
+// //   M2_Matrix grab_lowest_degree();
+// //   void row_reduce(M2_Matrix &m);  // Modifies m.
 // #endif
 // public:
 //   // creation
-//   sagbi_comp(const Matrix *m);
+//   sagbi_comp(const M2_Matrix *m);
 //   ~sagbi_comp();
 //
 //   void enlarge(const Ring *R, int *wts);
-//   void add_generators(const Matrix *m);
+//   void add_generators(const M2_Matrix *m);
 //   int calc(const int *deg, const intarray &stop_conditions);
 //
-//   Matrix *reduce(const Matrix *m, Matrix *&lift);
+//   M2_Matrix *reduce(const M2_Matrix *m, M2_Matrix *&lift);
 //
-//   virtual int contains(const Matrix *m);
+//   virtual int contains(const M2_Matrix *m);
 //   virtual bool is_equal(const gb_comp *q);
 //
 //   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-//   Matrix *min_gens_matrix();
-//   Matrix *initial_matrix(int n);
-//   Matrix *gb_matrix();
-//   Matrix *change_matrix();
-//   Matrix *syz_matrix();
+//   M2_Matrix *min_gens_matrix();
+//   M2_Matrix *initial_matrix(int n);
+//   M2_Matrix *gb_matrix();
+//   M2_Matrix *change_matrix();
+//   M2_Matrix *syz_matrix();
 //   void stats() const;
 //
 // public:

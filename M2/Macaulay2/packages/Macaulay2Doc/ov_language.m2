@@ -70,7 +70,7 @@ document {
 	      TO "packages",
 	      -- Mike wanted this: TO "a sample package: Quaternions",
 	  "parallel programming ",
-	      TO "programming with threads",
+	      TO "parallel programming with threads and tasks",
      	  "system facilities",
 	      TO "system facilities",
 	  "debugging",

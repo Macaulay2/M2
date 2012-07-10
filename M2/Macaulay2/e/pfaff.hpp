@@ -18,7 +18,7 @@ class MatrixConstructor;
 class PfaffianComputation : public our_new_delete
 {
   const Ring *R;
-  const Matrix *M;
+  const M2_Matrix *M;
   MatrixConstructor pfaffs;
         // One row matrix collecting non-zero pfaffians
 
@@ -34,14 +34,14 @@ class PfaffianComputation : public our_new_delete
         // Compute one more pfaffian of size p.
 
 public:
-  PfaffianComputation(const Matrix *M, int p);
+  PfaffianComputation(const M2_Matrix *M, int p);
   ~PfaffianComputation();
 
   int calc(int nsteps=-1);
   // Compute nsteps pfaffians.  Only non-negative ones are appended
   // -1 means compute all of them.
 
-  Matrix *pfaffians() { return pfaffs.to_matrix(); }
+  M2_Matrix *pfaffians() { return pfaffs.to_matrix(); }
 
   const Ring * get_ring () const { return R; }
 };

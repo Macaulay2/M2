@@ -1001,7 +1001,7 @@ binomialGB_comp::binomialGB_comp(const PolynomialRing *RR, int *wts, bool revlex
   set_status(COMP_NOT_STARTED);
 }
 
-binomialGB_comp * binomialGB_comp::create(const Matrix *m,
+binomialGB_comp * binomialGB_comp::create(const M2_Matrix *m,
                                           M2_bool collect_syz,
                                           int n_rows_to_keep,
                                           M2_arrayint gb_weights,
@@ -1070,7 +1070,7 @@ void binomialGB_comp::enlarge(const PolynomialRing *newR, int *wts)
   deleteitem(old_ring);
 }
 
-void binomialGB_comp::add_generators(const Matrix *m)
+void binomialGB_comp::add_generators(const M2_Matrix *m)
 {
   int i;
   binomial f;
@@ -1209,7 +1209,7 @@ void binomialGB_comp::start_computation()
 // Obtaining results //
 ///////////////////////
 
-Matrix *binomialGB_comp::subring()
+M2_Matrix *binomialGB_comp::subring()
 {
   // Subsequent calls will not receive duplicate elements
 
@@ -1223,7 +1223,7 @@ Matrix *binomialGB_comp::subring()
   return result.to_matrix();
 }
 
-Matrix *binomialGB_comp::subringGB()
+M2_Matrix *binomialGB_comp::subringGB()
 {
   MatrixConstructor result(R->F, 0);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
@@ -1232,19 +1232,19 @@ Matrix *binomialGB_comp::subringGB()
   return result.to_matrix();
 }
 
-Matrix *binomialGB_comp::reduce(const Matrix *m, Matrix *&/*lift*/)
+M2_Matrix *binomialGB_comp::reduce(const M2_Matrix *m, M2_Matrix *&/*lift*/)
 {
   ERROR("MES: not implemented yet");
   return 0;
 }
 
-int binomialGB_comp::contains(const Matrix */*m*/)
+int binomialGB_comp::contains(const M2_Matrix */*m*/)
 {
   ERROR("MES: not implemented yet");
   return 0;
 }
 
-const Matrix *binomialGB_comp::get_mingens()
+const M2_Matrix *binomialGB_comp::get_mingens()
 {
   MatrixConstructor result(R->F, 0);
   for (int i=0; i<mingens.length(); i++)
@@ -1252,7 +1252,7 @@ const Matrix *binomialGB_comp::get_mingens()
   return result.to_matrix();
 }
 
-const Matrix *binomialGB_comp::get_initial(int n)
+const M2_Matrix *binomialGB_comp::get_initial(int n)
 {
   MatrixConstructor result(R->F, 0);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
@@ -1260,7 +1260,7 @@ const Matrix *binomialGB_comp::get_initial(int n)
   return result.to_matrix();
 }
 
-const Matrix *binomialGB_comp::get_gb()
+const M2_Matrix *binomialGB_comp::get_gb()
 {
   MatrixConstructor result(R->F, 0);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
@@ -1268,24 +1268,24 @@ const Matrix *binomialGB_comp::get_gb()
   return result.to_matrix();
 }
 
-const Matrix *binomialGB_comp::get_change()
+const M2_Matrix *binomialGB_comp::get_change()
 {
   return 0;
 }
 
-const Matrix *binomialGB_comp::get_syzygies()
+const M2_Matrix *binomialGB_comp::get_syzygies()
 {
   return 0;
 }
 
-const Matrix /* or null */ *binomialGB_comp::matrix_remainder(const Matrix *m)
+const M2_Matrix /* or null */ *binomialGB_comp::matrix_remainder(const M2_Matrix *m)
   // likely not planned to be implemented
 {
   return 0;
 }
-M2_bool binomialGB_comp::matrix_lift(const Matrix *m,
-                                  const Matrix /* or null */ **result_remainder,
-                                  const Matrix /* or null */ **result_quotient
+M2_bool binomialGB_comp::matrix_lift(const M2_Matrix *m,
+                                  const M2_Matrix /* or null */ **result_remainder,
+                                  const M2_Matrix /* or null */ **result_quotient
                                   )
   //not planned to be implemented
 {

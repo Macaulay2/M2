@@ -1,4 +1,4 @@
-class Matrix;
+class M2_Matrix;
 class RingElement;
 class FreeModule;
 class Ring;
@@ -13,7 +13,7 @@ class MonomialIdeal;
 
 #include "ringelem.hpp"
 
-void dmatrix(const Matrix *M);
+void dmatrix(const M2_Matrix *M);
 
 void drelem(const RingElement *f);
 

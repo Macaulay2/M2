@@ -1006,7 +1006,7 @@ export (o:file) << (x:long) : file :=  o << tostring(x);
 
 export (o:file) << (x:ulong) : file :=  o << tostring(x);
 
-export setIOSyncronized(e:Expr):Expr :=(
+export setIOSynchronized(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0
@@ -1024,7 +1024,7 @@ export setIOExclusive(e:Expr):Expr :=(
      else WrongNumArgs(0)
 );
 
-export setIOUnSyncronized(e:Expr):Expr :=(
+export setIOUnSynchronized(e:Expr):Expr :=(
      when e
      is a:Sequence do (
 	  if length(a) == 0

@@ -68,7 +68,7 @@ setupconst("VisibleList",Expr(visibleListClass));
 setupconst("Array",Expr(arrayClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
-setupconst("Thread",Expr(threadClass));
+setupconst("Task",Expr(taskClass));
 setupconst("FileOutputSyncState",Expr(fileOutputSyncStateClass));
 
 export ancestor(o:HashTable,p:HashTable):bool := (
@@ -111,7 +111,7 @@ export Class(e:Expr):HashTable := (
      is CodeClosure do codeClass
      is pythonObjectCell do pythonObjectClass
      is xmlNodeCell do xmlNodeClass
-     is TaskCell do threadClass
+     is TaskCell do taskClass
      is xmlAttrCell do xmlAttrClass
      is MysqlConnectionWrapper do mysqlConnectionClass
      is MysqlResultWrapper do mysqlResultClass

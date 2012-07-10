@@ -354,6 +354,7 @@ export pythonObject := Pointer "struct _object *";
 export pythonObjectCell := {+v:pythonObject};
 
 export TaskCellBody := {+
+     hash:int,
      task:taskPointer, resultRetrieved:bool,
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };

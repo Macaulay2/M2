@@ -680,7 +680,7 @@ readpromptfun():string := readprompt;
 
 isReadyFun(e:Expr):Expr := (
      when e
-     -- # typical value: isReady, Thread, Boolean
+     -- # typical value: isReady, Task, Boolean
      is tc:TaskCell do toExpr(taskDone(tc.body.task) && !tc.body.resultRetrieved)
      -- # typical value: isReady, File, Boolean
      is f:file do toExpr ( 

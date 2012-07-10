@@ -68,7 +68,7 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
 
 void F4toM2Interface::from_M2_matrix(const Gausser *KK,
                                      const MonomialInfo *MI,
-                                     const Matrix *m,
+                                     const M2_Matrix *m,
                                      M2_arrayint wts,
                                      gb_array &result_polys)
 {
@@ -145,7 +145,7 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
   return result;
 }
 
-Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
+M2_Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
                                       const MonomialInfo *MI,
                                       gb_array &polys,
                                       const FreeModule *F)

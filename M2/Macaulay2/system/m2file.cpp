@@ -44,7 +44,7 @@ void M2File::waitExclusiveThread(size_t recurseCounter)
 	  m_MapMutex.unlock();
 	  return;
 	}
-      //this handles the case where the user shifts from exclusive to syncronized mode
+      //this handles the case where the user shifts from exclusive to synchronized mode
       if(currentThreadMode!=2)
 	{
 	  if(currentThreadMode==1)
@@ -65,11 +65,11 @@ void M2File::waitExclusiveThreadAcquire(size_t recurseCounter)
   m_MapMutex.lock();
   while(1)
     {
-      //if we have recently switched from exclusive to syncronized mode and the exclusive mode isn't done, wait.
+      //if we have recently switched from exclusive to synchronized mode and the exclusive mode isn't done, wait.
       if(exclusiveRecurseCount && exclusiveOwner!=pthread_self())
 	{
 	}
-      else if(exclusiveOwner==0)//if the exclusive/syncronized owner isn't in use, take ownership of it.
+      else if(exclusiveOwner==0)//if the exclusive/synchronized owner isn't in use, take ownership of it.
 	{
 	  exclusiveOwner=pthread_self();
 	  recurseCount=recurseCounter;

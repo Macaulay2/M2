@@ -58,7 +58,7 @@ cancelTask(tb:TaskCellBody):Expr := (
      nullE);
 
 cancelTask(e:Expr):Expr := when e is c:TaskCell do cancelTask(c.body) else WrongArg("a thread");
--- # typical value: cancelTask, Thread, Nothing
+-- # typical value: cancelTask, Task, Nothing
 setupfun("cancelTask",cancelTask);
 
 taskCellFinalizer(tc:TaskCell,p:null):void := (
@@ -74,7 +74,7 @@ header "#include <signal.h>";
 
 createTask2(fun:Expr,arg:Expr):Expr :=(
      if !isFunction(fun) then return WrongArg(1,"a function");
-     tc := TaskCell(TaskCellBody(Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
+     tc := TaskCell(TaskCellBody(nextHash(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreate(startup,tc.body);
@@ -142,7 +142,7 @@ setupfun("addCancelTask",addCancelTaskM2);
 
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
-     tc := TaskCell(TaskCellBody(Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
+     tc := TaskCell(TaskCellBody(nextHash(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreatePush(startup,tc.body);
@@ -166,8 +166,9 @@ schedule(e:Expr):Expr := (
      if length(args) == 2 then schedule2(args.0,args.1)
      else WrongNumArgs(1,2)
      else schedule2(e,emptySequenceE));
--- # typical value: schedule, Function, Thread
--- # typical value: schedule, Function, Thing, Thread
+-- # typical value: schedule, Task, Task
+-- # typical value: schedule, Function, Task
+-- # typical value: schedule, Function, Thing, Task
 setupfun("schedule",schedule);	   
 
 taskResult(e:Expr):Expr := (
@@ -182,12 +183,12 @@ taskResult(e:Expr):Expr := (
 	  c.body.task = nullTaskPointer();
 	  r)
      else WrongArg("a task"));
--- # typical value: taskResult, Thread, Thing
+-- # typical value: taskResult, Task, Thing
 setupfun("taskResult",taskResult);
 
 
-setupfun("setIOSyncronized",setIOSyncronized);
-setupfun("setIOUnSyncronized",setIOUnSyncronized);
+setupfun("setIOSynchronized",setIOSynchronized);
+setupfun("setIOUnSynchronized",setIOUnSynchronized);
 setupfun("setIOExclusive",setIOExclusive);
 
 -- Local Variables:
