@@ -1,0 +1,21 @@
+The behavior of "lines" conflicts with its documentation:
+
+i46 : lines "asdf\r\nasf"
+
+o46 = {asdf, asf}
+
+o46 : List
+
+i47 : help lines
+
+o47 = lines -- split a string into lines
+      **********************************
+
+...
+
+      The form lines s is designed to break lines correctly when the file follows the Unix, MS-DOS, or Macintosh convention and contains no extraneous
+      isolated newline or return characters.  In other words, it will break a line at "\r\n", "\n", or "\r".
+
+...
+
+o47 : DIV
