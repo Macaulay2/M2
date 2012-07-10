@@ -725,7 +725,8 @@ latticePoints ToricDivisor := Matrix => D -> (
     d := numRows V;
     V = transpose (normaliz(transpose V,2))#"gen";
     s := select(numColumns V, i -> V_(d,i) === 1);
-    return (V_s)^{0..d-1}))
+    c := (V_s)^{0..d-1};
+    return c_(sortColumns c)))
 
 polytope ToricDivisor := Polyhedron => (cacheValue symbol polytope)(
   D -> intersection(-matrix rays variety D, matrix vector D))
@@ -4370,7 +4371,7 @@ assert(isNef X_0 === true)
 assert(isNef X_1 === false)
 assert(isVeryAmple (X_2+X_3) === true)
 assert(vertices (X_2+X_3) === matrix{{0,1,0,3},{0,0,1,1}})
-assert(latticePoints (X_2+X_3) === matrix{{0,0,1,1,2,3},{0,1,0,1,1,1}})
+assert(latticePoints (X_2+X_3) === matrix {{0, 1, 0, 1, 2, 3}, {0, 0, 1, 1, 1, 1}})
 assert(degrees ring X === {{1,0},{-2,1},{1,0},{0,1}})
 S = ring X;
 assert(ideal X == intersect(ideal(S_0,S_2),ideal(S_1,S_3)))
