@@ -103,8 +103,8 @@ nmzNumberThreads=1;
 nmzUserCalled=true;  -- whether the user calls a method
 nmzFile="";
 nmzVersion="";     -- normaliz
-nmzExecVersion=""; -- needs to be at least nmzMinExecVersion
-nmzMinExecVersion="2.5"; -- minimal normaliz version
+nmzExecVersion=""; -- needs to be nmzRequiredExecVersion
+nmzRequiredExecVersion="2.7"; -- required normaliz version
 nmzGen=true;      -- indicates whether ".gen" is generated
 -- component 1 is name of option
 -- 2 is default value
@@ -495,8 +495,8 @@ checkNmzExecVersion=()->
     if not match("^Normaliz ([0-9.]*)\n",result) then error("normaliz executable not found: " | getNmzExec());
     nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", result);
   );
-  if (nmzExecVersion < nmzMinExecVersion) then
-    error("normaliz: Normaliz executable to old (" | nmzExecVersion | "), at least version " | nmzMinExecVersion | " needed!");
+  if (nmzExecVersion =!= nmzRequiredExecVersion) then
+    error("Normaliz: 'normaliz' executable is version " | nmzExecVersion | ", but version " | nmzRequiredExecVersion | " is needed");
 )
 
 
