@@ -816,7 +816,7 @@ net NonAssociativeProduct := v -> (
 
 net Minus := x -> (
      term := x#0;
-     horizontalJoin if precedence term < precedence x
+     horizontalJoin if precedence term <= precedence x	    -- note that precedence(Minus{...}) and precedence(Sum{...}) are equal
      then ("-", bigParenthesize net term)
      else (
 	  term = net term;
