@@ -1,7 +1,0 @@
-oops:
-
-    i57 : ?sin
-
-    UL{LI{DIV{class => list, DL{class => element, DT{class => heading, Usage: }, DD{class => value, DIV{TT{sin x}}}}}}, LI{DIV1{Inputs:, UL{LI{SPAN{TT{x}, , , SPAN{a , TO2{Macaulay2Doc :: RR, real number}}}}}}}, LI{DIV1{Outputs:, UL{LI{SPAN{SPAN{a , TO2{Macaulay2Doc :: RR, real number}}, , , the sine of , TT{x}, }}}}}}
-
-    DIV1{HEADER2{Ways to use , sin}, UL{LI{SPAN{sin(CC), , see , TOH{Macaulay2Doc :: sin}}}, LI{SPAN{sin(QQ), , see , TOH{Macaulay2Doc :: sin}}}, LI{SPAN{sin(RR), , see , TOH{Macaulay2Doc :: sin}}}, LI{SPAN{sin(ZZ), , see , TOH{Macaulay2Doc :: sin}}}}}
