@@ -49,7 +49,7 @@ export lines(s:string):array(string) := (
      nlines := 1;
      i := 0;
      while true do (
-	  j := index(s,i);
+	  j := index(s,i);				    -- search for \n
 	  if j == -1 then break;
 	  i = j + 1;
 	  nlines = nlines + 1;	    -- count the bit after the last newline even if it's empty
@@ -57,14 +57,16 @@ export lines(s:string):array(string) := (
      i = 0;
      new array(string) len nlines do (
 	  while true do (
-	       j := index(s,i);
+	       j := index(s,i);				    -- search for \n
 	       if j == -1 then (
 		    provide untabify(substr(s,i));
 		    break;
 		    )
 	       else (
+		    nexti := j+1;
+     	  	    if j > i && s.(j-1) == '\r' then j = j-1;	    -- handle MS-DOS line ending \r\n
 		    provide untabify(substr(s,i,j-i));
-		    i = j+1;
+		    i = nexti;
 		    ))));
 export toNet(s:string):Net := (
      v := if length(s) > 0 then lines(s) else array(string)(s);

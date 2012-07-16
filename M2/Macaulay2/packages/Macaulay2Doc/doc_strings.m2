@@ -294,36 +294,85 @@ document {
 document {
      Key => {separate,(separate, String),(separate, String, String)},
      Headline => "split a string into pieces",
-     TT "separate(d,s)", " -- split the string ", TT "s", " into pieces 
-     delimited by the string ", TT "d", ".",
-     PARA{},
-     "The value is a list of the pieces, the number of which is one
-     more than the number of occurrences of d in s, so that the pieces
-     may be reassembled with ", TO "between", ".",
+
+     SYNOPSIS (
+	  Usage => "separate s",
+	  Inputs => {
+	       "s" => String
+	       },
+	  Outputs => {
+	       {"an array of strings obtained from the string ", TT "s", " by breaking it into lines"}
+	       }
+	  ),
+     SYNOPSIS (
+	  Usage => "separate(nl,s)",
+	  Inputs => {
+	       "s" => String,
+	       "nl" => String => {", of length 1 or 2"}
+	       },
+	  Outputs => {
+	       {"an array of strings obtained from the string ", TT "s", " by breaking it at the characters specified by the string ", TT "nl" }
+	       }
+	  ),
+     PARA{
+	  "The value is a list of the pieces, the number of which is one
+	  more than the number of occurrences of d in s, so that the pieces
+	  may be reassembled with ", TO "demark", " to get the original string.",
+	  },
+     PARA{
+	  "An exception to what was just said is that the form ", TT "separate s", " is designed to break lines correctly
+	  when the file follows either the Unix or MS-DOS convention.  In
+	  other words, it will break a line at \"\\r\\n\" or \"\\n\", and thus reassembly
+	  with ", TO "demark", " may not give the original string.",
+	  },
      EXAMPLE {
 	  ///separate( ".", "a.b.c.d" )///,
-	  ///peek separate( ".", "a.b.c.d" )///,
-	  ///demark("=",ooo)///
-	  }
+	  ///peek oo///,
+	  ///demark("=",ooo)///,
+	  ///separate( "a\nb\nc\n" )///,
+	  ///peek oo///
+	  },
+     SeeAlso => {"lines", "demark"}
      }
 
 document {
      Key => {lines,(lines, String),(lines, String, String)},
      Headline => "split a string into lines",
-     TT "lines s", " -- yields an array of strings obtained from the
-     string ", TT "s", " by breaking it at newline or return characters.",
-     BR{},
-     TT "lines(nl,s)", " -- yields an array of strings obtained from the 
-     string ", TT "s", " by breaking it at the newline characters
-     specified by the string ", TT "nl", ".",
-     PARA{},
-     "The form ", TT "lines s", " is designed to break lines correctly
-     when the file follows the Unix, MS-DOS, or Macintosh convention and
-     contains no extraneous isolated newline or return characters.  In
-     other words, it will break a line at \"\\r\\n\", \"\\n\", or \"\\r\".",
-     PARA{},
-     "The string ", TT "nl", " should be a string of length 1 or 2.",
-     SeeAlso => "newline"
+     SYNOPSIS (
+	  Usage => "lines s",
+	  Inputs => {
+	       "s" => String
+	       },
+	  Outputs => {
+	       {"an array of strings obtained from the string ", TT "s", " by breaking it into lines"}
+	       }
+	  ),
+     SYNOPSIS (
+	  Usage => "lines(nl,s)",
+	  Inputs => {
+	       "s" => String,
+	       "nl" => String => {", of length 1 or 2"}
+	       },
+	  Outputs => {
+	       {"an array of strings obtained from the string ", TT "s", " by breaking it at the characters specified by the string ", TT "nl" }
+	       }
+	  ),
+     PARA{
+	  "The form ", TT "lines s", " is designed to break lines correctly
+	  when the file follows the Unix or MS-DOS convention.  In
+	  other words, it will break a line at \"\\r\\n\" or \"\\n\".",
+	  },
+     EXAMPLE lines ///
+     	  lines "a\nb\nc\n"
+	  peek oo
+     	  lines "a\nb\nc\nd"
+	  peek oo
+	  lines( ".", "a.b.c." )
+	  peek oo
+	  lines( ".", "a.b.c.d" )
+	  peek oo
+     ///,
+     SeeAlso => {"newline","separate"}
      }
 
 document {
