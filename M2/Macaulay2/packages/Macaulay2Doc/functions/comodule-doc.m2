@@ -15,9 +15,8 @@ document {
 	  "M" => Module => {"or an ", TO2(Ideal,"ideal")}
 	  },
      Outputs => {
-	  Module => {"If M is given as a submodule ", TEX "I \\subset N", 
-	       "where N is either a free module or a quotient, then
-	       the module N/I is returned."},
+	  Module => {"the quotient module ", TT "N/M", ", if ", TT "M", " is given as a submodule ", TEX "M \\subset N", 
+	       ", where ", TT "N", " is either a free module or a quotient of a free module."},
 	  },
      EXAMPLE {
 	  "R = QQ[a..d];",
