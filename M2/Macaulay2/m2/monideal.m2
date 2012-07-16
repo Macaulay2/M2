@@ -185,7 +185,6 @@ monomialIdeal RingElement := MonomialIdeal => v -> monomialIdeal {v}
 ring MonomialIdeal := I -> I.ring
 numgens MonomialIdeal := I -> I.numgens
 MonomialIdeal _ ZZ := (I,n) -> (generators I)_(0,n)
-module MonomialIdeal := Module => (I) -> image generators I
 
 isMonomialIdeal = method(TypicalValue => Boolean)
 isMonomialIdeal Thing := x -> false
