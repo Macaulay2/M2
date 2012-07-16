@@ -177,7 +177,7 @@ isField Ring := R -> R.?isField and R.isField
 
 isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := isField
-isAffineRing PolynomialRing := R -> (options R).WeylAlgebra === {} and not (options R).Inverses and isAffineRing coefficientRing R
+isAffineRing PolynomialRing := R -> isCommutative R and not (options R).Inverses and isAffineRing coefficientRing R
 isAffineRing QuotientRing := R -> isField R or isAffineRing ambient R
 
 -- Local Variables:
