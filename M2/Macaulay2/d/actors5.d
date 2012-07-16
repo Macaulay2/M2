@@ -1750,6 +1750,7 @@ export setErrorDepth(b:ushort):void := (
      setGlobalVariable(errorDepthS,toExpr(b));
      );
 export setLineNumber(b:int):void := (
+     if b < 0 then b = 1;				    -- start over
      lineNumber = b;
      setGlobalVariable(lineNumberS,toExpr(b));
      );
@@ -1988,14 +1989,12 @@ GCstats(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then Expr(toHashTable(Sequence(
 		    "heap size" => toExpr(Ccode(int,"GC_get_heap_size()")),
-		    "free space divisor" => toExpr(Ccode(int,"GC_free_space_divisor")),
 		    "number of collections" => toExpr(Ccode(int,"GC_get_gc_no()")),
 		    "parallel" => toExpr(Ccode(bool,"!!GC_get_parallel()")),
 		    "all interior pointers" => toExpr(Ccode(bool,"GC_get_all_interior_pointers()")),
 		    "finalize on demand" => toExpr(Ccode(bool,"!!GC_get_finalize_on_demand()")),
 		    "java finalization" => toExpr(Ccode(bool,"GC_get_java_finalization()")),
 		    "don't expand" => toExpr(Ccode(bool,"GC_get_dont_expand()")),
-		    "use entire heap" => toExpr(Ccode(bool,"GC_use_entire_heap")),
 		    "full freq" => toExpr(Ccode(int,"GC_get_full_freq()")),
 		    "max retries" => toExpr(Ccode(int,"GC_get_max_retries()")),
 		    "time limit" => toExpr(Ccode(ulong,"GC_get_time_limit()")),
