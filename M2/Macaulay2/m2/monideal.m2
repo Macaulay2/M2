@@ -149,13 +149,7 @@ intersect(Sequence) := args -> (
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 
-poincare MonomialIdeal := M -> (
-     R := ring M;
-     ZZn := degreesRing(R);
-     if not M.cache.?poincare then
-         M.cache.poincare = new ZZn from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal; 
-     M.cache.poincare
-     )
+poincare MonomialIdeal := (cacheValue symbol poincare) (M -> new degreesRing M from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal)
 
 independentSets = method(Options => { Limit => infinity })
 independentSets MonomialIdeal := o -> (M) -> (
