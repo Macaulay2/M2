@@ -157,7 +157,7 @@ hilbertSeries Module := opts -> (M) -> (
      else error "hilbertSeries: expected infinity or an integer as value of Order option";
      T := degreesRing A;
      if ord === infinity then (
-     	  num := poincare M;
+     	  num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
      	  denom := tally degrees A.FlatMonoid;
 	  r := Divide{
 	       num,
