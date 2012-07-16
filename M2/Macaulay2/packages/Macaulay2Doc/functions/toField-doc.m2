@@ -11,7 +11,7 @@ document {
 	  "R"
 	  },
      Outputs => {
-	  "L" => { "A new ring, isomorphic to ", TT "R", ", declared to be a field.
+	  "L" => { "a new ring, isomorphic to ", TT "R", ", declared to be a field.
 	       Polynomial rings over it will support Gröbner basis operations." }
 	  },
      EXAMPLE lines ///
