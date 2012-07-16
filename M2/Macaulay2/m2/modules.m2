@@ -441,7 +441,7 @@ Module#{Standard,AfterPrint} = M -> (
      else if n > 0 then (
 	  << ", free";
 	  if not all(degrees M, d -> all(d, zero)) 
-	  then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
+	  then << ", degrees " << runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M;
 	  );
      << endl;
      )
