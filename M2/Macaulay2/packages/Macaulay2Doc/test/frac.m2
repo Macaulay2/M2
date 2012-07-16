@@ -121,6 +121,9 @@ assert not isField F
  (a+b)/(a-b)
  assert try (a/b;false) else true			    -- should detect a non-unit here
 -----------------------------------------------------------------------------
+F = frac (ZZ[x,y]/x^2)
+try (1_F/x)^2
+assert( getNonUnit F === x )
 
 end
 -- Local Variables:
