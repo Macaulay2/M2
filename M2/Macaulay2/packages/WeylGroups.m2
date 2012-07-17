@@ -3,7 +3,7 @@
 
 newPackage(
 	"WeylGroups",
-	Version => "0.5",
+	Version => "0.5.1",
 	Date => "March 20, 2012",
 	Authors => {
 		{Name => "Baptiste Calmès",
@@ -239,10 +239,7 @@ dynkinExponents(DynkinType):= (D) ->
 	  (
 	  if D#i#0=="A" then toList (1..D#i#1)
 	  else if D#i#0=="B" or D#i#0=="C" then apply(toList (1..D#i#1),x->2*x-1)
-	  else if D#i#0=="D" then 
-	    (if odd(D#i#1) then append(apply(toList(1..D#i#1-1),x->2*x-1),D#i#1-1)
-	    else if even(D#i#1) then apply(toList(1..D#i#1-2),x->2*x-1)|{D#i#1-1,D#i#1-1}
-	    )
+	  else if D#i#0=="D" then append(apply(toList(1..D#i#1-1),x->2*x-1),D#i#1-1)
 	  else if D#i#0=="G" then {1,5}
 	  else if D#i#0=="F" then {1,5,7,11}
 	  else if D#i#0=="E" then 
