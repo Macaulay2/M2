@@ -535,8 +535,6 @@ void* interpFunc(void* vargs2)
      //     void M2__prepare();
      ///     M2__prepare();
 
-     if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
-     
      M2_envp = M2_tostrings(envc,(char **)saveenvp);
      M2_argv = M2_tostrings(argc,(char **)saveargv);
      M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);

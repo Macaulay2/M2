@@ -29,7 +29,6 @@ char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
-     GC_all_interior_pointers = TRUE;
      GC_INIT();
      }
 
