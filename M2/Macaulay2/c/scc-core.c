@@ -15,7 +15,6 @@ void scc_core_prepare() {
   static int called_yet;
   if (called_yet) return;
   called_yet = 1;
-  GC_all_interior_pointers = TRUE;
   GC_INIT();
 }
 
