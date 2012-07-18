@@ -1093,13 +1093,6 @@ document {
      Key => module,
      Headline => "make or get a module"
      }
-
-document {
-     Key => {(module, Ideal),(module, MonomialIdeal)},
-     Headline => "turn an ideal into a module",
-     TT "module I", " -- produce the submodule of ", TT "R^1", " corresponding to an
-     ideal ", TT "I", " in a ring ", TT "R", "."
-     }
 document {
      Key => SubringLimit,
      Headline => "stop after finding enough elements of a subring",
