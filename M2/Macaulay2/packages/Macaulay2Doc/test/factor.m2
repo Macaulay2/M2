@@ -32,5 +32,6 @@ assert ( factor (x^9-1) ===
 
 -- factoring over extension fields
 ZZ/101[x,a]
+debug Core
 t = rawFactor ( raw(x^4 - 2), raw(a^2 - 2) )
 assert( t === ((raw (x^2-a), raw (x^2+a)), (1,1)))
