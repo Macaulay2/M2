@@ -682,7 +682,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      if not (
 	  isAffineRing A 
 	  or
-	  isPolynomialRing A and isField coefficientRing A and A.?SkewCommutative
+	  isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
 	  or
 	  isPolynomialRing A and ZZ === coefficientRing A
 	  or
