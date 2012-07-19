@@ -153,6 +153,7 @@ doc ///
 -- check that the number of generators of the constructed 
 -- canonical curve is as expected
 TEST ///
+debug RandomCanonicalCurves
 apply(5..14,g->(
 	  assert (binomial(g-2,2) == rank source mingens (I=randomCanonicalCurve(g,(ZZ/101)[x_0..x_(g-1)])))
      ))
