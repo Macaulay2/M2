@@ -589,6 +589,7 @@ document {
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+setRandomSeed 7
 V = numericalVariety I 
 peek V
     	///,
