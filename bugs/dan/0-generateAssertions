@@ -1,0 +1,13 @@
+Semicolons make it not work:
+
+i1 : generateAssertions ///
+     4;
+     5
+     ///
+
+o1 = 
+     assert( (4;) === 4 );
+     assert( (5) === 5 );
+
+i2 :      assert( (4;) === 4 );
+stdio:5:6:(3): error: assertion failed
