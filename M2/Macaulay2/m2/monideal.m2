@@ -45,8 +45,7 @@ MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
 
 Ring / MonomialIdeal := (R,I) -> R / ideal I
 
-monomialIdeal MonomialIdeal := I -> (
-     error "the function monomialIdeal applied to a MonomialIdeal has been removed")
+monomialIdeal MonomialIdeal := identity
 
 monomialIdeal Matrix := MonomialIdeal => f -> (
      if numgens target f =!= 1 then error "expected a matrix with 1 row";
@@ -79,11 +78,11 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
 
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
-quotient(MonomialIdeal, MonomialIdeal) :=
-MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
+quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
+MonomialIdeal : MonomialIdeal := MonomialIdeal => quotient
 
-quotient(MonomialIdeal, RingElement) :=
-MonomialIdeal : RingElement := MonomialIdeal => (I,f) -> I : monomialIdeal terms f
+quotient(MonomialIdeal, RingElement) := opts -> (I,f) -> I : monomialIdeal terms f
+MonomialIdeal : RingElement := MonomialIdeal => quotient
 
 saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
 
