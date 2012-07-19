@@ -15,7 +15,7 @@ logComplex = A -> (
      Omega := append(apply(l,i -> (      -- first make the modules
 	       timesQ := map(Lambda_(i+1),Lambda_(i+1),Q);
 	       genlist := gens trim ker map(dQ_i | timesQ, Degree => 2*n);
-	       image genlist^{0..(rank Lambda_i)-1})),  -- toss redundant part
+	       image map(R^(rank Lambda_i),,genlist^{0..(rank Lambda_i)-1}))),  -- toss redundant part
                        image map(R^{0},R^{n},matrix{{1_R}}));   
 		       -- top guy has no constraints
 -- now extend rings:
