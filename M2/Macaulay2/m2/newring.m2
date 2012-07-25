@@ -75,7 +75,7 @@ tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
 graphIdeal = method( Options => apply( {MonomialOrder, MonomialSize, VariableBaseName}, o -> o => monoidDefaults#o ))
 graphRing = method( Options => options graphIdeal )
 
-graphIdeal RingMap := Ideal => opts -> (f) -> (
+graphIdeal RingMap := Ideal => opts -> (cacheValue (symbol graphIdeal => opts)) ((f) -> (
      -- return the ideal in the tensor product of the graph of f.
      -- if f is graded, then set the degrees correctly in the tensor ring.
      -- return the ideal (y_i - f_i : all i) in this ring.
@@ -101,7 +101,7 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      h := f.matrix_{0 .. n - 1};
      I := ideal(yv - substitute(h, xv));
      assert(not isHomogeneous f or isHomogeneous I);
-     I)
+     I))
 
 graphRing RingMap := QuotientRing => opts -> (f) -> ( I := graphIdeal(f,opts); (ring I)/I )
 
