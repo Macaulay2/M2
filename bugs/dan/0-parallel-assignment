@@ -1,0 +1,37 @@
+a bug:
+
+    i20 : a = (x,y)
+
+    o20 = (x, y)
+
+    o20 : Sequence
+
+    i21 : (b,c) = a
+
+    o21 = (x, y)
+
+    o21 : Sequence
+
+    i22 : b
+
+    o22 = x
+
+    o22 : Symbol
+
+    i23 : a = 1:x
+
+    o23 = 1 : (x)
+
+    o23 : Sequence
+
+    i24 : (b) = a
+
+    o24 = 1 : (x)
+
+    o24 : Sequence
+
+    i25 : a
+
+    o25 = 1 : (x)			-- wanted to get x here
+
+    o25 : Sequence
