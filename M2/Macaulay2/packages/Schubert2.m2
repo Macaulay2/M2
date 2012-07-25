@@ -32,7 +32,7 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base", 
      "toSchubertBasis", "Correspondence", "IncidenceCorrespondence", "intermediates",
-     "incidenceCorrespondence","SchubertRing",
+     "incidenceCorrespondence","SchubertRing", "Isotropic",
      "tautologicalLineBundle", "bundles", "schubertRing",
      "DefaultPushForward", "DefaultPullBack", "DefaultIntegral", "abstractVarietyMap",
      "extensionAlgebra", "inclusion", "SubTangent", "SuperTangent",
@@ -560,8 +560,18 @@ tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.B
 
 assignable = v -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
 
+chernRemainder = (m,f,n,g) -> (
+     -- assume f and g have constant terms 1
+     x := local x;
+     A := ring f;
+     R := A[x];
+     f' := sum(0 .. m, i -> part(i,f) * x^(m-i));
+     g' := sum(0 .. n, i -> part(i,g) * x^(n-i));
+     h' := f' % g';
+     ( map(A,R,{1}) ) h')     
+
 offset := 1
-flagBundle = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
+flagBundle = method(Options => { VariableNames => null, Isotropic => false }, TypicalValue => FlagBundle)
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
@@ -570,17 +580,27 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      bundleRanks = splice bundleRanks;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
      n := #bundleRanks;
-     rk := sum bundleRanks;
+     rk := rank E;
      hft := {1};
      HR := degreesRing hft;
      T := HR_0;
      vn := dualpart(0,rsort bundleRanks);
-     hilbertSeriesHint := new Divide from {
-	  promote( product for i from 0 to n-1 list ( k := sum take(bundleRanks,i); product for j from k+1 to k+bundleRanks#i list 1 - T^j ), HR),
-	  new Product from reverse for i from 1 to #vn list new Power from {1 - T^i, vn#(i-1)}
-	  };
-     if rank E != rk then error "expected rank of bundle to equal sum of bundle ranks";
-     if part(rk+1,infinity,chern E) != 0 then error "expected an effective bundle (vanishing higher Chern classes)";
+     -- we should have an option for checking the correctness of our hilbertSeriesHint:
+     hilbertSeriesHint := (
+	  if opts.Isotropic
+	  then null					    -- not implemented
+	  else new Divide from {
+	       promote( product for i from 0 to n-1 list ( k := sum take(bundleRanks,i); product for j from k+1 to k+bundleRanks#i list 1 - T^j ), HR),
+	       new Product from reverse for i from 1 to #vn list new Power from {1 - T^i, vn#(i-1)}
+	       });
+     -- We no longer check this, intentionally.  Important for the isotropic case.
+     -- if rank E != rk then error "expected rank of bundle to equal sum of bundle ranks";
+     if part(rk+1,infinity,chern E) != 0 then error "expected an effective bundle (with vanishing higher Chern classes)";
+     if opts.Isotropic then (
+	  if not even rk then error "flagBundle, isotropic case: expected bundle of even rank";
+	  if not all(1 .. rk//2, i -> part(2*i-1, chern E) == 0) then error "flagBundle, isotropic case: expected bundle with vanishing odd Chern classes";
+	  );
+     rk2 := if opts.Isotropic then rk//2 else rk;
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
      varNames = (
 	  if varNames === null then varNames = h$;
@@ -614,10 +634,20 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      -- (A,F) := flattenRing U; G := F^-1 ;
      A := U; F := identity;
      chclasses := apply(varNames, x -> F (1_U + sum(x,v -> U_v)));
-     rlns := product chclasses - F promote(chern E,U);
+     prodchclasses := product chclasses;
+     rkprod := sum bundleRanks;
+     if opts.Isotropic then (
+	  sig := x -> x * (-1)^(first degree x);
+	  chclassesstar := apply(varNames, x -> F (1_U + sum(x,v -> sig U_v)));
+     	  prodchclassesstar := product chclassesstar;
+	  prodchclasses = prodchclasses * prodchclassesstar;
+	  rkprod = 2 * rkprod;
+	  );
+     rlns := chernRemainder(rk, F promote(chern E,U), rkprod, prodchclasses);
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      rlns = ideal matrix(U,{rlns});
-     if heft S =!= null and degreesRing S === HR then gb(rlns, Hilbert => numerator hilbertSeriesHint * numerator hilbertSeries S);
+     if heft S =!= null and degreesRing S === HR 
+     then gb(rlns, Hilbert => if hilbertSeriesHint =!= null then numerator hilbertSeriesHint * numerator hilbertSeries S);
      B := A/rlns;
      -- (C,H) := flattenRing B; I := H^-1;
      C := B; H := identity;
@@ -638,17 +668,26 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      pullback := method();
      pushforward := method();
      pullback S := r -> H promote(F promote(r,U), B);
-     sec := if n === 0 then 1_C else product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
-     pushforward C := r -> coefficient(sec,r);
-     pushforward ZZ := pushforward QQ := r -> coefficient(sec,promote(r,C));
+     sectionClass := (
+	  t := if n == 0 then 1_C else product(0 .. n-1, i -> (ctop bundles#i)^(rk2 - sum(i .. n-1, j -> rank bundles#j)));
+	  if not opts.Isotropic 
+	  then t
+	  else t^2 * product gens C);
+     pushforward C := r -> coefficient(sectionClass,r);
+     pushforward ZZ := pushforward QQ := r -> coefficient(sectionClass,promote(r,C));
      pTangentBundle := (
-	  if #bundles > 0
-	  then sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))
-	  else OO_FV^0);
-     p := abstractVarietyMap(X,FV,pullback, pushforward, SectionClass => sec, TangentBundle => pTangentBundle);
+	  if opts.Isotropic then (
+	       null					    -- not implemented
+	       )
+	  else (
+	       if #bundles > 0
+	       then sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))
+	       else OO_FV^0));
+     p := abstractVarietyMap(X,FV,pullback, pushforward, SectionClass => sectionClass, TangentBundle => pTangentBundle);
      FV.StructureMap = p;
      integral C := r -> integral p_* r;
-     if X.?TangentBundle then FV.TangentBundle = FV.StructureMap.TangentBundle + FV.StructureMap^* X.TangentBundle;
+     if X.?TangentBundle and FV.StructureMap.?TangentBundle
+     then FV.TangentBundle = FV.StructureMap.TangentBundle + FV.StructureMap^* X.TangentBundle;
      use FV;
      FV)
 

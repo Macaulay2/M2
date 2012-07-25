@@ -99,3 +99,11 @@ integral ( g2^2 * p^13 )
 assert( oo == 59 )
 integral ( g2^3 * p^11 )
 assert( oo == 117 )
+
+F = flagBundle_{2}(OO_point^10,Isotropic=>true)
+Q = first F.Bundles
+assert ( 1430 == integral (chern_1 Q)^15)
+
+F = flagBundle_{5}(OO_point^10,Isotropic=>true)
+Q = first F.Bundles
+assert ( 292864 == integral (chern_1 Q)^15)
