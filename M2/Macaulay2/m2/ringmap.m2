@@ -445,7 +445,18 @@ RingMap == ZZ := (f,n) -> (
      else error "encountered integer other than 1 in comparison with a ring map")
 ZZ == RingMap := (n,f) -> f == n
 
-RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> notImplemented() )
+inverse RingMap := RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> (
+	  R := target f;
+	  S := source f;
+	  I := graphIdeal f;
+	  G := ring I;
+	  mapto := map(G,R,take(generators G,numgens R));
+	  mapback := map(S,G,{ numgens R : 0, toSequence generators S }); -- not a homomorphism
+	  m := selectInSubring(1, mapto vars R % I);
+	  if numColumns m === numColumns vars R 
+	  then map(S,R,mapback m)
+	  else error "ring map not invertible"))
+
 RingMap ^ ZZ := BinaryPowerMethod
 
 map(Ring,Ring,RingMap) := RingMap => opts -> (R,S,f) -> map(R,S,matrix f,opts)
