@@ -1700,7 +1700,7 @@ document { Key => {quotientRemainder',(quotientRemainder', Matrix, Matrix)},
      
 document { Key => {(quotient, Matrix, GroebnerBasis), (quotient, Matrix, Matrix)},
      Headline => "matrix quotient",
-     Usage => "(q,r) = quotient(f,g)",
+     Usage => "q = quotient(f,g)",
      Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same target as ", TT "f"}},
      Outputs => {
 	  "q" => {"the quotient of ", TT "f", " upon division by ", TT "g"}
@@ -1719,7 +1719,7 @@ document { Key => {(quotient, Matrix, GroebnerBasis), (quotient, Matrix, Matrix)
 
 document { Key => {quotient',(quotient', Matrix, Matrix)},
      Headline => "matrix quotient (opposite)",
-     Usage => "(q,r) = quotient'(f,g)",
+     Usage => "q = quotient'(f,g)",
      Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same source as ", TT "f"}},
      Outputs => {
 	  "q" => {"the quotient of ", TT "f", " upon (opposite) division by ", TT "g"},
@@ -1740,7 +1740,7 @@ document { Key => {quotient',(quotient', Matrix, Matrix)},
 
 document { Key => {remainder,(remainder, Matrix, GroebnerBasis), (remainder, Matrix, Matrix)},
      Headline => "matrix remainder",
-     Usage => "(q,r) = remainder(f,g)",
+     Usage => "r = remainder(f,g)",
      Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same target as ", TT "f"}},
      Outputs => {
 	  "r" => {"the remainder of ", TT "f", " upon division by ", TT "g"}
@@ -1760,7 +1760,7 @@ document { Key => {remainder,(remainder, Matrix, GroebnerBasis), (remainder, Mat
 
 document { Key => {remainder',(remainder', Matrix, Matrix)},
      Headline => "matrix quotient and remainder (opposite)",
-     Usage => "(q,r) = remainder'(f,g)",
+     Usage => "r = remainder'(f,g)",
      Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same source as ", TT "f"}},
      Outputs => {
 	  "r" => {"the remainder of ", TT "f", " upon (opposite) division by ", TT "g"}
