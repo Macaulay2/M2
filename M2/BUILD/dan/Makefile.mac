@@ -26,8 +26,8 @@ FIX_UNWIND=no
 # To test pari for that bug, make pari's gp and try this factorization:
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
-CC=gcc-4.2
-CXX=g++-4.2
+# CC=gcc-4.2
+# CXX=g++-4.2
 
 # now I've installed gcc 4.6.2
 # but it compiles e/montableZZ.cpp incorrectly, or else evokes a bug in it:

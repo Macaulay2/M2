@@ -155,6 +155,7 @@ case $OS-$REL in
   Darwin-9.*) REL=10.5 ; OS=MacOS ;;
   Darwin-10.*) REL=10.6 ; OS=MacOS ;;
   Darwin-11.*) REL=10.7 ; OS=MacOS ;;
+  Darwin-12.*) REL=10.8 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
 esac
 
@@ -229,9 +230,9 @@ fi
 ]
 
 if test "$OPTIMIZE" = yes
-then CFLAGS="$CFLAGS -O3"
-     CXXFLAGS="$CXXFLAGS -O3"
-     FFLAGS="$FFLAGS -O3"
+then CFLAGS="$CFLAGS -O2"
+     CXXFLAGS="$CXXFLAGS -O2"
+     FFLAGS="$FFLAGS -O2"
 else CFLAGS="$CFLAGS -O0"
      CXXFLAGS="$CXXFLAGS -O0"
      FFLAGS="$FFLAGS -O0"
@@ -294,8 +295,8 @@ cat >unwindtest-monomials.cpp <<EOF
 Monomials::Monomials() {}
 EOF
 if   (  set -x
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
+	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
+	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
 	$CC $LDFLAGS unwindtest-main.$OBJEXT unwindtest-monomials.$OBJEXT $LIBS -lstdc++ -o unwindtest-main &&
 	test -f unwindtest-main$EXEEXT
      ) >&AS_MESSAGE_LOG_FD 2>&1
