@@ -1,6 +1,17 @@
-diff -ur --exclude=configure /home/dan/src/M2/trunk/BUILD/dan/builds.tmp/fedora64.debug/libraries/gfan/tmp/gfan0.4plus/linalg.cpp gfan0.4plus/linalg.cpp
---- /home/dan/src/M2/trunk/BUILD/dan/builds.tmp/fedora64.debug/libraries/gfan/tmp/gfan0.4plus/linalg.cpp	2009-10-21 18:25:58.000000000 -0500
-+++ gfan0.4plus/linalg.cpp	2011-01-07 10:14:04.000000000 -0600
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/gfan/tmp/gfan0.4plus/app_minkowski.cpp gfan0.4plus/app_minkowski.cpp
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/gfan/tmp/gfan0.4plus/app_minkowski.cpp	2009-10-21 19:25:58.000000000 -0400
++++ gfan0.4plus/app_minkowski.cpp	2012-07-29 12:10:33.000000000 -0400
+@@ -160,7 +160,6 @@
+ 	    //log0 fprintf(Stderr,"4");
+ 	    f.insert(c);
+ 	    //log0 fprintf(Stderr,"5\n");
+-	    static int i;
+ 	    //log0 fprintf(Stderr,"inserted:%i\n",++i);
+ 	  }
+ 	log1 fprintf(Stderr,"Resolving symmetries.\n");
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/gfan/tmp/gfan0.4plus/linalg.cpp gfan0.4plus/linalg.cpp
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/gfan/tmp/gfan0.4plus/linalg.cpp	2009-10-21 19:25:58.000000000 -0400
++++ gfan0.4plus/linalg.cpp	2012-07-29 12:06:48.000000000 -0400
 @@ -525,7 +525,7 @@
  }
  
