@@ -2,6 +2,7 @@
 #include "supervisorinterface.h"
 #include <iostream>
 #include <stdlib.h>
+#include <unistd.h>
 
 static volatile bool finished[2000][2000];
 
