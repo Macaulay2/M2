@@ -1,5 +1,6 @@
 # license for 4ti2: GPL v2
 VERSION = 1.3.2
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # URL = http://www.4ti2.de/version_$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 STRIPFILES = src/groebner/4ti2gmp@EXEEXT@ src/groebner/4ti2int32@EXEEXT@ src/groebner/4ti2int64@EXEEXT@

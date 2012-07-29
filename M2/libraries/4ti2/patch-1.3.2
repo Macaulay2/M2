@@ -1,0 +1,272 @@
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/CircuitMatrixAlgorithm.tpp 4ti2-1.3.2/src/groebner/CircuitMatrixAlgorithm.tpp
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/CircuitMatrixAlgorithm.tpp	2008-11-14 21:08:37.000000000 -0500
++++ 4ti2-1.3.2/src/groebner/CircuitMatrixAlgorithm.tpp	2012-07-28 23:19:59.000000000 -0400
+@@ -152,23 +152,23 @@
+         )
+ 
+         // Find the next column.
+-        Index next_col = next_column(vs, remaining);
++        Index next_col = this->next_column(vs, remaining);
+ 
+         int start = 0; int end = vs.get_number(); int middle;
+         // We sort the vectors into nonzeros and then zeros.
+-        sort_nonzeros(vs, start, end, rays, supps, pos_supps, neg_supps, next_col, middle);
++        this->sort_nonzeros(vs, start, end, rays, supps, pos_supps, neg_supps, next_col, middle);
+         int nonzero_start = start, nonzero_end = middle;
+         //int zero_start = middle, zero_end = end;
+         // We sort the nonzeros into rays and circuits.
+-        sort_rays(vs, nonzero_start, nonzero_end, rays, supps, pos_supps, neg_supps, middle);
++        this->sort_rays(vs, nonzero_start, nonzero_end, rays, supps, pos_supps, neg_supps, middle);
+         int ray_start = nonzero_start, ray_end = middle;
+         int cir_start = middle, cir_end = nonzero_end;
+         // We sort the rays into positives and then negatives.
+-        sort_positives(vs, ray_start, ray_end, supps, pos_supps, neg_supps, next_col, middle);
++        this->sort_positives(vs, ray_start, ray_end, supps, pos_supps, neg_supps, next_col, middle);
+         int pos_ray_start = ray_start, pos_ray_end = middle;
+         int neg_ray_start = middle, neg_ray_end = ray_end;
+         // We sort the circuits into positives and then negatives.
+-        sort_positives(vs, cir_start, cir_end, supps, pos_supps, neg_supps, next_col, middle);
++        this->sort_positives(vs, cir_start, cir_end, supps, pos_supps, neg_supps, next_col, middle);
+         int pos_cir_start = cir_start, pos_cir_end = middle;
+         int neg_cir_start = middle, neg_cir_end = cir_end;
+ 
+@@ -185,8 +185,8 @@
+ 
+         // Switch the positive and negative supports, so that it is as if all
+         // vectors have a positive entry in the next column.
+-        switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
+-        switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
++        this->switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
++        this->switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
+ 
+         matrix = orig_matrix;
+         int remaining_row = upper_triangle(matrix, remaining, 0);
+@@ -212,15 +212,15 @@
+         rays.insert(rays.end(), vs.get_number()-previous_size, false);
+ 
+         // Switch back the positive and negative supports.
+-        switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
+-        switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
++        this->switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
++        this->switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
+ 
+         // Update the supp vectors for the next_col.
+-        update_supports(supps, next_col, nonzero_start, nonzero_end);
+-        update_supports(pos_supps, next_col, pos_ray_start, pos_ray_end);
+-        update_supports(pos_supps, next_col, pos_cir_start, pos_cir_end);
+-        update_supports(neg_supps, next_col, neg_ray_start, neg_ray_end);
+-        update_supports(neg_supps, next_col, neg_cir_start, neg_cir_end);
++        this->update_supports(supps, next_col, nonzero_start, nonzero_end);
++        this->update_supports(pos_supps, next_col, pos_ray_start, pos_ray_end);
++        this->update_supports(pos_supps, next_col, pos_cir_start, pos_cir_end);
++        this->update_supports(neg_supps, next_col, neg_ray_start, neg_ray_end);
++        this->update_supports(neg_supps, next_col, neg_cir_start, neg_cir_end);
+ 
+         *out << "\r";
+         *out << "  Left = " << std::setw(3) << num_remaining;
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/CircuitSupportAlgorithm.tpp 4ti2-1.3.2/src/groebner/CircuitSupportAlgorithm.tpp
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/CircuitSupportAlgorithm.tpp	2008-11-14 21:08:37.000000000 -0500
++++ 4ti2-1.3.2/src/groebner/CircuitSupportAlgorithm.tpp	2012-07-28 23:12:34.000000000 -0400
+@@ -188,23 +188,23 @@
+         )
+  
+         // Find the next column.
+-        Index next_col = next_column(vs, remaining);
++        Index next_col = this->next_column(vs, remaining);
+ 
+         int start = 0; int end = vs.get_number(); int middle;
+         // We sort the vectors into nonzeros and then zeros.
+-        sort_nonzeros(vs, start, end, rays, supps, pos_supps, neg_supps, next_col, middle);
++        this->sort_nonzeros(vs, start, end, rays, supps, pos_supps, neg_supps, next_col, middle);
+         int nonzero_start = start, nonzero_end = middle;
+         //int zero_start = middle, zero_end = end;
+         // We sort the nonzeros into rays and circuits.
+-        sort_rays(vs, nonzero_start, nonzero_end, rays, supps, pos_supps, neg_supps, middle);
++        this->sort_rays(vs, nonzero_start, nonzero_end, rays, supps, pos_supps, neg_supps, middle);
+         int ray_start = nonzero_start, ray_end = middle;
+         int cir_start = middle, cir_end = nonzero_end;
+         // We sort the rays into positives and then negatives.
+-        sort_positives(vs, ray_start, ray_end, supps, pos_supps, neg_supps, next_col, middle);
++        this->sort_positives(vs, ray_start, ray_end, supps, pos_supps, neg_supps, next_col, middle);
+         int pos_ray_start = ray_start, pos_ray_end = middle;
+         int neg_ray_start = middle, neg_ray_end = ray_end;
+         // We sort the circuits into positives and the negatives.
+-        sort_positives(vs, cir_start, cir_end, supps, pos_supps, neg_supps, next_col, middle);
++        this->sort_positives(vs, cir_start, cir_end, supps, pos_supps, neg_supps, next_col, middle);
+         int pos_cir_start = cir_start, pos_cir_end = middle;
+         int neg_cir_start = middle, neg_cir_end = cir_end;
+ 
+@@ -233,8 +233,8 @@
+ 
+         // Switch the positive and negative supports, so that it is as if all
+         // vectors have a positive entry in the next column.
+-        switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
+-        switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
++        this->switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
++        this->switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
+ 
+         //DEBUG_4ti2(*out << "Remaining row " << remaining_row << "\n";)
+         int previous_size = vs.get_number();
+@@ -258,19 +258,19 @@
+         rays.insert(rays.end(), vs.get_number()-previous_size, false);
+ 
+         // Switch back the positive and negative supports.
+-        switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
+-        switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
++        this->switch_supports(neg_ray_start, neg_ray_end, pos_supps, neg_supps);
++        this->switch_supports(neg_cir_start, neg_cir_end, pos_supps, neg_supps);
+ 
+         // Update the supp vectors for the next_col.
+-        update_supports(supps, next_col, nonzero_start, nonzero_end);
+-        update_supports(pos_supps, next_col, pos_ray_start, pos_ray_end);
+-        update_supports(pos_supps, next_col, pos_cir_start, pos_cir_end);
+-        update_supports(pos_supps, col_map[next_col], neg_ray_start, neg_ray_end);
+-        update_supports(pos_supps, col_map[next_col], neg_cir_start, neg_cir_end);
+-        update_supports(neg_supps, next_col, neg_ray_start, neg_ray_end);
+-        update_supports(neg_supps, next_col, neg_cir_start, neg_cir_end);
+-        update_supports(neg_supps, col_map[next_col], pos_ray_start, pos_ray_end);
+-        update_supports(neg_supps, col_map[next_col], pos_cir_start, pos_cir_end);
++        this->update_supports(supps, next_col, nonzero_start, nonzero_end);
++        this->update_supports(pos_supps, next_col, pos_ray_start, pos_ray_end);
++        this->update_supports(pos_supps, next_col, pos_cir_start, pos_cir_end);
++        this->update_supports(pos_supps, col_map[next_col], neg_ray_start, neg_ray_end);
++        this->update_supports(pos_supps, col_map[next_col], neg_cir_start, neg_cir_end);
++        this->update_supports(neg_supps, next_col, neg_ray_start, neg_ray_end);
++        this->update_supports(neg_supps, next_col, neg_cir_start, neg_cir_end);
++        this->update_supports(neg_supps, col_map[next_col], pos_ray_start, pos_ray_end);
++        this->update_supports(neg_supps, col_map[next_col], pos_cir_start, pos_cir_end);
+ 
+         *out << "\r";
+         *out << "  Left = " << std::setw(3) << num_remaining;
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/RayMatrixAlgorithm.tpp 4ti2-1.3.2/src/groebner/RayMatrixAlgorithm.tpp
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/RayMatrixAlgorithm.tpp	2008-11-14 21:08:37.000000000 -0500
++++ 4ti2-1.3.2/src/groebner/RayMatrixAlgorithm.tpp	2012-07-29 11:32:52.000000000 -0400
+@@ -865,7 +865,7 @@
+         DEBUG_4ti2(unsigned long long int num_checks = 0;)
+         // Find the next column.
+         int next_positive_count, next_negative_count, next_zero_count;
+-        Index next_col = next_column(vs, remaining,
++        Index next_col = this->next_column(vs, remaining,
+                                         next_positive_count,
+                                         next_negative_count,
+                                         next_zero_count);
+@@ -880,7 +880,7 @@
+         )
+ 
+         // We sort the vectors into zeros, positives, then negatives.
+-        sort(vs, supports, next_col, next_zero_count, next_positive_count,
++        RayImplementation<IndexSet>::sort(vs, supports, next_col, next_zero_count, next_positive_count,
+                         next_negative_count);
+ 
+         DEBUG_4ti2(*out << "Rays:\n" << vs << "\n";)
+@@ -944,7 +944,7 @@
+                     IndexSet::set_difference(supports[r2], r1_supp, temp_diff);
+                     if (temp_diff.power_of_2())
+                     {
+-                        create_new_vector(vs, supports, r1, r2, next_col,
++                        this->create_new_vector(vs, supports, r1, r2, next_col,
+                                             next_positive_count, next_negative_count,
+                                             temp, temp_supp);
+                         DEBUG_4ti2(++num_one_diff_added;)
+@@ -959,7 +959,7 @@
+                     IndexSet::set_difference(r1_supp, supports[r2], temp_diff);
+                     if (temp_diff.power_of_2())
+                     {
+-                        create_new_vector(vs, supports, r1, r2, next_col,
++                        this->create_new_vector(vs, supports, r1, r2, next_col,
+                                             next_positive_count, next_negative_count,
+                                             temp, temp_supp);
+                         DEBUG_4ti2(++num_one_diff_added;)
+@@ -984,7 +984,7 @@
+                             IndexSet::set_difference(r1_supp, supports[r2], temp_diff2);
+                             if (temp_diff2.power_of_2())
+                             {
+-                                create_new_vector(vs, supports, r1, r2, next_col,
++                                this->create_new_vector(vs, supports, r1, r2, next_col,
+                                     next_positive_count, next_negative_count,
+                                     temp, temp_supp);
+                                 DEBUG_4ti2(++num_one_diff_added;)
+@@ -996,7 +996,7 @@
+                             DEBUG_4ti2(++num_checks;)
+                             if (rank_check(matrix, temp_matrix, temp_diff, r1_rows))
+                             {
+-                                create_new_vector(vs, supports, r1, r2, next_col,
++                                this->create_new_vector(vs, supports, r1, r2, next_col,
+                                                 next_positive_count, next_negative_count,
+                                                 temp, temp_supp);
+                                 DEBUG_4ti2(++num_added;)
+@@ -1012,7 +1012,7 @@
+                         IndexSet::set_difference(supports[r2], r1_supp, temp_diff);
+                         if (temp_diff.power_of_2())
+                         {
+-                            create_new_vector(vs, supports, r1, r2, next_col,
++                            this->create_new_vector(vs, supports, r1, r2, next_col,
+                                 next_positive_count, next_negative_count,
+                                 temp, temp_supp);
+                             DEBUG_4ti2(++num_one_diff_added;)
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/RaySupportAlgorithm.tpp 4ti2-1.3.2/src/groebner/RaySupportAlgorithm.tpp
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/4ti2/tmp/4ti2-1.3.2/src/groebner/RaySupportAlgorithm.tpp	2008-11-14 21:08:37.000000000 -0500
++++ 4ti2-1.3.2/src/groebner/RaySupportAlgorithm.tpp	2012-07-29 11:32:39.000000000 -0400
+@@ -773,7 +773,7 @@
+ 
+         // Find the next column.
+         int next_positive_count, next_negative_count, next_zero_count;
+-        Index next_col = next_column(vs, remaining,
++        Index next_col = this->next_column(vs, remaining,
+                                         next_positive_count,
+                                         next_negative_count,
+                                         next_zero_count);
+@@ -788,7 +788,7 @@
+         )
+ 
+         // We sort the vectors into zeros, positives, then negatives.
+-        sort(vs, supports, next_col, next_zero_count, next_positive_count,
++        RayImplementation<IndexSet>::sort(vs, supports, next_col, next_zero_count, next_positive_count,
+                         next_negative_count);
+ 
+         int original_size = vs.get_number();
+@@ -852,7 +852,7 @@
+                     IndexSet::set_difference(supports[r2], r1_supp, temp_diff);
+                     if (temp_diff.power_of_2())
+                     {
+-                        create_new_vector(vs, supports, r1, r2, next_col,
++                        this->create_new_vector(vs, supports, r1, r2, next_col,
+                                             next_positive_count, next_negative_count,
+                                             temp, temp_supp);
+                         DEBUG_4ti2(++num_added;)
+@@ -866,7 +866,7 @@
+                     IndexSet::set_difference(r1_supp, supports[r2], temp_diff);
+                     if (temp_diff.power_of_2())
+                     {
+-                        create_new_vector(vs, supports, r1, r2, next_col,
++                        this->create_new_vector(vs, supports, r1, r2, next_col,
+                                             next_positive_count, next_negative_count,
+                                             temp, temp_supp);
+                         DEBUG_4ti2(++num_one_diff_added;)
+@@ -885,7 +885,7 @@
+                     zero_supp.set_union(supports[index]);
+                     if (index >= r2_index && index < r2_finish)
+                     {
+-                        create_new_vector(vs, supports, r1, index, next_col,
++                        this->create_new_vector(vs, supports, r1, index, next_col,
+                             next_positive_count, next_negative_count,
+                             temp, temp_supp);
+                         DEBUG_4ti2(++num_added;)
+@@ -905,7 +905,7 @@
+                         IndexSet::set_difference(r1_supp, supports[r2], temp_diff2);
+                         if (temp_diff2.power_of_2())
+                         {
+-                            create_new_vector(vs, supports, r1, r2, next_col,
++                            this->create_new_vector(vs, supports, r1, r2, next_col,
+                                     next_positive_count, next_negative_count,
+                                     temp, temp_supp);
+                             DEBUG_4ti2(++num_one_diff_added;)
+@@ -918,7 +918,7 @@
+                         DEBUG_4ti2(++num_checks;)
+                         if (!tree.dominated(temp_supp, r1, r2))
+                         {
+-                            create_new_vector(vs, supports, r1, r2, next_col,
++                            this->create_new_vector(vs, supports, r1, r2, next_col,
+                                             next_positive_count, next_negative_count,
+                                             temp, temp_supp);
+                             DEBUG_4ti2(++num_added;)
