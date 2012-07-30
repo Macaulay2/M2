@@ -1,0 +1,14 @@
+These display would look better with run length encoding of the list of variables:
+
+i1 : QQ[t_1..t_10]
+
+o1 = QQ[t , t , t , t , t , t , t , t , t , t  ]
+         1   2   3   4   5   6   7   8   9   10
+
+o1 : PolynomialRing
+
+i2 : describe oo
+
+o2 = QQ[t , t , t , t , t , t , t , t , t , t  , Degrees => {10:1}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 1]
+         1   2   3   4   5   6   7   8   9   10                                                   {GRevLex => {10:1} }
+                                                                                                  {Position => Up    }
