@@ -896,7 +896,7 @@ then AC_MSG_CHECKING([for library containing common symbol _rl_comment_begin and
 	 then AC_MSG_RESULT([yes, $lib])
 	 else AC_MSG_RESULT([none required])
 	 fi
-     else AC_MSG_RESULT(no)
+     else AC_MSG_RESULT([no, will build readline])
 	 BUILD_readline=yes
      fi 
 fi
@@ -979,8 +979,21 @@ fi
 
 if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
-     then AC_LANG(C++)
-	  AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
+     then AC_MSG_CHECKING(for frobby library)
+	  AC_LANG(C++)
+          SAVELIBS=$LIBS
+	  LIBS="-lfrobby $LIBS"
+	  AC_LINK_IFELSE([AC_LANG_SOURCE([
+	  	#include <frobby.h>
+		int main () {
+			Frobby::Ideal(0);
+			return 0;
+			}
+		])],
+		[AC_MSG_RESULT(yes)],
+		[LIBS=$SAVELIBS
+		 BUILD_frobby=yes
+		 AC_MSG_RESULT([no, will build it])])
      fi
      test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
 fi
@@ -1116,11 +1129,11 @@ then AC_LANG(C++)
      done
      if test "$FOUND"
      then if test "$lib"
-	 then AC_MSG_RESULT([$lib])
-	 else AC_MSG_RESULT([none needed])
-	 fi
-     else AC_MSG_RESULT(none found)
-	 BUILD_ntl=yes
+	  then AC_MSG_RESULT([$lib])
+	  else AC_MSG_RESULT([none needed])
+	  fi
+     else AC_MSG_RESULT([no, will build ntl])
+	  BUILD_ntl=yes
      fi 
 
      if test $BUILD_ntl = no
@@ -1217,8 +1230,8 @@ do AC_LANG(C++)
    AC_LINK_IFELSE([AC_LANG_SOURCE([[ #undef NOSTREAMIO
 	              #include <factory/factory.h>
 		      int main () { return 0 ; } ]])],
-       AC_MSG_RESULT(yes),
-       AC_MSG_RESULT(no) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break )
+       [AC_MSG_RESULT(yes)],
+       [AC_MSG_RESULT([no, will build factory and libfac]) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break] )
    AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	   #include <stdio.h>
@@ -1246,8 +1259,8 @@ do AC_LANG(C++)
 		return !( lOK && fOK );
 		}
 	   ]])],
-	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS)
+	[AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT([no, will build factory and libfac]); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS])
    break
 done
 test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
