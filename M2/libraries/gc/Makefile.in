@@ -11,16 +11,24 @@ HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/
 
 # URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 
-# we get the sources from
+# We get the sources from
 #   https://github.com/ivmai/bdwgc/
 #   https://github.com/ivmai/libatomic_ops/
-# run the appropriate autoconf tools and tar them up
+# Run the appropriate autoconf tools and tar them up
+# In more detail, run these commands:
+#   git clone git://github.com/ivmai/bdwgc.git
+#   cd bdwgc
+#   git clone git://github.com/ivmai/libatomic_ops.git
+#   autoreconf -vif
+#   automake --add-missing
+#   ./configure
+#   make
+#   make check
 
 # or we get it from the home page
 
-VERSION = libatomic_ops-7.3alpha2
-TARDIR = gc-7.3alpha2
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 20120729
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 AOVERSION = 
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 VLIMIT = 2000000
