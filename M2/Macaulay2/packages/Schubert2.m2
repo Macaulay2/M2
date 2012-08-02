@@ -573,6 +573,7 @@ chernRemainder = (m,f,n,g) -> (
 offset := 1
 flagBundle = method(Options => { VariableNames => null, Isotropic => false }, TypicalValue => FlagBundle)
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
+flagBundle(List,ZZ) := opts -> (bundleRanks,n) -> flagBundle(bundleRanks,OO_point^n,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      h$ := getSymbol "H";
