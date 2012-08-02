@@ -58,6 +58,9 @@ endif
 unexport DEBUG
 unexport PROFILE
 
+CC = gcc
+CXX = g++
+
 ifeq ($(M64),yes)
 DIRECTORY := mac64
 CONFIGOPTIONS += CC="$(CC) -m64" CXX="$(CXX) -m64" --build=x86_64-apple-darwin
