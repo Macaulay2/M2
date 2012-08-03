@@ -91,7 +91,8 @@ net FlagBundle := toString FlagBundle := X -> (
 FlagBundle#{Standard,AfterPrint} = X -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
-     << "a flag bundle with ranks " << X.BundleRanks << endl;
+     << (if X.Isotropic then "an isotropic flag bundle" else "a flag bundle")
+     << " of rank " << X.Rank << " with subquotient ranks " << runLengthEncode X.BundleRanks << endl;
      )
 
 AbstractVarietyMap = new Type of MutableHashTable
@@ -560,18 +561,27 @@ tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.B
 
 assignable = v -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
 
-chernRemainder = (m,f,n,g) -> (
+chernQuotientRemainder = (m,f,n,g) -> (
      -- assume f and g have constant terms 1
      x := local x;
      A := ring f;
      R := A[x];
      f' := sum(0 .. m, i -> part(i,f) * x^(m-i));
      g' := sum(0 .. n, i -> part(i,g) * x^(n-i));
-     h' := f' % g';
-     ( map(A,R,{1}) ) h')     
+     assert( m >= n );		 -- ensures the quotient is monic of degree m-n
+     p := map(A,R,{1});
+     p(f' // g'), p(f' % g'))     
 
-offset := 1
-flagBundle = method(Options => { VariableNames => null, Isotropic => false }, TypicalValue => FlagBundle)
+offset := 1 -- an offset of 1 means the variable have subscripts 1 .. n corresponding to the tautological bundles
+
+flagBundle = method(
+     Options => { 
+	  VariableNames => null,
+	  QuotientBundles => true,
+	  Isotropic => false
+	  }, 
+     TypicalValue => FlagBundle)
+
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,ZZ) := opts -> (bundleRanks,n) -> flagBundle(bundleRanks,OO_point^n,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
@@ -580,38 +590,70 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      varNames := opts.VariableNames;
      bundleRanks = splice bundleRanks;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
-     n := #bundleRanks;
+     bundleRanks' := bundleRanks;			    -- the original list of bundle ranks
+     n' := #bundleRanks';
      rk := rank E;
-     hft := {1};
-     HR := degreesRing hft;
-     T := HR_0;
-     vn := dualpart(0,rsort bundleRanks);
-     -- we should have an option for checking the correctness of our hilbertSeriesHint:
-     hilbertSeriesHint := (
-	  if opts.Isotropic
-	  then null					    -- not implemented
-	  else new Divide from {
-	       promote( product for i from 0 to n-1 list ( k := sum take(bundleRanks,i); product for j from k+1 to k+bundleRanks#i list 1 - T^j ), HR),
-	       new Product from reverse for i from 1 to #vn list new Power from {1 - T^i, vn#(i-1)}
-	       });
-     -- We no longer check this, intentionally.  Important for the isotropic case.
-     -- if rank E != rk then error "expected rank of bundle to equal sum of bundle ranks";
      if part(rk+1,infinity,chern E) != 0 then error "expected an effective bundle (with vanishing higher Chern classes)";
      if opts.Isotropic then (
 	  if not even rk then error "flagBundle, isotropic case: expected bundle of even rank";
 	  if not all(1 .. rk//2, i -> part(2*i-1, chern E) == 0) then error "flagBundle, isotropic case: expected bundle with vanishing odd Chern classes";
 	  );
      rk2 := if opts.Isotropic then rk//2 else rk;
+     omittedVariables := null;
+     if not opts.Isotropic then (
+	  if rk < sum bundleRanks then (
+	       -- Remark: In this case, we could regard the flag bundle to be the empty variety, with a zero intersection ring.
+	       -- But then we should also regard the ranks of the bundles to take values in the zero ring, since that what
+	       -- HH^0(FV,ZZ) turns out to be.  But we don't do that.  Ranks are always integers.  So don't implement this case.
+	       error "expected rank of bundle to be not less than the sum of the bundle ranks";
+	       );
+	  if rk > sum bundleRanks then (
+	       -- Add one more bundle-rank to bring the sum up to the rank of E, but flag it, so we don't create
+	       -- superfluous variables for it in the ring
+	       -- The value of the VariableNames option lists variable names only for the bundles of ranks explicitly specified.
+	       -- Isotropic flag bundles always have an extra bundle in the middle of the filtration, and we allow it to be zero.
+	       if opts.QuotientBundles then (
+		    omittedVariables = 0;	   -- the index of the one we're adding
+		    bundleRanks = join({rk - sum bundleRanks}, bundleRanks);
+		    )
+	       else (
+		    omittedVariables = #bundleRanks;	-- the index of the one we're adding
+		    bundleRanks = join(bundleRanks, {rk - sum bundleRanks});
+		    );
+	       );
+	  )
+     else (
+	  if rk < 2 * sum bundleRanks then (
+	       error "expected rank of bundle to be not less than the twice the sum of the bundle ranks";
+	       );
+	  bundleRanks = join(reverse bundleRanks, rk - 2 * sum bundleRanks {* might be 0 *}, bundleRanks);
+	  );
+     n := #bundleRanks;
+     hft := {1};
+     HR := degreesRing hft;
+     T := HR_0;
+     -- we should have an option for checking the correctness of our hilbertSeriesHint:
+     hilbertSeriesHint := (
+	  if opts.Isotropic
+	  then null					    -- not implemented yet, do soon
+	  else (
+	       vn := dualpart(0,rsort bundleRanks);
+	       new Divide from {
+		    promote( product for i from 0 to n-1 list ( k := sum take(bundleRanks,i); product for j from k+1 to k+bundleRanks#i list 1 - T^j ), HR),
+		    new Product from reverse for i from 1 to #vn list new Power from {1 - T^i, vn#(i-1)}
+		    };
+	       );
+	  );
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
      varNames = (
 	  if varNames === null then varNames = h$;
 	  varNames = fixvar varNames;
 	  if instance(varNames,Symbol)
-	  then apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> apply(toList(1 .. r), j -> new IndexedVariable from {varNames,(i+offset,j)}))
+	  then apply(0 ..< n', bundleRanks', (i,r) -> apply(toList(1 .. r), j -> new IndexedVariable from {varNames,(i+offset,j)}))
 	  else if instance(varNames,List)
 	  then (
-	       if #varNames != n then error("expected ", toString n, " bundle names");
-	       apply(0 .. #bundleRanks - 1, bundleRanks, (i,r) -> (
+	       if #varNames != n' then error("expected ", toString n', " bundle names");
+	       apply(0 ..< n', bundleRanks', (i,r) -> (
 		    h := varNames#i;
 		    try h = baseName h;
 		    if h === null then apply(toList(1 .. r), j -> new IndexedVariable from {h$,(i+offset,j)})
@@ -629,22 +671,30 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      -- done with user-interface preparation and checking
      Ord := GRevLex;
      X := variety E;
-     dgs := splice apply(bundleRanks, r -> 1 .. r);
+     dgs := splice apply(bundleRanks', r -> 1 .. r);
      S := intersectionRing X;
-     U := S(monoid [flatten varNames, Degrees => dgs, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false, Heft => hft, DegreeRank => 1]);
+     U := S(monoid [flatten varNames, Degrees => dgs, MonomialOrder => apply(bundleRanks', n -> Ord => n), Join => false, Heft => hft, DegreeRank => 1]);
      -- (A,F) := flattenRing U; G := F^-1 ;
      A := U; F := identity;
      chclasses := apply(varNames, x -> F (1_U + sum(x,v -> U_v)));
      prodchclasses := product chclasses;
-     rkprod := sum bundleRanks;
+     rkprod := sum bundleRanks';
      if opts.Isotropic then (
 	  sig := x -> x * (-1)^(first degree x);
-	  chclassesstar := apply(varNames, x -> F (1_U + sum(x,v -> sig U_v)));
+	  chclassesstar := reverse apply(varNames, x -> F (1_U + sum(x,v -> sig U_v)));
      	  prodchclassesstar := product chclassesstar;
 	  prodchclasses = prodchclasses * prodchclassesstar;
 	  rkprod = 2 * rkprod;
 	  );
-     rlns := chernRemainder(rk, F promote(chern E,U), rkprod, prodchclasses);
+     (quot,rlns) := chernQuotientRemainder(rk, F promote(chern E,U), rkprod, prodchclasses);
+     chclasses = (
+	  if opts.Isotropic 
+	  then join( chclassesstar, {quot}, chclasses )
+	  else if omittedVariables === 0 
+	  then join( {quot}, chclasses )
+	  else if omittedVariables === null
+	  then chclasses
+	  else join( chclasses, {quot} ));
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      rlns = ideal matrix(U,{rlns});
      if heft S =!= null and degreesRing S === HR 
@@ -659,7 +709,10 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      FV.BundleRanks = bundleRanks;
      FV.Rank = rk;
      FV.Base = X;
-     bundles := FV.Bundles = apply(0 .. n-1, i -> (
+     FV.Options = opts;
+     FV.Isotropic = opts.Isotropic;
+     assert( n == # bundleRanks and n == # chclasses );
+     bundles := FV.Bundles = apply(0 ..< n, i -> (
 	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       bdl));
      FV.SubBundles = (() -> ( t := OO_FV^0; for i from 0 to n list if i == 0 then t else t = t + bundles#(i-1)))();

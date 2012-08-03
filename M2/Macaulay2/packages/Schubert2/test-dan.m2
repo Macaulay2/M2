@@ -100,6 +100,7 @@ assert( oo == 59 )
 integral ( g2^3 * p^11 )
 assert( oo == 117 )
 
+-- test the isotropic case
 F = flagBundle_{2}(OO_point^10,Isotropic=>true)
 Q = first F.Bundles
 assert ( 1430 == integral (chern_1 Q)^15)
@@ -107,3 +108,25 @@ assert ( 1430 == integral (chern_1 Q)^15)
 F = flagBundle_{5}(OO_point^10,Isotropic=>true)
 Q = first F.Bundles
 assert ( 292864 == integral (chern_1 Q)^15)
+
+-- test the case where the sum of the subquotient ranks doesn't equal the rank of the bundle
+F = flagBundle({1,2,3}, OO_point^6, VariableNames => {symbol a, symbol b, symbol c})
+A = intersectionRing F
+assert ( F.BundleRanks == {1, 2, 3} )
+assert( gens A === {a_1, b_1, b_2, c_1, c_2, c_3} )
+F'= flagBundle({2,3}, OO_point^6, VariableNames => {symbol b, symbol c})
+assert ( F'.BundleRanks == {1, 2, 3} )
+A'= intersectionRing F'
+assert( gens A' === {b_1, b_2, c_1, c_2, c_3} )
+-- verify that A and A' are isomorphic and zero sections and tangent bundles correspond
+f = map(A,A')
+g = inverse f
+assert ( f * g == 1 )
+assert ( g * f == 1 )
+assert isWellDefined f
+assert isWellDefined g
+assert isHomogeneous f
+assert isHomogeneous g
+assert ( f sectionClass F'.StructureMap == sectionClass F.StructureMap )
+assert ( f chern tangentBundle F' === chern tangentBundle F )
+
