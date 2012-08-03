@@ -268,7 +268,7 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
 
 isWellDefined RingMap := f -> (
      R := source f;
-     (S,p,q) := flattenRing(R,CoefficientRing=>ZZ,Result=>3);
+     (S,p,q) := flattenRing(R,Result=>3);
      T := ambient S;
      I := ideal S;
      g := f * q * map(S,T);
