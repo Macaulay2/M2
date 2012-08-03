@@ -92,7 +92,7 @@ FlagBundle#{Standard,AfterPrint} = X -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << (if X.Isotropic then "an isotropic flag bundle" else "a flag bundle")
-     << " of rank " << X.Rank << " with subquotient ranks " << runLengthEncode X.BundleRanks << endl;
+     << " with subquotient ranks " << runLengthEncode X.BundleRanks << endl;
      )
 
 AbstractVarietyMap = new Type of MutableHashTable
