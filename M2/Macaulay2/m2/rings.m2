@@ -39,7 +39,9 @@ ring = method(TypicalValue => Ring)
 -- ring Type := T -> if T.?ring then T.ring else error "no ring"
 
 ambient Ring := Ring => R -> error "no ambient ring present"
-coefficientRing Ring := Ring => R -> error "no coefficient ring present"
+
+coefficientRing = method(TypicalValue => Ring)
+coefficientRing Ring := R -> error "no coefficient ring present"
 
 isCommutative = method(TypicalValue => Boolean)
 isCommutative Ring := R -> R.isCommutative

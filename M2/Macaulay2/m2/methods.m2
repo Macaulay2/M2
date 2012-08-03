@@ -170,7 +170,7 @@ setupMethods := (args, symbols) -> (
 setupMethods((), { 
 	  entries, borel, gcdCoefficients, singularLocus, replace,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
-	  koszul, symmetricPower, coefficientRing, trace, target, source,
+	  koszul, symmetricPower, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',

@@ -86,7 +86,7 @@ generators PolynomialRing := opts -> R -> (
      if opts.CoefficientRing === null then R.generators
      else if opts.CoefficientRing === R then {}
      else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r,R))))
-coefficientRing PolynomialRing := Ring => R -> last R.baseRings
+coefficientRing PolynomialRing := R -> last R.baseRings
 precision PolynomialRing := precision @@ coefficientRing
 standardForm RingElement := (f) -> (
      R := ring f;
