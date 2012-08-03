@@ -626,7 +626,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  if rk < 2 * sum bundleRanks then (
 	       error "expected rank of bundle to be not less than the twice the sum of the bundle ranks";
 	       );
-	  bundleRanks = join(reverse bundleRanks, rk - 2 * sum bundleRanks {* might be 0 *}, bundleRanks);
+	  bundleRanks = join(reverse bundleRanks, {rk - 2 * sum bundleRanks {* might be 0 *}}, bundleRanks);
 	  );
      n := #bundleRanks;
      hft := {1};
@@ -723,10 +723,13 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      pushforward := method();
      pullback S := r -> H promote(F promote(r,U), B);
      sectionClass := (
-	  t := if n == 0 then 1_C else product(0 .. n-1, i -> (ctop bundles#i)^(rk2 - sum(i .. n-1, j -> rank bundles#j)));
 	  if not opts.Isotropic 
-	  then t
-	  else t^2 * product gens C);
+	  then (
+	       if n == 0 then 1_C else product(0 .. n-1, i -> (ctop bundles#i)^(rk2 - sum(i .. n-1, j -> rank bundles#j)))
+	       )
+	  else (
+	       if n' == 0 then 1_C else product(0 ..< n', i -> (ctop bundles#-i)^(rk2 - sum(i .. n'-1, j -> rank bundles#-j)))
+	       )^2 * product gens C);
      pushforward C := r -> coefficient(sectionClass,r);
      pushforward ZZ := pushforward QQ := r -> coefficient(sectionClass,promote(r,C));
      pTangentBundle := (

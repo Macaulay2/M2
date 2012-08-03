@@ -102,11 +102,11 @@ assert( oo == 117 )
 
 -- test the isotropic case
 F = flagBundle_{2}(OO_point^10,Isotropic=>true)
-Q = first F.Bundles
+(S,M,Q) = F.Bundles
 assert ( 1430 == integral (chern_1 Q)^15)
 
 F = flagBundle_{5}(OO_point^10,Isotropic=>true)
-Q = first F.Bundles
+(S,M,Q) = F.Bundles
 assert ( 292864 == integral (chern_1 Q)^15)
 
 -- test the case where the sum of the subquotient ranks doesn't equal the rank of the bundle
