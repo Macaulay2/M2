@@ -1,0 +1,17 @@
+With this change, isWellDefined RingMap will fail to work if the ring map
+maps generators of ground fields somewhere wrong.  But at least it starts
+to work if the ground ring is QQ instead of ZZ.
+
+    Index: newring.m2
+    ===================================================================
+    --- newring.m2	(revision 14820)
+    +++ newring.m2	(working copy)
+    @@ -268,7 +268,7 @@
+
+     isWellDefined RingMap := f -> (
+	  R := source f;
+    -     (S,p,q) := flattenRing(R,CoefficientRing=>ZZ,Result=>3);
+    +     (S,p,q) := flattenRing(R,Result=>3);
+	  T := ambient S;
+	  I := ideal S;
+	  g := f * q * map(S,T);
