@@ -32,6 +32,8 @@ Number / Measurement  := Constant / Measurement  := (x,m) -> new Measurement fro
 Measurement * Number  := Measurement * Constant  := Measurement Number  := Measurement Constant  := (m,x) -> x*m
 Measurement / Number  := Measurement / Constant  := (m,x) -> new Measurement from { m#0/x, m#1 }
 
+factor Measurement := opts -> m -> new Measurement from { factor m#0, m#1 }
+
 Measurement * UnitMonomial := Measurement UnitMonomial := (m,n) -> (
      p := m#1*n;
      if p === 1 then m#0 else new Measurement from {m#0,p})
