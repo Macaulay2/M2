@@ -29,7 +29,7 @@ Node
       generic abstract sheaves.
 
       This package is inspired by @ HREF{"http://stromme.uib.no/home/schubert/", "schubert"} @, which was written by
-      @ HREF{"http://www.math.uiuc.edu/~katz/", "Sheldon Katz"} @ and Stein A. Strømme.
+      @ HREF{"http://www.math.uiuc.edu/~katz/", "Sheldon Katz"} @ and @ HREF{"http://stromme.uib.no/", "Stein A. Strømme"} @.
 
   Subnodes
     "Lines on hypersurfaces"
