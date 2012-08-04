@@ -33,6 +33,7 @@ Measurement * Number  := Measurement * Constant  := Measurement Number  := Measu
 Measurement / Number  := Measurement / Constant  := (m,x) -> new Measurement from { m#0/x, m#1 }
 
 factor Measurement := opts -> m -> new Measurement from { factor m#0, m#1 }
+value Measurement := m -> new Measurement from { value m#0, m#1 }
 
 Measurement * UnitMonomial := Measurement UnitMonomial := (m,n) -> (
      p := m#1*n;
