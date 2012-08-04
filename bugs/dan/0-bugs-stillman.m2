@@ -2,48 +2,84 @@
 -- then check in the file, using (outside of M2):
 --   cvs ci -m "another bug"
 
-restart
-R = ZZ[a..d,MonomialOrder=>Lex]
-sorted = sort{a*d, b^100, c^3*d}
-assert(sorted === {c^3*d, b^100, a*d}) -- fails
-assert(c^3*d <= b^100)
-assert(b^100 <= a*d)
-assert(c^3*d <= a*d)
-sorted2 = rsort{a*d, b^100, c^3*d} -- same as sort??
-
--- files to watch out for:
-ann'-doc.m2 (egrep screwed up)
-ann-doc.m2 -- already exists??
-contract'-doc.m2
-diff'-doc
-identity-doc.m2 -- already exists??
-file functions/numeric-doc.m2 already exists -- not modifying it
-writing functions/peek'-doc.m2
-writing functions/quotient'-doc.m2
-writing functions/remainder'-doc.m2
-
 -- design flaw:
 -- forceGB shouild be
 --    forceGB(f, GroebnerBasis=>g, ChangeMatrix=>c, SyzygyMatrix=>s) ?
 -- forceGB(f, ChangeMatrix=>m)
 --    where does this go to?  The minimal matrix?
 
+     what's the problem? [drg]
+
+
+
 -- 'monomials' applied to a matrix with more than one row is coming out messed up
 -- see the test in functions/monomials-doc.m2
+
+     what's the problem? [drg]
+
 
 -- RR and CC stuff:
 -- (1) conjugate should work on a MutableMatrix, or Matrix
 --     same with conjugate-transpose?
 -- (2) U^-1, for U a matrix over CC, is WRONG
+
+     give an example?
+
 -- (3) printingPrecision should be used for matrices?
+
+     it is:
+
+	i85 : printingPrecision=11
+
+	o85 = 11
+
+	i86 : matrix {{1/3.}}
+
+	o86 = | .33333333333 |
+
+			 1          1
+	o86 : Matrix RR    <--- RR
+		       53         53
+
+
+
 --     Actually it seems to be incorrect for real numbers in any case.
+
+     no, when the output is a single number, then printingPrecision = 0 is used,
+     according to the documentation
+
+	   i90 : printingPrecision=7
+
+	   o90 = 7
+
+	   i91 : 1/3.
+
+	   o91 = .333333333333333
+
+	   o91 : RR (of precision 53)
+
+	   i92 : {1/3.}
+
+	   o92 = {.3333333}
+
+	   o92 : List
+
+
 
 -- modules -- 10/1/05 -----------------
 R = ZZ[a,b]; 
 R^{10000:1,10000:2}  -- displays ALL of the degrees on one line!
-M = R^3; I = ideal(x); I*M_0 -- should be a submodule
+
+     	  fixed! [drg]
+
+M = R^3; I = ideal(a); I*M_0 -- should be a submodule
+
+     	  it is (?)
+
 S = R[x,y]
 S*a
+
+     -- above all okay
 
 Ring * RingElement := (R,f) -> (
      if ring f === R then ideal(f)
@@ -59,11 +95,15 @@ Ring * Vector := (R,v) -> (
 --Vector + Module := (v,M) -> (ring v) * v + M
 isHomogeneous Vector := (v) -> isHomogeneous new Matrix from v
 
+     -- above all okay
+
 R = QQ[a,b]
 S = R[x,y]
 M = S^3
 I = ideal(x,y)
 I*M + S*M_0
+
+     -- above all okay
 
 M_0; S*M_0 -- should also be allowed
   -- then submodules are easy to do: I*M + R*M_0 + R*a*M_1
@@ -73,6 +113,9 @@ I * M_0
 I*M_0 + S*M_1 + S*(x-y)*M_0
 isHomogeneous oo
 M_1
+
+     -- above all okay
+
 -- Question: given M_0, how do I do anything with it?
 
 ---------------------------------
@@ -93,37 +136,61 @@ aborting: lose all your variables
 
 gens gb: recomputes the min gens...
 
+     -- leave those above for Mike (?) [drg]
+
 -- This following 4 lines sent to Dan, 12/8/05 FIXED
 S = QQ[a,b,Degrees=>{{0,-1},{1,1}},Heft=>{2,-1}]
 N = matrix{{1,2,3}}
 substitute(N,S)
 
+     -- above all okay
+
+
 -- Resolutions over such rings FIXED
 S = QQ[a,b,Degrees=>{{0,-1},{1,1}},Heft=>{2,-1}]
 res ideal vars S
+
+     -- above all okay
 
 -- 12/21/05
 R = ZZ/7[x1,x2,x3]
 toExternalString monomialIdeal(x1,x2)
 
+     -- fixed [drg]
+
+
 -- 12/22/05
 gb of a monomial ideal (over a poly ring or quotient by monomials)
   should not recompute the GB.
+
+     -- fixed [drg]
+
 MonomialIdeal : RingElement now computes horrendous amount.  It
-  should call immediately the monomial ideal code.  If the ring element
+  should call immediately the monomial ideal code.  
+
+     	  -- fixed [ drg ]
+						    
+						    
+						    If the ring element
   is not a monomial, it should still call the monideal code, using the
   monomial ideal of all terms of a polynomial.
+
+     	  -- fixed [ drg ]
+
 hilbert series of a monomial ideal should be using monideal code.
+
+     	  -- fixed [ drg ]
+
 
 -- 1/18/06
 R = QQ[a..d]
 I = ideal"ab,cd,a2c,abd2"
 primaryDecomposition I -- this gives answer as ideals.  That is what it should be.
 
+     	  -- so it isn't a bug
+
 -- 1/18/06
-A = QQ[a]/(a^2+a+1)
-isField A
-toField A
+A = toField ( QQ[a]/(a^2+a+1) )
 isField A
 B = A[x,y,z]
 I = ideal(a*x-2, a^2*y^2-x-1)
@@ -132,7 +199,13 @@ gens gb I
 (a+1)/a -- recursion limit of 300 exceeded.  Should / over a ring be same as // ?
         -- perhaps: 'toField' should install a new "/" routine that calls // ?
 
-J = Grass(2,5)
+     	  -- modified this code to use "toField" correctly [drg]
+
+
+ZZ/2 ** ZZ[x]						    -- fails
+
+
+J = Grassmannian(2,5)
 ZZ/101 ** (ring J) -- fails, why?
 coefficientRing (ZZ/101) -- because it is somehow using this
 ZZ/101 ** (gens J) -- should we allo this sort of thing?
