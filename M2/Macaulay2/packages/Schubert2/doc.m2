@@ -16,9 +16,9 @@ Node
       
       An @TO2{AbstractSheaf,"abstract sheaf"}@ on an abstract variety is represented by an object of class 
       @ TO AbstractSheaf @ that contains the total Chern character of the sheaf.  It should be thought of as an element of
-      the Grothendieck ring of the variety tensored with the degree zero part of the intersection ring.  By the
-      Grothendieck-Riemann-Roch theorem, since we are working over the rational numbers, the Chern character provides a
-      ring isomorphism from Grothendieck ring (tensored as before) to the intersection ring.
+      the Grothendieck ring of the variety tensored with the rational numbers, which, by the
+      Grothendieck-Riemann-Roch theorem, is isomorphic to the intersection ring; the isomorphism is provided
+      by the Chern character.
 
       An @TO2{AbstractVarietyMap,"abstract variety map"}@ is a map between abstract varieties: the information encoded
       is the pull-back and push-forward maps between the corresponding intersection rings.  If necessary, the push-forward map
