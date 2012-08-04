@@ -720,7 +720,7 @@ examples Hypertext := x -> stack deepSplice getExampleInputs x
 examples Thing := x -> (
      checkLoadDocumentation();
      d := fetchRawDocumentation makeDocumentTag(x,Package=>null);
-     if d =!= null then (stack deepSplice getExampleInputs d.Description)^-1)
+     if d =!= null and d.?Description then (stack deepSplice getExampleInputs d.Description)^-1)
 apropos = method()
 apropos String := (pattern) -> (
      last \ sort unique select(
