@@ -90,7 +90,7 @@ ERROR'TOLERANCE := 0.001
 -- 1 = timing main processes
 -- 2 = verify solutions agains blackbox solver (no timing)
 -- 3 = time processes and blackbox solver 
-DEBUGG'LEVEL := 2
+DEBUG'LEVEL = 2
 
 
 solutionsHash := new MutableHashTable;
@@ -659,16 +659,16 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
      if node.Children == {} then node.FlagM = matrix mutableIdentity(FFF,n)
      else scan(node.Children, c->resolveNode(c,remaining'conditions'and'flags));
      
-     if DEBUGG'LEVEL >= 2 then (
+     if DEBUG'LEVEL >= 2 then (
      	  -- temporary: creates a superset of solutions via a blackbox solver
      	  all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
      	  polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
      	  
-	  if DEBUGG'LEVEL >= 2 then(
+	  if DEBUG'LEVEL >= 2 then(
 	       ---* this part is to time and keep track of what is the expensive part of the computation
-     	       if DEBUGG'LEVEL == 3 then blckbxtime1 := cpuTime();
+     	       if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
 	       Soluciones:=solveSystem flatten entries polynomials;
-	       if DEBUGG'LEVEL == 3 then (
+	       if DEBUG'LEVEL == 3 then (
 		    blckbxtime2 := cpuTime();
 		    <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
 		    );
@@ -701,7 +701,7 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
      scan(node.Fathers, father'movetype->(
      
      (father,movetype) := father'movetype; 
-     if DEBUGG'LEVEL == 1 or DEBUGG'LEVEL == 3 then(
+     if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
      	  tparents1:=cpuTime();
      	  );
      if father =!= "root" then (
@@ -806,9 +806,9 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
 --		    )
 	       else error "an unaccounted case";
 
-	       if DEBUGG'LEVEL == 1 or DEBUGG'LEVEL == 3 then timemakePolys1 := cpuTime();
+	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then timemakePolys1 := cpuTime();
 	       all'polys := makePolynomials(M'X',remaining'conditions'and'flags);
-	       if DEBUGG'LEVEL == 1 or DEBUGG'LEVEL == 3 then(
+	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
 		    timemakePolys2 := cpuTime();
 		    << "-- time to make equations:  "<< (timemakePolys2-timemakePolys1)<<endl;
 		    );
@@ -821,11 +821,11 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
 		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
 			 norm matrix{s} * 
 			 norm sub(last coefficients polys,CC)));
-	       if DEBUGG'LEVEL == 1 or DEBUGG'LEVEL == 3 then( 
+	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then( 
 	       	    t1:= cpuTime();
 		    );
 	       targetSolutions := trackHomotopy(polys,startSolutions);
-	       if DEBUGG'LEVEL == 1 or DEBUGG'LEVEL == 3 then(
+	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
 	       	    t2:= cpuTime();
 	       	    << node.Board << " -- trackHomotopy time: " << (t2-t1) << endl;
 	       	    );
@@ -844,7 +844,7 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
 		    ))
 	       );
      	  -- else {}; -- means: not implemented
-	  if DEBUGG'LEVEL >= 2 then (
+	  if DEBUG'LEVEL >= 2 then (
 	       -- verify solutions
 	       parentX := makeLocalCoordinates father.Board;
 	       parentXlist := flatten entries parentX;
@@ -860,12 +860,12 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
 	       );
 	  father.Solutions = father.Solutions | parent'solutions;
      	  );
-     if DEBUGG'LEVEL == 1 or DEBUGG'LEVEL == 3 then(
+     if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
      	  tparents2:=cpuTime();
      	  << "time of computing one edge: "<< (tparents2 - tparents1) << endl;
      	  );
      ));
-     if DEBUGG'LEVEL >= 2 then(
+     if DEBUG'LEVEL >= 2 then(
      	  -- check against the blackbox solutions
      	  scan(node.Solutions, X->
 	       assert(position(node.SolutionsSuperset, Y->norm(Y-X)<ERROR'TOLERANCE) =!= null)); 
@@ -1455,7 +1455,108 @@ doc ///
 ///;
 
 TEST ///
+-- 4 lines in P^3
+root = playCheckers({1},{1},2,4)
+resolveNode(root, {({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))})
+assert(#root.Solutions==2)
+-- another two-solutions example
+root = playCheckers({2,1,0},{2,1,0},3,6)
+resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
+assert(#root.Solutions==2)
 -- test code and assertions here
 -- may have as many TEST sections as needed
 ///
+
+end
+check "NumericalSchubertCalculus"
+
+-- EXAMPLES (see TEST section for more simple examples)
+restart
+setRandomSeed 0
+--debug 
+needsPackage "NumericalSchubertCalculus";
+
+root = playCheckers({2,1},{2,1},3,6)
+time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({1},random(FFF^6,FFF^6))})
+peek root
+
+n=7; K'n=FFF^n;
+root = playCheckers({2,1,0},{2,1,0},3,n)
+time resolveNode(root, {({2,1,0},random(K'n,K'n)),({2,1,0},random(K'n,K'n))})
+peek root
+printTree root
+
+root = playCheckers({2,1}, {2}, 3,6)
+time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({2},random(FFF^6,FFF^6))})
+peek root
+printTree root
+
+---- there is something wrong, 
+root = playCheckers({3,2,2},{2}, 3,6)
+peek root
+resolveNode(root, {})
+restart
+setRandomSeed 0
+debug needsPackage "LRcheckergame";
+
+-- we test if the resolveNode function
+-- can just solve the problem when 
+-- the Schubert problem consist of two
+-- complementary partitions only
+root = playCheckers({3,3,1},{2},3,6)
+resolveNode(root,{})
+peek root
+
+root = playCheckers({3,3,1}, {2}, 3,6)
+resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
+
+
+------------------- WHAT IS THIS STUFF? CAN IT BE DELETED??? ---------------------------
+
+movetype
+startSolutions
+s -- the "solutions that are wrong"
+polys
+norm sub(polys,matrix{{0}|s})
+
+SolBlackBox =apply(node.SolutionsSuperset, X->toRawSolutions(coordX,X))
+s2 = flatten SolBlackBox
+norm sub(polys,matrix{{0}|s2})
+
+--------------------------------------
+end
+moveCheckers({3,5,4,2,1,0},{3,99,99,5,99,1},6)
+restart
+needsPackage "LRcheckergame";
+moveRed({0, 2}, {2, 1}, {99, 3, 99, 1}, 4)
+-- The output must be
+-- {{99, 3, 99, 1, 1, 99, 99, 3},1}
+playCheckers({1},{1},2,4)
+
+moveRed({0, 3}, {3, 2}, {99, 99, 5, 3, 99, 2}, 6)
+moveRed({2,5},{3,4},{2,99,99,5,99,1},6)
+-- output must be {99, 99, 5, 3, 99, 2}
+playCheckers({1,1},{1,1},3,6)
+playCheckers({1,1},{2,1},3,6)
+playCheckers({1,1},{2,0},2,4)
+playCheckers({1,1},{2,1},3,6)
+playCheckers({2,1},{1,1},3,6)
+
+Sol = playCheckers({3},{3},2,8)
+#Sol
+unique Sol#0
+redChkrPos(partition2bracket(partn2,k,n),partition2bracket(partn1,k,n),k,n);
+playCheckers({2,2},{2,2},4,8)
+
+restart
+needsPackage "LRcheckergame";
+black = {3,5,4,2,1,0};
+red = {3,NC,NC,5,NC,1};
+makeLocalCoordinates [black,red];
+peek oo
+
+black = {6,7,8,9,11,12,13,14,10,5,4,3,2,1};
+red = {}
+
+
 
