@@ -17,7 +17,7 @@ newPackage(
     "BERTINIexe"=>"bertini", 
     "keep files" => true
   },
-  DebuggingMode => true,
+  DebuggingMode => false,
   AuxiliaryFiles => false,
   CacheExampleOutput => true
 )
