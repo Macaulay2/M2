@@ -98,19 +98,6 @@ Node
  Consequences
   Item
    when the task {\tt t} is finished, then the task {\tt u} will be cancelled
- Description
-  Example
-   allowableThreads = 3
-   u = schedule ( () -> while true do null )
-   sleep 1
-   u
-   t = createTask ( () -> null )
-   addCancelTask(t,u)
-   u
-   schedule t
-   while not isReady t do sleep 1
-   u
-   taskResult t
 Node
  Key
   (cancelTask,Task)
@@ -273,20 +260,6 @@ Node
   Item
    the task {\tt t} will be scheduled for execution, but execution will not begin until the
    task {\tt u} finishes
- Description
-  Example
-   t = createTask(() -> (print "t"; 333))
-   u = createTask(() -> (print "u"; 444))
-   addDependencyTask(t,u)
-   sleep 1
-   t
-   u
-   schedule u
-   while not isReady t do null
-   t   
-   u
-   taskResult t
-   taskResult u
 Node
  Key
   addStartTask
