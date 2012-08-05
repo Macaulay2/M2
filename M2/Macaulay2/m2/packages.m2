@@ -352,7 +352,7 @@ findSynonyms Symbol := x -> (
      scan(dictionaryPath, d -> scan(pairs d, (nam,sym) -> if x === sym and getGlobalSymbol nam === sym then r = append(r,nam)));
      sort unique r)
 
-warn0 := (sym,front,behind,syns) -> (
+warn0 := (sym,front,behind,syns) -> if debuggingMode then (
      -- just for debugging:
      -- error("symbol '",sym,"' in ",toString behind," is shadowed by a symbol in ",toString front);
      stderr << "--warning: symbol " << format toString sym << " in " << behind << " is shadowed by a symbol in " << front << endl;
@@ -409,7 +409,6 @@ endPackage String := title -> (
 	  loadedPackages = prepend(pkg,pkg#"previous packages");
 	  dictionaryPath = prepend(exportDict,pkg#"previous dictionaries");
 	  );
-     checkShadow();
      remove(pkg,"previous dictionaries");
      remove(pkg,"previous packages");
      hook := pkg#"close hook";
@@ -418,6 +417,7 @@ endPackage String := title -> (
      global currentPackage <- pkg#"previous currentPackage";
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode"; remove(pkg,"old debuggingMode");
+     checkShadow();
      if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
      if pkg.?loadDepth then (
 	  loadDepth = pkg.loadDepth;
