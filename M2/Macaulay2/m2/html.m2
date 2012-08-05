@@ -462,7 +462,10 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'loadPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | src | ldpkg;
-     cmdname := toAbsolutePath commandLine#0;
+     cmdname := commandLine#0;
+     -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
+     -- running the examples:
+     if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      if ulimit === null then (
 	  ulimit = utest "-t 350" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
 	  );
