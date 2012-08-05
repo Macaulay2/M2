@@ -2,8 +2,8 @@ needsPackage "NAGtypes"
 
 newPackage(
   "PHCpack",
-  Version => "1.07", 
-  Date => "29 Jul 2011",
+  Version => "1.08", 
+  Date => "12 Dec 2011",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "lizgross@math.uic.edu",
@@ -44,7 +44,9 @@ export {
   phcEmbed,
   topWitnessSet,
   phcFactor,
-  cascade
+  cascade,
+  witnessMember,
+  witnessCascade
 }
 
 protect ErrorTolerance, protect addSlackVariables, protect Iterations,
@@ -144,9 +146,11 @@ systemFromFile (String) := (name) -> (
   --   first term starts with +1*x which cannot be digested by M2.
   --   In contrast to the startSystemFromFile, the first term could
   --   also be "-1*x" so we must be a bit more careful...
+  --   Another problem are constants as "3.0e+00", at least on a Mac.
   s := get name;
   s = replace("i","ii",s);
   s = replace("E","e",s);
+  -- s = replace("e+00","",s);  -- on Mac: M2 crashes at 3.0e+00 as constant
   L := lines(s);
   n := value L_0;
   result := {};
@@ -193,7 +197,8 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   L = replace("rco", "\"rco\"", L);
   L = replace("multiplicity", "\"mult\"", L);
   L = replace("res", "\"residual\"", L);
-  L = replace("resolution", "\"residual\"", L);-- because M2 automatically thinks "res"=resolution
+  L = replace("resolution", "\"residual\"", L);
+  -- because M2 automatically thinks "res"=resolution
   use R; 	  
   sols := toList apply(value L, x->new HashTable from toList x);
   defaultPrecision = oldprec;
@@ -239,7 +244,7 @@ pointsToFile (List,Ring,String) := o -> (S,R,name) -> (
   file << #S << " " << numgens R << endl << 
   "===========================================================" << endl;
   scan(#S, i->( 
-    file << "solution " << i << " :" << endl <<
+    file << "solution " << i+1 << " :" << endl <<
     "t :  0.00000000000000E+00   0.00000000000000E+00" << endl <<
     "m :  1" << endl <<
     "the solution for t :" << endl;
@@ -279,6 +284,17 @@ witnessSetFromFile (String) := (name) -> (
   g := parseSolutions(witnessPointsFile,eR);
   w := witnessSet(ideal(take(e,{0,#e-d-1})),ideal(take(e,{#e-d,#e-1})),g);
   return w;
+)
+
+witnessSetToFile = method()
+witnessSetToFile (WitnessSet,String) := (witset,name) -> (
+  -- IN: name, a file name where to write a witness set to,
+  --     witset, a witness set.
+  R := ring ideal(witset);
+  s := equations(witset)|slice(witset);
+  p := points(witset);
+  systemToFile(s,name);
+  pointsToFile(p,R,name,Append=>true);
 )
 
 -----------------------------
@@ -348,7 +364,7 @@ convertToPoly List := List => system -> (
   var := local var;
   scan(system, f-> (
     if instance(class f, FractionField) then
-     --if f is already polynomial, don't do anything!
+     --if f is already polynomial, do not do anything!
        if liftable(f,P) then
      --if it can be lifted to P, then do so and update the system
 	 system = system-set{f} | {lift(f,P)}
@@ -393,8 +409,8 @@ phcSolve  List := List => system -> (
   R := ring ideal system;
   n := #system;
   if n < numgens R then
-    error "the system is underdetermined (positive-dimensional)"; 
-  --let's add slack variables if needed (i.e. if system is overdetermined)
+    error "the system is underdetermined, positive dimensional"; 
+  -- add slack variables if needed (i.e. if system is overdetermined)
   if n > numgens R then (
     nSlacks := n - numgens R;
     slackVars := apply(nSlacks, i->getSymbol("S"|toString i));
@@ -433,8 +449,11 @@ mixedVolume = method(Options => {stableMV => false, startSystem => false})
 mixedVolume  List := Sequence => opt -> system -> (
   -- IN:  system = list of polynomials in the system 
   -- OUT: mixed volume of the system. if optional inputs specified, then output is
-  --      a sequence containing a subset of: mixed volume, stable mixed volume, start system, and solutions to start system.
-  -- Calls an Ada translation of ACM TOMS Algorithm 846: "MixedVol: a software package for mixed-volume computation" by Tangan Gao, T. Y. Li, Mengnien Wu, ACM TOMS 31(4):555-560, 2005.
+  --      a sequence containing a subset of: mixed volume, stable mixed volume,
+  -- start system, and solutions to start system.
+  -- Calls an Ada translation of ACM TOMS Algorithm 846:
+  --  "MixedVol: a software package for mixed-volume computation" 
+  -- by Tangan Gao, T. Y. Li, Mengnien Wu, ACM TOMS 31(4):555-560, 2005.
   R := ring ideal system;
   n := #system;
   if n < numgens R then error "the system is underdetermined";
@@ -512,7 +531,7 @@ mixedVolume  List := Sequence => opt -> system -> (
 )
 
 ----------------------------------
---- PATH TRACKER               ---
+--------  PATH TRACKER  ----------
 ----------------------------------
 
 trackPaths = method(TypicalValue => List, Options=>{gamma=>0, tDegree=>2})
@@ -687,8 +706,8 @@ phcEmbed = method(TypicalValue => List)
 phcEmbed (List,ZZ) := (system,dimension) -> (
   -- IN: system, a polynomial system;
   --     dimension, expected dimension of the solution set.
-  -- OUT : system with as many random hyperplanes at the end
-  --       as the value of dimension.
+  -- OUT: system with as many random hyperplanes at the end
+  --      as the value of dimension.
   PHCinputFile := temporaryFileName() | "PHCinput";
   PHCoutputFile := temporaryFileName() | "PHCoutput";
   PHCbatchFile := temporaryFileName() | "PHCbatch";
@@ -730,9 +749,9 @@ phcEmbed (List,ZZ) := (system,dimension) -> (
 topWitnessSet = method()
 topWitnessSet (List,ZZ) := (system,dimension) -> (
   -- IN: system, a polynomial system;
-  --     dimension, top dimension of the solution set.
-  -- OUT : a witness set for the top dimensional component,
-  --       a list of nonsolutions
+  --      dimension, top dimension of the solution set.
+  -- OUT: a witness set for the top dimensional component,
+  --      a list of nonsolutions
   stdio << "... calling phcEmbed ..." << endl;
   e := phcEmbed(system,dimension);
   stdio << "... calling phcSolve ..." << endl;
@@ -743,6 +762,166 @@ topWitnessSet (List,ZZ) := (system,dimension) -> (
   w := witnessSet(ideal(take(e,{0,#e-dimension-1})),
                   ideal(take(e,{#e-dimension,#e-1})),g);
   return (w,ns);
+)
+
+----------------------------------------------
+------------  WITNESS MEMBER  ----------------
+----------------------------------------------
+
+witnessMember = method(TypicalValue => Boolean)
+witnessMember (WitnessSet,List,Boolean) := (witset,testpoint,verbose) -> (
+  -- IN: witset, a witness set for a positive dimensional solution set,
+  --     testpoint, does it belong to the solution set?
+  --     verbose, true if extra output is wanted.
+  -- OUT: true if testpoint is a member of the solution set,
+  --      false otherwise.
+  PHCwitnessFile := temporaryFileName() | "PHCwitset";
+  PHCtestpointFile := temporaryFileName() | "PHCtestpoint";
+  PHCbatchFile := temporaryFileName() | "PHCbatch";
+  PHCoutputFile := temporaryFileName() | "PHCoutput";
+  PHCsessionFile := temporaryFileName() | "PHCsession";
+  if verbose then
+    stdio << "writing witness set to file " << PHCwitnessFile << endl;
+  witnessSetToFile(witset,PHCwitnessFile);
+  d := dim(witset); -- pad test point with zero values for slack variables
+  dzeros := toList(apply(0..d,i->0));
+  L := {testpoint|dzeros};
+  R := ring ideal(witset);
+  if verbose then
+    stdio << "writing test point to file " << PHCtestpointFile << endl;
+  pointsToFile(L,R,PHCtestpointFile);
+  s := concatenate("1\n",PHCwitnessFile);
+  s = concatenate(s,"\n",PHCtestpointFile);
+  s = concatenate(s,"\n",PHCoutputFile);
+  s = concatenate(s,"\n0\n");
+  bat := openOut PHCbatchFile;
+  bat << s;
+  close bat;
+  if verbose then (
+    stdio << "calling phc -f < " << PHCbatchFile;
+    stdio << " > " << PHCsessionFile << endl;
+  );
+  run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
+  if verbose then
+    stdio << "output of phc -f is in file " << PHCoutputFile << endl;
+  -- if the point does not belong to the witness set,
+  -- then the output file contains the word "NOT"
+  r := get PHCoutputFile;
+  result := not match("NOT",r);
+  return result;
+)
+
+-------------------------------------------------------
+------------  WITNESS SUPERSET FILTERS  ---------------
+-------------------------------------------------------
+
+witnessSuperSetFilter = method()
+witnessSuperSetFilter (WitnessSet,List) := (witset,pts) -> (
+  -- This is an auxiliary procedure to witnessSuperSetsFilter,
+  -- applying witnessMember to filter points in a witness superset.
+  -- IN: witset, a witness set to represent a witness set;
+  --     pts, a list of points to be tested for membership.
+  -- OUT: a list of points in pts for which witnessMember is false.
+  result := new MutableList from {};
+  for p in pts do (
+    c := coordinates(p);
+    if not witnessMember(witset,c,false)
+     then result = append(result,p);
+  );
+  return result;
+)
+
+witnessSuperSetsFilter = method()
+witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
+  -- This is an auxiliary procedure to witnessCascade,
+  -- applying witnessSuperFilter to filter points in the
+  -- witness supersets given in the list.
+  -- IN: witsets, a list of tuples (dimension,witness set),
+  --     pts, a list of points to be tested for membership.
+  -- OUT: a list of points in pts for which witnessMember is false.
+  result := new MutableList from {};
+  local c;
+  for p in pts do (
+    found := false;
+    if instance(p,Point)
+     then c = coordinates(p)
+     else c = p;
+    for w in witsets when (not found) do (
+      ws := w#1;
+      found = witnessMember(ws,c,false);
+    );
+    if not found then result = append(result,p);
+  );
+  return toList(result);
+)
+
+-----------------------------------------------
+------------  WITNESS CASCADE  ----------------
+-----------------------------------------------
+ 
+witnessCascade = method()
+witnessCascade (List,ZZ) := (system,dimension) -> (
+  -- IN: system, a polynomial system;
+  --     dimension, top dimension of the solution set.
+  -- OUT: a hash table with keys the dimension of each component,
+  --      values are witness sets for positive dimensions,
+  --      or a list of isolated solutions for key equal to zero.
+  PHCinputFile := temporaryFileName() | "PHCinput";
+  PHCoutputFile := temporaryFileName() | "PHCoutput";
+  PHCbatchFile := temporaryFileName() | "PHCbatch";
+  PHCsolsFile := temporaryFileName() | "PHCsols";
+  PHCsessionFile := temporaryFileName() | "PHCsession";
+  stdio << "writing output to file " << PHCoutputFile << endl;
+  systemToFile(system,PHCinputFile);
+  s := concatenate("0\ny\n",PHCinputFile);
+  s = concatenate(s,"\n",PHCoutputFile);
+  s = concatenate(s,"\n");
+  s = concatenate(s,toString(dimension));
+  s = concatenate(s,"\nn\n");
+  bat := openOut PHCbatchFile;
+  bat << s;
+  close bat;
+  stdio << "calling phc -c < " << PHCbatchFile;
+  stdio << " > " << PHCsessionFile << endl;
+  run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
+  stdio << "output of phc -c is in file " << PHCoutputFile << endl;
+  stdio << "... constructing witness sets ... " << endl;
+  R := ring ideal system;
+  local slackvars;
+  local RwithSlack;
+  result := new MutableList from {};
+  i := dimension;
+  while i >= 0 do
+  (
+    fil := (PHCoutputFile | "_sw" | i);
+    if fileExists fil then 
+    (
+      stdio << "witness set of dimension " << i << endl;
+      if i > 0 then
+      (
+        slackvars = apply(i, k->getSymbol("zz"|toString(k+1)));
+        RwithSlack = (coefficientRing R)[gens R, slackvars];
+        use RwithSlack;
+        supwit := witnessSetFromFile(fil);
+        if i == dimension then (
+          result = append(result,(i,supwit));
+        ) else (
+          supsols := points(supwit);
+          genpts := witnessSuperSetsFilter(result,supsols);
+          g := toList(apply(genpts,x->point{x}));
+          ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
+          result = append(result,(i,ws));
+        );
+      ) else (
+        run(PHCexe | " -z " | fil | " " | PHCsolsFile);
+        psols := parseSolutions(PHCsolsFile,R);
+        isols := witnessSuperSetsFilter(result,psols);
+        result = append(result,(0,isols));
+      );
+    );
+    i = i-1
+  );
+  return hashTable(result);
 )
 
 -----------------------------------
