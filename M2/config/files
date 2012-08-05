@@ -45,6 +45,7 @@ libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/boost/Makefile
 libraries/mpack/Makefile
+libraries/memtailor/Makefile
 libraries/qd/Makefile
 libraries/mpc/Makefile
 libraries/4ti2/Makefile

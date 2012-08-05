@@ -832,7 +832,11 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
+AC_SUBST(LIBLIST, "
+		   gc gdbm mpir mpfr pari readline ntl factory libfac
+		   lapack frobby glpk cddlib givaro fflas_ffpack linbox boost 
+		   mpc qd mpack flint memtailor
+		  ")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -857,6 +861,14 @@ AC_ARG_ENABLE(fflas-ffpack,
     ENABLE_FFLAS_FFPACK=yes
     BUILD_givaro=yes
     ENABLE_GIVARO=yes
+    )
+
+AC_SUBST(ENABLE_MEMTAILOR,no)
+AC_ARG_ENABLE(memtailor,
+    [AS_HELP_STRING(--enable-memtailor,enable building the memtailor library and linking with it)],
+    AC_DEFINE(HAVE_MEMTAILOR,1,[whether we are linking with the memtailor library])
+    BUILD_memtailor=yes
+    ENABLE_MEMTAILOR=yes
     )
 
 PROGLIST=" $PROGLIST "
@@ -1304,6 +1316,10 @@ then # test whether the fortran compiler can handle lapack, which, starting with
     AC_COMPILE_IFELSE([instrinsic maxloc],
 	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
 	AC_MSG_RESULT(yes))
+fi
+
+if test $BUILD_memtailor = yes
+then BUILTLIBS="-lmemtailor $BUILTLIBS"
 fi
 
 test "$USE_FCLIBS" = no && FCLIBS=
