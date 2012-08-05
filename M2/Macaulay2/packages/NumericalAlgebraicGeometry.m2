@@ -78,10 +78,6 @@ protect MaxNumberOfVariables
 -- DEBUG CORE ----------------------------------------
 debug Core; -- to enable engine routines
 
--- SYMBOL SYNONYMS  -------------------------------- 
-NumericalAlgebraicGeometry#"private dictionary"#"NAG$gamma" = NumericalAlgebraicGeometry$gamma -- PHCpack conflict
-NumericalAlgebraicGeometry#"private dictionary"#"NAG$tDegree" = NumericalAlgebraicGeometry$tDegree -- PHCpack conflict
-
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 {*if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
 then 
@@ -106,8 +102,8 @@ lastPathTracker := null; -- path tracker object used last
 
 DEFAULT = new MutableHashTable from {
      Software=>M2engine, NoOutput=>false, 
-     NAG$gamma=>1, 
-     NAG$tDegree=>1,
+     NumericalAlgebraicGeometry$gamma=>1, 
+     NumericalAlgebraicGeometry$tDegree=>1,
      -- step control
      tStep => 0.05, -- initial
      tStepMin => 1e-6,
@@ -144,8 +140,8 @@ DEFAULT = new MutableHashTable from {
 setDefault = method(Options => {
      Software=>null, 
      NoOutput=>null, 
-     NAG$gamma=>null, 
-     NAG$tDegree=>null,
+     NumericalAlgebraicGeometry$gamma=>null, 
+     NumericalAlgebraicGeometry$tDegree=>null,
      -- step control
      tStep=>null, -- initial
      tStepMin=>null,
@@ -299,8 +295,8 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
-	  NAG$gamma=>null, 
-	  NAG$tDegree=>null,
+	  NumericalAlgebraicGeometry$gamma=>null, 
+	  NumericalAlgebraicGeometry$tDegree=>null,
      	  -- step control
 	  tStep => null, -- initial
           tStepMin => null,
@@ -414,7 +410,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    else ( 
 		    	 matrix{apply(n, i->exp(random(0.,2*pi)*ii))} ) -- ... or random patch
 	       	    };
-	       patches = patches | { o.NAG$gamma*patches#1 };
+	       patches = patches | { o.NumericalAlgebraicGeometry$gamma*patches#1 };
      	       if DBG>1 then << "affine patch: " << toString patches#1 <<endl;
 	       T = T | {patchEquation patches#1};
 	       S = S | {patchEquation patches#2};
@@ -436,7 +432,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if o.Predictor===Certified or (isProjective and o.Software===M2engine)
      -- in both cases a linear homotopy on the unit sphere is performed
      then (
-	  nT = (o.NAG$gamma/abs(o.NAG$gamma))*nT;
+	  nT = (o.NumericalAlgebraicGeometry$gamma/abs(o.NumericalAlgebraicGeometry$gamma))*nT;
 	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
@@ -448,7 +444,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  if DBG>4 then << "Re<S,T> = " << reBW'ST << ", bigT = " << bigT << endl; 
      	  )	  
      else (
-     	  H = matrix {apply(#S, i->o.NAG$gamma*(1-t)^(o.NAG$tDegree)*sub(nS#i,Rt)+t^(o.NAG$tDegree)*sub(nT#i,Rt))};
+     	  H = matrix {apply(#S, i->o.NumericalAlgebraicGeometry$gamma*(1-t)^(o.NumericalAlgebraicGeometry$tDegree)*sub(nS#i,Rt)+t^(o.NumericalAlgebraicGeometry$tDegree)*sub(nT#i,Rt))};
      	  JH := transpose jacobian H; 
      	  Hx = JH_(toList(0..n-1));
      	  Ht := JH_{n};
@@ -1381,7 +1377,7 @@ solveSystem List := List => o -> F -> (
 --	  else 
 	       (
 	       (S,solsS) := totalDegreeStartSystem T;
-	       track(S,T,solsS,NAG$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
+	       track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
 	       );
 	  if o.PostProcess and not overdetermined 
 	  then (
@@ -1517,7 +1513,7 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
      success := false;
      while (not success and attempts > 0) do (
 	  attempts = attempts - 1;
-	  w' := track(E|S, E|S', w,NAG$gamma=>exp(random(0.,2*pi)*ii)); 
+	  w' := track(E|S, E|S', w,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii)); 
 	  success = o.AllowSingular or all(toList(0..#w'-1), p->isRegular(w',p));
 	  );
      if attempts == 0 and not success then error "some path is singular generically";  
@@ -1630,7 +1626,7 @@ regeneration List := List => o -> F -> (
 	       	    	 | {f}
 	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
 	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
-			 NAG$gamma=>exp(random(0.,2*pi)*ii));
+			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if o.Software == M2engine then (
 			 sing := toList singularSolutions(T,targetPoints);

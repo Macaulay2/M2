@@ -26,7 +26,7 @@ solveBertini List := List => F -> ( -- uses Bertini package
      )
 
 protect StartSolutions, protect StartSystem
-makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},NAG$gamma=>1.0+ii})
+makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},NumericalAlgebraicGeometry$gamma=>1.0+ii})
 makeBertiniInput List := o -> T -> (
 -- IN:
 --	T = polynomials of target system
@@ -78,7 +78,7 @@ makeBertiniInput List := o -> T -> (
          << "s = t;" << endl;
 	 
        scan(#T, i -> f << "fff" << i 
-	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.NAG$gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
+	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.NumericalAlgebraicGeometry$gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
 	   );
        );
   f << endl << "END" << endl << endl;
@@ -233,7 +233,7 @@ trackBertini = method(TypicalValue => List)
 trackBertini (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
      -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
      -- mkdir tempdir; 	  
-     dir := makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, NAG$gamma=>o.NAG$gamma);
+     dir := makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, NumericalAlgebraicGeometry$gamma=>o.NumericalAlgebraicGeometry$gamma);
      compStartTime := currentTime();      
      run("cd "|dir|"; "|BERTINIexe|if DBG<2 then " >bertini_session.log" else "");
      if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
