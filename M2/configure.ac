@@ -832,11 +832,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, "
-		   gc gdbm mpir mpfr pari readline ntl factory libfac
-		   lapack frobby glpk cddlib givaro fflas_ffpack linbox boost 
-		   mpc qd mpack flint memtailor
-		  ")
+AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor ")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
