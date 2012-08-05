@@ -581,7 +581,7 @@ document {
 document {
 	Key => {(numericalVariety,List), numericalVariety},
 	Headline => "construct a numerical variety",
-	Usage => "V = numericalVariety(I,Ws)",
+	Usage => "V = numericalVariety Ws",
 	Inputs => { 
 --	     "I" => "the defining ideal of the variety",
 	     "Ws" => {"contains (irreducible) witness sets representing components of a variety"}
