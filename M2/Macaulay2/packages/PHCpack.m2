@@ -28,32 +28,32 @@ newPackage(
   CacheExampleOutput => true
 )
 
+needsPackage "NAGtypes"
+
 export { 
-  phcSolve,
-  mixedVolume,
-  stableMV,
-  startSystem,
-  convertToPoly, 
-  refineSolutions,
-  trackPaths,
-  gamma,
-  tDegree,
-  realFilter,
-  zeroFilter,
-  nonZeroFilter,
-  phcEmbed,
-  topWitnessSet,
-  phcFactor,
-  cascade,
-  witnessMember,
-  witnessCascade
+  "phcSolve",
+  "mixedVolume",
+  "stableMV",
+  "startSystem",
+  "convertToPoly", 
+  "refineSolutions",
+  "trackPaths",
+  "gamma",
+  "tDegree",
+  "realFilter",
+  "zeroFilter",
+  "nonZeroFilter",
+  "phcEmbed",
+  "topWitnessSet",
+  "phcFactor",
+  "cascade",
+  "witnessMember",
+  "witnessCascade"
 }
 
-protect ErrorTolerance, protect addSlackVariables, protect Iterations,
-protect generalEquations, protect Bits, protect ResidualTolerance, 
+protect ErrorTolerance, protect Iterations,
+protect Bits, protect ResidualTolerance, 
 protect Append
-
-needsPackage "NAGtypes"
 
 --##########################################################################--
 -- GLOBAL VARIABLES 
