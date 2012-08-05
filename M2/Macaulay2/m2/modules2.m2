@@ -14,6 +14,7 @@ Module + Module := Module => (M,N) -> (
      or not M.?relations and N.?relations
      then error "expected submodules of the same module";
      subquotient(
+	  ambient M,
 	  if not M.?generators or not N.?generators then null else M.generators | N.generators,
 	  if M.?relations then M.relations else null
 	  )
