@@ -105,9 +105,9 @@ solveSystem F
 
 document {
 	Key => { (track, List, List, List), track, 
-	     [track,NAG$gamma], [setDefault,NAG$gamma], [track,NAG$tDegree], [setDefault,NAG$tDegree], 
+	     [track,NumericalAlgebraicGeometry$gamma], [setDefault,NumericalAlgebraicGeometry$gamma], [track,NumericalAlgebraicGeometry$tDegree], [setDefault,NumericalAlgebraicGeometry$tDegree], 
 	     [track,tStep], [setDefault,tStep], [track,tStepMin], [setDefault,tStepMin],
-	     NAG$gamma, NAG$tDegree, tStep, tStepMin, 
+	     NumericalAlgebraicGeometry$gamma, NumericalAlgebraicGeometry$tDegree, tStep, tStepMin, 
 	     [track,stepIncreaseFactor], [setDefault,stepIncreaseFactor], 
 	     [track, numberSuccessesBeforeIncrease], [setDefault,numberSuccessesBeforeIncrease],
 	     stepIncreaseFactor, numberSuccessesBeforeIncrease, 
@@ -128,8 +128,8 @@ document {
 	     "S" => {" contains the polynomials in the start system"},
 	     "T" => {" contains the polynomials in the target system"},
 	     "solsS" => {" contains start solutions"},
-	     NAG$gamma => {" (meaning gamma = ",  toString DEFAULT.NAG$gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
-	     NAG$tDegree =>{" (meaning tDegree = ", toString DEFAULT.NAG$tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
+	     NumericalAlgebraicGeometry$gamma => {" (meaning gamma = ",  toString DEFAULT.NumericalAlgebraicGeometry$gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
+	     NumericalAlgebraicGeometry$tDegree =>{" (meaning tDegree = ", toString DEFAULT.NumericalAlgebraicGeometry$tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
 	     tStep => {" (meaning tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
 	     tStepMin => {" (meaning tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
 	     stepIncreaseFactor => {" (meaning stepIncreaseFactor = ", toString DEFAULT.stepIncreaseFactor, "). Determines how the step size is adjusted."},
