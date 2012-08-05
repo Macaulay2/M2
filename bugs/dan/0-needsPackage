@@ -1,0 +1,111 @@
+replace all uses of needsPackage inside packages by options PackageImports and PackageExports
+
+-*- mode: grep; default-directory: "~/src/M2/trunk/M2/Macaulay2/packages/" -*-
+Grep started at Sun Aug  5 10:20:55
+
+egrep --color=never -nH -e needsPackage *.m2
+AdjointIdeal.m2:27:needsPackage "MapleInterface"
+BGG.m2:1315:  needsPackage "ChainComplexExtras"
+BIBasis.m2:56:needsPackage "BooleanGB"
+Benchmark.m2:13:needsPackage "XML"
+Bertini.m2:1:needsPackage "NAGtypes"
+Bertini.m2:70:needsPackage "NAGtypes"
+Bertini.m2:82:needsPackage "SimpleDoc"
+Binomials.m2:105:needsPackage "FourTiTwo";
+Binomials.m2:106:needsPackage "Cyclotomic";
+Binomials.m2:1988:needsPackage "Binomials";
+BoijSoederberg.m2:756:needsPackage "SchurRings"
+Classic.m2:12:needsPackage "Parsing"
+ConvexInterface.m2:19:needsPackage "MapleInterface"
+ExampleIdeals.m2:14:needsPackage "Markov"
+FastLinearAlgebra.m2:446:needsPackage "FastLinearAlgebra"
+FastLinearAlgebra.m2:483:needsPackage "FastLinearAlgebra"
+FourTiTwo.m2:670:  needsPackage "FourTiTwo"   --testing graver  
+Functoriality.m2:31:--needsPackage "ChainComplexExtras"
+IntegralClosure.m2:20:needsPackage "PrimaryDecomposition"
+IntegralClosure.m2:65:needsPackage "ReesAlgebra"
+ModuleDeformations.m2:578:needsPackage "ModuleDeformations"
+ModuleDeformations.m2:595:needsPackage "ModuleDeformations";
+ModuleDeformations.m2:606:needsPackage "ModuleDeformations";
+ModuleDeformations.m2:618:needsPackage "ModuleDeformations";
+MonomialAlgebras.m2:1:needsPackage "Polyhedra"
+MonomialAlgebras.m2:45:needsPackage("FourTiTwo",Configuration=>{"keep files" => false})
+MonomialAlgebras.m2:46:needsPackage "Polyhedra"
+MonomialMultiplierIdeals.m2:68:needsPackage("Normaliz");
+MonomialMultiplierIdeals.m2:77:needsPackage("ReesAlgebra");
+MonomialMultiplierIdeals.m2:630:  needsPackage "Normaliz";
+MonomialMultiplierIdeals.m2:631:  needsPackage "MonomialMultiplierIdeals";
+MonomialMultiplierIdeals.m2:651:  needsPackage "Normaliz";
+MonomialMultiplierIdeals.m2:652:  needsPackage "MonomialMultiplierIdeals";
+MonomialMultiplierIdeals.m2:673:  needsPackage "MonomialMultiplierIdeals";
+MonomialMultiplierIdeals.m2:695:  needsPackage "MonomialMultiplierIdeals";
+MonomialMultiplierIdeals.m2:711:  needsPackage "MonomialMultiplierIdeals";
+MonomialMultiplierIdeals.m2:737:  needsPackage "MonomialMultiplierIdeals";
+NAGtypes.m2:472:needsPackage "NumericalAlgebraicGeometry"
+NAGtypes.m2:535:     needsPackage "NumericalAlgebraicGeometry"
+NAGtypes.m2:551:     needsPackage "NumericalAlgebraicGeometry"
+NAGtypes.m2:568:     needsPackage "NumericalAlgebraicGeometry"
+Nauty.m2:11:if version#"VERSION" <= "1.4" then needsPackage "EdgeIdeals"
+Nauty.m2:40:     needsPackage "SimplicialComplexes";
+Nauty.m2:41:     needsPackage "EdgeIdeals";
+Nauty.m2:2006:needsPackage "Nauty";
+NautyGraphs.m2:11:if version#"VERSION" <= "1.4" then needsPackage "Graphs"
+NautyGraphs.m2:26:if version#"VERSION" <= "1.4" then needsPackage "Graphs"
+NautyGraphs.m2:1923:needsPackage "Nauty";
+NormalToricVarieties.m2:4601:needsPackage "NormalToricVarieties";
+NormalToricVarieties.m2:4603:needsPackage "FourierMotzkin";
+NumericalAlgebraicGeometry.m2:4:if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
+NumericalAlgebraicGeometry.m2:5:if version#"VERSION" <= "1.4" then needsPackage "PHCpack"
+NumericalAlgebraicGeometry.m2:6:if version#"VERSION" <= "1.4" then needsPackage "Bertini"
+NumericalAlgebraicGeometry.m2:40:if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
+PHCpack.m2:1:needsPackage "NAGtypes"
+PHCpack.m2:54:needsPackage "NAGtypes"
+PHCpack.m2:68:needsPackage "SimpleDoc"
+ParameterSchemes.m2:25:needsPackage "FourierMotzkin"
+ParameterSchemes.m2:79:     needsPackage "FourierMotzkin";
+PieriMaps.m2:428:     needsPackage "SchurRings"
+Polyhedra.m2:155:needsPackage "FourierMotzkin"
+Polyhedra.m2:3529:     F << "needsPackage \"Polyhedra\"" << endl;
+Polyhedra.m2:3534:	  F << "needsPackage \"PPDivisor\"" << endl);
+Posets.m2:13:    needsPackage "SimplicialComplexes";
+Posets.m2:14:    needsPackage "Graphs";
+Posets.m2:15:    needsPackage "FourTiTwo";
+Posets.m2:34:    needsPackage "SimplicialComplexes";
+Posets.m2:35:    needsPackage "Graphs";
+Posets.m2:36:    needsPackage "FourTiTwo";
+Posets.m2:6464:needsPackage("Posets", FileName => "./Posets.m2")
+RandomCanonicalCurves.m2:1:needsPackage"RandomObjects"
+RandomCanonicalCurves.m2:29:needsPackage"RandomObjects"
+RandomCanonicalCurves.m2:30:needsPackage"RandomSpaceCurves"
+RandomCanonicalCurves.m2:31:needsPackage"RandomPlaneCurves"
+RandomCanonicalCurves.m2:32:needsPackage"RandomGenus14Curves"
+RandomCurves.m2:1:needsPackage"RandomObjects"
+RandomCurves.m2:2:needsPackage"RandomSpaceCurves"
+RandomCurves.m2:3:needsPackage"RandomPlaneCurves"
+RandomCurves.m2:4:needsPackage"RandomGenus14Curves"
+RandomCurves.m2:5:needsPackage"RandomCanonicalCurves"
+RandomGenus14Curves.m2:1:needsPackage"RandomObjects"
+RandomGenus14Curves.m2:27:needsPackage"RandomObjects"
+RandomGenus14Curves.m2:356:needsPackage("RandomGenus14Curves")
+RandomPlaneCurves.m2:1:needsPackage "RandomObjects"
+RandomPlaneCurves.m2:38:needsPackage "RandomObjects"
+RandomSpaceCurves.m2:1:needsPackage"RandomObjects"
+RandomSpaceCurves.m2:39:needsPackage"RandomObjects"
+RandomSpaceCurves.m2:855:needsPackage("RandomSpaceCurves")
+SRdeformations.m2:19:  needsPackage "ConvexInterface"
+SRdeformations.m2:21:needsPackage "Polyhedra"
+Sage.m2:1:needsPackage "Python"
+Sage.m2:3:needsPackage "Python"
+Schubert2.m2:19:needsPackage "SchurRings"
+Schubert2.m2:20:needsPackage "PushForward"
+SchurFunctors.m2:366:needsPackage "SymmetricPolynomials"
+SchurFunctors.m2:367:needsPackage "SchurRings"
+SimpleDoc.m2:20:needsPackage "Text"
+SimplicialDecomposability.m2:9:if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
+SimplicialDecomposability.m2:34:if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
+ToricCohomology.m2:20:needsPackage "LLLBases";
+ToricCohomology.m2:50:needsPackage "FourierMotzkin"
+VersalDeformations.m2:1099:needsPackage "VersalDeformations";
+gfanInterface.m2:46:needsPackage "FourierMotzkin"
+
+Grep finished (matches found) at Sun Aug  5 10:20:57
