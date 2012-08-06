@@ -1073,8 +1073,9 @@ document {
      and only if x is.",
      PARA{},
      "It is not advisable to copy such things as modules and rings,
-     for the operations that have already been installed for them will return
-     values in the original object, rather than in the copy.",
+     for: (1) the operations that have already been installed for them will return
+     values in the original object, rather than in the copy; and (2) the copy
+     operation is shallow, not copying keys and values that happen to be hash tables.",
      PARA{},
      SeeAlso => { "newClass" }
      }
