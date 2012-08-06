@@ -116,6 +116,20 @@ const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
      }
 }
 
+const Ring* /* or null */ rawDividedPowerRing(const Ring *K, const Monoid *M)
+{
+  //TODO: MES, this function has not yet been implemented, or even placed in engine.h
+  try {
+    const DividedPowerRing * result = 0;  // DividedPowerRing::create(K,M);
+    intern_polyring(result);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
                                          M2_arrayint skewvars)
 {
