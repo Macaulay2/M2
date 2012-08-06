@@ -2758,7 +2758,7 @@ document {
      }
 
 document { 
-     Key => {(multiplierIdeal, Ideal, QQ), (multiplierIdeal, Ideal, List), 
+     Key => {(multiplierIdeal, Ideal, QQ), (multiplierIdeal, Ideal, ZZ), (multiplierIdeal, Ideal, List), 
 	  [multiplierIdeal, Strategy], [jumpingCoefficients, Strategy], 
 	  [multiplierIdeal, DegreeLimit], [jumpingCoefficients, DegreeLimit], 
 	  multiplierIdeal},

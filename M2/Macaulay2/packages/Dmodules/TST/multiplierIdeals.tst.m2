@@ -7,3 +7,4 @@ I2 = multiplierIdeal(I, 35/18, Strategy=>ViaColonIdeal)
 I3 = multiplierIdeal(I, 35/18, Strategy=>ViaElimination)
 R1 = ring I1;
 assert(sub(I2,R1)==I1 and sub(I3,R1)==I1)
+multiplierIdeal(I,2)
