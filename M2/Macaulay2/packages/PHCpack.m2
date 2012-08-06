@@ -23,7 +23,7 @@ newPackage(
     "PHCexe"=>"phc", 
     "keep files" => true
   },
-  DebuggingMode => false,
+  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
@@ -48,7 +48,8 @@ export {
   "phcFactor",
   "cascade",
   "witnessMember",
-  "witnessCascade"
+  "witnessCascade",
+  "monodromyBreakup"
 }
 
 protect ErrorTolerance, protect Iterations,
@@ -264,8 +265,8 @@ dimEmbedding (List) := (system) -> (
   -- IN: embedded system with slack variables.
   -- OUT: returns the number of slack variables = the dimension.
   eR := ring first system;
-  v := vars eR;
-  slack := v_(#v-2)_0;
+  v := gens eR;
+  slack := v_(#v-1); --this was v-2, any reason?
   zz := toString(slack);
   ds := substring(2,#zz-1,zz);
   dimension := value(ds);
@@ -338,6 +339,38 @@ isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
   -- SP: the above 3 lines could just be written as one line: 
   return abs(L_k)<=tol; 
 )
+
+----------------------------------
+----add slack variables-----------
+----------------------------------
+
+addSlackVariables = method()
+addSlackVariables WitnessSet := (W) -> (
+     -- creates a new system of polynomials, in variables:
+     -- old set of variables, and zz1, ..., zzd, where
+     -- d is the dimension of W.
+     R := ring W;
+     n := numgens R;
+     d := dim W; -- this will be the number of slack variables to add
+     W1 := generalEquations W;
+     -- Add in new variables zz1, ..., zzd,
+     --  this changes the equations, the slice, and the points
+     slackvars := apply(d, i->getSymbol("zz"|toString (i+1)));
+     newR := (coefficientRing R)[gens R, slackvars];
+     newvars := (vars newR)_{n..n+d-1};
+     -- new slice:
+     newSlice := apply(d, i -> sub(W1.Slice#i,newR) + newR_(n + i));
+     -- add a linear matrix 
+     A := random(newR^(d),newR^(n-d));
+     AZ := transpose (newvars * A);
+     newEqns := (sub(gens ideal W1, newR) + AZ) | newvars;
+     -- new points
+     zeros := toList apply(d, i -> 0_(coefficientRing R));
+     newPoints := apply(W1.Points, pt -> join(pt,zeros));
+     witnessSet(ideal newEqns, ideal newSlice, newPoints)
+     )
+
+
 
 --##########################################################################--
 -- EXPORTED METHODS
@@ -871,6 +904,7 @@ witnessCascade (List,ZZ) := (system,dimension) -> (
   PHCbatchFile := temporaryFileName() | "PHCbatch";
   PHCsolsFile := temporaryFileName() | "PHCsols";
   PHCsessionFile := temporaryFileName() | "PHCsession";
+  {PHCinputFile, PHCoutputFile, PHCbatchFile, PHCsolsFile, PHCsessionFile} / (f->if fileExists f then removeFile f);
   stdio << "writing output to file " << PHCoutputFile << endl;
   systemToFile(system,PHCinputFile);
   s := concatenate("0\ny\n",PHCinputFile);
@@ -921,7 +955,13 @@ witnessCascade (List,ZZ) := (system,dimension) -> (
     );
     i = i-1
   );
-  return hashTable(result);
+     for i in toList result do (	 
+     	  (last i)#Equations=ideal system;
+	  (last i)#Points=apply(toList (last i)#Points, j->take(coordinates(j),{0,# gens R -1}) );
+	  (last i)#Slice=apply( toList (last i)#Slice, j->sub(j, R));
+	);        
+     return numericalVariety( apply(toList result, i->last i) )
+  --return hashTable(result);
 )
 
 -----------------------------------
