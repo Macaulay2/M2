@@ -5,8 +5,8 @@ GradedModule.synonym = "graded module"
 ring GradedModule := (M) -> M.ring
 
 spots := C -> select(keys C, i -> class i === ZZ)
-min GradedModule := C -> min spots C
-max GradedModule := C -> max spots C
+min GradedModule := C -> min spots complete C
+max GradedModule := C -> max spots complete C
 union := (x,y) -> keys(set x + set y)
 GradedModule == GradedModule := (C,D) -> (
      ring C === ring D
