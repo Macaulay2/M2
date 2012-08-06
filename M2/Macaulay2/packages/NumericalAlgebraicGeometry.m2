@@ -1,9 +1,10 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
+BERTINI'M2'EXISTS := fileExists(currentFileDirectory | "Bertini.m2") -- remove when Bertini is distributed
 if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 if version#"VERSION" <= "1.4" then needsPackage "PHCpack"
-if version#"VERSION" <= "1.4" then needsPackage "Bertini"
+--if BERTINI'M2'EXISTS and version#"VERSION" <= "1.4" then needsPackage "Bertini"
 
 newPackage select((
      "NumericalAlgebraicGeometry",
@@ -17,7 +18,7 @@ newPackage select((
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      if version#"VERSION" > "1.4" then PackageExports => {"NAGtypes"},
-     if version#"VERSION" > "1.4" then PackageImports => {"PHCpack", "Bertini"},
+     if version#"VERSION" > "1.4" then PackageImports => {"PHCpack"} | if BERTINI'M2'EXISTS then {"Bertini"} else {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => true,
@@ -79,17 +80,8 @@ protect MaxNumberOfVariables
 debug Core; -- to enable engine routines
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
-{*if (options NumericalAlgebraicGeometry).Configuration#"PHCPACK" =!= null 
-then 
-*}
-load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
-{* else (      
-trackPHCpack = null; refinePHCpack = null; solvePHCpack = null;
-     --solveBlackBox = null; trackPaths = null; refineSolutions = null 
-     ) 
-*}
-load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
-
+load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2"
+if BERTINI'M2'EXISTS then load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" else trackBertini = solveBertini = cleanupOutput = bertiniPosDimSolve = null
 
 -- GLOBAL VARIABLES ----------------------------------
 --PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCPACK";

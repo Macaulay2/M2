@@ -17,7 +17,7 @@ newPackage(
 export {
      Norm, MaxConditionNumber, -- options
      -- service functions
-     generalEquations, addSlackVariables,
+     generalEquations, 
      -- witness set
      "WitnessSet", "witnessSet", "equations", "slice", "points", 
      "Equations", "Slice", "Points", "sliceEquations", "IsIrreducible",
@@ -284,32 +284,6 @@ generalEquations WitnessSet := (W) -> (
 	  witnessSet(ideal neweqns, ideal W.Slice, W.Points))
      )
 
-addSlackVariables = method()
-addSlackVariables WitnessSet := (W) -> (
-     -- creates a new system of polynomials, in variables:
-     -- old set of variables, and zz1, ..., zzd, where
-     -- d is the dimension of W.
-     R := ring W;
-     n := numgens R;
-     d := dim W; -- this will be the number of slack variables to add
-     W1 := generalEquations W;
-     -- Add in new variables zz1, ..., zzd,
-     --  this changes the equations, the slice, and the points
-     slackvars := apply(d, i->getSymbol("zz"|toString (i+1)));
-     newR := (coefficientRing R)[gens R, slackvars];
-     newvars := (vars newR)_{n..n+d-1};
-     -- new slice:
-     newSlice := apply(d, i -> sub(W1.Slice#i,newR) + newR_(n + i));
-     -- add a linear matrix 
-     A := random(newR^(d),newR^(n-d));
-     AZ := transpose newvars * A;
-     newEqns := (sub(gens ideal W1, newR) + AZ) | newvars;
-     -- new points
-     zeros := toList apply(d, i -> 0_(coefficientRing R));
-     newPoints := apply(W1.Points, pt -> join(pt,zeros));
-     witnessSet(ideal newEqns, ideal newSlice, newPoints)
-     )
-
 beginDocumentation()
 
 undocumented {(generalEquations,WitnessSet), generalEquations}
@@ -331,7 +305,6 @@ document {
      UL{
 	  {"areEqual", ""},
 	  {"sortSolutions", ""},
-	  {"addSlackVariables", ""},
 	  {"generalEquations", ""}
 	  }
      }
