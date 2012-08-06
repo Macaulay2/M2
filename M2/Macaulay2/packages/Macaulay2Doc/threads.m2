@@ -65,8 +65,8 @@ Node
     One may use @ TO addStartTask @ to specify that one task is to be started after another
     one finishes.  In the following example, {\tt G} will start after {\tt F} finishes.
   Example
-       F = createTask(() -> print "F")
-       G = createTask(() -> print "G")
+       F = createTask(() -> "result of F")
+       G = createTask(() -> "result of G")
        addStartTask(F,G)
        schedule F
        while not isReady F do sleep 1
@@ -273,8 +273,8 @@ Node
    After task {\tt t} finishes, task {\tt u} will be scheduled for execution.
  Description
   Example
-       f = () -> (print "f running";"f value")
-       g = () -> (print "g running";"g value")
+       f = () -> "f value";
+       g = () -> "g value";
        F = createTask f
        G = createTask g
        addStartTask(F,G)
