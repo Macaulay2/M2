@@ -604,6 +604,7 @@ Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symb
      if not M.cache.?components then error "expected a direct sum module";
      if M.cache.?indexComponents then (
 	  ic := M.cache.indexComponents;
+	  oldw := w;
 	  w = apply(w, i -> if ic#?i 
 		    then ic#i 
 		    else error "expected an index of a component of a direct sum"));
@@ -611,7 +612,9 @@ Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symb
      -- we want to construct { (0,1,2), (3,4,5,6), (7,8,9,10,11) } for quick access
      k := 0;
      v := apply(M.cache.components, N -> k .. (k = k + numgens N) - 1);
-     map(directSum M.cache.components_w, M, (cover M)^(splice apply(w, i -> v#i))))
+     newcomps := M.cache.components_w;
+     if oldw =!= null then newcomps = apply(oldw,newcomps,(i,M) -> i => M); -- warning: duplicate entries in oldw will lead to inaccessible components
+     map(directSum newcomps, M, (cover M)^(splice apply(w, i -> v#i))))
 
 Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symbol _,w) else M.cache#(symbol _,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
@@ -619,6 +622,7 @@ Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symb
      if not M.cache.?components then error "expected a direct sum module";
      if M.cache.?indexComponents then (
 	  ic := M.cache.indexComponents;
+	  oldw := w;
 	  w = apply(w, i -> if ic#?i 
 		    then ic#i 
 		    else error "expected an index of a component of a direct sum"));
@@ -626,7 +630,9 @@ Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symb
      -- we want to construct { (0,1,2), (3,4,5,6), (7,8,9,10,11) } for quick access
      k := 0;
      v := apply(M.cache.components, N -> k .. (k = k + numgens N) - 1);
-     map(M, directSum M.cache.components_w, (cover M)_(splice apply(w, i -> v#i))))
+     newcomps := M.cache.components_w;
+     if oldw =!= null then newcomps = apply(oldw,newcomps,(i,M) -> i => M); -- warning: duplicate entries in oldw will lead to inaccessible components
+     map(M, directSum newcomps, (cover M)_(splice apply(w, i -> v#i))))
 
 -----------------------------------------------------------------------------
 Module ^ List := Matrix => (M,rows) -> submatrix(id_M,rows,)
