@@ -1597,10 +1597,10 @@ regeneration List := List => o -> F -> (
 	       if DBG>2 then << "*** proccesing component " << peek comp << endl;
 	       (cIn,cOut) := splitWitness(comp,f); 
 	       if cIn =!= null 
-	       then insertComponent(witnessSet(cIn#Equations 
-			 -- + ideal f -- should we store additional equations?
-			 , cIn#Slice, cIn#Points), 
-		    c2); 
+	       then insertComponent(
+		    witnessSet(cIn#Equations, cIn#Slice, cIn#Points), 
+		    c2
+		    ); 
      	       if cOut =!= null 
 	       and dim cOut > 0 -- 0-dimensional components outside V(f) discarded
 	       then (

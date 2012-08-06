@@ -41,7 +41,7 @@ NumericalVariety = new Type of MutableHashTable
 -- POINT = {
 --   Coordinates => List of CC,
 --   NumberOfSteps => ZZ, -- number of steps made while tracking the path
---   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, null}
+--   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, null}
 --   LastT => RR in [0,1]
 --   ConditionNumber => condition number of the Jacobian
 --   ErrorBoundEstimate => absolute error bound estimate (from Newton's method)
@@ -287,6 +287,12 @@ generalEquations WitnessSet := (W) -> (
 beginDocumentation()
 
 undocumented {(generalEquations,WitnessSet), generalEquations}
+ --warning: symbol has no documentation: NAGtypes :: 
+--warning: symbol has no documentation: NAGtypes :: 
+--warning: symbol has no documentation: NAGtypes :: 
+--warning: symbol has no documentation: NAGtypes :: 
+--warning: symbol has no documentation: NAGtypes :: Norm
+--warning: symbol has no documentation: NAGtypes :: MaxConditionNumber
 
 document {
      Key => NAGtypes,
@@ -310,8 +316,10 @@ document {
      }
 document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), 
-	  Regular, Singular, Infinity, MinStepFailure, (net, Point),
-	  Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate},
+	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, (net, Point),
+	  Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate,
+	  MaxPrecision, WindingNumber, DeflationNumber
+	  },
      Headline => "a type used to store a point in complex space",
      "This type is used to store a solution to a polynomial system obtained by such fuctions as ", 
      TO "solveSystem", ", ", TO "track",". The following methods can be used to access a ", 
@@ -326,6 +334,7 @@ document {
 	  {"Singular", " -- the jacobian of the polynomial system is (near)singular at the point"}, 
 	  {"Infinity", " -- the solution path has been deemed divergent"},
 	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"},
+	  {"NumericalRankFailure", " -- it is likely that in a sequence of deflations numerical rank did not give the correct rank"},
 	  {null, " -- the point has not been classified"}
 	  },
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
@@ -351,6 +360,9 @@ document {
 	  {TO NumberOfSteps, " -- the number of steps in made by the continuation procedure"}, 
      	  {TO LastT, " -- the last value of the continuation parameter produced during tracking (equals 1 for a regular solution)"},
 	  {TO ErrorBoundEstimate, " -- an estimate of the distance from the approximation to the actual solution"},
+	  {TO MaxPrecision, " -- max precision used during the homotopy tracking"}, 
+	  {TO WindingNumber, " -- the winding numeber of a singular solution determined in the end-games"}, 
+	  {TO DeflationNumber, " -- number of first-order deflations in the regularization of a singular solution"},
 	  {TT "Tracker", " -- reserved for developers"}
 	  }
      }
@@ -373,7 +385,7 @@ document {
 	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,
      	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet) 
      	  },
-Headline => "a witness set",
+     Headline => "a witness set",
      "This type stores a witness set of an equidimensional solution component. ", 
      "The following methods can be used to access a ", 
      TT "WitnessSet", ":",
@@ -390,8 +402,17 @@ Headline => "a witness set",
 	  {"deg", " -- the degree (the number of witness points)"},
 	  {"ring", " -- the ring of the defining polynomials"}
 	  }, 
-     "Only dimension and degree are displayed (by ", TO "net", "); to see the rest use ", 
-     TO "peek", "."
+     "Only dimension and degree are displayed (by ", TO "net", "); to see the data stored in a witness set use ", 
+     TO "peek", ".",
+     SUBSECTION "For developers:",
+     "Required entries in a ", TO WitnessSet, " are",
+     UL {
+	  {TT "Equations", " of type ", TO Ideal},
+	  {TT "Slice", " of type either ", TO List, " or ", TO Matrix},
+	  {TT "Points", ", a list of ", TO2(Point, "points")},
+	  {TT "IsIrreducible", " that takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
+	  },
+     SeeAlso => {witnessSet, NumericalVariety}
      }
 document {
 	Key => {witnessSet,(witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List)},
@@ -549,6 +570,14 @@ document {
      Key => {NumericalVariety},
      Headline => "a numerical variety",
      PARA {"This type stores a collection of witness sets representing a variety. "},
+     "Note that",
+     UL {     	  
+	  {"The ambient space is expected to be the same, i.e., ", TO "Equations", " of ", TO2(WitnessSet, "witness sets"),
+	       " are should come from the same ring."},
+	  "The witness sets need not come from the decomposition of the same variety.",
+	  {"The constructor ", TO (numericalVariety,List), " does not check the sensibility of the input; run ", 
+	  TO (check, NumericalVariety), " to verify the validity of a numerical variety."} 
+	  },
      SeeAlso => {WitnessSet}
      }
 document {
