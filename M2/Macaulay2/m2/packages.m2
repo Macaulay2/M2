@@ -151,6 +151,11 @@ newPackage(String) := opts -> (title) -> (
 	  else if opts.Reload === false then error("package ", title, " not reloaded; try Reload => true")
 	  );
      scan(opts.PackageExports, needsPackage);
+     -- We want package imports to be older, because the current package should be allowed to document new methods it attaches
+     -- to methods and classes exported by older packages, provided the older packages don't already document them.
+     -- So we "pre-load" the package imports here:
+     scan(opts.PackageImports, p -> if not member(p,loadedPackages) then dismiss needsPackage p);
+     -- A better way would be for the currentPackage to get recorded in *every* function body!
      dismiss title;
      save := (saveD := dictionaryPath, saveP := loadedPackages, debuggingMode, loadDepth);
      local hook;
