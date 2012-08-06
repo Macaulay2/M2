@@ -362,11 +362,11 @@ addSlackVariables WitnessSet := (W) -> (
      newSlice := apply(d, i -> sub(W1.Slice#i,newR) + newR_(n + i));
      -- add a linear matrix 
      A := random(newR^(d),newR^(n-d));
-     AZ := transpose (newvars * A);
+     AZ := newvars * A;
      newEqns := (sub(gens ideal W1, newR) + AZ) | newvars;
      -- new points
      zeros := toList apply(d, i -> 0_(coefficientRing R));
-     newPoints := apply(W1.Points, pt -> join(pt,zeros));
+     newPoints := apply(W1.Points, pt -> point({join(coordinates(pt),zeros)}));
      witnessSet(ideal newEqns, ideal newSlice, newPoints)
      )
 
@@ -955,12 +955,14 @@ witnessCascade (List,ZZ) := (system,dimension) -> (
     );
     i = i-1
   );
-     for i in toList result do (	 
-     	  (last i)#Equations=ideal system;
-	  (last i)#Points=apply(toList (last i)#Points, j->take(coordinates(j),{0,# gens R -1}) );
-	  (last i)#Slice=apply( toList (last i)#Slice, j->sub(j, R));
-	);        
-     return numericalVariety( apply(toList result, i->last i) )
+     --for i in toList result do (	 
+     --	  (last i)#Equations=ideal system;
+--	  (last i)#Points=apply(toList (last i)#Points, j->(take(coordinates(j),{0,# gens R -1})) );
+--	  (last i)#Slice=apply( toList (last i)#Slice, j->sub(j, R));
+--	);        
+     Wsets:=apply(result,i->witnessSet(ideal system, ideal apply( toList (last i)#Slice, j->sub(j, R)), 
+	       apply(toList (last i)#Points, j->(point{take(coordinates(j),{0,# gens R -1})}) )));
+     return numericalVariety(toList Wsets )
   --return hashTable(result);
 )
 
@@ -1127,7 +1129,9 @@ monodromyBreakup WitnessSet := o -> (W) -> (
      for f in filnames list (
 	  if fileExists solsfile then removeFile solsfile;
 	  run(PHCexe|" -z "|f|" "|solsfile);
-	  witnessSet(W.Equations, ideal W.Slice, parseSolutions(solsfile, ring W))
+	  Wf:=witnessSet(W.Equations, ideal W.Slice, parseSolutions(solsfile, ring W));
+	  Wf#IsIrreducible=true;
+	  Wf
 	  )
      )
 
