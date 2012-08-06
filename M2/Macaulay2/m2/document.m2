@@ -319,10 +319,7 @@ packageKey0 Array := key -> (
      n := youngest apply(toSequence key, package);
      assert( n =!= null );
      n )
-packageKey0 Sequence := key -> (
-     n := youngest append(apply(toSequence key, package), currentPackage);
-     assert( n =!= null );
-     n )
+packageKey0 Sequence := key -> currentPackage
 packageKey = method()
 packageKey(Array,String) := (key,fkey) -> packageKey0 key
 packageKey(Thing,String) := (key,fkey) -> (
