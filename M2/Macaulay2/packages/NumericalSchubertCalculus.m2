@@ -14,13 +14,13 @@ newPackage(
 
 export {   
    StartSolutions,
-	 skewSchubertVariety,
- 	 createRandomFlagsForSimpleSchubert,
-	 solveSimpleSchubert,
-	 trackSimpleSchubert,
-	 findGaloisElement,
-	 isFullSymmetric,
-	 isGaloisFullSymmetric,
+   skewSchubertVariety,
+   createRandomFlagsForSimpleSchubert,
+   solveSimpleSchubert,
+   trackSimpleSchubert,
+   findGaloisElement,
+   isFullSymmetric,
+   isGaloisFullSymmetric,
    Memoize,
 -----------------------
 -- The following are functions for
@@ -39,6 +39,7 @@ export {
    NC,
    FFF,
    Board,
+   IsResolved,
    Fathers,
    Children,
    printTree,
@@ -49,7 +50,6 @@ export {
    Polynomials,
    Solutions,
    SolutionsSuperset -- temporary
-
    }
 
 -------------------------
@@ -531,6 +531,7 @@ moveCheckers Array := blackred -> (
 
 playCheckers = method(TypicalValue => MutableHashTable)
 playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
+     all'nodes := new MutableHashTable;
      redChkrs := 
      if partn1 > partn2 then
      	  redChkrPos(partition2bracket(partn2,k,n),partition2bracket(partn1,k,n),k,n)
@@ -546,7 +547,7 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
      --if select(#redChkrs, i-> (redChkrs)_i < #redChkrs - i -1)!={} then(
 	--  self := new MutableHashTable from{
 	--  Board => [blackChkrs, redChkrs], 
-	--  Fathers => {("root",{})},
+	--  Fathers => {},
 	--  Children => {},
 	--  Solutions => {},
 	--  CriticalRow => "Schubert Problem with no solutions"
@@ -554,18 +555,28 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
         --  self
 	--  )
      --else(
-     	  playCheckers ([blackChkrs, redChkrs], "root", {})  -- returns the root of the tree
+     	  root := playCheckers ([blackChkrs, redChkrs], null, {}, all'nodes);  -- returns the root of the tree
+	  if DEBUG'LEVEL>1 then print VerticalList keys all'nodes;
+	  root
     -- )
 )
 
-playCheckers (Array,Thing,List) := (board,father,typeofmove) ->(
-     self := new MutableHashTable from {
+playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all'nodes) ->(
+     node'exists := all'nodes#?board; 
+     self := if node'exists  
+     then all'nodes#board 
+     else new MutableHashTable from {
 	  Board => board, 
-	  Fathers => {(father,typeofmove)},
+	  IsResolved => false,
+	  Fathers => {}
 	  };
-     (children,c) := moveCheckers board;
-     self.CriticalRow = c;
-     self.Children = apply(children, b -> playCheckers (take(b,2),self,last b));
+     if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)};
+     if not node'exists then (
+     	  (children,c) := moveCheckers board;
+     	  self.CriticalRow = c;
+     	  self.Children = apply(children, b -> playCheckers (take(b,2),self,last b,all'nodes));
+	  all'nodes#board = self;
+	  );
      self
 )
 
@@ -644,16 +655,17 @@ makeLocalCoordinates Array := blackred ->(
 -- into a generalized flag for the parent
 ------------------
 resolveNode = method()
-resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
+resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->  
+if not node.IsResolved then (
      n := #node.Board#0;
-     node.Solutions = {};
      coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
      if numgens ring coordX == 0 then (
+	  print "great success: we hit the ULTIMATE LEAF";
 	  if #remaining'conditions'and'flags > 0
 	  then error "invalid Schubert problem"
 	  else node.Solutions = {lift(coordX,FFF)};
-	  return
-	  );
+	  )
+     else ( -- coordX has variables
      black := first node.Board;
           
      if node.Children == {} then node.FlagM = matrix mutableIdentity(FFF,n)
@@ -699,18 +711,18 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
      	       ); -- should change!!! 
      	  );
      scan(node.Fathers, father'movetype->(
-     
-     (father,movetype) := father'movetype; 
-     if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
-     	  tparents1:=cpuTime();
-     	  );
-     if father =!= "root" then (
+     	  (father,movetype) := father'movetype; 
+     	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
+     	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
+     	       tparents1:=cpuTime();
+     	       );
      	  r := father.CriticalRow; -- critical row: rows r and r+1 are the most important ones
-     	  red := last father.Board;     
+          red := last father.Board;     
      	  red'sorted := sort delete(NC, red);
 	  M := node.FlagM;
 	  M'':= M_{0..(r-1)} | M_{r} - M_{r+1} | M_{r}| M_{(r+2)..(n-1)};
-      	  father.FlagM = M'';
+      	  if not father.?FlagM then father.FlagM = M'' 
+	  else if DEBUG'LEVEL>0 then assert (father.FlagM == M'');
 	  
 --	  if movetype=={2,2,0} and r == 1 then 1/0;
 	  parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
@@ -858,19 +870,22 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->(
 			      	   ));
 		    	 ));
 	       );
+	  if not father.?Solutions then father.Solutions = {};  
 	  father.Solutions = father.Solutions | parent'solutions;
-     	  );
-     if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
-     	  tparents2:=cpuTime();
-     	  << "time of computing one edge: "<< (tparents2 - tparents1) << endl;
-     	  );
-     ));
+     	  
+	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
+     	       tparents2:=cpuTime();
+     	       << "time of computing one edge: "<< (tparents2 - tparents1) << endl;
+     	       );
+     	  ));
      if DEBUG'LEVEL >= 2 then(
      	  -- check against the blackbox solutions
      	  scan(node.Solutions, X->
 	       assert(position(node.SolutionsSuperset, Y->norm(Y-X)<ERROR'TOLERANCE) =!= null)); 
      	  );
-     )
+     ); -- END coordX has variables
+     node.IsResolved = true;
+     ) -- END resolveNode
 
 
 toRawSolutions = method()
@@ -1459,7 +1474,7 @@ TEST ///
 root = playCheckers({1},{1},2,4)
 resolveNode(root, {({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))})
 assert(#root.Solutions==2)
--- another two-solutions example
+-- not a tree
 root = playCheckers({2,1,0},{2,1,0},3,6)
 resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
 assert(#root.Solutions==2)
