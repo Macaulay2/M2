@@ -96,7 +96,7 @@ class res2_comp : public ResolutionComputation
   res2_poly *R;
   const Monoid *M;
   const Ring *K;
-  const M2_Matrix *generator_matrix;       // Input matrix of generators, needs to be a GB.
+  const Matrix *generator_matrix;       // Input matrix of generators, needs to be a GB.
 
   stash *res2_pair_stash;
   stash *mi_stash;
@@ -206,14 +206,14 @@ private:
   void remove_res2_pair(res2_pair *p);
   void remove_res2_level(res2_level *lev);
 
-  void initialize(const M2_Matrix *mat,
+  void initialize(const Matrix *mat,
                   int LengthLimit,
                   bool UseDegreeLimit,
                   int SlantedDegreeLimit,
                   int SortStrategy);
 
 public:
-  res2_comp(const M2_Matrix *m,
+  res2_comp(const Matrix *m,
             int LengthLimit,
             bool UseDegreeLimit,
             int SlantedDegreeLimit,
@@ -262,10 +262,10 @@ public:
 
   FreeModule *free_of(int i) const;
   FreeModule *minimal_free_of(int i) const;
-  M2_Matrix *make(int i) const;
-  M2_Matrix *make_minimal(int i) const;
+  Matrix *make(int i) const;
+  Matrix *make_minimal(int i) const;
 
-  const M2_Matrix /* or null */ *get_matrix(int level) { return make_minimal(level); }
+  const Matrix /* or null */ *get_matrix(int level) { return make_minimal(level); }
 
   const FreeModule /* or null */ *get_free(int level) { return minimal_free_of(level); }
 

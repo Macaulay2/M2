@@ -18,7 +18,7 @@
 
 namespace BIBasis
 {
-    const M2_Matrix* Launcher::GetBIBasisMatrix(const M2_Matrix* matrix, int toGroebner) const
+    const Matrix* Launcher::GetBIBasisMatrix(const Matrix* matrix, int toGroebner) const
     {
         if (!CheckMatrix(matrix))
         {
@@ -47,7 +47,7 @@ namespace BIBasis
         };
     }
 
-    bool Launcher::CheckMatrix(const M2_Matrix* matrix) const
+    bool Launcher::CheckMatrix(const Matrix* matrix) const
     {
         if (!matrix)
         {

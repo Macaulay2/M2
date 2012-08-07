@@ -67,8 +67,8 @@ private:
 
   int need_resize;
 private:
-  void set_up0(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
-  void set_up(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strategy);
+  void set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
+  void set_up(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strategy);
 
   // S-pair control
   s_pair *new_var_pair(gb_elem *p, const int *lcm);
@@ -96,7 +96,7 @@ private:
   void minimalize_gb();
 public:
   // An honest GB computation
-  GBinhom_comp(const M2_Matrix *m,
+  GBinhom_comp(const Matrix *m,
                int collect_syz,
                int n_syz,
                M2_arrayint gb_weights,
@@ -109,17 +109,17 @@ public:
   int calc(const int *deg, const intarray &stop_conditions);
 
   // Adding generators
-  void add_gens(int lo, int hi, const M2_Matrix *m);
+  void add_gens(int lo, int hi, const Matrix *m);
 
   // reduction
-  M2_Matrix *reduce(const M2_Matrix *m, M2_Matrix *&lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  M2_Matrix *min_gens_matrix();
-  M2_Matrix *initial_matrix(int n);
-  M2_Matrix *gb_matrix();
-  M2_Matrix *change_matrix();
-  M2_Matrix *syz_matrix();
+  Matrix *min_gens_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
+  Matrix *syz_matrix();
   void debug_out(s_pair *q) const;
   void debug_pairs_out(gb_elem *p) const;
   void debug_pairs() const;
@@ -135,7 +135,7 @@ public:
   //////////////////////////
   virtual bool stop_conditions_ok() { return true; }
 
-  static GBinhom_comp * create(const M2_Matrix *m,
+  static GBinhom_comp * create(const Matrix *m,
                                M2_bool collect_syz,
                                int n_rows_to_keep,
                                M2_arrayint gb_weights,
@@ -149,26 +149,26 @@ public:
 
   virtual const PolynomialRing *get_ring() const { return originalR; }
 
-  virtual const M2_Matrix /* or null */ *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const M2_Matrix /* or null */ *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const M2_Matrix /* or null */ *get_change();
+  virtual const Matrix /* or null */ *get_change();
 
-  virtual const M2_Matrix /* or null */ *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
-  virtual const M2_Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
                            );
 
-  virtual int contains(const M2_Matrix *m);
+  virtual int contains(const Matrix *m);
 
   virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the

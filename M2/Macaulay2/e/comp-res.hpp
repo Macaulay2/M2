@@ -32,7 +32,7 @@ public:
   virtual ~ResolutionComputation();
   virtual void remove_res();
 
-  static ResolutionComputation *choose_res(const M2_Matrix *m,
+  static ResolutionComputation *choose_res(const Matrix *m,
                                            M2_bool resolve_cokernel,
                                            int max_level,
                                            M2_bool use_max_slanted_degree,
@@ -51,7 +51,7 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const M2_Matrix /* or null */ *get_matrix(int level) = 0;
+  virtual const Matrix /* or null */ *get_matrix(int level) = 0;
 
   virtual const FreeModule /* or null */ *get_free(int level) = 0;
 

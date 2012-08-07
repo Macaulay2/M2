@@ -11,7 +11,7 @@ GBMatrix::GBMatrix(const FreeModule *F0)
 {
 }
 
-GBMatrix::GBMatrix(const M2_Matrix *m)
+GBMatrix::GBMatrix(const Matrix *m)
   : F(m->rows())
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
@@ -29,7 +29,7 @@ void GBMatrix::append(gbvector *g)
   elems.push_back(g);
 }
 
-M2_Matrix *GBMatrix::to_matrix()
+Matrix *GBMatrix::to_matrix()
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   assert(R != 0);
@@ -84,7 +84,7 @@ int GBKernelComputation::calc()
   for (int p=0; p<syzygies.length(); p++)
     mm->append(GR->gbvector_copy(syzygies[p]));
   buffer o;
-  M2_Matrix *m = mm->to_matrix();
+  Matrix *m = mm->to_matrix();
   if (M2_gbTrace >= 5)
     {
       o << "skeleton = " << newline;

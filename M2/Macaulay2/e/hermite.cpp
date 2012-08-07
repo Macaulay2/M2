@@ -51,7 +51,7 @@ void HermiteComputation::insert(hm_elem *p)
     }
 }
 
-HermiteComputation::HermiteComputation(const M2_Matrix *m, int collsyz, int nsyz)
+HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
   : row(m->n_rows()-1),
   gens(m),
   GB_list(NULL),
@@ -314,7 +314,7 @@ void HermiteComputation::start_computation()
  ** Top level interface **
  *************************/
 
-const M2_Matrix /* or null */ *HermiteComputation::get_gb()
+const Matrix /* or null */ *HermiteComputation::get_gb()
 {
   MatrixConstructor mat(gens->rows(), 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
@@ -322,13 +322,13 @@ const M2_Matrix /* or null */ *HermiteComputation::get_gb()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *HermiteComputation::get_mingens()
+const Matrix /* or null */ *HermiteComputation::get_mingens()
 {
   // return the minimal generators (or as minimal as possible?)
   return get_gb();
 }
 
-const M2_Matrix /* or null */ *HermiteComputation::get_change()
+const Matrix /* or null */ *HermiteComputation::get_change()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
@@ -336,7 +336,7 @@ const M2_Matrix /* or null */ *HermiteComputation::get_change()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *HermiteComputation::get_syzygies()
+const Matrix /* or null */ *HermiteComputation::get_syzygies()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (int i=0; i<syz_list.size(); i++)
@@ -344,7 +344,7 @@ const M2_Matrix /* or null */ *HermiteComputation::get_syzygies()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *HermiteComputation::get_initial(int nparts)
+const Matrix /* or null */ *HermiteComputation::get_initial(int nparts)
 {
   MatrixConstructor mat(gens->rows(), 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
@@ -458,7 +458,7 @@ void HermiteComputation::gb_reduce(vec &f, vec &fsyz) const
   f = head.next;
 }
 
-const M2_Matrix /* or null */ *HermiteComputation::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *HermiteComputation::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != globalZZ)
     {
@@ -482,9 +482,9 @@ const M2_Matrix /* or null */ *HermiteComputation::matrix_remainder(const M2_Mat
 }
 
 
-M2_bool HermiteComputation::matrix_lift(const M2_Matrix *m,
-                                     const M2_Matrix /* or null */ **result_remainder,
-                                     const M2_Matrix /* or null */ **result_quotient)
+M2_bool HermiteComputation::matrix_lift(const Matrix *m,
+                                     const Matrix /* or null */ **result_remainder,
+                                     const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != globalZZ)
     {
@@ -520,7 +520,7 @@ M2_bool HermiteComputation::matrix_lift(const M2_Matrix *m,
   return all_zeroes;
 }
 
-int HermiteComputation::contains(const M2_Matrix *m)
+int HermiteComputation::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.

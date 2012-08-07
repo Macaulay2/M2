@@ -10,7 +10,7 @@
 ///// Ring Hierarchy ///////////////////////////////////
 
 class TermIdeal;
-class M2_Matrix;
+class Matrix;
 class GBRing;
 class GBRingSkew;
 class GBComputation;

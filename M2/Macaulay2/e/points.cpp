@@ -12,8 +12,8 @@
 
 M2_bool rawIdealOfPoints(const Ring *R,
                          const MutableMatrix *Pts,
-                         M2_Matrix /* or null */ ** result_GB,
-                         M2_Matrix /* or null */ ** result_std_monoms)
+                         Matrix /* or null */ ** result_GB,
+                         Matrix /* or null */ ** result_std_monoms)
 {
   // Branch depending on the type of K, the ring of Pts.
   // If Pts is not a DMatrix, make it one.
@@ -52,10 +52,10 @@ public:
 };
 
 template <typename CoeffRing>
-M2_Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
+Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
                                              const typename CoeffRing::ring_type *K,
                                              const DMat<CoeffRing> *Pts,
-                                             M2_Matrix * & result_std_monoms)
+                                             Matrix * & result_std_monoms)
 {
   // Declare and initialize our variables
   // int nvars = R->n_vars();

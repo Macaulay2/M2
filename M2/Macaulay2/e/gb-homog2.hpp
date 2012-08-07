@@ -80,16 +80,16 @@ private:
   const RingElement *_hf_orig;  // The Hilbert function that we are given at the beginning
   RingElement *_hf_diff;                // The difference between hf_orig and the computed hilb fcn
 private:
-  void initialize0(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
-  void initialize(const M2_Matrix *m,
+  void initialize0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
+  void initialize(const Matrix *m,
                   int csyz,
                   int nsyz,
                   M2_arrayint gb_weights,
                   int strategy);
 
-  void initialize_forced(const M2_Matrix *m,
-                         const M2_Matrix *gb,
-                         const M2_Matrix *mchange);
+  void initialize_forced(const Matrix *m,
+                         const Matrix *gb,
+                         const Matrix *mchange);
 
   // S-pair control
   s_pair *new_var_pair(gb_elem *p, const int *lcm);
@@ -125,7 +125,7 @@ private:
   virtual void remove_gb() {}
 
   // Adding generators
-  void add_gens(int lo, int hi, const M2_Matrix *m);
+  void add_gens(int lo, int hi, const Matrix *m);
 
   void debug_out(s_pair *q) const;
 
@@ -136,7 +136,7 @@ public:
   //////////////////////////
   // Computation routines //
   //////////////////////////
-  static GB_comp * create(const M2_Matrix *m,
+  static GB_comp * create(const Matrix *m,
                           M2_bool collect_syz,
                           int n_rows_to_keep,
                           M2_arrayint gb_weights,
@@ -144,9 +144,9 @@ public:
                           M2_bool use_max_degree,
                           int max_degree);
 
-  static GB_comp * create_forced(const M2_Matrix *m,
-                                 const M2_Matrix *gb,
-                                 const M2_Matrix *mchange);
+  static GB_comp * create_forced(const Matrix *m,
+                                 const Matrix *gb,
+                                 const Matrix *mchange);
 
   virtual int kind() { return 1; }
 
@@ -157,26 +157,26 @@ public:
 
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
 
-  virtual const M2_Matrix /* or null */ *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const M2_Matrix /* or null */ *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const M2_Matrix /* or null */ *get_change();
+  virtual const Matrix /* or null */ *get_change();
 
-  virtual const M2_Matrix /* or null */ *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
-  virtual const M2_Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
                            );
 
-  virtual int contains(const M2_Matrix *m);
+  virtual int contains(const Matrix *m);
 
   virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the

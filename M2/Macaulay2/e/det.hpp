@@ -18,9 +18,9 @@ const int DET_COFACTOR = 1;
 class DetComputation : public our_new_delete
 {
   const Ring *R;
-  const M2_Matrix *M;
+  const Matrix *M;
   const FreeModule *F; // target free module of the result
-  //  M2_Matrix *result;  // Either:One row matrix collecting non-zero
+  //  Matrix *result;  // Either:One row matrix collecting non-zero
                   // determinants, or the resulting
                   // exterior power; depending on 'do_exterior'
   MatrixConstructor result;// Either:One row matrix collecting non-zero
@@ -64,7 +64,7 @@ class DetComputation : public our_new_delete
   // Subroutines for use in Bareiss algorithm:
 
 public:
-  DetComputation(const M2_Matrix *M, int p, bool do_exterior, int strategy);
+  DetComputation(const Matrix *M, int p, bool do_exterior, int strategy);
   ~DetComputation();
 
   int step();
@@ -75,7 +75,7 @@ public:
   void discard() { clear(); }
   void set_next_minor(const int* rows, const int* cols);
 
-  M2_Matrix *determinants() { return result.to_matrix(); }
+  Matrix *determinants() { return result.to_matrix(); }
 };
 
 #endif

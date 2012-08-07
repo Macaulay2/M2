@@ -31,7 +31,7 @@ exponents gbA::exponents_make()
   return result;
 }
 
-gbA * gbA::create(const M2_Matrix *m,
+gbA * gbA::create(const Matrix *m,
                   M2_bool collect_syz,
                   int n_rows_to_keep,
                   M2_arrayint gb_weights,
@@ -45,7 +45,7 @@ gbA * gbA::create(const M2_Matrix *m,
   return result;
 }
 
-void gbA::initialize(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights0, int strat, int max_reduction_count0)
+void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights0, int strat, int max_reduction_count0)
 {
      // max_reduction_count: default was 10
      // 1 is best possible for 3-anderbuch!
@@ -2171,7 +2171,7 @@ ComputationStatusCode gbA::computation_is_complete()
   return COMP_COMPUTING;
 }
 
-M2_Matrix *gbA::make_lead_term_matrix()
+Matrix *gbA::make_lead_term_matrix()
 {
   MatrixConstructor result(_F,0);
   for (int i=first_gb_element; i<gb.size(); i++)
@@ -2254,7 +2254,7 @@ void gbA::do_computation()
             if (hilb_new_elems)
               {
                 // Recompute h, hf_diff
-                M2_Matrix *hf = make_lead_term_matrix();
+                Matrix *hf = make_lead_term_matrix();
                 RingElement *h = hilb_comp::hilbertNumerator(hf);
                 if (h == 0)
                   {
@@ -2476,14 +2476,14 @@ Computation /* or null */ *gbA::set_hilbert_function(const RingElement *hf)
   return this;
 }
 
-const M2_Matrix /* or null */ *gbA::get_gb()
+const Matrix /* or null */ *gbA::get_gb()
 {
   minimalize_gb();
   //  fprintf(stderr, "-- done with GB -- \n");
   return minimal_gb->get_gb();
 }
 
-const M2_Matrix /* or null */ *gbA::get_mingens()
+const Matrix /* or null */ *gbA::get_mingens()
 {
   MatrixConstructor mat(_F,0);
   for (VECTOR(gbelem *)::iterator i = gb.begin(); i != gb.end(); i++)
@@ -2493,13 +2493,13 @@ const M2_Matrix /* or null */ *gbA::get_mingens()
 
 }
 
-const M2_Matrix /* or null */ *gbA::get_change()
+const Matrix /* or null */ *gbA::get_change()
 {
   minimalize_gb();
   return minimal_gb->get_change();
 }
 
-const M2_Matrix /* or null */ *gbA::get_syzygies()
+const Matrix /* or null */ *gbA::get_syzygies()
 {
   // The (non-minimal) syzygy matrix
   MatrixConstructor mat(_Fsyz, 0);
@@ -2510,34 +2510,34 @@ const M2_Matrix /* or null */ *gbA::get_syzygies()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *gbA::get_initial(int nparts)
+const Matrix /* or null */ *gbA::get_initial(int nparts)
 {
   minimalize_gb();
   return minimal_gb->get_initial(nparts);
 }
 
-const M2_Matrix /* or null */ *gbA::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *gbA::get_parallel_lead_terms(M2_arrayint w)
 {
   minimalize_gb();
   return minimal_gb->get_parallel_lead_terms(w);
 }
 
-const M2_Matrix /* or null */ *gbA::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *gbA::matrix_remainder(const Matrix *m)
 {
   minimalize_gb();
   return minimal_gb->matrix_remainder(m);
 }
 
-M2_bool gbA::matrix_lift(const M2_Matrix *m,
-                 const M2_Matrix /* or null */ **result_remainder,
-                 const M2_Matrix /* or null */ **result_quotient
+M2_bool gbA::matrix_lift(const Matrix *m,
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
                  )
 {
   minimalize_gb();
   return minimal_gb->matrix_lift(m, result_remainder, result_quotient);
 }
 
-int gbA::contains(const M2_Matrix *m)
+int gbA::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.

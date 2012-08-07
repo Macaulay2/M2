@@ -5,17 +5,17 @@
 
 #include "engine.h"
 #include "dmat-LU.hpp"
-class M2_Matrix;
+class Matrix;
 class PolynomialRing;
 
 template <typename CoeffRing>
 class PointsComputation
 {
 public:
-  static M2_Matrix *points(const PolynomialRing *R,
+  static Matrix *points(const PolynomialRing *R,
                         const typename CoeffRing::ring_type *K,
                         const DMat<CoeffRing> *Pts,
-                        M2_Matrix * & result_std_monoms);
+                        Matrix * & result_std_monoms);
 };
 
 #endif

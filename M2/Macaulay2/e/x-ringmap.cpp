@@ -28,10 +28,10 @@ M2_bool IM2_RingMap_is_equal(const RingMap *f, const RingMap *g)
   return f->is_equal(g);
 }
 
-const RingMap * IM2_RingMap_make(const M2_Matrix *M, const Ring *base); /* TODO */
+const RingMap * IM2_RingMap_make(const Matrix *M, const Ring *base); /* TODO */
 
 const RingMap *
-IM2_RingMap_make1(const M2_Matrix *M)
+IM2_RingMap_make1(const Matrix *M)
 {
   return RingMap::make(M);
 }
@@ -49,10 +49,10 @@ IM2_RingMap_eval_ringelem(const RingMap *F,
      }
 }
 
-const M2_Matrix /* or null */ *
+const Matrix /* or null */ *
 IM2_RingMap_eval_matrix(const RingMap *F,
                         const FreeModule *newTarget,
-                        const M2_Matrix *M)
+                        const Matrix *M)
 {
      if (newTarget->rank() < M->n_rows())
        {

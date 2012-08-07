@@ -136,13 +136,13 @@ MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
   return result;
 }
 
-MutableMatrix *MutableMatrix::from_matrix(const M2_Matrix *m, bool prefer_dense)
+MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
 {
   MutableMatrix *result = zero_matrix(m->get_ring(),
                                          m->n_rows(),
                                          m->n_cols(),
                                          prefer_dense);
-  M2_Matrix::iterator i(m);
+  Matrix::iterator i(m);
   for (int c=0; c<m->n_cols(); c++)
     {
       for (i.set(c); i.valid(); i.next())
@@ -151,7 +151,7 @@ MutableMatrix *MutableMatrix::from_matrix(const M2_Matrix *m, bool prefer_dense)
   return result;
 }
 
-M2_Matrix *MutableMatrix::to_matrix() const
+Matrix *MutableMatrix::to_matrix() const
 {
   int nrows = n_rows();
   int ncols = n_cols();

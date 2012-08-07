@@ -10,7 +10,7 @@
 #include "polyring.hpp"
 
 class RingElement;
-class M2_Matrix;
+class Matrix;
 class MonomialIdeal;
 
 class partition_table
@@ -64,7 +64,7 @@ class hilb_comp : public mutable_object
   stash *mi_stash; // for all of the nodes in all of the monomial ideals
 
   // Collected values from the matrix
-  const M2_Matrix *input_mat;      // The input matrix
+  const Matrix *input_mat;      // The input matrix
   ring_elem result_poincare;    // The result poincare polynomial from components
                                 // 0..this_comp-1
   int this_comp;
@@ -96,7 +96,7 @@ class hilb_comp : public mutable_object
   void do_ideal(MonomialIdeal * I);
 
 public:
-  hilb_comp(const PolynomialRing *R, const M2_Matrix * M);
+  hilb_comp(const PolynomialRing *R, const Matrix * M);
   hilb_comp(const PolynomialRing *R, const MonomialIdeal * I);
   ~hilb_comp();
 
@@ -111,13 +111,13 @@ public:
   static int coeff_of(const RingElement *h, int deg);
 
 #if 0
-//   static int hilbertSeries(const M2_Matrix *M, RingElement * &result);
+//   static int hilbertSeries(const Matrix *M, RingElement * &result);
 //   // A return of 0 means that the result can be used.  A non-zero return
 //   // value means that the computation was interrupted, and so control should
 //   // return to the user.
 #endif
 
-  static RingElement /* or null */ *hilbertNumerator(const M2_Matrix *M);
+  static RingElement /* or null */ *hilbertNumerator(const Matrix *M);
   /* This routine computes the numerator of the Hilbert series
      for coker leadterms(M), using the degrees of the rows of M.
      NULL is returned if the ring is not appropriate for
@@ -139,7 +139,7 @@ public:
 //
 //   ring_elem hilbert(const MonomialTable *M);
 //
-//   RingElement /* or null */ *hilbert(const M2_Matrix *M);
+//   RingElement /* or null */ *hilbert(const Matrix *M);
 //   // This one is pretty easy: loop through each component,
 //   // make a monomial ideal, and compute its hilbert function,
 //   // then multiply it by the degree of that row component.
@@ -155,7 +155,7 @@ public:
 //   const Monoid *D;           // R->getMonoid() == S->degree_monoid()
 //
 //   // Collected values from the matrix
-//   const M2_Matrix *input_mat;   // The input matrix
+//   const Matrix *input_mat;   // The input matrix
 //   ring_elem result_poincare; // The result poincare polynomial from components
 //                              // 0..this_comp-1
 //   int this_comp;
@@ -187,7 +187,7 @@ public:
 //   void do_ideal(MonomialIdeal * I);
 //
 // public:
-//   hilb_comp(const PolynomialRing *R, const M2_Matrix * M);
+//   hilb_comp(const PolynomialRing *R, const Matrix * M);
 //   ~hilb_comp();
 //
 //   void reset();
@@ -201,13 +201,13 @@ public:
 //   static int coeff_of(const RingElement *h, int deg);
 //
 // #if 0
-// //   static int hilbertSeries(const M2_Matrix *M, RingElement * &result);
+// //   static int hilbertSeries(const Matrix *M, RingElement * &result);
 // //   // A return of 0 means that the result can be used.  A non-zero return
 // //   // value means that the computation was interrupted, and so control should
 // //   // return to the user.
 // #endif
 //
-//   static RingElement /* or null */ *hilbertNumerator(const M2_Matrix *M);
+//   static RingElement /* or null */ *hilbertNumerator(const Matrix *M);
 //   /* This routine computes the numerator of the Hilbert series
 //      for coker leadterms(M), using the degrees of the rows of M.
 //      NULL is returned if the ring is not appropriate for

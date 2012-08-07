@@ -49,12 +49,12 @@ GBWalker::GBWalker(MarkedGB *G0,
 }
 
 
-GBWalker::GBWalker(const M2_Matrix *gb_under_order1,
+GBWalker::GBWalker(const Matrix *gb_under_order1,
                    const MonomialOrdering *order1)
 {
 }
 
-GBWalker * GBWalker::create(const M2_Matrix *gb_under_order1,
+GBWalker * GBWalker::create(const Matrix *gb_under_order1,
                             const MonomialOrdering *order1)
 {
   // TODO MES: TO WRITE
@@ -72,7 +72,7 @@ bool GBWalker::stop_conditions_ok()
   return true;
 }
 
-GBComputation * GBWalker::make_gb(const M2_Matrix *M) const
+GBComputation * GBWalker::make_gb(const Matrix *M) const
   // return the GB of g, keep = 0 or 1.
 {
   M2_arrayint weights = M2_makearrayint(R->n_vars());
@@ -190,51 +190,51 @@ Computation /* or null */ *GBWalker::set_hilbert_function(const RingElement *h)
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBWalker::get_gb()
+const Matrix /* or null */ *GBWalker::get_gb()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBWalker::get_mingens()
+const Matrix /* or null */ *GBWalker::get_mingens()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBWalker::get_change()
+const Matrix /* or null */ *GBWalker::get_change()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBWalker::get_syzygies()
+const Matrix /* or null */ *GBWalker::get_syzygies()
 {
   // MES: TO WRITE
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBWalker::get_initial(int nparts)
+const Matrix /* or null */ *GBWalker::get_initial(int nparts)
 {
   // MES: TO WRITE
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBWalker::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GBWalker::get_parallel_lead_terms(M2_arrayint w)
 {
   // MES: TO WRITE
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBWalker::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *GBWalker::matrix_remainder(const Matrix *m)
 {
   // MES: TO WRITE
   return 0;
 }
 
-M2_bool GBWalker::matrix_lift(const M2_Matrix *m,
-                 const M2_Matrix /* or null */ **result_remainder,
-                 const M2_Matrix /* or null */ **result_quotient
+M2_bool GBWalker::matrix_lift(const Matrix *m,
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
                  )
 {
   // MES: TO WRITE, should this be written?
@@ -244,7 +244,7 @@ M2_bool GBWalker::matrix_lift(const M2_Matrix *m,
   return false;
 }
 
-int GBWalker::contains(const M2_Matrix *m)
+int GBWalker::contains(const Matrix *m)
 {
   // MES: TO WRITE
   return -1;

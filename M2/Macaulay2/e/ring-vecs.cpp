@@ -421,7 +421,7 @@ void Ring::mult_row(vec &v, const ring_elem r, int i, bool opposite_mult) const
   v = head.next;
 }
 
-vec Ring::mult_vec_matrix(const M2_Matrix *m,
+vec Ring::mult_vec_matrix(const Matrix *m,
                           vec v,
                           bool opposite_mult) const
 {

@@ -276,7 +276,7 @@ namespace M2 {
 
   class AGradedMatrix : public AMatrix
   {
-    // this is like M2_Matrix
+    // this is like Matrix
   };
 
   ////////////

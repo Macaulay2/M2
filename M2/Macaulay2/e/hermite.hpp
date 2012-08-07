@@ -28,7 +28,7 @@ private:
   int row;
   VECTOR(hm_elem *) initial;
 
-  const M2_Matrix *gens;                   // This is the input
+  const Matrix *gens;                   // This is the input
 
   hm_elem *GB_list;
   const FreeModule *Fsyz;
@@ -55,7 +55,7 @@ private:
 
 public:
   // An honest GB computation
-  HermiteComputation(const M2_Matrix *m, int collect_syz, int n_syz);
+  HermiteComputation(const Matrix *m, int collect_syz, int n_syz);
   ~HermiteComputation();
 
   virtual void remove_gb() {}
@@ -70,27 +70,27 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const M2_Matrix /* or null */ *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const M2_Matrix /* or null */ *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const M2_Matrix /* or null */ *get_change();
+  virtual const Matrix /* or null */ *get_change();
 
-  virtual const M2_Matrix /* or null */ *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient);
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient);
 
-  virtual int contains(const M2_Matrix *m);
+  virtual int contains(const Matrix *m);
 
   //////////////////////////////////////
   // Statistics and spair information //

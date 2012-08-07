@@ -27,7 +27,7 @@ void SchreyerOrder::append(int compare_num0, const int *baseMonom)
   _rank++;
 }
 
-SchreyerOrder *SchreyerOrder::create(const M2_Matrix *m)
+SchreyerOrder *SchreyerOrder::create(const Matrix *m)
 {
   int i;
   const Ring *R = m->get_ring();

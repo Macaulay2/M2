@@ -29,14 +29,14 @@ StraightLineProgram /* or null */ *StraightLineProgram::make(const PolyRing* R, 
   StraightLineProgram* ret = static_cast<StraightLineProgram*>(SLP<ComplexField>::make(R,e));
   return ret;
 }
-StraightLineProgram /* or null */ *StraightLineProgram::make(const M2_Matrix *consts, M2_arrayint program)
+StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *consts, M2_arrayint program)
 {
   StraightLineProgram* ret = static_cast<StraightLineProgram*>(SLP<ComplexField>::make(consts,program));
   return ret;
 }
 void StraightLineProgram::text_out(buffer& o) const {SLP<ComplexField>::text_out(o);}
 void StraightLineProgram::evaluate(int n, const element_type* values, element_type* out) {SLP<ComplexField>::evaluate(n,values,out);}
-M2_Matrix* StraightLineProgram::evaluate(const M2_Matrix *vals) {return SLP<ComplexField>::evaluate(vals);}
+Matrix* StraightLineProgram::evaluate(const Matrix *vals) {return SLP<ComplexField>::evaluate(vals);}
 #endif
 
 #ifdef SLPmpfr
@@ -47,7 +47,7 @@ StraightLineProgram /* or null */ *StraightLineProgram::make(const PolyRing* R, 
   StraightLineProgram* ret = static_cast<StraightLineProgram*>(SLP<ComplexFieldArbitraryPrecision>::make(R,e));
   return ret;
 }
-StraightLineProgram /* or null */ *StraightLineProgram::make(const M2_Matrix *consts, M2_arrayint program)
+StraightLineProgram /* or null */ *StraightLineProgram::make(const Matrix *consts, M2_arrayint program)
 {
   StraightLineProgram* ret = static_cast<StraightLineProgram*>(SLP<ComplexFieldArbitraryPrecision>::make(consts,program));
   return ret;
@@ -65,7 +65,7 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* out)
 }
 void StraightLineProgram::evaluate(int n, const element_type* values, element_type* out) { SLP<ComplexFieldArbitraryPrecision>::evaluate(n,values,out); }
 
-M2_Matrix* StraightLineProgram::evaluate(const M2_Matrix *vals) {return SLP<ComplexFieldArbitraryPrecision>::evaluate(vals);}
+Matrix* StraightLineProgram::evaluate(const Matrix *vals) {return SLP<ComplexFieldArbitraryPrecision>::evaluate(vals);}
 #endif
 
 
@@ -108,7 +108,7 @@ template <class Field>
 SLP<Field>* SLP<Field>::catalog[MAX_NUM_SLPs];
 
 template <class Field>
-SLP<Field> /* or null */ *SLP<Field>::make(const M2_Matrix *m_consts, M2_arrayint program)
+SLP<Field> /* or null */ *SLP<Field>::make(const Matrix *m_consts, M2_arrayint program)
 {
   // todo: move some of these lines to rawSLP
   SLP<Field>* res;
@@ -710,7 +710,7 @@ void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
 }
 
 template <class Field>
-M2_Matrix *SLP<Field>::evaluate(const M2_Matrix *values)
+Matrix *SLP<Field>::evaluate(const Matrix *values)
 {
 
   element_type* out = NULL; // used by compiledSLP
@@ -1424,7 +1424,7 @@ PathTracker::~PathTracker()
 // creates a PathTracker object (case: is_projective), builds slps for predictor and corrector given start/target systems
 // input: two (1-row) matrices of polynomials
 // out: PathTracker*
-PathTracker /* or null */* PathTracker::make(const M2_Matrix *S, const M2_Matrix *T, gmp_RR productST)
+PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, gmp_RR productST)
 {
   if (S->n_rows()!=1 || T->n_rows()!=1) {
     ERROR("1-row matrices expected");
@@ -1493,7 +1493,7 @@ PathTracker /* or null */* PathTracker::make(const M2_Matrix *S, const M2_Matrix
 // creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
 // input: a (1-row) matrix of polynomials
 // out: PathTracker*
-PathTracker /* or null */* PathTracker::make(const M2_Matrix *HH)
+PathTracker /* or null */* PathTracker::make(const Matrix *HH)
 {
   if (HH->n_rows()!=1) {
     ERROR("1-row matrix expected");
@@ -1542,7 +1542,7 @@ PathTracker /* or null */* PathTracker::make(StraightLineProgram* slp_pred, Stra
   return p;
 }
 
-int PathTracker::makeFromHomotopy(const M2_Matrix *HH)
+int PathTracker::makeFromHomotopy(const Matrix *HH)
 {
   if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
     ERROR("max number of path trackers exceeded");
@@ -1579,17 +1579,17 @@ void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
   PT->pred_type = pred_type;
 }
 
-void rawLaunchPT(PathTracker* PT, const M2_Matrix* start_sols)
+void rawLaunchPT(PathTracker* PT, const Matrix* start_sols)
 {
   PT->track(start_sols);
 }
 
-const M2_Matrix /* or null */ *rawGetSolutionPT(PathTracker* PT, int solN)
+const Matrix /* or null */ *rawGetSolutionPT(PathTracker* PT, int solN)
 {
   return PT->getSolution(solN);
 }
 
-const M2_Matrix /* or null */ *rawGetAllSolutionsPT(PathTracker* PT)
+const Matrix /* or null */ *rawGetAllSolutionsPT(PathTracker* PT)
 {
   return PT->getAllSolutions();
 }
@@ -1614,13 +1614,13 @@ gmp_RRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN)
   return PT->getSolutionRcond(solN);
 }
 
-const M2_Matrix /* or null */ *rawRefinePT(PathTracker* PT, const M2_Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine)
+const Matrix /* or null */ *rawRefinePT(PathTracker* PT, const Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine)
 {
   return PT->refine(sols, tolerance, max_corr_steps_refine);
 }
 
 #ifdef SLPdouble
-int PathTracker::track(const M2_Matrix* start_sols)
+int PathTracker::track(const Matrix* start_sols)
 {
   double the_smallest_number = 1e-13;
   double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
@@ -1897,7 +1897,7 @@ int PathTracker::track(const M2_Matrix* start_sols)
 #endif
 
 #ifdef SLPmpfr
-int PathTracker::track(const M2_Matrix* start_sols)
+int PathTracker::track(const Matrix* start_sols)
 {
   n_sols = start_sols->n_rows();
   int n = n_coords = start_sols->n_cols();
@@ -2203,7 +2203,7 @@ int PathTracker::track(const M2_Matrix* start_sols)
 }
 #endif
 
-M2_Matrix /* or null */* PathTracker::refine(const M2_Matrix *sols, gmp_RR tolerance, int max_corr_steps_refine)
+Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, int max_corr_steps_refine)
 {
   double epsilon2 = mpfr_get_d(tolerance,GMP_RNDN); epsilon2 *= epsilon2;
   int n = n_coords;
@@ -2285,7 +2285,7 @@ M2_Matrix /* or null */* PathTracker::refine(const M2_Matrix *sols, gmp_RR toler
   return mat.to_matrix();
 }
 
-M2_Matrix /* or null */* PathTracker::getSolution(int solN)
+Matrix /* or null */* PathTracker::getSolution(int solN)
 {
   if (solN<0 || solN>=n_sols) return NULL;
   // construct output
@@ -2306,7 +2306,7 @@ M2_Matrix /* or null */* PathTracker::getSolution(int solN)
   return mat.to_matrix();
 }
 
-M2_Matrix /* or null */* PathTracker::getAllSolutions()
+Matrix /* or null */* PathTracker::getAllSolutions()
 {
   // construct output
   FreeModule* SS = C->make_FreeModule(n_coords);

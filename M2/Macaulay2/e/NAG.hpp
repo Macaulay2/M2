@@ -455,7 +455,7 @@ public:
 //   StraightLineProgram(const Ring *R) : R_(R) {}
 
 //   static StraightLineProgram /* or null */ *make(const PolyRing* R, ring_elem e);
-//   static StraightLineProgram /* or null */ *make(const M2_Matrix *consts, M2_arrayint program);
+//   static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
 
 //   virtual StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) = 0;
 
@@ -472,7 +472,7 @@ public:
 
 //   virtual void evaluate(int n, const element_type* values, element_type* out) = 0;
 
-//   virtual M2_Matrix* evaluate(const M2_Matrix *vals) = 0;
+//   virtual Matrix* evaluate(const Matrix *vals) = 0;
 // protected:
 //   const Ring *R_;
 // };
@@ -527,13 +527,13 @@ public:
   SLP<Field> /* or null */ *jacobian(bool makeHxH, SLP<Field> *&slpHxH, bool makeHxtH, SLP<Field> *&slpHxtH);
   SLP<Field> /* or null */ *concatenate(const SLP<Field>* slp);
   static SLP<Field> /* or null */ *make(const PolyRing*, ring_elem);
-  static SLP<Field> /* or null */ *make(const M2_Matrix *consts, M2_arrayint program);
+  static SLP<Field> /* or null */ *make(const Matrix *consts, M2_arrayint program);
   virtual ~SLP();
 
   void text_out(buffer& o) const;
   void stats_out(buffer& o) const;
   void evaluate(int n, const element_type* values, element_type* out);
-  M2_Matrix* evaluate(const M2_Matrix *vals);
+  Matrix* evaluate(const Matrix *vals);
 };
 
 #define SLPdouble
@@ -544,7 +544,7 @@ public:
 class StraightLineProgram : public SLP<ComplexField> {
 public:
   static StraightLineProgram /* or null */ *make(const PolyRing* R, ring_elem e);
-  static StraightLineProgram /* or null */ *make(const M2_Matrix *consts, M2_arrayint program);
+  static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
 
   StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) { return static_cast<StraightLineProgram*>(SLP<ComplexField>::concatenate(slp)); }
 
@@ -561,7 +561,7 @@ public:
   void text_out(buffer& o) const;
   //void stats_out(buffer& o) const;
   void evaluate(int n, const element_type* values, element_type* out);
-  M2_Matrix* evaluate(const M2_Matrix *vals);
+  Matrix* evaluate(const Matrix *vals);
 };
 #endif
 #ifdef SLPmpfr
@@ -570,7 +570,7 @@ public:
 class StraightLineProgram : public SLP<ComplexFieldArbitraryPrecision> {
 public:
   static StraightLineProgram /* or null */ *make(const PolyRing* R, ring_elem e);
-  static StraightLineProgram /* or null */ *make(const M2_Matrix *consts, M2_arrayint program);
+  static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
 
   StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) { return static_cast<StraightLineProgram*>(SLP<ComplexFieldArbitraryPrecision>::concatenate(slp)); }
 
@@ -588,7 +588,7 @@ public:
   //void stats_out(buffer& o) const;
   void evaluate(int n, const element_type* values, element_type* out);
   void evaluate(int n, const complex* values, complex* out);
-  M2_Matrix* evaluate(const M2_Matrix *vals);
+  Matrix* evaluate(const Matrix *vals);
 };
 #endif
 
@@ -617,8 +617,8 @@ class PathTracker : public object
 
   int number; // trackers are enumerated
 
-  M2_Matrix *target;
-  const M2_Matrix *H, *S, *T; // homotopy, start, target
+  Matrix *target;
+  const Matrix *H, *S, *T; // homotopy, start, target
   StraightLineProgram *slpH, *slpHxt, *slpHxtH, *slpHxH, // slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H
     *slpS, *slpSx, *slpSxS, *slpT, *slpTx, *slpTxT; // slps for S and T, needed if is_projective
   double productST, // real part of the Bombieri-Weyl (hermitian) product <S,T>
@@ -687,7 +687,7 @@ class PathTracker : public object
   int n_coords;
   int n_sols;
   Solution* raw_solutions; // solutions + stats
-  M2_Matrix *solutions; // M2_Matrix of solutions passed to top level
+  Matrix *solutions; // Matrix of solutions passed to top level
 
   // parameters
   M2_bool is_projective;
@@ -704,21 +704,21 @@ class PathTracker : public object
 
   PathTracker();
 public:
-  static PathTracker /* or null */ *make(const M2_Matrix*); // from homotopy
-  static PathTracker /* or null */ *make(const M2_Matrix *S, const M2_Matrix *T, gmp_RR productST); // from start/target systems
+  static PathTracker /* or null */ *make(const Matrix*); // from homotopy
+  static PathTracker /* or null */ *make(const Matrix *S, const Matrix *T, gmp_RR productST); // from start/target systems
   static PathTracker /* or null */ *make(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr); // precookedSLPs
   virtual ~PathTracker();
 
   void text_out(buffer& o) const;
-  int makeFromHomotopy(const M2_Matrix*);
-  M2_Matrix /* or null */* getSolution(int);
-  M2_Matrix /* or null */* getAllSolutions();
+  int makeFromHomotopy(const Matrix*);
+  Matrix /* or null */* getSolution(int);
+  Matrix /* or null */* getAllSolutions();
   int getSolutionStatus(int);
   int getSolutionSteps(int);
   gmp_RRorNull getSolutionLastT(int);
   gmp_RRorNull getSolutionRcond(int);
-  int track(const M2_Matrix*);
-  M2_Matrix /* or null */* refine(const M2_Matrix *sols, gmp_RR tolerance, int max_corr_steps_refine = 100); // refine solutions such that (error estimate)/norm(solution) < tolerance
+  int track(const Matrix*);
+  Matrix /* or null */* refine(const Matrix *sols, gmp_RR tolerance, int max_corr_steps_refine = 100); // refine solutions such that (error estimate)/norm(solution) < tolerance
 
   // raw "friends"
   friend void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
@@ -726,7 +726,7 @@ public:
                                  gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
                                  gmp_RR epsilon, int max_corr_steps, gmp_RR end_zone_factor, gmp_RR infinity_threshold,
                                  int pred_type);
-  friend const M2_Matrix /* or null */ *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const M2_Matrix* start_sols ,
+  friend const Matrix /* or null */ *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols ,
                                     M2_bool is_projective,
                                     gmp_RR init_dt, gmp_RR min_dt, gmp_RR max_dt,
                                     gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,

@@ -197,7 +197,7 @@ private:
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
 
   /* initialization */
-  void initialize(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat, int max_reduction_count0);
+  void initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat, int max_reduction_count0);
   spair *new_gen(int i, gbvector *f, ring_elem denom);
 
   int gbelem_COMPONENT(gbelem *g) { return g->g.f->comp; }
@@ -265,7 +265,7 @@ private:
   /* Hilbert function handling */
   void flush_pairs(); // Used to flush the rest of the pairs in the current degree.
   RingElement /* or null */ *compute_hilbert_function(); // Compute the HF of _hilb_matrix.
-  M2_Matrix *make_lead_term_matrix(); // The submodule of all lead terms
+  Matrix *make_lead_term_matrix(); // The submodule of all lead terms
 
   /* reduction */
   void auto_reduce_by(int id);
@@ -330,7 +330,7 @@ public:
   // Computation routines //
   //////////////////////////
 
-  static gbA * create(const M2_Matrix *m,
+  static gbA * create(const Matrix *m,
                       M2_bool collect_syz,
                       int n_rows_to_keep,
                       M2_arrayint gb_weights,
@@ -339,9 +339,9 @@ public:
                       int max_degree,
                       int max_reduction_count);
 
-  static gbA * create_forced(const M2_Matrix *m,
-                                 const M2_Matrix *gb,
-                                 const M2_Matrix *mchange);
+  static gbA * create_forced(const Matrix *m,
+                                 const Matrix *gb,
+                                 const Matrix *mchange);
 
   void remove_gb();
   virtual ~gbA();
@@ -354,26 +354,26 @@ public:
 
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
 
-  virtual const M2_Matrix /* or null */ *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const M2_Matrix /* or null */ *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const M2_Matrix /* or null */ *get_change();
+  virtual const Matrix /* or null */ *get_change();
 
-  virtual const M2_Matrix /* or null */ *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
-  virtual const M2_Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
                            );
 
-  virtual int contains(const M2_Matrix *m);
+  virtual int contains(const Matrix *m);
 
   virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the

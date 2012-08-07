@@ -5,9 +5,9 @@
 #include "text-io.hpp"
 #include "matrix-con.hpp"
 #include "../system/supervisorinterface.h"
-extern ring_elem hilb(const M2_Matrix &M, const Ring *RR);
+extern ring_elem hilb(const Matrix &M, const Ring *RR);
 
-gb_emitter::gb_emitter(const M2_Matrix *m)
+gb_emitter::gb_emitter(const Matrix *m)
   : gens(m), g(NULL), n_left(m->n_cols()), n_i(0), n_in_degree(-1)
 {
   originalR = m->get_ring()->cast_to_PolynomialRing();
@@ -92,7 +92,7 @@ void gb_emitter::text_out(buffer &o) const
 
 typedef gb_node *gb_node_ptr;
 
-void gbres_comp::setup(const M2_Matrix *m,
+void gbres_comp::setup(const Matrix *m,
                      int length,
                      int origsyz,
                      int strategy)
@@ -166,12 +166,12 @@ void gbres_comp::setup(const M2_Matrix *m,
   strategy_flags = strategy;
 }
 
-gbres_comp::gbres_comp(const M2_Matrix *m, int length, int origsyz, int strategy)
+gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz, int strategy)
 {
   setup(m,length,origsyz,strategy);
 }
 
-gbres_comp::gbres_comp(const M2_Matrix *m, int length, int origsyz,
+gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz,
                  const RingElement */*hf*/, int strategy)
 {
   // MES: check homogeniety
@@ -262,7 +262,7 @@ int gbres_comp::complete_thru_degree() const
 //--- Reduction --------------------------
 
 
-M2_Matrix *gbres_comp::reduce(const M2_Matrix *m, M2_Matrix *&lift)
+Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
 {
   const FreeModule *F = nodes[0]->output_free_module();
   if (m->n_rows() != F->rank()) {
@@ -304,37 +304,37 @@ const FreeModule *gbres_comp::free_module(int level) const
   return nodes[0]->output_free_module()->get_ring()->make_FreeModule();
 
 }
-const M2_Matrix *gbres_comp::min_gens_matrix(int level)
+const Matrix *gbres_comp::min_gens_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return M2_Matrix::zero(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->min_gens_matrix();
 }
-const M2_Matrix *gbres_comp::get_matrix(int level)
+const Matrix *gbres_comp::get_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return M2_Matrix::zero(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->get_matrix();
 }
 
-const M2_Matrix *gbres_comp::initial_matrix(int n, int level)
+const Matrix *gbres_comp::initial_matrix(int n, int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return M2_Matrix::zero(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->initial_matrix(n);
 }
 
-const M2_Matrix *gbres_comp::gb_matrix(int level)
+const Matrix *gbres_comp::gb_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return M2_Matrix::zero(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->gb_matrix();
 }
 
-const M2_Matrix *gbres_comp::change_matrix(int level)
+const Matrix *gbres_comp::change_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return M2_Matrix::zero(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->change_matrix();
 }
 

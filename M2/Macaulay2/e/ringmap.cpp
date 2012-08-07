@@ -6,7 +6,7 @@
 #include "polyring.hpp"
 #include "relem.hpp"
 
-RingMap::RingMap(const M2_Matrix *m)
+RingMap::RingMap(const Matrix *m)
 : immutable_object(0), R(m->get_ring())
 {
   M = 0;
@@ -109,7 +109,7 @@ bool RingMap::is_equal(const RingMap *phi) const
   return true;
 }
 
-const RingMap *RingMap::make(const M2_Matrix *m)
+const RingMap *RingMap::make(const Matrix *m)
 {
   RingMap *result = new RingMap(m);
   // MES: set hash value
@@ -232,7 +232,7 @@ RingElement /* or null */ *RingMap::eval(const RingElement *r) const
   return result;
 }
 
-M2_Matrix /* or null */ *RingMap::eval(const FreeModule *F, const M2_Matrix *m) const
+Matrix /* or null */ *RingMap::eval(const FreeModule *F, const Matrix *m) const
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<m->n_cols(); i++)

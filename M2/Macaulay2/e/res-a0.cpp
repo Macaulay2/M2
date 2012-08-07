@@ -411,7 +411,7 @@ void res2_comp::start_computation()
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
 
-void res2_comp::initialize(const M2_Matrix *mat,
+void res2_comp::initialize(const Matrix *mat,
                            int LengthLimit,
                            bool UseDegreeLimit,
                            int SlantedDegreeLimit,
@@ -559,7 +559,7 @@ void res2_comp::display_order(buffer &o, int sortval) const
   o << "]" << newline;
 }
 
-res2_comp::res2_comp(const M2_Matrix *m,
+res2_comp::res2_comp(const Matrix *m,
                      int LengthLimit,
                      bool UseDegreeLimit,
                      int SlantedDegreeLimit,
@@ -2058,12 +2058,12 @@ FreeModule *res2_comp::minimal_free_of(int i) const
   return result;
 }
 
-M2_Matrix *res2_comp::make(int level) const
+Matrix *res2_comp::make(int level) const
 {
   const FreeModule *F = free_of(level-1);
   const FreeModule *G = free_of(level);
   MatrixConstructor result(F, G, NULL);
-  //  M2_Matrix *result = new M2_Matrix(free_of(level-1), free_of(level));
+  //  Matrix *result = new Matrix(free_of(level-1), free_of(level));
 
   int n = 0;
   if (G->rank() == 0) return result.to_matrix();
@@ -2103,7 +2103,7 @@ void res2_comp::reduce_minimal(int x, res2term *&f,
     }
 }
 
-M2_Matrix *res2_comp::make_minimal(int i) const
+Matrix *res2_comp::make_minimal(int i) const
 {
   const FreeModule *F = minimal_free_of(i-1);
   const FreeModule *G = minimal_free_of(i);
@@ -2150,7 +2150,7 @@ M2_Matrix *res2_comp::make_minimal(int i) const
 ///////////////////////////////////////////////////////
 
 #if 0
-// M2_Matrix res2_comp::reduce_mod_vars(int level) const
+// Matrix res2_comp::reduce_mod_vars(int level) const
 // {
 //   // Set all variables to 0, but only take columns marked
 //   // as SZ or GB, not NO.  The matrix returned is over K.
@@ -2159,7 +2159,7 @@ M2_Matrix *res2_comp::make_minimal(int i) const
 //
 //   FreeModule *rows = K->make_FreeModule();
 //   FreeModule *cols = K->make_FreeModule();
-//   M2_Matrix result(rows, cols);
+//   Matrix result(rows, cols);
 //   for (res_pair *p = resn[level]->pairs; p != NULL; p = p->next)
 //     {
 //       if (p->syz_type == SYZ2_MINIMAL || SYZ2_NOT_MINIMAL)

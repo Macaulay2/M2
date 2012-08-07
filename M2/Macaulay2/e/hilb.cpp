@@ -295,7 +295,7 @@ void hilb_comp::reset()
   current->h0 = R->from_int(0);         // This top level h0 is not used
   current->h1 = R->from_int(1);
 }
-hilb_comp::hilb_comp(const PolynomialRing *RR, const M2_Matrix *m)
+hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
 : S(m->get_ring()->cast_to_PolynomialRing()),
   R(RR),
   M(S->getMonoid()),
@@ -606,7 +606,7 @@ void hilb_comp::stats() const
     }
 }
 #if 0
-// int hilb_comp::hilbertSeries(const M2_Matrix *M, RingElement *&result)
+// int hilb_comp::hilbertSeries(const Matrix *M, RingElement *&result)
 // {
 //   const PolynomialRing *P = M->get_ring()->get_degree_ring();
 //   hilb_comp *hf = new hilb_comp(P,M);
@@ -617,7 +617,7 @@ void hilb_comp::stats() const
 //   return 0;
 // }
 #endif
-RingElement *hilb_comp::hilbertNumerator(const M2_Matrix *M)
+RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
      for coker leadterms(M), using the degrees of the rows of M.
      NULL is returned if the ring is not appropriate for
@@ -635,7 +635,7 @@ RingElement *hilb_comp::hilbertNumerator(const M2_Matrix *M)
 
 RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
 {
-  const M2_Matrix *Fmatrix = M2_Matrix::make(F,0,0);
+  const Matrix *Fmatrix = Matrix::make(F,0,0);
   RingElement *result = hilbertNumerator(Fmatrix);
   delete Fmatrix;
   return result;

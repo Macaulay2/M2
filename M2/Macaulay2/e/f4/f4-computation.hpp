@@ -30,7 +30,7 @@ class F4Computation : public GBComputation
 public:
   F4Computation(Gausser *K,
                 F4Mem *Mem,
-                const M2_Matrix *m,
+                const Matrix *m,
                 M2_bool collect_syz,
                 int n_rows_to_keep,
                 M2_arrayint gb_weights,
@@ -52,24 +52,24 @@ public:
 
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
 
-  virtual const M2_Matrix /* or null */ *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const M2_Matrix /* or null */ *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const M2_Matrix /* or null */ *get_change();
+  virtual const Matrix /* or null */ *get_change();
 
-  virtual const M2_Matrix /* or null */ *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
                            );
 
-  virtual int contains(const M2_Matrix *m);
+  virtual int contains(const Matrix *m);
 
   virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the
@@ -82,7 +82,7 @@ public:
 
 };
 
-GBComputation *createF4GB(const M2_Matrix *m,
+GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
                           int n_rows_to_keep,
                           M2_arrayint gb_weights,

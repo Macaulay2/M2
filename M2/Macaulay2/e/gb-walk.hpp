@@ -25,24 +25,24 @@ class GBWalker : public GBComputation {
 
   void initialize();
 
-  GBComputation * make_gb(const M2_Matrix *M) const;
+  GBComputation * make_gb(const Matrix *M) const;
 
   bool compute_next_w();
 
   // local data in the computation (kept because of possible interrupts)
   enum { STATE_compute_w, STATE_do_gb, STATE_reduce, STATE_autoreduce, STATE_done} state;
   M2_arrayint ww;
-  const M2_Matrix *inwwG;
+  const Matrix *inwwG;
   GBComputation *gb_inwwG;
   int next_to_reduce;
-  const M2_Matrix *H;
+  const Matrix *H;
   VECTOR(gbvector *) leadterms;
   VECTOR(POLY) polys;
   MarkedGB *G1; // becomes G eventually
 protected:
   virtual bool stop_conditions_ok();
 
-  GBWalker(const M2_Matrix *gb_under_order1,
+  GBWalker(const Matrix *gb_under_order1,
            const MonomialOrdering *order1);
 
   GBWalker(MarkedGB *G0,
@@ -54,7 +54,7 @@ public:
                            long **order1,
                            long **order2);
 
-  static GBWalker * create(const M2_Matrix *gb_under_order1,
+  static GBWalker * create(const Matrix *gb_under_order1,
                            const MonomialOrdering *order1);
 
   virtual ~GBWalker();
@@ -68,26 +68,26 @@ public:
 
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
 
-  virtual const M2_Matrix /* or null */ *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const M2_Matrix /* or null */ *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const M2_Matrix /* or null */ *get_change();
+  virtual const Matrix /* or null */ *get_change();
 
-  virtual const M2_Matrix /* or null */ *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
-  virtual const M2_Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
                            );
 
-  virtual int contains(const M2_Matrix *m);
+  virtual int contains(const Matrix *m);
 
   virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the

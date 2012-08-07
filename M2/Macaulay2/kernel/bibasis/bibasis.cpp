@@ -10,7 +10,7 @@
 #include "launcher.hpp"
 #include "matrix.hpp"
 
-extern "C" const M2_Matrix* rawBIBasis(const M2_Matrix* matrix, int toGroebner)
+extern "C" const Matrix* rawBIBasis(const Matrix* matrix, int toGroebner)
 {
     BIBasis::Launcher launcher;
     

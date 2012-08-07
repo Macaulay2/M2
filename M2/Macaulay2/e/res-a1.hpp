@@ -72,7 +72,7 @@ class res_comp : public ResolutionComputation
   res_poly *R;
   const Monoid *M;
   const Ring *K;
-  const M2_Matrix *generator_matrix;       // Input matrix of generators, possibly a GB, possibly not
+  const Matrix *generator_matrix;       // Input matrix of generators, possibly a GB, possibly not
   stash *res_pair_stash;
   stash *mi_stash;
 
@@ -156,12 +156,12 @@ private:
   void remove_res_degree(res_degree *p);
   void remove_res_level(res_level *lev);
 
-  void initialize(const M2_Matrix *mat,
+  void initialize(const Matrix *mat,
                   int LengthLimit,
                   int strategy);
 
 public:
-  res_comp(const M2_Matrix *m,
+  res_comp(const Matrix *m,
            int LengthLimit,
            int strategy);
 
@@ -198,10 +198,10 @@ public:
 
   const FreeModule *free_of(int i) const;
   const FreeModule *minimal_free_of(int i) const;
-  M2_Matrix *make(int i) const;
-  M2_Matrix *make_minimal(int i) const;
+  Matrix *make(int i) const;
+  Matrix *make_minimal(int i) const;
 
-  const M2_Matrix /* or null */ *get_matrix(int level) { return make_minimal(level); }
+  const Matrix /* or null */ *get_matrix(int level) { return make_minimal(level); }
 
   const FreeModule /* or null */ *get_free(int level) { return minimal_free_of(level); }
 

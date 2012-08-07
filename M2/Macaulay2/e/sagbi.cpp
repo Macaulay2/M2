@@ -21,8 +21,8 @@ ring_elem sagbi::subduct(const PolyRing *R,
       g->next = NULL;
 
       mat.set_entry(0,0,g);
-      M2_Matrix *m = mat.to_matrix();
-      const M2_Matrix *n = J->matrix_remainder(m);
+      Matrix *m = mat.to_matrix();
+      const Matrix *n = J->matrix_remainder(m);
       ring_elem g1 = n->elem(0,0);
       delete m;
       delete n;
@@ -48,7 +48,7 @@ ring_elem sagbi::subduct(const PolyRing *R,
   return head.next;
 }
 
-M2_Matrix *sagbi::subduct(const M2_Matrix *m,
+Matrix *sagbi::subduct(const Matrix *m,
                        const RingMap *phi,
                        GBComputation *J)
 {
@@ -118,11 +118,11 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 //   return head.next;
 // }
 //
-// M2_Matrix *sagbi::subduct(const M2_Matrix *m,
+// Matrix *sagbi::subduct(const Matrix *m,
 //                      const RingMap *phi,
 //                      gb_comp *J)
 // {
-//   M2_Matrix *result = new M2_Matrix(m->rows(), m->cols());
+//   Matrix *result = new Matrix(m->rows(), m->cols());
 //
 //   for (int i=0; i<m->n_cols(); i++)
 //     (*result)[i] = subduct(m->rows(), m->rows()->copy((*m)[i]), phi, J);
@@ -134,7 +134,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // // // pending_list //
 // // //////////////////
 // //
-// // pending_list::pending_list(M2_Matrix &m)
+// // pending_list::pending_list(Matrix &m)
 // //   : F(m.rows()),
 // //     _n_held(0)
 // // {
@@ -147,7 +147,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // // {
 // // }
 // //
-// // pending_list::insert(M2_Matrix &m)
+// // pending_list::insert(Matrix &m)
 // // {
 // //   for (int i = 0; i < m.n_cols(); i++) {
 // //     vec v = m[i];
@@ -157,18 +157,18 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // //     if (d < _lo_degree) _lo_degree = d;
 // //     d -= _base_degree;
 // //     while (Pending.length() <= d)
-// //       Pending.append(M2_Matrix(F));
+// //       Pending.append(Matrix(F));
 // //     Pending[d].append(F->copy(v));
 // //   }
 // // }
 // //
-// // M2_Matrix pending_list::take_lowest_matrix()
+// // Matrix pending_list::take_lowest_matrix()
 // // {
-// //   if (_lo_degree < _base_degree) return M2_Matrix(F);
+// //   if (_lo_degree < _base_degree) return Matrix(F);
 // //   int d = _lo_degree - _base_degree;
-// //   M2_Matrix result = Pending[d];
+// //   Matrix result = Pending[d];
 // //   n_held -= result.n_cols();
-// //   Pending[d] = M2_Matrix(F);
+// //   Pending[d] = Matrix(F);
 // //   for ( ; d < Pending.length(); d++)
 // //     if (Pending[d].n_cols() > 0)
 // //       {
@@ -179,7 +179,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // // }
 // #endif
 //
-// sagbi_comp::sagbi_comp(const M2_Matrix *m) : gb_comp(COMP_SAGBI)
+// sagbi_comp::sagbi_comp(const Matrix *m) : gb_comp(COMP_SAGBI)
 // {
 // }
 //
@@ -191,7 +191,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // {
 // }
 //
-// void sagbi_comp::add_generators(const M2_Matrix *m)
+// void sagbi_comp::add_generators(const Matrix *m)
 // {
 // }
 //
@@ -215,7 +215,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // #endif
 // #if 0
 // //
-// // void sagbi_comp::append_to_basis(M2_Matrix *m)
+// // void sagbi_comp::append_to_basis(Matrix *m)
 // // {
 // //   // Each of the elements in 'm' are to be added in.
 // //   if (m->n_cols() == 0) return;
@@ -236,7 +236,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // // }
 // #endif
 // #if 0
-// // M2_Matrix sagbi_comp::grab_lowest_degree()
+// // Matrix sagbi_comp::grab_lowest_degree()
 // // {
 // //
 // // /* This routine assumes that lowest degree of Pending list is autosubducted.
@@ -248,7 +248,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // //
 // //
 // //   // This should only be called if there are elements here...?
-// //   M2_Matrix temp = Pending->take_lowest_matrix();
+// //   Matrix temp = Pending->take_lowest_matrix();
 // //   row_reduce(temp);
 // //   Pending->insert(temp);
 // //   _current_degree = Pending->lo_degree();
@@ -286,7 +286,7 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // //       if (_J_status == COMP_INTERRUPTED) return COMP_INTERRUPTED;
 // //       newpairs = J->subring(_current_dgree); // This only grabs minimal generators, of the given degree.
 // //       newpairs = evaluatePairs(newpairs);    // Creates matrix over R.  Sends y_i to f_i.
-// //       M2_Matrix newgens = Pending->take_matrix(_current_degree);
+// //       Matrix newgens = Pending->take_matrix(_current_degree);
 // //       newpairs.concat(newgens);
 // //
 // //       // Reduce S-pairs
@@ -306,12 +306,12 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // #endif
 // }
 //
-// M2_Matrix *sagbi_comp::reduce(const M2_Matrix *m, M2_Matrix *&lift)
+// Matrix *sagbi_comp::reduce(const Matrix *m, Matrix *&lift)
 // {
 // return 0;
 // }
 //
-// int sagbi_comp::contains(const M2_Matrix *m)
+// int sagbi_comp::contains(const Matrix *m)
 // {
 // return 0;
 // }
@@ -322,27 +322,27 @@ M2_Matrix *sagbi::subduct(const M2_Matrix *m,
 // }
 //
 // // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-// M2_Matrix *sagbi_comp::min_gens_matrix()
+// Matrix *sagbi_comp::min_gens_matrix()
 // {
 // return 0;
 // }
 //
-// M2_Matrix *sagbi_comp::initial_matrix(int n)
+// Matrix *sagbi_comp::initial_matrix(int n)
 // {
 // return 0;
 // }
 //
-// M2_Matrix *sagbi_comp::gb_matrix()
+// Matrix *sagbi_comp::gb_matrix()
 // {
 // return 0;
 // }
 //
-// M2_Matrix *sagbi_comp::change_matrix()
+// Matrix *sagbi_comp::change_matrix()
 // {
 // return 0;
 // }
 //
-// M2_Matrix *sagbi_comp::syz_matrix()
+// Matrix *sagbi_comp::syz_matrix()
 // {
 // return 0;
 // }

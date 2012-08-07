@@ -29,7 +29,7 @@ public:
   static vec CRA(const PolyRing *R, vec f, vec g, mpz_t um, mpz_t vn, mpz_t mn);
   // does the vector combination without error checking and with precomputed multipliers
 
-  static M2_Matrix * CRA(const M2_Matrix *f, const M2_Matrix *g, mpz_t um, mpz_t vn, mpz_t mn);
+  static Matrix * CRA(const Matrix *f, const Matrix *g, mpz_t um, mpz_t vn, mpz_t mn);
   // does the matrix combination without error checking and with precomputed multipliers
 
   static RingElement * CRA(const RingElement *f, const RingElement *g,  mpz_t um, mpz_t vn, mpz_t mn);

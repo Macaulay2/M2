@@ -37,7 +37,7 @@ void longToExponents(int nvars, brMonomial mono, exponents exp)
 //
 }
 
-IntermediateBasis BRPSfromMatrix(const M2_Matrix *m)
+IntermediateBasis BRPSfromMatrix(const Matrix *m)
 {
   const Ring *R = m->get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -63,7 +63,7 @@ IntermediateBasis BRPSfromMatrix(const M2_Matrix *m)
   return F;
 }
 
-const M2_Matrix *BRPStoMatrix(const PolynomialRing *P, const IntermediateBasis &F)
+const Matrix *BRPStoMatrix(const PolynomialRing *P, const IntermediateBasis &F)
 {
   MatrixConstructor C(P->make_FreeModule(1),0);
   const Monoid *M = P->getMonoid();
@@ -95,7 +95,7 @@ const M2_Matrix *BRPStoMatrix(const PolynomialRing *P, const IntermediateBasis &
   return C.to_matrix();
 }
 
-extern "C" const M2_Matrix * rawGbBoolean(const M2_Matrix *m)
+extern "C" const Matrix * rawGbBoolean(const Matrix *m)
 {
   IntermediateBasis F = BRPSfromMatrix(m);
   //cout << "first BRP in F " << F.begin()->second << endl;

@@ -19,7 +19,7 @@ private:
 
   enum {KB_FULL, KB_SINGLE, KB_MULTI} computation_type;
 
-  const M2_Matrix *bottom_matrix;
+  const Matrix *bottom_matrix;
   M2_arrayint heft_vector; // length is D->n_vars(), or less.
   // Dot product with a degree of a variable
   // in 'vars' will give a positive value.
@@ -64,7 +64,7 @@ private:
   void basis0_singly_graded(int firstvar);
   void basis0_multi_graded(int firstvar);
 
-  KBasis(const M2_Matrix *bottom,
+  KBasis(const Matrix *bottom,
          const int * lo_degree,
          const int * hi_degree,
          M2_arrayint wt,
@@ -76,9 +76,9 @@ private:
 
   void compute();
 
-  M2_Matrix *value() { return(kb_error ? 0 : mat.to_matrix()); }
+  Matrix *value() { return(kb_error ? 0 : mat.to_matrix()); }
 public:
-  static M2_Matrix *k_basis(const M2_Matrix *bottom,
+  static Matrix *k_basis(const Matrix *bottom,
                          M2_arrayint lo_degree,
                          M2_arrayint hi_degree,
                          M2_arrayint heft,
@@ -87,7 +87,7 @@ public:
                          int limit);
 };
 
-KBasis::KBasis(const M2_Matrix *bottom,
+KBasis::KBasis(const Matrix *bottom,
                const int * lo_degree0,
                const int * hi_degree0,
                M2_arrayint heft_vector0,
@@ -344,7 +344,7 @@ void KBasis::compute()
     }
 }
 
-M2_Matrix /* or null */ *KBasis::k_basis(const M2_Matrix *bottom,
+Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
                               M2_arrayint lo_degree,
                               M2_arrayint hi_degree,
                               M2_arrayint heft,
@@ -378,7 +378,7 @@ M2_Matrix /* or null */ *KBasis::k_basis(const M2_Matrix *bottom,
   //
   // Do some checks first, return 0 if not good.
   const PolynomialRing *P = bottom->get_ring()->cast_to_PolynomialRing();
-  if (P == 0) return M2_Matrix::identity(bottom->rows());
+  if (P == 0) return Matrix::identity(bottom->rows());
 
   const PolynomialRing *D = P->get_degree_ring();
   const int *lo = lo_degree->len > 0 ? lo_degree->array : 0;
@@ -433,7 +433,7 @@ M2_Matrix /* or null */ *KBasis::k_basis(const M2_Matrix *bottom,
   return KB.value();
 }
 
-const M2_Matrix *M2_Matrix::basis(M2_arrayint lo_degree,
+const Matrix *Matrix::basis(M2_arrayint lo_degree,
                             M2_arrayint hi_degree,
                             M2_arrayint heft,
                             M2_arrayint vars,

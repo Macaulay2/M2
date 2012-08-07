@@ -18,7 +18,7 @@
 
 #include "matrix-con.hpp"
 
-M2_Matrix::M2_Matrix(const FreeModule *rows0,
+Matrix::Matrix(const FreeModule *rows0,
                const FreeModule *cols0,
                const int *degree_shift0,
                VECTOR(vec) & entries0)
@@ -34,7 +34,7 @@ M2_Matrix::M2_Matrix(const FreeModule *rows0,
   make_immutable(z);
 }
 
-const M2_Matrix /* or null */ * M2_Matrix::make(const FreeModule *target,
+const Matrix /* or null */ * Matrix::make(const FreeModule *target,
                                   int ncols,
                                   const engine_RawRingElementArray M)
 {
@@ -67,7 +67,7 @@ const M2_Matrix /* or null */ * M2_Matrix::make(const FreeModule *target,
     }
   return mat.to_matrix();
 }
-const M2_Matrix /* or null */ * M2_Matrix::make(const FreeModule *target,
+const Matrix /* or null */ * Matrix::make(const FreeModule *target,
                                   const FreeModule *source,
                                   M2_arrayint deg,
                                   const engine_RawRingElementArray M)
@@ -117,7 +117,7 @@ const M2_Matrix /* or null */ * M2_Matrix::make(const FreeModule *target,
   return mat.to_matrix();
 }
 
-bool M2_Matrix::make_sparse_vecs(MatrixConstructor &mat,
+bool Matrix::make_sparse_vecs(MatrixConstructor &mat,
                                const FreeModule *target,
                                int ncols,
                                M2_arrayint rows,
@@ -165,20 +165,20 @@ bool M2_Matrix::make_sparse_vecs(MatrixConstructor &mat,
   return true;
 }
 
-const M2_Matrix /* or null */ * M2_Matrix::make_sparse(const FreeModule *target,
+const Matrix /* or null */ * Matrix::make_sparse(const FreeModule *target,
                                          int ncols,
                                          M2_arrayint rows,
                                          M2_arrayint cols,
                                          const engine_RawRingElementArray entries)
 {
   MatrixConstructor mat(target, ncols);
-  if (!M2_Matrix::make_sparse_vecs(mat, target, ncols, rows, cols, entries))
+  if (!Matrix::make_sparse_vecs(mat, target, ncols, rows, cols, entries))
     return 0; // error message has already been sent
   mat.compute_column_degrees();
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ * M2_Matrix::make_sparse(const FreeModule *target,
+const Matrix /* or null */ * Matrix::make_sparse(const FreeModule *target,
                                          const FreeModule *source,
                                          M2_arrayint deg,
                                          M2_arrayint rows,
@@ -193,12 +193,12 @@ const M2_Matrix /* or null */ * M2_Matrix::make_sparse(const FreeModule *target,
   R->degree_monoid()->from_expvector(deg->array, degshift);
 
   MatrixConstructor mat(target, source, degshift);
-  if (!M2_Matrix::make_sparse_vecs(mat, target, source->rank(), rows, cols, entries))
+  if (!Matrix::make_sparse_vecs(mat, target, source->rank(), rows, cols, entries))
     return 0; // error message has already been sent
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ * M2_Matrix::remake(const FreeModule *target,
+const Matrix /* or null */ * Matrix::remake(const FreeModule *target,
                                     const FreeModule *source,
                                     M2_arrayint deg) const
 {
@@ -229,7 +229,7 @@ const M2_Matrix /* or null */ * M2_Matrix::remake(const FreeModule *target,
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ * M2_Matrix::remake(const FreeModule *target) const
+const Matrix /* or null */ * Matrix::remake(const FreeModule *target) const
 {
   if (n_rows() != target->rank())
     {
@@ -250,7 +250,7 @@ const M2_Matrix /* or null */ * M2_Matrix::remake(const FreeModule *target) cons
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ * M2_Matrix::make(const MonomialIdeal * mi)
+const Matrix /* or null */ * Matrix::make(const MonomialIdeal * mi)
 {
   const PolynomialRing *P = mi->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -275,12 +275,12 @@ const M2_Matrix /* or null */ * M2_Matrix::make(const MonomialIdeal * mi)
   return mat.to_matrix();
 }
 
-ring_elem M2_Matrix::elem(int i, int j) const
+ring_elem Matrix::elem(int i, int j) const
 {
   return get_ring()->get_entry(elem(j), i);
 }
 
-bool M2_Matrix::is_equal(const M2_Matrix &m) const
+bool Matrix::is_equal(const Matrix &m) const
 {
   if (this == &m) return true;
   if (get_hash_value() != m.get_hash_value())
@@ -298,14 +298,14 @@ bool M2_Matrix::is_equal(const M2_Matrix &m) const
   return true;
 }
 
-bool M2_Matrix::is_zero() const
+bool Matrix::is_zero() const
 {
   for (int i=0; i<n_cols(); i++)
     if (elem(i) != 0) return false;
   return true;
 }
 
-bool M2_Matrix::is_homogeneous() const
+bool Matrix::is_homogeneous() const
 {
   if (!get_ring()->is_graded()) return 0;
   int *d = degree_monoid()->make_one();
@@ -330,7 +330,7 @@ bool M2_Matrix::is_homogeneous() const
   return 1;
 }
 
-M2_Matrix *M2_Matrix::homogenize(int v, M2_arrayint wts) const
+Matrix *Matrix::homogenize(int v, M2_arrayint wts) const
 {
   MatrixConstructor mat(rows(), n_cols());
   for (int i=0; i<n_cols(); i++)
@@ -339,7 +339,7 @@ M2_Matrix *M2_Matrix::homogenize(int v, M2_arrayint wts) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::zero(const FreeModule *F, const FreeModule *G)
+Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G)
 {
   if (F->get_ring() != G->get_ring())
     {
@@ -350,7 +350,7 @@ M2_Matrix *M2_Matrix::zero(const FreeModule *F, const FreeModule *G)
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::identity(const FreeModule *F)
+Matrix *Matrix::identity(const FreeModule *F)
 {
   const ring_elem one = F->get_ring()->one();
   MatrixConstructor mat(F,F,0);
@@ -359,7 +359,7 @@ M2_Matrix *M2_Matrix::identity(const FreeModule *F)
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::operator+(const M2_Matrix &m) const
+Matrix *Matrix::operator+(const Matrix &m) const
 {
   if (get_ring() != m.get_ring())
     {
@@ -400,7 +400,7 @@ M2_Matrix *M2_Matrix::operator+(const M2_Matrix &m) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::operator-(const M2_Matrix &m) const
+Matrix *Matrix::operator-(const Matrix &m) const
 {
   if (get_ring() != m.get_ring())
     {
@@ -436,7 +436,7 @@ M2_Matrix *M2_Matrix::operator-(const M2_Matrix &m) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::operator-() const
+Matrix *Matrix::operator-() const
 {
   MatrixConstructor mat(rows(), cols(), degree_shift());
   for (int i=0; i<n_cols(); i++)
@@ -444,7 +444,7 @@ M2_Matrix *M2_Matrix::operator-() const
   return mat.to_matrix();
 }
 
-M2_Matrix /* or null */ *M2_Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
+Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
 {
   const FreeModule *F = rows()->sub_space(r);
   const FreeModule *G = cols()->sub_space(c);
@@ -471,7 +471,7 @@ M2_Matrix /* or null */ *M2_Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) con
   return mat.to_matrix();
 }
 
-M2_Matrix /* or null */ *M2_Matrix::sub_matrix(M2_arrayint c) const
+Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint c) const
 {
   const FreeModule *G = cols()->sub_space(c);
   if (G == NULL)
@@ -483,7 +483,7 @@ M2_Matrix /* or null */ *M2_Matrix::sub_matrix(M2_arrayint c) const
   return mat.to_matrix();
 }
 
-M2_Matrix /* or null */ *M2_Matrix::reshape(const FreeModule *F, const FreeModule *G) const
+Matrix /* or null */ *Matrix::reshape(const FreeModule *F, const FreeModule *G) const
   // Reshape 'this' : F <--- G, where
   // (rank F)(rank G) = (nrows this)(ncols this)
 {
@@ -513,7 +513,7 @@ M2_Matrix /* or null */ *M2_Matrix::reshape(const FreeModule *F, const FreeModul
   return mat.to_matrix();
 }
 
-M2_Matrix /* or null */ *M2_Matrix::flip(const FreeModule *F, const FreeModule *G)
+Matrix /* or null */ *Matrix::flip(const FreeModule *F, const FreeModule *G)
 {
   const Ring *R = F->get_ring();
   if (R != G->get_ring())
@@ -532,7 +532,7 @@ M2_Matrix /* or null */ *M2_Matrix::flip(const FreeModule *F, const FreeModule *
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::transpose() const
+Matrix *Matrix::transpose() const
 {
   const FreeModule *F = cols()->transpose();
   const FreeModule *G = rows()->transpose();
@@ -550,7 +550,7 @@ M2_Matrix *M2_Matrix::transpose() const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
+Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
 {
   const Ring *R = get_ring();
   int *deg = degree_monoid()->make_one();
@@ -567,7 +567,7 @@ M2_Matrix *M2_Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::concat(const M2_Matrix &m) const
+Matrix *Matrix::concat(const Matrix &m) const
 {
   if (get_ring() != m.get_ring())
     {
@@ -591,7 +591,7 @@ M2_Matrix *M2_Matrix::concat(const M2_Matrix &m) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::direct_sum(const M2_Matrix *m) const
+Matrix *Matrix::direct_sum(const Matrix *m) const
 {
   if (get_ring() != m->get_ring())
     {
@@ -619,7 +619,7 @@ M2_Matrix *M2_Matrix::direct_sum(const M2_Matrix *m) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::mult(const M2_Matrix *m, bool opposite_mult) const
+Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
 {
   const Ring *R = get_ring();
   if (R != m->get_ring())
@@ -645,7 +645,7 @@ M2_Matrix *M2_Matrix::mult(const M2_Matrix *m, bool opposite_mult) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::module_tensor(const M2_Matrix *m) const
+Matrix *Matrix::module_tensor(const Matrix *m) const
 {
   if (get_ring() != m->get_ring())
     {
@@ -672,7 +672,7 @@ M2_Matrix *M2_Matrix::module_tensor(const M2_Matrix *m) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::random(const Ring *R,
+Matrix *Matrix::random(const Ring *R,
                        int r, int c,
                        double density,
                        int special_type) // 0: general, 1:upper triangular, others?
@@ -726,7 +726,7 @@ M2_Matrix *M2_Matrix::random(const Ring *R,
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::tensor(const M2_Matrix *m) const
+Matrix *Matrix::tensor(const Matrix *m) const
 {
   if (get_ring() != m->get_ring())
     {
@@ -749,7 +749,7 @@ M2_Matrix *M2_Matrix::tensor(const M2_Matrix *m) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::diff(const M2_Matrix *m, int use_coef) const
+Matrix *Matrix::diff(const Matrix *m, int use_coef) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -780,7 +780,7 @@ M2_Matrix *M2_Matrix::diff(const M2_Matrix *m, int use_coef) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::contract0(int n_top_variables, const M2_Matrix *m) const
+Matrix *Matrix::contract0(int n_top_variables, const Matrix *m) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -811,7 +811,7 @@ M2_Matrix *M2_Matrix::contract0(int n_top_variables, const M2_Matrix *m) const
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::lead_term(int nparts) const
+Matrix *Matrix::lead_term(int nparts) const
     // Select those monomials in each column
     // which are maximal in the order under
     // the first n parts of the monomial order.
@@ -824,7 +824,7 @@ M2_Matrix *M2_Matrix::lead_term(int nparts) const
 }
 
 #if 0
-// void M2_Matrix::minimal_lead_terms_ZZ(intarray &result) const
+// void Matrix::minimal_lead_terms_ZZ(intarray &result) const
 // {
 //   int x;
 //   M2_arrayint indices;
@@ -859,7 +859,7 @@ M2_Matrix *M2_Matrix::lead_term(int nparts) const
 #endif
 
 #if 0
-// void M2_Matrix::minimal_lead_terms(intarray &result) const
+// void Matrix::minimal_lead_terms(intarray &result) const
 // {
 //   if (get_ring()->getCoefficientRing()->is_ZZ())
 //     {
@@ -892,7 +892,7 @@ M2_Matrix *M2_Matrix::lead_term(int nparts) const
 //
 #endif
 
-M2_arrayintOrNull M2_Matrix::support() const
+M2_arrayintOrNull Matrix::support() const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
   if (R == 0)
@@ -929,7 +929,7 @@ M2_arrayintOrNull M2_Matrix::support() const
   return result;
 }
 
-M2_Matrix *M2_Matrix::top_coefficients(M2_Matrix *&monoms) const
+Matrix *Matrix::top_coefficients(Matrix *&monoms) const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
   MatrixConstructor result(rows(), 0);
@@ -954,7 +954,7 @@ M2_Matrix *M2_Matrix::top_coefficients(M2_Matrix *&monoms) const
   return result.to_matrix();
 }
 
-M2_arrayintOrNull M2_Matrix::elim_vars(int nparts) const
+M2_arrayintOrNull Matrix::elim_vars(int nparts) const
 {
   intarray keep;
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
@@ -973,7 +973,7 @@ M2_arrayintOrNull M2_Matrix::elim_vars(int nparts) const
   return result;
 }
 
-M2_arrayintOrNull M2_Matrix::elim_keep(int nparts) const
+M2_arrayintOrNull Matrix::elim_keep(int nparts) const
 {
   intarray keep;
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
@@ -992,7 +992,7 @@ M2_arrayintOrNull M2_Matrix::elim_keep(int nparts) const
   return result;
 }
 
-M2_Matrix *M2_Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
+Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -1019,7 +1019,7 @@ M2_Matrix *M2_Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
 }
 
 // ideal operations
-M2_Matrix /* or null */ *M2_Matrix::koszul(int p) const
+Matrix /* or null */ *Matrix::koszul(int p) const
 {
   if (n_rows() != 1)
     {
@@ -1058,7 +1058,7 @@ M2_Matrix /* or null */ *M2_Matrix::koszul(int p) const
 //////////////////////////////////////////
 // koszul monomials //////////////////////
 //////////////////////////////////////////
-static MonomialIdeal *makemonideal(const M2_Matrix *A)
+static MonomialIdeal *makemonideal(const Matrix *A)
 {
   const PolynomialRing *P = A->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -1097,7 +1097,7 @@ static int signdivide(int n, const int *a, const int *b, int *exp)
   if (sign == 0) return 1;
   return -1;
 }
-M2_Matrix /* or null */ *M2_Matrix::koszul_monomials(int nskew, const M2_Matrix *r, const M2_Matrix *c)
+Matrix /* or null */ *Matrix::koszul_monomials(int nskew, const Matrix *r, const Matrix *c)
   // The first nskew variables are considered skew commuting for the purpose of computing signs.
 {
   // First check rings: r,c,'this' should be row vectors.
@@ -1159,7 +1159,7 @@ M2_Matrix /* or null */ *M2_Matrix::koszul_monomials(int nskew, const M2_Matrix 
   return mat.to_matrix();
 }
 
-M2_Matrix /* or null */ *M2_Matrix::koszul(const M2_Matrix *r, const M2_Matrix *c)
+Matrix /* or null */ *Matrix::koszul(const Matrix *r, const Matrix *c)
 {
   // First check rings: r,c,'this' should be row vectors.
   // and the ring should be a polynomial ring
@@ -1206,7 +1206,7 @@ M2_Matrix /* or null */ *M2_Matrix::koszul(const M2_Matrix *r, const M2_Matrix *
   return mat.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::wedge_product(int p, int q, const FreeModule *F)
+Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
 {
   const FreeModule *Fp = F->exterior(p);
   const FreeModule *Fq = F->exterior(q);
@@ -1256,7 +1256,7 @@ M2_Matrix *M2_Matrix::wedge_product(int p, int q, const FreeModule *F)
   return mat.to_matrix();
 }
 
-void M2_Matrix::text_out(buffer &o) const
+void Matrix::text_out(buffer &o) const
 {
   int nrows = n_rows();
   int ncols = n_cols();
@@ -1288,7 +1288,7 @@ void M2_Matrix::text_out(buffer &o) const
   delete[] p;
 }
 
-M2_Matrix *M2_Matrix::compress() const
+Matrix *Matrix::compress() const
 {
   MatrixConstructor result(rows(), 0);
   for (int i=0; i<n_cols(); i++)
@@ -1299,7 +1299,7 @@ M2_Matrix *M2_Matrix::compress() const
 
 
 #if 0
-// int M2_Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
+// int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
 //     // Internal private routine for 'coeffs'.
 //     // exp2 is a scratch value.  It is a paramter so we only have to allocate
 //     // it once...
@@ -1317,7 +1317,7 @@ M2_Matrix *M2_Matrix::compress() const
 //   get_ring()->getMonoid()->from_expvector(exp2, m);
 //   return 1;
 // }
-// vec M2_Matrix::strip_vector(vec &f, const int *vars,
+// vec Matrix::strip_vector(vec &f, const int *vars,
 //                            const FreeModule *F, vec &vmonom) const
 //     // private routine for 'coeffs'
 // {
@@ -1380,7 +1380,7 @@ M2_Matrix *M2_Matrix::compress() const
 // }
 #endif
 
-M2_Matrix *M2_Matrix::remove_scalar_multiples() const
+Matrix *Matrix::remove_scalar_multiples() const
 {
   bool keep;
   MatrixConstructor result(rows(), 0);
@@ -1404,7 +1404,7 @@ M2_Matrix *M2_Matrix::remove_scalar_multiples() const
   return result.to_matrix();
 }
 
-M2_Matrix *M2_Matrix::remove_monomial_factors(bool make_squarefree_only) const
+Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // Divide each column v by the maximal monomial 'm' which divides v.
 // If keep_one is true, divide by somewhat less, making the resulting monomial
 // factor squarefree.
@@ -1420,10 +1420,10 @@ M2_Matrix *M2_Matrix::remove_monomial_factors(bool make_squarefree_only) const
 
 #if 0
 // // MES Aug 2002
-// M2_Matrix *M2_Matrix::simplify(int n) const
+// Matrix *Matrix::simplify(int n) const
 // {
 //   int i,j, keep;
-//   M2_Matrix *result = new M2_Matrix(rows());
+//   Matrix *result = new Matrix(rows());
 //
 //   switch (n) {
 //   case 1:
@@ -1494,14 +1494,14 @@ M2_Matrix *M2_Matrix::remove_monomial_factors(bool make_squarefree_only) const
 #endif
 #if 0
 // // MES Aug 2002
-// M2_Matrix *M2_Matrix::auto_reduce() const
+// Matrix *Matrix::auto_reduce() const
 // {
 //   array<vec> vecs;
 //   int i;
 //   for (i=0; i<n_cols(); i++)
 //     vecs.append(rows()->copy(elem(i)));
 //   rows()->auto_reduce(vecs);
-//   M2_Matrix *result = new M2_Matrix(rows());
+//   Matrix *result = new Matrix(rows());
 //   for (i=0; i<vecs.length(); i++)
 //     result->append(vecs[i]);
 //   return result;
@@ -1509,10 +1509,10 @@ M2_Matrix *M2_Matrix::remove_monomial_factors(bool make_squarefree_only) const
 #endif
 
 #if 0
-// M2_Matrix *M2_Matrix::coeffs(const int *vars, M2_Matrix * &result_monoms) const
+// Matrix *Matrix::coeffs(const int *vars, Matrix * &result_monoms) const
 // {
-//   M2_Matrix *result_coeffs = new M2_Matrix(rows());
-//   result_monoms = new M2_Matrix(get_ring()->make_FreeModule(1));        // One row matrix
+//   Matrix *result_coeffs = new Matrix(rows());
+//   result_monoms = new Matrix(get_ring()->make_FreeModule(1));        // One row matrix
 //   for (int j=0; j<n_cols(); j++)
 //     {
 //       vec f = rows()->copy(elem(j));
@@ -1529,7 +1529,7 @@ M2_Matrix *M2_Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // }
 #endif
 
-M2_Matrix /* or null */ *M2_Matrix::monomials(M2_arrayint vars) const
+Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   // Returns a one row matrix of all of the monomials in the variable subset 'vars'
   // which occur in 'this'.  These monomials are sorted into increasing degree order.
 {
@@ -1594,7 +1594,7 @@ M2_Matrix /* or null */ *M2_Matrix::monomials(M2_arrayint vars) const
   exponent_table_free(&E);
 
   // Finally, we sort them
-  M2_Matrix *result = mat.to_matrix();
+  Matrix *result = mat.to_matrix();
   M2_arrayint perm = result->sort(0,-1);
   return result->sub_matrix(perm);
 }
@@ -1662,7 +1662,7 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
   return result;
 }
 
-M2_Matrix /* or null */ *M2_Matrix::coeffs(M2_arrayint vars, const M2_Matrix *monoms) const
+Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 {
   // Given an array_ of variable indices, 'vars', and given
   // that 'monoms' and 'this' both have one row, makes a matrix
@@ -1728,7 +1728,7 @@ M2_Matrix /* or null */ *M2_Matrix::coeffs(M2_arrayint vars, const M2_Matrix *mo
   return mat.to_matrix();
 }
 
-MonomialIdeal *M2_Matrix::make_monideal(int n, bool use_only_monomials_with_unit_coeffs) const
+MonomialIdeal *Matrix::make_monideal(int n, bool use_only_monomials_with_unit_coeffs) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -1780,7 +1780,7 @@ MonomialIdeal *M2_Matrix::make_monideal(int n, bool use_only_monomials_with_unit
 }
 
 
-int M2_Matrix::dimension1() const
+int Matrix::dimension1() const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   const Ring *K = (P != 0 ? P->getCoefficientRing() : get_ring());
@@ -1824,7 +1824,7 @@ int M2_Matrix::dimension1() const
     }
 }
 
-const M2_Matrix /* or null */ *M2_Matrix::content() const
+const Matrix /* or null */ *Matrix::content() const
 {
   const Ring *R = get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -1837,7 +1837,7 @@ const M2_Matrix /* or null */ *M2_Matrix::content() const
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *M2_Matrix::remove_content() const
+const Matrix /* or null */ *Matrix::remove_content() const
 {
   const Ring *R = get_ring();
   MatrixConstructor mat(rows(),cols(),degree_shift());
@@ -1846,7 +1846,7 @@ const M2_Matrix /* or null */ *M2_Matrix::remove_content() const
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *M2_Matrix::split_off_content(const M2_Matrix /* or null */ *&result) const
+const Matrix /* or null */ *Matrix::split_off_content(const Matrix /* or null */ *&result) const
 {
   const Ring *R = get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -1867,7 +1867,7 @@ const M2_Matrix /* or null */ *M2_Matrix::split_off_content(const M2_Matrix /* o
   return mat_content.to_matrix();
 }
 
-M2_Matrix /* or null */ *M2_Matrix::clean(gmp_RR epsilon) const
+Matrix /* or null */ *Matrix::clean(gmp_RR epsilon) const
 {
   MatrixConstructor mat(rows(),cols(),degree_shift());
   for (int i=0; i<n_cols(); i++)
@@ -1875,7 +1875,7 @@ M2_Matrix /* or null */ *M2_Matrix::clean(gmp_RR epsilon) const
   return mat.to_matrix();
 }
 
-gmp_RRorNull M2_Matrix::norm(gmp_RR p) const
+gmp_RRorNull Matrix::norm(gmp_RR p) const
 {
   const Ring *R = get_ring();
   if (R->get_precision() == 0)

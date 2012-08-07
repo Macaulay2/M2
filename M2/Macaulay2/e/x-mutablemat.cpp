@@ -31,12 +31,12 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
   return MutableMatrix::zero_matrix(R,nrows,ncols,is_dense);
 }
 
-MutableMatrix * IM2_MutableMatrix_from_matrix(const M2_Matrix *M, M2_bool is_dense)
+MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)
 {
   return MutableMatrix::from_matrix(M, is_dense);
 }
 
-const M2_Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
+const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
 {
   return M->to_matrix();
 }
@@ -805,7 +805,7 @@ M2_bool rawLeastSquares(MutableMatrix *A,
 // Support for RRR and CCC operations //
 ////////////////////////////////////////
 
-const M2_Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const M2_Matrix *M)
+const Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const Matrix *M)
 {
   if (M->get_ring()->get_precision() == 0)
     {
@@ -855,7 +855,7 @@ static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
   return norm;
 }
 
-gmp_RRorNull rawMatrixNorm(gmp_RR p, const M2_Matrix *M)
+gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M)
 {
   return M->norm(p);
 }

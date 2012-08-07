@@ -58,34 +58,34 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const M2_Matrix /* or null */ *get_gb() { return G->get_gb(); }
+  virtual const Matrix /* or null */ *get_gb() { return G->get_gb(); }
 
-  virtual const M2_Matrix /* or null */ *get_mingens() { return G->get_mingens(); }
+  virtual const Matrix /* or null */ *get_mingens() { return G->get_mingens(); }
 
-  virtual const M2_Matrix /* or null */ *get_change() { return G->get_change(); }
+  virtual const Matrix /* or null */ *get_change() { return G->get_change(); }
 
-  virtual const M2_Matrix /* or null */ *get_syzygies() { return G->get_syzygies(); }
+  virtual const Matrix /* or null */ *get_syzygies() { return G->get_syzygies(); }
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts) { return G->get_initial(nparts); }
+  virtual const Matrix /* or null */ *get_initial(int nparts) { return G->get_initial(nparts); }
 
-  virtual const M2_Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
 
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m) {
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) {
     return G->matrix_remainder(m);
   }
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient) {
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient) {
     return G->matrix_lift(m,result_remainder,result_quotient);
   }
 
 
-  virtual int contains(const M2_Matrix *m) { return G->contains(m); }
+  virtual int contains(const Matrix *m) { return G->contains(m); }
 
   //////////////////////////////////////
   // Statistics and spair information //

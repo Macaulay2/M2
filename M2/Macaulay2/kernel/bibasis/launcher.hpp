@@ -18,10 +18,10 @@ namespace BIBasis
     class Launcher
     {
     public:
-        const M2_Matrix* GetBIBasisMatrix(const M2_Matrix* matrix, int toGroebner) const;
+        const Matrix* GetBIBasisMatrix(const Matrix* matrix, int toGroebner) const;
     
     private:
-        bool CheckMatrix(const M2_Matrix* matrix) const;
+        bool CheckMatrix(const Matrix* matrix) const;
     };
 }
 

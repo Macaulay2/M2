@@ -833,7 +833,7 @@ bool gb2_comp::is_done()
 // Hilbert function computing //
 ////////////////////////////////
 
-M2_Matrix *gb2_comp::make_lead_term_matrix()
+Matrix *gb2_comp::make_lead_term_matrix()
 {
   MatrixConstructor result(F, gb.length());
   ring_elem one = originalR->getCoefficientRing()->one();
@@ -859,7 +859,7 @@ RingElement /* or null */ *gb2_comp::hilbertNumerator()
       return hf;
     }
 
-  M2_Matrix *hf_matrix = make_lead_term_matrix();
+  Matrix *hf_matrix = make_lead_term_matrix();
   hf = hilb_comp::hilbertNumerator(hf_matrix);
 
   // hf is NULL if the computation was interrupted
@@ -872,7 +872,7 @@ RingElement /* or null */ *gb2_comp::hilbertNumerator()
 }
 
 //--- Obtaining matrices as output -------
-M2_Matrix *gb2_comp::min_gens_matrix()
+Matrix *gb2_comp::min_gens_matrix()
 {
   MatrixConstructor mat(F,Fsyz, 0);
   int j = 0;
@@ -881,7 +881,7 @@ M2_Matrix *gb2_comp::min_gens_matrix()
       mat.set_column(j++, originalR->translate_gbvector_to_vec(F,gb[i]->f));
   return mat.to_matrix();
 }
-M2_Matrix *gb2_comp::get_matrix()
+Matrix *gb2_comp::get_matrix()
 {
   if (orig_syz > 0)
     return gens->get_matrix();
@@ -889,7 +889,7 @@ M2_Matrix *gb2_comp::get_matrix()
     return min_gens_matrix();
 }
 
-M2_Matrix *gb2_comp::initial_matrix(int n)
+Matrix *gb2_comp::initial_matrix(int n)
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<gb.length(); i++)
@@ -901,7 +901,7 @@ M2_Matrix *gb2_comp::initial_matrix(int n)
   return mat.to_matrix();
 }
 
-M2_Matrix *gb2_comp::gb_matrix()
+Matrix *gb2_comp::gb_matrix()
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<gb.length(); i++)
@@ -909,7 +909,7 @@ M2_Matrix *gb2_comp::gb_matrix()
   return mat.to_matrix();
 }
 
-M2_Matrix *gb2_comp::change_matrix()
+Matrix *gb2_comp::change_matrix()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (int i=0; i<gb.length(); i++)

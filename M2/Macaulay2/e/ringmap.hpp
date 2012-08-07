@@ -5,7 +5,7 @@
 #include "ring.hpp"
 
 class RingElement;
-class M2_Matrix;
+class Matrix;
 
 class RingMap : public immutable_object
 {
@@ -37,7 +37,7 @@ class RingMap : public immutable_object
   int nvars;                    // Number of variables in the source ring.
   var *_elem;                   // elem[i] is the structure representing the image of
                                 // the i th variable.
-  RingMap(const M2_Matrix *m);
+  RingMap(const Matrix *m);
 
   friend class GF; // To obtain the value of this element
   const ring_elem elem(int i) const {
@@ -47,7 +47,7 @@ class RingMap : public immutable_object
 public:
   ~RingMap();
 
-  static const RingMap *make(const M2_Matrix *m);
+  static const RingMap *make(const Matrix *m);
 
   const Ring *get_ring() const { return R; }
 
@@ -59,7 +59,7 @@ public:
                       int nvars_in_source) const;
 
   RingElement /* or null */ *eval(const RingElement *r) const;
-  M2_Matrix /* or null */ *eval(const FreeModule *newrows, const M2_Matrix *m) const;
+  Matrix /* or null */ *eval(const FreeModule *newrows, const Matrix *m) const;
 
   void text_out(buffer &o) const;
 };

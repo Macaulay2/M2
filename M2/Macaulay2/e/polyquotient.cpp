@@ -49,7 +49,7 @@ PolyRingQuotient::~PolyRingQuotient()
 //
 //
 // PolyRingQuotient *PolyRingQuotient::create(const PolynomialRing *R,
-//                                         const M2_Matrix *M)
+//                                         const Matrix *M)
 // {
 //   if (M->get_ring() != R)
 //     {
@@ -83,7 +83,7 @@ PolyRingQuotient::~PolyRingQuotient()
 //   return create(R,elems);
 // }
 //
-// M2_Matrix * PolyRingQuotient::getPresentation() const
+// Matrix * PolyRingQuotient::getPresentation() const
 // {
 //   const PolyRing *R = getAmbientRing();
 //
@@ -191,7 +191,7 @@ GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
 {
   MatrixConstructor mat(make_FreeModule(1),1);
   mat.set_entry(0,0,g);
-  M2_Matrix *mg = mat.to_matrix(); // {g}
+  Matrix *mg = mat.to_matrix(); // {g}
 
   M2_arrayint weights = M2_makearrayint(n_vars());
   for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
@@ -228,11 +228,11 @@ ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) cons
     }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
-  const M2_Matrix *mf = matf.to_matrix();
+  const Matrix *mf = matf.to_matrix();
 
   GBComputation *G = make_gb(g);
 
-  const M2_Matrix *mrem = G->matrix_remainder(mf);
+  const Matrix *mrem = G->matrix_remainder(mf);
   ring_elem result = mrem->elem(0,0);
 
   delete mrem;
@@ -250,11 +250,11 @@ ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
     }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
-  M2_Matrix *mf = matf.to_matrix();
+  Matrix *mf = matf.to_matrix();
 
   GBComputation *G = make_gb(g);
 
-  const M2_Matrix *mrem, *mquot;
+  const Matrix *mrem, *mquot;
   G->matrix_lift(mf, &mrem, &mquot);
   ring_elem result = mquot->elem(0,0);
 
@@ -276,11 +276,11 @@ ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_e
     }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
-  M2_Matrix *mf = matf.to_matrix();
+  Matrix *mf = matf.to_matrix();
 
   GBComputation *G = make_gb(g);
 
-  const M2_Matrix *mrem, *mquot;
+  const Matrix *mrem, *mquot;
   G->matrix_lift(mf, &mrem, &mquot);
   quot = mquot->elem(0,0);
   ring_elem result = mrem->elem(0,0);
@@ -300,11 +300,11 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
 {
   MatrixConstructor mata(make_FreeModule(1),1);
   mata.set_entry(0,0,a);
-  M2_Matrix *ma = mata.to_matrix(); // {a}
+  Matrix *ma = mata.to_matrix(); // {a}
 
   GBComputation *G = make_gb(b);
 
-  const M2_Matrix *mrem, *mquot;
+  const Matrix *mrem, *mquot;
   G->matrix_lift(ma, &mrem, &mquot);
   if (mquot->n_cols() == 0 || !mrem->is_zero())
     {
@@ -323,7 +323,7 @@ void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
   MatrixConstructor mat(make_FreeModule(1),2);
   mat.set_entry(0,0,a);
   mat.set_entry(0,1,b);
-  M2_Matrix *m = mat.to_matrix(); // {a,b}
+  Matrix *m = mat.to_matrix(); // {a,b}
   M2_arrayint weights = M2_makearrayint(n_vars());
   for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
   GBComputation *G = GBComputation::choose_gb(m,
@@ -345,7 +345,7 @@ void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
                          false,
                          NULL);
   G->start_computation();
-  const M2_Matrix *s = G->get_syzygies();
+  const Matrix *s = G->get_syzygies();
 
   // Now extract the two pieces of info
   x = s->elem(0,0);

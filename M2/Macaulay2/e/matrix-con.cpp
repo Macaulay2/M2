@@ -99,11 +99,11 @@ void MatrixConstructor::set_matrix_degree(const int *deg0)
   deg = deg0;
 }
 
-M2_Matrix * MatrixConstructor::to_matrix()
+Matrix * MatrixConstructor::to_matrix()
 {
   //  if (!will_be_mutable && !cols->is_frozen)
   //    cols->freeze(hashval);
-  return new M2_Matrix(rows, cols, deg, entries);
+  return new Matrix(rows, cols, deg, entries);
 }
 
 // Local Variables:

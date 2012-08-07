@@ -135,7 +135,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
 }
 
 PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
-                                                const M2_Matrix *M)
+                                                const Matrix *M)
 {
   if (M->get_ring() != R)
     {
@@ -174,7 +174,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   return create_quotient(R,elems);
 }
 
-M2_Matrix * PolynomialRing::getPresentation() const
+Matrix * PolynomialRing::getPresentation() const
 {
   const PolynomialRing *R = getAmbientRing();
 
@@ -282,7 +282,7 @@ SumCollector *PolynomialRing::make_SumCollector() const
 //   return R;
 // }
 //
-// const PolyQuotient *PolyQuotient::create(const M2_Matrix *quotient_gb)
+// const PolyQuotient *PolyQuotient::create(const Matrix *quotient_gb)
 // {
 //   // There are two cases here?
 //   // If the base is a field, then set Rideal, MonomialTable.
@@ -291,7 +291,7 @@ SumCollector *PolynomialRing::make_SumCollector() const
 //   // If the base is ZZ (the only other case), then we make a MonomialTableZZ,
 //   //   and use a different normal form.
 // }
-// PPolynomialRing *PPolynomialRing::createQuotient(const M2_Matrix *quotients) const
+// PPolynomialRing *PPolynomialRing::createQuotient(const Matrix *quotients) const
 // {
 //   // This depends on the kind of ring
 //   // (a) PolyRing

@@ -13,7 +13,7 @@
 #include "f4.hpp"
 #include "moninfo.hpp"
 
-GBComputation *createF4GB(const M2_Matrix *m,
+GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
                           int n_rows_to_keep,
                           M2_arrayint gb_weights,
@@ -47,7 +47,7 @@ GBComputation *createF4GB(const M2_Matrix *m,
 F4Computation::F4Computation(
                              Gausser *K0,
                              F4Mem *Mem0,
-                             const M2_Matrix *m,
+                             const Matrix *m,
                              M2_bool collect_syz,
                              int n_rows_to_keep,
                              M2_arrayint gb_weights,
@@ -98,7 +98,7 @@ F4Computation::set_hilbert_function(const RingElement *hf)
   return this;
 }
 
-const M2_Matrix /* or null */ *F4Computation::get_gb()
+const Matrix /* or null */ *F4Computation::get_gb()
 {
   const gb_array &gb = f4->get_gb();
   MatrixConstructor result(F,0);
@@ -110,7 +110,7 @@ const M2_Matrix /* or null */ *F4Computation::get_gb()
   return result.to_matrix();
 }
 
-const M2_Matrix /* or null */ *F4Computation::get_mingens()
+const Matrix /* or null */ *F4Computation::get_mingens()
 {
 #if 0
 //   MatrixConstructor mat(_F,0);
@@ -124,29 +124,29 @@ const M2_Matrix /* or null */ *F4Computation::get_mingens()
   return 0;
 }
 
-const M2_Matrix /* or null */ *F4Computation::get_change()
+const Matrix /* or null */ *F4Computation::get_change()
 {
   return 0;
 }
 
-const M2_Matrix /* or null */ *F4Computation::get_syzygies()
+const Matrix /* or null */ *F4Computation::get_syzygies()
 {
   return 0;
 }
 
-const M2_Matrix /* or null */ *F4Computation::get_initial(int nparts)
+const Matrix /* or null */ *F4Computation::get_initial(int nparts)
 {
   return 0;
 }
 
-const M2_Matrix /* or null */ *F4Computation::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
   return 0;
 }
 
-M2_bool F4Computation::matrix_lift(const M2_Matrix *m,
-                 const M2_Matrix /* or null */ **result_remainder,
-                 const M2_Matrix /* or null */ **result_quotient
+M2_bool F4Computation::matrix_lift(const Matrix *m,
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
                  )
 {
   *result_remainder = 0;
@@ -155,7 +155,7 @@ M2_bool F4Computation::matrix_lift(const M2_Matrix *m,
   return false;
 }
 
-int F4Computation::contains(const M2_Matrix *m)
+int F4Computation::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.

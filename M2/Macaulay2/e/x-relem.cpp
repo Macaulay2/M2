@@ -206,7 +206,7 @@ const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
 }
 
 const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
-                                            const M2_Matrix *Q)
+                                            const Matrix *Q)
 {
      try {
           const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -258,7 +258,7 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
      }
 }
 
-const Ring /* or null */ *IM2_Ring_localization(const Ring *R, const M2_Matrix *Prime)
+const Ring /* or null */ *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
 {
      try {
           const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -283,7 +283,7 @@ const Ring /* or null */ *IM2_Ring_localization(const Ring *R, const M2_Matrix *
 }
 
 const Ring /* or null */ * IM2_Ring_quotient(const Ring *R,
-                                     const M2_Matrix *I)
+                                     const Matrix *I)
 {
      try {
           if (I->get_ring() != R)

@@ -64,7 +64,7 @@ void GaussElimComputation::insert(gm_elem *p)
     }
 }
 
-GaussElimComputation::GaussElimComputation(const M2_Matrix *m, int collsyz, int nsyz)
+GaussElimComputation::GaussElimComputation(const Matrix *m, int collsyz, int nsyz)
   : row(m->n_rows()-1),
     R(m->get_ring()),
     gens(m),
@@ -266,12 +266,12 @@ void GaussElimComputation::start_computation()
   set_status(COMP_DONE);
 }
 
-const M2_Matrix *GaussElimComputation::get_mingens()
+const Matrix *GaussElimComputation::get_mingens()
 {
   return get_gb();
 }
 
-const M2_Matrix *GaussElimComputation::get_initial(int nparts)
+const Matrix *GaussElimComputation::get_initial(int nparts)
 {
   MatrixConstructor mat(gens->rows(), 0);
   for (int i=0; i<gens->n_rows(); i++)
@@ -283,7 +283,7 @@ const M2_Matrix *GaussElimComputation::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-const M2_Matrix *GaussElimComputation::get_gb()
+const Matrix *GaussElimComputation::get_gb()
 {
   MatrixConstructor mat(gens->rows(), 0);
   for (int i=0; i<gens->n_rows(); i++)
@@ -292,7 +292,7 @@ const M2_Matrix *GaussElimComputation::get_gb()
   return mat.to_matrix();
 }
 
-const M2_Matrix *GaussElimComputation::get_change()
+const Matrix *GaussElimComputation::get_change()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (int i=0; i<gens->n_rows(); i++)
@@ -301,7 +301,7 @@ const M2_Matrix *GaussElimComputation::get_change()
   return mat.to_matrix();
 }
 
-const M2_Matrix *GaussElimComputation::get_syzygies()
+const Matrix *GaussElimComputation::get_syzygies()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (int i=0; i<syz_list.size(); i++)
@@ -338,7 +338,7 @@ void GaussElimComputation::text_out(buffer &o) const
   o << newline;
 }
 
-const M2_Matrix /* or null */ *GaussElimComputation::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *GaussElimComputation::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != R)
     {
@@ -362,9 +362,9 @@ const M2_Matrix /* or null */ *GaussElimComputation::matrix_remainder(const M2_M
 }
 
 
-M2_bool GaussElimComputation::matrix_lift(const M2_Matrix *m,
-                                     const M2_Matrix /* or null */ **result_remainder,
-                                     const M2_Matrix /* or null */ **result_quotient)
+M2_bool GaussElimComputation::matrix_lift(const Matrix *m,
+                                     const Matrix /* or null */ **result_remainder,
+                                     const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != R)
     {
@@ -399,7 +399,7 @@ M2_bool GaussElimComputation::matrix_lift(const M2_Matrix *m,
   return all_zeroes;
 }
 
-int GaussElimComputation::contains(const M2_Matrix *m)
+int GaussElimComputation::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.

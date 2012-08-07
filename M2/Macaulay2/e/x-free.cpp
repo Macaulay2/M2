@@ -72,7 +72,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
      }
 }
 
-const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const M2_Matrix *m)
+const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
 {
      try {
           return FreeModule::make_schreyer(m);
@@ -100,7 +100,7 @@ M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
   return result;
 }
 
-const M2_Matrix * IM2_FreeModule_get_schreyer(const FreeModule *F)
+const Matrix * IM2_FreeModule_get_schreyer(const FreeModule *F)
 {
   return F->get_induced_order();
 }

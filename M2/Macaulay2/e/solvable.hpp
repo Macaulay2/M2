@@ -9,20 +9,20 @@
 
 class SolvableAlgebra : public PolyRing
 {
-  const M2_Matrix *Q_;
+  const Matrix *Q_;
 
   static SolvableAlgebra *create(const Ring *K,
                                  const Monoid *M,
-                                 const M2_Matrix *Q);
+                                 const Matrix *Q);
 
 protected:
-  bool initialize_solvable(const M2_Matrix *Q);
+  bool initialize_solvable(const Matrix *Q);
   SolvableAlgebra() {}
   virtual ~SolvableAlgebra();
 
 public:
   static SolvableAlgebra *create(const PolynomialRing *R,
-                                 const M2_Matrix *Q);
+                                 const Matrix *Q);
 
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_solvable_algebra() const { return true; }

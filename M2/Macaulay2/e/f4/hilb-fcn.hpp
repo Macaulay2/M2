@@ -32,7 +32,7 @@ public:
 
 private:
   bool recomputeHilbertFunction();
-  M2_Matrix *make_lead_term_matrix();
+  Matrix *make_lead_term_matrix();
 private:
   const PolynomialRing *R;
   const FreeModule *F;

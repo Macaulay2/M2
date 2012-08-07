@@ -391,7 +391,7 @@ public:
   void add_vec_to(vec &v, vec &w) const; // v <- v+w, w is set to 0.
   void subtract_vec_to(vec &v, vec &w) const; // v <- v-w, w is set to 0.
 
-  vec mult_vec_matrix(const M2_Matrix *m,
+  vec mult_vec_matrix(const Matrix *m,
                       vec v,
                       bool opposite_mult) const;
 

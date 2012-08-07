@@ -18,8 +18,8 @@ class GBDeclared : public GBComputation
 // the GB object itself.
 {
   ReducedGB *G;
-  const M2_Matrix *trimmed_gens;
-  const M2_Matrix *syz;
+  const Matrix *trimmed_gens;
+  const Matrix *syz;
 protected:
 
   virtual bool stop_conditions_ok() { return true; }
@@ -28,28 +28,28 @@ protected:
 
 
 public:
-  GBDeclared(const M2_Matrix *m0,
-             const M2_Matrix *gb,
-             const M2_Matrix *change,
-             const M2_Matrix *syz0);
+  GBDeclared(const Matrix *m0,
+             const Matrix *gb,
+             const Matrix *change,
+             const Matrix *syz0);
 
-  GBDeclared(const M2_Matrix *leadterms,
-             const M2_Matrix *m0,
-             const M2_Matrix *gb,
-             const M2_Matrix *change,
-             const M2_Matrix *syz0);
+  GBDeclared(const Matrix *leadterms,
+             const Matrix *m0,
+             const Matrix *gb,
+             const Matrix *change,
+             const Matrix *syz0);
 
-  static GBComputation *create(const M2_Matrix *m,
-                               const M2_Matrix *gb,
-                               const M2_Matrix *change,
-                               const M2_Matrix *syz);
+  static GBComputation *create(const Matrix *m,
+                               const Matrix *gb,
+                               const Matrix *change,
+                               const Matrix *syz);
   // Possibly returns NULL, if an error message is reported
 
-  static GBComputation *create(const M2_Matrix *leadterms,
-                               const M2_Matrix *m,
-                               const M2_Matrix *gb,
-                               const M2_Matrix *change,
-                               const M2_Matrix *syz);
+  static GBComputation *create(const Matrix *leadterms,
+                               const Matrix *m,
+                               const Matrix *gb,
+                               const Matrix *change,
+                               const Matrix *syz);
   // Possibly returns NULL, if an error message is reported
 
   virtual ~GBDeclared() {}
@@ -70,34 +70,34 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const M2_Matrix /* or null */ *get_gb() { return G->get_gb(); }
+  virtual const Matrix /* or null */ *get_gb() { return G->get_gb(); }
 
-  virtual const M2_Matrix /* or null */ *get_mingens() { return trimmed_gens; }
+  virtual const Matrix /* or null */ *get_mingens() { return trimmed_gens; }
 
-  virtual const M2_Matrix /* or null */ *get_change() { return G->get_change(); }
+  virtual const Matrix /* or null */ *get_change() { return G->get_change(); }
 
-  virtual const M2_Matrix /* or null */ *get_syzygies() { return syz; }
+  virtual const Matrix /* or null */ *get_syzygies() { return syz; }
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts) { return G->get_initial(nparts); }
+  virtual const Matrix /* or null */ *get_initial(int nparts) { return G->get_initial(nparts); }
 
-  virtual const M2_Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
 
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m) {
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) {
     return G->matrix_remainder(m);
   }
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient) {
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient) {
     return G->matrix_lift(m,result_remainder,result_quotient);
   }
 
 
-  virtual int contains(const M2_Matrix *m) { return G->contains(m); }
+  virtual int contains(const Matrix *m) { return G->contains(m); }
 
   //////////////////////////////////////
   // Statistics and spair information //

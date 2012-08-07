@@ -64,12 +64,12 @@ class MatrixSorter
   }
 
 public:
-  MatrixSorter(const M2_Matrix *m, int degorder, int ringorder);
+  MatrixSorter(const Matrix *m, int degorder, int ringorder);
 
   M2_arrayintOrNull value();
 };
 
-MatrixSorter::MatrixSorter(const M2_Matrix *m, int degorder, int ringorder)
+MatrixSorter::MatrixSorter(const Matrix *m, int degorder, int ringorder)
   : deg_ascending(degorder),
     ringorder_ascending(ringorder)
 {
@@ -101,7 +101,7 @@ M2_arrayintOrNull MatrixSorter::value()
   return result;
 }
 
-M2_arrayint M2_Matrix::sort(int degorder, int ringorder) const
+M2_arrayint Matrix::sort(int degorder, int ringorder) const
   // Sort the columns of 'this': Place the column indices into 'result'.
   // If degorder < 0, sort in descending degree order, if >0 ascending degree
   // If ==0, or in the event that two columns have the same (simple) degree,

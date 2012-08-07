@@ -7,7 +7,7 @@ SolvableAlgebra::~SolvableAlgebra()
 {
   // Nothing to do
 }
-bool SolvableAlgebra::initialize_solvable(const M2_Matrix *Q)
+bool SolvableAlgebra::initialize_solvable(const Matrix *Q)
 {
   Q_ = Q;
   return true;
@@ -15,7 +15,7 @@ bool SolvableAlgebra::initialize_solvable(const M2_Matrix *Q)
 
 SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
                                          const Monoid *M,
-                                         const M2_Matrix *Q)
+                                         const Matrix *Q)
 {
   SolvableAlgebra *result = new SolvableAlgebra;
 
@@ -26,7 +26,7 @@ SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
 }
 
 SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
-                                         const M2_Matrix *Q)
+                                         const Matrix *Q)
 {
   return create(R->getCoefficients(),
                 R->getMonoid(),
@@ -42,7 +42,7 @@ SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
 //   if (newM == 0) return 0;
 //
 //   // Somehow generate a new matrix Q?
-//   const M2_Matrix *Q = Q_;
+//   const Matrix *Q = Q_;
 //
 //   return create(getCoefficients(),
 //              newM,

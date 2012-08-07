@@ -40,7 +40,7 @@ inline bool error_row_bound(int r, int nrows)
  */
 template<class T> class MutableMat;
 class Ring;
-class M2_Matrix;
+class Matrix;
 class MutableMatrix;
 
 #if 0
@@ -90,11 +90,11 @@ public:
 
   static MutableMatrix *identity(const Ring *R, int nrows, bool dense);
 
-  static MutableMatrix *from_matrix(const M2_Matrix *N, bool is_dense);
+  static MutableMatrix *from_matrix(const Matrix *N, bool is_dense);
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 
-  M2_Matrix *to_matrix() const;
+  Matrix *to_matrix() const;
 
   void text_out(buffer &o) const;
 
@@ -196,7 +196,7 @@ public:
   /* Delete rows i .. j from M */
 
   ///////////////////////////////
-  // M2_Matrix operations //////////
+  // Matrix operations //////////
   ///////////////////////////////
 
   virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const = 0;
@@ -640,7 +640,7 @@ public:
   }
 
   ///////////////////////////////
-  // M2_Matrix operations //////////
+  // Matrix operations //////////
   ///////////////////////////////
 
   virtual bool is_zero() const

@@ -30,16 +30,16 @@ namespace BIBasis
         const PolynomialRing* const PRing;
 
     public:
-        BooleanInvolutiveBasis(const M2_Matrix* matrix, bool toGroebner);
+        BooleanInvolutiveBasis(const Matrix* matrix, bool toGroebner);
         ~BooleanInvolutiveBasis();
         
         const Polynom<MonomType>& operator[](int number) const;
         unsigned Length() const;
 
-        const M2_Matrix* ToMatrix() const;
+        const Matrix* ToMatrix() const;
 
     private:
-        void FillInitialSet(const M2_Matrix* matrix, std::list<Polynom<MonomType>*>& initialSet) const;
+        void FillInitialSet(const Matrix* matrix, std::list<Polynom<MonomType>*>& initialSet) const;
     
         Polynom<MonomType>* NormalForm(const Triple<MonomType>* triple) const;
         const Polynom<MonomType>* FindDivisor(const Polynom<MonomType>* polynom
@@ -55,7 +55,7 @@ namespace BIBasis
     };
     
     template <typename MonomType>
-    BooleanInvolutiveBasis<MonomType>::BooleanInvolutiveBasis(const M2_Matrix* matrix, bool toGroebner)
+    BooleanInvolutiveBasis<MonomType>::BooleanInvolutiveBasis(const Matrix* matrix, bool toGroebner)
         : GBasis()
         , IntermediateBasis()
         , ProlongationsSet()
@@ -106,7 +106,7 @@ namespace BIBasis
     }
 
     template <typename MonomType>
-    const M2_Matrix* BooleanInvolutiveBasis<MonomType>::ToMatrix() const
+    const Matrix* BooleanInvolutiveBasis<MonomType>::ToMatrix() const
     {
         MatrixConstructor matrixConstructor(PRing->make_FreeModule(1), 0);
         const Monoid* monoid = PRing->getMonoid();
@@ -152,7 +152,7 @@ namespace BIBasis
     }
 
     template <typename MonomType>
-    void BooleanInvolutiveBasis<MonomType>::FillInitialSet(const M2_Matrix* matrix, std::list<Polynom<MonomType>*>& initialSet) const
+    void BooleanInvolutiveBasis<MonomType>::FillInitialSet(const Matrix* matrix, std::list<Polynom<MonomType>*>& initialSet) const
     {
         const Monoid* monoid = PRing->getMonoid();
         typename MonomType::Integer independ = MonomType::GetDimIndepend();

@@ -8,7 +8,7 @@
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
 
-void res_comp::initialize(const M2_Matrix *mat,
+void res_comp::initialize(const Matrix *mat,
                           int LengthLimit,
                           int /*strategy*/)
 {
@@ -113,7 +113,7 @@ void res_comp::initialize(const M2_Matrix *mat,
   compare_type = 0;
 }
 
-res_comp::res_comp(const M2_Matrix *m,
+res_comp::res_comp(const Matrix *m,
                    int LengthLimit,
                    int strategy)
 {
@@ -1405,7 +1405,7 @@ const FreeModule *res_comp::minimal_free_of(int i) const
   return result;
 }
 
-M2_Matrix *res_comp::make(int level) const
+Matrix *res_comp::make(int level) const
 {
   const FreeModule *F = free_of(level-1);
   const FreeModule *G = free_of(level);
@@ -1453,7 +1453,7 @@ void res_comp::reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) cons
     }
 }
 
-M2_Matrix *res_comp::make_minimal(int i) const
+Matrix *res_comp::make_minimal(int i) const
 {
   const FreeModule *F = minimal_free_of(i-1);
   const FreeModule *G = minimal_free_of(i);

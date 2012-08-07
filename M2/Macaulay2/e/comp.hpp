@@ -36,7 +36,7 @@ protected:
 public:
   virtual ~GBBComputation();
 
-  static GBBComputation *choose_gb(const M2_Matrix *m,
+  static GBBComputation *choose_gb(const Matrix *m,
                                   M2_bool collect_syz,
                                   int n_rows_to_keep,
                                   M2_arrayint gb_weights, // null defaults to (1,...,1)
@@ -62,7 +62,7 @@ public:
 
   virtual GroebnerBasis * steal_GroebnerBasis() = 0; // This assumes that the computation is to be destroyed...
 
-  virtual const M2_Matrix /* or null */ *get_gb_snapshot() = 0;
+  virtual const Matrix /* or null */ *get_gb_snapshot() = 0;
 
   virtual void text_out(buffer &o) const;
   // This displays statistical information, and depends on the
@@ -82,29 +82,29 @@ public:
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const M2_Matrix /* or null */ *get_gb() = 0;
+  virtual const Matrix /* or null */ *get_gb() = 0;
 
-  virtual const M2_Matrix /* or null */ *get_mingens() = 0;
+  virtual const Matrix /* or null */ *get_mingens() = 0;
 
-  virtual const M2_Matrix /* or null */ *get_change() = 0;
+  virtual const Matrix /* or null */ *get_change() = 0;
 
-  virtual const M2_Matrix /* or null */ *get_syzygies() = 0;
+  virtual const Matrix /* or null */ *get_syzygies() = 0;
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts) = 0;
+  virtual const Matrix /* or null */ *get_initial(int nparts) = 0;
 
-  virtual const M2_Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w);
 
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m) = 0;
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) = 0;
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient) = 0;
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient) = 0;
 
-  virtual int contains(const M2_Matrix *m) = 0;
+  virtual int contains(const Matrix *m) = 0;
 
   //////////////////////////////////////
   // Statistics and spair information //

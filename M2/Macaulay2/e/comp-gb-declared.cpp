@@ -4,10 +4,10 @@
 #include "reducedgb.hpp"
 #include "polyring.hpp"
 
-GBDeclared::GBDeclared(const M2_Matrix *m0,
-                       const M2_Matrix *gb,
-                       const M2_Matrix *change,
-                       const M2_Matrix *syz0)
+GBDeclared::GBDeclared(const Matrix *m0,
+                       const Matrix *gb,
+                       const Matrix *change,
+                       const Matrix *syz0)
   : trimmed_gens(m0),
     syz(syz0)
 {
@@ -47,11 +47,11 @@ GBDeclared::GBDeclared(const M2_Matrix *m0,
   G->minimalize(elems);
 }
 
-GBDeclared::GBDeclared(const M2_Matrix *leadterms,
-                       const M2_Matrix *m0,
-                       const M2_Matrix *gb,
-                       const M2_Matrix *change,
-                       const M2_Matrix *syz0)
+GBDeclared::GBDeclared(const Matrix *leadterms,
+                       const Matrix *m0,
+                       const Matrix *gb,
+                       const Matrix *change,
+                       const Matrix *syz0)
   : trimmed_gens(m0),
     syz(syz0)
 {
@@ -97,10 +97,10 @@ GBDeclared::GBDeclared(const M2_Matrix *leadterms,
   G0->add_marked_elems(leads,elems,true);
 }
 
-GBComputation *GBDeclared::create(const M2_Matrix *m,
-                                  const M2_Matrix *gb,
-                                  const M2_Matrix *change,
-                                  const M2_Matrix *syz)
+GBComputation *GBDeclared::create(const Matrix *m,
+                                  const Matrix *gb,
+                                  const Matrix *change,
+                                  const Matrix *syz)
 {
   // Check:
   //   the rings are all the same, and all are not NULL.
@@ -126,11 +126,11 @@ GBComputation *GBDeclared::create(const M2_Matrix *m,
   return new GBDeclared(m,gb,change,syz);
 }
 
-GBComputation *GBDeclared::create(const M2_Matrix *leadterms,
-                                  const M2_Matrix *m,
-                                  const M2_Matrix *gb,
-                                  const M2_Matrix *change,
-                                  const M2_Matrix *syz)
+GBComputation *GBDeclared::create(const Matrix *leadterms,
+                                  const Matrix *m,
+                                  const Matrix *gb,
+                                  const Matrix *change,
+                                  const Matrix *syz)
 {
   // Check:
   //   the rings are all the same, and all are not NULL.

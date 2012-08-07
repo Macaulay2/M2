@@ -94,7 +94,7 @@ protected:
 
 public:
   static PolynomialRing *create_quotient(const PolynomialRing *R,
-                                         const M2_Matrix *M);
+                                         const Matrix *M);
 
   static PolynomialRing *create_quotient(const PolynomialRing *R,
                                          const PolynomialRing *B);
@@ -107,7 +107,7 @@ public:
   // Removes all space associated with 'this', at least the part
   // that is stashed: gb_ring_ (if it was created by this ring), qinfo_.
 
-  M2_Matrix * getPresentation() const;
+  Matrix * getPresentation() const;
 
 
   unsigned long get_precision() const { return K_->get_precision(); }
@@ -132,7 +132,7 @@ public:
 
   int n_vars() const { return nvars_; }
 
-  static PolynomialRing *create_quotient_ring(const M2_Matrix *M);
+  static PolynomialRing *create_quotient_ring(const Matrix *M);
 
   QRingInfo *get_quotient_info() const { return qinfo_; }
 

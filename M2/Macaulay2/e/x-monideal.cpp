@@ -12,7 +12,7 @@
 #include "../d/M2inits.h"
 #include "finalize.hpp"
 
-engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const M2_Matrix *m, int n)
+engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
      try {
           MonomialIdeal *result = m->make_monideal(n);
@@ -25,10 +25,10 @@ engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const M2_Matrix *m, int n)
      }
 }
 
-const M2_Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
+const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
 {
      try {
-          return M2_Matrix::make(I);
+          return Matrix::make(I);
      }
      catch (exc::engine_error e) {
           ERROR(e.what());

@@ -8,7 +8,7 @@
 #include "monoid.hpp"
 
 class GBMatrix;
-class M2_Matrix;
+class Matrix;
 
 class SchreyerOrder : public our_new_delete
 {
@@ -25,7 +25,7 @@ class SchreyerOrder : public our_new_delete
 public:
 
   static SchreyerOrder *create(const Monoid *m);
-  static SchreyerOrder *create(const M2_Matrix *m);
+  static SchreyerOrder *create(const Matrix *m);
   static SchreyerOrder *create(const GBMatrix *m);
 
   void remove();

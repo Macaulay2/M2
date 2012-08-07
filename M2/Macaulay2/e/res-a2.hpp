@@ -47,11 +47,11 @@ public:
 
   virtual int n_gb_elems() const = 0;
   virtual const FreeModule *output_free_module() const = 0;
-  virtual M2_Matrix *min_gens_matrix() = 0;
-  virtual M2_Matrix *get_matrix() = 0;
-  virtual M2_Matrix *initial_matrix(int n) = 0;
-  virtual M2_Matrix *gb_matrix() = 0;
-  virtual M2_Matrix *change_matrix() = 0;
+  virtual Matrix *min_gens_matrix() = 0;
+  virtual Matrix *get_matrix() = 0;
+  virtual Matrix *initial_matrix(int n) = 0;
+  virtual Matrix *gb_matrix() = 0;
+  virtual Matrix *change_matrix() = 0;
   virtual void text_out(buffer &o) const = 0;
   virtual void stats() const = 0;
 };
@@ -64,7 +64,7 @@ class gb_emitter : public gb_node
 {
   const PolynomialRing *originalR;
   GBRing *GR;
-  const M2_Matrix *gens;
+  const Matrix *gens;
   gb_node *g;
   int this_degree;
   int n_left;
@@ -76,7 +76,7 @@ class gb_emitter : public gb_node
   void flush();
   int start_degree(int deg);
 public:
-  gb_emitter(const M2_Matrix *m);
+  gb_emitter(const Matrix *m);
   ~gb_emitter();
   virtual void set_output(gb_node *gg) { g = gg; }
 
@@ -95,12 +95,12 @@ public:
 
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() const { return gens->rows(); }
-  virtual M2_Matrix *get_matrix() { return const_cast<M2_Matrix *>(gens); }
+  virtual Matrix *get_matrix() { return const_cast<Matrix *>(gens); }
 
-  virtual M2_Matrix *min_gens_matrix() { return 0; }
-  virtual M2_Matrix *initial_matrix(int) { return 0; }
-  virtual M2_Matrix *gb_matrix() { return 0; }
-  virtual M2_Matrix *change_matrix() { return 0; }
+  virtual Matrix *min_gens_matrix() { return 0; }
+  virtual Matrix *initial_matrix(int) { return 0; }
+  virtual Matrix *gb_matrix() { return 0; }
+  virtual Matrix *change_matrix() { return 0; }
 
   virtual void text_out(buffer &o) const;
   virtual void stats() const;
@@ -131,7 +131,7 @@ private:
   intarray total_pairs;
 
   array<gb_elem *> gb;
-  M2_Matrix *gbmatrix;
+  Matrix *gbmatrix;
   array<monideal_pair *> monideals; // baggage for each is 'gb_elem *'
 
   // Syzygies collected
@@ -195,7 +195,7 @@ private:
   void gb_sort(int lo, int hi);
 
   void flush_pairs();
-  M2_Matrix *make_lead_term_matrix(); // for computing hilbert functions
+  Matrix *make_lead_term_matrix(); // for computing hilbert functions
 
   void schreyer_append(gbvector *f);
   bool s_pair_step();
@@ -228,11 +228,11 @@ public:
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   int n_gb_elems() const { return n_gb; }
   const FreeModule *output_free_module() const { return Fsyz; }
-  M2_Matrix *min_gens_matrix();
-  M2_Matrix *get_matrix();
-  M2_Matrix *initial_matrix(int n);
-  M2_Matrix *gb_matrix();
-  M2_Matrix *change_matrix();
+  Matrix *min_gens_matrix();
+  Matrix *get_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
 
 
   void debug_out(s_pair *q) const;
@@ -261,14 +261,14 @@ private:
   int last_completed_degree;
   int strategy_flags;
 private:
-  void setup(const M2_Matrix *m, int length, int origsyz, int strategy);
+  void setup(const Matrix *m, int length, int origsyz, int strategy);
 
 protected:
   bool stop_conditions_ok();
 
 public:
-  gbres_comp(const M2_Matrix *m, int length, int orig_syz, int strategy);
-  gbres_comp(const M2_Matrix *m, int length, int orig_syz,
+  gbres_comp(const Matrix *m, int length, int orig_syz, int strategy);
+  gbres_comp(const Matrix *m, int length, int orig_syz,
           const RingElement *hf, int strategy);
 
   virtual void remove_res();
@@ -280,21 +280,21 @@ public:
   bool is_done();
 
   // reduction
-  M2_Matrix *reduce(const M2_Matrix *m, M2_Matrix *&lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   M2_arrayint betti_minimal() const;
 
   const FreeModule *free_module(int level) const;
-  const M2_Matrix *min_gens_matrix(int level);
-  const M2_Matrix *initial_matrix(int n, int level);
-  const M2_Matrix *gb_matrix(int level);
-  const M2_Matrix *change_matrix(int level);
+  const Matrix *min_gens_matrix(int level);
+  const Matrix *initial_matrix(int n, int level);
+  const Matrix *gb_matrix(int level);
+  const Matrix *change_matrix(int level);
 
   int complete_thru_degree() const;
   // The computation is complete up through this slanted degree.
 
-  const M2_Matrix /* or null */ *get_matrix(int level);
+  const Matrix /* or null */ *get_matrix(int level);
 
   const FreeModule /* or null */ *get_free(int level) { return free_module(level); }
 

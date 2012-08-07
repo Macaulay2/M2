@@ -3,7 +3,7 @@
 #include "det.hpp"
 #include "text-io.hpp"
 #include "../system/supervisorinterface.h"
-DetComputation::DetComputation(const M2_Matrix *M0, int p0,
+DetComputation::DetComputation(const Matrix *M0, int p0,
                                bool do_exterior0,
                                int strategy0)
   : R(M0->get_ring()),
@@ -307,7 +307,7 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p0)
   return answer;
 }
 
-M2_Matrix /* or null */ *M2_Matrix::exterior(int p,int strategy) const
+Matrix /* or null */ *Matrix::exterior(int p,int strategy) const
 {
   if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)
     {
@@ -317,12 +317,12 @@ M2_Matrix /* or null */ *M2_Matrix::exterior(int p,int strategy) const
 
   DetComputation *d = new DetComputation(this,p,1,strategy);
   d->calc(-1);
-  M2_Matrix *result = d->determinants();
+  Matrix *result = d->determinants();
   deleteitem(d);
   return result;
 }
 
-M2_Matrix /* or null */ *M2_Matrix::minors(int p,int strategy) const
+Matrix /* or null */ *Matrix::minors(int p,int strategy) const
 {
   if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)
     {
@@ -331,12 +331,12 @@ M2_Matrix /* or null */ *M2_Matrix::minors(int p,int strategy) const
     }
   DetComputation *d = new DetComputation(this,p,0,strategy);
   d->calc(-1);
-  M2_Matrix *result = d->determinants();
+  Matrix *result = d->determinants();
   deleteitem(d);
   return result;
 }
 
-M2_Matrix /* or null */ *M2_Matrix::minors(int p,
+Matrix /* or null */ *Matrix::minors(int p,
                        int strategy,
                        int n_to_compute, // -1 means all
                        M2_arrayintOrNull first_row, // possibly NULL
@@ -366,7 +366,7 @@ M2_Matrix /* or null */ *M2_Matrix::minors(int p,
   if (first_row != 0 && first_col != 0)
     d->set_next_minor(first_row->array, first_col->array);
   d->calc(n_to_compute);
-  M2_Matrix *result = d->determinants();
+  Matrix *result = d->determinants();
   deleteitem(d);
   return result;
 }

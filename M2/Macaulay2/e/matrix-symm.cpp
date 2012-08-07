@@ -4,7 +4,7 @@
 class SymmMatrix
 {
 public:
-  static M2_Matrix /* or null */ * symmetricPower(const M2_Matrix *m0, int p)
+  static Matrix /* or null */ * symmetricPower(const Matrix *m0, int p)
   {
     if (m0->n_rows() != 1)
       {
@@ -19,7 +19,7 @@ private:
   int symm1_next;
   const Ring *R;
   int ncols;
-  const M2_Matrix *m;
+  const Matrix *m;
   MatrixConstructor result;
 
   void symm1(vec f,            // product so far generated
@@ -41,7 +41,7 @@ private:
       }
   }
 
-  SymmMatrix(const M2_Matrix *m0, int p)
+  SymmMatrix(const Matrix *m0, int p)
     : symm1_next(0),
       R(m0->get_ring()),
       ncols(m0->n_cols()),
@@ -63,11 +63,11 @@ private:
       }
   }
 
-  M2_Matrix * value() { return result.to_matrix(); }
+  Matrix * value() { return result.to_matrix(); }
 
 };
 
-M2_Matrix /* or null */ *M2_Matrix::symm(int n) const
+Matrix /* or null */ *Matrix::symm(int n) const
 {
   return SymmMatrix::symmetricPower(this,n);
 }
@@ -75,7 +75,7 @@ M2_Matrix /* or null */ *M2_Matrix::symm(int n) const
 #if 0
 //
 // namespace M2 {
-//   M2_Matrix /* or null */ *M2::symmetricPower(const M2_Matrix *m, int p)
+//   Matrix /* or null */ *M2::symmetricPower(const Matrix *m, int p)
 //   {
 //     if (m->n_rows() != 1)
 //       {
@@ -92,7 +92,7 @@ M2_Matrix /* or null */ *M2_Matrix::symm(int n) const
 //   int symm1_next;
 //   const Ring *R;
 //   int ncols;
-//   const M2_Matrix *m;
+//   const Matrix *m;
 //   MatrixConstructor result;
 //
 //
@@ -100,12 +100,12 @@ M2_Matrix /* or null */ *M2_Matrix::symm(int n) const
 //           int lastn,        // can use lastn..n_cols()-1 in product
 //           int pow);   // remaining power to take
 //
-//   SymmMatrix(const M2_Matrix *m, int p);
+//   SymmMatrix(const Matrix *m, int p);
 //   void compute();
-//   M2_Matrix * value();
+//   Matrix * value();
 // public:
-//   friend M2_Matrix /* or null */ *M2::symmetricPower(const M2_Matrix *m, int p);
-//   static M2_Matrix /* or null */ * symmetricPower(const M2_Matrix *m, int p);
+//   friend Matrix /* or null */ *M2::symmetricPower(const Matrix *m, int p);
+//   static Matrix /* or null */ * symmetricPower(const Matrix *m, int p);
 // };
 //
 // void SymmMatrix::symm1(vec f,           // product so far generated, consumed here
@@ -127,7 +127,7 @@ M2_Matrix /* or null */ *M2_Matrix::symm(int n) const
 //     }
 // }
 //
-// SymmMatrix::SymmMatrix(const M2_Matrix *m0, int p)
+// SymmMatrix::SymmMatrix(const Matrix *m0, int p)
 //   : symm1_next(0),
 //     R(m0->get_ring()),
 //     ncols(m0->n_cols()),
@@ -149,12 +149,12 @@ M2_Matrix /* or null */ *M2_Matrix::symm(int n) const
 //     }
 // }
 //
-// M2_Matrix * SymmMatrix::value()
+// Matrix * SymmMatrix::value()
 // {
 //   return result.to_matrix();
 // }
 //
-// M2_Matrix /* or null */ * SymmMatrix::symmetricPower(const M2_Matrix *m, int p)
+// Matrix /* or null */ * SymmMatrix::symmetricPower(const Matrix *m, int p)
 // {
 //   if (m->n_rows() != 1)
 //     {
@@ -167,7 +167,7 @@ M2_Matrix /* or null */ *M2_Matrix::symm(int n) const
 // }
 //
 // namespace M2 {
-//   M2_Matrix /* or null */ *M2::symmetricPower(const M2_Matrix *m, int p)
+//   Matrix /* or null */ *M2::symmetricPower(const Matrix *m, int p)
 //   {
 //     return SymmMatrix::symmetricPower(m,p);
 //   }

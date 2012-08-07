@@ -17,7 +17,7 @@
 /////////////////////////////////////
 // GBBComputation ///////////////////
 /////////////////////////////////////
-GBBComputation *GBBComputation::choose_gb(const M2_Matrix *m,
+GBBComputation *GBBComputation::choose_gb(const Matrix *m,
                                           M2_bool collect_syz,
                                           int n_rows_to_keep,
                                           M2_arrayint gb_weights,
@@ -38,7 +38,7 @@ void GBBComputation::text_out(buffer &o) const
 /////////////////////////////////////
 // GroebnerBasis ////////////////////
 /////////////////////////////////////
-const M2_Matrix /* or null */ *GroebnerBasis::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GroebnerBasis::get_parallel_lead_terms(M2_arrayint w)
 {
   ERROR("Cannot compute parallel lead terms for this kind of Groebner computation");
   return 0;
@@ -51,7 +51,7 @@ void GroebnerBasis::text_out(buffer &o) const
 /////////////////////////////////////
 
 
-GBComputation *createF4GB(const M2_Matrix *m,
+GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
                           int n_rows_to_keep,
                           M2_arrayint gb_weights,
@@ -68,7 +68,7 @@ void GBComputation::text_out(buffer &o) const
   o << "-- a raw Groebner basis computation --";
 }
 
-GBComputation *GBComputation::choose_gb(const M2_Matrix *m,
+GBComputation *GBComputation::choose_gb(const Matrix *m,
                                           M2_bool collect_syz,
                                           int n_rows_to_keep,
                                           M2_arrayint gb_weights,
@@ -240,7 +240,7 @@ Computation /* or null */ *GBComputation::set_hilbert_function(const RingElement
   return 0;
 }
 
-const M2_Matrix /* or null */ *GBComputation::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(M2_arrayint w)
 {
   ERROR("Cannot compute parallel lead terms for this kind of Groebner computation");
   return 0;

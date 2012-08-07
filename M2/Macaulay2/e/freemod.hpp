@@ -6,7 +6,7 @@
 #include "ring.hpp"
 #include "schorder.hpp"
 
-class M2_Matrix;
+class Matrix;
 class GBMatrix;
 
 class FreeModule : public immutable_object
@@ -26,10 +26,10 @@ protected:
   virtual FreeModule *new_free() const;
 public:
 
-  static FreeModule *make_schreyer(const M2_Matrix *m);
+  static FreeModule *make_schreyer(const Matrix *m);
   static FreeModule *make_schreyer(const GBMatrix *m);
 
-  M2_Matrix * get_induced_order() const;
+  Matrix * get_induced_order() const;
 
   virtual ~FreeModule();
 

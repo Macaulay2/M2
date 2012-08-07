@@ -302,13 +302,13 @@ public:
   virtual bool stop_conditions_ok();
 
   void enlarge(const PolynomialRing *R, int *wts);
-  void add_generators(const M2_Matrix *m);
+  void add_generators(const Matrix *m);
 
-  M2_Matrix *subring();
-  M2_Matrix *subringGB();
+  Matrix *subring();
+  Matrix *subringGB();
 
   // reduction: these elements do not need to be binomials?
-  M2_Matrix *reduce(const M2_Matrix *m, M2_Matrix *&lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
 
   void stats() const;
 
@@ -317,7 +317,7 @@ public:
   // Computation routines //
   //////////////////////////
 
-  static binomialGB_comp * create(const M2_Matrix *m,
+  static binomialGB_comp * create(const Matrix *m,
                       M2_bool collect_syz,
                       int n_rows_to_keep,
                       M2_arrayint gb_weights,
@@ -330,11 +330,11 @@ public:
   void start_computation();
 
   virtual const Ring * get_ring() const { return 0; } /* doesn't have a ring !!  */
-  virtual const M2_Matrix /* or null */ *get_gb();
+  virtual const Matrix /* or null */ *get_gb();
 
-  virtual const M2_Matrix /* or null */ *get_mingens();
+  virtual const Matrix /* or null */ *get_mingens();
 
-  virtual const M2_Matrix /* or null */ *get_initial(int nparts);
+  virtual const Matrix /* or null */ *get_initial(int nparts);
 
   virtual void text_out(buffer &o) const { /* to do */ }
   /* This displays statistical information, and depends on the
@@ -348,22 +348,22 @@ public:
   // But they are not implemented... and there is no plan to implement them
   ////////////////////////////////////////////////////////
 
-  virtual const M2_Matrix /* or null */ *get_change();
+  virtual const Matrix /* or null */ *get_change();
   // not planned to be implemented
 
-  virtual const M2_Matrix /* or null */ *get_syzygies();
+  virtual const Matrix /* or null */ *get_syzygies();
   //not planned to be implemented
 
-  virtual const M2_Matrix /* or null */ *matrix_remainder(const M2_Matrix *m);
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
   // likely not planned to be implemented
 
-  virtual M2_bool matrix_lift(const M2_Matrix *m,
-                           const M2_Matrix /* or null */ **result_remainder,
-                           const M2_Matrix /* or null */ **result_quotient
+  virtual M2_bool matrix_lift(const Matrix *m,
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
                            );
   //not planned to be implemented
 
-  virtual int contains(const M2_Matrix *m);
+  virtual int contains(const Matrix *m);
   //not planned to be implemented
 
 };

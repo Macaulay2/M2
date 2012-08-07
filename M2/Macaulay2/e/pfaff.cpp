@@ -3,7 +3,7 @@
 #include "pfaff.hpp"
 #include "../system/supervisorinterface.h"
 
-PfaffianComputation::PfaffianComputation(const M2_Matrix *M0, int p0)
+PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
   : R(M0->get_ring()),
     M(M0),
     p(p0),
@@ -104,7 +104,7 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
   return result;
 }
 
-M2_Matrix *M2_Matrix::pfaffians(int p) const
+Matrix *Matrix::pfaffians(int p) const
 {
   if (get_ring()->get_precision() > 0)
     {

@@ -25,7 +25,7 @@
 // Creation, initialization //
 //////////////////////////////
 
-void GB_comp::initialize0(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights)
+void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights)
 {
   int i;
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
@@ -80,7 +80,7 @@ void GB_comp::initialize0(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb
     }
 }
 
-void GB_comp::initialize(const M2_Matrix *m,
+void GB_comp::initialize(const Matrix *m,
                          int csyz,
                          int nsyz,
                          M2_arrayint gb_weights,
@@ -108,7 +108,7 @@ void GB_comp::initialize(const M2_Matrix *m,
     }
 }
 
-GB_comp * GB_comp::create(const M2_Matrix *m,
+GB_comp * GB_comp::create(const Matrix *m,
                           M2_bool collect_syz,
                           int n_rows_to_keep,
                           M2_arrayint gb_weights,
@@ -977,7 +977,7 @@ Computation /* or null */ *GB_comp::set_hilbert_function(const RingElement *hf)
   return this;
 }
 
-const M2_Matrix /* or null */ *GB_comp::get_gb()
+const Matrix /* or null */ *GB_comp::get_gb()
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -990,7 +990,7 @@ const M2_Matrix /* or null */ *GB_comp::get_gb()
   // TODO NOW sort it, and auto-reduce it
 }
 
-const M2_Matrix /* or null */ *GB_comp::get_mingens()
+const Matrix /* or null */ *GB_comp::get_mingens()
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -1000,7 +1000,7 @@ const M2_Matrix /* or null */ *GB_comp::get_mingens()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *GB_comp::get_change()
+const Matrix /* or null */ *GB_comp::get_change()
 {
   start_computation();
   MatrixConstructor mat(_Fsyz, 0);
@@ -1009,7 +1009,7 @@ const M2_Matrix /* or null */ *GB_comp::get_change()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *GB_comp::get_syzygies()
+const Matrix /* or null */ *GB_comp::get_syzygies()
 {
   start_computation();
   MatrixConstructor mat(_Fsyz, 0);
@@ -1018,7 +1018,7 @@ const M2_Matrix /* or null */ *GB_comp::get_syzygies()
   return mat.to_matrix();
  }
 
-const M2_Matrix /* or null */ *GB_comp::get_initial(int nparts)
+const Matrix /* or null */ *GB_comp::get_initial(int nparts)
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -1032,7 +1032,7 @@ const M2_Matrix /* or null */ *GB_comp::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *GB_comp::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GB_comp::get_parallel_lead_terms(M2_arrayint w)
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
@@ -1044,7 +1044,7 @@ const M2_Matrix /* or null */ *GB_comp::get_parallel_lead_terms(M2_arrayint w)
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *GB_comp::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *GB_comp::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != originalR)
     {
@@ -1072,9 +1072,9 @@ const M2_Matrix /* or null */ *GB_comp::matrix_remainder(const M2_Matrix *m)
   return red.to_matrix();
 }
 
-M2_bool GB_comp::matrix_lift(const M2_Matrix *m,
-                 const M2_Matrix /* or null */ **result_remainder,
-                 const M2_Matrix /* or null */ **result_quotient
+M2_bool GB_comp::matrix_lift(const Matrix *m,
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
                  )
 {
   if (m->get_ring() != originalR)
@@ -1114,7 +1114,7 @@ M2_bool GB_comp::matrix_lift(const M2_Matrix *m,
   return all_zeroes;
 }
 
-int GB_comp::contains(const M2_Matrix *m)
+int GB_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.

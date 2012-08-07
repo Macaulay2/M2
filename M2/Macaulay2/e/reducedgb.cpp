@@ -54,7 +54,7 @@ ReducedGB::~ReducedGB()
     }
 }
 
-const M2_Matrix /* or null */ *ReducedGB::get_gb()
+const Matrix /* or null */ *ReducedGB::get_gb()
 {
   MatrixConstructor mat(F,0);
   for (VECTOR(POLY)::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -65,7 +65,7 @@ const M2_Matrix /* or null */ *ReducedGB::get_gb()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *ReducedGB::get_mingens()
+const Matrix /* or null */ *ReducedGB::get_mingens()
 {
 #ifdef DEVELOPMENT
 #warning "mingens?"
@@ -73,7 +73,7 @@ const M2_Matrix /* or null */ *ReducedGB::get_mingens()
   return 0;
 }
 
-const M2_Matrix /* or null */ *ReducedGB::get_syzygies()
+const Matrix /* or null */ *ReducedGB::get_syzygies()
 {
 #ifdef DEVELOPMENT
 #warning "syzygies?"
@@ -81,7 +81,7 @@ const M2_Matrix /* or null */ *ReducedGB::get_syzygies()
   return 0;
 }
 
-const M2_Matrix /* or null */ *ReducedGB::get_change()
+const Matrix /* or null */ *ReducedGB::get_change()
 {
   MatrixConstructor mat(Fsyz,0);
   for (VECTOR(POLY)::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -92,7 +92,7 @@ const M2_Matrix /* or null */ *ReducedGB::get_change()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *ReducedGB::get_initial(int nparts)
+const Matrix /* or null */ *ReducedGB::get_initial(int nparts)
 {
   MatrixConstructor mat(F,0);
   for (VECTOR(POLY)::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -104,7 +104,7 @@ const M2_Matrix /* or null */ *ReducedGB::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *ReducedGB::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *ReducedGB::get_parallel_lead_terms(M2_arrayint w)
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<polys.size(); i++)
@@ -120,7 +120,7 @@ void ReducedGB::text_out(buffer &o) const
 {
 }
 
-const M2_Matrix /* or null */ *ReducedGB::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *ReducedGB::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != originalR)
     {
@@ -149,9 +149,9 @@ const M2_Matrix /* or null */ *ReducedGB::matrix_remainder(const M2_Matrix *m)
 
 }
 
-M2_bool ReducedGB::matrix_lift(const M2_Matrix *m,
-                            const M2_Matrix /* or null */ **result_remainder,
-                            const M2_Matrix /* or null */ **result_quotient)
+M2_bool ReducedGB::matrix_lift(const Matrix *m,
+                            const Matrix /* or null */ **result_remainder,
+                            const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != originalR)
     {
@@ -199,7 +199,7 @@ M2_bool ReducedGB::matrix_lift(const M2_Matrix *m,
   return all_zeroes;
 }
 
-int ReducedGB::contains(const M2_Matrix *m)
+int ReducedGB::contains(const Matrix *m)
 {
   // Reduce each column of m one by one.
   if (m->get_ring() != originalR)

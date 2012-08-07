@@ -28,11 +28,11 @@ public:
 
   static void from_M2_matrix(const Gausser *KK,
                              const MonomialInfo *MI,
-                             const M2_Matrix *m,
+                             const Matrix *m,
                              M2_arrayint wts,
                              gb_array &result_polys);
 
-  static M2_Matrix *to_M2_matrix(const Gausser *KK,
+  static Matrix *to_M2_matrix(const Gausser *KK,
                               const MonomialInfo *MI,
                               gb_array &polys,
                               const FreeModule *F);

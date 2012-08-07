@@ -21,7 +21,7 @@ void dintarray(M2_arrayint a)
   emit(o.str());
 }
 
-void dmatrix(const M2_Matrix *M)
+void dmatrix(const Matrix *M)
 {
   buffer o;
   M->text_out(o);

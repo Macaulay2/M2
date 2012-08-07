@@ -234,7 +234,7 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   R->gbvector_sort(F, f);
 }
 
-const M2_Matrix /* or null */ *MarkedGB::get_initial(int nparts)
+const Matrix /* or null */ *MarkedGB::get_initial(int nparts)
 {
   if (nparts > 0)
     {
@@ -250,7 +250,7 @@ const M2_Matrix /* or null */ *MarkedGB::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *MarkedGB::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *MarkedGB::get_parallel_lead_terms(M2_arrayint w)
 {
   MatrixConstructor mat(F, 0);
   for (int i=0; i<polys.size(); i++)

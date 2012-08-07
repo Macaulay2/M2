@@ -20,7 +20,7 @@ static const int GBELEM_MINGEN_MINGB = 3;
 static const int MINGEN_MASK = 0x1;
 static const int MINGB_MASK = 0x2;
 
-void GBinhom_comp::set_up0(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights)
+void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights)
 {
   int i;
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
@@ -64,7 +64,7 @@ void GBinhom_comp::set_up0(const M2_Matrix *m, int csyz, int nsyz, M2_arrayint g
 
 }
 
-void GBinhom_comp::set_up(const M2_Matrix *m,
+void GBinhom_comp::set_up(const Matrix *m,
                           int csyz,
                           int nsyz,
                           M2_arrayint gb_weights,
@@ -89,7 +89,7 @@ void GBinhom_comp::inter_reduce(gb_elem *&/*gens*/)
   // MES
 }
 
-void GBinhom_comp::add_gens(int lo, int hi, const M2_Matrix *m)
+void GBinhom_comp::add_gens(int lo, int hi, const Matrix *m)
 {
   // MES
   // First incorporate the new generators.
@@ -109,7 +109,7 @@ void GBinhom_comp::add_gens(int lo, int hi, const M2_Matrix *m)
     }
 }
 
-GBinhom_comp *GBinhom_comp::create(const M2_Matrix *m,
+GBinhom_comp *GBinhom_comp::create(const Matrix *m,
                   M2_bool collect_syz,
                   int n_rows_to_keep,
                   M2_arrayint gb_weights,
@@ -131,7 +131,7 @@ GBinhom_comp *GBinhom_comp::create(const M2_Matrix *m,
   return result;
 }
 
-GBinhom_comp::GBinhom_comp(const M2_Matrix *m,
+GBinhom_comp::GBinhom_comp(const Matrix *m,
                            int csyz,
                            int nsyz,
                            M2_arrayint gb_weights,
@@ -862,22 +862,22 @@ void GBinhom_comp::minimalize_gb()
 }
 
 //--- Reduction --------------------------
-const M2_Matrix /* or null */ *GBinhom_comp::matrix_remainder(const M2_Matrix *m)
+const Matrix /* or null */ *GBinhom_comp::matrix_remainder(const Matrix *m)
 {
   minimalize_gb();
   return minimal_gb->matrix_remainder(m);
 }
 
-M2_bool GBinhom_comp::matrix_lift(const M2_Matrix *m,
-                 const M2_Matrix /* or null */ **result_remainder,
-                 const M2_Matrix /* or null */ **result_quotient
+M2_bool GBinhom_comp::matrix_lift(const Matrix *m,
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
                  )
 {
   minimalize_gb();
   return minimal_gb->matrix_lift(m, result_remainder, result_quotient);
 }
 
-int GBinhom_comp::contains(const M2_Matrix *m)
+int GBinhom_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
@@ -904,7 +904,7 @@ void GBinhom_comp::text_out(buffer &o) const
   stats();
 }
 
-const M2_Matrix /* or null */ *GBinhom_comp::get_mingens()
+const Matrix /* or null */ *GBinhom_comp::get_mingens()
 {
   MatrixConstructor mat(F, 0);
   for (gb_elem *q = gb->next; q != NULL; q = q->next)
@@ -913,32 +913,32 @@ const M2_Matrix /* or null */ *GBinhom_comp::get_mingens()
   return mat.to_matrix();
 }
 
-const M2_Matrix /* or null */ *GBinhom_comp::get_initial(int nparts)
+const Matrix /* or null */ *GBinhom_comp::get_initial(int nparts)
 {
   minimalize_gb();
   return minimal_gb->get_initial(nparts);
 }
 
-const M2_Matrix /* or null */ *GBinhom_comp::get_parallel_lead_terms(M2_arrayint w)
+const Matrix /* or null */ *GBinhom_comp::get_parallel_lead_terms(M2_arrayint w)
 {
   minimalize_gb();
   return minimal_gb->get_parallel_lead_terms(w);
 }
 
-const M2_Matrix /* or null */ *GBinhom_comp::get_gb()
+const Matrix /* or null */ *GBinhom_comp::get_gb()
 {
   minimalize_gb();
   //  fprintf(stderr, "-- done with GB -- \n");
   return minimal_gb->get_gb();
 }
 
-const M2_Matrix /* or null */ *GBinhom_comp::get_change()
+const Matrix /* or null */ *GBinhom_comp::get_change()
 {
   minimalize_gb();
   return minimal_gb->get_change();
 }
 
-const M2_Matrix /* or null */ *GBinhom_comp::get_syzygies()
+const Matrix /* or null */ *GBinhom_comp::get_syzygies()
 {
 #ifdef DEVELOPMENT
 #warning "this is not correct: this grabs the vectors, and so can't be called twice"
