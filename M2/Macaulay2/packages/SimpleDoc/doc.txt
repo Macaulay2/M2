@@ -11,10 +11,10 @@ Node
   s:String
  Consequences
   Item
-   The string {\tt s} is handled by parsing it the same way @ TO doc @ does, but
-   expecting the least indented keyword to be {\bf Node}, which can occur
-   multiple times.  The text following each such keyword is handled just as by @
-   TO doc @, resulting in a documentation node.
+   The string {\tt s} is handled by parsing it the same way @ TO doc @ does,
+   but expecting the least indented keyword to be {\bf Node}, which can occur
+   multiple times.  The text following each such keyword is handled just as by
+   @ TO doc @, resulting in a documentation node.
  Description
   Text
    Here is the input submitted to @ TO multidoc @ to document (most of) this package:
@@ -108,27 +108,30 @@ Node
     available via @TO help@ and @TO viewHelp@
   Description
    Text
-    The string {\tt s} contains text describing the documentation to be produced.
+    The string {\tt s} contains text describing the documentation to be
+    produced.
 
     Lines beginning with white space followed by two hyphens are ignored.
 
-    The text is divided into sections, each of which begins
-    with a keyword alone on a line; the keywords must all
-    be indented to the same level, and everything else must
-    be further indented.
+    The text is divided into sections, each of which begins with a keyword
+    alone on a line; the keywords must all be indented to the same level, and
+    everything else must be further indented.
 
-    The valid keywords are: {\bf Key}, {\bf Headline}, {\bf Usage}, {\bf Inputs},
-    {\bf Outputs}, {\bf Consequences}, {\bf Description}, {\bf SeeAlso}, {\bf Subnodes}, and {\bf Caveat}.
+    The valid keywords are: {\bf Key}, {\bf Headline}, {\bf Usage}, {\bf
+    Inputs}, {\bf Outputs}, {\bf Consequences}, {\bf Description}, {\bf
+    SeeAlso}, {\bf Subnodes}, and {\bf Caveat}.
 
     The only keyword which is always required is {\bf Key}.
 
     Each line in the {\bf Key} section is evaluated as a Macaulay2 expression
     to yield a documentation key.  The various types of documentation keys are
-    described in @TO [document,Key]@.  (If a string is desired as a key, it must be
-    surrounded by quotation marks.)
+    described in @TO [document,Key]@.  (If a string is desired as a key, it
+    must be surrounded by quotation marks.)
 
-    The body of the {\bf Headline} section should have a single line, which will be interpreted as a string.
-    The lines of the {\bf Usage} section may be used to present alternative usages, and they will be collected into a single string.
+    The body of the {\bf Headline} section should have a single line, which
+    will be interpreted as a string.  The lines of the {\bf Usage} section may
+    be used to present alternative usages, and they will be collected into a
+    single string.
 
     The text in an {\bf Inputs} or {\bf Outputs} section is divided into
     subsections, each of which corresponds to one input or output value.  The
@@ -145,10 +148,10 @@ Node
     Markup allowed includes many TeX commands, as allowed in @TO TEX@; for
     details and examples see @TO (html,TEX)@, allowing various mathematical
     expressions, such as $\PP^3$ or $x_i^{33} + 1/2$, to be displayed in the
-    html form of the documentation.
-    Also allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code to
-    be executed, yielding appropriate hypertext.  For example, {\tt \@TO Key\@}
-    will insert a link to another node of the documentation.
+    html form of the documentation.  Also allowed is a pair of {\tt \@}
+    characters, enclosing Macaulay2 code to be executed, yielding appropriate
+    hypertext.  For example, {\tt \@TO Key\@} will insert a link to another
+    node of the documentation.
 
     Each subsection of the {\bf Consequences} section should start with the
     keyword {\bf Item}; the text in each subsection can be marked up as
@@ -172,14 +175,12 @@ Node
 
     The lines in the {\bf Subnodes} section not beginning with a colon are keys
     giving links to the subnodes of the current documentation node.  The
-    purpose is to allow the documentation of the package to be arranged linearly,
-    as in a book.  The lines in the {\bf Subnodes} section beginning with a
-    colon are subheadings used to classify the subnodes.
+    purpose is to allow the documentation of the package to be arranged
+    linearly, as in a book.  The lines in the {\bf Subnodes} section beginning
+    with a colon are subheadings used to classify the subnodes.
+
   SeeAlso
     multidoc
     document
     "docExample"
     "docTemplate"
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
--- End:
