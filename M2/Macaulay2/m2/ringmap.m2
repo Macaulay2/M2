@@ -359,6 +359,11 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 		    try commonzero = commonzero + 0_(ring g#i) else error "expected substitution values and omitted generators to be in compatible rings";
 		    m#i = commonzero + g#i;
 		    );
+	       )
+	  else (
+	       -- the target ring should be at least as big as the bottom coefficient ring:
+	       try commonzero = commonzero + 0_A
+	       else error "expected substitution values and omitted generators to be in compatible rings";
 	       );
 	  for i from 0 to #m-1 do m#i = promote(m#i, ring commonzero);
 	  )
