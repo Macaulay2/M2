@@ -178,7 +178,6 @@ Node
     purpose is to allow the documentation of the package to be arranged
     linearly, as in a book.  The lines in the {\bf Subnodes} section beginning
     with a colon are subheadings used to classify the subnodes.
-
   SeeAlso
     multidoc
     document
