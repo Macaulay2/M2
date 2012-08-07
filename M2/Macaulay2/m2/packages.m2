@@ -281,8 +281,8 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
      if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
-     scan(opts.PackageExports, needsPackage);
      scan(opts.PackageImports, needsPackage);
+     scan(opts.PackageExports, needsPackage);
      newpkg.loadDepth = loadDepth;
      loadDepth = if title === "Core" then 1 else if not debuggingMode then 2 else 3;
      newpkg)
