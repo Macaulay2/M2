@@ -49,6 +49,10 @@ INSTALL = @INSTALL@
 # version skew (gcc preprocessor searches -I directories first, then -isystem directories)
 
 BUILTLIBPATH = @abs_top_builddir@/libraries/final
+
+# this will be a symbolic link installed by libraries/gtest/Makefile
+GTEST_DIR = @abs_top_builddir@/libraries/final/gtest
+
 CPPFLAGS := \
 	 -I@abs_top_srcdir@/include \
 	 -I@abs_top_builddir@/include \

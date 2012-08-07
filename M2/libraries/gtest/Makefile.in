@@ -1,0 +1,12 @@
+# from http://googletest.googlecode.com/files/gtest-1.6.0.zip
+URL = http://macaulay2.com/Extra
+VERSION = 1.6.0
+CONFIGURECMD = :
+BUILDCMD = :
+INSTALLCMD = rm -f $(BUILTLIBPATH)/gtest && ln -s ../gtest/$(BUILDDIR) $(BUILTLIBPATH)/gtest
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gtest/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/gtest "
+# End:
