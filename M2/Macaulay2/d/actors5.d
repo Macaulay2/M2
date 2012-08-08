@@ -1238,6 +1238,24 @@ fileExists(e:Expr):Expr := (
      );
 setupfun("fileExists",fileExists);
 
+fileReadable(e:Expr):Expr := (
+     when e is name:stringCell do toExpr(fileReadable(expandFileName(name.v)))
+     else WrongArgString()
+     );
+setupfun("fileReadable",fileReadable);
+
+fileWritable(e:Expr):Expr := (
+     when e is name:stringCell do toExpr(fileWritable(expandFileName(name.v)))
+     else WrongArgString()
+     );
+setupfun("fileWritable",fileWritable);
+
+fileExecutable(e:Expr):Expr := (
+     when e is name:stringCell do toExpr(fileExecutable(expandFileName(name.v)))
+     else WrongArgString()
+     );
+setupfun("fileExecutable",fileExecutable);
+
 removeDirectory(e:Expr):Expr := (
      when e is name:stringCell do
      if rmdir(expandFileName(name.v)) == ERROR 

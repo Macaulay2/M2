@@ -455,6 +455,31 @@ M2_bool system_fileExists(M2_string name) {
   char *cname = M2_tocharstar(name);
   struct stat buf;
   int r = stat(cname,&buf);
+  errno = 0;
+  GC_FREE(cname);
+  return r != ERROR;
+}
+
+M2_bool system_fileReadable(M2_string name) {
+  char *cname = M2_tocharstar(name);
+  int r = access(cname,R_OK);
+  errno = 0;
+  GC_FREE(cname);
+  return r != ERROR;
+}
+
+M2_bool system_fileWritable(M2_string name) {
+  char *cname = M2_tocharstar(name);
+  int r = access(cname,W_OK);
+  errno = 0;
+  GC_FREE(cname);
+  return r != ERROR;
+}
+
+M2_bool system_fileExecutable(M2_string name) {
+  char *cname = M2_tocharstar(name);
+  int r = access(cname,X_OK);
+  errno = 0;
   GC_FREE(cname);
   return r != ERROR;
 }
