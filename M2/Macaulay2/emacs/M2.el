@@ -468,7 +468,7 @@ be sent can be entered, with history."
 (if (not (boundp 'font-lock-constant-face))
     (setq font-lock-constant-face font-lock-function-name-face))
 
-(defconst M2-indent-level 5 "*Indentation increment in Macaulay 2 mode")
+(defconst M2-indent-level 4 "*Indentation increment in Macaulay 2 mode")
 
 (defun parse-line ()
      (save-excursion
