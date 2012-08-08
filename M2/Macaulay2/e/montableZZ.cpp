@@ -487,11 +487,24 @@ struct montable_sorter_ZZ : public std::binary_function<int,int,bool> {
 #endif
 };
 
+void MonomialTableZZ::show_weak(FILE *fil, mpz_ptr coeff, exponents exp, int comp, int val) const
+{
+  fprintf(fil," elem coeff=");
+  mpz_out_str(fil,10,coeff);
+  fprintf(fil, " exp=");
+  exponents_show(fil,exp,_nvars);
+  fprintf(fil, " comp=");
+  fprintf(fil,"%d",comp);
+  fprintf(fil, " val=");
+  fprintf(fil,"%d\n",val);
+}
+
 void MonomialTableZZ::find_weak_generators(int nvars,
-                                      const VECTOR(mpz_ptr) &coeffs,
-                                      const VECTOR(exponents) &exps,
-                                      const VECTOR(int) &comps,
-                                      VECTOR(int) &result_positions)
+                                           const VECTOR(mpz_ptr) &coeffs,
+                                           const VECTOR(exponents) &exps,
+                                           const VECTOR(int) &comps,
+                                           VECTOR(int) &result_positions,
+                                           bool use_stable_sort)
 {
   // Find a set of elements which generate all of them, as a submodule.
   // The indices for these are placed into result_positions.
@@ -502,6 +515,24 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 
   // Second, loop through each one, checking whether it is in the submodule gen
   // by the previous.
+  MonomialTableZZ *T = MonomialTableZZ::make(nvars);
+
+#if 0
+  // debugging
+  if (coeffs.size() != exps.size())
+    fprintf(stderr, "size mismatch\n");
+  if (coeffs.size() != exps.size())
+    fprintf(stderr, "size mismatch2\n");
+  if (coeffs.size() != comps.size())
+    fprintf(stderr, "size mismatch3\n");
+#endif
+#if 0
+  // debugging
+  fprintf(stderr, "-------------\n");
+  fprintf(stderr, "find_weak_generators %ld\n", coeffs.size());
+  for (size_t i = 0; i < coeffs.size(); i++)
+    T->show_weak(stderr, coeffs[i], exps[i], comps[i], i);
+#endif
 
   VECTOR(int) positions;
   positions.reserve(exps.size());
@@ -510,7 +541,17 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 
   /* The following sorts in ascending lex order, considering the component, exp vector
      and finally the coefficient */
-  sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
+  if (use_stable_sort)
+    std::stable_sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
+  else
+    std::sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
+
+#if 0
+  // debugging
+  fprintf(stderr, "sorted find_weak_generators\n");
+  for (size_t i = 0; i < coeffs.size(); i++)
+    T->show_weak(stderr, coeffs[i], exps[i], comps[i], positions[i]);
+#endif
 
 #if 0
 //   fprintf(stderr, "sorted terms: ");
@@ -519,13 +560,24 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 //   fprintf(stderr, "\n");
 #endif
 
-  MonomialTableZZ *T = MonomialTableZZ::make(nvars);
   for (VECTOR(int)::iterator j = positions.begin(); j != positions.end(); j++)
     if (!T->is_weak_member(coeffs[*j], exps[*j], comps[*j]))
       {
         result_positions.push_back(*j);
         T->insert(coeffs[*j], exps[*j], comps[*j], *j);
       }
+
+#if 0
+  // debugging
+  fprintf(stderr, "ones we take: find_weak_generators %ld\n", coeffs.size());
+  for (size_t i = 0; i < result_positions.size(); i++)
+    T->show_weak(stderr, 
+                 coeffs[result_positions[i]], 
+                 exps[result_positions[i]], 
+                 comps[result_positions[i]],
+                 result_positions[i]);
+  fprintf(stderr, "\n\n");
+#endif
   /* We could return T if that is desired */
   //  deleteitem(T);
 }

@@ -1,3 +1,5 @@
+#warning "Remove points.hpp, points.cpp once this branch is merged into the trunk"
+
 // Copyright 2005  Michael E. Stillman
 
 #ifndef _points_hpp_

@@ -4,7 +4,7 @@
 
 using namespace M2;
 
-typedef RingWrap<RingInterfaceExample> RingZ;
+typedef ConcreteRing<RingInterfaceExample> RingZ;
 typedef RElementWrap<RingInterfaceExample> ElementZ;
 
 namespace M2 {
@@ -12,8 +12,8 @@ namespace M2 {
   void testit()
   {
     RingGF R(5,2);
-    const ARing *A = new RingWrap<RingGF>(R);
-    const RingWrap<RingGF> *S = A->cast_to_RingWrap<RingGF>();
+    const ARing *A = new ConcreteRing<RingGF>(R);
+    const ConcreteRing<RingGF> *S = A->cast_to_ConcreteRing<RingGF>();
     if (S == 0)
       {
         std::cout << "result was 0" << std::endl;
@@ -23,7 +23,7 @@ namespace M2 {
         std::cout << "result was nonzero" << std::endl;
       }
 
-    const RingWrap<RingZZp> *T = A->cast_to_RingWrap<RingZZp>();
+    const ConcreteRing<RingZZp> *T = A->cast_to_ConcreteRing<RingZZp>();
     if (T == 0)
       {
         std::cout << "result was 0" << std::endl;
@@ -76,13 +76,13 @@ namespace M2 {
     if (p < 32750)
       {
 #if 0
-        const RingWrap<RingLogZZp> *A = new RingWrap<RingLogZZp>;
+        const ConcreteRing<RingLogZZp> *A = new ConcreteRing<RingLogZZp>;
         A->getInternalRing()->initialize(p);
         return A;
 #endif
         return 0;
       }
-    RingWrap<RingZZp> *B = new RingWrap<RingZZp>;
+    ConcreteRing<RingZZp> *B = new ConcreteRing<RingZZp>;
     B->getInternalRing().initialize(p);
     return B;
 }

@@ -52,7 +52,7 @@ BRP& BRP::operator+(const BRP &other) { // careful here!
 BRP BRP::operator*(const BRP &other) const {
   // other _must_ be a monomial
   if(other == 0) {
-    cout << "Multiplication by 0" << endl;
+    std::cout << "Multiplication by 0" << std::endl;
     return BRP();
   } else {
     brMonomial mono = *(other.m.begin());

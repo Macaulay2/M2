@@ -1,11 +1,15 @@
 // Copyright 2005  Michael E. Stillman
 
 #include "coeffrings.hpp"
+#include "coeffrings-zz.hpp"
 #include "ZZp.hpp"
 #include "smat.hpp"
 #include "mat.hpp"
 
 #include "aring-zzp.hpp"
+#include "aring-gf.hpp"
+#include "aring-m2-gf.hpp"
+#include "aring-tower.hpp"
 
 //////////////////////////
 // sparsevec operations //
@@ -45,10 +49,18 @@ typename SMat<CoeffRing>::sparsevec *SMat<CoeffRing>::vec_copy(const sparsevec *
       result->next = w;
       result = w;
       w->row = p->row;
-      coeffR->init_set(w->coeff, p->coeff);
+      ring().init_set(w->coeff, p->coeff);
     }
   result->next = 0;
   return head.next;
+}
+
+template<typename CoeffRing>
+bool SMat<CoeffRing>::vec_equals(const sparsevec* v, const sparsevec* w) const
+{
+  for ( ; v != NULL && w != NULL; v=v->next, w=w->next)
+    if (!ring().is_equal(v->coeff, w->coeff)) return false;
+  return true;
 }
 
 template<typename CoeffRing>
@@ -59,7 +71,7 @@ bool SMat<CoeffRing>::vec_get_entry(const sparsevec *v, int r, elem &result) con
       break;
     else if (p->row == r)
       {
-        coeffR->init_set(result,p->coeff);
+        ring().init_set(result,p->coeff);
         return true;
       }
   return false;
@@ -69,7 +81,7 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::vec_set_entry(sparsevec *&v, int r, const elem &a) const
 {
   sparsevec * p;
-  bool iszero = coeffR->is_zero(a);
+  bool iszero = ring().is_zero(a);
   sparsevec head;
   head.next = v;
   for (p = &head; p->next != 0; p = p->next)
@@ -82,7 +94,7 @@ void SMat<CoeffRing>::vec_set_entry(sparsevec *&v, int r, const elem &a) const
       sparsevec * w = vec_new();
       w->next = p->next;
       w->row = r;
-      coeffR->init_set(w->coeff, a);
+      ring().init_set(w->coeff, a);
       p->next = w;
     }
   else if (p->next->row == r)
@@ -95,7 +107,7 @@ void SMat<CoeffRing>::vec_set_entry(sparsevec *&v, int r, const elem &a) const
           vec_remove_node(tmp);
         }
       else
-        coeffR->set(p->next->coeff, a);
+        ring().set(p->next->coeff, a);
     }
   v = head.next;
 }
@@ -164,8 +176,8 @@ void SMat<CoeffRing>::vec_scale_row(sparsevec *&v, int r, const elem &a) const
       break;
     else if (p->next->row == r)
       {
-        coeffR->mult(p->next->coeff, a, p->next->coeff);
-        if (coeffR->is_zero(p->next->coeff))
+        ring().mult(p->next->coeff, a, p->next->coeff);
+        if (ring().is_zero(p->next->coeff))
           {
             sparsevec *tmp = p->next;
             p->next = tmp->next;
@@ -179,7 +191,7 @@ void SMat<CoeffRing>::vec_scale_row(sparsevec *&v, int r, const elem &a) const
 template<typename CoeffRing>
 void SMat<CoeffRing>::vec_scale(sparsevec *&v, const elem &a) const
 {
-  if (coeffR->is_zero(a))
+  if (ring().is_zero(a))
     {
       vec_remove(v);
       v = 0;
@@ -189,8 +201,8 @@ void SMat<CoeffRing>::vec_scale(sparsevec *&v, const elem &a) const
   head.next = v;
   for (sparsevec *p = &head; p->next != 0; p=p->next)
     {
-      coeffR->mult(p->next->coeff, a, p->next->coeff);
-      if (coeffR->is_zero(p->next->coeff))
+      ring().mult(p->next->coeff, a, p->next->coeff);
+      if (ring().is_zero(p->next->coeff))
         {
           sparsevec *tmp = p->next;
           p->next = tmp->next;
@@ -199,6 +211,13 @@ void SMat<CoeffRing>::vec_scale(sparsevec *&v, const elem &a) const
         }
     }
   v = head.next;
+}
+
+template<typename CoeffRing>
+void SMat<CoeffRing>::vec_negate(sparsevec *&v) const
+{
+  for (sparsevec *p = v; p->next != NULL; p=p->next)
+    ring().negate(p->coeff, p->coeff);
 }
 
 template<typename CoeffRing>
@@ -211,8 +230,8 @@ void SMat<CoeffRing>::vec_divide_row(sparsevec *&v, int r, const elem &a) const
       break;
     else if (p->next->row == r)
       {
-        coeffR->divide(p->next->coeff, p->next->coeff, a);
-        if (coeffR->is_zero(p->next->coeff))
+        ring().divide(p->next->coeff, p->next->coeff, a);
+        if (ring().is_zero(p->next->coeff))
           {
             sparsevec *tmp = p->next;
             p->next = tmp->next;
@@ -226,7 +245,7 @@ void SMat<CoeffRing>::vec_divide_row(sparsevec *&v, int r, const elem &a) const
 template<typename CoeffRing>
 void SMat<CoeffRing>::vec_divide(sparsevec *&v, const elem &a) const
 {
-  if (coeffR->is_zero(a))
+  if (ring().is_zero(a))
     {
       vec_remove(v);
       v = 0;
@@ -236,8 +255,8 @@ void SMat<CoeffRing>::vec_divide(sparsevec *&v, const elem &a) const
   head.next = v;
   for (sparsevec *p = &head; p->next != 0; p=p->next)
     {
-      coeffR->divide(p->next->coeff, p->next->coeff,a);
-      if (coeffR->is_zero(p->next->coeff))
+      ring().divide(p->next->coeff, p->next->coeff,a);
+      if (ring().is_zero(p->next->coeff))
         {
           sparsevec *tmp = p->next;
           p->next = tmp->next;
@@ -288,8 +307,8 @@ void SMat<CoeffRing>::vec_add_to(sparsevec *&v, sparsevec *&w) const
         sparsevec *tmw = w;
         v = v->next;
         w = w->next;
-        coeffR->add(tmv->coeff, tmv->coeff, tmw->coeff);
-        if (coeffR->is_zero(tmv->coeff))
+        ring().add(tmv->coeff, tmv->coeff, tmw->coeff);
+        if (ring().is_zero(tmv->coeff))
           {
             vec_remove_node(tmv);
           }
@@ -329,9 +348,9 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v, int r1, const elem &a, int r2) c
       }
   if (vec2 == 0) return;
   elem c;
-  coeffR->set_zero(c);
-  coeffR->mult(c, vec2->coeff, a);
-  if (coeffR->is_zero(c)) return; // nothing to change
+  ring().set_zero(c);
+  ring().mult(c, vec2->coeff, a);
+  if (ring().is_zero(c)) return; // nothing to change
 
   // Now add c to the r1'th row of v
   sparsevec head;
@@ -345,13 +364,13 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v, int r1, const elem &a, int r2) c
       sparsevec *w = vec_new();
       w->next = p->next;
       w->row = r1;
-      coeffR->init_set(w->coeff, c);
+      ring().init_set(w->coeff, c);
       p->next = w;
     }
   else
     {
-      coeffR->add(p->next->coeff, p->next->coeff, c);
-      if (coeffR->is_zero(p->next->coeff))
+      ring().add(p->next->coeff, p->next->coeff, c);
+      if (ring().is_zero(p->next->coeff))
         {
           sparsevec *tmp = p->next;
           p->next = tmp->next;
@@ -373,27 +392,27 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   // v[row r2] = b1 * v[r1] + b2 * v[r2]
   elem e1,e2, c1,c2,c3,c4;
 
-  coeffR->set_zero(c1);
-  coeffR->set_zero(c2);
-  coeffR->set_zero(c3);
-  coeffR->set_zero(c4);
+  ring().set_zero(c1);
+  ring().set_zero(c2);
+  ring().set_zero(c3);
+  ring().set_zero(c4);
   bool r1_nonzero = vec_get_entry(v,r1,e1);
   bool r2_nonzero = vec_get_entry(v,r2,e2);
   if (!r1_nonzero && !r2_nonzero) return;
 
   if (r1_nonzero)
     {
-      coeffR->mult(c1, a1, e1);
-      coeffR->mult(c3, b1, e1);
+      ring().mult(c1, a1, e1);
+      ring().mult(c3, b1, e1);
     }
   if (r2_nonzero)
     {
-      coeffR->mult(c2,a2,e2);
-      coeffR->mult(c4,b2,e2);
+      ring().mult(c2,a2,e2);
+      ring().mult(c4,b2,e2);
     }
 
-  coeffR->add(c1,c1,c2);
-  coeffR->add(c3,c3,c4);
+  ring().add(c1,c1,c2);
+  ring().add(c3,c3,c4);
   vec_set_entry(v,r1,c1);
   vec_set_entry(v,r2,c3);
 }
@@ -411,8 +430,8 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::vec_dot_product(sparsevec *v, sparsevec *w, elem &result) const
 {
   elem a;
-  coeffR->set_zero(a);
-  coeffR->set_zero(result);
+  ring().set_zero(a);
+  ring().set_zero(result);
   while (true)
     {
       if (v == 0 || w == 0) return;
@@ -422,8 +441,8 @@ void SMat<CoeffRing>::vec_dot_product(sparsevec *v, sparsevec *w, elem &result) 
         w = w->next;
       else
         {
-          coeffR->mult(a, v->coeff, w->coeff);
-          coeffR->add(result, result, a);
+          ring().mult(a, v->coeff, w->coeff);
+          ring().add(result, result, a);
           v = v->next;
           w = w->next;
         }
@@ -506,15 +525,27 @@ void SMat<CoeffRing>::vec_delete_rows(sparsevec *&v, int i, int j) const
 // SMat //////////////////
 //////////////////////////
 template<typename CoeffRing>
-SMat<CoeffRing>::SMat(const RingType *R0, int nrows, int ncols)
+SMat<CoeffRing>::SMat(const Ring *R0, const CoeffRing *coeffR0, int nrows, int ncols)
   : R(R0),
-    coeffR(R0->get_ARing()),
+    coeffR(coeffR0),
     nrows_(nrows),
     ncols_(ncols)
 {
   initialize(nrows,ncols,0);
 }
 
+template<typename CoeffRing>
+SMat<CoeffRing>::SMat(const SMat &M)
+  : R(M.R),
+    coeffR(M.coeffR),
+    nrows_(M.nrows_),
+    ncols_(M.ncols_)
+{
+  initialize(nrows_,ncols_,M.columns_);
+}
+
+#if 0
+//TODO: MES remove this once above compiles.
 template <> SMat<CoefficientRingR>::SMat(const Ring *R0, int nrows, int ncols)
   : R(R0),
     coeffR(0),
@@ -524,6 +555,7 @@ template <> SMat<CoefficientRingR>::SMat(const Ring *R0, int nrows, int ncols)
   coeffR = new CoefficientRingR(R0);
   initialize(nrows,ncols,0);
 }
+#endif
 
 template<typename CoeffRing>
 void SMat<CoeffRing>::initialize(int nrows, int ncols, sparsevec **cols)
@@ -556,9 +588,7 @@ void SMat<CoeffRing>::grab(SMat<CoeffRing> *M)
 template<typename CoeffRing>
 SMat<CoeffRing> *SMat<CoeffRing>::copy() const
 {
-  SMat<CoeffRing> *result = new SMat<CoeffRing>(get_ring(), 0, 0);
-  result->initialize(nrows_, ncols_, columns_);
-  return result;
+  return new SMat(*this);
 }
 
 template<typename CoeffRing>
@@ -580,7 +610,7 @@ int SMat<CoeffRing>::lead_row(int col, elem &result) const
 {
   sparsevec *v = columns_[col];
   if (v == 0) return -1;
-  coeffR->init_set(result, v->coeff);
+  ring().init_set(result, v->coeff);
   return v->row;
 }
 
@@ -834,7 +864,7 @@ bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 //      {
 //        ring_elem a;
 //        i->copy_ring_elem(a);
-//        coeffR->from_ring_elem(*(first + i->row()), a);
+//        ring().from_ring_elem(*(first + i->row()), a);
 //      }
 //       first += nrows_;
 //     }
@@ -852,66 +882,100 @@ bool SMat<CoeffRing>::is_zero() const
   return true;
 }
 
-template<typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint rows,
-                                             M2_arrayint cols) const
+template <typename CoeffRing>
+bool SMat<CoeffRing>::is_equal(const SMat& B) const
 {
-  SMat<CoeffRing> *result = new SMat<CoeffRing>(R,rows->len,cols->len);
+  ASSERT(&ring() == &B.ring())
+  if (B.n_rows() != n_rows()) return false;
+  if (B.n_cols() != n_cols()) return false;
+  for (size_t c = 0; c < n_cols(); c++)
+    {
+      sparsevec *v = columns_[c];
+      sparsevec *w = B.columns_[c];
+      if (!vec_equals(v,w))
+        return false;
+    }
+  return true;
+}
+
+template <typename CoeffRing>
+void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint rows, M2_arrayint cols)
+{
+  R = A.R;
+  coeffR = A.coeffR;
+  initialize(rows->len, cols->len, NULL);
+
   for (int r=0; r<rows->len; r++)
     for (int c=0; c<cols->len; c++)
       {
         elem f;
-        get_entry(rows->array[r],cols->array[c],f);
-        result->set_entry(r,c,f);
+        A.get_entry(rows->array[r],cols->array[c],f);
+        set_entry(r,c,f);
       }
-  return result;
 }
 
-template<typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint cols) const
+template <typename CoeffRing>
+void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
 {
-  SMat<CoeffRing> *result = new SMat<CoeffRing>(R,nrows_,cols->len);
+  R = A.R;
+  coeffR = A.coeffR;
+  initialize(A.n_rows(), cols->len, NULL);
   for (int r=0; r<nrows_; r++)
     for (int c=0; c<cols->len; c++)
       {
         elem f;
-        get_entry(r,cols->array[c],f);
-        result->set_entry(r,c,f);
+        A.get_entry(r,cols->array[c],f);
+        set_entry(r,c,f);
       }
-  return result;
 }
 
 template <typename CoeffRing>
-bool SMat<CoeffRing>::is_equal(const MutableMatrix *B) const
-{
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
-  return 0;
-}
-
-template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::add(const MutableMatrix *B) const
+void SMat<CoeffRing>::addInPlace(const SMat<CoeffRing>& B)
   // return this + B.  return NULL of sizes or types do not match.
-  // note: can add a sparse + dense
-  //       can add a matrix over RR and one over CC and/or one over ZZ.
 {
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
-  return 0;
+  ASSERT(&B.ring() == &ring());
+  ASSERT(B.n_rows() == n_rows());
+  ASSERT(B.n_cols() == n_cols());
+
+  for (int c=0; c<n_cols(); c++)
+    {
+      sparsevec *v = vec_copy(B.columns_[c]);
+      vec_add_to(columns_[c], v);
+    }
 }
 
 template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::subtract(const MutableMatrix *B) const
-  // return this - B.  return NULL of sizes or types do not match.
-  // note: can subtract a sparse + dense
-  //       can subtract a matrix over RR and one over CC and/or one over ZZ.
+void SMat<CoeffRing>::subtractInPlace(const SMat<CoeffRing>& B)
+  // this -= B.
+  // assumption:the assert statements below:
 {
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
-  return 0;
+  ASSERT(&B.ring() == &ring());
+  ASSERT(B.n_rows() == n_rows());
+  ASSERT(B.n_cols() == n_cols());
+
+  for (int c=0; c<n_cols(); c++)
+    {
+      sparsevec *v = vec_copy(B.columns_[c]);
+      vec_negate(v);
+      vec_add_to(columns_[c], v);
+    }
+}
+
+template <typename CoeffRing>
+void SMat<CoeffRing>::negateInPlace()
+  // this = -this
+{
+  for (int c=0; c<n_cols(); c++)
+    for (sparsevec *p = columns_[c]; p != NULL; p=p->next)
+      ring().negate(p->coeff, p->coeff);
+}
+
+template <typename CoeffRing>
+void SMat<CoeffRing>::scalarMultInPlace(const elem &f)
+  // this = f * this
+{
+  for (int c=0; c<n_cols(); c++)
+    vec_scale(columns_[c], f);
 }
 
 template <typename CoeffRing>
@@ -937,15 +1001,6 @@ SMat<CoeffRing> * SMat<CoeffRing>::mult(const elem &f) const
 }
 
 template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::negate() const
-{
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
-  return 0;
-}
-
-template <typename CoeffRing>
 M2_arrayint columnEchelonForm(SMat<CoeffRing> *A)
 {
 #ifdef DEVELOPMENT
@@ -954,8 +1009,72 @@ M2_arrayint columnEchelonForm(SMat<CoeffRing> *A)
   return 0;
 }
 
+
+
+///////////////////////////////////
+/// Fast linear algebra routines //
+///////////////////////////////////
+
+template<typename CoeffRing>
+size_t SMat<CoeffRing>::rank() const
+{
+  ERROR("not implemented for this ring yet");
+  return static_cast<size_t>(-1);
+}
+
+template<typename CoeffRing>
+void SMat<CoeffRing>::determinant(elem &result) const
+{
+  ERROR("not implemented for this ring yet");
+}
+
+template<typename CoeffRing>
+bool SMat<CoeffRing>::invert(SMat<CoeffRing> &inverse) const
+{
+  ERROR("not implemented for this ring yet");
+  return false;
+}
+
+template<typename CoeffRing>
+M2_arrayintOrNull SMat<CoeffRing>::rankProfile(bool row_profile) const
+{
+  ERROR("not implemented for this ring yet");
+  return 0;
+}
+
+template<typename CoeffRing>
+void SMat<CoeffRing>::nullSpace(SMat<CoeffRing> &nullspace, bool right_side) const
+{
+  ERROR("not implemented for this ring yet");
+}
+
+template<typename CoeffRing>
+bool SMat<CoeffRing>::solveLinear(SMat<CoeffRing> &X, const SMat<CoeffRing> &B, bool right_side) const
+{
+  ERROR("not implemented for this ring yet");
+  return false;
+}
+
+template<typename CoeffRing>
+void SMat<CoeffRing>::addMultipleTo(const SMat<CoeffRing> &A,
+                                    const SMat<CoeffRing> &B,
+                                    bool transposeA,
+                                    bool transposeB,
+                                    ElementType& a,
+                                    ElementType& b)
+{
+  ERROR("not implemented for this ring yet");
+}
+
+
+#include "aring-ffpack.hpp"
 template class SMat<CoefficientRingZZ_NTL>;
 template class SMat<M2::ARingZZp>;
+template class SMat<M2::ARingTower>;
+template class SMat<M2::ARingZZpFFPACK>;
+template class SMat<M2::ARingGF>;
+template class SMat<M2::ARingGFM2>;
+
 template class SMat<CoefficientRingRRR>;
 template class SMat<CoefficientRingCCC>;
 template class SMat<CoefficientRingR>;

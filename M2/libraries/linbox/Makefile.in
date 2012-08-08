@@ -2,6 +2,7 @@ VERSION = 1.2.0
 URL = http://www.linalg.org
 PRECONFIGURE = autoconf
 
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # linking linbox as a shared library is bad, because then under Mac OS X its static constructors
 # get run before ours do, and it calls our "operator new", which calls GC_malloc, before we've
 # had a chance to initialize it.

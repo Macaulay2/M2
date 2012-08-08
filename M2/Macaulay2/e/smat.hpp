@@ -17,7 +17,9 @@ class SMat : public our_new_delete
 public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
-  typedef typename CoeffRing::ring_type RingType;
+  typedef elem ElementType; // same as elem.  Will possibly remove 'elem' later.
+
+  //typedef typename CoeffRing::ring_type RingType;
 
 private:
   struct sparsevec : public our_new_delete
@@ -30,7 +32,11 @@ private:
 public:
   SMat():R(0), coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
 
-  SMat(const RingType *R0, int nrows, int ncols); // Makes a zero matrix
+  SMat(const Ring *R0, const CoeffRing * coeffR0, int nrows, int ncols); // Makes a zero matrix
+
+  SMat(const SMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
+
+  SMat(const SMat<ACoeffRing> &M); // Copies (clones) M
 
   void grab(SMat *M);// swaps M and this.
 
@@ -40,8 +46,9 @@ public:
 
   int n_rows() const { return nrows_; }
   int n_cols() const { return ncols_; }
-  const RingType * get_ring() const { return R; }
+  const Ring * get_ring() const { return R; }
   const CoeffRing * get_CoeffRing() const { return coeffR; }
+  const CoeffRing& ring() const { return *coeffR; }
 
   //  void set_matrix(const SMat<CoeffRing> *mat0);
   void initialize(int nrows, int ncols, sparsevec **cols);
@@ -155,20 +162,9 @@ public:
                      M2_arrayint cols,
                      const MutableMatrix *M);
 
-  SMat<CoeffRing> *submatrix(M2_arrayint rows, M2_arrayint cols) const;
-
-  SMat<CoeffRing> *submatrix(M2_arrayint cols) const;
-
   bool is_zero() const;
 
-  bool is_equal(const MutableMatrix *B) const;
-
-  SMat * add(const MutableMatrix *B) const;
-
-  SMat * subtract(const MutableMatrix *B) const;
-  // return this - B.  return NULL of sizes or types do not match.
-  // note: can subtract a sparse + dense
-  //       can subtract a matrix over RR and one over CC and/or one over ZZ.
+  bool is_equal(const SMat& B) const;
 
   SMat * mult(const MutableMatrix *B) const;
   // return this * B.  return NULL of sizes or types do not match.
@@ -178,11 +174,69 @@ public:
   SMat * mult(const elem &f) const;
   // return f*this.  return NULL of sizes or types do not match.
 
-  SMat * negate() const;
+  ///////////////////////////////////
+  /// Fast linear algebra routines //
+  ///////////////////////////////////
+
+  size_t rank() const;
+
+  void determinant(elem &result) const;
+
+  // Set 'inverse' with the inverse of 'this'.  If the matrix is not square, or 
+  // the matrix is not invertible, or
+  // the ring is one in which the matrix cannot be inverted,
+  // then false is returned, and an error message is set.
+  bool invert(SMat<ACoeffRing> &inverse) const;
+
+  // Returns an array of increasing integers {n_1, n_2, ...}
+  // such that if M is the matrix with rows (resp columns, if row_profile is false)
+  // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
+  // NULL is returned, and an error is set, if this function is not available
+  // for the given choice of ring and dense/sparseness.
+  M2_arrayintOrNull rankProfile(bool row_profile) const;
+  
+  // Find a spanning set for the null space.  If M = this,
+  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
+  // otherwise return a matrix whose columns span {x | Mx = 0}
+  void nullSpace(SMat<ACoeffRing> &nullspace, bool right_side) const;
+
+  // X is set to  a matrix whose rows or columns solve either AX = B (right_side=true)
+  // or XA = B (right_side=false). If no solutions are found, false is returned.
+  bool solveLinear(SMat<ACoeffRing> &X, const SMat<ACoeffRing> &B, bool right_side) const;
+
+  /** C=this,A,B should be mutable matrices over the same ring, and a,b
+     elements of this ring. AND of the same density type.
+     C = b*C + a * op(A)*op(B),
+     where op(A) = A or transpose(A), depending on transposeA
+     where op(B) = B or transpose(B), depending on transposeB
+  */
+  void addMultipleTo(const SMat<ACoeffRing> &A,
+                     const SMat<ACoeffRing> &B,
+                     bool transposeA,
+                     bool transposeB,
+                     ElementType& a,
+                     ElementType& b);
+
+
+  // this += B, assertion failure on bad ring or bad sizes
+  void addInPlace(const SMat& B);
+
+  // this -= B, assertion failure on bad ring or bad sizes
+  void subtractInPlace(const SMat& B);
+
+  // this = -this
+  void negateInPlace();
+
+  // this = f * this
+  void scalarMultInPlace(const elem &f);
+
+  void setFromSubmatrix(const SMat &A, M2_arrayint rows, M2_arrayint cols);
+
+  void setFromSubmatrix(const SMat &A, M2_arrayint cols);
 
 private:
-  const RingType *R; // To interface to the outside world
-  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
+  const Ring *R; // To interface to the outside world
+  const CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
   int nrows_;
   int ncols_;
   sparsevec **columns_; // array has length nrows*ncols
@@ -195,9 +249,11 @@ private:
   void vec_remove_node(sparsevec *&v) const;
   void vec_remove(sparsevec *&v) const;
   sparsevec *vec_copy(const sparsevec *v) const;
+  bool vec_equals(const sparsevec* v, const sparsevec* w) const;
   bool vec_get_entry(const sparsevec *v, int r, elem &result) const;
   void vec_set_entry(sparsevec *&v, int r, const elem &result) const;
   void vec_interchange_rows(sparsevec *&v, int r1, int r2) const;
+  void vec_negate(sparsevec *&v) const;
   void vec_scale_row(sparsevec *&v, int r, const elem &a) const;
   void vec_scale(sparsevec *&v, const elem &a) const;
   void vec_divide_row(sparsevec *&v, int r, const elem &a) const;

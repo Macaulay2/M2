@@ -1,12 +1,12 @@
--------------------------------------------------------
+--------------------------------------------------------
 -- 12/26/2011 MES
 Cleaning up code todo:
 1. get gtest working
     i.e. a make file target
 2. create a gtest file
     linking test file
-3. tabs --> spaces
-    put in tab-mode-null into each file
+3. DONE tabs --> spaces
+   DONE put in tab-mode-null into each file
     change copyrights
 4. remove as many includes as possible
 5. maybe make a set of subdirectories of 'e':
@@ -18,7 +18,7 @@ Cleaning up code todo:
   tests (gtest stuff)
 6. buffer --> use ostringstream?
 7. text-io --> maybe keep these except for bignum_text_out?
-8. at some point, merge back in the stuff with Jakob, preferably soon
+8. DONE at some point, merge back in the stuff with Jakob, preferably soon
 9.
 
 ------------------------------------------------------

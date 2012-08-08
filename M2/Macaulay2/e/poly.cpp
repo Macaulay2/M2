@@ -256,7 +256,7 @@ ring_elem PolyRing::var(int v) const
   else
     {
 #ifndef NDEBUG
-      cerr << "internal error: PolyRing::var(int v) with v = " << v << "  nvars = " << nvars_ << endl;
+      std::cerr << "internal error: PolyRing::var(int v) with v = " << v << "  nvars = " << nvars_ << std::endl;
 #endif
       return ZERO_RINGELEM;
     }

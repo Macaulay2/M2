@@ -64,7 +64,7 @@ class Pair {
 
 // set of index pairs
 // always ordered
-typedef set<Pair> Pairs;
+typedef std::set<Pair> Pairs;
 
 // functions f and g, corresponding to index pair j and i, respectively
 class FunctionPair {

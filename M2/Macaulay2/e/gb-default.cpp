@@ -630,12 +630,10 @@ public:
 private:
   const FreeModule *F;
   GBRing *R;
-  long ncmps;
 public:
   int compare(value a, value b)
   {
     // returns: LT if a < b, EQ if a == b, GT if a > b.
-    ncmps ++;
     /* Compare using degree, then type, then lead term of spoly */
     int result;
     int cmp = a->deg - b->deg;
@@ -659,10 +657,13 @@ public:
     return result;
   }
 
-  SPolySorter(GBRing *R0, const FreeModule *F0)
-    : F(F0), R(R0), ncmps(0) {}
+  bool operator()(value a, value b)
+  {
+    return compare(a,b) == LT;
+  }
 
-  long ncomparisons() const { return ncmps; }
+  SPolySorter(GBRing *R0, const FreeModule *F0)
+    : F(F0), R(R0) {}
 
   ~SPolySorter() {}
 };
@@ -679,7 +680,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 //     debug_spair(new_set[i]);
 //   }
 #endif
-  sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
+  std::sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
   MonomialTable *montab = MonomialTable::make(_nvars);
 
   //  array_sort(new_set, (compareFcn)spair_compare, 0);
@@ -774,10 +775,25 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
           globalZZ->syzygy(f1->coeff, f2->coeff, u, v);
           coeffs.push_back(u.get_mpz());
           coeffs2.push_back(v.get_mpz());
+
+          if (mpz_cmpabs_ui(u.get_mpz(),1) && mpz_cmpabs_ui(v.get_mpz(),1))
+            {
+              spair *p2 = spair_make_gcd_ZZ(a->x.pair.i, a->x.pair.j);
+              if (M2_gbTrace >= 4)
+                {
+                  buffer o;
+                  spair_text_out(o, p2);
+                  emit_line(o.str());
+                }
+              spair_set_insert(p2);
+            }
         }
     }
 
-  MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
+  if (_strategy == 0)
+    MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
+  else
+    MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions, true);
 
   for (VECTOR(int)::iterator i = positions.begin(); i != positions.end(); i++)
     {
@@ -790,6 +806,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
           emit_line(o.str());
         }
       spair_set_insert(p);
+#if 0
       mpz_ptr u = coeffs[*i];
       mpz_ptr v = coeffs2[*i];
       if (p->type != SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
@@ -803,6 +820,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
             }
           spair_set_insert(p2);
         }
+#endif
     }
 }
 
@@ -1096,8 +1114,8 @@ void gbA::spairs_sort(int len, spair *&ps)
     }
 
   SPolySorter SP(R,_F);
-  QuickSorter<SPolySorter>::sort(&SP,&a[0],a.size());
-
+  //  QuickSorter<SPolySorter>::sort(&SP,&a[0],a.size());
+  std::sort(a.begin(), a.end(), SP);
   int asize = INTSIZE(a);
   int bsize = INTSIZE(b);
 

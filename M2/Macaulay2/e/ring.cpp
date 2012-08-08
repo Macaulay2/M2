@@ -227,11 +227,6 @@ int Ring::coerce_to_int(ring_elem) const
   return 0;
 }
 
-int Ring::discrete_log(ring_elem) const
-{
-  return -1;
-}
-
 bool Ring::from_BigComplex(gmp_CC z, ring_elem &result) const
 {
   result = from_int(0);

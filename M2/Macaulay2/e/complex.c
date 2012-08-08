@@ -44,10 +44,20 @@ int mpfc_is_zero(gmp_CC a)
 {
   return mpfr_cmp_si(a->re, 0) == 0 && mpfr_cmp_si(a->im, 0) == 0;
 }
+
+int mpfc_is_equal(gmp_CC a, gmp_CC b)
+{
+  return mpfr_cmp(a->re, b->re) == 0 && mpfr_cmp(a->im, b->im) == 0;
+}
 void mpfc_add(gmp_CC result, gmp_CC a, gmp_CC b)
 {
   mpfr_add(result->re, a->re, b->re, GMP_RNDN);
   mpfr_add(result->im, a->im, b->im, GMP_RNDN);
+}
+void mpfc_neg(gmp_CC result, gmp_CC a)
+{
+  mpfr_neg(result->re, a->re, GMP_RNDN);
+  mpfr_neg(result->im, a->im, GMP_RNDN);
 }
 void mpfc_sub(gmp_CC result, gmp_CC a, gmp_CC b)
 {

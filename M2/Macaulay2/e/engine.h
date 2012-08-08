@@ -172,8 +172,32 @@ extern "C" {
   const Ring /* or null */ *rawARingZZp(int p); /* connected */
     /* Expects a prime number p in range 2 <= p <= 32749 */
 
+  const Ring /* or null */ *rawARingGaloisField1(const RingElement *prim); /* connected */
+  /* same interface as rawGaloisField, but uses different internal code */
+
+  const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *prim); /* connected */
+  /* same interface as rawGaloisField, but uses Givaro */
+
   const Ring /* or null */ *rawARingGaloisField(int p, int n); /* connected */
   /* creates a ring GF(p^n).  Constraints on p, n? */
+  /* returns null if the values p,n are too large  */
+
+
+  M2_arrayintOrNull rawARingGFPolynomial(const Ring *R);
+  /* given an ARingGF, return the coefficient array of the quotient polynoials.
+     So, if R = kk[a]/(f(a)), where kk = ZZ/p, then the (integer) coefficients
+     {f0, f1, f2, ..., f_(degree f)} is returned.
+   */
+
+  M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f);
+  /* f can be written as a polynomial in the generator a, e.g.
+     f = f0 + a*f1 + ... + a^(d-1) * f_(d-1), where d = deg of the
+     ring over ZZ/p.  This function returns {f0, f1, ..., f_(d-1)},
+     where each entry is an integer */
+
+  const RingElement*  rawARingGFGenerator(const Ring *R);
+  /* given an ARingGF, return the  the generator of the multiplicative group.
+    */
 
   /**************************************************/
   /**** Ring routines *******************************/
@@ -263,6 +287,12 @@ extern "C" {
 
   const Ring /* or null */ *rawTowerRing2(const Ring *R1, M2_ArrayString new_names);
   const Ring /* or null */ *rawTowerRing3(const Ring *R1, engine_RawRingElementArray eqns);
+
+  const Ring /* or null */ *rawARingTower1(const Ring *R1, M2_ArrayString names);
+  /* Create a tower ring with the given variable names and base ring */
+
+  const Ring /* or null */ *rawARingTower2(const Ring *R1, M2_ArrayString new_names);
+  const Ring /* or null */ *rawARingTower3(const Ring *R1, engine_RawRingElementArray eqns);
 
 
   const Ring /* or null */ *IM2_Ring_schur(const Ring *R); /* drg: reconnected rawSchurRing */
@@ -1211,6 +1241,11 @@ extern "C" {
   /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
      out of range, 0 is returned. */
 
+  /**
+     Is the matrix implemented as a contiguous array of elements?
+   */
+  M2_bool rawMutableMatrixIsDense(const MutableMatrix *M);
+
   M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M); /* drg: connected rawIsZero, OK */
 
   M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M,
@@ -1240,6 +1275,47 @@ extern "C" {
   /* Using row and column operations, use unit pivots to reduce the matrix */
   /* A return value of false means that the computation was interrupted */
 
+  size_t rawLinAlgRank(MutableMatrix* M);
+
+  /** requires: M should be a square matrix.  
+      If not, or if the ring has not implemented this routine,
+      then -1 is returned (and an error message is given).
+   */
+  const RingElement* rawLinAlgDeterminant(MutableMatrix* A);
+
+  MutableMatrix* rawLinAlgInvert(MutableMatrix* A);
+
+  M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile);
+
+  MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side);
+
+  MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
+                                const MutableMatrix* B,
+                                M2_bool right_side);
+
+  /** A,B,C should be mutable matrices over the same ring, and a,b
+     elements of this ring.
+     C = b*C + a * op(A)*op(B),
+     where op(A) = A or transpose(A), depending on transposeA
+     where op(B) = B or transpose(B), depending on transposeB
+  */ 
+  MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
+                                                      const MutableMatrix* A,
+                                                      const MutableMatrix* B,
+                                                      M2_bool transposeA,
+                                                      M2_bool transposeB,
+                                                      const RingElement* a,
+                                                      const RingElement* b);
+
+  engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A);
+  // returns an array whose coefficients give the characteristic polynomial of the square matrix A
+
+  engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix* A);
+  // returns an array whose coefficients give the minimal polynomial of the square matrix A
+
+
+
+
   RingElement *rawFFPackDeterminant(MutableMatrix *M);
   /* connected to rawFFPackDeterminant, MES */
   /* requires: M should be a square matrix over a prime finite field */
@@ -1263,8 +1339,8 @@ extern "C" {
   /* requires: M should be a square matrix over a prime finite field */
 
   MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
-                                                      MutableMatrix *A,
-                                                      MutableMatrix *B,
+                                                      const MutableMatrix *A,
+                                                      const MutableMatrix *B,
                                                       M2_bool transposeA,
                                                       M2_bool transposeB,
                                                       const RingElement *a,
@@ -1282,6 +1358,8 @@ extern "C" {
 
   M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A);
   /* connected, MES */
+
+  engine_RawArrayIntPairOrNull rawLQUPFactorization(MutableMatrix *A);
 
   /***************************************************
    ***** Lapack routines for dense mutable matrices **

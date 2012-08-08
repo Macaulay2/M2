@@ -257,3 +257,24 @@
  			   const enum CBLAS_DIAG Diag,const int N, double *A, const int lda)
  	{
  		int info;
+--- ffpack.h	2011-05-24 18:16:40.000000000 +0200
++++ fflas-ffpack-1.4.2.169/fflas-ffpack/ffpack/ffpack.h	2012-05-17 16:34:59.000000000 +0200
+@@ -1494,7 +1494,7 @@ namespace FFPACK  {
+ 	}
+ 
+ 	template <class Field, class Polynomial>
+-	static std::list<Polynomial>&
++	static Polynomial &
+ 	CharPoly( const Field& F, Polynomial& charp, const size_t N,
+ 		  typename Field::Element * A, const size_t lda,
+ 		  const FFPACK_CHARPOLY_TAG CharpTag= FfpackArithProg)
+@@ -1508,7 +1508,8 @@ namespace FFPACK  {
+ 		charp.resize(N+1);
+ 
+ 		Polynomial P = *(it++);
+-		while( it!=factor_list.end() ){
++		charp = P; 		
++		while( it!=factor_list.end() ){		   
+ 			mulpoly (F,charp, P, *it);
+ 			P = charp;
+ 

@@ -6,7 +6,6 @@
 #include <ctime>
 
 #include "f4.hpp"
-#include "monsort.hpp"
 #include "../freemod.hpp"
 #include "../polyring.hpp"
 
@@ -150,73 +149,6 @@ int F4GB::syz_new_column(packed_monomial m)
   c.head = -2;
   syz->columns.push_back(c);
   return next_column;
-}
-
-void F4GB::syz_reorder_columns()
-{
-  if (!using_syz) return;
-
-  // Same as reorder_columns(), but for syzygy matrix
-
-  int nrows = INTSIZE(syz->rows);
-  int ncols = INTSIZE(syz->columns);
-
-  // sort the columns
-
-  int *column_order = Mem->components.allocate(ncols);
-  int *ord = Mem->components.allocate(ncols);
-
-  clock_t begin_time = clock();
-  for (int i=0; i<ncols; i++)
-    {
-      column_order[i] = i;
-    }
-
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, "ncomparisons = ");
-
-  ColumnsSorter C(M, syz);
-  QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
-
-  clock_t end_time = clock();
-
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, "%ld, ", C.ncomparisons());
-  double nsecs = (double)(end_time - begin_time)/CLOCKS_PER_SEC;
-  syz_clock_sort_columns += nsecs;
-
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, " time = %f\n", nsecs);
-
-  for (int i=0; i<ncols; i++)
-    {
-      ord[column_order[i]] = i;
-    }
-
-  // Now move the columns into position
-  coefficient_matrix::column_array newcols;
-  newcols.reserve(ncols);
-  for (int i=0; i<ncols; i++)
-    {
-      long newc = column_order[i];
-      newcols.push_back(syz->columns[newc]);
-    }
-
-  // Now reset the components in each row
-  for (int r=0; r<nrows; r++)
-    {
-      row_elem &row = syz->rows[r];
-      for (int i=0; i<row.len; i++)
-        {
-          int oldcol = row.comps[i];
-          int newcol = ord[oldcol];
-          row.comps[i] = newcol;
-        }
-    }
-
-  std::swap(syz->columns, newcols);
-  Mem->components.deallocate(column_order);
-  Mem->components.deallocate(ord);
 }
 
 ////////////////////////////////////////////////

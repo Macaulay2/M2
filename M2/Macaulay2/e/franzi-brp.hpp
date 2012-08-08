@@ -11,7 +11,6 @@
 // addition is not const! It changes this
 //////// CAREFUL ////////
 
-using namespace std;
 typedef unsigned long brMonomial;
 
 struct lex {
@@ -20,13 +19,13 @@ struct lex {
   }
 };
 
-typedef list<brMonomial> monomials;
-typedef set<brMonomial,lex> monomials_set;
+typedef std::list<brMonomial> monomials;
+typedef std::set<brMonomial,lex> monomials_set;
 
 class BRP
 {
 
-  friend ostream& operator<< (ostream &out, const BRP &self) {
+  friend std::ostream& operator<< (std::ostream &out, const BRP &self) {
     for(monomials::const_iterator i = self.m.begin(); i != self.m.end(); ++i) {
       out << *i;
       out << " ";
@@ -90,9 +89,9 @@ class BRP
 };
 
 
-typedef map<int,BRP> IntermediateBasisMap;
-typedef map<int,BRP> IntermediateBasis;
-//typedef vector<BRP*> IntermediateBasis;
+typedef std::map<int,BRP> IntermediateBasisMap;
+typedef std::map<int,BRP> IntermediateBasis;
+//typedef std::vector<BRP*> IntermediateBasis;
 
 
 // Local Variables:

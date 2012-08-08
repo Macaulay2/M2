@@ -89,7 +89,8 @@ public:
                                    const VECTOR(mpz_ptr) &coeffs,
                                    const VECTOR(exponents) &exps,
                                    const VECTOR(int) &comps,
-                                   VECTOR(int) &result_positions);
+                                   VECTOR(int) &result_positions,
+                                   bool use_stable_sort=false);
 
   static void find_strong_generators(int nvars,
                                    const VECTOR(mpz_ptr) &coeffs,
@@ -100,7 +101,7 @@ public:
   void show_mon_term(FILE *fil, mon_term *t) const; /* Only for debugging */
   void show(FILE *fil) const; /* Only for debugging */
   void showmontable();
-
+  void show_weak(FILE *fil, mpz_ptr coeff, exponents exp, int comp, int val) const; /* Debugging */
 
 private:
   int _nvars;

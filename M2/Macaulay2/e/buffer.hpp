@@ -3,6 +3,8 @@
 #ifndef _buffer_hpp_
 #define _buffer_hpp_
 
+#include <string>
+
 #include "engine.h"
 #include "newdelete.hpp"
 
@@ -51,6 +53,7 @@ public:
   void put(unsigned int n, int width);  // Format the integer, with given width field.
   void put(unsigned long n);            // Format the integer, place into buffer
   void put(unsigned long n, int width); // Format the integer, with given width field.
+  void put(std::string s) { put(s.data(), s.size()); }
 
   // To put an endline in:
   // o.put(newline);
@@ -64,6 +67,7 @@ public:
 
   buffer &operator<<(const char *s) { put(s); return *this; }
   buffer &operator<<(M2_string s) { put(s->array, s->len); return *this; }
+  buffer &operator<<(std::string s) { put(s); return *this; }
   buffer &operator<<(long n) { put(n); return *this; }
   buffer &operator<<(unsigned int n) { put(n); return *this; }
   buffer &operator<<(unsigned long n) { put(n); return *this; }

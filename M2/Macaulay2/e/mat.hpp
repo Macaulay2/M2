@@ -3,59 +3,19 @@
 #ifndef _mat_hpp_
 #define _mat_hpp_
 
+#include "exceptions.hpp"
 #include "hash.hpp"
-#include "error.h"
-#include "buffer.hpp"
-#include "ringelem.hpp"
-#include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
 #include "relem.hpp"
-#include <vector>
 
-#include "dmat.hpp"
-#include "smat.hpp"
-
-inline bool error_column_bound(int c, int ncols)
-{
-  if (c < 0 || c >= ncols)
-    {
-      ERROR("column out of range");
-      return true;
-    }
-  return false;
-}
-
-inline bool error_row_bound(int r, int nrows)
-{
-  if (r < 0 || r >= nrows)
-    {
-      ERROR("row out of range");
-      return true;
-    }
-  return false;
-}
+class buffer;
+class RingElement;
+class Ring;
+class Matrix;
+template<class T> class MutableMat;
 
 /**
  * \ingroup matrices
  */
-template<class T> class MutableMat;
-class Ring;
-class Matrix;
-class MutableMatrix;
-
-#if 0
-typedef DMat<CoefficientRingZZp> DMatZZp;
-typedef DMat<CoefficientRingRRR> DMatRR;
-typedef DMat<CoefficientRingCCC> DMatCC;
-typedef DMat<CoefficientRingZZ_NTL> DMatZZ;
-typedef DMat<CoefficientRingR> DMatR;
-
-typedef SMat<CoefficientRingZZp> SMatZZp;
-typedef SMat<CoefficientRingRRR> SMatRR;
-typedef SMat<CoefficientRingCCC> SMatCC;
-typedef SMat<CoefficientRingZZ_NTL> SMatZZ;
-typedef SMat<CoefficientRingR> SMatR;
-#endif
 
 class MutableMatrix : public mutable_object
 {
@@ -108,10 +68,14 @@ public:
   // Casts down the hierarchy //
   //////////////////////////////
   template< typename MatType>
-  MutableMat<MatType> * cast_to_MutableMat() { return dynamic_cast< MutableMat<MatType> *>(this); }
+  MutableMat<MatType> * cast_to_MutableMat() { 
+    return dynamic_cast< MutableMat<MatType> *>(this); 
+  }
 
   template< typename MatType>
-  const MutableMat<MatType> * cast_to_MutableMat() const { return dynamic_cast< const MutableMat<MatType> *>(this); }
+  const MutableMat<MatType> * cast_to_MutableMat() const { 
+    return dynamic_cast< const MutableMat<MatType> *>(this); 
+  }
 
   template<typename MatT> MatT * coerce();
 
@@ -215,8 +179,6 @@ public:
 
   virtual MutableMatrix /* or null */ * add(const MutableMatrix *B) const = 0;
   // return this + B.  return NULL of sizes or types do not match.
-  // note: can add a sparse + dense
-  //       can add a matrix over RR and one over CC and/or one over ZZ.
 
   virtual MutableMatrix /* or null */ * subtract(const MutableMatrix *B) const = 0;
   // return this - B.  return NULL of sizes or types do not match.
@@ -261,475 +223,89 @@ public:
   virtual bool least_squares(const MutableMatrix *b,
                              MutableMatrix *x,
                              bool assume_full_rank) const = 0;
-};
 
-///////////////////////////////////////////////////
-// Wrapper class for a type which implements Mat //
-///////////////////////////////////////////////////
+  ///////////////////////////////////
+  /// LU decomposition routines /////
+  ///////////////////////////////////
 
-template<typename Mat>
-class MutableMat : public MutableMatrix
-{
-  typedef Mat MatType;
-  typedef typename Mat::CoeffRing CoeffRing;
-  typedef typename CoeffRing::ring_type RingType;
-  typedef typename CoeffRing::elem elem;
-  Mat mat;
-  // This class wraps the operations for Mat to make a MutableMatrix
-
-  // Same operations as in MutableMatrix.  Almost nothing is
-  // done except to call the Mat routines.
-
-  // Linear algebra routines: Default is to return 0.
-  // Caller must then make error message?
-  // Specific template instances must provide these functions
-  MutableMat() {}
-
-  MutableMat(const RingType *R, int nrows, int ncols)
-    : mat(R,nrows,ncols) {}
-public:
-#if 0
-  virtual DMatRR * get_DMatRR();
-  virtual DMatCC * get_DMatCC();
-  virtual DMatZZp * get_DMatZZp();
-  virtual DMatZZ * get_DMatZZ();
-  virtual DMatR * get_DMatR();
-
-  virtual SMatRR * get_SMatRR();
-  virtual SMatCC * get_SMatCC();
-  virtual SMatZZp * get_SMatZZp();
-  virtual SMatZZ * get_SMatZZ();
-  virtual SMatR * get_SMatR();
-
-  virtual const DMatRR * get_DMatRR() const;
-  virtual const DMatCC * get_DMatCC() const;
-  virtual const DMatZZp * get_DMatZZp() const;
-  virtual const DMatZZ * get_DMatZZ() const;
-  virtual const DMatR * get_DMatR() const;
-
-  virtual const SMatRR * get_SMatRR() const;
-  virtual const SMatCC * get_SMatCC() const;
-  virtual const SMatZZp * get_SMatZZp() const;
-  virtual const SMatZZ * get_SMatZZ() const;
-  virtual const SMatR * get_SMatR() const;
-
-  virtual Mat_ZZp *get_mat_ZZp();
-#endif
-
-  Mat * get_Mat() { return &mat; }
-  const Mat * get_Mat() const { return &mat; }
-
-  class iterator : public MutableMatrix::iterator
-  {
-    typename Mat::iterator i;
-  public:
-    iterator(const Mat *M0) : i(M0) {}
-    void set(int col0) { i.set(col0); }
-    void next() { i.next(); }
-    bool valid() { return i.valid(); }
-    int row() { return i.row(); }
-    elem value() { return i.value(); }
-    void copy_ring_elem(ring_elem &result) { i.copy_elem(result); }
-  };
-
-  static MutableMat *zero_matrix(const RingType *R, int nrows, int ncols)
-  {
-    return new MutableMat(R,nrows,ncols);
+  // A = m x n 'this' is factored as A = LQUP, where 
+  //   L is m x m lower unit triangular
+  //   U is m x n upper triangular
+  //   Q is a m x m permutation matrix
+  //   P is an n x n permutation matrix
+  // However, the result is constructed in an abbreviated, encoded format:
+  // First, the entries of A are modified:
+  //   L and U are placed into A
+  // Two integer arrays are returned:
+  // The first represents Q, giving the rows of U ??
+  // The second represents P, which tells which columns of A have non-zero pivots
+  //   (and, the elements below the main diagonal in these columns form the lower part of L).
+  // If the ring or matrix type does not support this computation, an engine_error is thrown.
+  virtual engine_RawArrayIntPairOrNull LQUPFactorizationInPlace(bool transpose) { 
+    throw exc::engine_error("not implemented for this ring or matrix type");
   }
 
-  static MutableMat *grab_Mat(const Mat *m);
+  // Return a permutation P of 0..nrows-1 and place into LU
+  // the encoded L and U matrices, such that this = A = PLU
+  virtual M2_arrayintOrNull LU1(MutableMatrix *LU) const { return 0; }
 
-  virtual iterator * begin() const { return new iterator(&mat); }
+  // If X = this, and A = PLU, then replace X with a solution to AX=B
+  // If the sizes don't match, return null, otherwise return 'this'
+  // ASSUMPTION: (LU, row_permutation) is the result of an LU
+  // decomposition of A.  (LU is encoded as in LU1).
+  virtual MutableMatrix *LUSolve(const MutableMatrix *LU,
+                                 const M2_arrayint row_permutation,
+                                 const MutableMatrix *B) const { return 0; }
 
-  virtual const Ring * get_ring() const { return mat.get_ring(); }
+  /// Fast linear algebra routines (well, fast for some rings)
 
-  virtual int n_rows() const { return mat.n_rows(); }
+  virtual size_t rank() const { return static_cast<size_t>(-1); }
 
-  virtual int n_cols() const { return mat.n_cols(); }
+  virtual const RingElement* determinant() const { return NULL; }
 
-  virtual bool is_dense() const { return mat.is_dense(); }
+  // Find the inverse matrix.  If the matrix is not square, or 
+  // the ring is one in which th matrix cannot be inverted,
+  // then NULL is returned, and an error message is set.
+  virtual MutableMatrix* invert() const { return 0; }
 
-  virtual MutableMat *copy(bool prefer_dense) const
-  {
-    MutableMat *result = new MutableMat;
-    Mat *m = mat.copy();
-    result->mat.grab(m);
-    return result;
+  // Returns an array of increasing integers {n_1, n_2, ...}
+  // such that if M is the matrix with rows (resp columns, if row_profile is false)
+  // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
+  // NULL is returned, and an error is set, if this function is not available
+  // for the given choice of ring and dense/sparseness.
+  virtual M2_arrayintOrNull rankProfile(bool row_profile) const { return 0; }
+  
+  // Find a spanning set for the null space.  If M = this,
+  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
+  // otherwise return a matrix whose columns span {x | Mx = 0}
+  virtual MutableMatrix* nullSpace(bool right_side) const { return 0; }
+
+  // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
+  // or xA = B (right_side=false).  The first argument returned is false
+  // in this case.
+  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
+                                                      bool right_side) const { 
+    return std::pair<bool, MutableMatrix*>(0,NULL); 
   }
 
-  virtual int lead_row(int col) const { return mat.lead_row(col); }
-  /* returns the largest index row which has a non-zero value in column 'col'.
-     returns -1 if the column is 0 */
-
-  virtual int lead_row(int col, ring_elem &result) const
-  /* returns the largest index row which has a non-zero value in column 'col'.
-     Also sets result to be the entry at this index.
-     returns -1 if the column is 0 */
-  {
-    elem b;
-    mat.get_CoeffRing()->set_zero(b);
-    int ret = mat.lead_row(col, b);
-    if (ret >= 0)
-      mat.get_CoeffRing()->to_ring_elem(result, b);
-    return ret;
-  }
-
-  virtual bool get_entry(int r, int c, ring_elem &result) const
-  // Returns false if (r,c) is out of range or if result is 0.  No error
-  // is returned. result <-- this(r,c), and is set to zero if false is returned.
-  {
-    if (r >= 0 && r < n_rows() && c >= 0 && c < n_cols())
-      {
-        elem a;
-        mat.get_CoeffRing()->set_zero(a);
-        if (mat.get_entry(r,c,a))
-          {
-            mat.get_CoeffRing()->to_ring_elem(result,a);
-            return true;
-          }
-      }
-
-    result = mat.get_ring()->zero();
-    return false;
-  }
-
-  virtual bool set_entry(int r, int c, const ring_elem a)
-  // Returns false if (r,c) is out of range, or the ring of a is wrong.
-  {
-    if (error_row_bound(r,n_rows())) return false;
-    if (error_column_bound(c,n_cols())) return false;
-    elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,a);
-    mat.set_entry(r,c,b);
-    return true;
-  }
-
-  ///////////////////////////////
-  // Row and column operations //
-  ///////////////////////////////
-  // The following routines return false if one of the row or columns given
-  // is out of range.
-
-  virtual bool interchange_rows(int i, int j)
-  /* swap rows: row(i) <--> row(j) */
-  {
-    int nrows = n_rows();
-    if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
-      return false;
-    mat.interchange_rows(i,j);
-    return true;
-  }
-
-  virtual bool interchange_columns(int i, int j)
-  /* swap columns: column(i) <--> column(j) */
-  {
-    int ncols = n_cols();
-    if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
-      return false;
-    mat.interchange_columns(i,j);
-    return true;
-  }
-
-  virtual bool scale_row(int i, ring_elem r)
-  /* row(i) <- r * row(i) */
-  {
-    int nrows = n_rows();
-    if (error_row_bound(i,nrows))
-      return false;
-    elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.scale_row(i,b);
-    return true;
-  }
-
-  virtual bool scale_column(int i, ring_elem r)
-  /* column(i) <- r * column(i) */
-  {
-    int ncols = n_cols();
-    if (error_column_bound(i,ncols))
-      return false;
-    elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.scale_column(i,b);
-    return true;
-  }
-
-  virtual bool divide_row(int i, ring_elem r)
-  /* row(i) <- row(i) / r */
-  {
-    int nrows = n_rows();
-    if (error_row_bound(i,nrows))
-      return false;
-    elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.divide_row(i,b);
-    return true;
-  }
-
-  virtual bool divide_column(int i, ring_elem r)
-  /* column(i) <- column(i) / r */
-  {
-    int ncols = n_cols();
-    if (error_column_bound(i,ncols))
-      return false;
-    elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.divide_column(i,b);
-    return true;
-  }
-
-  virtual bool row_op(int i, ring_elem r, int j)
-  /* row(i) <- row(i) + r * row(j) */
-  {
-    int nrows = n_rows();
-    if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
-      return false;
-    if (i == j) return true;
-    elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.row_op(i,b,j);
-    return true;
-  }
-
-  virtual bool column_op(int i, ring_elem r, int j)
-  /* column(i) <- column(i) + r * column(j) */
-  {
-    int ncols = n_cols();
-    if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
-      return false;
-    if (i == j) return true;
-    elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.column_op(i,b,j);
-    return true;
-  }
-
-  virtual bool column2by2(int c1, int c2,
-                          ring_elem a1, ring_elem a2,
-                          ring_elem b1, ring_elem b2)
-  /* column(c1) <- a1 * column(c1) + a2 * column(c2),
-     column(c2) <- b1 * column(c1) + b2 * column(c2)
+  /** C=this,A,B should be mutable matrices over the same ring, and a,b
+     elements of this ring. AND of the same density type.
+     C = b*C + a * op(A)*op(B),
+     where op(A) = A or transpose(A), depending on transposeA
+     where op(B) = B or transpose(B), depending on transposeB
   */
+  virtual void               addMultipleTo(const MutableMatrix* A,
+                                             const MutableMatrix* B,
+                                             bool transposeA,
+                                             bool transposeB,
+                                             const RingElement* a,
+                                             const RingElement* b)
   {
-    int ncols = n_cols();
-    if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
-      return false;
-    if (c1 == c2) return true;
-    elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
-    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
-    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
-    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
-    mat.column2by2(c1,c2,aa1,aa2,bb1,bb2);
-    return true;
+    //std::cerr << "MutableMatrix : rawLinAlgAddMultipleTo" << std::endl;
+    return ;
   }
 
-  virtual bool row2by2(int r1, int r2,
-                       ring_elem a1, ring_elem a2,
-                       ring_elem b1, ring_elem b2)
-  /* row(r1) <- a1 * row(r1) + a2 * row(r2),
-     row(r2) <- b1 * row(r1) + b2 * row(r2)
-  */
-  {
-    int nrows = n_rows();
-    if (error_row_bound(r1,nrows) || error_row_bound(r2,nrows))
-      return false;
-    if (r1 == r2) return true;
-    elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
-    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
-    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
-    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
-    mat.row2by2(r1,r2,aa1,aa2,bb1,bb2);
-    return true;
-  }
-
-  virtual bool dot_product(int c1, int c2, ring_elem &result) const
-  {
-    int ncols = n_cols();
-    if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
-      return false;
-    elem a;
-    mat.get_CoeffRing()->set_zero(a);
-    mat.dot_product(c1,c2,a);
-    mat.get_CoeffRing()->to_ring_elem(result,a);
-    return true;
-  }
-
-  virtual bool row_permute(int start_row, M2_arrayint perm)
-  {
-    return mat.row_permute(start_row, perm);
-  }
-
-  virtual bool column_permute(int start_col, M2_arrayint perm)
-  {
-    return mat.column_permute(start_col, perm);
-  }
-
-  virtual bool insert_columns(int i, int n_to_add)
-  /* Insert n_to_add columns directly BEFORE column i. */
-  {
-    if (i < 0 || i > n_cols() || n_to_add < 0)
-      {
-        ERROR("cannot insert %l columns before column %ln",n_to_add,i);
-        return false;
-      }
-    mat.insert_columns(i, n_to_add);
-    return true;
-  }
-
-  virtual bool insert_rows(int i, int n_to_add)
-  /* Insert n_to_add rows directly BEFORE row i. */
-  {
-    if (i < 0 || i > n_rows() || n_to_add < 0)
-      {
-        ERROR("cannot insert %l rows before row %ln",n_to_add,i);
-        return false;
-      }
-    mat.insert_rows(i, n_to_add);
-    return true;
-  }
-
-  virtual bool delete_columns(int i, int j)
-  /* Delete columns i .. j from M */
-  {
-    int ncols = n_cols();
-    if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
-      {
-        ERROR("column index out of range");
-        return false;
-      }
-
-    mat.delete_columns(i, j);
-    return true;
-  }
-
-  virtual bool delete_rows(int i, int j)
-  /* Delete rows i .. j from M */
-  {
-    int nrows = n_rows();
-    if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
-      {
-        ERROR("row index out of range");
-        return false;
-      }
-    mat.delete_rows(i, j);
-    return true;
-  }
-
-  virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const
-  {
-    MutableMat *M = new MutableMat;
-    M->mat.grab(mat.submatrix(rows,cols));
-    return M;
-  }
-
-  virtual MutableMatrix * submatrix(M2_arrayint cols) const
-  {
-    MutableMat *M = new MutableMat;
-    M->mat.grab(mat.submatrix(cols));
-    return M;
-  }
-
-  virtual bool set_submatrix(M2_arrayint rows,
-                             M2_arrayint cols,
-                             const MutableMatrix *N)
-  // returns false iff there is an error
-  {
-    return mat.set_submatrix(rows,cols,N);
-  }
-
-  ///////////////////////////////
-  // Matrix operations //////////
-  ///////////////////////////////
-
-  virtual bool is_zero() const
-  {
-    return mat.is_zero();
-  }
-
-  virtual bool is_equal(const MutableMatrix *B) const
-  {
-    return mat.is_equal(B);
-  }
-
-  virtual MutableMat * add(const MutableMatrix *B) const
-  // return this + B.  return NULL if sizes or types do not match.
-  // note: can add a sparse + dense
-  //       can add a matrix over RR and one over CC and/or one over ZZ.
-  {
-    MutableMat *result = new MutableMat;
-    result->mat.grab(mat.add(B));
-    return result;
-  }
-
-  virtual MutableMat * subtract(const MutableMatrix *B) const
-  // return this - B.  return NULL of sizes or types do not match.
-  // note: can subtract a sparse + dense
-  //       can subtract a matrix over RR and one over CC and/or one over ZZ.
-  {
-    MutableMat *result = new MutableMat;
-    result->mat.grab(mat.subtract(B));
-    return result;
-  }
-
-  virtual MutableMat * mult(const MutableMatrix *B) const
-  // return this * B.  return NULL of sizes or types do not match.
-  // note: can mult a sparse + dense
-  //       can mult a matrix over RR and one over CC and/or one over ZZ.
-  {
-    MutableMat *result = new MutableMat;
-    result->mat.grab(mat.mult(B));
-    return result;
-  }
-
-  virtual MutableMat * mult(const RingElement *f) const
-  // return f*this.  return NULL of sizes or types do not match.
-  {
-    elem a;
-    mat.get_CoeffRing()->from_ring_elem(a, f->get_value());
-    MutableMat *result = new MutableMat;
-    result->mat.grab(mat.mult(a));
-    return result;
-  }
-
-  virtual MutableMatrix * negate() const
-  {
-    MutableMat *result = new MutableMat;
-    result->mat.grab(mat.negate());
-    return result;
-  }
-
-  ///////////////////////////////
-  // Linear algebra /////////////
-  ///////////////////////////////
-
-  virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const;
-  // resets x, find a basis of solutions for Ax=b
-  // assumes that 'this' is full rank and a square matrix
-
-  virtual bool nullspaceU(MutableMatrix *x) const;
-  // resets x, find a basis of solutions for Ux=0, U upper triangular
-
-  virtual M2_arrayintOrNull LU(MutableMatrix *L,
-                                MutableMatrix *U) const;
-
-  virtual bool eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const;
-
-  virtual bool eigenvectors(MutableMatrix *eigenvals,
-                            MutableMatrix *eigenvecs,
-                            bool is_symm_or_hermitian) const;
-
-  virtual bool SVD(MutableMatrix *Sigma,
-                   MutableMatrix *U,
-                   MutableMatrix *Vt,
-                   bool use_divide_and_conquer) const;
-
-  virtual bool least_squares(const MutableMatrix *b,
-                             MutableMatrix *x,
-                             bool assume_full_rank) const;
 };
-
 
 #endif
 

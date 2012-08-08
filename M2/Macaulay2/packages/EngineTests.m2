@@ -11,11 +11,12 @@ newPackage(
         )
 
 export { ringOps, 
-     testMutableMatrices
+     testMutableMatrices,
+     testFrac
      }
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
-load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
+--load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
 
 beginDocumentation()
 
@@ -30,6 +31,26 @@ Caveat
 SeeAlso
 ///
 
+///
+testFracRaw = () -> (
+     debug Core;
+     K = rawFractionOverNoetherNormalization(raw R, 1);
+     f = (raw 1_K) / (raw x);
+     g = 1_K / y;
+     assert(f + g == (raw (x+y)) / raw (x*y));
+     )
+testFrac = () -> (
+     R = ZZ/101[y,x,MonomialOrder=>{1,1}]/(y^3-x^2*y^2-x-3);
+     K = frac R;
+     assert(1/x + 1/y == (x+y)/(x*y));
+     assert(1/x - 1/y == (-x+y)/(x*y));
+     1/y;
+     1(y-x);
+     x/y^3;
+     )
+///
+
+load (EngineTests#"source directory"|"EngineTests/test-tower-rings.m2")
 -- Tests of mutable matrix operations over ZZ/p
 
 -- Test tow and column operations on dense and sparse mutable matrices,
@@ -211,6 +232,40 @@ testops4 = (R) -> (
   assert(m1 == m2);
   )
 
+testops5 = (R) -> (
+     << "testops5 (submatrix, scalar mult)..." << endl;
+     -- submatrix, scalar mult
+     m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
+     assert(2*m == m+m);
+     assert(3*m == m+m+m);
+     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
+     assert(2*m == m+m);
+     assert(3*m == m+m+m);
+     -- submatrices for dense matrix types:
+     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
+     submatrix(m, {1,2,4,2}, {3,2,1});
+     submatrix(matrix m, {1,2,4,3}, {3,2,1});
+     assert(submatrix(m, {1,2,4,3}, {3,2,1}) == mutableMatrix submatrix(matrix m, {1,2,4,3}, {3,2,1}));
+     assert(submatrix(m, {3,2,1}) == mutableMatrix submatrix(matrix m, {3,2,1}));
+     -- submatrices for sparse matrix types:
+     --m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
+     --submatrix(m, {1,2,4,2}, {3,2,1});
+     --submatrix(matrix m, {1,2,4,3}, {3,2,1})
+     --assert(submatrix(m, {1,2,4,3}, {3,2,1}) == mutableMatrix submatrix(matrix m, {1,2,4,3}, {3,2,1}));
+     --assert(submatrix(m, {3,2,1}) == mutableMatrix submatrix(matrix m, {3,2,1}));
+     )
+{*
+testops5 = (R) -> (
+     -- still being constructed
+     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
+     assert(2*m == m+m);
+     assert(3*m == m+m+m);
+     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
+     assert(2*m == m+m);
+     assert(3*m == m+m+m);
+     )
+*}
+
 debug FastLinearAlgebra
 
 testrank = (R) -> (
@@ -222,10 +277,12 @@ testrank = (R) -> (
      )
 
 testMutableMatrices = (R) -> (
+     << "testing " << describe R << endl;
      testops R; 
      testops2 R; 
      testops3 R; 
      testops4 R;
+     testops5 R;
      --testrank R;
      << "tests passed for " << describe R << endl;
      )
@@ -252,6 +309,27 @@ end
 restart
 loadPackage "EngineTests"
 check EngineTests
+
+testMutableMatrices(ZZ/101)
+
+-- BUG!! in usual Matrix submatrix code!!
+R = ZZ/101
+m = matrix mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
+m^{1,1}
+----------------------
+R = ZZp 101
+     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
+     assert(2*m == m+m);
+     assert(3*m == m+m+m);
+     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
+     assert(2*m == m+m);
+     assert(3*m == m+m+m);
+
+debug Core
+rawSubmatrix(raw m, {0,1,2,3,4},{0,1,2,3,4})
+m = mutableMatrix(map(R^3,R^20, (i,j) -> 100*i+j), Dense=>true)
+rawSubmatrix(raw m, {0,2,0,2},{0,2,5,7,11,30})
+rawSubmatrix(raw m, {0,2,3,2},{0,2,5,7,11,10})
 
 debug EngineTests
 testMutableMatrices(ZZ/101)

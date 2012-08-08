@@ -13,11 +13,51 @@
 // #define HAVE_FFLAS_FFPACK 1 
 // #define HAVE_GIVARO 1
 
-#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
+#include "polyring.hpp"
+class RingMap;
+
+
+
+#if not   defined(HAVE_GIVARO)
+
+#include "aring-m2-gf.hpp"
+
+namespace M2 {
+
+   
+   class ARingGF : public DummyRing
+   //class ARingGF : public ARingGFM2
+   {
+    public:
+        static const RingID ringID = ring_GF;
+
+        typedef M2::ARingGF             ring_type ;
+     
+        ARingGF( int charac_,   int dimension_)  {};
+        ARingGF( int charac_,  
+           const M2_arrayint & modPolynomial, 
+           const PolynomialRing &originalR
+           )  {}
+        ARingGF( int charac_,  
+           const M2_arrayint & modPolynomial, 
+           const M2_arrayint & primitiveElement, 
+           const PolynomialRing &originalR
+           )  {}
+   };
+};
+
+#else
 #include <givaro/givgfq.h>
 #include <givaro/givpower.h>
 #include <givaro/givtimer.h>
-//#include <givaro/givextension.h>     //multiple definition problem...   solvable by encapsulating (see linbox)? Also solvable with the namespace trick, but do not overuse that...
+#include <givaro/givextension.h>     //multiple definition problem...   solvable by encapsulating (see linbox)? Also solvable with the namespace trick, but do not overuse that...
+#include <math.h>
+#include <givaro/givinteger.h>
+#include <givaro/givintnumtheo.h>
+#include <givaro/givpower.h>
+#include <givaro/givpoly1padic.h>
+
+
 
 
 namespace M2 {
@@ -27,48 +67,91 @@ namespace M2 {
 
     @brief wrapper for the  Givaro::GFqDom<>  galois field implementation
 */
-  /// @todo: think about deriving from RingInterface AND from Ring
-  class ARingGF : RingInterface
-  {
-
+/// @todo: think about deriving from RingInterface AND from Ring
+class ARingGF : public RingInterface
+{
 
   public:
     static const RingID ringID = ring_GF;
 
-    typedef Givaro::GFqDom<long> FieldType;
-    typedef FieldType::Element ElementType;
-    typedef M2::ARingGF    ring_type ;
-    //  CoefficientRingZZp * get_CoeffRing() const { return coeffR; }
-    M2::ARingGF * get_ARing() const { return new M2::ARingGF(charac,dimension); }
+    typedef Givaro::GFqDom<long>    FieldType;
+    typedef FieldType::Element      ElementType;
+    typedef M2::ARingGF             ring_type ;
   
-    typedef ElementType elem;
+    typedef ElementType     elem;
 
-    typedef  FieldType::Residu_t UTT; ///< types depends on FieldType definition!
-    typedef Signed_Trait<FieldType::Residu_t>::signed_type STT;///< types depends on FieldType definition!
-
+    typedef  FieldType::Residu_t     UTT; ///< types depends on FieldType definition!
+    typedef Signed_Trait<FieldType::Residu_t>::signed_type  STT;///< types depends on FieldType definition!
 
 
     ARingGF( UTT charac_,   UTT dimension_);
 
+  // returns a polynomial that Givaro would choose for this GF(mCharac^dim).
+  // We hope that if the polynomial is F(t), that t is a generator of the
+  // multiplicative group.  We need to check this.
+  //TODO: check whether Givaro can handle F(t) with t not primitive.
+  static const M2_arrayint findMinimalPolynomial(UTT charac, UTT dim);
+
+  ARingGF( UTT charac_,  
+           const M2_arrayint & modPolynomial, 
+           const PolynomialRing &originalR
+           //TODO: other information too?
+           );
+
+  ARingGF( UTT charac_,  
+           const M2_arrayint & modPolynomial,
+            const M2_arrayint & generatorPoly,  
+           const PolynomialRing &originalR
+           //TODO: other information too?
+           );
+
+  const FieldType field() const {return givaroField;}
+
   private:
+   
+    UTT     mCharac;
+    UTT     mDimension; ///< same as extensionDegree
+
+    const PolynomialRing*   mOriginalRing;
+    const ring_elem         mPrimitiveElement; // is an element of mOriginalRing
+
+    const FieldType     givaroField;
+ 
     mutable  FieldType::randIter     givaroRandomIterator;
-    UTT charac;
-    UTT dimension; ///< same as extensionDegree
 
-    const FieldType givaroField;
-
+    size_t      mGeneratorExponent;  
 
     //  int p1; // p-1
     // int minus_one;
     // int prim_root; // element we will use for our primitive root
 
+
+    M2_arrayint     representationToM2Array(UTT representation,  long coeffNum ) const;
+
+    static M2_arrayint     representationToM2Array(UTT representation,  long coeffNum, UTT charac ) ;
+
+    M2_arrayint     modPolynomialRepresentationToM2Array(UTT representation) const;
+    M2_arrayint     elementRepresentationToM2Array(UTT representation) const;
+    
+
+
+  public:
+    M2_arrayint fieldElementToM2Array(ElementType el) const;
+
+  private:
+    static      UTT               M2arrayToGFRepresentation(UTT pCharac , const  M2_arrayint & m2array ) ;
+    static      std::vector<UTT>  M2arrayToStdVec(UTT pCharac , const  M2_arrayint  & m2array ) ;
+     
+
+    static UTT   M2arrayGetDegree( const  M2_arrayint &  m2array )  ;
+
   public:
     // ring informational
-   UTT   characteristic() const { return charac; }
+   UTT   characteristic() const { return mCharac; }
 
     /** @name IO
     @{ */
-            void text_out(buffer &o) const { o << "GF(" << charac << "," << dimension << ")"; }
+            void text_out(buffer &o) const { o << "GF(" << mCharac << "," << mDimension << ",Givaro)"; }
 
             void elem_text_out(buffer &o, 
                                 const  ElementType a,
@@ -109,6 +192,11 @@ namespace M2 {
         @{ */
         int get_int(elem f) const ;
         int get_repr(elem f) const ;
+        M2_arrayint getModPolynomialCoeffs() const;
+        M2_arrayint getGeneratorCoeffs() const;
+
+        ring_elem   getGenerator() const;
+      
     /** @} */
 
 
@@ -168,8 +256,21 @@ namespace M2 {
     @{ */
             void swap(ElementType &a, ElementType &b) const;
 
+
+            void random(FieldType::randIter &it, ElementType &result) const;
             void random(ElementType &result) const;
+            
     /** @} */
+
+    bool promote(const Ring *Rf, const ring_elem f, ElementType &result) const;
+
+    bool lift(const Ring *Rg, const ElementType f, ring_elem &result) const;
+
+    // map : this --> target(map)
+    //       primelem --> map->elem(first_var)
+    // evaluate map(f)
+    void eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const;
+
   };
 
 };

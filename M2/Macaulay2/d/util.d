@@ -237,6 +237,8 @@ export toExpr(x:RawArrayPairOrNull):Expr := (
 	       new Sequence len length(r.monoms) at i do foreach x in r.monoms do provide Expr(RawMonomialCell(x))
 	       ))
      is null do engineErrorMessage());
+export toExpr(x:RawArrayIntPairOrNull):Expr := when x is p:RawArrayIntPair do seq(toExpr(p.a),toExpr(p.b)) is null do engineErrorMessage();
+
 export toExpr(x:xmlNode):Expr := Expr(xmlNodeCell(x));
 export toExpr(x:xmlAttr):Expr := Expr(xmlAttrCell(x));
 export toExpr(x:constcharstar) ::= toExpr(tostring(x));

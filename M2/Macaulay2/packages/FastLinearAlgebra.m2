@@ -22,35 +22,37 @@ export {
    ARing,
    ZZp,
    powerMod,
+   
    	
    testDivide,
-    testAdd,
-    testNegate,
-    testSubtract,
-    testMultiply,
-    testAxioms,
-    testGFArithmetic,
-    constructGivaroField,
-    constructZZpFFPACK,
-    constructMacaulayGF,
-    constructMacaulayZZp,
-    testField,
+   testAdd,
+   testNegate,
+   testSubtract,
+   testMultiply,
+   testAxioms,
+   testGFArithmetic,
+   constructGivaroField,
+   constructZZpFFPACK,
+   constructMacaulayGF,
+   constructMacaulayZZp,
+   testField,
 
-     RightSide,
-     nullSpace,
-     invert,
-     rowRankProfile,
-     columnRankProfile,
-     addMultipleTo,
-     solveLinear,
-     TransposeA,
-     TransposeB,
-     Alpha,
-     Beta
---     ,
---     columnRankProfile,
---     rowRankProfile
-     }
+   testAddMultipleTo,
+     
+   RightSide,
+   characteristicPolynomial,
+   minimalPolynomial,
+   nullSpace,
+   invert,
+   rowRankProfile,
+   columnRankProfile,
+   addMultipleTo,
+   solveLinear,
+   TransposeA,
+   TransposeB,
+   Alpha,
+   Beta
+   }
 
 debug Core
 
@@ -111,6 +113,30 @@ isPrimeField Ring := (R) -> (
      true
      )
 
+transpose MutableMatrix := (M) -> (
+     << "warning: rewrite to be in the engine" << endl;
+     mutableMatrix transpose matrix M
+     )
+
+--MutableMatrix + MutableMatrix := (A,B) -> (
+--     << "warning: rewrite to be in the engine" << endl;
+--     mutableMatrix(matrix A + matrix B)
+--     )
+
+--MutableMatrix - MutableMatrix := (A,B) -> (
+--     << "warning: rewrite to be in the engine" << endl;
+--     mutableMatrix(matrix A - matrix B)
+--     )
+
+ZZ * MutableMatrix := (a,M) -> (a_(ring M)) * M
+
+--RingElement * MutableMatrix := (a,M) -> (
+--     << "warning: rewrite to be in the engine" << endl;
+--     mutableMatrix(a*(matrix M))
+--    C:=mutableMatrix(
+--    addMultipleTo()
+--     )
+
 rank MutableMatrix := (M) -> rawLinAlgRank raw M
 
 determinant MutableMatrix := opts -> (M) -> (
@@ -123,6 +149,18 @@ invert MutableMatrix := (A) -> (
      R := ring A;
      if numRows A =!= numColumns A then error "expected square matrix";
      map(R,rawLinAlgInvert(raw A))
+     )
+
+MutableMatrix ^ ZZ := (A, r) -> (
+     if r == 0 then 
+       return mutableIdentity(ring A, numRows A);
+     if r < 0 then (
+	  r = -r;
+	  A = invert A;
+	  );
+     result := A;
+     if r > 1 then for i from 2 to r do result = result * A;
+     result     
      )
 
 rowRankProfile = method()
@@ -157,6 +195,19 @@ addMultipleTo(MutableMatrix,MutableMatrix,MutableMatrix) := opts -> (C,A,B) -> (
        error "expected matrices over the same ring";
      a := if opts.Alpha === null then 1_R else opts.Alpha;
      b := if opts.Beta === null then 1_R else opts.Beta;
+--
+      m :=  numRows A;
+      n := numColumns B;    
+      if opts.TransposeA then m= numColumns A;
+      if opts.TransposeB then n= numRows B;
+--
+      k:=numColumns A;
+      k2:=numRows B;
+      if opts.TransposeA then k= numRows A;
+      if opts.TransposeB then k2= numColumns B;
+      if ( k!=k2 or numRows C != m or numColumns C != n ) then 
+        error("matrix sizes are not compatible!");
+--
      rawLinAlgAddMultipleTo(raw C, raw A, raw B,
 	  opts.TransposeA, 
 	  opts.TransposeB, 
@@ -168,16 +219,26 @@ MutableMatrix * MutableMatrix := (A,B) -> (
      addMultipleTo(C,A,B)
      )
 
-fastRank= method();
 
-fastRank MutableMatrix := (M) -> (
+characteristicPolynomial = method()
+characteristicPolynomial(MutableMatrix, Ring) := (M, P) -> (
      R := ring M;
-     if isPrimeField R and char R > 0 then (
-	  new ZZ from rawFFPackRank raw M
-	  )
+     time cp := rawLinAlgCharPoly raw M;
+     t := P_0;
+     time sum for i from 0 to #cp - 1 list (new R from cp#i) * t^i
      )
+characteristicPolynomial(Matrix, Ring) := (M, P) -> characteristicPolynomial(mutableMatrix M, P)
 
-------------tests
+minimalPolynomial = method()
+minimalPolynomial(MutableMatrix, Ring) := (M, P) -> (
+     R := ring M;
+     cp := rawLinAlgMinPoly raw M;
+     t := P_0;
+     sum for i from 0 to #cp - 1 list (new R from cp#i) * t^i
+     )
+minimalPolynomial(Matrix, Ring) := (M, P) -> minimalPolynomial(mutableMatrix M, P)
+
+------------test functions
 
 testEqual = method();
 testEqual (MutableHashTable, ZZ) := (fieldHashTable, nrtests)->
@@ -439,8 +500,289 @@ testGFArithmetic GaloisField := (F) -> (
 	       assert(elemsR#i ^ N == lift(elemsF#i ^ N, R)));
      )
 
+testAddMultipleTo = method()
+testAddMultipleTo(MutableMatrix, MutableMatrix, MutableMatrix) := (M3,M1,M2) -> (
+     kk := ring M3;
+     numrows := numRows M3;
+     numcols := numColumns M3;
+     assert(ring M1 === kk);
+     assert(ring M2 === kk);
+
+     A := mutableMatrix matrix M3;  -- 'copy' should work here!!
+     B := mutableMatrix matrix M3;
+     
+     addMultipleTo(A, M1, M2);
+     assert(A == M3 + M1*M2);
+    
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     addMultipleTo(A,  M1, transpose M2, TransposeB=>true);
+     assert(A == M3 + M1*M2);
+    
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     addMultipleTo(A, transpose M1,  M2, TransposeA=>true);
+     assert(A == M3 + M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!    
+     addMultipleTo(A, transpose M1, transpose M2, TransposeA=>true, TransposeB=>true);
+     assert(A == M3 + M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a := 2_kk;
+     b := 3_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     assert(A == b*M3 + a*M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = 0_kk;
+     b = 0_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     assert(A == b*M3 + a*M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = 1_kk;
+     b = 0_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     assert(A == b*M3 + a*M1*M2);
+     )
+
+
 beginDocumentation()
 
+NONTEST = (str) -> null
+--
+-- loadPackage "FastLinearAlgebra"
+-- debug Core
+
+
+-----------------------------------
+-- Linear algebra tests -----------
+-----------------------------------
+TEST ///
+
+    kk = ZZp 101
+    R = kk[t]
+    M1 = mutableMatrix matrix(kk, {{2, 16, 29}, {-18, 24, 12}, {-41, 7, -31}})
+    M2 = mutableMatrix matrix(kk, {{-39, 27, 9}, {-44, 14, 28}, {-22, -23, 14}})
+
+    assert(M1 * M2 == mutableMatrix((matrix M1) * (matrix M2)))
+    assert(rank M1 == 3)
+    assert(rank M2 == 3)
+
+    assert(M1 * invert M1  == mutableIdentity(kk, 3))
+    assert(M1^-1 == invert M1)
+    assert(M1^2 == M1*M1)
+    assert(M1^-2 == (invert M1)*(invert M1))
+
+    cp = characteristicPolynomial(M1, R)
+    mp = minimalPolynomial(M1,R)
+    assert(mp == cp)
+    mp2 = minimalPolynomial(mutableMatrix (matrix M1 ++ matrix M1),R)
+    assert(mp2 == mp)
+    mp3 = minimalPolynomial(mutableMatrix (matrix M1 ++ matrix M2),R)
+    assert(mp3 == mp * minimalPolynomial(M2, R))
+
+    assert(nullSpace M1 == 0)
+    assert(nullSpace(M1, RightSide=>false) == 0)
+
+    M11 = mutableMatrix ((matrix M1) || (matrix M1))
+    assert(nullSpace M11 == 0)
+    assert(numRows nullSpace(M11, RightSide=>false) == 3)
+
+    X = solveLinear(M1, M2)
+    assert(M1 * X == M2)
+    Y = solveLinear(M1, M2, RightSide=>false)
+    assert(Y * M1 == M2)
+
+    assert(rowRankProfile(M1) == {0,1,2})
+    assert(columnRankProfile(M1) == {0,1,2})
+    assert(rowRankProfile(M11) == {0,1,2})
+    assert(columnRankProfile(M11) == {0,1,2})
+
+    C = mutableMatrix(kk,3,3)
+    testAddMultipleTo(C,M1,M2)
+///
+
+TEST ///
+-- addMultipleTo
+    kk = ZZp 101
+    M1 = mutableMatrix random(kk^3, kk^5)
+    M2 = mutableMatrix random(kk^2, kk^3)
+    M3 = mutableMatrix random(kk^2, kk^5)
+
+    testAddMultipleTo(M3,M2,M1)
+///
+
+TEST ///
+-- addMultipleTo
+    kk = ZZp 67000993
+    M1 = mutableMatrix random(kk^3, kk^5)
+    M2 = mutableMatrix random(kk^2, kk^3)
+    M3 = mutableMatrix random(kk^2, kk^5)
+
+    testAddMultipleTo(M3,M2,M1)
+///
+
+TEST ///
+-- addMultipleTo
+    kk = ZZp 101
+    M1 = mutableMatrix random(kk^300, kk^500);
+    M2 = mutableMatrix random(kk^200, kk^300);
+    M3 = mutableMatrix random(kk^200, kk^500);
+
+    testAddMultipleTo(M3,M2,M1)
+    time addMultipleTo(M3, M2, M1);
+///
+
+TEST ///
+-- addMultipleTo
+    kk = ZZp 67000993
+    M1 = mutableMatrix random(kk^300, kk^500);
+    M2 = mutableMatrix random(kk^200, kk^300);
+    M3 = mutableMatrix random(kk^200, kk^500);
+
+    testAddMultipleTo(M3,M2,M1)
+    time addMultipleTo(M3, M2, M1);
+///
+
+TEST ///
+    kk = ZZp 101;
+    A = mutableMatrix matrix(kk, {{23, -35, -29, 33}, {22, 7, -25, 11}})
+    B = mutableMatrix matrix(kk, {{-36, -40}, {-15, -43}, {-16, -43}, {15, 32}, {6, -14}})
+    M = mutableMatrix(B*A)
+    N = nullSpace M
+    assert(numColumns N == 2)
+    assert(M * N == 0)
+    N = nullSpace(M, RightSide=>false)
+    assert(N * M == 0)
+    assert(numRows N == 3)
+///
+
+TEST ///
+    N = 10
+    kk = ZZp 101
+    time A = mutableMatrix(kk, N, N, Dense=>true);
+    time fillMatrix A;
+    time B = invert A;
+    time C = A*B;
+    assert(C == mutableIdentity(kk, N))
+    idN = mutableIdentity(kk, N, Dense=>true);
+    time X = solveLinear(A, idN);
+    assert(B == X)
+///
+
+TEST ///
+  R = ZZp 5
+  Rt = R[t]
+  jordanBlock = (R, diag, n) -> (
+     m := mutableMatrix(R,n,n);
+     for i from 0 to n-1 do m_(i,i) = diag;
+     for i from 0 to n-2 do m_(i,i+1) = 1;
+     m
+     )
+  jordanForm = (R, L) -> (
+     -- L is a list of (eigenvalue, size)
+     directSum apply(L, (diag, n) -> matrix jordanBlock(R, diag, n))
+     )
+  jordanBlock(R,2_R,5)
+  M = jordanForm(R, {(2_R, 4), (1_R, 2), (0_R, 6), (0_R, 3)})
+
+  cpM = characteristicPolynomial(M, Rt)
+  mpM = minimalPolynomial(M, Rt)
+
+  A = mutableMatrix random(target M, source M)
+  Ainv = A^-1
+  N = A * (mutableMatrix M) * Ainv
+
+  cpN = characteristicPolynomial(N, Rt)
+  mpN = minimalPolynomial(N, Rt)
+
+  assert(cpM == cpN)
+  assert(mpM == mpN) -- WRONG!!
+  cpM == (t-2)^4 * (t-1)^2 * t^9
+  mpM == (t-2)^4 * (t-1)^2 * t^6
+  
+  Rt1 = ZZ/5[t]
+  cp1 = sub(cpM, Rt1)
+  mp1 = sub(mpM, Rt1)
+  factor cp1
+  factor mp1
+  -- list of top level issues with ZZp:
+  -- 1. display is using too many parentheses
+  -- 2. can't factor polynomials over Rt
+  -- 3. want linear algebra to be transparent.
+  --    A^-1  DONE
+  --    det(A)  DONE
+  --    syz A
+  --    what else?
+
+  use Rt
+
+  for i from 0 to 10 do (  
+    M = jordanBlock(R,1_R,2);
+    cp = characteristicPolynomial(M, Rt);
+    mp = minimalPolynomial(M,Rt);
+    assert(cp == (t-1)^2);
+    assert(mp == cp);  -- this fails some of the time!!
+    )
+///
+
+-- move good tests above this line
+-- XXXXXXXXXXXXXXXXXXXXXXXXXX --
+end
+
+TEST ///
+    kk = ZZ/101
+    A = random(kk^23, kk^400)
+    B = random(kk^500, kk^23)
+    M = mutableMatrix(B*A);
+    N = nullSpace M;
+    assert(numRows N == numColumns M)
+    assert(numColumns N == numColumns M - 23)
+    assert((matrix M) * (matrix N) == 0)
+    
+    time N = nullSpace(M, RightSide=>false);
+    assert(numRows N == numRows M - 23)
+    assert(numColumns N == numRows M)
+    assert((matrix N) * (matrix M) == 0)
+///
+
+TEST ///
+    kk = ZZ/101
+    A = random(kk^23, kk^1000);
+    B = random(kk^1000, kk^23);
+    M = mutableMatrix(B*A);
+    N = nullSpace M;
+    assert(numRows N == numColumns M)
+    assert(numColumns N == numColumns M - 23)
+    assert((matrix M) * (matrix N) == 0)
+    
+    time N = nullSpace(M, RightSide=>false);
+    assert(numRows N == numRows M - 23)
+    assert(numColumns N == numRows M)
+    assert((matrix N) * (matrix M) == 0)
+///
+
+TEST ///
+    kk = ZZp 101
+    M = mutableMatrix(kk,5000,5000);
+    N = mutableMatrix(kk,5000,5000);
+    fillMatrix M;
+    fillMatrix N;
+    time (M+N);	
+
+    A = mutableMatrix(kk,50000,50000, Dense=>false);
+    B = mutableMatrix(kk,50000,50000, Dense=>false);
+    --time fillMatrix(A, Density=>.001);    
+    --time fillMatrix(B, Density=>.001);    
+    time (A+B);
+    time (A*B); -- crashes: tries to grab too much memory: BUG
+
+    A = mutableMatrix(kk,50000,50000, Dense=>true); -- doesn't crash, but it should!!
+    B = mutableMatrix(kk,50000,50000, Dense=>true); 
+
+    A = mutableMatrix(kk,10000,10000, Dense=>true);
+
+///
 
 TEST ///
 needsPackage "FastLinearAlgebra"
@@ -499,49 +841,6 @@ rank A
  
 ///
 
-TEST ///
-    kk = ZZp 101;
-    --kk = ZZ/101
-    A = random(kk^2, kk^4)
-    B = random(kk^5, kk^2)
-    M = mutableMatrix(B*A)
-    N = nullSpace M
-    assert((matrix M) * (matrix N) == 0)
-    N = nullSpace(M, RightSide=>false)
-    assert((matrix N) * (matrix M) == 0)
-///
-
-TEST ///
-    kk = ZZ/101
-    A = random(kk^23, kk^400)
-    B = random(kk^500, kk^23)
-    M = mutableMatrix(B*A);
-    N = nullSpace M;
-    assert(numRows N == numColumns M)
-    assert(numColumns N == numColumns M - 23)
-    assert((matrix M) * (matrix N) == 0)
-    
-    time N = nullSpace(M, RightSide=>false);
-    assert(numRows N == numRows M - 23)
-    assert(numColumns N == numRows M)
-    assert((matrix N) * (matrix M) == 0)
-///
-
-TEST ///
-    kk = ZZ/101
-    A = random(kk^23, kk^1000);
-    B = random(kk^1000, kk^23);
-    M = mutableMatrix(B*A);
-    N = nullSpace M;
-    assert(numRows N == numColumns M)
-    assert(numColumns N == numColumns M - 23)
-    assert((matrix M) * (matrix N) == 0)
-    
-    time N = nullSpace(M, RightSide=>false);
-    assert(numRows N == numRows M - 23)
-    assert(numColumns N == numRows M)
-    assert((matrix N) * (matrix M) == 0)
-///
 
 TEST ///
 kk = ZZ/101
@@ -559,20 +858,6 @@ X = solveLinear(A,B)
 ((matrix A) * (matrix X)) - matrix B
 ///
 
-TEST ///
-kk = ZZ/101
-N = 10
-  kk = ZZp 101
-time A = mutableMatrix(kk, N, N, Dense=>true);
-time fillMatrix A;
-time B = invert A;
-time C = A*B;
-C == mutableIdentity(kk, N)
-
-idN = mutableIdentity(kk, N, Dense=>true);
-time X = solveLinear(A, idN);
-assert(B == X)
-///
 
 
 TEST ///
@@ -939,7 +1224,7 @@ testGFArithmetic D
 
 ///
 
-TEST /// -- XXXXXXXXXX -- of findGalois  (which will be placed into the engine?)
+TEST /// -- of findGalois  (which will be placed into the engine?)
 restart
 loadPackage "FastLinearAlgebra"
 
@@ -1017,13 +1302,13 @@ M = matrix(kk, mat)
 mm = mutableMatrix M
 
 rawFFPackRank raw mm
-fastRank mm
+rank mm
 
 kk= ZZ/19
 M = matrix(kk, mat)
 mm = mutableMatrix M
 rawFFPackRank raw mm
-fastRank mm
+rank mm
 assert(5 == rank mm)  -- WRONG!!
 
 R = ZZ/19
@@ -1053,7 +1338,6 @@ time (A*A);
 time (A+A);
 
 restart
--- XXXXXXXXXXXXXX
 restart
 debug loadPackage "FastLinearAlgebra"
 --kk = ZZ/101
@@ -1063,7 +1347,7 @@ random(kk^3, kk^4)
 N = 5
 m = mutableMatrix(kk, N, N)
 m = mutableMatrix random(kk^100, kk^100);
-fastRank m
+rank m
 time for i from 0 to N-1 do for j from 0 to N-1 do m_(i,j) = random kk
 time M = matrix m;
 time(ans1 = m * m);
@@ -1073,7 +1357,7 @@ assert(ans2 == matrix ans1)
 kk = GF(2,4,Strategy=>"Givaro")
 M = mutableMatrix random(kk^3, kk^4)
 debug FastLinearAlgebra
-fastRank M
+rank M
 
 restart
 debug Core
@@ -1170,15 +1454,71 @@ columnRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
 
 ///
 
+TEST /// -- testing char and min poly
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 101
+M = random(R^10, R^10)
+Rt = R[t]
+characteristicPolynomial(M, Rt)
+M2 = M ++ M
+cp = characteristicPolynomial(M2, Rt)
+mp = minimalPolynomial(M2, Rt)
+assert(cp == mp^2)
+
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 5
+Rt = R[t]
+M = mutableMatrix(R, 5000, 5000);
+fillMatrix M;
+time cp = characteristicPolynomial(M, Rt);
+time mp = minimalPolynomial(M, Rt);
+///
+
+
 /// -- looking into LUdivine
+restart
 loadPackage "FastLinearAlgebra"
 R = ZZp 101
 M = random(R^3, R^5)
+M1 = matrix(R, {{0,1,0,0,0},
+	        {0,1,0,1,1},
+		{0,1,0,1,0}})
+M2 = transpose M1
+M3 = matrix(R, {{0,0,0,0,0},
+	        {0,0,0,0,1},
+		{0,0,1,0,0}})
+M4 = transpose M3
+
+m = mutableMatrix M1      
 m = mutableMatrix M
-L = mutableMatrix(R,0,0)
-U = mutableMatrix(R,0,0)
+
 debug Core
-rawLU(raw m, raw L, raw U)
+m = mutableMatrix M1
+m = mutableMatrix matrix{{1,2},{3,4}}
+(P,Q) = rawLQUPFactorization(raw m)
+
+  -- #P == rank of the matrix U (which columns pivots)
+  -- #Q == #rows of m, or is it rank m?  (ignore 0 rows)
+  -- A=3x5, rank 3:  #P=3, #Q=3
+
+loadPackage "FastLinearAlgebra"
+debug Core  
+debug FastLinearAlgebra
+R = ZZp 101
+M = random(R^3, R^3)
+M2 = M ++ M
+m = mutableMatrix M2
+cp = rawLinAlgCharPoly raw m
+mp = rawLinAlgMinPoly raw m
+
+P = R[t]
+det(t*id_(P^3) - M)
+
+P = ZZ/101[t]
+M = matrix {{41, 41, -29}, {-36, 19, 11}, {31, 15, -23}}
+det(M - t*id_(P^3))
 ///
 -- TODO:
 --   top level M2 package (this file): calls the rawFFPack routines
@@ -1356,7 +1696,7 @@ rawLU(raw m, raw L, raw U)
 --
 -- TODO generated 20. Feb 2012
 --      Jakob: ask givaro authors if there is a reason for their choice of the generator
---      can we set the primitive element ourself ?
+--      can we set the primitive element ourself ? - yes
 --      inside of aring-gf code: check that promote, lift, and eval are "correct".
 --      Mike:
 --        Problem: suppose phi : K = GF(p^n) --> R, for some ring R.
@@ -1391,7 +1731,7 @@ rawLU(raw m, raw L, raw U)
 -- TODO 22 Mar 2012
 --     Jakob: why is the bound for modulus in ffpack about 67 million?  is it really? - yes. (<2^26)
 --            compute the generator in a faster manner, perhaps change interface to rawARing... to take a generator.
---            debug GF determinant.  Seems not to be working.
+--            debug GF determinant.  Seems not to be working. -  FFPACK calls for matrices over extension fields are illegal. 
 --            benchmarks should also appear as test and fail on specified hardware if the runtime increased significantly #
 --            random generator from givaro seems to be not that good - replace with a better one?
 --     Mike: write powerMod
@@ -1410,7 +1750,7 @@ rawLU(raw m, raw L, raw U)
 -- 12 April 2012
 --     todo:
 --       fix givaro matrix bug: it seems that det, rank are incorrect
---         check with authors?
+--         check with authors?  -  FFPACK calls for matrices over extension fields are illegal. 
 --       make a complete test suite for these functions, for ZZ/p and GF
 --       attach ffpack LU function
 --       attach minimal and char polynomials
@@ -1430,11 +1770,68 @@ rawLU(raw m, raw L, raw U)
 --       after this, remove code, including: FFLU, gauss.
 --       implement these functions for sparse large matrices
 --       matrix: implement using MutableMatrix (or DMat<>, SMat<>).
+-- 19 April 2012
+--    LQUP: place LQUPFactorizationInPlace in mat.hpp, mutablemat.hpp, dmat.cpp  (mike)
+--          understand the lengths of the output arrays P and Qt (jakob)
+--    linbox: get M2 to compile with it, or understand the problem DONE
+--            givaro version seems messed up or givaro is in the wrong place? FIXED
+--    CharPoly, MinPoly: learn the interface DONE
+--            what should our interface be? DONE
+--    (12 April 2012 todo list is still active too!)
+-- 3 May 2012
+--  Prioritize what we need to do
+--    1. hook up from ffpack the char poly and minimal poly functions DONE
+--         Mike: needs to make better conversion functions for arrays of ring elements
+--    2. Make the dense linear algebra over ZZ/p solid:
+--         tests
+--         incorporate top level M2 functions to use these fast routines (when available)
+--    3. Linear algebra routines, written more generically, but as fast as possible (dense arithmetic)
+--         hook up to GF
+--         hook up to other fields
+--         tests
+--    4. Linear algebra routines for sparse matrices
+--    5. Attach various normal forms of matrices from linbox to M2
+--         over ZZ: Hermite, Smith, LLL
+--         over fields: rational decomposition of a matrix, ...
+-- 17 May 2012
+--    1. JAKOB: find bugs in addMultipleTo DONE
+--    2. JAKOB: read about sparse matrices in linbox, how to use them.  Then: implement SMat type matrix type using their type.
+--    3. MIKE: Place characteristicPolynomial, minimalPolynomial into DMat, SMat, ...
+--    4. MIKE: internal routines for +, scalar mult and transpose (and perhaps submatrices), in DMat, SMat, ...  and use these at top level.
+--    5. stuff from 3 May 2012.
+
+--  JAKOB: remove using namespace LinBox from everywhere in LinBox.
+--  optimal matrix transposing seem not be trivial - http://en.wikipedia.org/wiki/In-place_matrix_transposition 
+--
+-- 26 July 2012
+--   Mike: debug memory allocation for dense matrices.  Maybe change int values to size_t's
+--         get parens OK
+--         look into: factorization over ZZp.
+--   Jakob: minimal polynomial bug.
+--   Miletone #1:
+--     tests for dense linear algebra over ZZ/p, p <= ???
+--     top level access to these functions
+--     characteristic and minimal polynomial (implemented in same way as other functions)
+--     all dense linear algebra routines over ZZ/p complete (e.g. +, -, *, transpose, submatrix)
+--     fix bugs:
+--       1. minimalPolynomial appears probabilistic.  Is that true?
+--          if so, find a version that is correct!
+--     notes:
+--       syz and kernel should use nullSpace
+--     document:
+--       all linear algebra functions
+--   Milestone #2:
+--     Connect sparse matrix routines from linbox to M2 (over ZZ/p, other fields)
+--   Milestone #3:
+--     Write basic linear algebra functiions (more generic versions) for more general rings/fields
+--   Milestone #4:
+--     Connect normal form operations from linbox to M2 (Hermite, Smith, LLL, Frobenius, ...)
+--     Make sure that ZZ operations and QQ operations match linbox
 
 ----------------------------------------------
 -- not discussed yet:
 --    a. bugs in ffpack ZZ/p: basis(2,R) fails (R = polyring over ZZ/p).  Fix this?  MIKE 
---        => i suggest we wil use M4RI for basis(2,R) op: we (mostly Mike) did setup this itsy bitsy template interface to incorporate other field implementations
+--        => i suggest we will use M4RI for basis(2,R) op: we (mostly Mike) did setup this itsy bitsy template interface to incorporate other field implementations
 --           and therefore we should also use it extensively ;-)
 
 R = GF(2,7)

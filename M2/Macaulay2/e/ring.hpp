@@ -8,6 +8,7 @@
 #include "ringelem.hpp"
 #include "monoid.hpp"
 
+#include "aring.hpp"
 
 ///// Ring Hierarchy ///////////////////////////////////
 
@@ -40,7 +41,7 @@ class buffer;
 class SumCollector;
 
 class ARing;
-
+class MutableMatrix;
 /**
     @ingroup rings
 
@@ -89,6 +90,9 @@ public:
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
   M2_arrayint get_heft_vector() const { return heft_vector; } // This CAN BE NULL
 
+  virtual M2::RingID ringID() const { 
+    return M2::ring_old; 
+  }
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
@@ -195,6 +199,7 @@ public:
   virtual CCC * cast_to_CCC() { return 0; }
   virtual const CCC * cast_to_CCC() const { return 0; }
 
+  virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const { return 0; }
 
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_Schreyer_FreeModule() const;
@@ -208,7 +213,6 @@ public:
   // Ring arithmetic ///
   //////////////////////
   virtual int coerce_to_int(ring_elem a) const;
-  virtual int discrete_log(ring_elem a) const; // returns -1 if ring has no discrete log implemented, or a == 0.
 
   ring_elem one() const { return oneV; }
   ring_elem minus_one() const { return minus_oneV; }

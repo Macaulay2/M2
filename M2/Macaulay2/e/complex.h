@@ -23,7 +23,9 @@ extern "C" {
   void mpfc_set_si(gmp_CC result, long re);
   void mpfc_set(gmp_CC result, gmp_CC a);
   int mpfc_is_zero(gmp_CC a);
+  int mpfc_is_equal(gmp_CC a, gmp_CC b);
   void mpfc_add(gmp_CC result, gmp_CC a, gmp_CC b);
+  void mpfc_neg(gmp_CC result, gmp_CC a);
   void mpfc_sub(gmp_CC result, gmp_CC a, gmp_CC b);
   void mpfc_mul(gmp_CC result, gmp_CC a, gmp_CC b);
   void mpfc_invert(gmp_CC result, gmp_CC v);

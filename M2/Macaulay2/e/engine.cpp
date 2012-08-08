@@ -10,8 +10,6 @@
 #include "queue.hpp"
 #include "ZZ.hpp"
 #include "QQ.hpp"
-#include "RRR.hpp"
-#include "CCC.hpp"
 
 #include "poly.hpp"
 

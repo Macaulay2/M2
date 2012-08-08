@@ -16,6 +16,7 @@ class CoefficientRingZZ_NTL : public our_new_delete
 public:
   typedef RingZZ ring_type;
   typedef NTL::ZZ elem;
+  typedef NTL::ZZ ElementType;
 
   CoefficientRingZZ_NTL(const RingZZ *R0) { }
 
@@ -26,6 +27,8 @@ public:
   void set(elem &result, const elem &a) const { result = a; }
 
   bool is_zero(const elem &result) const { return result == 0; }
+
+  bool is_equal(const elem &a, const elem &b) const { return a == b; }
 
   void invert(elem &result, const elem &a) const
   {
@@ -41,6 +44,11 @@ public:
   void add(elem &result, const elem &a, const elem &b) const
   {
     result = a+b;
+  }
+
+  void negate(elem &result, const elem &a) const
+  {
+    result = -a;
   }
 
   void subtract(elem &result, const elem &a, const elem &b) const

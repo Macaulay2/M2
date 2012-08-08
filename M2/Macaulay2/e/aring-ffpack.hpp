@@ -13,99 +13,128 @@
 // #define HAVE_FFLAS_FFPACK 1 
 // #define HAVE_GIVARO 1
 
-#if defined(HAVE_FFLAS_FFPACK) 
-#include <fflas-ffpack/field/modular-balanced.h>
- 
+#if not defined(HAVE_FFLAS_FFPACK)  
+namespace M2 {
 
+class ARingZZpFFPACK : public DummyRing
+  {
+     public:
+        static const RingID ringID = ring_FFPACK;
+
+       
+        typedef M2::ARingZZpFFPACK             ring_type ;
+
+        ARingZZpFFPACK( int charac_ ) {};
+  };
+
+};
+#else
+#include <fflas-ffpack/field/modular-balanced.h>
+#include <fflas-ffpack/ffpack/ffpack.h>
+#include <givaro/givgfq.h>
 
 namespace M2 {
 
-/**
-    @ingroup rings
-
-    @brief wrapper for the  FFPACK::ModularBalanced<double>   field implementation
-*/
+  /**
+     @ingroup rings
+     
+     @brief wrapper for the  FFPACK::ModularBalanced<double>   field implementation
+  */
   
-  class ARingFFPACK : RingInterface
+  class ARingZZpFFPACK : public RingInterface
   {
-
-
   public:
     static const RingID ringID = ring_FFPACK;
     
-  typedef FFPACK::ModularBalanced<double> FieldType;
-  typedef FieldType::Element ElementType;
- 
+    typedef FFPACK::ModularBalanced<double> FieldType;
 
- 
+    typedef FieldType::Element ElementType;
     typedef ElementType elem;
 
     typedef  uint32_t UTT; ////// attention: depends on STT;currently manual update
+
     // to use the signed_trait thing, we need givaro....
-    //typedef Signed_Trait<UTT>::signed_type STT;///< types depends on FieldType definition!
-    typedef  int32_t STT; /// attention: depends on UTT; currently manual update
+    typedef Signed_Trait<UTT>::signed_type STT;///< types depends on FieldType definition!
 
+    // if no givaro, use this:
+    //typedef  int32_t STT; /// attention: depends on UTT; currently manual update
 
-   // @todo: problem, wenn typ von cHarakteristif 
-    ARingFFPACK( UTT charac_);
+    // @todo: problem, wenn typ von cHarakteristif 
+    ARingZZpFFPACK( UTT charac);
 
   private:
-   mutable  FieldType::RandIter     ffpackRandomIterator;
-
-
-   
-   
-    const FieldType ffpackField;
-
-    UTT charac;
-    UTT dimension; ///< same as extensionDegree
+    const FieldType mFfpackField;
+    mutable  FieldType::RandIter     mFfpackRandomIterator;
     
-    ElementType generator;
+    UTT mCharac;
+    UTT mDimension; ///< same as extensionDegree
+    
+    mutable ElementType generator_m;///< use getGenerator() to access it since generator is cached and not computed if not required.
+
+    mutable bool generatorComputed_m;
     //  int p1; // p-1
     // int minus_one;
     // int prim_root; // element we will use for our primitive root
-
+    
   public:
     // ring informational
-   UTT   characteristic() const { return charac; }
+    UTT characteristic() const { return mCharac; }
 
+    ElementType getGenerator() const
+    {
+        if (not generatorComputed_m)
+        {
+            generator_m = computeGenerator();
+            generatorComputed_m=true;
+        }
+        return generator_m;
+    }
+
+    // 
+    const FieldType field() const { return mFfpackField; }
+    
     /** @name IO
-    @{ */
-            void text_out(buffer &o) const { o << "FFIELD(" << charac << "," << dimension << ")"; }
+	@{ 
+    */
+    void text_out(buffer &o) const { o << "ZZpFPACK(" << mCharac << "," << mDimension << ")"; }
 
-            void elem_text_out(buffer &o, 
-                                const  ElementType a,
-                                bool p_one, 
-                                bool p_plus, 
-                                bool p_parens) const;
-
+    void elem_text_out(buffer &o, 
+		       const  ElementType a,
+		       bool p_one, 
+		       bool p_plus, 
+		       bool p_parens) const;
     /** @} */
-
 
     /** @name properties
-    @{ */
-        bool is_unit(const ElementType f) const ;
-        bool is_zero(const ElementType f) const ;
+	@{     
+    */
+        
+      bool is_unit(const ElementType f) const ;
+      bool is_zero(const ElementType f) const ;
+
     /** @} */
 
 
-        /** @name translation functions
+    /** @name translation functions
         @{ */
-    void to_ring_elem(ring_elem &result, const ElementType &a) const
-    {
-      result.int_val = a;
-    }
- 
-    void from_ring_elem(ElementType &result, const ring_elem &a) const
-    {
-      result = a.int_val;
-    }
+
+      void to_ring_elem(ring_elem &result, const ElementType &a) const
+      {
+        result.int_val = static_cast<int>(a);
+      }
+    
+      void from_ring_elem(ElementType &result, const ring_elem &a) const
+      {
+        result = a.int_val;
+      }
+
     /** @} */
 
-  /** @name operators
-    @{ */
-        bool is_equal(const ElementType f,const ElementType g) const    ;
-        int compare_elems(const ElementType f,const ElementType g) const ;
+    /** @name operators
+	@{ */
+
+    bool is_equal(const ElementType f,const ElementType g) const    ;
+    int compare_elems(const ElementType f,const ElementType g) const ;
     /** @} */
 
     /** @name get functions
@@ -138,7 +167,7 @@ namespace M2 {
         
         ElementType computeGenerator ( ) const; 
 
-        void set_var(elem &result, int v) const         { result = generator; }
+        void set_var(elem &result, int v) const         { result = getGenerator(); }
 
     /** @} */
 
@@ -175,6 +204,15 @@ namespace M2 {
 
             void random(ElementType &result) const;
     /** @} */
+
+    bool promote(const Ring *Rf, const ring_elem f, elem &result) const;
+
+    bool lift(const Ring *Rg, const elem f, ring_elem &result) const;
+
+    // map : this --> target(map)
+    //       primelem --> map->elem(first_var)
+    // evaluate map(f)
+    void eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const;
      
     static inline double getMaxModulus() 
     {
@@ -190,4 +228,5 @@ namespace M2 {
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
 // End:

@@ -107,7 +107,7 @@ KBasis::KBasis(const Matrix *bottom,
   M = P->getMonoid();
   D = P->get_degree_ring()->getMonoid();
 
-  char *typ_str;
+  const char *typ_str;
   if (lo_degree == 0 && hi_degree == 0)
     {
       computation_type = KB_FULL;

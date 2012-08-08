@@ -3,18 +3,59 @@
 #include "dmat.hpp"
 #include "smat.hpp"
 #include "mat.hpp"
+#include "mutablemat.hpp"
 
 #include "coeffrings.hpp"
+#include "coeffrings-zz.hpp"
+
 #include "matrix-con.hpp"
 #include "matrix.hpp"
+
+#include "aring-zzp.hpp"
+#include "aring-ffpack.hpp"
+#include "aring-m2-gf.hpp"
+#include "aring-gf.hpp"
+#include "aring-glue.hpp"
+#include "aring-tower.hpp"
 
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
 
-#include "aring-zzp.hpp"
+#if 0
+// Considering this kind of code
+template <typename MatType>
+inline MatType* coerceMatrix(MutableMatrix* A)
+{
+  MutableMat< MatType >* B = dynamic_cast< MutableMat< MatType > >(A);
+  if (B == 0) return 0;
+  return B->get_Mat();
+}
+
+template <typename MatType>
+inline const MatType* coerceMatrix(const MutableMatrix* A)
+{
+  const MutableMat< MatType >* B = dynamic_cast< const MutableMat< MatType > >(A);
+  if (B == 0) return 0;
+  return B->get_Mat();
+}
+
+
+
+ MatType* coerceMatrix< MatType >(MutableMatrix* A);
+  MatType* coerceMatrixWithError< MatType >(MutableMatrix* A, std::string msg);
+
+#define COERCE_TO_MatT_or_ERROR(newName,MatT,A,ERRORMSG,retval) { \
+  MutableMat< MatT > *P = dynamic_cast< MutableMat< MatT >* >(A); \
+  if (P == 0) { \
+    ERROR(ERRORMSG); \
+    return retval; \
+  } \
+  MatT* newName = P->get_Mat(); \
+  } 
+#endif
 
 template<typename MatT> 
-MatT * MutableMatrix::coerce()
+inline MatT * MutableMatrix::coerce()
 {
   MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
   if (P == 0) return 0;
@@ -22,7 +63,7 @@ MatT * MutableMatrix::coerce()
 }
 
 template<typename MatT> 
-const MatT * MutableMatrix::coerce() const
+inline const MatT * MutableMatrix::coerce() const
 {
   const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
   if (P == 0) return 0;
@@ -39,90 +80,116 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
       ERROR("expected non-negative number of rows or columns");
       return 0;
     }
+  MutableMatrix *result = R->makeMutableMatrix(nrows, ncols, dense);
+  if (result != 0) return result;
   const Z_mod *KZZp = R->cast_to_Z_mod();
   if (KZZp != 0)
     {
       if (dense)
+        return MutableMat< DMat<M2::ARingZZp> >
+          ::zero_matrix(R,KZZp->get_ARing(), nrows,ncols);
+      else
+        return MutableMat< SMat<M2::ARingZZp> >
+          ::zero_matrix(R,KZZp->get_ARing(),nrows,ncols);
+    }
+  if (R->ringID() == M2::ring_FFPACK)
+    {
+      std::cerr << "Should not get here" << std::endl;
+      const M2::ConcreteRing<M2::ARingZZpFFPACK> *ffpackRing = 
+        dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK> * >(R);
+      ASSERT(ffpackRing != 0);
+      if (dense)
+        return MutableMat< DMat<M2::ARingZZpFFPACK> >
+          ::zero_matrix(R,&ffpackRing->ring(),nrows,ncols);
+      else
+        return MutableMat< SMat<M2::ARingZZpFFPACK> >
+          ::zero_matrix(R,&ffpackRing->ring(),nrows,ncols);
+    }
+#if 0
+  if (R->ringID() == M2::ring_GFM2)
+    {
+      const M2::ConcreteRing<M2::ARingGFM2> *AGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFM2> *>(R);
+      ASSERT(AGF != 0);
+      if (dense)
 	{
-	  return MutableMat< DMat<M2::ARingZZp> >
-	    ::zero_matrix(KZZp,nrows,ncols);
+	  return MutableMat< DMat<M2::ARingGFM2> >
+	    ::zero_matrix(R,&AGF->ring(),nrows,ncols);
 	}
       else
-	return MutableMat< SMat<M2::ARingZZp> >
-	    ::zero_matrix(KZZp,nrows,ncols);
+	return MutableMat< SMat<M2::ARingGFM2> >
+          ::zero_matrix(R,&AGF->ring(),nrows,ncols);
     }
+#endif
   if (R == globalZZ)
     {
-#ifdef DEVELOPMENT
- #warning "change to NTL mat_ZZ"
-#endif
       if (dense)
 	{
 	  return MutableMat< DMat<CoefficientRingZZ_NTL> >
-	    ::zero_matrix(globalZZ,nrows,ncols);
+	    ::zero_matrix(globalZZ,globalZZ->get_ARing(),nrows,ncols);
 	}
       else
 	  return MutableMat< SMat<CoefficientRingZZ_NTL> >
-	    ::zero_matrix(globalZZ,nrows,ncols);
+	    ::zero_matrix(globalZZ,globalZZ->get_ARing(),nrows,ncols);
     }
   if (R->is_RRR())
     {
-      if (R->cast_to_RRR()->get_precision() <= 53)
+      const RRR * ARRR = R->cast_to_RRR();
+      ASSERT(ARRR != 0);
+      if (ARRR->get_precision() <= 53)
 	{
 	  if (dense)
 	    {
 	      return MutableMat< DMat<CoefficientRingRRR> >
-		::zero_matrix(R->cast_to_RRR(),nrows,ncols);
+		::zero_matrix(R,ARRR->get_ARing(),nrows,ncols);
 	    }
 	  else
 	    return MutableMat< SMat<CoefficientRingRRR> >
-	      ::zero_matrix(R->cast_to_RRR(),nrows,ncols);
+	      ::zero_matrix(R, ARRR->get_ARing(),nrows,ncols);
 	  
 	}
       // large precision after this
       if (dense)
 	{
 	  return MutableMat< DMat<CoefficientRingRRR> >
-	    ::zero_matrix(R->cast_to_RRR(),nrows,ncols);
+	    ::zero_matrix(R, ARRR->get_ARing(),nrows,ncols);
 	}
       else
 	return MutableMat< SMat<CoefficientRingRRR> >
-	  ::zero_matrix(R->cast_to_RRR(),nrows,ncols);
-    }
+	  ::zero_matrix(R, ARRR->get_ARing(),nrows,ncols);
+}
   if (R->is_CCC())
     {
-      if (R->cast_to_CCC()->get_precision() <= 53)
+      const CCC *ACCC = R->cast_to_CCC();
+      ASSERT(ACCC != 0);
+      if (ACCC->get_precision() <= 53)
 	{
 	  if (dense)
 	    {
 	      return MutableMat< DMat<CoefficientRingCCC> >
-		::zero_matrix(R->cast_to_CCC(),nrows,ncols);
+		::zero_matrix(R, ACCC->get_ARing(),nrows,ncols);
 	    }
 	  else
 	    return MutableMat< SMat<CoefficientRingCCC> >
-	      ::zero_matrix(R->cast_to_CCC(),nrows,ncols);
+	      ::zero_matrix(R, ACCC->get_ARing(),nrows,ncols);
 	}
       // large precision after this
       if (dense)
 	{
 	  return MutableMat< DMat<CoefficientRingCCC> >
-	    ::zero_matrix(R->cast_to_CCC(),nrows,ncols);
+	    ::zero_matrix(R, ACCC->get_ARing(),nrows,ncols);
 	}
       else
 	return MutableMat< SMat<CoefficientRingCCC> >
-	  ::zero_matrix(R->cast_to_CCC(),nrows,ncols);
+	  ::zero_matrix(R, ACCC->get_ARing(),nrows,ncols);
     }
   // In this case, we just use ring elem arithmetic
+  const CoefficientRingR *cR = new CoefficientRingR(R);
   if (dense)
     return MutableMat< DMat<CoefficientRingR> >
-            ::zero_matrix(R,nrows,ncols);
+      ::zero_matrix(R,cR,nrows,ncols);
   else
     return MutableMat< SMat<CoefficientRingR> >
-            ::zero_matrix(R,nrows,ncols);
-  const GF *KGF = R->cast_to_GF();
-  if (KGF != 0)
-    {
-    }
+      ::zero_matrix(R,cR,nrows,ncols);
   ERROR("mutable matrices over this ring are not yet implemented");
   return 0;
 }
@@ -130,9 +197,8 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
 {
   MutableMatrix *result = MutableMatrix::zero_matrix(R,nrows,nrows,dense);
-  ring_elem one = R->one();
   for (int i=0; i<nrows; i++)
-    result->set_entry(i,i,one);
+    result->set_entry(i,i,R->from_int(1));
   return result;
 }
 
@@ -221,6 +287,7 @@ bool MutableMatrix::set_values(M2_arrayint rows,
   return true;
 }
 
+#if 0
 template<typename Mat>
 MutableMat<Mat> *MutableMat<Mat>::grab_Mat(const Mat *m) {
     MutableMat *result = new MutableMat;
@@ -228,10 +295,19 @@ MutableMat<Mat> *MutableMat<Mat>::grab_Mat(const Mat *m) {
     result->mat.grab(copy_m);
     return result;
   }
+#endif
 
 ///////////////////////////////////
 //// Linear algebra routines //////
 ///////////////////////////////////
+
+template<typename Mat>
+engine_RawArrayIntPairOrNull MutableMat<Mat>::
+  LQUPFactorizationInPlace(bool transpose)
+{
+  throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
+}
+
 
 template<typename Mat>
 bool MutableMat<Mat>::solve(const MutableMatrix *b, MutableMatrix *x) const
@@ -290,7 +366,6 @@ bool MutableMat<Mat>::least_squares(const MutableMatrix *b,
   ERROR("least squares requires dense mutable matrices over RR or CC");
   return false;
 }
-
 
 template <> M2_arrayintOrNull MutableMat< DMat<M2::ARingZZp> >::LU(MutableMatrix *L,
                                                               MutableMatrix *U) const
@@ -606,17 +681,212 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::least_squares(const Mut
     }
 }
 
+template<class RingType>
+MutableMatrix* M2::makeMutableZeroMatrix(const Ring* Rgeneral,
+                                         const RingType* R,
+                                         size_t nrows,
+                                         size_t ncols,
+                                         bool dense)
+{
+  if (dense)
+    return MutableMat< DMat<RingType> >
+      ::zero_matrix(Rgeneral,R,nrows,ncols);
+
+  return MutableMat< SMat<RingType> >
+    ::zero_matrix(Rgeneral,R,nrows,ncols);
+}
+
+#if 0
+//TODO: Mike, Jakob.  Once we have sparse linbox matrices implemented, this
+// might be how we create them.
+template<>
+MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFFPACK>(const Ring* Rgeneral,
+                                         const M2::ARingZZpFFPACK* R,
+                                         size_t nrows,
+                                         size_t ncols,
+                                         bool dense)
+{
+  if (dense)
+    return MutableMat< DMat<M2::ARingZZpFFPACK> >
+      ::zero_matrix(Rgeneral,R,nrows,ncols);
+
+  return MutableMat< SparseLinboxMat<M2::ARingZZpFFPACK> >
+    ::zero_matrix(Rgeneral,R,nrows,ncols);
+}
+#endif
+
+/////////////////////////////////////////
+/// Fast Linear Algebra Routines ////////
+/////////////////////////////////////////
+
+template <typename T>
+size_t MutableMat<T>::rank() const 
+{
+  return mat.rank();
+}
+
+template <typename T>
+const RingElement* MutableMat<T>::determinant() const 
+{
+  ring_elem det;
+  elem a;
+  mat.determinant(a);
+  mat.get_CoeffRing()->to_ring_elem(det, a);
+  return RingElement::make_raw(mat.get_ring(), det);
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::invert() const
+{
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
+  bool val = mat.invert(result->mat);
+  if (!val)
+    {
+      delete result;
+      return 0;
+    }
+  return result;
+}
+
+template <typename T>
+M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
+{
+  return mat.rankProfile(row_profile);
+}
+  
+template <typename T>
+MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
+{
+  MutableMat<T>* ker = makeZeroMatrix(0,0);
+  mat.nullSpace(ker->mat, right_side);
+  return ker;
+}
+
+template <typename T>
+std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B, 
+                                                           bool right_side) const 
+{ 
+  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  MutableMat<T>* solns = makeZeroMatrix(0,0);
+  bool retval = mat.solveLinear(solns->mat, B1->mat, right_side);
+  return std::pair<bool, MutableMatrix*>(retval, solns);
+}
+
+template <typename T>
+void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
+                                            const MutableMatrix* B,
+                                            bool transposeA,
+                                            bool transposeB,
+                                            const RingElement* a,
+                                            const RingElement* b)
+{
+    std::cerr << "somewhere addMultipleTo" << std::endl;
+
+  const MutableMat<T>* A1 = A->cast_to_MutableMat<T>();
+  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+
+  typename T::ElementType fa, fb;
+  mat.get_CoeffRing()->from_ring_elem(fa, a->get_value());
+  mat.get_CoeffRing()->from_ring_elem(fb, b->get_value());
+
+  mat.addMultipleTo(A1->mat, B1->mat, transposeA, transposeB, fa, fb);
+  
+  return ;
+}
+
+
+/////////////////////////////////////////
+#if 0
+MutableMatrix *M2::ARingZZpFFPACK::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
+{
+  if (dense)
+    return MutableMat< DMat<M2::ARingZZpFFPACK> >
+      ::zero_matrix(R,this,nrows,ncols);
+
+  return MutableMat< SMat<M2::ARingZZpFFPACK> >
+    ::zero_matrix(R,this,nrows,ncols);
+}
+
+MutableMatrix *M2::ARingZZp::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
+{
+  if (dense)
+    return MutableMat< DMat<M2::ARingZZp> >
+      ::zero_matrix(R,this,nrows,ncols);
+
+  return MutableMat< SMat<M2::ARingZZp> >
+    ::zero_matrix(R,this,nrows,ncols);
+}
+
+MutableMatrix *M2::ARingGF::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
+{
+  if (dense)
+    return MutableMat< DMat<M2::ARingGF> >
+      ::zero_matrix(R,this,nrows,ncols);
+
+  return MutableMat< SMat<M2::ARingGF> >
+    ::zero_matrix(R,this,nrows,ncols);
+}
+
+MutableMatrix *M2::ARingGFM2::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
+{
+  if (dense)
+    return MutableMat< DMat<M2::ARingGFM2> >
+      ::zero_matrix(R,this,nrows,ncols);
+
+  return MutableMat< SMat<M2::ARingGFM2> >
+    ::zero_matrix(R,this,nrows,ncols);
+}
+#endif
+
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZp>(const Ring* Rgeneral,
+                                                 const M2::ARingZZp* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingTower>(const Ring* Rgeneral,
+                                                 const M2::ARingTower* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFFPACK>(const Ring* Rgeneral,
+                                                 const M2::ARingZZpFFPACK* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingGF>(const Ring* Rgeneral,
+                                                 const M2::ARingGF* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingGFM2>(const Ring* Rgeneral,
+                                                 const M2::ARingGFM2* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+
 template class MutableMat< DMat<M2::ARingZZp> >;
 template class MutableMat< DMat<CoefficientRingRRR> >;
 template class MutableMat< DMat<CoefficientRingCCC> >;
 template class MutableMat< DMat<CoefficientRingZZ_NTL> >;
 template class MutableMat< DMat<CoefficientRingR> >;
+template class MutableMat< DMat<M2::ARingTower> >;
 
 template class MutableMat< SMat<M2::ARingZZp> >;
 template class MutableMat< SMat<CoefficientRingRRR> >;
 template class MutableMat< SMat<CoefficientRingCCC> >;
 template class MutableMat< SMat<CoefficientRingZZ_NTL> >;
 template class MutableMat< SMat<CoefficientRingR> >;
+template class MutableMat< SMat<M2::ARingTower> >;
+
+template class MutableMat< DMat<M2::ARingZZpFFPACK> >;
+template class MutableMat< SMat<M2::ARingZZpFFPACK> >;
+
+template class MutableMat< DMat<M2::ARingGF> >;
+template class MutableMat< SMat<M2::ARingGF> >;
+
+template class MutableMat< DMat<M2::ARingGFM2> >;
+template class MutableMat< SMat<M2::ARingGFM2> >;
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

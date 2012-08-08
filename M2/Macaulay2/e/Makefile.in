@@ -135,7 +135,7 @@ extended_doxygen:
 	cp $(DOXYGEN_CONF_DIR)/styleSheetFile.css $(DOXYGEN_OUTPUT_DIR)  ; \
 	cp $(DOXYGEN_CONF_DIR)/tabs.css $(DOXYGEN_OUTPUT_DIR)  ; \
 	cp $(DOXYGEN_CONF_DIR)/navtree.css $(DOXYGEN_OUTPUT_DIR)  ; \
-	@ echo "documentation was written to "$(DOXYGEN_OUTPUT_DIR) ;
+	echo "documentation was written to "$(DOXYGEN_OUTPUT_DIR) ;
 #doxygen -s  -u ./Doxyconf_copy ; # updates a config file and drops parameter documentation.
 
 # -exporting DOXYGEN_EXCLUDE_PATTERN is required to exclude the documentation folder from parsing if documentation is a subfolder in the source file tree.
@@ -182,7 +182,7 @@ smalldoc:
 	HAVE_DOT_SETTING=YES \
 	CALL_GRAPH_SETTING=NO \
 	INHERITMEMBERS=$(INHERITMEMBERS) \
-	ln -s (M2_E_DOXYGEN_OUTPUT_BASEDIR)/small$(INHERITED_POSTFIX) default
+	ln -s $(M2_E_DOXYGEN_OUTPUT_BASEDIR)/small$(INHERITED_POSTFIX) default
 
 fulldoc:
 	$(MAKE) extended_doxygen \

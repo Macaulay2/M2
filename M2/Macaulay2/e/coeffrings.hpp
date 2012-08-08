@@ -205,6 +205,8 @@ public:
 
   bool is_zero(elem result) const { return result == zero; }
 
+  bool is_equal(elem a, elem b ) const { return a == b; }
+
   void invert(elem &result, elem a) const
   {
     if (a == 0)
@@ -314,12 +316,16 @@ public:
 
   bool is_zero(elem result) const { return mpfr_cmp_si(&result, 0) == 0; }
 
+  bool is_equal(elem a, elem b ) const { return mpfr_cmp(&a,&b) == 0; }
+
   void invert(elem &result, elem a) const { mpfr_si_div(&result, 1, &a, GMP_RNDN); }
 
   void subtract_multiple(elem &result, elem a, elem b) const;
     // result -= a*b
 
   void add(elem &result, elem a, elem b) const { mpfr_add(&result, &a, &b, GMP_RNDN); }
+
+  void negate(elem &result, elem a) const { mpfr_neg(&result, &a, GMP_RNDN); }
 
   void subtract(elem &result, elem a, elem b) const { mpfr_sub(&result, &a, &b, GMP_RNDN); }
 
@@ -490,9 +496,13 @@ public:
 
   void set(elem &result, elem a) const { mpfc_set(&result, &a); }
 
+  bool is_equal(elem a, elem b ) const { return mpfc_is_equal(&a,&b); }
+
   bool is_zero(elem result) const { return mpfc_is_zero(&result); }
 
   void add(elem &result, elem a, elem b) const { mpfc_add(&result,&a,&b); }
+
+  void negate(elem &result, elem a) const { mpfc_neg(&result,&a); }
 
   void subtract(elem &result, elem a, elem b) const { mpfc_sub(&result,&a,&b); }
 
@@ -551,6 +561,8 @@ public:
 
   bool is_zero(elem result) const { return R->is_zero(result); }
 
+  bool is_equal(elem a, elem b ) const { return R->is_equal(a,b); }
+
   void invert(elem &result, elem a) const
   {
     result = R->invert(a);
@@ -562,6 +574,11 @@ public:
   void add(elem &result, elem a, elem b) const
   {
     result = R->add(a,b);
+  }
+
+  void negate(elem &result, elem a) const
+  {
+    result = R->negate(a);
   }
 
   void subtract(elem &result, elem a, elem b) const

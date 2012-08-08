@@ -31,6 +31,10 @@ export RawPathTrackerOrNull := RawPathTracker or null;
 export RawMutableMatrix := Pointer "struct MutableMatrix *";
 export RawMutableMatrixOrNull := RawMutableMatrix or null;
 export RawMonomialOrderingArray := array(RawMonomialOrdering);
+
+export RawArrayIntPair := { a:RawArrayInt, b:RawArrayInt };
+export RawArrayIntPairOrNull := RawArrayIntPair or null;
+
 export RawMatrixPair := { a:RawMatrix, b:RawMatrix };
 export RawMatrixPairOrNull := RawMatrixPair or null;
 export RawMatrixArray := array(RawMatrix);
@@ -121,10 +125,8 @@ export (M:RawMatrix) + (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
      -- of the result is set to have each degree zero.  Similarly with the
      -- source, and also with the degree of the matrix.
      );
-export (x:RawMutableMatrix) + (y:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
-     ERROR(\"not implemented for mutable matrices\");
-     return 0;
-     // return M->add(N);
+export (M:RawMutableMatrix) + (N:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
+     return M->add(N);
      "
      -- /* If the sizes do not match, then NULL is returned.  If they do match,
      --    the addition is performed.  If the targets are not equal, the target 
@@ -145,14 +147,8 @@ export (M:RawMatrix) - (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
      -- source, and also with the degree of the matrix.
      );
 export (M:RawMutableMatrix) - (N:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
-     ERROR(\"not implemented for mutable matrices\");
-     return 0;
-     // return M->subtract(N);
-     "
-     -- /* If the sizes do not match, then NULL is returned.  If they do match,
-     --    the addition is performed.  If the targets are not equal, the target 
-     --    of the result is set to have each degree zero.  Similarly with the
-     --    source, and also with the degree of the matrix. */
+     try { return M->subtract(N); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "
      );
 export (f:RawRingElement) * (M:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
      try { if (f->get_ring() != M->get_ring()) {
@@ -167,15 +163,11 @@ export (M:RawMatrix) * (f:RawRingElement) : RawMatrixOrNull := Ccode(returns, "
 	  return M->scalar_mult(f->get_value(), true); }
      catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
 export (f:RawRingElement) * (M:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
-     ERROR(\"scalar multiplication not implemented for mutable matrices\");
-     return 0;
-     // return M->mult(f);
-     ");
+     try { return M->mult(f); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
 export (M:RawMutableMatrix) * (f:RawRingElement) : RawMutableMatrixOrNull := Ccode(returns, "
-     ERROR(\"scalar multiplication not implemented for mutable matrices\");
-     return 0;
-     // return M->mult(f);
-     ");
+     try { return M->mult(f); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
 export (M:RawMatrix) * (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
      try { return M->mult(N, true); }
      catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "

@@ -718,6 +718,16 @@ export rawGaloisField(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawGaloisField", rawGaloisField);
 
+export rawARingGaloisField1(e:Expr):Expr := (
+     when e is f:RawRingElementCell do toExpr(Ccode(RawRingOrNull,"rawARingGaloisField1(", f.p, ")"))
+     else WrongArg("a raw ring element"));
+setupfun("rawARingGaloisField1", rawARingGaloisField1);
+
+export rawARingGaloisFieldFromQuotient(e:Expr):Expr := (
+     when e is f:RawRingElementCell do toExpr(Ccode(RawRingOrNull,"rawARingGaloisFieldFromQuotient(", f.p, ")"))
+     else WrongArg("a raw ring element"));
+setupfun("rawARingGaloisFieldFromQuotient", rawARingGaloisFieldFromQuotient);
+
 export rawARingGaloisField(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
@@ -734,6 +744,25 @@ export rawARingGaloisField(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawARingGaloisField", rawARingGaloisField);
+
+export rawARingGFPolynomial(e:Expr):Expr := (
+     when e
+     is R:RawRingCell do toExpr( Ccode(RawArrayIntOrNull, "rawARingGFPolynomial(", R.p, ")" ) )
+     else WrongArg("a raw ring"));
+setupfun("rawARingGFPolynomial",rawARingGFPolynomial);
+
+export rawARingGFGenerator(e:Expr):Expr := (
+     when e
+     is R:RawRingCell do toExpr( Ccode(RawRingElementOrNull, "rawARingGFGenerator(", R.p, ")" ) )
+     else WrongArg("a raw ring"));
+setupfun("rawARingGFGenerator",rawARingGFGenerator);
+
+
+export rawARingGFCoefficients(e:Expr):Expr := (
+     when e
+     is a:RawRingElementCell do toExpr( Ccode(RawArrayIntOrNull, "rawARingGFCoefficients(", a.p, ")" ) )
+     else WrongArg("a raw ring element"));
+setupfun("rawARingGFCoefficients",rawARingGFCoefficients);
 
 export rawFractionRing(e:Expr):Expr := (
      when e is R:RawRingCell do toExpr( Ccode(RawRingOrNull,"IM2_Ring_frac(", R.p, ")"))
@@ -793,6 +822,58 @@ export rawTowerQuotientRing(e:Expr):Expr := (
      else WrongNumArgs(2)
      );
 setupfun("rawTowerQuotientRing", rawTowerQuotientRing);
+
+export rawARingTower(e:Expr):Expr := (
+     -- e = (Ring, list of var names)
+     when e is a:Sequence do
+     if length(a) == 2 then
+       when a.0 is R:RawRingCell do (
+         	if isSequenceOfStrings(a.1) then (
+	   	     names := getSequenceOfStrings(a.1);
+	   	     toExpr(Ccode(RawRingOrNull, "rawARingTower1(", R.p, ",", names, ")"))
+	   	     )
+      	 	else
+	   	  WrongArg(2, "a list of strings"))
+       else WrongArg(1, "a ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
+     );
+setupfun("rawARingTower", rawARingTower);
+
+export rawARingTowerAdjoinVariables(e:Expr):Expr := (
+     -- e = (Ring, list of var names)
+     when e is a:Sequence do
+     if length(a) == 2 then
+       when a.0 is R:RawRingCell do (
+         	if isSequenceOfStrings(a.1) then (
+	   	     names := getSequenceOfStrings(a.1);
+	   	     toExpr(Ccode(RawRingOrNull, "rawARingTower2(", R.p, ",", names, ")"))
+	   	     )
+      	 	else
+	   	  WrongArg(2, "a list of strings"))
+       else WrongArg(1, "a ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
+     );
+setupfun("rawARingTowerAdjoinVariables", rawARingTowerAdjoinVariables);
+
+export rawARingTowerQuotient(e:Expr):Expr := (
+     -- e = (R:Ring, Fs:RawRingElementArray)
+     when e is a:Sequence do
+     if (length(a) == 2) then
+       when a.0 is R:RawRingCell do (
+	    if isSequenceOfRingElements(a.1) then (
+		 f := getSequenceOfRingElements(a.1);
+		 toExpr(Ccode(RawRingOrNull, "rawARingTower3(", R.p, ", ", f, ")"))
+		 )
+	    else WrongArg(2, "a sequence of ring elements")
+	    )
+       else WrongArg(1, "a ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
+     );
+setupfun("rawARingTowerQuotient", rawARingTowerQuotient);
+
 
 export rawAmbientRing(e:Expr):Expr := (
      when e is R:RawRingCell do toExpr( Ccode(RawRingOrNull,"rawAmbientRing(", R.p, ")"))
@@ -892,9 +973,8 @@ export rawFromNumber(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawFromNumber", rawFromNumber);
 
-rawRingElementInverse(f:RawRingElement):RawRingElementOrNull := Ccode(returns,"
-     try { return f->invert(); }
-     catch (exc::engine_error m) { ERROR(m.what()); return NULL; }");
+rawRingElementInverse(f:RawRingElement):RawRingElementOrNull := Ccode(returns,
+     "TRY return f->invert(); CATCH");
 export rawInverse(e:Expr):Expr := (
      when e
      is x:RawRingElementCell do toExpr(rawRingElementInverse(x.p))
@@ -964,6 +1044,13 @@ export rawIsZero(e:Expr):Expr := (
      else WrongArg("a raw ring element or matrix or mutable matrix")
      );
 setupfun("rawIsZero",rawIsZero);
+
+export rawMutableMatrixIsDense(e:Expr):Expr := (
+     when e
+     is x:RawMutableMatrixCell do toExpr( Ccode( bool, "rawMutableMatrixIsDense(", x.p, ")" ))
+     else WrongArg("a raw mutable matrix")
+     );
+setupfun("rawMutableMatrixIsDense",rawMutableMatrixIsDense);
 
 export rawToInteger(e:Expr):Expr := (
      when e
@@ -2686,43 +2773,63 @@ export rawMutableMatrixFillRandom(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawMutableMatrixFillRandom",rawMutableMatrixFillRandom);
 
-----------------------------
--- ffpack interface routines
-
-export rawFFPackDeterminant(e:Expr):Expr := (
+----------------------------------
+-- fast linear algebra routines --
+----------------------------------
+export rawLinAlgRank(e:Expr):Expr := (
      when e
      is m:RawMutableMatrixCell
-     do toExpr(Ccode(RawRingElementOrNull, "rawFFPackDeterminant(", m.p, ")" ))
+     do toExpr(Ccode(int, "rawLinAlgRank(", m.p, ")" ))
      else WrongArgMutableMatrix());
-setupfun("rawFFPackDeterminant",rawFFPackDeterminant);
+setupfun("rawLinAlgRank",rawLinAlgRank);
 
-export rawFFPackRank(e:Expr):Expr := (
+export rawLinAlgDeterminant(e:Expr):Expr := (
      when e
      is m:RawMutableMatrixCell
-     do toExpr(Ccode(int, "rawFFPackRank(", m.p, ")" ))
+     do toExpr(Ccode(RawRingElementOrNull, "rawLinAlgDeterminant(", m.p, ")" ))
      else WrongArgMutableMatrix());
-setupfun("rawFFPackRank",rawFFPackRank);
+setupfun("rawLinAlgDeterminant",rawLinAlgDeterminant);
 
-export rawFFPackNullSpace(e:Expr):Expr := (
+export rawLinAlgInvert(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawMutableMatrixOrNull, "rawLinAlgInvert(", m.p, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawLinAlgInvert",rawLinAlgInvert);
+
+export rawLinAlgRankProfile(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is M:RawMutableMatrixCell do
      if !isBoolean(s.1) then WrongArgBoolean(1) else toExpr(
-	  Ccode(RawMutableMatrixOrNull, "rawFFPackNullSpace(", 
+	  Ccode(RawArrayIntOrNull, "rawLinAlgRankProfile(", 
 	       M.p, ",", 
 	       toBoolean(s.1),
 	       ")"))
      else WrongArgMutableMatrix(1)
      else WrongNumArgs(2));
-setupfun("rawFFPackNullSpace", rawFFPackNullSpace);
+setupfun("rawLinAlgRankProfile", rawLinAlgRankProfile);
 
-export rawFFPackSolve(e:Expr):Expr := (
+export rawLinAlgNullSpace(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is M:RawMutableMatrixCell do
+     if !isBoolean(s.1) then WrongArgBoolean(1) else toExpr(
+	  Ccode(RawMutableMatrixOrNull, "rawLinAlgNullSpace(", 
+	       M.p, ",", 
+	       toBoolean(s.1),
+	       ")"))
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(2));
+setupfun("rawLinAlgNullSpace", rawLinAlgNullSpace);
+
+export rawLinAlgSolve(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrixCell do
      when s.1 is N:RawMutableMatrixCell do
      if !isBoolean(s.2) then WrongArgBoolean(2) else toExpr(
-	  Ccode(RawMutableMatrixOrNull, "rawFFPackSolve(", 
+	  Ccode(RawMutableMatrixOrNull, "rawLinAlgSolve(", 
 	       M.p, ",", 
 	       N.p, ",", 
 	       toBoolean(s.2),
@@ -2730,17 +2837,9 @@ export rawFFPackSolve(e:Expr):Expr := (
      else WrongArgMutableMatrix(1)
      else WrongArgMutableMatrix(2)
      else WrongNumArgs(3));
-setupfun("rawFFPackSolve", rawFFPackSolve);
+setupfun("rawLinAlgSolve", rawLinAlgSolve);
 
-export rawFFPackInvert(e:Expr):Expr := (
-     when e
-     is m:RawMutableMatrixCell
-     do toExpr(Ccode(RawMutableMatrixOrNull, "rawFFPackInvert(", m.p, ")" ))
-     else WrongArgMutableMatrix());
-setupfun("rawFFPackInvert",rawFFPackInvert);
-
-
-export rawFFPackAddMultipleTo(e:Expr):Expr := (
+export rawLinAlgAddMultipleTo(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 7 then WrongNumArgs(7) else
      when s.0 is C:RawMutableMatrixCell do
@@ -2751,7 +2850,7 @@ export rawFFPackAddMultipleTo(e:Expr):Expr := (
      if !isBoolean(s.3) then WrongArgBoolean(4)
      else if !isBoolean(s.4) then WrongArgBoolean(5) 
      else toExpr(
-	  Ccode(RawMutableMatrixOrNull, "rawFFPackAddMultipleTo(", 
+	  Ccode(RawMutableMatrixOrNull, "rawLinAlgAddMultipleTo(", 
 	       C.p, ",", 
 	       A.p, ",", 
 	       B.p, ",", 
@@ -2766,19 +2865,22 @@ export rawFFPackAddMultipleTo(e:Expr):Expr := (
      else WrongArgMutableMatrix(2)
      else WrongArgMutableMatrix(1)
      else WrongNumArgs(7));
-setupfun("rawFFPackAddMultipleTo", rawFFPackAddMultipleTo);
+setupfun("rawLinAlgAddMultipleTo", rawLinAlgAddMultipleTo);
 
-export rawFFPackRowRankProfile(e:Expr):Expr := (
-     when e is m:RawMutableMatrixCell do toExpr( 
-	  Ccode(RawArrayIntOrNull, "rawFFPackRowRankProfile(", m.p,")"))
-     else WrongArgMutableMatrix(1));
-setupfun("rawFFPackRowRankProfile", rawFFPackRowRankProfile);
+export rawLinAlgCharPoly(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawRingElementArrayOrNull, "rawLinAlgCharPoly(", m.p, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawLinAlgCharPoly",rawLinAlgCharPoly);
 
-export rawFFPackColumnRankProfile(e:Expr):Expr := (
-     when e is m:RawMutableMatrixCell do toExpr( 
-	  Ccode(RawArrayIntOrNull, "rawFFPackColumnRankProfile(", m.p,")"))
-     else WrongArgMutableMatrix(1));
-setupfun("rawFFPackColumnRankProfile", rawFFPackColumnRankProfile);
+export rawLinAlgMinPoly(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawRingElementArrayOrNull, "rawLinAlgMinPoly(", m.p, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawLinAlgMinPoly",rawLinAlgMinPoly);
+
 
 ----------------------------
 rawContent(e:Expr):Expr := (
@@ -3537,6 +3639,14 @@ export rawLU(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawLU", rawLU);
 
+
+export rawLQUPFactorization(e:Expr):Expr := (
+     -- rawLQUPFactorization(A) returns a pair of list of integers (P, Qt permutations),
+     when e is m:RawMutableMatrixCell do
+     	  toExpr(
+	       Ccode(RawArrayIntPairOrNull, "rawLQUPFactorization(", m.p, ")"))
+     else WrongArgMutableMatrix(1));
+setupfun("rawLQUPFactorization", rawLQUPFactorization);
 
 export rawFFLU(e:Expr):Expr := (
      when e is M:RawMutableMatrixCell do toExpr( Ccode(RawArrayIntOrNull, "IM2_FF_LU(", M.p, ")" ) )
