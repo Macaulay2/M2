@@ -54,6 +54,7 @@ opt64-linbox : always
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-linbox \
+		--enable-memtailor \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
