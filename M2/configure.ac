@@ -834,6 +834,7 @@ AC_SUBST(BUILTLIBS,)
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor gtest ")
+BUILD_ALWAYS=" gtest "
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -845,7 +846,10 @@ LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
-	    *" $i "*) eval BUILD_$i=yes ;;
+	    *" $i "*) 
+	        eval BUILD_$i=yes 
+		BUILD_ALWAYS="$BUILD_ALWAYS $i"
+	    	;;
 	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
        esac
     done])
@@ -1495,6 +1499,7 @@ done
 AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST (libraries to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST (programs to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST (libraries and programs to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILD_ALWAYS  = $BUILD_ALWAYS])
 AC_MSG_NOTICE([link using:])
 dnl the order of this list should agree with that in Macaulay2/bin/Makefile.in
 AC_MSG_NOTICE([     BUILTLIBS      = $BUILTLIBS])
@@ -1510,9 +1515,23 @@ AC_MSG_NOTICE([using CXX           = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
 AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
 
+function subset {
+    # whether the words of $1 are among the words of $2
+    y=" $2 "
+    for i in $1
+    do 	case "$y" in
+	    *" $i "*) ;;
+	    *) return 1 ;;
+	esac
+    done
+    return 0
+}
+
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
-if test "$BUILDING" = no -a "$BUILDLIBLIST"
+subset "$BUILDLIBLIST" "$BUILD_ALWAYS"
+sub=$?
+if test "$BUILDING" = no -a $sub = 1
 then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
 fi
 
