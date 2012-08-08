@@ -41,7 +41,11 @@ addHook(Module, symbol codim, (opts,M) -> break (
 	  for i from 0 to n-1 when c > 0 do c = min(c,codim(monomialIdealOfRow(i,p)));
 	  c - codim(R,opts))))
 
-MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
+MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> (
+     if n < 0 then error "expected nonnegative exponent"
+     else if n === 0 then monomialIdeal 1_(ring I)
+     else SimplePowerMethod(I,n)
+     )
 
 Ring / MonomialIdeal := (R,I) -> R / ideal I
 
