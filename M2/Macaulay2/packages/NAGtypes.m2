@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.4",
-     Date => "March, 2011",
+     Version => "1.4.0.1",
+     Date => "August, 2012",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -304,14 +304,15 @@ document {
 	  },  
      "Main datatypes: ",
      UL{
-	  {"Point", " -- numerical approximation of a point in a complex space (and related methods)"},
-	  {"WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"}
+	  {TO "Point", " -- numerical approximation of a point in a complex space (and related methods)"},
+	  {TO "WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"},
+	  {TO "NumericalVariety", " -- a numerical description of a variety"}
 	  },
      "Other service functions: ",
      UL{
-	  {"areEqual", ""},
-	  {"sortSolutions", ""},
-	  {"generalEquations", ""}
+	  {TO "areEqual", " -- compare numbers, points, lists of points"},
+	  {TO "sortSolutions", " -- sort lists of points"},
+	  {TO "generalEquations", " -- "}
 	  }
      }
 document {
@@ -600,6 +601,37 @@ V = numericalVariety {w0,w1}
      	///
 	}
 
+doc ///
+  Key
+    generalEquations
+    (generalEquations,ZZ,Ideal)
+    (generalEquations,ZZ,List)
+  Headline
+    random linear combinations of equations/generators 
+  Usage
+    L = generalEquations(k,F)
+    L = generalEquations(k,I)
+  Inputs
+    k:ZZ
+    F:List
+      a list of polynomials
+    I:Ideal
+  Outputs
+    L:List
+      {\tt k} linear combinations of polynomials in {\tt F} (of generators of {\tt I})
+  Description
+    Text
+      A variety {\em V} (that is not necessarily a complete intersection) of codimension {\tt k} 
+      is a component of a complete intersection of codimension {\tt k} defined by 
+      {\tt k} general linear combinations of any generating set of the defining ideal of {\em V}.
+      
+      This function automates the above construction.   
+    
+    Example
+      R = CC[x,y,z]; 
+      F = {x*y, x^2 - y, x*z};
+      L = generalEquations(2,F)      
+///
 
 
 TEST ///

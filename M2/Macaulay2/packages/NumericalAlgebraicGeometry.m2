@@ -4,6 +4,7 @@
 BERTINI'M2'EXISTS := fileExists(currentFileDirectory | "Bertini.m2") -- remove when Bertini is distributed
 if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 if version#"VERSION" <= "1.4" then needsPackage "PHCpack"
+PHC'EXISTS := (version#"VERSION" > "1.4")
 --if BERTINI'M2'EXISTS and version#"VERSION" <= "1.4" then needsPackage "Bertini"
 
 newPackage select((
@@ -80,7 +81,7 @@ protect MaxNumberOfVariables
 debug Core; -- to enable engine routines
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
-load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2"
+if PHC'EXISTS then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" else phcSolve = trackPaths = refineSolutions = null
 if BERTINI'M2'EXISTS then load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" else trackBertini = solveBertini = cleanupOutput = bertiniPosDimSolve = null
 
 -- GLOBAL VARIABLES ----------------------------------
