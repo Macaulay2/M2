@@ -1,6 +1,7 @@
 # from http://googletest.googlecode.com/files/gtest-1.6.0.zip
 URL = http://macaulay2.com/Extra
 VERSION = 1.6.0
+CHECKTARGET = .
 CONFIGURECMD = :
 BUILDCMD = :
 INSTALLCMD = rm -f $(BUILTLIBPATH)/gtest && ln -s ../gtest/$(BUILDDIR) $(BUILTLIBPATH)/gtest
