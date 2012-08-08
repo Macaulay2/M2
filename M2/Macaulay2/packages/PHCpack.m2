@@ -49,13 +49,13 @@ export {
   "cascade",
   "witnessMember",
   "witnessCascade",
-  "monodromyBreakup"
+  "monodromyBreakup",
+  "numericalIrreducibleDecomposition"
 }
 
 protect ErrorTolerance, protect Iterations,
 protect Bits, protect ResidualTolerance, 
-protect Append
-
+protect Append, protect TopDimension
 --##########################################################################--
 -- GLOBAL VARIABLES 
 --##########################################################################--
@@ -151,7 +151,7 @@ systemFromFile (String) := (name) -> (
   s := get name;
   s = replace("i","ii",s);
   s = replace("E","e",s);
-  -- s = replace("e+00","",s);  -- on Mac: M2 crashes at 3.0e+00 as constant
+  s = replace("e+00","",s);  -- on Mac: M2 crashes at 3.0e+00 as constant
   L := lines(s);
   n := value L_0;
   result := {};
@@ -891,14 +891,18 @@ witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
 -----------------------------------------------
 ------------  WITNESS CASCADE  ----------------
 -----------------------------------------------
- 
-witnessCascade = method()
-witnessCascade (List,ZZ) := (system,dimension) -> (
+witnessCascade = method(TypicalValue => numericalVariety, Options => {TopDimension => null})
+witnessCascade (Ideal,ZZ) := o -> (I,dimension) -> (
   -- IN: system, a polynomial system;
   --     dimension, top dimension of the solution set.
   -- OUT: a hash table with keys the dimension of each component,
   --      values are witness sets for positive dimensions,
   --      or a list of isolated solutions for key equal to zero.
+  if not(class coefficientRing ring I===ComplexField) then
+    error "coefficient ring is not complex";
+  system:=gens I;
+  system=apply(numcols system, i-> system_(0,i));
+  setRandomSeed(random(ZZ));
   PHCinputFile := temporaryFileName() | "PHCinput";
   PHCoutputFile := temporaryFileName() | "PHCoutput";
   PHCbatchFile := temporaryFileName() | "PHCbatch";
@@ -928,7 +932,7 @@ witnessCascade (List,ZZ) := (system,dimension) -> (
   while i >= 0 do
   (
     fil := (PHCoutputFile | "_sw" | i);
-    if fileExists fil then 
+    if (fileExists fil and match("THE SOLUTIONS",get fil)) then 
     (
       stdio << "witness set of dimension " << i << endl;
       if i > 0 then
@@ -965,6 +969,22 @@ witnessCascade (List,ZZ) := (system,dimension) -> (
      return numericalVariety(toList Wsets )
   --return hashTable(result);
 )
+
+
+-------------------------------------------
+--NUMERICAL IRREDUCIBLE DECOMPOSITION------
+-------------------------------------------
+
+numericalIrreducibleDecomposition=method(TypicalValue=>NumericalVariety)
+numericalIrreducibleDecomposition (Ideal,ZZ) := (I,d) -> (
+  --IN: an ideal, top dimension
+  --OUT: a NumericalVariety
+W:=witnessCascade(I,d);
+witsets:=apply(keys W, i->monodromyBreakup((W#i)_0));
+numericalVariety(flatten witsets)  
+  )
+
+
 
 -----------------------------------
 -----------  FACTOR  --------------
