@@ -214,7 +214,11 @@ addEndFunction( () -> (
 temporaryDirectory = () -> (
      if temporaryDirectoryName === null 
      then temporaryDirectoryName = (
-	  tmp := "/tmp/";				    -- unix dependency here...
+	  tmp := (
+	       if getenv "TMPDIR" === ""
+	       then "/tmp/"			     -- unix dependency here...
+	       else minimizeFilename ( getenv "TMPDIR" | "/" )
+	       );
 	  if not isDirectory tmp then error("expected a directory: ", tmp);
 	  if 0 === (fileMode tmp & (2 * 8^2)) then error("expected a writable directory: ", tmp);
 	  while true do (
