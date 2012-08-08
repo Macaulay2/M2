@@ -220,7 +220,8 @@ temporaryDirectory = () -> (
 	       else minimizeFilename ( getenv "TMPDIR" | "/" )
 	       );
 	  if not isDirectory tmp then error("expected a directory: ", tmp);
-	  if 0 === (fileMode tmp & (2 * 8^2)) then error("expected a writable directory: ", tmp);
+	  if not fileReadable tmp then error("expected a readable directory: ", tmp);
+	  if not fileWritable tmp then error("expected a writable directory: ", tmp);
 	  while true do (
 	       fn := tmp | "M2-" | toString processID() | "-" | toString temporaryDirectoryCounter | "/";
 	       temporaryDirectoryCounter = temporaryDirectoryCounter + 1;
