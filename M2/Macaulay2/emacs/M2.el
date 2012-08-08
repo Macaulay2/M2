@@ -123,9 +123,13 @@
 
 ;;
 
+(defgroup Macaulay2 nil "Editing Macaulay2 code.")
+(defcustom M2-indent-level 4 "*Indentation increment in Macaulay 2 mode" :group 'Macaulay2)
 (defvar M2-exe "M2" "*The default Macaulay2 executable name.")
 (defvar M2-shell-exe "/bin/sh" "*The default shell executable name.")
-(defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") "*The default Macaulay2 command line.")
+(defcustom M2-command 
+  (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") 
+  "*The default Macaulay2 command line." :group 'Macaulay2)
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer-history '("*M2*") "The history of recent Macaulay2 send-to buffers.")
 (defvar M2-tag-history () "The history of recent Macaulay2 command name tags.")
@@ -467,8 +471,6 @@ be sent can be entered, with history."
 
 (if (not (boundp 'font-lock-constant-face))
     (setq font-lock-constant-face font-lock-function-name-face))
-
-(defconst M2-indent-level 4 "*Indentation increment in Macaulay 2 mode")
 
 (defun parse-line ()
      (save-excursion
