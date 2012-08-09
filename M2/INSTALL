@@ -251,26 +251,6 @@ Microsoft Windows XP and Vista notes
 MacOS X notes
 ----------------------
 
-There are several methods for installing Macaulay2 under Mac OS X.
-
-(1) Download the ppc or i386 disk images and follow the directions in
-    the read me file.  This is the easiest and fastest method.
-
-(2) Use the fink system (http://fink.sourceforge.net).
-
-    Follow the instructions at the Fink website to install Fink itself,
-    add unstable/main to the appropriate line in /sw/etc/fink.conf, and
-    then install Fink's "macaulay2" package.  You can choose the binary
-    installation method or the source installation method (which will
-    download the source files and compile them on your machine).  You may
-    also wish to install emacs or xemacs using Fink, for the best
-    interface to Macaulay2.
-
-    Fink can also be used to install other software of interest to
-    mathematicians, and is highly recommended. 
-
-(3) Build from source yourself.  
-    
     For specific scripts that we use to build the disk images,
     see BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
 
