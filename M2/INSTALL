@@ -232,21 +232,6 @@ In the shell script g++-m64 put this single line:
 
 Mark both shell scripts executable.
 
------------------------
-Microsoft Windows XP and Vista notes
------------------------
-
-    ----------------------
-    Cygwin
-    ----------------------
-
-    Notes:
-
-      - Some configure scripts, notably that of "libtool", assume ccp is in /lib
-        on every system.  Work around:
-
-	   ln -s /usr/bin/cpp /lib
-
 ----------------------
 MacOS X notes
 ----------------------
