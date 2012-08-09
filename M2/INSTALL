@@ -50,32 +50,32 @@ Here are commands that will get you a good development environment under
 various modern operating systems:
 
   Ubuntu:
+    sudo apt-get install -y autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libreadline5-dev libxml2-dev libz-dev make openssh-server patch subversion xbase-clients
 
-    sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev libz-dev libreadline-dev libncurses-dev
 
   Debian:
+    sudo apt-get install -y autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
 
-    sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libgmp3-dev libmpfr-dev libpari-dev autoconf bison emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev make openssh-server subversion xbase-clients libxml2-dev curl libz-dev
 
   Fedora:
-
-    sudo yum -y install emacs gcc-c++ bison flex autoconf subversion patch ncurses-devel ncurses-devel gdbm-devel glpk-devel cddlib-devel libxml2-devel rpm-build kernel-devel fakeroot pari-devel gc-devel ntl-devel lapack-devel gmp-devel mpfr-devel rpmdevtools
+    sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion
+    some debugging aids:
+       sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
 
   Scientific linux:
-
-    sudo yum install -y emacs subversion lapack gcc-c++ gcc-gfortran flex bison autoconf autoconf flex bison ncurses-devel libxml2-devel zlib-devel gdbm-devel gmp-devel readline-devel rpm-build strace
-
+    sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
     For making an rpm file, install fakeroot manually, from:
     	 http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
 
-  Cygwin under Microsoft Windows:
+  Suse64:
+    sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel
 
-    # use setup to install these packages:
+  Cygwin 1.7 under Microsoft Windows:
+    use setup to install these packages:
 	autoconf automake bison emacs-X11 file flex gcc4-core gcc4-fortran gcc4-g++ gdb
 	libgc-devel libgdbm-devel libglpk-devel liblapack-devel libstdc++6-devel
 	libxml2-devel make mpfr-devel patchutils readline subversion time wget
-
-    # you may also want these:
+     you may also want these:
     	emacs-el gvim libxml2-doc openssh psmisc unzip vim xconsole xkill
 
 ----------------------
