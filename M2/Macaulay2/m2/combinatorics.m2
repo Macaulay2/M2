@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 subsets(ZZ,ZZ) := List => (n,j) -> (
+     if n < 0 then error "expected a nonnegative number";
      if j < 0 then return {};
      if j == 0 then return {{}};
      if j == 1 then return toList apply(0 .. n-1, i -> {i});
@@ -22,7 +23,9 @@ subsets List := List => x -> (
 	  x = drop(x,-1);
 	  s := subsets x;
 	  join(s,apply(s,y->append(y,a)))))
-subsets ZZ := List => n -> subsets toList (0 .. n-1)
+subsets ZZ := List => n -> (
+    if n < 0 then error "expected a nonnegative number";
+    subsets toList (0 .. n-1))
 
 Partition = new Type of BasicList
 Partition _ ZZ := (p,i) -> p#i
