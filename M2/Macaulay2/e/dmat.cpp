@@ -13,10 +13,6 @@
 #include "dmat.hpp"
 #include "mat.hpp"
 #include "mpfr.h"
-#ifdef HAVE_MPACK
-#include <mpack/mblas_mpfr.h>
-#include <mpack/mlapack_mpfr.h>
-#endif
 #include <iostream>
 
 #include "aring-zzp.hpp"
@@ -24,6 +20,7 @@
 
  #include <typeinfo>
 
+#include "dmat-RRR.hpp"
 
 
 
@@ -40,7 +37,13 @@ template<typename CoeffRing>
 size_t DMat<CoeffRing>::rank() const
 {
   ERROR("not implemented for this ring yet");
-  return static_cast<size_t>(-1);
+  return static_cast<size_t>(-3);
+}
+
+template<> 
+size_t DMat<M2::ARingRRR>::rank() const
+{
+  return LUDecompositionRRR::rankRRR(*this);
 }
 
 template<typename CoeffRing>
@@ -149,35 +152,6 @@ template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
   return result;
 }
 
-template <> __mpfr_struct *DMat<CoefficientRingCCC>::make_mpack_array() const // why is this here???
-{
-  long len = n_rows() * n_cols();
-  __mpfr_struct *result = new __mpfr_struct[2*len];
-
-  elem *a = array_;
-  __mpfr_struct *p = result;
-
- //std::cout<<"inside make_mpack"<<std::endl;
- for (long i=0; i<len; i++)
-   {
-     mpfr_init(p);
-     mpfr_set(p, a->re, GMP_RNDN);
-     p++;
-     a++;
-   }
-
- a =array_;
- for (long i=len; i< 2*len; i++)
-   {
-     mpfr_init(p);
-     mpfr_set(p, a->im, GMP_RNDN);
-     //*p= *(a->im);
-     p++;
-     a++;
-   }
-  return result;
-}
-
 template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack_array)
 {
   long len = n_rows() * n_cols();
@@ -191,8 +165,6 @@ template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack
       a++;
     }
 }
-
-
 
 #include "mutablemat.hpp"
 
@@ -257,8 +229,9 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
   return 0;
 }
 
-
 #include "dmat-ffpack.cpp"
+
+
 
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;

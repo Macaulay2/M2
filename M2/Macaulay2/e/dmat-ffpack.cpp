@@ -1,11 +1,5 @@
 // Copyright 2005-2012  Michael E. Stillman
 
-#include "dmat.hpp"
-
-
-#include "aring-ffpack.hpp"
-#include "aring-gf.hpp"
-
 #ifdef HAVE_FFLAS_FFPACK
 #if 0
     template<typename  CoeffRing >

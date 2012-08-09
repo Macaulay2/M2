@@ -87,9 +87,6 @@ public:
   double *make_lapack_array() const; // creates an array of doubles (or 0, if not applicable)
   void fill_from_lapack_array(double *lapack_array);  // The size of the array should match the size of this.
 
-  __mpfr_struct *make_mpack_array() const;
-  //void fill_from_mpack_array(mpreal *mparray);
-
   class iterator : public our_new_delete
   {
     const DMat<CoeffRing> *M;
