@@ -7,6 +7,7 @@
 #include "mat.hpp"
 
 #include "aring-zzp.hpp"
+#include "aring-RRR.hpp"
 #include "aring-gf.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-tower.hpp"
@@ -1078,6 +1079,7 @@ template class SMat<M2::ARingGFM2>;
 template class SMat<CoefficientRingRRR>;
 template class SMat<CoefficientRingCCC>;
 template class SMat<CoefficientRingR>;
+template class SMat<M2::ARingRRR>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

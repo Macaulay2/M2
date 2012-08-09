@@ -1,0 +1,57 @@
+Adding RRR and CCC linear algebra support
+
+1. Make new rings (in ConcreteRing structure)
+  1a. make RR_53 and RR_n (n > 53) different implementations
+  1b. same with CC
+  1c.  What about adaptive for a ring?
+
+2. Add in DMat and SMat over these rings.
+3. Write functions:
+  rank
+  determinant
+  invert
+  rankProfile
+  nullSpace
+  solveLinear
+  addMultipleTo
+
+  LU
+  SVD
+  eigenvalues
+  eigenvectors
+  leastSquares
+  QR
+  
+  condition numbers (simpler approx, and better approx via SVD)
+  +, -, scalar mult
+  given eigenvalues, the following are not really needed:
+    characteristicPolynomial
+    minimalPolynomial
+
+  LU gives:  m x n matrices, possibly close to rank deficient
+    rank  (not well determined)  maybe: give Threshold=> option.
+    determinant
+    invert
+    solveLinear
+    nullSpace (not well determined)
+
+  I imagine:
+    aring-CC.hpp
+    aring-CCC.hpp
+    aring-RR.hpp
+    aring-RRR.hpp
+    aring-ZZp.hpp
+    aring-ZZ.hpp
+    ...
+    template ConcreteRing<ARingCCC>;
+
+Test:
+   make simpler tests for inlining with templates
+
+SLP
+  separate big deal
+  Mike: check with C.S. people (e.g. Dexter) about if anyone can improve SLP implementation.
+  
+  eventually: want nodes that represent elementary functions, and det.
+  
+  SLP<>

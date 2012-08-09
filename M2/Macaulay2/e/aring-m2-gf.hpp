@@ -168,6 +168,8 @@ namespace M2 {
       ASSERT(d != 0);  //TODO actually: we need to check for this...
       divide(result,n,d);
     }
+
+    bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
     
     void negate(elem &result, elem a) const
     {

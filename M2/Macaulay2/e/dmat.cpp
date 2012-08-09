@@ -5,6 +5,7 @@
 #include "coeffrings.hpp"
 #include "coeffrings-zz.hpp"
 #include "ZZp.hpp"
+#include "aring-RRR.hpp"
 #include "aring-gf.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-tower.hpp"
@@ -271,6 +272,7 @@ template class DMat<CoefficientRingR>;
 template class DMat<M2::ARingGFM2>;
 template class DMat<M2::ARingZZpFFPACK>;
 template class DMat<M2::ARingGF>;
+template class DMat<M2::ARingRRR>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

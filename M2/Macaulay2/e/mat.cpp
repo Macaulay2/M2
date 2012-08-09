@@ -15,6 +15,7 @@
 #include "aring-ffpack.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-gf.hpp"
+#include "aring-RRR.hpp"
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
 
@@ -863,6 +864,11 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingGFM2>(const Ring* Rge
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingRRR>(const Ring* Rgeneral,
+                                                 const M2::ARingRRR* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
 
 template class MutableMat< DMat<M2::ARingZZp> >;
 template class MutableMat< DMat<CoefficientRingRRR> >;
@@ -886,6 +892,9 @@ template class MutableMat< SMat<M2::ARingGF> >;
 
 template class MutableMat< DMat<M2::ARingGFM2> >;
 template class MutableMat< SMat<M2::ARingGFM2> >;
+
+template class MutableMat< DMat<M2::ARingRRR> >;
+template class MutableMat< SMat<M2::ARingRRR> >;
 
 
 // Local Variables:

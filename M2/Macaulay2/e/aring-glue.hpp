@@ -85,6 +85,14 @@ namespace M2 {
       R->to_ring_elem(result, a);
       return result;
     }
+    virtual bool from_BigReal(gmp_RR q, ring_elem &result) const
+    {
+      ElementType a;
+      R->init(a);
+      bool ret = R->set_from_BigReal(a,q);
+      R->to_ring_elem(result, a);
+      return ret;
+    }
 
     virtual ring_elem var(int v) const
     {

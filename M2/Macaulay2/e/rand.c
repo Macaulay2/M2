@@ -88,6 +88,13 @@ gmp_RR rawRandomRR(unsigned long precision)
   return result;
 }
 
+void rawRandomMpfr(mpfr_t result, unsigned long precision)
+  /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
+{
+  mpfr_init2(result,precision);
+  mpfr_urandomb(result, state);
+}
+
 gmp_CC rawRandomCC(unsigned long precision)
   /* returns a uniformly distributed random complex in the box [0.0,0.0], [1.0,1.0] */
 {

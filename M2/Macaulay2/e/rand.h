@@ -43,6 +43,8 @@ extern "C" {
   gmp_RR rawRandomRR(unsigned long prec);
   /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
 
+  void rawRandomMpfr(mpfr_t result, unsigned long precision);
+
   gmp_CC rawRandomCC(unsigned long prec);
 
 #if defined(__cplusplus)

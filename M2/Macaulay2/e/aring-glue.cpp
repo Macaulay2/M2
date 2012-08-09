@@ -10,9 +10,9 @@ namespace M2 {
     result->initialize_ring(R->characteristic());
     result->declare_field();
 
-    //    zeroV = from_int(0);
-    //    oneV = from_int(1);
-    //    minus_oneV = from_int(-1);
+    result->zeroV = result->from_int(0);
+    result->oneV = result->from_int(1);
+    result->minus_oneV = result->from_int(-1);
 
     return result;
   }
@@ -90,16 +90,6 @@ namespace M2 {
     return retval;
   }
 
-
-
-  //explicit instantiation
- template class ConcreteRing< ARingZZp >;
-
-  template class ConcreteRing< ARingGFM2 >;
-
-//#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
-
-
   template<>
   bool ConcreteRing<ARingGF>::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   {
@@ -127,18 +117,15 @@ namespace M2 {
   }
 
   //explicit instantiation
- template class ConcreteRing< ARingGF >;
- 
-//#endif
-//#if defined(HAVE_FFLAS_FFPACK)  
+  template class ConcreteRing< ARingZZp >;
+  template class ConcreteRing< ARingZZpFFPACK >;
+  
+  template class ConcreteRing< ARingGFM2 >;
+  template class ConcreteRing< ARingGF >;
 
-  //explicit instantiation
- 
- template class ConcreteRing< ARingZZpFFPACK >;
-//#endif
-
-
+  template class ConcreteRing<ARingRRR>;
   template class ConcreteRing<ARingTower>;
+
   ///////////////////////////
   // Matrix creation ////////
   ///////////////////////////

@@ -139,6 +139,8 @@ namespace M2 {
     
     void set_from_mpq(elem &result, mpq_ptr a) const { }  // TODO: write this
     
+    bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
+
     // arithmetic
     void negate(elem &result, elem a) const { 
       result = copy(mStartLevel, a);

@@ -164,6 +164,8 @@ namespace M2 {
         void set_from_mpz(elem &result,const mpz_ptr a) const ;
 
         void set_from_mpq(elem &result,const mpq_ptr a) const ;
+
+        bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
         
         ElementType computeGenerator ( ) const; 
 

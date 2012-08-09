@@ -5,6 +5,7 @@
 
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
+#include "aring-RRR.hpp"
 #include "aring-gf.hpp"
 #include "aring-ffpack.hpp"
 #include "aring-m2-gf.hpp"

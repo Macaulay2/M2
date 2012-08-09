@@ -1,5 +1,7 @@
 // Copyright 2002 Michael E. Stillman
 
+static const bool use_old_RRR = true;
+
 #include "engine.h"
 
 #include "monoid.hpp"
@@ -28,7 +30,8 @@
 #include "tower.hpp"
 
 #include "aring.hpp"
-
+#include "aring-glue.hpp"
+#include "aring-RRR.hpp"
 unsigned long IM2_Ring_hash(const Ring *R)
 {
   return R->get_hash_value();
@@ -83,7 +86,10 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
-  return RRR::create(prec);
+  if (use_old_RRR)
+    return RRR::create(prec);
+
+  return M2::ConcreteRing<M2::ARingRRR>::create(new M2::ARingRRR(prec));
 }
 
 const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec)
@@ -574,8 +580,13 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 {
   if (!a->get_ring()->is_RRR())
     {
-      ERROR("expected an element of RRR");
-      return 0;
+      const M2::ConcreteRing<M2::ARingRRR> *R = dynamic_cast< const M2::ConcreteRing<M2::ARingRRR> * >(a->get_ring());
+      if (R == 0)
+        {
+          ERROR("expected an element of RRR");
+          return 0;
+        }
+      return a->get_value().mpfr_val;
     }
   void *f = a->get_value().poly_val;
   return static_cast<gmp_RR>(f);
