@@ -282,6 +282,8 @@ doc ///
      Compute the complete linear series of D_0-D_1 on the normalization of C
      via adjoint curves and double linkage.
    Example
+     setRandomSeed 18 -- this seed results in an assertion failure when calling completeLinearSystemOnNodalPlaneCurve below
+     setRandomSeed 1 -- this seed does not
      R=ZZ/101[x_0..x_2];
      J=(random nodalPlaneCurve)(6,3,R);
      D={J+ideal random(R^1,R^{1:-3}),J+ideal 1_R};
