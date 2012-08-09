@@ -525,7 +525,7 @@ homomorphism Matrix := Matrix => (f) -> (
      deg := (degrees source f)#0;
      map(N,M,adjoint1(super f, M0, N0),Degree=>deg))
 -----------------------------------------------------------------------------
-pdim Module := M -> length resolution M
+pdim Module := M -> length resolution trim M
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;
