@@ -42,7 +42,7 @@ partitions(ZZ,ZZ) := List => memoize (
 partitions ZZ := List => (n) -> partitions(n,n)
 
 conjugate Partition := Partition => (lambda) -> (
-     if #lambda === 0 then {} else (
+     if #lambda === 0 then new Partition from {} else (
      	  slot := #lambda-1;
      	  new Partition from
 	  for i from 1 to lambda#0 list (
