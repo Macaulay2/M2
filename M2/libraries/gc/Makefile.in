@@ -27,13 +27,14 @@ HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/
 
 # or we get it from the home page
 
-VERSION = libatomic_ops-7.3alpha2
-TARDIR = gc-7.3alpha2
+VERSION = 20120729
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 AOVERSION = 
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
-VLIMIT = 2000000
-MLIMIT = 2000000
+
+# for gc "make check" requires far too much memory
+VLIMIT := 2500000
+MLIMIT := $(VLIMIT)
 
 CONFIGOPTIONS += --enable-cplusplus
 
