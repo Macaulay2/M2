@@ -35,6 +35,21 @@ assert( image f0097 == image f )
 assert( image f0096 == image f )
 assert( image ftrimmed == image f )
 
+
+-- this used to not work because of a problem with Schreyer orders:
+    R = QQ[x,y,z]
+    M = R^1/ideal(vars R)
+    F = res M
+    S = R/(x^2-y^2)
+    N = S^1 /ideal(x^3,x*y^2,y^3)
+    lim = 10
+    G = res (N, LengthLimit => lim)
+    J=ker G.dd_lim
+    G#(lim+1) = J
+    G.dd#(lim+1) = inducedMap(G_lim,G_(lim+1))
+    id_(F**S) ** id_G
+
+
 end
 
 {*
