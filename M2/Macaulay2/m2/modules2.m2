@@ -30,8 +30,9 @@ Module ** Module := Module => (M,N) -> (
      R := ring M;
      if R =!= ring N then error "expected modules over the same ring";
      if isFreeModule M then (
-	  if M == R^1 then N
-	  else if isFreeModule N then (
+	  {*  -- this optimization can be a problem for functoriality, because M may have a Schreyer ordering
+	     if M == R^1 then N
+	  else *} if isFreeModule N then (
 	       if N == R^1 then M
 	       else new Module from (R, raw M ** raw N)
 	       )
@@ -40,8 +41,9 @@ Module ** Module := Module => (M,N) -> (
 	       if N.?relations then M ** N.relations))
      else (
 	  if isFreeModule N then (
-	       if N == R^1 then M
-	       else subquotient(
+	       {* -- this optimization can be a problem for functoriality, because M may have a Schreyer ordering
+		  if N == R^1 then M
+	       else *} subquotient(
 		    if M.?generators then M.generators ** N,
 		    if M.?relations then M.relations ** N))
 	  else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations ))))
