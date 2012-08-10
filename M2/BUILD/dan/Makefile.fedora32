@@ -23,13 +23,9 @@ default: install check
 #	yum list emacs
 #	yum provides /usr/include/gc/gc.h
 
-# install these packages:
-# sudo yum -y install emacs gcc-c++ bison flex autoconf subversion patch ncurses-devel ncurses-devel gdbm-devel glpk-devel cddlib-devel libxml2-devel rpm-build kernel-devel
-# sudo yum -y install fakeroot pari-devel gc-devel ntl-devel lapack-devel gmp-devel mpfr-devel rpmdevtools
-#	don't bother installing factory-devel and libfac-devel, as they seem to have a factoring bug, so we should compile them ourselves
-
-# install this debugging info, if debugging:
-#  sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib 
+# to install packages:
+#  sudo apt-get install -y ...
+# see ../../INSTALL for the list of packages
 
 # VirtualBox settings:
 

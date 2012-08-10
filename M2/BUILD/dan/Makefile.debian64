@@ -1,6 +1,9 @@
 # -*- makefile-gmake -*-
 
-# sudo apt-get install -y autoconf bison emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev make openssh-server subversion xbase-clients libxml2-dev curl libz-dev
+# to install packages:
+#  sudo apt-get install -y ...
+# see ../../INSTALL for the list of packages
+
 CONFIGOPTIONS += --enable-deb
 CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu --with-mpir-config-options="ABI=64"
 DIRECTORY = debian64

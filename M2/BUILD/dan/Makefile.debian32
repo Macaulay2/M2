@@ -19,8 +19,9 @@ arch-chk:
 #        locally: /var/lib/apt/lists
 #	remotely: ftp://ftp.us.debian.org/debian/dists/lenny/main/binary-i386/Packages.bz2
 
-# sudo apt-get install -y openssh-server xbase-clients emacs subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libgmp3-dev libmpfr-dev libpari-dev 
-# sudo apt-get install -y autoconf bison emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev make openssh-server subversion xbase-clients libxml2-dev curl libz-dev
+# to install packages:
+#  sudo apt-get install -y ...
+# see ../../INSTALL for the list of packages
 
 # VirtualBox settings:
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP

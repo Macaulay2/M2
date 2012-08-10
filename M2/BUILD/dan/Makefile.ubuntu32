@@ -1,6 +1,8 @@
 # -*- makefile-gmake -*-
 
-# sudo apt-get install -y openssh-server xbase-clients subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev libz-dev libreadline-dev libncurses-dev
+# to install packages:
+#  sudo apt-get install -y ...
+# see ../../INSTALL for the list of packages
 
 export CC =
 export CXX = 

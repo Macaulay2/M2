@@ -17,42 +17,8 @@ else
 DIRECTORY = cygwin
 endif
 
-# packages to install for cygwin 1.7:
-#   autoconf
-#   automake
-#   bison
-#   emacs-X11
-#   file
-#   flex
-#   gcc4-core
-#   gcc4-fortran
-#   gcc4-g++
-#   gdb
-#   libgc-devel
-#   libgdbm-devel
-#   libglpk-devel
-#   liblapack-devel
-#   libstdc++6-devel
-#   libxml2-devel 
-#   make
-#   mpfr-devel
-#   patchutils
-#   readline
-#   subversion
-#   time
-#   wget
-#   xinit
-#   xorg-server
-# optional:
-#   emacs-el
-#   gvim
-#   libxml2-doc
-#   openssh
-#   psmisc (to get killall, pstree, fuser)
-#   unzip
-#   vim
-#   xconsole
-#   xkill
+# to install packages use the setup program
+# see ../../INSTALL for the list of packages to install
 
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
