@@ -272,6 +272,7 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      if ring g =!= ring f then error "expected maps over the same ring";
      M := target f;
      if M != target g then error "expected maps with the same target";
+     if M.?generators then notImplemented();
      L := source f;
      N := source g;
      f = matrix f;
@@ -303,6 +304,7 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
        then return solve(g,f);
      M := target f;
      if M != target g then error "expected maps with the same target";
+     if M.?generators then notImplemented();
      L := source f;
      N := source g;
      f = matrix f;
