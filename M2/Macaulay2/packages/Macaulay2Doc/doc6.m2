@@ -289,9 +289,15 @@ document {
 document {
      Key => mod,
      Headline => "reduce modulo an integer",
-     TT "mod(i,n)", " -- reduce the integer ", TT "i", " modulo ", TT "n", ".",
-     PARA{},
-     "The result is an element of ", TT "ZZ/n", "."}
+     Usage => "mod(i,n)",
+     Inputs => {
+	  "i" => ZZ,
+	  "n" => ZZ },
+     Outputs => {
+	  ZZ => { "the integer ", TT "i", " modulo ", TT "n", ", as an element of ", TT "ZZ/n", "." }
+	  },
+     SeeAlso => {(symbol %, ZZ, ZZ)}
+     }
 document {
      Key => OrderedMonoid,
      Headline => "the class of all ordered monoids",
