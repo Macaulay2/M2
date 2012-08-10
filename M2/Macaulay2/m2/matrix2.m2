@@ -270,11 +270,13 @@ quotientRemainder'(Matrix,Matrix) := Matrix => (f,g) -> (
 
 quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      if ring g =!= ring f then error "expected maps over the same ring";
+     L := source f;					    -- result may not be well defined if L is not free
      M := target f;
-     if M != target g then error "expected maps with the same target";
-     if M.?generators then notImplemented();
-     L := source f;
      N := source g;
+     if M != target g then error "expected maps with the same target";
+     if M.?generators then (
+	  M = cokernel presentation M;	    -- this doesn't change the cover
+	  );
      f = matrix f;
      g = matrix g;
      G := (
@@ -295,18 +297,20 @@ quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     if instance(ring target f, InexactField) and instance(ring target g, InexactField)
+     L := source f;					    -- result may not be well-defined if L is not free
+     M := target f;
+     N := source g;
+     if M != target g then error "expected maps with the same target";
+     if instance(ring M, InexactField)
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
        then return solve(g,f);	   	     	       	    
      if isQuotientOf(ZZ,ring target f)
        and isFreeModule source g and isFreeModule source f
        then return solve(g,f);
-     M := target f;
-     if M != target g then error "expected maps with the same target";
-     if M.?generators then notImplemented();
-     L := source f;
-     N := source g;
+     if M.?generators then (
+	  M = cokernel presentation M;	    -- this doesn't change the cover
+	  );
      f = matrix f;
      g = matrix g;
      map(N, L, f //

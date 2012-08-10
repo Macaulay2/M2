@@ -1,3 +1,12 @@
+R = ZZ/101[x,y]
+phi = (minimalPresentation ker matrix{{x^2+1, x, y}}).cache.pruningMap
+isIsomorphism phi
+ phi^-1 -- fails
+assert( phi * phi^-1 == 1 )
+assert( phi^-1 * phi == 1 )
+assert isWellDefined phi^-1
+assert isWellDefined phi
+
 -----------------------------------------------------------------------------
 
 kk=ZZ/101
