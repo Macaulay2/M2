@@ -1,7 +1,5 @@
 // (c) 1995  Michael E. Stillman
 
-#include <iostream>
-#include "style.hpp"
 #include "mem.hpp"
 #include "text-io.hpp"
 

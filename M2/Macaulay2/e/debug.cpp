@@ -1,3 +1,4 @@
+#include "debug.hpp"
 #include "text-io.hpp"
 #include "matrix.hpp"
 #include "relem.hpp"

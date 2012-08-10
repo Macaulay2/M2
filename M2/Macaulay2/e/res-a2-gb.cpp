@@ -1013,8 +1013,7 @@ void gb2_comp::stats() const
           emit(o.str());
         }
     }
-
-  dfree(F);
+  //  dfree(F);
 }
 
 

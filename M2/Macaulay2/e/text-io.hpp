@@ -2,10 +2,10 @@
 #ifndef _text_io_hh_
 #define _text_io_hh_
 
-#include <gmp.h>
-#include <mpfr.h>
+//#include <mpfr.h>
+//#include "debug.hpp"
 #include "buffer.hpp"
-#include "debug.hpp"
+#include <gmp.h>
 
 extern int i_text_io();
 

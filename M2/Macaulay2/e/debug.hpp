@@ -12,6 +12,7 @@ class MutableMatrix;
 class MonomialIdeal;
 
 #include "ringelem.hpp"
+#include "intarray.hpp"
 
 void dmatrix(const Matrix *M);
 

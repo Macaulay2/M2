@@ -2,10 +2,9 @@
 #ifndef _mem_hh_
 #define _mem_hh_
 
-#include "style.hpp"
 #include "newdelete.hpp"
 #include "../system/mutex.h"
-#include <strings.h>
+class buffer;
 
 //2*2^NDOUBLES = Largest stash size.
 const int NDOUBLES = 25;
