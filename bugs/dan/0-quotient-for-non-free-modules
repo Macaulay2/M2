@@ -1,0 +1,6 @@
+For quotientRemainder(Matrix,Matrix) and quotient(Matrix,Matrix), if the
+source of the first map is not free, the resulting quotient may not be well-defined.
+
+Think about the meaning of this, mathematically, and decide what to do.
+
+Currently Matrix % Matrix requires free modules, inconsistently with quotientRemainder.
