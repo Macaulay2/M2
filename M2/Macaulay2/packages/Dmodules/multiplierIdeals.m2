@@ -31,7 +31,7 @@ star (Ideal,List) := (I,vw) -> (
      ) 
 
 multiplierIdeal = method(Options => {Strategy=>ViaElimination, DegreeLimit=>null})
-multiplierIdeal (Ideal, ZZ) := o -> (a,c) -> first multiplierIdeal(a, promote(c,QQ), Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit)
+multiplierIdeal (Ideal, ZZ) := o -> (a,c) -> multiplierIdeal(a, promote(c,QQ), Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit)
 multiplierIdeal (Ideal, QQ) := o -> (a,c) -> first multiplierIdeal(a, {c}, Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit) 
 multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
      R := ring a;
