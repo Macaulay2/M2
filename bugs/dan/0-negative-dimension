@@ -1,0 +1,20 @@
+-- -*- M2 -*-
+
+k = ZZ/101
+R = k[t_1 .. t_9, x, y]
+Number RingElement := RingElement Number := RingElement RingElement := times
+g=x^3 y-x y^3
+h={,1,x,y,x^2,x y,y^2,x^3,y^3,x^2 y^2}
+f = g + sum(1 .. 9, i -> t_i h_i)
+I = ideal(f,diff_x f,diff_y f,t_1,t_2,t_3,t_5,t_6,t_7,t_8,t_9)
+S = R/I
+T = S[u,v]
+f2  = (3 x  y  +t  _4 +3 x  t  _7 +y  ^2 t  _9 )+(3 x  ^2 -3 y  ^2 +t  _5 +4 x  y  t  _9 )v  +
+ (-3 x  y  +t  _6 +3 y  t  _8 +x  ^2 t  _9 )v  ^2 +(y  +t  _7 )u  +(3 x  +2 y  t  _9 )u  v  +
+ (-3 y  +2 x  t  _9 )u  v  ^2 +(-x  +t  _8 )u  v  ^3 +u  ^2 v  +t  _9 u  ^2 v  ^2 -u  ^2 v  ^3 
+phi = map(T,T,{u,v, t_4 t_1,t_4 t_2,t_4 t_3,  t_4  ,t_4 t_5,t_4 t_6,t_4 t_7,t_4 t_8,  t_9  ,t_4 x,t_4 y})
+f' = phi f2
+I' = ideal(f',diff_u f',diff_v f')
+assert isSubset (I', ideal(u,t_4) )
+dim I'
+assert ( dim I' >= 0 )
