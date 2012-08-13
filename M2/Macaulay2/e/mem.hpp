@@ -2,6 +2,7 @@
 #ifndef _mem_hh_
 #define _mem_hh_
 
+#include <cassert>
 #include "newdelete.hpp"
 #include "../system/mutex.h"
 class buffer;
