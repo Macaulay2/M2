@@ -93,6 +93,7 @@ debug64 : always
 		--prefix="`pwd`/installed" \
 		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
 		--build=x86_64-apple-darwin \
+		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \

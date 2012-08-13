@@ -35,13 +35,6 @@ union ring_elem
   int     get_int() const { return int_val; }
   Nterm * get_poly() const { return poly_val; }
   mpz_ptr get_mpz() const { return mpz_val; }
-
-#if 0
-  ring_elem &operator=(int a) { int_val = a; return *this; }
-  ring_elem &operator=(Nterm *a) { poly_val = a; return *this; }
-  // ring_elem &operator=(mpz_t a) { mpz_val = a; return *this; }
-#endif
-
 };
 
 struct Nterm
@@ -58,9 +51,6 @@ struct vecterm : public our_new_delete
   int       comp;
   ring_elem coeff;
 };
-
-// #define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
-// #define MPZ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
 #define MPQ_VAL(f) (reinterpret_cast<gmp_QQ>((f).poly_val))
 #define MPQ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))

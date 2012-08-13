@@ -4,7 +4,6 @@
 #define _mon_order_hh_
 
 #include "hash.hpp"
-#include "intarray.hpp"
 #include "newdelete.hpp"
 
 enum mon_order_types

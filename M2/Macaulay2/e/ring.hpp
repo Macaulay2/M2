@@ -3,11 +3,9 @@
 #ifndef _ring_hh_
 #define _ring_hh_
 
-//#include "ring-test.hpp"
 #include "hash.hpp"
 #include "ringelem.hpp"
 #include "monoid.hpp"
-
 #include "aring.hpp"
 
 ///// Ring Hierarchy ///////////////////////////////////
