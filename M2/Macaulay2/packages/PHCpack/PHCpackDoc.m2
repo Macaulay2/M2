@@ -20,7 +20,7 @@ doc ///
     Example     
       R = QQ[x,y,z]
       system = {y-x^2,z-x^3,x+y+z-1}
-      solns = phcSolve(system)
+      solns = solveSystem(system)
       numSolns = #solns
       solns/print
     Text
@@ -60,87 +60,78 @@ doc ///
 ///;
 
 -----------------------------------
--- phcSolve
+-- solveSystem
 -----------------------------------
 
 doc ///
   Key
-    phcSolve
-    (phcSolve, List)
+    solveSystem
+    (solveSystem, List)
   Headline
-    a blackbox solver to approximate all complex isolated solutions (invokes "phc -b")
+    a numerical blackbox solver  (invokes "phc -b")
   Usage
-    L = phcSolve(S)
+    L = solveSystem(S)
   Inputs
     S:List
-      containing the polynomials of a square system (as many equations as unknowns).
+      containing a zero-dimensional system of polynomials with complex coefficients
+      that contains at least as many equations as indeterminates 
   Outputs
     L:List 
       containing the solutions of S, each of type Point. 
   Description
     Text
-      Suppose we want to compute the numerical solutions to the 
-      following system:
+      Suppose we want numerical approximations of all complex isolated 
+      solutions to the following system:
+      
     Example
-      R = QQ[x,y,z]
-      S = {x+y+z-1,x^2+y^2,x+y-z-3}
+      R = CC[x,y,z]
+      S = {x+y+z-1, x^2+y^2, x+y-z-3}
     Text
       We call PHCpack's blackbox solver:
+    
     Example
-      L = phcSolve(S)
+      L = solveSystem(S)
     Text
-      We see that there are two solutions. Let's take a look at the first one:
+      The method solveSystem prints the the PHCpack input and output file names 
+      and returns two solutions. The solutions are of type Point, defined in @TO NAGtypes@. 
+      Each Point comes with diagnostics.
+      For example, {\tt LastT} is the end value of the continuation parameter; 
+      if it equals 1, then the solver reached the end of the path properly.
+    
     Example
       oneSoln = L_0
       peek oneSoln
+    
     Text
-      The solutions are of type Point, defined in @TO NAGtypes@. 
-      Each Point comes with diagnostics to help determine how `good' it is.
-      For example, {\tt LastT} is the end value of the continuation parameter; 
-      if it equals 1, then the solver reached the end of the path properly.
+      If the coefficient ring of the polynomial ring of the system is not a ComplexField, 
+      then the method will return an error.  One way around this is to use sub first:
+    
+    Example
+      R = QQ[x,y,z]
+      S = {x+y+z-1, x^2+y^2, x+y-z-3} 
+      system = sub(ideal S, CC[gens R])
+      sols = solveSystem( flatten entries gens system )
       
     Text
-      A brief discussion on the dimension of the system is in place.
-      If we try to run:
-      --phcSolve(flatten entries mingens I)
-      --break
-      we get an error. This is because the code does not check 
-      for dimension of the system; it checks for number of equations instead. 
-	       
-      One way to solve problems to make the system and then use only 
-      minimal generators of the ideal by using "mingens".	       
-      Here is a second system which is square, but has a free variable 
-      anyway (x) :
+      The method handles overdetermined systems by inserting slack variables.
+      
     Example
-      I = ideal(y-x^2,z-x^3,x^2-y)
-      dim I 
-    Text
-      The system is not zero-dimensional (there is a free variable!!); 
-      but the code does not know that;
-      since we have the system is ``square''...
-    Example
-      system = flatten entries gens I
-      vol = mixedVolume(system) -- this returns zero, not so useful
-      phcSolve(system) 
-    Text
-      Thus, if you are not sure if you have a *truly* square 
-      (or overdetermined system), that is, if you want to make sure 
-      the system is not positive dimensional (underdetermined),
-      you can check this by getting rid of the non-minimal generators 
-      of the ideal (note: here we use "mingens" which returns a matrix; 
-      we could have used "trim" which returns an ideal)
-
-      In case we need slack variables: 
-    Example
-      dim trim I
-    Text
-      Also, if the system is overdetermined, then the method inserts 
-      slack variables, so it still works:
-    Example
-      system={y-x^2, z-x^3,x+y+z-1,x+y+ x^3 -1}
+      system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
       #system > numcols vars R --overdetermined system
-      solns =phcSolve(system);
-      numSolns = #solns
+      solns = solveSystem(system);
+      numSolns = #solns  
+
+  Caveat
+      The method solveSystem does not check 
+      the dimension of the system; it checks for number of equations instead.
+      So solveSystem will return an error if there are less equations than unknowns 
+      even if the system is zero-dimensional. In addition, if the system is square
+      but not zero-dimensional, the output is meaningless.  Thus, it is suggested 
+      that the user checks the dimension of the system before using
+      solveSystem.
+      
+
+    
 ///;
 
 -----------------------------------
@@ -176,7 +167,7 @@ doc ///
       Let us compute a square root with a working precision of 64 decimal
       places:
     Example
-      R = QQ[x,y]; S = {x^2 - 1/3, x*y - 1}; roots = phcSolve(S);
+      R = QQ[x,y]; S = {x^2 - 1/3, x*y - 1}; roots = solveSystem(S);
       r0 = roots#0#Coordinates#1
       newRoots = refineSolutions(S,roots,64)
       newRoots#0 -- recall that solutions are of type Point
@@ -191,15 +182,15 @@ doc ///
   Key
     mixedVolume
     (mixedVolume, List)
-    [mixedVolume, startSystem]
-    [mixedVolume, stableMV]
+    [mixedVolume, StartSystem]
+    [mixedVolume, StableMixedVolume]
   Headline
     mixed volume of a polynomial system (invokes "phc -m")
   Usage
     mv = mixedVolume(S) 
-    (mv,sv) = mixedVolume(S,stableMV => true)  
-    (mv,q,qsols) = mixedVolume(S,startSystem => true)     
-    (mv,sv,q,qsols) = mixedVolume(S,stableMV => true, startSystem => true)
+    (mv,sv) = mixedVolume(S,StableMixedVolume => true)  
+    (mv,q,qsols) = mixedVolume(S,StartSystem => true)     
+    (mv,sv,q,qsols) = mixedVolume(S,StableMixedVolume => true, StartSystem => true)
   Inputs
     S:List
       whose entries are the polynomials of a square system
@@ -238,13 +229,13 @@ doc ///
       dim I
       degree I
       m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
-      (mv,sv) = mixedVolume(f,stableMV=>true) 
-      (mv,q,qsols) = mixedVolume(f,startSystem=>true);
+      (mv,sv) = mixedVolume(f,StableMixedVolume=>true) 
+      (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
       q --let's take a look at the start system:
       qsols --and its solutions:
     Text
       {\em Note that only those solutions with nonzero components 
-           are shown, even if stableMV is true.  See the end of 
+           are shown, even if StableMixedVolume is true.  See the end of 
            the temporary output file for the solutions with zero components.}
 
       The method
@@ -255,30 +246,30 @@ doc ///
             "ACM TOMS" }@
       31(4):555-560, 2005.
   SeeAlso
-    stableMV
-    startSystem
+    StableMixedVolume
+    StartSystem
 ///;
 
 -- options for mixedVolume
 
 doc ///
   Key
-    stableMV
+    StableMixedVolume
   Headline
     optional input for computation of the stable mixed volume
   Description
     Text
-      Put {\tt stableMV=>true} as an argument in the function @TO mixedVolume@ to count solutions in affine space.
+      Put {\tt StableMixedVolume=>true} as an argument in the function @TO mixedVolume@ to count solutions in affine space.
 ///;
 
 doc ///
   Key
-    startSystem
+    StartSystem
   Headline
     optional input for computation of mixed volume by solving a random coefficient system
   Description
     Text
-      PUt {\tt startSystem=>true} as an argument in the function @TO mixedVolume@ to tell the method to use polyhedral homotopies. 
+      PUt {\tt StartSystem=>true} as an argument in the function @TO mixedVolume@ to tell the method to use polyhedral homotopies. 
       Polyhedral homotopies solve a system with the same Newton polytopes as the original system and with random complex coefficients.
       This random coefficient system can serve as a start system to solve the original input system.
 ///;
@@ -386,17 +377,17 @@ doc ///
 ///;
 
 -----------------------------------
--- phcEmbed
+----CONSTRUCT EMBEDDING------------
 -----------------------------------
 
 doc ///
   Key
-    phcEmbed
-    (phcEmbed,List,ZZ)
+    constructEmbedding
+    (constructEmbedding,List,ZZ)
   Headline
     calls phc -c to construct an embedding of a polynomial system
   Usage
-    g = phcEmbed(f,k)
+    g = constructEmbedding(f,k)
   Inputs
     f:List
       of polynomials expected to have a component of dimension k
@@ -413,12 +404,12 @@ doc ///
     Example
       R = CC[x,y,z];
       f = { x^2 - y, x^3 - z };
-      fe1 = phcEmbed(f,1);
+      fe1 = constructEmbedding(f,1);
       toString fe1
     Text
       The ring in which the original system lives is extended with
       as many slack variables as the dimension provided as the second
-      argument k to phcEmbed.  The slack variables start with zz.
+      argument k to constructEmbedding.  The slack variables start with zz.
       Solutions of the embedded system with
       zero values for the slack variables are candidate generic points.
 
@@ -429,7 +420,7 @@ doc ///
     Example
       R = CC[x,y,z];
       f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
-      fe1 = phcEmbed(f,1);
+      fe1 = constructEmbedding(f,1);
       toString fe1
     Text
       In the example above we gave four equations in three unknowns
@@ -462,7 +453,7 @@ doc ///
   Description
     Text
       The method topWitnessSet constructs and embedding for the given
-      polynomial system with the given dimension and then calls phcSolve
+      polynomial system with the given dimension and then calls solveSystem
       for the computation of generic points on the solution set.
 
       The computation of a witness set for the twisted cubic
@@ -509,12 +500,12 @@ doc ///
 
 doc ///
   Key
-    phcFactor
-    (phcFactor,WitnessSet)
+    factorWitnessSet
+    (factorWitnessSet,WitnessSet)
   Headline
     applies monodromy to factor a witness set into irreducible components
   Usage
-    L = phcFactor(w)
+    L = factorWitnessSet(w)
   Inputs
     w:WitnessSet
       properly embedded with slack variables
@@ -531,7 +522,7 @@ doc ///
       R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
       (w,ns) = topWitnessSet(f,1);
       degree(w)
-      L = phcFactor(w)
+      L = factorWitnessSet(w)
 ///;
 
 -----------------------------------
@@ -541,15 +532,15 @@ doc ///
 doc ///
   Key 
     cascade
-    (cascade,Ideal)
+    (cascade,List)
   Headline
     runs a cascade of homotopies to get witness sets for each component of the variety (invokes "phc -c")
   Usage
-    C = cascade I
+    C = cascade L
   Inputs
-    I:Ideal
+    L:List
   Outputs
-    C:List
+    V:NumericalVariety
       containing the witness points for each pure-dimensional variety 
       contained in V(I). 
   Description
@@ -564,117 +555,70 @@ doc ///
       is  a hashtable, which lists the dimension, filename of
       the witness set, and witness points for the stated dimension.
     Example
-      R=QQ[x11,x22,x21,x12,x23,x13,x14,x24]
-      I=ideal(x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14)
-      dim I
-      degree I
-      cascade I
+      R=CC[x11,x22,x21,x12,x23,x13,x14,x24]
+      system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14}
+      dim ideal system
+      degree ideal system
+      cascade system
   Caveat
     This function should be returning witness sets using the type WitnessSet 
     from @TO NAGtypes@. This will be completed in version 1.1.
 ///;
 
 -----------------------------------
--- convertToPoly
+-- toLaurentPolynomial
 -----------------------------------
 
 doc ///
-  Key
-    convertToPoly
-    (convertToPoly, List)
+  Key    
+    toLaurentPolynomial
+    (toLaurentPolynomial,List,Symbol)
   Headline
-    converts a rational system into a Laurent polynomial system
+    converts a list of rational polynomials into Laurent polynomials 
   Usage
-    convertToPoly(system)
+    toLaurentPolynomial(system, x)
   Inputs
     system:List
-      a list of rational expressions
+      a list of rational polynomials from the same ring
+    x:Symbol
+      a symbol to be used for new indexed variables	   
   Outputs
     s:List 
       the same system converted to a Laurent polynomial system
   Description
     Text 
-      Here is an example when this function will be used:
+      Here is an example when this function might be used:
     Example
       QQ[x,y,z];
       sys = {y-x^2, z-x^3, (x+y+z-1)/x};
-      describe ring ideal sys -- "there are denominators, so convert"
-      convertedSys = convertToPoly(sys);
+      describe ring ideal sys -- "there are denominators, so the method will convert these"
+      convertedSys = toLaurentPolynomial(sys,w);    
     Text
-      convertedSys is an equivalent system living in a Laurent polynomial ring.
+      The system convertedSys is an equivalent system living in a Laurent polynomial ring.
       For each denominator, a new variable was created.
     Example
       printWidth = 300;
       toString convertedSys
       ring ideal convertedSys
-      describe oo -- that this is a ring with negative exponents allowed
-                  -- is evident from the option "Inverses=>true".
+      describe oo -- the option "Inverses=>true shows that this
+                  -- that this is a ring with negative exponents allowed                
     Text
       Note that if the system is already polynomial, or in Laurent 
-      polynomial form, the method doesn't change it.
-      Of course, sometimes it is possible that it is polynomial 
-      "in disguise" as in the following example:
+      polynomial form, the toLaurentPolynomial doesn't change it.
+      Of course, sometimes it is possible that the system is polynomial 
+      "in disguise" as in line o10 in the following example:
     Example
       P = QQ[x,y,z];
       f = (x*y + z^2*y) / y 
       liftable(f,P) 
     Text
-      But, the method detects this and simplifies the system accordingly.
+      But toLaurentPolynomial detects this and simplifies the system.
       Instead of creating Laurent polynomials, 
-      it simply updates the system using the following:
+      it updates the system using the following:
     Example
       lift(f,P)
-    Text	       	  
-      This method is called by @TO phcSolve @.
 ///;
 
------------------------------------
--- realFilter
------------------------------------
-
-doc ///
-  Key 
-    realFilter
-    (realFilter,List,RR)
-  Headline
-    returns real solutions with respect to a given tolerance
-  Usage
-    realSols = realFilter(sols,tol)
-  Inputs
-    sols:List
-      solutions of a polynomial system
-    tol:RR
-      tolerance on the size of imaginary parts
-  Outputs
-    realSols:List
-      solutions with imaginary parts less than the given tolerance
-  Description
-    Text
-      We determine a solution to be real when the imaginary parts
-      of all its variables are less than a given tolerance.
-      In the example below we first call the blackbox solver to
-      compute the intersection points of an ellipse with a parabola, 
-      storing the result 
-      in a list {\tt fSols} of two real and two complex conjugated solutions.
-      {\tt realFilter}  selects the two real solutions.
-    Example
-      R = QQ[x,y]; 
-      f = {x^2 + 4*y^2 - 4, 2*y^2 - x}; 
-      fSols = phcSolve(f);
-      fSols/print
-      realSols = realFilter(fSols,1.0e-10)
-    Text
-      Good values for the tolerance are relative to the accuracy and the 
-      condition number of the solution.
-      To improve the accuracy of a solution, apply @TO refineSolutions@ 
-      to increase working precision.
-    Example
-      realSols_0#Coordinates_0 --this is the first coordinate of the first solution
-  SeeAlso
-    refineSolutions
-    zeroFilter
-    nonZeroFilter
-///;
 
 -----------------------------------
 -- zeroFilter
@@ -705,7 +649,7 @@ doc ///
     Example
       R = QQ[x,y];  
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-      fSols = phcSolve(f);
+      fSols = solveSystem(f);
       fSols/print
     Text
       There is one solution with zero second coordinate:
@@ -717,7 +661,7 @@ doc ///
       first coordinate:
     Example
       f = {x^2+y^2,y*x+x}; 
-      fSols = phcSolve(f);
+      fSols = solveSystem(f);
       fSols/print
       zeroSols = zeroFilter(fSols,0,1.0e-10);
       zeroSols/print
@@ -729,7 +673,6 @@ doc ///
   SeeAlso
     refineSolutions
     nonZeroFilter      
-    realFilter
 ///;
 
 -----------------------------------
@@ -761,7 +704,7 @@ doc ///
     Example
       R = QQ[x,y];  
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-      fSols = phcSolve(f);
+      fSols = solveSystem(f);
       fSols/print
       nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
       nonZeroSols / print 
@@ -769,7 +712,7 @@ doc ///
       Here is another system where we filter solutions with `large enough' first coordinate:
     Example
       f = {x^2+y^2,y*x+x}; 
-      fSols = phcSolve(f);
+      fSols = solveSystem(f);
       fSols/print
       zeroSols = zeroFilter(fSols,0,1.0e-10);
       zeroSols/print
@@ -783,6 +726,5 @@ doc ///
   SeeAlso
     refineSolutions
     zeroFilter
-    realFilter
 ///;
 

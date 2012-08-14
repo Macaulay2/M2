@@ -1,24 +1,24 @@
--- -*- M2-comint -*- {* hash: -228215630 *}
---loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- {* hash: 1580877998 *}
+--loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = QQ[x,y];
 
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
-i3 : fSols = phcSolve(f);
-using temporary files /tmp/M2-5197-1PHCinput and /tmp/M2-5197-1PHCoutput
+i3 : fSols = solveSystem(f);
+using temporary files /tmp/M2-2657-1PHCinput and /tmp/M2-2657-1PHCoutput
 
 i4 : fSols/print
 {-1, 0}
 {1, 0}
-{1.33076+.335184*ii, -.62414-.513163*ii}
-{1.33076-.335184*ii, -.62414+.513163*ii}
+{-.894935+.624334*ii, .143333-1.14868*ii}
 {-1.59272, .964857}
-{.742585+.425943*ii, .270685-1.00715*ii}
 {.742585-.425943*ii, .270685+1.00715*ii}
 {-.894935-.624334*ii, .143333+1.14868*ii}
-{-.894935+.624334*ii, .143333-1.14868*ii}
 {-.764107, -.544612}
+{1.33076-.335184*ii, -.62414+.513163*ii}
+{1.33076+.335184*ii, -.62414-.513163*ii}
+{.742585+.425943*ii, .270685-1.00715*ii}
 
 o4 = {, , , , , , , , , }
 
@@ -27,14 +27,14 @@ o4 : List
 i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
 
 i6 : nonZeroSols / print
-{1.33076+.335184*ii, -.62414-.513163*ii}
-{1.33076-.335184*ii, -.62414+.513163*ii}
+{-.894935+.624334*ii, .143333-1.14868*ii}
 {-1.59272, .964857}
-{.742585+.425943*ii, .270685-1.00715*ii}
 {.742585-.425943*ii, .270685+1.00715*ii}
 {-.894935-.624334*ii, .143333+1.14868*ii}
-{-.894935+.624334*ii, .143333-1.14868*ii}
 {-.764107, -.544612}
+{1.33076-.335184*ii, -.62414+.513163*ii}
+{1.33076+.335184*ii, -.62414-.513163*ii}
+{.742585+.425943*ii, .270685-1.00715*ii}
 
 o6 = {, , , , , , , }
 
@@ -42,13 +42,13 @@ o6 : List
 
 i7 : f = {x^2+y^2,y*x+x};
 
-i8 : fSols = phcSolve(f);
-using temporary files /tmp/M2-5197-2PHCinput and /tmp/M2-5197-2PHCoutput
+i8 : fSols = solveSystem(f);
+using temporary files /tmp/M2-2657-2PHCinput and /tmp/M2-2657-2PHCoutput
 
 i9 : fSols/print
-(6.16298e-33-3.08149e-33*ii, -9.43877e-33-4.09051e-33*ii)
-{ii, -1}
+(-4.8148e-35+1.15556e-33*ii, -2.34108e-33+1.85268e-33*ii)
 {-ii, -1}
+{ii, -1}
 
 o9 = {, , }
 
@@ -57,7 +57,7 @@ o9 : List
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 
 i11 : zeroSols/print
-(6.16298e-33-3.08149e-33*ii, -9.43877e-33-4.09051e-33*ii)
+(-4.8148e-35+1.15556e-33*ii, -2.34108e-33+1.85268e-33*ii)
 
 o11 = {}
 
