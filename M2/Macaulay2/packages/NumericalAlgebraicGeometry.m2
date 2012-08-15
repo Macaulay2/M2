@@ -81,7 +81,9 @@ protect MaxNumberOfVariables
 debug Core; -- to enable engine routines
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
-if PHC'EXISTS then load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" else phcSolve = trackPaths = refineSolutions = null
+--if PHC'EXISTS then 
+load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
+--else phcSolve = trackPaths = refineSolutions = null
 if BERTINI'M2'EXISTS then load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" else trackBertini = solveBertini = cleanupOutput = bertiniPosDimSolve = null
 
 -- GLOBAL VARIABLES ----------------------------------
