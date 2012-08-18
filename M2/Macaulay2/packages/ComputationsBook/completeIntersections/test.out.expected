@@ -149,7 +149,7 @@ i27 : matrixFactorization = M -> (
          return (U,V));
 
 i28 : time (U,V) = matrixFactorization(B^1/m^3);
-     -- used 0.04722 seconds
+     -- used 0.015461 seconds
 
 i29 : U;
 
@@ -269,7 +269,7 @@ o56 = cokernel | x2 xy |
 o56 : B-module, quotient of B
 
 i57 : time H = Ext(N,N);
-     -- used 0.055781 seconds
+     -- used 0.018612 seconds
 
 i58 : ring H
 
@@ -341,7 +341,7 @@ o67 : S-module, quotient of S
 
 i68 : print code(Ext,Module,Module)
 -- code for method: Ext(Module,Module)
-/Users/dan/src/M2/trunk/Macaulay2/m2/ext.m2:89:39-177:3: --source code:
+../../../../../../../../Macaulay2/m2/ext.m2:89:39-177:3: --source code:
 Ext(Module,Module) := Module => (M,N) -> (
   cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
   cacheKey := (Ext,M,N);
@@ -369,7 +369,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   M' := cokernel ( pM | p ** id_(target pM) );
   N' := cokernel ( pN | p ** id_(target pN) );
   C := complete resolution M';
-  X := getGlobalSymbol "X";
+  X := getSymbol "X";
   K := coefficientRing A;
   S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
     Degrees => {
@@ -464,7 +464,7 @@ o73 : Matrix B  <--- B
 i74 : M = cokernel f;
 
 i75 : time P = Ext(M,B^1/(x,y,z));
-     -- used 1.71415 seconds
+     -- used 0.458102 seconds
 
 i76 : S = ring P;
 
@@ -559,7 +559,7 @@ i88 : use B;
 i89 : P = Ext(M,k);
 
 i90 : time oddPart P
-     -- used 0.017946 seconds
+     -- used 0.006548 seconds
 
 o90 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
                {-3, -9} | 0   0   0   0   0   X_1 0   0   |
@@ -585,7 +585,7 @@ i91 : Ext(Ring,Module) := (k,M) -> (
          );
 
 i92 : time I = Ext(k,M);
-     -- used 4.25853 seconds
+     -- used 1.76047 seconds
 
 i93 : evenPart I
 
@@ -800,49 +800,49 @@ i124 : scan((1,1) .. (3,3), (r,d) -> (
 V = cokernel | x-3y-2z |
 support variety ideal = ideal (X  + 3X , X  + 2X )
                                 2     3   1     3
-                        -- .113668 seconds
+                        -- .040124 seconds
 ------------------------------------------------------------------
 V = cokernel | 3x2-xy-3y2-xz+2yz-z2 |
 support variety ideal = ideal ()
-                        -- .660204 seconds
+                        -- .255827 seconds
 ------------------------------------------------------------------
 V = cokernel | -3x3+2xy2+3y3+2xyz-2y2z-3xz2-2yz2 |
 support variety ideal = ideal ()
-                        -- 1.15763 seconds
+                        -- .359794 seconds
 ------------------------------------------------------------------
 V = cokernel | -3x+2y-3z |
              | -x+3y     |
 support variety ideal = ideal(X  + 3X )
                                2     3
-                        -- .154937 seconds
+                        -- .058565 seconds
 ------------------------------------------------------------------
 V = cokernel | -2x2-3xy+2y2+3yz+2z2 |
              | 2x2-2xy-xz-2yz-z2    |
 support variety ideal = ideal ()
-                        -- .711927 seconds
+                        -- .200323 seconds
 ------------------------------------------------------------------
 V = cokernel | -2x2y+3xy2+y3-2xyz-2y2z+3xz2-2yz2+3z3 |
              | 2x3+3x2y+xy2-2x2z-2y2z-3xz2+3yz2-z3   |
 support variety ideal = ideal ()
-                        -- 1.31326 seconds
+                        -- .540779 seconds
 ------------------------------------------------------------------
 V = cokernel | -z     |
              | x-3y   |
              | -3x-3z |
 support variety ideal = ideal ()
-                        -- .20617 seconds
+                        -- .068606 seconds
 ------------------------------------------------------------------
 V = cokernel | 3x2-2xy-2xz-yz      |
              | -x2+2xy+3y2+xz+2z2  |
              | -3x2-2y2-3xz-yz-2z2 |
 support variety ideal = ideal ()
-                        -- .726147 seconds
+                        -- .23076 seconds
 ------------------------------------------------------------------
 V = cokernel | -x2y+2xy2-y3-2x2z-2y2z+3xz2                  |
              | -3x3+2x2y+2xy2+2y3+3xyz-2xz2+3yz2-z3         |
              | -x3-3x2y+2xy2+3y3-x2z+xyz+2y2z-2xz2-2yz2+2z3 |
 support variety ideal = ideal ()
-                        -- .968902 seconds
+                        -- .744938 seconds
 
 i125 : bassSeries2 = M -> (
           B := ring M;
@@ -910,7 +910,7 @@ i135 : use B;
 i136 : N = B^1/(x^2 + z^2,y^3);
 
 i137 : time rH = ext(M,N);
-     -- used 5.98414 seconds
+     -- used 2.47642 seconds
 
 i138 : evenPart rH
 
@@ -960,7 +960,7 @@ o139 : K[X , X , X ]-module, quotient of (K[X , X , X ])
 i140 : N' = B^1/(x^2 + z^2,y^3 - 2*z^3);
 
 i141 : time rH' = ext(M,N');
-     -- used 5.42211 seconds
+     -- used 2.61446 seconds
 
 i142 : evenPart rH'
 
@@ -1008,18 +1008,18 @@ o143 = cokernel {-1, -2} | X_2 X_1 0   0   0   0   0   0   0      0      0      
                 {-1, -2} | 0   0   X_2 X_1 0   0   0   0   0      0      0      0      0      0      |
                 {-1, -2} | 0   0   0   0   X_2 X_1 0   0   0      0      0      0      0      0      |
                 {-1, -2} | 0   0   0   0   0   0   X_2 X_1 0      0      0      0      0      0      |
-                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      X_1    0      0      0      |
-                {-3, -7} | 0   0   0   0   0   0   0   0   0      X_1    0      0      0      0      |
                 {-3, -7} | 0   0   0   0   0   0   0   0   0      0      0      X_1    0      0      |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      X_1    0      0      0      |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      0      0      0      X_1    |
                 {-3, -7} | 0   0   0   0   0   0   0   0   X_1    0      0      0      0      0      |
                 {-3, -7} | 0   0   0   0   0   0   0   0   0      0      0      0      X_1    0      |
-                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      0      0      0      X_1    |
-                {-3, -6} | 0   0   0   0   0   0   0   0   27X_2  20X_2  19X_2  39X_2  37X_2  45X_2  |
-                {-3, -6} | 0   0   0   0   0   0   0   0   -X_2   -44X_2 15X_2  47X_2  30X_2  -38X_2 |
-                {-3, -6} | 0   0   0   0   0   0   0   0   -51X_2 37X_2  -14X_2 15X_2  -42X_2 9X_2   |
-                {-3, -6} | 0   0   0   0   0   0   0   0   30X_2  49X_2  18X_2  -48X_2 -49X_2 48X_2  |
-                {-3, -6} | 0   0   0   0   0   0   0   0   18X_2  -34X_2 -43X_2 40X_2  46X_2  31X_2  |
-                {-3, -6} | 0   0   0   0   0   0   0   0   39X_2  40X_2  10X_2  14X_2  -7X_2  -27X_2 |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      X_1    0      0      0      0      |
+                {-3, -6} | 0   0   0   0   0   0   0   0   46X_2  28X_2  5X_2   41X_2  -19X_2 -19X_2 |
+                {-3, -6} | 0   0   0   0   0   0   0   0   20X_2  -49X_2 -33X_2 -21X_2 -14X_2 -45X_2 |
+                {-3, -6} | 0   0   0   0   0   0   0   0   -6X_2  -27X_2 2X_2   -16X_2 25X_2  -3X_2  |
+                {-3, -6} | 0   0   0   0   0   0   0   0   -36X_2 -43X_2 -5X_2  46X_2  49X_2  25X_2  |
+                {-3, -6} | 0   0   0   0   0   0   0   0   12X_2  3X_2   -39X_2 15X_2  -46X_2 -16X_2 |
+                {-3, -6} | 0   0   0   0   0   0   0   0   -46X_2 38X_2  -16X_2 -45X_2 -27X_2 -41X_2 |
 
                                                         16
 o143 : K[X , X , X ]-module, quotient of (K[X , X , X ])
@@ -1037,7 +1037,7 @@ i145 : extgenSeries1 = (M,N) -> (
           );
 
 i146 : time extgenSeries2(M,N)
-     -- used 0.036948 seconds
+     -- used 0.014473 seconds
 
          -2    -1            2      2 2     2 3     2 4     3 4     3 5     3 6    3 7     4 5     4 6    4 7     4 8    4 9     5 8     5 9     6 10     6 11    6 12    7 13
        8u   + u   + 8t*u - 8t u - 9t u  - 9t u  + 7t u  - 8t u  - 8t u  + 4t u  + t u  + 8t u  + 9t u  + t u  - 2t u  + t u  + 8t u  - 4t u  - 8t u   + 2t u   - t u   - t u
@@ -1048,7 +1048,7 @@ o146 = -------------------------------------------------------------------------
 o146 : Expression of class Divide
 
 i147 : g=time extgenSeries1(M,N)
-     -- used 0.038265 seconds
+     -- used 0.014228 seconds
 
                    2      3      4     5     6    7
        9 + 8t - 19t  - 11t  + 17t  + 4t  - 7t  - t
@@ -1069,7 +1069,7 @@ o148 = ----------------------
 o148 : Expression of class Divide
 
 i149 : time extgenSeries2(M,N')
-     -- used 0.051427 seconds
+     -- used 0.12563 seconds
 
          -2     -1       2     2      2 2     2 3      2 4     3 5     3 6     3 7     4 5     4 6     4 7     4 8     4 9     5 9     5 10     6 10      6 11     6 12
        7u   + 2u   + 4t*u  - 7t u - 9t u  - 9t u  + 16t u  - 4t u  + 2t u  + 6t u  + 7t u  + 9t u  - 5t u  - 9t u  + 6t u  + 4t u  - 6t u   - 7t u   + 11t u   - 6t u
@@ -1080,7 +1080,7 @@ o149 = -------------------------------------------------------------------------
 o149 : Expression of class Divide
 
 i150 : g'=time extgenSeries1(M,N')
-     -- used 0.056456 seconds
+     -- used 0.019594 seconds
 
                   2     3     4     5     6
        9 + 4t - 9t  + 4t  + 8t  - 2t  - 2t
@@ -1103,19 +1103,19 @@ o151 : Expression of class Divide
 i152 : complexityPair = (M,N) -> dim ext(M,N);
 
 i153 : time complexityPair(M,N)
-     -- used 0.02766 seconds
+     -- used 0.004883 seconds
 
 o153 = 2
 
 i154 : time complexityPair(M,N')
-     -- used 0.043287 seconds
+     -- used 0.016117 seconds
 
 o154 = 3
 
 i155 : supportVarietyPairIdeal = (M,N) -> ann ext(M,N);
 
 i156 : time supportVarietyPairIdeal(M,N)
-     -- used 0.156249 seconds
+     -- used 0.048518 seconds
 
 o156 = ideal(X )
               1
@@ -1124,7 +1124,7 @@ o156 : Ideal of K[X , X , X ]
                    1   2   3
 
 i157 : time supportVarietyPairIdeal(M,N')
-     -- used 0.765405 seconds
+     -- used 0.187773 seconds
 
 o157 = ideal ()
 
