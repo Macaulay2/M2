@@ -1102,7 +1102,11 @@ then AC_LANG(C)
 			     [ AC_MSG_RESULT([no, version at least 7.0 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
 			     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 			],
-			BUILD_gc=yes)],
+			[
+			AC_MSG_RESULT([atomic_ops.h not found, gc will be built from downloaded sources])
+			BUILD_gc=yes
+			]
+			)],
 		BUILD_gc=yes)],
 	BUILD_gc=yes)
 fi
