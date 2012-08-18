@@ -567,6 +567,7 @@ doc ///
      If there is a construction can be checked with @ TO "knownUnirationalComponentOfSpaceCurves" @.
 
    Example
+     setRandomSeed("alpha");
      R=ZZ/20011[x_0..x_3];
      d=10;g=7;
      betti res (J=(random spaceCurve)(d,g,R))
@@ -577,6 +578,7 @@ doc ///
      with $h^1 O_C(2)=0$. The degree d, genus g and Brill-Noether number $\rho$ of these families and the generic Betti tables
      are given below.
    Example
+     setRandomSeed("alpha");
      kk=ZZ/20011;
      R=kk[x_0..x_3];
      L=flatten apply(toList(0..40),g->apply(toList(3..30),d->(d,g)));
@@ -667,6 +669,7 @@ doc ///
       expected betti table. The constructions works only for many modules with
       diameter {\le} 3.
     Example
+      setRandomSeed("alpha");
       R = ZZ/101[x_0..x_3];
       betti res (random hartshorneRaoModule)(0,{1},R)
       betti res (random hartshorneRaoModule)(0,{1,4},R)
@@ -680,6 +683,7 @@ doc ///
       * {\tt Certify => ... } {\tt true} or {\tt false} (default) checks whether the constructed module has the expected betti Table
 
     Example
+      setRandomSeed("alpha");
       betti res (random hartshorneRaoModule)(0,{1,3,2},R)
       expectedBetti({1,3,2,0,0,0,0},3)
       null =!= (random hartshorneRaoModule)(0,{1,3,2},R)
@@ -823,14 +827,16 @@ TEST ///
 ///
 
 TEST ///
-     R=ZZ/101[x_0..x_3];
+     setRandomSeed("alpha");
+     R=ZZ/32003[x_0..x_3];
      d=12,g=11;
      betti(J=(random spaceCurve)(d,g,R,Certify=>true))
      assert (degree J==d and genus J == g)
 ///
 
 TEST ///
-     R=(ZZ/101)[x_0..x_3]
+     setRandomSeed("alpha");
+     R=(ZZ/32003)[x_0..x_3]
      HRao = {1,4,2};
      e = 1;
      betti res (M=(random hartshorneRaoModule)(1,HRao,R))

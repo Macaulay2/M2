@@ -91,6 +91,7 @@ randomCanonicalCurve(ZZ,PolynomialRing):= opt -> (g,R)->(
      if g==11 then return randomCanonicalModelOfSpaceCurve(12,11,R,Certify=>opt.Certify);
      if g==12 then return randomCanonicalModelOfSpaceCurve(12,12,R,Certify=>opt.Certify);
      if g==13 then return randomCanonicalModelOfSpaceCurve(13,13,R,Certify=>opt.Certify);
+     -- Verra's construction for g=14
      if g==14 then return (random canonicalCurveGenus14)(R,Certify=>opt.Certify,Attempts=>1);
      )
 
@@ -142,10 +143,10 @@ doc ///
       Compute a random canonical curve of genus $g \le{} 14$, based on the proofs of unirationality of
       $M_g$ by Severi, Sernesi, Chang-Ran and Verra.
     Example
+      setRandomSeed "alpha";
       g=14;
       FF=ZZ/10007;
       R=FF[x_0..x_(g-1)];
-      setRandomSeed "alpha";
       time betti(I=(random canonicalCurve)(g,R))
       genus I == g and degree I ==2*g-2
 ///
@@ -153,9 +154,9 @@ doc ///
 -- check that the number of generators of the constructed
 -- canonical curve is as expected
 TEST ///
-debug RandomCanonicalCurves
+setRandomSeed("alpha");
 apply(5..14,g->(
-	  assert (binomial(g-2,2) == rank source mingens (I=randomCanonicalCurve(g,(ZZ/101)[x_0..x_(g-1)])))
+	  assert (binomial(g-2,2) == rank source mingens (I=(random canonicalCurve)(g,(ZZ/101)[x_0..x_(g-1)])))
      ))
 ///
 

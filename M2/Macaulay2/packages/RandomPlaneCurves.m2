@@ -129,17 +129,13 @@ nodalPlaneCurve = new RandomObject from {
 
 completeLinearSystemOnNodalPlaneCurve=method()
 completeLinearSystemOnNodalPlaneCurve(Ideal,List):=(J,D)->(
-     singJ:=saturate(ideal jacobian J+J);-- adjoint ideal
+     singJ:=saturate(ideal jacobian J+J);
+        -- adjoint ideal
      H:=ideal (mingens ideal(gens intersect(singJ,D_0)%J))_(0,0);
         -- a curve passing through singJ and D_0
      E0:=((J+H):D_0):(singJ^2); -- residual divisor
-     assert(
-	  degree J *degree H
-	   - degree D_0
-	   -2*degree singJ
-	  ==
-	  degree E0
-	  );
+     if not(degree J *degree H - degree D_0 -2*degree singJ==degree E0)
+        then error"residual divisor of has wrong degree";
      L1:=mingens ideal (gens truncate(degree H, intersect(E0,D_1,singJ)))%J;
      h0D:=(tally degrees source L1)_{degree H}; -- h^0 O(D)
      L:=L1_{0..h0D-1}; -- matrix of homogeneous forms, L/H =L(D) subset K(C)
@@ -198,7 +194,8 @@ doc ///
        Creates the ideal of the points via a random choice of their
        Hilbert-Burch matrix, which is taken to be of generic shape.
     Example
-       R=ZZ/101[x_0..x_2];
+       setRandomSeed("alpha");
+       R=ZZ/32003[x_0..x_2];
        Ipts=(random distinctPlanePoints)(10,R);
        betti res Ipts
 ///
@@ -245,7 +242,8 @@ doc ///
       Here {\tt n} can be infinity. The default value is {\tt n=1}.
 
    Example
-      R=ZZ/101[x_0..x_2];
+      setRandomSeed("alpha");
+      R=ZZ/32003[x_0..x_2];
       F=(random nodalPlaneCurve)(8,5,R);
       (dim F, degree F)
       singF = F + ideal jacobian F;
@@ -282,9 +280,8 @@ doc ///
      Compute the complete linear series of D_0-D_1 on the normalization of C
      via adjoint curves and double linkage.
    Example
-     setRandomSeed 18 -- this seed results in an assertion failure when calling completeLinearSystemOnNodalPlaneCurve below
-     setRandomSeed 1 -- this seed does not
-     R=ZZ/101[x_0..x_2];
+     setRandomSeed("alpha");
+     R=ZZ/32003[x_0..x_2];
      J=(random nodalPlaneCurve)(6,3,R);
      D={J+ideal random(R^1,R^{1:-3}),J+ideal 1_R};
      l=completeLinearSystemOnNodalPlaneCurve(J,D)
@@ -313,6 +310,7 @@ doc ///
        of the image of the scheme defined by J under the rational map defined by L
   Description
      Example
+       setRandomSeed("alpha");
        p=nextPrime 10000
        kk=ZZ/p
        R=kk[t_0,t_1]
@@ -334,7 +332,7 @@ assert( nextPrime 1000 == 1009)
 -- tests for distinct plane curves
 TEST ///
 setRandomSeed("alpha");
-R=ZZ/101[x_0..x_2];
+R=ZZ/32003[x_0..x_2];
 Ipts=(random distinctPlanePoints)(10,R,Certify=>true);
 assert(Ipts=!=null)
 assert(betti res Ipts==new BettiTally from {(0,{0},0) => 1, (1,{4},4) => 5, (2,{5},5) => 4})
@@ -343,7 +341,7 @@ assert(betti res Ipts==new BettiTally from {(0,{0},0) => 1, (1,{4},4) => 5, (2,{
 -- tests for nodalPlaneCurve
 TEST ///
 setRandomSeed("alpha");
-R=ZZ/101[x_0..x_2];
+R=ZZ/32003[x_0..x_2];
 F=(random nodalPlaneCurve)(8,5,R);
 assert(F=!=null)
 assert(dim F==2)
@@ -369,4 +367,6 @@ installPackage("RandomPlaneCurves",RerunExamples=>true,RemakeAllDocumentation=>t
 check"RandomPlaneCurves"
 viewHelp"RandomPlaneCurves"
 end
+
+
 

@@ -225,6 +225,7 @@ Description
     We construct a curve of degree $2$ as follows
 
  Example
+    setRandomSeed("alpha");
     R=ZZ/3[x_0..x_2];
     (random planeCurve)(2,R)
 

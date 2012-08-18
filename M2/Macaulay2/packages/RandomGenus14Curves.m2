@@ -194,6 +194,7 @@ doc ///
       in R, ideal of the canonical curve
   Description
    Example
+     setRandomSeed("alpha");
      R=ZZ/101[x_0..x_13];
      C=(random canonicalCurveGenus14)(R);
      (dim C, degree C, genus C)
@@ -215,6 +216,7 @@ doc ///
        in R, ideal of the curve
   Description
    Example
+     setRandomSeed("alpha");
      R=ZZ/101[x_0..x_6];
      C=(random curveGenus14Degree18inP6)(R);
      (dim C, degree C, genus C)
@@ -245,7 +247,9 @@ doc ///
       gives the result.
 
     Example
-      FF=ZZ/10007;S=FF[x_0..x_7];
+      setRandomSeed("alpha");
+      FF=ZZ/10007;
+      S=FF[x_0..x_7];
       (I,points)=randomCanonicalCurveGenus8with8Points S;
       betti res I
       points
@@ -271,7 +275,9 @@ doc ///
       of the moduli space of genus 8 with 8 marked points (see [Mu]).
 
     Example
-      FF=ZZ/10007;S=FF[x_0..x_6];
+      setRandomSeed("alpha");
+      FF=ZZ/10007;
+      S=FF[x_0..x_6];
       I=randomCurveGenus8Degree14inP6 S;
       betti res I
 ///
@@ -309,8 +315,9 @@ doc ///
       by semi-continuity, and, hence, for all but finitely many primes $p$.
 
     Example
-      FF=ZZ/10007;S=FF[x_0..x_6];
-      setRandomSeed("alpha")
+      setRandomSeed("alpha");
+      FF=ZZ/10007;
+      S=FF[x_0..x_6];
       time I=randomCurveGenus14Degree18inP6(S);
       betti res I
 ///
