@@ -2,26 +2,26 @@ needsPackage"RandomObjects"
 
 newPackage(
 	"RandomSpaceCurves",
-    	Version => "0.5", 
+    	Version => "0.5",
     	Date => "March 1, 2011",
     	Authors => {
 	        {Name => "Hans-Christian Graf v. Bothmer",
 	         Email => "bothmer@uni-math.gwdg.de",
 		 HomePage => "http://www.crcg.de/wiki/User:Bothmer"},
-	    
+
 		{Name=> "Florian Geiss",
 		 Email=> "fg@math.uni-sb.de",
-		 HomePage=>"http://www.math.uni-sb.de/ag/schreyer/"},	
-	    
-	        {Name => "Frank-Olaf Schreyer", 
-		 Email => "schreyer@math.uni-sb.de", 
+		 HomePage=>"http://www.math.uni-sb.de/ag/schreyer/"},
+
+	        {Name => "Frank-Olaf Schreyer",
+		 Email => "schreyer@math.uni-sb.de",
 		 HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "Construction of random smooth space curves",
     	DebuggingMode => true
         )
 
-if not version#"VERSION" >= "1.4" then 
+if not version#"VERSION" >= "1.4" then
   error "this package requires Macaulay2 version 1.4 or newer"
 
 export{"nextPrime",
@@ -49,7 +49,7 @@ nextPrime ZZ:=n->(
 -- Hilbert Function and Numerator --
 ------------------------------------
 
--- calculate the numerator of a Hilbert function 
+-- calculate the numerator of a Hilbert function
 -- from the first d+r+1 values where
 -- d is the regularity of the corresponding module
 -- and r is the dimension of the ambient space
@@ -60,22 +60,22 @@ nextPrime ZZ:=n->(
 hilbertNumerator=method()
 hilbertNumerator(List,ZZ,RingElement):=(L,r,t)->(
      -- the beginning of the hilbert series
-     p:=sum(#L,i->L#i*t^i); 
+     p:=sum(#L,i->L#i*t^i);
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
      )
 
 TEST ///
-   T = QQ[t]; 
+   T = QQ[t];
    assert (hilbertNumerator({1,3,0,0,0,0},3,t) == 3*t^5-11*t^4+14*t^3-6*t^2-t+1)
 ///
 
-TEST /// 
-    T = QQ[t];  
+TEST ///
+    T = QQ[t];
     assert (hilbertNumerator({1,4,10,15,20,25,30,35,40},3,t) == -t^5+5*t^4-5*t^3+1)
 ///
 
-   
+
 
 -----------------------------
 -- Expected Betti Tableaus --
@@ -86,7 +86,7 @@ TEST ///
 -- ring of t must be over ZZ or QQ
 -- and singly graded
 --
--- this funciton is needed to construct 
+-- this funciton is needed to construct
 -- expected betti tables from
 -- a HilberNumerator
 termToBettiKey = (mon) -> (
@@ -113,9 +113,9 @@ expectedBetti=method()
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
--- sign switches that occur in the hilbert numerator befor this monomial  
+-- sign switches that occur in the hilbert numerator befor this monomial
 --
--- the ring of the hilbert numerator is expected to singly graded 
+-- the ring of the hilbert numerator is expected to singly graded
 -- and contain only one variable
 expectedBetti(RingElement):= (hilbNum) ->(
      -- find terms of hilbert Numerator
@@ -146,12 +146,12 @@ expectedBetti(RingElement):= (hilbNum) ->(
      )
 
 TEST ///
-    T = QQ[t];  
+    T = QQ[t];
     e = expectedBetti(t^5-5*t^4+5*t^3-1)
     b = new BettiTally from {
-	 (0,{0},0) => 1, 
+	 (0,{0},0) => 1,
 	 (1,{3},3) => 5,
-      	 (2,{4},4) => 5, 
+      	 (2,{4},4) => 5,
 	 (3,{5},5) => 1
     	 }
     assert(e == b)
@@ -161,8 +161,8 @@ TEST ///
 
 -- calculate the expected betti tableau
 -- from a given hilbert function.
--- hilb = {h0,...,h_(d+r+1)} 
--- where d is the regularity of the variety described 
+-- hilb = {h0,...,h_(d+r+1)}
+-- where d is the regularity of the variety described
 -- and r is the dimension of the ambient space
 expectedBetti(List,ZZ) := (L,r)->(
      t := local t;
@@ -171,17 +171,17 @@ expectedBetti(List,ZZ) := (L,r)->(
      )
 
 TEST ///
-    T = QQ[t]; 
+    T = QQ[t];
     e = expectedBetti({1,3,0,0,0,0},3)
     b = new BettiTally from {
-	 (0,{0},0) => 1, 
+	 (0,{0},0) => 1,
 	 (1,{1},1) => 1,
-      	 (1,{2},2) => 6, 
-	 (2,{3},3) => 14, 
-	 (3,{4},4) => 11, 
+      	 (1,{2},2) => 6,
+	 (2,{3},3) => 14,
+	 (3,{4},4) => 11,
 	 (4,{5},5) => 3};
     assert(e == b)
-/// 
+///
 
 
 
@@ -190,8 +190,8 @@ TEST ///
 -- we assume C non-degenerate, O_C(2) nonspecial and maximal rank
 expectedBetti(ZZ,ZZ,ZZ) := (g,r,d)->(
      b := d+r+1;
-     L := apply(b,i->(if i>1 then 
-	       min(d*i+1-g,binomial(r+i,r)) 
+     L := apply(b,i->(if i>1 then
+	       min(d*i+1-g,binomial(r+i,r))
 	       else binomial(r+i,r)));
      expectedBetti(L,r)
      )
@@ -199,9 +199,9 @@ expectedBetti(ZZ,ZZ,ZZ) := (g,r,d)->(
 TEST ///
     e = expectedBetti(1,3,5)
     b = new BettiTally from {
-	 (0,{0},0) => 1, 
+	 (0,{0},0) => 1,
 	 (1,{3},3) => 5,
-      	 (2,{4},4) => 5, 
+      	 (2,{4},4) => 5,
 	 (3,{5},5) => 1
     	 };
     assert(e == b)
@@ -211,8 +211,8 @@ TEST ///
 
 
 
--- given a betti Table b and a Ring R make a chainComplex 
--- with zero maps over R  that has betti diagramm b. 
+-- given a betti Table b and a Ring R make a chainComplex
+-- with zero maps over R  that has betti diagramm b.
 --
 -- negative entries are ignored
 -- rational entries produce an error
@@ -234,7 +234,7 @@ Ring ^ BettiTally := (R,b) -> (
 
 TEST ///
      R = QQ[x_0..x_3];
-     b = betti (random(R^{1,2},R^{0,0,1}))	  
+     b = betti (random(R^{1,2},R^{0,0,1}))
      assert (b == betti (R^b))
 ///
 
@@ -252,7 +252,7 @@ expectedLinearSyzygies = (a,b,R) -> (
 --TEST ///
 --    setRandomSeed("I am feeling lucky");
 --    R = ZZ/101[x_0..x_3];
---    assert(expectedLinearSyzygies(2,6,R) == 
+--    assert(expectedLinearSyzygies(2,6,R) ==
 --	 (betti res coker random(R^{2:0},R^{6:-1}))#(2,{2},2)
 --	 )
 --///
@@ -260,18 +260,18 @@ expectedLinearSyzygies = (a,b,R) -> (
 -- Try to construct a random HartshorneRao module of
 -- length 3 starting at the beginning of the
 -- minimal free resolution.
--- 
--- The main difficulty is in getting the number of 
+--
+-- The main difficulty is in getting the number of
 -- linear syzygies of the first matrix in the resolution right
 --
--- HRau = {h1,h2,h3} the Hilbertfunction of the desired module 
--- R the ring where the module should live. It is assumed, that 
+-- HRau = {h1,h2,h3} the Hilbertfunction of the desired module
+-- R the ring where the module should live. It is assumed, that
 -- this ring has 4 variables and is singly graded.
 randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
      -- construct a chain complex with expected betti tableau
      -- and 0 differentials
-     -- 
-     -- calculate the expectd betti diagramm to find out wether linear syzygies 
+     --
+     -- calculate the expectd betti diagramm to find out wether linear syzygies
      -- are requried (this is the difficult part in the construction)
      e := expectedBetti(HRao|{0,0,0,0},3);
      F := R^e;
@@ -292,7 +292,7 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
 	       -- choose first matrix randomly
      	       return coker random (F_0,F_1)
 	       );
-     	  );	       
+     	  );
      if #linearStrand == 3 then (
 	  -- is the number of expected syzygies == the number of required syzygies?
 	  if expectedLinearSyzygies(linearStrand#0,linearStrand#1,R) == linearStrand#2 then (
@@ -302,7 +302,7 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
 	  -- too many syzygies?
 	  if expectedLinearSyzygies(linearStrand#0,linearStrand#1,R) > linearStrand#2 then (
 	       -- in this case the construction method will not work
-	       return null     	       
+	       return null
 	       );
 	  -- too few syzygies?
 	  if expectedLinearSyzygies(linearStrand#0,linearStrand#1,R) < linearStrand#2 then (
@@ -319,8 +319,8 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
 	       )
       	   );
       -- if we arrive here there were either to few or to many linear
-      -- syzygies required	  
-      return null     	       
+      -- syzygies required
+      return null
       );
 
 
@@ -329,12 +329,12 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
 -- length 3 by starting at both ends of the expected
 -- minimal free resolution.
 --
--- HRau = {h1,h2,h3} the Hilbertfunction of the desired module 
--- R the ring where the module should live. It is assumed, that 
+-- HRau = {h1,h2,h3} the Hilbertfunction of the desired module
+-- R the ring where the module should live. It is assumed, that
 -- this ring singly graded. It is checked that the ring has 4 variables
 randomHartshorneRaoModuleDiameter3 = (HRao,R)->(
      if #HRao != 3 then error"Hilbert function has to have length 3";
-     -- start at the beginning of the resolution    
+     -- start at the beginning of the resolution
      M := randomHartshorneRaoModuleDiameter3oneDirection(HRao,R);
      -- did this direction work?
      if M =!= null and apply(3,i->hilbertFunction(i,M)) == HRao then return M;
@@ -350,8 +350,8 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R)->(
 -- length 2. Here the only problem is, that the
 -- generic module may not have expected syzgies
 --
--- HRau = {h1,h2} the Hilbertfunction of the desired module 
--- R the ring where the module should live. It is assumed, that 
+-- HRau = {h1,h2} the Hilbertfunction of the desired module
+-- R the ring where the module should live. It is assumed, that
 -- this ring has 4 variables and is singly graded.
 randomHartshorneRaoModuleDiameter2 = (HRao,R)->(
      if #HRao != 2 then error"Hilbert function has to have length 2";
@@ -366,7 +366,7 @@ randomHartshorneRaoModuleDiameter2 = (HRao,R)->(
      --
      -- now assume expected resolution
      --
-     -- always start at the beginning of the resolution  
+     -- always start at the beginning of the resolution
      F := R^(expectedBetti(HRao|{0,0,0,0},3));
      M := coker random(F_0,F_1)
      )
@@ -374,8 +374,8 @@ randomHartshorneRaoModuleDiameter2 = (HRao,R)->(
 -- Construct a random Hartshorne-Rau module of
 -- length 1. This allways works
 --
--- HRau = {h1} the Hilbertfunction of the desired module 
--- R the ring where the module should live. It is assumed, that 
+-- HRau = {h1} the Hilbertfunction of the desired module
+-- R the ring where the module should live. It is assumed, that
 -- this ring has 4 variables and is singly graded.
 randomHartshorneRaoModuleDiameter1 = (HRao,R)->(
      if #HRao != 1 then error"Hilbert function has to have length 1";
@@ -397,17 +397,17 @@ constructHartshorneRaoModule(ZZ,List,PolynomialRing):=opt->(e,HRao,R)->(
      )
 
 undocumented constructHartshorneRaoModule
- 
+
 certifyHartshorneRaoModule=method()
 certifyHartshorneRaoModule(Module,ZZ,List,PolynomialRing):=(M,e,HRao,R)->(
        (betti res (M**R^{e})) == expectedBetti(HRao|{0,0,0,0},3)
-       )     
-     
+       )
+
 undocumented certifyHartshorneRaoModule
-     
+
 hartshorneRaoModule = new RandomObject from {
     Construction  => constructHartshorneRaoModule,
-    Certification => certifyHartshorneRaoModule}     
+    Certification => certifyHartshorneRaoModule}
 
 ------------------
 -- Space Curves --
@@ -415,18 +415,18 @@ hartshorneRaoModule = new RandomObject from {
 
 
 
--- the Harshorne Rao module of a curve is defined as 
+-- the Harshorne Rao module of a curve is defined as
 -- M = \oplus_i H^1(I_C(-i)) is can also be obtained as
 -- the cokernel of the transpose of the last map
 -- in a minimal free resolution of a curve
 --
 -- conversly one can construct a curve, by first
 -- constructing the Harshorne Rao Module an therefore
--- the last matrix in the minimal free resolution of 
+-- the last matrix in the minimal free resolution of
 -- the curve
 randomSpaceCurve=method(TypicalValue=>Ideal,Options=>{Certify=>false})
 
-randomSpaceCurve(ZZ,ZZ,PolynomialRing) := opt->(d,g,R)->(			 
+randomSpaceCurve(ZZ,ZZ,PolynomialRing) := opt->(d,g,R)->(
      if not knownUnirationalComponentOfSpaceCurves(d,g) then return null;
      G:=R^(expectedBetti(g,dim R-1,d));
      -- calculate values of h^1 that are forced by the maximal rank assumption
@@ -440,16 +440,16 @@ randomSpaceCurve(ZZ,ZZ,PolynomialRing) := opt->(d,g,R)->(
      -- Hilbert-Birch-Matrix
      if #HRao==0 then (
 	  if length G !=2
-	  then error "cannot be ACM" 
+	  then error "cannot be ACM"
 	  else return minors(rank G_2,random(G_1,G_2))
 	  );
      M:=(random hartshorneRaoModule)(e,HRao,R);
-     if M === null then return null;     	       
+     if M === null then return null;
      F :=res M;
-     -- detect syzygies in the second step, that do not 
+     -- detect syzygies in the second step, that do not
      -- come from the HR-Module
      H := R^((betti G_2)-(betti F_3));
-     -- calculate a presentation matrix of 
+     -- calculate a presentation matrix of
      -- the ideal of the curve
      N := random(G_1,F_2++H_0)*(F.dd_3++id_(H_0));
      -- calculate the ideal presented by this matrix
@@ -460,7 +460,7 @@ undocumented randomSpaceCurve
 
 certifyRandomSpaceCurve=method()
 
--- old certification for SpaceCurves 
+-- old certification for SpaceCurves
 certifyRandomSpaceCurve(Ideal,ZZ,ZZ,PolynomialRing) := (J,d,g,R)->(
      singJ := minors(2,jacobian J)+J;
      (dim singJ==0) and (g == genus J) and (d == degree J) and (2 == codim J)
@@ -473,8 +473,8 @@ knownUnirationalComponentOfSpaceCurves(ZZ,ZZ) := (d,g)->(
      x := local x;
      R := QQ[x_0..x_3];
      n:=4;
-     while 
-     d*n+1-g>binomial(n+3,3)  
+     while
+     d*n+1-g>binomial(n+3,3)
      do n=n+1;
      HRao1:=select(apply(toList(1..n),n->(n,max(d*n+1-g-binomial(3+n,3),0))), i-> i_1 !=0);
      G:=R^(expectedBetti(g,3,d));
@@ -541,31 +541,31 @@ doc ///
     R:PolynomialRing
     	 homogeneous coordinate ring of $\PP^{ 3}$
   Outputs
-    :Ideal 
+    :Ideal
           of R
   Description
    Text
-     Creates the ideal of a random curve of degree d and genus g via the construction of its expected 
-     Hartshorne-Rao module, which should have diameter $\le 3$. The construction is implemented for non-degenerate, 
+     Creates the ideal of a random curve of degree d and genus g via the construction of its expected
+     Hartshorne-Rao module, which should have diameter $\le 3$. The construction is implemented for non-degenerate,
      linearly normal curves C of maximal rank with O_C(2) non-special, where moreover
      both C and its Hartshorne-Rao module
      have a "natural" free resolution.
-   Text  
-     There are the following options:
-     
-     * {\tt Attempts => ... } a nonnegative integer or {\tt infinity} (default) that limits the maximal number 
-     of attempts for the construction of the curve 
-      
-     * {\tt Certify => ... } {\tt true} or {\tt false} (default) checks whether the output is of correct 
-     dimension and the constructed curve is smooth and actually has the desired degree d and genus g
-    
    Text
-     There are 63 possible families satifying the four conditions above. 
-     Our method can provide random curves in 60 of these families, simultaneously proving the unirationality of each of these 60 components of the 
+     There are the following options:
+
+     * {\tt Attempts => ... } a nonnegative integer or {\tt infinity} (default) that limits the maximal number
+     of attempts for the construction of the curve
+
+     * {\tt Certify => ... } {\tt true} or {\tt false} (default) checks whether the output is of correct
+     dimension and the constructed curve is smooth and actually has the desired degree d and genus g
+
+   Text
+     There are 63 possible families satifying the four conditions above.
+     Our method can provide random curves in 60 of these families, simultaneously proving the unirationality of each of these 60 components of the
      Hilbert scheme.
-     
-     If there is a construction can be checked with @ TO "knownUnirationalComponentOfSpaceCurves" @. 
-     
+
+     If there is a construction can be checked with @ TO "knownUnirationalComponentOfSpaceCurves" @.
+
    Example
      R=ZZ/20011[x_0..x_3];
      d=10;g=7;
@@ -581,7 +581,7 @@ doc ///
      R=kk[x_0..x_3];
      L=flatten apply(toList(0..40),g->apply(toList(3..30),d->(d,g)));
      halpenBound = d ->(d/2-1)^2;
-     L = select(L,(d,g) -> 
+     L = select(L,(d,g) ->
 	  g <= halpenBound d
 	  and
 	  knownUnirationalComponentOfSpaceCurves(d,g));
@@ -594,48 +594,48 @@ doc ///
     knownUnirationalComponentOfSpaceCurves
     hartshorneRaoModule
 ///
-   
+
 
 doc ///
-  Key 
+  Key
     knownUnirationalComponentOfSpaceCurves
     (knownUnirationalComponentOfSpaceCurves,ZZ,ZZ)
   Headline
     check whether there is a unirational construction for a component of the Hilbert scheme of space curves
-  Usage 
+  Usage
     knownUnirationalComponentOfSpaceCurves(d,g)
   Inputs
     d: ZZ
     g: ZZ
   Outputs
      : Boolean
-	  whether there is a component of maximal rank curves of degree d 
+	  whether there is a component of maximal rank curves of degree d
 	  and genus g in $\PP^{ 3}$ with O_C(2) non-special and Hartshorne-Rao module of diameter $\le 3$
 	  that have a natural free resolution
   Description
     Text
       * diameter = 1. All modules can be constructed
-      
-      * diameter = 2. The modules can be constructed if the resolution of the generic module is minimal. This is for instance not the case for 
+
+      * diameter = 2. The modules can be constructed if the resolution of the generic module is minimal. This is for instance not the case for
       {\tt (d,g) } being among {\tt (2,1), (1,2), (1,1) }.
 
       * diameter = 3. The construction is possible
       unless the expected Betti table of the Hartshorne-Rao module has shape
-    
+
      {\tt a b c_1 - - }
-     
+
      {\tt - - c_2 - - }
-      
+
      {\tt - - c_3 d e }
-    
-     with both {\tt 4b-10c_1 < a} and {\tt 4d-10c_3 < e}. 
-     
-  
+
+     with both {\tt 4b-10c_1 < a} and {\tt 4d-10c_3 < e}.
+
+
      diameter {\ge} 4. he routine returns false, although we actually do know a couple of constructions which work in a few further cases.
-     
+
      The following example prints an overview table for the constructable cases:
    Example
-     matrix apply(toList(2..18),d-> apply(toList(0..26),g-> 
+     matrix apply(toList(2..18),d-> apply(toList(0..26),g->
 	  if knownUnirationalComponentOfSpaceCurves(d,g) then 1 else 0))
   SeeAlso
     spaceCurve
@@ -643,17 +643,17 @@ doc ///
 ///
 
 doc ///
-  Key 
+  Key
     hartshorneRaoModule
 --    (randomHartshorneRaoModule,ZZ,ZZ,PolynomialRing)
 --    (randomHartshorneRaoModule,ZZ,List,PolynomialRing)
   Headline
     Compute a random Hartshorne-Rao module
-  Usage 
+  Usage
 --    randomHartshorneRaoModule(d,g,R)
     (random hartshorneRaoModule)(e,HRao,R)
   Inputs
-    e: ZZ 
+    e: ZZ
        smallest degree of the Hartshorne-Rao module
     HRao: List
        desired dimensions of $H^1(\PP^3,I_C(n))$
@@ -663,36 +663,36 @@ doc ///
      : Module
   Description
     Text
-      Returns the Hartshorne-Rao Module over {\tt R} with Hilbert function {\tt HRao} and 
-      expected betti table. The constructions works only for many modules with 
-      diameter {\le} 3. 
+      Returns the Hartshorne-Rao Module over {\tt R} with Hilbert function {\tt HRao} and
+      expected betti table. The constructions works only for many modules with
+      diameter {\le} 3.
     Example
       R = ZZ/101[x_0..x_3];
       betti res (random hartshorneRaoModule)(0,{1},R)
       betti res (random hartshorneRaoModule)(0,{1,4},R)
       betti res (random hartshorneRaoModule)(0,{1,4,1},R)
       betti res (random hartshorneRaoModule)(0,{1,4,2},R)
-    Text  
+    Text
       There are the following options:
-     
-      * {\tt Attempts => ... } a nonnegative integer or {\tt infinity} (default) that limits the maximal number of attempts for the construction of the module 
-      
+
+      * {\tt Attempts => ... } a nonnegative integer or {\tt infinity} (default) that limits the maximal number of attempts for the construction of the module
+
       * {\tt Certify => ... } {\tt true} or {\tt false} (default) checks whether the constructed module has the expected betti Table
-      
-    Example         
+
+    Example
       betti res (random hartshorneRaoModule)(0,{1,3,2},R)
       expectedBetti({1,3,2,0,0,0,0},3)
       null =!= (random hartshorneRaoModule)(0,{1,3,2},R)
       null =!= (random hartshorneRaoModule)(0,{1,3,2},R,Certify=>true,Attempts=>1)
     Text
-    
-      if Certify => true and Attempts=>infinity (the default!) are given in this example, the construction never stops. 
+
+      if Certify => true and Attempts=>infinity (the default!) are given in this example, the construction never stops.
   Caveat
     The list {\tt HRao} needs only to contain the non-zero values of the Hilbert function.
   SeeAlso
     spaceCurve
     knownUnirationalComponentOfSpaceCurves
-/// 
+///
 
 doc ///
   Key
@@ -706,13 +706,13 @@ doc ///
     q: RingElement
        a polynomial in ZZ[t]
   Outputs
-    B: BettiTally 
+    B: BettiTally
        a Betti table that has Hilbert numerator q,
        assuming that each sign change in the coefficients of q corresponds to a step
   Description
     Text
       calculates the expected betti table  from a given hilbert Numerator.
-    
+
     Example
       T=ZZ[t]
       q=1-3*t^2+2*t^3
@@ -734,8 +734,8 @@ doc ///
     d: ZZ
        the degree
   Outputs
-    B: BettiTally 
-       a Betti table that has Hilbert numerator the same as 
+    B: BettiTally
+       a Betti table that has Hilbert numerator the same as
        for a nondegenerate maximal-rank curve of genus g and degree d in $\PP^{ r}$, with O_C(2) non-special.
   Description
     Example
@@ -744,14 +744,14 @@ doc ///
 ///
 
 doc ///
- Key 
+ Key
   (expectedBetti,List,ZZ)
  Usage
   B=expectedBetti(h,r)
  Inputs
   h: List
       values of the hilbert function
-  r: ZZ 
+  r: ZZ
        dimension of ambient protective space
  Outputs
   B: BettiTally
@@ -759,9 +759,9 @@ doc ///
  Description
   Example
     betti expectedBetti({0,0,4,6,3,0,0,0,0},3)
- Caveat 
+ Caveat
   The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
-///   
+///
 
 
 doc ///
@@ -783,12 +783,12 @@ doc ///
   Example
     T=QQ[t];
     hilbertNumerator({0,0,4,6,3,0,0,0,0},3,t)
- Caveat 
+ Caveat
   The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
 
 ///
-     
--- calculate the numerator of a Hilbert function 
+
+-- calculate the numerator of a Hilbert function
 -- from the first d+r+1 values where
 -- d is the regularity of the corresponding module
 -- and r is the dimension of the ambient space
@@ -808,9 +808,9 @@ doc ///
      This package provides the construction of random curves $C \subset \mathbb{P}^{ 3}$ for various values for its degree $d$ and genus $g$.
      A space curve $C \subset \mathbb{P}^{ 3}$ is constructed via its Hartshorne-Rao module $M= H^1_*(\mathcal{I}_C(n))$.
      In particular, there are constructions for random points in $M_g$ for $g=11,12,13$.
-     
-     For a algorithms and theoretical background see  
-     @ HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Needles in a Haystack") @ 
+
+     For a algorithms and theoretical background see
+     @ HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Needles in a Haystack") @
 
   ///
 
@@ -826,7 +826,7 @@ TEST ///
      R=ZZ/101[x_0..x_3];
      d=12,g=11;
      betti(J=(random spaceCurve)(d,g,R,Certify=>true))
-     assert (degree J==d and genus J == g)	  
+     assert (degree J==d and genus J == g)
 ///
 
 TEST ///
@@ -835,7 +835,7 @@ TEST ///
      e = 1;
      betti res (M=(random hartshorneRaoModule)(1,HRao,R))
      assert(apply(toList(e..e+#HRao-1),i->hilbertFunction(i,M))==HRao)
-///          
+///
 
 
 end
@@ -848,7 +848,7 @@ check("RandomSpaceCurves")
 
 viewHelp"RandomSpaceCurves"
 
-matrix apply(toList(2..18),d-> apply(toList(0..26),g-> 
+matrix apply(toList(2..18),d-> apply(toList(0..26),g->
 	  if knownUnirationalComponentOfSpaceCurves(d,g) then 1 else 0))
 
 restart

@@ -1,14 +1,14 @@
 needsPackage"RandomObjects"
 newPackage(
 	"RandomCanonicalCurves",
-    	Version => "0.6", 
+    	Version => "0.6",
     	Date => "March 4, 2011",
-    	Authors => {{Name => "Frank-Olaf Schreyer", 
-		  Email => "schreyer@math.uni-sb.de", 
+    	Authors => {{Name => "Frank-Olaf Schreyer",
+		  Email => "schreyer@math.uni-sb.de",
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
 	            {Name => "Hans-Christian Graf v. Bothmer",
 	             Email => "bothmer@uni-math.gwdg.de",
-		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}		 
+		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "Construction of random smooth canonical curves up to genus 14",
     	DebuggingMode => true
@@ -34,7 +34,7 @@ needsPackage"RandomGenus14Curves"
 
 randomCanonicalModelOfPlaneCurve = method(Options => {Certify => false})
 
--- input: 
+-- input:
 --    d degree of plane nodal curve
 --    g geometric genus of plane nodal curve
 --    R ring with g variables
@@ -51,10 +51,10 @@ randomCanonicalModelOfPlaneCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
 	  phi:=map(SJ,R,substitute(KC,SJ));
 	  I:=ideal mingens ker phi;
 	  return I);
-     
+
 randomCanonicalModelOfSpaceCurve = method(Options => {Certify => false})
 
--- input: 
+-- input:
 --    d degree of space curve
 --    g geometric genus of space curve
 --    R ring with g variables
@@ -67,12 +67,12 @@ randomCanonicalModelOfSpaceCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
      I := (random spaceCurve)(d,g,S,Certify=>opt.Certify,Attempts=>1);
      -- the canoncial linear system
      omegaC := presentation prune truncate(0,Ext^1(I,S^{ -4}));
-     graph := substitute(vars R,RS)*substitute(omegaC,RS);	  	    
-     J := saturate(ideal graph,substitute(y_0,RS));	  
+     graph := substitute(vars R,RS)*substitute(omegaC,RS);
+     J := saturate(ideal graph,substitute(y_0,RS));
      Icanonical := ideal mingens substitute(J,R);
      return Icanonical);
 
-      
+
 randomCanonicalCurve=method(TypicalValue=>Ideal,Options=>{Certify=>false})
 
 -- construct a random canonical curve of genus g
@@ -117,16 +117,16 @@ doc ///
     Construction of canonical curves of genus less or equal to 14
   Description
    Text
-    This package bundles the constructions for random points in the moduli spaces of curves $M_g$ for $g \leq 14$ based on 
+    This package bundles the constructions for random points in the moduli spaces of curves $M_g$ for $g \leq 14$ based on
     the proofs of unirationality of $M_g$ by Severi, Sernesi, Chang-Ran and Verra.
-    
-///    
+
+///
 
 doc ///
   Key
     canonicalCurve
   Headline
-    Compute a random canonical curve of genus less or equal to 14  
+    Compute a random canonical curve of genus less or equal to 14
   Usage
     I=(random canonicalCurve)(g,S)
   Inputs
@@ -135,22 +135,22 @@ doc ///
     R: PolynomialRing
        homogeneous coordinate ring of $\PP^{ g-1}$
   Outputs
-    I: Ideal 
+    I: Ideal
        of a canonical curve $C$ of genus $g$
   Description
     Text
       Compute a random canonical curve of genus $g \le{} 14$, based on the proofs of unirationality of
-      $M_g$ by Severi, Sernesi, Chang-Ran and Verra.     
+      $M_g$ by Severi, Sernesi, Chang-Ran and Verra.
     Example
       g=14;
       FF=ZZ/10007;
       R=FF[x_0..x_(g-1)];
       setRandomSeed "alpha";
       time betti(I=(random canonicalCurve)(g,R))
-      genus I == g and degree I ==2*g-2      
-/// 
+      genus I == g and degree I ==2*g-2
+///
 
--- check that the number of generators of the constructed 
+-- check that the number of generators of the constructed
 -- canonical curve is as expected
 TEST ///
 debug RandomCanonicalCurves
@@ -160,12 +160,12 @@ apply(5..14,g->(
 ///
 
 end
-viewHelp 
+viewHelp
 
 restart
 uninstallPackage("RandomCanonicalCurves")
 time installPackage("RandomCanonicalCurves",RerunExamples=>true,RemakeAllDocumentation=>true);
--- caveat: Testing takes some time 
+-- caveat: Testing takes some time
 viewHelp"RandomCanonicalCurves"
 
 time check ("RandomCanonicalCurves")

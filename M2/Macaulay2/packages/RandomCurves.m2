@@ -6,26 +6,26 @@ needsPackage"RandomCanonicalCurves"
 
 newPackage(
 	"RandomCurves",
-    	Version => "0.6", 
+    	Version => "0.6",
     	Date => "Juli 5, 2011",
-    	Authors => {{Name => "Frank-Olaf Schreyer", 
-		     Email => "schreyer@math.uni-sb.de", 
+    	Authors => {{Name => "Frank-Olaf Schreyer",
+		     Email => "schreyer@math.uni-sb.de",
 		     HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
-		    
+
 	            {Name => "Hans-Christian Graf v. Bothmer",
 	             Email => "bothmer@uni-math.gwdg.de",
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"},
-						
+
 	     	    {Name=> "Florian Geiss",
 	             Email=> "fg@math.uni-sb.de",
 	             HomePage=> "http://www.math.uni-sb.de/ag/schreyer/"}
-		
-		
+
+
                    },
     	Headline => "Construction of random curves",
     	DebuggingMode => true
         )
-end 
+end
 
 restart;
 uninstallPackage"RandomCurves"
@@ -35,8 +35,8 @@ uninstallPackage"RandomSpaceCurves"
 uninstallPackage"RandomGenus14Curves"
 uninstallPackage"RandomCanonicalCurves"
 --installing all packages takes about 90 seconds:
-installPackage("RandomObjects",RerunExamples=>true,RemakeAllDocumentation=>true); 
-installPackage("RandomPlaneCurves",RerunExamples=>true,RemakeAllDocumentation=>true);     
+installPackage("RandomObjects",RerunExamples=>true,RemakeAllDocumentation=>true);
+installPackage("RandomPlaneCurves",RerunExamples=>true,RemakeAllDocumentation=>true);
 installPackage("RandomSpaceCurves",RerunExamples=>true,RemakeAllDocumentation=>true);
 installPackage("RandomGenus14Curves",RerunExamples=>true,RemakeAllDocumentation=>true);
 installPackage("RandomCanonicalCurves",RerunExamples=>true,RemakeAllDocumentation=>true);
