@@ -217,8 +217,9 @@ temporaryDirectory = () -> (
 	  tmp := (
 	       if getenv "TMPDIR" === ""
 	       then "/tmp/"			     -- unix dependency here...
-	       else minimizeFilename ( getenv "TMPDIR" | "/" )
+	       else getenv "TMPDIR"
 	       );
+	  if not match("/$",tmp) then tmp = tmp | "/";
 	  if not isDirectory tmp then error("expected a directory: ", tmp);
 	  if not fileExecutable tmp then error("expected a executable directory: ", tmp);
 	  if not fileWritable tmp then error("expected a writable directory: ", tmp);
