@@ -226,7 +226,7 @@ poset (List, List, Matrix) := Poset => opts -> (G, R, M) -> (
         symbol GroundSet => G,
         symbol Relations => toList \ R,
         symbol RelationMatrix => M,
-        symbol cache => new CacheTable
+        symbol cache => new CacheTable from {"name" => "unnamed Poset"}
         })
 poset (List, List) := Poset => opts -> (G, R) -> poset(G, R = toList \ R, transitiveClosure(G, R), opts)
 poset (List, Function) := Poset => opts -> (G, cmp) -> (
@@ -236,11 +236,18 @@ poset (List, Function) := Poset => opts -> (G, cmp) -> (
     )
 poset List := Poset => opts -> R -> poset(unique flatten (R = toList \ R), R, opts);
 
+Poset.GlobalAssignHook = (sym, val) -> (
+     val.cache#"name" = sym;
+     )
+     
+net Poset := p -> (
+     if p.cache#"name" === "unnamed Poset" then "Relation matrix: " | net p.RelationMatrix else toString p.cache#"name")
+toString Poset := p -> toString p.cache#"name"
+
 Poset _ ZZ := Thing => (P, i) -> P.GroundSet#i
 Poset _ List := List => (P, L) -> P.GroundSet_L
 installMethod(symbol _*, Poset, P -> P.GroundSet)
 
-toString Poset := 
 toExternalString Poset := String => P -> "poset(" | toExternalString P.GroundSet | ", " | toExternalString P.Relations | ", " | toString P.RelationMatrix | ")"
 
 -- Returns a matrix M such that M_(i,j) = 1 if G_i <= G_j, and 0 otherwise
@@ -639,7 +646,7 @@ removeIsomorphicPosets List := List => L -> (
     )
 
 union = method()
-union (Poset, Poset) := Poset => (P, Q) -> poset(unique join(P.GroundSet, Q.GroundSet), unique join(P.Relations, Q.Relations), AntisymmetryStrategy => "none")
+union (Poset, Poset) := Poset => (P, Q) -> poset(unique join(P.GroundSet, Q.GroundSet), unique join(P.Relations, Q.Relations), AntisymmetryStrategy => "rank")
 Poset + Poset := union
 
 ------------------------------------------
@@ -1382,6 +1389,8 @@ rankPoset Poset := List => P -> (
     apply(max rk + 1, r -> P.GroundSet_(toList (rks#r)))
     )
 
+rank Poset := List => P -> rankPoset(P)
+
 ------------------------------------------
 -- Relations & relation properties
 ------------------------------------------
@@ -1715,6 +1724,8 @@ isUpperSemimodular Poset := Boolean => P -> (
     cvrby := apply(#P.GroundSet, i -> if cp#?i then last \ cp#i else {});
     P.cache.isUpperSemimodular = all(#P.GroundSet, i -> all(#cvrby#i, j -> all(j, k -> #(set cvrby#(cvrby#i#j) * set cvrby#(cvrby#i#k)) === 1)))
     )
+
+
 
 ------------------------------------------
 ------------------------------------------
