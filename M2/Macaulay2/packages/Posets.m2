@@ -145,6 +145,7 @@ export {
     "posetMeet",
     "rankFunction",
     "rankPoset",
+  --"rank",
     --
     -- Relations & relation properties
     "allRelations",
@@ -170,7 +171,7 @@ export {
     --
     -- Properties
     "dilworthNumber",
-  --"height", -- exported by Core
+  --"height",
     "isAtomic",
     "isBounded",
     "isComparabilityGraph",
@@ -4461,10 +4462,12 @@ doc ///
     Key
         rankPoset
         (rankPoset,Poset)
+        (rank, Poset)
     Headline
         generates a list of lists representing the ranks of a ranked poset
     Usage
         L = rankPoset P
+        L = rank Poset
     Inputs
         P:Poset
     Outputs
@@ -5850,7 +5853,7 @@ doc ///
         rankFunction
 ///
 
-undocumented { "VariableName", (toExternalString,Poset), (toString,Poset), (net,NCPart), (net,NCPartition), "Random" };
+undocumented { "VariableName", (toExternalString,Poset), (toString,Poset), (net,NCPart), (net,NCPartition), (net,Poset),"Random" };
 
 ------------------------------------------
 ------------------------------------------
