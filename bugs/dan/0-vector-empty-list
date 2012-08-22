@@ -1,0 +1,6 @@
+
+i55 : vector {}
+/Applications/Macaulay2-1.4/share/Macaulay2/Core/matrix1.m2:276:23:(1):[4]: error: expected nonempty list
+/Applications/Macaulay2-1.4/share/Macaulay2/Core/matrix1.m2:276:23:(1):[4]: --entering debugger (type help to see debugger commands)
+/Applications/Macaulay2-1.4/share/Macaulay2/Core/matrix1.m2:276:23-276:23: --source code:
+     if #m === 0 then error "expected nonempty list";
