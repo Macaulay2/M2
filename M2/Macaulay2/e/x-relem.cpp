@@ -1,6 +1,6 @@
 // Copyright 2002 Michael E. Stillman
 
-static const bool use_old_RRR = false;
+static const bool use_old_RRR = true;
 
 #include "engine.h"
 
