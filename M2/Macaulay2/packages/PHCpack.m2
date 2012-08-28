@@ -38,7 +38,6 @@ export {
   "isCoordinateZero",
   "isWitnessSetMember",
   "mixedVolume",
-  "monodromyBreakup",
   "nonZeroFilter",
   "numericalIrreducibleDecomposition",
   "refineSolutions",
@@ -50,7 +49,8 @@ export {
   "tDegree",
   "toLaurentPolynomial",
   "topWitnessSet",
-  "trackPaths", 
+  "trackPaths",
+  "Verbose", 
   "zeroFilter"
 }
 
@@ -213,7 +213,7 @@ systemFromFile (String) := (name) -> (
   s := get name;
   s = replace("i","ii",s);
   s = replace("E","e",s);
-  s = replace("e+00","",s);  -- on Mac: M2 crashes at 3.0e+00 as constant
+  --s = replace("e+00","",s);  -- on Mac: M2 crashes at 3.0e+00 as constant
   L := lines(s);
   n := value L_0;
   result := {};
@@ -227,7 +227,8 @@ systemFromFile (String) := (name) -> (
       if #L_j != 0 then (
         if (L_j_(#L_j-1) != ";") then (
           -- we have to bite off the first "+" sign of the term
-          term = value substring(1,#L_j-1,L_j);
+          term = 
+	  value substring(1,#L_j-1,L_j);
           if (L_j_0 == "+") then p = p + term else p = p - term;
         ) else ( -- in this case (L_j_(#L_j-1) == ";") holds
           term = value substring(1,#L_j-2,L_j);
@@ -266,6 +267,7 @@ witnessSetFromFile (String) := (name) -> (
   e := systemFromFile(name); 
   d := dimEmbedding(e);
   witnessPointsFile := temporaryFileName() | "PHCwitnessPoints";
+  if fileExists witnessPointsFile then removeFile witnessPointsFile;
   run(PHCexe|" -z " | name | " "|witnessPointsFile);
   eR := ring first e;
   g := parseSolutions(witnessPointsFile,eR);
@@ -297,7 +299,7 @@ dimEmbedding (List) := (system) -> (
   slack := v_(#v-1); 
   zz := toString(slack);
   ds := substring(2,#zz-1,zz);
-  dimension := value(ds);
+  dimension := if (value(ds)===null) then 0 else value(ds);
   return dimension;
 )
 
@@ -355,8 +357,7 @@ witnessSuperSetFilter (WitnessSet,List) := (witset,pts) -> (
   -- OUT: a list of points in pts for which isWitnessSetMember is false.
   result := new MutableList from {};
   for p in pts do (
-    c := coordinates(p);
-    if not isWitnessSetMember(witset,c,false)
+    if not isWitnessSetMember(witset,p)
      then result = append(result,p);
   );
   return result;
@@ -375,11 +376,11 @@ witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
   for p in pts do (
     found := false;
     if instance(p,Point)
-     then c = coordinates(p)
-     else c = p;
+     then c = p
+     else c = point{p};
     for w in witsets when (not found) do (
       ws := w#1;
-      found = isWitnessSetMember(ws,c,false);
+      found = isWitnessSetMember(ws,c);
     );
     if not found then result = append(result,p);
   );
@@ -397,7 +398,7 @@ witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
 -----------------------------------------------
 ------------  CASCADE  ------------------------
 -----------------------------------------------
-cascade = method(TypicalValue => NumericalVariety, Options => {StartDimension => null})
+cascade = method(TypicalValue => NumericalVariety, Options => {StartDimension => -1})
 cascade (List) := o -> (system) -> (
   -- IN: system, a polynomial system;
   --     dimension, top dimension of the solution set.
@@ -407,7 +408,12 @@ cascade (List) := o -> (system) -> (
   
   if not(class coefficientRing ring ideal system===ComplexField) then
     error "coefficient ring is not complex";
-  if (value o.StartDimension)==null then startdim:=(# gens ring first system)-1
+  
+  R := ring ideal system;
+  
+  if # system > numgens R then error "the system is overdetermined";
+    
+  if o.StartDimension==-1 then startdim:=(numgens R)-1
     else startdim=o.StartDimension;  
     
   PHCinputFile := temporaryFileName() | "PHCinput";
@@ -415,7 +421,11 @@ cascade (List) := o -> (system) -> (
   PHCbatchFile := temporaryFileName() | "PHCbatch";
   PHCsolsFile := temporaryFileName() | "PHCsols";
   PHCsessionFile := temporaryFileName() | "PHCsession";
-  {PHCinputFile, PHCoutputFile, PHCbatchFile, PHCsolsFile, PHCsessionFile} / (f->if fileExists f then removeFile f);
+  {PHCinputFile, PHCoutputFile, PHCbatchFile, PHCsolsFile, PHCsessionFile} / (f->if fileExists f 
+       then removeFile f);
+  toList (0..startdim) / (i->if fileExists (PHCoutputFile | "_sw" | i) 
+       then removeFile (PHCoutputFile | "_sw" | i) );
+  
   stdio << "writing output to file " << PHCoutputFile << endl;
   
   systemToFile(system,PHCinputFile);
@@ -432,22 +442,25 @@ cascade (List) := o -> (system) -> (
   run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
   stdio << "output of phc -c is in file " << PHCoutputFile << endl;
   stdio << "... constructing witness sets ... " << endl;
-  R := ring ideal system;
+  
   local slackvars;
   local RwithSlack;
+  
+  --get solutions
+  
   result := new MutableList from {};
-  dims:=select(toList (1..startdim),j->(fileExists (PHCoutputFile | "_sw" | j) and 
+  dims:=select(toList (0..startdim),j->(fileExists (PHCoutputFile | "_sw" | j) and 
 	    match("THE SOLUTIONS",get (PHCoutputFile | "_sw" | j))));
   topdimension := max dims; 
   i := topdimension;
   while i>=0 do
   (   if member(i,dims) then (	
       fil := (PHCoutputFile | "_sw" | i);
-      stdio << "witness set of dimension " << i << endl;
+      
       if i > 0 then
       (
         slackvars = apply(i, k->getSymbol("zz"|toString(k+1)));
-        RwithSlack = (coefficientRing R)[gens R, slackvars];
+        RwithSlack = (coefficientRing R)monoid(gens R | slackvars);
         use RwithSlack;
         supwit := witnessSetFromFile(fil);
         if i == topdimension then (
@@ -457,21 +470,22 @@ cascade (List) := o -> (system) -> (
           genpts := witnessSuperSetsFilter(result,supsols);
           g := toList(apply(genpts,x->point{x}));
           ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
-          result = append(result,(i,ws));
+          if #g!=0 then result = append(result,(i,ws));
         );
       ) else (
         run(PHCexe | " -z " | fil | " " | PHCsolsFile);
-        psols := parseSolutions(PHCsolsFile,R);
+        use R;
+	supwit = witnessSetFromFile(fil);
+	psols := parseSolutions(PHCsolsFile,R);
         isols := witnessSuperSetsFilter(result,psols);
-        result = append(result,(0,isols));
+        ws = witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),isols);
+	if #isols!=0 then result = append(result,(0,ws));
       );
     );  
     i = i-1
-  );        
-  Wsets:=apply(result,i->witnessSet(ideal system, 
-	 ideal apply( toList (last i)#Slice, j->sub(j, R)), 
-	 apply(toList (last i)#Points, j->(point{take(coordinates(j),{0,# gens R -1})}) )));
-  return numericalVariety(toList Wsets )
+  );
+  use R;
+  numericalVariety(toList (apply(result,i-> last i)))
 )
 
 -----------------------------------------------
@@ -545,6 +559,7 @@ factorWitnessSet (WitnessSet ) := w -> (
   system := equations(w) | slice(w); 
   systemToFile(system,PHCinputFile);
   R := ring first system;
+  use R;
   L := toList(points(w));
   pointsToFile(L,R,PHCinputFile,Append=>true);
   stdio << "preparing batch file to " << PHCbatchFile << endl;
@@ -559,17 +574,19 @@ factorWitnessSet (WitnessSet ) := w -> (
   run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
   stdio << "session information of phc -f is in " << PHCsessionFile << endl;
   stdio << "output of phc -f is in file " << PHCoutputFile << endl;
+ 
   -- counting the number of factors
   count := 0;
   result := new MutableList from {};
   name := PHCinputFile | "_f" | toString(count+1);
-  while (fileExists name) do (
+  while (fileExists name) do (   
     result = append(result,witnessSetFromFile(name));
     count = count + 1;
     name = PHCinputFile | "_f" | toString(count+1);
   );
   stdio << "found " << count << " irreducible factors " << endl;
-  return toList(result);
+  for ws in result do ws#IsIrreducible=true;
+  return numericalVariety(toList(result));
 )
 
 ----------------------------
@@ -586,6 +603,54 @@ isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
   L := sol#Coordinates;
   return abs(L_k)<=tol; 
 )
+
+
+----------------------------------------------
+----------IS WITNESS SET MEMBER  -------------
+----------------------------------------------
+isWitnessSetMember = method(TypicalValue => Boolean, Options => {Verbose => false})
+isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
+  -- IN: witset, a witness set for a positive dimensional solution set,
+  --     testpoint, does it belong to the solution set?
+  -- OUT: true if testpoint is a member of the solution set,
+  --      false otherwise.
+
+  PHCwitnessFile := temporaryFileName() | "PHCwitset";
+  PHCtestpointFile := temporaryFileName() | "PHCtestpoint";
+  PHCbatchFile := temporaryFileName() | "PHCbatch";
+  PHCoutputFile := temporaryFileName() | "PHCoutput";
+  PHCsessionFile := temporaryFileName() | "PHCsession";
+  if o.Verbose then
+    stdio << "writing witness set to file " << PHCwitnessFile << endl;
+  witnessSetToFile(witset,PHCwitnessFile);
+  d := dim(witset); -- pad test point with zero values for slack variables
+  dzeros := toList(apply(0..d,i->0));
+  L := {coordinates(testpoint)|dzeros};
+  R := ring ideal(witset);
+  if o.Verbose then
+    stdio << "writing test point to file " << PHCtestpointFile << endl;
+  pointsToFile(L,R,PHCtestpointFile);
+  s := concatenate("1\n",PHCwitnessFile);
+  s = concatenate(s,"\n",PHCtestpointFile);
+  s = concatenate(s,"\n",PHCoutputFile);
+  s = concatenate(s,"\n0\n");
+  bat := openOut PHCbatchFile;
+  bat << s;
+  close bat;
+  if o.Verbose then (
+    stdio << "calling phc -f < " << PHCbatchFile;
+    stdio << " > " << PHCsessionFile << endl;
+  );
+  run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
+  if o.Verbose then
+    stdio << "output of phc -f is in file " << PHCoutputFile << endl;
+  -- if the point does not belong to the witness set,
+  -- then the output file contains the word "not"
+  r := get PHCoutputFile;
+  result := not match("not",r);
+  return result;
+)
+
 
 -----------------------------------
 -------- MIXED VOLUME -------------
@@ -677,58 +742,6 @@ mixedVolume  List := Sequence => opt -> system -> (
   result
 )
 
------------------------------------------------
---------- MONODROMY BREAKUP    ----------------
------------------------------------------------
-
-monodromyBreakup = method(Options => {})
-monodromyBreakup WitnessSet := o -> (W) -> (
-     -- Input: a witness set (i.e. numerical equidimensional set)
-     -- Output: a list of witness sets, probably the irreducible
-     --  decomposition of W.
-     
-     W = addSlackVariables generalEquations W;
-     infile := temporaryFileName() | 
-     "PHCmonodromy";
-     targetfile := temporaryFileName() | 
-     "PHCtarget";
-     batchfile := temporaryFileName() | 
-     "PHCbat";
-     solsfile :=  temporaryFileName() | 
-     "PHCsolfile";
-     {infile, targetfile, batchfile} / (f->if fileExists f then removeFile f);
-     
-     -- writing data to the corresponding files                                                                                                                                                                           
-     systemToFile(W.Equations_* | W.Slice,infile);
-     solutionsToFile(W.Points,ring W,infile, Append=>true);	  
-     
-     -- making batch file (for phc -f)
-     bat := openOut batchfile;
-     bat << "2" << endl; -- option for newton's method using multiprecision
-     bat << infile << endl; -- name of input file
-     bat << targetfile << endl; -- name of output file
-     bat << if degree W < 15 then "2" else "1" << endl; -- this 15 is a problem
-     bat << "0" << endl;
-     close bat;
-     compStartTime := currentTime();      
-     run(PHCexe|" -f <"|batchfile|" >phc_session.log");
-     if DBG>0 then << "PHCpack computation time: " << currentTime()-compStartTime << endl;
-     
-     -- grab the files and get the points
-     i := 1;
-     filnames := while (
-	  fil := (infile|"_f"|i);
-     	  fileExists fil
-	  ) list fil do i=i+1;
-     for f in filnames list (
-	  if fileExists solsfile then removeFile solsfile;
-	  run(PHCexe|" -z "|f|" "|solsfile);
-	  Wf:=witnessSet(W.Equations, ideal W.Slice, parseSolutions(solsfile, ring W));
-	  Wf#IsIrreducible=true;
-	  Wf
-	  )
-     )
-
 -------------------------------------------
 ------------NON ZERO FILTER----------------
 -------------------------------------------
@@ -747,13 +760,14 @@ nonZeroFilter (List,ZZ,RR) := (sols,k,tol) -> (
 --NUMERICAL IRREDUCIBLE DECOMPOSITION------
 -------------------------------------------
 
-numericalIrreducibleDecomposition=method(TypicalValue=>NumericalVariety, Options=>{StartDimension=>null})
+numericalIrreducibleDecomposition=method(TypicalValue=>NumericalVariety, Options=>{StartDimension=>-1})
 numericalIrreducibleDecomposition (List) := o -> (L) -> (
   --IN: an ideal, top dimension
   --OUT: a NumericalVariety
+setRandomSeed(random ZZ);
 startdim:=o.StartDimension;  
 W:=cascade(L,StartDimension=>startdim);
-witsets:=apply(keys W, i->monodromyBreakup((W#i)_0));
+witsets:=apply(keys W, i->if i!=0 then (factorWitnessSet((W#i)_0))#i else W#i);
 numericalVariety(flatten witsets)  
   )
 
@@ -1075,53 +1089,6 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   return result;
 )
 
-----------------------------------------------
-------------  WITNESS MEMBER  ----------------
-----------------------------------------------
-
-isWitnessSetMember = method(TypicalValue => Boolean)
-isWitnessSetMember (WitnessSet,List,Boolean) := (witset,testpoint,verbose) -> (
-  -- IN: witset, a witness set for a positive dimensional solution set,
-  --     testpoint, does it belong to the solution set?
-  --     verbose, true if extra output is wanted.
-  -- OUT: true if testpoint is a member of the solution set,
-  --      false otherwise.
-
-  PHCwitnessFile := temporaryFileName() | "PHCwitset";
-  PHCtestpointFile := temporaryFileName() | "PHCtestpoint";
-  PHCbatchFile := temporaryFileName() | "PHCbatch";
-  PHCoutputFile := temporaryFileName() | "PHCoutput";
-  PHCsessionFile := temporaryFileName() | "PHCsession";
-  if verbose then
-    stdio << "writing witness set to file " << PHCwitnessFile << endl;
-  witnessSetToFile(witset,PHCwitnessFile);
-  d := dim(witset); -- pad test point with zero values for slack variables
-  dzeros := toList(apply(0..d,i->0));
-  L := {testpoint|dzeros};
-  R := ring ideal(witset);
-  if verbose then
-    stdio << "writing test point to file " << PHCtestpointFile << endl;
-  pointsToFile(L,R,PHCtestpointFile);
-  s := concatenate("1\n",PHCwitnessFile);
-  s = concatenate(s,"\n",PHCtestpointFile);
-  s = concatenate(s,"\n",PHCoutputFile);
-  s = concatenate(s,"\n0\n");
-  bat := openOut PHCbatchFile;
-  bat << s;
-  close bat;
-  if verbose then (
-    stdio << "calling phc -f < " << PHCbatchFile;
-    stdio << " > " << PHCsessionFile << endl;
-  );
-  run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
-  if verbose then
-    stdio << "output of phc -f is in file " << PHCoutputFile << endl;
-  -- if the point does not belong to the witness set,
-  -- then the output file contains the word "not"
-  r := get PHCoutputFile;
-  result := not match("not",r);
-  return result;
-)
 
 -----------------------------------------------
 ------------ ZERO FILTER -----------------------
@@ -1155,40 +1122,122 @@ load "./PHCpack/PHCpackDoc.m2";
 -- TESTS
 --##########################################################################
 
-
-
+-----------------------------------
+-- cascade
+-----------------------------------
+TEST/// 
+      R=CC[x11,x22,x21,x12,x23,x13,x14,x24]
+      L={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14}
+      assert( # cascade L == 1 )--there is one component of dim.5.
+///;
 
 -----------------------------------
--- toLaurentPolynomial
+--constructEmbedding
 -----------------------------------
 TEST///
-      QQ[x,y,z];
-      sys = {y-x^2, z-x^3, (x+y+z-1)/x};
-      convertedSys = toLaurentPolynomial(sys,w);
-      R=ring ideal convertedSys 
-      assert(isPolynomialRing(R)) --make sure it is a poly ring
-      O=options(R); 
-      assert(O#Inverses) -- want to make sure this is a Laurent ring
+      R=CC[x,y,z]
+      L={x^2+y^2, x+y+z}
+      Emb=constructEmbedding(L,1)
+      assert( # Emb == 4) -- there are four equations
+      assert ( member(zz1, Emb) == true ) --one of the eqns is zz1
+///;
+-----------------------------------
+--factorWitnessSet
+-----------------------------------
+TEST///
+    R = CC[x,y];
+    system = {x*y};
+    (w, ns)=topWitnessSet(system,1);
+    V=factorWitnessSet(w);
+    assert ((# V#1) == 2)
+///;
+
+-----------------------------------
+--isCoordinateZero
+-----------------------------------
+TEST///
+     P=point({{0,1.0e-12}})
+     assert (isCoordinateZero(P,1,1.0e-10) == true)
+///;     
+
+
+-----------------------------------
+-- isWitnessSetMember
+-----------------------------------
+TEST/// 
+    R = CC [x,y]
+    system = {2*y+2*x, 4*y + 4*x}
+    (W, ns)=topWitnessSet(system, 1)
+    assert isWitnessSetMember(W,point{{0,0}})
 ///;
 
 -----------------------------------
 -- mixedVolume
 -----------------------------------
 TEST/// 
-     R=QQ[x,y,z] 
+     R=CC[x,y,z] 
      S={y-x^2,z-x^3,x+y+z-1}
      m=mixedVolume(S) 
      assert(m==3) 
-     R=QQ[x,y,z]
+     R=CC[x,y,z]
      S1={y^3+z^2+3,z^2+x^4+x^4*z^2+4,x^4+y^3+x^4*y^3+5}
      M=mixedVolume(S1)
      assert(M==48)--testing output against by-hand calculation
-     R=QQ[x,y]
+     R=CC[x,y]
      S2={x^2+x*y+y^2+x+y+1,x^5+x^4*y+x^3*y^2+x^2*y^3+x*y^4+y^5} --another example
      M=mixedVolume(S2)
      assert(M==10)--testing output against by-hand calculation 
 ///;
 
+-----------------------------------
+-- nonZeroFilter
+-----------------------------------
+TEST/// 
+     R = CC[x,y]; 
+     f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+     fSols = solveSystem(f);
+     nonzeroSols = nonZeroFilter(fSols,0,1.0e-10);
+     assert(# nonzeroSols ==10) -- this is just complement of zeroFilter which is tested in more detail. Here we are just counting the number of solutions to make sure the method ran.
+///;
+
+-------------------------------------
+--numericalIrreducibleDecomposition
+-------------------------------------
+
+TEST///
+      R = CC [x,y]
+      system={x^2*y}
+      V=numericalIrreducibleDecomposition(system)
+      assert (dim V == 1) --there are two components of dimension 1
+      assert ((# V#1)==2)
+///;      
+
+-----------------------------------
+-- refineSolutions
+-----------------------------------
+TEST/// 
+      R = CC[x,y]; 
+      S = {x^2 - 1/3, x*y - 1}; 
+      roots = solveSystem(S);
+      r0 = roots#0#Coordinates#1
+      newRoots = refineSolutions(S,roots,64) --recall that solutions are of type Point. 
+      --check if precision increased:
+      assert(precision newRoots#0#Coordinates#1 > precision roots#0#Coordinates#1) 
+      --check if input number of decimal places, 64, used correctly: 
+      assert(precision newRoots#0#Coordinates#1 == ceiling(log_2(10^64)))
+///;
+
+-----------------------------------
+-- solveRationalSystem
+-----------------------------------
+TEST///
+     QQ[x,y,z];
+     sys = {y-x^2, z-x^3, (x+y+z-1)/x};
+     sols = solveRationalSystem(sys);
+     assert(# sols == 3); --there are 3 solutions
+     real = realPoints(sols);
+     assert(# real ==1); --one solution is real
+///;
 
 -----------------------------------
 -- solveSystem
@@ -1207,38 +1256,47 @@ TEST///
      (abs((sol2-L_1#Coordinates)_0)<.00000000001 and abs((sol2-L_1#Coordinates)_1)<.00000000001 and abs((sol2-L_1#Coordinates)_2)<.00000000001))
 ///;
 
+
 -----------------------------------
--- refineSolutions
+-- toLaurentPolynomial
 -----------------------------------
-TEST/// 
-      R = QQ[x,y]; 
-      S = {x^2 - 1/3, x*y - 1}; 
-      roots = solveSystem(S);
-      r0 = roots#0#Coordinates#1
-      newRoots = refineSolutions(S,roots,64) --recall that solutions are of type Point. 
-      --check if precision increased:
-      assert(precision newRoots#0#Coordinates#1 > precision roots#0#Coordinates#1) 
-      --check if input number of decimal places, 64, used correctly: 
-      assert(precision newRoots#0#Coordinates#1 == ceiling(log_2(10^64)))
+TEST///
+     QQ[x,y,z];
+     sys = {y-x^2, z-x^3, (x+y+z-1)/x};
+     convertedSys = toLaurentPolynomial(sys,w);
+     R=ring ideal convertedSys 
+     assert(isPolynomialRing(R)) --make sure it is a poly ring
+     O=options(R); 
+     assert(O#Inverses) -- want to make sure this is a Laurent ring
 ///;
 
+-----------------------------------
+--topWitnessSet
+-----------------------------------
+TEST///
+    R = CC[x,y];
+    system = {x*y};
+    (w, ns)=topWitnessSet(system,1);
+    assert (dim w == 1)
+    assert (degree w == 2)
+///;    
+    
 -----------------------------------
 -- trackPaths
 -----------------------------------
 TEST/// 
      R = CC[x,y]; 
      f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-     (m,q,qsols) = mixedVolume(f,startSystem=>true);
+     (m,q,qsols) = mixedVolume(f,StartSystem=>true);
      fsols = trackPaths(f,q,qsols)
      assert(# fsols == 8)
 ///;
-
 
 -----------------------------------
 -- zeroFilter
 -----------------------------------
 TEST/// 
-     R = QQ[x,y]; 
+     R = CC[x,y]; 
      f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
      fSols = solveSystem(f);
      zeroSols = zeroFilter(fSols,1,1.0e-10);
@@ -1246,30 +1304,9 @@ TEST///
 	      )
 ///;
 
-
------------------------------------
--- nonZeroFilter
------------------------------------
-TEST/// 
-     R = QQ[x,y]; 
-     f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-     fSols = solveSystem(f);
-     nonzeroSols = nonZeroFilter(fSols,0,1.0e-10);
-     assert(# nonzeroSols ==10) -- this is just complement of zeroFilter which is tested in more detail. Here we are just counting the number of solutions to make sure the method ran.
-///;
-
-
-
 --##########################################################################--
 end   -- terminate reading ... 
 --##########################################################################--
 
 
------------------------------------
--- cascade
------------------------------------
-TEST/// 
-      R=QQ[x11,x22,x21,x12,x23,x13,x14,x24]
-      I=ideal(x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14)
-      assert( # cascade I == 1 )--there is one component of dim.5.
-///;
+

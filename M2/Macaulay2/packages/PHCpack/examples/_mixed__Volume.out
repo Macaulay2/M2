@@ -1,14 +1,13 @@
--- -*- M2-comint -*- {* hash: -1715183444 *}
+-- -*- M2-comint -*- {* hash: -1229619679 *}
 --loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+--warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
+--  use the synonym Core$Verbose
 
 i1 : R = CC[x,y];
 
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
-i3 : I=ideal f
-
-             3 5    2     2   2
-o3 = ideal (x y  + x y + y , x  + x*y - 1)
+i3 : I=ideal f;
 
 o3 : Ideal of R
 
@@ -23,43 +22,45 @@ i5 : degree I
 o5 = 10
 
 i6 : m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
-using temporary files /tmp/M2-5279-1PHCinput and /tmp/M2-5279-1PHCoutput
+using temporary files /tmp/M2-1915-1PHCinput and /tmp/M2-1915-1PHCoutput
 
 o6 = 8
 
 i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
-using temporary files /tmp/M2-5279-2PHCinput and /tmp/M2-5279-2PHCoutput
+using temporary files /tmp/M2-1915-2PHCinput and /tmp/M2-1915-2PHCoutput
 
 o7 = (8, 10)
 
 o7 : Sequence
 
 i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
-using temporary files /tmp/M2-5279-3PHCinput and /tmp/M2-5279-3PHCoutput
+using temporary files /tmp/M2-1915-3PHCinput and /tmp/M2-1915-3PHCoutput
 
 i9 : q --let's take a look at the start system:
 
-                             3 5                          2               
-o9 = {(.981516 - .191378*ii)x y  + (.817324 - .576179*ii)x y, (- .990981 +
+                               3 5                           2              
+o9 = {(- .673215 - .739447*ii)x y  + (- .33427 - .942477*ii)x y + (- .937485
      ------------------------------------------------------------------------
-                 2
-     .134002*ii)x  + .987281 - .158983*ii}
+                   2                         2
+     - .348027*ii)y , (- .540724 + .8412*ii)x  + (.89118 - .45365*ii)x*y -
+     ------------------------------------------------------------------------
+     .999843 + .0177461*ii}
 
 o9 : List
 
 i10 : qsols --and its solutions:
 
-o10 = {{-.99992+.012627*ii, .994781-.102035*ii}, {.99992-.012627*ii,
+o10 = {{.323566-.676624*ii, -.071264+.585828*ii}, {-.864198+1.15957*ii,
       -----------------------------------------------------------------------
-      .775566+.631266*ii}, {-.99992+.012627*ii, .102035+.994781*ii},
+      -.290182+.757778*ii}, {.10055+.589592*ii, 1.35841-.900396*ii},
       -----------------------------------------------------------------------
-      {.99992-.012627*ii, -.631266+.775566*ii}, {-.99992+.012627*ii,
+      {-.17774-.698053*ii, -1.40247+.5465*ii}, {-.191312+1.27309*ii,
       -----------------------------------------------------------------------
-      -.994781+.102035*ii}, {.99992-.012627*ii, -.775566-.631266*ii},
+      .709381+.454627*ii}, {.509348-1.47333*ii, -.380227-.892251*ii},
       -----------------------------------------------------------------------
-      {-.99992+.012627*ii, -.102035-.994781*ii}, {.99992-.012627*ii,
+      {1.07379-.773403*ii, .895101-.543893*ii}, {-.774001+.599154*ii,
       -----------------------------------------------------------------------
-      .631266-.775566*ii}}
+      -.818744-.008193*ii}}
 
 o10 : List
 
