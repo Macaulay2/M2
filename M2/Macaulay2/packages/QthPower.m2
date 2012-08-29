@@ -1122,6 +1122,7 @@ assert(icq#3 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
 ///
 
 TEST ///
+wtR1 = matrix{{5,6,6},{3,6,0}};
 R0 = QQ[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 I0 = {x^6+x^3*z-y^3*z^2};
 time ic0 = rationalIntegralClosure(wtR1,R0,I0); toString(ic0)
@@ -1143,6 +1144,7 @@ assert( ic3#3 == matrix{{15,10,5,4}})
 ///
 
 TEST ///
+wtR2 = matrix{{9,8}};
 R0 = QQ[y,x,Weights=>entries(weightGrevlex(wtR2))];
 I0 = {y^8-x^9+2*y*x^6-y^2*x^3};
 time ic1 = rationalIntegralClosure(wtR2,R0,I0); toString(ic1)
