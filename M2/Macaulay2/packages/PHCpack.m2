@@ -10,7 +10,7 @@ newPackage(
      HomePage => "http://www.math.uic.edu/~lizgross"},
     {Name => "Sonja Petrovic", 
      Email => "sonja@psu.edu",
-     HomePage => "www.personal.psu.edu/sxp61"},
+     HomePage => "http://www.personal.psu.edu/sxp61"},
     {Name => "Jan Verschelde", 
      Email => "jan@math.uic.edu",
      HomePage => "http://www.math.uic.edu/~jan"},
