@@ -69,6 +69,7 @@ PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe";
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file 
 
 needsPackage "SimpleDoc"
+needsPackage "NAGtypes"
 
 --##########################################################################--
 -- INTERNAL METHODS
@@ -1309,4 +1310,13 @@ end   -- terminate reading ...
 --##########################################################################--
 
 
-
+restart
+installPackage("PHCpack",RemakeAllDocumentation=>true)
+installPackage ("PHCpack",RerunExamples=>true)
+viewHelp PHCpack
+--many errors seem to be due to the fact some things are not exported:
+--error: mutable unexported unset symbol(s) in package PHCpack: 'generalEquations', 'NumericalVariety', 'numericalVariety', 'IsIrreducible'
+/Users/sxp61/m2svn/trunk/M2/Macaulay2/packages/PHCpack.m2:329:12-329:28: here is the first use of 'generalEquations'
+/Users/sxp61/m2svn/trunk/M2/Macaulay2/packages/PHCpack.m2:401:34-401:50: here is the first use of 'NumericalVariety'
+/Users/sxp61/m2svn/trunk/M2/Macaulay2/packages/PHCpack.m2:488:3-488:19: here is the first use of 'numericalVariety'
+/Users/sxp61/m2svn/trunk/M2/Macaulay2/packages/PHCpack.m2:588:26-588:39: here is the first use of 'IsIrreducible'

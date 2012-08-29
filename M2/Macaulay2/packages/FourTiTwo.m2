@@ -21,7 +21,7 @@ newPackage(
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"},
 	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu"},
-	     {Name => "Sonja Petrovic", Email => "petrovic@math.uic.edu"}
+	     {Name => "Sonja Petrovic", Email => "petrovic@psu.edu"}
 	     },
     	Headline => "Interface to 4ti2",
 	Configuration => { "path" => "",
