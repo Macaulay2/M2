@@ -1119,12 +1119,16 @@ Rq = ZZ/109[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 Iq = {x^6+x^3*z-y^3*z^2};
 time icq = qthIntegralClosure(wtR1,Rq,Iq); toString(icq)
 assert(icq#3 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
+///
 
+TEST ///
 R0 = QQ[x,y,z,Weights=>entries(weightGrevlex(wtR1))];
 I0 = {x^6+x^3*z-y^3*z^2};
 time ic0 = rationalIntegralClosure(wtR1,R0,I0); toString(ic0)
 assert(ic0#3 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --example 1, disguised Hermitian----------------------------------------------
 -- so, in need of minimization------------------------------------------------
@@ -1136,14 +1140,18 @@ time ic1 = qthIntegralClosure(wtR2,Rq,Iq);toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert( ic3#3 == matrix{{15,10,5,4}})
+///
 
+TEST ///
 R0 = QQ[y,x,Weights=>entries(weightGrevlex(wtR2))];
 I0 = {y^8-x^9+2*y*x^6-y^2*x^3};
 time ic1 = rationalIntegralClosure(wtR2,R0,I0); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 time ic3 = rationalIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert(ic3#3 == matrix{{15,10,5,4}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --pseudo-weights--------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -1152,7 +1160,9 @@ R0 = QQ[u,r,Weights=>entries weightGrevlex(wtR3)];
 I0 = {u^7-u^3*r^7-r^3};
 time ic0 = rationalIntegralClosure(wtR3,R0,I0); toString(ic0)
 assert(ic0#3==matrix{{34,27,24,17,14,7,4}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --generic example over QQ with moderate coefficients to be reconstructed------
 ------------------------------------------------------------------------------ 
@@ -1161,7 +1171,9 @@ R0 = QQ[y,x,MonomialOrder=>{Weights=>{11,6},Weights=>{1,0}}];
 I0 = {(y^2-3/4*y-15/17*x)^3-9*y*x^4*(y^2-3/4*y-15/17*x)-27*x^11};
 time ic0 = rationalIntegralClosure(wtR4,R0,I0); toString(ic0)
 assert(ic0#3 == matrix{{25,21,20,11,10,6}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --example 7, Leonard 2009 with a presentation that is not free as a P-module--
 ------------------------------------------------------------------------------
@@ -1173,7 +1185,9 @@ Iq = {y15^2+y12*x9*u9,
       z19^3+z19*(y15+y12)*(x9+1)*u9+(y15*(x9+u9)+y12*(x9*u9+1))*x9^2*u9};
 time icq = qthIntegralClosure(wtR5,Rq,Iq); toString(icq)
 assert(icq#3 == matrix{{34,34,31,29,26,23,19,15,12,9,9},{30,21,21,24,24,15,12,9,9,9,0}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --generic example with non-trivial minimization-------------------------------
 -- M2's integralClosure seizes on flattenRing --------------------------------
@@ -1186,7 +1200,9 @@ time ic1 = qthIntegralClosure(wtR6,Rq,Iq); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert(ic3#3 == matrix{{38,31,24,12,5}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs.------ 
 --QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)-------------------------------------
@@ -1199,7 +1215,9 @@ Iq = {y^4-x^7-4*y*x^5-2*y^2*x^3+x^6};
 time ic1 = rationalIntegralClosure(wtR7,Rq,Iq); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 assert(ic1#3==matrix{{3,2,1,4}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --from the IntegralClosure package--------------------------------------------
 -- not type I, but amenable to grevlex weights--------------------------------
@@ -1209,7 +1227,9 @@ R0=QQ[v,u,Weights=>entries weightGrevlex(wtR8)];
 I0={1/5*(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)};
 time ic0 = rationalIntegralClosure(wtR8,R0,I0); toString(ic0)
 assert(ic0#3 == matrix{{2,2,2,2,1,1}})
+///
 
+TEST ///
 ------------------------------------------------------------------------------
 --MAGMA example found in GLS--------------------------------------------------
 -- genus 1, but try to figure that out from most pesentations-----------------
@@ -1224,7 +1244,9 @@ time ic2 = minimization(ic1); toString(ic2)
 time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert(ic3#3 == matrix{{3,2}})
 --leadTerm(1,ideal ic1#1)==leadTerm(1,ideal flatten entries gens gb ideal ic1#1)
-------------------------------------------
+///
+
+TEST ///
 wtR11 = matrix{{7,6}};
 Rq = ZZ/2[y,x,Weights => entries weightGrevlex(wtR11)];
 Iq = {y^6+y^4*x+y^2*(x^3+x^2)+(x^7+x^4+x^3)};
@@ -1232,16 +1254,16 @@ time ic1 = qthIntegralClosure(wtR11,Rq,Iq); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert(ic3#3==matrix{{5,4,3}})
-------------------------------------------------------------------------------
+///
 
+TEST ///
 wtR12=matrix{{5,1,1,1,1},{4,1,1,1,0},{4,1,1,0,0},{2,1,0,0,0}};
 Rq=QQ[w,x,z,y,v,Weights=>entries weightGrevlex(wtR12)];
 Iq= {w^2+w*v*y^4+v^2*x^4*z^4};
 time ic1 = rationalIntegralClosure(wtR12,Rq,Iq); toString(ic1)
+///
 
-
--------,-----------------------------------------------------------------------
---possibly too large an example unless separated------------------------------
+TEST ///
 wtR10 := matrix{{25,21}};
 Rq := ZZ/2[y,x,Weights=>entries(weightGrevlex(wtR10))];
 Iq := {
@@ -1272,28 +1294,4 @@ Iq := {
 --ic2 = minimization(ic1);---------------------------------------------------
 --ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2)--------------------------------
 --assert(ic3#3 == matrix{{16,15,13,12,11,10,7}}------------------------------
-
 ///
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
