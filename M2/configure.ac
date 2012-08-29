@@ -1097,9 +1097,9 @@ then AC_LANG(C)
 				      alpha = GC_version & 0xff;
 				      if (alpha == 0xff) fprintf(msg,"(version %d.%d found) ", major, minor);
 				      else fprintf(msg,"(version %d.%d alpha %d found) ", major, minor, alpha);
-				      return !( major >= 7 ); }])],
+				      return !( major > 7 || major == 7 && minor >= 2); }])],
 			     [ AC_MSG_RESULT(yes) ],
-			     [ AC_MSG_RESULT([no, version at least 7.0 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
+			     [ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
 			     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 			],
 			[
