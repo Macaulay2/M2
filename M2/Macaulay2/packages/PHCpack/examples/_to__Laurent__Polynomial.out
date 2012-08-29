@@ -1,0 +1,53 @@
+-- -*- M2-comint -*- {* hash: -742888775 *}
+
+i1 : QQ[x,y,z];
+
+i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
+
+i3 : describe ring ideal sys -- "there are denominators, so the method will convert these"
+
+o3 = frac QQ[x, y, z]
+
+i4 : convertedSys = toLaurentPolynomial(sys,w);
+
+i5 : printWidth = 300;
+
+i6 : toString convertedSys
+
+o6 = {y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}
+
+i7 : ring ideal convertedSys
+
+o7 = QQ {x, y, z, w }
+                   0
+
+o7 : PolynomialRing
+
+i8 : describe oo -- the option "Inverses=>true shows that this
+
+o8 = QQ {x..z, w , Degrees => {4:1}, MonomialOrder => {Weights => {4:-1} }, DegreeRank => 1, Inverses => true, Global => false}
+                0                                     {MonomialSize => 32}
+                                                      {GroupRevLex => 4  }
+                                                      {Position => Up    }
+
+i9 : P = QQ[x,y,z];
+
+i10 : f = (x*y + z^2*y) / y
+
+       2
+o10 = z  + x
+
+o10 : frac(P)
+
+i11 : liftable(f,P)
+
+o11 = true
+
+i12 : lift(f,P)
+
+       2
+o12 = z  + x
+
+o12 : P
+
+i13 : 

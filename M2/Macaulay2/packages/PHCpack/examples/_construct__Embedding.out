@@ -1,0 +1,34 @@
+-- -*- M2-comint -*- {* hash: -1285962778 *}
+
+i1 : R = CC[x,y,z];
+
+i2 : f = { x^2 - y, x^3 - z };
+
+i3 : fe1 = constructEmbedding(f,1);
+calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-68174-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-68174-0/3PHCsession
+output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-68174-0/1PHCoutput
+
+i4 : toString fe1
+
+o4 = {x^2-y+(.0871251-.996197*ii)*zz1, x^3-z+(-.815327-.579001*ii)*zz1, zz1,
+     (.338674+.940904*ii)*x+(-.956541-.291597*ii)*y+(.999862-.0166253*ii)*z
+     +(-.986154-.165834*ii)*zz1-.99915+.0412251*ii}
+
+i5 : R = CC[x,y,z];
+
+i6 : f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
+
+i7 : fe1 = constructEmbedding(f,1);
+calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-68174-0/6PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-68174-0/7PHCsession
+output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-68174-0/5PHCoutput
+
+i8 : toString fe1
+
+o8 = {x^2-y+(.966632+.0671724*ii)*ss1+(-.201283+.979533*ii)*zz1,
+     x^3-z+(-.823066+.178924*ii)*ss1+(.67795-.735108*ii)*zz1,
+     x*y-z+(.206852+.730303*ii)*ss1+(.994416-.105534*ii)*zz1,
+     -y^2+x*z+(.454963+.565387*ii)*ss1+(.439982+.898007*ii)*zz1,
+     (.962377-.271719*ii)*x+(.874455-.485107*ii)*y+(.357594+.933877*ii)*z
+     +(-.929686-.368353*ii)*ss1+(-.888138-.459576*ii)*zz1+.749084+.662475*ii}
+
+i9 : 

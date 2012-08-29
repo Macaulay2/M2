@@ -1,0 +1,54 @@
+-- -*- M2-comint -*- {* hash: -1663871215 *}
+
+i1 : R = CC[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : S = {x+y+z-1, x^2+y^2, x+y-z-3}
+
+                      2    2
+o2 = {x + y + z - 1, x  + y , x + y - z - 3}
+
+o2 : List
+
+i3 : L = solveSystem(S)
+using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/0PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/0PHCoutput
+
+o3 = {{1+ii, 1-ii, -1}, {1-ii, 1+ii, -1}}
+
+o3 : List
+
+i4 : oneSoln = L_0
+
+o4 = {1+ii, 1-ii, -1}
+
+o4 : Point
+
+i5 : peek oneSoln
+
+o5 = Point{ConditionNumber => 6.32111     }
+           Coordinates => {1+ii, 1-ii, -1}
+           LastT => 1
+           SolutionStatus => Regular
+
+i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
+
+         2         3                      3
+o6 = {- x  + y, - x  + z, x + y + z - 1, x  + x + y - 1}
+
+o6 : List
+
+i7 : #system > numcols vars R --overdetermined system
+
+o7 = true
+
+i8 : solns = solveSystem(system);
+using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/1PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/1PHCoutput
+
+i9 : numSolns = #solns
+
+o9 = 3
+
+i10 : 

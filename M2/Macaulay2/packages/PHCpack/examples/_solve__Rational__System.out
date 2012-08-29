@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- {* hash: -607525885 *}
+
+i1 : R = QQ[x,y,z];
+
+i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
+
+i3 : sols = solveRationalSystem(system)
+using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-995-0/0PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-995-0/0PHCoutput
+
+o3 = {{.543689, .295598, .160713}, {-.771845+1.11514*ii, -.647799-1.72143*ii,
+     ------------------------------------------------------------------------
+     2.41964+.606291*ii}, {-.771845-1.11514*ii, -.647799+1.72143*ii,
+     ------------------------------------------------------------------------
+     2.41964-.606291*ii}}
+
+o3 : List
+
+i4 : peek first sols
+
+o4 = Point{ConditionNumber => 4.93583                }
+           Coordinates => {.543689, .295598, .160713}
+           LastT => 1
+           SolutionStatus => Regular
+
+i5 : 
