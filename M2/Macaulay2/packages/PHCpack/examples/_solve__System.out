@@ -17,22 +17,22 @@ o2 = {x + y + z - 1, x  + y , x + y - z - 3}
 o2 : List
 
 i3 : L = solveSystem(S)
-using temporary files /tmp/M2-3375-1PHCinput and /tmp/M2-3375-1PHCoutput
+using temporary files /tmp/M2-5204-1PHCinput and /tmp/M2-5204-1PHCoutput
 
-o3 = {{1+ii, 1-ii, -1}, {1-ii, 1+ii, -1}}
+o3 = {{1-ii, 1+ii, -1}, {1+ii, 1-ii, -1}}
 
 o3 : List
 
 i4 : oneSoln = L_0
 
-o4 = {1+ii, 1-ii, -1}
+o4 = {1-ii, 1+ii, -1}
 
 o4 : Point
 
 i5 : peek oneSoln
 
 o5 = Point{ConditionNumber => 6.32111     }
-           Coordinates => {1+ii, 1-ii, -1}
+           Coordinates => {1-ii, 1+ii, -1}
            LastT => 1
            SolutionStatus => Regular
 
@@ -48,7 +48,7 @@ i7 : #system > numcols vars R --overdetermined system
 o7 = true
 
 i8 : solns = solveSystem(system);
-using temporary files /tmp/M2-3375-2PHCinput and /tmp/M2-3375-2PHCoutput
+using temporary files /tmp/M2-5204-2PHCinput and /tmp/M2-5204-2PHCoutput
 
 i9 : numSolns = #solns
 

@@ -1,23 +1,25 @@
--- -*- M2-comint -*- {* hash: -183973313 *}
+-- -*- M2-comint -*- {* hash: 1528738943 *}
 --loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+--warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
+--  use the synonym Core$Verbose
 
-i1 : R = QQ[x,y];
+i1 : R = CC[x,y];
 
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
 i3 : fSols = solveSystem(f);
-using temporary files /tmp/M2-2647-1PHCinput and /tmp/M2-2647-1PHCoutput
+using temporary files /tmp/M2-5136-1PHCinput and /tmp/M2-5136-1PHCoutput
 
 i4 : fSols/print
 {-1, 0}
 {1, 0}
-{1.33076+.335184*ii, -.62414-.513163*ii}
+{1.33076-.335184*ii, -.62414+.513163*ii}
 {-.764107, -.544612}
-{.742585-.425943*ii, .270685+1.00715*ii}
+{.742585+.425943*ii, .270685-1.00715*ii}
 {-1.59272, .964857}
 {-.894935-.624334*ii, .143333+1.14868*ii}
-{1.33076-.335184*ii, -.62414+.513163*ii}
-{.742585+.425943*ii, .270685-1.00715*ii}
+{.742585-.425943*ii, .270685+1.00715*ii}
+{1.33076+.335184*ii, -.62414-.513163*ii}
 {-.894935+.624334*ii, .143333-1.14868*ii}
 
 o4 = {, , , , , , , , , }
@@ -37,10 +39,10 @@ o6 : List
 i7 : f = {x^2+y^2,y*x+x};
 
 i8 : fSols = solveSystem(f);
-using temporary files /tmp/M2-2647-2PHCinput and /tmp/M2-2647-2PHCoutput
+using temporary files /tmp/M2-5136-2PHCinput and /tmp/M2-5136-2PHCoutput
 
 i9 : fSols/print
-(5.77779e-34-6.16298e-33*ii, 9.6156e-35+9.71639e-34*ii)
+(-5.47382e-48-8.21073e-48*ii, 3.76325e-48+5.47382e-48*ii)
 {ii, -1}
 {-ii, -1}
 
@@ -51,7 +53,7 @@ o9 : List
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 
 i11 : zeroSols/print
-(5.77779e-34-6.16298e-33*ii, 9.6156e-35+9.71639e-34*ii)
+(-5.47382e-48-8.21073e-48*ii, 3.76325e-48+5.47382e-48*ii)
 
 o11 = {}
 

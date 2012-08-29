@@ -19,7 +19,7 @@ doc ///
       the numerical blackbox solver.
       
     Example     
-      R = QQ[x,y,z]
+      R = CC[x,y,z]
       system = {y-x^2,z-x^3,x+y+z-1}
       solns = solveSystem(system)
       numSolns = #solns
@@ -503,7 +503,7 @@ doc ///
       evaluates to a number greater than the given tolerance.
     
     Example
-      R = QQ[x,y];  
+      R = CC[x,y];  
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
       fSols = solveSystem(f);
       fSols/print
@@ -612,7 +612,7 @@ doc ///
       places:
     
     Example
-      R = QQ[x,y]; S = {x^2 - 1/3, x*y - 1}; roots = solveSystem(S);
+      R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; roots = solveSystem(S);
       r0 = roots#0#Coordinates#1
       newRoots = refineSolutions(S,roots,64)
       newRoots#0 -- recall that solutions are of type Point
@@ -929,7 +929,7 @@ doc ///
     Example
       R = CC[x,y]; 
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-      (m,q,qsols) = mixedVolume(f,startSystem=>true);
+      (m,q,qsols) = mixedVolume(f,StartSystem=>true);
       fsols = trackPaths(f,q,qsols,gamma => exp(ii*pi/3))
     Text
     
@@ -986,7 +986,7 @@ doc ///
     Example
       R = CC[x,y]; 
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-      (m,q,qsols) = mixedVolume(f,startSystem=>true);
+      (m,q,qsols) = mixedVolume(f,StartSystem=>true);
       fsols = trackPaths(f,q,qsols,tDegree => 1)      
 ///;
 
@@ -1025,7 +1025,7 @@ doc ///
       evaluates to a number less than or equal to the given tolerance.
     
     Example
-      R = QQ[x,y];  
+      R = CC[x,y];  
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
       fSols = solveSystem(f);
       fSols/print

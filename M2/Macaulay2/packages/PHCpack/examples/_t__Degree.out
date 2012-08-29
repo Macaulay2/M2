@@ -1,25 +1,27 @@
--- -*- M2-comint -*- {* hash: 2101193336 *}
---loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- {* hash: -1222343848 *}
+--loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+--warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
+--  use the synonym Core$Verbose
 
 i1 : R = CC[x,y];
 
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
-i3 : (m,q,qsols) = mixedVolume(f,startSystem=>true);
-using temporary files /tmp/M2-5139-1PHCinput and /tmp/M2-5139-1PHCoutput
+i3 : (m,q,qsols) = mixedVolume(f,StartSystem=>true);
+using temporary files /tmp/M2-5142-1PHCinput and /tmp/M2-5142-1PHCoutput
 
 i4 : fsols = trackPaths(f,q,qsols,tDegree => 1)
-using temporary files /tmp/M2-5139-4PHCoutput and /tmp/M2-5139-6PHCtargetsols
+using temporary files /tmp/M2-5142-4PHCoutput and /tmp/M2-5142-6PHCtargetsols
 
-o4 = {{-1.59272, .964857}, {.742585+.425943*ii, .270685-1.00715*ii},
+o4 = {{.742585-.425943*ii, .270685+1.00715*ii}, {.742585+.425943*ii,
      ------------------------------------------------------------------------
-     {-.894935-.624334*ii, .143333+1.14868*ii}, {1.33076+.335184*ii,
+     .270685-1.00715*ii}, {-.764107, -.544612}, {-1.59272, .964857},
      ------------------------------------------------------------------------
-     -.62414-.513163*ii}, {-.894935+.624334*ii, .143333-1.14868*ii},
+     {-.894935-.624334*ii, .143333+1.14868*ii}, {1.33076-.335184*ii,
      ------------------------------------------------------------------------
-     {.742585-.425943*ii, .270685+1.00715*ii}, {-.764107, -.544612},
+     -.62414+.513163*ii}, {1.33076+.335184*ii, -.62414-.513163*ii},
      ------------------------------------------------------------------------
-     {1.33076-.335184*ii, -.62414+.513163*ii}}
+     {-.894935+.624334*ii, .143333-1.14868*ii}}
 
 o4 : List
 

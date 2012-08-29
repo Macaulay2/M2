@@ -8,11 +8,11 @@ i1 : R = QQ[x,y,z];
 i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
 
 i3 : sols = solveRationalSystem(system)
-using temporary files /tmp/M2-3321-1PHCinput and /tmp/M2-3321-1PHCoutput
+using temporary files /tmp/M2-5252-1PHCinput and /tmp/M2-5252-1PHCoutput
 
-o3 = {{-.771845+1.11514*ii, -.647799-1.72143*ii, 2.41964+.606291*ii},
+o3 = {{-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii},
      ------------------------------------------------------------------------
-     {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii},
+     {-.771845+1.11514*ii, -.647799-1.72143*ii, 2.41964+.606291*ii},
      ------------------------------------------------------------------------
      {.543689, .295598, .160713}}
 
@@ -20,8 +20,8 @@ o3 : List
 
 i4 : peek first sols
 
-o4 = Point{ConditionNumber => 36.6838                                                   }
-           Coordinates => {-.771845+1.11514*ii, -.647799-1.72143*ii, 2.41964+.606291*ii}
+o4 = Point{ConditionNumber => 34.638                                                    }
+           Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}
            LastT => 1
            SolutionStatus => Regular
 

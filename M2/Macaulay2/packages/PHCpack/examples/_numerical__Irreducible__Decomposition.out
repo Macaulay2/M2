@@ -8,19 +8,19 @@ i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
 i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 
 i3 : V=numericalIrreducibleDecomposition(system)
-writing output to file /tmp/M2-2301-2PHCoutput
-calling phc -c < /tmp/M2-2301-3PHCbatch > /tmp/M2-2301-5PHCsession
-output of phc -c is in file /tmp/M2-2301-2PHCoutput
+writing output to file /tmp/M2-5241-2PHCoutput
+calling phc -c < /tmp/M2-5241-3PHCbatch > /tmp/M2-5241-5PHCsession
+output of phc -c is in file /tmp/M2-5241-2PHCoutput
 ... constructing witness sets ... 
-preparing input file to /tmp/M2-2301-7PHCinput
-preparing batch file to /tmp/M2-2301-9PHCbatch
+preparing input file to /tmp/M2-5241-7PHCinput
+preparing batch file to /tmp/M2-5241-9PHCbatch
 ... calling monodromy breakup ...
-session information of phc -f is in /tmp/M2-2301-10PHCsession
-output of phc -f is in file /tmp/M2-2301-8PHCoutput
+session information of phc -f is in /tmp/M2-5241-10PHCsession
+output of phc -f is in file /tmp/M2-5241-8PHCoutput
 found 3 irreducible factors 
 
 o3 = A variety of dimension 5 with components in
-     dim 5:  (dim=5,deg=2) (dim=5,deg=2) (dim=5,deg=4)
+     dim 5:  (dim=5,deg=4) (dim=5,deg=2) (dim=5,deg=2)
 
 o3 : NumericalVariety
 

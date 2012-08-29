@@ -1,23 +1,25 @@
--- -*- M2-comint -*- {* hash: 1580877998 *}
+-- -*- M2-comint -*- {* hash: -1001377042 *}
 --loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+--warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
+--  use the synonym Core$Verbose
 
-i1 : R = QQ[x,y];
+i1 : R = CC[x,y];
 
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
 i3 : fSols = solveSystem(f);
-using temporary files /tmp/M2-2657-1PHCinput and /tmp/M2-2657-1PHCoutput
+using temporary files /tmp/M2-5191-1PHCinput and /tmp/M2-5191-1PHCoutput
 
 i4 : fSols/print
 {-1, 0}
 {1, 0}
-{-.894935+.624334*ii, .143333-1.14868*ii}
 {-1.59272, .964857}
 {.742585-.425943*ii, .270685+1.00715*ii}
 {-.894935-.624334*ii, .143333+1.14868*ii}
-{-.764107, -.544612}
 {1.33076-.335184*ii, -.62414+.513163*ii}
+{-.764107, -.544612}
 {1.33076+.335184*ii, -.62414-.513163*ii}
+{-.894935+.624334*ii, .143333-1.14868*ii}
 {.742585+.425943*ii, .270685-1.00715*ii}
 
 o4 = {, , , , , , , , , }
@@ -27,13 +29,13 @@ o4 : List
 i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
 
 i6 : nonZeroSols / print
-{-.894935+.624334*ii, .143333-1.14868*ii}
 {-1.59272, .964857}
 {.742585-.425943*ii, .270685+1.00715*ii}
 {-.894935-.624334*ii, .143333+1.14868*ii}
-{-.764107, -.544612}
 {1.33076-.335184*ii, -.62414+.513163*ii}
+{-.764107, -.544612}
 {1.33076+.335184*ii, -.62414-.513163*ii}
+{-.894935+.624334*ii, .143333-1.14868*ii}
 {.742585+.425943*ii, .270685-1.00715*ii}
 
 o6 = {, , , , , , , }
@@ -43,12 +45,12 @@ o6 : List
 i7 : f = {x^2+y^2,y*x+x};
 
 i8 : fSols = solveSystem(f);
-using temporary files /tmp/M2-2657-2PHCinput and /tmp/M2-2657-2PHCoutput
+using temporary files /tmp/M2-5191-2PHCinput and /tmp/M2-5191-2PHCoutput
 
 i9 : fSols/print
-(-4.8148e-35+1.15556e-33*ii, -2.34108e-33+1.85268e-33*ii)
-{-ii, -1}
+(-4.93038e-32+3.69779e-32*ii, 2.18842e-31+3.79283e-32*ii)
 {ii, -1}
+{-ii, -1}
 
 o9 = {, , }
 
@@ -57,7 +59,7 @@ o9 : List
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 
 i11 : zeroSols/print
-(-4.8148e-35+1.15556e-33*ii, -2.34108e-33+1.85268e-33*ii)
+(-4.93038e-32+3.69779e-32*ii, 2.18842e-31+3.79283e-32*ii)
 
 o11 = {}
 

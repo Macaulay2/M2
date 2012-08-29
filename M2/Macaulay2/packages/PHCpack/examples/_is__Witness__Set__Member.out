@@ -8,15 +8,15 @@ i1 : R = CC[x11,x22,x21,x12,x23,x13];
 i2 : system = {x11*x22-x21*x12,x12*x23-x22*x13};
 
 i3 : V = numericalIrreducibleDecomposition (system);
-writing output to file /tmp/M2-1601-2PHCoutput
-calling phc -c < /tmp/M2-1601-3PHCbatch > /tmp/M2-1601-5PHCsession
-output of phc -c is in file /tmp/M2-1601-2PHCoutput
+writing output to file /tmp/M2-5180-2PHCoutput
+calling phc -c < /tmp/M2-5180-3PHCbatch > /tmp/M2-5180-5PHCsession
+output of phc -c is in file /tmp/M2-5180-2PHCoutput
 ... constructing witness sets ... 
-preparing input file to /tmp/M2-1601-7PHCinput
-preparing batch file to /tmp/M2-1601-9PHCbatch
+preparing input file to /tmp/M2-5180-7PHCinput
+preparing batch file to /tmp/M2-5180-9PHCbatch
 ... calling monodromy breakup ...
-session information of phc -f is in /tmp/M2-1601-10PHCsession
-output of phc -f is in file /tmp/M2-1601-8PHCoutput
+session information of phc -f is in /tmp/M2-5180-10PHCsession
+output of phc -f is in file /tmp/M2-5180-8PHCoutput
 found 2 irreducible factors 
 
 i4 : W = first V#4;
