@@ -1,4 +1,7 @@
 -- -*- M2-comint -*- {* hash: -1663871215 *}
+--loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+--warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
+--  use the synonym Core$Verbose
 
 i1 : R = CC[x,y,z]
 
@@ -14,7 +17,7 @@ o2 = {x + y + z - 1, x  + y , x + y - z - 3}
 o2 : List
 
 i3 : L = solveSystem(S)
-using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/0PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/0PHCoutput
+using temporary files /tmp/M2-3375-1PHCinput and /tmp/M2-3375-1PHCoutput
 
 o3 = {{1+ii, 1-ii, -1}, {1-ii, 1+ii, -1}}
 
@@ -45,7 +48,7 @@ i7 : #system > numcols vars R --overdetermined system
 o7 = true
 
 i8 : solns = solveSystem(system);
-using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/1PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-969-0/1PHCoutput
+using temporary files /tmp/M2-3375-2PHCinput and /tmp/M2-3375-2PHCoutput
 
 i9 : numSolns = #solns
 
