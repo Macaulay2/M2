@@ -643,6 +643,7 @@ doc ///
  
 
 TEST ///
+   setRandomSeed 121
    R = QQ[x,y,z,w]
    I = minors(2,matrix{{x,y,z},{y,z,w}})
    assert( segreClassList I == {3,-10} )
