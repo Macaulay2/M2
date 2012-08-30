@@ -177,18 +177,11 @@ rawIdealReorder raw gens I  -- identity, so no reordering is being done
 C = rawCharSeries raw gens I -- this is WRONG (seems to me to be wrong, at least)
 C1 = C/(i -> map(R,i))
 C2 = for i in C1 list saturate(ideal i, product flatten entries last topCoefficients i)
-intersect C2 == I -- we know that I is radical, or at least we think that is true.
+assert(intersect C2 == I) -- BUG: this should not fail (we think we are sure that I is radical!)
 P = ideal (x5 + 1, x3 - 1, x1 + 1, x2 - 1)
 assert((gens I) % P == 0)
 -- one of the C2 components must (I think!) be P: (or be contained in P: i.e. C2 really should contain
 -- the minimal primes of I).
 for i in C2 list ((gens i) % P)
-tally for i in C2 list isSubset(i, P)
-decompose I
-
--- check that the saturations creating C2 are correct:
-ideal C1_0
-topCoefficients C1_0
-factor (ideal C1_0)_3
-see  oo
-end
+assert(# select(C2, i -> isSubset(i, P)) > 0) -- at least one of the primes in the list should contain P
+assert(I == intersect decompose I)
