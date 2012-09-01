@@ -5,13 +5,13 @@ include $(DOTS)/../include/config.Makefile
 VPATH = @srcdir@
 
 ifeq "@DEBUG@" "no"
-MLIMIT = 400000
-VLIMIT = 400000
+MLIMIT = 800000
+VLIMIT = 800000
 TLIMIT = 550
 else
 # give the debug version more time and space
-MLIMIT = 600000
-VLIMIT = 600000
+MLIMIT = 1200000
+VLIMIT = 1200000
 TLIMIT = 600
 endif
 
