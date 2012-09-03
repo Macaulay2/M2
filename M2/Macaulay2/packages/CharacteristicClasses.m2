@@ -7,8 +7,8 @@
 
 newPackage(
 	"CharacteristicClasses",
-	Version => "0.1", 
-    	Date => "April 3, 2012",
+	Version => "0.11", 
+    	Date => "September 3, 2012",
     	Authors => {{Name => "Christine Jost", 
 		  Email => "jost@math.su.se", 
 		  HomePage => "http://www.math.su.se/~jost"}},
@@ -458,6 +458,7 @@ doc ///
      	  Text
 	       For an n-dimensional subscheme X of projective space P^k, this command computes the push-forward of the total Segre class s(X,P^k) of X in P^k to the Chow ring of P^k. The output is a polynomial in the hyperplane class, containing the degrees of the Segre classes s_0(X,P^k),...,s_n(X,P^k) as coefficients.
 	  Example
+	       setRandomSeed 72;
 	       R = QQ[x,y,z]
 	       segreClass ideal(x*y)
 	       segreClass ideal(x^2*y,x*y^2)	  
@@ -501,6 +502,7 @@ doc ///
      	  Text
 	       For a non-singular n-dimensional subscheme X of projective space P^k, this command computes the push-forward of the total Chern class of X to the Chow ring of P^k. The output is a polynomial in the hyperplane class, containing the degrees of the Chern classes c_0(T_X),...,c_n(T_X) as coefficients.
 	  Example
+	       setRandomSeed 438;
 	       R = QQ[x,y,z,w]
 	       A = matrix{{x,y,z},{y,z,w}}
 	       chernClass minors(2,A)  	  
@@ -579,7 +581,7 @@ doc ///
           ResidualStrategy
 	  Symbolic
 	  Bertini
-     --Headline
+     	  --Headline
           --ResidualStrategy,
      Description
      	  Text
@@ -587,8 +589,10 @@ doc ///
 	       is the main step in the computation of the Chern and Segre classes. When choosing the default
 	       Symbolic, Gr\"obner basis methods will be used. The computations can also be done numerically using 
 	       the regenerative cascade implemented in Bertini. This is done by choosing the option Bertini and provided
-	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. Using Bertini will usually result in a considerable speed-up.	   
+	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. Using Bertini provide a speed-up 
+	       or prevent running out of memory.
 	  Example
+	       setRandomSeed 367;
 	       R = QQ[x,y,z,w]
 	       chernClass( minors(2,matrix{{x,y,z},{y,z,w}}), ResidualStrategy=>Symbolic)  
 ///
@@ -626,13 +630,14 @@ doc ///
 	       outside a lower-dimensional subset, i.e., with probability one. In the implementation, however, the probability of not computing the correct class
 	       is strictly larger than zero, although small. Sceptical users should repeat calculations to increase the probability of computing the correct class.
 	       
-	       An example that is known to be susceptible to errors, especially if {\tt ResidualStrategy=>Bertini} is used, is the following.
+	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 
 	  Example
-	       R=QQ[x,y,z,w]
-	       I=ideal(x^3+y*z*w,x*y+z*w,x^5+y^5+z^5+w^5)
-	  Text
-	       To get a feeling, the user is recommended to compute characteristic classes of this scheme several times, using the two different strategies.
-	       
+	       setRandomSeed 121;
+   	       R = QQ[x,y,z,w]
+   	       I = minors(2,matrix{{x,y,z},{y,z,w}})
+   	       chernClass I  
+     	       chernClass I  
+	       chernClass I  	       
 ///
 	  	       
 
@@ -643,7 +648,7 @@ doc ///
  
 
 TEST ///
-   setRandomSeed 121
+   setRandomSeed 122
    R = QQ[x,y,z,w]
    I = minors(2,matrix{{x,y,z},{y,z,w}})
    assert( segreClassList I == {3,-10} )
@@ -651,6 +656,7 @@ TEST ///
  ///
  
 TEST ///
+   setRandomSeed 24
    R = QQ[x,y,z,w]
    I = minors(2,matrix{{x,y,z},{y,z,w}})
    totalSegre = segreClass I
