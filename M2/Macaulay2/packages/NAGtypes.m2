@@ -536,7 +536,7 @@ document {
 document {
      Key => {realPoints, (realPoints,List)},
      Headline => "determine whether a point is real",
-     Usage => "R = isRealPoint L",
+     Usage => "R = realPoints L",
      Inputs => {
 	     "L" => {TO2{Point,"points"}}
 	     },

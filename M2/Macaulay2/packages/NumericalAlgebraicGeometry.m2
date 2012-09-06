@@ -429,7 +429,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then (
 	  nT = (o.NumericalAlgebraicGeometry$gamma/abs(o.NumericalAlgebraicGeometry$gamma))*nT;
 	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
-	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
+	  DMforPN := diagonalMatrix append(T/(f->1/sqrt sum degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
 	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(nS#i,nT#i));-- real Bombieri-Weyl scalar product
 	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
@@ -1137,6 +1137,7 @@ totalDegreeStartSystem List := Sequence => T -> (
 --      S     = list of polynomials, 
 --      solsS = list of sequences
      R := ring first T;
+     if any(gens R, x->sum degree x != 1) then error "expected degrees of ring generators to be 1";
      n := #T;
      if n != numgens R then (
 	  if numgens R == n+1 and all(T, isHomogeneous) 
@@ -1144,9 +1145,9 @@ totalDegreeStartSystem List := Sequence => T -> (
 	  else error "wrong number of polynomials";
 	  )
      else isH = false;
-     S := apply(n, i->R_i^(first degree T_i) - (if isH then R_n^(first degree T_i) else 1) );
+     S := apply(n, i->R_i^(sum degree T_i) - (if isH then R_n^(sum degree T_i) else 1) );
      s := apply(n, i->( 
-	  d := first degree T_i; 
+	  d := sum degree T_i; 
 	  set apply(d, j->sequence exp(ii*2*pi*j/d))
 	  ));
      solsS := first s;
@@ -1335,7 +1336,7 @@ randomInitialPair List := T -> (
      good'sys := transpose matrix{randomHd'NoHighXn(T/first@@degree)};  
      h := coord'change ((map(R,ring good'sys, vars R)) good'sys); 
      ret := sqrt(1-(normF M)^2)*h + diagonalMatrix apply(T,f->(
-	       d := first degree f;
+	       d := sum degree f;
 	       (sum(numgens R, i->R_i*conjugate sol_(i,0)))^(d-1) * sqrt d 
 	       )) * M * transpose vars R;     
      assert (norm2 sub(ret,transpose sol)<0.0001); -- just a check
@@ -1363,7 +1364,7 @@ solveSystem List := List => o -> F -> (
 	       then generalEquations(numgens R, F)
 	       else F);  
   	  result = 
--- 	  if all(F, f -> first degree f <= 1)
+-- 	  if all(F, f -> sum degree f <= 1)
 --      	  then ( 
 -- 	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
 -- 	       b := matrix apply(F, f->{coefficient(1_R,f)});
@@ -1386,9 +1387,9 @@ solveSystem List := List => o -> F -> (
 			 ));
 	       )
 	  )
-     else if o.Software == PHCPACK then result = solvePHCpack(F,o)
-     else if o.Software == BERTINI then result = solveBertini(F,o)
-     else if o.Software == HOM4PS2 then (
+     else if o.Software === PHCPACK then result = solvePHCpack(F,o)
+     else if o.Software === BERTINI then result = solveBertini(F,o)
+     else if o.Software === HOM4PS2 then (
 	  -- newR := coefficientRing R[xx_1..xx_(numgens R)];
 	  (name, p) := makeHom4psInput(R, F);
 	  targetfile := name; --(map(newR, R, gens newR)\F);
@@ -1594,7 +1595,7 @@ regeneration List := List => o -> F -> (
      R := ring F#0;
      c1 := {}; -- current solution components
      for f in F do (
-	  d := first degree f;
+	  d := sum degree f;
 	  c2 := new MutableHashTable; -- new components
 	  for comp in c1 do (
 	       if DBG>2 then << "*** proccesing component " << peek comp << endl;
@@ -2631,7 +2632,7 @@ conditionNumber Matrix := M -> (s := first SVD M; max s / min s)
 conditionNumber (List,List) := (F,x) -> (
      nF := apply(F, f->f/sqrt(#F * BombieriWeylNormSquared f)); -- normalize F
      x0 := normalize transpose matrix{x}; -- column unit vector
-     DMforPN := diagonalMatrix(nF/(f->1/sqrt first degree f) | {1});
+     DMforPN := diagonalMatrix(nF/(f->1/sqrt sum degree f) | {1});
      J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
      J = J || matrix{ flatten entries x0 / conjugate};
      conditionNumber(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
