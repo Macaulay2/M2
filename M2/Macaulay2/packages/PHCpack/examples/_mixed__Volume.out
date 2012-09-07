@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- {* hash: -1229619679 *}
---loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+--loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
 --warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
 --  use the synonym Core$Verbose
 
@@ -22,43 +22,43 @@ i5 : degree I
 o5 = 10
 
 i6 : m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
-using temporary files /tmp/M2-5222-1PHCinput and /tmp/M2-5222-1PHCoutput
+using temporary files /tmp/M2-9547-1PHCinput and /tmp/M2-9547-1PHCoutput
 
 o6 = 8
 
 i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
-using temporary files /tmp/M2-5222-2PHCinput and /tmp/M2-5222-2PHCoutput
+using temporary files /tmp/M2-9547-2PHCinput and /tmp/M2-9547-2PHCoutput
 
 o7 = (8, 10)
 
 o7 : Sequence
 
 i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
-using temporary files /tmp/M2-5222-3PHCinput and /tmp/M2-5222-3PHCoutput
+using temporary files /tmp/M2-9547-3PHCinput and /tmp/M2-9547-3PHCoutput
 
 i9 : q --let's take a look at the start system:
 
-                               3 5                           2               
-o9 = {(- .102135 + .994771*ii)x y  + (- .90772 + .419577*ii)x y, (- .398389 +
+                            3 5                          2              
+o9 = {(.971549 + .23684*ii)x y  + (.765669 - .643234*ii)x y + (.999484 -
      ------------------------------------------------------------------------
-                 2
-     .917217*ii)x  + (.442562 - .896738*ii)x*y - .88714 - .4615*ii}
+                  2                           2
+     .0321308*ii)y , (- .791378 - .611327*ii)x  + .773219 - .634139*ii}
 
 o9 : List
 
 i10 : qsols --and its solutions:
 
-o10 = {{.798638-.1971*ii, .471827+.938055*ii}, {.329647-.519419*ii,
+o10 = {{.782382-.622799*ii, .485718+.581043*ii}, {-.782382+.622799*ii,
       -----------------------------------------------------------------------
-      -1.08665+.306831*ii}, {-.503215+.321121*ii, .443945-1.04748*ii},
+      .155966+.735188*ii}, {-.782382+.622799*ii, -.008369-1.21245*ii},
       -----------------------------------------------------------------------
-      {1.25661-.824418*ii, .838278-.336148*ii}, {-.259283+.853473*ii,
+      {.782382-.622799*ii, -.415616+.863354*ii}, {-.782382+.622799*ii,
       -----------------------------------------------------------------------
-      .861926+.56205*ii}, {-.981605+1.16541*ii, -.412895+.799771*ii},
+      .949179+.19484*ii}, {.782382-.622799*ii, -.961175-.736221*ii},
       -----------------------------------------------------------------------
-      {-1.18087+.387696*ii, -.893449-.31422*ii}, {.540071-1.18676*ii,
+      {.782382-.622799*ii, .891073-.708176*ii}, {-.782382+.622799*ii,
       -----------------------------------------------------------------------
-      -.222983-.908864*ii}}
+      -1.09678+.282419*ii}}
 
 o10 : List
 

@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- {* hash: -1010838168 *}
---loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+--loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
 --warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
 --  use the synonym Core$Verbose
 
@@ -9,10 +9,10 @@ i2 : f = { x^2 - y, x^3 - z };
 
 i3 : (w,ns) = topWitnessSet(f,1)
 ... calling constructEmbedding ...
-calling phc -c < /tmp/M2-5256-3PHCbatch > /tmp/M2-5256-4PHCsession
-output of phc -c is in file /tmp/M2-5256-2PHCoutput
+calling phc -c < /tmp/M2-9580-3PHCbatch > /tmp/M2-9580-4PHCsession
+output of phc -c is in file /tmp/M2-9580-2PHCoutput
 ... calling solveSystem ...
-using temporary files /tmp/M2-5256-5PHCinput and /tmp/M2-5256-5PHCoutput
+using temporary files /tmp/M2-9580-5PHCinput and /tmp/M2-9580-5PHCoutput
 ... constructing a witness set ... 
 
 o3 = ([dim=1,deg=3], {})
@@ -29,20 +29,19 @@ o5 = 3
 
 i6 : toString equations(w)
 
-o6 = {x^2-y+(-.979061-.203565*ii)*zz1, x^3-z+(.597761-.801674*ii)*zz1, zz1}
+o6 = {x^2-y+(.988365-.152099*ii)*zz1, x^3-z+(-.926961-.375158*ii)*zz1, zz1}
 
 i7 : toString slice(w)
 
-o7 = {(.608248-.793747*ii)*x+(.0174673+.999847*ii)*y+(.988681+.150035*ii)*z
-     +(.603268-.797539*ii)*zz1+.507851+.861445*ii}
+o7 = {(.711187+.703003*ii)*x+(-.785845+.618423*ii)*y+(.967016+.254716*ii)*z
+     +(.920389-.391003*ii)*zz1-.995588+.093837*ii}
 
 i8 : toString points(w)
 
-o8 = VerticalList{{-.748548-1.15473*ii, -.773088+1.72875*ii,
-     2.57494-.401339*ii, 2.18462e-32+1.68742e-32*ii}, {.369628+.891461*ii,
-     -.658079+.659018*ii, -.830733-.34306*ii, -1.09258e-32+2.04424e-33*ii},
-     {.211638-.722636*ii, -.477412-.305875*ii, -.322074+.28026*ii,
-     -2.19952e-33-6.9088e-35*ii}}
+o8 = VerticalList{{.277679-1.02502*ii, -.97356-.569252*ii,
+     -.853832+.83985*ii, 0}, {.594349-.733485*ii, -.18475-.871892*ii,
+     -.749326-.382697*ii, 0}, {-.269625+.960313*ii, -.849503-.517849*ii,
+     .726344-.676163*ii, 0}}
 
 i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
@@ -53,10 +52,10 @@ o10 : List
 
 i11 : (w,ns) = topWitnessSet(f,1);
 ... calling constructEmbedding ...
-calling phc -c < /tmp/M2-5256-8PHCbatch > /tmp/M2-5256-9PHCsession
-output of phc -c is in file /tmp/M2-5256-7PHCoutput
+calling phc -c < /tmp/M2-9580-8PHCbatch > /tmp/M2-9580-9PHCsession
+output of phc -c is in file /tmp/M2-9580-7PHCoutput
 ... calling solveSystem ...
-using temporary files /tmp/M2-5256-10PHCinput and /tmp/M2-5256-10PHCoutput
+using temporary files /tmp/M2-9580-10PHCinput and /tmp/M2-9580-10PHCoutput
 ... constructing a witness set ... 
 
 i12 : dim(w)

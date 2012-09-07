@@ -1,5 +1,5 @@
--- -*- M2-comint -*- {* hash: -742888775 *}
---loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- {* hash: 1886230761 *}
+--loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
 --warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
 --  use the synonym Core$Verbose
 
@@ -7,7 +7,7 @@ i1 : QQ[x,y,z];
 
 i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 
-i3 : describe ring ideal sys -- "there are denominators, so the method will convert these"
+i3 : describe ring ideal sys
 
 o3 = frac QQ[x, y, z]
 
@@ -26,7 +26,7 @@ o7 = QQ {x, y, z, w }
 
 o7 : PolynomialRing
 
-i8 : describe oo -- the option "Inverses=>true shows that this
+i8 : describe oo
 
 o8 = QQ {x..z, w , Degrees => {4:1}, MonomialOrder => {Weights => {4:-1} }, DegreeRank => 1, Inverses => true, Global => false}
                 0                                     {MonomialSize => 32}

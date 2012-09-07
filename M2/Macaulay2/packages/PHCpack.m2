@@ -3,7 +3,7 @@ needsPackage "NAGtypes"
 newPackage(
   "PHCpack",
   Version => "1.5", 
-  Date => "14 August 2012",
+  Date => "7 September 2012",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "egross7@uic.edu",
