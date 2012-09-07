@@ -1,61 +1,39 @@
--- -*- M2-comint -*- {* hash: -2131607528 *}
---loading configuration for package "PHCpack" from file /Users/elizabeth/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- {* hash: 1629633789 *}
+--loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
 --warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
 --  use the synonym Core$Verbose
 
-i1 : R = CC[x,y,z];
+i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24]
 
-i2 : L = { z*(x+y), z*(x-y) };
+o1 = R
 
-i3 : WitSets = cascade(L)
-writing output to file /tmp/M2-5212-2PHCoutput
-calling phc -c < /tmp/M2-5212-3PHCbatch > /tmp/M2-5212-5PHCsession
-output of phc -c is in file /tmp/M2-5212-2PHCoutput
+o1 : PolynomialRing
+
+i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14}
+
+o2 = {x11*x22 - x21*x12, x12*x23 - x22*x13, - x23*x14 + x13*x24}
+
+o2 : List
+
+i3 : dim ideal system
+-- warning: experimental computation over inexact field begun
+--          results not reliable (one warning given per session)
+
+o3 = 5
+
+i4 : degree ideal system
+
+o4 = 8
+
+i5 : cascade system
+/bin/sh: ./phc: No such file or directory
+writing output to file /tmp/M2-5828-2PHCoutput
+calling phc -c < /tmp/M2-5828-3PHCbatch > /tmp/M2-5828-5PHCsession
+output of phc -c is in file /tmp/M2-5828-2PHCoutput
 ... constructing witness sets ... 
 
-o3 = A variety of dimension 2 with components in
-     dim 1:  [dim=1,deg=1]
-     dim 2:  [dim=2,deg=1]
+o5 = A variety of dimension -infinity with components in
 
-o3 : NumericalVariety
+o5 : NumericalVariety
 
-i4 : W=first WitSets#2
-
-o4 = [dim=2,deg=1]
-
-o4 : WitnessSet
-
-i5 : W#Equations
-
-o5 = ideal ((- .482346 + .875981*ii)zz1 + (- .493934 - .869499*ii)zz2 + x*z +
-     ------------------------------------------------------------------------
-     y*z, (.739096 + .6736*ii)zz1 + (- .656405 + .754408*ii)zz2 + x*z - y*z,
-     ------------------------------------------------------------------------
-     zz1 + (.77636 + .630289*ii)zz2)
-
-o5 : Ideal of CC  {x, y, z, zz1, zz2}
-                53
-
-i6 : W#Points
-
-o6 = {{3.00969-.087741*ii, -2.24018+.979538*ii, 2.73691e-48+2.18953e-47*ii,
-     ------------------------------------------------------------------------
-     -1.31372e-46-4.37906e-47*ii, 6.56859e-47-7.93704e-47*ii}}
-
-o6 : VerticalList
-
-i7 : W#Slice
-
-o7 = {- .42331 - .905985*ii + (.943336 + .331839*ii)x + (.914595 +
-     ------------------------------------------------------------------------
-     .40437*ii)y + (.298141 - .954522*ii)z + (- .965841 - .259135*ii)zz1 +
-     ------------------------------------------------------------------------
-     (.827836 + .560971*ii)zz2, .908108 + .418736*ii + (- .281165 -
-     ------------------------------------------------------------------------
-     .959659*ii)x + (.392256 - .919856*ii)y + (.720897 - .693042*ii)z + (-
-     ------------------------------------------------------------------------
-     .974786 + .223141*ii)zz1 + (- .95252 - .304475*ii)zz2}
-
-o7 : List
-
-i8 : 
+i6 : 
