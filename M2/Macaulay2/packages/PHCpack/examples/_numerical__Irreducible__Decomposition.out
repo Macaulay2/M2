@@ -1,26 +1,23 @@
 -- -*- M2-comint -*- {* hash: 522064869 *}
---loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
---warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
---  use the synonym Core$Verbose
 
 i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
 
 i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 
 i3 : V=numericalIrreducibleDecomposition(system)
-writing output to file /tmp/M2-9566-2PHCoutput
-calling phc -c < /tmp/M2-9566-3PHCbatch > /tmp/M2-9566-5PHCsession
-output of phc -c is in file /tmp/M2-9566-2PHCoutput
+writing output to file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/1PHCoutput
+calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/4PHCsession
+output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/1PHCoutput
 ... constructing witness sets ... 
-preparing input file to /tmp/M2-9566-7PHCinput
-preparing batch file to /tmp/M2-9566-9PHCbatch
+preparing input file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/6PHCinput
+preparing batch file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/8PHCbatch
 ... calling monodromy breakup ...
-session information of phc -f is in /tmp/M2-9566-10PHCsession
-output of phc -f is in file /tmp/M2-9566-8PHCoutput
+session information of phc -f is in /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/9PHCsession
+output of phc -f is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27896-0/7PHCoutput
 found 3 irreducible factors 
 
 o3 = A variety of dimension 5 with components in
-     dim 5:  (dim=5,deg=4) (dim=5,deg=2) (dim=5,deg=2)
+     dim 5:  (dim=5,deg=2) (dim=5,deg=4) (dim=5,deg=2)
 
 o3 : NumericalVariety
 

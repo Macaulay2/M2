@@ -1,7 +1,4 @@
 -- -*- M2-comint -*- {* hash: -1229619679 *}
---loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
---warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
---  use the synonym Core$Verbose
 
 i1 : R = CC[x,y];
 
@@ -22,43 +19,43 @@ i5 : degree I
 o5 = 10
 
 i6 : m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
-using temporary files /tmp/M2-9547-1PHCinput and /tmp/M2-9547-1PHCoutput
+using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27877-0/0PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27877-0/0PHCoutput
 
 o6 = 8
 
 i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
-using temporary files /tmp/M2-9547-2PHCinput and /tmp/M2-9547-2PHCoutput
+using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27877-0/1PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27877-0/1PHCoutput
 
 o7 = (8, 10)
 
 o7 : Sequence
 
 i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
-using temporary files /tmp/M2-9547-3PHCinput and /tmp/M2-9547-3PHCoutput
+using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27877-0/2PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27877-0/2PHCoutput
 
 i9 : q --let's take a look at the start system:
 
-                            3 5                          2              
-o9 = {(.971549 + .23684*ii)x y  + (.765669 - .643234*ii)x y + (.999484 -
+                               3 5                            2              
+o9 = {(- .152604 - .988287*ii)x y  + (- .939801 + .341723*ii)x y + (- .716575
      ------------------------------------------------------------------------
-                  2                           2
-     .0321308*ii)y , (- .791378 - .611327*ii)x  + .773219 - .634139*ii}
+                  2                          2
+     - .69751*ii)y , (- .38563 + .922654*ii)x  - .160922 - .986967*ii}
 
 o9 : List
 
 i10 : qsols --and its solutions:
 
-o10 = {{.782382-.622799*ii, .485718+.581043*ii}, {-.782382+.622799*ii,
+o10 = {{.961398-.275161*ii, -.172009+.758293*ii}, {-.961398+.275161*ii,
       -----------------------------------------------------------------------
-      .155966+.735188*ii}, {-.782382+.622799*ii, -.008369-1.21245*ii},
+      .196064+.711385*ii}, {.961398-.275161*ii, .716447+.585794*ii},
       -----------------------------------------------------------------------
-      {.782382-.622799*ii, -.415616+.863354*ii}, {-.782382+.622799*ii,
+      {-.961398+.275161*ii, -.489412-1.11384*ii}, {-.961398+.275161*ii,
       -----------------------------------------------------------------------
-      .949179+.19484*ii}, {.782382-.622799*ii, -.961175-.736221*ii},
+      1.09849-.189413*ii}, {.961398-.275161*ii, -1.11792-.284706*ii},
       -----------------------------------------------------------------------
-      {.782382-.622799*ii, .891073-.708176*ii}, {-.782382+.622799*ii,
+      {.961398-.275161*ii, .573482-1.05938*ii}, {-.961398+.275161*ii,
       -----------------------------------------------------------------------
-      -1.09678+.282419*ii}}
+      -.805139+.591866*ii}}
 
 o10 : List
 

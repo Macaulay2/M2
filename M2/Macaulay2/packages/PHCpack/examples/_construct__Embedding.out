@@ -1,37 +1,34 @@
 -- -*- M2-comint -*- {* hash: -1285962778 *}
---loading configuration for package "PHCpack" from file /Users/petrovic/Library/Application Support/Macaulay2/init-PHCpack.m2
---warning: symbol "Verbose" in Core.Dictionary is shadowed by a symbol in PHCpack.Dictionary
---  use the synonym Core$Verbose
 
 i1 : R = CC[x,y,z];
 
 i2 : f = { x^2 - y, x^3 - z };
 
 i3 : fe1 = constructEmbedding(f,1);
-calling phc -c < /tmp/M2-9467-3PHCbatch > /tmp/M2-9467-4PHCsession
-output of phc -c is in file /tmp/M2-9467-2PHCoutput
+calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/3PHCsession
+output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/1PHCoutput
 
 i4 : toString fe1
 
-o4 = {x^2-y+(.953337+.301909*ii)*zz1, x^3-z+(-.743995+.668185*ii)*zz1, zz1,
-     (.15166+.988433*ii)*x+(-.999961-.0088018*ii)*y+(.961374+.275246*ii)*z
-     +(.768067-.64037*ii)*zz1-.493329-.869843*ii}
+o4 = {x^2-y+(-.876078-.482169*ii)*zz1, x^3-z+(-.471909+.881647*ii)*zz1, zz1,
+     (-.846265-.532762*ii)*x+(-.910917+.41259*ii)*y+(.677852-.735199*ii)*z
+     +(-.699703-.714433*ii)*zz1-.474234-.880399*ii}
 
 i5 : R = CC[x,y,z];
 
 i6 : f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
 
 i7 : fe1 = constructEmbedding(f,1);
-calling phc -c < /tmp/M2-9467-7PHCbatch > /tmp/M2-9467-8PHCsession
-output of phc -c is in file /tmp/M2-9467-6PHCoutput
+calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/6PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/7PHCsession
+output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/5PHCoutput
 
 i8 : toString fe1
 
-o8 = {x^2-y+(.588782-.851753*ii)*ss1+(.779673+.626187*ii)*zz1,
-     x^3-z+(.74963-.343503*ii)*ss1+(.998477-.0551716*ii)*zz1,
-     x*y-z+(.529218-.962901*ii)*ss1+(-.564409+.825495*ii)*zz1,
-     -y^2+x*z+(.442567+.563958*ii)*ss1+(.938907-.34417*ii)*zz1,
-     (.556815-.830637*ii)*x+(.848808-.528701*ii)*y+(.754369-.65645*ii)*z
-     +(-.993808+.111109*ii)*ss1+(-.44503-.895516*ii)*zz1+.554093+.832455*ii}
+o8 = {x^2-y+(-.551285-.564916*ii)*ss1+(.77357-.633711*ii)*zz1,
+     x^3-z+(.414804+.553842*ii)*ss1+(.830507+.557008*ii)*zz1,
+     x*y-z+(-.961799-.389181*ii)*ss1+(-.210311+.977634*ii)*zz1,
+     -y^2+x*z+(-.683657-.949288*ii)*ss1+(-.956551-.291565*ii)*zz1,
+     (.379149-.925336*ii)*x+(-.971882+.23547*ii)*y+(-.498218-.867052*ii)*z
+     +(.489434+.87204*ii)*ss1+(-.380695-.9247*ii)*zz1+.837744-.546064*ii}
 
 i9 : 
