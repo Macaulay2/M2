@@ -8,8 +8,7 @@ URL = http://www.math.uiuc.edu/Macaulay2/Extra
 TARFILE = Normaliz$(VERSION).zip
 # this changes each time, too:
 TARDIR = Normaliz$(VERSION)/source
-FIXTARCMD = :
-
+FIXTARCMD = rm -fv Normaliz2.7/source/libnormaliz/libnormaliz.o
 
 # Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
 # I have filed a bug report, Bug ID# 8338749:
