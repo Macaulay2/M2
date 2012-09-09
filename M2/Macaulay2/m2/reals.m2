@@ -143,7 +143,7 @@ lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> (
      )
 promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
      (prec,sgn,expt,m,numbits) := partsRR z;
-     m / 2^(numbits - expt)
+     sgn * m / 2^(numbits - expt)
      ) else error "promote(RR,QQ): non-finite number encountered"
 
 ring RR := x -> new RealField of RR' from precision x
