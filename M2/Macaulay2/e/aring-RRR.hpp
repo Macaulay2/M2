@@ -4,21 +4,22 @@
 #define _aring_RRR_hpp_
 
 // uncomment to use CoefficientRingRRR
-// #define use_old_RRR
+// #define use_new_RRR
 
 // Ring_RRR is the placeholder for ARingRRR; shall be replaced when CoefficientRingRRR is phased out completely
-#if use_old_RRR
-#define Ring_RRR CoefficientRingRRR 
-#else 
+#ifdef use_new_RRR
 #define Ring_RRR M2::ARingRRR
+#else 
+#define Ring_RRR CoefficientRingRRR 
 #endif
+class Ring_RRR;
 
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "ringmap.hpp"
 
-class RRR;;
+class RRR;
 class RingMap;
 
 namespace M2 {
