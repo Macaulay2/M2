@@ -5,9 +5,10 @@
 #ifndef _RRR_hh_
 #define _RRR_hh_
 
+#include "aring-RRR.hpp"
 #include "ZZ.hpp"
 
-class CoefficientRingRRR;
+//class CoefficientRingRRR; // CoefficientRingRRR is replaced with Ring_RRR
 /**
     @ingroup rings
 */
@@ -17,7 +18,7 @@ class RRR : public Ring
   int _elem_size;
   mpfr_ptr _zero_elem;
 
-  CoefficientRingRRR *coeffR;
+  Ring_RRR *coeffR;
 
   mpfr_ptr new_elem() const;
 
@@ -31,8 +32,8 @@ public:
   RRR * cast_to_RRR() { return this; }
   const RRR * cast_to_RRR() const { return this; }
 
-  CoefficientRingRRR *get_CoeffRing() const { return coeffR; }
-  CoefficientRingRRR *get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
+  Ring_RRR *get_CoeffRing() const { return coeffR; }
+  Ring_RRR *get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
   
   unsigned long get_precision() const { return precision; }
 

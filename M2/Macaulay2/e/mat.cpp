@@ -11,6 +11,7 @@
 #include "matrix-con.hpp"
 #include "matrix.hpp"
 
+#include "aring-RRR.hpp"
 #include "aring-zzp.hpp"
 #include "aring-ffpack.hpp"
 #include "aring-m2-gf.hpp"
@@ -140,22 +141,22 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 	{
 	  if (dense)
 	    {
-	      return MutableMat< DMat<CoefficientRingRRR> >
+	      return MutableMat< DMat<Ring_RRR> >
 		::zero_matrix(R,ARRR->get_ARing(),nrows,ncols);
 	    }
 	  else
-	    return MutableMat< SMat<CoefficientRingRRR> >
+	    return MutableMat< SMat<Ring_RRR> >
 	      ::zero_matrix(R, ARRR->get_ARing(),nrows,ncols);
 	  
 	}
       // large precision after this
       if (dense)
 	{
-	  return MutableMat< DMat<CoefficientRingRRR> >
+	  return MutableMat< DMat<Ring_RRR> >
 	    ::zero_matrix(R, ARRR->get_ARing(),nrows,ncols);
 	}
       else
-	return MutableMat< SMat<CoefficientRingRRR> >
+	return MutableMat< SMat<Ring_RRR> >
 	  ::zero_matrix(R, ARRR->get_ARing(),nrows,ncols);
 }
   if (R->is_CCC())
@@ -382,7 +383,7 @@ template <> M2_arrayintOrNull MutableMat< DMat<M2::ARingZZp> >::LU(MutableMatrix
   return DMatLU<M2::ARingZZp>::LU(A2,L2,U2);
 }
 
-template <> M2_arrayintOrNull MutableMat< DMat<CoefficientRingRRR> >::LU(MutableMatrix *L,
+template <> M2_arrayintOrNull MutableMat< DMat<Ring_RRR> >::LU(MutableMatrix *L,
                                                              MutableMatrix *U) const
 {
   MatType *L2 = L->coerce<MatType>();
@@ -410,7 +411,7 @@ template <> M2_arrayintOrNull MutableMat< DMat<CoefficientRingCCC> >::LU(Mutable
   return Lapack::LU(A2,L2,U2);
 }
 
-template <> bool MutableMat< DMat<CoefficientRingRRR> >::solve(const MutableMatrix *b, MutableMatrix *x) const
+template <> bool MutableMat< DMat<Ring_RRR> >::solve(const MutableMatrix *b, MutableMatrix *x) const
   // resets x, find a basis of solutions for Ax=b
 {
   const MatType *b2 = b->coerce<MatType>();
@@ -465,7 +466,7 @@ template <> bool MutableMat< DMat<M2::ARingZZp> >::nullspaceU(MutableMatrix *x) 
   return true;
 }
 
-template <> bool MutableMat< DMat<CoefficientRingRRR> >::eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const
+template <> bool MutableMat< DMat<Ring_RRR> >::eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const
 {
   const MatType *A2 = get_Mat();
   // First check that the matrix 'eigenvals' is correct type
@@ -497,7 +498,7 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::eigenvalues(MutableMatr
   // First check that the matrix 'eigenvals' is correct type
   if (is_symm_or_hermitian)
     {
-      DMat<CoefficientRingRRR> *eig = eigenvals->coerce< DMat<CoefficientRingRRR> >();
+      DMat<Ring_RRR> *eig = eigenvals->coerce< DMat<Ring_RRR> >();
       if (eig == 0)
         {
           ERROR("requires a dense mutable matrix over RR");
@@ -517,7 +518,7 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::eigenvalues(MutableMatr
     }
 }
 
-template <> bool MutableMat< DMat<CoefficientRingRRR> >::eigenvectors(MutableMatrix *eigenvals,
+template <> bool MutableMat< DMat<Ring_RRR> >::eigenvectors(MutableMatrix *eigenvals,
                                                         MutableMatrix *eigenvecs,
                                                         bool is_symm_or_hermitian) const
 {
@@ -553,7 +554,7 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::eigenvectors(MutableMat
   const MatType *A2 = get_Mat();
   if (is_symm_or_hermitian)
     {
-      DMat<CoefficientRingRRR> *eig = eigenvals->coerce< DMat<CoefficientRingRRR> >();
+      DMat<Ring_RRR> *eig = eigenvals->coerce< DMat<Ring_RRR> >();
       DMat<CoefficientRingCCC> *eigvecs = eigenvecs->coerce< DMat<CoefficientRingCCC> >();
       if (eig == 0)
 	{
@@ -581,15 +582,15 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::eigenvectors(MutableMat
     }
 }
 
-template <> bool MutableMat< DMat<CoefficientRingRRR> >::SVD(MutableMatrix *Sigma,
+template <> bool MutableMat< DMat<Ring_RRR> >::SVD(MutableMatrix *Sigma,
                                     MutableMatrix *U,
                                     MutableMatrix *VT,
                                     bool use_divide_and_conquer) const
 {
   const MatType *A2 = get_Mat();
-  MatType *Sigma2 = Sigma->coerce< DMat<CoefficientRingRRR> >();
-  MatType *U2 = U->coerce< DMat<CoefficientRingRRR> >();
-  MatType *VT2 = VT->coerce< DMat<CoefficientRingRRR> >();
+  MatType *Sigma2 = Sigma->coerce< DMat<Ring_RRR> >();
+  MatType *U2 = U->coerce< DMat<Ring_RRR> >();
+  MatType *VT2 = VT->coerce< DMat<Ring_RRR> >();
   if (Sigma2 == 0 || U2 == 0 || VT2 == 0)
     {
       ERROR("requires dense mutable matrices over RR");
@@ -612,7 +613,7 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::SVD(MutableMatrix *Sigm
                                     bool use_divide_and_conquer) const
 {
   const MatType *A2 = get_Mat();
-  DMat<CoefficientRingRRR> *Sigma2 = Sigma->coerce< DMat<CoefficientRingRRR> >();
+  DMat<Ring_RRR> *Sigma2 = Sigma->coerce< DMat<Ring_RRR> >();
   MatType *U2 = U->coerce< MatType >();
   MatType *VT2 = VT->coerce< MatType >();
   if (Sigma2 == 0)
@@ -636,7 +637,7 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::SVD(MutableMatrix *Sigm
     }
 }
 
-template <> bool MutableMat< DMat<CoefficientRingRRR> >::least_squares(const MutableMatrix *b,
+template <> bool MutableMat< DMat<Ring_RRR> >::least_squares(const MutableMatrix *b,
                                                          MutableMatrix *x,
                                                          bool assume_full_rank) const
 {
@@ -871,6 +872,7 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingRRR>(const Ring* Rgen
                                                  bool dense);
 
 template class MutableMat< DMat<M2::ARingZZp> >;
+template class MutableMat< DMat<M2::ARingRRR> >;
 template class MutableMat< DMat<CoefficientRingRRR> >;
 template class MutableMat< DMat<CoefficientRingCCC> >;
 template class MutableMat< DMat<CoefficientRingZZ_NTL> >;
@@ -878,6 +880,7 @@ template class MutableMat< DMat<CoefficientRingR> >;
 template class MutableMat< DMat<M2::ARingTower> >;
 
 template class MutableMat< SMat<M2::ARingZZp> >;
+template class MutableMat< SMat<M2::ARingRRR> >;
 template class MutableMat< SMat<CoefficientRingRRR> >;
 template class MutableMat< SMat<CoefficientRingCCC> >;
 template class MutableMat< SMat<CoefficientRingZZ_NTL> >;
@@ -893,8 +896,8 @@ template class MutableMat< SMat<M2::ARingGF> >;
 template class MutableMat< DMat<M2::ARingGFM2> >;
 template class MutableMat< SMat<M2::ARingGFM2> >;
 
-template class MutableMat< DMat<M2::ARingRRR> >;
-template class MutableMat< SMat<M2::ARingRRR> >;
+//template class MutableMat< DMat<M2::ARingRRR> >;
+//template class MutableMat< SMat<M2::ARingRRR> >;
 
 
 // Local Variables:

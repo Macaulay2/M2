@@ -3,6 +3,16 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
+// uncomment to use CoefficientRingRRR
+// #define use_old_RRR
+
+// Ring_RRR is the placeholder for ARingRRR; shall be replaced when CoefficientRingRRR is phased out completely
+#if use_old_RRR
+#define Ring_RRR CoefficientRingRRR 
+#else 
+#define Ring_RRR M2::ARingRRR
+#endif
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -21,12 +31,14 @@ namespace M2 {
 
   public:
     static const RingID ringID = ring_RRR;
+    const RRR *R; // ???
 
     typedef RRR ring_type;
     typedef __mpfr_struct elem;
     typedef elem ElementType;
 
     ARingRRR(unsigned long precision) : mPrecision(precision) {}
+    ARingRRR(const RRR *R0) : R(R0) {}
 
     // ring informational
     size_t characteristic() const { return 0; }

@@ -112,6 +112,28 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
 
 
 
+template <> double *DMat<M2::ARingRRR>::make_lapack_array() const
+{
+  long len = n_rows() * n_cols();
+  double *result = newarray_atomic(double, len);
+
+  elem *a = array_;
+  double *p = result;
+  for (long i=0; i<len; i++)
+    *p++ = mpfr_get_d(a++, GMP_RNDN);
+  return result;
+}
+
+template <> void DMat<M2::ARingRRR>::fill_from_lapack_array(double *lapack_array)
+{
+  long len = n_rows() * n_cols();
+
+  elem *a = array_;
+  double *p = lapack_array;
+  for (long i=0; i<len; i++)
+    mpfr_set_d(a++, *p++, GMP_RNDN);
+}
+
 
 
 template <> double *DMat<CoefficientRingRRR>::make_lapack_array() const

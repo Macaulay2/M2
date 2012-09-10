@@ -73,6 +73,7 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      TtoR := StoR * TtoS;
      RtoT.cache.inverse = TtoR;
      TtoR.cache.inverse = RtoT;
+     --error "debug me iredCharSeries";
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
 factor ZZ := ( f -> opts -> f ) (
@@ -105,7 +106,8 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  (I',F) := flattenRing I; -- F is not needed
 	  A := ring I';
 	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
-     	  I = trim I';	  
+     	  --I = trim I';	  
+	  I = I';
 	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
 	  if not isCommutative A then
 	    error "expected commutative polynomial ring";
@@ -146,6 +148,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  if A =!= R then (
 	       components = apply(components, P -> trim(G P));
 	       );
+	  --error "debug me";
 	  components
 	  ))
 

@@ -1,6 +1,6 @@
 // Copyright 2002 Michael E. Stillman
 
-static const bool use_old_RRR = true;
+//static const bool use_old_RRR = false; // look in aring-RRR.hpp
 
 #include "engine.h"
 
@@ -86,10 +86,11 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
-  if (use_old_RRR)
-    return RRR::create(prec);
-
+#ifdef use_old_RRR
+  return RRR::create(prec);
+#else
   return M2::ConcreteRing<M2::ARingRRR>::create(new M2::ARingRRR(prec));
+#endif
 }
 
 const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec)
