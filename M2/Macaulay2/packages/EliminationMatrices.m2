@@ -968,6 +968,7 @@ document {
 		" M = matrix{{f1,f2,f3}} ",
 		" l = {x,y,z} ",
 		" dHPM = minorsComplex (1,l,koszul M, Strategy => Exact)",
+		" setRandomSeed 0",			    -- set seed to one known to work
 		" dHPM = minorsComplex (2,l,koszul M, Strategy => Numeric)"
 		},
      
@@ -1010,6 +1011,7 @@ document {
 		" M = matrix{{f1,f2,f3}} ",
 		" l = {x,y,z} ",
 		" dHPM = listDetComplex (1,l,koszul M, Strategy => Exact)",
+		" setRandomSeed 0",			    -- set seed to one known to work
 		" dHPM = listDetComplex (2,l,koszul M, Strategy => Numeric)"
 		},
      
