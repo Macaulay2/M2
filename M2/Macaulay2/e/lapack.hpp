@@ -289,7 +289,7 @@ void cblas_zgemm(const int Order,   // how matrices are stored, by column or row
 
 class Lapack {
  public:
-#if use_new_RRR
+#ifdef use_new_RRR
   typedef DMat<M2::ARingRRR> LMatrixRR; 
 #else 
   typedef DMat<CoefficientRingRRR> LMatrixRR;
