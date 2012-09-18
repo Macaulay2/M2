@@ -932,22 +932,13 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     F1 := last first twoconds;
     l2 := first last twoconds;
     F2 := last last twoconds;
-    --if class last twoconds === Sequence then(
-    --	l2:= first last twoconds;
-    --	F2:= last last twoconds;
-    --	) else if class last twoconds === List then(
-    --	l2 = last twoconds;
-    --	F2 = null;
-    --	);
     << "calling playCheckers from solveSchubert "<< l1<< l2<<k<<n<< endl;
     remaining'conditions'and'flags:=drop(SchPblm,2);
     newDag := playCheckers(l1,l2,k,n);
     resolveNode(newDag,remaining'conditions'and'flags);
-    if F2 === null then newDag.Solutions else(
-	-- we do a change of coordinates
-	B:=solve(F2,rsort id_(FFF^n));
-	apply(newDag.Solutions, sln-> sln*B )
-	)
+    -- we do a change of coordinates
+    B:=solve(F2,rsort id_(FFF^n));
+    apply(newDag.Solutions, sln-> sln*B )
     )
 
 
