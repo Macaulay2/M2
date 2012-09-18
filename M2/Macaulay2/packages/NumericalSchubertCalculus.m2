@@ -127,7 +127,7 @@ partition2bracket(List,ZZ,ZZ) := (l, k, n) -> (
 output2partition = method(TypicalValue => List)
 output2partition(List) := redpos ->(
 		n:= #redpos;
-		posn := rsort select( redpos, x->x!= NC);
+		posn := select( redpos, x->x!= NC);
 		k:= #posn;
 		partitn := new MutableList from k:0;
 		apply(#posn, j->(
@@ -722,7 +722,7 @@ if not node.IsResolved then (
 	       validpartition := true;
 	       scan(lambda, i-> if i>n-k then validpartition = false) ;
 	       if validpartition then(
-		   node.Solutions = solveSchubertProblem(prepend(lambda, remaining'conditions'and'flags),k,n);
+		   node.Solutions = solveSchubertProblem(prepend((lambda,id_(FFF^n)), remaining'conditions'and'flags),k,n);
 	       	   )else(   
 		   node.Solutions = {}; 
 		   );
@@ -928,15 +928,18 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     -- take the first two conditions
     twoconds := take(SchPblm,2);
     -- extract the partitions and the flags
-    l1:=first twoconds;
-    if class last twoconds === Sequence then(
-    	l2:= first last twoconds;
-    	F2:= last last twoconds;
-    	) else if class last twoconds === List then(
-    	l2 = last twoconds;
-    	F2 = null;
-    	);
-    << "calling playCheckers from solveSchubert "<< l1<< l2<< endl;
+    l1:=first first twoconds;
+    F1 := last first twoconds;
+    l2 := first last twoconds;
+    F2 := last last twoconds;
+    --if class last twoconds === Sequence then(
+    --	l2:= first last twoconds;
+    --	F2:= last last twoconds;
+    --	) else if class last twoconds === List then(
+    --	l2 = last twoconds;
+    --	F2 = null;
+    --	);
+    << "calling playCheckers from solveSchubert "<< l1<< l2<<k<<n<< endl;
     remaining'conditions'and'flags:=drop(SchPblm,2);
     newDag := playCheckers(l1,l2,k,n);
     resolveNode(newDag,remaining'conditions'and'flags);
@@ -1688,8 +1691,19 @@ red = {}
 restart
 needsPackage "NumericalSchubertCalculus";
 
+SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
+solveSchubertProblem(SchPblm,2,4)
+
 SchPblm = {({1}), ({1}),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
 solveSchubertProblem(SchPblm,2,4)
+
+playCheckers({2,0},{1},2,4)
+ 
+partition2bracket({2,0},2,4)
+partition2bracket({1},2,4)
+redChkrPos({1,4},{2,4},2,4)
+-- redChkrPos(partition2bracket({2,1},3,6),partition2bracket({2},3,6),3,6)
+
 
 twoconds = take(SchPblm,2);
 l1=first first twoconds;
