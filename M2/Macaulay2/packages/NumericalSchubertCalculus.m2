@@ -566,6 +566,10 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
 )
 
 playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all'nodes) ->(
+    -- Document this function!! it is not understandable
+    -- all'nodes is a HashTable whose keys are boards,
+    -- and this is where we store all nodes that we have
+    -- already visited.
      node'exists := all'nodes#?board; 
      self := if node'exists  
      then all'nodes#board 
@@ -575,11 +579,19 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	  Fathers => {}
 	  };
      if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)};
-     if not node'exists then (
-     	  (children,c) := moveCheckers board;
-     	  self.CriticalRow = c;
-     	  self.Children = apply(children, b -> playCheckers (take(b,2),self,last b,all'nodes));
-	  all'nodes#board = self;
+     if not node'exists then ( --add the ultimate node part here...
+<< "this is node'exists "<< node'exists<<endl;
+--	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
+--     	 if numgens ring coordX == 0 then ( 
+--	     print "great success: we hit the ULTIMATE LEAF";
+--	     self.Solutions = {lift(coordX,FFF)};
+--	     self.IsResolved = true;
+--	     )else(
+     	     (children,c) := moveCheckers board;
+     	     self.CriticalRow = c;
+     	     self.Children = apply(children, b -> playCheckers (take(b,2),self,last b,all'nodes));
+	     all'nodes#board = self;
+--	     );
 	  );
      self
 )
@@ -663,7 +675,7 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->
 if not node.IsResolved then (
      n := #node.Board#0;
      coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
-     if numgens ring coordX == 0 then (
+     if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
 	  print "great success: we hit the ULTIMATE LEAF";
 	  if #remaining'conditions'and'flags > 0
 	  then error "invalid Schubert problem"
@@ -1681,6 +1693,7 @@ red = {}
 
 restart
 needsPackage "NumericalSchubertCalculus";
+
 
 SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
 solveSchubertProblem(SchPblm,2,4)
