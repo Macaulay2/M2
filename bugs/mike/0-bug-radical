@@ -185,3 +185,33 @@ assert((gens I) % P == 0)
 for i in C2 list ((gens i) % P)
 assert(# select(C2, i -> isSubset(i, P)) > 0) -- at least one of the primes in the list should contain P
 assert(I == intersect decompose I)
+
+-- check that the saturations creating C2 are correct:
+ideal C1_0
+see  oo
+topCoefficients C1_0
+factor (ideal C1_0)_3
+
+ideal C1_1
+see oo
+factor (ideal C1_1)_3
+
+ideal C1_2
+see oo
+factor (ideal C1_2)_4
+
+ideal C1_3
+see oo
+factor (ideal C1_3)_2
+factor (ideal C1_3)_3
+topCoefficients C1_3
+
+ideal C1_7
+see oo
+factor (ideal C1_7)_4
+topCoefficients C1_7
+
+ideal C1_10
+see oo
+factor (ideal C1_10)_4
+topCoefficients C1_10
