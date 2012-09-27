@@ -1,0 +1,11 @@
+--- linbox-1.2.0/macros/givaro-check.m4.orig	2012-05-03 12:37:14.000000000 +0200
++++ linbox-1.2.0/macros/givaro-check.m4	2012-05-03 12:37:36.000000000 +0200
+@@ -55,7 +55,7 @@ if test -r "$GIVARO_HOME/include/givaro/
+ 
+ 	if test "x$GIVARO_HOME" != "x/usr" -a "x$GIVARO_HOME" != "x/usr/local"; then
+ 		GIVARO_CFLAGS="-I${GIVARO_HOME}/include"
+-		GIVARO_LIBS="-L${GIVARO_HOME}/lib -lgivaro ${GIVARO_HOME}/lib/libgivaro.so"
++		GIVARO_LIBS="-L${GIVARO_HOME}/lib -lgivaro "
+ 	else
+ 		GIVARO_CFLAGS=
+ 		GIVARO_LIBS="-lgivaro"
