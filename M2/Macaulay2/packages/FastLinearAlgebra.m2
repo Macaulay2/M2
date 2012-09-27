@@ -1831,7 +1831,7 @@ det(M - t*id_(P^3))
 ----------------------------------------------
 -- not discussed yet:
 --    a. bugs in ffpack ZZ/p: basis(2,R) fails (R = polyring over ZZ/p).  Fix this?  MIKE 
---        => i suggest we will use M4RI for basis(2,R) op: we (mostly Mike) did setup this itsy bitsy template interface to incorporate other field implementations
+--    b. i (Jakob) suggest we will use M4RI for char=2 ops: we (mostly Mike) did setup this itsy bitsy template interface to incorporate other field implementations
 --           and therefore we should also use it extensively ;-)
 
 R = GF(2,7)

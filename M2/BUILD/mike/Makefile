@@ -49,7 +49,7 @@ opt64-linbox : always
 	mkdir -p opt64-linbox
 	cd opt64-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
+		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-fflas-ffpack \
 		--enable-givaro \
@@ -58,6 +58,8 @@ opt64-linbox : always
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+#		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" 
 
 debug64-linbox : always
 	mkdir -p debug64-linbox
@@ -91,7 +93,7 @@ debug64 : always
 	mkdir -p debug64
 	cd debug64; ../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
+		CC="clang -m64" CXX="clang++ -m64" \
 		--build=x86_64-apple-darwin \
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
