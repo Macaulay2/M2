@@ -192,6 +192,7 @@ opt64-ubuntu : always
 	mkdir -p opt
 	cd opt;	../../../configure \
 		--prefix="`pwd`/installed" \
+                --with-mpir-config-options="ABI=64" \
 		--build=x86_64-unknown-linux-gnu \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
@@ -202,6 +203,17 @@ ubuntu64-givaro : always
 		--prefix="`pwd`/installed" \
 		--enable-fflas-ffpack \
 		--enable-givaro \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+ubuntu64-linbox : always
+	mkdir -p opt64-linbox
+	cd opt64-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
