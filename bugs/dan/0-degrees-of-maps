@@ -1,0 +1,49 @@
+For other operations, such as matrix multiplication, if the degrees all differ by the
+same number (or vector), then it will be incorporated as the degree of the result.  It is
+a bug that the operation || doesn't incorporate the degree into the result if both operands
+have the same degree, see below; same for | and ++.  But you could easily avoid that
+bug by avoiding composing two matrices where the degrees don't match up exactly.  I mean
+that " degrees source vars Q " is not equal to " degrees target id_(Q^2) ".
+
+i34 : g = vars Q * id_(Q^2)
+
+o34 = | t_1 t_2 |
+
+              1       2
+o34 : Matrix Q  <--- Q
+
+i35 : degree g
+
+o35 = {1}
+
+o35 : List
+
+i36 : degree (g||g)
+
+o36 = {0}
+
+o36 : List
+
+i37 : degree (g|g)
+
+o37 = {0}
+
+o37 : List
+
+i38 : degree (g++g)
+
+o38 = {0}
+
+o38 : List
+
+i39 : isHomogeneous (g||g)
+
+o39 = false
+
+i40 : isHomogeneous (g|g)
+
+o40 = false
+
+i41 : isHomogeneous (g++g)
+
+o41 = false
