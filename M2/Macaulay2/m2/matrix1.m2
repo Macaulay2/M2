@@ -111,7 +111,6 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      if all(p, o -> (
 	       instance(o,Option)
 	       and #o == 2
-	       and class o#1 === R
 	       and class o#0 === Sequence
 	       and #o#0 == 2
 	       and class o#0#0 === ZZ
@@ -120,7 +119,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  ) then (		    -- sparse list of entries
      	  rows := apply(p, o -> o#0#0);
 	  cols := apply(p, o -> o#0#1);
-	  ents := toSequence apply(p, o -> raw o#1);
+	  ents := toSequence apply(p, o -> raw promote(o#1,R));
 	  pref := 0;					    -- ???
 	  m := (
 	       if class N === Module
