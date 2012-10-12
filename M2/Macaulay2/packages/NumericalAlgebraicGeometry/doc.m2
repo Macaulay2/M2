@@ -541,6 +541,7 @@ document {
 	"Note that ", TT "Ws", " are not necessarily irreducible witness sets; use ", 
 	TO (decompose, WitnessSet), " to decompose into irreducibles. ",
 	EXAMPLE lines ///
+setRandomSeed 7
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 regeneration F 
