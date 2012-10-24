@@ -544,6 +544,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   TangentCone
   ChainComplexExtras
   Schubert2
+  PushForward
   LocalRings
   BoijSoederberg
   BGG
