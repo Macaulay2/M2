@@ -94,7 +94,8 @@ ZZp Ideal := opts -> (I) -> (
 	  S.isBasic = true;
 	  S.ideal = I;
 	  S.baseRings = {ZZ};
-     	  commonEngineRingInitializations S;
+   	  commonEngineRingInitializations S;
+      initializeEngineLinearAlgebra S;
 	  S.relations = gensI;
 	  S.isCommutative = true;
 	  S.presentation = matrix{{n}};
@@ -107,6 +108,17 @@ ZZp Ideal := opts -> (I) -> (
 	  --lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
+initializeEngineLinearAlgebra = method()
+initializeEngineLinearAlgebra Ring := (R) -> (
+    R#"EngineLinearAlgebra" = true;
+    R.determinant = (f) -> (
+        -- The following information 
+        -- f is a Matrix in the ring R
+        -- f should be a square matrix, with free modules for both source and target
+         m := mutableMatrix(f, Dense=>true);
+         new R from rawLinAlgDeterminant raw m
+         );
+    )
 
 isPrimeField = method()
 isPrimeField Ring := (R) -> (
@@ -724,6 +736,24 @@ TEST ///
     assert(cp == (t-1)^2);
     assert(mp == cp);  -- this fails some of the time!!
     )
+///
+
+TEST ///
+  kk = ZZp 67108859
+  M = mutableMatrix(kk, 10, 10, Dense=>true)
+  fillMatrix M
+  trace M -- not defined
+  det M
+  M*M
+  M+M
+  transpose M -- redo in engine
+  ker M  -- not written
+  syz M  -- not written
+  nullSpace M
+  
+  R = kk[a..d]
+  I = ideal random(R^1, R^{-4,-4}) -- display of 2-d polys has too many parens
+  gens gb I;
 ///
 
 -- move good tests above this line

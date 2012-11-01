@@ -180,7 +180,7 @@ setupMethods((), {
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  determinant, presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
-	  chi
+	  chi, hasEngineLinearAlgebra
 	  })
 
 use = method()
