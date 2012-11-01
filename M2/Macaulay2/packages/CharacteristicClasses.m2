@@ -7,13 +7,14 @@
 
 newPackage(
 	"CharacteristicClasses",
-	Version => "0.11", 
+	Version => "0.2", 
     	Date => "September 3, 2012",
     	Authors => {{Name => "Christine Jost", 
 		  Email => "jost@math.su.se", 
 		  HomePage => "http://www.math.su.se/~jost"}},
-    	Headline => "Degrees of Chern and Segre classes",
-    	DebuggingMode => false,
+    	Headline => "Degrees of Chern classes and other characteristic classes",
+    	DebuggingMode => true,
+	Reload => true,
 	Configuration => { 
 	     "pathToBertini" => ""
 	      }
@@ -46,10 +47,27 @@ if not instance(bertini'path,String) then error "Expected configuration option p
 --                 of the total Chern class to the Chow ring of the ambient space
 -- chernlassList:  does the same as chernClass, but returns a list with coefficients instead of a 
 --                 polynomial
+-- CSMClass:	   computes Chern-Schwartz-MacPherson classes of closed subschemes of P^k, or 
+--     	    	   rather the pushforward of the total Chern-Schwartz-MacPherson class to the Chow ring
+--     	    	   of the ambient space
+-- CSMClassList:   does the same as CSMclass, but returns a list with coefficients instead of a
+--     	    	   polynomial
+-- eulerChar:      computes the topological Euler characteristic of closed subschemes of P^k
 -- All functions have the option ResidualStrategy, which can be Symbolic or Bertini. 
 -- The strategy Symbolic uses Groebner basis computations, the strategy Bertini uses numeric 
 -- computations carried out by Bertini [2].  
-export {segreClass, chernClass, segreClassList, chernClassList, ResidualStrategy, Symbolic, Bertini}
+export {
+     segreClass, 
+     chernClass, 
+     segreClassList, 
+     chernClassList,
+     CSMClass,
+     CSMClassList, 
+     eulerChar,
+     ResidualStrategy, 
+     Symbolic, 
+     Bertini
+     }
 
 
 
@@ -88,6 +106,8 @@ segreClassList ProjectiveVariety := opts -> projectiveVar -> (
      return segreClassList(I, ResidualStrategy => opts.ResidualStrategy)
      )
 
+
+
 -- Analogously to the computation of the Segre classes, the computation of the Chern classes is done by 
 -- the internal function internalChernClassList, which returns a list with the degrees of the Chern 
 -- Classes and the dimension of the ambient space. The human-readable output as a polynomial in the Chow ring 
@@ -125,6 +145,56 @@ chernClassList  ProjectiveVariety := opts -> projectiveVar -> (
      )
 
 
+-- Analogously to the computation of the Chern and Segre classes, the computation of the Chern-Schwartz-MacPherson
+--  classes is done by the internal function internalCSMClassList, which returns a list with the degrees 
+-- of the Chern-Schwartz-MacPherson classes and the dimension of the ambient space. The human-readable 
+-- output as a polynomial in the Chow ring ZZ[H]/H^(k+1) of the ambient space P^k is produced by the 
+-- internal function output.
+-- The user can choose to give the input as a homogeneous ideal in a polynomial ring or as a projective
+-- variety. Furthermore, the user can give the symbol used for the Chow ring ZZ[H]/H^(k+1) as an 
+-- optional input. The default symbol is H for hyperplane class.
+CSMClass = method(TypicalValue => RingElement,  Options => {ResidualStrategy=>Symbolic} );
+CSMClass (Ideal, Symbol) := opts -> (I,hyperplaneClass) -> (
+     (csmList, ambientDim) := internalCSMClassList(I, ResidualStrategy => opts.ResidualStrategy);
+     return output (csmList, ambientDim, hyperplaneClass)
+     )
+CSMClass Ideal :=  opts ->  I -> (  
+     H := symbol H;   
+     return CSMClass (I, H, ResidualStrategy => opts.ResidualStrategy)
+     )
+CSMClass (ProjectiveVariety,Symbol) :=  opts -> (projectiveVar, hyperplaneClass) -> (
+     I := projectiveVar.ring.ideal;
+     return CSMClass(I, hyperplaneClass, ResidualStrategy => opts.ResidualStrategy)
+     )
+CSMClass ProjectiveVariety := opts -> projectiveVar -> (
+     I := projectiveVar.ring.ideal;
+     return CSMClass(I, ResidualStrategy => opts.ResidualStrategy)
+     )
+
+ 
+CSMClassList = method(TypicalValue => List,  Options => {ResidualStrategy=>Symbolic});
+CSMClassList Ideal :=  opts ->  I -> (
+     (CSMList, ambientDim) := internalCSMClassList(I, ResidualStrategy => opts.ResidualStrategy);
+     return CSMList
+     )
+CSMClassList  ProjectiveVariety := opts -> projectiveVar -> (
+     I := projectiveVar.ring.ideal;
+     return CSMClassList(I, ResidualStrategy => opts.ResidualStrategy)
+     )
+
+
+-- The computation of the Euler characteristic is done by the internal function internalEuler.
+-- The user can choose to give the input as a homogeneous ideal in a polynomial ring or as a projective
+-- variety. 
+eulerChar = method(TypicalValue => ZZ, Options => {ResidualStrategy => Symbolic});
+eulerChar Ideal :=  opts -> (I) -> (
+     return internalEuler(I, ResidualStrategy => opts.ResidualStrategy);
+     )
+eulerChar  ProjectiveVariety := opts -> projectiveVar -> (
+     I := projectiveVar.ring.ideal;
+     return internalEuler(I, ResidualStrategy => opts.ResidualStrategy);
+     )
+
 
 
 ----------------------------------------------
@@ -133,8 +203,8 @@ chernClassList  ProjectiveVariety := opts -> projectiveVar -> (
 
 
 
--- The functions internalSegreClassList and internalChernClassList call other internal functions 
--- which do the actual work. 
+-- The functions internalSegreClassList, internalChernClassList and internalCSMClassList call 
+-- other internal functions which do the actual work. 
 internalSegreClassList = {ResidualStrategy => Symbolic} >> opts -> I -> (
      -- check that the input is a homogeneous ideal in a polynomial ring over a field
      checkUserInput(I, opts.ResidualStrategy);
@@ -150,6 +220,26 @@ internalChernClassList = {ResidualStrategy => Symbolic} >> opts -> I -> (
      localI := prepare I;
      -- compute the Chern classes
      return internalChern(localI, ResidualStrategy => opts.ResidualStrategy);
+     )
+internalCSMClassList = {ResidualStrategy => Symbolic} >> opts -> I -> (
+     -- check that the input is a homogeneous ideal in a polynomial ring over a field
+     checkUserInput(I,opts.ResidualStrategy);
+     -- trim the ideal and make it an ideal over a ring only used internally
+     localI := prepare I;
+     -- compute the Chern-Schwartz-MacPherson classes
+     return internalCSM(localI, ResidualStrategy => opts.ResidualStrategy);
+     )
+-- The function internalEuler checks and prepares the input, just as e.g. 
+-- internalSegreClassList. It then computes the Chern-Schwartz-MaxPherson-classes
+-- of the input using internalCSM and returns the top Chern-Schwartz-MacPherson-
+-- class, which equals the topological Euler characteristic
+internalEuler = {ResidualStrategy => Symbolic} >> opts -> I -> (
+     -- check that the input is a homogeneous ideal in a polynomial ring over a field
+     checkUserInput(I,opts.ResidualStrategy);
+     -- trim the ideal and make it an ideal over a ring only used internally
+     localI := prepare I;
+     -- compute the Chern-Schwartz-MacPherson classes and return the degree of the top class
+     return last first internalCSM(localI, ResidualStrategy => opts.ResidualStrategy);
      )
 
 -- The function internalSegre is one of the two main functions in this package which do the actual 
@@ -272,8 +362,9 @@ residualDegs = {ResidualStrategy => Symbolic} >> opts -> (f, ambientDim, dimensi
 	  g << out;
 	  close g;
 	  
+	  
 	  -- run Bertini
-	  execstr := "cd /tmp ;" | bertini'path | "bertini " | filename;
+	  execstr := "cd /tmp ;" | bertini'path | "bertini " | filename | " > " | getFilename();
 	  ret := run(execstr);
 	  if ret =!= 0 then  error("Error occured while executing external program Bertini. Make sure that Bertini v1.3 or higher is installed and configured.");
 	  
@@ -330,6 +421,61 @@ internalChern = {ResidualStrategy => Symbolic} >> opts -> I -> (
         
      )
 
+-- The function internalCSM computes the Chern-Schwartz-MacPherson class of a projective variety given by
+-- an ideal I, using an exclusion-inclusion principle and the function internalCSMhyp, which computes the
+-- Chern-Schwartz-MacPherson classes of a hypersurface.
+-- Input:  I, a homogeneous ideal in a polynomial ring over a field
+-- Output: csmList, a list containing the degrees of the Chern-Schwartz-MacPhersn classes of Proj(R/I)
+--         ambientDim, the dimension k of the ambient space Proj(R)=P^k 
+internalCSM = {ResidualStrategy => Symbolic} >> opts -> I -> (
+     
+     -- Compute the dimension of the ambient space 
+     -- and the codimension of V(I)
+     ambientDim := numgens ring I - 1;
+     coDimension := ambientDim - (dim I - 1);
+          
+     -- compute the Chern-Schwartz-MacPherson class of V(I) from the Chern-Schwartz-MacPherson classes of
+     -- hypersurfaces containing V(I), with the help of exclusion-inclusion
+     csmList := toList( ambientDim+1:0 );
+     for subset in drop(subsets first entries gens I, 1) do (
+	  csmList = csmList + (-1)^(length subset - 1) * (internalCSMhyp( product subset, ResidualStrategy=>opts.ResidualStrategy) );
+	  );
+     -- remove leading zeros
+     csmList = drop(csmList, coDimension);
+          
+     return  (csmList, ambientDim)
+        
+     )
+
+-- The function internalCSMhyp computes the Chern-Schwartz-MacPherson class of a hypersurface
+-- using the algorithm from [4].
+-- Input:  p, a homogeneous element of a polynomial ring over a field
+-- Output: csmList, a list containing the degrees of the Chern-Schwartz-MacPhersn classes of Proj(R/ideal(p)) 
+internalCSMhyp = {ResidualStrategy => Symbolic} >> opts -> p -> (
+     
+     -- Compute:
+     -- the ideal singP of the singular locus of V(p)
+     -- the dimension of the ambient space,
+     -- the dimension of the singular locus and
+     -- the maximal degree maxDegSingP of its generators
+     singP := ideal jacobian ideal p;
+     ambientDim := numgens ring singP - 1;
+     dimension := dim singP - 1;
+     maxDegSingP := first max degrees singP;
+     
+     -- compute the integers s tilde related to the Segre classes of singP
+     s := segreClassList(singP, ResidualStrategy => opts.ResidualStrategy);
+     stilde := {-1} | toList( (ambientDim - dimension - 1):0 ) | s;
+
+     -- compute the shadow of the graph of singP
+      g := {};
+     for i from 0 to ambientDim do 
+          g = g | {- stilde#i - sum(0..(i-1), j -> binomial(i,j) * (-maxDegSingP)^(i-j) * g_j) };
+     
+     -- compute the Chern-Schwartz-MacPherson classes of V(p) from the shadow of the graph of singP
+     for i from 0 to ambientDim list 
+          binomial(ambientDim+1, i) - sum(0..i, j-> (-1)^j * g#j * binomial(ambientDim-j, i-j))
+     )
 
 
 -- The function checkUserInput checks that the given ideal I is a homogeneous ideal in a polynomial ring over a field, with a suitable coefficient field.
@@ -401,20 +547,21 @@ doc ///
      Key
      	  CharacteristicClasses
      Headline
-     	  Degrees of Chern and Segre classes
+     	  Degrees of Chern classes and other characteristic classes of projective schemes
      Description
      	  Text
-	       The package CharacteristicClasses provides commands to compute the degrees of the Chern and Segre classes of subvarieties and subschemes of projective space. 
-	       Equivalently, it computes the pushforward to projective space of the Chern and Segre classes.
+	       The package CharacteristicClasses provides commands to compute the degrees of the Chern classes, Chern-Schwartz-MacPherson classes and Segre classes of closed subschemes of projective space. 
+	       Equivalently, it computes the pushforward of the respective classes to the Chow ring of projective space. The package can also compute the topological Euler characteristic of closed subvarieties and subschemes of projective space.
 	       
 	       Let X be an n-dimensional subscheme of projective space P^k. If X is smooth, then by definition the Chern classes of X are the Chern classes c_0(T_X), ..., c_n(T_X) 
 	       of the tangent bundle T_X. The Chern classes are cycles in the Chow ring of X, i.e., linear combinations of subvarieties of X modulo rational equivalence. 
 	       For a subvariety V of X, the degree of the cycle [V] is defined as the degree of the variety V. This extends linearly to linear combinations of subvarieties. 
 	       Computing the degrees of the Chern classes of X is equivalent to computing the pushforward of the Chern classes to the Chow ring of P^k, which is the ring 
 	       ZZ[H]/(H^{k+1}), with H the hyperplane class. Also by definition, the Segre classes of the projective scheme X are the Segre classes s_0(X,P^k), ..., s_n(X,P^k) 
-	       of X in P^k. For definition of the concepts used here, see e.g. W. Fulton "Intersection Theory".
-	       The functions in this package can have two different kinds of output. The functions chernClass and segreClass give back the pushforward of the total Chern class 
-	       to the Chow ring of P^k, whereas chernClassList and segreClassList give a list of the degrees of the Chern or Segre classes, respectively. The scheme X can be 
+	       of X in P^k. For definition of the concepts used so far, see e.g. W. Fulton "Intersection Theory". Chern-Schwartz-MacPherson classes are a generalization of Chern classes of smooth schemes to possibly singular schemes with nice functorial properties.
+	       
+	       The functions computing characteristic classes in this package can have two different kinds of output. The functions chernClass, segreClass and CSMClass give back the pushforward of the total class 
+	       to the Chow ring of P^k, whereas chernClassList, segreClassList and CSMClass List give a list of the degrees of the Chern, Segre and Chern-Schwartz-MacPherson classes, respectively. The scheme X can be 
 	       given as either a homogeneous ideal in a polynomial ring over a field, or as projective variety. 
 	       
 	       This implementation uses the algorithm given in the  articles "Chern Numbers of Smooth Varieties via Homotopy Continuation and Intersection Theory" 
@@ -522,6 +669,89 @@ doc ///
 	       @TO "probabilistic algorithm"@.
 ///
 
+
+doc ///
+     Key
+     	  CSMClass
+	  [CSMClass, ResidualStrategy]
+	  (CSMClass,Ideal)
+	  (CSMClass, ProjectiveVariety)
+	  (CSMClass, Ideal, Symbol)
+	  (CSMClass, ProjectiveVariety, Symbol)	  
+     Headline
+     	  computes degrees of the Chern-Schwartz-MacPherson classes
+     Usage
+     	  CSMClass I
+	  CSMClass X
+     Inputs
+          I:Ideal
+	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
+	  X:ProjectiveVariety
+	    -- a projective variety
+	  ResidualStrategy => "Symbolic"
+	    the strategy to compute the degrees of the residuals
+     Outputs
+     	  :RingElement
+	   the pushforward of the total Chern-Schwartz-MacPherson class of the scheme X to the Chow ring ZZ[H]/(H^{k+1}) of projective space P^k.
+     Description
+     	  Text
+	       For an n-dimensional subscheme X of projective space P^k, this command computes the push-forward of the total Chern-Schwartz-MacPherson class of X to the Chow ring of P^k. The output is a polynomial in the hyperplane class, containing the degrees of the Chern-Schwartz-MacPherson classes (c_{SM})_0(T_X),...,(c_{SM})_n(T_X) as coefficients.
+	  Example
+	       setRandomSeed 365;
+	       R = QQ[x,y,z]
+	       CSMClass ideal(x^3 + x^2*z - y^2*z)
+	       chernClass ideal(x^3 + x^2*z - y^2*z)	  
+	  Text
+	       We compute the Chern-Schwartz-MacPherson class of the singular cubic x^3 + x^2z = y^2z. Observe that it does not agree with the Chern-Fulton class computed by the command @TO chernClass@.
+	      It is also possible to provide the symbol for the hyperplane class in the Chow ring of P^k:
+	  Example
+	       CSMClass( ideal(x^3 + x^2*z - y^2*z), symbol t ) 
+	  Text
+	       All the examples were done using symbolic computations with Gr\"obner bases. Changing the
+	       option @TO ResidualStrategy@ to Bertini will do the main computations numerically, provided
+	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@ .  
+	       
+	       Observe that the algorithm is a probabilistic algorithm and may give a wrong answer with a small but nonzero probability. Read more under 
+	       @TO "probabilistic algorithm"@.
+///
+
+doc ///
+     Key
+     	  eulerChar
+	  [eulerChar, ResidualStrategy]
+	  (eulerChar,Ideal)
+	  (eulerChar, ProjectiveVariety)  
+     Headline
+     	  computes the topological Euler characteristic
+     Usage
+     	  eulerChar I
+	  eulerChar X
+     Inputs
+          I:Ideal
+	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
+	  X:ProjectiveVariety
+	    -- a projective variety
+	  ResidualStrategy => "Symbolic"
+	    the strategy to compute the degrees of the residuals
+     Outputs
+     	  :ZZ
+	    the topological Euler characteristic of the scheme X.
+     Description
+     	  Text
+	      This command computes the topological Euler characteristic of closed subschemes of P^k, even singular ones. We compute the topological Euler characteristic of the singular cubic x^3 + x^2z = y^2z. 
+	  Example
+	       setRandomSeed 4386;
+	       R = QQ[x,y,z]
+	       eulerChar ideal(x^3 + x^2*z - y^2*z)     
+	  Text
+	       All the examples were done using symbolic computations with Gr\"obner bases. Changing the
+	       option @TO ResidualStrategy@ to Bertini will do the main computations numerically, provided
+	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@ .  
+	       
+	       Observe that the algorithm is a probabilistic algorithm and may give a wrong answer with a small but nonzero probability. Read more under 
+	       @TO "probabilistic algorithm"@.
+///
+
 doc ///
      Key
      	  segreClassList
@@ -542,7 +772,7 @@ doc ///
 	    the strategy to compute the degrees of the residuals      
      Outputs
      	  :List
-	   \{ deg s_0(X,P^k),..., deg s_n(X,P_K) \} of the degrees of the Segre classes of X in P^k
+	   \{ deg s_0(X,P^k),..., deg s_n(X,P_K) \}, of the degrees of the Segre classes of X in P^k
      Description
      	  Text
 	       This function does the same as the function @TO segreClass@, but provides an output that is easier to read for a computer.
@@ -570,10 +800,36 @@ doc ///
 	    the strategy to compute the degrees of the residuals	    
      Outputs
      	  :List
-	   \{ deg c_0(T_X),..., deg c_n(T_X) \} \ of the degrees of the Chern classes of X
+	   \{ deg c_0(T_X),..., deg c_n(T_X) \}, of the degrees of the Chern classes of X
      Description
      	  Text
 	       This function does the same as the function @TO{chernClass}@, but provides an output that is easier to read for a computer.
+///
+
+doc ///
+     Key
+     	  CSMClassList
+	  [CSMClassList, ResidualStrategy]
+	  (CSMClassList, Ideal)
+	  (CSMClassList, ProjectiveVariety)
+     Headline
+     	  degrees of Chern-Schwartz-MacPherson classes
+     Usage
+     	  CSMClassList I
+	  CSMClassList X
+     Inputs
+          I:Ideal
+	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
+	  X:ProjectiveVariety
+	    --a projective variety
+	  ResidualStrategy =>  "Symbolic" 
+	    the strategy to compute the degrees of the residuals	    
+     Outputs
+     	  :List
+	   \{ deg (c_{SM})_0(T_X),..., deg (c_{SM})_n(T_X) \}, of the degrees of the Chern-Schwartz-MacPherson classes of X
+     Description
+     	  Text
+	       This function does the same as the function @TO{CSMClass}@, but provides an output that is easier to read for a computer.
 ///
 
 doc ///
@@ -586,10 +842,10 @@ doc ///
      Description
      	  Text
 	       The option ResidualStrategy determines which strategy is used to compute the residuals, which
-	       is the main step in the computation of the Chern and Segre classes. When choosing the default
+	       is the main step in the computation done by the commands in this package. When choosing the default
 	       Symbolic, Gr\"obner basis methods will be used. The computations can also be done numerically using 
 	       the regenerative cascade implemented in Bertini. This is done by choosing the option Bertini and provided
-	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. Using Bertini provide a speed-up 
+	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. Using Bertini may provide a speed-up 
 	       or prevent running out of memory.
 	  Example
 	       setRandomSeed 367;
@@ -665,11 +921,20 @@ TEST ///
    assert( totalChern == 3*( (ring(totalChern))_0 )^2 + 2 * ((ring(totalChern))_0)^3 )
 ///
 
+TEST ///
+   setRandomSeed 657
+   R = QQ[x,y,z]
+   I = ideal(x^3 + x^2*z - y^2*z)
+   assert( CSMClassList I == {3,1} )
+   totalCSM = CSMClass I
+   assert( totalCSM == 3*( (ring(totalCSM))_0 ) + 1*( (ring(totalCSM))_0 )^2 )
+///
+
 
 -- TEST ///
 --    R = QQ[x,y,z,w]
 --    I = minors(2,matrix{{x,y,z},{y,z,w}})
---    assert( segreClassList(I, ResidualStrategy=>Bertini) == {3,-10} )
+--    assert( segrelassList(I, ResidualStrategy=>Bertini) == {3,-10} )
 --    assert( chernClassList(I, ResidualStrategy=>Bertini) == {3,2} )
 --  ///
  
@@ -689,3 +954,4 @@ TEST ///
 -- [1] A method to compute Segre classes (David Eklund, Christine Jost, Chris Peterson), 2011, available at arXiv:1109.5895v1 [math.AG]
 -- [2] Bertini: Software for Numerical Algebraic Geometry (Daniel J. Bates, Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), available at http://www.nd.edu/~sommese/bertini
 -- [3] Regenerative cascade homotopies for solving polynomial systems (Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), Applied Mathematics and Computation
+-- [4] Numeric computation of the Euler characteristic of projective varieties (Christine Jost), unpublished
