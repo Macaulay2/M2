@@ -445,7 +445,8 @@ local R;
        --Now we go through all blocks of solutions (each block contains the coordinates of the solution and a bunch of other stuff.
        --stdio << "Solutions:" << endl << endl;
 
-       wList := {}; --list of witness sets 
+       wList := {}; --list of witness sets
+       pts:={}; 
 
        while solNum > -1 do ( -- -1 in solNum position (top of solution block) is key to end of solutions.
             maxPrec := value(first l);
@@ -456,7 +457,11 @@ local R;
               coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
-              );
+              --print coords; --remove me
+	      );
+	 
+	
+	 
     
             -- now we dehomogenize, assuming the first variable is the hom coord:
             dehomCoords = {};
@@ -464,7 +469,7 @@ local R;
 	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
               );
 
-            --print dehomCoords; 
+            --print dehomCoords; --remove me
 
             funcResid = value(cleanupOutput(first l)); l=drop(l,1);
             condNum = value(cleanupOutput(first l)); l=drop(l,1);
@@ -476,13 +481,14 @@ local R;
             l = drop(l,1); 
 
             pt = new Point;
-            pt.Coordinates = dehomCoords;
-            N = map(CC^0,CC^4,0);
-            ws = witnessSet(ideal F, N, {pt});
-	    wList = join(wList, {ws});
+            pt.Coordinates = dehomCoords; --we want to output these
+            --N = map(CC^0,CC^4,0);
+            --ws = witnessSet(ideal F, N, {pt});
+	    --wList = join(wList, {ws});
+	    pts=join(pts,{pt})
             );
-  
-         nv = numericalVariety wList;
+       pts
+         --nv = numericalVariety wList;
        )
 
 
@@ -687,7 +693,7 @@ local R;
 
     ) else error "unknown output file";  
 --  pts;
-  return nv;
+  if o.runType==0 then return pts else return nv;
  
   )
 
