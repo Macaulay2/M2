@@ -118,6 +118,12 @@ initializeEngineLinearAlgebra Ring := (R) -> (
          m := mutableMatrix(f, Dense=>true);
          new R from rawLinAlgDeterminant raw m
          );
+    R.inverse = (f) -> (
+        A := mutableMatrix(f, Dense=>true);
+        R := ring A;
+        if numRows A =!= numColumns A then error "expected square matrix";
+        matrix map(R,rawLinAlgInvert(raw A))
+        );
     )
 
 isPrimeField = method()
@@ -570,6 +576,50 @@ NONTEST = (str) -> null
 -- Linear algebra tests -----------
 -----------------------------------
 TEST ///
+loadPackage "FastLinearAlgebra"
+    kk = ZZp 101
+
+    M3 = mutableMatrix(kk, 200, 200)
+    fillMatrix M3;
+    time M3^-1;
+    time m3 = matrix M3;
+    time m3^-1;
+
+    L = ZZ/101
+    M3 = mutableMatrix(L, 200, 200)
+    fillMatrix M3;
+    m3 = matrix M3;
+    time m3^-1;
+    m3 = matrix M3;
+    time det m3
+
+    L = ZZp 101
+    f = random(L^4, L^2)
+    g = image f
+    h = map(g, L^3, matrix(L, {{1,2,0},{-1,4,1}}))
+    ker h -- currently calls gb
+    coker h
+    prune oo -- error
+    modulo(f, f) -- this one calls gb (actually, syz)
+    rank h -- these currently call gb too
+    rank f
+    det (f * (dual f))
+    det((dual f) * f)
+    p = (dual f) * f
+    p^-1 -- this did call a gb, now it does not
+    p^-1 * p 
+    gens gb f
+    f // f -- doesn't work.  (is trying to call rawSolve)
+
+    -- matrix multiplication over ZZp p should use the fast matrix mult routines, at least for some size?
+    -- inverse: done
+    -- kernel: call nullSpace, although kernel also does other things, e.g. modulo.
+    -- modulo??
+    -- prune??  Doesn't even work with this ring.
+///
+
+
+TEST ///
 
     kk = ZZp 101
     R = kk[t]
@@ -579,6 +629,12 @@ TEST ///
     assert(M1 * M2 == mutableMatrix((matrix M1) * (matrix M2)))
     assert(rank M1 == 3)
     assert(rank M2 == 3)
+
+    det M1
+    m1 = matrix M1
+    assert(det m1 == det M1)
+    m1^-1 -- not calling the "correct" routine?
+    M1^-1
 
     assert(M1 * invert M1  == mutableIdentity(kk, 3))
     assert(M1^-1 == invert M1)
