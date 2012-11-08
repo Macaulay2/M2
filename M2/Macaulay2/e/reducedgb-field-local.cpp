@@ -76,7 +76,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   h_alpha = h_deg - wt->exponents_weight(h_exp,h_comp);
 
   int n0 = (ringtable ? ringtable->find_divisors(-1, h_exp, 1, &divisors) : 0);
-  int n1 = T1->find_divisors(-1, h_exp, 1, &divisors);
+  int n1 = T1->find_divisors(-1, h_exp, h_comp, &divisors);
   int n2 = T->find_divisors(-1, h_exp, h_comp, &divisors);
   int n = INTSIZE(divisors);
   if (n == 0) return false;
@@ -367,7 +367,8 @@ void ReducedGB_Field_Local::store_in_table(const POLY &h,
 {
   int id = INTSIZE(new_poly_elems);
   divisor_info t;
-  t.g = h;
+  t.g.f = R->gbvector_copy(h.f);
+  t.g.fsyz = R->gbvector_copy(h.fsyz);
   t.alpha = h_alpha;
   t.size = R->gbvector_n_terms(t.g.f);
   new_poly_elems.push_back(t);
@@ -387,12 +388,31 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
   int h_deg = wt->gbvector_weight(f.f);
   while (!R->gbvector_is_zero(h.f))
     {
+      if (M2_gbTrace == 3)
+        emit_wrapped(".");
       POLY g;
       R->gbvector_get_lead_exponents(F, h.f, h_exp);
       int h_comp = h.f->comp;
+
+      if (M2_gbTrace >= 4)
+        {
+          buffer o;
+          o << "\nreducing ";
+          R->gbvector_text_out(o,F,h.f);
+          emit(o.str());
+        }
+
       if (find_good_divisor(h_exp,h_comp,h_deg,
                             h_alpha,g,g_alpha)) // sets these three values
         {
+          if (M2_gbTrace >= 4)
+            {
+              buffer o;
+              o << "  h_alpha " << h_alpha << " g_alpha " << g_alpha; // << " reducing using ";
+              //R->gbvector_text_out(o,F,g.f);
+              //o << newline;
+              emit(o.str());
+            }
           if (g_alpha > h_alpha)
             {
               if (head.next != 0)
@@ -404,7 +424,10 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
                   break;
                 }
               // place h into T1, and store its (value,deg,alpha) values.
+              // store_in_table copies h
               store_in_table(h, h_exp, h_comp, h_alpha);
+              if (M2_gbTrace == 3) emit_wrapped("x");
+              if (M2_gbTrace == 4) emit("\nstored result\n");
               h_deg += g_alpha - h_alpha;
               h_exp = R->exponents_make();
             }
@@ -481,10 +504,7 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
                   break;
                 }
               // place h into T1, and store its (value,deg,alpha) values.
-              POLY h_copy;
-              h_copy.f = R->gbvector_copy(h.f);
-              h_copy.fsyz = 0;
-              store_in_table(h_copy, h_exp, h_comp, h_alpha);
+              store_in_table(h, h_exp, h_comp, h_alpha);
               if (M2_gbTrace == 3) emit_wrapped("x");
               if (M2_gbTrace == 4) emit("\nstored result\n");
               h_deg += g_alpha - h_alpha;
