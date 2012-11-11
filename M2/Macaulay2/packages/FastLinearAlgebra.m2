@@ -584,7 +584,10 @@ loadPackage "FastLinearAlgebra"
     time M3^-1;
     time m3 = matrix M3;
     time m3^-1;
-
+    time det m3
+    time rank m3 -- still using old code
+    time rank M3
+            
     L = ZZ/101
     M3 = mutableMatrix(L, 200, 200)
     fillMatrix M3;
@@ -592,7 +595,8 @@ loadPackage "FastLinearAlgebra"
     time m3^-1;
     m3 = matrix M3;
     time det m3
-
+    time rank m3
+    
     L = ZZp 101
     f = random(L^4, L^2)
     g = image f
@@ -614,8 +618,16 @@ loadPackage "FastLinearAlgebra"
     -- matrix multiplication over ZZp p should use the fast matrix mult routines, at least for some size?
     -- inverse: done
     -- kernel: call nullSpace, although kernel also does other things, e.g. modulo.
+    -- syz: call nullSpace directly
     -- modulo??
     -- prune??  Doesn't even work with this ring.
+    -- rank: not connected to matrices yet (partly because it also needs modulo...?)
+    -- ISSUE: how to determine the cutoff for Dense vs Sparse?
+    
+    -- row and column ranks for matrices: not implemented.  Should it be?
+    -- // should use solve code that we have just written.
+    --   issue here: matrices are more general, so we need to check that it is 
+    --     a matrix of free modules?
 ///
 
 
