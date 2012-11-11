@@ -34,3 +34,6 @@ macaulay2 (1.4) stable; urgency=low
 macaulay2 (1.4.0.1) unstable; urgency=low
   * release version 1.4.0.1
  -- Daniel R Grayson <dan@math.uiuc.edu>  Tue,  8 Feb 2011 09:26:46 -0500
+macaulay2 (1.5.0.1) unstable; urgency=low
+  * release version 1.5.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Tue, 11 Nov 2012 05:43:05 -0500
