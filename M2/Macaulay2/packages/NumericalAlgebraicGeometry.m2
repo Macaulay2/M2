@@ -903,6 +903,211 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       ))
      )
 
+trackHomotopy = method(TypicalValue => List, Options =>{
+	  Software=>null, NoOutput=>null, 
+     	  -- step control
+	  tStep => null, -- initial
+          tStepMin => null,
+	  stepIncreaseFactor => null,
+	  numberSuccessesBeforeIncrease => null,
+	  -- predictor 
+	  Predictor=>null, 
+	  MultistepDegree => null, -- used only for Predictor=>Multistep
+	  -- corrector 
+	  maxCorrSteps => null,
+     	  CorrectorTolerance => null, -- tracking tolerance
+	  -- end of path
+	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+	  InfinityThreshold => null -- used to tell if the path is diverging
+	  } )
+trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
+-- tracks homotopy H starting with solutions solsS 
+-- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t] -- !!! not implemented 
+--          or an SLP representing one -- !!! at this point it is preSLP
+-- OUT: solsT = list of target solutions corresponding to solsS
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); 
+     o = new OptionTable from o;
+
+     stepDecreaseFactor := 1/o.stepIncreaseFactor;
+     theSmallestNumber := 1e-12;
+    
+     -- the code works only for preSLP!!!
+     (R,slpH) := H;
+     n := numgens R - 1;
+     K := coefficientRing R;
+     
+     slpHx := transposePreSLP jacobianPreSLP(slpH,toList(0..n-1));
+     slpHt := transposePreSLP jacobianPreSLP(slpH,{n}); 
+    
+     -- evaluation times
+     etH := 0;
+     etHx := 0; 
+     etHt := 0;
+   
+     fromSlpMatrix := (S,inputMatrix) -> evaluatePreSLP(S, flatten entries inputMatrix);
+     evalH := (x0,t0)-> (
+	 tr := timing (
+	     transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+	     );
+	 etH = etH + tr#0;
+	 tr#1
+	 );
+     evalHx := (x0,t0)-> (
+	 tr := timing (
+	     fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+	     );
+	 etHx = etHx + tr#0;
+	 tr#1
+	 );  
+     evalHt := (x0,t0)->(
+	 tr := timing (
+	     fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+	     );
+	 etHt = etHt + tr#0;
+	 tr#1
+	 );
+     solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
+     
+     compStartTime := currentTime();      
+
+     rawSols := if o.Software===M2 then 
+	 apply(#solsS, sN->(
+	       s := solsS#sN;
+	       s'status := Processing;
+	       endZone := false;
+	       CorrectorTolerance := ()->(if endZone then o.EndZoneFactor else 1)*o.CorrectorTolerance;
+	       if DBG > 2 then << "tracking solution " << toString s << endl;
+     	       tStep := o.tStep;
+	       predictorSuccesses := 0;
+	       x0 := s; 
+	       t0 := 0_K; 
+	       count := 1; -- number of computed points
+	       stepAdj := 0; -- step adjustment number (wrt previous step): 
+	                     -- newstep = oldstep * stepIncreaseFactor^stepAdj  
+	       while s'status === Processing and 1-t0 > theSmallestNumber do (
+		    if 1-t0<=o.EndZoneFactor+theSmallestNumber and not endZone then (
+			 endZone = true;
+			 -- to do: see if this path coinsides with any other path
+			 );
+		    if DBG > 4 then << "--- current t = " << t0 << endl;
+                    -- monitor numerical stability: perhaps change patches if not stable ???
+		    -- Hx0 := evalHx(x0,t0);
+		    -- svd := sort first SVD Hx0;
+		    -- if o.Projectivize and first svd / last svd > condNumberThresh then ( 
+     	       	    --	 << "CONDITION NUMBER = " <<  first svd / last svd << endl;			 
+		    --	 );
+
+		    -- predictor step
+		    if DBG>9 then << ">>> predictor" << endl;
+		    local dx; local dt;
+		    -- default dt; Certified and Multistep modify dt
+		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-o.EndZoneFactor-t0);
+
+		    if o.Predictor == Tangent then (
+			Hx0 := evalHx(x0,t0);
+			Ht0 := evalHt(x0,t0);
+			dx = solve(Hx0,-dt*Ht0);
+			) 
+		    else if o.Predictor == Euler then (
+			H0 := evalH(x0,t0);
+			Hx0 = evalHx(x0,t0);
+			Ht0 = evalHt(x0,t0);
+			dx = solve(Hx0, -H0-Ht0*dt);
+			)
+		    else if o.Predictor == RungeKutta4 then (
+			--k1 := evalMinusInverseHxHt(x0,t0);
+			--k2 := evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
+			--k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
+			--k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
+			--dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
+			dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
+			dx2 := solveHxTimesDXequalsMinusHt(x0+.5*dx1*dt,t0+.5*dt);
+			dx3 := solveHxTimesDXequalsMinusHt(x0+.5*dx2*dt,t0+.5*dt);
+			dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
+			dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
+			)
+		    else error "unknown Predictor";
+
+
+		    if DBG > 3 then << " x0 = " << x0 << ", t0 = " << t0 << ", res=" <<  toString evalH(x0,t0) << ",  dt = " << dt << ",  dx = " << toString dx << endl;
+
+    	 	    t1 := t0 + dt;
+		    x1 := x0 + dx;
+		    
+		    -- corrector step
+		    if DBG>9 then << ">>> corrector" << endl;
+		    nCorrSteps := 0;
+		    dx = infinity;
+		    while dx === infinity or norm dx > CorrectorTolerance()*norm x1+theSmallestNumber 
+		    and nCorrSteps < o.maxCorrSteps
+		    do( 
+			dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			x1 = x1 + dx;
+			nCorrSteps = nCorrSteps + 1;
+			if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
+			<< endl << " dx=" << dx << endl;
+			if norm x1 > o.InfinityThreshold
+			then ( s'status = Infinity; dx = 0 );
+			);
+		    if DBG>9 then << ">>> step adjusting" << endl;
+		    if dt > o.tStepMin 
+		    and norm dx > CorrectorTolerance() * norm x1 then ( -- predictor failure 
+			predictorSuccesses = 0;
+			stepAdj = stepAdj - 1;
+			tStep = stepDecreaseFactor*tStep;
+			if DBG > 2 then << "decreased tStep to "<< tStep << endl;	 
+			if tStep < o.tStepMin then s'status = MinStepFailure;
+			) 
+		    else ( -- predictor success
+			predictorSuccesses = predictorSuccesses + 1;
+			x0 = x1;
+			t0 = t1;
+			count = count + 1;
+			if nCorrSteps <= o.maxCorrSteps - 1 -- over 2 / minus 2 ???
+			   and predictorSuccesses >= o.numberSuccessesBeforeIncrease 
+			then (			      
+			    predictorSuccesses = 0;
+			    if o.Predictor =!= Certified then (
+				stepAdj = 1;
+				tStep = o.stepIncreaseFactor*tStep;	
+				if DBG > 2 then << "increased tStep to "<< tStep << endl;
+				)
+			    )
+			 else stepAdj = 0; -- keep the same step size
+			 );
+		    );        	    
+	       if s'status===Processing then s'status = Regular;
+	       if DBG > 0 then << (if s'status == Regular then "."
+		    else if s'status == Singular then "S"
+		    else if s'status == MinStepFailure then "M"
+		    else if s'status == Infinity then "I"
+		    else error "unknown solution status"
+		    ) << if (sN+1)%100 == 0 then endl else flush;
+	       -- create a solution record 
+	       (x0,
+		   NumberOfSteps => count-1, -- number of points - 1 
+		   SolutionStatus => s'status, 
+		   LastT => t0, 
+		   ConditionNumber => conditionNumber evalHx(x0,t0)
+		   ) 
+    	    ))
+    else error "wrong Software option";
+    
+    if DBG>3 then print rawSols;
+    ret := if o.NoOutput then null 
+    else rawSols/(s->{flatten entries first s} | drop(toList s,1));
+    if DBG>0 then (
+	  if o.Software==M2 then (
+	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
+     	       if DBG>1 then (
+	       	    << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
+		    )
+	       )
+	   );
+     apply(ret, s->point toList s)
+     )
+
 refine = method(TypicalValue => List, Options =>{
 	  Software=>null, 
 	  ErrorTolerance =>null,

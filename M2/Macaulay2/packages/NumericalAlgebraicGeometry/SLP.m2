@@ -187,12 +187,15 @@ transposePreSLP(List,List,Matrix) := (C,slp,M) -> (C, slp, transpose M)
 
 jacobianPreSLP = method() -- finds jacobian of S with respect to inputs listed in L
 jacobianPreSLP (Sequence, List) := (S,L) -> (  
-     constants := S#0 | {1_CC};
+     constants := S#0 | {0_CC,1_CC};
      slp := S#1;
      outMatrix := S#2;
+     -- create "zero node"
+     zeroNode := #slp;
+     slp = slp | {{slpCOPY, "const"=>#constants-2}};
      if numgens target outMatrix != 1 then error "preSLP: row vector expected";
      diffNodeVar := (ni,vj)->( 
-	  -- augments slp with nodes necessary to differentiate node #ni w.r.t. input #vj 
+	  -- augments slp with nodes necessary to differentiate node n#ni w.r.t. input vj 
 	  -- output: the (absolute) position of the result in slp (or -1 "zero")
 	  n := slp#ni;
 	  k := first n;
@@ -257,13 +260,29 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
 		    return (#slp-1);
 		    )
 	       )
+	   else if k === slpDET then (
+	       e := apply(drop(n,2), a->ni+a); -- matrix entries (global node references)
+	       pos = toList apply(2..(#e+1), j->(
+		       if class n#j === ZZ then diffNodeVar(ni+n#j,vj)
+		       else error "unknown node type" 
+		       ));
+	       N := n#1; 
+	       slp = slp | apply(N, row->{slpDET,N}|
+		       -- references: global->local
+		       apply(
+			   take(e,N*row)|take(pos,{N*row,N*(row+1)-1})|drop(e,N*(row+1)),
+			   a->(if a == -1 then zeroNode else a)-(#slp+row)
+			   )
+		       ) | {
+		       {slpMULTIsum,N} | toList((-N)..(-1))
+		       };
+	       return (#slp-1)
+	       )
 	   else error "unknown SLP node key";   
 	  ); 
      newOut := transpose matrix apply(first entries outMatrix, ni->apply(L, vj->diffNodeVar(ni,vj)));
-     constants = constants | {0_CC};
-     slp = slp | {{slpCOPY, "const"=>#constants-1}};
      ( constants, slp,  
-	 matrix apply(entries newOut, row->apply(row, i->if i==-1 then (#slp-1) else i)) ) 
+	 matrix apply(entries newOut, row->apply(row, i->if i==-1 then zeroNode else i)) ) 
      )
 
 prunePreSLP = method() -- finds jacobian of S with respect to inputs listed in L
