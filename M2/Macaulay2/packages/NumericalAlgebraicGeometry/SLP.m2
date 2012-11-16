@@ -91,8 +91,16 @@ detPreSLP (List,List,Matrix) :=  (c,p,M) -> (
     (c,p|{{slpDET, n}|apply(flatten entries M,i->i-#p)}, matrix{{#p}})    
     )
 
+shift'constants = method() -- outputs the program obtained from p by shifting constants by s
+shift'constants (List, ZZ) := (p, s) -> apply(p, a->
+    apply(a, b->
+	if class b === Option and b#0 == "const" 
+	then b#0=>b#1+s -- shift the constants
+	else b
+	) 
+    )
 concatPreSLPs = method() -- concatenate pre-slps 
--- ( if 2 slp's output matrices A and B, their concatenation returns A|B )
+-- ( if 2 slp's output matrices are A and B, their concatenation is A|B )
 concatPreSLPs List := S -> (
      c := {};
      p := {}; 
@@ -101,13 +109,7 @@ concatPreSLPs List := S -> (
 	       if o === null then o = s#2
 	       else -- shift output by the current length of the program 
 	            o = o | (s#2 + map(ZZ^(numgens target s#2), ZZ^(numgens source s#2), (i,j)->#p));  
-	       p = p | apply(s#1, a->
-		    apply(a, b->
-			 if class b === Option and b#0 == "const" 
-			 then b#0=>b#1+#c -- shift the constants
-			 else b
-			 ) 
-		    );
+	       p = p | shift'constants(s#1, #c);
 	       c = c | s#0;
 	       ));     
      (c,p,o)
@@ -122,15 +124,36 @@ stackPreSLPs List := S -> (
 	       if o === null then o = s#2
 	       else -- shift output by the current length of the program 
 	            o = o || (s#2 + map(ZZ^(numgens target s#2), ZZ^(numgens source s#2), (i,j)->#p));  
-	       p = p | apply(s#1, a->
-		    apply(a, b->
-			 if class b === Option and b#0 == "const" 
-			 then b#0=>b#1+#c -- shift the constants
-			 else b
-			 ) 
-		    );
+	       p = p | shift'constants(s#1, #c);
 	       c = c | s#0;
 	       ));     
+     (c,p,o)
+     );
+
+addPreSLPs = method() -- adds pre-slps 
+-- ( output matrix dimensions should match)
+addPreSLPs List := S -> (
+     c := {};
+     p := {}; 
+     nRows := null;
+     nCols := null;
+     o'summands := apply(S, s->(
+	     (c',p',o') := s;
+	     if nRows === null then (nRows = numgens target o'; nCols = numgens source o')
+	     else (
+		 -- check if the dimensions of the output matrix are the same
+		 assert (nRows == numgens target o' and nCols == numgens source o');
+		 -- shift output by the current length of the program 
+		 o' = o' + map(ZZ^nRows, ZZ^nCols, (i,j)->#p)
+		 );  
+	     p = p | shift'constants(p', #c);
+	     c = c | c';
+	     o'
+	     ));
+     o := map(ZZ^nRows, ZZ^nCols, (i,j)->(
+	     p = p | {{slpMULTIsum, #o'summands}|apply(o'summands,a->a_(i,j)-#p)};
+	     #p-1 -- position of just added node
+	     ));
      (c,p,o)
      );
      
