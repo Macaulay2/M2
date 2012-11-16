@@ -1,4 +1,4 @@
--- Copyright 2011: David Cook II, Sonja Mapes, Gwyn Whieldon
+-- Copyright 2011, 2012: David Cook II, Sonja Mapes, Gwyn Whieldon
 -- You may redistribute this file under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
@@ -18,10 +18,10 @@ if version#"VERSION" <= "1.4" then (
 newPackage select((
     "Posets",
         Version => "1.0.5", 
-        Date => "18. November 2011",
+        Date => "16. November 2012",
         Authors => {
-            {Name => "David Cook II", Email => "dcook@ms.uky.edu", HomePage => "http://www.ms.uky.edu/~dcook/"},
-            {Name => "Sonja Mapes", Email => "smapes@math.duke.edu", HomePage => "http://www.math.duke.edu/~smapes/"},
+            {Name => "David Cook II", Email => "dcook8@nd.edu", HomePage => "http://www.nd.edu/~dcook8/"},
+            {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
         Headline => "Package for processing posets and order complexes",
