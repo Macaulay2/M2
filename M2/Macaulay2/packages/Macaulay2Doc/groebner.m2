@@ -291,7 +291,7 @@ document {
 		  "gens g2",
 		  },
 	"The result of the computation is stored internally, so when ", TT "gb",
-	"is called with a higher degree limit, only the additionally required
+	" is called with a higher degree limit, only the additionally required
 	computation is done.",
      EXAMPLE {
       	  "g3 = gb(I,DegreeLimit => 3);",

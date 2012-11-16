@@ -772,7 +772,7 @@ document {
 document {
      Key => "two dimensional formatting",
      "We have seen that nets (see ", TO Net, ") are potentially useful for two
-     dimesional formatting of output to an ascii terminal with limited
+     dimensional formatting of output to an ascii terminal with limited
      graphical ability.  We present now a few more hints about putting
      this idea into practice.  Nets are used extensively in Macaulay2
      for formatting, for example, for formatting of polynomials and

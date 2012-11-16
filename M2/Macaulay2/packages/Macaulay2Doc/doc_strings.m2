@@ -3,7 +3,7 @@
 document {
      Key => "strings and nets",
      "In this section we discuss strings and nets.  Strings are sequences of
-     characters intended to be printed, and are encountered almost every programming language.  Nets
+     characters intended to be printed, and are encountered in almost every programming language.  Nets
      are two-dimensional arrays of characters intended to be printed, and constitute a natural generalization
      of strings that makes ascii printing of complicated objects much easier.",
      SUBSECTION "strings",

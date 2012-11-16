@@ -28,7 +28,7 @@ document {
      this information should be provided as an optional argument ",
      TT "Hermitian=>true", ".  In this case,
      the resulting eigenvalues will be returned as real numbers, and if ", TT "M", " is real,
-     the matrix of of eigenvectors will be real.",
+     the matrix of eigenvectors will be real.",
      EXAMPLE lines ///
      M = matrix {{1, 2}, {2, 1}}
      (e,v) = eigenvectors(M, Hermitian=>true)
