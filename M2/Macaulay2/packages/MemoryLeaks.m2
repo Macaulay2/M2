@@ -1,3 +1,5 @@
+debug Core
+
 scan( {
 	  BasicList => (x,p) -> apply(#x, i -> (x#i, (p,i))),
 	  Boolean => a -> null,
