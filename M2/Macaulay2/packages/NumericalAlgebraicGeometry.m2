@@ -930,7 +930,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      o = new OptionTable from o;
 
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
-     theSmallestNumber := 1e-12;
+     theSmallestNumber := 1e-16;
     
      -- the code works only for preSLP!!!
      (R,slpH) := H;

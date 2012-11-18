@@ -22,6 +22,9 @@ slpCOPY = 1; --"COPY"; -- node positions for slpCOPY commands are absolute
 slpMULTIsum = 2; --"MULTIsum";
 slpPRODUCT = 3; --"PRODUCT";
 slpDET = 4; --"DET";
+CONST := symbol CONST;
+INPUT := symbol INPUT;
+
 
 -- types of predictors
 predRUNGEKUTTA = 1;
@@ -32,8 +35,8 @@ predPROJECTIVENEWTON = 4;
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
      n->apply(n, b->
-	  if class b === Option and b#0 === "const" 
-     	  then "const"=>shift+b#1 
+	  if class b === Option and b#0 === CONST 
+     	  then CONST=>shift+b#1 
      	  else b
 	  )
      );
@@ -44,7 +47,7 @@ poly2preSLP RingElement :=  g -> (
      R := ring g;
      const := coefficient(1_R,g);
      finalMULTIsum := {}; -- list of nodes for final multisum
-     constants := if const == 0 then {} else ( finalMULTIsum = finalMULTIsum | {"const"=>0}; {const} );
+     constants := if const == 0 then {} else ( finalMULTIsum = finalMULTIsum | {CONST=>0}; {const} );
      f := g - const;
      scan(numgens R, i->(
 	       fnox := sum(select(listForm f,ec->(first ec)#i==0), (e,c)->c*R_e); -- fnox := f%R_i;
@@ -61,7 +64,7 @@ poly2preSLP RingElement :=  g -> (
 	       	    prog = prog | shiftConstsSLP(progfx, #constants); 
 	       	    constants = constants | constfx;
 	       	    -- multiply by x=R_i
-	       	    prog = prog | {{slpPRODUCT, "in"=>i, -1}};
+	       	    prog = prog | {{slpPRODUCT, INPUT=>i, -1}};
 	       	    finalMULTIsum = finalMULTIsum | {#prog-1};
 		    );	       
 	       f = fnox;
@@ -70,7 +73,7 @@ poly2preSLP RingElement :=  g -> (
      if #finalMULTIsum === 1 then (
        	  if finalMULTIsum#0 === curPos-1  -- if trivial 
        	  then null -- do nothing
-       	  else if class finalMULTIsum#0 === Option and finalMULTIsum#0#0 == "const" then 
+       	  else if class finalMULTIsum#0 === Option and finalMULTIsum#0#0 === CONST then 
 	  prog = prog | {{slpCOPY, finalMULTIsum#0}}
 	  else error "unknown trivial MULTIsum"; 
 	  )   
@@ -94,7 +97,7 @@ detPreSLP (List,List,Matrix) :=  (c,p,M) -> (
 shift'constants = method() -- outputs the program obtained from p by shifting constants by s
 shift'constants (List, ZZ) := (p, s) -> apply(p, a->
     apply(a, b->
-	if class b === Option and b#0 == "const" 
+	if class b === Option and b#0 === CONST 
 	then b#0=>b#1+s -- shift the constants
 	else b
 	) 
@@ -159,6 +162,25 @@ addPreSLPs List := S -> (
      
 evaluatePreSLP = method() -- evaluates preSLP S at v
 evaluatePreSLP (Sequence,List) := (S,v)-> (
+     -- sign of a permutation 
+     sign := p -> (
+	 N := #p;
+	 p = new MutableList from p;
+	 s := 1;
+	 I := 0;
+	 while I < N-1 do (
+	     J := p#I;
+	     if J == I then I = I+1
+	     else (s = -s; p#I = p#J; p#J = J)
+	     );
+	 s
+	 );
+     det' := if isPolynomialRing ring first v 
+             then det 
+             else M -> (
+		 (p,L,U) := LUdecomposition M;
+		 sign p * product(numgens target M, i->L_(i,i)*U_(i,i))
+		 ); -- this is a hack!!! lapack det needs to be wrapped
      val := {};
      constants := S#0;
      slp := S#1;
@@ -166,12 +188,12 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	   n := slp#i;
 	   k := first n;
 	   if k === slpCOPY then (
-	   	if class n#1 === Option and n#1#0 == "const" then val = val | {constants#(n#1#1)}
+	   	if class n#1 === Option and n#1#0 === CONST then val = val | {constants#(n#1#1)}
 		else error "unknown node type"; 
 		)  
 	   else if k === slpMULTIsum then (
 		val = val | { sum(2..1+n#1, 
-			  j->if class n#j === Option and n#j#0 == "const" then constants#(n#j#1)
+			  j->if class n#j === Option and n#j#0 === CONST then constants#(n#j#1)
 			  else if class n#j === ZZ then val#(i+n#j)
 			  else error "unknown node type" 
 			  )
@@ -180,8 +202,8 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	   else if k === slpPRODUCT then (
 		val = val | { 
 		     product(1..2, j->(
-          		       if class n#j === Option and n#j#0 == "const" then constants#(n#j#1)
-			       else if class n#j === Option and n#j#0 == "in" then v#(n#j#1)
+          		       if class n#j === Option and n#j#0 === CONST then constants#(n#j#1)
+			       else if class n#j === Option and n#j#0 === INPUT then v#(n#j#1)
 			       else if class n#j === ZZ then val#(i+n#j)
 			       else error "unknown node type" 
 			       ))
@@ -190,14 +212,13 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	    else if k === slpDET then (
 		N := n#1; -- NxN matrix
 		assert(N>0);
-		val = val | { 
-		    det matrix apply(N, a->apply(N, b->(
+		M := matrix apply(N, a->apply(N, b->(
 			  ab := 2+a*N+b;
-			  if class n#ab === Option and n#ab#0 == "const" then constants#(n#ab#1)
+			  if class n#ab === Option and n#ab#0 === CONST then constants#(n#ab#1)
 			  else if class n#ab === ZZ then val#(i+n#ab)
 			  else error "unknown node type" 
-			  )))
-		     }
+			  )));
+		val = val | { det' M } 
 	   	)
 
 	   else error "unknown SLP node key";   
@@ -215,7 +236,7 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
      outMatrix := S#2;
      -- create "zero node"
      zeroNode := #slp;
-     slp = slp | {{slpCOPY, "const"=>#constants-2}};
+     slp = slp | {{slpCOPY, CONST=>#constants-2}};
      if numgens target outMatrix != 1 then error "preSLP: row vector expected";
      diffNodeVar := (ni,vj)->( 
 	  -- augments slp with nodes necessary to differentiate node n#ni w.r.t. input vj 
@@ -223,12 +244,12 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
 	  n := slp#ni;
 	  k := first n;
 	  if k === slpCOPY then (
-	       if class n#1 === Option and n#1#0 == "const" 
+	       if class n#1 === Option and n#1#0 === CONST 
 	       then return -1 -- "zero"
 	       else error "unknown node type"; 
 	       )  
 	  else if k === slpMULTIsum then (
-	       pos := toList apply(2..1+n#1, j->if class n#j === Option and n#j#0 == "const" then -1 -- "zero"
+	       pos := toList apply(2..1+n#1, j->if class n#j === Option and n#j#0 === CONST then -1 -- "zero"
 		    else if class n#j === ZZ then diffNodeVar(ni+n#j,vj)
 		    else error "unknown node type" 
 		    );
@@ -242,11 +263,11 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
 	       )
 	   else if k === slpPRODUCT then (
 	       pos = toList apply(1..2, j->(
-			 if class n#j === Option and n#j#0 == "in" then (
+			 if class n#j === Option and n#j#0 === INPUT then (
 			      if n#j#1 == vj then ( 
      	       	    	      	   slp = slp | {{slpPRODUCT}|
 					toList apply(1..2, t->if t==j 
-					     then "const"=> #constants-1 -- "one"
+					     then CONST=> #constants-1 -- "one"
 					     else (
 						  if class n#t === ZZ then ni+n#t-#slp
 					     	  else n#t
@@ -324,23 +345,24 @@ prunePreSLP (List,List,Matrix) := (C,slp,outMatrix) -> (
      newslp := apply(slp, n->(
 	   k := first n;
 	   if k === slpCOPY then (
-	   	if class n#1 === Option and n#1#0 == "const" then {n#0,"const"=>remap#(n#1#1)}
+	   	if class n#1 === Option and n#1#0 === CONST then {n#0,CONST=>remap#(n#1#1)}
 		else error "unknown node type"
 		)  
 	   else if k === slpMULTIsum then (
 		{n#0,n#1} | toList apply(2..1+n#1, 
-		     j -> if class n#j === Option and n#j#0 == "const" 
-		     then "const"=>remap#(n#j#1) 
+		     j -> if class n#j === Option and n#j#0 === CONST 
+		     then CONST=>remap#(n#j#1) 
 		     else n#j
 		     )
 	   	)
 	   else if k === slpPRODUCT then (
 		{n#0} | toList apply(1..2, j->
-		     if class n#j === Option and n#j#0 == "const" 
-		     then "const" => remap#(n#j#1)
+		     if class n#j === Option and n#j#0 === CONST 
+		     then CONST => remap#(n#j#1)
 		     else n#j
 		     )
 		)
+	   else if k === slpDET then n
 	   else error "unknown SLP node key"   
 	   ));
      	  (newC,newslp,outMatrix)
@@ -495,13 +517,13 @@ void complex::sprint(char* s)
 	   k := first n;
 	   f << "  *n = ";
 	   if k === slpCOPY then (
-	   	if class n#1 === Option and n#1#0 == "const" 
+	   	if class n#1 === Option and n#1#0 === CONST 
 		then f << "c[" << n#1#1 << "];" 
 		else error "unknown node type"; 
 		)  
 	   else if k === slpMULTIsum then (
 		scan(2..1+n#1, j->(
-			  if class n#j === Option and n#j#0 == "const" 
+			  if class n#j === Option and n#j#0 === CONST 
 			  then f << "c[" << n#j#1 << "]"
 			  else if class n#j === ZZ 
 			  then f << "node[" << i+n#j << "]"
@@ -513,9 +535,9 @@ void complex::sprint(char* s)
 	   else if k === slpPRODUCT then (
 		scan(1..2, j->(
 			  if class n#j === Option then (
-			       if n#j#0 == "in" 
+			       if n#j#0 === INPUT 
 			       then f << "a[" << n#j#1 << "]"
-			       else if n#j#0 == "const"
+			       else if n#j#0 === CONST
 			       then f << "c[" << n#j#1 << "]"
 			       else error "unknown node type"
 			       ) 
@@ -610,13 +632,13 @@ inline mul(complex c)
 	   n := slp#i;
 	   k := first n;
 	   if k === slpCOPY then (
-	   	if class n#1 === Option and n#1#0 == "const" 
+	   	if class n#1 === Option and n#1#0 === CONST 
 		then f << "  *n = c[" << n#1#1 << "];" 
 		else error "unknown node type"; 
 		)  
 	   else if k === slpMULTIsum then (
 		scan(2..1+n#1, j->(
-			  if class n#j === Option and n#j#0 == "const" 
+			  if class n#j === Option and n#j#0 === CONST 
 			  then f << (if j>2 then "add" else "set_r") << "(c[" << n#j#1 << "]); "
 			  else if class n#j === ZZ 
 			  then f << (if j>2 then "add" else "set_r") << "(node[" << i+n#j << "]); "
@@ -627,9 +649,9 @@ inline mul(complex c)
 	   else if k === slpPRODUCT then (
 		scan(1..2, j->(
 			  if class n#j === Option then (
-			       if n#j#0 == "in" 
+			       if n#j#0 === INPUT 
 			       then f << (if j>1 then "mul" else "set_r") << "(a[" << n#j#1 << "]); "
-			       else if n#j#0 == "const"
+			       else if n#j#0 === CONST
 			       then f << (if j>1 then "mul" else "set_r") << "(c[" << n#j#1 << "]); "
 			       else error "unknown node type"
 			       ) 
@@ -705,12 +727,12 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      scan(slp, n->(
 	   k := first n;
 	   if k === slpCOPY then (
-	   	if class n#1 === Option and n#1#0 == "const" then p = p | {slpCOPY} | {n#1#1} 
+	   	if class n#1 === Option and n#1#0 === CONST then p = p | {slpCOPY} | {n#1#1} 
 		else error "unknown node type" 
 		)  
 	   else if k === slpMULTIsum then (
 		p = p | {slpMULTIsum, n#1} | toList apply(2..1+n#1, 
-		     j->if class n#j === Option and n#j#0 == "const" then n#j#1
+		     j->if class n#j === Option and n#j#0 === CONST then n#j#1
 		     else if class n#j === ZZ then curNode+n#j
 		     else error "unknown node type" 
 		     )
@@ -718,8 +740,8 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
 	   else if k === slpPRODUCT then (
 		p = p | {slpPRODUCT} | toList apply(1..2, j->(
           		       if class n#j === Option then (
-				    if n#j#0 == "in" then #consts + n#j#1
-				    else if n#j#0 == "const" then n#j#1
+				    if n#j#0 === INPUT then #consts + n#j#1
+				    else if n#j#0 === CONST then n#j#1
 				    else error "unknown node type"
 				    ) 
 			       else if class n#j === ZZ then curNode+n#j
