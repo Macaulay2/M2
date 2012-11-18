@@ -164,7 +164,6 @@ clean::; rm -f $(EXEFILE) timestamp.o
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
-	if [ -x /usr/bin/execstack ] ; then execstack -c "$@".tmp ; fi
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
 	- @LDD@ $@.tmp
