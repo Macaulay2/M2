@@ -17,15 +17,20 @@ TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 
-# override this if you aren't set up to sign rpm files:
+# Override this if you aren't set up to sign rpm files:
 SIGN = --sign
-# to get set up to sign rpm files as "Macaulay2", add these two lines to ~/.rpmmacros :
+#
+# To get set up to sign rpm files as "Macaulay2", add these two lines to ~/.rpmmacros :
 #   %_signature gpg
 #   %_gpg_name  Macaulay2
-# this is needed to verify signatures:
+#
+# This is needed to verify signatures:
 #   sudo rpm --import Macaulay2-key.txt
-# where Macaulay2-key.txt is the public key file obtained from the web site
-# for details, see http://fedoranews.org/tchung/gpg/
+# where Macaulay2-key.txt is the public key file obtained from the web site.
+# For details, see http://fedoranews.org/tchung/gpg/
+#
+# To add a signature to an rpm file that doesn't have one:
+#   rpm --addsign *.rpm
 
 PKG_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).@ARCH@-@OS@-@ISSUE@.rpm
 PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
