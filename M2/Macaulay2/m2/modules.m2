@@ -447,6 +447,7 @@ Module#{Standard,AfterPrint} = M -> (
      )
 
 RingElement * Module := Module => ZZ * Module := (r,M) -> subquotient (r ** generators M, relations M)
+Module * RingElement := Module => Module * ZZ := (M,r) -> subquotient ((generators M) ** r, relations M)
 
 isHomogeneous Module := Boolean => (cacheValue symbol isHomogeneous) (
      (M) -> (

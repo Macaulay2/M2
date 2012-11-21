@@ -489,7 +489,9 @@ eulers(Ideal) := (I) -> eulers((ring I)^1/I)
 euler(Ideal) := (I) -> euler((ring I)^1/I)
 
 RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
+Ideal * RingElement := Ideal => (I,r) -> ideal ((generators I)**r)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
+Ideal * ZZ := (I,r) -> ideal (r * generators I)
 
 generators Ideal := Matrix => opts -> (I) -> I.generators
 Ideal_* := I -> first entries generators I
