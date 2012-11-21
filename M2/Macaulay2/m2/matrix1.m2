@@ -622,10 +622,58 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix, Module) := Matrix => (f,N) -> (
-     if isFreeModule source f and isFreeModule target f
-     then transpose f ** N
-     else notImplemented())
+Hom(Matrix, Module) := Matrix => (f,N)->(
+     	   -- this function was written by David Eisenbud
+     	   --say f: M --> M', with 
+	   --F1* --> F0* --> M
+	   --F1'* --> F0'* --> M'
+	   --G1 --> G0 --> N
+	   --the presentations, and 
+	   --mf: F0* --> F0'*
+	   --the matrix inducing f
+     	   M := source f;
+	   M':= target f;
+	   --the maps on the presentations of M,M':
+	   mf0 := transpose matrix f;
+	   mf1 := transpose(((matrix f)*(presentation M))//(presentation M'));
+     	   --dual of the presentation of M:
+           m := transpose presentation M;
+	   F0 := source m;
+	   F1 := target m;
+	   --dual of the presentation of M':
+           m' := transpose presentation M';
+	   F0' := source m';
+	   F1' := target m';
+	   --presentation of N:
+           n := presentation N;
+	   n2 := syz n;
+	   G0 := target n;
+	   G1 := source n;
+	   G2 := source n2;
+	   --presentation of Hom(M,N)
+	   s := syz(m**G0|F1**(-n));
+	   t := syz s;
+	   H0 := source s;
+	   H1 := (F0**G1)++(F1**G2)++(source t);
+	   Z := map (F0**G0, F1**G2, 0);
+	   h := map(H0,H1, (((F0**n||(m)**G1)|(Z||F1**(n2)))//s)|t);
+           --presentation of Hom(M',N)	   
+	   s' := syz(m'**G0|F1'**(-n));
+	   t' := syz s';
+	   n2' := syz(F1'**n);
+	   H0' := source s';
+	   H1' := F0'**G1++F1'**G2++source t';
+	   Z' := map (F0'**G0, F1'**G2, 0);	   
+	   h' := map(H0',H1', (((F0'**n||(m')**G1)|(Z'||F1'**n2))//s')|t');
+     	   --Hom(f,N): Hom(M',N) --> Hom(M,N)	   
+	   tar := cokernel h;
+	   sour := cokernel h';
+	   ff := map(tar, sour,(((mf0**G0)++(mf1**G1))*s')//s);
+	   --replace it with a pruned version
+	   tarp := prune tar;
+	   sourp:= prune sour;
+	   map(tarp, sourp,((tarp.cache.pruningMap)^(-1))*ff*sourp.cache.pruningMap)
+     )
 
 Hom(Module, Matrix) := Matrix => (N,f) -> (
      if isFreeModule N 
