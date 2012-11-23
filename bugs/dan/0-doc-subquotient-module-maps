@@ -1,0 +1,11 @@
+
+
+To specify a map M-->M' of subquotient modules in the form map(M', M, m) it
+seems the matrix m should go from
+
+source generators M == cover M
+to
+source generators M' == cover M'
+
+This is reasonable -- even "obvious", but it would have saved me a little time
+had it been mentioned in the documentation.
