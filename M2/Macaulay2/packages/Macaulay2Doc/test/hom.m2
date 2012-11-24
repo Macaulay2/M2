@@ -17,9 +17,13 @@ S = kk[a,b]
 M = S^1/ideal(a)
 f = inducedMap(S^1,module ideal(a^3,b^3))
 assert( (fh=Hom(f,M) ) === map(cokernel map(S^{{3}},S^{{2}},{{a}}),cokernel map(S^1,S^{{ -1}},{{a}}),{{b^3}}) )
+assert( target fh == Hom(source f,M) )
+assert( source fh == Hom(target f,M) )
 
 S=kk[a,b,c]
 I = ideal"a3,b3,c3"
 f = map(S^1,module I,{{a^3,b^3,c^3}})
-assert( (Hom(f, S^1)) === map(S^1,S^1,{{1}}) )
+assert( (fh = Hom(f, S^1)) === map(S^1,S^1,{{1}}) )
+assert( target fh == Hom(source f,M) )
+assert( source fh == Hom(target f,M) )
 
