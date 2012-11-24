@@ -790,6 +790,21 @@ truncate(List,Module) := Module => (deg,M) -> (
 truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
 truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
 truncate(ZZ,Ideal) := Ideal => (deg,I) -> truncate({deg},I)
+truncate(ZZ,ZZ,Matrix) := Matrix => (j,i,f) -> (
+     -- this function was written by David Eisenbud
+     --truncate source at i and target at j, and produce the map
+     --between the truncated modules
+     --notation: f: M --> M'
+     tM := truncate(i, source f);
+     tM' := truncate(j,target f);
+     if i<j then return map(tM',tM,0);
+     inc := inducedMap(source f,tM);
+     inc':= inducedMap(target f, tM');
+     map(tM', tM, f*inc//inc')
+     )
+truncate(ZZ, Matrix) := Matrix => (i,f)-> (
+     -- this function was written by David Eisenbud
+     truncate(i,i,f))
 -----------------------------------------------------------------------------
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!
