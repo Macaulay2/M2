@@ -286,7 +286,7 @@ generalEquations WitnessSet := (W) -> (
 
 beginDocumentation()
 
-undocumented {(generalEquations,WitnessSet), generalEquations}
+undocumented {(generalEquations,WitnessSet)}
  --warning: symbol has no documentation: NAGtypes :: 
 --warning: symbol has no documentation: NAGtypes :: 
 --warning: symbol has no documentation: NAGtypes :: 
