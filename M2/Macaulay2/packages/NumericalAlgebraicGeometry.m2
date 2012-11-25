@@ -9,8 +9,8 @@ PHC'EXISTS := (version#"VERSION" > "1.4")
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.4",
-     Date => "March, 2011",
+     Version => "1.5.0.1",
+     Date => "November, 2012",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
