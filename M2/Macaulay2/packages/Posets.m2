@@ -205,6 +205,8 @@ indexElement := (P,A) -> position(P.GroundSet, i -> i === A)
 
 principalOrderIdeal' := (P, i) -> positions(flatten entries(P.RelationMatrix_i), j -> j != 0)
 
+orderIdeal' := (P, L) -> unique flatten apply(L, l -> principalOrderIdeal'(P, l));
+
 principalFilter' := (P, i) -> positions(first entries(P.RelationMatrix^{i}), j -> j != 0)
 
 ------------------------------------------
@@ -316,7 +318,6 @@ hibiIdeal Poset := MonomialIdeal => opts -> P -> (
     G := toList(0 ..< #P.GroundSet);
     if not P.cache.?maximalAntichains then maximalAntichains P;
     A := sort unique flatten (subsets \ P.cache.maximalAntichains);
-    orderIdeal' := (P, L) -> unique flatten apply(L, l -> principalOrderIdeal'(P, l));
     J := apply(A, a -> orderIdeal'(P, a));
     x := local x;
     y := local y;
@@ -332,7 +333,6 @@ hibiRing Poset := QuotientRing => opts -> P -> (
     R := (opts.CoefficientRing)(monoid [x_0..x_(#P.GroundSet-1),y_0..y_(#P.GroundSet-1)]);
     if not P.cache.?maximalAntichains then maximalAntichains P;
     A := sort unique flatten (subsets \ P.cache.maximalAntichains);
-    orderIdeal' := (P, L) -> unique flatten apply(L, l -> principalOrderIdeal'(P, l));
     J := apply(A, a -> orderIdeal'(P, a));
     S := (opts.CoefficientRing)(monoid[apply(J, I -> t_I)]);
     G := set toList(0 ..< #P.GroundSet);
@@ -409,15 +409,17 @@ dilworthLattice Poset := Poset => P -> (
 
 distributiveLattice = method()
 distributiveLattice Poset := Poset => P -> (
-    O := unique apply(P.GroundSet, p -> principalOrderIdeal(P, p));
-    POI := poset(unique apply(subsets(#O), s -> sort unique flatten O_s), isSubset, AntisymmetryStrategy => "none");
-    POI.cache.OriginalPoset = P;
+    if not P.cache.?maximalAntichains then maximalAntichains P;
+    A := sort unique flatten (subsets \ P.cache.maximalAntichains);
+    J := apply(A, a -> P_(orderIdeal'(P, a)));
+    Q := poset(J, isSubset, AntisymmetryStrategy => "none");
+    Q.cache.OriginalPoset = P;
     if posets'Precompute then (
-        POI.cache.isLowerSemilattice = true;
-        POI.cache.isUpperSemimodular = true;
-        POI.cache.connectedComponents = {toList(0 ..< #P.GroundSet)};
+        Q.cache.isLowerSemilattice = true;
+        Q.cache.isUpperSemimodular = true;
+        Q.cache.connectedComponents = {toList(0 ..< #Q.GroundSet)};
         );
-    POI
+    Q
     )
 
 -- The method dual is given in the Core and has options.
