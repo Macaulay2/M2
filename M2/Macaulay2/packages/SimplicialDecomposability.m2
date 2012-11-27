@@ -11,9 +11,9 @@ newPackage select((
    "SimplicialDecomposability",
    Version => "1.0.6",
    Date => "20. June 2011",
-   Authors => {{Name => "David W. Cook II",
-                Email => "dcook@ms.uky.edu",
-                HomePage => "http://www.ms.uky.edu/~dcook"}},
+   Authors => {{Name => "David Cook II",
+                Email => "dcook8@nd.edu",
+                HomePage => "http://www.nd.edu/~dcook8"}},
    Headline => "various decomposability routines for simplicial complexes",
    DebuggingMode => false,
    Certification => {

@@ -312,24 +312,28 @@ hasseDiagram Poset := Digraph => P -> (
 
 -- NB: Renames vertices, otherwise it produces the wrong ideal in some cases.
 hibiIdeal = method(Options => { symbol CoefficientRing => QQ })
-hibiIdeal (Poset) := MonomialIdeal => opts -> (P) -> (
-    G := set toList(0 ..< #P.GroundSet);
-    O := unique apply(#P.GroundSet, i -> principalOrderIdeal'(P, i));
-    J := unique apply(subsets(#O), s -> sort unique flatten O_s);
+hibiIdeal Poset := MonomialIdeal => opts -> P -> (
+    G := toList(0 ..< #P.GroundSet);
+    if not P.cache.?maximalAntichains then maximalAntichains P;
+    A := sort unique flatten (subsets \ P.cache.maximalAntichains);
+    orderIdeal' := (P, L) -> unique flatten apply(L, l -> principalOrderIdeal'(P, l));
+    J := apply(A, a -> orderIdeal'(P, a));
     x := local x;
     y := local y;
     R := (opts.CoefficientRing)(monoid [x_0..x_(#P.GroundSet-1),y_0..y_(#P.GroundSet-1)]);
-    monomialIdeal apply(J, I -> product(I, i -> R_i) * product(toList(G - I), j -> R_(#P.GroundSet + j)))
+    monomialIdeal apply(J, I -> product(I, i -> R_i) * product(G - set I, j -> R_(#P.GroundSet + j)))
     )
 
 -- NB: Renames vertices, otherwise it produces the wrong ideal in some cases.
 hibiRing = method(Options => { symbol CoefficientRing => QQ, symbol Strategy => "kernel" })
-hibiRing (Poset) := QuotientRing => opts -> (P) -> (
+hibiRing Poset := QuotientRing => opts -> P -> (
     if opts.Strategy =!= "kernel" and opts.Strategy =!= "4ti2" then error "The option Strategy must either be 'kernel' or '4ti2'.";
     t := local t; x := local x; y := local y;
     R := (opts.CoefficientRing)(monoid [x_0..x_(#P.GroundSet-1),y_0..y_(#P.GroundSet-1)]);
-    O := unique apply(#P.GroundSet, i -> principalOrderIdeal'(P, i));
-    J := unique apply(subsets(#O), s -> sort unique flatten O_s);
+    if not P.cache.?maximalAntichains then maximalAntichains P;
+    A := sort unique flatten (subsets \ P.cache.maximalAntichains);
+    orderIdeal' := (P, L) -> unique flatten apply(L, l -> principalOrderIdeal'(P, l));
+    J := apply(A, a -> orderIdeal'(P, a));
     S := (opts.CoefficientRing)(monoid[apply(J, I -> t_I)]);
     G := set toList(0 ..< #P.GroundSet);
     M := apply(J, I -> product(I, i -> R_i) * product(toList(G - I), j -> R_(#P.GroundSet + j)));
@@ -351,7 +355,7 @@ incomparabilityGraph Poset := Graph => P -> (
 
 -- NB: Renames vertices, otherwise it produces the wrong simplicial complex in some cases.
 orderComplex = method(Options => { symbol VariableName => getSymbol "v", symbol CoefficientRing => QQ })
-orderComplex (Poset) := SimplicialComplex => opts -> (P) -> (
+orderComplex Poset := SimplicialComplex => opts -> P -> (
     E := flatten for i from 0 to #P.GroundSet - 1 list for j from i+1 to #P.GroundSet - 1 list
         if P.RelationMatrix_i_j == 0 and P.RelationMatrix_j_i == 0 then {i, j} else continue;
     s := opts.VariableName;
@@ -360,10 +364,11 @@ orderComplex (Poset) := SimplicialComplex => opts -> (P) -> (
     )
 
 pPartitionRing = method(Options => { symbol CoefficientRing => QQ, symbol Strategy => "kernel" })
-pPartitionRing (Poset) := QuotientRing => opts -> (P) -> (
+pPartitionRing Poset := QuotientRing => opts -> P -> (
     if opts.Strategy =!= "kernel" and opts.Strategy =!= "4ti2" then error "The option Strategy must either be 'kernel' or '4ti2'.";
     O := unique apply(#P.GroundSet, i -> principalOrderIdeal'(P, i));
-    J := select(unique apply(subsets(#O), s -> sort unique flatten O_s), I -> isConnected subposet(P, P.GroundSet_I));
+    if not P.cache.?connectedComponents then connectedComponents P;
+    J := flatten apply(P.cache.connectedComponents, C -> select(unique apply(subsets C, s -> sort unique flatten O_s), I -> isConnected subposet(P, P.GroundSet_I)));
     t := local t;
     S := (opts.CoefficientRing)(monoid [apply(J, I -> t_I)]);
     if opts.Strategy === "kernel" then (
@@ -831,8 +836,8 @@ hyperplaneEquivalence (List,Ring) := List => (L,R) -> (
 --      R = ring
 -- Outputs: Pairs of ideals (I,J), with I < J if J contains I
 hyperplaneInclusions = method()
-hyperplaneInclusions(List,Ring) := List => (L,R) -> (
-    H:=apply(L, l-> sub(l,R));
+hyperplaneInclusions(List,Ring) := List => (L, R) -> (
+    H:=apply(L, l-> sub(l, R));
     coverPairs:={};
     for l from 1 to #H-1 do
         for k to #H-1 do 
@@ -853,19 +858,21 @@ intersectionLattice (List, Ring) := Poset => (L, R)-> (
     poset(G, rel)
     )
 
-lcmLattice = method( Options => { Strategy => 1 })
-lcmLattice(MonomialIdeal) := Poset => opts -> (M) -> (
+lcmLattice = method( Options => { symbol Strategy => "subsets" })
+lcmLattice MonomialIdeal := Poset => opts -> M -> (
     L := flatten entries gens M;
-    Ground := if opts.Strategy === 0 then prepend(1_(ring M), unique (lcm \ drop(subsets L, 1)))
-              else apply(lcmLatticeProduceGroundSet L, D -> product apply(numgens ring M, i-> (ring M)_i^(D#i)));
+    Ground := if opts.Strategy === "subsets" then prepend(1_(ring M), unique (lcm \ drop(subsets L, 1)))
+    else if opts.Strategy === "recursive" then apply(lcmLatticeProduceGroundSet L, D -> product apply(numgens ring M, i-> (ring M)_i^(D#i)))
+    else error "The option Strategy must be 'subsets'."; -- or 'recursive.'"
     Rels := flatten for i to #Ground-1 list for j from i+1 to #Ground-1 list 
         if Ground_i % Ground_j == 0 then {Ground_j, Ground_i} else if Ground_j % Ground_i == 0 then {Ground_i, Ground_j} else continue;
     RelsMatrix := matrix apply(Ground, r -> apply(Ground, s -> if s % r == 0 then 1 else 0));
     poset (Ground, Rels, RelsMatrix, AntisymmetryStrategy => "none")
     )
-lcmLattice (Ideal) := Poset => opts -> (I) -> lcmLattice(monomialIdeal I, opts)
+lcmLattice Ideal := Poset => opts -> I -> lcmLattice(monomialIdeal I, opts)
 
--- Used by lcmLattice for Strategy 1
+-- Used by lcmLattice for the "recursive" Strategy
+-- BROKEN:  R = QQ[x,y,z]; I = ideal(x^4, y^4, z^4, x^2*y, x*y*z);
 protect next
 lcmLatticeProduceGroundSet = G -> (
     degreeNextPair := (D, nextDegrees) -> hashTable {symbol degree => D, symbol next => nextDegrees};
@@ -1161,7 +1168,7 @@ youngSubposet ZZ := Poset => n -> (
 ------------------------------------------
 
 displayPoset = method(Options => { symbol SuppressLabels => posets'SuppressLabels, symbol PDFViewer => posets'PDFViewer, symbol Jitter => false })
-displayPoset (Poset) := opts -> (P) -> (
+displayPoset Poset := opts -> P -> (
     if not instance(opts.PDFViewer, String) then error "The option PDFViewer must be a string.";
     if not instance(opts.SuppressLabels, Boolean) then error "The option SuppressLabels must be a Boolean.";
     if not instance(opts.Jitter, Boolean) then error "The option Jitter must be a Boolean.";
@@ -1206,7 +1213,7 @@ outputTexPoset (Poset,String) := String => opts -> (P,name) -> (
     )
 
 texPoset = method(Options => {symbol SuppressLabels => posets'SuppressLabels, symbol Jitter => false})
-texPoset (Poset) := String => opts -> (P) -> (
+texPoset Poset := String => opts -> P -> (
     if not instance(opts.SuppressLabels, Boolean) then error "The option SuppressLabels must be a Boolean.";
     if not instance(opts.Jitter, Boolean) then error "The option Jitter must be a Boolean.";
     -- edge list to be read into TikZ
@@ -1251,7 +1258,7 @@ connectedComponents Poset := List => P -> (
         Q := toList(0 ..< #P.GroundSet);
         if not P.cache.?coveringRelations then coveringRelations P;
         cr := P.cache.coveringRelations;
-        while (#cr > 0 and sum toList Q > 1) do (
+        while (#cr > 0 and #Q > 1) do (
             i := first first cr;
             j := last first cr; 
             C#j = unique join(C#i, C#j);
@@ -1390,7 +1397,7 @@ rankPoset Poset := List => P -> (
     apply(max rk + 1, r -> P.GroundSet_(toList (rks#r)))
     )
 
-rank Poset := List => P -> rankPoset(P)
+rank Poset := List => P -> rankPoset P
 
 ------------------------------------------
 -- Relations & relation properties
@@ -3462,12 +3469,11 @@ doc ///
         generates the lattice of lcms in an ideal
     Usage
         P = lcmLattice I
-        P = lcmLattice(I, Strategy => 0)
     Inputs
         I:MonomialIdeal
         I:Ideal
         Strategy=>ZZ
-            which is either $0$ or $1$
+            must be "subsets" for now
     Outputs
         P:Poset
     Description
@@ -5871,6 +5877,12 @@ undocumented { "VariableName", (toExternalString,Poset), (toString,Poset), (net,
 -- Basic Poset Constructions:
 ------------------------------------------
 ------------------------------------------
+
+-- Connected Components test;
+TEST ///
+P = poset({1,2}, {{1,2}});
+assert(isConnected P);
+///
 
 -- Poset defined by ground set and relations
 -- basic Poset constructor
