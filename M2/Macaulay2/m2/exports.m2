@@ -814,6 +814,8 @@ export {
 	symbol length,
 	symbol lift,
 	symbol liftable,
+	symbol limitFiles,
+	symbol limitProcesses,
 	symbol lines,
 	symbol linkFile,
 	symbol list,

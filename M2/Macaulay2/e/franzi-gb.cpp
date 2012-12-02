@@ -7,7 +7,7 @@
 
 //#define DEBBBB false;
 
-// pair of indeces 
+// pair of indeces
 // negative index -i for field polynomial x_i^2+x_i
 class Pair {
   // order with respect to lcm in lex ordering
@@ -21,9 +21,9 @@ class Pair {
         return true;
       } else if(pair1.j > pair2.j) {
         return false;
-      } else { 
+      } else {
         return pair1.i < pair2.i;
-      } 
+      }
     }
   }
 
@@ -47,8 +47,8 @@ class Pair {
     if(F.find(j) == end || (i >= 0 && F.find(i) == end)) { // fi or fj are not in F anymore
       lcm = 0; // constant 1
       good = false;
-    } else { 
-      if(i < 0) { // working with field polynomial 
+    } else {
+      if(i < 0) { // working with field polynomial
         lcm = F.find(j) ->second.LT();
         good = true; //BRP::isDivisibleBy(lcm, BRP( 1 << n-(-i) ) );
       } else {
@@ -60,7 +60,7 @@ class Pair {
     }
   }
 
-}; 
+};
 
 // set of index pairs
 // always ordered
@@ -69,7 +69,7 @@ typedef set<Pair> Pairs;
 // functions f and g, corresponding to index pair j and i, respectively
 class FunctionPair {
   BRP fieldpolynomial;
-  public: 
+  public:
   const BRP *f;
   const BRP *g;
   bool good;
@@ -78,11 +78,11 @@ class FunctionPair {
   FunctionPair(const Pair &pair, const IntermediateBasis &F, int n )  {
     int i = pair.i;
     int j = pair.j;
-    
+
     IntermediateBasis::const_iterator end = F.end();
     if(F.find(j) == end || (i >= 0 && F.find(i) == end)) {
       good = false;
-    } else { 
+    } else {
       good = true;
       if(i < 0) { // working with field polynomial, generate x_(-i)
         //g = BRP( 1 << n-(-i) );
@@ -151,14 +151,14 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
   if (!fp.good) {
     return false;
   }
-  
-  
+
+
   // both polynomials are monomials, so their S polynomial reduces to 0
   if ( fp.g->size() == 1 && fp.f->size() == 1 ) {
     //cout << "m ";
     return false;
   }
-  
+
   brMonomial g = fp.g->LT();
   brMonomial f = fp.f->LT();
   if( BRP::isRelativelyPrime(g,f) ) {
@@ -179,7 +179,7 @@ bool isGoodPair(const Pair &pair, const IntermediateBasis &F, const Pairs &B, in
       return false;
     }
   }
-  
+
   //cout << "good pair ";
   return true;
 }
@@ -191,12 +191,12 @@ BRP sPolynomial(const Pair &pair, const IntermediateBasis &F, int n) {
     return BRP();
   }
 
-  if (pair.i < 0 ) { 
+  if (pair.i < 0 ) {
     // fp.g = x_i
     // f = ax + b
     BRP b = (fp.f)->remainder(*fp.g);
     return b * *fp.g + b;
-  } 
+  }
   brMonomial f = fp.f->LT();
   brMonomial g = fp.g->LT();
   brMonomial lcm = f | g;
@@ -206,10 +206,10 @@ BRP sPolynomial(const Pair &pair, const IntermediateBasis &F, int n) {
 // modifies f, cancels the lead term once, f must be non zero
 void cancelLeadTerm(BRP &f, const BRP &g) {
   brMonomial a = f.LT() ^ g.LT();
-  f + g*a; 
+  f + g*a;
 }
 
-// find the first basis element that reduces the leading term of f, if none found return end()  
+// find the first basis element that reduces the leading term of f, if none found return end()
 // return end() if f == 0
 IntermediateBasis::const_iterator findDivisor( const BRP &f, const IntermediateBasis &F, const IntermediateBasis::const_iterator itF) {
   IntermediateBasis::const_iterator end = F.end();
@@ -257,7 +257,7 @@ bool reduce(BRP &f, const IntermediateBasis &F, const IntermediateBasis::const_i
   bool ret = false;
   ret = reduceLt(f, F, itF);
   if (!f.isZero() ) {
-    if ( reduceTail(f, F, itF) ) { 
+    if ( reduceTail(f, F, itF) ) {
       ret = true;
     }
   }
@@ -268,8 +268,8 @@ void reduce(BRP &f, const IntermediateBasis &F) {
   reduce(f,F,F.end());
 }
 
-// some effort could be saved on average if we arranged the 
-// f i so that their leading terms are listed in increasing order with respect to the cho- 
+// some effort could be saved on average if we arranged the
+// f i so that their leading terms are listed in increasing order with respect to the cho-
 // sen monomial ordering
 void rearrangeBasis(IntermediateBasis &F, int nextIndex) {
   for( IntermediateBasis::iterator j = F.begin(); j != F.end(); ++j ) {
@@ -295,7 +295,7 @@ void interreduction(IntermediateBasis &F) {
   while (changesHappened) {
     changesHappened = false;
     for(IntermediateBasis::iterator it = F.begin(); it != end; ) {
-      if (reduce(it->second, F, it)) { 
+      if (reduce(it->second, F, it)) {
         // we changed it
         numChanged++;
         if ( it->second.isZero() ) { //reduced an element to 0, remove it from F
@@ -312,9 +312,9 @@ void interreduction(IntermediateBasis &F) {
 }
 
 
-// complete algorithm to compute a Groebner basis F  
+// complete algorithm to compute a Groebner basis F
 void gb( IntermediateBasis &F, int n) {
-  int nextIndex = F.size(); 
+  int nextIndex = F.size();
   rearrangeBasis(F, -1);
   interreduction(F);
   Pairs B = makeList(F, n);
@@ -347,4 +347,3 @@ void gb( IntermediateBasis &F, int n) {
   interreduction(F);
   //cout << "we computed " << numSPoly << " S Polynomials and added " << countAddPoly << " of them to the intermediate basis." << endl;
 }
-

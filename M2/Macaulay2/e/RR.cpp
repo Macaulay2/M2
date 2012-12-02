@@ -16,7 +16,7 @@ RingRR::~RingRR()
 {
 }
 
-bool RingRR::initialize_RR() 
+bool RingRR::initialize_RR()
 {
   initialize_ring(0);
 
@@ -109,9 +109,9 @@ void RingRR::elem_text_out(buffer &o, const ring_elem ap) const
 
   if (!is_neg && p_plus) o << '+';
   if (is_neg) o << '-';
-  if (is_one) 
-    {  
-      if (p_one) o << '1'; 
+  if (is_one)
+    {
+      if (p_one) o << '1';
     }
   else
     {
@@ -215,7 +215,7 @@ ring_elem RingRR::power(const ring_elem f, int n) const
 ring_elem RingRR::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!RingZZ::get_si(n1, n)) 
+  if (!RingZZ::get_si(n1, n))
     { ERROR("exponent too large"); }
   return RingRR::power(f,n1);
 }
@@ -232,7 +232,7 @@ ring_elem RingRR::divide(const ring_elem f, const ring_elem g) const
 }
 
 void RingRR::syzygy(const ring_elem a, const ring_elem b,
-	       ring_elem &x, ring_elem &y) const
+               ring_elem &x, ring_elem &y) const
 {
   double a1 = RR_VAL(a);
   double b1 = RR_VAL(b);
@@ -241,7 +241,7 @@ void RingRR::syzygy(const ring_elem a, const ring_elem b,
       x = RingRR::from_double(0);
       y = RingRR::from_double(1);
     }
-  else 
+  else
     {
       x = RingRR::from_double(1);
       y = RingRR::from_double(-a1/b1);
@@ -259,4 +259,5 @@ ring_elem RingRR::eval(const RingMap *map, const ring_elem f, int) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

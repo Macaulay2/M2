@@ -21,6 +21,12 @@ class EngineResolutionComputation;
 class buffer;
 class GBComputation;
 class GBBComputation;
+
+/**
+    @ingroup gb
+
+    @brief Non-functional code.
+*/
 class GBBComputation : public mutable_object
 // This is the base type for all Groebner basis and syzygy computations
 {
@@ -31,14 +37,14 @@ public:
   virtual ~GBBComputation();
 
   static GBBComputation *choose_gb(const Matrix *m,
-				  M2_bool collect_syz,
-				  int n_rows_to_keep,
-				  M2_arrayint gb_weights, // null defaults to (1,...,1)
-				  M2_bool use_max_degree,
-				  int max_degree,
-				  int algorithm,
-				  int strategy,
-				  int max_reduction_count = 10);
+                                  M2_bool collect_syz,
+                                  int n_rows_to_keep,
+                                  M2_arrayint gb_weights, // null defaults to (1,...,1)
+                                  M2_bool use_max_degree,
+                                  int max_degree,
+                                  int algorithm,
+                                  int strategy,
+                                  int max_reduction_count = 10);
   // Values for algorithm and strategy are documented in engine.h
   // Returns NULL if an error occurs
 
@@ -46,8 +52,8 @@ public:
   // The default version returns an error saying that Hilbert functions cannot be used.
   // NULL is returned if there is an error...?
 
-  virtual ComputationStatusCode compute(const StopConditions &stop, 
-					long &result_complete_thru_this_degree) = 0;
+  virtual ComputationStatusCode compute(const StopConditions &stop,
+                                        long &result_complete_thru_this_degree) = 0;
 
   virtual int complete_thru_degree() const = 0;
   // The computation is complete up through this degree.
@@ -95,8 +101,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) = 0;
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient) = 0;
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient) = 0;
 
   virtual int contains(const Matrix *m) = 0;
 
@@ -119,21 +125,21 @@ protected:
   EngineComputation();
 
   enum ComputationStatusCode set_status(enum ComputationStatusCode);
-  
+
   virtual ~EngineComputation() {}
   // These are finalized objects, so this function is usually bypassed
 public:
   void set_stop_conditions(M2_bool always_stop,
-			   M2_arrayint degree_limit,
-			   int basis_element_limit,
-			   int syzygy_limit,
-			   int pair_limit,
-			   int codim_limit,
-			   int subring_limit,
-			   M2_bool just_min_gens,
-			   M2_arrayint length_limit);
+                           M2_arrayint degree_limit,
+                           int basis_element_limit,
+                           int syzygy_limit,
+                           int pair_limit,
+                           int codim_limit,
+                           int subring_limit,
+                           M2_bool just_min_gens,
+                           M2_arrayint length_limit);
 
-  virtual void destroy() = 0; // This function will be called when 
+  virtual void destroy() = 0; // This function will be called when
   // the computation is finalized by the garbage collector
 
   enum ComputationStatusCode status() const { return computation_status; }
@@ -141,7 +147,7 @@ public:
   virtual long complete_thru_degree() const = 0;
   // This is computation specific information.  However, for homogeneous
   // GB's, the GB coincides with the actual GB in degrees <= the returned value.
-  // For resolutions of homogeneous modules, the resolution 
+  // For resolutions of homogeneous modules, the resolution
   // coincides with the actual one in (slanted) degrees <= the returned value.
 
   virtual void start_computation() = 0;
@@ -217,7 +223,7 @@ protected:
   Computation();
 
   enum ComputationStatusCode set_status(enum ComputationStatusCode);
-  
+
   virtual bool stop_conditions_ok() = 0;
   // If the stop conditions in stop_ are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
@@ -226,15 +232,15 @@ protected:
 public:
   Computation /* or null */ *
   set_stop_conditions(M2_bool always_stop,
-		      M2_arrayint degree_limit,
-		      int basis_element_limit,
-		      int syzygy_limit,
-		      int pair_limit,
-		      int codim_limit,
-		      int subring_limit,
-		      M2_bool just_min_gens,
-		      M2_arrayint length_limit);
-  // returns NULL if there is a general problem with one of the stop 
+                      M2_arrayint degree_limit,
+                      int basis_element_limit,
+                      int syzygy_limit,
+                      int pair_limit,
+                      int codim_limit,
+                      int subring_limit,
+                      M2_bool just_min_gens,
+                      M2_arrayint length_limit);
+  // returns NULL if there is a general problem with one of the stop
   // conditions.
 
   enum ComputationStatusCode status() const { return computation_status; }
@@ -242,7 +248,7 @@ public:
   virtual int complete_thru_degree() const = 0;
   // This is computation specific information.  However, for homogeneous
   // GB's, the GB coincides with the actual GB in degrees <= the returned value.
-  // For resolutions of homogeneous modules, the resolution 
+  // For resolutions of homogeneous modules, the resolution
   // coincides with the actual one in (slanted) degrees <= the returned value.
 
   virtual void start_computation() = 0;
@@ -261,4 +267,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

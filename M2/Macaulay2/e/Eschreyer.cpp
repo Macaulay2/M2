@@ -144,12 +144,12 @@ void GBKernelComputation::strip_gb(const GBMatrix *m)
       gbvector head;
       gbvector *last = &head;
       for (gbvector * v = g[i]; v != 0; v = v->next)
-	if (components[v->comp-1] > 0)
-	  {
-	    gbvector * t = GR->gbvector_copy_term(v);
-	    last->next = t;
-	    last = t;
-	  }
+        if (components[v->comp-1] > 0)
+          {
+            gbvector * t = GR->gbvector_copy_term(v);
+            last->next = t;
+            last = t;
+          }
       last->next = 0;
       gb.append(head.next);
     }
@@ -165,10 +165,10 @@ void GBKernelComputation::new_pairs(int i)
 
   Index<MonomialIdeal> j;
   queue<Bag *> elems;
-  intarray vp;			// This is 'p'.
+  intarray vp;                  // This is 'p'.
   intarray thisvp;
 
-  if (SF) 
+  if (SF)
     {
       monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
       SF->schreyer_down(gb[i]->monom, gb[i]->comp-1, PAIRS_mon);
@@ -187,13 +187,13 @@ void GBKernelComputation::new_pairs(int i)
 
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_exp);
       for (int w=0; w<R->n_skew_commutative_vars(); w++)
-	if (find_pairs_exp[R->skew_variable(w)] > 0)
-	  {
-	    thisvp.shrink(0);
-	    varpower::var(w,1,thisvp);
-	    Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	    elems.insert(b);
-	  }
+        if (find_pairs_exp[R->skew_variable(w)] > 0)
+          {
+            thisvp.shrink(0);
+            varpower::var(w,1,thisvp);
+            Bag *b = new Bag(static_cast<void *>(0), thisvp);
+            elems.insert(b);
+          }
 
       deletearray(find_pairs_exp);
     }
@@ -204,17 +204,17 @@ void GBKernelComputation::new_pairs(int i)
     {
       const MonomialIdeal * Rideal = R->get_quotient_monomials();
       for (j = Rideal->first(); j.valid(); j++)
-	{
-	  // Compute (P->quotient_ideal->monom : p->monom)
-	  // and place this into a varpower and Bag, placing
-	  // that into 'elems'
-	  thisvp.shrink(0);
-	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
-	    continue;
-	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	  elems.insert(b);
-	}
+        {
+          // Compute (P->quotient_ideal->monom : p->monom)
+          // and place this into a varpower and Bag, placing
+          // that into 'elems'
+          thisvp.shrink(0);
+          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
+          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+            continue;
+          Bag *b = new Bag(static_cast<void *>(0), thisvp);
+          elems.insert(b);
+        }
     }
 
   // Third, add in syzygies arising from previous elements of this same level
@@ -245,7 +245,7 @@ void GBKernelComputation::new_pairs(int i)
     {
       M->from_varpower((*new_mi)[j]->monom().raw(), m);
       M->mult(m, gb[i]->monom, m);
-      
+
       gbvector * q = make_syz_term(GR->get_flattened_coefficients()->from_int(1),m,i+1);
       syzygies.append(q);
     }
@@ -269,9 +269,9 @@ bool GBKernelComputation::find_ring_divisor(const int *exp, const gbvector *&res
   return true;
 }
 
-int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi, 
-				      const int *exp,
-				      int &result)
+int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
+                                      const int *exp,
+                                      int &result)
 {
   // Find all the posible matches, use some criterion for finding the best...
   array<Bag *> bb;
@@ -283,16 +283,16 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
   if (M2_gbTrace >= 5)
     if (this_mi->length() > 1)
       {
-	buffer o;
-	o << ":" << this_mi->length() << "." << ndivisors << ":";
-	emit(o.str());
+        buffer o;
+        o << ":" << this_mi->length() << "." << ndivisors << ":";
+        emit(o.str());
       }
   if (ndivisors == 1)
     {
       if (this_mi->length() == 1)
-	n_ones++;
+        n_ones++;
       else
-	n_unique++;
+        n_unique++;
       return 1;
     }
   n_others++;
@@ -302,7 +302,7 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
     {
       int p = bb[i]->basis_elem();
       if (p < lowest)
-	lowest = p;
+        lowest = p;
     }
   result = lowest;
   return ndivisors;
@@ -338,22 +338,22 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
       Bag *b;
       GR->gbvector_get_lead_exponents(F,g->next,exp);
       if (mi[g->next->comp-1]->search_expvector(exp,b))
-	{
-	  // Want to keep the monomial
-	  g = g->next;
-	}
+        {
+          // Want to keep the monomial
+          g = g->next;
+        }
       else
-	{
-	  // Want to dump this term
-	  nsaved++;
-	  gbvector *tmp = g->next;
-	  g->next = tmp->next;
-	  tmp->next = 0;
-	  GR->gbvector_remove(tmp);
-	}
+        {
+          // Want to dump this term
+          nsaved++;
+          gbvector *tmp = g->next;
+          g->next = tmp->next;
+          tmp->next = 0;
+          GR->gbvector_remove(tmp);
+        }
     }
 #if 0
-//   if (M2_gbTrace >= 5) 
+//   if (M2_gbTrace >= 5)
 //     {
 //       buffer o;
 //       o << "[" << nterms << ",s" << nsaved << "]";
@@ -384,63 +384,63 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
   while (f != NULL)
     {
       if (SF)
-	{
-	  SF->schreyer_down(f->monom, f->comp-1, REDUCE_mon);
-	  M->to_expvector(REDUCE_mon, REDUCE_exp);
-	}
+        {
+          SF->schreyer_down(f->monom, f->comp-1, REDUCE_mon);
+          M->to_expvector(REDUCE_mon, REDUCE_exp);
+        }
       else
-	M->to_expvector(f->monom, REDUCE_exp);
+        M->to_expvector(f->monom, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, r))
-	{
-	  ring_elem u,v;
-	  // Subtract off f, leave fsyz alone
-	  M->divide(f->monom, r->monom, REDUCE_mon);
-	  gbringK->syzygy(f->coeff, r->coeff, u, v);
-	  gbvector * h = GR->mult_by_term(F, r, v, REDUCE_mon, f->comp);
-	  GR->gbvector_add_to(F,f,h);
-	  if (!gbringK->is_equal(u,one))
-	    {
-	      GR->gbvector_mult_by_coeff_to(fsyz, u);
-	      GR->gbvector_mult_by_coeff_to(f, u);
-	      gbringK->remove(u);
-	      gbringK->remove(v);
-	    }
-	  total_reduce_count++;
-	  count++;
-	}
+        {
+          ring_elem u,v;
+          // Subtract off f, leave fsyz alone
+          M->divide(f->monom, r->monom, REDUCE_mon);
+          gbringK->syzygy(f->coeff, r->coeff, u, v);
+          gbvector * h = GR->mult_by_term(F, r, v, REDUCE_mon, f->comp);
+          GR->gbvector_add_to(F,f,h);
+          if (!gbringK->is_equal(u,one))
+            {
+              GR->gbvector_mult_by_coeff_to(fsyz, u);
+              GR->gbvector_mult_by_coeff_to(f, u);
+              gbringK->remove(u);
+              gbringK->remove(v);
+            }
+          total_reduce_count++;
+          count++;
+        }
       else if (find_divisor(mi[f->comp-1], REDUCE_exp, q))
-	{
-	  ring_elem u,v;
-	  gbringK->syzygy(f->coeff, gb[q]->coeff, u, v);
-	  M->divide(f->monom, gb[q]->monom, REDUCE_mon);
-	  gbvector * h = GR->mult_by_term(F, gb[q], v, REDUCE_mon, 0);
-	  if (!gbringK->is_equal(u,one))
-	    {
-	      GR->gbvector_mult_by_coeff_to(fsyz, u);
-	      GR->gbvector_mult_by_coeff_to(f, u);
-	    }
-	  int n1 = GR->gbvector_n_terms(h);
-	  wipe_unneeded_terms(h);
-	  int n2 = GR->gbvector_n_terms(h);
-	  nremoved += (n1-n2);
-	  lastterm->next = make_syz_term(v, f->monom, q+1); // grabs v.
-	  lastterm = lastterm->next;
-	  gbringK->remove(u);
-	  gbringK->remove(v);
-	  int n3 = GR->gbvector_n_terms(f);
-	  GR->gbvector_add_to(F,f,h);
-	  int n4 = GR->gbvector_n_terms(f);
-	  if (n4 > max_len) max_len = n4;
-	  nhits += (n2+n3-n4-2); // the -2 is to avoid counting the lead term cancellations.
-	  total_reduce_count++;
-	  count++;
-	}
+        {
+          ring_elem u,v;
+          gbringK->syzygy(f->coeff, gb[q]->coeff, u, v);
+          M->divide(f->monom, gb[q]->monom, REDUCE_mon);
+          gbvector * h = GR->mult_by_term(F, gb[q], v, REDUCE_mon, 0);
+          if (!gbringK->is_equal(u,one))
+            {
+              GR->gbvector_mult_by_coeff_to(fsyz, u);
+              GR->gbvector_mult_by_coeff_to(f, u);
+            }
+          int n1 = GR->gbvector_n_terms(h);
+          wipe_unneeded_terms(h);
+          int n2 = GR->gbvector_n_terms(h);
+          nremoved += (n1-n2);
+          lastterm->next = make_syz_term(v, f->monom, q+1); // grabs v.
+          lastterm = lastterm->next;
+          gbringK->remove(u);
+          gbringK->remove(v);
+          int n3 = GR->gbvector_n_terms(f);
+          GR->gbvector_add_to(F,f,h);
+          int n4 = GR->gbvector_n_terms(f);
+          if (n4 > max_len) max_len = n4;
+          nhits += (n2+n3-n4-2); // the -2 is to avoid counting the lead term cancellations.
+          total_reduce_count++;
+          count++;
+        }
       else
-	{
-	  // To get here is an ERROR!
-	  f = f->next; // Just to not have an infinite loop
-	  emit_line("error in Schreyer reduction: element does not reduce to zero!");
-	}
+        {
+          // To get here is an ERROR!
+          f = f->next; // Just to not have an infinite loop
+          emit_line("error in Schreyer reduction: element does not reduce to zero!");
+        }
     }
 
   if (M2_gbTrace >= 4)
@@ -474,57 +474,57 @@ void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
   while ((lead = fb.get_lead_term()) != NULL)
     {
       if (SF)
-	{
-	  SF->schreyer_down(lead->monom, lead->comp-1, REDUCE_mon);
-	  M->to_expvector(REDUCE_mon, REDUCE_exp);
-	}
+        {
+          SF->schreyer_down(lead->monom, lead->comp-1, REDUCE_mon);
+          M->to_expvector(REDUCE_mon, REDUCE_exp);
+        }
       else
-	M->to_expvector(lead->monom, REDUCE_exp);
+        M->to_expvector(lead->monom, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, r))
-	{
-	  ring_elem u,v;
-	  // Subtract off f, leave fsyz alone
-	  M->divide(lead->monom, r->monom, REDUCE_mon);
+        {
+          ring_elem u,v;
+          // Subtract off f, leave fsyz alone
+          M->divide(lead->monom, r->monom, REDUCE_mon);
 
-	  gbringK->syzygy(f->coeff, r->coeff, u, v);
-	  gbvector * h = GR->mult_by_term(F, r, v, REDUCE_mon, f->comp);
-	  fb.add(h);
-	  if (!gbringK->is_equal(u,one))
-	    {
-	      GR->gbvector_mult_by_coeff_to(fsyz, u);
-	      GR->gbvector_mult_by_coeff_to(f, u);
-	      gbringK->remove(u);
-	      gbringK->remove(v);
-	    }
+          gbringK->syzygy(f->coeff, r->coeff, u, v);
+          gbvector * h = GR->mult_by_term(F, r, v, REDUCE_mon, f->comp);
+          fb.add(h);
+          if (!gbringK->is_equal(u,one))
+            {
+              GR->gbvector_mult_by_coeff_to(fsyz, u);
+              GR->gbvector_mult_by_coeff_to(f, u);
+              gbringK->remove(u);
+              gbringK->remove(v);
+            }
 
-	  fb.add(h);
-	  total_reduce_count++;
-	  count++;
-	}
+          fb.add(h);
+          total_reduce_count++;
+          count++;
+        }
       else if (find_divisor(mi[lead->comp-1], REDUCE_exp, q))
-	{
-	  ring_elem u,v;
-	  gbringK->syzygy(f->coeff, gb[q]->coeff, u, v);
-	  M->divide(lead->monom, gb[q]->monom, REDUCE_mon);
-	  gbvector * h = GR->mult_by_term(F, gb[q], v, REDUCE_mon, 0);
-	  if (!gbringK->is_equal(u,one))
-	    {
-	      GR->gbvector_mult_by_coeff_to(fsyz, u);
-	      GR->gbvector_mult_by_coeff_to(f, u);
-	    }
-	  wipe_unneeded_terms(h);
-	  lastterm->next = make_syz_term(v, lead->monom, q+1); // grabs v.
-	  lastterm = lastterm->next;
-	  fb.add(h);
-	  total_reduce_count++;
-	  count++;
-	}
+        {
+          ring_elem u,v;
+          gbringK->syzygy(f->coeff, gb[q]->coeff, u, v);
+          M->divide(lead->monom, gb[q]->monom, REDUCE_mon);
+          gbvector * h = GR->mult_by_term(F, gb[q], v, REDUCE_mon, 0);
+          if (!gbringK->is_equal(u,one))
+            {
+              GR->gbvector_mult_by_coeff_to(fsyz, u);
+              GR->gbvector_mult_by_coeff_to(f, u);
+            }
+          wipe_unneeded_terms(h);
+          lastterm->next = make_syz_term(v, lead->monom, q+1); // grabs v.
+          lastterm = lastterm->next;
+          fb.add(h);
+          total_reduce_count++;
+          count++;
+        }
       else
-	{
-	  // To get here is an ERROR!
-	  fb.remove_lead_term();
-	  emit_line("error in Schreyer reduction: element does not reduce to zero!");
-	}
+        {
+          // To get here is an ERROR!
+          fb.remove_lead_term();
+          emit_line("error in Schreyer reduction: element does not reduce to zero!");
+        }
     }
 
   if (M2_gbTrace >= 4)
@@ -537,4 +537,5 @@ void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

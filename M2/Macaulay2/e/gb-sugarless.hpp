@@ -12,6 +12,14 @@
 #include "matrix-con.hpp"
 class GBWeight;
 
+/**
+    @ingroup gb
+
+    @brief A Groebner basis computation class for inhomogeneous input modules.
+    
+    Works for homogeneous modules too.  Poor performance in many cases, but dramatically good
+    performance in others.
+*/
 class GBinhom_comp : public GBComputation
 {
 private:
@@ -27,8 +35,8 @@ private:
 
   s_pair_heap *spairs;
 
-  gb_elem *gb;			// The minimal GB so far encountered
-				// This is a list with a dummy head.
+  gb_elem *gb;                  // The minimal GB so far encountered
+                                // This is a list with a dummy head.
 
   gb_elem *gbLarge;
 
@@ -52,7 +60,7 @@ private:
   int n_saved_lcm;
 
   // Syzygy type
-  int collect_syz;	// 0 or 1
+  int collect_syz;      // 0 or 1
   int n_comps_per_syz;
   char is_ideal;
   int strategy;
@@ -88,11 +96,11 @@ private:
   void minimalize_gb();
 public:
   // An honest GB computation
-  GBinhom_comp(const Matrix *m, 
-	       int collect_syz, 
-	       int n_syz, 
-	       M2_arrayint gb_weights,
-	       int strategy);
+  GBinhom_comp(const Matrix *m,
+               int collect_syz,
+               int n_syz,
+               M2_arrayint gb_weights,
+               int strategy);
   ~GBinhom_comp();
 
   virtual void remove_gb() {}
@@ -127,14 +135,14 @@ public:
   //////////////////////////
   virtual bool stop_conditions_ok() { return true; }
 
-  static GBinhom_comp * create(const Matrix *m, 
-			       M2_bool collect_syz, 
-			       int n_rows_to_keep,
-			       M2_arrayint gb_weights,
-			       int strategy, 
-			       M2_bool use_max_degree,
-			       int max_degree);
-  
+  static GBinhom_comp * create(const Matrix *m,
+                               M2_bool collect_syz,
+                               int n_rows_to_keep,
+                               M2_arrayint gb_weights,
+                               int strategy,
+                               M2_bool use_max_degree,
+                               int max_degree);
+
   virtual int kind() { return 232; } // FIX THIS!!
 
   void start_computation();
@@ -156,21 +164,22 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient
-			   );
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
+                           );
 
   virtual int contains(const Matrix *m);
 
-  virtual void text_out(buffer &o) const; 
+  virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the
      M2_gbTrace value */
 
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
-};  
+};
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -1,0 +1,6 @@
+a confusing error message:
+
+i7 : delete(PackageDictionary,"foo")
+stdio:7:1:(3): error: expected argument 2 to be a string
+
+

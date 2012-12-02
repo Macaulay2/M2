@@ -36,9 +36,9 @@ class Monoid : public mutable_object
   M2_ArrayString varnames_;
   M2_arrayint degvals_;
   M2_arrayint heftvals_;
-  array<const_monomial> degree_of_var_;	// [0]..[nvars-1] are the multi-degrees of the 
-				// variables, and [nvars] = zero element in the 
-				// degree monoid.
+  array<const_monomial> degree_of_var_; // [0]..[nvars-1] are the multi-degrees of the
+                                // variables, and [nvars] = zero element in the
+                                // degree monoid.
   M2_arrayint heft_degree_of_var_;
 
   const PolynomialRing *degree_ring_;
@@ -63,8 +63,8 @@ class Monoid : public mutable_object
   int first_weights_slot_; // < 0 if none, otherwise the location of the first weight vec value
                            // in each monomial
   VECTOR(int) nslots_;
-  
-  
+
+
   void set_degrees();
   void set_overflow_flags();
 
@@ -73,17 +73,17 @@ class Monoid : public mutable_object
   Monoid();
 
   Monoid(const MonomialOrdering *mo,
-	 M2_ArrayString names,
-	 const PolynomialRing *DR, /* degree ring */
-	 M2_arrayint degs,
-	 M2_arrayint hefts);
-  
+         M2_ArrayString names,
+         const PolynomialRing *DR, /* degree ring */
+         M2_arrayint degs,
+         M2_arrayint hefts);
+
 public:
   static Monoid *create(const MonomialOrdering *mo,
-			M2_ArrayString names,
-			const PolynomialRing *DR, /* degree ring */
-			M2_arrayint degs,
-			M2_arrayint hefts);
+                        M2_ArrayString names,
+                        const PolynomialRing *DR, /* degree ring */
+                        M2_arrayint degs,
+                        M2_arrayint hefts);
 
   ~Monoid();
 
@@ -104,9 +104,9 @@ public:
   bool primary_degrees_of_vars_positive() const;
 
   bool is_group() const { return n_invertible_vars_ == nvars_; }
-  bool has_monomials_lt_one() const { 
+  bool has_monomials_lt_one() const {
     return (n_invertible_vars_ > 0 || local_vars->len > 0); }
-  
+
   void text_out(buffer &o) const;
 
   int n_vars()        const { return nvars_; }
@@ -125,18 +125,18 @@ public:
   void from_expvector(const_exponents exp, monomial result) const;
   void to_expvector(const_monomial m, exponents result_exp) const;
 
-  M2_arrayint to_arrayint(const_monomial monom) const; /* Returns an exponent vector representation 
-						      of the monomial */
+  M2_arrayint to_arrayint(const_monomial monom) const; /* Returns an exponent vector representation
+                                                      of the monomial */
   bool in_subring(int nslots, const_monomial m) const;
   inline int compare(int nslots, const_monomial m, const_monomial n) const
      {
-	for(int i = nslots; i!=0; --i)
-	  {
-	    if (*m > *n) return GT;
-	    if (*m < *n) return LT;
-	    m++; n++;
-	  }
-	return EQ;
+        for(int i = nslots; i!=0; --i)
+          {
+            if (*m > *n) return GT;
+            if (*m < *n) return LT;
+            m++; n++;
+          }
+        return EQ;
       }
 
   monomial make_new(const_monomial d) const;
@@ -144,7 +144,7 @@ public:
   void remove(monomial d) const;
 
   bool is_one(const_monomial m) const;
-  bool is_invertible(const_monomial m) const; // is every variable that occurs 
+  bool is_invertible(const_monomial m) const; // is every variable that occurs
   // in 'm' allowed to be negative?
 
   void one(monomial result) const;
@@ -153,15 +153,15 @@ public:
   void mult(const_monomial m, const_monomial n, monomial result) const;
   void power(const_monomial m, int n, monomial result) const;
   inline int compare(const_monomial m, const_monomial n) const {
-	  int i = monomial_size_;
-	  if (i == 0) return EQ;
-	  while (1)
-	    {
-	      if (*m > *n) return GT;
-	      if (*m < *n) return LT;
-	      if (--i == 0) return EQ;
-	      m++, n++;
-	    }
+          int i = monomial_size_;
+          if (i == 0) return EQ;
+          while (1)
+            {
+              if (*m > *n) return GT;
+              if (*m < *n) return LT;
+              if (--i == 0) return EQ;
+              m++, n++;
+            }
      }
   int partial_compare(int num, const_monomial m, const_monomial n) const;
   int compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const;
@@ -169,10 +169,10 @@ public:
   void divide(const_monomial m, const_monomial n, monomial result) const;
   void lcm(const_monomial m, const_monomial n, monomial result) const;
   void gcd(const_monomial m, const_monomial n, monomial result) const;
-  void monsyz(const_monomial m, 
-	      const_monomial n, 
-	      monomial result_sm, 
-	      monomial result_sn) const;
+  void monsyz(const_monomial m,
+              const_monomial n,
+              monomial result_sm,
+              monomial result_sn) const;
 
   void elem_text_out(buffer &o, const_monomial m, bool p_one=true) const;
 
@@ -195,20 +195,21 @@ public:
 // // needed...
 // inline void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 //     { for (int i=0; i<monomial_size_; i++) *result++ = *m++ + *n++; }
-// 
+//
 // inline void Monoid::power(const_monomial m, int n, monomial result) const
 //     { for (int i=0; i<monomial_size_; i++) *result++ = *m++ * n; }
 #endif
 
 // WARNING!! 'divide' assumes that division is possible
 inline void Monoid::divide(const_monomial m, const_monomial n, monomial result) const
-    { 
-      for (int i=monomial_size_; i>0; i--) 
-	*result++ = *m++ - *n++; 
+    {
+      for (int i=monomial_size_; i>0; i--)
+        *result++ = *m++ - *n++;
     }
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

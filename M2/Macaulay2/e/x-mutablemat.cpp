@@ -17,16 +17,16 @@
 #include "ring-test.hpp"
 
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
-						 int n,
-						 M2_bool is_dense)
+                                                 int n,
+                                                 M2_bool is_dense)
 {
   return MutableMatrix::identity(R, n, is_dense);
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
-					    int nrows,
-					    int ncols,
-					    M2_bool is_dense)
+                                            int nrows,
+                                            int ncols,
+                                            M2_bool is_dense)
 {
   return MutableMatrix::zero_matrix(R,nrows,ncols,is_dense);
 }
@@ -74,7 +74,7 @@ void rawMutableMatrixFillRandom(MutableMatrix *M, long nelems)
       int c = rawRandomInt(ncols);
       ring_elem a = R->random();
       if (!R->is_zero(a))
-	M->set_entry(r,c,R->random());
+        M->set_entry(r,c,R->random());
     }
 }
 
@@ -97,35 +97,35 @@ void rawMutableMatrixFillRandomDensity(MutableMatrix *M, double density, int spe
   if (special_type == 0)
     {
       for (int i=0; i<ncols; i++)
-	for (int j=0; j<nrows; j++)
-	  {
-	    if (doing_fraction)
-	      {
-		int32_t u = rawRandomInt((int32_t)10000);
-		if (u > threshold) continue;
-	      }
-	    ring_elem a = R->random();
-	    if (!R->is_zero(a))
-	      M->set_entry(j,i,a);
-	  }
+        for (int j=0; j<nrows; j++)
+          {
+            if (doing_fraction)
+              {
+                int32_t u = rawRandomInt((int32_t)10000);
+                if (u > threshold) continue;
+              }
+            ring_elem a = R->random();
+            if (!R->is_zero(a))
+              M->set_entry(j,i,a);
+          }
     }
   else if (special_type == 1)
     {
       for (int i=0; i<ncols; i++)
-	{
-	  int top = (i>=nrows ? nrows : i);
-	  for (int j=0; j<top; j++)
-	    {
-	      if (doing_fraction)
-		{
-		  int32_t u = rawRandomInt((int32_t)10000);
-		  if (u > threshold) continue;
-		}
-	      ring_elem a = R->random();
-	      if (!R->is_zero(a))
-		M->set_entry(j,i,a);
-	    }
-	}
+        {
+          int top = (i>=nrows ? nrows : i);
+          for (int j=0; j<top; j++)
+            {
+              if (doing_fraction)
+                {
+                  int32_t u = rawRandomInt((int32_t)10000);
+                  if (u > threshold) continue;
+                }
+              ring_elem a = R->random();
+              if (!R->is_zero(a))
+                M->set_entry(j,i,a);
+            }
+        }
     }
 }
 
@@ -146,10 +146,10 @@ const RingElement /* or null */ * IM2_MutableMatrix_get_entry(const MutableMatri
   return RingElement::make_raw(M->get_ring(), result);
 }
 
-M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M, 
-					int r, 
-					int c, 
-					const RingElement *a)
+M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M,
+                                        int r,
+                                        int c,
+                                        const RingElement *a)
 {
   const Ring *R = M->get_ring();
   if (R != a->get_ring())
@@ -198,11 +198,11 @@ M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j)
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M, 
-					int i,
-					const RingElement *r, 
-					int j,
-					M2_bool opposite_mult)
+M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
+                                        int i,
+                                        const RingElement *r,
+                                        int j,
+                                        M2_bool opposite_mult)
   /* row(i) <- row(i) + r * row(j) */
 {
   const Ring *R = M->get_ring();
@@ -221,11 +221,11 @@ M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M, 
-					   int i,
-					   const RingElement *r, 
-					   int j,
-					   M2_bool opposite_mult)
+M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
+                                           int i,
+                                           const RingElement *r,
+                                           int j,
+                                           M2_bool opposite_mult)
   /* column(i) <- column(i) + r * column(j) */
 {
   const Ring *R = M->get_ring();
@@ -244,10 +244,10 @@ M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M, 
-				    const RingElement *r, 
-				    int i,
-				    M2_bool opposite_mult)
+M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
+                                    const RingElement *r,
+                                    int i,
+                                    M2_bool opposite_mult)
   /* row(i) <- r * row(i) */
 {
   const Ring *R = M->get_ring();
@@ -265,8 +265,8 @@ M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M, 
-    const RingElement *r, 
+M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M,
+    const RingElement *r,
     int i,
     M2_bool opposite_mult)
   /* column(i) <- r * column(i) */
@@ -312,10 +312,10 @@ M2_bool IM2_MutableMatrix_delete_rows(MutableMatrix *M, int i, int j)
 }
 
 M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
-				      int c1, int c2, 
-				      const RingElement *a1, const RingElement *a2,
-				      const RingElement *b1, const RingElement *b2,
-				      M2_bool opposite_mult)
+                                      int c1, int c2,
+                                      const RingElement *a1, const RingElement *a2,
+                                      const RingElement *b1, const RingElement *b2,
+                                      M2_bool opposite_mult)
   /* column(c1) <- a1 * column(c1) + a2 * column(c2)
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
@@ -327,16 +327,16 @@ M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
       return 0;
     }
   return M->column2by2(c1,c2,
-		       a1->get_value(),a2->get_value(),
-		       b1->get_value(),b2->get_value());
+                       a1->get_value(),a2->get_value(),
+                       b1->get_value(),b2->get_value());
 }
 
 
 M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
-				   int r1, int r2, 
-				   const RingElement *a1, const RingElement *a2,
-				   const RingElement *b1, const RingElement *b2,
-				   M2_bool opposite_mult)
+                                   int r1, int r2,
+                                   const RingElement *a1, const RingElement *a2,
+                                   const RingElement *b1, const RingElement *b2,
+                                   M2_bool opposite_mult)
   /* row(r1) <- a1 * row(r1) + a2 * row(r2)
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -348,8 +348,8 @@ M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
       return 0;
     }
   return M->row2by2(r1,r2,
-		    a1->get_value(),a2->get_value(),
-		    b1->get_value(),b2->get_value());
+                    a1->get_value(),a2->get_value(),
+                    b1->get_value(),b2->get_value());
 }
 
 M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi)
@@ -360,8 +360,8 @@ M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi)
 }
 
 M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
-				      int start, 
-				      M2_arrayint perm)
+                                      int start,
+                                      M2_arrayint perm)
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
@@ -375,17 +375,17 @@ M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
     {
       int r = start + perm->array[i];
       if (r < 0 || r >= nrows)
-	{
-	  ERROR("row indices out of range");
-	  return false;
-	}
+        {
+          ERROR("row indices out of range");
+          return false;
+        }
     }
   return M->row_permute(start,perm);
 }
 
 M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
-					 int start, 
-					 M2_arrayint perm)
+                                         int start,
+                                         M2_arrayint perm)
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
@@ -399,10 +399,10 @@ M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
     {
       int r = start + perm->array[i];
       if (r < 0 || r >= ncols)
-	{
-	  ERROR("column indices out of range");
-	  return false;
-	}
+        {
+          ERROR("column indices out of range");
+          return false;
+        }
     }
   return M->column_permute(start,perm);
 }
@@ -420,8 +420,8 @@ M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M)
   return M->is_zero();
 }
 
-M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M, 
-					 const MutableMatrix *N)
+M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M,
+                                         const MutableMatrix *N)
 /* This checks that the entries of M,N are the same */
 {
   return M->is_equal(N);
@@ -432,19 +432,19 @@ MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
   return M->copy(prefer_dense);
 }
 
-M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
-				     M2_arrayint rows,
-				     M2_arrayint cols,
-				     engine_RawRingElementArray values)
+M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
+                                     M2_arrayint rows,
+                                     M2_arrayint cols,
+                                     engine_RawRingElementArray values)
 {
   return M->set_values(rows,cols,values);
 }
 
 
-void perform_reduction(MutableMatrix *M, 
-		       int r, int c, 
-		       int nr, int nc,
-		       int pivot_type)
+void perform_reduction(MutableMatrix *M,
+                       int r, int c,
+                       int nr, int nc,
+                       int pivot_type)
   // Subroutine of reduce_pivots()
   // pivot_type: 1 means pivot is 1, -1 means pivot is -1, 0 means pivot is unit
 {
@@ -459,7 +459,7 @@ void perform_reduction(MutableMatrix *M,
   ring_elem pivot;
   long pivotrow = M->lead_row(nc, pivot);
   if (pivot_type == -1) // pivot is -1
-    M->scale_column(nc,pivot);    
+    M->scale_column(nc,pivot);
   else if (pivot_type == 0)
     M->divide_column(nc, pivot);
   for (int i=0; i<nc; i++)
@@ -468,11 +468,11 @@ void perform_reduction(MutableMatrix *M,
       pivotrow = M->lead_row(i,coef);
       if (pivotrow < 0) continue;
       if (pivotrow == nr)
-	{
-	  // Do the reduction
-	  ring_elem f = R->negate(coef);
-	  M->column_op(i, f, nc);
-	}
+        {
+          // Do the reduction
+          ring_elem f = R->negate(coef);
+          M->column_op(i, f, nc);
+        }
     }
   M->scale_column(nc, R->zero());
   M->set_entry(nr,nc,R->one());
@@ -495,23 +495,23 @@ void reduce_pivots(MutableMatrix *M)
     {
       p->set(i);
       for (; p->valid(); p->next())
-	{
-	  int pivot_type = 0;
-	  ring_elem coef;
-	  p->copy_ring_elem(coef);
-	  if (K->is_equal(one, coef))
-	    pivot_type = 1;
-	  else if (K->is_equal(minus_one, coef))
-	    pivot_type = -1;
-	  if (pivot_type != 0)
-	    {
-	      perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
-	      if (nr < 0 || nc < 0) return;
-	      // restart loop with the (new) column i
-	      i = -1;
-	      break;
-	    }
-	}
+        {
+          int pivot_type = 0;
+          ring_elem coef;
+          p->copy_ring_elem(coef);
+          if (K->is_equal(one, coef))
+            pivot_type = 1;
+          else if (K->is_equal(minus_one, coef))
+            pivot_type = -1;
+          if (pivot_type != 0)
+            {
+              perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
+              if (nr < 0 || nc < 0) return;
+              // restart loop with the (new) column i
+              i = -1;
+              break;
+            }
+        }
     }
 
   // Now search for other possible pivots
@@ -519,29 +519,29 @@ void reduce_pivots(MutableMatrix *M)
     {
       p->set(i);
       for (; p->valid(); p->next())
-	{
-	  ring_elem coef;
-	  p->copy_ring_elem(coef);
-	  if (!K->is_unit(coef)) continue;
-	  int pivot_type = 0;
-	  if (K->is_equal(one, coef))
-	    pivot_type = 1;
-	  else if (K->is_equal(minus_one, coef))
-	    pivot_type = -1;
+        {
+          ring_elem coef;
+          p->copy_ring_elem(coef);
+          if (!K->is_unit(coef)) continue;
+          int pivot_type = 0;
+          if (K->is_equal(one, coef))
+            pivot_type = 1;
+          else if (K->is_equal(minus_one, coef))
+            pivot_type = -1;
 
-	  perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
-	  if (nr < 0 || nc < 0) return;
-	  // restart loop with the (new) column i
-	  i = -1;
-	  break;
-	}
+          perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
+          if (nr < 0 || nc < 0) return;
+          // restart loop with the (new) column i
+          i = -1;
+          break;
+        }
     }
 }
 
 ////////////////////////////
 //
 //void SparseMutableMatrix::perform_reduction(int r, int c, int nr, int nc,
-//					    int pivot_type)
+//                                          int pivot_type)
 //  // Subroutine of reduce_pivots()
 //  // pivot_type: 1 means pivot is 1, -1 means pivot is -1, 0 means pivot is unit
 //{
@@ -554,7 +554,7 @@ void reduce_pivots(MutableMatrix *M)
 //  interchange_rows(r,nr);
 //  ring_elem pivot = columns_[nc]->coeff;
 //  if (pivot_type == -1) // pivot is -1
-//    scale_column(pivot,nc,false);    
+//    scale_column(pivot,nc,false);
 //  else if (pivot_type == 0)
 //    divide_column(nc, pivot);
 //  for (int i=0; i<nc; i++)
@@ -562,11 +562,11 @@ void reduce_pivots(MutableMatrix *M)
 //      vec p = columns_[i];
 //      if (p == 0) continue;
 //      if (p->comp == nr)
-//	{
-//	  // Do the reduction
-//	  ring_elem f = R->negate(p->coeff);
-//	  column_op(i, f, nc, false);
-//	}
+//      {
+//        // Do the reduction
+//        ring_elem f = R->negate(p->coeff);
+//        column_op(i, f, nc, false);
+//      }
 //    }
 //  R->remove_vec(columns_[nc]);
 //  columns_[nc] = R->e_sub_i(nr);
@@ -586,42 +586,42 @@ void reduce_pivots(MutableMatrix *M)
 //
 //  for (int i=0; i<=nc; i++)
 //    {
-//      for (vec p = columns_[i]; p != 0; p = p->next) 
-//	{
-//	  int pivot_type = 0;
-//	  if (K->is_equal(one, p->coeff))
-//	    pivot_type = 1;
-//	  else if (K->is_equal(minus_one, p->coeff))
-//	    pivot_type = -1;
-//	  if (pivot_type != 0)
-//	    {
-//	      perform_reduction(p->comp, i, nr--, nc--, pivot_type);
-//	      if (nr < 0 || nc < 0) return;
-//	      // restart loop with the (new) column i
-//	      i = -1;
-//	      break;
-//	    }
-//	}
+//      for (vec p = columns_[i]; p != 0; p = p->next)
+//      {
+//        int pivot_type = 0;
+//        if (K->is_equal(one, p->coeff))
+//          pivot_type = 1;
+//        else if (K->is_equal(minus_one, p->coeff))
+//          pivot_type = -1;
+//        if (pivot_type != 0)
+//          {
+//            perform_reduction(p->comp, i, nr--, nc--, pivot_type);
+//            if (nr < 0 || nc < 0) return;
+//            // restart loop with the (new) column i
+//            i = -1;
+//            break;
+//          }
+//      }
 //    }
 //
 //  // Now search for other possible pivots
 //  for (int i=0; i<=nc; i++)
 //    {
-//      for (vec p = columns_[i]; p != 0; p = p->next) 
-//	{
-//	  if (!K->is_unit(p->coeff)) continue;
-//	  int pivot_type = 0;
-//	  if (K->is_equal(one, p->coeff))
-//	    pivot_type = 1;
-//	  else if (K->is_equal(minus_one, p->coeff))
-//	    pivot_type = -1;
+//      for (vec p = columns_[i]; p != 0; p = p->next)
+//      {
+//        if (!K->is_unit(p->coeff)) continue;
+//        int pivot_type = 0;
+//        if (K->is_equal(one, p->coeff))
+//          pivot_type = 1;
+//        else if (K->is_equal(minus_one, p->coeff))
+//          pivot_type = -1;
 //
-//	  perform_reduction(p->comp, i, nr--, nc--, pivot_type);
-//	  if (nr < 0 || nc < 0) return;
-//	  // restart loop with the (new) column i
-//	  i = -1;
-//	  break;
-//	}
+//        perform_reduction(p->comp, i, nr--, nc--, pivot_type);
+//        if (nr < 0 || nc < 0) return;
+//        // restart loop with the (new) column i
+//        i = -1;
+//        break;
+//      }
 //    }
 //}
 
@@ -636,22 +636,22 @@ M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
-						  M2_arrayint rows,
-						  M2_arrayint cols)
+                                                  M2_arrayint rows,
+                                                  M2_arrayint cols)
 {
   return M->submatrix(rows,cols);
 }
 
 bool IM2_MutableMatrix_set_submatrix(MutableMatrix *M,
-				     M2_arrayint rows,
-				     M2_arrayint cols,
-				     const MutableMatrix *N)
+                                     M2_arrayint rows,
+                                     M2_arrayint cols,
+                                     const MutableMatrix *N)
 {
   return M->set_submatrix(rows,cols,N);
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
-						   M2_arrayint cols)
+                                                   M2_arrayint cols)
 {
   return M->submatrix(cols);
 }
@@ -665,10 +665,10 @@ M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M)
   return FF_LUComputation::DO(M);
 }
 
-M2_bool rawLLL(MutableMatrix *M, 
-		MutableMatrix /* or null */ *U,
-		gmp_QQ threshold, 
-		int strategy)
+M2_bool rawLLL(MutableMatrix *M,
+                MutableMatrix /* or null */ *U,
+                gmp_QQ threshold,
+                int strategy)
 {
   if (strategy == 0)
     {
@@ -709,14 +709,14 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
 //typedef DMat<CoefficientRingCCC> LMatrixCC;
 
 M2_arrayintOrNull rawLU(const MutableMatrix *A,
-			 MutableMatrix *L,
-			 MutableMatrix *U)
+                         MutableMatrix *L,
+                         MutableMatrix *U)
 {
   return A->LU(L,U);
 }
 
 M2_bool rawNullspaceU(MutableMatrix *U,
-		      MutableMatrix *x)
+                      MutableMatrix *x)
   /* U should be a matrix in LU 'U' format.
      x is set to the matrix whose columns form a basis of Ux=0,
      which is the same as Ax=0. if A = PLU is the LU-decomp of A.
@@ -732,16 +732,16 @@ M2_bool rawNullspaceU(MutableMatrix *U,
 }
 
 M2_bool rawSolve(MutableMatrix *A,
-		 MutableMatrix *b,
-		 MutableMatrix *x)
+                 MutableMatrix *b,
+                 MutableMatrix *x)
 {
   /* Check: A, b, x all have the same ring, either RR or CC */
-  /* Check: if all of these are dense mutable matrices, then 
+  /* Check: if all of these are dense mutable matrices, then
      call the correct routine */
-  /* Otherwise: give error: 
+  /* Otherwise: give error:
      OR: make mutable matrices of the correct size, call the correct routine
      and afterwords, copy to x. */
-  
+
   const Ring *R = A->get_ring();
   if (R != b->get_ring() || R != x->get_ring())
     {
@@ -757,33 +757,33 @@ M2_bool rawSolve(MutableMatrix *A,
 }
 
 M2_bool rawEigenvalues(MutableMatrix *A,
-		       MutableMatrix *eigenvalues,
-		       M2_bool is_symm_or_hermitian)
+                       MutableMatrix *eigenvalues,
+                       M2_bool is_symm_or_hermitian)
 {
   return A->eigenvalues(eigenvalues,is_symm_or_hermitian);
 }
 
 M2_bool rawEigenvectors(MutableMatrix *A,
-			MutableMatrix *eigenvalues,
-			MutableMatrix *eigenvectors,
-			M2_bool is_symm_or_hermitian)
+                        MutableMatrix *eigenvalues,
+                        MutableMatrix *eigenvectors,
+                        M2_bool is_symm_or_hermitian)
 {
   return A->eigenvectors(eigenvalues, eigenvectors, is_symm_or_hermitian);
 }
 
 M2_bool rawSVD(MutableMatrix *A,
-	       MutableMatrix *Sigma,
-	       MutableMatrix *U,
-	       MutableMatrix *VT,
-	       M2_bool use_divide_and_conquer)
+               MutableMatrix *Sigma,
+               MutableMatrix *U,
+               MutableMatrix *VT,
+               M2_bool use_divide_and_conquer)
 {
   return A->SVD(Sigma,U,VT,use_divide_and_conquer);
 }
 
-M2_bool rawLeastSquares(MutableMatrix *A, 
-			MutableMatrix *b, 
-			MutableMatrix *x, /* return value: argument modified */
-			M2_bool assume_full_rank)
+M2_bool rawLeastSquares(MutableMatrix *A,
+                        MutableMatrix *b,
+                        MutableMatrix *x, /* return value: argument modified */
+                        M2_bool assume_full_rank)
 /* Case 1: A is a dense matrix over RR.  Then so are b,x.
    Case 2: A is a dense matrix over CC.  Then so are b,x. */
 {
@@ -834,7 +834,7 @@ MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon, MutableMatrix
     }
   //return M->clean(epsilon);
   return NULL;
-} 
+}
 
 static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
 {
@@ -876,11 +876,11 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
   for (int c=0; c<n_cols(); c++)
     {
       for (i->set(c); i->valid(); i->next())
-	{
-	  ring_elem a;
-	  i->copy_ring_elem(a);
-	  R->increase_maxnorm(nm, a);
-	}
+        {
+          ring_elem a;
+          i->copy_ring_elem(a);
+          R->increase_maxnorm(nm, a);
+        }
     }
   delete i;
   return nm;
@@ -890,7 +890,7 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 }
 
 #if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
-//#if 0 
+//#if 0
 #include "fflas-ffpack/field/modular-positive.h"
 #include "fflas-ffpack/field/modular-balanced.h"
 #include "fflas-ffpack/ffpack/ffpack.h"
@@ -928,16 +928,16 @@ template < typename FieldType >
 typename FieldType::Element *GFtoFFPackMatrix(const GF *kk, const FieldType &F, MutableMatrix *M)
 {
   typedef typename FieldType::Element ElementType;
-  
+
   ElementType * N = newarray(ElementType, M->n_rows() * M->n_cols());
   ElementType *inN = N;
   for (size_t i = 0; i<M->n_rows(); i++)
     for (size_t j = 0; j<M->n_cols(); j++)
       {
-	ring_elem a;
-	M->get_entry(i,j,a);
-	int b = kk->discrete_log(a);
-	*inN++ = b;
+        ring_elem a;
+        M->get_entry(i,j,a);
+        int b = kk->discrete_log(a);
+        *inN++ = b;
       }
   return N;
 }
@@ -946,103 +946,103 @@ template < typename FieldType >
 typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const FieldType &F, MutableMatrix *M)
 {
   typedef typename FieldType::Element ElementType;
-  
+
   ElementType * N = newarray(ElementType, M->n_rows() * M->n_cols());
   ElementType *inN = N;
   for (size_t i = 0; i<M->n_rows(); i++)
     for (size_t j = 0; j<M->n_cols(); j++)
       {
-	ring_elem a;
-	M->get_entry(i,j,a);
-	int b = kk->to_int(a);
-	double d = b;
-	F.init(*inN++, d);
+        ring_elem a;
+        M->get_entry(i,j,a);
+        int b = kk->to_int(a);
+        double d = b;
+        F.init(*inN++, d);
       }
   return N;
 }
 
 #if 0
 
-// This is practice code to see about incorporating givaro types into these functions 
+// This is practice code to see about incorporating givaro types into these functions
 template < typename M2FieldName > /* M2FieldName is Z_mod, or GF */
 /* Z_mod or GF would have the following types:
      typename Z_mod::FieldType
    therefore also
      Z_mod::FieldType::ElementType
 */
-MutableMatrix *fromFFPackMatrixPractice(const M2FieldName *kk, 
-					const typename M2FieldName::FieldType &F,
-					typename M2FieldName::FieldType::Element *N, 
-					size_t nrows, 
-					size_t ncols)
+MutableMatrix *fromFFPackMatrixPractice(const M2FieldName *kk,
+                                        const typename M2FieldName::FieldType &F,
+                                        typename M2FieldName::FieldType::Element *N,
+                                        size_t nrows,
+                                        size_t ncols)
 {
   typedef typename M2FieldName::FieldType FieldType;
   typedef typename FieldType::Element ElementType;
-  
+
   MutableMatrix * M = MutableMatrix::zero_matrix(kk, nrows, ncols, true);
   ElementType *inN = N;
   for (size_t i = 0; i<nrows; i++)
     for (size_t j = 0; j<ncols; j++)
       {
-	unsigned long a;  // unsigned long should be a type: M2FieldName::FieldType::(Residu_t or unsigned long)
-	F.convert(a, *inN);
-	inN++;
-	ring_elem b = kk->from_int(a); // MES: this will need to be changed to convert from givaro/ffpack types to M2 types
-	M->set_entry(i,j,b);
+        unsigned long a;  // unsigned long should be a type: M2FieldName::FieldType::(Residu_t or unsigned long)
+        F.convert(a, *inN);
+        inN++;
+        ring_elem b = kk->from_int(a); // MES: this will need to be changed to convert from givaro/ffpack types to M2 types
+        M->set_entry(i,j,b);
       }
   return M;
 }
 #endif
 
 template < typename FieldType >
-MutableMatrix *fromFFPackMatrix(const Z_mod *kk, 
-				const FieldType &F,
-				typename FieldType::Element *N, 
-				size_t nrows, 
-				size_t ncols)
+MutableMatrix *fromFFPackMatrix(const Z_mod *kk,
+                                const FieldType &F,
+                                typename FieldType::Element *N,
+                                size_t nrows,
+                                size_t ncols)
 {
   typedef typename FieldType::Element ElementType;
-  
+
   MutableMatrix * M = MutableMatrix::zero_matrix(kk, nrows, ncols, true);
   ElementType *inN = N;
   for (size_t i = 0; i<nrows; i++)
     for (size_t j = 0; j<ncols; j++)
       {
-	unsigned long a;
-	F.convert(a, *inN);
-	inN++;
-	ring_elem b = kk->from_int(a);
-	M->set_entry(i,j,b);
+        unsigned long a;
+        F.convert(a, *inN);
+        inN++;
+        ring_elem b = kk->from_int(a);
+        M->set_entry(i,j,b);
       }
   return M;
 }
 
 template < typename FieldType >
-MutableMatrix *fillFromFFPackMatrix(const Z_mod *kk, 
-				    const FieldType &F,
-				    MutableMatrix *C,
-				    typename FieldType::Element *N)
+MutableMatrix *fillFromFFPackMatrix(const Z_mod *kk,
+                                    const FieldType &F,
+                                    MutableMatrix *C,
+                                    typename FieldType::Element *N)
 // sets C from N.  Both should have the same shape!
 {
   typedef typename FieldType::Element ElementType;
-  
+
   size_t nrows = C->n_rows();
   size_t ncols = C->n_cols();
   ElementType *inN = N;
   for (size_t i = 0; i<nrows; i++)
     for (size_t j = 0; j<ncols; j++)
       {
-	unsigned long a;
-	F.convert(a, *inN);
-	inN++;
-	ring_elem b = kk->from_int(a);
-	C->set_entry(i,j,b);
+        unsigned long a;
+        F.convert(a, *inN);
+        inN++;
+        ring_elem b = kk->from_int(a);
+        C->set_entry(i,j,b);
       }
   return C;
 }
 
 RingElement *rawFFPackDeterminant(MutableMatrix *M)
-// M should be a mutable matrix over a finite prime field, 
+// M should be a mutable matrix over a finite prime field,
 // of square size.
 {
   // declare the field DONE
@@ -1115,8 +1115,8 @@ size_t rawFFPackRank(MutableMatrix *M)
     if (gf != 0) return FFPackRankGF(gf,M);
     else
       {
-	ERROR("expected finite prime field");
-	return -1;
+        ERROR("expected finite prime field");
+        return -1;
       }
   }
 }
@@ -1143,8 +1143,8 @@ MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool right
   size_t nullspace_dim;
   size_t nullspace_leading_dim;
   FFPACK::NullSpaceBasis(F,
-			 (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
-			 nr, nc, N, nc, nullspace, nullspace_leading_dim, nullspace_dim);
+                         (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
+                         nr, nc, N, nc, nullspace, nullspace_leading_dim, nullspace_dim);
   cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << endl;
   size_t nullspace_nrows = (right_side ? nc : nullspace_dim);
   if (right_side && nullspace_dim != nullspace_leading_dim)
@@ -1192,16 +1192,16 @@ MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A, MutableMatrix *B,
 
   int info; // >0 if the system is inconsistent, ==0 means success
 
-  FFPACK::fgesv(F, 
-	        (right_side ? FFLAS::FflasLeft : FFLAS::FflasRight), // 
-		a_rows, a_cols, 
-		(right_side ? b_cols : b_rows), 
-		ffpackA, 
-		a_cols, // leading dim of A
-		ffpackX, x_cols, 
-		ffpackB, b_cols,
-		&info);
-  
+  FFPACK::fgesv(F,
+                (right_side ? FFLAS::FflasLeft : FFLAS::FflasRight), //
+                a_rows, a_cols,
+                (right_side ? b_cols : b_rows),
+                ffpackA,
+                a_cols, // leading dim of A
+                ffpackX, x_cols,
+                ffpackB, b_cols,
+                &info);
+
   if (info > 0)
     {
       // the system is inconsistent
@@ -1252,14 +1252,14 @@ MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M)
   return result;
 }
 
-MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C, 
-						    MutableMatrix *A, 
-						    MutableMatrix *B,
-						    M2_bool transposeA,
-						    M2_bool transposeB,
-						    const RingElement *a,
-						    const RingElement *b)
-  /* A,B,C should be mutable matrices over a finite prime field, and a,b 
+MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
+                                                    MutableMatrix *A,
+                                                    MutableMatrix *B,
+                                                    M2_bool transposeA,
+                                                    M2_bool transposeB,
+                                                    const RingElement *a,
+                                                    const RingElement *b)
+  /* A,B,C should be mutable matrices over a finite prime field, and a,b
      elements of this field.
      C = b*C + a * op(A)*op(B),
      where op(A) = A or transpose(A), depending on transposeA
@@ -1281,7 +1281,7 @@ MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
   // set tA, tB
   FFLAS::FFLAS_TRANSPOSE tA = (transposeA ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
   FFLAS::FFLAS_TRANSPOSE tB = (transposeB ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
-  
+
   // determine m,n,k
   size_t m = (transposeA ? A->n_cols() : A->n_rows());
   size_t n = (transposeB ? B->n_rows() : B->n_cols());
@@ -1304,17 +1304,17 @@ MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
   ElementType *ffB = toFFPackMatrix(kk, F, B);
 
   FFLAS::fgemm(F,
-		tA, tB, 
-		m,n,k,  
-		ffa,
-		ffA,
-		A->n_cols(),
-		ffB,
-		B->n_cols(),
-		ffb,
-		ffC,
-		C->n_cols()
-		);
+                tA, tB,
+                m,n,k,
+                ffa,
+                ffA,
+                A->n_cols(),
+                ffB,
+                B->n_cols(),
+                ffb,
+                ffC,
+                C->n_cols()
+                );
 
   fillFromFFPackMatrix(kk,F,C,ffC);
   delete [] ffC;
@@ -1343,14 +1343,14 @@ M2_arrayintOrNull rawFFPackRankProfile(MutableMatrix *A, bool row_profile)
   size_t rk;
   if (row_profile)
     rk = FFPACK::RowRankProfile(F,
-				A->n_rows(),A->n_cols(),
-				ffA,A->n_cols(),
-				prof);
+                                A->n_rows(),A->n_cols(),
+                                ffA,A->n_cols(),
+                                prof);
   else
     rk = FFPACK::ColumnRankProfile(F,
-				A->n_rows(),A->n_cols(),
-				ffA,A->n_cols(),
-				prof);
+                                A->n_rows(),A->n_cols(),
+                                ffA,A->n_cols(),
+                                prof);
 
 
   M2_arrayint profile = M2_makearrayint(rk);
@@ -1399,13 +1399,13 @@ MutableMatrix /* or null */ *rawFFPackInvert(MutableMatrix *M)
   ERROR("FFPack not present");
   return 0;
 }
-MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C, 
-						    MutableMatrix *A, 
-						    MutableMatrix *B,
-						    M2_bool transposeA,
-						    M2_bool transposeB,
-						    const RingElement *a,
-						    const RingElement *b)
+MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
+                                                    MutableMatrix *A,
+                                                    MutableMatrix *B,
+                                                    M2_bool transposeA,
+                                                    M2_bool transposeB,
+                                                    const RingElement *a,
+                                                    const RingElement *b)
 {
   ERROR("FFPack not present");
   return 0;
@@ -1427,4 +1427,5 @@ M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

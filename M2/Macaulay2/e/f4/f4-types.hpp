@@ -33,10 +33,10 @@
 // not encoded: keep that length separately.
 typedef void *F4CoefficientArray;
 
-enum gbelem_type { 
+enum gbelem_type {
   ELEM_IN_RING,  // These are ring elements
-  ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might 
-                          // also be min gens, in the graded case, 
+  ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might
+                          // also be min gens, in the graded case,
                           // they ARE minimal generators
   ELEM_MIN_GB,    // These are elements which are minimal GB elements
   ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
@@ -93,7 +93,7 @@ struct row_elem : public our_new_delete {
   // Header information
   packed_monomial monom;
   int elem;
-  
+
   // The polynomial itself
   int len;
   F4CoefficientArray coeffs;
@@ -102,14 +102,14 @@ struct row_elem : public our_new_delete {
 
 struct column_elem : public our_new_delete {
   packed_monomial monom;
-  int head; // which row is being used as a pivot for this column.  
+  int head; // which row is being used as a pivot for this column.
             // -1 means none, -2 means not set yet
 };
 
 struct coefficient_matrix : public our_new_delete {
   typedef VECTOR(row_elem) row_array;
   typedef VECTOR(column_elem) column_array;
-  
+
   row_array rows;
   column_array columns;
 };
@@ -155,7 +155,7 @@ public:
   long ncomparisons0() const { return ncmps0; }
   void reset_ncomparisons() { ncmps0 = 0; ncmps = 0; }
 
-  ~ColumnsSorter() {} 
+  ~ColumnsSorter() {}
 };
 
 class PreSPairSorter
@@ -179,10 +179,10 @@ public:
 
   PreSPairSorter() {}
 
-  void reset_ncomparisons() { ncmps = 0; } 
+  void reset_ncomparisons() { ncmps = 0; }
   long ncomparisons() const { return ncmps; }
-  
-  ~PreSPairSorter() {} 
+
+  ~PreSPairSorter() {}
 };
 
 typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
@@ -193,4 +193,5 @@ template <typename MonInfo> class MonomialHashTable;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

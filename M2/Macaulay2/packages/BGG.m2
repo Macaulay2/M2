@@ -1,7 +1,7 @@
 newPackage(
 	"BGG",
-    	Version => "1.4", 
-    	Date => "Oct 1, 2010",
+    	Version => "1.4.1", 
+    	Date => "Jan 29, 2012",
     	Authors => {
 	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "http://www.webpages.uidaho.edu/~abo/"},
 	     {Name => "Wolfram Decker", Email => "decker@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/decker/"},
@@ -308,7 +308,8 @@ directImageComplex ChainComplex := opts -> F -> (
 
      minF := min F; --lowest index i such that F_i is defined
      maxF := max F; --highest index i such that F_i is defined     
-
+     --could save some work by testing for a complex of zero sheaves here; but it probably doesn't matter.
+     
      len := max F-min F; -- number of maps given in F
 
      modules := apply(toList(minF..maxF), i-> F_i);
@@ -359,11 +360,14 @@ directImageComplex ChainComplex := opts -> F -> (
      Dmat := matrix D;
      Eres := complete res(coker Dmat, LengthLimit => max(1,1+regF+len));
      dirIm := (EtoA degreeD(0,Eres))[regF+1-minF];
-     --now truncate aware the parts below zero and above 
+     --now truncate away the parts below zero and above 
      nonzero := positions(apply(min dirIm..max dirIm, i -> rank dirIm_i != 0), t -> t);
      minDirIm := min nonzero + min dirIm;
      maxDirIm := max nonzero + min dirIm;
+--     error(); -- there was an error when the output would be 0. Fixed Jan 29, 2012.
+     if minDirIm>maxDirIm then chainComplex{map(A^0, A^0, 0)} else
      chainComplex(apply(minDirIm..maxDirIm, i-> dirIm.dd_i))[-minDirIm+1]
+     
      )
 
 
@@ -1361,3 +1365,8 @@ betti pureResolution(2,3,{1,2,4})
 ///
 end
 
+restart
+uninstallPackage "BGG"
+notify=true
+installPackage "BGG"
+viewHelp BGG

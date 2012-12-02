@@ -37,7 +37,7 @@ int exp_cmp(const void * x, const void * y)
 }
 
 exponent_table *exponent_table_new(int hint,
-				   int nvars)
+                                   int nvars)
 {
   exponent_table *result;
   NEW(result);
@@ -60,8 +60,8 @@ void exponent_table_free(exponent_table **E)
 
 int exponent_table_put(exponent_table *E, const exponent expon, int value)
      /* Puts the element 'expon => value' into the table, and if an element is
-	already there, its value is returned, otherwise 0 is returned.
-	Thus, it is a good idea to not insert zero values into the table */
+        already there, its value is returned, otherwise 0 is returned.
+        Thus, it is a good idea to not insert zero values into the table */
 {
   table_nvars = E->nvars;
   return (int) Table_put(E->table, expon, (void *) value);
@@ -69,7 +69,7 @@ int exponent_table_put(exponent_table *E, const exponent expon, int value)
 
 int exponent_table_get(exponent_table *E, const exponent expon)
      /* Returns the value associated to 'expon', returning zero, if 'expon'
-	is not in the table */
+        is not in the table */
 {
   table_nvars = E->nvars;
   return (int) Table_get(E->table,expon);
@@ -83,5 +83,6 @@ const void ** exponent_table_to_array(exponent_table *E)
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
 */

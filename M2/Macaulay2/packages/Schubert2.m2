@@ -34,7 +34,9 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "toSchubertBasis", "Correspondence", "IncidenceCorrespondence", "intermediates",
      "incidenceCorrespondence","SchubertRing",
      "tautologicalLineBundle", "bundles", "schubertRing",
-     "DefaultPushForward", "DefaultPullBack", "DefaultIntegral", "abstractVarietyMap"}
+     "DefaultPushForward", "DefaultPullBack", "DefaultIntegral", "abstractVarietyMap",
+     "extensionAlgebra", "inclusion", "SubTangent", "SuperTangent",
+     "SubDimension", "SuperDimension", "NormalClass", "Codimension"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
 protect ChernCharacter
@@ -51,6 +53,13 @@ protect htoschubert
 protect schuberttoh
 protect SchubertRing
 protect ExceptionalDivisor
+protect Bincl
+protect Codimension
+protect SubDimension
+protect SuperDimension
+protect SubTangent
+protect SuperTangent
+protect NormalClass
 
 fixvar = s -> if instance(s,String) then getSymbol s else s
 
@@ -973,8 +982,13 @@ blowup(AbstractVarietyMap) :=
      Y := target incl;
      A := intersectionRing Y;
      B := intersectionRing X;
-     iuppermatrix := matrix {apply(gens A, a -> incl^* a)};
+     
+     -- recover the matrix for pullback map
+     (Aflat, AtoAflat) := flattenRing A;
+     Afullgens := (gens Aflat) / AtoAflat^-1;
+     iuppermatrix := matrix {apply(Afullgens, a -> incl^* a)};
      iupper := map(B,A, iuppermatrix);
+     
      N :=  (incl^* tangentBundle Y) - tangentBundle X;
      x := local x;
      d := rank N;
@@ -1087,6 +1101,238 @@ exceptionalDivisor = method()
 exceptionalDivisor AbstractVariety := X -> (
      if X.?ExceptionalDivisor then X.ExceptionalDivisor else
      error "Variety is not a blowup")
+
+-- Given a ring/algebra map f: A -> B and a normal class c in B, builds the
+-- Freest possible extension EBA of A by B, with multiplication
+-- (a+b)(a'+b') = aa' + ab' + a'b + cbb'.
+extensionAlgebra = method(
+     Options => {Codimension => null,
+	  CoefficientRing => null
+	  })
+extensionAlgebra(RingMap, RingElement) := opts -> (f, c) -> (
+     if not (isHomogeneous f) then error "Expected a graded map";
+     
+     A := source f;
+     B := target f;
+     if not (degreeLength B == 1) then error "Multigraded rings are not supported.";	  
+     
+     try c = promote(c,B);
+     if not instance(c,B) then error "Expected an element promotable to the target of first argument"; 
+     if not (isHomogeneous c) then error "Expected a graded ring element";
+     cdeg := first degree c;
+     r := 0;
+     if cdeg < 0 then (
+	  if opts.Codimension === null then error "Cannot use default codimension if c = 0";
+	  r = opts.Codimension
+	  ) else (
+	  r = cdeg
+	  );
+     if not (opts.Codimension === null) then (
+	  if not (r == opts.Codimension) then error "Given codimension conflicts with degree of c";
+	  );
+          
+     (BasAModule, Bbasis, fLowerMod) := pushFwd f;
+     n := numgens BasAModule;
+     
+     E := getSymbol "E"; -- I don't like this
+     D1 := A( monoid [E_0..E_(n-1), Join=>false, Degrees => (flatten degrees BasAModule) + splice{n:r}]);
+     alphas := first entries Bbasis;
+     
+     -- Two types of relations:
+ 
+     -- 1. relations on the generators of B as an A-module
+     -- After imposing these relations, we are left with the symmetric algebra Sym_A(B) where B is considered as an A-module
+     I1 := ideal((vars D1 * (relations BasAModule)));
+     
+     -- 2. relations arising from excess intersection:
+     -- f_*(b) * f_*(b') = f_*(cbb')
+     I2 := ideal flatten (
+	  for i from 0 to n-1 list 
+	  for j from i to n-1 list (
+	       prod := (vars D1) * fLowerMod (alphas#i * alphas#j * c);
+	       D1_(E_i) * D1_(E_j) - prod
+	  ));
+
+     I := trim (I1 + I2);
+     Dtower := D1/I;
+     (D, DtowertoD) := if opts.CoefficientRing === null then flattenRing Dtower else (
+	  flattenRing(Dtower, CoefficientRing => opts.CoefficientRing)
+	  );
+     
+     -- Now want to build pushforward and pullback maps
+     -- Will be happy if we obtain all data necessary to build the appropriate abstract variety map and we can apply our old blowup code.
+     
+     -- Inclusion of A in D, makes D an A-module.  Is finite since B was.
+     Aincl := map(D, A);
+     promote(A,D) := (a,D) -> (Aincl a);
+     
+     -- Inclusion of B in D, is an A-module map
+     Bincl := method();
+     Bincl(RingElement) := (b) -> (
+	  try b = promote(b,B);
+	  if not instance(b,B) then error "Element not promotable to source of this map.";
+	  basD1elt := ((vars D1)* fLowerMod(b))_(0,0);
+	  DtowertoD promote(basD1elt, Dtower)
+	  );
+     -- This promotion method is not a ring map.  Perhaps not kosher.
+     promote(B,D) := (b,D) -> (Bincl b);
+
+     --Pullback from D to B; an A-algebra map
+     --sends a + b -> f(a) + cb
+     D.PullBack = map(B,D, (c * Bbasis) | matrix f);
+     
+     --Forgetful map from D to B; an A-module map
+     --sends a + b -> b
+     --Calling this "promote" is contentious since:
+     -- 1) it's not a ring map
+     -- 2) in general promote(promote(d,B),D) != d.
+     promote(D,B) := (d,B) -> (
+	  dcoeffs := apply(E_0..E_(n-1), m -> f(coefficient(D1_(m), DtowertoD^-1 d)));
+	  dmatrix := matrix{apply(dcoeffs, coeff -> {coeff})};
+	  first flatten entries (Bbasis * dmatrix)
+	  );
+     
+     --Pullback from to D to A; an A-algebra map
+     (Aflat, AtoAflat) := flattenRing A;
+     Afullgens := (gens Aflat) / AtoAflat^-1;
+     Apullback := map(A,D, toList (n:0_A) | Afullgens);
+     -- Note: in general promote(promote(d,A),D) != d.
+     promote(D,A) := (d,A) -> (Apullback d);
+     
+     --Caching all new values on D
+     if not D.?cache then D.cache = new CacheTable;
+     if D.cache.?Bincl then error "Conflicting entries in Cache Table";
+     D.cache.Bincl = Bincl;
+
+     D
+     )
+
+-- Given an algebra map from A to B and some auxiliary data, create the freest
+-- possible abstract variety map "from B to A".
+--
+-- Builds the extension EBA of A by B
+-- Makes varieties out of B and EBA, if they don't already exist
+-- Returns the natural inclusion map from (variety B) to (variety EBA)
+--
+-- Note: all options are named from the point of view of the variety map, NOT the ring map
+inclusion = method(
+     Options => {SubDimension => null, -- dimension of the subvariety
+	  SuperDimension => null, -- dimension of the containing variety
+	  Codimension => null,
+	  SubTangent => null, -- chern class of the tangent bundle of the subvariety
+	  SuperTangent => null, -- chern class of the tangent bundle of the containing variety
+	  NormalClass => null, -- chern class of the normal bundle of the inclusion
+	  Base => null -- the ring or variety to use as the base
+	  })
+inclusion(RingMap) := opts -> (f) -> (
+     -- f: A -> B ring map, pullback map from "approx Chow rings" of Y to X
+     -- c: chern class of normal bundle, elt of B
+     -- tY: chern class of tangent bundle of Y, elt of A
+     
+     A := source f;
+     B := target f;
+     try integral 1_A else error "Expected an integral to be defined on A";
+     try integral 1_B else error "Expected an integral to be defined on B";
+     -- find the base ring
+     S := null;
+     if opts.Base === null then (
+     	  Abasering := try intersectionRing target (variety A).StructureMap else ring integral 1_A;
+     	  Bbasering := try intersectionRing target (variety B).StructureMap else ring integral 1_B;
+	  if not (Abasering === Bbasering) then error "Base not provided and cannot be gleaned from integrals";
+	  S = Abasering
+	  ) else (
+	  S = try intersectionRing opts.Base else opts.Base;
+	  if not instance(S,Ring) then error "Base option is not a Ring or AbstractVariety";
+	  try (promote(integral 1_A, S);
+	       promote(integral 1_B, S)) else error "Integral cannot be promoted to provided base";
+	  );
+     if not (isHomogeneous(A) and isHomogeneous(B)) then error "Expected graded Chow rings.";
+     if not (degreeLength B == 1) then error "Multigraded rings are not supported.";	  
+     
+     -- Calculate dimensions / codimension:
+     dY := try dim variety A else opts.SuperDimension;
+     dX := try dim variety B else opts.SubDimension;
+     if dX === null then (
+	  if (dY === null) or (opts.Codimension === null) then error "Not enough data provided to calculate dimensions";
+	  dX = dY - opts.Codimension
+	  );
+     if dY === null then (
+	  if (dX === null) or (opts.Codimension === null) then error "Not enough data provided to calculate dimensions";
+	  dY = dX + opts.Codimension
+	  );
+     r := dY - dX; --codimension of X in Y
+     -- Verify that data given is not conflicting:
+     if not r > 0 then error "Expected positive codimension";
+     if (opts.Codimension =!= null) and (r != opts.Codimension) then error "Codimension given conflicts with computed codimension";
+     if (opts.SuperDimension =!= null) and (dY != opts.SuperDimension) then error "Dimension of containing variety conflicts with computed dimension";
+     if (opts.SubDimension =!= null) and (dX != opts.SubDimension) then error "Dimension of subvariety conflicts with computed dimension";
+     
+     -- Create subvariety, if it does not exist
+     X := try variety B else (
+	  abstractVariety(dX,B,DefaultIntegral => false)
+	  );
+     -- Compute tangent classes
+     tY := try chern tangentBundle variety A else opts.SuperTangent;
+     if tY === null then error "No tangent bundle given for containing variety";
+     tYpulledback := abstractSheaf(X, Rank => dY, ChernClass => f(tY));
+     tX := try chern tangentBundle X else (
+	  if opts.SubTangent === null then (
+	       -- if no tangent class given, calculate by pulling back tangent bundle of Y and subtracting normal class
+	       if opts.NormalClass === null then error "Not enough data given to calculate tangent class of subvariety";
+	       chern (tYpulledback - abstractSheaf(X, Rank => r, ChernClass => opts.NormalClass))
+	       ) else (
+	       opts.SubTangent
+	       )
+	  );
+     try tangentBundle X else (
+	  X.TangentBundle = abstractSheaf(X, Rank => dX, ChernClass => tX)
+	  );
+
+     -- Compute normal class
+     c := if opts.NormalClass =!= null then opts.NormalClass else (	  
+	  chern (tYpulledback - tangentBundle X)
+	  );     
+     try c = promote(c,B);
+     if not instance(c,B) then error "Expected an element promotable to the target of first argument"; 
+     if not part(0,c) == 1_B then error "Expected first chern class of normal bundle to be 1";
+     -- may wish to assert that c_k = 0 for k > r
+
+     try tY = promote(tY,A);
+     if not instance(tY,A) then error "Expected an element promotable to the source of first argument"; 
+
+     ctop := part(r,c);
+     EBA := extensionAlgebra(f,ctop, Codimension => r, CoefficientRing => S);     
+
+     Y := abstractVariety(dY,EBA,DefaultIntegral => false);
+     
+     -- Construct integral on Y
+     integral EBA := e -> (
+	  (integral promote(e, A)) + (integral promote(e, B))
+	  );
+
+     -- Construct tangent bundle on Y     
+     tY = promote(tY, EBA);     
+     Y.TangentBundle = abstractSheaf(Y, Rank => dY, ChernClass => tY);
+     incl := abstractVarietyMap(Y,X, EBA.PullBack, EBA.cache.Bincl);
+     
+     -- if base ring has a variety, build structure maps
+     try variety S then (
+	  XS := variety S;
+     	  pfEBA := method();
+     	  pfEBA EBA := e -> (integral e);
+	  pbEBA := map(EBA, S);
+	  Y.StructureMap = abstractVarietyMap(XS,Y,pbEBA, pfEBA);
+	  
+	  if not X.?StructureMap then (
+	       pfB := method();
+	       pfB B := b -> (integral b);
+	       pbB := map(B,S);
+	       X.StructureMap = abstractVarietyMap(XS,X,pbB,pfB)
+	       )
+	  ) else null;
+     
+     incl
+     )
 
 reciprocal = method(TypicalValue => RingElement)
 reciprocal RingElement := (A) -> (
@@ -1477,6 +1723,7 @@ sectionZeroLocus AbstractSheaf := (F) -> (
 	  );
      integral B := m -> integral i_* m;
      if X.?TangentBundle then Z.TangentBundle = abstractSheaf(Z, ChernCharacter => ch tangentBundle X - ch F);
+     try Z.TautologicalLineBundle = i^* tautologicalLineBundle X;
      Z)
 
 degeneracyLocus2 = method(TypicalValue => RingElement)
@@ -1510,6 +1757,7 @@ kernelBundle(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc.m2")
 undocumented {
+     Codimension,
      (tangentBundle,FlagBundle),
      (symmetricPower,QQ,AbstractSheaf),
      (symmetricPower,ZZ,AbstractSheaf),

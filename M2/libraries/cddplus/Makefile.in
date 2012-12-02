@@ -1,6 +1,7 @@
 LIBNAME = cdd+
 HOMEPAGE = http://www.ifor.math.ethz.ch/~fukuda/cdd_home/
-URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd/
+# URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd/
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 VERSION = 077a
 TARFILE = cdd+-$(VERSION).tar.gz
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)

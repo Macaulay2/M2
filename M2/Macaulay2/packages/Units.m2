@@ -135,6 +135,7 @@ are = 100 m^2
 hectare = hecto are
 l = liter = 1000 cc
 J = joule = m N
+btu = 1055.06 J
 W = watt = J/s
 C = coulomb = A s
 V = volt = W/A

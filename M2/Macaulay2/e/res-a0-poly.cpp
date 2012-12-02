@@ -119,8 +119,8 @@ res2term *res2_poly::mult_by_term(const res2term *f, ring_elem c, const int *m) 
   result->next = NULL;
   return head.next;
 }
-res2term *res2_poly::ring_mult_by_term(const ring_elem f, 
-				     ring_elem c, const int *m, res2_pair *x) const
+res2term *res2_poly::ring_mult_by_term(const ring_elem f,
+                                     ring_elem c, const int *m, res2_pair *x) const
 {
   res2term head;
   res2term *result = &head;
@@ -158,61 +158,61 @@ void res2_poly::add_to(res2term * &f, res2term * &g) const
     switch (compare(f, g))
       {
       case -1:
-	result->next = g;
-	result = result->next;
-	g = g->next;
-	if (g == NULL) 
-	  {
-	    result->next = f; 
-	    f = head.next;
-	    return;
-	  }
-	break;
+        result->next = g;
+        result = result->next;
+        g = g->next;
+        if (g == NULL)
+          {
+            result->next = f;
+            f = head.next;
+            return;
+          }
+        break;
       case 1:
-	result->next = f;
-	result = result->next;
-	f = f->next;
-	if (f == NULL) 
-	  {
-	    result->next = g; 
-	    f = head.next;
-	    g = NULL;
-	    return;
-	  }
-	break;
+        result->next = f;
+        result = result->next;
+        f = f->next;
+        if (f == NULL)
+          {
+            result->next = g;
+            f = head.next;
+            g = NULL;
+            return;
+          }
+        break;
       case 0:
-	res2term *tmf = f;
-	res2term *tmg = g;
-	f = f->next;
-	g = g->next;
-	K->add_to(tmf->coeff, tmg->coeff);
-	if (K->is_zero(tmf->coeff))
-	  resterm_stash->delete_elem(tmf);
-	else
-	  {
-	    result->next = tmf;
-	    result = result->next;
-	  }
-	resterm_stash->delete_elem(tmg);
-	if (g == NULL) 
-	  {
-	    result->next = f; 
-	    f = head.next;
-	    return;
-	  }
-	if (f == NULL) 
-	  {
-	    result->next = g; 
-	    f = head.next;
-	    g = NULL;
-	    return;
-	  }
-	break;
+        res2term *tmf = f;
+        res2term *tmg = g;
+        f = f->next;
+        g = g->next;
+        K->add_to(tmf->coeff, tmg->coeff);
+        if (K->is_zero(tmf->coeff))
+          resterm_stash->delete_elem(tmf);
+        else
+          {
+            result->next = tmf;
+            result = result->next;
+          }
+        resterm_stash->delete_elem(tmg);
+        if (g == NULL)
+          {
+            result->next = f;
+            f = head.next;
+            return;
+          }
+        if (f == NULL)
+          {
+            result->next = g;
+            f = head.next;
+            g = NULL;
+            return;
+          }
+        break;
       }
 }
 
-void res2_poly::subtract_multiple_to(res2term *& f, ring_elem c, 
-				    const int *m, const res2term *g) const
+void res2_poly::subtract_multiple_to(res2term *& f, ring_elem c,
+                                    const int *m, const res2term *g) const
     // f := f - c * m * g
 {
   ring_elem minus_c = K->negate(c);
@@ -220,8 +220,8 @@ void res2_poly::subtract_multiple_to(res2term *& f, ring_elem c,
   add_to(f, h);
   K->remove(minus_c);
 }
-void res2_poly::ring_subtract_multiple_to(res2term *& f, ring_elem c, 
-					 const int *m, res2_pair *x, const ring_elem g) const
+void res2_poly::ring_subtract_multiple_to(res2term *& f, ring_elem c,
+                                         const int *m, res2_pair *x, const ring_elem g) const
     // f := f - c * m * g * x, where g is a ring element
 {
   ring_elem minus_c = K->negate(c);
@@ -244,8 +244,8 @@ void res2_poly::elem_text_out(const res2term *f) const
   elem_text_out(o, f);
   emit(o.str());
 }
-void res2_poly::elem_text_out(buffer &o, 
-			      const res2term *f) const
+void res2_poly::elem_text_out(buffer &o,
+                              const res2term *f) const
 {
   if (f == NULL)
     {
@@ -261,14 +261,14 @@ void res2_poly::elem_text_out(buffer &o,
       int isone = M->is_one(t->monom);
       K->elem_text_out(o,t->coeff, p_one, p_plus, p_parens);
       if (!isone)
-	M->elem_text_out(o, t->monom, p_one);
+        M->elem_text_out(o, t->monom, p_one);
       o << "<" << t->comp->me << ">";
       p_plus = true;
     }
 }
 
-vec res2_poly::to_vector(const res2term *f, const FreeModule *F, 
-			    int /*to_minimal*/) const
+vec res2_poly::to_vector(const res2term *f, const FreeModule *F,
+                            int /*to_minimal*/) const
 {
   vecHeap H(F);
   int *mon = M->make_one();
@@ -294,12 +294,12 @@ res2term *res2_poly::from_vector(const array<res2_pair *> &base, const vec v) co
   for (vecterm *w = v; w != NULL; w = w->next)
     for (Nterm *t = w->coeff; t != 0; t = t->next)
       {
-	result->next = new_term();
-	result = result->next;
-	result->comp = base[w->comp];
-	result->coeff = t->coeff;
-	M->copy(t->monom, result->monom);
-	M->mult(result->monom, result->comp->syz->monom, result->monom);
+        result->next = new_term();
+        result = result->next;
+        result->comp = base[w->comp];
+        result->coeff = t->coeff;
+        M->copy(t->monom, result->monom);
+        M->mult(result->monom, result->comp->syz->monom, result->monom);
     }
   result->next = NULL;
   // Now we must sort these
@@ -314,18 +314,18 @@ res2term *res2_poly::strip(const res2term *f) const
   for (const res2term *tm = f; tm != NULL; tm = tm->next)
     if (tm->comp->syz_type != SYZ2_NOT_MINIMAL)
       {
-	result->next = new_term();
-	result = result->next;
-	result->comp = tm->comp;
-	result->coeff = K->copy(tm->coeff);
-	M->copy(tm->monom, result->monom);
+        result->next = new_term();
+        result = result->next;
+        result->comp = tm->comp;
+        result->coeff = K->copy(tm->coeff);
+        M->copy(tm->monom, result->monom);
       }
   result->next = NULL;
   return head.next;
 }
 
-const res2term *res2_poly::component_occurs_in(const res2_pair *x, 
-					  const res2term *f) const
+const res2term *res2_poly::component_occurs_in(const res2_pair *x,
+                                          const res2term *f) const
 {
   for (const res2term *tm = f; tm != NULL; tm = tm->next)
     if (tm->comp == x) return tm;
@@ -337,7 +337,7 @@ void res2_poly::sort(res2term *&f) const
   // Divide f into two lists of equal length, sort each,
   // then add them together.  This allows the same monomial
   // to appear more than once in 'f'.
-  
+
   if (f == NULL || f->next == NULL) return;
   res2term *f1 = NULL;
   res2term *f2 = NULL;
@@ -354,7 +354,7 @@ void res2_poly::sort(res2term *&f) const
       t->next = f2;
       f2 = t;
     }
-  
+
   sort(f1);
   sort(f2);
   add_to(f1, f2);
@@ -363,4 +363,5 @@ void res2_poly::sort(res2term *&f) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -148,7 +148,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "Copyright 2010 Daniel R. Grayson and Michael E. Stillman," | newline
+	  | "Copyright 2012 Daniel R. Grayson and Michael E. Stillman," | newline
      	  | "  licensed under the GNU General Public License version 2 or 3." | newline
 	  | "For Macaulay2 packages, see their source code for licensing terms." | newline
      	  | "Compiled with the following libraries:" | newline
@@ -274,6 +274,7 @@ if firstTime then (
 	       "doc" => "share/doc/Macaulay2/",
 	       "packages" => "share/Macaulay2/PKG/",
 	       "docdir" => "share/doc/Macaulay2/",
+	       "factory gftables" =>  "share/Macaulay2/Core/factory/",
 	       "libraries" => "lib/Macaulay2/",
 	       "programs" => "libexec/Macaulay2/",
 	       "program licenses" => "libexec/Macaulay2/program-licenses/",
@@ -364,6 +365,7 @@ usage := arg -> (
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
      << "    --restarted        used internally to indicate this is a restart" << newline
+     << "    --read-only-files  disallow file and socket creation and writing" << newline
      << "    --script           as first argument, interpret second argument as name of a script" << newline
      << "                       implies --stop, --no-debug, --silent and -q" << newline
      << "                       see scriptCommandLine" << newline
@@ -371,6 +373,8 @@ usage := arg -> (
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --no-tvalues       do not load tvalues.m2" << newline
+
+     << "    --no-tty           do not treat stdin and stdout as tty's" << newline
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline

@@ -8,9 +8,9 @@
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
 
-void res_comp::initialize(const Matrix *mat, 
-			  int LengthLimit,
-			  int /*strategy*/)
+void res_comp::initialize(const Matrix *mat,
+                          int LengthLimit,
+                          int /*strategy*/)
 {
   int i;
 
@@ -36,8 +36,8 @@ void res_comp::initialize(const Matrix *mat,
     {
       lodegree = mat->rows()->primary_degree(0);
       for (i=1; i<mat->n_rows(); i++)
-	if (lodegree > mat->rows()->primary_degree(i))
-	  lodegree = mat->rows()->primary_degree(i);
+        if (lodegree > mat->rows()->primary_degree(i))
+          lodegree = mat->rows()->primary_degree(i);
     }
   else
     lodegree = 0;
@@ -59,13 +59,13 @@ void res_comp::initialize(const Matrix *mat,
 
       p->me = component_number++;
       p->minimal_me = p->me;
-      next_me_number++;	// this and 'component_number' should still be equal here.
+      next_me_number++; // this and 'component_number' should still be equal here.
       p->compare_num = i;
 
       if (S == 0)
-	p->base_monom = M->make_one();
+        p->base_monom = M->make_one();
       else
-	p->base_monom = M->make_new(S->base_monom(i));
+        p->base_monom = M->make_new(S->base_monom(i));
       p->mi = new MonomialIdeal(P, mi_stash);
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p;
@@ -88,17 +88,17 @@ void res_comp::initialize(const Matrix *mat,
   for (i=0; i<mat->n_cols(); i++)
     if ((*mat)[i] != NULL)
       {
-	res_pair *p = new_res_pair(i); // Makes a generator 'pair'
-	int d = mat->cols()->primary_degree(i);
-	res_degree *mypairs = make_degree_set(1, d-1);
-	p->next = mypairs->next_gen;
-	mypairs->next_gen = p;
-	mypairs->nleft++;
-	mypairs->npairs++;
-	resn[1]->nleft++;
-	resn[1]->npairs++;
-	nleft++;
-	npairs++;
+        res_pair *p = new_res_pair(i); // Makes a generator 'pair'
+        int d = mat->cols()->primary_degree(i);
+        res_degree *mypairs = make_degree_set(1, d-1);
+        p->next = mypairs->next_gen;
+        mypairs->next_gen = p;
+        mypairs->nleft++;
+        mypairs->npairs++;
+        resn[1]->nleft++;
+        resn[1]->npairs++;
+        nleft++;
+        npairs++;
       }
 
   for (i=0; i<base_components.length(); i++)
@@ -113,9 +113,9 @@ void res_comp::initialize(const Matrix *mat,
   compare_type = 0;
 }
 
-res_comp::res_comp(const Matrix *m, 
-		   int LengthLimit, 
-		   int strategy)
+res_comp::res_comp(const Matrix *m,
+                   int LengthLimit,
+                   int strategy)
 {
   initialize(m, LengthLimit, strategy);
 }
@@ -184,17 +184,17 @@ res_degree *res_comp::make_degree_set(int level, int deg)
     {
       // Create new res_levels
       for (i=resn.length(); i<=level; i++)
-	resn.append(new res_level);
+        resn.append(new res_level);
     }
   res_level *lev = resn[level];
-  
+
   deg -= lodegree;
-  assert(deg >= 0);		// This would be an internal error
+  assert(deg >= 0);             // This would be an internal error
   if (deg >= lev->bin.length())
     {
       // Create new res_degrees
       for (i=lev->bin.length(); i<=deg; i++)
-	lev->bin.append(new res_degree);
+        lev->bin.append(new res_degree);
       if (deg+lodegree > hidegree) hidegree = deg+lodegree;
     }
 
@@ -298,7 +298,7 @@ void res_comp::insert_res_pair(int level, res_pair *p)
   res_degree *mypairs = make_degree_set(level, deg);
   p->next = mypairs->first;
   mypairs->first = p;
-  
+
   if (level > 1)
     {
       resn[level]->npairs++;
@@ -338,8 +338,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     M->to_expvector(g->base_monom, EXP2);
     for (i=0; i<M->n_vars(); i++)
       {
-	if (EXP1[i] < EXP2[i]) return -1;
-	if (EXP1[i] > EXP2[i]) return 1;
+        if (EXP1[i] < EXP2[i]) return -1;
+        if (EXP1[i] > EXP2[i]) return 1;
       }
     return 0;
   case 2:
@@ -351,8 +351,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     M->to_expvector(g->base_monom, EXP2);
     for (i=0; i<M->n_vars(); i++)
       {
-	if (EXP1[i] < EXP2[i]) return 1;
-	if (EXP1[i] > EXP2[i]) return -1;
+        if (EXP1[i] < EXP2[i]) return 1;
+        if (EXP1[i] > EXP2[i]) return -1;
       }
     return 0;
   case 3:
@@ -364,8 +364,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     M->to_expvector(g->base_monom, EXP2);
     for (i=M->n_vars()-1; i>=0; i--)
       {
-	if (EXP1[i] < EXP2[i]) return -1;
-	if (EXP1[i] > EXP2[i]) return 1;
+        if (EXP1[i] < EXP2[i]) return -1;
+        if (EXP1[i] > EXP2[i]) return 1;
       }
     return 0;
   case 4:
@@ -377,12 +377,12 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     M->to_expvector(g->base_monom, EXP2);
     for (i=M->n_vars()-1; i>=0; i--)
       {
-	if (EXP1[i] < EXP2[i]) return 1;
-	if (EXP1[i] > EXP2[i]) return -1;
+        if (EXP1[i] < EXP2[i]) return 1;
+        if (EXP1[i] > EXP2[i]) return -1;
       }
     return 0;
   case 5:
-    // The original method, but with degree added, since 
+    // The original method, but with degree added, since
     // the new skeleton code doesn't just sort elements of
     // the same degree.
     df = degree(f);
@@ -417,27 +417,27 @@ res_pair *res_comp::merge_res_pairs(res_pair *f, res_pair *g) const
       {
       case 0:
       case -1:
-	result->next = g;
-	result = result->next;
-	g = g->next;
-	if (g == NULL) 
-	  {
-	    result->next = f;
-	    return head.next;
-	  }
-	break;
+        result->next = g;
+        result = result->next;
+        g = g->next;
+        if (g == NULL)
+          {
+            result->next = f;
+            return head.next;
+          }
+        break;
       case 1:
-	result->next = f;
-	result = result->next;
-	f = f->next;
-	if (f == NULL) 
-	  {
-	    result->next = g; 
-	    return head.next;
-	  }
-	break;
-	//      case 0:
-	//	assert(0);
+        result->next = f;
+        result = result->next;
+        f = f->next;
+        if (f == NULL)
+          {
+            result->next = g;
+            return head.next;
+          }
+        break;
+        //      case 0:
+        //      assert(0);
       }
 }
 
@@ -529,27 +529,27 @@ res_pair *res_comp::merge_compares(res_pair *f, res_pair *g) const
     switch (compare_compares(f, g))
       {
       case -1:
-	result->next_compare = g;
-	result = result->next_compare;
-	g = g->next_compare;
-	if (g == NULL) 
-	  {
-	    result->next_compare = f;
-	    return head.next_compare;
-	  }
-	break;
+        result->next_compare = g;
+        result = result->next_compare;
+        g = g->next_compare;
+        if (g == NULL)
+          {
+            result->next_compare = f;
+            return head.next_compare;
+          }
+        break;
       case 1:
-	result->next_compare = f;
-	result = result->next_compare;
-	f = f->next_compare;
-	if (f == NULL) 
-	  {
-	    result->next_compare = g; 
-	    return head.next_compare;
-	  }
-	break;
+        result->next_compare = f;
+        result = result->next_compare;
+        f = f->next_compare;
+        if (f == NULL)
+          {
+            result->next_compare = g;
+            return head.next_compare;
+          }
+        break;
       case 0:
-	assert(0);
+        assert(0);
       }
 }
 
@@ -624,7 +624,7 @@ void res_comp::new_pairs(res_pair *p)
 {
   Index<MonomialIdeal> j;
   queue<Bag *> elems;
-  intarray vp;			// This is 'p'.
+  intarray vp;                  // This is 'p'.
   intarray thisvp;
 
   monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
@@ -648,16 +648,16 @@ void res_comp::new_pairs(res_pair *p)
 
       int nskew = P->n_skew_commutative_vars();
       for (int v=0; v<nskew; v++)
-	{
-	  int w = P->skew_variable(v);
-	  if (exp[w] > 0)
-	    {
-	      thisvp.shrink(0);
-	      varpower::var(w,1,thisvp);
-	      Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	      elems.insert(b);
-	    }
-	}
+        {
+          int w = P->skew_variable(v);
+          if (exp[w] > 0)
+            {
+              thisvp.shrink(0);
+              varpower::var(w,1,thisvp);
+              Bag *b = new Bag(static_cast<void *>(0), thisvp);
+              elems.insert(b);
+            }
+        }
       deletearray(exp);
     }
 
@@ -667,17 +667,17 @@ void res_comp::new_pairs(res_pair *p)
     {
       const MonomialIdeal *Rideal = P->get_quotient_monomials();
       for (j = Rideal->first(); j.valid(); j++)
-	{
-	  // Compute (P->quotient_ideal->monom : p->monom)
-	  // and place this into a varpower and Bag, placing
-	  // that into 'elems'
-	  thisvp.shrink(0);
-	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
-	    continue;
-	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	  elems.insert(b);
-	}
+        {
+          // Compute (P->quotient_ideal->monom : p->monom)
+          // and place this into a varpower and Bag, placing
+          // that into 'elems'
+          thisvp.shrink(0);
+          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
+          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+            continue;
+          Bag *b = new Bag(static_cast<void *>(0), thisvp);
+          elems.insert(b);
+        }
     }
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res_pair
@@ -756,7 +756,7 @@ resterm *res_comp::s_pair(res_pair *p) const
 
 res_pair *res_comp::reduce(resterm * &f, resterm * &fsyz, resterm * &pivot)
      // Reduce f, placing the reduction history in fsyz.
-     // Returns NULL if f reduces to 0, otherwise 
+     // Returns NULL if f reduces to 0, otherwise
      // returns the res_pair at the previous level (f will "fill in" that pair), and
      // place a pointer to the corresponding term in "pivot".
 {
@@ -775,31 +775,31 @@ res_pair *res_comp::reduce(resterm * &f, resterm * &fsyz, resterm * &pivot)
       M->divide(f->monom, f->comp->base_monom, REDUCE_mon);
       M->to_expvector(REDUCE_mon, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, rg))
-	{
-	  // Subtract off f, leave fsyz alone
-	  Nterm *r = rg;
-	  M->divide(f->monom, r->monom, REDUCE_mon);
-	  R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
-	}
+        {
+          // Subtract off f, leave fsyz alone
+          Nterm *r = rg;
+          M->divide(f->monom, r->monom, REDUCE_mon);
+          R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
+        }
       else if (f->comp->mi->search_expvector(REDUCE_exp, b))
-	{
-	  q = reinterpret_cast<res_pair *>(b->basis_ptr());
-	  lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
-	  lastterm = lastterm->next;
-	  pivot = lastterm;
-	  if (q->syz_type == SYZ_S_PAIR) return q; // i.e. not computed yet
-	  M->divide(f->monom, q->syz->monom, REDUCE_mon);
-	  R->subtract_multiple_to(f, f->coeff, REDUCE_mon, q->syz);
-	}
+        {
+          q = reinterpret_cast<res_pair *>(b->basis_ptr());
+          lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
+          lastterm = lastterm->next;
+          pivot = lastterm;
+          if (q->syz_type == SYZ_S_PAIR) return q; // i.e. not computed yet
+          M->divide(f->monom, q->syz->monom, REDUCE_mon);
+          R->subtract_multiple_to(f, f->coeff, REDUCE_mon, q->syz);
+        }
       else
-	{
-	  // level 1: monomial not seen yet
-	  q = new_res_pair(SYZ_S_PAIR, f);
-	  insert_res_pair(1, q);
-	  lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
-	  lastterm = lastterm->next;
-	  return q;
-	}
+        {
+          // level 1: monomial not seen yet
+          q = new_res_pair(SYZ_S_PAIR, f);
+          insert_res_pair(1, q);
+          lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
+          lastterm = lastterm->next;
+          return q;
+        }
     }
   return NULL;
 }
@@ -823,32 +823,32 @@ res_pair *res_comp::reduce_level_one(resterm * &f, resterm * &fsyz, resterm * &p
       M->divide(f->monom, f->comp->base_monom, REDUCE_mon);
       M->to_expvector(REDUCE_mon, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, rg))
-	{
-	  // Subtract off f, leave fsyz alone
-	  Nterm *r = rg;
-	  M->divide(f->monom, r->monom, REDUCE_mon);
-	  R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
-	}
+        {
+          // Subtract off f, leave fsyz alone
+          Nterm *r = rg;
+          M->divide(f->monom, r->monom, REDUCE_mon);
+          R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
+        }
       else if (search_mi[f->comp->me]->search_expvector(REDUCE_exp, b))
-	{
-	  q = reinterpret_cast<res_pair *>(b->basis_ptr());
-	  lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
-	  lastterm = lastterm->next;
-	  pivot = lastterm;
-	  if (q->syz_type == SYZ_S_PAIR) return q; // i.e. not computed yet
-	  M->divide(f->monom, q->syz->monom, REDUCE_mon);
-	  R->subtract_multiple_to(f, f->coeff, REDUCE_mon, q->syz);
-	}
+        {
+          q = reinterpret_cast<res_pair *>(b->basis_ptr());
+          lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
+          lastterm = lastterm->next;
+          pivot = lastterm;
+          if (q->syz_type == SYZ_S_PAIR) return q; // i.e. not computed yet
+          M->divide(f->monom, q->syz->monom, REDUCE_mon);
+          R->subtract_multiple_to(f, f->coeff, REDUCE_mon, q->syz);
+        }
       else
-	{
-	  // level 1: monomial not seen yet
-	  q = new_res_pair(SYZ_S_PAIR, f);
-	  insert_res_pair(1, q);
-	  lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
-	  lastterm = lastterm->next;
-	  pivot = lastterm;
-	  return q;
-	}
+        {
+          // level 1: monomial not seen yet
+          q = new_res_pair(SYZ_S_PAIR, f);
+          insert_res_pair(1, q);
+          lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
+          lastterm = lastterm->next;
+          pivot = lastterm;
+          return q;
+        }
     }
   return NULL;
 }
@@ -867,20 +867,20 @@ void res_comp::reduce_gen(resterm * &f) const
       M->divide(f->monom, f->comp->base_monom, REDUCE_mon);
       M->to_expvector(REDUCE_mon, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, rg))
-	{
-	  // Subtract off f, leave fsyz alone
-	  Nterm *r = rg;
-	  M->divide(f->monom, r->monom, REDUCE_mon);
-	  R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
-	}
+        {
+          // Subtract off f, leave fsyz alone
+          Nterm *r = rg;
+          M->divide(f->monom, r->monom, REDUCE_mon);
+          R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
+        }
       else if (search_mi[f->comp->me]->search_expvector(REDUCE_exp, b))
-	{
-	  q = reinterpret_cast<res_pair *>(b->basis_ptr());
-	  M->divide(f->monom, q->syz->monom, REDUCE_mon);
-	  R->subtract_multiple_to(f, f->coeff, REDUCE_mon, q->syz);
-	}
+        {
+          q = reinterpret_cast<res_pair *>(b->basis_ptr());
+          M->divide(f->monom, q->syz->monom, REDUCE_mon);
+          R->subtract_multiple_to(f, f->coeff, REDUCE_mon, q->syz);
+        }
       else
-	break;			// MES: possibly auto reduce further...
+        break;                  // MES: possibly auto reduce further...
     }
 }
 
@@ -893,12 +893,12 @@ bool res_comp::stop_conditions_ok()
   if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
     {
       if (length_limit < stop_.length_limit->array[0])
-	{
-	  ERROR("resolution: cannot increase maximum level");
-	  return false;
-	}
+        {
+          ERROR("resolution: cannot increase maximum level");
+          return false;
+        }
       else
-	length_limit = stop_.length_limit->array[0];
+        length_limit = stop_.length_limit->array[0];
     }
 
   return true;
@@ -912,60 +912,60 @@ int res_comp::complete_thru_degree() const
 //#define DO(CALL) {int result = CALL; if (result != COMP_COMPUTING) return result;}
 #define DO(CALL) {enum ComputationStatusCode result = CALL; \
                   if (result != COMP_COMPUTING) \
-		     {set_status(result); return;}}
+                     {set_status(result); return;}}
 
 #if 0
-// int res_comp::calc(const int *DegreeLimit, 
-// 		   int LengthLimit, 
-// 		   int ArgSyzygyLimit,
-// 		   int ArgPairLimit,
-// 		   int /*SyzLimitValue*/,
-// 		   int /*SyzLimitLevel*/,
-// 		   int /*SyzLimitDegree*/)
+// int res_comp::calc(const int *DegreeLimit,
+//                 int LengthLimit,
+//                 int ArgSyzygyLimit,
+//                 int ArgPairLimit,
+//                 int /*SyzLimitValue*/,
+//                 int /*SyzLimitLevel*/,
+//                 int /*SyzLimitDegree*/)
 #endif
 void res_comp::start_computation()
 {
   if (status() == COMP_DONE) return;
   set_status(COMP_COMPUTING);
   DO(gens(lodegree));
-  DO(pairs(1,lodegree));		// MES: Probably not needed...
+  DO(pairs(1,lodegree));                // MES: Probably not needed...
 
   for ( ; n_degree <= hidegree; n_degree++, n_level = 2)
     {
       if (stop_.stop_after_degree && stop_.degree_limit->array[0] < n_degree)
-	{
-	  set_status(COMP_DONE_DEGREE_LIMIT);
-	  return;
-	}
-      if (M2_gbTrace >= 1) 
-	{
-	  buffer o;
-	  o << '{' << n_degree << '}';
-	  emit_wrapped(o.str());
-	}
+        {
+          set_status(COMP_DONE_DEGREE_LIMIT);
+          return;
+        }
+      if (M2_gbTrace >= 1)
+        {
+          buffer o;
+          o << '{' << n_degree << '}';
+          emit_wrapped(o.str());
+        }
 
       if (n_level == 2)
-	{
-	  DO(reductions(2,n_degree));
-	  DO(gens(n_degree+1));
-	  DO(pairs(1,n_degree+1));
-	  n_level = 3;
-	}
+        {
+          DO(reductions(2,n_degree));
+          DO(gens(n_degree+1));
+          DO(pairs(1,n_degree+1));
+          n_level = 3;
+        }
 
       for ( ; n_level <= length_limit+1; n_level++)
-	{
-	  if (M2_gbTrace >= 1) emit_wrapped(".");
+        {
+          if (M2_gbTrace >= 1) emit_wrapped(".");
 
-	  DO(pairs(n_level-1, n_degree));
-	  DO(pairs(n_level-1, n_degree+1));
-	  DO(reductions(n_level, n_degree));
-	}
+          DO(pairs(n_level-1, n_degree));
+          DO(pairs(n_level-1, n_degree+1));
+          DO(reductions(n_level, n_degree));
+        }
     }
   set_status(COMP_DONE);
 }
 enum ComputationStatusCode res_comp::gens(int deg)
 {
-  if (M2_gbTrace >= 5) 
+  if (M2_gbTrace >= 5)
     {
       buffer o;
       o << "gens(" << deg << ")" << newline;
@@ -977,20 +977,20 @@ enum ComputationStatusCode res_comp::gens(int deg)
   if (mypairs != NULL)
     {
       while ((p = mypairs->next_gen) != NULL)
-	{
-	  mypairs->next_gen = p->next;
-	  handle_gen(p);	// Consumes 'p'
-	  
-	  mypairs->nleft--;
-	  resn[1]->nleft--;
-	  nleft--;
-	  if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
-	    return COMP_DONE_PAIR_LIMIT;
-	  if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
-	    return COMP_DONE_SYZYGY_LIMIT;
-	  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
-	}
-      
+        {
+          mypairs->next_gen = p->next;
+          handle_gen(p);        // Consumes 'p'
+
+          mypairs->nleft--;
+          resn[1]->nleft--;
+          nleft--;
+          if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
+            return COMP_DONE_PAIR_LIMIT;
+          if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
+            return COMP_DONE_SYZYGY_LIMIT;
+          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+        }
+
       sort_pairs(1, deg); // Sort the level 1 GB elements
     }
   return COMP_COMPUTING;
@@ -1002,7 +1002,7 @@ enum ComputationStatusCode res_comp::pairs(int level, int deg)
   // Cases: level=1: gens(deg), pairs(1,deg-1)
   //        level=2: pairs(1,deg)
   //        level>2: pairs(level-1,deg), pairs(level-2,deg+1)
-  if (M2_gbTrace >= 5) 
+  if (M2_gbTrace >= 5)
     {
       buffer o;
       o << "pairs(" << level << ", " << deg << ")" << newline;
@@ -1014,11 +1014,11 @@ enum ComputationStatusCode res_comp::pairs(int level, int deg)
   if (mypairs != NULL)
     {
       while ((p = mypairs->next_new_pair) != NULL)
-	{
-	  mypairs->next_new_pair = p->next;
-	  new_pairs(p);
-	  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
-	}
+        {
+          mypairs->next_new_pair = p->next;
+          new_pairs(p);
+          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+        }
     }
   return COMP_COMPUTING;
 }
@@ -1037,17 +1037,17 @@ enum ComputationStatusCode res_comp::reductions(int level, int deg)
   if (mypairs != NULL)
     while ((p = mypairs->next_pair) != NULL)
       {
-	mypairs->next_pair = p->next;
-	handle_pair(p);
-	
-	mypairs->nleft--;
-	resn[level]->nleft--;
-	nleft--;
-	if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
-	  return COMP_DONE_PAIR_LIMIT;
-	if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
-	  return COMP_DONE_SYZYGY_LIMIT;
-	if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+        mypairs->next_pair = p->next;
+        handle_pair(p);
+
+        mypairs->nleft--;
+        resn[level]->nleft--;
+        nleft--;
+        if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
+          return COMP_DONE_PAIR_LIMIT;
+        if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
+          return COMP_DONE_SYZYGY_LIMIT;
+        if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
       }
   return COMP_COMPUTING;
 }
@@ -1084,7 +1084,7 @@ void res_comp::handle_pair(res_pair *p)
     q = reduce_level_one(f, p->syz, p->pivot_term);
   else
     q = reduce(f, p->syz, p->pivot_term);
-  
+
   if (f == NULL)
     {
       // minimal syzygy
@@ -1093,11 +1093,11 @@ void res_comp::handle_pair(res_pair *p)
       nminimal++;
       if (M2_gbTrace >= 2) emit_wrapped("z");
     }
-  else 
+  else
     {
       R->make_monic(f);
       p->syz_type = SYZ_NOT_MINIMAL;
-      
+
       // non-minimal syzygy
       q->syz = f;
       q->syz_type = SYZ_NOT_NEEDED;
@@ -1111,23 +1111,23 @@ void res_comp::handle_pair(res_pair *p)
 //   // Currently: this is just used for debugging
 // {
 //   int level, deg;
-// 
+//
 //   for (level=1; level < resn.length(); level++)
 //     {
 //       n_level = level+1;
 //       for (deg=0; deg < resn[level]->bin.length(); deg++)
-// 	{
-// 	  deg += lodegree;
-// 	  res_degree *p = get_degree_set(level, deg);
-// 	  if (p == NULL) continue;
-// 	  if (level == 1)
-// 	    {
-// 	      // Get the generators back into the game
-// 	      p->first = p->next_gen;
-// 	      p->next_gen = NULL;
-// 	    }
-// 	  pairs(level, deg);
-// 	}
+//      {
+//        deg += lodegree;
+//        res_degree *p = get_degree_set(level, deg);
+//        if (p == NULL) continue;
+//        if (level == 1)
+//          {
+//            // Get the generators back into the game
+//            p->first = p->next_gen;
+//            p->next_gen = NULL;
+//          }
+//        pairs(level, deg);
+//      }
 //     }
 // }
 #endif
@@ -1148,10 +1148,10 @@ int res_comp::n_left(int lev, int d) const
 
   int result = 0;
   for (res_pair *q = p->first; q != NULL; q = q->next)
-    if (q->syz_type == SYZ_S_PAIR 
-	|| q->syz_type == SYZ_GEN) 
+    if (q->syz_type == SYZ_S_PAIR
+        || q->syz_type == SYZ_GEN)
       result++;
-      
+
   return result;
 }
 
@@ -1162,7 +1162,7 @@ int res_comp::n_minimal(int lev, int d) const
   int result = 0;
   for (res_pair *q = p->first; q != NULL; q = q->next)
     if (q->syz_type == SYZ_MINIMAL) result++;
-      
+
   return result;
 }
 
@@ -1204,25 +1204,25 @@ M2_arrayint res_comp::get_betti(int type) const
   for (int d=lo; d<=hi; d++)
     for (int lev=0; lev<=len; lev++)
       {
-	int val = 0;
-	switch (type) {
-	case 0:
-	  val = n_minimal(lev,d);
-	  break;
-	case 1:
-	  val = n_pairs(lev,d);
-	  break;
-	case 2:
-	  val = n_left(lev,d);
-	  break;
-	case 3:
-	  val = n_monoms(lev,d);
-	  break;
-	default:
-	  val = -1;
-	  break;
-	}
-	bettis[lev+(len+1)*(d-lo)] = val;
+        int val = 0;
+        switch (type) {
+        case 0:
+          val = n_minimal(lev,d);
+          break;
+        case 1:
+          val = n_pairs(lev,d);
+          break;
+        case 2:
+          val = n_left(lev,d);
+          break;
+        case 3:
+          val = n_monoms(lev,d);
+          break;
+        default:
+          val = -1;
+          break;
+        }
+        bettis[lev+(len+1)*(d-lo)] = val;
       }
 
   M2_arrayint result = betti_make(lo,hi,len,bettis);
@@ -1339,18 +1339,18 @@ void res_comp::text_out(buffer &o) const
   if (M2_gbTrace >= 2)
     for (int lev=0; lev<resn.length(); lev++)
       {
-	o << "---- level " << lev << " ----" << newline;
-	for (int i=0; i<resn[lev]->bin.length(); i++)
-	  {
-	    res_degree *mypairs = resn[lev]->bin[i];
-	    if (mypairs == NULL) continue;
-	    for (res_pair *p = mypairs->first; p != NULL; p = p->next)
-	      {
-		o.put(i,4);
-		o << ' ';
-		text_out(o,p);
-	      }
-	  }
+        o << "---- level " << lev << " ----" << newline;
+        for (int i=0; i<resn[lev]->bin.length(); i++)
+          {
+            res_degree *mypairs = resn[lev]->bin[i];
+            if (mypairs == NULL) continue;
+            for (res_pair *p = mypairs->first; p != NULL; p = p->next)
+              {
+                o.put(i,4);
+                o << ' ';
+                text_out(o,p);
+              }
+          }
       }
 
 }
@@ -1368,14 +1368,14 @@ const FreeModule *res_comp::free_of(int i) const
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
-	{
-	  multi_degree(p, deg);
-	  result->append_schreyer(deg, p->base_monom, p->compare_num);
-	  p->minimal_me = n++;
-	}
+        {
+          multi_degree(p, deg);
+          result->append_schreyer(deg, p->base_monom, p->compare_num);
+          p->minimal_me = n++;
+        }
     }
   P->degree_monoid()->remove(deg);
-  
+
   return result;
 }
 const FreeModule *res_comp::minimal_free_of(int i) const
@@ -1393,12 +1393,12 @@ const FreeModule *res_comp::minimal_free_of(int i) const
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
-	if (p->syz_type == SYZ_MINIMAL)
-	  {
-	    multi_degree(p, deg);
-	    result->append(deg);
-	    p->minimal_me = nminimals++;
-	  }
+        if (p->syz_type == SYZ_MINIMAL)
+          {
+            multi_degree(p, deg);
+            result->append(deg);
+            p->minimal_me = nminimals++;
+          }
     }
   P->degree_monoid()->remove(deg);
 
@@ -1418,7 +1418,7 @@ Matrix *res_comp::make(int level) const
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
-        result.set_column(n++, R->to_vector(p->syz, F));    
+        result.set_column(n++, R->to_vector(p->syz, F));
     }
   return result.to_matrix();
 }
@@ -1438,18 +1438,18 @@ void res_comp::reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) cons
     {
       res_pair *p = elems[i];
       if (p->syz_type == SYZ_NOT_MINIMAL)
-	while ((tm = R->component_occurs_in(p->pivot_term->comp, f)) != NULL)
-	  {
-	    // Subtract the proper multiple to f.  f = ... + c m e_y + ...
-	    // and                                 p = ... + d n e_y
-	    // where n|m.  So we want to compute f -= c/d m/n p.
-	    ring_elem c = K->divide(tm->coeff, p->pivot_term->coeff); // exact division
-	    // MES: is the following line actually needed?
-	    M->divide(tm->monom, p->pivot_term->monom, MINIMAL_mon);
-	    if (p->stripped_syz == NULL)
-	      p->stripped_syz = R->strip(p->syz);
-	    R->subtract_multiple_to(f, c, MINIMAL_mon, p->stripped_syz);
-	  }
+        while ((tm = R->component_occurs_in(p->pivot_term->comp, f)) != NULL)
+          {
+            // Subtract the proper multiple to f.  f = ... + c m e_y + ...
+            // and                                 p = ... + d n e_y
+            // where n|m.  So we want to compute f -= c/d m/n p.
+            ring_elem c = K->divide(tm->coeff, p->pivot_term->coeff); // exact division
+            // MES: is the following line actually needed?
+            M->divide(tm->monom, p->pivot_term->monom, MINIMAL_mon);
+            if (p->stripped_syz == NULL)
+              p->stripped_syz = R->strip(p->syz);
+            R->subtract_multiple_to(f, c, MINIMAL_mon, p->stripped_syz);
+          }
     }
 }
 
@@ -1471,14 +1471,14 @@ Matrix *res_comp::make_minimal(int i) const
     {
       res_pair *p = elems[x];
       if (p->syz_type == SYZ_MINIMAL)
-	{
-	  if (p->stripped_syz == NULL)
-	    {
-	      p->stripped_syz = R->strip(p->syz);
-	      reduce_minimal(x,p->stripped_syz, elems);
-	    }
-	  result.set_column(thisx++, R->to_vector(p->stripped_syz, F, 1));
-	}
+        {
+          if (p->stripped_syz == NULL)
+            {
+              p->stripped_syz = R->strip(p->syz);
+              reduce_minimal(x,p->stripped_syz, elems);
+            }
+          result.set_column(thisx++, R->to_vector(p->stripped_syz, F, 1));
+        }
     }
   return result.to_matrix();
 }
@@ -1506,9 +1506,9 @@ void res_comp::skeleton_init(array<res_pair *> &reslevel)
   for (i=0; i<generator_matrix->n_cols(); i++)
     if ((*generator_matrix)[i] != NULL)
       {
-	res_pair *p = new_res_pair(i); // Makes a generator 'pair'
-	p->next = pp;
-	pp = p;
+        res_pair *p = new_res_pair(i); // Makes a generator 'pair'
+        p->next = pp;
+        pp = p;
       }
   reslevel.append(pp);
 }
@@ -1519,7 +1519,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 {
   Index<MonomialIdeal> j;
   queue<Bag *> elems;
-  intarray vp;			// This is 'p'.
+  intarray vp;                  // This is 'p'.
   intarray thisvp;
 
   monomial PAIRS_mon = ALLOCATE_MONOMIAL(monom_size);
@@ -1543,16 +1543,16 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 
       int nskew = P->n_skew_commutative_vars();
       for (int v=0; v<nskew; v++)
-	{
-	  int w = P->skew_variable(v);
-	  if (exp[w] > 0)
-	    {
-	      thisvp.shrink(0);
-	      varpower::var(w,1,thisvp);
-	      Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	      elems.insert(b);
-	    }
-	}
+        {
+          int w = P->skew_variable(v);
+          if (exp[w] > 0)
+            {
+              thisvp.shrink(0);
+              varpower::var(w,1,thisvp);
+              Bag *b = new Bag(static_cast<void *>(0), thisvp);
+              elems.insert(b);
+            }
+        }
       deletearray(exp);
     }
 
@@ -1562,19 +1562,19 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
     {
       const MonomialIdeal *Rideal = P->get_quotient_monomials();
       for (j = Rideal->first(); j.valid(); j++)
-	{
-	  // Compute (P->quotient_ideal->monom : p->monom)
-	  // and place this into a varpower and Bag, placing
-	  // that into 'elems'
-	  thisvp.shrink(0);
-	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
-	    continue;
-	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	  elems.insert(b);
-	}
+        {
+          // Compute (P->quotient_ideal->monom : p->monom)
+          // and place this into a varpower and Bag, placing
+          // that into 'elems'
+          thisvp.shrink(0);
+          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
+          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+            continue;
+          Bag *b = new Bag(static_cast<void *>(0), thisvp);
+          elems.insert(b);
+        }
     }
-  
+
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res_pair
 
@@ -1620,11 +1620,11 @@ int res_comp::skeleton_maxdegree(const array<res_pair *> &reslevel)
   for (int level=0; level < reslevel.length(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
-	{
-	  int d = degree(p);
-	  if (d-level > result)
-	    result = d-level;
-	}
+        {
+          int d = degree(p);
+          if (d-level > result)
+            result = d-level;
+        }
     }
   return result;
 }
@@ -1639,14 +1639,14 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
   for (level=0; level < reslevel.length(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
-	{
-	  int d = degree(p);
-	  d -= level;
-	  d -= lodegree;
-	  bettis[level + (maxlevel+1)*d] += 1;
-	}
+        {
+          int d = degree(p);
+          d -= level;
+          d -= lodegree;
+          bettis[level + (maxlevel+1)*d] += 1;
+        }
     }
-  
+
   // Now make an arrayint so that we may just use betti_display
   int lo = lodegree;
   int hi = maxdegree;
@@ -1670,12 +1670,12 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
     {
       o << "---- level " << level << " ----" << newline;
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
-	{
-	  int d = degree(p);
-	  o.put(d,4);
-	  o << ' ';
-	  text_out(o,p);
-	}
+        {
+          int d = degree(p);
+          o.put(d,4);
+          o << ' ';
+          text_out(o,p);
+        }
     }
   emit(o.str());
 }
@@ -1709,7 +1709,7 @@ void res_comp::skeleton(int strategy)
       head.next = NULL;
       ptrhead = &head;
       for (res_pair *p = pp; p != NULL; p = p->next)
-	skeleton_pairs(ptrhead, p);
+        skeleton_pairs(ptrhead, p);
       reslevel.append(head.next);
     }
 
@@ -1719,4 +1719,5 @@ void res_comp::skeleton(int strategy)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

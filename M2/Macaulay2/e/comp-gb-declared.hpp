@@ -6,6 +6,11 @@
 #include "comp-gb.hpp"
 #include "reducedgb.hpp"
 
+/**
+    @ingroup gb
+
+    @brief declared Groebner bases.
+*/
 class GBDeclared : public GBComputation
 // This contains a GBComputation, which can be changed.
 // For example, we can start with a computation, and then
@@ -24,34 +29,34 @@ protected:
 
 public:
   GBDeclared(const Matrix *m0,
-	     const Matrix *gb,
-	     const Matrix *change,
-	     const Matrix *syz0);
+             const Matrix *gb,
+             const Matrix *change,
+             const Matrix *syz0);
 
   GBDeclared(const Matrix *leadterms,
-	     const Matrix *m0,
-	     const Matrix *gb,
-	     const Matrix *change,
-	     const Matrix *syz0);
+             const Matrix *m0,
+             const Matrix *gb,
+             const Matrix *change,
+             const Matrix *syz0);
 
   static GBComputation *create(const Matrix *m,
-			       const Matrix *gb,
-			       const Matrix *change,
-			       const Matrix *syz);
+                               const Matrix *gb,
+                               const Matrix *change,
+                               const Matrix *syz);
   // Possibly returns NULL, if an error message is reported
 
   static GBComputation *create(const Matrix *leadterms,
-			       const Matrix *m,
-			       const Matrix *gb,
-			       const Matrix *change,
-			       const Matrix *syz);
+                               const Matrix *m,
+                               const Matrix *gb,
+                               const Matrix *change,
+                               const Matrix *syz);
   // Possibly returns NULL, if an error message is reported
 
   virtual ~GBDeclared() {}
 
   virtual void remove_gb() {}
 
-  virtual GBComputation * cast_to_GBComputation() { return this;} 
+  virtual GBComputation * cast_to_GBComputation() { return this;}
 
   virtual void start_computation() {  }
 
@@ -86,8 +91,8 @@ public:
   }
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient) {
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient) {
     return G->matrix_lift(m,result_remainder,result_quotient);
   }
 
@@ -108,4 +113,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

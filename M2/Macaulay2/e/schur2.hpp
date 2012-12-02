@@ -13,12 +13,12 @@ class tableau2
   int dim;
   int maxwt;
   int wt;
-  int *lambda;			// A partition vector 0..nvars-1
-  int *p;			// A partition vector 0..nvars-1
-  int *xloc;			// array 1..|p|-|lambda| of the horizontal location
-				// of this number in the skew table
-  int *yloc;			// array 1..|p|-|lambda| of the vertical location
-				// of this number in the skew table
+  int *lambda;                  // A partition vector 0..nvars-1
+  int *p;                       // A partition vector 0..nvars-1
+  int *xloc;                    // array 1..|p|-|lambda| of the horizontal location
+                                // of this number in the skew table
+  int *yloc;                    // array 1..|p|-|lambda| of the vertical location
+                                // of this number in the skew table
 
   void initialize(int nvars);
   void initialize(int maxrows, int maxwt);
@@ -60,16 +60,16 @@ public:
 class schur_poly_iterator {
   VECTOR(ring_elem)::const_iterator ic;
   VECTOR(schur_word)::const_iterator im;
-  
+
   friend class schur_poly;
-  
+
   schur_poly_iterator(const schur_poly &f) : ic(f.coeffs.begin()), im(f.monoms.begin()) {}
   schur_poly_iterator(const schur_poly &f, int) : ic(f.coeffs.end()), im(0) {}
 public:
   void operator++() { ++ic; im += *im;  }
   ring_elem getCoefficient() { return *ic; }
   const_schur_partition getMonomial() { return &*im; }
-  
+
   friend bool operator==(const schur_poly_iterator &a, const schur_poly_iterator &b);
   friend bool operator!=(const schur_poly_iterator &a, const schur_poly_iterator &b);
 };
@@ -127,11 +127,11 @@ public:
 
   ////// from Ring //////////////////////////////////////////
   virtual void text_out(buffer &o) const;
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
@@ -160,7 +160,7 @@ public:
   virtual ring_elem invert(const ring_elem f) const; // do nothing
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const; // do nothing
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const; // do nothing
+                      ring_elem &x, ring_elem &y) const; // do nothing
 
   ///////////////////////////////////////////////////////////
 private:
@@ -191,4 +191,5 @@ private:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -1134,6 +1134,24 @@ kill(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("kill",kill);
 
+limitFiles(e:Expr):Expr := (
+     when e is n:ZZcell do
+     if isInt(n)
+     then if limitFiles(toInt(n)) == 0 then nullE
+     else buildErrorPacket(syserrmsg())
+     else WrongArgSmallInteger(0)
+     else WrongArgZZ(0));
+setupfun("limitFiles",limitFiles);
+
+limitProcesses(e:Expr):Expr := (
+     when e is n:ZZcell do
+     if isInt(n)
+     then if limitProcesses(toInt(n)) == 0 then nullE
+     else buildErrorPacket(syserrmsg())
+     else WrongArgSmallInteger(0)
+     else WrongArgZZ(0));
+setupfun("limitProcesses",limitProcesses);
+
 setEcho(e:Expr):Expr := (
      when e is f:file do (
 	  f.echo = true;
@@ -1641,6 +1659,7 @@ stopIfErrorS := dummySymbol;
 handleInterruptsS := dummySymbol;
 printWidthS := dummySymbol;
 notifyS := dummySymbol;
+readonlyfilesS := dummySymbol;
 
 setupconst("minExponent",toExpr(minExponent));
 setupconst("maxExponent",toExpr(maxExponent));
@@ -1976,6 +1995,16 @@ GCstats(e:Expr):Expr := (
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("GCstats",GCstats);
+
+header "
+extern void set_gftable_dir(char *); /* defined in library factory, as patched by us */
+";
+setFactoryGFtableDirectory(e:Expr):Expr := (
+     when e is d:stringCell do (
+     	  Ccode(void,"set_gftable_dir(", tocharstar(d.v), ")");
+	  nullE)
+     else WrongArgString());
+setupfun("setFactoryGFtableDirectory",setFactoryGFtableDirectory);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors5.o "

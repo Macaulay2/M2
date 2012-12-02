@@ -4,7 +4,8 @@
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
-URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib
+# URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 VERSION = 042c
 TARFILE = lrslib-$(VERSION).tar.gz
 PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash

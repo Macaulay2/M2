@@ -18,27 +18,27 @@
 
 class vecHeap
 {
-  const FreeModule *F;		// Our elements will be vectors in here
-  const Ring *K;		// The coefficient ring
+  const FreeModule *F;          // Our elements will be vectors in here
+  const Ring *K;                // The coefficient ring
   vecterm * heap[GEOHEAP_SIZE];
   int top_of_heap;
-  int mLead;			// set after a call to get_lead_term.
-				// set negative after each call to add, 
-				// or remove_lead_term
+  int mLead;                    // set after a call to get_lead_term.
+                                // set negative after each call to add,
+                                // or remove_lead_term
 public:
   vecHeap(const FreeModule *F);
   ~vecHeap();
 
   void add(vecterm * p);
   const vecterm * get_lead_term(); // Returns NULL if none.
-  vecterm * remove_lead_term();	// Returns NULL if none.
+  vecterm * remove_lead_term(); // Returns NULL if none.
 
   const FreeModule *get_target() const { return F; }
-  vecterm * value();		// Returns the linearized value, and resets the vecHeap.
+  vecterm * value();            // Returns the linearized value, and resets the vecHeap.
 
   vecterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
   vecterm * current_value() const; // Adds up all the elements and returns this value
-				 // Mainly used for debugging.
+                                 // Mainly used for debugging.
 };
 
 inline vecHeap::vecHeap(const FreeModule *FF)
@@ -94,18 +94,18 @@ inline const vecterm * vecHeap::get_lead_term()
   for (int i=0; i <= top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;
-      if (lead_so_far < 0) 
-	{
-	  lead_so_far = i;
-	  continue;
-	}
+      if (lead_so_far < 0)
+        {
+          lead_so_far = i;
+          continue;
+        }
       int cmp = compare(heap[lead_so_far], heap[i]);
       if (cmp == GT) continue;
       if (cmp == LT)
-	{
-	  lead_so_far = i;
-	  continue;
-	}
+        {
+          lead_so_far = i;
+          continue;
+        }
       // At this point we have equality
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
       vecterm * tmp = heap[i];
@@ -114,15 +114,15 @@ inline const vecterm * vecHeap::get_lead_term()
       K->remove_vec(tmp);
 
       if (K->is_zero(heap[lead_so_far]->coeff))
-	{
-	  // Remove, and start over
-	  tmp = heap[lead_so_far];
-	  heap[lead_so_far] = tmp->next;
-	  tmp->next = NULL;
-	  K->remove_vec(tmp);
-	  lead_so_far = -1;
-	  i = -1;
-	}
+        {
+          // Remove, and start over
+          tmp = heap[lead_so_far];
+          heap[lead_so_far] = tmp->next;
+          tmp->next = NULL;
+          K->remove_vec(tmp);
+          lead_so_far = -1;
+          i = -1;
+        }
     }
   mLead = lead_so_far;
   if (lead_so_far < 0) return NULL;
@@ -166,4 +166,5 @@ inline vecterm * vecHeap::current_value() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

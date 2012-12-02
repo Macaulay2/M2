@@ -12,7 +12,7 @@
 
 class binomialGB_comp;
 typedef int *monomial0;
-  
+
 struct binomial  : public our_new_delete
 {
   monomial0 lead;
@@ -25,9 +25,9 @@ struct binomial  : public our_new_delete
 struct binomial_gb_elem  : public our_new_delete
 {
   binomial_gb_elem *next;
-  binomial_gb_elem *smaller;		// NULL if this is a minimal GB element, otherwise
-				// points to a GB element whose lead term divides 
-				// this lead term.
+  binomial_gb_elem *smaller;            // NULL if this is a minimal GB element, otherwise
+                                // points to a GB element whose lead term divides
+                                // this lead term.
   binomial f;
 
   binomial_gb_elem(binomial ff) : next(NULL), smaller(NULL), f(ff) {}
@@ -36,7 +36,7 @@ struct binomial_gb_elem  : public our_new_delete
 struct binomial_s_pair  : public our_new_delete
 {
   binomial_gb_elem *f1;
-  binomial_gb_elem *f2;		// f2 is NULL for generators...
+  binomial_gb_elem *f2;         // f2 is NULL for generators...
   monomial0 lcm;
   binomial_s_pair() {}
   binomial_s_pair(binomial_gb_elem *ff1, binomial_gb_elem *ff2, monomial0 lcm0)
@@ -52,27 +52,27 @@ class binomial_ring : public our_new_delete
 {
   friend class binomialGB_comp;
   const PolynomialRing *R;
-  const FreeModule *F;		// rank 1 free R-module
+  const FreeModule *F;          // rank 1 free R-module
 
   // exponent vector: [e0, ..., e(nvars-1), -deg, -wt] (the last slot is only there, if there
   // is a weight function.
   int nvars;
   bool have_weights;
-  int nslots;			// nvars+1 or nvars+2
-  int *degrees;			// (Negative of) Degree vector.
-  int *weights;			// (Negative of) Weight function, if any
-  bool revlex;			// true means break ties by degrevlex, false by deglex
+  int nslots;                   // nvars+1 or nvars+2
+  int *degrees;                 // (Negative of) Degree vector.
+  int *weights;                 // (Negative of) Weight function, if any
+  bool revlex;                  // true means break ties by degrevlex, false by deglex
 
   stash *monstash;
 
   monomial0 new_monomial() const;
   void set_weights(monomial0 m) const;
-  
+
 public:
   binomial_ring(const PolynomialRing *RR);
-  binomial_ring(const PolynomialRing *RR, 
-		int *wts,
-		bool revlex0);
+  binomial_ring(const PolynomialRing *RR,
+                int *wts,
+                bool revlex0);
   ~binomial_ring();
 
   // monomial operations
@@ -140,7 +140,7 @@ class binomial_s_pair_set : public our_new_delete
   struct s_pair_lcm_list  : public our_new_delete{
     s_pair_lcm_list *next;
     monomial0 lcm;
-    s_pair_elem *pairs;		// List of pairs with this lcm.
+    s_pair_elem *pairs;         // List of pairs with this lcm.
   };
 
   struct s_pair_elem  : public our_new_delete{
@@ -151,10 +151,10 @@ class binomial_s_pair_set : public our_new_delete
   };
 
   const binomial_ring *R;
-  monomial0 _prev_lcm;		// This class is responsible for deleting lcm's.
+  monomial0 _prev_lcm;          // This class is responsible for deleting lcm's.
   s_pair_degree_list *_pairs;
   int _n_elems;
-  
+
   // Stats for number of pairs:
   int _max_degree;
   intarray _npairs; // npairs[2*d] = total # of pairs.  npairs[2*d+1] = number left
@@ -173,7 +173,7 @@ public:
 
   bool next(const int *d, binomial_s_pair &result, int &result_deg);
   // returns false if no more pairs in degrees <= *d. (NULL represents
-  // infinity).  
+  // infinity).
 
   int lowest_degree() const;
   int n_elems(int d) const;
@@ -215,7 +215,7 @@ public:
   monomial_list *find_divisor(monomial_list *I, monomial0 m) const;
   monomial_list *ideal_quotient(monomial0 m) const;
   void remove_monomial_list(monomial_list *mm) const;
-  
+
   binomial_gb_elem *find_divisor(monomial0 m) const;
   void make_new_pairs(binomial_s_pair_set *Pairs, binomial_gb_elem *f) const;
   void reduce_monomial(monomial0 m) const;
@@ -245,13 +245,18 @@ public:
 #define GB_FLAG_IS_NONDEGENERATE 2
 #define GB_FLAG_BIGCELL 4
 
+/**
+    @ingroup gb
+
+    @brief Non-functional.
+*/
 class binomialGB_comp : public GBComputation
 {
   binomial_ring *R;
-  binomial_s_pair_set *Pairs;		// Pairs and Generators
+  binomial_s_pair_set *Pairs;           // Pairs and Generators
   binomialGB *Gmin;
   array <binomial_gb_elem *> Gens;       // All of the generators
-  array <binomial_gb_elem *> G;		// All of the binomial_gb_elem's in one place.
+  array <binomial_gb_elem *> G;         // All of the binomial_gb_elem's in one place.
 
   int top_degree;
 
@@ -260,26 +265,26 @@ class binomialGB_comp : public GBComputation
   ///////////////////////
 
   // flags used during the computation:
-  bool is_homogeneous;		// Generators will all be homogeneous,
-				// and elements of degree d will be added
-				// only BEFORE computing a GB in degree d+1.
-				// An error is given if a generator is added in
-				// after that point.
-  bool is_nondegenerate;	// Assumed: the ideal has no linear factors:
-				// thus, if x.f is found to be in the ideal,
-				// f must already be in the ideal.
-  bool use_bigcell;		// The generators given do not necessarily generate
-				// the entire ideal.  If an element of the form
-				// x.f (x a variable) is found, then we may add f
-				// to the ideal.
-  bool flag_auto_reduce;	// Form full auto-reduction of GB elements.  This is the
-				// default.
-  bool flag_use_monideal;	// If true, divisibility is done using monomial ideals
-				// otherwise, divisibility is done using a linked list, and 
-				// monomial masks.  Currently, using monideals is not yet
-				// implemented, so this is 'false'.
+  bool is_homogeneous;          // Generators will all be homogeneous,
+                                // and elements of degree d will be added
+                                // only BEFORE computing a GB in degree d+1.
+                                // An error is given if a generator is added in
+                                // after that point.
+  bool is_nondegenerate;        // Assumed: the ideal has no linear factors:
+                                // thus, if x.f is found to be in the ideal,
+                                // f must already be in the ideal.
+  bool use_bigcell;             // The generators given do not necessarily generate
+                                // the entire ideal.  If an element of the form
+                                // x.f (x a variable) is found, then we may add f
+                                // to the ideal.
+  bool flag_auto_reduce;        // Form full auto-reduction of GB elements.  This is the
+                                // default.
+  bool flag_use_monideal;       // If true, divisibility is done using monomial ideals
+                                // otherwise, divisibility is done using a linked list, and
+                                // monomial masks.  Currently, using monideals is not yet
+                                // implemented, so this is 'false'.
 
-  array<binomial_gb_elem *> mingens;	
+  array<binomial_gb_elem *> mingens;
            // Only valid for homogeneous case.  These point to GB elements
            // so don't free them by accident!
 
@@ -290,8 +295,8 @@ class binomialGB_comp : public GBComputation
 
 public:
   // creation
-  binomialGB_comp(const PolynomialRing *R, int *wts, bool revlex, 
-		  unsigned int options);
+  binomialGB_comp(const PolynomialRing *R, int *wts, bool revlex,
+                  unsigned int options);
   virtual ~binomialGB_comp();
 
   virtual bool stop_conditions_ok();
@@ -312,13 +317,13 @@ public:
   // Computation routines //
   //////////////////////////
 
-  static binomialGB_comp * create(const Matrix *m, 
-		      M2_bool collect_syz, 
-		      int n_rows_to_keep,
-		      M2_arrayint gb_weights,
-		      int strategy, 
-		      M2_bool use_max_degree,
-		      int max_degree);
+  static binomialGB_comp * create(const Matrix *m,
+                      M2_bool collect_syz,
+                      int n_rows_to_keep,
+                      M2_arrayint gb_weights,
+                      int strategy,
+                      M2_bool use_max_degree,
+                      int max_degree);
 
   void remove_gb();
 
@@ -353,9 +358,9 @@ public:
   // likely not planned to be implemented
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient
-			   );
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
+                           );
   //not planned to be implemented
 
   virtual int contains(const Matrix *m);
@@ -367,4 +372,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

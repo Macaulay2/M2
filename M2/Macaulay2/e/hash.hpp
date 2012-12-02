@@ -26,8 +26,8 @@ public:
 class object : public our_new_delete {
   // Hashed objects, which are either mutable or immutable.
   static long next_hash_sequence_number;
-  long hashval; 
-  // == 0 means hash value is not set.  
+  long hashval;
+  // == 0 means hash value is not set.
   // > 0 means object is immutable.  This hash value is set when the object is
   //   made immutable.
 public:
@@ -38,7 +38,7 @@ public:
     assert(hash > 0);
     if (hashval == 0) hashval = hash;
   }
-  
+
   bool is_mutable() const { return hashval < 0; }
   bool is_immutable() const { return hashval > 0; }
   long get_hash_value() const { return hashval; }
@@ -50,4 +50,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

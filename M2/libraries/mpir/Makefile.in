@@ -5,7 +5,9 @@ VERSION = 2.4.0
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 
-URL = http://www.mpir.org
+# URL = http://www.mpir.org
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+
 CONFIGOPTIONS += --enable-gmpcompat --enable-cxx
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared

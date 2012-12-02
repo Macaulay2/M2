@@ -16,8 +16,8 @@
 
 class polyheap
 {
-  const PolynomialRing *F;	// Our elements will be vectors in here
-  const Ring *K;		// The coefficient ring
+  const PolynomialRing *F;      // Our elements will be vectors in here
+  const Ring *K;                // The coefficient ring
   Nterm * heap[GEOHEAP_SIZE];
   int top_of_heap;
 
@@ -26,9 +26,9 @@ public:
   ~polyheap();
 
   void add(Nterm * p);
-  Nterm * remove_lead_term();	// Returns NULL if none.
+  Nterm * remove_lead_term();   // Returns NULL if none.
 
-  Nterm * value();		// Returns the linearized value, and resets the polyheap.
+  Nterm * value();              // Returns the linearized value, and resets the polyheap.
 
   Nterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };
@@ -86,18 +86,18 @@ inline Nterm * polyheap::remove_lead_term()
   for (int i=0; i <= top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;
-      if (lead_so_far < 0) 
-	{
-	  lead_so_far = i;
-	  continue;
-	}
+      if (lead_so_far < 0)
+        {
+          lead_so_far = i;
+          continue;
+        }
       int cmp = EQ; //F->compare(heap[lead_so_far], heap[i]);
       if (cmp == GT) continue;
       if (cmp == LT)
-	{
-	  lead_so_far = i;
-	  continue;
-	}
+        {
+          lead_so_far = i;
+          continue;
+        }
       // At this point we have equality
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
       Nterm * tmp = heap[i];
@@ -106,15 +106,15 @@ inline Nterm * polyheap::remove_lead_term()
       F->remove(reinterpret_cast<ring_elem &>(tmp));
 
       if (K->is_zero(heap[lead_so_far]->coeff))
-	{
-	  // Remove, and start over
-	  tmp = heap[lead_so_far];
-	  heap[lead_so_far] = tmp->next;
-	  tmp->next = NULL;
-	  F->remove(reinterpret_cast<ring_elem &>(tmp));
-	  lead_so_far = -1;
-	  i = -1;
-	}
+        {
+          // Remove, and start over
+          tmp = heap[lead_so_far];
+          heap[lead_so_far] = tmp->next;
+          tmp->next = NULL;
+          F->remove(reinterpret_cast<ring_elem &>(tmp));
+          lead_so_far = -1;
+          i = -1;
+        }
     }
   if (lead_so_far < 0) return NULL;
   Nterm * result = heap[lead_so_far];
@@ -141,4 +141,5 @@ inline Nterm * polyheap::value()
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

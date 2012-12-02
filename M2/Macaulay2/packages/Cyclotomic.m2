@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 --  cyclotomic.m2
 --
---  Copyright (C) 2009-11 Thomas Kahle <kahle@mis.mpg.de>
+--  Copyright (C) 2009-12 Thomas Kahle <thomas-kahle@gmx.de>
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
@@ -23,13 +23,13 @@
 
 newPackage(
 	"Cyclotomic",
-	Version => "0.5.5",
-	Date => "February 2011",
+	Version => "1.0",
+	Date => "Februar 2012",
     	Authors => {{Name => "Thomas Kahle", 
-		  Email => "kahle@mis.mpg.de", 
-		  HomePage => "http://thomas-kahle.de/bpd"}},
+		  Email => "thomas-kahle@gmx.de", 
+		  HomePage => "http://thomas-kahle.de"}},
     	Headline => "routines for cyclotomic fields",
-    	DebuggingMode => true
+     	Reload=>true
     	)
 
 export {cyclotomicField,
@@ -38,13 +38,12 @@ export {cyclotomicField,
 	joinCyclotomic
        }
 
-ww := local ww
+ww := getSymbol "ww"
   
 -- We use memoize to get physically the same cyclotomic field again and again!
 cf = (i) -> (
-     Q := QQ[symbol ww_i];
-     return toField ((Q) / cyclotomicPoly (i, Q_0));
-     )
+     Q := QQ(monoid [ww_i]);
+     toField ((Q) / cyclotomicPoly (i, Q_0)))
 
 cyclotomicField = memoize cf
 
@@ -96,8 +95,7 @@ joinCyclotomic = li -> (
 	       li2 = li2 | { f li#i };
 	       );
 	  );
-     return li2;
-     )
+     li2)
 
 cyclotomicPoly = (i,v) -> (
      -- returns the i-th cyclotomic polynomial in variable v.
@@ -118,16 +116,12 @@ cyclotomicPoly = (i,v) -> (
 	  -- check for factor
 	  if i%f == 0 then (
 	       fac := cyclotomicPoly (f,v);
-	       -- print fac;
 	       -- division with result in polynomial ring:
 	       mini = (flatten entries syz matrix {{mini,fac}})#1;
 	       )
 	  );
      --make sure the leading coefficient is one.
-     mini=mini / leadCoefficient(mini);
-     return mini;
-     
-     )
+     mini / leadCoefficient(mini))
 
 findRootPower = R -> (
      -- Finds the power of the adjoined root of unity in the
@@ -146,8 +140,7 @@ findRootPower = R -> (
 	  gg = gg *g;
 	  );
      if r<2 then return 2
-     else return r+1;
-     )
+     else r+1)
 
 -- End of source code ---
 
@@ -156,7 +149,9 @@ beginDocumentation()
 document { 
         Key => Cyclotomic,
         Headline => "a package for cyclotomic fields",
-        EM "Cyclotomic", " is a package for cyclotomic fields."
+        EM "Cyclotomic", " is a package for cyclotomic fields.  It is used in
+        to construct extensions of the coefficient field during binomial
+        primary decomposition using the package ", TO "Binomials::Binomials", "."
         }
 
 document {

@@ -25,34 +25,34 @@ public:
 
   static varpower_word simple_degree(const_varpower_monomial m);
 
-  static varpower_word weight(const_varpower_monomial m, 
-			      M2_arrayint wts);
+  static varpower_word weight(const_varpower_monomial m,
+                              M2_arrayint wts);
 
   static int equal(const_varpower_monomial m1,
-		   const_varpower_monomial m2);
+                   const_varpower_monomial m2);
 
   static int compare(const_varpower_monomial m1,
-		     const_varpower_monomial m2); // Which compare is this?
-  
-  static void mult(const_varpower_monomial m1, 
-		   const_varpower_monomial m2,
-		   varpower_monomial result);
-  
-  static void quotient(const_varpower_monomial m1, 
-		       const_varpower_monomial m2,
-		       varpower_monomial result);
+                     const_varpower_monomial m2); // Which compare is this?
 
-  static void lcm(const_varpower_monomial m1, 
-		  const_varpower_monomial m2,
-		  varpower_monomial result);
+  static void mult(const_varpower_monomial m1,
+                   const_varpower_monomial m2,
+                   varpower_monomial result);
 
-  static int divides(const_varpower_monomial m1, 
-		     const_varpower_monomial m2,
-		     varpower_monomial result);
+  static void quotient(const_varpower_monomial m1,
+                       const_varpower_monomial m2,
+                       varpower_monomial result);
 
-  static void elem_text_out(FILE *fil, 
-			    const_varpower_monomial m);
-  
+  static void lcm(const_varpower_monomial m1,
+                  const_varpower_monomial m2,
+                  varpower_monomial result);
+
+  static int divides(const_varpower_monomial m1,
+                     const_varpower_monomial m2,
+                     varpower_monomial result);
+
+  static void elem_text_out(FILE *fil,
+                            const_varpower_monomial m);
+
 };
 
 class index_varpower_monomial
@@ -63,8 +63,8 @@ public:
   index_varpower_monomial() : loc(0), hi(0) {}
   index_varpower_monomial(const_varpower_monomial m) : loc(m+1), hi(m+(2*(*m))) {}
 
-				     //  index_monomial(const int *m, int) 
-				     //    : lo(m+1), hi(m+*m-2) { loc = hi; }
+                                     //  index_monomial(const int *m, int)
+                                     //    : lo(m+1), hi(m+*m-2) { loc = hi; }
 
   index_varpower_monomial(const index_varpower_monomial &i) : loc(i.loc), hi(i.hi) {}
 
@@ -83,5 +83,6 @@ public:
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
 */

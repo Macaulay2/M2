@@ -13,10 +13,10 @@ ReducedGB_Field_Local::~ReducedGB_Field_Local()
 }
 
 ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
-				 const PolynomialRing *originalR0,
-				 const FreeModule *F0,
-				 const FreeModule *Fsyz0,
-				 const GBWeight *wt0) 
+                                 const PolynomialRing *originalR0,
+                                 const FreeModule *F0,
+                                 const FreeModule *Fsyz0,
+                                 const GBWeight *wt0)
   : ReducedGB_Field(R0,originalR0,F0,Fsyz0),
     T1(0),
     wt(wt0)
@@ -42,7 +42,7 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
 }
 
 void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
-				       bool auto_reduced)
+                                       bool auto_reduced)
 {
   // auto_reduced flag is ignored, since it can lead to infinite loops here
   ReducedGB_Field::minimalize(polys0,false);
@@ -64,11 +64,11 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
 }
 
 bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
-					      int h_comp,
-					      int h_deg,
-					      int &h_alpha,           // result value
-					      POLY &result_g,         // result value
-					      int & result_g_alpha)   // result value
+                                              int h_comp,
+                                              int h_deg,
+                                              int &h_alpha,           // result value
+                                              POLY &result_g,         // result value
+                                              int & result_g_alpha)   // result value
 {
   VECTOR(MonomialTable::mon_term *) divisors;
   MonomialTable *ringtable = originalR->get_quotient_MonomialTable();
@@ -109,41 +109,41 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
       buffer o;
       o << "\nfind good divisor:";
       if (n0 > 0)
-	{
-	  o << "\n  ndivisors from quotient ring elements " << n0;
-	  for (int j=0; j<n0; j++)
-	    {
-	      divisor_info &t = div_info[j];
-	      o << "\n    size " << t.size << " alpha " << t.alpha << " lead ";
-	      gbvector *f = R->gbvector_lead_term(-1,F,t.g.f);
-	      R->gbvector_text_out(o,F,f);
-	      R->gbvector_remove(f);
-	    }
-	}
+        {
+          o << "\n  ndivisors from quotient ring elements " << n0;
+          for (int j=0; j<n0; j++)
+            {
+              divisor_info &t = div_info[j];
+              o << "\n    size " << t.size << " alpha " << t.alpha << " lead ";
+              gbvector *f = R->gbvector_lead_term(-1,F,t.g.f);
+              R->gbvector_text_out(o,F,f);
+              R->gbvector_remove(f);
+            }
+        }
       if (n1 > 0)
-	{
-	  o << "\n  ndivisors from appended elements " << n1;
-	  for (int j=0; j<n1; j++)
-	    {
-	      divisor_info &t = div_info[n0+j];
-	      o << "\n    size " << t.size << " alpha " << t.alpha << " lead ";
-	      gbvector *f = R->gbvector_lead_term(-1,F,t.g.f);
-	      R->gbvector_text_out(o,F,f);
-	      R->gbvector_remove(f);
-	    }
-	}
+        {
+          o << "\n  ndivisors from appended elements " << n1;
+          for (int j=0; j<n1; j++)
+            {
+              divisor_info &t = div_info[n0+j];
+              o << "\n    size " << t.size << " alpha " << t.alpha << " lead ";
+              gbvector *f = R->gbvector_lead_term(-1,F,t.g.f);
+              R->gbvector_text_out(o,F,f);
+              R->gbvector_remove(f);
+            }
+        }
       if (n2 > 0)
-	{
-	  o << "\n  ndivisors from gb elements " << n1;
-	  for (int j=0; j<n2; j++)
-	    {
-	      divisor_info &t = div_info[n0+n1+j];
-	      o << "\n    size " << t.size << " alpha " << t.alpha << " lead ";
-	      gbvector *f = R->gbvector_lead_term(-1,F,t.g.f);
-	      R->gbvector_text_out(o,F,f);
-	      R->gbvector_remove(f);
-	    }
-	}
+        {
+          o << "\n  ndivisors from gb elements " << n1;
+          for (int j=0; j<n2; j++)
+            {
+              divisor_info &t = div_info[n0+n1+j];
+              o << "\n    size " << t.size << " alpha " << t.alpha << " lead ";
+              gbvector *f = R->gbvector_lead_term(-1,F,t.g.f);
+              R->gbvector_text_out(o,F,f);
+              R->gbvector_remove(f);
+            }
+        }
       emit(o.str());
     }
 
@@ -162,19 +162,19 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
   for (int i=0; i<n; i++)
     {
       if (div_info[i].alpha == min_alpha)
-	{
-	  int this_size = div_info[i].size;
-	  if (min_size < 0 || this_size < min_size)
-	    {
-	      min_size = this_size;
-	      result_i = i;
-	      nmatches = 1;
-	    }
-	  else if (this_size == min_size)
-	    {
-	      nmatches++;
-	    }
-	}
+        {
+          int this_size = div_info[i].size;
+          if (min_size < 0 || this_size < min_size)
+            {
+              min_size = this_size;
+              result_i = i;
+              nmatches = 1;
+            }
+          else if (this_size == min_size)
+            {
+              nmatches++;
+            }
+        }
     }
 
   if (nmatches > 1 && M2_gbTrace == 3)
@@ -192,7 +192,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
     {
       buffer o;
       if (nmatches > 1)
-	o << "\n  nmatches " << n;
+        o << "\n  nmatches " << n;
       o << "\n  chosen value: ";
       int size = R->gbvector_n_terms(result_g.f);
       o << "\n    size " << size << " alpha " << result_g_alpha << " lead ";
@@ -212,29 +212,29 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
       n = ringtable->find_divisors(-1, h_exp, 1, &divisors);
 
       if (n > 0)
-	{
-	  POLY p;
-	  p.fsyz = 0;
-	  for (int i=0; i<divisors.size(); i++)
-	    {
-	      MonomialTable::mon_term *t = divisors[i];
-	      int id = t->_val;
-	      p.f = const_cast<gbvector *>(originalR->quotient_gbvector(id));
-	      int g_alpha = ring_alpha[id];
-	      if (g_alpha <= h_alpha)
-		{
-		  result_g = p;
-		  result_g_alpha = g_alpha;
-		  return true;
-		}
-	      if (min_alpha < 0 || g_alpha < min_alpha)
-		{
-		  min_alpha = g_alpha;
-		  result_g = p;
-		  result_g_alpha = g_alpha;
-		}
-	    }
-	}
+        {
+          POLY p;
+          p.fsyz = 0;
+          for (int i=0; i<divisors.size(); i++)
+            {
+              MonomialTable::mon_term *t = divisors[i];
+              int id = t->_val;
+              p.f = const_cast<gbvector *>(originalR->quotient_gbvector(id));
+              int g_alpha = ring_alpha[id];
+              if (g_alpha <= h_alpha)
+                {
+                  result_g = p;
+                  result_g_alpha = g_alpha;
+                  return true;
+                }
+              if (min_alpha < 0 || g_alpha < min_alpha)
+                {
+                  min_alpha = g_alpha;
+                  result_g = p;
+                  result_g_alpha = g_alpha;
+                }
+            }
+        }
     }
   divisors.clear();
 
@@ -251,89 +251,89 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
     {
       POLY p;
       if (M2_gbTrace>=4)
-	{
-	  buffer o;
-	  o << "\n  ndivisors from appended elements " << n;
-	  for (int j=0; j<n; j++)
-	    {
-	      MonomialTable::mon_term *t = divisors[j];
-	      int id = t->_val;
-	      p = newpol[id];
-	      int g_alpha = newpol_alpha[id];
-	      int size = R->gbvector_n_terms(p.f);
-	      o << "\n    size " << size << " alpha " << g_alpha << " lead ";
-	      gbvector *f = R->gbvector_lead_term(-1,F,p.f);
-	      R->gbvector_text_out(o,F,f);
-	    }
-	  emit(o.str());
-	}
+        {
+          buffer o;
+          o << "\n  ndivisors from appended elements " << n;
+          for (int j=0; j<n; j++)
+            {
+              MonomialTable::mon_term *t = divisors[j];
+              int id = t->_val;
+              p = newpol[id];
+              int g_alpha = newpol_alpha[id];
+              int size = R->gbvector_n_terms(p.f);
+              o << "\n    size " << size << " alpha " << g_alpha << " lead ";
+              gbvector *f = R->gbvector_lead_term(-1,F,p.f);
+              R->gbvector_text_out(o,F,f);
+            }
+          emit(o.str());
+        }
       for (int i=0; i<divisors.size(); i++)
-	{
-	  MonomialTable::mon_term *t = divisors[i];
-	  int id = t->_val;
-	  p = newpol[id];
-	  int g_alpha = newpol_alpha[id];
-	  if (result_g_alpha < 0 && g_alpha <= h_alpha)
-	    {
-	      result_g = p;
-	      result_g_alpha = g_alpha;
-	      min_alpha = g_alpha;
-	      //break; //return true;
-	    }
-	  if (min_alpha < 0 ||  g_alpha < min_alpha)
-	    {
-	      min_alpha = g_alpha;
-	      result_g = p;
-	      result_g_alpha = g_alpha;
-	    }
-	}
+        {
+          MonomialTable::mon_term *t = divisors[i];
+          int id = t->_val;
+          p = newpol[id];
+          int g_alpha = newpol_alpha[id];
+          if (result_g_alpha < 0 && g_alpha <= h_alpha)
+            {
+              result_g = p;
+              result_g_alpha = g_alpha;
+              min_alpha = g_alpha;
+              //break; //return true;
+            }
+          if (min_alpha < 0 ||  g_alpha < min_alpha)
+            {
+              min_alpha = g_alpha;
+              result_g = p;
+              result_g_alpha = g_alpha;
+            }
+        }
     }
   divisors.clear();
-      
+
   // Now check the GB itself
   n = T->find_divisors(-1, h_exp, h_comp, &divisors);
   if (n > 0)
     {
       POLY p;
       if (M2_gbTrace>=4)
-	{
-	  buffer o;
-	  o << "\n  ndivisors from GB " << n;
-	  for (int j=0; j<n; j++)
-	    {
-	      MonomialTable::mon_term *t = divisors[j];
-	      int id = t->_val;
-	      p = polys[id];
-	      int g_alpha = alpha[id];
-	      int size = R->gbvector_n_terms(p.f);
-	      o << "\n     size " << size << " alpha " << g_alpha << " lead ";
-	      gbvector *f = R->gbvector_lead_term(-1,F,p.f);
-	      R->gbvector_text_out(o,F,f);
-	    }
-	  emit(o.str());
-	}
+        {
+          buffer o;
+          o << "\n  ndivisors from GB " << n;
+          for (int j=0; j<n; j++)
+            {
+              MonomialTable::mon_term *t = divisors[j];
+              int id = t->_val;
+              p = polys[id];
+              int g_alpha = alpha[id];
+              int size = R->gbvector_n_terms(p.f);
+              o << "\n     size " << size << " alpha " << g_alpha << " lead ";
+              gbvector *f = R->gbvector_lead_term(-1,F,p.f);
+              R->gbvector_text_out(o,F,f);
+            }
+          emit(o.str());
+        }
 
       for (int i=0; i<divisors.size(); i++)
-	{
-	  MonomialTable::mon_term *t = divisors[i];
-	  int id = t->_val;
-	  p = polys[id];
-	  int g_alpha = alpha[id];
-	  if (result_g_alpha < 0 && g_alpha <= h_alpha)
-	    {
-	      result_g = p;
-	      result_g_alpha = g_alpha;
-	      min_alpha = g_alpha;
-	      //break;
-	      //return true;
-	    }
-	  if (min_alpha < 0 || g_alpha < min_alpha)
-	    {
-	      min_alpha = g_alpha;
-	      result_g = p;
-	      result_g_alpha = g_alpha;
-	    }
-	}
+        {
+          MonomialTable::mon_term *t = divisors[i];
+          int id = t->_val;
+          p = polys[id];
+          int g_alpha = alpha[id];
+          if (result_g_alpha < 0 && g_alpha <= h_alpha)
+            {
+              result_g = p;
+              result_g_alpha = g_alpha;
+              min_alpha = g_alpha;
+              //break;
+              //return true;
+            }
+          if (min_alpha < 0 || g_alpha < min_alpha)
+            {
+              min_alpha = g_alpha;
+              result_g = p;
+              result_g_alpha = g_alpha;
+            }
+        }
     }
   divisors.clear();
 
@@ -349,7 +349,7 @@ bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
       R->gbvector_remove(f);
       emit(o.str());
     }
-  
+
   return (min_alpha >= 0);
 #endif
 }
@@ -360,10 +360,10 @@ void ReducedGB_Field_Local::reset_table()
   delete T1;
 }
 
-void ReducedGB_Field_Local::store_in_table(const POLY &h, 
-					   exponents h_exp,
-					   int h_comp,
-					   int h_alpha)
+void ReducedGB_Field_Local::store_in_table(const POLY &h,
+                                           exponents h_exp,
+                                           int h_comp,
+                                           int h_alpha)
 {
   int id = INTSIZE(new_poly_elems);
   divisor_info t;
@@ -391,36 +391,36 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
       R->gbvector_get_lead_exponents(F, h.f, h_exp);
       int h_comp = h.f->comp;
       if (find_good_divisor(h_exp,h_comp,h_deg,
-			    h_alpha,g,g_alpha)) // sets these three values
-	{
-	  if (g_alpha > h_alpha)
-	    {
-	      if (head.next != 0)
-		{
-		  // In this case, we can't reduce the tail without 
-		  // risking an infinite loop.  So we delcare ourselves done
-		  // Attach the rest of h.f to frem
-		  frem->next = h.f;
-		  break;
-		}
-	      // place h into T1, and store its (value,deg,alpha) values.
-	      store_in_table(h, h_exp, h_comp, h_alpha);
-	      h_deg += g_alpha - h_alpha;
-	      h_exp = R->exponents_make();
-	    }
-	  R->gbvector_reduce_lead_term(F, Fsyz,
-				       head.next,
-				       h.f, h.fsyz,
-				       g.f, g.fsyz,
-				       use_denom, denom);
-	}
+                            h_alpha,g,g_alpha)) // sets these three values
+        {
+          if (g_alpha > h_alpha)
+            {
+              if (head.next != 0)
+                {
+                  // In this case, we can't reduce the tail without
+                  // risking an infinite loop.  So we delcare ourselves done
+                  // Attach the rest of h.f to frem
+                  frem->next = h.f;
+                  break;
+                }
+              // place h into T1, and store its (value,deg,alpha) values.
+              store_in_table(h, h_exp, h_comp, h_alpha);
+              h_deg += g_alpha - h_alpha;
+              h_exp = R->exponents_make();
+            }
+          R->gbvector_reduce_lead_term(F, Fsyz,
+                                       head.next,
+                                       h.f, h.fsyz,
+                                       g.f, g.fsyz,
+                                       use_denom, denom);
+        }
       else
-	{
-	  frem->next = h.f;
-	  frem = frem->next;
-	  h.f = h.f->next;
-	  frem->next = 0;
-	}
+        {
+          frem->next = h.f;
+          frem = frem->next;
+          h.f = h.f->next;
+          frem->next = 0;
+        }
     }
 
   f.f = head.next;
@@ -446,63 +446,63 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
   while (!R->gbvector_is_zero(h.f))
     {
       if (M2_gbTrace == 3)
-	emit_wrapped(".");
+        emit_wrapped(".");
       POLY g;
       R->gbvector_get_lead_exponents(F, h.f, h_exp);
       int h_comp = h.f->comp;
 
       if (M2_gbTrace >= 4)
-	{
-	  buffer o;
-	  o << "\nreducing ";
-	  R->gbvector_text_out(o,F,h.f);
-	  emit(o.str());
-	}
+        {
+          buffer o;
+          o << "\nreducing ";
+          R->gbvector_text_out(o,F,h.f);
+          emit(o.str());
+        }
 
       if (find_good_divisor(h_exp,h_comp,h_deg,
-			    h_alpha,g,g_alpha)) // sets these three values
-	{
-	  if (M2_gbTrace >= 4)
-	    {
-	      buffer o;
-	      o << "  h_alpha " << h_alpha << " g_alpha " << g_alpha; // << " reducing using ";
-	      //R->gbvector_text_out(o,F,g.f);
-	      //o << newline;
-	      emit(o.str());
-	    }
-	  if (g_alpha > h_alpha)
-	    {
-	      if (head.next != 0)
-		{
-		  // In this case, we can't reduce the tail without 
-		  // risking an infinite loop.  So we delcare ourselves done
-		  // Attach the rest of h.f to frem
-		  frem->next = h.f;
-		  break;
-		}
-	      // place h into T1, and store its (value,deg,alpha) values.
-	      POLY h_copy;
-	      h_copy.f = R->gbvector_copy(h.f);
-	      h_copy.fsyz = 0;
-	      store_in_table(h_copy, h_exp, h_comp, h_alpha);
-	      if (M2_gbTrace == 3) emit_wrapped("x");
-	      if (M2_gbTrace == 4) emit("\nstored result\n");
-	      h_deg += g_alpha - h_alpha;
-	      h_exp = R->exponents_make();
-	    }
-	  R->gbvector_reduce_lead_term(F, Fsyz,
-				       head.next,
-				       h.f, zero,
-				       g.f, zero,
-				       use_denom, denom);
-	}
+                            h_alpha,g,g_alpha)) // sets these three values
+        {
+          if (M2_gbTrace >= 4)
+            {
+              buffer o;
+              o << "  h_alpha " << h_alpha << " g_alpha " << g_alpha; // << " reducing using ";
+              //R->gbvector_text_out(o,F,g.f);
+              //o << newline;
+              emit(o.str());
+            }
+          if (g_alpha > h_alpha)
+            {
+              if (head.next != 0)
+                {
+                  // In this case, we can't reduce the tail without
+                  // risking an infinite loop.  So we delcare ourselves done
+                  // Attach the rest of h.f to frem
+                  frem->next = h.f;
+                  break;
+                }
+              // place h into T1, and store its (value,deg,alpha) values.
+              POLY h_copy;
+              h_copy.f = R->gbvector_copy(h.f);
+              h_copy.fsyz = 0;
+              store_in_table(h_copy, h_exp, h_comp, h_alpha);
+              if (M2_gbTrace == 3) emit_wrapped("x");
+              if (M2_gbTrace == 4) emit("\nstored result\n");
+              h_deg += g_alpha - h_alpha;
+              h_exp = R->exponents_make();
+            }
+          R->gbvector_reduce_lead_term(F, Fsyz,
+                                       head.next,
+                                       h.f, zero,
+                                       g.f, zero,
+                                       use_denom, denom);
+        }
       else
-	{
-	  frem->next = h.f;
-	  frem = frem->next;
-	  h.f = h.f->next;
-	  frem->next = 0;
-	}
+        {
+          frem->next = h.f;
+          frem = frem->next;
+          h.f = h.f->next;
+          frem->next = 0;
+        }
     }
 
   f = head.next;
@@ -513,5 +513,5 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

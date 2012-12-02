@@ -4,11 +4,16 @@
 
 #include "ring.hpp"
 #include "coeffrings.hpp"
-
+namespace M2 {
+  class ARingZZp;
+};
+/**
+    @ingroup rings
+*/
 class Z_mod : public Ring
 {
   //int P; // this is defined in class Ring
-  int _P1;	// = P-1
+  int _P1;      // = P-1
   int _ZERO;     // = p-1, log of zero...
 
   int _prim_root;
@@ -19,6 +24,7 @@ class Z_mod : public Ring
   int int_to_exp(int a) const;
 
   CoefficientRingZZp *coeffR;
+  M2::ARingZZp *aringZZp;
 protected:
   Z_mod() {}
   virtual ~Z_mod() {}
@@ -30,6 +36,8 @@ public:
   const Z_mod * cast_to_Z_mod() const { return this; }
 
   CoefficientRingZZp * get_CoeffRing() const { return coeffR; }
+  M2::ARingZZp * get_ARing() const { return aringZZp; }
+  
   virtual int coerce_to_int(ring_elem a) const;
   virtual int discrete_log(ring_elem a) const; // returns -1 if a is 0
 
@@ -68,15 +76,15 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };
@@ -85,4 +93,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

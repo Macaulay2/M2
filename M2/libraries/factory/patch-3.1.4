@@ -1,0 +1,185 @@
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/assert.h factory/assert.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/assert.h	2012-02-02 07:41:58.000000000 -0600
++++ factory/assert.h	2012-02-20 08:16:42.000000000 -0600
+@@ -28,12 +28,14 @@
+ /* }}} */
+ 
+ #ifdef __cplusplus
++extern "C" {
++#include <stdlib.h>
++}
+ #ifdef HAVE_CSTDIO
+ #include <cstdio>
+ #else
+ extern "C" {
+ #include <stdio.h>
+-#include <stdlib.h>
+ }
+ #endif
+ #else
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/cf_cyclo.cc factory/cf_cyclo.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/cf_cyclo.cc	2012-02-02 07:41:58.000000000 -0600
++++ factory/cf_cyclo.cc	2012-02-20 08:17:22.000000000 -0600
+@@ -80,7 +80,7 @@
+   }
+   if (j >= 31397)
+     fail= true;
+-  ASSERT (j < 31397, "integer factorizer ran out of primes") //sic
++  ASSERT (j < 31397, "integer factorizer ran out of primes"); //sic
+   return result;
+ }
+ 
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/cf_gcd_smallp.cc factory/cf_gcd_smallp.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/cf_gcd_smallp.cc	2012-02-02 07:41:58.000000000 -0600
++++ factory/cf_gcd_smallp.cc	2012-02-20 08:18:08.000000000 -0600
+@@ -1470,7 +1470,7 @@
+ solveGeneralVandermonde (const CFArray& M, const CFArray& A)
+ {
+   int r= M.size();
+-  ASSERT (c == r, "number of columns and rows not equal");
++  //ASSERT (c == r, "number of columns and rows not equal");
+   ASSERT (A.size() == r, "vector does not have right size");
+   if (r == 1)
+   {
+@@ -1965,8 +1965,8 @@
+   B= M(B);
+ 
+   Variable x= Variable (1);
+-  ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
+-  ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
++  //ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
++  //ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
+ 
+   //univariate case
+   if (A.isUnivariate() && B.isUnivariate())
+@@ -2223,8 +2223,8 @@
+   B= M(B);
+ 
+   Variable x= Variable (1);
+-  ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
+-  ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
++  //ASSERT (degree (A, y) == 0, "expected degree (F, 1) == 0");
++  //ASSERT (degree (B, y) == 0, "expected degree (G, 1) == 0");
+ 
+   //univariate case
+   if (A.isUnivariate() && B.isUnivariate())
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/cf_gcd_smallp.h factory/cf_gcd_smallp.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/cf_gcd_smallp.h	2012-02-02 07:41:58.000000000 -0600
++++ factory/cf_gcd_smallp.h	2012-02-20 08:19:06.000000000 -0600
+@@ -52,8 +52,7 @@
+ /// GCD of A and B over GF
+ static inline CanonicalForm GCD_GF (const CanonicalForm& A, const CanonicalForm& B)
+ {
+-  ASSERT (CFFactory::gettype() == GaloisFieldDomain,
+-          "GF as base field expected");
++  //ASSERT (CFFactory::gettype() == GaloisFieldDomain, "GF as base field expected");
+   CFList list;
+   bool top_level= true;
+   return GCD_GF (A, B, list, top_level);
+@@ -66,8 +65,7 @@
+ static inline
+ CanonicalForm sparseGCDFp (const CanonicalForm& A, const CanonicalForm& B)
+ {
+-  ASSERT (CFFactory::gettype() == GaloisFieldDomain, 
+-          "GF as base field expected");
++  //ASSERT (CFFactory::gettype() == GaloisFieldDomain, "GF as base field expected");
+   CFList list;
+   bool topLevel= true;
+   return sparseGCDFp (A, B, topLevel, list);
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/facAlgExt.cc factory/facAlgExt.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/facAlgExt.cc	2012-02-02 07:41:58.000000000 -0600
++++ factory/facAlgExt.cc	2012-02-20 08:18:32.000000000 -0600
+@@ -163,7 +163,7 @@
+   }
+ 
+   factors.insert (CFFactor (Lc(F), 1));
+-  ASSERT (degree (buf) <= 0, "bug in AlgExtFactorize");
++  //ASSERT (degree (buf) <= 0, "bug in AlgExtFactorize");
+   if (save_rat) Off(SW_RATIONAL);
+   return factors;
+ }
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/gfops.cc factory/gfops.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/gfops.cc	2012-02-02 07:41:58.000000000 -0600
++++ factory/gfops.cc	2012-02-20 08:19:26.000000000 -0600
+@@ -61,6 +61,13 @@
+     return result;
+ }
+ 
++static char *gftable_dir;
++extern "C" {
++  void set_gftable_dir(char *d){
++    gftable_dir = d;
++  }
++}
++
+ static void gf_get_table ( int p, int n )
+ {
+     char buffer[gf_maxbuffer];
+@@ -91,14 +98,31 @@
+ #endif
+ 
+     // try to open file
++    char *gffilename;
++    FILE * inputfile;
++    if (gftable_dir) {
++      sprintf( buffer, "/gftable.%d.%d", p, n );
++      gffilename = (char *)malloc(strlen(gftable_dir) + strlen(buffer) + 1);
++      STICKYASSERT(gffilename,"out of memory");
++      strcpy(gffilename,gftable_dir);
++      strcat(gffilename,buffer);
++      inputfile = fopen( gffilename, "r" );
++    }
++    else {
+ #ifndef SINGULAR
+     sprintf( buffer, GFTABLEDIR "/gftable.%d.%d", p, n );
+-    FILE * inputfile = fopen( buffer, "r" );
++    gffilename = buffer;
++    inputfile = fopen( buffer, "r" );
+ #else
+     sprintf( buffer, "gftables/%d", q );
+-    FILE * inputfile = feFopen( buffer, "r" );
++    gffilename = buffer;
++    inputfile = feFopen( buffer, "r" );
+ #endif
+-    STICKYASSERT( inputfile, "can not open GF(q) table" );
++    }
++    if (!inputfile) {
++      fprintf(stderr,"can not open GF(q) addition table: %s\n",gffilename);
++      STICKYASSERT(inputfile, "can not open GF(q) table");
++    }
+ 
+     // read ID
+     char * bufptr;
+@@ -184,7 +208,7 @@
+ 
+ void gf_setcharacteristic ( int p, int n, char name )
+ {
+-    ASSERT( gf_valid_combination( p, n ), "illegal immediate GF(q)" );
++  //ASSERT( gf_valid_combination( p, n ), "illegal immediate GF(q)" );
+     gf_name = name;
+     gf_get_table( p, n );
+ }
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/memutil.c factory/memutil.c
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/memutil.c	2012-02-02 07:41:58.000000000 -0600
++++ factory/memutil.c	2012-02-20 08:08:31.000000000 -0600
+@@ -6,6 +6,8 @@
+ 
+ #include <stdlib.h>
+ 
++#include <string.h>
++
+ #include "assert.h"
+ 
+ #include "memutil.h"
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/variable.cc factory/variable.cc
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/factory/tmp/factory/variable.cc	2012-02-02 07:41:58.000000000 -0600
++++ factory/variable.cc	2012-02-20 08:19:44.000000000 -0600
+@@ -168,7 +168,7 @@
+ 
+ Variable rootOf( const CanonicalForm & mipo, char name )
+ {
+-    ASSERT( legal_mipo( mipo ), "not a legal extension" );
++  //ASSERT( legal_mipo( mipo ), "not a legal extension" );
+ 
+     int l;
+     if ( var_names_ext == 0 ) {

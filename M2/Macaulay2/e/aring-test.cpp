@@ -1,4 +1,4 @@
-// Tests for the code in 
+// Tests for the code in
 
 #include "aring-zz.hpp"
 using namespace M2;

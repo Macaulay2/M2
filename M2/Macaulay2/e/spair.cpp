@@ -7,7 +7,7 @@ static const int spair_heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
    65536, 262144, 1677721};
 
 s_pair_heap::s_pair_heap(const Monoid *MM)
-: M(MM), 
+: M(MM),
   top_of_heap(-1),
   nelems(0)
 {
@@ -25,11 +25,11 @@ s_pair * s_pair_heap::grab_remaining_pairs()
   s_pair *inresult = &head;
   for (int i=0; i<NHEAP; i++)
     if (heap[i])
-	{
-	  inresult->next = heap[i];
-	  while (inresult->next != 0)
-	    inresult = inresult->next;
-	}
+        {
+          inresult->next = heap[i];
+          while (inresult->next != 0)
+            inresult = inresult->next;
+        }
   return head.next;
 }
 
@@ -60,7 +60,7 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
   int cmp = f->degree - g->degree;
   if (cmp < 0) return -1;
   if (cmp > 0) return 1;
-  int compare_type = 0; // MES: res-a2.cpp would change this globally, uugh.  Doesn't seem to 
+  int compare_type = 0; // MES: res-a2.cpp would change this globally, uugh.  Doesn't seem to
                         // be used at all, so I am just commenting this out.
   switch (compare_type) {
   case 0:
@@ -84,15 +84,15 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
   case 2:
     if (f->first != NULL && g->first != NULL)
       {
-	cmp = f->first->me - g->first->me;
-	if (cmp < 0) return -1;
-	if (cmp > 0) return 1;
+        cmp = f->first->me - g->first->me;
+        if (cmp < 0) return -1;
+        if (cmp > 0) return 1;
       }
     if (f->second != NULL && g->second != NULL)
       {
-	cmp = f->second->me - g->second->me;
-	if (cmp < 0) return -1;
-	if (cmp > 0) return 1;
+        cmp = f->second->me - g->second->me;
+        if (cmp < 0) return -1;
+        if (cmp > 0) return 1;
       }
     cmp = M->compare(f->lcm, g->lcm);
     if (cmp != 0) return cmp;
@@ -120,26 +120,26 @@ s_pair *s_pair_heap::merge(s_pair *f, s_pair *g) const
     switch (compare(f, g))
       {
       case 1:
-	result->next = g;
-	result = result->next;
-	g = g->next;
-	if (g == NULL) 
-	  {
-	    result->next = f;
-	    return head.next;
-	  }
-	break;
+        result->next = g;
+        result = result->next;
+        g = g->next;
+        if (g == NULL)
+          {
+            result->next = f;
+            return head.next;
+          }
+        break;
       case -1:
       case 0:
-	result->next = f;
-	result = result->next;
-	f = f->next;
-	if (f == NULL) 
-	  {
-	    result->next = g; 
-	    return head.next;
-	  }
-	break;
+        result->next = f;
+        result = result->next;
+        f = f->next;
+        if (f == NULL)
+          {
+            result->next = g;
+            return head.next;
+          }
+        break;
       }
 }
 
@@ -221,10 +221,10 @@ s_pair *s_pair_heap::remove()
       if (heap[i] == NULL) continue;
       int cmp = compare(smallest, heap[i]);
       if (cmp > 0)
-	{
-	  first = i;
-	  smallest = heap[first];
-	}
+        {
+          first = i;
+          smallest = heap[first];
+        }
     }
 
   // Now remove this element and return it:
@@ -236,10 +236,10 @@ s_pair *s_pair_heap::remove()
   if (n_in_heap[top_of_heap] == 0)
     for (i=top_of_heap-1; i>=0; i--)
       if (n_in_heap[i] > 0)
-	{
-	  top_of_heap = i;
-	  break;
-	}
+        {
+          top_of_heap = i;
+          break;
+        }
 
   return smallest;
 }
@@ -263,4 +263,5 @@ void s_pair_heap::text_out(buffer &o) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

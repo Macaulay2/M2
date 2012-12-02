@@ -13,9 +13,9 @@
 // Monomials and binomials //
 /////////////////////////////
 
-binomial_ring::binomial_ring(const PolynomialRing *RR, 
-			     int *wts,
-			     bool revlex0)
+binomial_ring::binomial_ring(const PolynomialRing *RR,
+                             int *wts,
+                             bool revlex0)
   : R(RR),
     F(RR->make_FreeModule(1)),
     nvars(RR->n_vars()),
@@ -27,7 +27,7 @@ binomial_ring::binomial_ring(const PolynomialRing *RR,
 
   nslots = nvars + 1;
   degrees = newarray_atomic(int,nvars);
-  for (i=0; i<nvars; i++) 
+  for (i=0; i<nvars; i++)
     degrees[i] = - R->getMonoid()->primary_degree_of_var(i);
 
   if (have_weights)
@@ -83,7 +83,7 @@ void binomial_ring::set_weights(monomial m) const
     {
       int wt = 0;
       for (i=0; i<nvars; i++)
-	wt += weights[i] * m[i];
+        wt += weights[i] * m[i];
       m[nvars+1] = wt;
     }
 }
@@ -139,7 +139,7 @@ monomial binomial_ring::quotient(monomial m, monomial n) const
   // return m:n
 {
   monomial result = new_monomial();
-  for (int i=0; i<nslots; i++) 
+  for (int i=0; i<nslots; i++)
     {
       int x = m[i] - n[i];
       result[i] = (x > 0 ? x : 0);
@@ -152,7 +152,7 @@ monomial binomial_ring::monomial_lcm(monomial m, monomial n) const
   // return lcm(m,n)
 {
   monomial result = new_monomial();
-  for (int i=0; i<nvars; i++) 
+  for (int i=0; i<nvars; i++)
     result[i] = (m[i] > n[i] ? m[i] : n[i]);
   set_weights(result);
   return result;
@@ -203,7 +203,7 @@ bool binomial_ring::gcd_is_one(binomial f) const
 
 bool binomial_ring::remove_content(binomial &f) const
 {
-  // If the monomials of f have a common monomial factor, remove it from each, and 
+  // If the monomials of f have a common monomial factor, remove it from each, and
   // return true.  Otherwise return false.
   monomial m = f.lead;
   monomial n = f.tail;
@@ -211,19 +211,19 @@ bool binomial_ring::remove_content(binomial &f) const
   for (int i=0; i<nvars; i++)
     {
       if (m[i] > 0 && n[i] > 0)
-	{
-	  if (m[i] > n[i])
-	    {
-	      m[i] -= n[i];
-	      n[i] = 0;
-	    }
-	  else
-	    {
-	      n[i] -= m[i];
-	      m[i] = 0;
-	    }
-	  result = true;
-	}
+        {
+          if (m[i] > n[i])
+            {
+              m[i] -= n[i];
+              n[i] = 0;
+            }
+          else
+            {
+              n[i] -= m[i];
+              m[i] = 0;
+            }
+          result = true;
+        }
     }
   if (result)
     {
@@ -251,14 +251,14 @@ int binomial_ring::compare(monomial m, monomial n) const
   if (revlex)
     for ( ;i>=0; i--)
       {
-	if (m[i] > n[i]) return LT;
-	if (m[i] < n[i]) return GT;
+        if (m[i] > n[i]) return LT;
+        if (m[i] < n[i]) return GT;
       }
   else
     for ( ; i>=0; i--)
       {
-	if (m[i] > n[i]) return GT;
-	if (m[i] < n[i]) return LT;
+        if (m[i] > n[i]) return GT;
+        if (m[i] < n[i]) return LT;
       }
   return EQ;
 }
@@ -281,14 +281,14 @@ int binomial_ring::graded_compare(monomial m, monomial n) const
   if (revlex)
     for ( ;i>=0; i--)
       {
-	if (m[i] > n[i]) return LT;
-	if (m[i] < n[i]) return GT;
+        if (m[i] > n[i]) return LT;
+        if (m[i] < n[i]) return GT;
       }
   else
     for ( ; i>=0; i--)
       {
-	if (m[i] > n[i]) return GT;
-	if (m[i] < n[i]) return LT;
+        if (m[i] > n[i]) return GT;
+        if (m[i] < n[i]) return LT;
       }
   return EQ;
 }
@@ -331,12 +331,12 @@ vec binomial_ring::binomial_to_vector(binomial f, int n) const
 {
   vec v1 = monomial_to_vector(f.lead);
   bool include_tail = false;
-  if (n == 0) 
+  if (n == 0)
     include_tail = true;
   else if (n == 1 && degree(f.tail) == degree(f.lead))
     include_tail = true;
   else if (n == 2 && degree(f.tail) == degree(f.lead)
-	   && weight(f.tail) == weight(f.lead))
+           && weight(f.tail) == weight(f.lead))
     include_tail = true;
 
   if (include_tail)
@@ -353,7 +353,7 @@ bool binomial_ring::vector_to_binomial(vec f, binomial &result) const
 {
   if (f == NULL) return false;
   Nterm *t = f->coeff;
-  if (t == NULL || t->next == NULL || t->next->next != NULL) 
+  if (t == NULL || t->next == NULL || t->next->next != NULL)
     return false;
 
   R->getMonoid()->to_expvector(t->monom, result.lead);
@@ -379,9 +379,9 @@ void binomial_ring::intvector_to_binomial(vec f, binomial &result) const
     {
       int e = globalZZ->coerce_to_int(f->coeff);
       if (e > 0)
-	result.lead[f->comp] = e;
+        result.lead[f->comp] = e;
       else if (e < 0)
-	result.tail[f->comp] = -e;
+        result.tail[f->comp] = -e;
     }
 
   set_weights(result.lead);
@@ -512,22 +512,22 @@ void binomial_s_pair_set::insert_pair(s_pair_degree_list *q, binomial_s_pair &s)
   s_pair_lcm_list *r = &head;
   while (true)
     {
-      if (r->next == NULL || 
-	  ((cmp = R->compare(s.lcm, r->next->lcm)) == GT))
-	{
-	  // Insert new lcm node
-	  s_pair_lcm_list *r1 = new s_pair_lcm_list;
-	  r1->next = r->next;
-	  r1->lcm = s.lcm;
-	  r1->pairs = NULL;
-	  r->next = r1;
-	  break;
-	}
+      if (r->next == NULL ||
+          ((cmp = R->compare(s.lcm, r->next->lcm)) == GT))
+        {
+          // Insert new lcm node
+          s_pair_lcm_list *r1 = new s_pair_lcm_list;
+          r1->next = r->next;
+          r1->lcm = s.lcm;
+          r1->pairs = NULL;
+          r->next = r1;
+          break;
+        }
       if (cmp == EQ)
-	{
-	  R->remove_monomial(s.lcm);
-	  break;
-	}
+        {
+          R->remove_monomial(s.lcm);
+          break;
+        }
       r = r->next;
     }
   r = r->next;
@@ -547,13 +547,13 @@ void binomial_s_pair_set::insert(binomial_gb_elem *p)
 void binomial_s_pair_set::insert(binomial_s_pair s)
 {
   int deg = R->degree(s.lcm);
-  
+
   // Statistics control
   if (deg > _max_degree)
     {
       // Extend _npairs:
       for (int i=2*_max_degree+2; i<2*deg+2; i++)
-	_npairs.append(0);
+        _npairs.append(0);
       _max_degree = deg;
     }
   _npairs[2*deg]++;
@@ -563,15 +563,15 @@ void binomial_s_pair_set::insert(binomial_s_pair s)
   while (true)
     {
       if (q->next == NULL || q->next->deg > deg)
-	{
-	  // Insert new degree node
-	  s_pair_degree_list *q1 = new s_pair_degree_list;
-	  q1->next = q->next;
-	  q1->deg = deg;
-	  q1->pairs = NULL;
-	  q->next = q1;
-	  break;
-	}
+        {
+          // Insert new degree node
+          s_pair_degree_list *q1 = new s_pair_degree_list;
+          q1->next = q->next;
+          q1->deg = deg;
+          q1->pairs = NULL;
+          q->next = q1;
+          break;
+        }
       if (q->next->deg == deg) break;
       q = q->next;
     }
@@ -598,7 +598,7 @@ bool binomial_s_pair_set::next(const int *d, binomial_s_pair &result, int &resul
   _npairs[2*(thisdeg->deg)+1]--;
 
   result = binomial_s_pair(s->f1, s->f2, thislcm->lcm);
-  
+
   thislcm->pairs = s->next;
   if (thislcm->pairs == NULL)
     {
@@ -608,13 +608,13 @@ bool binomial_s_pair_set::next(const int *d, binomial_s_pair &result, int &resul
       _prev_lcm = thislcm->lcm;
       thislcm->lcm = NULL;
       deleteitem(thislcm);
-      
+
       if (thisdeg->pairs == NULL)
-	{
-	  // Now we must remove this larger degree list
-	  _pairs->next = thisdeg->next;
-	  deleteitem(thisdeg);
-	}
+        {
+          // Now we must remove this larger degree list
+          _pairs->next = thisdeg->next;
+          deleteitem(thisdeg);
+        }
     }
 
   deleteitem(s);
@@ -679,7 +679,7 @@ binomialGB::~binomialGB()
 {
   // Do nothing much, except maybe clear out stuff
   // so no stray pointers are around
-  
+
   R = NULL;
   first = NULL;  // MES: BUG!! We are leaking stuff here!!
 }
@@ -702,7 +702,7 @@ void binomialGB::minimalize_and_insert(binomial_gb_elem *f)
   for (p = &head ; p->next != NULL; p = p->next)
     {
       if (R->graded_compare(m, p->next->elem->f.lead) == LT)
-	break;
+        break;
     }
   fm->next = p->next;
   p->next = fm;
@@ -711,21 +711,21 @@ void binomialGB::minimalize_and_insert(binomial_gb_elem *f)
   p = fm;
   while (p->next != NULL)
     {
-      if (R->degree(p->next->elem->f.lead) > deg 
-	  && R->divides(m, p->next->elem->f.lead))
-	{
-	  // remove this element
-	  gbmin_elem *q = p->next;
-	  binomial_gb_elem *qe = q->elem;
-	  p->next = q->next;
-	  q->next = NULL;
-	  qe->smaller = f;
-	}
+      if (R->degree(p->next->elem->f.lead) > deg
+          && R->divides(m, p->next->elem->f.lead))
+        {
+          // remove this element
+          gbmin_elem *q = p->next;
+          binomial_gb_elem *qe = q->elem;
+          p->next = q->next;
+          q->next = NULL;
+          qe->smaller = f;
+        }
       else
-	{
-	  reduce_monomial(p->next->elem->f.tail);
-	  p = p->next;
-	}
+        {
+          reduce_monomial(p->next->elem->f.tail);
+          p = p->next;
+        }
     }
 }
 
@@ -738,7 +738,7 @@ binomialGB::monomial_list *binomialGB::find_divisor(binomialGB::monomial_list *I
       if (R->degree(p->m) > d) return NULL;
       if (mask & p->mask) continue;
       if (R->divides(p->m, m))
-	return p;
+        return p;
     }
   return NULL;
 }
@@ -765,40 +765,40 @@ binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
   for (int d=0; d<=_max_degree; d++)
     if (deglist[d] != NULL)
       {
-	monomial_list *currentresult = NULL;
-	while (deglist[d] != NULL)
-	  {
-	    monomial_list *p = deglist[d];
-	    deglist[d] = p->next;
-	    if (find_divisor(result, p->m))
-	      {
-		R->remove_monomial(p->m);
-		deleteitem(p->tag);	// There is only one element at this point
-		deleteitem(p);
-	      }
-	    else if ((r = find_divisor(currentresult, p->m)))
-	      {
-		gbmin_elem *p1 = new gbmin_elem(p->tag->elem, p->mask);
-		R->remove_monomial(p->m);
-		deleteitem(p);
-		p1->next = r->tag;
-		r->tag = p1;
-	      }
-	    else
-	      {
-		p->next = currentresult;
-		currentresult = p;
-	      }
-	  }
-	if (result == NULL)
-	  result = currentresult;
-	else if (currentresult != NULL)
-	  {
-	    monomial_list *q;
-	    for (q = result; q->next != NULL; q = q->next);
-	    q->next = currentresult;
-	  }
-	currentresult = NULL;
+        monomial_list *currentresult = NULL;
+        while (deglist[d] != NULL)
+          {
+            monomial_list *p = deglist[d];
+            deglist[d] = p->next;
+            if (find_divisor(result, p->m))
+              {
+                R->remove_monomial(p->m);
+                deleteitem(p->tag);     // There is only one element at this point
+                deleteitem(p);
+              }
+            else if ((r = find_divisor(currentresult, p->m)))
+              {
+                gbmin_elem *p1 = new gbmin_elem(p->tag->elem, p->mask);
+                R->remove_monomial(p->m);
+                deleteitem(p);
+                p1->next = r->tag;
+                r->tag = p1;
+              }
+            else
+              {
+                p->next = currentresult;
+                currentresult = p;
+              }
+          }
+        if (result == NULL)
+          result = currentresult;
+        else if (currentresult != NULL)
+          {
+            monomial_list *q;
+            for (q = result; q->next != NULL; q = q->next);
+            q->next = currentresult;
+          }
+        currentresult = NULL;
       }
   deletearray(deglist);
   return result;
@@ -819,23 +819,23 @@ void binomialGB::make_new_pairs(binomial_s_pair_set *Pairs, binomial_gb_elem *f)
   for (monomial_list *q = I; q != NULL; q = q->next)
     {
       gbmin_elem *ge = q->tag;  // a list of possibles
-      
+
       binomial_gb_elem *g = ge->elem;
 
       // Criterion 1: gcd of lead terms must be not 1.
       if (R->gcd_is_one(R->lead_monomial(f->f), R->lead_monomial(g->f)))
-	{
-	  // remove each of the elements in 'g'.
-	  continue;
-	}
+        {
+          // remove each of the elements in 'g'.
+          continue;
+        }
 
-      // Criterion 2: if a homogeneous prime, 
+      // Criterion 2: if a homogeneous prime,
       // gcd of tails must be 1.
       if (is_homogeneous_prime)
-	{
-	  if (!R->gcd_is_one(f->f.tail, g->f.tail))
-	    continue;
-	}
+        {
+          if (!R->gcd_is_one(f->f.tail, g->f.tail))
+            continue;
+        }
 
       // Finally do the insert
       monomial lcm = R->mult(m, q->m);
@@ -866,7 +866,7 @@ void binomialGB::remove_monomial_list(monomial_list *mm) const
 //       if (R->degree(g->f.lead) > d) return NULL;
 //       if (mask & p.this_elem()->mask) continue;
 //       if (R->divides(g->f.lead, m))
-// 	return g;
+//      return g;
 //     }
 //   return NULL;
 // }
@@ -881,7 +881,7 @@ binomial_gb_elem *binomialGB::find_divisor(monomial m) const
       if (R->degree(p->elem->f.lead) > d) return NULL;
       if (mask & p->mask) continue;
       if (R->divides(p->elem->f.lead, m))
-	return p->elem;
+        return p->elem;
     }
   return NULL;
 }
@@ -900,16 +900,16 @@ bool binomialGB::reduce(binomial &f) const
     {
       binomial_gb_elem *p = find_divisor(f.lead);
       if (p == NULL)
-	{
-	  reduce_monomial(f.tail);
-	  return R->normalize(f);
-	}
-      else 
-	{
-	  // Do the division:
-	  if (!R->one_reduction_step(f,p->f))  // Modifies 'f'.
-	    return false;
-	}
+        {
+          reduce_monomial(f.tail);
+          return R->normalize(f);
+        }
+      else
+        {
+          // Do the division:
+          if (!R->one_reduction_step(f,p->f))  // Modifies 'f'.
+            return false;
+        }
     }
 }
 #if 0
@@ -919,28 +919,28 @@ bool binomialGB::reduce(binomial &f) const
 //     {
 //       binomial_gb_elem *p = find_divisor(f.lead);
 //       if (p == NULL)
-// 	{
-// 	  reduce_monomial(f.tail);
-// 	  // The following should also check homog_prime, bigcell:
-// 	  // 
-// 	  return R->normalize(f);
-// 	}
-//       else 
-// 	{
-// 	  // Do the division:
-// 	  if (!R->one_reduction_step(f,p->f))  // Modifies 'f'.
-// 	    return false;
-// 
-// 	  if (is_homogeneous_prime)
-// 	    {
-// 	      if (!gcd_is_one(f)) return false;
-// 	    }
-// 	  else if (use_bigcell)
-// 	    {
-// 	      // if 'f' is divisible by a monomial, then we can strip this monomial.
-// 	      remove_monomial_content(f);
-// 	    }
-// 	}
+//      {
+//        reduce_monomial(f.tail);
+//        // The following should also check homog_prime, bigcell:
+//        //
+//        return R->normalize(f);
+//      }
+//       else
+//      {
+//        // Do the division:
+//        if (!R->one_reduction_step(f,p->f))  // Modifies 'f'.
+//          return false;
+//
+//        if (is_homogeneous_prime)
+//          {
+//            if (!gcd_is_one(f)) return false;
+//          }
+//        else if (use_bigcell)
+//          {
+//            // if 'f' is divisible by a monomial, then we can strip this monomial.
+//            remove_monomial_content(f);
+//          }
+//      }
 //     }
 // }
 #endif
@@ -955,13 +955,13 @@ int binomialGB::n_masks() const
       o << " " << p->mask;
       bool found = false;
       for (unsigned int i=0; i<nmasks && !found; i++)
-	if (masks[i] == p->mask)
-	  {
-	    found = true;
-	    break;
-	  }
+        if (masks[i] == p->mask)
+          {
+            found = true;
+            break;
+          }
       if (!found)
-	masks[nmasks++] = p->mask;
+        masks[nmasks++] = p->mask;
     }
   emit(o.str());
   deleteitem(masks);
@@ -984,7 +984,7 @@ void binomialGB::debug_display() const
 /////////////////////////////
 
 binomialGB_comp::binomialGB_comp(const PolynomialRing *RR, int *wts, bool revlex,
-				 unsigned int options)
+                                 unsigned int options)
 {
   // set the flags and options
   is_homogeneous = (options & GB_FLAG_IS_HOMOGENEOUS) != 0;
@@ -1002,12 +1002,12 @@ binomialGB_comp::binomialGB_comp(const PolynomialRing *RR, int *wts, bool revlex
 }
 
 binomialGB_comp * binomialGB_comp::create(const Matrix *m,
-					  M2_bool collect_syz,
-					  int n_rows_to_keep,
-					  M2_arrayint gb_weights,
-					  int strategy,
-					  M2_bool use_max_degree_limit,
-					  int max_degree_limit)
+                                          M2_bool collect_syz,
+                                          int n_rows_to_keep,
+                                          M2_arrayint gb_weights,
+                                          int strategy,
+                                          M2_bool use_max_degree_limit,
+                                          int max_degree_limit)
 {
   if (collect_syz || n_rows_to_keep > 0)
     {
@@ -1078,31 +1078,31 @@ void binomialGB_comp::add_generators(const Matrix *m)
   if (m->get_ring()->is_ZZ())
     {
       for (i=0; i<m->n_cols(); i++)
-	{
-	  f = R->make_binomial();
-	  R->intvector_to_binomial((*m)[i],f);
-	  p = new binomial_gb_elem(f);
-	  Gens.append(p);
-	  Pairs->insert(p);
-	}
+        {
+          f = R->make_binomial();
+          R->intvector_to_binomial((*m)[i],f);
+          p = new binomial_gb_elem(f);
+          Gens.append(p);
+          Pairs->insert(p);
+        }
     }
   else
     {
       for (i=0; i<m->n_cols(); i++)
-	{
-	  f = R->make_binomial();
-	  if (R->vector_to_binomial((*m)[i], f))
-	    {
-	      p = new binomial_gb_elem(f);
-	      Gens.append(p);
-	      Pairs->insert(p);
-	    }
-	  else
-	    {
-	      ERROR("expected binomials");
-	      return;
-	    }
-	}
+        {
+          f = R->make_binomial();
+          if (R->vector_to_binomial((*m)[i], f))
+            {
+              p = new binomial_gb_elem(f);
+              Gens.append(p);
+              Pairs->insert(p);
+            }
+          else
+            {
+              ERROR("expected binomials");
+              return;
+            }
+        }
     }
 }
 
@@ -1125,28 +1125,28 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
   else
     {
       if (s.f1->smaller != NULL || s.f2->smaller != NULL)
-	{
-	  if (s.f1->smaller != s.f2 && s.f2->smaller != s.f1)
-	    {
-	      return;
-	    }
-	}
+        {
+          if (s.f1->smaller != s.f2 && s.f2->smaller != s.f1)
+            {
+              return;
+            }
+        }
 
       if (M2_gbTrace >= 5)
-	{
-	  buffer o;
-	  o << "pair [";
-	  R->elem_text_out(o, s.f1->f);
-	  o << " ";
-	  R->elem_text_out(o, s.f2->f);
-	  o << "]" << newline;
-	  emit(o.str());
-	}
+        {
+          buffer o;
+          o << "pair [";
+          R->elem_text_out(o, s.f1->f);
+          o << " ";
+          R->elem_text_out(o, s.f2->f);
+          o << "]" << newline;
+          emit(o.str());
+        }
       if (!R->calc_s_pair(s, f))
-	{
-	  // The pair already reduces to zero.
-	  return;
-	}
+        {
+          // The pair already reduces to zero.
+          return;
+        }
       ismin = false;
       subringmin = (R->weight(s.lcm) > 0);
     }
@@ -1154,14 +1154,14 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
   if (Gmin->reduce(f))
     {
       if (M2_gbTrace >= 5)
-	{
-	  buffer o;
-	  o << "  reduced to ";
-	  R->elem_text_out(o, f);
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          o << "  reduced to ";
+          R->elem_text_out(o, f);
+          emit_line(o.str());
+        }
       subringmin = (subringmin && R->weight(f.lead) == 0);
-      binomial_gb_elem *p = new binomial_gb_elem(f);      
+      binomial_gb_elem *p = new binomial_gb_elem(f);
       Gmin->make_new_pairs(Pairs, p);
       Gmin->minimalize_and_insert(p);
       if (ismin) mingens.append(p);
@@ -1172,7 +1172,7 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
     R->remove_binomial(f);
 }
 
-bool binomialGB_comp::stop_conditions_ok() 
+bool binomialGB_comp::stop_conditions_ok()
 {
   return true;
 }
@@ -1192,12 +1192,12 @@ void binomialGB_comp::start_computation()
     {
       ComputationStatusCode ret = gb_done();
       if (ret != COMP_COMPUTING) return;
-      process_pair(s);		// consumes 's'.
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) 
-	{
-	  set_status(COMP_INTERRUPTED);
-	  return;
-	}
+      process_pair(s);          // consumes 's'.
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+        {
+          set_status(COMP_INTERRUPTED);
+          return;
+        }
     }
   if (Pairs->n_elems() == 0)
     set_status(COMP_DONE);
@@ -1284,9 +1284,9 @@ const Matrix /* or null */ *binomialGB_comp::matrix_remainder(const Matrix *m)
   return 0;
 }
 M2_bool binomialGB_comp::matrix_lift(const Matrix *m,
-				  const Matrix /* or null */ **result_remainder,
-				  const Matrix /* or null */ **result_quotient
-				  )
+                                  const Matrix /* or null */ **result_remainder,
+                                  const Matrix /* or null */ **result_quotient
+                                  )
   //not planned to be implemented
 {
   *result_remainder = 0;
@@ -1319,4 +1319,5 @@ void binomialGB_comp::stats() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

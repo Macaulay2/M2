@@ -19,7 +19,7 @@ class res2_poly : public our_new_delete
 {
   const PolynomialRing *R;
   const Monoid *M;
-  const Ring *K;		// Coefficient field of R.
+  const Ring *K;                // Coefficient field of R.
 
   size_t respoly_size;
   stash *resterm_stash;
@@ -38,16 +38,16 @@ public:
   res2term *new_term(ring_elem c, const int *m, res2_pair *comp) const;
   res2term *mult_by_monomial(const res2term *f, const int *m) const;
   res2term *mult_by_coefficient(const res2term *f, const ring_elem c) const;
-  void make_monic(res2term *&f) const; 
+  void make_monic(res2term *&f) const;
   res2term *mult_by_term(const res2term *f, ring_elem c, const int *m) const;
-  res2term *ring_mult_by_term(const ring_elem f, 
-			     ring_elem c, const int *m, res2_pair *x) const;
+  res2term *ring_mult_by_term(const ring_elem f,
+                             ring_elem c, const int *m, res2_pair *x) const;
   void add_to(res2term *&f, res2term *&g) const; // Destroys both f and g.
-  void subtract_multiple_to(res2term *&f, 
-			    ring_elem c, const int *m, const res2term *g) const;
-  void ring_subtract_multiple_to(res2term *&f, 
-				 ring_elem c, const int *m, res2_pair *x,
-				 const ring_elem g) const;
+  void subtract_multiple_to(res2term *&f,
+                            ring_elem c, const int *m, const res2term *g) const;
+  void ring_subtract_multiple_to(res2term *&f,
+                                 ring_elem c, const int *m, res2_pair *x,
+                                 const ring_elem g) const;
 
   int compare(const res2term *a, const res2term *b) const;
 
@@ -56,7 +56,7 @@ public:
 
   res2term *copy(const res2term *f) const;
   void remove(res2term *&f) const;
-    
+
   vec to_vector(const res2term *f, const FreeModule *F, int to_minimal=0) const;
   res2term *from_vector(const array<res2_pair *> &base, const vec v) const;
 
@@ -76,4 +76,5 @@ inline const int *res2_poly::lead_monomial(const res2term *f) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

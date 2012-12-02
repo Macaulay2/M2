@@ -48,6 +48,12 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
 
 inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
 
+gfdir = prefixDirectory | currentLayout#"factory gftables"
+gftestfile = gfdir | "gftable.31.2"
+if not fileExists gftestfile
+then stderr << "warning: sample Factory finite field addition table file missing, factorization may fail: " << gftestfile << endl
+setFactoryGFtableDirectory gfdir
+
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      R := ring I;

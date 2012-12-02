@@ -15,24 +15,24 @@
 engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
      try {
-	  MonomialIdeal *result = m->make_monideal(n);
-	  intern_monideal(result);
-	  return result;
+          MonomialIdeal *result = m->make_monideal(n);
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
 {
      try {
-	  return Matrix::make(I);
+          return Matrix::make(I);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -40,12 +40,12 @@ M2_string MonomialIdeal_to_string(const MonomialIdeal *I)
 {
      buffer o;
      try {
-	  I->text_out(o);
-	  return o.to_string();
+          I->text_out(o);
+          return o.to_string();
      }
      catch (exc::engine_error e) {
-	  o << "[unprintable monomial ideal]";
-	  return o.to_string();
+          o << "[unprintable monomial ideal]";
+          return o.to_string();
      }
 }
 
@@ -55,133 +55,133 @@ int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I)
 }
 
 int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
-	// 1 = true, 0 = false, -1 = error
+        // 1 = true, 0 = false, -1 = error
 {
      try {
-	  if (I->get_ring() != J->get_ring())
-	    return false;
-	  return I->is_equal(*J);
+          if (I->get_ring() != J->get_ring())
+            return false;
+          return I->is_equal(*J);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return -1;
+          ERROR(e.what());
+          return -1;
      }
 }
 
 const MonomialIdeal /* or null */ *rawRadicalMonomialIdeal(const MonomialIdeal *I)
 {
      try {
-	  MonomialIdeal *result = I->radical();
-	  intern_monideal(result);
-	  return result;
+          MonomialIdeal *result = I->radical();
+          intern_monideal(result);
+          return result;
 
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(const MonomialIdeal *I, 
-						 const MonomialIdeal *J)
+const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(const MonomialIdeal *I,
+                                                 const MonomialIdeal *J)
 {
      try {
-	  if (I->get_ring() != J->get_ring())
-	    {
-	      ERROR("expected ideals in the same ring");
-	      return 0;
-	    }
-	  MonomialIdeal *result = I->intersect(*J);
-	  intern_monideal(result);
-	  return result;
+          if (I->get_ring() != J->get_ring())
+            {
+              ERROR("expected ideals in the same ring");
+              return 0;
+            }
+          MonomialIdeal *result = I->intersect(*J);
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 #include "debug.hpp"
 
-const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(const MonomialIdeal *I, 
-						 const Monomial *a)
+const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(const MonomialIdeal *I,
+                                                 const Monomial *a)
 {
      try {
-	  MonomialIdeal *result = I->quotient(a->ints());
-	  intern_monideal(result);
-	  return result;
+          MonomialIdeal *result = I->quotient(a->ints());
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(const MonomialIdeal *I, 
-						const MonomialIdeal *J)
+const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(const MonomialIdeal *I,
+                                                const MonomialIdeal *J)
 {
      try {
-	  if (I->get_ring() != J->get_ring())
-	    {
-	      ERROR("expected ideals in the same ring");
-	      return 0;
-	    }
-	  MonomialIdeal *result = I->quotient(*J);
-	  intern_monideal(result);
-	  if (M2_gbTrace >= 1)
-	    dstash();
-	  return result;
+          if (I->get_ring() != J->get_ring())
+            {
+              ERROR("expected ideals in the same ring");
+              return 0;
+            }
+          MonomialIdeal *result = I->quotient(*J);
+          intern_monideal(result);
+          if (M2_gbTrace >= 1)
+            dstash();
+          return result;
 
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(const MonomialIdeal *I, 
-					    const Monomial *a)
+const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(const MonomialIdeal *I,
+                                            const Monomial *a)
 {
      try {
-	  MonomialIdeal *result = I->erase(a->ints());
-	  intern_monideal(result);
-	  return result;
+          MonomialIdeal *result = I->erase(a->ints());
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
-const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal2(const MonomialIdeal *I, 
-					   const MonomialIdeal *J)
+const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal2(const MonomialIdeal *I,
+                                           const MonomialIdeal *J)
 {
      try {
-	  if (I->get_ring() != J->get_ring())
-	    {
-	      ERROR("expected ideals in the same ring");
-	      return 0;
-	    }
-	  MonomialIdeal *result = I->sat(*J);
-	  intern_monideal(result);
-	  return result;
+          if (I->get_ring() != J->get_ring())
+            {
+              ERROR("expected ideals in the same ring");
+              return 0;
+            }
+          MonomialIdeal *result = I->sat(*J);
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const MonomialIdeal /* or null */ *IM2_MonomialIdeal_borel(const MonomialIdeal *I)
 {
      try {
-	  MonomialIdeal *result =  I->borel();
-	  intern_monideal(result);
-	  return result;
+          MonomialIdeal *result =  I->borel();
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -193,43 +193,43 @@ M2_bool IM2_MonomialIdeal_is_borel(const MonomialIdeal *I)
 int IM2_MonomialIdeal_codim(const MonomialIdeal *I)
 {
      try {
-	  MinimalPrimes ap(I);
-	  return ap.codimension();
+          MinimalPrimes ap(I);
+          return ap.codimension();
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return -1;		// -1 is not a valid codimension, and interface.d knows it
+          ERROR(e.what());
+          return -1;            // -1 is not a valid codimension, and interface.d knows it
      }
 }
 
 const MonomialIdeal /* or null */ *rawMonomialMinimalPrimes(const MonomialIdeal *I,
-					      int codim_limit,
-					      int count)
+                                              int codim_limit,
+                                              int count)
 {
      try {
-	  MinimalPrimes ap(I);
-	  MonomialIdeal *result = ap.alg1_min_primes(codim_limit, count);
-	  intern_monideal(result);
-	  return result;
+          MinimalPrimes ap(I);
+          MonomialIdeal *result = ap.alg1_min_primes(codim_limit, count);
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
 const MonomialIdeal /* or null */ *rawMaximalIndependentSets(const MonomialIdeal *I,
-					       int count)
+                                               int count)
 {
      try {
-	  AssociatedPrimes ap(I);
-	  MonomialIdeal *result = ap.associated_primes(count);
-	  intern_monideal(result);
-	  return result;
+          AssociatedPrimes ap(I);
+          MonomialIdeal *result = ap.associated_primes(count);
+          intern_monideal(result);
+          return result;
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -239,11 +239,11 @@ const RingElement /* or null */ * IM2_MonomialIdeal_Hilbert(const MonomialIdeal 
    computing Hilbert series, or the computation was interrupted. */
 {
      try {
-	  return hilb_comp::hilbertNumerator(I);
+          return hilb_comp::hilbertNumerator(I);
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }
 
@@ -271,20 +271,20 @@ public:
     deletearray(exp);
     J = 0;
   }
-  virtual void consume(mpz_ptr* exponentVector) 
-  { 
+  virtual void consume(mpz_ptr* exponentVector)
+  {
     // insert into J.  This is a minimal generator of J
     for (int i=0; i<nv; i++)
       exp[i] = static_cast<int>(mpz_get_si(exponentVector[i])); // overflow should not occur, as input fit
 
     if (M2_gbTrace >= 5)
       {
-	fprintf(stderr, "got ");
-	for (int j=0; j<nv; j++)
-	  fprintf(stderr, "%d ", exp[j]);
-	fprintf(stderr, "\n");
+        fprintf(stderr, "got ");
+        for (int j=0; j<nv; j++)
+          fprintf(stderr, "%d ", exp[j]);
+        fprintf(stderr, "\n");
       }
-      
+
     Bag *b = new Bag();
     varpower::from_ntuple(nv, exp, b->monom());
     J->insert_minimal(b);
@@ -304,10 +304,10 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const mpz_t *t
 
       if (M2_gbTrace >= 4) fprintf(stderr, "adding ");
       for (int j=0; j<nv; j++)
-	{
-	  if (M2_gbTrace >= 4) fprintf(stderr, "%d ", exp[j]);
-	  F.addExponent(exp[j]);
-	}
+        {
+          if (M2_gbTrace >= 4) fprintf(stderr, "%d ", exp[j]);
+          F.addExponent(exp[j]);
+        }
       if (M2_gbTrace >= 4) fprintf(stderr, "\n");
     }
 
@@ -336,7 +336,7 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I, const M
     {
       topvec = newarray(mpz_t, top->len);
       for (int i=0; i<top->len; i++)
-	mpz_init_set_si(topvec[i], top->array[i]);
+        mpz_init_set_si(topvec[i], top->array[i]);
     }
 
   MonomialIdeal *result = FrobbyAlexanderDual(I, topvec);
@@ -345,7 +345,7 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I, const M
   if (topvec != 0)
     {
       for (int i=0; i<top->len; i++)
-	mpz_clear(topvec[i]);
+        mpz_clear(topvec[i]);
       deletearray(topvec);
     }
 
@@ -387,4 +387,5 @@ const MonomialIdeal /* or null */ *rawAlexanderDual(const MonomialIdeal *I, cons
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

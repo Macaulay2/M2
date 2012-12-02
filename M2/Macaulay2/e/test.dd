@@ -22,11 +22,11 @@ export subpoly(r:ring,level:int,f:poly,g:poly):poly := (
 export tostring(level:int, f:poly):string := (
      when f
      is f0:iarray do (
-          a := new array(string) len length(f0) do 
-	    foreach y in f0 do 
-	      provide if y == 0 then "0 " else tostring(y) + " ";
-	  "[" + concatenate(a) + "]"
-	  )
+          a := new array(string) len length(f0) do
+            foreach y in f0 do
+              provide if y == 0 then "0 " else tostring(y) + " ";
+          "[" + concatenate(a) + "]"
+          )
      is fn:parray do "not done yet"
      is null do "0"
      );
@@ -55,4 +55,3 @@ setupfun("testPolys", testPolys);
 -- mode: M2
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/e'\" && make -C $M2BUILDDIR/Macaulay2/e test-tmp.cc test-exports.h test.o "
 -- End:
-

@@ -14,22 +14,35 @@ namespace M2 {
   ////////////////////////////////////////////////////////
   // Programming level interfaces ////////////////////////
   ////////////////////////////////////////////////////////
-  class RingInterface {}; // inherit from this if the class is to be used as a template parameter for RingWrap
-  class PolynomialRingInterface {}; // inherit from this if the class is to be used as a template param for PolynomialRingWrap
+
+/**
+\ingroup rings
+*/
+  class RingInterface {}; ///< inherit from this if the class is to be used as a template parameter for RingWrap
+
+/**
+\ingroup rings
+*/
+  class PolynomialRingInterface {}; ///< inherit from this if the class is to be used as a template param for PolynomialRingWrap
   class UserObject {};
 
+/**
+\ingroup rings
+*/
   enum RingID {
     ring_example = 0,
     ring_ZZZ,
     ring_ZZp,
     ring_logZZp,
     ring_GF,
+    ring_FFPACK,
     ring_RRR,
     ring_CCC,
-    ring_top = 8 // used to determine the number of ring types
+    ring_top = 8 ///< used to determine the number of ring types
   };
 
   template <class RingType> class ARingWrap;
+
 
   class RElement
   {
@@ -40,10 +53,13 @@ namespace M2 {
     //    virtual RElement &operator=(const RElement &a) = 0;
   };
 
+/**
+\ingroup rings
+*/
   class ARing : public UserObject
   {
   public:
-    template<class RingType> 
+    template<class RingType>
     const ARingWrap<RingType> * cast_to_ARingWrap() const { return dynamic_cast< const ARingWrap<RingType> * >(this) ; }
     // result will be either 0, or this.
 
@@ -79,4 +95,5 @@ namespace M2 {
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
 // End:

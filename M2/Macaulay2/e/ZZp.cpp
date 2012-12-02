@@ -7,13 +7,15 @@
 #include "ZZ.hpp"
 #include "gbring.hpp"
 
+#include "aring-zzp.hpp"
+
 extern RingZZ *globalZZ;
 
 bool Z_mod::initialize_Z_mod(int p)
 {
 
   initialize_ring(p);
-		  
+
 
   declare_field();
   int i,j,q,n;
@@ -39,7 +41,7 @@ bool Z_mod::initialize_Z_mod(int p)
   for (i=0, n=1; i<P-1; i++, n=(n*_prim_root)%P)
     {
       _log_table[n] = i;  // i = log_(base _prim_root)(n)
-      _exp_table[i] = n;  // n = (_prim_root)^i 
+      _exp_table[i] = n;  // n = (_prim_root)^i
     }
   _ZERO            = P-1;
   _exp_table[_ZERO] = 0;
@@ -52,6 +54,8 @@ bool Z_mod::initialize_Z_mod(int p)
   minus_oneV = from_int(-1);
 
   coeffR = new CoefficientRingZZp(P,_log_table, _exp_table);
+  aringZZp = new M2::ARingZZp(P); // WARNING: this uses that the primitive element is the SAME as computed above!!
+    // Remove this warning once Z_mod is not in existence any longer.
   return true;
 }
 
@@ -77,7 +81,7 @@ int Z_mod::to_int(int f) const
 }
 
 int Z_mod::coerce_to_int(ring_elem a) const
-{ 
+{
   return to_int(a.int_val);
 }
 
@@ -105,19 +109,19 @@ inline int Z_mod::int_to_exp(int a) const
   return _log_table[(n < 0 ? n+P : n)];
 }
 
-void Z_mod::elem_text_out(buffer &o, 
-			const ring_elem a, 
-			bool p_one, 
-			bool p_plus, 
-			bool p_parens) const
+void Z_mod::elem_text_out(buffer &o,
+                        const ring_elem a,
+                        bool p_one,
+                        bool p_plus,
+                        bool p_parens) const
 {
   int n = to_int(a);
-  if (n < 0) 
+  if (n < 0)
     {
       o << '-';
       n = -n;
     }
-  else if (p_plus) 
+  else if (p_plus)
     o << '+';
   if (p_one || n != 1) o << n;
 }
@@ -218,7 +222,7 @@ void Z_mod::internal_negate_to(ring_elem &f) const
 void Z_mod::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   if (g == _ZERO) return;
-  if (f == _ZERO) 
+  if (f == _ZERO)
     f = g;
   else
     {
@@ -230,7 +234,7 @@ void Z_mod::internal_add_to(ring_elem &f, ring_elem &g) const
 void Z_mod::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   if (g == _ZERO) return;
-  if (f == _ZERO) 
+  if (f == _ZERO)
     f = negate(g);
   else
     {
@@ -250,7 +254,7 @@ ring_elem Z_mod::add(const ring_elem f, const ring_elem g) const
 {
   if (g == _ZERO)  return f;
   if (f == _ZERO)  return g;
-  
+
   int n = modulus_add(_exp_table[f.int_val], _exp_table[g.int_val], P);
   return _log_table[n];
 }
@@ -259,7 +263,7 @@ ring_elem Z_mod::subtract(const ring_elem f, const ring_elem g) const
 {
   if (g == _ZERO)  return f;
   if (f == _ZERO)  return negate(g);
-  
+
   int n = modulus_sub(_exp_table[f.int_val], _exp_table[g.int_val], P);
   return _log_table[n];
 }
@@ -303,7 +307,7 @@ ring_elem Z_mod::divide(const ring_elem f, const ring_elem g) const
 }
 
 void Z_mod::syzygy(const ring_elem a, const ring_elem b,
-		   ring_elem &x, ring_elem &y) const
+                   ring_elem &x, ring_elem &y) const
 {
   x = Z_mod::from_int(1);
   y = Z_mod::divide(a,b);
@@ -325,4 +329,5 @@ ring_elem Z_mod::random() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e ZZp.o "
+// indent-tabs-mode: nil
 // End:

@@ -19,6 +19,16 @@ newPackage(
 
 -- also: rank, det, solve
 export {
+   testDivide,
+    testAdd,
+    testNegate,
+    testSubtract,
+    testMultiply,
+    testAxioms,    
+    constructGivaroField,
+    constructMacaulayGF,
+    constructMacaulayZZp,
+    testField,
      RightSide,
      nullSpace,
      invert,
@@ -111,17 +121,241 @@ columnRankProfile MutableMatrix := (A) -> (
      	  rawFFPackColumnRankProfile A
      ))
 
+------------tests
+
+testEqual = method();
+testEqual (MutableHashTable, ZZ) := (fieldHashTable, nrtests)->
+(
+    --todo
+    -- require random function.
+)
+testNegate = method();
+testNegate (MutableHashTable, ZZ) := (fieldHashTable,nrtests)->
+(
+    galoisField := fieldHashTable#"field";
+    fieldGen := fieldHashTable#"generator";
+    cardinality := fieldHashTable#"cardinality";
+    apply(nrtests,i->(  rnd:=random cardinality; 
+                        assert( fieldGen^rnd + (- fieldGen^rnd) == 0_galoisField );
+                    ) 
+        );
+)
+
+
+--depends on correct testNegate.
+testAdd = method();
+testAdd (MutableHashTable, ZZ) := (fieldHashTable, nrtests )->
+(
+    galoisField := fieldHashTable#"field";
+    fieldGen := galoisField_0;
+    cardinality := fieldHashTable#"cardinality";
+    apply( nrtests, i->( rnd1:=random cardinality; 
+                         rnd2:=random cardinality; 
+                         assert( fieldGen^rnd1 + fieldGen^rnd2 + (-(fieldGen)^rnd1) == fieldGen^rnd2);
+                    ) 
+        );
+)
+
+
+testSubtract = method();
+testSubtract (MutableHashTable, ZZ) := (fieldHashTable, nrtests)->
+(
+   galoisField := fieldHashTable#"field";
+  fieldGen := fieldHashTable#"generator";
+    cardinality := fieldHashTable#"cardinality";
+    apply( nrtests,i->( rnd1 := random cardinality;   
+                        rnd2 := random cardinality; 
+                        assert( fieldGen^rnd1 + fieldGen^rnd2 - fieldGen^rnd1 == fieldGen^rnd2);) 
+        );
+)
+
+-- relies on correct pow and comparison
+testMultiply = method();
+testMultiply (MutableHashTable, ZZ) :=(fieldHashTable,nrtests)->
+(
+    galoisField := fieldHashTable#"field";
+      fieldGen := fieldHashTable#"generator";
+    Zero := 0_galoisField;
+     cardinality := fieldHashTable#"cardinality";
+    characteristic := fieldHashTable#"characteristic";
+    apply( nrtests, i->( rnd1:=random cardinality;  assert( fieldGen^rnd1*Zero == Zero );) );
+    --
+    apply(nrtests, i->( rnd1:=random characteristic;
+                        rnd2:=random characteristic; 
+                        addresult := Zero; 
+                        apply(rnd1,j->addresult = addresult + fieldGen^rnd2); 
+                        assert(fieldGen^rnd2* rnd1_galoisField == addresult);) 
+        );
+)
+
+-- relies on correct pow and comparison
+testAxioms = method();
+testAxioms (MutableHashTable, ZZ) := (fieldHashTable, nrtests)->
+(
+    galoisField := fieldHashTable#"field";
+   fieldGen := fieldHashTable#"generator";
+    cardinality := fieldHashTable#"cardinality";
+    Zero := 0_galoisField;
+    apply( nrtests, i->( rnd1:=random cardinality;  assert( fieldGen^rnd1*Zero == Zero );) );
+    -- test commutative 
+    apply( nrtests, i->(      rnd1:=random cardinality;
+                            rnd2 := random cardinality; 
+                            assert( fieldGen^rnd1 * fieldGen^rnd2 == fieldGen^rnd2 * fieldGen^rnd1);
+                        assert( fieldGen^rnd1 + fieldGen^rnd2 == fieldGen^rnd2 + fieldGen^rnd1);
+                    ) 
+    );
+    --
+    -- test associative and distributive
+    apply( nrtests, i->(      rnd1:=random cardinality;
+                            rnd2 := random cardinality; 
+                            rnd3 := random cardinality;
+                            -- test associative
+                            assert( (fieldGen^rnd1 * fieldGen^rnd2) * fieldGen^rnd3 == fieldGen^rnd2 * (fieldGen^rnd1 * fieldGen^rnd3) );
+                            assert( (fieldGen^rnd1 + fieldGen^rnd2) + fieldGen^rnd3 == fieldGen^rnd2 + (fieldGen^rnd1 + fieldGen^rnd3) );
+                            -- test distributive
+                            assert( (fieldGen^rnd1 + fieldGen^rnd2) * fieldGen^rnd3 == fieldGen^rnd1 * fieldGen^rnd3  + fieldGen^rnd2 * fieldGen^rnd3 );
+                    ) 
+    );
+)
+
+--relies on correct multiplication and comparison
+testDivide = method();
+testDivide (MutableHashTable, ZZ) := ( fieldHashTable, nrtests )->
+(
+    galoisField := fieldHashTable#"field";
+     fieldGen := fieldHashTable#"generator";
+    cardinality := fieldHashTable#"cardinality";
+    One := 1_galoisField;
+    apply( nrtests, i->(    rnd1 := random cardinality;
+                            assert(( One // fieldGen^rnd1) * fieldGen^rnd1 == One );
+                       )
+        );
+    apply( cardinality, i->(  assert(( One // fieldGen^i )*fieldGen^i == One);) );
+    --
+    apply( nrtests, i->(    rnd1 := random cardinality; 
+                            rnd2 := random cardinality; 
+                            assert( (fieldGen^rnd2 // fieldGen^rnd1)*fieldGen^rnd1 == fieldGen^rnd2);
+                    ) 
+        );
+)
+
+
+testPower = method();
+testPower (MutableHashTable) := (fieldHashTable)->
+(
+    galoisField := fieldHashTable#"field";
+  fieldGen := fieldHashTable#"generator";
+    cardinality := fieldHashTable#"cardinality";
+    apply( cardinality-2 , i-> (print (fieldGen^(i+2)); assert( fieldGen^(i+2) != fieldGen)));
+    
+    assert( fieldGen^cardinality == fieldGen);
+    One := 1_galoisField; 
+    assert( fieldGen^(cardinality-1)   == One);
+    assert( fieldGen^(-2) * (fieldGen^2) == One );
+    assert( fieldGen^(-1) * fieldGen   == One );
+    -- overflow test is not possible here because of big memory consumption...
+    -- idea for overflow test: suppose elem= generator^k.  Then elem^m  is implemented as 
+    --                         generator^(k*m mod cardinality). If k*m implementation overflows this would result in an error.
+    --
+    --B := rawARingGaloisField(30013,2);
+    --c:= (B_0)^100040;
+    --c^100040;
+    --ZZP=ZZ/997;
+)
+
+constructGivaroField = method();
+constructGivaroField (ZZ,ZZ) := (characteristic,dimension)->
+(
+    result := new MutableHashTable;
+    --
+    result#"field" = rawARingGaloisField(characteristic, dimension );
+    result#"char" =  characteristic;
+    result#"characteristic" =  characteristic;
+    result#"dimension" =  dimension;
+    result#"cardinality" =  characteristic^dimension;
+    result#"generator" = (result#"field")_0;
+    assert( result#"generator"!=0_(result#"field"));
+    return result;
+)
+constructMacaulayGF = method();
+constructMacaulayGF (ZZ,ZZ) := (characteristic,dimension)->
+(
+    result := new MutableHashTable;
+    --
+    result#"field" = GF(characteristic, dimension );
+    result#"char" =  characteristic;
+    result#"characteristic" =  characteristic;
+    result#"dimension" =  dimension;
+    result#"cardinality" =  characteristic^dimension;
+    result#"generator" = (result#"field")_0;
+    assert( result#"generator"!=0_(result#"field"));
+    return result;
+)
+constructMacaulayZZp = method();
+constructMacaulayZZp (ZZ,ZZ) := (characteristic,dimension)->
+(
+    result := new MutableHashTable;
+    --
+    result#"field" = ZZ/characteristic;
+    result#"char" =  characteristic;
+    result#"characteristic" =  characteristic;
+    result#"dimension" =  dimension;
+    result#"cardinality" =  characteristic^dimension;
+    --todo:
+    tmp:=GF(characteristic,1);
+    result#"generator"= (gens tmp)_0;
+    return result;
+)
+
+testField = method();
+testField (MutableHashTable,ZZ) := (fieldHashTable,nrTests )->
+(
+    assert( fieldHashTable#"generator" != 0_(fieldHashTable#"field"));
+    assert( fieldHashTable#"generator" != 1_(fieldHashTable#"field"));
+    --testEqual(fieldHashTable, nrTests);
+    testPower(fieldHashTable);
+    testDivide(fieldHashTable, nrTests);
+    testAdd(fieldHashTable,    nrTests);
+    testNegate(fieldHashTable, nrTests);
+    testSubtract(fieldHashTable, nrTests);
+    testMultiply(fieldHashTable, nrTests);
+    testAxioms(fieldHashTable, nrTests);
+);
+
+
+
 beginDocumentation()
 
+
 TEST ///
+needsPackage "FastLinearAlgebra"
 debug Core
-A = rawARingGaloisField(5,3)
-a = A_0
-assert(a^125 == a)
-assert(a^124 == 1_A)
+
+
+ 
+
+nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
+fieldHashTable = constructGivaroField( 37,1 );
+testField(fieldHashTable, nrTests);
+
+nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
+fieldHashTable = constructGivaroField( 5,3 );
+testField(fieldHashTable, nrTests);
+
+nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
+fieldHashTable = constructGivaroField( 11,2 );
+testField(fieldHashTable, nrTests);
+
+fieldHashTable = constructMacaulayGF( 5,3 );
+testField(fieldHashTable, nrTests);
+
+fieldHashTable = constructMacaulayZZp(23,1);
+testField(fieldHashTable, nrTests);
+
+
 ///
 
-end
+
 
 TEST ///
 restart
@@ -263,6 +497,7 @@ kk = ZZ/101
 A = mutableMatrix random(kk^3, kk^4);
 B = mutableMatrix random(kk^4, kk^7);
 assert (try (B * A;false) else true)
+time C1 = A * B;
 time C2 = (matrix A) * (matrix B);
 assert(matrix C1 == C2)
 ///
@@ -409,6 +644,50 @@ loadPackage "FastLinearAlgebra"
 --      rank, det, A*B, solving interfaces should not need to change.
 --      a few functions need to be added.
 --
+-- TODO notes made 14 Oct 2011.
+--   - Jakob: doxygen: to do tags, make help, place documentation directory "elsewhere", handle options for generating class info DONE
+--   - Mike: recompile all stuff, and retest everything -- we recall some test not working. CONTINUAL
+--   - goal: have fast linear algebra over finite fields, and possibly other fields too.
+--      problem: connect this seamlessly into M2
+--   - we will add in calls that operate on mutables matrices.
+--   -- design#1: all these interface files will be in Mutable matrices, and in DMat<CR>, SMat<CR>, ...
+--   -- ring work:
+--      (a) ZZ/p: M2 version, and the ffpack version
+--      (b) GF: M2 version, givaro version
+--   -- after this: incorporate more rings for these operations: ZZ, QQ, ...
+--   -- Mike: add an include file to each cpp file: intent: ASSERT macro. TODO
+--   -- SO:
+--     (1) x-mutablemat.cpp: need the interface routines to front end (rank,det, ...)
+--     (2) also: add in the corresponding interface routines in the d directory
+--     (3) MutableMatrix, DMat, SMat: define class methods for these linear algebra routines
+--          note: implementation type of DMat, SMat will use ARing data structures, e.g. ARingGF::ElementType
+--          then: if entries are required, or other M2 matrices are required, these values will be translated to 
+--           "ringelem" types.  (Later: maybe the "ringelem" type will be exactly these ElementType's.)
+--          note: this will mean that we do not need to translate matrices before calling the appropriate functions
+--            in ffpack/lapack/givaro/etc.
+--     (4) write tests for these functions, as well as arithmetic, in the FastLinearAlgebra, EngineTests packages.
+--     (5) document exactly what is required for ring types (e.g. what classes/types/methods are required), in order
+--         to instantiate them with DMat, SMat.
+--
+-- TODO notes 19 Jan 2012
+--    a. get latest changes of Jakob working (Givaro problem Jakob TODO)
+--    b. merge in trunk changes (Mike TODO)
+--    c. possibly: merge out changes back to the trunk, delete the branch, and create a new branch. (ask Dan for read/write privs for Jakob on new branch)
+--    d. put x-mutablemat routines (fast linear algebra) into dmat.  Organize dispatch in x-mutablemat.
+--    e. tests: for matrices/elements for all of our new ring types (ffpack ZZ/p, givaro GF, ...)
+--    f. have toplevel GF have an option to call new GF code, same with ZZ/p.
+--       issues: at least have a toplevel M2 function which makes new GF code "first class".
+--    g. make sure that new GF and ZZ/p code allow to change rings (ring map code, promote, lift)  (e.g. GF(p^2) --> GF(p^4))
+--    h. TODO: Mike: what is the global picture in the e directory, especially rings.
+--       Mike: document this.  Is it @brief?  Put this into ring.hpp (seems like a good spot).
+--         Ring
+--         CoefficientRing
+--         ARing
+--    i. we have ffpack/givaro/linbox field types.
+--       it would be nice:  ConcreteFromLinbox<FieldType> this will be usable in M2 as an ARing type.
+--                          ConcreteRing<ARingType> This is a "Ring" in M2.
+--                          ConcretePolynomialRing<APolyRingType>
+--                          ConcreteField<AFieldType>
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
 -- End:

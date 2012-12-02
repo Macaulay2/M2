@@ -33,7 +33,7 @@ varpower_word varpower_monomials::weight(const_varpower_monomial m, M2_arrayint 
 }
 
 int varpower_monomials::equal(const_varpower_monomial m1,
-			      const_varpower_monomial m2)
+                              const_varpower_monomial m2)
 {
   varpower_word npairs = *m1++;
   if (npairs != *m2++) return 0;
@@ -61,12 +61,12 @@ int varpower_monomials::compare(const_varpower_monomial a, const_varpower_monomi
   if (alen > blen)
     {
       for (i=0; i<blen; i++)
-	{
-	  varpower_word c = *a++ - *b++;
-	  if (c == 0) continue;
-	  if (c > 0) return GT;
-	  return LT;
-	}
+        {
+          varpower_word c = *a++ - *b++;
+          if (c == 0) continue;
+          if (c > 0) return GT;
+          return LT;
+        }
       return GT;
     }
   for (i=0; i<alen; i++)
@@ -79,11 +79,11 @@ int varpower_monomials::compare(const_varpower_monomial a, const_varpower_monomi
   if (alen == blen)
     return EQ;
   return LT;
-}  
+}
 
-void varpower_monomials::lcm(const_varpower_monomial m1, 
-			     const_varpower_monomial m2,
-			     varpower_monomial result)
+void varpower_monomials::lcm(const_varpower_monomial m1,
+                             const_varpower_monomial m2,
+                             varpower_monomial result)
 {
   /* result: should be a pointer to a spot with enough space for the result */
   /* the format for const_varpower_monomials:
@@ -104,34 +104,34 @@ void varpower_monomials::lcm(const_varpower_monomial m1,
   {
     if (v1 > v2)
       {
-	*r++ = v1;
-	*r++ = e1;
-	(*result)++;
-	INCR(m1,n1,v1,e1);
+        *r++ = v1;
+        *r++ = e1;
+        (*result)++;
+        INCR(m1,n1,v1,e1);
       }
     else if (v2 > v1)
       {
-	*r++ = v2;
-	*r++ = e2;
-	(*result)++;
-	INCR(m2,n2,v2,e2);
+        *r++ = v2;
+        *r++ = e2;
+        (*result)++;
+        INCR(m2,n2,v2,e2);
       }
     else
       {
-	if (v1 < 0) break;
-	if (e1 < e2) e1 = e2;
-	*r++ = v1;
-	*r++ = e1;
-	(*result)++;
-	INCR(m1,n1,v1,e1);
-	INCR(m2,n2,v2,e2);
+        if (v1 < 0) break;
+        if (e1 < e2) e1 = e2;
+        *r++ = v1;
+        *r++ = e1;
+        (*result)++;
+        INCR(m1,n1,v1,e1);
+        INCR(m2,n2,v2,e2);
       }
   }
 }
 
-void varpower_monomials::mult(const_varpower_monomial m1, 
-			      const_varpower_monomial m2,
-			      varpower_monomial result)
+void varpower_monomials::mult(const_varpower_monomial m1,
+                              const_varpower_monomial m2,
+                              varpower_monomial result)
 {
   /* result: should be a pointer to a spot with enough space for the result */
   /* the format for const_varpower_monomials:
@@ -157,34 +157,34 @@ void varpower_monomials::mult(const_varpower_monomial m1,
   {
     if (v1 > v2)
       {
-	*r++ = v1;
-	*r++ = e1;
-	(*result)++;
-	INCR(m1,n1,v1,e1);
+        *r++ = v1;
+        *r++ = e1;
+        (*result)++;
+        INCR(m1,n1,v1,e1);
       }
     else if (v2 > v1)
       {
-	*r++ = v2;
-	*r++ = e2;
-	(*result)++;
-	INCR(m2,n2,v2,e2);
+        *r++ = v2;
+        *r++ = e2;
+        (*result)++;
+        INCR(m2,n2,v2,e2);
       }
     else
       {
-	if (v1 < 0) break;
-	varpower_word z = e1 + e2; /* we assume here that the powers are all >= 0?? */
-	*r++ = v1;
-	*r++ = z;
-	(*result)++;
-	INCR(m1,n1,v1,e1);
-	INCR(m2,n2,v2,e2);
+        if (v1 < 0) break;
+        varpower_word z = e1 + e2; /* we assume here that the powers are all >= 0?? */
+        *r++ = v1;
+        *r++ = z;
+        (*result)++;
+        INCR(m1,n1,v1,e1);
+        INCR(m2,n2,v2,e2);
       }
   }
 }
 
-void varpower_monomials::quotient(const_varpower_monomial m1, 
-				  const_varpower_monomial m2,
-				  varpower_monomial result)
+void varpower_monomials::quotient(const_varpower_monomial m1,
+                                  const_varpower_monomial m2,
+                                  varpower_monomial result)
 {
   /* result: should be a pointer to a spot with enough space for the result */
   /* the format for const_varpower_monomials:
@@ -206,34 +206,34 @@ void varpower_monomials::quotient(const_varpower_monomial m1,
   {
     if (v1 > v2)
       {
-	*r++ = v1;
-	*r++ = e1;
-	(*result)++;
-	INCR(m1,n1,v1,e1);
+        *r++ = v1;
+        *r++ = e1;
+        (*result)++;
+        INCR(m1,n1,v1,e1);
       }
     else if (v2 > v1)
       {
-	INCR(m2,n2,v2,e2);
+        INCR(m2,n2,v2,e2);
       }
     else
       {
-	if (v1 < 0) break;
-	varpower_word z = e1-e2;
-	if (z > 0)
-	  {
-	    *r++ = v1;
-	    *r++ = z;
-	    (*result)++;
-	  }
-	INCR(m1,n1,v1,e1);
-	INCR(m2,n2,v2,e2);
+        if (v1 < 0) break;
+        varpower_word z = e1-e2;
+        if (z > 0)
+          {
+            *r++ = v1;
+            *r++ = z;
+            (*result)++;
+          }
+        INCR(m1,n1,v1,e1);
+        INCR(m2,n2,v2,e2);
       }
   }
 }
 
-int varpower_monomials::divides(const_varpower_monomial m1, 
-				const_varpower_monomial m2,
-				varpower_monomial result)
+int varpower_monomials::divides(const_varpower_monomial m1,
+                                const_varpower_monomial m2,
+                                varpower_monomial result)
 {
   /* the result is only valid if 1 is returned.
      If 1 is returned: m1 divides m2, and result is set to m2-m1.
@@ -253,27 +253,27 @@ int varpower_monomials::divides(const_varpower_monomial m1,
   {
     if (v1 > v2)
       {
-	return 0; /* m1 has a term that m2 does not */
+        return 0; /* m1 has a term that m2 does not */
       }
     else if (v2 > v1)
       {
-	*r++ = v2;
-	*r++ = e2;
-	(*result)++;
-	INCR(m2,n2,v2,e2);
+        *r++ = v2;
+        *r++ = e2;
+        (*result)++;
+        INCR(m2,n2,v2,e2);
       }
     else
       {
-	if (v1 < 0) return 1;
-	if (e1 > e2) return 0;
-	if (e1 != e2)
-	  {
-	    *r++ = v1;
-	    *r++ = e2-e1;
-	    (*result)++;
-	  }
-	INCR(m1,n1,v1,e1);
-	INCR(m2,n2,v2,e2);
+        if (v1 < 0) return 1;
+        if (e1 > e2) return 0;
+        if (e1 != e2)
+          {
+            *r++ = v1;
+            *r++ = e2-e1;
+            (*result)++;
+          }
+        INCR(m1,n1,v1,e1);
+        INCR(m2,n2,v2,e2);
       }
   }
 }
@@ -306,13 +306,13 @@ void varpower_monomials::elem_text_out(FILE *fil, const_varpower_monomial m)
 }
 
 int buchberger_moeller_keep(const_varpower_monomial m,
-			    const_varpower_monomial p,
-			    const_varpower_monomial q,
-			    const_varpower_monomial pq)
+                            const_varpower_monomial p,
+                            const_varpower_monomial q,
+                            const_varpower_monomial pq)
      /* These should satisfy: lcm(p,q) == pq */
      /* returns 0 if the pair (p,q) should be REMOVED */
      /* Returns 1 iff either (a) m does not divide pq,
-	or (b) m does divide pq, and lcm(m,p) == lcm(m,q) */
+        or (b) m does divide pq, and lcm(m,p) == lcm(m,q) */
 {
 #ifdef DEVELOPMENT
 #warning "buchberger-moeller still to write"

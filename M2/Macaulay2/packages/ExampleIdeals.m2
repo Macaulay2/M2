@@ -23,10 +23,12 @@ export {
 
      toSingular,
      singularGB,
+     singularGBString,
      singularIntegralClosure,
      runSingularGB,     
 
      toMagma,
+     magmaGBString,
      runMagmaGB,
      runMagmaIntegralClosure,
      
@@ -346,13 +348,13 @@ toSingular Ring := (R) -> (
      -- letters indexed by a single non-negative integer.
      kk := coefficientRing R;
      p := char kk;
-     a := "ring R = "|p|",(";
+     a := "ring R1 = "|p|",(";
      b := concatenate between(",", (gens R)/toString);
      c := "),dp;\n";
      a | b | c
      )
 toSingular Ideal := (I) -> (
-     a := "ideal I = \n";
+     a := "ideal I1 = \n";
      g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
      a | g | ";\n"
      )
@@ -363,21 +365,18 @@ toSingular (Ideal, String) := (I,str) -> (
      )
 
 timerWrap = (str) -> (
-     "rtimer = 1;\nint ti=rtimer;"
+     "rtimer = 1;\nint ti=rtimer;\n"
      |str|
-     ///     
-       int ti2=rtimer-ti;
-       print("time used"); print(ti2);
-
-     ///
+     ///int ti2=rtimer-ti;
+print("time used"); print(ti2);
+///
      )
 -- computing a GB in Singular
 -- string with name of ideal @I@
 singGBstring = 
-  ///
-    ideal J=groebner(@I@);
-    print(size(J));
-  ///
+  ///ideal J1=groebner(@I@);
+print(size(J1));
+///
 
 -- computing an integral closure of a ring in Singular
 -- this is the integral closure of R/I...!
@@ -402,8 +401,37 @@ runSingularGB Ideal := (I) -> (
      run "/sw/bin/Singular <foo"
      )
 runSingularGB Ideal := (I) -> (
-     str := toSingular ring I | toSingular I | singularGB "I" | "\nexit(0);\n";
+     str := toSingular ring I | toSingular I | singularGB "I1" | "\nexit(0);\n";
      runSingular str
+     )
+
+--------------------------
+singGBtemplate = 
+///proc nummonoms (ideal L1)
+{
+  int i;
+  int result=0;
+  for (i=1; i<=size(L1); i++) {
+    result = result + size(L1[i]);
+  }
+  return(result);
+}
+
+$ring
+$ideal
+timer = 1;
+int ti=timer;
+ideal J1=groebner(I1);
+int ti2=timer-ti;
+printf("time=%s sec, #gb=%s #monoms=%s", ti2, size(J1), nummonoms(J1));
+exit;
+///
+--------------------------
+
+singularGBString = method()
+singularGBString Ideal := (I) -> (
+     replace("\\$ring", toSingular ring I,
+	  replace("\\$ideal", toSingular I, singGBtemplate))
      )
 
 runSingular = method()
@@ -424,11 +452,11 @@ toMagma Ring := (R) -> (
      kk := coefficientRing R;
      p := char kk;
      basering := if p === 0 then "RationalField()" else "GF("|p|")";
-     "R<" | concatenate between(",", (gens R)/toString) | "> := PolynomialRing(" 
+     "R1<" | concatenate between(",", (gens R)/toString) | "> := PolynomialRing(" 
        | basering | "," | toString numgens R | ",\"grevlex\");"
      )
 toMagma Ideal := (I) -> (
-     a := "I := ideal< R | \n   ";
+     a := "I1 := ideal< R1 | \n   ";
      g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
      a | g | ">;\n" 
      )
@@ -444,8 +472,8 @@ runMagmaGB Ideal := (I) -> (
      "foo" 
      << toMagma ring I << endl
      << toMagma I
-     << "time J := GroebnerBasis(I);\n"
-     << "#J;\n"
+     << "time J1 := GroebnerBasis(I1);\n"
+     << "#J1;\n"
      << "quit;\n" << close;
      run "magma <foo"
      )
@@ -455,10 +483,26 @@ runMagmaIntegralClosure Ideal := (I) -> (
      "foo" 
      << toMagma ring I << endl
      << toMagma I
-     << "time Js := Normalization(I);\n"
+     << "time Js := Normalization(I1);\n"
      << "#Js;\n"
      << "quit;\n" << close;
      run "magma <foo"
+     )
+
+magmaGBtemplate = 
+///
+$ring
+$ideal
+time J1 := GroebnerBasis(I1);
+#J1;
+quit;
+///
+--------------------------
+
+magmaGBString = method()
+magmaGBString Ideal := (I) -> (
+     replace("\\$ring", toMagma ring I,
+	  replace("\\$ideal", toMagma I, magmaGBtemplate))
      )
 
 beginDocumentation()

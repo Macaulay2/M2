@@ -6,6 +6,12 @@
 
 always:
 
+sandboxed : always
+	mkdir -p sandbox64
+	cd sandbox64; ../../../configure \
+		--prefix="`pwd`/sandbox" \
+		--enable-download
+
 opt64 : always
 	mkdir -p opt64
 	cd opt64; ../../../configure \

@@ -34,24 +34,24 @@ static int sort_sign(int a, int *v1, int b, int *v2)
   for (;;)
     {
       if (v1[a] < v2[b])
-	{
-	  b--;
-	  if (b < 0)
-	    {
-	      return (result % 2 == 0 ? 1 : -1);
-	    }
-	}
+        {
+          b--;
+          if (b < 0)
+            {
+              return (result % 2 == 0 ? 1 : -1);
+            }
+        }
       else if (v1[a] > v2[b])
-	{
-	  result += b+1;
-	  a--;
-	  if (a < 0)
-	    {
-	      return (result % 2 == 0 ? 1 : -1);
-	    }
-	}
-      else 
-	return 0;
+        {
+          result += b+1;
+          a--;
+          if (a < 0)
+            {
+              return (result % 2 == 0 ? 1 : -1);
+            }
+        }
+      else
+        return 0;
     }
 }
 
@@ -66,7 +66,7 @@ int SkewMultiplication::skew_vars(const int *exp, int *result) const
     {
       int v = _skew_list[i];
       if (exp[v] > 0)
-	result[next++] = v;
+        result[next++] = v;
     }
   return next;
 }
@@ -125,4 +125,5 @@ bool SkewMultiplication::exp_is_zero(const int *exp) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

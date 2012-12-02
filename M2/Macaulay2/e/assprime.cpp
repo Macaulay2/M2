@@ -42,7 +42,7 @@ int AssociatedPrimes::codimension()
 }
 
 MonomialIdeal * AssociatedPrimes::associated_primes(int count)
-    // Place the associated primes of minimal codimension 
+    // Place the associated primes of minimal codimension
     // into a monomial ideal where each monomial corresponds to the prime
     // monomial ideal which is its support.
 {
@@ -59,9 +59,9 @@ MonomialIdeal * AssociatedPrimes::associated_primes(int count)
 }
 
 static int reduce_exp(const int *m, const int *exp)
-     // Determine whether the varpower monomial 'm' 
+     // Determine whether the varpower monomial 'm'
      // can be in the monomial prime ideal 'exp'.
-     // exp corresponds to the set: 
+     // exp corresponds to the set:
      //    exp[i]>0 means variable is in ideal
      //    exp[i]<0 means variable is not in ideal
      //    exp[i]=0 means variable may or may not be in the ideal.
@@ -82,7 +82,7 @@ static int reduce_exp(const int *m, const int *exp)
 static void to_prime_ideal(int n, int *exp)
 {
   for (int i=0; i<n; i++)
-    if (exp[i] <= 0) 
+    if (exp[i] <= 0)
       exp[i] = 1;
     else
       exp[i] = 0;
@@ -98,45 +98,46 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
   for (;;)
     {
       if (p == NULL)
-	{
-	  if (state == do_codim)
-	    { if (codim < min_codim) min_codim = codim; }
-	  else
-	    { 
-	      to_prime_ideal(nvars, exp); 
-	      Bag *b = new Bag(0);
-	      varpower::from_ntuple(nvars, exp, b->monom());
-	      ass_primes->insert(b);
-	      n_minprimes++;
-	      if (minprime_limit > 0 && n_minprimes >= minprime_limit)
-		return;
-	    }
-	  return ;
-	}
+        {
+          if (state == do_codim)
+            { if (codim < min_codim) min_codim = codim; }
+          else
+            {
+              to_prime_ideal(nvars, exp);
+              Bag *b = new Bag(0);
+              varpower::from_ntuple(nvars, exp, b->monom());
+              ass_primes->insert(b);
+              n_minprimes++;
+              if (minprime_limit > 0 && n_minprimes >= minprime_limit)
+                return;
+            }
+          return ;
+        }
       const int *m = p->monom().raw();
-      switch (reduce_exp(m, exp)) 
-	{
-	case 0 : 
-	  p = mi->next(p);
-	  break;
-	case -1:
-	  return ;
-	case 1 : 
-	  if (codim < min_codim)
-	    for (index_varpower i2 = m; i2.valid(); ++i2)
-	      if (exp[i2.var()] == 0)
-		{
-		  exp[i2.var()] = 1 ;
-		  ass_prime_generator(mi->next(p), codim+1) ;
-		  exp[i2.var()] = -1 ;
-		  if (minprime_limit > 0 && n_minprimes >= minprime_limit)
-		    return;
-		}
-	  return ;
-	}
+      switch (reduce_exp(m, exp))
+        {
+        case 0 :
+          p = mi->next(p);
+          break;
+        case -1:
+          return ;
+        case 1 :
+          if (codim < min_codim)
+            for (index_varpower i2 = m; i2.valid(); ++i2)
+              if (exp[i2.var()] == 0)
+                {
+                  exp[i2.var()] = 1 ;
+                  ass_prime_generator(mi->next(p), codim+1) ;
+                  exp[i2.var()] = -1 ;
+                  if (minprime_limit > 0 && n_minprimes >= minprime_limit)
+                    return;
+                }
+          return ;
+        }
     }
 }
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

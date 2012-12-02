@@ -6,23 +6,17 @@
 # much better documentation, and the stable branch is said to be stale.
 #      svn://pari.math.u-bordeaux.fr/pari/trunk
 
-# http://pari.math.u-bordeaux.fr/
+HOMEPAGE = http://pari.math.u-bordeaux.fr/
 VPATH = @srcdir@
-
-# VERSION = 2.3.5
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # # pari maintainers have been known to break URL's, so we copy their software to another server:
 # # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
-# URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
 
 VERSION = 2.5.0
-PATCHFILE = 
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
 
-# disable check, because it fails on various 64 bit machines
-# CHECKTARGET = bench test-all test-compat test-ellglobalred test-galois test-intnum test-qfbsolve test-rfrac test-round4 test-stark test-ploth
-CHECKTARGET = .
+CHECKTARGET = bench test-all test-compat test-ellglobalred test-galois test-intnum test-qfbsolve test-rfrac test-round4 test-stark test-ploth
 
 BUILDTARGET = lib-sta
 INSTALLTARGET = install-lib-sta install-include
@@ -53,11 +47,6 @@ endif
 CONFIGURECMD += | tee pari-config.log
 
 include ../Makefile.library
-
-ifeq (@DEBUG@ @OPTIMIZE@ @GCCVERSION@ @OS@ @ISSUE@,no yes 4.2 MacOS 10.7)
- # work around a bug in gcc that makes pari crash
-CFLAGS += -O0
-endif
 
 # we have to detect which of these two answers it gives:
 #   ### Building without GNU MP support

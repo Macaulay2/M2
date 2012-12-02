@@ -14,9 +14,9 @@ private:
   int determine_next_degree(int &result_number);
 
   spair *make_spair(spair_type type,
-		    int deg, 
-		    int i,
-		    int j); // CAUTION: lcm is allocated correctly, but is
+                    int deg,
+                    int i,
+                    int j); // CAUTION: lcm is allocated correctly, but is
                             // NOT initialized.  That is the caller's responsibility!!
 
   bool pair_not_needed(spair *p, gbelem *m);
@@ -27,7 +27,7 @@ private:
   pre_spair *create_pre_spair(int i);
 
   int construct_pairs(bool remove_disjoints);
-  
+
 public:
   F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);
 
@@ -60,7 +60,7 @@ public:
   // A debugging routine which displays the spairs in the set
 
   long n_unneeded_pairs() const { return nsaved_unneeded; }
-  // Returns how many pairs were created, then later removed due to 
+  // Returns how many pairs were created, then later removed due to
   // spair criteria.
 
  private:
@@ -83,4 +83,3 @@ public:
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 //  End:
-

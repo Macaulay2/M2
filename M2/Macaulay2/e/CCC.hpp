@@ -8,6 +8,10 @@
 #include "ring.hpp"
 
 class CoefficientRingCCC;
+
+/**
+    @ingroup rings
+*/
 class CCC : public Ring
 {
   unsigned long precision;
@@ -31,6 +35,8 @@ public:
   const CCC * cast_to_CCC() const { return this; }
 
   CoefficientRingCCC *get_CoeffRing() const { return coeffR; }
+  CoefficientRingCCC *get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
+  
   unsigned long get_precision() const { return precision; }
 
   // should there be a complex conjugation function?
@@ -83,15 +89,15 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
@@ -104,4 +110,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

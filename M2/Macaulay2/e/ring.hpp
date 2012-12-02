@@ -41,6 +41,13 @@ class SumCollector;
 
 class ARing;
 
+/**
+    @ingroup rings
+
+    @brief xxx
+    xxx
+    xxx
+*/
 class Ring : public mutable_object
 {
 protected:
@@ -55,7 +62,7 @@ protected:
 
   const ARing *AR;
   ring_elem _non_unit;
-  int _isfield;		// 1: means yes, or declared yes.
+  int _isfield;         // 1: means yes, or declared yes.
                         // 0: means not declared to be so.
                         // -1: means a non unit was found, and that _non_unit contains
                         //    a non-zero non-unit.
@@ -65,9 +72,9 @@ protected:
   ring_elem oneV;
   ring_elem minus_oneV;
 
-  void initialize_ring(int charac, 
-		       const PolynomialRing *DR = 0,
-		       const M2_arrayint heft_vec = 0);
+  void initialize_ring(int charac,
+                       const PolynomialRing *DR = 0,
+                       const M2_arrayint heft_vec = 0);
   Ring() : heft_vector(0) {}
 public:
   virtual ~Ring();
@@ -94,7 +101,7 @@ public:
   // polynomial rings over QQ, polynomial rings over fraction fields,
   // fraction rings, and localizations.
   // If this returns true, then 'get_denominator_ring()' returns non-NULL value.
-  // 
+  //
 
   virtual bool is_poly_ring() const { return false; }
   // Returns true if this is a polynomial ring, possibly with fractions
@@ -136,7 +143,7 @@ public:
 
   typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_BASIC} CoefficientType;
   virtual  CoefficientType coefficient_type() const { return COEFF_BASIC; }
-  // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
+  // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these
   // three values.  Fraction fields return their ultimate value, as do poly rings.
 
   virtual bool has_associate_divisors() const { return true; }
@@ -210,11 +217,11 @@ public:
   virtual ring_elem from_int(int n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
 
-  virtual ring_elem from_rational(mpq_ptr q) const = 0;  
+  virtual ring_elem from_rational(mpq_ptr q) const = 0;
   // The default version calls from_int(0). Change it?
-  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;  
+  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
   // The default version calls from_int(0) and returns false.
-  virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;  
+  virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   // The default version calls from_int(0) and returns false.
 
   virtual ring_elem var(int v) const;
@@ -265,8 +272,8 @@ public:
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
-					 ring_elem &quot) const;
+  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g,
+                                         ring_elem &quot) const;
   // The default version is for a field:
   //   f % 0 is f, otherwise f % g is 0.
   //   f // 0 is 0, otherwise f // g is f/g
@@ -280,19 +287,19 @@ public:
   // remainderAndQuotient combines remainder and quotient into one routine.
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const = 0;
+                      ring_elem &x, ring_elem &y) const = 0;
   // Constructs elements x and y in the ring s.t. ax + by = 0.  This syzygy is
-  // chosen as simply as possible.  For example, over QQ, x is chosen 
+  // chosen as simply as possible.  For example, over QQ, x is chosen
   // to be positive.  The routine must handle the case when a=0, but can
   // ignore the case when b=0... (Really?)
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const = 0;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const = 0;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const = 0;
 
@@ -309,8 +316,8 @@ public:
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;
 
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
-			       M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg,
+                               M2_arrayint wts) const;
   virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
 
   // Routines expecting a grading.  The default implementation
@@ -366,7 +373,7 @@ public:
   vec sub_vector(const vecterm * v, M2_arrayint r) const;
   int n_nonzero_terms(const vecterm * v) const;
   void vec_text_out(buffer &o, const vecterm * v, bool p_one=true, bool p_plus=false, bool p_parens=false) const;
-  vec vec_eval(const RingMap *map, const FreeModule *F,	const vec v) const;
+  vec vec_eval(const RingMap *map, const FreeModule *F, const vec v) const;
 
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const;
 
@@ -383,24 +390,18 @@ public:
   void negate_vec_to(vec &v) const; // v <- -v.
   void add_vec_to(vec &v, vec &w) const; // v <- v+w, w is set to 0.
   void subtract_vec_to(vec &v, vec &w) const; // v <- v-w, w is set to 0.
-  void interchange_rows(vec &v, int i, int j) const;
-  void vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const;
 
   vec mult_vec_matrix(const Matrix *m,
-		      vec v,
-		      bool opposite_mult) const;
+                      vec v,
+                      bool opposite_mult) const;
 
   vec component_shift(int n, vec v) const;
 
   vec tensor_shift(int n, int m, vec v) const;
 
-  vec tensor(const FreeModule *F, vec v, 
-	     const FreeModule *G, vec w) const;
+  vec tensor(const FreeModule *F, vec v,
+             const FreeModule *G, vec w) const;
 
-
-  void row2by2(vec &, int r1, int r2,
-	       ring_elem a1, ring_elem a2,
-	       ring_elem b1, ring_elem b2) const;
 
   void divide_vec_to(vec &v, const ring_elem a) const;
   void divide_row(vec &v, int r, const ring_elem a) const;
@@ -423,21 +424,21 @@ public:
   // returns true iff f is homogeneous
 
   void vec_degree(const FreeModule *F, const vec f, int *d) const;
-  void vec_degree_weights(const FreeModule *F, 
-			  const vec f, 
-			  M2_arrayint wts, 
-			  int &lo, 
-			  int &hi) const;
+  void vec_degree_weights(const FreeModule *F,
+                          const vec f,
+                          M2_arrayint wts,
+                          int &lo,
+                          int &hi) const;
   bool vec_is_homogeneous (const FreeModule *F, const vec f) const;
-  vec vec_homogenize(const FreeModule *F, 
-		     const vec f, 
-		     int v, 
-		     int deg, 
-		     M2_arrayint wts) const;
-  vec vec_homogenize(const FreeModule *F, 
-		     const vec f, 
-		     int v, 
-		     M2_arrayint wts) const;
+  vec vec_homogenize(const FreeModule *F,
+                     const vec f,
+                     int v,
+                     int deg,
+                     M2_arrayint wts) const;
+  vec vec_homogenize(const FreeModule *F,
+                     const vec f,
+                     int v,
+                     M2_arrayint wts) const;
 
   // content of vectors and ring elements, default implementation is for basic fields
   virtual void lower_content(ring_elem &c, ring_elem g) const; // c is a content elem, g is in ring
@@ -470,4 +471,5 @@ extern QQ *globalQQ;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e ring.o "
+// indent-tabs-mode: nil
 // End:

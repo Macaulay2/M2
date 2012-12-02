@@ -1,0 +1,30 @@
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/gc/tmp/gc-7.3alpha1.2012.01.23/include/gc.h gc-7.3alpha1.2012.01.23/include/gc.h
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/gc/tmp/gc-7.3alpha1.2012.01.23/include/gc.h	2012-01-23 16:52:39.000000000 -0600
++++ gc-7.3alpha1.2012.01.23/include/gc.h	2012-01-25 20:27:21.000000000 -0600
+@@ -468,7 +468,7 @@
+ GC_API void GC_CALL GC_clear_roots(void);
+ 
+ /* Add a root segment.  Wizards only.                                   */
+-/* The segment (referred to by low_address) must be pointer-aligned.    */
++/* The segment (referred to by low_address) need not be pointer-aligned.*/
+ /* low_address must not be greater than high_address_plus_1.            */
+ GC_API void GC_CALL GC_add_roots(void * /* low_address */,
+                                  void * /* high_address_plus_1 */);
+diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/gc/tmp/gc-7.3alpha1.2012.01.23/mark_rts.c gc-7.3alpha1.2012.01.23/mark_rts.c
+--- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.debug/libraries/gc/tmp/gc-7.3alpha1.2012.01.23/mark_rts.c	2012-01-23 16:52:39.000000000 -0600
++++ gc-7.3alpha1.2012.01.23/mark_rts.c	2012-01-25 19:58:10.000000000 -0600
+@@ -156,11 +156,10 @@
+ {
+     struct roots * old;
+ 
+-    /* Adjust and check range boundaries for safety */
+-    GC_ASSERT((word)b % sizeof(word) == 0);
+-    e = (ptr_t)((word)e & ~(sizeof(word) - 1));
+     GC_ASSERT(b <= e);
+-    if (b == e) return;  /* nothing to do? */
++    b = (ptr_t)(((word)b + sizeof(word) - 1) & ~(sizeof(word) - 1)); /* round b  up  to word boundary */
++    e = (ptr_t)((word)e & ~(sizeof(word) - 1));			     /* round e down to word boundary */
++    if (b >= e) return;  /* nothing to do */
+ 
+ #   if defined(MSWIN32) || defined(MSWINCE) || defined(CYGWIN32)
+       /* Spend the time to ensure that there are no overlapping */

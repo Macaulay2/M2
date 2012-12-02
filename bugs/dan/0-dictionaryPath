@@ -1,0 +1,2 @@
+OutputDictionary should not be on the dictionaryPath while a package is loading
+(except for the package User)

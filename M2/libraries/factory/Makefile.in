@@ -4,47 +4,43 @@
 # svn co svn+ssh://monty.mathematik.uni-kl.de/usr/local/Singular/svn/trunk
 # svn co http://www.singular.uni-kl.de/svn/trunk
 
-# VERSION = 3.0.2
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-# TARDIR = factory
-
-# VERSION = 3.0.4
-# TARDIR = factory
-
-# VERSION = 3.1.0
-# PATCHFILE = @abs_srcdir@/patch-3.1.0b
-# TARDIR = factory
-
-# VERSION = 3.1.1
-# PATCHFILE = @abs_srcdir@/patch-3.1.1
-# TARDIR = factory
-
-VERSION = 3.1.2
-PATCHFILE = @abs_srcdir@/patch-3.1.2
-VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
-TARDIR = factory-$(VERSIONH)
-LICENSEFILES = INSTALL COPYING
-
-VERSION = 3.1.3
-PATCHFILE = @abs_srcdir@/patch-3.1.3
-VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
-TARDIR = factory-$(VERSIONH)
-LICENSEFILES = INSTALL COPYING
-
-TARFILE = factory-$(VERSIONH).tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
-PRECONFIGURE = autoconf
+VERSION = 3.1.4
+VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
+TARFILE = factory-$(VERSIONH).tar.gz
+TARDIR = factory
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
+BUILDTARGET = all ftmpl_inst.o
+LIBRARIES = ftmpl_inst.o
+
+LICENSEFILES = INSTALL COPYING
+
 # this doesn't work, because autoheader fails with factory
 # PRECONFIGURE = autoreconf -vi
 CONFIGOPTIONS += --enable-NTL
-ifeq (@OPTIMIZE@,yes)
-CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
-endif
+CONFIGOPTIONS += --includedir='$(LIBRARIESDIR)/include/'factory
+
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assertions
 endif
 CHECKCMD = true
 include ../Makefile.library
+
+# add code to add these options only for gcc
+WARNFLAGS += -Wno-uninitialized -Wno-write-strings
+## add code to add these options only for recent enough versions of gcc
+# WARNFLAGS += -Wno-int-to-pointer-cast
+# WARNFLAGS += -Wno-unused-but-set-variable
+
+ifeq (@OPTIMIZE@,yes)
+WARNFLAGS += -Wno-deprecated
+endif
+
+CXXFLAGS += --no-rtti --no-exceptions
+
+BUILDOPTIONS += WARNFLAGS='$(WARNFLAGS)'
+
 CPPFLAGS += -DMP_INT=__mpz_struct
 
 # These are old routines, long deprecated, missing in mpir 1.3.0

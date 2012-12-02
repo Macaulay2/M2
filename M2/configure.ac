@@ -593,6 +593,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   Units
   MonomialMultiplierIdeals
   NautyGraphs
+  VersalDeformations
 ")
 
 # convert the newlines in the list above to spaces
@@ -788,7 +789,7 @@ AC_SUBST(BUILTLIBS,)
 #     initially, we offer no option for not compiling some of them
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
-#    factory needs ntl and gmp
+#    factory needs gftables, ntl and gmp
 #    libfac needs factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
@@ -818,7 +819,7 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, "gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint")
 for i in $LIBLIST
 do eval BUILD_$i=no
@@ -828,7 +829,7 @@ do eval BUILD_$i=yes
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -1185,21 +1186,24 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
+BUILD_gftables=yes
+
+# the instantiations needed by an initialization in libcf are in libfac,
+# and libfac depends on libcf, so we mention libfac twice:
 if test "$DEBUG" = yes
-then SINGULARLIBS="-lfac -lcf -lcfmem"
-else SINGULARLIBS="-lfac -lcf -lcfmem"
+then SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
+else SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
 fi
 while test $BUILD_factory = no -o $BUILD_libfac = no
 do AC_LANG(C++)
-   AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
    dnl if -lntl is needed, it's been added to $LIBS above
    AC_LINK_IFELSE([AC_LANG_SOURCE([[ #undef NOSTREAMIO
-	              #include <factory.h>
-		      #include <templates/ftmpl_inst.cc>
+	              #include <factory/factory.h>
 		      int main () { return 0 ; } ]])],
        AC_MSG_RESULT(yes),
        AC_MSG_RESULT(no) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break )
@@ -1208,9 +1212,8 @@ do AC_LANG(C++)
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
-	   #include <factory.h>
+	   #include <factory/factory.h>
 	   #include <factor.h>
-	   #include <templates/ftmpl_inst.cc>
 	   extern const char * libfac_version;
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");

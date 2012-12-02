@@ -22,12 +22,17 @@ const int ELEMB_IN_RING = 1;
 const int ELEMB_MINGEN = 2;
 const int ELEMB_MINGB = 4;
 
+/**
+    @ingroup gb
+
+    @brief A modification of the default algorithm to try to speed it up in inhomogeneous cases.
+*/
 class gbB : public GBComputation {
 public:
   typedef int gbelem_type;
     // ELEMB_IN_RING: a bit set.  If this is set, then the next two bits need to
     //   off.
-    // ELEMB_MINGEN: a bit set: 0 means it is provably not needed to 
+    // ELEMB_MINGEN: a bit set: 0 means it is provably not needed to
     //   generated the ideal or submodule.  1 means it might be a minimal generator.
     //   NOTE: often the min gens obtained this way are not so good.  Exceptions are
     //    for graded submodules.  Then the meaning of 1 is: it IS a min gen.
@@ -42,7 +47,7 @@ public:
     int gap; // the homogenizing degree, called "alpha", or the "ecart".  It is deg g - deg lead term of g.
     int reduced_deg; // the poly might be of actual degree lower than 'deg'.  This is the actual deg.
     int reduced_gap; // This is the gap value assuming the degree is reduced_deg.  Used in finding divisors.
-    int size; // number of monomials, when the element is first inserted.  After 
+    int size; // number of monomials, when the element is first inserted.  After
               // auto reduction, the number can change.  It is not yet clear if we should change this value...
     exponents lead; // -1..nvars-1, the -1 part is the component
     gbelem_type minlevel;
@@ -62,15 +67,15 @@ public:
   struct spair {
     spair *next;
     spair_type type; /* SPAIR_SPAIR,
-			SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
+                        SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
     int deg;
     exponents lcm; /* Contains homogenizing variable, component */
     union {
       POLY f; /* SPAIR_GEN, SPAIR_ELEM */
       struct pair {
-	int i,j; /* i refers to a GB element. j refers to GB element (SPAIR_SPAIR)
-		    or a ring element (SPAIR_RING) or a variable number (SPAIR_SKEW)
-		  */
+        int i,j; /* i refers to a GB element. j refers to GB element (SPAIR_SPAIR)
+                    or a ring element (SPAIR_RING) or a variable number (SPAIR_SKEW)
+                  */
       } pair;
     } x;
     gbvector *lead_of_spoly; // experimental
@@ -92,13 +97,13 @@ private:
     spair spair_deferred_list; // list header
     spair *spair_last_deferred; // points to last elem of previous list, possibly the header
 
-    spair *gen_list; 
+    spair *gen_list;
     spair gen_deferred_list;  // list header
     spair *gen_last_deferred; // points to last elem of previous list, possibly the header
 
     SPairSet();
   };
-  
+
 private:
   // Stashes
   stash *spair_stash;
@@ -138,9 +143,9 @@ private:
   bool _collect_syz;
   bool _is_ideal;
   int first_gb_element; /* First index past the skew variable squares, quotient elements,
-			   in the array in G */
+                           in the array in G */
   int first_in_degree; /* for the current 'sugar' degree, this is the first GB element
-			   inserted for this degree */
+                           inserted for this degree */
   int complete_thru_this_degree; /* Used in reporting status to the user */
 
   /* (new) state machine */
@@ -177,11 +182,11 @@ private:
   int n_saved_hilb;
 #if 0
   bool use_hilb;
-  bool hilb_new_elems;	// True if any new elements since HF was last computed
+  bool hilb_new_elems;  // True if any new elements since HF was last computed
   int hilb_n_in_degree; // The number of new elements that we expect to find
-			 // in this degree.
-  const RingElement *hf_orig;	// The Hilbert function that we are given at the beginning
-  RingElement *hf_diff;		// The difference between hf_orig and the computed hilb fcn
+                         // in this degree.
+  const RingElement *hf_orig;   // The Hilbert function that we are given at the beginning
+  RingElement *hf_diff;         // The difference between hf_orig and the computed hilb fcn
 #endif
   //////////////////////////////////////////
 
@@ -200,7 +205,7 @@ private:
   spair *new_gen(int i, gbvector *f, ring_elem denom);
 
   int gbelem_COMPONENT(gbelem *g) { return g->g.f->comp; }
-  int spair_COMPONENT(spair *s) { 
+  int spair_COMPONENT(spair *s) {
     // Only valid if this is an SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW.
     // Probably better is to put it into spair structure.
     return gb[s->x.pair.i]->g.f->comp;
@@ -215,9 +220,9 @@ private:
   gbelem *gbelem_ring_make(gbvector *f);
 
   gbelem *gbelem_make(gbvector *f,  // grabs f
-		      gbvector *fsyz, // grabs fsyz
-		      gbelem_type minlevel,
-		      int deg);
+                      gbvector *fsyz, // grabs fsyz
+                      gbelem_type minlevel,
+                      int deg);
 
   void gbelem_text_out(buffer &o, int i, int nterms=3) const;
 
@@ -244,7 +249,7 @@ private:
   void remove_SPairSet();
   void spair_set_insert(spair *p);
     /* Insert a LIST of s pairs into S */
-  spair *spair_set_next(); 
+  spair *spair_set_next();
     /* Removes the next element of the current degree, returning NULL if none left */
   int spair_set_determine_next_degree(int &nextdegree);
   int spair_set_prepare_next_degree(int &nextdegree);
@@ -284,9 +289,9 @@ private:
   void minimalize_gb();
 
   int find_good_divisor(exponents e,
-			int x,
-			int degf, 
-			int &result_gap);
+                        int x,
+                        int degf,
+                        int &result_gap);
 
   void remainder(POLY &f, int degf, bool use_denom, ring_elem &denom);
   // denom must start out as an element of the base R->getCoefficients().
@@ -299,18 +304,18 @@ public:
   // Computation routines //
   //////////////////////////
 
-  static gbB * create(const Matrix *m, 
-		      M2_bool collect_syz, 
-		      int n_rows_to_keep,
-		      M2_arrayint gb_weights,
-		      int strategy, 
-		      M2_bool use_max_degree,
-		      int max_degree,
-		      int max_reduction_count);
+  static gbB * create(const Matrix *m,
+                      M2_bool collect_syz,
+                      int n_rows_to_keep,
+                      M2_arrayint gb_weights,
+                      int strategy,
+                      M2_bool use_max_degree,
+                      int max_degree,
+                      int max_reduction_count);
 
-  static gbB * create_forced(const Matrix *m, 
-				 const Matrix *gb, 
-				 const Matrix *mchange);
+  static gbB * create_forced(const Matrix *m,
+                                 const Matrix *gb,
+                                 const Matrix *mchange);
 
   void remove_gb();
   virtual ~gbB();
@@ -338,13 +343,13 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-			   const Matrix /* or null */ **result_remainder,
-			   const Matrix /* or null */ **result_quotient
-			   );
+                           const Matrix /* or null */ **result_remainder,
+                           const Matrix /* or null */ **result_quotient
+                           );
 
   virtual int contains(const Matrix *m);
 
-  virtual void text_out(buffer &o) const; 
+  virtual void text_out(buffer &o) const;
   /* This displays statistical information, and depends on the
      M2_gbTrace value */
 
@@ -358,11 +363,12 @@ public:
   void show() const;
 
   void show_mem_usage();
-};  
+};
 
 #endif
 
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

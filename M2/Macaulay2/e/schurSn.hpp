@@ -5,7 +5,7 @@
 
 #include "schur2.hpp"
 
-class SchurSnRing : public SchurRing2 
+class SchurSnRing : public SchurRing2
 {
 public:
   SchurSnRing(const Ring *A, int n=-1);
@@ -23,4 +23,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -1,4 +1,5 @@
-URL = http://cs.anu.edu.au/~bdm/nauty
+# URL = http://cs.anu.edu.au/~bdm/nauty
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 VERSION = 24r2
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)

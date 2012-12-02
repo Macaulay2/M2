@@ -13,7 +13,7 @@ bool GF::initialize_GF(const RingElement *prim)
   _primitive_element = prim;
   _originalR = prim->get_ring()->cast_to_PolynomialRing();
   initialize_ring(_originalR->charac(),
-		  PolyRing::get_trivial_poly_ring());
+                  PolyRing::get_trivial_poly_ring());
 
   declare_field();
 
@@ -55,7 +55,7 @@ bool GF::initialize_GF(const RingElement *prim)
       polys.append(g);
       if (_originalR->is_equal(g, oneR)) break;
       if (_originalR->is_equal(g, x))
-	_x_exponent = i;
+        _x_exponent = i;
     }
 
   if (polys.length() != Q_)
@@ -72,11 +72,11 @@ bool GF::initialize_GF(const RingElement *prim)
   for (i=1; i<=Q_-1; i++)
     {
       if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-	return false;
+        return false;
       ring_elem f1 = _originalR->add(polys[i], oneR);
       for (j=1; j<=Q_-1; j++)
-	if (_originalR->is_equal(f1, polys[j]))
-	  break;
+        if (_originalR->is_equal(f1, polys[j]))
+          break;
       _one_table[i] = j;
     }
 
@@ -163,13 +163,13 @@ ring_elem GF::random() const
   return ring_elem(exp);
 }
 
-void GF::elem_text_out(buffer &o, 
-		       const ring_elem a,
-		       bool p_one,
-		       bool p_plus, 
-		       bool p_parens) const
+void GF::elem_text_out(buffer &o,
+                       const ring_elem a,
+                       bool p_one,
+                       bool p_plus,
+                       bool p_parens) const
 {
-  if (a.get_int() == _ZERO) 
+  if (a.get_int() == _ZERO)
     {
       o << "0";
       return;
@@ -255,7 +255,7 @@ bool GF::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
     result = _originalR->from_int(1);
   else
     result = _originalR->power(_primitive_element->get_value(), e);
-  
+
   return true;
 }
 
@@ -301,7 +301,7 @@ void GF::internal_negate_to(ring_elem &f) const
 void GF::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   if (g == _ZERO) return;
-  if (f == _ZERO) 
+  if (f == _ZERO)
     f = g;
   else
     {
@@ -309,26 +309,26 @@ void GF::internal_add_to(ring_elem &f, ring_elem &g) const
       int b = g.int_val;
       int n = a-b;
       if (n > 0)
-	{
-	  if (n == _MINUS_ONE)
-	    f = _ZERO;
-	  else
-	    f = modulus_add(b, _one_table[n], Q1_);
-	}
+        {
+          if (n == _MINUS_ONE)
+            f = _ZERO;
+          else
+            f = modulus_add(b, _one_table[n], Q1_);
+        }
       else if (n < 0)
-	{
-	  if (-n == _MINUS_ONE)
-	    f = _ZERO;
-	  else
-	    f = modulus_add(a, _one_table[-n], Q1_);
-	}
-      else 
-	{
-	  if (P == 2) 
-	    f = _ZERO;
-	  else
-	    f = modulus_add(a, _one_table[_ONE], Q1_);
-	}
+        {
+          if (-n == _MINUS_ONE)
+            f = _ZERO;
+          else
+            f = modulus_add(a, _one_table[-n], Q1_);
+        }
+      else
+        {
+          if (P == 2)
+            f = _ZERO;
+          else
+            f = modulus_add(a, _one_table[_ONE], Q1_);
+        }
     }
 }
 
@@ -400,7 +400,7 @@ ring_elem GF::divide(const ring_elem f, const ring_elem g) const
 }
 
 void GF::syzygy(const ring_elem a, const ring_elem b,
-		ring_elem &x, ring_elem &y) const
+                ring_elem &x, ring_elem &y) const
 {
   x = GF::from_int(1);
   y = GF::divide(a,b);
@@ -409,4 +409,5 @@ void GF::syzygy(const ring_elem a, const ring_elem b,
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -11,7 +11,7 @@ PolynomialRing::~PolynomialRing()
 {
 }
 
-void PolynomialRing::setQuotientInfo(QRingInfo *qinfo0) 
+void PolynomialRing::setQuotientInfo(QRingInfo *qinfo0)
 {
   qinfo_ = qinfo0;
   const PolyRing *numerR = getNumeratorRing(); // might be 'this'
@@ -19,21 +19,21 @@ void PolynomialRing::setQuotientInfo(QRingInfo *qinfo0)
   for (int i=0; i<n_quotients(); i++)
     {
       if (!numerR->is_homogeneous(quotient_element(i)))
-	{
-	  setIsGraded(false);
-	  break;
-	}
+        {
+          setIsGraded(false);
+          break;
+        }
     }
 
   overZZ_ = (coeff_type_ == Ring::COEFF_ZZ);
 }
 
 void PolynomialRing::initialize_PolynomialRing(
-					       const Ring *K,
-					       const Monoid *M,
-					       const PolyRing *numeratorR,
-					       const PolynomialRing *ambientR,
-					       const Ring *denomR)
+                                               const Ring *K,
+                                               const Monoid *M,
+                                               const PolyRing *numeratorR,
+                                               const PolynomialRing *ambientR,
+                                               const Ring *denomR)
 {
   nvars_ = M->n_vars();
   K_ = K;
@@ -43,12 +43,12 @@ void PolynomialRing::initialize_PolynomialRing(
   denomR_ = denomR;
 
   exp_size = EXPONENT_BYTE_SIZE(nvars_);
-  
+
   if (K->is_QQ() || (K == globalZZ && denomR != 0))
     coeff_type_ = Ring::COEFF_QQ;
   else if (K == globalZZ && denomR == 0)
     coeff_type_ = Ring::COEFF_ZZ;
-  else 
+  else
     coeff_type_ = Ring::COEFF_BASIC;
 
   is_weyl_ = false;
@@ -63,14 +63,14 @@ void PolynomialRing::initialize_PolynomialRing(
     {
       // We must set the non-commutative settings ourselves at this time
       if (numeratorR->cast_to_WeylAlgebra() != 0)
-	is_weyl_ = true;
+        is_weyl_ = true;
       else if (numeratorR->cast_to_SolvableAlgebra() != 0)
-	is_solvable_ = true;
+        is_solvable_ = true;
       else if (numeratorR->is_skew_commutative())
-	{
-	  is_skew_ = true;
-	  skew_ = numeratorR->getSkewInfo();
-	}
+        {
+          is_skew_ = true;
+          skew_ = numeratorR->getSkewInfo();
+        }
     }
 
   poly_size_ = 0; // The callee needs to set this later
@@ -79,8 +79,8 @@ void PolynomialRing::initialize_PolynomialRing(
   // Also: callee should call setIsGraded, and set oneV, minus_oneV, zeroV
 }
 
-PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R, 
-						VECTOR(Nterm *) &elems)
+PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
+                                                VECTOR(Nterm *) &elems)
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
   // They should also form a GB.
 {
@@ -115,14 +115,14 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   }
 
   result->initialize_ring(R->charac(),
-			  R->get_degree_ring(),
-			  R->get_heft_vector());
+                          R->get_degree_ring(),
+                          R->get_heft_vector());
 
   result->initialize_PolynomialRing(R->getCoefficients(),
-				    R->getMonoid(),
-				    R->getNumeratorRing(),
-				    R->getAmbientRing(),
-				    R->getDenominatorRing());
+                                    R->getMonoid(),
+                                    R->getNumeratorRing(),
+                                    R->getAmbientRing(),
+                                    R->getDenominatorRing());
 
   result->gb_ring_ = R->get_gb_ring();
   result->setQuotientInfo(qrinfo); // Also sets graded-ness
@@ -130,12 +130,12 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   result->zeroV = result->from_int(0);
   result->oneV = result->from_int(1);
   result->minus_oneV = result->from_int(-1);
-  
+
   return result;
 }
 
-PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R, 
-						const Matrix *M)
+PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
+                                                const Matrix *M)
 {
   if (M->get_ring() != R)
     {
@@ -156,8 +156,8 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   return create_quotient(R->getAmbientRing(),elems);
 }
 
-PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R, 
-						const PolynomialRing *B)
+PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
+                                                const PolynomialRing *B)
   // R should be an ambient poly ring
   // B should have: ambient of B is the logical coeff ring of R
   //   i.e. R = A[x], B = A/I
@@ -223,10 +223,10 @@ SumCollector *PolynomialRing::make_SumCollector() const
 //     }
 //   return 0;
 // }
-// 
-// 
+//
+//
 // const PolyRing *PolyRing::create(const RRing *K, const Monoid *M)
-//   // Create the ring K[M].  
+//   // Create the ring K[M].
 //   // K must be either a basic ring, or an ambient polynomial ring,
 //   //  possibly non-commutative of some sort.
 // {
@@ -241,7 +241,7 @@ SumCollector *PolynomialRing::make_SumCollector() const
 //   const PolyRing *B = A->getAmbientRing();
 //   return B->createPolyRing(M);
 // }
-// 
+//
 // const PolyRing *PolyRingSkew::createPolyRing(const Monoid *M) const
 // {
 //   M2_arrayint skew;
@@ -249,39 +249,39 @@ SumCollector *PolynomialRing::make_SumCollector() const
 //   int n = M->n_vars();
 //   M2_arrayint newskew = addScalar(skew, n);
 //   const Monoid *flatM = Monoid::tensor_product(M, getMonoid());
-//   
+//
 //   PolyRingSkew *R = new PolyRingSkew;
 //   R->initialize(this, M,  getCoefficients(), flatM);
 //   R->setSkewInfo(newskew);
 //   return R;
 // }
-// 
-// const PolyRingSkew *PolyRingSkew::create(const PolyRing *P, 
-// 					 M2_arrayint skewvars)
+//
+// const PolyRingSkew *PolyRingSkew::create(const PolyRing *P,
+//                                       M2_arrayint skewvars)
 // {
 //   PolyRingSkew *R = new PolyRingSkew;
 //   R->initialize(P->getCoefficients(),
-// 		P->getMonoid(),
-// 		P->getFlatCoefficients(),
-// 		P->getFlatMonoid());
+//              P->getMonoid(),
+//              P->getFlatCoefficients(),
+//              P->getFlatMonoid());
 //   R->setSkewInfo(skewvars);
 //   return R;
 // }
-// 
+//
 // const PolyRingWeyl *PolyRingWeyl::create(const PolyRing *P,
-// 					 M2_arrayint derivatives,
-// 					 M2_arrayint commutatives,
-// 					 int homog_var)
+//                                       M2_arrayint derivatives,
+//                                       M2_arrayint commutatives,
+//                                       int homog_var)
 // {
 //   PolyRingWeyl *R = new PolyRingWeyl;
 //   R->initialize(P->getCoefficients(),
-// 		P->getMonoid(),
-// 		P->getFlatCoefficients(),
-// 		P->getFlatMonoid());
+//              P->getMonoid(),
+//              P->getFlatCoefficients(),
+//              P->getFlatMonoid());
 //   R->setWeylInfo(derivatives, commutatives, homog_var);
 //   return R;
 // }
-// 
+//
 // const PolyQuotient *PolyQuotient::create(const Matrix *quotient_gb)
 // {
 //   // There are two cases here?
@@ -302,18 +302,19 @@ SumCollector *PolynomialRing::make_SumCollector() const
 //   //    Create a PolyFracQuotient
 //   // (d) PolyFracQuotient
 //   //    Create a new PolyFracQuotient, with the union of two GB's.
-// 
+//
 //   return makeQuotientRing(quotients); // virtual call
 // }
-// 
+//
 // PPolynomialRing *PPolynomialRing::createQuotient(const PPolynomialRing *B) const
 // {
 //   // First check that B is a valid quotient of this.
 //   // Then make the quotient elements in this ring
-//   return makeQuotientRing(quotients); // virtual call: 
+//   return makeQuotientRing(quotients); // virtual call:
 // }
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

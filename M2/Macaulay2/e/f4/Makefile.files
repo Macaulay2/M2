@@ -15,6 +15,6 @@ F4_CCFILES := \
   varpower-monomial \
   gausser
 
-F4_CFILES := 
+F4_CFILES :=
 F4_FILES := $(F4_CCFILES) $(F4_CFILES)
 F4_OBJECT_FILES :=  $(addsuffix .o, $(F4_FILES))

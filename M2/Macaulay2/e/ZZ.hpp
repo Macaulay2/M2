@@ -13,6 +13,9 @@ class CoefficientRingZZ_NTL;
 extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i) { return mpz_cmp_si(x,i); }
 extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j) { return mpq_cmp_si(x,i,j); }
 
+/**
+    @ingroup rings
+*/
 class RingZZ : public Ring
 {
   friend class CoefficientRingZZ_NTL;
@@ -41,6 +44,7 @@ public:
   const RingZZ * cast_to_RingZZ() const { return this; }
 
   CoefficientRingZZ_NTL * get_CoeffRing() const { return coeffR; }
+  CoefficientRingZZ_NTL * get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
 
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }
@@ -97,23 +101,23 @@ public:
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
-					 ring_elem &quot) const;
+  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g,
+                                         ring_elem &quot) const;
 
   ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const;
+  ring_elem gcd_extended(const ring_elem f, const ring_elem g,
+                                  ring_elem &u, ring_elem &v) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
@@ -123,4 +127,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

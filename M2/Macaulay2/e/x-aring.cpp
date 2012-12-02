@@ -4,7 +4,7 @@
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
 #include "aring-gf.hpp"
-
+#include "aring-ffpack.hpp"
 
 const Ring /* or null */ *rawARingZZp(int p)
   /* p must be a prime number <= 32767 */
@@ -18,23 +18,50 @@ const Ring /* or null */ *rawARingZZp(int p)
   return M2::RingWrap<M2::ARingZZp>::create(A);
 }
 
-const Ring /* or null */ *rawARingGaloisField(int p, int n)
+
+/// @todo why parameters are ints and not longs or mpz's? is an overflow possible?
+/// @todo check prime for primality (probably at top of Macaulay2)
+/// @todo ARingGF uses tables and may consume a huge amount of memory -
+///        pass therefore a 'MaxMemoryConsumption' parameter and if the value is overstepped by ARingGF, create polynomial representation?
+/// @todo  the check if in general polynomial representation is needed cost some additional work, similar to linbox/field/givaro-gfq.h. Use GivaroGfq instead of Givaro::GFqDom in ARingGF?
+///@todo: return Macaulay Galois field in some cases.
+
+const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
 {
-  // Check that the ring R of f is a polynomial ring in one var over a ZZ/p
-  // Check that f has degree >= 2
-  // Check that f is monic
-  // If any of these fail, then return 0.
+        if (dimension < 0  )
+        {
+            ERROR(" givaroGF/FFPACK: help, dimension is negative ! ");
+            return 0;
+        }
      try {
 #if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
-       M2::ARingGF *A = new M2::ARingGF(p,n);
-       return M2::RingWrap<M2::ARingGF>::create(A);
+
+        if (prime <= 1  )
+        {
+            ERROR("givaroGF/FFPACK: expected a prime number p ");
+            return 0;
+        }
+
+        //-- NEED_POLYNOMIAL_REPRESENTATION is not usable(namespace problems) and is not correct, because the answer depends on the template used for Givaro::GFqDom.
+        /*if (Givaro::NEED_POLYNOMIAL_REPRESENTATION(prime,dimension) )  
+        {
+            ERROR("givaro Galois Field: polynomial representation is needed  - todo ");
+            return 0;
+        }*/
+        if (dimension==1 && M2::ARingFFPACK::getMaxModulus()> prime) 
+        {
+          M2::ARingFFPACK *A = new M2::ARingFFPACK(prime);
+          return M2::RingWrap<M2::ARingFFPACK>::create(A);
+        }
+        M2::ARingGF *A = new M2::ARingGF(prime,dimension);
+        return M2::RingWrap<M2::ARingGF>::create(A);
 #else
        ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
        return 0;
 #endif
      }
      catch (exc::engine_error e) {
-	  ERROR(e.what());
-	  return NULL;
+          ERROR(e.what());
+          return NULL;
      }
 }

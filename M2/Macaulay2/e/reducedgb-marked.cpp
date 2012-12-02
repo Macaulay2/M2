@@ -6,9 +6,9 @@
 #include "matrix-con.hpp"
 
 MarkedGB *MarkedGB::create(
-		 const PolynomialRing *originalR0,
-		 const FreeModule *F0,
-		 const FreeModule *Fsyz0)
+                 const PolynomialRing *originalR0,
+                 const FreeModule *F0,
+                 const FreeModule *Fsyz0)
 {
   return new MarkedGB(originalR0,F0,Fsyz0);
 }
@@ -28,8 +28,8 @@ struct MarkedGB_sorter : public std::binary_function<int,int,bool> {
   const FreeModule *F;
   const VECTOR(POLY) &gb;
   MarkedGB_sorter(GBRing *R0,
-			 const FreeModule *F0,
-			 const VECTOR(POLY) &gb0)
+                         const FreeModule *F0,
+                         const VECTOR(POLY) &gb0)
     : R(R0), F(F0), gb(gb0) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx].f;
@@ -39,17 +39,17 @@ struct MarkedGB_sorter : public std::binary_function<int,int,bool> {
 };
 
 MarkedGB::MarkedGB(
-		   const PolynomialRing *originalR0,
-		   const FreeModule *F0,
-		   const FreeModule *Fsyz0) 
+                   const PolynomialRing *originalR0,
+                   const FreeModule *F0,
+                   const FreeModule *Fsyz0)
 : ReducedGB(originalR0->get_gb_ring(),originalR0,F0,Fsyz0), T(0)
 {
   T = MonomialTable::make(R->n_vars());
 }
 
 void MarkedGB::add_marked_elems(const VECTOR(gbvector *) &leadterms0,
-				 const VECTOR(POLY) &polys0,
-				 bool auto_reduced)
+                                 const VECTOR(POLY) &polys0,
+                                 bool auto_reduced)
 {
   // First sort these elements via increasing lex order (or monomial order?)
   // Next insert minimal elements into T, and polys
@@ -73,26 +73,26 @@ void MarkedGB::add_marked_elems(const VECTOR(gbvector *) &leadterms0,
 
       gbvector *iinf = 0;
       for (gbvector *t = h.f; t != 0; t = t->next)
-	if (inf->comp == t->comp && EQ == M->compare(inf->monom, t->monom))
-	  {
-	    iinf = t;
-	    break;
-	  }
+        if (inf->comp == t->comp && EQ == M->compare(inf->monom, t->monom))
+          {
+            iinf = t;
+            break;
+          }
       if (!iinf)
-	{
-	  ERROR("lead term does not appear in the polynomial!");
-	  iinf = f;
-	}
+        {
+          ERROR("lead term does not appear in the polynomial!");
+          iinf = f;
+        }
       leadterms[i] = iinf;
 
       exponents e = R->exponents_make();
       R->gbvector_get_lead_exponents(F,iinf,e);
 
-	  //	  if (auto_reduced)
-	  //	    remainder(h,false,junk); // This auto-reduces h. MES MES!! Maybe not for marked GB!!
+          //      if (auto_reduced)
+          //        remainder(h,false,junk); // This auto-reduces h. MES MES!! Maybe not for marked GB!!
 
       R->gbvector_remove_content(h.f,h.fsyz);
-      
+
       T->insert(e, iinf->comp, i);
       polys.push_back(h);
     }
@@ -124,27 +124,27 @@ void MarkedGB::marked_remainder(POLY &f, bool use_denom, ring_elem &denom, gbvec
   while (!R->gbvector_is_zero(h.f))
     {
       if (h.f != marked_lead_term)
-	{
-	  R->gbvector_get_lead_exponents(F, h.f, EXP);
-	  int x = h.f->comp;
-	  int w = T->find_divisor(EXP,x);
-	  if (w >= 0)
-	    {
-	      POLY g = polys[w];
-	      R->gbvector_reduce_with_marked_lead_term(F, Fsyz,
-						       head.next,
-						       h.f, h.fsyz,
-						       leadterms[w],
-						       g.f, g.fsyz,
-						       use_denom, denom);
-	      continue;
-	    }
-	}
+        {
+          R->gbvector_get_lead_exponents(F, h.f, EXP);
+          int x = h.f->comp;
+          int w = T->find_divisor(EXP,x);
+          if (w >= 0)
+            {
+              POLY g = polys[w];
+              R->gbvector_reduce_with_marked_lead_term(F, Fsyz,
+                                                       head.next,
+                                                       h.f, h.fsyz,
+                                                       leadterms[w],
+                                                       g.f, g.fsyz,
+                                                       use_denom, denom);
+              continue;
+            }
+        }
       frem->next = h.f;
       frem = frem->next;
       h.f = h.f->next;
       frem->next = 0;
-    }      
+    }
 
   h.f = head.next;
   f.f = h.f;
@@ -174,22 +174,22 @@ void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
       int x = h->comp;
       int w = T->find_divisor(EXP,x);
       if (w < 0)
-	{
-	  frem->next = h;
-	  frem = frem->next;
-	  h = h->next;
-	  frem->next = 0;
-	}
+        {
+          frem->next = h;
+          frem = frem->next;
+          h = h->next;
+          frem->next = 0;
+        }
       else
-	{
-	  POLY g = polys[w];
-	  R->gbvector_reduce_with_marked_lead_term(F, Fsyz,
-				       head.next,
-				       h, zero,
-				       leadterms[w],
-				       g.f, zero,
-				       use_denom, denom);
-	}
+        {
+          POLY g = polys[w];
+          R->gbvector_reduce_with_marked_lead_term(F, Fsyz,
+                                       head.next,
+                                       h, zero,
+                                       leadterms[w],
+                                       g.f, zero,
+                                       use_denom, denom);
+        }
     }
   h = head.next;
   f = h;
@@ -205,7 +205,7 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvectorHeap fb(R,F);
   gbvectorHeap zero(R,Fsyz);
   fb.add(f);
-  
+
   const gbvector *lead;
   exponents EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
   while ((lead = fb.get_lead_term()) != NULL)
@@ -214,21 +214,21 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
       int x = lead->comp;
       int w = T->find_divisor(EXP,x);
       if (w < 0)
-	{
-	  frem->next = fb.remove_lead_term();
-	  frem = frem->next;
-	  frem->next = 0;
-	}
+        {
+          frem->next = fb.remove_lead_term();
+          frem = frem->next;
+          frem->next = 0;
+        }
       else
-	{
-	  POLY g = polys[w];
-	  R->reduce_marked_lead_term_heap(F, Fsyz,
-					  lead,
-					  EXP,
-					  head.next, fb, zero,
-					  leadterms[w],
-					  g.f, 0);
-	}
+        {
+          POLY g = polys[w];
+          R->reduce_marked_lead_term_heap(F, Fsyz,
+                                          lead,
+                                          EXP,
+                                          head.next, fb, zero,
+                                          leadterms[w],
+                                          g.f, 0);
+        }
     }
   f = head.next;
   R->gbvector_sort(F, f);
@@ -263,5 +263,5 @@ const Matrix /* or null */ *MarkedGB::get_parallel_lead_terms(M2_arrayint w)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

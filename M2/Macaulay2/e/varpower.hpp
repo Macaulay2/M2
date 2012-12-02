@@ -27,8 +27,8 @@ public:
   ~varpower() {}
 
   static void elem_text_out(buffer &o, const int *a, bool p_one=true);
-  static void elem_text_out(buffer &o, const int *a, 
-			    M2_ArrayString varnames, bool p_one=true);
+  static void elem_text_out(buffer &o, const int *a,
+                            M2_ArrayString varnames, bool p_one=true);
 
   static bool is_one(const int *a);
   static bool is_equal(const int *a, const int *b);
@@ -52,8 +52,8 @@ public:
   static void power(const int *a, int n, intarray &result);
   static bool divides(const int *a, const int *b);
     // Is a divisible by b?
-  static void monsyz(const int *a, const int *b, 
-		     intarray &sa, intarray &sb);
+  static void monsyz(const int *a, const int *b,
+                     intarray &sa, intarray &sb);
   static void lcm(const int *a, const int *b, intarray &result);
   static void gcd(const int *a, const int *b, intarray &result);
   static void erase(const int *a, const int *b, intarray &result);
@@ -73,8 +73,8 @@ public:
   index_varpower() : loc(0), hi(0) {}
   index_varpower(const int *m) : loc(m+1), hi(m+*m) {}
 
-				     //  index_varpower(const int *m, int) 
-				     //    : lo(m+1), hi(m+*m-2) { loc = hi; }
+                                     //  index_varpower(const int *m, int)
+                                     //    : lo(m+1), hi(m+*m-2) { loc = hi; }
 
   index_varpower(const index_varpower &i) : loc(i.loc), hi(i.hi) {}
 
@@ -91,4 +91,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

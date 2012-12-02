@@ -10,22 +10,22 @@ class FF_LUComputation
 {
   // This is a class encapsulating the LU decomposition
   // over a domain, using fraction free Gaussian elimination.
-  
-  const Ring *R;		// R should be a domain.
+
+  const Ring *R;                // R should be a domain.
   MutableMatrix *M;
   int *col_perm;
   bool *need_div;
   int pivot_col;
   ring_elem lastpivot;
-  ring_elem pivot;	
+  ring_elem pivot;
 
 private:
   FF_LUComputation(MutableMatrix *M);
   ~FF_LUComputation();
 
   bool choose_pivot_column(int lo, int hi, int &result);
-  // Chooses a pivot in the column range lo..hi, among those with 
-  // the highest index row.  Returns true if there is a non-zero 
+  // Chooses a pivot in the column range lo..hi, among those with
+  // the highest index row.  Returns true if there is a non-zero
   // column in the range lo..hi, and sets 'result' in this case.
   // If all such columns are zero, returns false.
 

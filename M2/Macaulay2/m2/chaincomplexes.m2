@@ -50,6 +50,8 @@ length ChainComplex := (C) -> (
      )
 
 ChainComplex == ChainComplex := (C,D) -> (
+     complete C;
+     complete D;
      all(sort union(spots C, spots D), i -> C_i == D_i)
      )     
 
@@ -91,8 +93,9 @@ target ChainComplexMap := f -> f.target
 
 lineOnTop := (s) -> concatenate(width s : "-") || s
 
-sum ChainComplex := Module => C -> directSum apply(sort spots C, i -> C_i)
+sum ChainComplex := Module => C -> (complete C; directSum apply(sort spots C, i -> C_i))
 sum ChainComplexMap := Matrix => f -> (
+     complete f;
      R := ring f;
      T := target f;
      t := sort spots T;
@@ -299,7 +302,7 @@ ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
      h.cache.components = {f,g};
      h)
 
-isHomogeneous ChainComplexMap := f -> all(spots f, i -> isHomogeneous f_i)
+isHomogeneous ChainComplexMap := f -> (complete f; all(spots f, i -> isHomogeneous f_i))
 isHomogeneous ChainComplex := C -> isHomogeneous C.dd
 
 isDirectSum ChainComplex := (C) -> C.cache.?components
@@ -360,13 +363,12 @@ extend(ChainComplex,ChainComplex,Matrix) := ChainComplexMap => opts -> (D,C,fi)-
      f)
 
 cone ChainComplexMap := ChainComplex => f -> (
+     complete f;
      if f.degree =!= 0 then error "expected a map of chain complexes of degree zero";
      C := source f;
      D := target f;
      E := new ChainComplex;
      E.ring = ring f;
-     complete C;
-     complete D;
      scan(union(spots C /( i -> i+1 ), spots D), i -> E#i = D_i ++ C_(i-1));
      complete C.dd;
      complete D.dd;
@@ -507,6 +509,7 @@ homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
      g.degree = f.degree;
      g.source = HH f.source;
      g.target = HH f.target;
+     complete f;
      scan(spots f, i -> g#i = homology(i,f));
      g)
 
@@ -612,6 +615,7 @@ dual ChainComplex := ChainComplex => {} >> o -> (C) -> (
 	  Hom(C,R^1))
 
 Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
+     complete f;
      g := new ChainComplexMap;
      g.cache = new CacheTable;
      d := g.degree = f.degree;
@@ -624,6 +628,7 @@ Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
      g)
 
 Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
+     complete f;
      g := new ChainComplexMap;
      g.cache = new CacheTable;
      d := g.degree = f.degree;
@@ -825,6 +830,8 @@ tens := (R,f,g) -> map(R, rawTensor( f.RawMatrix, g.RawMatrix ))
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
      R := ring C;
      if ring D =!= R then error "expected chain complexes over the same ring";
+     complete C;
+     complete D;
      E := chainComplex (lookup(symbol **, GradedModule, GradedModule))(C,D);
      scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = 
 	  map( E#(i-1), E#i,
@@ -936,6 +943,7 @@ map(ChainComplex,ChainComplex,Function) := ChainComplexMap => options -> (C,D,f)
      h.source = D;
      h.target = C;
      deg := h.degree = if options.Degree === null then 0 else options.Degree;
+     complete D;
      scan(spots D, k -> (
 	       if C#?(k+deg) then (
 		    g := f(k);
@@ -952,6 +960,7 @@ inducedMap(ChainComplex,ChainComplex) := ChainComplexMap => options -> (C,D) -> 
      h.source = D;
      h.target = C;
      deg := h.degree = if options.Degree === null then 0 else options.Degree;
+     complete D;
      scan(spots D, k -> if C#?(k+deg) then h#k = inducedMap(C#(k+deg),D#k));
      h
      )

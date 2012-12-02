@@ -52,7 +52,7 @@
 //       rows --> new gb elements
 //    gb itself
 //    generators
-//    
+//
 //    syzygies via this method
 //    minimalization of these syzygies
 //
@@ -61,7 +61,7 @@
 //      Schreyer orders
 //      quotient rings
 //      Hilbert function use
-//      
+//
 
 #include "f4-types.hpp"
 #include "f4-mem.hpp"
@@ -89,7 +89,7 @@ class F4GB : public our_new_delete
   M2_arrayint weights; // The length of this is the number of variables, each entry is positive.
   M2_arrayint component_degrees; // Degree of each free module element.
   // Also need Schreyer order info sometimes
-  
+
   // Options and information about the computation
   bool using_syz;
   long n_lcmdups;
@@ -103,16 +103,16 @@ class F4GB : public our_new_delete
 
   // Hilbert function information
   HilbertController *hilbert; // null if not being used
-  
+
   // Monomial order information.  Should this be in M?
-  
+
   // The main players in the computation
   gb_array gens;
   gb_array gb;
   gb_array syz_basis;
   MonomialLookupTable *lookup; // (monom,comp) --> index into gb
   F4SPairSet *S;
-  
+
   // The matrix and its construction
   int next_col_to_process;
   coefficient_matrix *mat;
@@ -120,19 +120,19 @@ class F4GB : public our_new_delete
   F4Mem *Mem; // Used to allocate and deallocate arrays used in the matrix
   MemoryBlock<monomial_word> B;
   monomial_word *next_monom; // valid while creating the matrix
-  
+
   // The syzygy matrix and its construction
   int syz_next_col_to_process;
-  coefficient_matrix *syz; // recreated at every degree       
+  coefficient_matrix *syz; // recreated at every degree
   coefficient_matrix *master_syz; // collects all syzygies
   MonomialHashTable<MonomialInfo> syzH;
   MonomialHashTable<MonomialInfo> master_syzH;
   MemoryBlock<monomial_word> syzB;
   MemoryBlock<monomial_word> master_syzB;
   monomial_word *syz_next_monom; // valid while creating <syz>
-  monomial_word *master_syz_next_monom; 
-  // F4Vec syzF4Vec; // syzygy vector manager 
-  
+  monomial_word *master_syz_next_monom;
+  // F4Vec syzF4Vec; // syzygy vector manager
+
   // Local data for gaussian elimination
   dense_row gauss_row, syz_row;
 
@@ -146,21 +146,21 @@ private:
 
   ////////////////////////////////////
   // Syzygy matrix manipulations:
-  
+
   // fill syz_row from syz->row[i]
   void syz_dense_row_fill_from_sparse(int i);
 
   // convert dense <syz_row> into sparse <s>
   void syz_dense_row_to_sparse_row(row_elem& s);
-  
-  // record "reduce current row (w/leading coeff <li>) with row[pivot] (...<lj>)" 
-  void syzygy_row_record_reduction(int pivot, int li, int lj); 
-  
+
+  // record "reduce current row (w/leading coeff <li>) with row[pivot] (...<lj>)"
+  void syzygy_row_record_reduction(int pivot, int li, int lj);
+
   // divide row <i> with coefficient <c>
   void syzygy_row_divide(int i, int c);
 
-  // insert syzygy corresponding to row r 
-  // ( if g>=0 then this row resulted in gb[g] )  
+  // insert syzygy corresponding to row r
+  // ( if g>=0 then this row resulted in gb[g] )
   void insert_syz(row_elem &r, int g = -1);
 
   // end (SYZYGY MANIPULATIONS)
@@ -168,7 +168,7 @@ private:
   void delete_gb_array(gb_array &g);
 
 
-  void gauss_reduce_linbox(); // dumps matrices in linbox format 
+  void gauss_reduce_linbox(); // dumps matrices in linbox format
 
   void test_spair_code(); // test routine: probably will be removed
 
@@ -210,14 +210,14 @@ private:
 
     void gauss_reduce(bool diagonalize);
     void tail_reduce();
-  
+
     void row_to_dense_row(int r, int &first, int &last);
     void subtract1(int r, int &first, int &last);
     void reduce1(int r, int &first, int &last);
     void dense_row_to_row(int r, int &first, int &last);
 
   void new_GB_elements();
-  
+
     void insert_gb_element(row_elem &r);
 
 public:
@@ -225,15 +225,15 @@ public:
        F4Mem *Mem0,
        const MonomialInfo *MI,
        const FreeModule *F, // used for debugging only...
-       M2_bool collect_syz, 
+       M2_bool collect_syz,
        int n_rows_to_keep,
        M2_arrayint gb_weights,
-       int strategy, 
+       int strategy,
        M2_bool use_max_degree,
        int max_degree);
-  
+
   ~F4GB();
-  
+
   void set_generators(gb_array &new_gens);
   // This grabs these elements, possibly by doing a swap
 
@@ -253,7 +253,7 @@ public:
   // Debugging routines
   void show_gb_array(const gb_array &g) const;
   void append_to_syzF(const_packed_monomial m, int compare_number);
-  void show_syz_basis();  
+  void show_syz_basis();
   void show_row_info() const;
   void show_column_info() const;
   void show_matrix();
@@ -266,4 +266,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

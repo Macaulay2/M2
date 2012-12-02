@@ -7,7 +7,7 @@
 #include "geovec.hpp"
 #include "ringmap.hpp"
 #include "poly.hpp"
-//  Notes: ring_elem's are treated as immutable objects: they are not changed, and 
+//  Notes: ring_elem's are treated as immutable objects: they are not changed, and
 // the fact that one cannot change is used throughout.
 
 vec Ring::new_vec() const
@@ -76,10 +76,10 @@ bool Ring::is_equal(const vecterm * a, const vecterm * b) const
   for ( ;; a = a->next, b = b->next)
     {
       if (a == NULL)
-	{
-	  if (b == NULL) return true;
-	  return false;
-	}
+        {
+          if (b == NULL) return true;
+          return false;
+        }
       if (b == NULL) return false;
       if (a->comp != b->comp) return false;
       if (!this->is_equal(a->coeff, b->coeff)) return false;
@@ -91,10 +91,10 @@ int Ring::compare_vecs(vec v, vec w) const
   for ( ;; v = v->next, w = w->next)
     {
       if (v == NULL)
-	{
-	  if (w == NULL) return 0;
-	  return -1;
-	}
+        {
+          if (w == NULL) return 0;
+          return -1;
+        }
       if (w == NULL) return 1;
       int cmp = v->comp - w->comp;
       if (cmp > 0) return cmp;
@@ -112,8 +112,8 @@ bool Ring::get_entry(const vecterm * v, int r, ring_elem &result) const
       break;
     else if (p->comp == r)
       {
-	result = p->coeff;
-	return true;
+        result = p->coeff;
+        return true;
       }
   return false;
 }
@@ -183,11 +183,11 @@ vec Ring::mult_vec(const ring_elem f, const vec w) const
     {
       ring_elem a = mult(f,v->coeff);
       if (!is_zero(a))
-	{
-	  vec t = make_vec(v->comp, a);
-	  result->next = t;
-	  result = t;
-	}
+        {
+          vec t = make_vec(v->comp, a);
+          result->next = t;
+          result = t;
+        }
     }
   result->next = NULL;
   return head.next;
@@ -202,11 +202,11 @@ vec Ring::rightmult_vec(const vec w, const ring_elem f) const
     {
       ring_elem a = mult(v->coeff,f);
       if (!is_zero(a))
-	{
-	  vec t = make_vec(v->comp,a);
-	  result->next = t;
-	  result = t;
-	}
+        {
+          vec t = make_vec(v->comp,a);
+          result->next = t;
+          result = t;
+        }
     }
   result->next = NULL;
   return head.next;
@@ -229,11 +229,11 @@ vec Ring::sub_vector(const vecterm * v, M2_arrayint r) const
   for ( ; v != NULL; v = v->next)
     if (trans[v->comp] != -1)
       {
-	result->next = new_vec();
-	result = result->next;
-	result->next = 0;
-	result->coeff = v->coeff;
-	result->comp = trans[v->comp];
+        result->next = new_vec();
+        result = result->next;
+        result->next = 0;
+        result->coeff = v->coeff;
+        result->comp = trans[v->comp];
       }
   result->next = NULL;
   result = head.next;
@@ -275,8 +275,8 @@ vec Ring::tensor_shift(int n, int m, vec v) const
   return head.next;
 }
 
-vec Ring::tensor(const FreeModule *F, vec v, 
-		 const FreeModule *G, vec w) const
+vec Ring::tensor(const FreeModule *F, vec v,
+                 const FreeModule *G, vec w) const
 {
   vecHeap H(F);
   for ( ; v != NULL; v = v->next)
@@ -288,11 +288,11 @@ vec Ring::tensor(const FreeModule *F, vec v,
   return H.value();
 }
 
-void Ring::vec_text_out(buffer &o, 
-			const vecterm * v,
-			bool p_one, 
-			bool p_plus, 
-			bool p_parens) const
+void Ring::vec_text_out(buffer &o,
+                        const vecterm * v,
+                        bool p_one,
+                        bool p_plus,
+                        bool p_parens) const
 {
   if (v == NULL)
     {
@@ -309,9 +309,9 @@ void Ring::vec_text_out(buffer &o,
     }
 }
 
-vec Ring::vec_eval(const RingMap *map, 
-		   const FreeModule *F,
-		   const vec v) const
+vec Ring::vec_eval(const RingMap *map,
+                   const FreeModule *F,
+                   const vec v) const
 // v is a vector over 'this'
 {
   const Ring *targetRing = map->get_ring();
@@ -323,10 +323,10 @@ vec Ring::vec_eval(const RingMap *map,
     {
       ring_elem a = eval(map, t->coeff, 0); // a is now in the target ring
       if (!targetRing->is_zero(a))
-	{
-	  result->next = targetRing->make_vec(t->comp,a);
-	  result = result->next;
-	}
+        {
+          result->next = targetRing->make_vec(t->comp,a);
+          result = result->next;
+        }
     }
   result->next = 0;
   return head.next;
@@ -340,13 +340,13 @@ vec Ring::vec_zeroize_tiny(gmp_RR epsilon, const vec v) const
     {
       ring_elem a = zeroize_tiny(epsilon,p->coeff);
       if (!is_zero(a))
-	{
-	  vec w = new_vec();
-	  result->next = w;
-	  result = w;
-	  w->comp = p->comp;
-	  w->coeff = a;
-	}
+        {
+          vec w = new_vec();
+          result->next = w;
+          result = w;
+          w->comp = p->comp;
+          w->coeff = a;
+        }
     }
   result->next = 0;
   return head.next;
@@ -379,18 +379,18 @@ void Ring::mult_vec_to(vec &v, const ring_elem r, bool opposite_mult) const
       //old version: this->mult_to(p->next->coeff, a);
       ring_elem c;
       if (opposite_mult)
-	c = this->mult(p->next->coeff, r);
-      else 
-	c = this->mult(r,p->next->coeff);
+        c = this->mult(p->next->coeff, r);
+      else
+        c = this->mult(r,p->next->coeff);
       p->next->coeff = c;
       if (this->is_zero(p->next->coeff))
-	{
-	  vec tmp = p->next;
-	  p->next = tmp->next;
-	  remove_vec_node(tmp);
-	}
+        {
+          vec tmp = p->next;
+          p->next = tmp->next;
+          remove_vec_node(tmp);
+        }
       else
-	p = p->next;
+        p = p->next;
     }
   v = head.next;
 }
@@ -400,30 +400,30 @@ void Ring::mult_row(vec &v, const ring_elem r, int i, bool opposite_mult) const
   vecterm head;
   head.next = v;
   for (vec p = &head; p->next != 0; p = p->next)
-    if (p->next->comp < i) 
+    if (p->next->comp < i)
       break;
     else if (p->next->comp == i)
       {
-	ring_elem c;
-	if (opposite_mult)
-	  c = mult(p->next->coeff, r);
-	else
-	  c = mult(r, p->next->coeff);
-	p->next->coeff = c;
-	if (this->is_zero(p->next->coeff))
-	  {
-	    vec tmp = p->next;
-	    p->next = tmp->next;
-	    remove_vec_node(tmp);
-	  }
-	break;
+        ring_elem c;
+        if (opposite_mult)
+          c = mult(p->next->coeff, r);
+        else
+          c = mult(r, p->next->coeff);
+        p->next->coeff = c;
+        if (this->is_zero(p->next->coeff))
+          {
+            vec tmp = p->next;
+            p->next = tmp->next;
+            remove_vec_node(tmp);
+          }
+        break;
       }
   v = head.next;
 }
 
 vec Ring::mult_vec_matrix(const Matrix *m,
-			  vec v,
-			  bool opposite_mult) const
+                          vec v,
+                          bool opposite_mult) const
 {
   // Multiply m * v, using left or right mult for each scalar mult.
 
@@ -457,13 +457,13 @@ void Ring::divide_vec_to(vec &v, const ring_elem a) const
       ring_elem c = this->divide(p->next->coeff,a); // exact or quotient?? MES MES
       p->next->coeff = c;
       if (this->is_zero(p->next->coeff))
-	{
-	  vec tmp = p->next;
-	  p->next = tmp->next;
-	  remove_vec_node(tmp);
-	}
-      else 
-	p = p->next;
+        {
+          vec tmp = p->next;
+          p->next = tmp->next;
+          remove_vec_node(tmp);
+        }
+      else
+        p = p->next;
     }
   v = head.next;
 }
@@ -473,75 +473,20 @@ void Ring::divide_row(vec &v, int r, const ring_elem a) const
   vecterm head;
   head.next = v;
   for (vec p = &head; p->next != 0; p = p->next)
-    if (p->next->comp < r) 
+    if (p->next->comp < r)
       break;
     else if (p->next->comp == r)
       {
-	ring_elem c = this->divide(p->next->coeff, a); // exact or quotient?? MES MES
-	p->next->coeff = c;
-	if (this->is_zero(p->next->coeff))
-	  {
-	    vec tmp = p->next;
-	    p->next = tmp->next;
-	    remove_vec_node(tmp);
-	  }
-	break;
+        ring_elem c = this->divide(p->next->coeff, a); // exact or quotient?? MES MES
+        p->next->coeff = c;
+        if (this->is_zero(p->next->coeff))
+          {
+            vec tmp = p->next;
+            p->next = tmp->next;
+            remove_vec_node(tmp);
+          }
+        break;
       }
-}
-
-void Ring::interchange_rows(vec &v, int i, int j) const
-{
-  vec p;
-  if (i == j) return;
-  if (v == 0) return;
-  if (i < j) 
-    {
-      int tmp = i;
-      i = j;
-      j = tmp;
-    }
-  // So now i > j.
-  vecterm head;
-  head.next = v;
-  vec vec1;
-  vec vec2;
-  for (p = &head; p->next != 0; p=p->next)
-    if (p->next->comp <= i)
-      break;
-  vec1 = p;
-  for ( ; p->next != 0; p=p->next)
-    if (p->next->comp <= j)
-      break;
-  vec2 = p;
-  if (vec1->next != 0 && vec1->next->comp == i)
-    {
-      if (vec2->next != 0 && vec2->next->comp == j)
-	{
-	  ring_elem tmp = vec1->next->coeff;
-	  vec1->next->coeff = vec2->next->coeff;
-	  vec2->next->coeff = tmp;
-	  return;
-	}
-    }
-  else if (vec2->next != 0 && vec2->next->comp == j)
-    {
-      vec tmp = vec1;
-      vec1 = vec2;
-      vec2 = tmp;
-      j = i;			// Used below.
-    }
-  else
-    return;
-
-  vec tmp = vec1->next;
-  if (vec2 != tmp)
-    {
-      vec1->next = tmp->next;
-      tmp->next = vec2->next;
-      vec2->next = tmp;
-    }
-  tmp->comp = j;
-  v = head.next;
 }
 
 void Ring::negate_vec_to(vec &v) const
@@ -569,146 +514,60 @@ void Ring::add_vec_to(vec &v, vec &w) const
   while (true)
     if (v->comp < w->comp)
       {
-	result->next = w;
-	result = result->next;
-	w = w->next;
-	if (w == NULL) 
-	  {
-	    result->next = v;
-	    v = head.next;
-	    return;
-	  }
+        result->next = w;
+        result = result->next;
+        w = w->next;
+        if (w == NULL)
+          {
+            result->next = v;
+            v = head.next;
+            return;
+          }
       }
     else if (v->comp > w->comp)
       {
-	result->next = v;
-	result = result->next;
-	v = v->next;
-	if (v == NULL) 
-	  {
-	    result->next = w;
-	    v = head.next;
-	    w = NULL;
-	    return;
-	  }
+        result->next = v;
+        result = result->next;
+        v = v->next;
+        if (v == NULL)
+          {
+            result->next = w;
+            v = head.next;
+            w = NULL;
+            return;
+          }
       }
     else
       {
-	vec tmv = v;
-	vec tmw = w;
-	v = v->next;
-	w = w->next;
-	tmv->coeff = this->add(tmv->coeff, tmw->coeff);
-	if (this->is_zero(tmv->coeff))
-	  {
-	    remove_vec_node(tmv);
-	  }
-	else
-	  {
-	    result->next = tmv;
-	    result = result->next;
-	  }
-	remove_vec_node(tmw);
-	if (w == NULL) 
-	  {
-	    result->next = v;
-	    v = head.next;
-	    return;
-	  }
-	if (v == NULL) 
-	  {
-	    result->next = w;
-	    v = head.next;
-	    w = NULL;
-	    return;
-	  }
+        vec tmv = v;
+        vec tmw = w;
+        v = v->next;
+        w = w->next;
+        tmv->coeff = this->add(tmv->coeff, tmw->coeff);
+        if (this->is_zero(tmv->coeff))
+          {
+            remove_vec_node(tmv);
+          }
+        else
+          {
+            result->next = tmv;
+            result = result->next;
+          }
+        remove_vec_node(tmw);
+        if (w == NULL)
+          {
+            result->next = v;
+            v = head.next;
+            return;
+          }
+        if (v == NULL)
+          {
+            result->next = w;
+            v = head.next;
+            w = NULL;
+            return;
+          }
       }
-}
-
-void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const
-  // replace v_i = v_i + r * v_j, or v_i = v_i + v_j * r, depending on opposite_mult
-{
-  vec p;
-  vec vec2 = 0;
-  for (p = v; p != 0; p=p->next)
-    if (p->comp == j)
-      {
-	vec2 = p;
-	break;
-      }
-  if (vec2 == 0) return;
-  ring_elem r1;
-  if (opposite_mult)
-    r1 = this->mult(vec2->coeff, r);
-  else 
-    r1 = this->mult(r, vec2->coeff);
-  if (this->is_zero(r1)) return; // nothing to change
-  vecterm head;
-  head.next = v;
-  for (p = &head; p->next != 0; p=p->next)
-    if (p->next->comp <= i)
-      break;
-  if (p->next == 0 || p->next->comp < i)
-    {
-      // Make a new node
-      vec w = new_vec();
-      w->next = p->next;
-      w->comp = i;
-      w->coeff = r1;
-      p->next = w;
-    }
-  else
-    {
-      p->next->coeff = this->add(p->next->coeff, r1);
-      if (this->is_zero(p->next->coeff))
-	{
-	  vec tmp = p->next;
-	  p->next = tmp->next;
-	  remove_vec_node(tmp);
-	}
-    }
-
-  v = head.next;
-}
-
-
-void Ring::row2by2(vec &v, 
-		      int r1, int r2,
-		      ring_elem a1, ring_elem a2,
-		      ring_elem b1, ring_elem b2) const
-{
-  // v[row r1] = a1 * v[r1] + a2 * v[r2]
-  // v[row r2] = b1 * v[r1] + b2 * v[r2]
-  ring_elem e1,e2, c1,c2,c3,c4;
-  bool r1_nonzero = get_entry(v,r1,e1);
-  bool r2_nonzero = get_entry(v,r2,e2);
-  if (!r1_nonzero && !r2_nonzero) return;
-
-  if (r1_nonzero)
-    {
-      c1 = this->mult(a1,e1);
-      c3 = this->mult(b1,e1);
-    }
-  else
-    {
-      c1 = this->from_int(0);
-      c3 = this->from_int(0);
-    }
-  if (r2_nonzero)
-    {
-      c2 = this->mult(a2,e2);
-      c4 = this->mult(b2,e2);
-    }
-  else
-    {
-      c2 = this->from_int(0);
-      c4 = this->from_int(0);
-    }
-
-  c1 = this->add(c1,c2);
-  c3 = this->add(c3,c4);
-  set_entry(v,r1,c1);
-  set_entry(v,r2,c3);
 }
 
 ring_elem Ring::dot_product(const vecterm *v, const vecterm *w) const
@@ -719,16 +578,16 @@ ring_elem Ring::dot_product(const vecterm *v, const vecterm *w) const
       if (v == 0) return result;
       if (w == 0) return result;
       if (v->comp > w->comp)
-	v = v->next;
+        v = v->next;
       else if (v->comp < w->comp)
-	w = w->next;
+        w = w->next;
       else
-	{
-	  ring_elem a = this->mult(v->coeff, w->coeff);
-	  result = this->add(result,a);
-	  v = v->next;
-	  w = w->next;
-	}
+        {
+          ring_elem a = this->mult(v->coeff, w->coeff);
+          result = this->add(result,a);
+          v = v->next;
+          w = w->next;
+        }
     }
 }
 
@@ -755,26 +614,26 @@ void Ring::set_entry(vec &v, int r, ring_elem a) const
   else if (p->next->comp == r)
     {
       if (iszero)
-	{
-	  // delete node
-	  vec tmp = p->next;
-	  p->next = tmp->next;
-	  remove_vec_node(tmp);
-	}
+        {
+          // delete node
+          vec tmp = p->next;
+          p->next = tmp->next;
+          remove_vec_node(tmp);
+        }
       else
-	p->next->coeff = a;
+        p->next->coeff = a;
     }
   v = head.next;
 }
 
 void Ring::vec_sort(vecterm *&f) const
 {
-  // Internal routine to place the elements back in order after 
+  // Internal routine to place the elements back in order after
   // an operation such as subvector.
   // Divide f into two lists of equal length, sort each,
   // then add them together.  This allows the same monomial
   // to appear more than once in 'f'.
-  
+
   if (f == NULL || f->next == NULL) return;
   vecterm *f1 = NULL;
   vecterm *f2 = NULL;
@@ -791,7 +650,7 @@ void Ring::vec_sort(vecterm *&f) const
       t->next = f2;
       f2 = t;
     }
-  
+
   vec_sort(f1);
   vec_sort(f2);
   add_vec_to(f1, f2);
@@ -812,17 +671,17 @@ vec Ring::vec_diff(vec v, int rankFw, vec w, int use_coeff) const
   for ( ; v != NULL; v = v->next)
     for (vecterm *p = w; p != NULL; p = p->next)
       {
-	ring_elem a = diff(v->coeff, p->coeff, use_coeff);
-	if (is_zero(a)) 
-	  {
-	    remove(a);
-	    continue;
-	  }
-	vecterm *t = new_vec();
-	t->comp = rankFw * v->comp + p->comp;
-	t->coeff = a;
-	t->next = result;
-	result = t;
+        ring_elem a = diff(v->coeff, p->coeff, use_coeff);
+        if (is_zero(a))
+          {
+            remove(a);
+            continue;
+          }
+        vecterm *t = new_vec();
+        t->comp = rankFw * v->comp + p->comp;
+        t->coeff = a;
+        t->next = result;
+        result = t;
       }
   vec_sort(result);
   return result;
@@ -835,17 +694,17 @@ vec Ring::vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const
   for ( ; v != NULL; v = v->next)
     for (vecterm *p = w; p != NULL; p = p->next)
       {
-	ring_elem a = contract0(n_top_variables, v->coeff, p->coeff);
-	if (is_zero(a)) 
-	  {
-	    remove(a);
-	    continue;
-	  }
-	vecterm *t = new_vec();
-	t->comp = rankFw * v->comp + p->comp;
-	t->coeff = a;
-	t->next = result;
-	result = t;
+        ring_elem a = contract0(n_top_variables, v->coeff, p->coeff);
+        if (is_zero(a))
+          {
+            remove(a);
+            continue;
+          }
+        vecterm *t = new_vec();
+        t->comp = rankFw * v->comp + p->comp;
+        t->coeff = a;
+        t->next = result;
+        result = t;
       }
   vec_sort(result);
   return result;
@@ -887,11 +746,11 @@ vec Ring::vec_divide_by_var(int n, int d, const vec v) const
     {
       ring_elem a = divide_by_var(n, d, w->coeff);
       if (!is_zero(a))
-	{
-	  vec t = make_vec(w->comp,a);
-	  result->next = t;
-	  result = t;
-	}
+        {
+          vec t = make_vec(w->comp,a);
+          result->next = t;
+          result = t;
+        }
     }
   result->next = 0;
   return head.next;
@@ -905,11 +764,11 @@ vec Ring::vec_divide_by_expvector(const int *exp, const vec v) const
     {
       ring_elem a = divide_by_expvector(exp, w->coeff);
       if (!is_zero(a))
-	{
-	  vec t = make_vec(w->comp,a);
-	  result->next = t;
-	  result = t;
-	}
+        {
+          vec t = make_vec(w->comp,a);
+          result->next = t;
+          result = t;
+        }
     }
   result->next = 0;
   return head.next;
@@ -921,7 +780,7 @@ vec Ring::vec_divide_by_expvector(const int *exp, const vec v) const
 
 bool Ring::vec_multi_degree(const FreeModule *F, const vec f, int *degf) const
   // Returns true if the element is homogeneous
-  // Sets degf to be the highest degree found (actually, the join of the 
+  // Sets degf to be the highest degree found (actually, the join of the
   //   degree vectors occuring).
 {
   int *degv;
@@ -938,10 +797,10 @@ bool Ring::vec_multi_degree(const FreeModule *F, const vec f, int *degf) const
       degree_monoid()->mult(degv, F->degree(v->comp), degv);
 
       if (0 != degree_monoid()->compare(degf, degv))
-	{
-	  result = false;
-	  degree_monoid()->lcm(degf, degv, degf);
-	}
+        {
+          result = false;
+          degree_monoid()->lcm(degf, degv, degf);
+        }
     }
   degree_monoid()->remove(degv);
   return result;
@@ -959,20 +818,20 @@ bool Ring::vec_is_homogeneous(const FreeModule *F, const vec f) const
   int *d = degree_monoid()->make_one();
   int *e = degree_monoid()->make_one();
   bool result = multi_degree(f->coeff, d);
-  if (result) 
+  if (result)
     {
       degree_monoid()->mult(d, F->degree(f->comp), d);
       for (vecterm *t = f->next; (t != NULL) && result; t = t->next)
-	{
-	  bool ishom = multi_degree(t->coeff, e);
-	  result = result && ishom;
-	  if (result)
-	    {
-	      degree_monoid()->mult(e, F->degree(t->comp), e);
-	      if (0 != degree_monoid()->compare(d,e))
-		result = false;
-	    }
-	}
+        {
+          bool ishom = multi_degree(t->coeff, e);
+          result = result && ishom;
+          if (result)
+            {
+              degree_monoid()->mult(e, F->degree(t->comp), e);
+              if (0 != degree_monoid()->compare(d,e))
+                result = false;
+            }
+        }
     }
   degree_monoid()->remove(d);
   degree_monoid()->remove(e);
@@ -980,10 +839,10 @@ bool Ring::vec_is_homogeneous(const FreeModule *F, const vec f) const
 }
 
 void Ring::vec_degree_weights(const FreeModule *F,
-			      const vec f, 
-			      M2_arrayint wts, 
-			      int &lo, 
-			      int &hi) const
+                              const vec f,
+                              M2_arrayint wts,
+                              int &lo,
+                              int &hi) const
 {
   vecterm *t = f;
   if (t == NULL)
@@ -1006,10 +865,10 @@ void Ring::vec_degree_weights(const FreeModule *F,
 }
 
 vec Ring::vec_homogenize(const FreeModule *F,
-			 const vec f, 
-			 int v, 
-			 int d, 
-			 M2_arrayint wts) const
+                         const vec f,
+                         int v,
+                         int d,
+                         M2_arrayint wts) const
 // Any terms which can't be homogenized are silently set to 0
 {
   vecterm head;
@@ -1022,19 +881,19 @@ vec Ring::vec_homogenize(const FreeModule *F,
       int e = F->primary_degree(w->comp);
       ring_elem a = homogenize(w->coeff, v, d-e, wts);
       if (!is_zero(a))
-	{
-	  result->next = make_vec(w->comp,a);
-	  result = result->next;
-	}
+        {
+          result->next = make_vec(w->comp,a);
+          result = result->next;
+        }
     }
   result->next = 0;
   return head.next;
 }
 
 vec Ring::vec_homogenize(const FreeModule *F,
-			       const vec f, 
-			       int v, 
-			       M2_arrayint wts) const
+                               const vec f,
+                               int v,
+                               M2_arrayint wts) const
 {
   vecterm *result = NULL;
   if (f == NULL) return result;
@@ -1051,10 +910,10 @@ vec Ring::vec_homogenize(const FreeModule *F,
 //////////////////////////////////////////////
 
 bool static check_nterm_multiples(const PolyRing *R,
-				  ring_elem f1, // in R
-				  ring_elem g1, // in R
-				  ring_elem c, // in flat coeffs of R
-				  ring_elem d) // in flat coeffs of R
+                                  ring_elem f1, // in R
+                                  ring_elem g1, // in R
+                                  ring_elem c, // in flat coeffs of R
+                                  ring_elem d) // in flat coeffs of R
 {
   Nterm *f;
   Nterm *g;
@@ -1063,7 +922,7 @@ bool static check_nterm_multiples(const PolyRing *R,
   for (f = f1, g = g1; f != 0 && g != 0; f=f->next,g=g->next)
     {
       if (M->compare(f->monom,g->monom) != 0)
-	return false;
+        return false;
       ring_elem c1 = K->mult(c, g->coeff);
       ring_elem d1 = K->mult(d, f->coeff);
       int isequal = K->is_equal(c1, d1);
@@ -1072,7 +931,7 @@ bool static check_nterm_multiples(const PolyRing *R,
   if (f == NULL && g == NULL) return true;
   return false;
 }
-				  
+
 bool Ring::vec_is_scalar_multiple(vec f, vec g) const
   // is df = cg, some scalars c,d?
   // These scalars are over the very bottom base field/ZZ.
@@ -1095,7 +954,7 @@ bool Ring::vec_is_scalar_multiple(vec f, vec g) const
     {
       if (p->comp != q->comp) return 0;
       if (!check_nterm_multiples(PR1,p->coeff,q->coeff,c,d))
-	return false;
+        return false;
     }
   if (q == NULL && p == NULL) return true;
   return false;
@@ -1162,7 +1021,7 @@ vec Ring::vec_divide_by_content(vec f) const
 ring_elem Ring::vec_split_off_content(vec f, vec &result) const
 {
   ring_elem c = vec_content(f);
-  if (f == 0) 
+  if (f == 0)
     result = 0;
   else
     result = vec_divide_by_given_content(f,c);
@@ -1171,4 +1030,5 @@ ring_elem Ring::vec_split_off_content(vec f, vec &result) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

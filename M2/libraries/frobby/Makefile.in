@@ -9,8 +9,9 @@ VPATH = @srcdir@
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
-URL = http://www.broune.com/frobby
+# URL = http://www.broune.com/frobby
 # URL = http://www.math.uiuc.edu/Macaulay2/Extra
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 
 BUILDTARGET = library
 BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \

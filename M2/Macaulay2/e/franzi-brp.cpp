@@ -23,7 +23,7 @@ bool BRP::operator==(const brMonomial &val) const{
 
 void BRP::addition(const BRP &other, monomials::iterator pos) {
   // merge m with other.m, while removing doubles
-  monomials::const_iterator it = other.m.begin(); 
+  monomials::const_iterator it = other.m.begin();
   monomials::iterator pos_end = m.end();
   monomials::const_iterator other_end = other.m.end();
   while (it != other_end && pos != pos_end) {
@@ -135,7 +135,7 @@ bool BRP::reduceTail(const BRP &g) {
   brMonomial lt = g.LT();
   bool ret = false;
   monomials::iterator it = m.begin();
-  ++it; // really only reduce tail 
+  ++it; // really only reduce tail
   monomials::iterator end = m.end();
   for( ; it != end; ) {
     brMonomial mono = *it;
@@ -154,8 +154,9 @@ bool BRP::reduceTail(const BRP &g) {
   //cout << "at the end of reduceTail, this = " << (*this) << endl;
   return ret;
 }
-  
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -8,6 +8,9 @@
 #include "ZZ.hpp"
 #include "ntl-interface.hpp"
 
+/**
+ * \ingroup coeffrings
+ */
 class CoefficientRingZZ_NTL : public our_new_delete
 {
 public:
@@ -77,4 +80,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

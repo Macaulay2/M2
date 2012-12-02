@@ -19,6 +19,10 @@ typedef int * exponents; // used only in add_term
 
 typedef struct poly_struct * poly;
 typedef const struct poly_struct * const_poly;
+
+/**
+ * \ingroup polynomialrings
+ */
 struct poly_struct : public our_new_delete {
   unsigned long deg;
   unsigned long len;
@@ -28,6 +32,9 @@ struct poly_struct : public our_new_delete {
   } arr;
 };
 
+/**
+ * \ingroup polynomialrings
+ */
 class DPoly {
   friend class DPolyTraverser;
   int nvars;
@@ -88,7 +95,7 @@ public:
 
   static bool is_equal(int level, const poly f, const poly g);
   static poly copy(int level, const_poly f);
-  
+
   static poly from_int(int level, long c);  // c should be reduced mod p
   static bool is_one(int level, poly f);
 
@@ -121,8 +128,8 @@ public:
   poly pseudo_division(int level, poly & f, const poly g);
 
   poly gcd(int level, const poly f, const poly g);
-  poly gcd_coefficients(int level, const poly f, const poly g, 
-			       poly &result_u, poly &result_v);
+  poly gcd_coefficients(int level, const poly f, const poly g,
+                               poly &result_u, poly &result_v);
   poly resultant(int level, poly f, poly g);
 
   void make_monic(int level, poly  &f);
@@ -132,13 +139,13 @@ public:
 
   void subtract_multiple_to(int level, poly &f, long a, int i, poly g);
 
-  void elem_text_out(buffer &o, 
-		     int level, 
-		     const poly f,
-		     bool p_one,
-		     bool p_plus, 
-		     bool p_parens,
-		     M2_ArrayString names) const;
+  void elem_text_out(buffer &o,
+                     int level,
+                     const poly f,
+                     bool p_one,
+                     bool p_plus,
+                     bool p_parens,
+                     M2_ArrayString names) const;
 
   void extensions_text_out(buffer &o, M2_ArrayString names) const;
 
@@ -152,6 +159,10 @@ public:
   DPoly(long p, int nvars0, const_poly *extensions=0);
 };
 
+
+/**
+ * \ingroup polynomialrings
+ */
 class DRing : public our_new_delete
 {
   int level;
@@ -191,9 +202,9 @@ public:
     else if (b == 0) result = a;
     else
       {
-	poly a1 = D.copy(level, a);
-	D.add_in_place(level, a1, b);
-	result = a1;
+        poly a1 = D.copy(level, a);
+        D.add_in_place(level, a1, b);
+        result = a1;
       }
   }
 
@@ -213,7 +224,7 @@ public:
 
   void mult(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0) 
+    if (a == 0 || b == 0)
       result = 0;
     else
       result = D.mult(level, a, b, true);
@@ -221,25 +232,25 @@ public:
 
   void divide(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0) 
+    if (a == 0 || b == 0)
       result = 0;
     else
       {
-	elem a1 = D.copy(level, a);
-	if (!D.division_in_place(level, a1, b, result))
-	  result = 0;
-	D.dealloc_poly(a1);
+        elem a1 = D.copy(level, a);
+        if (!D.division_in_place(level, a1, b, result))
+          result = 0;
+        D.dealloc_poly(a1);
       }
   }
 
   void remainder(elem &result, elem a, elem b) const
   {
-    if (a == 0 || b == 0) 
+    if (a == 0 || b == 0)
       result = 0;
     else
       {
-	result = D.copy(level, a);
-	D.remainder(level, result, b);
+        result = D.copy(level, a);
+        D.remainder(level, result, b);
       }
   }
 
@@ -287,18 +298,18 @@ public:
 
   void set_random(poly &result) { result = D.random(level); }
 
-  void elem_text_out(buffer &o, 
-		     const poly f,
-		     bool p_one,
-		     bool p_plus, 
-		     bool p_parens,
-		     M2_ArrayString names) const;
+  void elem_text_out(buffer &o,
+                     const poly f,
+                     bool p_one,
+                     bool p_plus,
+                     bool p_parens,
+                     M2_ArrayString names) const;
 
   void gcd(poly &result, const poly f, const poly g) { result = D.gcd(level,f,g); }
 
-  void gcd_coefficients(poly &result_gcd, 
-			poly &result_u, poly &result_v,
-			const poly f, const poly g)
+  void gcd_coefficients(poly &result_gcd,
+                        poly &result_u, poly &result_v,
+                        const poly f, const poly g)
   {
     result_gcd = D.gcd_coefficients(level, f, g, result_u, result_v);
   }
@@ -308,10 +319,13 @@ public:
   int degree(int var, const poly f) const { return D.degree(level,var,f); }
   void diff(int var, poly &result, const poly f) const { result = D.diff(level, var, f); }
   int extension_degree(int firstvar); // returns -1 if infinite
-  void power_mod(poly &result, const poly f, mpz_t n, const poly g) const { result = D.power_mod(level, f, n, g); } // f^n mod g  
+  void power_mod(poly &result, const poly f, mpz_t n, const poly g) const { result = D.power_mod(level, f, n, g); } // f^n mod g
   void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
 };
 
+/**
+ * \ingroup polynomialrings
+ */
 class DPolyTraverser : public our_new_delete
 {
   const DPoly *D;
@@ -343,12 +357,12 @@ public:
   //TODO: finish
 
 
-  
+
   poly f1 = TOWER_VAL(f);
   poly g1 = TOWER_VAL(g);
 
   poly h = D->invert(level,g1);
-  if (D->is_zero(h)) 
+  if (D->is_zero(h))
     ERROR("element not invertible");
   else
     {
@@ -364,5 +378,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

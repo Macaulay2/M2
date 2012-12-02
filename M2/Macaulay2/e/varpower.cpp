@@ -33,19 +33,19 @@ void varpower::elem_text_out(buffer &o, const int *a, bool p_one)
   else
     for ( ; i.valid(); ++i)
       {
-	int v = i.var();
-	int e = i.exponent();
-	if (v < 26) o << char('a' + v);
-	else if (v < 52) o << char('A' + v - 26);
-	else o << "x[" << v << "]";
-	if (e > 1) o << e;
-	else if (e < 0) o << "^(" << e << ")";
+        int v = i.var();
+        int e = i.exponent();
+        if (v < 26) o << char('a' + v);
+        else if (v < 52) o << char('A' + v - 26);
+        else o << "x[" << v << "]";
+        if (e > 1) o << e;
+        else if (e < 0) o << "^(" << e << ")";
       }
 }
 
-void varpower::elem_text_out(buffer &o, const int *a, 
-			     M2_ArrayString varnames,
-			     bool p_one)
+void varpower::elem_text_out(buffer &o, const int *a,
+                             M2_ArrayString varnames,
+                             bool p_one)
 {
   index_varpower i = a;
   if (!i.valid())
@@ -55,17 +55,17 @@ void varpower::elem_text_out(buffer &o, const int *a,
   else
     for ( ; i.valid(); ++i)
       {
-	int v = i.var();
-	int e = i.exponent();
-	if (varnames->len < v)
-	  o << ".";
-	else
-	  o << varnames->array[v];
-	int single = (varnames->array[v]->len == 1);
-	if (e > 1 && single) o << e;
-	else if (e > 1) o << "^" << e;
-	else if (e < 0) o << "^(" << e << ")";
-//	if (i > 0) o << "*";
+        int v = i.var();
+        int e = i.exponent();
+        if (varnames->len < v)
+          o << ".";
+        else
+          o << varnames->array[v];
+        int single = (varnames->array[v]->len == 1);
+        if (e > 1 && single) o << e;
+        else if (e > 1) o << "^" << e;
+        else if (e < 0) o << "^(" << e << ")";
+//      if (i > 0) o << "*";
       }
 }
 
@@ -157,8 +157,8 @@ void varpower::from_ntuple(int n, const int *a, intarray &result)
   for (int i=n-1; i>=0; i--)
     if (a[i] != 0)
       {
-	*result_vp++ = i;
-	*result_vp++ = a[i];
+        *result_vp++ = i;
+        *result_vp++ = a[i];
       }
 }
 
@@ -186,41 +186,41 @@ void varpower::mult(const int *a, const int *b, intarray &result)
   for (;;)
     {
       if (va > vb)
-	{
-	  *result_vp++ = va;
-	  *result_vp++ = i.exponent();
-	  ++i;
-	  va = (i.valid() ? i.var() : -1);
-	}
+        {
+          *result_vp++ = va;
+          *result_vp++ = i.exponent();
+          ++i;
+          va = (i.valid() ? i.var() : -1);
+        }
       else if (vb > va)
-	{
-	  *result_vp++ = vb;
-	  *result_vp++ = j.exponent();
-	  ++j;
-	  vb = (j.valid() ? j.var() : -1);
-	}
-      else 
-	{
-	  if (va == -1) break;
-	  int x = i.exponent();
-	  int y = j.exponent();
-	  int z = x+y;
-	  if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
-	    {
-	      ERROR("monomial overflow");
-	    }
-	  else
-	    {
-	      if (z != 0)
-		{
-		  *result_vp++ = va;
-		  *result_vp++ = z;
-		}
-	    }
-	  ++i; ++j;
-	  va = (i.valid() ? i.var() : -1);
-	  vb = (j.valid() ? j.var() : -1);
-	}
+        {
+          *result_vp++ = vb;
+          *result_vp++ = j.exponent();
+          ++j;
+          vb = (j.valid() ? j.var() : -1);
+        }
+      else
+        {
+          if (va == -1) break;
+          int x = i.exponent();
+          int y = j.exponent();
+          int z = x+y;
+          if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
+            {
+              ERROR("monomial overflow");
+            }
+          else
+            {
+              if (z != 0)
+                {
+                  *result_vp++ = va;
+                  *result_vp++ = z;
+                }
+            }
+          ++i; ++j;
+          va = (i.valid() ? i.var() : -1);
+          vb = (j.valid() ? j.var() : -1);
+        }
     }
   int newlen = static_cast<int>(result_vp - orig_result_vp);
   *orig_result_vp = newlen;
@@ -242,40 +242,40 @@ void varpower::quotient(const int *a, const int *b, intarray &result)
   for (;;)
     {
       if (va > vb)
-	{
-	  *result_vp++ = va;
-	  *result_vp++ = i.exponent();
-	  ++i;
-	  va = (i.valid() ? i.var() : -1);
-	}
+        {
+          *result_vp++ = va;
+          *result_vp++ = i.exponent();
+          ++i;
+          va = (i.valid() ? i.var() : -1);
+        }
       else if (vb > va)
-	{
-	  ++j;
-	  vb = (j.valid() ? j.var() : -1);
-	}
-      else 
-	{
-	  if (va == -1) break;
-	  int ea = i.exponent();
-	  int eb = j.exponent();  
-	  if (ea > eb)
-	    {
-	      *result_vp++ = va;
-	      *result_vp++ = ea-eb; // overflow cannot occur
-	    }
-	  ++i; ++j;
-	  va = (i.valid() ? i.var() : -1);
-	  vb = (j.valid() ? j.var() : -1);
-	}
+        {
+          ++j;
+          vb = (j.valid() ? j.var() : -1);
+        }
+      else
+        {
+          if (va == -1) break;
+          int ea = i.exponent();
+          int eb = j.exponent();
+          if (ea > eb)
+            {
+              *result_vp++ = va;
+              *result_vp++ = ea-eb; // overflow cannot occur
+            }
+          ++i; ++j;
+          va = (i.valid() ? i.var() : -1);
+          vb = (j.valid() ? j.var() : -1);
+        }
     }
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
 }
 
 void varpower::power(const int *a, int n, intarray &result)
 {
-  if (n == 0) 
+  if (n == 0)
     {
-      result.append(1); 
+      result.append(1);
       return;
     }
   int *result_vp = result.alloc(*a);
@@ -297,28 +297,28 @@ bool varpower::divides(const int *b, const int *a)
   for (;;)
     {
       if (va > vb)
-	{
-	  ++i;
-	  va = (i.valid() ? i.var() : -1);
-	}
+        {
+          ++i;
+          va = (i.valid() ? i.var() : -1);
+        }
       else if (va < vb)
-	return false;
-      else 
-	{
-	  if (va == -1) return true;
-	  int ea = i.exponent();
-	  int eb = j.exponent();  
-	  if (ea < eb)
-	    return false;
-	  ++i; ++j;
-	  va = (i.valid() ? i.var() : -1);
-	  vb = (j.valid() ? j.var() : -1);
-	}
+        return false;
+      else
+        {
+          if (va == -1) return true;
+          int ea = i.exponent();
+          int eb = j.exponent();
+          if (ea < eb)
+            return false;
+          ++i; ++j;
+          va = (i.valid() ? i.var() : -1);
+          vb = (j.valid() ? j.var() : -1);
+        }
     }
 }
 
-void varpower::monsyz(const int *a, const int *b, 
-		      intarray &sa, intarray &sb)
+void varpower::monsyz(const int *a, const int *b,
+                      intarray &sa, intarray &sb)
 // sa, sb are set so that a * sa = b * sb
 // and sa, sb have disjoint support.
 {
@@ -337,40 +337,40 @@ void varpower::monsyz(const int *a, const int *b,
   for (;;)
     {
       if (va > vb)
-	{
-	  // va should be placed into sb
-	  *result_vp2++ = va;
-	  *result_vp2++ = i.exponent();
-	  ++i;
-	  va = (i.valid() ? i.var() : -1);
-	}
+        {
+          // va should be placed into sb
+          *result_vp2++ = va;
+          *result_vp2++ = i.exponent();
+          ++i;
+          va = (i.valid() ? i.var() : -1);
+        }
       else if (va < vb)
-	{
-	  // vb should be placed into sa
-	  *result_vp1++ = vb;
-	  *result_vp1++ = j.exponent();
-	  ++j;
-	  vb = (j.valid() ? j.var() : -1);
-	}
-      else 
-	{
-	  if (va == -1) break;
-	  int ea = i.exponent();
-	  int eb = j.exponent();  
-	  if (ea < eb)
-	    {
-	      *result_vp1++ = va;
-	      *result_vp1++ = eb-ea;
-	    }
-	  else if (ea > eb)
-	    {
-	      *result_vp2++ = va;
-	      *result_vp2++ = ea-eb;
-	    }
-	  ++i; ++j;
-	  va = (i.valid() ? i.var() : -1);
-	  vb = (j.valid() ? j.var() : -1);
-	}
+        {
+          // vb should be placed into sa
+          *result_vp1++ = vb;
+          *result_vp1++ = j.exponent();
+          ++j;
+          vb = (j.valid() ? j.var() : -1);
+        }
+      else
+        {
+          if (va == -1) break;
+          int ea = i.exponent();
+          int eb = j.exponent();
+          if (ea < eb)
+            {
+              *result_vp1++ = va;
+              *result_vp1++ = eb-ea;
+            }
+          else if (ea > eb)
+            {
+              *result_vp2++ = va;
+              *result_vp2++ = ea-eb;
+            }
+          ++i; ++j;
+          va = (i.valid() ? i.var() : -1);
+          vb = (j.valid() ? j.var() : -1);
+        }
     }
   *orig_result_vp1 = static_cast<int>(result_vp1 - orig_result_vp1);
   *orig_result_vp2 = static_cast<int>(result_vp2 - orig_result_vp2);
@@ -392,31 +392,31 @@ void varpower::lcm(const int *a, const int *b, intarray &result)
   for (;;)
     {
       if (va > vb)
-	{
-	  *result_vp++ = va;
-	  *result_vp++ = i.exponent();
-	  ++i;
-	  va = (i.valid() ? i.var() : -1);
-	}
+        {
+          *result_vp++ = va;
+          *result_vp++ = i.exponent();
+          ++i;
+          va = (i.valid() ? i.var() : -1);
+        }
       else if (vb > va)
-	{
-	  *result_vp++ = vb;
-	  *result_vp++ = j.exponent();
-	  ++j;
-	  vb = (j.valid() ? j.var() : -1);
-	}
-      else 
-	{
-	  if (va == -1) break;
-	  int ea = i.exponent();
-	  int eb = j.exponent();  
-	  if (ea < eb) ea = eb;
-	  *result_vp++ = va;
-	  *result_vp++ = ea;
-	  ++i; ++j;
-	  va = (i.valid() ? i.var() : -1);
-	  vb = (j.valid() ? j.var() : -1);
-	}
+        {
+          *result_vp++ = vb;
+          *result_vp++ = j.exponent();
+          ++j;
+          vb = (j.valid() ? j.var() : -1);
+        }
+      else
+        {
+          if (va == -1) break;
+          int ea = i.exponent();
+          int eb = j.exponent();
+          if (ea < eb) ea = eb;
+          *result_vp++ = va;
+          *result_vp++ = ea;
+          ++i; ++j;
+          va = (i.valid() ? i.var() : -1);
+          vb = (j.valid() ? j.var() : -1);
+        }
     }
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
 }
@@ -438,27 +438,27 @@ void varpower::gcd(const int *a, const int *b, intarray &result)
   for (;;)
     {
       if (va > vb)
-	{
-	  ++i;
-	  va = (i.valid() ? i.var() : -1);
-	}
+        {
+          ++i;
+          va = (i.valid() ? i.var() : -1);
+        }
       else if (vb > va)
-	{
-	  ++j;
-	  vb = (j.valid() ? j.var() : -1);
-	}
-      else 
-	{
-	  if (va == -1) break;
-	  int ea = i.exponent();
-	  int eb = j.exponent();  
-	  if (ea > eb) ea = eb;
-	  *result_vp++ = va;
-	  *result_vp++ = ea;
-	  ++i; ++j;
-	  va = (i.valid() ? i.var() : -1);
-	  vb = (j.valid() ? j.var() : -1);
-	}
+        {
+          ++j;
+          vb = (j.valid() ? j.var() : -1);
+        }
+      else
+        {
+          if (va == -1) break;
+          int ea = i.exponent();
+          int eb = j.exponent();
+          if (ea > eb) ea = eb;
+          *result_vp++ = va;
+          *result_vp++ = ea;
+          ++i; ++j;
+          va = (i.valid() ? i.var() : -1);
+          vb = (j.valid() ? j.var() : -1);
+        }
     }
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
 }
@@ -478,24 +478,24 @@ void varpower::erase(const int *a, const int *b, intarray &result)
   for (;;)
     {
       if (va > vb)
-	{
-	  *result_vp++ = va;
-	  *result_vp++ = i.exponent();
-	  ++i;
-	  va = (i.valid() ? i.var() : -1);
-	}
+        {
+          *result_vp++ = va;
+          *result_vp++ = i.exponent();
+          ++i;
+          va = (i.valid() ? i.var() : -1);
+        }
       else if (vb > va)
-	{
-	  ++j;
-	  vb = (j.valid() ? j.var() : -1);
-	}
-      else 
-	{
-	  if (va == -1) break;
-	  ++i; ++j;
-	  va = (i.valid() ? i.var() : -1);
-	  vb = (j.valid() ? j.var() : -1);
-	}
+        {
+          ++j;
+          vb = (j.valid() ? j.var() : -1);
+        }
+      else
+        {
+          if (va == -1) break;
+          ++i; ++j;
+          va = (i.valid() ? i.var() : -1);
+          vb = (j.valid() ? j.var() : -1);
+        }
     }
 
   *orig_result_vp = static_cast<int>(result_vp - orig_result_vp);
@@ -525,4 +525,5 @@ bool varpower::is_pure_power(const int *a, int &v, int &e)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -13,7 +13,7 @@
 //  2 not mingen, but is a minimal gb element
 //  3 mingen and minimal gb elem
 
-static const int GBELEM_NONGEN_NONGB = 0; 
+static const int GBELEM_NONGEN_NONGB = 0;
 static const int GBELEM_MINGEN_NONGB = 1;
 static const int GBELEM_NONGEN_MINGB = 2;
 static const int GBELEM_MINGEN_MINGB = 3;
@@ -38,8 +38,8 @@ void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_w
 
   spairs = new s_pair_heap(M);
 
-  gb = gbLarge = new gb_elem;		// List head for the GB computed so far
-  gb->next = NULL;			// (both minimal, and large GB's)
+  gb = gbLarge = new gb_elem;           // List head for the GB computed so far
+  gb->next = NULL;                      // (both minimal, and large GB's)
   gb->next_min = NULL;
 
   if (nsyz < 0 || nsyz > m->n_cols())
@@ -64,16 +64,16 @@ void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_w
 
 }
 
-void GBinhom_comp::set_up(const Matrix *m, 
-			  int csyz, 
-			  int nsyz, 
-			  M2_arrayint gb_weights, 
-			  int strat)
+void GBinhom_comp::set_up(const Matrix *m,
+                          int csyz,
+                          int nsyz,
+                          M2_arrayint gb_weights,
+                          int strat)
 {
   strategy = strat;
   set_up0(m, csyz, nsyz, gb_weights);
 
-  Fsyz = m->cols()->sub_space(n_comps_per_syz);  
+  Fsyz = m->cols()->sub_space(n_comps_per_syz);
 
   minimal_gb = ReducedGB::create(originalR,F,Fsyz);
   minimal_gb_valid = true;
@@ -104,18 +104,18 @@ void GBinhom_comp::add_gens(int lo, int hi, const Matrix *m)
       gbvector *f = originalR->translate_gbvector_from_vec(F,(*m)[i], denom);
       s_pair *p = new_gen(i, f, denom);
       if (p != NULL)
-	spairs->insert(p);
+        spairs->insert(p);
       n_pairs++;
     }
 }
 
 GBinhom_comp *GBinhom_comp::create(const Matrix *m,
-		  M2_bool collect_syz,
-		  int n_rows_to_keep,
-		  M2_arrayint gb_weights,
-		  int strategy,
-		  M2_bool use_max_degree_limit,
-		  int max_degree_limit)
+                  M2_bool collect_syz,
+                  int n_rows_to_keep,
+                  M2_arrayint gb_weights,
+                  int strategy,
+                  M2_bool use_max_degree_limit,
+                  int max_degree_limit)
 {
   const PolynomialRing *P = m->get_ring()->cast_to_PolynomialRing();
   if (P == 0 || P->getCoefficients()->is_ZZ())
@@ -123,19 +123,19 @@ GBinhom_comp *GBinhom_comp::create(const Matrix *m,
       ERROR("expected polynomial ring over a field");
       return 0;
     }
-  GBinhom_comp *result = new GBinhom_comp(m, 
-					  collect_syz,
-					  n_rows_to_keep,
-					  gb_weights,
-					  strategy);
+  GBinhom_comp *result = new GBinhom_comp(m,
+                                          collect_syz,
+                                          n_rows_to_keep,
+                                          gb_weights,
+                                          strategy);
   return result;
 }
 
-GBinhom_comp::GBinhom_comp(const Matrix *m, 
-			   int csyz, 
-			   int nsyz, 
-			   M2_arrayint gb_weights, 
-			   int strat)
+GBinhom_comp::GBinhom_comp(const Matrix *m,
+                           int csyz,
+                           int nsyz,
+                           M2_arrayint gb_weights,
+                           int strat)
 {
   set_up(m, csyz, nsyz, gb_weights, strat);
 }
@@ -217,11 +217,11 @@ s_pair *GBinhom_comp::new_gen(int i, gbvector * f, ring_elem denom)
   if (GR->gbvector_is_zero(f))
     {
       if (!GR->gbvector_is_zero(fsyz))
-	{
-	  vec fsyzvec = originalR->translate_gbvector_to_vec(Fsyz,fsyz);
-	  n_syz++;
-	  syz.append(fsyzvec);
-	}
+        {
+          vec fsyzvec = originalR->translate_gbvector_to_vec(Fsyz,fsyz);
+          n_syz++;
+          syz.append(fsyzvec);
+        }
       return NULL;
     }
 
@@ -246,38 +246,38 @@ int GBinhom_comp::mark_pair(gb_elem *p, gb_elem *q) const
   for (r = p->pair_list; r != NULL; r = r->next_same)
     if (r->second == q)
       {
-	if (r->compare_num >= 0)
-	  {
-	    r->compare_num = -1;
-	    if (M2_gbTrace >= 8)
-	      {
-		buffer o;
-		o << "---- removed pair ";
-		debug_out(o,r);
-		emit_line(o.str());
-	      }
-	    return 1;
-	  }
-	else
-	  return 0;
+        if (r->compare_num >= 0)
+          {
+            r->compare_num = -1;
+            if (M2_gbTrace >= 8)
+              {
+                buffer o;
+                o << "---- removed pair ";
+                debug_out(o,r);
+                emit_line(o.str());
+              }
+            return 1;
+          }
+        else
+          return 0;
       }
   for (r = q->pair_list; r != NULL; r = r->next_same)
     if (r->second == p)
       {
-	if (r->compare_num >= 0)
-	  {
-	    r->compare_num = -1;
-	    if (M2_gbTrace >= 8)
-	      {
-		buffer o;
-		o << "---- removed pair ";
-		debug_out(o,r);
-		emit_line(o.str());
-	      }
-	    return 1;
-	  }
-	else
-	  return 0;
+        if (r->compare_num >= 0)
+          {
+            r->compare_num = -1;
+            if (M2_gbTrace >= 8)
+              {
+                buffer o;
+                o << "---- removed pair ";
+                debug_out(o,r);
+                emit_line(o.str());
+              }
+            return 1;
+          }
+        else
+          return 0;
       }
   return 0;
 }
@@ -306,19 +306,19 @@ void GBinhom_comp::find_pairs(gb_elem *p)
       M->to_expvector(f_m, find_pairs_exp);
 
       for (int v=0; v<GR->n_skew_commutative_vars(); v++)
-	{
-	  int w = GR->skew_variable(v);
-	  if (find_pairs_exp[w] == 0) continue;
+        {
+          int w = GR->skew_variable(v);
+          if (find_pairs_exp[w] == 0) continue;
 
-	  find_pairs_exp[w]++;
-	  M->from_expvector(find_pairs_exp, find_pairs_lcm);
-	  find_pairs_exp[w]--;
-	      
-	  vplcm.shrink(0);
-	  M->to_varpower(find_pairs_lcm, vplcm);
-	  s_pair *q2 = new_var_pair(p, find_pairs_lcm);
-	  elems.insert(new Bag(q2, vplcm));
-	}
+          find_pairs_exp[w]++;
+          M->from_expvector(find_pairs_exp, find_pairs_lcm);
+          find_pairs_exp[w]--;
+
+          vplcm.shrink(0);
+          M->to_varpower(find_pairs_lcm, vplcm);
+          s_pair *q2 = new_var_pair(p, find_pairs_lcm);
+          elems.insert(new Bag(q2, vplcm));
+        }
       deletearray(find_pairs_exp);
     }
 
@@ -329,14 +329,14 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   if (originalR->is_quotient_ring())
     {
       for (int i=0; i<originalR->n_quotients(); i++)
-	{
-	  const gbvector * f = originalR->quotient_gbvector(i);
-	  M->lcm(f->monom, f_m, find_pairs_lcm);
-	  vplcm.shrink(0);
-	  M->to_varpower(find_pairs_lcm, vplcm);
-	  s_pair *q2 = new_ring_pair(p, find_pairs_lcm);
-	  elems.insert(new Bag(q2, vplcm));
-	}
+        {
+          const gbvector * f = originalR->quotient_gbvector(i);
+          M->lcm(f->monom, f_m, find_pairs_lcm);
+          vplcm.shrink(0);
+          M->to_varpower(find_pairs_lcm, vplcm);
+          s_pair *q2 = new_ring_pair(p, find_pairs_lcm);
+          elems.insert(new Bag(q2, vplcm));
+        }
     }
 
   // Add in syzygies arising as s-pairs
@@ -375,22 +375,22 @@ void GBinhom_comp::find_pairs(gb_elem *p)
       nextsame = q;
       len++;
       if (is_ideal && q->syz_type == SPAIR_PAIR)
-	{
-	  M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_mon);
-	  if (M->is_one(find_pairs_mon))
-	    {
-	      n_saved_gcd++;
-	      q->compare_num = -1; // MES: change name of field!!
-				    // This means: don't compute spair.
-	      if (M2_gbTrace >= 8)
-		{
-		  buffer o;
-		  o << "removed pair[" << q->first->me << " " 
-		    << q->second->me << "]";
-		  emit_line(o.str());
-		}
-	    }
-	}
+        {
+          M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_mon);
+          if (M->is_one(find_pairs_mon))
+            {
+              n_saved_gcd++;
+              q->compare_num = -1; // MES: change name of field!!
+                                    // This means: don't compute spair.
+              if (M2_gbTrace >= 8)
+                {
+                  buffer o;
+                  o << "removed pair[" << q->first->me << " "
+                    << q->second->me << "]";
+                  emit_line(o.str());
+                }
+            }
+        }
     }
   n_pairs += len;
   nextsame->next = NULL;
@@ -400,11 +400,11 @@ void GBinhom_comp::find_pairs(gb_elem *p)
     {
       buffer o;
       for (q = p->pair_list; q != NULL; q = q->next)
-	{
-	  o << "insert ";
-	  debug_out(o,q);
-	  o << newline;
-	}
+        {
+          o << "insert ";
+          debug_out(o,q);
+          o << newline;
+        }
       emit(o.str());
     }
   for (q = p->pair_list; q != NULL; q = q->next)
@@ -418,7 +418,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   // keeping the 'correct' minimal generator of the lcms.
 
   for (s_pair *s1 = p->pair_list; s1 != NULL; s1 = s1->next_same)
-    {    
+    {
       if (s1->syz_type != SPAIR_PAIR) continue;
 
       GR->gbvector_get_lead_monomial(F, s1->second->f, f_m);
@@ -426,19 +426,19 @@ void GBinhom_comp::find_pairs(gb_elem *p)
       M->divide(s1->lcm, f_m, pi);
 
       for (s_pair *t1 = s1->next_same; t1 != NULL; t1 = t1->next_same)
-	{
-	  if (t1->syz_type != SPAIR_PAIR) continue;
-	  GR->gbvector_get_lead_monomial(F, t1->second->f, f_m);
-	  M->divide(t1->lcm, f_m, pj);
-	  M->gcd(pi, pj, pij);
-	  if (M->is_one(pij))
-	    {
-	      if (mark_pair(s1->second, t1->second))
-		{
-		  n_saved_lcm++;
-		}
-	    }
-	}
+        {
+          if (t1->syz_type != SPAIR_PAIR) continue;
+          GR->gbvector_get_lead_monomial(F, t1->second->f, f_m);
+          M->divide(t1->lcm, f_m, pj);
+          M->gcd(pi, pj, pij);
+          if (M->is_one(pij))
+            {
+              if (mark_pair(s1->second, t1->second))
+                {
+                  n_saved_lcm++;
+                }
+            }
+        }
     }
 
   // Remove the local variables
@@ -459,14 +459,14 @@ void GBinhom_comp::compute_s_pair(s_pair *p)
       M->divide(p->lcm, p->first->f->monom, s);
 
       GR->gbvector_mult_by_term(F,Fsyz,
-				GR->one(), s,
-				p->first->f, 
-				p->first->fsyz,
-				p->f, 
-				p->fsyz);
+                                GR->one(), s,
+                                p->first->f,
+                                p->first->fsyz,
+                                p->f,
+                                p->fsyz);
       if (p->syz_type == SPAIR_PAIR)
-	GR->gbvector_reduce_lead_term(F,Fsyz,0,p->f,p->fsyz,
-				      p->second->f, p->second->fsyz);
+        GR->gbvector_reduce_lead_term(F,Fsyz,0,p->f,p->fsyz,
+                                      p->second->f, p->second->fsyz);
       M->remove(s);
     }
 }
@@ -496,26 +496,26 @@ int GBinhom_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 #warning "quotient ring stuff"
 #endif
       Bag *b;
-      if (originalR->is_quotient_ring() 
-	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
-	{
-	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
-	  GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,g,0);
-	  count++;
-	}
-      else 
-	if (search(div_totalexp, f->comp, q))
-	  {
-	    GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
-	    count++;
-	  }
-	else
-	  {
-	    result->next = f;
-	    f = f->next;
-	    result = result->next;
-	    result->next = 0;
-	  }
+      if (originalR->is_quotient_ring()
+          && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+        {
+          const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
+          GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,g,0);
+          count++;
+        }
+      else
+        if (search(div_totalexp, f->comp, q))
+          {
+            GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
+            count++;
+          }
+        else
+          {
+            result->next = f;
+            f = f->next;
+            result = result->next;
+            result->next = 0;
+          }
     }
   if (M2_gbTrace >= 4)
     {
@@ -553,32 +553,32 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 #endif
       Bag *b;
       if (originalR->is_quotient_ring()
-	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
-	{
-	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
-	  GR->reduce_lead_term_heap(F,Fsyz,
-				    lead, div_totalexp, // are these two needed
-				    head.next,fb,fsyzb,
-				    g,0);
-	  count++;
-	}
-      else 
-	if (search(div_totalexp, lead->comp, q))
-	  {
-	    GR->reduce_lead_term_heap(F,Fsyz,
-				      lead, div_totalexp,
-				      head.next,fb,fsyzb,
-				      q->f,q->fsyz);
-	    count++;
-	  }
-	else
-	  {
-	    result->next = fb.remove_lead_term();
-	    result = result->next;
-	    result->next = 0;
-	  }
+          && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+        {
+          const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
+          GR->reduce_lead_term_heap(F,Fsyz,
+                                    lead, div_totalexp, // are these two needed
+                                    head.next,fb,fsyzb,
+                                    g,0);
+          count++;
+        }
+      else
+        if (search(div_totalexp, lead->comp, q))
+          {
+            GR->reduce_lead_term_heap(F,Fsyz,
+                                      lead, div_totalexp,
+                                      head.next,fb,fsyzb,
+                                      q->f,q->fsyz);
+            count++;
+          }
+        else
+          {
+            result->next = fb.remove_lead_term();
+            result = result->next;
+            result->next = 0;
+          }
     }
-  
+
   if (M2_gbTrace >= 4)
     {
       buffer o;
@@ -612,16 +612,16 @@ int GBinhom_comp::search(const int *exp, int comp, gb_elem *&result)
       exp2 = p->lead_exp;
       int is_div = 1;
       for (int i=0; i<nvars; i++)
-	if (exp2[i] > exp[i])
-	  {
-	    is_div = 0;
-	    break;
-	  }
+        if (exp2[i] > exp[i])
+          {
+            is_div = 0;
+            break;
+          }
       if (is_div)
-	{
-	  result = p;
-	  return 1;
-	}
+        {
+          result = p;
+          return 1;
+        }
     }
   return 0;
 }
@@ -650,41 +650,41 @@ void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int minlevel)
   for (;;)
     {
       if (q->next == NULL || compare(p, q->next) == LT)
-	{
-	  p->next = q->next;
-	  q->next = p;
-	  n_gb++;
-	  // Now place into the minimal list as well
-	  p->next_min = prevmin->next_min;
-	  prevmin->next_min = p;
-	  break;
-	}
+        {
+          p->next = q->next;
+          q->next = p;
+          n_gb++;
+          // Now place into the minimal list as well
+          p->next_min = prevmin->next_min;
+          prevmin->next_min = p;
+          break;
+        }
       else if (q->next->is_min & MINGB_MASK)
-	prevmin = q->next;
+        prevmin = q->next;
       q = q->next;
     }
 
   M->remove(f_m);
 
-  // At this point 'p' has been inserted.  Now we need to remove the 
+  // At this point 'p' has been inserted.  Now we need to remove the
   // non-minimal elements.
   q = p;
   while (q->next_min != NULL)
     // MES: this loop would be a good place to put in auto-reduction?
     if (p->f->comp == q->next_min->f->comp && M->divides(p->f->monom, q->next_min->f->monom))
       {
-	gb_elem *tmp = q->next_min;
-	q->next_min = tmp->next_min;
-	tmp->next_min = NULL;
-	tmp->is_min ^= MINGB_MASK;	// I.e. not in the minimal GB
-	n_gb--;
+        gb_elem *tmp = q->next_min;
+        q->next_min = tmp->next_min;
+        tmp->next_min = NULL;
+        tmp->is_min ^= MINGB_MASK;      // I.e. not in the minimal GB
+        n_gb--;
       }
     else
       q = q->next_min;
 }
 
 int GBinhom_comp::s_pair_step(s_pair *p)
-     // If no s-pairs left in the current degree, 
+     // If no s-pairs left in the current degree,
      // return SPAIR_DONE.
      // Otherwise, compute the current s-pair, reduce it, and
      // dispatch the result.  Return one of the other SPAIR_*
@@ -704,10 +704,10 @@ int GBinhom_comp::s_pair_step(s_pair *p)
   if (compute_pair)
     {
       compute_s_pair(p);
-      
+
       if (!gb_reduce(p->f, p->fsyz))
-	return SPAIR_DEFERRED;
-      
+        return SPAIR_DEFERRED;
+
     }
   gbvector * f = p->f;
   gbvector * fsyz = p->fsyz;
@@ -720,39 +720,39 @@ int GBinhom_comp::s_pair_step(s_pair *p)
       p->first->pair_list = p->next_same;
     }
   remove_pair(p);
-  
+
   if (!compute_pair) return SPAIR_REMOVED;
 
   if (!GR->gbvector_is_zero(f))
     {
       gb_insert(f, fsyz, minlevel);
       if (M2_gbTrace >= 8)
-	{
-	  buffer o;
-	  o << "  gb " << last_gb_num-1 << " = ";
-	  GR->gbvector_text_out(o, F, f);
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          o << "  gb " << last_gb_num-1 << " = ";
+          GR->gbvector_text_out(o, F, f);
+          emit_line(o.str());
+        }
       return SPAIR_GB;
     }
   if (!GR->gbvector_is_zero(fsyz))
     {
       if (M2_gbTrace >= 8)
-	{
-	  buffer o;
-	  o << "  syz = ";
-	  GR->gbvector_text_out(o, Fsyz,fsyz);
-	  emit_line(o.str());
-	}
+        {
+          buffer o;
+          o << "  syz = ";
+          GR->gbvector_text_out(o, Fsyz,fsyz);
+          emit_line(o.str());
+        }
       if (collect_syz)
-	{
-	  vec fsyzvec = originalR->translate_gbvector_to_vec(Fsyz,fsyz);
-	  n_syz++;
-	  syz.append(fsyzvec);
-	  return SPAIR_SYZ;
-	}
+        {
+          vec fsyzvec = originalR->translate_gbvector_to_vec(Fsyz,fsyz);
+          n_syz++;
+          syz.append(fsyzvec);
+          return SPAIR_SYZ;
+        }
       else
-	GR->gbvector_remove(fsyz);
+        GR->gbvector_remove(fsyz);
     }
   return SPAIR_ZERO;
 }
@@ -774,57 +774,57 @@ ComputationStatusCode GBinhom_comp::computation_complete() const
 void GBinhom_comp::start_computation()
 {
   ComputationStatusCode is_done = COMP_COMPUTING;
-  
+
   for (;;)
     {
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) 
-	{
-	  is_done = COMP_INTERRUPTED;
-	  break;
-	}
+      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+        {
+          is_done = COMP_INTERRUPTED;
+          break;
+        }
 
       if (need_resize)
-	{
-	  is_done = COMP_NEED_RESIZE;
-	  break;
-	}
+        {
+          is_done = COMP_NEED_RESIZE;
+          break;
+        }
 
       is_done = computation_complete();
       if (is_done != COMP_COMPUTING) break;
 
       if (error())
-	{
-	  is_done = COMP_ERROR;
-	  break;
-	}
+        {
+          is_done = COMP_ERROR;
+          break;
+        }
       s_pair *p = spairs->remove();
       if (p == NULL)
-	{
-	  is_done = COMP_DONE;
-	  break;
-	}
+        {
+          is_done = COMP_DONE;
+          break;
+        }
       int stype = s_pair_step(p);
       if (M2_gbTrace >= 3 && M2_gbTrace <= 7)
-	switch (stype)
-	  {
-	  case SPAIR_GB:
-	    emit_wrapped("m");
-	    break;
-	  case SPAIR_SYZ:
-	    emit_wrapped("z");
-	    break;
-	  case SPAIR_ZERO:
-	    emit_wrapped("o");
-	    break;
-	  case SPAIR_REMOVED:
-	    emit_wrapped("r");
-	    break;
-	  default:
-	    emit_wrapped("ERROR");
-	    break;
-	  }
+        switch (stype)
+          {
+          case SPAIR_GB:
+            emit_wrapped("m");
+            break;
+          case SPAIR_SYZ:
+            emit_wrapped("z");
+            break;
+          case SPAIR_ZERO:
+            emit_wrapped("o");
+            break;
+          case SPAIR_REMOVED:
+            emit_wrapped("r");
+            break;
+          default:
+            emit_wrapped("ERROR");
+            break;
+          }
     }
-  
+
   // MES: complete the reduction of the GB here
   if (M2_gbTrace >= 1) emit_line("");
   if (M2_gbTrace >= 4)
@@ -869,9 +869,9 @@ const Matrix /* or null */ *GBinhom_comp::matrix_remainder(const Matrix *m)
 }
 
 M2_bool GBinhom_comp::matrix_lift(const Matrix *m,
-		 const Matrix /* or null */ **result_remainder,
-		 const Matrix /* or null */ **result_quotient
-		 )
+                 const Matrix /* or null */ **result_remainder,
+                 const Matrix /* or null */ **result_quotient
+                 )
 {
   minimalize_gb();
   return minimal_gb->matrix_lift(m, result_remainder, result_quotient);
@@ -1018,11 +1018,11 @@ void GBinhom_comp::debug_pairs(buffer &o) const
       o << "---- pairs in bin " << i << " -----" << newline;
       int n = 0;
       for ( ; q != NULL; q = q->next)
-	{
-	  debug_out(o,q);
-	  n++;
-	  if (n % 10 == 0) o << newline;
-	}
+        {
+          debug_out(o,q);
+          n++;
+          if (n % 10 == 0) o << newline;
+        }
       o << newline;
     }
 }
@@ -1034,12 +1034,12 @@ void GBinhom_comp::stats() const
     {
       int i = 0;
       for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-	{
-	  o << i << '\t';
-	  i++;
-	  GR->gbvector_text_out(o, F,q->f);
-	  o << newline;
-	}
+        {
+          o << i << '\t';
+          i++;
+          GR->gbvector_text_out(o, F,q->f);
+          o << newline;
+        }
     }
   emit(o.str());
 }
@@ -1047,4 +1047,5 @@ void GBinhom_comp::stats() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

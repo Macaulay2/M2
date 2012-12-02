@@ -3,14 +3,14 @@
 # license:          version 3.0  : GNU Lesser General Public License version 3 or later (LGPL v3+)
 #				   so our binary distributions should be distributed under GPL 3
 
-#VERSION = 2.4.2
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-
 VERSION = 3.0.1
 
+# warning: version 3.1.0 breaks 'check loadPackage "EllipticIntegrals"'!
+#VERSION = 3.1.0
+
 RELAX = yes
-URL = http://www.mpfr.org/mpfr-$(VERSION)
-# URL = http://macaulay2.com/Downloads/SourceCode
+# URL = http://www.mpfr.org/mpfr-$(VERSION)
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 
 ifeq (@CC_THREAD_SUPPORT@,yes)
 # compiling mpfr with thread local variables is incompatible with libgc, because

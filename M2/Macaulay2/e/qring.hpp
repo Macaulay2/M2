@@ -15,6 +15,10 @@ class MonomialTableZZ;
 class gbvector;
 class GBRing;
 
+
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo : public our_new_delete
 {
   VECTOR(Nterm *) quotient_ideal;
@@ -44,7 +48,7 @@ public:
 
   virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f) const { }
 
-  virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const 
+  virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const
   {  gbvector_normal_form(F,f); }
 
   virtual const MonomialIdeal *  get_quotient_monomials() const { return 0; }
@@ -57,6 +61,9 @@ public:
   // Each id is an index into quotient_ideal_
 };
 
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_field : public QRingInfo
 {
 protected:
@@ -64,7 +71,7 @@ protected:
   MonomialTable *ringtable;
 public:
   QRingInfo_field(const PolyRing *ambientR,
-		  const VECTOR(Nterm *) &quotients);
+                  const VECTOR(Nterm *) &quotients);
   void destroy(GBRing *GR);
   ~QRingInfo_field();
 
@@ -75,12 +82,15 @@ public:
   // Each id is an index into quotient_ideal_
 };
 
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_field_basic : public QRingInfo_field
 {
   void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field_basic(const PolyRing *ambientR,
-			const VECTOR(Nterm *) &quotients);
+                        const VECTOR(Nterm *) &quotients);
   ~QRingInfo_field_basic();
 
   void normal_form(ring_elem &f) const;
@@ -88,13 +98,15 @@ public:
   void gbvector_normal_form(const FreeModule *F, gbvector *&f) const;
 };
 
-
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_field_QQ : public QRingInfo_field
 {
   void reduce_lead_term_QQ(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field_QQ(const PolyRing *ambientR,
-		     const VECTOR(Nterm *) &quotients);
+                     const VECTOR(Nterm *) &quotients);
   ~QRingInfo_field_QQ();
 
   void normal_form(ring_elem &f) const;
@@ -104,18 +116,21 @@ public:
   void gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const;
 };
 
+/**
+ * \ingroup ringinfo
+ */
 class QRingInfo_ZZ : public QRingInfo
 {
   MonomialTableZZ *ringtableZZ;
-  bool is_ZZ_quotient_;		// true if this is a quotient of a polynomial ring over ZZ, AND
-				// there is an integer in the factored ideal.
-  ring_elem ZZ_quotient_value_;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
+  bool is_ZZ_quotient_;         // true if this is a quotient of a polynomial ring over ZZ, AND
+                                // there is an integer in the factored ideal.
+  ring_elem ZZ_quotient_value_; // This is the integer in the factor ideal, if is_ZZ_quotient is set.
 
 
   bool reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_ZZ(const PolyRing *ambientR,
-	       const VECTOR(Nterm *) &quotients);
+               const VECTOR(Nterm *) &quotients);
   void destroy(GBRing *GR);
   ~QRingInfo_ZZ();
 
@@ -123,7 +138,7 @@ public:
   ring_elem ZZ_quotient_value() const { return ZZ_quotient_value_; }
 
   void normal_form(ring_elem &f) const;
-  
+
   void gbvector_normal_form(const FreeModule *F, gbvector *&f) const;
 
   virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return ringtableZZ; }
@@ -134,4 +149,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

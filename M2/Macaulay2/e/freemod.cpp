@@ -70,7 +70,7 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
       int *deg = R->degree_monoid()->make_one();
       gbvector * v = m->elems[i];
       if (v != 0)
-	R->get_gb_ring()->gbvector_multidegree(F, v, deg);
+        R->get_gb_ring()->gbvector_multidegree(F, v, deg);
       G->append(deg);
     }
 
@@ -94,8 +94,8 @@ Matrix * FreeModule::get_induced_order() const
   MatrixConstructor mat(F,this,0);
   for (i=0; i<rank(); i++)
     {
-      ring_elem f = P->make_flat_term(P->getCoefficients()->from_int(1), 
-			    S->base_monom(i));
+      ring_elem f = P->make_flat_term(P->getCoefficients()->from_int(1),
+                            S->base_monom(i));
       mat.set_entry(S->compare_num(i), i, f);
     }
   return mat.to_matrix();
@@ -131,7 +131,7 @@ void FreeModule::append_schreyer(const int *d, const int *base, int compare_num)
 }
 
 void FreeModule::change_degree(int i, const int *deg)
-{ 
+{
   // WARNING: this modifies the degree, and should only be used during
   // the construction of a free module (or matrix).
   assert(i >= 0);
@@ -150,7 +150,7 @@ bool FreeModule::is_equal(const FreeModule *F) const
   if (D->n_vars() > 0)
     for (i=0; i<rank(); i++)
       if (0 != D->compare(degree(i), F->degree(i)))
-	return false;
+        return false;
 
   if (schreyer != NULL)
     return schreyer->is_equal(F->schreyer);
@@ -182,7 +182,7 @@ FreeModule *FreeModule::shift(const int *d) const
   return result;
 }
 
-  
+
 FreeModule *FreeModule::sub_space(int n) const
 {
   if (n < 0 || n > rank())
@@ -207,9 +207,9 @@ FreeModule *FreeModule::sub_space(M2_arrayint a) const
       result->append(degree(a->array[i]));
     else
       {
-	ERROR("subfreemodule: index out of bounds");
-	deleteitem(result);
-	return NULL;
+        ERROR("subfreemodule: index out of bounds");
+        deleteitem(result);
+        return NULL;
       }
   if (schreyer != NULL)
     result->schreyer = schreyer->sub_space(a);
@@ -233,7 +233,7 @@ FreeModule *FreeModule::transpose() const
 }
 
 FreeModule *FreeModule::direct_sum(const FreeModule *G) const
-     // direct sum 
+     // direct sum
 {
   int i;
   if (get_ring() != G->get_ring())
@@ -276,8 +276,8 @@ FreeModule *FreeModule::tensor(const FreeModule *G) const
   for (int i=0; i<rank(); i++)
     for (int j=0; j<G->rank(); j++)
       {
-	degree_monoid()->mult(degree(i), G->degree(j), deg);
-	result->append(deg);
+        degree_monoid()->mult(degree(i), G->degree(j), deg);
+        result->append(deg);
       }
 
   degree_monoid()->remove(deg);
@@ -293,7 +293,7 @@ FreeModule *FreeModule::exterior(int p) const
 
   int rk = rank();
 
-  if (p == 0) 
+  if (p == 0)
     return get_ring()->make_FreeModule(1);
   else
     result = new_free();
@@ -309,7 +309,7 @@ FreeModule *FreeModule::exterior(int p) const
       degree_monoid()->one(deg);
 
       for (int r=0; r<p; r++)
-	degree_monoid()->mult(deg, degree(a[r]), deg);
+        degree_monoid()->mult(deg, degree(a[r]), deg);
 
       result->append(deg);
     }
@@ -331,43 +331,43 @@ struct FreeModule_symm {
   FreeModule *symm1_result; // what is being computed
   int *symm1_deg; // used in recursion
 
-  void symm1(int lastn,	     // can use lastn..rank()-1 in product
-	     int pow) const   // remaining power to take
+  void symm1(int lastn,      // can use lastn..rank()-1 in product
+             int pow) const   // remaining power to take
   {
     if (pow == 0)
       symm1_result->append(symm1_deg);
     else
       {
-	for (int i=lastn; i<F->rank(); i++)
-	  {
-	    // increase symm1_deg, with e_i
-	    D->mult(symm1_deg, F->degree(i), symm1_deg);
-	    
-	    symm1(i, pow-1);
-	    
-	    // decrease symm1_deg back
-	    D->divide(symm1_deg, F->degree(i), symm1_deg);
-	  }
+        for (int i=lastn; i<F->rank(); i++)
+          {
+            // increase symm1_deg, with e_i
+            D->mult(symm1_deg, F->degree(i), symm1_deg);
+
+            symm1(i, pow-1);
+
+            // decrease symm1_deg back
+            D->divide(symm1_deg, F->degree(i), symm1_deg);
+          }
       }
   }
-  
+
   FreeModule_symm(const FreeModule *F0, int n0)
-    : F(F0), 
+    : F(F0),
       D(F0->degree_monoid()),
-      n(n0), 
+      n(n0),
       symm1_result(0),
       symm1_deg(0) { }
 
   FreeModule *value() {
     if (symm1_result == 0)
       {
-	symm1_result = F->get_ring()->make_FreeModule();
-	if (n >= 0)
-	  {
-	    symm1_deg = D->make_one();
-	    symm1(0, n);
-	    D->remove(symm1_deg);
-	  }
+        symm1_result = F->get_ring()->make_FreeModule();
+        if (n >= 0)
+          {
+            symm1_deg = D->make_one();
+            symm1(0, n);
+            D->remove(symm1_deg);
+          }
       }
     return symm1_result;
   }
@@ -397,7 +397,7 @@ int FreeModule::lowest_primary_degree() const
     {
       int a = primary_degree(i);
       if (a < result)
-	result = a;
+        result = a;
     }
   return result;
 }
@@ -410,7 +410,7 @@ int FreeModule::highest_primary_degree() const
     {
       int a = primary_degree(i);
       if (a > result)
-	result = a;
+        result = a;
     }
   return result;
 }
@@ -434,4 +434,5 @@ void FreeModule::text_out(buffer &o) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

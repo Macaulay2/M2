@@ -25,8 +25,8 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 }
 
 bool LLLoperations::initializeLLL(const MutableMatrix *A,
-			    gmp_QQ threshold,
-			    MutableMatrix *& LLLstate)
+                            gmp_QQ threshold,
+                            MutableMatrix *& LLLstate)
 {
   // First check m: should be a matrix over globalZZ.
   if (A == 0 || A->get_ring() != globalZZ)
@@ -48,7 +48,7 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
 
   // LLLstate has n+4 columns, and n rows.
   // First n columns: LLLstate(i,i) = D#i
-  //                  LLLstate(i,j) = lambda#(j,i) for 
+  //                  LLLstate(i,j) = lambda#(j,i) for
   // Last four columns just have entries in row 0:
   // The entries are: k, kmax, alphaTop, alphaBottom: all are ZZ values.
 
@@ -68,12 +68,12 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
 }
 
 bool LLLoperations::Lovasz(MutableMatrix *lambda,
-			   int k,
-			   ring_elem alphaTop,
-			   ring_elem alphaBottom)
+                           int k,
+                           ring_elem alphaTop,
+                           ring_elem alphaBottom)
 {
-  // Test:alphaBottom * (D#(k-2) * D#k + lambda#(k,k-1)^2) < 
-  //	          alphaTop * D#(k-1)^2
+  // Test:alphaBottom * (D#(k-2) * D#k + lambda#(k,k-1)^2) <
+  //              alphaTop * D#(k-1)^2
   ring_elem D2,D1,D,L;
   mpz_t a,b;
   lambda->get_entry(k-1,k-1,D1);
@@ -94,7 +94,7 @@ bool LLLoperations::Lovasz(MutableMatrix *lambda,
       mpz_add(a,a,b);
     }
   mpz_mul(a,a,alphaBottom.get_mpz());  // This is the LHS.
-  
+
   mpz_mul(b,D1.get_mpz(),D1.get_mpz());
   mpz_mul(b,alphaTop.get_mpz(),b); // RHS
   int cmp = mpz_cmp(a,b);
@@ -104,9 +104,9 @@ bool LLLoperations::Lovasz(MutableMatrix *lambda,
 }
 
 void LLLoperations::REDI(int k, int ell,
-			 MutableMatrix *A,
-			 MutableMatrix *Achange, // can be NULL
-			 MutableMatrix *lambda)
+                         MutableMatrix *A,
+                         MutableMatrix *Achange, // can be NULL
+                         MutableMatrix *lambda)
 {
   // set q = ...
   // negate q.
@@ -129,8 +129,8 @@ void LLLoperations::REDI(int k, int ell,
   //A->addColumnMultiple(ell,q,k);
   //lambda->addColumnMultiple(ell,q,k);
 
-  A->column_op(k,q,ell); 
-  if (Achange) Achange->column_op(k,q,ell); 
+  A->column_op(k,q,ell);
+  if (Achange) Achange->column_op(k,q,ell);
   lambda->column_op(k,q,ell);
 
   mpz_clear(c);
@@ -138,9 +138,9 @@ void LLLoperations::REDI(int k, int ell,
 }
 
 void LLLoperations::SWAPI(int k, int kmax,
-			  MutableMatrix *A,
-			  MutableMatrix *Achange, // can be NULL
-			  MutableMatrix *lambda)
+                          MutableMatrix *A,
+                          MutableMatrix *Achange, // can be NULL
+                          MutableMatrix *lambda)
 {
   int i;
   mpz_t a,b,B,C1,C2,D,D1,lam;
@@ -174,7 +174,7 @@ void LLLoperations::SWAPI(int k, int kmax,
       lambda->set_entry(k,k-1,globalZZ->from_int(0));
       // (k-1,k-1) is set below.
     }
-  
+
   // B := (D#(k-2) * D#k + lam^2) // D#(k-1);
   if (k == 1)
     mpz_set(a,D);
@@ -188,34 +188,34 @@ void LLLoperations::SWAPI(int k, int kmax,
   mpz_add(a,a,b);
   mpz_fdiv_q(B,a,D1);
   lambda->set_entry(k-1,k-1,globalZZ->from_int(B));
-  
+
   // scan(k+1..C.kmax, i-> (
-  //	 t := lambda#(i,k);
-  //	 lambda#(i,k) = (D#k * lambda#(i,k-1) - lam * t) // D#(k-1);
-  //	 lambda#(i,k-1) = (B*t + lam*lambda#(i,k))//(D#k);));
+  //     t := lambda#(i,k);
+  //     lambda#(i,k) = (D#k * lambda#(i,k-1) - lam * t) // D#(k-1);
+  //     lambda#(i,k-1) = (B*t + lam*lambda#(i,k))//(D#k);));
   for (i=k+1; i<=kmax; i++)
     {
       ring_elem s,t;
       bool s_notzero = lambda->get_entry(k-1,i,s);
       bool t_notzero = lambda->get_entry(k,i,t);
       if (s_notzero)
-	mpz_mul(a,D, s.get_mpz());
+        mpz_mul(a,D, s.get_mpz());
       else
-	mpz_set_ui(a,0);
+        mpz_set_ui(a,0);
       // lambda#(i,k) = (D#k * lambda#(i,k-1) - lam * t) // D#(k-1);
       if (t_notzero)
-	mpz_mul(b,lam,t.get_mpz());
+        mpz_mul(b,lam,t.get_mpz());
       else
-	mpz_set_ui(b,0);
+        mpz_set_ui(b,0);
       mpz_sub(a,a,b);
       mpz_fdiv_q(C1,a,D1);
 
       // lambda#(i,k-1) = (B*t + lam*lambda#(i,k))//(D#k);));
       mpz_mul(b,lam,C1);
       if (t_notzero)
-	mpz_mul(a,B,t.get_mpz());
+        mpz_mul(a,B,t.get_mpz());
       else
-	mpz_set_ui(a,0);
+        mpz_set_ui(a,0);
 
       mpz_add(a,a,b);
       mpz_fdiv_q(C2,a,D);
@@ -234,9 +234,9 @@ void LLLoperations::SWAPI(int k, int kmax,
 }
 
 int LLLoperations::doLLL(MutableMatrix *A,
-			 MutableMatrix *Achange,
-			 MutableMatrix *LLLstate,
-			 int nsteps)
+                         MutableMatrix *Achange,
+                         MutableMatrix *LLLstate,
+                         int nsteps)
 {
   int n = A->n_cols();
   if (n == 0) return COMP_DONE;
@@ -262,74 +262,74 @@ int LLLoperations::doLLL(MutableMatrix *A,
   while (k < n && nsteps != 0 && !test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
     {
       if (M2_gbTrace >= 1)
-	{
-	  o.reset();
-	  o << ".";
-	  if (M2_gbTrace >= 2)
-	    o << k;
-	  if (nsteps % 20 == 0)
-	    o << newline;
-	  emit(o.str());
-	}
+        {
+          o.reset();
+          o << ".";
+          if (M2_gbTrace >= 2)
+            o << k;
+          if (nsteps % 20 == 0)
+            o << newline;
+          emit(o.str());
+        }
       nsteps--;
 
       if (k > kmax)
-	{
-	  if (M2_gbTrace == 1)
-	    {
-	      o.reset();
-	      o << "." << k;
-	      if (nsteps % 20 == 0)
-		o << newline;
-	      emit(o.str());
-	    }
+        {
+          if (M2_gbTrace == 1)
+            {
+              o.reset();
+              o << "." << k;
+              if (nsteps % 20 == 0)
+                o << newline;
+              emit(o.str());
+            }
 
-	  kmax = k;
-	  for (int j=0; j<=k; j++)
-	    {
-	      ring_elem u;
-	      A->dot_product(k,j,u);
-	      for (int i=0; i<=j-1; i++)
-		{
-		  // u = (D#i * u - lambda#(k,i) * lambda#(j,i)) // D#(i-1)
-		  ring_elem Di, mki, mji, Di1;
-		  LLLstate->get_entry(i,i,Di);
-		  globalZZ->mult_to(u, Di);
-		  if (LLLstate->get_entry(i,k,mki) &&  LLLstate->get_entry(i,j,mji))
-		    {
-		      ring_elem t1 = globalZZ->mult(mki,mji);
-		      globalZZ->subtract_to(u,t1);
-		    }
-		  if (i > 0)
-		    {
-		      LLLstate->get_entry(i-1,i-1,Di1);  // Cannot be zero!!
-		      ring_elem t1 = globalZZ->divide(u,Di1);
-		      globalZZ->remove(u);
-		      u = t1;
-		    }
-		}
-	      // At this point we have our element:
-	      LLLstate->set_entry(j,k,u);
-	      if (j == k && globalZZ->is_zero(u))
-		{
-		  ERROR("LLL vectors not independent");
-		  return COMP_ERROR;
-		}
-	    }
-	} // end of the k>kmax initialization
+          kmax = k;
+          for (int j=0; j<=k; j++)
+            {
+              ring_elem u;
+              A->dot_product(k,j,u);
+              for (int i=0; i<=j-1; i++)
+                {
+                  // u = (D#i * u - lambda#(k,i) * lambda#(j,i)) // D#(i-1)
+                  ring_elem Di, mki, mji, Di1;
+                  LLLstate->get_entry(i,i,Di);
+                  globalZZ->mult_to(u, Di);
+                  if (LLLstate->get_entry(i,k,mki) &&  LLLstate->get_entry(i,j,mji))
+                    {
+                      ring_elem t1 = globalZZ->mult(mki,mji);
+                      globalZZ->subtract_to(u,t1);
+                    }
+                  if (i > 0)
+                    {
+                      LLLstate->get_entry(i-1,i-1,Di1);  // Cannot be zero!!
+                      ring_elem t1 = globalZZ->divide(u,Di1);
+                      globalZZ->remove(u);
+                      u = t1;
+                    }
+                }
+              // At this point we have our element:
+              LLLstate->set_entry(j,k,u);
+              if (j == k && globalZZ->is_zero(u))
+                {
+                  ERROR("LLL vectors not independent");
+                  return COMP_ERROR;
+                }
+            }
+        } // end of the k>kmax initialization
       REDI(k,k-1,A,Achange,LLLstate);
       if (Lovasz(LLLstate,k,alphaTop,alphaBottom))
-	{
-	  SWAPI(k,kmax,A,Achange,LLLstate);
-	  k--;
-	  if (k == 0) k = 1;
-	}
+        {
+          SWAPI(k,kmax,A,Achange,LLLstate);
+          k--;
+          if (k == 0) k = 1;
+        }
       else
-	{
-	  for (int ell=k-2; ell>=0; ell--)
-	    REDI(k,ell,A,Achange,LLLstate);
-	  k++;
-	}
+        {
+          for (int ell=k-2; ell>=0; ell--)
+            REDI(k,ell,A,Achange,LLLstate);
+          k++;
+        }
     }
 
   // Before returning, reset k,kmax:
@@ -341,9 +341,9 @@ int LLLoperations::doLLL(MutableMatrix *A,
   return COMP_INTERRUPTED;
 }
 
-bool LLLoperations::LLL(MutableMatrix *A, 
-			MutableMatrix *Achange, // can be NULL
-			gmp_QQ threshold)
+bool LLLoperations::LLL(MutableMatrix *A,
+                        MutableMatrix *Achange, // can be NULL
+                        gmp_QQ threshold)
 {
   MutableMatrix *LLLstate;
   if (!initializeLLL(A,threshold,LLLstate))
@@ -359,4 +359,5 @@ bool LLLoperations::LLL(MutableMatrix *A,
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

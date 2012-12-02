@@ -35,16 +35,16 @@ private:
 
   // In the singly graded case: collect every monomial whose weight lies >= weight of
   // lo_degree (kb_target_lo_weight), and <= weight of hi_degree (kb_target_hi_weight).
-  // (resp -infty, infty, if lo_degree resp hi_degree is null).  (NO: that's not right (!), because ordering of the weights might 
+  // (resp -infty, infty, if lo_degree resp hi_degree is null).  (NO: that's not right (!), because ordering of the weights might
   // be the reverse of the ordering of the degrees, if the heft vector is negative.)
   //
   // in multi-graded case, we can only collect one degree, or the entire module.
   // so: lo_degree and hi_degree must be the same (null, or same degree vector).
 
   int * kb_exp; // exponent vector being constructed recursively
-  int kb_exp_weight; // weight of this exponent vector  
+  int kb_exp_weight; // weight of this exponent vector
 
-  int kb_target_lo_weight; // only valid if lo_degree is not null 
+  int kb_target_lo_weight; // only valid if lo_degree is not null
   int kb_target_hi_weight; // only valid if hi_degree is not null
 
   int * kb_target_multidegree; // in multigraded case this is not null, and is the
@@ -54,7 +54,7 @@ private:
   int kb_comp;
 
   int          * kb_mon;
-  
+
   MonomialIdeal* kb_monideal;
 
   bool kb_error; // set if ERROR has been called, e.g. if a full basis of a non 0-diml module is asked for
@@ -64,13 +64,13 @@ private:
   void basis0_singly_graded(int firstvar);
   void basis0_multi_graded(int firstvar);
 
-  KBasis(const Matrix *bottom, 
-	 const int * lo_degree,
-	 const int * hi_degree,
-	 M2_arrayint wt, 
-	 M2_arrayint vars,
-	 bool do_truncation,
-	 int limit);
+  KBasis(const Matrix *bottom,
+         const int * lo_degree,
+         const int * hi_degree,
+         M2_arrayint wt,
+         M2_arrayint vars,
+         bool do_truncation,
+         int limit);
 
   ~KBasis() {}
 
@@ -78,22 +78,22 @@ private:
 
   Matrix *value() { return(kb_error ? 0 : mat.to_matrix()); }
 public:
-  static Matrix *k_basis(const Matrix *bottom, 
-			 M2_arrayint lo_degree,
-			 M2_arrayint hi_degree,
-			 M2_arrayint heft, 
-			 M2_arrayint vars,
-			 bool do_truncation,
-			 int limit);
+  static Matrix *k_basis(const Matrix *bottom,
+                         M2_arrayint lo_degree,
+                         M2_arrayint hi_degree,
+                         M2_arrayint heft,
+                         M2_arrayint vars,
+                         bool do_truncation,
+                         int limit);
 };
 
-KBasis::KBasis(const Matrix *bottom, 
-	       const int * lo_degree0,
-	       const int * hi_degree0,
-	       M2_arrayint heft_vector0, 
-	       M2_arrayint vars0,
-	       bool do_truncation0,
-	       int limit0)
+KBasis::KBasis(const Matrix *bottom,
+               const int * lo_degree0,
+               const int * hi_degree0,
+               M2_arrayint heft_vector0,
+               M2_arrayint vars0,
+               bool do_truncation0,
+               int limit0)
   : bottom_matrix(bottom),
     heft_vector(heft_vector0),
     vars(vars0),
@@ -123,7 +123,7 @@ KBasis::KBasis(const Matrix *bottom,
       computation_type = KB_MULTI;
       typ_str = "multi";
     }
-    
+
   //  fprintf(stderr, "computation type is %s\n", typ_str);
   // Compute the (positive) weights of each of the variables in 'vars'.
 
@@ -140,8 +140,8 @@ KBasis::KBasis(const Matrix *bottom,
     }
   deletearray(exp);
 
-  
-  
+
+
   // Set the recursion variables
   kb_exp = newarray_atomic_clear(int, P->n_vars());
   kb_exp_weight = 0;
@@ -191,7 +191,7 @@ void KBasis::basis0_full(int firstvar)
   if (kb_monideal->search_expvector(kb_exp,b)) return;
 
   insert();
-  if (limit == 0) return;	    
+  if (limit == 0) return;
 
   for (int i=firstvar; i<vars->len; i++)
     {
@@ -227,7 +227,7 @@ void KBasis::basis0_singly_graded(int firstvar)
 
       kb_exp[v]++;
       kb_exp_weight += var_wts[i];
-      
+
       basis0_singly_graded(i);
 
       kb_exp[v]--;
@@ -254,20 +254,20 @@ void KBasis::basis0_multi_graded(int firstvar)
   if (kb_exp_weight == kb_target_lo_weight)
     {
       if (EQ == ntuple::lex_compare(heft_vector->len, kb_target_multidegree, kb_exp_multidegree))
-	insert();
+        insert();
       return;
     }
 
   for (int i=firstvar; i<vars->len; i++)
     {
       int v = vars->array[i];
-      
+
       kb_exp[v]++;
       kb_exp_weight += var_wts[i];
       ntuple::mult(heft_vector->len, kb_exp_multidegree, var_degs + (heft_vector->len * v), kb_exp_multidegree);
-      
+
       basis0_multi_graded(i);
-      
+
       kb_exp[v]--;
       kb_exp_weight -= var_wts[i];
       ntuple::divide(heft_vector->len, kb_exp_multidegree, var_degs + (heft_vector->len * v), kb_exp_multidegree);
@@ -287,7 +287,7 @@ static bool all_have_pure_powers(const MonomialIdeal *M, M2_arrayint vars)
       int v = vars->array[i];
       exp[v] = lcms->array[v];
       if (!M->search_expvector(exp, b))
-	return false;
+        return false;
       exp[v] = 0;
     }
   return true;
@@ -309,21 +309,21 @@ void KBasis::compute()
 
       // Make the monomial ideal: this should contain only
       // monomials involving 'vars'.
-      kb_monideal = bottom_matrix->make_monideal(i, true); 
+      kb_monideal = bottom_matrix->make_monideal(i, true);
         // the true means: over ZZ, don't consider monomials with non-unit lead coeffs
 
       if (kb_monideal->is_one()) continue;
       if (hi_degree == NULL)
-	{
-	  // check here that kb_monideal is 0-dimensional
-	  // (at least for the variables being used):
-	  if (!all_have_pure_powers(kb_monideal, vars))
-	    {
-	      kb_error = true;
-	      ERROR("module given is not finite over the base");
-	      return;
-	    }
-	}
+        {
+          // check here that kb_monideal is 0-dimensional
+          // (at least for the variables being used):
+          if (!all_have_pure_powers(kb_monideal, vars))
+            {
+              kb_error = true;
+              ERROR("module given is not finite over the base");
+              return;
+            }
+        }
 
       const int *component_degree = bottom_matrix->rows()->degree(i);
       D->to_expvector(component_degree, kb_exp_multidegree);
@@ -332,29 +332,29 @@ void KBasis::compute()
       // Do the recursion
       switch (computation_type) {
       case KB_FULL:
-	basis0_full(0);
-	break;
+        basis0_full(0);
+        break;
       case KB_SINGLE:
-	basis0_singly_graded(0);
-	break;
+        basis0_singly_graded(0);
+        break;
       case KB_MULTI:
-	basis0_multi_graded(0);
-	break;
+        basis0_multi_graded(0);
+        break;
       }
     }
 }
 
-Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom, 
-			      M2_arrayint lo_degree,
-			      M2_arrayint hi_degree,
-			      M2_arrayint heft, 
-			      M2_arrayint vars,
-			      bool do_truncation,
-			      int limit)
+Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
+                              M2_arrayint lo_degree,
+                              M2_arrayint hi_degree,
+                              M2_arrayint heft,
+                              M2_arrayint vars,
+                              bool do_truncation,
+                              int limit)
 {
   // There are essentially 3 situations:
   // (a) basis(M) -- lo_degree and hi_degree are not given
-  //     in this case, only need that for each variable in 'vars', 
+  //     in this case, only need that for each variable in 'vars',
   //     some power is an initial term of 'bottom' (for each row of 'bottom').
   //     heft is not used here, or considered.
   // (b) basis(lo,hi,M) -- case when the ring is singly-graded
@@ -370,12 +370,12 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
   //     and kb_exp_multidegree (of length #d).
   //   if do_truncation, then any generator with heft > kb_target_lo_heft is
   //   placed in the resulting matrix
-  // 
+  //
   // Further assumptions:
   //  1 <= #heft <= degreeRank P
   //  #heft = #lo_degree = #hi_degree, if these are not 0.
-  //  
-  //    
+  //
+  //
   // Do some checks first, return 0 if not good.
   const PolynomialRing *P = bottom->get_ring()->cast_to_PolynomialRing();
   if (P == 0) return Matrix::identity(bottom->rows());
@@ -405,12 +405,12 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
   // If heft->len is > 1, and both lo and hi are non-null,
   // they need to be the same
   if (heft->len > 1 && lo && hi)
-    for (int i = 0; i<heft->len; i++) 
+    for (int i = 0; i<heft->len; i++)
       if (lo_degree->array[i] != hi_degree->array[i])
-	{
-	  ERROR("expected degree bounds to be equal");
-	  return 0;
-	}
+        {
+          ERROR("expected degree bounds to be equal");
+          return 0;
+        }
 
   KBasis KB(bottom,lo,hi,heft,vars,do_truncation,limit);
 
@@ -418,10 +418,10 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
   if (lo || hi)
     for (int i=0; i<vars->len; i++)
       if (KB.var_wts[i] <= 0)
-	{
-	  ERROR("basis: computation requires a heft form positive on the degrees of the variables");
-	  return 0;
-	}
+        {
+          ERROR("basis: computation requires a heft form positive on the degrees of the variables");
+          return 0;
+        }
 
   // This next line will happen if both lo,hi degrees are given, and they are
   // different.  This can only be the singly generated case, and in that case
@@ -434,15 +434,16 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
 }
 
 const Matrix *Matrix::basis(M2_arrayint lo_degree,
-			    M2_arrayint hi_degree,
-			    M2_arrayint heft, 
-			    M2_arrayint vars,
-			    bool do_truncation,
-			    int limit) const
+                            M2_arrayint hi_degree,
+                            M2_arrayint heft,
+                            M2_arrayint vars,
+                            bool do_truncation,
+                            int limit) const
 {
   return KBasis::k_basis(this,lo_degree,hi_degree,heft,vars,do_truncation,limit);
 }
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e matrix-kbasis.o "
+// indent-tabs-mode: nil
 // End:

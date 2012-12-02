@@ -8,7 +8,7 @@ Actually, it seems that the fields could have variable widths, with no problem.
 
 The length of U is less than or equal to the length of T.
 
-Encoding from type U to an unsigned field is done in such a way that the ordering is either 
+Encoding from type U to an unsigned field is done in such a way that the ordering is either
 preserved or reversed.
 
 Example:
@@ -44,13 +44,13 @@ The encoding will be done with an invertible function from a vector of exponents
 
 Monomial operations should not require decoding: comparison, multiplication, division,
   divisibility checking (how ??).  For divisibility checking, this means that the exponents
-  themselves, some possibly with sign reversed, must appear among the fields, and that 
+  themselves, some possibly with sign reversed, must appear among the fields, and that
   we check just them.  A weight formed from a weight vector with components of mixed sign
   will not reflect divisibility, so must be ignored.  If the components have the same sign,
   it might be useful to check it, because it might come first and give us a quick negative answer
   half the time.
 
-Comparison of encoded monomials is always unsigned and lexicographic; 
+Comparison of encoded monomials is always unsigned and lexicographic;
   thus the desired monomial ordering will dictate the encoding used.
   To implement multiple ordering steps, redundant encoding fields will be used.
      E.g., a weight can be prepended to the array of exponents.
@@ -80,14 +80,14 @@ Initial choices:
   4. Each area is represented by a template class.  To make it appear that
      a monomial ordering has just one area, we can have two types of area:
          -- a normal area, as described below
-	 -- a composite area, which contains a sequence of others, and
-  	    implements composite operations for them.  A composite area could (eventually)
-  	    have weight vectors of its own that involve variables from all the
-	    areas it contains, and the weights would be stored in their own
-  	    bins.  A composite area would normally possess just
-	    the variables that are possessed by each of its subareas, and no
-	    others.  There could be (eventually) various types of composite
-	    area.
+         -- a composite area, which contains a sequence of others, and
+            implements composite operations for them.  A composite area could (eventually)
+            have weight vectors of its own that involve variables from all the
+            areas it contains, and the weights would be stored in their own
+            bins.  A composite area would normally possess just
+            the variables that are possessed by each of its subareas, and no
+            others.  There could be (eventually) various types of composite
+            area.
   5. Overflow is signalled with "throw(exc::overflow_error(char *))".
   6. All routines will update references to pointers, so composite areas can be
      implemented.  Thus the caller has to save a separate copy of the pointer.
@@ -95,7 +95,7 @@ Initial choices:
      certain weight
   8. "degree" will mean weight with respect to a particular weight vector;
      we need to know a bound on the degrees for which all monomials can be
-     safely encode without overflow  
+     safely encode without overflow
 
 Thus the description of a monomial type will include:
    (choice of U, the integer type used to hold a field)
@@ -110,35 +110,35 @@ Thus the description of a monomial type will include:
      the number of variables
      the number of fields
      the choice of SIGNED, SIGNED_REVERSED, UNSIGNED, UNSIGNED_REVERSED;
-     	 this need not agree with whether U is signed
+         this need not agree with whether U is signed
      the number of bits per field (although future implementations of new
-     	 area types might allow fields of varying widths, in which case
-	 this would be an array of numbers).  This number is silently increased
+         area types might allow fields of varying widths, in which case
+         this would be an array of numbers).  This number is silently increased
          to the highest number that packs just as many fields into each bin.
-	 The type U should be large enough to hold a field value, even though
-	 they may differ in signedness: for example, if U is int32_t, and the 
-	 fields are to be unsigned, then the maximum number of bits per field 
-	 is 31, but if the fields are to be signed, then it's 32 bits per field
+         The type U should be large enough to hold a field value, even though
+         they may differ in signedness: for example, if U is int32_t, and the
+         fields are to be unsigned, then the maximum number of bits per field
+         is 31, but if the fields are to be signed, then it's 32 bits per field
      the number of fields per bin (as many as will fit, except with
-     	 signed fields, we may reduce that by one when the field width
-	 is a power of 2 in order to provide a guard bit at the top)
+         signed fields, we may reduce that by one when the field width
+         is a power of 2 in order to provide a guard bit at the top)
      the number of bins (as many as are needed)
      the encoding routine, with overflow checking
      the decoding routine
      the comparison routine (overall ordering is lex, area by area);
-     	 Optimization idea: if the user gives weights, one may be able to precompute
-	 the minimum number of fields that need to be examined to give a total 
-	 ordering; if grevlex is stored redundantly, e.g., as (i+j+k,-k,-j,-i),
-	 the same remark applies: just check 3 fields.  If we can omit looking
-   	 at enough fields, maybe we could omit looking at an entire bin, which
-	 is when it would be worthwhile.
+         Optimization idea: if the user gives weights, one may be able to precompute
+         the minimum number of fields that need to be examined to give a total
+         ordering; if grevlex is stored redundantly, e.g., as (i+j+k,-k,-j,-i),
+         the same remark applies: just check 3 fields.  If we can omit looking
+         at enough fields, maybe we could omit looking at an entire bin, which
+         is when it would be worthwhile.
      <noncommutative versions of the following routines may multiply a static
         variable by a sign or zero or binomial coefficient>
      the multiplication routine, with overflow checking
      the multiplication routine, without overflow checking
      the division routine, with overflow checking (if the fields
          are unsigned, replace resulting negative exponents by 0 instead
-	 of signalling an error)
+         of signalling an error)
      the division routine, without overflow checking
      the divisibility routine, with an array of masks
            to tell which fields should be examined, and another array of

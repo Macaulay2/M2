@@ -11,8 +11,8 @@
 const Monoid * Ring::degree_monoid() const { return degree_ring->getMonoid(); }
 
 void Ring::initialize_ring(int P0,
-			   const PolynomialRing *DR,
-			   const M2_arrayint heft_vec)
+                           const PolynomialRing *DR,
+                           const M2_arrayint heft_vec)
 {
   // Remember: if this is a poly ring, the ring is K[M].
   // If this is a basic routine, K = this, M = trivial monoid.
@@ -37,46 +37,46 @@ Ring::~Ring()
 }
 
 FreeModule *Ring::make_FreeModule() const
-{ 
-  return new FreeModule(this,0,false); 
+{
+  return new FreeModule(this,0,false);
 }
 
 FreeModule *Ring::make_Schreyer_FreeModule() const
-{ 
-  return new FreeModule(this,0,true); 
+{
+  return new FreeModule(this,0,true);
 }
 
 FreeModule *Ring::make_FreeModule(int n) const
-{ 
+{
   return new FreeModule(this,n,false);
 }
 
-bool Ring::is_field() const 
-{ 
-  return _isfield == 1; 
+bool Ring::is_field() const
+{
+  return _isfield == 1;
 }
 
-bool Ring::declare_field() 
-{ 
+bool Ring::declare_field()
+{
   if (_isfield >= 0)
     {
-      _isfield = 1; 
+      _isfield = 1;
       return true;
     }
-  else 
+  else
     {
       ERROR("attempting to declare a ring with known non-units to be a field");
       return false;
     }
 }
-ring_elem Ring::get_non_unit() const 
-{ 
+ring_elem Ring::get_non_unit() const
+{
   if (_isfield >= 0) return zero();
-  return copy(_non_unit); 
+  return copy(_non_unit);
 }
 
 void Ring::set_non_unit(ring_elem non_unit) const
-{ 
+{
   if (_isfield == 1) // i.e. declared to be a field
     ERROR("a non unit was found in a ring declared to be a field");
   const_cast<Ring *>(this)->_isfield = -1;
@@ -101,10 +101,10 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
       mpz_neg(n,n);
       ff = invert(ff);
       if (is_zero(ff))
-	{
-	  ERROR("either element not invertible, or no method available to compute its inverse");
-	  return ff;
-	}
+        {
+          ERROR("either element not invertible, or no method available to compute its inverse");
+          return ff;
+        }
     }
   ring_elem prod = from_int(1);
   ring_elem base = copy(ff);
@@ -113,21 +113,21 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
   for (;;)
     {
       if (RingZZ::mod_ui(n,2) == 1)
-	{
-	  tmp = mult(prod, base);
-	  prod = tmp;
-	}
+        {
+          tmp = mult(prod, base);
+          prod = tmp;
+        }
       mpz_tdiv_q_2exp(n, n, 1);
       if (mpz_sgn(n) == 0)
-	{
-	  mpz_clear(n);
-	  return prod;
-	}
+        {
+          mpz_clear(n);
+          return prod;
+        }
       else
-	{
-	  tmp = mult(base, base);
-	  base = tmp;
-	}
+        {
+          tmp = mult(base, base);
+          base = tmp;
+        }
     }
 }
 
@@ -140,10 +140,10 @@ ring_elem Ring::power(const ring_elem gg, int n) const
       n = -n;
       ff = invert(ff);
       if (is_zero(ff))
-	{
-	  ERROR("negative power of noninvertible element requested");
-	  return ff;
-	}
+        {
+          ERROR("negative power of noninvertible element requested");
+          return ff;
+        }
     }
 
   // The exponent 'n' should be > 0 here.
@@ -154,20 +154,20 @@ ring_elem Ring::power(const ring_elem gg, int n) const
   for (;;)
     {
       if ((n % 2) != 0)
-	{
-	  tmp = mult(prod, base);
-	  prod = tmp;
-	}
+        {
+          tmp = mult(prod, base);
+          prod = tmp;
+        }
       n >>= 1;
       if (n == 0)
-	{
-	  return prod;
-	}
+        {
+          return prod;
+        }
       else
-	{
-	  tmp = mult(base, base);
-	  base = tmp;
-	}
+        {
+          tmp = mult(base, base);
+          base = tmp;
+        }
     }
 }
 
@@ -209,8 +209,8 @@ ring_elem Ring::quotient(const ring_elem f, const ring_elem g) const
   return divide(f,g);
 }
 
-ring_elem Ring::remainderAndQuotient(const ring_elem f, const ring_elem g, 
-				     ring_elem &quot) const
+ring_elem Ring::remainderAndQuotient(const ring_elem f, const ring_elem g,
+                                     ring_elem &quot) const
 {
   if (is_zero(g))
     {
@@ -348,7 +348,7 @@ ring_elem Ring::divide_by_expvector(const int *exp, const ring_elem a) const
 
 ring_elem Ring::homogenize(const ring_elem f, int, int deg, M2_arrayint) const
 {
-  if (deg != 0) 
+  if (deg != 0)
     ERROR("homogenize: no homogenization exists");
   return f;
 }
@@ -432,32 +432,32 @@ SumCollector *Ring::make_SumCollector() const
 #if 0
 // #include "gbring.hpp"
 // Ring::trans_tag Ring::trans_type() const { return BASE; }
-// 
-// ring_elem Ring::trans_to_ringelem(ring_elem coeff, 
-// 				  const int *exp) const
+//
+// ring_elem Ring::trans_to_ringelem(ring_elem coeff,
+//                                const int *exp) const
 // {
 //   return coeff;
 // }
-// 
-// ring_elem Ring::trans_to_ringelem_denom(ring_elem coeff, 
-// 					ring_elem denom, 
-// 					int *exp) const
+//
+// ring_elem Ring::trans_to_ringelem_denom(ring_elem coeff,
+//                                      ring_elem denom,
+//                                      int *exp) const
 // {
 //   // To use this, the corresponding ring MUST have division defined
 //   return this->divide(coeff, denom);
 // }
-// 
-// void Ring::trans_from_ringelem(gbvectorHeap &H, 
-// 				    ring_elem coeff, 
-// 				    int comp, 
-// 				    int *exp,
-// 				    int firstvar) const
+//
+// void Ring::trans_from_ringelem(gbvectorHeap &H,
+//                                  ring_elem coeff,
+//                                  int comp,
+//                                  int *exp,
+//                                  int firstvar) const
 // {
 //   GBRing *GR = H.get_gb_ring();
 //   const FreeModule *F = H.get_freemodule();
-//   
+//
 //   gbvector *g = GR->gbvector_term_exponents(F, coeff, exp, comp);
-// 
+//
 //   H.add(g);
 // }
 #endif
@@ -468,4 +468,5 @@ SumCollector *Ring::make_SumCollector() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

@@ -8,49 +8,30 @@ HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/
 #     RPATH                /home/dan/src/M2/trunk/BUILD/Linux-x86_64/ubuntu/include/.././libraries/final/lib
 # That might happen to other sharable libraries we import
 # That's why it's better for sharable libraries to be distributed as separate packages.
-URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 
-CVSROOT = :pserver:anonymous@bdwgc.cvs.sourceforge.net:/cvsroot/bdwgc
-# cvs -z3 -d:pserver:anonymous@bdwgc.cvs.sourceforge.net:/cvsroot/bdwgc co -P bdwgc
+# URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 
-#VERSION = 7.1
-#PATCHFILE = @abs_srcdir@/patch-7.1
-#TARDIR = gc-7.1
+# we get the sources from
+#   https://github.com/ivmai/bdwgc/
+#   https://github.com/ivmai/libatomic_ops/
+# run the appropriate autoconf tools and tar them up
 
-# VERSION = 7.2alpha2
-# AOVERSION = -1.2
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-
-# VERSION = 7.2alpha4
-# AOVERSION = 
-# this version is not ready yet:
-#    misc.c:462: error: 'SIGRTMIN' undeclared (first use in this function)
-# bit it works under 32 bit ubuntu.  Perhaps it was darwin?
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-
-# VERSION = 7.2.2010.2.16
-# AOVERSION = 
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-# URL = http://www.math.uiuc.edu/Macaulay2/Extra
-
-# VERSION = 7.2alpha5-2010-09-03
-# TARDIR = gc-7.2alpha5
-# AOVERSION = 
-# # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-# URL = http://www.math.uiuc.edu/Macaulay2/Extra
-
-# VERSION = 7.2alpha6
-# AOVERSION = 
-
-VERSION = 7.2alpha7-2011-07-25
-TARDIR = gc-7.2alpha7
+VERSION = 7.3alpha1.2012.01.23
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 AOVERSION = 
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
+VLIMIT = 2000000
+MLIMIT = 2000000
+
+CONFIGOPTIONS += --enable-cplusplus
+
+# this tells it that libatomic_ops is included internally as a subdirectory
+CONFIGOPTIONS += --with-libatomic-ops=no
+
+# PRECONFIGURE = (cd libatomic_ops$(AOVERSION) && autoconf)
 
 #################################
 
-PRECONFIGURE = (cd libatomic_ops$(AOVERSION) && autoconf)
 VPATH = @srcdir@
 
 # ifeq (@ PTHREADS @,yes)
@@ -64,7 +45,14 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 ifeq (@DEBUG@,yes)
-CONFIGOPTIONS += --enable-gc-debug --enable-gc-assertions
+CONFIGOPTIONS += --enable-gc-debug
+
+# --enable-gc-assertions causes all the tests to fail on 64 bit mac os x
+#   because addresses of roots are added that are not a multiple of 8.
+#   One such address is "start", the linker defined symbol, which can be a
+#   non-multiple of 8 under gcc 4.6.2
+CONFIGOPTIONS += --enable-gc-assertions
+
 else
 # INSTALLTARGET = install-strip
 endif
@@ -72,8 +60,8 @@ CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-fina
 # PATCHFILE = @abs_srcdir@/patch-7.0
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
-CONFIGURECMD += && cd libatomic_ops$(AOVERSION) && $(CONFIGENV) ./configure --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
-BUILDCMD     += && $(MAKE) -C libatomic_ops$(AOVERSION) $(BUILDOPTIONS) $(BUILDTARGET)
+# CONFIGURECMD += && cd libatomic_ops$(AOVERSION) && $(CONFIGENV) ./configure --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
+# BUILDCMD     += && $(MAKE) -C libatomic_ops$(AOVERSION) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLCMD   += && $(MAKE) -C libatomic_ops$(AOVERSION) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 clean uninstall::
 	if [ -d $(LIBRARIESDIR) ] ; \

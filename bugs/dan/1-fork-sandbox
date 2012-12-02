@@ -10,10 +10,10 @@ or optionally, give an error.
 namely:
 
  if (0==fork()) {
-    • Prohibit new ﬁles, new sockets, etc., by setting the 
+    • Prohibit new files, new sockets, etc., by setting the 
       current and maximum RLIMIT_NOFILE limits to 0. 
       (with setrlimit(2))
-    • Prohibit ﬁlesystem access: chdir and chroot to an 
+    • Prohibit filesystem access: chdir and chroot to an 
       empty directory. 
     • Choose a uid dedicated to this process ID. This can 
       be as simple as adding the process ID to a base uid, 

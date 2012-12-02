@@ -22,7 +22,6 @@ public:
   const Ring * get_ring  ()             const { return R; }
 
   // ring arithmetic
-  int          int_of() const { return R->coerce_to_int(val); }
 
   bool is_zero() const;
   bool is_equal(const RingElement &b) const;
@@ -39,8 +38,8 @@ public:
   RingElement *operator/(const RingElement &b) const;
 #if 0
 //   RingElement *operator%(const RingElement &b) const;
-//   RingElement *divide(const RingElement &b, 
-// 		      RingElement * &rem) const;
+//   RingElement *divide(const RingElement &b,
+//                    RingElement * &rem) const;
 #endif
   RingElement *invert() const;
 
@@ -97,7 +96,7 @@ public:
   RingElement *fraction(const Ring *R, const RingElement *bottom) const;
 };
 
-inline RingElement::RingElement(const Ring *R0, ring_elem f) : 
+inline RingElement::RingElement(const Ring *R0, ring_elem f) :
   immutable_object(0), R(R0), val(f)
 {
 }
@@ -127,4 +126,5 @@ inline bool RingElement::is_equal(const RingElement &b) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

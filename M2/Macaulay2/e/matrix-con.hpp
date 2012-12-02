@@ -5,6 +5,9 @@
 #include "engine.h"
 #include "ring.hpp"
 
+/**
+ * \ingroup matrices
+ */
 class MatrixConstructor
 {
   const Ring *R;
@@ -13,7 +16,7 @@ class MatrixConstructor
   const FreeModule *cols; // If cols is given at the beginning, this is used.
   // If this is immutable, no changes are allowed, other than to replace the entire thing.
 
-  bool cols_frozen; // Once this is set, no more modifications to the 'cols' 
+  bool cols_frozen; // Once this is set, no more modifications to the 'cols'
                     // are allowed.  In particular, if the 'source' is set at
                     // the beginning via the constructor, and that free module is
                     // immutable, then no more changes are allowed.
@@ -24,9 +27,9 @@ class MatrixConstructor
 public:
   MatrixConstructor();
   MatrixConstructor(const FreeModule *target, int ncols);
-  MatrixConstructor(const FreeModule *target, const FreeModule *source, 
-		    const int *deg = 0);
-  
+  MatrixConstructor(const FreeModule *target, const FreeModule *source,
+                    const int *deg = 0);
+
   // The copy constructor just does the default thing: copy over all items.
 
   void append(vec v);
@@ -49,4 +52,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

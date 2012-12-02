@@ -3,20 +3,20 @@
 #include "monomial.hpp"
 #include "monoid.hpp"
 
-Monomial::Monomial() : 
+Monomial::Monomial() :
   immutable_object(0)
 {
   // This routine is private because it leaves the object in
   // an incorrect state... to be filled in by varpower routines.
 }
 
-Monomial::Monomial(int v, int e) : 
+Monomial::Monomial(int v, int e) :
   immutable_object(0)
 {
   varpower::var(v, e, val);
 }
 
-Monomial::Monomial(const int *vp) : 
+Monomial::Monomial(const int *vp) :
   immutable_object(0)
 {
   varpower::copy(vp, val);
@@ -46,8 +46,8 @@ Monomial *Monomial::make(M2_arrayint m)
   for (unsigned int i=2; i<m->len; i+=2)
     if (m->array[i-2] <= m->array[i])
       {
-	ERROR("Monomial expects variables in descending order");
-	return 0;
+        ERROR("Monomial expects variables in descending order");
+        return 0;
       }
   Monomial *result = new Monomial(m);
   if (error()) return 0;
@@ -134,8 +134,8 @@ void Monomial::monsyz(const Monomial &b, Monomial *&sa, Monomial *&sb) const
 {
   sa = new Monomial;
   sb = new Monomial;
-  varpower::monsyz(ints(), b.ints(), 
-		    sa->val, sb->val);
+  varpower::monsyz(ints(), b.ints(),
+                    sa->val, sb->val);
   sa->set_hash_code();
   sb->set_hash_code();
 }
@@ -184,4 +184,5 @@ Monomial *Monomial::radical() const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

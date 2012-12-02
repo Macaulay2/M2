@@ -92,9 +92,9 @@ void Gausser::dense_row_deallocate(dense_row &r) const
 }
 
 void Gausser::dense_row_fill_from_sparse(dense_row &r,
-					 int len,
-					 F4CoefficientArray sparse,
-					 int *comps) const
+                                         int len,
+                                         F4CoefficientArray sparse,
+                                         int *comps) const
 {
   int *elems = static_cast<int *>(r.coeffs);
   int *sparseelems = static_cast<int *>(sparse);
@@ -114,9 +114,9 @@ int Gausser::dense_row_next_nonzero(dense_row &r, int first, int last) const
 }
 
 void Gausser::dense_row_cancel_sparse(dense_row &r,
-				      int len,
-				      F4CoefficientArray sparse,
-				      int *comps) const
+                                      int len,
+                                      F4CoefficientArray sparse,
+                                      int *comps) const
 {
   int *elems = static_cast<int *>(r.coeffs);
   int *sparseelems = static_cast<int *>(sparse);
@@ -133,11 +133,11 @@ void Gausser::dense_row_cancel_sparse(dense_row &r,
 }
 
 void Gausser::dense_row_to_sparse_row(dense_row &r,
-				      int &result_len,
-				      F4CoefficientArray &result_sparse,
-				      int *&result_comps,
-				      int first,
-				      int last) const
+                                      int &result_len,
+                                      F4CoefficientArray &result_sparse,
+                                      int *&result_comps,
+                                      int first,
+                                      int last) const
 {
   int *elems = static_cast<int *>(r.coeffs);
   int len = 0;
@@ -151,14 +151,14 @@ void Gausser::dense_row_to_sparse_row(dense_row &r,
   for (int i=first; i<=last; i++)
     if (!Kp->is_zero(elems[i]))
       {
-	*in_sparse++ = elems[i];
-	*in_comps++ = i;
-	Kp->set_zero(elems[i]);
+        *in_sparse++ = elems[i];
+        *in_comps++ = i;
+        Kp->set_zero(elems[i]);
       }
 }
 
 void Gausser::sparse_row_make_monic(int len,
-				    F4CoefficientArray sparse) const
+                                    F4CoefficientArray sparse) const
 {
   int *elems = static_cast<int *>(sparse);
   int lead = *elems;
@@ -173,4 +173,5 @@ void Gausser::sparse_row_make_monic(int len,
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

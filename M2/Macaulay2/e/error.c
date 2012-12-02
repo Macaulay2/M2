@@ -42,7 +42,7 @@ void INTERNAL_ERROR(const char *s,...)
   vsprintf(buf,s,ap);
   va_end(ap);
   fprintf(stderr, "--internal error: %s\n", buf);
-  abort();			/* we should exit after an internal error, to avoid crashing */
+  abort();                      /* we should exit after an internal error, to avoid crashing */
 }
 
 int error()
@@ -60,5 +60,6 @@ const char *error_message()
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
 */

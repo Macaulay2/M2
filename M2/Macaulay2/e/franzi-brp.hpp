@@ -8,7 +8,7 @@
 #include <string>
 
 //////// CAREFUL ////////
-// addition is not const! It changes this 
+// addition is not const! It changes this
 //////// CAREFUL ////////
 
 using namespace std;
@@ -35,7 +35,7 @@ class BRP
   }
 
   public:
-  
+
   monomials m; // this is the ordered list of monomials represented as integers
 
   static bool isDivisibleBy(const brMonomial &a, const brMonomial &b) {
@@ -67,22 +67,22 @@ class BRP
   BRP operator*(const BRP &other) const;
   BRP operator*(const brMonomial &other) const;
 
-  unsigned int size() const {return static_cast<unsigned int>(m.size());} 
+  unsigned int size() const {return static_cast<unsigned int>(m.size());}
 
   bool isLeadingReducibleBy(const BRP &other) const;
   bool isLeadingReducibleBy(const brMonomial &other) const;
-  
+
   BRP remainder(const BRP &x) const; // this = ax + b, return remainder b of division by x
 
-  brMonomial LT() const { 
+  brMonomial LT() const {
 //    if ( (*this) == 0 ) {
 //      cerr << "ERROR, calling LT on 0" << endl;
 //      throw "calling LT on 0 polynomial";
 //    }
-    return *(m.begin()); 
+    return *(m.begin());
   } // Leading Term
 
-  bool reduceTail(const BRP &g); 
+  bool reduceTail(const BRP &g);
   // reduce tail of f with leading term of g
   // return true if a change happened, otherwise false
   // f is being changed to its reduction
@@ -97,4 +97,5 @@ typedef map<int,BRP> IntermediateBasis;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

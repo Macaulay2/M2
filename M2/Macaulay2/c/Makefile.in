@@ -40,7 +40,12 @@ endif
 LOADLIBES += @GC_LIBS@
 
 ############################## compiling
-scc1: $(OFILES)
+scc1: $(OFILES) 
+	@echo "LIBS: $(LIBS)"
+	@echo "LIBS: @LIBS@"
+	@echo "SCCFLAGS: $(SCCFLAGS)"
+	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) $(LIBS) -o scc1
+	
 $(OFILES) : $(HFILES)
 grammar.o: grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## debugging, and building *.d and *.dd test programs

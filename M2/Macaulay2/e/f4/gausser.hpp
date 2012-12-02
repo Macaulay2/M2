@@ -39,8 +39,8 @@ public:
 
   // leading coefficient
   int lead_coeff(F4CoefficientArray coeffs) const
-  { 
-    return (static_cast<int *>(coeffs))[0]; 
+  {
+    return (static_cast<int *>(coeffs))[0];
   }
 
   // other routines:
@@ -66,28 +66,28 @@ public:
   int dense_row_next_nonzero(dense_row &r, int first, int last) const;
 
   void dense_row_fill_from_sparse(dense_row &r,
-				  int len,
-				  F4CoefficientArray sparse,
-				  int *comps) const;
+                                  int len,
+                                  F4CoefficientArray sparse,
+                                  int *comps) const;
   // Fills 'r' from 'sparse' (and 'comps')
 
   void dense_row_cancel_sparse(dense_row &r,
-			       int len,
-			       F4CoefficientArray sparse,
-			       int *comps) const;
+                               int len,
+                               F4CoefficientArray sparse,
+                               int *comps) const;
   // dense += c * sparse, where c is chosen to cancel column comps[0].
   // There should also be a version of this routine which records this value c
   // into a F4CoefficientArray.
 
   void dense_row_to_sparse_row(dense_row &r,
-			       int &result_len,
-			       F4CoefficientArray &result_sparse,
-			       int *&result_comps,
-			       int first,
-			       int last) const;
+                               int &result_len,
+                               F4CoefficientArray &result_sparse,
+                               int *&result_comps,
+                               int first,
+                               int last) const;
 
   void sparse_row_make_monic(int len,
-			     F4CoefficientArray sparse) const;
+                             F4CoefficientArray sparse) const;
   int coeff_to_int(int f) const //anton
   {
     return Kp->to_int(f);

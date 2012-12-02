@@ -24,6 +24,7 @@ namespace M2 {
     ring_ZZp,
     ring_logZZp,
     ring_GF,
+     ring_FFPACK,
     ring_RRR,
     ring_CCC,
     ring_top = 8 // used to determine the number of ring types
@@ -66,7 +67,7 @@ namespace M2 {
   class RingLogZZp : RingInterface
   {
   };
-  
+
   // ring-gf.hpp
   class RingGF : RingInterface
   {
@@ -81,6 +82,20 @@ namespace M2 {
     void init_set(ElementType &a, long val) const { a = val; }
     void add_to(ElementType &a, const ElementType &b) const { a += b; }
   };
+
+   class RingFFPACK : RingInterface
+  {
+  public:
+    static const RingID ringID = ring_FFPACK;
+    typedef unsigned int ElementType;
+
+    RingFFPACK(int p, int n) {}
+
+    void initialize(unsigned long charac);
+
+    void init_set(ElementType &a, long val) const { a = val; }
+    void add_to(ElementType &a, const ElementType &b) const { a += b; }
+  };
   
   // ring-rr.hpp
   class RingRRR : RingInterface
@@ -89,7 +104,7 @@ namespace M2 {
     static const RingID ringID = ring_GF;
     typedef double ElementType;
   };
-  
+
   // ring-cc.hpp
   class RingCCC : RingInterface
   {
@@ -99,7 +114,7 @@ namespace M2 {
   // User level types ////////////////////////////////////
   ////////////////////////////////////////////////////////
   template <class RingType> class RingWrap;
-  
+
   class UserObject {};
 
   class RElement
@@ -114,7 +129,7 @@ namespace M2 {
   class ARing : public UserObject
   {
   public:
-    template<class RingType> 
+    template<class RingType>
     const RingWrap<RingType> * cast_to_RingWrap() const { return dynamic_cast< const RingWrap<RingType> * >(this) ; }
     // result will be either 0, or this.
 
@@ -128,7 +143,7 @@ namespace M2 {
   class APolynomialRing : public ARing
   {
   };
-  
+
   ////////////////////////////////////////////////////////
   // Matrices ////////////////////////////////////////////
   ////////////////////////////////////////////////////////
@@ -205,11 +220,11 @@ namespace M2 {
   public:
     virtual const ARing * getRing() const { return 0; }
 
-    template<class MatrixType> 
+    template<class MatrixType>
     MatrixWrap<MatrixType> * cast_to_MatrixWrap() { return dynamic_cast< MatrixWrap<MatrixType> * >(this) ; }
     // result will be either 0, or this.
 
-    template<class MatrixType> 
+    template<class MatrixType>
     const MatrixWrap<MatrixType> * cast_to_MatrixWrap() const { return dynamic_cast< const MatrixWrap<MatrixType> * >(this) ; }
 #if 0
     // Informational
@@ -229,8 +244,8 @@ namespace M2 {
     virtual bool divideRow(size_t r, const RElement &a);
     virtual bool rowOp(size_t r, const RElement &a, size_t r1);
     virtual bool row2by2(size_t r1, size_t r2,
-			 const RElement &a1, const RElement &a2,
-			 const RElement &b1, const RElement &b2);
+                         const RElement &a1, const RElement &a2,
+                         const RElement &b1, const RElement &b2);
     //    virtual bool rowPermute(size_t start_row, M2_arrayint perm);
     virtual bool insertRows(size_t r, size_t n_to_add);
     virtual bool deleteRows(size_t r, size_t n_to_delete);
@@ -265,15 +280,15 @@ namespace M2 {
   };
 
   ////////////
-  template<typename MatrixType> 
+  template<typename MatrixType>
   class MatrixWrap : public AMatrix
   {
   public:
     typedef typename MatrixType::RingType RingType;
-    
+
     const RingWrap<RingType> * getRing() const { return R_; }
 
-    MatrixWrap(const RingWrap<RingType> *R, size_t nrows, size_t ncols) 
+    MatrixWrap(const RingWrap<RingType> *R, size_t nrows, size_t ncols)
       : R_(R), mat(R->getInternalRing(),nrows,ncols)
     {
     }
@@ -321,20 +336,20 @@ namespace M2 {
     RingType & getInternalRing() { return R_; }
     const RingType & getInternalRing() const { return R_; }
 
-    virtual void init_set(RElement &a, long val) const { 
+    virtual void init_set(RElement &a, long val) const {
       R_.init_set( RELEM(RingType, a),
-		   val ); 
+                   val );
     }
 
-    virtual void add_to(RElement &a, const RElement &b) const { 
+    virtual void add_to(RElement &a, const RElement &b) const {
       R_.add_to( RELEM(RingType, a),
-		 constRELEM(RingType, b) );
+                 constRELEM(RingType, b) );
     }
 
   private:
     RingType R_;
   };
-  
+
   ///////////////////
 
   template <class R>
@@ -346,12 +361,12 @@ namespace M2 {
   // RingElement's ///////////////////////////////////////
   ////////////////////////////////////////////////////////
 
-  // approach #1.  For this one, it is important for ring identity that ther eis only one ARing * 
+  // approach #1.  For this one, it is important for ring identity that ther eis only one ARing *
   // per ring.
   class ARingElement : public UserObject {
   public:
     const ARing *getRing() const { return R_; }
-    
+
     ARingElement * add(ARingElement *b); // requires ring of this and of b to be the same
 
   private:
@@ -367,7 +382,7 @@ namespace M2 {
     // But this adds more space per element.
   public:
     virtual const ARing *getRing() const = 0;
-    
+
     ARingElement * add(BRingElement *b); // requires ring of this and of b to be the same
 
   private:
@@ -382,9 +397,9 @@ namespace M2 {
 
   template<typename SourceRingType, typename TargetRingType>
   bool convert(const SourceRingType *A,
-	       const TargetRingType *B,
-	       const typename SourceRingType::ElementType & a,
-	       typename SourceRingType::ElementType & b);
+               const TargetRingType *B,
+               const typename SourceRingType::ElementType & a,
+               typename SourceRingType::ElementType & b);
 
   /////////////////////////////////////////////////////////
   // Straightline programs ////////////////////////////////
@@ -396,10 +411,10 @@ namespace M2 {
     typedef typename RingType::ElementType ElementType;
 
     void evaluate(const DenseMatrix<RingType> &var_values,
-		  DenseMatrix<RingType> &results);
+                  DenseMatrix<RingType> &results);
 
     void evaluate(const ElementType *var_values,
-		  ElementType *results);
+                  ElementType *results);
 
     static SLP<RingType> * createSLP();
   private:
@@ -442,4 +457,5 @@ namespace M2 {
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
 // End:

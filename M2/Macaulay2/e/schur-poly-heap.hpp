@@ -17,7 +17,7 @@ public:
 
   void add(ring_elem p);
 
-  ring_elem value();		// Returns the linearized value, and resets the schur_poly_heap.
+  ring_elem value();            // Returns the linearized value, and resets the schur_poly_heap.
 
   ring_elem debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };

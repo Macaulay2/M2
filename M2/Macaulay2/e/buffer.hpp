@@ -22,17 +22,17 @@ class buffer : public our_new_delete
   char *_buf;
   void expand(int newcap);
 public:
-  buffer() : _size(0), 
-    _capacity(BUFFER_INITIAL_CAPACITY), 
+  buffer() : _size(0),
+    _capacity(BUFFER_INITIAL_CAPACITY),
     _buf(newarray_atomic(char,BUFFER_INITIAL_CAPACITY)) {}
   ~buffer() { deletearray(_buf); }
-  
+
   void reset() { _size = 0; }
 
   int size() { return _size; }
   int capacity() { return _capacity; }
   char *str() { _buf[_size] = '\0'; return _buf; }
-  char *truncate(int newsize) { 
+  char *truncate(int newsize) {
     if (newsize < _size) _size = newsize;
     _buf[_size] = '\0';
     return _buf;
@@ -40,17 +40,17 @@ public:
 
   M2_string to_string(); // Copies the string, leaves buffer intact
 
-  void put(const char *s);		// Place null-terminated string into buffer
-  void put(const char *s, long len);	// Place a string possible containing null chars
-  void put(char c);		// Place a single character
-  void put(int n);		// Format the integer, place into buffer
-  void put(int n, int width);	// Format the integer, with given width field.
-  void put(long n);		// Format the integer, place into buffer
-  void put(long n, int width);	// Format the integer, with given width field.
-  void put(unsigned int n);		// Format the integer, place into buffer
-  void put(unsigned int n, int width);	// Format the integer, with given width field.
-  void put(unsigned long n);		// Format the integer, place into buffer
-  void put(unsigned long n, int width);	// Format the integer, with given width field.
+  void put(const char *s);              // Place null-terminated string into buffer
+  void put(const char *s, long len);    // Place a string possible containing null chars
+  void put(char c);             // Place a single character
+  void put(int n);              // Format the integer, place into buffer
+  void put(int n, int width);   // Format the integer, with given width field.
+  void put(long n);             // Format the integer, place into buffer
+  void put(long n, int width);  // Format the integer, with given width field.
+  void put(unsigned int n);             // Format the integer, place into buffer
+  void put(unsigned int n, int width);  // Format the integer, with given width field.
+  void put(unsigned long n);            // Format the integer, place into buffer
+  void put(unsigned long n, int width); // Format the integer, with given width field.
 
   // To put an endline in:
   // o.put(newline);
@@ -74,7 +74,7 @@ public:
   buffer &operator<<(indent s) {
        buffer &o = *this;
        const int &n = s.n;
-       if (n < 10) o << "  "; 
+       if (n < 10) o << "  ";
        else if (n < 100) o << " ";
        o << n;
        return o;
@@ -85,4 +85,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

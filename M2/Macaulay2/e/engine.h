@@ -151,14 +151,14 @@ extern "C" {
     /* Always returns the same object */
 
   engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering *mo,
-				M2_ArrayString names,
-				const Ring *DegreeRing,
-				M2_arrayint degs,
-				M2_arrayint hefts); /* drg: connected rawMonoid*/
+                                M2_ArrayString names,
+                                const Ring *DegreeRing,
+                                M2_arrayint degs,
+                                M2_arrayint hefts); /* drg: connected rawMonoid*/
     /* This function will return NULL if the monomial order cannot be handled
        currently, if the first components for each degree are not all
        positive, or under various other "internal" error conditions */
-  
+
   unsigned long IM2_Monoid_hash(const Monoid *M);  /* drg: connected hash */
     /* Assigned sequentially */
 
@@ -194,7 +194,7 @@ extern "C" {
 
   const Ring /* or null */ *rawGaloisField(const RingElement *f); /* drg: connected to rawGaloisField */
     /* f should be a primitive element in a ring
-       R = ZZ/p[x]/(g(x)), some p, some variable x, g irreducible, 
+       R = ZZ/p[x]/(g(x)), some p, some variable x, g irreducible,
        monic, deg >= 2.
        However, currently, not all of this is checked...
     */
@@ -203,8 +203,8 @@ extern "C" {
 
   const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec); /* drg: connected rawCCC */
 
-  const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, 
-				      const Monoid *M); /* drg: connected rawPolynomialRing(,) */
+  const Ring /* or null */ *IM2_Ring_polyring(const Ring *K,
+                                      const Monoid *M); /* drg: connected rawPolynomialRing(,) */
   /* K can be either commutative or not. If K is a quotient ring, the relations are
    ignored.  Use rawQuotientRing to then make the desired quotient ring. */
 
@@ -212,26 +212,26 @@ extern "C" {
   /* This returns the polynomial ring ZZ[], whose degree ring is itself */
 
   const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
-					   M2_arrayint skewvars); /* drg: reconnected rawSkewPolynomialRing */
+                                           M2_arrayint skewvars); /* drg: reconnected rawSkewPolynomialRing */
   /* R should be a polynomial ring K[M], where K is commutative.
      skewvars should be a list of variable indices (for the monoid M) indicating which ones
      are skew-commutative with each other. Further quotients (using IM2_Ring_quotient) are allowed */
 
   const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
-					  M2_arrayint comm_vars,
-					  M2_arrayint diff_vars,
-					  int homog_var); /* drg: reconnected rawWeylAlgebra*/
+                                          M2_arrayint comm_vars,
+                                          M2_arrayint diff_vars,
+                                          int homog_var); /* drg: reconnected rawWeylAlgebra*/
   /* R should be a polynomial ring K[M], where K is commutative.
      comm_vars and diff_vars should be arrays of the same length.  diff_vars[i] is the differential
      operator corresponding to comm_vars[i].  If homog_var is non-negative, then the multiplication
-     is taken to be the homogeneous Weyl algebra (that is Dx*x = x*Dx + h^2, where h is the 
+     is taken to be the homogeneous Weyl algebra (that is Dx*x = x*Dx + h^2, where h is the
      variable of R with index 'homog_var').
      Further quotients (using IM2_Ring_quotient) are allowed, however, one must make sure that
      the quotient is only by elements in the center of the ring.
   */
 
   const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
-					      const Matrix *Q); /* drg: connected rawSolvableAlgebra */
+                                              const Matrix *Q); /* drg: connected rawSolvableAlgebra */
   /* R should be a polynomial ring K[M], where K is commutative.
      Q is a square matrix of size #gens(M).  If the variables are X_1, ..., X_r,
      then multiplication is defined to be X_j X_i = Q_(j,i), for j > i.
@@ -241,20 +241,20 @@ extern "C" {
 
   const Ring /* or null */ *IM2_Ring_frac(const Ring *R); /* drg: connected rawFractionRing*/
 
-  const Ring /* or null */ *IM2_Ring_localization(const Ring *R, 
-					  const Matrix *P); /* drg: connected rawLocalRing */
+  const Ring /* or null */ *IM2_Ring_localization(const Ring *R,
+                                          const Matrix *P); /* drg: connected rawLocalRing */
   /* Create the localization of R.
      R should be a COMMUTATIVE ring.  P should be a one row matrix
      whose entries generate a prime ideal of R.
   */
 
-  const Ring /* or null */ * IM2_Ring_quotient(const Ring *R, 
-				       const Matrix *I); /*drg: connected rawQuotientRing */
+  const Ring /* or null */ * IM2_Ring_quotient(const Ring *R,
+                                       const Matrix *I); /*drg: connected rawQuotientRing */
   /* Given a quotient of an ambient poly ring R = A/J, and a GB I in R, form
      the quotient ring A/(I+J). */
 
-  const Ring /* or null */ * IM2_Ring_quotient1(const Ring *R, 
-					const Ring *B); /*drg: connected rawQuotientRing */
+  const Ring /* or null */ * IM2_Ring_quotient1(const Ring *R,
+                                        const Ring *B); /*drg: connected rawQuotientRing */
   /* if R is a polynomial ring of the form A[x], and B = A/I (where A is a poly ring)
      then form the quotient ring B[x]. */
 
@@ -276,10 +276,10 @@ extern "C" {
   M2_bool IM2_Ring_is_field(const Ring *K); /* drg: connected rawIsField*/
     /* Returns true if K is a field, or has been declared to be one.
        In the latter case, if an operation shows that K cannot be a field,
-       then this function will thereafter return false, and 
+       then this function will thereafter return false, and
        rawGetNonUnit(K) can be used to obtain a non-unit, if one
        has been found. */
-  
+
   M2_bool IM2_Ring_declare_field(const Ring *K); /* drg: connected rawDeclareField*/
     /* Declare that K is a field.  The ring K can then be used as the coefficient
        ring for computing Groebner bases,etc.  If false is returned, then
@@ -288,7 +288,7 @@ extern "C" {
   const RingElement * rawGetNonUnit(const Ring *K); /* drg: connected rawGetNonUnit */
     /* Return a non-unit for the ring K, if one has been found, or the zero
        element, if not. Perhaps we should name this 'get_non_unit'.  This
-       function currently never seems to return a non-zero value, but I plan 
+       function currently never seems to return a non-zero value, but I plan
        on fixing that (MES, June 2002). */
 
   const Ring /* or null */ *rawAmbientRing(const Ring *R); /* drg: connected rawAmbientRing */
@@ -298,18 +298,18 @@ extern "C" {
      ring is ZZ[s,t][x,y,z]. This routine is provided only for debugging the engine. */
 
   const Ring /* or null */ *rawDenominatorRing(const Ring *R); /* drg: connected rawDenominatorRing */
-  /* If elements of R may have denominators, then this routine returns true, and 
+  /* If elements of R may have denominators, then this routine returns true, and
      the ambient ring for denominators returned. Otherwise, NULL
      is returned, which is not to be considered an error.  This routine is provided only for debugging the engine. */
 
   /**************************************************/
   /**** Ring element routines ***********************/
   /**************************************************/
-  const RingElement *IM2_RingElement_from_Integer(const Ring *R, 
-						  gmp_ZZ d);  /* drg: connected rawFromNumber*/
+  const RingElement *IM2_RingElement_from_Integer(const Ring *R,
+                                                  gmp_ZZ d);  /* drg: connected rawFromNumber*/
 
-  const RingElement /* or null */ *IM2_RingElement_from_rational(const Ring *R, 
-							 gmp_QQ r); /* rawFromNumber*/
+  const RingElement /* or null */ *IM2_RingElement_from_rational(const Ring *R,
+                                                         gmp_QQ r); /* rawFromNumber*/
 
   gmp_ZZ /* or null */ IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
@@ -319,11 +319,11 @@ extern "C" {
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
        Otherwise, NULL is returned, and an error is given */
 
-  const RingElement /* or null */ *IM2_RingElement_from_BigReal(const Ring *R, 
-							gmp_RR d); /* drg: waiting, rawFromNumber*/
+  const RingElement /* or null */ *IM2_RingElement_from_BigReal(const Ring *R,
+                                                        gmp_RR d); /* drg: waiting, rawFromNumber*/
 
-  const RingElement /* or null */ *IM2_RingElement_from_BigComplex(const Ring *R, 
-							gmp_CC d); /* drg: waiting, rawFromNumber*/
+  const RingElement /* or null */ *IM2_RingElement_from_BigComplex(const Ring *R,
+                                                        gmp_CC d); /* drg: waiting, rawFromNumber*/
 
   gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a); /* drg: implemented, connected to rawToRR */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
@@ -337,16 +337,16 @@ extern "C" {
   M2_bool IM2_RingElement_is_zero(const RingElement *a); /* drg: connected rawIsZero*/
 
   M2_bool IM2_RingElement_is_equal(const RingElement *a,
-				   const RingElement *b); /* drg: connected === */
-  
+                                   const RingElement *b); /* drg: connected === */
+
   const RingElement /* or null */ *IM2_RingElement_invert(const RingElement *a);/* TODO */
 
-  engine_RawRingElementPair IM2_RingElement_divmod(const RingElement *a, 
-						 const RingElement *b); /* drg: connected rawDivMod*/
+  engine_RawRingElementPair IM2_RingElement_divmod(const RingElement *a,
+                                                 const RingElement *b); /* drg: connected rawDivMod*/
 
 
   int rawRingElementCompare(const RingElement *a,
-			    const RingElement *b);
+                            const RingElement *b);
   /* Superficially compares two ring elements a,b from the same ring.  If the ring is
      a polynomial ring, then the lead flat monomials are compared.  If the ring is ZZ or QQ
      then a > b iff |a| > |b|.
@@ -372,56 +372,56 @@ extern "C" {
 
   gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts, const RingElement *a); /* drg: connected rawWeightRange*/
     /* The first component of the degree is used, unless the degree monoid is trivial,
-       in which case the degree of each variable is taken to be 1. 
+       in which case the degree of each variable is taken to be 1.
        Returns lo,hi degree.  If the ring is not a graded ring or a polynomial ring
        then (0,0) is returned.
     */
 
   const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
             const RingElement *a,
-	    int v,
-	    int deg,
-	    M2_arrayint wts); /* drg: connected rawHomogenize*/
+            int v,
+            int deg,
+            M2_arrayint wts); /* drg: connected rawHomogenize*/
 
   const RingElement /* or null */ *IM2_RingElement_homogenize(
             const RingElement *a,
-	    int v,
-	    M2_arrayint wts); /* drg: connected rawHomogenize*/
-						
+            int v,
+            M2_arrayint wts); /* drg: connected rawHomogenize*/
+
   const RingElement /* or null */ *IM2_RingElement_term(
             const Ring *R,
-	    const RingElement *a,
-	    const Monomial *m); /* drg: connected rawTerm*/
+            const RingElement *a,
+            const Monomial *m); /* drg: connected rawTerm*/
     /* R must be a polynomial ring, and 'a' an element of the
        coefficient ring of R.  Returns a*m, if this is a valid
-       element of R.  Returns NULL if not (with an error message). 
+       element of R.  Returns NULL if not (with an error message).
     */
 
   const RingElement /* or null */ *IM2_RingElement_get_terms(
             int nvars, /* n variables in an outermost monoid */
             const RingElement *a,
-	    int lo, int hi); /* drg: connected rawGetTerms*/
+            int lo, int hi); /* drg: connected rawGetTerms*/
     /* Returns the sum of some monomials of 'a', starting at 'lo',
-       going up to 'hi'.  If either of these are negative, they are indices 
+       going up to 'hi'.  If either of these are negative, they are indices
        from the back of the polynomial.
-       'a' should be an element of a polynomial ring. 
+       'a' should be an element of a polynomial ring.
     */
 
   const RingElement /* or null */ *IM2_RingElement_get_coeff(
             const Ring * coeffRing, /* ring of the result */
             const RingElement *a,
-	    const Monomial *m); /* drg: connected rawCoefficient*/
+            const Monomial *m); /* drg: connected rawCoefficient*/
     /* Return (as an element of the coefficient ring) the coeff
-       of the monomial 'm'. 
+       of the monomial 'm'.
     */
 
   const RingElement /* or null */ *IM2_RingElement_lead_coeff(
             const Ring * coeffRing, /* ring of the result */
-	    const RingElement *a); /* drg: connected rawLeadCoefficient*/
+            const RingElement *a); /* drg: connected rawLeadCoefficient*/
 
   const Monomial /* or null */ *IM2_RingElement_lead_monomial(
             int nvars, /* number of variables in an outermost monoid */
-	    const RingElement *a); /* drg: connected rawLeadMonomial*/
+            const RingElement *a); /* drg: connected rawLeadMonomial*/
 
   int IM2_RingElement_n_terms(
             int nvars, /* number of variables in an outermost monoid */
@@ -432,28 +432,28 @@ extern "C" {
             const RingElement *f); /* drg: connected rawPairs */
 
   engine_RawRingElementArrayOrNull rawConvolve(engine_RawRingElementArray H,
-					       int convolve_type);
+                                               int convolve_type);
   /* assumes: H[0]..H[n] are in a ring.
-     returns the array determined by convolving H 
+     returns the array determined by convolving H
      (see def in x-relem.cpp for more info)
   */
 
   engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
-				const RingElement *f);
+                                const RingElement *f);
   /* Return an array of RingElement's, each having pure weight, and sorted by
-     strictly increasing weight value.  The wt vector values must fit into 
+     strictly increasing weight value.  The wt vector values must fit into
      a word length integer.  */
 
   const RingElement /* or null */ * rawGetPart(const M2_arrayint wts,
-				     const RingElement *f,
-				     M2_bool lobound_given,
-				     M2_bool hibound_given,
-				     long lobound,
-				     long hibound);
+                                     const RingElement *f,
+                                     M2_bool lobound_given,
+                                     M2_bool hibound_given,
+                                     long lobound,
+                                     long hibound);
   /* Return the sum of all of the terms t of f, which satisfy: lobound <= wt.t <= hibound,
      where, if lobound_given is false, then lobound is -infinity, and if hibound_given
      is false, then hibound is infinity. */
-  
+
   int IM2_RingElement_index_if_var(const RingElement *f); /* drg: connected rawIndexIfVariable */
   /* if f is a variable of its ring, then the index of that variable is returned.
      If f is not a variable, then -1 is returned. */
@@ -514,8 +514,8 @@ extern "C" {
   const RingElement *IM2_RingElement_denominator(const RingElement *a); /* drg: connected rawDenominator*/
 
   const RingElement /* or null */ *IM2_RingElement_fraction(const Ring *R,
-						    const RingElement *a,
-						    const RingElement *b); /* drg: connected rawFraction*/
+                                                    const RingElement *a,
+                                                    const RingElement *b); /* drg: connected rawFraction*/
 
   gmp_ZZ /* or null */ rawSchurDimension(const RingElement *f); /* connected rawSchurDimension */
   /* f should be a polynomial whose base ring was created using rawSchurRing
@@ -546,7 +546,7 @@ extern "C" {
   /* Currently only valid for tower rings */
 
   const RingElement *rawTowerTranslatePoly(const Ring *newRing, const RingElement *F);
-  /* 2 cases: ring of F is a polynomial ring, and newRing is a Tower.  
+  /* 2 cases: ring of F is a polynomial ring, and newRing is a Tower.
      second case: ring of F is a tower, and newRing is a polynomial ring.
      In both cases, the two rings should have the same characteristic, and the same number of variables.
      This then translates F, returning the translated poly in the ring newRing.
@@ -571,7 +571,7 @@ extern "C" {
      breaker values.
      Also: I might keep all freemodules for a ring unique.
      This is not currently done. */
-  
+
   const Ring *
   IM2_FreeModule_ring(
           const FreeModule *F); /* drg: connected rawRing*/
@@ -580,74 +580,74 @@ extern "C" {
   IM2_FreeModule_rank(
           const FreeModule *F); /* drg: connected rawRank*/
 
-  M2_string 
+  M2_string
   IM2_FreeModule_to_string(
           const FreeModule *F); /* drg: connected */
 
-  unsigned long int 
+  unsigned long int
   IM2_FreeModule_hash(
           const FreeModule *F); /* TODO */ /* drg: waiting, returning 0 */
 
   const FreeModule /* or null */ *
   IM2_FreeModule_make(
-          const Ring *R, 
-	  int rank); /* drg: connected rawFreeModule*/
+          const Ring *R,
+          int rank); /* drg: connected rawFreeModule*/
 
   const FreeModule /* or null */ *
   IM2_FreeModule_make_degs(
-          const Ring *R, 
-	  M2_arrayint degs); /* drg: connected rawFreeModule*/
-    /* Make a graded free module over R.  'degs' should be of length 
-     * divisible by the length 'd' of a degree vector, and the 
+          const Ring *R,
+          M2_arrayint degs); /* drg: connected rawFreeModule*/
+    /* Make a graded free module over R.  'degs' should be of length
+     * divisible by the length 'd' of a degree vector, and the
      * i th degree will be degs[i*d]..degs[i*d+d-1], starting at
-     * i = 0. 
+     * i = 0.
      */
-  
+
   const FreeModule /* or null */ *
   IM2_FreeModule_make_schreyer(
           const Matrix *m); /* drg: connected rawSchreyerSource */
     /* Returns G, (a copy of) the source free module of 'm', modified to
      * use the induced order via m: compare two monomials of G via
-     * x^A e_i > x^B e_j iff either 
+     * x^A e_i > x^B e_j iff either
      * leadmonomial((in m)(x^A e_i)) > leadmonomial((in m)(x^B e_j))
-     * or these are the same monomial, and i > j. 
-     * The case where the target of 'm' has a Schreyer order is 
-     * handled efficiently. 
+     * or these are the same monomial, and i > j.
+     * The case where the target of 'm' has a Schreyer order is
+     * handled efficiently.
      */
 
-  M2_arrayint 
+  M2_arrayint
   IM2_FreeModule_get_degrees(
           const FreeModule *F); /* drg: connected rawMultiDegree*/
 
-  const Matrix * 
+  const Matrix *
   IM2_FreeModule_get_schreyer(
           const FreeModule *F); /* drg: connected rawGetSchreyer*/
 
-  M2_bool 
+  M2_bool
   IM2_FreeModule_is_equal(
-          const FreeModule *F, 
-	  const FreeModule *G); /* drg: connected === */
+          const FreeModule *F,
+          const FreeModule *G); /* drg: connected === */
     /* Determines if F and G are the same graded module.  If one has a
      * Schreyer order and one does not, but their ranks and degrees are the
-     * same, then they are considered equal by this routine. 
+     * same, then they are considered equal by this routine.
      */
 
   const FreeModule /* or null */ *
   IM2_FreeModule_sum(
           const FreeModule *F,
-	  const FreeModule *G); /* drg: connected rawDirectSum */
+          const FreeModule *G); /* drg: connected rawDirectSum */
     /* The direct sum of two free modules over the same ring, or NULL.
-     * If F or G has a Schreyer order, then so does their direct sum 
+     * If F or G has a Schreyer order, then so does their direct sum
      */
 
-  const FreeModule /* or null */ * 
+  const FreeModule /* or null */ *
   IM2_FreeModule_tensor(
           const FreeModule *F,
-	  const FreeModule *G); /* drg: connected rawTensor*/
+          const FreeModule *G); /* drg: connected rawTensor*/
     /* The tensor product of two free modules over the same ring, or NULL.
-     * If F has (ordered basis {f_1,...,f_r}, and 
+     * If F has (ordered basis {f_1,...,f_r}, and
      * G has (ordered) basis {g_1, ..., g_s}, then
-     * the result has (ordered) basis 
+     * the result has (ordered) basis
      *    {f_1 ** g_1, f_1 ** g_2, ..., f_1 ** g_s,
      *     f_2 ** g_1, f_2 ** g_2, ..., f_2 ** g_s,
      *     ...
@@ -655,50 +655,50 @@ extern "C" {
      *  If F or G has a Schreyer order, what about their tensor product?
      *  At the moment, the answer is almost yes...
      */
-  
+
   const FreeModule /* or null */ *IM2_FreeModule_dual(
-	  const FreeModule *F); /* drg: connected rawDual*/
+          const FreeModule *F); /* drg: connected rawDual*/
     /* Returns the graded dual F^* of F: if F has basis {f_1,...,f_r},
      * with degrees {d_1, ..., d_r}, then F^* has rank r, with
-     * degrees {-d_1, ..., -d_r}.  The result does not have a 
-     * Schreyer order (even if F does). 
+     * degrees {-d_1, ..., -d_r}.  The result does not have a
+     * Schreyer order (even if F does).
      */
 
-  const FreeModule * 
+  const FreeModule *
   IM2_FreeModule_symm(
-          int n, 
-	  const FreeModule *F); /* drg: connected rawSymmetricPower*/
+          int n,
+          const FreeModule *F); /* drg: connected rawSymmetricPower*/
     /* Returns the n th symmetric power G of F.
      * If F has basis {f_1,...,f_r}, then G has basis
      * the monomials of f_1, ..., f_r of degree exactly n, in
      * descending lexicographic order.
-     * If F has a Schreyer order, then G is set to have one as well. 
+     * If F has a Schreyer order, then G is set to have one as well.
      */
 
 
-  const FreeModule * 
+  const FreeModule *
   IM2_FreeModule_exterior(
-          int n, 
-	  const FreeModule *F); /* drg: connected rawExteriorPower*/
+          int n,
+          const FreeModule *F); /* drg: connected rawExteriorPower*/
     /* Returns the n th exterior power G of F.
      * If F has basis {f_1,...,f_r}, then G has basis
      * the squarefree monomials of f_1, ..., f_r of degree exactly n, in
      * descending reverse lexicographic order.
-     * If F has a Schreyer order, then G is set to have one as well. 
+     * If F has a Schreyer order, then G is set to have one as well.
      */
 
-  const FreeModule /* or null */ * 
+  const FreeModule /* or null */ *
   IM2_FreeModule_submodule(
-	  const FreeModule *F, 
-	  M2_arrayint selection); /* drg: connected rawSubmodule*/
+          const FreeModule *F,
+          M2_arrayint selection); /* drg: connected rawSubmodule*/
     /* Returns a free module obtained by choosing basis elements of F:
      * if F has basis {f_0, ..., f_(r-1)} with degrees {d_0, ..,d_(r-1)},
      * and selection = [i_1, ..., i_s], where 0 <= i_j < r for all j,
-     * then return a free module of rank s, having degrees 
+     * then return a free module of rank s, having degrees
      * d_(i_1), ..., d_(i_s).  'selection' may include duplicate values.
-     * If F has a Schreyer order, the result has one as well. 
+     * If F has a Schreyer order, the result has one as well.
      */
-  
+
   /**************************************************/
   /**** Matrix routines *****************************/
   /**************************************************/
@@ -721,47 +721,47 @@ extern "C" {
 
   /*******************************************************************************/
   const Matrix * IM2_Matrix_identity(const FreeModule *F,
-				     int preference
-				     ); /* drg: connected rawIdentity, OK*/
+                                     int preference
+                                     ); /* drg: connected rawIdentity, OK*/
 
   const Matrix /* or null */ * IM2_Matrix_zero(const FreeModule *F,
-				       const FreeModule *G,
-				       int preference
-				       ); /* drg: connected rawZero, OK */
+                                       const FreeModule *G,
+                                       int preference
+                                       ); /* drg: connected rawZero, OK */
 
   const Matrix /* or null */ * IM2_Matrix_make1(const FreeModule *target,
-					int ncols,
-					const engine_RawRingElementArray M,
-					int preference); /* drg: connected rawMatrix1, OK */
+                                        int ncols,
+                                        const engine_RawRingElementArray M,
+                                        int preference); /* drg: connected rawMatrix1, OK */
 
   const Matrix /* or null */ * IM2_Matrix_make2(const FreeModule *target,
-					const FreeModule *source,
-					M2_arrayint deg,
-					const engine_RawRingElementArray M,
-					int preference); /* drg: connected rawMatrix2, OK */
+                                        const FreeModule *source,
+                                        M2_arrayint deg,
+                                        const engine_RawRingElementArray M,
+                                        int preference); /* drg: connected rawMatrix2, OK */
 
   const Matrix /* or null */ * IM2_Matrix_make_sparse1(const FreeModule *target,
-					       int ncols,
-					       M2_arrayint rows,
-					       M2_arrayint cols,
-					       const engine_RawRingElementArray entries,
-					       int preference); /* drg: connected rawSparseMatrix1, OK */
-  
+                                               int ncols,
+                                               M2_arrayint rows,
+                                               M2_arrayint cols,
+                                               const engine_RawRingElementArray entries,
+                                               int preference); /* drg: connected rawSparseMatrix1, OK */
+
   const Matrix /* or null */ * IM2_Matrix_make_sparse2(const FreeModule *target,
-					       const FreeModule *source,
-					       M2_arrayint deg,
-					       M2_arrayint rows,
-					       M2_arrayint cols,
-					       const engine_RawRingElementArray entries,
-					       int preference); /* drg: connected rawSparseMatrix2, OK */
+                                               const FreeModule *source,
+                                               M2_arrayint deg,
+                                               M2_arrayint rows,
+                                               M2_arrayint cols,
+                                               const engine_RawRingElementArray entries,
+                                               int preference); /* drg: connected rawSparseMatrix2, OK */
 
   M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M); /* connected to rawIsDense */
-  /* Is the matrix M implemented in the engine as a dense matrix? */ 
+  /* Is the matrix M implemented in the engine as a dense matrix? */
 
   const Matrix /* or null */ * IM2_Matrix_remake1(const FreeModule *target,
-					  const Matrix *M,
-					  int preference
-					  ); /* drg: connected rawMatrixRemake1, OK  */
+                                          const Matrix *M,
+                                          int preference
+                                          ); /* drg: connected rawMatrixRemake1, OK  */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      and/or mutable-ness. The target free module must have the expected rank.
      The source free module is computed heuristically from the the target and the
@@ -769,28 +769,28 @@ extern "C" {
   */
 
   const Matrix /* or null */ * IM2_Matrix_remake2(const FreeModule *target,
-					  const FreeModule *source,
-					  M2_arrayint deg,
-					  const Matrix *M,
-					  int preference
-					  ); /* drg: connected rawMatrixRemake2, OK */
+                                          const FreeModule *source,
+                                          M2_arrayint deg,
+                                          const Matrix *M,
+                                          int preference
+                                          ); /* drg: connected rawMatrixRemake2, OK */
   /* Create a new matrix (mutable or immutable), from M, with new target,
-     source, deg and/or mutable-ness. The new free modules must have 
-     the expected rank. 
+     source, deg and/or mutable-ness. The new free modules must have
+     the expected rank.
   */
 
-  const Matrix /* or null */ *IM2_Matrix_random(const Ring *R, 
-				  int r, int c, 
-				  double fraction_non_zero, 
-				  int special_type, /* 0: general, 1:upper triangular, others? */
-				  int preference); /* connected to rawRandomConstantMatrix, OK */
+  const Matrix /* or null */ *IM2_Matrix_random(const Ring *R,
+                                  int r, int c,
+                                  double fraction_non_zero,
+                                  int special_type, /* 0: general, 1:upper triangular, others? */
+                                  int preference); /* connected to rawRandomConstantMatrix, OK */
 
   /**********************************************************************************/
 
   M2_bool IM2_Matrix_is_zero(const Matrix *M); /* drg: connected rawIsZero*/
 
   int IM2_Matrix_is_equal(const Matrix *M, const Matrix *N); /* drg: connected === and to rawIsEqual for use with == */
-	// 1 = true, 0 = false, -1 = error
+        // 1 = true, 0 = false, -1 = error
     /* This checks that the entries of M,N are the same, as well as
        that the source and target are the same (as graded free modules).
        Therefore, it can happen that M-N == 0, but M != N.
@@ -803,63 +803,63 @@ extern "C" {
   const Matrix /* or null */ * IM2_Matrix_direct_sum(const engine_RawMatrixArray Ms); /* drg: connected rawDirectSum*/
 
   const Matrix /* or null */ * IM2_Matrix_tensor(const Matrix *M,
-					 const Matrix *N); /* drg: connected rawTensor*/
+                                         const Matrix *N); /* drg: connected rawTensor*/
 
   const Matrix /* or null */ * IM2_Matrix_transpose(const Matrix *M); /* drg: connected rawDual*/
 
   const Matrix /* or null */ * IM2_Matrix_reshape(const Matrix *M,
-					  const FreeModule *F,
-					  const FreeModule *G); /* drg: connected rawReshape*/
+                                          const FreeModule *F,
+                                          const FreeModule *G); /* drg: connected rawReshape*/
 
   const Matrix /* or null */ * IM2_Matrix_flip(const FreeModule *F,
-				       const FreeModule *G); /* drg: connected rawFlip*/
+                                       const FreeModule *G); /* drg: connected rawFlip*/
 
   const Matrix /* or null */ * rawWedgeProduct(int p,
-				       int q,
-				       const FreeModule *F); /* drg: connected rawWedgeProduct */
+                                       int q,
+                                       const FreeModule *F); /* drg: connected rawWedgeProduct */
   /* Constructs the map
      exterior(p,F) ** exterior(q,F) --> exterior(p+q,F)
   */
 
   const Matrix /* or null */ * IM2_Matrix_submatrix(const Matrix *M,
-					    M2_arrayint rows,
-					    M2_arrayint cols); /* drg: connected rawSubmatrix*/
+                                            M2_arrayint rows,
+                                            M2_arrayint cols); /* drg: connected rawSubmatrix*/
 
   const Matrix /* or null */ * IM2_Matrix_submatrix1(const Matrix *M,
-					     M2_arrayint cols); /* drg: connected rawSubmatrix*/
+                                             M2_arrayint cols); /* drg: connected rawSubmatrix*/
 
 
   const Matrix /* or null */ * IM2_Matrix_koszul(int p, const Matrix *M); /* drg: connected rawKoszul*/
 
-  const Matrix /* or null */ * 
+  const Matrix /* or null */ *
   rawKoszulMonomials(int nskew,
-		     const Matrix *M,
-		     const Matrix *N); /* drg: connected rawKoszulMonomials */
+                     const Matrix *M,
+                     const Matrix *N); /* drg: connected rawKoszulMonomials */
   /* M and N should each have one row, and the base ring should be a
      polynomial ring.  The (i,j) th entry of the resulting matrix is
      1 or -1 times N_j/M_i (if M_i divides N_j). The sign is determined only from
      the first nskew variables.  The sign is the sign of M_i * (N_j/M_i) in
-     exterior algebra (on this set of variables).  The actual commutativity of the 
+     exterior algebra (on this set of variables).  The actual commutativity of the
      common ring of M and N is ignored. */
 
   const Matrix /* or null */ * IM2_Matrix_symm(int p, const Matrix *M); /* drg: connected rawSymmetricPower*/
 
   const Matrix /* or null */ * IM2_Matrix_exterior(int p, const Matrix *M, int strategy); /* drg: connected rawExteriorPower*/
 
-  M2_arrayint IM2_Matrix_sort_columns(const Matrix *M, 
-					    int deg_order, 
-					    int mon_order); /* drg: connected rawSortColumns*/
+  M2_arrayint IM2_Matrix_sort_columns(const Matrix *M,
+                                            int deg_order,
+                                            int mon_order); /* drg: connected rawSortColumns*/
 
 
   const Matrix /* or null */ * IM2_Matrix_minors(int p, const Matrix *M, int strategy); /* drg: unconnected*/
 
-  const Matrix /* or null */ * rawMinors(int p, 
-			   const Matrix *M, 
-			   int strategy,
-			   int n_minors_to_compute, /* -1 means all */
-			   M2_arrayintOrNull first_row_set,
-			   M2_arrayintOrNull first_col_set
-			   ); /* connected to rawMinors */
+  const Matrix /* or null */ * rawMinors(int p,
+                           const Matrix *M,
+                           int strategy,
+                           int n_minors_to_compute, /* -1 means all */
+                           M2_arrayintOrNull first_row_set,
+                           M2_arrayintOrNull first_col_set
+                           ); /* connected to rawMinors */
   /* If first_row_set or first_col_set is not NULL, they should both be non-NULL,
      and both have length p.  If not, NULL is returned.
      Compute n_minors_to_compute minors, starting at (first_row_set,first_col_set) if given,
@@ -876,7 +876,7 @@ extern "C" {
      The definition of "same up to a scalar" is this:
      if K is the base field or ring (i.e. QQ in QQ(x,y,z)[s,t]),
      and if c and d are the lead scalar coeff's of vecs v,w, resp, then
-     v and w are scalar multiplies iff d*v == c*w.  
+     v and w are scalar multiplies iff d*v == c*w.
      Warning: Over non-domains, this might not be the intended effect.
   */
 
@@ -910,44 +910,44 @@ extern "C" {
   /* Routines for use when the base ring is a polynomial ring of some sort */
 
   const Matrix /* or null */ * IM2_Matrix_diff(const Matrix *M,
-				       const Matrix *N); /* drg: connected rawMatrixDiff*/
+                                       const Matrix *N); /* drg: connected rawMatrixDiff*/
 
   const Matrix /* or null */ * IM2_Matrix_contract(const Matrix *M,
-					   const Matrix *N); /* drg: connected rawMatrixContract*/
+                                           const Matrix *N); /* drg: connected rawMatrixContract*/
 
   const Matrix /* or null */ * IM2_Matrix_contract0(
-					    int n_top_variables,
-					    const Matrix *M,
-					    const Matrix *N); /* drg: connect*/
+                                            int n_top_variables,
+                                            const Matrix *M,
+                                            const Matrix *N); /* drg: connect*/
   /* same shape of result as contract, except that the entries corresponding to M_(i,j), N_(k,l)
      is the dot product of the polynomials, thought of as polynomials in the first n_top_variables
      vars in the ring.  It is assumed that the monomial order is a product order, so that
      all monomials with the same first n_top_variables vars are in order. */
 
   const Matrix /* or null */ * IM2_Matrix_homogenize(const Matrix *M,
-					     int var,
-					     M2_arrayint wts); /* drg: connected rawHomogenize*/
+                                             int var,
+                                             M2_arrayint wts); /* drg: connected rawHomogenize*/
 
   const struct engine_RawMatrixPair_struct /* or null */ *IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars) ;/* TODO */
 
 
   const Matrix /* or null */ * rawCoefficients(M2_arrayint vars,
-				       const Matrix *monoms,
-				       const Matrix *M); /* drg: connected as rawCoefficients*/
+                                       const Matrix *monoms,
+                                       const Matrix *M); /* drg: connected as rawCoefficients*/
   /* Given:
-   *  vars : a list of variable indices in the (common) ring R of monoms and M 
+   *  vars : a list of variable indices in the (common) ring R of monoms and M
    *  monoms : a map R^b --> R^a such that each column has exactly one monomial
    *      which is only in the variables in 'vars'.
    *  M : a map R^c --> R^a such that every (module) monomial of each column of M
    *      matches one of the columns of 'monoms', in the variables 'vars'.
    *
-   * Returns: a matrix C : R^c --> R^b such that 
+   * Returns: a matrix C : R^c --> R^b such that
    *      (i) the entries of C do not involve the variables in 'vars', and
    *      (ii) monoms * C == M
    *
    * Assumptions on rings: if R is non-commutative, then the variables in 'vars'
    *      should commute with the variables outside of 'vars'.
-   * 
+   *
    * If each column of monoms has more than one monomial, or if variables other than
    *      those in 'vars' occur, then only the first monomial is used, and the other
    *      variables are ignored.
@@ -963,16 +963,16 @@ extern "C" {
   M2_arrayint IM2_Matrix_keep_vars(int nparts, const Matrix *M); /* drg: connected rawKeepVariables*/
 
   engine_RawMatrixAndInt IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegree); /* drg: connected rawDivideByVariable*/
-  /* If M = [v1, ..., vn], and x = 'var'th variable in the ring, 
+  /* If M = [v1, ..., vn], and x = 'var'th variable in the ring,
      return the matrix [w1,...,wn], where wi * x^(ai) = vi,
-     and wi is not divisible by x, or ai = maxdegree, 
+     and wi is not divisible by x, or ai = maxdegree,
      and the integer which is the maximum of the ai's.
      QUESTION: what rings should this work over?
   */
 
   engine_RawMatrixPairOrNull rawTopCoefficients(const Matrix *M); /* connected to rawTopCoefficients */
   /* Returns a pair of matrices: the first is a list of monomials (of form var^exp),
-     and the second has the same row space as M.  For each column, find the smallest 
+     and the second has the same row space as M.  For each column, find the smallest
      index variable, var,  which occurs, and exp, the largest degree to which it occurs
      in that column.  Place var^exp in the first matrix.
      Place the coeff of var^exp (a vector) into the second matrix.
@@ -980,11 +980,11 @@ extern "C" {
   */
 
   M2_arrayintOrNull rawMatrixIndices(const Matrix *f); /* connected to rawIndices */
-  
+
   M2_arrayint IM2_Matrix_min_leadterms(const Matrix *M, M2_arrayint vars); /* TODO */
 
   const Matrix /* or null */ * IM2_Matrix_auto_reduce(const Matrix *M); /* TODO */
-  
+
   const Matrix /* or null */ * IM2_Matrix_reduce(const Matrix *M, const Matrix *N); /* TODO */
 
   const Matrix /* or null */ * IM2_Matrix_reduce_by_ideal(const Matrix *M, const Matrix *N); /* TODO */
@@ -992,18 +992,18 @@ extern "C" {
   /* Routines when considering matrices as modules of some sort */
 
   const Matrix /* or null */ * rawModuleTensor(const Matrix *M,
-				       const Matrix *N); /* connected rawModuleTensor */
+                                       const Matrix *N); /* connected rawModuleTensor */
 
   const Matrix /* or null */ * rawBasis(const Matrix *M,
-				M2_arrayint lo_degree, /* possibly length 0 */
-				M2_arrayint hi_degree,
-				M2_arrayint wt,
-				M2_arrayint vars,
-				M2_bool do_truncation,
-				int limit); /* connected to rawBasis */
+                                M2_arrayint lo_degree, /* possibly length 0 */
+                                M2_arrayint hi_degree,
+                                M2_arrayint wt,
+                                M2_arrayint vars,
+                                M2_bool do_truncation,
+                                int limit); /* connected to rawBasis */
   /* Yields a monomial basis of part of the graded R-module cokernel(M).
    * Returns a matrix of monomials which maps to the target of M, such that
-   *  (i) The image spans the sum of M_i, for lo_degree <= i <= hi_degree 
+   *  (i) The image spans the sum of M_i, for lo_degree <= i <= hi_degree
    *       where M_i is the degree i piece of M.
    * Notes:
    *  -- 'vars' is a list of variables.  The entries of the result will only involve
@@ -1017,17 +1017,17 @@ extern "C" {
    *  -- if limit >= 0, then only the first 'limit' monomials are placed into the result.
    *  -- if do_truncation is set, then monomials of degree higher than hi_degree will be
    *     placed into .
-   * 
+   *
    * If R is a quotient ring, then the monomial order had better be a product order
    * such that the first block (or blocks) consists of the variables in 'vars'.
-   * 
+   *
    */
 
   int IM2_Matrix_dimension(const Matrix *M); /* TODO */
 
   const RingElement /* or null */ * IM2_Matrix_Hilbert(const Matrix *M); /* drg: connected rawHilbert*/
   /* This routine computes the numerator of the Hilbert series
-     for coker leadterms(M), using the degrees of the rows of M. 
+     for coker leadterms(M), using the degrees of the rows of M.
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 
@@ -1057,12 +1057,12 @@ extern "C" {
   const RingMap * IM2_RingMap_make1(const Matrix *M); /* drg: connected rawRingMap */
   /* WARNING: I want to change the interface to this routine */
 
-  const RingElement /* or null */ * IM2_RingMap_eval_ringelem(const RingMap *F, 
-						      const RingElement *a); /* drg: connected rawRingMapEval*/
+  const RingElement /* or null */ * IM2_RingMap_eval_ringelem(const RingMap *F,
+                                                      const RingElement *a); /* drg: connected rawRingMapEval*/
 
-  const Matrix /* or null */ * IM2_RingMap_eval_matrix(const RingMap *F, 
-					       const FreeModule *newTarget,
-					       const Matrix *M); /* drg: connected rawRingMapEval*/
+  const Matrix /* or null */ * IM2_RingMap_eval_matrix(const RingMap *F,
+                                               const FreeModule *newTarget,
+                                               const Matrix *M); /* drg: connected rawRingMapEval*/
 
   const RingElement *IM2_RingElement_promote(const Ring *S, const RingElement *f); /* drg: connected rawPromote*/
 
@@ -1076,7 +1076,7 @@ extern "C" {
        R ---> frac R
        Z/p[x]/F(x) ---> GF(p,n)
        R ---> local(R,I)    (much later...)
-       
+
        Both of the following routines assume that S ---> 'this'
        is one of these construction steps.  Promote takes an element of
        S, and maps it into 'this', while lift goes the other way.
@@ -1091,14 +1091,14 @@ extern "C" {
   /**** MutableMatrix routines **********************/
   /**************************************************/
 
-  MutableMatrix * IM2_MutableMatrix_identity(const Ring *R, 
-					     int nrows, 
-					     M2_bool prefer_dense); /* drg: connected rawMutableIdentity, OK*/
+  MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
+                                             int nrows,
+                                             M2_bool prefer_dense); /* drg: connected rawMutableIdentity, OK*/
 
   MutableMatrix * IM2_MutableMatrix_make(const Ring *R,
-					 int nrows,
-					 int ncols,
-					 M2_bool prefer_dense); /* drg: connected rawMutableMatrix, OK */
+                                         int nrows,
+                                         int ncols,
+                                         M2_bool prefer_dense); /* drg: connected rawMutableMatrix, OK */
 
   MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool prefer_dense); /* drg: connected rawMutableMatrix, OK*/
 
@@ -1109,9 +1109,9 @@ extern "C" {
 
   unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* drg: connected to "hash" */
 
-  int IM2_MutableMatrix_n_rows(const MutableMatrix *M);	/* drg: connected rawNumberOfRows, OK */
+  int IM2_MutableMatrix_n_rows(const MutableMatrix *M); /* drg: connected rawNumberOfRows, OK */
 
-  int IM2_MutableMatrix_n_cols(const MutableMatrix *M);	/* drg: connected rawNumberOfColumns, OK */
+  int IM2_MutableMatrix_n_cols(const MutableMatrix *M); /* drg: connected rawNumberOfColumns, OK */
 
   void rawMutableMatrixFillRandomDensity(MutableMatrix *M, double density, int special_type);
   /* drg: connected rawMutableMatrixFillRandom */
@@ -1120,8 +1120,8 @@ extern "C" {
   void rawMutableMatrixFillRandom(MutableMatrix *M, long nelems);
   /* drg: connected rawMutableMatrixFillRandom */
 
-  const RingElement /* or null */ * IM2_MutableMatrix_get_entry(const MutableMatrix *M, 
-							int r, int c); /* drg: connected rawMatrixEntry, OK*/
+  const RingElement /* or null */ * IM2_MutableMatrix_get_entry(const MutableMatrix *M,
+                                                        int r, int c); /* drg: connected rawMatrixEntry, OK*/
 
   /* Each of these routines returns false if there was an error. */
 
@@ -1131,33 +1131,33 @@ extern "C" {
 
   M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j); /* drg: connected rawMatrixColSwap, OK*/
 
-  M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M, 
-					  int i, 
-					  const RingElement *r, 
-					  int j,
-					  M2_bool opposite_mult); /* drg: connected rawMatrixRowChange, OK */
-  /* row(i) <- row(i) + r * row(j), returns false if matrix is 
+  M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
+                                          int i,
+                                          const RingElement *r,
+                                          int j,
+                                          M2_bool opposite_mult); /* drg: connected rawMatrixRowChange, OK */
+  /* row(i) <- row(i) + r * row(j), returns false if matrix is
      immutable, or rows are out of bounds */
 
-  M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M, 
-					     int i, 
-					     const RingElement *r, 
-					     int j,
-					     M2_bool opposite_mult); /* drg: connected rawMatrixColChange, OK*/
-  /* column(i) <- column(i) + r * column(j), returns false if matrix is 
+  M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
+                                             int i,
+                                             const RingElement *r,
+                                             int j,
+                                             M2_bool opposite_mult); /* drg: connected rawMatrixColChange, OK*/
+  /* column(i) <- column(i) + r * column(j), returns false if matrix is
      immutable, or columns are out of bounds */
 
-  M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M, 
-				      const RingElement *r, 
-				      int i, 
-				      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale, OK*/
+  M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
+                                      const RingElement *r,
+                                      int i,
+                                      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale, OK*/
   /* row(i) <- r * row(i), returns false if matrix is immutable
      or row is out of bounds */
 
-  M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M, 
-					 const RingElement *r, 
-					 int i, 
-					 M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale, OK */
+  M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M,
+                                         const RingElement *r,
+                                         int i,
+                                         M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale, OK */
   /* column(i) <- r * column(i), returns false if matrix is immutable
      or row is out of bounds */
 
@@ -1175,19 +1175,19 @@ extern "C" {
 
 
   M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
-					int c1, int c2, 
-					const RingElement *a1, const RingElement *a2,
-					const RingElement *b1, const RingElement *b2,
-					M2_bool opposite_mult);	/* connected to rawMatrixColumnOperation2, OK */
+                                        int c1, int c2,
+                                        const RingElement *a1, const RingElement *a2,
+                                        const RingElement *b1, const RingElement *b2,
+                                        M2_bool opposite_mult); /* connected to rawMatrixColumnOperation2, OK */
   /* column(c1) <- a1 * column(c1) + a2 * column(c2)
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
   M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
-				     int r1, int r2, 
-				     const RingElement *a1, const RingElement *a2,
-				     const RingElement *b1, const RingElement *b2,
-				     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2, OK */
+                                     int r1, int r2,
+                                     const RingElement *a1, const RingElement *a2,
+                                     const RingElement *b1, const RingElement *b2,
+                                     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2, OK */
   /* row(r1) <- a1 * row(r1) + a2 * row(r2)
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -1196,14 +1196,14 @@ extern "C" {
   /* Returns false if M is not mutable, or lo, or hi are out of range */
 
   M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
-					int start, 
-					M2_arrayint perm); /* connected to rawPermuteRows, OK */
+                                        int start,
+                                        M2_arrayint perm); /* connected to rawPermuteRows, OK */
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
   M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
-					   int start, 
-					   M2_arrayint perm); /* connected to rawPermuteColumns, OK */
+                                           int start,
+                                           M2_arrayint perm); /* connected to rawPermuteColumns, OK */
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
@@ -1213,27 +1213,27 @@ extern "C" {
 
   M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M); /* drg: connected rawIsZero, OK */
 
-  M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M, 
-					   const MutableMatrix *N); /* drg: connected to rawIsEqual for use with ==, not connected to '===', OK */
+  M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M,
+                                           const MutableMatrix *N); /* drg: connected to rawIsEqual for use with ==, not connected to '===', OK */
   /* This checks that the entries of M,N are the same */
 
   MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense); /* connected to rawMutableMatrix, OK */
 
-  M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
-				       M2_arrayint rows,
-				       M2_arrayint cols,
-				       engine_RawRingElementArray values); /* connected to rawSetMatrixValues, OK */
+  M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
+                                       M2_arrayint rows,
+                                       M2_arrayint cols,
+                                       engine_RawRingElementArray values); /* connected to rawSetMatrixValues, OK */
   /* Given three arrays of the same length, 'rows', 'cols', 'values', set the
      corresponding values of M.  If any elements are out of range, ignore those
      triples.  If the type of ring element is not valid, or the sizes of the
      matrices do not match, return false. */
 
   MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
-						    M2_arrayint rows,
-						    M2_arrayint cols); /* drg: connected rawSubmatrix, OK */
-  
+                                                    M2_arrayint rows,
+                                                    M2_arrayint cols); /* drg: connected rawSubmatrix, OK */
+
   MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
-						     M2_arrayint cols); /* drg: connected rawSubmatrix, OK */
+                                                     M2_arrayint cols); /* drg: connected rawSubmatrix, OK */
 
 
   M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M); /* connected rawReduceByPivots */
@@ -1262,14 +1262,14 @@ extern "C" {
   /* connected to rawFFPackInvert, MES */
   /* requires: M should be a square matrix over a prime finite field */
 
-  MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C, 
-						      MutableMatrix *A, 
-						      MutableMatrix *B,
-						      M2_bool transposeA,
-						      M2_bool transposeB,
-						      const RingElement *a,
-						      const RingElement *b);
-  /* A,B,C should be mutable matrices over a finite prime field, and a,b 
+  MutableMatrix /* or null */ *rawFFPackAddMultipleTo(MutableMatrix *C,
+                                                      MutableMatrix *A,
+                                                      MutableMatrix *B,
+                                                      M2_bool transposeA,
+                                                      M2_bool transposeB,
+                                                      const RingElement *a,
+                                                      const RingElement *b);
+  /* A,B,C should be mutable matrices over a finite prime field, and a,b
      elements of this field.
      C = b*C + a * op(A)*op(B),
      where op(A) = A or transpose(A), depending on transposeA
@@ -1282,7 +1282,7 @@ extern "C" {
 
   M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A);
   /* connected, MES */
-  
+
   /***************************************************
    ***** Lapack routines for dense mutable matrices **
    ***************************************************/
@@ -1292,47 +1292,47 @@ extern "C" {
      some of the (already existing) parameters of the routine */
 
   M2_bool rawSolve(MutableMatrix *A,
-		   MutableMatrix *b,
-		   MutableMatrix *x); /* connected */
+                   MutableMatrix *b,
+                   MutableMatrix *x); /* connected */
 
   M2_bool rawNullspaceU(MutableMatrix *U,
-		     MutableMatrix *x); /* connected */
-  /* If U is a matrix in upper triangular echelon form (i.e.as 
+                     MutableMatrix *x); /* connected */
+  /* If U is a matrix in upper triangular echelon form (i.e.as
      returned by LU decomp), then x is replaced with
      a matrix whose columns form a basis for the null space of U. */
 
   M2_arrayintOrNull rawLU(const MutableMatrix *A,
-			   MutableMatrix *L,
-			   MutableMatrix *U); /* connected */
+                           MutableMatrix *L,
+                           MutableMatrix *U); /* connected */
   /* Returns the permutation array: we need to be more precise which one.
      A encodes both the L and the U part, as in lapack.
    */
 
   M2_bool rawEigenvalues(MutableMatrix *A,
-			 MutableMatrix *eigenvalues,
-			 M2_bool isHermitian); /* connected */
+                         MutableMatrix *eigenvalues,
+                         M2_bool isHermitian); /* connected */
   /*
    */
 
   M2_bool rawEigenvectors(MutableMatrix *A,
-			  MutableMatrix *eigenvalues,
-			  MutableMatrix *eigenvectors,
-			  M2_bool isHermitian); /* connected */
+                          MutableMatrix *eigenvalues,
+                          MutableMatrix *eigenvectors,
+                          M2_bool isHermitian); /* connected */
   /*
    */
 
   M2_bool rawSVD(MutableMatrix *A,
-		 MutableMatrix *Sigma,
-		 MutableMatrix *U,
-		 MutableMatrix *VT,
-		 M2_bool use_divide_and_conquer); /* connected */
-  /* 
+                 MutableMatrix *Sigma,
+                 MutableMatrix *U,
+                 MutableMatrix *VT,
+                 M2_bool use_divide_and_conquer); /* connected */
+  /*
    */
 
-  M2_bool rawLeastSquares(MutableMatrix *A, 
-			  MutableMatrix *b, 
-			  MutableMatrix *x, /* return value: argument modified */
-			  M2_bool assume_full_rank); /* connected */
+  M2_bool rawLeastSquares(MutableMatrix *A,
+                          MutableMatrix *b,
+                          MutableMatrix *x, /* return value: argument modified */
+                          M2_bool assume_full_rank); /* connected */
   /* Case 1: A is a dense matrix over RR.  Then so are b,x.
      Case 2: A is a dense matrix over CC.  Then so are b,x. */
 
@@ -1363,38 +1363,38 @@ extern "C" {
 
   unsigned long IM2_MonomialIdeal_hash(const MonomialIdeal *I);/* TODO */
 
-  int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1, 
-				     const MonomialIdeal *I2); /* drg: connected === */
-	// 1 = true, 0 = false, -1 = error
+  int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1,
+                                     const MonomialIdeal *I2); /* drg: connected === */
+        // 1 = true, 0 = false, -1 = error
 
   int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I); /* drg: connected rawNumgens*/
   /* Returns the number of minimal generators of I */
 
-  
+
   const MonomialIdeal /* or null */ *rawRadicalMonomialIdeal(const MonomialIdeal *I); /* drg: connected rawRadicalMonomialIdeal*/
-  /* The radical of the monomial ideal, that is, the monomial ideal 
+  /* The radical of the monomial ideal, that is, the monomial ideal
      generated by the square-free parts of the each monomial of I. */
 
-  const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(const MonomialIdeal *I, 
-							 const MonomialIdeal *J); /* drg: connected rawIntersect*/
-  
-  const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(const MonomialIdeal *I, 
-						   const Monomial *a); /* drg: connected rawColon*/
+  const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(const MonomialIdeal *I,
+                                                         const MonomialIdeal *J); /* drg: connected rawIntersect*/
+
+  const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(const MonomialIdeal *I,
+                                                   const Monomial *a); /* drg: connected rawColon*/
   /* If I = (m1, ..., mr),
      Form the monomial ideal (I : a) = (m1:a, ..., mr:a) */
 
-  const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(const MonomialIdeal *I, 
-						      const MonomialIdeal *J); /* drg: connected rawColon*/
+  const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(const MonomialIdeal *I,
+                                                      const MonomialIdeal *J); /* drg: connected rawColon*/
   /* Form the monomial ideal (I : J) = intersect(I:m1, ..., I:mr),
      where J = (m1,...,mr) */
 
-  const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(const MonomialIdeal *I, 
-					      const Monomial *a); /* drg: connected rawSaturateMonomialIdeal*/
+  const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(const MonomialIdeal *I,
+                                              const Monomial *a); /* drg: connected rawSaturateMonomialIdeal*/
   /* Form I:a^\infty.  IE, set every variable which occurs in 'a' to '1' in
      every generator of I. */
 
   const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal2(const MonomialIdeal *I,
-						   const MonomialIdeal *J); /* drg: connected rawSaturateMonomialIdeal*/
+                                                   const MonomialIdeal *J); /* drg: connected rawSaturateMonomialIdeal*/
   /* Form (I : J^\infty) = intersect(I:m1^\infty, ..., I:mr^\infty),
      where J = (m1,...,mr). */
 
@@ -1415,19 +1415,19 @@ extern "C" {
   /* Return the codimension of I IN THE AMBIENT POLYNOMIAL RING. */
 
   const MonomialIdeal /* or null */ *rawMonomialMinimalPrimes(const MonomialIdeal *I,
-						int codim_limit,
-						int count); /* drg: connected */
+                                                int codim_limit,
+                                                int count); /* drg: connected */
   /* RENAME THIS ROUTINE */
-  /* Return a monomial ideal whose generators correspond to the 
+  /* Return a monomial ideal whose generators correspond to the
      minimal primes of I of codim <= codim_limit.  If a minimal prime
      of I has the form (x_i1, ..., x_ir), then the corresponding monomial
      is x_i1 ... x_ir, i.e. the support of
-     the monomial generates the monomial minimal prime. 
+     the monomial generates the monomial minimal prime.
      If 'count' is positive, only collect this number.
   */
 
   const MonomialIdeal /* or null */ *rawMaximalIndependentSets(const MonomialIdeal *I,
-						 int count); 
+                                                 int count);
   /* drg: connected rawMaximalIndependentSets */
   /* Returns a monomial ideal where each generator encodes a maximal independent set
      of variables of I.  If 'count' is positive, only collect this number.
@@ -1473,18 +1473,18 @@ enum gbTraceValues
     /* The printlevel flags */
     PRINT_SPAIR_TRACKING=1024
   };
-  
-  Computation /* or null */* IM2_Computation_set_stop(Computation *G,          
-				     M2_bool always_stop,       /* 1 */
-				     M2_arrayint degree_limit,  /* 2*/
-				     int basis_element_limit,   /* 3 */
-				     int syzygy_limit,          /* 4 */
-				     int pair_limit,            /* 5 */
-				     int codim_limit,           /* 6 */
-				     int subring_limit,         /* 7 */
-				     M2_bool just_min_gens,     /* 8 */
-				     M2_arrayint length_limit   /* 9 */  /* not for GB */
-				     ); /* drg: connected rawGBSetStop */
+
+  Computation /* or null */* IM2_Computation_set_stop(Computation *G,
+                                     M2_bool always_stop,       /* 1 */
+                                     M2_arrayint degree_limit,  /* 2*/
+                                     int basis_element_limit,   /* 3 */
+                                     int syzygy_limit,          /* 4 */
+                                     int pair_limit,            /* 5 */
+                                     int codim_limit,           /* 6 */
+                                     int subring_limit,         /* 7 */
+                                     M2_bool just_min_gens,     /* 8 */
+                                     M2_arrayint length_limit   /* 9 */  /* not for GB */
+                                     ); /* drg: connected rawGBSetStop */
 
   /* Each of these routines can return NULL, because of errors */
 
@@ -1508,28 +1508,28 @@ enum gbTraceValues
    *******************************************/
 
   Computation /* or null */ *IM2_GB_make(const Matrix *m,
-				 M2_bool collect_syz,
-				 int n_rows_to_keep,
-				 M2_arrayint gb_weights,
-				 M2_bool use_max_degree,
-				 int max_degree,
-				 int algorithm,
-				 int strategy,
-				 int max_reduction_count); /* drg: connected rawGB */
+                                 M2_bool collect_syz,
+                                 int n_rows_to_keep,
+                                 M2_arrayint gb_weights,
+                                 M2_bool use_max_degree,
+                                 int max_degree,
+                                 int algorithm,
+                                 int strategy,
+                                 int max_reduction_count); /* drg: connected rawGB */
 
   Computation /* or null */ *IM2_GB_force(const Matrix *m,
-				  const Matrix *gb,
-				  const Matrix *change,
-				  const Matrix *syz); /* drg: connected rawGBForce */
+                                  const Matrix *gb,
+                                  const Matrix *change,
+                                  const Matrix *syz); /* drg: connected rawGBForce */
 
   Computation /* or null */ *rawMarkedGB(const Matrix *leadterms,
-				 const Matrix *m,
-				 const Matrix *gb,
-				 const Matrix *change,
-				 const Matrix *syz); /* mes: connected rawMarkedGB */
+                                 const Matrix *m,
+                                 const Matrix *gb,
+                                 const Matrix *change,
+                                 const Matrix *syz); /* mes: connected rawMarkedGB */
 
   Computation /* or null */ *rawGroebnerWalk(const Matrix *gb,
-				     const MonomialOrdering *order1);
+                                     const MonomialOrdering *order1);
   /* Create a GB algorithm which will compute using the generic Groebner walk algorithm
      Input: gb: a matrix which, under order1, would be a Groebner basis, except that
                 'gb' is a matrix over a polynomial ring whose order is 'order2'.
@@ -1540,7 +1540,7 @@ enum gbTraceValues
   */
 
   Computation /* or null */ *IM2_GB_set_hilbert_function(Computation *G,
-						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
+                                                 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
 
 
   const Matrix /* or null */ *rawGBGetMatrix(Computation *C);
@@ -1560,29 +1560,29 @@ enum gbTraceValues
   const Matrix /* or null */ *rawGBChangeOfBasis(Computation *C);
   /* Yields the change of basis matrix from the Groebner basis to
      the original generators, at least if n_rows_to_keep was set
-     when creating the GB computation.  This matrix, after the 
+     when creating the GB computation.  This matrix, after the
      computation has run to completion, should satisfy:
      (original matrix) = (GB matrix) * (change of basis matrix). */
 
-  const Matrix /* or null */ *rawGBSyzygies(Computation *C);  
+  const Matrix /* or null */ *rawGBSyzygies(Computation *C);
   /* Yields a matrix containing the syzygies computed so far
      via the GB computation C, assuming that 'collect_syz' was
      set when the computation was created.  If 'n_rows_to_keep' was
      set to a non-negative integer, then only that many rows of each
      syzygy are kept. */
 
-  const Matrix /* or null */ *rawGBMatrixRemainder(Computation *G, 
-					   const Matrix *m); /* drg: connected rawGBMatrixRemainder */
+  const Matrix /* or null */ *rawGBMatrixRemainder(Computation *G,
+                                           const Matrix *m); /* drg: connected rawGBMatrixRemainder */
 
   M2_bool IM2_GB_matrix_lift(Computation *G,
-			  const Matrix *m,
-			  const Matrix /* or null */ **result_remainder,
-			  const Matrix /* or null */ **result_quotient
-			  ); /* drg: connected rawGBMatrixLift */
+                          const Matrix *m,
+                          const Matrix /* or null */ **result_remainder,
+                          const Matrix /* or null */ **result_quotient
+                          ); /* drg: connected rawGBMatrixLift */
   /* false is returned if there is an error or if the remainder is NON-zero */
 
-  int IM2_GB_contains(Computation *G, 
-		      const Matrix *m); /* drg: connected rawGBContains */
+  int IM2_GB_contains(Computation *G,
+                      const Matrix *m); /* drg: connected rawGBContains */
 
 
   /*******************************************
@@ -1593,47 +1593,47 @@ enum gbTraceValues
   /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 
   Computation /* or null */ *IM2_res_make(const Matrix *m,
-				  M2_bool resolve_cokernel,
-				  int max_level,
-				  M2_bool use_max_slanted_degree,
-				  int max_slanted_degree,
-				  int algorithm,
-				  int strategy /* drg: connected rawResolution */
-				  );
+                                  M2_bool resolve_cokernel,
+                                  int max_level,
+                                  M2_bool use_max_slanted_degree,
+                                  int max_slanted_degree,
+                                  int algorithm,
+                                  int strategy /* drg: connected rawResolution */
+                                  );
 
-  const Matrix /* or null */ *rawResolutionGetMatrix(Computation *G,int level); 
+  const Matrix /* or null */ *rawResolutionGetMatrix(Computation *G,int level);
   /* rawResolutionGetMatrix */
 
   const FreeModule /* or null */ *rawResolutionGetFree(Computation *G, int level);
     /*drg: connected rawResolutionGetFree*/
 
   M2_arrayint rawResolutionBetti(Computation *G,
-				 int type); /* drg: connected rawGBBetti */
+                                 int type); /* drg: connected rawGBBetti */
   /* type:
-	 0: minimal betti numbers,
-	 1: non-minimal betti numbers (skeleton size, or size of GB's).
-	 2: number of S-pairs remaining to consider
-	 3: number of monomials in polynomials at this slot
-     Not all of these may be accessible with all algorithms.  If not available, 
+         0: minimal betti numbers,
+         1: non-minimal betti numbers (skeleton size, or size of GB's).
+         2: number of S-pairs remaining to consider
+         3: number of monomials in polynomials at this slot
+     Not all of these may be accessible with all algorithms.  If not available,
      A betti diagram with all -1's is displayed.
   */
 
   /* I don't know what this is supposed to do (mike) */
   int IM2_Resolution_status(Computation *G,
-		    int * complete_up_through_this_degree,
-		    int * complete_up_through_this_level); /* drg: TODO */
+                    int * complete_up_through_this_degree,
+                    int * complete_up_through_this_level); /* drg: TODO */
   /* -1: error condition, and the error message is set.
      0: not made, and in fact it won't ever be done...
      1: not started,
-     2: started, 
+     2: started,
      3: stopped because of a stopping condition
      4: finished the computation completely
   */
 
-  enum ComputationStatusCode IM2_Resolution_status_level(Computation *G, 
-							 int level, 
-							 M2_bool minimize,
-							 int * complete_up_through_this_degree); 
+  enum ComputationStatusCode IM2_Resolution_status_level(Computation *G,
+                                                         int level,
+                                                         M2_bool minimize,
+                                                         int * complete_up_through_this_degree);
   /* WARNING: 'minimize' is completely ignored, and should be removed from the interface */
   /* drg: connected rawResolutionStatusLevel */
 
@@ -1641,31 +1641,31 @@ enum gbTraceValues
   /**** Chinese remainder and rational reconstruction */
   /****************************************************/
 
-  const RingElement * rawRingElementCRA(const RingElement *f, 
-					const RingElement *g,
-					mpz_t m,
-					mpz_t n);
+  const RingElement * rawRingElementCRA(const RingElement *f,
+                                        const RingElement *g,
+                                        mpz_t m,
+                                        mpz_t n);
 
-  const Matrix * rawMatrixCRA(const Matrix *f, 
-			      const Matrix *g,
-			      mpz_t m,
-			      mpz_t n);
-  
-  const RingElement * rawRingElementRatConversion(const RingElement *f, 
+  const Matrix * rawMatrixCRA(const Matrix *f,
+                              const Matrix *g,
+                              mpz_t m,
+                              mpz_t n);
+
+  const RingElement * rawRingElementRatConversion(const RingElement *f,
                                   mpz_t m,
                                   const Ring *RQ);
 
   // f should be an element in the polynomial ring R (over ZZ).
   // RQ should be the same ring as R, but with rational coefficients
 
-  const Matrix * rawMatrixRatConversion(const Matrix *f, 
+  const Matrix * rawMatrixRatConversion(const Matrix *f,
                                         mpz_t m,
                                         const Ring *RQ);
   // f should be a matrix in the polynomial ring R (over ZZ).
   // RQ should be the same ring as R, but with rational coefficients
 
-					
-  
+
+
   /**************************************************/
   /**** Fraction free LU decomposition **************/
   /**************************************************/
@@ -1673,35 +1673,35 @@ enum gbTraceValues
   M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M); /* connected to rawFFLU */
   /* Replace M by a column echelon form.  No fractions are generated, but the
      base ring should be a domain.
-     If M has a column change of basis matrix attached, it will be modified accordingly. 
+     If M has a column change of basis matrix attached, it will be modified accordingly.
   */
 
   /**************************************************/
   /**** LLL bases ***********************************/
   /**************************************************/
-  
-  M2_bool rawLLL(MutableMatrix *M, 
-		 MutableMatrix /* or null */ *U,
-		 gmp_QQ threshold, 
-		 int strategy); /* DAN: connected to rawLLL */
+
+  M2_bool rawLLL(MutableMatrix *M,
+                 MutableMatrix /* or null */ *U,
+                 gmp_QQ threshold,
+                 int strategy); /* DAN: connected to rawLLL */
   /* Given a mutable matrix M over ZZ, and a rational number threshold, 1/4 < threshold <= 1,
      modify M so that the columns form a Lenstra-Lenstra-Lovasz
      basis of the image of (the original) M.  ASSUMPTION: (strategy=0 case)
-     the columns of M are already a a basis for the 
+     the columns of M are already a a basis for the
      lattice.  The algorithm used is that in Cohen's book on computational algebraic number
      theory, BUT: beware of the typos in the algorithm!
      If there is any error (interupted, M or threshold not the correct kind), then false
      is returned, and LLL is set to 0.
-     If M has a column change of basis matrix attached, it will be modified accordingly. 
+     If M has a column change of basis matrix attached, it will be modified accordingly.
 
      strategy: 0 means use original Macaulay2 engine routine.
                2 means use NTL LLL
-	       (strategy%3) == 3 means use one of the real number variants:
-	       GramSchmidt or Givens: 0 or 4 (respectively)
-	       LLL or BKZ: 0 or 8 (respectively)
-	       FP, QP1, QP, XD, RR (respectively: 0, 16, 2*16, 3*16, 4*16
-	       Thus: strategy 3+4+8+16 means use NTL's GBKZ_QP1.
-	       
+               (strategy%3) == 3 means use one of the real number variants:
+               GramSchmidt or Givens: 0 or 4 (respectively)
+               LLL or BKZ: 0 or 8 (respectively)
+               FP, QP1, QP, XD, RR (respectively: 0, 16, 2*16, 3*16, 4*16
+               Thus: strategy 3+4+8+16 means use NTL's GBKZ_QP1.
+
      For the RR variants, the suggested value of the threshold is 99/100.
 
      If U is not NULL, then it should be an m by m matrix over ZZ, where m is the number
@@ -1713,7 +1713,7 @@ enum gbTraceValues
   /* Given a mutable matrix over ZZ, compute the Smith normal form for M. (replaces
      M with this normal form.
      Currently the algorithm used makes computing the change of basis matrices
-     difficult (we use mod D arithmetic, where D is the determinant). 
+     difficult (we use mod D arithmetic, where D is the determinant).
      If there is an error, then an error is flagged and false is returned.
   */
 
@@ -1721,7 +1721,7 @@ enum gbTraceValues
   /* Given a mutable matrix over ZZ, compute the Hermite normal form for M. (replaces
      M with this normal form.
      Currently the algorithm used makes computing the change of basis matrices
-     difficult (we use mod D arithmetic, where D is the determinant). 
+     difficult (we use mod D arithmetic, where D is the determinant).
      If there is an error, then an error is flagged and false is returned.
   */
 
@@ -1730,8 +1730,8 @@ enum gbTraceValues
   /**************************************************/
 
   Matrix /* or null */ * rawSubduction(const Matrix *M,
-			       const RingMap *F,
-			       Computation *C);
+                               const RingMap *F,
+                               Computation *C);
   /*
     Perform a subalgebra reduction of the entries of the one row matrix M.
     C should be a GB computed in high enough degree to handle the elements of M,
@@ -1740,15 +1740,15 @@ enum gbTraceValues
     M should be a matrix over the ring R, usually only involving the variables in the f_i.
     R should be a ring containing the variables of the f_i, and the variables y_i,
       with a monomial order eliminating the first set of variables
-   The resulting matrix will have no monomials which are in the subalgebra 
-   generated by the monomials m_i, and each entry of M and the corresponding entry of the 
+   The resulting matrix will have no monomials which are in the subalgebra
+   generated by the monomials m_i, and each entry of M and the corresponding entry of the
    result differ by an element of the subalgebra generated by the f_i.
    */
 
   M2_bool rawIdealOfPoints(const Ring *R,
-		      const MutableMatrix *Pts,
-		      Matrix /* or null */ ** result_GB,
-		      Matrix /* or null */ ** result_std_monoms);
+                      const MutableMatrix *Pts,
+                      Matrix /* or null */ ** result_GB,
+                      Matrix /* or null */ ** result_std_monoms);
   /* Returns false if an error occured.
      Input: R: a polynomial ring of the form K[x1,...,xn]
             Pts: an n by d matrix over K.
@@ -1764,29 +1764,29 @@ enum gbTraceValues
   /**************************************************/
 
   const RingElement /* or null */ *rawGCDRingElement(
-					     const RingElement *f, const RingElement *g,
-					     const RingElement *mipo, M2_bool inExtension
-					     ); /* connect to rawGCD */
+                                             const RingElement *f, const RingElement *g,
+                                             const RingElement *mipo, M2_bool inExtension
+                                             ); /* connect to rawGCD */
   const RingElement /* or null */ *rawExtendedGCDRingElement(
-						     const RingElement *f, const RingElement *g,
-						     const RingElement **A, const RingElement **B
-						     ); /* connected to rawExtendedGCD */
+                                                     const RingElement *f, const RingElement *g,
+                                                     const RingElement **A, const RingElement **B
+                                                     ); /* connected to rawExtendedGCD */
   const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected to rawPseudoRemainder */
-  void rawFactor(const RingElement *f, 
-		 engine_RawRingElementArrayOrNull *result_factors, 
-		 M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
+  void rawFactor(const RingElement *f,
+                 engine_RawRingElementArrayOrNull *result_factors,
+                 M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
   M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
 
-  void rawDummy(void);		/* connected to rawDummy */
+  void rawDummy(void);          /* connected to rawDummy */
 
   /**************************************************/
   /**** Special routines for objects over RRR,CCC ***/
   /**************************************************/
 
   /* The code for these is in x-mutablemat.cpp */
-  
-  /* These routines set any real or complex numbers whose absolute value is less than 
+
+  /* These routines set any real or complex numbers whose absolute value is less than
      epsilon.  If the ring is not over RRR or CCC, then an error message is given, and NULL
      is returned. */
 
@@ -1807,12 +1807,12 @@ enum gbTraceValues
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
   M2_string rawStraightLineProgramToString(StraightLineProgram *); /* connected */
   unsigned long rawStraightLineProgramHash(StraightLineProgram *); /* connected */
-  const Matrix /* or null */ *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols , 
-				    M2_bool is_projective,
-				    gmp_RR init_dt, gmp_RR min_dt, gmp_RR max_dt, 
-				    gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
-				    gmp_RR epsilon, int max_corr_steps,
-				    int pred_type);  
+  const Matrix /* or null */ *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols ,
+                                    M2_bool is_projective,
+                                    gmp_RR init_dt, gmp_RR min_dt, gmp_RR max_dt,
+                                    gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
+                                    gmp_RR epsilon, int max_corr_steps,
+                                    int pred_type);
 
   PathTracker /* or null */ *rawPathTrackerPrecookedSLPs(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr);
   PathTracker /* or null */ *rawPathTracker(const Matrix *);
@@ -1820,10 +1820,10 @@ enum gbTraceValues
   M2_string rawPathTrackerToString(PathTracker *); /* connected */
   unsigned long rawPathTrackerHash(PathTracker *); /* connected */
   void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
-			  gmp_RR init_dt, gmp_RR min_dt, 
-			  gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
-			  gmp_RR epsilon, int max_corr_steps, gmp_RR end_zone_factor, gmp_RR infinity_threshold,
-			  int pred_type);  
+                          gmp_RR init_dt, gmp_RR min_dt,
+                          gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
+                          gmp_RR epsilon, int max_corr_steps, gmp_RR end_zone_factor, gmp_RR infinity_threshold,
+                          int pred_type);
   void rawLaunchPT(PathTracker* PT, const Matrix* start_sols);
   const Matrix /* or null */ *rawGetSolutionPT(PathTracker* PT, int solN);
   const Matrix /* or null */ *rawGetAllSolutionsPT(PathTracker* PT);
@@ -1847,5 +1847,6 @@ enum gbTraceValues
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
 */

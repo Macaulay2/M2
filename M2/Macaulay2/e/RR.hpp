@@ -6,7 +6,9 @@
 #include "ring.hpp"
 
 class CoefficientRingRR;
-
+/**
+    @ingroup rings
+*/
 class RingRR : public Ring
 // Elements of this ring are real numbers: 'double's
 {
@@ -46,7 +48,7 @@ public:
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
-  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;  
+  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
@@ -72,7 +74,7 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
@@ -89,4 +91,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

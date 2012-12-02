@@ -43,7 +43,7 @@ static unsigned long monomial_mask(int nvars, exponents exp)
     {
       if (j == 8*sizeof(long)) j=0;
       if (exp[i] > 0)
-	result |= (1 << j);
+        result |= (1 << j);
     }
   return result;
 }
@@ -68,7 +68,7 @@ MonomialTableZZ *MonomialTableZZ::make(int nvars)
   result = new MonomialTableZZ;
   result->_nvars = nvars;
   result->_count = 0;
-  /* The first entry is a dummy entry.  Components 
+  /* The first entry is a dummy entry.  Components
      will always start at 1. */
   result->_head.push_back(0);
 
@@ -84,12 +84,12 @@ MonomialTableZZ::~MonomialTableZZ()
 #if 0
 // NEW FUNCTION, 5/21/09.  If not functional in a few days, remove it!
 int MonomialTableZZ::find_divisors(int max,
-				   mpz_t coeff,
-				   exponents exp, 
-				   int comp,
-				   VECTOR(int) *result_term_divisors,
-				   VECTOR(int) *result_mon_divisors) const,
-  /* max: the max number of divisors to find. 
+                                   mpz_t coeff,
+                                   exponents exp,
+                                   int comp,
+                                   VECTOR(int) *result_term_divisors,
+                                   VECTOR(int) *result_mon_divisors) const,
+  /* max: the max number of divisors to find.
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
      return value: length of this array, i.e. the number of matches found */
@@ -106,29 +106,29 @@ int MonomialTableZZ::find_divisors(int max,
   for (t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
-	bool is_div = 1;
-	for (i=0; i<_nvars; i++)
-	  if (exp[i] < t->_lead[i])
-	    {
-	      is_div = 0;
-	      break;
-	    }
-	if (is_div)
-	  {
-	    if (mpz_divisible_p(coeff, t->_coeff))
-	      {
-		n_term_matches++;
-		if (result_term_divisors != 0) result_term_divisors->push_back(t->_val);
-	      }
-	      else if (result_mon_divisors != 0) result_mon_divisors->push_back(t->_val);
-					       
-	  }
-	if (is_div && mpz_divisible_p(coeff,t->_coeff))
-	  {
-	    nmatches++;
-	    if (result != 0) result->push_back(t);
-	    if (max >= 0 && nmatches >= max) break;
-	  }
+        bool is_div = 1;
+        for (i=0; i<_nvars; i++)
+          if (exp[i] < t->_lead[i])
+            {
+              is_div = 0;
+              break;
+            }
+        if (is_div)
+          {
+            if (mpz_divisible_p(coeff, t->_coeff))
+              {
+                n_term_matches++;
+                if (result_term_divisors != 0) result_term_divisors->push_back(t->_val);
+              }
+              else if (result_mon_divisors != 0) result_mon_divisors->push_back(t->_val);
+
+          }
+        if (is_div && mpz_divisible_p(coeff,t->_coeff))
+          {
+            nmatches++;
+            if (result != 0) result->push_back(t);
+            if (max >= 0 && nmatches >= max) break;
+          }
       }
   if (M2_gbTrace == 15 && nmatches >= 2)
     {
@@ -139,19 +139,19 @@ int MonomialTableZZ::find_divisors(int max,
       fprintf(stderr, "]%d\n", comp);
       fprintf(stderr, "  %d matches: \n",nmatches);
       if (result != 0)
-	for (int i=0; i<result->size(); i++)
-	  show_mon_term(stderr, (*result)[i]);
+        for (int i=0; i<result->size(); i++)
+          show_mon_term(stderr, (*result)[i]);
     }
   return nmatches;
 }
 #endif
 
 int MonomialTableZZ::find_term_divisors(int max,
-					mpz_t coeff,
-					exponents exp, 
-					int comp,
-					VECTOR(mon_term *) *result) const
-  /* max: the max number of divisors to find. 
+                                        mpz_t coeff,
+                                        exponents exp,
+                                        int comp,
+                                        VECTOR(mon_term *) *result) const
+  /* max: the max number of divisors to find.
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
      return value: length of this array, i.e. the number of matches found */
@@ -167,19 +167,19 @@ int MonomialTableZZ::find_term_divisors(int max,
   for (t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
-	bool is_div = 1;
-	for (int i=0; i<_nvars; i++)
-	  if (exp[i] < t->_lead[i])
-	    {
-	      is_div = 0;
-	      break;
-	    }
-	if (is_div && mpz_divisible_p(coeff,t->_coeff))
-	  {
-	    nmatches++;
-	    if (result != 0) result->push_back(t);
-	    if (max >= 0 && nmatches >= max) break;
-	  }
+        bool is_div = 1;
+        for (int i=0; i<_nvars; i++)
+          if (exp[i] < t->_lead[i])
+            {
+              is_div = 0;
+              break;
+            }
+        if (is_div && mpz_divisible_p(coeff,t->_coeff))
+          {
+            nmatches++;
+            if (result != 0) result->push_back(t);
+            if (max >= 0 && nmatches >= max) break;
+          }
       }
   if (M2_gbTrace == 15 && nmatches >= 2)
     {
@@ -190,8 +190,8 @@ int MonomialTableZZ::find_term_divisors(int max,
       fprintf(stderr, "]%d\n", comp);
       fprintf(stderr, "  %d matches: \n",nmatches);
       if (result != 0)
-	for (int i=0; i<result->size(); i++)
-	  show_mon_term(stderr, (*result)[i]);
+        for (int i=0; i<result->size(); i++)
+          show_mon_term(stderr, (*result)[i]);
     }
   return nmatches;
 }
@@ -218,27 +218,27 @@ bool MonomialTableZZ::is_weak_member(mpz_ptr c, exponents exp, int comp) const
   for (t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
-	bool is_div = true;
-	for (i=0; i<_nvars; i++)
-	  if (exp[i] < t->_lead[i])
-	    {
-	      is_div = false;
-	      break;
-	    }
-	if (!is_div) continue;
-	if (!g_is_set)
-	  {
-	    mpz_init_set(g, t->_coeff);
-	    g_is_set = true;
-	  }
-	else
-	  mpz_gcd(g,g,t->_coeff);
-	/* g is set */
-	if (mpz_divisible_p(c,t->_coeff))
-	  {
-	    mpz_clear(g);
-	    return true;
-	  }
+        bool is_div = true;
+        for (i=0; i<_nvars; i++)
+          if (exp[i] < t->_lead[i])
+            {
+              is_div = false;
+              break;
+            }
+        if (!is_div) continue;
+        if (!g_is_set)
+          {
+            mpz_init_set(g, t->_coeff);
+            g_is_set = true;
+          }
+        else
+          mpz_gcd(g,g,t->_coeff);
+        /* g is set */
+        if (mpz_divisible_p(c,t->_coeff))
+          {
+            mpz_clear(g);
+            return true;
+          }
       }
   if (g_is_set) mpz_clear(g);
   return false;
@@ -249,8 +249,8 @@ bool MonomialTableZZ::is_strong_member(mpz_ptr c, exponents exp, int comp) const
   return (find_term_divisors(1,c,exp,comp,0) > 0);
 }
 
-int MonomialTableZZ::find_smallest_coeff_divisor(exponents exp, 
-						 int comp) const
+int MonomialTableZZ::find_smallest_coeff_divisor(exponents exp,
+                                                 int comp) const
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return -1;
@@ -265,30 +265,30 @@ int MonomialTableZZ::find_smallest_coeff_divisor(exponents exp,
   for (t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
-	bool is_div = 1;
-	for (int i=0; i<_nvars; i++)
-	  if (exp[i] < t->_lead[i])
-	    {
-	      is_div = 0;
-	      break;
-	    }
-	if (is_div)
-	  {
-	    if (smallest_val < 0 || (mpz_cmpabs(smallest, t->_coeff) > 0))
-	      {
-		smallest_val = t->_val;
-		smallest = t->_coeff;
-	      }
-	  }
+        bool is_div = 1;
+        for (int i=0; i<_nvars; i++)
+          if (exp[i] < t->_lead[i])
+            {
+              is_div = 0;
+              break;
+            }
+        if (is_div)
+          {
+            if (smallest_val < 0 || (mpz_cmpabs(smallest, t->_coeff) > 0))
+              {
+                smallest_val = t->_val;
+                smallest = t->_coeff;
+              }
+          }
       }
   return smallest_val;
 }
 
 
 int MonomialTableZZ::find_monomial_divisors(int max,
-					  exponents exp, 
-					  int comp,
-					  VECTOR(mon_term *) *result) const
+                                          exponents exp,
+                                          int comp,
+                                          VECTOR(mon_term *) *result) const
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return 0;
@@ -301,19 +301,19 @@ int MonomialTableZZ::find_monomial_divisors(int max,
   for (t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
-	bool is_div = 1;
-	for (int i=0; i<_nvars; i++)
-	  if (exp[i] < t->_lead[i])
-	    {
-	      is_div = 0;
-	      break;
-	    }
-	if (is_div)
-	  {
-	    nmatches++;
-	    if (result != 0) result->push_back(t);
-	    if (max >= 0 && nmatches >= max) break;
-	  }
+        bool is_div = 1;
+        for (int i=0; i<_nvars; i++)
+          if (exp[i] < t->_lead[i])
+            {
+              is_div = 0;
+              break;
+            }
+        if (is_div)
+          {
+            nmatches++;
+            if (result != 0) result->push_back(t);
+            if (max >= 0 && nmatches >= max) break;
+          }
       }
 
   if (M2_gbTrace == 15 && nmatches >= 2)
@@ -323,15 +323,15 @@ int MonomialTableZZ::find_monomial_divisors(int max,
       fprintf(stderr, "]%d\n", comp);
       fprintf(stderr, "  %d matches: \n",nmatches);
       if (result != 0)
-	for (int i=0; i<result->size(); i++)
-	  show_mon_term(stderr, (*result)[i]);
+        for (int i=0; i<result->size(); i++)
+          show_mon_term(stderr, (*result)[i]);
     }
   return nmatches;
 }
 
 MonomialTableZZ::mon_term *MonomialTableZZ::find_exact(mpz_ptr coeff,
-						       exponents exp, 
-						       int comp) const
+                                                       exponents exp,
+                                                       int comp) const
 {
   if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
@@ -343,22 +343,22 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact(mpz_ptr coeff,
   for (t = head->_next; t != head; t = t->_next)
     if (expmask == t->_mask)
       {
-	bool is_eq = 1;
-	for (i=0; i<_nvars; i++)
-	  if (exp[i] != t->_lead[i])
-	    {
-	      is_eq = 0;
-	      break;
-	    }
-	if (is_eq && !mpz_cmp(coeff,t->_coeff))
-	  return t;
+        bool is_eq = 1;
+        for (i=0; i<_nvars; i++)
+          if (exp[i] != t->_lead[i])
+            {
+              is_eq = 0;
+              break;
+            }
+        if (is_eq && !mpz_cmp(coeff,t->_coeff))
+          return t;
       }
   return 0;
 }
 
-MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp, 
-								int comp,
-								int first_val) const
+MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp,
+                                                                int comp,
+                                                                int first_val) const
 {
   if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
@@ -374,19 +374,19 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp,
     {
       if (t->_val < first_val) continue;
       if (expmask == t->_mask)
-	{
-	  bool is_eq = 1;
-	  for (i=0; i<_nvars; i++)
-	    if (exp[i] != t->_lead[i])
-	      {
-		is_eq = 0;
-		break;
-	      }
-	  if (is_eq) {
-	    if (result == 0) result = t;
-	    neqs++;
-	  }
-	}
+        {
+          bool is_eq = 1;
+          for (i=0; i<_nvars; i++)
+            if (exp[i] != t->_lead[i])
+              {
+                is_eq = 0;
+                break;
+              }
+          if (is_eq) {
+            if (result == 0) result = t;
+            neqs++;
+          }
+        }
     }
   if (neqs > 1)
     {
@@ -409,7 +409,7 @@ void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)
   if (comp >= INTSIZE(_head))
     {
       for (int i=INTSIZE(_head); i <= comp; i++)
-	_head.push_back(make_list_head());
+        _head.push_back(make_list_head());
     }
 
   mon_term *head = _head[comp];
@@ -427,11 +427,11 @@ void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)
   for (t=head; t->_next != head; t = t->_next)
     {
       if (exponents_greater(_nvars, newterm->_lead, t->_next->_lead))
-	{
-	  /* Time to insert newterm, right between t, t->next */
-	  break;
-	}
-    }	  
+        {
+          /* Time to insert newterm, right between t, t->next */
+          break;
+        }
+    }
 
   /* The actual insertion */
   newterm->_next = t->_next;
@@ -449,10 +449,10 @@ struct montable_sorter_ZZ : public std::binary_function<int,int,bool> {
   const VECTOR(mpz_ptr) &coeffs;
   const VECTOR(exponents) &exps;
   const VECTOR(int) &comps;
-  montable_sorter_ZZ(int nvars0, 
-	 const VECTOR(mpz_ptr) &coeffs0,
-	 const VECTOR(exponents) &exps0,
-	 const VECTOR(int) &comps0) 
+  montable_sorter_ZZ(int nvars0,
+         const VECTOR(mpz_ptr) &coeffs0,
+         const VECTOR(exponents) &exps0,
+         const VECTOR(int) &comps0)
     : nvars(nvars0), coeffs(coeffs0), exps(exps0), comps(comps0) {}
 
   bool operator()(int x, int y) {
@@ -487,11 +487,11 @@ struct montable_sorter_ZZ : public std::binary_function<int,int,bool> {
 #endif
 };
 
-void MonomialTableZZ::find_weak_generators(int nvars, 
-				      const VECTOR(mpz_ptr) &coeffs,
-				      const VECTOR(exponents) &exps,
-				      const VECTOR(int) &comps,
-				      VECTOR(int) &result_positions)
+void MonomialTableZZ::find_weak_generators(int nvars,
+                                      const VECTOR(mpz_ptr) &coeffs,
+                                      const VECTOR(exponents) &exps,
+                                      const VECTOR(int) &comps,
+                                      VECTOR(int) &result_positions)
 {
   // Find a set of elements which generate all of them, as a submodule.
   // The indices for these are placed into result_positions.
@@ -499,8 +499,8 @@ void MonomialTableZZ::find_weak_generators(int nvars,
   // The plan for this is simple, although it could be easily optimized.
   // First, sort the elements into increasing order, with coeffs for each specific
   // exponent vector also in increasing order (ASSUMPTION: all coeffs are > 0).
-  
-  // Second, loop through each one, checking whether it is in the submodule gen 
+
+  // Second, loop through each one, checking whether it is in the submodule gen
   // by the previous.
 
   VECTOR(int) positions;
@@ -523,20 +523,20 @@ void MonomialTableZZ::find_weak_generators(int nvars,
   for (VECTOR(int)::iterator j = positions.begin(); j != positions.end(); j++)
     if (!T->is_weak_member(coeffs[*j], exps[*j], comps[*j]))
       {
-	result_positions.push_back(*j);
-	T->insert(coeffs[*j], exps[*j], comps[*j], *j);
+        result_positions.push_back(*j);
+        T->insert(coeffs[*j], exps[*j], comps[*j], *j);
       }
   /* We could return T if that is desired */
   //  deleteitem(T);
 }
 
-void MonomialTableZZ::find_strong_generators(int nvars, 
-					     const VECTOR(mpz_ptr) &coeffs,
-					     const VECTOR(exponents) &exps,
-					     const VECTOR(int) &comps,
-					     VECTOR(int) &result_positions)
+void MonomialTableZZ::find_strong_generators(int nvars,
+                                             const VECTOR(mpz_ptr) &coeffs,
+                                             const VECTOR(exponents) &exps,
+                                             const VECTOR(int) &comps,
+                                             VECTOR(int) &result_positions)
 {
-  // Find the set of terms c*exp*comp such that every other one is divisible 
+  // Find the set of terms c*exp*comp such that every other one is divisible
   // by at least one of these.
 
   VECTOR(int) positions;
@@ -559,8 +559,8 @@ void MonomialTableZZ::find_strong_generators(int nvars,
   for (VECTOR(int)::iterator j = positions.begin(); j != positions.end(); j++)
     if (!T->is_strong_member(coeffs[*j], exps[*j], comps[*j]))
       {
-	result_positions.push_back(*j);
-	T->insert(coeffs[*j], exps[*j], comps[*j], *j);
+        result_positions.push_back(*j);
+        T->insert(coeffs[*j], exps[*j], comps[*j], *j);
       }
   /* We could return T if that is desired */
   //  deleteitem(T);
@@ -579,16 +579,16 @@ void MonomialTableZZ::show(FILE *fil) const
   mon_term *t,*head;
   /* Loop through each component, display monomials(val) 10 per line */
   fprintf(fil, "monomial table: %d vars, %d components, %d elements\n",
-	  this->_nvars, static_cast<int>(_head.size()), this->_count);
+          this->_nvars, static_cast<int>(_head.size()), this->_count);
   for (unsigned i=1; i<_head.size(); i++)
     {
       head = this->_head[i];
       if (head->_next == head) continue;
       fprintf(fil,"  -- component %d --\n",i);
       for (t = head->_next; t != head; t = t->_next)
-	{
-	  show_mon_term(fil, t);
-	}
+        {
+          show_mon_term(fil, t);
+        }
     }
   fprintf(fil,"\n");
 }
@@ -600,4 +600,5 @@ void MonomialTableZZ::showmontable()
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

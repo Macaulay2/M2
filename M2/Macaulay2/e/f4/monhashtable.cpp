@@ -24,8 +24,8 @@ void MonomialHashTable<ValueType>::initialize(int logsize0)
 {
   logsize = logsize0;
   size = (1<<logsize);
-  //threshold = size/3; // was 2*size/3 
-  threshold = 2*size/3; // was 2*size/3 
+  //threshold = size/3; // was 2*size/3
+  threshold = 2*size/3; // was 2*size/3
   hashtab = newarray(value, size);
   hashmask = size-1;
   reset();
@@ -95,32 +95,32 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
       value *hashtop = hashtab + size;
       long run_len = 1;
       for (value *i = hashtab + hashval; ; i++, run_len++)
-	{
-	  if (run_len > max_run_length)
-	    max_run_length = run_len;
-	  if (i == hashtop) i = hashtab;
-	  if (!(*i)) 
-	    {
-	      // Spot is empty, so m is a new value
-	      *i = m;
-	      result = m;
-	      count++;
-	      if (count > threshold) grow();
-	      return false;
-	    }
-	  if (HASHVALUE(*i) == mhash)
-	    {
-	      monequal_count++;
-	      if (MONOMIAL_EQUAL(m, *i))
-		{
-		  monequal_count++;
-		  result = *i;
-		  return true;
-		}
-	      monequal_fails++;
-	    }
-	  nclashes++;
-	}
+        {
+          if (run_len > max_run_length)
+            max_run_length = run_len;
+          if (i == hashtop) i = hashtab;
+          if (!(*i))
+            {
+              // Spot is empty, so m is a new value
+              *i = m;
+              result = m;
+              count++;
+              if (count > threshold) grow();
+              return false;
+            }
+          if (HASHVALUE(*i) == mhash)
+            {
+              monequal_count++;
+              if (MONOMIAL_EQUAL(m, *i))
+                {
+                  monequal_count++;
+                  result = *i;
+                  return true;
+                }
+              monequal_fails++;
+            }
+          nclashes++;
+        }
     }
 }
 
@@ -142,19 +142,19 @@ void MonomialHashTable<ValueType>::show() const
   for (long i=0; i<size; i++)
     {
       if (hashtab[i] == 0)
-	nzeros++;
-      else 
-	{
-	  value m = hashtab[i];
-	  if (nzeros > 0)
-	    {
-	      fprintf(stderr, "-- %ld zero elements --\n", nzeros);
-	      nzeros = 0;
-	    }
-	  fprintf(stderr, "hash %ld monomial ", M->hash_value(m));
-	  M->show(m);
-	  fprintf(stderr, "\n");
-	}
+        nzeros++;
+      else
+        {
+          value m = hashtab[i];
+          if (nzeros > 0)
+            {
+              fprintf(stderr, "-- %ld zero elements --\n", nzeros);
+              nzeros = 0;
+            }
+          fprintf(stderr, "hash %ld monomial ", M->hash_value(m));
+          M->show(m);
+          fprintf(stderr, "\n");
+        }
     }
   if (nzeros > 0)
     fprintf(stderr, "-- %ld zero elements --\n", nzeros);
@@ -164,4 +164,5 @@ template class MonomialHashTable<MonomialInfo>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

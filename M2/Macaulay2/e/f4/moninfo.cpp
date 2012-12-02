@@ -35,14 +35,14 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
       compare = &MonomialInfo::compare_lex;
 
       if (M2_gbTrace >= 1)
-	fprintf(stderr, "lex order\n");
+        fprintf(stderr, "lex order\n");
     }
   else if (moIsGRevLex(mo))
     {
       compare = &MonomialInfo::compare_grevlex;
 
       if (M2_gbTrace >= 1)
-	fprintf(stderr, "grevlex order\n");
+        fprintf(stderr, "grevlex order\n");
     }
   else
     {
@@ -51,7 +51,7 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
       compare = &MonomialInfo::compare_weightvector;
 
       if (M2_gbTrace >= 1)
-	fprintf(stderr, "weight order\n");
+        fprintf(stderr, "weight order\n");
     }
 
   nslots = 2 + nvars + nweights;
@@ -111,4 +111,5 @@ void MonomialInfo::show(const_packed_monomial m) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

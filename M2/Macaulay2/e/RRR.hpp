@@ -8,6 +8,9 @@
 #include "ZZ.hpp"
 
 class CoefficientRingRRR;
+/**
+    @ingroup rings
+*/
 class RRR : public Ring
 {
   unsigned long precision;
@@ -29,6 +32,8 @@ public:
   const RRR * cast_to_RRR() const { return this; }
 
   CoefficientRingRRR *get_CoeffRing() const { return coeffR; }
+  CoefficientRingRRR *get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
+  
   unsigned long get_precision() const { return precision; }
 
   bool is_greater(const ring_elem a, const ring_elem b) const;
@@ -74,15 +79,15 @@ public:
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
 
   virtual void syzygy(const ring_elem a, const ring_elem b,
-		      ring_elem &x, ring_elem &y) const;
+                      ring_elem &x, ring_elem &y) const;
 
   virtual ring_elem random() const;
 
-  virtual void elem_text_out(buffer &o, 
-			     const ring_elem f, 
-			     bool p_one=true, 
-			     bool p_plus=false, 
-			     bool p_parens=false) const;
+  virtual void elem_text_out(buffer &o,
+                             const ring_elem f,
+                             bool p_one=true,
+                             bool p_plus=false,
+                             bool p_parens=false) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
@@ -96,4 +101,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

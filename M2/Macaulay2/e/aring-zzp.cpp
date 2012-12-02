@@ -12,10 +12,10 @@ namespace M2 {
       prim_root = 1;
     else
       {
-	j=1;
-	for (i=2; (i<P && j<P-1); i++)
-	  for (q=i,j=1; (q!=1 && j<P); q=(q*i)%P,j++);
-	prim_root = i-1;
+        j=1;
+        for (i=2; (i<P && j<P-1); i++)
+          for (q=i,j=1; (q!=1 && j<P); q=(q*i)%P,j++);
+        prim_root = i-1;
       }
     return prim_root;
   }
@@ -23,15 +23,15 @@ namespace M2 {
   void ARingZZp::initialize_tables()
   {
     int i,n;
-    
+
     prim_root = findPrimitiveRoot(p);
 
     log_table = new int[p]; // newarray_atomic(int,p);
     exp_table = new int[p]; // newarray_atomic(int,p);
     for (i=0, n=1; i<p-1; i++, n=(n*prim_root)%p)
       {
-	log_table[n] = i;  // i = log_(base _prim_root)(n)
-	exp_table[i] = n;  // n = (_prim_root)^i 
+        log_table[n] = i;  // i = log_(base _prim_root)(n)
+        exp_table[i] = n;  // n = (_prim_root)^i
       }
     exp_table[p1] = 1;
     exp_table[0] = 0;
@@ -60,26 +60,28 @@ namespace M2 {
 
     initialize_tables();
   }
-  
-  void ARingZZp::elem_text_out(buffer &o, 
-			       ElementType a, 
-			       bool p_one, 
-			       bool p_plus, 
-			       bool p_parens) const
+
+  void ARingZZp::elem_text_out(buffer &o,
+                               ElementType a,
+                               bool p_one,
+                               bool p_plus,
+                               bool p_parens) const
   {
     int n = exp_table[a];
+    o << "me.";
     if (n < 0) 
       {
-	o << '-';
-	n = -n;
+        o << '-';
+        n = -n;
       }
-    else if (p_plus) 
+    else if (p_plus)
       o << '+';
     if (p_one || n != 1) o << n;
   }
-  
+
 };
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
 // End:

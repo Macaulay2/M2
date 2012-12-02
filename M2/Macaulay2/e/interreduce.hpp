@@ -30,11 +30,12 @@ public:
   bool reduceTail(gbvector *&f, int i);
   // reduces f w.r.t G \ i.
 
-  
+
 };
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// indent-tabs-mode: nil
 // End:

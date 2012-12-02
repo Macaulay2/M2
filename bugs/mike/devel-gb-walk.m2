@@ -105,7 +105,7 @@ groebnerWalktoLex(Ideal,Ring,List) := (I,Rlast,WW) -> (
      
 end
 restart
-load "/Users/mike/src/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+load "/Users/mike/src/M2-trunk/bugs/mike/devel-gb-walk.m2"
 -- test of marked GB reduction
 R1 = ZZ/101[a..e]
 I = ideal"a4b+a3c3+a2d5+ae7"
@@ -135,6 +135,7 @@ time gens gb(homogenize(I,t));
 -- Example from paper
 restart
 load "/Users/mike/M2/Macaulay2/bugs/mike/devel-gb-walk.m2"
+load "/Users/mike/src/M2-trunk/bugs/mike/devel-gb-walk.m2"
 kk = QQ
 R = kk[x,y]
 I = ideal"x2-y3,x3-y2-x"

@@ -4,7 +4,8 @@
 GFAN_VERSION = 0.4plus
 VERSION = $(GFAN_VERSION)
 PATCHFILE = @abs_srcdir@/patch-$(GFAN_VERSION)
-URL = http://www.math.tu-berlin.de/~jensen/software/gfan
+# URL = http://www.math.tu-berlin.de/~jensen/software/gfan
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
 CONFIGURECMD = true

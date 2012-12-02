@@ -35,7 +35,7 @@ extern "C" {
   void mpfc_abs(gmp_RR result, gmp_CC a);
   void mpfc_sqrt(gmp_CC result, gmp_CC a);
   void mpfc_conj(gmp_CC result, gmp_CC a);
-  
+
 #if defined(__cplusplus)
 }
 #endif
@@ -44,5 +44,5 @@ extern "C" {
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

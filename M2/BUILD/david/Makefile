@@ -1,5 +1,5 @@
-CC = gcc -m64
-CXX = g++ -m64
+CC = gcc-4.2 -m64
+CXX = g++-4.2 -m64
 all:
 	$(MAKE) -C build.tmp all install
 configure:

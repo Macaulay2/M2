@@ -14,24 +14,17 @@ union ring_elem;
 
 class MutableMatrix;
 
-template<typename CoeffRing>
+/**
+ * \ingroup matrices
+ */
+template<typename ACoeffRing>
 class DMat : public our_new_delete
 {
-  public:
-	 typedef typename CoeffRing::elem elem;
-
-  private:
-  typedef typename CoeffRing::ring_type RingType;
-  const RingType *R; // To interface to the outside world
-  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
-  int nrows_;
-  int ncols_;
-  elem *array_; // array has length nrows*ncols
-                // columns stored one after another
-
-
-  void copy_elems(long n_to_copy, elem *target, int target_stride, elem *source, int stride);
 public:
+  typedef ACoeffRing CoeffRing;
+  typedef typename CoeffRing::elem elem;
+  typedef typename CoeffRing::ring_type RingType;
+
   DMat():R(0), coeffR(0), nrows_(0), ncols_(0), array_(0) {} // Makes a zero matrix
 
   DMat(const RingType *R0, int nrows, int ncols); // Makes a zero matrix
@@ -65,28 +58,28 @@ public:
     int col;
     elem *begin;
     elem *end;
-    void to_next_valid() { 
+    void to_next_valid() {
       const CoeffRing *R = M->get_CoeffRing();
       --begin;
       while (begin >= end && R->is_zero(*begin)) --begin;
     }
   public:
-    void set(int col0) { 
-      col = col0; 
-      begin = M->array_ + (col0+1) * (M->n_rows()); 
+    void set(int col0) {
+      col = col0;
+      begin = M->array_ + (col0+1) * (M->n_rows());
       end = begin-M->n_rows();
       to_next_valid();
     }
-    iterator(const DMat<CoeffRing> *M0) : M(M0), 
-					  col(-1), 
-					  begin(0),
-					  end(0) { }
+    iterator(const DMat<CoeffRing> *M0) : M(M0),
+                                          col(-1),
+                                          begin(0),
+                                          end(0) { }
     const elem &value() { return *begin; }
     void next() { to_next_valid(); }
     bool valid() { return begin >= end; }
     int row() { return static_cast<int>(begin-end); }
 
-    void copy_elem(ring_elem &result) { 
+    void copy_elem(ring_elem &result) {
       M->get_CoeffRing()->to_ring_elem(result, value());
     }
   };
@@ -116,16 +109,16 @@ public:
   void set_entry(int r, int c, const elem &a);
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
-  void interchange_rows(int i, int j); 
+  void interchange_rows(int i, int j);
   /* swap rows: row(i) <--> row(j) */
 
-  void interchange_columns(int i, int j); 
+  void interchange_columns(int i, int j);
   /* swap columns: column(i) <--> column(j) */
 
-  void scale_row(int i, const elem &r); 
+  void scale_row(int i, const elem &r);
   /* row(i) <- r * row(i) */
 
-  void scale_column(int i, const elem &r); 
+  void scale_column(int i, const elem &r);
   /* column(i) <- r * column(i) */
 
   void divide_row(int i, const elem &r);
@@ -134,27 +127,27 @@ public:
   void divide_column(int i, const elem &r);
   /* column(i) <- column(i) / r */
 
-  void row_op(int i, const elem &r, int j); 
+  void row_op(int i, const elem &r, int j);
   /* row(i) <- row(i) + r * row(j) */
 
-  void column_op(int i, const elem &r, int j); 
+  void column_op(int i, const elem &r, int j);
   /* column(i) <- column(i) + r * column(j) */
 
-  void column2by2(int c1, int c2, 
-		  const elem &a1, const elem &a2,
-		  const elem &b1, const elem &b2);
+  void column2by2(int c1, int c2,
+                  const elem &a1, const elem &a2,
+                  const elem &b1, const elem &b2);
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
-  void row2by2(int r1, int r2, 
-	       const elem &a1, const elem &a2,
-	       const elem &b1, const elem &b2);
+  void row2by2(int r1, int r2,
+               const elem &a1, const elem &a2,
+               const elem &b1, const elem &b2);
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 
-  void dot_product(int i, int j, elem &result) const; 
+  void dot_product(int i, int j, elem &result) const;
 
   bool row_permute(int start_row, M2_arrayint perm);
 
@@ -173,8 +166,8 @@ public:
   /* Delete rows i .. j from M */
 
   bool set_submatrix(M2_arrayint rows,
-		     M2_arrayint cols,
-		     const MutableMatrix *N);
+                     M2_arrayint cols,
+                     const MutableMatrix *N);
 
   DMat<CoeffRing> *submatrix(M2_arrayint rows, M2_arrayint cols) const;
 
@@ -200,10 +193,22 @@ public:
   // return f*this.  return NULL of sizes or types do not match.
 
   DMat * negate() const;
+
+private:
+  const RingType *R; // To interface to the outside world
+  CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
+  int nrows_;
+  int ncols_;
+  elem *array_; // array has length nrows*ncols
+                // columns stored one after another
+
+
+  void copy_elems(long n_to_copy, elem *target, int target_stride, elem *source, int stride);
 };
 
 #endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

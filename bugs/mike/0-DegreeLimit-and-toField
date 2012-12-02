@@ -1,0 +1,36 @@
+Reported by J. Yu:
+
+    i1 : F = toField( QQ[x]/(x^2+1) )
+
+    o1 = F
+
+    o1 : PolynomialRing
+
+    i2 : 1 % ideal(x)
+
+    o2 = 1
+
+    o2 : F
+
+    i3 : 1 % x
+
+    o3 = 0				wrong answer
+
+    o3 : F
+
+
+
+It falls into this code:
+
+    i15 : code ( symbol %, ZZ, Ideal )
+
+    o15 = -- code for method: ZZ % Ideal
+	  ../../src/M2/trunk/M2/Macaulay2/m2/matrix2.m2:348:25-351:63: --source code:
+	  Number % Ideal := (r,I) -> (
+	       r = promote(r,ring I);
+	       if r == 0 then return r;
+	       r % if isHomogeneous I then gb(I,DegreeLimit=>0) else gb I)
+
+The problem is that gb stops at degree limit 0 but perhaps that has a different meaning
+in the engine than at top level, where x is just a constant.
+

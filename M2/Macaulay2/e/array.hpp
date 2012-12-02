@@ -26,9 +26,9 @@ class array : public our_new_delete
       entries = tmp;
       len = newlen;
       }
-   
+
 public:
-  array(unsigned int i_size = init_array_size) 
+  array(unsigned int i_size = init_array_size)
     : max(0)
     {
       len = (init_array_size > i_size ? init_array_size : i_size);
@@ -42,15 +42,15 @@ public:
       for (unsigned int i=0; i<max; i++) entries[i] = a.entries[i];
     }
 
-  ~array() { 
-    engine_dealloc(len * sizeof(T)); 
+  ~array() {
+    engine_dealloc(len * sizeof(T));
     deletearray(entries);
     entries = NULL;
     }
 
   unsigned int  length() const { return max; }
 
-  void shrink(unsigned int newmax) { 
+  void shrink(unsigned int newmax) {
        assert( newmax >= 0 );
        if (newmax < max) max = newmax;
   }
@@ -70,21 +70,21 @@ public:
     }
 
   T &rawelem(unsigned int i)
-    { 
-	 assert(i < max);
-	 return entries[i]; 
+    {
+         assert(i < max);
+         return entries[i];
     }
 
   const T &rawelem(unsigned int i) const
-    { 
-	 assert(i < max); 
-	 return entries[i];
+    {
+         assert(i < max);
+         return entries[i];
     }
 
-  void append(const T &t) 
-    { 
-      if (max == len) expand(max); 
-      entries[max++] = t; 
+  void append(const T &t)
+    {
+      if (max == len) expand(max);
+      entries[max++] = t;
     }
 
   array<T> &operator=(const array<T> &a)
@@ -125,12 +125,12 @@ class array_class : public our_new_delete {
      entries = tmp;
      len = newlen;
    }
-   
+
 public:
 
   unsigned int  length() const { return max; }
 
-  void shrink(unsigned int newmax) { 
+  void shrink(unsigned int newmax) {
        assert( newmax >= 0 );
        if (newmax < max) max = newmax;
   }
@@ -150,23 +150,23 @@ public:
     }
 
   T &rawelem(unsigned int i)
-    { 
-	 assert(i < max); 
-	 return entries[i]; 
+    {
+         assert(i < max);
+         return entries[i];
     }
 
   const T &rawelem(unsigned int i) const
-    { 
-	 assert(i < max); 
-	 return entries[i];
+    {
+         assert(i < max);
+         return entries[i];
     }
 
-  void append(const T &t) 
-    { 
-      if (max == len) expand(max); 
-      entries[max++] = t; 
+  void append(const T &t)
+    {
+      if (max == len) expand(max);
+      entries[max++] = t;
     }
-  array_class(unsigned int i_size = init_array_size) 
+  array_class(unsigned int i_size = init_array_size)
     : max(0)
     {
       len = (init_array_size > i_size ? init_array_size : i_size);
@@ -185,9 +185,9 @@ public:
       for (   ; i<len; i++) new(&entries[i]) T; // run the constructors explicitly (we could also have assigned the old ones)
     }
  ~array_class()
-    { 
-      engine_dealloc(len * sizeof(T)); 
-      // delete[] entries; 
+    {
+      engine_dealloc(len * sizeof(T));
+      // delete[] entries;
       for (unsigned int i=0; i<len; i++) entries[i].~T(); // run the destructors explicitly
       deletearray(entries);
       entries = NULL;
@@ -217,4 +217,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

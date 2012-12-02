@@ -9,9 +9,9 @@
 #include "reducedgb-ZZ.hpp"
 
 ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
-			     const FreeModule *F0,
-			     const FreeModule *Fsyz0,
-			     const GBWeight *wt0) // better be 0 or set with same F0
+                             const FreeModule *F0,
+                             const FreeModule *Fsyz0,
+                             const GBWeight *wt0) // better be 0 or set with same F0
 {
   // Depending on whether the ring is over a field, or over ZZ, or
   // has local variables, we create a different class.
@@ -26,20 +26,20 @@ ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
   else
     {
       if (is_local)
-	return new ReducedGB_Field_Local(R,originalR0,F0,Fsyz0,wt0);
+        return new ReducedGB_Field_Local(R,originalR0,F0,Fsyz0,wt0);
       else
-	return new ReducedGB_Field(R,originalR0,F0,Fsyz0);
+        return new ReducedGB_Field(R,originalR0,F0,Fsyz0);
     }
 }
 
 
 ReducedGB::ReducedGB(GBRing *R0,
-		     const PolynomialRing *originalR0,
-		     const FreeModule *F0,
-		     const FreeModule *Fsyz0) 
-  : R(R0), 
-    originalR(originalR0), 
-    F(F0), 
+                     const PolynomialRing *originalR0,
+                     const FreeModule *F0,
+                     const FreeModule *Fsyz0)
+  : R(R0),
+    originalR(originalR0),
+    F(F0),
     Fsyz(Fsyz0)
 {
   set_status(COMP_DONE);
@@ -150,8 +150,8 @@ const Matrix /* or null */ *ReducedGB::matrix_remainder(const Matrix *m)
 }
 
 M2_bool ReducedGB::matrix_lift(const Matrix *m,
-			    const Matrix /* or null */ **result_remainder,
-			    const Matrix /* or null */ **result_quotient)
+                            const Matrix /* or null */ **result_remainder,
+                            const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != originalR)
     {
@@ -216,14 +216,15 @@ int ReducedGB::contains(const Matrix *m)
       remainder(g, false, denom);
 
       if (g != NULL)
-	{
-	  R->gbvector_remove(g);
-	  return i;
-	}
+        {
+          R->gbvector_remove(g);
+          return i;
+        }
     }
   return -1;
 }
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

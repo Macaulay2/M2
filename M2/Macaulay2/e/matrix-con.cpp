@@ -26,9 +26,9 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols)
   deg = R->degree_monoid()->make_one();
 }
 
-MatrixConstructor::MatrixConstructor(const FreeModule *target, 
-				     const FreeModule *source, 
-				     const int *deg0)
+MatrixConstructor::MatrixConstructor(const FreeModule *target,
+                                     const FreeModule *source,
+                                     const int *deg0)
  : R(target->get_ring()),
    rows(target),
    cols(source),
@@ -41,7 +41,7 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target,
   deg = (deg0 == 0 ? R->degree_monoid()->make_one() : R->degree_monoid()->make_new(deg0));
 }
 
-void MatrixConstructor::append(vec v) 
+void MatrixConstructor::append(vec v)
 {
   assert(!cols_frozen);
   int *d = R->degree_monoid()->make_one();
@@ -50,10 +50,10 @@ void MatrixConstructor::append(vec v)
   R->degree_monoid()->remove(d);
 
 }
-void MatrixConstructor::append(vec v, const int *deg0) 
+void MatrixConstructor::append(vec v, const int *deg0)
 {
   assert(!cols_frozen);
-  entries.push_back(v); 
+  entries.push_back(v);
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->append(deg0);
 }
@@ -108,4 +108,5 @@ Matrix * MatrixConstructor::to_matrix()
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

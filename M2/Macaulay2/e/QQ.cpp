@@ -9,7 +9,7 @@
 #include "ringmap.hpp"
 #include "gbring.hpp"
 
-bool QQ::initialize_QQ() 
+bool QQ::initialize_QQ()
 {
   initialize_ring(0);
   _elem_size = sizeof(mpq_t);
@@ -49,7 +49,7 @@ void QQ::remove_elem(gmp_QQ f) const
 }
 
 int QQ::coerce_to_int(ring_elem a) const
-{ 
+{
   return static_cast<int>(mpz_get_si(mpq_numref(MPQ_VAL(a))));
 }
 
@@ -59,11 +59,11 @@ ring_elem QQ::random() const
   return MPQ_RINGELEM(result);
 }
 
-void QQ::elem_text_out(buffer &o, 
-			   const ring_elem ap, 
-			   bool p_one, 
-			   bool p_plus, 
-			   bool p_parens) const
+void QQ::elem_text_out(buffer &o,
+                           const ring_elem ap,
+                           bool p_one,
+                           bool p_plus,
+                           bool p_parens) const
 {
   gmp_QQ a = MPQ_VAL(ap);
 
@@ -74,15 +74,15 @@ void QQ::elem_text_out(buffer &o,
   bool is_one = (mask_mpq_cmp_si(a, 1, 1) == 0 || mask_mpq_cmp_si(a, -1, 1) == 0);
 
   int size = static_cast<int>(mpz_sizeinbase (mpq_numref(a), 10)
-			      + mpz_sizeinbase (mpq_denref(a), 10) + 3);
+                              + mpz_sizeinbase (mpq_denref(a), 10) + 3);
 
   char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
   if (!is_neg && p_plus) o << '+';
-  if (is_one) 
-    {  
+  if (is_one)
+    {
       if (is_neg) o << '-';
-      if (p_one) o << '1'; 
+      if (p_one) o << '1';
     }
   else
     {
@@ -154,10 +154,10 @@ bool QQ::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
     {
       gmp_QQ h = MPQ_VAL(f);
       if (mask_mpz_cmp_si(mpq_denref(h),1) == 0)
-	{
-	  result = globalZZ->RingZZ::from_int(mpq_numref(h));
-	  return true;
-	}
+        {
+          result = globalZZ->RingZZ::from_int(mpq_numref(h));
+          return true;
+        }
     }
   return false;
 }
@@ -311,17 +311,17 @@ ring_elem QQ::power(const ring_elem f, int n) const
       mpz_pow_ui(mpq_numref(result), mpq_denref(MPQ_VAL(f)), -n);
       mpz_pow_ui(mpq_denref(result), mpq_numref(MPQ_VAL(f)), -n);
       if (mpz_sgn(mpq_denref(result)) < 0)
-	{
-	  mpz_neg(mpq_numref(result), mpq_numref(result));
-	  mpz_neg(mpq_denref(result), mpq_denref(result));
-	}
+        {
+          mpz_neg(mpq_numref(result), mpq_numref(result));
+          mpz_neg(mpq_denref(result), mpq_denref(result));
+        }
       else if (mpz_sgn(mpq_denref(result)) == 0)
-	{
-	  ERROR("attempted to divide by zero");
-	  mpz_set_si(mpq_denref(result), 1);
-	}
+        {
+          ERROR("attempted to divide by zero");
+          mpz_set_si(mpq_denref(result), 1);
+        }
     }
-  else 
+  else
     mpq_set_si(result, 1, 1);
   return MPQ_RINGELEM(result);
 }
@@ -329,8 +329,8 @@ ring_elem QQ::power(const ring_elem f, int n) const
 ring_elem QQ::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!RingZZ::get_si(n1, n)) 
-    { 
+  if (!RingZZ::get_si(n1, n))
+    {
       ERROR("exponent too large");
       return QQ::from_int(1);
     }
@@ -358,7 +358,7 @@ ring_elem QQ::divide(const ring_elem f, const ring_elem g) const
 }
 
 void QQ::syzygy(const ring_elem a, const ring_elem b,
-	       ring_elem &x, ring_elem &y) const
+               ring_elem &x, ring_elem &y) const
 {
   x = QQ::from_int(1);
   y = QQ::divide(a,b);
@@ -396,26 +396,26 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a, int) const
 // ///////////////////////////////////
 // // translation gbvector <--> vec //
 // ///////////////////////////////////
-// ring_elem QQ::trans_to_ringelem(ring_elem coeff, 
-// 				const int *exp) const
+// ring_elem QQ::trans_to_ringelem(ring_elem coeff,
+//                              const int *exp) const
 // {
 //   ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
 //   return this->fraction(a, trans_one);
 // }
-// 
-// ring_elem QQ::trans_to_ringelem_denom(ring_elem coeff, 
-// 				      ring_elem denom, 
-// 				      int *exp) const
+//
+// ring_elem QQ::trans_to_ringelem_denom(ring_elem coeff,
+//                                    ring_elem denom,
+//                                    int *exp) const
 // {
 //   ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
 //   return this->fraction(a, denom);
 // }
-// 
-// void QQ::trans_from_ringelem(gbvectorHeap &H, 
-// 			     ring_elem coeff, 
-// 			     int comp, 
-// 			     int *exp,
-// 			     int firstvar) const
+//
+// void QQ::trans_from_ringelem(gbvectorHeap &H,
+//                           ring_elem coeff,
+//                           int comp,
+//                           int *exp,
+//                           int firstvar) const
 // {
 //   ring_elem a = this->numerator(coeff);
 //   globalZZ->trans_from_ringelem(H, a, comp, exp, firstvar);
@@ -424,5 +424,5 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a, int) const
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

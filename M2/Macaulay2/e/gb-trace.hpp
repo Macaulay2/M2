@@ -18,6 +18,12 @@ public:
   long offset();
 };
 
+/**
+    @ingroup gb
+
+    @brief Unfinished code.  Meant to handle tracing of a GB from ZZ/p to QQ.
+*/
+
 class GBTrace : public newdelete
 {
   // Commands:
@@ -70,5 +76,5 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
-

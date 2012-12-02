@@ -1,6 +1,7 @@
 # http://www.netlib.org/lapack/
 # documentation: http://www.netlib.org/lapack/lug/
-URL = http://www.netlib.org/lapack
+#URL = http://www.netlib.org/lapack
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 
 # VERSION = 3.2
 # version 3.2 doesn't compile

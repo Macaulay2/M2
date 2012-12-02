@@ -56,22 +56,22 @@ ResolutionComputation::~ResolutionComputation()
 
 void ResolutionComputation::remove_res()
 {
-  // This is the default behavior: doing nothing 
+  // This is the default behavior: doing nothing
 }
 
 ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
-							 M2_bool resolve_cokernel,
-							 int max_level,
-							 M2_bool use_max_slanted_degree,
-							 int max_slanted_degree,
-							 int algorithm,
-							 int strategy
-							 )
+                                                         M2_bool resolve_cokernel,
+                                                         int max_level,
+                                                         M2_bool use_max_slanted_degree,
+                                                         int max_slanted_degree,
+                                                         int algorithm,
+                                                         int strategy
+                                                         )
 {
   const Ring *R = m->get_ring();
   ResolutionComputation *C = 0;
   int origsyz;
-  // First, we need to check that m is homogeneous, and that 
+  // First, we need to check that m is homogeneous, and that
   // the heft values of the variables are all positive.
   // All of these algorithms also assume that R is a polynomial ring.
 
@@ -91,42 +91,42 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
       ERROR("engine resolution strategies require a homogeneous module");
       return 0;
     }
-  
+
   switch (algorithm) {
-  case 1 : 
+  case 1 :
     if (!resolve_cokernel)
       {
-	ERROR("resolution Strategy=>1 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
-	return 0;
+        ERROR("resolution Strategy=>1 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
+        return 0;
       }
     if (!R->is_commutative_ring())
       {
-	ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
-	return 0;
+        ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
+        return 0;
       }
     if (M2_gbTrace > 0) emit_line("resolution Strategy=>1");
     C = new res_comp(m, max_level, strategy);
     break;
-  case 0: 
+  case 0:
     if (!resolve_cokernel)
       {
-	ERROR("resolution Strategy=>0 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
-	return 0;
+        ERROR("resolution Strategy=>0 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
+        return 0;
       }
     if (!R->is_commutative_ring())
       {
-	ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
-	return 0;
+        ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
+        return 0;
       }
     if (M2_gbTrace > 0) emit_line("resolution Strategy=>0");
     C = new res2_comp(m, max_level, use_max_slanted_degree, max_slanted_degree, strategy);
     break;
-  case 2 : 
+  case 2 :
     origsyz = m->n_cols();
     if (M2_gbTrace > 0) emit_line("resolution Strategy=>2");
     C = new gbres_comp(m, max_level+1, origsyz, strategy);
     break;
-  case 3: 
+  case 3:
     origsyz = m->n_cols();
     if (M2_gbTrace > 0) emit_line("resolution Strategy=>3");
     C = new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
@@ -158,11 +158,11 @@ M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bett
   for (d=hi; d >= lo; d--)
     {
       for (lev=0; lev<=len; lev++)
-	if (bettis[lev+(len+1)*(d-lo)] > 0)
-	  {
-	    hi1 = d;
-	    break;
-	  }
+        if (bettis[lev+(len+1)*(d-lo)] > 0)
+          {
+            hi1 = d;
+            break;
+          }
       if (hi1 <= hi) break;
     }
   if (hi1 > hi) hi1 = hi;
@@ -171,11 +171,11 @@ M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bett
   for (lev=len; lev>=0; lev--)
     {
       for (d=lo; d<=hi1; d++)
-	if (bettis[lev+(len+1)*(d-lo)] > 0)
-	  {
-	    len1 = lev;
-	    break;
-	  }
+        if (bettis[lev+(len+1)*(d-lo)] > 0)
+          {
+            len1 = lev;
+            break;
+          }
       if (len1 <= len) break;
     }
   if (len1 > len) len1 = len;
@@ -207,7 +207,7 @@ void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar) const
     {
       int sum = 0;
       for (int d=lo; d<=hi; d++)
-	sum += a[len*(d-lo)+lev+3];
+        sum += a[len*(d-lo)+lev+3];
       total_sum += sum;
       o.put(sum, 6);
       o << ' ';
@@ -218,18 +218,19 @@ void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar) const
       o.put(d, 5);
       o << ": ";
       for (int lev=0; lev<len; lev++)
-	{
-	  int c = a[len*(d-lo) + lev + 3];
-	  if (c != 0)
-	    o.put(c, 6);
-	  else
-	    o << "     -";
-	  o << " ";
-	}
+        {
+          int c = a[len*(d-lo) + lev + 3];
+          if (c != 0)
+            o.put(c, 6);
+          else
+            o << "     -";
+          o << " ";
+        }
       o << newline;
     }
 }
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:

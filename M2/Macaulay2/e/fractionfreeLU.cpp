@@ -42,11 +42,11 @@ bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)
   for (int i=lo; i<=hi; i++)
     {
       int r1 = M->lead_row(i);
-      if (r1 > r) 
-	{
-	  r = r1;
-	  c = i;
-	}
+      if (r1 > r)
+        {
+          r = r1;
+          c = i;
+        }
     }
   if (r == -1) return false;
 
@@ -60,22 +60,22 @@ void FF_LUComputation::do_pivots(int lo, int hi, int pivotCol)
   R->remove(lastpivot);
   lastpivot = pivot;
   int pivot_row = M->lead_row(pivotCol, pivot); // pivot is the element at (pivot_row, pivotCol)
-  
+
   for (int i=lo; i<=hi; i++)
     {
       ring_elem a;
       int r = M->lead_row(i, a);
       if (r == pivot_row)
-	{
-	  // Need to modify column i:
-	  // col(i) := pivot*M[i] - M[pivot_row,i] * M[pivotCol]
-	  R->negate_to(a);
-	  M->scale_column(i,pivot);
-	  M->column_op(i,a,pivotCol);
-	}	  
+        {
+          // Need to modify column i:
+          // col(i) := pivot*M[i] - M[pivot_row,i] * M[pivotCol]
+          R->negate_to(a);
+          M->scale_column(i,pivot);
+          M->column_op(i,a,pivotCol);
+        }
 
       if (need_div[i])
-	M->divide_column(i,lastpivot);
+        M->divide_column(i,lastpivot);
 
       need_div[i] = (r == pivot_row);
     }
@@ -87,22 +87,22 @@ bool FF_LUComputation::calc()
   while (choose_pivot_column(0,--pivot_col,c1))
     {
       if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
-	return false;
+        return false;
 
       if (pivot_col != c1)
-	{
-	  M->interchange_columns(pivot_col,c1);
-	  
-	  // swap need_div[pivot_col], need_div[c1]
-	  bool tmp = need_div[pivot_col];
-	  need_div[pivot_col] = need_div[c1];
-	  need_div[c1] = tmp;
-	  
-	  // swap col_perm
-	  int ctmp = col_perm[pivot_col];
-	  col_perm[pivot_col] = col_perm[c1];
-	  col_perm[c1] = ctmp;
-	}
+        {
+          M->interchange_columns(pivot_col,c1);
+
+          // swap need_div[pivot_col], need_div[c1]
+          bool tmp = need_div[pivot_col];
+          need_div[pivot_col] = need_div[c1];
+          need_div[c1] = tmp;
+
+          // swap col_perm
+          int ctmp = col_perm[pivot_col];
+          col_perm[pivot_col] = col_perm[c1];
+          col_perm[c1] = ctmp;
+        }
 
       do_pivots(0,pivot_col-1,pivot_col);
     }
@@ -130,4 +130,5 @@ M2_arrayintOrNull FF_LUComputation::DO(MutableMatrix *M)
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
 // End:
