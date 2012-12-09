@@ -9,6 +9,7 @@ newPackage(
                   Email => "asanchez@math.tamu.edu", 
                   HomePage => "www.math.tamu.edu/~asanchez"}},
         Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
+	PackageImports => {"NumericalAlgebraicGeometry"},
         DebuggingMode => true
         )
 
@@ -51,6 +52,7 @@ export {
    Polynomials,
    Solutions,
    solveSchubertProblem,
+   changeFlags, -- temporary
    SolutionsSuperset -- temporary
    }
 
@@ -71,10 +73,10 @@ export {
 --
 -- Date: April 5, 2012
 --
--- Last Update: August 05, 2012
+-- Last Update: December 09, 2012
 ------------------------------------
 
-needsPackage "NumericalAlgebraicGeometry"
+-- needsPackage "NumericalAlgebraicGeometry"
 -- we need to use GAP's package
 
 -- NC means no checker in that column
@@ -86,12 +88,13 @@ FFF = RR
 FFF = CC
 ERROR'TOLERANCE := 0.001
 ------------------
--- Debugg Level --
+-- Debug Level --
 ------------------
--- 0 = no debugg mode
+-- 0 = no debug mode
 -- 1 = timing main processes
--- 2 = verify solutions agains blackbox solver (no timing)
+-- 2 = verify solutions against blackbox solver (no timing)
 -- 3 = time processes and blackbox solver 
+-- 4 = new experimental stuff kicks in
 DEBUG'LEVEL = 3
 
 
@@ -528,6 +531,8 @@ moveCheckers Array := blackred -> (
 	      blackdown2 --return also the critical row
 	      )
 )
+--------------
+-- TEST
 --moveCheckers({3,5,4,2,1,0},{3,NC,NC,5,NC,1})
 
 
@@ -580,19 +585,19 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	  };
      if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)};
      if not node'exists then ( --add the ultimate node part here...
-<< "this is node'exists "<< node'exists<<endl;
---	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
---     	 if numgens ring coordX == 0 then ( 
---	     print "great success: we hit the ULTIMATE LEAF";
---	     self.Solutions = {lift(coordX,FFF)};
---	     self.IsResolved = true;
---	     )else(
+--<< "this is node'exists "<< node'exists<<endl;
+	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
+     	 if numgens ring coordX == 0 then ( 
+	     print "great success: we hit the ULTIMATE LEAF";
+	     self.Solutions = {lift(coordX,FFF)};
+	     self.IsResolved = true;
+	     )else(
      	     (children,c) := moveCheckers board;
      	     self.CriticalRow = c;
      	     self.Children = apply(children, b -> playCheckers (take(b,2),self,last b,all'nodes));
-	     all'nodes#board = self;
---	     );
-	  );
+	     );
+	 all'nodes#board = self;
+	 );
      self
 )
 
@@ -625,7 +630,7 @@ printTree MutableHashTable := node ->(
 --
 -- This procedure will translate a checker 
 -- board configuration into a matrix with
--- 0's 1's and variables
+-- 0's, 1's and variables
 -----------------
 -- input: an array of black and red checkers
 --        in the form ( ListofPositionsBlack, ListofPositionsRed)
@@ -675,13 +680,13 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->
 if not node.IsResolved then (
      n := #node.Board#0;
      coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
-     if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
-	  print "great success: we hit the ULTIMATE LEAF";
-	  if #remaining'conditions'and'flags > 0
-	  then error "invalid Schubert problem"
-	  else node.Solutions = {lift(coordX,FFF)};
-	  )
-     else ( -- coordX has variables
+--     if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
+--	  print "great success: we hit the ULTIMATE LEAF";
+--	  if #remaining'conditions'and'flags > 0
+--	  then error "invalid Schubert problem"
+--	  else node.Solutions = {lift(coordX,FFF)};
+--	  )
+--     else ( -- coordX has variables
      black := first node.Board;
           
      if node.Children == {} then node.FlagM = matrix mutableIdentity(FFF,n) --change here
@@ -725,7 +730,8 @@ if not node.IsResolved then (
 	       --print(node.SolutionsSuperset);
 	       --print({(map(CC,ring coordX,matrix sub(transpose Soluts, CC))) coordX});
 	       ------------------------
-	       -- Precondition this with the DEBUGG LeVEL
+	       -- Precondition this with the DEBUG LeVEL
+	       if DEBUG'LEVEL >= 4 then (
 	       print "calling solveSchubertProblem from resolveNode ";
 	       print(node.Board);
 	       lambda := output2partition(last node.Board);
@@ -733,13 +739,21 @@ if not node.IsResolved then (
 	       k:=#lambda;
 	       validpartition := true;
 	       scan(lambda, i-> if i>n-k then validpartition = false) ;
+	       
 	       if validpartition then(
-		   node.Solutions = solveSchubertProblem(prepend((lambda,id_(FFF^n)), remaining'conditions'and'flags),k,n);
+		   node.Solutions = solveSchubertProblem(
+		       prepend(
+			   (lambda,id_(FFF^n)), -- check that this is the correct flag!!! 
+			   remaining'conditions'and'flags
+			   ),
+		       k,n);
+		   -- assert(???); --verify that the solutions fit the localization pattern 
 	       	   )else(   
 		   node.Solutions = {}; 
 		   );
-	       --node.Solutions = node.SolutionsSuperset; 
-     	       ); -- should change!!! 
+	           )
+	       	   else node.Solutions = node.SolutionsSuperset; -- should change!!! 
+     	       ); 
      	  );
      scan(node.Fathers, father'movetype->(
      	  (father,movetype) := father'movetype; 
@@ -914,7 +928,7 @@ if not node.IsResolved then (
      	  scan(node.Solutions, X->
 	       assert(position(node.SolutionsSuperset, Y->norm(Y-X)<ERROR'TOLERANCE) =!= null)); 
      	  );
-     ); -- END coordX has variables
+     --); -- END coordX has variables
      node.IsResolved = true;
      ) -- END resolveNode
 
@@ -940,7 +954,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     -- take the first two conditions
     twoconds := take(SchPblm,2);
     -- extract the partitions and the flags
-    l1:=first first twoconds;
+    l1 :=first first twoconds;
     F1 := last first twoconds;
     l2 := first last twoconds;
     F2 := last last twoconds;
@@ -949,10 +963,135 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     newDag := playCheckers(l1,l2,k,n);
     resolveNode(newDag,remaining'conditions'and'flags);
     -- we do a change of coordinates
-    B:=solve(F2,rsort id_(FFF^n));
-    apply(newDag.Solutions, sln-> sln*B )
+--    B:=solve(F2,rsort id_(FFF^n));
+    
+    -- Need to glue solutions from the node of a Dag to solutions
+    -- of the leaf of the previous Dag
+    changeFlags(newDag.Solutions, 
+	twoconds/first, 
+	{id_(FFF^n),rsort id_(FFF^n)}|(remaining'conditions'and'flags/last), 
+	twoconds/last);
     )
 
+-----------------------
+-- Test Here:
+restart
+debug needsPackage "NumericalSchubertCalculus"
+
+twoconds = take(SchPblm,2);
+l1=first first twoconds;
+F1= last first twoconds;
+l2= first last twoconds;
+F2= last last twoconds;
+remaining'conditions'and'flags=drop(SchPblm,2);
+newDag = playCheckers(l1,l2,2,4);
+resolveNode(newDag,remaining'conditions'and'flags);
+
+SchPblm = {({2,1}), ({1})};
+twoconds = take(SchPblm,2)
+l1= first twoconds
+if class last twoconds === Sequence then( 
+l2= first last twoconds
+F2= last last twoconds
+)
+remaining'conditions'and'flags=drop(SchPblm,2);
+newDag = playCheckers(l1,l2,2,4);
+resolveNode(newDag,remaining'conditions'and'flags);
+peek newDag
+
+solveSchubertProblem(SchPblm,2,4)
+
+SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
+solveSchubertProblem(SchPblm,2,4)
+
+SchPblm = {({1}), ({1}),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
+solveSchubertProblem(SchPblm,2,4)
+-----------------------
+
+---------------------------------
+--- changeFlags
+---------------------------------
+---
+-- changeFlags is a function to
+-- write solutions written w.r.t. flagsA
+-- to solutions written w.r.t flagsB
+--
+-- Input:
+--    MX -- X -> A localization pattern, M -> flag
+--    solutionsA -> solutions to the problem specialized to flagsA
+--    conds'A'B -> sequence with conditions and flags as follows: 
+--    	  conditions = list of partitions (L1,..., Lm), _not_pairs (partition, flag)
+--    	  flagsA = (A1,...,Am)
+--    	  flagsB = (B1,...,Bm)
+-- Output:
+--    List of solutions written w.r.t flags B
+---------------------------------
+changeFlags = method()
+changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->(
+   (conditions,flagsA,flagsB) := conds'A'B; 
+   flagsS := flagsA;
+   solutionsS := solutionsA;
+   n := numcols flagsA#0;
+   scan(n, i->(
+      flagsT := apply(#flagsS, f-> flagsS#f_{0..i-1}|flagsB#f_{i..n-1});
+      solutionsT:= changeFlagsLinear (MX, solutionsS, (conditions, flagsS, flagsT));
+      flagsS = flagsT;
+      solutionsS = solutionsT/coordinates;
+      ));
+   solutionsS
+   )
+
+-------------------------------
+-- changeFlagsLinear
+--
+-- function to follow solutions from one
+-- flag to another using linear homotopies
+--
+-- this is an auxilary function that create
+-- the start and the target system and uses
+-- homotopy cont. to track the solutions
+---------------------------------
+-- Input:
+--    MX -- X -> A localization pattern, M -> flag
+--    solutionsS -> solutions to the problem specialized to a start system of Flags
+--    conds'S'T -> sequence with conditions and flags as follows: 
+--    	  conditions = list of partitions (L1,..., Lm), _not_pairs (partition, flag)
+--    	  flagsS = starting flags (S1,...,Sm)
+--    	  flagsT = target flags (T1,...,Tm)
+-- Output:
+--    List of solutions written w.r.t. flags T
+---------------------------------
+changeFlagsLinear = method()
+changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
+   (conditions,flagsS,flagsT):= conds'S'T;
+   condsStart := {};
+   condsTarget := {};
+   scan(#conditions, i->(
+      condsStart = append(condsStart, (conditions#i, flagsS#i));
+      condsTarget = append(condsTarget, (conditions#i, flagsT#i));
+   ));
+   -- create Start and Target systems
+   S := first entries gens makePolynomials(MX, condsStart);
+   T := first entries gens makePolynomials(MX, condsTarget);
+   track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
+   )
+
+TEST ///
+-- Test the function that
+-- moves solutions wrt flags A
+-- to solutions wrt flags B
+restart
+debug needsPackage "NumericalSchubertCalculus"
+needsPackage "NumericalAlgebraicGeometry"
+Rng = FFF[x_{1,1}, x_{1,2}];
+MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
+conds = {{1},{1}};
+Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
+sols = solveSystem (makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i))))_*
+Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
+solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
+assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
+///
 
 toRawSolutions = method()
 toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
@@ -1094,7 +1233,9 @@ makePolynomials(Matrix, List) := (MX, conds) ->(
 squareUpPolynomials = method()
 squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs), FFF^m)  
 
+-----------------------------
 -- Tracks a homotopy
+-----------------------------
 -- Input: 
 --    H -- a list of polynomials in k[xx,t];
 --    S = {{...},...,{...}} -- a list of solutions to H at t=0
@@ -1586,6 +1727,9 @@ doc ///
 ///;
 
 TEST ///
+restart 
+needsPackage "NumericalSchubertCalculus"
+-----------------------
 -- 4 lines in P^3
 root = playCheckers({1},{1},2,4)
 resolveNode(root, {({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))})
@@ -1612,7 +1756,8 @@ root = playCheckers({2,1},{2,1},3,6)
 time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({1},random(FFF^6,FFF^6))})
 peek root
 
-n=7; K'n=FFF^n;
+DEBUG'LEVEL = 1 --check that DebugLevel = 1 should do the black box solving only at the leaves
+n=7; K'n=FFF^n; -- takes about 10 minutes!
 root = playCheckers({2,1,0},{2,1,0},3,n)
 time resolveNode(root, {({2,1,0},random(K'n,K'n)),({2,1,0},random(K'n,K'n))})
 peek root
@@ -1623,10 +1768,12 @@ time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({2},random(FFF^6,FFF^6))})
 peek root
 printTree root
 
----- there is something wrong, 
+---- there is something wrong, this problem gives an error
 root = playCheckers({3,2,2},{2}, 3,6)
 peek root
 resolveNode(root, {})
+
+
 restart
 setRandomSeed 0
 debug needsPackage "LRcheckergame";
@@ -1639,95 +1786,10 @@ root = playCheckers({3,3,1},{2},3,6)
 resolveNode(root,{})
 peek root
 
-root = playCheckers({3,3,1}, {2}, 3,6)
+-- this problem should give empty solutions as
+-- the two partition are not complementary
+root = playCheckers({3,3,1}, {1,1}, 3,6)
 resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
 
 
 ------------------- WHAT IS THIS STUFF? CAN IT BE DELETED??? ---------------------------
-
-movetype
-startSolutions
-s -- the "solutions that are wrong"
-polys
-norm sub(polys,matrix{{0}|s})
-
-SolBlackBox =apply(node.SolutionsSuperset, X->toRawSolutions(coordX,X))
-s2 = flatten SolBlackBox
-norm sub(polys,matrix{{0}|s2})
-
---------------------------------------
-end
-moveCheckers({3,5,4,2,1,0},{3,99,99,5,99,1},6)
-restart
-needsPackage "LRcheckergame";
-moveRed({0, 2}, {2, 1}, {99, 3, 99, 1}, 4)
--- The output must be
--- {{99, 3, 99, 1, 1, 99, 99, 3},1}
-playCheckers({1},{1},2,4)
-
-moveRed({0, 3}, {3, 2}, {99, 99, 5, 3, 99, 2}, 6)
-moveRed({2,5},{3,4},{2,99,99,5,99,1},6)
--- output must be {99, 99, 5, 3, 99, 2}
-playCheckers({1,1},{1,1},3,6)
-playCheckers({1,1},{2,1},3,6)
-playCheckers({1,1},{2,0},2,4)
-playCheckers({1,1},{2,1},3,6)
-playCheckers({2,1},{1,1},3,6)
-
-Sol = playCheckers({3},{3},2,8)
-#Sol
-unique Sol#0
-redChkrPos(partition2bracket(partn2,k,n),partition2bracket(partn1,k,n),k,n);
-playCheckers({2,2},{2,2},4,8)
-
-restart
-needsPackage "LRcheckergame";
-black = {3,5,4,2,1,0};
-red = {3,NC,NC,5,NC,1};
-makeLocalCoordinates [black,red];
-peek oo
-
-black = {6,7,8,9,11,12,13,14,10,5,4,3,2,1};
-red = {}
-
-
-restart
-needsPackage "NumericalSchubertCalculus";
-
-
-SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
-solveSchubertProblem(SchPblm,2,4)
-
-SchPblm = {({1}), ({1}),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
-solveSchubertProblem(SchPblm,2,4)
-
-playCheckers({2,0},{1},2,4)
- 
-partition2bracket({2,0},2,4)
-partition2bracket({1},2,4)
-redChkrPos({1,4},{2,4},2,4)
--- redChkrPos(partition2bracket({2,1},3,6),partition2bracket({2},3,6),3,6)
-
-
-twoconds = take(SchPblm,2);
-l1=first first twoconds;
-F1= last first twoconds;
-l2= first last twoconds;
-F2= last last twoconds;
-remaining'conditions'and'flags=drop(SchPblm,2);
-newDag = playCheckers(l1,l2,2,4);
-resolveNode(newDag,remaining'conditions'and'flags);
-
-SchPblm = {({2,1}), ({1})};
-twoconds = take(SchPblm,2)
-l1= first twoconds
-if class last twoconds === Sequence then( 
-l2= first last twoconds
-F2= last last twoconds
-)
-remaining'conditions'and'flags=drop(SchPblm,2);
-newDag = playCheckers(l1,l2,2,4);
-resolveNode(newDag,remaining'conditions'and'flags);
-peek newDag
-
-solveSchubertProblem(SchPblm,2,4)
