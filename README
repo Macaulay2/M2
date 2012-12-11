@@ -2,5 +2,5 @@ This directory is intended to be checked out by developers of Macaulay2.  Thus,
 it contains "M2", which contains everything needed by a user to build
 Macaulay2, and "bugs", where we keep track of bugs.
 
-Users interested just in building Macaulay2 will prefer the check out just
+Users interested just in building Macaulay2 will prefer to check out just
 "M2".
