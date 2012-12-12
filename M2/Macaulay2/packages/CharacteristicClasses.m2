@@ -954,4 +954,4 @@ TEST ///
 -- [1] A method to compute Segre classes (David Eklund, Christine Jost, Chris Peterson), 2011, available at arXiv:1109.5895v1 [math.AG]
 -- [2] Bertini: Software for Numerical Algebraic Geometry (Daniel J. Bates, Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), available at http://www.nd.edu/~sommese/bertini
 -- [3] Regenerative cascade homotopies for solving polynomial systems (Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), Applied Mathematics and Computation
--- [4] Numeric computation of the Euler characteristic of projective varieties (Christine Jost), unpublished
+-- [4] Numeric computation of the Euler characteristic of projective varieties (Christine Jost), to be submitted
