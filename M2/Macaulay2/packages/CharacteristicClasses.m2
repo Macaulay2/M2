@@ -13,7 +13,7 @@ newPackage(
 		  Email => "jost@math.su.se", 
 		  HomePage => "http://www.math.su.se/~jost"}},
     	Headline => "Degrees of Chern classes and other characteristic classes",
-    	DebuggingMode => true,
+    	DebuggingMode => false,
 	Reload => true,
 	Configuration => { 
 	     "pathToBertini" => ""
