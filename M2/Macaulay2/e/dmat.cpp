@@ -40,11 +40,25 @@ size_t DMat<CoeffRing>::rank() const
   return static_cast<size_t>(-3);
 }
 
+///////////////////////////////////
+/// Real linear algebra routines //
+///////////////////////////////////
+
 template<> 
 size_t DMat<M2::ARingRRR>::rank() const
 {
   return LUDecompositionRRR::rankRRR(*this);
 }
+
+template<>
+void DMat<M2::ARingRRR>::determinant(elem &result) const
+{
+  LUDecompositionRRR::determinantRRR(*this, result);
+}
+
+//////////////////////////////////////
+/// Generic linear algebra routines //
+//////////////////////////////////////
 
 template<typename CoeffRing>
 void DMat<CoeffRing>::determinant(elem &result) const

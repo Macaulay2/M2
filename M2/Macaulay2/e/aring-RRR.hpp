@@ -3,17 +3,15 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
-// uncomment to use CoefficientRingRRR
-// #define use_new_RRR
-
 // Ring_RRR is the placeholder for ARingRRR; shall be replaced when CoefficientRingRRR is phased out completely
+
 #ifdef use_new_RRR
 #define Ring_RRR M2::ARingRRR
 #else 
 #define Ring_RRR CoefficientRingRRR 
 #endif
-class Ring_RRR;
 
+//class Ring_RRR;
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"

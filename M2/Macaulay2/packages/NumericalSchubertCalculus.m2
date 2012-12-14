@@ -749,6 +749,7 @@ if not node.IsResolved then (
 		       k,n);
 		   -- assert(???); --verify that the solutions fit the localization pattern 
 	       	   )else(   
+		   << "-- partition is not valid: " << lambda << endl;
 		   node.Solutions = {}; 
 		   );
 	           )
