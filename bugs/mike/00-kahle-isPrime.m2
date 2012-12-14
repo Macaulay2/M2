@@ -9,7 +9,7 @@ gbTrace=3
 isPrime I
 
 end
--- mike trying to debug this
+-- mike trying to debug this (done sometime in November 2012)
 minimalPrimes I
 code methods isPrime
 code methods minimalPrimes
