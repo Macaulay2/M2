@@ -291,7 +291,6 @@ public:
 
 
 
-
 #include "RRR.hpp"
 /**
  * \ingroup coeffrings

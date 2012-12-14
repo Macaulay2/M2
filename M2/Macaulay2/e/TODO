@@ -1,3 +1,23 @@
+14 Dec 2012 (TK+MES)
+
+engine work todo list:
+1. gtest tests for engine code
+  TK: play with gtest, to understand it
+  add Makefile targets for a simple one
+  get include files so we can link with all engine files (not interpreter files)
+  write tests!
+2. doxygen: start putting in better doxy-comments
+  also: source code has no indentation, why not?!
+  
+3. interface to flint and top-level ring and mutable matrix code
+4. same issue with RRR, CCC
+5. same issue with finite fields
+6. interface to mathicgb code that Bjarke is doing
+
+
+
+
+
 -- 1/10/2007:
 changed comp_* to comp-*
 z_mod_p --> ZZp

@@ -8,6 +8,7 @@
 #ifdef use_new_RRR
 #define Ring_RRR M2::ARingRRR
 #else 
+class CoefficientRingRRR;
 #define Ring_RRR CoefficientRingRRR 
 #endif
 
