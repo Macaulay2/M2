@@ -27,7 +27,7 @@ newPackage select((
         Headline => "Package for processing posets and order complexes",
         Configuration => {"DefaultPDFViewer" => "open", "DefaultPrecompute" => true, "DefaultSuppressLabels" => true},
         DebuggingMode => true,
-        if version#"VERSION" > "1.4" then PackageExports => {"SimplicialComplexes", "Graphs", "FourTiTwo"}
+        if version#"VERSION" > "1.4" then PackageExports => {"Graphs", "SimplicialComplexes", "Graphs", "FourTiTwo"}
         ), x -> x =!= null)
 
 if version#"VERSION" <= "1.4" then (
@@ -860,59 +860,46 @@ intersectionLattice (List, Ring) := Poset => (L, R)-> (
     poset(G, rel)
     )
 
-lcmLattice = method( Options => { symbol Strategy => "subsets" })
-lcmLattice MonomialIdeal := Poset => opts -> M -> (
-    L := flatten entries gens M;
-    Ground := if opts.Strategy === "subsets" then prepend(1_(ring M), unique (lcm \ drop(subsets L, 1)))
-    else if opts.Strategy === "recursive" then apply(lcmLatticeProduceGroundSet L, D -> product apply(numgens ring M, i-> (ring M)_i^(D#i)))
-    else error "The option Strategy must be 'subsets'."; -- or 'recursive.'"
+lcmLattice = method( Options => { symbol Strategy => "recursive" })
+lcmLattice Ideal := Poset => opts -> I -> (
+    str := if isMonomialIdeal I then opts.Strategy else "subsets";
+    Ground := if str === "subsets" then prepend(1_(ring I), unique (lcm \ drop(subsets I_*, 1)))
+        else if str === "recursive" then apply(lcmLatticeProduceGroundSet I_*, D -> (ring I)_D)
+        else error "The option Strategy must be 'subsets' or 'recursive.'";
     Rels := flatten for i to #Ground-1 list for j from i+1 to #Ground-1 list 
-        if Ground_i % Ground_j == 0 then {Ground_j, Ground_i} else if Ground_j % Ground_i == 0 then {Ground_i, Ground_j} else continue;
+        if Ground_i % Ground_j == 0 then {Ground_j, Ground_i} 
+        else if Ground_j % Ground_i == 0 then {Ground_i, Ground_j} 
+        else continue;
     RelsMatrix := matrix apply(Ground, r -> apply(Ground, s -> if s % r == 0 then 1 else 0));
-    poset (Ground, Rels, RelsMatrix, AntisymmetryStrategy => "none")
+    poset(Ground, Rels, RelsMatrix, AntisymmetryStrategy => "none")
     )
-lcmLattice Ideal := Poset => opts -> I -> lcmLattice(monomialIdeal I, opts)
 
 -- Used by lcmLattice for the "recursive" Strategy
--- BROKEN:  R = QQ[x,y,z]; I = ideal(x^4, y^4, z^4, x^2*y, x*y*z);
 protect next
 lcmLatticeProduceGroundSet = G -> (
-    degreeNextPair := (D, nextDegrees) -> hashTable {symbol degree => D, symbol next => nextDegrees};
-    -- Builds the possible multidegrees by changes in variable i.
-    determineLCMsForVariable := (lcmDegrees, i) -> (
-        -- Takes the lcm of two degrees and determines which of the lowerNexts can later be joined to newDegree
-        -- and change its multidegree. Note that the lower nexts are not all multi-degrees. 
-        joinDegrees := (A,B, lowerNexts) ->  (
-            C := max \ transpose {A.degree, B};
-            degreeNextPair(C, select(lowerNexts, D -> any(C - D, i -> i < 0)))
-            );
-        newLCMDegrees := flatten apply(lcmDegrees, D -> (
-            -- Take D's nexts are partition them by the exponent of the i-th variable. Store in P.
+    if #G === 0 then return {{}}; -- empty set has 1 as a divisor.
+    n := numgens ring first G;
+    -- Base Case: 1 can be made bigger by *every* generator.
+    lcmDegrees := {hashTable {symbol degree => toList(n:0), symbol next => first@@exponents \ G}};
+    -- Recursive Step: Update lcmDegrees so that the multidegrees are updated in the first i variables.
+    --      The list "next" is all the things that can change the multidegree after the first i variables.
+    for i from 0 to n-1 do (
+        lcmDegrees' := flatten apply(lcmDegrees, D -> (
             P := partition(E -> E#i, D.next);
-            -- Partition the possible degrees of the i-th variable into those that change multi-degree D 
-            -- in the i-th coordinate and those that don't. Store in Q.
             Q := partition(d -> d > (D.degree)#i, keys P);
-            --Restrict P to only those which change the degree the i-th variable of D.
+            -- Select those D.next that can change D.degree in the i^th variable.
             upperPartition := hashTable apply(if Q#?true then Q#true else {}, d -> d => P#d);
-            -- The lowerNexts are those multi degrees that can change D in the indices larger than i, but not in i itself.
-            lowerNexts := flatten apply(if Q#?false then Q#false else {}, d -> P#d);
-            newD := degreeNextPair( D.degree, lowerNexts ); -- D with fewer nexts
-            newMultiDegrees := flatten apply(keys upperPartition, d -> (
-                lowerNexts = lowerNexts | upperPartition#d; -- build these as we go
-                apply(upperPartition#d, E -> joinDegrees(D, E, lowerNexts))
+            -- Make the changes in the i^th variable
+            newMultiDegrees := flatten apply(keys upperPartition, d -> apply(upperPartition#d, E -> 
+                hashTable {symbol degree => C := max \ transpose {D.degree, E}, symbol next => select(D.next, N -> any(C - N, i -> i < 0)) }
                 ));
-            prepend(newD, newMultiDegrees)
+            -- Update D to only have those that can change D *after* the i^th variable.
+            D' := hashTable {symbol degree => D.degree, symbol next => flatten apply(if Q#?false then Q#false else {}, d -> P#d)};
+            prepend(D', newMultiDegrees)
             ));
-        -- unique the multi-degrees list
-        first \ values partition(D -> D.degree, select(newLCMDegrees, D -> D =!= null))
-    );
-    initialExps := flatten apply(G, m -> exponents m);
-    n := if #initialExps === 0 then 0 else #(first initialExps);
-    lcmDegrees := { degreeNextPair(apply(n, i -> 0), initialExps) };
-    -- lcmDegrees contains all possible multi-degrees restricted to the first i varibles. For each of these multi-degrees
-    -- we have a list of "nexts" which are atoms which could affect degrees of variables after i without changing the 
-    -- degrees of variables before i.
-    for i from 0 to n-1 do lcmDegrees = determineLCMsForVariable(lcmDegrees, i);
+        -- Get rid of D with duplicate multi-degrees
+        lcmDegrees = first \ values partition(D -> D.degree, select(lcmDegrees', D -> D =!= null));
+        );
     sort apply(lcmDegrees, D -> D.degree)
     )
 
@@ -3465,22 +3452,20 @@ doc ///
     Key
         lcmLattice
         (lcmLattice,Ideal)
-        (lcmLattice,MonomialIdeal)
         [lcmLattice,Strategy]
     Headline
         generates the lattice of lcms in an ideal
     Usage
         P = lcmLattice I
     Inputs
-        I:MonomialIdeal
         I:Ideal
         Strategy=>ZZ
-            must be "subsets" for now
+            either "subsets" or "recursive" (default)
     Outputs
         P:Poset
     Description
         Text
-            The LCM lattice of a @TO "MonomialIdeal"@ is the set of all
+            The LCM lattice of an @TO "Ideal"@ is the set of all
             LCMs of subsets of the generators of the ideal with partial
             ordering given by divisbility.  These are particularly useful
             in the study of resolutions of monomial ideals.
@@ -3488,14 +3473,10 @@ doc ///
             R = QQ[x,y];
             lcmLattice monomialIdeal(x^2, x*y, y^2)
         Text
-            If a non-monomial ideal is passed in, then the @TO "monomialIdeal"@
-            of the ideal is used instead.
-        Example
-           S = QQ[a,b,c,d];
-           lcmLattice ideal (b^2-a*d, a*d-b*c, c^2-b*d)
+            Note that if $I$ is not a @TO "MonomialIdeal"@, then
+            the method automatically uses the Strategy "subsets."
     SeeAlso
         lcm
-        monomialIdeal
 ///
 
 -- ncpLattice
@@ -5880,6 +5861,15 @@ undocumented { "VariableName", (toExternalString,Poset), (toString,Poset), (net,
 ------------------------------------------
 ------------------------------------------
 
+-- lcmLattice Strategy test
+TEST ///
+R = QQ[x,y,z]; 
+I = monomialIdeal(x^4, y^4, z^4, x^2*y, x*y*z);
+L = lcmLattice(I, Strategy => "subsets");
+L' = lcmLattice(I, Strategy => "recursive");
+assert(areIsomorphic(L, L'));
+///
+
 -- Connected Components test;
 TEST ///
 P = poset({1,2}, {{1,2}});
@@ -6044,7 +6034,7 @@ assert(dilworthLattice B == poset({{a,b}}))
 D=distributiveLattice B
 assert(D.cache#OriginalPoset == B)
 assert(# chains(D,9) == 48)
-assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 3, 6}, 2 => set {4, 7}, 3 => set {4, 8}, 4 => set {5, 9}, 5 => set {10}, 6 => set {7, 8}, 7 => set {9, 11}, 8 => set {9, 14}, 9 => set{10, 12, 15}, 10 => set {13, 16}, 11 => set {12}, 12 => set {13, 17}, 13 => set {18}, 14 => set {15}, 15 => set {16, 17},16 => set {18}, 17 => set {18}, 18 => set {19}, 19 => set {}})
+assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 7, 15}, 2 => set {3, 5}, 3 => set {4, 10}, 4 => set {6, 9, 11}, 5 => set {4, 16}, 6 => set {14, 17}, 7 => set {3, 8}, 8 => set {4, 18}, 9 => set {12, 17}, 10 => set {11}, 11 => set {12, 14}, 12 => set {13}, 13 => set {19}, 14 => set {13}, 15 => set {5, 8}, 16 => set {9}, 17 => set {13}, 18 => set {6}, 19 => set {}})
 assert(filter(B, {"001", "110"}) == {"001", "011", "101", "111", "110"})
 assert(orderIdeal(B, {"001", "110"}) == {"000", "001", "010", "100", "110"})
 assert(principalFilter(B,"001") == {"001", "011", "101", "111"})
@@ -6278,7 +6268,7 @@ D=distributiveLattice B
 assert(D.cache#OriginalPoset == B)
 assert(# chains(D,12) == 1386)
 assert(# chains(D,13) == 132)
-assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 3}, 2 => set {4,5}, 3 => set {4}, 4 => set {6, 7}, 5 => set {6, 9}, 6 => set {8,10}, 7 => set {8}, 8 => set {11, 12}, 9 => set {10, 14}, 10 => set{11, 15}, 11 => set {13, 16}, 12 => set {13}, 13 => set {17, 18}, 14 => set {15, 20}, 15 => set {16, 21}, 16 => set {17, 22}, 17 =>set {19, 23}, 18 => set {19}, 19 => set {24, 25}, 20 => set {21}, 21 => set {22}, 22 => set {23}, 23 => set {24}, 24 => set {26}, 25=> set {26}, 26 => set {27}, 27 => set {}})
+assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 4}, 2 => set {3, 9}, 3 => set {5, 11}, 4 => set {3}, 5 => set {6, 10}, 6 => set {7, 12}, 7 => set {8, 13}, 8 => set {14}, 9 => set {5, 15}, 10 => set {12, 17}, 11 => set {10}, 12 => set {13, 16}, 13 => set {14, 18}, 14 => set {19}, 15 => set {6, 20}, 16 => set {18, 22}, 17 => set {16}, 18 => set {19, 21}, 19 => set {23}, 20 => set {7, 24}, 21 => set {23, 26}, 22 => set {21}, 23 => set {25}, 24 => set {8}, 25 => set {27}, 26 => set {25}, 27 => set {}})
 assert(sort filter(B, {4,6}) == {4, 6, 8, 12, 16, 24, 32, 48, 96})
 assert(sort orderIdeal(B, {4,6}) == {1, 2, 3, 4, 6})
 assert(sort principalFilter(B,4) == {4, 8, 12, 16, 24, 32, 48, 96})
@@ -6389,7 +6379,7 @@ assert(D.cache#OriginalPoset == B)
 
 assert(# chains(D,1) == # D.GroundSet)
 assert(# chains(D,2) == 837)
-assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 3, 5}, 2 => set {4, 6}, 3 => set {4, 7}, 4 => set {8, 9}, 5 => set {6, 7, 19}, 6 => set {8, 11, 20}, 7 => set {8, 14, 21}, 8 => set {10, 12, 15, 22}, 9 => set {10}, 10 => set {13, 16, 23}, 11 => set {12, 24}, 12 => set {13, 17, 25}, 13 => set {18, 26}, 14 => set {15, 27}, 15 => set {16, 17, 28}, 16 => set {18, 29}, 17 => set {18, 30}, 18 => set {31, 32}, 19 => set {20, 21}, 20 => set {22, 24}, 21 => set {22, 27}, 22 => set {23, 25, 28}, 23 => set {26, 29}, 24 => set {25, 34}, 25 => set {26, 30, 35}, 26 => set {31, 36}, 27 => set {28, 40}, 28 => set {29, 30, 41}, 29 => set {31, 42}, 30 => set {31, 37, 43}, 31 => set {33, 38, 44}, 32 => set {33}, 33 => set {39, 45}, 34 => set {35}, 35 => set {36, 37}, 36 => set {38}, 37 => set {38, 46}, 38 => set {39, 47}, 39 => set {48}, 40 => set {41}, 41 => set {42, 43}, 42 => set {44}, 43 => set {44, 46}, 44 => set {45, 47}, 45 => set {48}, 46 => set {47}, 47 => set {48}, 48 => set {49}, 49 => set {}})
+assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 11, 17}, 2 => set {3, 6}, 3 => set {4, 19}, 4 => set {5, 7, 13, 18}, 5 => set {8, 14, 28}, 6 => set {4, 9, 32}, 7 => set {8, 25, 33}, 8 => set {10, 26, 34}, 9 => set {5, 35}, 10 => set {31, 36}, 11 => set {3, 12}, 12 => set {4, 15, 37}, 13 => set {14, 20, 33}, 14 => set {16, 23, 34}, 15 => set {5, 38}, 16 => set {29, 39}, 17 => set {6, 12, 40}, 18 => set {20, 25, 28}, 19 => set {18}, 20 => set {21, 23}, 21 => set {22, 42}, 22 => set {24, 27, 41}, 23 => set {22, 29}, 24 => set {30, 45}, 25 => set {21, 26}, 26 => set {22, 31}, 27 => set {30, 43}, 28 => set {23, 26}, 29 => set {27}, 30 => set {44}, 31 => set {24}, 32 => set {13, 35}, 33 => set {21, 34}, 34 => set {22, 36, 39}, 35 => set {14, 46}, 36 => set {24, 47}, 37 => set {7, 38}, 38 => set {8, 48}, 39 => set {27, 47}, 40 => set {9, 15}, 41 => set {43, 45}, 42 => set {41}, 43 => set {44}, 44 => set {49}, 45 => set {44}, 46 => set {16}, 47 =>  set {30}, 48 => set {10}, 49 => set {}})
 assert(sort filter(B, {x*y,x^2}) == {x*y, x^2, x*y*z, x^2*z, x^2*y, x^2*y*z})
 assert(sort orderIdeal(B,{x*y,x^2}) == {1, y, x, x*y, x^2})
 assert(sort principalFilter(B,x^2) == {x^2, x^2*z, x^2*y, x^2*y*z})
