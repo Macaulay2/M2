@@ -11,6 +11,13 @@
 #/var/folders/_s/927kdr250gjf5p9f3x78_dgh0000gp/T/M2-84774-0/0_resolution_lp__Module_rp.m2
 /var/folders/_s/927kdr250gjf5p9f3x78_dgh0000gp/T/M2-84774-0/0___Ext^__Z__Z_lp__Coherent__Sheaf_cm__Coherent__Sheaf_rp.m2
 
+for i from 0 to 100000 do (
+R = ZZ/101[x,y]/x^2;
+f = 1_R;
+f // f;
+collectGarbage();
+)
+
 R = QQ[x,y]/(y^2-x^3);
 1_R//(1_R) -- this appears to be the problem with 'prune'
 M = image matrix{{x,y}}
